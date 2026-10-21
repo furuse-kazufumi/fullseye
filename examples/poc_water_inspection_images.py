@@ -549,7 +549,7 @@ def make_figures(pool, bot, wet, hull, tilt, bottle_small):
     figs.save_grid("hull_images", imgs, ncols=3, captions=caps_i, title="船体の溶接線・錆・番号を、カメラの横のランプで 1・3・6 m から見る",
                    caption="各コマは最大を 1 にして見やすくした(露出は固定でなく、絶対の明るさは題に)。外洋は青に寄り、沿岸(3C)は黄緑に寄って、距離とともに霧のベールが乗る(6 m の沿岸はほぼベールだけ)。")
     snrs = [np.log10(np.clip(out[k]["snr_mean"], 1e-3, None)) for k in keys]
-    figs.save_grid("hull_snr", snrs, gray=True, ncols=3, vrange=(-1.0, 2.5), captions=["SNR %s・%g m(中央 %.1f)" % ("I" if k[0].endswith("I") else "3C", k[1], float(out[k]["snr_mean"][48, 72])) for k in keys],
+    figs.save_grid("hull_snr", snrs, gray=True, ncols=3, vrange=(-1.0, 2.5), captions=["SNR %s・%g m(中央 %.1f)" % ("I" if k[0].endswith("I") else "3C", k[1], float(out[k]["snr_mean"][48, 72])) for k in keys],  # gray-ok: 距離別の光学像だが画素値は SNR であり距離場ではない
                    title="画素ごとの SNR(log10、白 = 316): 距離で落ち、中央のベールで中央が最も悪い",
                    caption="SNR = √N · 直接光 / √(直接光 + ベール + 1e-12)。ランプの後方散乱の体積はカメラの視野の中央で最も重なる。")
 

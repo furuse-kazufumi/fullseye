@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 636 of 1541. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 636 of 1542. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -260,13 +260,13 @@ This repository records *why* things are the way they are in **comments in the s
 ## `examplefig.py`
 
 - **L148** _(ja)_ — 書いた図の sha256 -> 名前。★同じ中身の図が 2 枚出たら台帳に積む
-- **L217** — ★`colorize_depth` returns **float [0,1]**. Receiving it with `np.asarray(..., np.uint8)` truncates every 0.x to 0 and turns it pitch black (hit on 2026-09-06).
-- **L302** — ★Do not drop the body of the example. It is a pity that the figure does not appear, but the numbers must be shown.
-- **L341** — ★Do not just hand off to :func:`_to_rgb8` here. That passes (H,W) to `colorize_depth`, but **inside it each frame is normalized individually**, so a frame that is all 0 and a frame that is all 1 come out the same colour (caught by a test on 2026-09-09). Only by passing the value range explicitly does the scale become a single one.
-- **L406** — ★Pillow **folds a frame identical to the previous one into a single frame** (that time is added to the previous frame's display time, so the speed of motion does not change). We count after writing and, if it differs from the number passed, record **both** in the ledger —— so as not to silently pass off "a 72-frame GIF" whose content is 40 frames.
-- **L551** — ★2026-09-08: when the panel is small the title does not fit, and ``annotate_figure_grid`` (correctly) refuses, so **one figure was silently disappearing**. A 29×19 core grid or a 24×24 reduced map appears routinely in PoCs, yet the error says "shorten the title" —— the actual fix is "enlarge the panel". Two people fell into the same hole independently (there is a case where one scene figure on the signboard disappeared), so instead of making each caller write the enlargement, we do a nearest-neighbour enlargement once here. We use nearest neighbour so as **not to create values** by enlarging (interpolation would create intermediate values that do not exist on the figure, and the pseudo-colour would lie).
-- **L668** _(ja)_ — ★2026-10-03: 下の余白を 16 px 広げた。軸名の帯(左下)が x 軸の目盛りの数字に重なって 「0.5」や「20」を隠していた(transforms_tour の図で踏んだ。全部の save_plot に効く)。
-- **L694** _(ja)_ — ★2026-10-03: 凡例は**データを最も隠さない隅**に置く(MATLAB の legend('best'))。右上固定だと 減衰の遅い応答の山が凡例の下に隠れた。点の数で象限を選ぶ最初の版も、Runge の端の山を 半分隠した —— 隠れるのは「点」でなく「線の画素」なので、各隅に凡例を試しに描き、 その矩形の下にあるデータの画素(背景でも格子でもない画素)を数えて最少の隅を選ぶ。
+- **L220** — ★`colorize_depth` returns **float [0,1]**. Receiving it with `np.asarray(..., np.uint8)` truncates every 0.x to 0 and turns it pitch black (hit on 2026-09-06).
+- **L332** — ★Do not drop the body of the example. It is a pity that the figure does not appear, but the numbers must be shown.
+- **L371** — ★Do not just hand off to :func:`_to_rgb8` here. That passes (H,W) to `colorize_depth`, but **inside it each frame is normalized individually**, so a frame that is all 0 and a frame that is all 1 come out the same colour (caught by a test on 2026-09-09). Only by passing the value range explicitly does the scale become a single one.
+- **L436** — ★Pillow **folds a frame identical to the previous one into a single frame** (that time is added to the previous frame's display time, so the speed of motion does not change). We count after writing and, if it differs from the number passed, record **both** in the ledger —— so as not to silently pass off "a 72-frame GIF" whose content is 40 frames.
+- **L604** — ★2026-09-08: when the panel is small the title does not fit, and ``annotate_figure_grid`` (correctly) refuses, so **one figure was silently disappearing**. A 29×19 core grid or a 24×24 reduced map appears routinely in PoCs, yet the error says "shorten the title" —— the actual fix is "enlarge the panel". Two people fell into the same hole independently (there is a case where one scene figure on the signboard disappeared), so instead of making each caller write the enlargement, we do a nearest-neighbour enlargement once here. We use nearest neighbour so as **not to create values** by enlarging (interpolation would create intermediate values that do not exist on the figure, and the pseudo-colour would lie).
+- **L721** _(ja)_ — ★2026-10-03: 下の余白を 16 px 広げた。軸名の帯(左下)が x 軸の目盛りの数字に重なって 「0.5」や「20」を隠していた(transforms_tour の図で踏んだ。全部の save_plot に効く)。
+- **L747** _(ja)_ — ★2026-10-03: 凡例は**データを最も隠さない隅**に置く(MATLAB の legend('best'))。右上固定だと 減衰の遅い応答の山が凡例の下に隠れた。点の数で象限を選ぶ最初の版も、Runge の端の山を 半分隠した —— 隠れるのは「点」でなく「線の画素」なので、各隅に凡例を試しに描き、 その矩形の下にあるデータの画素(背景でも格子でもない画素)を数えて最少の隅を選ぶ。
 
 ## `examples/acoustic_condition_monitoring.py`
 
@@ -425,12 +425,12 @@ This repository records *why* things are the way they are in **comments in the s
 ## `examples/poc_cad_scan_deviation.py`
 
 - **L434** — ★The ledger's out adapter truncates the dict to (R, t), so rmse does not get through
-- **L893** — Chapter 6: ★The defect pulls the alignment —— predicted by projection onto the rigid-body 6-D # --------------------------------------------------------------------------- #
-- **L1099** — ★Do not add a defect —— if you do, Chapter 6's datum shift (0.107 mm) becomes a pedestal on the point movement and mixes with "the amount broken by the initial angle".
-- **L1252** — ★Producing a "%" for the control group whose ground truth is 0 gives a meaningless huge number from division by zero. Present the area in mm^2 as is, and append % only when the ground truth is meaningful.
-- **L1263** — ★Do not read the difference of a single run as "it worked" —— vary the seed and compare against the spread
-- **L1353** — ★An assert that fires once the gap is closed. It actually fired on 2026-09-07, and this line was rewritten: after the note that "cylindrical holes, chamfers, and fillets cannot be built", plane / cylinder / torus / capsule were added. The note changed the tool, so we record it and move on.
-- **L1375** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
+- **L895** — Chapter 6: ★The defect pulls the alignment —— predicted by projection onto the rigid-body 6-D # --------------------------------------------------------------------------- #
+- **L1101** — ★Do not add a defect —— if you do, Chapter 6's datum shift (0.107 mm) becomes a pedestal on the point movement and mixes with "the amount broken by the initial angle".
+- **L1254** — ★Producing a "%" for the control group whose ground truth is 0 gives a meaningless huge number from division by zero. Present the area in mm^2 as is, and append % only when the ground truth is meaningful.
+- **L1265** — ★Do not read the difference of a single run as "it worked" —— vary the seed and compare against the spread
+- **L1355** — ★An assert that fires once the gap is closed. It actually fired on 2026-09-07, and this line was rewritten: after the note that "cylindrical holes, chamfers, and fillets cannot be built", plane / cylinder / torus / capsule were added. The note changed the tool, so we record it and move on.
+- **L1377** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
 
 ## `examples/poc_calipers_under_illusion.py`
 
@@ -643,7 +643,7 @@ This repository records *why* things are the way they are in **comments in the s
 ## `examples/poc_focus_stacking.py`
 
 - **L176** _(ja)_ — 絞り。★2026-10-14: defocus_blur のぼけが 2 倍広かった(σ = 錯乱円の直径/2、正しくは /4)のを直したら、F 5.6 では 被写界深度が 2 倍深くなり、0.42 mm 間隔の像で奥行きが区別できなくなった(テクスチャ有の RMS 0.47 → 0.91 mm)。 旧版の結果は「F 5.6 と書いて実質 F 2.8 のぼけ」の上に立っていた —— 書いた値と効いていた値を揃えて F 2.8 にする。
-- **L600** — 1. The picture works. ★The threshold is +3 dB — real semiconductor images are mostly smooth metal (die, leads), which is already in focus in a single frame, so the AIF gain is smaller than with a synthetic pattern that is high-frequency everywhere (the honest picture of the shop floor; the old full-texture field gave +14 dB).
+- **L601** — 1. The picture works. ★The threshold is +3 dB — real semiconductor images are mostly smooth metal (die, leads), which is already in focus in a single frame, so the AIF gain is smaller than with a synthetic pattern that is high-frequency everywhere (the honest picture of the shop floor; the old full-texture field gave +14 dB).
 
 ## `examples/poc_forensics_roc.py`
 
@@ -779,7 +779,7 @@ This repository records *why* things are the way they are in **comments in the s
 - **L842** — ★When there are too few valid cores, do not treat the LoD as 'measured' (the standard deviation of 2 points is a number but carries no meaning).
 - **L845** — ★If you decimate here, C2C ends up measuring the 'post-decimation point spacing' and the density dependence vanishes (when I first wrote it aligned to 6000 points, it came out a constant 0.42 m at every density).
 - **L965** — --- ★ Change vanishes exactly by the amount you align away -------------------------------------- #
-- **L1327** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
+- **L1329** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
 
 ## `examples/poc_lightfield_depth.py`
 
@@ -1189,14 +1189,14 @@ This repository records *why* things are the way they are in **comments in the s
 - **L267** — ★Pin down the observation: the floor is **not zero but small**. We bound it on both sides —— if it became zero, the reinterpretation in Section 3 ("even a curve that doesn't pass through an image deviates by a few %"; ±5 % is roughly the same as the floor) would no longer hold, and if it grew large we could no longer attribute the deviations from Section 3 onward to lateral diffusion.
 - **L302** — ★Pin down the observation. That these 2 lines hold simultaneously is the very claim of this section. (1) When the 16 items are collapsed into a single average, TSR loses to the null baseline that "always answers 1.50 mm."
 - **L332** — ★Pin down the observation. (1) The lower-right triangle, where the diameter is 4 times or more the depth, is hit within a few % (roughly the same as the floor in Section 1).
-- **L362** — ★Control group: the same scene with **lateral diffusion turned off**. This separates "blame lateral diffusion" from "blame insufficient pixels / a mask that can't be extracted." Looking at only one side and blaming physics is the most common mistake in this kind of experiment.
-- **L409** — ★Pin down the control group's observation: **with lateral diffusion off, all 16 fall within ±8 %**. This one line is the evidence that "the only cause of breakage is lateral diffusion, not pixel coarseness nor how the mask is taken." Loosen it and the conclusion of Section 3 reverts to the misreading that 'raising the resolution fixes it'.
-- **L419** — ★If the reasoning above (the diffusion length at the end of the window matters) is correct, then **cutting the window fixes it**. When you form a hypothesis, always place one experiment shaped to disprove it. ------------------------------------------------------------------ #
-- **L440** — ★Pin down the heaviest observation of this PoC —— the "aspect-ratio limit" was not physics but **how the fitting time window is chosen**. (1) With a 4-second window, all 8 small ones fall within ±20 % (measured worst case -14 %).
-- **L528** — ★Pin down the observation: if heating is uniform, **the raw single frame detects the most**, while the 2nd derivative of TSR detects none. "It works for depth estimation but is unsuited to detection" = the same tool does not necessarily work for both, which is exactly this section's claim.
-- **L575** — ★Lamp reflection. This is the one with structure at **the same scale as the defect**.
-- **L602** — ★Pin down the observation. (1) The only thing that breaks it is (c)'s **unevenness at the same scale as the defect**. (b)'s gentle gradient barely breaks the raw single frame —— since this is where "the prediction was off," we explicitly confirm that (b) does not undercut (a).
-- **L683** — ★Put NETD into the default cube as well. With zero noise, the in-plane variation of the sound region becomes exactly 0 and the SNR turns into a meaningless number like 1e9 (measured and fixed).
+- **L363** — ★Control group: the same scene with **lateral diffusion turned off**. This separates "blame lateral diffusion" from "blame insufficient pixels / a mask that can't be extracted." Looking at only one side and blaming physics is the most common mistake in this kind of experiment.
+- **L410** — ★Pin down the control group's observation: **with lateral diffusion off, all 16 fall within ±8 %**. This one line is the evidence that "the only cause of breakage is lateral diffusion, not pixel coarseness nor how the mask is taken." Loosen it and the conclusion of Section 3 reverts to the misreading that 'raising the resolution fixes it'.
+- **L420** — ★If the reasoning above (the diffusion length at the end of the window matters) is correct, then **cutting the window fixes it**. When you form a hypothesis, always place one experiment shaped to disprove it. ------------------------------------------------------------------ #
+- **L441** — ★Pin down the heaviest observation of this PoC —— the "aspect-ratio limit" was not physics but **how the fitting time window is chosen**. (1) With a 4-second window, all 8 small ones fall within ±20 % (measured worst case -14 %).
+- **L529** — ★Pin down the observation: if heating is uniform, **the raw single frame detects the most**, while the 2nd derivative of TSR detects none. "It works for depth estimation but is unsuited to detection" = the same tool does not necessarily work for both, which is exactly this section's claim.
+- **L576** — ★Lamp reflection. This is the one with structure at **the same scale as the defect**.
+- **L603** — ★Pin down the observation. (1) The only thing that breaks it is (c)'s **unevenness at the same scale as the defect**. (b)'s gentle gradient barely breaks the raw single frame —— since this is where "the prediction was off," we explicitly confirm that (b) does not undercut (a).
+- **L684** — ★Put NETD into the default cube as well. With zero noise, the in-plane variation of the sound region becomes exactly 0 and the SNR turns into a meaningless number like 1e9 (measured and fixed).
 
 ## `examples/poc_thin_film_reflectometry.py`
 
@@ -2088,17 +2088,18 @@ This repository records *why* things are the way they are in **comments in the s
 - **L1599** _(ja)_ — ★2026-10-03: dict は中身に関係なく「輪郭 0 本」と表示していた。台帳の op(~1,700 本)の大半は {"distance": …, "t": …} のような表を返すので、全部「輪郭 0 本」に見えていた。 輪郭(``cs`` を持つ)以外は**表**として、欄ごとに何が入っているかを出す。
 - **L1610** _(ja)_ — ★2026-10-03: 空の配列は「先頭の値」を取りに行って IndexError、4 次元以上は先頭の 1 値を スカラーとして見せていた(台帳の op を Studio から走らせて踏んだ)。
 - **L2142** _(ja)_ — ★ヘルプの「開けるファイル」表の正本(2026-10-03、ユーザー指摘「ヘルプにも機能として書いておいたほうがいい」)。 各行 = (分類キー, 何で開くか, 拡張子, 補足)。文字列は英語 = ``tr`` のキー。拡張子は**上の定数から引く**ので 定数に足せば表にも出る。表から漏れた拡張子・分類と違う行は tests/test_studio_dragdrop_formats.py の門が落とす。
-- **L6817** _(ja)_ — ★順位(2026-09-19、GenSpark 第 10 報 N17): 「canny」で先頭に edges_color(説明文に canny を含む)が 来て、Enter で挿入する op を取り違えやすかった。名前の完全一致 → 前方一致 → 名前に含む → HALCON 名 → 説明文だけ、の順に並べる(同順位は登録順のまま)。
-- **L8751** _(ja)_ — ★fallback は画面に出す(2026-09-19、GenSpark 第 10 報 N16): グレー画像に edges_color(color 入力)を Run once すると、ライブラリは台帳に記録して sort の既定値を返すが、GUI は「ran … once」としか 言わなかった。結果の窓には**既定値**が映っているので、それを結果だと思わせてはいけない。
-- **L9601** — ★ The receptacle for figures. The examples write a PNG here via `examplefig`. In runs that pass no environment variable (CLI), not a single one is written, so a picture appears only when run from the gallery (the example's numbers and speed do not change).
-- **L9757** — ★ The receptacle for figures. The examples write a PNG here via `examplefig`. In runs that pass no environment variable (CLI), not a single one is written, so a picture appears only when run from the gallery (the example's numbers and speed do not change).
-- **L10629** _(ja)_ — ★実行キー(F5 / Ctrl+Return / Ctrl+R)は「いま書いてあるものを走らせる」(2026-09-19、GenSpark 第 8 報 N13): Program に未適用の編集があるのに実行キーを押すと**古いパイプライン**が走り、画面は 「● unapplied edits」のまま何も変わらなかった(Xvfb + xdotool の実測、s8 → s9 が同一画面)。 先に Apply し、Apply が通らなければ(構文エラー等は Program の状態表示に出る)走らせない。
-- **L11526** _(ja)_ — ★パスで渡すと sim_source は拡張子 .xml の時だけファイルと読み、.urdf / .mjcf は**XML の文字列**と 取り違えて「XML parse error」になった(2026-10-03 のテストで発見)。モデルはここでパスから作る。
-- **L11599** _(ja)_ — ★2026-10-03: 3DGS の学習結果(.ply に f_dc/opacity、または .splat)は、以前は普通の点群として **色無し**で開いていた。ガウスの中心を 0 次の球面調和の色で出す(不透明度 5% 未満は落とす)。 楕円体の描画ではなく中心の点 —— 形を見る用(splat の見た目そのものは gs_render)。
-- **L11602** _(ja)_ — ★2026-10-03(ユーザー「Physical AI で使われるデータ形式も読んで表示」): glTF / LAS・LAZ / MJCF・URDF。 読み手は既存(meshio_opt / sim_source)で、依存は任意(無ければ pip の名前つきで断る)。
-- **L13091** _(ja)_ — ★2026-10-03(ユーザー「画像をドラッグ・アンド・ドロップして見れる」「Python スクリプトも D&D で開ける方が便利」): 以前は 1 本目しか見ず、.py は「未対応」だった。種類ごとに全部さばく: 画像 1 枚 = 入力として読む(従来どおり)、2 枚以上やフォルダ = 画像ビューアで並べる、 .py = Python エディタのタブ、.json = パイプライン。
-- **L13110** _(ja)_ — ★モデル + qpos 軌跡 (T, nq) を一緒に落とすと再生(nq が 3 や 6 だと点群と見分けがつかないので、 モデルと一緒に落とされた .npy は形に関係なく軌跡として読む)
-- **L14026** _(ja)_ — ★2026-09-20(GenSpark 第 43 報 N154): `fullseye-studio --help` が表示の無い Linux で SIGABRT。QApplication を作る前に --help / --version を答え、表示が無ければ Qt を起こさず 1 文で止まる(abort は説明にならない)。
+- **L6338** _(ja)_ — ★2026-10-21: 走っている/終わりかけの実行ワーカーを静止させてから閉じる。QThread が 走ったまま親ごと破棄されると Qt は abort し、CI では「全件合格のあと exit 134」になる。
+- **L6826** _(ja)_ — ★順位(2026-09-19、GenSpark 第 10 報 N17): 「canny」で先頭に edges_color(説明文に canny を含む)が 来て、Enter で挿入する op を取り違えやすかった。名前の完全一致 → 前方一致 → 名前に含む → HALCON 名 → 説明文だけ、の順に並べる(同順位は登録順のまま)。
+- **L8773** _(ja)_ — ★fallback は画面に出す(2026-09-19、GenSpark 第 10 報 N16): グレー画像に edges_color(color 入力)を Run once すると、ライブラリは台帳に記録して sort の既定値を返すが、GUI は「ran … once」としか 言わなかった。結果の窓には**既定値**が映っているので、それを結果だと思わせてはいけない。
+- **L9623** — ★ The receptacle for figures. The examples write a PNG here via `examplefig`. In runs that pass no environment variable (CLI), not a single one is written, so a picture appears only when run from the gallery (the example's numbers and speed do not change).
+- **L9779** — ★ The receptacle for figures. The examples write a PNG here via `examplefig`. In runs that pass no environment variable (CLI), not a single one is written, so a picture appears only when run from the gallery (the example's numbers and speed do not change).
+- **L10652** _(ja)_ — ★実行キー(F5 / Ctrl+Return / Ctrl+R)は「いま書いてあるものを走らせる」(2026-09-19、GenSpark 第 8 報 N13): Program に未適用の編集があるのに実行キーを押すと**古いパイプライン**が走り、画面は 「● unapplied edits」のまま何も変わらなかった(Xvfb + xdotool の実測、s8 → s9 が同一画面)。 先に Apply し、Apply が通らなければ(構文エラー等は Program の状態表示に出る)走らせない。
+- **L11549** _(ja)_ — ★パスで渡すと sim_source は拡張子 .xml の時だけファイルと読み、.urdf / .mjcf は**XML の文字列**と 取り違えて「XML parse error」になった(2026-10-03 のテストで発見)。モデルはここでパスから作る。
+- **L11622** _(ja)_ — ★2026-10-03: 3DGS の学習結果(.ply に f_dc/opacity、または .splat)は、以前は普通の点群として **色無し**で開いていた。ガウスの中心を 0 次の球面調和の色で出す(不透明度 5% 未満は落とす)。 楕円体の描画ではなく中心の点 —— 形を見る用(splat の見た目そのものは gs_render)。
+- **L11625** _(ja)_ — ★2026-10-03(ユーザー「Physical AI で使われるデータ形式も読んで表示」): glTF / LAS・LAZ / MJCF・URDF。 読み手は既存(meshio_opt / sim_source)で、依存は任意(無ければ pip の名前つきで断る)。
+- **L13114** _(ja)_ — ★2026-10-03(ユーザー「画像をドラッグ・アンド・ドロップして見れる」「Python スクリプトも D&D で開ける方が便利」): 以前は 1 本目しか見ず、.py は「未対応」だった。種類ごとに全部さばく: 画像 1 枚 = 入力として読む(従来どおり)、2 枚以上やフォルダ = 画像ビューアで並べる、 .py = Python エディタのタブ、.json = パイプライン。
+- **L13133** _(ja)_ — ★モデル + qpos 軌跡 (T, nq) を一緒に落とすと再生(nq が 3 や 6 だと点群と見分けがつかないので、 モデルと一緒に落とされた .npy は形に関係なく軌跡として読む)
+- **L14049** _(ja)_ — ★2026-09-20(GenSpark 第 43 報 N154): `fullseye-studio --help` が表示の無い Linux で SIGABRT。QApplication を作る前に --help / --version を答え、表示が無ければ Qt を起こさず 1 文で止まる(abort は説明にならない)。
 
 ## `superquadric.py`
 
