@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 0aff854064d1 -->
+<!-- i18n-source-sha: d7ced9102dcd -->
 # Vollständiger Leitfaden zu Fullseye Studio
 
 Aufwendige Verarbeitung blockiert das Fenster nicht. Unten werden die aktive Stufe und der Fortschritt angezeigt; eine Stoppanforderung wird an der nächsten Stufengrenze bestätigt. Ändern sich Einstellungen während eines Laufs, bleibt die Generation des angezeigten Ergebnisses sichtbar und man kann das ältere Ergebnis ansehen oder mit den aktuellen Einstellungen neu starten.
@@ -370,7 +370,7 @@ Bei gleichnamigen Dateien wählen Sie zwischen „nicht überschreiben“, „ü
 
 ## Anzeigebereich und Rohdaten
 
-**Automatisch je Bild** berechnet für jedes Bild einen eigenen Bereich, **Gemeinsam für Vergleichsbilder** verwendet einen Bereich für A/B und **Manuell** die eingegebenen Grenzen. Der Hinweis „nur Anzeigeverarbeitung“ bedeutet, dass die Rohwerte unverändert bleiben. NaN und Inf erscheinen magenta; Werte außerhalb des Bereichs erhalten die Endfarbe und lösen eine Warnung mit Pixelzahl aus. Beim Speichern stehen **Originalwerte**, **aktuelles Anzeigebild** und **beides** zur Wahl; Originalwerte sind voreingestellt.
+**Automatisch je Bild** berechnet für jedes Bild einen eigenen Bereich, **Gemeinsam für Vergleichsbilder** verwendet einen Bereich für A/B und **Manuell** wendet die eingegebenen Grenzen auf Anzeigemodi an, die einen Wertebereich verwenden. Ein Modus ohne Wertebereich, etwa `region overlay`, weist im Label darauf hin. Der Hinweis „nur Anzeigeverarbeitung“ bedeutet, dass die Rohwerte unverändert bleiben. NaN und Inf erscheinen magenta; Werte außerhalb des Bereichs erhalten die Endfarbe und lösen eine Warnung mit Pixelzahl aus. Beim Speichern stehen **Originalwerte**, **aktuelles Anzeigebild** und **beides** zur Wahl; Originalwerte sind voreingestellt.
 
 ## Zusammenhang zwischen Export und Save/Open
 

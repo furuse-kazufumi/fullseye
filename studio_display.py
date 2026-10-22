@@ -113,6 +113,26 @@ _VIRIDIS = _viridis_table()
 
 def to_display(img, rng):
     """Map a scalar array to RGB without changing the source array."""
+    info = range_info(img, rng)
+    rng = replace(_validate(rng), lo=info.lo, hi=info.hi)
+    arr = np.asarray(img)
+    finite = np.isfinite(arr)
+    if rng.hi == rng.lo:
+        indices = np.full(arr.shape, 128, dtype=np.uint8)
+    else:
+        safe = np.where(finite, arr, rng.lo)
+        scaled = np.clip((safe - rng.lo) / (rng.hi - rng.lo), 0, 1)
+        indices = np.minimum(np.rint(scaled * 256), 255).astype(np.uint8)
+    if rng.colormap == "gray":
+        rgb = np.repeat(indices[..., None], 3, axis=2)
+    else:
+        rgb = _VIRIDIS[indices]
+    rgb = np.array(rgb, copy=True)
+    return mark_nonfinite(rgb, arr), info
+
+
+def range_info(img, rng):
+    """Return range/count metadata for a 2-D scalar array without rendering it."""
     rng = _validate(rng)
     if rng.lo is None or rng.hi is None:
         resolved = resolve_range([img], rng)
@@ -125,22 +145,21 @@ def to_display(img, rng):
     inf = np.isinf(arr)
     under = finite & (arr < rng.lo)
     over = finite & (arr > rng.hi)
-    if rng.hi == rng.lo:
-        indices = np.full(arr.shape, 128, dtype=np.uint8)
-    else:
-        safe = np.where(finite, arr, rng.lo)
-        scaled = np.clip((safe - rng.lo) / (rng.hi - rng.lo), 0, 1)
-        indices = np.minimum(np.rint(scaled * 256), 255).astype(np.uint8)
-    if rng.colormap == "gray":
-        rgb = np.repeat(indices[..., None], 3, axis=2)
-    else:
-        rgb = _VIRIDIS[indices]
-    rgb = np.array(rgb, copy=True)
-    rgb[~finite] = (255, 0, 255)
-    info = DisplayInfo(int(nan.sum()), int(inf.sum()), int(under.sum()), int(over.sum()),
+    return DisplayInfo(int(nan.sum()), int(inf.sum()), int(under.sum()), int(over.sum()),
                        float(rng.lo), float(rng.hi), rng.colormap,
                        "表示処理のみ: %s、元データは変更していません" % rng.colormap)
-    return rgb, info
+
+
+def mark_nonfinite(rgb_uint8, img):
+    """Paint non-finite source pixels magenta in an RGB uint8 rendering, in place."""
+    rgb = np.asarray(rgb_uint8)
+    arr = np.asarray(img)
+    if rgb.dtype != np.uint8 or rgb.ndim != 3 or rgb.shape[2] != 3:
+        raise ValueError("display rendering must be an (H, W, 3) uint8 array")
+    if arr.ndim != 2 or rgb.shape[:2] != arr.shape:
+        raise ValueError("display rendering and source image shapes must match")
+    rgb[~np.isfinite(arr)] = (255, 0, 255)
+    return rgb
 
 
 def pixel_readout(img, rng, y, x):
@@ -166,7 +185,7 @@ def pixel_readout(img, rng, y, x):
             "note": "表示値は表示処理後の値で、元データではありません"}
 
 
-def save_outputs(img, rng, path_stem, what, *, overwrite=False):
+def save_outputs(img, rng, path_stem, what, *, display_rgb=None, overwrite=False):
     """Save exact numeric data, its current RGB rendering, or both."""
     if what not in {"raw", "display", "both"}:
         raise ValueError("unknown save choice: %r" % what)
@@ -184,6 +203,9 @@ def save_outputs(img, rng, path_stem, what, *, overwrite=False):
         np.save(paths[0], np.asarray(img), allow_pickle=False)
     if what in {"display", "both"}:
         display_path = paths[-1]
-        rgb, _ = to_display(img, rng)
+        if display_rgb is None:
+            rgb, _ = to_display(img, rng)
+        else:
+            rgb = np.asarray(display_rgb)
         imgio.save(str(display_path), rgb)
     return paths

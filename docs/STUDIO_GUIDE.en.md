@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 0aff854064d1 -->
+<!-- i18n-source-sha: d7ced9102dcd -->
 # The complete guide to Fullseye Studio
 
 A purpose search groups candidates by whether they fit the current input, need preprocessing, or belong elsewhere. You can try a candidate once without adding a stage. Failures in the Problems pane show the cause, location, and concrete next actions for reselecting input, comparing values, opening the log, editing a knob, or finding a suggested stage.
@@ -376,7 +376,7 @@ For files with the same name you choose between "do not overwrite", "overwrite" 
 
 ## Display range and source data
 
-**Auto per image** assigns a range to each image, **Shared for comparison** uses one range across A/B, and **Manual** uses the entered limits. The “display processing only” note means that source values are unchanged. NaN and Inf are magenta; values outside the range use the end colours and produce a pixel-count warning. When saving, choose **Original values**, **Current display image**, or **Both**; original values are the default.
+**Auto per image** assigns a range to each image, **Shared for comparison** uses one range across A/B, and **Manual** applies the entered limits to display modes that use a value range. A mode that does not use the range, such as `region overlay`, says so in the label. The “display processing only” note means that source values are unchanged. NaN and Inf are magenta; values outside the range use the end colours and produce a pixel-count warning. When saving, choose **Original values**, **Current display image**, or **Both**; original values are the default.
 
 ## The relationship between Export and Save/Open
 

@@ -28,6 +28,13 @@ def test_nonfinite_and_clipped_counts_and_warning():
     assert info.warning == "レンジ外 2 画素(下 1 / 上 1) / NaN 1 / Inf 2 画素"
     assert "元データは変更していません" in info.note
 
+    metadata = display.range_info(image, rng)
+    assert metadata == info
+    target = np.zeros((1, 6, 3), dtype=np.uint8)
+    assert display.mark_nonfinite(target, image) is target
+    assert np.all(target[0, :3] == 0)
+    assert np.all(target[0, 3:] == np.array([255, 0, 255]))
+
 
 def test_constant_and_manual_validation_fail_closed():
     resolved = display.resolve_range([np.full((2, 2), 7)], display.DisplayRange("shared"))
@@ -59,6 +66,11 @@ def test_save_raw_display_and_both_without_overwrite(tmp_path):
     assert np.load(tmp_path / "raw.npy").dtype == image.dtype
     display.save_outputs(image, rng, tmp_path / "shown", "display")
     assert imgio.load(str(tmp_path / "shown.png"), color=True).shape == (2, 2, 3)
+    on_screen = np.array([[[1, 2, 3], [4, 5, 6]],
+                          [[7, 8, 9], [10, 11, 12]]], dtype=np.uint8)
+    display.save_outputs(image, rng, tmp_path / "screen", "display", display_rgb=on_screen)
+    loaded = np.rint(imgio.load(str(tmp_path / "screen.png"), color=True) * 255).astype(np.uint8)
+    assert np.array_equal(loaded, on_screen)
     paths = display.save_outputs(image, rng, tmp_path / "both", "both")
     assert paths == [tmp_path / "both.npy", tmp_path / "both.png"]
     with pytest.raises(ValueError, match="already exists"):
@@ -75,8 +87,9 @@ def test_gui_controls_are_view_only(monkeypatch):
     app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
     win, model = studio.build_window()
     controls = win._display_range_controls
+    assert "colormap" not in controls
     before_generation = win._run_controller.generation
-    controls["shared"].click(); controls["colormap"].setCurrentText("viridis")
+    controls["shared"].click()
     app.processEvents()
     resolved = win._display_range([np.array([[0.0]]), np.array([[10.0]])])
     assert resolved.mode == "shared" and (resolved.lo, resolved.hi) == (0, 10)
@@ -85,4 +98,50 @@ def test_gui_controls_are_view_only(monkeypatch):
     text = win._format_display_readout(
         np.array([[0.4213]], dtype=np.float64), display.DisplayRange("manual", 0, 1), 0, 0)
     assert text == "値 0.4213 (float64) / 表示 108 / レンジ 0〜1"
+    win.quiesce(); win.close_guard = lambda: True; win.close(); app.processEvents()
+
+
+def test_gui_region_overlay_uses_apply_display_with_resolved_range(monkeypatch):
+    monkeypatch.setenv("QT_QPA_PLATFORM", "offscreen")
+    from PySide6 import QtWidgets
+    import studio
+
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+    image = np.linspace(0, 1, 48 * 48).reshape(48, 48)
+    model = studio.PipelineModel(image)
+    model.add_stage("threshold")
+    calls = []
+    original = studio.apply_display
+
+    def recording_apply(value, mode, **kwargs):
+        calls.append((value, mode, kwargs))
+        return original(value, mode, **kwargs)
+
+    monkeypatch.setattr(studio, "apply_display", recording_apply)
+    win, _ = studio.build_window(model)
+    win._set_display_mode("region overlay")
+    app.processEvents()
+    value, mode, kwargs = calls[-1]
+    resolved = win._display_range([value])
+    assert mode == "region overlay"
+    assert kwargs["vmin"] == resolved.lo and kwargs["vmax"] == resolved.hi
+    assert kwargs["draw"] == win._state["draw"]
+    assert win._display_range_controls["warning"].text() == "このモードは表示レンジを使いません"
+    win.quiesce(); win.close_guard = lambda: True; win.close(); app.processEvents()
+
+
+def test_gui_jet_uses_existing_display_renderer(monkeypatch):
+    monkeypatch.setenv("QT_QPA_PLATFORM", "offscreen")
+    from PySide6 import QtWidgets
+    import studio
+
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+    image = np.linspace(0, 1, 48 * 48).reshape(48, 48)
+    win, _ = studio.build_window(studio.PipelineModel(image))
+    win._set_display_mode("jet")
+    app.processEvents()
+    resolved = win._display_range([image])
+    gray, _ = display.to_display(image, resolved)
+    assert win._state["result"].shape == gray.shape
+    assert not np.array_equal(win._state["result"], gray)
     win.quiesce(); win.close_guard = lambda: True; win.close(); app.processEvents()
