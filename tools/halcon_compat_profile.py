@@ -171,8 +171,8 @@ def main(argv=None) -> int:
     PROFILE.write_text(_dump(profile), encoding="utf-8")
     if args.manifest:
         MANIFEST.write_text(_dump(manifest), encoding="utf-8")
-    subprocess.run([sys.executable, str(ROOT / "lib_coverage.py"), "--compat-only"],
-                   cwd=ROOT, check=True)
+    import lib_coverage
+    lib_coverage.main(["--compat-only"])
     return 0
 
 
