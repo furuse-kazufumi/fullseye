@@ -908,7 +908,7 @@ def fly_tau_from_expansion(theta_signal, dt_s, shape="sphere"):
 
     ★ The two object models differ by 33% at a 60-degree subtense (``sin 60 = 0.866``
     vs ``2 tan 30 = 1.155``); using the wrong one silently mis-times a landing, so
-    the model is a required, named choice rather than a default guess.
+    the model is a named choice, with ``"sphere"`` as the default.
 
     theta_signal: the full subtended angle per sample, radians.
     dt_s:  the sample interval, seconds.
@@ -1212,7 +1212,8 @@ def fly_onoff_split(movie, dt_s, tau_on_s=0.02, tau_off_s=0.02, rectify=True):
     Ground truth (exact, with ``tau_on_s == tau_off_s`` so the two channels share
     one filter):
 
-      * ``ON - OFF`` is the low-passed input, whichever *rectify* you chose;
+      * with ``rectify=True``, ``ON - OFF`` is the low-passed input; with
+        ``rectify=False`` it is twice the low-passed input;
       * with ``rectify=True``, ``ON + OFF`` is the low-passed **absolute value**;
       * a movie that never goes negative leaves the OFF channel identically zero
         (and vice versa) — the split does not invent a dark event.

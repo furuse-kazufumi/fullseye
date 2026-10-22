@@ -20,8 +20,8 @@ version: 0.8.1  # fullseye lib version this note was generated for
 table(dict)を返す: 寸法線の幾何(寸法線・補助線・文字位置)を閉形式で決める。
 
 ``n`` を p0→p1 の左法線(画面座標)として、寸法線は ``p + n*offset``、補助線は
-``p`` から ``p + n*(offset+extension)``、文字は寸法線の中点から ``n*text_gap``。
-``offset`` の符号で側を選ぶ。
+``p`` から ``p + n*(offset + sign(offset)*extension)``、文字は寸法線の中点から
+``sign(offset)*n*text_gap``。``offset`` の符号で側を選ぶ。
 
 Returns
 -------

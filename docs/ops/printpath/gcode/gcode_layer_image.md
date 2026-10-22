@@ -17,7 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 ## 使い方
 
-1 層の経路を**線幅つきのラスタ** ``image2d``(0 / 1、y 下向き = 行)に描く。
+1 層の経路を**線幅つきのラスタ** ``image2d``(造形 1、背景 0、移動を描く場合 0.5、y 下向き = 行)に描く。
 
 押し出しのある線分だけを ``line_width_mm`` の太さで塗る(``travel=True`` なら移動も細線で)。画素は ``px_per_mm``、
 範囲は ``bounds=(xmin, ymin, xmax, ymax)`` mm(無ければ表全体 + 2 mm の余白 —— 層をまたいで同じ範囲にしたければ

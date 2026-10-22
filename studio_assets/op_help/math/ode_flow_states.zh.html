@@ -20,7 +20,7 @@
 <p>t_end, dt : float</p>
 <p>Integration window and step. <code style="color:#22d3bf">t_end / dt</code> must stay under 4,000,000.</p>
 <p>method : &quot;rk4&quot; | &quot;euler&quot;</p>
-<p>Returns a <code style="color:#22d3bf">states</code> table: <code style="color:#22d3bf">t</code> (S,) and <code style="color:#22d3bf">x</code> (S, n).</p>
+<p>Returns a <code style="color:#22d3bf">states</code> table: <code style="color:#22d3bf">t</code> (S,) and one (S,) column per state, named <code style="color:#22d3bf">x0</code>, <code style="color:#22d3bf">x1</code>, ... .</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: unknown system or method; wrong parameter count; non-finite input; <code style="color:#22d3bf">dt</code> not positive; a step count over the cap; a trajectory that left float range (the field diverged — reported, never silently clipped).</p>
 <p>HALCON: no operator.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>

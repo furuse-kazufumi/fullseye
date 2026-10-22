@@ -18,7 +18,7 @@
 <p>The window, as in <code style="color:#22d3bf">cplx_plane_grid</code>.</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: a pole (or zero) lands *exactly* on a sample, so the value there is not a number — nudge <code style="color:#22d3bf">centre</code> by half a pixel or take an odd <code style="color:#22d3bf">shape</code> (the message says which pole and where); non-finite input; the window is degenerate; the result overflows to infinity anyway (the gain and the window disagree by more than float64 can hold).</p>
 <p>HALCON: no operator (HALCON has no complex-plane family).</p>
-<p>Empty input (<code style="color:#22d3bf">zeros</code> with 0 elements) returns an empty result (reason: a rational function without zeros (<code style="color:#22d3bf">1/q</code>) is a valid mathematical object).</p>
+<p>Empty <code style="color:#22d3bf">zeros</code> leaves the poles-only field with the same shape as <code style="color:#22d3bf">z</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>mathops के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex input से <code style="color:#22d3bf">ValueError</code></b> — float64 में ज़बरदस्ती बदलने पर imaginary part चुपचाप छूट जाता है (numpy केवल ComplexWarning देता है और &quot;सही दिखने वाला पर गलत&quot; real number लौटाता है)। <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> स्पष्ट रूप से लिखें, या complex data संभालने वाले complexops का उपयोग करें।</p>

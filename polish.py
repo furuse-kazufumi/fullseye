@@ -675,8 +675,8 @@ def polish_scene_mjcf(radius: float = 8.0e-3, k_z: float = 500.0, k_xy: float = 
     関節で動かす MJCF。z は位置サーボ(ゲイン ``k_z`` [N/m] = 手首の押し付けのばね)、x・y は硬いサーボ ``k_xy``。重力あり。
     ばねの閉形式: 工具の底が板に載っている時の法線力 N = m g + k_z (q_surface − q_cmd)(q_surface = 底が z = 0 に来る関節値)。
     接触は硬めに(solref の時定数 = 4 × timestep、solimp 0.99)して、めり込みを ばねの縮みより十分小さくする(既定の柔らかい接触では
-    質量 0.05 kg・5 N で 0.7 mm めり込み、手首のばねと直列になって力が 6 % 小さく出た —— 実測)。摩擦の錐は角錐(pyramidal)。
-    楕円の錐 + impratio = 10 では、硬い手首(20 kN/m)で 0.1〜0.36 mm めり込んで力が 17 % 小さく出た(摩擦 0 でも同じ、実測)。
+    質量 0.05 kg・5 N で 0.7 mm めり込み、手首のばねと直列になって力が 6 % 小さく出た —— 実測)。摩擦の錐は楕円(elliptic)。
+    この設定では、硬い手首(20 kN/m)で 0.1〜0.36 mm めり込んで力が 17 % 小さく出た(摩擦 0 でも同じ、実測)。
     **Raises** ValueError: 数の検査。"""
     op = "polish_scene_mjcf"
     a = _pos(radius, "radius", op)

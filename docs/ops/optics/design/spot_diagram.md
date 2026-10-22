@@ -20,8 +20,8 @@ version: 0.8.1  # fullseye lib version this note was generated for
 Transverse ray intersections on the image plane for one field point.
 
 Returns ``(N,2)`` ``(x, y)`` positions in mm relative to the **chief ray**
-(so the pattern is centred; use ``ray_bundle`` for absolute positions), and
-stores the statistics on the array as attributes via :func:`spot_stats`.
+(so the pattern is centred; use ``ray_bundle`` for absolute positions).
+Statistics are obtained separately with :func:`spot_stats`.
 Rays that miss / vignette are dropped. Pupil: hexapolar, ``rings`` rings.
 *aim* (``"paraxial"`` / ``"stop"``, default the system's own) and *vignetting* are those of
 :func:`ray_bundle`.

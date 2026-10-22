@@ -665,7 +665,7 @@ def vda5050_check(order):
     各エッジの始点・終点が前後のノード / released は base の先頭から連続(base → horizon の 1 回の切替のみ)/
     エッジの released はその終点ノードと同じ。返りは違反の文言のリスト(空 = 合格)。
 
-    空の入力(``order`` が空の dict)は空を返す(理由: 検査器なので、空の order も検査の対象。足りない鍵の一覧が正しい答え)。
+    空の入力(``order`` が空の dict)は、足りない必須キーの一覧を返す。
     """
     errs = []
     for key in ("headerId", "timestamp", "version", "manufacturer", "serialNumber", "orderId",

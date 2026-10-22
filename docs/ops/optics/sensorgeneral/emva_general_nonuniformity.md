@@ -26,7 +26,7 @@ DSNU1288 = s_y.dark/R_d [光子] (式 58)、PRNU1288 = √(s²_p.50 − s²_p.da
 *highpass*: 既定 ``"r4"``(General 8.1 節も Linear と同じフィルタ)、``"r3.1"``、None。
 
 返り値 ``{"DSNU1288_p", "DSNU1288_y", "PRNU1288", "dsnu_p": {"col", "row", "pixel"}, "prnu": {...},
-"s2_p_dark", "s2_p_50", "linear": Linear の計算(K = 1 のときの値), "highpass"}``。
+"s2_p_dark", "s2_p_50", "dark", "bright", "highpass"}``。
 
 **Raises** ``ValueError``: :func:`sensorchar.emva_spatial_nonuniformity` と同じ / slope_50・μ_p.50・R_d が正でない /
 s²_p.50 < s²_p.dark。

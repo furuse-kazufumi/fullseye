@@ -139,7 +139,7 @@ def fabry_perot_response(length_m: float = 3994.5, wavelength_nm: float = 1064.0
         = T₁/(1 − r₁r₂)²、``transmission_max`` = T₁T₂/(1 − r₁r₂)²、
         ``reflection_min`` = 共振での反射率 ``((r₁ − r₂(1−ℓ₁... ))/(1 − r₁r₂))²`` の
         損失なし形 ``((r₁ − r₂)/(1 − r₁r₂))²``、``r1`` / ``r2``、``round_trip_phase_per_hz``
-        = 4πL/c、``free_spectral_range_mode_number`` = 2L/λ(共振の次数、参考値)。
+        = 4πL/c、``mode_number`` = 2L/λ(共振の次数、参考値)。
 
     Notes
     -----

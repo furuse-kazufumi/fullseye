@@ -43,7 +43,7 @@ Returns
 numpy.ndarray
     data と同じ長さの非負配列。``ρ(t) = ⟨d|h_t⟩/σ``、``⟨a|b⟩ = 4Re∫ÃB̃*/S df``、
     ``σ = optimal_snr``。位相は解析信号で最大化する(``|z|``)。テンプレートが data の外へ
-    はみ出す時刻(先頭の ``ref`` 標本と末尾の ``len(template) − ref`` 標本)は循環の折り返し
+    はみ出す時刻(先頭の ``ref`` 標本と末尾の ``len(template) − ref − 1`` 標本)は循環の折り返し
     なので **0** にしてある(山の探索に混じらない)。
 
 Notes
