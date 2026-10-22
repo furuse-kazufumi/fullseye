@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 85644ff1ed7d -->
+<!-- i18n-source-sha: 0aff854064d1 -->
 # The complete guide to Fullseye Studio
 
 A purpose search groups candidates by whether they fit the current input, need preprocessing, or belong elsewhere. You can try a candidate once without adding a stage. Failures in the Problems pane show the cause, location, and concrete next actions for reselecting input, comparing values, opening the log, editing a knob, or finding a suggested stage.
@@ -373,6 +373,10 @@ Results that are not pixels are drawn according to their shape (the right panel 
 Run ▸ **Apply this processing to a folder…** lets you pick an input folder and a file pattern, check the result on the first, middle, last or any chosen image, and then run the whole set. The inputs and the processing chain are frozen once at the start, so turning a knob during the run does not change the conditions of the running batch.
 
 For files with the same name you choose between "do not overwrite", "overwrite" and "add a sequence number"; when subfolders are included, the same hierarchy is created on the output side. `summary.csv` holds the file name, status, processing time, numeric outputs and the error reason. If reading or processing one image fails, the rest continues, and after the run you can review the failed files with their reasons in a list. A stop request is accepted at the boundary after the current image, and "stopped" is not shown until the run has actually stopped.
+
+## Display range and source data
+
+**Auto per image** assigns a range to each image, **Shared for comparison** uses one range across A/B, and **Manual** uses the entered limits. The “display processing only” note means that source values are unchanged. NaN and Inf are magenta; values outside the range use the end colours and produce a pixel-count warning. When saving, choose **Original values**, **Current display image**, or **Both**; original values are the default.
 
 ## The relationship between Export and Save/Open
 

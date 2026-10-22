@@ -72,7 +72,7 @@ _INTERNAL = {
     # studio_search / studio_errors 2026-10-20: Studio の論理層(Qt 非依存)。UI への配線は次の片。
     #   search 6 本(current_sort_of / search_grouped / search_zero_results_help / canonical_sort / clear_caches / nearest_op_names)
     #   errors 3 本(explain_failure / format_failure / localize)。studio と同じ「GUI の内側の部品」で、テストが直接呼ぶ。
-    "studio": 90, "studio_errors": 3, "studio_search": 6, "studio_roundtrip": 5, "studio_batch": 6, "sweep": 1, "typed_catalog": 1, "verify_auto": 2,
+    "studio": 90, "studio_errors": 3, "studio_search": 6, "studio_roundtrip": 5, "studio_batch": 6, "studio_display": 6, "sweep": 1, "typed_catalog": 1, "verify_auto": 2,
     # ★2026-09-14: この 13 本は 2026-09-05 から wheel に**入っていなかった**もので、
     #   py-modules へ足した結果ここに現れた。演算子としては `unified._3DGS_OPS` が
     #   `_lazy_call(モジュール名, 関数名)` で**文字列から**登録しているので、利用者には
@@ -240,7 +240,8 @@ def test_pending_exposure_shrinks_when_fixed():
 #: (spc_xbar_r/spc_cusum/spc_capability/spc_hotelling_t2)は typed_catalog と api から引ける。
 
 # 2026-10-22 Studio 第8片: studio_batch のQt非依存部品6本で実測 892 → 898。
-_HIDDEN_FUNCTIONS_TODAY = 898
+# 2026-10-22 Studio 第9片: studio_display のQt非依存部品6本を内部部品として登録。実測 898 → 904。
+_HIDDEN_FUNCTIONS_TODAY = 904
 
 
 def _hidden_total():

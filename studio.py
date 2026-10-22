@@ -39,6 +39,7 @@ from studio_search import search_grouped, search_zero_results_help
 import studio_errors
 import studio_roundtrip
 import studio_batch
+import studio_display
 
 
 # --------------------------------------------------------------------------- #
@@ -7061,7 +7062,25 @@ def build_window(model=None):
     drow.addWidget(QtWidgets.QLabel("Display:")); drow.addWidget(display, 1); drow.addWidget(b_3d)
     prow = QtWidgets.QHBoxLayout()
     prow.addWidget(b_loadb); prow.addWidget(percep_mode, 1); prow.addWidget(b_percep)
-    dlay.addLayout(drow); dlay.addLayout(prow)
+    range_each = QtWidgets.QRadioButton("各画像で自動")
+    range_shared = QtWidgets.QRadioButton("比較画像で共通")
+    range_manual = QtWidgets.QRadioButton("手動")
+    range_shared.setChecked(True)
+    range_lo = QtWidgets.QDoubleSpinBox(); range_hi = QtWidgets.QDoubleSpinBox()
+    for _spin, _value in ((range_lo, 0.0), (range_hi, 1.0)):
+        _spin.setDecimals(6); _spin.setRange(-1e100, 1e100); _spin.setValue(_value)
+        _spin.setEnabled(False)
+    range_cmap = QtWidgets.QComboBox(); range_cmap.addItems(["gray", "viridis"])
+    range_note = QtWidgets.QLabel("表示処理のみ: gray、元データは変更していません")
+    range_note.setProperty("hint", True); range_note.setWordWrap(True)
+    range_warning = QtWidgets.QLabel(""); range_warning.setStyleSheet("color:#ffb841;")
+    range_warning.hide()
+    rrow = QtWidgets.QHBoxLayout()
+    for _widget in (range_each, range_shared, range_manual, QtWidgets.QLabel("lo"), range_lo,
+                    QtWidgets.QLabel("hi"), range_hi, range_cmap):
+        rrow.addWidget(_widget)
+    dlay.addLayout(drow); dlay.addLayout(rrow); dlay.addWidget(range_note)
+    dlay.addWidget(range_warning); dlay.addLayout(prow)
     rv.addWidget(_group(QtWidgets, "DISPLAY & PERCEPTION", dlay))
 
     hist_view = QtWidgets.QLabel(); hist_view.setFixedHeight(64)
@@ -8107,6 +8126,28 @@ def build_window(model=None):
             refresh_stage_list(select=stage_list.currentRow())
             show_result()
 
+    def _display_range(images=None):
+        mode = ("manual" if range_manual.isChecked() else
+                "shared" if range_shared.isChecked() else "auto_each")
+        setting = studio_display.DisplayRange(
+            mode=mode, lo=range_lo.value(), hi=range_hi.value(),
+            colormap=range_cmap.currentText())
+        if images is None:
+            return setting
+        return studio_display.resolve_range(images, setting)
+
+    def _range_for(image, companions=()):
+        images = [image, *companions]
+        resolved = _display_range(images)
+        return resolved[0] if isinstance(resolved, list) else resolved
+
+    win._display_range = _display_range
+    win._display_range_controls = {
+        "auto_each": range_each, "shared": range_shared, "manual": range_manual,
+        "lo": range_lo, "hi": range_hi, "colormap": range_cmap,
+        "note": range_note, "warning": range_warning,
+    }
+
     def _render():
         idx = selected_index()
         try:
@@ -8164,8 +8205,16 @@ def build_window(model=None):
             hist_view.clear(); state["result"] = prev["image"]; state["raw"] = val
             return
         if drawable:
-            shown = apply_display(val, display.currentText(), base=model.image,  # region overlay uses the source
-                                  draw=state["draw"])                            # dev_set_draw/color/line_width
+            if val.ndim == 2:
+                resolved = _range_for(val)
+                shown, display_info = studio_display.to_display(val, resolved)
+                range_warning.setText(display_info.warning)
+                range_warning.setVisible(bool(display_info.warning))
+                state["display_range"] = resolved
+            else:
+                shown = apply_display(val, display.currentText(), base=model.image,
+                                      draw=state["draw"])
+                range_warning.hide(); state["display_range"] = None
             qi = _to_qimage(shown, QtGui)
             if qi is not None:
                 pm = QtGui.QPixmap.fromImage(qi)
@@ -8206,8 +8255,12 @@ def build_window(model=None):
                     and (val.ndim == 2 or (val.ndim == 3 and val.shape[2] == 3)))
         img = None
         if drawable:
-            img = apply_display(val, display.currentText(), base=(model.image if base is None else base),
-                                draw=state["draw"], vmin=(rng[0] if rng else None), vmax=(rng[1] if rng else None))
+            if val.ndim == 2 and isinstance(rng, studio_display.DisplayRange):
+                img, _ = studio_display.to_display(val, rng)
+            else:
+                img = apply_display(val, display.currentText(), base=(model.image if base is None else base),
+                                    draw=state["draw"], vmin=(rng[0] if rng else None),
+                                    vmax=(rng[1] if rng else None))
         else:
             prev = result_preview(val)
             if prev is not None:
@@ -8496,17 +8549,32 @@ def build_window(model=None):
             ab_a.set_source(None, tr("pipeline error (see the Problems list)"))
             ab_info.setText(truncate(e, 160))
             return
-        rng = shared_display_range(A, B)                      # ONE display range chosen from A and B together
+        if (isinstance(A, np.ndarray) and A.ndim == 2 and
+                isinstance(B, np.ndarray) and B.ndim == 2):
+            ranges = _display_range([A, B])
+            if isinstance(ranges, list):
+                rng_a, rng_b = ranges
+                rng = None
+            else:
+                rng_a = rng_b = ranges
+                rng = (ranges.lo, ranges.hi)
+                if range_cmap.currentText() == "gray":
+                    # Keep the established A/B rendering path for gray; it also
+                    # preserves the comparison pane's shared-range contract.
+                    rng_a = rng_b = rng
+        else:
+            rng = shared_display_range(A, B)
+            rng_a = rng_b = rng
         ab_state["range"] = rng
         none_msg = tr("no picture for this result")
         info = []
         if pin.valid is False:
             info.append(tr("%s: result needs review") % lab + " (" + "; ".join(pin.reasons) + ")")
         if mode == "side":
-            ab_a.set_source(_val_pixmap(A, rng=rng), none_msg)
-            ab_b.set_source(_val_pixmap(B, rng=rng), none_msg)
+            ab_a.set_source(_val_pixmap(A, rng=rng_a), none_msg)
+            ab_b.set_source(_val_pixmap(B, rng=rng_b), none_msg)
         else:
-            pa, pb = _val_pixmap(A, rng=rng), _val_pixmap(B, rng=rng)
+            pa, pb = _val_pixmap(A, rng=rng_a), _val_pixmap(B, rng=rng_b)
             same = (isinstance(A, np.ndarray) and isinstance(B, np.ndarray) and A.shape == B.shape
                     and pa is not None and pb is not None)
             if not same:
@@ -9203,6 +9271,46 @@ def build_window(model=None):
         if not isinstance(state.get("result"), np.ndarray):
             flash("nothing to save — run the pipeline first"); return
         _save_array(state["result"], "Save view as shown", "view.png", "view")
+
+    def save_both():
+        arr = _result_array()
+        if arr is None:
+            flash("nothing to save — run the pipeline first"); return
+        path, _ = QtWidgets.QFileDialog.getSaveFileName(win, "保存先", "result", "All files (*)")
+        if not path:
+            return
+        try:
+            rng = state.get("display_range") or _range_for(arr)
+            written = studio_display.save_outputs(arr, rng, os.path.splitext(path)[0], "both")
+        except Exception as e:
+            report_error("保存できませんでした", e); return
+        flash("保存しました: " + ", ".join(os.path.basename(str(p)) for p in written))
+
+    def save_raw_numeric():
+        arr = _result_array()
+        if arr is None:
+            flash("nothing to save — run the pipeline first"); return
+        path, _ = QtWidgets.QFileDialog.getSaveFileName(win, "元の数値を保存", "result.npy",
+                                                        "NumPy (*.npy)")
+        if not path:
+            return
+        try:
+            rng = state.get("display_range") or _range_for(arr)
+            written = studio_display.save_outputs(arr, rng, os.path.splitext(path)[0], "raw")
+        except Exception as e:
+            report_error("保存できませんでした", e); return
+        flash("保存しました: " + os.path.basename(str(written[0])))
+
+    save_menu = QtWidgets.QMenu(b_save)
+    save_raw_action = save_menu.addAction("○ 元の数値")
+    save_display_action = save_menu.addAction("○ 現在の表示画像")
+    save_both_action = save_menu.addAction("○ 両方")
+    save_raw_action.triggered.connect(save_raw_numeric)
+    save_display_action.triggered.connect(save_view)
+    save_both_action.triggered.connect(save_both)
+    b_save.setMenu(save_menu); b_save.setPopupMode(QtWidgets.QToolButton.MenuButtonPopup)
+    win._save_output_actions = {"raw": save_raw_action, "display": save_display_action,
+                                "both": save_both_action}
 
     def _save_secondary_view(gv):
         """Save button / right-click Save of a secondary graphics window: its data
@@ -13619,11 +13727,44 @@ def build_window(model=None):
     act_save_pipe.triggered.connect(save_pipe); act_open_pipe.triggered.connect(open_pipe)
 
     def on_hover(x, y, v):
-        if np.ndim(v) == 0:
+        raw = state.get("raw")
+        rng = state.get("display_range")
+        if isinstance(raw, np.ndarray) and raw.ndim == 2 and rng is not None:
+            info = studio_display.pixel_readout(raw, rng, y, x)
+            if info is None:
+                return
+            value = info["value"]
+            value_text = value if isinstance(value, str) else format(value, ".4g")
+            shown = "—" if info["display_value"] is None else str(info["display_value"])
+            readout.setText("値 %s (%s) / 表示 %s / レンジ %s〜%s" % (
+                value_text, info["dtype"], shown, format(info["lo"], ".4g"),
+                format(info["hi"], ".4g")))
+        elif np.ndim(v) == 0:
             readout.setText(f"x={x}  y={y}   value={float(v):.4f}")
         else:
             readout.setText(f"x={x}  y={y}   RGB=({float(v[0]):.3f},{float(v[1]):.3f},{float(v[2]):.3f})")
     view.hover_cb = on_hover
+    win._format_display_readout = lambda image, rng, y, x: (
+        None if studio_display.pixel_readout(image, rng, y, x) is None else
+        "値 %s (%s) / 表示 %s / レンジ %s〜%s" % (
+            (lambda z: z if isinstance(z, str) else format(z, ".4g"))(
+                studio_display.pixel_readout(image, rng, y, x)["value"]),
+            studio_display.pixel_readout(image, rng, y, x)["dtype"],
+            studio_display.pixel_readout(image, rng, y, x)["display_value"],
+            format(studio_display.pixel_readout(image, rng, y, x)["lo"], ".4g"),
+            format(studio_display.pixel_readout(image, rng, y, x)["hi"], ".4g")))
+
+    def _display_settings_changed(*_):
+        manual = range_manual.isChecked()
+        range_lo.setEnabled(manual); range_hi.setEnabled(manual)
+        range_note.setText("表示処理のみ: %s、元データは変更していません" % range_cmap.currentText())
+        show_result(); update_ab()
+
+    for _control in (range_each, range_shared, range_manual):
+        _control.toggled.connect(_display_settings_changed)
+    for _control in (range_lo, range_hi):
+        _control.valueChanged.connect(_display_settings_changed)
+    range_cmap.currentTextChanged.connect(_display_settings_changed)
 
     # ---- keyboard-shortcut scoping ----------------------------------------- #
     # These edit/step keys used to be WindowShortcut: Ctrl+Up / Ctrl+Down fired
