@@ -7,6 +7,9 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- 修正: 外れ値や定数で崩れていた NCC の窓検出。
+- 修正: NCC モデルの subnormal スケール。
+
 - 修正: NaN 画像で黙って有限値を返していた 9 op を fail-closed に。
 
 - 12 演算子と domain・blob・型付き演算子について、正常な空結果、NaN 障害、入力型の取り違え、厳密／既定フォールバック経路を区別する fault-injection gate を追加した。
