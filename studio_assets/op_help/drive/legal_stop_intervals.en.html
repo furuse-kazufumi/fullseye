@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Intervals (m, 2) of <b>rear-end positions</b> at which the car body [rear, rear + car_length] fits entirely while avoiding the no-stopping-or-parking sections (merged (k, 2)).</p>
 <p>Exact interval ends (e.g. a distance of exactly 5 m) are included on the prohibited side (&quot;within&quot;), so a vehicle body merely touching an end is allowed (closure of the complement of closed intervals).</p>
-<p>Empty input (<code style="color:#22d3bf">merged</code> with 0 elements) returns an empty result (reason: if there are 0 prohibited intervals, the whole road is the correct answer. no_stopping_zones can return an empty merged even when facilities exist (when there are only bus stops outside their service hours)).</p>
+<p>Empty input (<code style="color:#22d3bf">merged</code> with 0 elements) returns the whole-road interval shortened by the vehicle length (with no prohibited intervals, the whole road is the correct answer).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

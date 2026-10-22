@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>주정차 금지 구간(병합된 (k, 2))을 피해 차체 [rear, rear + car_length]가 통째로 들어가는 <b>후단 위치</b>의 구간 (m, 2).</p>
 <p>구간 끝 정확히(거리가 정확히 5 m 등)는 금지 쪽에 포함하므로(「이내」), 차체가 끝에 닿기만 하면 허용한다(닫힌 구간의 여집합의 폐포).</p>
-<p>빈 입력(<code style="color:#22d3bf">merged</code> 이(가) 0 개 요소)은 빈 결과를 반환한다(이유: 금지 구간이 0 건이면 도로 전체가 올바른 답. no_stopping_zones 는 시설이 있어도 빈 merged 를 반환할 수 있다(운행 시간 외의 버스 정류장뿐일 때)).</p>
+<p>빈 입력(<code style="color:#22d3bf">merged</code>가 0요소)은 전체 도로에서 차량 길이를 뺀 구간을 반환한다(금지 구간이 없으면 전체 도로가 올바른 답이다).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

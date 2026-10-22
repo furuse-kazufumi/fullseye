@@ -4,7 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gaussian_transport_map(src_samples, ref_samples)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import colortransport; colortransport.gaussian_transport_map(src_samples, ref_samples)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opscolortransport.get(&quot;gaussian_transport_map&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.gaussian_transport_map(...)</code> 는 <b>선언된 out 형 <code style="color:#22d3bf">matrix</code> 의 값만</b> 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.gaussian_transport_map.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">colortransport.gaussian_transport_map</code> 를 직접 호출하세요.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>두 점군을 정규분포로 볼 때의 몽주 사상 <code style="color:#22d3bf">(A, b)</code>.</p>
+<p>두 점군을 정규분포로 볼 때의 몽주 사상의 선형부 <code style="color:#22d3bf">A</code>와 평균 <code style="color:#22d3bf">m1, m2</code>.</p>
 <p><code style="color:#22d3bf">x -&gt; A (x - m1) + m2</code> 이고, <code style="color:#22d3bf">A</code> 는 <code style="color:#22d3bf">S1^-1/2 (S1^1/2 S2 S1^1/2)^1/2 S1^-1/2</code>(Bures 기하의 닫힌 식). <b>공분산째 옮기므로</b> 채널 간 상관이 유지된다.</p>
 <p>퇴화(한쪽 공분산이 특이)에서는 역제곱근을 만들 수 없다 ―― 의사역으로 얼버무리면 &quot;옮기지 못했는데 옮긴 척하는&quot; 사상이 되므로 <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

@@ -10,7 +10,7 @@
 <p>lat_deg / lon_deg: 위도, 경도 [도]. 배열 가능(같은 형상).</p>
 <p>height_m: 타원체고 [m]. 스칼라든 배열이든 가능.</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(..., 3)</code>의 ECEF 좌표 [m].</p>
+<p><code style="color:#22d3bf">(N, 3)</code>의 ECEF 좌표 [m]. 입력의 브로드캐스트 결과를 평탄화한다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

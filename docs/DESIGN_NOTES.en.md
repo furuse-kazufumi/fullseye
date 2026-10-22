@@ -41,7 +41,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `annotate.py`
 
-- **L3101** — ★Punctuation (。、) should not be rotated but **shifted to the upper right**, but here we don't shift it —— rather than silently approximating what we can't do, we write it in the docstring and leave it. Characters (punctuation) that **shift to the upper right** in vertical writing. A dot that sits at the lower left of the glyph in horizontal setting comes to the upper right in vertical setting —— the typographic manner is to **move the position**, not to rotate. Windows' ``@``-prefixed fonts (the vertical-writing face GDI selects by face name) did this on the font side. Pillow opens a font by **file path** so it can't reach the ``@`` face, and HarfBuzz's ``direction="ttb"`` also gives different results with and without Raqm installed (this machine's Pillow 12.3.0 has ``features.check("raqm")`` False). Following the policy **choose what is consistent across platforms**, here we shift by composition.
+- **L3106** — ★Punctuation (。、) should not be rotated but **shifted to the upper right**, but here we don't shift it —— rather than silently approximating what we can't do, we write it in the docstring and leave it. Characters (punctuation) that **shift to the upper right** in vertical writing. A dot that sits at the lower left of the glyph in horizontal setting comes to the upper right in vertical setting —— the typographic manner is to **move the position**, not to rotate. Windows' ``@``-prefixed fonts (the vertical-writing face GDI selects by face name) did this on the font side. Pillow opens a font by **file path** so it can't reach the ``@`` face, and HarfBuzz's ``direction="ttb"`` also gives different results with and without Raqm installed (this machine's Pillow 12.3.0 has ``features.check("raqm")`` False). Following the policy **choose what is consistent across platforms**, here we shift by composition.
 
 ## `api.py`
 
@@ -1640,8 +1640,8 @@ This repository records *why* things are the way they are in **comments in the s
 - **L3126** _(ja)_ — ★2026-10-07: 以前は「集めた数が c+8 を超えたら止める」で、低い次数(m=0..2)の 高い零点ばかり集めて m>=3 の低い固有値(j'_{3,1}**2 = 17.65 …)を落としていた。 j'_{m,1} は m について単調増加なので、次の次数の最初の零点が、集めた中の c 番目を 超えた時点で打ち切れば取りこぼしは無い。
 - **L3325** _(ja)_ — ★真値は**公表値か閉形式だけ**: 線形系は expm(At)x0 が厳密解で刻み半分に すると誤差が 1/16(4 次)、Lorenz のリアプノフ指数の**和**はトレース恒等式 により厳密に -(sigma+1+beta)、ロジスティック写像の周期倍分岐は 3 と 1+sqrt6、 相関次元は円 1・カントール log2/log3。絵では何も確かめられない。
 - **L3329** _(ja)_ — ★関数(callable)を引数に取らない —— 型付き台帳は入力を sort で登録し、 連鎖ファザーがデータから引数を組むので callable は載らない。系は族名か係数配列。 ------------------------------------------------------------------------- #
-- **L3512** _(ja)_ — ★`table` は**列名 -> 1-D 配列**。状態を (S, n) のまま 1 列に入れると型の嘘に なるので、成分ごとの列に開く(x0, x1, ... と時刻 t)。
-- **L3856** _(ja)_ — ★上限は 60 パーセンタイルにしていたが、有界な集合では大きい r で C(r) が 飽和して**傾きが下がる**(充填した正方形で 1.83、真値 2.0)。飽和の 手前に寄せる。下限は近傍の離散化(雑音の床)を避ける。
+- **L3513** _(ja)_ — ★`table` は**列名 -> 1-D 配列**。状態を (S, n) のまま 1 列に入れると型の嘘に なるので、成分ごとの列に開く(x0, x1, ... と時刻 t)。
+- **L3857** _(ja)_ — ★上限は 60 パーセンタイルにしていたが、有界な集合では大きい r で C(r) が 飽和して**傾きが下がる**(充填した正方形で 1.83、真値 2.0)。飽和の 手前に寄せる。下限は近傍の離散化(雑音の床)を避ける。
 
 ## `measuring1d.py`
 
@@ -1966,10 +1966,10 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `profileops.py`
 
-- **L269** — ★ At first we wrote it as "the one with larger curvature" and **judged the trailing edge as the leading edge** on NACA 2412. The curvature of the 3-point circle comes out larger at the trailing edge, where the upper and lower surfaces nearly touch, than at the roundness of the leading edge —— the intuition "the leading edge is round" reverses when measured with 3 points on the contour.
-- **L276** — ★ When the trailing edge is open, the 2 farthest points pick **one of the corners** of the trailing edge and the chord tilts. We re-take it at the midpoint of the gap, then decide the leading edge as "the point farthest from that midpoint". Without doing this, even a symmetric airfoil shows camber by the half-gap of the trailing edge (measured 0.001257).
-- **L642** — ★ Before comparing, **re-take by the same method**. The chord frame (especially the trailing-edge midpoint) depends slightly on the placement of points, so matching a raw contour against a re-taken contour injects a 0.02 degree rotation and 7.8e-4 translation even for an identical shape —— that itself became the floor of the deviation (measured rms 6.05e-4). Put what you compare on the same footing.
-- **L653** — ★ Measure not point-to-point but **point-to-polyline**. Even after re-taking at equal arc length, the phases of the two do not coincide, so taking correspondence by index makes the phase shift become the deviation directly (measured: comparing the same shape against itself gives rms 6.05e-4 —— the same order as the defect we want to detect).
+- **L270** — ★ At first we wrote it as "the one with larger curvature" and **judged the trailing edge as the leading edge** on NACA 2412. The curvature of the 3-point circle comes out larger at the trailing edge, where the upper and lower surfaces nearly touch, than at the roundness of the leading edge —— the intuition "the leading edge is round" reverses when measured with 3 points on the contour.
+- **L277** — ★ When the trailing edge is open, the 2 farthest points pick **one of the corners** of the trailing edge and the chord tilts. We re-take it at the midpoint of the gap, then decide the leading edge as "the point farthest from that midpoint". Without doing this, even a symmetric airfoil shows camber by the half-gap of the trailing edge (measured 0.001257).
+- **L643** — ★ Before comparing, **re-take by the same method**. The chord frame (especially the trailing-edge midpoint) depends slightly on the placement of points, so matching a raw contour against a re-taken contour injects a 0.02 degree rotation and 7.8e-4 translation even for an identical shape —— that itself became the floor of the deviation (measured rms 6.05e-4). Put what you compare on the same footing.
+- **L654** — ★ Measure not point-to-point but **point-to-polyline**. Even after re-taking at equal arc length, the phases of the two do not coincide, so taking correspondence by index makes the phase shift become the deviation directly (measured: comparing the same shape against itself gives rms 6.05e-4 —— the same order as the defect we want to detect).
 
 ## `pxrd.py`
 
@@ -2071,7 +2071,7 @@ This repository records *why* things are the way they are in **comments in the s
 - **L1150** _(ja)_ — ★**区間が定義域を出たら、それは測定の主張でなく近似の破綻**。 比較損失(二乗の和)は構成上非負なのに、規格の例題では伝播則の 95 % 区間が [-96, +296]e-6 と負側へ張り出す。伝播則は出力を正規と見なすので 境界を知らない —— 知っているのは呼ぶ側だけなので、境界を渡されたときに 限って検査する(既定で勝手に 0 を下限と仮定はしない)。
 - **L1529** — ★"no spread" is not "std == 0.0". A column holding one repeated value leaves rounding dust behind: 4.2 stored 200 times gives std = 1.3e-14, not zero (measured). Dividing by that dust amplifies it into a distance of nonsense, and the absolute test never fires. Put the floor at the *relative* scale of the column, below which a spread cannot be represented in the data itself.
 - **L1561** — ★ std = 1 alone does NOT make a flat feature "contribute nothing": a new observation that leaves the flat value is scored in raw units, so the same physical data in mm vs um gave MD 1.73 vs 1732 (2026-10-07 review). Zero its row and column of the inverse correlation instead — then its z drops out of z' R^-1 z whatever the new value is.
-- **L1669** — ★A unit space given in part is the dangerous case: the missing piece would be silently estimated from the very data under test, so a drifted batch would score itself as normal. Refuse instead.
+- **L1671** — ★A unit space given in part is the dangerous case: the missing piece would be silently estimated from the very data under test, so a drifted batch would score itself as normal. Refuse instead.
 
 ## `specops.py`
 

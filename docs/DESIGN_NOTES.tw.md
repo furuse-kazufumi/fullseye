@@ -41,7 +41,7 @@
 
 ## `annotate.py`
 
-- **L3101** — ★標點(。、)本應不旋轉而是**靠向右上**，但這裡不靠——與其默默近似做不到的事，不如寫進 docstring 留存。直排中**靠向右上**的字(標點)。橫排時位於字左下的點，直排時來到右上——排版之道是**移動位置**而非旋轉。Windows 的 ``@`` 前綴字型(GDI 按 face 名選擇的直排字面)在字型側做了這件事。Pillow 以**檔案路徑**開啟字型，搆不到 ``@`` 字面，HarfBuzz 的 ``direction="ttb"`` 也會因是否安裝 Raqm 而結果不同(本機 Pillow 12.3.0 的 ``features.check("raqm")`` 為 False)。遵循**選擇跨平台一致者**的方針，這裡用合成來靠位。
+- **L3106** — ★標點(。、)本應不旋轉而是**靠向右上**，但這裡不靠——與其默默近似做不到的事，不如寫進 docstring 留存。直排中**靠向右上**的字(標點)。橫排時位於字左下的點，直排時來到右上——排版之道是**移動位置**而非旋轉。Windows 的 ``@`` 前綴字型(GDI 按 face 名選擇的直排字面)在字型側做了這件事。Pillow 以**檔案路徑**開啟字型，搆不到 ``@`` 字面，HarfBuzz 的 ``direction="ttb"`` 也會因是否安裝 Raqm 而結果不同(本機 Pillow 12.3.0 的 ``features.check("raqm")`` 為 False)。遵循**選擇跨平台一致者**的方針，這裡用合成來靠位。
 
 ## `api.py`
 
@@ -1640,8 +1640,8 @@
 - **L3126** _(ja)_ — ★2026-10-07: 以前は「集めた数が c+8 を超えたら止める」で、低い次数(m=0..2)の 高い零点ばかり集めて m>=3 の低い固有値(j'_{3,1}**2 = 17.65 …)を落としていた。 j'_{m,1} は m について単調増加なので、次の次数の最初の零点が、集めた中の c 番目を 超えた時点で打ち切れば取りこぼしは無い。
 - **L3325** _(ja)_ — ★真値は**公表値か閉形式だけ**: 線形系は expm(At)x0 が厳密解で刻み半分に すると誤差が 1/16(4 次)、Lorenz のリアプノフ指数の**和**はトレース恒等式 により厳密に -(sigma+1+beta)、ロジスティック写像の周期倍分岐は 3 と 1+sqrt6、 相関次元は円 1・カントール log2/log3。絵では何も確かめられない。
 - **L3329** _(ja)_ — ★関数(callable)を引数に取らない —— 型付き台帳は入力を sort で登録し、 連鎖ファザーがデータから引数を組むので callable は載らない。系は族名か係数配列。 ------------------------------------------------------------------------- #
-- **L3512** _(ja)_ — ★`table` は**列名 -> 1-D 配列**。状態を (S, n) のまま 1 列に入れると型の嘘に なるので、成分ごとの列に開く(x0, x1, ... と時刻 t)。
-- **L3856** _(ja)_ — ★上限は 60 パーセンタイルにしていたが、有界な集合では大きい r で C(r) が 飽和して**傾きが下がる**(充填した正方形で 1.83、真値 2.0)。飽和の 手前に寄せる。下限は近傍の離散化(雑音の床)を避ける。
+- **L3513** _(ja)_ — ★`table` は**列名 -> 1-D 配列**。状態を (S, n) のまま 1 列に入れると型の嘘に なるので、成分ごとの列に開く(x0, x1, ... と時刻 t)。
+- **L3857** _(ja)_ — ★上限は 60 パーセンタイルにしていたが、有界な集合では大きい r で C(r) が 飽和して**傾きが下がる**(充填した正方形で 1.83、真値 2.0)。飽和の 手前に寄せる。下限は近傍の離散化(雑音の床)を避ける。
 
 ## `measuring1d.py`
 
@@ -1966,10 +1966,10 @@
 
 ## `profileops.py`
 
-- **L269** — ★ 最初寫作「曲率較大的一側」，在 NACA 2412 上**把後緣判成了前緣**。三點圓的曲率，在上下面幾乎相切的後緣處會比前緣的圓度更大——「前緣是圓的」這一直覺，用輪廓上的 3 點來測時會逆轉。
-- **L276** — ★ 後緣張開時，最遠的 2 點會拾取後緣的**某一角**而使弦傾斜。改在縫隙的中點重取，再把前緣定為「離該中點最遠的點」。不這樣做，即使對稱翼也會出現相當於後緣半縫隙的彎度（實測 0.001257）。
-- **L642** — ★ 比對前**用同一取法重取**。弦的框架（尤其是後緣中點）會略依賴點的放置方式，故把生輪廓與重取輪廓相互對照時，即使同一形狀也會引入 0.02 度的旋轉與 7.8e-4 的平移——這本身就成了偏差的地板（實測 rms 6.05e-4）。要比較的東西須置於同一擂台。
-- **L653** — ★ 不作點對點，而作**點對折線**測量。即便按等弧長重取，兩者的相位也不一致，故若以編號取對應，則相位錯移會直接成為偏差（實測：拿同一形狀與自身比，rms 為 6.05e-4——與想檢測的缺陷同一數量級）。
+- **L270** — ★ 最初寫作「曲率較大的一側」，在 NACA 2412 上**把後緣判成了前緣**。三點圓的曲率，在上下面幾乎相切的後緣處會比前緣的圓度更大——「前緣是圓的」這一直覺，用輪廓上的 3 點來測時會逆轉。
+- **L277** — ★ 後緣張開時，最遠的 2 點會拾取後緣的**某一角**而使弦傾斜。改在縫隙的中點重取，再把前緣定為「離該中點最遠的點」。不這樣做，即使對稱翼也會出現相當於後緣半縫隙的彎度（實測 0.001257）。
+- **L643** — ★ 比對前**用同一取法重取**。弦的框架（尤其是後緣中點）會略依賴點的放置方式，故把生輪廓與重取輪廓相互對照時，即使同一形狀也會引入 0.02 度的旋轉與 7.8e-4 的平移——這本身就成了偏差的地板（實測 rms 6.05e-4）。要比較的東西須置於同一擂台。
+- **L654** — ★ 不作點對點，而作**點對折線**測量。即便按等弧長重取，兩者的相位也不一致，故若以編號取對應，則相位錯移會直接成為偏差（實測：拿同一形狀與自身比，rms 為 6.05e-4——與想檢測的缺陷同一數量級）。
 
 ## `pxrd.py`
 
@@ -2071,7 +2071,7 @@
 - **L1150** _(ja)_ — ★**区間が定義域を出たら、それは測定の主張でなく近似の破綻**。 比較損失(二乗の和)は構成上非負なのに、規格の例題では伝播則の 95 % 区間が [-96, +296]e-6 と負側へ張り出す。伝播則は出力を正規と見なすので 境界を知らない —— 知っているのは呼ぶ側だけなので、境界を渡されたときに 限って検査する(既定で勝手に 0 を下限と仮定はしない)。
 - **L1529** _(ja)_ — ★"no spread" is not "std == 0.0". A column holding one repeated value leaves rounding dust behind: 4.2 stored 200 times gives std = 1.3e-14, not zero (measured). Dividing by that dust amplifies it into a distance of nonsense, and the absolute test never fires. Put the floor at the *relative* scale of the column, below which a spread cannot be represented in the data itself.
 - **L1561** _(ja)_ — ★ std = 1 alone does NOT make a flat feature "contribute nothing": a new observation that leaves the flat value is scored in raw units, so the same physical data in mm vs um gave MD 1.73 vs 1732 (2026-10-07 review). Zero its row and column of the inverse correlation instead — then its z drops out of z' R^-1 z whatever the new value is.
-- **L1669** _(ja)_ — ★A unit space given in part is the dangerous case: the missing piece would be silently estimated from the very data under test, so a drifted batch would score itself as normal. Refuse instead.
+- **L1671** _(ja)_ — ★A unit space given in part is the dangerous case: the missing piece would be silently estimated from the very data under test, so a drifted batch would score itself as normal. Refuse instead.
 
 ## `specops.py`
 

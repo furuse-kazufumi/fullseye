@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Intervalle (m, 2) der <b>Heckpositionen</b>, bei denen die Karosserie [rear, rear + car_length] vollständig außerhalb der Abschnitte mit Halt- und Parkverbot (zusammengefasst (k, 2)) liegt.</p>
 <p>Exakte Intervallenden (z. B. ein Abstand von genau 5 m) werden der verbotenen Seite zugerechnet („innerhalb“), daher ist es erlaubt, wenn die Karosserie ein Ende nur berührt (Abschluss des Komplements geschlossener Intervalle).</p>
-<p>Leere Eingabe (<code style="color:#22d3bf">merged</code> mit 0 Elementen) gibt ein leeres Ergebnis zurück (Grund: Gibt es 0 Verbotsintervalle, ist die ganze Straße die richtige Antwort. no_stopping_zones kann auch bei vorhandenen Einrichtungen ein leeres merged zurückgeben (wenn es nur Bushaltestellen außerhalb der Betriebszeit gibt)).</p>
+<p>Eine leere Eingabe (<code style="color:#22d3bf">merged</code> hat 0 Elemente) liefert das um die Fahrzeuglänge verkürzte Intervall der gesamten Straße (ohne Verbotsintervalle ist die gesamte Straße die richtige Antwort).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
