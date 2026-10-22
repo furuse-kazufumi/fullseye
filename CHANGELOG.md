@@ -7,6 +7,8 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- 層ごとの壊れた演算を一時注入し、基準実行の失敗を除外して検出門を再計測できる変異探針を追加した。中断再開、時間上限、JUnit と JSON の記録に対応する。
+
 - Add an evidence-based HALCON compatibility profile and a pinned comparison-test manifest.
 
 - Studio に4つの作業モード、結果画像だけを一時的に大きくする表示、名前で隠れたパネルを呼び出す検索を追加した。モードごとのパネル調整は保存され、切替時も入力・処理手順・計算結果を変更しない。
