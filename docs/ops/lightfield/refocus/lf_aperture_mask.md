@@ -39,7 +39,8 @@ reduction is a weighted **mean** and its result is directly comparable with
 :func:`lf_refocus`. Set it to ``False`` to keep 0/1 selection weights.
 
 **Raises** ``ValueError``: an angular shape outside ``[1, MAX_ANGULAR]``, a
-negative *radius* / *inner* / *sigma*, ``inner >= radius``, an unknown
+negative *radius* / *inner*, ``inner >= radius`` for an annulus, non-positive
+*sigma* for a Gaussian, an unknown
 *shape*, and — explicitly rather than returning a field of zeros — a mask
 that selects **no** view at all (an opaque aperture), which would make every
 downstream weighted mean a 0/0.

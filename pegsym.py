@@ -92,7 +92,7 @@ def _halfplanes(p: np.ndarray):
 def polygon_peg(n: int, apothem: float = 5.0e-3, yaw: float = 0.0, cut: float = 0.0, centre=(0.0, 0.0)) -> dict:
     """ペグの断面(反時計回りの頂点列): 正 n 角形(辺心距離 ``apothem`` [m]、面 0 の法線が ``yaw`` [rad])。``cut`` > 0 なら頂点 0
     (面 0 と面 1 の間)を、その頂点の向きを法線とする直線で外接円から ``cut`` [m] 内側で落とす —— キー付き(対称は n = 1)。
-    返り ``vertices``(V, 2)、``n``(形の名目の n 回対称: キー付きは 1)、``apothem``、``circumradius``、``yaw``。
+    返り ``vertices``(V, 2)、``n``(形の名目の n 回対称: キー付きは 1)、``apothem``、``circumradius``、``yaw``、``cut``。
     **Raises** ValueError: n < 3、apothem ≤ 0、cut < 0 か外接円と内接円の差以上(辺が消える)。"""
     n = int(n)
     A = float(apothem)
@@ -372,7 +372,7 @@ def plane_topview(image, K, R, t, z: float = 0.0, centre=(0.0, 0.0), extent: flo
     カメラは世界 → OpenCV カメラの ``R``・``t``(x_c = R X + t)、内部 ``K``(画素中心が整数の規約)。格子は ``centre`` = (x, y) を中心に
     一辺 ``extent`` [m]、画素 ``res`` [m]。列 = +x、行 = −y(北が上)。下から見た画像(鏡像)もこの図では同じ向きになる。カメラの後ろ・
     画像の外の格子点は ``fill``。返り = (S, S) の濃淡(カラーは輝度にする)。
-    **Raises** ValueError: 画像が 2-D 濃淡か (H, W, 3) でない、K・R が 3×3 でない、t が 3 成分でない、extent ≤ 0、res ≤ 0、S > 4096。"""
+    **Raises** ValueError: 画像が 2-D 濃淡か (H, W, 3/4) でない、K・R が 3×3 でない、t が 3 成分でない、extent ≤ 0、res ≤ 0、S > 4096。"""
     g = _gray(image)
     Km, Rm = np.asarray(K, np.float64), np.asarray(R, np.float64)
     tv = np.asarray(t, np.float64).reshape(-1)

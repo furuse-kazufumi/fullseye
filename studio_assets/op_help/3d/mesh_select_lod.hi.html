@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>सबसे coarse LOD level जिसका geometric error project होकर *pixel_tolerance* से नीचे रहता है (<code style="color:#22d3bf">table</code>)।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>Screen-space error <code style="color:#22d3bf">e_px = error × focal_px / distance</code> (pinhole, mesh units for *distance*). Returns <code style="color:#22d3bf">{&quot;level&quot;, &quot;error_px&quot;, &quot;n_faces&quot;, &quot;candidates&quot;: [e_px per level]}</code>; <code style="color:#22d3bf">use</code> picks <code style="color:#22d3bf">&quot;max_error&quot;</code> (safe) or <code style="color:#22d3bf">&quot;rms_error&quot;</code>. Level 0 (the input) is chosen when nothing else fits.</p>
+<p>Screen-space error <code style="color:#22d3bf">e_px = error × focal_px / distance</code> (pinhole, mesh units for *distance*). Returns <code style="color:#22d3bf">{&quot;level&quot;, &quot;error_px&quot;, &quot;n_faces&quot;, &quot;candidates&quot;: [e_px per level], &quot;pixel_tolerance&quot;}</code>; <code style="color:#22d3bf">use</code> picks <code style="color:#22d3bf">&quot;max_error&quot;</code> (safe) or <code style="color:#22d3bf">&quot;rms_error&quot;</code>. Level 0 (the input) is chosen when nothing else fits.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — Depth sensors — ranging के सिद्धांत, असली devices के आँकड़े, dropouts कैसे दिखते हैं</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

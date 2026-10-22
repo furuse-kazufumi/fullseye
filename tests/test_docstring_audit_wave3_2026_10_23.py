@@ -11,6 +11,7 @@ import backends_regions3
 import carpath
 import driveenv
 import drivecommonroad
+import drivepass
 import gfx2d
 import grind
 import conngraph
@@ -29,6 +30,15 @@ import mathnumerics
 import mathops
 import match3d
 import measuring1d
+import meshres
+import driveplateau
+import funct1d
+import lightfield
+import photoncount
+import reprconv
+import raytrace
+import agvfleet
+import pegsym
 import render_beauty
 import drivelateral
 import sensorgeneral
@@ -74,6 +84,17 @@ import segcontour
         (mathnumerics.integrate_hamiltonian, '"method","system"'),
         (telecentric.lens_equivalent_pinhole, "``width`` / ``height``"),
         (gfx2d.lens_shading_gain, "flat-field response mean"),
+        (lightfield.lf_aperture_mask, "for an annulus"),
+        (photoncount.lifetime_fit, "centre time of the first usable bin"),
+        (meshres.mesh_select_lod, '"pixel_tolerance"'),
+        (spc.msa_anova_table, "``n_replicates``"),
+        (funct1d.num_points_funct_1d, "returns integer ``0``"),
+        (drivepass.overtaken_conduct_check, "対象条件 ``applies``"),
+        (reprconv.pairs_to_table, "最大値と最小値の開き"),
+        (raytrace.paraxial_trace, "``|efl| / (2·ep_radius)``"),
+        (agvfleet.plan_conflicts, "t には v から出た"),
+        (pegsym.plane_topview, "(H, W, 3/4)"),
+        (pegsym.polygon_peg, "``cut``"),
     ],
 )
 def test_corrected_contract_is_public(op, statement):
@@ -102,3 +123,6 @@ def test_corrected_contracts_match_behavior():
     assert pcl_augment.random_rotation([])[0].shape == (0, 3)
     with pytest.raises(ValueError, match="start_index out of range"):
         drivelateral.lateral_offset([[0, 0]], [[0, 0], [1, 0]], start_index=1)
+    points = np.array([[0.0, 0.0, 0.0], [1, 0, 0]])
+    lod = meshres.pc_lod_chain(points, 0.5, levels=1)
+    assert not np.shares_memory(lod["levels"][0], points)

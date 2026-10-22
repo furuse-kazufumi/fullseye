@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Die gröbste LOD-Stufe, deren geometrischer Fehler projiziert unter *pixel_tolerance* bleibt (<code style="color:#22d3bf">table</code>).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>Screen-space error <code style="color:#22d3bf">e_px = error × focal_px / distance</code> (pinhole, mesh units for *distance*). Returns <code style="color:#22d3bf">{&quot;level&quot;, &quot;error_px&quot;, &quot;n_faces&quot;, &quot;candidates&quot;: [e_px per level]}</code>; <code style="color:#22d3bf">use</code> picks <code style="color:#22d3bf">&quot;max_error&quot;</code> (safe) or <code style="color:#22d3bf">&quot;rms_error&quot;</code>. Level 0 (the input) is chosen when nothing else fits.</p>
+<p>Screen-space error <code style="color:#22d3bf">e_px = error × focal_px / distance</code> (pinhole, mesh units for *distance*). Returns <code style="color:#22d3bf">{&quot;level&quot;, &quot;error_px&quot;, &quot;n_faces&quot;, &quot;candidates&quot;: [e_px per level], &quot;pixel_tolerance&quot;}</code>; <code style="color:#22d3bf">use</code> picks <code style="color:#22d3bf">&quot;max_error&quot;</code> (safe) or <code style="color:#22d3bf">&quot;rms_error&quot;</code>. Level 0 (the input) is chosen when nothing else fits.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — Tiefensensoren — Messprinzipien, Werte realer Geräte, wie Messlücken entstehen</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

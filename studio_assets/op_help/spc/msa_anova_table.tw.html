@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>交叉雙因子設計(零件 x 量測者 x 重複)的變異數分析表(<code style="color:#22d3bf">table</code>)。</p>
 <p>*table* 是具有欄 *part* / *operator* / *value* 的表。設計必須<b>平衡</b> (每個格子的重複次數相同)——不平衡則拒絕。</p>
-<p>回傳 source / ss / df / ms / f / p 共 6 欄。<code style="color:#22d3bf">f</code> 與 <code style="color:#22d3bf">p</code> 是以交互作用均方檢定量測者與交互作用、以誤差均方檢定交互作用所得的值(標準的慣例)。</p>
+<p>回傳 source / ss / df / ms / f / p 共 6 欄，另含 <code style="color:#22d3bf">n_parts</code> / <code style="color:#22d3bf">n_operators</code> / <code style="color:#22d3bf">n_replicates</code>。 回傳 source / ss / df / ms / f / p 共 6 欄。<code style="color:#22d3bf">f</code> 與 <code style="color:#22d3bf">p</code> 是以交互作用均方檢定量測者與交互作用、以誤差均方檢定交互作用所得的值(標準的慣例)。</p>
 <p>★可作為門檻的嚴格恆等式: <code style="color:#22d3bf">ss_total == ss_part + ss_oper + ss_inter + ss_err</code>。這是代數分解,因此無論變異數成分如何求得都必然成立 —— 任一側壞掉就不再一致。自由度也以 <code style="color:#22d3bf">df_total == 和</code> 閉合。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

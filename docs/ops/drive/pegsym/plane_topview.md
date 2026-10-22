@@ -21,7 +21,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 カメラは世界 → OpenCV カメラの ``R``・``t``(x_c = R X + t)、内部 ``K``(画素中心が整数の規約)。格子は ``centre`` = (x, y) を中心に
 一辺 ``extent`` [m]、画素 ``res`` [m]。列 = +x、行 = −y(北が上)。下から見た画像(鏡像)もこの図では同じ向きになる。カメラの後ろ・
 画像の外の格子点は ``fill``。返り = (S, S) の濃淡(カラーは輝度にする)。
-**Raises** ValueError: 画像が 2-D 濃淡か (H, W, 3) でない、K・R が 3×3 でない、t が 3 成分でない、extent ≤ 0、res ≤ 0、S > 4096。
+**Raises** ValueError: 画像が 2-D 濃淡か (H, W, 3/4) でない、K・R が 3×3 でない、t が 3 成分でない、extent ≤ 0、res ≤ 0、S > 4096。
 
 ## 参考(サンプルデータ・文献)
 

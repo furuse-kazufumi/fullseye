@@ -22,7 +22,7 @@ Number of samples (HALCON ``num_points_funct_1d``).
 :param y: 1-D function (may be empty).
 :raises ValueError: non-1-D / NaN / Inf input.
 
-Empty input (``y`` with 0 elements) returns an empty result (reason: a 1-D function with 0 samples is a valid function (as in HALCON's funct_1d), and empty functions flow through chains of function ops).
+Empty input (``y`` with 0 elements) returns integer ``0`` (reason: the result is the sample count of a valid empty 1-D function).
 
 ## 参考(サンプルデータ・文献)
 

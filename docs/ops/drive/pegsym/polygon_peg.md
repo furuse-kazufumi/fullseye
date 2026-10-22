@@ -19,7 +19,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 ペグの断面(反時計回りの頂点列): 正 n 角形(辺心距離 ``apothem`` [m]、面 0 の法線が ``yaw`` [rad])。``cut`` > 0 なら頂点 0
 (面 0 と面 1 の間)を、その頂点の向きを法線とする直線で外接円から ``cut`` [m] 内側で落とす —— キー付き(対称は n = 1)。
-返り ``vertices``(V, 2)、``n``(形の名目の n 回対称: キー付きは 1)、``apothem``、``circumradius``、``yaw``。
+返り ``vertices``(V, 2)、``n``(形の名目の n 回対称: キー付きは 1)、``apothem``、``circumradius``、``yaw``、``cut``。
 **Raises** ValueError: n < 3、apothem ≤ 0、cut < 0 か外接円と内接円の差以上(辺が消える)。
 
 ## 参考(サンプルデータ・文献)

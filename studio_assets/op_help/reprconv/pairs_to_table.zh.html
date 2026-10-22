@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>对 <code style="color:#22d3bf">(N,2)</code> → 汇总 <code style="color:#22d3bf">table</code>。<b>单向</b>。</p>
 <p><code style="color:#22d3bf">x_uniform</code> 是“列 0 是否等间隔”的判定,判定为 False 的对</p>
-<p>若通过 <code style="color:#22d3bf">pairs_to_signal</code>,x 会被悄悄丢掉(参见上面的 docstring)。判定使用最大差分与最小差分之比,阈值为 1e-9(相对)。</p>
+<p>若通过 <code style="color:#22d3bf">pairs_to_signal</code>,x 会被悄悄丢掉(参见上面的 docstring)。判定使用差分最大值与最小值之差，阈值为全幅的 1e-9(相对)。</p>
 <p>Args:</p>
 <p>pairs: (N, 2)。</p>
 <p>Returns:</p>

@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>交叉双因子设计(零件 x 测量者 x 重复)的方差分析表(<code style="color:#22d3bf">table</code>)。</p>
 <p>*table* 是含有列 *part* / *operator* / *value* 的表。设计必须<b>均衡</b> (每个格子的重复次数相同)——不均衡则拒绝。</p>
-<p>返回 source / ss / df / ms / f / p 共 6 列。<code style="color:#22d3bf">f</code> 和 <code style="color:#22d3bf">p</code> 是以交互作用均方检验测量者与交互作用、以误差均方检验交互作用所得的值(标准的惯例)。</p>
+<p>返回 source / ss / df / ms / f / p 共 6 列，另含 <code style="color:#22d3bf">n_parts</code> / <code style="color:#22d3bf">n_operators</code> / <code style="color:#22d3bf">n_replicates</code>。 返回 source / ss / df / ms / f / p 共 6 列。<code style="color:#22d3bf">f</code> 和 <code style="color:#22d3bf">p</code> 是以交互作用均方检验测量者与交互作用、以误差均方检验交互作用所得的值(标准的惯例)。</p>
 <p>★可作为门禁的严格恒等式: <code style="color:#22d3bf">ss_total == ss_part + ss_oper + ss_inter + ss_err</code>。这是代数分解,因此无论方差分量怎样求得都必然成立 —— 任一侧出错就不再一致。自由度也以 <code style="color:#22d3bf">df_total == 和</code> 闭合。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

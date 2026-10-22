@@ -869,7 +869,7 @@ def pairs_to_table(pairs):
 
     ``x_uniform`` は「列 0 が等間隔か」の判定で、これが False の対を
     :func:`pairs_to_signal` に通すと x が黙って落ちる(上の docstring 参照)。
-    判定は最大差分と最小差分の比で行い、閾値は 1e-9(相対)。
+    判定は差分の最大値と最小値の開きで行い、閾値は全幅に対して 1e-9(相対)。
 
     Args:
         pairs: (N, 2)。

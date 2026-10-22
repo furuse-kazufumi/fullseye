@@ -20,7 +20,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 衝突の一覧: 同じ時刻に同じマス(vertex)・すれ違い(edge)・追従(follow)。
 
 返りは ``[(種類, i, j, 時刻, マス)]``。着いた車両はその場に居続けるものとして数える。
-follow は「i が時刻 t にマス v へ**入った**とき、j が t-1 に v に居た」(i ≠ j)。
+follow は「i が時刻 t にマス v へ**入った**とき、j が t-1 に v に居て t には v から出た」(i ≠ j)。
 
 ## 参考(サンプルデータ・文献)
 

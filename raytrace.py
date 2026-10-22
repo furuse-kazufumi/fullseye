@@ -729,7 +729,7 @@ def paraxial_trace(system):
     (transverse; 0 for an object at infinity), ``ep_position`` / ``ep_radius``
     (entrance pupil from the first vertex), ``xp_position`` / ``xp_radius``
     (exit pupil from the last vertex), ``fno`` (image-space f-number,
-    ``efl / (2·ep_radius)``), ``na_image``, ``lagrange`` (the Lagrange invariant
+    ``|efl| / (2·ep_radius)``), ``na_image``, ``lagrange`` (the Lagrange invariant
     for the system's default field), ``marginal`` / ``chief`` (the two paraxial
     rays: heights and post-surface slopes at every surface).
 
