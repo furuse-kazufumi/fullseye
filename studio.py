@@ -38,6 +38,7 @@ import terrain
 from studio_search import search_grouped, search_zero_results_help
 import studio_errors
 import studio_roundtrip
+import studio_batch
 
 
 # --------------------------------------------------------------------------- #
@@ -6505,6 +6506,8 @@ def build_window(model=None):
     act_runall = _act("Run all", "Ctrl+Return", "Show the final pipeline result")
     act_roundtrip = _act("Verify exported Python…", "Ctrl+Shift+R",
                          "Run exported Python in an isolated interpreter and compare every stage with the GUI")
+    act_batch = _act("この処理をフォルダに適用…", None,
+                     "現在の処理と入力設定を固定して、フォルダ内の画像へ順番に適用します")
     act_holdout = _act("Validate on holdout…", "Ctrl+H",
                        "Run the current pipeline over a folder of validation images and report results")
     act_palette = _act("Command palette…", "Ctrl+P", "Run any operator or action by name")
@@ -6595,6 +6598,7 @@ def build_window(model=None):
     m = _menu(mb, "&Run", "run")
     m.addAction(act_reset); m.addAction(act_step)
     m.addSeparator(); m.addAction(act_runall)
+    m.addAction(act_batch)
     m.addAction(act_roundtrip)
     m.addSeparator(); m.addAction(act_holdout)
     menu_windows = _menu(mb, "&Window", "window")   # panels / graphics / layout submenus (filled after docks)
@@ -6672,7 +6676,7 @@ def build_window(model=None):
     # Primary actions get a themed icon so the icon-only toolbar reads at a glance;
     # tooltips (already set on each action) name them.
     for _a, _ic in ((act_demo, "demo"), (act_open_img, "open"), (act_runall, "playplay"),
-                    (act_export, "export"), (act_pin, "eye")):
+                    (act_batch, "apply"), (act_export, "export"), (act_pin, "eye")):
         _a.setIcon(_icon(QtGui, QtCore, _ic, TEXT))
         tb.addAction(_a)
 
@@ -7993,7 +7997,102 @@ def build_window(model=None):
     win.quiesce = quiesce_run_workers
     run_ctl.quiesce = quiesce_run_workers
     win._run_controller = run_ctl
+    win._run_snapshots = run_snapshots
     win._start_run_async = start_run_async
+
+    def _run_batch_value(snapshot, path):
+        value = imgio.load(str(path))
+        for i, (name, a, b, bypass) in enumerate(snapshot["stages"]):
+            value = value if bypass else api.run_pipeline(value, [(name, a, b)], coerce=(i == 0))
+        numeric = {}
+        array = np.asarray(value)
+        if array.size == 1 and array.dtype.kind in "biufc":
+            numeric["value"] = array.reshape(()).item()
+        return {"final_image": value, "numeric": numeric}
+
+    class _BatchWorker(QtCore.QObject):
+        progress = QtCore.Signal(int, int, int, str, str)
+        complete = QtCore.Signal(int, object)
+
+        def __init__(self, generation, snapshot, plan, stop_event):
+            super().__init__()
+            self.generation = generation
+            self.snapshot = snapshot
+            self.plan = plan
+            self.stop_event = stop_event
+
+        @QtCore.Slot()
+        def run(self):
+            result = studio_batch.run_batch(
+                self.plan, lambda path: _run_batch_value(self.snapshot, path),
+                should_stop=self.stop_event.is_set,
+                on_progress=lambda i, n, path, status: self.progress.emit(
+                    self.generation, i, n, os.path.basename(str(path)), status))
+            self.complete.emit(self.generation, result)
+
+    class _BatchBridge(QtCore.QObject):
+        @QtCore.Slot(int, int, int, str, str)
+        def progress(self, gen, i, n, name, status_name):
+            if gen != run_ctl.latest_generation:
+                return
+            text = "バッチ %d/%d: %s" % (i, n, name)
+            run_status.setText(text); run_ctl.status_history.append(text)
+            run_progress.setRange(0, n); run_progress.setValue(i)
+
+        @QtCore.Slot(int, object)
+        def complete(self, gen, result):
+            pair = run_ctl.threads.get(gen)
+            if pair is not None:
+                pair[0].quit()
+            if gen != run_ctl.latest_generation:
+                run_ctl.history.append((gen, "batch-dropped", result.done))
+                return
+            run_progress.hide(); run_stop.hide(); run_stop.setEnabled(False)
+            win._last_batch_result = result
+            skipped = sum(status_name == "skipped" for status_name in result.statuses.values())
+            successful = result.done
+            text = "%d 枚: 成功 %d / 失敗 %d / スキップ %d、summary.csv" % (
+                len(win._batch_plan.files), successful, len(result.failed), skipped)
+            if result.stopped:
+                text = "停止済み (%d/%d) · " % (len(result.statuses),
+                                               len(win._batch_plan.files)) + text
+            run_status.setText(text); run_ctl.status_history.append(text)
+            if getattr(win, "_batch_summary_label", None) is not None:
+                win._batch_summary_label.setText(text)
+                win._batch_failures_button.setEnabled(bool(result.failed))
+
+    batch_bridge = _BatchBridge(win)
+
+    def start_batch_async(plan):
+        """Submit one fixed pipeline generation for all files in *plan*."""
+        import threading
+        run_ctl.generation += 1
+        gen = run_ctl.generation
+        run_ctl.latest_generation = gen
+        snapshot = _run_snapshot(model, gen)
+        run_snapshots[gen] = snapshot
+        run_completed[gen] = 0
+        stop_event = threading.Event(); run_stop_events[gen] = stop_event
+        thread = QtCore.QThread()
+        worker = _BatchWorker(gen, snapshot, plan, stop_event); worker.moveToThread(thread)
+        worker.progress.connect(batch_bridge.progress, QtCore.Qt.QueuedConnection)
+        worker.complete.connect(batch_bridge.complete, QtCore.Qt.QueuedConnection)
+        thread.started.connect(worker.run)
+        thread.finished.connect(worker.deleteLater)
+        finish_bridge = _ThreadFinishBridge(gen, thread, worker)
+        run_ctl.finish_bridges[gen] = finish_bridge
+        thread.finished.connect(finish_bridge.finished, QtCore.Qt.QueuedConnection)
+        thread.finished.connect(thread.deleteLater)
+        run_ctl.threads[gen] = (thread, worker)
+        win._batch_plan = plan
+        win._batch_generation = gen
+        run_status.setText("バッチ 0/%d" % len(plan.files))
+        run_progress.setRange(0, len(plan.files)); run_progress.setValue(0); run_progress.show()
+        run_stop.setText(tr("Request stop")); run_stop.setEnabled(True); run_stop.show()
+        thread.start()
+        return gen
+
+    win._start_batch_async = start_batch_async
 
     def on_rows_moved(*_):
         """A drag-reorder inside the stage list -> permute model.stages to match."""
@@ -9219,6 +9318,133 @@ def build_window(model=None):
         b_run.clicked.connect(lambda _=False: compare_now())
         dlg.setModal(False); dlg.resize(580, 230); dlg.show()
         win._roundtrip_dlg = dlg
+
+    def show_batch_dialog():
+        dlg = QtWidgets.QDialog(win); dlg.setWindowTitle("この処理をフォルダに適用")
+        lay = QtWidgets.QVBoxLayout(dlg)
+        form = QtWidgets.QFormLayout()
+        folder_row = QtWidgets.QWidget(); folder_lay = QtWidgets.QHBoxLayout(folder_row)
+        folder_lay.setContentsMargins(0, 0, 0, 0)
+        folder = QtWidgets.QLineEdit(); choose_folder = QtWidgets.QPushButton("選択…")
+        folder_lay.addWidget(folder, 1); folder_lay.addWidget(choose_folder)
+        patterns = QtWidgets.QLineEdit("*.png;*.jpg;*.jpeg;*.tif;*.tiff;*.bmp")
+        recursive = QtWidgets.QCheckBox("サブフォルダも含める")
+        count = QtWidgets.QLabel("対象 0 画像")
+        form.addRow("入力フォルダ", folder_row); form.addRow("パターン", patterns)
+        form.addRow("", recursive); form.addRow("", count)
+        output_row = QtWidgets.QWidget(); output_lay = QtWidgets.QHBoxLayout(output_row)
+        output_lay.setContentsMargins(0, 0, 0, 0)
+        output = QtWidgets.QLineEdit(); choose_output = QtWidgets.QPushButton("選択…")
+        output_lay.addWidget(output, 1); output_lay.addWidget(choose_output)
+        policy = QtWidgets.QComboBox()
+        policy.addItem("上書きしない", "skip"); policy.addItem("上書き", "overwrite")
+        policy.addItem("連番を付ける", "suffix")
+        save_image = QtWidgets.QCheckBox("最終画像"); save_image.setChecked(True)
+        save_csv = QtWidgets.QCheckBox("数値 CSV"); save_csv.setChecked(True)
+        saves = QtWidgets.QWidget(); saves_lay = QtWidgets.QHBoxLayout(saves)
+        saves_lay.setContentsMargins(0, 0, 0, 0); saves_lay.addWidget(save_image); saves_lay.addWidget(save_csv)
+        form.addRow("出力フォルダ", output_row); form.addRow("同名ファイル", policy)
+        form.addRow("保存するもの", saves); lay.addLayout(form)
+
+        preview = QtWidgets.QGroupBox("先に確認する画像")
+        preview_lay = QtWidgets.QHBoxLayout(preview)
+        preview_buttons = {}
+        for key, label in (("first", "先頭"), ("middle", "中央"), ("last", "末尾"),
+                           ("select", "選択…")):
+            button = QtWidgets.QPushButton(label); preview_lay.addWidget(button)
+            preview_buttons[key] = button
+        lay.addWidget(preview)
+        summary = QtWidgets.QLabel(""); summary.setWordWrap(True); lay.addWidget(summary)
+        failures = QtWidgets.QPushButton("失敗一覧を開く"); failures.setEnabled(False)
+        execute = QtWidgets.QPushButton("実行"); execute.setProperty("accent", True)
+        buttons = QtWidgets.QHBoxLayout(); buttons.addWidget(failures); buttons.addStretch(1)
+        buttons.addWidget(execute); lay.addLayout(buttons)
+        fields = {"folder": folder, "patterns": patterns, "recursive": recursive,
+                  "count": count, "output": output, "policy": policy,
+                  "save_image": save_image, "save_csv": save_csv,
+                  "execute": execute, "preview": preview_buttons}
+        win._batch_dialog_fields = fields
+        win._batch_summary_label = summary
+        win._batch_failures_button = failures
+        current_files = []
+
+        def pattern_values():
+            return tuple(item for item in re.split(r"[;,\s]+", patterns.text().strip()) if item)
+
+        def refresh_files(set_default=False):
+            nonlocal current_files
+            try:
+                current_files = studio_batch.list_inputs(
+                    folder.text(), pattern_values(), recursive.isChecked())
+            except ValueError as exc:
+                current_files = []; count.setText("対象 0 画像 · %s" % exc)
+                execute.setEnabled(False)
+            else:
+                count.setText("対象 %d 画像" % len(current_files)); execute.setEnabled(True)
+                if set_default or not output.text().strip():
+                    output.setText(str(os.path.join(folder.text(), "results")))
+            return current_files
+
+        def build_plan():
+            files = refresh_files()
+            return studio_batch.BatchPlan(
+                files, output.text(), policy.currentData(),
+                {"final_image": save_image.isChecked(), "numeric_csv": save_csv.isChecked()},
+                folder.text())
+
+        def select_folder():
+            selected = QtWidgets.QFileDialog.getExistingDirectory(dlg, "入力フォルダ")
+            if selected:
+                folder.setText(selected); refresh_files(True)
+
+        def select_output():
+            selected = QtWidgets.QFileDialog.getExistingDirectory(dlg, "出力フォルダ")
+            if selected:
+                output.setText(selected)
+
+        def run_preview(which):
+            try:
+                files = refresh_files()
+                selected = studio_batch.preview_pick(files, which)
+                snapshot = _run_snapshot(model, run_ctl.generation + 1)
+                value = _run_batch_value(snapshot, selected)["final_image"]
+            except Exception as exc:
+                report_error("バッチのプレビュー", exc); return
+            state["worker_result"] = value
+            show_result(); summary.setText("確認: %s" % os.path.basename(str(selected)))
+
+        def select_preview():
+            selected, _ = QtWidgets.QFileDialog.getOpenFileName(dlg, "確認する画像", folder.text())
+            if selected:
+                run_preview(selected)
+
+        def execute_batch():
+            try:
+                plan = build_plan()
+            except Exception as exc:
+                report_error("バッチを開始できません", exc); return
+            summary.setText(plan.summary()); execute.setEnabled(False)
+            start_batch_async(plan)
+
+        def show_failures():
+            result = getattr(win, "_last_batch_result", None)
+            if result is None or not result.failed:
+                return
+            message = "\n".join("%s — %s" % (path, reason) for path, reason in result.failed)
+            QtWidgets.QMessageBox.warning(dlg, "失敗一覧", message)
+
+        choose_folder.clicked.connect(select_folder); choose_output.clicked.connect(select_output)
+        folder.editingFinished.connect(refresh_files); patterns.editingFinished.connect(refresh_files)
+        recursive.toggled.connect(refresh_files)
+        preview_buttons["first"].clicked.connect(lambda: run_preview("first"))
+        preview_buttons["middle"].clicked.connect(lambda: run_preview("middle"))
+        preview_buttons["last"].clicked.connect(lambda: run_preview("last"))
+        preview_buttons["select"].clicked.connect(select_preview)
+        execute.clicked.connect(execute_batch); failures.clicked.connect(show_failures)
+        win._batch_plan_from_dialog = build_plan
+        dlg.setModal(False); dlg.resize(620, 400); dlg.show(); win._batch_dlg = dlg
+
+    win._show_batch_dialog = show_batch_dialog
 
     def clear_pipe():
         if not confirm_discard("Clear pipeline"):
@@ -10862,6 +11088,7 @@ def build_window(model=None):
     act_viewer.triggered.connect(lambda _=False: _open_viewer_dialog())
     act_save_res.triggered.connect(save_result); act_export.triggered.connect(export)
     act_roundtrip.triggered.connect(verify_exported_python)
+    act_batch.triggered.connect(show_batch_dialog)
     act_save_view.triggered.connect(save_view)
     act_copy_res.triggered.connect(copy_result)
     act_quit.triggered.connect(win.close)
@@ -13455,7 +13682,7 @@ def build_window(model=None):
         "zoom_in": act_zin, "zoom_out": act_zout, "fit": act_fit,
         "actual_size": act_11, "surface_3d": act_3d, "reset": act_reset, "step": act_step,
         "run_all": act_runall, "holdout": act_holdout, "palette": act_palette, "shortcuts": act_shortcuts,
-        "verify_exported": act_roundtrip,
+        "verify_exported": act_roundtrip, "batch_apply": act_batch,
         "feature_inspection": act_featins, "viewer_3d": act_viewer3d,
         "op_reference": act_op_help, "samples": act_samples, "about": act_about,
         "dbg_run": act_dbg_run, "dbg_step": act_dbg_step, "dbg_reset": act_dbg_reset,
