@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 71c18c518f4c -->
+<!-- i18n-source-sha: 85644ff1ed7d -->
 # Vollständiger Leitfaden zu Fullseye Studio
 
 Aufwendige Verarbeitung blockiert das Fenster nicht. Unten werden die aktive Stufe und der Fortschritt angezeigt; eine Stoppanforderung wird an der nächsten Stufengrenze bestätigt. Ändern sich Einstellungen während eines Laufs, bleibt die Generation des angezeigten Ergebnisses sichtbar und man kann das ältere Ergebnis ansehen oder mit den aktuellen Einstellungen neu starten.
@@ -361,6 +361,12 @@ namentlich abgelehnt, nie repariert. Zuordnungen gelten je Operation und Kopfzei
 - **A anheften, mit B vergleichen (Werkzeugleiste "Pin as A" / Strg+Umschalt+A, Window ▸ Panels ▸ A / B)**: friert Stufenliste (mit Bypass-Marken), Eingabereferenz, Endergebnis und Anzeigeeinstellungen ein. Das Ergebnis ist eine schreibgeschützte Kopie, die kein späterer Lauf ändern kann. Höchstens zwei bleiben erhalten; ein dritter verwirft den ältesten (die Statusleiste sagt es). Das A/B-Panel zeigt A und das aktuelle Ergebnis B nebeneinander, als Wischen (Grenze ziehen), als Blinken (standardmäßig 500 ms; stoppt, wenn das Panel geschlossen wird) oder als Differenz (Betrag / mit Vorzeichen auf symmetrischer Skala, 0 = weiß / Verhältnis als log2). A und B teilen einen aus A ∪ B gewählten Anzeigebereich. Die Liste "What changed" darunter nennt der Reihe nach, was seit A hinzugefügt, entfernt, geändert (alter → neuer Wert mit Einheit), überbrückt wurde oder welche Eingabe sich geändert hat. "Restore A" stellt die Pipeline von A wieder her (ein Undo-Schritt), "Adopt B" verwirft A, "Keep both" heftet B als zweiten Stand an. Die Projektdatei speichert unter `pinned` nur Stufen, Eingabe, Anzeige und Notiz (nie die Arrays) und berechnet die Arrays beim Öffnen neu; gelingt das nicht, bleibt der Stand erhalten und Problems meldet "cannot recompute A". Ältere Dateien ohne `pinned` öffnen sich wie bisher.
 - **Synchrones Zoomen, Verschieben und Cursor**: Die Bilder im Panel Stufe Ein → Aus und im A/B-Panel zoomen und verschieben sich gemeinsam, und der Cursor über einem Bild zeigt in den anderen ein Fadenkreuz am selben Pixel. Mit "sync the main view too" im A/B-Panel kommt das Hauptbild zur Gruppe.
 
+
+## Dieselbe Verarbeitung auf einen Ordner anwenden
+
+Unter Run ▸ **Diese Verarbeitung auf einen Ordner anwenden…** wählen Sie den Eingabeordner und das Dateimuster, prüfen das Ergebnis am ersten, mittleren, letzten oder einem beliebigen Bild und führen dann alle Dateien aus. Eingaben und Verarbeitungskette werden beim Start einmal eingefroren; ein Regler, der während des Laufs verstellt wird, ändert die Bedingungen des laufenden Stapels nicht.
+
+Bei gleichnamigen Dateien wählen Sie zwischen „nicht überschreiben“, „überschreiben“ und „Laufnummer anhängen“; sind Unterordner einbezogen, entsteht auf der Ausgabeseite dieselbe Hierarchie. `summary.csv` enthält Dateiname, Status, Verarbeitungszeit, numerische Ausgaben und den Fehlergrund. Schlägt das Lesen oder Verarbeiten eines Bildes fehl, läuft der Rest weiter; danach lassen sich die fehlgeschlagenen Dateien mit Grund in einer Liste prüfen. Eine Stopp-Anforderung wird an der Grenze nach dem aktuellen Bild angenommen, und „gestoppt“ erscheint erst, wenn der Lauf wirklich steht.
 
 ## Zusammenhang zwischen Export und Save/Open
 
