@@ -18,6 +18,16 @@
 | `baseline_failed` | 1 | 1 |
 | `not_applicable` | 67 | 67 |
 
+## 包み紙(fullseye.apply)経由
+
+上の表は生の実装(登録表の関数を直接呼んだ結果)で、そちらは変えていない。公開の入口 `fullseye.apply` は 非有限な浮動小数の入力を op を呼ぶ前に `FsValueError` で拒否する(2026-10-23 の契約変更、逃げ道は `allow_nonfinite=True`)。適用可能な 875 op を同じ注入入力で入口経由に通した結果:
+
+| behaviour | NaN | +inf |
+|---|---:|---:|
+| `raised_FsValueError` | 875 | 875 |
+
+入口が拒否しなかった op(silent_finite の包み紙版): なし。
+
 ## silent_finite
 
 ### `backends`

@@ -40,6 +40,7 @@ if _HERE not in sys.path:
 import ops as _ops  # noqa: E402  (the engine registry; imports its backends on load)
 import opnames as _opnames  # noqa: E402  (canonical op-name aliases, phase 1 of the naming cleanup)
 import backend_safe as _bs  # noqa: E402  (fallback ledger / strict mode — the one mediator)
+from fslib import FsValueError as _FsValueError  # noqa: E402  (FS_E_INVALID_ARG: input outside the declared domain)
 from backend_safe import FullseyeFallbackWarning  # noqa: E402,F401  (re-exported)
 import stereo  # noqa: E402  (numpy+scipy depth building blocks)
 import terrain  # noqa: E402  (elevation map / traversability)
@@ -2548,7 +2549,7 @@ def _explain_gpu_failure(device, e):
 
 def apply(image, name: str, a: float = 0.5, b: float = 0.5, coerce: bool = True,
           device: str = "cpu", on_error: str | None = None, template=None,
-          fast: bool | None = None):
+          fast: bool | None = None, allow_nonfinite: bool = False):
     """Apply one operator to *image* and return its raw output.
 
     image  -> image/region  : returns a float64 ndarray
@@ -2599,14 +2600,25 @@ def apply(image, name: str, a: float = 0.5, b: float = 0.5, coerce: bool = True,
     per-tile header algebra + clip, O(#tiles), returning a union — and any other op
     by materialising once. Integer/bool unions always materialise so the ``/255``
     contract conversion and its ledger record happen on the normal path.
+
+    **A non-finite input is refused, whatever ``on_error`` is** (2026-10-23): a float
+    array (image / volume / points / signal, every input of an n-ary list, the numeric
+    leaves of a dict such as an XLD contour) holding a single NaN or ±inf raises
+    ``FsValueError("<op>: input contains NaN or infinity")`` before the op runs. The
+    audit ``docs/NAN_INPUT_AUDIT.md`` measured 431 ops that turned a NaN input into a
+    *finite, plausible* answer with no error — the third state between accept and
+    reject — so the entry refuses it instead of guessing. Integer / bool arrays cannot
+    hold NaN and are not scanned; a :class:`PrecisionUnion` is not scanned either.
+    ``allow_nonfinite=True`` hands the array to the op unchanged (the single escape
+    hatch; the answer is then whatever the implementation does with NaN).
     """
     policy = _policy(on_error)
     if template is None:
-        return _apply_impl(image, name, a, b, coerce, device, policy, fast)
+        return _apply_impl(image, name, a, b, coerce, device, policy, fast, allow_nonfinite)
     prev = _ops._MATCH_CTX.get("template")
     _ops.set_match_template(template)
     try:
-        return _apply_impl(image, name, a, b, coerce, device, policy, fast)
+        return _apply_impl(image, name, a, b, coerce, device, policy, fast, allow_nonfinite)
     finally:
         _ops.set_match_template(prev)
 
@@ -2673,9 +2685,65 @@ def _check_call_args(image, name, a, b, policy):
         out.append(x)
     return out[0], out[1]
 
-def _apply_impl(image, name, a, b, coerce, device, policy, fast=None):
+def _nonfinite_leaf(x, depth=0):
+    """*x* の最初の非有限な浮動小数の葉を短い文で返す(無ければ None)。
+
+    ndarray は float / complex の種だけ見る(整数・bool は NaN を持てない)。float は
+    ``min`` / ``max`` が NaN を伝播し ±inf をそのまま出すので、bool 配列を作らずに済む。
+    list / tuple / dict は 3 段まで降りる(n 項 op の入力リスト、XLD の ``cs``、表の列)。
+    """
+    if isinstance(x, np.ndarray):
+        if x.size == 0 or x.dtype.kind not in "fc":
+            return None
+        if x.dtype.kind == "f":
+            if np.isfinite(x.min()) and np.isfinite(x.max()):
+                return None
+        else:
+            if np.isfinite(x).all():
+                return None
+        n = int(np.count_nonzero(~np.isfinite(x)))
+        return "%d of %d values non-finite (shape %s)" % (n, x.size, x.shape)
+    if depth >= 3:
+        return None
+    if isinstance(x, dict):
+        for k, v in x.items():
+            hit = _nonfinite_leaf(v, depth + 1)
+            if hit is not None:
+                return "key %r: %s" % (k, hit)
+        return None
+    if isinstance(x, (list, tuple)):
+        if x and all(isinstance(v, (int, float, np.integer, np.floating)) for v in x):
+            return _nonfinite_leaf(np.asarray(x, dtype=np.float64), depth)
+        for i, v in enumerate(x):
+            hit = _nonfinite_leaf(v, depth + 1)
+            if hit is not None:
+                return "input %d: %s" % (i, hit)
+    return None
+
+
+def _refuse_nonfinite(image, name):
+    """NaN / ±inf を含む入力は ``on_error`` に依らず入口で拒否する(FS_E_INVALID_ARG)。
+
+    ★2026-10-23 の監査(``tools/audit_nan_inputs.py`` → ``docs/NAN_INPUT_AUDIT.md``): 登録 942 op
+    のうち 431 op が、中央の 1 画素を NaN / +inf にした入力に対して**例外も NaN も出さず有限の
+    もっともらしい答え**を返していた(NaN 282・+inf 392)。受け入れでも拒否でもない第 3 の
+    状態なので、生の実装は触らず入口で止める。知った上で渡すなら ``allow_nonfinite=True``。
+    """
+    hit = _nonfinite_leaf(image)
+    if hit is None:
+        return
+    raise _FsValueError(
+        "%s: input contains NaN or infinity (%s). Clean or mask the values first (np.nan_to_num, "
+        "np.isfinite), or pass allow_nonfinite=True to hand the array to the op unchanged -- its "
+        "answer is then whatever the implementation does with NaN (docs/NAN_INPUT_AUDIT.md)"
+        % (name, hit))
+
+
+def _apply_impl(image, name, a, b, coerce, device, policy, fast=None, allow_nonfinite=False):
     a, b = _check_call_args(image, name, a, b, policy)
     nop = _nary_by_name().get(name) if find_op(name) is None else None
+    if not allow_nonfinite and (nop is not None or find_op(name) is not None):
+        _refuse_nonfinite(image, name)          # a known op only: an unknown name keeps its own error below
     if nop is not None:                                  # n-ary tier: needs a LIST of inputs
         if isinstance(image, np.ndarray) or not isinstance(image, (list, tuple)):
             raise TypeError(
@@ -2891,6 +2959,8 @@ def _prepare_pipeline(image, stages, a, b, policy):
     for (name, sa, sb), op in zip(norm, ops_):
         sa, sb = _check_call_args(image, op.name, sa, sb, policy)
         checked.append((name, sa, sb))
+    if ops_:
+        _refuse_nonfinite(image, ops_[0].name)       # the entry value, once (stage outputs are sanitised by the guard)
     return image, checked, ops_
 
 
