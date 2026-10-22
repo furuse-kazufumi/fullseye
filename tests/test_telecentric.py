@@ -72,8 +72,35 @@ def test_stop_shift_moves_the_entrance_pupil_by_newtons_equation(lenses):
         assert abs((obj + p["ep_position"]) / L - 1) < 1e-9
         th = T.chief_ray_angle(s, 0.5)["object_angle_deg"] - T.chief_ray_angle(base, 0.5)["object_angle_deg"]
         assert abs(th / -math.degrees(math.atan(0.5 / L)) - 1) < 2e-3
-    e = T.telecentricity_error(T.telecentric_lens("object", stop_shift_mm=-2.0), 2.0, 5.0)
-    assert abs(e["lateral_shift_um"] / e["closed_form_shift_um"] - 1) < 0.02
+    # 2026-10-15: 以前は lateral_shift_um を同じ関数が返す closed_form_shift_um(実光線の主光線角から出した
+    # Δz·tanθ)と比べていた —— 両辺が同じ実光線の主光線から出るので、主光線の狙いが狂っても一緒に動く。
+    # 真値は外から: Newton の式の入射瞳までの距離 L(近軸)で、段差 Δz の上の点の見かけのずれは h·Δz/(L − Δz)。
+    # 実光線は瞳の球面収差 ∝ h² だけ離れるので、h を半分にするとずれの比は 1/4 になる(近軸の極限へ収束)。
+    for d in (-2.0, 1.5, 4.0):
+        s = T.telecentric_lens("object", stop_shift_mm=d)
+        L = ffl - f * f / d + obj
+        for h, dz in ((0.5, 1.0), (0.5, 5.0), (-0.5, 3.0)):
+            e = T.telecentricity_error(s, h, dz)
+            truth = 1000.0 * abs(h) * dz / (L - dz)
+            assert abs(e["lateral_shift_um"] / truth - 1) < 5e-3, (d, h, dz, e["lateral_shift_um"], truth)
+    s = T.telecentric_lens("object", stop_shift_mm=-2.0)
+    L = ffl - f * f / -2.0 + obj
+    dev = [T.telecentricity_error(s, h, 2.0)["lateral_shift_um"] / (1000.0 * h * 2.0 / (L - 2.0)) - 1 for h in (1.0, 0.5, 0.25)]
+    assert 3.8 < dev[0] / dev[1] < 4.2 and 3.8 < dev[1] / dev[2] < 4.2, dev
+
+
+#: 2026-10-15 に第二実装 optiland 0.6.3 で同じ処方を組んで得た主光線の像の高さ [mm](物高 8 mm、狙い = iterative)。
+#: examples/poc_telecentric_metrology.py の OPTILAND_RECORDED と同じ値(手元に optiland が無くても CI で効かせる)。
+OPTILAND_RECORDED = {"entocentric": -4.000118, "object": -4.131367}
+
+
+@pytest.mark.parametrize("kind", sorted(OPTILAND_RECORDED))
+def test_chief_ray_image_height_matches_the_recorded_second_implementation(kind):
+    """記録値は小数 6 桁(丸めの幅 5e-7 mm)。門は 1e-6 mm(記録の桁の 2 目盛り)。
+
+    狙いを近軸にすると物体側テレセンで 0.011 mm 違う(PoC の実測)ので、主光線の狙いの誤りはこの門で赤になる。"""
+    y = T.chief_ray_angle(T.telecentric_lens(kind), 8.0)["image_y_mm"]
+    assert abs(y - OPTILAND_RECORDED[kind]) < 1e-6, (kind, y)
 
 
 def test_defocus_rms_slope_is_m_na_over_root_two(lenses):
