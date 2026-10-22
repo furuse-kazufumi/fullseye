@@ -482,7 +482,7 @@ def signal_jp_mesh(*, lens: float = LENS_DIAMETER, n: int = 3, hood: bool = True
     n = 2 なら 黄・赤、n = 1 なら 黄(一灯点滅式)。各レンズの上に庇(薄い箱、長さ 0.25 m、``hood``)。
     レンズ径は 300 mm(2017 年度から標準 250 mm、どちらも現役)。
 
-    返り値 ``{"V", "F", "color", "label": 3, "lamp_faces": {"green": (f0, f1), ...}, "width", "height", "depth", "lens"}``。
+    返り値 ``{"V", "F", "color", "label": 3, "lamp_faces": {"green": (f0, f1), ...}, "width", "height", "depth", "lens", "state"}``。
     ``lamp_faces`` はこのメッシュ内の面の索引の範囲(世界に足すときは world_add の返す範囲へ平行移動する —
     :func:`driveworld.add_signal` と同じ仕組み)。``state`` の灯だけ driveworld._LAMP の色、他は "off" の色。"""
     lens = float(lens)

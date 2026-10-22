@@ -25,7 +25,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 ``straight``: 101 も直線(3 本で 120 m)。``blocked``: straight の 101 の中央に静止障害物(衝突の門用)。
 車線幅 3.5 m。中心線の長さ = 40 + 6π(≒ 18.85、円弧は 16 分割の折線) + 40(tjunction)/ 120(straight)。
 
-**Raises** ``ValueError``: kind が :data:`SYNTHETIC_KINDS` 以外、dt / speed_limit / v0 が正でない。
+**Raises** ``ValueError``: kind が :data:`SYNTHETIC_KINDS` 以外、dt / speed_limit が正でない、v0 が負。
 
 ## 参考(サンプルデータ・文献)
 

@@ -732,10 +732,10 @@ def dem_geodetic_to_ecef(lat_deg, lon_deg, height_m=0.0):
     最大 21 km ずれる(極半径が赤道半径より短いぶん)。
 
     Args:
-        lat_deg / lon_deg: 緯度・経度 [度]。配列可(同じ形)。
+        lat_deg / lon_deg: 緯度・経度 [度]。互いに broadcast 可能な形の配列可。
         height_m: 楕円体高 [m]。スカラでも配列でも可。
     Returns:
-        ``(..., 3)`` の ECEF 座標 [m]。
+        ``(N, 3)`` の ECEF 座標 [m]。入力の broadcast 結果を平坦化する。
     """
     lat = np.asarray(lat_deg, dtype=np.float64)
     lon = np.asarray(lon_deg, dtype=np.float64)

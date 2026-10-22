@@ -2852,7 +2852,14 @@ MATERIAL_RECORDS = [
             },
         ],
         'properties': {
-
+            'density_kg_m3': 2203.0,
+            'sound_speed_longitudinal_m_s': 5914.614951608688,
+            'acoustic_attenuation_coefficient_np_per_m_hz_power': 0.0,
+            'acoustic_attenuation_frequency_exponent': 2.0,
+            'acoustic_impedance_mrayl': 13.02989673839394,
+            'acoustic_verified': True,
+            'acoustic_source': "fused silica: rho = 2.203 g/cm3, E = 71.7 GPa, nu = 0.17 (Wikipedia 'Fused quartz'); c = sqrt(E(1-nu)/(rho(1+nu)(1-2nu))) computed here. Attenuation set to 0 (thin layers)",
+            'acoustic_uncertainty': 'bulk fused silica; deposited bonding oxides (PECVD, thermal) differ by an unverified amount - treat as representative'
         }
     },
     {
@@ -3206,7 +3213,14 @@ MATERIAL_RECORDS = [
             },
         ],
         'properties': {
-
+            'density_kg_m3': 2329.0,
+            'sound_speed_longitudinal_m_s': 8430.0,
+            'acoustic_attenuation_coefficient_np_per_m_hz_power': 0.0,
+            'acoustic_attenuation_frequency_exponent': 2.0,
+            'acoustic_impedance_mrayl': 19.63347,
+            'acoustic_verified': True,
+            'acoustic_source': "[100] longitudinal V_L = sqrt(C11/rho) = 8.43e5 cm/s with C11 = 16.60e11 dyn/cm2 (McSkimin 1953) and rho = 2.329 g/cm3, Ioffe Institute NSM database 'Si - mechanical properties'. Attenuation NOT verified: set to 0 (assumption)",
+            'acoustic_uncertainty': 'c, rho < 1 % for [100]; [110]/[111] are 9.13e5 / 9.36e5 cm/s (anisotropy); attenuation unverified'
         }
     },
     {
@@ -6137,7 +6151,14 @@ MATERIAL_RECORDS = [
             },
         ],
         'properties': {
-
+            'density_kg_m3': 8935.0,
+            'sound_speed_longitudinal_m_s': 4778.2383025422,
+            'acoustic_attenuation_coefficient_np_per_m_hz_power': 0.0,
+            'acoustic_attenuation_frequency_exponent': 1.0,
+            'acoustic_impedance_mrayl': 42.69355923321455,
+            'acoustic_verified': True,
+            'acoustic_source': "rho = 8.935 g/cm3 at 20 C, bulk modulus 140 GPa, shear modulus 48 GPa (Wikipedia 'Copper' infobox); c = sqrt((K + 4G/3)/rho) computed here. Attenuation set to 0 (micrometre layers)",
+            'acoustic_uncertainty': 'polycrystalline average; the same infobox gives E = 110-128 GPa, nu = 0.34, which spans c = 4.4-4.8 km/s - about +-5 %'
         }
     },
     {
@@ -10523,7 +10544,14 @@ MATERIAL_RECORDS = [
             },
         ],
         'properties': {
-
+            'density_kg_m3': 998.0,
+            'sound_speed_longitudinal_m_s': 1481.0,
+            'acoustic_attenuation_coefficient_np_per_m_hz_power': 2.4983048258985403e-14,
+            'acoustic_attenuation_frequency_exponent': 2.0,
+            'acoustic_impedance_mrayl': 1.478038,
+            'acoustic_verified': True,
+            'acoustic_source': "c = 1481 m/s at 20 C (Wikipedia 'Speed of sound', fresh water); rho = 998 kg/m3 lies between the tabulated 999.84 (0 C) and 997.05 (25 C) of Wikipedia 'Properties of water' (interpolated, +-0.2 %); attenuation 2.17e-3 dB/(cm MHz^2) (Szabo 2004 power law, as quoted beside Pinkerton 1949 in the open-source k-Wave attenuationWater help) = 2.498e-14 Np/(m Hz^2)",
+            'acoustic_uncertainty': 'c and rho ~0.2 % (temperature: c moves ~3 m/s per K near 20 C); alpha ~10 %'
         }
     },
     {
@@ -10601,6 +10629,54 @@ MATERIAL_RECORDS = [
         ],
         'properties': {
 
+        }
+    },
+    {
+        'name': 'AIR',
+        'class': 'gas',
+        'aliases': (),
+        'datasets': [],
+        'properties': {
+            'density_kg_m3': 1.2041,
+            'sound_speed_longitudinal_m_s': 343.0,
+            'acoustic_attenuation_coefficient_np_per_m_hz_power': 0.0,
+            'acoustic_attenuation_frequency_exponent': 2.0,
+            'acoustic_impedance_mrayl': 0.0004130063,
+            'acoustic_verified': True,
+            'acoustic_source': "c = 343 m/s and rho = 1.2041 kg/m3 at 20 C (Wikipedia 'Speed of sound'). Attenuation irrelevant for sub-micrometre gaps (set to 0)",
+            'acoustic_uncertainty': 'continuum value; a 0.1 um gap is comparable to the mean free path, but the echo is ~-1 for any gap above a few nm'
+        }
+    },
+    {
+        'name': 'POLYIMIDE',
+        'class': 'polymer',
+        'aliases': (),
+        'datasets': [],
+        'properties': {
+            'density_kg_m3': 1420.0,
+            'sound_speed_longitudinal_m_s': 2300.0,
+            'acoustic_attenuation_coefficient_np_per_m_hz_power': 1e-06,
+            'acoustic_attenuation_frequency_exponent': 1.0,
+            'acoustic_impedance_mrayl': 3.266,
+            'acoustic_verified': False,
+            'acoustic_source': 'UNVERIFIED representative placeholder (no freely readable primary source was read). Pass allow_unverified=True and replace with your own measured values',
+            'acoustic_uncertainty': 'unknown'
+        }
+    },
+    {
+        'name': 'EPOXY_UNDERFILL',
+        'class': 'composite',
+        'aliases': ('UNDERFILL',),
+        'datasets': [],
+        'properties': {
+            'density_kg_m3': 1800.0,
+            'sound_speed_longitudinal_m_s': 2800.0,
+            'acoustic_attenuation_coefficient_np_per_m_hz_power': 2e-06,
+            'acoustic_attenuation_frequency_exponent': 1.0,
+            'acoustic_impedance_mrayl': 5.04,
+            'acoustic_verified': False,
+            'acoustic_source': 'UNVERIFIED representative placeholder for a filled epoxy (no source read). Pass allow_unverified=True and replace with your own measured values',
+            'acoustic_uncertainty': 'unknown'
         }
     },
 ]

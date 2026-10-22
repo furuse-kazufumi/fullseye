@@ -1662,6 +1662,8 @@ def spc_mt_distance(data, mean=None, std=None, inv_corr=None, threshold=3.0):
         raise ValueError("%s: data must be 2-D (m observations x p features), got a "
                          "%d-D array of shape %r" % (op, arr.ndim, arr.shape))
     m, p = arr.shape
+    if m < 1:
+        raise ValueError(op + ": data must not be empty")
     if p < 1:
         raise ValueError("%s: need at least 1 feature, got p=%d" % (op, p))
     if not (float(threshold) > 0.0):

@@ -26,7 +26,7 @@
 <p>numpy.ndarray</p>
 <p>data と同じ長さの非負配列。<code style="color:#22d3bf">ρ(t) = ⟨d|h_t⟩/σ</code>、<code style="color:#22d3bf">⟨a|b⟩ = 4Re∫ÃB̃*/S df</code>、</p>
 <p><code style="color:#22d3bf">σ = optimal_snr</code>。位相は解析信号で最大化する(<code style="color:#22d3bf">|z|</code>)。テンプレートが data の外へ</p>
-<p>はみ出す時刻(先頭の <code style="color:#22d3bf">ref</code> 標本と末尾の <code style="color:#22d3bf">len(template) − ref</code> 標本)は循環の折り返し</p>
+<p>はみ出す時刻(先頭の <code style="color:#22d3bf">ref</code> 標本と末尾の <code style="color:#22d3bf">len(template) − ref − 1</code> 標本)は循環の折り返し</p>
 <p>なので <b>0</b> にしてある(山の探索に混じらない)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
 <p>白色ガウス雑音だけなら |ρ| の典型値は ~1.25(レイリー)、閾値 8 が重力波探索の慣例。</p>

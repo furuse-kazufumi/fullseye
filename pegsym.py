@@ -295,7 +295,7 @@ def polygon_two_point_depth(peg_vertices, hole_vertices, theta: float, tilt_dir:
     奇数の n(三角形)は面の向かいが頂点なので、どの向きでも内接円の式より深い。偶数の n は面の法線の向きで内接円の式に一致する
     (正方形で 1e-11 m)。内接円の側に 0.03 % まで出る組がある(傾き 6°、面から 15°)。
     返り ``l2``・``circle_in``・``circle_out``・``goli_small_angle``(δ は辺心距離の差の平均、n は頂点数)。
-    **Raises** ValueError: θ ≤ 0 か ≥ 30°、まっすぐでも入らない、depth_max まで二点接触しない。"""
+    **Raises** ValueError: θ ≤ 0 か ≥ 30°、傾けた状態で最狭部に入らない、depth_max まで二点接触しない。"""
     P = _poly(peg_vertices, "polygon_two_point_depth")
     H = _poly(hole_vertices, "polygon_two_point_depth")
     th = float(theta)

@@ -109,6 +109,12 @@ import sys  # noqa: E402
 
 CURATED_DIR = os.path.join(LIT, "curated")
 MANIFESTS = sorted(f for f in os.listdir(CURATED_DIR) if f.endswith(".json")) if os.path.isdir(CURATED_DIR) else []
+NEW_CURATED_FLOORS = {
+    "convergent_numerics_light_transport": 36,
+    "electron_microscopy": 30,
+    "industrial_optical_sensing": 42,
+    "sensitivity_uq_calibration": 36,
+}
 
 
 def _gen():
@@ -140,6 +146,26 @@ def test_every_manifest_is_registered_and_generated():
         name = _manifest(fname)["name"]
         assert g.CURATED.get(name) == "docs/literature/curated/" + fname, "%s: 生成器の CURATED に登録されていない" % fname
         assert name + ".md" in FILES, "%s: 生成物 docs/literature/%s.md が無い(生成器を回すこと)" % (fname, name)
+
+
+def test_planned_curated_corpora_are_present_with_reviewable_counts():
+    """2026-10-15 に追加された4コーパスが黙って登録・生成対象から消えない。"""
+    found = {_manifest(fname)["name"]: _manifest(fname) for fname in MANIFESTS}
+    for name, floor in NEW_CURATED_FLOORS.items():
+        assert name in found, "%s: 目録が無い(fail-closed)" % name
+        man = found[name]
+        for key in ("name", "corpus", "title", "what", "why", "selection_rule", "axes"):
+            assert man.get(key), "%s: 目録キー %s が無い(fail-closed)" % (name, key)
+        count = sum(len(axis["papers"]) for axis in man["axes"])
+        assert floor <= count <= 60, "%s: 文献数 %d は %d〜60 の範囲外" % (name, count, floor)
+
+
+def test_curated_ops_exist_in_public_op_index():
+    """目録の op 名は公開索引に実在し、出荷台帳だけとの偶然の一致に頼らない。"""
+    with open(os.path.join(ROOT, "docs", "OP_INDEX.json"), encoding="utf-8") as f:
+        indexed = {op["name"] for op in json.load(f)["ops"]}
+    named = {op for fname in MANIFESTS for axis in _manifest(fname)["axes"] for op, _why in axis["ops"]}
+    assert named <= indexed, "OP_INDEX.json に無い op: %s" % sorted(named - indexed)
 
 
 @pytest.mark.parametrize("fname", MANIFESTS)

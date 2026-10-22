@@ -919,7 +919,7 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # 2026-10-20: 3 次元のシーンを処方どおりのレンズ越しに撮る(lensrender)8 op(415 → 423)。
     # 2026-10-20: 製造公差・補償・歩留まり(lenstol)8 op(423 → 431)。
     # 2026-10-20: spectral_integral_table 1 op を追加。
-    assert len(opsoptics.OPSOPTICS) == 462
+    assert len(opsoptics.OPSOPTICS) == 464
     assert len(opsoptics.list_ops("tolerancing")) == 8
     assert len(opsoptics.list_ops("omni360")) == 24
     assert len(opsoptics.list_ops("grating_interf")) == 8
@@ -938,7 +938,7 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     assert len(opsoptics.list_ops("linescan")) == 6
     assert len(opsoptics.list_ops("pixelshift")) == 6
     assert len(opsoptics.list_ops("itof")) == 8
-    assert len(opsoptics.list_ops("matprop")) == 20      # + 電子線の物性 1 op(2026-10-15)
+    assert len(opsoptics.list_ops("matprop")) == 22      # + 音響物性 2 op(2026-10-22)
     assert len(opsoptics.list_ops("spectral")) == 15
     assert len(opsoptics.list_ops("sensorchar")) == 19 and len(opsoptics.list_ops("sensorgeneral")) == 3
     # 2026-09-26: wave に 4f 光学プロセッサ 2 op(fourier_plane_filter /

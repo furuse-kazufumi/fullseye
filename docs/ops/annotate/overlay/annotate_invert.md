@@ -38,10 +38,10 @@ mask : (H,W)
     領域。真偽か [0,1] の重み。**画像と形が違えば例外**。
 draw : {"fill", "margin"}
     HALCON の ``set_draw`` と同じ語。``"fill"`` は中身ごと、``"margin"``
-    は**輪郭だけ**を反転する。輪郭は太さ ``width`` 画素(整数に丸める)の
-    帯で、領域の内外へ半分ずつ広がる。
+    は**輪郭だけ**を反転する。輪郭は領域の内外へそれぞれ
+    ``max(1, round(width / 2))`` 画素ずつ広がる帯。
 width : float
-    ``draw="margin"`` のときの帯の太さ(画素)。
+    ``draw="margin"`` のときの帯幅を決める値(画素)。
 mode : str
     :data:`INVERT_MODES`。``"complement"`` は地の模様を残し、``"xor"`` は
     模様を残したまま消えないことを保証し、``"contrast"`` は白黒に倒して

@@ -4,7 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gaussian_transport_map(src_samples, ref_samples)</code>(要直接调用实现,<code style="color:#22d3bf">import colortransport; colortransport.gaussian_transport_map(src_samples, ref_samples)</code>;从台账取用则 <code style="color:#22d3bf">opscolortransport.get(&quot;gaussian_transport_map&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.gaussian_transport_map(...)</code> 只返回<b>声明的 out 类型 <code style="color:#22d3bf">matrix</code> 的值</b>(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.gaussian_transport_map.raw(...)</code>,或直接调用 <code style="color:#22d3bf">colortransport.gaussian_transport_map</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>把两个点集视为正态分布时的 Monge 映射 <code style="color:#22d3bf">(A, b)</code>。</p>
+<p>把两个点集视为正态分布时的 Monge 映射的线性部分 <code style="color:#22d3bf">A</code> 和均值 <code style="color:#22d3bf">m1, m2</code>。</p>
 <p><code style="color:#22d3bf">x -&gt; A (x - m1) + m2</code>，其中 <code style="color:#22d3bf">A</code> 为 <code style="color:#22d3bf">S1^-1/2 (S1^1/2 S2 S1^1/2)^1/2 S1^-1/2</code>(Bures 几何的闭式)。由于<b>连同协方差一起搬运</b>，通道间的相关性得以保持。</p>
 <p>退化时(其中一个协方差奇异)无法构造逆平方根 —— 若用伪逆蒙混过关，就会得到「明明没搬运过去却装作搬运了」的映射，因此抛出 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>

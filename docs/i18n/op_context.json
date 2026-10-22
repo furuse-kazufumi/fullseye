@@ -1743,6 +1743,291 @@
   },
   "欠陥図の方法を、欠陥 1 つずつの重なり(PRO / AUPRO)で比べる": {
    "en": "Compare defect-map methods by the overlap with each defect (PRO / AUPRO)"
+  },
+  "不動点反復の加速": {
+   "en": "Acceleration of fixed-point iterations"
+  },
+  "逐次推定の収束を追う": {
+   "en": "Track the convergence of sequential estimation"
+  },
+  "停止条件つきの反復復元を行う": {
+   "en": "Perform iterative reconstruction with a stopping criterion"
+  },
+  "入力変化への応答を調べる": {
+   "en": "Examine the response to changes in the inputs"
+  },
+  "検証と妥当性確認": {
+   "en": "Verification and validation"
+  },
+  "格子収束指標を求める": {
+   "en": "Compute the grid convergence index"
+  },
+  "観測された収束次数を求める": {
+   "en": "Compute the observed order of convergence"
+  },
+  "残る不確かさを伝播する": {
+   "en": "Propagate the remaining uncertainty"
+  },
+  "逐次モンテカルロ": {
+   "en": "Sequential Monte Carlo"
+  },
+  "逐次標本の平均と収束を追う": {
+   "en": "Track the mean and convergence of sequential samples"
+  },
+  "入力標本の偏りを抑える": {
+   "en": "Reduce bias in the input samples"
+  },
+  "標本から出力分布を求める": {
+   "en": "Obtain the output distribution from samples"
+  },
+  "ラジオシティと大域照明": {
+   "en": "Radiosity and global illumination"
+  },
+  "面間の拡散光輸送を組む": {
+   "en": "Construct diffuse light transport between surfaces"
+  },
+  "三次元面の相互反射を反復計算する": {
+   "en": "Iteratively compute interreflection among three-dimensional surfaces"
+  },
+  "輸送行列を通した像を作る": {
+   "en": "Form an image through a transport matrix"
+  },
+  "濁った媒質の光子輸送": {
+   "en": "Photon transport in turbid media"
+  },
+  "層状媒質で光子を追跡する": {
+   "en": "Track photons through layered media"
+  },
+  "拡散による広がりを計算する": {
+   "en": "Compute spreading due to diffusion"
+  },
+  "光学特性の不確かさを伝播する": {
+   "en": "Propagate uncertainty in optical properties"
+  },
+  "食い違い原理で止める反復": {
+   "en": "Iterations stopped by the discrepancy principle"
+  },
+  "指標を監視して反復復元を止める": {
+   "en": "Monitor a metric to stop iterative reconstruction"
+  },
+  "三次元の反復復元を行う": {
+   "en": "Perform three-dimensional iterative reconstruction"
+  },
+  "観測との食い違いを明示する": {
+   "en": "Make the discrepancy from observations explicit"
+  },
+  "SEMの電子・固体相互作用": {
+   "en": "Electron-solid interactions in SEM"
+  },
+  "試料内の電子軌道を標本化する": {
+   "en": "Sample electron trajectories within a specimen"
+  },
+  "入射条件ごとの電子収率を求める": {
+   "en": "Compute the electron yield for each incident condition"
+  },
+  "物質の電子相互作用特性を与える": {
+   "en": "Specify the electron-interaction properties of a material"
+  },
+  "CD-SEMと寸法計測": {
+   "en": "CD-SEM and dimensional metrology"
+  },
+  "線幅を定義した規則で測る": {
+   "en": "Measure line width using a defined rule"
+  },
+  "寸法測定に使う断面を取り出す": {
+   "en": "Extract a profile for dimensional measurement"
+  },
+  "形状から走査電子像を合成する": {
+   "en": "Synthesize a scanning electron image from geometry"
+  },
+  "TEMの伝達関数": {
+   "en": "TEM transfer function"
+  },
+  "伝達関数を計算する": {
+   "en": "Compute the transfer function"
+  },
+  "パワースペクトルから撮像条件を推定する": {
+   "en": "Estimate imaging conditions from the power spectrum"
+  },
+  "推定した伝達関数を補正する": {
+   "en": "Correct for the estimated transfer function"
+  },
+  "マルチスライスと像シミュレーション": {
+   "en": "Multislice and image simulation"
+  },
+  "層ごとの透過と伝播を計算する": {
+   "en": "Compute transmission and propagation through each slice"
+  },
+  "原子配置から投影ポテンシャルを作る": {
+   "en": "Construct a projected potential from atomic positions"
+  },
+  "弱位相近似の基準像を作る": {
+   "en": "Create a reference image under the weak-phase approximation"
+  },
+  "電子顕微鏡像の処理": {
+   "en": "Electron microscopy image processing"
+  },
+  "時間方向の外れ雑音を抑える": {
+   "en": "Suppress temporal outlier noise"
+  },
+  "周波数成分を使って雑音を抑える": {
+   "en": "Suppress noise using frequency components"
+  },
+  "処理前後のエッジ断面を比較する": {
+   "en": "Compare edge profiles before and after processing"
+  },
+  "工業用OCT": {
+   "en": "Industrial OCT"
+  },
+  "深さ情報を含む干渉信号を作る": {
+   "en": "Create an interference signal containing depth information"
+  },
+  "断面像を構成する": {
+   "en": "Reconstruct a cross-sectional image"
+  },
+  "境界間の層厚を求める": {
+   "en": "Determine layer thickness between boundaries"
+  },
+  "間接ToF": {
+   "en": "Indirect ToF"
+  },
+  "位相と振幅から距離信号を得る": {
+   "en": "Obtain a range signal from phase and amplitude"
+  },
+  "複数周波数で距離周期を展開する": {
+   "en": "Unwrap range ambiguity using multiple frequencies"
+  },
+  "複数経路の混合を分ける": {
+   "en": "Separate mixtures of multiple paths"
+  },
+  "波長ごとの共焦点応答を合成する": {
+   "en": "Synthesize the confocal response at each wavelength"
+  },
+  "スペクトルのピークを検出する": {
+   "en": "Detect peaks in a spectrum"
+  },
+  "ピーク波長を高さへ変換する": {
+   "en": "Convert peak wavelength to height"
+  },
+  "デフレクトメトリ": {
+   "en": "Deflectometry"
+  },
+  "位相測定用の画面模様を作る": {
+   "en": "Create screen patterns for phase measurement"
+  },
+  "位相を面の傾きへ変換する": {
+   "en": "Convert phase to surface slope"
+  },
+  "傾きから曲率を求める": {
+   "en": "Determine curvature from slope"
+  },
+  "モアレによる位置合わせと変位": {
+   "en": "Moiré-based alignment and displacement"
+  },
+  "二つの格子の重なり像を作る": {
+   "en": "Create a superposition image of two grids"
+  },
+  "縞位相を相対変位へ変換する": {
+   "en": "Convert fringe phase to relative displacement"
+  },
+  "位相測定の精度限界を求める": {
+   "en": "Determine the precision limit of phase measurement"
+  },
+  "ハイパースペクトル選別": {
+   "en": "Hyperspectral sorting"
+  },
+  "分光画像の撮像過程を表す": {
+   "en": "Model the spectral imaging process"
+  },
+  "判定に使う波長帯を重み付けする": {
+   "en": "Weight the wavelength bands used for classification"
+  },
+  "スペクトルから品質値を回帰する": {
+   "en": "Regress a quality value from a spectrum"
+  },
+  "光学図面と公差": {
+   "en": "Optical drawings and tolerances"
+  },
+  "公差による性能変化を集計する": {
+   "en": "Aggregate performance changes caused by tolerances"
+  },
+  "各公差の性能寄与を求める": {
+   "en": "Determine each tolerance's contribution to performance"
+  },
+  "公差分布から性能分布を標本化する": {
+   "en": "Sample the performance distribution from tolerance distributions"
+  },
+  "大域感度解析": {
+   "en": "Global sensitivity analysis"
+  },
+  "分散ベースの一次効果と全効果を求める": {
+   "en": "Compute variance-based first-order and total effects"
+  },
+  "少ない評価回数で影響の大きい入力を絞る": {
+   "en": "Screen for influential inputs with few evaluations"
+  },
+  "感度指標用の標本を再現可能に作る": {
+   "en": "Generate reproducible samples for sensitivity indices"
+  },
+  "同定可能性": {
+   "en": "Identifiability"
+  },
+  "較正パラメータの識別可能性を診断する": {
+   "en": "Diagnose the identifiability of calibration parameters"
+  },
+  "説明変数どうしの交絡を調べる": {
+   "en": "Examine confounding among explanatory variables"
+  },
+  "残差に残る系統成分を調べる": {
+   "en": "Examine systematic components remaining in the residuals"
+  },
+  "PLS回帰・変数選択": {
+   "en": "PLS regression and variable selection"
+  },
+  "潜在成分で多変量回帰する": {
+   "en": "Perform multivariate regression with latent components"
+  },
+  "多重共線性を診断する": {
+   "en": "Diagnose multicollinearity"
+  },
+  "回帰後の残差構造を調べる": {
+   "en": "Examine the residual structure after regression"
+  },
+  "計算機モデルの較正": {
+   "en": "Computer-model calibration"
+  },
+  "実測とモデルの系統差を表す": {
+   "en": "Represent the systematic discrepancy between measurements and the model"
+  },
+  "較正値と食い違いの交絡を調べる": {
+   "en": "Examine confounding between calibrated values and discrepancy"
+  },
+  "観測に合わせて分散モデルを較正する": {
+   "en": "Calibrate a variance model to observations"
+  },
+  "代理モデル・エミュレータ": {
+   "en": "Surrogate models and emulators"
+  },
+  "入力空間を系統的に標本化する": {
+   "en": "Systematically sample the input space"
+  },
+  "偏りの小さい点列を作る": {
+   "en": "Generate a low-discrepancy sequence"
+  },
+  "近似モデルを使った不確かさ伝播を行う": {
+   "en": "Propagate uncertainty using an approximate model"
+  },
+  "画像処理パラメータの感度": {
+   "en": "Sensitivity of image-processing parameters"
+  },
+  "多数の設定から影響の強いものを選ぶ": {
+   "en": "Select the most influential settings from many candidates"
+  },
+  "設定と相互作用の寄与を定量化する": {
+   "en": "Quantify the contributions of settings and their interactions"
+  },
+  "設定を振る実験点を作る": {
+   "en": "Create experimental points that vary the settings"
   }
  }
 }

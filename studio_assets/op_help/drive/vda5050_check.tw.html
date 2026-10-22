@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>檢查 VDA 5050 order 的<b>結構規則</b>(獨立於官方 JSON 結構描述的自製第二實作(獨立實作))。</p>
 <p>規則: 必要鍵/節點的 sequenceId 從 0 起為連續偶數,邊為連續奇數/邊數 = 節點數 − 1/ 各邊的起點、終點為前後節點/released 從 base 開頭連續(僅有一次 base → horizon 的切換)/ 邊的 released 與其終點節點相同。回傳違規文字的串列(空 = 合格)。</p>
-<p>空輸入(<code style="color:#22d3bf">order</code> 為空 dict)回傳空結果(理由: 作為檢查器,空的 order 也是檢查對象。缺少之鍵的清單才是正確答案)。</p>
+<p>空輸入（<code style="color:#22d3bf">order</code> 為空 dict）回傳缺少的必要鍵清單（理由：空 dict 不含任何必要鍵）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
