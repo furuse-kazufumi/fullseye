@@ -18,6 +18,7 @@
 from __future__ import annotations
 
 import numpy as np
+from scipy.fft import irfftn, next_fast_len, rfftn
 from scipy.ndimage import gaussian_filter, binary_fill_holes
 from scipy.signal import fftconvolve
 from scipy.spatial import Delaunay, cKDTree
@@ -69,7 +70,7 @@ def _grid_coords(P, size, pad_vox):
 # ═══════════════════════════════════════════════════════════════════════════
 # 1. poisson_lite: 点群 → 等値面メッシュ(スクリーンド Poisson の軽量近似)
 # ═══════════════════════════════════════════════════════════════════════════
-def _winding_indicator(gp, normals, size, sigma, idx):
+def _winding_indicator(gp, normals, size, sigma, idx, method="exact"):
     """向き付き点(oriented points)→ 内外指標場 [0,1]。generalized winding number の格子版。
 
     winding number w(x) = (1/4π) Σ_i n_i·(p_i − x)/|p_i − x|³ は、閉じた向き付き曲面の
@@ -89,11 +90,7 @@ def _winding_indicator(gp, normals, size, sigma, idx):
         raise ValueError("normals contain NaN/Inf")
     nn = n / (np.linalg.norm(n, axis=1, keepdims=True) + 1e-12)   # 単位化
 
-    # 法線を最近傍 voxel へ splat(3 チャンネルのベクトル場)
-    S = [np.zeros((size, size, size), dtype=np.float64) for _ in range(3)]
     ijk = (idx[:, 0], idx[:, 1], idx[:, 2])
-    for c in range(3):
-        np.add.at(S[c], ijk, nn[:, c])
 
     # winding カーネル K(u) = −u/|u|³(中心=原点は特異点 → 0)
     c0 = size // 2
@@ -103,9 +100,27 @@ def _winding_indicator(gp, normals, size, sigma, idx):
     r3[c0, c0, c0] = np.inf
     Kz, Ky, Kx = -vz / r3, -vy / r3, -vx / r3
 
-    w = (fftconvolve(S[0], Kz, mode="same")
-         + fftconvolve(S[1], Ky, mode="same")
-         + fftconvolve(S[2], Kx, mode="same")) / (4.0 * np.pi)
+    # ベクトル場3成分を同時に保持せず、1成分ずつ voxel 化して加える。
+    w = np.zeros((size, size, size), dtype=np.float64)
+    if method == "exact":
+        for component, kernel in zip(range(3), (Kz, Ky, Kx)):
+            splat = np.zeros_like(w)
+            np.add.at(splat, ijk, nn[:, component])
+            w += fftconvolve(splat, kernel, mode="same")
+    elif method == "fast":
+        fft_shape = tuple(next_fast_len(2 * size - 1, real=True) for _ in range(3))
+        spectrum = None
+        for component, kernel in zip(range(3), (Kz, Ky, Kx)):
+            splat = np.zeros_like(w)
+            np.add.at(splat, ijk, nn[:, component])
+            term = rfftn(splat, fft_shape) * rfftn(kernel, fft_shape)
+            spectrum = term if spectrum is None else spectrum + term
+        full = irfftn(spectrum, fft_shape)
+        start = (size - 1) // 2
+        w = full[start:start + size, start:start + size, start:start + size].copy()
+    else:
+        raise ValueError("method must be 'exact' or 'fast', got %r" % (method,))
+    w /= 4.0 * np.pi
     w = gaussian_filter(w, sigma)
 
     lo_ref = np.percentile(w, 5.0)
@@ -120,7 +135,8 @@ def _winding_indicator(gp, normals, size, sigma, idx):
     return field
 
 
-def poisson_lite(points, size=64, sigma=1.0, iso=0.5, normals=None):
+def poisson_lite(points, size=64, sigma=1.0, iso=0.5, normals=None,
+                 method="exact"):
     """点群 (N,3) → (vertices(V,3), faces(F,3)) の表面メッシュ(スクリーンド Poisson 軽量近似)。
 
     点群を size³ の voxel 格子へ splat し、等値面場を作って marching cubes で三角形メッシュ化する。
@@ -148,6 +164,9 @@ def poisson_lite(points, size=64, sigma=1.0, iso=0.5, normals=None):
         等値面レベル。正規化場 [0,1] 上の値(既定 0.5)。
     normals : array_like (N,3) or None
         点法線。与えると winding number モード、None なら占有モード。
+    method : {"exact", "fast"}
+        ``"exact"`` keeps the historical three convolutions. ``"fast"``
+        accumulates them in frequency space; rounding differs, so it is opt-in.
 
     Returns
     -------
@@ -168,6 +187,8 @@ def poisson_lite(points, size=64, sigma=1.0, iso=0.5, normals=None):
         raise ValueError(f"size={size} is too small (>=8 recommended)")
     if sigma <= 0:
         raise ValueError("sigma must be positive")
+    if method not in ("exact", "fast"):
+        raise ValueError("method must be 'exact' or 'fast', got %r" % (method,))
 
     pad_vox = int(np.ceil(3.0 * sigma)) + 2
     gp, lo, span, inner = _grid_coords(P, size, pad_vox)
@@ -198,7 +219,7 @@ def poisson_lite(points, size=64, sigma=1.0, iso=0.5, normals=None):
                 occ = filled / fmx
         field = occ
     else:
-        field = _winding_indicator(gp, normals, size, sigma, idx)
+        field = _winding_indicator(gp, normals, size, sigma, idx, method=method)
 
     level = float(iso)
     fmin, fmax = float(field.min()), float(field.max())
@@ -231,6 +252,10 @@ def _circumradii(P, simplices):
     det ∝ L³ が小座標(L≲1e-4)で閾値を下回り、正常な四面体まで特異扱いになって境界/メッシュが
     黙って空になる(スケール依存バグ)。返り値 R(M,)。
     """
+    if len(simplices) > 65536:
+        # 四面体配列・係数行列・右辺を全件同時に持たない。
+        return np.concatenate([_circumradii(P, simplices[i:i + 65536])
+                               for i in range(0, len(simplices), 65536)])
     T = P[simplices]                                    # (M,4,3)
     p0 = T[:, 0]
     A = 2.0 * (T[:, 1:] - p0[:, None, :])               # (M,3,3); 各行 = 2·(p_i − p_0)
@@ -277,11 +302,19 @@ def _alpha_boundary_faces(P, alpha):
     if len(kept) == 0:                                  # alpha 大きすぎて全除外
         return np.zeros((0, 3), dtype=np.int64)
 
-    faces = np.concatenate([kept[:, [0, 1, 2]], kept[:, [0, 1, 3]],
-                            kept[:, [0, 2, 3]], kept[:, [1, 2, 3]]], axis=0)
-    fs = np.sort(faces, axis=1)                         # 面を正準化して数える
-    uniq, counts = np.unique(fs, axis=0, return_counts=True)
-    return uniq[counts == 1].astype(np.int64)          # 出現 1 回 = 境界面
+    # neighbors[:, j] は頂点 j の反対面を共有する四面体。隣が無いか、
+    # 隣の四面体が alpha 閾値で落ちた面だけが境界になる。
+    kept_ids = np.flatnonzero(keep)
+    boundary = []
+    for opposite, cols in enumerate(((1, 2, 3), (0, 2, 3), (0, 1, 3), (0, 1, 2))):
+        neigh = tri.neighbors[kept_ids, opposite]
+        exposed = (neigh < 0) | ~keep[np.maximum(neigh, 0)]
+        if exposed.any():
+            boundary.append(np.sort(simp[kept_ids[exposed]][:, cols], axis=1))
+    if not boundary:
+        return np.zeros((0, 3), dtype=np.int64)
+    # 従来の np.unique と同じ正準化・辞書順を保つ。
+    return np.unique(np.concatenate(boundary), axis=0).astype(np.int64)
 
 
 def alpha_shape_boundary(points, alpha):

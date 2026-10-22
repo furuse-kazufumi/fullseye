@@ -145,7 +145,8 @@ def clearcoat_shade(base_rgb, normals, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1
     """透明な上塗りを被せる(車の塗装・陶器の釉薬・光沢プラスチック)。
 
     base_rgb: 下地の色 (H,W,3) または (3,)。normals / light / view: 上記と同じ。
-    ior: 上塗りの屈折率(クリア塗料 ~1.5)。coat: 上塗りの強さ(0–1)。
+    ior: 上塗りの屈折率(クリア塗料 ~1.5)。数か材料表の名前(例 "PMMA"、名前なら d 線 587.56 nm の n)。
+    coat: 上塗りの強さ(0–1)。
     coat_roughness: 上塗りのざらつき(0 = 完全な鏡面、大きいほどぼける)。
 
     返り値: (H, W, 3) 線形 sRGB。
@@ -174,6 +175,8 @@ def clearcoat_shade(base_rgb, normals, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1
     H = H / max(float(np.linalg.norm(H)), 1e-12)
     ndh = np.clip(np.sum(N * H[None, None, :], axis=-1), 0.0, 1.0)
 
+    import materials as _mat
+    ior = _mat._index_of(ior, op, "ior")                  # 材料名なら d 線の n(数はそのまま)
     F_in = glassmirror.fresnel_dielectric(np.maximum(ndl, 1e-9), 1.0, ior)
     F_out = glassmirror.fresnel_dielectric(np.maximum(ndv, 1e-9), 1.0, ior)
     # 上塗りの鏡面: 粗さを微小面のガウス分布として与える(r→0 で鏡のように細い)
@@ -318,7 +321,7 @@ def wetness(base_rgb, wet=1.0, ior=1.33) -> np.ndarray:
     """濡れた面の下地色。**拡散が暗くなる**(そして鏡面が増える)。
 
     base_rgb: 乾いた状態の色 (H,W,3) または (3,)。wet: 濡れ具合(0–1)。
-    ior: 水膜の屈折率。
+    ior: 水膜の屈折率。数か材料表の名前(例 "WATER"、名前なら d 線 587.56 nm の n)。
 
     返り値: 濡れた状態の拡散色(同形)。
 
@@ -336,7 +339,8 @@ def wetness(base_rgb, wet=1.0, ior=1.33) -> np.ndarray:
     if np.any(base < 0.0):
         raise ValueError(f"{op}: base_rgb must be >= 0")
     a = _unit_scalar(wet, "wet", op)
-    n = float(ior)
+    import materials as _mat
+    n = float(_mat._index_of(ior, op, "ior"))
     if not np.isfinite(n) or n <= 1.0:
         raise ValueError(f"{op}: ior must be > 1: got {ior!r}")
     ri = 1.0 - (1.0 - glassmirror.fresnel_dielectric(1.0, 1.0, n)) / (n * n)
@@ -411,6 +415,7 @@ def rough_transmission(cos_i, roughness=0.3, n1=1.0, n2=1.5):
     """すりガラスの透過を「直進成分」と「拡散成分」に分ける。
 
     cos_i: 入射角の cos。roughness: 面の粗さ(0 = 透明、1 = 完全拡散)。
+    n1 / n2: 入射側 / 板の屈折率。数か材料表の名前(例 "N-BK7"、名前なら d 線 587.56 nm の n)。
 
     返り値: (直進 T_spec, 拡散 T_diff) の 2 本。合計は透明板の透過率に一致する
     (エネルギーを作らない ―― テストで確認)。曇りガラス越しの見え方は、この
@@ -422,6 +427,7 @@ def rough_transmission(cos_i, roughness=0.3, n1=1.0, n2=1.5):
         raise ValueError("rough_transmission: cos_i is empty — pass at least one element")
     op = "rough_transmission"
     r = _unit_scalar(roughness, "roughness", op)
-    T = glassmirror.slab_transmittance(cos_i, n1, n2, 0.0, 0.0)
+    import materials as _mat
+    T = glassmirror.slab_transmittance(cos_i, _mat._index_of(n1, op, "n1"), _mat._index_of(n2, op, "n2"), 0.0, 0.0)
     keep = np.exp(-(r * 3.0) ** 2)                        # 粗いほど直進が残らない
     return T * keep, T * (1.0 - keep)

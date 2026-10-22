@@ -7,13 +7,13 @@ out: table
 examples: [numerics_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # chebyshev_coeffs_nd — MATH `numerics` op
 
 - **データ種**: `image2d` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.chebyshev_coeffs_nd(values, box=None) -> 'dict'` (実装を直接呼ぶなら `import mathnumerics; mathnumerics.chebyshev_coeffs_nd(values, box=None) -> 'dict'`、台帳から引くなら `opsmath.get("chebyshev_coeffs_nd")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.chebyshev_coeffs_nd(values, box=None, *, method='exact') -> 'dict'` (実装を直接呼ぶなら `import mathnumerics; mathnumerics.chebyshev_coeffs_nd(values, box=None, *, method='exact') -> 'dict'`、台帳から引くなら `opsmath.get("chebyshev_coeffs_nd")`)
 
 ## 使い方
 

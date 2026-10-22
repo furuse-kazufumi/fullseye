@@ -7,13 +7,14 @@ out: pairs
 examples: [vision_layout_from_catalog]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # light_wavelengths — OPTICS `scene` op
 
 - **データ種**: `table` → `pairs`
 - **呼び出し**: `import fullseye as fs; fs.ledger.light_wavelengths(light: 'dict', samples: 'int' = 5)` (実装を直接呼ぶなら `import optscene; optscene.light_wavelengths(light: 'dict', samples: 'int' = 5)`、台帳から引くなら `opsoptics.get("light_wavelengths")`)
+- **台帳経由の戻り値**: `fullseye.ledger.light_wavelengths(...)` は**宣言 out 型 `pairs` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.light_wavelengths.raw(...)`、または `optscene.light_wavelengths` を直接呼ぶ。
 
 ## 使い方
 
@@ -22,17 +23,23 @@ version: 0.6.0  # fullseye lib version this note was generated for
 レーザー = 1 本、LED = 狭帯域を数本、ハロゲン = 広帯域を数本。同じ面でも
 波長で鏡面/散乱の配分が変わるので、広帯域は**重ね合わせて**撮るのが正しい。
 
-手順: ``light["wavelength_nm"]``(無ければ 550)を中心 ``λ``、
-``light["bandwidth_nm"]``(無ければ 0)を全幅 ``bw`` とし、``k = max(samples, 1)``
-本を ``λ ± bw/2`` に等間隔で置く。重みはガウス型 ``exp(-0.5 (2x)^2)``
-(``x`` は ``[-1, 1]`` に正規化した位置、端が 2σ)で、和が 1 になるよう正規化。
-``bw <= 0``(レーザー)または ``k == 1`` なら ``λ`` 1 本・重み 1。
+スペクトルの形(2026-10-15 から実形状): LED は Ohno 2005 のモデル(``spectralrad.led_spectrum``、
+半値全幅 = ``bandwidth_nm``、峰 ± 1.5 半値全幅で切る)、ハロゲンは Planck の黒体
+(``spectralrad.blackbody_spectrum``、``color_temperature_k`` 既定 3000 K、峰は Wien の変位則で約 966 nm)を
+``band_nm``(既定 380〜1100 nm、Si が感じる範囲)で切ったもの、レーザーは 1 本。``light_spec`` の
+``band_nm`` で帯域を変えられる。2026-10-15 まではハロゲンを 600 ± 150 nm のガウスで代用していた
+(3000 K の黒体の峰は 966 nm なので、近赤外の光の大半を落としていた)。
+
+手順: 帯域を ``k = max(samples, 1)`` 個の等幅の区間に分け、各区間の**エネルギー**
+∫ S(λ) dλ を重み、区間内のエネルギー重心を波長にする。重みは和が 1。``k == 1`` なら帯域全体の
+重心 1 本(LED は峰、ハロゲンは重心)。レーザー・帯域 0 は ``λ`` 1 本・重み 1。
+重みはエネルギーの割合で、光子数への換算(λ/hc)と QE は ``layout_capture(mode="spectral")`` が掛ける。
 
 - ``light``: ``light_spec`` の結果(dict)。キーが無ければ既定値で進む(dict でなければ
   ``ValueError``。sort ``table`` の行リストが流れ込むのを止める)。
-- ``samples``: 本数。既定 5。1 未満は 1 に丸める。奇数にすると中心波長が入る。
-- 返り値: ``(wavelengths (k,), weights (k,))`` の 2 本の float64 配列。
-  スペクトルの実形状(LED の非対称、ハロゲンの黒体分布)は模さない近似。
+- ``samples``: 本数。既定 5。1 未満は 1 に丸める。
+- 返り値: ``(wavelengths (k,), weights (k,))`` の 2 本の float64 配列(台帳の型 pairs へは
+  ``opsoptics.call`` の adapter が (k, 2) に揃える)。
 
 ``layout_capture`` が ``spectral_samples`` 本でこれを呼び、波長ごとの結果を
 この重みで足し合わせる。
@@ -75,7 +82,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`pairs` を入力に取れる)
 
-[mtf50](../imaging/mtf50.md) · [energy_to_photons](../spectral/energy_to_photons.md) · [spectral_product](../spectral/spectral_product.md) · [spectral_integral](../spectral/spectral_integral.md) · [spectral_stats](../spectral/spectral_stats.md) · [kubelka_munk_reflectance](../spectral/kubelka_munk_reflectance.md) · [hyperspectral_capture](../spectral/hyperspectral_capture.md) · [film_thickness_fft](../film/film_thickness_fft.md)
+[mtf50](../imaging/mtf50.md) · [energy_to_photons](../spectral/energy_to_photons.md) · [spectral_product](../spectral/spectral_product.md) · [spectral_integral](../spectral/spectral_integral.md) · [spectral_integral_table](../spectral/spectral_integral_table.md) · [spectral_stats](../spectral/spectral_stats.md) · [kubelka_munk_reflectance](../spectral/kubelka_munk_reflectance.md) · [hyperspectral_capture](../spectral/hyperspectral_capture.md)
 
 ## 同カテゴリ(`scene`)
 

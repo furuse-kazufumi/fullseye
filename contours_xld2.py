@@ -155,6 +155,7 @@ def _fit_circle(a):
 def union_cocircular_contours_xld(contour, max_radius_diff=5.0):
     """共円(同一円上)な輪郭を統合(union_cocircular_contours_xld)。"""
     cs = [a.copy() for a in contour["cs"]]
+    fits = [_fit_circle(a) if len(a) >= 3 else None for a in cs]
     merged = True
     while merged and len(cs) > 1:
         merged = False
@@ -162,9 +163,11 @@ def union_cocircular_contours_xld(contour, max_radius_diff=5.0):
             for j in range(i + 1, len(cs)):
                 if len(cs[i]) < 3 or len(cs[j]) < 3:
                     continue
-                ci, ri = _fit_circle(cs[i]); cj, rj = _fit_circle(cs[j])
+                ci, ri = fits[i]; cj, rj = fits[j]
                 if abs(ri - rj) < max_radius_diff and np.linalg.norm(ci - cj) < max_radius_diff:
-                    cs[i] = np.vstack([cs[i], cs[j]]); cs.pop(j); merged = True
+                    cs[i] = np.vstack([cs[i], cs[j]])
+                    fits[i] = _fit_circle(cs[i])
+                    cs.pop(j); fits.pop(j); merged = True
                     break
             if merged:
                 break

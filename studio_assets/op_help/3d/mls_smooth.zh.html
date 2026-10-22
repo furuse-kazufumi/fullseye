@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">mls_smooth — 3D <code style="color:#22d3bf">preprocess</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
-<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mls_smooth(points, radius: &#x27;float&#x27;, order: &#x27;int&#x27; = 2)</code>(要直接调用实现,<code style="color:#22d3bf">import pcl_filter; pcl_filter.mls_smooth(points, radius: &#x27;float&#x27;, order: &#x27;int&#x27; = 2)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;mls_smooth&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mls_smooth(points, radius: &#x27;float&#x27;, order: &#x27;int&#x27; = 2, chunk: &#x27;int | None&#x27; = None, method: &#x27;str&#x27; = &#x27;exact&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import pcl_filter; pcl_filter.mls_smooth(points, radius: &#x27;float&#x27;, order: &#x27;int&#x27; = 2, chunk: &#x27;int | None&#x27; = None, method: &#x27;str&#x27; = &#x27;exact&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;mls_smooth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把每个点投影到局部多项式曲面上以去噪(Moving Least Squares 平滑)。</p>
 <p>对每个点收集半径 <code style="color:#22d3bf">radius</code> 内的邻域,用加权 PCA 估计局部平面(法线 n 与切平面的 2 个轴),对邻域的&quot;切平面上坐标 (u,v) → 法线方向高度 h&quot;用高斯加权最小二乘拟合 order 次的多项式曲面。关注点自身对应局部坐标的原点 (0,0), 因此沿法线方向移动拟合曲面在 (0,0) 处的高度(= 常数项), 投影到曲面上。能在保持面形状的同时只平滑传感器噪声。</p>
@@ -12,6 +12,10 @@
 <p>邻域球的半径(&gt; 0)。局部曲面的支撑范围。</p>
 <p>order : int</p>
 <p>局部多项式的次数(默认 2)。项数为 (order+1)(order+2)/2。</p>
+<p>chunk : int or None</p>
+<p>指定时，邻域列表按该点数分批获取并丢弃。默认使用原有路径。</p>
+<p>method : {&#x27;exact&#x27;, &#x27;mean&#x27;}</p>
+<p>默认 <code style="color:#22d3bf">&#x27;exact&#x27;</code> 是多项式曲面的最小二乘拟合。<code style="color:#22d3bf">&#x27;mean&#x27;</code> 仅用于 <code style="color:#22d3bf">order=0</code>,把常数项直接取为加权平均(不经过 lstsq 得到相同值的更快路径;容差 rtol=1e-12, atol=1e-14)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray, shape (N, 3)</p>
 <p>平滑后的点云(保持顺序和点数)。邻域少于多项式项数的点保持原位。</p>

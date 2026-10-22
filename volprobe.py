@@ -65,10 +65,12 @@ naming the problem.
 from __future__ import annotations
 
 import numpy as np
-from scipy.ndimage import gaussian_filter1d, map_coordinates
+from dataclasses import dataclass
+
+from scipy.ndimage import gaussian_filter1d, map_coordinates, spline_filter
 
 __all__ = [
-    "vol_profile_line", "vol_edge_probe", "vol_wall_thickness",
+    "PreparedVolProbe", "prepare_vol_probe", "vol_profile_line", "vol_edge_probe", "vol_wall_thickness",
     "VOLPROBE_OPS", "MAX_VOXELS",
 ]
 
@@ -85,6 +87,31 @@ MAX_VOXELS = 1 << 27
 _MERGE_SEP = 1.5
 
 
+@dataclass(frozen=True)
+class PreparedVolProbe:
+    """Read-only validated volume and optional reusable spline coefficients."""
+
+    volume: np.ndarray
+    spline_coefficients: tuple
+
+
+def prepare_vol_probe(vol, spline_orders=()):
+    """Validate a volume once and prepare coefficients reused by line probes."""
+    v = _require_volume(vol, "vol").view()
+    v.flags.writeable = False
+    orders = tuple(_exact_int(o, "spline_order") for o in spline_orders)
+    if any(o < 2 or o > 5 for o in orders):
+        raise ValueError("spline_orders must contain only integers in [2, 5]")
+    # map_coordinates(..., mode="nearest") pre-pads by 12 before filtering.
+    # Retaining that padded coefficient field is required for result identity.
+    padded = np.pad(v, 12, mode="edge") if orders else None
+    coeffs = tuple((o, spline_filter(padded, order=o, mode="nearest"))
+                   for o in sorted(set(orders)))
+    for _, c in coeffs:
+        c.flags.writeable = False
+    return PreparedVolProbe(v, coeffs)
+
+
 # --------------------------------------------------------------------------- #
 # fail-closed input helpers (contract identical to volops)                     #
 # --------------------------------------------------------------------------- #
@@ -94,6 +121,8 @@ def _require_volume(vol, name: str = "vol") -> np.ndarray:
     Rejects anything that is not exactly 3-D and any NaN / Inf — a poisoned
     voxel would silently corrupt the interpolated profile and every derived
     edge position."""
+    if isinstance(vol, PreparedVolProbe):
+        return vol.volume
     v = np.ascontiguousarray(vol, dtype=np.float64)
     if v.ndim != 3:
         raise ValueError("%s must be a 3-D (D, H, W) volume, got a %d-D array of shape %r"
@@ -223,8 +252,15 @@ def vol_profile_line(vol, p0, p1, n=None, spacing=None, order=1):
 
     ts = np.linspace(0.0, 1.0, n)
     coords = a[None, :] + ts[:, None] * d_idx[None, :]      # (n, 3) index coords
-    values = map_coordinates(v, [coords[:, 0], coords[:, 1], coords[:, 2]],
-                             order=order, mode="nearest")
+    prepared_coeff = None
+    if isinstance(vol, PreparedVolProbe):
+        prepared_coeff = dict(vol.spline_coefficients).get(order)
+    source = prepared_coeff if prepared_coeff is not None else v
+    sample_coords = coords + 12.0 if prepared_coeff is not None else coords
+    values = map_coordinates(source, [sample_coords[:, 0], sample_coords[:, 1],
+                                      sample_coords[:, 2]],
+                             order=order, mode="nearest",
+                             prefilter=prepared_coeff is None)
     # Physical abscissa: cumulative norm of physical-coordinate differences —
     # exact for anisotropic spacing and oblique probes (not index length).
     phys = coords * sp_arr[None, :]

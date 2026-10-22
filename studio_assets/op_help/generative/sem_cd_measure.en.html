@@ -1,0 +1,37 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">sem_cd_measure — GENERATIVE <code style="color:#22d3bf">sem</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sem_cd_measure(profile, *, method: &#x27;str&#x27; = &#x27;threshold&#x27;, threshold: &#x27;float&#x27; = 0.5, smooth_nm: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import sem; sem.sem_cd_measure(profile, *, method: &#x27;str&#x27; = &#x27;threshold&#x27;, threshold: &#x27;float&#x27; = 0.5, smooth_nm: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsgenerative.get(&quot;sem_cd_measure&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>Measure a line width from a line profile (<code style="color:#22d3bf">pairs</code>: x and signal) with the two CD-SEM methods.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>1 本の線の左右の縁は、それぞれ明るい山(縁の効果)になる。各山の<b>外側の斜面</b>で:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">threshold</code>: 外側の地の水準 b と山の高さ p の間の <code style="color:#22d3bf">b + t·(p − b)</code> を横切る位置(線形補間)。t = <code style="color:#22d3bf">threshold</code>(既定 0.5 = 50 % しきい値)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">max_slope</code>: 外側の斜面で勾配の絶対値が最大になる位置(3 点放物線で詰める)。</p>
+<p>地の水準は両端それぞれ外側 10 % の中央値。<code style="color:#22d3bf">smooth_nm &gt; 0</code> なら先にガウシアンで均す。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict</p>
+<p><code style="color:#22d3bf">width_nm</code> / <code style="color:#22d3bf">left_nm</code> / <code style="color:#22d3bf">right_nm</code> / <code style="color:#22d3bf">method</code> / <code style="color:#22d3bf">threshold</code> /</p>
+<p><code style="color:#22d3bf">peak_left_nm</code> / <code style="color:#22d3bf">peak_right_nm</code>。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
+<p>&gt;&gt;&gt; import numpy as np</p>
+<p>&gt;&gt;&gt; x = np.arange(-50.0, 51.0)</p>
+<p>&gt;&gt;&gt; y = 0.2 + np.exp(-0.5 * ((x + 20) / 3) ** 2) + np.exp(-0.5 * ((x - 20) / 3) ** 2)</p>
+<p>&gt;&gt;&gt; r = sem_cd_measure(np.stack([x, y], axis=1), method=&quot;threshold&quot;, threshold=0.5)</p>
+<p>&gt;&gt;&gt; bool(abs(r[&quot;width_nm&quot;] - 2 * (20 + 3 * np.sqrt(2 * np.log(2)))) &lt; 0.2)</p>
+<p>True</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">generative_art family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_virtual_sem_kv_cd_bse">poc_virtual_sem_kv_cd_bse</a> — <code style="color:#22d3bf">py -3.11 examples/poc_virtual_sem_kv_cd_bse.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">table</code> as input)</h3>
+<p><a style="color:#22d3bf" href="opgenerative:perpetual_step">perpetual_step</a> · <a style="color:#22d3bf" href="opgenerative:perpetual_render">perpetual_render</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">sem</code>)</h3>
+<p><a style="color:#22d3bf" href="opgenerative:sem_render">sem_render</a> · <a style="color:#22d3bf" href="opgenerative:sem_electron_mc">sem_electron_mc</a> · <a style="color:#22d3bf" href="opgenerative:sem_se_universal_curve">sem_se_universal_curve</a> · <a style="color:#22d3bf" href="opgenerative:sem_yield_curve">sem_yield_curve</a> · <a style="color:#22d3bf" href="opgenerative:sem_line_profile">sem_line_profile</a> · <a style="color:#22d3bf" href="opgenerative:sem_image">sem_image</a> · <a style="color:#22d3bf" href="opgenerative:sem_se_escape_fraction">sem_se_escape_fraction</a> · <a style="color:#22d3bf" href="opgenerative:sem_charging_series">sem_charging_series</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: sem.py — GENERATIVE operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

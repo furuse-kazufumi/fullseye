@@ -55,6 +55,7 @@ warnings.filterwarnings("ignore")
 
 REDUCED = os.environ.get("FULLSEYE_POC_BUDGET", "reduced" if os.environ.get("CI") else "full") == "reduced"
 T0 = time.time()
+C0 = time.process_time()
 OK = []
 TAU = 2.0
 
@@ -232,7 +233,11 @@ def main() -> int:
     gate("細い構造: Otsu は境界 F ≥ 0.95 なのに過分割 ≥ 10(雑音の粒)、局所閾値 3 本は Jaccard < 0.2", cth["boundary_f"] >= 0.95 and cth["over"] >= 10 and max(j_loc) < 0.2,
          "BF=%.2f over=%d / local max J=%.2f" % (cth["boundary_f"], cth["over"], max(j_loc)))
     elapsed = time.time() - T0
-    gate("図なしで 60 秒以内", elapsed < 60.0, "%.1f s" % elapsed)
+    cpu = time.process_time() - C0
+    # ★2026-10-15: 壁時計は CI の並列のシャードで同じ機械の他のテストの負荷まで数える
+    #   (poc_phase_measuring_deflectometry がこれで赤になった)。この門が抑えたいのはこの PoC 自身の計算量なので、プロセスの CPU 時間
+    #   (time.process_time)で測り、壁時計は併記する。
+    gate("図なしで 60 秒以内", cpu < 60.0, "CPU %.1f s(壁時計 %.1f s)" % (cpu, elapsed))
 
     if figs.enabled():
         figures(worlds, rows, labels)

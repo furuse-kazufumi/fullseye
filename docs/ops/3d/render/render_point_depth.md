@@ -7,7 +7,7 @@ out: depth
 examples: [sfm_recon]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # render_point_depth — 3D `render` op
@@ -49,7 +49,7 @@ col=u)`` が ``size=(H, W)`` 内かつ ``z > 0`` の点だけを、遠い順に�
 
 ## 同カテゴリ(`render`)
 
-[project_points](project_points.md) · [render_volume_projection](render_volume_projection.md) · [render_shaded](render_shaded.md) · [ambient_occlusion](ambient_occlusion.md) · [cast_shadow](cast_shadow.md) · [phong_shade](phong_shade.md) · [matcap_shade](matcap_shade.md) · [supersample_mesh](supersample_mesh.md)
+[project_points](project_points.md) · [points_render](points_render.md) · [render_volume_projection](render_volume_projection.md) · [render_shaded](render_shaded.md) · [ambient_occlusion](ambient_occlusion.md) · [cast_shadow](cast_shadow.md) · [phong_shade](phong_shade.md) · [matcap_shade](matcap_shade.md)
 
 ---
 *Provenance: match3d.py — 3D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

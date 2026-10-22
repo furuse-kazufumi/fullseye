@@ -7,7 +7,7 @@ out: table
 examples: [poc_illumination_cone_vs_na]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # solid_angle_light — OPTICS `illumination` op

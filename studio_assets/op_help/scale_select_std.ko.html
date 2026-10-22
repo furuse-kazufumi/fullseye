@@ -18,6 +18,7 @@
 <p><code style="color:#22d3bf">a</code>가 시험할 창의 상한(<code style="color:#22d3bf">3,5,7,9,11,13,15</code> 중 어디까지인가), <code style="color:#22d3bf">b</code>가 신뢰구간의 배율 <code style="color:#22d3bf">gamma</code>(1.0〜3.0). <code style="color:#22d3bf">gamma</code>를 크게 하면 창이 늘어나기 쉬워진다(안정 쪽).</p>
 <p><b><code style="color:#22d3bf">local_std</code>와의 관계</b>: <code style="color:#22d3bf">local_std</code>는 창을 고정한다. 평탄부의 추정을 조이고 싶어창을 넓히면 가장자리가 번진다는 거래를 이쪽은 장소마다 푼다. <b>가장자리의 날카로움을 유지한 채평탄부의 오차만 낮출 수 있는</b> 것이 장점이며, 대신 계산량이 창의 수만큼 늘어난다.</p>
 <p><b>적용 조건</b>: (1) &quot;겹치는가&quot;의 판정은 오차 한계가 올바른지에 의존한다 —— 백색 잡음이 아닌(공간 상관이 있는) 잡음에서는 창이 너무 늘어난다. (2) <code style="color:#22d3bf">gamma</code>가 너무 작으면 항상최소 창이 선택되어 <code style="color:#22d3bf">local_std</code>의 3x3과 같아진다(효과가 없을 때 알아보는 법).</p>
+<p><b>노브(실측)</b>: <code style="color:#22d3bf">a</code>는 <b>단계적으로</b> 작용하며 전환점은 a ≈ 0.25、0.41、0.59、0.75、0.91(간격 0.02 스윕으로 실측).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
@@ -30,7 +31,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_texture_freq">gallery2d_texture_freq</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_texture_freq.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">image</code> 를 입력으로 받는 것)</h3>
-<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:gaussian">gaussian</a> · <a style="color:#22d3bf" href="op:mean_box">mean_box</a> · <a style="color:#22d3bf" href="op:bilateral">bilateral</a> · <a style="color:#22d3bf" href="op:unsharp">unsharp</a> · <a style="color:#22d3bf" href="op:median">median</a> · <a style="color:#22d3bf" href="op:min_filter">min_filter</a> · <a style="color:#22d3bf" href="op:max_filter">max_filter</a></p>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:gaussian">gaussian</a> · <a style="color:#22d3bf" href="op:mean_box">mean_box</a> · <a style="color:#22d3bf" href="op:mean_box_wh">mean_box_wh</a> · <a style="color:#22d3bf" href="op:bilateral">bilateral</a> · <a style="color:#22d3bf" href="op:kuwahara">kuwahara</a> · <a style="color:#22d3bf" href="op:unsharp">unsharp</a> · <a style="color:#22d3bf" href="op:median">median</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">texture</code>)</h3>
 <p><a style="color:#22d3bf" href="op:std_filter">std_filter</a> · <a style="color:#22d3bf" href="op:local_bimodality">local_bimodality</a> · <a style="color:#22d3bf" href="op:local_std">local_std</a> · <a style="color:#22d3bf" href="op:bootstrap_std_error">bootstrap_std_error</a> · <a style="color:#22d3bf" href="op:structure_tensor_orientation">structure_tensor_orientation</a> · <a style="color:#22d3bf" href="op:structure_tensor_coherence">structure_tensor_coherence</a> · <a style="color:#22d3bf" href="op:gabor">gabor</a> · <a style="color:#22d3bf" href="op:sk_frangi">sk_frangi</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">

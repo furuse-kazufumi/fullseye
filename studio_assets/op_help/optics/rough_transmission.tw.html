@@ -5,7 +5,7 @@
 <p style="margin:2px 0 2px 12px">• <b>經台帳呼叫的回傳值</b>: <code style="color:#22d3bf">fullseye.ledger.rough_transmission(...)</code> 只回傳<b>宣告的 out 型別 <code style="color:#22d3bf">pairs</code> 的值</b>(底層函式還會回傳輔助資訊)。需要被捨棄的部分時,請用 <code style="color:#22d3bf">fullseye.ledger.rough_transmission.raw(...)</code>,或直接呼叫 <code style="color:#22d3bf">surfacelib.rough_transmission</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把毛玻璃的透射分成「直透分量」與「擴散分量」。</p>
-<p>cos_i：入射角的 cos。roughness：面的粗糙度(0 = 透明，1 = 完全漫射)。</p>
+<p>cos_i：入射角的 cos。roughness：面的粗糙度(0 = 透明，1 = 完全漫射)。n1 / n2: 入射側 / 板的折射率。數值或材料表的名稱(例 &quot;N-BK7&quot;,名稱則取 d 線 587.56 nm 的 n)。</p>
 <p>回傳值：(直進 T_spec, 漫射 T_diff) 2 個值。合計與透明板的穿透率一致(不憑空產生能量 ―― 已由測試確認)。隔著毛玻璃的觀感，只需用這個直進成分下降、漫射成分增加即可解釋。</p>
 <p>空輸入(<code style="color:#22d3bf">cos_i</code> 為 0 個元素)會引發 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
@@ -26,7 +26,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:machined_metal_and_materials">machined_metal_and_materials</a> — <code style="color:#22d3bf">py -3.11 examples/machined_metal_and_materials.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">pairs</code> 作為輸入)</h3>
-<p><a style="color:#22d3bf" href="opoptics:mtf50">mtf50</a> · <a style="color:#22d3bf" href="opoptics:energy_to_photons">energy_to_photons</a> · <a style="color:#22d3bf" href="opoptics:spectral_product">spectral_product</a> · <a style="color:#22d3bf" href="opoptics:spectral_integral">spectral_integral</a> · <a style="color:#22d3bf" href="opoptics:spectral_stats">spectral_stats</a> · <a style="color:#22d3bf" href="opoptics:kubelka_munk_reflectance">kubelka_munk_reflectance</a> · <a style="color:#22d3bf" href="opoptics:hyperspectral_capture">hyperspectral_capture</a> · <a style="color:#22d3bf" href="opoptics:film_thickness_fft">film_thickness_fft</a></p>
+<p><a style="color:#22d3bf" href="opoptics:mtf50">mtf50</a> · <a style="color:#22d3bf" href="opoptics:energy_to_photons">energy_to_photons</a> · <a style="color:#22d3bf" href="opoptics:spectral_product">spectral_product</a> · <a style="color:#22d3bf" href="opoptics:spectral_integral">spectral_integral</a> · <a style="color:#22d3bf" href="opoptics:spectral_integral_table">spectral_integral_table</a> · <a style="color:#22d3bf" href="opoptics:spectral_stats">spectral_stats</a> · <a style="color:#22d3bf" href="opoptics:kubelka_munk_reflectance">kubelka_munk_reflectance</a> · <a style="color:#22d3bf" href="opoptics:hyperspectral_capture">hyperspectral_capture</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">surface</code>)</h3>
 <p><a style="color:#22d3bf" href="opoptics:metallic_flake_normals">metallic_flake_normals</a> · <a style="color:#22d3bf" href="opoptics:weave_normals">weave_normals</a> · <a style="color:#22d3bf" href="opoptics:wood_grain">wood_grain</a> · <a style="color:#22d3bf" href="opoptics:corrosion_mask">corrosion_mask</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">

@@ -385,8 +385,12 @@ def _build_op_index():
     rows = _all_ops()
     # 握り潰さない —— color 層が黙って空になると、tier の内訳だけが静かに縮む。
     import backends_color as CL
-    col = set(CL.coverage()["halcon_names"])
-    assert col, "color 層が空(backends_color.coverage が何も返さない)"
+    cov = CL.coverage()
+    col = set(cov["halcon_names"])
+    # ★2026-10-18(外部レビュー 0.6.0 N228 の再現で見つけた): color 層は OpenCV が要る(extra `opencv`)。
+    #   素の `pip install fullseye` では空が正しいのに、ここが無条件に assert していたので `fullseye index` が
+    #   AssertionError で落ちていた。黙って空になるのを止めたいのは OpenCV が在るときだけ。
+    assert col or not cov.get("has_cv2"), "color 層が空(backends_color.coverage が何も返さない)"
     for r in rows:
         if r["halcon"] in col:
             r["tier"] = "color"
@@ -445,8 +449,13 @@ def _index_default_out() -> str:
     中に ``docs/OP_INDEX.json`` を作り、同梱の ``fullseye/data/OP_INDEX.json`` と別の値(その環境の生きた
     registry)を持つ「3 つ目の索引」が生まれていた。インストール先に書かない。
     """
+    # ★2026-10-18(外部レビュー 0.6.0 N228): checkout の判定が「HERE に docs/ が在るか」だけだった。wheel の
+    #   HERE は site-packages そのものなので、別のパッケージが site-packages/docs/ を置いていると、そこへ
+    #   OP_INDEX.json を書きに行く(読み取り専用の環境では落ちる)。checkout にしか無い正本の組で判定する。
     docs = os.path.join(HERE, "docs")
-    return os.path.join(docs, "OP_INDEX.json") if os.path.isdir(docs) else os.path.join(os.getcwd(), "OP_INDEX.json")
+    is_checkout = (os.path.isfile(os.path.join(docs, "OP_INDEX.json"))
+                   and os.path.isfile(os.path.join(HERE, "tools", "regen_all.py")))
+    return os.path.join(docs, "OP_INDEX.json") if is_checkout else os.path.join(os.getcwd(), "OP_INDEX.json")
 
 
 def _index_vs_shipped(rows) -> list:
@@ -642,6 +651,10 @@ def main() -> int:
     sub = ap.add_subparsers(dest="cmd", required=True)
 
     p = sub.add_parser("ops", help="list/search implemented operators")
+    # ★2026-10-18(外部レビュー 0.6.0 N217): `fullseye algo list` に倣って `fullseye ops list` と打つと
+    #   rc=2(unrecognized arguments)だった。`list` は既定の動作と同じなので、語として受けて同じものを出す。
+    p.add_argument("action", nargs="?", choices=["list"], default="list",
+                   help="`list` (the default; accepted for symmetry with `fullseye algo list`)")
     p.add_argument("--search", default="")
     p.add_argument("--sort", default="")
     p.add_argument("--include-ledger", action="store_true",

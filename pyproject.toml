@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fullseye"
-version = "0.6.0"
-description = "Numpy-native operator library for vision, 3-D and measurement (3,295 typed ops in the machine-readable index: imaging, point clouds, optics, tomography, metrology) with an evolutionary pipeline designer and honest holdout gating"
+version = "0.8.1"
+description = "Numpy-native operator library for vision, 3-D and measurement (3,531 typed ops in the machine-readable index: imaging, point clouds, optics, tomography, metrology) with an evolutionary pipeline designer and honest holdout gating"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "Apache-2.0" }
@@ -130,6 +130,9 @@ py-modules = [
   # opnames: canonical op-name aliases (phase 1 of the naming cleanup, 2026-10-07). api / opassist /
   # imgevolve / the fullseye facade import it, so it must ship.
   "opnames",
+  # pocviewer: PoC の結果を 1 枚の HTML ビューアにする公開 API(fullseye.write_viewer、MCP tool も呼ぶ)。
+  # root モジュールが py-modules から落ちると wheel から黙って消える(2026-09-05 / 09-14 の事故と同じ族)。
+  "pocviewer",
   # realdata: 実写サンプルの取り口(2026-09-08 追加)。examples/poc_real_*.py が
   # import する。ライブラリ本体は使わないが、**wheel から落ちると PoC が
   # 動かない** —— core CI の packaging 門が実際に捕まえた。
@@ -154,7 +157,9 @@ py-modules = [
   "blob2d", "opsblob",
   "conngraph", "opsconngraph", "eyebrain", "emproof", "opsemproof", "videocube", "opsvideocube", "live4d", "opslive4d", "printpath", "opsprintpath", "geocam", "opsgeocam","geocam", "opsgeocam",
   # 2026-09-24: LLM に至る系譜の芯(注意・RoPE・RMSNorm)。numpy だけで動く。
-  "llmcore", "opsllmcore",
+  "lenstol", "llmcore", "opsllmcore",
+  # 2026-10-21: the shipped omni360/plenoptic examples import these root modules.
+  "omni360", "plenoptic",
   # 2026-10-02: HALCON Segmentation 章の 9 op の台帳。実体 segmentation は下の facade 群に既載。
   "opssegmentation",
   # 2026-10-02: セグメンテーション第 1 陣。採点の物差し(segeval)と真値つき合成世界(segworld)の実体。
@@ -166,6 +171,7 @@ py-modules = [
   # 2026-10-02: セグメンテーション第 3 陣。グラフ・階層・閾値(graph cut / α-expansion / SRM / 成分木 /
   #   準平坦領域 / 階層分水嶺 / 超画素 / 閾値 4 定理)の実体。opssegmentation 台帳に graph / threshold として載る。
   "seggraph",
+  "cropweed",
   "backends", "backends_auto", "backends_color", "backends_cv2b", "backends_dl",
   "backends_extra", "backends_kornia", "backends_pil", "backends_r3",
   "backends_scipy", "backends_ski2",
@@ -214,15 +220,15 @@ py-modules = [
   "unified", "sim_source", "oss_adapter", "filters_flow", "matching3d",
   "calib", "matching", "mosaic", "objmodel3d", "pose_quat", "reconstruction", "transforms",
   "pointcloud", "pcseg", "mesh", "meshio_opt", "volio", "raster", "render3d", "camera", "odometry", "grasp", "meshrepair", "volops", "volregion", "volgray", "volxform", "volprobe", "volfreq", "volrestore", "handpose", "complexops", "specops", "flow", "motion", "sceneflow", "features", "events", "video", "videops", "engine", "graphengine", "acquire", "fullseye_comm", "device", "dsp", "funct1d", "mathops", "mathtransforms", "mathnumerics", "mathspectral", "mathestimation", "mathgeometry", "predicates", "precision_union", "geompred", "matappear", "glassmirror", "metalfinish", "surfacelib", "opassist", "ops1d", "opsmath", "optics",
-  "optscene", "raytrace", "lensopt", "illumdesign", "edgesfr", "sensorchar", "sensorgeneral", "coherent", "sfpolar", "lighttransport", "lensimage", "opsoptics", "visiondesign", "defectgen", "visionlab", "lightfield", "opslightfield", "photoncount", "opsphoton", "specularity", "opsspecular", "motionmag", "opsmotionmag", "gfx2d", "opsgfx2d", "quatimage", "opsquat", "rangedoppler", "opsrangedoppler", "interferometry", "opsinterferometry", "opsinterferometry", "acoustics", "ultrasound", "opsacoustics",
+  "optscene", "raytrace", "lensopt", "illumdesign", "edgesfr", "sensorchar", "sensorgeneral", "coherent", "sfpolar", "lighttransport", "radiosity3d", "raytrace3d", "lensimage", "opsoptics", "visiondesign", "defectgen", "visionlab", "lightfield", "opslightfield", "photoncount", "opsphoton", "specularity", "opsspecular", "motionmag", "opsmotionmag", "gfx2d", "opsgfx2d", "quatimage", "opsquat", "rangedoppler", "opsrangedoppler", "interferometry", "opsinterferometry", "opsinterferometry", "acoustics", "ultrasound", "opsacoustics",
   # flyvision: ハエ視葉の視覚処理経路(六角格子・EMD 運動・LGMD looming・水平系読み出し)。
   # 設計側(optics/visiondesign)と処理側(sceneflow)はあったが、複眼の視覚処理経路が
   # 無かった(2026-09-13 追加)。opsflyvision がレジストリ台帳。
-  "flyvision", "opsflyvision", "cavityoptics", "gwsearch", "materials", "materials_data", "spectralrad", "chromconf", "fiberoptics", "filmoptics", "moirealign", "telecentric", "optdraw", "deflectometry", "linescan", "pixelshift", "octscan", "spc", "pod", "opsspc", "graphinv", "treemorph", "segcompare", "vxcore", "opsvx", "helpstore", "opsearch", "physarum_search", "carpath", "drivecourse", "driveworld", "lidarsim", "drivettc", "rsssafety", "driveterrain", "ballistics", "balltrack", "ballworld", "racket", "roadjp", "kendama", "kendamaworld", "pegsim", "tacsim", "tacdome", "tacscalib", "tacslip", "tactorque", "puck", "pegfail", "pegtactile", "granular", "cutting", "cuttouch", "diabolo", "pegsym", "polish", "scoop", "grind", "doseunif", "ozakimm", "swarmflow", "pxrd", "roverslip", "gsplatnp", "motionio", "drivehumanoid", "agvfleet", "carlabridge", "drivetown", "drivejapan", "driveplateau", "drivecommonroad", "drivelong", "driveenv", "driveinf", "drivetraffic", "drivedecide", "drivelateral", "drivecrossing", "drivepass", "opsdrive", "opsgraph", "textregion", "opstext", "residue", "opsresidue", "doe", "multivar", "sensitivity", "opsmultivar", "simcal", "simcalcheck", "opssimcal", "cadmap", "opscadmap", "volcolor", "opsvolcolor", "tomography", "opstomography", "palette", "annotate", "opsannotate", "reprconv", "opsreprconv", "imgmetrics", "iqatid", "iqafsim", "opsimgmetrics", "colortransport", "opscolortransport", "imgforensics", "opsimgforensics", "astrostack", "opsastrostack", "meshres", "videostream", "opsvideostream", "annotate3d", "contours_xld", "metriccontract", "fssystem", "illusion", "perpetual", "semsim", "plsim", "opsgenerative",
+  "flyvision", "opsflyvision", "cavityoptics", "gwsearch", "materials", "materials_data", "materials_xray_data", "dualxray", "spectralrad", "chromconf", "gratingspec", "gratinginterf", "fiberoptics", "filmoptics", "moirealign", "telecentric", "optdraw", "lensfile", "lensconfig", "lensglobal", "lensmerit", "lensrender", "lenssolve", "lockin", "watermedia", "watermedia_data", "watervision", "deflectometry", "linescan", "pixelshift", "octscan", "itof", "spc", "pod", "opsspc", "graphinv", "treemorph", "segcompare", "vxcore", "opsvx", "helpstore", "opsearch", "physarum_search", "carpath", "drivecourse", "driveworld", "lidarsim", "drivettc", "rsssafety", "driveterrain", "ballistics", "balltrack", "ballworld", "racket", "roadjp", "kendama", "kendamaworld", "pegsim", "tacsim", "tacdome", "tacscalib", "tacslip", "tactorque", "puck", "pegfail", "pegtactile", "granular", "cutting", "cuttouch", "diabolo", "pegsym", "polish", "scoop", "grind", "doseunif", "ozakimm", "swarmflow", "pxrd", "roverslip", "gsplatnp", "motionio", "drivehumanoid", "agvfleet", "carlabridge", "drivetown", "drivejapan", "driveplateau", "drivecommonroad", "drivelong", "driveenv", "driveinf", "drivetraffic", "drivedecide", "drivelateral", "drivecrossing", "drivepass", "opsdrive", "opsgraph", "textregion", "opstext", "residue", "opsresidue", "doe", "multivar", "sensitivity", "opsmultivar", "simcal", "simcalcheck", "opssimcal", "converge", "mcphoton", "deconvstop", "opsconverge", "codematch", "opscodematch", "cadmap", "opscadmap", "volcolor", "opsvolcolor", "tomography", "opstomography", "palette", "annotate", "opsannotate", "reprconv", "opsreprconv", "imgmetrics", "iqatid", "iqafsim", "opsimgmetrics", "colortransport", "opscolortransport", "imgforensics", "opsimgforensics", "astrostack", "opsastrostack", "meshres", "videostream", "opsvideostream", "annotate3d", "contours_xld", "metriccontract", "fssystem", "illusion", "perpetual", "semsim", "temsim", "plsim", "opsgenerative", "anomeval", "anomaly_patch", "varmodel",
   # グリフ照合(指定の字と合っているかを測り、誤字を置き換える)。annotate の
   # フォント解決と豆腐検出を使い回す。2026-09-17 追加。
   "glyphops",
-  "recipes", "measure", "studio", "sample_images", "sample_data", "accuracy_bench",
+  "recipes", "measure", "studio", "studio_search", "studio_errors", "studio_roundtrip", "studio_batch", "sample_images", "sample_data", "accuracy_bench",
   "evolve", "problems", "baseline", "robust",
   "verify_auto", "honest_summary", "dispositions", "catalog", "report",
   "samples", "references", "codegen", "difftest", "parity", "accel", "accel_bridge", "accel_match", "accel_vol", "bench",

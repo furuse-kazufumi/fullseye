@@ -4,10 +4,10 @@ dim: lightfield
 category: synthesis
 in: 
 out: lightfield
-examples: [lightfield_depth, poc_compound_eye]
+examples: [lightfield_depth, plenoptic_decode_pipeline, poc_compound_eye]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # lf_synthesize — LIGHTFIELD `synthesis` op
@@ -81,6 +81,7 @@ so large the smoothed texture's dynamic range falls below
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [lightfield_depth](../../../../examples/lightfield_depth.py) — `py -3.11 examples/lightfield_depth.py`
+- [plenoptic_decode_pipeline](../../../../examples/plenoptic_decode_pipeline.py) — `py -3.11 examples/plenoptic_decode_pipeline.py`
 - [poc_compound_eye](../../../../examples/poc_compound_eye.py) — `py -3.11 examples/poc_compound_eye.py`
 
 ## 型が繋がる次の op(`lightfield` を入力に取れる)

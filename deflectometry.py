@@ -440,7 +440,8 @@ def deflectometry_render(height, rig=None, period_mm=10.0, n_steps=4, direction=
         縞の振幅が (1 − k_d) 倍に落ち、位相の雑音は 1 / (1 − k_d) 倍になる(ざらついた塗装)。
       * ``scatter_rad``: 鏡面ローブの広がり(面の法線の標準偏差 [rad])。反射光は 2 倍広がり、画面上で
         σ = 2·scatter·(面から画面の距離)のガウスで縞がぼける → 振幅 exp(−2π²σ²/周期²)。
-      * ``back_thickness_mm`` / ``refractive_index``: 透明板(カバーガラス)の裏面反射。表で屈折
+      * ``back_thickness_mm`` / ``refractive_index``: 透明板(カバーガラス)の裏面反射(屈折率は数か材料表の名前 ——
+        名前なら d 線 587.56 nm の n)。表で屈折
         (`glassmirror.refract_rays`)→ 平らな裏面で反射 → 表から出る光が、ずれた画面の点を映す。
         重みは Fresnel(`glassmirror.fresnel_dielectric`)。カメラの露出は表と裏の和で正規化する。
       * ``focus``: ``"surface"``(面にピント)/ ``"screen"``(画面の虚像 = 主光線に沿って L + d にピント)/
@@ -482,6 +483,8 @@ def deflectometry_render(height, rig=None, period_mm=10.0, n_steps=4, direction=
         raise ValueError("%s: diffuse_fraction must be < 1 (1 = no mirror at all, nothing to measure), got %g"
                          % (op, kd))
     sc = _num(scatter_rad, "scatter_rad", op, 0.0)
+    import materials as _mat
+    refractive_index = _mat._index_of(refractive_index, op)     # 材料名なら d 線の n(数はそのまま)
     nidx = _num(refractive_index, "refractive_index", op, 1.0, lo_open=True)
     if back_thickness_mm is not None:
         _num(back_thickness_mm, "back_thickness_mm", op, 0.0, lo_open=True)

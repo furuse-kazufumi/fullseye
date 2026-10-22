@@ -4,16 +4,16 @@ dim: optics
 category: scene
 in: 
 out: table
-examples: [poc_optics_drawings, studio_raytrace_scene, vision_layout_from_catalog]
+examples: [poc_nir_silicon_transmission, poc_optics_drawings, studio_raytrace_scene, vision_layout_from_catalog]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # light_spec — OPTICS `scene` op
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import fullseye as fs; fs.ledger.light_spec(kind: 'str' = 'coaxial', source: 'str' = 'led', wavelength_nm: 'float' = 550.0, bandwidth_nm: 'float' = 30.0, radius_mm: 'float' = 40.0, height_mm: 'float' = 110.0, size_mm: 'float' = None, n: 'int' = 196, intensity: 'float' = 1.0, cos_exponent: 'float' = 1.0, polarization: 'str' = None, model: 'str' = None, maker: 'str' = None) -> 'dict'` (実装を直接呼ぶなら `import optscene; optscene.light_spec(kind: 'str' = 'coaxial', source: 'str' = 'led', wavelength_nm: 'float' = 550.0, bandwidth_nm: 'float' = 30.0, radius_mm: 'float' = 40.0, height_mm: 'float' = 110.0, size_mm: 'float' = None, n: 'int' = 196, intensity: 'float' = 1.0, cos_exponent: 'float' = 1.0, polarization: 'str' = None, model: 'str' = None, maker: 'str' = None) -> 'dict'`、台帳から引くなら `opsoptics.get("light_spec")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.light_spec(kind: 'str' = None, source: 'str' = None, wavelength_nm: 'float' = None, bandwidth_nm: 'float' = None, radius_mm: 'float' = None, height_mm: 'float' = None, size_mm: 'float' = None, n: 'int' = 196, intensity: 'float' = 1.0, cos_exponent: 'float' = 1.0, polarization: 'str' = None, model: 'str' = None, maker: 'str' = None, color_temperature_k: 'float' = None, band_nm=None, splitter_reflectance: 'float' = 0.5, splitter_transmittance: 'float' = 0.5) -> 'dict'` (実装を直接呼ぶなら `import optscene; optscene.light_spec(kind: 'str' = None, source: 'str' = None, wavelength_nm: 'float' = None, bandwidth_nm: 'float' = None, radius_mm: 'float' = None, height_mm: 'float' = None, size_mm: 'float' = None, n: 'int' = 196, intensity: 'float' = 1.0, cos_exponent: 'float' = 1.0, polarization: 'str' = None, model: 'str' = None, maker: 'str' = None, color_temperature_k: 'float' = None, band_nm=None, splitter_reflectance: 'float' = 0.5, splitter_transmittance: 'float' = 0.5) -> 'dict'`、台帳から引くなら `opsoptics.get("light_spec")`)
 
 ## 使い方
 
@@ -28,6 +28,22 @@ exp(-(4πσcosθ/λ)²) が波長依存なので、**同じ面でも光源で見
 ``size_mm`` は器具の実体の差し渡し。鏡像として写るかどうか = 明視野/暗視野の
 本体なので、点近似のままだと暗視野が原理的に成立しない。省くと ``radius_mm``
 の半分を使う。
+
+既定値(引数を省いたとき): kind coaxial / source led / 550 nm / 帯域 30 nm / 半径 40 mm /
+高さ 110 mm。``model`` を渡すと台帳の値が既定になり、**明示した** wavelength_nm / bandwidth_nm /
+radius_mm / height_mm / size_mm はそちらを優先する(同じ器具の波長違いを組める)。型番と矛盾する
+kind / source は ValueError。
+
+分光: LED は Ohno 2005 のスペクトル(``spectralrad.led_spectrum``、半値全幅 = ``bandwidth_nm``)、
+ハロゲンは**黒体**(``spectralrad.blackbody_spectrum``、``color_temperature_k`` 既定 3000 K、峰は Wien の
+変位則で約 966 nm)を ``band_nm``(ハロゲンの既定は Si が感じる 380〜1100 nm、LED は峰 ± 1.5 半値全幅)で
+切ったもの、レーザーは 1 本の線。``light_wavelengths`` がこれを数本の波長と重みに落とす。
+
+同軸照明(kind coaxial)はハーフミラーを通る: 光源の光は反射 ``splitter_reflectance`` 倍で部品に届き、
+カメラはハーフミラー越しに見るので像は透過 ``splitter_transmittance`` 倍になる(往復で R·T、
+50/50 なら 1/4)。返り値の ``intensity`` は部品に届く側(R 倍済み)、``emitted_intensity`` が光源の値。
+T は ``render_optscene`` / ``layout_capture`` が像に掛ける。2026-10-15 まで往復の損失が無く、同軸だけが
+リング照明に比べて約 4 倍明るく出ていた。R + T ≤ 1(エネルギー保存)でなければ ValueError。
 
 ## ファミリ共通の入力契約(fail-closed)
 
@@ -61,6 +77,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_nir_silicon_transmission](../../../../examples/poc_nir_silicon_transmission.py) — `py -3.11 examples/poc_nir_silicon_transmission.py`
 - [poc_optics_drawings](../../../../examples/poc_optics_drawings.py) — `py -3.11 examples/poc_optics_drawings.py`
 - [studio_raytrace_scene](../../../../examples/studio_raytrace_scene.py) — `py -3.11 examples/studio_raytrace_scene.py`
 - [vision_layout_from_catalog](../../../../examples/vision_layout_from_catalog.py) — `py -3.11 examples/vision_layout_from_catalog.py`

@@ -5,7 +5,7 @@
 <p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.rough_transmission(...)</code> は<b>宣言 out 型 <code style="color:#22d3bf">pairs</code> の値だけ</b>を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.rough_transmission.raw(...)</code>、または <code style="color:#22d3bf">surfacelib.rough_transmission</code> を直接呼ぶ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>すりガラスの透過を「直進成分」と「拡散成分」に分ける。</p>
-<p>cos_i: 入射角の cos。roughness: 面の粗さ(0 = 透明、1 = 完全拡散)。</p>
+<p>cos_i: 入射角の cos。roughness: 面の粗さ(0 = 透明、1 = 完全拡散)。n1 / n2: 入射側 / 板の屈折率。数か材料表の名前(例 &quot;N-BK7&quot;、名前なら d 線 587.56 nm の n)。</p>
 <p>返り値: (直進 T_spec, 拡散 T_diff) の 2 本。合計は透明板の透過率に一致する(エネルギーを作らない ―― テストで確認)。曇りガラス越しの見え方は、この直進成分が落ちて拡散成分が増えるだけで説明できる。</p>
 <p>空の入力(<code style="color:#22d3bf">cos_i</code> が 0 要素)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
@@ -26,7 +26,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:machined_metal_and_materials">machined_metal_and_materials</a> — <code style="color:#22d3bf">py -3.11 examples/machined_metal_and_materials.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">pairs</code> を入力に取れる)</h3>
-<p><a style="color:#22d3bf" href="opoptics:mtf50">mtf50</a> · <a style="color:#22d3bf" href="opoptics:energy_to_photons">energy_to_photons</a> · <a style="color:#22d3bf" href="opoptics:spectral_product">spectral_product</a> · <a style="color:#22d3bf" href="opoptics:spectral_integral">spectral_integral</a> · <a style="color:#22d3bf" href="opoptics:spectral_stats">spectral_stats</a> · <a style="color:#22d3bf" href="opoptics:kubelka_munk_reflectance">kubelka_munk_reflectance</a> · <a style="color:#22d3bf" href="opoptics:hyperspectral_capture">hyperspectral_capture</a> · <a style="color:#22d3bf" href="opoptics:film_thickness_fft">film_thickness_fft</a></p>
+<p><a style="color:#22d3bf" href="opoptics:mtf50">mtf50</a> · <a style="color:#22d3bf" href="opoptics:energy_to_photons">energy_to_photons</a> · <a style="color:#22d3bf" href="opoptics:spectral_product">spectral_product</a> · <a style="color:#22d3bf" href="opoptics:spectral_integral">spectral_integral</a> · <a style="color:#22d3bf" href="opoptics:spectral_integral_table">spectral_integral_table</a> · <a style="color:#22d3bf" href="opoptics:spectral_stats">spectral_stats</a> · <a style="color:#22d3bf" href="opoptics:kubelka_munk_reflectance">kubelka_munk_reflectance</a> · <a style="color:#22d3bf" href="opoptics:hyperspectral_capture">hyperspectral_capture</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">surface</code>)</h3>
 <p><a style="color:#22d3bf" href="opoptics:metallic_flake_normals">metallic_flake_normals</a> · <a style="color:#22d3bf" href="opoptics:weave_normals">weave_normals</a> · <a style="color:#22d3bf" href="opoptics:wood_grain">wood_grain</a> · <a style="color:#22d3bf" href="opoptics:corrosion_mask">corrosion_mask</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">

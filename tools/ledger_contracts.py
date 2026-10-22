@@ -83,6 +83,9 @@ SIZE_OVERRIDES = {
     # 光干渉断層の B スキャンの合成: 既定の 256 列 × 1024 画素は 1 回 6 s(列ごとに場を足す)。大きさだけを縮める。
     "oct_bscan_simulate": {"n_columns": 12, "n_pixels": 256, "width_um": 200.0},
     "render_beauty": {"size": 96},
+    # 仮想 SEM の平らな試料の MC: 既定は 95 % 区間が締まるまで最大 2 万電子。上限と刻みだけを縮める
+    # (上限で止まるので max_electrons が効く条件で探れる。意味のある量 tol・energy_kev は既定のまま)。
+    "sem_electron_mc": {"max_electrons": 2000, "batch": 500},
 }
 
 #: Ops whose ``None`` return is the documented contract, not a sort lie (the ``sort`` check
@@ -294,6 +297,29 @@ def _optics_kit():
     return OS, cam, scene, light
 
 
+def _gi_kit():
+    """A small Lambertian pocket (box minus box) on a black stage, a binned camera and a dome (radiosity3d)."""
+    import illumdesign
+    import optscene as OS
+    m = OS.scene_material("lambert", albedo=0.7)
+    scene = [OS.scene_difference(OS.scene_box((0.0, 0.0, 4.0), (8.0, 6.0, 4.0), m),
+                                 OS.scene_box((0.0, 0.0, 7.0), (5.0, 3.0, 4.0))),
+             OS.scene_plane(0.0, OS.scene_material("lambert", albedo=0.0))]
+    cam = OS.optical_camera(focal_mm=12.0, pixel_um=200.0, resolution=(24, 24), working_distance_mm=120.0)
+    light = illumdesign.light_source(kind="dome", radius_mm=50.0, n=8)
+    return scene, cam, light
+
+
+def _gi_patches(patch_mm=3.0):
+    import radiosity3d
+    return radiosity3d.radiosity_patches(scene=_gi_kit()[0], patch_mm=patch_mm, outer_mm=4.0)
+
+
+def _gi_emission(patches):
+    import numpy as np
+    return np.where(np.abs(patches["centers"][:, 2] - 3.0) < 1e-9, 1.0, 0.2)
+
+
 def _cone_light():
     import illumdesign
     return illumdesign.solid_angle_light(4.0, tilt_deg=1.0)
@@ -310,6 +336,14 @@ def _tilted_normals(rng, size=16):
 def _lens(name="singlet"):
     import raytrace
     return raytrace.example_system(name)
+
+
+def _lr_scene():
+    """lensrender の探針用のシーン: 1.5 m の平面 + 照明 + 点光源 1 つ。"""
+    import lensrender
+    return lensrender.lens_scene([{"type": "plane", "z_mm": -1500.0, "albedo": 0.5, "size_mm": (300.0, 300.0)}],
+                                 [{"type": "directional", "to_light": (0.0, 0.0, 1.0), "irradiance_W_m2_nm": 1.0}],
+                                 sources=[{"position_mm": (0.0, 5.0, -1500.0), "intensity_W_sr_nm": 1e-3}])
 
 
 def _ls():
@@ -386,9 +420,35 @@ def _drawing():
     return optdraw.lens_section_drawing(_lens())
 
 
+def _tem_micrograph():
+    """しきい値の境界に置いた合成写真(非晶質炭素 30 Å、Δf 6000 Å、100 e/Å²、256²)。種は固定。
+
+    ★``tem_ctf_estimate`` の判定のしきい値 2 つが探針の 2 点(半分と倍)で効くように置いた(2026-10-18):
+    帯域 k ≤ 0.2 Å⁻¹ に零点が 4 本(``min_rings`` 3 → 1 は受理のまま、6 で拒否)、相関の山が 11.8 MAD
+    (``min_peak_z`` 8 → 4 は受理のまま、16 で拒否)。拒否は ``on_fail="report"`` で表に出す(例外だと探針が
+    その点を飛ばし、効き目が見えない)。
+    """
+    import temsim
+    film = temsim.tem_amorphous_film(256, 1.0, 30.0, seed=2)
+    return temsim.tem_image_weak_phase(film, 1.0, 300.0, 2.7, 6000.0, dose_e_per_A2=100.0, seed=1)
+
+
+def _gauss_psf(size=65, sigma=3.0):
+    """円対称なガウスの点像(窓の外へ翼がはみ出さない)。"""
+    yy, xx = np.mgrid[0:size, 0:size] - size // 2
+    g = np.exp(-0.5 * (yy ** 2 + xx ** 2) / sigma ** 2)
+    return g / g.sum()
+
+
 def _optics_builders():
     def lens_first(**kw):
         return lambda pool, rng: ([_lens()], dict(kw))
+
+    def s3_first(**kw):
+        def b(pool, rng):
+            import raytrace3d
+            return [raytrace3d.noncoaxial_example("epi_beamsplitter")], dict(kw)
+        return b
 
     def tele_first(**kw):
         def b(pool, rng):
@@ -412,6 +472,26 @@ def _optics_builders():
         "paraxial_trace": lens_first(), "seidel_coefficients": lens_first(),
         "spot_stats": lens_first(rings=3), "spot_diagram": lens_first(rings=3),
         "tolerance_analysis": lens_first(trials=4, rings=3),
+        "tolerance_table": lens_first(defaults={"radius_pct": 0.1}),
+        "tolerance_criteria": lambda pool, rng: ([], {"rms_spot": {"max": 1.0}}),
+        "tolerance_compensators": lambda pool, rng: ([], {"variables": "t1"}),
+        "tolerance_monte_carlo": lambda pool, rng: (
+            [__import__("raytrace").example_system(),
+             __import__("lenstol").tolerance_table(__import__("raytrace").example_system(), {"radius_pct": 0.01}),
+             __import__("lenstol").tolerance_criteria(efl={"max": 200.0})], {"trials": 2}),
+        "tolerance_sensitivity": lambda pool, rng: (
+            [__import__("raytrace").example_system(),
+             __import__("lenstol").tolerance_table(__import__("raytrace").example_system(), {"radius_pct": 0.01}),
+             __import__("lenstol").tolerance_criteria(efl={"max": 200.0})], {}),
+        "tolerance_report": lambda pool, rng: ([__import__("lenstol").tolerance_monte_carlo(
+            __import__("raytrace").example_system(),
+            __import__("lenstol").tolerance_table(__import__("raytrace").example_system(), {"radius_pct": 0.01}),
+            __import__("lenstol").tolerance_criteria(efl={"max": 200.0}), trials=2)], {}),
+        "tolerance_table_zmx": lambda pool, rng: ([__import__("lenstol").tolerance_table(
+            __import__("raytrace").example_system(), {"radius_pct": 0.01})], {}),
+        "tolerance_table_from_zmx": lambda pool, rng: (
+            [__import__("raytrace").example_system(), __import__("lenstol").tolerance_table_zmx(
+                __import__("lenstol").tolerance_table(__import__("raytrace").example_system(), {"radius_pct": 0.01}))], {}),
         "wavefront_from_opd": lens_first(size=16), "ray_fan": lens_first(n=9),
         "opd_map": lens_first(size=16), "chromatic_shift": lens_first(rings=3),
         # telecentric(2026-10-15): 有限物体の処方が要る(example_system は無限遠の物体なので拒否される)
@@ -425,12 +505,81 @@ def _optics_builders():
         "lens_element_drawing": lens_first(trials=4),
         "vision_setup_drawing": os_call(lambda OS, cam, sc, li, rng: ([layout(OS, li)], {})),
         "drawing_svg": lambda pool, rng: ([_drawing()], {}),
+        # temsim(2026-10-15): 原子の座標(N, 2)と、Thon リングの見える小さな合成写真(32² の雑音では推定は拒否する)
+        "tem_projected_potential": lambda pool, rng: ([[[4.2, 5.1], [10.3, 7.7], [12.9, 3.3]]], {"shape": 32, "pixel_A": 0.5}),
+        "tem_ctf_estimate": lambda pool, rng: ([_tem_micrograph()], {"defocus_min_A": 2000.0, "k_max": 0.2,
+                                                                       "on_fail": "report"}),
         "drawing_dxf": lambda pool, rng: ([_drawing()], {}),
         "drawing_raster": lambda pool, rng: ([_drawing()], {"dpi": 10.0}),
         "svg_entities": lambda pool, rng: ([__import__("optdraw").drawing_svg(_drawing())], {}),
         "dxf_entities": lambda pool, rng: ([__import__("optdraw").drawing_dxf(_drawing())], {}),
+        # raytrace の追加登録(2026-10-15)と raytrace3d(非共軸): 系は example の table
+        "chief_ray": lens_first(), "ray_bundle": lens_first(rings=2), "opd_samples": lens_first(size=8),
+        "with_wavelength": lens_first(),
+        "with_aiming": lens_first(), "ray_aiming": lens_first(rings=2), "set_vignetting": lens_first(),
+        "noncoaxial_layout": s3_first(), "noncoaxial_trace": s3_first(rings=2), "noncoaxial_spot": s3_first(rings=2),
+        "image_orientation": s3_first(), "ghost_analysis": s3_first(rings=2), "ghost_image": s3_first(size=16),
+        "ghost_path": s3_first(i=1, j=2, rings=1), "noncoaxial_drawing": s3_first(rays=1),
         "optimize_lens": lens_first(iterations=2, rings=2),
+        # lensfile(2026-10-18): lens_file_read の返す処方(視野・波長・面の表つき)が要る(印の無い dict は拒否)。
+        #   lens_file_write は path=None で書かない(探針がファイルを作らない)。
+        "lens_file_system": lambda pool, rng: ([__import__("lensfile").lens_file_read()], {"field_index": 1}),
+        "lens_file_write": lambda pool, rng: ([__import__("lensfile").lens_file_read()], {"path": None}),
+        # lensconfig(2026-10-19): "configurations" を持つ処方(lensconfig の例)が要る(印の無い dict は拒否)
+        "lens_configurations": lambda pool, rng: ([__import__("lensconfig")._example_system()], {}),
+        "lens_with_configuration": lambda pool, rng: ([__import__("lensconfig")._example_system()], {"k": 1}),
+        "lens_configuration_table": lambda pool, rng: ([__import__("lensconfig")._example_system()], {}),
+        "lens_configuration_metrics": lambda pool, rng: ([__import__("lensconfig")._example_system()], {"metric": "efl"}),
+        "lens_add_configuration": lambda pool, rng: ([__import__("lensconfig")._example_system()],
+                                                     {"surfaces": {0: {"t": 15.0}}}),
+        # lensglobal(2026-10-19): モデル硝材 (n_d, V_d) を持つ処方が要る(カタログ名だけの処方は置き換える物が無い)
+        "lens_substitute_glasses": lambda pool, rng: ([__import__("lensglobal")._example_doublet()], {}),
+        "lens_global_search": lambda pool, rng: ([__import__("lensglobal")._example_doublet()],
+                                                 {"variables": ["c0", "c1"], "n_starts": 3, "iterations": 3, "spread": 0.001}),
+        # lenssolve(2026-10-20): 処方は印のある lens_system の dict。解を外す op は解の付いた処方、afocal の報告は afocal の処方、
+        #   afocal_system / lens_zmx_solves_roundtrip は処方を取らず既定の系を作る(None)。像面の曲率は有限の R で探る
+        "lens_apply_solves": lens_first(), "lens_solve_set": lens_first(), "lens_solves_list": lens_first(),
+        "lens_petzval_radius": lens_first(),
+        "lens_solve_clear": lambda pool, rng: ([__import__("lenssolve")._example_doublet()], {}),
+        "afocal_system": lambda pool, rng: ([None], {}),
+        "lens_afocal_report": lambda pool, rng: ([__import__("lenssolve").afocal_system()], {"rings": 2}),
+        "lens_image_surface": lens_first(R=-200.0),
+        "lens_zmx_solves_roundtrip": lambda pool, rng: ([None], {}),
+        # lensmerit(2026-10-19): オペランド表は処方 + 行のリスト。行の添字が処方の面数を超えない最小の表で探る
+        "merit_evaluate": lens_first(operands=[{"op": "EFFL", "target": 100.0}, {"op": "ETGT", "surf": 0, "target": 1.0}]),
+        "merit_default": lens_first(rings=2),
+        "merit_boundary_operands": lens_first(),
+        "merit_contributions": lens_first(operands=[{"op": "EFFL", "target": 100.0}, {"op": "ETGT", "surf": 0, "target": 1.0}]),
+        # lensrender(2026-10-20): 処方 + 小さなセンサ。点光源つきのシーンで、どの引数も出力に効く最小の呼び方で探る
+        "exit_pupil_samples": lens_first(n=7),
+        "trace_sensor_rays": lens_first(),
+        "render_scene_through_lens": lambda pool, rng: ([_lens(), _lr_scene()], {"sensor": {"size": (6, 8), "pixel_pitch_um": 25.0},
+                                                                              "pupil_samples": 4, "wavelengths": [0.55]}),
+        "bokeh_shape": lens_first(pupil_samples=40),
+        # ゴーストは面の対の数(貼り合わせ 3 面 = 3 対)より少ない max_ghosts で、数を変えると出力が変わるようにする
+        "render_ghost_overlay": lambda pool, rng: ([_lens("doublet")], {"light_xy_mm": (0.0, 0.5), "rings": 3, "max_ghosts": 2,
+                                                                      "sensor": {"size": (6, 8), "pixel_pitch_um": 25.0}}),
+        "render_compare_prescriptions": lambda pool, rng: ([], {"sensor": {"size": (6, 8), "pixel_pitch_um": 25.0},
+                                                              "pupil_samples": 4, "wavelengths": [0.55]}),
+        # 効かないノブの門: 止める条件(iterations / tolerance)、連続変数の下限(min_thickness / min_radius)、硝材の外側ループ
+        # (glass_iterations / outer_iterations)は、それぞれが出力を変える入力でないと「効かない」と判定される。
+        # 開始の厚み 0.3 は min_thickness 0.5 に当たり、R = 1.5 は min_radius 2 に当たる。互いに引き合う行(TOTR / ETGT / CTLT)で
+        # 収束が tolerance で止まり、iterations はそのすぐ上
+        "optimize_lens_operands": lambda pool, rng: ([__import__("raytrace").lens_system(
+            [{"R": 1.5, "t": 0.3, "n": (1.6, 50.0), "ap": 0.9}, {"R": -3.0, "t": None, "n": 1.0}], stop=0)],
+            {"operands": [{"op": "EFFL", "target": 1.5, "weight": 1.0},
+                          {"op": "RSCH", "target": 0.0, "weight": 5.0, "rings": 2, "pupil_fill": 0.9},
+                          {"op": "ETGT", "surf": 0, "target": 0.4, "weight": 5.0},
+                          {"op": "TOTR", "target": 4.0, "weight": 1.0},
+                          {"op": "CTLT", "surf": 0, "target": 0.45, "weight": 8.0}],
+             "variables": ["c0", "c1", "t0", "g0"], "iterations": 8, "tolerance": 1e-2,
+             "glass_candidates": [(1.5, 60.0), (1.8, 30.0), (1.7, 45.0)], "glass_iterations": 4,
+             "outer_iterations": 3, "min_thickness": 0.5}),
         "merit_function": lens_first(rings=2), "psf_from_opd": lens_first(),
+        # 2026-10-18: スルーフォーカス MTF は系 + 像面のずれ。エネルギーの半径は「翼が窓に収まった PSF」が要る
+        #   (乱数の画像では 80 % が円の中に無く、拒否が正しい)
+        "through_focus_mtf": lens_first(defocus_mm=[-0.1, 0.0, 0.1], frequency_cpmm=[20.0]),
+        "energy_radii": lambda pool, rng: ([_gauss_psf()], {"fractions": (0.5, 0.8)}),
         "distortion_map": lens_first(image_size=(32, 32)),
         "calibration_views": lens_first(image_size=(64, 64)),
         "render_through_lens": lambda pool, rng: (
@@ -467,6 +616,19 @@ def _optics_builders():
         "oct_dispersion_compensate": lambda pool, rng: ([_oct_it(True)], {"a2": 20.0, "a3": 2.0}),
         "oct_ascan": lambda pool, rng: ([_oct_it(True)], {}),
         "oct_bscan": lambda pool, rng: ([_oct_bs()], {}),
+        # 3-D ラジオシティ(radiosity3d、2026-10-15): パッチの組は kind の印つきの表なので、箱のポケットから作る
+        "form_factor_parallel_rects": lambda pool, rng: ([], {"a": 2.0, "b": 1.5, "c": 1.0}),
+        "form_factor_perpendicular_rects": lambda pool, rng: ([], {"h": 1.5, "w": 0.8, "length": 1.2}),
+        "form_factor_polygons": lambda pool, rng: (
+            [[[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0], [0.0, 1.0, 0.0]],
+             [[0.3, 0.2, 1.0], [1.3, 0.2, 1.0], [1.3, 1.2, 1.0], [0.3, 1.2, 1.0]]], {"n_quad": 4}),
+        "radiosity_patches": lambda pool, rng: ([], {"scene": _gi_kit()[0], "patch_mm": 3.0, "outer_mm": 4.0}),
+        # 細かいパッチ(1 mm)で遠い対を作る —— far_ratio が効く入力
+        "form_factor_matrix": lambda pool, rng: ([_gi_patches(1.0)], {"n_quad": 2}),
+        "radiosity_progressive_3d": lambda pool, rng: (
+            [_gi_patches(), _gi_emission(_gi_patches())], {"tol": 1e-6}),
+        "render_optscene_gi": lambda pool, rng: (
+            [_gi_kit()[0], _gi_kit()[1], [_gi_kit()[2]]], {"patch_mm": 3.0, "outer_mm": 4.0, "study_bounces": 3}),
         # 境界の入力(しきい値 4 本がそれぞれ判定を変える)。本数は指定しない —— 指定すると変種は拒否で終わり、
         # ノブの効き目が測れない(拒否は探針では「呼べなかった」と数えられる)
         "oct_layer_thickness": lambda pool, rng: ([_oct_edge_ascan()], {"n_group": 1.55}),
@@ -566,6 +728,36 @@ def _array_builders():
 _CCF_CACHE: dict = {}
 
 
+def _ct_design():
+    """既定の Czerny–Turner の設計表(gratingspec、1200 本/mm・500〜750 nm)。呼ぶたびに作る(軽い)。"""
+    import gratingspec
+    return gratingspec.czerny_turner_design()
+
+
+def _ct_spectrum(rng):
+    """250〜800 nm の連続光 + 輝線 3 本(0.04 nm 刻み)。2 次・3 次の像が帯域へ落ちる短波長を含む
+    (``max_order_multiple`` と ``higher_order_efficiency`` が効く入力)。"""
+    lam = np.arange(250.0, 800.0, 0.04)
+    s = 0.2 + 0.1 * rng.random()
+    y = np.full(lam.size, s)
+    for l0 in (312.6, 546.07, 576.96):
+        y = y + np.exp(-0.5 * ((lam - l0) / 0.03) ** 2)
+    return np.column_stack([lam, y])
+
+
+def _ill_train(kind="kohler"):
+    """既定の顕微鏡の照明系(illumdesign)。"""
+    import illumdesign
+    return illumdesign.illumination_train(kind)
+
+
+def _filament(rng):
+    """コイルの縞の入った光源の放射輝度の地図(ケーラーでは写らず、クリティカルでは写る)。"""
+    n = 32
+    xx = np.arange(n)[None, :] * np.ones((n, 1))
+    return 0.4 + 0.6 * (np.sin(xx / n * 2.0 * np.pi * (3.0 + rng.random())) > 0.0)
+
+
 def _ccf_probe():
     """既定の対物レンズの較正表(chromconf)。1 回だけ作り、呼ぶたびに深いコピーを渡す。"""
     if "probe" not in _CCF_CACHE:
@@ -645,6 +837,20 @@ def _batch2_builders():
         raw = pixelshift.pixel_shift_capture(np.stack(scenes), 4, _ps_nom(), "RGGB", per_frame=True)
         return raw + 0.01 * rng.standard_normal(raw.shape)
 
+    def _lk_clip(rng):
+        # lockin(2026-10-19): 周期が整数(32 枚 / 16 fps / 2 Hz = 4 周期)の画像列 = 振幅・位相・直流が画素ごとに違う正弦
+        k = np.arange(32)[:, None, None]
+        amp, ph, dc = 0.2 + rng.random((8, 8)), 6.0 * rng.random((8, 8)) - 3.0, 1.0 + rng.random((8, 8))
+        return dc + amp * np.cos(2.0 * np.pi * 2.0 * k / 16.0 + ph)
+
+    def _lk_height(rng):
+        yy, xx = np.mgrid[0:16, 0:16]
+        return 3.0 * np.exp(-((yy - 8.0) ** 2 + (xx - 8.0) ** 2) / 20.0) + 0.1 * rng.random((16, 16))
+
+    def _lk_demod(rng):
+        import lockin
+        return lockin.lockin_demodulate(lockin.lockin_ring_synthesize(_lk_height(rng), 20.0, 8, 1, 16, 2), 1.0, 16.0)
+
     def _film_spec(rng):
         import filmoptics
         return filmoptics.multilayer_reflectance([("SIO2", 300.0 + 900.0 * rng.random())], "SI", 400.0, 800.0, 81)
@@ -657,6 +863,53 @@ def _batch2_builders():
         col = filmoptics.film_color("SIO2", "SI", 0.0, 1500.0, 1501)
         rgb = np.array([np.interp(d, col["thickness_nm"], col["linear_srgb"][:, k]) for k in range(3)])
         return rgb + 0.003 * rng.standard_normal(rgb.shape)
+    def _itof_depth(rng):
+        # 段差のある距離の図(箱 0.8 m と床 1.2 m)。段差が無いと flying_pixel_mask の閾値が効く場面が無い。
+        d = 1.2 + 0.02 * rng.random((32, 32))
+        d[8:20, 10:24] = 0.8
+        return d
+
+    def _itof_raw(rng, freqs=(16e6, 80e6, 120e6), **kw):
+        import itof
+        return itof.itof_capture(_itof_depth(rng), frequencies_hz=freqs, seed=int(rng.integers(1 << 30)), **kw)
+
+    def _itof_phase(rng, freqs=(16e6, 80e6, 120e6), **kw):
+        import itof
+        return itof.itof_phase_amplitude(_itof_raw(rng, freqs, **kw))
+
+    def _itof_mp(rng):
+        # 等間隔 8 周波・2 経路(半透明の板 0.5 m と奥の面)。経路が 1 本だと分ける物が無い。
+        import itof
+        d = np.full((8, 8), 1.3)
+        raw = itof.itof_capture(d, frequencies_hz=tuple(20e6 * np.arange(1, 9)), signal_electrons=2e5,
+                                paths_depth=np.full((1, 8, 8), 0.5), paths_amplitude=np.full((1, 8, 8), 0.3),
+                                seed=int(rng.integers(1 << 30)))
+        return itof.itof_phase_amplitude(raw)
+
+    def _itof_fly(rng):
+        # 1 行ごとに段差の高さ(3〜33 cm)・台地の傾き・混ざる割合を変えた距離の図と、画素ごとの雑音 1.5 cm。
+        # 閾値(×0.5 / ×2)・n_sigma・台地の比・半径(2 画素に広がる混合)のどれを変えても印が動く場面を作る。
+        r = np.random.default_rng(7)
+        d = np.empty((40, 24))
+        for i in range(40):
+            jump, slope, frac = 0.03 + 0.3 * r.random(), 0.03 * r.random(), r.random()
+            row = 1.0 + slope * np.arange(24)
+            row[12:] += jump
+            row[12] = row[11] + slope + frac * jump
+            if i % 3 == 0:
+                row[13] = row[12] + (row[14] - row[12]) * r.random()
+            d[i] = row
+        return d, np.full((40, 24), 0.015)
+
+    def _itof_wig(rng):
+        # 矩形波の 4 段で撮った壁(0.1〜7.4 m)の位相と、レール上の 24 点の較正の組(n_harmonics と n_phases が効く)
+        import itof
+        pos = np.linspace(0.1, 7.4, 120)
+        raw = itof.itof_capture(pos[None, :], frequencies_hz=(20e6,), waveform="square", signal_electrons=1e6, seed=5)
+        ph = itof.itof_phase_amplitude(raw)["phase"]
+        true = np.mod(4 * np.pi * 20e6 * pos / itof.C_LIGHT, 2 * np.pi)
+        idx = np.linspace(0, 119, 24).astype(int)
+        return ph, (ph[0, 0, idx], true[idx])
 
     def ula(rng):
         import mathspectral
@@ -682,6 +935,7 @@ def _batch2_builders():
         # (汎用の pairs の種は x が昇順でなく、波長の検査で全部拒否される)。
         "energy_to_photons": lambda pool, rng: ([_spec_curve(rng)], {}),
         "spectral_integral": lambda pool, rng: ([_spec_curve(rng)], {}),
+        "spectral_integral_table": lambda pool, rng: ([_spec_curve(rng)], {}),
         "spectral_stats": lambda pool, rng: ([_spec_curve(rng)], {}),
         "spectral_product": lambda pool, rng: ([_spec_curve(rng), _spec_curve(rng, 850.0, 1250.0)], {}),
         # filmoptics(2026-10-15): 膜厚の逆問題は**本物の反射スペクトル**(Si 上の SiO₂、昇順の波長)と、既定の 6 帯域に
@@ -694,6 +948,35 @@ def _batch2_builders():
         "pixel_shift_merge": lambda pool, rng: ([_ps_raw(rng), _ps_nom()], {"motion_threshold": 4.0}),
         "pixel_shift_motion_mask": lambda pool, rng: ([_ps_raw(rng), _ps_nom()], {}),
         "pixel_shift_resolution_budget": lambda pool, rng: ([3.45, 2.8], {}),
+        # lockin(2026-10-19): 画像列は周期が整数の正弦、符号は Walsh 行、法線の復元はリングの像を復調した表を種にする
+        "lockin_demodulate": lambda pool, rng: ([_lk_clip(rng), 2.0, 16.0], {}),
+        "lockin_amplitude": lambda pool, rng: ([_lk_clip(rng), 2.0, 16.0], {}),
+        "lockin_phase": lambda pool, rng: ([_lk_clip(rng), 2.0, 16.0], {}),
+        "lockin_noise_floor": lambda pool, rng: ([64, 0.1 + rng.random(), 1.0], {}),
+        "lockin_walsh_codes": lambda pool, rng: ([16, 3], {}),
+        "lockin_separate": lambda pool, rng: ([_lk_clip(rng), __import__("lockin").lockin_walsh_codes(32, 3)], {}),
+        "lockin_ring_synthesize": lambda pool, rng: ([_lk_height(rng), 20.0, 8, 1, 16, 2], {}),
+        "lockin_ring_normals": lambda pool, rng: ([_lk_demod(rng), 20.0], {}),
+        "lockin_thermal_wave": lambda pool, rng: ([1e-3 * (1.0 + 2.0 * rng.random((8, 8))), 4.2e-7, 0.1, 16, 2], {}),
+        # watermedia(2026-10-19): 風速・角度・屈折率は物理の範囲、点は水中(z < 0)、目は水面の上、画像は 3 バンドの非負
+        "ocean_spectrum": lambda pool, rng: ([4.0 + 10.0 * rng.random()], {"kind": "jonswap"}),
+        "ocean_height_field": lambda pool, rng: ([16, 60.0, 4.0 + 8.0 * rng.random(), 360.0 * rng.random()], {"seed": int(rng.integers(0, 1000)), "directional": "cos2s"}),
+        "fresnel_water_air": lambda pool, rng: ([90.0 * rng.random()], {}),
+        "snell_window": lambda pool, rng: ([0.5 + 5.0 * rng.random()], {}),
+        "refracted_view": lambda pool, rng: ([np.array([[0.0, 0.0, -1.0 - rng.random()], [0.5, 0.3, -2.0]]), np.array([2.0 * rng.random(), 1.0, 3.0])], {}),
+        "water_attenuation": lambda pool, rng: ([0.42 + 0.25 * rng.random(), "jerlov_II"], {"depth_m": 3.0 * rng.random()}),
+        "underwater_image": lambda pool, rng: ([0.2 + 0.8 * rng.random((6, 6, 3)), 2.0 * rng.random((6, 6)), 6.0 * rng.random((6, 6))], {}),
+        "phase_function_hg": lambda pool, rng: ([2.0 * rng.random(7) - 1.0, 1.8 * rng.random() - 0.9], {}),
+        "scattering_phase_petzold": lambda pool, rng: ([0.1 + 179.0 * rng.random(5)], {}),
+        "cylinder_lens_caustic": lambda pool, rng: ([10.0 + 20.0 * rng.random(), 1.4 + 0.2 * rng.random(), 1.333, 1.0], {}),
+        # watervision(2026-10-20): 波は小さく(波頭より底が深い)、瓶は粗い画素で、濡れ面の角度は [0, 90)、欠陥マスクは両クラスを含める
+        "caustic_irradiance": lambda pool, rng: ([0.01 * rng.standard_normal((16, 16)), 2.0 + 2.0 * rng.random(), 1.0 + rng.random(), [60.0 * rng.random(), 360.0 * rng.random()]], {"ray_density": 1}),
+        "bottle_image": lambda pool, rng: ([20.0 + 20.0 * rng.random(), 2.0, 80.0, rng.random(), 1.45 + 0.15 * rng.random(), 1.333], {"pixel_pitch_um": 1000.0}),
+        "fill_level_from_image": lambda pool, rng: ([np.where(np.arange(40)[:, None] < 10 + int(rng.integers(0, 20)), 0.9, 0.5) + 0.01 * rng.random((40, 12)), 100.0], {}),
+        "wet_surface_appearance": lambda pool, rng: ([0.05 + 0.9 * rng.random(), rng.random(), 30.0 * rng.random(), 80.0 * rng.random(), 80.0 * rng.random()], {}),
+        "wet_dry_inspection_pair": lambda pool, rng: ([0.2 + 0.7 * rng.random((16, 16)), np.arange(16)[:, None] < 4 + np.zeros((1, 16), dtype=bool), 0.2, 10.0 * rng.random(), 60.0 * rng.random(), 60.0 * rng.random()], {}),
+        "underwater_inspection_image": lambda pool, rng: ([0.2 + 0.8 * rng.random((6, 6, 3)), 1.0 + 5.0 * rng.random((6, 6)), "jerlov_II"], {"light": "both"}),
+        "caustic_floor_segmentation": lambda pool, rng: ([1.0 + 0.3 * rng.random((16, 16))], {}),
         # chromconf(2026-10-15): 較正表(table)は汎用の table の種({"pre", "post"})では作れないので、既定の
         #   対物レンズの較正表を種にする。peaks には透明板の表裏の 2 ピークのスペクトルを渡す(1 ピークだと
         #   max_peaks のノブが効かない入力になる)。
@@ -702,11 +985,27 @@ def _batch2_builders():
         "chromatic_confocal_readout": lambda pool, rng: (
             [__import__("chromconf").chromatic_confocal_peaks(_ccf_plate_spectrum()), _ccf_probe()], {"layer_material": __import__("chromconf").GLASS_CROWN}),
         "chromatic_confocal_limits": lambda pool, rng: ([_ccf_probe()], {}),
+        # gratingspec(2026-10-15): 設計表(table)は汎用の table の種では作れないので、既定の Czerny–Turner を種に。
+        #   spectrum には 2 次・3 次の像が帯域へ落ちる短波長を含む細かいスペクトルを渡す。
+        "spectrometer_bandpass": lambda pool, rng: ([_ct_design()], {}),
+        "spectrometer_slit_image": lambda pool, rng: ([_ct_design()], {}),
+        "spectrometer_spectrum": lambda pool, rng: ([_ct_design(), _ct_spectrum(rng)], {}),
+        # illumdesign の照明系(2026-10-15): 照明系の表と、縞の入った光源(クリティカルなら写る)
+        "illumination_field": lambda pool, rng: ([_ill_train("critical")], {"source_radiance": _filament(rng)}),
         # 2026-10-15 近赤外の分光撮像: 吸収係数の曲線(材料表)と反射率の曲線(Kubelka–Munk)を種に
         "kubelka_munk_reflectance": lambda pool, rng: ([__import__("materials").material_nir_absorption(
             ("PE", "PP", "NUT_KERNEL")[int(rng.integers(3))], 900.0, 2500.0, 161)], {}),
         "hyperspectral_capture": lambda pool, rng: ([__import__("spectralrad").spectral_reflectance_from_material(
             ("PE", "NUT_SHELL", "NUT_KERNEL")[int(rng.integers(3))], wl_min_nm=900.0, wl_max_nm=2500.0, n_points=321)], {}),
+        # itof(2026-10-15): 段差のある距離の図、3 周波の生信号・位相の表、2 経路の 8 周波、矩形波の位相
+        "itof_capture": lambda pool, rng: ([_itof_depth(rng)], {"frequencies_hz": (16e6, 80e6, 120e6), "ambient_electrons": 500.0,
+                                                                 "read_noise_e": 5.0}),
+        "itof_phase_amplitude": lambda pool, rng: ([_itof_raw(rng, read_noise_e=5.0)], {}),
+        "itof_unwrap_multifreq": lambda pool, rng: ([_itof_phase(rng)], {}),
+        "itof_multipath_separate": lambda pool, rng: ([_itof_mp(rng)], {}),
+        "itof_flying_pixel_mask": lambda pool, rng: ([_itof_fly(rng)[0]], {"depth_sigma": _itof_fly(rng)[1]}),
+        "itof_wiggling_correct": lambda pool, rng: ([_itof_wig(rng)[0]], {"frequencies_hz": (20e6,),
+                                                                         "calibration": _itof_wig(rng)[1]}),
         "grating_wavelengths": lambda pool, rng: ([1.6, 0.0, 0.45], {}),
         "mueller_checks": lambda pool, rng: ([np.eye(4)], {}),
         "veiling_glare_index": lambda pool, rng: (
@@ -790,6 +1089,14 @@ def _knob_builders():
     * ``deflectometry_render`` (2026-10-15) -- ``refractive_index`` only acts on the back-surface
       reflection of a cover glass, which is off by default (``back_thickness_mm=None``, as
       documented). Here: a 1 mm plate over a shallow dimple.
+    * ``iterate_fixed_point`` / ``mc_sequential_mean`` / ``iv_richardson_lucy_until`` (2026-10-15,
+      opsconverge) -- a stopping rule's tolerance and budget only show when the run ends right at
+      them: on the default inputs the run converges long before ``max_iter`` and far below
+      ``tol``, so x0.5 / x2 change nothing. Here the run is first made once to read where it
+      stops, and the tolerance / budget are set so that it stops exactly there (Anderson on a
+      12-point H-equation; pi with tol 0.05 and a 6,000-sample budget; RL with a PSF too wide
+      for the data, which levels off outside the model's range, with max_iter = that iteration).
+      No random numbers are drawn here (only the ops' own fixed seeds).
     """
     def oblique(pool, rng):
         th = np.deg2rad(np.linspace(10.0, 60.0, 12))
@@ -834,9 +1141,34 @@ def _knob_builders():
         h = -0.02 * np.exp(-(xx ** 2 + yy ** 2) / 0.1)
         return [h], {"back_thickness_mm": 1.0}
 
+    def h_equation_map():
+        n = 12
+        mu = (np.arange(n) + 0.5) / n
+        K = 0.45 * mu[:, None] / (mu[:, None] + mu[None, :]) / n
+        return (lambda H: 1.0 / (1.0 - K @ H)), np.ones(n)
+
+    def fixed_point(pool, rng):
+        cv = __import__("converge")
+        g, x0 = h_equation_map()
+        hist = cv.iterate_fixed_point(g, x0, method="anderson", tol=1e-15, max_iter=60,
+                                      on_fail="record")["residual_history"]
+        j = next(i for i, r in enumerate(hist) if r < 1e-6)
+        return [g, x0], {"method": "anderson", "tol": 1.5 * hist[j], "max_iter": j, "on_fail": "record"}
+
+    def seq_mean(pool, rng):
+        return [], {"sampler": "pi", "tol": 0.05, "batch": 512, "max_samples": 6000, "on_fail": "record"}
+
+    def rl_until(pool, rng):
+        ds = __import__("deconvstop")
+        y = ds._example_counts()
+        n_p = ds.iv_richardson_lucy_until(y, psf_sigma=2.5, keep_history=False)["n_iter"]
+        return [y], {"psf_sigma": 2.5, "max_iter": n_p}
+
     return {"refract_rays": oblique, "env_lightbox": sphere_dirs,
             "print_layer_defect_map": layers, "photometric_stereo": ps, "gs_render": gs,
-            "slope_to_curvature": bowl_normals, "deflectometry_render": plate}
+            "slope_to_curvature": bowl_normals, "deflectometry_render": plate,
+            "iterate_fixed_point": fixed_point, "mc_sequential_mean": seq_mean,
+            "iv_richardson_lucy_until": rl_until}
 
 
 def probe_builders():

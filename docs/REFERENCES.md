@@ -1,13 +1,15 @@
 # imgevolve — operator research provenance
 
-Seminal references for the 936 operators (families collapse many variants). The point: a designed pipeline is traceable to the literature, and the RAD image corpus is the mining source for *new* operators.
+Seminal references for the 942 operators (families collapse many variants). The point: a designed pipeline is traceable to the literature, and the RAD image corpus is the mining source for *new* operators.
 
 | op | category | seminal reference |
 |---|---|---|
 | `identity` | misc | - |
 | `gaussian` | smoothing | - |
 | `mean_box` | smoothing | - |
+| `mean_box_wh` | smoothing | - |
 | `bilateral` | smoothing | Tomasi & Manduchi (1998). Bilateral filtering for gray and color images. ICCV. |
+| `kuwahara` | smoothing | - |
 | `unsharp` | smoothing | - |
 | `median` | rank | Tukey, J. (1977). Exploratory Data Analysis (running median smoothing). |
 | `min_filter` | rank | - |
@@ -45,6 +47,7 @@ Seminal references for the 936 operators (families collapse many variants). The 
 | `local_bimodality` | texture | - |
 | `local_std` | texture | - |
 | `scale_select_std` | texture | - |
+| `xdog` | edges | Marr & Hildreth (1980). Theory of edge detection. Proc. R. Soc. Lond. B. |
 | `bootstrap_std_error` | texture | - |
 | `persistence_map` | morphology | - |
 | `structure_tensor_orientation` | texture | - |
@@ -66,6 +69,7 @@ Seminal references for the 936 operators (families collapse many variants). The 
 | `log` | edges | Marr & Hildreth (1980). Theory of edge detection. Proc. R. Soc. Lond. B. |
 | `canny` | segmentation | Canny, J. (1986). A computational approach to edge detection. IEEE TPAMI. |
 | `dist_transform` | region | Rosenfeld & Pfaltz (1966). Sequential operations in digital picture processing. JACM. |
+| `dist_transform_abs` | region | Rosenfeld & Pfaltz (1966). Sequential operations in digital picture processing. JACM. |
 | `region_boundary` | region | - |
 | `convex_fill` | region | - |
 | `select_contours` | contour | Steger, C. (1998). An unbiased detector of curvilinear structures (subpixel edges). IEEE TPAMI. |
@@ -768,6 +772,7 @@ Seminal references for the 936 operators (families collapse many variants). The 
 | `tb_iss_keypoints` | typed | - |
 | `tb_project_points` | typed | - |
 | `tb_render_point_depth` | typed | - |
+| `tb_points_render` | typed | - |
 | `tb_statistical_outlier_removal` | typed | - |
 | `tb_radius_outlier_removal` | typed | - |
 | `tb_voxel_grid_downsample` | typed | - |
@@ -854,6 +859,7 @@ Seminal references for the 936 operators (families collapse many variants). The 
 | `tb_env_studio` | typed | - |
 | `tb_env_lightbox` | typed | - |
 | `tb_sensor_capture` | typed | - |
+| `tb_viewport_from_equirect` | typed | - |
 | `tb_lf_to_mla` | typed | - |
 | `tb_lf_subaperture` | typed | - |
 | `tb_lf_center_view` | typed | - |
@@ -941,7 +947,7 @@ Seminal references for the 936 operators (families collapse many variants). The 
 | `contour_to_img` | bridge | - |
 | `feature_to_img` | bridge | - |
 
-**Provenance coverage: 173/936 operators cite a seminal paper.**
+**Provenance coverage: 175/942 operators cite a seminal paper.**
 
 ## Mining new operators from research (RAD)
 - RAD image / diffusion / deep_learning corpora (thousands of papers) = the source for operators beyond the classics: modern denoisers (BM3D, DnCNN), learned edges (HED), superpixels (SLIC), diffusion priors, foundation segmenters (SAM).

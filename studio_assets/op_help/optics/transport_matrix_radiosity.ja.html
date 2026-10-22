@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">transport_matrix_radiosity — OPTICS <code style="color:#22d3bf">light_transport</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.transport_matrix_radiosity(profile, albedo=0.8, n_bounces=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import lighttransport; lighttransport.transport_matrix_radiosity(profile, albedo=0.8, n_bounces=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;transport_matrix_radiosity&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.transport_matrix_radiosity(profile, albedo=0.8, n_bounces=None, *, chunk=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import lighttransport; lighttransport.transport_matrix_radiosity(profile, albedo=0.8, n_bounces=None, *, chunk=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;transport_matrix_radiosity&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Lambert の凹んだ断面の光輸送行列: ラジオシティ B = T E、T = (I − diag(ρ)F)^-1 diag(ρ)(<code style="color:#22d3bf">table</code>)。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
@@ -26,6 +26,7 @@
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_interreflection_fringe_error">poc_interreflection_fringe_error</a> — <code style="color:#22d3bf">py -3.11 examples/poc_interreflection_fringe_error.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_itof_multifreq">poc_itof_multifreq</a> — <code style="color:#22d3bf">py -3.11 examples/poc_itof_multifreq.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
 <p><a style="color:#22d3bf" href="opoptics:abcd_matrix">abcd_matrix</a> · <a style="color:#22d3bf" href="opoptics:wavefront_stats">wavefront_stats</a> · <a style="color:#22d3bf" href="opoptics:sfr_from_edge">sfr_from_edge</a> · <a style="color:#22d3bf" href="opoptics:paraxial_trace">paraxial_trace</a> · <a style="color:#22d3bf" href="opoptics:seidel_coefficients">seidel_coefficients</a> · <a style="color:#22d3bf" href="opoptics:spot_stats">spot_stats</a> · <a style="color:#22d3bf" href="opoptics:tolerance_analysis">tolerance_analysis</a> · <a style="color:#22d3bf" href="opoptics:wavefront_from_opd">wavefront_from_opd</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">light_transport</code>)</h3>

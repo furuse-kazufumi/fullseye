@@ -703,9 +703,16 @@ def _jpeg_roundtrip(u8: np.ndarray, quality: int) -> np.ndarray:
     _require("PIL", "JPEG 再圧縮")
     from PIL import Image
 
+    # ★2026-10-18: 受けるのは 2-D の uint8 だけ。float の [0,1] を渡しても古い Pillow は mode="L" で生のバイト列を
+    #   読み替えて黙って通し(画素値は意味の無い数になる)、Pillow 13 で初めて "Invalid mode for data type" で落ちた。
+    #   試験 1 本がこの経路で無意味な入力を 1 か月使っていた。型を確かめてから渡す(mode は dtype から決まる)。
+    arr = np.asarray(u8)
+    if arr.dtype != np.uint8 or arr.ndim != 2:
+        raise ValueError("_jpeg_roundtrip: expected a 2-D uint8 image, got dtype=%s ndim=%d "
+                         "(convert with _to_uint8 first)" % (arr.dtype, arr.ndim))
     buf = io.BytesIO()
-    Image.fromarray(u8, mode="L").save(buf, format="JPEG", quality=int(quality),
-                                       subsampling=0, optimize=False)
+    Image.fromarray(arr).save(buf, format="JPEG", quality=int(quality),
+                              subsampling=0, optimize=False)
     buf.seek(0)
     return np.asarray(Image.open(buf).convert("L"), np.float64)
 

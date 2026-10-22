@@ -7,26 +7,27 @@ out: pairs
 examples: [glass_and_mirror_optics, poc_material_optical_library]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # metal_optical_constants — OPTICS `mirror` op
 
 - **データ種**: `signal` → `pairs`
-- **呼び出し**: `import fullseye as fs; fs.ledger.metal_optical_constants(metal='ag', wavelength_nm=550.0, source='table')` (実装を直接呼ぶなら `import glassmirror; glassmirror.metal_optical_constants(metal='ag', wavelength_nm=550.0, source='table')`、台帳から引くなら `opsoptics.get("metal_optical_constants")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.metal_optical_constants(metal='ag', wavelength_nm=550.0, source='materials')` (実装を直接呼ぶなら `import glassmirror; glassmirror.metal_optical_constants(metal='ag', wavelength_nm=550.0, source='materials')`、台帳から引くなら `opsoptics.get("metal_optical_constants")`)
 - **台帳経由の戻り値**: `fullseye.ledger.metal_optical_constants(...)` は**宣言 out 型 `pairs` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.metal_optical_constants.raw(...)`、または `glassmirror.metal_optical_constants` を直接呼ぶ。
 
 ## 使い方
 
 金属の複素屈折率 (n, k) を波長で引く(可視域、線形補間)。
 
-metal: "ag" / "au" / "al" / "cu" / "cr"(`METALS`)。
-wavelength_nm: スカラまたは配列 [nm]。表の外は端の値で頭打ち(外挿しない)。
-source: "table"(既定、5 点の粗い表)/ "materials"(共通の材料表 ``materials`` の実測の数表。
-    金属は `MEASURED_METALS` の 10 種、表の範囲外は ValueError)。
+metal: `MEASURED_METALS` の 10 種(source="table" なら "ag" / "au" / "al" / "cu" / "cr" = `METALS`)。
+wavelength_nm: スカラまたは配列 [nm]。
+source: "materials"(既定、共通の材料表 ``materials`` の実測の数表。表の範囲外は ValueError —— 外挿しない)/
+    "table"(5 点の粗い表、400〜800 nm。表の外は端の値で頭打ち)。
+    ★2026-10-15 に既定を粗い表から実測に替えた(粗い表では Cu の色が ΔE*ab 8.3、Au 6.6 ずれる)。
 
 返り値: (n, k) の 2 要素タプル(入力と同形の配列)。
-出典は表の定義(`_METAL_NK`)を参照 — 5 点の粗い表であることを隠さない。
+出典は `MEASURED_METALS` と `_METAL_NK` の定義を参照。
 
 ## ファミリ共通の入力契約(fail-closed)
 
@@ -57,7 +58,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`pairs` を入力に取れる)
 
-[mtf50](../imaging/mtf50.md) · [energy_to_photons](../spectral/energy_to_photons.md) · [spectral_product](../spectral/spectral_product.md) · [spectral_integral](../spectral/spectral_integral.md) · [spectral_stats](../spectral/spectral_stats.md) · [kubelka_munk_reflectance](../spectral/kubelka_munk_reflectance.md) · [hyperspectral_capture](../spectral/hyperspectral_capture.md) · [film_thickness_fft](../film/film_thickness_fft.md)
+[mtf50](../imaging/mtf50.md) · [energy_to_photons](../spectral/energy_to_photons.md) · [spectral_product](../spectral/spectral_product.md) · [spectral_integral](../spectral/spectral_integral.md) · [spectral_integral_table](../spectral/spectral_integral_table.md) · [spectral_stats](../spectral/spectral_stats.md) · [kubelka_munk_reflectance](../spectral/kubelka_munk_reflectance.md) · [hyperspectral_capture](../spectral/hyperspectral_capture.md)
 
 ## 同カテゴリ(`mirror`)
 

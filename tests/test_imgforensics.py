@@ -1061,8 +1061,10 @@ def test_jpeg_ghost_argmin_dies_after_one_more_save():
     docstring の表と対。直したら(谷の深さ読み出しを op にしたら)ここも直す。
     """
     def rt(a, q):
-        r = F._jpeg_roundtrip(a, q)
-        return r.astype(np.float64) / 255.0 if r.max() > 1.5 else r
+        # ★2026-10-18: 以前は float の [0,1] をそのまま渡し、古い Pillow がバイト列を読み替えて黙って通していた
+        #   (Pillow 13 で発覚)。本物の 8 bit に直してから JPEG を通す。
+        r = F._jpeg_roundtrip(F._to_uint8(a), q)
+        return r.astype(np.float64) / 255.0
 
     rng = np.random.default_rng(1)
     base = np.clip(0.5 + 0.12 * rng.standard_normal((128, 128))

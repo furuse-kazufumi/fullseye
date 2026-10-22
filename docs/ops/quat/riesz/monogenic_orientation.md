@@ -4,10 +4,10 @@ dim: quat
 category: riesz
 in: qimage
 out: image2d
-examples: [quaternion_monogenic]
+examples: [perf_monogenic_metrics, quaternion_monogenic]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # monogenic_orientation — QUAT `riesz` op
@@ -60,6 +60,7 @@ a *value*, not a measurement.
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [perf_monogenic_metrics](../../../../examples/perf_monogenic_metrics.py) — `py -3.11 examples/perf_monogenic_metrics.py`
 - [quaternion_monogenic](../../../../examples/quaternion_monogenic.py) — `py -3.11 examples/quaternion_monogenic.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)

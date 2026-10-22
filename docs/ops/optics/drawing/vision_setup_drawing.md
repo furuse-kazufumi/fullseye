@@ -7,7 +7,7 @@ out: table
 examples: [poc_optics_drawings]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # vision_setup_drawing — OPTICS `drawing` op
@@ -66,7 +66,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 同カテゴリ(`drawing`)
 
-[lens_section_drawing](lens_section_drawing.md) · [lens_element_drawing](lens_element_drawing.md) · [drawing_svg](drawing_svg.md) · [drawing_dxf](drawing_dxf.md) · [drawing_raster](drawing_raster.md) · [svg_entities](svg_entities.md) · [dxf_entities](dxf_entities.md)
+[lens_section_drawing](lens_section_drawing.md) · [lens_element_drawing](lens_element_drawing.md) · [drawing_svg](drawing_svg.md) · [drawing_dxf](drawing_dxf.md) · [drawing_raster](drawing_raster.md) · [svg_entities](svg_entities.md) · [dxf_entities](dxf_entities.md) · [noncoaxial_drawing](noncoaxial_drawing.md)
 
 ---
 *Provenance: optdraw.py — OPTICS operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

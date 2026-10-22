@@ -1,10 +1,10 @@
 {
- "n_ops": 3295,
+ "n_ops": 3531,
  "tiers": {
   "color": 12,
-  "ledger": 2342,
+  "ledger": 2572,
   "nary": 17,
-  "registry": 924
+  "registry": 930
  },
  "sorts": [
   "angle",
@@ -671,6 +671,19 @@
    ]
   },
   {
+   "name": "afocal_system",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lenssolve",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "aim_velocity",
    "halcon": "",
    "in_sort": "table",
@@ -835,6 +848,34 @@
    "dim": "3d",
    "in_sorts": [
     "mesh"
+   ]
+  },
+  {
+   "name": "anaglyph_crosstalk",
+   "halcon": "",
+   "in_sort": "rgbimage",
+   "out_sort": "table",
+   "category": "omni360",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "rgbimage",
+    "rgbimage"
+   ]
+  },
+  {
+   "name": "anaglyph_from_ods",
+   "halcon": "",
+   "in_sort": "rgbimage",
+   "out_sort": "rgbimage",
+   "category": "omni360",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "rgbimage",
+    "rgbimage"
    ]
   },
   {
@@ -1380,6 +1421,104 @@
    ]
   },
   {
+   "name": "anomaly_image_auroc",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "anomaly_eval",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "signal",
+    "signal"
+   ]
+  },
+  {
+   "name": "anomaly_image_f1_max",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "anomaly_eval",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "signal",
+    "signal"
+   ]
+  },
+  {
+   "name": "anomaly_operating_point",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "anomaly_eval",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "signal",
+    "signal"
+   ]
+  },
+  {
+   "name": "anomaly_pixel_auroc",
+   "halcon": "",
+   "in_sort": "video",
+   "out_sort": "table",
+   "category": "anomaly_eval",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "video",
+    "video"
+   ]
+  },
+  {
+   "name": "anomaly_pixel_f1_max",
+   "halcon": "",
+   "in_sort": "video",
+   "out_sort": "table",
+   "category": "anomaly_eval",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "video",
+    "video"
+   ]
+  },
+  {
+   "name": "anomaly_pro",
+   "halcon": "",
+   "in_sort": "video",
+   "out_sort": "table",
+   "category": "anomaly_eval",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "video",
+    "video"
+   ]
+  },
+  {
+   "name": "anomaly_region_overlap",
+   "halcon": "",
+   "in_sort": "video",
+   "out_sort": "table",
+   "category": "anomaly_eval",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "video",
+    "video"
+   ]
+  },
+  {
    "name": "anscombe_inverse",
    "halcon": "",
    "in_sort": "image2d",
@@ -1883,6 +2022,30 @@
    "in_sorts": []
   },
   {
+   "name": "basis_decomposition_crlb",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "spectral_xray",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": []
+  },
+  {
+   "name": "basis_material_decompose",
+   "halcon": "",
+   "in_sort": "images",
+   "out_sort": "images",
+   "category": "spectral_xray",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": [
+    "images"
+   ]
+  },
+  {
    "name": "beam_hardening_apply",
    "halcon": "",
    "in_sort": "sinogram",
@@ -1933,6 +2096,17 @@
    "in_sorts": [
     "beatcube"
    ]
+  },
+  {
+   "name": "beamsplitter_branches",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "noncoaxial",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "bearing_angle_image",
@@ -2161,6 +2335,19 @@
    ]
   },
   {
+   "name": "blob_count_interval",
+   "halcon": "",
+   "in_sort": "mask",
+   "out_sort": "table",
+   "category": "split",
+   "tier": "ledger",
+   "ledger": "opsblob",
+   "dim": "blob",
+   "in_sorts": [
+    "mask"
+   ]
+  },
+  {
    "name": "blob_distance",
    "halcon": "",
    "in_sort": "mask",
@@ -2292,6 +2479,30 @@
    "in_sorts": [
     "rgb"
    ]
+  },
+  {
+   "name": "bokeh_shape",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lensrender",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "bottle_image",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "watervision",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "bounce",
@@ -3132,6 +3343,32 @@
    ]
   },
   {
+   "name": "caustic_floor_segmentation",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "watervision",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "caustic_irradiance",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "watervision",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
    "name": "cavity_strain_transfer",
    "halcon": "",
    "in_sort": null,
@@ -3314,6 +3551,19 @@
    "tier": "ledger",
    "ledger": "opsdrive",
    "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "chief_ray",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "design",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
    "in_sorts": [
     "table"
    ]
@@ -3661,6 +3911,17 @@
     "image2d",
     "scalar"
    ]
+  },
+  {
+   "name": "coaxial_illumination",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "illumination",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "coherence",
@@ -4147,6 +4408,28 @@
    ]
   },
   {
+   "name": "conv_gci",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "verification",
+   "tier": "ledger",
+   "ledger": "opsconverge",
+   "dim": "converge",
+   "in_sorts": []
+  },
+  {
+   "name": "conv_observed_order",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "verification",
+   "tier": "ledger",
+   "ledger": "opsconverge",
+   "dim": "converge",
+   "in_sorts": []
+  },
+  {
    "name": "convex_hull",
    "halcon": "",
    "in_sort": "points",
@@ -4466,6 +4749,19 @@
    "ledger": "opsdrive",
    "dim": "drive",
    "in_sorts": []
+  },
+  {
+   "name": "cover_ratio_grade",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "plant",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "signal"
+   ]
   },
   {
    "name": "coverage_edge_points",
@@ -5133,6 +5429,19 @@
    ]
   },
   {
+   "name": "cubemap_from_equirect",
+   "halcon": "",
+   "in_sort": "rgbimage",
+   "out_sort": "rgbvideo",
+   "category": "omni360",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "rgbimage"
+   ]
+  },
+  {
    "name": "cubic_index",
    "halcon": "",
    "in_sort": "signal",
@@ -5477,6 +5786,17 @@
    ]
   },
   {
+   "name": "cylinder_lens_caustic",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "watermedia",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
    "name": "cylinder_sdf",
    "halcon": "",
    "in_sort": "coordgrid",
@@ -5503,6 +5823,17 @@
    ]
   },
   {
+   "name": "czerny_turner_design",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "spectrometer",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
    "name": "d2_distribution",
    "halcon": "",
    "in_sort": "points",
@@ -5514,6 +5845,17 @@
    "in_sorts": [
     "points"
    ]
+  },
+  {
+   "name": "darkfield_scatter_relation",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "grating_interf",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "data_range_of",
@@ -7020,6 +7362,19 @@
    ]
   },
   {
+   "name": "dpc_integrate",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "grating_interf",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "drag_coefficient_sphere",
    "halcon": "",
    "in_sort": "signal",
@@ -7146,6 +7501,31 @@
    "dim": "photon",
    "in_sorts": [
     "counts"
+   ]
+  },
+  {
+   "name": "dual_energy_separability",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "spectral_xray",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": []
+  },
+  {
+   "name": "dual_kvp_channels",
+   "halcon": "",
+   "in_sort": "pairs",
+   "out_sort": "table",
+   "category": "spectral_xray",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": [
+    "pairs",
+    "pairs"
    ]
   },
   {
@@ -7324,6 +7704,19 @@
    "dim": "3d",
    "in_sorts": [
     "voxel"
+   ]
+  },
+  {
+   "name": "effective_z_map",
+   "halcon": "",
+   "in_sort": "images",
+   "out_sort": "image2d",
+   "category": "spectral_xray",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": [
+    "images"
    ]
   },
   {
@@ -7711,6 +8104,32 @@
    ]
   },
   {
+   "name": "encircled_energy",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "pairs",
+   "category": "imaging",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "energy_radii",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "imaging",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
    "name": "energy_to_photons",
    "halcon": "",
    "in_sort": "pairs",
@@ -7732,6 +8151,19 @@
    "tier": "ledger",
    "ledger": "opsprintpath",
    "dim": "printpath",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "ensquared_energy",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "pairs",
+   "category": "imaging",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
    "in_sorts": [
     "image2d"
    ]
@@ -7813,6 +8245,109 @@
    "in_sorts": [
     "signal"
    ]
+  },
+  {
+   "name": "equirect_defect_unwrap_pipe",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "omni360",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "equirect_filter_gaussian",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "omni360",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "equirect_from_cubemap",
+   "halcon": "",
+   "in_sort": "rgbvideo",
+   "out_sort": "rgbimage",
+   "category": "omni360",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "rgbvideo"
+   ]
+  },
+  {
+   "name": "equirect_from_fisheye_pair",
+   "halcon": "",
+   "in_sort": "images",
+   "out_sort": "table",
+   "category": "omni360",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "images"
+   ]
+  },
+  {
+   "name": "equirect_from_perspectives",
+   "halcon": "",
+   "in_sort": "images",
+   "out_sort": "table",
+   "category": "omni360",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "images"
+   ]
+  },
+  {
+   "name": "equirect_rotate",
+   "halcon": "",
+   "in_sort": "rgbimage",
+   "out_sort": "rgbimage",
+   "category": "omni360",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "rgbimage",
+    "matrix"
+   ]
+  },
+  {
+   "name": "equirect_stabilize",
+   "halcon": "",
+   "in_sort": "images",
+   "out_sort": "table",
+   "category": "omni360",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "images"
+   ]
+  },
+  {
+   "name": "equirect_weight_map",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "image2d",
+   "category": "omni360",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "equivalent_level",
@@ -8095,6 +8630,19 @@
    "ledger": "opsoptics",
    "dim": "optics",
    "in_sorts": []
+  },
+  {
+   "name": "exit_pupil_samples",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lensrender",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
   },
   {
    "name": "exit_room_check",
@@ -8418,6 +8966,19 @@
    ]
   },
   {
+   "name": "fill_level_from_image",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "watervision",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
    "name": "filled_polygon",
    "halcon": "",
    "in_sort": "image2d",
@@ -8582,6 +9143,34 @@
    "dim": "optics",
    "in_sorts": [
     "normalmap"
+   ]
+  },
+  {
+   "name": "fisher_lda_fit",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "classify",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "matrix",
+    "signal"
+   ]
+  },
+  {
+   "name": "fisher_lda_score",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "classify",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "table",
+    "matrix"
    ]
   },
   {
@@ -9534,6 +10123,55 @@
    "in_sorts": []
   },
   {
+   "name": "form_factor_matrix",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "matrix",
+   "category": "radiosity",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "form_factor_parallel_rects",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "measurement",
+   "category": "radiosity",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "form_factor_perpendicular_rects",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "measurement",
+   "category": "radiosity",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "form_factor_polygons",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "measurement",
+   "category": "radiosity",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "points",
+    "points"
+   ]
+  },
+  {
    "name": "form_factors_2d",
    "halcon": "",
    "in_sort": "table",
@@ -9712,6 +10350,17 @@
    "in_sorts": [
     "measurement"
    ]
+  },
+  {
+   "name": "fresnel_water_air",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "watermedia",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "friction_circle_usage",
@@ -10180,6 +10829,45 @@
    ]
   },
   {
+   "name": "ghost_analysis",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "noncoaxial",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "ghost_image",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "image2d",
+   "category": "noncoaxial",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "ghost_path",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "noncoaxial",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "gicp",
    "halcon": "",
    "in_sort": "points",
@@ -10221,6 +10909,17 @@
    "in_sort": null,
    "out_sort": "table",
    "category": "matprop",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "glass_nearest",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "lensglobal",
    "tier": "ledger",
    "ledger": "opsoptics",
    "dim": "optics",
@@ -10754,6 +11453,17 @@
    ]
   },
   {
+   "name": "grating_dispersion",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "spectrometer",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
    "name": "grating_rgb",
    "halcon": "",
    "in_sort": "normalmap",
@@ -10764,6 +11474,46 @@
    "dim": "optics",
    "in_sorts": [
     "normalmap"
+   ]
+  },
+  {
+   "name": "grating_step_period_estimate",
+   "halcon": "",
+   "in_sort": "images",
+   "out_sort": "table",
+   "category": "grating_interf",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "images"
+   ]
+  },
+  {
+   "name": "grating_stepping_simulate",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "images",
+   "category": "grating_interf",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "grating_three_image_retrieve",
+   "halcon": "",
+   "in_sort": "images",
+   "out_sort": "table",
+   "category": "grating_interf",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "images",
+    "images"
    ]
   },
   {
@@ -11786,6 +12536,30 @@
    "in_sorts": []
   },
   {
+   "name": "illumination_field",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "image2d",
+   "category": "illumination",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "illumination_train",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "illumination",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
    "name": "illumination_uniformity",
    "halcon": "",
    "in_sort": "image2d",
@@ -11970,6 +12744,19 @@
    ]
   },
   {
+   "name": "image_orientation",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "noncoaxial",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "impact_params",
    "halcon": "",
    "in_sort": null,
@@ -12003,6 +12790,19 @@
    "ledger": "opsdrive",
    "dim": "drive",
    "in_sorts": []
+  },
+  {
+   "name": "increment_sign",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "code",
+   "tier": "ledger",
+   "ledger": "opscodematch",
+   "dim": "codematch",
+   "in_sorts": [
+    "image2d"
+   ]
   },
   {
    "name": "indices_to_labels",
@@ -12457,6 +13257,20 @@
    ]
   },
   {
+   "name": "isc_match",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "match",
+   "tier": "ledger",
+   "ledger": "opscodematch",
+   "dim": "codematch",
+   "in_sorts": [
+    "image2d",
+    "image2d"
+   ]
+  },
+  {
    "name": "iss_keypoints",
    "halcon": "",
    "in_sort": "points",
@@ -12480,6 +13294,130 @@
    "dim": "acoustics",
    "in_sorts": [
     "table"
+   ]
+  },
+  {
+   "name": "iterate_fixed_point",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "iterate",
+   "tier": "ledger",
+   "ledger": "opsconverge",
+   "dim": "converge",
+   "in_sorts": []
+  },
+  {
+   "name": "itof_capture",
+   "halcon": "",
+   "in_sort": "depth",
+   "out_sort": "table",
+   "category": "itof",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "depth"
+   ]
+  },
+  {
+   "name": "itof_flying_pixel_mask",
+   "halcon": "",
+   "in_sort": "depth",
+   "out_sort": "image2d",
+   "category": "itof",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "depth"
+   ]
+  },
+  {
+   "name": "itof_multipath_separate",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "itof",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "itof_noise_budget",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "itof",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "itof_phase_amplitude",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "itof",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "itof_unwrap_error_rate",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "itof",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "itof_unwrap_multifreq",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "itof",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "itof_wiggling_correct",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "itof",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "iv_richardson_lucy_until",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "stopping",
+   "tier": "ledger",
+   "ledger": "opsconverge",
+   "dim": "converge",
+   "in_sorts": [
+    "image2d"
    ]
   },
   {
@@ -13526,6 +14464,45 @@
    ]
   },
   {
+   "name": "lens_add_configuration",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lensconfig",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "lens_afocal_report",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lenssolve",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "lens_apply_solves",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lenssolve",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "lens_area",
    "halcon": "",
    "in_sort": null,
@@ -13546,6 +14523,45 @@
    "ledger": "opsoptics",
    "dim": "optics",
    "in_sorts": []
+  },
+  {
+   "name": "lens_configuration_metrics",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lensconfig",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "lens_configuration_table",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lensconfig",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "lens_configurations",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lensconfig",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
   },
   {
    "name": "lens_element_drawing",
@@ -13585,6 +14601,104 @@
    "in_sorts": [
     "table"
    ]
+  },
+  {
+   "name": "lens_file_read",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "lensfile",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "lens_file_report",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "lensfile",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "lens_file_system",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lensfile",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "lens_file_write",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lensfile",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "lens_global_search",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lensglobal",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "lens_image_surface",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lenssolve",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "lens_petzval_radius",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lenssolve",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "lens_scene",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "lensrender",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "lens_section_drawing",
@@ -13627,6 +14741,45 @@
    ]
   },
   {
+   "name": "lens_solve_clear",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lenssolve",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "lens_solve_set",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lenssolve",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "lens_solves_list",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lenssolve",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "lens_spec",
    "halcon": "",
    "in_sort": null,
@@ -13638,6 +14791,19 @@
    "in_sorts": []
   },
   {
+   "name": "lens_substitute_glasses",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lensglobal",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "lens_system",
    "halcon": "",
    "in_sort": null,
@@ -13647,6 +14813,32 @@
    "ledger": "opsoptics",
    "dim": "optics",
    "in_sorts": []
+  },
+  {
+   "name": "lens_with_configuration",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lensconfig",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "lens_zmx_solves_roundtrip",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lenssolve",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
   },
   {
    "name": "level_set_reinit",
@@ -14129,6 +15321,119 @@
    "in_sorts": [
     "signal"
    ]
+  },
+  {
+   "name": "lockin_amplitude",
+   "halcon": "",
+   "in_sort": "video",
+   "out_sort": "image2d",
+   "category": "lockin",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "video"
+   ]
+  },
+  {
+   "name": "lockin_demodulate",
+   "halcon": "",
+   "in_sort": "video",
+   "out_sort": "table",
+   "category": "lockin",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "video"
+   ]
+  },
+  {
+   "name": "lockin_noise_floor",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "lockin",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "lockin_phase",
+   "halcon": "",
+   "in_sort": "video",
+   "out_sort": "image2d",
+   "category": "lockin",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "video"
+   ]
+  },
+  {
+   "name": "lockin_ring_normals",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lockin",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "lockin_ring_synthesize",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "video",
+   "category": "lockin",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "lockin_separate",
+   "halcon": "",
+   "in_sort": "video",
+   "out_sort": "table",
+   "category": "lockin",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "video"
+   ]
+  },
+  {
+   "name": "lockin_thermal_wave",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "video",
+   "category": "lockin",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "lockin_walsh_codes",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "matrix",
+   "category": "lockin",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "log_zero_crossings",
@@ -14801,6 +16106,28 @@
    "in_sorts": []
   },
   {
+   "name": "material_effective_z",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "spectral_xray",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": []
+  },
+  {
+   "name": "material_electron_properties",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "matprop",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
    "name": "material_extinction",
    "halcon": "",
    "in_sort": null,
@@ -14933,6 +16260,39 @@
    "in_sorts": []
   },
   {
+   "name": "material_xray_attenuation",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "pairs",
+   "category": "spectral_xray",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": []
+  },
+  {
+   "name": "material_xray_constants",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "spectral_xray",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": []
+  },
+  {
+   "name": "material_xray_table",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "spectral_xray",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": []
+  },
+  {
    "name": "matmul_ozaki",
    "halcon": "",
    "in_sort": "matrix",
@@ -15011,6 +16371,28 @@
    "in_sorts": [
     "image2d"
    ]
+  },
+  {
+   "name": "mc_photon_slab",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "montecarlo",
+   "tier": "ledger",
+   "ledger": "opsconverge",
+   "dim": "converge",
+   "in_sorts": []
+  },
+  {
+   "name": "mc_sequential_mean",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "montecarlo",
+   "tier": "ledger",
+   "ledger": "opsconverge",
+   "dim": "converge",
+   "in_sorts": []
   },
   {
    "name": "mdr_spring_bed",
@@ -15297,6 +16679,58 @@
    ]
   },
   {
+   "name": "merit_boundary_operands",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lensmerit",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "merit_contributions",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lensmerit",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "merit_default",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lensmerit",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "merit_evaluate",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lensmerit",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "merit_function",
    "halcon": "",
    "in_sort": "table",
@@ -15308,6 +16742,17 @@
    "in_sorts": [
     "table"
    ]
+  },
+  {
+   "name": "merit_operands_list",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "lensmerit",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "mesh_area",
@@ -15904,6 +17349,17 @@
    ]
   },
   {
+   "name": "mla_surface",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "plenoptic",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
    "name": "mls_smooth",
    "halcon": "",
    "in_sort": "points",
@@ -16461,6 +17917,19 @@
    "in_sorts": []
   },
   {
+   "name": "mtf_tangential_sagittal",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "imaging",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
    "name": "mu_from_stop_distance",
    "halcon": "",
    "in_sort": null,
@@ -16805,6 +18274,80 @@
    "in_sorts": []
   },
   {
+   "name": "noncoaxial_drawing",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "drawing",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "noncoaxial_example",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "noncoaxial",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "noncoaxial_layout",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "noncoaxial",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "noncoaxial_spot",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "noncoaxial",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "noncoaxial_system",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "noncoaxial",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "noncoaxial_trace",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "noncoaxial",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "normal_consistency",
    "halcon": "",
    "in_sort": "points",
@@ -17128,6 +18671,42 @@
    ]
   },
   {
+   "name": "ocean_height_field",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "watermedia",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "ocean_spectrum",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "watermedia",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "ocm_match",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "match",
+   "tier": "ledger",
+   "ledger": "opscodematch",
+   "dim": "codematch",
+   "in_sorts": [
+    "image2d",
+    "image2d"
+   ]
+  },
+  {
    "name": "oct_ascan",
    "halcon": "",
    "in_sort": "table",
@@ -17352,6 +18931,43 @@
    ]
   },
   {
+   "name": "ods_depth_to_disparity",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "omni360",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "ods_disparity_to_depth",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "omni360",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "ods_render",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "images",
+   "category": "omni360",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
    "name": "offtracking_circle",
    "halcon": "",
    "in_sort": null,
@@ -17363,10 +18979,37 @@
    "in_sorts": []
   },
   {
+   "name": "omni_anaglyph_compose",
+   "halcon": "",
+   "in_sort": "rgbimage",
+   "out_sort": "rgbimage",
+   "category": "omni360",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "rgbimage",
+    "rgbimage"
+   ]
+  },
+  {
    "name": "opd_map",
    "halcon": "",
    "in_sort": "table",
    "out_sort": "image2d",
+   "category": "design",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "opd_samples",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
    "category": "design",
    "tier": "ledger",
    "ledger": "opsoptics",
@@ -17430,6 +19073,19 @@
    "in_sort": "table",
    "out_sort": "table",
    "category": "optimization",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "optimize_lens_operands",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lensmerit",
    "tier": "ledger",
    "ledger": "opsoptics",
    "dim": "optics",
@@ -17544,6 +19200,19 @@
    "in_sorts": [
     "points",
     "normals"
+   ]
+  },
+  {
+   "name": "orientation_code",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "code",
+   "tier": "ledger",
+   "ledger": "opscodematch",
+   "dim": "codematch",
+   "in_sorts": [
+    "image2d"
    ]
   },
   {
@@ -18091,6 +19760,73 @@
    "ledger": "opsdrive",
    "dim": "drive",
    "in_sorts": []
+  },
+  {
+   "name": "patch_features",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "anomaly_patch",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "patchbank_fit",
+   "halcon": "",
+   "in_sort": "video",
+   "out_sort": "table",
+   "category": "anomaly_patch",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "video"
+   ]
+  },
+  {
+   "name": "patchbank_score",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "anomaly_patch",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "image2d",
+    "table"
+   ]
+  },
+  {
+   "name": "patchdist_fit",
+   "halcon": "",
+   "in_sort": "video",
+   "out_sort": "table",
+   "category": "anomaly_patch",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "video"
+   ]
+  },
+  {
+   "name": "patchdist_score",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "anomaly_patch",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "image2d",
+    "table"
+   ]
   },
   {
    "name": "path_slip_risk",
@@ -18693,6 +20429,17 @@
    ]
   },
   {
+   "name": "phase_function_hg",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "watermedia",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
    "name": "phase_peel",
    "halcon": "",
    "in_sort": "signal",
@@ -18757,6 +20504,19 @@
    "dim": "specular",
    "in_sorts": [
     "images"
+   ]
+  },
+  {
+   "name": "photon_counting_channels",
+   "halcon": "",
+   "in_sort": "pairs",
+   "out_sort": "table",
+   "category": "spectral_xray",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": [
+    "pairs"
    ]
   },
   {
@@ -19395,6 +21155,19 @@
    ]
   },
   {
+   "name": "plant_color_index",
+   "halcon": "",
+   "in_sort": "rgbimage",
+   "out_sort": "table",
+   "category": "plant",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "rgbimage"
+   ]
+  },
+  {
    "name": "plate_focus_shift",
    "halcon": "",
    "in_sort": null,
@@ -19429,6 +21202,76 @@
    "dim": "drive",
    "in_sorts": [
     "any"
+   ]
+  },
+  {
+   "name": "plenoptic_capture",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "plenoptic",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table",
+    "table"
+   ]
+  },
+  {
+   "name": "plenoptic_decode",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "lightfield",
+   "category": "plenoptic",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d",
+    "table"
+   ]
+  },
+  {
+   "name": "plenoptic_mla_calibrate",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "plenoptic",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "plenoptic_refocus_depth",
+   "halcon": "",
+   "in_sort": "lightfield",
+   "out_sort": "table",
+   "category": "plenoptic",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "lightfield",
+    "table"
+   ]
+  },
+  {
+   "name": "plenoptic_system",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "plenoptic",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table",
+    "table",
+    "table"
    ]
   },
   {
@@ -19552,6 +21395,19 @@
    "in_sorts": [
     "points",
     "matrix"
+   ]
+  },
+  {
+   "name": "points_render",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "rgbimage",
+   "category": "render",
+   "tier": "ledger",
+   "ledger": "ops3d",
+   "dim": "3d",
+   "in_sorts": [
+    "points"
    ]
   },
   {
@@ -21141,6 +22997,19 @@
    ]
   },
   {
+   "name": "r_value_map",
+   "halcon": "",
+   "in_sort": "images",
+   "out_sort": "image2d",
+   "category": "spectral_xray",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": [
+    "images"
+   ]
+  },
+  {
    "name": "racket_hit_check",
    "halcon": "",
    "in_sort": "table",
@@ -21227,6 +23096,45 @@
    "dim": "drive",
    "in_sorts": [
     "image2d"
+   ]
+  },
+  {
+   "name": "radial_reach_filter",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "change",
+   "tier": "ledger",
+   "ledger": "opscodematch",
+   "dim": "codematch",
+   "in_sorts": [
+    "image2d",
+    "image2d"
+   ]
+  },
+  {
+   "name": "radiosity_patches",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "radiosity",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "radiosity_progressive_3d",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "radiosity",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table",
+    "signal"
    ]
   },
   {
@@ -21538,6 +23446,19 @@
    ]
   },
   {
+   "name": "ray_aiming",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "design",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "ray_box_ranges",
    "halcon": "",
    "in_sort": "points",
@@ -21549,6 +23470,19 @@
    "in_sorts": [
     "points",
     "points"
+   ]
+  },
+  {
+   "name": "ray_bundle",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "design",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
    ]
   },
   {
@@ -21832,6 +23766,17 @@
    ]
   },
   {
+   "name": "refracted_view",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "watermedia",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
    "name": "region_growing",
    "halcon": "",
    "in_sort": "points",
@@ -22061,6 +24006,30 @@
    ]
   },
   {
+   "name": "render_compare_prescriptions",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "lensrender",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "render_ghost_overlay",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lensrender",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "render_lambertian",
    "halcon": "",
    "in_sort": "normalmap",
@@ -22079,6 +24048,21 @@
    "in_sort": "table",
    "out_sort": "rgbimage",
    "category": "scene",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table",
+    "table",
+    "table"
+   ]
+  },
+  {
+   "name": "render_optscene_gi",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "radiosity",
    "tier": "ledger",
    "ledger": "opsoptics",
    "dim": "optics",
@@ -22112,6 +24096,19 @@
    "dim": "3d",
    "in_sorts": [
     "mesh"
+   ]
+  },
+  {
+   "name": "render_scene_through_lens",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lensrender",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
    ]
   },
   {
@@ -22742,6 +24739,45 @@
    ]
   },
   {
+   "name": "robust_gaussian_profile",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "signal",
+   "category": "prepare",
+   "tier": "ledger",
+   "ledger": "opsroughness",
+   "dim": "roughness",
+   "in_sorts": [
+    "signal"
+   ]
+  },
+  {
+   "name": "robust_gaussian_surface",
+   "halcon": "",
+   "in_sort": "depth",
+   "out_sort": "depth",
+   "category": "prepare",
+   "tier": "ledger",
+   "ledger": "opsroughness",
+   "dim": "roughness",
+   "in_sorts": [
+    "depth"
+   ]
+  },
+  {
+   "name": "robust_spline_profile",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "signal",
+   "category": "prepare",
+   "tier": "ledger",
+   "ledger": "opsroughness",
+   "dim": "roughness",
+   "in_sorts": [
+    "signal"
+   ]
+  },
+  {
    "name": "roll_slide_state",
    "halcon": "",
    "in_sort": "table",
@@ -23080,6 +25116,20 @@
    ]
   },
   {
+   "name": "s_psnr",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "measurement",
+   "category": "omni360",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d",
+    "image2d"
+   ]
+  },
+  {
    "name": "sam_cscan",
    "halcon": "",
    "in_sort": "labels2d",
@@ -23210,6 +25260,31 @@
    ]
   },
   {
+   "name": "scattering_phase_petzold",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "watermedia",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "scc_match",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "match",
+   "tier": "ledger",
+   "ledger": "opscodematch",
+   "dim": "codematch",
+   "in_sorts": [
+    "image2d",
+    "image2d"
+   ]
+  },
+  {
    "name": "scene_box",
    "halcon": "",
    "in_sort": null,
@@ -23308,11 +25383,33 @@
    "in_sorts": []
   },
   {
+   "name": "scene_radiance",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "lensrender",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
    "name": "scene_sphere",
    "halcon": "",
    "in_sort": null,
    "out_sort": "table",
    "category": "scene",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "scheimpflug_tilt",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "noncoaxial",
    "tier": "ledger",
    "ledger": "opsoptics",
    "dim": "optics",
@@ -23903,6 +26000,67 @@
    "in_sorts": []
   },
   {
+   "name": "sem_cd_measure",
+   "halcon": "",
+   "in_sort": "pairs",
+   "out_sort": "table",
+   "category": "sem",
+   "tier": "ledger",
+   "ledger": "opsgenerative",
+   "dim": "generative",
+   "in_sorts": [
+    "pairs"
+   ]
+  },
+  {
+   "name": "sem_charging_series",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "video",
+   "category": "sem",
+   "tier": "ledger",
+   "ledger": "opsgenerative",
+   "dim": "generative",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "sem_electron_mc",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "sem",
+   "tier": "ledger",
+   "ledger": "opsgenerative",
+   "dim": "generative",
+   "in_sorts": []
+  },
+  {
+   "name": "sem_image",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "sem",
+   "tier": "ledger",
+   "ledger": "opsgenerative",
+   "dim": "generative",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "sem_line_profile",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "sem",
+   "tier": "ledger",
+   "ledger": "opsgenerative",
+   "dim": "generative",
+   "in_sorts": []
+  },
+  {
    "name": "sem_render",
    "halcon": "",
    "in_sort": "image2d",
@@ -23914,6 +26072,39 @@
    "in_sorts": [
     "image2d"
    ]
+  },
+  {
+   "name": "sem_se_escape_fraction",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "signal",
+   "category": "sem",
+   "tier": "ledger",
+   "ledger": "opsgenerative",
+   "dim": "generative",
+   "in_sorts": []
+  },
+  {
+   "name": "sem_se_universal_curve",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "signal",
+   "category": "sem",
+   "tier": "ledger",
+   "ledger": "opsgenerative",
+   "dim": "generative",
+   "in_sorts": []
+  },
+  {
+   "name": "sem_yield_curve",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "sem",
+   "tier": "ledger",
+   "ledger": "opsgenerative",
+   "dim": "generative",
+   "in_sorts": []
   },
   {
    "name": "sens_morris",
@@ -24028,6 +26219,19 @@
    "dim": "segmentation",
    "in_sorts": [
     "voxel"
+   ]
+  },
+  {
+   "name": "set_vignetting",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "design",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
    ]
   },
   {
@@ -25157,6 +27361,17 @@
    ]
   },
   {
+   "name": "snell_window",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "watermedia",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
    "name": "snic_superpixels",
    "halcon": "",
    "in_sort": "image2d",
@@ -25462,6 +27677,19 @@
    ]
   },
   {
+   "name": "spectral_integral_table",
+   "halcon": "",
+   "in_sort": "pairs",
+   "out_sort": "table",
+   "category": "spectral",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "pairs"
+   ]
+  },
+  {
    "name": "spectral_kurtosis",
    "halcon": "",
    "in_sort": "signal",
@@ -25536,6 +27764,46 @@
    "dim": "oned",
    "in_sorts": [
     "signal"
+   ]
+  },
+  {
+   "name": "spectrometer_bandpass",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "spectrometer",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "spectrometer_slit_image",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "spectrometer",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "spectrometer_spectrum",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "pairs",
+   "category": "spectrometer",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table",
+    "pairs"
    ]
   },
   {
@@ -26221,6 +28489,59 @@
    "in_sorts": []
   },
   {
+   "name": "stereo360_sbs",
+   "halcon": "",
+   "in_sort": "rgbimage",
+   "out_sort": "rgbimage",
+   "category": "omni360",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "rgbimage",
+    "rgbimage"
+   ]
+  },
+  {
+   "name": "stereo360_top_bottom",
+   "halcon": "",
+   "in_sort": "rgbimage",
+   "out_sort": "rgbimage",
+   "category": "omni360",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "rgbimage",
+    "rgbimage"
+   ]
+  },
+  {
+   "name": "stereo_pack",
+   "halcon": "",
+   "in_sort": "rgbimage",
+   "out_sort": "rgbimage",
+   "category": "omni360",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "rgbimage",
+    "rgbimage"
+   ]
+  },
+  {
+   "name": "stereo_parallax_budget",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "omni360",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
    "name": "stft",
    "halcon": "",
    "in_sort": "signal",
@@ -26645,6 +28966,20 @@
    ]
   },
   {
+   "name": "superpixel_color_texture_features",
+   "halcon": "",
+   "in_sort": "rgbimage",
+   "out_sort": "table",
+   "category": "plant",
+   "tier": "ledger",
+   "ledger": "opssegmentation",
+   "dim": "segmentation",
+   "in_sorts": [
+    "rgbimage",
+    "labels2d"
+   ]
+  },
+  {
    "name": "superpixel_quality",
    "halcon": "",
    "in_sort": "labels2d",
@@ -26803,6 +29138,17 @@
    "in_sorts": [
     "depth"
    ]
+  },
+  {
+   "name": "surface_reflectance",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "noncoaxial",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "surface_residual",
@@ -27125,6 +29471,39 @@
    ]
   },
   {
+   "name": "talbot_carpet",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "grating_interf",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "talbot_grating_design",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "grating_interf",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "talbot_source_visibility",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "grating_interf",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
    "name": "tangent_field",
    "halcon": "",
    "in_sort": null,
@@ -27270,6 +29649,137 @@
    "in_sorts": [
     "table"
    ]
+  },
+  {
+   "name": "tem_amorphous_film",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "image2d",
+   "category": "tem",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "tem_ctf",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "image2d",
+   "category": "tem",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "tem_ctf_correct",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "tem",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "tem_ctf_estimate",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "tem",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "tem_ctf_profile",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "tem",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "tem_image_weak_phase",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "tem",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "tem_multislice",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "tem",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "tem_power_spectrum",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "tem",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "tem_projected_potential",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "image2d",
+   "category": "tem",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "tem_scherzer",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "tem",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "tem_wavelength",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "tem",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "temporal_band_power",
@@ -27662,6 +30172,19 @@
    ]
   },
   {
+   "name": "through_focus_mtf",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "imaging_sim",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "ticks",
    "halcon": "",
    "in_sort": "image2d",
@@ -27960,6 +30483,17 @@
    ]
   },
   {
+   "name": "tilted_plate_shift",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "noncoaxial",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
    "name": "tilted_surface_read",
    "halcon": "",
    "in_sort": "image2d",
@@ -28050,6 +30584,111 @@
    "in_sort": "table",
    "out_sort": "table",
    "category": "design",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "tolerance_compensators",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "tolerancing",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "tolerance_criteria",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "tolerancing",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "tolerance_monte_carlo",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "tolerancing",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table",
+    "table",
+    "table"
+   ]
+  },
+  {
+   "name": "tolerance_report",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "text",
+   "category": "tolerancing",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "tolerance_sensitivity",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "tolerancing",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table",
+    "table",
+    "table"
+   ]
+  },
+  {
+   "name": "tolerance_table",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "tolerancing",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "tolerance_table_from_zmx",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "tolerancing",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table",
+    "text"
+   ]
+  },
+  {
+   "name": "tolerance_table_zmx",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "text",
+   "category": "tolerancing",
    "tier": "ledger",
    "ledger": "opsoptics",
    "dim": "optics",
@@ -28342,6 +30981,19 @@
     "table",
     "points",
     "points"
+   ]
+  },
+  {
+   "name": "trace_sensor_rays",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "lensrender",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
    ]
   },
   {
@@ -28758,6 +31410,35 @@
    "in_sorts": []
   },
   {
+   "name": "underwater_image",
+   "halcon": "",
+   "in_sort": "rgbimage",
+   "out_sort": "table",
+   "category": "watermedia",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "rgbimage",
+    "image2d",
+    "image2d"
+   ]
+  },
+  {
+   "name": "underwater_inspection_image",
+   "halcon": "",
+   "in_sort": "rgbimage",
+   "out_sort": "table",
+   "category": "watervision",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "rgbimage",
+    "image2d"
+   ]
+  },
+  {
    "name": "unexplained_peaks",
    "halcon": "",
    "in_sort": "table",
@@ -28807,6 +31488,71 @@
    "dim": "3d",
    "in_sorts": [
     "image2d"
+   ]
+  },
+  {
+   "name": "varmodel_alignment",
+   "halcon": "",
+   "in_sort": "video",
+   "out_sort": "table",
+   "category": "variation",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "video"
+   ]
+  },
+  {
+   "name": "varmodel_band_k",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "variation",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": []
+  },
+  {
+   "name": "varmodel_calibrate",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "variation",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "table",
+    "video"
+   ]
+  },
+  {
+   "name": "varmodel_fit",
+   "halcon": "",
+   "in_sort": "video",
+   "out_sort": "table",
+   "category": "variation",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "video"
+   ]
+  },
+  {
+   "name": "varmodel_score",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "variation",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "image2d",
+    "table"
    ]
   },
   {
@@ -28931,6 +31677,32 @@
    ]
   },
   {
+   "name": "video360_tile_coverage",
+   "halcon": "",
+   "in_sort": "pairs",
+   "out_sort": "table",
+   "category": "omni360",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "pairs"
+   ]
+  },
+  {
+   "name": "video360_viewport_track",
+   "halcon": "",
+   "in_sort": "rgbvideo",
+   "out_sort": "rgbvideo",
+   "category": "omni360",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "rgbvideo"
+   ]
+  },
+  {
    "name": "video_cube_cut",
    "halcon": "",
    "in_sort": "video",
@@ -29019,6 +31791,19 @@
    "dim": "gfx2d",
    "in_sorts": [
     "rgb"
+   ]
+  },
+  {
+   "name": "viewport_from_equirect",
+   "halcon": "",
+   "in_sort": "rgbimage",
+   "out_sort": "rgbimage",
+   "category": "omni360",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "rgbimage"
    ]
   },
   {
@@ -30327,6 +33112,17 @@
    ]
   },
   {
+   "name": "water_attenuation",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "watermedia",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
    "name": "watermark_capacity",
    "halcon": "",
    "in_sort": "image2d",
@@ -30553,6 +33349,31 @@
    ]
   },
   {
+   "name": "wet_dry_inspection_pair",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "watervision",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d",
+    "image2d"
+   ]
+  },
+  {
+   "name": "wet_surface_appearance",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "watervision",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
    "name": "wetness",
    "halcon": "",
    "in_sort": "rgbimage",
@@ -30702,6 +33523,32 @@
    "in_sorts": [
     "image2d",
     "scalar"
+   ]
+  },
+  {
+   "name": "with_aiming",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "design",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "with_wavelength",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "design",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
    ]
   },
   {
@@ -30986,6 +33833,20 @@
    ]
   },
   {
+   "name": "ws_psnr",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "measurement",
+   "category": "omni360",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d",
+    "image2d"
+   ]
+  },
+  {
    "name": "x_range_funct_1d",
    "halcon": "",
    "in_sort": "signal",
@@ -30997,6 +33858,43 @@
    "in_sorts": [
     "signal"
    ]
+  },
+  {
+   "name": "xray_beam_quality",
+   "halcon": "",
+   "in_sort": "pairs",
+   "out_sort": "table",
+   "category": "spectral_xray",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": [
+    "pairs"
+   ]
+  },
+  {
+   "name": "xray_channel_projection",
+   "halcon": "",
+   "in_sort": "images",
+   "out_sort": "images",
+   "category": "spectral_xray",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": [
+    "images"
+   ]
+  },
+  {
+   "name": "xray_tube_spectrum",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "pairs",
+   "category": "spectral_xray",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": []
   },
   {
    "name": "xyz_to_lab",
@@ -32846,6 +35744,16 @@
   },
   {
    "name": "dist_transform",
+   "halcon": "distance_transform",
+   "in_sort": "region",
+   "out_sort": "image",
+   "category": "region",
+   "tier": "registry",
+   "module": "ops",
+   "requires": []
+  },
+  {
+   "name": "dist_transform_abs",
    "halcon": "distance_transform",
    "in_sort": "region",
    "out_sort": "image",
@@ -35277,6 +38185,16 @@
    ]
   },
   {
+   "name": "kuwahara",
+   "halcon": null,
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "smoothing",
+   "tier": "registry",
+   "module": "ops",
+   "requires": []
+  },
+  {
    "name": "laplace",
    "halcon": "laplace",
    "in_sort": "image",
@@ -35555,6 +38473,16 @@
   },
   {
    "name": "mean_box",
+   "halcon": "mean_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "smoothing",
+   "tier": "registry",
+   "module": "ops",
+   "requires": []
+  },
+  {
+   "name": "mean_box_wh",
    "halcon": "mean_image",
    "in_sort": "image",
    "out_sort": "image",
@@ -39014,6 +41942,16 @@
    "requires": []
   },
   {
+   "name": "tb_points_render",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "rgbimage",
+   "category": "typed",
+   "tier": "registry",
+   "module": "backends_typed",
+   "requires": []
+  },
+  {
    "name": "tb_points_to_voxel",
    "halcon": "",
    "in_sort": "points",
@@ -39578,6 +42516,16 @@
    "halcon": "",
    "in_sort": "points",
    "out_sort": "volume",
+   "category": "typed",
+   "tier": "registry",
+   "module": "backends_typed",
+   "requires": []
+  },
+  {
+   "name": "tb_viewport_from_equirect",
+   "halcon": "",
+   "in_sort": "rgbimage",
+   "out_sort": "rgbimage",
    "category": "typed",
    "tier": "registry",
    "module": "backends_typed",
@@ -40322,6 +43270,16 @@
     "cv2",
     "skimage"
    ]
+  },
+  {
+   "name": "xdog",
+   "halcon": null,
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry",
+   "module": "ops",
+   "requires": []
   },
   {
    "name": "xg_area_center",

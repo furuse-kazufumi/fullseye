@@ -1,5 +1,9 @@
-<!-- i18n-source-sha: 11529e905883 -->
+<!-- i18n-source-sha: 85644ff1ed7d -->
 # The complete guide to Fullseye Studio
+
+A purpose search groups candidates by whether they fit the current input, need preprocessing, or belong elsewhere. You can try a candidate once without adding a stage. Failures in the Problems pane show the cause, location, and concrete next actions for reselecting input, comparing values, opening the log, editing a knob, or finding a suggested stage.
+
+Heavy work runs without freezing the window. The bottom area shows the active stage and progress; a stop request is acknowledged at the next stage boundary. If settings change during a run, the displayed generation remains identified and you can either view the completed older result or run the current settings.
 
 [日本語](./STUDIO_GUIDE.md) · **English** · [简体中文](./STUDIO_GUIDE.zh.md) · [繁體中文](./STUDIO_GUIDE.tw.md) · [한국어](./STUDIO_GUIDE.ko.md) · [Deutsch](./STUDIO_GUIDE.de.md) · [हिन्दी](./STUDIO_GUIDE.hi.md)
 
@@ -331,6 +335,14 @@ Some ops do not run on their sample (a limit of how each op's sample is built: o
 as is). That the window adds no failures of its own is checked by a gate: it must agree with passing the sample to the
 op directly.
 
+### Assigning CSV columns to a table operation
+
+For a typed `table` input, choose **CSV file…** in the existing ledger runner. Each role is selected from actual headers,
+never free text; gauge R&R shows `part / part ID`, `operator / operator`, and `value / measured value`. The check reports
+rows, distinct keys, missing values and repeats. Unequal repeats are refused before execution with the groups named; no
+unsupported design is repaired. Mappings are remembered by operation and header signature (sorted names plus count), so
+only the same format reuses them. The CSV is never modified or renamed.
+
 ### How the result view shows things
 
 Results that are not pixels are drawn according to their shape (the right panel and the window above share this).
@@ -342,6 +354,25 @@ Results that are not pixels are drawn according to their shape (the right panel 
 | table (dict) | its numeric columns of equal length as lines; the x axis is a `t` / `x` / `freq` … column if there is one |
 | `(h, w, 4)` / `(h, w, 1)` / complex | RGB over white / grey / magnitude \|z\| |
 | empty arrays, 4-D and more | shape and range as text (the first value is not shown as a "scalar") |
+
+## Result cache, review marks and the input reference (2026-10-19)
+
+- **Per-stage result cache**: when you move a knob, only that stage and the ones after it are recomputed; earlier results are reused. At the right end of each stage row, `⟳ calc` marks a stage computed this time and `↺ cache` one served from the cache. Changing the image, reordering or deleting stages drops everything from the affected stage onward. The cache keeps one latest result per stage, so dragging a knob repeatedly does not grow it.
+- **Review mark (⚠)**: "did it run" (`ran`) and "is the result sound" (`valid`) are kept apart. When a result contains NaN / Inf, is empty, or has every pixel equal, the stage row gets a `⚠`, with the reason in its tooltip and in Problems (a separate row from the `✕` errors). If the result is a table with fields such as `converged` / `valid` / `ok`, Studio mirrors that declaration. A result that carries no validity information is shown as "validity not judged", never as OK. After Run all the status bar reads "Run: done / Result: needs review (reason)" or "Run: done / Result: validity not judged". Studio only **reports**; it does not repair the operator's numerical problem or change any value.
+- **Input reference**: Save pipeline stores a reference to the loaded image file in the JSON under `input` (the path as given, the file's sha256, shape and dtype). On open, a file that exists with a matching sha256 is reloaded silently. A file that exists but differs is loaded and Problems shows "input file changed since save". If it is missing, the current image is kept and Problems shows "input not found: path" (a file with the same name next to the `.json` is tried as a relink candidate). Older JSON files without `input` load exactly as before.
+- **Stage thumbnails (2026-10-20)**: each stage row starts with a small picture (about 48×36 px) of that stage's result: a region as its binary picture, a contour as its lines, a table or scalar as a symbol for its kind. The picture is made from the result already in the cache and never makes a stage recompute. A stage not computed yet shows "未計算 / not computed"; one computed earlier but with other knobs or another image shows "再計算が必要 / recompute needed" instead of an old picture passed off as current. Only a small array is kept per stage, so memory barely grows on large images. Rebuilding the list never runs a stage (computation happens on run, step, or when a knob drag settles). _(ja)_
+- **Stage in → out panel (Window ▸ Panels ▸ Stage in → out)**: selecting a stage shows its input and output side by side, in the same display mode and range, with a one-line difference below: for a region or label result "regions 128 → 37", for an image mean / σ / min / max before → after, for a table its rows and columns, for contours their count. While the panel is closed it computes nothing.
+- **Bypass (Ctrl+B / the stage's right-click menu)**: switches the selected stage off for now without removing it. It passes its input through unchanged and is drawn greyed and struck through in the list. The undo entry says "bypass", not "remove". Bypass is saved as a 4th element `true` of the stage in the project file (nothing is written when it is off, so a file that never uses it is byte-identical to before); it is part of the cache key, so toggling it recomputes from that stage on. The Python export keeps only a `# bypassed: op` comment line, and the exported script gives the same result as the screen. In the Program text a bypassed stage is the line `# bypassed: op (a, b)`, and "Apply" reads it back, so the mark survives.
+- **Strip for trying nearby values ("Try nearby values", under the knob rows)**: shows the selected stage's result as small pictures at 3 (or 5) knob values just below and above the current one. The spacing is the spec's step or 1/10 of its range, whichever is larger (geometric for a log-scale spec); an integer or choice knob uses its neighbouring values, and nothing goes outside the allowed range. It computes only while the strip is open, and runs **only that stage** once per candidate from the previous stage's cached result (no other stage runs). All pictures use one common display range and only small pictures are kept, so memory barely grows on a large image. Clicking a picture changes nothing; "Adopt this value" under the chosen picture sets it through the same path as the slider, as one undo step ("change blur σ"). If a region was marked on the main image (Shift + drag; Shift + click clears it), the strip draws only that region.
+- **Pin A, compare with B (toolbar "Pin as A" / Ctrl+Shift+A, Window ▸ Panels ▸ A / B)**: freezes the stage list (bypass flags included), the input reference, the final result and the display settings. The result is one read-only copy that no later run can change. At most two are kept; a third drops the oldest (the status bar says so). The A / B panel shows A and the live result B side by side, as a swipe (drag the boundary), as a blink (500 ms by default; it stops when the panel is closed) or as a difference (absolute / signed on a symmetric map where 0 is white / ratio as log2). A and B share one display range chosen from A ∪ B. The "What changed" list below names, in order, what was added, removed, changed (old → new value with its unit), bypassed, or which input changed since A. "Restore A" puts A's pipeline back (one undo step), "Adopt B" drops A, "Keep both" pins B as a second snapshot. The project file keeps only the stages, input, display and note under `pinned` (never the arrays) and recomputes the arrays when it is opened; if one cannot be recomputed the pin is kept and Problems says "cannot recompute A". Older files without `pinned` open as before.
+- **Synchronised zoom, pan and cursor**: the pictures in the Stage in → out panel and the A / B panel zoom and pan together, and putting the cursor over one shows a crosshair at the same pixel in the others. Turning on "sync the main view too" in the A / B panel adds the main image to the group.
+
+
+## Apply the same processing to a folder
+
+Run ▸ **Apply this processing to a folder…** lets you pick an input folder and a file pattern, check the result on the first, middle, last or any chosen image, and then run the whole set. The inputs and the processing chain are frozen once at the start, so turning a knob during the run does not change the conditions of the running batch.
+
+For files with the same name you choose between "do not overwrite", "overwrite" and "add a sequence number"; when subfolders are included, the same hierarchy is created on the output side. `summary.csv` holds the file name, status, processing time, numeric outputs and the error reason. If reading or processing one image fails, the rest continues, and after the run you can review the failed files with their reasons in a list. A stop request is accepted at the boundary after the current image, and "stopped" is not shown until the run has actually stopped.
 
 ## The relationship between Export and Save/Open
 
@@ -364,3 +395,4 @@ the JSON. For the side that receives and executes the JSON, see [ENGINE.md](ENGI
 - [V14.md](V14.md) / [PERCEPTION.md](PERCEPTION.md) — what's inside the perception panel (flow / stereo / terrain)
 - [ENGINE.md](ENGINE.md) — execute the pipeline you exported
 - [GETTING_STARTED.md](GETTING_STARTED.md) — get going in 5 minutes
+- **Verify exported Python (Run ▸ Verify exported Python / Ctrl+Shift+R)**: runs the editable export in an isolated Python process and compares every intermediate stage with the GUI. Choose absolute/relative tolerances and whether NaNs must occupy the same positions, are ignored, or are forbidden. Shape and dtype must always match. A failure is added to Problems and points to the first differing stage; Studio reports it without changing values.

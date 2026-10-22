@@ -7,7 +7,7 @@ out: image2d
 examples: [poc_laser_line_speckle_floor]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # speckle_field — OPTICS `coherent` op
@@ -61,7 +61,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 
-[fraunhofer_pattern](../wave/fraunhofer_pattern.md) · [pupil_psf](../wave/pupil_psf.md) · [pupil_blur](../wave/pupil_blur.md) · [psf_to_mtf](../imaging/psf_to_mtf.md) · [edge_spread](../imaging/edge_spread.md) · [veiling_glare_index](../imaging/veiling_glare_index.md) · [emva_pair_statistics](../sensorchar/emva_pair_statistics.md) · [emva_defect_pixels](../sensorchar/emva_defect_pixels.md)
+[fraunhofer_pattern](../wave/fraunhofer_pattern.md) · [pupil_psf](../wave/pupil_psf.md) · [pupil_blur](../wave/pupil_blur.md) · [psf_to_mtf](../imaging/psf_to_mtf.md) · [encircled_energy](../imaging/encircled_energy.md) · [ensquared_energy](../imaging/ensquared_energy.md) · [energy_radii](../imaging/energy_radii.md) · [mtf_tangential_sagittal](../imaging/mtf_tangential_sagittal.md)
 
 ## 同カテゴリ(`coherent`)
 

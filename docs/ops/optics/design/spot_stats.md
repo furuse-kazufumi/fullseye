@@ -4,16 +4,16 @@ dim: optics
 category: design
 in: table
 out: table
-examples: [lens_design_demo, lens_optimize_demo]
+examples: [lens_design_demo, lens_optimize_demo, optical_design_metrics, poc_lens_solves_afocal, poc_photograph_through_prescription, poc_zmx_public_verify]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # spot_stats — OPTICS `design` op
 
 - **データ種**: `table` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.spot_stats(system, field=None, rings=8, wavelength_um=None, image_mm=None, pupil_fill=1.0)` (実装を直接呼ぶなら `import raytrace; raytrace.spot_stats(system, field=None, rings=8, wavelength_um=None, image_mm=None, pupil_fill=1.0)`、台帳から引くなら `opsoptics.get("spot_stats")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.spot_stats(system, field=None, rings=8, wavelength_um=None, image_mm=None, pupil_fill=1.0, aim=None, vignetting=None)` (実装を直接呼ぶなら `import raytrace; raytrace.spot_stats(system, field=None, rings=8, wavelength_um=None, image_mm=None, pupil_fill=1.0, aim=None, vignetting=None)`、台帳から引くなら `opsoptics.get("spot_stats")`)
 
 ## 使い方
 
@@ -24,6 +24,8 @@ with the stop on a surface, the outermost rays sit exactly on the aperture
 edge and any perturbation (tilt, decenter) vignettes half of them, which
 makes the RMS *drop* — :func:`tolerance_analysis` uses 0.99 for that reason.
 ``n_vignetted`` reports how many rays were lost either way.
+*aim* / *vignetting*: see :func:`ray_bundle` — with ``aim="stop"`` and the field's vignetting
+factors this is the spot a lens-design program reports (no marginal rays lost to pupil aberration).
 
 ## ファミリ共通の入力契約(fail-closed)
 
@@ -51,6 +53,10 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 - [lens_design_demo](../../../../examples/lens_design_demo.py) — `py -3.11 examples/lens_design_demo.py`
 - [lens_optimize_demo](../../../../examples/lens_optimize_demo.py) — `py -3.11 examples/lens_optimize_demo.py`
+- [optical_design_metrics](../../../../examples/optical_design_metrics.py) — `py -3.11 examples/optical_design_metrics.py`
+- [poc_lens_solves_afocal](../../../../examples/poc_lens_solves_afocal.py) — `py -3.11 examples/poc_lens_solves_afocal.py`
+- [poc_photograph_through_prescription](../../../../examples/poc_photograph_through_prescription.py) — `py -3.11 examples/poc_photograph_through_prescription.py`
+- [poc_zmx_public_verify](../../../../examples/poc_zmx_public_verify.py) — `py -3.11 examples/poc_zmx_public_verify.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

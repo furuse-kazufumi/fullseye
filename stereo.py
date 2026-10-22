@@ -257,7 +257,9 @@ def _census_cost_volume(Lc: np.ndarray, Rc: np.ndarray, D: int) -> np.ndarray:
     vol = np.empty((D + 1, H, W), np.float64)
     for d in range(D + 1):
         Rd = _shift_right_cols(Rc, d)
-        vol[d] = _popcount64(Lc ^ Rd).astype(np.float64)
+        xor = Lc ^ Rd
+        count = np.bitwise_count(xor) if hasattr(np, "bitwise_count") else _popcount64(xor)
+        vol[d] = count.astype(np.float64)
     return vol
 
 
@@ -274,7 +276,16 @@ def disparity_census(left, right, max_disp: int = 16, window: int = 5) -> np.nda
         raise ValueError("left/right must be equal-shape 2-D arrays")
     Lc = census_transform(L, window)
     Rc = census_transform(R, window)
-    return _census_cost_volume(Lc, Rc, int(max_disp)).argmin(0).astype(np.float64)
+    D = int(max_disp)
+    best_cost = np.full(Lc.shape, np.inf)
+    best_disp = np.zeros(Lc.shape, np.float64)
+    for d in range(D + 1):
+        xor = Lc ^ _shift_right_cols(Rc, d)
+        cost = np.bitwise_count(xor) if hasattr(np, "bitwise_count") else _popcount64(xor)
+        better = cost < best_cost
+        best_cost[better] = cost[better]
+        best_disp[better] = d
+    return best_disp
 
 
 def _sgm_penalty(prev: np.ndarray, P1: float, P2: float) -> np.ndarray:
@@ -304,6 +315,28 @@ def _aggregate_dir(C: np.ndarray, sy: int, sx: int, P1: float, P2: float) -> np.
     return L
 
 
+def _aggregate_dir_into(C: np.ndarray, S: np.ndarray, sy: int, sx: int,
+                        P1: float, P2: float) -> None:
+    """Aggregate one direction using only its previous row/column and add to ``S``."""
+    H, W, _ = C.shape
+    if sx != 0:
+        prev = C[:, 0 if sx > 0 else W - 1, :].copy()
+        S[:, 0 if sx > 0 else W - 1, :] += prev
+        xs = range(1, W) if sx > 0 else range(W - 2, -1, -1)
+        for x in xs:
+            cur = C[:, x, :] + _sgm_penalty(prev, P1, P2)
+            S[:, x, :] += cur
+            prev = cur
+    else:
+        prev = C[0 if sy > 0 else H - 1, :, :].copy()
+        S[0 if sy > 0 else H - 1, :, :] += prev
+        ys = range(1, H) if sy > 0 else range(H - 2, -1, -1)
+        for y in ys:
+            cur = C[y, :, :] + _sgm_penalty(prev, P1, P2)
+            S[y, :, :] += cur
+            prev = cur
+
+
 def disparity_sgm(left, right, max_disp: int = 16, window: int = 5,
                   P1: float = 5.0, P2: float = 50.0, paths: int = 4) -> np.ndarray:
     """Semi-Global Matching disparity (Hirschmüller, CVPR 2005 / PAMI 2008).
@@ -314,22 +347,37 @@ def disparity_sgm(left, right, max_disp: int = 16, window: int = 5,
     result has far fewer isolated mismatches than the raw winner-take-all
     :func:`disparity_census` / :func:`disparity_map` — the standard high-quality
     passive-stereo method. ``paths`` is 2 (horizontal only) or 4 (cardinal, the
-    default 4-path variant). Returns per-pixel disparity (float), left-referenced."""
+    default 4-path variant). Returns per-pixel disparity (float), left-referenced.
+
+    Non-finite input: an image with **no** finite pixel raises ``ValueError``; for a
+    partly non-finite pair the pixels that are NaN/inf in either image come back as
+    ``NaN`` (invalid), never as a disparity of 0."""
     L = np.asarray(left, np.float64)
     R = np.asarray(right, np.float64)
     if L.shape != R.shape or L.ndim != 2:
         raise ValueError("left/right must be equal-shape 2-D arrays")
     if paths not in (2, 4):
         raise ValueError("paths must be 2 or 4")
+    bad = ~(np.isfinite(L) & np.isfinite(R))
+    if not np.isfinite(L).any() or not np.isfinite(R).any():
+        raise ValueError("disparity_sgm: an image has no finite pixel (all NaN/inf) — "
+                         "there is nothing to match, refusing to return a disparity of 0")
+    if bad.any():
+        # 非有限画素は比較が全部 False になり偽の一致を作る。有限値の平均で埋めて
+        # から計算し、そこの視差は NaN で返す(無効の印)。
+        L = np.where(np.isfinite(L), L, L[np.isfinite(L)].mean())
+        R = np.where(np.isfinite(R), R, R[np.isfinite(R)].mean())
     D = int(max_disp)
     vol = _census_cost_volume(census_transform(L, window),
                               census_transform(R, window), D)
-    C = np.moveaxis(vol, 0, -1)                    # (H, W, D)
+    C = np.ascontiguousarray(np.moveaxis(vol, 0, -1))  # (H, W, D), disparity contiguous
     dirs = [(0, 1), (0, -1)] + ([(1, 0), (-1, 0)] if paths == 4 else [])
     S = np.zeros_like(C)
     for sy, sx in dirs:
-        S += _aggregate_dir(C, sy, sx, float(P1), float(P2))
-    return S.argmin(-1).astype(np.float64)
+        _aggregate_dir_into(C, S, sy, sx, float(P1), float(P2))
+    out = S.argmin(-1).astype(np.float64)
+    out[bad] = np.nan                  # 入力が非有限だった画素は無効(NaN)
+    return out
 
 
 # --- disparity post-processing ---------------------------------------------- #

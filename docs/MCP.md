@@ -61,7 +61,27 @@ retrieval 無しでは使えない)。
 | `fullseye_fix_text` | 画像の中の文字を「本当はこう書いてあるべき文字列」に合わせて直す。行ごとに `{text, bbox}`、`mode=repair_flagged`(床を超えた字だけ置換、正しい字に触らない)/ `rewrite_line`(行を丸ごと同じ書体で描き直す)。直した画像はハンドル + 全解像度 PNG、報告に `status` / `reason_code` / `mismatch`(typo か unrelated = 元の字が指示と無関係な疑い)。検証を通らない置換は元に戻す |
 | `fullseye_import_json` | 型付きの値を **JSON 封筒で引数に受け取り**、以後の op が使えるハンドルにする。`json`(文字列)か `envelope`(オブジェクト)のどちらか一方。配列 sort(image / color / region / points / matrix …)はハンドルに、feature / contour / table は値を返す。壊れた封筒・未知 sort は `-32602` |
 | `fullseye_export_json` | ハンドルの中身を **JSON 封筒で持ち出す**。`structuredContent` に `fullseye.from_jsonable` で bit そのまま戻せる封筒、本文に `fullseye.to_markdown` の読める描画。`readable=true` で数をリストに。上限(512 KB)超の大きな画像は `isError` で断る(画像はハンドル/小図で扱う) |
+| `fullseye_write_viewer` | PoC の結果を**自己完結した 1 枚の HTML ビューア**にして書く(タブ・正直なバッジ `passed` / `limit` / `null`・数字・3-D の点群/メッシュ・2-D 動画と時系列・前後の分割・ja/en/zh/tw/ko/de/hi/fr の切り替え)。`spec`(JSON)・`lang`(言語の配列、先頭が既定)・`name`。`spec` は信頼境界で再検証し、形違い・NaN・未知のバッジ/種類・欠けた訳は `-32602`。書き先はサンドボックスだけで、`resource_link` で返す |
 | `fullseye_estimate_distortion` | 本来まっすぐな**線群の点列**(`lines`=`[[x,y],…]` を並べた配列、2 本以上・各線 3 点以上)と 3x3 内部行列 `K` から Brown–Conrady 歪み係数 `dist=[k1,k2,p1,p2,k3]` を推定(plumb-line 法、チェッカー不要)。`radial`=1/2/3、`tangential` 真偽。返す `dist` は `undistort_image` にそのまま渡せる。`lines`/`K` は信頼境界で再検証し、形が違えば `-32602`、推定不能は `isError` |
+
+## 触って見るビューアを書く(`fullseye_write_viewer`)
+
+PoC の結果を、自己完結した 1 枚の HTML(タブ・正直なバッジ・3-D の点群/メッシュ・2-D 動画・前後の分割・言語切り替え)にして書く。Python の `fullseye.write_viewer` と同じ門を通る(能力ノート [`interactive-poc-viewer`](capabilities/interactive-poc-viewer.md)、例 [`examples/interactive_poc_viewer.py`](../examples/interactive_poc_viewer.py))。
+
+```json
+{"method": "tools/call", "params": {"name": "fullseye_write_viewer", "arguments": {
+  "lang": ["ja", "en"],
+  "spec": {"id": "demo", "title": {"ja": "見本", "en": "Demo"}, "subtitle": {"ja": "副題", "en": "Subtitle"},
+           "hint": {"ja": "操作", "en": "Hint"},
+           "tabs": [{"id": "a", "kind": "points", "badge": "null",
+                     "label": {"ja": "点群", "en": "Points"}, "text": {"ja": "説明", "en": "Text"},
+                     "pos": [[0, 0, 0], [1, 0, 0], [0, 1, 1]], "val": [0.0, 0.5, 1.0],
+                     "cbar": {"lo": 0, "hi": 1, "unit": "mm"}}]}}}}
+```
+
+* `spec` は **untrusted として信頼境界で再検証**する。形が違う・NaN・未知のバッジ(`passed` / `limit` / `null` 以外)・未知の `kind`・空の `tabs`・要求した言語の訳が 1 つでも欠ける、は `-32602`(欠けた鍵を全部並べる。他の言語で補わない)。
+* 書き先は MCP のサンドボックスの作業ディレクトリだけ(`name` は英数字と `_` `-`、`..` や `/` は拒否)。返り値の `resource_link`(`text/html`)でファイルを受け取る。
+* 対応言語は ja / en / zh / tw / ko / de / hi / fr。URL の `?lang=xx` と `?tab=<id>` で開く言語とタブを選べる。
 
 ## 文字を直す(`fullseye_fix_text`)の呼び出し例
 

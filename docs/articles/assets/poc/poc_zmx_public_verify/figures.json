@@ -1,0 +1,78 @@
+[
+ {
+  "file": "01_independent_verification.png",
+  "name": "independent_verification",
+  "caption": "4 処方。最大相対差は EFL 2.84e-16、BFL 3.47e-16。RMS は各読取器の瞳写像による値。",
+  "shape": [
+   176,
+   1120,
+   3
+  ],
+  "csv": "01_independent_verification.csv",
+  "tsv": "01_independent_verification.tsv"
+ },
+ {
+  "file": "02_spot_diagrams.png",
+  "name": "spot_diagrams",
+  "caption": "2 処方、3 視野。各パネルの RMS は同じ実光線から計算。",
+  "shape": [
+   855,
+   1120,
+   3
+  ]
+ },
+ {
+  "file": "03_spot_field_sweep.gif",
+  "name": "spot_field_sweep",
+  "caption": "同じ処方のスポットを軸上から最大視野まで掃引する。",
+  "shape": [
+   480,
+   480,
+   3
+  ],
+  "animated": true,
+  "frames": 16,
+  "frames_written": 16,
+  "fps": 5.0,
+  "video": "03_spot_field_sweep.mp4",
+  "video_frames": 32,
+  "video_fps": 10.0,
+  "video_shape": [
+   720,
+   720,
+   3
+  ]
+ },
+ {
+  "file": "04_inspection_scores.png",
+  "name": "inspection_scores",
+  "caption": "合格条件は照明≥0.75、|歪曲|≤2 %、RMS≤1 px、|倍率色|≤1 px、MTF≥0.2、傷 contrast≥0.1。",
+  "shape": [
+   176,
+   1120,
+   3
+  ],
+  "csv": "04_inspection_scores.csv",
+  "tsv": "04_inspection_scores.tsv"
+ },
+ {
+  "file": "05_scratch_visibility.png",
+  "name": "scratch_visibility",
+  "caption": "出力から測った傷 contrast は -0.424〜-0.397。",
+  "shape": [
+   647,
+   808,
+   3
+  ]
+ },
+ {
+  "file": "06_opd_convention_limit.png",
+  "name": "opd_convention_limit",
+  "caption": "光線座標の門とは別に、軸外 OPD は最大 36.22 % 違う。規約差を精度とは数えない。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]

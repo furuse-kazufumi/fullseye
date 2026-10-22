@@ -7,7 +7,7 @@ out: image2d
 examples: [poc_si_wafer_pl_defect_visibility]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # pl_image_simulate — GENERATIVE `pl` op
@@ -74,7 +74,7 @@ True
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 
-[sem_render](../sem/sem_render.md)
+[sem_render](../sem/sem_render.md) · [sem_image](../sem/sem_image.md) · [sem_charging_series](../sem/sem_charging_series.md)
 
 ## 同カテゴリ(`pl`)
 

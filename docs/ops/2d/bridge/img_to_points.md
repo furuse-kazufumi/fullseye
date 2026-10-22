@@ -7,7 +7,7 @@ out: points
 examples: [gallery2d_bridge]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # img_to_points — 2D `bridge` op
@@ -81,7 +81,7 @@ img_to_points 0.50 0.50
 
 ## 型が繋がる次の op(`points` を入力に取れる)
 
-[identity](../misc/identity.md) · [tb_points_to_voxel](../typed/tb_points_to_voxel.md) · [tb_estimate_point_normals](../typed/tb_estimate_point_normals.md) · [tb_iss_keypoints](../typed/tb_iss_keypoints.md) · [tb_project_points](../typed/tb_project_points.md) · [tb_render_point_depth](../typed/tb_render_point_depth.md) · [tb_statistical_outlier_removal](../typed/tb_statistical_outlier_removal.md) · [tb_radius_outlier_removal](../typed/tb_radius_outlier_removal.md)
+[identity](../misc/identity.md) · [tb_points_to_voxel](../typed/tb_points_to_voxel.md) · [tb_estimate_point_normals](../typed/tb_estimate_point_normals.md) · [tb_iss_keypoints](../typed/tb_iss_keypoints.md) · [tb_project_points](../typed/tb_project_points.md) · [tb_render_point_depth](../typed/tb_render_point_depth.md) · [tb_points_render](../typed/tb_points_render.md) · [tb_statistical_outlier_removal](../typed/tb_statistical_outlier_removal.md)
 
 ## 同カテゴリ(`bridge`)
 

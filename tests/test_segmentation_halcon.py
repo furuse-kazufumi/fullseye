@@ -496,7 +496,10 @@ def test_the_ledger_lists_every_op_and_nothing_is_missing():
     # ★2026-10-02: 同じ台帳に score(segeval)/world(segworld)のカテゴリが足された。HALCON の 9 本は
     #   4 カテゴリの中にちょうど 9 本、他のカテゴリの op は segmentation.py の物ではない。
     halcon_cats = ["compare", "classify", "grow", "watershed"]
-    in_halcon = {n for c in halcon_cats for n in opssegmentation.list_ops(c)}
+    # ★2026-10-18(統合 8 第 2 波): 同じ「classify」カテゴリに cropweed の Fisher 判別 2 本が入った。HALCON 章の 9 本は
+    #   実体が segmentation.py の物なので、module で絞る(カテゴリ名だけで数えると汎用の判別が混ざる)。
+    in_halcon = {n for c in halcon_cats for n in opssegmentation.list_ops(c)
+                 if opssegmentation.info(n)["module"] == "segmentation"}
     assert in_halcon == set(S.__all__) == set(OPS9)
     assert len(opssegmentation.OPSSEGMENTATION) >= 9
     assert opssegmentation.categories()[:4] == halcon_cats

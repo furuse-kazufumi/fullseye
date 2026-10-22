@@ -35,7 +35,7 @@ import ops  # noqa: E402
 # 全オペレータ。名前がソースに文字列リテラルとして現れる必要がある(op→example 索引用)。
 OPS = [
     "reg_erode", "reg_dilate", "reg_open", "reg_close", "fill_holes",
-    "select_largest", "remove_small", "invert_region", "dist_transform",
+    "select_largest", "remove_small", "invert_region", "dist_transform", "dist_transform_abs",
     "region_boundary", "convex_fill", "sk_skeleton", "sk_medial", "sk_convex",
     "sk_thin", "sk_remove_holes", "sk_clear_border", "sk_find_boundaries",
     "cv_dist", "erosion_circle", "dilation_circle", "opening_circle",
@@ -117,7 +117,8 @@ def _check_contract(name, op, out) -> None:
         assert np.issubdtype(out.dtype, np.floating), f"{name}: float 配列でない (dtype={out.dtype})"
         assert np.isfinite(out).all(), f"{name}: 非有限値(NaN/Inf)を含む"
         mn, mx = float(out.min()), float(out.max())
-        assert -1e-9 <= mn and mx <= 1 + 1e-9, f"{name}: 値域 [0,1] 外 (min={mn}, max={mx})"
+        if name not in ops.UNIT_RANGE_IS_NOT_THE_CONTRACT:
+            assert -1e-9 <= mn and mx <= 1 + 1e-9, f"{name}: 値域 [0,1] 外 (min={mn}, max={mx})"
         if os_ == "region":
             uniq = np.unique(out)
             assert set(np.round(uniq, 9)).issubset({0.0, 1.0}), \

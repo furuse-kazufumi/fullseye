@@ -4,10 +4,10 @@ dim: optics
 category: glassbody
 in: points × points
 out: points
-examples: [glass_and_mirror_optics]
+examples: [glass_and_mirror_optics, poc_water_transparent_media]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # refract_rays — OPTICS `glassbody` op
@@ -55,10 +55,11 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [glass_and_mirror_optics](../../../../examples/glass_and_mirror_optics.py) — `py -3.11 examples/glass_and_mirror_optics.py`
+- [poc_water_transparent_media](../../../../examples/poc_water_transparent_media.py) — `py -3.11 examples/poc_water_transparent_media.py`
 
 ## 型が繋がる次の op(`points` を入力に取れる)
 
-[reflect_rays](../scene/reflect_rays.md) · [trace_rays](../scene/trace_rays.md) · [illumination_visibility](../scene/illumination_visibility.md) · [env_studio](../scene/env_studio.md) · [env_lightbox](../scene/env_lightbox.md)
+[reflect_rays](../scene/reflect_rays.md) · [trace_rays](../scene/trace_rays.md) · [illumination_visibility](../scene/illumination_visibility.md) · [env_studio](../scene/env_studio.md) · [env_lightbox](../scene/env_lightbox.md) · [form_factor_polygons](../radiosity/form_factor_polygons.md)
 
 ## 同カテゴリ(`glassbody`)
 

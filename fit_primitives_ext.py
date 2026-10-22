@@ -150,10 +150,10 @@ def fit_cone(points) -> dict:
         t = Q @ d0
         rho = np.linalg.norm(Q - np.outer(t, d0), axis=1)
         m, b = np.polyfit(t, rho, 1)           # ρ ≈ m t + b
-        if m < 0:                               # 開く向きが逆 → 軸反転して再フィット
+        if m < 0:                               # 開く向きが逆 → 軸と傾きの符号だけ反転
             d0 = -d0
             t = -t
-            m, b = np.polyfit(t, rho, 1)
+            m = -m
         if abs(m) < 1e-6:
             continue                            # この軸では広がりが見えない → 次の候補
         t_apex = -b / m
@@ -184,16 +184,16 @@ def fit_cone(points) -> dict:
     if float(np.mean(a)) < 0.0:
         axis = -axis                            # 幾何は同一(頂点は不変、向きだけ反転)
 
-    r = resid(sol.x)
-    residual = float(np.sqrt(np.mean(r ** 2)))
+    residual = float(np.sqrt(np.mean(sol.fun ** 2)))
     return {"apex": apex, "axis": axis, "half_angle": half_angle,
             "residual": residual}
+
 
 
 # ═══════════════════════════════════════════════════════════════════════════
 # 2. トーラス(torus)
 # ═══════════════════════════════════════════════════════════════════════════
-def fit_torus(points) -> dict:
+def fit_torus(points, method: str = "exact", axis_parameterization: str = "cartesian") -> dict:
     """点群にトーラスを当てはめ ``{center, axis, R, r, residual}`` を返す。
 
     点-トーラス距離 ``sqrt((ρ−R)² + a²) − r``(``a``=軸成分, ``ρ``=軸からの半径,
@@ -202,6 +202,12 @@ def fit_torus(points) -> dict:
 
     Args:
         points: (N,3) 点群(最低 7 点)。
+        method: ``'exact'``(既定)は 8 パラメータを一括最小化。``'eliminate_r'`` は管半径 ``r`` を
+            各点の管中心円までの距離の平均として消去し 7 パラメータで最小化する(速い別方式。
+            既定値は変更せず、残差の許容差は rtol=1e-10, atol=1e-12)。
+        axis_parameterization: ``'cartesian'``(既定)は軸を 3 成分のベクトルで更新する。``'tangent'`` は
+            初期軸の接平面の 2 自由度で更新し 7 パラメータで最小化する(速い別方式。軸の差は試験した
+            点群で 1e-9 未満。``method='eliminate_r'`` とは併用できない)。
 
     Returns:
         dict: ``{"center": (3,), "axis": (3,), "R": float, "r": float, "residual": float}``。
@@ -211,6 +217,12 @@ def fit_torus(points) -> dict:
         ValueError: 形状不正/点数不足 fail-closed。
     """
     P = _as_points(points, 7, "fit_torus")
+    if method not in ("exact", "eliminate_r"):
+        raise ValueError("method must be 'exact' or 'eliminate_r'")
+    if axis_parameterization not in ("cartesian", "tangent"):
+        raise ValueError("fit_torus: axis_parameterization must be 'cartesian' or 'tangent'")
+    if axis_parameterization == "tangent" and method != "exact":
+        raise ValueError("fit_torus: axis_parameterization='tangent' is available only with method='exact'")
     center0 = P.mean(0)
     Q = P - center0
     diag = float(np.linalg.norm(P.max(0) - P.min(0))) + 1e-12
@@ -231,17 +243,55 @@ def fit_torus(points) -> dict:
         aa, rr = _axial_radial(P, c, n)
         return np.sqrt((rr - R) ** 2 + aa ** 2) - r
 
+    def resid_eliminated(p):
+        c = p[0:3]
+        n = _unit(p[3:6])
+        aa, rr = _axial_radial(P, c, n)
+        distances = np.sqrt((rr - p[6]) ** 2 + aa ** 2)
+        return distances - distances.mean()
+
+    if axis_parameterization == "tangent":
+        seed = np.array([1.0, 0.0, 0.0]) if abs(n0[0]) < 0.9 else np.array([0.0, 1.0, 0.0])
+        e1 = _unit(np.cross(n0, seed))
+        e2 = np.cross(n0, e1)
+
+        def tangent_resid(p):
+            """軸を初期軸の接平面の 2 自由度で動かす(7 パラメータ)。幾何の差は 1e-9 未満(実測)。"""
+            n = _unit(n0 + p[3] * e1 + p[4] * e2)
+            aa, rr = _axial_radial(P, p[0:3], n)
+            return np.sqrt((rr - p[5]) ** 2 + aa ** 2) - p[6]
+
+        p0 = np.concatenate([center0, [0.0, 0.0, R0, r0]])
+        lb = np.array([-np.inf] * 5 + [1e-9, 1e-9])
+        ub = np.array([np.inf] * 7)
+        sol = least_squares(tangent_resid, p0, bounds=(lb, ub), method="trf",
+                            xtol=1e-12, ftol=1e-12, max_nfev=8000)
+        center = np.asarray(sol.x[0:3], dtype=np.float64)
+        axis = _unit(n0 + sol.x[3] * e1 + sol.x[4] * e2)
+        R, r = float(sol.x[5]), float(sol.x[6])
+        residual = float(np.sqrt(np.mean(sol.fun ** 2)))
+        return {"center": center, "axis": axis, "R": R, "r": r,
+                "residual": residual}
+
     p0 = np.concatenate([center0, n0, [R0, r0]])
     lb = np.array([-np.inf] * 6 + [1e-9, 1e-9])
     ub = np.array([np.inf] * 8)
-    sol = least_squares(resid, p0, bounds=(lb, ub), method="trf",
-                        xtol=1e-12, ftol=1e-12, max_nfev=8000)
+    if method == "eliminate_r":
+        sol = least_squares(resid_eliminated, p0[:-1], bounds=(lb[:-1], ub[:-1]),
+                            method="trf", xtol=1e-12, ftol=1e-12, max_nfev=8000)
+    else:
+        sol = least_squares(resid, p0, bounds=(lb, ub), method="trf",
+                            xtol=1e-12, ftol=1e-12, max_nfev=8000)
 
     center = np.asarray(sol.x[0:3], dtype=np.float64)
     axis = _unit(sol.x[3:6])
     R = float(sol.x[6])
-    r = float(sol.x[7])
-    residual = float(np.sqrt(np.mean(resid(sol.x) ** 2)))
+    if method == "eliminate_r":
+        aa, rr = _axial_radial(P, center, axis)
+        r = float(np.mean(np.sqrt((rr - R) ** 2 + aa ** 2)))
+    else:
+        r = float(sol.x[7])
+    residual = float(np.sqrt(np.mean(sol.fun ** 2)))
     return {"center": center, "axis": axis, "R": R, "r": r,
             "residual": residual}
 
@@ -313,7 +363,7 @@ def _ellipsoid_from_coeffs(v, centroid, scale):
     return {"center": center, "axes": axes, "radii": radii}
 
 
-def fit_ellipsoid(points) -> dict:
+def fit_ellipsoid(points, chunk: int | None = None) -> dict:
     """点群に任意姿勢の 3 軸楕円体を代数フィットし ``{center, axes, radii, residual}`` を返す。
 
     一般二次曲面 ``xᵀA x + b·x + c = 0`` を、楕円体を保証する拘束 ``4J − I² = 1`` の下で
@@ -325,6 +375,8 @@ def fit_ellipsoid(points) -> dict:
 
     Args:
         points: (N,3) 点群(最低 10 点)。外れ値には無防備(必要なら事前に inlier 選別)。
+        chunk: 指定時は設計行列をこの点数ずつ 10x10 散布行列へ加算する省メモリ経路。
+            集計順の違いにより既定経路との差は 1e-10 以下。既定 ``None`` は従来経路。
 
     Returns:
         dict: ``{"center": (3,), "axes": (3, 3), "radii": (3,), "residual": float}``。
@@ -351,17 +403,31 @@ def fit_ellipsoid(points) -> dict:
     Pn = d / scale
     x, y, z = Pn[:, 0], Pn[:, 1], Pn[:, 2]
     # 設計行列 D(列 = χ = [x²,y²,z²,2yz,2xz,2xy,2x,2y,2z,1])
-    D = np.column_stack([x * x, y * y, z * z, 2 * y * z, 2 * x * z, 2 * x * y,
-                         2 * x, 2 * y, 2 * z, np.ones_like(x)])
-    S = D.T @ D
+    def design(lo, hi):
+        return np.column_stack([x[lo:hi] * x[lo:hi], y[lo:hi] * y[lo:hi],
+                                z[lo:hi] * z[lo:hi], 2 * y[lo:hi] * z[lo:hi],
+                                2 * x[lo:hi] * z[lo:hi], 2 * x[lo:hi] * y[lo:hi],
+                                2 * x[lo:hi], 2 * y[lo:hi], 2 * z[lo:hi],
+                                np.ones(hi - lo)])
+    if chunk is None:
+        D = design(0, len(Pn))
+        S = D.T @ D
+    else:
+        block = int(chunk)
+        if block < 1:
+            raise ValueError("fit_ellipsoid: chunk must be >= 1 or None")
+        S = np.zeros((10, 10), dtype=np.float64)
+        for lo in range(0, len(Pn), block):
+            Db = design(lo, min(lo + block, len(Pn)))
+            S += Db.T @ Db
     S11 = S[0:6, 0:6]
     S12 = S[0:6, 6:10]
     S22 = S[6:10, 6:10]
     try:
-        S22inv = np.linalg.inv(S22)
+        eliminated = np.linalg.solve(S22, S12.T)
     except np.linalg.LinAlgError:
-        S22inv = np.linalg.pinv(S22)
-    Sr = S11 - S12 @ S22inv @ S12.T             # 一次/定数を消去した縮約 6x6
+        eliminated = np.linalg.pinv(S22) @ S12.T
+    Sr = S11 - S12 @ eliminated                  # 一次/定数を消去した縮約 6x6
 
     try:
         evals, evecs = sla.eig(Sr, _ELLIPSOID_C)
@@ -380,7 +446,7 @@ def fit_ellipsoid(points) -> dict:
         v1 = np.real(evecs[:, i])
         if not np.all(np.isfinite(v1)) or np.linalg.norm(v1) < 1e-12:
             continue
-        v2 = -S22inv @ (S12.T @ v1)
+        v2 = -(eliminated @ v1)
         v = np.concatenate([v1, v2])
         params = _ellipsoid_from_coeffs(v, centroid, scale)
         if params is None:

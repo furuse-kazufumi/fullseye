@@ -7,7 +7,7 @@ out: table
 examples: [poc_pod_lighting, poc_sem_wafer_defect_edge_bias, poc_si_wafer_pl_defect_visibility]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # pod_hitmiss_fit — SPC `pod` op

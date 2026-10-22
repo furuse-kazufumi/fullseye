@@ -23,6 +23,7 @@
 <p>窓 9x9 (n=81) 実測 0.076 / 閉形式 0.079 = 0.96</p>
 <p>つまり窓が大きくなるほど近づく。<b>読みどころは「どこが周りより高いか」</b>で、そこは分布が正規から外れている(傷・外れ値・二つの材質の境目)。外れ値を 2 % 混ぜた画像では中央値が閉形式の <b>1.8 倍</b>まで跳ね上がり、正規の場合(0.9 倍前後)とはっきり分かれる —— この差が使いどころ。<code style="color:#22d3bf">local_std</code> と並べて、「ばらつきの大きさ」と「その数字の信用できなさ」を同時に見る。</p>
 <p><b>適用条件</b>: (1) 窓が小さいとブートストラップ自体がぶれるうえ、上のとおり系統的に低く出る。(2) 取り直し回数(<code style="color:#22d3bf">b</code>)を増やすと地図は滑らかになるが、真の誤差が下がるわけではない。(3) 決定的にするため種は固定してある —— 同じ入力なら必ず同じ出力を返す。(4) <b>仮定を計算で買う op</b>なので遅い: 実測で 128x128 が 0.26 秒、256x256 が 1.27 秒(<code style="color:#22d3bf">b=1.0</code>、64 回)。閉形式で足りる場面では <code style="color:#22d3bf">local_std</code> の誤差限界を使うこと —— この op は「その閉形式が信用できるか」を確かめたいときの道具。</p>
+<p><b>つまみ(実測)</b>: <code style="color:#22d3bf">a</code> は<b>段階的</b>に効き、切り替わるのは a ≈ 0.25、0.49、0.75(実測。刻み 0.02 の掃きで測った位置)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
@@ -35,7 +36,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_texture_freq">gallery2d_texture_freq</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_texture_freq.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image</code> を入力に取れる)</h3>
-<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:gaussian">gaussian</a> · <a style="color:#22d3bf" href="op:mean_box">mean_box</a> · <a style="color:#22d3bf" href="op:bilateral">bilateral</a> · <a style="color:#22d3bf" href="op:unsharp">unsharp</a> · <a style="color:#22d3bf" href="op:median">median</a> · <a style="color:#22d3bf" href="op:min_filter">min_filter</a> · <a style="color:#22d3bf" href="op:max_filter">max_filter</a></p>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:gaussian">gaussian</a> · <a style="color:#22d3bf" href="op:mean_box">mean_box</a> · <a style="color:#22d3bf" href="op:mean_box_wh">mean_box_wh</a> · <a style="color:#22d3bf" href="op:bilateral">bilateral</a> · <a style="color:#22d3bf" href="op:kuwahara">kuwahara</a> · <a style="color:#22d3bf" href="op:unsharp">unsharp</a> · <a style="color:#22d3bf" href="op:median">median</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">texture</code>)</h3>
 <p><a style="color:#22d3bf" href="op:std_filter">std_filter</a> · <a style="color:#22d3bf" href="op:local_bimodality">local_bimodality</a> · <a style="color:#22d3bf" href="op:local_std">local_std</a> · <a style="color:#22d3bf" href="op:scale_select_std">scale_select_std</a> · <a style="color:#22d3bf" href="op:structure_tensor_orientation">structure_tensor_orientation</a> · <a style="color:#22d3bf" href="op:structure_tensor_coherence">structure_tensor_coherence</a> · <a style="color:#22d3bf" href="op:gabor">gabor</a> · <a style="color:#22d3bf" href="op:sk_frangi">sk_frangi</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">

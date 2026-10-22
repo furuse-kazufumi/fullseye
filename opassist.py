@@ -45,6 +45,10 @@ _LEDGERS = (
     ("opsmultivar", "OPSMULTIVAR"),
     # 2026-10-15: sim-to-real 較正(実画像から物理モデルの係数を合わせ、決まらない係数は拒否)。新語 simmodel / calresult。
     ("opssimcal", "OPSSIMCAL"),
+    # 2026-10-15: 収束型の演算(不動点反復・観測収束次数と GCI・逐次モンテカルロ・光子輸送・食い違い原理で止める逆問題)。新語なし。
+    ("opsconverge", "OPSCONVERGE"),
+    # 2026-10-18: 符号系の頑健照合(方向符号 OCM・増分符号 ISC・選択的相関 SCC・放射リーチ RRF)。新語なし。
+    ("opscodematch", "OPSCODEMATCH"),
     # 2026-10-01: OpenVX 1.3.1 の素の口(勾配・表引き・ヒストグラム・非極大の抑制)。新語なし。
     ("opsvx", "OPSVX"),
     # 2026-09-29: 自動運転の教習所ワールド(規格寸法のコース / 3-D の世界 / 回転式 LiDAR)。新語なし。
@@ -104,8 +108,8 @@ _UNIT_BY_SUFFIX = (
 #: 値は (モジュール, 属性) で、実体は import 時ではなく参照時に解決する
 #: (循環 import を避け、任意依存が無い環境でも opassist 自体は読める)。
 _CHOICE_SOURCES = {
-    ("metal_optical_constants", "metal"): ("glassmirror", "METALS"),
-    ("metal_mirror_rgb", "metal"): ("glassmirror", "METALS"),
+    ("metal_optical_constants", "metal"): ("glassmirror", "MEASURED_METALS"),
+    ("metal_mirror_rgb", "metal"): ("glassmirror", "MEASURED_METALS"),
     ("finish_shade", "metal"): ("glassmirror", "METALS"),
     ("finish_shade", "kind"): ("metalfinish", "FINISHES"),
     ("tangent_field", "kind"): ("metalfinish", "FINISHES"),
@@ -123,6 +127,8 @@ _CHOICE_SOURCES = {
 _CHOICE_LITERAL = {
     ("fresnel_dielectric", "polarization"): ("unpolarized", "s", "p"),
     ("fresnel_conductor", "polarization"): ("unpolarized", "s", "p"),
+    ("thin_film_reflectance", "polarization"): ("unpolarized", "s", "p"),
+    ("thin_film_rgb", "polarization"): ("unpolarized", "s", "p"),
 }
 
 #: **プリセット** = 実在の設定に名前を付けたもの。数値を知らなくても試せるための導線。
@@ -143,11 +149,19 @@ PRESETS: dict[str, dict[str, dict[str, Any]]] = {
         "シャボン膜 (水 380 nm)": {"thickness_nm": 380.0, "n_film": 1.33, "n_sub": 1.0},
         "陽極酸化被膜 (150 nm、アルミの上)": {"thickness_nm": 150.0, "n_film": 1.63, "n_sub": "AL"},
         "反射防止 (λ/4 MgF2)": {"thickness_nm": 550.0 / (4 * 1.38), "n_film": 1.38, "n_sub": 1.52},
-        "焼き色 (チタン 90 nm)": {"thickness_nm": 90.0, "n_film": 2.4, "n_sub": "TI"},
+        "焼き色 (チタン 90 nm)": {"thickness_nm": 90.0, "n_film": "TIO2_AMORPHOUS", "n_sub": "TI"},
+        "Si の熱酸化膜 100 nm (60°・s 偏光)": {"thickness_nm": 100.0, "n_film": "SIO2", "n_sub": "SI",
+                                          "cos_theta": 0.5, "polarization": "s"},
+        "誘電体ミラー 550 nm (非晶質 TiO2 / SiO2 の 7 層、ガラスの上)": {
+            "thickness_nm": 58.6, "n_film": "TIO2_AMORPHOUS", "n_sub": "N-BK7",
+            "under_layers": [("SIO2", 94.2), ("TIO2_AMORPHOUS", 58.6)] * 3},
     },
     "thin_film_rgb": {
         "シャボン膜 (380 nm)": {"thickness_nm": 380.0, "n_film": 1.33, "n_sub": 1.0},
         "陽極酸化 (150 nm、アルミの上)": {"thickness_nm": 150.0, "n_film": 1.63, "n_sub": "AL"},
+        "焼き色 (チタン 90 nm、点光源)": {"thickness_nm": 90.0, "n_film": "TIO2_AMORPHOUS", "n_sub": "TI",
+                                       "light": (0.5, 0.0, 0.866)},
+        "Si の熱酸化膜 300 nm (ウェハの色)": {"thickness_nm": 300.0, "n_film": "SIO2", "n_sub": "SI"},
     },
     "fresnel_dielectric": {
         "空気 → 水": {"n1": 1.0, "n2": 1.333},
@@ -208,6 +222,15 @@ def _help_html_root(here):
     except Exception:
         return os.path.join(here, "studio_assets", "op_help")
 
+def _max_thickness(kw):
+    """膜厚の引数の最大値(スカラでも膜厚の場でも)。読めなければ 0(判定は op 本体の ValueError に任せる)。"""
+    try:
+        import numpy as _np
+        return float(_np.max(_np.asarray(kw.get("thickness_nm", 350.0), dtype=float)))
+    except (TypeError, ValueError):
+        return 0.0
+
+
 def _grating_light_across(kw):
     import numpy as np
     t = np.asarray(kw.get("tangent", (1.0, 0.0, 0.0)), float).ravel()[:3]
@@ -228,7 +251,7 @@ _PREFLIGHT = (
      "light をずらしてください)。"),
     ("critical_angle_deg", lambda kw: float(kw.get("n1", 1.5)) <= float(kw.get("n2", 1.0)),
      "全反射は密→疎(n1 > n2)でしか起きません。この組では臨界角が存在せず ValueError になります。"),
-    ("thin_film_reflectance", lambda kw: float(kw.get("thickness_nm", 350.0)) > 3000.0,
+    ("thin_film_reflectance", lambda kw: _max_thickness(kw) > 3000.0,
      "膜厚が可視光の波長より桁で大きいので、干渉の縞が積分の刻みより細かくなり、"
      "色ではなく平均値に潰れます(膜として意味を持つのは概ね 50–1000 nm)。"),
     ("slab_transmittance", lambda kw: float(kw.get("sigma_per_mm", 0.0)) * float(
@@ -1327,6 +1350,35 @@ def find(query: str, limit: int = 20) -> list[dict]:
                      "category": "nary", "doc": doc,
                      "call": "apply([%s], name)" % ", ".join("x%d" % i for i in range(int(nop.arity))),
                      "score": score})
+    # ファサード層(``fullseye.<名前>``、op 表に載らない公開関数)。
+    # ★2026-10-18(外部レビュー 0.6.0 の一次検証): op_find("sgm") が 0 件で、外部 AI は「SGM は無い」と結論した。
+    #   実際には ``fullseye.disparity_sgm``(Hirschmüller の SGM、census の費用 + 経路集約)が 0.1 系から在り、
+    #   ``fullseye.stereo`` の族ごと**ファサードにだけ**在る —— 台帳・2-D レジストリ・n-ary のどれにも載らないので、
+    #   探す側からは見えなかった([[feedback_search_all_tiers_before_declaring_a_gap]] と同じ型)。
+    #   名前と docstring の 1 行目で、他の層より 1 点低く拾う(同名なら op 表の行が勝つ)。
+    taken = {h["op"] for h in hits}
+    for fname, fobj in _facade_callables():
+        if fname in taken:
+            continue
+        lines = (getattr(fobj, "__doc__", None) or "").strip().splitlines()
+        doc = lines[0].strip() if lines else ""
+        hay_name = fname.lower()
+        if hay_name == q:
+            score = 98
+        elif q in hay_name:
+            score = 58 + max(0, 20 - len(hay_name))
+        elif q in doc.lower():
+            score = 28
+        else:
+            fr = _stem_fraction(q_tokens, hay_name)
+            score = int(round(43 * fr)) if fr else 0
+            if not score:
+                fr = _stem_fraction(q_tokens, doc)
+                score = int(round(20 * fr)) if fr else 0
+            if not score:
+                continue
+        hits.append({"op": fname, "ledger": "facade", "module": getattr(fobj, "__module__", None),
+                     "category": "facade", "doc": doc, "call": "fullseye.%s(...)" % fname, "score": score})
     # ★2026-09-20: 何で当たったかを ``match`` に(exact = 名前の完全一致 / name = 名前の部分一致 / stem = 語幹 /
   #   doc = 説明・カテゴリの語)。doc をノートで埋めた(N119)途端、PoC の「op が無い」検査が説明文の語で当たって
   #   落ちた —— 件数で「在る」と言わず、name 以上の当たりだけを見るための鍵。GenSpark 第 33 報の exact もこれで読める。
@@ -1335,6 +1387,25 @@ def find(query: str, limit: int = 20) -> list[dict]:
         h["match"] = "exact" if sc >= 99 else "name" if sc >= 59 else "stem" if sc >= 40 else "doc"
     hits.sort(key=lambda h: (-h["score"], h["op"]))
     return hits[: max(int(limit), 1)]
+
+
+def _facade_callables():
+    """``fullseye.__all__`` のうち呼べるもの(モジュールを除く)を ``(名前, 物)`` で。読めなければ空。"""
+    import sys
+    import types
+    fs = sys.modules.get("fullseye")
+    if fs is None:
+        try:
+            fs = importlib.import_module("fullseye")
+        except Exception:                                # noqa: BLE001 - 検索だけ痩せる
+            return ()
+    out = []
+    for n in getattr(fs, "__all__", ()):
+        obj = getattr(fs, n, None)
+        if obj is None or isinstance(obj, types.ModuleType) or not callable(obj):
+            continue
+        out.append((n, obj))
+    return out
 
 
 def _nary_ops():

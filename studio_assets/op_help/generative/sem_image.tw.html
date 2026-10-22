@@ -1,0 +1,60 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">sem_image — GENERATIVE <code style="color:#22d3bf">sem</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sem_image(height, material_map=None, *, materials=(&#x27;SI&#x27;,), substrate=&#x27;SI&#x27;, energy_kev: &#x27;float&#x27; = 5.0, pixel_nm: &#x27;float&#x27; = 2.0, beam_sigma_nm: &#x27;float&#x27; = 1.0, electrons_per_pixel: &#x27;int&#x27; = 30, detector: &#x27;str&#x27; = &#x27;inlens&#x27;, layer_bottom_nm=0.0, buried=None, gain=None, seed: &#x27;int&#x27; = 0, return_signals: &#x27;bool&#x27; = False)</code>(要直接呼叫實作,<code style="color:#22d3bf">import sem; sem.sem_image(height, material_map=None, *, materials=(&#x27;SI&#x27;,), substrate=&#x27;SI&#x27;, energy_kev: &#x27;float&#x27; = 5.0, pixel_nm: &#x27;float&#x27; = 2.0, beam_sigma_nm: &#x27;float&#x27; = 1.0, electrons_per_pixel: &#x27;int&#x27; = 30, detector: &#x27;str&#x27; = &#x27;inlens&#x27;, layer_bottom_nm=0.0, buried=None, gain=None, seed: &#x27;int&#x27; = 0, return_signals: &#x27;bool&#x27; = False)</code>;從台帳取用則 <code style="color:#22d3bf">opsgenerative.get(&quot;sem_image&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>由高度場與材料圖生成 SEM 像:向每個像素發射電子(直接蒙地卡羅)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>各画素に <code style="color:#22d3bf">electrons_per_pixel</code> 個の一次電子(ビーム幅 <code style="color:#22d3bf">beam_sigma_nm</code> のガウシアン) を撃ち、検出器の信号を電子 1 個あたりで平均する。<b>雑音は撃った電子の数そのもの</b> (反射電子も二次電子も 1 個ずつの統計)なので、別のポアソン雑音は載せない。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>height : array_like</p>
+<p>(H, W) の高さ場 [nm] (上が正)。</p>
+<p>material_map : array_like of int, optional</p>
+<p>(H, W) の材料番号(<code style="color:#22d3bf">materials</code> の添字)。表面から <code style="color:#22d3bf">layer_bottom_nm</code> までの柱の</p>
+<p>材料。それより深い所は <code style="color:#22d3bf">substrate</code>。<code style="color:#22d3bf">None</code> は全部 <code style="color:#22d3bf">materials[0]</code>。</p>
+<p>materials : sequence of str</p>
+<p>材料表の名前の列。</p>
+<p>substrate : str</p>
+<p>基板の材料。</p>
+<p>energy_kev, pixel_nm, beam_sigma_nm : float</p>
+<p>加速電圧 [keV]・画素の一辺 [nm]・ビームの σ [nm]。</p>
+<p>electrons_per_pixel : int</p>
+<p>画素あたりの一次電子の数(像の S/N を決める)。</p>
+<p>detector : str</p>
+<p><code style="color:#22d3bf">inlens</code>(レンズ内の二次電子)/ <code style="color:#22d3bf">everhart</code>(側方の二次電子、+x 側、SE3 込み)/</p>
+<p><code style="color:#22d3bf">bse</code>(真上の環状の反射電子、エネルギー重み)/ <code style="color:#22d3bf">se_total</code>(検出器なしの全収率)。</p>
+<p>layer_bottom_nm : float or array_like</p>
+<p>材料の柱の下端の z [nm] (0 = 基板の上面。正は基板の中へ)。</p>
+<p>buried : list, optional</p>
+<p>埋もれた箱 <code style="color:#22d3bf">[(材料名, (H, W) のマスク, 上端の深さ, 下端の深さ), ...]</code> [nm]。</p>
+<p>gain : float, optional</p>
+<p>信号 → [0,1] の固定の倍率(既定は検出器ごとの定数。画像ごとに正規化しない)。</p>
+<p>seed : int</p>
+<p>乱数の種。</p>
+<p>return_signals : bool</p>
+<p>True なら像の代わりに dict(4 検出器の信号の地図と η の地図)を返す。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>numpy.ndarray</p>
+<p>(H, W) の float64、[0,1]。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
+<p>&gt;&gt;&gt; import numpy as np</p>
+<p>&gt;&gt;&gt; img = sem_image(np.zeros((6, 6)), energy_kev=1.0, electrons_per_pixel=5)</p>
+<p>&gt;&gt;&gt; img.shape, bool(0.0 &lt;= img.min() and img.max() &lt;= 1.0)</p>
+<p>((6, 6), True)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">generative_art 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_sem_tem_same_particle">poc_sem_tem_same_particle</a> — <code style="color:#22d3bf">py -3.11 examples/poc_sem_tem_same_particle.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_sem_wafer_defect_edge_bias">poc_sem_wafer_defect_edge_bias</a> — <code style="color:#22d3bf">py -3.11 examples/poc_sem_wafer_defect_edge_bias.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_virtual_sem_kv_cd_bse">poc_virtual_sem_kv_cd_bse</a> — <code style="color:#22d3bf">py -3.11 examples/poc_virtual_sem_kv_cd_bse.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">image2d</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opgenerative:sem_render">sem_render</a> · <a style="color:#22d3bf" href="opgenerative:sem_charging_series">sem_charging_series</a> · <a style="color:#22d3bf" href="opgenerative:pl_image_simulate">pl_image_simulate</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">sem</code>)</h3>
+<p><a style="color:#22d3bf" href="opgenerative:sem_render">sem_render</a> · <a style="color:#22d3bf" href="opgenerative:sem_electron_mc">sem_electron_mc</a> · <a style="color:#22d3bf" href="opgenerative:sem_se_universal_curve">sem_se_universal_curve</a> · <a style="color:#22d3bf" href="opgenerative:sem_yield_curve">sem_yield_curve</a> · <a style="color:#22d3bf" href="opgenerative:sem_line_profile">sem_line_profile</a> · <a style="color:#22d3bf" href="opgenerative:sem_cd_measure">sem_cd_measure</a> · <a style="color:#22d3bf" href="opgenerative:sem_se_escape_fraction">sem_se_escape_fraction</a> · <a style="color:#22d3bf" href="opgenerative:sem_charging_series">sem_charging_series</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: sem.py — GENERATIVE 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

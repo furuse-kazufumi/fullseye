@@ -444,26 +444,60 @@ def piv_cross_correlate(a, b, window=32, overlap=0.5, peak="gauss3",
     keep = _search_mask(win, lim_frac)
     flow = np.zeros((2, rows.size, cols.size))
     ratio = np.zeros((rows.size, cols.size))
-    for i, r in enumerate(rows):
-        for j, c in enumerate(cols):
-            wa = A[r:r + win, c:c + win]
-            if pred is None:
-                sr = sc = 0
-            else:
+
+    def store(corr, i, j, sr=0, sc=0):
+        search = corr if keep is None else np.where(keep, corr, -np.inf)
+        k = int(np.argmax(search))
+        pi, pj = divmod(k, win)
+        top = corr[pi, pj]
+        if not np.isfinite(top) or top <= 0:
+            dy = dx = pr = np.nan
+        else:
+            c0 = win // 2
+            dy = (pi - c0) + _subpixel(corr, pi, pj, 0, peak)
+            dx = (pj - c0) + _subpixel(corr, pi, pj, 1, peak)
+            pr = _peak_ratio(search, pi, pj, top)
+        flow[0, i, j] = dy + sr
+        flow[1, i, j] = dx + sc
+        ratio[i, j] = pr
+
+    if pred is None:
+        positions = [(i, j, int(r), int(c)) for i, r in enumerate(rows)
+                     for j, c in enumerate(cols)]
+        # 128 windows bounds the real and complex FFT work arrays.
+        for first in range(0, len(positions), 128):
+            batch = positions[first:first + 128]
+            xa = np.stack([A[r:r + win, c:c + win] for _, _, r, c in batch])
+            xb = np.stack([B[r:r + win, c:c + win] for _, _, r, c in batch])
+            if subtract_mean:
+                xa = xa - xa.mean(axis=(1, 2), keepdims=True)
+                xb = xb - xb.mean(axis=(1, 2), keepdims=True)
+            if taper is not None:
+                xa = xa * taper
+                xb = xb * taper
+            corr = np.fft.fftshift(np.fft.irfft2(
+                np.conj(np.fft.rfft2(xa, axes=(-2, -1)))
+                * np.fft.rfft2(xb, axes=(-2, -1)), s=(win, win), axes=(-2, -1)),
+                axes=(-2, -1))
+            if weight is not None:
+                corr = corr / weight
+            for plane, (i, j, _, _) in zip(corr, batch):
+                store(plane, i, j)
+    else:
+        for i, r in enumerate(rows):
+            for j, c in enumerate(cols):
+                wa = A[r:r + win, c:c + win]
                 sr, sc = int(pred[0, i, j]), int(pred[1, i, j])
+                r2 = min(max(r + sr, 0), h - win)
+                c2 = min(max(c + sc, 0), w - win)
+                sr, sc = r2 - r, c2 - c
+                wb = B[r2:r2 + win, c2:c2 + win]
+                corr = _corr_map(wa, wb, taper, subtract_mean, weight)
+                store(corr, i, j, sr, sc)
             # 予測が画像の外を指したら**切り詰める**(nan にしない)。切り詰めた
             # ぶんは残差として測り直されるので測定は成立する。縁の窓を丸ごと
             # 欠測にすると、渦度・発散が縁から内側へ nan で伝播して**場全体が
             # 消える**(実測でそうなった)。
-            r2 = min(max(r + sr, 0), h - win)
-            c2 = min(max(c + sc, 0), w - win)
-            sr, sc = r2 - r, c2 - c
-            wb = B[r2:r2 + win, c2:c2 + win]
-            dy, dx, pr = _correlate_window(wa, wb, taper, subtract_mean, peak,
-                                           weight, keep)
-            flow[0, i, j] = dy + sr
-            flow[1, i, j] = dx + sc
-            ratio[i, j] = pr
 
     info = {"rows": rows + (win - 1) / 2.0, "cols": cols + (win - 1) / 2.0,
             "peak_ratio": ratio, "window": win, "overlap": ov, "peak": peak,
@@ -573,9 +607,10 @@ def _peak_ratio(corr, pi, pj, top):
     n = corr.shape[0]
     y0, y1 = max(0, pi - 1), min(n, pi + 2)
     x0, x1 = max(0, pj - 1), min(n, pj + 2)
-    masked = np.array(corr, dtype=np.float64, copy=True)
-    masked[y0:y1, x0:x1] = -np.inf
-    second = float(np.max(masked))
+    a = np.asarray(corr)
+    regions = (a[:y0, :], a[y1:, :], a[y0:y1, :x0], a[y0:y1, x1:])
+    maxima = [np.max(region) for region in regions if region.size]
+    second = float(np.max(maxima)) if maxima else -np.inf
     if not np.isfinite(second) or second <= 0:
         return np.inf
     return float(top / second)
@@ -704,6 +739,14 @@ def piv_replace_outliers(flow, mask, method="median"):
     work[:, m] = np.nan
     _, h, w = f.shape
     pad = np.pad(work, ((0, 0), (1, 1), (1, 1)), mode="edge")
+    if np.count_nonzero(m) < m.size // 20:
+        for r, c in np.argwhere(m):
+            vals = pad[:, r:r + 3, c:c + 3].reshape(2, 9)
+            vals = np.delete(vals, 4, axis=1)
+            with np.errstate(invalid="ignore"):
+                v = np.nanmedian(vals, axis=1) if method == "median" else np.nanmean(vals, axis=1)
+            f[:, r, c] = np.where(np.isfinite(v), v, 0.0)
+        return f
     neigh = [pad[:, 1 + dy:1 + dy + h, 1 + dx:1 + dx + w]
              for dy in (-1, 0, 1) for dx in (-1, 0, 1) if (dy, dx) != (0, 0)]
     nb = np.stack(neigh)
@@ -711,6 +754,21 @@ def piv_replace_outliers(flow, mask, method="median"):
         fill = np.nanmedian(nb, axis=0) if method == "median" else np.nanmean(nb, axis=0)
     f[:, m] = np.where(np.isfinite(fill[:, m]), fill[:, m], 0.0)
     return f
+
+
+def piv_outlier_mask_stream(flow, threshold=2.0, epsilon=0.1, chunk=128):
+    """Memory-bounded outlier mask; ``chunk`` is the number of output rows."""
+    f = _flow(flow)
+    rows = int(chunk)
+    if rows < 1:
+        raise ValueError("chunk must be >= 1")
+    out = np.empty(f.shape[1:], dtype=bool)
+    for r0 in range(0, f.shape[1], rows):
+        r1 = min(f.shape[1], r0 + rows)
+        e0, e1 = max(0, r0 - 1), min(f.shape[1], r1 + 1)
+        part = piv_outlier_mask(f[:, e0:e1], threshold, epsilon)
+        out[r0:r1] = part[r0 - e0:r1 - e0]
+    return out
 
 
 # =========================================================================
@@ -1228,11 +1286,19 @@ def piv_ensemble_correlate(images, window=32, overlap=0.5, peak="gauss3",
     ratio = np.zeros((rows.size, cols.size))
     for i, r in enumerate(rows):
         for j, c in enumerate(cols):
-            acc = np.zeros((win, win))
-            for k in range(len(frames) - 1):
-                acc += _corr_map(frames[k][r:r + win, c:c + win],
-                                 frames[k + 1][r:r + win, c:c + win],
-                                 taper, True, weight)
+            spectra = []
+            for frame in frames:
+                x = frame[r:r + win, c:c + win]
+                x = x - x.mean()
+                if taper is not None:
+                    x = x * taper
+                spectra.append(np.fft.rfft2(x))
+            cross = np.zeros_like(spectra[0])
+            for k in range(len(spectra) - 1):
+                cross += np.conj(spectra[k]) * spectra[k + 1]
+            acc = np.fft.fftshift(np.fft.irfft2(cross, s=(win, win)))
+            if weight is not None:
+                acc = acc / weight
             search = acc if keep is None else np.where(keep, acc, -np.inf)
             idx = int(np.argmax(search))
             pi, pj = divmod(idx, win)
@@ -1266,20 +1332,36 @@ def piv_time_statistics(images, window=32, overlap=0.5, **kw):
     if len(seq) < 3:
         raise ValueError(
             f"images must hold at least 3 frames to define a fluctuation, got {len(seq)}")
-    flows, info = [], None
+    sums = sums2 = counts = None
+    sum_uv = sum_u_pair = sum_v_pair = count_pair = None
+    info = None
+    n_pairs = 0
     for k in range(len(seq) - 1):
         f, info = piv_cross_correlate(seq[k], seq[k + 1], window, overlap, **kw)
-        flows.append(f)
-    stack = np.stack(flows)                       # (n, 2, h, w)
-    mean = np.nanmean(stack, axis=0)
-    fluct = stack - mean
-    rms = np.sqrt(np.nanmean(fluct ** 2, axis=0))
-    reynolds = np.nanmean(fluct[:, 0] * fluct[:, 1], axis=0)
+        finite = np.isfinite(f)
+        clean = np.where(finite, f, 0.0)
+        if sums is None:
+            sums = np.zeros_like(f); sums2 = np.zeros_like(f)
+            counts = np.zeros(f.shape, dtype=np.int64)
+            sum_uv = np.zeros(f.shape[1:]); sum_u_pair = np.zeros(f.shape[1:])
+            sum_v_pair = np.zeros(f.shape[1:]); count_pair = np.zeros(f.shape[1:], np.int64)
+        sums += clean; sums2 += clean * clean; counts += finite
+        pair = finite[0] & finite[1]
+        sum_uv += np.where(pair, f[0] * f[1], 0.0)
+        sum_u_pair += np.where(pair, f[0], 0.0)
+        sum_v_pair += np.where(pair, f[1], 0.0)
+        count_pair += pair
+        n_pairs += 1
+    with np.errstate(invalid="ignore", divide="ignore"):
+        mean = sums / counts
+        rms = np.sqrt(np.maximum(0.0, sums2 / counts - mean * mean))
+        reynolds = (sum_uv - mean[0] * sum_v_pair - mean[1] * sum_u_pair
+                    + count_pair * mean[0] * mean[1]) / count_pair
     speed = np.hypot(mean[0], mean[1])
     with np.errstate(invalid="ignore", divide="ignore"):
         ti = np.where(speed > _EPS, np.hypot(rms[0], rms[1]) / speed, np.nan)
     return {"mean": mean, "rms": rms, "reynolds": reynolds,
-            "turbulence_intensity": ti, "n_pairs": len(flows),
+            "turbulence_intensity": ti, "n_pairs": n_pairs,
             "rows": info["rows"], "cols": info["cols"], "step": info["step"]}
 
 

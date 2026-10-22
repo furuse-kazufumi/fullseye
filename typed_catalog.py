@@ -207,6 +207,26 @@ PARAM_HINTS = {
 
 
 OP_PARAM_HINTS = {
+    # プレノプティック MLA の生成元。
+    ("mla_surface", "pitch_mm"): lambda rng: 0.06,
+    ("mla_surface", "radius_mm"): lambda rng: 0.12,
+    # omni360: scalar geometry stays small; structured rigs are built in chain_fuzz.
+    ("cubemap_from_equirect", "face_size"): lambda rng: 16,
+    ("equirect_filter_gaussian", "sigma_deg"): lambda rng: 4.0,
+    ("equirect_weight_map", "h"): lambda rng: 16,
+    ("equirect_weight_map", "w"): lambda rng: 32,
+    ("ods_depth_to_disparity", "ipd_m"): lambda rng: 0.064,
+    ("ods_depth_to_disparity", "w"): lambda rng: 32,
+    ("ods_disparity_to_depth", "ipd_m"): lambda rng: 0.064,
+    ("ods_disparity_to_depth", "w"): lambda rng: 32,
+    ("stereo_parallax_budget", "disparity_px"): lambda rng: 2.0,
+    ("stereo_parallax_budget", "width_px"): lambda rng: 1920,
+    ("stereo_parallax_budget", "viewing_distance_m"): lambda rng: 2.0,
+    ("stereo_parallax_budget", "screen_width_m"): lambda rng: 0.7,
+    ("stereo_parallax_budget", "ipd_m"): lambda rng: 0.064,
+    ("equirect_rotate", "R"): lambda rng: np.array(
+        [[np.cos(0.1), 0.0, np.sin(0.1)], [0.0, 1.0, 0.0],
+         [-np.sin(0.1), 0.0, np.cos(0.1)]]),
     # 複素平面の面(2026-09-22)。既定の 256x256 はファザーには重いので、
     # op ごとに小さい窓を渡す(名前ヒントにすると他の族の "shape" を巻き込む)。
     ("cplx_plane_grid", "shape"): lambda rng: (24, 24),
@@ -359,6 +379,12 @@ OP_PARAM_HINTS = {
     ("surface_psd", "dx"): lambda rng: 1.0,
     ("surface_filter", "dx"): lambda rng: 1.0,
     ("surface_filter", "lambda_c"): lambda rng: 8.0,
+    ("robust_gaussian_profile", "dx"): lambda rng: 1.0,
+    ("robust_gaussian_profile", "lambda_c"): lambda rng: 8.0,
+    ("robust_spline_profile", "dx"): lambda rng: 1.0,
+    ("robust_spline_profile", "lambda_c"): lambda rng: 8.0,
+    ("robust_gaussian_surface", "dx"): lambda rng: 1.0,
+    ("robust_gaussian_surface", "lambda_c"): lambda rng: 8.0,
     # ★ここを入れないと surface_params は毎回 fail-closed で拒否され、
     #   カバレッジ 1 数字では「呼べた」に見えて実体は未実行になる。
     ("surface_params", "assume_filtered"): lambda rng: True,
@@ -667,6 +693,11 @@ OP_PARAM_HINTS = {
     ("pc_lod_chain", "levels"): lambda rng: 2,
     # 測地距離の起点は頂点添字。種の最小メッシュでも 0 は必ず存在する
     ("geodesic_mesh", "source"): lambda rng: 0,
+    # 格子干渉の線源(2026-10-18): 焦点の幅・線源の距離・格子間の距離・分析格子の周期(実験室の X 線管の程度)
+    ("talbot_source_visibility", "source_width_um"): lambda rng: float(rng.uniform(20.0, 400.0)),
+    ("talbot_source_visibility", "source_distance_mm"): lambda rng: float(rng.uniform(800.0, 1600.0)),
+    ("talbot_source_visibility", "distance_mm"): lambda rng: float(rng.uniform(20.0, 60.0)),
+    ("talbot_source_visibility", "analyzer_period_um"): lambda rng: float(rng.uniform(1.5, 5.0)),
 }
 
 
@@ -702,7 +733,7 @@ def _registry_adapters():
                  "opsimgforensics", "opsastrostack", "opsdem", "opspiv",
                  "opsprofile", "opsshapestat", "opsshape2d", "opsroughness",
                  "opsmeasure1d", "opsblob", "opsflyvision", "opsspc",
-                 "opsgraph", "opstext", "opsvx", "opsdrive", "opsresidue", "opsmultivar", "opssimcal", "opsgenerative",
+                 "opsgraph", "opstext", "opsvx", "opsdrive", "opsresidue", "opsmultivar", "opssimcal", "opsconverge", "opscodematch", "opsgenerative",
                  "opssegmentation"):
         try:
             d.update(getattr(__import__(_mod), "RESULT_ADAPTERS", {}))
@@ -898,6 +929,21 @@ def catalog():
     for n, m in opssimcal.OPSSIMCAL.items():
         if m["func"] is not None:
             ops.append((n, "simcal", list(m["in"]), m["out"], m["func"]))
+    # 収束型の演算(opsconverge 台帳、2026-10-15)。**新語なし**: 全 op が table を返し、収束しなかった
+    # 記録は値の鍵(x / mean / image)を None にして最後の反復を last_iterate に置く(既定は拒否)ので、
+    # table として素直に読んでも収束していない数を出せない —— 型を分ける理由(混ぜると黙って間違う)が無い。
+    import opsconverge
+    for n, m in opsconverge.OPSCONVERGE.items():
+        if m["func"] is not None:
+            ops.append((n, "converge", list(m["in"]), m["out"], m["func"]))
+    # 符号系の頑健照合(opscodematch 台帳、2026-10-18)。**新語なし**: 符号の画像は image2d、照合と
+    # RRF は table(位置・点数・余裕・採点した位置のマスク)。平坦なテンプレート・平坦な背景は値を返さずに
+    # ValueError。真値は単調変換での不変性(定理)・rot90 の同変性・増分符号の確率モデルの閉形式・
+    # 総当たりの第 2 実装・既存の NCC(マスクが全部立つとき SCC = NCC)。
+    import opscodematch
+    for n, m in opscodematch.OPSCODEMATCH.items():
+        if m["func"] is not None:
+            ops.append((n, "codematch", list(m["in"]), m["out"], m["func"]))
     # 絵を作る側(opsgenerative 台帳)。**新しい型語彙を 1 つも作らない**判断:
     # 30 op の返りは既存の rgb((H,W,3))/ rgbvideo((T,H,W,3))/ table に収まる。
     # 「錯視画像」という型を作らないのが要点で、作った絵に既存の 2,147 op が

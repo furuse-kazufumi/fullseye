@@ -1484,6 +1484,40 @@ def _b_simcal_uncertainty(pool, rng):
     return (res,), {"method": "bootstrap", "n_boot": 8}
 
 
+# --- 符号系の頑健照合(opscodematch)。乱数は共有の列を引かず、固定の種で 1 枚の場面を作る。 --- #
+def _codematch_scene():
+    from scipy import ndimage as _ndi
+    rr = np.random.default_rng(20261018)
+    a = _ndi.gaussian_filter(rr.random((64, 72)), 1.5)
+    return (a - a.min()) / (a.max() - a.min())
+
+
+def _b_codematch_pair(pool, rng):
+    # 場面とその一部(24 x 28、列数は偶数 = SCC の組が全列を覆う)。正解は左上 (20, 24)。
+    img = _codematch_scene()
+    return (img, img[20:44, 24:52].copy()), {}
+
+
+def _b_codematch_rrf(pool, rng):
+    # 背景と、明るさを単調に変えたうえで 16 x 16 の物を置いた現在の画像。
+    bg = _codematch_scene()
+    cur = bg ** 0.7
+    cur[24:40, 30:46] = 1.0 - bg[0:16, 0:16]
+    return (bg, cur), {}
+
+
+# --- 収束型の演算(opsconverge)。乱数は引かない(op の内側の固定の種だけ)。 --- #
+def _b_rl_until(pool, rng):
+    # ポアソンの食い違い原理は光子数(非負の整数)を要る。汎用の 0..1 画像では「計数でない」と拒否するのが正しいので、
+    # 例の計数画像(棒と円をガウスでぼかしてポアソン雑音、固定の種)を渡す。
+    return (__import__("deconvstop")._example_counts(),), {}
+
+
+def _b_mc_photon_slab(pool, rng):
+    # 大きさだけを縮める(既定の 10 万光子は探針の 2 回呼びには重い)。
+    return (), {"n_photons": 4000, "batch": 2000}
+
+
 def _b_graph_adj(pool, rng):
     B = (rng.random((40, 40)) < 0.12).astype(int)
     np.fill_diagonal(B, 0)
@@ -4495,6 +4529,60 @@ def _b_moire_mark(pool, rng):
     return (img, ref), {"pixel_um": 2.0}
 
 
+def _b_grating_stacks(pool, rng):
+    """格子干渉の位相ステップ 2 組(試料あり 8 枚・基準 6 枚、16 x 20 画素)。
+
+    基準の縞の可視度は列で 0.025〜0.25 に変わる(格子の端の影)。既定の ``min_visibility`` 0.02 では全画素が有効
+    (出力に NaN は無い)で、倍の 0.04 にすると端の列が無効画素(NaN)になる = しきい値が出力を変える。
+    """
+    import gratinginterf as _gi
+    yy, xx = np.mgrid[:16, :20]
+    t = np.exp(-0.03 * xx)
+    phi = float(rng.uniform(0.2, 1.0)) * np.sin(yy / 3.0)
+    dfm = 0.5 + 0.4 * np.cos(xx / 5.0) ** 2
+    s = _gi.grating_stepping_simulate(t, phi, dfm, n_steps=8)
+    ref_d = np.clip(0.1 + 0.08 * xx, 0.0, 1.0) * np.ones((16, 20))           # V = 0.25 × (0.1 … 1)
+    r = _gi.grating_stepping_simulate(None, None, ref_d, n_steps=6)
+    return (s, r), {}
+
+
+def _b_grating_stack1(pool, rng):
+    """1 周期 10.6 段で 10 枚撮った基準の画像列(12 x 14 画素、弱い雑音つき)。
+
+    縞の可視度は列で 0.01〜0.25 に変わる。既定の ``min_visibility`` 0.05 の半分と倍(0.025・0.1)の間に入る列が
+    あるので、しきい値を動かすと残差に数える画素の組が変わり、残差の曲線が変わる。
+    """
+    import gratinginterf as _gi
+    yy, xx = np.mgrid[:12, :14]
+    dfm = np.clip(0.04 + 0.075 * xx, 0.0, 1.0)
+    s = _gi.grating_stepping_simulate(None, None, dfm, n_steps=10, steps_per_period=10.6,
+                                      ref_phase_rad=float(rng.uniform(-1.0, 1.0)))
+    s = s + np.random.default_rng(7).normal(0.0, 0.003, s.shape)          # 共有の乱数列を引かない専用の種
+    return (s,), {}
+
+
+def _b_source_vis(pool, rng):
+    """線源格子つきの線源(Lau の条件の近く): duty と n_slits が効く場合を必ず含める。"""
+    big_l, d, p2 = float(rng.uniform(800.0, 1600.0)), float(rng.uniform(20.0, 60.0)), float(rng.uniform(1.5, 5.0))
+    p0 = p2 * big_l / d * float(rng.uniform(0.995, 1.005))
+    return (8.0 * p0, big_l, d, p2), {"source_grating_period_um": p0, "duty": 0.5, "n_slits": 8}
+
+
+def _b_darkfield_rel(pool, rng):
+    """暗視野か散乱角の広がりの一方だけ(両方・どちらも無しは拒否する op)。"""
+    if rng.uniform() < 0.5:
+        return (), {"darkfield": float(rng.uniform(0.2, 0.95))}
+    return (), {"sigma_urad": float(rng.uniform(0.2, 5.0))}
+
+
+def _b_dpc_map(pool, rng):
+    """丸棒の微分位相(折り返しの無い 0.4 rad 程度、16 x 40 画素)を 3 像の表の形で、幾何と一緒に。"""
+    xb = np.arange(41, dtype=float) - 0.5
+    tb = 2.0 * np.sqrt(np.clip(12.0 ** 2 - (xb - 20.0) ** 2, 0.0, None))
+    phi = np.tile(float(rng.uniform(0.02, 0.06)) * np.diff(tb), (16, 1))
+    return ({"dpc_rad": phi},), {"pixel_um": 40.0, "distance_mm": 23.2, "analyzer_period_um": 2.0, "energy_kev": 14.4}
+
+
 def _b_gum_mc(pool, rng):
     """モンテカルロ。n は探針では小さく(規格の下限 1000)。"""
     n = 3
@@ -4555,6 +4643,145 @@ def _b_pod_decision_tradeoff(pool, rng):
     import pod as _pod
     fit = _pod.pod_ahat_fit(_pod_ahat_table(rng), log_size=True, censor_low=-1.5)
     return (fit, rng.normal(-1.0, 0.5, 60)), {}
+
+
+def _anom_maps(rng, n=4, h=32, w=32):
+    """異常スコアの図と欠陥マスク(anomeval の種)。欠陥は 2 つの矩形、スコアは欠陥で高めの連続値。
+
+    ★プールの任意の video は 2 値でなく、マスクとして渡すと op が拒む。欠陥と良品の両方が
+    必ず在り(AUROC が定義される)、スコアが欠陥で部分的にしか高くない(PRO の曲線と
+    閾値つきの重なりが中間の値を取り、つまみの探針が効く)ように組む。
+    """
+    masks = np.zeros((n, h, w), dtype=bool)
+    masks[0, 4:10, 4:12] = True
+    masks[1, 20:24, 18:30] = True
+    scores = rng.random((n, h, w)) + 0.8 * masks * rng.random((n, h, w))
+    return scores, masks
+
+
+def _b_anomaly_image_auroc(pool, rng):
+    y = np.r_[np.zeros(12), np.ones(8)].astype(bool)
+    return (rng.random(20) + 0.5 * y, y), {}
+
+
+def _b_anomaly_pixel_auroc(pool, rng):
+    return _anom_maps(rng), {}
+
+
+def _b_anomaly_pro(pool, rng):
+    return _anom_maps(rng), {}
+
+
+def _b_anomaly_region_overlap(pool, rng):
+    """予測は欠陥の一部だけを覆う(重なり 0.3 と 0.8)— min_overlap を半分・倍にすると判定が動く。"""
+    scores, masks = _anom_maps(rng)
+    pred = np.zeros_like(masks)
+    pred[0, 4:10, 4:7] = True          # 1 つめの欠陥の 3/8 ≈ 0.375
+    pred[1, 20:24, 18:28] = True       # 2 つめの欠陥の 10/12 ≈ 0.83
+    pred[2, 0:3, 0:3] = True           # 誤検出
+    return (pred, masks), {}
+
+
+def _vm_stack(rng, n=8, side=48):
+    """良品の積み重ね(varmodel の種): 縁のある模様 + 雑音、位置は揃っている。
+
+    ★プールの任意の video は動くクリップで、良品群として渡すと位置合わせの確認で拒否される
+    (探針が「拒否された」としか言えない)。揃った群を組んで当てはめを実際に走らせる。
+    """
+    yy, xx = np.mgrid[0:side, 0:side]
+    base = 0.5 + 0.3 * np.sin(xx / 3.0) * np.cos(yy / 4.0)
+    return base, base + 0.02 * rng.standard_normal((n, side, side))
+
+
+def _b_varmodel_alignment(pool, rng):
+    return (_vm_stack(rng)[1],), {}
+
+
+def _b_varmodel_band_k(pool, rng):
+    return (), {"n": 12, "far": 1e-2}
+
+
+def _b_varmodel_fit(pool, rng):
+    return (_vm_stack(rng)[1],), {"spread": "std", "far": 1e-2}
+
+
+def _b_varmodel_calibrate(pool, rng):
+    import varmodel as _vm
+    base, st = _vm_stack(rng, n=8)
+    m = _vm.varmodel_fit(st, spread="std", far=1e-2)
+    return (m, base + 0.02 * rng.standard_normal((12,) + base.shape)), {}
+
+
+def _b_varmodel_score(pool, rng):
+    """欠陥(+0.2 = 雑音の 10 倍、3×3)を 1 つ描いた試験の 1 枚。
+
+    ★16 px 四方・+0.3 の欠陥を 32 px の像に描くと、位相相関が欠陥に引かれて 0.85 px の「ずれ」になり、
+    ``align="check"`` が拒否した(実測 2026-10-18)。欠陥が像に対して大きすぎると位置合わせも汚れる。
+    """
+    import varmodel as _vm
+    base, st = _vm_stack(rng)
+    m = _vm.varmodel_fit(st, spread="std", far=1e-2)
+    img = base + 0.02 * rng.standard_normal(base.shape)
+    img[20:23, 24:27] += 0.2
+    return (img, m), {}
+
+
+def _b_anomaly_pixel_f1_max(pool, rng):
+    return _anom_maps(rng), {}
+
+
+def _b_anomaly_image_f1_max(pool, rng):
+    y = np.r_[np.zeros(12), np.ones(8)].astype(bool)
+    return (rng.random(20) + 0.5 * y, y), {}
+
+
+def _b_anomaly_operating_point(pool, rng):
+    """保証に足りる数の欠陥(20 枚)と良品 30 枚。recall 0.8・信頼 0.9 なら n_required = 11 で、つまみが効く。"""
+    y = np.r_[np.zeros(30), np.ones(20)].astype(bool)
+    return (rng.random(50) + 0.6 * y, y), {"recall": 0.8, "confidence": 0.9}
+
+
+def _patch_tex(rng, n=40):
+    """パッチ特徴の種: 滑らかなランダム模様(確率的なテクスチャ)。"""
+    from scipy import ndimage as _ndi
+    return _ndi.gaussian_filter(rng.standard_normal((n, n)), 1.5) * 3.0
+
+
+def _patch_stack(rng, n=8):
+    return np.stack([_patch_tex(rng) for _ in range(n)])
+
+
+_PATCH_KW = {"patch": 8, "stride": 4, "scales": (1.0, 2.0), "groups": ("gradient", "gabor", "lbp")}
+
+
+def _patch_test_image(rng):
+    img = _patch_tex(rng)
+    img[14:22, 18:28] += 1.5
+    return img
+
+
+def _b_patch_features(pool, rng):
+    return (_patch_test_image(rng),), dict(_PATCH_KW)
+
+
+def _b_patchdist_fit(pool, rng):
+    return (_patch_stack(rng),), dict(_PATCH_KW)
+
+
+def _b_patchdist_score(pool, rng):
+    import anomaly_patch as _ap
+    m = _ap.patchdist_fit(_patch_stack(rng), **_PATCH_KW)
+    return (_patch_test_image(rng), m), {}
+
+
+def _b_patchbank_fit(pool, rng):
+    return (_patch_stack(rng),), dict(_PATCH_KW, coreset=0.3)
+
+
+def _b_patchbank_score(pool, rng):
+    import anomaly_patch as _ap
+    m = _ap.patchbank_fit(_patch_stack(rng), **dict(_PATCH_KW, coreset=0.3))
+    return (_patch_test_image(rng), m), {"k": 2}
 
 
 def _b_coherent_image(pool, rng):
@@ -6471,7 +6698,242 @@ def _b_emva_general_relative_qe(pool, rng):
     return (mp, mu, 64.0, 64.0 + 0.1125 * mps * np.array([1.0, 0.7]), mps, 0), {}
 
 
+def _b_dualxray(kind):
+    """エネルギー弁別 X 線(dualxray、2026-10-15)の op に**本物の入力**を渡す。
+
+    ★宣言 in の ``pairs`` / ``images`` をプールから拾うと、乱数の pairs はエネルギーが単調増加でなく、
+    乱数の images はチャネルの数(2)と合わず、どちらも fail-closed で拒否される —— 走ったことには
+    なるが一度も計算しない。管のスペクトルと、既定のチャネルで撮った計数像を builder で作る。
+    """
+    def build(pool, rng):
+        import dualxray as _dx
+        kv = float(rng.integers(50, 121))
+        spec = _dx.xray_tube_spectrum(kv)
+        if kind == "spectrum":
+            return ([spec], {})
+        if kind == "two_spectra":
+            return ([_dx.xray_tube_spectrum(kv), _dx.xray_tube_spectrum(kv + 60.0)], {})
+        t = rng.uniform(0.0, 0.5, size=(2, 16, 16)) * np.array([10.0, 0.3])[:, None, None]
+        if kind == "thickness":
+            return ([t], {"materials_list": ["WATER", "AL"]})
+        if kind == "signal3":
+            # ★2026-10-18: 窓 3 つ + 厚さ 0 から始まる勾配。窓の番号(low / high)のノブは窓が 3 つないと
+            #   どの値も同じ 2 窓を指し、min_log(素通しに近い画素を拒否する下限)は L が 0.01〜0.04 の画素が
+            #   無いと効かない —— 効く入力を渡す(効かないノブを台帳に載せない)。
+            #   窓は 120 kV で 20 / 40 / 60 keV(隣り合う狭い窓 20〜35 / 35〜55 では Cr と Mn の R が逆転し、
+            #   effective_z_map が単調でないとして拒否する —— それは op の正しい拒否で、ノブの検査にならない)。
+            ch3 = _dx.photon_counting_channels(_dx.xray_tube_spectrum(120.0), (20.0, 40.0, 60.0))
+            t3 = np.zeros((2, 16, 16))
+            t3[0] = np.linspace(0.0, 6.0, 16)[None, :] ** 2 / 6.0       # 水 0〜6 cm(先頭の列は L がほぼ 0)
+            t3[1] = np.linspace(0.0, 0.3, 16)[:, None]
+            sig3 = _dx.xray_channel_projection(t3, ["WATER", "AL"], ch3, 1e5, seed=int(rng.integers(0, 1000)))
+            return ([sig3], {"channels": ch3})
+        sig = _dx.xray_channel_projection(t, ["WATER", "AL"], None, 1e5, seed=int(rng.integers(0, 1000)))
+        return ([sig], {})
+    return build
+# --- 作物と雑草(cropweed、2026-10-18): 植物の色指標・超画素の特徴・Fisher 判別・被度の段階 --------- #
+# 種は共有の乱数列を引かない(rng 引数は使わず、固定の種の生成器を各自で持つ)。汎用の (2, 2, 3) の
+# rgbimage は全画素が黒で、色度が 1 画素も決まらず fail-closed で拒否されるので、緑の葉・土・水と、
+# 明るさが dark_floor の半分と倍の間にある暗い画素を混ぜた小さな圃場を組む(ノブ dark_floor が効く)。
+def _cropweed_field(size=24):
+    g = np.random.default_rng(20261018)
+    yy, xx = np.mgrid[0:size, 0:size].astype(np.float64)
+    leaf = 0.5 + 0.5 * np.sin(0.9 * xx + 0.3 * yy)                  # 縞 = 葉の向き
+    rgb = np.empty((size, size, 3))
+    rgb[..., 0] = 0.20 + 0.10 * leaf
+    rgb[..., 1] = 0.35 + 0.30 * leaf
+    rgb[..., 2] = 0.15 + 0.05 * leaf
+    soil = (xx - size * 0.7) ** 2 + (yy - size * 0.3) ** 2 < (size * 0.18) ** 2
+    rgb[soil] = (0.45, 0.38, 0.30)
+    rgb += g.normal(0.0, 0.01, rgb.shape)
+    rgb[size - 3:, :4] = (0.012, 0.018, 0.012)                        # 明るさ 0.014 < 0.02
+    rgb[size - 3:, 4:8] = (0.025, 0.035, 0.024)                       # 明るさ 0.028: 0.02 と 0.04 の間
+    return np.clip(rgb, 0.0, 1.0)
+
+
+def _b_cropweed_plant_color_index(pool, rng):
+    return (_cropweed_field(),), {"index": "exg", "dark_floor": 0.02}
+
+
+def _b_cropweed_superpixel_features(pool, rng):
+    size = 24
+    rgb = _cropweed_field(size)
+    yy, xx = np.mgrid[0:size, 0:size]
+    lab = (yy // 6) * 4 + (xx // 6) + 1
+    lab[0, 0:5] = 17                                                  # 5 画素の小領域: min_size 4 は残し 8 は落とす
+    return (rgb, lab.astype(np.int64)), {"dark_floor": 0.02, "texture_sigma": 1.0, "min_size": 4}
+
+
+def _cropweed_two_class():
+    g = np.random.default_rng(20261019)
+    X0 = g.normal(0.0, 1.0, (20, 3))
+    X1 = g.normal(0.0, 1.0, (20, 3)) + np.array([1.5, -0.5, 0.8])
+    X = np.vstack([X0, X1])
+    y = np.r_[np.zeros(20), np.ones(20)]
+    return X, y
+
+
+def _b_cropweed_fisher_lda_fit(pool, rng):
+    X, y = _cropweed_two_class()
+    return (X, y), {"ridge": 1e-6}
+
+
+def _b_cropweed_fisher_lda_score(pool, rng):
+    import cropweed
+    X, y = _cropweed_two_class()
+    return (cropweed.fisher_lda_fit(X, y), X), {}
+
+
+def _b_cropweed_cover_ratio_grade(pool, rng):
+    return (np.linspace(0.0, 1.0, 21),), {}
+
+
+_CROPWEED_ENTRIES = {
+    "plant_color_index": _b_cropweed_plant_color_index,
+    "superpixel_color_texture_features": _b_cropweed_superpixel_features,
+    "fisher_lda_fit": _b_cropweed_fisher_lda_fit,
+    "fisher_lda_score": _b_cropweed_fisher_lda_score,
+    "cover_ratio_grade": _b_cropweed_cover_ratio_grade,
+}
+# --- /作物と雑草 ------------------------------------------------------------------------- #
+
+
+def _b_plenoptic_system(pool, rng):
+    """主レンズ・MLA・センサーを、各生成 API を通した実型で組む。"""
+    import plenoptic
+    import raytrace
+    lens = raytrace.lens_system([
+        {"R": 50.0, "t": 5.0, "n": (1.5, 50.0), "ap": 10.0},
+        {"R": -50.0, "t": None, "n": 1.0, "ap": 10.0},
+    ], object_mm=1000.0)
+    mla = plenoptic.mla_surface(0.06, 0.12, (5, 5))
+    sensor = {"size": (25, 25), "pixel_pitch_um": 12.0}
+    return ([lens, mla, sensor], {"kind": "focused", "mla_to_sensor_mm": 0.48,
+                                  "main_to_mla_mm": 0.48})
+
+
+def _b_plenoptic_capture(pool, rng):
+    import lensrender
+    import plenoptic
+    args, kwargs = _b_plenoptic_system(pool, rng)
+    system = plenoptic.plenoptic_system(*args, **kwargs)
+    return ([system, lensrender.lens_scene()], {})
+
+
+def _plenoptic_white_calibration():
+    from scipy import ndimage
+    import plenoptic
+    white = np.zeros((32, 32), dtype=float)
+    white[4:29:6, 4:29:6] = 1.0
+    white[16, 16] = 0.0
+    white[16, 17] = 1.0
+    white = ndimage.gaussian_filter(white, 0.8)
+    calibration = plenoptic.plenoptic_mla_calibrate(
+        white, 6.0, max_residual_px=0.3)
+    return white, calibration
+
+
+def _b_plenoptic_mla_calibrate(pool, rng):
+    white, _ = _plenoptic_white_calibration()
+    return ([white, 6.0], {"max_residual_px": 0.3})
+
+
+def _b_plenoptic_decode(pool, rng):
+    white, calibration = _plenoptic_white_calibration()
+    return ([white, calibration], {"angular": (3, 3)})
+
+
+def _b_plenoptic_refocus_depth(pool, rng):
+    import plenoptic
+    args, kwargs = _b_plenoptic_system(pool, rng)
+    system = plenoptic.plenoptic_system(*args, **kwargs)
+    return ([np.zeros((3, 3, 5, 5)), system, 0.2], {})
+
+
+def _omni_image(h=16, w=32):
+    yy, xx = np.mgrid[0:h, 0:w]
+    return (0.25 + 0.35 * np.sin(2 * np.pi * xx / w)
+            + 0.2 * np.cos(np.pi * (yy + 0.5) / h))
+
+
+def _omni_rgb(h=16, w=32):
+    image = _omni_image(h, w)
+    return np.stack((image, np.roll(image, 2, axis=1), 0.8 * image + 0.1), axis=-1)
+
+
+def _b_omni_cubemap(pool, rng):
+    import omni360
+    return (omni360.cubemap_from_equirect(_omni_rgb(), 16), (16, 32)), {}
+
+
+def _b_omni_fisheye_pair(pool, rng):
+    images = np.stack((_omni_image(32, 32), _omni_image(32, 32) + 0.01))
+    import omni360
+    rotations = np.stack((np.eye(3), omni360._ypr(180, 0, 0)))
+    return (images, rotations, (16, 32)), {"f_px": 4.0, "fov_deg": 360.0}
+
+
+def _b_omni_perspectives(pool, rng):
+    import omni360
+    rotations = [omni360._ypr(yaw, pitch, 0) for yaw, pitch in
+                 ((0, 0), (90, 0), (180, 0), (-90, 0), (0, 90), (0, -90))]
+    images = np.stack([_omni_image(24, 24) + i * 0.01 for i in range(6)])
+    intrinsics = [{"fx": 7.0, "fy": 7.0, "cx": 12.0, "cy": 12.0}
+                  for _ in rotations]
+    return (images, rotations, intrinsics, (16, 32)), {}
+
+
+def _b_omni_ods_render(pool, rng):
+    def scene(origins, directions):
+        return 0.5 + 0.2 * directions[..., 0] + 0.1 * origins[..., 2]
+    return (scene, 0.064, 16, 32), {}
+
+
+def _b_omni_viewport_track(pool, rng):
+    frames = np.stack((_omni_rgb(), np.roll(_omni_rgb(), 2, axis=1)))
+    return (frames, np.array([0.0, 8.0]), np.array([0.0, 2.0])), {"size": (16, 16)}
+
+
+def _b_omni_rotate(pool, rng):
+    import omni360
+    return (_omni_rgb(), omni360._ypr(6, -3, 1)), {}
+
+
+def _b_omni_depth_to_disparity(pool, rng):
+    depth = 0.5 + 3.0 * (_omni_image() - _omni_image().min())
+    return (depth, 0.064, 32), {}
+
+
+def _b_omni_psnr(pool, rng):
+    a = _omni_image()
+    yy, xx = np.mgrid[:a.shape[0], :a.shape[1]]
+    b = a + 0.02 + 0.08 * ((xx > a.shape[1] // 2) & (yy > a.shape[0] // 3))
+    return (a, b), {}
+
+
+def _b_omni_stabilise(pool, rng):
+    ref = _omni_image()
+    changed = ref.copy()
+    changed[3:10, 5:15] += 0.25
+    return (np.stack((ref, changed)),), {"sample_shape": (12, 24)}
+
+
 OP_ARG_BUILDERS = {
+    "plenoptic_system": _b_plenoptic_system,
+    "plenoptic_capture": _b_plenoptic_capture,
+    "plenoptic_mla_calibrate": _b_plenoptic_mla_calibrate,
+    "plenoptic_decode": _b_plenoptic_decode,
+    "plenoptic_refocus_depth": _b_plenoptic_refocus_depth,
+    "equirect_from_cubemap": _b_omni_cubemap,
+    "equirect_from_fisheye_pair": _b_omni_fisheye_pair,
+    "equirect_from_perspectives": _b_omni_perspectives,
+    "ods_render": _b_omni_ods_render,
+    "video360_viewport_track": _b_omni_viewport_track,
+    "equirect_rotate": _b_omni_rotate,
+    "ods_depth_to_disparity": _b_omni_depth_to_disparity,
+    "s_psnr": _b_omni_psnr,
+    "ws_psnr": _b_omni_psnr,
+    "equirect_stabilize": _b_omni_stabilise,
     # --- 測定システム解析 / 測定の不確かさ(表の列が合わないと一度も計算しない) --- #
     "perpetual_step": _b_perpetual_state,
     "perpetual_render": _b_perpetual_state,
@@ -6539,6 +7001,23 @@ OP_ARG_BUILDERS = {
     "pod_hitmiss_fit": _b_pod_hitmiss_fit,
     "pod_false_call": _b_pod_false_call,
     "pod_decision_tradeoff": _b_pod_decision_tradeoff,
+    "anomaly_image_auroc": _b_anomaly_image_auroc,
+    "anomaly_pixel_auroc": _b_anomaly_pixel_auroc,
+    "anomaly_pro": _b_anomaly_pro,
+    "anomaly_region_overlap": _b_anomaly_region_overlap,
+    "anomaly_pixel_f1_max": _b_anomaly_pixel_f1_max,
+    "anomaly_image_f1_max": _b_anomaly_image_f1_max,
+    "anomaly_operating_point": _b_anomaly_operating_point,
+    "patch_features": _b_patch_features,
+    "patchdist_fit": _b_patchdist_fit,
+    "patchdist_score": _b_patchdist_score,
+    "patchbank_fit": _b_patchbank_fit,
+    "patchbank_score": _b_patchbank_score,
+    "varmodel_alignment": _b_varmodel_alignment,
+    "varmodel_band_k": _b_varmodel_band_k,
+    "varmodel_fit": _b_varmodel_fit,
+    "varmodel_calibrate": _b_varmodel_calibrate,
+    "varmodel_score": _b_varmodel_score,
     # --- flyvision(ハエ視葉)の消費 6 op(形の噛み合う入力を組む) ------------ #
     "fly_hex_resample": _b_fly_resample,
     "fly_emd_response": _b_fly_emd,
@@ -6962,6 +7441,12 @@ OP_ARG_BUILDERS = {
     "simcal_observe": _b_simcal_observe,
     "simcal_screen": _b_simcal_screen,
     "simcal_uncertainty": _b_simcal_uncertainty,
+    "iv_richardson_lucy_until": _b_rl_until,
+    "mc_photon_slab": _b_mc_photon_slab,
+    "ocm_match": _b_codematch_pair,
+    "isc_match": _b_codematch_pair,
+    "scc_match": _b_codematch_pair,
+    "radial_reach_filter": _b_codematch_rrf,
     "residue_integer_crt": _b_residue_int,
     "residue_crt": _b_residue_real,
     "residue_fault_locate": _b_residue_real,
@@ -7074,6 +7559,22 @@ OP_ARG_BUILDERS = {
     # モアレの位置合わせ(2026-10-15): マークを読む op は縞の入った本物のマーク 2 枚が要る(汎用の 32x32 の
     # 乱数画像には縞が無く、区画に縞が 1 周期も入らないので fail-closed で拒否される)。
     "moire_mark_read": _b_moire_mark,
+    # 格子干渉(2026-10-15): 3 像の分離は、縞の入った位相ステップの画像列 2 組が要る(汎用の画像の束には
+    # 1 周期の正弦が無く、基準の可視度が 0 で fail-closed で拒否される)。
+    "grating_three_image_retrieve": _b_grating_stacks,
+    "grating_step_period_estimate": _b_grating_stack1,
+    "dpc_integrate": _b_dpc_map,
+    "darkfield_scatter_relation": _b_darkfield_rel,
+    "talbot_source_visibility": _b_source_vis,
+    # エネルギー弁別 X 線(2026-10-15): 単調なエネルギーのスペクトルと、2 チャネルの計数像が要る
+    "xray_beam_quality": _b_dualxray("spectrum"),
+    "photon_counting_channels": _b_dualxray("spectrum"),
+    "dual_kvp_channels": _b_dualxray("two_spectra"),
+    "xray_channel_projection": _b_dualxray("thickness"),
+    "basis_material_decompose": _b_dualxray("signal"),
+    "r_value_map": _b_dualxray("signal3"),
+    "effective_z_map": _b_dualxray("signal3"),
+    **_CROPWEED_ENTRIES,
 }
 
 
@@ -7081,7 +7582,12 @@ OP_ARG_BUILDERS = {
 #: depth_of_field は過焦点距離以遠で far/depth = inf(それが過焦点距離の定義)、
 #: gaussian_beam はウエストで wavefront_radius = inf(平面波面の曲率半径)。
 #: どちらも有限の逆数(curvature_per_mm)や bool を併せて返す。
-NONFINITE_BY_CONTRACT_OPTICS = {"depth_of_field", "gaussian_beam"}
+NONFINITE_BY_CONTRACT_OPTICS = {
+    "depth_of_field",
+    "gaussian_beam",
+    # worst_trial preserves physical infinite planes/object distance.
+    "tolerance_monte_carlo",
+}
 
 #: 文書化済みの非有限を返す op(cadmap)。**「当たらなかった」を NaN で表すのが
 #: 契約**で、最寄りの面へ丸めないための設計そのもの(丸めると「背景に載っていた
@@ -7115,6 +7621,7 @@ NONFINITE_BY_CONTRACT_SPECULAR = {"photometric_stereo_robust"}
 #: になる ―― 網羅パス(``--cover-all``)で初めて実行されて挙がった(metrics 型と
 #: image2d 2 枚が同時に要るため、ランダム歩行では一度も踏まれていなかった)。
 NONFINITE_BY_CONTRACT_METRICS = {"psnr", "compare_images", "measure_with"}
+NONFINITE_BY_CONTRACT_OMNI360 = {"s_psnr", "ws_psnr"}  # identical inputs: zero MSE means infinite PSNR
 
 #: 文書化済みの非有限を返す op(astrostack / imgforensics)。**「答えられない」を
 #: NaN で言うのが契約**で、0 で埋めると「測れた」に化ける。2026-09-02 に台帳を
@@ -7718,7 +8225,29 @@ NONFINITE_BY_CONTRACT_PRESCRIPTION = {"lens_system", "example_system", "bend_sin
                                       "telecentric_lens",
                                       # ★2026-10-15: 図の values に処方の平面の R = inf と、無焦点の EFL / BFL = inf、
                                       #   分散の無い媒質の ν_d = inf を写す(lens_system の規約どおり)
-                                      "lens_section_drawing", "lens_element_drawing"}
+                                      "lens_section_drawing", "lens_element_drawing",
+                                      # ★2026-10-15: 非共軸の系(raytrace3d)は面の R = inf・物体の inf を記録に持ち、
+                                      #   ゴーストの表・光線の束は「届かない光線 = NaN」(trace_rays と同じ規約)、
+                                      #   図の values にも平面の R = inf を写す。opd_samples は瞳の外 = NaN、
+                                      #   with_wavelength は処方(object_mm = inf)をそのまま返す。
+                                      "noncoaxial_system", "noncoaxial_example", "noncoaxial_layout",
+                                      "noncoaxial_drawing", "ghost_analysis", "ghost_path", "opd_samples",
+                                      "with_wavelength",
+                                      # ★2026-10-19: 照準 / ケラレ係数を設定した処方もそのまま返す(R = inf、object_mm = inf)
+                                      "with_aiming", "set_vignetting",
+                                      # ★2026-10-18: .zmx から読んだ処方(lensfile)は lens_system そのもの(物体が無限遠
+                                      #   なら object_mm = inf、平面の R = inf、ファイル側の面の表の DISZ = INFINITY)
+                                      "lens_file_read", "lens_file_system",
+                                      # ★2026-10-19: 構成ごとに解決した処方も lens_system そのもの(R = inf、object_mm = inf)
+                                      "lens_configurations", "lens_with_configuration", "lens_add_configuration",
+                                      # ★2026-10-19: 硝材置換・大域探索は処方(R = inf)を入れ子で返す
+                                      "lens_substitute_glasses", "lens_global_search",
+                                      # ★2026-10-19: 最適化後の処方(R = inf)を返す
+                                      "optimize_lens_operands",
+                                      # ★2026-10-20: 解を解いた・解を外した・afocal の・像面を曲げた処方(R = inf、object_mm = inf)と、
+                                      #   その解の一覧(R = inf の行)を返す
+                                      "lens_apply_solves", "lens_solve_set", "lens_solve_clear", "afocal_system",
+                                      "lens_image_surface", "lens_solves_list"}
 
 #: 文書化済みの非有限を返す op(計測の「測れなかった」)。
 #:   * triangulate_column — 「NaN = 未確定画素(出力も NaN)」「交点が後方(Z<=0)や視線が
@@ -7766,6 +8295,12 @@ NONFINITE_BY_CONTRACT_LEDGER_GATE = {
     "diabolo_spheroid",           # b_paper_literal: 「根の中が負になる(NaN)」
 }
 
+#: 文書化済みの非有限を返す op(エネルギー弁別 X 線、2026-10-15)。どれも「その画素では値を作らない」が契約:
+#:   * basis_material_decompose — 信号 0 以下・収束しない・飛ぶ画素は NaN で ``rejected`` に数える(docstring)。
+#:   * r_value_map — L_high < min_log(ほぼ素通しで比が雑音だけ)の画素は NaN(docstring)。
+#:   * effective_z_map — 照合の範囲の外(H より軽いか Fe より重い R、L_high が小さい)の画素は NaN(docstring)。
+NONFINITE_BY_CONTRACT_DUALXRAY = {"basis_material_decompose", "r_value_map", "effective_z_map"}
+
 NONFINITE_BY_CONTRACT = {"esdf", "register_spin", "register_fpfh",
                          "sdf_union", "sdf_intersect", "sdf_subtract",
                          "sdf_smooth_union", "sdf_offset", "mat_cond",
@@ -7783,12 +8318,22 @@ NONFINITE_BY_CONTRACT = {"esdf", "register_spin", "register_fpfh",
                          "slope_slip_curve",    # 登れない角は slip が NaN で feasible = False(docstring どおり、立ち往生)
                          "cvar_cost_map",       # 通れない辺(悲観的な滑り ≥ s_max・データの角の範囲の外・地図の外)は inf(docstring どおり)
                          "risk_aware_path",     # 届かなければ cost が inf(docstring どおり)
-                         } | NONFINITE_BY_CONTRACT_METRICS \
+                         "fresnel_water_air",    # 全反射の角度では屈折角が NaN で tir = True(docstring どおり、屈折光が無い)
+                         "refracted_view",       # 収束しない/スネルの式を満たさない点は NaN と converged = False(docstring どおり)
+                         "cylinder_lens_caustic",  # 光軸を横切らない光線(発散・全反射)の焦点は NaN(docstring どおり)
+                         "trace_sensor_rays",    # ケラレ・全反射で失われた光線の起点と向きは NaN で vignetted = True(docstring どおり)
+                         "scene_radiance",       # 何にも当たらない光線の t_mm は inf、失われた(NaN の)光線の放射輝度は NaN(docstring どおり)
+                         "render_compare_prescriptions",  # レンズが届かない視野・測れない刃は NaN(docstring どおり)
+                         "ocean_height_field",   # 単一モードでない海では omega_mode が NaN(docstring どおり)
+                         "underwater_image",     # RGB でない画像では red_to_blue_kd_ratio が NaN(docstring どおり)
+                         "lockin_ring_normals",  # 影が出る画素(A/DC >= 1/2)と DC <= 0 の画素は全マップが NaN で valid = False(docstring どおり、モデルの外)
+                         "plant_color_index",   # 暗い画素(明るさ < dark_floor)は色度が決まらず index が NaN で valid = False(docstring どおり)
+                         } | NONFINITE_BY_CONTRACT_METRICS | NONFINITE_BY_CONTRACT_OMNI360 \
                          | NONFINITE_BY_CONTRACT_ASTRO_FORENSICS \
                          | NONFINITE_BY_CONTRACT_OPTICS \
     | NONFINITE_BY_CONTRACT_CADMAP | NONFINITE_BY_CONTRACT_SPECULAR \
     | NONFINITE_BY_CONTRACT_PRESCRIPTION | NONFINITE_BY_CONTRACT_MEASURE \
-    | NONFINITE_BY_CONTRACT_MSA | NONFINITE_BY_CONTRACT_LEDGER_GATE
+    | NONFINITE_BY_CONTRACT_MSA | NONFINITE_BY_CONTRACT_LEDGER_GATE | NONFINITE_BY_CONTRACT_DUALXRAY
 
 #: pool へ入れる 1 産物の上限バイト数。拡大系 op(upsample/uncrop/resize)の連鎖で
 #: 体積が指数増殖し、後段の全 op が実質ハングする(wave-4 実測: ~34GB の voxel に

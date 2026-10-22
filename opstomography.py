@@ -33,9 +33,13 @@
     opstomography.list_ops("reconstruct")
     opstomography.get("filtered_backprojection")(sino, angles)
 """
+import numpy as np
+
+import dualxray
+import materials
 import tomography
 
-_MOD = {"tomography": tomography}
+_MOD = {"tomography": tomography, "dualxray": dualxray, "materials": materials}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 #   既存語彙の再利用: image2d / voxel / measurement / signal / table
@@ -132,6 +136,26 @@ _CATALOG = {
         ("radon_volume", "tomography", ["voxel"], "sinostack"),
         ("fbp_volume", "tomography", ["sinostack"], "voxel"),
     ],
+    # 2026-10-15 エネルギー弁別 X 線(dualxray.py + materials の X 線の列): 管のスペクトル → 検出器のチャネル
+    # → 材料ごとの厚み図の投影 → 基底分解・R 値・実効 Z・弁別の誤り率。CT の前段(投影の物理)なので
+    # この台帳に置く。★出力は既存の語彙だけ: スペクトルと μ/ρ(E) は pairs、チャネル・線質・CRLB は table、
+    # チャネルの像と基底の厚みは images (C|B, H, W)、R 値と実効 Z は image2d。
+    "spectral_xray": [
+        ("material_xray_table", "materials", [], "table"),
+        ("material_xray_attenuation", "materials", [], "pairs"),
+        ("material_xray_constants", "materials", [], "table"),
+        ("material_effective_z", "materials", [], "table"),
+        ("xray_tube_spectrum", "dualxray", [], "pairs"),
+        ("xray_beam_quality", "dualxray", ["pairs"], "table"),
+        ("photon_counting_channels", "dualxray", ["pairs"], "table"),
+        ("dual_kvp_channels", "dualxray", ["pairs", "pairs"], "table"),
+        ("xray_channel_projection", "dualxray", ["images"], "images"),
+        ("basis_material_decompose", "dualxray", ["images"], "images"),
+        ("basis_decomposition_crlb", "dualxray", [], "table"),
+        ("r_value_map", "dualxray", ["images"], "image2d"),
+        ("effective_z_map", "dualxray", ["images"], "image2d"),
+        ("dual_energy_separability", "dualxray", [], "table"),
+    ],
 }
 
 
@@ -172,7 +196,15 @@ def categories():
 #: のほうが連鎖の型検査が厳しくなるからである。空にしておくと :func:`call` は
 #: :func:`get` と同じ値を返し、連鎖ファザーの TYPEMISS 検査が**素の返りを
 #: そのまま**宣言と突き合わせる = 検証が最も厳しい。
-RESULT_ADAPTERS = {}
+RESULT_ADAPTERS = {
+    # 2026-10-15 spectral_xray: 素の返りはチャネル / 基底の (C|B, H, W) 配列(numpy で扱いやすい形)。宣言型は
+    # 既存の images(同じ場面の画像の並び)にする —— (C, H, W) を voxel と宣言すると、体積の op(marching cubes …)が
+    # エネルギーのチャネルを奥行きとして黙って処理する(型を分ける基準「混ぜると例外でなくもっともらしく間違う」)。
+    # 基底分解は「拒否した画素の数」を厚みと一緒に dict で返し(fail-closed の記録を捨てない)、宣言型は厚みの並び
+    # (拒否した画素は NaN のまま)。tomography の 17 op は従来どおり素の返りが宣言型(adapter 無し)。
+    "xray_channel_projection": lambda r: [np.asarray(c) for c in r],
+    "basis_material_decompose": lambda r: [np.asarray(c) for c in r["thickness"]],
+}
 
 
 def get(name):

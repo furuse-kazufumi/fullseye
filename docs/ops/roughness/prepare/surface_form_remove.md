@@ -7,7 +7,7 @@ out: depth
 examples: [poc_polish_wipe_measure, poc_pv_thermal_survey, poc_surface_roughness]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # surface_form_remove — ROUGHNESS `prepare` op
@@ -100,11 +100,11 @@ fail-closed
 
 ## 型が繋がる次の op(`depth` を入力に取れる)
 
-[surface_filter](surface_filter.md) · [surface_params](../measure/surface_params.md) · [surface_psd](../measure/surface_psd.md)
+[surface_filter](surface_filter.md) · [robust_gaussian_surface](robust_gaussian_surface.md) · [surface_params](../measure/surface_params.md) · [surface_psd](../measure/surface_psd.md)
 
 ## 同カテゴリ(`prepare`)
 
-[surface_filter](surface_filter.md)
+[surface_filter](surface_filter.md) · [robust_gaussian_profile](robust_gaussian_profile.md) · [robust_spline_profile](robust_spline_profile.md) · [robust_gaussian_surface](robust_gaussian_surface.md)
 
 ---
 *Provenance: roughness.py — ROUGHNESS operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

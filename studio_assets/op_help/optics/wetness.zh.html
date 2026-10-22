@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>湿润表面的底色。<b>漫反射变暗</b>(而镜面反射增强)。</p>
 <p>base_rgb：干燥状态的颜色 (H,W,3) 或 (3,)。wet：湿润程度(0–1)。</p>
-<p>ior：水膜的折射率。</p>
+<p>ior：水膜的折射率。数值或材料表的名称(例 &quot;WATER&quot;,名称则取 d 线 587.56 nm 的 n)。</p>
 <p>返回值：湿润状态的漫射色(同形)。</p>
 <p>为什么会变暗：水膜内侧发生全反射，漫射光一次次被送回表面，每次都被吸收。作为近似，对干燥反射率 ρ 乘以相当于内部反射率 Ri = 1 − (1 − Ri0)/n² 的再吸收 ―― 正是湿沙看起来发黑的现象(镜面增加则叠加 <code style="color:#22d3bf">clearcoat_shade(coat=wet)</code> 来表现)。</p>
 <p>空输入(<code style="color:#22d3bf">base_rgb</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
@@ -27,7 +27,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:machined_metal_and_materials">machined_metal_and_materials</a> — <code style="color:#22d3bf">py -3.11 examples/machined_metal_and_materials.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">rgbimage</code> 作为输入)</h3>
-<p><a style="color:#22d3bf" href="opoptics:clearcoat_shade">clearcoat_shade</a> · <a style="color:#22d3bf" href="opoptics:defocus_blur">defocus_blur</a> · <a style="color:#22d3bf" href="opoptics:diffraction_blur">diffraction_blur</a> · <a style="color:#22d3bf" href="opoptics:sensor_capture">sensor_capture</a> · <a style="color:#22d3bf" href="opoptics:pixel_shift_capture">pixel_shift_capture</a> · <a style="color:#22d3bf" href="opoptics:false_color_metric">false_color_metric</a></p>
+<p><a style="color:#22d3bf" href="opoptics:clearcoat_shade">clearcoat_shade</a> · <a style="color:#22d3bf" href="opoptics:defocus_blur">defocus_blur</a> · <a style="color:#22d3bf" href="opoptics:diffraction_blur">diffraction_blur</a> · <a style="color:#22d3bf" href="opoptics:sensor_capture">sensor_capture</a> · <a style="color:#22d3bf" href="opoptics:underwater_image">underwater_image</a> · <a style="color:#22d3bf" href="opoptics:cubemap_from_equirect">cubemap_from_equirect</a> · <a style="color:#22d3bf" href="opoptics:viewport_from_equirect">viewport_from_equirect</a> · <a style="color:#22d3bf" href="opoptics:equirect_rotate">equirect_rotate</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">material</code>)</h3>
 <p><a style="color:#22d3bf" href="opoptics:material_catalog">material_catalog</a> · <a style="color:#22d3bf" href="opoptics:oren_nayar">oren_nayar</a> · <a style="color:#22d3bf" href="opoptics:clearcoat_shade">clearcoat_shade</a> · <a style="color:#22d3bf" href="opoptics:sheen_shade">sheen_shade</a> · <a style="color:#22d3bf" href="opoptics:subsurface_approx">subsurface_approx</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">

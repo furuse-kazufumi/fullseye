@@ -7,13 +7,13 @@ out: image2d
 examples: [structured_light]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # unwrap_phase_2d — 3D `structured_light` op
 
 - **データ種**: `image2d` → `image2d`
-- **呼び出し**: `import fullseye as fs; fs.ledger.unwrap_phase_2d(wrapped, mask=None) -> 'np.ndarray'` (実装を直接呼ぶなら `import fringe; fringe.unwrap_phase_2d(wrapped, mask=None) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("unwrap_phase_2d")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.unwrap_phase_2d(wrapped, mask=None, crop_valid=False) -> 'np.ndarray'` (実装を直接呼ぶなら `import fringe; fringe.unwrap_phase_2d(wrapped, mask=None, crop_valid=False) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("unwrap_phase_2d")`)
 
 ## 使い方
 
@@ -22,6 +22,8 @@ wrapped phase を skimage.restoration.unwrap_phase で連続位相に展開す�
 wrapped: wrapped_phase の出力(2D)。NaN を含んでよい(無効画素として扱う)。
 mask:    省略可。True = 有効画素(numpy masked array の慣習とは逆にした直感的な向き)。
          NaN 画素と mask=False 画素は無効としてアンラップから除外し、出力では NaN を返す。
+crop_valid: 省略可(既定 False = 全面処理)。True なら有効画素の外接矩形だけを skimage に渡し、
+         外側は NaN のまま返す(無効画素が多い枠つき画像で速い別経路。有効画素の位相は全面処理と 2π の整数倍のオフセットを除いて一致する。島ごとのオフセットは skimage の版で変わりうる)。
 
 返り値: 連続位相(2D float)。無効画素は NaN。大域オフセット(+2πm)の不定性は残る。
 

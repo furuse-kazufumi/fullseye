@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">hankel_transform — MATH <code style="color:#22d3bf">transform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hankel_transform(r, f, *, r_max: &#x27;float | None&#x27; = None, order: &#x27;int&#x27; = 0, n: &#x27;int&#x27; = 256) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mathtransforms; mathtransforms.hankel_transform(r, f, *, r_max: &#x27;float | None&#x27; = None, order: &#x27;int&#x27; = 0, n: &#x27;int&#x27; = 256) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmath.get(&quot;hankel_transform&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hankel_transform(r, f, *, r_max: &#x27;float | None&#x27; = None, order: &#x27;int&#x27; = 0, n: &#x27;int&#x27; = 256, plan: &#x27;HankelPlan | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mathtransforms; mathtransforms.hankel_transform(r, f, *, r_max: &#x27;float | None&#x27; = None, order: &#x27;int&#x27; = 0, n: &#x27;int&#x27; = 256, plan: &#x27;HankelPlan | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmath.get(&quot;hankel_transform&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 quasi-discrete 法计算 p 阶 Hankel 变换 F(ν) = 2π ∫_0^∞ f(r) J_p(2πνr) r dr。</p>
 <p><code style="color:#22d3bf">(r, f)</code> 是径向样本(r 升序)。通过线性插值放到样本点 r_k 上，<code style="color:#22d3bf">r_max</code>(默认 = r 的最大值)之外为 0。若向 <code style="color:#22d3bf">f</code> 传入可调用对象，则在样本点上直接求值(忽略 <code style="color:#22d3bf">r</code>，必须传入 <code style="color:#22d3bf">r_max</code>)。样本点为 r_k = j_k R / S(j_k 是 J_p 的第 k 个零点，S = j_{n+1})，频率 ν_k = j_k / (2πR)。该变换的核 T 是<b>对合</b>(T·T = I)，因此同一函数也可做逆变换(把 <code style="color:#22d3bf">F</code> 作为 f 传入)。</p>
@@ -21,6 +21,7 @@
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
 <p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:perf_hankel_plan_and_piv_stream">perf_hankel_plan_and_piv_stream</a> — <code style="color:#22d3bf">py -3.11 examples/perf_hankel_plan_and_piv_stream.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:transforms_tour">transforms_tour</a> — <code style="color:#22d3bf">py -3.11 examples/transforms_tour.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
 <p><a style="color:#22d3bf" href="opmath:dynsys_poincare_section">dynsys_poincare_section</a> · <a style="color:#22d3bf" href="opmath:dwt_inverse">dwt_inverse</a> · <a style="color:#22d3bf" href="opmath:chebyshev_eval_nd">chebyshev_eval_nd</a></p>

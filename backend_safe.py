@@ -451,9 +451,11 @@ def _keep_complex(out, v, out_sort, name):
         return fallback(v, out_sort)
     _note_nonfinite(out, v, out_sort, name)
     a = np.asarray(out)
-    if a.dtype.kind == "c" and a.size and not np.isfinite(a).all():
-        a = np.where(np.isfinite(a), a, 0.0 + 0.0j)
-        return a
+    # ★2026-10-18(0.7.0 の preflight の退化スイープ): 複素の sort を名乗る op でも、入力が実数の NaN / Inf
+    #   だと実数の配列を返すことがある(3 op とも float64 の NaN を返した)。複素の時だけ埋めていたので、
+    #   その実数の非有限がそのまま外へ出ていた。実数でも複素数でも、非有限は記録したうえで 0 で埋める。
+    if a.dtype.kind in "fc" and a.size and not np.isfinite(a).all():
+        return np.where(np.isfinite(a), a, np.zeros((), a.dtype))
     return out
 
 

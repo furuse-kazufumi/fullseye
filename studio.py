@@ -13,12 +13,15 @@ from __future__ import annotations
 
 import inspect
 import json
+import csv
+import hashlib
 import math
 import shutil
 import os
 import tempfile
 import re
 import sys
+import traceback
 
 import numpy as np
 
@@ -32,6 +35,10 @@ import flow          # v14 perception panel
 import motion
 import stereo
 import terrain
+from studio_search import search_grouped, search_zero_results_help
+import studio_errors
+import studio_roundtrip
+import studio_batch
 
 
 # --------------------------------------------------------------------------- #
@@ -62,8 +69,11 @@ def validate_pipeline_dict(d):
         raise ValueError("'stages' must be a list, got %s" % type(raw).__name__)
     out = []
     for i, s in enumerate(raw):
-        if isinstance(s, str) or not isinstance(s, (list, tuple)) or len(s) != 3:
+        if isinstance(s, str) or not isinstance(s, (list, tuple)) or len(s) not in (3, 4):
             raise ValueError("stage %d must be [op, a, b], got %r" % (i + 1, truncate(s, 60)))
+        if len(s) == 4 and not isinstance(s[3], bool):
+            raise ValueError("stage %d: the bypass flag must be true or false, got %r"
+                             % (i + 1, truncate(s[3], 40)))
         name = s[0]
         if not isinstance(name, str):
             raise ValueError("stage %d: operator name must be text, got %r"
@@ -88,7 +98,44 @@ def validate_pipeline_dict(d):
                                  % (i + 1, name, label, v))
         # store the CANONICAL op name: a HALCON alias is accepted on input, but the
         # program text / runners resolve canonical names (F5 review finding)
-        out.append([op.name, a, b])
+        out.append([op.name, a, b] + ([True] if len(s) == 4 and s[3] else []))   # bypass: written only when on
+    return out
+
+
+def validate_pinned(d):
+    """Validate the optional ``pinned`` key of a pipeline payload -> a list of
+    ``{"stages", "input", "display", "note"}`` dicts (at most :data:`MAX_PINS`).
+
+    Absent -> ``[]`` (files written before the key existed load as before). Present but malformed
+    -> :class:`ValueError`, so a bad file leaves the current project untouched. The stages go
+    through :func:`validate_pipeline_dict` (known ops, knobs in [0, 1], bypass flags)."""
+    if not isinstance(d, dict):
+        raise ValueError("not a pipeline file (expected a JSON object)")
+    raw = d.get("pinned")
+    if raw is None:
+        return []
+    if not isinstance(raw, (list, tuple)):
+        raise ValueError("'pinned' must be a list, got %s" % type(raw).__name__)
+    if len(raw) > MAX_PINS:
+        raise ValueError("'pinned' holds %d snapshots, at most %d are kept" % (len(raw), MAX_PINS))
+    out = []
+    for i, p in enumerate(raw):
+        if not isinstance(p, dict):
+            raise ValueError("pinned snapshot %d must be an object, got %s" % (i + 1, type(p).__name__))
+        try:
+            stages = validate_pipeline_dict({"stages": p.get("stages")})
+        except ValueError as e:
+            raise ValueError("pinned snapshot %d: %s" % (i + 1, e)) from None
+        disp = p.get("display")
+        if disp is not None and not isinstance(disp, dict):
+            raise ValueError("pinned snapshot %d: 'display' must be an object" % (i + 1))
+        note = p.get("note", "")
+        if not isinstance(note, str):
+            raise ValueError("pinned snapshot %d: 'note' must be text" % (i + 1))
+        out.append({"stages": stages, "input": _valid_input_ref(p.get("input")),
+                    "display": {k: v for k, v in (disp or {}).items() if isinstance(k, str)
+                                and isinstance(v, (str, int, float, bool))},
+                    "note": note})
     return out
 
 
@@ -124,14 +171,40 @@ def validate_directives(d):
     return out
 
 
+class _Stage(list):
+    """One pipeline stage: still the 3-element ``[name, a, b]`` list every unpacking site expects,
+    plus a ``bypass`` flag (Studio slice 2). A bypassed stage passes its input through unchanged;
+    the flag is an attribute, not a 4th element, so ``name, a, b = stage`` keeps working."""
+    bypass = False
+
+
+def _is_bypassed(s):
+    """True if the stage (a :class:`_Stage` or a plain list) is switched off for now."""
+    return bool(getattr(s, "bypass", False))
+
+
 def _normalise_stage(s):
     """One pipeline stage as the mutable ``[name, a, b]`` list the model edits in place.
 
     Every loader (parser tuples, JSON, recipes, undo snapshots) passes through here,
-    so ``set_knobs`` can never meet a tuple again (F1 review finding)."""
-    if isinstance(s, str) or not isinstance(s, (list, tuple)) or len(s) != 3:
+    so ``set_knobs`` can never meet a tuple again (F1 review finding). The result is a
+    :class:`_Stage`; the ``bypass`` flag of a stage given in is kept (a saved file may carry it
+    as a 4th boolean element), so a copy made through here does not drop it."""
+    if isinstance(s, str) or not isinstance(s, (list, tuple)) or len(s) not in (3, 4):
         raise ValueError("stage must be [op, a, b], got %r" % (truncate(s, 60),))
-    return [str(s[0]), float(s[1]), float(s[2])]
+    byp = _is_bypassed(s)
+    if len(s) == 4:
+        if not isinstance(s[3], (bool, np.bool_)):
+            raise ValueError("stage bypass flag must be true or false, got %r" % (truncate(s[3], 40),))
+        byp = byp or bool(s[3])
+    out = _Stage([str(s[0]), float(s[1]), float(s[2])])
+    out.bypass = byp
+    return out
+
+
+def _copy_stage(s):
+    """A copy of one stage that keeps the bypass flag (``list(s)`` would drop it)."""
+    return _normalise_stage(s)
 
 
 def _log_soft_failure(context, exc):
@@ -353,6 +426,84 @@ ERROR_HOOK = _default_error       # (parent, title, text) -> None
 CONFIRM_HOOK = _default_confirm   # (parent, title, text) -> bool (True = go ahead)
 KNOB_DEBOUNCE_MS = 160            # coalesce knob drags before re-running step_states
 
+RUN_WORKER_I18N_KEYS = (
+    "Run in progress %d/%d stages: %s", "Request stop", "Stop requested",
+    "Stop requested (the current stage cannot be interrupted)", "Stopped (%d/%d stages completed)",
+    "Current settings: unchanged / displayed result: generation %d",
+    "Current settings: changed / displayed result: generation %d",
+    "The completed result used settings from before the change",
+    "Show that result", "Run with current settings", "Generation %d",
+)
+
+
+class _RunControllerState:
+    """GUI-owned bookkeeping for independent worker threads."""
+
+    def __init__(self):
+        self.generation = 0
+        self.latest_generation = 0
+        self.threads = {}
+        self.finish_bridges = {}
+        self.history = []
+        self.status_history = []
+        self.request_stop = lambda: None
+
+    @property
+    def running(self):
+        return bool(self.threads)
+
+
+def _run_snapshot(model, generation):
+    """Freeze one run's input and stage settings without retaining GUI objects."""
+    image = None if model.image is None else np.array(model.image, copy=True)
+    if image is not None:
+        image.flags.writeable = False
+    stages = tuple((str(s[0]), float(s[1]), float(s[2]), bool(_is_bypassed(s)))
+                   for s in model.stages)
+    return {"generation": int(generation), "image": image, "stages": stages,
+            "image_version": model._img_ver, "input_ref": dict(model.input_ref or {}),
+            "token": (model._img_ver, tuple(_stage_key(s) for s in model.stages))}
+
+
+def _run_worker_class(QtCore):
+    class RunWorker(QtCore.QObject):
+        started = QtCore.Signal(int, int, int, str)
+        finished = QtCore.Signal(int, int, object, object, float)
+        run_done = QtCore.Signal(int, bool)
+
+        def __init__(self, snapshot, stop_event):
+            super().__init__()
+            self.snapshot = snapshot
+            self.stop_event = stop_event
+
+        @QtCore.Slot()
+        def run(self):
+            import time
+            snap = self.snapshot
+            gen, stages = snap["generation"], snap["stages"]
+            value = snap["image"]
+            stopped = False
+            for i, (name, a, b, bypass) in enumerate(stages):
+                if self.stop_event.is_set():
+                    stopped = True
+                    break
+                self.started.emit(gen, i, len(stages), name)
+                t0 = time.perf_counter()
+                try:
+                    result = value if bypass else api.run_pipeline(
+                        value, [(name, a, b)], coerce=(i == 0))
+                except Exception as exc:  # transported to the GUI thread as data
+                    self.finished.emit(gen, i, None, exc, (time.perf_counter() - t0) * 1000.0)
+                    self.run_done.emit(gen, False)
+                    return
+                value = result
+                self.finished.emit(gen, i, result, None, (time.perf_counter() - t0) * 1000.0)
+            if self.stop_event.is_set():
+                stopped = True
+            self.run_done.emit(gen, stopped)
+
+    return RunWorker
+
 
 
 # --------------------------------------------------------------------------- #
@@ -378,15 +529,454 @@ def _settings():
     return QtCore.QSettings("Fullseye", "Studio")
 
 
+def _stage_key(s):
+    """The cache key of one stage: (op, a, b) as plain values; a bypassed stage adds a 4th part,
+    so toggling bypass changes the key and drops the cache from that stage on."""
+    k = (str(s[0]), float(s[1]), float(s[2]))
+    return k + ("bypass",) if _is_bypassed(s) else k
+
+
+# --------------------------------------------------------------------------- #
+# 結果の妥当性(ran / valid / reasons を分けて持つ)と、入力画像の参照(project 保存)。
+# どちらも Qt を使わない。Studio は**報告するだけ**で、op の数値の問題を直したり隠したりしない。
+# --------------------------------------------------------------------------- #
+#: 結果の dict が持つ「妥当/非妥当」の明示欄(opsmultivar / lensopt / spc / drive* などの実在の名前)。
+_VALIDITY_KEYS = ("converged", "valid", "guf_valid", "ok", "success")
+#: ``status`` 欄の文字列のうち、失敗を意味するもの / 成功を意味するもの(出典タグの "primary" などは判定しない)。
+_STATUS_BAD = frozenset({"failed", "failure", "error", "diverged", "not_converged", "nonconverged",
+                         "max_iter", "maxiter", "max_iterations", "singular", "invalid", "degenerate"})
+_STATUS_GOOD = frozenset({"converged", "ok", "success", "succeeded"})
+
+
+def _bool_verdict(x):
+    """明示欄 1 つの判定: True / False / None(読めない)。大きい bool 配列は「有効が 1 つも無い」時だけ False。"""
+    if isinstance(x, (bool, np.bool_)):
+        return bool(x)
+    if isinstance(x, np.ndarray) and x.dtype == bool and x.size:
+        if x.size == 1:
+            return bool(x.reshape(-1)[0])
+        return None if x.any() else False
+    return None
+
+
+def assess_validity(val):
+    """結果の妥当性を ``(valid, reasons)`` で返す。valid は True / False / None(未判定)。
+
+    * 結果が dict で明示欄(``converged`` / ``valid`` / ``guf_valid`` / ``ok`` / ``success`` /
+      ``status`` / ``n_iter`` と ``max_iter``)を持てば、それを写す。どれかが偽なら False。
+    * 配列は、非有限値・空・(実数画像で)一定値のときだけ False。それ以外は**判定しない(None)**
+      —— 妥当性の情報が無い結果に「OK」を出さない。
+    報告するだけで、値は一切変えない。"""
+    why = []
+    if isinstance(val, dict):
+        good = False
+        for k in _VALIDITY_KEYS:
+            if k not in val:
+                continue
+            r = _bool_verdict(val[k])
+            if r is False:
+                big = isinstance(val[k], np.ndarray) and val[k].size > 1
+                why.append("%s is False%s" % (k, " (no valid entries)" if big else ""))
+            elif r is True:
+                good = True
+        st = val.get("status")
+        if isinstance(st, str):
+            sl = st.strip().lower()
+            if sl in _STATUS_BAD:
+                why.append("status=%s" % st)
+            elif sl in _STATUS_GOOD:
+                good = True
+        for ik in ("n_iter", "iterations"):
+            mi = val.get("max_iter", val.get("max_iterations"))
+            n = val.get(ik)
+            if (isinstance(n, (int, np.integer)) and isinstance(mi, (int, np.integer))
+                    and not isinstance(n, bool) and mi > 0 and n >= mi):
+                why.append("reached max_iter (%d)" % int(mi))
+                break
+        if why:
+            ir = val.get("invalid_reasons")
+            if isinstance(ir, (list, tuple)):
+                why.extend(str(x) for x in ir[:8])
+            return False, why
+        return (True, []) if good else (None, [])
+    if isinstance(val, (float, complex, np.floating, np.complexfloating)):
+        val = np.asarray(val)
+    if not isinstance(val, np.ndarray):
+        return None, []
+    if val.size == 0:
+        return False, ["empty result"]
+    if val.dtype.kind in "fc":
+        fin = np.isfinite(val)
+        k = int(val.size - np.count_nonzero(fin))
+        if k:
+            why.append("%d non-finite values" % k)
+        if val.ndim in (2, 3) and fin.any():
+            num = np.abs(val[fin]) if val.dtype.kind == "c" else val[fin]
+            if float(np.ptp(num)) == 0.0 and not _is_binary(val):
+                why.append("constant image (all pixels equal)")
+    return (False, why) if why else (None, [])
+
+
+def file_sha256(path):
+    """ファイルのバイト列の sha256(16 進)。読めなければ OSError。"""
+    import hashlib
+    h = hashlib.sha256()
+    with open(path, "rb") as fh:
+        for chunk in iter(lambda: fh.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def input_reference(path, image=None):
+    """project 保存に入れる入力画像の参照: path(与えられたまま)・sha256・shape・dtype。"""
+    ref = {"path": str(path), "sha256": file_sha256(path)}
+    if image is not None:
+        arr = np.asarray(image)
+        ref["shape"] = [int(v) for v in arr.shape]
+        ref["dtype"] = str(arr.dtype)
+    return ref
+
+
+def _valid_input_ref(d):
+    """保存ファイルの ``input`` 欄を読む。壊れていたら None(古い形と同じ扱い。読み込みは落とさない)。"""
+    if not isinstance(d, dict) or not isinstance(d.get("path"), str) or not d["path"]:
+        return None
+    if not isinstance(d.get("sha256"), str):
+        return None
+    ref = {"path": d["path"], "sha256": d["sha256"]}
+    if isinstance(d.get("shape"), list) and all(isinstance(v, int) and not isinstance(v, bool) for v in d["shape"]):
+        ref["shape"] = list(d["shape"])
+    if isinstance(d.get("dtype"), str):
+        ref["dtype"] = d["dtype"]
+    return ref
+
+
+def resolve_input_ref(ref, base_dir):
+    """保存された入力参照を今の環境へ当てる。``{"status", "path", "message"}`` を返す。
+
+    status: ``ok``(ある・sha256 一致 = 黙って読む)/ ``changed``(ある・不一致 = 読むが警告)/
+    ``relinked``(元の場所に無く、.json の隣の同じ名前で見つかった・一致)/ ``missing``(見つからない =
+    今の画像を保つ)。相対 path は .json のあるフォルダ基準。"""
+    given = str(ref["path"])
+    cand = given if os.path.isabs(given) else os.path.join(base_dir, given)
+    name = re.split(r"[\\/]", given)[-1]
+
+    def _same(p):
+        try:
+            return file_sha256(p) == ref.get("sha256")
+        except OSError:
+            return None
+
+    if os.path.isfile(cand):
+        same = _same(cand)
+        if same:
+            return {"status": "ok", "path": cand, "message": ""}
+        if same is not None:
+            return {"status": "changed", "path": cand,
+                    "message": "input file changed since save: %s" % given}
+    alt = os.path.join(base_dir, name) if name else ""
+    if alt and os.path.isfile(alt) and os.path.abspath(alt) != os.path.abspath(cand):
+        same = _same(alt)
+        if same:
+            return {"status": "relinked", "path": alt,
+                    "message": "input relinked by file name: %s -> %s" % (given, alt)}
+        if same is not None:
+            return {"status": "changed", "path": alt,
+                    "message": "input file changed since save: %s (found next to the project file)" % given}
+    return {"status": "missing", "path": None, "message": "input not found: %s" % given}
+
+
+#: stage-list thumbnail size (width, height) in pixels
+_STAGE_THUMB = (48, 36)
+
+
+def _cheap_is_binary(a):
+    """``_is_binary`` without sorting every pixel: look at a strided sample first, and confirm in one pass."""
+    if a.dtype == bool:
+        return True
+    step = max(1, int(max(a.shape[:2]) // 128))
+    sample = a[::step, ::step]
+    fin = sample[np.isfinite(sample)] if sample.dtype.kind == "f" else sample
+    if fin.size == 0 or np.unique(fin).size > 2:
+        return False
+    return bool(np.all((a == 0) | (a == 1)))
+
+
+def _shrink_u8(u8, size):
+    """Area-average a uint8 ``(h, w)`` / ``(h, w, 3)`` image down so it fits *size* ``(w, h)``
+    (never up). Pure numpy: one pass per axis, so a 2048 x 2048 stage costs milliseconds."""
+    h, w = u8.shape[:2]
+    tw, th = size
+    sc = min(tw / float(w), th / float(h), 1.0)
+    nw, nh = max(1, int(round(w * sc))), max(1, int(round(h * sc)))
+    ye = np.linspace(0, h, nh + 1).astype(np.int64)
+    xe = np.linspace(0, w, nw + 1).astype(np.int64)
+    acc = np.add.reduceat(u8, ye[:-1], axis=0, dtype=np.float32)
+    acc = np.add.reduceat(acc, xe[:-1], axis=1)
+    cnt = np.outer(np.diff(ye), np.diff(xe)).astype(np.float32)
+    if acc.ndim == 3:
+        cnt = cnt[..., None]
+    return np.clip(np.rint(acc / cnt), 0, 255).astype(np.uint8)
+
+
+def _contour_thumb(xld, size):
+    """Rasterise an XLD contour set ``{"shape": (H, W), "cs": [Nx2 (row, col)]}`` into a small RGB array."""
+    tw, th = size
+    img = np.empty((th, tw, 3), np.uint8)
+    img[:] = (27, 30, 40)
+    shp = xld.get("shape") or (1, 1)
+    H, W = max(int(shp[0]), 1), max(int(shp[1]), 1)
+    sc = (min(tw, th) - 2) / float(max(H, W))
+    oy, ox = (th - sc * H) / 2.0, (tw - sc * W) / 2.0
+    for c in list(xld.get("cs") or [])[:200]:
+        try:
+            pts = np.asarray(c, np.float64)
+        except Exception:
+            continue
+        if pts.ndim != 2 or pts.shape[0] < 2 or pts.shape[1] < 2 or not np.isfinite(pts[:, :2]).all():
+            continue
+        y = pts[:, 0] * sc + oy
+        x = pts[:, 1] * sc + ox
+        seg = np.hypot(np.diff(x), np.diff(y))
+        t = np.concatenate([[0.0], np.cumsum(seg)])
+        if t[-1] <= 0:
+            continue
+        tt = np.linspace(0.0, t[-1], int(t[-1] * 2) + 2)
+        xi = np.rint(np.interp(tt, t, x)).astype(int)
+        yi = np.rint(np.interp(tt, t, y)).astype(int)
+        ok = (xi >= 0) & (xi < tw) & (yi >= 0) & (yi < th)
+        img[yi[ok], xi[ok]] = (23, 184, 166)
+    return img
+
+
+def _result_thumbnail(val, size=_STAGE_THUMB):
+    """``(thumb, kind)`` for a stage result: *thumb* is a small uint8 RGB array (or None when the
+    result has no picture: a table, a scalar, a series, a 4-D array), *kind* a short word
+    (``image`` / ``color`` / ``region`` / ``flow2d`` / ``contour`` / ``table`` / ``feature`` /
+    ``series`` / ``array`` / ``other``). Reads the value only; nothing is computed."""
+    try:
+        if isinstance(val, dict):
+            if "cs" in val:
+                return _contour_thumb(val, size), "contour"
+            return None, "table"
+        if isinstance(val, np.ndarray):
+            if val.size == 0:
+                return None, "other"
+            if _is_flow2d(val) or val.dtype.kind == "c" or (val.ndim == 3 and val.shape[2] in (1, 4)):
+                prev = result_preview(val, max_px=96)
+                if prev is not None and prev.get("image") is not None:
+                    img = np.clip(np.nan_to_num(np.asarray(prev["image"], np.float64)), 0, 1)
+                    u8 = np.rint(img * 255.0).astype(np.uint8)
+                    u8 = _shrink_u8(u8, size)
+                    return (np.repeat(u8[..., None], 3, 2) if u8.ndim == 2 else u8), (
+                        "flow2d" if _is_flow2d(val) else "image")
+                return None, "other"
+            if val.ndim == 2 or (val.ndim == 3 and val.shape[2] == 3):
+                kind = "color" if val.ndim == 3 else ("region" if _cheap_is_binary(val) else "image")
+                a = np.nan_to_num(np.asarray(val, np.float64), nan=0.0, posinf=1.0, neginf=0.0)
+                u8 = np.rint(np.clip(a, 0.0, 1.0) * 255.0).astype(np.uint8)
+                u8 = _shrink_u8(u8, size)
+                return (np.repeat(u8[..., None], 3, 2) if u8.ndim == 2 else u8), kind
+            if val.ndim == 1 and val.size > 1:
+                return None, "series"
+            if val.ndim >= 3:
+                return None, "array"
+            return None, "feature"
+        if isinstance(val, (int, float, np.integer, np.floating)):
+            return None, "feature"
+    except Exception:                      # a thumbnail is a convenience: never break the list
+        return None, "other"
+    return None, "other"
+
+
+def _label_count(val):
+    """Number of regions of a binary result (8-connected) or of labels of an integer label image;
+    None for anything else (a grey image, a table, ...)."""
+    if not isinstance(val, np.ndarray) or val.ndim != 2 or val.size == 0 or val.dtype.kind == "c":
+        return None
+    if _cheap_is_binary(val):
+        from scipy import ndimage
+        return int(ndimage.label(val > 0.5, structure=np.ones((3, 3), int))[1])
+    fin = val[np.isfinite(val)]
+    if fin.size and fin.min() >= 0 and fin.max() > 1 and np.all(fin == np.rint(fin)):
+        return int(np.unique(fin[fin > 0]).size)
+    return None
+
+
+def _image_stats(val):
+    """``(mean, sigma, min, max)`` over the finite values of a real array, or None."""
+    if not isinstance(val, np.ndarray) or val.size == 0 or val.dtype.kind not in "biuf":
+        return None
+    a = np.asarray(val, np.float64)
+    a = a[np.isfinite(a)]
+    if a.size == 0:
+        return None
+    return float(a.mean()), float(a.std()), float(a.min()), float(a.max())
+
+
+def _table_shape(val):
+    """``(rows, cols)`` of a result table (dict): cols = fields, rows = the longest array field."""
+    rows = 1
+    for v in val.values():
+        try:
+            arr = np.asarray(v)
+            if arr.ndim >= 1:
+                rows = max(rows, int(arr.shape[0]))
+        except Exception:
+            continue
+    return rows, len(val)
+
+
+def _stage_delta_summary(before, after):
+    """One line saying what a stage did, by the kind of its result: region / label results give
+    the object count before -> after, images ``mean / sigma / min / max`` before -> after, a table
+    its rows and columns, a contour set its contour count. Reads values only. Headless."""
+    na = _label_count(after)
+    if na is not None:
+        nb = _label_count(before)
+        return tr("regions %s → %s") % ("–" if nb is None else nb, na)
+    if isinstance(after, dict):
+        if "cs" in after:
+            nb = len(before.get("cs", [])) if isinstance(before, dict) and "cs" in before else None
+            return tr("contours %s → %s") % ("–" if nb is None else nb, len(after.get("cs", [])))
+        rows, cols = _table_shape(after)
+        return tr("table: %d rows × %d cols") % (rows, cols)
+    sa = _image_stats(after)
+    if sa is not None and isinstance(after, np.ndarray) and after.ndim in (2, 3):
+        sb = _image_stats(before)
+        if sb is None:
+            return "mean %s  σ %s  min %s  max %s" % tuple(fmt_num(x, 4) for x in sa)
+        return " · ".join("%s %s → %s" % (lab, fmt_num(x, 4), fmt_num(y, 4))
+                               for lab, x, y in zip(("mean", "σ", "min", "max"), sb, sa))
+    if after is None:
+        return ""
+    try:
+        va = float(np.asarray(after).reshape(-1)[0])
+        vb = None
+        try:
+            vb = float(np.asarray(before).reshape(-1)[0]) if before is not None and np.size(before) == 1 else None
+        except (TypeError, ValueError):
+            vb = None
+        return tr("value %s → %s") % ("–" if vb is None else fmt_num(vb, 4), fmt_num(va, 4))
+    except (TypeError, ValueError, IndexError):
+        return type(after).__name__
+
+
+class _Snap(list):
+    """An undo snapshot (a list of stages) that remembers what the edit was (``label``)."""
+    label = None
+
+
+#: how many pinned snapshots a project keeps (the oldest is dropped past this)
+MAX_PINS = 2
+
+
+class PinnedSnapshot:
+    """A frozen "this is how it looked" record (Studio slice 3): the stage list (bypass flags included),
+    the input reference, the display settings and the final output.
+
+    The output is ONE private copy made at pin time and marked read-only
+    (``array.flags.writeable is False``), so no later run, cache reuse or in-place op can change it.
+    ``stages`` is a tuple of private stage copies; :meth:`stage_copies` hands out fresh ones.
+    The arrays are never saved: :meth:`to_dict` writes the stages, input, display and note, and the
+    array is recomputed on load (see :meth:`PipelineModel.recompute_pins`)."""
+
+    def __init__(self, stages, input_ref=None, display=None, note="", img_ver=0):
+        self.stages = tuple(_copy_stage(s) for s in stages)
+        self.input = dict(input_ref) if input_ref else None
+        self.display = dict(display or {})
+        self.note = str(note or "")
+        self.img_ver = img_ver              # the in-session image version it was made under (see diff_pin)
+        self.array = None                   # read-only ndarray of the final output, or None
+        self.valid = None                   # assess_validity of that output
+        self.reasons = []
+        self.error = None                   # why the array could not be (re)computed, else None
+        self.kind = None                    # "image" / "other" (a result that is not a picture)
+
+    def stage_copies(self):
+        return [_copy_stage(s) for s in self.stages]
+
+    def freeze(self, value):
+        """Take one private read-only copy of *value* as the pinned output."""
+        self.valid, self.reasons = assess_validity(value)
+        if isinstance(value, np.ndarray):
+            a = np.array(value, copy=True)
+            a.flags.writeable = False
+            self.array, self.kind = a, "image"
+        else:
+            self.array, self.kind = None, "other"
+        self.error = None
+
+    def to_dict(self):
+        return {"stages": [[st[0], st[1], st[2]] + ([True] if _is_bypassed(st) else []) for st in self.stages],
+                "input": dict(self.input) if self.input else None,
+                "display": dict(self.display), "note": self.note}
+
+
 class PipelineModel:
-    """An ordered list of (op, a, b) stages applied to a base image."""
+    """An ordered list of (op, a, b) stages applied to a base image.
+
+    Each stage's result is cached, keyed by the stage prefix (op, a, b of every stage up to
+    and including it) and the base-image version; a knob drag on stage *i* recomputes only
+    stages *i..* (see :meth:`result_upto`)."""
 
     def __init__(self, image=None):
-        self.image = None if image is None else np.asarray(image, np.float64)
+        self._change_callback = None
+        self._img_ver = 0
+        self._cache: list = []                # [(stage_key, value, ms), ...] one entry per stage, prefix-valid
+        self._ctx = None                      # (image version, error policy, fast flag) the cache was built under
+        self._fresh: set = set()              # stage indices computed since acknowledge() (UI marker)
+        self._last = (0, -1)                  # (stages served from cache, last index reached) of the last call
+        self._fail = None                     # (stage index, stage key, image version, exception) of the last failed run
+        self._thumbs: dict = {}               # stage index -> (image version, stage key, small uint8 thumb or None, kind)
+        self._image = None if image is None else np.asarray(image, np.float64)
         self._stages: list[list] = []         # [ [name, a, b], ... ]
         #: display / config directive lines (dev_* / set_system / disp_*) that belong
         #: to the program but are not stages; persisted in to_dict() when non-empty
         self.directives: list[str] = []
+        #: path of the input file the window loaded (set by the window; saved as "input" in to_dict)
+        self.input_path = None
+        #: the "input" reference read by the last load_dict (None for files without one)
+        self.input_ref = None
+        #: pinned snapshots (Studio slice 3), oldest first, at most MAX_PINS; saved under "pinned"
+        self.pins: list = []
+        #: the snapshot the last :meth:`pin` call pushed out (None if none was dropped)
+        self.last_dropped_pin = None
+        self._in_ref_cache = None             # (input path, image version, reference) of the current input
+        self.displayed_generation = 0
+        self.displayed_result = None
+        self.applied_run_results = 0
+        self._displayed_stage_results = {}
+
+    def _apply_worker_result(self, snapshot, stage_index, value, ms):
+        """Accept a worker value on the GUI thread; callers already checked its generation."""
+        gen = snapshot["generation"]
+        self.displayed_generation = gen
+        self.displayed_result = value
+        self._displayed_stage_results[stage_index] = (gen, value)
+        self.applied_run_results += 1
+        current = (self._img_ver, tuple(_stage_key(s) for s in self.stages))
+        if snapshot["token"] != current:
+            return False
+        if stage_index == 0:
+            self._cache.clear()
+        if stage_index == len(self._cache):
+            key = _stage_key(self.stages[stage_index])
+            self._cache.append((key, value, round(float(ms), 1)))
+            self._fresh.add(stage_index)
+            self._ctx = self._context()
+        return True
+
+    @property
+    def image(self):
+        return self._image
+
+    @image.setter
+    def image(self, value):
+        self._image = None if value is None else np.asarray(value, np.float64)
+        self._img_ver += 1                    # any new base image drops every cached stage
+        self._cache.clear(); self._fresh.clear()
+        self._notify_changed()
 
     @property
     def stages(self):
@@ -398,27 +988,224 @@ class PipelineModel:
         # JSON lists, undo snapshots, recipes) becomes mutable [name, a, b] lists, so
         # set_knobs / knob drags can never hit "'tuple' does not support item assignment".
         self._stages = [_normalise_stage(s) for s in (value or [])]
+        self._thumbs.clear()                  # a new pipeline: nothing was computed for these stages before
+        self._invalidate(0)
+        self._notify_changed()
+
+    def _notify_changed(self):
+        callback = getattr(self, "_change_callback", None)
+        if callback is not None:
+            callback()
 
     def set_image(self, arr):
-        self.image = np.asarray(arr, np.float64)
+        self.image = arr
+
+    # -- stage cache ------------------------------------------------------- #
+    def _invalidate(self, i):
+        """Drop the cached results of stage *i* and everything after it (earlier ones stay)."""
+        i = max(0, int(i))
+        del self._cache[i:]
+        self._fresh = {k for k in self._fresh if k < i}
+
+    def cache_len(self):
+        """How many stage results are cached (never more than the number of stages)."""
+        return len(self._cache)
+
+    def acknowledge(self):
+        """The UI has shown which stages were recomputed: forget that marker."""
+        self._fresh = set()
+
+    def cache_status(self):
+        """Per stage, for the LAST :meth:`result_upto` call: ``"cached"`` (served from the cache),
+        ``"computed"`` (run in that call) or ``"pending"`` (beyond what that call needed and not cached)."""
+        hit, last = self._last
+        out = []
+        for i in range(len(self._stages)):
+            if i <= last:
+                out.append("cached" if i < hit else "computed")
+            else:
+                out.append("cached" if i < len(self._cache) else "pending")
+        return out
+
+    @property
+    def last_cache_hits(self):
+        """``(True, True, False, ...)``: per stage the last call reached, whether the cache served it."""
+        hit, last = self._last
+        return tuple(i < hit for i in range(last + 1))
+
+    def stage_marks(self):
+        """Per stage for the stage list: ``"computed"`` if it was recomputed since :meth:`acknowledge`,
+        ``"cached"`` if a valid cached result exists, else ``"pending"``."""
+        return ["computed" if i in self._fresh else ("cached" if i < len(self._cache) else "pending")
+                for i in range(len(self._stages))]
+
+    def _context(self):
+        return (self._img_ver, api._policy(None), api._fast_on(None))
+
+    def _ensure(self, idx):
+        """Make ``self._cache[idx]`` valid, running only the stages the cache cannot serve."""
+        stages = self._stages
+        idx = min(idx, len(stages) - 1)
+        n = idx + 1
+        ctx = self._context()
+        if ctx != self._ctx:
+            self._cache.clear(); self._fresh.clear(); self._ctx = ctx
+        # the longest cached prefix whose keys still equal the current stages (also catches
+        # edits that bypassed set_knobs, e.g. ``model.stages[i][1] = x``)
+        v = 0
+        lim = min(len(self._cache), len(stages))
+        while v < lim and self._cache[v][0] == _stage_key(stages[v]):
+            v += 1
+        self._invalidate(v)
+        hit = min(v, n)
+        self._last = (hit, idx)
+        if v >= n:
+            return
+        policy = ctx[1]
+        fast = api._fast_on(None)
+        # a bypassed stage is not prepared or run: it hands its input on unchanged
+        active = [k for k in range(n) if not _is_bypassed(stages[k])]
+        norm = ops_ = ()
+        if active:
+            try:
+                base, norm, ops_ = api._prepare_pipeline(self._image, [tuple(stages[k][:3]) for k in active],
+                                                         0.5, 0.5, policy)
+            except Exception as e:
+                self._note_failure(self._first_bad_prefix(active, policy, v), e)
+                raise
+        else:
+            base = self._image
+        pos = {k: j for j, k in enumerate(active)}
+        prev = base if v == 0 else self._cache[v - 1][1]
+        import time
+        for k in range(v, n):
+            if k not in pos:                                   # bypassed: same object, no copy, no time
+                self._cache.append((_stage_key(stages[k]), prev, 0.0))
+                self._fresh.add(k)
+                continue
+            j = pos[k]
+            steps = api._pipeline_steps(prev, [norm[j]], [ops_[j]], True, policy, fast, entry=(j == 0))
+            t0 = time.perf_counter()
+            try:
+                val = next(steps)
+            except StopIteration:
+                break
+            except Exception as e:
+                self._note_failure(k, e)
+                raise
+            ms = round((time.perf_counter() - t0) * 1000.0, 1)
+            self._cache.append((_stage_key(stages[k]), val, ms))
+            self._fresh.add(k)
+            prev = val
+
+    def _first_bad_prefix(self, active, policy, v):
+        """Index of the first stage whose prefix the pre-run checks refuse (error path only; runs nothing)."""
+        for j in range(len(active)):
+            try:
+                api._prepare_pipeline(self._image, [tuple(self._stages[k][:3]) for k in active[:j + 1]],
+                                      0.5, 0.5, policy)
+            except Exception:
+                return active[j]
+        return active[-1]
+
+    def _note_failure(self, k, exc):
+        self._fail = (k, tuple(_stage_key(x) for x in self._stages[:k + 1]), self._img_ver, exc)
+
+    def _live_failure(self):
+        """``(stage index, exception)`` of the last failed run if it still describes the current stages, else None."""
+        f = self._fail
+        if f is None:
+            return None
+        k, keys, ver, exc = f
+        st = self._stages
+        if ver != self._img_ver or k >= len(st) or tuple(_stage_key(x) for x in st[:k + 1]) != keys:
+            return None
+        return k, exc
+
+    def _is_fresh(self, i):
+        """True if stage *i* has a cached result that is valid for the current stages (reads only)."""
+        stages = self._stages
+        return (0 <= i < len(stages) and self._ctx == self._context() and i < len(self._cache)
+                and all(self._cache[j][0] == _stage_key(stages[j]) for j in range(i + 1)))
+
+    def cached_result(self, i):
+        """The cached value after stage *i* (``-1`` = the base image), or None when it is not cached
+        (never computed, or computed with other knobs). Reads only: nothing is run."""
+        if i < 0:
+            return self._image
+        return self._cache[i][1] if self._is_fresh(i) else None
+
+    def cached_times(self):
+        """Per stage ms of the cached run, None where nothing valid is cached. Runs nothing."""
+        return [self._cache[i][2] if self._is_fresh(i) else None for i in range(len(self._stages))]
+
+    def cached_step_states(self):
+        """Like :meth:`step_states` but **from the cache only**: a stage with a valid cached result gets the
+        same inspection / ``ran`` / ``valid`` / ``reasons``; a stage that failed on the last run (and every
+        stage after it) an ``error`` state; every other stage ``state=None`` with ``status`` ``"stale"``
+        (computed earlier with other knobs) or ``"uncomputed"``. Runs nothing."""
+        out = []
+        live = self._live_failure()
+        for i, st in enumerate(self._stages):
+            op, a, b = st
+            pv = self.stage_preview(i)
+            state = None
+            if live is not None and i >= live[0]:
+                state = {"kind": "error", "message": str(live[1]), "ran": False, "valid": None, "reasons": []}
+            elif pv["status"] == "ready":
+                val = self._cache[i][1]
+                state = inspect_result(val)
+                valid, reasons = assess_validity(val)
+                state.update(ran=True, valid=valid, reasons=reasons)
+            out.append({"index": i, "op": op, "a": a, "b": b, "state": state,
+                        "status": "error" if (state and state.get("kind") == "error") else pv["status"],
+                        "bypass": _is_bypassed(st)})
+        return out
 
     def add_stage(self, name, a=0.5, b=0.5):
         op = api.find_op(name)
         if op is None:
             raise KeyError(name)
-        self.stages.append([op.name, float(a), float(b)])     # canonical name (alias ok)
+        self.stages.append(_normalise_stage([op.name, float(a), float(b)]))     # canonical name (alias ok)
+        self._notify_changed()
         return len(self.stages) - 1
 
     def remove_stage(self, i):
         del self.stages[i]
+        self._invalidate(i)
+        self._notify_changed()
 
     def move_stage(self, i, j):
         self.stages.insert(j, self.stages.pop(i))
+        self._invalidate(min(i, j))
+        self._notify_changed()
 
     def duplicate_stage(self, i):
         """Insert a copy of stage i right after it; return the new stage's index."""
-        self.stages.insert(i + 1, list(self.stages[i]))
+        self.stages.insert(i + 1, _copy_stage(self.stages[i]))
+        self._invalidate(i + 1)
+        self._notify_changed()
         return i + 1
+
+    def set_bypass(self, i, flag=True):
+        """Switch stage *i* off (``True``: it passes its input through unchanged) or on again.
+
+        Not a removal: the stage keeps its place and knobs. The flag is part of the cache key, so
+        the stage and everything after it is recomputed. Returns the new flag."""
+        st = self.stages[i]
+        if not isinstance(st, _Stage):
+            st = self.stages[i] = _normalise_stage(st)
+        st.bypass = bool(flag)
+        self._invalidate(i)
+        self._notify_changed()
+        return st.bypass
+
+    def toggle_bypass(self, i):
+        """Flip the bypass flag of stage *i*; returns the new flag."""
+        return self.set_bypass(i, not _is_bypassed(self.stages[i]))
+
+    def is_bypassed(self, i):
+        return _is_bypassed(self.stages[i])
 
     def set_knobs(self, i, a=None, b=None):
         st = self.stages[i]
@@ -428,6 +1215,8 @@ class PipelineModel:
             st[1] = float(a)
         if b is not None:
             st[2] = float(b)
+        self._invalidate(i)                          # stage i and later; earlier results stay
+        self._notify_changed()
 
     def load_recipe(self, name):
         """Replace the pipeline with a named sample recipe (see `recipes`)."""
@@ -437,13 +1226,16 @@ class PipelineModel:
         self.stages = [[op, float(a), float(b)] for (op, a, b) in st]
 
     def result_upto(self, idx):
-        """The value after applying stages[0 .. idx] (idx = -1 -> the raw image)."""
+        """The value after applying stages[0 .. idx] (idx = -1 -> the raw image).
+
+        Reuses the longest cached prefix and computes only the remaining stages. A stage that
+        raises leaves the earlier stages cached and re-raises the same error on the next call."""
         if self.image is None:
             return None
         if idx < 0 or not self.stages:
             return self.image
-        prefix = [tuple(s) for s in self.stages[: idx + 1]]
-        return api.run_pipeline(self.image, prefix)
+        self._ensure(idx)
+        return self._cache[min(idx, len(self._stages) - 1)][1]
 
     def output(self):
         return self.result_upto(len(self.stages) - 1)
@@ -453,41 +1245,182 @@ class PipelineModel:
         an inspection of the intermediate result after that stage. This is what a
         step-through debugger shows — the object/variable state at every step.
 
+        Each state also carries ``ran`` (no exception), ``valid`` (True / False / None =
+        not judged, see :func:`assess_validity`) and ``reasons``; a result with non-finite
+        values is ``ran=True, valid=False`` — a warning, not an error.
+
         A stage that raises records an ``{"kind": "error"}`` state instead of
-        aborting the whole list, so one bad stage does not blank the rest."""
+        aborting the whole list, so one bad stage does not blank the rest. The stages are
+        walked forward once (each runs at most once; cached ones not at all)."""
         out = []
+        err = None
+        if self.image is not None and self.stages:
+            try:
+                self._ensure(len(self.stages) - 1)
+            except Exception:                            # per-stage below says where it broke
+                pass
         for i in range(len(self.stages)):
             op, a, b = self.stages[i]
             try:
-                state = inspect_result(self.result_upto(i))
+                if err is not None:
+                    raise err
+                val = self.result_upto(i)
+                state = inspect_result(val)
+                valid, reasons = assess_validity(val)
+                state.update(ran=True, valid=valid, reasons=reasons)
             except Exception as e:                       # this op failed on its input
-                state = {"kind": "error", "message": str(e)}
-            out.append({"index": i, "op": op, "a": a, "b": b, "state": state})
+                err = e if err is None else err
+                state = {"kind": "error", "message": str(e), "ran": False, "valid": None, "reasons": []}
+            out.append({"index": i, "op": op, "a": a, "b": b, "state": state,
+                        "bypass": _is_bypassed(self.stages[i])})
         return out
+
+    def stage_preview(self, i):
+        """What the stage list may show for stage *i*, **without computing anything**.
+
+        ``{"status", "thumb", "kind", "bypass"}``. ``status`` is ``"ready"`` (a valid cached result
+        exists: *thumb* is its small uint8 RGB picture, or None for a table / scalar; *kind* says
+        what it is), ``"stale"`` (it was computed before, but with other knobs / another image /
+        another bypass: no picture is given, so an old one is never shown as if it were current) or
+        ``"uncomputed"`` (never computed). Only the small thumbnail is kept, never a copy of the array."""
+        stages = self._stages
+        if not 0 <= i < len(stages):
+            raise IndexError(i)
+        for k in [k for k in self._thumbs if k >= len(stages)]:
+            del self._thumbs[k]
+        key = _stage_key(stages[i])
+        byp = _is_bypassed(stages[i])
+        if self._is_fresh(i):
+            rec = self._thumbs.get(i)
+            if rec is None or rec[0] != self._img_ver or rec[1] != key:
+                th, kind = _result_thumbnail(self._cache[i][1])
+                rec = self._thumbs[i] = (self._img_ver, key, th, kind)
+            return {"status": "ready", "thumb": rec[2], "kind": rec[3], "bypass": byp}
+        rec = self._thumbs.get(i)
+        if rec is not None and rec[1][0] == key[0]:
+            return {"status": "stale", "thumb": None, "kind": rec[3], "bypass": byp}
+        return {"status": "uncomputed", "thumb": None, "kind": None, "bypass": byp}
+
+    def stage_previews(self):
+        """:meth:`stage_preview` for every stage (still computes nothing)."""
+        return [self.stage_preview(i) for i in range(len(self._stages))]
+
+    def thumb_bytes(self):
+        """Bytes held by the thumbnail store (the small arrays only)."""
+        return int(sum(r[2].nbytes for r in self._thumbs.values() if r[2] is not None))
+
+    def run_variants(self, i, which, knobs):
+        """Run stage *i* ALONE with each knob value in *knobs* (knob ``which`` = ``"a"`` | ``"b"``),
+        starting from the cached output of stage *i-1*; the other knob keeps its current value.
+
+        Returns ``[(value, None) | (None, exception), ...]``, one per knob value. Exactly one call of
+        stage *i*'s op per value and none of any other stage (the prefix comes from the cache and is
+        only computed if it is missing). The stage list and the cache are not touched, so the user's
+        pipeline is exactly as it was. A bypassed stage cannot be varied (it runs nothing)."""
+        stages = self._stages
+        if self._image is None or not 0 <= i < len(stages):
+            raise IndexError(i)
+        if which not in ("a", "b"):
+            raise ValueError("which must be 'a' or 'b', got %r" % (which,))
+        if _is_bypassed(stages[i]):
+            raise ValueError("stage %d is bypassed: switch it on to try its values" % (i + 1))
+        active_before = any(not _is_bypassed(stages[k]) for k in range(i))
+        prefix = self.result_upto(i - 1) if active_before else None
+        policy, fast = api._policy(None), api._fast_on(None)
+        out = []
+        for kn in knobs:
+            a, b = float(stages[i][1]), float(stages[i][2])
+            if which == "a":
+                a = float(kn)
+            else:
+                b = float(kn)
+            try:
+                base, norm, ops_ = api._prepare_pipeline(self._image, [(stages[i][0], a, b)], 0.5, 0.5, policy)
+                start = prefix if active_before else base
+                steps = api._pipeline_steps(start, norm, ops_, True, policy, fast, entry=not active_before)
+                out.append((next(steps), None))
+            except Exception as e:                       # one bad candidate does not blank the others
+                out.append((None, e))
+        return out
+
+    # -- pinned snapshots (Studio slice 3) ----------------------------------- #
+    def _current_input_ref(self):
+        """The reference (path + sha256) of the current input file, or None when the input is not a file.
+        Cached per (path, image version): the file is hashed once, not on every refresh."""
+        if not self.input_path:
+            return None
+        c = self._in_ref_cache
+        if c is not None and c[0] == self.input_path and c[1] == self._img_ver:
+            return c[2]
+        try:
+            ref = input_reference(self.input_path, self._image)
+        except OSError:
+            ref = None
+        self._in_ref_cache = (self.input_path, self._img_ver, ref)
+        return ref
+
+    def pin(self, note="", display=None):
+        """Freeze the current pipeline and its final output as a :class:`PinnedSnapshot` (appended;
+        past :data:`MAX_PINS` the oldest is dropped and kept in :attr:`last_dropped_pin`)."""
+        if self._image is None:
+            raise ValueError("there is no image to pin")
+        out = self.output()                              # may raise: a pipeline that fails cannot be pinned
+        p = PinnedSnapshot(self._stages, self._current_input_ref(), display, note, self._img_ver)
+        p.freeze(out)
+        self.last_dropped_pin = None
+        self.pins.append(p)
+        while len(self.pins) > MAX_PINS:
+            self.last_dropped_pin = self.pins.pop(0)
+        return p
+
+    def drop_pin(self, k):
+        """Remove and return the pinned snapshot at position *k*."""
+        return self.pins.pop(k)
+
+    def diff_pin(self, pin):
+        """What changed between *pin* (A) and the current pipeline (B): see :func:`diff_pipelines`."""
+        cur = self._current_input_ref()
+        if pin.input and cur:
+            changed = pin.input.get("sha256") != cur.get("sha256")
+        else:
+            changed = pin.img_ver != self._img_ver       # no file to compare: a new image object counts
+        return diff_pipelines(pin.stages, self._stages, pin.input, cur, input_changed=changed)
+
+    def recompute_pins(self):
+        """Recompute every pinned output from its stages and the CURRENT image (arrays are not saved).
+
+        Fail-closed: if the snapshot knows the input file it was made from and the current input file
+        is a different one, nothing is computed (``pin.error`` says why); a pipeline that fails sets
+        ``pin.error`` too. The pin is kept either way, so the Problems list can say "cannot recompute"."""
+        cur = self._current_input_ref()
+        for p in self.pins:
+            p.error = None
+            if p.input and cur and p.input.get("sha256") != cur.get("sha256"):
+                p.array, p.error = None, "the input image is not the one this snapshot was made from"
+                continue
+            try:
+                if self._image is None:
+                    raise ValueError("there is no input image")
+                m = PipelineModel(self._image)
+                m.stages = p.stage_copies()
+                out = m.output()
+            except Exception as e:
+                p.array, p.error = None, truncate(e, 160)
+                continue
+            p.freeze(out)
+            p.img_ver = self._img_ver
 
     def step_times(self):
-        """Accurate per-stage wall-clock in ms, aligned with self.stages.
-
-        Applies each stage once to the previous stage's result (O(n)), so each number
-        is that stage's own cost — a bottleneck read-out for the pipeline list. Kept
-        separate from step_states (which owns the inspection states) so the correctness
-        path is untouched; a stage that raises records None and stops the timing.
-        """
-        import time
+        """Per-stage wall-clock in ms, aligned with self.stages: the cost of that stage's own
+        (last) computation, kept with its cached result — O(n), no stage is run twice. A stage
+        that raised (and the ones after it) records None."""
         if self.image is None or not self.stages:
             return []
-        out = []
-        img = self.image
-        for st in self.stages:
-            if img is None:
-                out.append(None); continue
-            t0 = time.perf_counter()
-            try:
-                img = api.run_pipeline(img, [tuple(st)])
-                out.append(round((time.perf_counter() - t0) * 1000.0, 1))
-            except Exception:
-                out.append(None); img = None
-        return out
+        try:
+            self._ensure(len(self.stages) - 1)
+        except Exception:
+            pass
+        return [self._cache[i][2] if i < len(self._cache) else None for i in range(len(self.stages))]
 
     def ops_string(self):
         return ",".join(s[0] for s in self.stages)
@@ -495,7 +1428,11 @@ class PipelineModel:
     def export_python(self):
         lines = ["import fullseye, numpy as np", "", "def pipeline(frame):",
                  "    return fullseye.run_pipeline(frame, ["]
-        for name, a, b in self.stages:
+        for st in self.stages:
+            name, a, b = st
+            if _is_bypassed(st):                   # switched off: the script must equal the model output
+                lines.append(f"        # bypassed: {name}")
+                continue
             # full precision (repr), not %.3f: the exported script must run the SAME
             # pipeline as the editor (a 0.12345 knob used to become 0.123 silently)
             lines.append(f"        ({name!r}, {a!r}, {b!r}),")
@@ -503,21 +1440,40 @@ class PipelineModel:
         return "\n".join(lines) + "\n"
 
     def to_dict(self):
-        d = {"fullseye_pipeline": 1, "stages": [[op, a, b] for op, a, b in self.stages]}
+        # a stage is [op, a, b]; a bypassed one adds a 4th element true (key written only when on,
+        # so a file without bypass is byte-identical to what older versions wrote)
+        d = {"fullseye_pipeline": 1,
+             "stages": [[st[0], st[1], st[2]] + ([True] if _is_bypassed(st) else []) for st in self.stages]}
         if self.directives:                          # key only when used: old files stay byte-identical
             d["directives"] = list(self.directives)
+        if self.input_path:                          # the input reference (path as given + sha256 of the file)
+            try:
+                d["input"] = input_reference(self.input_path, self.image)
+            except OSError:
+                pass                                 # unreadable input: save the pipeline without a reference
+        if self.pins:                                # key only when used: old files stay byte-identical
+            d["pinned"] = [p.to_dict() for p in self.pins]
         return d
 
-    def load_dict(self, d):
+    def load_dict(self, d, recompute_pins=True):
         """Replace the pipeline from a saved dict.
 
         The payload is validated into a temporary list first (see
-        :func:`validate_pipeline_dict` / :func:`validate_directives`), so a malformed
-        file raises :class:`ValueError` and leaves the current pipeline untouched."""
+        :func:`validate_pipeline_dict` / :func:`validate_directives` / :func:`validate_pinned`), so a
+        malformed file raises :class:`ValueError` and leaves the current pipeline untouched.
+        Pinned snapshots are restored without their arrays and recomputed from the current image
+        (``recompute_pins=False``: the caller does it once the right image is loaded)."""
         stages = validate_pipeline_dict(d)
         directives = validate_directives(d)
+        pinned = validate_pinned(d)
         self.stages = stages
         self.directives = directives
+        self.input_ref = _valid_input_ref(d.get("input"))    # a malformed "input" is ignored, never fatal
+        self.pins = [PinnedSnapshot(p["stages"], p["input"], p["display"], p["note"], self._img_ver)
+                     for p in pinned]
+        self.last_dropped_pin = None
+        if recompute_pins and self.pins:
+            self.recompute_pins()
 
 
 class PerceptionModel:
@@ -601,6 +1557,11 @@ def _is_binary(a):
     if a.dtype == bool:
         return True
     a = np.asarray(a, dtype=np.float64) if a.dtype.kind in "iu" else a
+    if a.size > 4096:
+        sample = a.reshape(-1)[:4096]
+        finite = sample[np.isfinite(sample)]
+        if np.unique(finite).size > 2:
+            return False
     u = np.unique(a[np.isfinite(a)]) if a.size else a
     return u.size <= 2 and set(np.round(u, 6).tolist()).issubset({0.0, 1.0})
 
@@ -790,7 +1751,58 @@ _IMAGE_SORTS = frozenset({"image2d", "image", "gray", "depth", "mask", "region",
 SAMPLE_TOKEN = "<sample>"
 
 #: データ入力の入手元(表示名は tr で訳す)
-LEDGER_SOURCES = ("sample (synthetic)", "current image", "last result")
+LEDGER_SOURCES = ("sample (synthetic)", "current image", "last result", "CSV file…")
+
+
+def csv_table(path):
+    """Read a CSV as the ledger table representation, without changing the file."""
+    with open(path, encoding="utf-8-sig", newline="") as f:
+        reader = csv.DictReader(f)
+        if not reader.fieldnames or any(not str(x).strip() for x in reader.fieldnames):
+            raise ValueError("CSV needs a non-empty header row")
+        if len(set(reader.fieldnames)) != len(reader.fieldnames):
+            raise ValueError("CSV column names must be unique")
+        rows = list(reader)
+    if not rows:
+        raise ValueError("CSV contains no data rows")
+    return {name: np.asarray([row[name] for row in rows], dtype=object)
+            for name in reader.fieldnames}
+
+
+def csv_header_signature(columns):
+    """Stable signature: column count plus sorted names (row values/path are excluded)."""
+    names = sorted(str(x) for x in columns)
+    raw = json.dumps({"count": len(names), "columns": names}, ensure_ascii=False,
+                     separators=(",", ":"))
+    return "%d:%s" % (len(names), hashlib.sha256(raw.encode("utf-8")).hexdigest())
+
+
+def gauge_rr_data_check(table, mapping):
+    """Return a human check summary; reject missing/unbalanced gauge R&R data."""
+    chosen = {p: mapping.get(p) for p in ("part", "operator", "value")}
+    absent = [p for p, c in chosen.items() if not c or c not in table]
+    if absent:
+        raise ValueError("[gauge_rr:column_assignment_missing] %s" %
+                         (tr("Column assignment missing for: %s") % ", ".join(absent)))
+    cols = {p: np.asarray(table[c], dtype=object).reshape(-1) for p, c in chosen.items()}
+    missing = {p: int(sum(str(v).strip() == "" for v in a)) for p, a in cols.items()}
+    bad = ["%s=%d" % (p, n) for p, n in missing.items() if n]
+    if bad:
+        raise ValueError("[gauge_rr:missing_values] %s" %
+                         (tr("Missing values: %s") % ", ".join(bad)))
+    counts = {}
+    for part, operator in zip(cols["part"], cols["operator"]):
+        key = (str(part), str(operator)); counts[key] = counts.get(key, 0) + 1
+    expected = max(set(counts.values()), key=lambda n: (list(counts.values()).count(n), n))
+    unequal = [(p, o, n) for (p, o), n in sorted(counts.items()) if n != expected]
+    if unequal:
+        groups = ", ".join("part=%s / operator=%s (%d)" % x for x in unequal)
+        raise ValueError("[gauge_rr:unequal_repeats] %s" %
+                         (tr("Unequal repeats per part x operator group; expected %d: %s")
+                          % (expected, groups)))
+    return (tr("%d rows; part: %d distinct; operator: %d distinct; value: 0 missing; "
+               "%d repeats per part x operator group")
+            % (len(cols["part"]), len(set(cols["part"])), len(set(cols["operator"])), expected))
 
 
 def ledger_op_names():
@@ -858,7 +1870,7 @@ def run_ledger_op(op, data, kwargs):
     return out, _time.perf_counter() - t0
 
 
-def ledger_script(op, inputs, kwargs, sample_kw=(), image_path=None):
+def ledger_script(op, inputs, kwargs, sample_kw=(), image_path=None, csv_path=None):
     """窓で走らせた 1 回を、**そのまま走るスクリプト**にする(エディタへ差し込む・コピーする用)。
 
     ``inputs`` はデータ入力ごとの ``(名前, 入手元)``。入手元は ``"sample"``(合成の見本。
@@ -871,7 +1883,9 @@ def ledger_script(op, inputs, kwargs, sample_kw=(), image_path=None):
     """
     sample_kw = set(sample_kw)
     need_sample = any(src == "sample" for _, src in inputs) or bool(sample_kw)
-    head = ["import fullseye as fs"] + (["import opassist"] if need_sample else [])
+    need_csv = any(src == "csv" for _, src in inputs)
+    head = (["import csv"] if need_csv else []) + ["import fullseye as fs"] \
+        + (["import opassist"] if need_sample else [])
     body = []
     if need_sample:
         body.append("_data, _kw = opassist.sample_input(%r)   # synthetic sample: replace with your data" % op)
@@ -884,6 +1898,14 @@ def ledger_script(op, inputs, kwargs, sample_kw=(), image_path=None):
             path = image_path or "your_image.png"
             body.append("img = fs.read_image(%r)" % path.replace("\\", "/"))
             names.append("img")
+        elif src == "csv":
+            path = (csv_path or "your_table.csv").replace("\\", "/")
+            body.extend([
+                "with open(%r, encoding='utf-8-sig', newline='') as _f:" % path,
+                "    _rows = list(csv.DictReader(_f))",
+                "table = {name: [row[name] for row in _rows] for name in _rows[0]}",
+            ])
+            names.append("table")
         else:
             names.append("result")
     args = names + [("%s=_kw[%r]" % (k, k)) if k in sample_kw else ("%s=%r" % (k, v))
@@ -974,7 +1996,9 @@ def _describe_value(v) -> str:
         if v.dtype.kind in "biuf":
             fin = np.isfinite(v)
             rng = "[%s, %s]" % (fmt_num(np.min(v[fin])), fmt_num(np.max(v[fin]))) if fin.any() else "[non-finite]"
-            return "array %s %s %s" % (fmt_shape(v.shape), v.dtype, rng)
+            nf = int(v.size - np.count_nonzero(fin))
+            return "array %s %s %s%s" % (fmt_shape(v.shape), v.dtype, rng,
+                                         " (%d non-finite)" % nf if nf else "")   # NaN / Inf are never hidden
         if v.dtype.kind == "c":
             return "array %s complex |max| %s" % (fmt_shape(v.shape), fmt_num(np.abs(v).max()))
         return "array %s %s" % (fmt_shape(v.shape), v.dtype)
@@ -1365,14 +2389,30 @@ def stage_knob_text(name, a, b):
     return ", ".join(parts)
 
 
-def apply_display(val, mode, base=None, draw=None):
+def _stretch(val, vmin, vmax):
+    """Linear map of *val* so that ``vmin`` -> 0 and ``vmax`` -> 1 (float64; non-finite -> 0 / 1 / 0)."""
+    a = np.asarray(val, np.float64)
+    span = float(vmax) - float(vmin)
+    if not (math.isfinite(span) and span > 0):
+        span = 1.0
+    return np.nan_to_num((a - float(vmin)) / span, nan=0.0, posinf=1.0, neginf=0.0)
+
+
+def apply_display(val, mode, base=None, draw=None, vmin=None, vmax=None):
     """Map a 2-D result to an RGB image for the chosen display mode: 'gray', any
     false-colour palette name, 'shaded relief', 'height (color)', or 'region overlay'
     (blend a binary region onto *base* — HDevelop dev_display of a region on the
     current image). *draw* (optional) is the HDevelop dev_set_draw/dev_set_color/
     dev_set_line_width style {mode:'fill'|'margin', color, line_width, alpha} for the
     region overlay; None = the default amber fill. Non-2-D or already-color results
-    are returned unchanged. (Headless, testable.)"""
+    are returned unchanged. *vmin* / *vmax* (both given) fix the display range: the value
+    is stretched so ``vmin`` -> black and ``vmax`` -> white BEFORE the mode is applied, which is
+    how several pictures (the knob strip, the A / B panes) are shown on one common scale; a
+    binary region in 'region overlay' mode is left alone. (Headless, testable.)"""
+    if (vmin is not None and vmax is not None and isinstance(val, np.ndarray) and val.dtype.kind in "biuf"
+            and (val.ndim == 2 or (val.ndim == 3 and val.shape[2] == 3))
+            and not (mode == "region overlay" and val.ndim == 2 and _is_binary(val))):
+        val = _stretch(val, vmin, vmax)
     if not isinstance(val, np.ndarray) or val.ndim != 2:
         return val
     if mode == "region overlay":
@@ -1391,6 +2431,265 @@ def apply_display(val, mode, base=None, draw=None):
     if mode in imgio.COLORMAPS:
         return imgio.apply_cmap(val, name=mode)
     return val
+
+
+# --------------------------------------------------------------------------- #
+# Studio slice 3 (Qt-free helpers): candidate knob values for the strip, one shared display range,
+# the A / B difference image, the "what changed" list, and the view-sync group.
+# --------------------------------------------------------------------------- #
+def shared_display_range(*arrays):
+    """``(lo, hi)``: the finite min / max over every ndarray given (non-arrays are skipped), so several
+    pictures can be shown on ONE scale. ``None`` when there is nothing to measure; a flat input gives
+    ``(lo, lo + 1)``."""
+    lo, hi = math.inf, -math.inf
+    for a in arrays:
+        if not isinstance(a, np.ndarray) or a.dtype.kind not in "biuf" or a.size == 0:
+            continue
+        f = a[np.isfinite(a)] if a.dtype.kind == "f" else a
+        if f.size:
+            lo, hi = min(lo, float(f.min())), max(hi, float(f.max()))
+    if not math.isfinite(lo):
+        return None
+    return (lo, hi) if hi > lo else (lo, lo + 1.0)
+
+
+def crop_roi(val, roi):
+    """The part of *val* (a 2-D / 3-channel picture) inside the region of interest ``(x0, y0, x1, y1)``
+    (pixel columns / rows, clipped to the picture); *val* itself when there is no region, no picture or the
+    region misses it."""
+    if roi is None or not isinstance(val, np.ndarray) or val.ndim not in (2, 3):
+        return val
+    x0, y0, x1, y1 = roi
+    h, w = val.shape[:2]
+    x0, y0, x1, y1 = max(0, int(x0)), max(0, int(y0)), min(w, int(x1)), min(h, int(y1))
+    if x1 - x0 < 1 or y1 - y0 < 1:
+        return val
+    return val[y0:y1, x0:x1]
+
+
+def _window_values(cur, delta, half, lo, hi):
+    """``2 * half + 1`` values ``cur + o * delta`` around *cur* (``o`` = -half .. half), the whole row
+    slid by whole steps (so *cur* itself stays in it) when one end would leave ``[lo, hi]``, and any
+    value that still sticks out dropped: a knob at its end still gets a full strip where the range allows."""
+    eps = 1e-9 * max(1.0, abs(delta))
+    offs = list(range(-half, half + 1))
+    while cur + offs[0] * delta < lo - eps and cur + (offs[-1] + 1) * delta <= hi + eps:
+        offs = [o + 1 for o in offs]
+    while cur + offs[-1] * delta > hi + eps and cur + (offs[0] - 1) * delta >= lo - eps:
+        offs = [o - 1 for o in offs]
+    return [cur + o * delta for o in offs if lo - eps <= cur + o * delta <= hi + eps]
+
+
+def knob_candidates(spec, knob, n=3):
+    """Knob values to try around *knob* (0..1) for a knob with param spec *spec*: the list the knob strip shows.
+
+    ``n`` is 3 or 5 (anything else is 3). Returns ``[{"knob", "text", "current"}, ...]`` in ascending
+    order, ``text`` being the value in the knob's own unit. Continuous knob: steps of the spec's
+    ``step`` or 1/10 of its range, whichever is larger (geometric steps when the spec maps on a
+    log scale); int: whole steps; choice: the neighbouring choices; bool: both. Never outside the
+    allowed range (the window slides back in); an unused knob has no candidates. The entry marked
+    ``current`` carries the knob exactly as it is."""
+    PS = param_specs
+    spec = spec or PS.GENERIC_FLOAT
+    kind = spec.get("kind", "float")
+    n = 5 if int(n) >= 5 else 3
+    half = n // 2
+    try:
+        k0 = float(knob)
+    except (TypeError, ValueError):
+        k0 = 0.0
+    k0 = min(1.0, max(0.0, k0)) if math.isfinite(k0) else 0.0
+    if kind == "unused":
+        return []
+    if kind == "bool":
+        cur = bool(PS.knob_to_display(spec, k0))
+        ks = [0.0, 1.0]
+        return [{"knob": (k0 if bool(PS.knob_to_display(spec, k)) == cur else k),
+                 "text": PS.format_display(spec, k), "current": bool(PS.knob_to_display(spec, k)) == cur}
+                for k in ks]
+    if kind in ("choice", "int"):
+        lo, hi = int(spec.get("min", 0)), int(spec.get("max", 0))
+        d = int(PS.knob_to_display(spec, k0))
+        step = 1 if kind == "choice" else max(1, int(round((hi - lo) / 10.0)))
+        vals = sorted({int(round(v)) for v in _window_values(d, step, half, lo, hi)})
+        items = [(v, k0 if v == d else PS.display_to_knob(spec, v)) for v in vals]
+    else:
+        lo, hi = float(spec.get("min", 0.0)), float(spec.get("max", 1.0))
+        d = float(PS.knob_to_display(spec, k0))
+        if spec.get("map") == "log" and lo > 0 and hi > 0:
+            u0, ulo, uhi = math.log(d), math.log(lo), math.log(hi)
+            delta = (uhi - ulo) / 10.0
+            vals = [math.exp(u) for u in _window_values(u0, delta, half, ulo, uhi)]
+        else:
+            delta = max(float(spec.get("step") or 0.001), abs(hi - lo) / 10.0)
+            vals = _window_values(d, delta, half, min(lo, hi), max(lo, hi))
+        items = [(v, k0 if abs(v - d) <= 1e-12 * max(1.0, abs(d)) else PS.display_to_knob(spec, v))
+                 for v in vals]
+    out, seen = [], set()
+    for _v, kn in items:
+        key = round(kn, 9)
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append({"knob": kn, "text": PS.format_display(spec, kn), "current": abs(kn - k0) <= 1e-12})
+    return out
+
+
+def _gray2d(a):
+    """A float64 ``(h, w)`` view of an image for differencing (a 3-channel image -> luminance)."""
+    a = np.asarray(a, np.float64)
+    return a if a.ndim == 2 else imgio.ensure_gray(a)
+
+
+def difference_image(a, b, kind="absolute"):
+    """The picture of how *b* differs from *a*, as an RGB float image in [0, 1] plus its scale.
+
+    ``kind``: ``"absolute"`` |b - a| on a sequential map; ``"signed"`` b - a on a symmetric diverging
+    map (zero is the neutral middle, + and - are mirror images); ``"ratio"`` log2(b / a) on the same
+    diverging map (doubling and halving are mirror images; pixels where a is 0 or a value is not finite
+    are left black). Returns ``{"image", "scale", "kind"}`` where ``scale`` is the value at the end of
+    the colour bar. Raises :class:`ValueError` when the two are not same-size pictures (fail-closed)."""
+    if not (isinstance(a, np.ndarray) and isinstance(b, np.ndarray) and a.dtype.kind in "biuf"
+            and b.dtype.kind in "biuf"):
+        raise ValueError("no picture to compare")
+    if a.shape != b.shape:
+        raise ValueError("A %s and B %s differ in size" % (fmt_shape(a.shape), fmt_shape(b.shape)))
+    ga, gb = _gray2d(a), _gray2d(b)
+    if kind == "absolute":
+        d = np.abs(gb - ga)
+        m = float(np.max(d[np.isfinite(d)])) if np.isfinite(d).any() else 0.0
+        t = d / m if m > 0 else np.zeros_like(d)
+        return {"image": imgio.apply_cmap(np.clip(t, 0, 1), name="inferno", vmin=0.0, vmax=1.0),
+                "scale": m, "kind": kind}
+    if kind == "signed":
+        d = gb - ga
+    elif kind == "ratio":
+        with np.errstate(divide="ignore", invalid="ignore"):
+            d = np.log2(gb / ga)
+        d[~np.isfinite(d)] = np.nan
+    else:
+        raise ValueError("unknown difference kind %r" % (kind,))
+    fin = np.isfinite(d)
+    m = float(np.max(np.abs(d[fin]))) if fin.any() else 0.0
+    t = d / m if m > 0 else np.zeros_like(d)
+    img = imgio.apply_cmap(np.clip(t, -1, 1), name="coolwarm", vmin=-1.0, vmax=1.0, invalid=(0, 0, 0))
+    return {"image": img, "scale": m, "kind": kind}
+
+
+def _knob_text_for(spec, knob):
+    """A knob value in its own unit ('1.38 px'); a plain number for a knob without a spec."""
+    return param_specs.format_display(spec, float(knob))
+
+
+def diff_pipelines(old, new, old_input=None, new_input=None, input_changed=None):
+    """What changed from the stage list *old* (A) to *new* (B), as an ordered list of entries.
+
+    The two lists are aligned by operator name (``difflib``), so an inserted or removed stage does not
+    make every later stage look edited. Entries, in order of position: ``input`` (first), then per
+    position ``knob`` (old -> new in the knob's unit; an unused knob is skipped, it changes nothing),
+    ``bypass`` (switched off / on again), ``removed`` and ``added``. Each entry is
+    ``{"kind", "index", "op", "knob", "old", "new", "text"}``; ``index`` is 1-based (a removed stage
+    counts in A, the others in B). *input_changed* None = compare the two input references by sha256."""
+    import difflib
+    out = []
+    if input_changed is None:
+        input_changed = bool(old_input and new_input and old_input.get("sha256") != new_input.get("sha256"))
+    if input_changed:
+        def _name(r):
+            return re.split(r"[\\/]", str(r["path"]))[-1] if r else tr("(unnamed image)")
+        o, n = _name(old_input), _name(new_input)
+        out.append({"kind": "input", "index": 0, "op": None, "knob": None, "old": o, "new": n,
+                    "text": tr("input changed: %s \u2192 %s") % (o, n)})
+    ops_o = [str(s[0]) for s in old]
+    ops_n = [str(s[0]) for s in new]
+    for tag, i1, i2, j1, j2 in difflib.SequenceMatcher(None, ops_o, ops_n, autojunk=False).get_opcodes():
+        if tag == "equal":
+            for k in range(i2 - i1):
+                so, sn, j = old[i1 + k], new[j1 + k], j1 + k
+                op = str(sn[0])
+                specs = param_specs.spec_for(op)
+                for letter, ix in (("a", 1), ("b", 2)):
+                    sp = specs[letter]
+                    if sp.get("kind") == "unused" or abs(float(so[ix]) - float(sn[ix])) <= 1e-12:
+                        continue
+                    ot, nt = _knob_text_for(sp, so[ix]), _knob_text_for(sp, sn[ix])
+                    out.append({"kind": "knob", "index": j + 1, "op": op, "knob": letter, "old": ot, "new": nt,
+                                "text": tr("stage %d (%s) %s: %s \u2192 %s")
+                                % (j + 1, op, sp.get("label") or letter, ot, nt)})
+                if _is_bypassed(so) != _is_bypassed(sn):
+                    on = _is_bypassed(sn)
+                    out.append({"kind": "bypass", "index": j + 1, "op": op, "knob": None,
+                                "old": not on, "new": on,
+                                "text": tr("stage %d (%s): bypassed") % (j + 1, op) if on
+                                else tr("stage %d (%s): switched on again") % (j + 1, op)})
+        else:
+            for i in range(i1, i2):
+                op = ops_o[i]
+                out.append({"kind": "removed", "index": i + 1, "op": op, "knob": None, "old": None, "new": None,
+                            "text": tr("removed: stage %d %s (%s)")
+                            % (i + 1, op, stage_knob_text(op, old[i][1], old[i][2]))})
+            for j in range(j1, j2):
+                op = ops_n[j]
+                out.append({"kind": "added", "index": j + 1, "op": op, "knob": None, "old": None, "new": None,
+                            "text": tr("added: stage %d %s (%s)")
+                            % (j + 1, op, stage_knob_text(op, new[j][1], new[j][2]))})
+    return out
+
+
+class ViewSyncGroup:
+    """Several image views that move together: a zoom, a pan or a fit in any member is replayed
+    in all the others (same scale and scroll offsets), and a hover in one puts a crosshair at the same
+    IMAGE coordinate in the others. Qt-free: the members are duck-typed (``sync_state()``,
+    ``sync_apply(state, full)``, ``sync_cursor(pos)``), and a guard flag keeps a replay from echoing back,
+    so one wheel event is exactly one ``setTransform`` on each other member."""
+
+    def __init__(self):
+        self._members = []
+        self._busy = False
+
+    @property
+    def members(self):
+        return list(self._members)
+
+    def add(self, view):
+        if view not in self._members:
+            self._members.append(view)
+        view._sync_group = self
+        return view
+
+    def remove(self, view):
+        if view in self._members:
+            self._members.remove(view)
+        if getattr(view, "_sync_group", None) is self:
+            view._sync_group = None
+        for m in self._members:                      # the departed member's crosshair must not stay behind
+            m.sync_cursor(None)
+        view.sync_cursor(None)
+
+    def notify_view(self, src, full=True):
+        """*src* moved: replay its state in the others (``full`` False: scroll offsets only)."""
+        if self._busy or src not in self._members:
+            return
+        self._busy = True
+        try:
+            st = src.sync_state()
+            for m in list(self._members):
+                if m is not src:
+                    m.sync_apply(st, full)
+        finally:
+            self._busy = False
+
+    def notify_cursor(self, src, pos):
+        """The cursor is over image coordinate *pos* ``(x, y)`` in *src* (None: it left)."""
+        if self._busy or src not in self._members:
+            return
+        self._busy = True
+        try:
+            for m in list(self._members):
+                if m is not src:
+                    m.sync_cursor(pos)
+        finally:
+            self._busy = False
 
 
 def _downsample_grid(hm, max_side=140):
@@ -2349,8 +3648,14 @@ def parse_hdev_program_lines(text, names):
     names = set(names)
     errs = []
     toks = []
+    byp_lines = set()
     for n, raw in enumerate(text.splitlines(), 1):
-        line = _hdev_strip_comment(raw)
+        mb = re.match(r"\s*#\s*bypassed:\s*(\S.*)$", raw)
+        if mb and mb.group(1).split()[0].split("(")[0].lower() in names:
+            line = _hdev_strip_comment(mb.group(1)).strip()      # "# bypassed: op (a, b)" = a switched-off stage
+            byp_lines.add(n)
+        else:
+            line = _hdev_strip_comment(raw)
         if not line:
             continue
         head = line.split()[0].lower()
@@ -2406,6 +3711,9 @@ def parse_hdev_program_lines(text, names):
                     continue                       # applied via extract_dev_directives
                 st = _hdev_parse_op(line, n, errs, names)
                 if st:
+                    if n in byp_lines:
+                        st = _normalise_stage(st)
+                        st.bypass = True
                     out.append((st, n))            # (stage, source line)
         return out
 
@@ -2641,7 +3949,7 @@ def run_holdout(stages, image_paths, gt_paths=None):
         try:
             img = api.read_image(p)
             t0 = time.perf_counter()
-            out = api.run_pipeline(img, list(stages))
+            out = api.run_pipeline(img, [st for st in stages if not _is_bypassed(st)])
             rec["ms"] = (time.perf_counter() - t0) * 1000.0
             rec["ok"] = True
             rec["out_shape"] = tuple(np.shape(out))
@@ -2991,9 +4299,206 @@ def _knob_row_class(QtWidgets, QtCore):
     return KnobRow
 
 
+class _ViewSyncMixin:
+    """The "moves together" half of an image view (mixed in before ``QGraphicsView``): the three methods a
+    :class:`ViewSyncGroup` calls (``sync_state`` / ``sync_apply`` / ``sync_cursor``) and the hooks the view
+    calls back (``_sync_zoomed`` after a zoom or fit, ``_sync_scrolled`` on a pan, ``_sync_hover`` on a mouse move).
+
+    A replay is applied under ``_sync_applying`` so it never echoes back; the view that was driven by
+    the user is the only one that notifies the group."""
+
+    def _sync_init(self):
+        self._sync_group = None
+        self._sync_applying = False
+        self._sync_zooming = False
+        self._fitted = False
+        self._cross = None
+        self._cross_pos = None
+        self.horizontalScrollBar().valueChanged.connect(self._sync_scrolled)
+        self.verticalScrollBar().valueChanged.connect(self._sync_scrolled)
+
+    def sync_state(self):
+        from PySide6 import QtGui
+        vp = self.viewport()
+        return {"transform": QtGui.QTransform(self.transform()),
+                "h": self.horizontalScrollBar().value(), "v": self.verticalScrollBar().value(),
+                "size": (vp.width(), vp.height()), "center": self.mapToScene(vp.rect().center()),
+                "fitted": bool(self._fitted)}
+
+    def sync_apply(self, st, full=True):
+        """Replay another member's view: its scale (``full``) and its scroll offsets. Panes of the same
+        size take the offsets as they are (same offsets = same picture part); panes of another size
+        centre on the same image point instead, since the same offsets would show another part."""
+        self._sync_applying = True
+        try:
+            if full:
+                self.setTransform(st["transform"])
+                self._fitted = bool(st.get("fitted"))
+            vp = self.viewport()
+            if (vp.width(), vp.height()) == tuple(st["size"]):
+                self.horizontalScrollBar().setValue(st["h"])
+                self.verticalScrollBar().setValue(st["v"])
+            else:
+                self.centerOn(st["center"])
+        finally:
+            self._sync_applying = False
+
+    def _sync_scrolled(self, _v=0):
+        if self._sync_applying or self._sync_zooming or self._sync_group is None:
+            return
+        self._fitted = False
+        self._sync_group.notify_view(self, False)
+
+    def _sync_zoomed(self):
+        """The user (or a Fit / 1:1 button) changed this view's scale: replay it in the group, once."""
+        g = self._sync_group
+        if g is not None and not self._sync_applying:
+            g.notify_view(self, True)
+
+    def _sync_hover(self, e):
+        g = self._sync_group
+        if g is not None and not self._sync_applying:
+            self.sync_cursor(None)                       # the pane the mouse is in shows the real cursor, not a crosshair
+            p = self.mapToScene(e.position().toPoint())
+            g.notify_cursor(self, (p.x(), p.y()))
+
+    def sync_cursor(self, pos):
+        """Show the crosshair at image coordinate *pos* ``(x, y)`` (None: hide it)."""
+        from PySide6 import QtGui, QtWidgets
+        if pos is None:
+            self._cross_pos = None
+            if self._cross is not None:
+                self._cross.setVisible(False)
+            return
+        sc = self.scene()
+        if sc is None:
+            return
+        if self._cross is None:
+            self._cross = QtWidgets.QGraphicsPathItem()
+            pen = QtGui.QPen(QtGui.QColor(AMBER))
+            pen.setCosmetic(True)
+            pen.setWidth(1)
+            self._cross.setPen(pen)
+            self._cross.setZValue(100)
+            sc.addItem(self._cross)
+        x, y = float(pos[0]), float(pos[1])
+        r = sc.sceneRect()
+        path = QtGui.QPainterPath()
+        path.moveTo(r.left(), y); path.lineTo(r.right(), y)
+        path.moveTo(x, r.top()); path.lineTo(x, r.bottom())
+        self._cross.setPath(path)
+        self._cross.setVisible(True)
+        self._cross_pos = (x, y)
+
+    def crosshair_pos(self):
+        """Where this view's synchronised crosshair is, in image coordinates, or None."""
+        return self._cross_pos
+
+    def leaveEvent(self, e):
+        super().leaveEvent(e)
+        g = self._sync_group
+        if g is not None and not self._sync_applying:
+            g.notify_cursor(self, None)
+
+
+def _sync_view_class(QtWidgets, QtGui, QtCore):
+    """A zoom / pan picture pane that can join a :class:`ViewSyncGroup` (the Stage in -> out panes and the
+    A / B panes). Wheel = zoom at the cursor, drag = pan; it keeps the pixmap it was given (``pixmap()``),
+    fits a new picture to the pane (and refits on resize until the user zooms), and writes a message
+    instead of a picture when there is none."""
+
+    class SyncView(_ViewSyncMixin, QtWidgets.QGraphicsView):
+        def __init__(self, parent=None):
+            super().__init__(parent)
+            self.setScene(QtWidgets.QGraphicsScene(self))
+            self._item = QtWidgets.QGraphicsPixmapItem()
+            self._item.setTransformationMode(QtCore.Qt.FastTransformation)   # zoomed pixels stay visible
+            self.scene().addItem(self._item)
+            self.setDragMode(QtWidgets.QGraphicsView.ScrollHandDrag)
+            self.setTransformationAnchor(QtWidgets.QGraphicsView.AnchorUnderMouse)
+            self.setMouseTracking(True)
+            self.setBackgroundBrush(QtGui.QColor(NAVY_1))
+            self.setMinimumSize(120, 90)
+            self.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+            self._pm = None
+            self._msg = ""
+            self._sync_init()
+            self._fitted = True
+
+        def set_source(self, pm, msg=""):
+            """Show *pm* (a QPixmap) or, when it is None / null, the message *msg*."""
+            self._msg = msg or ""
+            if pm is None or pm.isNull():
+                self._pm = None
+                self._item.setPixmap(QtGui.QPixmap())
+                self.viewport().update()
+                return
+            same = self._pm is not None and self._pm.size() == pm.size()
+            self._pm = pm
+            self._item.setPixmap(pm)
+            self.scene().setSceneRect(QtCore.QRectF(pm.rect()))
+            if not same:
+                self.fit()                               # a picture of another size starts fitted
+
+        def pixmap(self):
+            return self._pm
+
+        def fit(self):
+            if self._pm is None:
+                return
+            self._sync_zooming = True
+            try:
+                self.fitInView(self._item, QtCore.Qt.KeepAspectRatio)
+            finally:
+                self._sync_zooming = False
+            self._fitted = True
+            self._sync_zoomed()
+
+        def resizeEvent(self, e):
+            was = self._fitted
+            self._sync_zooming = True                    # the scroll bars re-ranging on a resize are not a user pan
+            try:
+                super().resizeEvent(e)
+            finally:
+                self._sync_zooming = False
+            self._fitted = was
+            if was and self._pm is not None:
+                self.fit()
+
+        def wheelEvent(self, e):
+            f = 1.25 if e.angleDelta().y() > 0 else 0.8
+            if not 0.02 <= self.transform().m11() * f <= 64.0:
+                return
+            self._fitted = False
+            self._sync_zooming = True
+            try:
+                self.scale(f, f)
+            finally:
+                self._sync_zooming = False
+            self._sync_zoomed()
+
+        def mousePressEvent(self, e):
+            self._fitted = False
+            super().mousePressEvent(e)
+
+        def mouseMoveEvent(self, e):
+            super().mouseMoveEvent(e)
+            self._sync_hover(e)
+
+        def drawForeground(self, painter, rect):
+            if self._pm is None and self._msg:
+                painter.save()
+                painter.resetTransform()
+                painter.setPen(QtGui.QColor(MUTED))
+                painter.drawText(self.viewport().rect(), QtCore.Qt.AlignCenter | QtCore.Qt.TextWordWrap, self._msg)
+                painter.restore()
+
+    return SyncView
+
+
 def _image_view_class(QtWidgets, QtGui, QtCore):
     """A zoom/pan image viewer (wheel = zoom at cursor, drag = pan)."""
-    class ImageView(QtWidgets.QGraphicsView):
+    class ImageView(_ViewSyncMixin, QtWidgets.QGraphicsView):
         #: tests set this False so contextMenuEvent builds the menu without the
         #: blocking ``QMenu.exec`` (the built menu is kept in ``_last_context_menu``)
         CONTEXT_MENU_EXEC = True
@@ -3018,6 +4523,11 @@ def _image_view_class(QtWidgets, QtGui, QtCore):
             self.save_cb = None                      # optional (view) -> None for Save image…
             self.actions = {}                        # own QActions (secondary windows)
             self._tools = None                       # overlay icon strip (secondary windows)
+            self.roi_cb = None                       # optional callback(rect | None), rect = (x0, y0, x1, y1) in pixels
+            self._band = None                        # Shift+drag rubber band (a region of interest)
+            self._band_origin = None
+            self._roi_item = None
+            self._sync_init()
             if tools:
                 self._build_own_actions()
                 self._build_tools_strip()
@@ -3158,8 +4668,40 @@ def _image_view_class(QtWidgets, QtGui, QtCore):
         def set_data(self, arr):
             self._data = np.asarray(arr) if arr is not None else None
 
+        # ---- region of interest: Shift + drag a rectangle, Shift + click clears it ---------- #
+        def set_roi_rect(self, rect):
+            """Draw (or, with None, remove) the dashed region-of-interest rectangle (pixels ``x0, y0, x1, y1``)."""
+            if self._roi_item is not None:
+                try:
+                    self._scene.removeItem(self._roi_item)
+                except Exception:
+                    pass
+                self._roi_item = None
+            if rect is None:
+                return
+            x0, y0, x1, y1 = rect
+            pen = QtGui.QPen(QtGui.QColor(AMBER))
+            pen.setCosmetic(True); pen.setStyle(QtCore.Qt.DashLine)
+            self._roi_item = self._scene.addRect(QtCore.QRectF(x0, y0, x1 - x0, y1 - y0), pen)
+            self._roi_item.setZValue(50)
+
+        def _band_to_rect(self, pos):
+            """The rubber band (origin .. *pos*) as an image rectangle clipped to the picture, or None if it is a click."""
+            r = QtCore.QRect(self._band_origin, pos).normalized()
+            pm = self._item.pixmap()
+            if pm.isNull() or r.width() < 3 or r.height() < 3:
+                return None
+            sr = self.mapToScene(r).boundingRect()
+            x0, y0 = max(0, int(math.floor(sr.left()))), max(0, int(math.floor(sr.top())))
+            x1, y1 = min(pm.width(), int(math.ceil(sr.right()))), min(pm.height(), int(math.ceil(sr.bottom())))
+            return (x0, y0, x1, y1) if (x1 - x0 >= 2 and y1 - y0 >= 2) else None
+
         def mouseMoveEvent(self, e):
+            if self._band_origin is not None:
+                self._band.setGeometry(QtCore.QRect(self._band_origin, e.position().toPoint()).normalized())
+                return
             super().mouseMoveEvent(e)
+            self._sync_hover(e)
             if self._data is not None and self.hover_cb is not None:
                 p = self.mapToScene(e.position().toPoint())
                 x, y = int(p.x()), int(p.y())
@@ -3169,6 +4711,13 @@ def _image_view_class(QtWidgets, QtGui, QtCore):
 
         def mousePressEvent(self, e):
             self._press_pos = e.position().toPoint()
+            if e.button() == QtCore.Qt.LeftButton and (e.modifiers() & QtCore.Qt.ShiftModifier):
+                self._band_origin = self._press_pos                 # Shift + drag: a rubber band, not a pan
+                if self._band is None:
+                    self._band = QtWidgets.QRubberBand(QtWidgets.QRubberBand.Rectangle, self.viewport())
+                self._band.setGeometry(QtCore.QRect(self._band_origin, QtCore.QSize()))
+                self._band.show()
+                return
             super().mousePressEvent(e)
 
         def mouseReleaseEvent(self, e):
@@ -3176,6 +4725,14 @@ def _image_view_class(QtWidgets, QtGui, QtCore):
             # fires click_cb — the Feature-inspection dialog uses it for
             # "click a region -> select its table row". A drag (ScrollHandDrag pan)
             # moves further than the 4-px slop and is NOT a click.
+            if self._band_origin is not None:
+                rect = self._band_to_rect(e.position().toPoint())
+                self._band.hide()
+                self._band_origin = None
+                self._press_pos = None
+                if self.roi_cb is not None:
+                    self.roi_cb(rect)                              # None (a Shift+click) clears the region
+                return
             super().mouseReleaseEvent(e)
             pos = e.position().toPoint()
             if (self.click_cb is not None and self._data is not None
@@ -3208,19 +4765,33 @@ def _image_view_class(QtWidgets, QtGui, QtCore):
             self._data = None
             self.reset_zoom()
 
+        def _scaled(self, f):
+            """Scale by *f* and tell the sync group once (the scroll bars moving meanwhile are not a pan)."""
+            self._sync_zooming = True
+            try:
+                self.scale(f, f)
+            finally:
+                self._sync_zooming = False
+            self._sync_zoomed()
+
         def wheelEvent(self, e):
-            f = 1.25 if e.angleDelta().y() > 0 else 0.8
-            self.scale(f, f)
+            self._scaled(1.25 if e.angleDelta().y() > 0 else 0.8)
 
         def zoom(self, f):
-            self.scale(f, f)
+            self._scaled(f)
 
         def reset_zoom(self):
             self.resetTransform()
+            self._sync_zoomed()
 
         def fit(self):
             if not self._item.pixmap().isNull():
-                self.fitInView(self._item, QtCore.Qt.KeepAspectRatio)
+                self._sync_zooming = True
+                try:
+                    self.fitInView(self._item, QtCore.Qt.KeepAspectRatio)
+                finally:
+                    self._sync_zooming = False
+                self._sync_zoomed()
 
         def set_pixmap_keep_view(self, pm):
             """Swap the pixmap but KEEP the current zoom/pan when the image geometry is
@@ -3231,13 +4802,16 @@ def _image_view_class(QtWidgets, QtGui, QtCore):
             t = self.transform()
             hs = self.horizontalScrollBar().value()
             vs = self.verticalScrollBar().value()
-            self.set_pixmap(pm)
-            if same:
-                self.setTransform(t)
-                self.horizontalScrollBar().setValue(hs)
-                self.verticalScrollBar().setValue(vs)
-                return True
-            return False
+            self._sync_applying = True                   # a re-render restoring the same view is not a user pan
+            try:
+                self.set_pixmap(pm)
+                if same:
+                    self.setTransform(t)
+                    self.horizontalScrollBar().setValue(hs)
+                    self.verticalScrollBar().setValue(vs)
+            finally:
+                self._sync_applying = False
+            return bool(same)
 
         def set_part(self, r1, c1, r2, c2):
             """dev_set_part: show the image part with corners (Row1,Col1)-(Row2,Col2)
@@ -4010,8 +5584,11 @@ def _load_i18n():
     langs = dict(data.get("languages") or {})
     if "en" not in langs:                      # English is always available as the base
         langs = {"en": "English", **langs}
-    return (langs, data.get("tooltips", {}) or {}, data.get("guide", {}) or {"en": ""},
-            data.get("strings", {}) or {})
+    strings = dict(data.get("strings", {}) or {})
+    for key in RUN_WORKER_I18N_KEYS:
+        if key in data:                         # slice-5 rows live beside the older top-level rows
+            strings[key] = data[key]
+    return (langs, data.get("tooltips", {}) or {}, data.get("guide", {}) or {"en": ""}, strings)
 
 
 LANGUAGES, TOOLTIPS_I18N, HELP_I18N, STRINGS_I18N = _load_i18n()
@@ -4821,12 +6398,21 @@ def build_window(model=None):
 
         ``close_guard`` is installed below; it returns False to veto the close."""
         close_guard = None
+        quiesce = None     # 実行ワーカーの QThread を止めて待つ(閉じる前に必ず)
 
         def closeEvent(self, ev):
             guard = self.close_guard
             if guard is not None and not guard():
                 ev.ignore()
                 return
+            # ★2026-10-21: 走っている/終わりかけの実行ワーカーを静止させてから閉じる。QThread が
+            # 走ったまま親ごと破棄されると Qt は abort し、CI では「全件合格のあと exit 134」になる。
+            q = self.quiesce
+            if q is not None:
+                try:
+                    q()
+                except Exception as e:
+                    _log_soft_failure("could not stop run workers before close", e)
             try:                              # remember window position + panel layout
                 if os.environ.get("QT_QPA_PLATFORM") != "offscreen":
                     s = _settings()
@@ -4898,12 +6484,18 @@ def build_window(model=None):
     act_down = _act("Move stage down", "Ctrl+Down", "Move the selected stage later")
     act_clear = _act("Clear pipeline", "Ctrl+Shift+Backspace", "Remove all stages")
     act_dup = _act("Duplicate stage", "Ctrl+D", "Insert a copy of the selected stage after it")
+    act_bypass = _act("Bypass stage (on/off)", "Ctrl+B",
+                      "Switch the selected stage off for now: it passes its input through unchanged "
+                      "(not a removal; press again to switch it on)")
     act_top = _act("Move stage to top", "Ctrl+Shift+Up", "Move the selected stage to the front")
     act_bottom = _act("Move stage to bottom", "Ctrl+Shift+Down", "Move the selected stage to the end")
     act_focus_search = _act("Focus operator search", "Ctrl+F", "Jump to the operator search box")
     act_undo = _act("Undo", "Ctrl+Z", "Undo the last pipeline edit")
     act_redo = _act("Redo", "Ctrl+Shift+Z", "Redo the last undone pipeline edit")
     act_undo.setEnabled(False); act_redo.setEnabled(False)
+    act_pin = _act("Pin as A", "Ctrl+Shift+A",
+                   "Freeze the current pipeline and its result as A, then compare it with what you change next "
+                   "(Window > Panels > A / B)")
     act_zin = _act("Zoom in", "Ctrl+=", "Zoom the image in")
     act_zout = _act("Zoom out", "Ctrl+-", "Zoom the image out")
     act_fit = _act("Fit to window", "Ctrl+0", "Fit the image to the view")
@@ -4912,6 +6504,10 @@ def build_window(model=None):
     act_reset = _act("Reset to start", "Home", "Show the raw image (before stage 1)")
     act_step = _act("Step forward", "Ctrl+Right", "Advance one pipeline stage")
     act_runall = _act("Run all", "Ctrl+Return", "Show the final pipeline result")
+    act_roundtrip = _act("Verify exported Python…", "Ctrl+Shift+R",
+                         "Run exported Python in an isolated interpreter and compare every stage with the GUI")
+    act_batch = _act("この処理をフォルダに適用…", None,
+                     "現在の処理と入力設定を固定して、フォルダ内の画像へ順番に適用します")
     act_holdout = _act("Validate on holdout…", "Ctrl+H",
                        "Run the current pipeline over a folder of validation images and report results")
     act_palette = _act("Command palette…", "Ctrl+P", "Run any operator or action by name")
@@ -4988,7 +6584,9 @@ def build_window(model=None):
     m = _menu(mb, "&Edit", "edit")
     m.addAction(act_undo); m.addAction(act_redo)
     m.addSeparator()
-    m.addAction(act_remove); m.addAction(act_dup)
+    m.addAction(act_pin)
+    m.addSeparator()
+    m.addAction(act_remove); m.addAction(act_dup); m.addAction(act_bypass)
     m.addAction(act_up); m.addAction(act_down)
     m.addAction(act_top); m.addAction(act_bottom)
     m.addSeparator(); m.addAction(act_clear)
@@ -5000,6 +6598,8 @@ def build_window(model=None):
     m = _menu(mb, "&Run", "run")
     m.addAction(act_reset); m.addAction(act_step)
     m.addSeparator(); m.addAction(act_runall)
+    m.addAction(act_batch)
+    m.addAction(act_roundtrip)
     m.addSeparator(); m.addAction(act_holdout)
     menu_windows = _menu(mb, "&Window", "window")   # panels / graphics / layout submenus (filled after docks)
     menu_tools = _menu(mb, "&Tools", "tools")
@@ -5076,7 +6676,7 @@ def build_window(model=None):
     # Primary actions get a themed icon so the icon-only toolbar reads at a glance;
     # tooltips (already set on each action) name them.
     for _a, _ic in ((act_demo, "demo"), (act_open_img, "open"), (act_runall, "playplay"),
-                    (act_export, "export")):
+                    (act_batch, "apply"), (act_export, "export"), (act_pin, "eye")):
         _a.setIcon(_icon(QtGui, QtCore, _ic, TEXT))
         tb.addAction(_a)
 
@@ -5107,6 +6707,23 @@ def build_window(model=None):
     win._img_info.setProperty("hint", True)
     win._img_info.setToolTip("current result: shape · dtype · value range")
     status.addPermanentWidget(win._img_info)
+
+    run_box = QtWidgets.QWidget()
+    run_lay = QtWidgets.QHBoxLayout(run_box); run_lay.setContentsMargins(6, 0, 0, 0)
+    run_attr = QtWidgets.QLabel("")
+    run_status = QtWidgets.QLabel("")
+    run_progress = QtWidgets.QProgressBar(); run_progress.setTextVisible(False); run_progress.setFixedWidth(90)
+    run_stop = QtWidgets.QPushButton(tr("Request stop"))
+    run_banner = QtWidgets.QLabel("")
+    run_show = QtWidgets.QPushButton(tr("Show that result"))
+    run_current = QtWidgets.QPushButton(tr("Run with current settings"))
+    for widget in (run_attr, run_status, run_progress, run_stop, run_banner, run_show, run_current):
+        run_lay.addWidget(widget)
+    run_progress.hide(); run_stop.hide(); run_banner.hide(); run_show.hide(); run_current.hide()
+    status.addPermanentWidget(run_box, 1)
+    win._run_ui = {"box": run_box, "attribution": run_attr, "status": run_status,
+                   "progress": run_progress, "stop": run_stop, "banner": run_banner,
+                   "show_result": run_show, "run_current": run_current}
 
     def flash(msg):
         status.showMessage(msg, 6000)
@@ -5184,8 +6801,82 @@ def build_window(model=None):
     olay.addLayout(oprow); olay.addWidget(op_hint)
     lv.addWidget(_group(QtWidgets, "OPERATORS", olay), 1)
 
+    search_state = {"rows": {g: [] for g in ("applicable", "needs_preprocessing", "other")},
+                    "chips": [], "groups": {}}
+
+    def _search_current_value():
+        try:
+            i = stage_list.currentRow()
+        except NameError:
+            i = -1
+        if 0 <= i < len(model.stages):
+            try:
+                return model.result_upto(i)
+            except Exception:
+                return None
+        return model.image
+
+    def _add_search_row(group, row):
+        bridge = "" if group != "needs_preprocessing" else "".join(" → " + n for n in row.get("bridge", []))
+        text_ = "%s  (%s)\n入力: %s → 出力: %s%s" % (
+            row.get("label") or row["name"], row["name"], row.get("in_sort") or "?",
+            row.get("out_sort") or "?", bridge)
+        it = QtWidgets.QListWidgetItem(text_); it.setData(QtCore.Qt.UserRole, row["name"])
+        it.setData(QtCore.Qt.UserRole + 3, group)
+        tip = ", ".join(row.get("why") or [])
+        if row.get("tier") == "unavailable":
+            tip = (tip + "\n" if tip else "") + tr("Missing optional extra: %s") % row["name"].split("_")[0]
+            it.setFlags(QtCore.Qt.NoItemFlags); it.setForeground(QtGui.QColor(MUTED))
+        it.setToolTip(tip); op_list.addItem(it)
+        box = QtWidgets.QWidget(); h = QtWidgets.QHBoxLayout(box); h.setContentsMargins(2, 1, 2, 1)
+        label = QtWidgets.QLabel(text_); label.setWordWrap(True); h.addWidget(label, 1)
+        run = QtWidgets.QPushButton(tr("Try on current data")); help_ = QtWidgets.QPushButton(tr("Help"))
+        enabled = row.get("tier") != "unavailable"; run.setEnabled(enabled); help_.setEnabled(enabled)
+        run.clicked.connect(lambda _=False, n=row["name"]: run_op_once(n, _search_current_value()))
+        help_.clicked.connect(lambda _=False, n=row["name"]: show_op_help(n))
+        h.addWidget(run); h.addWidget(help_); it.setSizeHint(box.sizeHint()); op_list.setItemWidget(it, box)
+        search_state["rows"][group].append(dict(row, text=text_, item=it, try_button=run, help_button=help_))
+
+    def grouped_search(query=None):
+        q = search.text().strip() if query is None else str(query)
+        if query is not None and search.text() != q:
+            search.blockSignals(True); search.setText(q); search.blockSignals(False)
+        op_list.clear(); search_state["chips"] = []; search_state["groups"] = {}
+        search_state["rows"] = {g: [] for g in ("applicable", "needs_preprocessing", "other")}
+        result = search_grouped(q, current_value=_search_current_value(), k=40,
+                                lang=_UI_LANG.get("code", "en"))
+        headers = {"applicable": tr("Applicable to the current input"),
+                   "needs_preprocessing": tr("Needs preprocessing"), "other": tr("Other")}
+        count = sum(len(result[g]) for g in headers)
+        if count:
+            for group, title_ in headers.items():
+                head = QtWidgets.QListWidgetItem("▾ " + title_)
+                head.setData(QtCore.Qt.UserRole + 4, group); head.setFlags(QtCore.Qt.ItemIsEnabled)
+                op_list.addItem(head); search_state["groups"][group] = head
+                for row in result[group]:
+                    _add_search_row(group, row)
+        else:
+            help_data = search_zero_results_help(q, lang=_UI_LANG.get("code", "en"))
+            terms = list(help_data.get("nearest_ops") or help_data.get("nearest_terms") or [])
+            terms += list(help_data.get("categories") or []) + list(help_data.get("sorts") or [])
+            if not terms:
+                terms = [q[:-1] or "image"]
+            note = QtWidgets.QListWidgetItem(tr("No exact results. Try a nearby term:"))
+            note.setFlags(QtCore.Qt.NoItemFlags); op_list.addItem(note)
+            chiprow = QtWidgets.QWidget(); h = QtWidgets.QHBoxLayout(chiprow); h.setContentsMargins(2, 2, 2, 2)
+            for term in terms[:8]:
+                b = QtWidgets.QPushButton(str(term)); b.clicked.connect(
+                    lambda _=False, t=str(term): grouped_search(t))
+                h.addWidget(b); search_state["chips"].append(b)
+            h.addStretch(1); chip = QtWidgets.QListWidgetItem(); op_list.addItem(chip)
+            chip.setSizeHint(chiprow.sizeHint()); op_list.setItemWidget(chip, chiprow)
+        return result
+
     def refill_ops():
         kw = search.text().lower(); c = cat.currentText()
+        if kw:
+            grouped_search(kw)
+            return
         op_list.clear()
         ranked = []
         for r in all_ops:
@@ -5270,6 +6961,42 @@ def build_window(model=None):
     klay = QtWidgets.QVBoxLayout()
     klay.addWidget(stage_detail); klay.addWidget(la); klay.addLayout(_ra)
     klay.addWidget(lb); klay.addLayout(_rb)
+    # ---- Studio slice 3 A: "try nearby values" strip (collapsed by default; computes only when open) ---- #
+    strip_toggle = QtWidgets.QToolButton()
+    strip_toggle.setCheckable(True)
+    strip_toggle.setArrowType(QtCore.Qt.RightArrow)
+    strip_toggle.setToolButtonStyle(QtCore.Qt.ToolButtonTextBesideIcon)
+    strip_toggle.setText("Try nearby values")
+    strip_toggle.setToolTip(tr("show the selected stage's result at the values just below and above the current knob; "
+                               "nothing is computed while this is closed"))
+    strip_body = QtWidgets.QWidget()
+    strip_body.setVisible(False)
+    _sbl = QtWidgets.QVBoxLayout(strip_body); _sbl.setContentsMargins(0, 2, 0, 2)
+    strip_which = QtWidgets.QComboBox()
+    strip_which.addItem(tr("knob a"), "a"); strip_which.addItem(tr("knob b"), "b")
+    strip_count = QtWidgets.QComboBox()
+    strip_count.addItem(tr("3 values"), 3); strip_count.addItem(tr("5 values"), 5)
+    _ctl = QtWidgets.QHBoxLayout(); _ctl.addWidget(strip_which); _ctl.addWidget(strip_count); _ctl.addStretch(1)
+    _sbl.addLayout(_ctl)
+    strip_cells_row = QtWidgets.QHBoxLayout()
+    strip_slots = []                                   # five fixed slots; only as many as there are candidates are shown
+    for _k in range(5):
+        _slot = QtWidgets.QWidget()
+        _sv = QtWidgets.QVBoxLayout(_slot); _sv.setContentsMargins(0, 0, 0, 0); _sv.setSpacing(2)
+        _cell = QtWidgets.QToolButton()
+        _cell.setCheckable(True)
+        _cell.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
+        _adopt = QtWidgets.QPushButton("Adopt this value")
+        _adopt.setEnabled(False)
+        _sv.addWidget(_cell); _sv.addWidget(_adopt)
+        _slot.setVisible(False)
+        strip_cells_row.addWidget(_slot)
+        strip_slots.append((_slot, _cell, _adopt))
+    _sbl.addLayout(strip_cells_row)
+    strip_msg = QtWidgets.QLabel("")
+    strip_msg.setWordWrap(True); strip_msg.setProperty("hint", True)
+    _sbl.addWidget(strip_msg)
+    klay.addWidget(strip_toggle); klay.addWidget(strip_body)
     mv.addWidget(_group(QtWidgets, "SELECTED STAGE · KNOBS", klay))
     win._knob_rows = (krow_a, krow_b)
     win._op_knob_rows = (op_row_a, op_row_b)
@@ -5434,6 +7161,81 @@ def build_window(model=None):
     dock_disp = _mk_dock("Display · Analysis", right, "dock_display")
     dock_code = _mk_dock("Program (code)", code_w, "dock_program")
     dock_vars = _mk_dock("Variables & Objects", var_w, "dock_variables")
+
+    SyncView = _sync_view_class(QtWidgets, QtGui, QtCore)
+    sync_group = ViewSyncGroup()                          # Stage in -> out panes + A / B panes (+ the main view, optionally)
+    win._sync_group = sync_group
+
+    cmp_w = QtWidgets.QWidget()
+    _cl = QtWidgets.QVBoxLayout(cmp_w); _cl.setContentsMargins(6, 6, 6, 6)
+    cmp_left, cmp_right = SyncView(), SyncView()
+    sync_group.add(cmp_left); sync_group.add(cmp_right)
+    cmp_ltitle, cmp_rtitle = QtWidgets.QLabel(""), QtWidgets.QLabel("")
+    for _t in (cmp_ltitle, cmp_rtitle):
+        _t.setProperty("muted", True)
+    _crow = QtWidgets.QHBoxLayout()
+    for _t, _pane in ((cmp_ltitle, cmp_left), (cmp_rtitle, cmp_right)):
+        _col = QtWidgets.QVBoxLayout(); _col.addWidget(_t); _col.addWidget(_pane, 1)
+        _crow.addLayout(_col, 1)
+    cmp_summary = QtWidgets.QLabel("")
+    cmp_summary.setWordWrap(True)
+    cmp_summary.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
+    _cl.addLayout(_crow, 1); _cl.addWidget(cmp_summary)
+    dock_cmp = _mk_dock(tr("Stage in \u2192 out"), cmp_w, "dock_compare")
+
+    # ---- Studio slice 3 B: the A / B dock (hidden by default) ---------------------------------- #
+    ab_w = QtWidgets.QWidget()
+    _abl = QtWidgets.QVBoxLayout(ab_w); _abl.setContentsMargins(6, 6, 6, 6)
+    ab_ref = QtWidgets.QComboBox()                       # which pinned snapshot is "A"
+    ab_ref.setToolTip(tr("which pinned snapshot to compare with the live result"))
+    ab_mode = QtWidgets.QComboBox()
+    for _key, _lbl in (("side", "side by side"), ("swipe", "swipe"), ("blink", "blink"), ("diff", "difference")):
+        ab_mode.addItem(tr(_lbl), _key)
+    ab_diff = QtWidgets.QComboBox()
+    for _key, _lbl in (("absolute", "absolute"), ("signed", "signed"), ("ratio", "ratio")):
+        ab_diff.addItem(tr(_lbl), _key)
+    ab_swipe = QtWidgets.QSlider(QtCore.Qt.Horizontal)
+    ab_swipe.setRange(0, 100); ab_swipe.setValue(50)
+    ab_swipe.setToolTip(tr("drag: A on the left of the line, B on the right"))
+    ab_blink = QtWidgets.QSpinBox()
+    ab_blink.setRange(100, 5000); ab_blink.setSingleStep(50); ab_blink.setValue(500); ab_blink.setSuffix(" ms")
+    ab_sync_main = QtWidgets.QCheckBox(tr("sync the main view too"))
+    _abrow = QtWidgets.QHBoxLayout()
+    for _w in (ab_ref, ab_mode, ab_diff, ab_swipe, ab_blink):
+        _abrow.addWidget(_w)
+    _abrow.addStretch(1); _abrow.addWidget(ab_sync_main)
+    ab_a, ab_b = SyncView(), SyncView()
+    sync_group.add(ab_a); sync_group.add(ab_b)
+    ab_atitle, ab_btitle = QtWidgets.QLabel(""), QtWidgets.QLabel("")
+    for _t in (ab_atitle, ab_btitle):
+        _t.setProperty("muted", True)
+    _abpanes = QtWidgets.QHBoxLayout()
+    ab_cols = []                                         # one container per pane, so a hidden pane gives its room back
+    for _t, _pane in ((ab_atitle, ab_a), (ab_btitle, ab_b)):
+        _cw = QtWidgets.QWidget()
+        _col = QtWidgets.QVBoxLayout(_cw); _col.setContentsMargins(0, 0, 0, 0)
+        _col.addWidget(_t); _col.addWidget(_pane, 1)
+        _abpanes.addWidget(_cw, 1)
+        ab_cols.append(_cw)
+    ab_info = QtWidgets.QLabel("")
+    ab_info.setWordWrap(True); ab_info.setProperty("hint", True)
+    ab_changes = QtWidgets.QListWidget()
+    ab_changes.setMaximumHeight(110)
+    ab_changes.setToolTip(tr("what changed since A"))
+    ab_restore = QtWidgets.QPushButton("Restore A")
+    ab_adopt = QtWidgets.QPushButton("Adopt B")
+    ab_keep = QtWidgets.QPushButton("Keep both")
+    ab_restore.setToolTip(tr("put A's pipeline back (one undo step)"))
+    ab_adopt.setToolTip(tr("keep the current pipeline and drop A"))
+    ab_keep.setToolTip(tr("keep A and pin the current result as a second snapshot (the oldest goes past two)"))
+    _abbtn = QtWidgets.QHBoxLayout()
+    for _w in (ab_restore, ab_adopt, ab_keep):
+        _abbtn.addWidget(_w)
+    _abbtn.addStretch(1)
+    _chl = QtWidgets.QLabel(tr("What changed")); _chl.setProperty("muted", True)
+    _abl.addLayout(_abrow); _abl.addLayout(_abpanes, 1); _abl.addWidget(ab_info)
+    _abl.addWidget(_chl); _abl.addWidget(ab_changes); _abl.addLayout(_abbtn)
+    dock_ab = _mk_dock(tr("A / B"), ab_w, "dock_ab")
     # Default layout (user-directed 2026-08-15): the IMAGE (central MDI) is the largest
     # surface, the Program (script code) is the second, and op selection + Variables /
     # Objects are compact panels ("small size", mostly floated / shown on demand).
@@ -5454,17 +7256,21 @@ def build_window(model=None):
     win.tabifyDockWidget(dock_ops, dock_pipe)                       # Pipeline·Params tabbed in
     win.addDockWidget(QtCore.Qt.RightDockWidgetArea, dock_disp)
     win.tabifyDockWidget(dock_ops, dock_disp)                       # Display·Analysis tabbed in
+    win.addDockWidget(QtCore.Qt.RightDockWidgetArea, dock_cmp)
+    win.tabifyDockWidget(dock_ops, dock_cmp)                        # Stage in -> out tabbed in
+    win.addDockWidget(QtCore.Qt.RightDockWidgetArea, dock_ab)
+    win.tabifyDockWidget(dock_ops, dock_ab)                         # A / B tabbed in
     dock_ops.raise_()
     # The inspection panels (Variables & Objects, Pipeline·Params, Display·Analysis) are
     # on-demand — the user keeps them undocked / shown only when needed — so they start
     # hidden and the image owns the workspace. Toolbar + Window ▸ Panels toggles bring
     # each back. Operators stays (compact) since it is the primary build tool.
-    for _d in (dock_vars, dock_pipe, dock_disp):
+    for _d in (dock_vars, dock_pipe, dock_disp, dock_cmp, dock_ab):
         _d.hide()
     win.resizeDocks([dock_ops], [420], QtCore.Qt.Horizontal)        # narrow right column → image keeps the rest
     win.resizeDocks([dock_code], [300], QtCore.Qt.Vertical)         # wide bottom code strip = 2nd largest
     win._docks = {"operators": dock_ops, "pipeline": dock_pipe, "display": dock_disp,
-                  "program": dock_code, "variables": dock_vars}
+                  "program": dock_code, "variables": dock_vars, "compare": dock_cmp, "ab": dock_ab}
     # On-demand panels + less-common actions live behind ONE small popup menu button
     # (per user direction: prefer popup menus, keep buttons small) instead of a row of
     # wide toggles. Each panel toggle's text is the panel name; checking it shows it.
@@ -5472,7 +7278,7 @@ def build_window(model=None):
     _more_menu = QtWidgets.QMenu("More", win)
     win._more_menu = _more_menu                          # retain (shiboken ownership)
     _panels_sub = QtWidgets.QMenu("Panels", _more_menu); win._more_menu_panels = _panels_sub
-    for _d in (dock_vars, dock_disp, dock_pipe, dock_ops, dock_code):
+    for _d in (dock_vars, dock_disp, dock_pipe, dock_cmp, dock_ab, dock_ops, dock_code):
         _panels_sub.addAction(_d.toggleViewAction())
     _more_menu.addMenu(_panels_sub)
     _more_menu.addSeparator()
@@ -5637,8 +7443,9 @@ def build_window(model=None):
     win._reset_layout = reset_layout
     state = {"result": None, "raw": None, "view_raw": False, "reordering": False,
              "dirty": False, "code_dirty": False, "errors": [], "perception_error": None,
-             "program_error": None, "stage_lines": None,
+             "program_error": None, "structured_errors": [], "stage_lines": None,
              "renders": 0, "image_path": None, "pipe_path": None,
+             "roi": None,                    # (x0, y0, x1, y1) region of interest of the main view (Shift + drag), or None
              # HDevelop dev_update_{window,var,pc,time}: whether the graphics window,
              # variable window, execution cursor and per-line timings auto-update during
              # editing/execution. Turn off to make many edits (or a heavy run) without the
@@ -5679,17 +7486,32 @@ def build_window(model=None):
         win.setWindowTitle(seg + " — Fullseye Studio")
     win._set_title = _set_title
 
-    def report_error(title, text):
+    def report_error(title, text, *, op_name=None, stage_index=None, inputs=None,
+                     show_modal=True):
         """Surface a recoverable failure: status bar + a modal via ERROR_HOOK.
 
         Also appended to ``state['errors']`` so a headless test can assert on it
         without stubbing the dialog."""
         state["errors"].append((title, str(text)))
-        flash("%s: %s" % (title, truncate(text, 120)))
+        exc = text if isinstance(text, BaseException) else RuntimeError(str(text))
+        info = studio_errors.explain_failure(
+            exc, op_name=op_name, stage_index=stage_index, inputs=inputs)
+        info["_traceback"] = ("".join(traceback.format_exception(type(exc), exc, exc.__traceback__))
+                              if isinstance(text, BaseException) else str(text))
+        info["_source_title"] = title
+        state["structured_errors"].append(info)
+        flash(studio_errors.localize(info["title"], _UI_LANG.get("code", "en")))
         try:
-            ERROR_HOOK(win, title, str(text))
-        except Exception:                 # a stubbed/absent dialog must never crash us
+            refresh_problems(model.cached_step_states())
+        except NameError:                         # only possible during early window construction
             pass
+        if show_modal:
+            try:
+                ERROR_HOOK(win, title, studio_errors.format_failure(
+                    info, _UI_LANG.get("code", "en")))
+            except Exception:             # a stubbed/absent dialog must never crash us
+                pass
+    win._report_error = report_error
 
     def confirm_discard(title, what="the current pipeline"):
         """True if it is OK to throw away unsaved work — unsaved pipeline stages OR
@@ -5700,7 +7522,7 @@ def build_window(model=None):
         # Count unsaved Python-Editor tabs too — the app-quit path must not
         # silently discard them (only per-tab close prompted before this fix).
         ed_dirty = 0
-        pe = getattr(win, "_pyedit", None)
+        pe = state.get("pyedit")            # QObject の動的 getattr は閉じる途中に呼ばない
         if pe is not None:
             tabs = pe.get("tabs")
             if tabs is not None:
@@ -5718,7 +7540,68 @@ def build_window(model=None):
         return bool(CONFIRM_HOOK(
             win, title, "%s has %s.\nDiscard them?" % (what.capitalize(), " and ".join(parts))))
 
-    def refresh_stage_list(select=None):
+    _icon_cache = {}
+    _KIND_GLYPH = {"table": "\u25a6", "feature": "#", "series": "~", "array": "\u25a3", "contour": "\u2307",
+                   "other": "\u00b7"}
+
+    def _glyph_icon(glyph, tone):
+        """A neutral placeholder / kind icon of the thumbnail size (cached by glyph and colour)."""
+        key = (glyph, tone)
+        ic = _icon_cache.get(key)
+        if ic is None:
+            tw, th = _STAGE_THUMB
+            pm = QtGui.QPixmap(tw, th)
+            pm.fill(QtGui.QColor(NAVY_1))
+            pt = QtGui.QPainter(pm)
+            pt.setPen(QtGui.QColor(tone))
+            f = pt.font(); f.setPointSize(13); pt.setFont(f)
+            pt.drawText(pm.rect(), QtCore.Qt.AlignCenter, glyph)
+            pt.end()
+            ic = _icon_cache[key] = QtGui.QIcon(pm)
+        return ic
+
+    def _thumb_icon(arr):
+        """A QIcon from the model's small uint8 RGB thumbnail, centred on a fixed-size canvas so the rows align."""
+        a = np.ascontiguousarray(arr)
+        h, w = a.shape[:2]
+        qi = QtGui.QImage(a.data, w, h, 3 * w, QtGui.QImage.Format_RGB888).copy()
+        tw, th = _STAGE_THUMB
+        pm = QtGui.QPixmap(tw, th)
+        pm.fill(QtGui.QColor(NAVY_1))
+        pt = QtGui.QPainter(pm)
+        pt.drawImage((tw - w) // 2, (th - h) // 2, qi)
+        pt.end()
+        return QtGui.QIcon(pm)
+
+    def update_stage_icons():
+        """Put each stage row's thumbnail / placeholder from the model's stage cache.
+
+        Reads only what is cached (``model.stage_preview``): it never computes a stage. A stage with
+        a valid result shows its small picture; one never computed shows the neutral 'not computed'
+        icon; one computed earlier with other knobs shows 'recompute needed' instead of an old picture."""
+        stage_list.setIconSize(QtCore.QSize(*_STAGE_THUMB))
+        for i in range(min(stage_list.count(), len(model.stages))):
+            it = stage_list.item(i)
+            try:
+                pv = model.stage_preview(i)
+            except Exception:
+                continue
+            base = it.data(QtCore.Qt.UserRole + 1) or ""
+            if pv["status"] == "ready":
+                th = pv["thumb"]
+                it.setIcon(_thumb_icon(th) if th is not None
+                           else _glyph_icon(_KIND_GLYPH.get(pv["kind"], "\u00b7"), TEAL))
+                it.setToolTip(base)
+            elif pv["status"] == "stale":
+                it.setIcon(_glyph_icon("\u21bb", AMBER))
+                it.setToolTip("\u518d\u8a08\u7b97\u304c\u5fc5\u8981 / recompute needed\n\n" + base)
+            else:
+                it.setIcon(_glyph_icon("\u2026", MUTED))
+                it.setToolTip("\u672a\u8a08\u7b97 / not computed\n\n" + base)
+            it.setData(QtCore.Qt.UserRole + 2, pv["status"])
+    win._update_stage_icons = update_stage_icons
+
+    def refresh_stage_list(select=None, sync_code=True):
         """Rebuild the stage rows (and the Problems panel).
 
         Never renders the image: the row is selected with the list's signals still
@@ -5728,31 +7611,60 @@ def build_window(model=None):
         state["reordering"] = True                    # suppress the drag-reorder handler
         stage_list.blockSignals(True)
         stage_list.clear()
+        # CACHE ONLY (Studio slice 2): rebuilding the list never runs a stage. Computation
+        # happens from run / step / the settled knob drag / the main view, as before; a row
+        # whose stage has no valid cached result says so ("not computed" / "recompute needed").
         try:
-            states = model.step_states()
+            states = model.cached_step_states()
         except Exception as e:                        # summaries lost -> say so, don't blank
             states = []
             state["errors"].append(("step summaries unavailable", str(e)))
             flash("step summaries unavailable: %s" % truncate(e, 100))
-        try:
-            times = model.step_times()
-        except Exception as e:
-            times = []
-            state["errors"].append(("stage timings unavailable", str(e)))
-            flash("stage timings unavailable: %s" % truncate(e, 100))
+        times = model.cached_times()
+        marks = model.stage_marks()                   # which stages were recomputed since the last refresh
+        model.acknowledge()
+        validity_rows = []
         for i, (name, a, b) in enumerate(model.stages):
-            st = states[i]["state"] if i < len(states) else {}
-            summ = step_summary(st) if st else ""
-            ms = times[i] if i < len(times) else None
+            byp = _is_bypassed(model.stages[i])
+            st = (states[i]["state"] if i < len(states) else None) or {}
+            pstatus = states[i]["status"] if i < len(states) else "uncomputed"
+            if st:
+                summ = step_summary(st)
+            elif pstatus == "stale":
+                summ = "再計算が必要 / recompute needed"
+            else:
+                summ = "未計算 / not computed"
+            ms = times[i] if (i < len(times) and st) else None
             tstr = ("  ·  %.1f ms" % ms) if isinstance(ms, (int, float)) else ""
-            it = QtWidgets.QListWidgetItem(f"{i + 1}. {name} ({stage_knob_text(name, a, b)})  ->  {summ}{tstr}")
+            mk = marks[i] if (i < len(marks) and st) else "pending"
+            cstr = {"computed": "  ·  ⟳ calc", "cached": "  ·  ↺ cache"}.get(mk, "")
+            warn = st.get("valid") is False
+            wstr = "  ·  ⚠" if warn else ""
+            it = QtWidgets.QListWidgetItem(
+                f"{i + 1}. {name} ({stage_knob_text(name, a, b)})  ->  {summ}{tstr}{cstr}{wstr}"
+                + ("  \u00b7  \u2937 bypass" if byp else ""))
             it.setData(QtCore.Qt.UserRole, i)         # model index, for drag-reorder mapping
             row = _op_row(name)
             it.setToolTip(op_tooltip(row) if row else name)
+            if warn:                                  # ran, but the result needs a look (a warning, not an error)
+                why = "; ".join(st.get("reasons", []))
+                it.setForeground(QtGui.QColor("#c9a227"))
+                it.setToolTip("⚠ result needs review: %s\n(Studio only reports this; the result is shown as computed.)\n\n%s"
+                              % (why, it.toolTip()))
+                validity_rows.append({"index": i, "op": name, "severity": "warning", "glyph": "⚠",
+                                      "message": why})
             if st.get("kind") == "error":             # mark a stage that raised at runtime
                 it.setForeground(QtGui.QColor(AMBER))
                 it.setToolTip("runtime error: " + truncate(st.get("message", "")))
+            if byp:                                   # switched off: greyed + struck through, still in its place
+                _f = it.font(); _f.setStrikeOut(True); it.setFont(_f)
+                it.setForeground(QtGui.QColor(MUTED))
+                it.setToolTip(tr("bypassed: this stage passes its input through unchanged (Ctrl+B switches it on again)")
+                              + "\n\n" + it.toolTip())
+            it.setData(QtCore.Qt.UserRole + 1, it.toolTip())    # the row's own tooltip; icons add a status line
             stage_list.addItem(it)
+        state["validity_rows"] = validity_rows
+        update_stage_icons()
         if stage_list.count() == 0:                     # onboarding: guide the empty state
             hint = QtWidgets.QListWidgetItem(
                 "— empty — double-click an operator, or drop an image/.json here, to start —")
@@ -5765,22 +7677,30 @@ def build_window(model=None):
         state["reordering"] = False
         refresh_problems(states)
         sync_stage_ui()
-        getattr(win, "_code_sync", lambda: None)()   # keep the program (code) view in sync
+        if sync_code:                                 # (a run keeps the editor's cursor / timings: sync_code=False)
+            getattr(win, "_code_sync", lambda: None)()   # keep the program (code) view in sync
 
     def refresh_problems(states=None):
         """Populate the Problems list: static validation (unknown op / sort mismatch,
         via engine.diagnose_stages) + runtime errors (a stage that raised) + the last
         perception failure (which used to be a status-bar flash you could easily miss)."""
         problems_list.clear()
-        probs = list(engine.diagnose_stages(model.stages))     # static checks
+        _act_idx = [k for k, st in enumerate(model.stages) if not _is_bypassed(st)]
+        if len(_act_idx) == len(model.stages):
+            probs = list(engine.diagnose_stages(model.stages))     # static checks
+        else:                                                      # a bypassed stage is not part of the chain
+            probs = [dict(p, index=_act_idx[p["index"]]) if 0 <= p.get("index", -1) < len(_act_idx) else p
+                     for p in engine.diagnose_stages([model.stages[k] for k in _act_idx])]
         if states:
             for s in states:                                    # runtime errors
-                if s.get("state", {}).get("kind") == "error":
+                if (s.get("state") or {}).get("kind") == "error":
                     probs.append({"index": s["index"], "op": s["op"], "severity": "error",
                                   "message": "runtime: " + truncate(s["state"].get("message", ""))})
+        if states is not None:
+            probs.extend(state.get("validity_rows", []))        # ran-but-needs-review: ⚠, distinct from ✕
         probs.sort(key=lambda p: (p["index"], 0 if p["severity"] == "error" else 1))
         for p in probs:
-            mark = "✕" if p["severity"] == "error" else "!"
+            mark = p.get("glyph") or ("✕" if p["severity"] == "error" else "!")
             it = QtWidgets.QListWidgetItem("%s stage %d (%s): %s"
                                            % (mark, p["index"] + 1,
                                               truncate(p.get("op", "?"), 40),
@@ -5801,11 +7721,378 @@ def build_window(model=None):
             it.setData(QtCore.Qt.UserRole, rerr[0])
             it.setForeground(QtGui.QColor(AMBER))
             problems_list.addItem(it)
-        if not probs and not perr and not rerr:
+        notes = state.get("input_notes") or []
+        for msg in notes:                                       # saved-input reference could not be matched cleanly
+            it = QtWidgets.QListWidgetItem("⚠ input: %s" % truncate(msg, 160))
+            it.setData(QtCore.Qt.UserRole, -1)
+            it.setForeground(QtGui.QColor("#c9a227"))
+            problems_list.addItem(it)
+        pin_bad = [(k, p) for k, p in enumerate(model.pins) if p.error]
+        for k, p in pin_bad:                                    # a pinned snapshot whose picture could not be rebuilt
+            lab = "AB"[k] if k < 2 else str(k + 1)
+            it = QtWidgets.QListWidgetItem("⚠ %s を再計算できません / cannot recompute %s: %s"
+                                           % (lab, lab, truncate(p.error, 120)))
+            it.setData(QtCore.Qt.UserRole, -1)
+            it.setForeground(QtGui.QColor("#c9a227"))
+            problems_list.addItem(it)
+        roundtrip = state.get("roundtrip_report")
+        if roundtrip is not None and not roundtrip.ok:
+            it = QtWidgets.QListWidgetItem("✕ " + roundtrip.describe(_UI_LANG.get("code", "en")))
+            it.setData(QtCore.Qt.UserRole, roundtrip.first_mismatch)
+            it.setForeground(QtGui.QColor(AMBER))
+            problems_list.addItem(it)
+        # Structured runtime failures keep the full cause/place/next-action text and
+        # put the proposed actions beside it.  Nothing here mutates input data.
+        for info_ in state.get("structured_errors", []):
+            text_ = studio_errors.format_failure(info_, _UI_LANG.get("code", "en"))
+            it = QtWidgets.QListWidgetItem(text_)
+            idx_ = info_.get("place", {}).get("stage")
+            it.setData(QtCore.Qt.UserRole, idx_ if idx_ is not None else -1)
+            it.setData(QtCore.Qt.UserRole + 10, info_)
+            it.setForeground(QtGui.QColor(AMBER))
+            problems_list.addItem(it)
+            box = QtWidgets.QWidget()
+            lay = QtWidgets.QVBoxLayout(box); lay.setContentsMargins(3, 3, 3, 3)
+            label = QtWidgets.QLabel(text_); label.setWordWrap(True); lay.addWidget(label)
+            actions = QtWidgets.QHBoxLayout(); lay.addLayout(actions)
+            for action in info_.get("actions", []):
+                kind = action.get("kind")
+                if kind not in studio_errors.ACTION_KINDS:
+                    continue
+                button = QtWidgets.QPushButton(studio_errors.localize(
+                    action.get("label"), _UI_LANG.get("code", "en")))
+                button.setProperty("action_kind", kind)
+                button.clicked.connect(lambda _=False, k=kind, a=action, inf=info_:
+                                       _run_problem_action(k, a, inf))
+                actions.addWidget(button)
+            actions.addStretch(1)
+            box.adjustSize()
+            it.setSizeHint(box.sizeHint())
+            problems_list.setItemWidget(it, box)
+        if not probs and not perr and not rerr and not notes and not pin_bad \
+                and not (roundtrip is not None and not roundtrip.ok) \
+                and not state.get("structured_errors"):
             hint = QtWidgets.QListWidgetItem("no problems")
             hint.setForeground(QtGui.QColor(MUTED))
             hint.setData(QtCore.Qt.UserRole, -1)
             problems_list.addItem(hint)
+
+    def _run_problem_action(kind, action, info):
+        idx = info.get("place", {}).get("stage")
+        if kind == "reselect_input":
+            load_image()
+        elif kind == "show_inputs_side_by_side":
+            if isinstance(idx, int) and 0 <= idx < len(model.stages):
+                stage_list.setCurrentRow(idx)
+            win._docks["compare"].show()
+            update_stage_compare()
+        elif kind == "open_log":
+            dlg = QtWidgets.QDialog(win); dlg.setWindowTitle(tr("Detailed log")); dlg.setModal(False)
+            lay = QtWidgets.QVBoxLayout(dlg)
+            edit = QtWidgets.QPlainTextEdit(); edit.setReadOnly(True)
+            edit.setPlainText(info.get("_traceback") or info.get("raw", "")); lay.addWidget(edit)
+            dlg.resize(680, 360); dlg.show()
+            win._last_error_log = edit; win._last_error_log_dialog = dlg
+        elif kind == "edit_knob":
+            if isinstance(idx, int) and 0 <= idx < len(model.stages):
+                stage_list.setCurrentRow(idx); krow_a.typed.setFocus()
+        elif kind == "insert_stage":
+            candidates = action.get("candidates") or []
+            search.setText(candidates[0] if candidates else info.get("place", {}).get("op") or "")
+            search.setFocus()
+
+    def _problem_buttons(item):
+        box = problems_list.itemWidget(item)
+        return box.findChildren(QtWidgets.QPushButton) if box is not None else []
+    win._problem_buttons = _problem_buttons
+
+    run_ctl = _RunControllerState()
+    run_snapshots = {}
+    run_completed = {}
+    run_stop_events = {}
+    RunWorker = _run_worker_class(QtCore)
+
+    def _current_run_token():
+        return (model._img_ver, tuple(_stage_key(s) for s in model.stages))
+
+    def _update_attribution():
+        gen = model.displayed_generation or run_ctl.latest_generation
+        if not gen:
+            run_attr.setText("")
+            return
+        snap = run_snapshots.get(gen)
+        changed = snap is not None and snap["token"] != _current_run_token()
+        key = ("Current settings: changed / displayed result: generation %d" if changed else
+               "Current settings: unchanged / displayed result: generation %d")
+        run_attr.setText(tr(key) % gen)
+
+    def settings_changed():
+        _update_attribution()
+        gen = model.displayed_generation
+        snap = run_snapshots.get(gen)
+        if snap is not None and snap["token"] != _current_run_token() and gen in run_completed:
+            run_banner.setText(tr("The completed result used settings from before the change"))
+            for widget in (run_banner, run_show, run_current):
+                widget.show()
+    win._settings_changed = settings_changed
+    model._change_callback = settings_changed
+
+    def _worker_started(gen, i, n, name):
+        if gen != run_ctl.latest_generation:
+            return
+        run_progress.setRange(0, n); run_progress.setValue(i)
+        text = tr("Run in progress %d/%d stages: %s") % (i + 1, n, name)
+        run_status.setText(text); run_ctl.status_history.append(text)
+
+    def _worker_finished(gen, i, value, exc, ms):
+        snap = run_snapshots.get(gen)
+        if gen != run_ctl.latest_generation:
+            run_ctl.history.append((gen, "dropped", i))
+            return
+        if exc is not None:
+            name = snap["stages"][i][0] if snap and i < len(snap["stages"]) else None
+            report_error("Run", exc, op_name=name, stage_index=i,
+                         inputs=[snap["image"]] if snap else None)
+            return
+        model._apply_worker_result(snap, i, value, ms)
+        run_completed[gen] = i + 1
+        run_progress.setValue(i + 1)
+
+    def _thread_finished(gen, thread):
+        """Retire a worker on the GUI thread, never from QThread.finished's emitter."""
+        run_ctl.threads.pop(gen, None)
+        run_stop_events.pop(gen, None)
+
+    def _worker_done(gen, stopped):
+        thread_worker = run_ctl.threads.get(gen)
+        if thread_worker is not None:
+            thread_worker[0].quit()
+        if gen != run_ctl.latest_generation:
+            run_ctl.history.append((gen, "stopped" if stopped else "finished", run_completed.get(gen, 0)))
+            return
+        n = len(run_snapshots[gen]["stages"])
+        done = run_completed.get(gen, 0)
+        run_stop.setEnabled(False); run_progress.hide(); run_stop.hide()
+        if stopped:
+            text = tr("Stopped (%d/%d stages completed)") % (done, n)
+            run_status.setText(text); run_ctl.status_history.append(text)
+        else:
+            run_status.setText("")
+        snap = run_snapshots[gen]
+        if not stopped and done == n:
+            state["worker_result"] = model.displayed_result
+            show_result()
+            refresh_stage_list(select=len(model.stages) - 1 if model.stages else None)
+            if snap["token"] != _current_run_token():
+                run_banner.setText(tr("The completed result used settings from before the change"))
+                for widget in (run_banner, run_show, run_current):
+                    widget.show()
+            else:
+                for widget in (run_banner, run_show, run_current):
+                    widget.hide()
+        _update_attribution()
+
+    class _RunBridge(QtCore.QObject):
+        @QtCore.Slot(int, int, int, str)
+        def started(self, gen, i, n, name):
+            _worker_started(gen, i, n, name)
+
+        @QtCore.Slot(int, int, object, object, float)
+        def finished(self, gen, i, value, exc, ms):
+            _worker_finished(gen, i, value, exc, ms)
+
+        @QtCore.Slot(int, bool)
+        def done(self, gen, stopped):
+            _worker_done(gen, stopped)
+
+    run_bridge = _RunBridge(win)
+
+    class _ThreadFinishBridge(QtCore.QObject):
+        """Carry thread identity into a receiver with explicit GUI affinity."""
+
+        def __init__(self, generation, thread, worker):
+            super().__init__(run_bridge)
+            self.generation = generation
+            self.thread = thread
+            # Keep both Python wrappers alive until Qt confirms worker deletion.
+            self.worker = worker
+
+        @QtCore.Slot()
+        def finished(self):
+            # finished() is emitted before QThread has necessarily completed all
+            # thread-local cleanup.  wait() is the synchronization point that
+            # makes releasing the worker's Python wrapper safe.
+            self.thread.wait()
+            _thread_finished(self.generation, self.thread)
+            run_ctl.finish_bridges.pop(self.generation, None)
+            self.worker = None
+            self.thread = None
+            self.deleteLater()
+
+    def start_run_async():
+        import threading
+        run_ctl.generation += 1
+        gen = run_ctl.generation
+        run_ctl.latest_generation = gen
+        snap = _run_snapshot(model, gen)
+        run_snapshots[gen] = snap
+        run_completed[gen] = 0
+        stop_event = threading.Event(); run_stop_events[gen] = stop_event
+        # The window must not own a running QThread: QObject parent teardown can
+        # otherwise destroy it while a queued completion is still in flight.
+        thread = QtCore.QThread()
+        worker = RunWorker(snap, stop_event); worker.moveToThread(thread)
+        worker.started.connect(run_bridge.started, QtCore.Qt.QueuedConnection)
+        worker.finished.connect(run_bridge.finished, QtCore.Qt.QueuedConnection)
+        worker.run_done.connect(run_bridge.done, QtCore.Qt.QueuedConnection)
+        thread.started.connect(worker.run)
+        # QObject cleanup belongs to the worker thread.  Controller cleanup belongs
+        # to the GUI thread; a context-free Python lambda here can run in the
+        # emitting worker thread and drop the final wrappers there.
+        thread.finished.connect(worker.deleteLater)
+        finish_bridge = _ThreadFinishBridge(gen, thread, worker)
+        run_ctl.finish_bridges[gen] = finish_bridge
+        thread.finished.connect(finish_bridge.finished, QtCore.Qt.QueuedConnection)
+        thread.finished.connect(thread.deleteLater)
+        run_ctl.threads[gen] = (thread, worker)
+        text = tr("Run in progress %d/%d stages: %s") % (
+            1, max(len(snap["stages"]), 1), snap["stages"][0][0] if snap["stages"] else "")
+        run_status.setText(text); run_ctl.status_history.append(text)
+        run_progress.setRange(0, len(snap["stages"])); run_progress.setValue(0); run_progress.show()
+        run_stop.setText(tr("Request stop")); run_stop.setEnabled(True); run_stop.show()
+        for widget in (run_banner, run_show, run_current):
+            widget.hide()
+        thread.start()
+        return gen
+
+    def request_stop():
+        gen = run_ctl.latest_generation
+        event = run_stop_events.get(gen)
+        if event is None or event.is_set():
+            return
+        event.set()
+        run_stop.setEnabled(False)
+        text = tr("Stop requested (the current stage cannot be interrupted)")
+        run_status.setText(text); run_ctl.status_history.append(text)
+
+    def show_completed_result():
+        gen = run_ctl.latest_generation
+        if gen in run_completed and model.displayed_generation == gen:
+            state["worker_result"] = model.displayed_result
+            show_result()
+
+    run_ctl.request_stop = request_stop
+    run_stop.clicked.connect(request_stop)
+    run_show.clicked.connect(show_completed_result)
+    run_current.clicked.connect(start_run_async)
+    def quiesce_run_workers(timeout_ms=5000):
+        """停止を要求し、生きている QThread をすべて quit + wait する(閉じる前・テストの後始末)。"""
+        for event in list(run_stop_events.values()):
+            event.set()
+        for thread, _worker in list(run_ctl.threads.values()):
+            thread.quit()
+            thread.wait(timeout_ms)
+        QtWidgets.QApplication.processEvents()
+
+    win.quiesce = quiesce_run_workers
+    run_ctl.quiesce = quiesce_run_workers
+    win._run_controller = run_ctl
+    win._run_snapshots = run_snapshots
+    win._start_run_async = start_run_async
+
+    def _run_batch_value(snapshot, path):
+        value = imgio.load(str(path))
+        for i, (name, a, b, bypass) in enumerate(snapshot["stages"]):
+            value = value if bypass else api.run_pipeline(value, [(name, a, b)], coerce=(i == 0))
+        numeric = {}
+        array = np.asarray(value)
+        if array.size == 1 and array.dtype.kind in "biufc":
+            numeric["value"] = array.reshape(()).item()
+        return {"final_image": value, "numeric": numeric}
+
+    class _BatchWorker(QtCore.QObject):
+        progress = QtCore.Signal(int, int, int, str, str)
+        complete = QtCore.Signal(int, object)
+
+        def __init__(self, generation, snapshot, plan, stop_event):
+            super().__init__()
+            self.generation = generation
+            self.snapshot = snapshot
+            self.plan = plan
+            self.stop_event = stop_event
+
+        @QtCore.Slot()
+        def run(self):
+            result = studio_batch.run_batch(
+                self.plan, lambda path: _run_batch_value(self.snapshot, path),
+                should_stop=self.stop_event.is_set,
+                on_progress=lambda i, n, path, status: self.progress.emit(
+                    self.generation, i, n, os.path.basename(str(path)), status))
+            self.complete.emit(self.generation, result)
+
+    class _BatchBridge(QtCore.QObject):
+        @QtCore.Slot(int, int, int, str, str)
+        def progress(self, gen, i, n, name, status_name):
+            if gen != run_ctl.latest_generation:
+                return
+            text = "バッチ %d/%d: %s" % (i, n, name)
+            run_status.setText(text); run_ctl.status_history.append(text)
+            run_progress.setRange(0, n); run_progress.setValue(i)
+
+        @QtCore.Slot(int, object)
+        def complete(self, gen, result):
+            pair = run_ctl.threads.get(gen)
+            if pair is not None:
+                pair[0].quit()
+            if gen != run_ctl.latest_generation:
+                run_ctl.history.append((gen, "batch-dropped", result.done))
+                return
+            run_progress.hide(); run_stop.hide(); run_stop.setEnabled(False)
+            win._last_batch_result = result
+            skipped = sum(status_name == "skipped" for status_name in result.statuses.values())
+            successful = result.done
+            text = "%d 枚: 成功 %d / 失敗 %d / スキップ %d、summary.csv" % (
+                len(win._batch_plan.files), successful, len(result.failed), skipped)
+            if result.stopped:
+                text = "停止済み (%d/%d) · " % (len(result.statuses),
+                                               len(win._batch_plan.files)) + text
+            run_status.setText(text); run_ctl.status_history.append(text)
+            if getattr(win, "_batch_summary_label", None) is not None:
+                win._batch_summary_label.setText(text)
+                win._batch_failures_button.setEnabled(bool(result.failed))
+
+    batch_bridge = _BatchBridge(win)
+
+    def start_batch_async(plan):
+        """Submit one fixed pipeline generation for all files in *plan*."""
+        import threading
+        run_ctl.generation += 1
+        gen = run_ctl.generation
+        run_ctl.latest_generation = gen
+        snapshot = _run_snapshot(model, gen)
+        run_snapshots[gen] = snapshot
+        run_completed[gen] = 0
+        stop_event = threading.Event(); run_stop_events[gen] = stop_event
+        thread = QtCore.QThread()
+        worker = _BatchWorker(gen, snapshot, plan, stop_event); worker.moveToThread(thread)
+        worker.progress.connect(batch_bridge.progress, QtCore.Qt.QueuedConnection)
+        worker.complete.connect(batch_bridge.complete, QtCore.Qt.QueuedConnection)
+        thread.started.connect(worker.run)
+        thread.finished.connect(worker.deleteLater)
+        finish_bridge = _ThreadFinishBridge(gen, thread, worker)
+        run_ctl.finish_bridges[gen] = finish_bridge
+        thread.finished.connect(finish_bridge.finished, QtCore.Qt.QueuedConnection)
+        thread.finished.connect(thread.deleteLater)
+        run_ctl.threads[gen] = (thread, worker)
+        win._batch_plan = plan
+        win._batch_generation = gen
+        run_status.setText("バッチ 0/%d" % len(plan.files))
+        run_progress.setRange(0, len(plan.files)); run_progress.setValue(0); run_progress.show()
+        run_stop.setText(tr("Request stop")); run_stop.setEnabled(True); run_stop.show()
+        thread.start()
+        return gen
+
+    win._start_batch_async = start_batch_async
 
     def on_rows_moved(*_):
         """A drag-reorder inside the stage list -> permute model.stages to match."""
@@ -5816,13 +8103,19 @@ def build_window(model=None):
             push_undo()
             model.stages = [model.stages[i] for i in order]
             mark_dirty()
+            settings_changed()
             refresh_stage_list(select=stage_list.currentRow())
             show_result()
 
     def _render():
         idx = selected_index()
         try:
-            if idx < 0 and state.get("view_raw"):
+            worker_value = state.pop("worker_result", None)
+            if worker_value is not None:
+                val = worker_value
+            elif run_ctl.running and model.displayed_generation:
+                val = model.displayed_result
+            elif idx < 0 and state.get("view_raw"):
                 val = model.result_upto(-1)           # Reset -> the pre-pipeline raw image
             else:
                 val = model.result_upto(idx if idx >= 0 else len(model.stages) - 1)
@@ -5856,6 +8149,9 @@ def build_window(model=None):
             prev = result_preview(val)
             if prev is not None:
                 insp += "\n\nPreview: %s" % prev["note"]
+        _v, _why = assess_validity(val)
+        if _v is False:
+            insp += "\n\n⚠ result needs review: %s" % "; ".join(_why)
         inspector.setPlainText(insp)
         if prev is not None and prev.get("image") is not None:
             qi = _to_qimage(prev["image"], QtGui)
@@ -5902,6 +8198,447 @@ def build_window(model=None):
                 view.set_message("Nothing to display")
             hist_view.clear(); state["result"] = None; state["raw"] = None
 
+    def _val_pixmap(val, rng=None, base=None):
+        """The pixmap the main view would show for *val* (same display mode and mapping as ``_render``), or None.
+        *rng* ``(lo, hi)`` shows it on a common scale (see :func:`shared_display_range`); *base* is the picture a
+        region is drawn on (default: the input image)."""
+        drawable = (isinstance(val, np.ndarray) and val.dtype.kind in "biuf"
+                    and (val.ndim == 2 or (val.ndim == 3 and val.shape[2] == 3)))
+        img = None
+        if drawable:
+            img = apply_display(val, display.currentText(), base=(model.image if base is None else base),
+                                draw=state["draw"], vmin=(rng[0] if rng else None), vmax=(rng[1] if rng else None))
+        else:
+            prev = result_preview(val)
+            if prev is not None:
+                img = prev.get("image")
+        qi = _to_qimage(img, QtGui) if img is not None else None
+        return QtGui.QPixmap.fromImage(qi) if qi is not None else None
+
+    def update_stage_compare():
+        """Fill the 'Stage in -> out' panel for the selected stage: its input and output side by
+        side through the same display mapping, and a one-line before -> after summary. Only runs
+        while the panel is open; the values come from the stage cache (the stage is run once, as
+        the main view needs it anyway)."""
+        if dock_cmp.isHidden():
+            return
+        i = selected_index()
+        if not (0 <= i < len(model.stages)):
+            for _p in (cmp_left, cmp_right):
+                _p.set_source(None, tr("select a stage to compare its input and output"))
+            cmp_ltitle.setText(""); cmp_rtitle.setText(""); cmp_summary.setText("")
+            return
+        try:
+            before, after = model.result_upto(i - 1), model.result_upto(i)
+        except Exception as e:
+            for _p in (cmp_left, cmp_right):
+                _p.set_source(None, tr("pipeline error (see the Problems list)"))
+            cmp_summary.setText(truncate(e, 160))
+            return
+        none_msg = tr("no picture for this result")
+        cmp_left.set_source(_val_pixmap(before), none_msg)
+        cmp_right.set_source(_val_pixmap(after), none_msg)
+        cmp_ltitle.setText(tr("in: input image") if i == 0 else tr("in: stage %d output") % i)
+        stage_gen = model._displayed_stage_results.get(i, (0, None))[0]
+        suffix = " · " + tr("Generation %d") % stage_gen if stage_gen else ""
+        cmp_rtitle.setText(tr("out: stage %d (%s)") % (i + 1, model.stages[i][0]) + suffix)
+        cmp_summary.setText(_stage_delta_summary(before, after))
+    win._update_stage_compare = update_stage_compare
+    win._compare = {"dock": dock_cmp, "left": cmp_left, "right": cmp_right, "summary": cmp_summary,
+                    "left_title": cmp_ltitle, "right_title": cmp_rtitle}
+    dock_cmp.visibilityChanged.connect(lambda vis: update_stage_compare() if vis else None)
+
+    # ---- Studio slice 3 A: the knob strip ------------------------------------------------------ #
+    _STRIP_THUMB = (120, 90)
+    strip = {"toggle": strip_toggle, "body": strip_body, "which": strip_which, "count": strip_count,
+             "message": strip_msg, "cells": [], "adopt": [], "thumbs": [], "values": [], "chosen": None,
+             "knob": "a", "op": None}
+    win._strip = strip
+    strip_timer = QtCore.QTimer(win)
+    strip_timer.setSingleShot(True)
+
+    def _strip_clear(msg):
+        for _slot, _c, _a in strip_slots:
+            _slot.setVisible(False)
+        strip.update(cells=[], adopt=[], thumbs=[], values=[], chosen=None)
+        strip_msg.setText(msg)
+        strip_msg.setVisible(bool(msg))
+
+    def update_knob_strip():
+        """Fill the strip for the selected stage and knob. Runs only while the strip is open; the stage runs
+        once per candidate on the CACHED output of the stage before it (see PipelineModel.run_variants), and only
+        small pixmaps are kept - never the arrays."""
+        if not strip_toggle.isChecked():
+            return
+        i = selected_index()
+        if not (0 <= i < len(model.stages)):
+            return _strip_clear(tr("select a stage to try its values"))
+        name, a, b = model.stages[i]
+        specs = param_specs.spec_for(name)
+        if strip["op"] != name:                         # another op: start on its first knob that does something
+            strip["op"] = name
+            first = "a" if specs["a"].get("kind") != "unused" else "b"
+            strip_which.blockSignals(True)
+            strip_which.setCurrentIndex(strip_which.findData(first))
+            strip_which.blockSignals(False)
+        which = strip_which.currentData() or "a"
+        n = int(strip_count.currentData() or 3)
+        if model.is_bypassed(i):
+            return _strip_clear(tr("this stage is bypassed: switch it on to try its values"))
+        spec = specs[which]
+        cands = knob_candidates(spec, a if which == "a" else b, n)
+        if not cands:
+            return _strip_clear(tr("this operator does not use knob %s") % which)
+        try:
+            results = model.run_variants(i, which, [c["knob"] for c in cands])
+            cur = model.result_upto(i)
+        except Exception as e:
+            return _strip_clear(truncate(e, 160))
+        roi = state.get("roi")
+        crops = [crop_roi(v, roi) for v, _e in results]
+        rng = shared_display_range(crop_roi(cur, roi), *crops)        # ONE display range for the whole strip
+        base = crop_roi(model.image, roi)
+        pix, vals = [], []
+        for (v, err), c, cand in zip(results, crops, cands):
+            pm = None
+            if err is None and v is not None:
+                try:
+                    pm = _val_pixmap(c, rng=rng, base=base)
+                except Exception:
+                    pm = None
+            if pm is not None:
+                pm = pm.scaled(*_STRIP_THUMB, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
+            pix.append(pm)
+            vals.append(dict(cand))
+        del results, crops, cur
+        strip["knob"] = which
+        strip.update(thumbs=pix, values=vals, chosen=None,
+                     cells=[strip_slots[k][1] for k in range(len(vals))],
+                     adopt=[strip_slots[k][2] for k in range(len(vals))])
+        for k, (_slot, cell, adopt) in enumerate(strip_slots):
+            _slot.setVisible(k < len(vals))
+            if k >= len(vals):
+                continue
+            pm = pix[k]
+            cell.blockSignals(True); cell.setChecked(False); cell.blockSignals(False)
+            cell.setIcon(QtGui.QIcon(pm) if pm is not None else QtGui.QIcon())
+            cell.setIconSize(pm.size() if pm is not None else QtCore.QSize(*_STRIP_THUMB))
+            cell.setText(vals[k]["text"] + (" \u25cf" if vals[k]["current"] else "")
+                         + ("" if pm is not None else "\n" + tr("no picture")))
+            cell.setToolTip(tr("the current value") if vals[k]["current"] else tr("click to choose, then adopt"))
+            adopt.setEnabled(False)
+        msg = ""
+        if any(p is None for p in pix):
+            msg = tr("some values gave no picture")
+        if roi is not None:
+            msg = (msg + "  " if msg else "") + tr("showing only the region %s") % (roi,)
+        strip_msg.setText(msg)
+        strip_msg.setVisible(bool(msg))
+
+    def _strip_choose(k):
+        """Choosing a candidate only marks it and enables ITS adopt button; the knob does not move."""
+        strip["chosen"] = k
+        for j, (_slot, cell, adopt) in enumerate(strip_slots):
+            cell.blockSignals(True); cell.setChecked(j == k); cell.blockSignals(False)
+            adopt.setEnabled(j == k and j < len(strip["values"]))
+
+    def _strip_adopt(k):
+        """Apply candidate *k* through the normal knob path: one undo entry (named after the knob), the same
+        debounce-tail handler a slider drag ends in."""
+        vals = strip["values"]
+        i = selected_index()
+        if not (0 <= k < len(vals) and 0 <= i < len(model.stages)):
+            return
+        which = strip["knob"]
+        kn = float(vals[k]["knob"])
+        spec = param_specs.spec_for(model.stages[i][0])[which]
+        row = krow_a if which == "a" else krow_b
+        row.set_knob(kn)                                # mirror into the widgets, no emit
+        _knob_changed(which, kn, from_spin=True)
+        knob_timer.stop()
+        if getattr(win, "_knob_drag_base", None) is not None:
+            win._knob_drag_base.label = tr("change %s") % (spec.get("label") or which)
+        on_knob_settled()
+        strip["chosen"] = None
+        update_knob_strip()
+
+    def _on_strip_toggle(on):
+        strip_toggle.setArrowType(QtCore.Qt.DownArrow if on else QtCore.Qt.RightArrow)
+        strip_body.setVisible(bool(on))
+        if on:
+            update_knob_strip()
+
+    strip_toggle.toggled.connect(_on_strip_toggle)
+    strip_which.currentIndexChanged.connect(lambda _=None: update_knob_strip())
+    strip_count.currentIndexChanged.connect(lambda _=None: update_knob_strip())
+    for _k, (_slot, _cell, _adopt) in enumerate(strip_slots):
+        _cell.clicked.connect(lambda _=False, k=_k: _strip_choose(k))
+        _adopt.clicked.connect(lambda _=False, k=_k: _strip_adopt(k))
+    strip_timer.timeout.connect(update_knob_strip)
+    strip["refresh"] = update_knob_strip
+
+    def _strip_schedule():
+        """A render happened: refresh the open strip once the knob has been quiet for a moment (a drag is one refresh)."""
+        if strip_toggle.isChecked():
+            strip_timer.start(KNOB_DEBOUNCE_MS * 2)
+
+    # ---- region of interest of the main view (Shift + drag; Shift + click clears) ------------- #
+    def set_roi(rect):
+        r = None
+        if rect is not None:
+            x0, y0, x1, y1 = [int(v) for v in rect]
+            if x0 >= 0 and y0 >= 0 and x1 - x0 >= 2 and y1 - y0 >= 2:
+                r = (x0, y0, x1, y1)
+        state["roi"] = r
+        view.set_roi_rect(r)
+        _strip_schedule()
+    win._set_roi = set_roi
+    view.roi_cb = set_roi
+
+    # ---- Studio slice 3 B: pin A, compare with the live result B ------------------------------ #
+    ab_state = {"mode": "side", "phase": 0, "range": None, "pm_a": None, "pm_b": None}
+    ab = {"dock": dock_ab, "a": ab_a, "b": ab_b, "mode": ab_mode, "diff_kind": ab_diff, "ref": ab_ref,
+          "swipe": ab_swipe, "blink_ms": ab_blink, "info": ab_info, "changes": ab_changes,
+          "restore": ab_restore, "adopt": ab_adopt, "keep": ab_keep, "sync_main": ab_sync_main,
+          "title_a": ab_atitle, "title_b": ab_btitle}
+    win._ab = ab
+    ab_timer = QtCore.QTimer(win)
+    ab["timer"] = ab_timer
+
+    def _pin_label(k):
+        return "AB"[k] if 0 <= k < 2 else str(k + 1)
+
+    def _ref_pin():
+        k = ab_ref.currentIndex()
+        return model.pins[k] if 0 <= k < len(model.pins) else None
+
+    def _fill_ab_ref():
+        keep = ab_ref.currentIndex()
+        ab_ref.blockSignals(True)
+        ab_ref.clear()
+        for k, p in enumerate(model.pins):
+            ab_ref.addItem(_pin_label(k) + (": " + p.note if p.note else ""))
+        ab_ref.setCurrentIndex(min(max(keep, 0), len(model.pins) - 1) if model.pins else -1)
+        ab_ref.blockSignals(False)
+
+    def _ab_timer_sync():
+        """The blink timer runs only while the dock is shown, a snapshot exists and the mode is 'blink'."""
+        want = (not dock_ab.isHidden()) and ab_state["mode"] == "blink" and bool(model.pins)
+        if want:
+            ab_timer.setInterval(ab_blink.value())
+            if not ab_timer.isActive():
+                ab_timer.start()
+        elif ab_timer.isActive():
+            ab_timer.stop()
+
+    def _swipe_pixmap(pa, pb, frac):
+        out = QtGui.QPixmap(pb)
+        cut = int(round(pa.width() * frac))
+        pt = QtGui.QPainter(out)
+        if cut > 0:
+            pt.drawPixmap(0, 0, pa, 0, 0, cut, pa.height())
+        if 0 < cut < pa.width():
+            pt.setPen(QtGui.QPen(QtGui.QColor(AMBER), 1))
+            pt.drawLine(cut, 0, cut, pa.height())
+        pt.end()
+        return out
+
+    def _ab_show_composite():
+        """Swipe / blink from the two pixmaps already made (moving the slider or a blink tick recomputes nothing)."""
+        pa, pb = ab_state["pm_a"], ab_state["pm_b"]
+        if pa is None or pb is None:
+            return
+        if ab_state["mode"] == "swipe":
+            ab_a.set_source(_swipe_pixmap(pa, pb, ab_swipe.value() / 100.0))
+            ab_atitle.setText(tr("A | B"))
+        elif ab_state["mode"] == "blink":
+            ab_a.set_source(pb if ab_state["phase"] else pa)
+            ab_atitle.setText("B" if ab_state["phase"] else "A")
+
+    def update_ab():
+        """Redraw the A / B dock. Costs nothing while the dock is hidden."""
+        _ab_timer_sync()
+        if dock_ab.isHidden():
+            return
+        _fill_ab_ref()
+        pin = _ref_pin()
+        ab_changes.clear()
+        for _b in (ab_restore, ab_adopt):
+            _b.setEnabled(pin is not None)
+        ab_keep.setEnabled(bool(model.pins) and model.image is not None)
+        mode = ab_state["mode"]
+        ab_diff.setVisible(mode == "diff"); ab_swipe.setVisible(mode == "swipe"); ab_blink.setVisible(mode == "blink")
+        ab_b.setVisible(mode == "side"); ab_btitle.setVisible(mode == "side"); ab_cols[1].setVisible(mode == "side")
+        ab_state.update(pm_a=None, pm_b=None, range=None)
+        if pin is None:
+            for _p in (ab_a, ab_b):
+                _p.set_source(None, tr("pin the current result as A (toolbar, Ctrl+Shift+A), then change something"))
+            ab_atitle.setText(""); ab_btitle.setText(""); ab_info.setText("")
+            return
+        lab = _pin_label(model.pins.index(pin))
+        for e in model.diff_pin(pin):
+            ab_changes.addItem(e["text"])
+        if ab_changes.count() == 0:
+            _h = QtWidgets.QListWidgetItem(tr("no changes since %s") % lab)
+            _h.setForeground(QtGui.QColor(MUTED))
+            ab_changes.addItem(_h)
+        ab_atitle.setText(lab + (": " + pin.note if pin.note else ""))
+        ab_btitle.setText(tr("B: now") + ((" · " + tr("Generation %d") % model.displayed_generation)
+                                          if model.displayed_generation else ""))
+        A = pin.array
+        if A is None:
+            ab_a.set_source(None, (tr("cannot recompute %s") % lab) + (": " + pin.error if pin.error else ""))
+            ab_info.setText(tr("%s has no picture to show") % lab)
+            return
+        try:
+            B = model.output()
+        except Exception as e:
+            ab_a.set_source(None, tr("pipeline error (see the Problems list)"))
+            ab_info.setText(truncate(e, 160))
+            return
+        rng = shared_display_range(A, B)                      # ONE display range chosen from A and B together
+        ab_state["range"] = rng
+        none_msg = tr("no picture for this result")
+        info = []
+        if pin.valid is False:
+            info.append(tr("%s: result needs review") % lab + " (" + "; ".join(pin.reasons) + ")")
+        if mode == "side":
+            ab_a.set_source(_val_pixmap(A, rng=rng), none_msg)
+            ab_b.set_source(_val_pixmap(B, rng=rng), none_msg)
+        else:
+            pa, pb = _val_pixmap(A, rng=rng), _val_pixmap(B, rng=rng)
+            same = (isinstance(A, np.ndarray) and isinstance(B, np.ndarray) and A.shape == B.shape
+                    and pa is not None and pb is not None)
+            if not same:
+                ab_a.set_source(None, tr("A and B differ in size or are not pictures: use side by side"))
+                info.append(tr("this mode needs two pictures of the same size"))
+            elif mode == "diff":
+                kind = ab_diff.currentData() or "absolute"
+                try:
+                    d = difference_image(A, B, kind)
+                    qi = _to_qimage(d["image"], QtGui)
+                    ab_a.set_source(QtGui.QPixmap.fromImage(qi), none_msg)
+                    ab_atitle.setText(tr("difference (%s)") % tr(kind))
+                    info.append({"absolute": tr("|B - A|: black = 0, bright = %.4g"),
+                                 "signed": tr("B - A: white = 0, red = more in B, blue = less (\u00b1%.4g)"),
+                                 "ratio": tr("log2(B / A): white = same, red = B larger, blue = smaller (\u00b1%.3g)")}[kind]
+                                % d["scale"])
+                except ValueError as e:
+                    ab_a.set_source(None, truncate(e, 120))
+            else:
+                ab_state.update(pm_a=pa, pm_b=pb)
+                _ab_show_composite()
+        ab_info.setText("   ".join(info))
+
+    def _ab_set_mode(key):
+        i = ab_mode.findData(key)
+        if i >= 0:
+            ab_mode.setCurrentIndex(i)
+
+    def _on_ab_mode(_=None):
+        ab_state["mode"] = ab_mode.currentData() or "side"
+        ab_state["phase"] = 0
+        update_ab()
+
+    def ab_tick():
+        ab_state["phase"] = 1 - ab_state["phase"]
+        _ab_show_composite()
+
+    ab_mode.currentIndexChanged.connect(_on_ab_mode)
+    ab_diff.currentIndexChanged.connect(lambda _=None: update_ab())
+    ab_ref.currentIndexChanged.connect(lambda _=None: update_ab())
+    ab_swipe.valueChanged.connect(lambda _=None: _ab_show_composite() if ab_state["mode"] == "swipe" else None)
+    ab_blink.valueChanged.connect(lambda v: ab_timer.setInterval(int(v)))
+    ab_timer.timeout.connect(ab_tick)
+    ab["refresh"] = update_ab
+    ab["set_mode"] = _ab_set_mode
+    ab["tick"] = ab_tick
+
+    class _DockVisibility(QtCore.QObject):
+        """Show / hide of the A / B dock (also when its window is not on screen yet): redraw it, run or stop the blink timer."""
+        def eventFilter(self, obj, ev):
+            if ev.type() in (QtCore.QEvent.Show, QtCore.QEvent.Hide, QtCore.QEvent.ShowToParent,
+                             QtCore.QEvent.HideToParent):
+                try:
+                    update_ab()
+                except RuntimeError:                      # a widget already torn down while the window closes
+                    pass
+            return False
+    _ab_filter = _DockVisibility(win)
+    dock_ab.installEventFilter(_ab_filter)
+    win._ab_filter = _ab_filter
+
+    def _toggle_sync_main(on):
+        if on:
+            sync_group.add(view)
+        else:
+            sync_group.remove(view)
+    ab_sync_main.toggled.connect(_toggle_sync_main)
+
+    def _ab_schedule():
+        if not dock_ab.isHidden():
+            ab_refresh_timer.start(KNOB_DEBOUNCE_MS)
+    ab_refresh_timer = QtCore.QTimer(win)
+    ab_refresh_timer.setSingleShot(True)
+    ab_refresh_timer.timeout.connect(update_ab)
+
+    def _refresh_problems_only():
+        """Redraw the Problems list from the cache (a pin that could not be rebuilt is listed there)."""
+        try:
+            refresh_problems(model.cached_step_states())
+        except Exception:
+            refresh_problems(None)
+
+    def pin_as_a():
+        """Toolbar / Ctrl+Shift+A: freeze the pipeline and its result. The oldest of the (at most two) snapshots goes."""
+        if model.image is None:
+            flash(tr("there is no image to pin"))
+            return
+        model.input_path = state.get("image_path")
+        try:
+            model.pin(display={"mode": display.currentText()})
+        except Exception as e:
+            report_error("Could not pin", e)
+            return
+        lab = _pin_label(len(model.pins) - 1)
+        msg = tr("pinned as %s") % lab
+        if model.last_dropped_pin is not None:
+            msg += "  " + tr("(the oldest pinned snapshot was dropped)")
+        flash(msg)
+        mark_dirty()
+        _refresh_problems_only()
+        update_ab()
+    act_pin.triggered.connect(lambda _=False: pin_as_a())
+    win._pin_a = pin_as_a
+
+    def restore_a():
+        pin = _ref_pin()
+        if pin is None:
+            return
+        lab = _pin_label(model.pins.index(pin))
+        push_undo(tr("restore %s") % lab)                 # ONE undo entry
+        _restore_stages(pin.stage_copies())
+        m_ = pin.display.get("mode")
+        if isinstance(m_, str) and display.findText(m_) >= 0 and display.currentText() != m_:
+            display.setCurrentText(m_)
+        flash(tr("%s restored") % lab)
+
+    def adopt_b():
+        pin = _ref_pin()
+        if pin is None:
+            return
+        lab = _pin_label(model.pins.index(pin))
+        model.drop_pin(model.pins.index(pin))
+        mark_dirty()
+        flash(tr("kept the current result; %s dropped") % lab)
+        _refresh_problems_only()
+        update_ab()
+
+    def keep_both():
+        pin_as_a()
+
+    ab_restore.clicked.connect(restore_a); ab_adopt.clicked.connect(adopt_b); ab_keep.clicked.connect(keep_both)
+
     def show_result():
         """Render the current result. The whole body is guarded, not just the
         pipeline call: inspect_result / apply_display / _to_qimage / histogram_image
@@ -5913,6 +8650,9 @@ def build_window(model=None):
         state["renders"] += 1
         try:
             _render()
+            update_stage_compare()
+            _strip_schedule()
+            _ab_schedule()
         except Exception as e:
             view.set_message("Display error\n\n%s\n\n(see the Problems list)" % truncate(e, 200))
             inspector.setPlainText("display error: %s" % e)
@@ -5942,7 +8682,7 @@ def build_window(model=None):
         n = len(model.stages)
         has_sel = 0 <= i < n
         has_res = isinstance(state.get("result"), np.ndarray)
-        _enable(has_sel, act_remove, b_rm)
+        _enable(has_sel, act_remove, b_rm, act_bypass)
         _enable(has_sel and i > 0, act_up, b_up)
         _enable(has_sel and i < n - 1, act_down, b_dn)
         _enable(has_res, act_save_res, b_save, act_3d, b_3d)
@@ -6002,7 +8742,7 @@ def build_window(model=None):
         if getattr(win, "_knob_drag_base", None) is None:
             # first tick of a drag: capture the PRE-drag pipeline once; the settled
             # handler turns it into a single undo entry (drags coalesce)
-            win._knob_drag_base = [list(st) for st in model.stages]
+            win._knob_drag_base = _Snap(_copy_stage(st) for st in model.stages)
         v = float(value)
         # The KnobRow already mirrored the value into the sibling widgets (signals
         # blocked) and refreshed the label in display units; only the model, the
@@ -6012,6 +8752,7 @@ def build_window(model=None):
         else:
             model.set_knobs(i, b=v)
         mark_dirty()
+        settings_changed()
         show_result()
         knob_timer.start(KNOB_DEBOUNCE_MS)
 
@@ -6036,10 +8777,15 @@ def build_window(model=None):
     def on_knob_settled():
         """Debounce tail: refresh the summaries + commit ONE undo entry for the drag."""
         i = selected_index()
+        try:
+            if not run_ctl.running:
+                model.step_states()                       # the settled drag runs the pipeline once (O(n))
+        except Exception:
+            pass                                          # a failing stage is recorded and shown in the rows
         refresh_stage_list(select=i if 0 <= i < len(model.stages) else None)
         base = getattr(win, "_knob_drag_base", None)
         win._knob_drag_base = None
-        if base is not None and base != [list(st) for st in model.stages]:
+        if base is not None and base != [_copy_stage(st) for st in model.stages]:
             win._undo_stack.append(base)
             if len(win._undo_stack) > _UNDO_CAP:
                 del win._undo_stack[0]
@@ -6065,14 +8811,17 @@ def build_window(model=None):
         act_undo.setEnabled(bool(win._undo_stack))
         act_redo.setEnabled(bool(win._redo_stack))
 
-    def _snapshot():
+    def _snapshot(label=None):
         # DEEP copy: each stage is a mutable [op, a, b] list that set_knobs edits in
         # place — a shallow list(model.stages) shared the inner lists, so dragging a
         # knob silently rewrote every snapshot already in the undo/redo stacks.
-        return [list(st) for st in model.stages]
+        # _copy_stage keeps the bypass flag; the label says what the edit was (undo/redo message).
+        snap = _Snap(_copy_stage(st) for st in model.stages)
+        snap.label = label
+        return snap
 
-    def push_undo():
-        win._undo_stack.append(_snapshot())
+    def push_undo(label=None):
+        win._undo_stack.append(_snapshot(label))
         if len(win._undo_stack) > _UNDO_CAP:
             del win._undo_stack[0]
         win._redo_stack.clear()
@@ -6084,7 +8833,7 @@ def build_window(model=None):
         # corrupting history (F8 review finding) — cancel it and forget its base
         knob_timer.stop()
         win._knob_drag_base = None
-        model.stages = [list(st) for st in stages]
+        model.stages = [_copy_stage(st) for st in stages]
         mark_dirty()
         refresh_stage_list(select=(len(model.stages) - 1) if model.stages else None)
         show_result()
@@ -6093,22 +8842,28 @@ def build_window(model=None):
     def undo():
         if not win._undo_stack:
             return
-        win._redo_stack.append(_snapshot())
-        _restore_stages(win._undo_stack.pop())
-        flash("undo (%d more)" % len(win._undo_stack))
+        snap = win._undo_stack.pop()
+        lab = getattr(snap, "label", None)
+        win._redo_stack.append(_snapshot(lab))
+        _restore_stages(snap)
+        flash("undo %s(%d more)" % ((lab + " ") if lab else "", len(win._undo_stack)))
 
     def redo():
         if not win._redo_stack:
             return
-        win._undo_stack.append(_snapshot())
-        _restore_stages(win._redo_stack.pop())
-        flash("redo (%d more)" % len(win._redo_stack))
+        snap = win._redo_stack.pop()
+        lab = getattr(snap, "label", None)
+        win._undo_stack.append(_snapshot(lab))
+        _restore_stages(snap)
+        flash("redo %s(%d more)" % ((lab + " ") if lab else "", len(win._redo_stack)))
     win._undo = undo
     win._redo = redo
     win._push_undo = push_undo
 
     def add_op(item):
         name = item.data(QtCore.Qt.UserRole)
+        if not name:
+            return
         row = _op_row(name)
         if row and row.get("backend") == "general":     # double-click on a read-only general op
             flash("‘%s’ is a general-algorithm op (seq/scalar) — run it via CLI: "
@@ -6195,20 +8950,21 @@ def build_window(model=None):
     win._insert_program_line = _insert_program_line
     win._place_program_cursor = _place_program_cursor
 
-    def run_op_once():
+    def run_op_once(name=None, base=None):
         """HDevelop single-step: apply the selected operator ONCE with the a, b from
         the operator panel to the loaded image, and show the result in a graphics
         window. The pipeline is NOT modified (a scratch preview)."""
         cur = op_list.currentItem()
-        if cur is None:
-            return
-        name = cur.data(QtCore.Qt.UserRole)
+        if name is None:
+            if cur is None:
+                return
+            name = cur.data(QtCore.Qt.UserRole)
         row = _op_row(name)
         if row and row.get("backend") == "general":
             flash("‘%s’ is a general-algorithm op (seq/scalar) — run it via CLI: "
                   "imgevolve.py algo run %s" % (name, name))
             return
-        base = model.image
+        base = _search_current_value() if base is None else base
         if base is None:
             flash("load an image first (File ▸ Open image / Synthetic demo)")
             return
@@ -6217,7 +8973,7 @@ def build_window(model=None):
         try:
             out = api.apply(base, name, a, b)
         except Exception as e:
-            report_error("Run once", e)
+            report_error("Run once", e, op_name=name, inputs=[base])
             return
         # ★fallback は画面に出す(2026-09-19、GenSpark 第 10 報 N16): グレー画像に edges_color(color 入力)を
         # Run once すると、ライブラリは台帳に記録して sort の既定値を返すが、GUI は「ran … once」としか
@@ -6271,6 +9027,11 @@ def build_window(model=None):
         if stage_list.count() != len(model.stages):          # self-heal a desynced UI list
             refresh_stage_list(select=i)
         stage_list.setCurrentRow(i)                          # triggers show_result for that step
+        try:
+            model.result_upto(i)                             # a step/run computes up to here (a no-op if the view just did)
+        except Exception:
+            pass                                             # the failing stage is recorded and shown in the rows
+        refresh_stage_list(select=i, sync_code=False)         # the step has run: rows now read its cache
         _select_var_row(i + 1)                               # sync: highlight this step's output var
         flash("step %d/%d — %s (showing this stage's result)"
               % (i + 1, len(model.stages), model.stages[i][0]))
@@ -6291,7 +9052,7 @@ def build_window(model=None):
             samples.blockSignals(True); samples.setCurrentIndex(0); samples.blockSignals(False)
             return
         try:
-            snap = [list(st) for st in model.stages]
+            snap = [_copy_stage(st) for st in model.stages]
             model.load_recipe(samples.itemText(idx))
         except Exception as e:
             report_error("Sample pipeline", e); return
@@ -6311,7 +9072,7 @@ def build_window(model=None):
     def remove():
         i = selected_index()
         if 0 <= i < len(model.stages):
-            push_undo()
+            push_undo("remove")
             model.remove_stage(i)
             mark_dirty()
             n = len(model.stages)
@@ -6327,6 +9088,18 @@ def build_window(model=None):
             push_undo()
             model.move_stage(i, j); mark_dirty()
             refresh_stage_list(select=j); show_result()
+
+    def toggle_bypass_ui():
+        """Switch the selected stage off / on (it keeps its place and knobs). One undo entry, labelled 'bypass'."""
+        i = selected_index()
+        if not (0 <= i < len(model.stages)):
+            return
+        push_undo("bypass")
+        on = model.toggle_bypass(i)
+        mark_dirty()
+        refresh_stage_list(select=i); show_result()
+        flash("stage %d (%s) %s" % (i + 1, model.stages[i][0], "bypassed" if on else "switched on again"))
+    win._toggle_bypass = toggle_bypass_ui
 
     def duplicate_stage_ui():
         i = selected_index()
@@ -6352,6 +9125,8 @@ def build_window(model=None):
             report_error("Could not open image", "%s\n\n%s" % (path, e)); return False
         model.set_image(arr)
         state["image_path"] = os.path.abspath(path)
+        model.input_path = state["image_path"]        # snapshots (A / B) compare the input by file
+        state["input_notes"] = []                     # notes belong to the previously opened project's input
         state["fit_next"] = True                      # a new image should fit the view
         _push_recent(path); _set_title()
         flash("loaded " + os.path.basename(path))
@@ -6365,7 +9140,10 @@ def build_window(model=None):
             _load_image_path(path)
 
     def use_demo():
-        model.set_image(demo_image()); state["fit_next"] = True; show_result()
+        model.set_image(demo_image()); state["fit_next"] = True
+        state["image_path"] = None; state["input_notes"] = []      # not a file: nothing to reference when saving
+        model.input_path = None
+        show_result()
 
     def load_sample_image(name):
         """Load one of the collected, license-clean sample images (sample_images.py)."""
@@ -6374,6 +9152,8 @@ def build_window(model=None):
             model.set_image(sample_images.load(name))
         except Exception as e:
             report_error("Could not load sample image", "%s\n\n%s" % (name, e)); return
+        state["image_path"] = None; state["input_notes"] = []
+        model.input_path = None
         state["fit_next"] = True
         flash("loaded sample image: " + name); show_result()
     win._load_sample_image = load_sample_image
@@ -6483,6 +9263,188 @@ def build_window(model=None):
         b_copy.clicked.connect(_copy_export); b_savepy.clicked.connect(_save_py)
         dlg.setModal(False); win._export_dlg = dlg    # non-modal: keep working while it is open
         dlg.resize(560, 400); dlg.show()
+
+    def verify_exported_python():
+        """Small IDE-facing shell around the Qt-free round-trip verifier."""
+        dlg = QtWidgets.QDialog(win); dlg.setWindowTitle(tr("Verify exported Python"))
+        lay = QtWidgets.QVBoxLayout(dlg)
+        form = QtWidgets.QFormLayout()
+        atol = QtWidgets.QDoubleSpinBox(); atol.setDecimals(12); atol.setRange(0, 1e9); atol.setValue(1e-8)
+        rtol = QtWidgets.QDoubleSpinBox(); rtol.setDecimals(12); rtol.setRange(0, 1e9); rtol.setValue(1e-5)
+        nan = QtWidgets.QComboBox(); nan.addItems(["same_positions", "ignore", "strict"])
+        form.addRow("Absolute tolerance", atol); form.addRow("Relative tolerance", rtol)
+        form.addRow("NaN policy", nan); lay.addLayout(form)
+        result = QtWidgets.QLabel(tr("Ready to compare every stage.")); result.setWordWrap(True)
+        lay.addWidget(result)
+        row = QtWidgets.QHBoxLayout()
+        b_editor = QtWidgets.QPushButton(tr("Open exported code"))
+        b_first = QtWidgets.QPushButton(tr("Go to first mismatch")); b_first.setEnabled(False)
+        b_run = QtWidgets.QPushButton(tr("Compare")); b_run.setProperty("accent", True)
+        row.addWidget(b_editor); row.addWidget(b_first); row.addStretch(1); row.addWidget(b_run)
+        lay.addLayout(row)
+
+        def script_text():
+            return studio_roundtrip.export_script(model, model._current_input_ref())
+
+        def compare_now():
+            if model.image is None or not model.stages:
+                result.setText(tr("Load an input and add at least one stage first.")); return
+            b_run.setEnabled(False); result.setText(tr("Running exported Python in isolation…"))
+            QtWidgets.QApplication.processEvents()
+            try:
+                gui = {i: model.result_upto(i) for i in range(len(model.stages))}
+                exported = studio_roundtrip.run_exported(script_text(), model.image)
+                report = studio_roundtrip.compare_results(
+                    gui, exported, atol=atol.value(), rtol=rtol.value(), nan_policy=nan.currentText())
+            except Exception as exc:
+                result.setText(tr("Verification could not run: %s") % truncate(exc, 500))
+                report_error("Verify exported Python", exc)
+            else:
+                state["roundtrip_report"] = report
+                result.setText(report.describe(_UI_LANG.get("code", "en")))
+                b_first.setEnabled(report.first_mismatch is not None)
+                refresh_problems(model.cached_step_states())
+                flash(tr("Export verification: PASS") if report.ok else tr("Export verification: mismatch"))
+            finally:
+                b_run.setEnabled(True)
+
+        def first_mismatch():
+            report = state.get("roundtrip_report")
+            if report is not None and report.first_mismatch is not None:
+                stage_list.setCurrentRow(report.first_mismatch)
+
+        b_editor.clicked.connect(lambda _=False: insert_code_into_editor(script_text(), "pipeline_roundtrip.py"))
+        b_first.clicked.connect(lambda _=False: first_mismatch())
+        b_run.clicked.connect(lambda _=False: compare_now())
+        dlg.setModal(False); dlg.resize(580, 230); dlg.show()
+        win._roundtrip_dlg = dlg
+
+    def show_batch_dialog():
+        dlg = QtWidgets.QDialog(win); dlg.setWindowTitle("この処理をフォルダに適用")
+        lay = QtWidgets.QVBoxLayout(dlg)
+        form = QtWidgets.QFormLayout()
+        folder_row = QtWidgets.QWidget(); folder_lay = QtWidgets.QHBoxLayout(folder_row)
+        folder_lay.setContentsMargins(0, 0, 0, 0)
+        folder = QtWidgets.QLineEdit(); choose_folder = QtWidgets.QPushButton("選択…")
+        folder_lay.addWidget(folder, 1); folder_lay.addWidget(choose_folder)
+        patterns = QtWidgets.QLineEdit("*.png;*.jpg;*.jpeg;*.tif;*.tiff;*.bmp")
+        recursive = QtWidgets.QCheckBox("サブフォルダも含める")
+        count = QtWidgets.QLabel("対象 0 画像")
+        form.addRow("入力フォルダ", folder_row); form.addRow("パターン", patterns)
+        form.addRow("", recursive); form.addRow("", count)
+        output_row = QtWidgets.QWidget(); output_lay = QtWidgets.QHBoxLayout(output_row)
+        output_lay.setContentsMargins(0, 0, 0, 0)
+        output = QtWidgets.QLineEdit(); choose_output = QtWidgets.QPushButton("選択…")
+        output_lay.addWidget(output, 1); output_lay.addWidget(choose_output)
+        policy = QtWidgets.QComboBox()
+        policy.addItem("上書きしない", "skip"); policy.addItem("上書き", "overwrite")
+        policy.addItem("連番を付ける", "suffix")
+        save_image = QtWidgets.QCheckBox("最終画像"); save_image.setChecked(True)
+        save_csv = QtWidgets.QCheckBox("数値 CSV"); save_csv.setChecked(True)
+        saves = QtWidgets.QWidget(); saves_lay = QtWidgets.QHBoxLayout(saves)
+        saves_lay.setContentsMargins(0, 0, 0, 0); saves_lay.addWidget(save_image); saves_lay.addWidget(save_csv)
+        form.addRow("出力フォルダ", output_row); form.addRow("同名ファイル", policy)
+        form.addRow("保存するもの", saves); lay.addLayout(form)
+
+        preview = QtWidgets.QGroupBox("先に確認する画像")
+        preview_lay = QtWidgets.QHBoxLayout(preview)
+        preview_buttons = {}
+        for key, label in (("first", "先頭"), ("middle", "中央"), ("last", "末尾"),
+                           ("select", "選択…")):
+            button = QtWidgets.QPushButton(label); preview_lay.addWidget(button)
+            preview_buttons[key] = button
+        lay.addWidget(preview)
+        summary = QtWidgets.QLabel(""); summary.setWordWrap(True); lay.addWidget(summary)
+        failures = QtWidgets.QPushButton("失敗一覧を開く"); failures.setEnabled(False)
+        execute = QtWidgets.QPushButton("実行"); execute.setProperty("accent", True)
+        buttons = QtWidgets.QHBoxLayout(); buttons.addWidget(failures); buttons.addStretch(1)
+        buttons.addWidget(execute); lay.addLayout(buttons)
+        fields = {"folder": folder, "patterns": patterns, "recursive": recursive,
+                  "count": count, "output": output, "policy": policy,
+                  "save_image": save_image, "save_csv": save_csv,
+                  "execute": execute, "preview": preview_buttons}
+        win._batch_dialog_fields = fields
+        win._batch_summary_label = summary
+        win._batch_failures_button = failures
+        current_files = []
+
+        def pattern_values():
+            return tuple(item for item in re.split(r"[;,\s]+", patterns.text().strip()) if item)
+
+        def refresh_files(set_default=False):
+            nonlocal current_files
+            try:
+                current_files = studio_batch.list_inputs(
+                    folder.text(), pattern_values(), recursive.isChecked())
+            except ValueError as exc:
+                current_files = []; count.setText("対象 0 画像 · %s" % exc)
+                execute.setEnabled(False)
+            else:
+                count.setText("対象 %d 画像" % len(current_files)); execute.setEnabled(True)
+                if set_default or not output.text().strip():
+                    output.setText(str(os.path.join(folder.text(), "results")))
+            return current_files
+
+        def build_plan():
+            files = refresh_files()
+            return studio_batch.BatchPlan(
+                files, output.text(), policy.currentData(),
+                {"final_image": save_image.isChecked(), "numeric_csv": save_csv.isChecked()},
+                folder.text())
+
+        def select_folder():
+            selected = QtWidgets.QFileDialog.getExistingDirectory(dlg, "入力フォルダ")
+            if selected:
+                folder.setText(selected); refresh_files(True)
+
+        def select_output():
+            selected = QtWidgets.QFileDialog.getExistingDirectory(dlg, "出力フォルダ")
+            if selected:
+                output.setText(selected)
+
+        def run_preview(which):
+            try:
+                files = refresh_files()
+                selected = studio_batch.preview_pick(files, which)
+                snapshot = _run_snapshot(model, run_ctl.generation + 1)
+                value = _run_batch_value(snapshot, selected)["final_image"]
+            except Exception as exc:
+                report_error("バッチのプレビュー", exc); return
+            state["worker_result"] = value
+            show_result(); summary.setText("確認: %s" % os.path.basename(str(selected)))
+
+        def select_preview():
+            selected, _ = QtWidgets.QFileDialog.getOpenFileName(dlg, "確認する画像", folder.text())
+            if selected:
+                run_preview(selected)
+
+        def execute_batch():
+            try:
+                plan = build_plan()
+            except Exception as exc:
+                report_error("バッチを開始できません", exc); return
+            summary.setText(plan.summary()); execute.setEnabled(False)
+            start_batch_async(plan)
+
+        def show_failures():
+            result = getattr(win, "_last_batch_result", None)
+            if result is None or not result.failed:
+                return
+            message = "\n".join("%s — %s" % (path, reason) for path, reason in result.failed)
+            QtWidgets.QMessageBox.warning(dlg, "失敗一覧", message)
+
+        choose_folder.clicked.connect(select_folder); choose_output.clicked.connect(select_output)
+        folder.editingFinished.connect(refresh_files); patterns.editingFinished.connect(refresh_files)
+        recursive.toggled.connect(refresh_files)
+        preview_buttons["first"].clicked.connect(lambda: run_preview("first"))
+        preview_buttons["middle"].clicked.connect(lambda: run_preview("middle"))
+        preview_buttons["last"].clicked.connect(lambda: run_preview("last"))
+        preview_buttons["select"].clicked.connect(select_preview)
+        execute.clicked.connect(execute_batch); failures.clicked.connect(show_failures)
+        win._batch_plan_from_dialog = build_plan
+        dlg.setModal(False); dlg.resize(620, 400); dlg.show(); win._batch_dlg = dlg
+
+    win._show_batch_dialog = show_batch_dialog
 
     def clear_pipe():
         if not confirm_discard("Clear pipeline"):
@@ -7769,6 +10731,7 @@ def build_window(model=None):
                        "status": status, "run": run_code, "stop": stop_code,
                        "open_tab": open_tab, "close_tab": close_tab, "save_to": save_to,
                        "open_path": open_path, "new": new_file}
+        state["pyedit"] = win._pyedit
         if code_text is not None:
             open_tab(code_text, name_hint)
         else:
@@ -7926,7 +10889,10 @@ def build_window(model=None):
         dlg.exec()
 
     # operator browser filters
-    search.textChanged.connect(refill_ops); cat.currentIndexChanged.connect(refill_ops)
+    search_timer = QtCore.QTimer(win); search_timer.setSingleShot(True); search_timer.setInterval(250)
+    search_timer.timeout.connect(refill_ops)
+    search.textChanged.connect(lambda _=None: search_timer.start())
+    cat.currentIndexChanged.connect(refill_ops)
 
     # HDevelop-style autocomplete: typing shows op-name candidates in a popup; picking
     # one clears the category filter, filters the list to it, and selects it.
@@ -8008,20 +10974,41 @@ def build_window(model=None):
                          or ("(unused by %s)" % name if b_unused else "argument b"))
         b_insert.setEnabled(True); b_help.setEnabled(True); b_run_once.setEnabled(True)
     op_list.currentItemChanged.connect(on_op_selected)
+    def _toggle_search_group(item):
+        group = item.data(QtCore.Qt.UserRole + 4)
+        if not group:
+            return
+        rows = search_state["rows"].get(group, [])
+        collapsed = any(not r["item"].isHidden() for r in rows)
+        for r in rows:
+            r["item"].setHidden(collapsed)
+        item.setText(("▸ " if collapsed else "▾ ") + item.text()[2:])
+    op_list.itemClicked.connect(_toggle_search_group)
     win._op_arg_labels = (lbl_a, lbl_b)
     b_insert.clicked.connect(
         lambda: add_op(op_list.currentItem()) if op_list.currentItem() is not None else None)
-    b_run_once.clicked.connect(run_op_once)
+    b_run_once.clicked.connect(lambda _=False: run_op_once())
     # itemActivated fires on BOTH Enter and double-click (one signal), so keyboard-only
     # pipeline building works and there is no double-insert from wiring two signals.
     op_list.itemActivated.connect(add_op)
 
     def _insert_searched_op():
         """Enter in the search box inserts the highlighted (or first) filtered op."""
-        it = op_list.currentItem() or (op_list.item(0) if op_list.count() else None)
+        if search.text().strip():
+            search_timer.stop()
+            grouped_search(search.text().strip())
+        it = op_list.currentItem()
+        if it is None or not it.data(QtCore.Qt.UserRole):
+            it = next((op_list.item(i) for i in range(op_list.count())
+                       if op_list.item(i).data(QtCore.Qt.UserRole)), None)
         if it is not None:
             add_op(it)
     search.returnPressed.connect(_insert_searched_op)
+    win._search_ui = {
+        "edit": search, "list": op_list, "timer": search_timer, "search_now": grouped_search,
+        "rows": lambda: search_state["rows"], "chips": lambda: search_state["chips"],
+        "try": lambda name: run_op_once(name, _search_current_value()),
+    }
 
     def jump_to_problem(item):
         idx = item.data(QtCore.Qt.UserRole)
@@ -8059,10 +11046,37 @@ def build_window(model=None):
             if state.get("code_dirty"):
                 return
         step_to(len(model.stages) - 1)
+        _flash_run_validity()
+
+    def _do_run_all_async():
+        prog = getattr(win, "_program", None)
+        if state.get("code_dirty") and prog:
+            prog["apply"]()
+            if state.get("code_dirty"):
+                return
+        if model.stages:
+            stage_list.setCurrentRow(len(model.stages) - 1)
+        start_run_async()
+
+    def _flash_run_validity():
+        """Status bar after a run: 'ran' and 'valid' are two facts. Reports only; never fixes."""
+        if not model.stages or model.image is None:
+            return
+        try:
+            val = model.output()
+        except Exception:
+            return                                    # a stage raised: the Problems list says which
+        v, why = assess_validity(val)
+        if v is False:
+            flash(tr("Run: done / Result: needs review (%s)") % "; ".join(why))
+        elif v is None:
+            flash(tr("Run: done / Result: validity not judged"))
+        else:
+            flash(tr("Run: done / Result: valid (as reported by the op)"))
     win._do_step = _do_step; win._do_run_all = _do_run_all; win._do_reset = reset_to_raw
     b_reset.clicked.connect(reset_to_raw)
     b_step.clicked.connect(_do_step)
-    b_runall.clicked.connect(_do_run_all)
+    b_runall.clicked.connect(_do_run_all_async)
     stage_list.model().rowsMoved.connect(on_rows_moved)     # drag-reorder -> permute model
     # menu / toolbar actions (share the same handlers as the buttons)
     act_open_img.triggered.connect(load_image); act_demo.triggered.connect(use_demo)
@@ -8073,6 +11087,8 @@ def build_window(model=None):
         show_image_viewer(ps or None)
     act_viewer.triggered.connect(lambda _=False: _open_viewer_dialog())
     act_save_res.triggered.connect(save_result); act_export.triggered.connect(export)
+    act_roundtrip.triggered.connect(verify_exported_python)
+    act_batch.triggered.connect(show_batch_dialog)
     act_save_view.triggered.connect(save_view)
     act_copy_res.triggered.connect(copy_result)
     act_quit.triggered.connect(win.close)
@@ -8080,6 +11096,7 @@ def build_window(model=None):
     act_up.triggered.connect(lambda: move(-1)); act_down.triggered.connect(lambda: move(1))
     act_clear.triggered.connect(clear_pipe)
     act_dup.triggered.connect(duplicate_stage_ui)
+    act_bypass.triggered.connect(toggle_bypass_ui)
     act_top.triggered.connect(lambda: move_to_end(True))
     act_bottom.triggered.connect(lambda: move_to_end(False))
     act_focus_search.triggered.connect(lambda: (search.setFocus(), search.selectAll()))
@@ -8088,7 +11105,7 @@ def build_window(model=None):
     act_fit.triggered.connect(view.fit); act_11.triggered.connect(view.reset_zoom)
     act_reset.triggered.connect(reset_to_raw)
     act_step.triggered.connect(_do_step)
-    act_runall.triggered.connect(_do_run_all)
+    act_runall.triggered.connect(_do_run_all_async)
 
     # Debugger-style function keys that fire ANYWHERE in the window. The Ctrl+Arrow
     # step/run keys above are deliberately scoped to the pipeline list so they do
@@ -8119,7 +11136,8 @@ def build_window(model=None):
                     "* control flow:  for 3 ... endfor   ·   if 1 ... else ... endif")
         # repr = full precision: the program must run the SAME pipeline as the model
         # (a 0.12345 knob used to come back as 0.123 after Sync/Apply)
-        return "\n".join("%s (%r, %r)" % (n, a, b) for (n, a, b) in model.stages)
+        return "\n".join(("# bypassed: %s (%r, %r)" if _is_bypassed(st) else "%s (%r, %r)") % tuple(st[:3])
+                         for st in model.stages)
 
     # ---- stage <-> editor line map (F2 review finding) ------------------------- #
     # Directive lines (dev_* / set_system / disp_*) and comments emit no stage, and an
@@ -8141,20 +11159,24 @@ def build_window(model=None):
     def _set_stage_lines(lines):
         state["stage_lines"] = list(lines) if lines is not None else None
 
-    def _fail_stage(i, name, exc, timings, what):
+    def _fail_stage(i, name, exc, timings, what, inputs=None):
         """A stage raised inside the program runner: stop THERE, put the cursor on its
         line, name it in the status + Problems (F4 review finding)."""
         ln = _stage_line(i)
         msg = "✕ %s: stage %d (%s) on line %d failed: %s" % (what, i + 1, name, ln, truncate(exc, 140))
         code_status.setText(msg)
-        state["program_error"] = (i, name, str(exc))
+        info = studio_errors.explain_failure(exc, op_name=name, stage_index=i, inputs=inputs)
+        info["_traceback"] = "".join(traceback.format_exception(type(exc), exc, exc.__traceback__))
+        state["structured_errors"].append(info)
+        state["program_error"] = (i, name, studio_errors.format_failure(info, _UI_LANG.get("code", "en")))
         if state["dev_update"]["time"]:
             code_edit.set_timings(timings)
         if state["dev_update"]["pc"]:
             code_edit.set_exec_line(ln)
         stage_list.setCurrentRow(i)
+        refresh_stage_list(select=i, sync_code=False)
         try:
-            refresh_problems(model.step_states())
+            refresh_problems(model.cached_step_states())
         except Exception as e:
             state["errors"].append(("problems refresh failed", str(e)))
         flash(msg)
@@ -8163,6 +11185,8 @@ def build_window(model=None):
         """The same computation api.run_pipeline performs for stage *i* on value *v*
         (entry coercion on the first stage, canonical-name resolution, feature ->
         float), so the timed run IS the displayed pipeline. KeyError for an unknown op."""
+        if 0 <= i < len(model.stages) and _is_bypassed(model.stages[i]):
+            return v                                  # switched off: the value passes through
         return api.run_pipeline(v, [(name, a, b)], coerce=(i == 0))
 
     def sync_program():
@@ -8254,7 +11278,7 @@ def build_window(model=None):
             try:
                 v = _run_stage(v, i, name, a, b)
             except Exception as e:             # unknown op (KeyError) or the op raised
-                _fail_stage(i, name, e, timings, "run"); return
+                _fail_stage(i, name, e, timings, "run", [v]); return
             ln = _stage_line(i)
             timings[ln] = timings.get(ln, 0.0) + (_time.perf_counter() - t0) * 1000.0
             last = i
@@ -8267,6 +11291,7 @@ def build_window(model=None):
             code_edit.set_exec_line(_stage_line(last) if last >= 0 else 0)   # dev_update_pc
         if 0 <= last < len(model.stages):
             stage_list.setCurrentRow(last)     # show the result up to the reached line
+            refresh_stage_list(select=last, sync_code=False)
         tmo = state["system"]["operator_timeout_ms"]
         slow = [ln for ln, ms in timings.items() if tmo and ms > tmo]   # soft set_operator_timeout
         code_status.setText("ran %d line(s) in %.1f ms%s%s"
@@ -8291,7 +11316,7 @@ def build_window(model=None):
             try:
                 v = _run_stage(v, i, name, a, b)
             except Exception as e:
-                _fail_stage(i, name, e, tmap, "step"); return
+                _fail_stage(i, name, e, tmap, "step", [v]); return
             if i == nxt - 1:
                 tmap[_stage_line(i)] = (_time.perf_counter() - t0) * 1000.0
         if state["dev_update"]["time"]:
@@ -8300,6 +11325,7 @@ def build_window(model=None):
         if state["dev_update"]["pc"]:
             code_edit.set_exec_line(ln)        # dev_update_pc
         stage_list.setCurrentRow(nxt - 1)
+        refresh_stage_list(select=nxt - 1, sync_code=False)
         code_status.setText("stepped to line %d (stage %d)" % (ln, nxt))
 
     def continue_program():
@@ -8323,7 +11349,7 @@ def build_window(model=None):
             try:
                 v = _run_stage(v, i, name, a, b)
             except Exception as e:
-                _fail_stage(i, name, e, timings, "continue"); return
+                _fail_stage(i, name, e, timings, "continue", [v]); return
             ln = _stage_line(i)
             timings[ln] = timings.get(ln, 0.0) + (_time.perf_counter() - t0) * 1000.0
             last = i
@@ -8336,6 +11362,7 @@ def build_window(model=None):
             code_edit.set_exec_line(_stage_line(last) if last >= 0 else 0)
         if 0 <= last < len(model.stages):
             stage_list.setCurrentRow(last)
+            refresh_stage_list(select=last, sync_code=False)
         code_status.setText("continued line %d → %d%s"
                             % (_stage_line(start) if start < len(model.stages) else exec_line + 1,
                                _stage_line(last) if last >= 0 else exec_line,
@@ -8366,11 +11393,11 @@ def build_window(model=None):
     def _var_entries():
         ents = [("input", -1, "image")]
         try:
-            states = model.step_states()
+            states = model.cached_step_states()       # cache only: listing variables never runs a stage
         except Exception:
             states = []
         for i, (name, a, b) in enumerate(model.stages):
-            kind = states[i]["state"].get("kind", "?") if i < len(states) else "?"
+            kind = ((states[i]["state"] or {}).get("kind", "?") if i < len(states) else "?")
             ents.append(("%d: %s" % (i + 1, name), i, kind))
         return ents
 
@@ -8379,8 +11406,11 @@ def build_window(model=None):
         if it is None:
             var_inspect.setPlainText(""); refresh_watches(); return
         try:
-            val = model.result_upto(it.data(QtCore.Qt.UserRole))
-            var_inspect.setPlainText(format_inspection(inspect_result(val)))
+            val = model.cached_result(it.data(QtCore.Qt.UserRole))
+            if val is None:
+                var_inspect.setPlainText("未計算 / not computed (run or step to this stage)")
+            else:
+                var_inspect.setPlainText(format_inspection(inspect_result(val)))
         except Exception as e:
             var_inspect.setPlainText("inspect error: %s" % e)
         refresh_watches()
@@ -8400,7 +11430,7 @@ def build_window(model=None):
         val = None
         if it is not None:
             try:
-                val = model.result_upto(it.data(QtCore.Qt.UserRole))
+                val = model.cached_result(it.data(QtCore.Qt.UserRole))
             except Exception:
                 val = None
         env = {"v": val, "np": np, "img": model.image}
@@ -8501,7 +11531,7 @@ def build_window(model=None):
         var_list.setIconSize(QtCore.QSize(_VAR_THUMB, _VAR_THUMB))
         for label, idx, kind in _var_entries():
             try:
-                val = model.result_upto(idx)
+                val = model.cached_result(idx)
             except Exception:
                 val = None
             ic = _var_icon(val)                      # iconic vars get a shape thumbnail
@@ -8807,6 +11837,7 @@ def build_window(model=None):
                 ("Run from here", lambda: win._program["run_from"](i + 1)),
                 ("Continue (to breakpoint / end)", lambda: win._program["continue"]()),
                 ("---", None),
+                (tr("Bypass stage (on/off)"), toggle_bypass_ui),
                 ("Remove stage", remove),
                 ("Move up", lambda: move(-1)),
                 ("Move down", lambda: move(1))]
@@ -10403,6 +13434,7 @@ def build_window(model=None):
         if not path:
             return
         try:
+            model.input_path = state.get("image_path")          # saved as "input" (path as given + sha256)
             _atomic_write_text(path, json.dumps(model.to_dict(), indent=2))   # never a half file
         except Exception as e:                                # permission / bad path / full disk
             report_error("Could not save pipeline", "%s\n\n%s" % (path, e)); return
@@ -10418,8 +13450,8 @@ def build_window(model=None):
         try:
             with open(path, encoding="utf-8") as fh:          # missing / permission
                 data = json.loads(fh.read())                  # malformed JSON
-            snap = [list(st) for st in model.stages]
-            model.load_dict(data)                             # schema + op-name validation
+            snap = [_copy_stage(st) for st in model.stages]
+            model.load_dict(data, recompute_pins=False)       # schema + op-name validation; pins after the image
             win._undo_stack.append(snap)                      # fork history only on success
             if len(win._undo_stack) > _UNDO_CAP:
                 del win._undo_stack[0]
@@ -10435,7 +13467,22 @@ def build_window(model=None):
         state["dev_lines"] = list(model.directives)
         state["code_dirty"] = False
         code_edit.breakpoints.clear()
+        state["input_notes"] = []
+        if model.input_ref:                               # the input the project was saved with
+            res = resolve_input_ref(model.input_ref, os.path.dirname(os.path.abspath(path)))
+            if res["path"]:
+                if _load_image_path(res["path"]):         # ok / relinked: silent; changed: loaded + warned
+                    if res["status"] == "changed":
+                        state["input_notes"] = [res["message"]]
+                    elif res["status"] == "relinked":
+                        flash(res["message"])
+                else:
+                    state["input_notes"] = ["input could not be read: %s" % res["path"]]
+            else:
+                state["input_notes"] = [res["message"]]   # missing: keep the current image
+        model.recompute_pins()                            # snapshots are saved without their pictures: rebuild them now
         refresh_stage_list(select=len(model.stages) - 1)
+        update_ab()
         if model.directives:
             apply_dev_directives("\n".join(model.directives), reclaim_stale=True)
         show_result()
@@ -10444,6 +13491,7 @@ def build_window(model=None):
         _push_recent(path); _set_title()
         flash("loaded " + os.path.basename(path))
     win._open_pipe_path = _open_pipe_path
+    win._refresh_stage_list = refresh_stage_list
 
     def open_pipe():
         path, _ = QtWidgets.QFileDialog.getOpenFileName(win, "Open pipeline", "", "JSON (*.json)")
@@ -10584,7 +13632,7 @@ def build_window(model=None):
     # the operator list. Binding them to the pipeline list with
     # WidgetWithChildrenShortcut keeps the *menu items*, the toolbar and the
     # buttons working exactly as before — only the bare key press is now scoped.
-    for _a in (act_remove, act_dup, act_up, act_down, act_top, act_bottom, act_step, act_reset):
+    for _a in (act_remove, act_dup, act_bypass, act_up, act_down, act_top, act_bottom, act_step, act_reset):
         _a.setShortcutContext(QtCore.Qt.WidgetWithChildrenShortcut)
         stage_list.addAction(_a)
 
@@ -10634,11 +13682,12 @@ def build_window(model=None):
         "zoom_in": act_zin, "zoom_out": act_zout, "fit": act_fit,
         "actual_size": act_11, "surface_3d": act_3d, "reset": act_reset, "step": act_step,
         "run_all": act_runall, "holdout": act_holdout, "palette": act_palette, "shortcuts": act_shortcuts,
+        "verify_exported": act_roundtrip, "batch_apply": act_batch,
         "feature_inspection": act_featins, "viewer_3d": act_viewer3d,
         "op_reference": act_op_help, "samples": act_samples, "about": act_about,
         "dbg_run": act_dbg_run, "dbg_step": act_dbg_step, "dbg_reset": act_dbg_reset,
-        "duplicate_stage": act_dup, "move_top": act_top, "move_bottom": act_bottom,
-        "focus_search": act_focus_search,
+        "duplicate_stage": act_dup, "bypass": act_bypass, "move_top": act_top, "move_bottom": act_bottom,
+        "focus_search": act_focus_search, "pin_a": act_pin,
     }
     win._actions.update(_palette_extra)                 # Tools ▸ Run a ledger op もパレットから
     win.addAction(act_focus_search)          # app-wide Ctrl+F -> operator search
@@ -11061,7 +14110,58 @@ def build_window(model=None):
         timer = QtCore.QTimer(dlg); timer.setSingleShot(True); timer.setInterval(250)
         st = {"op": None, "specs": [], "widgets": {}, "sources": {}, "result": None,
               "sample": None, "error": None, "image": None, "history": [], "script": "",
-              "prefer_image": bool(prefer_image)}
+              "prefer_image": bool(prefer_image), "csv": {}, "column_widgets": {},
+              "data_check": None}
+
+        column_labels = {"part": "part ID", "operator": "operator",
+                         "value": "measured value"}
+
+        def mapping_key(signature):
+            return "input_assign/%s/%s" % (st["op"], signature)
+
+        def update_data_check():
+            if st["op"] != "msa_gauge_rr" or not st["csv"]:
+                return ""
+            mapping = {p: w.currentText() for p, w in st["column_widgets"].items()}
+            try:
+                text_ = gauge_rr_data_check(st["csv"]["table"], mapping)
+            except ValueError as e:
+                text_ = str(e)
+            st["data_check"].setText(text_)
+            return text_
+
+        def load_csv(path, input_name="table"):
+            table = csv_table(path)
+            signature = csv_header_signature(table)
+            saved = _settings().value(mapping_key(signature), "")
+            try:
+                saved = json.loads(saved) if saved else {}
+            except (TypeError, ValueError):
+                saved = {}
+            st["csv"] = {"path": os.path.abspath(path), "name": os.path.basename(path),
+                         "table": table, "signature": signature, "input": input_name}
+            source = st["sources"].get(input_name)
+            if source is not None:
+                source.blockSignals(True)
+                source.setCurrentIndex(LEDGER_SOURCES.index("CSV file…"))
+                source.blockSignals(False)
+            for p, w in st["column_widgets"].items():
+                w.blockSignals(True); w.clear(); w.addItems(list(table))
+                choice = saved.get(p) if saved.get(p) in table else (p if p in table else None)
+                if choice is not None:
+                    w.setCurrentText(choice)
+                w.blockSignals(False)
+            label = st.get("csv_label")
+            if label is not None:
+                label.setText("%s — %d rows" % (os.path.basename(path), len(next(iter(table.values())))))
+            update_data_check()
+            return table
+
+        def choose_csv(input_name):
+            path, _ = QtWidgets.QFileDialog.getOpenFileName(dlg, tr("Open CSV table"), "",
+                                                            "CSV (*.csv)")
+            if path:
+                load_csv(path, input_name)
 
         def fill_list():
             q = search.text().strip()
@@ -11124,7 +14224,7 @@ def build_window(model=None):
                 form.removeRow(0)
             # 直前の結果は消さない —— 別の op の入力に「直前の結果」として渡せる(op を繋ぐ)
             st.update(op=name, specs=opassist.param_spec(name), widgets={}, sources={},
-                      sample=None, error=None)
+                      sample=None, error=None, csv={}, column_widgets={}, data_check=None)
             try:
                 first = opassist._note_first_line(name)
             except Exception:                           # noqa: BLE001
@@ -11134,10 +14234,15 @@ def build_window(model=None):
                 if spec.get("kind") == "data":
                     srcs = QtWidgets.QComboBox()
                     for s_ in LEDGER_SOURCES:
+                        if s_ == "CSV file…" and spec.get("sort") != "table":
+                            continue
                         srcs.addItem(tr(s_), s_)
                     if st["prefer_image"] and spec.get("sort") in _IMAGE_SORTS:
                         srcs.setCurrentIndex(LEDGER_SOURCES.index("current image"))   # 結果 → op
                     srcs.currentIndexChanged.connect(lambda _=0: changed())
+                    srcs.currentIndexChanged.connect(
+                        lambda _=0, s=spec, w=srcs: choose_csv(s["name"])
+                        if w.currentData() == "CSV file…" else None)
                     st["sources"][spec["name"]] = srcs
                     form.addRow("%s  [%s]" % (spec["name"], spec.get("sort")), srcs)
                 else:
@@ -11146,6 +14251,20 @@ def build_window(model=None):
                         w.setToolTip(spec["doc"])
                     st["widgets"][spec["name"]] = w
                     form.addRow(spec["name"] + (" *" if spec.get("required") else ""), w)
+            table_input = next((s for s in st["specs"]
+                                if s.get("kind") == "data" and s.get("sort") == "table"), None)
+            if table_input and name == "msa_gauge_rr":
+                csv_label = QtWidgets.QLabel(tr("No CSV selected")); st["csv_label"] = csv_label
+                form.addRow(tr("Input table"), csv_label)
+                for p in ("part", "operator", "value"):
+                    old = st["widgets"].get(p)
+                    if old is not None:
+                        form.removeRow(old)
+                    w = QtWidgets.QComboBox(); w.currentIndexChanged.connect(lambda _=0: update_data_check())
+                    st["widgets"][p] = w; st["column_widgets"][p] = w
+                    form.addRow("%s / %s" % (p, tr(column_labels[p])), w)
+                check = QtWidgets.QLabel(); check.setWordWrap(True); st["data_check"] = check
+                form.addRow(tr("Data check"), check)
             # 必須の引数は見本の値で埋めておく(空欄のまま押すと TypeError しか出ない)
             try:
                 st["sample"] = opassist.sample_input(name)
@@ -11178,7 +14297,12 @@ def build_window(model=None):
             for spec in st["specs"]:
                 if spec.get("kind") == "data":
                     src = st["sources"][spec["name"]].currentData()
-                    if src == "current image":
+                    if src == "CSV file…":
+                        if not st["csv"] or st["csv"].get("input") != spec["name"]:
+                            raise ValueError("%s: select a CSV file" % spec["name"])
+                        v = st["csv"]["table"]
+                        data.append(v); dnames.append("table"); prov.append((spec["name"], "csv"))
+                    elif src == "current image":
                         v = state.get("raw")
                         if not isinstance(v, np.ndarray):
                             raise ValueError(tr("No current image — open one or use the sample"))
@@ -11200,7 +14324,7 @@ def build_window(model=None):
                     di += 1
                     continue
                 w = st["widgets"][spec["name"]]
-                v = value_of(spec, w)
+                v = w.currentText() if spec["name"] in st["column_widgets"] else value_of(spec, w)
                 if spec.get("required") and v is None:
                     raise ValueError("%s: %s" % (spec["name"], tr("required")))
                 if isinstance(w, QtWidgets.QLineEdit) and w.text().strip() == SAMPLE_TOKEN:
@@ -11220,14 +14344,25 @@ def build_window(model=None):
             if not st["op"]:
                 return None
             try:
+                if st["csv"] and st["op"] == "msa_gauge_rr":
+                    mapping = {p: w.currentText() for p, w in st["column_widgets"].items()}
+                    check_text = gauge_rr_data_check(st["csv"]["table"], mapping)
+                    st["data_check"].setText(check_text)
+                    _settings().setValue(mapping_key(st["csv"]["signature"]),
+                                         json.dumps(mapping, ensure_ascii=False, sort_keys=True))
                 data, dnames, kwargs, prov, from_sample = gather()
                 st["script"] = ledger_script(st["op"], prov, kwargs, from_sample,
-                                             image_path=state.get("image_path"))
+                                             image_path=state.get("image_path"),
+                                             csv_path=st["csv"].get("path") if st["csv"] else None)
                 code.setPlainText(st["script"])
                 out, sec = run_ledger_op(st["op"], data, kwargs)
             except Exception as e:                      # noqa: BLE001 — 何が悪いかを窓に出す
                 st["error"] = "%s: %s" % (type(e).__name__, e)
                 info.setPlainText(st["error"]); pic.clear()
+                # The runner already shows this error in its own window.  Keep the
+                # structured Problems entry, but do not open a second modal dialog.
+                report_error("Run ledger op", e, op_name=st["op"],
+                             inputs=locals().get("data"), show_modal=False)
                 return None
             st["result"], st["error"] = out, None
             st["history"].append(st["script"])
@@ -11300,6 +14435,7 @@ def build_window(model=None):
         dlg._state = st; dlg._select = select; dlg._run = run; dlg._search = search
         dlg._op_list = op_list; dlg._auto = auto; dlg._code = code; dlg._info = info; dlg._pic = pic
         dlg._timer = timer
+        dlg._load_csv = load_csv; dlg._update_data_check = update_data_check
         dlg._insert = insert_into_editor; dlg._session_script = session_script
         dlg.resize(1100, 760); dlg.show()
         win._last_ledger_runner = dlg

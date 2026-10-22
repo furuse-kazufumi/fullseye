@@ -57,7 +57,9 @@ with warnings.catch_warnings():
         pcseg, fit_plane, fit_plane_ransac, fit_sphere_ransac, fit_cylinder_ransac,
         plane_distance, height_above_plane, remove_ground,
         euclidean_clusters, region_growing, aabb, obb, crop_box, crop_sphere,
-        farthest_point_sampling, curvature, centroid, principal_axes,
+        farthest_point_sampling, curvature, curvature_descriptors, centroid, principal_axes,
+        pocviewer, write_viewer, viewer_spec, viewer_text, viewer_number, viewer_mesh_tab,
+        viewer_points_tab, viewer_frames_tab, viewer_split_tab,
         mesh, read_mesh, read_points, write_mesh, write_points, sample_surface,
         mesh_to_points, voxelize, bounds, recenter, normalize_scale,
         meshio_opt, read_gltf, read_gltf_merged, read_las, read_pcd, formats_available,
@@ -91,7 +93,8 @@ with warnings.catch_warnings():
         vol_rle_difference, vol_rle_components,
         volgray, vol_window_level, vol_equalize, vol_gamma, vol_stretch,
         volxform, vol_resize, vol_rotate, vol_affine,
-        volprobe, vol_profile_line, vol_edge_probe, vol_wall_thickness,
+        volprobe, PreparedVolProbe, prepare_vol_probe,
+        vol_profile_line, vol_edge_probe, vol_wall_thickness,
         volfreq, vol_fft_lowpass, vol_fft_highpass, vol_fft_bandpass,
         volrestore, vol_gaussian_psf, vol_richardson_lucy,
         handpose, hand_landmarks, finger_flexions, hand_skeleton_edges, draw_hand_landmarks,
@@ -123,7 +126,7 @@ with warnings.catch_warnings():
         event_rate_map, time_surface, warp_frame, contrast_maximization,
         video, read_frames, iter_frames, frame_pairs, write_video, probe,
         recipes, recipe, measure, line_profile, distance, angle,
-        orient2d, orient3d, incircle, insphere,
+        orient2d, orient3d, incircle, insphere, grid_axes,
         orient2d_exact, orient3d_exact, incircle_exact, insphere_exact,
         point_in_polygon, point_in_convex_polygon, is_convex_polygon,
         point_in_tetrahedron, point_in_convex_polytope,
@@ -188,6 +191,7 @@ with warnings.catch_warnings():
         abel_inverse,
         abel_inverse_image,
         abel_revolve,
+        HankelPlan,
         hankel_transform,
         tf_poles_zeros,
         tf_freq_response,
@@ -208,6 +212,7 @@ with warnings.catch_warnings():
         polish_scene_build, polish_stroke_run, polish_scene_close,   # 研削・研磨・拭き取り: 工具を手首のばねで押して動かす(mujoco が要るので台帳の外、2026-10-05)
         scoop_mujoco_fill, scoop_mujoco_pour,   # 粉体のすくい(椀の球の個数)と注ぎ(樋を傾ける)の MuJoCo の第 2 実装(mujoco が要るので台帳の外、2026-10-05)
         hankel_image, dct_transform, wavelet_filters, dwt_transform, dwt_inverse,
+        unpack_lsb, piv_outlier_mask_stream, monogenic_metrics,
         # 数値計算の古典と特殊関数(2026-10-03)
         erf,
         erfc,
@@ -264,7 +269,7 @@ with warnings.catch_warnings():
         tcspc_stats, dtof_depth, dtof_cube_simulate, dtof_cube_depth,
         lifetime_fit, lifetime_phasor,
         specularity, motionmag, pose_quat, quatimage, rangedoppler,
-        acoustics, interferometry, flyvision, spc, graphinv, treemorph, segcompare, textregion, vxcore, residue, doe, multivar, sensitivity, simcal, simcalcheck,
+        acoustics, interferometry, flyvision, spc, graphinv, treemorph, segcompare, textregion, vxcore, residue, doe, multivar, sensitivity, simcal, simcalcheck, converge, mcphoton, deconvstop, codematch,
         gfx2d, alpha_composite, alpha_composite_premul, blend_mode, bloom,
         chromatic_aberration, color_grade, color_lut, dither, film_grain,
         layer_stack, light_mask, linear_to_srgb, nine_slice, normal_map_decode,
@@ -401,13 +406,14 @@ with warnings.catch_warnings():
         brdf_blinn_phong, brdf_microfacet, dichromatic_render,
         photometric_stereo_robust, photometric_residual,
         polarization_render, polarization_separate,
-        polarization_dolp_map, polarization_stokes,
+        polarization_dolp_map, polarization_stokes, polarization_analyze,
         optics, thin_lens, abcd_matrix, abcd_trace, depth_of_field,
         relative_illumination,
         airy_pattern, angular_spectrum_propagate, fraunhofer_pattern,
         fourier_plane_filter, four_f_filter,
         gaussian_beam, defocus_from_shift, pupil_psf, pupil_blur,
         psf_to_mtf, mtf_diffraction, wavefront_stats,
+    encircled_energy, ensquared_energy, energy_radii, mtf_tangential_sagittal,
         jones_element, jones_apply, stokes_from_jones,
         mueller_element, mueller_apply, stokes_analyze,
         polarization_demosaic, polarization_demosaic_color, mueller_from_intensities, mueller_checks,
@@ -417,6 +423,7 @@ with warnings.catch_warnings():
         spot_diagram, spot_stats, ray_fan, opd_map, opd_samples,
         wavefront_from_opd, seidel_coefficients, tolerance_analysis,
         glass_catalog, sellmeier, chromatic_shift, chief_ray, with_wavelength,
+        with_aiming, ray_aiming, set_vignetting,
     )
     import lensopt  # noqa: E402,F401  (damped-least-squares lens optimisation)
     from lensopt import optimize_lens, merit_function, bend_singlet  # noqa: E402,F401
@@ -434,15 +441,23 @@ with warnings.catch_warnings():
         light_source, irradiance_map, illumination_uniformity, defect_contrast,
         lighting_sweep, illumination_design,
         solid_angle_light, solid_angle_boundaries, solid_angle_brightness, solid_angle_sweep, solid_angle_render,
+        illumination_train, illumination_field, coaxial_illumination,
     )
     # 2026-10-15 近赤外の分光撮像: 反射率のキューブ (H, W, L) を撮る。キューブ型が台帳に無いので facade から出す
     #   (曲線・表を返す 5 本は opsoptics の spectral に載る)。
     from spectralrad import hyperspectral_capture_cube  # noqa: E402,F401
     import lensimage  # noqa: E402,F401  (image formation through a designed lens)
     from lensimage import (  # noqa: E402,F401
-        psf_from_opd, psf_field_grid, distortion_map, render_through_lens, defect_dataset,
+        psf_from_opd, psf_field_grid, through_focus_mtf, distortion_map, render_through_lens, defect_dataset,
         calibration_views,
     )
+    # Public coordinate/projection utilities that complement the typed omni360 ledger ops.
+    from omni360 import (  # noqa: E402,F401
+        anaglyph_preview, cubemap_to_dir, dir_to_cubemap, dir_to_equirect,
+        equirect_to_dir, fisheye_project, fisheye_unproject, ods_from_cubemap_pair,
+        panorama_scene, perspective_project, perspective_unproject, stereo_unpack,
+    )
+    from plenoptic import mla_sag_normal  # noqa: E402,F401
     # ★2026-10-02: 「名前の無い非公開関数」の棚卸しで、op として振る舞うのに公開経路が 1 本も無かった 18 本。
     #   どれも既存の型つき台帳の約束(台帳 = 実装モジュールの集合)に合わないので、facade(fs.<名前>)から出す。
     #   門は tests/test_hidden_ops_exposed_2026_10_02.py(定理か第 2 実装)。
@@ -815,9 +830,10 @@ from fullseye.fixture import (  # noqa: E402,F401
 )
 # 意味で op を引く(6 言語の要約・BM25、索引は fullseye/data/OP_SEARCH.json —— RAG の入口、2026-10-07)。
 from fullseye.opsearch import search_ops  # noqa: E402,F401
+from fslib import connection_opts  # noqa: E402,F401
 
 __all__ = [
-    "op", "ledger",
+    "op", "ledger", "connection_opts",
     "orient2d", "orient3d", "incircle", "insphere",
     "orient2d_exact", "orient3d_exact", "incircle_exact", "insphere_exact",
     "point_in_polygon", "point_in_convex_polygon", "is_convex_polygon",
@@ -867,6 +883,8 @@ __all__ = [
     "plane_distance", "height_above_plane", "remove_ground",
     "euclidean_clusters", "region_growing", "aabb", "obb", "crop_box", "crop_sphere",
     "farthest_point_sampling", "curvature", "centroid", "principal_axes",
+    "pocviewer", "write_viewer", "viewer_spec", "viewer_text", "viewer_number", "viewer_mesh_tab",
+    "viewer_points_tab", "viewer_frames_tab", "viewer_split_tab",
     "mesh", "read_mesh", "read_points", "write_mesh", "write_points", "sample_surface",
     "mesh_to_points", "voxelize", "bounds", "recenter", "normalize_scale",
     "meshio_opt", "read_gltf", "read_gltf_merged", "read_las", "read_pcd", "formats_available",
@@ -1013,7 +1031,7 @@ __all__ = [
     "lf_subaperture", "lf_center_view", "lf_views", "lf_epi",
     "lf_refocus", "lf_focal_stack", "lf_aperture_mask", "lf_synthetic_aperture",
     "lf_depth_from_focus", "lf_epi_slope", "lf_disparity_to_depth",
-    "lf_all_in_focus", "lf_plenoptic_design",
+    "lf_all_in_focus", "lf_plenoptic_design", "mla_sag_normal",
     "photoncount", "photon_sample", "photon_statistics", "photon_uncertainty",
     "anscombe_transform", "anscombe_inverse",
     "spad_deadtime_apply", "spad_deadtime_correct", "tcspc_coates_correct",
@@ -1024,7 +1042,7 @@ __all__ = [
     # 漏れていた 2 つだけ(2026-09-01: 全部足して重複させた回帰)
     "dsp", "resample", "zero_crossing_rate",
     "specularity", "motionmag", "pose_quat", "quatimage", "rangedoppler",
-    "acoustics", "interferometry", "flyvision", "spc", "graphinv", "treemorph", "segcompare", "textregion", "vxcore", "residue", "doe", "multivar", "sensitivity", "simcal", "simcalcheck",
+    "acoustics", "interferometry", "flyvision", "spc", "graphinv", "treemorph", "segcompare", "textregion", "vxcore", "residue", "doe", "multivar", "sensitivity", "simcal", "simcalcheck", "converge", "mcphoton", "deconvstop", "codematch",
     "gfx2d", "alpha_composite", "alpha_composite_premul", "blend_mode", "bloom",
     "chromatic_aberration", "color_grade", "color_lut", "dither", "film_grain",
     "layer_stack", "light_mask", "linear_to_srgb", "nine_slice",
@@ -1161,13 +1179,14 @@ __all__ = [
     "brdf_blinn_phong", "brdf_microfacet", "dichromatic_render",
     "photometric_stereo_robust", "photometric_residual",
     "polarization_render", "polarization_separate",
-    "polarization_dolp_map", "polarization_stokes",
+    "polarization_dolp_map", "polarization_stokes", "polarization_analyze",
     "optics", "thin_lens", "abcd_matrix", "abcd_trace", "depth_of_field",
     "relative_illumination",
     "airy_pattern", "angular_spectrum_propagate", "fraunhofer_pattern",
     "fourier_plane_filter", "four_f_filter",
     "gaussian_beam", "defocus_from_shift", "pupil_psf", "pupil_blur",
     "psf_to_mtf", "mtf_diffraction", "wavefront_stats",
+    "encircled_energy", "ensquared_energy", "energy_radii", "mtf_tangential_sagittal",
     "jones_element", "jones_apply", "stokes_from_jones",
     "mueller_element", "mueller_apply", "stokes_analyze",
     "polarization_demosaic", "polarization_demosaic_color", "mueller_from_intensities", "mueller_checks",
@@ -1177,6 +1196,7 @@ __all__ = [
     "spot_diagram", "spot_stats", "ray_fan", "opd_map", "opd_samples",
     "wavefront_from_opd", "seidel_coefficients", "tolerance_analysis",
     "glass_catalog", "sellmeier", "chromatic_shift", "chief_ray", "with_wavelength",
+    "with_aiming", "ray_aiming", "set_vignetting",
     "lensopt", "optimize_lens", "merit_function", "bend_singlet",
     "sensorchar", "emva_pair_statistics", "emva_photon_transfer", "emva_quantum_efficiency", "emva_linearity_error", "emva_snr_curve", "emva_sensitivity_threshold", "emva_dynamic_range", "emva_dark_current", "emva_spatial_nonuniformity", "emva_defect_pixels", "emva_highpass", "emva_spectrogram", "emva_total_snr", "emva_exposure_for_snr", "emva_photon_exposure", "emva_bspline_regression", "emva_ptc_linearity_check", "emva_noise_whiteness", "emva_filter_distortion",
     "sensorgeneral", "emva_general_sensitivity", "emva_general_nonuniformity", "emva_general_relative_qe",
@@ -1184,8 +1204,12 @@ __all__ = [
     "illumdesign", "light_source", "irradiance_map", "illumination_uniformity",
     "defect_contrast", "lighting_sweep", "illumination_design",
     "solid_angle_light", "solid_angle_boundaries", "solid_angle_brightness", "solid_angle_sweep", "solid_angle_render",
-    "lensimage", "psf_from_opd", "psf_field_grid", "distortion_map",
+    "illumination_train", "illumination_field", "coaxial_illumination",
+    "lensimage", "psf_from_opd", "psf_field_grid", "through_focus_mtf", "distortion_map",
     "render_through_lens", "defect_dataset", "calibration_views",
+    "anaglyph_preview", "cubemap_to_dir", "dir_to_cubemap", "dir_to_equirect",
+    "equirect_to_dir", "fisheye_project", "fisheye_unproject", "ods_from_cubemap_pair",
+    "panorama_scene", "perspective_project", "perspective_unproject", "stereo_unpack",
     "vision", "vision_ops", "Image", "Pipeline", "pipeline",
     # ★字の検証・修正(glyph_*)。**dir() でなく __all__ が一次情報**なので
     #   ここに載せる —— dir は環境依存で、載せ忘れは全体スイートでしか出ない。
@@ -1246,6 +1270,33 @@ __all__ += [
     "vol_marker_watershed",
     "wet_surface_color",
 ]
+
+# 名前の当て推量への案内(外部 AI レビュー N223): `fullseye.Engine` / `fullseye.Graph` / `fullseye.op_info` は
+#   存在したことがない(公開名は FullseyeEngine / FullseyeGraph、op の情報は op_assist / op_find)。
+#   別名(alias)は足さない —— 同じものに名前が 2 つ出来るので。代わりに AttributeError の文面で本名を案内する。
+#   hasattr は False のまま、表に無い名前は標準の AttributeError。
+_NAME_HINTS = {
+    "Engine": ("FullseyeEngine", "dict-step engine: a list of (op, a, b) stages"),
+    "Graph": ("FullseyeGraph", "branch + merge DAG of operators"),
+    "DAG": ("FullseyeGraph", "branch + merge DAG of operators"),
+    "op_info": ("op_assist / op_find / find_op", "op spec, presets and next ops; CLI: fullseye has <name>"),
+    "op_help": ("op_assist / op_find / find_op", "op spec, presets and next ops; CLI: fullseye has <name>"),
+    "describe_op": ("op_assist / op_find / find_op", "op spec, presets and next ops; CLI: fullseye has <name>"),
+    "get_op": ("find_op", "look an operator up by name; CLI: fullseye has <name>"),
+    "search_ops": ("op_find", "search operators by words"),
+    "list_operators": ("list_ops / op_names", "list operators"),
+}
+
+
+def __getattr__(name):
+    """Module-level hook: only reached when ``name`` is NOT a real attribute."""
+    hint = _NAME_HINTS.get(name)
+    if hint is not None:
+        real, what = hint
+        raise AttributeError(
+            "module 'fullseye' has no attribute '%s'; did you mean '%s'? (%s)" % (name, real, what))
+    raise AttributeError("module 'fullseye' has no attribute '%s'" % name)
+
 
 # ★2026-09-20(GenSpark 第 50 報 N175 / N176): `import fullseye; fullseye.os` が通っていた —— import に使った
 #   道具(os / sys / warnings と __future__ の annotations)は facade の名前ではない。tab 補完と dir() を汚さない。

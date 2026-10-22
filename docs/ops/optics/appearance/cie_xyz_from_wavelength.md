@@ -7,7 +7,7 @@ out: points
 examples: [appearance_structural_colour, poc_chromatic_confocal]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # cie_xyz_from_wavelength — OPTICS `appearance` op
@@ -61,7 +61,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`points` を入力に取れる)
 
-[refract_rays](../glassbody/refract_rays.md) · [reflect_rays](../scene/reflect_rays.md) · [trace_rays](../scene/trace_rays.md) · [illumination_visibility](../scene/illumination_visibility.md) · [env_studio](../scene/env_studio.md) · [env_lightbox](../scene/env_lightbox.md)
+[refract_rays](../glassbody/refract_rays.md) · [reflect_rays](../scene/reflect_rays.md) · [trace_rays](../scene/trace_rays.md) · [illumination_visibility](../scene/illumination_visibility.md) · [env_studio](../scene/env_studio.md) · [env_lightbox](../scene/env_lightbox.md) · [form_factor_polygons](../radiosity/form_factor_polygons.md)
 
 ## 同カテゴリ(`appearance`)
 

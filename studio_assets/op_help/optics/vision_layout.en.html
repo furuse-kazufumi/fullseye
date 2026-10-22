@@ -6,6 +6,7 @@
 <p>Bundle sensor, lens, light and scene, and return the <b>derived quantities in closed form</b>.</p>
 <p>Return value dict: <code style="color:#22d3bf">camera</code> (same convention as <code style="color:#22d3bf">optical_camera</code>) / <code style="color:#22d3bf">sensor</code> / <code style="color:#22d3bf">lens</code> / <code style="color:#22d3bf">lights</code> / <code style="color:#22d3bf">scene</code> / <code style="color:#22d3bf">budget</code> (<code style="color:#22d3bf">optical_budget</code>).</p>
 <p>Looking here before shooting tells you whether the part fits in the field of view, whether the defect can be resolved, and whether the depth of field is sufficient ―― judging not &quot;can it be seen&quot; but &quot;is it imaged with the required contrast&quot; first is the reason for having an optical digital twin.</p>
+<p>With <code style="color:#22d3bf">lens_spec(telecentric=True)</code> the camera becomes an orthographic projection (<code style="color:#22d3bf">optical_camera(telecentric=True)</code>), and magnification does not change with the part&#x27;s height. The representative wavelength of the budget is the mean of the light sources&#x27; energy centroids.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>
@@ -28,6 +29,7 @@
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
 <p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_nir_silicon_transmission">poc_nir_silicon_transmission</a> — <code style="color:#22d3bf">py -3.11 examples/poc_nir_silicon_transmission.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_optics_drawings">poc_optics_drawings</a> — <code style="color:#22d3bf">py -3.11 examples/poc_optics_drawings.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:vision_layout_from_catalog">vision_layout_from_catalog</a> — <code style="color:#22d3bf">py -3.11 examples/vision_layout_from_catalog.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">table</code> as input)</h3>

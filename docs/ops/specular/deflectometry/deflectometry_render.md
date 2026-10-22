@@ -7,7 +7,7 @@ out: images
 examples: [poc_phase_measuring_deflectometry]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # deflectometry_render — SPECULAR `deflectometry` op
@@ -34,7 +34,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
     縞の振幅が (1 − k_d) 倍に落ち、位相の雑音は 1 / (1 − k_d) 倍になる(ざらついた塗装)。
   * ``scatter_rad``: 鏡面ローブの広がり(面の法線の標準偏差 [rad])。反射光は 2 倍広がり、画面上で
     σ = 2·scatter·(面から画面の距離)のガウスで縞がぼける → 振幅 exp(−2π²σ²/周期²)。
-  * ``back_thickness_mm`` / ``refractive_index``: 透明板(カバーガラス)の裏面反射。表で屈折
+  * ``back_thickness_mm`` / ``refractive_index``: 透明板(カバーガラス)の裏面反射(屈折率は数か材料表の名前 ——
+    名前なら d 線 587.56 nm の n)。表で屈折
     (`glassmirror.refract_rays`)→ 平らな裏面で反射 → 表から出る光が、ずれた画面の点を映す。
     重みは Fresnel(`glassmirror.fresnel_dielectric`)。カメラの露出は表と裏の和で正規化する。
   * ``focus``: ``"surface"``(面にピント)/ ``"screen"``(画面の虚像 = 主光線に沿って L + d にピント)/

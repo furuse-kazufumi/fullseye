@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">mc_photon_slab — CONVERGE <code style="color:#22d3bf">montecarlo</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">table</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mc_photon_slab(layers=None, n_above=1.0, n_below=1.0, n_photons=100000, tol=None, confidence=0.95, batch=50000, seed=1, w_threshold=0.0001, roulette_m=10) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import mcphoton; mcphoton.mc_photon_slab(layers=None, n_above=1.0, n_below=1.0, n_photons=100000, tol=None, confidence=0.95, batch=50000, seed=1, w_threshold=0.0001, roulette_m=10) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsconverge.get(&quot;mc_photon_slab&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>以 MCML 型蒙地卡羅計算多層混濁平板的漫反射、總穿透與吸收，並附信賴區間。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p><code style="color:#22d3bf">layers</code>: list of <code style="color:#22d3bf">{&quot;n&quot;, &quot;mua&quot;, &quot;mus&quot;, &quot;g&quot;, &quot;d&quot;}</code> from the top (coefficients in 1/length, thickness in the same length; <code style="color:#22d3bf">d = inf</code> for a semi-infinite last layer). <code style="color:#22d3bf">n_above</code> / <code style="color:#22d3bf">n_below</code>: ambient refractive indices. A pencil beam enters at normal incidence.</p>
+<p>The tracing rules are those of the MCML manual (Wang &amp; Jacques), eqs. 3.2a-3.31 — see the module docstring for which equation does what. Every packet&#x27;s contribution is kept, so the standard error is the sample standard deviation over packets / sqrt(N) and the interval is mean +- z se (<code style="color:#22d3bf">confidence</code>). Batch b uses <code style="color:#22d3bf">default_rng((seed, b))</code>.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">tol=None</code>: trace <code style="color:#22d3bf">n_photons</code> packets.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">tol=h</code>: sequential Monte Carlo — add batches of <code style="color:#22d3bf">batch</code> packets until the half-width of R_d and of T_t is &lt;= h (the stopping rule of <code style="color:#22d3bf">converge</code>, from the second batch on), with <code style="color:#22d3bf">n_photons</code> as the budget: refusing (<code style="color:#22d3bf">NotConvergedError</code>) if the budget is spent first.</p>
+<p>Returns <code style="color:#22d3bf">Rd</code>, <code style="color:#22d3bf">Tt</code>, <code style="color:#22d3bf">A</code> (absorbed fraction) and <code style="color:#22d3bf">A_layers</code>, each with <code style="color:#22d3bf">*_se</code> and <code style="color:#22d3bf">*_ci</code>; <code style="color:#22d3bf">Rsp</code> (specular, deterministic: eq. 3.2a); <code style="color:#22d3bf">energy_balance</code> = R_sp + R_d + T_t + A (1 in expectation — roulette conserves energy only on average, so its deviation is compared with its own standard error); <code style="color:#22d3bf">R_total</code> = R_sp + R_d (specular plus diffuse, with the interval of R_d shifted by the deterministic R_sp); <code style="color:#22d3bf">n_photons</code>. Defaults: the MCML manual Table 6.1 slab (van de Hulst: R_d = 0.09739, T_t = 0.66096); <code style="color:#22d3bf">MCML_TABLE_6_2</code> holds Table 6.2.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconverge:convergent_computation">convergent_computation 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:converge_tour">converge_tour</a> — <code style="color:#22d3bf">py -3.11 examples/converge_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">montecarlo</code>)</h3>
+<p><a style="color:#22d3bf" href="opconverge:mc_sequential_mean">mc_sequential_mean</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mcphoton.py — CONVERGE 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

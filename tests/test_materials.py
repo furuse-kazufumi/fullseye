@@ -18,11 +18,11 @@ import materials_data as MD
 # --------------------------------------------------------------------------- #
 # 表そのもの                                                                     #
 # --------------------------------------------------------------------------- #
-def test_table_has_83_materials_in_seven_classes():
+def test_table_has_86_materials_in_seven_classes():
     cat = M.material_table()
-    assert len(cat) == 83 == len(M.MATERIALS)
+    assert len(cat) == 86 == len(M.MATERIALS)
     counts = {c: sum(r["class"] == c for r in cat) for c in M.CLASSES[:-1]}
-    assert counts == {"glass": 46, "crystal": 12, "semiconductor": 6, "film": 4, "metal": 10, "liquid": 1, "polymer": 4}
+    assert counts == {"glass": 46, "crystal": 12, "semiconductor": 6, "film": 7, "metal": 10, "liquid": 1, "polymer": 4}
     for r in cat:
         assert r["reference"], r["name"]                     # 出典の無い行は無い
         assert r["range_um"][0] < r["range_um"][1]
@@ -328,8 +328,9 @@ def test_custom_records_round_trip_and_refuse_empty():
 def test_ledger_registration():
     import opsoptics
     names = [r[0] for r in opsoptics._CATALOG["matprop"]]
-    assert sorted(names) == sorted(n for n in M.__all__ if n not in ("MATERIALS", "CLASSES", "AGF_EXAMPLE", "NIR_BAND_MODELS"))
-    assert len(names) == 19                                   # + 近赤外の吸収帯 3 op(2026-10-15)
+    assert sorted(names) == sorted(n for n in M.__all__ if n not in ("MATERIALS", "CLASSES", "AGF_EXAMPLE", "NIR_BAND_MODELS",
+                                                                     "ELEMENTS", "ELECTRON_SOLID"))
+    assert len(names) == 20                                   # + 近赤外の吸収帯 3 op + 電子線の物性 1 op(2026-10-15)
     for n in names:
         assert opsoptics.get(n) is getattr(M, n)
     import fullseye as fs

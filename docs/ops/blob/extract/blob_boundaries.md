@@ -7,7 +7,7 @@ out: mask
 examples: [poc_gear_tooth_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # blob_boundaries — BLOB `extract` op
@@ -54,7 +54,7 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 ## 型が繋がる次の op(`mask` を入力に取れる)
 
-[blob_label](../connect/blob_label.md) · [blob_distance](../split/blob_distance.md)
+[blob_label](../connect/blob_label.md) · [blob_distance](../split/blob_distance.md) · [blob_count_interval](../split/blob_count_interval.md)
 
 ## 同カテゴリ(`extract`)
 

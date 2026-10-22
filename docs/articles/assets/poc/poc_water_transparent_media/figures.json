@@ -1,0 +1,124 @@
+[
+ {
+  "file": "01_ocean_field.png",
+  "name": "ocean_field",
+  "caption": "Tessendorf の FFT。有義波高 1.37 m、周期 5.8 s。波は +x(右)へ進む。",
+  "shape": [
+   380,
+   542,
+   3
+  ]
+ },
+ {
+  "file": "02_ocean_surface_motion.gif",
+  "name": "ocean_surface_motion",
+  "caption": "同じFFT海面の時刻を進めると波面が風下へ動く。",
+  "shape": [
+   480,
+   480,
+   3
+  ],
+  "animated": true,
+  "frames": 16,
+  "frames_written": 16,
+  "fps": 5.0,
+  "video": "02_ocean_surface_motion.mp4",
+  "video_frames": 32,
+  "video_fps": 10.0,
+  "video_shape": [
+   720,
+   720,
+   3
+  ]
+ },
+ {
+  "file": "03_ocean_spectrum.png",
+  "name": "ocean_spectrum",
+  "caption": "JONSWAP はピークを γ 倍に尖らせる。γ = 1 なら PM と 1e-9 で一致する。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_slope_histogram.png",
+  "name": "slope_histogram",
+  "caption": "PM の波は毛管波を持たず、風下方向の傾きの分散は Cox & Munk(0.00316 U)の 34 %。全方向では 26 %(飽和域を毛管波数まで延ばすと 71 %)。",
+  "shape": [
+   380,
+   899,
+   3
+  ]
+ },
+ {
+  "file": "05_pool_views.png",
+  "name": "pool_views",
+  "caption": "見上げた魚眼の中央が空(窓)、外側は全反射で底が鏡に映る。黄の輪が臨界角 48.6°(窓の半径は深さ 1 m で 1.13 m)。(c) の最大のずれは 18.5 cm。",
+  "shape": [
+   1095,
+   990,
+   3
+  ]
+ },
+ {
+  "file": "06_bottle_caustic.png",
+  "name": "bottle_caustic",
+  "caption": "空の瓶はほとんど曲げない(屈折力は水入りの 1/14)。",
+  "shape": [
+   420,
+   720,
+   3
+  ]
+ },
+ {
+  "file": "07_fill_level.png",
+  "name": "fill_level",
+  "caption": "水のある所だけ中央に明るい線(最大 14.0 倍)、空の所は発散して中央が暗い(0.94 倍)。",
+  "shape": [
+   333,
+   1470,
+   3
+  ]
+ },
+ {
+  "file": "08_diver_chart.png",
+  "name": "diver_chart",
+  "caption": "上: 外洋(ジャーロフ I)、下: 沿岸(3C)。赤が先に消え、沿岸では青も落ちて緑に寄る。露出は固定。",
+  "shape": [
+   375,
+   520,
+   3
+  ]
+ },
+ {
+  "file": "09_diver_chart_exposed.png",
+  "name": "diver_chart_exposed",
+  "caption": "I 型は 15 m で青一色、3C 型は 5 m から緑が主になる。",
+  "shape": [
+   615,
+   1000,
+   3
+  ]
+ },
+ {
+  "file": "10_water_spectra.png",
+  "name": "water_spectra",
+  "caption": "純水の吸収の最小は 417.5 nm の 0.00442 /m、700 nm で 0.624 /m。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "11_limits_apparent_depth.png",
+  "name": "limits_apparent_depth",
+  "caption": "斜めに見るほど底は浅く見える。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]

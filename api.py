@@ -192,6 +192,11 @@ from pcseg import (  # noqa: E402,F401
     euclidean_clusters, region_growing, aabb, obb, crop_box, crop_sphere,
     farthest_point_sampling, curvature, centroid, principal_axes,
 )
+from pocviewer import (  # noqa: E402,F401
+    write_viewer, viewer_spec, viewer_text, viewer_number, viewer_mesh_tab, viewer_points_tab,
+    viewer_frames_tab, viewer_split_tab,
+)
+import pocviewer  # noqa: E402,F401
 from mesh import (  # noqa: E402,F401
     read_mesh, read_points, write_mesh, write_points, sample_surface, mesh_to_points,
     voxelize, bounds, recenter, normalize_scale,
@@ -256,6 +261,7 @@ from volxform import (  # noqa: E402,F401
     vol_resize, vol_rotate, vol_affine,
 )
 from volprobe import (  # noqa: E402,F401
+    PreparedVolProbe, prepare_vol_probe,
     vol_profile_line, vol_edge_probe, vol_wall_thickness,
 )
 from volfreq import (  # noqa: E402,F401
@@ -379,6 +385,7 @@ from mathtransforms import (  # noqa: E402,F401
     abel_inverse,
     abel_inverse_image,
     abel_revolve,
+    HankelPlan,
     hankel_transform,
     tf_poles_zeros,
     tf_freq_response,
@@ -746,6 +753,10 @@ import multivar  # noqa: E402  (table PCA / PLS / response surfaces / main effec
 import sensitivity  # noqa: E402  (Morris / Sobol sensitivity, collinearity index, residual PCA)
 import simcal  # noqa: E402  (sim-to-real calibration: forward model, observation, screening, refusing fit)
 import simcalcheck  # noqa: E402  (sim-to-real checks: profile likelihood, uncertainty, over-fitting gates, discrepancy)
+import converge  # noqa: E402  (convergent computation: fixed-point driver, observed order / GCI, sequential Monte Carlo)
+import mcphoton  # noqa: E402  (Monte Carlo photon transport in layered turbid slabs, MCML rules, with intervals)
+import deconvstop  # noqa: E402  (Richardson-Lucy stopped by the discrepancy principle)
+import codematch  # noqa: E402  (robust code matching: orientation code, increment sign, selective correlation, radial reach)
 from residue import (  # noqa: E402,F401
     residue_integer_crt, residue_crt, residue_fault_locate, crt_displacement, harmonic_rotation,
 )
@@ -991,13 +1002,20 @@ from rangedoppler import (  # noqa: E402,F401
 )
 import quatimage  # noqa: E402  (quaternion images / Riesz + monogenic signal)
 from quatimage import (  # noqa: E402,F401
-    iqft2, monogenic_amplitude, monogenic_orientation, monogenic_phase,
+    iqft2, monogenic_amplitude, monogenic_metrics, monogenic_orientation, monogenic_phase,
     monogenic_signal, qft2, quat_color_filter, quat_color_rotate,
     quat_conjugate_image, quat_correlate, quat_image_multiply, quat_norm,
     quat_normalize_image, quaternion_to_rgb, rgb_to_quaternion,
     riesz_displacement, riesz_displacement_series, riesz_motion_magnify,
     riesz_transform,
 )
+
+# Public helpers introduced by the performance batches.  Keep them reachable
+# through the same stable facade as the operators they prepare or accelerate.
+from acquire import unpack_lsb  # noqa: E402,F401
+from curvature3d import curvature_descriptors  # noqa: E402,F401
+from pivops import piv_outlier_mask_stream  # noqa: E402,F401
+from sdf_ops import grid_axes  # noqa: E402,F401
 import motionmag  # noqa: E402  (phase-based motion magnification / vibration measurement)
 from motionmag import (  # noqa: E402,F401
     band_snr, complex_steerable_decompose, complex_steerable_reconstruct,
@@ -1023,6 +1041,7 @@ from specularity import (  # noqa: E402,F401
     brdf_blinn_phong, brdf_microfacet, dichromatic_render,
     photometric_stereo_robust, photometric_residual, polarization_render,
     polarization_separate, polarization_dolp_map, polarization_stokes,
+    polarization_analyze,
 )
 from optics import (  # noqa: E402,F401
     thin_lens, abcd_matrix, abcd_trace, depth_of_field, relative_illumination,
@@ -1030,6 +1049,7 @@ from optics import (  # noqa: E402,F401
     fourier_plane_filter, four_f_filter,
     defocus_from_shift, pupil_psf, pupil_blur,
     psf_to_mtf, mtf_diffraction, wavefront_stats,
+    encircled_energy, ensquared_energy, energy_radii, mtf_tangential_sagittal,
     jones_element, jones_apply, stokes_from_jones,
     mueller_element, mueller_apply, stokes_analyze,
     polarization_demosaic, polarization_demosaic_color, mueller_from_intensities, mueller_checks,
@@ -1040,7 +1060,12 @@ from raytrace import (  # noqa: E402,F401  (lens design: real rays beyond the pa
     paraxial_trace, trace_rays, ray_bundle, spot_diagram, spot_stats, ray_fan,
     opd_map, opd_samples, wavefront_from_opd, seidel_coefficients,
     tolerance_analysis, glass_catalog, sellmeier, chromatic_shift, chief_ray,
-    with_wavelength,
+    with_wavelength, with_aiming, ray_aiming, set_vignetting,
+)
+import lenstol  # noqa: E402  (manufacturing tolerances, compensation, and yield)
+from lenstol import (  # noqa: E402,F401
+    tolerance_table, tolerance_criteria, tolerance_compensators, tolerance_monte_carlo,
+    tolerance_sensitivity, tolerance_report, tolerance_table_zmx, tolerance_table_from_zmx,
 )
 import lensopt  # noqa: E402  (damped-least-squares lens optimisation)
 from lensopt import optimize_lens, merit_function, bend_singlet  # noqa: E402,F401
@@ -1058,10 +1083,11 @@ from illumdesign import (  # noqa: E402,F401
     light_source, irradiance_map, illumination_uniformity, defect_contrast,
     lighting_sweep, illumination_design,
     solid_angle_light, solid_angle_boundaries, solid_angle_brightness, solid_angle_sweep, solid_angle_render,
+    illumination_train, illumination_field, coaxial_illumination,
 )
 import lensimage  # noqa: E402  (image formation through a designed lens + synthetic defect datasets)
 from lensimage import (  # noqa: E402,F401
-    psf_from_opd, psf_field_grid, distortion_map, render_through_lens, defect_dataset,
+    psf_from_opd, psf_field_grid, through_focus_mtf, distortion_map, render_through_lens, defect_dataset,
     calibration_views,
 )
 # ★2026-10-02: 「名前の無い非公開関数」の棚卸しで、op として振る舞うのに公開経路が 1 本も無かった 18 本。
@@ -1116,6 +1142,8 @@ __all__ = [
     "plane_distance", "height_above_plane", "remove_ground",
     "euclidean_clusters", "region_growing", "aabb", "obb", "crop_box", "crop_sphere",
     "farthest_point_sampling", "curvature", "centroid", "principal_axes",
+    "pocviewer", "write_viewer", "viewer_spec", "viewer_text", "viewer_number", "viewer_mesh_tab",
+    "viewer_points_tab", "viewer_frames_tab", "viewer_split_tab",
     "mesh", "read_mesh", "read_points", "write_mesh", "write_points", "sample_surface",
     "mesh_to_points", "voxelize", "bounds", "recenter", "normalize_scale",
     "meshio_opt", "read_gltf", "read_gltf_merged", "read_las", "read_pcd", "formats_available",
@@ -1337,7 +1365,7 @@ __all__ = [
     "peak_subbin", "point_spectrum",
     "signal_features", "resample", "zero_crossing_rate",
     "specularity", "motionmag", "pose_quat", "quatimage", "rangedoppler",
-    "acoustics", "interferometry", "flyvision", "spc", "graphinv", "treemorph", "segcompare", "textregion", "vxcore", "residue", "doe", "multivar", "sensitivity", "simcal", "simcalcheck",
+    "acoustics", "interferometry", "flyvision", "spc", "graphinv", "treemorph", "segcompare", "textregion", "vxcore", "residue", "doe", "multivar", "sensitivity", "simcal", "simcalcheck", "converge", "mcphoton", "deconvstop", "codematch",
     "gfx2d", "alpha_composite", "alpha_composite_premul", "blend_mode", "bloom",
     "chromatic_aberration", "color_grade", "color_lut", "dither", "film_grain",
     "layer_stack", "light_mask", "linear_to_srgb", "nine_slice",
@@ -1474,13 +1502,14 @@ __all__ = [
     "brdf_blinn_phong", "brdf_microfacet", "dichromatic_render",
     "photometric_stereo_robust", "photometric_residual",
     "polarization_render", "polarization_separate",
-    "polarization_dolp_map", "polarization_stokes",
+    "polarization_dolp_map", "polarization_stokes", "polarization_analyze",
     "optics", "thin_lens", "abcd_matrix", "abcd_trace", "depth_of_field",
     "relative_illumination",
     "airy_pattern", "angular_spectrum_propagate", "fraunhofer_pattern",
     "fourier_plane_filter", "four_f_filter",
     "gaussian_beam", "defocus_from_shift", "pupil_psf", "pupil_blur",
     "psf_to_mtf", "mtf_diffraction", "wavefront_stats",
+    "encircled_energy", "ensquared_energy", "energy_radii", "mtf_tangential_sagittal",
     "jones_element", "jones_apply", "stokes_from_jones",
     "mueller_element", "mueller_apply", "stokes_analyze",
     "polarization_demosaic", "polarization_demosaic_color", "mueller_from_intensities", "mueller_checks",
@@ -1490,6 +1519,7 @@ __all__ = [
     "spot_diagram", "spot_stats", "ray_fan", "opd_map", "opd_samples",
     "wavefront_from_opd", "seidel_coefficients", "tolerance_analysis",
     "glass_catalog", "sellmeier", "chromatic_shift", "chief_ray", "with_wavelength",
+    "with_aiming", "ray_aiming", "set_vignetting",
     "lensopt", "optimize_lens", "merit_function", "bend_singlet",
     "sensorchar", "emva_pair_statistics", "emva_photon_transfer", "emva_quantum_efficiency", "emva_linearity_error", "emva_snr_curve", "emva_sensitivity_threshold", "emva_dynamic_range", "emva_dark_current", "emva_spatial_nonuniformity", "emva_defect_pixels", "emva_highpass", "emva_spectrogram", "emva_total_snr", "emva_exposure_for_snr", "emva_photon_exposure", "emva_bspline_regression", "emva_ptc_linearity_check", "emva_noise_whiteness", "emva_filter_distortion",
     "sensorgeneral", "emva_general_sensitivity", "emva_general_nonuniformity", "emva_general_relative_qe",
@@ -1497,7 +1527,8 @@ __all__ = [
     "illumdesign", "light_source", "irradiance_map", "illumination_uniformity",
     "defect_contrast", "lighting_sweep", "illumination_design",
     "solid_angle_light", "solid_angle_boundaries", "solid_angle_brightness", "solid_angle_sweep", "solid_angle_render",
-    "lensimage", "psf_from_opd", "psf_field_grid", "distortion_map",
+    "illumination_train", "illumination_field", "coaxial_illumination",
+    "lensimage", "psf_from_opd", "psf_field_grid", "through_focus_mtf", "distortion_map",
     "render_through_lens", "defect_dataset", "calibration_views",
     "ncc_map_3d", "gradient_normals", "subpixel_refine_edges", "min_max_gray_n",
     "gen_gauss_bandpass", "apply_bandpass", "gaussians_to_mesh", "ensure_gray", "ensure_color",
@@ -2611,10 +2642,12 @@ def _check_call_args(image, name, a, b, policy):
     """``apply`` の引数を呼び出し規約に照らす。返り値は (a, b)(値域を切り詰めたもの)。"""
     if not isinstance(name, str):
         if isinstance(image, str) and (isinstance(name, np.ndarray) or name is None):
+            # ★2026-10-18(外部レビュー 0.6.0 N224): 以前の文は「got name=ndarray」だけで、受け取った image 側
+            #   (op 名の文字列)を言わず、規約の説明と食い違って読めた。受け取った 2 つと、直した呼び方を言う。
             raise TypeError(
-                "fullseye.apply(image, name, a, b): arguments look swapped -- "
-                "the first argument is the image, the second the op name (str); got name=%s"
-                % type(name).__name__)
+                "fullseye.apply(image, name, a, b): arguments look swapped -- got image=%r (str) and "
+                "name=%s; the image comes first and the op name second: fullseye.apply(<image>, %r, a, b)"
+                % (image, type(name).__name__, image))
         raise TypeError("fullseye.apply(image, name, a, b): name must be str, got %s"
                         % type(name).__name__)
     if image is None:
@@ -2861,7 +2894,7 @@ def _prepare_pipeline(image, stages, a, b, policy):
     return image, checked, ops_
 
 
-def _pipeline_steps(image, norm, ops_, coerce, policy, use_fast):
+def _pipeline_steps(image, norm, ops_, coerce, policy, use_fast, entry=True):
     """CPU の段実行の唯一の本体: 各段の後の値を順に yield する。
 
     ``run_pipeline`` は最後の値を、``FullseyeEngine.run_stepwise`` は全部を取る ——
@@ -2869,7 +2902,7 @@ def _pipeline_steps(image, norm, ops_, coerce, policy, use_fast):
     dtype 契約と guard を飛ばし、uint8 で別の答えを返していた)。
     """
     v = image
-    first = True
+    first = bool(entry)       # entry=False: *image* is already a mid-chain value (Studio's stage cache resumes here)
     for (name, sa, sb), op in zip(norm, ops_):
         if isinstance(v, PrecisionUnion):
             # lazy stages keep the union (see _apply_impl); the first non-lazy stage

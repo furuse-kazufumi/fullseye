@@ -5,10 +5,10 @@ category: segmentation
 in: image
 out: region
 halcon: edges_image
-examples: [gallery2d_segmentation, poc_real_coin_metrology]
+examples: [gallery2d_segmentation, poc_real_coin_metrology, poc_water_inspection_images]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # canny — 2D `segmentation` op
@@ -65,6 +65,7 @@ canny 0.50 0.50
 
 - [gallery2d_segmentation](../../../../examples/gallery2d_segmentation.py) — `py -3.11 examples/gallery2d_segmentation.py`
 - [poc_real_coin_metrology](../../../../examples/poc_real_coin_metrology.py) — `py -3.11 examples/poc_real_coin_metrology.py`
+- [poc_water_inspection_images](../../../../examples/poc_water_inspection_images.py) — `py -3.11 examples/poc_water_inspection_images.py`
 
 ## 型が繋がる次の op(`region` を入力に取れる)
 

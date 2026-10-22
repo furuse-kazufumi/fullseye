@@ -4,16 +4,16 @@ dim: optics
 category: light_transport
 in: table
 out: table
-examples: [poc_interreflection_fringe_error]
+examples: [poc_interreflection_fringe_error, poc_itof_multifreq]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # transport_matrix_radiosity — OPTICS `light_transport` op
 
 - **データ種**: `table` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.transport_matrix_radiosity(profile, albedo=0.8, n_bounces=None)` (実装を直接呼ぶなら `import lighttransport; lighttransport.transport_matrix_radiosity(profile, albedo=0.8, n_bounces=None)`、台帳から引くなら `opsoptics.get("transport_matrix_radiosity")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.transport_matrix_radiosity(profile, albedo=0.8, n_bounces=None, *, chunk=None)` (実装を直接呼ぶなら `import lighttransport; lighttransport.transport_matrix_radiosity(profile, albedo=0.8, n_bounces=None, *, chunk=None)`、台帳から引くなら `opsoptics.get("transport_matrix_radiosity")`)
 
 ## 使い方
 
@@ -64,6 +64,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_interreflection_fringe_error](../../../../examples/poc_interreflection_fringe_error.py) — `py -3.11 examples/poc_interreflection_fringe_error.py`
+- [poc_itof_multifreq](../../../../examples/poc_itof_multifreq.py) — `py -3.11 examples/poc_itof_multifreq.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

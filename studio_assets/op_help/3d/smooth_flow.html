@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">smooth_flow — 3D <code style="color:#22d3bf">scene_flow3d</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">flow_scattered</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.smooth_flow(pts0, pts1, k: &#x27;int&#x27; = 10, n_iter: &#x27;int&#x27; = 5) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import scene_flow3d; scene_flow3d.smooth_flow(pts0, pts1, k: &#x27;int&#x27; = 10, n_iter: &#x27;int&#x27; = 5) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;smooth_flow&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.smooth_flow(pts0, pts1, k: &#x27;int&#x27; = 10, n_iter: &#x27;int&#x27; = 5, method: &#x27;str&#x27; = &#x27;exact&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import scene_flow3d; scene_flow3d.smooth_flow(pts0, pts1, k: &#x27;int&#x27; = 10, n_iter: &#x27;int&#x27; = 5, method: &#x27;str&#x27; = &#x27;exact&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;smooth_flow&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>最近傍フローを近傍平均で局所平滑化した正則化フロー (N, 3) を返す。</p>
 <p><code style="color:#22d3bf">nearest_neighbor_flow</code> の生フロー(最近傍対応ゆえノイズが乗る)を、<code style="color:#22d3bf">pts0</code> 空間の k 近傍トポロジ(自身を含む、1 度だけ構築)で反復平均する。ゼロ平均ノイズを抑えつつ滑らかな変位場は概ね保存する(Jacobi 反復 = フロー場のラプラシアン平滑化)。線形場は対称近傍で不偏、曲率のある場は僅かに縮む(honest な平滑化バイアス)。</p>
@@ -10,6 +10,7 @@
 <p>pts1: (M, 3) 時刻 1 の点群。</p>
 <p>k: 平均に使う近傍数(自身含む)。</p>
 <p>n_iter: 平滑化反復回数。</p>
+<p>method: <code style="color:#22d3bf">&quot;exact&quot;</code> は従来の gather、<code style="color:#22d3bf">&quot;sparse&quot;</code> は同じ重みの疎行列積。</p>
 <p>Returns:</p>
 <p>(N, 3) 平滑化変位ベクトル場。</p>
 <p>Raises:</p>

@@ -7,7 +7,7 @@ out: text
 examples: [vision_layout_from_catalog]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # register_light — OPTICS `scene` op
@@ -72,7 +72,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`text` を入力に取れる)
 
-[svg_entities](../drawing/svg_entities.md) · [dxf_entities](../drawing/dxf_entities.md)
+[tolerance_table_from_zmx](../tolerancing/tolerance_table_from_zmx.md) · [svg_entities](../drawing/svg_entities.md) · [dxf_entities](../drawing/dxf_entities.md)
 
 ## 同カテゴリ(`scene`)
 

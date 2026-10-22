@@ -7,7 +7,7 @@ out: points
 examples: [studio_raytrace_scene]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # reflect_rays — OPTICS `scene` op
@@ -71,7 +71,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`points` を入力に取れる)
 
-[refract_rays](../glassbody/refract_rays.md) · [trace_rays](trace_rays.md) · [illumination_visibility](illumination_visibility.md) · [env_studio](env_studio.md) · [env_lightbox](env_lightbox.md)
+[refract_rays](../glassbody/refract_rays.md) · [trace_rays](trace_rays.md) · [illumination_visibility](illumination_visibility.md) · [env_studio](env_studio.md) · [env_lightbox](env_lightbox.md) · [form_factor_polygons](../radiosity/form_factor_polygons.md)
 
 ## 同カテゴリ(`scene`)
 

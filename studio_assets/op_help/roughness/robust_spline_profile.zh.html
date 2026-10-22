@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">robust_spline_profile — ROUGHNESS <code style="color:#22d3bf">prepare</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.robust_spline_profile(z, dx, lambda_c, c=4.4, robust=True, max_iter=None, tol=1e-06)</code>(要直接调用实现,<code style="color:#22d3bf">import roughness; roughness.robust_spline_profile(z, dx, lambda_c, c=4.4, robust=True, max_iter=None, tol=1e-06)</code>;从台账取用则 <code style="color:#22d3bf">opsroughness.get(&quot;robust_spline_profile&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.robust_spline_profile(...)</code> 只返回<b>声明的 out 类型 <code style="color:#22d3bf">signal</code> 的值</b>(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.robust_spline_profile.raw(...)</code>,或直接调用 <code style="color:#22d3bf">roughness.robust_spline_profile</code>。</p>
+<p style="margin:2px 0 2px 12px">• 底层返回: <code style="color:#22d3bf">(roughness, mean_line, info)</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>稳健样条滤波器(截面):不被离群点拖动的平均线与粗糙度。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>平均線 <code style="color:#22d3bf">w</code> を <code style="color:#22d3bf">Σ δ_i (z_i - w_i)² + β Σ (Δ² w)_i²</code> の最小化で求める(2 階差分の罰則つき最小二乗 = 離散の三次平滑化スプライン、Whittaker 1923 / Eilers 2003 / Krystek, Measurement 18 (1996) 9-15)。重み <code style="color:#22d3bf">δ</code> は biweight で反復して更新する。ガウスと違って <b>端に自然境界条件が付く</b> ので、端を削らなくても平均線が端で外へ振れにくい。</p>
+<p><code style="color:#22d3bf">β = 1 / (16 sin⁴(π dx/λc))</code> と置くと、線形(<code style="color:#22d3bf">robust=False</code>)の内部の伝達関数が <code style="color:#22d3bf">H(λ) = 1 / (1 + (sin(π dx/λ) / sin(π dx/λc))⁴)</code> になり、<code style="color:#22d3bf">λ = λc</code> でちょうど 50 % (閉形式)。<code style="color:#22d3bf">dx/λ</code> が小さい極限では <code style="color:#22d3bf">1/(1+(λc/λ)⁴)</code>(張力 0 の三次スプラインフィルタの形)。</p>
+<p>戻り値は <code style="color:#22d3bf">(roughness, mean_line, info)</code>。引数と fail-closed は <code style="color:#22d3bf">robust_gaussian_profile</code> と同じ(<code style="color:#22d3bf">order</code> / <code style="color:#22d3bf">truncate</code> は無い)。重みを持つデータが 2 点未満なら拒否する。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideroughness:surface_roughness">surface_roughness 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_robust_profile_filter">poc_robust_profile_filter</a> — <code style="color:#22d3bf">py -3.11 examples/poc_robust_profile_filter.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">signal</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="oproughness:robust_gaussian_profile">robust_gaussian_profile</a> · <a style="color:#22d3bf" href="oproughness:profile_params">profile_params</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">prepare</code>)</h3>
+<p><a style="color:#22d3bf" href="oproughness:surface_form_remove">surface_form_remove</a> · <a style="color:#22d3bf" href="oproughness:surface_filter">surface_filter</a> · <a style="color:#22d3bf" href="oproughness:robust_gaussian_profile">robust_gaussian_profile</a> · <a style="color:#22d3bf" href="oproughness:robust_gaussian_surface">robust_gaussian_surface</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: roughness.py — ROUGHNESS 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -31,7 +31,7 @@ def _knn_idx(points, k):
     return np.atleast_2d(idx)
 
 
-def _principal_at(local, orient=None):
+def _principal_at(local, orient=None, *, analytic=False):
     """クエリ点を原点にした近傍 (m,3) → 主曲率 (k1>=k2) と法線。
 
     PCA で法線(最小固有ベクトル)を推定 → 接線基底で Monge 形 w=du+ev+au²+buv+cv² を
@@ -68,7 +68,13 @@ def _principal_at(local, orient=None):
     I1 = np.array([[1 + fx * fx, fx * fy], [fx * fy, 1 + fy * fy]])
     II = np.array([[fxx, fxy], [fxy, fyy]]) / denom
     S = np.linalg.solve(I1, II)      # shape operator
-    ev = np.sort(np.linalg.eigvals(S).real)
+    if analytic:
+        half_trace = 0.5 * (S[0, 0] + S[1, 1])
+        disc = max(0.0, half_trace * half_trace - np.linalg.det(S))
+        root = np.sqrt(disc)
+        ev = np.array([half_trace - root, half_trace + root])
+    else:
+        ev = np.sort(np.linalg.eigvals(S).real)
     # 外向き法線だと凸面は負固有値 → 符号反転して凸=正、k1>=k2 を維持
     k1, k2 = -ev[0], -ev[1]
     return k1, k2, normal
@@ -86,11 +92,13 @@ def _validate_normals(normals, n):
     return nrm
 
 
-def _curvatures(points, k, normals=None):
+def _curvatures(points, k, normals=None, *, method="exact"):
     """全点の (k1, k2, normals)。→ (N,), (N,), (N,3)。
 
     normals(向き付き参照法線, (N,3))を渡すと各点の局所法線をそれへ整合させ凹/凸符号を正しく出す。
     """
+    if method not in {"exact", "fast"}:
+        raise ValueError("method must be 'exact' or 'fast'")
     p = np.asarray(points, float)
     n = len(p)
     if normals is not None:
@@ -102,11 +110,46 @@ def _curvatures(points, k, normals=None):
     for i in range(n):
         local = p[idx[i]] - p[i]     # クエリ点を原点に
         orient = None if normals is None else normals[i]
-        K1[i], K2[i], NRM[i] = _principal_at(local, orient)
+        K1[i], K2[i], NRM[i] = _principal_at(local, orient, analytic=method == "fast")
     return K1, K2, NRM
 
 
-def principal_curvatures(points, k=25, normals=None):
+def curvature_descriptors(points, k=25, normals=None, *, include_normals=False):
+    """Compute related point-cloud curvature measures in one neighbourhood pass.
+
+    The returned mapping contains ``k1``, ``k2``, ``mean``, ``gaussian``,
+    ``shape_index`` and ``curvedness``.  Set ``include_normals=True`` to retain
+    the fitted normals as well.  This composite entry point avoids repeating
+    neighbour lookup and surface fitting when several descriptors are needed.
+    """
+    k1, k2, fitted_normals = _curvatures(points, k, normals)
+    curve = np.sqrt((k1 * k1 + k2 * k2) / 2.0)
+    scale = float(np.median(curve))
+    shape = np.zeros_like(k1)
+    if scale > 0.0:
+        flat = curve < 1e-3 * scale
+        total = k1 + k2
+        difference = k1 - k2
+        magnitude = np.abs(k1) + np.abs(k2)
+        umbilic = (difference < 1e-2 * magnitude) & (magnitude > 0.0) & ~flat
+        shape[umbilic] = np.sign(total[umbilic])
+        general = ~umbilic & ~flat
+        shape[general] = (2.0 / np.pi) * np.arctan(
+            total[general] / difference[general])
+    result = {
+        "k1": k1,
+        "k2": k2,
+        "mean": (k1 + k2) / 2.0,
+        "gaussian": k1 * k2,
+        "shape_index": shape,
+        "curvedness": curve,
+    }
+    if include_normals:
+        result["normals"] = fitted_normals
+    return result
+
+
+def principal_curvatures(points, k=25, normals=None, *, method="exact"):
     """各点の主曲率 (k1>=k2)。→ (k1 (N,), k2 (N,))。
 
     normals(向き付き参照法線, (N,3))未指定時は凸側マグニチュード(開面の凹/凸符号は不定)。
@@ -122,7 +165,7 @@ def principal_curvatures(points, k=25, normals=None):
     - ``normals`` は (N,3) で有限かつ非ゼロ行が必須(``ValueError``)。決定論的。
     - 後段: ``mean_curvature`` / ``gaussian_curvature`` / ``shape_index``(いずれも内部で同じ計算を繰り返す)。shape index と曲がりの対が要るなら 2 本を ``(N,2)`` に並べて ``curvature_to_shape_index``。
     """
-    K1, K2, _ = _curvatures(points, k, normals)
+    K1, K2, _ = _curvatures(points, k, normals, method=method)
     return K1, K2
 
 
@@ -209,7 +252,7 @@ def curvedness(points, k=25):
     return np.sqrt((K1 ** 2 + K2 ** 2) / 2.0)
 
 
-def estimate_normals(points, k=25):
+def estimate_normals(points, k=25, *, method="exact"):
     """外向き(近傍重心から離れる)に統一した点群法線。→ (N,3)。
 
     手順(各点、Python ループ): ``cKDTree`` で自身を含む k+1 近傍(k は N-1 に切り詰め)を取り、クエリ点を原点にした近傍座標の散布行列 ``local.T @ local`` の最小固有ベクトルを法線にする(単位長)。向きは「近傍重心との内積が正なら反転」= 近傍重心から離れる側に揃える。
@@ -219,5 +262,19 @@ def estimate_normals(points, k=25):
     - 返り値は float64 (N,3)。``k`` 既定 25。決定論的。
     - 内部は ``principal_curvatures`` と同じ計算を通る(法線推定にも二次曲面フィットまで走る)ので、点数が多いと遅い。
     """
-    _, _, NRM = _curvatures(points, k)
-    return NRM
+    if method == "exact":
+        return _curvatures(points, k)[2]
+    if method != "fast":
+        raise ValueError("method must be 'exact' or 'fast'")
+    p = np.asarray(points, float)
+    idx = _knn_idx(p, k)
+    local = p[idx] - p[:, None, :]
+    cov = np.einsum("nki,nkj->nij", local, local)
+    _values, vectors = np.linalg.eigh(cov)
+    normals = vectors[:, :, 0]
+    centroids = local.mean(axis=1)
+    flip = np.einsum("ij,ij->i", centroids, normals) > 0.0
+    normals[flip] *= -1.0
+    if local.shape[1] < 5:
+        normals[:] = (0.0, 0.0, 1.0)
+    return normals

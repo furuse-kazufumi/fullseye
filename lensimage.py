@@ -49,7 +49,7 @@ import defectgen
 import photoncount
 import raytrace as RT
 
-__all__ = ["psf_from_opd", "psf_field_grid", "distortion_map", "render_through_lens",
+__all__ = ["psf_from_opd", "psf_field_grid", "through_focus_mtf", "distortion_map", "render_through_lens",
            "defect_dataset", "MAX_PUPIL_SAMPLES", "MAX_IMAGE_PIXELS"]
 
 INF = float("inf")
@@ -72,6 +72,9 @@ def _system(system):
         raise ValueError("expected the dict returned by raytrace.lens_system(), got %r"
                          % type(system).__name__)
     RT.paraxial_trace(system)                       # validates the prescription too
+    if system.get("afocal"):
+        raise ValueError("an afocal system has no image plane and no F-number: the PSF / MTF / image-formation ops need a "
+                         "focusing system (use lenssolve.lens_afocal_report for the angular spot and the wavefront)")
     return system
 
 
@@ -287,6 +290,103 @@ def psf_field_grid(system, fields=(0.0, 2.0, 4.0), size=None, wavelength_um=None
 # --------------------------------------------------------------------------- #
 # distortion
 # --------------------------------------------------------------------------- #
+def _base_image_mm(system):
+    """Last vertex to the image plane the traces use (the system's own, or its paraxial image)."""
+    if system["image_mm"] is not None:
+        return float(system["image_mm"])
+    last = system["surfaces"][-1]
+    if last["t"] is not None:
+        return float(last["t"])
+    return float(RT.paraxial_trace(system)["image_mm"])
+
+
+def through_focus_mtf(system, frequency_cpmm=None, defocus_mm=None, field=None, wavelength_um=None,
+                      size=None, tangential_axis="y"):
+    """Tangential and sagittal MTF at chosen spatial frequencies for a range of image-plane positions (``table``).
+
+    For each image-plane shift in *defocus_mm* (mm, added to the system's image distance; positive moves
+    the plane away from the lens) the diffraction PSF of the real pupil is computed as in
+    :func:`psf_from_opd` (the reference sphere is re-centred on the shifted plane, so the shift appears as
+    defocus in the OPD) and its tangential and sagittal MTF are read from the 2-D transform at each
+    frequency of *frequency_cpmm* (cycles per millimetre; linear interpolation on the exact grid
+    frequencies, which are spaced ``1 / ((size - 1) λ F#)`` apart). *tangential_axis* = ``'y'`` is the
+    meridional plane for fields along +y, as everywhere in ``raytrace``.
+
+    Defaults: *frequency_cpmm* = 10, 25 and 50 % of the diffraction cutoff ``1 / (λ F#)``;
+    *defocus_mm* = 11 points over ±2 waves of defocus ``W20 = δ / (8 F#² λ)``.
+
+    Returns ``{"defocus_mm" (nd,), "frequency_cpmm" (nf,), "tangential" (nd, nf), "sagittal" (nd, nf),
+    "best_focus_mm", "cutoff_cpmm", "fno", "field"}``. ``best_focus_mm`` is the shift that maximises the
+    mean of the tangential and sagittal MTF at the **first** frequency (parabolic refinement through the
+    three points around the maximum; the end of the range when the maximum is there, which means the
+    range was too short to bracket the focus).
+
+    Ground truth it reproduces: for an aberration-free lens (an ideal paraxial surface) the in-focus MTF
+    is the circular-pupil closed form and the defocused MTF is Hopkins' integral of the pupil overlap
+    (tested against an independent quadrature, including the loss of contrast to zero at the first
+    zero crossing); a rotationally symmetric on-axis system gives identical tangential and sagittal
+    curves, and an off-axis singlet separates them (astigmatism).
+
+    The PSF grid is oversampled 2x, so its Nyquist limit equals the diffraction cutoff and the MTF at a
+    grid frequency does not depend on the oversampling (the transform of the periodic PSF is the pupil
+    autocorrelation).
+
+    **Raises** ``ValueError``: a bad system, *field*, *wavelength_um* or *size* (see :func:`psf_from_opd`);
+    an empty or non-finite *frequency_cpmm* or *defocus_mm* (at most 64 each); a negative frequency or one
+    above the diffraction cutoff of the PSF grid; *tangential_axis* not ``'x'`` or ``'y'``.
+    """
+    import optics
+    op = "through_focus_mtf"
+    _system(system)
+    if tangential_axis not in ("x", "y"):
+        raise ValueError("%s: tangential_axis must be 'x' or 'y', got %r" % (op, tangential_axis))
+    field = system["field"] if field is None else _num(field, "field")
+    wl = system["wavelength_um"] if wavelength_um is None else _num(wavelength_um, "wavelength_um", lo=1e-3)
+    oversample = 2
+    para = RT._para_at(system, wl)
+    fno = _working_fno(para)
+    cutoff = 1e3 / (wl * fno)
+
+    def _vec(v, name, default):
+        if v is None:
+            return np.asarray(default, float)
+        a = np.atleast_1d(np.asarray(v, dtype=float)).ravel() if not isinstance(v, (str, bytes)) else None
+        if a is None or a.size < 1 or a.size > 64 or not np.all(np.isfinite(a)):
+            raise ValueError("%s: %s must be 1..64 finite numbers, got %r" % (op, name, v))
+        return a
+
+    freqs = _vec(frequency_cpmm, "frequency_cpmm", cutoff * np.array([0.1, 0.25, 0.5]))
+    if np.any(freqs < 0.0):
+        raise ValueError("%s: frequencies must be >= 0, got %r" % (op, freqs.tolist()))
+    w20_mm = 8.0 * fno * fno * wl * 1e-3                       # image shift of one wave of W20
+    defoc = _vec(defocus_mm, "defocus_mm", np.linspace(-2.0, 2.0, 11) * w20_mm)
+    base = _base_image_mm(system)
+    tan = np.zeros((defoc.size, freqs.size))
+    sag = np.zeros_like(tan)
+    for i, d in enumerate(defoc):
+        sysd = dict(system)
+        sysd["image_mm"] = base + float(d)
+        psf, _ref, dx, _n = _psf_core(sysd, field, size, wl, oversample)
+        p = psf / psf.sum()
+        fr, mr, fc, mc = optics._otf_slices(p, dx, op)
+        nyq = 0.5e3 / dx
+        if np.any(freqs > nyq * (1.0 + 1e-9)):
+            raise ValueError("%s: frequency %.6g cycles/mm is above the Nyquist limit %.6g of the PSF grid (the "
+                             "diffraction cutoff is %.6g)" % (op, float(freqs.max()), nyq, cutoff))
+        y, x = np.interp(freqs, fr, mr), np.interp(freqs, fc, mc)
+        tan[i], sag[i] = (y, x) if tangential_axis == "y" else (x, y)
+    score = 0.5 * (tan[:, 0] + sag[:, 0])
+    k = int(np.argmax(np.round(score, 12)))
+    best = float(defoc[k])
+    if 0 < k < defoc.size - 1:
+        a, b, c = score[k - 1], score[k], score[k + 1]
+        den = a - 2.0 * b + c
+        if den < 0.0 and defoc[k - 1] < defoc[k] < defoc[k + 1] and abs((defoc[k + 1] - defoc[k]) - (defoc[k] - defoc[k - 1])) < 1e-9 * max(1.0, abs(defoc[k])):
+            best = float(defoc[k] + 0.5 * (a - c) / den * (defoc[k + 1] - defoc[k]))
+    return {"defocus_mm": defoc, "frequency_cpmm": freqs, "tangential": tan, "sagittal": sag,
+            "best_focus_mm": best, "cutoff_cpmm": float(cutoff), "fno": float(fno), "field": float(field)}
+
+
 def _chief_image_y(system, field, para):
     cr = RT.chief_ray(system, field)
     if not cr["valid"]:

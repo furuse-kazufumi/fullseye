@@ -13,7 +13,7 @@ refractiveindex.info database(CC0 1.0、Polyanskiy, Sci. Data 11, 94 (2024))の�
 
     {"name": "N-BK7", "class": "glass", "aliases": ("BK7",),
      "datasets": [{"type": "formula", "formula": 2, "range_um": (0.3, 2.5), "coefficients": (...),
-                   "reference": "SCHOTT Zemax catalog 2017-01-20b ...", "page": "specs/schott/optical/N-BK7.yml"},
+                   "reference": "SCHOTT glass catalogue 2017-01-20b ...", "page": "specs/schott/optical/N-BK7.yml"},
                   {"type": "k", "range_um": (0.3, 2.5), "rows": 25, ...}],
      "properties": {"nd": 1.5168, "Vd": 64.17, "density_kg_m3": 2510.0,
                     "thermal_expansion_per_k": 7.1e-06, "dn_dt_formula_a": (D0, D1, D2, E0, E1, λ_tk)}}
@@ -57,6 +57,7 @@ __all__ = [
     "thermo_optic_coefficient", "plate_focus_shift", "silicon_free_carrier_absorption",
     "material_from_sellmeier", "material_from_curves", "read_glass_catalog_agf",
     "NIR_BAND_MODELS", "material_nir_absorption", "carbon_black_absorption", "nir_model_info",
+    "ELEMENTS", "ELECTRON_SOLID", "material_electron_properties",
 ]
 
 #: フラウンホーファー線 [µm](硝材カタログの定義どおり)。
@@ -75,6 +76,30 @@ MATERIALS = tuple(sorted(_RECORDS))
 # --------------------------------------------------------------------------- #
 def _key(name: str) -> str:
     return "_".join(str(name).strip().upper().split())
+
+
+def _index_of(spec, op: str, name: str = "refractive_index", wavelength_nm: float = WL_D * 1000.0):
+    """透明な媒質の屈折率の指定を実数 n にする(屈折率を数で受けていた op が材料名も受けるための入口)。
+
+    spec が材料名(別名可)かレコード dict なら、その材料の ``wavelength_nm``(既定は d 線 587.56 nm)での n を返す。
+    それ以外(数)は**そのまま返す** —— 数の検査は呼び手の今までの検査に任せる(後方互換、値は 1 ビットも変わらない)。
+    金属(class "metal")は ValueError: 透明な媒質の屈折率を求める op に金属の名前を渡すのは取り違え。
+    k が n の 1e-3 を超える(その波長で不透明に近い)材料も ValueError。表の範囲外も ValueError(外挿しない)。
+    """
+    if not isinstance(spec, (str, dict)):
+        return spec
+    rec = _record(spec, op)
+    if rec["class"] == "metal":
+        raise ValueError("%s: %s is a metal in the material table; %s needs a transparent medium"
+                         % (op, rec["name"], name))
+    w = float(wavelength_nm)
+    if not (np.isfinite(w) and w > 0.0):
+        raise ValueError("%s: wavelength_nm must be finite and > 0, got %r" % (op, wavelength_nm))
+    n, k = _nk(rec, np.array([w / 1000.0]), op)[:2]
+    if float(k[0]) > 1e-3 * float(n[0]):
+        raise ValueError("%s: %s absorbs at %.1f nm (k = %.3g); %s needs a transparent medium"
+                         % (op, rec["name"], w, float(k[0]), name))
+    return float(n[0])
 
 
 def _record(material, op: str) -> dict:
@@ -660,7 +685,7 @@ def material_from_curves(n_curve=N_CURVE_EXAMPLE, k_curve=None, name: str = "cus
 # --------------------------------------------------------------------------- #
 #: .agf の雛形(2 種)。係数は refractiveindex.info(CC0)に載る公表値 —— N-BK7 は Sellmeier 1
 #: (式 2)、BSC7 は Schott 多項式(式 1)。テストは読んだ結果が同梱レコードと一致することを門にする。
-AGF_EXAMPLE = """CC Example glass catalogue in Zemax .agf form (coefficients from the refractiveindex.info database, CC0)
+AGF_EXAMPLE = """CC Example glass catalogue in the .agf catalogue-file form (coefficients from the refractiveindex.info database, CC0)
 NM N-BK7 2 517642 1.5168 64.17 0 1 0
 ED 7.1 8.3 2.51 -0.0009 0
 CD 1.03961212 0.00600069867 0.231792344 0.0200179144 1.01046945 103.560653 0 0 0 0
@@ -680,7 +705,7 @@ _AGF_POLY = {1: (2, -2, -4, -6, -8), 10: (2, -2, -4, -6, -8, -10, -12),
 
 
 def _agf_formula(code: int, cd, name: str):
-    """Zemax の分散式番号と CD 係数を refractiveindex.info の式に写す。"""
+    """.agf の分散式番号(1-13)と CD 係数を refractiveindex.info の式に写す。"""
     c = [float(v) for v in cd]
     if code in _AGF_POLY:
         exps = _AGF_POLY[code]
@@ -708,7 +733,7 @@ def _agf_formula(code: int, cd, name: str):
         a, b, cc, d, e = c[:5]
         return 4, (a, b, 2.0, cc, 1.0, d, 2.0, e, 1.0)
     raise ValueError("read_glass_catalog_agf: glass %s uses dispersion formula %d, which is not one of the "
-                     "Zemax formulas 1-13 this reader knows" % (name, code))
+                     ".agf dispersion formulas 1-13 this reader knows" % (name, code))
 
 
 def _agf_text(source) -> str:
@@ -817,6 +842,350 @@ def _agf_finish(g: dict, label: str, op: str) -> dict:
     rec = {"name": _key(g["name"]), "class": "glass", "aliases": (), "datasets": datasets, "properties": props}
     _nk(rec, np.array([g["ld"][0], g["ld"][1]]), op)
     return rec
+
+
+# --------------------------------------------------------------------------- #
+# X 線の列(2026-10-15): 質量減衰係数 μ/ρ(E)                                    #
+# --------------------------------------------------------------------------- #
+# 光学の列(n, k)と同じ名前で X 線の μ/ρ を引く。数値は NIST の表(Hubbell & Seltzer、SRD 126)の
+# 部分集合 ``materials_xray_data.py``(``tools/gen_xray_tables.py`` の生成物)。
+#
+# 引き方は 3 通りで、上から先に当たったものを使う:
+#   1. NIST が化合物として表にした材料(WATER / PMMA / BONE_CORTICAL_ICRU44 / PVC / CSI …)は表そのもの。
+#   2. 元素(CU / AL / W / PB …、記号でも名前でも)は元素の表。
+#   3. 組成(化学式か質量分率)が分かる材料は混合則 μ/ρ = Σ wᵢ (μ/ρ)ᵢ。光学の表の結晶・膜・半導体
+#      (SAPPHIRE = Al2O3、SI3N4 …)と、食品の異物の代表(ソーダ石灰ガラス・天然ゴム・ステンレス・石 …)。
+# 組成の分からない材料(硝材の N-BK7 など、メーカーが組成を公表しない)は ValueError で拒否する。
+# 混合則は光電効果・コンプトン・干渉性散乱の断面積が原子ごとに足し合わさるという近似で、NIST の化合物の
+# 表もこの規則で計算されている(化学結合・結晶の効果は吸収端の近くの数 % を除き無視できる)。
+import materials_xray_data as _mx  # noqa: E402
+
+# ★X 線の列の op 4 本の台帳は ``opstomography`` の ``spectral_xray``(dualxray と同じ族)。``materials.__all__`` は
+#   ``opsoptics`` の ``matprop`` 台帳と 1 対 1(tests/test_materials.py)なので、ここには足さない —— 足すと
+#   matprop の登録と食い違い、統合で他の作業(電子線の列)と同じ行を取り合う。
+
+_XE = {e["Z"]: e for e in _mx.XRAY_ELEMENTS}
+_XE_SYMBOL = {e["symbol"].upper(): e["Z"] for e in _mx.XRAY_ELEMENTS}
+_XE_NAME = {e["name"].split(",")[0].strip().upper(): e["Z"] for e in _mx.XRAY_ELEMENTS}
+_XE_NAME["ALUMINIUM"] = 13
+_XC = {c["key"]: c for c in _mx.XRAY_COMPOUNDS}
+
+#: X 線の列を組成から作る材料。**レコードの形は電子線の表(``ELECTRON_SOLID``、仮想 SEM)と同じ**
+#: ``{"formula": {元素: 原子数}, "density_g_cm3": …}``(混合物は ``"mass_fractions": {化学式: 質量分率}``)。
+#: 統合で 1 つの表に寄せられるようにしてある —— 同じ名前が ``ELECTRON_SOLID`` にあればそちらの組成と
+#: 密度を使い(:func:`_xray_record`)、ここの値と食い違えば ``tests/test_dualxray.py`` が赤になる。
+#: 密度は公称値(結晶の理論密度・ハンドブックの代表値)で、実物の気孔・充填材で変わる ——
+#: 正確な値が要るときは ``density_g_cm3=`` で上書きする。
+XRAY_SOLID = {
+    # 光学の表にある材料(結晶・膜・半導体・樹脂)
+    "SILICA": {"formula": {"Si": 1, "O": 2}, "density_g_cm3": 2.20},
+    "QUARTZ": {"formula": {"Si": 1, "O": 2}, "density_g_cm3": 2.65},
+    "SAPPHIRE": {"formula": {"Al": 2, "O": 3}, "density_g_cm3": 3.98},
+    "CAF2": {"formula": {"Ca": 1, "F": 2}, "density_g_cm3": 3.18},
+    "BAF2": {"formula": {"Ba": 1, "F": 2}, "density_g_cm3": 4.89},
+    "LIF": {"formula": {"Li": 1, "F": 1}, "density_g_cm3": 2.635},
+    "KBR": {"formula": {"K": 1, "Br": 1}, "density_g_cm3": 2.75},
+    "MGF2": {"formula": {"Mg": 1, "F": 2}, "density_g_cm3": 3.15},
+    "ZNS": {"formula": {"Zn": 1, "S": 1}, "density_g_cm3": 4.09},
+    "ZNSE": {"formula": {"Zn": 1, "Se": 1}, "density_g_cm3": 5.27},
+    "YAG": {"formula": {"Y": 3, "Al": 5, "O": 12}, "density_g_cm3": 4.56},
+    "GAN": {"formula": {"Ga": 1, "N": 1}, "density_g_cm3": 6.15},
+    "INP": {"formula": {"In": 1, "P": 1}, "density_g_cm3": 4.81},
+    "SIC": {"formula": {"Si": 1, "C": 1}, "density_g_cm3": 3.21},
+    "SI3N4": {"formula": {"Si": 3, "N": 4}, "density_g_cm3": 3.17},
+    "TIO2": {"formula": {"Ti": 1, "O": 2}, "density_g_cm3": 4.23},
+    "TA2O5": {"formula": {"Ta": 2, "O": 5}, "density_g_cm3": 8.2},
+    "HFO2": {"formula": {"Hf": 1, "O": 2}, "density_g_cm3": 9.68},
+    "POLYCARBONATE": {"formula": {"C": 16, "H": 14, "O": 3}, "density_g_cm3": 1.20},
+    # 食品・電池・リサイクルの検査で出てくる材料(NIST の化合物の表に無いもの)
+    "SODA_LIME_GLASS": {"mass_fractions": {"SiO2": 0.726, "Na2O": 0.139, "CaO": 0.084, "MgO": 0.039,
+                                           "Al2O3": 0.012}, "density_g_cm3": 2.52},
+    "NATURAL_RUBBER": {"formula": {"C": 5, "H": 8}, "density_g_cm3": 0.92},
+    "POLYPROPYLENE": {"formula": {"C": 3, "H": 6}, "density_g_cm3": 0.90},
+    "NYLON6": {"formula": {"C": 6, "H": 11, "N": 1, "O": 1}, "density_g_cm3": 1.14},
+    "CALCITE": {"formula": {"Ca": 1, "C": 1, "O": 3}, "density_g_cm3": 2.71},
+    "HYDROXYAPATITE": {"formula": {"Ca": 10, "P": 6, "O": 26, "H": 2}, "density_g_cm3": 3.16},
+    "STAINLESS_STEEL_304": {"mass_fractions": {"Fe": 0.70, "Cr": 0.19, "Ni": 0.09, "Mn": 0.02}, "density_g_cm3": 8.0},
+    "SOLDER_SAC305": {"mass_fractions": {"Sn": 0.965, "Ag": 0.03, "Cu": 0.005}, "density_g_cm3": 7.4},
+}
+#: 旧名(2026-10-15 の初版の名前)。中身は XRAY_SOLID と同じものを指す。
+XRAY_FORMULAS = XRAY_SOLID
+
+
+def _xray_record(key: str):
+    """名前 → 組成のレコード。電子線の表(``ELECTRON_SOLID``、別の作業で入る)にあればそちらを優先する。"""
+    es = globals().get("ELECTRON_SOLID")
+    if isinstance(es, dict) and key in es and "formula" in es[key]:
+        return es[key]
+    return XRAY_SOLID.get(key)
+
+
+def _record_composition(rec: dict, op: str) -> tuple:
+    if "mass_fractions" in rec:
+        return _composition(dict(rec["mass_fractions"]), op)
+    formula = "".join("%s%s" % (el, ("%g" % n) if n != 1 else "") for el, n in rec["formula"].items())
+    return _composition(formula, op)
+
+
+_XRAY_ALIASES = {"H2O": "WATER", "PE": "POLYETHYLENE", "PS": "POLYSTYRENE", "PC": "POLYCARBONATE",
+                 "TEFLON": "PTFE", "MYLAR": "PET", "BONE": "BONE_CORTICAL_ICRU44", "MUSCLE": "MUSCLE_ICRU44",
+                 "MEAT": "MUSCLE_ICRU44", "FAT": "ADIPOSE_ICRU44", "ADIPOSE": "ADIPOSE_ICRU44",
+                 "SOFT_TISSUE": "SOFT_TISSUE_ICRU44", "PYREX": "BOROSILICATE_GLASS", "GLASS": "SODA_LIME_GLASS",
+                 "RUBBER": "NATURAL_RUBBER", "PP": "POLYPROPYLENE", "STONE": "CALCITE", "STEEL": "STAINLESS_STEEL_304",
+                 "SOLDER": "SOLDER_SAC305", "GOS": "GOS", "CSI": "CSI"}
+XRAY_E_MIN_KEV = min(r[0] for r in _mx.XRAY_ELEMENTS[0]["rows"])
+XRAY_E_MAX_KEV = max(r[0] for r in _mx.XRAY_ELEMENTS[0]["rows"])
+_FORMULA_TOKEN = re.compile(r"([A-Z][a-z]?)(\d*\.?\d*)")
+
+
+def _atomic_mass(z: int) -> float:
+    """A = Z / (Z/A)。NIST の表 1 の Z/A から(別の原子量表を持たない)。"""
+    return z / _XE[z]["z_over_a"]
+
+
+def _formula_fractions(formula: str, op: str) -> dict:
+    """化学式 → {Z: 質量分率}。表に無い元素・読めない式は ValueError。"""
+    s = str(formula).strip()
+    if not s or _FORMULA_TOKEN.sub("", s) != "":
+        raise ValueError("%s: cannot read chemical formula %r (use element symbols and counts, e.g. 'Al2O3')" % (op, formula))
+    mass = {}
+    for sym, cnt in _FORMULA_TOKEN.findall(s):
+        z = _XE_SYMBOL.get(sym.upper())
+        if z is None:
+            raise ValueError("%s: element %r of %r has no X-ray table (bundled: %s)"
+                             % (op, sym, formula, " ".join(sorted(e["symbol"] for e in _mx.XRAY_ELEMENTS))))
+        n = float(cnt) if cnt else 1.0
+        mass[z] = mass.get(z, 0.0) + n * _atomic_mass(z)
+    tot = sum(mass.values())
+    return {z: m / tot for z, m in mass.items()}
+
+
+def _composition(spec, op: str) -> tuple:
+    """化学式 / {化学式または記号: 質量分率} / ((Z, w), …) → ((Z, w), …)(w の和 = 1)。"""
+    if isinstance(spec, str):
+        fr = _formula_fractions(spec, op)
+    elif isinstance(spec, dict):
+        tot = 0.0
+        fr = {}
+        for part, w in spec.items():
+            w = float(w)
+            if not np.isfinite(w) or w < 0.0:
+                raise ValueError("%s: mass fraction of %r must be finite and >= 0, got %r" % (op, part, w))
+            tot += w
+            for z, f in _formula_fractions(part, op).items():
+                fr[z] = fr.get(z, 0.0) + w * f
+        if not (0.98 <= tot <= 1.02):
+            raise ValueError("%s: mass fractions sum to %.4f (must be 1 within 2 %%)" % (op, tot))
+        fr = {z: f / tot for z, f in fr.items()}
+    else:
+        try:
+            pairs = [(int(z), float(w)) for z, w in spec]
+        except (TypeError, ValueError):
+            raise ValueError("%s: composition must be a formula, a {formula: fraction} dict or (Z, fraction) pairs" % op)
+        tot = sum(w for _, w in pairs)
+        if not (0.98 <= tot <= 1.02) or any(w < 0 for _, w in pairs):
+            raise ValueError("%s: (Z, fraction) pairs must be >= 0 and sum to 1, got %.4f" % (op, tot))
+        fr = {}
+        for z, w in pairs:
+            if z not in _XE:
+                raise ValueError("%s: Z=%d has no bundled X-ray table" % (op, z))
+            fr[z] = fr.get(z, 0.0) + w / tot
+    return tuple(sorted(fr.items()))
+
+
+def _xray_source(material, op: str, density_g_cm3=None) -> dict:
+    """名前 / 化学式 / {"composition": …, "density_g_cm3": …} → X 線の列(表か組成)と密度。"""
+    if isinstance(material, dict):
+        if "composition" not in material:
+            raise ValueError("%s: a custom X-ray material needs 'composition' (formula, {part: fraction} or "
+                             "(Z, fraction) pairs) and 'density_g_cm3'" % op)
+        rho = material.get("density_g_cm3", density_g_cm3)
+        src = {"name": str(material.get("name", "custom")), "kind": "mixture",
+               "composition": _composition(material["composition"], op), "density_g_cm3": rho,
+               "reference": "custom composition; elemental tables NIST SRD 126"}
+    else:
+        if not isinstance(material, str):
+            raise ValueError("%s: material must be a name, a chemical formula or a dict, got %r" % (op, type(material).__name__))
+        key = _key(material)
+        key = _XRAY_ALIASES.get(key, key)
+        key = _ALIASES.get(key, key) if key not in _XC and _xray_record(key) is None else key
+        if key in _XC:
+            c = _XC[key]
+            src = {"name": key, "kind": "table", "rows": c["rows"], "composition": c["composition"],
+                   "density_g_cm3": c["density_g_cm3"],
+                   "reference": "NIST SRD 126 %s (%s)" % (c["page"], c["nist_name"])}
+        elif key in _XE_SYMBOL or key in _XE_NAME:
+            z = _XE_SYMBOL.get(key, _XE_NAME.get(key))
+            e = _XE[z]
+            src = {"name": e["symbol"].upper(), "kind": "table", "rows": e["rows"], "composition": ((z, 1.0),),
+                   "density_g_cm3": e["density_g_cm3"], "reference": "NIST SRD 126 %s (%s)" % (e["page"], e["name"])}
+        elif _xray_record(key) is not None:
+            rec = _xray_record(key)
+            src = {"name": key, "kind": "mixture", "composition": _record_composition(rec, op),
+                   "density_g_cm3": rec["density_g_cm3"],
+                   "reference": "mixture rule over NIST SRD 126 elemental tables; nominal density"}
+        elif _FORMULA_TOKEN.sub("", str(material).strip()) == "" and re.search(r"[A-Z]", str(material)):
+            src = {"name": str(material).strip(), "kind": "mixture", "composition": _composition(material, op),
+                   "density_g_cm3": density_g_cm3, "reference": "chemical formula; mixture rule over NIST SRD 126"}
+        elif key in _RECORDS:
+            raise ValueError("%s: %r is in the optical table but its elemental composition is not public (a "
+                             "manufacturer glass) - pass {'composition': ..., 'density_g_cm3': ...}" % (op, material))
+        else:
+            raise ValueError("%s: unknown X-ray material %r (see material_xray_table(); or pass a chemical "
+                             "formula / {'composition': ..., 'density_g_cm3': ...})" % (op, material))
+    if density_g_cm3 is not None:
+        src["density_g_cm3"] = density_g_cm3
+    if src["density_g_cm3"] is not None:
+        rho = float(src["density_g_cm3"])
+        if not np.isfinite(rho) or rho <= 0.0:
+            raise ValueError("%s: density_g_cm3 must be finite and > 0, got %r" % (op, src["density_g_cm3"]))
+        src["density_g_cm3"] = rho
+    return src
+
+
+def _xray_interp(rows, energy_kev: np.ndarray, col: int) -> np.ndarray:
+    """表の log–log 補間(吸収端は区間の境目、端ちょうどは端の上の値)。"""
+    e = np.array([r[0] for r in rows], dtype=np.float64)
+    v = np.array([r[col] for r in rows], dtype=np.float64)
+    E = np.asarray(energy_kev, dtype=np.float64)
+    i = np.searchsorted(e, E, side="right") - 1
+    i = np.clip(i, 0, len(e) - 2)
+    lo, hi = e[i], e[i + 1]
+    same = hi <= lo                                     # 端の下と上の 2 行の間には入らない(念のため)
+    t = np.where(same, 0.0, np.log(np.maximum(E, 1e-300) / lo) / np.log(np.where(same, 2.0, hi / lo)))
+    out = np.exp(np.log(v[i]) + t * (np.log(v[i + 1]) - np.log(v[i])))
+    out = np.where(E == lo, v[i], out)                  # 表の点ちょうどは表の値そのもの(丸めの屑を足さない)
+    at_end = E >= e[-1]
+    return np.where(at_end, v[-1], out)
+
+
+def _xray_mu_rho(src: dict, energy_kev, col: int = 1, op: str = "material_xray_attenuation") -> np.ndarray:
+    E = np.asarray(energy_kev, dtype=np.float64)
+    if not np.all(np.isfinite(E)) or np.any(E < XRAY_E_MIN_KEV * (1 - 1e-12)) or np.any(E > XRAY_E_MAX_KEV * (1 + 1e-12)):
+        raise ValueError("%s: energy must lie in [%g, %g] keV (the bundled table; not extrapolated)"
+                         % (op, XRAY_E_MIN_KEV, XRAY_E_MAX_KEV))
+    if src["kind"] == "table":
+        return _xray_interp(src["rows"], E, col)
+    return sum(w * _xray_interp(_XE[z]["rows"], E, col) for z, w in src["composition"])
+
+
+def _xray_edges(src: dict, lo: float, hi: float) -> list:
+    out = []
+    for z, w in src["composition"]:
+        for r in _XE[z]["rows"]:
+            if r[3] and lo <= r[0] <= hi:
+                out.append((_XE[z]["symbol"], r[3], float(r[0])))
+    return sorted(set(out), key=lambda t: t[2])
+
+
+def material_xray_table() -> list:
+    """X 線の列(質量減衰係数 μ/ρ)を引ける材料の一覧を返す。
+
+    返り値: 1 材料 1 行の dict(name, kind = table / mixture / element, density_g_cm3, composition
+    ((記号, 質量分率), …), optical(光学の表にも同じ名前のレコードがあるか), reference)。
+    元素 49 種と NIST の化合物 20 種は NIST SRD 126(Hubbell & Seltzer)の表そのもの、それ以外は
+    :data:`XRAY_SOLID`(と電子線の表)の組成から混合則で作る。範囲は 1 keV〜1 MeV(表の外は外挿しない)。
+    """
+    rows = []
+    for z in sorted(_XE):
+        e = _XE[z]
+        rows.append({"name": e["symbol"].upper(), "kind": "element", "Z": z, "density_g_cm3": e["density_g_cm3"],
+                     "composition": ((e["symbol"], 1.0),), "optical": e["symbol"].upper() in _RECORDS,
+                     "reference": "NIST SRD 126 " + e["page"]})
+    es = globals().get("ELECTRON_SOLID") or {}
+    for key in list(_XC) + sorted(set(XRAY_SOLID) | {k for k in es if k not in _XC and k not in _XE_SYMBOL}):
+        src = _xray_source(key, "material_xray_table")
+        rows.append({"name": key, "kind": src["kind"], "density_g_cm3": src["density_g_cm3"],
+                     "composition": tuple((_XE[z]["symbol"], round(w, 6)) for z, w in src["composition"]),
+                     "optical": key in _RECORDS, "reference": src["reference"]})
+    return rows
+
+
+def material_xray_attenuation(material="CU", e_min_kev: float = 10.0, e_max_kev: float = 150.0,
+                              n_points: int = 141, quantity: str = "mu_rho",
+                              density_g_cm3=None) -> np.ndarray:
+    """材料の X 線の減衰を ``pairs``(E [keV], 値)で返す(質量減衰係数 μ/ρ [cm²/g] が既定)。
+
+    ``material``: 名前(``WATER`` / ``MUSCLE`` / ``BONE`` / ``PVC`` / ``CU`` / ``SAPPHIRE`` …、
+    :func:`material_xray_table` の一覧)、化学式(``"Al2O3"``)、または
+    ``{"composition": "C2H4" か {"SiO2": 0.7, …} か ((Z, w), …), "density_g_cm3": 0.93}``。
+    ``quantity``: ``mu_rho``(全減衰、干渉性散乱を含む)/ ``mu_en_rho``(エネルギー吸収)/
+    ``mu``(線減衰係数 μ = ρ·μ/ρ [1/cm]、密度が要る)。
+
+    格子は ``e_min_kev``〜``e_max_kev`` の対数等間隔 ``n_points`` 点。吸収端(Cu の K 端 8.979 keV など)
+    の上下は表の 2 行のあいだで飛ぶ —— 格子に端ちょうどの点があれば端の上の値になる。
+    表は 1 keV〜1 MeV(NIST の行の log–log 補間、NIST が推奨する補間)。範囲の外は ValueError。
+
+    公表値(NIST SRD 126): Cu の 8 keV で 52.55 cm²/g、K 端 8.979 keV で 38.29 → 278.4 cm²/g、
+    水の 60 keV で 0.2059 cm²/g。
+    """
+    op = "material_xray_attenuation"
+    if quantity not in ("mu_rho", "mu_en_rho", "mu"):
+        raise ValueError("%s: quantity must be 'mu_rho', 'mu_en_rho' or 'mu', got %r" % (op, quantity))
+    lo, hi, n = float(e_min_kev), float(e_max_kev), int(n_points)
+    if not (np.isfinite(lo) and np.isfinite(hi) and 0.0 < lo < hi) or n < 2 or n > 100000:
+        raise ValueError("%s: need 0 < e_min_kev < e_max_kev and 2 <= n_points <= 100000" % op)
+    src = _xray_source(material, op, density_g_cm3)
+    E = np.geomspace(lo, hi, n)
+    v = _xray_mu_rho(src, E, 2 if quantity == "mu_en_rho" else 1, op)
+    if quantity == "mu":
+        if src["density_g_cm3"] is None:
+            raise ValueError("%s: quantity='mu' needs a density (pass density_g_cm3=)" % op)
+        v = v * src["density_g_cm3"]
+    return _pairs(E, v)
+
+
+def material_xray_constants(material="CU", energy_kev: float = 8.0, density_g_cm3=None) -> dict:
+    """1 エネルギーの X 線の定数(μ/ρ・μ_en/ρ・μ・半価層・平均自由行程)と出典を返す。
+
+    返り値: dict(name, energy_kev, mu_rho_cm2_g, mu_en_rho_cm2_g, density_g_cm3, mu_per_cm,
+    hvl_mm = 10·ln 2/μ, mfp_mm = 10/μ, edges(±20 % の範囲にある吸収端の (元素, 端, keV)), kind, reference)。
+    単色 X 線の半価層は ln 2/μ そのもの(多色の線質の半価層は ``dualxray.xray_beam_quality``)。
+    """
+    op = "material_xray_constants"
+    E = float(energy_kev)
+    src = _xray_source(material, op, density_g_cm3)
+    mr = float(_xray_mu_rho(src, np.array([E]), 1, op)[0])
+    me = float(_xray_mu_rho(src, np.array([E]), 2, op)[0])
+    rho = src["density_g_cm3"]
+    mu = None if rho is None else mr * rho
+    return {"name": src["name"], "energy_kev": E, "mu_rho_cm2_g": mr, "mu_en_rho_cm2_g": me,
+            "density_g_cm3": rho, "mu_per_cm": mu,
+            "hvl_mm": None if mu is None else float(10.0 * np.log(2.0) / mu),
+            "mfp_mm": None if mu is None else 10.0 / mu,
+            "edges": _xray_edges(src, E / 1.2, E * 1.2), "kind": src["kind"], "reference": src["reference"]}
+
+
+def material_effective_z(material="WATER", exponent: float = 2.94, density_g_cm3=None) -> dict:
+    """組成から実効原子番号(Mayneord / Spiers の冪の式)と電子密度を返す。
+
+    Z_eff = (Σ aᵢ Zᵢ^p)^(1/p)、aᵢ = wᵢ (Z/A)ᵢ / Σ wⱼ (Z/A)ⱼ は**電子の割合**、p = 2.94 は光電効果の
+    断面積の Z 依存(≈ Z^3.94/原子 → Z^2.94/電子)から来る慣用の指数。水は 7.42(公表値)。
+    電子密度 ρₑ = ρ N_A Σ wᵢ Zᵢ/Aᵢ [電子/cm³] と、水に対する比も返す。
+    デュアルエナジーの像から推定する実効 Z(``dualxray.effective_z_map``)は、この「組成の Z_eff」と
+    同じものではない(光電効果の比で定義した Z は、スペクトルの位置で値が数 % 動く)—— その差を
+    PoC で数える。
+    """
+    op = "material_effective_z"
+    p = float(exponent)
+    if not np.isfinite(p) or not (1.0 <= p <= 5.0):
+        raise ValueError("%s: exponent must lie in [1, 5], got %r" % (op, exponent))
+    src = _xray_source(material, op, density_g_cm3)
+    comp = src["composition"]
+    ne = np.array([w * _XE[z]["z_over_a"] for z, w in comp])
+    zs = np.array([float(z) for z, _ in comp])
+    a = ne / ne.sum()
+    zeff = float(np.sum(a * zs ** p) ** (1.0 / p))
+    z_over_a = float(ne.sum())
+    rho = src["density_g_cm3"]
+    n_a = 6.02214076e23
+    rho_e = None if rho is None else rho * n_a * z_over_a
+    rho_e_w = 1.0 * n_a * sum(w * _XE[z]["z_over_a"] for z, w in _XC["WATER"]["composition"])
+    return {"name": src["name"], "z_eff": zeff, "exponent": p, "z_over_a": z_over_a,
+            "electron_density_per_cm3": rho_e,
+            "electron_density_rel_water": None if rho_e is None else rho_e / rho_e_w,
+            "electron_fractions": tuple((_XE[z]["symbol"], float(x)) for (z, _), x in zip(comp, a)),
+            "density_g_cm3": rho}
 
 
 # --------------------------------------------------------------------------- #
@@ -1031,3 +1400,114 @@ def nir_model_info(material="POLYETHYLENE") -> dict:
     return {"name": key, "class": m["class"], "bands": bands, "components": tuple(m.get("components", ())),
             "water": float(m.get("water", 0.0)), "scattering_per_mm": m.get("scattering_per_mm"),
             "reference_um": m.get("reference_um"), "n_nir": m["n_nir"], "note": m.get("note", "")}
+
+
+# --------------------------------------------------------------------------- #
+# 電子と固体の相互作用の物性(仮想 SEM のモンテカルロが引く)                    #
+# --------------------------------------------------------------------------- #
+#: 元素の Z と標準原子量 A [g/mol] (IUPAC 2021 の標準原子量の簡略値)。
+ELEMENTS = {
+    "H": (1, 1.008), "C": (6, 12.011), "N": (7, 14.007), "O": (8, 15.999),
+    "Al": (13, 26.982), "Si": (14, 28.085), "P": (15, 30.974), "Ti": (22, 47.867),
+    "Cr": (24, 51.996), "Ni": (28, 58.693), "Cu": (29, 63.546), "Ga": (31, 69.723),
+    "Ge": (32, 72.630), "As": (33, 74.922), "Rh": (45, 102.91), "Ag": (47, 107.87),
+    "In": (49, 114.82), "Hf": (72, 178.49), "Ta": (73, 180.95), "W": (74, 183.84),
+    "Pt": (78, 195.08), "Au": (79, 196.97),
+}
+
+#: 材料ごとの組成(原子数の比)・密度 [g/cm³]・絶縁体か・二次電子の 2 定数。
+#: 密度は室温のバルクの値(CRC Handbook of Chemistry and Physics の表の値。膜は成膜法で
+#: 数 % 動く)。二次電子の脱出深さ λ [nm] と、二次電子 1 個を作るエネルギー ε [eV] は、
+#: C / Al / Si / Cu / Ag / W / Au の 7 元素は Lin & Joy 2005(Surf. Interface Anal. 37:895)
+#: の Table 1 の値そのまま(``se_ref`` に同じ表の δmax と Emax [keV] を置く —— モンテカルロの
+#: δ の山はこれに**合わせていない**。比べる相手である)。表に無い材料の λ・ε は**推定**
+#: (半導体は Si と同じ λ = 2.7 nm・ε = 90 eV、金属は λ = 1 nm・ε = 35 eV、絶縁体は
+#: λ = 5 nm・ε = 50 eV)で、``se_ref`` は None。
+ELECTRON_SOLID = {
+    "SI": {"formula": {"Si": 1}, "density_g_cm3": 2.329, "insulator": False,
+           "se_escape_nm": 2.7, "se_energy_ev": 90.0, "se_ref": (0.89, 0.45)},
+    "GE": {"formula": {"Ge": 1}, "density_g_cm3": 5.323, "insulator": False,
+           "se_escape_nm": 2.7, "se_energy_ev": 90.0, "se_ref": None},
+    "GAAS": {"formula": {"Ga": 1, "As": 1}, "density_g_cm3": 5.317, "insulator": False,
+             "se_escape_nm": 2.7, "se_energy_ev": 90.0, "se_ref": None},
+    "GAN": {"formula": {"Ga": 1, "N": 1}, "density_g_cm3": 6.15, "insulator": False,
+            "se_escape_nm": 2.7, "se_energy_ev": 90.0, "se_ref": None},
+    "INP": {"formula": {"In": 1, "P": 1}, "density_g_cm3": 4.81, "insulator": False,
+            "se_escape_nm": 2.7, "se_energy_ev": 90.0, "se_ref": None},
+    "SIC": {"formula": {"Si": 1, "C": 1}, "density_g_cm3": 3.21, "insulator": False,
+            "se_escape_nm": 2.7, "se_energy_ev": 90.0, "se_ref": None},
+    "SI3N4": {"formula": {"Si": 3, "N": 4}, "density_g_cm3": 3.17, "insulator": True,
+              "se_escape_nm": 5.0, "se_energy_ev": 50.0, "se_ref": None},
+    "SILICA": {"formula": {"Si": 1, "O": 2}, "density_g_cm3": 2.20, "insulator": True,
+               "se_escape_nm": 5.0, "se_energy_ev": 50.0, "se_ref": None},
+    "TIO2": {"formula": {"Ti": 1, "O": 2}, "density_g_cm3": 4.23, "insulator": True,
+             "se_escape_nm": 5.0, "se_energy_ev": 50.0, "se_ref": None},
+    "TA2O5": {"formula": {"Ta": 2, "O": 5}, "density_g_cm3": 8.2, "insulator": True,
+              "se_escape_nm": 5.0, "se_energy_ev": 50.0, "se_ref": None},
+    "HFO2": {"formula": {"Hf": 1, "O": 2}, "density_g_cm3": 9.68, "insulator": True,
+             "se_escape_nm": 5.0, "se_energy_ev": 50.0, "se_ref": None},
+    "AL": {"formula": {"Al": 1}, "density_g_cm3": 2.70, "insulator": False,
+           "se_escape_nm": 1.7, "se_energy_ev": 32.0, "se_ref": (2.0, 0.4)},
+    "TI": {"formula": {"Ti": 1}, "density_g_cm3": 4.506, "insulator": False,
+           "se_escape_nm": 1.0, "se_energy_ev": 35.0, "se_ref": None},
+    "CR": {"formula": {"Cr": 1}, "density_g_cm3": 7.19, "insulator": False,
+           "se_escape_nm": 1.0, "se_energy_ev": 35.0, "se_ref": None},
+    "NI": {"formula": {"Ni": 1}, "density_g_cm3": 8.908, "insulator": False,
+           "se_escape_nm": 1.0, "se_energy_ev": 35.0, "se_ref": None},
+    "CU": {"formula": {"Cu": 1}, "density_g_cm3": 8.96, "insulator": False,
+           "se_escape_nm": 0.6, "se_energy_ev": 35.0, "se_ref": (1.53, 0.4)},
+    "RH": {"formula": {"Rh": 1}, "density_g_cm3": 12.41, "insulator": False,
+           "se_escape_nm": 1.0, "se_energy_ev": 35.0, "se_ref": None},
+    "AG": {"formula": {"Ag": 1}, "density_g_cm3": 10.49, "insulator": False,
+           "se_escape_nm": 1.0, "se_energy_ev": 50.0, "se_ref": (1.43, 0.6)},
+    "W": {"formula": {"W": 1}, "density_g_cm3": 19.25, "insulator": False,
+          "se_escape_nm": 0.2, "se_energy_ev": 20.0, "se_ref": (1.06, 0.25)},
+    "PT": {"formula": {"Pt": 1}, "density_g_cm3": 21.45, "insulator": False,
+           "se_escape_nm": 1.0, "se_energy_ev": 35.0, "se_ref": None},
+    "AU": {"formula": {"Au": 1}, "density_g_cm3": 19.30, "insulator": False,
+           "se_escape_nm": 0.5, "se_energy_ev": 35.0, "se_ref": (1.28, 0.5)},
+    "PMMA": {"formula": {"C": 5, "O": 2, "H": 8}, "density_g_cm3": 1.18, "insulator": True,
+             "se_escape_nm": 5.0, "se_energy_ev": 50.0, "se_ref": None},
+    # 光学の表には無いが、反射電子係数の外部真値(Z = 6)に要るので電子の表にだけ置く。
+    "C": {"formula": {"C": 1}, "density_g_cm3": 2.26, "insulator": False,
+          "se_escape_nm": 2.5, "se_energy_ev": 80.0, "se_ref": (1.06, 0.4), "aliases": ("CARBON", "GRAPHITE")},
+}
+_ELECTRON_ALIASES = {a: k for k, v in ELECTRON_SOLID.items() for a in v.get("aliases", ())}
+
+
+def material_electron_properties(material="SI") -> dict:
+    """電子線の物性(元素ごとの Z・A・質量分率、密度、二次電子の脱出深さと生成エネルギー)を返す。
+
+    仮想 SEM のモンテカルロ(``semsim.sem_electron_mc`` ほか)が引く表で、光学の材料表と
+    同じ名前(別名可: SILICON / FUSED_SILICA …)で引ける。組成は原子数の比から質量分率に
+    直して返す(``composition`` = ((Z, A, 質量分率), ...))。``z_mean`` は質量分率で平均した Z。
+
+    Returns
+    -------
+    dict
+        ``name`` / ``composition`` / ``z_mean`` / ``a_mean`` / ``density_g_cm3`` /
+        ``insulator`` / ``se_escape_nm`` / ``se_energy_ev`` / ``se_ref`` / ``in_optical_table``。
+
+    Examples
+    --------
+    >>> r = material_electron_properties("SILICA")
+    >>> round(sum(c[2] for c in r["composition"]), 9), r["insulator"]
+    (1.0, True)
+    """
+    op = "material_electron_properties"
+    if not isinstance(material, str):
+        raise ValueError("%s: material must be a name, got %r" % (op, type(material).__name__))
+    key = _key(material)
+    key = _ELECTRON_ALIASES.get(key, _ALIASES.get(key, key))
+    if key not in ELECTRON_SOLID:
+        raise ValueError("%s: no electron-solid data for %r (have: %s)"
+                         % (op, material, ", ".join(sorted(ELECTRON_SOLID))))
+    rec = ELECTRON_SOLID[key]
+    parts = [(ELEMENTS[el][0], ELEMENTS[el][1], float(cnt)) for el, cnt in rec["formula"].items()]
+    mass = sum(a * c for _, a, c in parts)
+    comp = tuple((z, a, a * c / mass) for z, a, c in parts)
+    return {"name": key, "formula": dict(rec["formula"]), "composition": comp,
+            "z_mean": float(sum(z * w for z, _, w in comp)), "a_mean": float(sum(a * w for _, a, w in comp)),
+            "density_g_cm3": float(rec["density_g_cm3"]), "insulator": bool(rec["insulator"]),
+            "se_escape_nm": float(rec["se_escape_nm"]), "se_energy_ev": float(rec["se_energy_ev"]),
+            "se_ref": rec["se_ref"], "in_optical_table": key in _RECORDS}

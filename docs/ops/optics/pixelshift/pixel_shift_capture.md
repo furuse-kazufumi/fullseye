@@ -4,10 +4,10 @@ dim: optics
 category: pixelshift
 in: rgbimage × matrix
 out: video
-examples: [poc_pixel_shift]
+examples: [poc_pixel_shift, poc_simcal_pixel_shift]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # pixel_shift_capture — OPTICS `pixelshift` op
@@ -69,10 +69,11 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_pixel_shift](../../../../examples/poc_pixel_shift.py) — `py -3.11 examples/poc_pixel_shift.py`
+- [poc_simcal_pixel_shift](../../../../examples/poc_simcal_pixel_shift.py) — `py -3.11 examples/poc_simcal_pixel_shift.py`
 
 ## 型が繋がる次の op(`video` を入力に取れる)
 
-[pixel_shift_merge](pixel_shift_merge.md) · [pixel_shift_motion_mask](pixel_shift_motion_mask.md)
+[lockin_demodulate](../lockin/lockin_demodulate.md) · [lockin_amplitude](../lockin/lockin_amplitude.md) · [lockin_phase](../lockin/lockin_phase.md) · [lockin_separate](../lockin/lockin_separate.md) · [pixel_shift_merge](pixel_shift_merge.md) · [pixel_shift_motion_mask](pixel_shift_motion_mask.md)
 
 ## 同カテゴリ(`pixelshift`)
 

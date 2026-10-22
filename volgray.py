@@ -212,14 +212,13 @@ def vol_equalize(vol, nbins=256, mask=None):
     nb = int(nbins)
     if nb < 2:
         raise ValueError("nbins must be an integer >= 2, got %r" % (nbins,))
-    sample = None
+    m = None
     if mask is not None:                              # validate *before* any shortcut
         m = _require_volume(mask, "mask") > 0.5
         if m.shape != v.shape:
             raise ValueError("mask shape %r does not match vol shape %r"
                              % (m.shape, v.shape))
-        sample = v[m]
-        if sample.size == 0:
+        if not m.any():
             raise ValueError("mask selects no voxels — an empty domain has no "
                              "histogram to equalise against")
     vmin = float(v.min())
@@ -227,8 +226,6 @@ def vol_equalize(vol, nbins=256, mask=None):
     if vmax <= vmin:
         # constant volume: no contrast to redistribute — pass through unchanged
         return v.copy()
-    if sample is None:
-        sample = v.ravel()
     # Histogram over the *full* volume range so the LUT covers every voxel,
     # even when the mask spans a narrower intensity band. Binned by the SAME
     # index formula the LUT lookup uses (bincount, not np.histogram): the two
@@ -237,13 +234,11 @@ def vol_equalize(vol, nbins=256, mask=None):
     # and it raises its internal "Too many bins" error — equalises fine (its
     # two values land in the first and last bin).
     scale = nb / (vmax - vmin)
-    sidx = ((sample - vmin) * scale).astype(np.int64)
-    np.clip(sidx, 0, nb - 1, out=sidx)                # vmax lands in the last bin
-    hist = np.bincount(sidx, minlength=nb)
+    idx = ((v - vmin) * scale).astype(np.int64)
+    np.clip(idx, 0, nb - 1, out=idx)                  # vmax lands in the last bin
+    hist = np.bincount(idx.ravel() if m is None else idx[m], minlength=nb)
     cdf = np.cumsum(hist, dtype=np.float64)
     lut = cdf / cdf[-1]                               # monotone, ends at 1.0
-    idx = ((v - vmin) * scale).astype(np.int64)
-    np.clip(idx, 0, nb - 1, out=idx)
     return lut[idx]
 
 

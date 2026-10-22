@@ -44,10 +44,14 @@ MAX_VOXELS = 1 << 27
 
 
 def _require_volume(vol, name: str = "vol") -> np.ndarray:
-    v = np.ascontiguousarray(vol, dtype=np.float64)
-    if v.ndim != 3:
+    raw = np.asarray(vol)
+    if raw.ndim != 3:
         raise ValueError("%s must be a 3-D (D, H, W) volume, got a %d-D array"
-                         % (name, v.ndim))
+                         % (name, raw.ndim))
+    if raw.size > MAX_VOXELS:
+        raise ValueError("%s: %d voxels exceeds the %d cap (volfreq.MAX_VOXELS)"
+                         % (name, raw.size, MAX_VOXELS))
+    v = np.ascontiguousarray(raw, dtype=np.float64)
     if not np.isfinite(v).all():
         raise ValueError("%s has non-finite voxel(s) (NaN/Inf) — refusing"
                          % (name,))
@@ -58,7 +62,7 @@ def _require_volume(vol, name: str = "vol") -> np.ndarray:
 
 
 def _freq_radius(shape, spacing):
-    """Per-voxel frequency magnitude |f| — cycles/voxel, or cycles/mm when
+    """Per-voxel squared frequency magnitude |f|² — cycles²/voxel², or cycles²/mm² when
     *spacing* is given (``d=spacing`` makes fftfreq return physical frequency)."""
     if spacing is None:
         sp = (1.0, 1.0, 1.0)
@@ -76,8 +80,25 @@ def _freq_radius(shape, spacing):
     fz = np.fft.fftfreq(shape[0], d=sp[0])
     fy = np.fft.fftfreq(shape[1], d=sp[1])
     fx = np.fft.rfftfreq(shape[2], d=sp[2])
-    return np.sqrt(fz[:, None, None] ** 2 + fy[None, :, None] ** 2
-                   + fx[None, None, :] ** 2)
+    return (fz[:, None, None] ** 2 + fy[None, :, None] ** 2
+            + fx[None, None, :] ** 2)
+
+
+def _gaussian_transfer(shape, spacing, cutoff):
+    """各軸の1-D Gaussian因子をbroadcast積して3-D伝達関数を作る。"""
+    if spacing is None:
+        sp = (1.0, 1.0, 1.0)
+    else:
+        if hasattr(spacing, "spacing_mm"):
+            spacing = spacing.spacing_mm
+        sp = tuple(float(s) for s in spacing)
+        if len(sp) != 3 or any(not np.isfinite(s) or s <= 0.0 for s in sp):
+            raise ValueError("spacing must be 3 positive finite values, got %r" % (spacing,))
+    axes = (np.fft.fftfreq(shape[0], d=sp[0]),
+            np.fft.fftfreq(shape[1], d=sp[1]),
+            np.fft.rfftfreq(shape[2], d=sp[2]))
+    factors = [np.exp(-(f * f) / (2.0 * cutoff * cutoff)) for f in axes]
+    return factors[0][:, None, None] * factors[1][None, :, None] * factors[2][None, None, :]
 
 
 def _check_cutoff(c, name):
@@ -101,9 +122,24 @@ def _apply_transfer(vol, spacing, transfer):
                          % (v.shape,))
     fr = _freq_radius(v.shape, spacing)
     spec = np.fft.rfftn(v)
+    spec *= transfer(fr)
     # axes must be explicit alongside s= (NumPy 2.0 deprecation -> future error)
-    out = np.fft.irfftn(spec * transfer(fr), s=v.shape, axes=(0, 1, 2))
+    out = np.fft.irfftn(spec, s=v.shape, axes=(0, 1, 2))
     return np.ascontiguousarray(out, dtype=np.float64)
+
+
+def _apply_gaussian(vol, spacing, high, low=None, complement=False):
+    v = _require_volume(vol)
+    if v.size == 0:
+        raise ValueError("vol_fft_*: vol is empty (shape %s) — pass a non-empty (D, H, W) volume" % (v.shape,))
+    gain = _gaussian_transfer(v.shape, spacing, high)
+    if low is not None:
+        gain -= _gaussian_transfer(v.shape, spacing, low)
+    elif complement:
+        np.subtract(1.0, gain, out=gain)
+    spec = np.fft.rfftn(v)
+    spec *= gain
+    return np.ascontiguousarray(np.fft.irfftn(spec, s=v.shape, axes=(0, 1, 2)), dtype=np.float64)
 
 
 def vol_fft_lowpass(vol, cutoff, spacing=None):
@@ -132,7 +168,7 @@ def vol_fft_lowpass(vol, cutoff, spacing=None):
     またいで漏れる(窓掛けは黙ってしない)。``vol_fft_highpass`` は厳密にこの補集合
     ``1 - lowpass`` で、両者の和は入力に一致する。空の入力(``vol`` が 0 要素)は ValueError。"""
     c = _check_cutoff(cutoff, "cutoff")
-    return _apply_transfer(vol, spacing, lambda f: np.exp(-(f * f) / (2.0 * c * c)))
+    return _apply_gaussian(vol, spacing, c)
 
 
 def vol_fft_highpass(vol, cutoff, spacing=None):
@@ -156,8 +192,7 @@ def vol_fft_highpass(vol, cutoff, spacing=None):
     引くのと同値)。周期的とみなす FFT の性質上、面どうしの輝度差は wrap で漏れる。
     空の入力(``vol`` が 0 要素)は ValueError。"""
     c = _check_cutoff(cutoff, "cutoff")
-    return _apply_transfer(vol, spacing,
-                           lambda f: 1.0 - np.exp(-(f * f) / (2.0 * c * c)))
+    return _apply_gaussian(vol, spacing, c, complement=True)
 
 
 def vol_fft_bandpass(vol, low, high, spacing=None):
@@ -186,7 +221,4 @@ def vol_fft_bandpass(vol, low, high, spacing=None):
     if lo >= hi:
         raise ValueError("band-pass needs low < high, got low=%r high=%r"
                          % (low, high))
-    return _apply_transfer(
-        vol, spacing,
-        lambda f: (np.exp(-(f * f) / (2.0 * hi * hi))
-                   - np.exp(-(f * f) / (2.0 * lo * lo))))
+    return _apply_gaussian(vol, spacing, hi, lo)

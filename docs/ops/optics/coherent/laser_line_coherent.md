@@ -7,13 +7,13 @@ out: image2d
 examples: [poc_laser_line_speckle_floor]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # laser_line_coherent — OPTICS `coherent` op
 
 - **データ種**: `なし` → `image2d`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import fullseye as fs; fs.ledger.laser_line_coherent(shape=(96, 512), wavelength_um=0.65, sin_u_obs=0.05, pixel_um=2.0, line_width_um=20.0, height_um=20.0, sin_theta=0.5, row0=None, polarizations=1, n_patterns=1, pixel_oversample=2, roughness_rad=None, noise=0.0, seed=0, noise_seed=None)` (実装を直接呼ぶなら `import coherent; coherent.laser_line_coherent(shape=(96, 512), wavelength_um=0.65, sin_u_obs=0.05, pixel_um=2.0, line_width_um=20.0, height_um=20.0, sin_theta=0.5, row0=None, polarizations=1, n_patterns=1, pixel_oversample=2, roughness_rad=None, noise=0.0, seed=0, noise_seed=None)`、台帳から引くなら `opsoptics.get("laser_line_coherent")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.laser_line_coherent(shape=(96, 512), wavelength_um=0.65, sin_u_obs=0.05, pixel_um=2.0, line_width_um=20.0, height_um=20.0, sin_theta=0.5, row0=None, polarizations=1, n_patterns=1, pixel_oversample=2, roughness_rad=None, noise=0.0, seed=0, noise_seed=None, *, method='exact')` (実装を直接呼ぶなら `import coherent; coherent.laser_line_coherent(shape=(96, 512), wavelength_um=0.65, sin_u_obs=0.05, pixel_um=2.0, line_width_um=20.0, height_um=20.0, sin_theta=0.5, row0=None, polarizations=1, n_patterns=1, pixel_oversample=2, roughness_rad=None, noise=0.0, seed=0, noise_seed=None, *, method='exact')`、台帳から引くなら `opsoptics.get("laser_line_coherent")`)
 
 ## 使い方
 
@@ -66,7 +66,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 
-[fraunhofer_pattern](../wave/fraunhofer_pattern.md) · [pupil_psf](../wave/pupil_psf.md) · [pupil_blur](../wave/pupil_blur.md) · [psf_to_mtf](../imaging/psf_to_mtf.md) · [edge_spread](../imaging/edge_spread.md) · [veiling_glare_index](../imaging/veiling_glare_index.md) · [emva_pair_statistics](../sensorchar/emva_pair_statistics.md) · [emva_defect_pixels](../sensorchar/emva_defect_pixels.md)
+[fraunhofer_pattern](../wave/fraunhofer_pattern.md) · [pupil_psf](../wave/pupil_psf.md) · [pupil_blur](../wave/pupil_blur.md) · [psf_to_mtf](../imaging/psf_to_mtf.md) · [encircled_energy](../imaging/encircled_energy.md) · [ensquared_energy](../imaging/ensquared_energy.md) · [energy_radii](../imaging/energy_radii.md) · [mtf_tangential_sagittal](../imaging/mtf_tangential_sagittal.md)
 
 ## 同カテゴリ(`coherent`)
 

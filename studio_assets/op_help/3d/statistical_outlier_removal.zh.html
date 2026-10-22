@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">statistical_outlier_removal — 3D <code style="color:#22d3bf">preprocess</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
-<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.statistical_outlier_removal(points, k: &#x27;int&#x27; = 16, std_ratio: &#x27;float&#x27; = 2.0)</code>(要直接调用实现,<code style="color:#22d3bf">import pcl_filter; pcl_filter.statistical_outlier_removal(points, k: &#x27;int&#x27; = 16, std_ratio: &#x27;float&#x27; = 2.0)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;statistical_outlier_removal&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.statistical_outlier_removal(points, k: &#x27;int&#x27; = 16, std_ratio: &#x27;float&#x27; = 2.0, chunk: &#x27;int | None&#x27; = None)</code>(要直接调用实现,<code style="color:#22d3bf">import pcl_filter; pcl_filter.statistical_outlier_removal(points, k: &#x27;int&#x27; = 16, std_ratio: &#x27;float&#x27; = 2.0, chunk: &#x27;int | None&#x27; = None)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;statistical_outlier_removal&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.statistical_outlier_removal(...)</code> 只返回<b>声明的 out 类型 <code style="color:#22d3bf">points</code> 的值</b>(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.statistical_outlier_removal.raw(...)</code>,或直接调用 <code style="color:#22d3bf">pcl_filter.statistical_outlier_removal</code>。</p>
 <p style="margin:2px 0 2px 12px">• 底层返回: <code style="color:#22d3bf">(kept, mask)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
@@ -14,6 +14,8 @@
 <p>邻域点数(默认 16)。点数少时内部截为 <code style="color:#22d3bf">n-1</code>。</p>
 <p>std_ratio : float</p>
 <p>阈值的宽松程度。越大越容易保留(剔除越宽松)。</p>
+<p>chunk : int or None</p>
+<p>指定时，邻域查询按该点数分批进行。默认 <code style="color:#22d3bf">None</code> 使用原有路径。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>filtered : ndarray, shape (M, 3)</p>
 <p>保留下来的点(保持原顺序)。</p>

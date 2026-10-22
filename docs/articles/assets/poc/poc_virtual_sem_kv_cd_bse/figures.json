@@ -1,0 +1,100 @@
+[
+ {
+  "file": "01_sem_interaction_volume.png",
+  "name": "sem_interaction_volume",
+  "caption": "一次電子 400 本の軌跡の密度(対数)。枠は各条件の Kanaya-Okayama の到達深さ R_KO の 1.1 倍。Si は 1 → 5 → 20 keV で R_KO が 31 nm → 0.47 µm → 4.7 µm と伸び、形は「梨形」のまま相似に広がる。Au(20 keV)は R_KO が Si の 1/5.5 で、浅い所で大きく曲がって戻る(反射電子が多い)。",
+  "shape": [
+   535,
+   830,
+   3
+  ]
+ },
+ {
+  "file": "02_sem_se_universal_curve.png",
+  "name": "sem_se_universal_curve",
+  "caption": "δ(E) を各元素の MC の山(Emax, δmax)で割った形(横軸は対数)。破線は Lin & Joy 2005 の普遍曲線(式 12)。C〜Ag の 5 元素は重なる。W と Au(赤)は E > 3 Emax で裾が厚い —— 重元素は反射電子が多く、表面を抜けるときに作る SE2 が主になるので、SE1 だけを仮定した普遍曲線からずれる(未解決のまま数で固定)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_sem_cd_profiles_by_kv.png",
+  "name": "sem_cd_profiles_by_kv",
+  "caption": "レンズ内の SE の線プロファイル(基板の水準で割った)。1 kV は PMMA の上面そのものが明るく(PMMA は Si より δ が大きく、電子が線の中に収まる)、5 kV と 20 kV は縁だけが明るい山になる。線幅を測る縁の位置が電圧で動く。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_sem_cd_bias_table.png",
+  "name": "sem_cd_bias_table",
+  "caption": "PMMA の線(高さ 40 nm)を Si の上で。測った高さ = (底辺 − しきい値法の線幅)/(底辺 − 上辺)、0 = 根元、1 = 上端。ビーム σ = 1 nm、平滑 1.5 nm。",
+  "shape": [
+   368,
+   492,
+   3
+  ],
+  "csv": "04_sem_cd_bias_table.csv",
+  "tsv": "04_sem_cd_bias_table.tsv"
+ },
+ {
+  "file": "05_sem_same_part_3kv_3detectors.png",
+  "name": "sem_same_part_3kv_3detectors",
+  "caption": "行 = 加速電圧、列 = 検出器。SE の 2 列はパネルごとにコントラストを合わせた(実機の調整と同じ。SE の総量は 1 → 20 kV で 1 桁落ちる)。反射電子の列は 3 電圧で共通の濃淡。1 kV のレンズ内 SE は PMMA の上面が明るい。5 / 20 kV では線の縁だけが明るい帯になる。側方の SE は検出器(右)を向く縁が明るい。反射電子は W の粒が 1 kV で最も浮き、電圧を上げると電子が粒を突き抜けて薄まる。PMMA の線は反射電子ではほぼ消える(細い線は側壁から電子が抜け、溝の Si は影になるので η の差が相殺する)。1 画素 2.4 nm、画素あたり 90 電子(雑音は撃った電子の数そのもの)。",
+  "shape": [
+   897,
+   760,
+   3
+  ]
+ },
+ {
+  "file": "06_sem_buried_w_contrast.png",
+  "name": "sem_buried_w_contrast",
+  "caption": "Si に埋もれた W(幅 100 nm、厚さ 60 nm)の、真上と 400 nm 離れた Si の平均との比 − 1(反射電子 / レンズ内 SE)。深い W ほど高い電圧が要る(情報深さ)。表面の W は 1 kV の SE ではほぼ見えないのに反射電子では浮く。",
+  "shape": [
+   200,
+   613,
+   3
+  ],
+  "csv": "06_sem_buried_w_contrast.csv",
+  "tsv": "06_sem_buried_w_contrast.tsv"
+ },
+ {
+  "file": "07_sem_tungsten_se_vs_bse.png",
+  "name": "sem_tungsten_se_vs_bse",
+  "caption": "各パネルは Si の水準で割った信号(0〜3 で共通の濃淡)。表面に埋めた W(段差なし)は 1 kV のレンズ内 SE ではほぼ見えず、反射電子では明るい円板。深さ 50 nm の W は 1 kV の反射電子では見えず、10 kV で浮かぶ。1 画素 3 nm、画素あたり 50 電子。",
+  "shape": [
+   646,
+   510,
+   3
+  ]
+ },
+ {
+  "file": "08_sem_charging_by_kv.png",
+  "name": "sem_charging_by_kv",
+  "caption": "同じ PMMA の面を走査し続けたときの平均の明るさ(1 コマ目で割った)。η + δ > 1 の 0.5 / 1 kV は正に帯電して二次電子が引き戻され暗くなり、η + δ·F(V*) = 1 の電位で止まる。η + δ < 1 の 5 / 20 kV は負に溜まり続け明るくなる(漏れを入れない上限の振る舞い)。",
+  "shape": [
+   360,
+   738,
+   3
+  ]
+ },
+ {
+  "file": "09_sem_charging_pmma_line.gif",
+  "name": "sem_charging_pmma_line",
+  "caption": "Si の上の PMMA の線を 5 kV で 24 コマ走査し続けた像。PMMA だけが負に帯電して明るくなり、接地した Si は変わらない。",
+  "shape": [
+   32,
+   32,
+   3
+  ],
+  "animated": true,
+  "frames": 24,
+  "frames_written": 24,
+  "fps": 6.0
+ }
+]

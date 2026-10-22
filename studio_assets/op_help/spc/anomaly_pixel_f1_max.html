@@ -1,0 +1,21 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">anomaly_pixel_f1_max — SPC <code style="color:#22d3bf">anomaly_eval</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">video × video</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.anomaly_pixel_f1_max(scores, masks)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import anomeval; anomeval.anomaly_pixel_f1_max(scores, masks)</code>、台帳から引くなら <code style="color:#22d3bf">opsspc.get(&quot;anomaly_pixel_f1_max&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Best pixel-level F1 over all thresholds of anomaly score maps against defect masks (<code style="color:#22d3bf">table</code>).</p>
+<p><code style="color:#22d3bf">scores</code> and <code style="color:#22d3bf">masks</code> are (n, H, W) (or lists / single 2-D maps); a pixel is predicted defective when its score is &gt;= the threshold. The F1 = 2TP / (2TP + FP + FN) is evaluated exactly at every distinct score (sorted cumulative sums, no threshold grid); the highest threshold wins a tie. Returns <code style="color:#22d3bf">f1</code>, <code style="color:#22d3bf">threshold</code>, <code style="color:#22d3bf">precision</code> and <code style="color:#22d3bf">recall</code> at the maximum, <code style="color:#22d3bf">n_pos</code> and <code style="color:#22d3bf">n_neg</code> (pixels). It counts pixels, like the pixel AUROC, not regions (see <code style="color:#22d3bf">anomaly_pro</code>): a small defect weighs little however well it is found.</p>
+<p>Raises <code style="color:#22d3bf">ValueError</code> on empty / mismatched / non-finite input, non-binary masks, or when the masks contain no defect pixel or no good pixel.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_patch_anomaly">poc_patch_anomaly</a> — <code style="color:#22d3bf">py -3.11 examples/poc_patch_anomaly.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opspc:msa_anova_table">msa_anova_table</a> · <a style="color:#22d3bf" href="opspc:msa_gauge_rr">msa_gauge_rr</a> · <a style="color:#22d3bf" href="opspc:msa_bias_linearity">msa_bias_linearity</a> · <a style="color:#22d3bf" href="opspc:msa_attribute_agreement">msa_attribute_agreement</a> · <a style="color:#22d3bf" href="opspc:gum_standard_uncertainty">gum_standard_uncertainty</a> · <a style="color:#22d3bf" href="opspc:gum_propagate">gum_propagate</a> · <a style="color:#22d3bf" href="opspc:gum_expanded">gum_expanded</a> · <a style="color:#22d3bf" href="opspc:gum_monte_carlo">gum_monte_carlo</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">anomaly_eval</code>)</h3>
+<p><a style="color:#22d3bf" href="opspc:anomaly_image_auroc">anomaly_image_auroc</a> · <a style="color:#22d3bf" href="opspc:anomaly_pixel_auroc">anomaly_pixel_auroc</a> · <a style="color:#22d3bf" href="opspc:anomaly_pro">anomaly_pro</a> · <a style="color:#22d3bf" href="opspc:anomaly_region_overlap">anomaly_region_overlap</a> · <a style="color:#22d3bf" href="opspc:anomaly_image_f1_max">anomaly_image_f1_max</a> · <a style="color:#22d3bf" href="opspc:anomaly_operating_point">anomaly_operating_point</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: anomeval.py — SPC operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

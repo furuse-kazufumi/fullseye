@@ -123,8 +123,9 @@ def _num(v, name, op, lo=None, hi=None, lo_open=True, hi_open=False):
 
 
 def _index(n, op, name="refractive_index"):
-    """屈折率: 実数・有限・1 より大きい(n = 1 では界面が無く偏光も生じない)。"""
-    return _num(n, name, op, lo=1.0, hi=MAX_INDEX, lo_open=True)
+    """屈折率: 実数・有限・1 より大きい(n = 1 では界面が無く偏光も生じない)。材料名なら d 線の n(``materials._index_of``)。"""
+    import materials as _mat
+    return _num(_mat._index_of(n, op, name), name, op, lo=1.0, hi=MAX_INDEX, lo_open=True)
 
 
 def _model(model, op, allowed=_MODELS):
@@ -246,6 +247,11 @@ def sfp_dolp_model(zenith_deg, refractive_index=1.5, model="specular"):
 
     **Raises** ``ValueError``: zenith outside ``[0, 90]`` or non-finite;
     *refractive_index* not a finite real ``> 1``; unknown *model*.
+
+    *refractive_index* (here and in every op of this module) may also be a
+    material name of the shared table ``materials`` (e.g. ``"N-BK7"``,
+    ``"PMMA"``, ``"WATER"``): its index at the d line (587.56 nm) is used.
+    Metals and materials that absorb there are refused.
     """
     op = "sfp_dolp_model"
     n = _index(refractive_index, op)
@@ -312,11 +318,12 @@ def dolp_to_zenith(dolp, refractive_index=1.5, model="diffuse", out_of_range="cl
         return {"zenith_deg": out, "n_solutions": nsol, "model": m, "refractive_index": n,
                 "dolp_max": float(rmax), "brewster_deg": float(math.degrees(math.atan(n)))}
     tb = math.atan(n)
-    low = _bisect(lambda t: _rho_specular(t, n), rho, 0.0, tb, True)
-    high = _bisect(lambda t: _rho_specular(t, n), rho, tb, half, False)
     top = rho >= 1.0 - _BREWSTER_EPS
-    low = np.where(top, tb, low)
-    high = np.where(top, tb, high)
+    low = np.full(rho.shape, tb)
+    high = np.full(rho.shape, tb)
+    if (~top).any():
+        low[~top] = _bisect(lambda t: _rho_specular(t, n), rho[~top], 0.0, tb, True)
+        high[~top] = _bisect(lambda t: _rho_specular(t, n), rho[~top], tb, half, False)
     nsol = np.where(top, 1, 2).astype(np.int64)
     out = np.degrees(np.stack([low, high]))
     return {"zenith_deg": out, "n_solutions": nsol, "model": m, "refractive_index": n,
@@ -661,10 +668,15 @@ def sfp_disambiguate(candidates, prior="convex", mask=None, center=None, prior_n
         if (ln[msk] == 0.0).any():
             raise ValueError("%s: the prior has zero-length normals inside the mask" % op)
         pn = pn / np.where(ln == 0.0, 1.0, ln)
-        dots = np.einsum("khwc,hwc->khw", cand, pn)
-        k = np.argmax(dots, axis=0)
-    pick = np.take_along_axis(cand, k[None, ..., None].repeat(3, axis=-1), axis=0)[0]
-    out[msk] = pick[msk]
+        best = np.full((H, W), -np.inf)
+        k = np.zeros((H, W), dtype=np.intp)
+        for i in range(K):
+            score = np.einsum("hwc,hwc->hw", cand[i], pn)
+            better = score > best
+            best[better] = score[better]
+            k[better] = i
+    iy, ix = np.nonzero(msk)
+    out[iy, ix] = cand[k[iy, ix], iy, ix]
     del K
     return out
 
@@ -716,8 +728,17 @@ def sfp_estimate_index(dolp, zenith_deg, model="specular", mask=None, n_bounds=(
     r = rho[msk]
     th = np.radians(z[msk])
 
+    s2 = np.sin(th) ** 2
+    c = np.cos(th)
+
+    def curve(nn):
+        root = np.sqrt(np.maximum(nn * nn - s2, 0.0))
+        if m == "specular":
+            return 2.0 * s2 * c * root / (nn * nn - s2 - nn * nn * s2 + 2.0 * s2 * s2)
+        return (nn - 1.0 / nn) ** 2 * s2 / (2.0 + 2.0 * nn * nn - (nn + 1.0 / nn) ** 2 * s2 + 4.0 * c * root)
+
     def sse(nn):
-        d = _rho(th, nn, m) - r
+        d = curve(nn) - r
         return float(np.dot(d, d))
 
     grid = np.linspace(lo, hi, 241)

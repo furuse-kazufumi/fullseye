@@ -63,26 +63,51 @@ def _bilateral_core(
     val_valid: np.ndarray,
     edge_valid: np.ndarray,
     truncate: float,
+    chunk: int | None = 64,
 ) -> np.ndarray:
     """bilateral の共通核: values を平均し range 重みは edge の差で作る(無効画素は重み 0 で除外)。
 
     近傍が寄与する条件 = その画素で values も edge も有効。中心画素が処理される条件も同じで、
     満たさない中心画素(穴・ガイド欠損)は元値のまま残す(値を捏造しない = fail-closed)。
     """
+    # ``chunk`` controls peak memory without changing arithmetic or output.
+    # 64 rows is the measured speed-preserving default; None requests one tile.
     values = np.asarray(values, dtype=float)
     edge = np.asarray(edge, dtype=float)
     H, W = values.shape
     contrib = val_valid & edge_valid  # 近傍として使える画素
 
     # 無効画素は有限のプレースホルダに置換(重み 0 で寄与しないが NaN 伝播を防ぐため)。
+    same_guide = edge is values and edge_valid is val_valid
     v_safe = np.where(val_valid, values, 0.0)
-    e_safe = np.where(edge_valid, edge, 0.0)
+    e_safe = v_safe if same_guide else np.where(edge_valid, edge, 0.0)
 
     radius = max(int(np.ceil(float(truncate) * spatial_sigma)), 1)
+    if chunk is not None:
+        chunk = int(chunk)
+        if chunk < 1:
+            raise ValueError("chunk must be >= 1")
+        if H > chunk:
+            # Reflect once at the true image boundary.  Each subproblem includes
+            # a full halo, so its own padding is never observed by the crop.
+            pv = np.pad(values, radius, mode="reflect")
+            pe = pv if same_guide else np.pad(edge, radius, mode="reflect")
+            pvv = np.pad(val_valid, radius, mode="reflect")
+            pev = pvv if same_guide else np.pad(edge_valid, radius, mode="reflect")
+            out = np.empty_like(values)
+            for y0 in range(0, H, chunk):
+                y1 = min(y0 + chunk, H)
+                tile = _bilateral_core(
+                    pv[y0:y1 + 2 * radius], pe[y0:y1 + 2 * radius],
+                    spatial_sigma, range_sigma, pvv[y0:y1 + 2 * radius],
+                    pev[y0:y1 + 2 * radius], truncate, None,
+                )
+                out[y0:y1] = tile[radius:radius + y1 - y0, radius:radius + W]
+            return out
     # reflect パディング(scipy.ndimage 既定と同じ境界規約)。
     vp = np.pad(v_safe, radius, mode="reflect")
-    ep = np.pad(e_safe, radius, mode="reflect")
-    cp = np.pad(contrib.astype(float), radius, mode="reflect")
+    ep = vp if same_guide else np.pad(e_safe, radius, mode="reflect")
+    cp = np.pad(contrib, radius, mode="reflect")
 
     inv2s2 = 1.0 / (2.0 * spatial_sigma * spatial_sigma)
     inv2r2 = 1.0 / (2.0 * range_sigma * range_sigma)
@@ -116,6 +141,7 @@ def bilateral_filter_depth(
     *,
     invalid: float | None = 0.0,
     truncate: float = 3.0,
+    chunk: int | None = 64,
 ) -> np.ndarray:
     """深度画像の bilateral filter(段差保存デノイズ)。→ float64 (H,W)。
 
@@ -123,13 +149,15 @@ def bilateral_filter_depth(
     中心が無効なら元値のまま(穴埋めは :func:`fill_holes` の役目)。spatial_sigma は画素単位、
     range_sigma は深度値の単位(段差 > range_sigma なら段差を跨がず、ノイズ std < range_sigma
     ならノイズを平滑する)。truncate=3 でガウス窓半径 = ceil(3*spatial_sigma)。
+    ``chunk`` は行タイルごとに処理してピーク メモリを抑える(計算も出力も変えない)。既定 64 は
+    速度を落とさない実測値で、調整するか ``None``(1 タイル = 従来経路)も渡せる。
     """
     d = np.asarray(depth, dtype=float)
     if d.ndim != 2:
         raise ValueError(f"bilateral_filter_depth expects a 2D depth image, got shape {d.shape}")
     ss, sr = _check_sigmas(spatial_sigma, range_sigma)
     valid = _valid_mask(d, invalid)
-    return _bilateral_core(d, d, ss, sr, valid, valid, truncate)
+    return _bilateral_core(d, d, ss, sr, valid, valid, truncate, chunk)
 
 
 def joint_bilateral(
@@ -140,12 +168,15 @@ def joint_bilateral(
     *,
     invalid: float | None = 0.0,
     truncate: float = 3.0,
+    chunk: int | None = 64,
 ) -> np.ndarray:
     """joint / cross bilateral: 平滑対象は depth、range 重みは guide の差で作る。→ float64 (H,W)。
 
     深度が荒くても清浄な guide(RGB 輝度・別センサ)の鮮鋭なエッジで段差を保存できる。range_sigma は
     **guide 値の単位**。guide が非有限の画素、および depth が無効な画素は寄与しない。guide と depth は
     同一形状必須(fail-closed)。
+    ``chunk`` は行タイルごとに処理してピーク メモリを抑える(計算も出力も変えない)。既定 64 は
+    速度を落とさない実測値で、調整するか ``None``(1 タイル = 従来経路)も渡せる。
     """
     d = np.asarray(depth, dtype=float)
     g = np.asarray(guide, dtype=float)
@@ -156,7 +187,7 @@ def joint_bilateral(
     ss, sr = _check_sigmas(spatial_sigma, range_sigma)
     valid = _valid_mask(d, invalid)
     gvalid = np.isfinite(g)
-    return _bilateral_core(d, g, ss, sr, valid, gvalid, truncate)
+    return _bilateral_core(d, g, ss, sr, valid, gvalid, truncate, chunk)
 
 
 def fill_holes(
@@ -216,17 +247,34 @@ def fill_holes(
             # 半径 r の穴の Jacobi 収束は O(r^2) 反復で足りる(小穴なら十分収束)。
             max_iter = int(min(4000, max(64, np.ceil(8.0 * (r + 1.0) ** 2))))
 
+        pp = np.pad(part.astype(float), 1, mode="constant")
+        ncnt = pp[:-2, 1:-1] + pp[2:, 1:-1] + pp[1:-1, :-2] + pp[1:-1, 2:]
+        safe_ncnt = np.where(ncnt > 0.0, ncnt, 1.0)
+        sparse = np.count_nonzero(fillable) * 8 < out.size
+        fy, fx = np.nonzero(fillable) if sparse else (None, None)
         for _ in range(max_iter):
             vp = np.pad(out, 1, mode="edge")
-            pp = np.pad(part.astype(float), 1, mode="constant")
+            if sparse:
+                # Preserve the reference top, bottom, left, right summation order.
+                yy, xx = fy + 1, fx + 1
+                vals = (
+                    vp[yy - 1, xx] * pp[yy - 1, xx]
+                    + vp[yy + 1, xx] * pp[yy + 1, xx]
+                    + vp[yy, xx - 1] * pp[yy, xx - 1]
+                    + vp[yy, xx + 1] * pp[yy, xx + 1]
+                ) / safe_ncnt[fy, fx]
+                delta = np.max(np.abs(vals - out[fy, fx])) if fy.size else 0.0
+                out[fy, fx] = vals
+                if delta < tol:
+                    break
+                continue
             nsum = (
                 vp[:-2, 1:-1] * pp[:-2, 1:-1]
                 + vp[2:, 1:-1] * pp[2:, 1:-1]
                 + vp[1:-1, :-2] * pp[1:-1, :-2]
                 + vp[1:-1, 2:] * pp[1:-1, 2:]
             )
-            ncnt = pp[:-2, 1:-1] + pp[2:, 1:-1] + pp[1:-1, :-2] + pp[1:-1, 2:]
-            new = np.where(ncnt > 0.0, nsum / np.where(ncnt > 0.0, ncnt, 1.0), out)
+            new = np.where(ncnt > 0.0, nsum / safe_ncnt, out)
             delta = np.max(np.abs(new[fillable] - out[fillable])) if fillable.any() else 0.0
             out[fillable] = new[fillable]
             if delta < tol:

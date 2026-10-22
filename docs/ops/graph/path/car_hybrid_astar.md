@@ -7,13 +7,13 @@ out: table
 examples: [poc_car_parking, poc_driving_school]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # car_hybrid_astar — GRAPH `path` op
 
 - **データ種**: `image2d × matrix` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.car_hybrid_astar(occupancy, poses, radius=1.0, cell=1.0, step=None, n_theta=72, allow_reverse=True, footprint=None, clearance=0.0, reverse_penalty=0.0, switch_penalty=0.0, steer_penalty=0.0, shot_every=None, max_expansions=200000, return_tree=False)` (実装を直接呼ぶなら `import carpath; carpath.car_hybrid_astar(occupancy, poses, radius=1.0, cell=1.0, step=None, n_theta=72, allow_reverse=True, footprint=None, clearance=0.0, reverse_penalty=0.0, switch_penalty=0.0, steer_penalty=0.0, shot_every=None, max_expansions=200000, return_tree=False)`、台帳から引くなら `opsgraph.get("car_hybrid_astar")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.car_hybrid_astar(occupancy, poses, radius=1.0, cell=1.0, step=None, n_theta=72, allow_reverse=True, footprint=None, clearance=0.0, reverse_penalty=0.0, switch_penalty=0.0, steer_penalty=0.0, shot_every=None, max_expansions=200000, return_tree=False, method='exact')` (実装を直接呼ぶなら `import carpath; carpath.car_hybrid_astar(occupancy, poses, radius=1.0, cell=1.0, step=None, n_theta=72, allow_reverse=True, footprint=None, clearance=0.0, reverse_penalty=0.0, switch_penalty=0.0, steer_penalty=0.0, shot_every=None, max_expansions=200000, return_tree=False, method='exact')`、台帳から引くなら `opsgraph.get("car_hybrid_astar")`)
 
 ## 使い方
 
@@ -36,6 +36,10 @@ paper), the shortest analytic path from the node to the goal is collision-checke
 when that shot is free. On an obstacle-free grid the first shot succeeds and the result equals the
 Reeds–Shepp (Dubins) length exactly; with obstacles the result is never below it (``lower_bound``).
 Cell pruning makes Hybrid A* an approximation of the optimum among all feasible paths, as in the paper.
+``method="exact"`` (default) preserves the original expansion order. ``method="fast"`` uses a
+platform-stable priority rounded to 1e-9, rejects dominated branches before collision checking, and
+reuses at most eight analytic candidates computed by the heuristic;
+it may return different waypoints with the same cost.
 
 Returns ``points`` ``(N, 3)`` poses along the path (start, tree part, analytic shot to the goal),
 ``length`` (metres), ``cost``, ``lower_bound`` (Reeds–Shepp/Dubins length start→goal),

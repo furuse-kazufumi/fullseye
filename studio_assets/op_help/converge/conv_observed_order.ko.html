@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">conv_observed_order — CONVERGE <code style="color:#22d3bf">verification</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">table</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.conv_observed_order(phi=None, h=None, r=None, n_cells=None, dim=None) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import converge; converge.conv_observed_order(phi=None, h=None, r=None, n_cells=None, dim=None) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsconverge.get(&quot;conv_observed_order&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>체계적으로 세분한 세 해로부터 관측 수렴 차수 p를 구한다(Celik 외 2008, 식 3).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p><code style="color:#22d3bf">phi</code> = (phi1, phi2, phi3) on grids 1 (finest) .. 3 (coarsest). The refinement is given by exactly one of <code style="color:#22d3bf">h</code> = (h1, h2, h3) representative cell sizes, <code style="color:#22d3bf">r</code> = (r21, r32) with r21 = h2/h1 and r32 = h3/h2, or <code style="color:#22d3bf">n_cells</code> = (N1, N2, N3) with <code style="color:#22d3bf">dim</code> (h from Celik eqs. (1)-(2)). With eps32 = phi3 - phi2 and eps21 = phi2 - phi1 (Step 3):</p>
+<p>p = |ln|eps32/eps21| + q(p)| / ln(r21)                       (3a)</p>
+<p>q(p) = ln((r21^p - s) / (r32^p - s))                          (3b)</p>
+<p>s = sign(eps32 / eps21)                                       (3c)</p>
+<p>solved by fixed-point iteration from the first term (q = 0) with <code style="color:#22d3bf">iterate_fixed_point</code> (plain, as the paper prescribes; |p_k+1 - p_k| &lt;= 1e-13, at most 1000 steps). q = 0 when r is constant. s = -1 flags <b>oscillatory convergence</b> (reported, not refused — Celik keeps the absolute values so the extrapolation goes toward h = 0).</p>
+<p><b>Refusal</b>: eps21 or eps32 &quot;very close&quot; to zero (|eps| &lt;= 1e-12 * max|phi|) — Celik: the procedure does not work there (oscillation or an exact solution; refine further) — and a fixed-point iteration for p that does not converge.</p>
+<p>Defaults: the first column of Celik et al. 2008 Table 1 (p = 1.53).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconverge:convergent_computation">convergent_computation 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• (아직 없음)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">verification</code>)</h3>
+<p><a style="color:#22d3bf" href="opconverge:conv_gci">conv_gci</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: converge.py — CONVERGE 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -7,17 +7,17 @@ out: sdf
 examples: [sdf_csg]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # plane_sdf — 3D `sdf_csg` op
 
 - **データ種**: `coordgrid` → `sdf`
-- **呼び出し**: `import fullseye as fs; fs.ledger.plane_sdf(grid, point, normal)` (実装を直接呼ぶなら `import sdf_ops; sdf_ops.plane_sdf(grid, point, normal)`、台帳から引くなら `ops3d.get("plane_sdf")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.plane_sdf(grid, point, normal, method='exact')` (実装を直接呼ぶなら `import sdf_ops; sdf_ops.plane_sdf(grid, point, normal, method='exact')`、台帳から引くなら `ops3d.get("plane_sdf")`)
 
 ## 使い方
 
-半空間(平面で切った側)の**厳密**な符号付き距離場(内側負・外側正)。
+半空間の厳密な符号付き距離場。``fast`` は1e6で相対差1.5e-10の選択式経路、既定は ``exact``。
 
 ``sdf(p) = (p - point) · n̂``。法線 ``n̂`` の**指す側が外側(正)**で、反対側が内側。
 面取り(chamfer)・切断・「基板から上だけ」のような**片側だけを残す**演算に使う。

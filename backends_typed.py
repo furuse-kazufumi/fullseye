@@ -187,6 +187,10 @@ _OP_BRIDGE_SKIP = {
     #   太陽の円盤も空と地形の境界も無いので、どちらも ValueError か意味の無い線になる(「走った」≠「意味のある出力」)。
     #   台帳(`fullseye.ledger.sun_pixel_position` / `skyline_extract`)からは写真を渡して使う。
     "sun_pixel_position", "skyline_extract",
+    # 2026-10-18 ロバストな断面フィルタ 2 本: 橋が a,b を最初の数値引数(次数 order・定数 c)へ振ると
+    # order=2 などの範囲外になり、ガウスの次数は連続量でない(1 次元の断面を 2-D 画像の行から取る意味も無い)。
+    # 台帳(`fullseye.ledger.robust_gaussian_profile` …)からは本物の断面を渡して使える。
+    "robust_gaussian_profile", "robust_spline_profile",
     # 2026-09-21 実データ回の 2 本: 模様の探針には飽和塊も時刻つきの候補列も無い。
     "sun_bloom_fit", "camera_orientation_from_sun_candidates",
     # 2026-10-14 重力波の 12 本。cavityoptics の 5 本は引数だけで描く側(画像を受けない)。
@@ -223,6 +227,12 @@ _OP_BRIDGE_SKIP = {
     # 2026-10-15 ピクセルシフト(pixelshift): 偽色の量は無彩色かどうかを測る表の op で、橋の汎用 rgbimage(0..1 の
     # 任意の色)に掛けても「入力の色の量」を返すだけ —— 進化の語彙として意味のある手にならない。台帳から使う。
     "false_color_metric",
+    # 2026-10-18 光学設計ファイル(.zmx)の読み書き 4 本(lensfile、lensfile): 処方(table)を読む・書く・分類する側で、
+    # 画像を受けない。
+    "lens_file_read",
+    "lens_file_system",
+    "lens_file_write",
+    "lens_file_report",
     # 2026-10-14 ステップ型ファイバとライトガイド 7 本(fiberoptics、fiber): 引数だけで表か曲線を返す側で、画像を受けない。
     "material_group_index",
     "material_gvd",
@@ -231,6 +241,10 @@ _OP_BRIDGE_SKIP = {
     "fiber_lp_modes",
     "fiber_mode_field_diameter",
     "fiber_bundle_coupling",
+    # 2026-10-15 仮想の透過電子顕微鏡 11 本(temsim、tem): 引数だけで表・CTF・試料を作る側と、投影ポテンシャル / 顕微鏡写真
+    # (V Å / 電子の数)を受ける側。一般の画像を投影ポテンシャルと読ませても意味が無いので、台帳から使う。
+    "tem_wavelength", "tem_scherzer", "tem_ctf", "tem_ctf_profile", "tem_projected_potential", "tem_amorphous_film",
+    "tem_image_weak_phase", "tem_multislice", "tem_power_spectrum", "tem_ctf_estimate", "tem_ctf_correct",
     # 2026-10-15 薄膜の分光反射率と膜厚 5 本(filmoptics、film): 曲線(pairs)か表を返す側。map は帯域画像の列を受けるが
     # 返すのは表(膜厚・残差・候補の数の地図の dict)で、単一画像の op ではない。
     "multilayer_reflectance",
@@ -248,6 +262,17 @@ _OP_BRIDGE_SKIP = {
     "moire_differential_shift",
     "moire_mark_read",
     "moire_phase_crlb",
+    # 2026-10-15 格子干渉 4 本(gratinginterf、grating_interf): 設計の表・位相ステップの画像列 (N, H, W) を作る側と、
+    # 2 組の画像列から 3 像を分ける側。橋が渡す汎用の 1 枚の画像には位相ステップの縞が無い。
+    "talbot_grating_design",
+    "grating_stepping_simulate",
+    "grating_three_image_retrieve",
+    "darkfield_scatter_relation",
+    # 2026-10-18 第 2 陣: 絨毯と線源は引数だけ、ステップ数の推定は縞の入った画像列、積分は幾何(画素・距離・周期・波長)が要る。
+    "talbot_carpet",
+    "talbot_source_visibility",
+    "grating_step_period_estimate",
+    "dpc_integrate",
     # 2026-10-15 クロマティック共焦点 6 本(chromconf、confocal): レンズの処方・較正表・スペクトル(pairs)を受ける側で、
     # 画像を受けない。台帳(`fullseye.ledger.chromatic_confocal_probe` …)から使う。
     "chromatic_confocal_probe",
@@ -556,6 +581,10 @@ OP_KNOB_RANGE = {
     #   ``_make_runner`` が整数に丸めて渡す。
     ("local_std", "window"): (3, 17),    # dsp.local_std は window >= 3(相対スケールだと a=0 で 2)
     ("fit_spline_curve", "k"): (1, 5),   # scipy splprep は 1 <= k <= 5(相対スケールだと a=1 で 6)
+    # ★2026-10-18: points_render の不透明度は (0, 1] —— 既定 1.0 の相対スケールは a > 0.5 で 1 を超えて拒否。
+    #   足跡の半径は 0.5〜4 画素(a=0.5 で 2.25)。
+    ("points_render", "radius_px"): (0.5, 4.0),
+    ("points_render", "opacity"): (0.1, 1.0),
 }
 
 

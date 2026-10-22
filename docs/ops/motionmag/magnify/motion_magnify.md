@@ -7,13 +7,13 @@ out: table
 examples: [motion_magnification, poc_motion_magnification, quaternion_monogenic]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # motion_magnify — MOTIONMAG `magnify` op
 
 - **データ種**: `video` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.motion_magnify(video, alpha, f_lo, f_hi, fps, scales: 'int' = 4, orientations: 'int' = 4) -> 'dict'` (実装を直接呼ぶなら `import motionmag; motionmag.motion_magnify(video, alpha, f_lo, f_hi, fps, scales: 'int' = 4, orientations: 'int' = 4) -> 'dict'`、台帳から引くなら `opsmotionmag.get("motion_magnify")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.motion_magnify(video, alpha, f_lo, f_hi, fps, scales: 'int' = 4, orientations: 'int' = 4, method: 'str' = 'exact') -> 'dict'` (実装を直接呼ぶなら `import motionmag; motionmag.motion_magnify(video, alpha, f_lo, f_hi, fps, scales: 'int' = 4, orientations: 'int' = 4, method: 'str' = 'exact') -> 'dict'`、台帳から引くなら `opsmotionmag.get("motion_magnify")`)
 
 ## 使い方
 

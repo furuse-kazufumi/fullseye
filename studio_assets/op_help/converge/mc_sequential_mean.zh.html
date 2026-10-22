@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">mc_sequential_mean — CONVERGE <code style="color:#22d3bf">montecarlo</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mc_sequential_mean(sampler=&#x27;pi&#x27;, tol=0.01, rel_tol=0.0, confidence=0.95, batch=4096, max_samples=4000000, seed=0, on_fail=&#x27;raise&#x27;, history_stride=1) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import converge; converge.mc_sequential_mean(sampler=&#x27;pi&#x27;, tol=0.01, rel_tol=0.0, confidence=0.95, batch=4096, max_samples=4000000, seed=0, on_fail=&#x27;raise&#x27;, history_stride=1) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsconverge.get(&quot;mc_sequential_mean&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>序贯蒙特卡罗均值：不断加样本，直到置信区间窄于容许值。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p><code style="color:#22d3bf">sampler(rng, n)</code> returns n i.i.d. samples (a 1-D array) — or the built-in <code style="color:#22d3bf">&quot;pi&quot;</code> (4 * [u^2 + v^2 &lt;= 1], mean pi). Batch b is drawn from <code style="color:#22d3bf">default_rng((seed, b))</code>, so the result is reproducible and does not depend on how many batches came before.</p>
+<p>Stops at the first batch boundary, from the second batch on, where the half-width z * s / sqrt(n) &lt;= <code style="color:#22d3bf">tol</code> + <code style="color:#22d3bf">rel_tol</code> * |mean| (z from <code style="color:#22d3bf">confidence</code>; s the running sample standard deviation). This is the fixed-width sequential interval of Chow &amp; Robbins 1965; never stopping inside the first two batches guards against an early, accidentally small variance (raise <code style="color:#22d3bf">batch</code> to guard more) — the actual coverage is checked by the gates, not assumed.</p>
+<p>Returns <code style="color:#22d3bf">mean</code>, <code style="color:#22d3bf">se</code>, <code style="color:#22d3bf">ci</code> (lower, upper), <code style="color:#22d3bf">half_width</code>, <code style="color:#22d3bf">n_samples</code> (used), <code style="color:#22d3bf">converged</code> and <code style="color:#22d3bf">history</code> (n, mean, se per batch). <b>Refusal</b>: <code style="color:#22d3bf">max_samples</code> reached first raises <code style="color:#22d3bf">NotConvergedError</code> (<code style="color:#22d3bf">on_fail=&quot;record&quot;</code> returns the record with <code style="color:#22d3bf">mean = None</code> and the running values under <code style="color:#22d3bf">last_mean</code> / <code style="color:#22d3bf">last_se</code>).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconverge:convergent_computation">convergent_computation 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• (暂无)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">montecarlo</code>)</h3>
+<p><a style="color:#22d3bf" href="opconverge:mc_photon_slab">mc_photon_slab</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: converge.py — CONVERGE 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

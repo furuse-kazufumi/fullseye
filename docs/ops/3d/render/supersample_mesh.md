@@ -7,7 +7,7 @@ out: image2d
 examples: [render_ssaa]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # supersample_mesh — 3D `render` op
@@ -56,7 +56,7 @@ Fail-closed: ``ss`` は 1 以上の整数、``size`` は正、``size*ss`` の総
 
 ## 同カテゴリ(`render`)
 
-[project_points](project_points.md) · [render_point_depth](render_point_depth.md) · [render_volume_projection](render_volume_projection.md) · [render_shaded](render_shaded.md) · [ambient_occlusion](ambient_occlusion.md) · [cast_shadow](cast_shadow.md) · [phong_shade](phong_shade.md) · [matcap_shade](matcap_shade.md)
+[project_points](project_points.md) · [render_point_depth](render_point_depth.md) · [points_render](points_render.md) · [render_volume_projection](render_volume_projection.md) · [render_shaded](render_shaded.md) · [ambient_occlusion](ambient_occlusion.md) · [cast_shadow](cast_shadow.md) · [phong_shade](phong_shade.md)
 
 ---
 *Provenance: render_ssaa.py — 3D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

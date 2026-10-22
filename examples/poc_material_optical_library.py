@@ -1,5 +1,5 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
-"""PoC: 材料の光学物性ライブラリ —— 硝材・結晶・半導体・金属・液体・プラスチック 83 種を 1 つの表にし、
+"""PoC: 材料の光学物性ライブラリ —— 硝材・結晶・半導体・金属・液体・プラスチック 86 種を 1 つの表にし、
 カタログ公表値と第二実装で採点する。
 
 【問い】観察用の光学系(レンズ・窓・鏡・膜)と観察対象(ウェハ・モールド・はんだ)は、どちらも材料の
@@ -155,7 +155,7 @@ def chapter_glass():
     cat = MT.material_table()
     print("   同梱 %d 材料: %s" % (len(cat), ", ".join("%s %d" % (c, sum(r["class"] == c for r in cat))
                                                    for c in MT.CLASSES[:-1])))
-    gate("同梱の材料は 83 種(硝材 46・結晶 12・半導体 6・膜 4・金属 10・液体 1・高分子 4)", len(cat) == 83
+    gate("同梱の材料は 86 種(硝材 46・結晶 12・半導体 6・膜 7・金属 10・液体 1・高分子 4)", len(cat) == 86
          and sum(r["class"] == "glass" for r in cat) == 46)
     rec = MT.material_record("SI")
     print("   例: Si のレコード = %s、区間 %s" % (rec["class"], ", ".join("%s %s %.3g-%.3g µm (%s)" % (
@@ -432,14 +432,14 @@ def chapter_shared():
          worst_n < 1e-6 and worst_k < 2e-5, "n 最大 %.1e・k 相対 %.1e" % (worst_n, worst_k))
     coarse, measured, dmax = {}, {}, {}
     for m in GM.METALS:
-        n1, k1 = GM.metal_optical_constants(m, w)
+        n1, k1 = GM.metal_optical_constants(m, w, source="table")
         n2, k2 = GM.metal_optical_constants(m, w, source="materials")
         coarse[m] = np.asarray(GM.fresnel_conductor(1.0, n1, k1), dtype=np.float64)
         measured[m] = np.asarray(GM.fresnel_conductor(1.0, n2, k2), dtype=np.float64)
         i = int(np.argmax(np.abs(coarse[m] - measured[m])))
         dmax[m] = (float(abs(coarse[m][i] - measured[m][i])), float(w[i]))
     NUMBERS["coarse_worst"] = max(v[0] for v in dmax.values())
-    rgb_t = {m: np.asarray(GM.metal_mirror_rgb(m), dtype=np.float64) for m in GM.METALS}
+    rgb_t = {m: np.asarray(GM.metal_mirror_rgb(m, source="table"), dtype=np.float64) for m in GM.METALS}
     rgb_m = {m: np.asarray(GM.metal_mirror_rgb(m, source="materials"), dtype=np.float64) for m in GM.MEASURED_METALS}
     warm = all(c["au"][0] > c["au"][1] > c["au"][2] and c["cu"][0] > c["cu"][1] > c["cu"][2] for c in (rgb_t, rgb_m))
     gate("粗い表(5 点)と実測の表で、金・銅は両方とも R > G > B(色の順序は表の粗さに依らない)", warm,
@@ -456,9 +456,11 @@ def chapter_shared():
     mat = OS.scene_material("dielectric", glass=G883408)
     nrgb = np.array([RT.refractive_index(G883408, u) for u in OS._RGB_UM])
     met = OS.scene_material("conductor", metal="pt", metal_source="materials")
-    gate("観察対象の材質(optscene)も同じ表: 別のカタログの硝材の n_RGB は raytrace と一致、Pt の材質は実測の表で作れる",
-         np.array_equal(mat["n_rgb"], nrgb) and met["metal_source"] == "materials" and _refuses(
-             lambda: OS.scene_material("conductor", metal="pt")), "n_RGB %s" % np.round(mat["n_rgb"], 4))
+    # 2026-10-15: scene_material の金属の既定は実測の表(glassmirror の既定と同じ)。粗い表を選んだときだけ Pt を拒む
+    gate("観察対象の材質(optscene)も同じ表: 別のカタログの硝材の n_RGB は raytrace と一致、Pt の材質は実測の表(既定)で作れ、粗い表では拒む",
+         np.array_equal(mat["n_rgb"], nrgb) and met["metal_source"] == "materials"
+         and OS.scene_material("conductor", metal="pt")["metal_source"] == "materials" and _refuses(
+             lambda: OS.scene_material("conductor", metal="pt", metal_source="table")), "n_RGB %s" % np.round(mat["n_rgb"], 4))
     return lens, coarse, measured, w, rgb_t, rgb_m, r550
 
 

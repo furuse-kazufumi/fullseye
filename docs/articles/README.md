@@ -28,11 +28,11 @@ All figures are regenerable with `py -3.11 tools/gen_article_assets.py`
 
 <!-- articles:start -->
 
-## この下にあるもの(全 62 本 —— 生成)
+## この下にあるもの(全 66 本 —— 生成)
 
 `py -3.11 tools/gen_docs_index_ops.py` が `docs/articles/` を歩いて作ります。**ここから辿れない文書を作らない**ための一覧なので、手で足し引きしないでください。
 
-**記事**(26) —— 記事本文。長文の原稿はここが正本で、Qiita などへはここから出す。
+**記事**(30) —— 記事本文。長文の原稿はここが正本で、Qiita などへはここから出す。
 
 | ファイル | 見出し |
 |---|---|
@@ -42,6 +42,8 @@ All figures are regenerable with `py -3.11 tools/gen_article_assets.py`
 | [`LINKEDIN_POST_msa.md`](LINKEDIN_POST_msa.md) | LinkedIn 投稿キット(測る側を測る —— 規格の公表値が 5 件を出した話) |
 | [`fullseye_overview_qiita_en.md`](fullseye_overview_qiita_en.md) | Carrying ~1,000 Explainable Classical Vision Algorithms as "Skills" — Building Fullseye, a Self-Made Vision Workshop ... |
 | [`fullseye_overview_qiita_ja.md`](fullseye_overview_qiita_ja.md) | 説明できる古典画像処理を「スキル」として1000個持ち歩く ―― Physical AI のための自作ビジョン工房 **Fullseye** をつくっている話 |
+| [`fullseye_poc_museum_device_qiita_en.md`](fullseye_poc_museum_device_qiita_en.md) | A Metrology Museum on Paper — The Instrument Wing (sensors and instruments reproduced from physics) |
+| [`fullseye_poc_museum_device_qiita_ja.md`](fullseye_poc_museum_device_qiita_ja.md) | 紙面の計測館 —— 装置の棟(センサーと計測器を物理から再現する) |
 | [`fullseye_poc_museum_how_qiita_en.md`](fullseye_poc_museum_how_qiita_en.md) | A Metrology Museum on Paper — The How-It-Is-Measured Wing (restoration, space-time, calibration, colour, forensics, 3... |
 | [`fullseye_poc_museum_how_qiita_ja.md`](fullseye_poc_museum_how_qiita_ja.md) | 紙面の計測館 —— どう測るかの棟(撮像品質・時系列・幾何校正・色・法科学・3-D 形状) |
 | [`fullseye_poc_museum_qiita_en.md`](fullseye_poc_museum_qiita_en.md) | A Metrology Museum on Paper — Planting Your Own Ground Truth to Find Where Image Measurement Breaks |
@@ -60,6 +62,8 @@ All figures are regenerable with `py -3.11 tools/gen_article_assets.py`
 | [`qiita_math_drawing_ja.md`](qiita_math_drawing_ja.md) | 数学の絵は、きれいなので誰も確かめない ―― 定理を門にして描く PoC シリーズ |
 | [`qiita_measuring_the_measurement_en.md`](qiita_measuring_the_measurement_en.md) | I Got All 52 Tests Green, Then Checked Against the Standard’s Own Answers — 5 Failed |
 | [`qiita_measuring_the_measurement_ja.md`](qiita_measuring_the_measurement_ja.md) | 検査 52 件を全部緑にしてから、規格の答えと突き合わせたら 5 件落ちた —— 測る側を測る話 |
+| [`qiita_simcal_series_en.md`](qiita_simcal_series_en.md) | A Good Fit Is Not a Right Answer: Calibrating Physics-Model Coefficients to Real Images, Starting from Multivariate A... |
+| [`qiita_simcal_series_ja.md`](qiita_simcal_series_ja.md) | 実写に合わせて物理モデルの係数を決める ―― 多変量解析から入る sim-to-real 較正 |
 | [`qiita_table_tennis_en.md`](qiita_table_tennis_en.md) | A Table-Tennis Ball Bounces, So a Tracker That Ignores Physics Misses the Landing Point by 20 cm — A PoC Series That ... |
 | [`qiita_table_tennis_ja.md`](qiita_table_tennis_ja.md) | 卓球の球は跳ねるので、物理を知らない追跡は着地点を 20 cm 外す ―― 跳ねと摩擦を映像から測る PoC シリーズ |
 

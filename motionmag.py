@@ -266,9 +266,41 @@ def _require_video(video, name: str, op: str, max_elements: int,
     Accepts a 3-D array-like or a list/tuple of equal-shape 2-D frames — the same
     contract :mod:`videops` documents — and adds the size caps and the
     complex/masked refusals this module needs."""
+    def validate_shape(shape, dtype):
+        if len(shape) != 3:
+            raise ValueError("%s: %s must be a (T, H, W) clip, got a %d-D array of shape %r"
+                             % (op, name, len(shape), tuple(shape)))
+        t, h, w = shape
+        if t > MAX_FRAMES:
+            raise ValueError("%s: %s has T=%d frames, over the %d cap (motionmag.MAX_FRAMES)"
+                             % (op, name, t, MAX_FRAMES))
+        if h * w > MAX_FRAME_PIXELS:
+            raise ValueError("%s: %s frames are %dx%d = %d pixels, over the %d cap "
+                             "(motionmag.MAX_FRAME_PIXELS)"
+                             % (op, name, h, w, h * w, MAX_FRAME_PIXELS))
+        elements = int(t) * int(h) * int(w)
+        if elements > np.iinfo(np.int64).max:
+            raise ValueError("%s: %s shape %r overflows an int64 element count (dtype %s)"
+                             % (op, name, tuple(shape), np.dtype(dtype)))
+        estimated_bytes = elements * np.dtype(np.float64).itemsize
+        if elements > max_elements:
+            raise ValueError(
+                "%s: %s shape %r dtype %s has %d elements; estimated float64 copy "
+                "is %d bytes, over the %d-element cap"
+                % (op, name, tuple(shape), np.dtype(dtype), elements,
+                   estimated_bytes, max_elements))
+
     if isinstance(video, (list, tuple)):
         if not video:
             raise ValueError("%s: %s is an empty frame list" % (op, name))
+        raw_shapes = [np.shape(f) for f in video]
+        if any(len(shape) != 2 for shape in raw_shapes):
+            raise ValueError("%s: every %s frame must be 2-D" % (op, name))
+        if len(set(raw_shapes)) != 1:
+            raise ValueError("%s: %s frames have differing shapes: %r"
+                             % (op, name, sorted(set(raw_shapes))))
+        raw_dtype = np.result_type(*[np.asarray(f).dtype for f in video])
+        validate_shape((len(video),) + raw_shapes[0], raw_dtype)
         frames = []
         for i, f in enumerate(video):
             if np.ma.is_masked(f):
@@ -290,6 +322,7 @@ def _require_video(video, name: str, op: str, max_elements: int,
                              % (op, name, sorted(shapes)))
         vid = np.stack(frames, axis=0)
     else:
+        validate_shape(np.shape(video), np.asarray(video).dtype)
         if np.ma.is_masked(video):
             raise ValueError("%s: %s is a masked array with masked entries — "
                              "fill or drop them explicitly" % (op, name))
@@ -679,6 +712,14 @@ def complex_steerable_decompose(image, scales: int = 4,
     References: Freeman & Adelson, IEEE PAMI 1991; Simoncelli & Freeman,
     ICIP 1995; Portilla & Simoncelli, IJCV 2000."""
     op = "complex_steerable_decompose"
+    raw_shape = np.shape(image)
+    if len(raw_shape) != 2:
+        raise ValueError("%s: image must be 2-D (H, W), got shape %r"
+                         % (op, tuple(raw_shape)))
+    h, w = raw_shape
+    if h * w > MAX_FRAME_PIXELS:
+        raise ValueError("%s: image is %dx%d = %d pixels, over the %d cap"
+                         % (op, h, w, h * w, MAX_FRAME_PIXELS))
     if np.ma.is_masked(image):
         raise ValueError("%s: image is a masked array with masked entries — fill "
                          "or drop them explicitly" % (op,))
@@ -750,6 +791,9 @@ def complex_steerable_reconstruct(decomposition) -> np.ndarray:
                          % (op, len(bands), ns, no, expected))
     acc = np.zeros((h, w), np.complex128)
     for j, band in enumerate(bands):
+        if np.shape(band) != (h, w):
+            raise ValueError("%s: band %d has shape %r, expected %r"
+                             % (op, j, np.shape(band), (h, w)))
         arr = np.ascontiguousarray(band, dtype=np.complex128)
         if arr.shape != (h, w):
             raise ValueError("%s: band %d has shape %r, expected %r"
@@ -764,7 +808,7 @@ def complex_steerable_reconstruct(decomposition) -> np.ndarray:
 # --------------------------------------------------------------------------- #
 # Temporal band selection                                                       #
 # --------------------------------------------------------------------------- #
-def temporal_bandpass(video, f_lo, f_hi, fps) -> np.ndarray:
+def temporal_bandpass(video, f_lo, f_hi, fps, method="exact") -> np.ndarray:
     """Ideal temporal band-pass of every pixel's time series -> ``(T, H, W)``.
 
     Each pixel is transformed along time, every DFT bin whose frequency lies
@@ -786,6 +830,15 @@ def temporal_bandpass(video, f_lo, f_hi, fps) -> np.ndarray:
     op = "temporal_bandpass"
     vid = _require_video(video, "video", op, MAX_VIDEO_ELEMENTS)
     _lo, _hi, _fs, mask, _freq = _require_band(f_lo, f_hi, fps, vid.shape[0], op)
+    if method == "fast":
+        freq = np.fft.rfftfreq(vid.shape[0], d=1.0 / _fs)
+        keep = (freq >= _lo) & (freq <= _hi)
+        keep[0] = False
+        spec = np.fft.rfft(vid, axis=0)
+        spec[~keep] = 0.0
+        return np.fft.irfft(spec, n=vid.shape[0], axis=0)
+    if method != "exact":
+        raise ValueError("method must be 'exact' or 'fast'")
     spec = np.fft.fft(vid, axis=0)
     spec[~mask] = 0.0
     return np.real(np.fft.ifft(spec, axis=0))
@@ -889,7 +942,7 @@ def band_snr(video, f_lo, f_hi, fps) -> dict:
 # Magnification                                                                 #
 # --------------------------------------------------------------------------- #
 def motion_magnify(video, alpha, f_lo, f_hi, fps, scales: int = 4,
-                   orientations: int = 4) -> dict:
+                   orientations: int = 4, method: str = "exact") -> dict:
     """Scale the in-band motion of a clip by *alpha* -> ``dict``.
 
     For every oriented sub-band of every frame the local phase is taken relative
@@ -1006,6 +1059,8 @@ def motion_magnify(video, alpha, f_lo, f_hi, fps, scales: int = 4,
     ns = _count(scales, "scales", 1, MAX_SCALES)
     no = _count(orientations, "orientations", 1, MAX_ORIENTATIONS)
     bank = _filter_bank(h, w, ns, no)
+    if method not in ("exact", "fast"):
+        raise ValueError("method must be 'exact' or 'fast'")
 
     gain = a - 1.0
     scale = float(np.abs(vid).max())
@@ -1017,6 +1072,9 @@ def motion_magnify(video, alpha, f_lo, f_hi, fps, scales: int = 4,
     coh_num = 0.0           # contrast-weighted reference coherence |z_mean|/mean|z|
     coh_den = 0.0
     for j, filt in enumerate(bank["filters"]):
+        if method == "fast" and (bank["kinds"][j] != _ORIENTED or gain == 0.0):
+            acc += spec * (filt * filt)[None]
+            continue
         sub = np.fft.ifft2(spec * filt[None], axes=(1, 2))
         if bank["kinds"][j] == _ORIENTED and gain != 0.0:
             ref = sub.mean(axis=0)
@@ -1250,14 +1308,17 @@ def phase_displacement(video, f_lo, f_hi, fps, scales: int = 4,
     # Full-rank branch: the ordinary 2x2 inverse.
     det = a00 * a11 - a01 * a01
     s_det = np.where(rank2, det, 1.0)
-    dx_full = (a11[None] * b0 - a01[None] * b1) / s_det[None]
-    dy_full = (a00[None] * b1 - a01[None] * b0) / s_det[None]
+    dx = np.zeros_like(b0)
+    dy = np.zeros_like(b1)
+    dx[:, rank2] = ((a11[rank2][None] * b0[:, rank2]
+                     - a01[rank2][None] * b1[:, rank2]) / s_det[rank2][None])
+    dy[:, rank2] = ((a00[rank2][None] * b1[:, rank2]
+                     - a01[rank2][None] * b0[:, rank2]) / s_det[rank2][None])
     # Rank-1 branch: project the right-hand side onto the observable direction.
     proj = (vx[None] * b0 + vy[None] * b1) / s_lam1[None]
-    dx_rank1 = proj * vx[None]
-    dy_rank1 = proj * vy[None]
-    dx = np.where(rank2[None], dx_full, np.where(alive[None], dx_rank1, 0.0))
-    dy = np.where(rank2[None], dy_full, np.where(alive[None], dy_rank1, 0.0))
+    rank1 = alive & ~rank2
+    dx[:, rank1] = proj[:, rank1] * vx[rank1][None]
+    dy[:, rank1] = proj[:, rank1] * vy[rank1][None]
     if not (np.isfinite(dx).all() and np.isfinite(dy).all()):
         raise ValueError("%s: the least-squares solve produced non-finite "
                          "displacements — this is a bug in the rank guard, not "

@@ -150,7 +150,14 @@ def graph_cycle3(adj):
     B = _as_binary_adjacency(adj, "adj", op)
     np.fill_diagonal(B, 0)
     M = B.astype(np.int64)
-    c3 = int(np.trace(M @ M @ M)) // 3
+    # trace((M @ M) @ M) == sum((M @ M) * M.T).  Keeping int64 preserves
+    # the old overflow boundary while avoiding the second dense matrix product.
+    if np.count_nonzero(B) < B.size // 20 and B.shape[0] >= 128:
+        from scipy.sparse import csr_matrix
+        S = csr_matrix(M)
+        c3 = int(S.T.multiply(S @ S).sum()) // 3
+    else:
+        c3 = int(np.sum((M @ M) * M.T, dtype=np.int64)) // 3
     return {"cycles3": c3, "n": int(B.shape[0])}
 
 
@@ -222,7 +229,7 @@ def graph_degree_preserving_null(adj, n_samples=20, swaps_per_edge=5, seed=0):
         raise ValueError("%s: need at least 2 edges to swap, got %d" % (op, E))
     kin, kout = B.sum(axis=0), B.sum(axis=1)
     M = B.astype(np.int64)
-    c3 = int(np.trace(M @ M @ M)) // 3
+    c3 = int(np.sum((M @ M) * M.T)) // 3
     rec = int((B * B.T).sum()) // 2
     rng = np.random.default_rng(seed)
     null_c3, null_rec, accepted = [], [], []
@@ -234,7 +241,7 @@ def graph_degree_preserving_null(adj, n_samples=20, swaps_per_edge=5, seed=0):
             raise ValueError("%s: a null sample changed the degree sequence — the "
                              "rewiring is broken, refusing to report ratios" % op)
         RM = R.astype(np.int64)
-        null_c3.append(int(np.trace(RM @ RM @ RM)) // 3)
+        null_c3.append(int(np.sum((RM @ RM) * RM.T)) // 3)
         null_rec.append(int((R * R.T).sum()) // 2)
     c3m, c3s = float(np.mean(null_c3)), float(np.std(null_c3, ddof=1))
     rm, rs = float(np.mean(null_rec)), float(np.std(null_rec, ddof=1))
@@ -288,12 +295,20 @@ def graph_swap_symmetry(adj, pairs):
             raise ValueError("%s: node %d or %d appears in more than one pair" % (op, i, j))
         seen.add(i); seen.add(j)
         perm[i], perm[j] = j, i
-    Bm = B[np.ix_(perm, perm)]
-    shared = int(((B == 1) & (Bm == 1)).sum())
-    union = int(((B == 1) | (Bm == 1)).sum())
+    edges = int(B.sum())
+    # Below 25% density, checking only existing edges avoids constructing and
+    # comparing two full matrices.  Dense inputs retain the vectorized path.
+    if edges < B.size // 4:
+        row, col = np.nonzero(B)
+        shared = int(B[perm[row], perm[col]].sum())
+        union = 2 * edges - shared
+    else:
+        Bm = B[np.ix_(perm, perm)]
+        shared = int(((B == 1) & (Bm == 1)).sum())
+        union = int(((B == 1) | (Bm == 1)).sum())
     return {
         "jaccard": shared / union if union else 1.0,
-        "shared": shared, "union": union, "edges": int(B.sum()),
+        "shared": shared, "union": union, "edges": edges,
         "n_pairs": len(seen) // 2,
     }
 
@@ -388,9 +403,12 @@ def graph_edge_consensus(adjs, ordered=False, n_null=0, swaps_per_edge=5, seed=0
         for j in range(K):
             u = E[i] + E[j] - inter[i, j]
             J[i, j] = inter[i, j] / u if u else 1.0
-    S = np.stack(W).sum(axis=0)                                    # synapses summed over individuals
+    S = np.zeros_like(W[0])
+    for w in W:
+        S += w                                                     # synapses summed over individuals
     tot = float(S.sum())
-    share = [float(S[occ == c].sum() / tot) if c > 0 else 0.0 for c in range(K + 1)]
+    sums = np.bincount(occ.ravel(), weights=S.ravel(), minlength=K + 1)
+    share = [float(sums[c] / tot) if c > 0 else 0.0 for c in range(K + 1)]
     out = {
         "k": K, "n": int(n), "names": names,
         "edges_per_individual": [int(e) for e in E], "union": union,
@@ -636,13 +654,16 @@ def _rich_club_phi(B: np.ndarray, deg: np.ndarray, ks: np.ndarray) -> tuple:
     cnt = np.zeros(len(ks), dtype=np.int64)
     order = np.argsort(-deg)
     dsorted = deg[order]
+    prefix_edges = np.zeros(len(order) + 1, dtype=np.int64)
+    for r, v in enumerate(order, 1):
+        prior = order[:r - 1]
+        prefix_edges[r] = prefix_edges[r - 1] + B[v, prior].sum() + B[prior, v].sum()
     for i, k in enumerate(ks):
-        r = int((dsorted > k).sum())
+        r = int(np.searchsorted(-dsorted, -k, side="left"))
         cnt[i] = r
         if r < 2:
             continue
-        idx = order[:r]
-        phi[i] = float(B[np.ix_(idx, idx)].sum()) / float(r * (r - 1))
+        phi[i] = float(prefix_edges[r]) / float(r * (r - 1))
     return phi, cnt
 
 

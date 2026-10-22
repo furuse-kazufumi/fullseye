@@ -8,7 +8,7 @@ halcon: label_to_region
 examples: [gallery2d_region]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # r3_label_to_region — 2D `region` op
@@ -38,6 +38,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 ラベル画像から 1 つのグレー値（ラベル）を持つ画素だけを抽出する（HALCON``label_to_region`` に相当）。
 
 入力を 3 桁に丸めた上で 0 より大きい値をラベルとみなし、昇順に並べた``round(a * (ラベル数-1))`` 番目のラベルを選んで、その値を持つ画素を領域として返す。``b`` は未使用。単純な 0/1 マスクはラベルが 1 つしか無いので常にその前景が返る。
+
+**つまみ(実測)**: ``a`` を 0 から 1 まで振っても**出力は変わらない**(実測。5 種類の入力で確認)。
 
 ## 詳しい使い方ガイド
 

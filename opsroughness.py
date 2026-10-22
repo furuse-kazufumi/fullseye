@@ -58,6 +58,10 @@ _CATALOG = {
     "prepare": [
         ("surface_form_remove", "roughness", ["depth"], "depth"),
         ("surface_filter", "roughness", ["depth"], "depth"),
+        # ロバスト版(外れ値・傷に引きずられない平均線)。2026-10-18。
+        ("robust_gaussian_profile", "roughness", ["signal"], "signal"),
+        ("robust_spline_profile", "roughness", ["signal"], "signal"),
+        ("robust_gaussian_surface", "roughness", ["depth"], "depth"),
     ],
     # 計測 —— パラメータとスペクトル。
     "measure": [
@@ -91,6 +95,9 @@ RESULT_ADAPTERS = {
     "surface_synth_psd": lambda r: r[0],      # (z, sq_analytic)
     "surface_form_remove": lambda r: r[0],    # (residual, coeffs)
     "surface_filter": lambda r: r[0],         # (roughness, waviness)
+    "robust_gaussian_profile": lambda r: r[0],   # (roughness, mean_line, info)
+    "robust_spline_profile": lambda r: r[0],     # (roughness, mean_line, info)
+    "robust_gaussian_surface": lambda r: r[0],   # (roughness, mean_surface, info)
     "surface_psd": lambda r: __import__("numpy").c_[r[0], r[1]],   # (q, C) -> (N,2)
 }
 

@@ -17,7 +17,7 @@
 <p>quantity:     &quot;reflectance&quot; / &quot;transmittance&quot;(基板の中へ入る割合)/ &quot;absorptance&quot;(層での吸収 = 1 − R − T)。</p>
 <p>粗さ &gt; 0 では T と A を出さない(散乱光の行き先をこのモデルは持たない → ValueError)。</p>
 <p>返り値: (K, 2) の pairs。</p>
-<p>真値: 1 層なら <code style="color:#22d3bf">matappear.thin_film_reflectance</code>(Airy の式、別実装)と一致する。膜厚 0 は裸の基板の Fresnel、λ/4 の AR 膜(n = √n_sub)は設計波長で R = 0、(HL)^N の鏡は閉形式 ((1 − q)/(1 + q))²、q = (n_s/n₀)(n_H/n_L)^{2N}(H が入射側)。吸収の無い積層では R + T = 1。</p>
+<p>真値: 1 層なら Airy の閉じた式(テストと PoC に独立に書いた式)と一致する。膜厚 0 は裸の基板の Fresnel、λ/4 の AR 膜(n = √n_sub)は設計波長で R = 0、(HL)^N の鏡は閉形式 ((1 − q)/(1 + q))²、q = (n_s/n₀)(n_H/n_L)^{2N}(H が入射側)。吸収の無い積層では R + T = 1。</p>
 <p>&gt;&gt;&gt; p = multilayer_reflectance([(&quot;SIO2&quot;, 500.0)], &quot;SI&quot;, 400.0, 800.0, 5)</p>
 <p>&gt;&gt;&gt; p.shape</p>
 <p>(5, 2)</p>
@@ -37,9 +37,10 @@
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_simcal_thin_film">poc_simcal_thin_film</a> — <code style="color:#22d3bf">py -3.11 examples/poc_simcal_thin_film.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_thin_film_reflectometry">poc_thin_film_reflectometry</a> — <code style="color:#22d3bf">py -3.11 examples/poc_thin_film_reflectometry.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">pairs</code> を入力に取れる)</h3>
-<p><a style="color:#22d3bf" href="opoptics:mtf50">mtf50</a> · <a style="color:#22d3bf" href="opoptics:energy_to_photons">energy_to_photons</a> · <a style="color:#22d3bf" href="opoptics:spectral_product">spectral_product</a> · <a style="color:#22d3bf" href="opoptics:spectral_integral">spectral_integral</a> · <a style="color:#22d3bf" href="opoptics:spectral_stats">spectral_stats</a> · <a style="color:#22d3bf" href="opoptics:kubelka_munk_reflectance">kubelka_munk_reflectance</a> · <a style="color:#22d3bf" href="opoptics:hyperspectral_capture">hyperspectral_capture</a> · <a style="color:#22d3bf" href="opoptics:film_thickness_fft">film_thickness_fft</a></p>
+<p><a style="color:#22d3bf" href="opoptics:mtf50">mtf50</a> · <a style="color:#22d3bf" href="opoptics:energy_to_photons">energy_to_photons</a> · <a style="color:#22d3bf" href="opoptics:spectral_product">spectral_product</a> · <a style="color:#22d3bf" href="opoptics:spectral_integral">spectral_integral</a> · <a style="color:#22d3bf" href="opoptics:spectral_integral_table">spectral_integral_table</a> · <a style="color:#22d3bf" href="opoptics:spectral_stats">spectral_stats</a> · <a style="color:#22d3bf" href="opoptics:kubelka_munk_reflectance">kubelka_munk_reflectance</a> · <a style="color:#22d3bf" href="opoptics:hyperspectral_capture">hyperspectral_capture</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">film</code>)</h3>
 <p><a style="color:#22d3bf" href="opoptics:film_color">film_color</a> · <a style="color:#22d3bf" href="opoptics:film_thickness_fft">film_thickness_fft</a> · <a style="color:#22d3bf" href="opoptics:film_thickness_fit">film_thickness_fit</a> · <a style="color:#22d3bf" href="opoptics:film_thickness_map">film_thickness_map</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">

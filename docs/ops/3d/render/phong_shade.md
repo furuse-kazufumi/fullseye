@@ -7,7 +7,7 @@ out: image2d
 examples: [render_beauty, render_shade]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # phong_shade — 3D `render` op
@@ -62,7 +62,7 @@ fail-closed: 形状不正・非有限・ゼロ長方向・非正の ``shininess`
 
 ## 同カテゴリ(`render`)
 
-[project_points](project_points.md) · [render_point_depth](render_point_depth.md) · [render_volume_projection](render_volume_projection.md) · [render_shaded](render_shaded.md) · [ambient_occlusion](ambient_occlusion.md) · [cast_shadow](cast_shadow.md) · [matcap_shade](matcap_shade.md) · [supersample_mesh](supersample_mesh.md)
+[project_points](project_points.md) · [render_point_depth](render_point_depth.md) · [points_render](points_render.md) · [render_volume_projection](render_volume_projection.md) · [render_shaded](render_shaded.md) · [ambient_occlusion](ambient_occlusion.md) · [cast_shadow](cast_shadow.md) · [matcap_shade](matcap_shade.md)
 
 ---
 *Provenance: render_shade.py — 3D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

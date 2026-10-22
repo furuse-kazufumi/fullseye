@@ -410,7 +410,7 @@ def apply_cmap(x, name: str = "viridis", vmin=None, vmax=None, invalid=(0, 0, 0)
     return rgb
 
 
-def colorize_depth(depth, name="viridis", **kw):
+def colorize_depth(depth, name="turbo", **kw):
     """Colourise a depth map; ``inf``/unknown -> black.
 
     ★2026-09-08: ``vmin`` / ``vmax`` / ``norm`` / ``levels`` / ``under`` / ``over``
@@ -709,6 +709,11 @@ def save(path: str, arr, depth=None) -> None:
     instead of failing inside OpenCV.
     """
     import os
+    # ★2026-10-18(外部レビュー 0.6.0 N209): 順は save(path, arr)。逆に呼ぶと「path must be ... got ndarray」で
+    #   止まってはいたが、逆順だとは言わなかった。配列が path に、文字列が arr に来たら、それを言う。
+    if isinstance(path, np.ndarray) and isinstance(arr, (str, os.PathLike)):
+        raise TypeError("save(path, arr, depth=None): arguments look swapped -- got path=ndarray and arr=%r; "
+                        "the file path comes first: save(%r, <array>)" % (os.fspath(arr), os.fspath(arr)))
     ext = os.path.splitext(os.fspath(path) if isinstance(path, (str, os.PathLike)) else "")[1].lower()
     _check_write_target(path, ext)
     a0 = np.asarray(arr)

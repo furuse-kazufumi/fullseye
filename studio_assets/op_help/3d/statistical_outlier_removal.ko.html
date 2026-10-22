@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">statistical_outlier_removal — 3D <code style="color:#22d3bf">preprocess</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
-<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.statistical_outlier_removal(points, k: &#x27;int&#x27; = 16, std_ratio: &#x27;float&#x27; = 2.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pcl_filter; pcl_filter.statistical_outlier_removal(points, k: &#x27;int&#x27; = 16, std_ratio: &#x27;float&#x27; = 2.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;statistical_outlier_removal&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.statistical_outlier_removal(points, k: &#x27;int&#x27; = 16, std_ratio: &#x27;float&#x27; = 2.0, chunk: &#x27;int | None&#x27; = None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pcl_filter; pcl_filter.statistical_outlier_removal(points, k: &#x27;int&#x27; = 16, std_ratio: &#x27;float&#x27; = 2.0, chunk: &#x27;int | None&#x27; = None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;statistical_outlier_removal&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.statistical_outlier_removal(...)</code> 는 <b>선언된 out 형 <code style="color:#22d3bf">points</code> 의 값만</b> 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.statistical_outlier_removal.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">pcl_filter.statistical_outlier_removal</code> 를 직접 호출하세요.</p>
 <p style="margin:2px 0 2px 12px">• 실제 반환: <code style="color:#22d3bf">(kept, mask)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
@@ -14,6 +14,8 @@
 <p>근방 수(기본값 16). 점 수가 적으면 내부에서 <code style="color:#22d3bf">n-1</code>로 줄인다.</p>
 <p>std_ratio : float</p>
 <p>임계값의 느슨함. 클수록 남기 쉽다(제거가 느슨하다).</p>
+<p>chunk : int or None</p>
+<p>지정하면 근방 질의를 이 점 수만큼 나누어 수행한다. 기본 <code style="color:#22d3bf">None</code>은 기존 경로를 사용한다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>filtered : ndarray, shape (M, 3)</p>
 <p>살아남은 점(원래 순서를 유지).</p>

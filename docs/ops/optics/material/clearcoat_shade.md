@@ -7,7 +7,7 @@ out: rgbimage
 examples: [machined_metal_and_materials, poc_telecentric_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # clearcoat_shade — OPTICS `material` op
@@ -20,7 +20,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 透明な上塗りを被せる(車の塗装・陶器の釉薬・光沢プラスチック)。
 
 base_rgb: 下地の色 (H,W,3) または (3,)。normals / light / view: 上記と同じ。
-ior: 上塗りの屈折率(クリア塗料 ~1.5)。coat: 上塗りの強さ(0–1)。
+ior: 上塗りの屈折率(クリア塗料 ~1.5)。数か材料表の名前(例 "PMMA"、名前なら d 線 587.56 nm の n)。
+coat: 上塗りの強さ(0–1)。
 coat_roughness: 上塗りのざらつき(0 = 完全な鏡面、大きいほどぼける)。
 
 返り値: (H, W, 3) 線形 sRGB。
@@ -58,7 +59,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`rgbimage` を入力に取れる)
 
-[wetness](wetness.md) · [defocus_blur](../scene/defocus_blur.md) · [diffraction_blur](../scene/diffraction_blur.md) · [sensor_capture](../scene/sensor_capture.md) · [pixel_shift_capture](../pixelshift/pixel_shift_capture.md) · [false_color_metric](../pixelshift/false_color_metric.md)
+[wetness](wetness.md) · [defocus_blur](../scene/defocus_blur.md) · [diffraction_blur](../scene/diffraction_blur.md) · [sensor_capture](../scene/sensor_capture.md) · [underwater_image](../watermedia/underwater_image.md) · [cubemap_from_equirect](../omni360/cubemap_from_equirect.md) · [viewport_from_equirect](../omni360/viewport_from_equirect.md) · [equirect_rotate](../omni360/equirect_rotate.md)
 
 ## 同カテゴリ(`material`)
 

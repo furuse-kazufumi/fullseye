@@ -9,6 +9,13 @@ fullseye は産業ビジョン(検査ライン)と Physical AI(ロボット知�
 + lensimage.py 5 op + lensopt.py 3 op + illumdesign.py 6 op = 50 op / 8 カテゴリ、
 optics の wave に 2026-09-15 の瞳形状 PSF 3 op を含む)。
 
+spectrometer(gratingspec.py、2026-10-15 追加)— **回折格子と分光器**。クロマティック共焦点
+(``chromconf`` の ``spectrometer_fwhm_nm``)とハイパースペクトル(``spectralrad.hyperspectral_band_weights`` の
+``band_fwhm_nm``)は分光器の線幅を**与えられた数字**として受けていた。gratingspec は格子の式 mλ = d(sin α + sin β)
+と Czerny–Turner の幾何から、角分散・逆線分散・分解能 mN・帯域の幅(スリットの像 ⊗ 画素 ⊗ 回折)・コマを消す
+Shafer の角・smile と keystone(溝に沿った方向余弦を保つ 3 次元の格子の式)・高次の重なり(迷光の次数)を出す。
+同日、illumination に顕微鏡の照明系(ケーラー / クリティカル)と同軸落射のハーフミラー(往復の T·R)の 3 op。
+
 shape_from_polarization(sfpolar.py、2026-10-13 追加)— **偏光で形を測る**。偏光の分解
 (``polarization_demosaic`` → specularity の ``polarization_dolp_map`` / Stokes)はあったが、
 DoLP から天頂角、AoLP から方位角を逆算して法線にする経路が無かった(``polar_cam`` の
@@ -23,6 +30,13 @@ light_transport(lighttransport.py、2026-10-13 追加)— **凹みの中の光**
 形態係数で解いた**輸送行列**、Nayar ら(2006)の高周波パターンによる直接・大域の分離、縞の
 位相バイアスの予測(直接と大域のフェーザ和)、マイクロ位相シフトの復号、ToF の多経路
 (反射ごとの遅延を入れた複素ラジオシティ)。
+
+radiosity(radiosity3d.py、2026-10-15 追加)— **凹みの中の光を 3-D で、収束するまで**。``render_optscene`` は
+直接光だけ(測光に根拠あり)、``render_studio`` は多重反射を解くが明るさの絶対値に意味が無い、``light_transport`` は
+2-D だけ。radiosity3d は Howell の表(C-11 / C-14)の閉形式、平らな凸多角形どうしの数値の形態係数(点 → 多角形の
+輪郭和 + Gauss 求積)、optscene のシーン(箱・箱をくり抜いたポケット)のパッチ分割、Cohen ら(1988)の漸進
+ラジオシティ(残エネルギーの履歴・converged)、直接光の測光を変えずに反射を n 回または収束まで足す検査用の
+描画(``render_optscene_gi``、反射 0 回で ``render_optscene`` と一致、反射の回数の観測収束比と GCI 型の見積もり)。
 
 coherent(coherent.py、2026-10-13 追加)— **レーザーで撮る**。imaging_sim は強度の PSF を
 畳み込むインコヒーレント結像だけで、``optscene.light_spec`` がレーザーに付ける
@@ -43,6 +57,13 @@ drawing(optdraw.py、2026-10-15 追加)— **光学系の図面**。``raytrace``
 実光線・EFL / BFL / 全長 / 像高の寸法線・処方表)、撮像系の設置図(側面図と上面図、視野の錐・WD・DOF の帯・照明 5 種)、
 単レンズの製作図(ISO 10110 の 3 分割の表、公差は ``tolerance_analysis`` から)を組み、stdlib だけの SVG と
 DXF R12 に書き出し、書いた図から座標と文字を読み戻す(門は読み戻しで採点する)。
+
+noncoaxial(raytrace3d.py、2026-10-15 追加)— **非共軸の光学系**。``raytrace`` は光軸が 1 本の直線の
+共軸系だけを追い、折り返しミラー・同軸落射の半透鏡・傾いた平板・シャインプルーフ配置が組めず、半透鏡の裏面が
+作るゴーストも計算できなかった。raytrace3d は面ごとに 3-D の姿勢を持たせ(座標の切り替えは偏心 → x → y → z の
+順、戻しはその逆順)、``raytrace`` の面の式のまま追跡する(共軸の処方では ``trace_rays`` と 1e-12 で一致)。
+像の向き(反射の回数と裏返り)、半透鏡の 2 本の枝、傾いた平板の閉形式、シャインプルーフの像面の傾き、
+面の残留反射率(材料表 + 膜)、全ての 2 面の組のゴースト(焦点・像面上の大きさ・相対強度)を返す。
 
 optimization(lensopt.py)/ illumination(illumdesign.py)— 2026-09-03 追加。
 raytrace は処方を**評価**する側、lensopt は減衰最小二乗で処方を**変える**側
@@ -96,6 +117,7 @@ import coherent
 import edgesfr
 import sfpolar
 import lighttransport
+import radiosity3d
 import sensorchar
 import sensorgeneral
 import illumdesign
@@ -114,26 +136,45 @@ import cavityoptics
 import materials
 import spectralrad
 import chromconf
+import gratingspec
 import fiberoptics
+import temsim
+import lensfile
+import lensconfig
+import lockin
+import watermedia
+import watervision
+import omni360
+import lensglobal
+import lensmerit
+import lensrender
+import lenstol
+import plenoptic
+import lenssolve
 import filmoptics
 import moirealign
+import gratinginterf
 import telecentric
 import optdraw
+import raytrace3d
 import linescan
 import pixelshift
 import octscan
+import itof
 
-_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "chromconf": chromconf, "fiberoptics": fiberoptics, "filmoptics": filmoptics, "moirealign": moirealign,
+_MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "chromconf": chromconf, "gratingspec": gratingspec, "gratinginterf": gratinginterf, "fiberoptics": fiberoptics, "temsim": temsim, "lensfile": lensfile, "lensconfig": lensconfig, "lockin": lockin, "watermedia": watermedia, "watervision": watervision, "omni360": omni360, "lensglobal": lensglobal, "lensmerit": lensmerit, "lensrender": lensrender, "lenstol": lenstol, "plenoptic": plenoptic, "lenssolve": lenssolve, "filmoptics": filmoptics, "moirealign": moirealign,
         "telecentric": telecentric,
         "optdraw": optdraw,
+        "raytrace3d": raytrace3d,
         "linescan": linescan,
         "pixelshift": pixelshift,
         "octscan": octscan,
+        "itof": itof,
         "matappear": matappear, "glassmirror": glassmirror,
         "metalfinish": metalfinish, "surfacelib": surfacelib,
         "lensopt": lensopt, "illumdesign": illumdesign, "edgesfr": edgesfr, "sensorchar": sensorchar, "sensorgeneral": sensorgeneral,
         "optscene": optscene, "coherent": coherent, "sfpolar": sfpolar,
-        "lighttransport": lighttransport}
+        "lighttransport": lighttransport, "radiosity3d": radiosity3d}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 #   既存語彙の再利用: image2d / signal / matrix / measurement(実スカラのみ)/
@@ -198,6 +239,13 @@ _CATALOG = {
     "imaging": [
         ("psf_to_mtf", "optics", ["image2d"], "pairs"),
         ("mtf_diffraction", "optics", [], "pairs"),
+        # 2026-10-18(逐次光学設計の拡充 第 1 弾): PSF から設計ソフトの定番の指標を出す。
+        # 囲み/四角エネルギーは PSF の窓の中の割合(エッジ画素は面積で重み)、子午/球欠 MTF は 2-D 変換の軸の断面
+        # (psf_to_mtf は半径平均だけだった)。真値 = Airy の 83.8 %、円形瞳の MTF の閉形式、ガウス PSF の閉形式。
+        ("encircled_energy", "optics", ["image2d"], "pairs"),
+        ("ensquared_energy", "optics", ["image2d"], "pairs"),
+        ("energy_radii", "optics", ["image2d"], "table"),
+        ("mtf_tangential_sagittal", "optics", ["image2d"], "table"),
         ("wavefront_stats", "optics", ["table"], "table"),
         # edgesfr(2026-10-01): 刃のエッジの写真から SFR/MTF、黒点の写真から迷光指数を**測る**側。
         # psf_to_mtf は PSF を持っている人向け、現場が持っているのはエッジと黒点の写真(poc_veiling_glare 8 節の穴)。
@@ -342,6 +390,19 @@ _CATALOG = {
         ("opd_map", "raytrace", ["table"], "image2d"),
         # 2026-09-03 追加: 波長ごとの焦点移動・倍率色収差・多色スポット
         ("chromatic_shift", "raytrace", ["table"], "table"),
+        # 2026-10-15 追加(台帳の漏れ): 公開していたのに未登録だった raytrace の関数。
+        #   ★trace_rays は登録しない: 台帳の trace_rays は optscene が持ち、正準名 lens_trace_rays は窓口(facade)の
+        #   別名として予約済み(opnames.FACADE_ALIASES)で、台帳に置くと test_op_names_phase1 の衝突の門が赤になる。
+        #   台帳からは ray_bundle / noncoaxial_trace で同じ追跡に届く。refractive_index は別の作業が中を直しているので
+        #   この回は登録しない(既定の媒質が要る)。
+        ("chief_ray", "raytrace", ["table"], "table"),
+        ("ray_bundle", "raytrace", ["table"], "table"),
+        ("opd_samples", "raytrace", ["table"], "table"),
+        ("with_wavelength", "raytrace", ["table"], "table"),
+        # 2026-10-19 追加(光線の照準とケラレ係数): 実光線で絞りの点へ狙う / 狙いの検査表 / 開口から係数を求める
+        ("with_aiming", "raytrace", ["table"], "table"),
+        ("ray_aiming", "raytrace", ["table"], "table"),
+        ("set_vignetting", "raytrace", ["table"], "table"),
     ],
     # optimization(lensopt、2026-09-03 追加): 処方を**変える**側。減衰最小二乗
     # (Levenberg–Marquardt)で曲率/間隔/円錐/非球面係数を動かし、多視野・多波長の
@@ -374,6 +435,13 @@ _CATALOG = {
         ("solid_angle_brightness", "illumdesign", ["table"], "table"),
         ("solid_angle_sweep", "illumdesign", [], "pairs"),
         ("solid_angle_render", "illumdesign", ["normalmap", "table"], "image2d"),
+        # 顕微鏡の照明系(ケーラー / クリティカル)と同軸落射のハーフミラー(2026-10-15)。照明系は共役面の鎖を
+        # 近軸で並べ、標本の点と方向から光源まで逆に追う(ケーラーは光源の模様が視野に写らない、クリティカルは
+        # 写る —— 閉形式の門)。同軸は往復の T·R(最大 0.25)と、鏡面の部品に写るパネルそのものの像。
+        # table を受ける側なので 2-D の橋は架からない(table は sort に写らない)。
+        ("illumination_train", "illumdesign", [], "table"),
+        ("illumination_field", "illumdesign", ["table"], "image2d"),
+        ("coaxial_illumination", "illumdesign", [], "table"),
     ],
     # imaging_sim(lensimage、2026-09-03 追加): 処方(table)から**センサが記録する
     # 画像**まで。psf_from_opd = 実収差瞳の回折 PSF(|FFT(mask·e^{i2πW})|²、画素
@@ -384,6 +452,8 @@ _CATALOG = {
     # 通す(ぼかさない)ので注釈が像とずれない。乱数 table は全 op が ValueError
     "imaging_sim": [
         ("psf_from_opd", "lensimage", ["table"], "image2d"),
+        # スルーフォーカス MTF: 像面を動かした PSF ごとの子午/球欠 MTF(Hopkins の閉形式と照合)。
+        ("through_focus_mtf", "lensimage", ["table"], "table"),
         ("distortion_map", "lensimage", ["table"], "table"),
         ("render_through_lens", "lensimage", ["image2d", "table"], "image2d"),
         ("defect_dataset", "lensimage", [], "table"),
@@ -481,6 +551,9 @@ _CATALOG = {
         ("material_nir_absorption", "materials", [], "pairs"),
         ("carbon_black_absorption", "materials", [], "pairs"),
         ("nir_model_info", "materials", [], "table"),
+        # 2026-10-15 電子線の物性(仮想 SEM のモンテカルロが引く): 組成の Z・A・質量分率、密度、
+        #   二次電子の λ・ε(7 元素は Lin & Joy 2005 Table 1、他は推定と明記)。光学の表と同じ名前で引く。
+        ("material_electron_properties", "materials", [], "table"),
     ],
     "spectral": [  # 光源・フィルタ・センサの分光曲線と、その積と積分(spectralrad、2026-10-14)
         # ★曲線は materials と同じ pairs(λ [nm], 値)。像の明るさ = ∫ 光源 × 光学系・対象 × QE dλ を
@@ -494,6 +567,7 @@ _CATALOG = {
         ("energy_to_photons", "spectralrad", ["pairs"], "pairs"),
         ("spectral_product", "spectralrad", ["pairs", "pairs"], "pairs"),
         ("spectral_integral", "spectralrad", ["pairs"], "measurement"),
+        ("spectral_integral_table", "spectralrad", ["pairs"], "table"),
         ("spectral_stats", "spectralrad", ["pairs"], "table"),
         # 2026-10-15 近赤外の分光撮像(ハイパースペクトル): InGaAs の QE、散乱層の反射(Kubelka–Munk)、
         #   材料表 → 反射率、反射率 → 帯域ごとの電子数(ハロゲン × ガラス × 帯域 × QE)。画像(キューブ)は
@@ -522,6 +596,173 @@ _CATALOG = {
         ("chromatic_confocal_readout", "chromconf", ["table", "table"], "table"),
         ("chromatic_confocal_limits", "chromconf", ["table"], "table"),
     ],
+    "tem": [  # 仮想の透過電子顕微鏡(temsim、2026-10-15): 電子の波長 → CTF(包絡つき)→ 投影ポテンシャル → 位相コントラストの像
+        # → Thon リングから焦点外れの推定(拒否つき)→ 補正。結像の本体は coherent_image、散乱因子は pxrd を Mott–Bethe で使う。
+        # ★画像を受ける op の in は image2d(橋の外)、引数だけの op は表 / 曲線を返す側なので 2-D の橋は架けない。
+        ("tem_wavelength", "temsim", [], "table"),
+        ("tem_scherzer", "temsim", [], "table"),
+        ("tem_ctf", "temsim", [], "image2d"),
+        ("tem_ctf_profile", "temsim", [], "table"),
+        ("tem_projected_potential", "temsim", [], "image2d"),
+        ("tem_amorphous_film", "temsim", [], "image2d"),
+        ("tem_image_weak_phase", "temsim", ["image2d"], "image2d"),
+        ("tem_multislice", "temsim", ["image2d"], "table"),
+        ("tem_power_spectrum", "temsim", ["image2d"], "image2d"),
+        ("tem_ctf_estimate", "temsim", ["image2d"], "table"),
+        ("tem_ctf_correct", "temsim", ["image2d"], "image2d"),
+    ],
+    "lensfile": [  # 光学設計ファイル(.zmx の逐次処方)の読み書き(lensfile、2026-10-18)。読んだ処方は raytrace.lens_system
+        # そのもの(別の模型を作らない)なので、design / optimization / imaging_sim の op がそのまま使える。
+        # ★fail-closed: 扱えない面の種類・座標変換面・r² の非球面項・別名でしか表に無い硝材は拒否、近似は allow_partial
+        #   で明示したときだけ(結果に approximate=True)。画像を受けないので 2-D の橋は架けない(_OP_BRIDGE_SKIP)。
+        ("lens_file_read", "lensfile", [], "table"),
+        ("lens_file_system", "lensfile", ["table"], "table"),
+        ("lens_file_write", "lensfile", ["table"], "table"),
+        ("lens_file_report", "lensfile", [], "table"),
+    ],
+    "lensconfig": [  # 多構成(ズーム・切替)の逐次系(lensconfig、2026-10-19)。lens_system が "configurations"(構成ごとの疎な上書き)を
+        # 持つと、構成ごとに解決した lens_system を返す(別の模型を作らない)。.zmx の MNUM 表は lensfile が読み書きする。
+        # ★fail-closed: 無い面・未知の欄・lens_system が拒否する値は ValueError。基の系は書き換えない。
+        ("lens_configurations", "lensconfig", ["table"], "table"),
+        ("lens_with_configuration", "lensconfig", ["table"], "table"),
+        ("lens_configuration_table", "lensconfig", ["table"], "table"),
+        ("lens_configuration_metrics", "lensconfig", ["table"], "table"),
+        ("lens_add_configuration", "lensconfig", ["table"], "table"),
+    ],
+    "lockin": [  # 画素ごとの直交復調(ロックイン / 時間相関イメージセンサ、lockin、2026-10-19): 画像列 → 振幅・位相・直流
+        # ★fail-closed: 矩形窓は参照の周期が整数のときだけ(そうでなければ拒否し、窓の宣言 hann を促す)、ナイキスト以上・1 周期未満は拒否。
+        #   法線の復元は影の無い画素だけ有効(他は NaN と valid = False)。雑音の模擬は種を明示。
+        ("lockin_demodulate", "lockin", ["video"], "table"),
+        ("lockin_amplitude", "lockin", ["video"], "image2d"),
+        ("lockin_phase", "lockin", ["video"], "image2d"),
+        ("lockin_noise_floor", "lockin", [], "table"),
+        ("lockin_walsh_codes", "lockin", [], "matrix"),
+        ("lockin_separate", "lockin", ["video"], "table"),
+        ("lockin_ring_synthesize", "lockin", ["image2d"], "video"),
+        ("lockin_ring_normals", "lockin", ["table"], "table"),
+        ("lockin_thermal_wave", "lockin", ["image2d"], "video"),
+    ],
+    "lensglobal": [  # 硝材の置き換えと多始点の大域探索(lensglobal、2026-10-19)。局所最適化は lensopt.optimize_lens をそのまま使い、
+        # merit を再実装しない。★fail-closed: カタログに許容距離内の近傍が無いモデル硝材・無効な始点・未知の merit 欄は ValueError。
+        ("glass_nearest", "lensglobal", [], "table"),
+        ("lens_substitute_glasses", "lensglobal", ["table"], "table"),
+        ("lens_global_search", "lensglobal", ["table"], "table"),
+    ],
+    "lensmerit": [  # オペランド表のマージン関数と、それを最小化する最適化(lensmerit、2026-10-19)。行 = 目標・重み・片側の境界。
+        # lensopt の変数・LM をそのまま使い、硝材を変数にできる(離散の外側ループ)。★fail-closed: 未知のオペランド・足りない/余計な引数・
+        # 範囲外の添字・有限でない値・重みが全部 0 の表は ValueError。
+        ("merit_operands_list", "lensmerit", [], "table"),
+        ("merit_evaluate", "lensmerit", ["table"], "table"),
+        ("merit_default", "lensmerit", ["table"], "table"),
+        ("merit_boundary_operands", "lensmerit", ["table"], "table"),
+        ("optimize_lens_operands", "lensmerit", ["table"], "table"),
+        ("merit_contributions", "lensmerit", ["table"], "table"),
+    ],
+    "lenssolve": [  # 解(solve)・ピックアップ・afocal・曲面の像面(lenssolve、2026-10-20)。解は面に付く宣言的な規則で、
+        # 追跡の前に毎回解き直される(傍らの数値は解いた値)。★fail-closed: 未知の種類・循環したピックアップ・絞りを動かす厚みの解・
+        # 軸上の主光線の解・根の無い F/# の解・collimate しない afocal は ValueError。
+        ("lens_apply_solves", "lenssolve", ["table"], "table"),
+        ("lens_solve_set", "lenssolve", ["table"], "table"),
+        ("lens_solve_clear", "lenssolve", ["table"], "table"),
+        ("lens_solves_list", "lenssolve", ["table"], "table"),
+        ("afocal_system", "lenssolve", ["table"], "table"),
+        ("lens_afocal_report", "lenssolve", ["table"], "table"),
+        ("lens_image_surface", "lenssolve", ["table"], "table"),
+        ("lens_petzval_radius", "lenssolve", ["table"], "table"),
+        ("lens_zmx_solves_roundtrip", "lenssolve", ["table"], "table"),
+    ],
+    "watermedia": [  # 水と透明媒質(watermedia、2026-10-19): 海の波・屈折・減衰・散乱・瓶のレンズ作用
+        # ★fail-closed: 収束しない屈折は NaN と converged = False、表の外の波長・未知の水の種類・|g| >= 1・n <= 1 は拒否。
+        #   波のスペクトルは Pierson-Moskowitz(1964)/ JONSWAP(1973)、水の吸収は Pope & Fry(1997)、散乱の位相関数は Petzold(1972)。
+        ("ocean_spectrum", "watermedia", [], "table"),
+        ("ocean_height_field", "watermedia", [], "table"),
+        ("fresnel_water_air", "watermedia", [], "table"),
+        ("snell_window", "watermedia", [], "table"),
+        ("refracted_view", "watermedia", [], "table"),
+        ("water_attenuation", "watermedia", [], "table"),
+        ("underwater_image", "watermedia", ["rgbimage", "image2d", "image2d"], "table"),
+        ("phase_function_hg", "watermedia", [], "table"),
+        ("scattering_phase_petzold", "watermedia", [], "table"),
+        ("cylinder_lens_caustic", "watermedia", [], "table"),
+    ],
+    "lensrender": [  # 3 次元のシーンを処方どおりのレンズ越しに撮る(lensrender、2026-10-20): 像面側から射出瞳を標本化して物体空間へ逆向きに追跡する
+        # Kolb, Mitchell & Hanrahan (1995)。幾何光学のみ(回折なし)。★fail-closed: 射出瞳が無限遠の系・非有限の入力・範囲外の波長/照明の表・
+        # 軸対称でない系への点光源(前方追跡で回す)は ValueError。ケラレ/全反射の光線は NaN と vignetted = True で返す。
+        ("lens_scene", "lensrender", [], "table"),
+        ("exit_pupil_samples", "lensrender", ["table"], "table"),
+        ("trace_sensor_rays", "lensrender", ["table"], "table"),
+        ("scene_radiance", "lensrender", [], "table"),
+        ("render_scene_through_lens", "lensrender", ["table"], "table"),
+        ("bokeh_shape", "lensrender", ["table"], "table"),
+        ("render_ghost_overlay", "lensrender", ["table"], "table"),
+        ("render_compare_prescriptions", "lensrender", [], "table"),
+    ],
+    "tolerancing": [  # 製造公差: 行ごとの分布、補償、歩留まり、感度と組立レポート
+        ("tolerance_table", "lenstol", ["table"], "table"),
+        ("tolerance_criteria", "lenstol", [], "table"),
+        ("tolerance_compensators", "lenstol", [], "table"),
+        ("tolerance_monte_carlo", "lenstol", ["table", "table", "table"], "table"),
+        ("tolerance_sensitivity", "lenstol", ["table", "table", "table"], "table"),
+        ("tolerance_report", "lenstol", ["table"], "text"),
+        ("tolerance_table_zmx", "lenstol", ["table"], "text"),
+        ("tolerance_table_from_zmx", "lenstol", ["table", "text"], "table"),
+    ],
+    "plenoptic": [
+        ("mla_surface", "plenoptic", [], "table"),
+        ("plenoptic_system", "plenoptic", ["table", "table", "table"], "table"),
+        ("plenoptic_capture", "plenoptic", ["table", "table"], "table"),
+        ("plenoptic_mla_calibrate", "plenoptic", ["image2d"], "table"),
+        ("plenoptic_decode", "plenoptic", ["image2d", "table"], "lightfield"),
+        ("plenoptic_refocus_depth", "plenoptic", ["lightfield", "table"], "table"),
+    ],
+    "omni360": [
+        ("cubemap_from_equirect", "omni360", ["rgbimage"], "rgbvideo"),
+        ("equirect_from_cubemap", "omni360", ["rgbvideo"], "rgbimage"),
+        ("viewport_from_equirect", "omni360", ["rgbimage"], "rgbimage"),
+        ("equirect_rotate", "omni360", ["rgbimage", "matrix"], "rgbimage"),
+        ("equirect_weight_map", "omni360", [], "image2d"),
+        ("ws_psnr", "omni360", ["image2d", "image2d"], "measurement"),
+        ("s_psnr", "omni360", ["image2d", "image2d"], "measurement"),
+        ("equirect_filter_gaussian", "omni360", ["image2d"], "image2d"),
+        ("equirect_stabilize", "omni360", ["images"], "table"),
+        ("equirect_from_fisheye_pair", "omni360", ["images"], "table"),
+        ("equirect_from_perspectives", "omni360", ["images"], "table"),
+        ("equirect_defect_unwrap_pipe", "omni360", ["image2d"], "table"),
+        ("ods_render", "omni360", [], "images"),
+        ("ods_depth_to_disparity", "omni360", ["image2d"], "image2d"),
+        ("ods_disparity_to_depth", "omni360", ["image2d"], "image2d"),
+        ("stereo360_sbs", "omni360", ["rgbimage", "rgbimage"], "rgbimage"),
+        ("stereo360_top_bottom", "omni360", ["rgbimage", "rgbimage"], "rgbimage"),
+        ("omni_anaglyph_compose", "omni360", ["rgbimage", "rgbimage"], "rgbimage"),
+        ("anaglyph_crosstalk", "omni360", ["rgbimage", "rgbimage"], "table"),
+        ("stereo_parallax_budget", "omni360", [], "table"),
+        ("stereo_pack", "omni360", ["rgbimage", "rgbimage"], "rgbimage"),
+        ("anaglyph_from_ods", "omni360", ["rgbimage", "rgbimage"], "rgbimage"),
+        ("video360_viewport_track", "omni360", ["rgbvideo"], "rgbvideo"),
+        ("video360_tile_coverage", "omni360", ["pairs"], "table"),
+    ],
+    "watervision": [  # 水が検査画像にどう写るか(watervision、2026-10-20): 底のコースティクス・瓶の側面像・濡れ面・船体の水中画像
+        # ★fail-closed: 非有限の高さ・波頭より浅い底・下を向かない光・n <= 1・充填率の範囲外・定数画像・両クラスのない欠陥マスクは拒否。
+        #   濡れ面は Lekner & Dorf(1988)、水中画像は watermedia(Akkaynak & Treibitz 2018)、瓶は 2 次元の断面の光線追跡。
+        ("caustic_irradiance", "watervision", ["image2d"], "table"),
+        ("bottle_image", "watervision", [], "table"),
+        ("fill_level_from_image", "watervision", ["image2d"], "table"),
+        ("wet_surface_appearance", "watervision", [], "table"),
+        ("wet_dry_inspection_pair", "watervision", ["image2d", "image2d"], "table"),
+        ("underwater_inspection_image", "watervision", ["rgbimage", "image2d"], "table"),
+        ("caustic_floor_segmentation", "watervision", ["image2d"], "table"),
+    ],
+    "spectrometer": [  # 回折格子と分光器(gratingspec、2026-10-15)
+        # ★格子の式 mλ = d(sin α + sin β) と Czerny–Turner の幾何から、角分散・分解能 mN・帯域の幅(スリットの像 ⊗
+        #   画素 ⊗ 回折)・smile / keystone(3 次元の格子の式)・高次の重なりまで。chromconf の spectrometer_fwhm_nm と
+        #   spectralrad の band_fwhm_nm を、スリット・格子・焦点距離・画素から実体化する。画像を受けないので 2-D の橋は
+        #   架からない(table は sort に写らず、spectrum は 2 入力)。
+        ("grating_dispersion", "gratingspec", [], "table"),
+        ("czerny_turner_design", "gratingspec", [], "table"),
+        ("spectrometer_bandpass", "gratingspec", ["table"], "table"),
+        ("spectrometer_slit_image", "gratingspec", ["table"], "table"),
+        ("spectrometer_spectrum", "gratingspec", ["table", "pairs"], "pairs"),
+    ],
     "fiber": [  # ステップ型ファイバとライトガイド(fiberoptics、2026-10-14): 材料表のガラスの分散 → 導波(LP モード・MFD)→ 照明の効率
         # ★LP モードは特性方程式の数値解(遮断 = Bessel の零点)。画像を受けないので 2-D の橋は架けない。
         ("material_group_index", "fiberoptics", [], "pairs"),
@@ -543,6 +784,18 @@ _CATALOG = {
         ("moire_mark_read", "moirealign", ["image2d", "image2d"], "table"),
         ("moire_phase_crlb", "moirealign", [], "table"),
     ],
+    "grating_interf": [  # 格子干渉(gratinginterf、2026-10-15): 自己像の距離と周期 → 位相ステップの画像列 → 透過・微分位相・暗視野
+        # ★暗視野は縞の可視度の比(試料あり / なし)で、画素より小さい構造の小角散乱を測る。散乱角の広がりへは公表式で換算。
+        ("talbot_grating_design", "gratinginterf", [], "table"),
+        ("grating_stepping_simulate", "gratinginterf", ["image2d"], "images"),
+        ("grating_three_image_retrieve", "gratinginterf", ["images", "images"], "table"),
+        ("darkfield_scatter_relation", "gratinginterf", [], "table"),
+        # 2026-10-18 第 2 陣: 絨毯(I(x, z))・線源と Lau の条件・1 周期のステップ数の推定・微分位相の積分(折り返しは拒否)
+        ("talbot_carpet", "gratinginterf", [], "table"),
+        ("talbot_source_visibility", "gratinginterf", [], "table"),
+        ("grating_step_period_estimate", "gratinginterf", ["images"], "table"),
+        ("dpc_integrate", "gratinginterf", ["table"], "table"),     # 3 像の表(か 2-D の図)を受ける
+    ],
     "drawing": [  # 光学系の図面(optdraw、2026-10-15): 図の dict(kind "optdraw")を組み、SVG / DXF の文字列に書き、
         # 読み戻す。★新しい型の語は作らない: 図は印つきの dict(table)で、印の無い table は書き出しの op が
         #   ValueError で拒む。SVG / DXF は既存の text(文字列)、画像は rgbimage。
@@ -554,6 +807,24 @@ _CATALOG = {
         ("drawing_raster", "optdraw", ["table"], "rgbimage"),
         ("svg_entities", "optdraw", ["text"], "table"),
         ("dxf_entities", "optdraw", ["text"], "table"),
+        # 2026-10-15: 折り返した系の断面図・設置図(raytrace3d の系の大域の配置を子午面に投影)
+        ("noncoaxial_drawing", "optdraw", ["table"], "table"),
+    ],
+    "noncoaxial": [  # 非共軸の光学系(raytrace3d、2026-10-15): 座標の切り替え・折り返しミラー・半透鏡・傾いた平板・
+        # シャインプルーフ・ゴースト。系は印つきの dict(kind "noncoaxial_system"、table)。raytrace.lens_system の処方も受ける。
+        ("noncoaxial_system", "raytrace3d", [], "table"),
+        ("noncoaxial_example", "raytrace3d", [], "table"),
+        ("noncoaxial_layout", "raytrace3d", ["table"], "table"),
+        ("noncoaxial_trace", "raytrace3d", ["table"], "table"),
+        ("noncoaxial_spot", "raytrace3d", ["table"], "table"),
+        ("image_orientation", "raytrace3d", ["table"], "table"),
+        ("beamsplitter_branches", "raytrace3d", [], "table"),
+        ("tilted_plate_shift", "raytrace3d", [], "table"),
+        ("scheimpflug_tilt", "raytrace3d", [], "table"),
+        ("surface_reflectance", "raytrace3d", [], "table"),
+        ("ghost_analysis", "raytrace3d", ["table"], "table"),
+        ("ghost_image", "raytrace3d", ["table"], "image2d"),
+        ("ghost_path", "raytrace3d", ["table"], "table"),
     ],
     "telecentric": [  # テレセントリックレンズと寸法計測(telecentric、2026-10-15): 絞りの位置で主光線の傾きを決め、
         # 高さで変わる倍率・ケラレ・ぼけを実光線で。★光線は入射瞳でなく絞りを狙う(入射瞳が無限遠でも動く)。
@@ -602,6 +873,17 @@ _CATALOG = {
         ("oct_layer_thickness", "octscan", ["table"], "table"),
         ("oct_bscan_boundaries", "octscan", ["image2d"], "table"),
         ("oct_bscan_flatten", "octscan", ["table", "signal"], "table"),
+    ],
+    "itof": [  # 間接 ToF(連続波・位相方式、itof、2026-10-15): 4 段の生信号 → 位相 → 多周波アンラップ、壊れ方 4 つ
+        # ★距離は周期 c/(2f) の剰余。高い f ほど細かいが折り返す / 多重反射・縁の混合・高調波・背景光で壊れる。
+        ("itof_capture", "itof", ["depth"], "table"),               # 距離の図 → 生信号 (F, K, H, W) の表
+        ("itof_phase_amplitude", "itof", ["table"], "table"),
+        ("itof_noise_budget", "itof", [], "table"),
+        ("itof_unwrap_multifreq", "itof", ["table"], "table"),
+        ("itof_unwrap_error_rate", "itof", [], "table"),
+        ("itof_multipath_separate", "itof", ["table"], "table"),
+        ("itof_flying_pixel_mask", "itof", ["depth"], "image2d"),
+        ("itof_wiggling_correct", "itof", ["table"], "table"),
     ],
     "cavity": [  # 光共振器と Michelson(重力波望遠鏡の設計の式 = エタロン・レーザー共振器・干渉計測の式)
         ("fabry_perot_response", "cavityoptics", [], "table"),
@@ -663,6 +945,21 @@ _CATALOG = {
         ("tof_multipath_phase", "lighttransport", [], "table"),
         ("tof_transport_depth", "lighttransport", ["table"], "table"),
     ],
+    # radiosity(radiosity3d、2026-10-15 追加): 3-D の形態係数と漸進ラジオシティ(Cohen ら 1988)、検査用の
+    # 多重反射描画。light_transport は 2-D(押し出し形状)の輸送行列で、こちらは optscene のシーン(箱・ポケット)
+    # を 3-D のパッチに割る —— 族を分けたのは実装の module が別だから(台帳の検査は族ごとに 1 module)。
+    # ★新しい型の語は作らない。パッチの組・解・描画の結果は kind の印つきの dict(table)で、印の無い
+    #   table は消費する op が ValueError で拒む。多角形は points((V, 3))、放射は signal((N,))。
+    # ★2-D の橋(tb_*)は架からない: 1 入力の op の in は table(TYPE_TO_SORT に無い)。
+    "radiosity": [
+        ("form_factor_parallel_rects", "radiosity3d", [], "measurement"),
+        ("form_factor_perpendicular_rects", "radiosity3d", [], "measurement"),
+        ("form_factor_polygons", "radiosity3d", ["points", "points"], "measurement"),
+        ("radiosity_patches", "radiosity3d", [], "table"),
+        ("form_factor_matrix", "radiosity3d", ["table"], "matrix"),
+        ("radiosity_progressive_3d", "radiosity3d", ["table", "signal"], "table"),
+        ("render_optscene_gi", "radiosity3d", ["table", "table", "table"], "table"),
+    ],
 }
 
 
@@ -704,11 +1001,16 @@ def categories():
 #: タプル返しの op を将来足すならここに登録すること(空欄を埋めるために既存の
 #: 返り型をタプルへ変える、は本末転倒なのでしない)。
 RESULT_ADAPTERS = {
+    # (px, py, opd, valid) の 4 本 → table(どれも捨てない)
+    "opd_samples": lambda r: ({"px": r[0], "py": r[1], "opd": r[2], "valid": r[3]}
+                              if isinstance(r, tuple) else r),
     # (n, k) の 2 本 → (K, 2) の pairs。どちらも捨てない。
     # スカラ波長では (3,) が返る。宣言 points((N,3))へ揃える。
     "cie_xyz_from_wavelength": lambda r: np.atleast_2d(r),
     "metal_optical_constants": lambda r: (np.stack(r, axis=1)
                                           if isinstance(r, tuple) else r),
+    # (波長, 重み) の 2 本 → (k, 2) の pairs(台帳の宣言)。素の関数はタプルのまま(後方互換)。
+    "light_wavelengths": lambda r: (np.stack(r, axis=1) if isinstance(r, tuple) else r),
     # (方向, TIR マスク) → 方向。マスクが要る呼び手は素の関数を直接呼ぶ。
     "refract_rays": lambda r: r[0] if isinstance(r, tuple) else r,
     # (色の変調, 繊維方向) → 変調。接線は ward_anisotropic へ渡す用で素の関数から取る。
@@ -725,6 +1027,10 @@ RESULT_ADAPTERS = {
                                      if isinstance(r, tuple) else r),
     # B スキャンの表 → 断面像(dB)。深さ軸・横軸が要る呼び手は素の関数から表を取る。
     "oct_bscan": lambda r: np.asarray(r["image_db"], float) if isinstance(r, dict) else r,
+    # 位相ステップの画像列 (N, H, W) の ndarray → 2-D の画像 N 枚の列(宣言 images)。素の関数は ndarray のまま返す
+    # (向きの反転・露光の倍率など、配列の演算をそのまま使えるように)。消費側は列も (N, H, W) も受ける。
+    "grating_stepping_simulate": lambda r: ([np.asarray(x) for x in r]
+                                            if isinstance(r, np.ndarray) and r.ndim == 3 else r),
 }
 
 

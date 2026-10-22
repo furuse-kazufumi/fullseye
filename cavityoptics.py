@@ -349,9 +349,15 @@ def pdh_error_signal(length_m: float = 1.0, *, itm_transmittance: float = 0.01,
                                 etm_transmittance=etm_transmittance)
     fsr, lw = resp["fsr_hz"], resp["linewidth_hz"]
     delta = np.linspace(-span * lw, span * lw, n)
-    Fw = _reflection_coefficient(delta, fsr, r1, r2)
-    Fp = _reflection_coefficient(delta + Om, fsr, r1, r2)
-    Fm = _reflection_coefficient(delta - Om, fsr, r1, r2)
+    phase = np.exp(1j * 2.0 * np.pi * delta / fsr)
+    side = np.exp(1j * 2.0 * np.pi * Om / fsr)
+
+    def reflection(e):
+        return (r1 - r2 * e) / (1.0 - r1 * r2 * e)
+
+    Fw = reflection(phase)
+    Fp = reflection(phase * side)
+    Fm = reflection(phase / side)
     pc = (j0(beta) ** 2) * P
     ps = (j1(beta) ** 2) * P
     eps = 2.0 * np.sqrt(pc * ps) * np.imag(Fw * np.conj(Fp) - np.conj(Fw) * Fm)

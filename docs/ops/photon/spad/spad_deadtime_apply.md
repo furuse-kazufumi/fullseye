@@ -4,10 +4,10 @@ dim: photon
 category: spad
 in: countrate
 out: countrate
-examples: [photon_timeresolved]
+examples: [photon_timeresolved, poc_dtof_ranging]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # spad_deadtime_apply — PHOTON `spad` op
@@ -57,6 +57,7 @@ non-positive *dead_time_ns*, and a non-bool *paralyzable*.
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [photon_timeresolved](../../../../examples/photon_timeresolved.py) — `py -3.11 examples/photon_timeresolved.py`
+- [poc_dtof_ranging](../../../../examples/poc_dtof_ranging.py) — `py -3.11 examples/poc_dtof_ranging.py`
 
 ## 型が繋がる次の op(`countrate` を入力に取れる)
 

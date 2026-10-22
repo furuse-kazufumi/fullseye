@@ -7,7 +7,7 @@ out: image2d
 examples: [optics_imaging, poc_beats_fringes_and_screens]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # fraunhofer_pattern — OPTICS `wave` op
@@ -84,7 +84,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 
-[pupil_psf](pupil_psf.md) · [pupil_blur](pupil_blur.md) · [psf_to_mtf](../imaging/psf_to_mtf.md) · [edge_spread](../imaging/edge_spread.md) · [veiling_glare_index](../imaging/veiling_glare_index.md) · [emva_pair_statistics](../sensorchar/emva_pair_statistics.md) · [emva_defect_pixels](../sensorchar/emva_defect_pixels.md) · [emva_highpass](../sensorchar/emva_highpass.md)
+[pupil_psf](pupil_psf.md) · [pupil_blur](pupil_blur.md) · [psf_to_mtf](../imaging/psf_to_mtf.md) · [encircled_energy](../imaging/encircled_energy.md) · [ensquared_energy](../imaging/ensquared_energy.md) · [energy_radii](../imaging/energy_radii.md) · [mtf_tangential_sagittal](../imaging/mtf_tangential_sagittal.md) · [edge_spread](../imaging/edge_spread.md)
 
 ## 同カテゴリ(`wave`)
 

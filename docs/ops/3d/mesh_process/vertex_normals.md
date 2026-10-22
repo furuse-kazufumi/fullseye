@@ -7,13 +7,13 @@ out: normals
 examples: [mesh_props]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # vertex_normals — 3D `mesh_process` op
 
 - **データ種**: `mesh` → `normals`
-- **呼び出し**: `import fullseye as fs; fs.ledger.vertex_normals(mesh) -> 'np.ndarray'` (実装を直接呼ぶなら `import mesh_props; mesh_props.vertex_normals(mesh) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("vertex_normals")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.vertex_normals(mesh, method='exact') -> 'np.ndarray'` (実装を直接呼ぶなら `import mesh_props; mesh_props.vertex_normals(mesh, method='exact') -> 'np.ndarray'`、台帳から引くなら `ops3d.get("vertex_normals")`)
 
 ## 使い方
 
@@ -24,6 +24,10 @@ version: 0.6.0  # fullseye lib version this note was generated for
 ``normals_orient.estimate_normals``(点群 PCA・符号未定)と違い、追加の向き付け工程は不要。
 
 Args:
+    method: ``"exact"`` keeps the historical accumulation order.
+        ``"fast"`` uses component-wise ``bincount``; on measured probes
+        it differed by at most 3.6e-15 and may differ at vertices whose
+        incident face normals nearly cancel.
     mesh: (vertices (N,3), faces (M,3)) のタプル。
 
 Returns:

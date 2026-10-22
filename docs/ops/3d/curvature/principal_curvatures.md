@@ -7,13 +7,13 @@ out: curvature
 examples: [curvature_grasp, itokawa_curvature, minimal_surfaces]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # principal_curvatures — 3D `curvature` op
 
 - **データ種**: `points` → `curvature`
-- **呼び出し**: `import fullseye as fs; fs.ledger.principal_curvatures(points, k=25, normals=None)` (実装を直接呼ぶなら `import curvature3d; curvature3d.principal_curvatures(points, k=25, normals=None)`、台帳から引くなら `ops3d.get("principal_curvatures")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.principal_curvatures(points, k=25, normals=None, *, method='exact')` (実装を直接呼ぶなら `import curvature3d; curvature3d.principal_curvatures(points, k=25, normals=None, *, method='exact')`、台帳から引くなら `ops3d.get("principal_curvatures")`)
 
 ## 使い方
 

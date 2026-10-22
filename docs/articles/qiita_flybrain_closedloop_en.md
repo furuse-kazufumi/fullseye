@@ -589,6 +589,18 @@ There are no left/right gaps at the level of cell counts; the one significant as
 
 **Same-day addendum (second implementation)**: the same 1,810 KCab cells were re-clustered with the public tool **coconatfly** (R, natverse: the cosine matrix from `cf_cosine_plot`, then ward.D into 4 clusters). Agreement with the published labels is L 0.88 / R 0.84 (higher than the home-grown classifier's 0.72 / 0.76); agreement with the home-grown consensus labels is 0.72, and the disagreements sit at the c / m boundary. **The s connectivity cluster is L 201 / R 352 — about 150 more on the right, independent of the implementation.** One step further in the reading: the left/right difference of s in connectivity space is real, while the c / m boundary moves with the method (part of the subtype asymmetry is where the line is drawn). Two implementations agreeing may still mean the same hole seen twice, so the third fingerprint will be morphology, not connectivity.
 
+**The whole brain (added 2026-10-18)**: here is the brain that was counted above. From the soma coordinates in the same annotation table, the **126,104 brain cell bodies** (VNC and ascending neurons excluded) are drawn one point per cell and coloured by superclass: blue = optic-lobe intrinsic (81,055), orange = central-brain intrinsic (31,997), purple = visual projection from the optic lobe to the central brain (9,162), green = descending neurons from the brain to the VNC (1,308). The black holes in the central brain are the neuropils (bundles of wiring) where no cell bodies sit.
+
+![The male fly brain, 126,104 cell bodies](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_flybrain_pointcloud/01_three_views.png)
+
+*↑ Front, side and top views at one common scale (labels in the figure are in Japanese). Data = MaleCNS v1.0 (Janelia FlyEM / Google Research, CC BY 4.0); rendered with Fullseye's `points_render`.*
+
+![The brain turning](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_flybrain_pointcloud/03_rotation.gif)
+
+*↑ One turn about the dorso-ventral axis (36 frames, each a single call of `points_render`).*
+
+The picture is drawn with a Fullseye op. Until now Fullseye had no op that turns a point cloud into a colour picture, and the same brain printed on the back of the ViEW 2026 business card was placed point by point in hand-written numpy. The new `points_render` splats sub-pixel footprints in depth order or adds them conserving the total light. A pretty picture does not show that it is right, so it is scored against values the renderer never computes: 99.5 % of the cell bodies labelled L land in the right half of the front view (seen from the front, the fly's left is on the right), and 4,050 Kenyon cells picked by type name sit dorsal and posterior of 437 antennal-lobe neurons. The column sums of the front and top views (two different cameras) agree, mirrored, to 1.8e-15. The PoC is `examples/poc_flybrain_pointcloud.py`.
+
 ### Is the worm's wiring left/right symmetric? — Testing the ruler on a brain whose wiring is complete (2026-09-27)
 
 Before measuring "left vs right" or "individual differences" in the fly brain, I tested the ruler itself on **the smallest brain whose wiring is completely known**. The *C. elegans* hermaphrodite has 302 neurons and its chemical-synapse wiring is fully public (Cook et al. 2019, wormwiring.org; the data is not in the repository).

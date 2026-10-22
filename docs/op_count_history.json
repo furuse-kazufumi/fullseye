@@ -406,6 +406,106 @@
    "halcon": 981,
    "poc": 218,
    "tests": 18109
+  },
+  {
+   "version": "0.7.0",
+   "tag": "v0.7.0",
+   "date": "2026-10-18",
+   "registry": 924,
+   "nary": 17,
+   "color": 12,
+   "ledger": 2401,
+   "ledger_families": 50,
+   "index": 3354,
+   "index_tiers": [
+    "color",
+    "ledger",
+    "nary",
+    "registry"
+   ],
+   "halcon": 982,
+   "poc": 248,
+   "tests": 19935
+  },
+  {
+   "version": "0.7.1",
+   "tag": "v0.7.1",
+   "date": "2026-10-19",
+   "registry": 927,
+   "nary": 17,
+   "color": 12,
+   "ledger": 2493,
+   "ledger_families": 51,
+   "index": 3449,
+   "index_tiers": [
+    "color",
+    "ledger",
+    "nary",
+    "registry"
+   ],
+   "halcon": 982,
+   "poc": 264,
+   "tests": 20795
+  },
+  {
+   "version": "0.7.2",
+   "tag": "v0.7.2",
+   "date": "2026-10-20",
+   "registry": 927,
+   "nary": 17,
+   "color": 12,
+   "ledger": 2493,
+   "ledger_families": 51,
+   "index": 3449,
+   "index_tiers": [
+    "color",
+    "ledger",
+    "nary",
+    "registry"
+   ],
+   "halcon": 982,
+   "poc": 264,
+   "tests": 21185
+  },
+  {
+   "version": "0.8.0",
+   "tag": "v0.8.0",
+   "date": "2026-10-22",
+   "registry": 928,
+   "nary": 17,
+   "color": 12,
+   "ledger": 2572,
+   "ledger_families": 51,
+   "index": 3529,
+   "index_tiers": [
+    "color",
+    "ledger",
+    "nary",
+    "registry"
+   ],
+   "halcon": 982,
+   "poc": 275,
+   "tests": 22073
+  },
+  {
+   "version": "0.8.1",
+   "tag": "v0.8.1",
+   "date": "2026-10-22",
+   "registry": 930,
+   "nary": 17,
+   "color": 12,
+   "ledger": 2572,
+   "ledger_families": 51,
+   "index": 3531,
+   "index_tiers": [
+    "color",
+    "ledger",
+    "nary",
+    "registry"
+   ],
+   "halcon": 982,
+   "poc": 275,
+   "tests": 22110
   }
  ]
 }

@@ -682,11 +682,12 @@ def skyline_extract(image, sky_is_bright=True, smooth=1.5, max_jump=3, jump_pena
     cost = 1.0 - edge
     H, W = cost.shape
     acc = cost[:, 0].copy()
-    back = np.zeros((H, W), dtype=np.int32)
+    offset_dtype = np.int8 if mj <= 127 else np.int16 if mj <= 32767 else np.int32
+    back = np.zeros((H, W), dtype=offset_dtype)
     rows = np.arange(H)
     for u in range(1, W):
         best = np.full(H, np.inf)
-        arg = np.zeros(H, dtype=np.int32)
+        arg = np.zeros(H, dtype=offset_dtype)
         for j in range(-mj, mj + 1):
             src = rows + j
             ok = (src >= 0) & (src < H)
@@ -694,13 +695,13 @@ def skyline_extract(image, sky_is_bright=True, smooth=1.5, max_jump=3, jump_pena
             cand[ok] = acc[src[ok]] + jp * abs(j)
             better = cand < best
             best[better] = cand[better]
-            arg[better] = src[better]
+            arg[better] = j
         acc = best + cost[:, u]
         back[:, u] = arg
     path = np.zeros(W, dtype=np.int32)
     path[-1] = int(np.argmin(acc))
     for u in range(W - 1, 0, -1):
-        path[u - 1] = back[path[u], u]
+        path[u - 1] = path[u] + int(back[path[u], u])
     strength = float(edge[path, np.arange(W)].mean())
     if strength < 0.05:
         raise ValueError("the best path has mean edge strength %.3f (< 0.05) — the image shows no sky/terrain boundary" % strength)

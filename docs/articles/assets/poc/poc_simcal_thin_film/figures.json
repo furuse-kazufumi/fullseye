@@ -1,0 +1,97 @@
+[
+ {
+  "file": "01_real_spectrum_fits.png",
+  "name": "real_spectrum_fits",
+  "caption": "Si 上の SiO₂(基準 98.5 nm)の実測の反射率に、5 本のつまみの模型(実線)と直入射・材料表の n の模型(破線)を合わせた。どちらも見た目はよく重なる —— 違いは残差を雑音の床 σ = 0.00054(裸の Si の別の測定から)で割ると見える(次の図)。",
+  "shape": [
+   360,
+   777,
+   3
+  ],
+  "source": "Schwarz et al., Adv. Opt. Mater. (2024) doi:10.1002/adom.202402502; data Zenodo 10.5281/zenodo.13753754 (CC BY 4.0). Modified: re-labelled and rounded table / micrograph downsized to 640x360, block means."
+ },
+ {
+  "file": "02_real_residuals.png",
+  "name": "real_residuals",
+  "caption": "豊かな模型の χ²/ν は 0.29、直入射・材料表の n は 1.98(絶対の χ² の門で p < 1e-3 → 拒否)。",
+  "shape": [
+   360,
+   560,
+   3
+  ],
+  "source": "Schwarz et al., Adv. Opt. Mater. (2024) doi:10.1002/adom.202402502; data Zenodo 10.5281/zenodo.13753754 (CC BY 4.0). Modified: re-labelled and rounded table / micrograph downsized to 640x360, block means."
+ },
+ {
+  "file": "03_real_profile_thickness.png",
+  "name": "real_profile_thickness",
+  "caption": "膜厚を固定して A・B・NA・利得を合わせ直したときの χ² の増え方(プロファイル尤度)。3.84 を越えない範囲が 95 % 区間(幅 4.4 nm)。局所の共線性 γ > 10 なので点推定は出さない —— NA が分からないと膜厚と屈折率と NA が互いに肩代わりする。左の端で χ² が急に立つのは NA = 0 の壁(NA は負になれず、薄い側へはそれ以上逃げられない)。直入射・材料表の n の模型は区間が狭く(93.02〜93.07 nm)基準を外すが、絶対の χ² の門が拒否する。",
+  "shape": [
+   360,
+   808,
+   3
+  ],
+  "source": "Schwarz et al., Adv. Opt. Mater. (2024) doi:10.1002/adom.202402502; data Zenodo 10.5281/zenodo.13753754 (CC BY 4.0). Modified: re-labelled and rounded table / micrograph downsized to 640x360, block means."
+ },
+ {
+  "file": "04_plan_screen.png",
+  "name": "plan_screen",
+  "caption": "写真と同じ区画の配置で、雑音 0.55 DN に白色化した出力の主成分ごとに Morris の μ* を回して合成した。照明と利得は積しか効かないので「組み合わせ」。L18 の直交表 18 回の出力 6 個の主成分は {'cumulative': 2, 'parallel': 1, 'mdl': None}。",
+  "shape": [
+   248,
+   337,
+   3
+  ],
+  "csv": "04_plan_screen.csv",
+  "tsv": "04_plan_screen.tsv"
+ },
+ {
+  "file": "05_synthetic_recovery_z.png",
+  "name": "synthetic_recovery_z",
+  "caption": "実測と同じ波長・同じ雑音 σ で、膜厚 98.5 nm・利得 1 を作って合わせた。z の標準偏差 1.00(1 ならCramér-Rao 下界どおり)。",
+  "shape": [
+   360,
+   684,
+   3
+  ]
+ },
+ {
+  "file": "06_synthetic_discrepancy.png",
+  "name": "synthetic_discrepancy",
+  "caption": "合成の 500 nm の膜(真値は材料表の分散)を 0・25・45・60° で撮った。分散を無視(B = 0)すると残差が波長に沿って系統的にうねり、残差 PCA は 4 成分の構造を見つける。分散ありの模型は 0 成分(白色)。",
+  "shape": [
+   360,
+   743,
+   3
+  ]
+ },
+ {
+  "file": "07_real_micrograph_calibration.png",
+  "name": "real_micrograph_calibration",
+  "caption": "材料表の n を固定し、膜厚・色温度・利得・ガンマ・周辺減光を区画(40 px 角)の平均に合わせた: d = 86.6 nm(基準 98.5 nm と -12 %)、T = 6224 K、γ = 2.51。区間は ±0.22 nm と狭いが χ²/ν 11.7 で、残差 PCA は 2 成分の構造を見つける —— カメラの分光感度(模型は CIE 1931)が足りない。出典: Schwarz et al., Adv. Opt. Mater. (2024) doi:10.1002/adom.202402502; data Zenodo 10.5281/zenodo.13753754 (CC BY 4.0). Modified: re-labelled and rounded table / micrograph downsized to 640x360, block means.",
+  "shape": [
+   453,
+   1960,
+   3
+  ]
+ },
+ {
+  "file": "08_real_determined_vs_combinations.png",
+  "name": "real_determined_vs_combinations",
+  "caption": "Schwarz ら 2024 の顕微鏡写真(Si 上の SiO₂ の縁)を 40 px 角の 52 区画の RGB 平均にし、転送行列 × 黒体の光源 × CIE 1931 → sRGB × 利得 × ガンマ × 周辺減光の 7 本のつまみに合わせた終点を通る切り口(ほかのつまみは終点に固定、色は log10(χ² − 最小 + 1)、暗いほど合う、上が大きい値)。左は各軸 ±8 σ_CRLB(T 5752〜6449 K、周辺減光 -0.149〜-0.018)でも谷が 1 点に閉じる。右は利得 ×1/2〜×2・ガンマ 1.4〜3.2 の全域に谷が溝として伸び、明るさを上げても γ を上げれば同じ画素値に戻る。simcal_fit が値を出したのは T = 6100 K, vig = -0.084 だけで、膜厚・屈折率・分散・利得・ガンマは共線性指数 γ > 10 で「組み合わせ」として数を出さない。出典: Schwarz et al., Adv. Opt. Mater. (2024) doi:10.1002/adom.202402502; data Zenodo 10.5281/zenodo.13753754 (CC BY 4.0). Modified: re-labelled and rounded table / micrograph downsized to 640x360, block means.",
+  "shape": [
+   524,
+   1096,
+   3
+  ]
+ },
+ {
+  "file": "09_real_undetermined_direction.png",
+  "name": "real_undetermined_direction",
+  "caption": "実物の写真の 7 本の当てはめの終点から、1 本ずつ(色温度・周辺減光・膜厚・ガンマ)と、Fisher 情報の最小固有ベクトル(A -0.42, B +0.89, gamma -0.14)の向きに動かした。膜厚もガンマも 1 本だけ動かせば画像は大きく変わるのに、決まらない組み合わせの向きでは ±0.08 動かしても Δχ² は最大 6.5(膜厚だけなら 17130、ガンマだけなら 21274。Fisher 情報の条件数 6.0e+06)。これが「値を出さない」理由。負の側で Δχ² がわずかに負(最小 -5.90、図では 0 で切った)なのは、終点の A が範囲の端 1.38 に張り付き、範囲の外へ逃げたがっているから —— 模型か範囲が違う印で、simcal はこの端の値も推定として出さない。出典: Schwarz et al., Adv. Opt. Mater. (2024) doi:10.1002/adom.202402502; data Zenodo 10.5281/zenodo.13753754 (CC BY 4.0). Modified: re-labelled and rounded table / micrograph downsized to 640x360, block means.",
+  "shape": [
+   360,
+   763,
+   3
+  ]
+ }
+]

@@ -8,6 +8,11 @@ Airy の式は ``matappear.thin_film_reflectance`` にあるが、**膜を何層
 (ウェハの色見本)が無かった。膜・基板の n,k はすべて材料表 ``materials`` の鍵で指定する —— 観察用の
 光学系と観察対象が同じ材料表を引く(Fullseye の設計原則)。
 
+計算は 1 か所: 薄膜の反射・透過はこのモジュールの特性行列(``_stack_rt``)と屈折率の解決(``_index_spec``)だけで
+計算する。``matappear.thin_film_reflectance`` / ``thin_film_rgb`` もここを呼ぶ(2026-10-15 に寄せた。以前は matappear に
+Airy の閉じた式の第二の実装があり、受ける入力の種類が食い違っていた)。独立の検算(Airy の式・別に書いた特性行列)は
+テストと PoC の側に置く。
+
 内容(5 op):
   順問題  `multilayer_reflectance`(特性行列 = 転送行列。斜入射・s/p・集光 NA の角度平均・共形な粗さ)
           `film_color`(膜厚 → D65 で見た sRGB・CIELAB。ウェハの干渉色の色見本)
@@ -77,15 +82,38 @@ def _wavelengths(wavelengths_nm, wl_min_nm, wl_max_nm, n_points, op):
     return np.linspace(lo, hi, n)
 
 
-def _index(v, lam, name, op):
-    """材料の指定 → 波長 lam [nm] での複素屈折率の配列(matappear と同じ解決: 鍵・レコード・数・配列)。"""
-    import matappear as _ma
-    if isinstance(v, dict):
+def _index_spec(v, w, name, op):
+    """屈折率の指定 → 波長 w [nm] での複素屈折率 N = n + ik の配列(薄膜の計算はすべてここを通る)。
+
+    受けるもの: 材料表の鍵(文字列)・材料レコード(dict)・実数・複素数 n + ik・w とブロードキャストできる配列
+    (波長ごとの n(λ)、複素も可)。
+
+    ★符号の約束: N = n + ik、k ≥ 0(時間因子 e^{−iωt}、層の中の波は Im(N cos θ) ≥ 0 の枝で減衰する)。
+    N = n − ik と書く文献(時間因子 e^{+iωt}、例 Macleod)の値は、**同じ k を正のまま** n + 1j*k として渡す。
+    虚部が負の入力は ValueError —— どちらの約束で書かれた値かを推測しない(推測を誤ると利得のある媒質になり、
+    反射率が 1 を超えうる)。
+    """
+    if isinstance(v, (str, dict)):
         import materials as _mat
         rec = _mat._record(v, op)
-        n, k = _mat._nk(rec, np.asarray(lam, dtype=np.float64).ravel() / 1000.0, op)[:2]
-        return (n + 1j * k).reshape(np.shape(lam))
-    return np.broadcast_to(_ma._film_index(v, lam, name, op), np.shape(lam)).astype(np.complex128)
+        flat = np.asarray(w, dtype=np.float64).ravel()
+        n, k = _mat._nk(rec, flat / 1000.0, op)[:2]
+        return (n + 1j * k).reshape(np.shape(w))
+    a = np.asarray(v)
+    if a.dtype.kind not in "biufc":
+        raise ValueError("%s: %s must be a number, a complex n + ik, a material name or an array: got %r" % (op, name, v))
+    a = a.astype(np.complex128)
+    if not np.all(np.isfinite(a)) or np.any(a.real <= 0.0):
+        raise ValueError("%s: %s must be finite with a positive real part: got %r" % (op, name, v))
+    if np.any(a.imag < 0.0):
+        raise ValueError("%s: %s must have k >= 0 in the N = n + ik convention (a source that writes N = n - ik "
+                         "means the same k: pass n + 1j*k): got %r" % (op, name, v))
+    return a
+
+
+def _index(v, lam, name, op):
+    """材料の指定 → 波長 lam [nm] での複素屈折率の配列(lam と同じ形)。"""
+    return np.broadcast_to(_index_spec(v, lam, name, op), np.shape(lam)).astype(np.complex128)
 
 
 def _ambient(v, lam, op):
@@ -110,32 +138,34 @@ def _layers(layers, op):
     return out
 
 
-def _cos_in(n_layer, n0_sin0):
-    """層の中の複素 cos θ̃(減衰する枝 Im(N cos θ̃) ≥ 0)。matappear と同じ選び方。"""
-    c = np.sqrt(1.0 - (n0_sin0 / n_layer) ** 2 + 0j)
+def _cos_in(n_layer, n0, n0c0_sq):
+    """層の中の複素 cos θ̃(減衰する枝 Im(N cos θ̃) ≥ 0)。"""
+    # √(1 − (n₀ sin θ₀ / N)²) を √(N² − n₀² + (n₀ cos θ₀)²) / N と書く(同じ値。N = n₀ の層で cos θ̃ = cos θ₀ が
+    # 丸めずに残る —— 1 − sin² の形では cos θ₀ = 1e-9 の斜入射で 0 になり、p のアドミッタンスが 0/0 になった)
+    c = np.sqrt(n_layer * n_layer - n0 * n0 + n0c0_sq + 0j) / n_layer
     return np.where((n_layer * c).imag < 0.0, -c, c)
 
 
 # --------------------------------------------------------------------------- #
 # 心臓部: 特性行列(ブロードキャスト可)                                         #
 # --------------------------------------------------------------------------- #
-def _stack_rt(lam, n0, layer_n, layer_d, n_sub, sin0, pol, op):
+def _stack_rt(lam, n0, layer_n, layer_d, n_sub, sin0, pol, op, cos0=None):
     """R, T(偏光 1 つ)。lam は (..., K)、layer_d の各要素は lam とブロードキャストできる厚さ [nm]。"""
-    n0_sin0 = n0 * sin0
-    c0 = np.sqrt(1.0 - sin0 ** 2 + 0j)
+    c0 = np.sqrt(1.0 - sin0 ** 2 + 0j) if cos0 is None else np.asarray(cos0, dtype=np.float64) + 0j
+    n0c0_sq = (n0 * c0) ** 2
 
     def adm(n, c):
         return n * c if pol == "s" else n / c
 
     eta0 = adm(n0, c0)
-    cs = _cos_in(n_sub, n0_sin0)
+    cs = _cos_in(n_sub, n0, n0c0_sq)
     eta_s = adm(n_sub, cs)
     m11 = np.ones(np.broadcast(lam, eta_s).shape, dtype=np.complex128)
     m12 = np.zeros_like(m11)
     m21 = np.zeros_like(m11)
     m22 = np.ones_like(m11)
     for n, d in zip(layer_n, layer_d):
-        c = _cos_in(n, n0_sin0)
+        c = _cos_in(n, n0, n0c0_sq)
         delta = 2.0 * np.pi * n * c * d / lam
         if np.any(np.abs(delta.imag) > _MAX_IM_DELTA):
             raise ValueError("%s: a layer is optically opaque (|Im delta| > %g); model it as the substrate instead"
@@ -223,7 +253,7 @@ def multilayer_reflectance(layers=(("SIO2", 100.0),), substrate="SI", wl_min_nm=
 
     返り値: (K, 2) の pairs。
 
-    真値: 1 層なら ``matappear.thin_film_reflectance``(Airy の式、別実装)と一致する。膜厚 0 は裸の基板の Fresnel、
+    真値: 1 層なら Airy の閉じた式(テストと PoC に独立に書いた式)と一致する。膜厚 0 は裸の基板の Fresnel、
     λ/4 の AR 膜(n = √n_sub)は設計波長で R = 0、(HL)^N の鏡は閉形式 ((1 − q)/(1 + q))²、q = (n_s/n₀)(n_H/n_L)^{2N}(H が入射側)。
     吸収の無い積層では R + T = 1。
 
@@ -535,19 +565,22 @@ def film_thickness_map(images, wavelengths_nm=(450.0, 500.0, 550.0, 600.0, 650.0
     for s in range(0, px.shape[0], ck):
         p = px[s:s + ck]
         sse = np.maximum(np.sum(p * p, axis=1)[:, None] - 2.0 * p @ lut.T + lut2[None, :], 0.0)  # (P, N)
-        rm = np.sqrt(sse / B)
-        j = np.argmin(rm, axis=1)
+        j = np.argmin(sse, axis=1)
         jj = np.clip(j, 1, grid.size - 2)
-        a, b, c = rm[np.arange(j.size), jj - 1], rm[np.arange(j.size), jj], rm[np.arange(j.size), jj + 1]
+        rows = np.arange(j.size)
+        a = np.sqrt(sse[rows, jj - 1] / B)
+        b = np.sqrt(sse[rows, jj] / B)
+        c = np.sqrt(sse[rows, jj + 1] / B)
         den = a - 2.0 * b + c
         off = np.where((den > 1e-300) & (j == jj), 0.5 * (a - c) / np.where(den > 1e-300, den, 1.0), 0.0)
         thick[s:s + ck] = grid[jj] + np.clip(off, -0.5, 0.5) * st if grid.size > 2 else grid[j]
         thick[s:s + ck] = np.where(j == jj, thick[s:s + ck], grid[j])
-        best = rm[np.arange(j.size), j]
+        best = np.sqrt(sse[rows, j] / B)
         rmse[s:s + ck] = best
-        left = np.concatenate([np.full((rm.shape[0], 1), np.inf), rm[:, :-1]], axis=1)
-        right = np.concatenate([rm[:, 1:], np.full((rm.shape[0], 1), np.inf)], axis=1)
-        is_min = (rm <= left) & (rm < right)
-        ncand[s:s + ck] = np.sum(is_min & (rm <= best[:, None] + tol), axis=1)
+        left = np.concatenate([np.full((sse.shape[0], 1), np.inf), sse[:, :-1]], axis=1)
+        right = np.concatenate([sse[:, 1:], np.full((sse.shape[0], 1), np.inf)], axis=1)
+        is_min = (sse <= left) & (sse < right)
+        threshold = B * (best + tol) ** 2
+        ncand[s:s + ck] = np.sum(is_min & (sse <= threshold[:, None]), axis=1)
     return {"thickness": thick.reshape(H, W), "rmse": rmse.reshape(H, W), "n_candidates": ncand.reshape(H, W),
             "lut_thickness_nm": grid}

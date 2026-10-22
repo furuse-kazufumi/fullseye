@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The base colour of a wet surface. <b>The diffuse gets darker</b> (and the specular grows).</p>
 <p>base_rgb: colour in the dry state (H,W,3) or (3,). wet: wetness (0–1).</p>
-<p>ior: refractive index of the water film.</p>
+<p>ior: refractive index of the water film. A number or a material-table name (e.g. &quot;WATER&quot;; a name gives n at the d line, 587.56 nm).</p>
 <p>Returns: diffuse colour in the wet state (same shape).</p>
 <p>Why it darkens: total internal reflection occurs inside the water film, diffuse light is sent back to the surface again and again and absorbed each time. As an approximation, for the dry reflectance ρ a re-absorption corresponding to the internal reflectance Ri = 1 − (1 − Ri0)/n² is applied ―― exactly the phenomenon of wet sand looking dark (the increase in specularity is expressed by layering <code style="color:#22d3bf">clearcoat_shade(coat=wet)</code>).</p>
 <p>Empty input (<code style="color:#22d3bf">base_rgb</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
@@ -27,7 +27,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:machined_metal_and_materials">machined_metal_and_materials</a> — <code style="color:#22d3bf">py -3.11 examples/machined_metal_and_materials.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">rgbimage</code> as input)</h3>
-<p><a style="color:#22d3bf" href="opoptics:clearcoat_shade">clearcoat_shade</a> · <a style="color:#22d3bf" href="opoptics:defocus_blur">defocus_blur</a> · <a style="color:#22d3bf" href="opoptics:diffraction_blur">diffraction_blur</a> · <a style="color:#22d3bf" href="opoptics:sensor_capture">sensor_capture</a> · <a style="color:#22d3bf" href="opoptics:pixel_shift_capture">pixel_shift_capture</a> · <a style="color:#22d3bf" href="opoptics:false_color_metric">false_color_metric</a></p>
+<p><a style="color:#22d3bf" href="opoptics:clearcoat_shade">clearcoat_shade</a> · <a style="color:#22d3bf" href="opoptics:defocus_blur">defocus_blur</a> · <a style="color:#22d3bf" href="opoptics:diffraction_blur">diffraction_blur</a> · <a style="color:#22d3bf" href="opoptics:sensor_capture">sensor_capture</a> · <a style="color:#22d3bf" href="opoptics:underwater_image">underwater_image</a> · <a style="color:#22d3bf" href="opoptics:cubemap_from_equirect">cubemap_from_equirect</a> · <a style="color:#22d3bf" href="opoptics:viewport_from_equirect">viewport_from_equirect</a> · <a style="color:#22d3bf" href="opoptics:equirect_rotate">equirect_rotate</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">material</code>)</h3>
 <p><a style="color:#22d3bf" href="opoptics:material_catalog">material_catalog</a> · <a style="color:#22d3bf" href="opoptics:oren_nayar">oren_nayar</a> · <a style="color:#22d3bf" href="opoptics:clearcoat_shade">clearcoat_shade</a> · <a style="color:#22d3bf" href="opoptics:sheen_shade">sheen_shade</a> · <a style="color:#22d3bf" href="opoptics:subsurface_approx">subsurface_approx</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">

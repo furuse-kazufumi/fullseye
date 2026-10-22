@@ -402,6 +402,57 @@ def make_figures():
     赤が緑の**外**にあるのが面積の太り。2 枚目: 半径ごとの面積比を、補正前(太る)と
     補正後(1 に戻る)で並べ、真値の 1.0 を破線で引く。
     """
+    # Device-native micrographs: line/contact structures and two defect types.
+    hh, ww = 512, 1024
+    yy, xx = np.mgrid[:hh, :ww]
+    height = np.zeros((hh, ww), np.float64)
+    material = np.zeros((hh, ww), np.int32)
+    for x0 in range(90, 900, 150):
+        line = np.abs(xx - x0) < 24
+        height[line] = 28.0; material[line] = 1
+    for cy in (130, 380):
+        for cx in (180, 480, 780):
+            contact = (xx - cx) ** 2 + (yy - cy) ** 2 < 42 ** 2
+            height[contact] = 42.0; material[contact] = 1
+    particle = (xx - 690) ** 2 + (yy - 265) ** 2 < 25 ** 2
+    bridge = (np.abs(yy - 260) < 13) & (xx > 365) & (xx < 515)
+    height[particle] = 70.0; height[bridge] = 28.0
+    material[particle | bridge] = 1
+    se = SM.sem_render(height, pixel_nm=2.0, psf_px=2.2, edge_gain=1.0,
+                       base=0.24, dose=45.0, charging=0.018, seed=225)
+    signals = SM.sem_image(height[::4, ::4], material[::4, ::4], materials=("PMMA", "W"), substrate="SI",
+                           energy_kev=5.0, pixel_nm=8.0, beam_sigma_nm=2.0,
+                           electrons_per_pixel=1, detector="everhart", seed=226,
+                           return_signals=True)
+    # Use the Monte-Carlo material contrast on a coarse calibration grid, then
+    # recompute a full-resolution count image from that contrast (no upscaling).
+    mc = signals["bse"]
+    c0 = float(np.mean(mc[material[::4, ::4] == 0]))
+    c1 = float(np.mean(mc[material[::4, ::4] == 1]))
+    expected = ndi.gaussian_filter(np.where(material == 1, c1, c0), 1.0)
+    bse = np.random.default_rng(226).poisson(24.0 * expected) / 24.0
+    truth = height > 0
+    measured = se > (np.median(se) + 0.12)
+    overlay = np.repeat((0.45 * se)[..., None], 3, axis=2)
+    overlay[_boundary(truth)] = (0.1, 0.95, 0.2)
+    overlay[_boundary(measured)] = (0.95, 0.15, 0.1)
+    truth_edge = _boundary(truth); measured_edge = _boundary(measured)
+    bias_nm = 2.0 * float(np.median(ndi.distance_transform_edt(~truth_edge)[measured_edge]))
+    triptych = np.concatenate([np.repeat(se[..., None], 3, axis=2),
+                               np.repeat(bse[..., None], 3, axis=2), overlay], axis=1)
+    figs.save("sem_se_bse_bias", triptych,
+              caption=("二次電子像（左、45 e⁻/pixel、PSF σ=4.4 nm、帯電勾配 0.018）｜反射電子像（中央）｜寸法測定重ね合わせ（右、緑=真値、赤=閾値輪郭）。等価半径の偏り %+.1f nm。" % bias_nm))
+    # Eightfold zoom is recomputed at the same physical sampling, not nearest-neighbour enlarged.
+    local_h = np.zeros((512, 512)); local_h[:, 256:] = 28.0
+    crop = SM.sem_render(local_h, pixel_nm=0.5, psf_px=8.8, base=0.24,
+                         dose=45.0, charging=0.018, seed=227)
+    figs.save_grid("sem_edge_rim_zoom", [crop], captions=["256 nm 視野"], title="縁の明帯と検出器側の陰影（8倍視野）",
+                   caption="0.5 nm/pixel で再計算した 256 nm 視野。明帯幅は PSF とともに増える。")
+    dose_imgs = [SM.sem_render(height[:, :512], pixel_nm=2.0, psf_px=2.2, base=0.24,
+                               dose=d, charging=0.018, seed=225 + int(d)) for d in (4.0, 16.0, 64.0)]
+    figs.save_grid("sem_dose_series", dose_imgs, captions=["4 e⁻/pixel", "16 e⁻/pixel", "64 e⁻/pixel"],
+                   title="照射量系列", caption="低照射量ほど粒状のショット雑音が増える。")
+
     S = 200; thr = BASE * 1.02
     h, foot = cone((S, S), 100, 100, 22)
     img = SM.sem_render(h, psf_px=3.0, base=BASE)
@@ -431,7 +482,7 @@ def make_figures():
         colors=["wrong", "right", "reference"],
         caption="面積の太りは小さい欠陥ほど大きい(周囲長/面積 ∝ 1/R)。既知のビーム PSF 幅を"
                 "引くと、どの大きさでも 1.0 に戻る。")
-    return 2
+    return 5
 
 
 def main():

@@ -24,6 +24,10 @@
     py -3.11 tools/regen_all.py --check   # 作り直して、差分が出たら exit 1
     py -3.11 tools/regen_all.py --list    # 何をどの順で回すかだけ見る
 
+**この鎖に入れないもの**: ``tools/build_view2026_viewers.py``(ViEW2026 の「触って見る」7 本)。LiDAR の
+実データ(``FULLSEYE_DATA_DIR`` 配下、リポジトリに無い)が要るので、無い環境で ``--check`` が赤になる。
+出力(``docs/view2026/viewers/*.html``)を変える回は、手で回して commit する。
+
 ``--check`` は**強い不変条件**を見る: 全部作り直したあとの作業ツリーが
 きれいであること。個々の drift 検査の総和より広く、「回し忘れ」を 1 つ残らず拾う。
 """
@@ -60,6 +64,8 @@ CHAIN = [
     (["tools/gen_op_catalog.py"], "1 ページの op カタログ"),
     (["tools/gen_capabilities_index.py"], "能力索引(docs/capabilities/*.md から)"),
     (["tools/gen_hardening_index.py"], "堅牢性台帳"),
+    # 入力は公開 op のモジュールの原文だけ(他の段の生成物を読まない)。
+    (["tools/audit_fallbacks.py"], "失敗と空結果の棚卸し docs/fallback_audit.json(H16、--check で drift)"),
     (["tools/gen_maturity.py"], "成熟度台帳(生成物 + 機械可読 JSON)"),
     # ★展示館より**先**に回す —— 生成器は見出しに収蔵番号を出すので、
     #   未発行の展示が 1 つでもあると BuildError で止まる。
@@ -98,7 +104,13 @@ CHAIN = [
     #   題を持つ生成物(OPERATORS / REFERENCES / EXAMPLES / EXAMPLES_3D / SENSOR_PLAYBOOK /
     #   CONVERSION_MATRIX / DESIGN_NOTES*)を書く 7 段すべてより後でなければならない ——
     #   以前はその 7 段より前にあり、題が変わると 2 回回さないと揃わなかった。
+    # 文献層の本体はコーパスが要る(EXCLUDED)が、「op ノート N 本」の件数は docs/ops を数えれば直せる。
+    # docs/ops を書く opdocs の後、題を読む docmap(gen_docs_index_ops)の前。
+    (["tools/gen_literature_counts.py"], "docs/literature の件数(op ノートの枚数)を実ファイルから打ち直す"),
     (["tools/gen_docs_index_ops.py"], "docs/README*.md の ops / poc / docmap ブロック"),
+    # 手書き部分にある実装由来の数だけを最後に更新する。RAG ガイドの訳は、正本・訳の
+    # 差分が数値だけだと確認できた場合に限り source-sha も更新する。
+    (["tools/gen_doc_counts.py"], "README の registry 件数 + AI_RAG_GUIDE の op ノート件数"),
     # 索引と op ノートの後(複製するので)。
     (["tools/gen_mcp_data.py"], "fullseye/data/OP_INDEX.json + OP_NOTES.json(MCP が wheel から読む複製)"),
 ]
@@ -129,6 +141,7 @@ OUTPUTS = {
     "tools/gen_op_catalog.py": ["docs/OP_CATALOG.md", "fullseye/OP_CATALOG.md"],
     "tools/gen_capabilities_index.py": ["docs/CAPABILITIES.md", "docs/CAPABILITIES.*.md"],
     "tools/gen_hardening_index.py": ["docs/HARDENING.md", "docs/HARDENING.*.md"],
+    "tools/audit_fallbacks.py": ["docs/fallback_audit.json"],
     "tools/gen_maturity.py": ["docs/MATURITY.md", "docs/maturity.json"],
     "tools/gen_exhibit_numbers.py": ["docs/articles/exhibits/exhibit_numbers.json"],
     "tools/gen_wingpoc_gallery.py": ["docs/articles/exhibits/wingpoc.*.md",
@@ -150,9 +163,37 @@ OUTPUTS = {
     "tools/conversion_matrix.py": ["docs/CONVERSION_MATRIX.md"],
     "tools/gen_design_notes.py": ["docs/DESIGN_NOTES.md", "docs/DESIGN_NOTES.*.md", "docs/design_notes.json"],
     "tools/gen_docs_index_ops.py": ["docs/README.md", "docs/README.*.md", "docs/articles/README.md"],
+    "tools/gen_doc_counts.py": ["docs/README.md", "docs/README.*.md",
+                                 "docs/AI_RAG_GUIDE.md", "docs/AI_RAG_GUIDE.*.md"],
     "tools/gen_mcp_data.py": ["fullseye/data/OP_INDEX.json", "fullseye/data/OP_NOTES.json",
                               "fullseye/data/OP_SEARCH.json", "fullseye/data/op_knob.json"],
+    "tools/gen_literature_counts.py": ["docs/literature/INDEX.md", "docs/literature/driving_simulation.md",
+                                       "docs/literature/manufacturing_processes.md", "docs/literature/mech_design.md",
+                                       "docs/literature/mechatronics_parts.md", "docs/literature/optical_metrology.md",
+                                       "docs/literature/sensor_simulation.md"],
 }
+
+#: ---- 書く**かもしれない**出力(2026-10-18)--------------------------------------------
+#:
+#: OUTPUTS は「この段が必ず触れる」宣言で、`trace_problems()` は触れもしない宣言を拒む。ところが
+#: **差分があるときだけ書く**出力がある —— `gen_wingpoc_gallery` は図の PNG より古いときだけ
+#: `<図>_720.jpg` のサムネを書き直す。統合で 2 回続けて同じ症状を踏んだ: 新しい PoC の図を初めて
+#: 載せる / 図を差し替えると「OUTPUTS に無いファイルを書いた」で止まり、OUTPUTS に足すと次の回は
+#: 「触れもしない」で止まる(2 回目の regen でやっと通る)。
+#:
+#: ここに挙げたパターンは**書いてもよいが、書かなくてもよい**(0 件を許す)。書き込みの許可と
+#: 順序の検査(`order_violations`)には効くが、「触れもしない」の検査と「追跡ファイルに当たる」の
+#: 検査には使わない。抜け道にしないよう、パターンごとに理由を書き(`table_problems` が短い理由・
+#: 鎖に無い段・ファイル名の部分が `*` だけのパターン・自分の OUTPUTS と重なるパターンを拒む)、
+#: tests/test_regen_all.py が「消すと 1 回目の regen が止まる」ことを探針で見る。
+MAY_OUTPUTS = {
+    "tools/gen_wingpoc_gallery.py": {
+        "docs/articles/assets/poc/*_720.jpg":
+            ("幅 720 px の JPEG サムネ。元の図(PNG)より古いか無いときだけ書く(_thumb)ので、"
+             "図を初めて載せた回・差し替えた回にしか書き込みが起きない。"),
+    },
+}
+
 
 #: 各段が読む、**他の段の**生成物(自分の出力を読み比べるのは書かなくてよい)。
 #: 2026-10-15 に audit hook の実測(全 23 段)から起こした。
@@ -167,12 +208,18 @@ READS = {
         "docs/ops/*", "docs/OP_CATALOG.md", "docs/CAPABILITIES.md", "docs/CAPABILITIES.*.md",
         "docs/HARDENING.md", "docs/HARDENING.*.md", "docs/MATURITY.md",
         "docs/articles/exhibits/wingpoc.*.md", "docs/articles/fullseye_poc_museum_qiita_*.md", "docs/articles/fullseye_poc_museum_*_qiita_*.md",
-        "docs/literature/OSS_LANDSCAPE.md", "docs/view2026/index.md", "docs/view2026/*/index.md",
+        "docs/literature/OSS_LANDSCAPE.md", "docs/literature/INDEX.md", "docs/literature/driving_simulation.md",
+        "docs/literature/manufacturing_processes.md", "docs/literature/mech_design.md",
+        "docs/literature/mechatronics_parts.md", "docs/literature/optical_metrology.md",
+        "docs/literature/sensor_simulation.md",
         "docs/README.md", "docs/README.*.md", "docs/OP_COUNT_HISTORY.md",
         "docs/EXAMPLES_3D.md", "docs/SENSOR_PLAYBOOK.md", "docs/OPERATORS.md",
         "docs/REFERENCES.md", "docs/EXAMPLES.md", "docs/CONVERSION_MATRIX.md",
-        "docs/DESIGN_NOTES.md", "docs/DESIGN_NOTES.*.md"],
+        "docs/DESIGN_NOTES.md", "docs/DESIGN_NOTES.*.md",
+        "docs/AI_RAG_GUIDE.md", "docs/AI_RAG_GUIDE.*.md"],
     "tools/gen_mcp_data.py": ["docs/OP_INDEX.json", "docs/ops/*"],
+    "tools/gen_literature_counts.py": ["docs/ops/*"],
+    "tools/gen_doc_counts.py": ["docs/README.md", "docs/README.*.md"],
 }
 
 #: 順序の例外 —— 読むが、後ろの段が書いてもよいもの。(段, READS のパターン) → 理由。
@@ -183,11 +230,19 @@ _SHARED_README = ("README*.md は gen_trust_block(trust ブロック)と gen_doc
 _SHIPPED_DIAG = ("同梱の複製は `imgevolve.py index` の**標準出力の診断**(この環境と同梱索引の差)に"
                  "だけ使い、docs/OP_INDEX.json の中身には入らない。複製を作る gen_mcp_data は"
                  "索引を読むので後ろでなければならず、ここは構造的に循環する。")
+_DOCMAP_COUNT = ("gen_docs_index_ops は文書地図に載せるため AI_RAG_GUIDE の題だけを読む。"
+                 "gen_doc_counts が後で変更するのは本文中の件数だけなので、地図の生成結果には影響しない。")
 ORDER_EXEMPT = {
     ("tools/gen_trust_block.py", "docs/README.md"): _SHARED_README,
     ("tools/gen_trust_block.py", "docs/README.*.md"): _SHARED_README,
     ("imgevolve.py", "fullseye/data/OP_INDEX.json"): _SHIPPED_DIAG,
     ("imgevolve.py", "fullseye/data/op_knob.json"): _SHIPPED_DIAG,
+    # gen_doc_counts は gen_docs_index_ops が自分のマーカー区間を更新した後、同じ
+    # README の手書き冒頭にある registry 件数だけを更新する。
+    ("tools/gen_docs_index_ops.py", "docs/README.md"): _SHARED_README,
+    ("tools/gen_docs_index_ops.py", "docs/README.*.md"): _SHARED_README,
+    ("tools/gen_docs_index_ops.py", "docs/AI_RAG_GUIDE.md"): _DOCMAP_COUNT,
+    ("tools/gen_docs_index_ops.py", "docs/AI_RAG_GUIDE.*.md"): _DOCMAP_COUNT,
 }
 
 #: **CHAIN に入れないものと、その理由**(2026-09-09)。
@@ -225,8 +280,12 @@ _IMAGE_REASON = ("画像・動画の書き手。PNG/GIF のバイトは Pillow �
 _SPIKE_REASON = ("スパイク(実験)の記録。spikes/out_gallery/ の図は当時の証跡として凍結してあり、"
                  "再描画(matplotlib / GUI)はバイトが変わる。")
 EXCLUDED = {
+    "tools/merge_test_durations.py": "CI の片割りの重み(.test_durations)。入力は CI の run が残す所要時間の artifact(repo の外)なので手元では作れない —— 取ってきた artifact を合流して commit する。中身は実測値で、回すたびに変わる。",
+    "tools/seed_test_durations.py": "同じ .test_durations の初回の穴埋め(未計測の試験を平均値で仮置き)。最初の 1 回だけの道具で、以後は merge_test_durations.py の実測が置き換える。",
     "tools/gen_thin_film_real.py": "薄膜 PoC の実測データ(Zenodo 13753754・figshare 23285603、どちらも CC BY 4.0)の抜き出し。入力の原本(xlsx・写真、計 60 MB)は repo の外で手で取得するので CI では作れない —— 抜き出した小さな表と縮小写真を data/thin_film_real/ に commit し、出典と改変は同じ場所の README.md に書く。",
     "tools/gen_oct_real.py": "工業用 OCT の PoC の実測データ(Liverpool Research Data Catalogue 126、CC BY 4.0)の抜き出し。入力の原本(.mat の zip、61 MB)は repo の外で手で取得するので CI では作れない —— A ラインを等間隔に 100 本ずつ抜いた小さな npz を data/oct_real/ に commit し、出典と改変は同じ場所の README.md に書く。",
+    "tools/gen_xray_tables.py": "材料表の X 線の列(materials_xray_data.py)。入力は NIST SRD 126(Hubbell & Seltzer)の公開ページを手で保存したもの(repo の外、著作権の表示があるので部分集合だけを同梱)で CI では作れない —— 生成物を commit し、手元では `--nist <dir> --check` が drift を見る。tests/test_dualxray.py が NIST の公表値と化合物の表で中身を守る。",
+    "tools/gen_pmd_real.py": "デフレクトメトリの PoC の実データ(DataverseNO doi:10.18710/TKS7SI、CC0 1.0)の抜き出しと全解析の記録。入力の原本(16 bit TIFF 280 枚、110 MB)は repo の外で手で取得するので CI では作れない —— 3 枚の切り出しと解析の記録の小さな npz を data/pmd_real/ に commit し、出典と改変は同じ場所の README.md に書く。PoC は FULLSEYE_PMD_HAMMER_DATA があるとき原本から解析し直して記録との差を門で見る。",
     "tools/gen_material_tables.py": "材料表(materials_data.py)。入力の refractiveindex.info database(CC0、71 MB)は repo の外にあるので CI では作れない —— 生成物を commit し、手元では `--rii <database dir> --check` が drift を見る。tests/test_materials.py がカタログ公表値(n_d / V_d)と一次文献の点で中身を守る。",
     "tools/gen_wing1d_gallery.py": _ARTICLE_REASON,
     "tools/gen_wing2d_gallery.py": _ARTICLE_REASON,
@@ -328,6 +387,12 @@ EXCLUDED = {
     "tools/gen_blas_article_figs.py": _IMAGE_REASON + (" BLAS スレッド数の**実測**を図にする。★2026-10-07 まで"
                                                        "出力先が手元の絶対パスで、どの checkout から回しても"
                                                        "本線の図を書き換えていた(今は Path(__file__) から求める)。"),
+    "tools/gen_simcal_article_figs.py": _IMAGE_REASON + (" Qiita の sim-to-real 較正シリーズの図"
+                                                        "(docs/articles/assets/qiita_simcal_series/)。本文の数字は同じ場所の"
+                                                        "numbers.json と examples の simcal ツアー 2 本の印字に合わせ、ずれたら"
+                                                        "図を書かずに止まる(assert)。第 2 回の図は実写の PoC 4 本"
+                                                        "(薄膜・テレセン・ピクセルシフト・相互反射)の章を呼ぶので、"
+                                                        "公開画像の取得(ネット)と 10 分前後の CPU が要る。"),
     "tools/gen_evis_media.py": _IMAGE_REASON + " 入力は手元の evis 実験映像(EVIS_CHOPSTICK_DIR)。",
     "tools/gen_visionlab_video.py": _IMAGE_REASON + " 動画(GIF/MP4)。",
     "tools/gen_studio_screenshots.py": _IMAGE_REASON + " Studio(PySide6)を実際に起動して撮る。CI に画面は無い。",
@@ -348,6 +413,7 @@ EXCLUDED = {
 _OUT_REASON = "出力は out/(gitignore)で、コミット物を書かない。"
 NOT_A_GENERATOR = {
     "tools/algo_gate.py": "門(algo 層の合否を出す)。出力は out/ へ。",
+    "pocviewer.py": "ライブラリ(fs.write_viewer)。呼び出し側が指定した出力先へ 1 つの HTML を書く道具で、repo の生成物ではない(ビューアの生成器は tools/build_view2026_viewers.py)。",
     "tools/bench_ops.py": "ベンチ。実測値なので回すたびに変わる。",
     "tools/bench_realtime.py": "ベンチ(実時間)。",
     "tools/bench_soak.py": "ベンチ(長時間)。",
@@ -538,6 +604,11 @@ def _overlap(a: str, b: str) -> bool:
     return a == b or _match(a, b) or _match(b, a) or bool(_expand(a) & _expand(b))
 
 
+def _all_outputs(stage: str) -> list:
+    """その段が書きうる全パターン(必ず書く OUTPUTS + 書くかもしれない MAY_OUTPUTS)。"""
+    return list(OUTPUTS.get(stage, ())) + list(MAY_OUTPUTS.get(stage, {}))
+
+
 def _chain_scripts(chain=None) -> list:
     return [args[0] for args, _ in (CHAIN if chain is None else chain)]
 
@@ -555,7 +626,7 @@ def order_violations(order=None) -> list:
             if (reader, rp) in ORDER_EXEMPT:
                 continue
             for writer in order[i + 1:]:
-                for wp in OUTPUTS.get(writer, ()):
+                for wp in _all_outputs(writer):
                     if _overlap(rp, wp):
                         bad.append((reader, rp, writer, wp))
     return bad
@@ -581,6 +652,18 @@ def table_problems() -> list:
         for wp in pats:
             if _tracked_files() and not _expand(wp):
                 probs.append("%s の OUTPUTS %r に当たる追跡ファイルが 1 本も無い" % (s, wp))
+    for s, pats in MAY_OUTPUTS.items():
+        if s not in scripts:
+            probs.append("MAY_OUTPUTS に鎖に無い段: %s" % s)
+        if not pats:
+            probs.append("%s の MAY_OUTPUTS が空" % s)
+        for wp, why in pats.items():
+            if len((why or "").strip()) < 15:
+                probs.append("%s の MAY_OUTPUTS %r の理由が短すぎる" % (s, wp))
+            if wp.rsplit("/", 1)[-1].strip("*") == "":
+                probs.append("%s の MAY_OUTPUTS %r はファイル名が * だけ(何でも書ける抜け道)" % (s, wp))
+            if any(_overlap(wp, op) for op in OUTPUTS.get(s, ())):
+                probs.append("%s の MAY_OUTPUTS %r が自分の OUTPUTS と重なる(どちらか一方に)" % (s, wp))
     for (s, rp), why in ORDER_EXEMPT.items():
         if rp not in READS.get(s, ()):
             probs.append("ORDER_EXEMPT の (%s, %r) が READS に無い(幽霊)" % (s, rp))
@@ -592,7 +675,7 @@ def table_problems() -> list:
 def trace_problems(traces: dict) -> list:
     """各段の**実測**の読み書き(``{段: {"r": [...], "w": [...]}}``)と表を突き合わせる。
 
-    * 宣言に無い書き込み(OUTPUTS に足す)
+    * 宣言に無い書き込み(OUTPUTS に足す。差分があるときだけ書くものは MAY_OUTPUTS に)
     * 他の段の生成物を宣言なしに読んだ(READS に足す —— 足すと order_violations が順序を見る)
     * 宣言した READS を 1 本も読んでいない(表が古い)
     * 宣言した OUTPUTS のどれにも触れていない(**書いていない段** —— conversion_matrix が
@@ -606,12 +689,13 @@ def trace_problems(traces: dict) -> list:
             continue
         rd, wr = set(t.get("r", ())), set(t.get("w", ()))
         own = OUTPUTS.get(s, [])
+        may = _all_outputs(s)      # 書いてよい = 必ず書く + 書くかもしれない
         for p in sorted(wr):
-            if not any(_match(p, wp) for wp in own):
+            if not any(_match(p, wp) for wp in may):
                 probs.append("%s: OUTPUTS に無いファイルを書いた: %s" % (s, p))
         decl = READS.get(s, [])
         for p in sorted(rd):
-            producers = [w for w, wps in OUTPUTS.items() if w != s and any(_match(p, wp) for wp in wps)]
+            producers = [w for w in _chain_scripts() if w != s and any(_match(p, wp) for wp in _all_outputs(w))]
             if producers and not any(_match(p, rp) for rp in decl):
                 probs.append("%s: READS に無い生成物を読んだ: %s(書く段: %s)"
                              % (s, p, ", ".join(producers)))
@@ -727,12 +811,34 @@ def _run(args: list[str], traces: dict | None = None) -> int:
             pass
 
 
+def _content_changed(path: str) -> bool:
+    """追跡済みファイルの中身が本当に変わっているか(`git diff --quiet` の exit code)。"""
+    r = subprocess.run(["git", "diff", "--quiet", "--", path], cwd=_ROOT,
+                       capture_output=True)
+    return r.returncode != 0
+
+
 def _dirty() -> list[str]:
+    # Windows では改行コードだけが違う(中身は同じ)再生成物が `git status` に
+    # 「変更」として出て、--check が偽の食い違いを報告した(2026-10-19 に 28 本、
+    # `git diff` は空)。stat キャッシュを更新してから読み、さらに追跡済みで
+    # `git diff --quiet` が 0 のもの(=中身が同じ)は落とす。未追跡 `??` と
+    # 本当の内容変更は残す。
+    subprocess.run(["git", "update-index", "-q", "--refresh"], cwd=_ROOT,
+                   capture_output=True)
     r = subprocess.run(["git", "status", "--porcelain"], cwd=_ROOT,
                        capture_output=True, text=True, errors="replace")
-    return [ln for ln in r.stdout.splitlines() if ln.strip()
-            # 毎ターン自動で書き換わるので、回し忘れの証拠にはならない。
-            and not ln.endswith("docs/SESSION_SUMMARY.md")]
+    out = []
+    for ln in r.stdout.splitlines():
+        if not ln.strip():
+            continue
+        # 毎ターン自動で書き換わるので、回し忘れの証拠にはならない。
+        if ln.endswith("docs/SESSION_SUMMARY.md"):
+            continue
+        if not ln.startswith("??") and ln[:2].strip() in ("M", "MM", "AM", "TM")                 and " -> " not in ln and not _content_changed(ln[3:].strip().strip('"')):
+            continue
+        out.append(ln)
+    return out
 
 
 def main(argv=None) -> int:

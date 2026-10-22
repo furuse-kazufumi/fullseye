@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">dual_energy_separability — TOMOGRAPHY <code style="color:#22d3bf">spectral_xray</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">table</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dual_energy_separability(material_a=&#x27;POLYETHYLENE&#x27;, thickness_a_cm: &#x27;float&#x27; = 1.0, material_b=&#x27;AL&#x27;, thickness_b_cm=None, channels=None, photons_per_pixel: &#x27;float&#x27; = 100000.0, background=None, n_pixels: &#x27;int&#x27; = 1) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import dualxray; dualxray.dual_energy_separability(material_a=&#x27;POLYETHYLENE&#x27;, thickness_a_cm: &#x27;float&#x27; = 1.0, material_b=&#x27;AL&#x27;, thickness_b_cm=None, channels=None, photons_per_pixel: &#x27;float&#x27; = 100000.0, background=None, n_pixels: &#x27;int&#x27; = 1) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opstomography.get(&quot;dual_energy_separability&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>channels के log attenuation से दो materials (thicknesses) को कितना अलग किया जा सकता है (d′ और error rate का closed form)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">thickness_b_cm=None</code> は<b>交絡の組</b>: b の厚みを、最後(最も高いエネルギー)のチャネルで a と同じ L になるように決める(単一エネルギーの像では区別できない組)。<code style="color:#22d3bf">background</code> = (材料, 厚さ cm) は両方に重なる共通の母材(肉の中の異物)。<code style="color:#22d3bf">n_pixels</code> 個の画素を平均した領域で判定する(d′ は √n 倍)。</p>
+<p>各材料の L ベクトル(チャネルごと)は平均 μ_a, μ_b、共分散は Poisson の差分近似 Σ = diag(var_c/mean_c²)/n。判別は等事前確率の線形判別(LDA)で、d′² = Δᵀ Σ̄⁻¹ Δ、誤り率 = Φ(−d′/2)。比べのため、1 チャネルだけで判定したときの d′ も返す(交絡の組では最後のチャネルの d′ は 0)。</p>
+<p>返り値: dict(thickness_b_cm, L_a, L_b, R_a, R_b, d_prime, error_rate, d_prime_single (C,), error_rate_single (C,), sigma_L (C,), n_pixels)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_dual_energy_xray">poc_dual_energy_xray</a> — <code style="color:#22d3bf">py -3.11 examples/poc_dual_energy_xray.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">spectral_xray</code>)</h3>
+<p><a style="color:#22d3bf" href="optomography:material_xray_table">material_xray_table</a> · <a style="color:#22d3bf" href="optomography:material_xray_attenuation">material_xray_attenuation</a> · <a style="color:#22d3bf" href="optomography:material_xray_constants">material_xray_constants</a> · <a style="color:#22d3bf" href="optomography:material_effective_z">material_effective_z</a> · <a style="color:#22d3bf" href="optomography:xray_tube_spectrum">xray_tube_spectrum</a> · <a style="color:#22d3bf" href="optomography:xray_beam_quality">xray_beam_quality</a> · <a style="color:#22d3bf" href="optomography:photon_counting_channels">photon_counting_channels</a> · <a style="color:#22d3bf" href="optomography:dual_kvp_channels">dual_kvp_channels</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: dualxray.py — TOMOGRAPHY operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

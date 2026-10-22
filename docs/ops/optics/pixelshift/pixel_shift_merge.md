@@ -4,10 +4,10 @@ dim: optics
 category: pixelshift
 in: video × matrix
 out: rgbimage
-examples: [poc_pixel_shift]
+examples: [poc_pixel_shift, poc_simcal_pixel_shift]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # pixel_shift_merge — OPTICS `pixelshift` op
@@ -63,10 +63,11 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_pixel_shift](../../../../examples/poc_pixel_shift.py) — `py -3.11 examples/poc_pixel_shift.py`
+- [poc_simcal_pixel_shift](../../../../examples/poc_simcal_pixel_shift.py) — `py -3.11 examples/poc_simcal_pixel_shift.py`
 
 ## 型が繋がる次の op(`rgbimage` を入力に取れる)
 
-[clearcoat_shade](../material/clearcoat_shade.md) · [wetness](../material/wetness.md) · [defocus_blur](../scene/defocus_blur.md) · [diffraction_blur](../scene/diffraction_blur.md) · [sensor_capture](../scene/sensor_capture.md) · [pixel_shift_capture](pixel_shift_capture.md) · [false_color_metric](false_color_metric.md)
+[clearcoat_shade](../material/clearcoat_shade.md) · [wetness](../material/wetness.md) · [defocus_blur](../scene/defocus_blur.md) · [diffraction_blur](../scene/diffraction_blur.md) · [sensor_capture](../scene/sensor_capture.md) · [underwater_image](../watermedia/underwater_image.md) · [cubemap_from_equirect](../omni360/cubemap_from_equirect.md) · [viewport_from_equirect](../omni360/viewport_from_equirect.md)
 
 ## 同カテゴリ(`pixelshift`)
 

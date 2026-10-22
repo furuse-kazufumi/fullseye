@@ -1,8 +1,16 @@
-# SPC operator help — 22 ops in 8 categories
+# SPC operator help — 39 ops in 11 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/spc/<category>/<op>.md` を走査。
 
 ## カテゴリ
+
+### anomaly_eval (7)
+
+[anomaly_image_auroc](anomaly_eval/anomaly_image_auroc.md) · [anomaly_image_f1_max](anomaly_eval/anomaly_image_f1_max.md) · [anomaly_operating_point](anomaly_eval/anomaly_operating_point.md) · [anomaly_pixel_auroc](anomaly_eval/anomaly_pixel_auroc.md) · [anomaly_pixel_f1_max](anomaly_eval/anomaly_pixel_f1_max.md) · [anomaly_pro](anomaly_eval/anomaly_pro.md) · [anomaly_region_overlap](anomaly_eval/anomaly_region_overlap.md)
+
+### anomaly_patch (5)
+
+[patch_features](anomaly_patch/patch_features.md) · [patchbank_fit](anomaly_patch/patchbank_fit.md) · [patchbank_score](anomaly_patch/patchbank_score.md) · [patchdist_fit](anomaly_patch/patchdist_fit.md) · [patchdist_score](anomaly_patch/patchdist_score.md)
 
 ### capability (1)
 
@@ -35,6 +43,10 @@
 ### uncertainty (5)
 
 [gum_expanded](uncertainty/gum_expanded.md) · [gum_monte_carlo](uncertainty/gum_monte_carlo.md) · [gum_propagate](uncertainty/gum_propagate.md) · [gum_standard_uncertainty](uncertainty/gum_standard_uncertainty.md) · [gum_validate](uncertainty/gum_validate.md)
+
+### variation (5)
+
+[varmodel_alignment](variation/varmodel_alignment.md) · [varmodel_band_k](variation/varmodel_band_k.md) · [varmodel_calibrate](variation/varmodel_calibrate.md) · [varmodel_fit](variation/varmodel_fit.md) · [varmodel_score](variation/varmodel_score.md)
 
 ---
 © 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.

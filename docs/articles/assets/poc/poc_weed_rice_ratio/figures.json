@@ -1,0 +1,112 @@
+[
+ {
+  "file": "01_synthetic_paddy.png",
+  "name": "synthetic_paddy",
+  "caption": "作物は細く濃い葉が畝の向きに揃い、雑草は広く明るい葉がばらばらの向き。雑草の割合は乱数場の分位点で厳密に置いた。判定は 16 px 角の区画ごとの Fisher 判別。",
+  "shape": [
+   987,
+   808,
+   3
+  ]
+ },
+ {
+  "file": "02_synthetic_color_swap.png",
+  "name": "synthetic_color_swap",
+  "caption": "葉の形と配置は同じ乱数で同じ。色だけ入れ替えると、判別は作物を雑草と読み、被度の段階が反転する —— 判定を支えているのが色だという証拠。",
+  "shape": [
+   519,
+   542,
+   3
+  ]
+ },
+ {
+  "file": "03_validation_choice.png",
+  "name": "validation_choice",
+  "caption": "train で判別を学び、val の段階の一致 κ がいちばん高い組を選んだ。同点は表の順で先。",
+  "shape": [
+   176,
+   497,
+   3
+  ],
+  "csv": "03_validation_choice.csv",
+  "tsv": "03_validation_choice.tsv"
+ },
+ {
+  "file": "04_leave_one_date_out.png",
+  "name": "leave_one_date_out",
+  "caption": "データ付属の分割は同じ飛行の隣り合うコマを train と test に分ける(コマは重なる)。撮影日ごとに外すと、季節・生育・日の当たりが学習に無い日を当てることになる。",
+  "shape": [
+   176,
+   514,
+   3
+  ],
+  "csv": "04_leave_one_date_out.csv",
+  "tsv": "04_leave_one_date_out.tsv"
+ },
+ {
+  "file": "05_real_examples.png",
+  "name": "real_examples",
+  "caption": "UAV の水田の RGB(1/4 に縮小)。紫が注釈の雑草イネ、黄が区画ごとの判別。出典: Nguyen et al. (2025) WeedyRice-RGBMS, Mendeley Data V1, doi:10.17632/vt4s83pxx6.1, CC BY 4.0; resized 1/4, cropped, annotation and prediction overlaid",
+  "shape": [
+   897,
+   1000,
+   3
+  ]
+ },
+ {
+  "file": "06_fraction_scatter.png",
+  "name": "fraction_scatter",
+  "caption": "点 1 つが test の 1 枚。破線が y = x、点線が評価前に宣言した段階の境(5 / 25 / 50 %)。r = 0.826 [0.758, 0.883]。",
+  "shape": [
+   360,
+   698,
+   3
+  ],
+  "source": "Nguyen et al. (2025) WeedyRice-RGBMS, Mendeley Data V1, doi:10.17632/vt4s83pxx6.1, CC BY 4.0; resized 1/4, cropped, annotation and prediction overlaid"
+ },
+ {
+  "file": "07_grade_confusion.png",
+  "name": "grade_confusion",
+  "caption": "対角が一致。κ = 0.424、並べ替え検定 p = 0.0005。境は評価前に宣言した 5 / 25 / 50 %。",
+  "shape": [
+   176,
+   349,
+   3
+  ],
+  "csv": "07_grade_confusion.csv",
+  "tsv": "07_grade_confusion.tsv"
+ },
+ {
+  "file": "08_fraction_histogram.png",
+  "name": "fraction_histogram",
+  "caption": "判定は少ない側へ寄る(誤差の平均 -7 pt)。0〜5 % の枚数が注釈より多く、注釈で 8 割を超える画像の一部を 2〜5 割と言う。",
+  "shape": [
+   360,
+   560,
+   3
+  ],
+  "source": "Nguyen et al. (2025) WeedyRice-RGBMS, Mendeley Data V1, doi:10.17632/vt4s83pxx6.1, CC BY 4.0; resized 1/4, cropped, annotation and prediction overlaid"
+ },
+ {
+  "file": "09_lda_weights.png",
+  "name": "lda_weights",
+  "caption": "正の重みは雑草イネの側。Fisher 比 J = 3.57。",
+  "shape": [
+   272,
+   504,
+   3
+  ],
+  "csv": "09_lda_weights.csv",
+  "tsv": "09_lda_weights.tsv"
+ },
+ {
+  "file": "10_real_channel_swap.png",
+  "name": "real_channel_swap",
+  "caption": "色を入れ替えると判別の入力の分布から外れ、判定が崩れる。出典: Nguyen et al. (2025) WeedyRice-RGBMS, Mendeley Data V1, doi:10.17632/vt4s83pxx6.1, CC BY 4.0; resized 1/4, cropped, annotation and prediction overlaid",
+  "shape": [
+   615,
+   670,
+   3
+  ]
+ }
+]

@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">vertex_normals — 3D <code style="color:#22d3bf">mesh_process</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">normals</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vertex_normals(mesh) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mesh_props; mesh_props.vertex_normals(mesh) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;vertex_normals&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vertex_normals(mesh, method=&#x27;exact&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mesh_props; mesh_props.vertex_normals(mesh, method=&#x27;exact&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;vertex_normals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The <b>vertex normals</b> of a triangle mesh (unit normals aggregated with area weights). → (N,3).</p>
 <p>The cross-product vector of each triangle (= face normal × 2·area) is scatter-added to its 3 vertices, then normalised per vertex. This gives an area-weighted average where larger (more important) faces contribute more, and the orientation is consistent with the face winding. Unlike <code style="color:#22d3bf">normals_orient.estimate_normals</code> (point cloud PCA, sign undetermined), no extra orientation step is needed.</p>
@@ -12,6 +12,7 @@
 <p>Raises:</p>
 <p>ValueError: invalid shape, index out of range, or when there is a vertex whose normal cannot be defined (no incident face /</p>
 <p>contributions cancel to zero).</p>
+<p>The <code style="color:#22d3bf">method</code> argument selects the historical exact accumulation or the opt-in component-wise fast accumulation; the latter may differ at nearly cancelling vertices.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Using Blender alongside — build the shape, measure it with fullseye (pitfalls: axes, units, ground truth)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

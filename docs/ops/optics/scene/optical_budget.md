@@ -7,7 +7,7 @@ out: table
 examples: [vision_layout_from_catalog]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # optical_budget — OPTICS `scene` op
@@ -23,11 +23,18 @@ NA と F 値はどちらで与えてもよい(N = 1/(2·NA))。倍率は薄肉�
 m = f / (WD − f)、実効(作動)F 値は N_w = (1 + |m|)·N。返す量:
 
   ``magnification`` 倍率 m / ``f_number_working`` N_w /
-  ``airy_um`` エアリー半径 1.22·λ·N_w(像面)/ ``airy_object_um`` それを物体側に換算 /
+  ``airy_um`` = ``airy_radius_um`` エアリー半径 1.22·λ·N_w(像面、Rayleigh の 2 点分離)/
+  ``airy_diameter_um`` エアリー径 2.44·λ·N_w / ``airy_object_um`` 半径を物体側に換算 /
   ``pixel_object_um`` 画素の物体側の実寸 / ``limit_um`` 実際の分解限界
-  (回折と標本化の**大きい方**)/ ``limited_by`` どちらが律速か /
-  ``dof_um`` 被写界深度(物体側、幾何 2·N_w·c/m² と波動 2·λ·N_w²/m² の和)/
-  ``coc_um`` 許容錯乱円(既定は画素ピッチ)。
+  (回折 = エアリー**径**の物体側と、標本化 = 2 画素の物体側の**大きい方**)/ ``limited_by`` どちらが律速か /
+  ``dof_um`` = ``dof_combined_um`` 被写界深度(物体側、幾何と回折の和)/ ``dof_geometric_um`` 錯乱円の幾何の深度
+  (薄肉レンズの近点・遠点)/ ``dof_diffraction_um`` Rayleigh の λ/4 の焦点深度 ±2·λ·N_w²(全幅 4·λ·N_w²)を m² で
+  物体側へ / ``coc_um`` 許容錯乱円(既定は画素ピッチ)。
+
+式は ``visiondesign`` と **1 本**(``visiondesign._diffraction_limits`` / ``_depth_of_field``)で、同じ構成なら
+``visiondesign.system_feasibility`` の ``depth_of_field_geometric_mm`` / ``_diffraction_mm`` / ``_combined_mm``
+と名前ごとに一致する。2026-10-15 までは 2 つの入口が別の式で、f 25・WD 200・F4・3.45 µm で被写界深度が
+1.55 mm(幾何だけ)と 2.67 mm(幾何 + 回折の**半分**)、律速の判定がエアリー径と半径で 2 倍食い違っていた。
 
 「見えるか」ではなく「**必要なコントラストで写るか**」を決める前段の数字で、
 ここが足りていない構成でいくら画像を作っても、実機では検査が成立しない。

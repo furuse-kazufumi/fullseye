@@ -1,0 +1,55 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">sem_electron_mc — GENERATIVE <code style="color:#22d3bf">sem</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">table</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sem_electron_mc(material=&#x27;SI&#x27;, energy_kev: &#x27;float&#x27; = 10.0, *, tol: &#x27;float&#x27; = 0.01, batch: &#x27;int&#x27; = 1000, max_electrons: &#x27;int&#x27; = 20000, seed: &#x27;int&#x27; = 0, n_tracks: &#x27;int&#x27; = 0, depth_bins: &#x27;int&#x27; = 60, tilt_deg: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import sem; sem.sem_electron_mc(material=&#x27;SI&#x27;, energy_kev: &#x27;float&#x27; = 10.0, *, tol: &#x27;float&#x27; = 0.01, batch: &#x27;int&#x27; = 1000, max_electrons: &#x27;int&#x27; = 20000, seed: &#x27;int&#x27; = 0, n_tracks: &#x27;int&#x27; = 0, depth_bins: &#x27;int&#x27; = 60, tilt_deg: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsgenerative.get(&quot;sem_electron_mc&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>평평한 시료에 전자를 쏘는 몬테카를로: 후방산란 계수 η, 2차 전자 수율 δ, 상호작용 부피.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>Joy の単散乱モデル(遮蔽ラザフォード + Joy-Luo の阻止能)で一次電子を 1 個ずつ追い、<code style="color:#22d3bf">batch</code> 個ずつ足して 95 % 信頼区間の半幅が η で <code style="color:#22d3bf">tol</code>、δ で <code style="color:#22d3bf">tol</code>·max(δ, 1) を切ったら止める(<code style="color:#22d3bf">max_electrons</code> で打ち切り、その時は <code style="color:#22d3bf">converged</code> が False)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>material : str</p>
+<p>材料表の名前(<code style="color:#22d3bf">materials.material_electron_properties</code> が引ける物。SI / W / AU /</p>
+<p>SILICA / PMMA …)。Z・A・密度・二次電子の 2 定数はそこから取る。</p>
+<p>energy_kev : float</p>
+<p>加速電圧 [keV] (0.1〜50)。</p>
+<p>tol : float</p>
+<p>信頼区間の半幅の目標。</p>
+<p>batch, max_electrons : int</p>
+<p>1 回に足す電子の数と上限。</p>
+<p>seed : int</p>
+<p>乱数の種(同じ種なら同じ結果)。</p>
+<p>n_tracks : int</p>
+<p>軌跡を返す電子の数(図用)。</p>
+<p>depth_bins : int</p>
+<p>深さ分布の区間の数(0〜1.2 R_KO)。</p>
+<p>tilt_deg : float</p>
+<p>試料の傾き [度] (0〜80)。ビームが法線から θ 傾いて入る。δ(θ)/δ(0) を sec θ と、</p>
+<p>η(θ) を Arnal ほかの (1 + cos θ)^(−9/√Z) と比べるのに使う。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict</p>
+<p><code style="color:#22d3bf">eta</code> / <code style="color:#22d3bf">eta_ci95</code> / <code style="color:#22d3bf">se_yield</code> / <code style="color:#22d3bf">se_yield_ci95</code> / <code style="color:#22d3bf">n_electrons</code> /</p>
+<p><code style="color:#22d3bf">converged</code> / <code style="color:#22d3bf">range_ko_nm</code>(Kanaya-Okayama)/ <code style="color:#22d3bf">depth_max_nm</code>・</p>
+<p><code style="color:#22d3bf">depth_p95_nm</code>・<code style="color:#22d3bf">depth_p50_nm</code>(電子ごとの最大の深さ)/ <code style="color:#22d3bf">lateral_p95_nm</code></p>
+<p>(沈着エネルギーの 95 % が入る半径)/ <code style="color:#22d3bf">depth_dose</code>(<code style="color:#22d3bf">pairs</code>: 深さ [nm] と</p>
+<p>沈着エネルギーの割合)/ <code style="color:#22d3bf">bse_energy</code>(<code style="color:#22d3bf">pairs</code>: E/E0 と反射電子の割合)/</p>
+<p><code style="color:#22d3bf">tracks</code>(各 (K, 3) [nm]、z は下向きが正)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
+<p>&gt;&gt;&gt; r = sem_electron_mc(&quot;SI&quot;, 5.0, tol=0.03, batch=400, max_electrons=800)</p>
+<p>&gt;&gt;&gt; 0.1 &lt; r[&quot;eta&quot;] &lt; 0.3 and r[&quot;depth_max_nm&quot;] &lt; r[&quot;range_ko_nm&quot;]</p>
+<p>True</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">generative_art 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_sem_tem_same_particle">poc_sem_tem_same_particle</a> — <code style="color:#22d3bf">py -3.11 examples/poc_sem_tem_same_particle.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_virtual_sem_kv_cd_bse">poc_virtual_sem_kv_cd_bse</a> — <code style="color:#22d3bf">py -3.11 examples/poc_virtual_sem_kv_cd_bse.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opgenerative:perpetual_step">perpetual_step</a> · <a style="color:#22d3bf" href="opgenerative:perpetual_render">perpetual_render</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">sem</code>)</h3>
+<p><a style="color:#22d3bf" href="opgenerative:sem_render">sem_render</a> · <a style="color:#22d3bf" href="opgenerative:sem_se_universal_curve">sem_se_universal_curve</a> · <a style="color:#22d3bf" href="opgenerative:sem_yield_curve">sem_yield_curve</a> · <a style="color:#22d3bf" href="opgenerative:sem_line_profile">sem_line_profile</a> · <a style="color:#22d3bf" href="opgenerative:sem_cd_measure">sem_cd_measure</a> · <a style="color:#22d3bf" href="opgenerative:sem_image">sem_image</a> · <a style="color:#22d3bf" href="opgenerative:sem_se_escape_fraction">sem_se_escape_fraction</a> · <a style="color:#22d3bf" href="opgenerative:sem_charging_series">sem_charging_series</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: sem.py — GENERATIVE 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -18,6 +18,8 @@ data/*
 !data/thin_film_real/
 # Public measured OCT spectra for the industrial-OCT PoC (CC BY 4.0, a small extract; source and changes in its README.md).
 !data/oct_real/
+# Public deflectometry grid images and the full-run record for the PMD PoC (CC0 1.0, a small extract; source and changes in its README.md).
+!data/pmd_real/
 
 # packaging build artifacts
 *.egg-info/

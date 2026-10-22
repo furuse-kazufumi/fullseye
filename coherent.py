@@ -297,12 +297,17 @@ def _acf_cuts(img, up):
     """正規化した強度の自己共分散(周期境界)の x・y 断面を、フーリエ補間で up 倍に細かく。"""
     d = img - img.mean()
     ny, nx = d.shape
-    S = np.abs(np.fft.fft2(d)) ** 2
     out = []
     for axis in (0, 1):
         # 断面 = パワースペクトルを他方の軸で足して 1-D の逆変換(Wiener–Khinchin の 1-D 版)
-        s1 = S.sum(axis=1 - axis)
+        # 2-D 複素スペクトルを保持せず、その軸だけの FFT と Parseval で得る。
+        f1 = np.fft.fft(d, axis=axis)
+        s1 = np.sum(f1.real * f1.real + f1.imag * f1.imag, axis=1 - axis)
         n = s1.size
+        if up == 1:
+            r = np.fft.ifft(s1).real
+            out.append(r / r[0])
+            continue
         m = n * up
         pad = np.zeros(m, dtype=np.complex128)
         h = n // 2
@@ -388,7 +393,7 @@ def speckle_statistics(image, roi=None, upsample=4):
 def laser_line_coherent(shape=(96, 512), wavelength_um=0.65, sin_u_obs=0.05, pixel_um=2.0,
                         line_width_um=20.0, height_um=20.0, sin_theta=0.5, row0=None,
                         polarizations=1, n_patterns=1, pixel_oversample=2, roughness_rad=None,
-                        noise=0.0, seed=0, noise_seed=None):
+                        noise=0.0, seed=0, noise_seed=None, *, method="exact"):
     """A sheet-of-light laser line on a rough surface, imaged with its speckle (``image2d``).
 
     Object-side coordinates, magnification 1: one output pixel covers ``pixel_um`` on the
@@ -411,6 +416,8 @@ def laser_line_coherent(shape=(96, 512), wavelength_um=0.65, sin_u_obs=0.05, pix
     uncorrelated between fine samples.
     """
     op = "laser_line_coherent"
+    if method not in {"exact", "fast"}:
+        raise ValueError("%s: method must be 'exact' or 'fast'" % op)
     ny, nx = _shape(shape, op, lo=8)
     lam = _num(wavelength_um, "wavelength_um", op, lo=0.0, hi=100.0)
     su = _num(sin_u_obs, "sin_u_obs", op, lo=0.0, hi=1.0)
@@ -421,7 +428,8 @@ def laser_line_coherent(shape=(96, 512), wavelength_um=0.65, sin_u_obs=0.05, pix
     pol = _int(polarizations, "polarizations", op, 1, 2)
     n = _int(n_patterns, "n_patterns", op, 1, MAX_PATTERNS)
     nz = _num(noise, "noise", op, lo=0.0, hi=1e3, lo_open=False)
-    rough = None if roughness_rad is None else _num(roughness_rad, "roughness_rad", op, lo=0.0, hi=1e3)
+    rough = None if roughness_rad is None else _num(
+        roughness_rad, "roughness_rad", op, lo=0.0, hi=1e3, lo_open=False)
     r0 = (ny - 1) / 2.0 if row0 is None else _num(row0, "row0", op)
     h = np.asarray(height_um, dtype=np.float64) if not isinstance(height_um, (str, bytes)) else None
     if h is None or h.dtype.kind != "f" or h.ndim > 1 or (h.ndim == 1 and h.size != nx):
@@ -444,16 +452,23 @@ def laser_line_coherent(shape=(96, 512), wavelength_um=0.65, sin_u_obs=0.05, pix
     cen = np.repeat(centre, s) if np.ndim(centre) else np.full(fx, float(centre))
     amp = np.exp(-((yy[:, None] - cen[None, :]) * pix) ** 2 / (w * w))   # 強度 exp(-2 y²/w²)
     rng = np.random.default_rng(_seed(seed, op))
-    acc = np.zeros((fy, fx))
+    acc = np.zeros((fy, fx)) if method == "exact" else np.zeros((ny, nx))
     for _ in range(pol * n):
         if rough is None:
             phi = rng.uniform(0.0, 2.0 * math.pi, (fy, fx))
         else:
             phi = rng.normal(0.0, rough, (fy, fx))
         E = _filter(amp * np.exp(1j * phi), pupil)
-        acc += E.real ** 2 + E.imag ** 2
+        intensity = E.real ** 2 + E.imag ** 2
+        if method == "exact":
+            acc += intensity
+        else:
+            acc += _block_mean(intensity, s)
+            if rough == 0.0:
+                acc *= pol * n
+                break
     acc /= (pol * n) * _expected_mean(pupil, rough)
-    img = _block_mean(acc, s)
+    img = _block_mean(acc, s) if method == "exact" else acc
     if nz > 0:
         nrng = np.random.default_rng(_seed(0 if noise_seed is None else noise_seed, op) + 0x5EC)
         img = img + nrng.normal(0.0, nz, img.shape)

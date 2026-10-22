@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">riesz_transform — QUAT <code style="color:#22d3bf">riesz</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">qimage</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.riesz_transform(image) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import quatimage; quatimage.riesz_transform(image) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsquat.get(&quot;riesz_transform&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.riesz_transform(image, *, method=&#x27;exact&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import quatimage; quatimage.riesz_transform(image, *, method=&#x27;exact&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsquat.get(&quot;riesz_transform&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Die 2-D-Riesz-Transformation eines Bildes als reines Quaternionenfeld. → (H, W, 4).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
@@ -12,7 +12,7 @@
 <p><code style="color:#22d3bf">R2 = (v0/|w0|) * sin(...)</code></p>
 <p>exactly. Measured over a table of eight grid-exact orientations from 0 to 159.4 degrees on a 64x64 frame, the largest absolute deviation from that closed form is <b>6.1e-15</b>, and the orientation recovered through <code style="color:#22d3bf">monogenic_orientation</code> matches the grating&#x27;s to <b>3.6e-15 rad</b> at every one of them. There is no tolerance to choose.</p>
 <p>Note the scalar component is 0, so this is the Riesz *transform* and not the monogenic signal — feeding it to <code style="color:#22d3bf">monogenic_phase</code> gives <code style="color:#22d3bf">pi/2</code> everywhere, correctly but uselessly. Use <code style="color:#22d3bf">monogenic_signal</code>, which keeps the band-pass image in the scalar slot.</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: *image* is not a finite real <code style="color:#22d3bf">(H, W)</code> array with <code style="color:#22d3bf">H, W &gt;= 2</code>, or exceeds <code style="color:#22d3bf">MAX_PIXELS</code>.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: *image* is not a finite real <code style="color:#22d3bf">(H, W)</code> array with <code style="color:#22d3bf">H, W &gt;= 2</code>, or exceeds <code style="color:#22d3bf">MAX_PIXELS</code>. <code style="color:#22d3bf">method=&quot;fast&quot;</code> uses a half-spectrum transform on odd-sized images and otherwise falls back to the exact path, avoiding Nyquist-row ambiguity.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidequat:quaternion_monogenic">Leitfaden zur Familie quaternion_monogenic</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

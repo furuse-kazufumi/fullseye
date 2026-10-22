@@ -1,4 +1,4 @@
-# GENERATIVE operator help — 34 ops in 6 categories
+# GENERATIVE operator help — 42 ops in 6 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/generative/<category>/<op>.md` を走査。
 
@@ -24,9 +24,9 @@
 
 [pl_diffusion_psf](pl/pl_diffusion_psf.md) · [pl_groove_visibility](pl/pl_groove_visibility.md) · [pl_image_simulate](pl/pl_image_simulate.md)
 
-### sem (1)
+### sem (9)
 
-[sem_render](sem/sem_render.md)
+[sem_cd_measure](sem/sem_cd_measure.md) · [sem_charging_series](sem/sem_charging_series.md) · [sem_electron_mc](sem/sem_electron_mc.md) · [sem_image](sem/sem_image.md) · [sem_line_profile](sem/sem_line_profile.md) · [sem_render](sem/sem_render.md) · [sem_se_escape_fraction](sem/sem_se_escape_fraction.md) · [sem_se_universal_curve](sem/sem_se_universal_curve.md) · [sem_yield_curve](sem/sem_yield_curve.md)
 
 ### stream (3)
 

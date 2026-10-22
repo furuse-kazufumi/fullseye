@@ -7,7 +7,7 @@ out: table
 examples: [poc_veiling_glare]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # veiling_glare_index — OPTICS `imaging` op
@@ -66,7 +66,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 同カテゴリ(`imaging`)
 
-[psf_to_mtf](psf_to_mtf.md) · [mtf_diffraction](mtf_diffraction.md) · [wavefront_stats](wavefront_stats.md) · [edge_spread](edge_spread.md) · [sfr_from_edge](sfr_from_edge.md) · [mtf50](mtf50.md)
+[psf_to_mtf](psf_to_mtf.md) · [mtf_diffraction](mtf_diffraction.md) · [encircled_energy](encircled_energy.md) · [ensquared_energy](ensquared_energy.md) · [energy_radii](energy_radii.md) · [mtf_tangential_sagittal](mtf_tangential_sagittal.md) · [wavefront_stats](wavefront_stats.md) · [edge_spread](edge_spread.md)
 
 ---
 *Provenance: edgesfr.py — OPTICS operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

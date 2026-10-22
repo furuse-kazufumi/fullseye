@@ -91,12 +91,14 @@ def test_classified_entries_still_exist():
 #: 2026-10-15 に直す前の並び(回帰の探針)。
 _OLD_ORDER = [
     "gen_auto_specs_data.py", "tools/opdocs.py", "tools/gen_op_catalog.py",
-    "tools/gen_capabilities_index.py", "tools/gen_hardening_index.py", "tools/gen_maturity.py",
+    "tools/gen_capabilities_index.py", "tools/gen_hardening_index.py", "tools/audit_fallbacks.py",
+    "tools/gen_maturity.py",
     "tools/gen_exhibit_numbers.py", "tools/gen_wingpoc_gallery.py", "tools/gen_examples_readme.py",
     "tools/gen_oss_landscape.py", "tools/gen_view2026_pages.py", "tools/gen_trust_block.py",
-    "tools/gen_docs_index_ops.py", "tools/gen_examples3d_doc.py", "tools/gen_sensor_playbook.py",
-    "imgevolve.py", "catalog.py", "dispositions.py", "references.py", "samples.py",
+    "tools/gen_literature_counts.py", "tools/gen_docs_index_ops.py", "tools/gen_examples3d_doc.py",
+    "tools/gen_sensor_playbook.py", "imgevolve.py", "catalog.py", "dispositions.py", "references.py", "samples.py",
     "tools/gen_mcp_data.py", "tools/conversion_matrix.py", "tools/gen_design_notes.py",
+    "tools/gen_doc_counts.py",
 ]
 
 
@@ -139,6 +141,18 @@ def test_the_order_gate_catches_a_single_swap():
     bad = RA.order_violations(order)
     assert ("tools/gen_capabilities_index.py", "docs/OP_INDEX.json", "imgevolve.py",
             "docs/OP_INDEX.json") in bad
+
+
+def test_the_literature_counts_stage_must_follow_the_notes_it_counts():
+    """件数の打ち直しは docs/ops を数えるので、op ノートを書く opdocs より後ろでなければならない(壊して確かめる)。"""
+    order = _chain_order()
+    assert "tools/gen_literature_counts.py" in order
+    assert not RA.order_violations(order)
+    order.remove("tools/gen_literature_counts.py")
+    order.insert(order.index("tools/opdocs.py"), "tools/gen_literature_counts.py")
+    bad = RA.order_violations(order)
+    assert bad
+    assert any(r == "tools/gen_literature_counts.py" and w == "tools/opdocs.py" for r, _rp, w, _wp in bad), bad
 
 
 def test_exemptions_are_not_a_blanket():
@@ -227,3 +241,129 @@ def test_every_chain_stage_is_traced_for_real(tmp_path):
                                "tools/conversion_matrix.py": t})
     assert probs, "出力に触れない段なのに問題が 1 件も出ない"
     assert any("conversion_matrix.py: OUTPUTS" in p and "触れもしない" in p for p in probs), probs
+
+
+# ---- 書くかもしれない出力(2026-10-18)----------------------------------------------------
+_THUMB = "docs/articles/assets/poc/poc_new_exhibit/01_scene_720.jpg"
+_GALLERY = "tools/gen_wingpoc_gallery.py"
+
+
+def _clean_traces():
+    return {s: {"r": [p.replace("*", "x") for p in RA.READS.get(s, [])],
+                "w": [p.replace("*", "x") for p in RA.OUTPUTS[s]]} for s in _chain_order()}
+
+
+def test_conditional_thumbnail_passes_on_the_first_and_the_second_run():
+    """図を初めて載せた回(サムネを書く)も、次の回(書かない)も、表と食い違わない。
+    統合で 2 回踏んだ症状: 1 回目は「OUTPUTS に無いファイルを書いた」、OUTPUTS に足すと 2 回目に
+    「触れもしない」で止まった。"""
+    first = _clean_traces()
+    first[_GALLERY]["w"].append(_THUMB)
+    assert RA.trace_problems(first) == []
+    assert RA.trace_problems(_clean_traces()) == []          # 2 回目: 書かない
+
+
+def test_without_the_conditional_entry_the_first_run_is_rejected():
+    """探針: MAY_OUTPUTS を外すと、1 回目(サムネを書く回)が止まる —— 直す前の症状が戻る。"""
+    saved = RA.MAY_OUTPUTS.pop(_GALLERY)
+    try:
+        first = _clean_traces()
+        first[_GALLERY]["w"].append(_THUMB)
+        probs = RA.trace_problems(first)
+        assert probs, "サムネを書いたのに問題が 1 件も出ない"
+        assert any("OUTPUTS に無いファイルを書いた: " + _THUMB in p for p in probs), probs
+    finally:
+        RA.MAY_OUTPUTS[_GALLERY] = saved
+
+
+def test_putting_the_thumbnail_in_outputs_fails_the_second_run():
+    """探針: 必ず書く OUTPUTS に入れると、書かない回が「触れもしない」で止まる(MAY_OUTPUTS が要る理由)。"""
+    pat = next(iter(RA.MAY_OUTPUTS[_GALLERY]))
+    RA.OUTPUTS[_GALLERY].append(pat)
+    try:
+        second = _clean_traces()
+        second[_GALLERY]["w"] = [w for w in second[_GALLERY]["w"] if not w.endswith("_720.jpg")]
+        probs = RA.trace_problems(second)
+        assert probs, "書かない回なのに問題が 1 件も出ない"
+        assert any("触れもしない" in p and "_720.jpg" in p for p in probs), probs
+    finally:
+        RA.OUTPUTS[_GALLERY].remove(pat)
+
+
+def test_conditional_outputs_are_not_a_blanket():
+    """書くかもしれない出力は、その段のそのパターンだけ。別の段が書けば拒む / 同じ段でも別の
+    ファイルは拒む / 表の側も、理由の無い・鎖に無い段・ファイル名が * だけ・OUTPUTS と重なる宣言を拒む。"""
+    t = _clean_traces()
+    t["catalog.py"]["w"].append(_THUMB)
+    probs = RA.trace_problems(t)
+    assert probs, "別の段がサムネを書いたのに問題が 1 件も出ない"
+    assert any("catalog.py: OUTPUTS に無いファイルを書いた: " + _THUMB in p for p in probs), probs
+    t = _clean_traces()
+    t[_GALLERY]["w"].append("docs/articles/assets/poc/poc_new_exhibit/01_scene.png")
+    probs = RA.trace_problems(t)
+    assert probs, "宣言に無い PNG を書いたのに問題が 1 件も出ない"
+    assert any("01_scene.png" in p for p in probs), probs
+    for bad, needle in (({"tools/no_such.py": {"docs/x_720.jpg": "理由は十分に長い説明の文です"}}, "鎖に無い段"),
+                        ({_GALLERY: {"docs/x_720.jpg": "短い"}}, "理由が短すぎる"),
+                        ({_GALLERY: {"docs/articles/*": "理由は十分に長い説明の文です"}}, "* だけ"),
+                        ({_GALLERY: {"docs/articles/exhibits/wingpoc.ja.md": "理由は十分に長い説明の文です"}},
+                         "OUTPUTS と重なる")):
+        saved = dict(RA.MAY_OUTPUTS)
+        RA.MAY_OUTPUTS.clear()
+        RA.MAY_OUTPUTS.update(bad)
+        try:
+            probs = RA.table_problems()
+            assert probs, needle
+            assert any(needle in p for p in probs), (needle, probs)
+        finally:
+            RA.MAY_OUTPUTS.clear()
+            RA.MAY_OUTPUTS.update(saved)
+
+
+def test_conditional_outputs_take_part_in_the_order_check():
+    """書くかもしれない出力も、それを読む段より前で書かれなければならない(順序の門に入る)。"""
+    RA.READS.setdefault("tools/gen_examples_readme.py", [])
+    RA.READS["tools/gen_examples_readme.py"].append("docs/articles/assets/poc/*_720.jpg")
+    try:
+        order = _chain_order()
+        order.remove(_GALLERY)
+        order.append(_GALLERY)                      # サムネを書く段を読む段の後ろへ
+        bad = RA.order_violations(order)
+        assert bad, "サムネを読む段の後ろで書いても逆順にならない"
+        assert any(r == "tools/gen_examples_readme.py" and w == _GALLERY for r, _rp, w, _wp in bad), bad
+    finally:
+        RA.READS["tools/gen_examples_readme.py"].remove("docs/articles/assets/poc/*_720.jpg")
+        if not RA.READS["tools/gen_examples_readme.py"]:
+            del RA.READS["tools/gen_examples_readme.py"]
+
+
+def test_dirty_ignores_touched_but_identical_files(tmp_path, monkeypatch):
+    """改行コードだけ・mtime だけの「変更」は食い違いに数えず、本当の変更は数える。"""
+    import subprocess
+
+    def git(*a):
+        return subprocess.run(["git", *a], cwd=tmp_path, capture_output=True,
+                              text=True, check=True)
+
+    git("init", "-q")
+    git("config", "user.email", "t@example.invalid")
+    git("config", "user.name", "t")
+    git("config", "core.autocrlf", "false")
+    same = tmp_path / "same.txt"
+    real = tmp_path / "real.txt"
+    same.write_bytes(b"a\nb\n")
+    real.write_bytes(b"x\n")
+    git("add", ".")
+    git("commit", "-q", "-m", "init")
+    # 中身は同じまま書き直し(mtime が変わり、stat キャッシュは古くなる)。
+    st = same.stat()
+    same.write_bytes(b"a\nb\n")
+    os.utime(same, (st.st_atime + 5, st.st_mtime + 5))
+    real.write_bytes(b"y\n")
+    (tmp_path / "new.txt").write_bytes(b"n\n")
+    monkeypatch.setattr(RA, "_ROOT", str(tmp_path))
+    lines = RA._dirty()
+    assert len([ln for ln in lines if ln.endswith("same.txt")]) == 0, lines
+    assert len([ln for ln in lines if ln.endswith("real.txt")]) == 1, lines
+    assert len([ln for ln in lines if ln.startswith("??") and ln.endswith("new.txt")]) == 1, lines
+    assert len(lines) == 2, lines

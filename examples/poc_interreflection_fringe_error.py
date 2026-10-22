@@ -123,6 +123,7 @@ def render(segs, patterns, which="tr"):
 
 def main():
     t0 = time.time()
+    c0 = time.process_time()
     segs, ncol = build_part()
     wp = OVERSAMPLE * ncol
     x_mm = np.arange(ncol) / COLS
@@ -284,7 +285,15 @@ def main():
           "2 経路の最悪のバイアス = asin(r)·c/(4πf)(r = 0.3)", "%.3f m" % np.abs(two["bias"]).max())
 
     elapsed = time.time() - t0
-    check(elapsed < 60.0, "所要時間(CI の上限に余裕を残す)", "%.1f 秒" % elapsed)
+    cpu = time.process_time() - c0
+    # ★2026-10-15: 壁時計は CI の並列のシャードで同じ機械の他のテストの負荷まで数える
+    #   (poc_phase_measuring_deflectometry がこれで赤になった)。この門が抑えたいのはこの PoC 自身の計算量なので、プロセスの CPU 時間
+    #   (time.process_time)で測り、壁時計は併記する。
+    #   ★この PoC だけは CPU 時間が壁時計を大きく上回る(手元 24 スレッドで CPU 10〜13 秒・壁時計 0.6〜0.7 秒、
+    #   OMP/OPENBLAS/MKL_NUM_THREADS=1 では CPU・壁時計とも 0.1 秒未満)。計算そのものは小さく、差は BLAS の
+    #   スレッドの空回り(待ちの spin)で、コア数に比例して増える。60 秒の上限は手元の 4.7 倍で、CI の走者(4 コア)
+    #   では空回りがさらに小さいので据え置く。上限に近づいたら、計算が増えたのか空回りかをスレッド 1 で切り分ける。
+    check(cpu < 60.0, "所要時間(CI の上限に余裕を残す)", "CPU %.1f 秒(壁時計 %.1f 秒)" % (cpu, elapsed))
 
     if figs.enabled():
         _figures(segs, ncol, x_mm, gmask, pats, shots, full, direct, glob, sd, sg, periods, sep_curve,

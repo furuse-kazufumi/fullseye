@@ -4,10 +4,10 @@ dim: optics
 category: spectral
 in: 
 out: pairs
-examples: [poc_nir_silicon_transmission, poc_thin_film_reflectometry]
+examples: [poc_nir_silicon_transmission, poc_simcal_thin_film, poc_thin_film_reflectometry]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # blackbody_spectrum — OPTICS `spectral` op
@@ -49,15 +49,16 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_nir_silicon_transmission](../../../../examples/poc_nir_silicon_transmission.py) — `py -3.11 examples/poc_nir_silicon_transmission.py`
+- [poc_simcal_thin_film](../../../../examples/poc_simcal_thin_film.py) — `py -3.11 examples/poc_simcal_thin_film.py`
 - [poc_thin_film_reflectometry](../../../../examples/poc_thin_film_reflectometry.py) — `py -3.11 examples/poc_thin_film_reflectometry.py`
 
 ## 型が繋がる次の op(`pairs` を入力に取れる)
 
-[mtf50](../imaging/mtf50.md) · [energy_to_photons](energy_to_photons.md) · [spectral_product](spectral_product.md) · [spectral_integral](spectral_integral.md) · [spectral_stats](spectral_stats.md) · [kubelka_munk_reflectance](kubelka_munk_reflectance.md) · [hyperspectral_capture](hyperspectral_capture.md) · [film_thickness_fft](../film/film_thickness_fft.md)
+[mtf50](../imaging/mtf50.md) · [energy_to_photons](energy_to_photons.md) · [spectral_product](spectral_product.md) · [spectral_integral](spectral_integral.md) · [spectral_integral_table](spectral_integral_table.md) · [spectral_stats](spectral_stats.md) · [kubelka_munk_reflectance](kubelka_munk_reflectance.md) · [hyperspectral_capture](hyperspectral_capture.md)
 
 ## 同カテゴリ(`spectral`)
 
-[cie_illuminant_a](cie_illuminant_a.md) · [led_spectrum](led_spectrum.md) · [bandpass_spectrum](bandpass_spectrum.md) · [silicon_photodiode_qe](silicon_photodiode_qe.md) · [energy_to_photons](energy_to_photons.md) · [spectral_product](spectral_product.md) · [spectral_integral](spectral_integral.md) · [spectral_stats](spectral_stats.md)
+[cie_illuminant_a](cie_illuminant_a.md) · [led_spectrum](led_spectrum.md) · [bandpass_spectrum](bandpass_spectrum.md) · [silicon_photodiode_qe](silicon_photodiode_qe.md) · [energy_to_photons](energy_to_photons.md) · [spectral_product](spectral_product.md) · [spectral_integral](spectral_integral.md) · [spectral_integral_table](spectral_integral_table.md)
 
 ---
 *Provenance: spectralrad.py — OPTICS operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

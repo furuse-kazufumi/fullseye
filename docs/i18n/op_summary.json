@@ -9,6 +9,31 @@
   "hi"
  ],
  "summaries": {
+  "2d/tb_viewport_from_equirect": {"fp":"5c3b6d1408ec","ja":"正距円筒画像から透視投影の視野を切り出す。","zh":"从等距柱状图提取透视视口。","tw":"從等距柱狀圖擷取透視視口。","ko":"등거리 원통 영상에서 원근 시야를 추출한다.","de":"Extrahiert eine perspektivische Ansicht aus einem Rechteckpanorama.","hi":"समदूरी बेलनाकार चित्र से परिप्रेक्ष्य दृश्य निकालता है।"},
+  "optics/omni_anaglyph_compose": {"fp":"e8aef366b701","ja":"左右像を色フィルター式の立体画像に合成する。","zh":"将左右图像合成为彩色滤镜立体图。","tw":"將左右影像合成為彩色濾鏡立體圖。","ko":"좌우 영상을 색 필터 입체 영상으로 합성한다.","de":"Setzt linkes und rechtes Bild zu einem Farbfilter-Stereobild zusammen.","hi":"बाएँ और दाएँ चित्र को रंग-फ़िल्टर त्रिविम चित्र में मिलाता है।"},
+  "optics/anaglyph_crosstalk": {"fp":"630258bbee1c","ja":"左右の見え方と誤像漏れのエネルギー比を返す。","zh":"返回双眼预览和串扰能量比。","tw":"回傳雙眼預覽與串擾能量比。","ko":"양안 미리보기와 누설 에너지 비를 반환한다.","de":"Liefert Augenansichten und das Energieverhältnis der Übersprechbilder.","hi":"दोनों आँखों के दृश्य और रिसाव ऊर्जा अनुपात देता है।"},
+  "optics/anaglyph_from_ods": {"fp":"a6d2a5dc912f","ja":"全方位立体像から視野を切り出して色フィルター像にする。","zh":"从全景立体对中提取视口并生成彩色滤镜图。","tw":"從全景立體對擷取視口並產生彩色濾鏡圖。","ko":"전방위 입체 쌍에서 시야를 추출해 색 필터 영상으로 만든다.","de":"Extrahiert Ansichten aus einem Rundum-Stereopaar und erzeugt ein Farbfilterbild.","hi":"सर्वदिशीय त्रिविम जोड़ी से दृश्य निकालकर रंग-फ़िल्टर चित्र बनाता है।"},
+  "optics/cubemap_from_equirect": {"fp":"f2bd33b61fd7","ja":"正距円筒画像を6面のキューブ面へ再標本化する。","zh":"将等距柱状图重采样为六个立方体面。","tw":"將等距柱狀圖重取樣為六個立方體面。","ko":"등거리 원통 영상을 여섯 정육면체 면으로 재표본화한다.","de":"Tastet ein Rechteckpanorama auf sechs Würfelflächen um.","hi":"समदूरी बेलनाकार चित्र को छह घन फलकों पर पुनः नमूना करता है।"},
+  "optics/equirect_defect_unwrap_pipe": {"fp":"acad0a376d95","ja":"円筒壁を平面の検査帯へ展開する。","zh":"将圆柱壁展开为平面检测条带。","tw":"將圓柱壁展開為平面檢測帶。","ko":"원통 벽을 평면 검사 띠로 펼친다.","de":"Wickelt eine Zylinderwand zu einem flachen Prüfstreifen ab.","hi":"बेलनाकार दीवार को समतल निरीक्षण पट्टी में खोलता है।"},
+  "optics/equirect_filter_gaussian": {"fp":"33fcb78ed5d4","ja":"緯度に合わせた尺度で全天球像をガウス平滑化する。","zh":"按纬度调整尺度，对全景图进行高斯滤波。","tw":"依緯度調整尺度，對全景圖進行高斯濾波。","ko":"위도에 맞춘 척도로 전방위 영상을 가우시안 필터링한다.","de":"Glättet ein Rundumbild mit einer breitenabhängigen Gauß-Skala.","hi":"अक्षांश-अनुकूल पैमाने से सर्वदिशीय चित्र का गाउस फ़िल्टर करता है।"},
+  "optics/equirect_from_cubemap": {"fp":"364147dfd7e7","ja":"6面のキューブ面を正距円筒画像へ再標本化する。","zh":"将六个立方体面重采样为等距柱状图。","tw":"將六個立方體面重取樣為等距柱狀圖。","ko":"여섯 정육면체 면을 등거리 원통 영상으로 재표본화한다.","de":"Tastet sechs Würfelflächen zu einem Rechteckpanorama um.","hi":"छह घन फलकों को समदूरी बेलनाकार चित्र में पुनः नमूना करता है।"},
+  "optics/equirect_from_fisheye_pair": {"fp":"fd85e422f4d7","ja":"校正済み魚眼2面を接合し、重なり、継ぎ目誤差、死角を報告する。","zh":"拼接两个已标定鱼眼图并报告重叠、接缝误差和盲区。","tw":"拼接兩個已校正魚眼圖並回報重疊、接縫誤差與盲區。","ko":"보정된 어안 두 장을 접합하고 겹침, 이음 오차, 사각을 보고한다.","de":"Fügt zwei kalibrierte Fischaugenbilder zusammen und meldet Überlappung, Nahtfehler und Blindstellen.","hi":"दो अंशांकित मत्स्यनेत्र चित्र जोड़कर अतिव्यापन, जोड़ त्रुटि और अंध क्षेत्र बताता है।"},
+  "optics/equirect_from_perspectives": {"fp":"d74362f6e181","ja":"校正済み透視画像群を全天球像へ混合する。","zh":"将已标定透视图组混合为全景图。","tw":"將已校正透視圖組混合為全景圖。","ko":"보정된 원근 영상들을 전방위 영상으로 혼합한다.","de":"Mischt kalibrierte Perspektivbilder zu einem Rundumbild.","hi":"अंशांकित परिप्रेक्ष्य चित्रों को सर्वदिशीय चित्र में मिलाता है।"},
+  "optics/equirect_rotate": {"fp":"edb1aac99ac2","ja":"全天球画像へ正しい3次元回転を適用する。","zh":"对全景图应用正规三维旋转。","tw":"對全景圖套用正規三維旋轉。","ko":"전방위 영상에 올바른 3차원 회전을 적용한다.","de":"Wendet eine echte dreidimensionale Drehung auf ein Rundumbild an.","hi":"सर्वदिशीय चित्र पर उचित त्रिविम घूर्णन लागू करता है।"},
+  "optics/equirect_stabilize": {"fp":"ab76886ed141","ja":"全天球系列のカメラ回転を推定して除く。","zh":"估计并消除全景序列的相机旋转。","tw":"估計並消除全景序列的相機旋轉。","ko":"전방위 연속 영상의 카메라 회전을 추정해 제거한다.","de":"Schätzt und entfernt Kameradrehungen aus einer Rundumbildfolge.","hi":"सर्वदिशीय क्रम से कैमरा घूर्णन का अनुमान लगाकर हटाता है।"},
+  "optics/equirect_weight_map": {"fp":"a74bcdc94482","ja":"余弦緯度の重み画像を返す。","zh":"返回余弦纬度权重图。","tw":"回傳餘弦緯度權重圖。","ko":"코사인 위도 가중치 영상을 반환한다.","de":"Liefert eine Gewichtskarte mit dem Kosinus der Breite.","hi":"अक्षांश के कोसाइन का भार मानचित्र देता है।"},
+  "optics/ods_depth_to_disparity": {"fp":"4eec61f70f88","ja":"半径方向距離を全方位立体の水平視差へ変換する。","zh":"将径向深度转换为全景立体水平视差。","tw":"將徑向深度轉換為全景立體水平視差。","ko":"방사 깊이를 전방위 입체 수평 시차로 변환한다.","de":"Wandelt radiale Tiefe in horizontale Rundum-Stereodisparität um.","hi":"त्रिज्यीय गहराई को सर्वदिशीय क्षैतिज त्रिविम विस्थापन में बदलता है।"},
+  "optics/ods_disparity_to_depth": {"fp":"032e90d4a997","ja":"全方位立体の水平視差を半径方向距離へ変換する。","zh":"将全景立体水平视差转换为径向深度。","tw":"將全景立體水平視差轉換為徑向深度。","ko":"전방위 입체 수평 시차를 방사 깊이로 변환한다.","de":"Wandelt horizontale Rundum-Stereodisparität in radiale Tiefe um.","hi":"सर्वदिशीय क्षैतिज त्रिविम विस्थापन को त्रिज्यीय गहराई में बदलता है।"},
+  "optics/ods_render": {"fp":"caa8ad7432d9","ja":"場面コールバックから全方位立体光線を描画する。","zh":"通过场景回调渲染全景立体射线。","tw":"透過場景回呼渲染全景立體射線。","ko":"장면 콜백으로 전방위 입체 광선을 렌더링한다.","de":"Rendert Rundum-Stereostrahlen über eine Szenenfunktion.","hi":"दृश्य फ़ंक्शन से सर्वदिशीय त्रिविम किरणें रेंडर करता है।"},
+  "optics/s_psnr": {"fp":"385d212eebb8","ja":"球面上の決定的な準一様標本でPSNRを計算する。","zh":"在球面确定性近均匀采样点上计算PSNR。","tw":"在球面確定性近均勻取樣點上計算PSNR。","ko":"구면의 결정적 준균일 표본에서 PSNR을 계산한다.","de":"Berechnet PSNR an deterministischen, nahezu gleichverteilten Kugelproben.","hi":"गोले पर नियत लगभग-समान नमूनों से PSNR गणना करता है।"},
+  "optics/stereo360_sbs": {"fp":"79bf3d05e547","ja":"全天球の左右像を横並びに詰める。","zh":"将全景左右图并排打包。","tw":"將全景左右圖並排封裝。","ko":"전방위 좌우 영상을 나란히 묶는다.","de":"Packt ein Rundum-Stereopaar nebeneinander.","hi":"सर्वदिशीय त्रिविम जोड़ी को अगल-बगल रखता है।"},
+  "optics/stereo360_top_bottom": {"fp":"948339a08e8a","ja":"全天球の左右像を上下に詰める。","zh":"将全景左右图上下打包。","tw":"將全景左右圖上下封裝。","ko":"전방위 좌우 영상을 위아래로 묶는다.","de":"Packt ein Rundum-Stereopaar übereinander.","hi":"सर्वदिशीय त्रिविम जोड़ी को ऊपर-नीचे रखता है।"},
+  "optics/stereo_pack": {"fp":"b4def7cb6684","ja":"左右像を指定した表示配置に詰める。","zh":"按指定显示布局打包左右图。","tw":"依指定顯示配置封裝左右圖。","ko":"좌우 영상을 지정한 표시 배치로 묶는다.","de":"Packt zwei Augenbilder in die angegebene Anzeigeanordnung.","hi":"दोनों आँखों के चित्र निर्दिष्ट प्रदर्शन विन्यास में रखता है।"},
+  "optics/stereo_parallax_budget": {"fp":"a26062b4e190","ja":"物理視差と画面幅の1 %・3 %限界を報告する。","zh":"报告物理视差及屏宽1%和3%限值。","tw":"回報物理視差及螢幕寬1%與3%限值。","ko":"물리 시차와 화면 너비 1%, 3% 한계를 보고한다.","de":"Meldet physische Parallaxe sowie Ein- und Drei-Prozent-Grenzen der Bildschirmbreite.","hi":"भौतिक विस्थापन और स्क्रीन चौड़ाई की एक व तीन प्रतिशत सीमाएँ बताता है।"},
+  "optics/video360_tile_coverage": {"fp":"fde6de48c5f3","ja":"視線経路が触れる経度緯度タイルを報告する。","zh":"报告视线路径触及的经纬度分块。","tw":"回報視線路徑觸及的經緯度分塊。","ko":"시선 경로가 닿는 경위도 타일을 보고한다.","de":"Meldet die von einem Blickpfad berührten Längen-Breiten-Kacheln.","hi":"दृष्टि पथ से छुए गए देशांतर-अक्षांश टाइल बताता है।"},
+  "optics/video360_viewport_track": {"fp":"eb54e9aa1cf6","ja":"全天球フレーム列から動く視野を切り出す。","zh":"从全景帧序列提取移动视口。","tw":"從全景影格序列擷取移動視口。","ko":"전방위 프레임열에서 움직이는 시야를 추출한다.","de":"Extrahiert ein bewegtes Sichtfenster aus einer Rundumbildfolge.","hi":"सर्वदिशीय फ़्रेम क्रम से चलता दृश्य क्षेत्र निकालता है।"},
+  "optics/viewport_from_equirect": {"fp":"5c3b6d1408ec","ja":"正距円筒画像から透視投影の視野を切り出す。","zh":"从等距柱状图提取透视视口。","tw":"從等距柱狀圖擷取透視視口。","ko":"등거리 원통 영상에서 원근 시야를 추출한다.","de":"Extrahiert eine perspektivische Ansicht aus einem Rechteckpanorama.","hi":"समदूरी बेलनाकार चित्र से परिप्रेक्ष्य दृश्य निकालता है।"},
+  "optics/ws_psnr": {"fp":"fa7426b404cc","ja":"余弦緯度で重み付けした球面PSNRを計算する。","zh":"计算余弦纬度加权的球面PSNR。","tw":"計算餘弦緯度加權的球面PSNR。","ko":"코사인 위도로 가중한 구면 PSNR을 계산한다.","de":"Berechnet kugelflächengewichtetes PSNR mit Kosinus-Breitengewichten.","hi":"अक्षांश-कोसाइन भारित गोलकीय PSNR गणना करता है।"},
   "simcal/simcal_identifiability": {
    "fp": "a33c94d233ab",
    "ja": "合わせた各つまみの Fisher 情報・Cramér-Rao 下界・相関・共線性・プロファイル尤度。",
@@ -6201,6 +6226,15 @@
    "de": "Extrahiert iterativ mittels wiederholtem RANSAC bis zu `max_planes` Ebenen nacheinander (verbleibende Restpunkte sind -1).",
    "hi": "बार-बार RANSAC से अधिकतम max_planes planes को एक-एक करके निकालता है (residual points -1)।"
   },
+  "2d/tb_points_render": {
+   "fp": "1d90762ce89e",
+   "ja": "(N, 3) の点群を RGB 画像 (H, W, 3) に描く: アンチエイリアスつきの足跡、深さの順、決定的。",
+   "zh": "把 (N, 3) 点云渲染为 RGB 图像 (H, W, 3):抗锯齿的足迹、按深度排序、结果确定。",
+   "tw": "把 (N, 3) 點雲繪製為 RGB 影像 (H, W, 3):抗鋸齒的足跡、依深度排序、結果確定。",
+   "ko": "(N, 3) 점군을 RGB 영상 (H, W, 3) 으로 그립니다: 안티에일리어싱된 발자국, 깊이 순서, 결정적.",
+   "de": "Rendert eine (N, 3)-Punktwolke als RGB-Bild (H, W, 3): geglättete Splats, nach Tiefe sortiert, deterministisch.",
+   "hi": "(N, 3) point cloud को RGB image (H, W, 3) में render करता है: anti-aliased splats, depth के क्रम में, deterministic।"
+  },
   "2d/tb_points_to_voxel": {
    "fp": "21f55eef00b9",
    "en": "Point cloud (N,3) → density voxel (size³). Splatted via scatter_add, with optional Gaussian smoothing.",
@@ -10241,6 +10275,15 @@
    "ko": "이상치에 강건한 PnP(RANSAC + 최종 DLT 재적합). → (R, t, inlier_mask, info).",
    "de": "Ausreißerrobustes PnP (RANSAC plus abschließendes DLT-Refit). → (R, t, inlier_mask, info).",
    "hi": "outliers के प्रति robust PnP (RANSAC + अंतिम DLT refit)। → (R, t, inlier_mask, info)।"
+  },
+  "3d/points_render": {
+   "fp": "1d90762ce89e",
+   "ja": "(N, 3) の点群を RGB 画像 (H, W, 3) に描く: アンチエイリアスつきの足跡、深さの順、決定的。",
+   "zh": "把 (N, 3) 点云渲染为 RGB 图像 (H, W, 3):抗锯齿的足迹、按深度排序、结果确定。",
+   "tw": "把 (N, 3) 點雲繪製為 RGB 影像 (H, W, 3):抗鋸齒的足跡、依深度排序、結果確定。",
+   "ko": "(N, 3) 점군을 RGB 영상 (H, W, 3) 으로 그립니다: 안티에일리어싱된 발자국, 깊이 순서, 결정적.",
+   "de": "Rendert eine (N, 3)-Punktwolke als RGB-Bild (H, W, 3): geglättete Splats, nach Tiefe sortiert, deterministisch.",
+   "hi": "(N, 3) point cloud को RGB image (H, W, 3) में render करता है: anti-aliased splats, depth के क्रम में, deterministic।"
   },
   "3d/points_to_voxel": {
    "fp": "21f55eef00b9",
@@ -14598,6 +14641,15 @@
    "de": "Wellenlängenintegral einer Kurve ∫ s(λ) dλ (Trapezregel, λ in nm). Mit Intervall nur darin (Enden linear interpoliert).",
    "hi": "curve का तरंगदैर्घ्य integral ∫ s(λ) dλ (trapezoid नियम, λ nm में)। अंतराल देने पर केवल उसके भीतर (सिरे रैखिक interpolation)।"
   },
+  "optics/spectral_integral_table": {
+   "fp": "3f440afae3b9",
+   "ja": "帯域積分を繰り返すための、再利用できる累積台形積分表を作る。",
+   "zh": "为重复的波段积分构建可复用的累积梯形积分表。",
+   "tw": "為重複的波段積分建立可重用的累積梯形積分表。",
+   "ko": "반복적인 대역 적분을 위한 재사용 가능한 누적 사다리꼴 적분표를 만든다.",
+   "de": "Erstellt eine wiederverwendbare kumulative Trapeztabelle für wiederholte Bandintegrale.",
+   "hi": "बार-बार band integral निकालने के लिए पुन: उपयोग योग्य संचयी trapezoid table बनाता है।"
+  },
   "optics/spectral_stats": {
    "fp": "94b60c9895d7",
    "en": "Summary of a curve: peak wavelength and value, centroid wavelength, full width at half maximum (crossings by linear interpolation), integral.",
@@ -16282,13 +16334,13 @@
    "hi": "air में closed-form thick lens: EFL, back/front focal lengths, principal points।"
   },
   "optics/thin_film_reflectance": {
-   "fp": "aed080c05671",
-   "en": "The spectral reflectance of a thin film (thickness d, index n_film). The closed Airy (multiple-reflection) form.",
-   "zh": "薄膜(厚度 d,折射率 n_film)的分光反射率。Airy(多次反射)的闭式。",
-   "tw": "薄膜(厚度 d,折射率 n_film)的分光反射率。Airy(多次反射)的閉合式。",
-   "ko": "박막(두께 d, 굴절률 n_film)의 분광 반사율. Airy(다중 반사)의 닫힌 식.",
-   "de": "Der spektrale Reflexionsgrad eines dünnen Films (Dicke d, Index n_film). Die geschlossene Airy-(Mehrfachreflexions-)Form.",
-   "hi": "thin film (मोटाई d, refractive index n_film) की spectral reflectance। Airy (multiple reflection) का closed form।"
+   "fp": "df7f309817d2",
+   "en": "The spectral reflectance of a thin film (thickness d, index n_film). The exact characteristic-matrix solution (all multiple reflections included).",
+   "zh": "薄膜(厚度 d,折射率 n_film)的分光反射率。特性矩阵法的严格解(包含全部多次反射)。",
+   "tw": "薄膜(厚度 d,折射率 n_film)的分光反射率。特性矩陣法的嚴格解(包含全部多次反射)。",
+   "ko": "박막(두께 d, 굴절률 n_film)의 분광 반사율. 특성 행렬법의 엄밀해(다중 반사를 모두 포함).",
+   "de": "Der spektrale Reflexionsgrad eines dünnen Films (Dicke d, Index n_film). Die exakte Lösung mit der charakteristischen Matrix (alle Mehrfachreflexionen eingeschlossen).",
+   "hi": "thin film (मोटाई d, अपवर्तनांक n_film) की spectral reflectance। characteristic matrix विधि का सटीक हल (सभी multiple reflections शामिल)।"
   },
   "optics/thin_film_rgb": {
    "fp": "9ec751bd7d38",
@@ -25183,13 +25235,13 @@
    "hi": "Texture की जटिलता मापने वाला Minkowski-Bouligand (box counting) fractal dimension।"
   },
   "2d/tb_plane_sdf": {
-   "fp": "5d740eda75a3",
-   "en": "**Exact** signed distance field of a half-space (the side cut off by a plane) (negative inside, positive outside).",
-   "zh": "半空间(被平面切出的一侧)的**精确**有符号距离场(内侧为负、外侧为正)。",
-   "tw": "半空間(被平面切出的一側)的**精確**有號距離場(內側為負、外側為正)。",
-   "ko": "반공간(평면으로 자른 쪽)의 **엄밀한** 부호 거리장(안쪽 음, 바깥쪽 양).",
-   "de": "**Exaktes** vorzeichenbehaftetes Distanzfeld eines Halbraums (der durch eine Ebene abgeschnittenen Seite) (innen negativ, außen positiv).",
-   "hi": "half-space (plane से कटा हुआ हिस्सा) का **exact** signed distance field (अंदर ऋणात्मक, बाहर धनात्मक)।"
+   "fp": "c5405a377123",
+   "en": "Exact signed distance field of a half-space. ``fast`` is an optional path with measured relative difference 1.5e-10 at 1e6; the default is ``exact``.",
+   "zh": "半空间的精确有符号距离场。``fast`` 是可选路径，在 1e6 处实测相对差 1.5e-10；默认为 ``exact``。",
+   "tw": "半空間的精確有號距離場。``fast`` 是選用路徑，在 1e6 處實測相對差 1.5e-10；預設為 ``exact``。",
+   "ko": "반공간의 엄밀한 부호 거리장. ``fast`` 는 1e6에서 상대 차이 1.5e-10으로 측정된 선택 경로이며 기본값은 ``exact`` 이다.",
+   "de": "Exaktes vorzeichenbehaftetes Distanzfeld eines Halbraums. ``fast`` ist ein optionaler Pfad mit gemessener relativer Abweichung 1,5e-10 bei 1e6; Standard ist ``exact``.",
+   "hi": "half-space का exact signed distance field। ``fast`` वैकल्पिक path है जिसकी 1e6 पर measured relative difference 1.5e-10 है; default ``exact`` है।"
   },
   "2d/tb_cylinder_sdf": {
    "fp": "1ad6eec995d8",
@@ -25561,13 +25613,13 @@
    "hi": "``carve`` / ``synthesize_silhouette`` को दिया जा सकने वाला camera pose ``(R, t)`` बनाता है।"
   },
   "3d/plane_sdf": {
-   "fp": "5d740eda75a3",
-   "en": "**Exact** signed distance field of a half-space (the side cut off by a plane) (negative inside, positive outside).",
-   "zh": "半空间(被平面切出的一侧)的**精确**有符号距离场(内侧为负、外侧为正)。",
-   "tw": "半空間(被平面切出的一側)的**精確**有號距離場(內側為負、外側為正)。",
-   "ko": "반공간(평면으로 자른 쪽)의 **엄밀한** 부호 거리장(안쪽 음, 바깥쪽 양).",
-   "de": "**Exaktes** vorzeichenbehaftetes Distanzfeld eines Halbraums (der durch eine Ebene abgeschnittenen Seite) (innen negativ, außen positiv).",
-   "hi": "half-space (plane से कटा हुआ हिस्सा) का **exact** signed distance field (अंदर ऋणात्मक, बाहर धनात्मक)।"
+   "fp": "c5405a377123",
+   "en": "Exact signed distance field of a half-space. ``fast`` is an optional path with measured relative difference 1.5e-10 at 1e6; the default is ``exact``.",
+   "zh": "半空间的精确有符号距离场。``fast`` 是可选路径，在 1e6 处实测相对差 1.5e-10；默认为 ``exact``。",
+   "tw": "半空間的精確有號距離場。``fast`` 是選用路徑，在 1e6 處實測相對差 1.5e-10；預設為 ``exact``。",
+   "ko": "반공간의 엄밀한 부호 거리장. ``fast`` 는 1e6에서 상대 차이 1.5e-10으로 측정된 선택 경로이며 기본값은 ``exact`` 이다.",
+   "de": "Exaktes vorzeichenbehaftetes Distanzfeld eines Halbraums. ``fast`` ist ein optionaler Pfad mit gemessener relativer Abweichung 1,5e-10 bei 1e6; Standard ist ``exact``.",
+   "hi": "half-space का exact signed distance field। ``fast`` वैकल्पिक path है जिसकी 1e6 पर measured relative difference 1.5e-10 है; default ``exact`` है।"
   },
   "3d/cylinder_sdf": {
    "fp": "1ad6eec995d8",
@@ -25723,13 +25775,13 @@
    "hi": "rational function F(s) = num(s)/den(s) का numerical inverse Laplace transform (fixed Talbot method)।"
   },
   "math/hankel_image": {
-   "fp": "8cc7f68e1d59",
-   "en": "Obtains the 2-dimensional Fourier transform of an axisymmetric image (a round aperture, a Gaussian blob, diffraction rings) with 1 radial Hankel transform.",
-   "zh": "用沿径向的 1 次 Hankel 变换求轴对称图像(圆形孔径、高斯团块、衍射环)的 2 维傅里叶变换。",
-   "tw": "以沿徑向的 1 次 Hankel 轉換求軸對稱影像(圓形孔徑、高斯團塊、繞射環)的 2 維傅立葉轉換。",
-   "ko": "축대칭 영상(둥근 개구·가우스 덩어리·회절 고리)의 2차원 푸리에 변환을 동경 방향 1개의 Hankel 변환으로 구한다.",
-   "de": "Bestimmt die 2-dimensionale Fourier-Transformation eines achsensymmetrischen Bildes (runde Apertur, Gauß-Fleck, Beugungsringe) mit 1 radialen Hankel-Transformation.",
-   "hi": "axisymmetric image (गोल aperture, Gaussian blob, diffraction rings) का 2-dimensional Fourier transform, radial दिशा के 1 Hankel transform से निकालता है।"
+   "fp": "154f403e459a",
+   "en": "Computes an axisymmetric image's 2-D Fourier transform with a radial Hankel transform. ``memory_budget`` selects a low-memory path measured within 1e-10.",
+   "zh": "用径向 Hankel 变换求轴对称图像的二维傅里叶变换。``memory_budget`` 选择实测差在 1e-10 内的省内存路径。",
+   "tw": "以徑向 Hankel 轉換求軸對稱影像的二維傅立葉轉換。``memory_budget`` 選擇實測差在 1e-10 內的省記憶體路徑。",
+   "ko": "동경 Hankel 변환으로 축대칭 영상의 2차원 푸리에 변환을 구한다. ``memory_budget`` 는 측정 차이가 1e-10 이하인 저메모리 경로를 선택한다.",
+   "de": "Berechnet die 2-D-Fourier-Transformation eines achsensymmetrischen Bildes per radialer Hankel-Transformation. ``memory_budget`` wählt einen speichersparenden Pfad mit gemessener Abweichung unter 1e-10.",
+   "hi": "radial Hankel transform से axisymmetric image का 2-D Fourier transform निकालता है। ``memory_budget`` measured difference 1e-10 के भीतर वाला low-memory path चुनता है।"
   },
   "math/dct_transform": {
    "fp": "b9a4bea869a8",
@@ -27918,6 +27970,15 @@
    "de": "Legt die Objekte farblich unterschieden über das Originalbild und gibt ein float-RGB der Form ``(H, W, 3)`` zurück.",
    "hi": "मूल image पर object को अलग-अलग रंगों में overlay करके ``(H, W, 3)`` का float RGB लौटाता है।"
   },
+  "blob/blob_count_interval": {
+   "fp": "9f97cd894c3e",
+   "en": "Counts overlapping objects. **When the count cannot be determined, returns an interval instead of a number** (fail-closed).",
+   "zh": "对重叠的物体计数。**无法确定时返回区间而不是个数**(fail-closed)。",
+   "tw": "對重疊的物體計數。**無法確定時回傳區間而不是個數**(fail-closed)。",
+   "ko": "겹친 물체를 센다. **정해지지 않을 때는 개수가 아니라 구간을 반환한다**(fail-closed).",
+   "de": "Zählt überlappende Objekte. **Ist die Anzahl nicht bestimmbar, wird statt einer Zahl ein Intervall zurückgegeben** (fail-closed).",
+   "hi": "overlap हुए objects गिनता है। **जब तय न हो सके, तो संख्या के बजाय interval लौटाता है** (fail-closed)।"
+  },
   "dem/dem_slope": {
    "fp": "70b34f800b85",
    "en": "Slope angle. ``units`` is ``\"degrees\"`` / ``\"radians\"`` / ``\"percent\"``.",
@@ -29717,6 +29778,1750 @@
    "ko": "반사 스펙트럼 1개를 할로겐 × 광학계 × 대역 × InGaAs로 촬영할 때의 대역별 전자 수와 잡음.",
    "de": "Elektronen und Rauschen pro Band, wenn ein Reflexionsspektrum über Halogenlampe × Optik × Bänder × InGaAs aufgenommen wird.",
    "hi": "एक reflectance spectrum को halogen × optics × bands × InGaAs से लेने पर हर band के electrons और noise।"
-  }
+  },
+  "optics/itof_capture": {
+   "fp": "e631a9fef968",
+   "en": "Depth map → raw indirect-ToF signal (K phase-step buckets per modulation frequency, in electrons). Returns a ``table`` (``dict``).",
+   "zh": "距离图 → 间接 ToF 的原始信号(每个调制频率 K 个相位步进的累积桶,单位为电子数)。返回 ``table``(``dict``)。",
+   "tw": "距離圖 → 間接 ToF 的原始訊號(每個調變頻率 K 個相位步進的累積桶,單位為電子數)。回傳 ``table``(``dict``)。",
+   "ko": "거리 맵 → 간접 ToF의 원시 신호(변조 주파수마다 K단 버킷, 전자 수). ``table``(``dict``)을 반환한다.",
+   "de": "Tiefenkarte → rohes indirektes ToF-Signal (K Phasenstufen-Buckets je Modulationsfrequenz, in Elektronen). Gibt eine ``table`` (``dict``) zurück.",
+   "hi": "depth map → indirect ToF का raw signal (हर modulation frequency पर K phase-step bucket, electrons में)। ``table`` (``dict``) लौटाता है।"
+  },
+  "optics/itof_phase_amplitude": {
+   "fp": "eeef517b8e78",
+   "en": "K-step raw signal → phase, amplitude, offset, wrapped depth and a per-pixel depth-noise estimate (``table``).",
+   "zh": "K 步原始信号 → 相位、振幅、偏移、折返距离以及逐像素的距离噪声估计(``table``)。",
+   "tw": "K 步原始訊號 → 相位、振幅、偏移、折返距離以及逐像素的距離雜訊估計(``table``)。",
+   "ko": "K단 원시 신호 → 위상·진폭·오프셋·접힌 거리·화소별 거리 잡음 추정(``table``).",
+   "de": "K-stufiges Rohsignal → Phase, Amplitude, Offset, gefaltete Tiefe und eine Schätzung des Tiefenrauschens je Pixel (``table``).",
+   "hi": "K-step raw signal → phase, amplitude, offset, wrapped depth और हर pixel के depth noise का अनुमान (``table``)।"
+  },
+  "optics/itof_noise_budget": {
+   "fp": "543c29a127cf",
+   "en": "Closed-form depth noise of indirect ToF (one pixel, one frequency, K equally spaced steps). Returns a ``table``.",
+   "zh": "间接 ToF 距离噪声的闭式解(单像素、单频率、等间隔 K 步)。返回 ``table``。",
+   "tw": "間接 ToF 距離雜訊的閉式解(單像素、單頻率、等間隔 K 步)。回傳 ``table``。",
+   "ko": "간접 ToF 거리 잡음의 닫힌 형태(1화소·1주파수·등간격 K단). ``table``을 반환한다.",
+   "de": "Geschlossene Form des Tiefenrauschens von indirektem ToF (ein Pixel, eine Frequenz, K äquidistante Stufen). Gibt eine ``table`` zurück.",
+   "hi": "indirect ToF के depth noise का closed form (एक pixel, एक frequency, समान अंतराल के K step)। ``table`` लौटाता है।"
+  },
+  "optics/itof_unwrap_multifreq": {
+   "fp": "ce3870cd42f0",
+   "en": "Phases at several frequencies → depth (multi-frequency unwrapping). Returns a ``table``.",
+   "zh": "多个频率的相位 → 距离(多频解包裹)。返回 ``table``。",
+   "tw": "多個頻率的相位 → 距離(多頻解包裹)。回傳 ``table``。",
+   "ko": "여러 주파수의 위상 → 거리(다주파 언랩). ``table``을 반환한다.",
+   "de": "Phasen bei mehreren Frequenzen → Tiefe (Mehrfrequenz-Phasenentfaltung). Gibt eine ``table`` zurück.",
+   "hi": "कई frequency की phase → depth (multi-frequency unwrapping)। ``table`` लौटाता है।"
+  },
+  "optics/itof_unwrap_error_rate": {
+   "fp": "94d3c2fd37c5",
+   "en": "Estimated probability that multi-frequency unwrapping (maximum-likelihood decoding) picks the wrong wrap order. Returns a ``table``.",
+   "zh": "多频解包裹(最大似然解码)判错周期序号(第几周)的概率估计。返回 ``table``。",
+   "tw": "多頻解包裹(最大概似解碼)判錯週期序號(第幾週)的機率估計。回傳 ``table``。",
+   "ko": "다주파 언랩(최우 복호)이 차수(몇 번째 주기인지)를 틀릴 확률의 추정. ``table``을 반환한다.",
+   "de": "Geschätzte Wahrscheinlichkeit, dass die Mehrfrequenz-Entfaltung (Maximum-Likelihood-Dekodierung) die falsche Periodenordnung wählt. Gibt eine ``table`` zurück.",
+   "hi": "multi-frequency unwrapping (maximum-likelihood decoding) के गलत wrap order चुनने की संभावना का अनुमान। ``table`` लौटाता है।"
+  },
+  "optics/itof_multipath_separate": {
+   "fp": "86eeaa8a6f04",
+   "en": "Phasors measured at equally spaced frequencies → depth and strength of each path (matrix pencil). Returns a ``table``.",
+   "zh": "在等间隔多频率下测得的相量 → 各路径的距离与强度(矩阵束法)。返回 ``table``。",
+   "tw": "在等間隔多頻率下測得的相量 → 各路徑的距離與強度(矩陣束法)。回傳 ``table``。",
+   "ko": "등간격 다주파로 잰 페이저 → 경로별 거리와 세기(행렬 펜슬). ``table``을 반환한다.",
+   "de": "Bei äquidistanten Frequenzen gemessene Zeiger → Tiefe und Stärke jedes Pfades (Matrix-Pencil). Gibt eine ``table`` zurück.",
+   "hi": "समान अंतराल की frequencies पर मापे phasor → हर path की depth और strength (matrix pencil)। ``table`` लौटाता है।"
+  },
+  "optics/itof_flying_pixel_mask": {
+   "fp": "381fcf4a7a67",
+   "en": "Depth map → mask of flying pixels (pixels **floating between** foreground and background), ``(H, W)`` (1.0 = floating).",
+   "zh": "距离图 → 飞点像素(**悬浮在**前景与背景**之间**的像素)的标记 ``(H, W)``(1.0 = 悬浮)。",
+   "tw": "距離圖 → 飛點像素(**懸浮在**前景與背景**之間**的像素)的標記 ``(H, W)``(1.0 = 懸浮)。",
+   "ko": "거리 맵 → 플라잉 픽셀(전경과 배경 **사이에 뜬** 화소)의 표시 ``(H, W)``(1.0 = 떠 있음).",
+   "de": "Tiefenkarte → Maske der fliegenden Pixel (Pixel, die **zwischen** Vorder- und Hintergrund schweben), ``(H, W)`` (1.0 = schwebend).",
+   "hi": "depth map → flying pixel (foreground और background के **बीच तैरते** pixel) का mask ``(H, W)`` (1.0 = तैरता हुआ)।"
+  },
+  "optics/itof_wiggling_correct": {
+   "fp": "f26ec8c13316",
+   "en": "Phase and depth with the harmonic cyclic error (wiggling) corrected. Returns a ``table``.",
+   "zh": "校正了谐波引起的周期误差(wiggling)后的相位与距离。返回 ``table``。",
+   "tw": "校正了諧波引起的週期誤差(wiggling)後的相位與距離。回傳 ``table``。",
+   "ko": "고조파에 의한 주기 오차(wiggling)를 보정한 위상과 거리. ``table``을 반환한다.",
+   "de": "Phase und Tiefe mit korrigiertem harmonischem Zyklusfehler (Wiggling). Gibt eine ``table`` zurück.",
+   "hi": "harmonics से आई cyclic error (wiggling) को ठीक करके phase और depth। ``table`` लौटाता है।"
+  },
+  "converge/iterate_fixed_point": {
+   "fp": "9f3bd48e02d2",
+   "ja": "x = g(x) を不動点反復(素の反復 / Aitken / Anderson)で解き、収束しなければ値を返さずに拒否する。",
+   "zh": "用不动点迭代（普通迭代 / Aitken / Anderson）求解 x = g(x)，不收敛时拒绝而不返回值。",
+   "tw": "以不動點迭代（一般迭代 / Aitken / Anderson）求解 x = g(x)，不收斂時拒絕而不回傳值。",
+   "ko": "x = g(x)를 고정점 반복(일반 반복 / Aitken / Anderson)으로 풀고, 수렴하지 않으면 값을 내지 않고 거부한다.",
+   "de": "Löst x = g(x) durch Fixpunktiteration (einfach / Aitken / Anderson) und verweigert das Ergebnis, wenn sie nicht konvergiert.",
+   "hi": "x = g(x) को fixed-point iteration (plain / Aitken / Anderson) से हल करता है और converge न होने पर मान लौटाने से मना करता है।"
+  },
+  "converge/conv_observed_order": {
+   "fp": "2ff41506f3f3",
+   "ja": "系統的に細かくした 3 つの解から観測収束次数 p を求める(Celik ら 2008、式 3)。",
+   "zh": "由三个系统加密的解求表观收敛阶 p（Celik 等 2008，式 3）。",
+   "tw": "由三個系統加密的解求表觀收斂階 p（Celik 等 2008，式 3）。",
+   "ko": "체계적으로 세분한 세 해로부터 관측 수렴 차수 p를 구한다(Celik 외 2008, 식 3).",
+   "de": "Beobachtete Konvergenzordnung p aus drei systematisch verfeinerten Lösungen (Celik et al. 2008, Gl. 3).",
+   "hi": "तीन systematically refined solutions से observed order of convergence p निकालता है (Celik et al. 2008, eq. 3)।"
+  },
+  "converge/conv_gci": {
+   "fp": "36aefcea0507",
+   "ja": "最も細かい解の格子収束指標 GCI: Celik ら 2008 の手順(式 1〜7)。",
+   "zh": "最细解的网格收敛指数 GCI：Celik 等 2008 的步骤（式 1–7）。",
+   "tw": "最細解的網格收斂指標 GCI：Celik 等 2008 的程序（式 1–7）。",
+   "ko": "가장 세밀한 해의 격자 수렴 지수 GCI: Celik 외 2008의 절차(식 1~7).",
+   "de": "Gitterkonvergenzindex (GCI) der feinsten Lösung: Verfahren nach Celik et al. 2008, Gl. (1)-(7).",
+   "hi": "सबसे बारीक solution का grid convergence index (GCI): Celik et al. 2008 की प्रक्रिया, eqs. (1)-(7)।"
+  },
+  "converge/mc_sequential_mean": {
+   "fp": "8be59d7c4db7",
+   "ja": "逐次モンテカルロの平均: 信頼区間が許容幅より狭くなるまで標本を足す。",
+   "zh": "序贯蒙特卡罗均值：不断加样本，直到置信区间窄于容许值。",
+   "tw": "序貫蒙地卡羅平均：持續加樣本，直到信賴區間窄於容許值。",
+   "ko": "순차 몬테카를로 평균: 신뢰구간이 허용 폭보다 좁아질 때까지 표본을 더한다.",
+   "de": "Sequentieller Monte-Carlo-Mittelwert: Stichproben hinzufügen, bis das Konfidenzintervall schmaler als die Toleranz ist.",
+   "hi": "Sequential Monte Carlo mean: confidence interval tolerance से संकरा होने तक samples जोड़ता है।"
+  },
+  "converge/mc_photon_slab": {
+   "fp": "7ca5f6513d2f",
+   "ja": "多層の濁ったスラブの拡散反射・全透過・吸収を MCML 型のモンテカルロで、信頼区間つきで求める。",
+   "zh": "用 MCML 型蒙特卡罗计算多层浑浊平板的漫反射、总透射和吸收，并给出置信区间。",
+   "tw": "以 MCML 型蒙地卡羅計算多層混濁平板的漫反射、總穿透與吸收，並附信賴區間。",
+   "ko": "다층 혼탁 평판의 확산 반사·전투과·흡수를 MCML형 몬테카를로로 신뢰구간과 함께 구한다.",
+   "de": "Diffuse Reflexion, Gesamttransmission und Absorption einer geschichteten trüben Platte per Monte Carlo nach MCML, mit Konfidenzintervallen.",
+   "hi": "MCML-type Monte Carlo से layered turbid slab का diffuse reflectance, total transmittance और absorption, confidence intervals के साथ।"
+  },
+  "converge/iv_richardson_lucy_until": {
+   "fp": "4380a3309528",
+   "ja": "食い違い原理で止める Richardson-Lucy 逆畳み込み(ポアソン: Bertero 2010、τ = 1 / ガウス: Morozov)。モデルの値域外のデータは拒否する。",
+   "zh": "按偏差原理停止的 Richardson-Lucy 反卷积（泊松：Bertero 2010，τ = 1；高斯：Morozov）；拒绝模型值域之外的数据。",
+   "tw": "依偏差原理停止的 Richardson-Lucy 反卷積（卜瓦松：Bertero 2010，τ = 1；高斯：Morozov）；拒絕模型值域之外的資料。",
+   "ko": "불일치 원리로 멈추는 Richardson-Lucy 역합성곱(푸아송: Bertero 2010, τ = 1 / 가우스: Morozov). 모델 치역 밖의 데이터는 거부한다.",
+   "de": "Richardson-Lucy-Entfaltung mit Abbruch nach dem Diskrepanzprinzip (Poisson: Bertero 2010, τ = 1; Gauß: Morozov); verweigert Daten außerhalb des Modellbildbereichs.",
+   "hi": "Discrepancy principle से रुकने वाला Richardson-Lucy deconvolution (Poisson: Bertero 2010, τ = 1; Gaussian: Morozov); model की range से बाहर के data को मना करता है।"
+  },
+  "optics/form_factor_parallel_rects": {
+   "fp": "bb1b0c8150e5",
+   "ja": "平行に正対する同じ長方形 a × b(間隔 c)の形態係数(Howell のカタログ C-11 の閉形式)。",
+   "zh": "两个相同、平行且正对的矩形 a × b(间距 c)之间的角系数(Howell 目录 C-11 的闭式解)。",
+   "tw": "兩個相同、平行且正對的矩形 a × b(間距 c)之間的形狀因子(Howell 目錄 C-11 的閉式解)。",
+   "ko": "간격 c로 평행하게 마주 보는 같은 직사각형 a × b 사이의 형태 계수 (Howell 카탈로그 C-11의 닫힌 형식).",
+   "de": "Sichtfaktor zwischen zwei gleichen, parallelen, direkt gegenüberliegenden Rechtecken a × b im Abstand c (Howells Katalog C-11, geschlossene Form).",
+   "hi": "दूरी c पर आमने-सामने समानांतर दो समान आयतों a × b के बीच view factor (Howell की सूची C-11 का बंद रूप)।"
+  },
+  "optics/form_factor_perpendicular_rects": {
+   "fp": "ad18997e52f9",
+   "ja": "長さ l の辺を共有して直角に交わる長方形 w × l から h × l への形態係数(Howell のカタログ C-14 の閉形式)。",
+   "zh": "共用长度为 l 的边、成 90° 相交的矩形 w × l 到 h × l 的角系数(Howell 目录 C-14 的闭式解)。",
+   "tw": "共用長度為 l 的邊、成 90° 相交的矩形 w × l 到 h × l 的形狀因子(Howell 目錄 C-14 的閉式解)。",
+   "ko": "길이 l의 변을 공유하며 직각으로 만나는 직사각형 w × l에서 h × l로의 형태 계수 (Howell 카탈로그 C-14의 닫힌 형식).",
+   "de": "Sichtfaktor von einem Rechteck w × l zu einem Rechteck h × l mit gemeinsamer Kante der Länge l unter 90° (Howells Katalog C-14, geschlossene Form).",
+   "hi": "लंबाई l का किनारा साझा करते हुए 90° पर मिलने वाले आयत w × l से h × l तक view factor (Howell की सूची C-14 का बंद रूप)।"
+  },
+  "optics/form_factor_polygons": {
+   "fp": "40e37d7649ca",
+   "ja": "3-D の平らな凸多角形(三角形・四角形)どうしの形態係数 F_ij を数値で求める。",
+   "zh": "以数值方法求三维中两个平面凸多边形(三角形或四边形)之间的角系数 F_ij。",
+   "tw": "以數值方法求三維中兩個平面凸多邊形(三角形或四邊形)之間的形狀因子 F_ij。",
+   "ko": "3-D의 평평한 볼록 다각형(삼각형·사각형) 사이의 형태 계수 F_ij를 수치로 구한다.",
+   "de": "Sichtfaktor F_ij zwischen zwei ebenen konvexen Polygonen (Dreiecke oder Vierecke) in 3-D, numerisch.",
+   "hi": "3-D में दो समतल उत्तल बहुभुजों (त्रिभुज या चतुर्भुज) के बीच view factor F_ij, संख्यात्मक रूप से।"
+  },
+  "optics/radiosity_patches": {
+   "fp": "08fb203b9345",
+   "ja": "多角形か optscene のシーンから、平らなラジオシティのパッチの組(``rad_patches`` の表)を作る。",
+   "zh": "由多边形或 optscene 场景构建一组平面辐射度面片(``rad_patches`` 表)。",
+   "tw": "由多邊形或 optscene 場景建立一組平面輻射度面片(``rad_patches`` 表)。",
+   "ko": "다각형 또는 optscene 장면으로부터 평평한 radiosity 패치 집합(``rad_patches`` 표)을 만든다.",
+   "de": "Baut einen Satz ebener Radiosity-Patches (Tabelle ``rad_patches``) aus Polygonen oder aus einer optscene-Szene.",
+   "hi": "बहुभुजों या optscene दृश्य से समतल radiosity patches का समूह (``rad_patches`` तालिका) बनाता है।"
+  },
+  "optics/form_factor_matrix": {
+   "fp": "71b2f88eed16",
+   "ja": "``radiosity_patches`` の組の全パッチ対の形態係数 F_ij(遮蔽はシーンの光線で判定)。",
+   "zh": "``radiosity_patches`` 面片组中所有面片对的角系数 F_ij(遮挡由场景光线判定)。",
+   "tw": "``radiosity_patches`` 面片組中所有面片對的形狀因子 F_ij(遮擋由場景光線判定)。",
+   "ko": "``radiosity_patches`` 집합의 모든 패치 쌍의 형태 계수 F_ij (가림은 장면의 광선으로 판정).",
+   "de": "Alle Patch-zu-Patch-Sichtfaktoren F_ij eines ``radiosity_patches``-Satzes (Verdeckung über Strahlen der Szene).",
+   "hi": "``radiosity_patches`` समूह के सभी patch-युग्मों के view factors F_ij (अवरोध दृश्य की किरणों से)।"
+  },
+  "optics/radiosity_progressive_3d": {
+   "fp": "5bbb86d13a0b",
+   "ja": "3-D のパッチの組の漸進ラジオシティ(Cohen ら 1988、shooting、式 7・8)と、収束した証拠。",
+   "zh": "三维面片组上的渐进细化辐射度(Cohen 等 1988,shooting,式 7–8)及其收敛的证据。",
+   "tw": "三維面片組上的漸進細化輻射度(Cohen 等 1988,shooting,式 7–8)及其收斂的證據。",
+   "ko": "3-D 패치 집합의 점진적 radiosity (Cohen 외 1988, shooting, 식 7–8)와 수렴했다는 증거.",
+   "de": "Progressive-Refinement-Radiosity (Cohen et al. 1988, Shooting, Gl. 7–8) auf einem 3-D-Patch-Satz, mit dem Nachweis der Konvergenz.",
+   "hi": "3-D patch समूह पर progressive-refinement radiosity (Cohen et al. 1988, shooting, समी. 7–8), अभिसरण के प्रमाण सहित।"
+  },
+  "optics/render_optscene_gi": {
+   "fp": "9c5ff9f2dbe4",
+   "ja": "相互反射つきの検査用の描画: ``render_optscene`` の測光に、Lambert のパッチ間の n 回反射(または収束解)を足す。",
+   "zh": "含相互反射的检测用渲染:在 ``render_optscene`` 的光度之上加上朗伯面片之间的 n 次反射(或收敛解)。",
+   "tw": "含相互反射的檢測用渲染:在 ``render_optscene`` 的光度之上加上朗伯面片之間的 n 次反射(或收斂解)。",
+   "ko": "상호 반사를 포함한 검사용 렌더링: ``render_optscene``의 측광에 Lambert 패치 사이의 n회 반사(또는 수렴 해)를 더한다.",
+   "de": "Inspektions-Rendering mit Interreflexion: die Photometrie von ``render_optscene`` plus n Reflexionen (oder die konvergierte Summe) zwischen Lambert-Patches.",
+   "hi": "अंतर-परावर्तन सहित निरीक्षण render: ``render_optscene`` की photometry में Lambert patches के बीच n परावर्तन (या अभिसरित योग)।"
+  },
+  "generative/sem_electron_mc": {
+   "fp": "f34b620b55bd",
+   "ja": "平らな試料に電子を撃つモンテカルロ: 反射電子係数 η・二次電子収率 δ・相互作用体積。",
+   "en": "Monte Carlo of electrons fired into a flat specimen: backscatter coefficient η, secondary-electron yield δ and interaction volume.",
+   "zh": "向平整试样发射电子的蒙特卡罗:背散射系数 η、二次电子产额 δ 与相互作用体积。",
+   "tw": "向平整試樣發射電子的蒙地卡羅:背向散射係數 η、二次電子產額 δ 與交互作用體積。",
+   "ko": "평평한 시료에 전자를 쏘는 몬테카를로: 후방산란 계수 η, 2차 전자 수율 δ, 상호작용 부피.",
+   "de": "Monte-Carlo-Simulation von Elektronen in einer ebenen Probe: Rückstreukoeffizient η, Sekundärelektronenausbeute δ und Wechselwirkungsvolumen.",
+   "hi": "समतल नमूने में दागे गए electrons का Monte Carlo: backscatter गुणांक η, secondary-electron yield δ और interaction volume।"
+  },
+  "generative/sem_se_universal_curve": {
+   "fp": "a066b624b3e7",
+   "ja": "二次電子収率の普遍曲線 δ/δmax = 1.28 (E/Emax)^−0.67 [1 − exp(−1.614 (E/Emax)^1.67)]。",
+   "en": "Universal secondary-electron yield curve δ/δmax = 1.28 (E/Emax)^−0.67 [1 − exp(−1.614 (E/Emax)^1.67)].",
+   "zh": "二次电子产额的普适曲线 δ/δmax = 1.28 (E/Emax)^−0.67 [1 − exp(−1.614 (E/Emax)^1.67)]。",
+   "tw": "二次電子產額的普適曲線 δ/δmax = 1.28 (E/Emax)^−0.67 [1 − exp(−1.614 (E/Emax)^1.67)]。",
+   "ko": "2차 전자 수율의 보편 곡선 δ/δmax = 1.28 (E/Emax)^−0.67 [1 − exp(−1.614 (E/Emax)^1.67)].",
+   "de": "Universelle Sekundärelektronen-Ausbeutekurve δ/δmax = 1.28 (E/Emax)^−0.67 [1 − exp(−1.614 (E/Emax)^1.67)].",
+   "hi": "secondary-electron yield का सार्वभौमिक वक्र δ/δmax = 1.28 (E/Emax)^−0.67 [1 − exp(−1.614 (E/Emax)^1.67)]।"
+  },
+  "generative/sem_yield_curve": {
+   "fp": "d2cb1e270e21",
+   "ja": "加速電圧を振って η(E) と δ(E) を MC で出し、δ の形を普遍曲線と比べる。",
+   "en": "Sweep the accelerating voltage, compute η(E) and δ(E) by Monte Carlo, and compare the shape of δ with the universal curve.",
+   "zh": "扫描加速电压,用蒙特卡罗求 η(E) 与 δ(E),并把 δ 的形状与普适曲线比较。",
+   "tw": "掃描加速電壓,用蒙地卡羅求 η(E) 與 δ(E),並把 δ 的形狀與普適曲線比較。",
+   "ko": "가속 전압을 바꿔 가며 몬테카를로로 η(E)와 δ(E)를 구하고 δ의 모양을 보편 곡선과 비교한다.",
+   "de": "Beschleunigungsspannung durchfahren, η(E) und δ(E) per Monte Carlo berechnen und die Form von δ mit der universellen Kurve vergleichen.",
+   "hi": "accelerating voltage बदलते हुए Monte Carlo से η(E) और δ(E) निकालना, और δ के आकार की सार्वभौमिक वक्र से तुलना।"
+  },
+  "generative/sem_line_profile": {
+   "fp": "e400a1b44f2c",
+   "ja": "1 本の線(台形の断面)を横切って電子線を走査した線プロファイルを MC で出す(CD-SEM)。",
+   "en": "Monte Carlo line profile of a beam scanned across one line with a trapezoidal cross-section (CD-SEM).",
+   "zh": "用蒙特卡罗求电子束横扫一条梯形截面线条的线轮廓(CD-SEM)。",
+   "tw": "用蒙地卡羅求電子束橫掃一條梯形截面線條的線輪廓(CD-SEM)。",
+   "ko": "사다리꼴 단면의 선 하나를 가로질러 전자빔을 주사한 라인 프로파일을 몬테카를로로 구한다(CD-SEM).",
+   "de": "Monte-Carlo-Linienprofil eines Strahls, der über eine Linie mit trapezförmigem Querschnitt gerastert wird (CD-SEM).",
+   "hi": "समलंब cross-section वाली एक line के आर-पार scan किए गए beam का Monte Carlo line profile (CD-SEM)।"
+  },
+  "generative/sem_cd_measure": {
+   "fp": "e17dedbe692d",
+   "ja": "線プロファイル(``pairs``: x と信号)から線幅を出す(CD-SEM の 2 方式)。",
+   "en": "Measure a line width from a line profile (``pairs``: x and signal) with the two CD-SEM methods.",
+   "zh": "用 CD-SEM 的两种方法从线轮廓(``pairs``:x 与信号)求线宽。",
+   "tw": "用 CD-SEM 的兩種方法從線輪廓(``pairs``:x 與訊號)求線寬。",
+   "ko": "라인 프로파일(``pairs``: x와 신호)에서 CD-SEM의 두 방식으로 선폭을 구한다.",
+   "de": "Linienbreite aus einem Linienprofil (``pairs``: x und Signal) mit den zwei CD-SEM-Verfahren messen.",
+   "hi": "line profile (``pairs``: x और signal) से CD-SEM की दो विधियों से line width मापना।"
+  },
+  "generative/sem_image": {
+   "fp": "df9757edf327",
+   "ja": "高さ場と材料の地図から、画素ごとに電子を撃って SEM 像を作る(MC の直接計算)。",
+   "en": "SEM image from a height field and a material map, firing electrons into every pixel (direct Monte Carlo).",
+   "zh": "由高度场与材料图生成 SEM 像:向每个像素发射电子(直接蒙特卡罗)。",
+   "tw": "由高度場與材料圖生成 SEM 像:向每個像素發射電子(直接蒙地卡羅)。",
+   "ko": "높이 장과 재료 지도로부터 화소마다 전자를 쏘아 SEM 영상을 만든다(직접 몬테카를로).",
+   "de": "SEM-Bild aus Höhenfeld und Materialkarte, indem in jedes Pixel Elektronen geschossen werden (direktes Monte Carlo).",
+   "hi": "height field और material map से हर pixel में electrons दागकर SEM image बनाना (direct Monte Carlo)।"
+  },
+  "generative/sem_se_escape_fraction": {
+   "fp": "c79948466eee",
+   "ja": "正に帯電した面(電位 V > 0)から、二次電子が出ていける割合 F(V)。",
+   "en": "Fraction F(V) of secondary electrons that can leave a positively charged surface (potential V > 0).",
+   "zh": "二次电子能离开正带电表面(电位 V > 0)的比例 F(V)。",
+   "tw": "二次電子能離開正帶電表面(電位 V > 0)的比例 F(V)。",
+   "ko": "양으로 대전된 면(전위 V > 0)에서 2차 전자가 빠져나갈 수 있는 비율 F(V).",
+   "de": "Anteil F(V) der Sekundärelektronen, die eine positiv geladene Oberfläche (Potential V > 0) verlassen können.",
+   "hi": "धनात्मक रूप से आवेशित सतह (potential V > 0) से बाहर निकल सकने वाले secondary electrons का अंश F(V)।"
+  },
+  "generative/sem_charging_series": {
+   "fp": "b8320621b12e",
+   "ja": "絶縁物の帯電を走査のコマごとに進め、像の時間変化(``video``、(T, H, W))を返す。",
+   "en": "Advance insulator charging frame by frame of the scan and return the image over time (``video``, (T, H, W)).",
+   "zh": "按扫描帧推进绝缘体的带电,返回图像随时间的变化(``video``,(T, H, W))。",
+   "tw": "按掃描幀推進絕緣體的帶電,回傳影像隨時間的變化(``video``,(T, H, W))。",
+   "ko": "절연체의 대전을 주사 프레임마다 진행시켜 영상의 시간 변화(``video``, (T, H, W))를 반환한다.",
+   "de": "Aufladung des Isolators Bild für Bild des Rasters fortschreiben und den zeitlichen Bildverlauf zurückgeben (``video``, (T, H, W)).",
+   "hi": "scan के हर frame के साथ insulator की charging आगे बढ़ाकर image का समय-परिवर्तन लौटाना (``video``, (T, H, W))।"
+  },
+  "optics/material_electron_properties": {
+   "fp": "12f114bef0e4",
+   "ja": "電子線の物性(元素ごとの Z・A・質量分率、密度、二次電子の脱出深さと生成エネルギー)を返す。",
+   "en": "Electron-beam properties (per-element Z, A and mass fraction, density, secondary-electron escape depth and generation energy).",
+   "zh": "电子束物性(各元素的 Z、A 与质量分数,密度,二次电子逃逸深度与生成能量)。",
+   "tw": "電子束物性(各元素的 Z、A 與質量分率,密度,二次電子逃逸深度與生成能量)。",
+   "ko": "전자빔 물성(원소별 Z·A·질량 분율, 밀도, 2차 전자의 탈출 깊이와 생성 에너지).",
+   "de": "Elektronenstrahl-Eigenschaften (je Element Z, A und Massenanteil, Dichte, Austrittstiefe und Erzeugungsenergie der Sekundärelektronen).",
+   "hi": "electron-beam गुण (हर तत्व का Z, A और mass fraction, घनत्व, secondary electrons की escape depth और generation energy)।"
+  },
+  "optics/tem_wavelength": {
+   "fp": "51e2ba93074d",
+   "en": "Electron wavelength (with the relativistic correction) and interaction constant for an accelerating voltage ``kv`` in kV, as a table.",
+   "zh": "返回加速电压 ``kv``(kV)下电子的波长(含相对论修正)和相互作用常数(表)。",
+   "tw": "回傳加速電壓 ``kv``(kV)下電子的波長(含相對論修正)與交互作用常數(表)。",
+   "ko": "가속 전압 ``kv``(kV)에서 전자의 파장(상대론 보정 포함)과 상호작용 상수를 표로 반환.",
+   "de": "Elektronenwellenlänge (mit relativistischer Korrektur) und Wechselwirkungskonstante für die Beschleunigungsspannung ``kv`` in kV, als Tabelle.",
+   "hi": "त्वरण वोल्टेज ``kv`` (kV) पर इलेक्ट्रॉन की तरंगदैर्घ्य (सापेक्षिक सुधार सहित) और interaction constant, table के रूप में।"
+  },
+  "optics/tem_scherzer": {
+   "fp": "ae7c48cf7ba8",
+   "en": "Scherzer defocus and point resolution (table).",
+   "zh": "Scherzer 欠焦与点分辨率(表)。",
+   "tw": "Scherzer 欠焦與點解析度(表)。",
+   "ko": "Scherzer 디포커스와 점 분해능(표).",
+   "de": "Scherzer-Defokus und Punktauflösung (Tabelle).",
+   "hi": "Scherzer defocus और point resolution (table)।"
+  },
+  "optics/tem_ctf": {
+   "fp": "2a651311b487",
+   "en": "2-D contrast transfer function (DC at the centre, ``fftshift`` order, shape ``shape``).",
+   "zh": "二维衬度传递函数(直流在中心,``fftshift`` 顺序,形状 ``shape``)。",
+   "tw": "二維對比轉移函數(直流在中心,``fftshift`` 順序,形狀 ``shape``)。",
+   "ko": "2차원 콘트라스트 전달 함수(DC가 중앙, ``fftshift`` 순서, 형태 ``shape``).",
+   "de": "2-D-Kontrastübertragungsfunktion (Gleichanteil in der Mitte, ``fftshift``-Reihenfolge, Form ``shape``).",
+   "hi": "2-D contrast transfer function (DC केंद्र में, ``fftshift`` क्रम, आकार ``shape``)।"
+  },
+  "optics/tem_ctf_profile": {
+   "fp": "26fcfd2e850d",
+   "en": "1-D radial CTF curve (with envelopes) and a table of its zeros.",
+   "zh": "一维径向 CTF 曲线(含包络)及其零点表。",
+   "tw": "一維徑向 CTF 曲線(含包絡)及其零點表。",
+   "ko": "1차원 동경 CTF 곡선(포락선 포함)과 영점 표.",
+   "de": "1-D-Radialkurve der CTF (mit Einhüllenden) und Tabelle ihrer Nullstellen.",
+   "hi": "1-D radial CTF वक्र (envelope सहित) और उसके शून्यों की table।"
+  },
+  "optics/tem_projected_potential": {
+   "fp": "21181278d044",
+   "en": "Atom positions to the potential projected along z, v_z(x, y) in V Å (periodic boundary, ``image2d``).",
+   "zh": "由原子坐标得到沿 z 方向投影的势 v_z(x, y),单位 V Å(周期边界,``image2d``)。",
+   "tw": "由原子座標得到沿 z 方向投影的位勢 v_z(x, y),單位 V Å(週期邊界,``image2d``)。",
+   "ko": "원자 좌표로부터 z 방향으로 투영한 퍼텐셜 v_z(x, y), 단위 V Å(주기 경계, ``image2d``).",
+   "de": "Atompositionen zum entlang z projizierten Potential v_z(x, y) in V Å (periodischer Rand, ``image2d``).",
+   "hi": "परमाणु स्थितियों से z दिशा में projected potential v_z(x, y), V Å में (periodic boundary, ``image2d``)।"
+  },
+  "optics/tem_amorphous_film": {
+   "fp": "f3a0cf002a79",
+   "en": "Projected potential of an amorphous film in V Å (the standard specimen for Thon rings, ``image2d``).",
+   "zh": "非晶膜的投影势,单位 V Å(Thon 环的标准试样,``image2d``)。",
+   "tw": "非晶膜的投影位勢,單位 V Å(Thon 環的標準試片,``image2d``)。",
+   "ko": "비정질 막의 투영 퍼텐셜, 단위 V Å(Thon 링의 표준 시료, ``image2d``).",
+   "de": "Projiziertes Potential eines amorphen Films in V Å (Standardprobe für Thon-Ringe, ``image2d``).",
+   "hi": "amorphous film का projected potential, V Å में (Thon rings का मानक नमूना, ``image2d``)।"
+  },
+  "optics/tem_image_weak_phase": {
+   "fp": "789b2041bac3",
+   "en": "TEM bright-field image (intensity with mean 1, ``image2d``) from a projected potential v_z in V Å.",
+   "zh": "由投影势 v_z(V Å)生成 TEM 明场像(平均为 1 的强度,``image2d``)。",
+   "tw": "由投影位勢 v_z(V Å)產生 TEM 明場像(平均為 1 的強度,``image2d``)。",
+   "ko": "투영 퍼텐셜 v_z(V Å)로부터 TEM 명시야상(평균 1인 강도, ``image2d``).",
+   "de": "TEM-Hellfeldbild (Intensität mit Mittelwert 1, ``image2d``) aus einem projizierten Potential v_z in V Å.",
+   "hi": "projected potential v_z (V Å) से TEM bright-field छवि (औसत 1 की तीव्रता, ``image2d``)।"
+  },
+  "optics/tem_multislice": {
+   "fp": "f5387fa05f48",
+   "en": "Simple multislice (Cowley–Moodie, in Kirkland's form): returns the exit wave (table).",
+   "zh": "简易多层法(Cowley–Moodie,Kirkland 的形式):返回出射波(表)。",
+   "tw": "簡易多層法(Cowley–Moodie,Kirkland 的形式):回傳出射波(表)。",
+   "ko": "간이 멀티슬라이스(Cowley–Moodie, Kirkland 형식): 출사파를 반환(표).",
+   "de": "Einfaches Multislice-Verfahren (Cowley–Moodie, in Kirklands Form): gibt die Austrittswelle zurück (Tabelle).",
+   "hi": "सरल multislice (Cowley–Moodie, Kirkland के रूप में): exit wave लौटाता है (table)।"
+  },
+  "optics/tem_power_spectrum": {
+   "fp": "e1938ffa8406",
+   "en": "Average of tiled periodograms (Welch, Hann window) as a 2-D array in ``fftshift`` order (``image2d``).",
+   "zh": "分块周期图的平均(Welch,Hann 窗),以 ``fftshift`` 顺序的二维数组返回(``image2d``)。",
+   "tw": "分塊週期圖的平均(Welch,Hann 窗),以 ``fftshift`` 順序的二維陣列回傳(``image2d``)。",
+   "ko": "타일로 나눈 periodogram의 평균(Welch, Hann 창)을 ``fftshift`` 순서의 2차원으로 반환(``image2d``).",
+   "de": "Mittel gekachelter Periodogramme (Welch, Hann-Fenster) als 2-D-Array in ``fftshift``-Reihenfolge (``image2d``).",
+   "hi": "tiles में बाँटे periodograms का औसत (Welch, Hann window), ``fftshift`` क्रम के 2-D array के रूप में (``image2d``)।"
+  },
+  "optics/tem_ctf_estimate": {
+   "fp": "e48a8c56bbed",
+   "en": "Estimate defocus (and astigmatism) from the Thon rings in the power spectrum of a micrograph (table).",
+   "zh": "由显微照片功率谱中的 Thon 环估计欠焦量(及像散)(表)。",
+   "tw": "由顯微照片功率譜中的 Thon 環估計欠焦量(及像散)(表)。",
+   "ko": "현미경 사진의 파워 스펙트럼에 나타난 Thon 링으로부터 디포커스(와 비점수차)를 추정(표).",
+   "de": "Defokus (und Astigmatismus) aus den Thon-Ringen im Leistungsspektrum einer Mikrographie schätzen (Tabelle).",
+   "hi": "micrograph के power spectrum के Thon rings से defocus (और astigmatism) का अनुमान (table)।"
+  },
+  "optics/tem_ctf_correct": {
+   "fp": "5287ce2805d6",
+   "en": "CTF correction (``image2d``). ``method=\"phase_flip\"``: F⁻¹[ F(I − ⟨I⟩) · sign(CTF) ] (phase flipping, amplitudes unchanged) / ``\"wiener\"``: F⁻¹[ F(I − ⟨I⟩) · CTF / (CTF² + 1/snr) ].",
+   "zh": "CTF 校正(``image2d``)。``method=\"phase_flip\"``:F⁻¹[ F(I − ⟨I⟩) · sign(CTF) ] (相位翻转,振幅不变)/ ``\"wiener\"``:F⁻¹[ F(I − ⟨I⟩) · CTF / (CTF² + 1/snr) ]。",
+   "tw": "CTF 校正(``image2d``)。``method=\"phase_flip\"``:F⁻¹[ F(I − ⟨I⟩) · sign(CTF) ] (相位翻轉,振幅不變)/ ``\"wiener\"``:F⁻¹[ F(I − ⟨I⟩) · CTF / (CTF² + 1/snr) ]。",
+   "ko": "CTF 보정(``image2d``). ``method=\"phase_flip\"``: F⁻¹[ F(I − ⟨I⟩) · sign(CTF) ] (위상 반전, 진폭은 그대로) / ``\"wiener\"``: F⁻¹[ F(I − ⟨I⟩) · CTF / (CTF² + 1/snr) ].",
+   "de": "CTF-Korrektur (``image2d``). ``method=\"phase_flip\"``: F⁻¹[ F(I − ⟨I⟩) · sign(CTF) ] (Phasenumkehr, Amplituden unverändert) / ``\"wiener\"``: F⁻¹[ F(I − ⟨I⟩) · CTF / (CTF² + 1/snr) ].",
+   "hi": "CTF सुधार (``image2d``)। ``method=\"phase_flip\"``: F⁻¹[ F(I − ⟨I⟩) · sign(CTF) ] (phase flipping, आयाम अपरिवर्तित) / ``\"wiener\"``: F⁻¹[ F(I − ⟨I⟩) · CTF / (CTF² + 1/snr) ]।"
+  },
+  "optics/noncoaxial_system": {
+   "fp": "591305072f62",
+   "ja": "検証済みの非共軸の逐次光学系を組む(``table``)—— 面・座標の切り替え・折り返し・平板。",
+   "zh": "构建经过校验的非共轴序列光学系统(``table``)——面、坐标断点、折转、平板。",
+   "tw": "建構經過驗證的非共軸序列光學系統(``table``)——面、座標斷點、折轉、平板。",
+   "ko": "검증된 비공축 순차 광학계를 구성한다(``table``) — 면·좌표 전환·접힘·평판.",
+   "de": "Baut ein geprüftes nicht-koaxiales sequenzielles System (``table``) — Flächen, Koordinatenbrüche, Faltungen, Platten.",
+   "hi": "सत्यापित non-coaxial sequential प्रणाली बनाता है (``table``) — सतहें, coordinate break, fold, plate।"
+  },
+  "optics/noncoaxial_example": {
+   "fp": "43a7bbbefc8f",
+   "ja": "名前つきの非共軸の例(``table``): 折り返し・潜望鏡・半透鏡・傾いた平板・シャインプルーフ。",
+   "zh": "命名的非共轴示例系统(``table``):折转、潜望镜、分束器、倾斜平板、沙伊姆弗勒。",
+   "tw": "具名的非共軸範例系統(``table``):折轉、潛望鏡、分光鏡、傾斜平板、沙伊姆弗勒。",
+   "ko": "이름 붙은 비공축 예제 계(``table``): 접힘·잠망경·빔스플리터·기울어진 평판·샤임플루크.",
+   "de": "Ein benanntes nicht-koaxiales Beispielsystem (``table``): Faltungen, Periskop, Strahlteiler, gekippte Platte, Scheimpflug.",
+   "hi": "नामित non-coaxial उदाहरण प्रणाली (``table``): fold, periscope, beamsplitter, झुकी plate, Scheimpflug।"
+  },
+  "optics/noncoaxial_layout": {
+   "fp": "506dc5be2dc0",
+   "ja": "全ての記録の大域の姿勢(``table``): 面の頂点・回転行列・軸の折れ線。",
+   "zh": "每条记录的全局位姿(``table``):面顶点、旋转矩阵、光轴折线。",
+   "tw": "每筆紀錄的全域位姿(``table``):面頂點、旋轉矩陣、光軸折線。",
+   "ko": "모든 기록의 전역 자세(``table``): 면 정점·회전 행렬·축 꺾은선.",
+   "de": "Globale Lage jedes Eintrags (``table``): Flächenscheitel, Rotationsmatrizen, Achsenpolygon.",
+   "hi": "हर record की global स्थिति (``table``): सतह के शीर्ष, rotation matrix, अक्ष की polyline।"
+  },
+  "optics/noncoaxial_trace": {
+   "fp": "5b3807093625",
+   "ja": "瞳を満たす実光線の束を 3-D の系に通す(``table``)。",
+   "zh": "让充满光瞳的实际光线束穿过三维系统(``table``)。",
+   "tw": "讓充滿光瞳的實際光線束穿過三維系統(``table``)。",
+   "ko": "동공을 채우는 실제 광선 다발을 3-D 계에 추적한다(``table``).",
+   "de": "Verfolgt pupillenfüllende reale Strahlenbündel durch das 3-D-System (``table``).",
+   "hi": "pupil भरने वाले वास्तविक किरण-समूह को 3-D प्रणाली से trace करता है (``table``)।"
+  },
+  "optics/noncoaxial_spot": {
+   "fp": "28a18c551fa9",
+   "ja": "(傾いていてもよい)像面上の RMS・幾何のスポット半径(mm)と重心(``table``)。",
+   "zh": "(可倾斜的)像面上的 RMS / 几何光斑半径(mm)与质心(``table``)。",
+   "tw": "(可傾斜的)像面上的 RMS / 幾何光斑半徑(mm)與質心(``table``)。",
+   "ko": "(기울어질 수 있는) 상면 위의 RMS·기하 스폿 반경(mm)과 중심(``table``).",
+   "de": "RMS- / geometrischer Spotradius (mm) und Schwerpunkt auf der (ggf. gekippten) Bildebene (``table``).",
+   "hi": "(संभवतः झुके) image plane पर RMS / geometric spot त्रिज्या (mm) और centroid (``table``)।"
+  },
+  "optics/image_orientation": {
+   "fp": "630dc87f55e5",
+   "ja": "折り返しを経た像の向き(``table``): 反射の回数・裏返り・回転。",
+   "zh": "经过折转后的像方向(``table``):反射次数、镜像翻转、旋转。",
+   "tw": "經過折轉後的像方向(``table``):反射次數、鏡像翻轉、旋轉。",
+   "ko": "접힘을 거친 상의 방향(``table``): 반사 횟수·뒤집힘·회전.",
+   "de": "Bildlage nach Faltungen (``table``): Reflexionen, Händigkeit, Drehung.",
+   "hi": "fold के बाद image का अभिविन्यास (``table``): परावर्तन, handedness, घुमाव।"
+  },
+  "optics/beamsplitter_branches": {
+   "fp": "28920584758d",
+   "ja": "集光する光束の中の平板の半透鏡の 2 本の枝(``table``)。",
+   "zh": "会聚光束中平板分束器的两条支路(``table``)。",
+   "tw": "會聚光束中平板分光鏡的兩條支路(``table``)。",
+   "ko": "수렴 광속 속 평판 빔스플리터의 두 가지(``table``).",
+   "de": "Die zwei Zweige eines Platten-Strahlteilers im konvergenten Bündel (``table``).",
+   "hi": "अभिसारी किरण-पुंज में plate beamsplitter की दो शाखाएँ (``table``)।"
+  },
+  "optics/tilted_plate_shift": {
+   "fp": "9871c56d43b1",
+   "ja": "θ だけ傾けた平行平板: 横ずれ・焦点ずれ・非点隔差(``table``、閉形式)。",
+   "zh": "倾斜 θ 的平行平板:横向偏移、焦点移动与像散(``table``,闭式)。",
+   "tw": "傾斜 θ 的平行平板:橫向偏移、焦點移動與像散(``table``,閉式)。",
+   "ko": "θ만큼 기울인 평행 평판: 횡 이동·초점 이동·비점수차(``table``, 닫힌 식).",
+   "de": "Um θ gekippte planparallele Platte: Querversatz, Fokusverschiebung und Astigmatismus (``table``, geschlossene Form).",
+   "hi": "θ से झुकी समानांतर plate: पार्श्व विस्थापन, focus विस्थापन और astigmatism (``table``, closed form)।"
+  },
+  "optics/scheimpflug_tilt": {
+   "fp": "3669afbe9780",
+   "ja": "傾いた物面に対するシャインプルーフの条件(``table``、閉形式と、任意で実光線)。",
+   "zh": "倾斜物面的沙伊姆弗勒条件(``table``;闭式,可选实际光线)。",
+   "tw": "傾斜物面的沙伊姆弗勒條件(``table``;閉式,可選實際光線)。",
+   "ko": "기울어진 물체면에 대한 샤임플루크 조건(``table``, 닫힌 식과 선택적으로 실제 광선).",
+   "de": "Scheimpflug-Bedingung für eine gekippte Objektebene (``table``; geschlossene Form, optional reale Strahlen).",
+   "hi": "झुके object plane के लिए Scheimpflug शर्त (``table``; closed form, वैकल्पिक रूप से वास्तविक किरणें)।"
+  },
+  "optics/surface_reflectance": {
+   "fp": "f95a7830622f",
+   "ja": "材料表と膜から求めた 1 面の残留反射率(``table``)。",
+   "zh": "由材料表与镀膜求得的单个面的残余反射率(``table``)。",
+   "tw": "由材料表與鍍膜求得的單一面的殘餘反射率(``table``)。",
+   "ko": "재료표와 막으로 구한 한 면의 잔류 반사율(``table``).",
+   "de": "Restreflexion einer Fläche aus der Materialtabelle und ihrer Beschichtung (``table``).",
+   "hi": "material table और coating से एक सतह की अवशिष्ट परावर्तकता (``table``)।"
+  },
+  "optics/ghost_analysis": {
+   "fp": "695ac7951e22",
+   "ja": "全ての 2 面の組の 2 回反射のゴースト(``table``): 焦点・像面上の大きさ・相対強度。",
+   "zh": "所有面对的两次反射鬼像(``table``):焦点、在传感器上的大小与相对强度。",
+   "tw": "所有面對的兩次反射鬼影(``table``):焦點、在感測器上的大小與相對強度。",
+   "ko": "모든 두 면 쌍의 2회 반사 고스트(``table``): 초점·센서 위 크기·상대 강도.",
+   "de": "Zweifach reflektierte Geisterbilder aller Flächenpaare (``table``): Fokus, Größe auf dem Sensor, relative Intensität.",
+   "hi": "हर सतह-जोड़ी के दो-परावर्तन ghost (``table``): focus, sensor पर आकार और सापेक्ष तीव्रता।"
+  },
+  "optics/ghost_image": {
+   "fp": "f37dab1d2f7f",
+   "ja": "点光源の像と全ての 2 回反射のゴーストの、像面の照度(``image2d``)。",
+   "zh": "点光源的像加上全部两次反射鬼像在像面上的照度(``image2d``)。",
+   "tw": "點光源的像加上全部兩次反射鬼影在像面上的照度(``image2d``)。",
+   "ko": "점광원의 상과 모든 2회 반사 고스트의 상면 조도(``image2d``).",
+   "de": "Bestrahlungsstärke in der Bildebene: Bild plus alle zweifach reflektierten Geister einer Punktquelle (``image2d``).",
+   "hi": "बिंदु स्रोत की image और सभी दो-परावर्तन ghost का image-plane विकिरण (``image2d``)।"
+  },
+  "optics/ghost_path": {
+   "fp": "df53582051e9",
+   "ja": "1 組の 2 回反射のゴーストの実光線の折れ線(``table``): 経路 i < j・光線・エネルギー。",
+   "zh": "单个两次反射鬼像的实际光线折线(``table``):路径 i < j、光线与能量。",
+   "tw": "單一兩次反射鬼影的實際光線折線(``table``):路徑 i < j、光線與能量。",
+   "ko": "한 쌍의 2회 반사 고스트의 실제 광선 꺾은선(``table``): 경로 i < j·광선·에너지.",
+   "de": "Reale Strahlpolygone eines zweifach reflektierten Geists (``table``): Pfad i < j, Strahlen, Energie.",
+   "hi": "एक दो-परावर्तन ghost की वास्तविक किरण polyline (``table``): पथ i < j, किरणें और ऊर्जा।"
+  },
+  "optics/noncoaxial_drawing": {
+   "fp": "aae45c6fb7a1",
+   "en": "Section / setup drawing of a folded system (``table``, a drawing dict) — the surfaces, mirrors, beamsplitters, image plane and rays of a ``raytrace3d`` system, projected onto the meridional plane in global coordinates.",
+   "zh": "折转系统的截面图/安装图(``table``,图的 dict)——把 ``raytrace3d`` 系统的面、反射镜、分束器、像面与光线以全局坐标投影到子午面绘制。",
+   "tw": "折轉系統的截面圖/安裝圖(``table``,圖的 dict)——把 ``raytrace3d`` 系統的面、反射鏡、分光鏡、像面與光線以全域座標投影到子午面繪製。",
+   "ko": "접힌 계의 단면도·설치도(``table``, 도면 dict) — ``raytrace3d`` 계의 면·거울·빔스플리터·상면·광선을 전역 좌표로 자오면에 투영해 그린다.",
+   "de": "Schnitt- / Aufstellungszeichnung eines gefalteten Systems (``table``, ein Zeichnungs-dict) — Flächen, Spiegel, Strahlteiler, Bildebene und Strahlen eines ``raytrace3d``-Systems, in globalen Koordinaten auf die Meridionalebene projiziert.",
+   "hi": "मुड़ी हुई प्रणाली का अनुप्रस्थ-काट / setup drawing (``table``, drawing dict) — ``raytrace3d`` प्रणाली की सतहें, दर्पण, beamsplitter, image plane और किरणें global निर्देशांकों में meridional तल पर प्रक्षेपित।"
+  },
+  "optics/chief_ray": {
+   "fp": "6b770f738f6a",
+   "ja": "1 つの視野の主光線(絞りの中心を通る)を追跡する(``table``)。",
+   "zh": "追迹某一视场的主光线(穿过光阑中心)(``table``)。",
+   "tw": "追跡某一視場的主光線(穿過光闌中心)(``table``)。",
+   "ko": "한 시야의 주광선(조리개 중심을 지나는)을 추적한다(``table``).",
+   "de": "Verfolgt den Hauptstrahl (durch die Blendenmitte) eines Feldes (``table``).",
+   "hi": "एक field की chief ray (stop के केंद्र से) trace करता है (``table``)।"
+  },
+  "optics/ray_bundle": {
+   "fp": "50df9b589a2d",
+   "ja": "1 つの視野の瞳を満たす束を追跡する。生の追跡結果に ``image_xy``(N,2)・``chief_xy``(2,)・``pupil``(N,2)の正規化座標・``opl0``(光線の始点の光路のずれ)を足して返す。",
+   "zh": "追迹某一视场充满光瞳的光束;返回原始追迹结果以及 ``image_xy`` (N,2)、``chief_xy`` (2,)、``pupil`` (N,2) 归一化坐标和 ``opl0``(光线起点的光程偏移)。",
+   "tw": "追跡某一視場充滿光瞳的光束;回傳原始追跡結果以及 ``image_xy`` (N,2)、``chief_xy`` (2,)、``pupil`` (N,2) 正規化座標和 ``opl0``(光線起點的光程偏移)。",
+   "ko": "한 시야의 동공을 채우는 다발을 추적한다. 원시 추적 결과와 ``image_xy`` (N,2)·``chief_xy`` (2,)·``pupil`` (N,2) 정규화 좌표·``opl0``(광선 시작점의 광로 오프셋)을 반환한다.",
+   "de": "Verfolgt ein pupillenfüllendes Bündel eines Feldes; liefert die Rohdaten plus ``image_xy`` (N,2), ``chief_xy`` (2,), ``pupil`` (N,2) normierte Koordinaten und ``opl0`` (Startwerte der optischen Weglänge).",
+   "hi": "एक field का pupil भरने वाला समूह trace करता है; कच्चा trace और ``image_xy`` (N,2), ``chief_xy`` (2,), ``pupil`` (N,2) normalised निर्देशांक तथा ``opl0`` (किरण के आरंभ का optical path offset) लौटाता है।"
+  },
+  "optics/opd_samples": {
+   "fp": "f056123fa419",
+   "ja": "瞳の格子点での OPD(波長単位): ``(px, py, opd, valid)`` を返す。",
+   "zh": "光瞳网格采样点上的 OPD(波长):返回 ``(px, py, opd, valid)``。",
+   "tw": "光瞳格點取樣上的 OPD(波長):回傳 ``(px, py, opd, valid)``。",
+   "ko": "동공 격자 표본의 OPD(파장 단위): ``(px, py, opd, valid)``를 반환한다.",
+   "de": "OPD (in Wellenlängen) an Pupillen-Gitterpunkten: liefert ``(px, py, opd, valid)``.",
+   "hi": "pupil grid नमूनों पर OPD (तरंगों में): ``(px, py, opd, valid)`` लौटाता है।"
+  },
+  "optics/with_wavelength": {
+   "fp": "a61df8c7cea1",
+   "ja": "同じ処方を別の波長で評価したもの(屈折率を引き直す。既定は F 線)。",
+   "zh": "在另一波长下评估的同一处方(重新解析折射率;默认 F 线)。",
+   "tw": "在另一波長下評估的同一處方(重新解析折射率;預設 F 線)。",
+   "ko": "같은 처방을 다른 파장에서 평가한 것(굴절률을 다시 구함, 기본은 F선).",
+   "de": "Dieselbe Vorschrift bei einer anderen Wellenlänge (Brechzahlen neu bestimmt; Standard die F-Linie).",
+   "hi": "वही prescription किसी अन्य तरंगदैर्घ्य पर (अपवर्तनांक दोबारा; डिफ़ॉल्ट F रेखा)।"
+  },
+  "optics/lens_file_read": {
+   "fp": "7903a456f64e",
+   "en": "Read a ``.zmx`` sequential lens prescription into a Fullseye prescription (``table``).",
+   "zh": "将 ``.zmx`` 逐次透镜处方读入 Fullseye 的处方(``table``)。",
+   "tw": "將 ``.zmx`` 逐次透鏡處方讀入 Fullseye 的處方(``table``)。",
+   "ko": "``.zmx`` 순차 렌즈 처방을 Fullseye의 처방(``table``)으로 읽는다.",
+   "de": "Liest eine sequenzielle ``.zmx``-Linsenvorschrift in eine Fullseye-Vorschrift ein (``table``).",
+   "hi": "``.zmx`` sequential lens prescription को Fullseye prescription (``table``) में पढ़ता है।"
+  },
+  "optics/lens_file_system": {
+   "fp": "1f702354a74f",
+   "en": "The imported prescription as a ``raytrace.lens_system`` at one field and wavelength (``table``).",
+   "zh": "把导入的处方变成某一视场、某一波长下的 ``raytrace.lens_system``(``table``)。",
+   "tw": "把匯入的處方變成某一視場、某一波長下的 ``raytrace.lens_system``(``table``)。",
+   "ko": "가져온 처방을 하나의 시야·파장에서의 ``raytrace.lens_system``(``table``)으로 만든다.",
+   "de": "Die importierte Vorschrift als ``raytrace.lens_system`` bei einem Feld und einer Wellenlänge (``table``).",
+   "hi": "import की गई prescription को एक field और wavelength पर ``raytrace.lens_system`` (``table``) बनाता है।"
+  },
+  "optics/lens_file_write": {
+   "fp": "38f1c13a11f0",
+   "en": "Write a prescription as ``.zmx`` text that :func:`lens_file_read` and design programs read (``table``).",
+   "zh": "把处方写成 :func:`lens_file_read` 和设计软件都能读的 ``.zmx`` 文本(``table``)。",
+   "tw": "把處方寫成 :func:`lens_file_read` 和設計軟體都能讀的 ``.zmx`` 文字(``table``)。",
+   "ko": "처방을 :func:`lens_file_read`와 설계 프로그램이 읽을 수 있는 ``.zmx`` 텍스트로 쓴다(``table``).",
+   "de": "Schreibt eine Vorschrift als ``.zmx``-Text, den :func:`lens_file_read` und Designprogramme lesen (``table``).",
+   "hi": "prescription को ``.zmx`` text के रूप में लिखता है जिसे :func:`lens_file_read` और design programs पढ़ते हैं (``table``)।"
+  },
+  "optics/lens_file_report": {
+   "fp": "19e894a64e02",
+   "en": "Inventory of a ``.zmx`` file without importing it: what would be read / ignored / refused (``table``).",
+   "zh": "不导入就清点 ``.zmx`` 文件:哪些会被读取 / 忽略 / 拒绝(``table``)。",
+   "tw": "不匯入就清點 ``.zmx`` 檔:哪些會被讀取 / 忽略 / 拒絕(``table``)。",
+   "ko": "가져오지 않고 ``.zmx`` 파일을 조사한다: 무엇이 읽히고 / 무시되고 / 거부되는지(``table``).",
+   "de": "Inventar einer ``.zmx``-Datei ohne Import: was gelesen / ignoriert / abgelehnt würde (``table``).",
+   "hi": "``.zmx`` file को import किए बिना जाँचता है: क्या पढ़ा / अनदेखा / अस्वीकार होगा (``table``)।"
+  },
+  "optics/grating_dispersion": {
+   "fp": "498fee38a239",
+   "en": "Solve the grating equation mλ = d(sin α + sin β) and tabulate angular and reciprocal linear dispersion, resolving power and the overlapping orders.",
+   "zh": "求解光栅方程 mλ = d(sin α + sin β),并列出角色散、倒线色散、分辨本领和重叠的衍射级。",
+   "tw": "求解光柵方程 mλ = d(sin α + sin β),並列出角色散、倒線色散、解析力與重疊的繞射級。",
+   "ko": "격자 방정식 mλ = d(sin α + sin β)를 풀어 각분산·역선분산·분해능·겹치는 차수를 표로 만든다.",
+   "de": "Löst die Gittergleichung mλ = d(sin α + sin β) und tabelliert Winkel- und reziproke Lineardispersion, Auflösungsvermögen und überlappende Ordnungen.",
+   "hi": "grating equation mλ = d(sin α + sin β) हल करके angular dispersion, reciprocal linear dispersion, resolving power और overlap करने वाले orders की table बनाता है।"
+  },
+  "optics/czerny_turner_design": {
+   "fp": "98c1bda4343d",
+   "en": "First-order design of a Czerny–Turner spectrometer (plane grating + two concave mirrors): camera focal length, coma-free mirror angle and the wavelength mapping.",
+   "zh": "Czerny–Turner 光谱仪(平面光栅 + 两块凹面镜)的一阶设计:相机焦距、消彗差的镜面角和波长映射。",
+   "tw": "Czerny–Turner 光譜儀(平面光柵 + 兩片凹面鏡)的一階設計:相機焦距、消彗差的鏡面角與波長映射。",
+   "ko": "Czerny–Turner 분광기(평면 격자 + 오목거울 2장)의 1차 설계: 카메라 초점거리·코마를 없애는 거울 각·파장 사상.",
+   "de": "Erstentwurf eines Czerny-Turner-Spektrometers (Plangitter + zwei Hohlspiegel): Kamerabrennweite, komafreier Spiegelwinkel und Wellenlängenabbildung.",
+   "hi": "Czerny–Turner spectrometer (plane grating + दो concave mirror) का first-order design: camera focal length, coma हटाने वाला mirror angle और wavelength mapping।"
+  },
+  "optics/spectrometer_bandpass": {
+   "fp": "71022453e05c",
+   "en": "Spectrometer bandpass (FWHM of the instrument line shape) per wavelength, from the slit, the pixels and diffraction.",
+   "zh": "按波长由狭缝、像素和衍射给出光谱仪的带宽(仪器线型的半高全宽)。",
+   "tw": "依波長由狹縫、像素與繞射給出光譜儀的頻寬(儀器線型的半高全寬)。",
+   "ko": "슬릿·화소·회절로부터 파장마다 분광기의 대역폭(장치 함수의 FWHM)을 구한다.",
+   "de": "Bandbreite des Spektrometers (FWHM der Instrumentenfunktion) je Wellenlänge aus Spalt, Pixeln und Beugung.",
+   "hi": "slit, pixel और diffraction से हर wavelength पर spectrometer की bandpass (instrument line shape का FWHM) देता है।"
+  },
+  "optics/spectrometer_slit_image": {
+   "fp": "3c362dc32a0e",
+   "en": "Trace the image of a long slit in 3-D and report smile (spectral-line curvature) and keystone (wavelength-dependent spatial magnification).",
+   "zh": "三维追迹长狭缝的像,给出 smile(谱线弯曲)和 keystone(空间放大率随波长的变化)。",
+   "tw": "三維追跡長狹縫的像,給出 smile(譜線彎曲)與 keystone(空間放大率隨波長的變化)。",
+   "ko": "긴 슬릿의 상을 3차원으로 추적해 smile(스펙트럼선의 휨)과 keystone(공간 배율의 파장 의존)을 구한다.",
+   "de": "Verfolgt das Bild eines langen Spalts in 3-D und liefert Smile (Krümmung der Spektrallinie) und Keystone (wellenlängenabhängige räumliche Vergrößerung).",
+   "hi": "लंबी slit की image को 3-D में trace करके smile (spectral line की वक्रता) और keystone (wavelength पर निर्भर spatial magnification) देता है।"
+  },
+  "optics/spectrometer_spectrum": {
+   "fp": "d833e2cee12e",
+   "en": "Input spectrum → detector pixel readings, with higher-order images overlapping the first order.",
+   "zh": "输入光谱 → 探测器像素的读数(高阶像与一阶像重叠)。",
+   "tw": "輸入光譜 → 偵測器像素的讀數(高階像與一階像重疊)。",
+   "ko": "입력 스펙트럼 → 검출기 화소의 읽기(1차 상에 고차 상이 겹침).",
+   "de": "Eingangsspektrum → Pixelwerte des Detektors, mit höheren Ordnungen, die sich der ersten überlagern.",
+   "hi": "input spectrum → detector pixels की readings (first order की image पर higher-order images का overlap)।"
+  },
+  "optics/illumination_train": {
+   "fp": "a9f71644afb4",
+   "ja": "顕微鏡の照明系(``kohler`` または ``critical``)を近軸で並べる(``table``)。",
+   "zh": "以近轴方式排布显微镜照明系统(``kohler`` 或 ``critical``)(``table``)。",
+   "tw": "以近軸方式排布顯微鏡照明系統(``kohler`` 或 ``critical``)(``table``)。",
+   "ko": "현미경 조명계(``kohler`` 또는 ``critical``)를 근축으로 배치한다 (``table``).",
+   "de": "Ein Mikroskop-Beleuchtungsstrahlengang (``kohler`` oder ``critical``), paraxial angeordnet (``table``).",
+   "hi": "microscope का illumination train (``kohler`` या ``critical``) paraxial रूप में रखता है (``table``)।"
+  },
+  "optics/illumination_field": {
+   "fp": "ea82a25e55fa",
+   "ja": "照明系が標本に作る放射照度(``image2d``)を、近軸で光源まで逆に追って求める。",
+   "zh": "通过近轴反向追迹到光源,求照明系统在标本上的辐照度(``image2d``)。",
+   "tw": "以近軸反向追跡到光源,求照明系統在標本上的輻照度(``image2d``)。",
+   "ko": "근축으로 광원까지 거꾸로 추적해 조명계가 표본에 만드는 방사조도(``image2d``)를 구한다.",
+   "de": "Bestrahlungsstärke eines Beleuchtungsstrahlengangs auf dem Präparat (``image2d``), durch paraxiale Rückverfolgung bis zur Quelle.",
+   "hi": "paraxial backward tracing से source तक जाकर illumination train द्वारा specimen पर irradiance (``image2d``) निकालता है।"
+  },
+  "optics/coaxial_illumination": {
+   "fp": "a3cc3fc72394",
+   "ja": "同軸落射(ハーフミラー): 往復の T*R の収支と、カメラが見る像(``table``)。",
+   "zh": "同轴落射照明(半透半反镜):往返 T*R 的收支与相机看到的像(``table``)。",
+   "tw": "同軸落射照明(半透半反鏡):往返 T*R 的收支與相機看到的像(``table``)。",
+   "ko": "동축 낙사 조명(하프 미러): 왕복 T*R 수지와 카메라가 보는 상 (``table``).",
+   "de": "Koaxiale Auflichtbeleuchtung (Halbspiegel): die Bilanz T*R für Hin- und Rückweg und das Bild, das die Kamera sieht (``table``).",
+   "hi": "coaxial (half-mirror) lighting: round-trip T*R का हिसाब और camera द्वारा देखी गई image (``table``)।"
+  },
+  "optics/talbot_grating_design": {
+   "fp": "adc2d4ca84d3",
+   "en": "Grating-interferometer geometry: self-image distances of the first grating (fractional Talbot distances), fringe and analyser-grating periods, source-grating period (closed form).",
+   "zh": "光栅干涉仪的几何:第 1 光栅自成像的距离(分数塔尔博特距离)、条纹与分析光栅的周期、源光栅的周期(闭式)。",
+   "tw": "光柵干涉儀的幾何:第 1 光柵自成像的距離(分數塔爾博特距離)、條紋與分析光柵的週期、源光柵的週期(閉式)。",
+   "ko": "격자 간섭계의 기하: 제1 격자의 자기상 거리(분수 탤벗 거리), 줄무늬와 분석 격자의 주기, 선원 격자의 주기(닫힌 형식).",
+   "de": "Geometrie des Gitterinterferometers: Selbstabbildungsabstände des ersten Gitters (fraktionale Talbot-Abstände), Perioden von Streifen und Analysatorgitter, Periode des Quellgitters (geschlossene Form).",
+   "hi": "grating interferometer की ज्यामिति: पहले grating की self-image दूरियाँ (fractional Talbot distances), fringe और analyser grating के period, source grating का period (closed form)।"
+  },
+  "optics/grating_stepping_simulate": {
+   "fp": "9754412b8555",
+   "en": "Builds a phase-stepping image stack (N, H, W) from three maps: transmission, differential phase and dark field (forward model).",
+   "zh": "由透射、微分相位、暗场 3 幅图生成相位步进的图像序列 (N, H, W)(正向模型)。",
+   "tw": "由穿透、微分相位、暗場 3 張圖產生相位步進的影像序列 (N, H, W)(正向模型)。",
+   "ko": "투과·미분 위상·암시야 3장의 맵으로부터 위상 스텝 영상열 (N, H, W)을 만든다(순방향 모델).",
+   "de": "Erzeugt aus drei Karten (Transmission, differentielle Phase, Dunkelfeld) einen Phase-Stepping-Bildstapel (N, H, W) (Vorwärtsmodell).",
+   "hi": "तीन maps (transmission, differential phase, dark field) से phase-stepping image stack (N, H, W) बनाता है (forward model)।"
+  },
+  "optics/grating_three_image_retrieve": {
+   "fp": "dfe85cba8dff",
+   "en": "Separates transmission, differential phase and dark field from two phase-stepping stacks (with and without the sample).",
+   "zh": "从两组相位步进序列(有样品、无样品)中分离出透射、微分相位、暗场 3 幅图。",
+   "tw": "從兩組相位步進序列(有樣品、無樣品)中分離出穿透、微分相位、暗場 3 張圖。",
+   "ko": "위상 스텝 2세트(시료 있음·없음)로부터 투과·미분 위상·암시야 3장을 분리한다.",
+   "de": "Trennt Transmission, differentielle Phase und Dunkelfeld aus zwei Phase-Stepping-Stapeln (mit und ohne Probe).",
+   "hi": "दो phase-stepping stacks (sample के साथ और बिना) से transmission, differential phase और dark field को अलग करता है।"
+  },
+  "optics/darkfield_scatter_relation": {
+   "fp": "5add528a91c2",
+   "en": "Converts between the dark field D (a visibility ratio) and the width σ of the scattering-angle distribution (published formula for Gaussian scattering).",
+   "zh": "暗场 D(可见度之比)与散射角分布宽度 σ 之间的换算(高斯散射的公开公式)。",
+   "tw": "暗場 D(可見度之比)與散射角分布寬度 σ 之間的換算(高斯散射的公開公式)。",
+   "ko": "암시야 D(가시도의 비)와 산란각 분포의 폭 σ 사이의 환산(가우스 산란의 공개 식).",
+   "de": "Umrechnung zwischen Dunkelfeld D (Visibilitätsverhältnis) und der Breite σ der Streuwinkelverteilung (publizierte Formel für Gaußsche Streuung).",
+   "hi": "dark field D (visibility का अनुपात) और scattering-angle वितरण की चौड़ाई σ के बीच रूपांतरण (Gaussian scattering का प्रकाशित सूत्र)।"
+  },
+  "optics/talbot_carpet": {
+   "fp": "00c474a0a101",
+   "en": "Talbot carpet: the intensity I(x, z) behind a binary grating (π phase, π/2 phase or absorption) in closed form as a sum over diffraction orders.",
+   "zh": "塔尔博特地毯:以衍射级次之和的闭式给出二值光栅(π 相位 / π/2 相位 / 吸收)后方的强度 I(x, z)。",
+   "tw": "塔爾博特地毯:以繞射級次之和的閉式給出二值光柵(π 相位 / π/2 相位 / 吸收)後方的強度 I(x, z)。",
+   "ko": "탤벗 카펫: 이진 격자(π 위상 / π/2 위상 / 흡수) 뒤의 강도 I(x, z)를 회절 차수의 합으로 닫힌 형식으로 낸다.",
+   "de": "Talbot-Teppich: die Intensität I(x, z) hinter einem binären Gitter (π-Phase, π/2-Phase oder Absorption) in geschlossener Form als Summe über Beugungsordnungen.",
+   "hi": "Talbot carpet: binary grating (π phase / π/2 phase / absorption) के पीछे की intensity I(x, z), diffraction orders के योग के रूप में closed form में।"
+  },
+  "optics/talbot_source_visibility": {
+   "fp": "11b7c6fcfcc3",
+   "en": "How much the fringe visibility drops for a given source size and source grating (Lau condition), in closed form as an incoherent sum.",
+   "zh": "光源尺寸与源光栅(Lau 条件)使条纹可见度降低为多少倍(闭式,非相干叠加)。",
+   "tw": "光源尺寸與源光柵(Lau 條件)使條紋可見度降低為多少倍(閉式,非同調疊加)。",
+   "ko": "선원의 크기와 선원 격자(Lau 조건)로 줄무늬 가시도가 몇 배로 떨어지는지(닫힌 형식, 비간섭 합).",
+   "de": "Um welchen Faktor die Streifensichtbarkeit bei gegebener Quellgröße und Quellgitter (Lau-Bedingung) sinkt, in geschlossener Form als inkohärente Summe.",
+   "hi": "source के आकार और source grating (Lau condition) से fringe visibility कितने गुना घटती है (closed form, incoherent sum)।"
+  },
+  "optics/grating_step_period_estimate": {
+   "fp": "920d918e7436",
+   "en": "Estimates how many steps make one period (P) from a phase-stepping stack, as the minimum of the sine-fit residual.",
+   "zh": "由相位步进图像序列估计「一个周期包含多少步」(P),取正弦拟合残差的最小值。",
+   "tw": "由相位步進影像序列估計「一個週期包含多少步」(P),取正弦擬合殘差的最小值。",
+   "ko": "위상 스텝 영상열로부터 '1 주기가 몇 스텝인지'(P)를 사인 맞춤 잔차의 최소로 추정한다.",
+   "de": "Schätzt aus einem Phase-Stepping-Stapel, wie viele Schritte eine Periode bilden (P), als Minimum des Residuums der Sinusanpassung.",
+   "hi": "phase-stepping image stack से 'एक period में कितने steps हैं' (P) का अनुमान, sine fit के residual के न्यूनतम से।"
+  },
+  "optics/dpc_integrate": {
+   "fp": "9a288a6ad268",
+   "en": "Integrates the differential phase (fringe phase shift φ) along the grating's sensitive direction back to the wavefront phase Φ [rad].",
+   "zh": "将微分相位(条纹相位偏移 φ)沿光栅的灵敏方向积分,还原为波前相位 Φ [rad]。",
+   "tw": "將微分相位(條紋相位偏移 φ)沿光柵的靈敏方向積分,還原為波前相位 Φ [rad]。",
+   "ko": "미분 위상(줄무늬 위상의 어긋남 φ)을 격자의 감도 방향으로 적분하여 파면 위상 Φ [rad]로 되돌린다.",
+   "de": "Integriert die differentielle Phase (Streifenphasenverschiebung φ) entlang der empfindlichen Gitterrichtung zurück zur Wellenfrontphase Φ [rad].",
+   "hi": "differential phase (fringe phase shift φ) को grating की sensitive दिशा में integrate करके wavefront phase Φ [rad] वापस लाता है।"
+  },
+  "tomography/material_xray_table": {
+   "fp": "0903efb5e092",
+   "en": "List the materials whose X-ray column (mass attenuation coefficient μ/ρ) can be looked up.",
+   "zh": "返回可以查询 X 射线列(质量衰减系数 μ/ρ)的材料一览。",
+   "tw": "傳回可以查詢 X 射線欄(質量衰減係數 μ/ρ)的材料一覽。",
+   "ko": "X선 열(질량 감쇠 계수 μ/ρ)을 조회할 수 있는 재료 목록을 반환한다.",
+   "de": "Listet die Materialien auf, deren Röntgenspalte (Massenschwächungskoeffizient μ/ρ) abgefragt werden kann.",
+   "hi": "उन materials की सूची देता है जिनका X-ray column (mass attenuation coefficient μ/ρ) देखा जा सकता है।"
+  },
+  "tomography/material_xray_attenuation": {
+   "fp": "f3fd6ec0b607",
+   "en": "Return a material's X-ray attenuation as ``pairs`` (E [keV], value); the mass attenuation coefficient μ/ρ [cm²/g] by default.",
+   "zh": "以 ``pairs``(E [keV], 值)返回材料的 X 射线衰减(默认为质量衰减系数 μ/ρ [cm²/g])。",
+   "tw": "以 ``pairs``(E [keV], 值)傳回材料的 X 射線衰減(預設為質量衰減係數 μ/ρ [cm²/g])。",
+   "ko": "재료의 X선 감쇠를 ``pairs``(E [keV], 값)로 반환한다(기본값은 질량 감쇠 계수 μ/ρ [cm²/g]).",
+   "de": "Gibt die Röntgenschwächung eines Materials als ``pairs`` (E [keV], Wert) zurück; standardmäßig den Massenschwächungskoeffizienten μ/ρ [cm²/g].",
+   "hi": "किसी material का X-ray attenuation ``pairs`` (E [keV], मान) के रूप में देता है; डिफ़ॉल्ट रूप से mass attenuation coefficient μ/ρ [cm²/g]।"
+  },
+  "tomography/material_xray_constants": {
+   "fp": "17a0c48f1dc1",
+   "en": "Return the X-ray constants at one energy (μ/ρ, μ_en/ρ, μ, half-value layer, mean free path) with their source.",
+   "zh": "返回单一能量下的 X 射线常数(μ/ρ、μ_en/ρ、μ、半值层、平均自由程)及其出处。",
+   "tw": "傳回單一能量下的 X 射線常數(μ/ρ、μ_en/ρ、μ、半值層、平均自由徑)及其出處。",
+   "ko": "한 에너지에서의 X선 상수(μ/ρ, μ_en/ρ, μ, 반가층, 평균 자유 행로)와 출처를 반환한다.",
+   "de": "Gibt die Röntgenkonstanten bei einer Energie (μ/ρ, μ_en/ρ, μ, Halbwertsschicht, mittlere freie Weglänge) mit Quelle zurück.",
+   "hi": "एक energy पर X-ray constants (μ/ρ, μ_en/ρ, μ, half-value layer, mean free path) और उनका स्रोत देता है।"
+  },
+  "tomography/material_effective_z": {
+   "fp": "da36208bc0d3",
+   "en": "Return the effective atomic number (Mayneord / Spiers power law) and the electron density from the composition.",
+   "zh": "由组成返回有效原子序数(Mayneord / Spiers 幂律式)和电子密度。",
+   "tw": "由組成傳回有效原子序(Mayneord / Spiers 冪律式)和電子密度。",
+   "ko": "조성으로부터 유효 원자 번호(Mayneord / Spiers 거듭제곱 식)와 전자 밀도를 반환한다.",
+   "de": "Gibt aus der Zusammensetzung die effektive Ordnungszahl (Potenzgesetz nach Mayneord / Spiers) und die Elektronendichte zurück.",
+   "hi": "composition से effective atomic number (Mayneord / Spiers power law) और electron density देता है।"
+  },
+  "tomography/xray_tube_spectrum": {
+   "fp": "95c7affebd24",
+   "en": "Return the photon spectrum of an X-ray tube as ``pairs`` (E [keV], photons / keV), normalised to Σ φ ΔE = 1.",
+   "zh": "以 ``pairs``(E [keV], 光子数 / keV)返回 X 射线管的光子能谱(归一化为 Σ φ ΔE = 1)。",
+   "tw": "以 ``pairs``(E [keV], 光子數 / keV)傳回 X 射線管的光子能譜(正規化為 Σ φ ΔE = 1)。",
+   "ko": "X선관의 광자 스펙트럼을 ``pairs``(E [keV], 광자 수 / keV)로 반환한다(Σ φ ΔE = 1로 정규화).",
+   "de": "Gibt das Photonenspektrum einer Röntgenröhre als ``pairs`` (E [keV], Photonen / keV) zurück, normiert auf Σ φ ΔE = 1.",
+   "hi": "X-ray tube का photon spectrum ``pairs`` (E [keV], photons / keV) के रूप में देता है, Σ φ ΔE = 1 पर normalised।"
+  },
+  "tomography/xray_beam_quality": {
+   "fp": "47bf4641f06d",
+   "en": "Beam quality of a spectrum: first and second half-value layers, homogeneity coefficient, mean energy and effective energy.",
+   "zh": "能谱的线质:第一、第二半值层、均匀系数、平均能量和有效能量。",
+   "tw": "能譜的線質:第一、第二半值層、均勻係數、平均能量和有效能量。",
+   "ko": "스펙트럼의 선질: 제1·제2 반가층, 균등도, 평균 에너지, 유효 에너지를 반환한다.",
+   "de": "Strahlqualität eines Spektrums: erste und zweite Halbwertsschicht, Homogenitätsgrad, mittlere und effektive Energie.",
+   "hi": "spectrum की beam quality: पहली और दूसरी half-value layer, homogeneity coefficient, mean energy और effective energy।"
+  },
+  "tomography/photon_counting_channels": {
+   "fp": "63673911bc2e",
+   "en": "Energy windows of a photon-counting detector → channels (one count per photon).",
+   "zh": "光子计数探测器的能量窗 → 通道(一个光子计一次)。",
+   "tw": "光子計數偵測器的能量窗 → 通道(一個光子計一次)。",
+   "ko": "광자 계수 검출기의 에너지 창 → 채널(광자 1개당 1카운트).",
+   "de": "Energiefenster eines photonenzählenden Detektors → Kanäle (ein Zählereignis pro Photon).",
+   "hi": "photon-counting detector की energy windows → channels (हर photon पर एक count)।"
+  },
+  "tomography/dual_kvp_channels": {
+   "fp": "d0542c835aa7",
+   "en": "The two channels of an energy-integrating (scintillator) detector imaged at two tube voltages.",
+   "zh": "以两种管电压拍摄的能量积分型(闪烁体)探测器的两个通道。",
+   "tw": "以兩種管電壓拍攝的能量積分型(閃爍體)偵測器的兩個通道。",
+   "ko": "두 관전압으로 찍는 에너지 적분형(신틸레이터) 검출기의 2채널.",
+   "de": "Die zwei Kanäle eines energieintegrierenden (Szintillator-)Detektors, aufgenommen mit zwei Röhrenspannungen.",
+   "hi": "दो tube voltages पर लिए गए energy-integrating (scintillator) detector के दो channels।"
+  },
+  "tomography/xray_channel_projection": {
+   "fp": "8b195f4e06b6",
+   "en": "Thickness map per material → an image of the signal in each channel (C, H, W).",
+   "zh": "每种材料的厚度图 → 每个通道的信号图像 (C, H, W)。",
+   "tw": "每種材料的厚度圖 → 每個通道的訊號影像 (C, H, W)。",
+   "ko": "재료별 두께 맵 → 채널별 신호 영상 (C, H, W).",
+   "de": "Dickenkarte je Material → ein Signalbild je Kanal (C, H, W).",
+   "hi": "हर material का thickness map → हर channel की signal image (C, H, W)।"
+  },
+  "tomography/basis_material_decompose": {
+   "fp": "f9a5f2ff9da9",
+   "en": "Channel signals → thickness maps of the basis materials (Alvarez–Macovski / Lehmann basis decomposition).",
+   "zh": "通道信号 → 基材料的厚度图(Alvarez–Macovski / Lehmann 基分解)。",
+   "tw": "通道訊號 → 基材料的厚度圖(Alvarez–Macovski / Lehmann 基分解)。",
+   "ko": "채널 신호 → 기저 물질의 두께 맵(Alvarez–Macovski / Lehmann 기저 분해).",
+   "de": "Kanalsignale → Dickenkarten der Basismaterialien (Basiszerlegung nach Alvarez–Macovski / Lehmann).",
+   "hi": "channel signals → basis materials के thickness maps (Alvarez–Macovski / Lehmann basis decomposition)।"
+  },
+  "tomography/basis_decomposition_crlb": {
+   "fp": "877c7940bfb1",
+   "en": "Return in closed form the lower bound (Cramér–Rao) on the variance of the decomposition at basis thicknesses b.",
+   "zh": "以闭式返回基厚度 b 处分解方差的下限(Cramér–Rao)。",
+   "tw": "以閉式傳回基厚度 b 處分解變異數的下限(Cramér–Rao)。",
+   "ko": "기저 두께 b에서 분해 분산의 하한(Cramér–Rao)을 닫힌 꼴로 반환한다.",
+   "de": "Gibt in geschlossener Form die untere Schranke (Cramér–Rao) der Varianz der Zerlegung bei den Basisdicken b zurück.",
+   "hi": "basis thicknesses b पर decomposition के variance की निचली सीमा (Cramér–Rao) closed form में देता है।"
+  },
+  "tomography/r_value_map": {
+   "fp": "647b1041f743",
+   "en": "Return the image of R = L_low / L_high (ratio of low- to high-energy log attenuation).",
+   "zh": "返回 R = L_low / L_high(低能与高能对数衰减之比)的图像。",
+   "tw": "傳回 R = L_low / L_high(低能與高能對數衰減之比)的影像。",
+   "ko": "R = L_low / L_high(저에너지와 고에너지 로그 감쇠의 비)의 영상을 반환한다.",
+   "de": "Gibt das Bild von R = L_low / L_high (Verhältnis der logarithmischen Schwächung bei niedriger und hoher Energie) zurück.",
+   "hi": "R = L_low / L_high (low और high energy के log attenuation का अनुपात) की image देता है।"
+  },
+  "tomography/effective_z_map": {
+   "fp": "207b94d76942",
+   "en": "Estimate an effective-atomic-number image from dual-energy images (R matched against the curves of the elements).",
+   "zh": "由双能图像估计有效原子序数图像(将 R 与元素的曲线对照)。",
+   "tw": "由雙能影像估計有效原子序影像(將 R 與元素的曲線對照)。",
+   "ko": "듀얼 에너지 영상에서 유효 원자 번호 영상을 추정한다(R을 원소의 곡선과 대조).",
+   "de": "Schätzt aus Dual-Energy-Bildern ein Bild der effektiven Ordnungszahl (R gegen die Kurven der Elemente abgeglichen).",
+   "hi": "dual-energy images से effective atomic number की image का अनुमान (R को elements के curves से मिलाकर)।"
+  },
+  "tomography/dual_energy_separability": {
+   "fp": "fc1456a5ca2b",
+   "en": "How well two materials (thicknesses) can be told apart by the channels' log attenuations (closed-form d′ and error rate).",
+   "zh": "两种材料(厚度)能被通道的对数衰减区分到什么程度(d′ 与错误率的闭式)。",
+   "tw": "兩種材料(厚度)能被通道的對數衰減區分到什麼程度(d′ 與錯誤率的閉式)。",
+   "ko": "두 재료(두께)를 채널의 로그 감쇠로 얼마나 구별할 수 있는가(d′와 오류율의 닫힌 꼴).",
+   "de": "Wie gut sich zwei Materialien (Dicken) anhand der logarithmischen Schwächung der Kanäle unterscheiden lassen (d′ und Fehlerrate in geschlossener Form).",
+   "hi": "channels के log attenuation से दो materials (thicknesses) को कितना अलग किया जा सकता है (d′ और error rate का closed form)।"
+  },
+  "codematch/orientation_code": {
+   "fp": "72d086b77265",
+   "en": "Orientation-code image: gradient direction quantised into ``n_codes`` steps (the OCM coding).",
+   "zh": "将梯度方向量化为 ``n_codes`` 级的方向码图像（OCM 的编码）。",
+   "tw": "將梯度方向量化為 ``n_codes`` 級的方向碼影像（OCM 的編碼）。",
+   "ko": "기울기 방향을 ``n_codes`` 단계로 양자화한 방향 부호 영상(OCM의 부호화).",
+   "de": "Orientierungscode-Bild: Gradientenrichtung in ``n_codes`` Stufen quantisiert (die OCM-Kodierung).",
+   "hi": "gradient की दिशा को ``n_codes`` चरणों में quantise करने वाली orientation-code image (OCM की coding)।"
+  },
+  "codematch/increment_sign": {
+   "fp": "d9364373105d",
+   "en": "Sign of the increment to the neighbouring pixel, ``b = [I(next) >= I(this)]`` (uint8 1 / 0).",
+   "zh": "与相邻像素的增量符号 ``b = [I(下一个) >= I(当前)]``（1 / 0 的 uint8）。",
+   "tw": "與相鄰像素的增量符號 ``b = [I(下一個) >= I(目前)]``（1 / 0 的 uint8）。",
+   "ko": "이웃 화소와의 증분 부호 ``b = [I(다음) >= I(현재)]``(1 / 0의 uint8).",
+   "de": "Vorzeichen des Inkrements zum Nachbarpixel, ``b = [I(nächstes) >= I(aktuelles)]`` (uint8 1 / 0).",
+   "hi": "पड़ोसी pixel तक increment का चिह्न ``b = [I(अगला) >= I(वर्तमान)]`` (uint8 1 / 0)।"
+  },
+  "codematch/ocm_match": {
+   "fp": "0b99c1f3e5e5",
+   "en": "Orientation code matching (OCM): returns the position with the smallest mean cyclic code difference.",
+   "zh": "方向码匹配（OCM）：返回码的循环差平均值最小的位置。",
+   "tw": "方向碼匹配（OCM）：回傳碼的循環差平均值最小的位置。",
+   "ko": "방향 부호 정합(OCM). 부호의 순환 차 평균이 최소인 위치를 돌려준다.",
+   "de": "Orientierungscode-Matching (OCM): liefert die Position mit der kleinsten mittleren zyklischen Codedifferenz.",
+   "hi": "Orientation code matching (OCM): वह स्थान लौटाता है जहाँ codes के cyclic अंतर का औसत सबसे कम हो।"
+  },
+  "codematch/isc_match": {
+   "fp": "684f3af3afe7",
+   "en": "Increment sign correlation (ISC): returns the position where the largest fraction of increment signs agree.",
+   "zh": "增量符号相关（ISC）：返回增量符号一致比例最大的位置。",
+   "tw": "增量符號相關（ISC）：回傳增量符號一致比例最大的位置。",
+   "ko": "증분 부호 상관(ISC). 증분 부호가 일치하는 비율이 최대인 위치를 돌려준다.",
+   "de": "Inkrementvorzeichen-Korrelation (ISC): liefert die Position, an der der größte Anteil der Inkrementvorzeichen übereinstimmt.",
+   "hi": "Increment sign correlation (ISC): वह स्थान लौटाता है जहाँ increment चिह्नों का सबसे बड़ा हिस्सा मेल खाता है।"
+  },
+  "codematch/scc_match": {
+   "fp": "11b950520766",
+   "en": "Selective correlation coefficient (SCC): normalised correlation over only the pixels whose increment signs agree.",
+   "zh": "选择性相关系数（SCC）：只用增量符号一致的像素计算归一化相关。",
+   "tw": "選擇性相關係數（SCC）：只用增量符號一致的像素計算正規化相關。",
+   "ko": "선택적 상관 계수(SCC). 증분 부호가 일치하는 화소만으로 정규화 상관을 구한다.",
+   "de": "Selektiver Korrelationskoeffizient (SCC): normierte Korrelation nur über die Pixel, deren Inkrementvorzeichen übereinstimmen.",
+   "hi": "Selective correlation coefficient (SCC): केवल उन pixels पर normalised correlation जिनके increment चिह्न मेल खाते हैं।"
+  },
+  "codematch/radial_reach_filter": {
+   "fp": "583bca5a8792",
+   "en": "Radial Reach Filter (RRF): compares a background and the current image by the signs of the reaches in 8 directions.",
+   "zh": "Radial Reach Filter（RRF）：用 8 个方向的 reach 符号比较背景与当前图像。",
+   "tw": "Radial Reach Filter（RRF）：以 8 個方向的 reach 符號比較背景與目前影像。",
+   "ko": "Radial Reach Filter(RRF). 배경과 현재 영상을 8방향 reach의 부호로 비교한다.",
+   "de": "Radial Reach Filter (RRF): vergleicht Hintergrund und aktuelles Bild über die Vorzeichen der Reaches in 8 Richtungen.",
+   "hi": "Radial Reach Filter (RRF): background और वर्तमान image की तुलना 8 दिशाओं के reach चिह्नों से करता है।"
+  },
+  "spc/anomaly_image_auroc": {
+   "fp": "7145079fe2a4",
+   "ja": "画像ごとの異常スコアと良/不良のラベルから画像単位の AUROC(``table``)。",
+   "zh": "由每张图像的异常分数与良/不良标签计算图像级 AUROC(``table``)。",
+   "tw": "由每張影像的異常分數與良/不良標籤計算影像級 AUROC(``table``)。",
+   "ko": "이미지별 이상 점수와 양품/불량 라벨로 이미지 단위 AUROC (``table``).",
+   "de": "AUROC auf Bildebene aus einem Anomaliewert je Bild und einer Gut/Schlecht-Kennung je Bild (``table``).",
+   "hi": "हर image के एक anomaly score और अच्छा/दोषपूर्ण label से image-level AUROC (``table``)।"
+  },
+  "spc/anomaly_pixel_auroc": {
+   "fp": "1dacad6a8246",
+   "ja": "異常スコアの図と欠陥マスクから画素単位の AUROC(``table``)。",
+   "zh": "由异常分数图与缺陷真值掩膜计算像素级 AUROC(``table``)。",
+   "tw": "由異常分數圖與缺陷真值遮罩計算像素級 AUROC(``table``)。",
+   "ko": "이상 점수 맵과 결함 정답 마스크로 픽셀 단위 AUROC (``table``).",
+   "de": "AUROC auf Pixelebene von Anomalie-Wertkarten gegen Defektmasken der Grundwahrheit (``table``).",
+   "hi": "anomaly score maps और ground-truth defect masks से pixel-level AUROC (``table``)।"
+  },
+  "spc/anomaly_pro": {
+   "fp": "87069abda025",
+   "ja": "欠陥の連結領域ごとの重なり(PRO)の曲線と、``fpr_max`` までの正規化面積 AUPRO(``table``)。",
+   "zh": "按缺陷连通区域计算的重叠率(PRO)曲线,及积分到 ``fpr_max`` 的归一化面积 AUPRO(``table``)。",
+   "tw": "按缺陷連通區域計算的重疊率(PRO)曲線,及積分到 ``fpr_max`` 的正規化面積 AUPRO(``table``)。",
+   "ko": "결함 연결 영역별 중첩(PRO) 곡선과 ``fpr_max`` 까지의 정규화 면적 AUPRO (``table``).",
+   "de": "Kurve der Überlappung je Defektregion (PRO) und ihre normierte Fläche AUPRO bis ``fpr_max`` (``table``).",
+   "hi": "हर defect region के overlap (PRO) की curve और ``fpr_max`` तक उसका normalised area AUPRO (``table``)।"
+  },
+  "spc/anomaly_region_overlap": {
+   "fp": "840a230f98c4",
+   "ja": "1 つの動作点での 2 値の欠陥予測と真値の領域ごとの重なり(``table``)。",
+   "zh": "单一工作点下二值缺陷预测与真值各区域的重叠率(``table``)。",
+   "tw": "單一工作點下二值缺陷預測與真值各區域的重疊率(``table``)。",
+   "ko": "하나의 동작점에서 이진 결함 예측과 정답 영역별 중첩 (``table``).",
+   "de": "Überlappung einer binären Defektvorhersage mit den Regionen der Grundwahrheit an einem Arbeitspunkt (``table``).",
+   "hi": "एक operating point पर binary defect prediction का ground-truth regions से per-region overlap (``table``)।"
+  },
+  "spc/varmodel_alignment": {
+   "fp": "8fe168938342",
+   "ja": "良品それぞれの、群の典型の位置に対する並進のずれと、許容までの余裕(``table``)。",
+   "zh": "每个良品相对于该组典型位置的平移偏差,以及距容许值的余量(``table``)。",
+   "tw": "每個良品相對於該組典型位置的平移偏差,以及距容許值的餘量(``table``)。",
+   "ko": "각 양품이 그룹의 전형적 위치에 대해 갖는 평행이동 어긋남과 허용치까지의 여유 (``table``).",
+   "de": "Verschiebung jedes Gutteils gegenüber der typischen Lage des Stapels und der Abstand zur Toleranz (``table``).",
+   "hi": "हर अच्छे sample का stack की सामान्य स्थिति से translation offset, और tolerance तक का margin (``table``)।"
+  },
+  "spc/varmodel_band_k": {
+   "fp": "80bebd2af108",
+   "ja": "宣言した画素あたりの両側誤検出率に対する許容帯の半幅 ``k``(ばらつきの単位、``table``)。",
+   "zh": "对应所声明的每像素双侧误检率的容许带半宽 ``k``(以离散度为单位,``table``)。",
+   "tw": "對應所宣告的每像素雙側誤檢率的容許帶半寬 ``k``(以離散度為單位,``table``)。",
+   "ko": "선언한 픽셀당 양측 오검출률에 대한 허용 대역의 반폭 ``k`` (산포 단위, ``table``).",
+   "de": "Halbbreite ``k`` (in Streuungseinheiten) des Toleranzbands für eine erklärte zweiseitige Fehlalarmrate je Pixel (``table``).",
+   "hi": "घोषित दो-तरफ़ा per-pixel false-alarm दर के लिए tolerance band की आधी चौड़ाई ``k`` (spread की इकाई में, ``table``)।"
+  },
+  "spc/varmodel_fit": {
+   "fp": "6160807af29a",
+   "ja": "良品の積み重ねから画素ごとの変動モデル(中心・ばらつき・帯の半幅 k)を学ぶ(``table``)。",
+   "zh": "由良品图像堆叠学习逐像素的变动模型(中心、离散度、容许带半宽 k)(``table``)。",
+   "tw": "由良品影像堆疊學習逐像素的變動模型(中心、離散度、容許帶半寬 k)(``table``)。",
+   "ko": "양품 스택에서 픽셀별 변동 모델(중심·산포·대역 반폭 k)을 학습 (``table``).",
+   "de": "Ein pixelweises Variationsmodell (Zentrum, Streuung, Bandhalbbreite k) aus einem Stapel von Gutteilen lernen (``table``).",
+   "hi": "अच्छे samples के stack से per-pixel variation model (centre, spread, band की आधी चौड़ाई k) सीखना (``table``)।"
+  },
+  "spc/varmodel_calibrate": {
+   "fp": "decedb6abf8c",
+   "ja": "当てはめに使っていない良品から帯の半幅 ``k`` を測り直す(正規の仮定が外れる実画像用、``table``)。",
+   "zh": "用未参与拟合的良品重新求容许带半宽 ``k``(用于不满足正态假设的真实图像,``table``)。",
+   "tw": "用未參與擬合的良品重新求容許帶半寬 ``k``(用於不滿足常態假設的真實影像,``table``)。",
+   "ko": "적합에 쓰지 않은 양품으로 대역 반폭 ``k`` 를 다시 측정 (정규 가정이 깨지는 실영상용, ``table``).",
+   "de": "Die Bandhalbbreite ``k`` aus zurückgehaltenen Gutteilen neu bestimmen, für Daten, die die Normalannahme verletzen (``table``).",
+   "hi": "fit में न इस्तेमाल हुए अच्छे images से band की आधी चौड़ाई ``k`` फिर से निकालना, उन असली images के लिए जो normal मान्यता तोड़ते हैं (``table``)।"
+  },
+  "spc/varmodel_score": {
+   "fp": "ca4a693ee765",
+   "ja": "1 枚を ``varmodel_fit`` の模型に当てる: 何 σ 外れたかの z 図・帯の外の図・領域ごとの説明(``table``)。",
+   "zh": "将一张图像与 ``varmodel_fit`` 的模型比较:以 σ 计的 z 图、带外图与逐区域说明(``table``)。",
+   "tw": "將一張影像與 ``varmodel_fit`` 的模型比較:以 σ 計的 z 圖、帶外圖與逐區域說明(``table``)。",
+   "ko": "한 장을 ``varmodel_fit`` 모델에 대조: σ 단위 z 맵·대역 밖 맵·영역별 설명 (``table``).",
+   "de": "Ein Bild gegen ein ``varmodel_fit``-Modell bewerten: z-Karte in Sigma, Karte außerhalb des Bands und eine Erklärung je Region (``table``).",
+   "hi": "एक image को ``varmodel_fit`` model से मिलाना: sigma में z map, band से बाहर का map और हर region की व्याख्या (``table``)।"
+  },
+  "segmentation/plant_color_index": {
+   "fp": "74837abb9485",
+   "en": "Per-pixel plant colour indices from the three visible bands (ExG, ExR, ExGR, CIVE, NGRDI, VEG).",
+   "zh": "逐像素计算可见光三波段的植物颜色指数（ExG、ExR、ExGR、CIVE、NGRDI、VEG）。",
+   "tw": "逐像素計算可見光三波段的植物顏色指數（ExG、ExR、ExGR、CIVE、NGRDI、VEG）。",
+   "ko": "가시광 3밴드의 식물 색 지수(ExG·ExR·ExGR·CIVE·NGRDI·VEG)를 화소마다 계산한다.",
+   "de": "Pflanzen-Farbindizes aus den drei sichtbaren Kanälen pro Pixel (ExG, ExR, ExGR, CIVE, NGRDI, VEG).",
+   "hi": "तीन दृश्य band से हर pixel के plant colour index (ExG, ExR, ExGR, CIVE, NGRDI, VEG) निकालता है।"
+  },
+  "segmentation/superpixel_color_texture_features": {
+   "fp": "a866957294c1",
+   "en": "Ten colour (plant indices, chromaticity) and texture (gradient, orientation coherence) features for every region of a label image.",
+   "zh": "为标签图像的每个区域输出 10 个颜色（植物颜色指数、色度）与纹理（梯度、方向一致性）特征。",
+   "tw": "為標籤影像的每個區域輸出 10 個顏色（植物顏色指數、色度）與紋理（梯度、方向一致性）特徵。",
+   "ko": "라벨 영상의 영역마다 색(식물 색 지수·색도)과 결(기울기·방향 정렬도) 특징 10개를 낸다.",
+   "de": "Zehn Farb- (Pflanzenindizes, Chromatizität) und Texturmerkmale (Gradient, Orientierungskohärenz) für jede Region eines Labelbildes.",
+   "hi": "label image के हर region के लिए 10 colour (plant index, chromaticity) और texture (gradient, orientation coherence) feature देता है।"
+  },
+  "segmentation/fisher_lda_fit": {
+   "fp": "f986a704b2eb",
+   "en": "Fit a two-class Fisher linear discriminant (closed form, no iteration).",
+   "zh": "学习两类 Fisher 线性判别（闭式解，无迭代）。",
+   "tw": "學習兩類 Fisher 線性判別（閉式解，無迭代）。",
+   "ko": "2클래스 Fisher 선형 판별을 학습한다(닫힌 형태, 반복 없음).",
+   "de": "Zweiklassige lineare Fisher-Diskriminante anpassen (geschlossene Form, ohne Iteration).",
+   "hi": "दो class का Fisher linear discriminant सीखता है (closed form, कोई iteration नहीं)।"
+  },
+  "segmentation/fisher_lda_score": {
+   "fp": "7b2b0be5a7a9",
+   "en": "Score features with a discriminant fitted by ``fisher_lda_fit`` (score > 0 means class 1).",
+   "zh": "用 ``fisher_lda_fit`` 学到的判别对特征打分（score > 0 为类 1）。",
+   "tw": "以 ``fisher_lda_fit`` 學到的判別對特徵打分（score > 0 為類 1）。",
+   "ko": "``fisher_lda_fit``로 학습한 판별로 특징을 채점한다(score > 0이면 클래스 1).",
+   "de": "Merkmale mit einer durch ``fisher_lda_fit`` angepassten Diskriminante bewerten (score > 0 bedeutet Klasse 1).",
+   "hi": "``fisher_lda_fit`` से सीखे discriminant से feature को score देता है (score > 0 का अर्थ class 1)।"
+  },
+  "segmentation/cover_ratio_grade": {
+   "fp": "eb6c33721835",
+   "en": "Split a cover fraction (area share 0..1) into grades 0..len(edges) at **declared edges** ``edges``.",
+   "zh": "用**事先声明的边界** ``edges`` 把覆盖度（面积比例 0..1）分为 0..len(edges) 级。",
+   "tw": "以**事先宣告的邊界** ``edges`` 把覆蓋度（面積比例 0..1）分為 0..len(edges) 級。",
+   "ko": "피도(면적 비율 0..1)를 **미리 선언한 경계** ``edges``로 0..len(edges) 단계로 나눈다.",
+   "de": "Einen Deckungsgrad (Flächenanteil 0..1) an **vorab festgelegten Grenzen** ``edges`` in Stufen 0..len(edges) einteilen.",
+   "hi": "cover fraction (area का हिस्सा 0..1) को **पहले घोषित सीमाओं** ``edges`` पर 0..len(edges) grade में बाँटता है।"
+  },
+  "roughness/robust_gaussian_profile": {
+   "fp": "9fec53f12ae4",
+   "en": "Robust Gaussian regression filter (profile): a mean line and roughness that outliers and scratches cannot drag.",
+   "zh": "稳健高斯回归滤波器(截面):不被离群点和划痕拖动的平均线与粗糙度。",
+   "tw": "穩健高斯迴歸濾波器(截面):不被離群點與刮痕拖動的平均線與粗糙度。",
+   "ko": "로버스트 가우스 회귀 필터(단면): 이상값과 흠집에 끌려가지 않는 평균선과 거칠기.",
+   "de": "Robuster Gauß-Regressionsfilter (Profil): Mittellinie und Rauheit, die sich von Ausreißern und Kratzern nicht ziehen lassen.",
+   "hi": "Robust Gaussian regression filter (profile): ऐसी mean line और roughness जिसे outliers और scratches खींच नहीं पाते।"
+  },
+  "roughness/robust_spline_profile": {
+   "fp": "77dae02eccbb",
+   "en": "Robust spline filter (profile): a mean line and roughness that outliers cannot drag.",
+   "zh": "稳健样条滤波器(截面):不被离群点拖动的平均线与粗糙度。",
+   "tw": "穩健樣條濾波器(截面):不被離群點拖動的平均線與粗糙度。",
+   "ko": "로버스트 스플라인 필터(단면): 이상값에 끌려가지 않는 평균선과 거칠기.",
+   "de": "Robuster Spline-Filter (Profil): Mittellinie und Rauheit, die sich von Ausreißern nicht ziehen lassen.",
+   "hi": "Robust spline filter (profile): ऐसी mean line और roughness जिसे outliers खींच नहीं पाते।"
+  },
+  "roughness/robust_gaussian_surface": {
+   "fp": "786df7c5ba92",
+   "en": "Robust Gaussian regression filter (surface): waviness and roughness of a surface that scratches and spikes cannot drag.",
+   "zh": "稳健高斯回归滤波器(曲面):不被划痕和突起拖动的曲面波纹度与粗糙度。",
+   "tw": "穩健高斯迴歸濾波器(曲面):不被刮痕與突起拖動的曲面波紋度與粗糙度。",
+   "ko": "로버스트 가우스 회귀 필터(면): 흠집과 돌기에 끌려가지 않는 면의 파상도와 거칠기.",
+   "de": "Robuster Gauß-Regressionsfilter (Fläche): Welligkeit und Rauheit einer Fläche, die sich von Kratzern und Spitzen nicht ziehen lassen.",
+   "hi": "Robust Gaussian regression filter (surface): surface की waviness और roughness, जिसे scratches और spikes खींच नहीं पाते।"
+  },
+  "2d/kuwahara": {
+   "fp": "f83a1917f0bd",
+   "en": "Kuwahara filter (1976): edge-preserving smoothing that outputs the mean of whichever of four overlapping windows has the smallest variance.",
+   "zh": "Kuwahara 滤波（1976）。保边平滑：取四个相互重叠的窗口中方差最小者的均值作为输出。",
+   "tw": "Kuwahara 濾波（1976）。保邊平滑：取四個相互重疊的視窗中變異數最小者的平均值作為輸出。",
+   "ko": "Kuwahara 필터(1976). 서로 겹치는 네 개의 창 중 분산이 가장 작은 창의 평균을 출력하는 경계 보존 평활화.",
+   "de": "Kuwahara-Filter (1976): kantenerhaltende Glättung, die den Mittelwert desjenigen von vier überlappenden Fenstern mit der kleinsten Varianz ausgibt.",
+   "hi": "Kuwahara filter (1976)। चार overlapping windows में से जिसका variance सबसे कम हो उसका mean लौटाने वाला, किनारों को सुरक्षित रखने वाला smoothing।"
+  },
+  "2d/xdog": {
+   "fp": "1aca9168c860",
+   "en": "XDoG (extended difference of Gaussians; Winnemoller, Kyprianidis and Olsen 2012): line-art / ink-drawing stylisation.",
+   "zh": "XDoG（扩展高斯差分，Winnemoller、Kyprianidis、Olsen 2012）：线稿、水墨风格的风格化。",
+   "tw": "XDoG（擴展高斯差分，Winnemoller、Kyprianidis、Olsen 2012）：線稿、水墨風格的風格化。",
+   "ko": "XDoG(확장 가우시안 차분, Winnemoller·Kyprianidis·Olsen 2012)에 의한 선화·수묵풍 스타일라이즈.",
+   "de": "XDoG (erweiterte Gauß-Differenz, Winnemoller, Kyprianidis und Olsen 2012): Stilisierung zu Strichzeichnung bzw. Tuschezeichnung.",
+   "hi": "XDoG (extended difference of Gaussians, Winnemoller, Kyprianidis, Olsen 2012) से line-art / ink-drawing जैसी stylisation।"
+  },
+  "optics/encircled_energy": {
+   "fp": "39c2d8477342",
+   "ja": "点像分布関数(PSF)の囲みエネルギー: 半径 r の円の中に入るエネルギーの割合。",
+   "zh": "点扩散函数(PSF)的环围能量:半径为 r 的圆内所含能量的比例。",
+   "tw": "點擴散函數(PSF)的環圍能量:半徑為 r 的圓內所含能量的比例。",
+   "ko": "점확산함수(PSF)의 포위 에너지: 반지름 r인 원 안에 들어오는 에너지의 비율.",
+   "de": "Eingeschlossene Energie einer Punktbildfunktion (PSF): der Energieanteil innerhalb eines Kreises vom Radius r.",
+   "hi": "point-spread function (PSF) की encircled energy: त्रिज्या r के वृत्त के भीतर ऊर्जा का अनुपात।"
+  },
+  "optics/ensquared_energy": {
+   "fp": "11b3425a0c3f",
+   "ja": "点像分布関数(PSF)の四角エネルギー: 半幅 w の正方形の中に入るエネルギーの割合。",
+   "zh": "点扩散函数(PSF)的方形能量:半宽为 w 的正方形内所含能量的比例。",
+   "tw": "點擴散函數(PSF)的方形能量:半寬為 w 的正方形內所含能量的比例。",
+   "ko": "점확산함수(PSF)의 정사각형 에너지: 반폭 w인 정사각형 안에 들어오는 에너지의 비율.",
+   "de": "Quadratisch eingeschlossene Energie einer Punktbildfunktion (PSF): der Energieanteil innerhalb eines Quadrats der Halbbreite w.",
+   "hi": "point-spread function (PSF) की ensquared energy: अर्ध-चौड़ाई w के वर्ग के भीतर ऊर्जा का अनुपात।"
+  },
+  "optics/energy_radii": {
+   "fp": "7ef6db3122a4",
+   "ja": "点像分布関数(PSF)のエネルギーのうち、指定した割合を含む半径(``table``)。",
+   "zh": "包含点扩散函数(PSF)指定能量比例的半径(``table``)。",
+   "tw": "包含點擴散函數(PSF)指定能量比例的半徑(``table``)。",
+   "ko": "점확산함수(PSF) 에너지의 지정한 비율을 포함하는 반지름(``table``).",
+   "de": "Der Radius, der einen gegebenen Anteil der Energie einer Punktbildfunktion (PSF) enthält (``table``).",
+   "hi": "वह त्रिज्या जिसमें point-spread function (PSF) की ऊर्जा का दिया गया अनुपात आता है (``table``)।"
+  },
+  "optics/mtf_tangential_sagittal": {
+   "fp": "c909005b1168",
+   "ja": "点像分布関数(PSF)の 2 次元変換から、子午(タンジェンシャル)と球欠(サジタル)の MTF を別々に出す(``table``)。",
+   "zh": "由点扩散函数(PSF)的二维变换分别给出子午(切向)与弧矢 MTF(``table``)。",
+   "tw": "由點擴散函數(PSF)的二維變換分別給出子午(切向)與弧矢 MTF(``table``)。",
+   "ko": "점확산함수(PSF)의 2차원 변환에서 자오(접선)와 구결(시상) MTF를 따로 구한다(``table``).",
+   "de": "Tangentiale und sagittale MTF aus der 2-D-Transformierten einer Punktbildfunktion (PSF) (``table``).",
+   "hi": "point-spread function (PSF) के 2-D transform से tangential और sagittal MTF अलग-अलग (``table``)।"
+  },
+  "optics/through_focus_mtf": {
+   "fp": "57757121d3ad",
+   "ja": "像面の位置を動かしたときの、指定した空間周波数の子午・球欠 MTF(``table``)。",
+   "zh": "像面位置变化时,指定空间频率下的子午与弧矢 MTF(``table``)。",
+   "tw": "像面位置變化時,指定空間頻率下的子午與弧矢 MTF(``table``)。",
+   "ko": "상면 위치를 움직였을 때 지정한 공간 주파수의 자오·구결 MTF(``table``).",
+   "de": "Tangentiale und sagittale MTF bei gewählten Ortsfrequenzen über einen Bereich von Bildebenenlagen (``table``).",
+   "hi": "image plane की स्थिति बदलने पर चुनी गई spatial frequencies पर tangential और sagittal MTF (``table``)।"
+  },
+  "optics/with_aiming": {
+   "fp": "d8e9f4842c09",
+   "ja": "光線の照準モードやケラレ係数を設定した *system* の複製(``table``)。",
+   "zh": "返回设置了光线瞄准模式和/或渐晕系数的 *system* 副本(``table``)。",
+   "tw": "回傳設定了光線瞄準模式和/或漸暈係數的 *system* 副本(``table``)。",
+   "ko": "광선 조준 모드나 비네팅 계수를 설정한 *system*의 복사본(``table``).",
+   "de": "Kopie von *system* mit gesetztem Strahlzielmodus und/oder Vignettierungsfaktoren (``table``).",
+   "hi": "ray-aiming mode और/या vignetting factors सेट किए हुए *system* की प्रति (``table``)।"
+  },
+  "optics/ray_aiming": {
+   "fp": "84db7dc34bc0",
+   "ja": "1 つの視野で瞳の光線がどれだけ絞りに届くか: 本数・残差・瞳の広がり(``table``)。",
+   "zh": "单个视场下瞳面光线到达光阑的情况:光线数、残差与光瞳范围(``table``)。",
+   "tw": "單一視場下瞳面光線到達光闌的情況:光線數、殘差與光瞳範圍(``table``)。",
+   "ko": "한 시야에서 동공 광선이 조리개에 얼마나 도달하는가: 광선 수, 잔차, 동공 범위(``table``).",
+   "de": "Wie gut die Pupillenstrahlen bei einem Feldpunkt die Blende erreichen: Anzahl, Restfehler und Pupillenausdehnung (``table``).",
+   "hi": "एक field पर pupil rays stop तक कितनी अच्छी तरह पहुँचती हैं: गिनती, residual और pupil का विस्तार (``table``)।"
+  },
+  "optics/set_vignetting": {
+   "fp": "1e0cf34a5809",
+   "ja": "「set vignetting」と同じく、開口に切られる光線をなくすケラレ係数を求める(``table``)。",
+   "zh": "与“set vignetting”相同,求出消除所有被口径截断光线的渐晕系数(``table``)。",
+   "tw": "與「set vignetting」相同,求出消除所有被口徑截斷光線的漸暈係數(``table``)。",
+   "ko": "\"set vignetting\"처럼 개구에 잘리는 광선을 없애는 비네팅 계수를 계산한다(``table``).",
+   "de": "Berechnet wie „Set Vignetting“ die Vignettierungsfaktoren, die jeden von einer Apertur beschnittenen Strahl beseitigen (``table``).",
+   "hi": "\"set vignetting\" की तरह, aperture से कटने वाली हर ray को हटाने वाले vignetting factors निकालता है (``table``)।"
+  },
+  "optics/lens_configurations": {
+   "fp": "3bc881d21b96",
+   "en": "Resolve a multi-configuration prescription into one ``lens_system`` per configuration (``table``).",
+   "zh": "将多构型处方解析为每个构型一个 ``lens_system`` 的列表(``table``)。",
+   "tw": "將多構型處方解析為每個構型一個 ``lens_system`` 的列表(``table``)。",
+   "ko": "다중 구성 처방을 구성마다 하나의 ``lens_system``으로 풀어 목록으로 돌려준다(``table``).",
+   "de": "Löst eine Mehrkonfigurations-Vorschrift in je ein ``lens_system`` pro Konfiguration auf (``table``).",
+   "hi": "बहु-विन्यास prescription को प्रत्येक विन्यास के लिए एक ``lens_system`` की सूची में हल करता है (``table``)।"
+  },
+  "optics/lens_with_configuration": {
+   "fp": "74ea7ac3dd11",
+   "en": "Return configuration k (0-based) of a multi-configuration prescription as a resolved ``lens_system`` (``table``).",
+   "zh": "返回多构型处方的第 k 个构型(从 0 起)解析后的 ``lens_system``(``table``)。",
+   "tw": "回傳多構型處方的第 k 個構型(從 0 起)解析後的 ``lens_system``(``table``)。",
+   "ko": "다중 구성 처방의 k번째(0부터) 구성을 풀어 ``lens_system``으로 돌려준다(``table``).",
+   "de": "Gibt die k-te Konfiguration (0-basiert) einer Mehrkonfigurations-Vorschrift als aufgelöstes ``lens_system`` zurück (``table``).",
+   "hi": "बहु-विन्यास prescription का k-वाँ (0 से शुरू) विन्यास हल किए गए ``lens_system`` के रूप में लौटाता है (``table``)।"
+  },
+  "optics/lens_configuration_table": {
+   "fp": "403f15eb4fa9",
+   "en": "Return the multi-configuration table (rows = what changes between configurations, columns = configurations) (``table``).",
+   "zh": "返回多构型表(行 = 随构型变化的量,列 = 构型)(``table``)。",
+   "tw": "回傳多構型表(列 = 隨構型變化的量,欄 = 構型)(``table``)。",
+   "ko": "다중 구성 표(행 = 구성마다 달라지는 양, 열 = 구성)를 돌려준다(``table``).",
+   "de": "Gibt die Mehrkonfigurations-Tabelle zurück (Zeilen = was sich je Konfiguration ändert, Spalten = Konfigurationen) (``table``).",
+   "hi": "बहु-विन्यास तालिका लौटाता है (पंक्तियाँ = विन्यास के साथ बदलने वाली राशियाँ, स्तंभ = विन्यास) (``table``)।"
+  },
+  "optics/lens_configuration_metrics": {
+   "fp": "e85c0451f630",
+   "en": "List one metric (EFL, back focal length, RMS spot, MTF, encircled energy) per configuration (``table``).",
+   "zh": "按构型逐个列出一项指标(EFL、后焦距、RMS 光斑、MTF、环围能量)(``table``)。",
+   "tw": "依構型逐個列出一項指標(EFL、後焦距、RMS 光斑、MTF、圍繞能量)(``table``)。",
+   "ko": "구성마다 지표 하나(EFL, 후초점거리, RMS 스폿, MTF, 포함 에너지)를 나열한다(``table``).",
+   "de": "Listet je Konfiguration eine Kennzahl (EFL, Schnittweite, RMS-Spot, MTF, eingeschlossene Energie) auf (``table``).",
+   "hi": "प्रत्येक विन्यास के लिए एक मापदंड (EFL, पश्च फोकस दूरी, RMS स्पॉट, MTF, घिरी ऊर्जा) सूचीबद्ध करता है (``table``)।"
+  },
+  "optics/lens_add_configuration": {
+   "fp": "42dcc0ecda3d",
+   "ja": "*system* に構成を 1 つ足した複製を返す(``table``)。",
+   "zh": "返回追加了一个构型的 *system* 副本(``table``)。",
+   "tw": "回傳追加了一個構型的 *system* 副本(``table``)。",
+   "ko": "구성을 하나 더 붙인 *system*의 복사본을 돌려준다(``table``).",
+   "de": "Gibt eine Kopie von *system* mit einer zusätzlichen Konfiguration zurück (``table``).",
+   "hi": "*system* की एक प्रति लौटाता है जिसमें एक और विन्यास जुड़ा हो (``table``)।"
+  },
+  "optics/lockin_demodulate": {
+   "fp": "c34822fe3acd",
+   "ja": "画像列を正弦の参照に対して画素ごとに直交復調する -> マップの dict。",
+   "zh": "将图像序列对正弦参考逐像素进行正交解调 -> 映射字典。",
+   "tw": "將影像序列對正弦參考逐像素進行正交解調 -> 映射字典。",
+   "ko": "영상 시퀀스를 정현파 기준 신호에 대해 화소별로 직교 복조한다 -> 맵의 dict.",
+   "de": "Quadratur-Demodulation einer Bildfolge gegen eine sinusförmige Referenz, pixelweise -> dict von Karten.",
+   "hi": "छवि अनुक्रम का sinusoidal संदर्भ के विरुद्ध प्रति-pixel quadrature demodulation -> मानचित्रों का dict।"
+  },
+  "optics/lockin_amplitude": {
+   "fp": "7393f205ce5f",
+   "ja": "各画素のうち参照に追従する成分の振幅マップ A -> (H, W) の画像。",
+   "zh": "每个像素中跟随参考信号的成分的幅值图 A -> (H, W) 图像。",
+   "tw": "每個像素中跟隨參考訊號的成分的振幅圖 A -> (H, W) 影像。",
+   "ko": "각 화소에서 기준 신호를 따르는 성분의 진폭 맵 A -> (H, W) 영상.",
+   "de": "Amplitudenkarte A des Anteils jedes Pixels, der der Referenz folgt -> (H, W)-Bild.",
+   "hi": "प्रत्येक pixel के उस भाग का amplitude मानचित्र A जो संदर्भ का अनुसरण करता है -> (H, W) छवि।"
+  },
+  "optics/lockin_phase": {
+   "fp": "0a9756cf7519",
+   "ja": "各画素のうち参照に追従する成分の位相マップ phi(ラジアン、(-pi, pi])-> (H, W) の画像。",
+   "zh": "每个像素中跟随参考信号的成分的相位图 phi(弧度,(-pi, pi])-> (H, W) 图像。",
+   "tw": "每個像素中跟隨參考訊號的成分的相位圖 phi(弧度,(-pi, pi])-> (H, W) 影像。",
+   "ko": "각 화소에서 기준 신호를 따르는 성분의 위상 맵 phi(라디안, (-pi, pi]) -> (H, W) 영상.",
+   "de": "Phasenkarte phi (Radiant, (-pi, pi]) des Anteils jedes Pixels, der der Referenz folgt -> (H, W)-Bild.",
+   "hi": "प्रत्येक pixel के उस भाग का phase मानचित्र phi (radian, (-pi, pi]) जो संदर्भ का अनुसरण करता है -> (H, W) छवि।"
+  },
+  "optics/lockin_noise_floor": {
+   "fp": "58c66e60fffd",
+   "ja": "白色雑音に対するロックインの振幅と位相の雑音を閉形式で与える -> dict。",
+   "zh": "给出白噪声下锁相幅值与相位噪声的闭式解 -> 字典。",
+   "tw": "給出白雜訊下鎖相振幅與相位雜訊的閉式解 -> 字典。",
+   "ko": "백색 잡음에 대한 록인 진폭과 위상 잡음의 닫힌 형식 -> dict.",
+   "de": "Geschlossene Form des Rauschens von Lock-in-Amplitude und -Phase bei weißem Rauschen -> dict.",
+   "hi": "श्वेत शोर के लिए lock-in amplitude और phase के शोर का closed-form -> dict।"
+  },
+  "optics/lockin_walsh_codes": {
+   "fp": "147c022cbdf0",
+   "ja": "符号化間歇照明のための直交・零平均のオン/オフ符号 -> +-1 の (n_codes, n_frames) 行列。",
+   "zh": "用于编码间歇照明的正交零均值开/关码 -> +-1 的 (n_codes, n_frames) 矩阵。",
+   "tw": "用於編碼間歇照明的正交零平均開/關碼 -> +-1 的 (n_codes, n_frames) 矩陣。",
+   "ko": "부호화 간헐 조명을 위한 직교·영평균 온/오프 부호 -> +-1의 (n_codes, n_frames) 행렬.",
+   "de": "Orthogonale mittelwertfreie Ein/Aus-Codes für codierte intermittierende Beleuchtung -> (n_codes, n_frames)-Matrix aus +-1.",
+   "hi": "कोडित आंतरायिक प्रकाश के लिए orthogonal, शून्य-माध्य on/off कोड -> +-1 का (n_codes, n_frames) आव्यूह।"
+  },
+  "optics/lockin_separate": {
+   "fp": "ffbc5ab4f75e",
+   "ja": "零平均の符号に対する最小二乗で、符号化された照明と符号化されていない残りを分離する -> マップの dict。",
+   "zh": "通过对零均值码的最小二乘,分离编码光源与未编码的其余部分 -> 映射字典。",
+   "tw": "透過對零平均碼的最小平方法,分離編碼光源與未編碼的其餘部分 -> 映射字典。",
+   "ko": "영평균 부호에 대한 최소제곱으로 부호화된 조명과 부호화되지 않은 나머지를 분리한다 -> 맵의 dict.",
+   "de": "Trennt codierte Lichtquellen vom uncodierten Rest per Kleinste-Quadrate gegen mittelwertfreie Codes -> dict von Karten.",
+   "hi": "शून्य-माध्य कोड के विरुद्ध least squares से कोडित प्रकाश और बिना कोड वाले शेष को अलग करता है -> मानचित्रों का dict।"
+  },
+  "optics/lockin_ring_synthesize": {
+   "fp": "7da303033175",
+   "ja": "変調した光源の輪で照らしたランバート面の凹凸 -> 画像列 (T, H, W)。",
+   "zh": "由一圈调制光源照明的朗伯起伏表面 -> 图像序列 (T, H, W)。",
+   "tw": "由一圈調變光源照明的朗伯起伏表面 -> 影像序列 (T, H, W)。",
+   "ko": "변조된 광원의 고리로 비춘 램버트 요철 표면 -> 영상 시퀀스 (T, H, W).",
+   "de": "Ein von einem Ring modulierter Quellen beleuchtetes Lambert-Relief -> Bildfolge (T, H, W).",
+   "hi": "मॉड्युलेटेड स्रोतों की एक वलय से प्रकाशित Lambertian उभार-सतह -> छवि अनुक्रम (T, H, W)।"
+  },
+  "optics/lockin_ring_normals": {
+   "fp": "dec1c774bb98",
+   "ja": "双極子変調したリングの基本波応答から面の法線を求める -> マップの dict。",
+   "zh": "由偶极调制光环的基波响应求表面法线 -> 映射字典。",
+   "tw": "由偶極調變光環的基波響應求表面法線 -> 映射字典。",
+   "ko": "쌍극자 변조 고리의 기본파 응답에서 표면 법선을 구한다 -> 맵의 dict.",
+   "de": "Oberflächennormalen aus der Grundwellenantwort eines dipolmodulierten Rings -> dict von Karten.",
+   "hi": "द्विध्रुव-मॉड्युलेटेड वलय की मूल-तरंग प्रतिक्रिया से सतह के अभिलंब -> मानचित्रों का dict।"
+  },
+  "optics/lockin_thermal_wave": {
+   "fp": "be32c6cbb661",
+   "ja": "正弦波の熱流束で加熱した板の定常状態の表面温度を画素ごとに -> 画像列 (T, H, W)。",
+   "zh": "逐像素给出受正弦热流加热的平板的稳态表面温度 -> 图像序列 (T, H, W)。",
+   "tw": "逐像素給出受正弦熱流加熱的平板的穩態表面溫度 -> 影像序列 (T, H, W)。",
+   "ko": "정현파 열유속으로 가열한 판의 정상 상태 표면 온도를 화소별로 -> 영상 시퀀스 (T, H, W).",
+   "de": "Stationäre Oberflächentemperatur einer von einem sinusförmigen Wärmestrom geheizten Platte, pro Pixel -> Bildfolge (T, H, W).",
+   "hi": "sinusoidal ऊष्मा-अभिवाह से गर्म की गई प्लेट का steady-state सतह तापमान, प्रति pixel -> छवि अनुक्रम (T, H, W)।"
+  },
+  "optics/glass_nearest": {
+   "fp": "007e202a6b69",
+   "en": "Return the k catalogue glasses nearest to (n_d, V_d), with their distances (``table``).",
+   "zh": "返回与 (n_d, V_d) 最接近的 k 种目录玻璃及其距离(``table``)。",
+   "tw": "回傳與 (n_d, V_d) 最接近的 k 種目錄玻璃及其距離(``table``)。",
+   "ko": "(n_d, V_d)에 가장 가까운 카탈로그 유리 k개를 거리와 함께 돌려준다(``table``).",
+   "de": "Gibt die k Katalogläser zurück, die (n_d, V_d) am nächsten liegen, mit ihren Abständen (``table``).",
+   "hi": "(n_d, V_d) के सबसे निकट के k catalogue glasses को उनकी दूरी के साथ लौटाता है (``table``)।"
+  },
+  "optics/lens_substitute_glasses": {
+   "fp": "bd0407b0876f",
+   "en": "Replace the model glasses (n_d, V_d) of a system by the k-th nearest catalogue glass (``table``).",
+   "zh": "将系统中的模型玻璃 (n_d, V_d) 替换为第 k 近的目录玻璃(``table``)。",
+   "tw": "將系統中的模型玻璃 (n_d, V_d) 替換為第 k 近的目錄玻璃(``table``)。",
+   "ko": "계의 모델 유리 (n_d, V_d)를 k번째로 가까운 카탈로그 유리로 바꾼다(``table``).",
+   "de": "Ersetzt die Modellgläser (n_d, V_d) eines Systems durch das k-nächste Katalogglas (``table``).",
+   "hi": "system के model glasses (n_d, V_d) को k-वें निकटतम catalogue glass से बदलता है (``table``)।"
+  },
+  "optics/lens_global_search": {
+   "fp": "c5cbe00461dc",
+   "en": "Collect local optima with multi-start local optimisation (lensopt.optimize_lens) and return them in merit order (``table``).",
+   "zh": "用多起点局部优化(lensopt.optimize_lens)收集局部最优解,按 merit 顺序返回(``table``)。",
+   "tw": "用多起點局部最佳化(lensopt.optimize_lens)收集局部最佳解,按 merit 順序回傳(``table``)。",
+   "ko": "다중 시작 국소 최적화(lensopt.optimize_lens)로 국소해를 모아 merit 순으로 돌려준다(``table``).",
+   "de": "Sammelt lokale Optima per Mehrstart-Optimierung (lensopt.optimize_lens) und gibt sie nach Merit sortiert zurück (``table``).",
+   "hi": "multi-start local optimisation (lensopt.optimize_lens) से local optima इकट्ठा करके merit क्रम में लौटाता है (``table``)।"
+  },
+  "spc/patch_features": {
+   "fp": "7e775b15a9e9",
+   "ja": "格子上の古典的なパッチ特徴: パッチごとに D 次元のベクトル(勾配・Gabor・LBP・周波数帯・色)(``table``)。",
+   "zh": "网格上的经典图块特征:每个图块一个 D 维向量(梯度、Gabor、LBP、频带、颜色)(``table``)。",
+   "tw": "網格上的經典圖塊特徵:每個圖塊一個 D 維向量(梯度、Gabor、LBP、頻帶、顏色)(``table``)。",
+   "ko": "격자 위의 고전적 패치 특징: 패치마다 D차원 벡터(기울기·Gabor·LBP·주파수 대역·색) (``table``).",
+   "de": "Klassische Patch-Merkmale auf einem Gitter: ein D-dimensionaler Vektor je Patch (Gradient, Gabor, LBP, Frequenzbänder, Farbe) (``table``).",
+   "hi": "grid पर classical patch features: हर patch का D-आयामी vector (gradient, Gabor, LBP, frequency bands, colour) (``table``)।"
+  },
+  "spc/patchdist_fit": {
+   "fp": "612fc01f8542",
+   "ja": "良品の画像から、格子の位置ごとにパッチ特徴の正規分布を学ぶ(縮小推定を宣言、特異なら拒否)(``table``)。",
+   "zh": "从良品图像学习每个网格位置上图块特征的正态分布(声明收缩估计,协方差奇异则拒绝)(``table``)。",
+   "tw": "從良品影像學習每個網格位置上圖塊特徵的常態分佈(宣告收縮估計,共變異數奇異則拒絕)(``table``)。",
+   "ko": "양품 이미지에서 격자 위치마다 패치 특징의 정규분포를 학습 (수축 추정을 선언하고, 특이하면 거부) (``table``).",
+   "de": "Aus Gutbildern je Gitterposition eine Normalverteilung des Patch-Merkmals lernen (Schrumpfung wird deklariert, singuläre Kovarianz abgelehnt) (``table``).",
+   "hi": "अच्छे images से हर grid position पर patch feature का normal distribution सीखना (shrinkage घोषित, singular covariance अस्वीकृत) (``table``)।"
+  },
+  "spc/patchdist_score": {
+   "fp": "2cca83e21e54",
+   "ja": "1 枚を位置ごとの正規分布に当てる: パッチごとのマハラノビス距離から異常地図を作る(``table``)。",
+   "zh": "将一张图像与逐位置的正态分布比较:由各图块的马氏距离生成异常图(``table``)。",
+   "tw": "將一張影像與逐位置的常態分佈比較:由各圖塊的馬氏距離產生異常圖(``table``)。",
+   "ko": "한 장을 위치별 정규분포에 대조: 패치별 마할라노비스 거리로 이상 맵을 만든다 (``table``).",
+   "de": "Ein Bild gegen die Normalverteilung je Position bewerten: Anomaliekarte aus der Mahalanobis-Distanz je Patch (``table``).",
+   "hi": "एक image को हर position के normal distribution से मिलाना: हर patch की Mahalanobis दूरी से anomaly map बनाना (``table``)।"
+  },
+  "spc/patchbank_fit": {
+   "fp": "cea39158076a",
+   "ja": "良品のパッチ特徴の記憶バンクを作る。記憶は座標の貪欲被覆(k 中心)で間引く(``table``)。",
+   "zh": "建立良品图块特征的记忆库,并用贪心 k 中心覆盖进行稀疏化(``table``)。",
+   "tw": "建立良品圖塊特徵的記憶庫,並用貪婪 k 中心覆蓋進行稀疏化(``table``)。",
+   "ko": "양품 패치 특징의 메모리 뱅크를 만들고 탐욕적 k-중심 커버링으로 솎아낸다 (``table``).",
+   "de": "Eine Speicherbank guter Patch-Merkmale aufbauen, ausgedünnt durch gierige k-Zentren-Überdeckung (``table``).",
+   "hi": "अच्छे patch features का memory bank बनाना, greedy k-centre covering से छाँटा हुआ (``table``)।"
+  },
+  "spc/patchbank_score": {
+   "fp": "29dc6d181e70",
+   "ja": "1 枚を記憶バンクに当てる: パッチごとに近い良品 k 個までの距離から異常地図を作る(``table``)。",
+   "zh": "将一张图像与记忆库比较:由各图块到最近 k 个良品图块的距离生成异常图(``table``)。",
+   "tw": "將一張影像與記憶庫比較:由各圖塊到最近 k 個良品圖塊的距離產生異常圖(``table``)。",
+   "ko": "한 장을 메모리 뱅크에 대조: 패치마다 가장 가까운 양품 k개까지의 거리로 이상 맵을 만든다 (``table``).",
+   "de": "Ein Bild gegen die Speicherbank bewerten: Anomaliekarte aus dem Abstand jedes Patches zu seinen k nächsten guten Patches (``table``).",
+   "hi": "एक image को memory bank से मिलाना: हर patch की सबसे निकट k अच्छे patches तक की दूरी से anomaly map बनाना (``table``)।"
+  },
+  "spc/anomaly_pixel_f1_max": {
+   "fp": "264e0799f720",
+   "ja": "異常スコアの図と欠陥マスクから、全閾値にわたる画素単位の F1 の最大値(``table``)。",
+   "zh": "由异常得分图与缺陷掩膜,求遍历所有阈值的像素级 F1 最大值(``table``)。",
+   "tw": "由異常得分圖與缺陷遮罩,求遍歷所有閾值的像素級 F1 最大值(``table``)。",
+   "ko": "이상 점수 맵과 결함 마스크로부터 모든 임계값에 걸친 화소 단위 F1의 최댓값 (``table``).",
+   "de": "Bester Pixel-F1 über alle Schwellen aus Anomalie-Scorekarten und Defektmasken (``table``).",
+   "hi": "anomaly score maps और defect masks से सभी thresholds पर pixel-स्तर का सर्वोत्तम F1 (``table``)।"
+  },
+  "spc/anomaly_image_f1_max": {
+   "fp": "82f7ab1cdf62",
+   "ja": "画像ごとの異常スコアと良/不良ラベルから、全閾値にわたる画像単位の F1 の最大値(``table``)。",
+   "zh": "由每张图像的异常得分与良/不良标签,求遍历所有阈值的图像级 F1 最大值(``table``)。",
+   "tw": "由每張影像的異常得分與良/不良標籤,求遍歷所有閾值的影像級 F1 最大值(``table``)。",
+   "ko": "이미지별 이상 점수와 양/불량 라벨로부터 모든 임계값에 걸친 이미지 단위 F1의 최댓값 (``table``).",
+   "de": "Bester Bild-F1 über alle Schwellen aus einem Anomalie-Score je Bild und einem Gut/Defekt-Label (``table``).",
+   "hi": "हर image के anomaly score और अच्छा/दोषपूर्ण label से सभी thresholds पर image-स्तर का सर्वोत्तम F1 (``table``)।"
+  },
+  "spc/anomaly_operating_point": {
+   "fp": "f0fb23b84091",
+   "ja": "欠陥の再現率が ``confidence`` の水準で ``recall`` 以上と保証できる、最も高い閾値を選ぶ(``table``)。",
+   "zh": "选出能以 ``confidence`` 的置信水平保证缺陷召回率不低于 ``recall`` 的最高阈值(``table``)。",
+   "tw": "選出能以 ``confidence`` 的信賴水準保證缺陷召回率不低於 ``recall`` 的最高閾值(``table``)。",
+   "ko": "결함 재현율이 ``confidence`` 수준에서 ``recall`` 이상임을 보장할 수 있는 가장 높은 임계값을 고른다 (``table``).",
+   "de": "Die höchste Schwelle wählen, deren Defekt-Recall mit Sicherheit ``confidence`` mindestens ``recall`` beträgt (``table``).",
+   "hi": "वह सबसे ऊँचा threshold चुनना जिसकी defect recall ``confidence`` स्तर पर कम से कम ``recall`` होने की गारंटी हो (``table``)।"
+  },
+  "optics/merit_operands_list": {
+   "fp": "8224730149f4",
+   "en": "List the operands of the merit function: name, meaning, unit and arguments (``table``).",
+   "zh": "列出评价函数的操作数(operand):名称、含义、单位和参数(``table``)。",
+   "tw": "列出評價函數的運算元(operand):名稱、意義、單位與參數(``table``)。",
+   "ko": "메리트 함수의 오퍼랜드 목록: 이름, 의미, 단위, 인수(``table``).",
+   "de": "Listet die Operanden der Gütefunktion auf: Name, Bedeutung, Einheit und Argumente (``table``).",
+   "hi": "merit function के operands की सूची: नाम, अर्थ, इकाई और arguments (``table``)।"
+  },
+  "optics/merit_evaluate": {
+   "fp": "33da3e0b5609",
+   "en": "Apply an operand table to a prescription and return each row's value, target, weight, contribution and share (``table``).",
+   "zh": "把操作数表应用到处方上,返回每一行的值、目标、权重、贡献及其占比(``table``)。",
+   "tw": "把運算元表套用到處方上,回傳每一列的值、目標、權重、貢獻及其占比(``table``)。",
+   "ko": "오퍼랜드 표를 처방에 적용해 각 행의 값, 목표, 가중치, 기여와 그 비율을 돌려준다(``table``).",
+   "de": "Wendet eine Operandentabelle auf eine Konstruktion an und gibt Wert, Ziel, Gewicht, Beitrag und Anteil jeder Zeile zurück (``table``).",
+   "hi": "operand table को prescription पर लागू करके हर पंक्ति का मान, लक्ष्य, भार, योगदान और उसका हिस्सा लौटाता है (``table``)।"
+  },
+  "optics/merit_default": {
+   "fp": "86f5603d1159",
+   "en": "Build the default merit function as an operand table: whole-pupil ray rows plus the EFL hold (``table``).",
+   "zh": "把默认评价函数组成操作数表:整个光瞳的光线行加上 EFL 的保持(``table``)。",
+   "tw": "把預設評價函數組成運算元表:整個光瞳的光線列加上 EFL 的保持(``table``)。",
+   "ko": "기본 메리트 함수를 오퍼랜드 표로 구성한다: 동공 전체의 광선 행과 EFL 유지(``table``).",
+   "de": "Baut die Standard-Gütefunktion als Operandentabelle: Strahlzeilen über die ganze Pupille plus die EFL-Vorgabe (``table``).",
+   "hi": "default merit function को operand table के रूप में बनाता है: पूरे pupil की ray पंक्तियाँ और EFL hold (``table``)।"
+  },
+  "optics/merit_boundary_operands": {
+   "fp": "01f14ceb0401",
+   "en": "Turn manufacturing bounds into table rows: edge thickness of every glass, centre-thickness and air-gap ranges (``table``).",
+   "zh": "把制造上的边界变成表中的行:每块玻璃的边缘厚度、中心厚度和空气间隔的范围(``table``)。",
+   "tw": "把製造上的邊界變成表中的列:每片玻璃的邊緣厚度、中心厚度與空氣間隔的範圍(``table``)。",
+   "ko": "제조상의 경계를 표의 행으로 만든다: 각 유리의 가장자리 두께, 중심 두께와 공기 간격의 범위(``table``).",
+   "de": "Macht Fertigungsgrenzen zu Tabellenzeilen: Randdicke jedes Glases, Bereiche für Mittendicke und Luftabstand (``table``).",
+   "hi": "निर्माण संबंधी सीमाओं को table की पंक्तियों में बदलता है: हर glass की edge thickness, centre thickness और air gap की सीमाएँ (``table``)।"
+  },
+  "optics/optimize_lens_operands": {
+   "fp": "04cbdf254732",
+   "en": "Minimise the operand-table merit function by Levenberg-Marquardt; glass can be a variable too (``table``).",
+   "zh": "用 LM 法最小化操作数表的评价函数,玻璃也可以作为变量(``table``)。",
+   "tw": "用 LM 法最小化運算元表的評價函數,玻璃也可以作為變數(``table``)。",
+   "ko": "오퍼랜드 표의 메리트 함수를 LM으로 최소화한다. 유리도 변수로 삼을 수 있다(``table``).",
+   "de": "Minimiert die Gütefunktion der Operandentabelle mit Levenberg-Marquardt; auch das Glas kann Variable sein (``table``).",
+   "hi": "operand table के merit function को LM से न्यूनतम करता है; glass भी variable हो सकता है (``table``)।"
+  },
+  "optics/merit_contributions": {
+   "fp": "047bc063381e",
+   "en": "Show which rows dominate the merit function: a table of percentages, largest first (``table``).",
+   "zh": "显示哪些行主导评价函数:按贡献从大到小的百分比表(``table``)。",
+   "tw": "顯示哪些列主導評價函數:依貢獻由大到小的百分比表(``table``)。",
+   "ko": "어느 행이 메리트 함수를 지배하는지 보인다: 기여가 큰 순서의 백분율 표(``table``).",
+   "de": "Zeigt, welche Zeilen die Gütefunktion dominieren: eine Prozenttabelle, größte zuerst (``table``).",
+   "hi": "बताता है कि कौन सी पंक्तियाँ merit function पर हावी हैं: योगदान के क्रम में प्रतिशत की table (``table``)।"
+  },
+  "optics/ocean_spectrum": {
+   "fp": "ae5f8d9b6132",
+   "ja": "風の海の 1 次元の波のスペクトル S(ω)と、有義波高・ピーク周期 -> dict。",
+   "zh": "风浪的一维波谱 S(ω),及有效波高与峰值周期 -> 字典。",
+   "tw": "風浪的一維波譜 S(ω),及有效波高與峰值週期 -> 字典。",
+   "ko": "풍성파의 1차원 파랑 스펙트럼 S(ω)와 유의파고·피크 주기 -> dict.",
+   "de": "Eindimensionales Wellenspektrum S(ω) einer Windsee mit signifikanter Wellenhöhe und Spitzenperiode -> dict.",
+   "hi": "पवन-जनित समुद्र का एक-आयामी तरंग स्पेक्ट्रम S(ω), उसकी significant ऊँचाई और peak period के साथ -> dict।"
+  },
+  "optics/ocean_height_field": {
+   "fp": "680587986f50",
+   "ja": "時刻 t の Tessendorf(2001)の FFT の海面 -> dict(高さ・傾き・法線マップ・変位)。",
+   "zh": "时刻 t 的 Tessendorf(2001)FFT 海面 -> 字典(高度、斜率、法线图、位移)。",
+   "tw": "時刻 t 的 Tessendorf(2001)FFT 海面 -> 字典(高度、斜率、法線圖、位移)。",
+   "ko": "시각 t의 Tessendorf(2001) FFT 해수면 -> dict(높이, 기울기, 법선 맵, 변위).",
+   "de": "FFT-Meeresoberfläche nach Tessendorf (2001) zum Zeitpunkt t -> dict (Höhe, Neigungen, Normalenkarte, Verschiebung).",
+   "hi": "समय t पर Tessendorf (2001) FFT समुद्र-सतह -> dict (ऊँचाई, ढलान, normal map, विस्थापन)।"
+  },
+  "optics/fresnel_water_air": {
+   "fp": "bb07353be4b7",
+   "ja": "空気と水の界面のフレネル反射率と透過率 -> dict。",
+   "zh": "空气-水界面的菲涅耳反射率与透射率 -> 字典。",
+   "tw": "空氣-水界面的菲涅耳反射率與穿透率 -> 字典。",
+   "ko": "공기-물 경계면의 프레넬 반사율과 투과율 -> dict.",
+   "de": "Fresnel-Reflexions- und Transmissionsgrad der Grenzfläche Luft-Wasser -> dict.",
+   "hi": "वायु-जल अंतरापृष्ठ की Fresnel परावर्तन और संचरण दक्षता -> dict।"
+  },
+  "optics/snell_window": {
+   "fp": "5dea6e667b03",
+   "ja": "水面下の点から見たスネルの窓と、平らな界面の見かけの深さ -> dict。",
+   "zh": "从水面下一点看到的斯涅尔窗,以及平坦界面的视深度 -> 字典。",
+   "tw": "從水面下一點看到的斯涅爾窗,以及平坦界面的視深度 -> 字典。",
+   "ko": "수면 아래의 한 점에서 본 스넬의 창과 평평한 경계면의 겉보기 깊이 -> dict.",
+   "de": "Snelliussches Fenster von einem Punkt unter der Oberfläche aus und scheinbare Tiefe an einer ebenen Grenzfläche -> dict.",
+   "hi": "सतह के नीचे के एक बिंदु से दिखने वाली Snell की खिड़की और समतल अंतरापृष्ठ की आभासी गहराई -> dict।"
+  },
+  "optics/refracted_view": {
+   "fp": "3c7ae1d2918b",
+   "ja": "水中の点が、平らな(または波のある)水面の上のカメラにどこに見えるか(フェルマーの原理)-> dict。",
+   "zh": "水下的点在平坦或有波的水面上方的相机中出现在哪里(费马原理)-> 字典。",
+   "tw": "水下的點在平坦或有波的水面上方的相機中出現在哪裡(費馬原理)-> 字典。",
+   "ko": "평평하거나 물결이 있는 수면 위의 카메라에 수중의 점이 어디에 보이는가(페르마의 원리) -> dict.",
+   "de": "Wo ein Unterwasserpunkt für eine Kamera über einer ebenen oder welligen Oberfläche erscheint (Fermatsches Prinzip) -> dict.",
+   "hi": "समतल या लहरदार सतह के ऊपर रखे camera को जल के भीतर का बिंदु कहाँ दिखता है (Fermat का सिद्धांत) -> dict।"
+  },
+  "optics/water_attenuation": {
+   "fp": "e52cf6680cef",
+   "ja": "水の吸収・散乱・拡散減衰と、深さごとの透過率 -> dict。",
+   "zh": "水的吸收、散射与漫衰减系数,以及随深度的透过率 -> 字典。",
+   "tw": "水的吸收、散射與漫衰減係數,以及隨深度的穿透率 -> 字典。",
+   "ko": "물의 흡수·산란·확산 감쇠와 깊이에 따른 투과율 -> dict.",
+   "de": "Absorption, Streuung und diffuse Abschwächung von Wasser sowie die Transmission über die Tiefe -> dict.",
+   "hi": "जल का अवशोषण, प्रकीर्णन और विसरित क्षीणन तथा गहराई के साथ संचरण -> dict।"
+  },
+  "optics/underwater_image": {
+   "fp": "596175e42886",
+   "ja": "水を通して記録された場面の画像(改訂版 Jaffe–McGlamery モデル)-> dict。",
+   "zh": "透过水记录的场景图像(修订版 Jaffe–McGlamery 模型)-> 字典。",
+   "tw": "透過水記錄的場景影像(修訂版 Jaffe–McGlamery 模型)-> 字典。",
+   "ko": "물을 통해 기록된 장면의 영상(개정판 Jaffe–McGlamery 모델) -> dict.",
+   "de": "Das durch Wasser aufgenommene Bild einer Szene (überarbeitetes Jaffe-McGlamery-Modell) -> dict.",
+   "hi": "पानी के माध्यम से रिकॉर्ड किए गए दृश्य की छवि (संशोधित Jaffe–McGlamery मॉडल) -> dict।"
+  },
+  "optics/phase_function_hg": {
+   "fp": "540ed4a5f5bb",
+   "ja": "球面で規格化した Henyey–Greenstein 位相関数 -> dict。",
+   "zh": "在球面上归一化的 Henyey–Greenstein 相函数 -> 字典。",
+   "tw": "在球面上歸一化的 Henyey–Greenstein 相函數 -> 字典。",
+   "ko": "구면에서 정규화한 Henyey–Greenstein 위상 함수 -> dict.",
+   "de": "Die über die Kugel normierte Henyey-Greenstein-Phasenfunktion -> dict.",
+   "hi": "गोले पर सामान्यीकृत Henyey–Greenstein phase function -> dict।"
+  },
+  "optics/scattering_phase_petzold": {
+   "fp": "285fe14e3db4",
+   "ja": "自然の水で実測された体積散乱関数(Petzold 1972)を位相関数として -> dict。",
+   "zh": "天然水体实测的体散射函数(Petzold 1972),以相函数形式给出 -> 字典。",
+   "tw": "天然水體實測的體散射函數(Petzold 1972),以相函數形式給出 -> 字典。",
+   "ko": "자연 수역에서 실측한 체적 산란 함수(Petzold 1972)를 위상 함수로 -> dict.",
+   "de": "Die gemessene Volumenstreufunktion natürlicher Gewässer (Petzold 1972) als Phasenfunktion -> dict.",
+   "hi": "प्राकृतिक जल का मापा गया volume scattering function (Petzold 1972), phase function के रूप में -> dict।"
+  },
+  "optics/cylinder_lens_caustic": {
+   "fp": "2a4592a3ffb3",
+   "ja": "平行光の中の円柱(棒や瓶)の近軸焦点と実光線の焦線 -> dict。",
+   "zh": "平行光束中圆柱(棒或瓶)的近轴焦点与实际光线的焦散线 -> 字典。",
+   "tw": "平行光束中圓柱(棒或瓶)的近軸焦點與實際光線的焦散線 -> 字典。",
+   "ko": "평행광 속의 원기둥(막대나 병)의 근축 초점과 실제 광선의 초점선 -> dict.",
+   "de": "Paraxialer Fokus und Realstrahl-Kaustik eines Zylinders (Stab oder Flasche) im parallelen Strahl -> dict.",
+   "hi": "समानांतर किरण-पुंज में बेलन (छड़ या बोतल) का पैराएक्सियल फोकस और वास्तविक किरणों की caustic -> dict।"
+  },
+  "optics/caustic_irradiance": {
+   "fp": "374a216ca47b",
+   "ja": "波打つ水面の下の平らな床に、平行光が作る照度 -> dict。",
+   "zh": "平行光在波动水面下方平坦底面上形成的照度 -> 字典。",
+   "tw": "平行光在波動水面下方平坦底面上形成的照度 -> 字典。",
+   "ko": "평행광이 물결치는 수면 아래의 평평한 바닥에 만드는 조도 -> dict.",
+   "de": "Die Beleuchtungsstärke, die ein paralleles Lichtbündel auf einem ebenen Boden unter einer welligen Wasseroberfläche erzeugt -> dict.",
+   "hi": "लहरदार जल-सतह के नीचे समतल तल पर समानांतर प्रकाश से बनने वाली दीप्ति (irradiance) -> dict।"
+  },
+  "optics/bottle_image": {
+   "fp": "358209a9e1f7",
+   "ja": "液体を途中まで入れた円筒形の瓶の側面像を、行ごとに光線追跡したもの -> dict。",
+   "zh": "部分装有液体的圆柱形瓶子的侧视图,逐行进行光线追迹 -> 字典。",
+   "tw": "部分裝有液體的圓柱形瓶子的側視圖,逐行進行光線追跡 -> 字典。",
+   "ko": "액체가 일부 채워진 원통형 병의 측면 이미지를 행 단위로 광선 추적한 결과 -> dict.",
+   "de": "Seitenansicht einer teilweise mit Flüssigkeit gefüllten zylindrischen Flasche, zeilenweise per Strahlverfolgung berechnet -> dict.",
+   "hi": "तरल से आंशिक रूप से भरी बेलनाकार बोतल का पार्श्व दृश्य, पंक्ति-दर-पंक्ति ray tracing से -> dict।"
+  },
+  "optics/fill_level_from_image": {
+   "fp": "37315d98c269",
+   "ja": "側面から見た瓶の画像から測った液面 -> dict(最下行からの水準 mm、行、確信度)。",
+   "zh": "从瓶子侧视图像中测得的液面 -> 字典(距最下行的液位 mm、行号、置信度)。",
+   "tw": "從瓶子側視影像中測得的液面 -> 字典(距最下行的液位 mm、列號、信賴度)。",
+   "ko": "병의 측면 이미지에서 측정한 액면 -> dict(맨 아래 행 위의 높이 mm, 행, 신뢰도).",
+   "de": "Aus einem Seitenansichtsbild der Flasche gemessene Füllhöhe -> dict (Pegel in mm über der untersten Zeile, Zeile, Konfidenz).",
+   "hi": "बोतल के पार्श्व-दृश्य चित्र से मापी गई तरल-सतह -> dict (सबसे निचली पंक्ति से ऊपर स्तर mm में, पंक्ति, विश्वसनीयता)।"
+  },
+  "optics/wet_surface_appearance": {
+   "fp": "0a7b3abba1ab",
+   "ja": "薄い水膜の下の面の暗化と光沢(Lekner & Dorf 1988、Twomey ほか 1986)-> dict。",
+   "zh": "薄水膜下表面的变暗与光泽(Lekner & Dorf 1988;Twomey 等 1986)-> 字典。",
+   "tw": "薄水膜下表面的變暗與光澤(Lekner & Dorf 1988;Twomey 等 1986)-> 字典。",
+   "ko": "얇은 물막 아래 표면이 어두워지고 광택이 나는 정도(Lekner & Dorf 1988; Twomey 외 1986) -> dict.",
+   "de": "Abdunkelung und Glanz einer Oberfläche unter einem dünnen Wasserfilm (Lekner & Dorf 1988; Twomey et al. 1986) -> dict.",
+   "hi": "पतली जल-परत के नीचे सतह का काला पड़ना और चमक (Lekner & Dorf 1988; Twomey et al. 1986) -> dict।"
+  },
+  "optics/wet_dry_inspection_pair": {
+   "fp": "c47fa21d4237",
+   "ja": "同じテクスチャの板を乾いた状態と濡れた状態で描き、それぞれの欠陥のコントラストを返す -> dict。",
+   "zh": "分别渲染同一块有纹理的板的干燥与湿润状态,并给出各自缺陷的对比度 -> 字典。",
+   "tw": "分別渲染同一塊有紋理的板的乾燥與濕潤狀態,並給出各自缺陷的對比度 -> 字典。",
+   "ko": "같은 질감의 판을 건조한 상태와 젖은 상태로 렌더링하고 각각의 결함 대비를 구한다 -> dict.",
+   "de": "Dieselbe texturierte Platte trocken und nass gerendert, mit dem Kontrast ihres Defekts in beiden Fällen -> dict.",
+   "hi": "एक ही बनावट वाली प्लेट को सूखी और गीली दशा में रेंडर करना, और दोनों में उसके दोष का contrast -> dict।"
+  },
+  "optics/underwater_inspection_image": {
+   "fp": "03711f8a91f4",
+   "ja": "船体や配管の検査画像: カメラの位置のランプが水を通して壁を照らす -> dict(画像、画素ごとの SNR)。",
+   "zh": "船体或管道检测图像:位于相机处的灯穿过水照亮墙面 -> 字典(图像、逐像素信噪比)。",
+   "tw": "船體或管道檢測影像:位於相機處的燈穿過水照亮牆面 -> 字典(影像、逐像素信噪比)。",
+   "ko": "선체나 배관 검사 이미지: 카메라 위치의 램프가 물을 통해 벽을 비춘다 -> dict(이미지, 화소별 SNR).",
+   "de": "Inspektionsbild eines Schiffsrumpfs oder Rohrs: eine Lampe an der Kamera beleuchtet eine Wand durch das Wasser -> dict (Bild, SNR pro Pixel).",
+   "hi": "पोत-पतवार या पाइप का निरीक्षण चित्र: कैमरे पर लगा लैंप पानी के आर-पार दीवार को रोशन करता है -> dict (चित्र, प्रति-पिक्सेल SNR)।"
+  },
+  "optics/caustic_floor_segmentation": {
+   "fp": "a61dc0134a2b",
+   "ja": "床の照度画像からコースティクスの線を切り出す -> dict(マスク、しきい値、線の周期)。",
+   "zh": "从地面照度图像中分割出焦散线 -> 字典(掩码、阈值、线的周期)。",
+   "tw": "從地面照度影像中分割出焦散線 -> 字典(遮罩、閾值、線的週期)。",
+   "ko": "바닥 조도 이미지에서 코스틱 선을 분할한다 -> dict(마스크, 임곗값, 선의 주기).",
+   "de": "Segmentiert die Kaustiklinien eines Boden-Beleuchtungsstärkebilds -> dict (Maske, Schwelle, Linienperiode).",
+   "hi": "फर्श की irradiance छवि से caustic रेखाओं को अलग करना -> dict (mask, threshold, रेखा की अवधि)।"
+  },
+  "optics/lens_apply_solves": {
+   "fp": "ec89668e4391",
+   "en": "Return a copy of the prescription with every solve resolved: the rules stay, R / t become the solved values (``table``).",
+   "zh": "返回已解出所有解(solve)的处方副本:规则保留,R / t 变为解出的值(``table``)。",
+   "tw": "回傳已解出所有解(solve)的處方副本:規則保留,R / t 變為解出的值(``table``)。",
+   "ko": "모든 솔브(solve)를 푼 처방의 복사본을 돌려준다: 규칙은 남고 R / t는 푼 값이 된다(``table``).",
+   "de": "Gibt eine Kopie der Konstruktion mit allen aufgelösten Solves zurück: die Regeln bleiben, R / t werden zu den gelösten Werten (``table``).",
+   "hi": "सभी solve हल की हुई prescription की प्रति लौटाता है: नियम बने रहते हैं, R / t हल किए गए मान बन जाते हैं (``table``)।"
+  },
+  "optics/lens_solve_set": {
+   "fp": "a3508ff382a1",
+   "en": "Attach a solve rule to a surface and return the solved prescription (``table``).",
+   "zh": "给某个面加上解(solve)的规则,并返回解出后的处方(``table``)。",
+   "tw": "為某個面加上解(solve)的規則,並回傳解出後的處方(``table``)。",
+   "ko": "면에 솔브(solve) 규칙을 붙이고 푼 처방을 돌려준다(``table``).",
+   "de": "Hängt einer Fläche eine Solve-Regel an und gibt die gelöste Konstruktion zurück (``table``).",
+   "hi": "किसी surface पर solve का नियम जोड़कर हल की हुई prescription लौटाता है (``table``)।"
+  },
+  "optics/lens_solve_clear": {
+   "fp": "825d29fd5aa4",
+   "en": "Remove the solve rule of a surface: the solved values stay as plain numbers (``table``).",
+   "zh": "去掉某个面的解(solve)规则:解出的值作为普通数值保留(``table``)。",
+   "tw": "去掉某個面的解(solve)規則:解出的值作為普通數值保留(``table``)。",
+   "ko": "면의 솔브(solve) 규칙을 제거한다: 푼 값은 일반 숫자로 남는다(``table``).",
+   "de": "Entfernt die Solve-Regel einer Fläche: die gelösten Werte bleiben als gewöhnliche Zahlen (``table``).",
+   "hi": "किसी surface का solve नियम हटाता है: हल किए गए मान सामान्य संख्याओं के रूप में रहते हैं (``table``)।"
+  },
+  "optics/lens_solves_list": {
+   "fp": "e77f5675d473",
+   "en": "List the solves in place: rule, solved value, achieved quantity and error (``table``).",
+   "zh": "列出现有的解(solve):规则、解出的值、达到的量及误差(``table``)。",
+   "tw": "列出現有的解(solve):規則、解出的值、達到的量及誤差(``table``)。",
+   "ko": "붙어 있는 솔브(solve)의 목록: 규칙, 푼 값, 달성한 양과 오차(``table``).",
+   "de": "Listet die vorhandenen Solves auf: Regel, gelöster Wert, erreichte Größe und Fehler (``table``).",
+   "hi": "लगे हुए solve की सूची: नियम, हल किया गया मान, प्राप्त राशि और त्रुटि (``table``)।"
+  },
+  "optics/afocal_system": {
+   "fp": "313bbfe7fcee",
+   "en": "Build an afocal system (telescope, beam expander): flag a given system as afocal, or make an ideal two-lens telescope (``table``).",
+   "zh": "构造像空间为平行光的系统(望远镜、扩束器):给已有系统加上 afocal 标记,或生成由两片理想透镜构成的望远镜(``table``)。",
+   "tw": "建構像空間為平行光的系統(望遠鏡、擴束器):為既有系統加上 afocal 標記,或生成由兩片理想透鏡構成的望遠鏡(``table``)。",
+   "ko": "상 공간이 평행광인 계(망원경, 빔 확대기)를 만든다: 주어진 계에 afocal 표시를 붙이거나 이상 렌즈 2장의 망원경을 만든다(``table``).",
+   "de": "Baut ein afokales System (Fernrohr, Strahlaufweiter): markiert ein gegebenes System als afokal oder erzeugt ein ideales Zwei-Linsen-Fernrohr (``table``).",
+   "hi": "ऐसा तंत्र बनाता है जिसका image space समानांतर प्रकाश का हो (दूरबीन, beam expander): दिए गए तंत्र पर afocal चिह्न लगाता है या दो आदर्श lens की दूरबीन बनाता है (``table``)।"
+  },
+  "optics/lens_afocal_report": {
+   "fp": "fcfc0b7ebd70",
+   "en": "Angular magnification, exit pupil and angular aberrations per field (in arcminutes) of an afocal system (``table``).",
+   "zh": "afocal 系统的角放大率、出瞳和各视场的角度像差(角分)(``table``)。",
+   "tw": "afocal 系統的角放大率、出瞳和各視場的角度像差(角分)(``table``)。",
+   "ko": "afocal 계의 각배율, 사출동 및 시야별 각도 수차(각분)(``table``).",
+   "de": "Winkelvergrößerung, Austrittspupille und Winkelaberrationen je Feld (in Bogenminuten) eines afokalen Systems (``table``).",
+   "hi": "afocal तंत्र का कोणीय आवर्धन, exit pupil और हर field की कोणीय aberration (आर्कमिनट में) (``table``)।"
+  },
+  "optics/lens_image_surface": {
+   "fp": "6213b9eb7f66",
+   "en": "Return a prescription with a curved image surface: rays meet this surface, and spot, OPD and MTF are measured on it (``table``).",
+   "zh": "返回像面为曲面的处方:光线与该面相交,光斑、OPD 和 MTF 都在该面上测量(``table``)。",
+   "tw": "回傳像面為曲面的處方:光線與該面相交,光斑、OPD 和 MTF 都在該面上量測(``table``)。",
+   "ko": "상면을 곡면으로 만든 처방을 돌려준다: 광선은 이 면과 만나고 스폿, OPD, MTF는 이 면에서 측정한다(``table``).",
+   "de": "Gibt eine Konstruktion mit gekrümmter Bildfläche zurück: Strahlen schneiden diese Fläche, Spot, OPD und MTF werden auf ihr gemessen (``table``).",
+   "hi": "curved image surface वाली prescription लौटाता है: किरणें इसी सतह से मिलती हैं, और spot, OPD तथा MTF इसी पर मापे जाते हैं (``table``)।"
+  },
+  "optics/lens_petzval_radius": {
+   "fp": "3ece3cd3bd68",
+   "en": "Petzval radius in image space: the radius of the image surface that removes the third-order field curvature (``table``).",
+   "zh": "像空间的佩茨瓦尔半径:消除三阶场曲的像面曲率半径(``table``)。",
+   "tw": "像空間的佩茨瓦爾半徑:消除三階場曲的像面曲率半徑(``table``)。",
+   "ko": "상 공간의 페츠발 반지름: 3차 상면 만곡을 없애는 상면의 곡률 반지름(``table``).",
+   "de": "Petzval-Radius im Bildraum: der Krümmungsradius der Bildfläche, die die Bildfeldwölbung dritter Ordnung aufhebt (``table``).",
+   "hi": "image space की Petzval त्रिज्या: वह image surface की वक्रता त्रिज्या जो तीसरे क्रम की field curvature मिटा देती है (``table``)।"
+  },
+  "optics/lens_zmx_solves_roundtrip": {
+   "fp": "78ee0d1b14a5",
+   "en": "Write the solves to a ``.zmx``, read it back and write again: check that this is a fixed point (``table``).",
+   "zh": "把解(solve)写入 ``.zmx``,读回后再写一次:检查是否为不动点(``table``)。",
+   "tw": "把解(solve)寫入 ``.zmx``,讀回後再寫一次:檢查是否為不動點(``table``)。",
+   "ko": "솔브(solve)를 ``.zmx``에 쓰고 다시 읽어 한 번 더 쓴다: 고정점이 되는지 확인한다(``table``).",
+   "de": "Schreibt die Solves in eine ``.zmx``, liest sie zurück und schreibt erneut: prüft, ob das ein Fixpunkt ist (``table``).",
+   "hi": "solve को ``.zmx`` में लिखता है, वापस पढ़ता है और फिर लिखता है: जाँचता है कि यह fixed point है या नहीं (``table``)।"
+  },
+  "optics/lens_scene": {
+   "fp": "80a7ef063bc7",
+   "ja": "render_scene_through_lens 用の簡単な 3 次元のシーン(平面・球・メッシュ・光源)を作って検証する -> dict(``scene`` の表)。",
+   "zh": "构建并校验供 render_scene_through_lens 使用的简单三维场景(平面、球、网格、光源)-> 字典(``scene`` 表)。",
+   "tw": "建構並驗證供 render_scene_through_lens 使用的簡單三維場景(平面、球、網格、光源)-> 字典(``scene`` 表)。",
+   "ko": "render_scene_through_lens 용 간단한 3차원 장면(평면·구·메시·광원)을 만들고 검증한다 -> dict(``scene`` 표).",
+   "de": "Eine einfache 3-D-Szene (Ebenen, Kugeln, Netze, Lichter) für render_scene_through_lens aufbauen und prüfen -> dict (die ``scene``-Tabelle).",
+   "hi": "render_scene_through_lens के लिए एक सरल 3-D दृश्य (planes, spheres, meshes, lights) बनाना और जाँचना -> dict (``scene`` table)।"
+  },
+  "optics/exit_pupil_samples": {
+   "fp": "a3033b6fe491",
+   "ja": "*system* の射出瞳の標本点(位置と半径は近軸光線追跡から)-> dict。",
+   "zh": "在 *system* 的出瞳上取样点(位置与半径来自近轴追迹)-> 字典。",
+   "tw": "在 *system* 的出瞳上取樣點(位置與半徑來自近軸追跡)-> 字典。",
+   "ko": "*system* 의 사출동 위의 표본점(위치와 반지름은 근축 추적에서) -> dict.",
+   "de": "Stichprobenpunkte auf der Austrittspupille von *system* (Lage und Radius aus der paraxialen Rechnung) -> dict.",
+   "hi": "*system* की exit pupil पर नमूना बिंदु (स्थिति और त्रिज्या paraxial trace से) -> dict।"
+  },
+  "optics/trace_sensor_rays": {
+   "fp": "77bb3e98952f",
+   "ja": "センサ上の点から射出瞳の点を通る光線を、物体空間へ**逆向きに**追跡する -> dict。",
+   "zh": "从传感器上的点经出瞳上的点,把光线**逆向**追迹到物空间 -> 字典。",
+   "tw": "從感測器上的點經出瞳上的點,把光線**逆向**追跡到物空間 -> 字典。",
+   "ko": "센서 위의 점에서 사출동의 점을 지나는 광선을 물체 공간까지 **거꾸로** 추적한다 -> dict.",
+   "de": "Strahlen von Sensorpunkten durch Punkte der Austrittspupille **rückwärts** in den Objektraum verfolgen -> dict.",
+   "hi": "sensor के बिंदुओं से exit pupil के बिंदुओं से होकर किरणों को object space तक **उल्टी दिशा में** trace करना -> dict।"
+  },
+  "optics/scene_radiance": {
+   "fp": "75517c0d9ef5",
+   "ja": "物体空間の光線が ``lens_scene`` に当たったときに運ぶ放射輝度 -> dict。",
+   "zh": "物空间光线击中 ``lens_scene`` 时所带的辐亮度 -> 字典。",
+   "tw": "物空間光線擊中 ``lens_scene`` 時所帶的輻射亮度 -> 字典。",
+   "ko": "물체 공간의 광선이 ``lens_scene`` 에 닿을 때 실어 나르는 복사휘도 -> dict.",
+   "de": "Strahldichte entlang von Objektraumstrahlen, die auf eine ``lens_scene`` treffen -> dict.",
+   "hi": "object space की किरणों के ``lens_scene`` से टकराने पर radiance -> dict।"
+  },
+  "optics/render_scene_through_lens": {
+   "fp": "08762f698fac",
+   "ja": "``lens_scene`` を処方 *system* のレンズ越しに撮る: センサ側からの光線追跡 -> dict。",
+   "zh": "透过处方 *system* 的镜头拍摄 ``lens_scene``:从传感器一侧的光线追迹 -> 字典。",
+   "tw": "透過處方 *system* 的鏡頭拍攝 ``lens_scene``:從感測器一側的光線追跡 -> 字典。",
+   "ko": "처방 *system* 의 렌즈를 통해 ``lens_scene`` 을 촬영한다: 센서 쪽에서의 광선 추적 -> dict.",
+   "de": "Eine ``lens_scene`` durch das Objektiv der Verschreibung *system* aufnehmen: Strahlverfolgung von der Sensorseite -> dict.",
+   "hi": "किसी ``lens_scene`` को prescription *system* के लेंस से होकर photograph करना: sensor की ओर से ray tracing -> dict।"
+  },
+  "optics/bokeh_shape": {
+   "fp": "ef490d6f1d6a",
+   "ja": "点光源のピントはずれの像(ボケ)の形 ―― 瞳の像の重なり、猫の目 -> dict。",
+   "zh": "点光源失焦像(虚化)的形状——光瞳像的交集,即猫眼形 -> 字典。",
+   "tw": "點光源失焦像(虛化)的形狀——光瞳像的交集,即貓眼形 -> 字典。",
+   "ko": "점광원의 초점 벗어난 상(보케)의 모양 — 동공 상들의 교집합, 고양이 눈 -> dict.",
+   "de": "Der unscharfe Fußabdruck einer Punktquelle – der Schnitt der Pupillenbilder, das Katzenauge -> dict.",
+   "hi": "बिंदु स्रोत का out-of-focus footprint — pupil images का प्रतिच्छेदन, यानी cat's eye -> dict।"
+  },
+  "optics/render_ghost_overlay": {
+   "fp": "81d3f3f49bba",
+   "ja": "明るい点光源の 2 回反射のゴーストを、センサ上の電子数として求める -> dict。",
+   "zh": "明亮点光源的二次反射鬼像,以传感器上的电子数表示 -> 字典。",
+   "tw": "明亮點光源的二次反射鬼影,以感測器上的電子數表示 -> 字典。",
+   "ko": "밝은 점광원의 2회 반사 고스트를 센서 위의 전자 수로 구한다 -> dict.",
+   "de": "Die Doppelreflexions-Geisterbilder einer hellen Punktquelle als Elektronen auf dem Sensor -> dict.",
+   "hi": "किसी चमकीले बिंदु के दो-परावर्तन वाले ghost images, sensor पर इलेक्ट्रॉनों के रूप में -> dict।"
+  },
+  "optics/render_compare_prescriptions": {
+   "fp": "7b7eb7d5ad18",
+   "ja": "同じ場面を 2 本以上の処方で撮り、絵ごとの品質を表にする -> dict。",
+   "zh": "用两个或更多处方拍摄同一场景,并把每张图像的质量列成表 -> 字典。",
+   "tw": "用兩個或更多處方拍攝同一場景,並把每張影像的品質列成表 -> 字典。",
+   "ko": "같은 장면을 둘 이상의 처방으로 촬영하고 사진마다의 품질을 표로 정리한다 -> dict.",
+   "de": "Dieselbe Szene durch zwei oder mehr Verschreibungen aufnehmen und die Qualität jedes Bildes tabellieren -> dict.",
+   "hi": "एक ही दृश्य को दो या अधिक prescriptions से render करना और हर तस्वीर की गुणवत्ता को तालिका में देना -> dict।"
+  },
+  "optics/mla_surface": {"fp":"d0eebb81b305","ja":"周期的な球面キャップのマイクロレンズアレイ面を記述する。","zh":"描述周期球冠微透镜阵列表面。","tw":"描述週期球冠微透鏡陣列表面。","ko":"주기적 구면 캡 마이크로렌즈 배열 면을 기술한다.","de":"Eine periodische Mikrolinsenarray-Fläche aus Kugelkappen beschreiben.","hi":"आवर्ती गोलाकार-कैप माइक्रोलेंस ऐरे सतह का वर्णन करें।"},
+  "optics/plenoptic_system": {"fp":"4de626cc52b1","ja":"主レンズ、MLA、センサを組み立て、F ナンバー整合を報告する。","zh":"组装主镜头、微透镜阵列和传感器，并报告 F 数匹配。","tw":"組裝主鏡頭、微透鏡陣列和感測器，並報告 F 數匹配。","ko":"주 렌즈, MLA, 센서를 조립하고 F 번호 정합을 보고한다.","de":"Hauptobjektiv, MLA und Sensor zusammensetzen und die F-Zahl-Anpassung berichten.","hi":"मुख्य लेंस, MLA और सेंसर को जोड़कर F-number मिलान रिपोर्ट करें।"},
+  "optics/plenoptic_capture": {"fp":"4254954e736d","ja":"プレノプティック生フレームと白色校正画像を追跡して生成する。","zh":"追迹生成光场原始帧及其白场校准图像。","tw":"追跡產生光場原始幀及其白場校正影像。","ko":"플렌옵틱 원시 프레임과 백색 보정 영상을 추적해 생성한다.","de":"Ein plenoptisches Rohbild und sein Weißbild zur Kalibrierung nachverfolgen.","hi":"प्लेनॉप्टिक raw frame और उसकी white calibration image को trace करें।"},
+  "optics/plenoptic_mla_calibrate": {"fp":"9bb6f03bef51","ja":"白色画像のピークへ回転した長方格子を当てはめ、MLA を校正する。","zh":"对白场图像峰值拟合旋转矩形晶格以校准微透镜阵列。","tw":"對白場影像峰值擬合旋轉矩形晶格以校正微透鏡陣列。","ko":"백색 영상의 피크에 회전 직사각 격자를 맞춰 MLA를 보정한다.","de":"Ein gedrehtes rechteckiges Linsengitter an die Spitzen eines Weißbildes anpassen.","hi":"white image की peaks पर घुमी हुई आयताकार lenslet lattice fit करें।"},
+  "optics/plenoptic_decode": {"fp":"2f38b9ae1d67","ja":"校正済み生フレームを整流し、光線場 L[v,u,y,x] を返す。","zh":"校正并重采样原始帧，返回光场 L[v,u,y,x]。","tw":"校正並重取樣原始幀，回傳光場 L[v,u,y,x]。","ko":"보정된 원시 프레임을 정류해 광선장 L[v,u,y,x]를 반환한다.","de":"Ein kalibriertes Rohbild entzerren und das Lichtfeld L[v,u,y,x] zurückgeben.","hi":"calibrated raw frame को rectify करके light field L[v,u,y,x] लौटाएँ।"},
+  "optics/plenoptic_refocus_depth": {"fp":"ddd177c30e78","ja":"光線場の再合焦スロープをメートル単位の物体距離へ変換する。","zh":"将光场重聚焦斜率转换为以米为单位的物距。","tw":"將光場重聚焦斜率轉換為以公尺為單位的物距。","ko":"광선장 재초점 기울기를 미터 단위 물체 거리로 변환한다.","de":"Die Lichtfeld-Refokus-Steigung in eine Objektentfernung in Metern umrechnen.","hi":"light-field refocus slope को मीटर में object distance में बदलें।"},
+  "optics/tolerance_table": {"fp":"d24d251fde5a","ja":"製造変数ごとに独立した、検証済みの公差行を作る -> dict。","zh":"为每个独立制造变量建立并验证公差行 -> 字典。","tw":"為每個獨立製造變數建立並驗證公差列 -> 字典。","ko":"독립 제조 변수마다 검증된 공차 행을 만든다 -> dict.","de":"Validierte Toleranzzeilen je unabhängiger Fertigungsvariable erstellen -> dict.","hi":"हर स्वतंत्र निर्माण चर के लिए सत्यापित tolerance row बनाएँ -> dict।"},
+  "optics/tolerance_criteria": {"fp":"a6a6d02f847d","ja":"性能基準と任意の上限・下限を検証する -> dict。","zh":"验证性能准则及可选上下限 -> 字典。","tw":"驗證性能準則及可選上下限 -> 字典。","ko":"성능 기준과 선택적 상하한을 검증한다 -> dict.","de":"Leistungskriterien und optionale Grenzwerte prüfen -> dict.","hi":"performance criteria और वैकल्पिक सीमाएँ जाँचें -> dict।"},
+  "optics/tolerance_compensators": {"fp":"216967038329","ja":"決定的で境界つきの再最適化変数を記述する -> dict。","zh":"描述确定且有界的再优化变量 -> 字典。","tw":"描述確定且有界的再最佳化變數 -> 字典。","ko":"결정적이고 경계가 있는 재최적화 변수를 기술한다 -> dict.","de":"Deterministische begrenzte Nachoptimierungsvariablen beschreiben -> dict.","hi":"नियत और सीमाबद्ध पुनः-अनुकूलन चर बताएँ -> dict।"},
+  "optics/tolerance_monte_carlo": {"fp":"2d650fdd7d4f","ja":"決定的で失敗を隠さない Monte Carlo と Wilson 95 % 歩留まり区間 -> dict。","zh":"运行确定且失败封闭的蒙特卡洛并报告 Wilson 95% 良率区间 -> 字典。","tw":"執行確定且失敗封閉的蒙地卡羅並報告 Wilson 95% 良率區間 -> 字典。","ko":"결정적 fail-closed Monte Carlo와 Wilson 95% 수율 구간을 보고한다 -> dict.","de":"Deterministische fehlersichere Monte-Carlo-Analyse mit Wilson-95-%-Ausbeuteintervall -> dict.","hi":"नियत fail-closed Monte Carlo और Wilson 95% yield interval दें -> dict।"},
+  "optics/tolerance_sensitivity": {"fp":"79ab71d117fe","ja":"中央差分、分布を反映した線形 RSS、逆公差を求める -> dict。","zh":"计算中心差分、考虑分布的线性 RSS 和反向公差 -> 字典。","tw":"計算中央差分、考慮分布的線性 RSS 與反向公差 -> 字典。","ko":"중앙 차분, 분포를 반영한 선형 RSS와 역공차를 구한다 -> dict.","de":"Zentrale Differenzen, verteilungsabhängiges lineares RSS und inverse Toleranzen -> dict.","hi":"central difference, distribution-aware linear RSS और inverse tolerance निकालें -> dict।"},
+  "optics/tolerance_report": {"fp":"f50a26a71a70","ja":"簡潔な組立報告を辞書または平文で作る -> dict。","zh":"以字典或纯文本生成简洁装配报告 -> 字典。","tw":"以字典或純文字產生簡潔組裝報告 -> 字典。","ko":"간결한 조립 보고서를 dict 또는 일반 텍스트로 만든다 -> dict.","de":"Kompakten Montagebericht als Dict oder Klartext erzeugen -> dict.","hi":"संक्षिप्त assembly report dict या plain text में बनाएँ -> dict।"},
+  "optics/tolerance_table_zmx": {"fp":"724cd2c0e5da","ja":"公差行を NOTE 行として直列化する -> text。","zh":"将公差行序列化为 NOTE 行 -> 文本。","tw":"將公差列序列化為 NOTE 行 -> 文字。","ko":"공차 행을 NOTE 행으로 직렬화한다 -> text.","de":"Toleranzzeilen als NOTE-Zeilen serialisieren -> Text.","hi":"tolerance rows को NOTE lines में serialize करें -> text।"},
+  "optics/tolerance_table_from_zmx": {"fp":"d21bbad026b5","ja":"書き出した NOTE 行から公差表を読む -> dict。","zh":"从写出的 NOTE 行读取公差表 -> 字典。","tw":"從寫出的 NOTE 行讀取公差表 -> 字典。","ko":"기록한 NOTE 행에서 공차표를 읽는다 -> dict.","de":"Toleranztabelle aus geschriebenen NOTE-Zeilen lesen -> dict.","hi":"लिखी NOTE lines से tolerance table पढ़ें -> dict।"},
+  "2d/dist_transform_abs": {"fp":"e82947918dfe","en":"Distance transform in absolute pixel distances without normalisation. Equivalent to HALCON's ``distance_transform`` (Compute the distance transformation of a region.).","zh":"不归一化的绝对像素距离变换。相当于 HALCON 的 ``distance_transform``（Compute the distance transformation of a region.）。","tw":"不正規化的絕對像素距離轉換。相當於 HALCON 的 ``distance_transform``（Compute the distance transformation of a region.）。","ko":"정규화하지 않는 절대 픽셀 거리의 거리 변환. HALCON의 ``distance_transform``(Compute the distance transformation of a region.)에 해당한다.","de":"Distanztransformation in absoluten Pixelabständen ohne Normierung. Entspricht HALCONs ``distance_transform`` (Compute the distance transformation of a region.).","hi":"बिना सामान्यीकरण के निरपेक्ष pixel दूरी का distance transform। HALCON के ``distance_transform`` (Compute the distance transformation of a region.) के समकक्ष है।"},
+  "2d/mean_box_wh": {"fp":"80854472d0bf","en":"Averaging (box) filter with independently chosen width and height. Equivalent to HALCON's ``mean_image`` (Smooth by averaging.).","zh":"宽度与高度独立选择的平均（box）滤波。相当于 HALCON 的 ``mean_image``（Smooth by averaging.）。","tw":"寬度與高度獨立選擇的平均（box）濾波。相當於 HALCON 的 ``mean_image``（Smooth by averaging.）。","ko":"너비와 높이를 독립적으로 고르는 평균(box) 필터. HALCON의 ``mean_image``(Smooth by averaging.)에 해당한다.","de":"Mittelwert-(Box-)Filter mit unabhängig gewählter Breite und Höhe. Entspricht HALCONs ``mean_image`` (Smooth by averaging.).","hi":"स्वतंत्र रूप से चुनी गई चौड़ाई और ऊँचाई वाला औसत (box) filter। HALCON के ``mean_image`` (Smooth by averaging.) के समकक्ष है।"}
  }
 }

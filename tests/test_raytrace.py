@@ -41,7 +41,11 @@ DESIGN_OPS = ["lens_system", "thick_lens", "glass", "example_system",
               "glass_catalog", "sellmeier",
               "paraxial_trace", "seidel_coefficients", "spot_stats",
               "tolerance_analysis", "wavefront_from_opd", "spot_diagram",
-              "ray_fan", "opd_map", "chromatic_shift"]
+              "ray_fan", "opd_map", "chromatic_shift",
+              # 2026-10-15: 公開していたのに未登録だった 4 関数(trace_rays は窓口の正準名 lens_trace_rays のまま)
+              "chief_ray", "ray_bundle", "opd_samples", "with_wavelength",
+              # 2026-10-19: 光線の照準とケラレ係数
+              "with_aiming", "ray_aiming", "set_vignetting"]
 N_ENTRY = 6                                          # ops callable with no input (the rest eat a table)
 
 
@@ -321,7 +325,9 @@ def test_design_ops_return_their_declared_type_and_reach_the_fuzzer():
             "wavefront_from_opd": (sg,), "spot_diagram": (sg,), "ray_fan": (sg,),
             "opd_map": (sg,), "glass_catalog": ("N-BK7",),
             "sellmeier": (1.03961212, 0.231792344, 1.01046945, 0.00600069867, 0.0200179144, 103.560653),
-            "chromatic_shift": (sg,)}
+            "chromatic_shift": (sg,), "chief_ray": (sg,), "ray_bundle": (sg,), "opd_samples": (sg,),
+            "with_wavelength": (sg,), "with_aiming": (sg,), "ray_aiming": (sg,),
+            "set_vignetting": (sg,)}
     for name in DESIGN_OPS:
         out_t = opsoptics.info(name)["out"]
         val = opsoptics.call(name, *args[name])

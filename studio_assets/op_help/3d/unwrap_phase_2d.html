@@ -1,12 +1,14 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">unwrap_phase_2d — 3D <code style="color:#22d3bf">structured_light</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.unwrap_phase_2d(wrapped, mask=None) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import fringe; fringe.unwrap_phase_2d(wrapped, mask=None) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;unwrap_phase_2d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.unwrap_phase_2d(wrapped, mask=None, crop_valid=False) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import fringe; fringe.unwrap_phase_2d(wrapped, mask=None, crop_valid=False) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;unwrap_phase_2d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>wrapped phase を skimage.restoration.unwrap_phase で連続位相に展開する。</p>
 <p>wrapped: wrapped_phase の出力(2D)。NaN を含んでよい(無効画素として扱う)。</p>
 <p>mask:    省略可。True = 有効画素(numpy masked array の慣習とは逆にした直感的な向き)。</p>
 <p>NaN 画素と mask=False 画素は無効としてアンラップから除外し、出力では NaN を返す。</p>
+<p>crop_valid: 省略可(既定 False = 全面処理)。True なら有効画素の外接矩形だけを skimage に渡し、</p>
+<p>外側は NaN のまま返す(無効画素が多い枠つき画像で速い別経路。有効画素の位相は全面処理と 2π の整数倍のオフセットを除いて一致する。島ごとのオフセットは skimage の版で変わりうる)。</p>
 <p>返り値: 連続位相(2D float)。無効画素は NaN。大域オフセット(+2πm)の不定性は残る。</p>
 <p>手順: 無効画素(<code style="color:#22d3bf">wrapped</code> の非有限 ∪ <code style="color:#22d3bf">mask == False</code>)が無ければ <code style="color:#22d3bf">skimage.restoration.unwrap_phase(arr)</code> をそのまま呼ぶ。あれば無効画素を 0 で埋めた <code style="color:#22d3bf">numpy.ma</code> の masked array として渡し(skimage は masked 画素を展開から除外する)、出力の無効画素を NaN に戻す。</p>
 <p>検証: scikit-image が import できない環境では <code style="color:#22d3bf">RuntimeError</code>(<code style="color:#22d3bf">ImportError</code> ではない)。<code style="color:#22d3bf">wrapped</code> が 2-D でない、<code style="color:#22d3bf">mask</code> の形が違う、<b>全画素が無効</b> (アンラップする画素が無い)は <code style="color:#22d3bf">ValueError</code>。</p>

@@ -15,6 +15,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>透過填補孔洞與凹陷來逼近凸包形狀（以閉運算實現的近似）。原意對應 HALCON 的 <code style="color:#22d3bf">shape_trans</code>（Transform the shape of a region.）中的凸包變換，但實作方式是反覆次數很多的閉運算，並非嚴格的凸包計算（近似）。</p>
 <p><code style="color:#22d3bf">a</code> 將迭代次數在 <code style="color:#22d3bf">3〜6</code>（<code style="color:#22d3bf">_it(a)+2</code>）之間調整。<code style="color:#22d3bf">b</code> 未使用。只是施加 <code style="color:#22d3bf">border_value=1</code> 的二值閉運算，因此超過迭代次數大小的縮頸和孔不會被填補（真正的凸包則一定會填補）。</p>
+<p><b>旋鈕（實測）</b>：<code style="color:#22d3bf">a</code> 以<b>離散檔位</b>生效，切換點在 a ≈ 0.33、0.67、0.99（以步長 0.02 掃描實測）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

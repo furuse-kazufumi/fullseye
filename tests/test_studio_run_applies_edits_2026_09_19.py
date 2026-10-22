@@ -47,7 +47,10 @@ def test_run_all_does_not_run_the_old_pipeline_when_the_edit_does_not_parse():
 def test_browser_search_ranks_name_matches_before_doc_matches():
     win, _model = _window()
     win._search.setText("canny")
-    names = [win._op_list.item(i).data(0x0100) for i in range(win._op_list.count())]   # Qt.UserRole
+    win._search_ui["timer"].stop()
+    win._search_ui["timer"].timeout.emit()
+    names = [win._op_list.item(i).data(0x0100) for i in range(win._op_list.count())
+             if win._op_list.item(i).data(0x0100)]                 # skip group headers
     assert names, "no hit for 'canny'"
     assert "canny" in names[0], names[:5]                 # 名前に含む op が説明文だけの op(edges_color)より先
     if "edges_color" in names:

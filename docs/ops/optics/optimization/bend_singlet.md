@@ -7,7 +7,7 @@ out: table
 examples: [lens_optimize_demo]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # bend_singlet — OPTICS `optimization` op
@@ -27,6 +27,9 @@ the third-order minimum-spherical bending for a distant object,
 ``shape_factor``, ``R1``, ``R2`` and the RMS spot on axis.
 ``system["object_mm"]`` is ``inf`` for the default object at infinity (the
 lens_system convention); ``R1`` / ``R2`` are ``inf`` for a flat side (q = ±1).
+*index* is anything :func:`raytrace.refractive_index` takes: a number, an
+``(nd, vd)`` pair, or a glass / material name such as ``"N-BK7"`` or
+``"PMMA"`` (the radii use its d-line index, the traced lens keeps its dispersion).
 
 ## ファミリ共通の入力契約(fail-closed)
 

@@ -7,7 +7,7 @@ out: labels2d
 examples: [halcon_segmentation_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # classify_image_class_lut — SEGMENTATION `classify` op
@@ -41,7 +41,7 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 ## 同カテゴリ(`classify`)
 
-[class_2dim_sup](class_2dim_sup.md) · [class_2dim_unsup](class_2dim_unsup.md) · [learn_ndim_norm](learn_ndim_norm.md) · [class_ndim_norm](class_ndim_norm.md)
+[class_2dim_sup](class_2dim_sup.md) · [class_2dim_unsup](class_2dim_unsup.md) · [learn_ndim_norm](learn_ndim_norm.md) · [class_ndim_norm](class_ndim_norm.md) · [fisher_lda_fit](fisher_lda_fit.md) · [fisher_lda_score](fisher_lda_score.md)
 
 ---
 *Provenance: segmentation.py — SEGMENTATION operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

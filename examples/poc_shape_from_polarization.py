@@ -144,6 +144,7 @@ def err_deg(a, b):
 
 def main():
     t0 = time.time()
+    c0 = time.process_time()
     print("=" * 76)
     print("PoC: 黒光沢とガラスの形を偏光で測る(偏光からの形状復元)")
     print("=" * 76)
@@ -291,7 +292,11 @@ def main():
           " / ".join("%d %%: %.1f°" % (100 * a, b) for a, b in zip(fr, e_mix)))
 
     elapsed = time.time() - t0
-    check(elapsed < 60.0, "所要時間(CI の上限に余裕を残す)", "%.1f 秒" % elapsed)
+    cpu = time.process_time() - c0
+    # ★2026-10-15: 壁時計は CI の並列のシャードで同じ機械の他のテストの負荷まで数える
+    #   (poc_phase_measuring_deflectometry がこれで赤になった)。この門が抑えたいのはこの PoC 自身の計算量なので、プロセスの CPU 時間
+    #   (time.process_time)で測り、壁時計は併記する。
+    check(cpu < 60.0, "所要時間(CI の上限に余裕を残す)", "CPU %.1f 秒(壁時計 %.1f 秒)" % (cpu, elapsed))
 
     if figs.enabled():
         _figures(nrm, md, ml, both, inner, z_true, sweep, raw, cands, n_sfp, e_sfp, n_ps, e_ps, h, stack,

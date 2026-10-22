@@ -243,10 +243,27 @@ def _hero_montage(cap: dict) -> str:
     buf = io.BytesIO()
     sheet.save(buf, "JPEG", quality=JPEG_Q, optimize=True)
     data = buf.getvalue()
-    # 内容が同じなら書かない(mtime だけ動いて差分に見えるのを避ける)
-    if not (os.path.exists(dst) and io.open(dst, "rb").read() == data):
+    # 内容が同じなら書かない(mtime だけ動いて差分に見えるのを避ける)。バイトでなく画素で比べる:
+    # Pillow 12 と 13 では LANCZOS の丸めと JPEG のバイトが違い(平均 0.017 段・最大 17 段、2026-10-18 実測)、
+    # バイト比較だと手元(12)で作った看板が Linux の CI(13)の --check で毎回赤になる。
+    if not (os.path.exists(dst) and _same_picture(dst, data)):
         io.open(dst, "wb").write(data)
     return MONTAGE
+
+
+#: 看板を「同じ絵」とみなす画素差の上限(0〜255 の平均絶対差)。タイルが 1 枚変われば桁で超える
+MONTAGE_SAME_MEAN_ABS = 0.5
+
+
+def _same_picture(path: str, data: bytes) -> bool:
+    """既存の看板と新しい JPEG が同じ絵か(大きさが同じで、画素の平均絶対差が上限未満)。"""
+    import numpy as np
+    from PIL import Image
+    if io.open(path, "rb").read() == data:
+        return True
+    a = np.asarray(Image.open(path).convert("RGB"), dtype=np.int16)
+    b = np.asarray(Image.open(io.BytesIO(data)).convert("RGB"), dtype=np.int16)
+    return a.shape == b.shape and float(np.abs(a - b).mean()) < MONTAGE_SAME_MEAN_ABS
 
 
 _OP_URL = None
@@ -312,7 +329,10 @@ def _exhibit_md(no: str, ex: dict, lang: str, pick: dict, thumb: str, byid: dict
                 second: dict | None = None, thumb2: str | None = None,
                 extras: list | None = None, more: list | None = None) -> str:
     title = ex["title_" + lang]
-    cap = ex["caption_" + lang]
+    # A realism pass may replace the lead figure without replacing the long exhibit
+    # plaque.  Keep the detailed plaque, but let the canonical registry describe the
+    # new lead image precisely in each published language.
+    cap = ex.get("figure_caption_" + lang) or ex["caption_" + lang]
     full = RAW + ex["id"] + "/" + pick["file"]
     th = RAW + ex["id"] + "/" + thumb
     run = ex.get("run") or ("py -3.11 examples/%s.py" % ex["id"])
@@ -332,12 +352,13 @@ def _exhibit_md(no: str, ex: dict, lang: str, pick: dict, thumb: str, byid: dict
         th2 = RAW + ex["id"] + "/" + thumb2
         # 図に説明が付いていなければ機械名(`auc_by_type` など)は出さない
         sub = (second.get("caption") or "").strip()
+        translated_sub = (ex.get("second_figure_caption_" + lang) or sub).strip()
         alt = (sub[:120] if sub else ("測定の図" if lang == "ja" else "measurement")).replace("]", ")")
         if lang == "ja":
-            cap_line = ("*↑ 測定の図 ―― %s*" % sub) if sub else "*↑ 測定の図*"
+            cap_line = ("*↑ 測定の図 ―― %s*" % translated_sub) if translated_sub else "*↑ 測定の図*"
         else:
-            tail = "(figure labels are in Japanese; the numbers are the same)"
-            cap_line = ("*↑ The measurement ―― %s %s*" % (sub, tail)) if sub else ("*↑ The measurement %s*" % tail)
+            tail = "" if ex.get("second_figure_caption_en") else " (figure labels are in Japanese; the numbers are the same)"
+            cap_line = ("*↑ The measurement ―― %s%s*" % (translated_sub, tail)) if translated_sub else ("*↑ The measurement%s*" % tail)
         lines += ["[![%s](%s)](%s)" % (alt, th2, full2), "", cap_line, ""]
     # 看板にも 2 枚目にも入らなかった**動く図**は全部出す —— GIF を落とすと「クリックしないと
     # 動かない絵」になり、動きが主題の展示ではそれで意味が消える(2026-09-21、GIF 2 本の展示で気づいた)。

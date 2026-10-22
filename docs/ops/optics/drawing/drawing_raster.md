@@ -4,10 +4,10 @@ dim: optics
 category: drawing
 in: table
 out: rgbimage
-examples: [poc_optics_drawings]
+examples: [poc_lens_file_roundtrip, poc_noncoaxial_optics, poc_optics_drawings]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # drawing_raster — OPTICS `drawing` op
@@ -47,15 +47,17 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_lens_file_roundtrip](../../../../examples/poc_lens_file_roundtrip.py) — `py -3.11 examples/poc_lens_file_roundtrip.py`
+- [poc_noncoaxial_optics](../../../../examples/poc_noncoaxial_optics.py) — `py -3.11 examples/poc_noncoaxial_optics.py`
 - [poc_optics_drawings](../../../../examples/poc_optics_drawings.py) — `py -3.11 examples/poc_optics_drawings.py`
 
 ## 型が繋がる次の op(`rgbimage` を入力に取れる)
 
-[clearcoat_shade](../material/clearcoat_shade.md) · [wetness](../material/wetness.md) · [defocus_blur](../scene/defocus_blur.md) · [diffraction_blur](../scene/diffraction_blur.md) · [sensor_capture](../scene/sensor_capture.md) · [pixel_shift_capture](../pixelshift/pixel_shift_capture.md) · [false_color_metric](../pixelshift/false_color_metric.md)
+[clearcoat_shade](../material/clearcoat_shade.md) · [wetness](../material/wetness.md) · [defocus_blur](../scene/defocus_blur.md) · [diffraction_blur](../scene/diffraction_blur.md) · [sensor_capture](../scene/sensor_capture.md) · [underwater_image](../watermedia/underwater_image.md) · [cubemap_from_equirect](../omni360/cubemap_from_equirect.md) · [viewport_from_equirect](../omni360/viewport_from_equirect.md)
 
 ## 同カテゴリ(`drawing`)
 
-[lens_section_drawing](lens_section_drawing.md) · [vision_setup_drawing](vision_setup_drawing.md) · [lens_element_drawing](lens_element_drawing.md) · [drawing_svg](drawing_svg.md) · [drawing_dxf](drawing_dxf.md) · [svg_entities](svg_entities.md) · [dxf_entities](dxf_entities.md)
+[lens_section_drawing](lens_section_drawing.md) · [vision_setup_drawing](vision_setup_drawing.md) · [lens_element_drawing](lens_element_drawing.md) · [drawing_svg](drawing_svg.md) · [drawing_dxf](drawing_dxf.md) · [svg_entities](svg_entities.md) · [dxf_entities](dxf_entities.md) · [noncoaxial_drawing](noncoaxial_drawing.md)
 
 ---
 *Provenance: optdraw.py — OPTICS operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

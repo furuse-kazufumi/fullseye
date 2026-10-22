@@ -226,6 +226,7 @@ def measure(dn):
 # --------------------------------------------------------------------------- #
 def main():
     t0 = time.time()
+    c0 = time.process_time()
     print("=" * 74)
     print("PoC: 「解像度の式」は見つかる大きさを教えない —— 照明ごとの POD(1823A)")
     print("=" * 74)
@@ -401,7 +402,11 @@ def main():
               "%s: 閾値を上げると a90 は増え、誤検出は減る" % key)
 
     elapsed = time.time() - t0
-    check(elapsed < 45.0, "所要時間(CI の上限に余裕を残す)", "%.1f 秒" % elapsed)
+    cpu = time.process_time() - c0
+    # ★2026-10-15: 壁時計は CI の並列のシャードで同じ機械の他のテストの負荷まで数える
+    #   (poc_phase_measuring_deflectometry がこれで赤になった)。この門が抑えたいのはこの PoC 自身の計算量なので、プロセスの CPU 時間
+    #   (time.process_time)で測り、壁時計は併記する。
+    check(cpu < 45.0, "所要時間(CI の上限に余裕を残す)", "CPU %.1f 秒(壁時計 %.1f 秒)" % (cpu, elapsed))
 
     # ---- 図 ------------------------------------------------------------- #
     if figs.enabled():

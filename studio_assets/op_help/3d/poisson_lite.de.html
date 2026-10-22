@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">poisson_lite — 3D <code style="color:#22d3bf">reconstruct</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">mesh</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.poisson_lite(points, size=64, sigma=1.0, iso=0.5, normals=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import recon3d; recon3d.poisson_lite(points, size=64, sigma=1.0, iso=0.5, normals=None)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;poisson_lite&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.poisson_lite(points, size=64, sigma=1.0, iso=0.5, normals=None, method=&#x27;exact&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import recon3d; recon3d.poisson_lite(points, size=64, sigma=1.0, iso=0.5, normals=None, method=&#x27;exact&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;poisson_lite&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Punktmenge (N,3) → ein Oberflächennetz (vertices(V,3), faces(F,3)) — eine leichtgewichtige Screened-Poisson-Näherung.</p>
 <p>Splattet die Punktwolke in ein size³-Voxelgitter, baut ein Isoflächenfeld und erzeugt daraus mit marching cubes ein Dreiecks-Mesh. Die Ausgabe-Vertices liegen in denselben <b>Weltkoordinaten</b> wie die Eingabe-Punktwolke (inverse Abbildung aus der bbox). bounds ist die bbox der Punktwolke (+ σ-abhängiges padding).</p>
@@ -27,6 +27,7 @@
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
 <p>Zu wenige Punkte (&lt;4), size zu klein, Belegungs- / Indikatorfeld zu dünn, sodass iso außerhalb des Wertebereichs liegt, usw.</p>
+<p>Mit Normalen summiert <code style="color:#22d3bf">method=&quot;fast&quot;</code> die drei Windungskomponenten im Frequenzraum; wegen abweichender Rundung ist dies optional.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Zusammen mit Blender — Form bauen, mit fullseye messen (Fallstricke: Achsen, Einheiten, Referenzdaten)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

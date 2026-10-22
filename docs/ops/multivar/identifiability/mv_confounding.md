@@ -4,10 +4,10 @@ dim: multivar
 category: identifiability
 in: matrix
 out: table
-examples: [sensitivity_tour]
+examples: [poc_simcal_thin_film, sensitivity_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # mv_confounding — MULTIVAR `identifiability` op
@@ -55,6 +55,7 @@ are reported as ``no_influence`` and left out of gamma.
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_simcal_thin_film](../../../../examples/poc_simcal_thin_film.py) — `py -3.11 examples/poc_simcal_thin_film.py`
 - [sensitivity_tour](../../../../examples/sensitivity_tour.py) — `py -3.11 examples/sensitivity_tour.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)

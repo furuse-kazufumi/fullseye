@@ -4,16 +4,16 @@ dim: math
 category: transform
 in: signal × signal
 out: table
-examples: [transforms_tour]
+examples: [perf_hankel_plan_and_piv_stream, transforms_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # hankel_transform — MATH `transform` op
 
 - **データ種**: `signal × signal` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.hankel_transform(r, f, *, r_max: 'float | None' = None, order: 'int' = 0, n: 'int' = 256) -> 'dict'` (実装を直接呼ぶなら `import mathtransforms; mathtransforms.hankel_transform(r, f, *, r_max: 'float | None' = None, order: 'int' = 0, n: 'int' = 256) -> 'dict'`、台帳から引くなら `opsmath.get("hankel_transform")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.hankel_transform(r, f, *, r_max: 'float | None' = None, order: 'int' = 0, n: 'int' = 256, plan: 'HankelPlan | None' = None) -> 'dict'` (実装を直接呼ぶなら `import mathtransforms; mathtransforms.hankel_transform(r, f, *, r_max: 'float | None' = None, order: 'int' = 0, n: 'int' = 256, plan: 'HankelPlan | None' = None) -> 'dict'`、台帳から引くなら `opsmath.get("hankel_transform")`)
 
 ## 使い方
 
@@ -50,6 +50,7 @@ mathops の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [perf_hankel_plan_and_piv_stream](../../../../examples/perf_hankel_plan_and_piv_stream.py) — `py -3.11 examples/perf_hankel_plan_and_piv_stream.py`
 - [transforms_tour](../../../../examples/transforms_tour.py) — `py -3.11 examples/transforms_tour.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)

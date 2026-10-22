@@ -7,13 +7,13 @@ out: table
 examples: [lens_design_demo, poc_optics_drawings]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # tolerance_analysis — OPTICS `design` op
 
 - **データ種**: `table` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.tolerance_analysis(system, tolerances=None, trials=100, seed=0, field=None, rings=6)` (実装を直接呼ぶなら `import raytrace; raytrace.tolerance_analysis(system, tolerances=None, trials=100, seed=0, field=None, rings=6)`、台帳から引くなら `opsoptics.get("tolerance_analysis")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.tolerance_analysis(system, tolerances=None, trials=100, seed=0, field=None, rings=6, compensator='auto')` (実装を直接呼ぶなら `import raytrace; raytrace.tolerance_analysis(system, tolerances=None, trials=100, seed=0, field=None, rings=6, compensator='auto')`、台帳から引くなら `opsoptics.get("tolerance_analysis")`)
 
 ## 使い方
 
@@ -29,6 +29,14 @@ finite difference), so you can see which surface's radius or tilt drives
 the yield. Deterministic for a given *seed*. Spots are sampled to 99 % of the
 pupil radius so that edge vignetting by a tilt cannot masquerade as an
 improvement (``n_vignetted`` would otherwise jump on the nominal design).
+
+*compensator* says whether each perturbed lens is **refocused**: ``"back_focus"`` moves the image
+plane to the perturbed lens's paraxial image (an assembler adjusting the back focus), ``"none"``
+keeps the nominal image plane, ``"auto"`` (default, the behaviour before 2026-10-15) refocuses
+exactly when the last surface's ``t`` is None (the image then follows each perturbed lens) and keeps the
+plane when ``t`` / ``image_mm`` is a number. ★The two answers differ by orders of magnitude (the
+default singlet: the std of the RMS spot changes about 300×), so the result reports the compensator
+actually used under ``compensator``.
 
 ## ファミリ共通の入力契約(fail-closed)
 

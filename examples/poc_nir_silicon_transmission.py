@@ -8,7 +8,7 @@
 
 材料表(`materials`、第 1〜2 段)の Si の n,k(Green 2008)を、**観察対象(ウェハの透過率)とセンサ
 (フォトダイオードの QE)の両方**に使う。新 op 9 本(`spectralrad`): 光源の分光分布(Planck・CIE A・LED)、
-帯域通過フィルタ、Si フォトダイオードの QE、エネルギー → 光子数、曲線の積と積分。5 章:
+帯域通過フィルタ、Si フォトダイオードの QE、エネルギー → 光子数、曲線の積と積分。6 章:
 
   1. **光源**: CIE A の表(300 / 560 / 780 nm)を定義式で再現、黒体は Wien と Stefan–Boltzmann、LED と
      フィルタの FWHM は指定どおり。
@@ -26,6 +26,13 @@
      像から測った CNR = 理論 e/√(e + 読出し²)(10 % 以内)。
   5. **焦点**: ウェハの厚さ分だけ機械的に下げると、像は t(1 − 1/n) = 556 µm ずれて回折限界の像が崩れる
      (`pupil_blur`、波面の defocus に換算)。補正した焦点で縁幅が戻る。
+  6. **3-D のシーンで撮る**(2026-10-15、`optscene` の波長積分): 第 4 章は配線の絵を手で描いて電子数を掛けた。
+     ここでは同じウェハ(材料表の Si、k から吸収)・裏の配線・バックライト・テレセンのレンズ・Si センサを 3-D に置き、
+     `layout_capture(mode="spectral")` で LED のスペクトルを数本の波長に割って光線で撮る。門: 開口の画素の
+     電子/光子が、この章で独立に書いた波長積分 ∫LED·λ·(1 − R)²e^{−αt}·QE / ∫LED と 4 % 以内(光線追跡と
+     曲線の積は別の実装)、850 nm ではウェハが不透明(1e-10 未満)、配線の影は幾何の真値の画素と 1 画素も違わない、
+     像から測った CNR = 理論。★レンダラは板の中の多重反射を追わないので、第 3 章の積分(多重反射込み)より
+     少し暗い —— その差も数として出す。
 
 【外部真値】CIE 15:2004 の標準イルミナント A(式と表)、Planck・Wien・Stefan–Boltzmann(SI 2019 の定数)、
 Green 2008 の Si の n,k(refractiveindex.info database、CC0)、Poisson 雑音の分散 = 平均。
@@ -45,6 +52,7 @@ import examplefig as figs  # noqa: E402
 import fullseye as fs  # noqa: E402
 import materials as MT  # noqa: E402
 import optics  # noqa: E402
+import optscene as OS  # noqa: E402
 import spectralrad as SR  # noqa: E402
 
 REDUCED = os.environ.get("FULLSEYE_POC_BUDGET",
@@ -273,9 +281,128 @@ def chapter_focus(pat, best):
 
 
 # --------------------------------------------------------------------------- #
+# 6. 3-D のシーンで撮る(optscene の波長積分)                                     #
+# --------------------------------------------------------------------------- #
+#: 裏の配線(中心 x, y と半幅 hx, hy [mm])。線と間隔の 3 組(0.2 / 0.4 / 0.8 mm = 2 / 4 / 8 画素)と十字。
+WIRES = [(x0 + w / 2 + 2 * k * w, -2.0, w / 2, 1.6) for w, x0 in ((0.2, -4.0), (0.4, -1.4), (0.8, 1.2)) for k in range(3)]
+WIRES += [(0.0, 2.4, 2.0, 0.15), (0.0, 2.4, 0.15, 1.5)]
+
+
+def _wafer_scene(t_um):
+    """Si ウェハ(材料表の n と k の吸収)の裏に、光を通さない配線を貼った 3-D のシーン。"""
+    si = OS.scene_material("dielectric", glass="SI", absorption_from_k=True)
+    t = t_um / 1000.0
+    objs = [OS.scene_box((0.0, 0.0, 1.0 + t / 2), (12.0, 12.0, t / 2), si)]
+    dark = OS.scene_material("lambert", albedo=0.0)
+    objs += [OS.scene_box((cx, cy, 0.975), (hx, hy, 0.025), dark) for cx, cy, hx, hy in WIRES]
+    return objs
+
+
+def _backlight(peak_nm):
+    return OS.light_spec("backlight", source="led", wavelength_nm=peak_nm, bandwidth_nm=LED_FWHM_NM,
+                         radius_mm=40.0, height_mm=60.0, n=8, size_mm=60.0)
+
+
+def _single_pass_integral(peak_nm, t_um):
+    """独立の経路: ∫ S(λ)·(λ/550)·(1 − R)²·e^{−αt}·QE(λ) dλ / ∫ S(λ) dλ(1 nm より細かい格子の台形則)。
+
+    S は Ohno の LED(峰 ± 1.5 半値全幅)、R・α は材料表の Si の n,k(垂直入射)、QE は第 2 章の Si フォトダイオード。
+    レンダラと同じく板の中の多重反射は入れない(入れた値との差は別に数える)。
+    """
+    lo, hi = peak_nm - 1.5 * LED_FWHM_NM, peak_nm + 1.5 * LED_FWHM_NM
+    led = SR.led_spectrum(peak_nm, LED_FWHM_NM, lo, hi, 1501)
+    lam = led[:, 0]
+    qe = SR.silicon_photodiode_qe(COLLECTION_UM, 0.0, None, lo, hi, 1501)[:, 1]
+    c = [MT.material_optical_constants("SI", float(v)) for v in lam]
+    t1 = np.array([(1 - r["reflectance_normal"]) ** 2 * math.exp(-r["alpha_per_cm"] * t_um * 1e-4) for r in c])
+    y = led[:, 1] * (lam / 550.0) * t1 * qe
+    return float(np.trapezoid(y, lam) / np.trapezoid(led[:, 1], lam))
+
+
+def chapter_scene(best, photons_per_px):
+    print("\n6. 3-D のシーンで撮る: ウェハ・裏の配線・バックライト・テレセンのレンズ・Si センサ(optscene の波長積分)")
+    res, K = (48, 9) if REDUCED else (96, 15)
+    qe = SR.silicon_photodiode_qe(COLLECTION_UM, 0.0, None, 700.0, 1350.0, 651)
+    sensor = OS.sensor_spec(pixel_um=20.0 * 96 / res, resolution=(res, res), qe_curve=qe)   # 視野 9.6 mm(物体側の画素 0.1 mm × 96)
+    lens = OS.lens_spec(focal_mm=25.0, f_number=4.0, working_distance_mm=150.0, telecentric=True)
+    scene = _wafer_scene(775.0)
+    cam = OS.vision_layout(sensor, lens, [_backlight(1050.0)], scene=scene)["camera"]
+    # 平らな視野(ウェハなしでバックライトを直接)で割る = フラットフィールド補正。発光点の粗さの模様が消え、
+    # 画素の値がそのまま「光源のエネルギー 1 あたりの T·QE·λ/550」になる
+    nothing = [OS.scene_box((1000.0, 0.0, 0.0), (0.1, 0.1, 0.1))]
+    flat = OS.render_optscene(nothing, cam, [_backlight(1050.0)])[..., 0]
+    o, _d = OS.camera_rays(cam)                                    # テレセン: 光線の原点の xy = 物体の xy
+    x, y = o[:, 0].reshape(res, res), o[:, 1].reshape(res, res)
+    pad = 0.75 * cam["object_pixel_mm"]
+    inside = np.zeros((res, res), bool)
+    near = np.zeros((res, res), bool)
+    for cx, cy, hx, hy in WIRES:
+        inside |= (np.abs(x - cx) < hx - pad) & (np.abs(y - cy) < hy - pad)
+        near |= (np.abs(x - cx) < hx + pad) & (np.abs(y - cy) < hy + pad)
+    open_ = ~near
+    leds = {"850 nm": 850.0, "最良 %.0f nm" % best[775.0]: best[775.0], "1050 nm": 1050.0, "1200 nm": 1200.0}
+    shots, rel, ratio_img = {}, {}, {}
+    cpu0 = time.process_time()
+    for label, peak in leds.items():
+        lay = OS.vision_layout(sensor, lens, [_backlight(peak)], scene=scene)
+        cap = OS.layout_capture(lay, supersample=1, raw=True, mode="spectral", spectral_samples=K,
+                                apply_diffraction=False)
+        per_energy = cap["radiance"][..., 0] / (flat * lens["transmission"])
+        photon_norm = sum(t["weight"] * t["photon_ratio"] for t in cap["spectral_terms"])
+        ratio_img[label] = per_energy
+        e_per_photon = per_energy / photon_norm                    # 電子 / 光子(第 3 章と同じ規格化)
+        shots[label] = e_per_photon
+        rel[label] = float(per_energy[open_].mean()) / _single_pass_integral(peak, 775.0) - 1.0
+    NUMBERS["scene_cpu_s"] = time.process_time() - cpu0
+    lab_best = [k for k in leds if k.startswith("最良")][0]
+    worst = max(abs(rel[k]) for k in leds if k != "850 nm")
+    NUMBERS["scene_vs_integral"] = worst
+    gate("光線で撮った開口の画素 = 独立に書いた波長積分 ∫LED·λ·(1 − R)²e^{−αt}·QE / ∫LED(%d 本の波長、4 %% 以内)" % K,
+         worst < 0.04, " / ".join("%s %+.2f %%" % (k, 100 * rel[k]) for k in leds if k != "850 nm"))
+    spread = max(float(ratio_img[k][open_].std() / ratio_img[k][open_].mean()) for k in leds if k != "850 nm")
+    gate("開口の画素はどれも同じ値(フラットフィールド補正の後、相対 1e-9)", spread < 1e-9, "最大 %.1e" % spread)
+    opaque = float(ratio_img["850 nm"][open_].mean() / ratio_img[lab_best][open_].mean())
+    want = _single_pass_integral(850.0, 775.0) / _single_pass_integral(best[775.0], 775.0)
+    NUMBERS["opaque_850"] = opaque
+    gate("850 nm ではウェハが不透明: 開口でも最良の LED の 1e-7 未満(積分は %.1e、裾の 925 nm 側だけが漏れる)" % want,
+         opaque < 1e-7 and want < 1e-7, "%.1e" % opaque)
+    dark = max(float(ratio_img[k][inside].max() / ratio_img[k][open_].mean()) for k in leds if k != "850 nm")
+    gate("配線の影は幾何の真値どおり(配線の内側の画素は 0、開口の画素は全部明るい)",
+         dark == 0.0 and all(float(ratio_img[k][open_].min()) > 0.0 for k in leds if k != "850 nm"))
+    ch3 = _electrons(best[775.0], 775.0)
+    NUMBERS["scene_vs_ch3"] = float(shots[lab_best][open_].mean() / ch3)
+    c = MT.material_optical_constants("SI", best[775.0])
+    mr = 1.0 / (1.0 - c["reflectance_normal"] ** 2 * math.exp(-2.0 * c["alpha_per_cm"] * 775e-4))
+    led = SR.energy_to_photons(SR.led_spectrum(best[775.0], LED_FWHM_NM, *GRID))
+    integral_table = SR.spectral_integral_table(led)
+    tail = 1.0 - integral_table["integrate"](best[775.0] - 1.5 * LED_FWHM_NM,
+                                               best[775.0] + 1.5 * LED_FWHM_NM) / integral_table["integrate"]()
+    NUMBERS.update({"multi_reflection": mr, "led_tail": tail})
+    gate("第 3 章(多重反射込み・LED の全幅で光子数を規格化)と 4 %% 以内: レンダラ / 第 3 章 = %.3f。内訳 —— 板の中の往復(第 3 章だけ)"
+         "×%.3f、LED の ±1.5 半値全幅の外の光子 %.1f %%(第 3 章だけが数える)、波長 %d 本の誤差 %+.1f %%"
+         % (NUMBERS["scene_vs_ch3"], mr, 100 * tail, K, 100 * rel[lab_best]),
+         abs(NUMBERS["scene_vs_ch3"] - 1.0) < 0.04)
+    rng = np.random.default_rng(20261015)
+    read_e = 5.0
+    noisy, cnr, cnr_th = {}, {}, {}
+    for k, e in shots.items():
+        clean = photons_per_px * e
+        nz = rng.poisson(clean).astype(np.float64) + rng.normal(0.0, read_e, clean.shape)
+        noisy[k] = (clean, nz)
+        eo = float(clean[open_].mean())
+        cnr_th[k] = eo / math.sqrt(eo + read_e ** 2)
+        cnr[k] = float((nz[open_].mean() - nz[inside].mean()) / nz[open_].std())
+    worst_cnr = max(abs(cnr[k] / cnr_th[k] - 1) for k in leds if k not in ("850 nm",))
+    gate("撮った像の CNR = 理論 e/√(e + 読出し²)(第 4 章と同じ光子数、10 % 以内)", worst_cnr < 0.10,
+         " / ".join("%s 測 %.1f 理 %.1f" % (k, cnr[k], cnr_th[k]) for k in leds))
+    print("   (光線で撮った 4 枚の CPU 時間 %.1f s)" % NUMBERS["scene_cpu_s"])
+    return noisy, cnr, open_
+
+
+# --------------------------------------------------------------------------- #
 # 図                                                                            #
 # --------------------------------------------------------------------------- #
-def make_figures(A, qs, contra, img, focus):
+def make_figures(A, qs, contra, img, focus, scene=None):
     sig, best, deep = contra
     pat, shots, cnr = img
     sharp, blurred, w20, shift_um = focus
@@ -318,6 +445,15 @@ def make_figures(A, qs, contra, img, focus):
                                                   ylabel="電子数(最大で規格化)", title="ウェハ %.0f µm: 最良 %.0f nm" % (t, b),
                                                   colors=["emphasis"], ylim=(0.0, 1.05), xlim=(850.0, 1200.0))))
     figs.save_gif("best_led_sweep", frames, fps=3.0, caption="ウェハを 30 µm から 1.5 mm まで厚くすると、最良の LED が長波長へ滑っていく。")
+    if scene is not None:
+        noisy3d, cnr3d, open3d = scene
+        ref = max(float(c[open3d].mean()) for c, _n in noisy3d.values())
+        tiles3d = [_tile(np.kron(nz, np.ones((1, 1))) / (1.2 * max(float(cl[open3d].mean()), 1e-30)) if not k.startswith("850")
+                         else nz / (1.2 * ref), "%s  CNR %.1f" % (k, cnr3d[k])) for k, (cl, nz) in noisy3d.items()]
+        figs.save("scene_through_wafer", np.concatenate(tiles3d, axis=1),
+                  caption="同じ 775 µm のウェハと裏の配線を 3-D のシーンに置き、光線で撮った(optscene の波長積分、テレセンのレンズ、"
+                          "Si センサ、第 4 章と同じ光子数)。850 nm は表示を最良の LED の開口で正規化 —— ウェハが不透明で読出し雑音だけが写る。"
+                          "他の 3 枚は各像の開口の平均で正規化。配線の影は幾何の真値の画素とずれない。")
 
 
 def main():
@@ -328,8 +464,9 @@ def main():
     contra = chapter_contradiction()
     img = chapter_image(contra[1])
     focus = chapter_focus(img[0], contra[1])
+    scene = chapter_scene(contra[1], NUMBERS["photons_per_px"])
     if not REDUCED and figs.target_dir() is not None:
-        make_figures(A, qs, contra, img, focus)
+        make_figures(A, qs, contra, img, focus, scene)
     print("\n所要 %.1f s、門 %d 件中 NG %d 件" % (time.time() - t0, len(GATES), len(FAILS)))
     if FAILS:
         print("FAIL: " + ", ".join(FAILS))

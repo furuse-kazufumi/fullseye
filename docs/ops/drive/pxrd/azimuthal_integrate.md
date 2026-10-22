@@ -7,13 +7,13 @@ out: table
 examples: [poc_pxrd_phase_peel]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # azimuthal_integrate — DRIVE `pxrd` op
 
 - **データ種**: `image2d × table` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.azimuthal_integrate(image, geometry, n_bins=None, two_theta_range=None, mask=None, solid_angle=True, polarization=None, chi_range=None, supersample=2)` (実装を直接呼ぶなら `import pxrd; pxrd.azimuthal_integrate(image, geometry, n_bins=None, two_theta_range=None, mask=None, solid_angle=True, polarization=None, chi_range=None, supersample=2)`、台帳から引くなら `opsdrive.get("azimuthal_integrate")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.azimuthal_integrate(image, geometry, n_bins=None, two_theta_range=None, mask=None, solid_angle=True, polarization=None, chi_range=None, supersample=2, memory_budget=None)` (実装を直接呼ぶなら `import pxrd; pxrd.azimuthal_integrate(image, geometry, n_bins=None, two_theta_range=None, mask=None, solid_angle=True, polarization=None, chi_range=None, supersample=2, memory_budget=None)`、台帳から引くなら `opsdrive.get("azimuthal_integrate")`)
 
 ## 使い方
 

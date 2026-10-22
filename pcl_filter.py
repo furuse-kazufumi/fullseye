@@ -34,7 +34,8 @@ def _as_points(points) -> np.ndarray:
     return P
 
 
-def statistical_outlier_removal(points, k: int = 16, std_ratio: float = 2.0):
+def statistical_outlier_removal(points, k: int = 16, std_ratio: float = 2.0,
+                                chunk: int | None = None):
     """各点の k 近傍平均距離が大域的に外れる点を除去する(統計的外れ値除去)。
 
     点ごとに「最も近い k 個(自分自身は除く)までの平均距離」を測り、その全点分布の
@@ -49,6 +50,8 @@ def statistical_outlier_removal(points, k: int = 16, std_ratio: float = 2.0):
         近傍数(既定 16)。点数が少なければ内部で ``n-1`` に丸める。
     std_ratio : float
         しきい値の緩さ。大きいほど残りやすい(除去が緩い)。
+    chunk : int or None
+        指定時は近傍照会をこの点数ずつ行う。既定 ``None`` は従来経路。
 
     Returns
     -------
@@ -72,8 +75,19 @@ def statistical_outlier_removal(points, k: int = 16, std_ratio: float = 2.0):
 
     kk = int(min(max(1, k), n - 1))
     # k+1 を引くのは 0 番目に必ず自分自身(距離 0)が入るため。
-    dist, _ = cKDTree(P).query(P, k=kk + 1)
-    mean_d = dist[:, 1:].mean(axis=1)          # 自分を除いた k 近傍の平均距離
+    tree = cKDTree(P)
+    if chunk is None:
+        dist, _ = tree.query(P, k=kk + 1)
+        mean_d = dist[:, 1:].mean(axis=1)
+    else:
+        block = int(chunk)
+        if block < 1:
+            raise ValueError("chunk must be >= 1 or None")
+        mean_d = np.empty(n, dtype=np.float64)
+        for start in range(0, n, block):
+            stop = min(start + block, n)
+            dist, _ = tree.query(P[start:stop], k=kk + 1)
+            mean_d[start:stop] = dist[:, 1:].mean(axis=1)
     thr = float(mean_d.mean() + float(std_ratio) * mean_d.std())
     keep = mean_d <= thr
     return P[keep], keep
@@ -160,10 +174,9 @@ def voxel_grid_downsample(points, voxel_size: float):
     _, inv = np.unique(keys, axis=0, return_inverse=True)
     inv = np.asarray(inv).ravel()
     m = int(inv.max()) + 1
-    sums = np.zeros((m, 3), dtype=np.float64)
-    counts = np.zeros(m, dtype=np.float64)
-    np.add.at(sums, inv, P)
-    np.add.at(counts, inv, 1.0)
+    sums = np.column_stack([np.bincount(inv, weights=P[:, j], minlength=m)
+                            for j in range(3)])
+    counts = np.bincount(inv, minlength=m).astype(np.float64)
     return sums / counts[:, None]
 
 
@@ -186,7 +199,8 @@ def _n_poly_terms(order: int) -> int:
     return (order + 1) * (order + 2) // 2
 
 
-def mls_smooth(points, radius: float, order: int = 2):
+def mls_smooth(points, radius: float, order: int = 2, chunk: int | None = None,
+               method: str = "exact"):
     """各点を局所多項式曲面へ射影してノイズを落とす(Moving Least Squares 平滑)。
 
     点ごとに半径 ``radius`` 内の近傍を集め、重み付き PCA で局所平面(法線 n と接平面の
@@ -203,6 +217,11 @@ def mls_smooth(points, radius: float, order: int = 2):
         近傍球の半径(> 0)。局所曲面のサポート。
     order : int
         局所多項式の次数(既定 2)。項数は (order+1)(order+2)/2。
+    chunk : int or None
+        指定時は近傍リストをこの点数ずつ取得して破棄する。既定は従来経路。
+    method : {'exact', 'mean'}
+        既定 ``'exact'`` は多項式曲面の最小二乗。``'mean'`` は ``order=0`` 専用で、定数項を
+        重み付き平均で直接求める(同じ値を lstsq を経ずに出す速い経路。許容差 rtol=1e-12, atol=1e-14)。
 
     Returns
     -------
@@ -226,16 +245,23 @@ def mls_smooth(points, radius: float, order: int = 2):
         return P.copy()
 
     order = int(max(0, order))
+    if method not in ("exact", "mean"):
+        raise ValueError("method must be 'exact' or 'mean'")
+    if method == "mean" and order != 0:
+        raise ValueError("method='mean' is available only when order=0")
     n_terms = _n_poly_terms(order)
     r = float(radius)
     sigma2 = (r * 0.5) ** 2 + 1e-30      # ガウス重みの帯域(半径の半分を目安)
 
     tree = cKDTree(P)
-    neigh = tree.query_ball_point(P, r=r)      # 各点の近傍 index(自分自身を含む)
-
     out = P.copy()
-    for i in range(n):
-        idx = neigh[i]
+    block = n if chunk is None else int(chunk)
+    if block < 1:
+        raise ValueError("chunk must be >= 1 or None")
+    for start in range(0, n, block):
+      neigh = tree.query_ball_point(P[start:min(start + block, n)], r=r)
+      for local, idx in enumerate(neigh):
+        i = start + local
         if len(idx) < n_terms:                 # 曲面を決めるに足る点が無い → 原位置維持
             continue
         Q = P[idx]
@@ -258,10 +284,16 @@ def mls_smooth(points, radius: float, order: int = 2):
         v = c @ t2
         h = c @ normal                         # 接平面からの高さ(注目点は h=0)
 
-        A = _poly_terms(u, v, order)
-        sw = np.sqrt(w)
+        if method == "mean":
+            h0 = float(np.dot(w, h) / wsum)
+            if np.isfinite(h0):
+                out[i] = P[i] + h0 * normal
+            continue
+        else:
+            A = _poly_terms(u, v, order)
+            sw = np.sqrt(w)
         # 重み付き最小二乗 (sqrt-weight で両辺を掛ける)。lstsq は縮退に頑健。
-        coef, *_ = np.linalg.lstsq(A * sw[:, None], h * sw, rcond=None)
+            coef, *_ = np.linalg.lstsq(A * sw[:, None], h * sw, rcond=None)
         h0 = float(coef[0])                    # 曲面の (u,v)=(0,0) での高さ = 射影量
         if not np.isfinite(h0):
             continue

@@ -295,6 +295,29 @@ TOOLS: dict[str, dict] = {
             "additionalProperties": False,
         },
     },
+    "fullseye_write_viewer": {
+        "description": (
+            "PoC の結果を、自己完結した 1 枚の HTML ビューア(タブ・正直なバッジ・3-D の点群/メッシュ・"
+            "2-D 動画・前後の分割・言語切り替え)にして書く。spec は fullseye.viewer_spec が作る辞書と同じ形の"
+            "JSON(配列は入れ子の数値リスト)、lang は言語の配列(ja/en/zh/tw/ko/de/hi/fr、先頭が既定)。"
+            "文字列は要求した全言語ぶんが要る(足りなければ欠けた鍵を並べて -32602、他言語で補わない)。"
+            "バッジは passed / limit / null の 3 種。HTML は MCP のサンドボックスの作業ディレクトリに"
+            "書き、resource_link で返す(任意のパスへは書かない)。"),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "spec": {"type": "object",
+                         "description": "{id, title, subtitle, hint, tabs:[{id,label,badge,text,numbers,kind,...}], credit?}。"
+                                        "kind は mesh / points / frames / split。各文字列は {言語: 文}"},
+                "lang": {"type": "array", "minItems": 1, "maxItems": 8,
+                         "description": "言語の配列。既定 [\"ja\"]。先頭が既定の表示言語"},
+                "name": {"type": "string", "maxLength": 64,
+                         "description": "ファイル名の素(英数字と _ - だけ)。既定は spec.id"},
+            },
+            "required": ["spec"],
+            "additionalProperties": False,
+        },
+    },
 }
 
 
@@ -960,6 +983,36 @@ def _estimate_distortion(a: dict) -> dict:
                               "n_lines": len(lines)})
 
 
+def _write_viewer(a: dict, store: HandleStore) -> dict:
+    """spec(JSON)→ 自己完結 HTML。書く先はサンドボックスの作業ディレクトリだけ(名前は検査する)。"""
+    import re
+    import pocviewer
+
+    spec = a["spec"]
+    if not isinstance(spec, dict):
+        raise ArgError("spec はオブジェクトでなければならない(%s)" % type(spec).__name__)
+    langs = a.get("lang", ["ja"])
+    if not all(isinstance(x, str) for x in langs):
+        raise ArgError("lang は文字列の配列でなければならない")
+    name = a.get("name") or str(spec.get("id", "viewer"))
+    if not re.fullmatch(r"[A-Za-z0-9_-]{1,64}", name):
+        raise ArgError("name は英数字と _ - だけ(64 文字まで): %r" % name)
+    try:                                                   # 信頼境界: spec は untrusted、形違いは -32602
+        text = pocviewer._build_html(spec, langs)
+    except (ValueError, TypeError, KeyError, AttributeError) as exc:
+        raise ArgError("spec が不正: %s" % exc) from None
+    path = os.path.join(store.thumb_dir, name + ".html")
+    with open(path, "w", encoding="utf-8", newline="\n") as fh:
+        fh.write(text)
+    size = len(text.encode("utf-8"))
+    tabs = [t["id"] for t in spec["tabs"]]
+    body = ("ビューアを書いた: %s(%.2f MB、タブ %d 本: %s、言語 %s)。ブラウザで開くだけで動く"
+            "(外部の読み込み無し)。URL の ?lang=xx で開く言語、?tab=<id> で開くタブを選べる。"
+            % (os.path.basename(path), size / 1e6, len(tabs), ", ".join(tabs), "/".join(langs)))
+    return tool_result(body, {"path": path, "bytes": size, "tabs": tabs, "lang": list(langs)},
+                       links=[_file_link(path, os.path.basename(path), "text/html", "自己完結の HTML ビューア")])
+
+
 def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = None, *,
               max_structured_bytes: int = MAX_STRUCTURED_BYTES) -> dict:
     """tool 本体。引数違反は ArgError(= -32602)、実行の失敗は isError の結果。"""
@@ -1019,6 +1072,8 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
             return _export_json(a, store, max_structured_bytes=max_structured_bytes)
         if name == "fullseye_estimate_distortion":
             return _estimate_distortion(a)
+        if name == "fullseye_write_viewer":
+            return _write_viewer(a, store)
     except HandleError as exc:
         raise ArgError(str(exc)) from exc
     raise ArgError("未実装の tool: %r" % name)                 # TOOLS に足して本体を忘れた

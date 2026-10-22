@@ -4,16 +4,16 @@ dim: optics
 category: design
 in: table
 out: pairs
-examples: [lens_design_demo]
+examples: [lens_design_demo, poc_lens_file_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # spot_diagram — OPTICS `design` op
 
 - **データ種**: `table` → `pairs`
-- **呼び出し**: `import fullseye as fs; fs.ledger.spot_diagram(system, field=None, rings=8, wavelength_um=None, image_mm=None)` (実装を直接呼ぶなら `import raytrace; raytrace.spot_diagram(system, field=None, rings=8, wavelength_um=None, image_mm=None)`、台帳から引くなら `opsoptics.get("spot_diagram")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.spot_diagram(system, field=None, rings=8, wavelength_um=None, image_mm=None, aim=None, vignetting=None)` (実装を直接呼ぶなら `import raytrace; raytrace.spot_diagram(system, field=None, rings=8, wavelength_um=None, image_mm=None, aim=None, vignetting=None)`、台帳から引くなら `opsoptics.get("spot_diagram")`)
 
 ## 使い方
 
@@ -23,6 +23,8 @@ Returns ``(N,2)`` ``(x, y)`` positions in mm relative to the **chief ray**
 (so the pattern is centred; use ``ray_bundle`` for absolute positions), and
 stores the statistics on the array as attributes via :func:`spot_stats`.
 Rays that miss / vignette are dropped. Pupil: hexapolar, ``rings`` rings.
+*aim* (``"paraxial"`` / ``"stop"``, default the system's own) and *vignetting* are those of
+:func:`ray_bundle`.
 
 ## ファミリ共通の入力契約(fail-closed)
 
@@ -49,10 +51,11 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [lens_design_demo](../../../../examples/lens_design_demo.py) — `py -3.11 examples/lens_design_demo.py`
+- [poc_lens_file_roundtrip](../../../../examples/poc_lens_file_roundtrip.py) — `py -3.11 examples/poc_lens_file_roundtrip.py`
 
 ## 型が繋がる次の op(`pairs` を入力に取れる)
 
-[mtf50](../imaging/mtf50.md) · [energy_to_photons](../spectral/energy_to_photons.md) · [spectral_product](../spectral/spectral_product.md) · [spectral_integral](../spectral/spectral_integral.md) · [spectral_stats](../spectral/spectral_stats.md) · [kubelka_munk_reflectance](../spectral/kubelka_munk_reflectance.md) · [hyperspectral_capture](../spectral/hyperspectral_capture.md) · [film_thickness_fft](../film/film_thickness_fft.md)
+[mtf50](../imaging/mtf50.md) · [energy_to_photons](../spectral/energy_to_photons.md) · [spectral_product](../spectral/spectral_product.md) · [spectral_integral](../spectral/spectral_integral.md) · [spectral_integral_table](../spectral/spectral_integral_table.md) · [spectral_stats](../spectral/spectral_stats.md) · [kubelka_munk_reflectance](../spectral/kubelka_munk_reflectance.md) · [hyperspectral_capture](../spectral/hyperspectral_capture.md)
 
 ## 同カテゴリ(`design`)
 

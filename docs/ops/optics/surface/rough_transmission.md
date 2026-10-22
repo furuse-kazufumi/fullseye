@@ -7,7 +7,7 @@ out: pairs
 examples: [machined_metal_and_materials]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # rough_transmission — OPTICS `surface` op
@@ -21,6 +21,7 @@ version: 0.6.0  # fullseye lib version this note was generated for
 すりガラスの透過を「直進成分」と「拡散成分」に分ける。
 
 cos_i: 入射角の cos。roughness: 面の粗さ(0 = 透明、1 = 完全拡散)。
+n1 / n2: 入射側 / 板の屈折率。数か材料表の名前(例 "N-BK7"、名前なら d 線 587.56 nm の n)。
 
 返り値: (直進 T_spec, 拡散 T_diff) の 2 本。合計は透明板の透過率に一致する
 (エネルギーを作らない ―― テストで確認)。曇りガラス越しの見え方は、この
@@ -56,7 +57,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`pairs` を入力に取れる)
 
-[mtf50](../imaging/mtf50.md) · [energy_to_photons](../spectral/energy_to_photons.md) · [spectral_product](../spectral/spectral_product.md) · [spectral_integral](../spectral/spectral_integral.md) · [spectral_stats](../spectral/spectral_stats.md) · [kubelka_munk_reflectance](../spectral/kubelka_munk_reflectance.md) · [hyperspectral_capture](../spectral/hyperspectral_capture.md) · [film_thickness_fft](../film/film_thickness_fft.md)
+[mtf50](../imaging/mtf50.md) · [energy_to_photons](../spectral/energy_to_photons.md) · [spectral_product](../spectral/spectral_product.md) · [spectral_integral](../spectral/spectral_integral.md) · [spectral_integral_table](../spectral/spectral_integral_table.md) · [spectral_stats](../spectral/spectral_stats.md) · [kubelka_munk_reflectance](../spectral/kubelka_munk_reflectance.md) · [hyperspectral_capture](../spectral/hyperspectral_capture.md)
 
 ## 同カテゴリ(`surface`)
 

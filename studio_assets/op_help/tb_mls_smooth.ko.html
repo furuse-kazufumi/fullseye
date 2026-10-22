@@ -21,6 +21,10 @@
 <p>근방 구의 반지름(&gt; 0). 국소 곡면의 서포트.</p>
 <p>order : int</p>
 <p>국소 다항식의 차수(기본값 2). 항 수는 (order+1)(order+2)/2.</p>
+<p>chunk : int or None</p>
+<p>지정하면 근방 목록을 이 점 수만큼 가져와 폐기한다. 기본값은 기존 경로를 사용한다.</p>
+<p>method : {&#x27;exact&#x27;, &#x27;mean&#x27;}</p>
+<p>기본 <code style="color:#22d3bf">&#x27;exact&#x27;</code>는 다항식 곡면의 최소제곱 적합. <code style="color:#22d3bf">&#x27;mean&#x27;</code>은 <code style="color:#22d3bf">order=0</code> 전용으로 상수항을 가중 평균으로 직접 구한다(lstsq를 거치지 않고 같은 값을 내는 빠른 경로. 허용차 rtol=1e-12, atol=1e-14).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray, shape (N, 3)</p>
 <p>평활 후의 점군(순서·점 수는 유지). 근방이 다항식의 항 수에 못 미치는 점은 원위치 그대로.</p>
@@ -39,9 +43,9 @@ tb_mls_smooth 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_poi
 <p>아래 예제는 원래의 대장 op <code style="color:#22d3bf">mls_smooth</code>를 호출한다. 이 브리지 op는 같은 구현을 <code style="color:#22d3bf">fn(v, a, b)</code> 규약에 맞춘 것뿐이므로 동작은 그대로 적용된다(호출 형식만 다름).</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:pcl_geodesic">pcl_geodesic</a> — <code style="color:#22d3bf">py -3.11 examples_3d/pcl_geodesic.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">points</code> 를 입력으로 받는 것)</h3>
-<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:tb_points_to_voxel">tb_points_to_voxel</a> · <a style="color:#22d3bf" href="op:tb_estimate_point_normals">tb_estimate_point_normals</a> · <a style="color:#22d3bf" href="op:tb_iss_keypoints">tb_iss_keypoints</a> · <a style="color:#22d3bf" href="op:tb_project_points">tb_project_points</a> · <a style="color:#22d3bf" href="op:tb_render_point_depth">tb_render_point_depth</a> · <a style="color:#22d3bf" href="op:tb_statistical_outlier_removal">tb_statistical_outlier_removal</a> · <a style="color:#22d3bf" href="op:tb_radius_outlier_removal">tb_radius_outlier_removal</a></p>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:tb_points_to_voxel">tb_points_to_voxel</a> · <a style="color:#22d3bf" href="op:tb_estimate_point_normals">tb_estimate_point_normals</a> · <a style="color:#22d3bf" href="op:tb_iss_keypoints">tb_iss_keypoints</a> · <a style="color:#22d3bf" href="op:tb_project_points">tb_project_points</a> · <a style="color:#22d3bf" href="op:tb_render_point_depth">tb_render_point_depth</a> · <a style="color:#22d3bf" href="op:tb_points_render">tb_points_render</a> · <a style="color:#22d3bf" href="op:tb_statistical_outlier_removal">tb_statistical_outlier_removal</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">typed</code>)</h3>
-<p><a style="color:#22d3bf" href="op:tb_points_to_voxel">tb_points_to_voxel</a> · <a style="color:#22d3bf" href="op:tb_estimate_point_normals">tb_estimate_point_normals</a> · <a style="color:#22d3bf" href="op:tb_iss_keypoints">tb_iss_keypoints</a> · <a style="color:#22d3bf" href="op:tb_project_points">tb_project_points</a> · <a style="color:#22d3bf" href="op:tb_render_point_depth">tb_render_point_depth</a> · <a style="color:#22d3bf" href="op:tb_statistical_outlier_removal">tb_statistical_outlier_removal</a> · <a style="color:#22d3bf" href="op:tb_radius_outlier_removal">tb_radius_outlier_removal</a> · <a style="color:#22d3bf" href="op:tb_voxel_grid_downsample">tb_voxel_grid_downsample</a></p>
+<p><a style="color:#22d3bf" href="op:tb_points_to_voxel">tb_points_to_voxel</a> · <a style="color:#22d3bf" href="op:tb_estimate_point_normals">tb_estimate_point_normals</a> · <a style="color:#22d3bf" href="op:tb_iss_keypoints">tb_iss_keypoints</a> · <a style="color:#22d3bf" href="op:tb_project_points">tb_project_points</a> · <a style="color:#22d3bf" href="op:tb_render_point_depth">tb_render_point_depth</a> · <a style="color:#22d3bf" href="op:tb_points_render">tb_points_render</a> · <a style="color:#22d3bf" href="op:tb_statistical_outlier_removal">tb_statistical_outlier_removal</a> · <a style="color:#22d3bf" href="op:tb_radius_outlier_removal">tb_radius_outlier_removal</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">
 <p>*Provenance: ops.py — 2D 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
 <p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

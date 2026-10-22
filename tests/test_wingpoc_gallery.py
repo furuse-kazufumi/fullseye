@@ -307,6 +307,50 @@ def test_every_exhibit_belongs_to_exactly_one_part(cap):
     _check_parts(c)
 
 
+def test_museum_has_three_generated_parts_and_a_device_wing(cap):
+    """展示館の生成記事は what / how / device の 3 部で、装置展示は重複しない。"""
+    c, _byid = cap
+    generated = [p for p in c["meta"]["parts"] if p["kind"] == "generated"]
+    assert [p["slug"] for p in generated] == ["what", "how", "device"]
+    device = next(p for p in generated if p["slug"] == "device")
+    assert device["wings"] == ["wing_device"]
+    device_exhibits = {e["id"] for e in c["exhibits"] if e["wing"] == "wing_device"}
+    assert device_exhibits == {
+        "poc_am_thermal_to_ct",
+        "poc_chromatic_confocal",
+        "poc_ct_fidelity",
+        "poc_dtof_ranging",
+        "poc_dual_energy_xray",
+        "poc_emva1288_sensor",
+        "poc_grating_interferometry",
+        "poc_gw_detector_pseudo_simulation",
+        "poc_industrial_oct",
+        "poc_interferometry_step",
+        "poc_itof_multifreq",
+        "poc_lens_tolerancing",
+        "poc_lightfield_depth",
+        "poc_omni360_inspection",
+        "poc_phase_measuring_deflectometry",
+        "poc_pixel_shift",
+        "poc_plenoptic_camera",
+        "poc_polarization_specular",
+        "poc_pv_thermal_survey",
+        "poc_pxrd_phase_peel",
+        "poc_sem_tem_same_particle",
+        "poc_sem_wafer_defect_edge_bias",
+        "poc_shape_from_polarization",
+        "poc_spectrometer_illumination",
+        "poc_tdi_linescan",
+        "poc_tem_ctf_thon_rings",
+        "poc_thermal_radiometry",
+        "poc_thermography_ndt",
+        "poc_thin_film_reflectometry",
+        "poc_tof_camera",
+        "poc_virtual_sem_kv_cd_bse",
+        "poc_weld_radiograph_porosity",
+    }
+
+
 def test_the_part_gate_catches_a_wing_in_two_parts(cap):
     """★破壊試験: 同じ翼を 2 つの棟に入れたら落ちること。"""
     c, _byid = cap

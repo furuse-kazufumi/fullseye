@@ -21,6 +21,23 @@ def _grad_field(img):
     return gx, gy, mag
 
 
+def _normalise_gradients(gy, gx, mag):
+    """勾配を画素ごとに正規化する(``mag`` は MinContrast 用に別途保持)。"""
+    den = mag + 1e-9
+    return gy / den, gx / den
+
+
+def _pyramid_grad_field(img):
+    """ピラミッド用勾配。生の2配列を正規化済み配列で置き換えて保持する。"""
+    gx, gy, mag = _grad_field(img)
+    ngy, ngx = _normalise_gradients(gy, gx, mag)
+    return ngx, ngy, mag, True
+
+
+def _field_parts(field):
+    return (*field[:3], bool(field[3]) if len(field) > 3 else False)
+
+
 def create_shape_model(template, min_grad: float = 0.1,
                        metric: str = "use_polarity") -> dict:
     """テンプレートのエッジ点(|grad|>min_grad)の正規化勾配ベクトルをモデル化(create_shape_model)。
@@ -70,7 +87,7 @@ def create_aniso_shape_model(template, min_grad: float = 0.1,
     return m
 
 
-def _score_at(model, gy_img, gx_img, mag_img, r0, c0):
+def _score_at(model, gy_img, gx_img, mag_img, r0, c0, normalised=False):
     pts = model["pts"]
     ys = pts[:, 0] - model["shape"][0] // 2 + r0
     xs = pts[:, 1] - model["shape"][1] // 2 + c0
@@ -80,8 +97,11 @@ def _score_at(model, gy_img, gx_img, mag_img, r0, c0):
         return 0.0
     ys, xs = ys[ok], xs[ok]
     m = mag_img[ys, xs]
-    md = m + 1e-9
-    ig = np.column_stack([gy_img[ys, xs] / md, gx_img[ys, xs] / md])
+    if normalised:
+        ig = np.column_stack([gy_img[ys, xs], gx_img[ys, xs]])
+    else:
+        md = m + 1e-9
+        ig = np.column_stack([gy_img[ys, xs] / md, gx_img[ys, xs] / md])
     dots = (ig * model["grad"][ok]).sum(1)               # 符号つき方向一致
     mc = float(model.get("min_contrast", 0.0))
     if mc > 0.0:
@@ -158,19 +178,19 @@ def image_pyramid(image, n_levels: int) -> list:
 
 def _scan_flat(model, field, step: int):
     """1 階層を全走査して最良の (score, row, col) を返す。"""
-    gx, gy, mag = field
+    gx, gy, mag, normalised = _field_parts(field)
     H, W = mag.shape
     h, w = model["shape"]
     best = (-1.0, -1, -1)
     for r0 in range(h // 2, H - h // 2, step):
         for c0 in range(w // 2, W - w // 2, step):
-            s = _score_at(model, gy, gx, mag, r0, c0)
+            s = _score_at(model, gy, gx, mag, r0, c0, normalised=normalised)
             if s > best[0]:
                 best = (s, r0, c0)
     return best
 
 
-def _search_with_pyramid(models, pyr, fields, n_cand: int = 12):
+def _search_with_pyramid(models, pyr, fields, n_cand: int = 12, _trace=None):
     """モデル階層と画像階層を突き合わせ、最良の (score, row, col) を返す。
 
     models[i] は pyr[i] と同じ解像度。最粗階層を全走査して候補を n_cand 個残し、
@@ -179,22 +199,26 @@ def _search_with_pyramid(models, pyr, fields, n_cand: int = 12):
     """
     top = len(models) - 1
     mh, mw = models[top]["shape"]
-    gxT, gyT, magT = fields[top]
+    gxT, gyT, magT, normT = _field_parts(fields[top])
     Ht, Wt = pyr[top].shape
     cand = []
     for r0 in range(mh // 2, max(mh // 2 + 1, Ht - mh // 2)):
         for c0 in range(mw // 2, max(mw // 2 + 1, Wt - mw // 2)):
-            cand.append((_score_at(models[top], gyT, gxT, magT, r0, c0), r0, c0))
+            cand.append((_score_at(models[top], gyT, gxT, magT, r0, c0,
+                                   normalised=normT), r0, c0))
     if not cand:
         return None
     cand.sort(key=lambda z: -z[0])
     cand = cand[:n_cand]
+    if _trace is not None:
+        _trace.append(list(cand))
 
     for L in range(top - 1, -1, -1):
-        gxL, gyL, magL = fields[L]
+        gxL, gyL, magL, normL = _field_parts(fields[L])
         HL, WL = pyr[L].shape
         mhL, mwL = models[L]["shape"]
         nxt = []
+        scores = {}
         for _, r0, c0 in cand:
             for dr in (-2, -1, 0, 1, 2):
                 for dc in (-2, -1, 0, 1, 2):
@@ -202,11 +226,17 @@ def _search_with_pyramid(models, pyr, fields, n_cand: int = 12):
                     if not (mhL // 2 <= r < HL - mhL // 2
                             and mwL // 2 <= c < WL - mwL // 2):
                         continue
-                    nxt.append((_score_at(models[L], gyL, gxL, magL, r, c), r, c))
+                    key = (r, c)
+                    if key not in scores:
+                        scores[key] = _score_at(models[L], gyL, gxL, magL, r, c,
+                                                normalised=normL)
+                    nxt.append((scores[key], r, c))
         if not nxt:
             return None
         nxt.sort(key=lambda z: -z[0])
         cand = nxt[:n_cand]
+        if _trace is not None:
+            _trace.append(list(cand))
     return cand[0]
 
 
@@ -264,7 +294,7 @@ def find_shape_model(model, image, min_score: float = 0.5, step: int = 2,
         return find_shape_model(model, image, min_score, step, num_levels=0)
 
     pyr = image_pyramid(img, len(models))
-    fields = [_grad_field(a) for a in pyr]
+    fields = [_pyramid_grad_field(a) for a in pyr]
     hit = _search_with_pyramid(models, pyr, fields, n_cand)
     if hit is None:
         return find_shape_model(model, image, min_score, step, num_levels=0)
@@ -423,7 +453,7 @@ def _search_transforms(model, image, combos, min_score=0.5, step=2, n_cand=12,
         return None
     depth = max(len(m) for _, m in per)
     pyr = image_pyramid(img, depth)
-    fields = [_grad_field(a) for a in pyr]
+    fields = [_pyramid_grad_field(a) for a in pyr]
     best = None
     for (ang, sr, sc), models in per:
         if len(models) == 1:
@@ -471,13 +501,49 @@ def find_scaled_shape_model(model, image, scales=(0.8, 1.0, 1.25),
 
 
 # ── 多インスタンス検出 / XLD 由来モデル / パラメータ決定・アクセサ ────────────── #
-def _nms_from_map(score_map, min_score, max_matches, min_distance):
-    """スコア地図から非最大抑制で上位を拾う。返り値は [(score, r, c), ...]。"""
+def _nms_from_map(score_map, min_score, max_matches, min_distance, _stats=None):
+    """スコア地図から非最大抑制で上位を拾う。返り値は [(score, r, c), ...]。
+
+    256x256 以上かつ複数検出では 64x64 タイルの最大値を管理し、抑制が触れた
+    タイルだけを再走査する。同点は全画像の行優先順に解決する。
+    """
     H, W = score_map.shape
     sm = score_map.copy()
     out = []
+    use_tiles = sm.size >= 256 * 256 and int(max_matches) > 1
+    reads = 0
+    tile = 64
+    if use_tiles:
+        ntr = (H + tile - 1) // tile
+        ntc = (W + tile - 1) // tile
+        values = np.empty((ntr, ntc))
+        positions = np.empty((ntr, ntc), dtype=np.int64)
+
+        def update_tile(tr, tc):
+            nonlocal reads
+            r0, c0 = tr * tile, tc * tile
+            block = sm[r0:min(H, r0 + tile), c0:min(W, c0 + tile)]
+            local = int(np.argmax(block))
+            lr, lc = np.unravel_index(local, block.shape)
+            values[tr, tc] = block[lr, lc]
+            positions[tr, tc] = (r0 + lr) * W + c0 + lc
+            reads += block.size
+
+        for tr in range(ntr):
+            for tc in range(ntc):
+                update_tile(tr, tc)
     for _ in range(int(max_matches)):
-        idx = np.unravel_index(np.argmax(sm), sm.shape)
+        if use_tiles:
+            flat_values = values.ravel()
+            if np.isnan(flat_values).any():
+                eligible = np.flatnonzero(np.isnan(flat_values))
+            else:
+                eligible = np.flatnonzero(flat_values == flat_values.max())
+            chosen = eligible[np.argmin(positions.ravel()[eligible])]
+            idx = np.unravel_index(int(positions.ravel()[chosen]), sm.shape)
+        else:
+            idx = np.unravel_index(np.argmax(sm), sm.shape)
+            reads += sm.size
         s = float(sm[idx])
         if s < min_score:
             break
@@ -485,12 +551,19 @@ def _nms_from_map(score_map, min_score, max_matches, min_distance):
         r0 = max(0, idx[0] - min_distance); r1 = min(H, idx[0] + min_distance + 1)
         c0 = max(0, idx[1] - min_distance); c1 = min(W, idx[1] + min_distance + 1)
         sm[r0:r1, c0:c1] = -1.0
+        if use_tiles:
+            for tr in range(r0 // tile, (r1 - 1) // tile + 1):
+                for tc in range(c0 // tile, (c1 - 1) // tile + 1):
+                    update_tile(tr, tc)
+    if _stats is not None:
+        _stats.update(pixel_reads=reads,
+                      strategy="tiles" if use_tiles else "full")
     return out
 
 
 def _scan_level(model, field, step=1):
     """1 階層を全走査してスコア地図を返す(中心規約)。"""
-    gx, gy, mag = field
+    gx, gy, mag, normalised = _field_parts(field)
     H, W = mag.shape
     mh, mw = model["shape"]
     score_map = np.full((H, W), -1.0)
@@ -502,7 +575,8 @@ def _scan_level(model, field, step=1):
     # 中心の有効範囲だけを走査すれば、model は常に全部画像内に入り両方消える。
     for r0 in range(mh // 2, H - mh // 2, step):
         for c0 in range(mw // 2, W - mw // 2, step):
-            score_map[r0, c0] = _score_at(model, gy, gx, mag, r0, c0)
+            score_map[r0, c0] = _score_at(model, gy, gx, mag, r0, c0,
+                                          normalised=normalised)
     return score_map
 
 
@@ -571,7 +645,7 @@ def find_shape_models(model, image, min_score=0.5, step=2, max_matches=10,
                             for s, r, c in hits], "num": len(hits), "levels": 1}
 
     pyr = image_pyramid(img, len(models))
-    fields = [_grad_field(a) for a in pyr]
+    fields = [_pyramid_grad_field(a) for a in pyr]
     top = len(models) - 1
 
     # 最粗階層: 全走査 -> NMS。**候補は多めに残す**。粗い階層の順位は当てにせず、
@@ -589,7 +663,7 @@ def find_shape_models(model, image, min_score=0.5, step=2, max_matches=10,
     for L in range(top - 1, -1, -1):
         HL, WL = pyr[L].shape
         mhL, mwL = models[L]["shape"]
-        gxL, gyL, magL = fields[L]
+        gxL, gyL, magL, normL = _field_parts(fields[L])
         nxt = []
         for _, r0, c0 in cand:
             b = None
@@ -599,7 +673,8 @@ def find_shape_models(model, image, min_score=0.5, step=2, max_matches=10,
                     if not (mhL // 2 <= r < HL - mhL // 2
                             and mwL // 2 <= c < WL - mwL // 2):
                         continue
-                    v = _score_at(models[L], gyL, gxL, magL, r, c)
+                    v = _score_at(models[L], gyL, gxL, magL, r, c,
+                                  normalised=normL)
                     if b is None or v > b[0]:
                         b = (v, r, c)
             if b is not None:
@@ -627,23 +702,11 @@ def find_shape_models(model, image, min_score=0.5, step=2, max_matches=10,
 
 
 def find_ncc_models(model, image, min_score=0.5, max_matches=10, min_distance=5):
-    """NCC モデルの複数インスタンス検出(find_ncc_models)。"""
-    from matching import _ncc_map
-    t = np.asarray(model["template"], np.float64)
-    nccm = _ncc_map(t, np.asarray(image, np.float64))
-    # find_ncc_model と同じく **中心** を返す(_ncc_map の添字は左上)。
-    oh, ow = t.shape[0] // 2, t.shape[1] // 2
-    H, W = nccm.shape; matches = []; sm = nccm.copy()
-    for _ in range(int(max_matches)):
-        idx = np.unravel_index(np.argmax(sm), sm.shape)
-        if sm[idx] < min_score:
-            break
-        matches.append({"row": int(idx[0]) + oh, "column": int(idx[1]) + ow,
-                        "col": int(idx[1]) + ow, "row_tl": int(idx[0]),
-                        "col_tl": int(idx[1]), "score": float(sm[idx])})
-        r0 = max(0, idx[0] - min_distance); r1 = min(H, idx[0] + min_distance + 1)
-        c0 = max(0, idx[1] - min_distance); c1 = min(W, idx[1] + min_distance + 1)
-        sm[r0:r1, c0:c1] = -1.0
+    """NCCモデルの複数検出。``min_distance``を共通検索核へ渡す旧入口。"""
+    from matching import find_ncc_model
+    result = find_ncc_model(model, image, min_score, num_matches=max_matches,
+                            min_distance=min_distance)
+    matches = result["matches"] if result["found"] else []
     return {"matches": matches, "num": len(matches)}
 
 

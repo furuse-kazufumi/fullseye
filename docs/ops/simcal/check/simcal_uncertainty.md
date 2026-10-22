@@ -4,10 +4,10 @@ dim: simcal
 category: check
 in: calresult
 out: calresult
-examples: []
+examples: [poc_simcal_thin_film]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # simcal_uncertainty — SIMCAL `check` op
@@ -40,7 +40,7 @@ point estimate is refused. Under a model discrepancy both are optimistic
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [poc_simcal_thin_film](../../../../examples/poc_simcal_thin_film.py) — `py -3.11 examples/poc_simcal_thin_film.py`
 
 ## 型が繋がる次の op(`calresult` を入力に取れる)
 

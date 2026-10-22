@@ -101,13 +101,51 @@ def test_g2_single_wavelength_film_fixes_only_n_times_d():
     assert r["theta_hat"] == {} and set(r["undetermined"]) == {"n_film", "d"}
     c = r["determined_combos"][0]
     w = c["weights"]
-    assert abs(w["n_film"] - 1.0) < 1e-9 and 0.9 < w["d"] < 1.05, w          # n^1 * d^~1(位相 4 pi n d / lambda)
+    # n^1 * d^~1(位相 4 pi n d / lambda)。★d の指数が 1 から外れるのは Fresnel の項(n だけに効く)の分。
+    #   2026-10-18 に決まる組の重みを e/|列| → e·|列| に直した(下の test_g2_determined_combination_weights_...)ので
+    #   0.94 → 1.07 に動いた。どちらも 1 の近くなので、この門は直す前も後も通る幅にしてある(向きの検査は下の門)。
+    assert abs(w["n_film"] - 1.0) < 1e-9 and 0.9 < w["d"] < 1.1, w
     # 探針: 31 波長(400-700 nm)では n と d が別々に決まる(交絡が消える → 拒否しない)
     m31 = film_model(np.linspace(400.0, 700.0, 31))
     assert g2_refuses(m1, truth, seed=2) is True
     assert g2_refuses(m31, truth, seed=2, method="multistart") is False
     r31 = sc.simcal_fit(sc.simcal_observe(m31, capture(m31, truth, 2)), method="multistart")
     assert abs(r31["theta_hat"]["n_film"] - 1.46) < 0.02 and abs(r31["theta_hat"]["d"] - 520.0) < 8.0
+
+
+def test_g2_determined_combination_weights_follow_the_column_norms():
+    """決まる組の重みは自然な座標で e·|列|、決まらない向きは e/|列|(2026-10-18 の回帰)。
+
+    像 = 模様 × (3a + b): 列の大きさが 3 : 1 の、厳密に 1 次元しか決まらない模型。決まる組は閉形式で 3a + b
+    (重み a 1、b 1/3)、決まらない向きは 3δa + δb = 0 すなわち (1, −3)。直す前は決まる組が a + 3b と出た
+    (シーメンススターの升で、決まる組の向きが接線から 20〜40° 回っていたのが発見の経緯)。
+    """
+    pat = sc._chart(24)
+
+    def lin(a=1.0, b=1.0):
+        return pat * (3.0 * a + b)
+
+    m = sc.simcal_model(chain=[{"op": lin}, {"op": "stage:gain_offset", "args": {"gain": 300.0, "offset": 64.0}}],
+                        knobs=[{"name": "a", "step": 0, "arg": "a", "lo": 0.0, "hi": 2.0},
+                               {"name": "b", "step": 0, "arg": "b", "lo": 0.0, "hi": 2.0}],
+                        noise=NOISE_DARK64)
+    truth = {"a": 0.8, "b": 0.6}
+    r = sc.simcal_fit(sc.simcal_observe(m, capture(m, truth, 5)), allow_undetermined=True)
+    assert r["theta_hat"] == {} and set(r["undetermined"]) == {"a", "b"}
+    c = r["determined_combos"][0]
+    assert abs(c["weights"]["a"] - 1.0) < 1e-12 and abs(c["weights"]["b"] - 1.0 / 3.0) < 1e-6, c["weights"]
+    # 値も閉形式: a + b/3 = (3a + b)/3 = 1.0(雑音の分だけ揺れる。線形化した標準偏差の 4 倍以内)
+    assert abs(c["value"]["sum"] - 1.0) < 4.0 * c["std_linearised"] + 1e-9, c
+    # 決まらない向きの文字列は (1, −3)
+    assert "1*a + -3*b" in r["undetermined"]["a"], r["undetermined"]["a"]
+    # 探針: 列の大きさが等しい模型(a + b)では、重みは 1 : 1(直す前と同じ答え)
+    m1 = sc.simcal_model(chain=[{"op": lambda a=1.0, b=1.0: pat * (a + b)},
+                                {"op": "stage:gain_offset", "args": {"gain": 300.0, "offset": 64.0}}],
+                         knobs=[{"name": "a", "step": 0, "arg": "a", "lo": 0.0, "hi": 2.0},
+                                {"name": "b", "step": 0, "arg": "b", "lo": 0.0, "hi": 2.0}],
+                         noise=NOISE_DARK64)
+    r1 = sc.simcal_fit(sc.simcal_observe(m1, capture(m1, truth, 6)), allow_undetermined=True)
+    assert abs(r1["determined_combos"][0]["weights"]["b"] - 1.0) < 1e-6
 
 
 def test_g2_a_knob_without_influence_is_refused():

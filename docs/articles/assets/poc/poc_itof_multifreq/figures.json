@@ -1,0 +1,146 @@
+[
+ {
+  "file": "01_warehouse_unwrap.png",
+  "name": "warehouse_unwrap",
+  "caption": "倉庫の通路を 3 周波の間接 ToF で撮る。120 MHz の位相は 1.25 m ごとに折り返す。3 周波の剰余を全部の次数の仮説で採点すると 18.7 m まで一意になるが、遠い棚ほど信号が弱く、次数を丸ごと誤った画素が点状に出る(誤差の図)。周波数の最大公約数が 20 MHz の組では 7.49 m より奥が何の警告も無く手前に折り返して映る(右下)。",
+  "shape": [
+   574,
+   1000,
+   3
+  ]
+ },
+ {
+  "file": "02_unwrap_error_rate.png",
+  "name": "unwrap_error_rate",
+  "caption": "平らな板(距離は一様乱数)で信号を振り、次数を誤った画素の割合を数えた。破線は候補ごとのガウスの 2 仮説の誤りの和(和集合の上界)、点線はその最大の 1 項。実測は 2 本の間に入る。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_warehouse_by_range.png",
+  "name": "warehouse_by_range",
+  "caption": "通路の画素を距離帯に分け、次数を誤った割合と、その帯の位相雑音から見積もった上界を並べた。信号は距離の 2 乗で弱まる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_film_separation.png",
+  "name": "film_separation",
+  "caption": "フィルム(反射 10 %)の奥の箱(35 %)。1 周波の距離は 2 つの経路の間に引かれる。等間隔 8 周波(20〜160 MHz)の行列ペンシルで 2 本に分けると、間隔が大きいほど箱の距離が戻り、近すぎると分けられない。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_corner_bias.png",
+  "name": "corner_bias",
+  "caption": "向かいの壁で 1 回以上反射した光が遅れて混ざり、内角の面は全体に奥へ伸びる。頂点そのものでは向かいの面が近く遅れが小さいので偏りは小さく、頂点から 0.3〜0.5 m 離れた所で最大になる。周波数で偏りの形が変わる(高い周波数では遠回りの経路の位相が回って打ち消し合う)。破線は経路を並べて itof_capture で撮ったもので、輸送行列の 1 回反射と一致する。",
+  "shape": [
+   360,
+   816,
+   3
+  ]
+ },
+ {
+  "file": "06_flying_pixel_profile.png",
+  "name": "flying_pixel_profile",
+  "caption": "左の箱の上面を通る 1 行。iToF は箱の縁の画素で前景と背景の間の距離を返す(宙に浮いた点)。直接 ToF は2 つの山のどちらかを選ぶので、縁の画素も前景か背景のどちらかに乗る。右側(列 113〜135 付近)は包装フィルムの下で、iToF だけが手前に引かれている。",
+  "shape": [
+   360,
+   769,
+   3
+  ]
+ },
+ {
+  "file": "07_flying_pixels_side.png",
+  "name": "flying_pixels_side",
+  "caption": "左の箱(高さ 28 cm)の点群を横から見た。箱の縁から背後の床へ、カメラの視線に沿って宙に浮いた点の列が伸びる(画素の視野が段差をまたぎ、2 つの位相が混ざった)。印は浮いた点の 97 % を拾い、段差の無い画素を消すのは 0.03 %。",
+  "shape": [
+   612,
+   1150,
+   3
+  ]
+ },
+ {
+  "file": "08_itof_vs_dtof.png",
+  "name": "itof_vs_dtof",
+  "caption": "同じ卓上の場面を 2 つの方式で撮る。iToF はフィルムの下が手前に引かれ、箱の縁に沿って誤差の線が出る(フライングピクセル)。直接 ToF は 2 つの山を別々に見るので、縁はどちらかの面に寄り、フィルムの下もずれない。",
+  "shape": [
+   574,
+   670,
+   3
+  ]
+ },
+ {
+  "file": "09_wiggling.png",
+  "name": "wiggling",
+  "caption": "矩形どうしの相関は三角波で、4 段の推定に 3 次と 5 次の高調波が折り返し、誤差が 1.87 m(位相 π/2)ごとに波打つ。閉形式に一致し、模型の逆引きか 16 点の較正で雑音の床まで下がる。",
+  "shape": [
+   360,
+   737,
+   3
+  ]
+ },
+ {
+  "file": "10_ambient.png",
+  "name": "ambient",
+  "caption": "背景光は振幅 A を増やさずオフセット B(とショット雑音 √B)だけを増やす。近い所は雑音が増え、遠い所では次数の誤りが噴き出す。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "11_noise_closed_form.png",
+  "name": "noise_closed_form",
+  "caption": "σ_d = c/(4πf)·√((B + σ_r²)/2)/A。信号を 4 倍にすると σ_d は半分。背景光は B を増やすだけ。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "12_public_raw_unwrap.png",
+  "name": "public_raw_unwrap",
+  "caption": "実機の生データ(3 周波 × 3 段)を itof_phase_amplitude と itof_unwrap_multifreq に通し、真値と比べた。左半分で焦点距離・中心・周波数ごとのオフセットを較正し、右半分で採点した。錨を Wang–Xia の選び方にした residue_crt は最尤と同等。データ: Lawin, Forssén, Ovrén (ECCV 2016)、Zenodo 10.5281/zenodo.19608956、CC BY 4.0。",
+  "shape": [
+   942,
+   1050,
+   3
+  ]
+ },
+ {
+  "file": "13_public_raw_margin.png",
+  "name": "public_raw_margin",
+  "caption": "最良と次点の仮説の採点の差(margin)が小さい画素を捨てると、残った画素の飛びが減る。データ: Lawin, Forssén, Ovrén (ECCV 2016)、Zenodo 10.5281/zenodo.19608956、CC BY 4.0。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "14_flying_pixels_orbit.gif",
+  "name": "flying_pixels_orbit",
+  "caption": "左の箱の点群を回して見る。横から見ると、縁から背後の床へ視線に沿って伸びる赤い点の列(フライングピクセル)が現れる。右は印を除いたもの。",
+  "shape": [
+   393,
+   630,
+   3
+  ],
+  "animated": true,
+  "frames": 28,
+  "frames_written": 27,
+  "fps": 8.0
+ }
+]

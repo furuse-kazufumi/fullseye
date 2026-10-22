@@ -7,7 +7,7 @@ out: table
 examples: [gallery_drive_lateral_env, poc_ttc_rss]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # rss_params — DRIVE `rss` op

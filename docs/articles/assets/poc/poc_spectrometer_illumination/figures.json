@@ -1,0 +1,106 @@
+[
+ {
+  "file": "01_resolution_vs_throughput.png",
+  "name": "resolution_vs_throughput",
+  "caption": "スリットの幅で帯域の幅とエタンデュがどう動くか(1200 本/mm、M 型 2025 の設計、625 nm)。左: 細いスリットは回折の床 0.886 λ / (mN) で止まり、NA を上げて照らす溝を増やすと床が下がる。右: 広いスリットでは光の量と分解能の積が一定(傾き −1)、細くしていくと床に当たって光だけを失う。",
+  "shape": [
+   420,
+   1520,
+   3
+  ]
+ },
+ {
+  "file": "02_mercury_yellow_doublet.png",
+  "name": "mercury_yellow_doublet",
+  "caption": "Hg の黄色の 2 本を、スリットの幅を変えて読む。FWHM が間隔 2.11 nm を超えると 1 本に潰れる。",
+  "shape": [
+   420,
+   900,
+   3
+  ]
+ },
+ {
+  "file": "03_slit_image_smile.png",
+  "name": "slit_image_smile",
+  "caption": "長いスリット(4 mm)の Hg 546 / 577 / 579 nm を検出器の 1 コマに描く(画素 14 µm、左 2 枚は等倍、右は 546 nm の線を横に 6 倍)。赤の点線は線の中心を通る真っすぐな参照。正しい 3 次元の式では線の両端が長い波長の側(右)へ約 3 画素曲がる(smile)。面内の式を流用した模型は真っすぐ —— 閉形式の門に落ちる。",
+  "shape": [
+   451,
+   1196,
+   3
+  ]
+ },
+ {
+  "file": "04_smile_closed_form.png",
+  "name": "smile_closed_form",
+  "caption": "smile の追跡(実線)と閉形式 y'²/(2ρ)、ρ = f cos β / (sin α + sin β)(破線)。",
+  "shape": [
+   420,
+   835,
+   3
+  ]
+ },
+ {
+  "file": "05_second_order_ghosts.png",
+  "name": "second_order_ghosts",
+  "caption": "1 次の 500〜750 nm の検出器に、紫外の Hg 線の 2 次の像が偽の線として乗る(効率 0.3 の模型)。ロングパス 400 nm で消える。",
+  "shape": [
+   420,
+   960,
+   3
+  ]
+ },
+ {
+  "file": "06_hsi_band_shape.png",
+  "name": "hsi_band_shape",
+  "caption": "150 本/mm・コリメータ f 50 mm・InGaAs 15 µm の分光器。スリット 8 µm では画素で決まる 1.5 nm、25 µm で 3.4 nm、10 nm にするにはスリット 75 µm(台形の装置関数で、ガウスではない)。",
+  "shape": [
+   420,
+   900,
+   3
+  ]
+ },
+ {
+  "file": "07_chromconf_plate_vs_slit.png",
+  "name": "chromconf_plate_vs_slit",
+  "caption": "可視の分光器(600 本/mm)のスリットを広げると、薄い板の表裏の 2 ピークが 1 つに潰れ、readout は厚さを当て推量せず拒否する。",
+  "shape": [
+   224,
+   439,
+   3
+  ],
+  "csv": "07_chromconf_plate_vs_slit.csv",
+  "tsv": "07_chromconf_plate_vs_slit.tsv"
+ },
+ {
+  "file": "08_kohler_vs_critical.png",
+  "name": "kohler_vs_critical",
+  "caption": "同じ縞の光源で、クリティカル照明は光源を標本に写し、ケーラー照明は光源をコンデンサの前側焦点面に写して視野を一様にする(明るさは各パネルの最大を白に。クリティカルの NA は 0.05、ケーラーは 0.15)。開口絞りを焦点面から外すと縞と縁のぼけが出る。",
+  "shape": [
+   610,
+   546,
+   3
+  ]
+ },
+ {
+  "file": "09_coaxial_views.png",
+  "name": "coaxial_views",
+  "caption": "同軸落射(視野 44 mm 角): 鏡面の部品はパネルそのものを写す(R·T = 1/4)。通常のレンズは 1 + h/H 倍に引き伸ばし、視野の端でパネルの外を見て黒くなる。テレセントリックは 1 倍。つや消しの部品はパネル全体を積分するので模様は消えるが、パネルが有限なぶん周辺が暗くなる。",
+  "shape": [
+   576,
+   512,
+   3
+  ]
+ },
+ {
+  "file": "10_published_spectrometers.png",
+  "name": "published_spectrometers",
+  "caption": "Feng 2021 の中心の分解能だけが合わない(スリットの像だけで 0.49 nm)。差は解かずに残す。",
+  "shape": [
+   200,
+   662,
+   3
+  ],
+  "csv": "10_published_spectrometers.csv",
+  "tsv": "10_published_spectrometers.tsv"
+ }
+]

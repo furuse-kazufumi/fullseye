@@ -1,0 +1,141 @@
+---
+id: sequential-lens-design-metrics
+title: 逐次光学設計の指標(理想レンズ面 → 囲みエネルギー → 子午/球欠 MTF → スルーフォーカス MTF)
+title_en: Sequential lens-design metrics (ideal lens surface, encircled energy, tangential / sagittal MTF, through-focus MTF)
+category: 測る
+ops: [lens_system, encircled_energy, ensquared_energy, energy_radii, mtf_tangential_sagittal, through_focus_mtf, with_aiming, ray_aiming, set_vignetting, lens_configurations, lens_with_configuration, lens_configuration_table, lens_configuration_metrics, lens_add_configuration, glass_nearest, lens_substitute_glasses, lens_global_search, merit_operands_list, merit_evaluate, merit_default, merit_boundary_operands, optimize_lens_operands, merit_contributions, lens_apply_solves, lens_solve_set, lens_solve_clear, lens_solves_list, afocal_system, lens_afocal_report, lens_image_surface, lens_petzval_radius, lens_zmx_solves_roundtrip]
+examples: [optical_design_metrics, poc_zoom_configurations, poc_lens_global_search, poc_lens_merit_operands, poc_lens_solves_afocal]
+version: 0.7.0
+inputs: [table]
+pipeline: [lens_system, psf_from_opd, encircled_energy, energy_radii, mtf_tangential_sagittal, through_focus_mtf]
+alternatives: [psf_to_mtf, mtf_diffraction, spot_stats, opd_map, wavefront_from_opd, lens_section_drawing]
+limits: 理想レンズ面の光路は軸上の物点(第 1 面で有限物体なら光線ごとの物点)に対して等光路で、途中の理想レンズでは平行入射を仮定する(収束光の中の理想レンズの OPD は近似)。理想レンズは非共軸の raytrace3d では読まず、鏡・円錐・非球面・硝材を持たない。囲み/四角エネルギーは PSF の窓の中の割合で、窓が翼を切ると高めに出る(切れて届かない割合は ValueError)。半径が 2 画素前後より小さいと PSF の点標本を画素に均等に広げた近似が効く。スルーフォーカス MTF は 1 視野 1 波長ずつ(多色は波長ごとに呼ぶ)。
+calibration: 長さの尺度は PSF の画素ピッチ(psf_from_opd の pixel_pitch_um、または細かい格子の間隔 λ·F#·(size−1)/M)で決まり、周波数は cycles/mm。ピッチを間違えると半径が比例して狂う(探針で確認)。
+---
+
+# 逐次光学設計の指標(理想レンズ面 → 囲みエネルギー → 子午/球欠 MTF → スルーフォーカス MTF)
+
+## できること
+
+商用の逐次光学設計ソフトで毎日使う 4 つの道具を、Fullseye の op として足しました。
+
+`raytrace.lens_system` の面に `{"f": 50.0, "t": …}` と書くと**理想レンズ**(paraxial 面)になります。厚み 0・形なし・硝材なしで、薄肉レンズの法則 `tan θ' = tan θ − h/f` を実光線に厳密に当てるので、平行光は f にちょうど集まり、有限の物体はガウスの結像公式の位置・倍率 `m = −s'/s` に結像します。光路は等光路(小さい高さで `−h²/(2f)` の 2 次位相)なので、OPD・PSF・スポットの解析がそのまま動き、収差ゼロの基準として使えます。断面図には細い線と矢じり(収束は外向き、発散は内向き)で描きます。
+
+`encircled_energy` / `ensquared_energy` は PSF から囲み・四角エネルギーの曲線を、`energy_radii` は 50 / 80 / 90 % が入る半径を返します。`mtf_tangential_sagittal` は PSF の 2-D 変換の軸の断面で子午/球欠の MTF を分け(`psf_to_mtf` は半径平均だけでした)、`through_focus_mtf` は像面を動かした PSF ごとに指定周波数の MTF を並べます。
+
+**光線の照準とケラレ係数**(2026-10-19)。既定の打ち出しは近軸の入射瞳へ向けるので、瞳の収差のある系では周辺の光線が絞りの外へ落ち、同梱の三枚玉は軸上で 217 本中 48 本を失います(設計ソフトのスポット・MTF と数字が合わない原因)。`with_aiming(system, "stop")` か `lens_system(..., aim="stop")` で**実光線の照準**に切り替えると、各光線を Newton 法で絞りの指定の点へ通します(許容は絞り半径の 1e-11、収束しなければ ValueError)。三枚玉は全視野で 217 本とも絞りに届き、残差は 1e-13 台、RMS スポットは軸上 5.07 → 4.69 µm、14 度 16.6 → 17.4 µm、20 度 11.9 → 15.6 µm になります(以前は縁の光線を捨てて小さく見えていた)。薄肉の理想レンズでは照準しても動きません(1e-12)。既存の数字を動かさないため、既定は従来の `aim="paraxial"` のままです。
+
+`lens_system(..., vignetting=[{"field", "vdx", "vdy", "vcx", "vcy", "van"}])` は視野ごとのケラレ係数です。定義は書式の利用者ガイド(Vignetting Factors の項)とナレッジベース記事 KA-01393 のとおりで、正規化した瞳 `p` をまず拡縮・平行移動して `p' = (VDX, VDY) + diag(1−VCX, 1−VCY)·p`、その結果全体を VAN 度だけ反時計回りに回します(`q = R(VAN)·p'`、偏心も一緒に回る)。光線を狙う前(照準ありなら絞り面、なしなら近軸の入射瞳)に適用するので、`VCY = 0.3` なら絞り上の瞳の高さがちょうど 0.7 倍になります(実光線から測って 1e-10 以内)。`.zmx` の `VDXN / VDYN / VCXN / VCYN / VANN` を読み、`lens_file_write` が書き戻します。`set_vignetting(system, fields)` は設計ソフトの "set vignetting" と同じく、開口に切られる光線が 1 本も残らないところまで瞳を縮め・ずらして係数を求めます(切られない系では全部 0)。既定の `mode="four"` は上記ガイドの定義どおり、頂点・底・左・右の 4 本の周辺光線 (0,1) (0,−1) (−1,0) (1,0) が全部の開口を通る係数で、ファイルに記録された VCX / VCY を再現するのはこちらです(4 本の間の光線が切られることはあります)。`mode="grid"` はもっと厳しく、六角格子と縁の 72 点に切られる光線が 1 本も残らないところまで瞳を縮めます。`ray_aiming` は狙いの検査表(通過本数・残差・絞り上の瞳の広がり)です。スポット・OPD・PSF・MTF の各 op はシステムの `aim` と係数をそのまま使い、回折限界の理想レンズに VCY = 0.3 を入れると子午(y)の MTF は円形瞳の閉形式でカットオフが 0.7 倍、球欠(x)は元のままになります(6e-3 以内)。
+
+真値は外にあります。収差ゼロの PSF の囲みエネルギーは Airy の `1 − J0(v)² − J1(v)²`(第 1 暗環で 83.8 %、Born & Wolf)、四角瞳は sinc² の積分、ガウス PSF は閉形式、円形瞳の MTF は `(2/π)(arccos x − x√(1−x²))`、デフォーカスは Hopkins の瞳の重なりの積分(求積で独立に計算)。ピッチを 2 倍にする、軸を入れ替える、共役の補正を落とすといった壊し方で、各門が赤になることも確かめています。
+
+**多構成(ズーム・切替)**(2026-10-19)。`lens_system` の辞書に `"configurations"`(構成ごとの疎な上書きの列 `{"name", "surfaces": {面: {欄: 値}}, "system": {欄: 値}}`)を足すと、`lens_configurations(system)` が構成ごとに解決した `lens_system` を返し(`lens_with_configuration(system, k)` はその 1 つ、k は 0 始まり)、他の op はそのまま使えます。面の欄は `R t n k ap f asph mirror decenter tilt`、系の欄は `wavelength_um field stop object_mm image_mm aim`。無い面・未知の欄・`lens_system` が拒否する値は、構成の番号を添えた ValueError(黙って捨てない)で、基の系は書き換わりません。`lens_configuration_table` は多構成エディタの表(行 = 変わる量、列 = 構成)、`lens_configuration_metrics` は EFL・後端焦点距離・RMS スポット・MTF・囲みエネルギーのどれか 1 つを構成ごとに並べます(既存の op を呼ぶだけで、式は複製していません)。`lens_add_configuration` は構成を 1 つ足した複製を返します。
+
+設計ファイル(.zmx)の `MNUM` の表は `lens_file_read` / `lens_file_write` が読み書きします。門(`tests/test_optdesign_multiconfig.py`)の真値は、薄肉 2 枚の閉形式 `EFL = f1·f2/(f1+f2−d)`・`BFL = f2·(f1−d)/(f1+f2−d)`(1e-9)、単一の理想レンズの f を変えたときの囲みエネルギーの Airy 83.8 %、書き→読みの往復(構成ごとの全上書き値と EFL が 1e-12)、公開のズームレンズ .zmx の行の形です。
+
+### 多構成のファイルの行(2026-10-19 に一次の試料で確かめた形)
+
+形は「`MNUM n 有効な構成` のあと、行ごとに `演算子 面 構成 値 …`(構成は 1 始まり)」です。表はファイルの末尾(面のブロックの後)にあり、面のブロックには有効な構成の値が入っています。証人ごとに何を言ったかを残します。
+
+| 証人 | 何が言えるか |
+|---|---|
+| 公開のズームレンズ .zmx 24 本(特許明細書のレンズ、`VERS 161019`。MNUM 2〜11) | `MNUM 6 1`、続く行は `THIC   4   1 15.62 0 0 0 1 1 1 0 0` の形(演算子・面・構成・値、残りは 0 0 0 1 1 1 0 0)。演算子は `THIC`(374 行)と `SDIA`(37 行)だけ。行は演算子 → 面 → 構成の順。面のブロックの `DISZ` は構成 1(= 有効な構成)の `THIC` と一致(例: `SURF 4` の `DISZ 15.62` = `THIC 4 1 15.62`)。物体面の無限遠は `THIC 0 c 1.00E+10`(面のブロックは `DISZ INFINITY`) |
+| 公開の試験用 .zmx(2 面の座標変換面を持つ小さな試料ほか) | 古い短い形 `GLSS   4   1 BK7 0 0` / `GLSS   4   2 MIRROR 0 0`(硝材名、鏡は MIRROR、空気は値なしの `GLSS   2   2`)、`THIC   5   2 -20 0 0`、`CRVT   7   1 0.0264257501 0 0`(CRVT は曲率で曲率半径ではない)、`PAR3   5   2 90 0 0`(面 5 のパラメータ 3 = 座標変換面の x 傾き)。`MNUM 2`(有効な構成の欄が無い版もある) |
+| 公開の試料(傾き付き近軸系、`MNUM 3 2`) | `MOFF   0   1 "" 0 0 0 1 1 0 0.0 ""` が構成の数だけ並び、続いて `PRAM   3   1 -1.000000000000E+001 0 3 0 1 1 1.000000000000E+000 0.000000000000E+000 0`。PRAM は値のあと 0、**パラメータ番号**(= 3、面 3 の `PARM 3`)、0 … の並び。`MNUM 3 2` の有効な構成 2 の値(0)は面のブロックの `PARM 3 0` と一致。長い形(`… 1 1 1.000000000000E+000 0.000000000000E+000 0`)は現行の保存形 |
+| 公開の試料(`MCOM`、`MOFF` に文字列が入るもの) | `MCOM   8   1 "untilted" …` と `MOFF   0   4 "Any current" …` は文字列つきの行(構成の名前・行の注釈と見えるが、役割は一次の説明が得られていない)。幾何には効かないので読むときは無視して数える |
+| 設計ソフトの利用者ガイド(多構成エディタの章) | 一次の説明ページは取得できなかった(配布元が自動取得を 403 で拒否)。演算子の名前 `THIC` / `CRVT` / `GLSS` / `SDIA` / `PRAM` / `APER` / `TEMP` / `PRES` は開発者向け API の例の検索結果で確認(`APER` / `TEMP` / `PRES` の行の形は確かめていない → 未対応として拒否) |
+| ray-optics 0.9.8(BSD-3)の `zmxread.py` | `MNUM`・`MOFF`・`PPAR`・`CONF` を「対応しない」リストに入れて読み飛ばす(構成の表は読まない)。形の証人にはならない |
+| optiland 0.6.3(MIT)の ZMX 読み手 | `MNUM` の処理が無い(構成の表は読まない)。別に `optiland.multiconfig`(構成を持つ光学系のクラス)があるが ZMX の行とは繋がっていない |
+
+食い違い: 読み手 2 本はどちらも表を読まないので、読み手どうしの食い違いは無い。実ファイルが示した形に従った。**未確認のまま**: `MOFF` / `MCOM` の文字列の役割、`PAR1`〜`PAR9` のうち `PAR3` 以外(`PARn` は `PAR3` からの類推で読み、報告に注記する)、`GLSS` の長い形、`APER` / `TEMP` / `PRES` など他の演算子。書き手は「実ファイルで確かめた形(THIC / CRVT / PRAM は長い形、GLSS は短い形)」だけを書き、読み戻した結果と、実ファイルの EFL(下)で確かめた。設計ソフトそのものでの読み込みは試していない。
+
+実ファイルでの確認(権利が明確でないので同梱しない。手元の非公開置き場): 24 本のうち 23 本が `lens_file_read(allow_partial=True)` で読め(残りは XOSPHERE 面で拒否)、構成ごとの EFL は題名の焦点距離の範囲と一致した(例: 35–70 mm のズームで 36.0 / 50.0 / 68.0 mm、70–210 mm で 73.0 / 118.4 / 204.1 mm、残りの 3 構成は近距離合焦)。読んだ 8 本(構成数 2〜6)を `lens_file_write` で書いて読み戻すと構成ごとの EFL が一致した。
+
+**硝材の置き換えと大域探索**(2026-10-19)。`glass_nearest(n_d, v_d, catalog, k, metric, p_gf)` は、カタログ(既定は `materials.glass_map` の光学ガラス 46 種、または `{"name", "nd", "vd", "PgF"}` の列)を Abbe 面の距離で並べ、近い順に k 個を返します。距離は `nd_vd` が `√(Δn_d² + (ΔV_d/100)²)`、`partial_dispersion` が `√(Δn_d² + (ΔV_d/100)² + (ΔP_gF/0.1)²)`(P_g,F = (n_g−n_F)/(n_F−n_C)、`p_gf` が要る)で、同じ距離は名前の順で決めるので結果は再現します。`lens_substitute_glasses(system, catalog, k, metric, tolerance)` は系のモデル硝材((n_d, V_d) の組と `raytrace.glass` の辞書)を k 番目に近いカタログ硝材の名前に置き換え、面ごとの表(置き換え前後の n_d・V_d・P_g,F・距離)を返します。空気・屈折率の数・名前で書かれた硝材はそのまま。2 項 Cauchy のモデル硝材が持つ P_g,F はどの硝材でも 0.541 なので、`partial_dispersion` はそこに近いカタログ硝材を選びます。許容距離(既定 0.05)の外のモデル硝材は面の番号つきの ValueError で、一部だけ置き換えることはしません。最後の面の `t` が None なら新しい硝材で像面が取り直されます。
+
+`lens_global_search(system, variables, merit, n_starts, seed, spread, iterations, duplicate_tolerance)` は多始点の局所最適化です。始点 0 は与えた処方、残りは各変数を `x(1 + spread·u)`(u は `default_rng(seed)` の [−1, 1] の一様乱数、0 の変数は同じ種類の代表的な大きさの `spread` 倍)だけ動かし、無効な処方になる始点は引き直します(25 回で ValueError)。各始点を `lensopt.optimize_lens` でそのまま最適化し(merit を再実装せず、`merit` は `fields wavelengths rings efl_target efl_weight field_weights pupil_fill min_thickness max_thickness min_radius damping tolerance` の辞書)、EFL の目標は全始点で同じ(与えた処方の EFL)です。返り値は merit 順の全局所解(`start`・`merit`・`values`・`status`・`duplicate_of`)、別々の解の一覧 `basins`(何本の始点が着いたか)、`n_distinct`。変数がすべて `duplicate_tolerance`(相対 1e-3)以内で揃う解は、より良い解の重複と印が付きます。
+
+門(`tests/test_optdesign_globalglass.py`)の真値は、薄肉色消しの閉形式(Smith『Modern Optical Engineering』、Kingslake & Johnson『Lens Design Fundamentals』): 2 枚が F・C 線で色消しの条件は φ1/V1 + φ2/V2 = 0、φ1 + φ2 = φ から φ1 = φV1/(V1−V2)、φ2 = −φV2/(V1−V2)。置き換えた後の F−C の屈折力差は φ1'/V1' + φ2'/V2'(カタログの n_d・V_d で手計算)で、光線追跡の値と相対 1e-6 以内(実測 4e-11)。単レンズの曲げは薄肉の 3 次球面収差が形状係数 q = (R2+R1)/(R2−R1) の 2 次式(q² の係数 (n+2)/(n(n−1)²)、q·p の係数 4(n+1)/(n(n−1))。Welford『Aberrations of Optical Systems』の薄肉 Seidel 係数)で、物体が無限遠(p = −1)の最小は q* = 2(n²−1)/(n+2)(n = 1.5168 で 0.7397)。**符号は規約**で、上の q の定義では正(強く曲がった面が遠い物体の側)。教科書の原本は手元に無く、2 つの係数から導出し直し、さらに数値で符号を確かめた(開口を小さくすると光線追跡の最適値が +0.7397 に下から近づく)。開口 5 / 3 mm の最良の q は 0.7374 / 0.7383、5 次収差と厚みが ap² に比例するので ap² で外挿すると 0.7388(q* と 1e-3 以内)。色消し 2 枚の屈折力は、開口 0.004 mm の極薄 2 枚で 8 始点がすべて閉形式に相対 9.8e-9 で着き、1 つの解にまとまる。3 曲率の色消し 2 枚には merit の違う 2 つの解があり(1.18e-5 と 5.04e-6)、浅い解から始めた 1 始点はそこに留まり、20 始点(spread 0.7)のうち 1 本だけが深い解に届く。壊し方(許容距離を 1e-6 にする、カタログの名前を重ねる、merit に未知の欄を入れる、k を 0 にする)で各門が赤になることも確かめています。
+
+**オペランド表のメリット関数と最適化**(2026-10-19)。設計者のメリット関数は要求の表で、`lensmerit` はそれを行(目標・重み・片側の境界)として持ちます。`merit_operands_list` は 32 個のオペランド(30 個 + afocal 系の角倍率 `ANGM` と角度のスポット `RSAN`)の名前・意味・単位・引数を返し、`merit_evaluate(system, operands, fields, wavelengths, ...)` は行ごとの値・目標・重み・寄与 `(w(値 − 目標))²`・割合を返します。境界の行(縁厚 `ETGT`/`ETLT`、中心厚 `CTGT`/`CTLT`、ガラス・空気の厚みの範囲 `MNCG`/`MXCG`/`MNCA`/`MXCA`)は満たしている間は寄与 0、任意の行に `sense="ge"/"le"` を付けて片側にもできます。縁厚は両面のクリア半径でのサグから `t − sag_i(h_i) + sag_{i+1}(h_{i+1})`(円錐・偶数次非球面を含む)。実光線は `REAY`/`REAX`/`RAID`/`OPDX`、収差は Seidel 和・`AXCL`/`LACL`・`RSCE`/`RSCH`・`WFRMS`、1 次の量は `EFFL`/`TOTR`/`WFNO`/`PMAG`/`DIMX`。瞳全体を 1 行にまとめる群の行 `TRAN`(横収差)と `OPDW`(OPD)を `merit_default` が並べ、`kind="spot"`・`reference="chief"` では `lensopt.merit_function` と一致します。`merit_boundary_operands` が製造上の境界を行にし、`merit_contributions` が支配している行を割合で示します。`optimize_lens_operands` は `lensopt` の変数・減衰最小二乗・刻みで行を積んだ残差を最小化し、変数 `g<i>` で硝材を候補から選びます(連続変数の収束後に候補を 1 つずつ入れ替えて再最適化し、最良を残す外側ループ)。不明なオペランド・足りない引数・範囲外の添字・重み全部 0・有限でない値は ValueError です。
+
+**解(solve)・ピックアップ・afocal・曲面の像面・奇数次の非球面**(2026-10-20)。設計は数字の並びでなく関係の束なので、`lenssolve` は関係を規則として面に持たせます。`lens_solve_set(system, surface, kind, ...)` が面の辞書の `solve` に規則を載せ(傍らの `R` / `t` は解いた値)、`lens_system` は作るとき、`raytrace` の追跡は毎回、規則を解き直すので、絞りの半径や硝材を変えると残りが追従します(`lens_apply_solves` は純粋で、規則を残したまま解いた複製を返す。結果は入力が同じなら使い回す)。種類は、厚みの解 `marginal_ray_height` / `chief_ray_height`(次の面での光線の高さ)・`paraxial_image`(高さ 0 = 近軸の焦点、最後の面で `t=None` だったものの正体)、曲率の解 `marginal_ray_angle` / `chief_ray_angle`(射出角)・`f_number`(系全体の像側 F/# を 1 本の曲率で。根の探索は走査と二分法で、根は一般に 2 本あり開始に近い方を採って全部報告)・`concentric`(共通の曲率中心か、前の面の頂点)・`aplanatic`、ピックアップ `pickup`(曲率・厚み・非球面係数を、倍率と偏りをつけて別の面から)。面を順に、動かなくなる(1e-12)まで何度か解き、循環したピックアップ・未知の種類・その種類が取らない引数・理想レンズの曲率の解・絞りを動かす厚みの解・軸上の主光線の解・根の無い F/# の解は ValueError。**afocal**: `lens_system(..., afocal=True)` か `afocal_system` で像側が平行光の系にすると、`paraxial_trace` は焦点距離でなく `angular_magnification` と射出瞳を返し(EFL = inf でも例外にならない)、`ray_bundle`・`spot_stats`・`ray_fan` は像面の位置の代わりに**射出角(分角、主光線から)**を、`opd_samples` は平面波を基準にします。`lens_afocal_report` は角倍率・射出瞳・視野ごとの角度の収差を返し、`lensmerit` に `ANGM` と `RSAN` を足しました。**曲面の像面**: `lens_system(..., image_R=, image_k=)` と `lens_image_surface`(`R="petzval"` で `lens_petzval_radius`)。光線は像面の式と交わり、近軸の像は変わりません。**奇数次の非球面**: 面の `odd`(`B1 r + B2 r² + ...`、8 次まで)と、偶数次に足りなかった r² の項 `a2`。`.zmx` は `ODDASPH` と `EVENASPH` の `PARM 1` を読み書きし、曲面の像面は `CURV` / `CONI`、ピックアップ(`CURV c 4 source scale offset`、`PZUP`、`PPAR`)は規則として読んで追従し、それ以外の規則は `NOTE 0 FULLSEYE-SOLVE {...}` の行で往復します(形式の解の型は実ファイルで確かめられるピックアップだけ)。afocal の印は `NOTE 0 FULLSEYE-AFOCAL 1`(形式の afocal の行は実ファイルで確かめられないので作らない)。
+
+門(`tests/test_lensmerit.py`)の真値は、薄肉色消しの閉形式(EFFL と AXCL = 0 の最適化が φ1 = φV1/(V1−V2)、φ2 = −φV2/(V1−V2) に 1e-4 以内、実測 1e-14)、平凸の縁厚(1e-12)、屈折球面の Snell の式(実光線の高さと入射角、1e-12)と 1 面の 3 次球面収差(Welford)、理想レンズの作動 F ナンバー(1e-6)と倍率、独立実装(MIT ライセンスの公開ライブラリ、記録値を `tests/data/lensmerit_optiland_ref.json` に置く)の EFL・像面の実光線(1e-6 mm、実測 2e-14)・OPD。軸外の OPD は基準球の半径の規約の違い(独立実装は像点から射出瞳中心までの距離、`raytrace.opd_samples` は光軸方向の距離だけ)で最大値の 0.03 %(14°)〜0.25 %(20°)ずれます。PoC `poc_lens_merit_operands`: 縁の薄い三枚玉の最適化で寄与の割合が EFL の保持(82 %)から 12° の波面(71 %)へ移り、負レンズの硝材を間違えた出発点で `g2` を 6 種のモデル硝材から選ばせると軸上色が 1/17、倍率色が 1/154 に落ちます。
+
+門(`tests/test_lenssolve.py`)の真値は、近軸の線形方程式の手解き(主光線の高さ・周辺光線の角度・F/# の 2 根、1e-12)、屈折球面のアプラナティック点(全光線で厳密に結像、スポット 1e-9 mm 以下)、同心の玉(中心へ向かう光線が曲がらない、1e-12)、理想レンズのケプラー・ガリレオ望遠鏡(角倍率 ∓4 が 1e-12、角度の収差 0)、薄肉レンズのペッツバール半径 −N f と Seidel の和、円錐・奇数次の手書きのサグ(1e-12)と円錐面の板の Snell の閉形式(1e-9)。既存の `.zmx` 9 本の面の表は、この回の前後で一字一句同じです。PoC `poc_lens_solves_afocal`: 二重ガウス型で絞りを 5.0 → 7.6 mm と動かしても F/# は 5 のまま、解かない版は 6.34 → 4.17 に流れる。ペッツバール半径の像面は 0.7 視野のスポットを 1/8.6 にする。
+
+## What it does
+
+### Independent verification of public `.zmx` prescriptions (2026-10-20)
+
+`tests/data/lensfile/` の同軸処方 4 本を、それぞれ別の `.zmx` 読取器と光線追跡器で再計算した。`asphere_singlet.zmx`、`double_gauss_const.zmx`、`triplet_catalog.zmx`、`triplet_const.zmx` について、EFL/BFL の最大相対差は 3.5e-16、同じ入射光線を再生した像面座標と重心まわり RMS スポットの差は 1e-6 mm 未満だった。記録値は `tests/data/zmx_public_ref.json` に置き、任意の外部実装が無い CI でも毎回照合する。
+
+PoC `poc_zmx_public_verify`(収蔵番号 2026.270)は、作動距離を無限遠、入口瞳径を 1 mm、センサーを 256×256 画素・5.5 µm と明記して、相対照明、歪曲、RMS スポット/画素、倍率色、ナイキスト周波数の 1/4 の MTF、角の 3 画素傷のコントラストを採点する。OPD は参照球だけでなく内部絞りの瞳写像も実装ごとに異なるため、精密一致の門には使わず規約差の図として残す。
+
+An ideal (paraxial) lens surface for `raytrace.lens_system` and four PSF metrics. The ideal lens turns rays by the thin-lens law exactly with a stigmatic optical path, so an aberration-free lens reads zero OPD and an Airy PSF. `encircled_energy` / `ensquared_energy` give the energy-versus-radius curves, `energy_radii` the radii at chosen fractions, `mtf_tangential_sagittal` the two meridional slices of the 2-D transform, and `through_focus_mtf` the MTF at chosen frequencies across image-plane shifts. Gates: focus at f to 1e-12 mm, Gaussian conjugate and magnification, 83.8 % at the first Airy dark ring, the closed-form circular-pupil MTF, and Hopkins' defocus integral.
+
+Real-ray aiming and vignetting factors (2026-10-19): `with_aiming(system, "stop")` (or `lens_system(..., aim="stop")`) iterates every pupil ray onto its own point of the stop surface (tolerance 1e-11 of the stop radius, `ValueError` if it does not converge), so the stock triplet loses 0 of 217 rays on axis instead of 48; the default stays the paraxial launch so existing numbers do not move. `lens_system(..., vignetting=[...])` carries per-field VDX / VDY / VCX / VCY / VAN (read from and written to `.zmx`), `set_vignetting` computes them from the apertures, `ray_aiming` reports the counts, residual and pupil extent. Spot, OPD, PSF and MTF ops use the aimed, vignetted pupil.
+
+Multi-configuration systems (2026-10-19): a `lens_system` dict may carry `"configurations"`, one sparse override per configuration; `lens_configurations` / `lens_with_configuration` resolve them into ordinary systems (the base is never modified, bad surfaces / fields are a `ValueError`), `lens_configuration_table` returns the operand-by-configuration table and `lens_configuration_metrics` one existing metric (EFL, BFL, RMS spot, MTF, encircled energy) per configuration. `lens_file_read` / `lens_file_write` read and write the `MNUM` table of a `.zmx` (rows `THIC`, `CRVT`, `GLSS`, `PRAM` / `PARn`, layout taken from public zoom-lens files; the table above lists what each witness said). Gates: the two-thin-lens closed form (1e-9), the Airy 83.8 % for a lens whose f changes, and a write-read round trip (1e-12).
+
+Glass substitution and global search (2026-10-19): `glass_nearest` ranks a catalogue (default: the 46 optical glasses of `materials.glass_map`, or your own `{name, nd, vd, PgF}` list) by distance in the Abbe plane (`nd_vd`: sqrt(dn_d^2 + (dV_d/100)^2); `partial_dispersion` adds (dP_gF/0.1)^2); `lens_substitute_glasses` replaces every model glass of a system by the k-th nearest catalogue glass and returns the substitution table (a model glass with no neighbour inside `tolerance` is a ValueError, never a partial swap); `lens_global_search` runs `lensopt.optimize_lens` from the given prescription and from seeded perturbations of the variables, with the same merit and EFL target for every start, and returns all local optima in merit order with coinciding ones flagged as duplicates (same seed, same result). Gates: the thin-achromat closed form (phi1 = phi V1/(V1 - V2), phi2 = -phi V2/(V1 - V2)) and the F-C power difference after a swap, phi1'/V1' + phi2'/V2' (traced against hand computation to 4e-11); the third-order best-form bending q* = 2(n^2 - 1)/(n + 2) approached as the aperture shrinks (0.7374 / 0.7383 at 5 / 3 mm, 0.7388 extrapolated in ap^2; the sign depends on the definition q = (R2 + R1)/(R2 - R1)); the achromat powers reached from 8 starts to 9.8e-9; and a three-curvature achromat with two optima (merit 1.18e-5 and 5.04e-6) of which 1 of 20 starts reaches the deeper one.
+
+Operand-table merit function and optimiser (2026-10-19): `lensmerit` keeps the merit function as a table of rows, each with a target, a weight and, for a bound, a one-sided form. `merit_operands_list` lists the 32 operands (the 30 plus `ANGM` and `RSAN` for afocal systems; name, meaning, unit, arguments); `merit_evaluate` returns per row the value, target, weight, contribution `(w (value - target))^2` and share; bound rows (edge thickness `ETGT`/`ETLT`, centre thickness `CTGT`/`CTLT`, glass and air thickness ranges `MNCG`/`MXCG`/`MNCA`/`MXCA`) contribute nothing while they hold, and any row can be made one-sided with `sense="ge"/"le"`. Edge thickness is `t - sag_i(h_i) + sag_(i+1)(h_(i+1))` at the clear semi-diameters of both surfaces (conic and even aspheric terms included). Real-ray rows are `REAY`/`REAX`/`RAID`/`OPDX`, aberration rows the Seidel sums, `AXCL`/`LACL`, `RSCE`/`RSCH` and `WFRMS`, first-order rows `EFFL`/`TOTR`/`WFNO`/`PMAG`/`DIMX`; `merit_default` lays out the group rows `TRAN` (transverse aberration) and `OPDW` (OPD) over the whole pupil and equals `lensopt.merit_function` for `kind="spot"`, `reference="chief"`; `merit_boundary_operands` turns manufacturing bounds into rows and `merit_contributions` says which row dominates, as percentages. `optimize_lens_operands` minimises the stacked residuals with the variables, damped least squares and step sizes of `lensopt`, and a variable `g<i>` picks the glass of surface i from a candidate list (after the continuous variables converge each candidate is swapped in and re-optimised, and the best is kept). An unknown operand, a missing argument, an index out of range, all weights zero or a value that is not finite is a ValueError.
+
+Gates (`tests/test_lensmerit.py`): the thin-achromat closed form (an EFFL + AXCL = 0 optimisation lands on phi1 = phi V1/(V1 - V2), phi2 = -phi V2/(V1 - V2) to 1e-4, measured 1e-14), the plano-convex edge thickness (1e-12), Snell's law after a refracting sphere (real ray height and angle of incidence, 1e-12) and the third-order spherical aberration of one surface (Welford), the working F-number of an ideal lens (1e-6) and its magnification, and an independent implementation (an MIT-licensed open-source library; its numbers are recorded in `tests/data/lensmerit_optiland_ref.json`): EFL, real ray positions at the image (1e-6 mm, measured 2e-14) and OPD. The off-axis OPD differs by 0.03 % of the peak at 14 deg and 0.25 % at 20 deg because of a convention for the reference-sphere radius (the other implementation: image point to exit-pupil centre; `raytrace.opd_samples`: the axial distance only). PoC `poc_lens_merit_operands`: optimising a thin-edged triplet moves the dominant row from the EFL hold (82 %) to the 12-degree wavefront (71 %), and from a start whose negative lens has the wrong glass, letting `g2` choose among 6 model glasses cuts the axial colour to 1/17 and the lateral colour to 1/154.
+
+Solves, pickups, afocal systems, a curved image surface and odd aspheres (2026-10-20): a design is a bundle of relations, so `lenssolve` keeps them as rules on the surfaces. `lens_solve_set(system, surface, kind, ...)` puts a rule in `solve` of the surface dict (the `R` / `t` beside it hold the solved value); `lens_system` resolves it when the system is built and every `raytrace` trace resolves it again, so changing the stop radius or a glass lets the rest follow (`lens_apply_solves` is pure: a solved copy with the rules kept, cached while the inputs are unchanged). Kinds: thickness solves `marginal_ray_height` / `chief_ray_height` (ray height at the next surface) and `paraxial_image` (height 0 = the paraxial focus, what a missing last thickness always meant); curvature solves `marginal_ray_angle` / `chief_ray_angle` (exit angle), `f_number` (the image-space F/# of the whole system by one curvature; a scan for sign changes then bisection, the F/# generally has two roots, the one nearest the start is taken and all are reported), `concentric` (a shared centre of curvature, or the centre at an earlier vertex) and `aplanatic`; and `pickup` (a curvature, thickness or aspheric coefficient from another surface with a scale and an offset). Surfaces are solved in order, sweep after sweep until nothing moves (1e-12); a circular pickup, an unknown kind, an argument the kind does not take, a curvature solve on an ideal lens, a thickness solve that would move the stop, a chief-ray solve on axis and an F/# with no root are a ValueError. Afocal: with `lens_system(..., afocal=True)` or `afocal_system` the image space is collimated; `paraxial_trace` returns `angular_magnification` and the exit pupil instead of a focal length (EFL = inf does not raise), `ray_bundle` / `spot_stats` / `ray_fan` report the exit angle in arcminutes from the chief ray instead of an image-plane position, and `opd_samples` references a plane wave. `lens_afocal_report` returns the angular magnification, the exit pupil and the angular aberration per field, and `lensmerit` gained `ANGM` and `RSAN`. Curved image surface: `lens_system(..., image_R=, image_k=)` and `lens_image_surface` (`R="petzval"` gives `lens_petzval_radius`); rays meet the surface equation and the paraxial image does not change. Odd aspheres: the surface key `odd` (`B1 r + B2 r^2 + ...` up to the 8th power) and the r^2 term `a2` the even asphere lacked. The `.zmx` reader and writer handle `ODDASPH` and `PARM 1` of `EVENASPH`, a curved image surface as `CURV` / `CONI`, and the pickups (`CURV c 4 source scale offset`, `PZUP`, `PPAR`) as rules that are followed; every other rule is written as a `NOTE 0 FULLSEYE-SOLVE {...}` line (the only solve forms real files show are the pickups), and the afocal flag as `NOTE 0 FULLSEYE-AFOCAL 1` (the format's own afocal line cannot be established from a real file, so none is invented).
+
+Gates (`tests/test_lenssolve.py`): hand solutions of the paraxial linear equations (chief ray height, marginal ray angle, the two F/# roots, 1e-12), the aplanatic points of a refracting sphere (every ray images exactly, spot 1e-9 mm), a concentric ball (a ray aimed at the centre is not bent, 1e-12), ideal-lens Keplerian and Galilean telescopes (angular magnification -4 / +4 to 1e-12, zero angular aberration), the thin-lens Petzval radius -N f and the Seidel sum, the hand-written conic / odd sag (1e-12) and the Snell closed form for a conical plate (1e-9). The surface tables of the 9 existing `.zmx` test files are identical before and after this slice. PoC `poc_lens_solves_afocal`: a double-Gauss type keeps F/# 5 while the stop moves from 5.0 to 7.6 mm (the frozen-numbers version drifts 6.34 -> 4.17), and the Petzval image surface cuts the 0.7-field spot to 1/8.6.
+
+## 向くところ / 向かないところ
+
+**向く**: 設計の出発点を理想レンズで置いて後ろの系の収差だけを見る、スポットの大きさを「何 % が画素に入るか」で言う、軸外の非点収差を子午/球欠の MTF で見る、像面のずれに対する MTF の余裕(焦点深度)を出す。
+
+**向かない**: 色のある多波長の MTF(波長ごとに呼ぶ)、Huygens の PSF。理想レンズは非共軸の `raytrace3d` では読めません。
+
+## 推奨パイプライン
+
+`lens_system` → `psf_from_opd` → `encircled_energy` → `energy_radii` → `mtf_tangential_sagittal` → `through_focus_mtf`
+
+`psf_from_opd` には `pixel_pitch_um` を渡す。`encircled_energy` と `energy_radii` は同じ PSF から並べて使う(曲線と、指定した割合に達する半径)。
+
+`lens_system` に `{"f": 50.0, "t": None, "ap": 2.5}` の面を置いて収差ゼロの基準を作り(実際の系なら処方を並べる)→ `psf_from_opd` に `pixel_pitch_um` を渡して PSF を画素へ面積積分し → `encircled_energy` / `energy_radii` で「何 µm の円に 80 % 入るか」→ 細かい格子の PSF を `mtf_tangential_sagittal` に渡して子午/球欠の MTF → 像面のずれに対する余裕は `through_focus_mtf`(処方を直接受ける)。
+
+## 代替
+
+半径平均の MTF で足りるなら `psf_to_mtf`、回折限界の曲線だけなら `mtf_diffraction`。スポットの大きさを幾何光線で見るなら `spot_stats`、波面は `opd_map` / `wavefront_from_opd`。図面は `lens_section_drawing`(理想レンズは細線と矢じりで描く)。
+
+## 限界
+
+- 解(solve): 実ファイルで形が確かめられるのはピックアップ(`CURV c 4 source scale offset`、`PZUP`、`PPAR`)だけで、ほかの種類は `NOTE` 行で往復する(他のソフトはそれを読まない)。1 面に規則は 1 つ。解の確かな意味は近軸の量(周辺光線は絞りの縁 +ap を通る、主光線は絞りの中心を通り系の `field` を持つ)で、実光線ではない。絞りより前の面の曲率の解は周辺光線の尺度を動かすので何度か解き直す。F/# の解は走査の範囲(`span`)に根が無ければ ValueError。afocal の系は焦点距離・F ナンバーが無いので PSF / MTF / 像形成の op は拒否する。`a2` / `odd` を持つ面は Seidel 和・非共軸の `raytrace3d` が拒否し、近軸の屈折力には `a2` と `B2` が曲率として入るが `B1`(円錐)は入らない。
+- オペランド表: 1 本の光線のオペランド(`REAY` `REAX` `RAID` `OPDX` `WFNO`)はケラレ係数を使わず、光線が口径で失われると ValueError(黙って別の値にしない)。軸外の OPD の基準球は `raytrace.opd_samples` と同じ(光軸方向の距離を半径にする)で、独立実装とは最大値の 0.03〜0.25 % ずれる。最適化は減衰最小二乗の局所解で、硝材の外側ループは候補を 1 つずつ入れ替えた近傍の探索(全組み合わせではない)。境界の重みが小さいと破れが残る(PoC は 100)。硝材の候補を入れ替えた処方が主光線を失うと、その候補は `tried` にエラーつきで記録され飛ばされる。
+- 硝材の置き換え: 最近傍は Abbe 面の距離だけで決める(価格・入手性・熱特性・透過率・部分分散の異常は見ない。`partial_dispersion` は P_g,F を足す)。置き換えた系は元の最適解ではなく、置き換え後に `optimize_lens` で取り直す。モデル硝材は 2 項 Cauchy(可視 0.4〜0.8 µm のみ)で、カタログ硝材は材料表の式なので、同じ n_d・V_d でも F・C 線の外では屈折率が違う。
+- 大域探索: 多始点の局所最適化で、解の網羅は保証しない(始点の数と spread 次第)。局所最適化は減衰最小二乗なので、始点が光線を失う処方(縁の厚みが負など)だと merit が大きい解に止まる(`basins` に merit つきで出る)。EFL の既定の重みは開口の小さい系では硬すぎて収束が進まないので、そういう系は `merit={"efl_weight": 1.0}` で回す。
+- 多構成: 上書きは `R t n k ap f asph mirror decenter tilt`(面)と `wavelength_um field stop object_mm image_mm aim`(系)で、非共軸の `raytrace3d` の系は対象外。`.zmx` に書けるのは厚み・曲率・硝材名・非球面パラメータだけで、構成ごとに口径・視野・波長・円錐定数・面の型・モデル硝材が違う系は ValueError(黙って落とさない)。F/# で口径を決めたファイルは構成ごとの瞳が F/# どおりでなければ書けない。書くとき曲率・厚み・パラメータのピックアップは固定値にする(`dropped_solves` に出る)。
+- 理想レンズの光路は、軸上の物点(第 1 面で有限物体なら光線ごとの物点)に対して等光路にしてある。途中の理想レンズは平行入射を仮定するので、収束光の中に置いた理想レンズの OPD は近似になる。
+- 理想レンズは非共軸の `raytrace3d` では読めず、鏡・円錐・非球面・硝材を持たない(ValueError)。
+- 囲み/四角エネルギーは PSF の窓の中の割合で、窓が翼を切ると高めに出る。窓が足りず指定の割合に届かないときは ValueError(`energy_radii`)。半径が 2 画素前後より小さいと、点標本を画素に均等に広げた近似が効く。
+- 実光線の照準は既定でなく(`aim="stop"` で入れる)、物体側テレセンの系は従来の絞り照準を使う。照準が収束しない光線(絞りに届かない大きな視野)は ValueError。ケラレ係数の定義は書式の利用者ガイド(Vignetting Factors の項)と KA-01393 に従う(拡縮・平行移動のあと全体を VAN で回す)。視野の間は係数を線形補間、範囲の外は最寄りの記録。OPD / PSF / MTF では係数は瞳の**マスク**(格子は物理瞳のまま)で、基準は暈されていない主光線。
+- スルーフォーカス MTF は 1 視野 1 波長ずつ。周波数は回折限界の格子の上限(カットオフ)までで、それを超えると ValueError。
+
+## 実寸校正
+
+長さの尺度は PSF の画素ピッチで決まる。`psf_from_opd` の `pixel_pitch_um` を渡した PSF ならそのピッチ、細かい格子の PSF なら `λ·F#·(size−1)/M`(M は FFT 格子)を `pixel_pitch_um` に渡す。ピッチを 2 倍にすると半径がちょうど 2 倍に狂う(試験の探針で確認)ので、半径は必ず元の格子のピッチで読む。周波数は cycles/mm。
+
+## 最初の 1 本
+
+```python
+import lensimage as LI
+import optics as O
+import raytrace as RT
+
+lens = RT.lens_system([{"f": 50.0, "t": None, "ap": 2.5}], stop=0)           # 理想レンズ f/10: 収差ゼロ
+psf = LI.psf_from_opd(lens, size=128, oversample=8, pixel_pitch_um=1.5)
+print(O.energy_radii(psf, 1.5, (0.5, 0.8, 0.9))["radius_um"])                 # [3.29, 5.5, 11.33]  Airy の 50/80/90 % 半径
+tf = LI.through_focus_mtf(lens, frequency_cpmm=[30.0], defocus_mm=[-0.5, 0.0, 0.5])
+print(tf["tangential"][:, 0].round(3), tf["sagittal"][:, 0].round(3))          # 軸上は子午 = 球欠
+```
+
+走らせて見るなら `py -3.11 examples/optical_design_metrics.py`(理想レンズの焦点・結像公式・Airy の 83.8 %・回折限界 MTF・非点収差での分離を一巡)。

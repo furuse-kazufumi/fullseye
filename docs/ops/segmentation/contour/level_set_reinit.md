@@ -7,7 +7,7 @@ out: table
 examples: [poc_active_contours]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # level_set_reinit — SEGMENTATION `contour` op
@@ -47,7 +47,7 @@ D = φ0 / Δφ0(Δφ0 = 中心差分の勾配の大きさと片側差分の最�
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[class_ndim_norm](../classify/class_ndim_norm.md)
+[class_ndim_norm](../classify/class_ndim_norm.md) · [fisher_lda_score](../classify/fisher_lda_score.md)
 
 ## 同カテゴリ(`contour`)
 

@@ -69,6 +69,7 @@ import heapq
 from collections import defaultdict
 
 import numpy as np
+from scipy.sparse import csr_matrix
 from scipy.spatial import ConvexHull
 
 __all__ = [
@@ -312,7 +313,10 @@ def orient_consistent(V, F):
                     flipped[g] = ~flipped[g]
                 stack.append(g)
 
-    if is_watertight(V, F) and _signed_volume(V, F) < 0.0:
+    # ``edge_faces`` already contains exactly the information needed by
+    # ``is_watertight``; rebuilding and sorting every edge here is redundant.
+    watertight = bool(edge_faces) and all(len(fs) == 2 for fs in edge_faces.values())
+    if watertight and _signed_volume(V, F) < 0.0:
         F = F[:, [0, 2, 1]]
         flipped = ~flipped
     return np.ascontiguousarray(F, np.int64), int(flipped.sum())
@@ -393,15 +397,15 @@ def fill_holes(V, F, max_boundary_len=None):
 # --------------------------------------------------------------------------- #
 # smoothing                                                                   #
 # --------------------------------------------------------------------------- #
-def _laplacian_step(P: np.ndarray, edges: np.ndarray, factor: float) -> np.ndarray:
+def _laplacian_step(P: np.ndarray, edges: np.ndarray, factor: float,
+                    deg: np.ndarray | None = None) -> np.ndarray:
     nv = P.shape[0]
     nsum = np.zeros_like(P)
-    deg = np.zeros(nv)
+    if deg is None:
+        deg = np.bincount(edges.ravel(), minlength=nv).astype(np.float64)
     i, j = edges[:, 0], edges[:, 1]
     np.add.at(nsum, i, P[j])
     np.add.at(nsum, j, P[i])
-    np.add.at(deg, i, 1.0)
-    np.add.at(deg, j, 1.0)
     mask = deg > 0
     out = P.copy()
     delta = nsum[mask] / deg[mask][:, None] - P[mask]      # uniform-weight Laplacian
@@ -409,7 +413,8 @@ def _laplacian_step(P: np.ndarray, edges: np.ndarray, factor: float) -> np.ndarr
     return out
 
 
-def smooth_taubin(V, F, iterations=10, lamb=0.5, mu=-0.53) -> np.ndarray:
+def smooth_taubin(V, F, iterations=10, lamb=0.5, mu=-0.53,
+                  method="exact") -> np.ndarray:
     """Taubin lambda|mu smoothing -> new ``V`` (topology ``F`` unchanged).
 
     Each iteration is a positive Laplacian pass (weight *lamb*, a shrinking blur)
@@ -425,12 +430,27 @@ def smooth_taubin(V, F, iterations=10, lamb=0.5, mu=-0.53) -> np.ndarray:
         raise ValueError("iterations must be >= 0, got %r" % (iterations,))
     lamb, mu = float(lamb), float(mu)
     edges = _unique_edges(F)
+    deg = np.bincount(edges.ravel(), minlength=V.shape[0]).astype(np.float64)
     P = V.copy()
     if edges.shape[0] == 0:
         return P
+    if method not in ("exact", "csr"):
+        raise ValueError("method must be 'exact' or 'csr'")
+    if method == "csr":
+        i, j = edges[:, 0], edges[:, 1]
+        rows = np.concatenate((i, j))
+        cols = np.concatenate((j, i))
+        adjacency = csr_matrix((np.ones(rows.size), (rows, cols)),
+                               shape=(V.shape[0], V.shape[0]))
+        mask = deg > 0
+        for factor in (lamb, mu) * iterations:
+            mean = adjacency @ P
+            mean[mask] /= deg[mask, None]
+            P[mask] += factor * (mean[mask] - P[mask])
+        return np.ascontiguousarray(P, np.float64)
     for _ in range(iterations):
-        P = _laplacian_step(P, edges, lamb)
-        P = _laplacian_step(P, edges, mu)
+        P = _laplacian_step(P, edges, lamb, deg)
+        P = _laplacian_step(P, edges, mu, deg)
     return np.ascontiguousarray(P, np.float64)
 
 
@@ -523,6 +543,8 @@ def decimate_qem(V, F, target_faces, protect=None):
 
     def _push(vi, vj):
         if vi == vj:
+            return
+        if protect is not None and (protect[vi] or protect[vj]):
             return
         vbar, cost = _opt(vi, vj)
         heapq.heappush(heap, (cost, vi, vj, int(version[vi]), int(version[vj]), vbar))
@@ -738,11 +760,9 @@ def components(V, F) -> list:
     out = []
     for _, flist in groups.items():
         fsel = F[flist]
-        used = np.unique(fsel)
-        remap = -np.ones(nv, np.int64)
-        remap[used] = np.arange(used.size)
+        used, local_faces = np.unique(fsel, return_inverse=True)
         out.append((int(used.min()),
                     np.ascontiguousarray(V[used], np.float64),
-                    np.ascontiguousarray(remap[fsel], np.int64)))
+                    np.ascontiguousarray(local_faces.reshape(fsel.shape), np.int64)))
     out.sort(key=lambda t: t[0])
     return [(v, f) for _, v, f in out]

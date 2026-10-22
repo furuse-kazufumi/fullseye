@@ -1,0 +1,136 @@
+[
+ {
+  "file": "01_chart_good_vs_detuned.png",
+  "name": "chart_good_vs_detuned",
+  "caption": "左は市松 1 mm・傾いた刃 2 本・シーメンススター(24 本)が読める。右は RMS スポットが 5.0 倍(軸上 11 → 53 µm)で、市松のコントラストは落ち、スターは中心から先にぼけ、刃の縁に色が付く。1 画素 4 µm、ショットノイズ・読み出しノイズ・12 bit の量子化つき。",
+  "shape": [
+   413,
+   990,
+   3
+  ]
+ },
+ {
+  "file": "02_prescription_detune_morph.gif",
+  "name": "prescription_detune_morph",
+  "caption": "同じチャートを良好な処方からずらした処方へ連続的に比較する。",
+  "shape": [
+   270,
+   480,
+   3
+  ],
+  "animated": true,
+  "frames": 12,
+  "frames_written": 12,
+  "fps": 5.0,
+  "video": "02_prescription_detune_morph.mp4",
+  "video_frames": 24,
+  "video_fps": 10.0,
+  "video_shape": [
+   540,
+   960,
+   3
+  ]
+ },
+ {
+  "file": "03_quality_table.png",
+  "name": "quality_table",
+  "caption": "RMS スポットは raytrace.spot_stats、光量は lensimage、刃は edgesfr で同じ絵から測った。",
+  "shape": [
+   128,
+   1037,
+   3
+  ],
+  "csv": "03_quality_table.csv",
+  "tsv": "03_quality_table.tsv"
+ },
+ {
+  "file": "04_depth_of_field.png",
+  "name": "depth_of_field",
+  "caption": "F/2.8 では 1 m の緑の球だけが締まり、手前の赤い球と奥の青い球、市松の背景(4 m)はぼける。点光源は円盤になり、画面の隅(右上)のものは口径食で猫の目になる。F/8 では被写界深度が深くなりボケは 0.35 倍。幾何光学なので円盤の縁は実物より鋭い。",
+  "shape": [
+   333,
+   750,
+   3
+  ]
+ },
+ {
+  "file": "05_cats_eye.png",
+  "name": "cats_eye",
+  "caption": "遮光筒が隅の斜めの光束を削り、瞳の通過率は 90 %(形は円から外れる)。面積は軸上の 130 % ―― 像面湾曲で円盤そのものが大きくなるので、通過率とは一致しない(収差ゼロの理想レンズなら一致する: 門 2 つの円の重なり)。",
+  "shape": [
+   480,
+   691,
+   3
+  ]
+ },
+ {
+  "file": "06_cats_eye_ideal.png",
+  "name": "cats_eye_ideal",
+  "caption": "像は点(収差ゼロ)なので、ボケは瞳と遮光板の像の重なり ―― 2 つの円の重なりの閉形式 0.635 に、凸包の面積比 0.633、瞳の通過率、描いた絵が 5 % 以内で一致する。",
+  "shape": [
+   480,
+   757,
+   3
+  ]
+ },
+ {
+  "file": "07_relative_illumination.png",
+  "name": "relative_illumination",
+  "caption": "0.7 視野(7.7°)までは lensimage と 2 % 以内(最大 1.6 %)。8.7° では 3.2 % 離れる ―― lensimage は物体側の角度の cos⁴ を使い、描画は像側の角度を使うため。",
+  "shape": [
+   380,
+   600,
+   3
+  ]
+ },
+ {
+  "file": "08_distortion_grid.png",
+  "name": "distortion_grid",
+  "caption": "絞りを前に置いた単玉(樽型 -6.6 %)で撮った 30 mm 格子の絵。赤い点が歪みの無い理想の格子の交点。",
+  "shape": [
+   448,
+   672,
+   3
+  ]
+ },
+ {
+  "file": "09_ghost_overlay.png",
+  "name": "ghost_overlay",
+  "caption": "光源は場面の白の 1e5 倍明るいとして、ピークの 1e-5 を白にした表示。ゴーストは大きく薄い(焦点が遠い)ので、画素ごとの明るさはピークの 1e-7 程度でも、全体では光源の 0.4 % になる。エネルギーは r² (1−r)^(2(j−i)−2) に従い、0.5 % では 4 % の 1/64。",
+  "shape": [
+   264,
+   640,
+   3
+  ]
+ },
+ {
+  "file": "10_scratch_profile.png",
+  "name": "scratch_profile",
+  "caption": "良い三枚玉では傷の中心の画素が 55 % 暗くなるが、ずらした方では 26 % しか暗くならず、周りの画素と区別がつきにくい。",
+  "shape": [
+   380,
+   840,
+   3
+  ]
+ },
+ {
+  "file": "11_scratch_images.png",
+  "name": "scratch_images",
+  "caption": "同じ露出。良い方は細い暗線が読め、ずらした方は線が薄れて周りのぼけに埋もれかけている。",
+  "shape": [
+   243,
+   762,
+   3
+  ]
+ },
+ {
+  "file": "12_geometric_vs_airy.png",
+  "name": "geometric_vs_airy",
+  "caption": "F/6.25 は収差が支配(EE 83.8 % の半径は Airy の 2.7 倍)。F/11 は 32 % しかなく、実物より鋭く描いている。",
+  "shape": [
+   400,
+   640,
+   3
+  ]
+ }
+]

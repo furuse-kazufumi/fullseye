@@ -212,8 +212,8 @@ def _local_slope(f: np.ndarray, coord: np.ndarray, w: int) -> np.ndarray:
     内側の点の複製なので、場が局所的に 1 次なら傾きは境界でも厳密に返る。
     """
     sc = ndimage.uniform_filter(coord, w)
-    sf = ndimage.uniform_filter(f, w)
     scc = ndimage.uniform_filter(coord * coord, w)
+    sf = ndimage.uniform_filter(f, w)
     scf = ndimage.uniform_filter(coord * f, w)
     var = scc - sc * sc
     return np.where(var > 1e-9, (scf - sc * sf) / np.maximum(var, 1e-12), 0.0)
@@ -383,6 +383,15 @@ def _bilinear(img: np.ndarray, ry: np.ndarray, rx: np.ndarray) -> np.ndarray:
     """``img`` を実数座標 ``(ry, rx)`` で双一次標本化。外は NaN。"""
     ny, nx = img.shape
     inside = (ry >= 0.0) & (ry <= ny - 1) & (rx >= 0.0) & (rx <= nx - 1)
+    if inside.all():
+        y0 = np.floor(ry).astype(np.int64)
+        x0 = np.floor(rx).astype(np.int64)
+        y1 = np.minimum(y0 + 1, ny - 1)
+        x1 = np.minimum(x0 + 1, nx - 1)
+        fy = ry - y0
+        fx = rx - x0
+        return ((1 - fy) * ((1 - fx) * img[y0, x0] + fx * img[y0, x1])
+                + fy * ((1 - fx) * img[y1, x0] + fx * img[y1, x1]))
     cy = np.clip(np.nan_to_num(ry, nan=0.0), 0.0, ny - 1.0)
     cx = np.clip(np.nan_to_num(rx, nan=0.0), 0.0, nx - 1.0)
     y0 = np.floor(cy).astype(np.int64)

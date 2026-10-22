@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 68 項目**
+**収録 95 項目**
 
 ## 課題から引く(推奨パイプライン)
 
@@ -29,41 +29,67 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 | [領域を切り出して、選んで、数える](capabilities/blob-and-region.md) | `auto_threshold` → `blob_label` → `blob_select` → `blob_features` | `poc_cell_counting` |
 | [クロマティック共焦点変位センサ(硝材の分散 → 較正表 → 戻りスペクトル → 高さ・厚さ)](capabilities/chromatic-confocal-sensor.md) | `chromatic_confocal_probe` → `chromatic_confocal_spectrum` → `chromatic_confocal_peaks` → `chromatic_confocal_readout` | `poc_chromatic_confocal` |
 | [色を測る(XYZ / Lab / 色差)](capabilities/colour-and-delta-e.md) | `rgb_to_lab` → `delta_e_2000` | `poc_white_balance` |
+| [多重反射・多重散乱・反復を収束まで回す —— 収束した証拠と残りの誤差を返し、収束しなければ値を出さない](capabilities/convergent-forward-models.md) | `iterate_fixed_point` → `conv_gci` | `converge_tour` |
+| [圃場の RGB から作物と雑草を色と肌理で分け、雑草の被度を宣言した境で段階にする(学習器なし)](capabilities/crop-weed-cover-grade.md) | `superpixel_color_texture_features` → `fisher_lda_fit` → `fisher_lda_score` → `cover_ratio_grade` | `poc_weed_rice_ratio` |
+| [X 線の 2 つのエネルギーで厚みと材質を分ける(デュアルエナジー / フォトンカウンティング: スペクトル → 窓 → 基底分解 → 実効 Z)](capabilities/dual-energy-xray-material-discrimination.md) | `xray_tube_spectrum` → `photon_counting_channels` → `basis_decomposition_crlb` → `basis_material_decompose` → `effective_z_map` | `poc_dual_energy_xray` |
 | [結果を人が読める図にする](capabilities/figures-and-annotation.md) | `annotate_figure_grid` → `annotate_panel_label` → `annotate_scale_bar` → `annotate_colorbar` | `poc_colormap_readability` |
 | [地球規模の座標に載せる(ECEF・高さの基準・局所 ENU)](capabilities/geodetic-frames.md) | `dem_geodetic_to_ecef` → `dem_ecef_to_geodetic` | `poc_geodetic_height_frames` |
+| [良品を並べて「いつもと違う」を言う(良品統計の変動モデル、誤検出率の宣言つき)](capabilities/good-sample-variation-model.md) | `varmodel_alignment` → `varmodel_fit` → `varmodel_calibrate` → `varmodel_score` | `poc_good_sample_variation_model` |
+| [格子干渉計(タルボ・ロー)で透過・微分位相・暗視野の 3 像を分ける](capabilities/grating-interferometry.md) | `talbot_grating_design` → `talbot_source_visibility` → `grating_step_period_estimate` → `grating_three_image_retrieve` → `darkfield_scatter_relation` → `dpc_integrate` | `poc_grating_interferometry` |
+| [回折格子の分光器と顕微鏡の照明系(帯域の幅・smile / keystone・ケーラー / クリティカル・同軸のハーフミラー)](capabilities/grating-spectrometer-and-illumination.md) | `czerny_turner_design` → `spectrometer_bandpass` → `spectrometer_spectrum` | `poc_spectrometer_illumination` |
 | [照明の円錐と観察の NA で、鏡面の小さな傾きを出す・消す(球冠の交わり → 傾きの帯 → 打痕・傷・梨地)](capabilities/illumination-cone-vs-na.md) | `solid_angle_light` → `solid_angle_boundaries` → `solid_angle_sweep` → `solid_angle_brightness` → `solid_angle_render` | `poc_illumination_cone_vs_na` |
 | [工業用 OCT(干渉スペクトル → k 線形化 → 分散補償 → A / B スキャン → 群屈折率で層厚)](capabilities/industrial-oct.md) | `oct_design` → `oct_from_spectra` → `oct_bscan` → `oct_bscan_boundaries` → `oct_bscan_flatten` → `oct_layer_thickness` | `poc_industrial_oct` |
 | [円形部品の内径を mm まで測る](capabilities/inner-diameter-in-mm.md) | `gaussian` → `otsu` → `area_center` → `create_metrology_model` → `add_metrology_object_circle_measure` → `apply_metrology_model` → `mm_per_px_from_reference` → `pixel_to_world` | `example_inner_diameter_mm` |
+| [凹んだ部品の相互反射を、測光の真値を保ったまま収束まで数える(3-D の形態係数・漸進ラジオシティ・検査用の多重反射描画)](capabilities/interreflection-to-convergence.md) | `radiosity_patches` → `form_factor_matrix` | `poc_pocket_interreflection` |
 | [地の色を知らずに線と領域を描く(反転色)](capabilities/inverted-colour-overlays.md) | `annotate_invert_visibility` → `annotate_invert` → `annotate_invert_path` | `annotate_paper_tour` |
+| [間接 ToF(位相方式)の多周波アンラップと壊れ方(折り返し・多重反射・縁の混合・高調波・背景光)](capabilities/itof-multifreq.md) | `itof_noise_budget` → `itof_capture` → `itof_phase_amplitude` → `itof_unwrap_multifreq` | `poc_itof_multifreq` |
+| [光学設計ファイル(.zmx の逐次処方を読む・書く・分類する)](capabilities/lens-prescription-files.md) | `lens_file_read` → `lens_file_system` → `paraxial_trace` → `spot_stats` → `lens_file_write` | `poc_lens_file_roundtrip` |
+| [レンズの製造公差を、MTF と歩留まりで決める](capabilities/lens-tolerancing.md) | `tolerance_table` → `tolerance_criteria` → `tolerance_sensitivity` → `tolerance_monte_carlo` → `tolerance_report` | `poc_lens_tolerancing` |
+| [画素ごとの直交復調(ロックイン・時間相関イメージセンサ → 振幅・位相・直流、リング照明の法線・符号化照明の分離・熱波)](capabilities/lockin-demodulation.md) | `lockin_ring_synthesize` → `lockin_demodulate` → `lockin_ring_normals` | `poc_lockin_imaging` |
 | [モアレで位置合わせ(ピッチの僅かに違う 2 枚の格子 → 縞の位相 → nm のずれ、差動と Talbot ギャップ)](capabilities/moire-alignment.md) | `moire_magnification` → `moire_mark_read` → `moire_phase_crlb` | `poc_moire_alignment` |
 | [近赤外のハイパースペクトルで見た目が同じ異物を選別する(材料表の吸収帯 → 散乱層の反射 → InGaAs の帯域ごとの電子数)](capabilities/nir-hyperspectral-sorting.md) | `material_nir_absorption` → `kubelka_munk_reflectance` → `hyperspectral_capture` | `poc_hyperspectral_foreign_matter` |
+| [非共軸の光学系(折り返しミラー・半透鏡・傾いた平板・シャインプルーフ・ゴースト)](capabilities/noncoaxial-optics.md) | `noncoaxial_system` → `noncoaxial_trace` → `image_orientation` → `ghost_analysis` → `noncoaxial_drawing` | `poc_noncoaxial_optics` |
 | [OCR の前処理(傾き補正・局所 2 値化・行の切り出し)](capabilities/ocr-preprocessing.md) | `median` → `rotate_image` → `sk_sauvola` → `invert_region` → `remove_small` → `select_shape` → `dilation_rectangle1` | `gallery2d_segmentation` |
 | [光の反射・屈折・干渉を計算する](capabilities/optics-and-materials.md) | `fresnel_dielectric` → `thin_film_reflectance` → `thin_film_rgb` | `glass_and_mirror_optics` |
 | [光学系の図面(レンズ断面図・撮像系の設置図・単レンズの製作図を SVG / DXF で)](capabilities/optics-drawings.md) | `lens_section_drawing` → `drawing_svg` → `drawing_dxf` → `svg_entities` → `dxf_entities` | `poc_optics_drawings` |
+| [良品だけから学んで外れたパッチを指す(古典特徴の「位置ごとの正規分布」と「記憶バンク」、再現率を保証する運用点)](capabilities/patch-feature-anomaly-detection.md) | `patchbank_fit` → `patchbank_score` | `poc_patch_anomaly` |
 | [1-D 信号の周期欠陥を見つける](capabilities/periodic-defects-in-1d-signals.md) | `smooth_funct_1d_gauss` → `bandpass` → `spectrum` → `find_peaks` → `peak_subbin` → `envelope` → `local_min_max_funct_1d` | `poc_web_roll_periodicity` |
 | [光沢面の µm の凹みを縞の鏡像で測る(位相計測デフレクトメトリ: 縞 → 位相 → 傾き → 曲率)](capabilities/phase-measuring-deflectometry.md) | `deflectometry_rig` → `deflectometry_sensitivity` → `wrapped_phase` → `absolute_phase` → `deflectometry_phase_to_slope` → `slope_to_curvature` | `poc_phase_measuring_deflectometry` |
+| [処方どおりのレンズ越しに 3 次元の場面を撮る(被写界深度・猫の目のボケ・隅の光量・色収差・ゴースト)](capabilities/photograph-through-prescription.md) | `lens_system` → `lens_scene` → `render_scene_through_lens` → `render_compare_prescriptions` | `poc_photograph_through_prescription` |
 | [ピクセルシフト撮像(1 画素シフトで全色、半画素シフトで折り返しを消す、壊れる条件まで)](capabilities/pixel-shift-imaging.md) | `pixel_shift_resolution_budget` → `pixel_shift_pattern` → `pixel_shift_capture` → `pixel_shift_motion_mask` → `pixel_shift_merge` → `false_color_metric` | `poc_pixel_shift` |
 | [3-D 点群から平面度を出す](capabilities/planarity-from-point-cloud.md) | `statistical_outlier_removal` → `ransac_plane` → `fit_plane_3d` → `distance_point_plane` | `geometry_metrology` |
+| [処方から撮るプレノプティックカメラ](capabilities/plenoptic-camera.md) | `mla_surface` → `plenoptic_system` → `plenoptic_capture` → `plenoptic_mla_calibrate` → `plenoptic_decode` → `plenoptic_refocus_depth` | `poc_plenoptic_camera` |
+| [点群をそのまま色の絵にする](capabilities/point-cloud-to-picture.md) | `points_render` | `points_render_basics` |
 | [小さな点状の目標を見つけて、副画素で位置を出す](capabilities/point-target-detection.md) | `noise_sigma` → `star_detect` → `find_peaks` → `peak_subbin` | `poc_search_sweep_width` |
 | [偏光 4 方向で鏡面反射を除く(誘電体と金属で分ける)](capabilities/polarisation-specular-removal.md) | `polarization_dolp_map` → `polarization_separate` → `polarization_stokes` → `stokes_analyze` → `specular_diffuse_split` | `example_polarization_metal` |
+| [同じ入力の検証・近傍探索・変換核を一度だけ計算する](capabilities/reuse-computation-results.md) | `polarization_separate` | `perf_pointcloud_descriptors` |
+| [照明むら・ハイライト・遮蔽に強いテンプレート照合(明るさの変化の向きを符号にして比べ、決まらないテンプレートは拒否する)](capabilities/robust-code-matching.md) | `isc_match` → `ocm_match` | `poc_code_matching_breakdown` |
+| [傷や突起に引きずられない平均線を引く(ロバストなガウス回帰・スプラインフィルタ、断面と面)](capabilities/robust-gaussian-spline-profile-filter.md) | `robust_gaussian_profile` → `profile_params` | `poc_robust_profile_filter` |
 | [微細スクラッチを見つけて、幅を測る](capabilities/scratch-detection-and-width.md) | `gaussian` → `lines_gauss` → `select_contours` → `fit_line_contours` → `gen_measure_rectangle2` → `measure_pairs` → `table_px_to_mm` | `example_scratch_width` |
+| [同じ粒子を走査像と透過像で測り、二つの寸法偏りを比べる](capabilities/sem-tem-same-particle.md) | `sem_render` → `tem_power_spectrum` | `poc_sem_tem_same_particle` |
+| [逐次光学設計の指標(理想レンズ面 → 囲みエネルギー → 子午/球欠 MTF → スルーフォーカス MTF)](capabilities/sequential-lens-design-metrics.md) | `lens_system` → `psf_from_opd` → `encircled_energy` → `energy_radii` → `mtf_tangential_sagittal` → `through_focus_mtf` | `optical_design_metrics` |
 | [実物の画像から物理モデルの係数を合わせる(sim-to-real 較正)—— 画像が決めない係数には数を出さず、決まる組み合わせと理由を返す](capabilities/sim-to-real-calibration.md) | `simcal_model` → `simcal_observe` → `simcal_fit` → `simcal_identifiability` → `simcal_report` | `simcal_tour` |
 | [画像から寸法をサブピクセルで測る](capabilities/subpixel-2d-metrology.md) | `gen_measure_rectangle2` → `measure_pos` → `measure_pairs` → `table_px_to_mm` | `poc_dimensional_inspection` |
 | [表面の凹凸欠陥を、照明の設計から検出まで](capabilities/surface-defects-with-lighting.md) | `illumination_design` → `lighting_sweep` → `light_source` → `defect_contrast` → `irradiance_map` → `illumination_uniformity` → `photometric_stereo` → `integrate_normals` → `surface_form_error` → `bothat` → `auto_threshold` → `remove_small` | `illumination_design_demo` |
 | [TDI ラインスキャンとラインスキャン用レンズ(段数と SNR → 同期ずれの MTF → 像高ごとの照度と MTF)](capabilities/tdi-linescan-and-lens.md) | `tdi_snr` → `tdi_sync_mtf` → `linescan_lens_example` → `lens_field_profile` → `linescan_lens_columns` → `linescan_acquire` | `poc_tdi_linescan` |
 | [テレセントリックレンズと寸法計測(主光線の傾き → 高さで変わる倍率 → ケラレとぼけ)](capabilities/telecentric-metrology.md) | `telecentric_lens` → `chief_ray_angle` → `telecentricity_error` → `magnification_vs_depth` → `defocus_spot_vs_depth` → `vignetting_vs_field` | `poc_telecentric_metrology` |
+| [仮想の透過電子顕微鏡(電子の波長 → CTF → 位相コントラストの像 → Thon リングから焦点外れを推定 → 補正)](capabilities/tem-phase-contrast-and-ctf.md) | `tem_power_spectrum` → `tem_ctf_estimate` → `tem_ctf_correct` | `poc_tem_ctf_thon_rings` |
 | [位置決め(テンプレート照合で測定線を追従させる)](capabilities/template-alignment.md) | `gaussian` → `ncc_locate` → `shape_locate` → `create_metrology_model` → `add_metrology_object_circle_measure` → `align_metrology_model` → `apply_metrology_model` | `poc_template_tracking` |
 | [地形の傾き・水の流れ・見通しを測る](capabilities/terrain-and-visibility.md) | `dem_fill_sinks` → `dem_slope` → `dem_aspect` → `dem_flow_direction` → `dem_viewshed` | `poc_dem_terrain` |
 | [画像の上に、文字と表を置きたい場所へ置く](capabilities/text-and-tables-on-images.md) | `measure_text` → `annotate_text_path_layout` → `annotate_text_path` → `annotate_table_layout` → `annotate_table` | `annotate_paper_tour` |
 | [薄膜の膜厚を分光反射率で測る(転送行列 → 干渉色 → FFT・モデルあてはめ・膜厚マップ)](capabilities/thin-film-reflectometry.md) | `multilayer_reflectance` → `film_thickness_fft` → `film_thickness_fit` → `film_thickness_map` | `poc_thin_film_reflectometry` |
+| [同じ3次元場面を間接ToFと直接ToFで測る](capabilities/tof-camera.md) | `itof_capture` → `itof_phase_amplitude` → `itof_unwrap_multifreq` → `bilateral_filter_depth` → `depth_to_points` | `poc_tof_camera` |
 | [投影から断面を再構成する(CT)](capabilities/tomography-reconstruction.md) | `radon_transform` → `ring_artifact_remove` → `beam_hardening_correct` → `fbp_volume` → `vol_rle_components` → `vol_rle_volume` | `poc_ct_fidelity` |
 | [振動と音から異常を診断する](capabilities/vibration-and-acoustics.md) | `bandpass` → `envelope` → `envelope_spectrum` → `find_peaks` → `bearing_defect_frequencies` | `poc_bearing_diagnosis` |
+| [仮想 SEM —— 電子と固体の相互作用をモンテカルロで解き、加速電圧・検出器・帯電で像と線幅がどう変わるかを実測値で採点しながら見る](capabilities/virtual-sem-monte-carlo.md) | `material_electron_properties` → `sem_electron_mc` → `sem_line_profile` → `sem_cd_measure` → `sem_image` | `poc_virtual_sem_kv_cd_bse` |
 | [シルエットから立体を彫り出す(視体積交差)](capabilities/visual-hull-from-silhouettes.md) | `synthesize_silhouette` → `visual_hull` → `vol_rle_components` → `vol_rle_volume` | `space_carving` |
 | [3-D スキャンから体積・土量を出す](capabilities/volume-from-3d-scan.md) | `vol_rle_components` → `vol_rle_volume` → `mesh_volume` | `poc_stockpile_volume` |
+| [水が検査画像にどう写るか(プールの底のコースティクス・瓶の側面像と液面・濡れた面・船体の水中画像)](capabilities/water-inspection-images.md) | `caustic_irradiance` → `caustic_floor_segmentation` | `poc_water_inspection_images` |
+| [水と透明媒質(海の波・水面のフレネルと屈折・水中の色と散乱・瓶のレンズ作用)](capabilities/water-transparent-media.md) | `ocean_height_field` → `refracted_view` → `water_attenuation` → `underwater_image` | `poc_water_transparent_media` |
 
-レシピ欄(推奨パイプライン / 代替 / 限界 / 実寸校正)がまだ無い項目が 32 件あります(下の各項目。`gen_capabilities_index.NO_RECIPE_YET` に理由つきで名指し)。
+レシピ欄(推奨パイプライン / 代替 / 限界 / 実寸校正)がまだ無い項目が 33 件あります(下の各項目。`gen_capabilities_index.NO_RECIPE_YET` に理由つきで名指し)。
 
-## 測る (24)
+## 測る (33)
 
 ### [平面ターゲットの多視点から内部行列 K を推定する(Zhang 法)](capabilities/camera-intrinsics-calibration.md)
 
@@ -121,6 +147,22 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 
 動く例: `poc_geodetic_height_frames`, `poc_geodetic_benchmarks_real`, `dem_geodesy_tour`
 
+### [格子干渉計(タルボ・ロー)で透過・微分位相・暗視野の 3 像を分ける](capabilities/grating-interferometry.md)
+
+X 線(や可視光)の透過像は「どれだけ吸われたか」しか写しません。周期数 µm の格子を 2 枚(線源が大きいなら 3 枚)入れ、どちらかを 1 周期ずらしながら数枚撮ると、各画素で縞の正弦が取れます。その**平均**が透過(吸収)、**位相のずれ**が微分位相(屈折角)、**振幅の落ち方**が暗視野(画素より小さい構造からの小角散乱)です。吸収がまわりとほとんど同じ繊維・粉・微小な割れ・気孔の群が、暗視野でははっきり出ます。
+
+使う op: `talbot_grating_design`, `talbot_carpet`, `talbot_source_visibility`, `grating_stepping_simulate`, `grating_step_period_estimate`, `grating_three_image_retrieve`, `darkfield_scatter_relation`, `dpc_integrate`
+
+推奨パイプライン: [`talbot_grating_design`](ops/optics/grating_interf/talbot_grating_design.md) → [`talbot_source_visibility`](ops/optics/grating_interf/talbot_source_visibility.md) → [`grating_step_period_estimate`](ops/optics/grating_interf/grating_step_period_estimate.md) → [`grating_three_image_retrieve`](ops/optics/grating_interf/grating_three_image_retrieve.md) → [`darkfield_scatter_relation`](ops/optics/grating_interf/darkfield_scatter_relation.md) → [`dpc_integrate`](ops/optics/grating_interf/dpc_integrate.md)
+
+代替: [`talbot_carpet`](ops/optics/grating_interf/talbot_carpet.md), [`grating_stepping_simulate`](ops/optics/grating_interf/grating_stepping_simulate.md), [`wrapped_phase`](ops/3d/structured_light/wrapped_phase.md), [`moire_talbot_gap`](ops/optics/moire_align/moire_talbot_gap.md), [`angular_spectrum_propagate`](ops/optics/wave/angular_spectrum_propagate.md)
+
+限界: 位相ステップは 1 次の正弦だけを見る(格子の高次の調和・ステップの位置の揺れ・検出器の点広がりは模型に無い)。暗視野から散乱角へはガウス散乱の近似。単色の順モデルなので、多色の線源で吸収が平均のエネルギーを上げて可視度が落ちる効果は無い。折り返しは隣との跳びでしか見えない。
+
+実寸校正: 1 周期のステップ数 P は空気(基準)の区画で grating_step_period_estimate から決める。基準と試料の露光の比は reference_exposure に渡す。屈折角・位相への換算は分析格子の周期 p2 と距離 d、波長で決まる(talbot_grating_design の値か実測)。
+
+動く例: `poc_grating_interferometry`
+
 ### [工業用 OCT(干渉スペクトル → k 線形化 → 分散補償 → A / B スキャン → 群屈折率で層厚)](capabilities/industrial-oct.md)
 
 塗装・コンフォーマルコート・接着層・多層フィルムの**層の並び**と、層の中の空洞・剥離を、壊さずに深さ方向で見ます。分光器型(SD-OCT)は 1 回の露光の干渉スペクトルを、波長掃引型(SS-OCT)は掃引の時間波形を、波数 k に等間隔に並べ直して FFT すると、深さごとの反射の振幅(A スキャン)になります。横に走査すると断面(B スキャン)です。
@@ -153,6 +195,22 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 
 動く例: `example_inner_diameter_mm`, `poc_dimensional_inspection`, `poc_real_coin_metrology`
 
+### [間接 ToF(位相方式)の多周波アンラップと壊れ方(折り返し・多重反射・縁の混合・高調波・背景光)](capabilities/itof-multifreq.md)
+
+光を周波数 f で強度変調し、戻り光との相関を 4 段(K 段)の位相で測る間接 ToF を、生信号から距離まで通し、壊れるところまで再現します。`itof` の 8 本は `opsoptics` の族 `itof` です。
+
+使う op: `itof_capture`, `itof_phase_amplitude`, `itof_noise_budget`, `itof_unwrap_multifreq`, `itof_unwrap_error_rate`, `itof_multipath_separate`, `itof_flying_pixel_mask`, `itof_wiggling_correct`
+
+推奨パイプライン: [`itof_noise_budget`](ops/optics/itof/itof_noise_budget.md) → [`itof_capture`](ops/optics/itof/itof_capture.md) → [`itof_phase_amplitude`](ops/optics/itof/itof_phase_amplitude.md) → [`itof_unwrap_multifreq`](ops/optics/itof/itof_unwrap_multifreq.md)
+
+代替: [`dtof_cube_simulate`](ops/photon/dtof/dtof_cube_simulate.md), [`dtof_cube_depth`](ops/photon/dtof/dtof_cube_depth.md), [`tof_transport_depth`](ops/optics/light_transport/tof_transport_depth.md), [`residue_crt`](ops/residue/robust/residue_crt.md)
+
+限界: 場面の強さは Lambert と逆二乗だけ(鏡面・迷光・画素間のクロストークなし)。行列ペンシルは等間隔の周波数専用で、帯域の分解能 c/(2FΔf) より近い 2 経路は雑音があると分けられない。雑音の閉形式は SNR ≥ 3 の近似(PoC)。
+
+実寸校正: 距離は周期 c/(2f) の剰余から出るので尺度は光速と周波数で決まる。実機では段の位相の符号と原点・系の遅延(距離のオフセット)・周波数の正確な値を較正する(オフセットは itof_wiggling_correct の較正の定数項)。
+
+動く例: `poc_itof_multifreq`
+
 ### [レーザー光切断の誤差の床はスペックルが決める(コヒーレント結像・スペックルの統計・三角測量の不確かさ)](capabilities/laser-speckle-floor.md)
 
 レーザーで照らした粗面を、**コヒーレント結像**で撮ります。面の凹凸が波長より大きいと反射光の位相は場所ごとにでたらめになり、カメラの開口(瞳)で帯域を切られた**複素振幅**が干渉して粒々の模様(スペックル)になります。光切断やレーザー変位計の高さの誤差の下限は、画素の雑音ではなくこの粒で決まります。
@@ -168,6 +226,22 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 使う op: `groove_profile`, `form_factors_2d`, `transport_matrix_radiosity`, `high_frequency_patterns`, `render_transport`, `separate_direct_global`, `fringe_multipath_phase_error`, `predict_fringe_phase_error`, `micro_phase_decode`, `tof_multipath_phase`, `tof_transport_depth`
 
 動く例: `poc_interreflection_fringe_error`
+
+### [画素ごとの直交復調(ロックイン・時間相関イメージセンサ → 振幅・位相・直流、リング照明の法線・符号化照明の分離・熱波)](capabilities/lockin-demodulation.md)
+
+変調した光や熱で場面を照らし、画素ごとに参照信号と相関を取ると、画像でなく「参照に追従する成分の振幅と位相」と直流が出ます。`lockin` の 9 本は、画像列 (T, H, W) に対するその直交復調と 3 つの使い方です。`lockin_demodulate` は振幅・位相・直流・同相・直交と窓の漏れを返し(`lockin_amplitude` / `lockin_phase` は 2 次元の画像だけ)、窓は宣言します: 矩形窓は参照の周期が整数のときだけ厳密で、そうでなければ拒否し、hann なら漏れの大きさを表で返します。`lockin_noise_floor` は白色雑音の下の振幅・位相の雑音を SN 比から閉形式(位相は Rice の分布)で与えます。
+
+使う op: `lockin_demodulate`, `lockin_amplitude`, `lockin_phase`, `lockin_noise_floor`, `lockin_walsh_codes`, `lockin_separate`, `lockin_ring_synthesize`, `lockin_ring_normals`, `lockin_thermal_wave`
+
+推奨パイプライン: [`lockin_ring_synthesize`](ops/optics/lockin/lockin_ring_synthesize.md) → [`lockin_demodulate`](ops/optics/lockin/lockin_demodulate.md) → [`lockin_ring_normals`](ops/optics/lockin/lockin_ring_normals.md)
+
+代替: [`lockin_amplitude`](ops/optics/lockin/lockin_amplitude.md), [`lockin_phase`](ops/optics/lockin/lockin_phase.md), [`lockin_separate`](ops/optics/lockin/lockin_separate.md), [`lockin_walsh_codes`](ops/optics/lockin/lockin_walsh_codes.md), [`lockin_noise_floor`](ops/optics/lockin/lockin_noise_floor.md), [`lockin_thermal_wave`](ops/optics/lockin/lockin_thermal_wave.md)
+
+限界: 法線の復元は朗伯面で、輪の光源のどれも影にならない画素(傾き < 90° − 天頂角)だけ有効(他は NaN と valid = False)。光沢・相互反射では式が崩れる。熱波は定常状態の 1 次元モデル(横拡散と立ち上がりの過渡は無し)で、位相は L/μ = 1.963 で最大になるのでそれより深い欠陥は位相から一意に読めない。矩形窓は周期が整数のときだけ(そうでなければ拒否)。
+
+実寸校正: 位相は参照の周波数と標本化の時刻(fps)だけで決まり、画素の大きさや照度の絶対値は要らない。振幅は照明・反射率・放射率の掛け算を含むので、反射率を消したいときは A / 直流(法線)か位相(熱波)を使う。参照の周波数が 10 % ずれると振幅が落ちる(sinc)ので、参照は実測の周波数に合わせる。
+
+動く例: `poc_lockin_imaging`
 
 ### [その数字のうち、いくつが測り方のものか(ゲージ R&R と測定の不確かさ)](capabilities/measurement-system-and-uncertainty.md)
 
@@ -233,6 +307,22 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 
 動く例: `poc_pod_lighting`
 
+### [傷や突起に引きずられない平均線を引く(ロバストなガウス回帰・スプラインフィルタ、断面と面)](capabilities/robust-gaussian-spline-profile-filter.md)
+
+粗さは断面(または面)から平均線(うねり)を引いて残りを測ります。普通のガウスフィルタは深い傷に引かれて平均線が傷の側へ凹み、**傷の両側の健全な面が山に見えます**(PoC の実測で、傷の脇の粗さが真値の 2.5 倍)。`roughness` 族の新しい 3 本は、Tukey の biweight で傷の重みを下げながら反復し、平均線を傷から守ります。
+
+使う op: `robust_gaussian_profile`, `robust_spline_profile`, `robust_gaussian_surface`, `surface_filter`
+
+推奨パイプライン: [`robust_gaussian_profile`](ops/roughness/prepare/robust_gaussian_profile.md) → [`profile_params`](ops/roughness/measure/profile_params.md)
+
+代替: [`robust_spline_profile`](ops/roughness/prepare/robust_spline_profile.md), [`surface_filter`](ops/roughness/prepare/surface_filter.md), [`robust_gaussian_surface`](ops/roughness/prepare/robust_gaussian_surface.md)
+
+限界: 傷の標本が 4 割を超えると平均線が傷側へ破綻する(合成断面の実測で 35 % までは雑音の床、40 % で 3.5 µm)。外れ値の無い断面でもロバスト版は線形と一致しない(biweight が雑音の裾を刈る)。傷が窓(既定 ±λc)より広いと外挿せず拒否する。収束しなければ値を返さない。次数 2 は出していない。真値は閉形式と合成したうねりで、実スタイラス断面での検証は未了。
+
+実寸校正: 平均線の真値は測定器では得られない。標本間隔 dx(µm)とカットオフ λc(測定条件で決まる値)は呼び出し側が与え、単位を混ぜても検出できない。伝達関数は dx と λc だけで決まる閉形式なので、既知波長の正弦を通して λc で 0.5 になるかを現場の設定で確かめられる。
+
+動く例: `poc_robust_profile_filter`, `example_robust_profile_filter`
+
 ### [微細スクラッチを見つけて、幅を測る](capabilities/scratch-detection-and-width.md)
 
 線状の傷を**どこにあるか**(検出)と**どれだけ太いか**(幅)の 2 段で扱います。検出は Hessian リッジ応答(`lines_gauss`)か暗い細部だけを浮かせる形態学(`bothat`)、幅は検出した線に**直交する測定線**を張って `measure_pairs` で両側のエッジをサブピクセルで取り、`table_px_to_mm` で mm にします。
@@ -256,6 +346,38 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 使う op: `sem_render`, `blob_label`, `blob_features`, `seg_dice_jaccard`, `seg_boundary_f`, `pod_hitmiss_fit`
 
 動く例: `poc_sem_wafer_defect_edge_bias`
+
+### [同じ粒子を走査像と透過像で測り、二つの寸法偏りを比べる](capabilities/sem-tem-same-particle.md)
+
+`examples/poc_sem_tem_same_particle.py` は、20〜80 nmの球形・ファセット粒子14個を一つの真値台帳で持ち、同じ位置・径・材料から走査像と透過像を作ります。ISO 13322-1型の面積相当径、最大傾斜の縁、距離変換と`watersheds_marker`による接触粒子分離を同じ真値に照合します。
+
+使う op: `sem_render`, `sem_image`, `tem_projected_potential`, `tem_image_weak_phase`, `tem_multislice`, `tem_power_spectrum`, `watersheds_marker`, `radon_transform`, `filtered_backprojection`
+
+推奨パイプライン: [`sem_render`](ops/generative/sem/sem_render.md) → [`tem_power_spectrum`](ops/optics/tem/tem_power_spectrum.md)
+
+代替: [`sem_image`](ops/generative/sem/sem_image.md), [`tem_image_weak_phase`](ops/optics/tem/tem_image_weak_phase.md), [`watersheds_marker`](ops/segmentation/watershed/watersheds_marker.md), [`radon_transform`](ops/tomography/forward/radon_transform.md), [`filtered_backprojection`](ops/tomography/reconstruct/filtered_backprojection.md)
+
+限界: 二次電子像は内部構造を示さず、透過像には薄い支持膜が要る。厚い粒子では弱位相近似が崩れ、限定角再構成は欠落角方向へ伸びる。
+
+実寸校正: 画素寸法を既知寸法試料で校正し、走査像はビーム幅、透過像は電子波長と焦点外れを記録する。PoCは既知のnm格子なので追加較正0。
+
+動く例: `poc_sem_tem_same_particle`
+
+### [逐次光学設計の指標(理想レンズ面 → 囲みエネルギー → 子午/球欠 MTF → スルーフォーカス MTF)](capabilities/sequential-lens-design-metrics.md)
+
+商用の逐次光学設計ソフトで毎日使う 4 つの道具を、Fullseye の op として足しました。
+
+使う op: `lens_system`, `encircled_energy`, `ensquared_energy`, `energy_radii`, `mtf_tangential_sagittal`, `through_focus_mtf`, `with_aiming`, `ray_aiming`, `set_vignetting`, `lens_configurations`, `lens_with_configuration`, `lens_configuration_table`, `lens_configuration_metrics`, `lens_add_configuration`, `glass_nearest`, `lens_substitute_glasses`, `lens_global_search`, `merit_operands_list`, `merit_evaluate`, `merit_default`, `merit_boundary_operands`, `optimize_lens_operands`, `merit_contributions`, `lens_apply_solves`, `lens_solve_set`, `lens_solve_clear`, `lens_solves_list`, `afocal_system`, `lens_afocal_report`, `lens_image_surface`, `lens_petzval_radius`, `lens_zmx_solves_roundtrip`
+
+推奨パイプライン: [`lens_system`](ops/optics/design/lens_system.md) → [`psf_from_opd`](ops/optics/imaging_sim/psf_from_opd.md) → [`encircled_energy`](ops/optics/imaging/encircled_energy.md) → [`energy_radii`](ops/optics/imaging/energy_radii.md) → [`mtf_tangential_sagittal`](ops/optics/imaging/mtf_tangential_sagittal.md) → [`through_focus_mtf`](ops/optics/imaging_sim/through_focus_mtf.md)
+
+代替: [`psf_to_mtf`](ops/optics/imaging/psf_to_mtf.md), [`mtf_diffraction`](ops/optics/imaging/mtf_diffraction.md), [`spot_stats`](ops/optics/design/spot_stats.md), [`opd_map`](ops/optics/design/opd_map.md), [`wavefront_from_opd`](ops/optics/design/wavefront_from_opd.md), [`lens_section_drawing`](ops/optics/drawing/lens_section_drawing.md)
+
+限界: 理想レンズ面の光路は軸上の物点(第 1 面で有限物体なら光線ごとの物点)に対して等光路で、途中の理想レンズでは平行入射を仮定する(収束光の中の理想レンズの OPD は近似)。理想レンズは非共軸の raytrace3d では読まず、鏡・円錐・非球面・硝材を持たない。囲み/四角エネルギーは PSF の窓の中の割合で、窓が翼を切ると高めに出る(切れて届かない割合は ValueError)。半径が 2 画素前後より小さいと PSF の点標本を画素に均等に広げた近似が効く。スルーフォーカス MTF は 1 視野 1 波長ずつ(多色は波長ごとに呼ぶ)。
+
+実寸校正: 長さの尺度は PSF の画素ピッチ(psf_from_opd の pixel_pitch_um、または細かい格子の間隔 λ·F#·(size−1)/M)で決まり、周波数は cycles/mm。ピッチを間違えると半径が比例して狂う(探針で確認)。
+
+動く例: `optical_design_metrics`, `poc_zoom_configurations`, `poc_lens_global_search`, `poc_lens_merit_operands`, `poc_lens_solves_afocal`
 
 ### [黒光沢とガラスの形を偏光で測る(偏光からの形状復元・曖昧さの集合・屈折率の推定)](capabilities/shape-from-polarization.md)
 
@@ -313,6 +435,22 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 
 動く例: `poc_telecentric_metrology`
 
+### [仮想の透過電子顕微鏡(電子の波長 → CTF → 位相コントラストの像 → Thon リングから焦点外れを推定 → 補正)](capabilities/tem-phase-contrast-and-ctf.md)
+
+透過電子顕微鏡(TEM)は薄い試料を透けた電子の位相を、対物レンズの球面収差 Cs と焦点外れ Δf で強度に変えて見ます。その変え方がコントラスト伝達関数 CTF = −sin(χ + arcsin w) で、周波数ごとに符号が入れ替わるので、写真の細部は焦点によって黒くも白くも写ります。パワースペクトルには CTF の零点が同心円(Thon リング)として出るので、逆にリングから焦点外れを読めます。`temsim`(`opsoptics` の `tem`、11 本)はこの流れを通します。
+
+使う op: `tem_wavelength`, `tem_scherzer`, `tem_ctf`, `tem_ctf_profile`, `tem_projected_potential`, `tem_amorphous_film`, `tem_image_weak_phase`, `tem_multislice`, `tem_power_spectrum`, `tem_ctf_estimate`, `tem_ctf_correct`
+
+推奨パイプライン: [`tem_power_spectrum`](ops/optics/tem/tem_power_spectrum.md) → [`tem_ctf_estimate`](ops/optics/tem/tem_ctf_estimate.md) → [`tem_ctf_correct`](ops/optics/tem/tem_ctf_correct.md)
+
+代替: [`tem_ctf_profile`](ops/optics/tem/tem_ctf_profile.md), [`tem_scherzer`](ops/optics/tem/tem_scherzer.md), [`tem_image_weak_phase`](ops/optics/tem/tem_image_weak_phase.md), [`tem_amorphous_film`](ops/optics/tem/tem_amorphous_film.md), [`tem_multislice`](ops/optics/tem/tem_multislice.md)
+
+限界: 弱位相近似の線形の像は位相の rms が 0.1 rad を超えると 10 % 以上ずれる(非線形は mode="coherent")。推定は CTF² の振動の当てはめで、リングが見えない・零点が 3 本無い・範囲の端・2-D の当てはめが別の谷に落ちた(z が低い)ときは拒否。Cu など重い元素の散乱因子は X 線の当てはめの限界で 10 % 小さい。
+
+実寸校正: 焦点外れの値は画素寸法の 2 乗と電子の波長に比例して決まる(画素寸法を 2 % 間違えると Δf は 4 % ずれる)。画素寸法は検出器の画素 ÷ 倍率か、格子間隔の既知の試料(金の格子・グラファイト)のリングで校正し、電圧と Cs は装置の値を使う。
+
+動く例: `poc_tem_ctf_thon_rings`
+
 ### [地形の傾き・水の流れ・見通しを測る](capabilities/terrain-and-visibility.md)
 
 高さ格子(DEM)から、傾斜・斜面方位・可視領域・流向を出します。いずれも閉形式と突き合わせられる量なので、実装の誤りを数字で捕まえられます。
@@ -328,6 +466,38 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 実寸校正: `cell_size` [m] を渡す —— 傾斜は高さと格子間隔の**比**なので、単位が揃っていないと角度が全部ずれる。
 
 動く例: `poc_dem_terrain`, `dem_terrain_analysis_tour`
+
+### [同じ3次元場面を間接ToFと直接ToFで測る](capabilities/tof-camera.md)
+
+`poc_tof_camera` は床、二面コーナー、箱を積んだ荷台、光沢面、透明板、細い柱、暗明市松を 70°×55° のピンホールカメラから 320×240 画素で撮ります。各画素を 3×3 本の光線で積分し、Lambert 反射、逆二乗、レンズ減光、ショット雑音、読み出し雑音、暗電位、多経路を加えます。実データは Lawin・Forssén・Ovrén (ECCV 2016) の生フレーム、壁・メッシュの反復実測、無雑音の4相 MPI レンダリングを数値だけで照合します。README に再配布許諾が明記されていないため、実フレーム自体は公開図へ転載しません。
+
+使う op: `itof_capture`, `itof_phase_amplitude`, `itof_noise_budget`, `itof_unwrap_multifreq`, `itof_unwrap_error_rate`, `itof_multipath_separate`, `itof_flying_pixel_mask`, `itof_wiggling_correct`, `tof_multipath_phase`, `dtof_cube_simulate`, `dtof_cube_depth`, `spad_deadtime_apply`, `bilateral_filter_depth`, `depth_to_points`
+
+推奨パイプライン: [`itof_capture`](ops/optics/itof/itof_capture.md) → [`itof_phase_amplitude`](ops/optics/itof/itof_phase_amplitude.md) → [`itof_unwrap_multifreq`](ops/optics/itof/itof_unwrap_multifreq.md) → [`bilateral_filter_depth`](ops/3d/depth_denoise/bilateral_filter_depth.md) → [`depth_to_points`](ops/3d/transform/depth_to_points.md)
+
+代替: [`dtof_cube_simulate`](ops/photon/dtof/dtof_cube_simulate.md), [`dtof_cube_depth`](ops/photon/dtof/dtof_cube_depth.md)
+
+限界: 解析的な平面場面。間接方式は位相折返し・多経路・混合画素、直接方式は時間ビン・pile-up・光子欠乏を受ける。遮蔽面の奥は両方式とも測れない。
+
+実寸校正: 間接方式は変調周波数・位相段・電子数・背景光、直接方式は時間ビン・応答幅・光子数・デッドタイムを実測値に合わせる。
+
+動く例: `poc_tof_camera`
+
+### [仮想 SEM —— 電子と固体の相互作用をモンテカルロで解き、加速電圧・検出器・帯電で像と線幅がどう変わるかを実測値で採点しながら見る](capabilities/virtual-sem-monte-carlo.md)
+
+一次電子を固体の中で 1 個ずつ追うモンテカルロ(Joy の単散乱モデル。弾性散乱は Browning 1994 の Mott 近似、阻止能は Joy-Luo 1989)で、反射電子係数 η・二次電子収率 δ・到達深さを `sem_electron_mc` が、δ(E) の形を `sem_yield_curve` が出します。材料の Z・A・密度・二次電子の定数は、光学と同じ材料表の `material_electron_properties` から引きます。CD-SEM の線プロファイルは `sem_line_profile`(台形の断面、埋もれた矩形も)で、線幅は `sem_cd_measure`(しきい値法・最大傾斜法)で測ります。高さ場と材料の地図からは `sem_image` が画素ごとに電子を撃って像を作り(レンズ内 SE / 側方 SE / 反射電子)、`sem_charging_series` が絶縁物の帯電をコマ送りにします。外部真値の門は 4 本: η(Z, E) が Joy のデータベースの実測の幅に入る / 傾けた試料の η(θ) が Arnal の式 / 到達深さが Kanaya-Okayama / δ の形と Emax が Lin & Joy 2005。
+
+使う op: `sem_electron_mc`, `sem_yield_curve`, `sem_se_universal_curve`, `sem_line_profile`, `sem_cd_measure`, `sem_image`, `sem_charging_series`, `sem_se_escape_fraction`, `material_electron_properties`
+
+推奨パイプライン: [`material_electron_properties`](ops/optics/matprop/material_electron_properties.md) → [`sem_electron_mc`](ops/generative/sem/sem_electron_mc.md) → [`sem_line_profile`](ops/generative/sem/sem_line_profile.md) → [`sem_cd_measure`](ops/generative/sem/sem_cd_measure.md) → [`sem_image`](ops/generative/sem/sem_image.md)
+
+代替: [`sem_render`](ops/generative/sem/sem_render.md), [`sem_yield_curve`](ops/generative/sem/sem_yield_curve.md), [`sem_charging_series`](ops/generative/sem/sem_charging_series.md)
+
+限界: 重元素(W・Au)の δ(E) の形は普遍曲線より裾が厚く合わない(SE2 が主、未解決)。δmax は Lin & Joy の表の約 0.8 倍。帯電の負の側は現象論。像は画素ごとの直接 MC なので高加速・大きな像は遅い。「低加速ほど側壁の上を測る」は側壁 88 度で成り立ち 80 度では逆(`poc_virtual_sem_kv_cd_bse`)。
+
+実寸校正: 高さ場・線幅・画素は nm のまま入れる。材料は `material_electron_properties` の名前で引き、表に無い材料の λ・ε は推定と明記される。実機と合わせるなら既知の材料(Si・Au)の η と δ を同じ加速電圧で測って比べる。
+
+動く例: `poc_virtual_sem_kv_cd_bse`
 
 ### [3-D スキャンから体積・土量を出す](capabilities/volume-from-3d-scan.md)
 
@@ -353,23 +523,55 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 
 動く例: `poc_what_a_picture_cannot_check`
 
-## 見つける (8)
+## 見つける (13)
 
 ### [領域を切り出して、選んで、数える](capabilities/blob-and-region.md)
 
 連結成分にラベルを付け、面積・形・位置で選び、数えます。接触している対象は分水嶺で分けられます。
 
-使う op: `blob_label`, `blob_select`, `blob_count`, `watersheds`
+使う op: `blob_label`, `blob_select`, `blob_count`, `watersheds`, `blob_count_interval`
 
 推奨パイプライン: [`auto_threshold`](ops/2d/segmentation/auto_threshold.md) → [`blob_label`](ops/blob/connect/blob_label.md) → [`blob_select`](ops/blob/select/blob_select.md) → [`blob_features`](ops/blob/measure/blob_features.md)
 
-代替: [`watersheds`](ops/2d/segmentation/watersheds.md), [`blob_seeds`](ops/blob/split/blob_seeds.md), [`blob_count`](ops/2d/features/blob_count.md), [`remove_small`](ops/2d/region/remove_small.md), [`select_shape`](ops/2d/region/select_shape.md), [`otsu`](ops/2d/segmentation/otsu.md)
+代替: [`watersheds`](ops/2d/segmentation/watersheds.md), [`blob_seeds`](ops/blob/split/blob_seeds.md), [`blob_count`](ops/2d/features/blob_count.md), [`blob_count_interval`](ops/blob/split/blob_count_interval.md), [`remove_small`](ops/2d/region/remove_small.md), [`select_shape`](ops/2d/region/select_shape.md), [`otsu`](ops/2d/segmentation/otsu.md)
 
 限界: 計数が合っていて分割が全部外れる点がある(`poc_cell_counting`)—— 数と形を別に数える。粒度分布で D50 が合う点は「正確」ではなく融合と縁切れの打ち消し(`poc_particle_sizing`)。
 
 実寸校正: 面積は mm/px の **2 乗**。`mm_per_px_from_reference` で mm/px を出し、面積には自分で 2 乗して掛ける(`table_px_to_mm` が換算するのは長さ列だけ)。
 
-動く例: `poc_cell_counting`, `poc_particle_sizing`, `poc_real_coin_metrology`
+動く例: `poc_cell_counting`, `poc_particle_sizing`, `poc_real_coin_metrology`, `poc_dense_bubble_count`
+
+### [圃場の RGB から作物と雑草を色と肌理で分け、雑草の被度を宣言した境で段階にする(学習器なし)](capabilities/crop-weed-cover-grade.md)
+
+水田や畑の RGB 画像(UAV・定点カメラ)から、作物の画素と雑草の画素を分け、雑草の程度を段階(少ない / 中程度 / 多い / 甚大)で答えます。深層学習は使わず、色の指標と肌理の特徴を領域ごとに出し、2 クラスの Fisher 線形判別(閉形式)で分けます。
+
+使う op: `plant_color_index`, `superpixel_color_texture_features`, `fisher_lda_fit`, `fisher_lda_score`, `cover_ratio_grade`
+
+推奨パイプライン: [`superpixel_color_texture_features`](ops/segmentation/plant/superpixel_color_texture_features.md) → [`fisher_lda_fit`](ops/segmentation/classify/fisher_lda_fit.md) → [`fisher_lda_score`](ops/segmentation/classify/fisher_lda_score.md) → [`cover_ratio_grade`](ops/segmentation/plant/cover_ratio_grade.md)
+
+代替: [`plant_color_index`](ops/segmentation/plant/plant_color_index.md), [`snic_superpixels`](ops/segmentation/graph/snic_superpixels.md), [`class_ndim_norm`](ops/segmentation/classify/class_ndim_norm.md)
+
+限界: 判別は 10 特徴の 1 次式で、色と肌理が作物と雑草でほとんど同じ(雑草イネ)だと位置の精度は IoU 0.4 程度。季節の違う飛行への汎化は弱い(撮影日を丸ごと外すと日の中の相関 0.14 の日がある)。暗い画素は色度が決まらず値を作らない。
+
+実寸校正: 画像は uint8 か [0, 1] の float。照明の色が変わる圃場では、白板か灰色の板で白を合わせてから色指標を取る(色度座標の指標は一様な明るさの倍率には不変だが、色温度の変化には不変でない)。
+
+動く例: `poc_weed_rice_ratio`
+
+### [X 線の 2 つのエネルギーで厚みと材質を分ける(デュアルエナジー / フォトンカウンティング: スペクトル → 窓 → 基底分解 → 実効 Z)](capabilities/dual-energy-xray-material-discrimination.md)
+
+1 枚の X 線透過像は、各画素で L = −ln(I/I₀) = Σ μₘ tₘ という**1 つの数**しか測りません。厚い肉と薄い骨片・ガラスは同じ L を作れるので、厚みと材質は分けられません。光子のエネルギーを 2 つ以上の窓で数え分ける検出器(フォトンカウンティング)か、2 つの管電圧で撮ると、μ(E) の**形**が材質で違う(光電効果は ≈ Z³/E³、コンプトン散乱は電子密度だけ)ので、各画素で方程式が窓の数だけ立ち、2 つの基底物質の厚みに分けられます(Alvarez & Macovski 1976、Lehmann ら 1981)。
+
+使う op: `material_xray_table`, `material_xray_attenuation`, `material_xray_constants`, `material_effective_z`, `xray_tube_spectrum`, `xray_beam_quality`, `photon_counting_channels`, `dual_kvp_channels`, `xray_channel_projection`, `basis_material_decompose`, `basis_decomposition_crlb`, `r_value_map`, `effective_z_map`, `dual_energy_separability`
+
+推奨パイプライン: [`xray_tube_spectrum`](ops/tomography/spectral_xray/xray_tube_spectrum.md) → [`photon_counting_channels`](ops/tomography/spectral_xray/photon_counting_channels.md) → [`basis_decomposition_crlb`](ops/tomography/spectral_xray/basis_decomposition_crlb.md) → [`basis_material_decompose`](ops/tomography/spectral_xray/basis_material_decompose.md) → [`effective_z_map`](ops/tomography/spectral_xray/effective_z_map.md)
+
+代替: [`dual_kvp_channels`](ops/tomography/spectral_xray/dual_kvp_channels.md), [`r_value_map`](ops/tomography/spectral_xray/r_value_map.md), [`dual_energy_separability`](ops/tomography/spectral_xray/dual_energy_separability.md), [`xray_channel_projection`](ops/tomography/spectral_xray/xray_channel_projection.md), [`material_xray_attenuation`](ops/tomography/spectral_xray/material_xray_attenuation.md)
+
+限界: 散乱線・検出器の K 蛍光の逃げ・パイルアップ・画素間の電荷共有の二重計数は入っていない。X 線管のスペクトルは簡易模型(半価層は IEC の線質と 6 % 以内)。肉に埋まった異物の見かけの Z は組成だけでなく密度でも動き(PVC は 13.9 が 18.7 に見える)、無機物の向きは Al(13)から Cu(29)まで狭い角度に詰まるので、Z を 1 刻みでは読めない。
+
+実寸校正: 較正の op は無い。管電圧・ろ過・検出器の材料と厚さ・窓のしきい値・エネルギー分解能・電荷共有の割合を既知として `photon_counting_channels` に入れる —— 応答を知らずに分解すると肉が Al に化ける(PoC の門)。実機では厚さの分かった 2 材料の段の撮影でチャネルの応答を合わせる。
+
+動く例: `poc_dual_energy_xray`
 
 ### [画像の中の文字を、正しい文字列に合わせて直す](capabilities/fix-text-in-images.md)
 
@@ -378,6 +580,22 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 使う op: `glyph_correct_spec`, `glyph_make_spec`, `glyph_find_text_lines`, `glyph_rewrite_line`, `glyph_find_plate`, `glyph_typeface_noise_floor`, `glyph_rendering_noise_floor`, `glyph_distance`, `glyph_replace`, `glyph_split_cells`, `glyph_fonts`
 
 動く例: `fix_text_in_image`, `poc_glyph_typo_detection`
+
+### [良品を並べて「いつもと違う」を言う(良品統計の変動モデル、誤検出率の宣言つき)](capabilities/good-sample-variation-model.md)
+
+位置をそろえた良品の画像を何枚か渡すと、画素ごとの「いつもの値」(中心)と「いつものばらつき」を覚え、新しい 1 枚のどの画素が許容帯の外にあるか、何 σ 外れたかを領域ごとに説明します。外観検査の古典(良品統計・バリエーションモデル)ですが、帯の幅 k を手で決めずに、**1 画素あたりの誤検出率を宣言して**分布から決めます。
+
+使う op: `varmodel_alignment`, `varmodel_band_k`, `varmodel_fit`, `varmodel_calibrate`, `varmodel_score`, `anomaly_pixel_auroc`, `anomaly_pro`, `anomaly_image_auroc`, `anomaly_region_overlap`, `compare_to_golden`
+
+推奨パイプライン: [`varmodel_alignment`](ops/spc/variation/varmodel_alignment.md) → [`varmodel_fit`](ops/spc/variation/varmodel_fit.md) → [`varmodel_calibrate`](ops/spc/variation/varmodel_calibrate.md) → [`varmodel_score`](ops/spc/variation/varmodel_score.md)
+
+代替: `compare_to_golden`, [`dc_rpca_sparse`](ops/2d/decomposition/dc_rpca_sparse.md), [`anomaly_pro`](ops/spc/anomaly_eval/anomaly_pro.md)
+
+限界: 並進だけを合わせる。回転・拡大・照明の違いが残る実画像では宣言の誤検出率は守られない(VisA pcb1 で宣言 1e-3 に対し 3.8 %、持ち出しの較正後も 2.4 %)。確率的なテクスチャには効かない(DAGM 2007 で偶然並み)。
+
+実寸校正: 帯は画素値の単位のまま。欠陥の大きさを実寸で言うなら、既知寸法の的を同じ光学系で測り `mm_per_px_from_reference` → `pixel_to_world`。
+
+動く例: `poc_good_sample_variation_model`, `anomaly_eval_metrics`
 
 ### [OCR の前処理(傾き補正・局所 2 値化・行の切り出し)](capabilities/ocr-preprocessing.md)
 
@@ -394,6 +612,22 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 実寸校正: 文字は px で扱い、実寸校正は不要。読み取り解像度の目安は x 高さ 20 px 以上(足りなければ `zoom_image_factor`)。
 
 動く例: `gallery2d_segmentation`, `poc_matrix_code_reading`, `gallery2d_region`
+
+### [良品だけから学んで外れたパッチを指す(古典特徴の「位置ごとの正規分布」と「記憶バンク」、再現率を保証する運用点)](capabilities/patch-feature-anomaly-detection.md)
+
+良品の画像だけを何枚か渡すと、パッチ(格子の小窓)ごとの古典特徴を覚え、新しい 1 枚のどのパッチが良品から外れているかを異常地図で返します。覚え方は 2 つあります。
+
+使う op: `patch_features`, `patchdist_fit`, `patchdist_score`, `patchbank_fit`, `patchbank_score`, `anomaly_pixel_auroc`, `anomaly_pro`, `anomaly_image_auroc`, `anomaly_pixel_f1_max`, `anomaly_image_f1_max`, `anomaly_operating_point`, `anomaly_region_overlap`
+
+推奨パイプライン: [`patchbank_fit`](ops/spc/anomaly_patch/patchbank_fit.md) → [`patchbank_score`](ops/spc/anomaly_patch/patchbank_score.md)
+
+代替: [`varmodel_fit`](ops/spc/variation/varmodel_fit.md), `compare_to_golden`, [`dc_rpca_sparse`](ops/2d/decomposition/dc_rpca_sparse.md)
+
+限界: 特徴は古典の手作り(勾配・Gabor・LBP・周波数帯・色)で、深層特徴ではない。細かい欠陥や意味の絡む欠陥(論理的な異常)は、位置の重みを足した記憶でも位置の違いまでしか言えない。良品群に欠陥が混ざると分布も記憶も鈍る。実データ(テクスチャ)では画像ごとの AUROC は 0.5〜0.6 止まりで、深層特徴の方法の数字の代わりにはならない。
+
+実寸校正: 異常地図は特徴空間の距離(位置ごとの分布はマハラノビス距離)で、画素値の単位ではない。大きさを実寸で言うなら、既知寸法の的を同じ光学系で測り `mm_per_px_from_reference` → `pixel_to_world`(格子の刻み stride px が地図の分解能)。
+
+動く例: `poc_patch_anomaly`, `anomaly_eval_metrics`
 
 ### [PL 像で細い溝が見えなくなる理由を、キャリア拡散の PSF と欠陥の種類で切り分ける(Si ウェハ・太陽電池の PL/EL 検査)](capabilities/pl-carrier-diffusion-visibility.md)
 
@@ -418,6 +652,22 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 実寸校正: 位置は px。実距離は `mm_per_px_from_reference`(空撮なら高度から GSD)で換算し、高度が変われば取り直す。
 
 動く例: `poc_search_sweep_width`, `poc_astro_photometry`
+
+### [照明むら・ハイライト・遮蔽に強いテンプレート照合(明るさの変化の向きを符号にして比べ、決まらないテンプレートは拒否する)](capabilities/robust-code-matching.md)
+
+明るさの**値**ではなく**変化の向き**を符号にして比べる照合の族(`codematch`、6 op)。学習した特徴を使わず、式と閾値だけで、 どこまで残りどこで壊れるかを自分で言えます。
+
+使う op: `ocm_match`, `isc_match`, `scc_match`, `orientation_code`, `increment_sign`, `radial_reach_filter`
+
+推奨パイプライン: [`isc_match`](ops/codematch/match/isc_match.md) → [`ocm_match`](ops/codematch/match/ocm_match.md)
+
+代替: [`scc_match`](ops/codematch/match/scc_match.md), [`ncc_locate`](ops/2d/matching/ncc_locate.md), [`radial_reach_filter`](ops/codematch/change/radial_reach_filter.md)
+
+限界: 回転には弱い(4 種とも 7〜9° で当たりが半分を割る。回転を探す方向符号ヒストグラムの系統は無い)。スケール変化も探さない。平坦な所の多いテンプレートは拒否されるか、SCC では採点できる位置が減る。SCC は「符号の合った画素だけを選ぶ」ので無関係な位置でも相関が高めに出る(選択の偏り)。既定の床でそれを抑えても OCM・ISC には届かない。RRF は背景が平坦な画素を判定しない(空・無地の壁)。
+
+実寸校正: 座標は画素(テンプレート中心、find_ncc_model と同じ規約)。閾値 grad_thresh・flat_thresh・t_p は [0, 1] の明るさで書く(8 ビットなら 255 で割る)。
+
+動く例: `poc_code_matching_breakdown`
 
 ### [ハイブリッド接合のボイドを、超音波のエコーの明るさでなく位相で見つける(走査型音響顕微鏡の C スキャン・周波数の取引・POD)](capabilities/sam-bond-voids.md)
 
@@ -501,7 +751,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 
 動く例: `space_carving`, `poc_livestock_body_volume`
 
-## 光と色 (14)
+## 光と色 (21)
 
 ### [クロマティック共焦点変位センサ(硝材の分散 → 較正表 → 戻りスペクトル → 高さ・厚さ)](capabilities/chromatic-confocal-sensor.md)
 
@@ -535,6 +785,22 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 
 動く例: `poc_white_balance`, `poc_pigment_unmixing`
 
+### [多重反射・多重散乱・反復を収束まで回す —— 収束した証拠と残りの誤差を返し、収束しなければ値を出さない](capabilities/convergent-forward-models.md)
+
+実物に近い順方向モデルは、閉じた式ではなく**繰り返しの極限**であることが多い —— 溝の壁から壁へ跳ね返り続ける光、濁った媒質の 中で散乱を繰り返す光子、どこかで止めるべき逆畳み込み。この族(`converge`、6 op)は、どれも収束まで回し、**収束した証拠**と **残りの誤差**を返し、収束しなければ値を返しません。
+
+使う op: `iterate_fixed_point`, `conv_observed_order`, `conv_gci`, `mc_sequential_mean`, `mc_photon_slab`, `iv_richardson_lucy_until`
+
+推奨パイプライン: [`iterate_fixed_point`](ops/converge/iterate/iterate_fixed_point.md) → [`conv_gci`](ops/converge/verification/conv_gci.md)
+
+代替: [`conv_observed_order`](ops/converge/verification/conv_observed_order.md), [`mc_sequential_mean`](ops/converge/montecarlo/mc_sequential_mean.md), [`mc_photon_slab`](ops/converge/montecarlo/mc_photon_slab.md), [`iv_richardson_lucy_until`](ops/converge/stopping/iv_richardson_lucy_until.md), [`iv_richardson_lucy`](ops/2d/restoration/iv_richardson_lucy.md)
+
+限界: 推定残り誤差は g が縮小写像である所でだけ意味を持つ(割線の比 L が 1 以上なら出さない)。GCI は離散化の誤差だけで、モデルの誤りは含まない。モンテカルロの区間は光子ごとの寄与の正規近似で、逐次に止めると被覆率は名目より少し下がりうる(0.95 に対し 400 回で実測、テストが両側で判定)。光子輸送は平行平板の層だけ(横方向の分布・ガラス層は無い)。Richardson-Lucy の止め方は雑音モデル(光子数か既知の σ)が正しいときだけ働く。
+
+実寸校正: 単位は入力のまま(光子輸送は係数の長さの単位と厚さの単位を揃える。反射率・透過率は無次元)。画素から mm への換算は無い。
+
+動く例: `converge_tour`
+
 ### [光ファイバとライトガイド(ガラスの分散 → LP モード → モード径 → 照明の効率)](capabilities/fiber-and-light-guide.md)
 
 検査の照明はライトガイド(ファイバの束)で運び、干渉・分光の光は単一モードファイバで運びます。どちらもガラスの分散と導波の式で決まるので、`fiberoptics` の 7 本は材料表(`materials`)のガラスを名前で受けます。
@@ -542,6 +808,22 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 使う op: `material_group_index`, `material_gvd`, `fiber_numerical_aperture`, `fiber_v_number`, `fiber_lp_modes`, `fiber_mode_field_diameter`, `fiber_bundle_coupling`
 
 動く例: `poc_fiber_light_guide`
+
+### [回折格子の分光器と顕微鏡の照明系(帯域の幅・smile / keystone・ケーラー / クリティカル・同軸のハーフミラー)](capabilities/grating-spectrometer-and-illumination.md)
+
+分光器の「帯域の幅」は、入口スリットの幅・格子の溝の密度と照らされた本数・鏡の焦点距離・検出器の画素から決まります。`gratingspec` の 5 本は、格子の式 mλ = d(sin α + sin β) と Czerny–Turner の幾何からそれを組み立てます。`grating_dispersion` は角分散・逆線分散・分解能 mN・自由スペクトル範囲・同じ方向へ出る他の次数の波長を、`czerny_turner_design` は帯域と検出器の長さからカメラ鏡の焦点距離とコマを消す Shafer の角を、`spectrometer_bandpass` はスリットの像 ⊗ 画素 ⊗ 回折の装置関数の FWHM とエタンデュを、`spectrometer_slit_image` は溝に沿った方向余弦を保つ 3 次元の格子の式で長いスリットの像の smile と keystone を、`spectrometer_spectrum` は入力スペクトルから画素の読み(2 次・3 次の像の重なりとロングパスのフィルタつき)を出します。クロマティック共焦点の `spectrometer_fwhm_nm` とハイパースペクトルの `band_fwhm_nm` に渡す数字を、ここで作れます。
+
+使う op: `grating_dispersion`, `czerny_turner_design`, `spectrometer_bandpass`, `spectrometer_slit_image`, `spectrometer_spectrum`, `illumination_train`, `illumination_field`, `coaxial_illumination`
+
+推奨パイプライン: [`czerny_turner_design`](ops/optics/spectrometer/czerny_turner_design.md) → [`spectrometer_bandpass`](ops/optics/spectrometer/spectrometer_bandpass.md) → [`spectrometer_spectrum`](ops/optics/spectrometer/spectrometer_spectrum.md)
+
+代替: [`grating_dispersion`](ops/optics/spectrometer/grating_dispersion.md), [`spectrometer_slit_image`](ops/optics/spectrometer/spectrometer_slit_image.md), [`illumination_train`](ops/optics/illumination/illumination_train.md), [`illumination_field`](ops/optics/illumination/illumination_field.md), [`coaxial_illumination`](ops/optics/illumination/coaxial_illumination.md)
+
+限界: 鏡とレンズは無収差、カメラは歪曲の無い直線写像なので、帯域の幅は収差を入れない下限。高次の回折効率は 1 次との比の定数(模型)、偏光と blaze は入れない。照明は近軸で cos⁴ とレンズの収差を入れない。
+
+実寸校正: 較正は無い(設計値から閉形式と数値の畳み込みで出す)。実機の分光器は輝線ランプで波長を較正し、装置関数は単色の線で測って差し替える。
+
+動く例: `poc_spectrometer_illumination`
 
 ### [照明の円錐と観察の NA で、鏡面の小さな傾きを出す・消す(球冠の交わり → 傾きの帯 → 打痕・傷・梨地)](capabilities/illumination-cone-vs-na.md)
 
@@ -559,7 +841,39 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 
 動く例: `poc_illumination_cone_vs_na`
 
-### [材料の光学物性を 1 つの表で引く(硝材・結晶・半導体・金属・液体・プラスチック 83 種、一次文献の係数と数表、硝材カタログの取り込み口)](capabilities/material-optical-property-library.md)
+### [凹んだ部品の相互反射を、測光の真値を保ったまま収束まで数える(3-D の形態係数・漸進ラジオシティ・検査用の多重反射描画)](capabilities/interreflection-to-convergence.md)
+
+`render_optscene` は検査用の描画で、実在の照明器具を物理単位で置いて**直接光だけ**を数えます(測光に根拠があり、真値と突き合わせられる)。`render_studio` は多重反射まで解きますが、明るさの絶対値に意味がありません。加工ポケット・内角・箱の隅のような凹んだ部品では、向かいの壁で反射した光が底を照らすので、直接光だけのモデルを実写に合わせると、その分が反射率や照明の強さに**吸収されて、もっともらしく合ってしまいます**。
+
+使う op: `form_factor_parallel_rects`, `form_factor_perpendicular_rects`, `form_factor_polygons`, `radiosity_patches`, `form_factor_matrix`, `radiosity_progressive_3d`, `render_optscene_gi`
+
+推奨パイプライン: [`radiosity_patches`](ops/optics/radiosity/radiosity_patches.md) → [`form_factor_matrix`](ops/optics/radiosity/form_factor_matrix.md)
+
+代替: [`render_optscene_gi`](ops/optics/radiosity/render_optscene_gi.md), [`radiosity_progressive_3d`](ops/optics/radiosity/radiosity_progressive_3d.md), [`render_optscene`](ops/optics/scene/render_optscene.md), [`render_studio`](ops/optics/scene/render_studio.md), [`transport_matrix_radiosity`](ops/optics/light_transport/transport_matrix_radiosity.md), [`form_factors_2d`](ops/optics/light_transport/form_factors_2d.md)
+
+限界: Lambert(完全拡散)だけ。シーンは箱・箱をくり抜いたポケット・有限の板(球・円筒・鏡面・加工目・欠陥は拒否)。パッチ内のラジオシティは一様で、画素の相互反射は点 → 多角形の閉形式で集め直す(遮蔽はパッチ中心への光線 1 本)。
+
+実寸校正: 照明の強さは線形に効き、幾何(形態係数・画素とパッチの対応)はシーンの形・カメラ・パッチの大きさの SHA-256 で使い回すので、反射率と照明の強さを動かす較正の繰り返しではラジオシティだけを解き直す。
+
+動く例: `poc_pocket_interreflection`
+
+### [光学設計ファイル(.zmx の逐次処方を読む・書く・分類する)](capabilities/lens-prescription-files.md)
+
+市販の逐次光線追跡の設計ソフトが保存する処方のテキスト(`.zmx`)を、`lens_file_read` がそのまま `raytrace.lens_system` の処方にします。別の模型を作らないので、実光線(`spot_stats` / `ray_fan`)・Seidel 和(`seidel_coefficients`)・波面と PSF(`opd_map` / `psf_from_opd`)・色収差(`chromatic_shift`)・公差(`tolerance_analysis`)・最適化(`optimize_lens`)・断面図(`lens_section_drawing`)がそのまま使えます。視野と波長はファイルの並びのまま持ち、`lens_file_system` で 1 つ選んだ処方にします。直した処方は `lens_file_write` が同じ形式で書き戻し(視野・波長・まだ有効なソルブを保つ)、`lens_file_report` は読まずに全キーワードを「読む / 無視(理由つき)/ 扱えない」に分けます。硝材は材料表か、手元の `.agf`(`glass_dir` か環境変数 `FULLSEYE_GLASS_DIR`、`read_glass_catalog_agf` が読む)を名前の完全一致で引きます。
+
+使う op: `lens_file_read`, `lens_file_system`, `lens_file_write`, `lens_file_report`
+
+推奨パイプライン: [`lens_file_read`](ops/optics/lensfile/lens_file_read.md) → [`lens_file_system`](ops/optics/lensfile/lens_file_system.md) → [`paraxial_trace`](ops/optics/design/paraxial_trace.md) → [`spot_stats`](ops/optics/design/spot_stats.md) → [`lens_file_write`](ops/optics/lensfile/lens_file_write.md)
+
+代替: [`lens_file_report`](ops/optics/lensfile/lens_file_report.md), [`read_glass_catalog_agf`](ops/optics/matprop/read_glass_catalog_agf.md), [`lens_system`](ops/optics/design/lens_system.md), [`optimize_lens`](ops/optics/optimization/optimize_lens.md), [`lens_section_drawing`](ops/optics/drawing/lens_section_drawing.md)
+
+限界: 座標変換面(傾き・偏心・折り返し)は非共軸の追跡器へ読む(SCBD・物体空間を動かす先頭の変換・OBNA・像高の視野は拒否)。理想レンズ・トーリック・奇数次非球面は拒否。曲がった像面・温度、座標変換面と多構成の併用は allow_partial のときだけ近似として読む(多構成の表 MNUM は読み書きできる)。ソルブは保存値で読む。カタログに無い硝材は拒否(.agf を置く)。
+
+実寸校正: 長さは mm に換算、波長は µm、視野は度(無限遠)か mm(有限の物体)。画素校正は不要。
+
+動く例: `poc_lens_file_roundtrip`
+
+### [材料の光学物性を 1 つの表で引く(硝材・結晶・半導体・金属・液体・プラスチック 86 種、一次文献の係数と数表、硝材カタログの取り込み口)](capabilities/material-optical-property-library.md)
 
 観察用の光学系(レンズ・窓・鏡・膜)も観察対象(ウェハ・モールド・はんだ)も、見え方は材料の光学特性で決まります。これまで Fullseye は硝材 20 種の Sellmeier(`raytrace`)、金属 5 種の 5 点の n,k(`glassmirror`)、見た目のカタログ(`surfacelib` / `metalfinish`)が別々の名前空間にあり、同じ材料を光学系側と対象側で引く口がありませんでした。この回は**1 材料 = 1 レコード**の材料表を `materials` に作り、`opsoptics` の新カテゴリ `matprop` に 16 本を足しました。
 
@@ -582,6 +896,22 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 実寸校正: 反射率は白板の電子数で割る平場補正(white_electrons)で読む。帯の中心は一次文献の実測、幅と強さは実測の帯(bands=...)に差し替える。
 
 動く例: `poc_hyperspectral_foreign_matter`
+
+### [非共軸の光学系(折り返しミラー・半透鏡・傾いた平板・シャインプルーフ・ゴースト)](capabilities/noncoaxial-optics.md)
+
+`raytrace` の処方は光軸が 1 本の直線の共軸系でした。`raytrace3d` は面ごとに 3-D の姿勢(回転と原点)を持たせ、座標の切り替え(偏心してから x → y → z の順に回す。`undo` で逆順に戻す)、元の座標系への戻り、折り返しミラー(`fold_mirror`、45° で 90° 折れる)、傾いた平行平板や楔、平板の半透鏡(透過と反射の 2 本の枝)を組めます。面の式(円錐 + 偶数次の非球面)と屈折・反射の式は `raytrace` のままで、共軸の処方を変換した系は `raytrace.trace_rays` と 1e-12 で同じ交点・光路長になります。
+
+使う op: `noncoaxial_system`, `noncoaxial_example`, `noncoaxial_layout`, `noncoaxial_trace`, `noncoaxial_spot`, `image_orientation`, `beamsplitter_branches`, `tilted_plate_shift`, `scheimpflug_tilt`, `surface_reflectance`, `ghost_analysis`, `ghost_image`, `ghost_path`, `noncoaxial_drawing`
+
+推奨パイプライン: [`noncoaxial_system`](ops/optics/noncoaxial/noncoaxial_system.md) → [`noncoaxial_trace`](ops/optics/noncoaxial/noncoaxial_trace.md) → [`image_orientation`](ops/optics/noncoaxial/image_orientation.md) → [`ghost_analysis`](ops/optics/noncoaxial/ghost_analysis.md) → [`noncoaxial_drawing`](ops/optics/drawing/noncoaxial_drawing.md)
+
+代替: [`lens_system`](ops/optics/design/lens_system.md), [`spot_stats`](ops/optics/design/spot_stats.md), [`tilted_plate_shift`](ops/optics/noncoaxial/tilted_plate_shift.md), [`scheimpflug_tilt`](ops/optics/noncoaxial/scheimpflug_tilt.md), [`surface_reflectance`](ops/optics/noncoaxial/surface_reflectance.md), [`lens_section_drawing`](ops/optics/drawing/lens_section_drawing.md)
+
+限界: ゴーストは 2 回反射まで(3 回以上・散乱・鏡筒の迷光は持たない)。各面の反射率は視野の主光線の入射角での無偏光の値で、半透鏡の膜は与えた R(角度・波長の依存なし)。光線の狙いは絞りの点への Newton 法(狙えない光線は無効として数える)。近軸量(EFL・瞳)は共軸の処方から変換した系だけで、ほかは実光線の近軸極限で焦点を求める。
+
+実寸校正: 長さは mm、角度は度。処方の数値がそのまま実寸で、校正は要らない。
+
+動く例: `poc_noncoaxial_optics`
 
 ### [光の反射・屈折・干渉を計算する](capabilities/optics-and-materials.md)
 
@@ -687,6 +1017,38 @@ Si 上の SiO₂・Si₃N₄、コート、AR 膜の膜厚は、反射スペク�
 
 動く例: `poc_thin_film_reflectometry`
 
+### [水が検査画像にどう写るか(プールの底のコースティクス・瓶の側面像と液面・濡れた面・船体の水中画像)](capabilities/water-inspection-images.md)
+
+`watermedia` の物理を、検査カメラが記録する絵にする 7 本です。`caustic_irradiance` は波のある水面の高さの場から、平行光が水底に作る照度を 2 つの方法で作ります。光子の方法は、規則格子の光線をスネルのベクトル式で曲げて、双線形に床へ撒きます(重みの合計が保存されるので、周期境界では光子の総量が入射 × 平均透過率に一致します)。波面の方法は、水面から床への写像のヤコビアンの逆数を照度とし、折り目(行列式 → 0)では inf と旗を返します。`caustic_floor_segmentation` はその照度から明るい線・網を大津の方法か曲率の稜線で切り出します。ひび割れ検出器はコースティクスの縁をひびと取り違えるので、この分割で縁を除くか、照度で割って平坦化します。
+
+使う op: `caustic_irradiance`, `bottle_image`, `fill_level_from_image`, `wet_surface_appearance`, `wet_dry_inspection_pair`, `underwater_inspection_image`, `caustic_floor_segmentation`
+
+推奨パイプライン: [`caustic_irradiance`](ops/optics/watervision/caustic_irradiance.md) → [`caustic_floor_segmentation`](ops/optics/watervision/caustic_floor_segmentation.md)
+
+代替: [`bottle_image`](ops/optics/watervision/bottle_image.md), [`fill_level_from_image`](ops/optics/watervision/fill_level_from_image.md), [`wet_surface_appearance`](ops/optics/watervision/wet_surface_appearance.md), [`wet_dry_inspection_pair`](ops/optics/watervision/wet_dry_inspection_pair.md), [`underwater_inspection_image`](ops/optics/watervision/underwater_inspection_image.md)
+
+限界: 瓶は水平の断面ごとに追跡するので、カメラから縦に離れた行の光線の傾きを無視する(垂直な円柱なら実効屈折率 sqrt(n² − sin²α) で厳密に扱えるが、肩の曲面では使えない。傾き 40 度で明るい帯の半幅が約 29 % 動く)。壁の内部反射は追わない(全反射は追う)。濡れた面の膜は波長より十分厚いとして干渉を無視し、被覆率の法則(膜厚 2 µm で 63 %)は仮定。コースティクスの光子法は折り目で有限の大きな値を数え、波面法は inf と旗を返す。海の傾きの絶対値は毛管波を持たないスペクトルでは決まらないので手で合わせる。ランプのベールは 1 回散乱でビームの形は仮定。
+
+実寸校正: 瓶はカメラ距離・画素の大きさ(物体面)・壁厚・屈折率を実物に合わせる。背面板の放射の角度範囲(既定 ±8 度)は板の仕様に合わせる。濡れた面は膜厚と粗さを実測の光沢度から選ぶ。水中画像は水の種類(ジャーロフ型)を実測の Kd から選び、ランプの出力とカメラとの距離で SNR が決まる。
+
+動く例: `poc_water_inspection_images`
+
+### [水と透明媒質(海の波・水面のフレネルと屈折・水中の色と散乱・瓶のレンズ作用)](capabilities/water-transparent-media.md)
+
+水は、上から見れば動くレンズ、下から見れば距離で濃くなる色フィルタです。`watermedia` の 10 本は、その両方を閉形式と公表値の表に載せ、数値解は別の経路で確かめられるようにしたものです。`ocean_spectrum` は風速から Pierson–Moskowitz(1964)と JONSWAP(1973)の波のスペクトル、有義波高、周期を返し、`ocean_height_field` はそれを Tessendorf(2001)の FFT で 2 次元の海にして(高さ・傾き・法線・荒れによる水平変位、水深の分散関係)返します。
+
+使う op: `ocean_spectrum`, `ocean_height_field`, `fresnel_water_air`, `snell_window`, `refracted_view`, `water_attenuation`, `underwater_image`, `phase_function_hg`, `scattering_phase_petzold`, `cylinder_lens_caustic`
+
+推奨パイプライン: [`ocean_height_field`](ops/optics/watermedia/ocean_height_field.md) → [`refracted_view`](ops/optics/watermedia/refracted_view.md) → [`water_attenuation`](ops/optics/watermedia/water_attenuation.md) → [`underwater_image`](ops/optics/watermedia/underwater_image.md)
+
+代替: [`ocean_spectrum`](ops/optics/watermedia/ocean_spectrum.md), [`fresnel_water_air`](ops/optics/watermedia/fresnel_water_air.md), [`snell_window`](ops/optics/watermedia/snell_window.md), [`phase_function_hg`](ops/optics/watermedia/phase_function_hg.md), [`scattering_phase_petzold`](ops/optics/watermedia/scattering_phase_petzold.md), [`cylinder_lens_caustic`](ops/optics/watermedia/cylinder_lens_caustic.md)
+
+限界: 平らな水の見かけの深さ d/n は真上の近傍だけ(30° で 7 %、60° で 52 % の過大評価)。PM / JONSWAP の海は毛管波を持たず、格子で解ける波の傾きは Cox & Munk の 1〜2 割(飽和域を毛管波数まで延ばすと 5 m/s では合うが 10 m/s は 4 割届かない)。水の吸収は 380〜727.5 nm、ジャーロフの表は 400〜700 nm(3C は 650 nm、5C は 575 nm まで)で、外は拒否する。Kd を視線に沿った減衰として使うのは近似で、実際は距離と深さで変わる。波面の屈折は焦線の近くで経路が複数あり、見つけた 1 本だけを返す(式を満たさなければ NaN)。
+
+実寸校正: 水の種類は実測の Kd(またはディスク透視度)から最も近いジャーロフ型を選ぶ。屈折率は波長ごとの材料表なので、塩分・温度の違いは n_water で与える。カメラ画像の色は、センサの分光感度と露出で変わるので、RGB は 3 つの代表波長の近似(分光画像なら波長を渡す)。瓶の焦線は光軸に直交する断面の 2 次元の光線追跡で、円柱の長さ方向の曲がりは無い。
+
+動く例: `poc_water_transparent_media`
+
 ## 波と信号 (5)
 
 ### [配列で方向を測り、距離と速度を分ける](capabilities/beamforming-and-range-doppler.md)
@@ -753,7 +1115,7 @@ Si 上の SiO₂・Si₃N₄、コート、AR 膜の膜厚は、反射スペク�
 
 動く例: `poc_bearing_diagnosis`, `poc_rail_corrugation`
 
-## 組み立てる (7)
+## 組み立てる (9)
 
 ### [位置を合わせて重ねる](capabilities/align-and-stack.md)
 
@@ -795,6 +1157,38 @@ op が 931 本あっても、ライン担当が最初に触る形は「画像フ
 
 動く例: `inspection_workflow`
 
+### [レンズの製造公差を、MTF と歩留まりで決める](capabilities/lens-tolerancing.md)
+
+`lenstol` は、曲率・厚み・屈折率・アッベ数・偏心・傾き・面の非点不整・くさび・レンズ群の偏心と傾きを、面または群ごとの行にします。一様分布、正規分布、±公差で切った正規分布を選べます。
+
+使う op: `tolerance_table`, `tolerance_criteria`, `tolerance_compensators`, `tolerance_monte_carlo`, `tolerance_sensitivity`, `tolerance_report`, `tolerance_table_zmx`, `tolerance_table_from_zmx`
+
+推奨パイプライン: [`tolerance_table`](ops/optics/tolerancing/tolerance_table.md) → [`tolerance_criteria`](ops/optics/tolerancing/tolerance_criteria.md) → [`tolerance_sensitivity`](ops/optics/tolerancing/tolerance_sensitivity.md) → [`tolerance_monte_carlo`](ops/optics/tolerancing/tolerance_monte_carlo.md) → [`tolerance_report`](ops/optics/tolerancing/tolerance_report.md)
+
+代替: [`tolerance_analysis`](ops/optics/design/tolerance_analysis.md), [`through_focus_mtf`](ops/optics/imaging_sim/through_focus_mtf.md), [`spot_stats`](ops/optics/design/spot_stats.md)
+
+限界: 面の非点不整は二つの低次非点成分です。測定した面形状マップそのものは扱いません。設計ファイルとの往復は NOTE TOLERANCE_ROW 形式です。逆感度は線形近似です。
+
+実寸校正: 長さは mm、傾きは degree または arcminute、MTF は cycles/mm、波面 RMS は waves です。歩留まりには Wilson 95 % 区間を付けます。
+
+動く例: `poc_lens_tolerancing`
+
+### [同じ入力の検証・近傍探索・変換核を一度だけ計算する](capabilities/reuse-computation-results.md)
+
+同じ入力から複数の量を得るとき、共通する高価な処理を一度にまとめます。`curvature_descriptors` は一度の近傍探索と曲面当てはめから主曲率・平均曲率・Gauss 曲率・shape index・curvedness を返します。`monogenic_metrics` と `polarization_analyze` は入力検証や正弦波当てはめを共有します。`HankelPlan` と `PreparedVolProbe` は変換核や spline 係数を複数回の呼び出しで再利用します。
+
+使う op: `curvature_descriptors`, `HankelPlan`, `piv_outlier_mask_stream`, `monogenic_metrics`, `grid_axes`, `polarization_analyze`, `PreparedVolProbe`, `prepare_vol_probe`, `unpack_lsb`
+
+推奨パイプライン: [`polarization_separate`](ops/specular/polarization/polarization_separate.md)
+
+代替: `curvature_descriptors`, `HankelPlan`, `piv_outlier_mask_stream`, `monogenic_metrics`, `grid_axes`, `polarization_analyze`, `prepare_vol_probe`, `unpack_lsb`
+
+限界: 合成結果を返す op は単独結果より保持量が増える。stream と `unpack_lsb` の省メモリ展開は一時配列を抑えるが入力と出力はメモリ上に必要で、速度・ピーク値は入力形状と実行環境に依存する。
+
+実寸校正: 数値の単位や較正は元の op と同じ。曲率は点群の長さ単位、体積プローブは spacing、偏光は検光子角度を正しく渡す。
+
+動く例: `perf_pointcloud_descriptors`, `perf_monogenic_metrics`, `perf_prepared_volume_probe`, `perf_polarization_analyze`, `perf_hankel_plan_and_piv_stream`
+
 ### [op の返り値(型付き)を JSON に出し、bit そのままで戻す](capabilities/typed-results-as-json.md)
 
 op の返り値は `image` / `region` / `points` / `contour` / `feature` / `matrix` / `signal` … の**型(sort)**を持つ NumPy 配列や小さな dict で、次の op に渡すには良くても、ファイル・ログ・LLM・別プロセスには渡せません。`to_json(value, sort)` が sort ごとに**一つ**の JSON 形を与え、`from_json(text)` が `(value, sort)` に戻します。封筒は自己記述(`{"fullseye_sort": "points", "version": 1, "payload": …}`)で、戻すときに型の指定は要りません。
@@ -819,7 +1213,7 @@ JSON と Markdown は一緒に使う場面が多い —— 結果を報告書の
 
 動く例: `xlsx_report`
 
-## 見せる (3)
+## 見せる (5)
 
 ### [結果を人が読める図にする](capabilities/figures-and-annotation.md)
 
@@ -837,6 +1231,14 @@ JSON と Markdown は一緒に使う場面が多い —— 結果を報告書の
 
 動く例: `poc_colormap_readability`, `poc_dem_terrain`
 
+### [結果を、触って見られる 1 枚の HTML にする(タブ・バッジ・3-D・動画・多言語)](capabilities/interactive-poc-viewer.md)
+
+PoC や計測の結果を、**自己完結した 1 枚の HTML ビューア**にします。暗色で、素の WebGL と 2-D canvas だけ、外部ライブラリも外部 URL の読み込みも無く、`file://` でも iPhone の Safari でも動きます。同じ課題を違う方法で試した記録を**タブ**に並べ、各タブに正直な**バッジ**(門を通った / 限界を見せる / 何もしない場合)・短い説明・実測の数字を付けます。
+
+使う op: `write_viewer`, `viewer_spec`, `viewer_points_tab`, `viewer_mesh_tab`, `viewer_frames_tab`, `viewer_split_tab`
+
+動く例: `interactive_poc_viewer`
+
 ### [地の色を知らずに線と領域を描く(反転色)](capabilities/inverted-colour-overlays.md)
 
 検査画像に測定線や ROI を重ねるとき、**地が明るいか暗いか分からない**のが普通です。白で描けば白飛びの上で消え、黒で描けば影の上で消えます。反転色は「その場の色をひっくり返して描く」ことでこれを避ける古典手で、`annotate_invert_path` が折れ線(アンチエイリアス・破線可)、`annotate_invert` が領域を、`draw="fill"` で中身ごと、`draw="margin"` で輪郭だけ反転します(HALCON の `set_draw` と同じ語)。
@@ -852,6 +1254,22 @@ JSON と Markdown は一緒に使う場面が多い —— 結果を報告書の
 実寸校正: 描画のみ。実寸校正は不要。
 
 動く例: `annotate_paper_tour`
+
+### [点群をそのまま色の絵にする](capabilities/point-cloud-to-picture.md)
+
+面を張れない点群 —— 細胞の位置、LiDAR、SfM の疎な点、粒子 —— を、点のまま RGB の絵にします。点は小数画素の位置に足跡(gaussian / disc / point)を落とし、**深さの順に**アルファ合成(over)するか、**光の総量を保って**足します(add、数の密度の地図になる)。カメラは `project_points` / `render_point_depth` と同じ OpenCV の規約(+Z が前)で、正射影は K を省くと点群を画像に収めます。
+
+使う op: `points_render`, `render_point_depth`, `project_points`
+
+推奨パイプライン: [`points_render`](ops/3d/render/points_render.md)
+
+代替: [`render_point_depth`](ops/3d/render/render_point_depth.md), [`points_activity_video`](ops/conngraph/activity/points_activity_video.md), [`gs_render`](ops/drive/gsplat/gs_render.md), `render_mesh`
+
+限界: 正射影の自動の収め方は R, t を当てた後の XY の箱で決まる(透視は K が要る)。disc の足跡は画素に量子化されるので、像の重心は半径 1〜1.5 画素で最大 0.05 画素ずれる(小数画素の位置を見るなら gaussian、1e-3 画素以内)。over は点ごとの不透明度で重ねるので、奥の密度は手前に隠れる —— 数を見るなら add。点 × 足跡の組が 4,000 万を超える描画は拒否する。
+
+実寸校正: 画素校正は無い。縮尺が要るなら K の fx(画素 / 座標単位)から スケールバーを置く(annotate_scale_bar)。
+
+動く例: `points_render_basics`, `poc_flybrain_pointcloud`
 
 ### [画像の上に、文字と表を置きたい場所へ置く](capabilities/text-and-tables-on-images.md)
 
@@ -869,7 +1287,7 @@ JSON と Markdown は一緒に使う場面が多い —— 結果を報告書の
 
 動く例: `annotate_paper_tour`
 
-## 描く (4)
+## 描く (6)
 
 ### [写真を 1 本の線にする(点描 → 巡回路 → 回る円)](capabilities/one-stroke-drawing.md)
 
@@ -895,6 +1313,22 @@ JSON と Markdown は一緒に使う場面が多い —— 結果を報告書の
 
 動く例: `poc_optics_drawings`
 
+### [処方どおりのレンズ越しに 3 次元の場面を撮る(被写界深度・猫の目のボケ・隅の光量・色収差・ゴースト)](capabilities/photograph-through-prescription.md)
+
+レンズ設計の画面は、スポットダイアグラムや MTF の数字までは出してくれますが、「この処方で 1 m 先の資料を撮ると、絵は実際どう写るのか」までは見せてくれません。`lensrender` の 8 本は、センサ側から射出瞳を標本化して処方の全面を**逆向きに**追跡し(Kolb, Mitchell & Hanrahan 1995)、物体空間の場面で陰影をつけて、光子・ショットノイズ・読み出しノイズ・量子化まで通します。
+
+使う op: `lens_scene`, `exit_pupil_samples`, `trace_sensor_rays`, `scene_radiance`, `render_scene_through_lens`, `bokeh_shape`, `render_ghost_overlay`, `render_compare_prescriptions`
+
+推奨パイプライン: [`lens_system`](ops/optics/design/lens_system.md) → [`lens_scene`](ops/optics/lensrender/lens_scene.md) → [`render_scene_through_lens`](ops/optics/lensrender/render_scene_through_lens.md) → [`render_compare_prescriptions`](ops/optics/lensrender/render_compare_prescriptions.md)
+
+代替: [`exit_pupil_samples`](ops/optics/lensrender/exit_pupil_samples.md), [`trace_sensor_rays`](ops/optics/lensrender/trace_sensor_rays.md), [`scene_radiance`](ops/optics/lensrender/scene_radiance.md), [`bokeh_shape`](ops/optics/lensrender/bokeh_shape.md), [`render_ghost_overlay`](ops/optics/lensrender/render_ghost_overlay.md), [`render_through_lens`](ops/optics/imaging_sim/render_through_lens.md), [`ghost_analysis`](ops/optics/noncoaxial/ghost_analysis.md)
+
+限界: 幾何光学のみ(回折が無いので、絞った良いレンズの点像は Airy より小さく描かれる。F/11 の三枚玉で Airy の 0.32 倍)。射出瞳は近軸の位置と大きさで標本化する(瞳収差で実際の瞳がはみ出すレンズはその分の光を取りこぼす)。透過率はフレネル損失なし(fresnel=True で非偏光のフレネル損失、コーティングとガラスの吸収は無し)。ゴーストは 2 回反射だけ。点光源は前向きの追跡で重ねるので遮られず影を作らない。非軸対称の系(偏心・傾き)の点光源とボケの形は未対応(拒否)。
+
+実寸校正: センサは画素ピッチ・QE・フルウェル・読み出しノイズ・暗電子・ビット数の実測値で与える(EMVA 1288 の値)。光源の強さは分光放射照度(W/m²/nm)か分光強度(W/sr/nm)、露光は秒で、電子数は E dλ A t (λ/hc) QE の閉形式に 1e-3 以内で合う。処方は raytrace.lens_system(.zmx の読み込みは lensfile)。
+
+動く例: `poc_photograph_through_prescription`
+
 ### [目が嘘をつく絵を作って、測る側を採点する(錯視・無限描画・循環動画)](capabilities/pictures-that-carry-their-own-truth.md)
 
 **真値が最初から付いている画像**を作ります。Fullseye のほとんどの op は与えられた 画像を測る側にいますが、この族だけが反対側にいます。
@@ -902,6 +1336,22 @@ JSON と Markdown は一緒に使う場面が多い —— 結果を報告書の
 使う op: `illusion_cafe_wall`, `illusion_muller_lyer`, `illusion_checker_shadow`, `illusion_kanizsa`, `illusion_fraser_spiral`, `illusion_ground_truth`, `perpetual_elementary_ca`, `perpetual_langtons_ant`, `perpetual_apollonian`, `perpetual_flow_field`, `perpetual_identities`, `perpetual_state`, `perpetual_step`, `perpetual_render`, `perpetual_loop`, `perpetual_loop_seam`
 
 動く例: `poc_illusions_and_perpetual_drawing`
+
+### [処方から撮るプレノプティックカメラ](capabilities/plenoptic-camera.md)
+
+主レンズ処方、マイクロレンズアレイ、センサを組み合わせ、一回の撮影から生のマイクロ画像と四次元ライトフィールドを作る。出力は既存のライトフィールド処理へ直接渡せる。
+
+使う op: `mla_surface`, `plenoptic_system`, `plenoptic_capture`, `plenoptic_mla_calibrate`, `plenoptic_decode`, `plenoptic_refocus_depth`
+
+推奨パイプライン: [`mla_surface`](ops/optics/plenoptic/mla_surface.md) → [`plenoptic_system`](ops/optics/plenoptic/plenoptic_system.md) → [`plenoptic_capture`](ops/optics/plenoptic/plenoptic_capture.md) → [`plenoptic_mla_calibrate`](ops/optics/plenoptic/plenoptic_mla_calibrate.md) → [`plenoptic_decode`](ops/optics/plenoptic/plenoptic_decode.md) → [`plenoptic_refocus_depth`](ops/optics/plenoptic/plenoptic_refocus_depth.md)
+
+代替: [`lf_from_mla`](ops/lightfield/decode/lf_from_mla.md), [`lf_refocus`](ops/lightfield/refocus/lf_refocus.md), [`lf_depth_from_focus`](ops/lightfield/depth/lf_depth_from_focus.md), [`trace_sensor_rays`](ops/optics/lensrender/trace_sensor_rays.md)
+
+限界: 幾何光学のみで回折と画素間クロストークは扱わない。
+
+実寸校正: 一様な白色面で MLA 格子を校正し、距離既知の三平面で深度を確認する。
+
+動く例: `poc_plenoptic_camera`
 
 ### [定理が門になる図(アポロニウス・フォード・測地ドーム・葉序・IFS・空間充填曲線)](capabilities/theorems-as-pictures.md)
 

@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">smooth_flow — 3D <code style="color:#22d3bf">scene_flow3d</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">flow_scattered</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.smooth_flow(pts0, pts1, k: &#x27;int&#x27; = 10, n_iter: &#x27;int&#x27; = 5) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import scene_flow3d; scene_flow3d.smooth_flow(pts0, pts1, k: &#x27;int&#x27; = 10, n_iter: &#x27;int&#x27; = 5) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;smooth_flow&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.smooth_flow(pts0, pts1, k: &#x27;int&#x27; = 10, n_iter: &#x27;int&#x27; = 5, method: &#x27;str&#x27; = &#x27;exact&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import scene_flow3d; scene_flow3d.smooth_flow(pts0, pts1, k: &#x27;int&#x27; = 10, n_iter: &#x27;int&#x27; = 5, method: &#x27;str&#x27; = &#x27;exact&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;smooth_flow&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Return a regularised flow (N, 3): the nearest-neighbour flow locally smoothed by neighbourhood averaging.</p>
 <p>Iteratively averages the raw flow of <code style="color:#22d3bf">nearest_neighbor_flow</code> (noisy because it comes from nearest-neighbour correspondence) over the k-nearest-neighbour topology in <code style="color:#22d3bf">pts0</code> space (including the point itself, built only 1 time). It suppresses zero-mean noise while largely preserving smooth displacement fields (Jacobi iteration = Laplacian smoothing of the flow field). Linear fields are unbiased with symmetric neighbourhoods; fields with curvature shrink slightly (an honest smoothing bias).</p>
@@ -10,6 +10,7 @@
 <p>pts1: (M, 3) point cloud at time 1.</p>
 <p>k: number of neighbours used for averaging (including itself).</p>
 <p>n_iter: number of smoothing iterations.</p>
+<p>method: <code style="color:#22d3bf">&quot;exact&quot;</code> uses the legacy gather; <code style="color:#22d3bf">&quot;sparse&quot;</code> uses sparse matrix multiplication with the same weights.</p>
 <p>Returns:</p>
 <p>(N, 3) smoothed displacement vector field.</p>
 <p>Raises:</p>

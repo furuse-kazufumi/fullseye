@@ -1,0 +1,61 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">blob_count_interval — BLOB <code style="color:#22d3bf">split</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">mask</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blob_count_interval(region: &#x27;Any&#x27;, rel_lo: &#x27;float&#x27; = 0.05, rel_hi: &#x27;float&#x27; = 0.15, min_prominence: &#x27;float&#x27; = 1.0, round_tol: &#x27;Optional[float]&#x27; = None, connectivity: &#x27;int&#x27; = 8) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import blob2d; blob2d.blob_count_interval(region: &#x27;Any&#x27;, rel_lo: &#x27;float&#x27; = 0.05, rel_hi: &#x27;float&#x27; = 0.15, min_prominence: &#x27;float&#x27; = 1.0, round_tol: &#x27;Optional[float]&#x27; = None, connectivity: &#x27;int&#x27; = 8) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsblob.get(&quot;blob_count_interval&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Zählt überlappende Objekte. <b>Ist die Anzahl nicht bestimmbar, wird statt einer Zahl ein Intervall zurückgegeben</b> (fail-closed).</p>
+<p>Objekte in einem verschmolzenen Klumpen erscheinen als Gipfel der Distanztransformation. Überlappen sich zwei Kreise, entsteht eine Einschnürung; je flacher sie ist (je kleiner die <b>Prominenz</b> des Gipfels), desto weniger lässt sich entscheiden, ob es &quot;2 oder 1&quot; sind. <code style="color:#22d3bf">blob_seeds</code> + <code style="color:#22d3bf">blob_split</code> wählen ein einziges h und <b>geben immer eine einzige Anzahl zurück</b> —— selbst wo die Überlappung zu tief für eine Entscheidung ist, kommt eine plausible Zahl heraus. Dieser op misst die Prominenz jedes Gipfels, behandelt Gipfel im Schwellenband als &quot;mehrdeutig&quot; und gibt die Anzahl als Intervall von <code style="color:#22d3bf">lo</code> bis <code style="color:#22d3bf">hi</code> zurück. Nur wenn das Intervall die Breite 0 hat, wird <code style="color:#22d3bf">count</code> zurückgegeben.</p>
+<p>Klassifikation der Gipfel (Prominenz p, Höhe h, relative Prominenz p/h; h entspricht dem Inkreisradius):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">p &gt;= min_prominence</code> und <code style="color:#22d3bf">p/h &gt;= rel_hi</code> → sicherer Gipfel (wird gezählt)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">p &gt;= min_prominence</code> und <code style="color:#22d3bf">rel_lo &lt;= p/h &lt; rel_hi</code> → mehrdeutig (in lo nicht gezählt, in hi gezählt)</p>
+<p style="margin:2px 0 2px 12px">• sonst → Rauschen (Gipfel aus der Gitterquantisierung; an Ellipsen gemessen unter 0.6 px)</p>
+<p><b>Warum relative Prominenz</b>: Überlappen sich zwei Kreise gleichen Radius r mit Überlappungsgrad o (Mittelpunktsabstand d = 2r(1 − o)), ist die halbe Breite der Einschnürung w = sqrt(r² − (d/2)²) und p/h = 1 − sqrt(1 − (1 − o)²) —— <b>unabhängig vom Radius</b>. Ein absolutes h passt in einem Bild mit großen und kleinen Blasen nur zu einer Seite (dieselbe Form wie die Lücke, die <code style="color:#22d3bf">poc_cell_counting</code> festgehalten hat). Das Standardband 0.05–0.15 entspricht Überlappungsgraden von 0.69–0.47.</p>
+<p>Wird <code style="color:#22d3bf">round_tol</code> angegeben, wird auch <b>Fläche, die die Gipfel nicht erklären können</b>, abgewiesen. Über einem Überlappungsgrad von 0.7 geht die Einschnürung in der Gitterquantisierung unter, und nur ein Gipfel bleibt übrig (2 sehen aus wie 1). Daher wird die Fläche der Komponente mit Σπh² verglichen, der Summe der Inkreisflächen der sicheren und mehrdeutigen Gipfel; ist Fläche &gt; (1 + round_tol + 1/h_min) · Σπh², wird die Obergrenze geöffnet (<code style="color:#22d3bf">hi = None</code>). 1/h_min ist der Anteil der Gitterquantisierung (bei Kreisscheiben ab Radius 8 px Verhältnis höchstens 1.09, gemessen 2026-10-18). <code style="color:#22d3bf">round_tol</code> entspricht <b>dem zulässigen Seitenverhältnis − 1</b> (eine Ellipse mit Seitenverhältnis a/b hat das Flächenverhältnis a/b). Für runde Objekte wie Blasen 0.1, für unregelmäßige wie Zellen etwa 0.3. <code style="color:#22d3bf">None</code> setzt keine Form voraus (tiefe Überlappungen werden übersehen).</p>
+<p><b>Die Obergrenze des Intervalls ist keine Garantie</b>: <code style="color:#22d3bf">hi</code> ist die Anzahl der Objekte, die als Gipfel sichtbar wurden; Objekte, die ohne Gipfel verschüttet sind (etwa eine kleine Blase, die in eine große hineinragt), sind auch in <code style="color:#22d3bf">hi</code> nicht enthalten. Die Obergrenze wird nur geöffnet, wenn die Flächenprüfung sie erfasst. Ist <code style="color:#22d3bf">determined</code> False, steht nur fest, dass &quot;die Anzahl nicht angegeben werden kann&quot;, und das Intervall ist ein Richtwert (in einem halbsynthetischen Test mit echten Blasenformen lag bei einem als unbestimmt gemeldeten Klumpen der wahre Wert um 1 über <code style="color:#22d3bf">hi</code>. <code style="color:#22d3bf">poc_dense_bubble_count</code>).</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>region : array_like</p>
+<p>2-D-Vordergrund (<code style="color:#22d3bf">&gt; 0</code> ist Vordergrund).</p>
+<p>rel_lo, rel_hi : float</p>
+<p>Band der relativen Prominenz. <code style="color:#22d3bf">0 &lt; rel_lo &lt;= rel_hi &lt; 1</code>.</p>
+<p>min_prominence : float</p>
+<p>Absolute Untergrenze der Prominenz [px]. <code style="color:#22d3bf">&gt;= 0</code>. Verwirft Gipfel aus der Quantisierung der Distanztransformation.</p>
+<p>round_tol : float or None</p>
+<p>Toleranz der Flächenprüfung (siehe oben). Bei <code style="color:#22d3bf">None</code> keine Prüfung.</p>
+<p>connectivity : {4, 8}</p>
+<p>Zusammenhang für Komponenten und Wasserstände.</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict</p>
+<p><code style="color:#22d3bf">count</code> (int, wenn das Intervall die Breite 0 hat, sonst <code style="color:#22d3bf">None</code>), <code style="color:#22d3bf">lo</code>,</p>
+<p><code style="color:#22d3bf">hi</code> (<code style="color:#22d3bf">None</code>, wenn die Obergrenze offen ist), <code style="color:#22d3bf">determined</code>, <code style="color:#22d3bf">reason</code>,</p>
+<p><code style="color:#22d3bf">labels</code> (Aufteilung nur mit sicheren Gipfeln als Saat, int32, Potenzdiagramm der Inkreise), <code style="color:#22d3bf">labels_hi</code></p>
+<p>(Aufteilung auch mit mehrdeutigen Gipfeln als Saat), <code style="color:#22d3bf">components</code> (je Komponente <code style="color:#22d3bf">label</code> / <code style="color:#22d3bf">lo</code> /</p>
+<p><code style="color:#22d3bf">hi</code> (-1, wenn offen) / <code style="color:#22d3bf">status</code> / <code style="color:#22d3bf">area</code> / <code style="color:#22d3bf">area_ratio</code>),</p>
+<p><code style="color:#22d3bf">peaks</code> (je Gipfel <code style="color:#22d3bf">component</code> / <code style="color:#22d3bf">row</code> / <code style="color:#22d3bf">col</code> / <code style="color:#22d3bf">height</code> /</p>
+<p><code style="color:#22d3bf">prominence</code> / <code style="color:#22d3bf">rel_prominence</code> / <code style="color:#22d3bf">status</code> (0 Rauschen, 1 mehrdeutig, 2 sicher)),</p>
+<p><code style="color:#22d3bf">params</code>.</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
+<p>&gt;&gt;&gt; import numpy as np</p>
+<p>&gt;&gt;&gt; yy, xx = np.mgrid[0:80, 0:120]</p>
+<p>&gt;&gt;&gt; two = ((yy - 40) ** 2 + (xx - 40) ** 2 &lt; 400) | ((yy - 40) ** 2 + (xx - 76) ** 2 &lt; 400)</p>
+<p>&gt;&gt;&gt; blob_count_interval(two)[&quot;count&quot;]              # Überlappungsgrad 0.1: eindeutig 2</p>
+<p>2</p>
+<p>&gt;&gt;&gt; deep = ((yy - 40) ** 2 + (xx - 50) ** 2 &lt; 400) | ((yy - 40) ** 2 + (xx - 66) ** 2 &lt; 400)</p>
+<p>&gt;&gt;&gt; r = blob_count_interval(deep, round_tol=0.1)   # Überlappungsgrad 0.6: unbestimmt</p>
+<p>&gt;&gt;&gt; r[&quot;count&quot;] is None, r[&quot;lo&quot;]</p>
+<p>(True, 1)</p>
+<p>Herkunft (nur öffentliche Literatur): Edelsbrunner, Letscher &amp; Zomorodian, *Discrete Comput. Geom.* 28 (2002) 511 —— Persistenz / Vincent &amp; Soille, *IEEE TPAMI* 13 (1991) 583 —— Wasserscheide / Aurenhammer, *SIAM J. Comput.* 16 (1987) 78 —— Potenzdiagramm (Aufteilung).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideblob:blob_analysis">Leitfaden zur Familie blob_analysis</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_dense_bubble_count">poc_dense_bubble_count</a> — <code style="color:#22d3bf">py -3.11 examples/poc_dense_bubble_count.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">split</code>)</h3>
+<p><a style="color:#22d3bf" href="opblob:blob_distance">blob_distance</a> · <a style="color:#22d3bf" href="opblob:blob_seeds">blob_seeds</a> · <a style="color:#22d3bf" href="opblob:blob_split">blob_split</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: blob2d.py — BLOB Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

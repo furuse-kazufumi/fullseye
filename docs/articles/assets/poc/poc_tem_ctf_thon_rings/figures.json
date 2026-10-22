@@ -1,0 +1,168 @@
+[
+ {
+  "file": "01_thon_ring_sweep.gif",
+  "name": "thon_ring_sweep",
+  "caption": "焦点外れ Δf を 0.3 → 3 µm と振る(300 kV、Cs 2.7 mm、非晶質炭素 50 Å、40 e/Å² 相当の雑音)。左はパワースペクトル(k ≤ 0.25 Å⁻¹、動径の背景で割った)、右は同じ写真の一部。Thon リングは Δf とともに内側へ詰まり、写真の粒状の模様が細かくなる。",
+  "shape": [
+   128,
+   262,
+   3
+  ],
+  "animated": true,
+  "frames": 28,
+  "frames_written": 28,
+  "fps": 4.0
+ },
+ {
+  "file": "02_thon_rings_four_defoci.png",
+  "name": "thon_rings_four_defoci",
+  "caption": "同じ試料を 4 つの焦点で撮ったパワースペクトル。最初の暗いリング(半径 1/√(λΔf))は 0.4 → 2.4 µm で √6 倍内側へ動く(門: 4 点とも閉形式と 4 % 以内)。",
+  "shape": [
+   256,
+   866,
+   3
+  ]
+ },
+ {
+  "file": "03_ctf_curves.png",
+  "name": "ctf_curves",
+  "caption": "CTF = −sin(χ + arcsin w) に空間・時間の包絡を掛けた曲線(300 kV、Cs 2.7 mm、照明の半角 0.05 mrad、焦点の広がり 60 Å)。零点(リング)の位置は閉形式と 1e-6 Å⁻¹ 以内で一致。Δf が大きいほど振動が速く、空間の包絡(dχ/dk に比例して効く)が早く落ちる。",
+  "shape": [
+   380,
+   999,
+   3
+  ]
+ },
+ {
+  "file": "04_contrast_reversal.png",
+  "name": "contrast_reversal",
+  "caption": "炭素膜 60 Å の上の非晶質 Si の粒子(半径 12 Å)。Scherzer 焦点(842 Å)では粒子と膜の原子が暗く、ポテンシャルに似る。正焦点では細部が白黒反転し、焦点を外すほど粒子の縁にフレネルの縞が出る。",
+  "shape": [
+   734,
+   1000,
+   3
+  ]
+ },
+ {
+  "file": "05_scherzer_fidelity.png",
+  "name": "scherzer_fidelity",
+  "caption": "像 −(I − 1) と、点分解能 2.49 Å まで帯域を切った投影ポテンシャルとの相関。最大は Δf = 900 Å(Scherzer の 10 % 以内)。正焦点では負(細部が反転)。",
+  "shape": [
+   360,
+   720,
+   3
+  ]
+ },
+ {
+  "file": "06_estimate_diagnostic.png",
+  "name": "estimate_diagnostic",
+  "caption": "真値 Δf 25000 Å・非点収差 1500 Å・75° の合成写真。推定 25013 ± 21 Å、非点 1526 Å、76.0°。楕円のリングが左右で繋がれば当てはまっている。",
+  "shape": [
+   276,
+   244,
+   3
+  ]
+ },
+ {
+  "file": "07_estimate_profile.png",
+  "name": "estimate_profile",
+  "caption": "背景(u = k² の上でリング 1 周期の移動平均)を引いて振れ幅で割った動径平均と、推定した Δf の CTF²。",
+  "shape": [
+   340,
+   1000,
+   3
+  ]
+ },
+ {
+  "file": "08_weak_phase_breakdown.png",
+  "name": "weak_phase_breakdown",
+  "caption": "同じ試料のポテンシャルを 0.05〜4 倍して、弱位相近似の線形の像と coherent_image の像を比べた。差は位相に比例して増え、0.1 rad で数 %、1 rad を超えると線形の像は使えない。",
+  "shape": [
+   340,
+   620,
+   3
+  ]
+ },
+ {
+  "file": "09_multislice_thickness.png",
+  "name": "multislice_thickness",
+  "caption": "4 Å ずつのスライスで伝播させた出射波と、全体を 1 枚の位相物体とみなした出射波の差。厚いほど試料の中の伝播(フレネル回折)が効く。",
+  "shape": [
+   340,
+   620,
+   3
+  ]
+ },
+ {
+  "file": "10_drift_alignment.png",
+  "name": "drift_alignment",
+  "caption": "10 枚が 1 枚あたり (2.0, 0.6) 画素ずつドリフト。そのまま足すとずれの向きのリングが消える(当てはまりの分解能 15.6 Å)。合わせると戻る(5.3 Å)。",
+  "shape": [
+   308,
+   542,
+   3
+  ]
+ },
+ {
+  "file": "11_ctf_correction.png",
+  "name": "ctf_correction",
+  "caption": "ポテンシャルとの相関: 生 0.09 → 位相反転 0.84 → ウィーナー 0.87。Δf を間違えると 0.10 に落ちる。",
+  "shape": [
+   734,
+   1000,
+   3
+  ]
+ },
+ {
+  "file": "12_real_empiar_10028.png",
+  "name": "real_empiar_10028",
+  "caption": "実写 3 枚のパワースペクトル(k ≤ 0.12 Å⁻¹、左 = 観測、右 = この PoC が当てはめた CTF²)。EMPIAR-10028(W. Wong ら, eLife 3, e03080, 2014)、CC0。Micrographs_part1/001・002、part2/001 の 1024〜3071 行を切り出し、パワースペクトルを計算した(改変)。著者の値は各写真の CTFFIND3 のログ。",
+  "shape": [
+   380,
+   1024,
+   3
+  ]
+ },
+ {
+  "file": "13_real_micrograph_part1_001.png",
+  "name": "real_micrograph_part1_001",
+  "caption": "EMPIAR-10028 part1_001 の 1024 × 1024 画素(1.34 Å/画素)。リボソームの粒子は氷の中で薄く、パワースペクトルのリングで初めて焦点が読める。",
+  "shape": [
+   1024,
+   1024
+  ],
+  "source": "EMPIAR-10028(W. Wong ら, eLife 3, e03080, 2014)、CC0。Micrographs_part1/001・002、part2/001 の 1024〜3071 行を切り出し、パワースペクトルを計算した(改変)。著者の値は各写真の CTFFIND3 のログ。"
+ },
+ {
+  "file": "14_real_micrograph_part1_002.png",
+  "name": "real_micrograph_part1_002",
+  "caption": "EMPIAR-10028 part1_002 の 1024 × 1024 画素(1.34 Å/画素)。リボソームの粒子は氷の中で薄く、パワースペクトルのリングで初めて焦点が読める。",
+  "shape": [
+   1024,
+   1024
+  ],
+  "source": "EMPIAR-10028(W. Wong ら, eLife 3, e03080, 2014)、CC0。Micrographs_part1/001・002、part2/001 の 1024〜3071 行を切り出し、パワースペクトルを計算した(改変)。著者の値は各写真の CTFFIND3 のログ。"
+ },
+ {
+  "file": "15_real_micrograph_part2_001.png",
+  "name": "real_micrograph_part2_001",
+  "caption": "EMPIAR-10028 part2_001 の 1024 × 1024 画素(1.34 Å/画素)。リボソームの粒子は氷の中で薄く、パワースペクトルのリングで初めて焦点が読める。",
+  "shape": [
+   1024,
+   1024
+  ],
+  "source": "EMPIAR-10028(W. Wong ら, eLife 3, e03080, 2014)、CC0。Micrographs_part1/001・002、part2/001 の 1024〜3071 行を切り出し、パワースペクトルを計算した(改変)。著者の値は各写真の CTFFIND3 のログ。"
+ },
+ {
+  "file": "16_real_vs_author.png",
+  "name": "real_vs_author",
+  "caption": "許容幅 max(100 Å, 1 %)(CTFFIND4 と CTFFIND3 の差が 1 % 未満、Gctf と CTFFIND3 の差が平均 40 Å)。",
+  "shape": [
+   152,
+   659,
+   3
+  ],
+  "csv": "16_real_vs_author.csv",
+  "tsv": "16_real_vs_author.tsv"
+ }
+]

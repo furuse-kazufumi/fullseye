@@ -7,7 +7,7 @@ out: table
 examples: [poc_am_thermal_to_ct, poc_graph_hierarchy_segmentation, poc_sem_wafer_defect_edge_bias]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # seg_boundary_f — SEGMENTATION `score` op
@@ -47,7 +47,7 @@ F = 2PR/(P+R)。境界は :func:`_boundary` の規約(ラベルの割れ目、1 
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[class_ndim_norm](../classify/class_ndim_norm.md)
+[class_ndim_norm](../classify/class_ndim_norm.md) · [fisher_lda_score](../classify/fisher_lda_score.md)
 
 ## 同カテゴリ(`score`)
 

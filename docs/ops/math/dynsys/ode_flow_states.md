@@ -7,7 +7,7 @@ out: table
 examples: [poc_what_a_picture_cannot_check]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # ode_flow_states — MATH `dynsys` op
@@ -23,6 +23,10 @@ Explicit Runge-Kutta on one of the named systems (``lorenz``, ``rossler``,
 ``harmonic``, ``linear``). ``method="rk4"`` is the classical 4th-order step;
 ``method="euler"`` is there as a **control group** — the same picture comes out
 of both, and only the error tells them apart.
+
+For a linear system the classical RK4 polynomial update matrix is formed
+once and reused.  It is deliberately not the matrix exponential: the
+expected fifth-order one-step difference remains observable.
 
 ★**Why the field is a name, not a function**: the typed ledger registers inputs
 by sort and the chain fuzzer builds arguments from data, so a callable can

@@ -49,7 +49,7 @@ _NOT_TILE_SAFE = frozenset({
     'anisotropic_diffusion', 'bothat', 'clahe', 'closest_point_transform', 'coherence_enhancing_diff', 'corner_response',
     'cv_blackhat', 'cv_clahe', 'cv_corner_harris', 'cv_dist', 'cv_gradient', 'cv_laplacian',
     'cv_min_eigen', 'cv_precorner', 'cv_scharr', 'cv_tophat', 'derivate_gauss', 'deviation_image',
-    'diff_of_gauss', 'dist_transform', 'distance_transform', 'dl_aniso_diffusion', 'dog', 'dots_image',
+    'diff_of_gauss', 'dist_transform', 'dist_transform_abs', 'distance_transform', 'dl_aniso_diffusion', 'dog', 'dots_image',
     'edges_color', 'em_skeleton', 'entropy_image', 'equ_histo_image', 'equ_histo_image_rect', 'equalize',
     # ★2026-09-17: 検査のタイル幅を 64/16 だけから 60/12 も見るように広げたら、
     #   tile_safe と宣言されていた 168 本のうち 16 本が割れた。64 も 16 も 8 の
@@ -61,6 +61,7 @@ _NOT_TILE_SAFE = frozenset({
     'xsk2_diameter_opening', 'xsk3_diameter_closing', 'xsk_struct_coherence',  # 0.076 / 0.073 / 0.061
     'dither_ordered', 'dither_floyd_steinberg', 'quantize_lloyd_max',     # 0.14 / 0.14 / 0.13
     'cv_nlmeans', 'xpil_unsharp_mask',    # ハロー 8 では支持長が足りない(0.0078)
+    'xdog',    # 0.0205(2026-10-18 実測): ガウシアンの支持が最大 4.8 sigma(sigma 3 で 15 画素)
     'persistence_map', 'f2_shock_diffuse',    # 1.0 / 0.064(2026-09-17 実測)
     'f2_gauss_pyramid', 'f2_gray_inside', 'f2_gray_skeleton', 'f2_symmetry', 'f2_topographic', 'fill_up_shape',
     'structure_tensor_orientation', 'structure_tensor_coherence',
@@ -146,6 +147,10 @@ _NOT_TILE_SAFE_OP_REASON = {
         "HIGHER peak, which may be anywhere in the image. Cutting the image cuts the "
         "merge tree, so every tile invents its own global maximum (measured error 1.0). "
         "No halo fixes this - run it once on the full image."),
+    "xdog": (
+        "halo",
+        "the second Gaussian reaches 4 x 1.6 sigma (up to 19 px at sigma 3), past the default tile halo; "
+        "measured tile error 0.0205. Use a halo of at least 7 sigma, or run it whole."),
     "f2_shock_diffuse": (
         "global_reduce",
         "each diffuse/shock pair widens the receptive field by about sigma, so 10 "

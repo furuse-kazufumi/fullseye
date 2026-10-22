@@ -7,13 +7,13 @@ out: pairs
 examples: [lens_design_demo]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # ray_fan — OPTICS `design` op
 
 - **データ種**: `table` → `pairs`
-- **呼び出し**: `import fullseye as fs; fs.ledger.ray_fan(system, field=None, n=21, axis='y', wavelength_um=None, image_mm=None)` (実装を直接呼ぶなら `import raytrace; raytrace.ray_fan(system, field=None, n=21, axis='y', wavelength_um=None, image_mm=None)`、台帳から引くなら `opsoptics.get("ray_fan")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.ray_fan(system, field=None, n=21, axis='y', wavelength_um=None, image_mm=None, aim=None, vignetting=None)` (実装を直接呼ぶなら `import raytrace; raytrace.ray_fan(system, field=None, n=21, axis='y', wavelength_um=None, image_mm=None, aim=None, vignetting=None)`、台帳から引くなら `opsoptics.get("ray_fan")`)
 
 ## 使い方
 
@@ -23,6 +23,8 @@ Returns ``(n,2)``: column 0 the normalised pupil coordinate (−1…1) along
 *axis* (``"y"`` tangential, ``"x"`` sagittal), column 1 the image-plane
 displacement (mm) of that ray from the chief ray along the same axis.
 The classic "ray fan plot"; NaN where a ray is vignetted.
+*aim* / *vignetting* as in :func:`ray_bundle`: the fan runs over the vignetted pupil, the chief ray
+it is measured from is the unvignetted one.
 
 ## ファミリ共通の入力契約(fail-closed)
 
@@ -52,7 +54,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`pairs` を入力に取れる)
 
-[mtf50](../imaging/mtf50.md) · [energy_to_photons](../spectral/energy_to_photons.md) · [spectral_product](../spectral/spectral_product.md) · [spectral_integral](../spectral/spectral_integral.md) · [spectral_stats](../spectral/spectral_stats.md) · [kubelka_munk_reflectance](../spectral/kubelka_munk_reflectance.md) · [hyperspectral_capture](../spectral/hyperspectral_capture.md) · [film_thickness_fft](../film/film_thickness_fft.md)
+[mtf50](../imaging/mtf50.md) · [energy_to_photons](../spectral/energy_to_photons.md) · [spectral_product](../spectral/spectral_product.md) · [spectral_integral](../spectral/spectral_integral.md) · [spectral_integral_table](../spectral/spectral_integral_table.md) · [spectral_stats](../spectral/spectral_stats.md) · [kubelka_munk_reflectance](../spectral/kubelka_munk_reflectance.md) · [hyperspectral_capture](../spectral/hyperspectral_capture.md)
 
 ## 同カテゴリ(`design`)
 

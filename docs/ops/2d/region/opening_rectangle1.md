@@ -8,7 +8,7 @@ halcon: opening_rectangle1
 examples: [gallery2d_region]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # opening_rectangle1 — 2D `region` op
@@ -42,6 +42,8 @@ HALCON の ``opening_rectangle1``（Open a region with a rectangular
 structuring element.）に相当。
 
 ``a`` が正方形の一辺を ``{3,5,7,9}`` で振る。``b`` は未使用。
+
+**つまみ(実測)**: ``a`` は**段階的**に効き、切り替わるのは a ≈ 0.25、0.49、0.75(実測。刻み 0.02 の掃きで測った位置)。
 
 ## 詳しい使い方ガイド
 

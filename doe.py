@@ -218,9 +218,27 @@ def _int_arg(v, name: str, op: str, lo: int, hi: int) -> int:
 # Latin hypercube                                                             #
 # --------------------------------------------------------------------------- #
 def _min_dist(u: np.ndarray) -> float:
-    d = np.sqrt(((u[:, None, :] - u[None, :, :]) ** 2).sum(-1))
-    d[np.diag_indices_from(d)] = np.inf
-    return float(d.min())
+    if u.shape[0] >= 512:
+        from scipy.spatial import cKDTree
+        return float(cKDTree(u).query(u, k=2)[0][:, 1].min())
+    from scipy.spatial.distance import pdist
+    return float(pdist(u).min())
+
+
+def _min_dist_bounded(u: np.ndarray, upper: float, return_pairs: bool = False):
+    """Minimum distance, stopping once the candidate cannot beat ``upper``."""
+    best = np.inf
+    pairs = 0
+    for i in range(u.shape[0] - 1):
+        d = np.sqrt(((u[i + 1:] - u[i]) ** 2).sum(axis=1))
+        pairs += d.size
+        row = float(d.min())
+        if row < best:
+            best = row
+        if best <= upper:
+            return (best, pairs) if return_pairs else best
+    value = float(best)
+    return (value, pairs) if return_pairs else value
 
 
 def doe_lhs(n=10, factors=3, seed=0, maximin=0, centered=False) -> dict:
@@ -267,7 +285,7 @@ def doe_lhs(n=10, factors=3, seed=0, maximin=0, centered=False) -> dict:
         best, md = None, -1.0
         for _ in range(maximin):
             cand = one()
-            d = _min_dist(cand)
+            d = _min_dist_bounded(cand, md)
             if d > md:
                 best, md = cand, d
         u = best
@@ -512,14 +530,14 @@ def _oa_strength2_ok(table: np.ndarray) -> bool:
     """True if every pair of columns shows every level pair equally often (strength-2 orthogonality)."""
     n = table.shape[0]
     for a, b in itertools.combinations(range(table.shape[1]), 2):
-        sa, sb = np.unique(table[:, a]), np.unique(table[:, b])
+        sa, ia = np.unique(table[:, a], return_inverse=True)
+        sb, ib = np.unique(table[:, b], return_inverse=True)
         if n % (sa.size * sb.size):
             return False
         want = n // (sa.size * sb.size)
-        for x in sa:
-            for y in sb:
-                if int(np.sum((table[:, a] == x) & (table[:, b] == y))) != want:
-                    return False
+        counts = np.bincount(ia * sb.size + ib, minlength=sa.size * sb.size)
+        if not np.all(counts == want):
+            return False
     return True
 
 

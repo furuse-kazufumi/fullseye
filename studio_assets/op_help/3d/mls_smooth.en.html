@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">mls_smooth — 3D <code style="color:#22d3bf">preprocess</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mls_smooth(points, radius: &#x27;float&#x27;, order: &#x27;int&#x27; = 2)</code> (to call the implementation directly, <code style="color:#22d3bf">import pcl_filter; pcl_filter.mls_smooth(points, radius: &#x27;float&#x27;, order: &#x27;int&#x27; = 2)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;mls_smooth&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mls_smooth(points, radius: &#x27;float&#x27;, order: &#x27;int&#x27; = 2, chunk: &#x27;int | None&#x27; = None, method: &#x27;str&#x27; = &#x27;exact&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import pcl_filter; pcl_filter.mls_smooth(points, radius: &#x27;float&#x27;, order: &#x27;int&#x27; = 2, chunk: &#x27;int | None&#x27; = None, method: &#x27;str&#x27; = &#x27;exact&#x27;)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;mls_smooth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Drop noise by projecting each point onto a local polynomial surface (Moving Least Squares smoothing).</p>
 <p>For each point, gathers the neighbours within radius <code style="color:#22d3bf">radius</code>, estimates the local plane (normal n and the 2 axes of the tangent plane) by weighted PCA, and fits a polynomial surface of degree order to the neighbours&#x27; &quot;tangent-plane coordinates (u,v) → height h along the normal&quot; by Gaussian-weighted least squares. The point of interest itself is the origin (0,0) of the local coordinates, so it is moved along the normal by the fitted surface&#x27;s height at (0,0) (= constant term), projecting it onto the surface. Only the sensor noise is evened out while the shape of the surface is preserved.</p>
@@ -12,6 +12,10 @@
 <p>Radius of the neighbourhood sphere (&gt; 0). Support of the local surface.</p>
 <p>order : int</p>
 <p>Degree of the local polynomial (default 2). The number of terms is (order+1)(order+2)/2.</p>
+<p>chunk : int or None</p>
+<p>When specified, neighbour lists are fetched and discarded in batches of this many points. The default uses the legacy path.</p>
+<p>method : {&#x27;exact&#x27;, &#x27;mean&#x27;}</p>
+<p>The default <code style="color:#22d3bf">&#x27;exact&#x27;</code> is the least-squares fit of the polynomial surface. <code style="color:#22d3bf">&#x27;mean&#x27;</code> is for <code style="color:#22d3bf">order=0</code> only and takes the constant term directly as the weighted mean (a faster path that gives the same value without lstsq; tolerances rtol=1e-12, atol=1e-14).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray, shape (N, 3)</p>
 <p>Smoothed point cloud (order and count preserved). Points with fewer neighbours than the polynomial&#x27;s number of terms stay in place.</p>

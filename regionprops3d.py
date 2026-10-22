@@ -87,10 +87,16 @@ def _surface_area(mask: np.ndarray) -> int:
     """
     if not mask.any():
         return 0
-    m = np.pad(mask.astype(np.int8), 1)
-    area = 0
-    for axis in range(3):
-        area += int(np.count_nonzero(np.diff(m, axis=axis)))
+    # Each unlike adjacent pair contributes one exposed face.  Faces on the
+    # array boundary are the foreground voxels in the two border slices.
+    # This is exactly the six-neighbour definition, without a padded copy.
+    area = sum(int(np.count_nonzero(mask[tuple(
+        slice(1, None) if i == axis else slice(None) for i in range(3)
+    )] != mask[tuple(
+        slice(None, -1) if i == axis else slice(None) for i in range(3)
+    )])) for axis in range(3))
+    area += sum(int(np.count_nonzero(np.take(mask, side, axis=axis)))
+                for axis in range(3) for side in (0, -1))
     return area
 
 

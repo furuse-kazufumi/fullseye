@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">poisson_lite — 3D <code style="color:#22d3bf">reconstruct</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">mesh</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.poisson_lite(points, size=64, sigma=1.0, iso=0.5, normals=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import recon3d; recon3d.poisson_lite(points, size=64, sigma=1.0, iso=0.5, normals=None)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;poisson_lite&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.poisson_lite(points, size=64, sigma=1.0, iso=0.5, normals=None, method=&#x27;exact&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import recon3d; recon3d.poisson_lite(points, size=64, sigma=1.0, iso=0.5, normals=None, method=&#x27;exact&#x27;)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;poisson_lite&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Point set (N,3) → a surface mesh (vertices(V,3), faces(F,3)) — a lightweight screened-Poisson approximation.</p>
 <p>Splats the point cloud into a size³ voxel grid, builds an iso-surface field and turns it into a triangle mesh with marching cubes. Output vertices are in the same <b>world coordinates</b> as the input point cloud (inverse mapping from the bbox). bounds is the point-cloud bbox (+ σ-dependent padding).</p>
@@ -27,6 +27,7 @@
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
 <p>Too few points (&lt;4), size too small, occupancy / indicator field too thin so iso is outside the field&#x27;s range, etc.</p>
+<p>With normals, <code style="color:#22d3bf">method=&quot;fast&quot;</code> accumulates the three winding components in frequency space; it is opt-in because rounding differs from <code style="color:#22d3bf">&quot;exact&quot;</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Using Blender alongside — build the shape, measure it with fullseye (pitfalls: axes, units, ground truth)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

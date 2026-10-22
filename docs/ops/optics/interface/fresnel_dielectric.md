@@ -7,7 +7,7 @@ out: signal
 examples: [example_polarization_metal, glass_and_mirror_optics, poc_phase_measuring_deflectometry, poc_pv_thermal_survey, poc_shape_from_polarization]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # fresnel_dielectric — OPTICS `interface` op

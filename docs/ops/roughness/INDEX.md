@@ -1,4 +1,4 @@
-# ROUGHNESS operator help — 6 ops in 3 categories
+# ROUGHNESS operator help — 9 ops in 3 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/roughness/<category>/<op>.md` を走査。
 
@@ -12,9 +12,9 @@
 
 [profile_params](measure/profile_params.md) · [surface_params](measure/surface_params.md) · [surface_psd](measure/surface_psd.md)
 
-### prepare (2)
+### prepare (5)
 
-[surface_filter](prepare/surface_filter.md) · [surface_form_remove](prepare/surface_form_remove.md)
+[robust_gaussian_profile](prepare/robust_gaussian_profile.md) · [robust_gaussian_surface](prepare/robust_gaussian_surface.md) · [robust_spline_profile](prepare/robust_spline_profile.md) · [surface_filter](prepare/surface_filter.md) · [surface_form_remove](prepare/surface_form_remove.md)
 
 ### synth (1)
 

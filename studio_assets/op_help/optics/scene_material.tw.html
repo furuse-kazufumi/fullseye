@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">scene_material — OPTICS <code style="color:#22d3bf">scene</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">table</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
-<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scene_material(kind: &#x27;str&#x27; = &#x27;lambert&#x27;, albedo=0.6, metal: &#x27;str&#x27; = &#x27;al&#x27;, finish: &#x27;str&#x27; = &#x27;random&#x27;, glass: &#x27;str&#x27; = &#x27;N-BK7&#x27;, sigma_per_mm: &#x27;float&#x27; = 0.0, roughness_um: &#x27;float&#x27; = 0.05, metal_source: &#x27;str&#x27; = &#x27;table&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import optscene; optscene.scene_material(kind: &#x27;str&#x27; = &#x27;lambert&#x27;, albedo=0.6, metal: &#x27;str&#x27; = &#x27;al&#x27;, finish: &#x27;str&#x27; = &#x27;random&#x27;, glass: &#x27;str&#x27; = &#x27;N-BK7&#x27;, sigma_per_mm: &#x27;float&#x27; = 0.0, roughness_um: &#x27;float&#x27; = 0.05, metal_source: &#x27;str&#x27; = &#x27;table&#x27;) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;scene_material&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scene_material(kind: &#x27;str&#x27; = &#x27;lambert&#x27;, albedo=0.6, metal: &#x27;str&#x27; = &#x27;al&#x27;, finish: &#x27;str&#x27; = &#x27;random&#x27;, glass: &#x27;str&#x27; = &#x27;N-BK7&#x27;, sigma_per_mm: &#x27;float&#x27; = 0.0, roughness_um: &#x27;float&#x27; = 0.05, metal_source: &#x27;str&#x27; = &#x27;materials&#x27;, reflectance_curve=None, absorption_from_k: &#x27;bool&#x27; = False) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import optscene; optscene.scene_material(kind: &#x27;str&#x27; = &#x27;lambert&#x27;, albedo=0.6, metal: &#x27;str&#x27; = &#x27;al&#x27;, finish: &#x27;str&#x27; = &#x27;random&#x27;, glass: &#x27;str&#x27; = &#x27;N-BK7&#x27;, sigma_per_mm: &#x27;float&#x27; = 0.0, roughness_um: &#x27;float&#x27; = 0.05, metal_source: &#x27;str&#x27; = &#x27;materials&#x27;, reflectance_curve=None, absorption_from_k: &#x27;bool&#x27; = False) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;scene_material&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>建立一種材質。<code style="color:#22d3bf">kind</code> 為 lambert / conductor / dielectric 三選一。</p>
 <p>只有 3 種是因為<b>混在一起會默默出錯</b>，要增加就分成不同型別(漫射、金屬還是透明，光線的去向會根本不同)。</p>
@@ -12,10 +12,17 @@
 <p>exp(-(4πσcosθ/λ)²) 決定(Davies 1954 / Bennett-Porteus 1961)，所以</p>
 <p>是鏡面(0.01 = 拋光)還是偏漫射(1.0 = 霧面)由這 1 個值決定。</p>
 <p><b>波長進入公式</b>，所以同一表面也會因光源波長而看起來不同。</p>
-<p><code style="color:#22d3bf">metal_source</code> 是 n,k 的來源:&quot;table&quot;(預設,5 點的粗略表)或 &quot;materials&quot;(共用材料表的實測數表;<code style="color:#22d3bf">glassmirror.MEASURED_METALS</code> 的 10 種 —— Ni / Pt / Ti / W / Rh 也可在此選擇)。觀察對象與鏡頭的玻璃引用同一張表。</p>
+<p><code style="color:#22d3bf">metal_source</code> 是 n,k 的來源:&quot;materials&quot;(預設,共用材料表的實測數表;</p>
+<p><code style="color:#22d3bf">glassmirror.MEASURED_METALS</code> 的 10 種 —— Ni / Pt / Ti / W / Rh 也可在此選擇)或</p>
+<p>&quot;table&quot;(5 點的粗略表)。觀察對象與鏡頭的玻璃引用同一張表。★2026-10-15</p>
+<p>配合 <code style="color:#22d3bf">glassmirror</code> 的預設改為實測表而調整(此前預設是粗略表，2 個預設互相矛盾)。</p>
 <p>dielectric：依 <code style="color:#22d3bf">glass</code>(<code style="color:#22d3bf">raytrace.glass_catalog()</code>)的 Sellmeier 色散折射，</p>
 <p>以 <code style="color:#22d3bf">sigma_per_mm</code> 的 Beer–Lambert 吸收。</p>
 <p>玻璃名可引用到共用材料表的透光材料(其他廠商的玻璃、晶體、樹脂、水)。</p>
+<p>不是鏡頭介質的材料(Si、Ge 等半導體)也</p>
+<p>可以用 <code style="color:#22d3bf">materials</code> 的 n 引用。<code style="color:#22d3bf">absorption_from_k=True</code> 時，由材料表的消光係數 k 按</p>
+<p>α = 4πk/λ 逐波長加上吸收(這就是 Si 晶圓在 850 nm 不透明、在 1100 nm 透明的原因)。</p>
+<p>在分光的路徑(<code style="color:#22d3bf">render_optscene(spectral=True)</code> / <code style="color:#22d3bf">layout_capture(mode=&quot;spectral&quot;)</code>)中，lambert 引用 <code style="color:#22d3bf">reflectance_curve</code>(pairs(λ [nm], R)，不外插)，若沒有則把 RGB 的 albedo 的平均視為<b>與波長無關</b>(作為假設留在結果中)。金屬由材料表的 n,k(Johnson &amp; Christy 等) 以 Fresnel 求解，介電質用 n(λ) 求解。RGB 的路徑(預設)與以往相同。</p>
 <p>回傳值：經驗證後存放上述內容的 dict(直接傳給其他 scene_* op)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
@@ -40,6 +47,8 @@
 <p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_material_optical_library">poc_material_optical_library</a> — <code style="color:#22d3bf">py -3.11 examples/poc_material_optical_library.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_nir_silicon_transmission">poc_nir_silicon_transmission</a> — <code style="color:#22d3bf">py -3.11 examples/poc_nir_silicon_transmission.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_pocket_interreflection">poc_pocket_interreflection</a> — <code style="color:#22d3bf">py -3.11 examples/poc_pocket_interreflection.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:studio_raytrace_scene">studio_raytrace_scene</a> — <code style="color:#22d3bf">py -3.11 examples/studio_raytrace_scene.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:virtual_machine_vision">virtual_machine_vision</a> — <code style="color:#22d3bf">py -3.11 examples/virtual_machine_vision.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:vision_layout_from_catalog">vision_layout_from_catalog</a> — <code style="color:#22d3bf">py -3.11 examples/vision_layout_from_catalog.py</code></p>

@@ -1,0 +1,1013 @@
+# Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
+"""PoC の結果を「触って見る」ための、1 枚の HTML ビューアを作る(公開 API。標準ライブラリ + numpy だけ)。
+
+    import fullseye as fs
+    spec = fs.viewer_spec("my_poc", title=..., subtitle=..., hint=..., tabs=[fs.viewer_points_tab(...), ...])
+    fs.write_viewer(spec, "out/my_poc.html")
+
+    py -3.11 pocviewer.py spec.json out.html     # JSON の仕様から(配列は入れ子の list)
+
+出力は **自己完結した 1 ファイル**(暗色、素の WebGL と 2-D canvas、ライブラリ無し、外部 URL 読み込み
+無し)。``file://`` でも iPhone の Safari でも動く。見た目と操作は ``walk_series_viewer.html``
+(歩行の系譜)に倣う:
+
+* **タブ** —— 同じ課題を違う方法で試した記録。各タブに **正直なバッジ**・短い説明・実測の数字。
+* **3-D** —— ドラッグで回す / ホイールとピンチで拡大 / 視点ボタン / 再生(ターンテーブル)/ 時間つまみ / 速度。
+* **2-D 動画** —— コマ送り、重ねた枠(真値と推定)、時系列グラフ(しきい値の線つき)。
+* **ja / en の切り替え**(既定は ja)。すべての文字列は仕様側が両言語で渡す。
+
+バッジは 3 種に固定する(Fullseye の流儀: 成功だけを並べない):
+
+* ``passed`` 「門を通った」 —— その方法が、自分の門(合否の検査)を通った。
+* ``limit`` 「限界を見せる」 —— 壊れ方を正直に見せるための回。
+* ``null``  「何もしない場合」 —— 比べるための零点(何もしない/素朴にやる)。
+
+仕様 (spec) の形
+----------------
+::
+
+    spec = {
+      "id": "poc_xxx",
+      "title": {"ja": ..., "en": ...}, "subtitle": {...}, "hint": {...},
+      "credit": {...},                         # 任意。出典・謝辞・改変の記述(ページ下部)
+      "tabs": [{
+        "id": "a", "label": {...}, "badge": "passed" | "limit" | "null",
+        "text": {...},                         # 短い正直な説明
+        "numbers": [{"label": {...}, "value": "81.7 µm" | {"ja":..., "en":...}}, ...],
+        "kind": "mesh" | "points" | "frames" | "split",
+        ...ペイロード(下)...
+      }]
+    }
+
+ペイロード
+~~~~~~~~~~
+``mesh`` 三角形メッシュ + 頂点ごとの値の色 + カラーバー
+    ``pos`` (N,3) / ``faces`` (M,3) int / ``val`` (N,) / ``cbar`` ``{lo, hi, unit, cmap, label}``
+``points`` 点群(点ごとの値の色 + カラーバー、または点ごとの RGB)
+    ``pos`` (N,3) / ``val`` (N,) + ``cbar``、または ``rgb`` (N,3) uint8。
+    任意: ``ghost`` (K,3)(灰色の参照点群。位置合わせのずれを見せる)/ ``point_size``(世界単位)
+``frames`` 2-D の画像列 + 重ねる枠 + 時系列
+    ``frames`` (T,H,W) か (T,H,W,3)(uint8、または 0..1 の float)/ ``dt``(秒)/
+    ``boxes`` ``[{label, color, xy (T,2), size [w,h], flag (T,) 任意, flag_color, flag_text}]`` /
+    ``series`` ``[{label, color, values (T,), lo, hi, unit, threshold, decimals}]``
+``split`` 前後の画像 + ドラッグで動く分割線
+    ``before`` / ``after`` (H,W) か (H,W,3) uint8 / ``label_before`` / ``label_after``
+
+共通の任意項目: ``view`` ``{az, el, dist}``(3-D の初期視点。dist は既定距離の倍率)。
+
+データの詰め方 —— **間引かない、量子化する**
+--------------------------------------------
+位置は軸ごとに uint16(最小値と範囲から等間隔。刻み = 範囲 / 65535)、値は uint16(カラーバーの
+範囲でクリップ。色が飽和するのと同じ範囲)、画像と索引は無損失の整数。点を減らすことはしない
+(見せたい欠陥を消さないため)。同じ配列は内容のハッシュで 1 本にまとめる(タブ間で位置を共有)。
+:func:`_decode_array` が Python 側の逆変換で、テストは「戻した値が量子化の刻みの半分以内」を確かめる。
+
+★fail-closed: NaN / inf、両言語がそろわない文字列、未知のバッジ・種類、範囲外の索引は、
+黙って通さず ``ValueError`` で止める。
+"""
+from __future__ import annotations
+
+import argparse
+import base64
+import hashlib
+import html
+import json
+import sys
+from pathlib import Path
+from typing import Any
+
+import numpy as np
+
+#: 対応する言語(この順)。``write_viewer(lang=...)`` に渡せるのはこの中だけ。
+LANGS = ("ja", "en", "zh", "tw", "ko", "de", "hi", "fr")
+#: 言語の自称(切り替えの選択肢に出す)。
+LANG_NAMES = {"ja": "日本語", "en": "English", "zh": "简体中文", "tw": "繁體中文", "ko": "한국어",
+              "de": "Deutsch", "hi": "हिन्दी", "fr": "Français"}
+KINDS = ("mesh", "points", "frames", "split")
+
+
+def _t(ja, en, zh, tw, ko, de, hi, fr):
+    return dict(zip(LANGS, (ja, en, zh, tw, ko, de, hi, fr)))
+
+
+#: タブのバッジ(8 言語)。
+BADGES: dict[str, dict[str, str]] = {
+    "passed": _t("門を通った", "Passed its gates", "通过了检验", "通過了檢驗", "검증을 통과",
+                 "Prüfung bestanden", "जाँच पास की", "Contrôles réussis"),
+    "limit": _t("限界を見せる", "Shows the limit", "展示极限", "展示極限", "한계를 보여줌",
+                "Zeigt die Grenze", "सीमा दिखाता है", "Montre la limite"),
+    "null": _t("何もしない場合", "Doing nothing", "什么都不做时", "什麼都不做時", "아무것도 안 할 때",
+               "Ohne Maßnahme", "कुछ न करने पर", "Sans rien faire"),
+}
+
+#: ページの固定文字列(8 言語)。仕様のものではなく、ビューアの操作系。
+UI: dict[str, dict[str, str]] = {
+    "front": _t("正面", "Front", "正面", "正面", "정면", "Vorne", "सामने", "Face"),
+    "side": _t("真横", "Side", "侧面", "側面", "측면", "Seite", "बगल", "Côté"),
+    "iso": _t("斜め", "Oblique", "斜视", "斜視", "사선", "Schräg", "तिरछा", "Oblique"),
+    "top": _t("俯瞰", "Top", "俯视", "俯視", "위에서", "Oben", "ऊपर से", "Dessus"),
+    "play": _t("▶ 再生", "▶ Play", "▶ 播放", "▶ 播放", "▶ 재생", "▶ Abspielen", "▶ चलाएँ", "▶ Lecture"),
+    "pause": _t("⏸ 一時停止", "⏸ Pause", "⏸ 暂停", "⏸ 暫停", "⏸ 일시정지", "⏸ Pause", "⏸ रोकें", "⏸ Pause"),
+    "speed": _t("速度", "Speed", "速度", "速度", "속도", "Tempo", "गति", "Vitesse"),
+    "loop": _t("ループ", "Loop", "循环", "循環", "반복", "Schleife", "दोहराएँ", "Boucle"),
+    "nogl": _t("この環境では WebGL を初期化できませんでした。別のブラウザ(Chrome / Edge / Safari の最新版)でお試しください。",
+               "WebGL could not be initialised here. Please try a recent Chrome, Edge or Safari.",
+               "当前环境无法初始化 WebGL。请使用最新版 Chrome、Edge 或 Safari 重试。",
+               "目前環境無法初始化 WebGL。請改用最新版 Chrome、Edge 或 Safari 再試。",
+               "이 환경에서는 WebGL을 초기화할 수 없습니다. 최신 Chrome, Edge 또는 Safari로 다시 시도해 주세요.",
+               "WebGL konnte hier nicht initialisiert werden. Bitte einen aktuellen Browser (Chrome, Edge oder Safari) verwenden.",
+               "यहाँ WebGL शुरू नहीं हो सका। कृपया Chrome, Edge या Safari का नया संस्करण आज़माएँ।",
+               "WebGL n'a pas pu être initialisé ici. Essayez une version récente de Chrome, Edge ou Safari."),
+    "frame": _t("コマ", "frame", "帧", "影格", "프레임", "Bild", "फ़्रेम", "image"),
+    "points": _t("点", "points", "个点", "個點", "개 점", "Punkte", "बिंदु", "points"),
+    "verts": _t("頂点", "vertices", "个顶点", "個頂點", "개 꼭짓점", "Eckpunkte", "शीर्ष", "sommets"),
+    "drag": _t("ドラッグで回す・ホイール/ピンチで拡大", "Drag to orbit, wheel / pinch to zoom",
+               "拖动旋转,滚轮/双指缩放", "拖曳旋轉,滾輪/雙指縮放", "드래그로 회전, 휠/핀치로 확대",
+               "Ziehen zum Drehen, Mausrad/Pinch zum Zoomen",
+               "खींचकर घुमाएँ, व्हील/पिंच से ज़ूम करें", "Glisser pour tourner, molette/pincement pour zoomer"),
+    "split": _t("左右にドラッグして前後を比べる", "Drag left/right to compare", "左右拖动以对比前后",
+                "左右拖曳以比較前後", "좌우로 드래그해 전후를 비교", "Nach links/rechts ziehen zum Vergleichen",
+                "बाएँ-दाएँ खींचकर पहले-बाद की तुलना करें", "Glisser à gauche ou à droite pour comparer"),
+    "above": _t("しきい値以上", "at/above threshold", "不低于阈值", "不低於閾值", "임계값 이상",
+                "ab Schwelle", "सीमा या उससे ऊपर", "au-dessus du seuil"),
+    "below": _t("しきい値未満", "below threshold", "低于阈值", "低於閾值", "임계값 미만",
+                "unter Schwelle", "सीमा से नीचे", "sous le seuil"),
+    "azimuth": _t("方位", "azimuth", "方位角", "方位角", "방위각", "Azimut", "दिगंश", "azimut"),
+}
+
+_MAXV = {"q8": 255, "q16": 65535}
+
+
+# --------------------------------------------------------------------------- #
+# 配列の詰め方                                                                  #
+# --------------------------------------------------------------------------- #
+def _finite(a: np.ndarray, what: str) -> np.ndarray:
+    a = np.asarray(a, dtype=np.float64)
+    if not np.isfinite(a).all():
+        raise ValueError("%s に NaN / inf がある(黙って通さない)" % what)
+    return a
+
+
+def _encode_array(a, t: str = "q16", lo=None, hi=None, per_axis: bool = False) -> dict:
+    """配列を ``{t, shape, lo, hi, b64}`` に詰める。
+
+    ``t``:
+      * ``"q16"`` / ``"q8"`` —— 浮動小数を uint16 / uint8 へ等間隔に量子化。``lo`` / ``hi`` を渡せば
+        その範囲でクリップ(渡さなければ最小・最大)。``per_axis=True`` なら最後の軸ごとに範囲を持つ。
+        復元の誤差は **刻み (hi-lo)/最大値 の半分以内**(クリップした値を除く)。
+      * ``"u8"`` / ``"u16"`` / ``"u32"`` —— 整数を無損失で。
+      * ``"f32"`` —— float32 のまま。
+    """
+    a = np.asarray(a)
+    shape = list(a.shape)
+    if t in _MAXV:
+        x = _finite(a, "量子化する配列")
+        maxv = _MAXV[t]
+        if per_axis:
+            if x.ndim < 1:
+                raise ValueError("per_axis には 1 次元以上が要る")
+            flat = x.reshape(-1, x.shape[-1])
+            los = flat.min(axis=0) if lo is None else np.broadcast_to(np.asarray(lo, float), (flat.shape[1],)).copy()
+            his = flat.max(axis=0) if hi is None else np.broadcast_to(np.asarray(hi, float), (flat.shape[1],)).copy()
+        else:
+            los = np.array([x.min() if lo is None else float(lo)])
+            his = np.array([x.max() if hi is None else float(hi)])
+        span = np.where(his > los, his - los, 1.0)
+        his = np.where(his > los, his, los + 1.0)         # 幅 0 の軸は幅 1 の箱にする(割り算を避ける)
+        nax = len(los)
+        y = x.reshape(-1, nax) if nax > 1 else x.reshape(-1, 1)
+        q = np.rint(np.clip((y - los) / span, 0.0, 1.0) * maxv)
+        q = q.astype(np.uint8 if t == "q8" else np.uint16)
+        raw = q.tobytes()
+        rec = {"t": t, "shape": shape, "lo": [float(v) for v in los], "hi": [float(v) for v in his]}
+    elif t in ("u8", "u16", "u32"):
+        dt = {"u8": np.uint8, "u16": np.uint16, "u32": np.uint32}[t]
+        info = np.iinfo(dt)
+        if a.dtype.kind == "f":
+            if not np.isfinite(a).all() or not np.array_equal(a, np.rint(a)):
+                raise ValueError("整数として詰める配列が整数でない")
+        if a.size and (a.min() < info.min or a.max() > info.max):
+            raise ValueError("%s に収まらない値がある(最小 %s / 最大 %s)" % (t, a.min(), a.max()))
+        raw = np.ascontiguousarray(a.astype(dt)).tobytes()
+        rec = {"t": t, "shape": shape}
+    elif t == "f32":
+        raw = np.ascontiguousarray(_finite(a, "float32 の配列").astype(np.float32)).tobytes()
+        rec = {"t": t, "shape": shape}
+    else:
+        raise ValueError("未知の詰め方: %r" % t)
+    rec["b64"] = base64.b64encode(raw).decode("ascii")
+    return rec
+
+
+def _decode_array(rec: dict) -> np.ndarray:
+    """:func:`_encode_array` の逆。量子化した配列は float64 で返る(JS 側と同じ式)。"""
+    t = rec["t"]
+    raw = base64.b64decode(rec["b64"])
+    shape = tuple(rec["shape"])
+    if t in _MAXV:
+        q = np.frombuffer(raw, dtype=np.uint8 if t == "q8" else np.dtype("<u2")).astype(np.float64)
+        lo = np.asarray(rec["lo"], float)
+        hi = np.asarray(rec["hi"], float)
+        nax = len(lo)
+        q = q.reshape(-1, nax)
+        out = lo + q * (hi - lo) / _MAXV[t]
+        return out.reshape(shape)
+    dt = {"u8": np.dtype("u1"), "u16": np.dtype("<u2"), "u32": np.dtype("<u4"), "f32": np.dtype("<f4")}[t]
+    return np.frombuffer(raw, dtype=dt).reshape(shape).copy()
+
+
+def _quant_step(rec: dict) -> np.ndarray:
+    """量子化した配列の刻み(軸ごと)。復元誤差の上限は刻みの半分。"""
+    maxv = _MAXV[rec["t"]]
+    return (np.asarray(rec["hi"], float) - np.asarray(rec["lo"], float)) / maxv
+
+
+class _Store:
+    """配列を内容のハッシュで 1 本にまとめる入れ物(タブ間で同じ位置配列を共有する)。"""
+
+    def __init__(self) -> None:
+        self.arrays: dict[str, dict] = {}
+
+    def put(self, a, t: str = "q16", **kw) -> str:
+        rec = _encode_array(a, t, **kw)
+        h = hashlib.sha1(json.dumps({k: v for k, v in rec.items()}, sort_keys=True).encode()).hexdigest()[:12]
+        self.arrays.setdefault(h, rec)
+        return h
+
+
+# --------------------------------------------------------------------------- #
+# 仕様の検査と詰め替え                                                          #
+# --------------------------------------------------------------------------- #
+def _norm_langs(lang) -> tuple:
+    """``"ja"`` か ``["ja", "en", ...]`` を検査して tuple に(先頭が既定の言語)。"""
+    seq = [lang] if isinstance(lang, str) else list(lang)
+    if not seq:
+        raise ValueError("lang が空")
+    bad = [l for l in seq if l not in LANGS]
+    if bad:
+        raise ValueError("未対応の言語 %s(対応: %s)" % (bad, ", ".join(LANGS)))
+    if len(set(seq)) != len(seq):
+        raise ValueError("lang に重複がある: %s" % seq)
+    return tuple(seq)
+
+
+class _Ctx:
+    """要求された言語と、足りない訳の集計(最後にまとめて ``ValueError``)。"""
+
+    def __init__(self, langs: tuple) -> None:
+        self.langs = langs
+        self.missing: list[str] = []
+
+
+def _bi(x: Any, where: str, ctx: _Ctx) -> dict:
+    """要求した言語がそろった文字列にする(``str`` は不可 —— 言語を黙って補わない)。
+
+    足りない鍵は ``ctx.missing`` に溜める(1 回の失敗で全部の欠けを名指しするため)。
+    要求していない言語の訳は捨てる(単言語のページに他言語の文字を残さない)。
+    """
+    out = {}
+    for l in ctx.langs:
+        v = x.get(l) if isinstance(x, dict) else None
+        if v is None or not str(v).strip():
+            ctx.missing.append("%s.%s" % (where, l))
+        else:
+            out[l] = str(v)
+    return out
+
+
+def _num_value(v: Any, where: str, ctx: _Ctx) -> Any:
+    if isinstance(v, str):
+        if not v.strip():
+            raise ValueError("%s: 空の値" % where)
+        return v
+    return _bi(v, where, ctx)
+
+
+def _clean_list(v, dec: int = 4) -> list:
+    """JSON 用の数のリスト。NaN は null(グラフで途切れる)。"""
+    out = []
+    for x in np.asarray(v, dtype=np.float64).ravel():
+        out.append(None if not np.isfinite(x) else round(float(x), dec))
+    return out
+
+
+def _cbar(c: Any, where: str, ctx: _Ctx) -> dict:
+    if not isinstance(c, dict) or "lo" not in c or "hi" not in c:
+        raise ValueError("%s: cbar に lo / hi が要る" % where)
+    lo, hi = float(c["lo"]), float(c["hi"])
+    if not (np.isfinite(lo) and np.isfinite(hi) and hi > lo):
+        raise ValueError("%s: cbar の範囲が不正 (%r, %r)" % (where, lo, hi))
+    cmap = c.get("cmap", "div")
+    if cmap not in ("div", "seq"):
+        raise ValueError("%s: cmap は div / seq" % where)
+    out = {"lo": lo, "hi": hi, "unit": str(c.get("unit", "")), "cmap": cmap}
+    if c.get("label") is not None:
+        out["label"] = _bi(c["label"], where + ".cbar.label", ctx)
+    return out
+
+
+def _as_u8(a, where: str) -> np.ndarray:
+    a = np.asarray(a)
+    if a.dtype == np.uint8:
+        return a
+    if a.dtype.kind in "iu":                       # JSON 経由の整数の画像は 0..255 とみなす
+        if a.size and (a.min() < 0 or a.max() > 255):
+            raise ValueError("%s: 整数の画像は 0..255 でなければならない" % where)
+        return a.astype(np.uint8)
+    x = _finite(a, where)
+    if x.min() < -1e-9 or x.max() > 1.0 + 1e-9:
+        raise ValueError("%s: float の画像は 0..1 でなければならない" % where)
+    return np.rint(np.clip(x, 0.0, 1.0) * 255.0).astype(np.uint8)
+
+
+def _pack_tab(tab: dict, store: _Store, idx: int, ctx: _Ctx) -> dict:
+    where = "tabs[%d]" % idx
+    tid = str(tab.get("id", ""))
+    if not tid or not all(ch.isalnum() or ch in "_-" for ch in tid):
+        raise ValueError("%s: id は英数字と _ - だけ: %r" % (where, tid))
+    where = "tab %s" % tid
+    if tab.get("badge") not in BADGES:
+        raise ValueError("%s: badge は %s のどれか: %r" % (where, sorted(BADGES), tab.get("badge")))
+    kind = tab.get("kind")
+    if kind not in KINDS:
+        raise ValueError("%s: kind は %s のどれか: %r" % (where, KINDS, kind))
+    out: dict[str, Any] = {
+        "id": tid, "kind": kind, "badge": tab["badge"],
+        "label": _bi(tab.get("label"), where + ".label", ctx),
+        "text": _bi(tab.get("text"), where + ".text", ctx),
+        "numbers": [{"label": _bi(n.get("label"), where + ".numbers.label", ctx),
+                     "value": _num_value(n.get("value"), where + ".numbers.value", ctx)}
+                    for n in tab.get("numbers", [])],
+    }
+    if tab.get("view"):
+        out["view"] = {k: float(v) for k, v in tab["view"].items() if k in ("az", "el", "dist")}
+
+    if kind in ("mesh", "points"):
+        pos = _finite(tab.get("pos"), where + ".pos")
+        if pos.ndim != 2 or pos.shape[1] != 3 or len(pos) == 0:
+            raise ValueError("%s: pos は (N,3)" % where)
+        out["pos"] = store.put(pos, "q16", per_axis=True)
+        out["n"] = int(len(pos))
+        if kind == "mesh":
+            faces = np.asarray(tab.get("faces"))
+            if faces.ndim != 2 or faces.shape[1] != 3 or len(faces) == 0:
+                raise ValueError("%s: faces は (M,3)" % where)
+            if faces.min() < 0 or faces.max() >= len(pos):
+                raise ValueError("%s: faces の索引が範囲外" % where)
+            out["faces"] = store.put(faces, "u32" if len(pos) > 65535 else "u16")
+            out["nf"] = int(len(faces))
+        if tab.get("val") is not None:
+            cb = _cbar(tab.get("cbar"), where, ctx)
+            val = _finite(tab["val"], where + ".val")
+            if val.shape != (len(pos),):
+                raise ValueError("%s: val は (N,)" % where)
+            out["cbar"] = cb
+            out["val"] = store.put(val, "q16", lo=cb["lo"], hi=cb["hi"])
+        elif kind == "points" and tab.get("rgb") is not None:
+            rgb = np.asarray(tab["rgb"])
+            if rgb.shape != pos.shape:
+                raise ValueError("%s: rgb は pos と同じ形" % where)
+            out["rgb"] = store.put(_as_u8(rgb, where + ".rgb"), "u8")
+        else:
+            raise ValueError("%s: val(+cbar)か rgb が要る" % where)
+        if kind == "points":
+            if tab.get("ghost") is not None:
+                g = _finite(tab["ghost"], where + ".ghost")
+                if g.ndim != 2 or g.shape[1] != 3:
+                    raise ValueError("%s: ghost は (K,3)" % where)
+                out["ghost"] = store.put(g, "q16", per_axis=True)
+            if tab.get("point_size") is not None:
+                out["point_size"] = float(tab["point_size"])
+    elif kind == "frames":
+        fr = _as_u8(tab.get("frames"), where + ".frames")
+        if fr.ndim not in (3, 4) or (fr.ndim == 4 and fr.shape[3] != 3) or len(fr) < 1:
+            raise ValueError("%s: frames は (T,H,W) か (T,H,W,3)" % where)
+        T = len(fr)
+        out["frames"] = store.put(fr, "u8")
+        out["dt"] = float(tab.get("dt", 0.2))
+        boxes = []
+        for j, b in enumerate(tab.get("boxes", [])):
+            xy = _finite(b.get("xy"), where + ".boxes.xy")
+            if xy.shape != (T, 2):
+                raise ValueError("%s: boxes[%d].xy は (T,2)" % (where, j))
+            box = {"label": _bi(b.get("label"), where + ".boxes.label", ctx), "color": str(b.get("color", "#4fc3f7")),
+                   "xy": [[round(float(x), 3), round(float(y), 3)] for x, y in xy],
+                   "size": [float(b["size"][0]), float(b["size"][1])]}
+            if b.get("flag") is not None:
+                fl = np.asarray(b["flag"]).astype(bool)
+                if fl.shape != (T,):
+                    raise ValueError("%s: boxes[%d].flag は (T,)" % (where, j))
+                box["flag"] = [bool(x) for x in fl]
+                box["flag_color"] = str(b.get("flag_color", "#ff5252"))
+                if b.get("flag_text") is not None:
+                    box["flag_text"] = _bi(b["flag_text"], where + ".boxes.flag_text", ctx)
+            boxes.append(box)
+        out["boxes"] = boxes
+        series = []
+        for j, s in enumerate(tab.get("series", [])):
+            v = np.asarray(s.get("values"), dtype=np.float64)
+            if v.shape != (T,):
+                raise ValueError("%s: series[%d].values は (T,)" % (where, j))
+            se = {"label": _bi(s.get("label"), where + ".series.label", ctx), "color": str(s.get("color", "#ffb74d")),
+                  "values": _clean_list(v), "lo": float(s.get("lo", 0.0)), "hi": float(s.get("hi", 1.0)),
+                  "unit": str(s.get("unit", "")), "decimals": int(s.get("decimals", 3))}
+            if not se["hi"] > se["lo"]:
+                raise ValueError("%s: series[%d] の lo < hi" % (where, j))
+            if s.get("threshold") is not None:
+                se["threshold"] = float(s["threshold"])
+            series.append(se)
+        out["series"] = series
+    else:  # split
+        b, a = _as_u8(tab.get("before"), where + ".before"), _as_u8(tab.get("after"), where + ".after")
+        if b.shape != a.shape or b.ndim not in (2, 3) or (b.ndim == 3 and b.shape[2] != 3):
+            raise ValueError("%s: before / after は同じ形の (H,W) か (H,W,3)" % where)
+        out["before"] = store.put(b, "u8")
+        out["after"] = store.put(a, "u8")
+        out["label_before"] = _bi(tab.get("label_before"), where + ".label_before", ctx)
+        out["label_after"] = _bi(tab.get("label_after"), where + ".label_after", ctx)
+    return out
+
+
+def _pack_spec(spec: dict, lang="ja") -> dict:
+    """仕様を検査して、ページに埋める ``DATA``(JSON にできる dict)にする。
+
+    ``lang`` は ``"ja"`` か ``["ja", "en", ...]``(先頭が既定)。要求した言語が 1 つでも欠けた文字列があれば、
+    欠けた鍵を全部並べて ``ValueError``(日本語などへ黙って補わない)。
+    """
+    langs = _norm_langs(lang)
+    ctx = _Ctx(langs)
+    tabs = spec.get("tabs")
+    if not tabs:
+        raise ValueError("tabs が空")
+    ids = [t.get("id") for t in tabs]
+    if len(ids) != len(set(ids)):
+        raise ValueError("タブの id が重複している: %s" % ids)
+    store = _Store()
+    data: dict[str, Any] = {
+        "id": str(spec.get("id", "viewer")), "langs": list(langs),
+        "langnames": {l: LANG_NAMES[l] for l in langs},
+        "title": _bi(spec.get("title"), "title", ctx),
+        "subtitle": _bi(spec.get("subtitle"), "subtitle", ctx),
+        "hint": _bi(spec.get("hint"), "hint", ctx),
+        "tabs": [_pack_tab(t, store, i, ctx) for i, t in enumerate(tabs)],
+    }
+    if spec.get("credit") is not None:
+        data["credit"] = _bi(spec["credit"], "credit", ctx)
+    if ctx.missing:
+        raise ValueError("訳が足りない(要求した言語 %s): %s" % (list(langs), ", ".join(ctx.missing)))
+    data["badges"] = {k: {l: v[l] for l in langs} for k, v in BADGES.items()}
+    data["ui"] = {k: {l: v[l] for l in langs} for k, v in UI.items()}
+    data["arrays"] = store.arrays
+    return data
+
+
+# --------------------------------------------------------------------------- #
+# ページ                                                                        #
+# --------------------------------------------------------------------------- #
+_CSS = """
+  :root { --bg:#11161c; --panel:#182029; --line:#2a3540; --fg:#e8edf2; --dim:#93a2b1; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg);
+         font-family:"Segoe UI","Hiragino Sans",Meiryo,sans-serif; -webkit-text-size-adjust:100%; }
+  header { padding:16px 18px 8px; display:flex; gap:12px; align-items:flex-start; justify-content:space-between; }
+  h1 { font-size:18px; margin:0 0 4px; }
+  .sub { font-size:13px; color:var(--dim); line-height:1.6; }
+  #lang { flex:none; padding:5px 8px; font-size:13px; background:var(--panel); color:var(--fg); border:1px solid var(--line); border-radius:8px; }
+  .tabs { display:flex; flex-wrap:wrap; gap:8px; padding:10px 18px 4px; }
+  .tab { padding:8px 13px; border-radius:8px; border:1px solid var(--line);
+         background:var(--panel); color:#c8d4df; cursor:pointer; font-size:14px; text-align:left; }
+  .tab.on { background:#2c6fb5; border-color:#2c6fb5; color:#fff; font-weight:600; }
+  .tab i { display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:7px; vertical-align:baseline; }
+  .card { margin:8px 18px; padding:10px 14px; background:var(--panel);
+          border:1px solid var(--line); border-radius:8px; font-size:13.5px; line-height:1.75; }
+  .badge { display:inline-block; padding:2px 9px; border-radius:999px; font-size:12px;
+           margin-right:8px; font-weight:600; }
+  .passed { background:#1d4e7a; color:#dbeafe; } .passed-dot { background:#5aa9f0; }
+  .limit { background:#7a4a1d; color:#fde9d0; } .limit-dot { background:#f0a45a; }
+  .null { background:#444c55; color:#e3e8ed; } .null-dot { background:#9aa6b2; }
+  .nums { display:flex; flex-wrap:wrap; gap:6px 16px; margin-top:6px; }
+  .num { font-variant-numeric:tabular-nums; } .num i { font-style:normal; color:var(--dim); margin-right:6px; }
+  #wrap { position:relative; margin:6px 18px; height:min(64vh,560px); }
+  #wrap.two { height:auto; }
+  canvas { display:block; background:#0d1116; border:1px solid var(--line); border-radius:8px; touch-action:none; }
+  #gl { width:100%; height:100%; cursor:grab; }
+  #c2d { width:100%; height:auto; image-rendering:pixelated; max-height:56vh; object-fit:contain; margin:0 auto; }
+  #err { display:none; position:absolute; inset:0; align-items:center; justify-content:center;
+         padding:20px; text-align:center; color:#f6dede; background:#5c2f2f; border-radius:8px; }
+  #hud { position:absolute; left:12px; top:10px; font-size:13px; color:#c3ced9; line-height:1.55;
+         font-variant-numeric:tabular-nums; pointer-events:none; text-shadow:0 1px 3px #000; }
+  #hud b.flag { color:#ff8a80; }
+  .cb { display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:2px 18px 4px; font-size:12.5px; color:var(--dim); }
+  .cb .bar { width:min(260px,60vw); height:12px; border-radius:3px; border:1px solid var(--line); }
+  .cb .ticks { display:flex; justify-content:space-between; width:min(260px,60vw); font-size:11.5px; margin-top:2px; }
+  .ctl { display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:10px 18px 6px; }
+  button { padding:7px 13px; border-radius:8px; border:1px solid var(--line);
+           background:var(--panel); color:var(--fg); cursor:pointer; font-size:14px; }
+  button.pri { background:#2c6fb5; border-color:#2c6fb5; color:#fff; }
+  input[type=range] { flex:1; min-width:160px; }
+  .read { color:var(--dim); font-size:13px; font-variant-numeric:tabular-nums; }
+  .views { padding:0 18px 8px; display:flex; gap:8px; flex-wrap:wrap; }
+  #plot { width:calc(100% - 36px); margin:4px 18px; height:150px; }
+  .hint { padding:2px 18px 10px; color:#7d8b99; font-size:12.5px; line-height:1.8; }
+  .credit { padding:0 18px 26px; color:#6b7886; font-size:12px; line-height:1.7; }
+"""
+
+_BODY = """
+<header>
+  <div><h1 id="h1"></h1><div class="sub" id="sub"></div></div>
+  <select id="lang"></select>
+</header>
+<div class="tabs" id="tabs"></div>
+<div class="card" id="meta"></div>
+<div id="wrap"><canvas id="gl"></canvas><canvas id="c2d" style="display:none"></canvas><div id="hud"></div>
+  <div id="err"></div></div>
+<div class="cb" id="cb" style="display:none"></div>
+<div class="views" id="views">
+  <button data-v="front"></button><button data-v="side"></button>
+  <button data-v="iso"></button><button data-v="top"></button>
+</div>
+<div class="ctl" id="ctl">
+  <button id="play" class="pri"></button>
+  <input type="range" id="scrub" min="0" max="1000" value="0">
+  <span class="read" id="tlabel"></span>
+  <label class="read" id="spl"><span id="spd"></span> <input type="range" id="speed" min="10" max="300" value="100" style="width:80px;vertical-align:middle"></label>
+  <label class="read" id="lpl"><input type="checkbox" id="loop" checked> <span id="lpt"></span></label>
+</div>
+<canvas id="plot" style="display:none"></canvas>
+<div class="hint" id="hint"></div>
+<div class="credit" id="credit"></div>
+"""
+
+_JS = r"""
+(function(){
+'use strict';
+const D = __DATA__;
+const $ = id => document.getElementById(id);
+const qs = new URLSearchParams(location.search);
+let L = D.langs.indexOf(qs.get('lang')) >= 0 ? qs.get('lang') : D.langs[0];
+const T = o => o == null ? '' : (typeof o === 'string' ? o : (o[L] || ''));
+const U = k => T(D.ui[k]);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const tabs = D.tabs;
+let cur = tabs.some(t => t.id === qs.get('tab')) ? qs.get('tab') : tabs[0].id;
+const get = () => tabs.find(t => t.id === cur);
+
+/* ---------- 配列の復元(Python の decode_array と同じ式) ---------- */
+const cache = {};
+function arr(key){
+  if (cache[key]) return cache[key];
+  const rec = D.arrays[key], b = atob(rec.b64), u = new Uint8Array(b.length);
+  for (let i = 0; i < b.length; i++) u[i] = b.charCodeAt(i);
+  let r;
+  switch (rec.t) {
+    case 'u8': case 'q8': r = u; break;
+    case 'u16': case 'q16': r = new Uint16Array(u.buffer); break;
+    case 'u32': r = new Uint32Array(u.buffer); break;
+    default: r = new Float32Array(u.buffer);
+  }
+  let out = r;
+  if (rec.t === 'q8' || rec.t === 'q16') {
+    const maxv = rec.t === 'q8' ? 255 : 65535, nax = rec.lo.length;
+    out = new Float64Array(r.length);
+    for (let i = 0; i < r.length; i++) { const a = i % nax; out[i] = rec.lo[a] + r[i] * (rec.hi[a] - rec.lo[a]) / maxv; }
+  }
+  return cache[key] = {a: out, shape: rec.shape};
+}
+
+/* ---------- 色 ---------- */
+const STOPS = {
+  div: ['#e66101','#fdb863','#e6ebef','#7fb0e6','#2f7fd6'],
+  seq: ['#30409a','#2a9fb5','#7fcf8a','#f2e05a','#f2863c']
+};
+const hex = h => [parseInt(h.slice(1,3),16), parseInt(h.slice(3,5),16), parseInt(h.slice(5,7),16)];
+function cmapRGB(name, t){
+  const s = STOPS[name].map(hex); t = Math.min(1, Math.max(0, t));
+  const x = t * (s.length - 1), i = Math.min(s.length - 2, Math.floor(x)), f = x - i;
+  return [0,1,2].map(k => s[i][k] + (s[i+1][k] - s[i][k]) * f);
+}
+function colorsOf(tab){
+  const n = tab.n, c = new Uint8Array(n * 3);
+  if (tab.val != null) {
+    const V = arr(tab.val).a, cb = tab.cbar, sp = cb.hi - cb.lo;
+    for (let i = 0; i < n; i++) { const r = cmapRGB(cb.cmap, (V[i] - cb.lo) / sp); c[i*3] = r[0]; c[i*3+1] = r[1]; c[i*3+2] = r[2]; }
+  } else { c.set(arr(tab.rgb).a); }
+  return c;
+}
+
+/* ---------- 行列 ---------- */
+function mul(a,b){const o=new Float32Array(16);for(let c=0;c<4;c++)for(let r=0;r<4;r++){let s=0;for(let k=0;k<4;k++)s+=a[k*4+r]*b[c*4+k];o[c*4+r]=s;}return o;}
+function persp(fy,as,n,f){const t=1/Math.tan(fy/2),nf=1/(n-f);return new Float32Array([t/as,0,0,0, 0,t,0,0, 0,0,(f+n)*nf,-1, 0,0,2*f*n*nf,0]);}
+function look(e,c,u){let z=[e[0]-c[0],e[1]-c[1],e[2]-c[2]];const zl=Math.hypot(z[0],z[1],z[2]);z=[z[0]/zl,z[1]/zl,z[2]/zl];
+  let x=[u[1]*z[2]-u[2]*z[1],u[2]*z[0]-u[0]*z[2],u[0]*z[1]-u[1]*z[0]];const xl=Math.hypot(x[0],x[1],x[2])||1;x=[x[0]/xl,x[1]/xl,x[2]/xl];
+  const y=[z[1]*x[2]-z[2]*x[1],z[2]*x[0]-z[0]*x[2],z[0]*x[1]-z[1]*x[0]];
+  return new Float32Array([x[0],y[0],z[0],0, x[1],y[1],z[1],0, x[2],y[2],z[2],0,
+    -(x[0]*e[0]+x[1]*e[1]+x[2]*e[2]),-(y[0]*e[0]+y[1]*e[1]+y[2]*e[2]),-(z[0]*e[0]+z[1]*e[1]+z[2]*e[2]),1]);}
+
+/* ---------- WebGL ---------- */
+const cv = $('gl'), c2 = $('c2d'), ctx = c2.getContext('2d');
+const gl = cv.getContext('webgl', {antialias:true}) || cv.getContext('experimental-webgl');
+const u32ext = gl ? gl.getExtension('OES_element_index_uint') : null;
+function sh(t, src){ const o = gl.createShader(t); gl.shaderSource(o, src); gl.compileShader(o);
+  if (!gl.getShaderParameter(o, gl.COMPILE_STATUS)) console.error(gl.getShaderInfoLog(o)); return o; }
+function prog(vs, fs){ const p = gl.createProgram(); gl.attachShader(p, sh(gl.VERTEX_SHADER, vs)); gl.attachShader(p, sh(gl.FRAGMENT_SHADER, fs));
+  gl.linkProgram(p); if (!gl.getProgramParameter(p, gl.LINK_STATUS)) { console.error(gl.getProgramInfoLog(p)); return null; } return p; }
+let PP = null, MP = null;
+if (gl) {
+  PP = prog('attribute vec3 a_p;attribute vec3 a_c;uniform mat4 u_vp;uniform float u_ps;varying vec3 v_c;'+
+    'void main(){gl_Position=u_vp*vec4(a_p,1.0);v_c=a_c;gl_PointSize=clamp(u_ps/gl_Position.w,1.5,28.0);}',
+    'precision mediump float;varying vec3 v_c;void main(){vec2 d=gl_PointCoord-0.5;if(dot(d,d)>0.25)discard;gl_FragColor=vec4(v_c,1.0);}');
+  MP = prog('attribute vec3 a_p;attribute vec3 a_n;attribute vec3 a_c;uniform mat4 u_vp;varying vec3 v_n;varying vec3 v_c;'+
+    'void main(){gl_Position=u_vp*vec4(a_p,1.0);v_n=a_n;v_c=a_c;}',
+    'precision mediump float;varying vec3 v_n;varying vec3 v_c;uniform vec3 u_l;'+
+    'void main(){float d=abs(dot(normalize(v_n),u_l))*0.65+0.38;gl_FragColor=vec4(v_c*d,1.0);}');
+}
+function buf(data, target){ const b = gl.createBuffer(); gl.bindBuffer(target || gl.ARRAY_BUFFER, b); gl.bufferData(target || gl.ARRAY_BUFFER, data, gl.STATIC_DRAW); return b; }
+
+const scenes = {};
+function bbox(P){
+  const lo = [Infinity,Infinity,Infinity], hi = [-Infinity,-Infinity,-Infinity];
+  for (let i = 0; i < P.length; i += 3) for (let k = 0; k < 3; k++) { const v = P[i+k]; if (v < lo[k]) lo[k] = v; if (v > hi[k]) hi[k] = v; }
+  return {lo, hi, ctr: [0,1,2].map(k => (lo[k] + hi[k]) / 2)};
+}
+function centred(P, ctr){ const o = new Float32Array(P.length); for (let i = 0; i < P.length; i++) o[i] = P[i] - ctr[i % 3]; return o; }
+function scene3d(tab){
+  if (scenes[tab.id]) return scenes[tab.id];
+  const P = arr(tab.pos).a, bb = bbox(P), n = tab.n;
+  const rad = 0.5 * Math.hypot(bb.hi[0]-bb.lo[0], bb.hi[1]-bb.lo[1], bb.hi[2]-bb.lo[2]) || 1;
+  const S = {rad, n, cbufC: null};
+  S.pos = buf(centred(P, bb.ctr)); S.col = buf(colorsOf(tab));
+  if (tab.kind === 'points') {
+    S.ps = tab.point_size || (3.2 * rad / Math.sqrt(n));
+    if (tab.ghost != null) {
+      const G = arr(tab.ghost).a, gc = new Uint8Array(G.length); gc.fill(110);
+      S.gpos = buf(centred(G, bb.ctr)); S.gcol = buf(gc); S.gn = G.length / 3;
+    }
+  } else {
+    const F = arr(tab.faces).a, nv = n;
+    if (nv > 65535 && !u32ext) { S.fail = true; return scenes[tab.id] = S; }
+    const idx = nv > 65535 ? new Uint32Array(F) : new Uint16Array(F);
+    const N = new Float32Array(P.length);
+    for (let f = 0; f < F.length; f += 3) {
+      const a = F[f]*3, b = F[f+1]*3, c = F[f+2]*3;
+      const ux = P[b]-P[a], uy = P[b+1]-P[a+1], uz = P[b+2]-P[a+2], vx = P[c]-P[a], vy = P[c+1]-P[a+1], vz = P[c+2]-P[a+2];
+      const nx = uy*vz-uz*vy, ny = uz*vx-ux*vz, nz = ux*vy-uy*vx;
+      for (const q of [a,b,c]) { N[q] += nx; N[q+1] += ny; N[q+2] += nz; }
+    }
+    for (let i = 0; i < N.length; i += 3) { const l = Math.hypot(N[i],N[i+1],N[i+2]) || 1; N[i]/=l; N[i+1]/=l; N[i+2]/=l; }
+    S.nrm = buf(N); S.idx = buf(idx, gl.ELEMENT_ARRAY_BUFFER); S.count = idx.length; S.itype = nv > 65535 ? gl.UNSIGNED_INT : gl.UNSIGNED_SHORT;
+  }
+  return scenes[tab.id] = S;
+}
+
+/* ---------- 状態 ---------- */
+let az = -1.0, el = 0.5, dist = 3, playing = false, frame = 0, last = performance.now(), dirty = true;
+let splitX = 0.5;
+const PRESETS = {front:[-Math.PI/2, 0.08, 1], side:[0, 0.08, 1], iso:[-1.0, 0.5, 1], top:[-Math.PI/2, 1.5, 1]};
+function dist0(S){ return S.rad * 2.0; }
+function applyView(tab, S){
+  const v = tab.view || {};
+  az = v.az != null ? v.az : -1.0; el = v.el != null ? v.el : 0.5; dist = dist0(S) * (v.dist != null ? v.dist : 1);
+}
+function isTwoD(tab){ return tab.kind === 'frames' || tab.kind === 'split'; }
+
+function resize3d(){
+  const r = cv.getBoundingClientRect(), d = Math.min(2, window.devicePixelRatio || 1);
+  const w = Math.max(1, Math.round(r.width * d)), h = Math.max(1, Math.round(r.height * d));
+  if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; }
+  gl.viewport(0, 0, cv.width, cv.height);
+}
+function draw3d(tab){
+  const S = scene3d(tab);
+  if (S.fail || !PP) { showErr(U('nogl')); return; }
+  resize3d();
+  const cd = Math.cos(el), sd = Math.sin(el), ca = Math.cos(az), sa = Math.sin(az);
+  const eye = [dist*cd*ca, dist*cd*sa, dist*sd];
+  const fy = 0.9, vp = mul(persp(fy, cv.width/cv.height, S.rad*0.02, S.rad*40), look(eye, [0,0,0], [0,0,1]));
+  gl.enable(gl.DEPTH_TEST); gl.clearColor(0.051, 0.067, 0.086, 1); gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  if (tab.kind === 'points') {
+    gl.useProgram(PP);
+    const lp = gl.getAttribLocation(PP, 'a_p'), lc = gl.getAttribLocation(PP, 'a_c');
+    gl.uniformMatrix4fv(gl.getUniformLocation(PP, 'u_vp'), false, vp);
+    const px = S.ps * cv.height / (2 * Math.tan(fy / 2));
+    gl.uniform1f(gl.getUniformLocation(PP, 'u_ps'), px);
+    const run = (pb, cb, cnt) => {
+      gl.bindBuffer(gl.ARRAY_BUFFER, pb); gl.enableVertexAttribArray(lp); gl.vertexAttribPointer(lp, 3, gl.FLOAT, false, 0, 0);
+      gl.bindBuffer(gl.ARRAY_BUFFER, cb); gl.enableVertexAttribArray(lc); gl.vertexAttribPointer(lc, 3, gl.UNSIGNED_BYTE, true, 0, 0);
+      gl.drawArrays(gl.POINTS, 0, cnt);
+    };
+    if (S.gpos) run(S.gpos, S.gcol, S.gn);
+    run(S.pos, S.col, S.n);
+  } else {
+    gl.useProgram(MP);
+    const lp = gl.getAttribLocation(MP, 'a_p'), ln = gl.getAttribLocation(MP, 'a_n'), lc = gl.getAttribLocation(MP, 'a_c');
+    gl.bindBuffer(gl.ARRAY_BUFFER, S.pos); gl.enableVertexAttribArray(lp); gl.vertexAttribPointer(lp, 3, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ARRAY_BUFFER, S.nrm); gl.enableVertexAttribArray(ln); gl.vertexAttribPointer(ln, 3, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ARRAY_BUFFER, S.col); gl.enableVertexAttribArray(lc); gl.vertexAttribPointer(lc, 3, gl.UNSIGNED_BYTE, true, 0, 0);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, S.idx);
+    let l = [eye[0]/dist*0.5, eye[1]/dist*0.5, eye[2]/dist*0.5 + 0.5]; const ll = Math.hypot(l[0], l[1], l[2]); l = l.map(v => v/ll);
+    gl.uniform3f(gl.getUniformLocation(MP, 'u_l'), l[0], l[1], l[2]);
+    gl.uniformMatrix4fv(gl.getUniformLocation(MP, 'u_vp'), false, vp);
+    gl.drawElements(gl.TRIANGLES, S.count, S.itype, 0);
+  }
+  const deg = ((az * 180 / Math.PI) % 360 + 360) % 360;
+  $('hud').innerHTML = esc(tab.n.toLocaleString() + ' ' + (tab.kind === 'points' ? U('points') : U('verts'))) + '<br>' + esc(U('drag'));
+  $('tlabel').textContent = U('azimuth') + ' ' + deg.toFixed(0) + '°';
+  $('scrub').value = String(Math.round(deg / 360 * 1000));
+}
+
+/* ---------- 2-D(動画・分割) ---------- */
+const imgs = {};
+function frameCanvas(tab, key, t){
+  const id = tab.id + ':' + key + ':' + t;
+  if (imgs[id]) return imgs[id];
+  const A = arr(tab[key] || tab.frames), sh_ = A.shape;
+  const H = tab.kind === 'frames' ? sh_[1] : sh_[0], W = tab.kind === 'frames' ? sh_[2] : sh_[1];
+  const ch = sh_.length === (tab.kind === 'frames' ? 4 : 3) ? 3 : 1;
+  const base = tab.kind === 'frames' ? t * H * W * ch : 0;
+  const o = document.createElement('canvas'); o.width = W; o.height = H;
+  const im = o.getContext('2d').createImageData(W, H), d = im.data;
+  for (let i = 0; i < W * H; i++) {
+    if (ch === 3) { d[i*4] = A.a[base+i*3]; d[i*4+1] = A.a[base+i*3+1]; d[i*4+2] = A.a[base+i*3+2]; }
+    else { const g = A.a[base+i]; d[i*4] = g; d[i*4+1] = g; d[i*4+2] = g; }
+    d[i*4+3] = 255;
+  }
+  o.getContext('2d').putImageData(im, 0, 0);
+  return imgs[id] = o;
+}
+function dims(tab){ const s = arr(tab.kind === 'frames' ? tab.frames : tab.before).shape; return tab.kind === 'frames' ? [s[2], s[1]] : [s[1], s[0]]; }
+function fit2d(tab){
+  const [W, H] = dims(tab), k = Math.max(1, Math.round(640 / W));
+  if (c2.width !== W * k || c2.height !== H * k) { c2.width = W * k; c2.height = H * k; }
+  return k;
+}
+function draw2d(tab){
+  const k = fit2d(tab), [W, H] = dims(tab);
+  ctx.imageSmoothingEnabled = false; ctx.clearRect(0, 0, c2.width, c2.height);
+  if (tab.kind === 'split') {
+    ctx.drawImage(frameCanvas(tab, 'after', 0), 0, 0, W*k, H*k);
+    const sx = Math.round(splitX * W * k);
+    ctx.save(); ctx.beginPath(); ctx.rect(0, 0, sx, H*k); ctx.clip();
+    ctx.drawImage(frameCanvas(tab, 'before', 0), 0, 0, W*k, H*k); ctx.restore();
+    ctx.fillStyle = '#ffffff'; ctx.fillRect(sx - 1, 0, 2, H*k);
+    ctx.beginPath(); ctx.arc(sx, H*k/2, 14, 0, 6.2832); ctx.fillStyle = '#2c6fb5'; ctx.fill(); ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.fillStyle = '#fff'; ctx.font = (13*Math.max(1,k/2))+'px sans-serif'; ctx.textBaseline = 'top';
+    ctx.textAlign = 'left'; ctx.fillText(T(tab.label_before), 8, 6); ctx.textAlign = 'right'; ctx.fillText(T(tab.label_after), W*k-8, 6);
+    $('hud').innerHTML = esc(U('split'));
+    return;
+  }
+  const T_ = arr(tab.frames).shape[0], f = Math.min(T_-1, Math.max(0, Math.floor(frame)));
+  ctx.drawImage(frameCanvas(tab, 'frames', f), 0, 0, W*k, H*k);
+  let hud = U('frame') + ' ' + f + ' / ' + (T_-1) + '  (' + (f * tab.dt).toFixed(2) + ' s)';
+  for (const b of tab.boxes) {
+    const fl = b.flag ? b.flag[f] : false, [x, y] = b.xy[f], w = b.size[0]*k, h = b.size[1]*k;
+    ctx.strokeStyle = fl ? b.flag_color : b.color; ctx.lineWidth = Math.max(2, k * 0.8);
+    ctx.strokeRect((x + 0.5)*k - w/2, (y + 0.5)*k - h/2, w, h);
+    hud += '<br><span style="color:' + esc(b.color) + '">■</span> ' + esc(T(b.label)) + (fl && b.flag_text ? ' <b class="flag">' + esc(T(b.flag_text)) + '</b>' : '');
+  }
+  for (const s of tab.series) {
+    const v = s.values[f]; let line = esc(T(s.label)) + ': ' + (v == null ? '—' : v.toFixed(s.decimals) + (s.unit ? ' ' + esc(s.unit) : ''));
+    if (s.threshold != null && v != null) line += ' (' + esc(v >= s.threshold ? U('above') : U('below')) + ' ' + s.threshold.toFixed(s.decimals) + ')';
+    hud += '<br><span style="color:' + esc(s.color) + '">■</span> ' + line;
+  }
+  $('hud').innerHTML = hud;
+  $('tlabel').textContent = (f * tab.dt).toFixed(2) + ' s';
+  $('scrub').value = String(Math.round(f / Math.max(1, T_-1) * 1000));
+  drawPlot(tab, f);
+}
+function drawPlot(tab, f){
+  const p = $('plot'); if (!tab.series.length) { p.style.display = 'none'; return; }
+  p.style.display = 'block';
+  const r = p.getBoundingClientRect(), d = Math.min(2, window.devicePixelRatio || 1);
+  p.width = Math.max(1, Math.round(r.width * d)); p.height = Math.max(1, Math.round(r.height * d));
+  const g = p.getContext('2d'); g.setTransform(d, 0, 0, d, 0, 0);
+  const w = r.width, h = r.height, ml = 8, mr = 8, mt = 8, mb = 22, n = tab.series[0].values.length;
+  g.fillStyle = '#0d1116'; g.fillRect(0, 0, w, h);
+  const X = i => ml + (w - ml - mr) * i / Math.max(1, n - 1), Y = (s, v) => mt + (h - mt - mb) * (1 - (v - s.lo) / (s.hi - s.lo));
+  g.strokeStyle = '#26313c'; g.lineWidth = 1; g.strokeRect(ml, mt, w - ml - mr, h - mt - mb);
+  g.font = '11px sans-serif'; g.textBaseline = 'alphabetic';
+  let lx = ml + 4;
+  for (const s of tab.series) {
+    if (s.threshold != null) { g.setLineDash([4, 4]); g.strokeStyle = s.color; g.globalAlpha = 0.6; g.beginPath(); g.moveTo(ml, Y(s, s.threshold)); g.lineTo(w - mr, Y(s, s.threshold)); g.stroke(); g.setLineDash([]); g.globalAlpha = 1; }
+    for (const pass of [0, 1]) {
+      g.strokeStyle = s.color; g.lineWidth = pass ? 2 : 1; g.globalAlpha = pass ? 1 : 0.28; g.beginPath(); let pen = false;
+      const a = pass ? 0 : f, b = pass ? f : n - 1;
+      for (let i = a; i <= b; i++) { const v = s.values[i]; if (v == null) { pen = false; continue; } if (!pen) { g.moveTo(X(i), Y(s, v)); pen = true; } else g.lineTo(X(i), Y(s, v)); }
+      g.stroke();
+    }
+    g.globalAlpha = 1; g.fillStyle = s.color;
+    const lab = T(s.label) + ' [' + s.lo + '–' + s.hi + (s.unit ? ' ' + s.unit : '') + ']'; g.fillText(lab, lx, h - 6); lx += g.measureText(lab).width + 16;
+  }
+  g.strokeStyle = '#ffffff'; g.globalAlpha = 0.7; g.beginPath(); g.moveTo(X(f), mt); g.lineTo(X(f), h - mb); g.stroke(); g.globalAlpha = 1;
+}
+
+/* ---------- ページ ---------- */
+function showErr(msg){ const e = $('err'); e.textContent = msg; e.style.display = 'flex'; }
+function colorbar(tab){
+  const cb = $('cb');
+  if (isTwoD(tab) || !tab.cbar) { cb.style.display = 'none'; return; }
+  const c = tab.cbar, st = STOPS[c.cmap];
+  cb.style.display = 'flex';
+  const f = v => Math.abs(v) >= 100 ? v.toFixed(0) : (Math.abs(v) >= 1 ? v.toFixed(1) : v.toFixed(2));
+  cb.innerHTML = '<span>' + esc(c.label ? T(c.label) : '') + '</span><div><div class="bar" style="background:linear-gradient(90deg,' + st.join(',') + ')"></div>' +
+    '<div class="ticks"><span>' + f(c.lo) + '</span><span>' + f((c.lo + c.hi) / 2) + '</span><span>' + f(c.hi) + ' ' + esc(c.unit) + '</span></div></div>';
+}
+function renderTabs(){
+  $('tabs').innerHTML = tabs.map(t => '<button class="tab ' + (t.id === cur ? 'on' : '') + '" data-id="' + esc(t.id) + '"><i class="' + t.badge + '-dot"></i>' + esc(T(t.label)) + '</button>').join('');
+  document.querySelectorAll('.tab').forEach(b => b.onclick = () => select(b.dataset.id));
+}
+function renderMeta(){
+  const t = get();
+  const nums = t.numbers.map(n => '<span class="num"><i>' + esc(T(n.label)) + '</i><b>' + esc(T(n.value)) + '</b></span>').join('');
+  $('meta').innerHTML = '<span class="badge ' + t.badge + '">' + esc(T(D.badges[t.badge])) + '</span><b>' + esc(T(t.label)) + '</b><br>' + esc(T(t.text)) +
+    (nums ? '<div class="nums">' + nums + '</div>' : '');
+}
+function renderText(){
+  document.documentElement.lang = L;
+  $('h1').textContent = T(D.title); document.title = T(D.title);
+  $('sub').textContent = T(D.subtitle); $('hint').textContent = T(D.hint); $('credit').textContent = T(D.credit);
+  const sel = $('lang'); sel.style.display = D.langs.length > 1 ? 'block' : 'none';
+  sel.innerHTML = D.langs.map(l => '<option value="' + l + '"' + (l === L ? ' selected' : '') + '>' + esc(D.langnames[l]) + '</option>').join('');
+  document.querySelectorAll('[data-v]').forEach(b => b.textContent = U(b.dataset.v));
+  $('spd').textContent = U('speed'); $('lpt').textContent = U('loop'); $('err').textContent = U('nogl');
+  setBtn(); renderTabs(); renderMeta(); colorbar(get());
+}
+function setBtn(){ $('play').textContent = playing ? U('pause') : U('play'); }
+function select(id){
+  cur = id; frame = 0; splitX = 0.5; const t = get();
+  try { const u = new URL(location.href); u.searchParams.set('tab', cur); history.replaceState(null, '', u); } catch (e) {}
+  $('err').style.display = 'none';
+  const two = isTwoD(t);
+  $('wrap').className = two ? 'two' : ''; cv.style.display = two ? 'none' : 'block'; c2.style.display = two ? 'block' : 'none';
+  $('views').style.display = two ? 'none' : 'flex';
+  $('ctl').style.display = t.kind === 'split' ? 'none' : 'flex';
+  $('lpl').style.display = t.kind === 'frames' ? 'inline' : 'none';
+  $('plot').style.display = t.kind === 'frames' && t.series.length ? 'block' : 'none';
+  playing = t.kind === 'frames'; last = performance.now();
+  if (!two) { if (!gl) showErr(U('nogl')); else { const S = scene3d(t); applyView(t, S); } }
+  renderTabs(); renderMeta(); colorbar(t); setBtn(); dirty = true;
+}
+function render(){
+  const t = get();
+  if (isTwoD(t)) draw2d(t); else if (gl) draw3d(t);
+}
+function tick(now){
+  const t = get(), dt = Math.min(0.1, (now - last) / 1000); last = now;
+  const sp = $('speed').value / 100;
+  if (playing) {
+    if (t.kind === 'frames') {
+      const n = arr(t.frames).shape[0]; frame += dt * sp / t.dt;
+      if (frame >= n - 1) { if ($('loop').checked) frame = frame % (n - 1 || 1); else { frame = n - 1; playing = false; setBtn(); } }
+    } else if (!isTwoD(t)) { az += dt * sp * 0.6; }
+    dirty = true;
+  }
+  if (dirty) { dirty = false; render(); }
+  requestAnimationFrame(tick);
+}
+
+/* ---------- 入力 ---------- */
+$('play').onclick = () => { playing = !playing; setBtn(); last = performance.now(); dirty = true; };
+$('lang').onchange = e => { L = e.target.value; try { const u = new URL(location.href); u.searchParams.set('lang', L); history.replaceState(null, '', u); } catch (e) {} renderText(); dirty = true; };
+$('scrub').oninput = e => {
+  const t = get(); playing = false; setBtn();
+  if (t.kind === 'frames') frame = e.target.value / 1000 * (arr(t.frames).shape[0] - 1); else az = e.target.value / 1000 * 2 * Math.PI;
+  dirty = true;
+};
+document.querySelectorAll('[data-v]').forEach(b => b.onclick = () => { const t = get(), S = scene3d(t), v = PRESETS[b.dataset.v]; az = v[0]; el = v[1]; dist = dist0(S); dirty = true; });
+const pts = new Map(); let pinch = 0;
+function target(){ return isTwoD(get()) ? c2 : cv; }
+function splitMove(e){ const r = c2.getBoundingClientRect(); splitX = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width)); dirty = true; }
+[cv, c2].forEach(el_ => {
+  el_.addEventListener('pointerdown', e => { el_.setPointerCapture(e.pointerId); pts.set(e.pointerId, {x: e.clientX, y: e.clientY});
+    if (pts.size === 2) { const a = [...pts.values()]; pinch = Math.hypot(a[0].x - a[1].x, a[0].y - a[1].y); }
+    if (get().kind === 'split' && el_ === c2) splitMove(e); });
+  el_.addEventListener('pointermove', e => {
+    const p = pts.get(e.pointerId); if (!p) return;
+    if (get().kind === 'split' && el_ === c2) { splitMove(e); return; }
+    if (isTwoD(get())) return;
+    if (pts.size === 2) { p.x = e.clientX; p.y = e.clientY; const a = [...pts.values()], d = Math.hypot(a[0].x - a[1].x, a[0].y - a[1].y);
+      if (pinch > 0) { dist = Math.min(dist0(scene3d(get())) * 8, Math.max(dist0(scene3d(get())) * 0.05, dist * pinch / d)); } pinch = d; dirty = true; return; }
+    az -= (e.clientX - p.x) * 0.008; el = Math.max(-1.5, Math.min(1.5, el + (e.clientY - p.y) * 0.008));
+    p.x = e.clientX; p.y = e.clientY; dirty = true; });
+  const up = e => { pts.delete(e.pointerId); pinch = 0; };
+  el_.addEventListener('pointerup', up); el_.addEventListener('pointercancel', up);
+});
+cv.addEventListener('wheel', e => { e.preventDefault(); const S = scene3d(get());
+  dist = Math.min(dist0(S) * 8, Math.max(dist0(S) * 0.05, dist * Math.exp(e.deltaY * 0.0012))); dirty = true; }, {passive: false});
+window.addEventListener('resize', () => { dirty = true; });
+
+renderText(); select(cur); requestAnimationFrame(tick);
+})();
+"""
+
+
+def _build_html(spec: dict, lang="ja") -> str:
+    """仕様から HTML 文字列を作る(検査はここで行う)。``lang`` は :func:`_pack_spec` と同じ。"""
+    data = _pack_spec(spec, lang)
+    blob = json.dumps(data, ensure_ascii=True, separators=(",", ":")).replace("</", "<\\/")
+    js = _JS.replace("__DATA__", blob)
+    if js.count(blob) != 1:
+        raise AssertionError("DATA の差し込みが 1 回でない")
+    title = html.escape(data["title"][data["langs"][0]])
+    return ("<!doctype html>\n<html lang=\"%s\">\n<meta charset=\"utf-8\">\n"
+            "<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n"
+            "<title>%s</title>\n<style>%s</style>\n%s\n<script>%s</script>\n</html>\n" % (data["langs"][0], title, _CSS, _BODY, js))
+
+
+def write_viewer(spec: dict, path, lang="ja") -> str:
+    """HTML を書いて、書いたパス(文字列)を返す。仕様が不正なら何も書かず ``ValueError``。
+
+    ``lang="ja"`` は単言語のページ。``lang=["ja", "en", ...]`` は言語の切り替えつきで、先頭が既定。
+    対応は ja / en / zh / tw / ko / de / hi / fr。URL の ``?lang=xx`` で開く言語を選べる。
+    """
+    text = _build_html(spec, lang)                      # 検査はここで終わる(書く前に落とす)
+    p = Path(path)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_bytes(text.encode("utf-8"))
+    return str(p)
+
+
+# --------------------------------------------------------------------------- #
+# 仕様を組み立てる道具(辞書を手で書かなくてよいように)                            #
+# --------------------------------------------------------------------------- #
+def viewer_text(ja: str, en: str, **others: str) -> dict:
+    """言語ごとの文字列の辞書。``viewer_text("日本語", "English", zh="中文", de="Deutsch")``。
+
+    ``others`` のキーは ``LANGS``(zh / tw / ko / de / hi / fr)だけ。要求した言語に足りない訳は
+    書き出し時に ``ValueError`` で止まる(黙って他言語で補わない)。
+    """
+    bad = [k for k in others if k not in LANGS]
+    if bad:
+        raise ValueError("未対応の言語 %s(対応: %s)" % (bad, ", ".join(LANGS)))
+    return {"ja": ja, "en": en, **others}
+
+
+def viewer_number(label: dict, value) -> dict:
+    """カードに出す実測の数字 1 つ。``value`` は文字列(両言語共通)か :func:`viewer_text`。"""
+    return {"label": label, "value": value}
+
+
+def _tab(kind: str, tab_id: str, label: dict, badge: str, text: dict, numbers, extra: dict) -> dict:
+    d = {"id": tab_id, "kind": kind, "label": label, "badge": badge, "text": text,
+         "numbers": list(numbers or [])}
+    d.update({k: v for k, v in extra.items() if v is not None})
+    return d
+
+
+def viewer_mesh_tab(tab_id, label, badge, text, pos, faces, val, cbar, numbers=None, view=None) -> dict:
+    """三角形メッシュ + 頂点ごとの値(色)+ カラーバーのタブ。"""
+    return _tab("mesh", tab_id, label, badge, text, numbers,
+                {"pos": pos, "faces": faces, "val": val, "cbar": cbar, "view": view})
+
+
+def viewer_points_tab(tab_id, label, badge, text, pos, val=None, cbar=None, rgb=None, ghost=None,
+                      point_size=None, numbers=None, view=None) -> dict:
+    """点群のタブ。``val`` + ``cbar``(値の色)か ``rgb``(点ごとの色)。``ghost`` は灰色の参照点群。"""
+    return _tab("points", tab_id, label, badge, text, numbers,
+                {"pos": pos, "val": val, "cbar": cbar, "rgb": rgb, "ghost": ghost,
+                 "point_size": point_size, "view": view})
+
+
+def viewer_frames_tab(tab_id, label, badge, text, frames, dt=0.2, boxes=None, series=None,
+                      numbers=None) -> dict:
+    """2-D の画像列のタブ。``boxes`` は重ねる枠(真値と推定)、``series`` は時系列グラフ。"""
+    return _tab("frames", tab_id, label, badge, text, numbers,
+                {"frames": frames, "dt": dt, "boxes": boxes or [], "series": series or []})
+
+
+def viewer_split_tab(tab_id, label, badge, text, before, after, label_before, label_after,
+                     numbers=None) -> dict:
+    """前後の画像を、ドラッグで動く分割線で比べるタブ。"""
+    return _tab("split", tab_id, label, badge, text, numbers,
+                {"before": before, "after": after, "label_before": label_before,
+                 "label_after": label_after})
+
+
+def viewer_spec(viewer_id: str, title: dict, subtitle: dict, hint: dict, tabs, credit=None) -> dict:
+    """ビューア全体の仕様。``tabs`` は ``viewer_*_tab`` の戻り値の列(空は不可)。"""
+    tabs = list(tabs)
+    if not tabs:
+        raise ValueError("tabs が空(タブが 1 つも無いビューアは作らない)")
+    return {"id": viewer_id, "title": title, "subtitle": subtitle, "hint": hint, "tabs": tabs,
+            "credit": credit}
+
+
+__all__ = [
+    "BADGES", "UI", "LANGS", "LANG_NAMES", "KINDS", "viewer_text", "viewer_number", "viewer_spec", "viewer_mesh_tab",
+    "viewer_points_tab", "viewer_frames_tab", "viewer_split_tab", "write_viewer",
+]
+
+
+def _main(argv=None) -> int:
+    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    ap.add_argument("spec", help="JSON の仕様(配列は入れ子の list)")
+    ap.add_argument("out", help="出力の HTML")
+    ap.add_argument("--lang", default="ja", help="言語(カンマ区切りで複数。先頭が既定): " + ",".join(LANGS))
+    a = ap.parse_args(argv)
+    spec = json.loads(Path(a.spec).read_text(encoding="utf-8"))
+    out = write_viewer(spec, a.out, a.lang.split(","))
+    print("wrote %s (%d bytes)" % (out, Path(out).stat().st_size))
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(_main())

@@ -1,4 +1,4 @@
-# SEGMENTATION operator help — 54 ops in 10 categories
+# SEGMENTATION operator help — 59 ops in 11 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/segmentation/<category>/<op>.md` を走査。
 
@@ -14,9 +14,9 @@
 
 ## カテゴリ
 
-### classify (5)
+### classify (7)
 
-[class_2dim_sup](classify/class_2dim_sup.md) · [class_2dim_unsup](classify/class_2dim_unsup.md) · [class_ndim_norm](classify/class_ndim_norm.md) · [classify_image_class_lut](classify/classify_image_class_lut.md) · [learn_ndim_norm](classify/learn_ndim_norm.md)
+[class_2dim_sup](classify/class_2dim_sup.md) · [class_2dim_unsup](classify/class_2dim_unsup.md) · [class_ndim_norm](classify/class_ndim_norm.md) · [classify_image_class_lut](classify/classify_image_class_lut.md) · [fisher_lda_fit](classify/fisher_lda_fit.md) · [fisher_lda_score](classify/fisher_lda_score.md) · [learn_ndim_norm](classify/learn_ndim_norm.md)
 
 ### compare (1)
 
@@ -33,6 +33,10 @@
 ### grow (2)
 
 [expand_gray](grow/expand_gray.md) · [regiongrowing_n](grow/regiongrowing_n.md)
+
+### plant (3)
+
+[cover_ratio_grade](plant/cover_ratio_grade.md) · [plant_color_index](plant/plant_color_index.md) · [superpixel_color_texture_features](plant/superpixel_color_texture_features.md)
 
 ### score (8)
 

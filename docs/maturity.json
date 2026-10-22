@@ -108,8 +108,8 @@
    "category": "見つける",
    "note": "docs/capabilities/blob-and-region.md",
    "status": "validated-public-real-data",
-   "ops_total": 4,
-   "ops_named_in_tests": 3,
+   "ops_total": 5,
+   "ops_named_in_tests": 4,
    "ops_not_named_in_tests": [
     "watersheds"
    ],
@@ -131,6 +131,13 @@
     },
     {
      "id": "poc_real_coin_metrology",
+     "data": "real",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "poc_dense_bubble_count",
      "data": "real",
      "gate": "tests/test_poc_scripts_run.py",
      "executed": true,
@@ -243,6 +250,69 @@
    "examples": [
     {
      "id": "poc_zebra_stripes_fly_eye",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
+   "id": "convergent-forward-models",
+   "title": "多重反射・多重散乱・反復を収束まで回す —— 収束した証拠と残りの誤差を返し、収束しなければ値を出さない",
+   "title_en": "Run inter-reflections, multiple scattering and iterations to convergence — return the evidence and the remaining error, and no value when it did not converge",
+   "category": "光と色",
+   "note": "docs/capabilities/convergent-forward-models.md",
+   "status": "verified-synthetic",
+   "ops_total": 6,
+   "ops_named_in_tests": 6,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "converge_tour",
+     "data": "synthetic",
+     "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
+   "id": "crop-weed-cover-grade",
+   "title": "圃場の RGB から作物と雑草を色と肌理で分け、雑草の被度を宣言した境で段階にする(学習器なし)",
+   "title_en": "Separating crop from weeds in field RGB by colour and texture, and grading weed cover at declared edges (no learned network)",
+   "category": "見つける",
+   "note": "docs/capabilities/crop-weed-cover-grade.md",
+   "status": "validated-public-real-data",
+   "ops_total": 5,
+   "ops_named_in_tests": 5,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_weed_rice_ratio",
+     "data": "real",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
+   "id": "dual-energy-xray-material-discrimination",
+   "title": "X 線の 2 つのエネルギーで厚みと材質を分ける(デュアルエナジー / フォトンカウンティング: スペクトル → 窓 → 基底分解 → 実効 Z)",
+   "title_en": "Separate thickness from material with two X-ray energies (dual-energy and photon-counting X-ray: spectrum, energy windows, basis decomposition, effective Z)",
+   "category": "見つける",
+   "note": "docs/capabilities/dual-energy-xray-material-discrimination.md",
+   "status": "verified-synthetic",
+   "ops_total": 14,
+   "ops_named_in_tests": 14,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_dual_energy_xray",
      "data": "synthetic",
      "gate": "tests/test_poc_scripts_run.py",
      "executed": true,
@@ -444,6 +514,76 @@
    ]
   },
   {
+   "id": "good-sample-variation-model",
+   "title": "良品を並べて「いつもと違う」を言う(良品統計の変動モデル、誤検出率の宣言つき)",
+   "title_en": "Flag what differs from aligned good samples (a per-pixel variation model with a declared false-alarm rate)",
+   "category": "見つける",
+   "note": "docs/capabilities/good-sample-variation-model.md",
+   "status": "validated-public-real-data",
+   "ops_total": 10,
+   "ops_named_in_tests": 10,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_good_sample_variation_model",
+     "data": "real",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "anomaly_eval_metrics",
+     "data": "synthetic",
+     "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
+   "id": "grating-interferometry",
+   "title": "格子干渉計(タルボ・ロー)で透過・微分位相・暗視野の 3 像を分ける",
+   "title_en": "Grating interferometry (Talbot / Talbot-Lau): transmission, differential phase and dark field from one phase-stepping scan",
+   "category": "測る",
+   "note": "docs/capabilities/grating-interferometry.md",
+   "status": "validated-public-real-data",
+   "ops_total": 8,
+   "ops_named_in_tests": 8,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_grating_interferometry",
+     "data": "real",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
+   "id": "grating-spectrometer-and-illumination",
+   "title": "回折格子の分光器と顕微鏡の照明系(帯域の幅・smile / keystone・ケーラー / クリティカル・同軸のハーフミラー)",
+   "title_en": "Grating spectrometer and microscope illumination (bandwidth, smile and keystone, Koehler and critical illumination, coaxial half mirror)",
+   "category": "光と色",
+   "note": "docs/capabilities/grating-spectrometer-and-illumination.md",
+   "status": "verified-synthetic",
+   "ops_total": 8,
+   "ops_named_in_tests": 8,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_spectrometer_illumination",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "gw-interferometer-quantum-noise-and-matched-filter",
    "title": "干渉計の共振器・量子雑音の予算・色つき雑音の中の既知波形を閉形式で設計する(重力波望遠鏡の式を検査装置の干渉計・振動計・AE に)",
    "title_en": "Cavity optics, the quantum-noise budget and a known waveform in coloured noise, in closed form (the gravitational-wave detector's equations for inspection interferometers, vibrometers and AE)",
@@ -586,6 +726,48 @@
    ]
   },
   {
+   "id": "interactive-poc-viewer",
+   "title": "結果を、触って見られる 1 枚の HTML にする(タブ・バッジ・3-D・動画・多言語)",
+   "title_en": "Turn results into one self-contained page you can touch (tabs, badges, 3-D, video, languages)",
+   "category": "見せる",
+   "note": "docs/capabilities/interactive-poc-viewer.md",
+   "status": "verified-synthetic",
+   "ops_total": 6,
+   "ops_named_in_tests": 6,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "interactive_poc_viewer",
+     "data": "synthetic",
+     "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
+   "id": "interreflection-to-convergence",
+   "title": "凹んだ部品の相互反射を、測光の真値を保ったまま収束まで数える(3-D の形態係数・漸進ラジオシティ・検査用の多重反射描画)",
+   "title_en": "Count interreflection in concave parts to convergence without losing the photometric truth (3-D view factors, progressive radiosity, an inspection render with bounces)",
+   "category": "光と色",
+   "note": "docs/capabilities/interreflection-to-convergence.md",
+   "status": "verified-synthetic",
+   "ops_total": 7,
+   "ops_named_in_tests": 7,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_pocket_interreflection",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "inverted-colour-overlays",
    "title": "地の色を知らずに線と領域を描く(反転色)",
    "title_en": "Draw lines and regions without knowing the background colour",
@@ -601,6 +783,27 @@
      "id": "annotate_paper_tour",
      "data": "synthetic",
      "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
+   "id": "itof-multifreq",
+   "title": "間接 ToF(位相方式)の多周波アンラップと壊れ方(折り返し・多重反射・縁の混合・高調波・背景光)",
+   "title_en": "Indirect time-of-flight (phase-based): multi-frequency unwrapping and how it breaks (wrapping, multipath, flying pixels, harmonics, ambient light)",
+   "category": "測る",
+   "note": "docs/capabilities/itof-multifreq.md",
+   "status": "verified-synthetic",
+   "ops_total": 8,
+   "ops_named_in_tests": 8,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_itof_multifreq",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
      "executed": true,
      "registry": "examples2d"
     }
@@ -649,6 +852,48 @@
    ]
   },
   {
+   "id": "lens-prescription-files",
+   "title": "光学設計ファイル(.zmx の逐次処方を読む・書く・分類する)",
+   "title_en": "Lens design files (read, write and triage sequential .zmx prescriptions)",
+   "category": "光と色",
+   "note": "docs/capabilities/lens-prescription-files.md",
+   "status": "verified-synthetic",
+   "ops_total": 4,
+   "ops_named_in_tests": 4,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_lens_file_roundtrip",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
+   "id": "lens-tolerancing",
+   "title": "レンズの製造公差を、MTF と歩留まりで決める",
+   "title_en": "Budget lens manufacturing tolerances by MTF and yield",
+   "category": "組み立てる",
+   "note": "docs/capabilities/lens-tolerancing.md",
+   "status": "verified-synthetic",
+   "ops_total": 8,
+   "ops_named_in_tests": 8,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_lens_tolerancing",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "light-transport",
    "title": "凹みの相互反射で縞投影と ToF が外れる量を、撮る前に予測する(大域光輸送・直接と大域の分離・マイクロ位相シフト)",
    "title_en": "Predict how far interreflection in concave parts throws fringe projection and ToF off, before measuring (global light transport, direct/global separation, micro phase shifting)",
@@ -670,9 +915,30 @@
    ]
   },
   {
+   "id": "lockin-demodulation",
+   "title": "画素ごとの直交復調(ロックイン・時間相関イメージセンサ → 振幅・位相・直流、リング照明の法線・符号化照明の分離・熱波)",
+   "title_en": "Per-pixel lock-in demodulation (time-correlation imaging: amplitude, phase and DC; ring-light normals, coded-light separation, thermal waves)",
+   "category": "測る",
+   "note": "docs/capabilities/lockin-demodulation.md",
+   "status": "verified-synthetic",
+   "ops_total": 9,
+   "ops_named_in_tests": 9,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_lockin_imaging",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "material-optical-property-library",
-   "title": "材料の光学物性を 1 つの表で引く(硝材・結晶・半導体・金属・液体・プラスチック 83 種、一次文献の係数と数表、硝材カタログの取り込み口)",
-   "title_en": "One table of material optical constants (83 glasses, crystals, semiconductors, metals, liquids and plastics from primary literature, with a glass-catalogue importer)",
+   "title": "材料の光学物性を 1 つの表で引く(硝材・結晶・半導体・金属・液体・プラスチック 86 種、一次文献の係数と数表、硝材カタログの取り込み口)",
+   "title_en": "One table of material optical constants (86 glasses, crystals, semiconductors, metals, liquids and plastics from primary literature, with a glass-catalogue importer)",
    "category": "光と色",
    "note": "docs/capabilities/material-optical-property-library.md",
    "status": "validated-public-real-data",
@@ -752,6 +1018,27 @@
     {
      "id": "poc_hyperspectral_foreign_matter",
      "data": "real",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
+   "id": "noncoaxial-optics",
+   "title": "非共軸の光学系(折り返しミラー・半透鏡・傾いた平板・シャインプルーフ・ゴースト)",
+   "title_en": "Non-coaxial optics (fold mirrors, beamsplitters, tilted plates, Scheimpflug and ghosts)",
+   "category": "光と色",
+   "note": "docs/capabilities/noncoaxial-optics.md",
+   "status": "verified-synthetic",
+   "ops_total": 14,
+   "ops_named_in_tests": 14,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_noncoaxial_optics",
+     "data": "synthetic",
      "gate": "tests/test_poc_scripts_run.py",
      "executed": true,
      "registry": "examples2d"
@@ -867,6 +1154,34 @@
    ]
   },
   {
+   "id": "patch-feature-anomaly-detection",
+   "title": "良品だけから学んで外れたパッチを指す(古典特徴の「位置ごとの正規分布」と「記憶バンク」、再現率を保証する運用点)",
+   "title_en": "Flag patches that leave what good samples look like (classical features, a normal distribution per position or a memory bank, and a recall-guaranteeing operating point)",
+   "category": "見つける",
+   "note": "docs/capabilities/patch-feature-anomaly-detection.md",
+   "status": "validated-public-real-data",
+   "ops_total": 12,
+   "ops_named_in_tests": 12,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_patch_anomaly",
+     "data": "real",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "anomaly_eval_metrics",
+     "data": "synthetic",
+     "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "periodic-defects-in-1d-signals",
    "title": "1-D 信号の周期欠陥を見つける",
    "title_en": "Periodic defects in a 1-D signal",
@@ -915,6 +1230,27 @@
    "examples": [
     {
      "id": "poc_phase_measuring_deflectometry",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
+   "id": "photograph-through-prescription",
+   "title": "処方どおりのレンズ越しに 3 次元の場面を撮る(被写界深度・猫の目のボケ・隅の光量・色収差・ゴースト)",
+   "title_en": "Photographing a 3-D scene through the actual lens prescription (depth of field, cat's-eye bokeh, corner illumination, colour fringes, ghosts)",
+   "category": "描く",
+   "note": "docs/capabilities/photograph-through-prescription.md",
+   "status": "verified-synthetic",
+   "ops_total": 8,
+   "ops_named_in_tests": 8,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_photograph_through_prescription",
      "data": "synthetic",
      "gate": "tests/test_poc_scripts_run.py",
      "executed": true,
@@ -1017,6 +1353,55 @@
     {
      "id": "poc_scan_to_bim_asbuilt",
      "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
+   "id": "plenoptic-camera",
+   "title": "処方から撮るプレノプティックカメラ",
+   "title_en": "Prescription-based plenoptic camera",
+   "category": "描く",
+   "note": "docs/capabilities/plenoptic-camera.md",
+   "status": "verified-synthetic",
+   "ops_total": 6,
+   "ops_named_in_tests": 6,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_plenoptic_camera",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
+   "id": "point-cloud-to-picture",
+   "title": "点群をそのまま色の絵にする",
+   "title_en": "Draw a point cloud as a colour picture",
+   "category": "見せる",
+   "note": "docs/capabilities/point-cloud-to-picture.md",
+   "status": "validated-public-real-data",
+   "ops_total": 3,
+   "ops_named_in_tests": 3,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "points_render_basics",
+     "data": "synthetic",
+     "gate": "examples3d.py (suite runs a smoke subset)",
+     "executed": true,
+     "registry": "examples3d"
+    },
+    {
+     "id": "poc_flybrain_pointcloud",
+     "data": "real",
      "gate": "tests/test_poc_scripts_run.py",
      "executed": true,
      "registry": "examples2d"
@@ -1159,6 +1544,108 @@
    ]
   },
   {
+   "id": "reuse-computation-results",
+   "title": "同じ入力の検証・近傍探索・変換核を一度だけ計算する",
+   "title_en": "Reuse validation, neighbourhoods and transform kernels",
+   "category": "組み立てる",
+   "note": "docs/capabilities/reuse-computation-results.md",
+   "status": "verified-synthetic",
+   "ops_total": 9,
+   "ops_named_in_tests": 8,
+   "ops_not_named_in_tests": [
+    "PreparedVolProbe"
+   ],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "perf_pointcloud_descriptors",
+     "data": "synthetic",
+     "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "perf_monogenic_metrics",
+     "data": "synthetic",
+     "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "perf_prepared_volume_probe",
+     "data": "synthetic",
+     "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "perf_polarization_analyze",
+     "data": "synthetic",
+     "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "perf_hankel_plan_and_piv_stream",
+     "data": "synthetic",
+     "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
+   "id": "robust-code-matching",
+   "title": "照明むら・ハイライト・遮蔽に強いテンプレート照合(明るさの変化の向きを符号にして比べ、決まらないテンプレートは拒否する)",
+   "title_en": "Template matching that survives uneven light, highlights and occlusion (compare the direction of brightness change as codes, and refuse templates that cannot fix a position)",
+   "category": "見つける",
+   "note": "docs/capabilities/robust-code-matching.md",
+   "status": "validated-public-real-data",
+   "ops_total": 6,
+   "ops_named_in_tests": 5,
+   "ops_not_named_in_tests": [
+    "increment_sign"
+   ],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_code_matching_breakdown",
+     "data": "real",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
+   "id": "robust-gaussian-spline-profile-filter",
+   "title": "傷や突起に引きずられない平均線を引く(ロバストなガウス回帰・スプラインフィルタ、断面と面)",
+   "title_en": "A mean line that deep scratches and spikes cannot drag (robust Gaussian-regression and spline filters, for profiles and surfaces)",
+   "category": "測る",
+   "note": "docs/capabilities/robust-gaussian-spline-profile-filter.md",
+   "status": "verified-synthetic",
+   "ops_total": 4,
+   "ops_named_in_tests": 4,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_robust_profile_filter",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "example_robust_profile_filter",
+     "data": "synthetic",
+     "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "sam-bond-voids",
    "title": "ハイブリッド接合のボイドを、超音波のエコーの明るさでなく位相で見つける(走査型音響顕微鏡の C スキャン・周波数の取引・POD)",
    "title_en": "Find hybrid-bond voids by the phase of the ultrasonic echo, not its brightness (scanning acoustic microscope C-scans, the frequency trade-off, POD)",
@@ -1231,6 +1718,76 @@
     {
      "id": "poc_sem_wafer_defect_edge_bias",
      "data": "real",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
+   "id": "sem-tem-same-particle",
+   "title": "同じ粒子を走査像と透過像で測り、二つの寸法偏りを比べる",
+   "title_en": "Measure the same particles in scanning and transmission images and compare both size biases",
+   "category": "測る",
+   "note": "docs/capabilities/sem-tem-same-particle.md",
+   "status": "verified-synthetic",
+   "ops_total": 9,
+   "ops_named_in_tests": 9,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_sem_tem_same_particle",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
+   "id": "sequential-lens-design-metrics",
+   "title": "逐次光学設計の指標(理想レンズ面 → 囲みエネルギー → 子午/球欠 MTF → スルーフォーカス MTF)",
+   "title_en": "Sequential lens-design metrics (ideal lens surface, encircled energy, tangential / sagittal MTF, through-focus MTF)",
+   "category": "測る",
+   "note": "docs/capabilities/sequential-lens-design-metrics.md",
+   "status": "verified-synthetic",
+   "ops_total": 32,
+   "ops_named_in_tests": 32,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "optical_design_metrics",
+     "data": "synthetic",
+     "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "poc_zoom_configurations",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "poc_lens_global_search",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "poc_lens_merit_operands",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "poc_lens_solves_afocal",
+     "data": "synthetic",
      "gate": "tests/test_poc_scripts_run.py",
      "executed": true,
      "registry": "examples2d"
@@ -1420,6 +1977,27 @@
    ]
   },
   {
+   "id": "tem-phase-contrast-and-ctf",
+   "title": "仮想の透過電子顕微鏡(電子の波長 → CTF → 位相コントラストの像 → Thon リングから焦点外れを推定 → 補正)",
+   "title_en": "A virtual transmission electron microscope (electron wavelength, CTF, phase-contrast images, defocus from Thon rings, correction)",
+   "category": "測る",
+   "note": "docs/capabilities/tem-phase-contrast-and-ctf.md",
+   "status": "validated-public-real-data",
+   "ops_total": 11,
+   "ops_named_in_tests": 11,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_tem_ctf_thon_rings",
+     "data": "real",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "template-alignment",
    "title": "位置決め(テンプレート照合で測定線を追従させる)",
    "title_en": "Locate a part by template matching and move the measurement model with it",
@@ -1546,6 +2124,27 @@
    ]
   },
   {
+   "id": "tof-camera",
+   "title": "同じ3次元場面を間接ToFと直接ToFで測る",
+   "title_en": "Measuring one 3-D scene with indirect and direct time of flight",
+   "category": "測る",
+   "note": "docs/capabilities/tof-camera.md",
+   "status": "verified-synthetic",
+   "ops_total": 14,
+   "ops_named_in_tests": 14,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_tof_camera",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "tomography-reconstruction",
    "title": "投影から断面を再構成する(CT)",
    "title_en": "Reconstruct slices from projections (CT)",
@@ -1646,6 +2245,27 @@
    ]
   },
   {
+   "id": "virtual-sem-monte-carlo",
+   "title": "仮想 SEM —— 電子と固体の相互作用をモンテカルロで解き、加速電圧・検出器・帯電で像と線幅がどう変わるかを実測値で採点しながら見る",
+   "title_en": "A virtual SEM — solve the electron-solid interaction by Monte Carlo and see, scored against measured data, how voltage, detector and charging change the image and the measured line width",
+   "category": "測る",
+   "note": "docs/capabilities/virtual-sem-monte-carlo.md",
+   "status": "verified-synthetic",
+   "ops_total": 9,
+   "ops_named_in_tests": 9,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_virtual_sem_kv_cd_bse",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "visual-hull-from-silhouettes",
    "title": "シルエットから立体を彫り出す(視体積交差)",
    "title_en": "Carve a solid out of silhouettes (visual hull)",
@@ -1702,6 +2322,48 @@
    ]
   },
   {
+   "id": "water-inspection-images",
+   "title": "水が検査画像にどう写るか(プールの底のコースティクス・瓶の側面像と液面・濡れた面・船体の水中画像)",
+   "title_en": "How water looks in inspection images (caustics on a pool floor, a bottle seen from the side with its fill line, a wet surface, a hull seen through water)",
+   "category": "光と色",
+   "note": "docs/capabilities/water-inspection-images.md",
+   "status": "verified-synthetic",
+   "ops_total": 7,
+   "ops_named_in_tests": 7,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_water_inspection_images",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
+   "id": "water-transparent-media",
+   "title": "水と透明媒質(海の波・水面のフレネルと屈折・水中の色と散乱・瓶のレンズ作用)",
+   "title_en": "Water and transparent media (ocean waves, Fresnel and refraction at the surface, colour and scattering under water, a bottle as a lens)",
+   "category": "光と色",
+   "note": "docs/capabilities/water-transparent-media.md",
+   "status": "verified-synthetic",
+   "ops_total": 10,
+   "ops_named_in_tests": 10,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_water_transparent_media",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "what-a-picture-cannot-check",
    "title": "絵では確かめられないもの(積分器の次数・リアプノフ指数・分岐・相関次元・極小曲面)",
    "title_en": "What a picture cannot check (integrator order, Lyapunov spectrum, bifurcations, correlation dimension, minimal surfaces)",
@@ -1745,9 +2407,9 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 384,
-  "run_by_the_poc_gate": 242,
-  "run_by_the_example_gate": 142,
+  "examples2d_total": 431,
+  "run_by_the_poc_gate": 275,
+  "run_by_the_example_gate": 156,
   "not_run_by_any_gate": 0,
   "gates": [
    "tests/test_poc_scripts_run.py",

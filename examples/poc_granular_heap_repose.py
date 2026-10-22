@@ -155,6 +155,7 @@ def _pad_top(frames, h=None):
 def numpy_part() -> dict:
     print("== 1. numpy の門(閉形式・側面像・高さ図・Beverloo・基準面・流動性・スプーン・容器・MJCF)")
     t0 = time.perf_counter()
+    c0 = time.process_time()
     out = {}
 
     # ── 門 1 円錐の閉形式
@@ -351,8 +352,12 @@ def numpy_part() -> dict:
     gate("門 19 入口: __all__ が実在し、docstring があり Markdown のリンク記法を含まない", not missing and not bad_doc,
          "%d 名%s" % (len(G.__all__), "" if not (missing or bad_doc) else "; %r %r" % (missing, bad_doc)))
     dt = time.perf_counter() - t0
+    cpu = time.process_time() - c0
     # 単独 1.3 s、全体スイートの 8 並列の中では 3.3 s(実測、3 s の門が負荷で鳴った)。共有ランナーの遅さも見込んで 15 s。
-    gate("門 20 既定の門の所要 ≤ 15 s", dt <= 15.0, "%.2f s(単独の実測 1.3 s)" % dt)
+    # ★2026-10-15: 壁時計は CI の並列のシャードで同じ機械の他のテストの負荷まで数える
+    #   (poc_phase_measuring_deflectometry がこれで赤になった)。この門が抑えたいのはこの PoC 自身の計算量なので、プロセスの CPU 時間
+    #   (time.process_time)で測り、壁時計は併記する。
+    gate("門 20 既定の門の所要 ≤ 15 s", cpu <= 15.0, "CPU %.2f s(壁時計 %.2f s、単独の実測 1.3 s)" % (cpu, dt))
     return out
 
 
@@ -360,6 +365,7 @@ def numpy_part() -> dict:
 def full_part(out: dict) -> dict:
     print("== 2. MuJoCo の門(剛体球 1,200 個の山 = 第 2 実装)")
     t0 = time.perf_counter()
+    c0 = time.process_time()
     r = G.heap_mujoco_pour()
     info = r["model_info"]
     pitch, extent, height = 0.0015, 0.16, 0.07
@@ -398,7 +404,11 @@ def full_part(out: dict) -> dict:
          "%.3f kg/s vs %.3f kg/s(D_eq %.1f mm、d %.0f mm、ρ_b %.0f kg/m³ はビンの実測)= 比 %.2f(門 0.5〜2 = 桁だけ; D₀/d = %.1f は詰まりの限界付近、"
          "帯のコマ %d)" % (dr["rate"], Wb, Deq * 1e3, 2 * r["radius"] * 1e3, info["bulk_density_bin"], dr["rate"] / Wb, Deq / (2 * r["radius"]), dr["n_frames"]))
     dt = time.perf_counter() - t0
-    gate("門 25 --full の所要 ≤ 60 s", dt <= 60.0, "%.1f s(シミュ %.1f s、%d 歩 × %.1f ms)" % (dt, r["elapsed_s"], info["steps"], info["timestep"] * 1e3))
+    cpu = time.process_time() - c0
+    # ★2026-10-15: 壁時計は CI の並列のシャードで同じ機械の他のテストの負荷まで数える
+    #   (poc_phase_measuring_deflectometry がこれで赤になった)。この門が抑えたいのはこの PoC 自身の計算量なので、プロセスの CPU 時間
+    #   (time.process_time)で測り、壁時計は併記する。
+    gate("門 25 --full の所要 ≤ 60 s", cpu <= 60.0, "CPU %.1f s(壁時計 %.1f s、シミュ %.1f s、%d 歩 × %.1f ms)" % (cpu, dt, r["elapsed_s"], info["steps"], info["timestep"] * 1e3))
     out.update(mj=r, mj_heap=heap, mj_sils=sils, mj_phi=phi_s, mj_phis=phis, mj_hm=hm, mj_h=h, mj_h_raw=h_raw, mj_rate=dr, mj_Wb=Wb, mj_Deq=Deq,
                mj_extent=extent, mj_height=height, mj_pitch=pitch)
     return out
@@ -589,6 +599,7 @@ def _figures_mujoco(out: dict) -> None:
                       "この方位で φ = %.2f 度。4 方位 %s。" % (s0["phi_deg"], ", ".join("%.1f" % v for v in out["mj_phis"])))
     # 14 高さ図
     figs.save("granular_mujoco_heightmap", np.kron(out["mj_hm"] * 1e3, np.ones((3, 3))),
+               kind="height", unit="mm",
               caption="同じ山の高さ図(単位 mm、球面の最大高さ、1.5 mm/セルを 3 倍の最近傍で表示)。2 粒径で平滑してから dem_slope: 中央値 %.2f 度"
                       "(平滑なしの最頻 %.1f 度 = 球の縁)。" % (out["mj_h"]["phi_median_deg"], out["mj_h_raw"]["phi_deg"]))
     # 15 排出の質量の列

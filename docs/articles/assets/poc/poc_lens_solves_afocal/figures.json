@@ -1,0 +1,34 @@
+[
+ {
+  "file": "01_lens_solves_afocal.png",
+  "name": "lens_solves_afocal",
+  "caption": "1 段目: 左 二重ガウス型の最終素子の前面の曲率で F/# = 5 を解く(F/#(c) の曲線と 2 つの根、採るのは近い方)、中 絞りの半径を動かしたときの F/#(解いた版は 5 のまま、数字を固めた版は流れる)、右 解いた EFL と像距離。2 段目: 実ガラスの 2 つの色消し 2 枚の afocal 望遠鏡の角度のスポット RMS(分角)と角倍率の歪み、1° の射出角の散らばり。3・4 段目: 非点収差を 0 にした薄いメニスカスの 0 / 5 / 7 / 10° のスポット、平らな像面(3 段目)とペッツバール半径の像面(4 段目)。最下段: 左 円錐面(r¹)の板の光線が軸を横切る位置と閉形式、右 球面収差の補正板に足す項ごとの軸上スポット(板なし = 1)。",
+  "shape": [
+   1530,
+   1320,
+   3
+  ]
+ },
+ {
+  "file": "02_solved_surface_field_sweep.gif",
+  "name": "solved_surface_field_sweep",
+  "caption": "解いた曲面像面で視野角を掃引したスポット。",
+  "shape": [
+   480,
+   480,
+   3
+  ],
+  "animated": true,
+  "frames": 16,
+  "frames_written": 16,
+  "fps": 5.0,
+  "video": "02_solved_surface_field_sweep.mp4",
+  "video_frames": 32,
+  "video_fps": 10.0,
+  "video_shape": [
+   720,
+   720,
+   3
+  ]
+ }
+]

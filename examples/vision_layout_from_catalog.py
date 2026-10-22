@@ -90,17 +90,25 @@ def main() -> None:
     assert abs(budget["pixel_object_um"] - 3.45 / m) < 1e-9
     assert abs(budget["numerical_aperture"] - 1.0 / (2.0 * 5.6)) < 1e-12
     # 分解限界は「回折」と「標本化(2 画素)」の**大きい方**。ここを取り違えると、
-    # 絞りを開けて直る問題と直らない問題の区別がつかなくなる
+    # 絞りを開けて直る問題と直らない問題の区別がつかなくなる。回折の側はエアリー**径**(2.44·λ·N_w)の
+    # 物体側(visiondesign と同じ 1 本の式。半径 = Rayleigh の 2 点分離は airy_object_um に別名で残る)
     nyquist = 2.0 * budget["pixel_object_um"]
-    assert abs(budget["limit_um"] - max(budget["airy_object_um"], nyquist)) < 1e-9
-    assert budget["limited_by"] == "sampling" and nyquist > budget["airy_object_um"]
+    assert abs(budget["airy_diameter_object_um"] - 2.0 * budget["airy_object_um"]) < 1e-9
+    assert abs(budget["limit_um"] - max(budget["airy_diameter_object_um"], nyquist)) < 1e-9
+    # F/5.6 では回折(径 75 um)が 2 画素(62 um)を上回る。2026-10-15 までは半径(38 um)で判定して
+    # 「標本化が律速」と出ていた —— visiondesign と判定がそろった結果、この構成の答えが変わった
+    assert budget["limited_by"] == "diffraction" and budget["airy_diameter_object_um"] > nyquist
+    fast = OS.optical_budget(focal_mm=25.0, working_distance_mm=250.0, f_number=2.8, pixel_um=3.45)
+    print(f"    F/2.8 に開けると律速は **{fast['limited_by']}**(Airy 径 {fast['airy_diameter_object_um']:.1f} um "
+          f"< 2 画素 {2 * fast['pixel_object_um']:.1f} um)")
+    assert fast["limited_by"] == "sampling" and fast["airy_diameter_object_um"] < 2 * fast["pixel_object_um"]
 
     # 高倍率・絞り込みでは回折側が律速になる(同じ式で切り替わる)
     macro = OS.optical_budget(focal_mm=50.0, working_distance_mm=100.0,
                               f_number=8.0, pixel_um=3.45)
     print(f"    倍率 {macro['magnification']:.2f} / F/8 では律速が "
           f"**{macro['limited_by']}** に変わる "
-          f"(Airy {macro['airy_object_um']:.2f} um > 2 画素 "
+          f"(Airy 径 {macro['airy_diameter_object_um']:.2f} um > 2 画素 "
           f"{2 * macro['pixel_object_um']:.2f} um)")
     assert macro["limited_by"] == "diffraction"
 
@@ -111,10 +119,20 @@ def main() -> None:
           f"物体側 Airy {budget['airy_object_um']:.1f} → {tight['airy_object_um']:.1f} um")
     assert tight["dof_um"] > budget["dof_um"]
     assert tight["airy_object_um"] > budget["airy_object_um"]
-    # 被写界深度も閉じた式(幾何 2·N_w·c + 波動 2·λ·N_w²、いずれも物体側 /m²)
+    # 被写界深度も閉じた式。幾何の側は薄肉レンズの錯乱円を直接解く(物体 s' の像 v' = f·s'/(s' − f)、
+    # 撮像面 v でのぼけ径 D·|v' − v|/v' = c、D = f/N → 遠点の像 v' = v·D/(D + c)、近点の像 v' = v·D/(D − c))。
+    # 回折の側は Rayleigh の λ/4 の焦点深度 ±2·λ·N_w²(全幅 4·λ·N_w²)を m² で物体側へ。dof_um はその和
+    f_, wd_, c_mm, D = 25.0, 250.0, budget["coc_um"] * 1e-3, 25.0 / 5.6
+    v = f_ * wd_ / (wd_ - f_)
+    obj = lambda vp: f_ * vp / (vp - f_)
+    geo_mm = obj(v * D / (D + c_mm)) - obj(v * D / (D - c_mm))      # 遠点 − 近点
     nw, lam_um = budget["f_number_working"], budget["wavelength_nm"] * 1e-3
-    want_dof = (2.0 * nw * budget["coc_um"] + 2.0 * lam_um * nw * nw) / (m * m)
-    assert abs(budget["dof_um"] - want_dof) < 1e-6
+    diff_um = 4.0 * lam_um * nw * nw / (m * m)
+    print(f"    被写界深度 {budget['dof_um']:.0f} um = 幾何 {budget['dof_geometric_um']:.0f} + "
+          f"回折 {budget['dof_diffraction_um']:.0f} um")
+    assert abs(budget["dof_geometric_um"] - geo_mm * 1e3) < 1e-6
+    assert abs(budget["dof_diffraction_um"] - diff_um) < 1e-6
+    assert abs(budget["dof_um"] - (geo_mm * 1e3 + diff_um)) < 1e-6
 
     # --- 3) 照明(型番・自社登録・スペクトル)-----------------------------------
     print("\n[3] 照明")

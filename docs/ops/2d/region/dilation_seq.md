@@ -8,7 +8,7 @@ halcon: dilation_seq
 examples: [gallery2d_region]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # dilation_seq — 2D `region` op
@@ -40,6 +40,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 既定の十字形構造要素（4 近傍）で、a に応じて 1〜4 回反復して膨張（dilation）する逐次的膨張。b は未使用。
 
 HALCON の ``dilation_seq``（構造要素を繰り返し適用して逐次的に膨張する演算）に相当する近似。円形やユーザー定義の構造要素ではなく scipy 既定の十字形要素を使う点が簡略化されている。
+
+**つまみ(実測)**: ``a`` は**段階的**に効き、切り替わるのは a ≈ 0.33、0.67、0.99(実測。刻み 0.02 の掃きで測った位置)。
 
 ## 詳しい使い方ガイド
 

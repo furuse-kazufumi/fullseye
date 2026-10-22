@@ -7,7 +7,7 @@ out: table
 examples: [poc_graph_hierarchy_segmentation]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # ultrametric_contour_map — SEGMENTATION `graph` op
@@ -44,7 +44,7 @@ dynamics の階層の ultrametric contour map(UCM): 隣り合う画素 p, q の�
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[class_ndim_norm](../classify/class_ndim_norm.md)
+[class_ndim_norm](../classify/class_ndim_norm.md) · [fisher_lda_score](../classify/fisher_lda_score.md)
 
 ## 同カテゴリ(`graph`)
 

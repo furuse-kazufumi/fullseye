@@ -8,7 +8,7 @@ halcon: fill_up_shape
 examples: [gallery2d_region]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # fill_up_shape — 2D `region` op
@@ -38,6 +38,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 領域内の小さな穴を埋める。``area_threshold = 16+200a`` 画素以下の穴だけを埋める（skimage の ``remove_small_holes``）。b は未使用。
 
 HALCON の ``fill_up_shape``（面積・円形度など形状特徴で選んだ穴だけを埋める演算）とは異なり、この実装は面積の上限だけで穴を選別する単純化された近似 —— 円形度や凸性など他の形状特徴によるフィルタリングはできない。
+
+**つまみ(実測)**: ``a`` は**段階的**に効き、切り替わるのは a ≈ 0.29、0.65(実測。刻み 0.02 の掃きで測った位置)。
 
 ## 詳しい使い方ガイド
 

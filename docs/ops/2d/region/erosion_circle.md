@@ -8,7 +8,7 @@ halcon: erosion_circle
 examples: [gallery2d_region, poc_livestock_body_volume]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # erosion_circle — 2D `region` op
@@ -47,6 +47,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 円形・矩形いずれも)に共通して**未使用**。
 
 **端の扱い**: 画像の外側は背景(0)とみなす(実測。`tools/impl2/border_probe.py`)。
+
+**つまみ(実測)**: ``a`` は**段階的**に効き、切り替わるのは a ≈ 0.33、0.67、0.99(実測。刻み 0.02 の掃きで測った位置)。
 
 ## 詳しい使い方ガイド
 

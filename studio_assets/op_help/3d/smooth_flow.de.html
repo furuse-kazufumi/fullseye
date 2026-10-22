@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">smooth_flow — 3D <code style="color:#22d3bf">scene_flow3d</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">flow_scattered</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.smooth_flow(pts0, pts1, k: &#x27;int&#x27; = 10, n_iter: &#x27;int&#x27; = 5) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import scene_flow3d; scene_flow3d.smooth_flow(pts0, pts1, k: &#x27;int&#x27; = 10, n_iter: &#x27;int&#x27; = 5) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;smooth_flow&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.smooth_flow(pts0, pts1, k: &#x27;int&#x27; = 10, n_iter: &#x27;int&#x27; = 5, method: &#x27;str&#x27; = &#x27;exact&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import scene_flow3d; scene_flow3d.smooth_flow(pts0, pts1, k: &#x27;int&#x27; = 10, n_iter: &#x27;int&#x27; = 5, method: &#x27;str&#x27; = &#x27;exact&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;smooth_flow&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Liefert einen regularisierten Fluss (N, 3): den Nächste-Nachbar-Fluss, lokal durch Nachbarschaftsmittelung geglättet.</p>
 <p>Mittelt den Rohfluss von <code style="color:#22d3bf">nearest_neighbor_flow</code> (verrauscht, da aus der Korrespondenz über den nächsten Nachbarn) iterativ über die k-Nächste-Nachbarn-Topologie im Raum von <code style="color:#22d3bf">pts0</code> (einschließlich des Punktes selbst, nur 1 Mal aufgebaut). Unterdrückt mittelwertfreies Rauschen und erhält glatte Verschiebungsfelder weitgehend (Jacobi-Iteration = Laplace-Glättung des Flussfeldes). Lineare Felder sind bei symmetrischer Nachbarschaft unverzerrt, Felder mit Krümmung schrumpfen leicht (ein ehrlicher Glättungs-Bias).</p>
@@ -10,6 +10,7 @@
 <p>pts1: (M, 3)-Punktwolke zum Zeitpunkt 1.</p>
 <p>k: Anzahl der zur Mittelung verwendeten Nachbarn (einschließlich des Punktes selbst).</p>
 <p>n_iter: Anzahl der Glättungsiterationen.</p>
+<p>method: <code style="color:#22d3bf">&quot;exact&quot;</code> verwendet das bisherige Gather, <code style="color:#22d3bf">&quot;sparse&quot;</code> eine dünnbesetzte Matrixmultiplikation mit denselben Gewichten.</p>
 <p>Returns:</p>
 <p>(N, 3) geglättetes Verschiebungsvektorfeld.</p>
 <p>Raises:</p>

@@ -401,6 +401,11 @@ def mesh_slice_contours(mesh: Any, z: float, tol: float = 1e-6) -> dict[str, np.
     V, F = _mesh(mesh, op)
     zc = _finite(z, op, "z")
     tl = _finite(tol, op, "tol", lo=0.0)
+    return _mesh_slice_contours_arrays(V, F, zc, tl, op)
+
+
+def _mesh_slice_contours_arrays(V, F, zc, tl, op="mesh_slice_contours"):
+    """Slice already validated arrays; ``F`` may be a z-bucket candidate view."""
     zs = V[:, 2].copy()
     zs[np.abs(zs - zc) <= tl] += 2.0 * tl + 1e-12
     segs = []
@@ -481,14 +486,23 @@ def _fill_rings(ring, x, y, xmin, ymin, W, H, ppm) -> np.ndarray:
             continue
         area = 0.5 * float(np.sum(px * np.roll(py, -1) - np.roll(px, -1) * py))
         sign = 1 if area > 0.0 else -1
-        for row in range(int(max(0, math.floor(py.min()))), int(min(H - 1, math.ceil(py.max()))) + 1):
-            yc = row + 0.5
-            xs = []
-            for i in range(len(px)):
-                j = (i + 1) % len(px)
-                y0, y1 = py[i], py[j]
-                if (y0 <= yc) != (y1 <= yc):
-                    xs.append(px[i] + (yc - y0) / (y1 - y0) * (px[j] - px[i]))
+        row0 = int(max(0, math.floor(py.min())))
+        row1 = int(min(H - 1, math.ceil(py.max())))
+        crossings = [[] for _ in range(max(0, row1 - row0 + 1))]
+        # Active-edge table: place an edge only in the pixel-centre rows where
+        # the old half-open crossing predicate selected it. Horizontal edges
+        # therefore remain excluded and shared vertices are counted once.
+        for i in range(len(px)):
+            j = (i + 1) % len(px)
+            y0, y1 = py[i], py[j]
+            if y0 == y1:
+                continue
+            first = max(row0, int(math.ceil(min(y0, y1) - 0.5)))
+            last = min(row1, int(math.ceil(max(y0, y1) - 0.5)) - 1)
+            for row in range(first, last + 1):
+                yc = row + 0.5
+                crossings[row - row0].append(px[i] + (yc - y0) / (y1 - y0) * (px[j] - px[i]))
+        for row, xs in enumerate(crossings, row0):
             xs.sort()
             for a, b in zip(xs[0::2], xs[1::2]):
                 lo, hi = int(math.ceil(a - 0.5)), int(math.floor(b - 0.5))
@@ -514,10 +528,21 @@ def mesh_slice_stack(mesh: Any, layer_mm: float = 0.2, px_per_mm: float = 10.0, 
     if nz < 1 or nz * H * W > MAX_LAYER_PIXELS * 4:
         raise ValueError(f"{op}: {nz} layers of {H} x {W} px is empty or too large")
     out = np.zeros((nz, H, W), dtype=np.float64)
+    candidates = [[] for _ in range(nz)]
+    tri_z = V[F, 2]
+    # Conservative tol-widened layer buckets. The slicer retains the exact
+    # vertex-on-plane adjustment, so bucketing cannot alter contour semantics.
+    for fi, (zlo, zhi) in enumerate(zip(tri_z.min(axis=1) - 1e-6,
+                                        tri_z.max(axis=1) + 1e-6)):
+        ka = max(0, int(math.ceil((zlo - z0) / dz - 0.5)))
+        kb = min(nz - 1, int(math.floor((zhi - z0) / dz - 0.5)))
+        for k in range(ka, kb + 1):
+            candidates[k].append(fi)
     for k in range(nz):
         zc = z0 + (k + 0.5) * dz
         try:
-            c = mesh_slice_contours((V, F), zc)
+            subset = F[np.asarray(candidates[k], dtype=np.int64)]
+            c = _mesh_slice_contours_arrays(V, subset, zc, 1e-6)
         except ValueError:
             continue
         out[k] = _fill_rings(c["ring"], c["x"], c["y"], xmin, ymin, W, H, ppm)

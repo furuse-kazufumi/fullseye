@@ -33,7 +33,9 @@ Ops
 
 Provenance (public literature only): Chinese remainder theorem, Garner 1959
 (mixed-radix reconstruction); Xia & Wang, closed-form and maximum-likelihood robust
-CRT for reals (IEEE TSP 2007 / 2015); redundant residue number systems (Watson &
+CRT for reals (IEEE TSP 2007 / 2015); Wang & Xia 2010, closed-form robust CRT with
+reference-remainder selection and the ``Γ/4`` bound (IEEE TSP 58(11):5655-5666,
+doi:10.1109/TSP.2010.2066974); redundant residue number systems (Watson &
 Hastings 1966); Fleet & Jepson 1990 (phase-based displacement); circular harmonic
 (angular Fourier) phase for rotation.
 
@@ -44,6 +46,7 @@ are all refused with ``ValueError`` — never clipped.
 from __future__ import annotations
 
 import operator
+import warnings
 from fractions import Fraction
 from math import gcd
 
@@ -52,7 +55,15 @@ import numpy as np
 __all__ = [
     "residue_integer_crt", "residue_crt", "residue_fault_locate",
     "crt_displacement", "harmonic_rotation",
-]
+]   # ``ResidueBoundWarning`` is public too, but not an op (the op ledger mirrors __all__)
+
+
+class ResidueBoundWarning(RuntimeWarning):
+    """``residue_crt`` returned samples outside the Wang–Xia robustness guarantee.
+
+    The folding integers are guaranteed only while every residue error is below
+    ``Γ/4`` (Wang & Xia 2010, eq. (47)); a sample whose residues modulo ``Γ`` do not
+    fit in an arc shorter than ``Γ/2`` provably violates that bound."""
 
 #: cap on (candidates x samples x bands) evaluated by one ``residue_crt`` call
 MAX_SEARCH_ELEMENTS = 60_000_000
@@ -134,6 +145,28 @@ def _rational_lcm(periods: np.ndarray, max_den: int = 64):
     return num / den
 
 
+def _rational_gcd(periods: np.ndarray, max_den: int = 64):
+    """Common factor ``Γ`` of the periods (``p_i = Γ M_i``, ``M_i`` integers with gcd 1).
+
+    Returns ``(Γ, M)`` or ``(nan, None)`` when the periods are incommensurate (same
+    rational test as :func:`_rational_lcm`). ``Γ`` is what the Wang–Xia bound is
+    stated in: residue errors below ``Γ/4`` never change the folding integers."""
+    fr = []
+    for p in periods:
+        f = Fraction(float(p)).limit_denominator(max_den)
+        if abs(float(f) - p) > 1e-9 * p or f <= 0:
+            return float("nan"), None
+        fr.append(f)
+    den = 1
+    for f in fr:
+        den = den * f.denominator // gcd(den, f.denominator)
+    ints = [int(f * den) for f in fr]
+    g = 0
+    for x in ints:
+        g = gcd(g, x)
+    return g / den, np.array([x // g for x in ints], dtype=np.int64)
+
+
 # --------------------------------------------------------------------------- #
 # 1. the theorem                                                              #
 # --------------------------------------------------------------------------- #
@@ -192,43 +225,101 @@ def residue_integer_crt(residues, moduli) -> dict:
                                  "solution would not be unique" % (op, m[i], m[j], gcd(m[i], m[j])))
     r = [x % mi for x, mi in zip(r, m)]
     digits = []
-    for k in range(len(m)):
-        v = r[k]
-        # subtract the contribution of earlier digits, divide by the earlier moduli
-        acc = 0
-        place = 1
-        for j in range(k):
-            acc += digits[j] * place
-            place *= m[j]
-        v = ((r[k] - acc) * pow(place % m[k], -1, m[k])) % m[k] if k else r[0]
-        digits.append(v)
-    value = 0
+    acc = 0
     place = 1
-    for d, mi in zip(digits, m):
-        value += d * place
-        place *= mi
-    return {"value": int(value), "modulus": int(place), "mixed_radix": digits}
+    for k in range(len(m)):
+        digit = ((r[k] - acc) * pow(place % m[k], -1, m[k])) % m[k] if k else r[0]
+        digits.append(digit)
+        acc += digit * place
+        place *= m[k]
+    return {"value": int(acc), "modulus": int(place), "mixed_radix": digits}
 
 
 # --------------------------------------------------------------------------- #
 # 2. weighted robust CRT over reals                                            #
 # --------------------------------------------------------------------------- #
-def _crt_core(r, p, w, lo, hi, ref):
+def _candidate_ks(p, lo, hi):
+    """Integers ``k`` such that ``r_ref + k p_ref`` covers ``[lo, hi)`` for every band as reference."""
+    return np.arange(min(np.floor(lo / q) for q in p) - 1, max(np.ceil(hi / q) for q in p) + 1)
+
+
+def _select_reference(r, p, w, gamma):
+    """Reference remainder per sample (Wang & Xia 2010, Sec. IV-A) -> ``(ref, within)``.
+
+    Wang & Xia: any remainder can be the reference; the one with the smallest noise
+    variance makes every remainder difference least noisy. The variance of band ``i``
+    in units of ``v`` is taken as ``p_i^2 / w_i`` (equal phase noise scaled by the
+    weight — the same model as the refinement), so the candidates are the bands with
+    the largest ``w_i / p_i^2``. Among equal-variance bands (the i.i.d. case of the
+    paper) the rule is eq. (58): the band whose remainder modulo ``Γ`` is closest to
+    the common remainder ``r^c`` estimated by eq. (55) (circular least squares, here
+    weighted by ``w_i / p_i^2``). Zero-weight bands are never the reference.
+
+    ``within`` is ``True`` where the residues modulo ``Γ`` of the weighted bands fit in
+    an arc shorter than ``Γ/2`` — a necessary condition of the bound ``|Δr_i| < Γ/4``
+    (eq. (47)); ``False`` proves the sample is outside it. Without ``Γ`` (incommensurate
+    periods) there is no guarantee and ``within`` is all ``False``."""
     n = r.shape[0]
     shp = r.shape[1:]
     pb = p.reshape((n,) + (1,) * len(shp))
+    a = w / pb ** 2
+    amax = a.max(0)
+    cand = (w > 0) & (a >= amax[None] * (1.0 - 1e-9))
+    if not np.isfinite(gamma):
+        key = np.where(cand, np.broadcast_to(pb, r.shape), np.inf)
+        return np.argmin(key, 0), np.zeros(shp, dtype=bool)
+    rc = np.mod(r, gamma)
+    asum = a.sum(0)
+    safe = np.where(asum > 0, asum, 1.0)
+    best_m = np.zeros(shp)
+    best_c = np.full(shp, np.inf)
+    for j in range(n):                       # eq. (55): the minimiser is one of the n cut means
+        x = np.where(rc >= rc[j][None], rc, rc + gamma)
+        m = np.mod((a * x).sum(0) / safe, gamma)
+        d = _wrap_signed(rc - m[None], gamma)
+        c = (a * d * d).sum(0)
+        upd = c < best_c
+        best_m = np.where(upd, m, best_m)
+        best_c = np.where(upd, c, best_c)
+    dist = np.abs(_wrap_signed(rc - best_m[None], gamma))
+    ref = np.argmin(np.where(cand, dist, np.inf), 0)          # eq. (58)
+    # arc span of the weighted bands' residues modulo Γ (zero-weight bands sit on the reference)
+    rref = np.take_along_axis(rc, ref[None], 0)
+    pts = np.sort(np.where(w > 0, rc, rref), axis=0)
+    gaps = np.concatenate([np.diff(pts, axis=0), (pts[:1] + gamma - pts[-1:])], axis=0)
+    span = gamma - gaps.max(0)
+    return ref, span < 0.5 * gamma
+
+
+def _crt_core(r, p, w, lo, hi, ref, edge=0.0):
+    """Phasor-agreement search over the candidates ``r_ref + k p_ref`` (``ref`` per sample).
+
+    A candidate carries the reference's own residue error, so the true folding of a
+    value just inside ``[lo, hi)`` can sit just outside it; candidates are admitted
+    within ``edge`` of the range (``edge`` <= the error bound, and small enough that
+    no two admitted candidates are a whole lcm apart)."""
+    n = r.shape[0]
+    shp = r.shape[1:]
+    pb = p.reshape((n,) + (1,) * len(shp))
+    ref = np.broadcast_to(np.asarray(ref), shp)
     pr = p[ref]
-    ks = np.arange(np.floor((lo - pr) / pr), np.ceil(hi / pr) + 1)
-    cand = r[ref][None] + ks.reshape((-1,) + (1,) * len(shp)) * pr
-    inside = (cand >= lo) & (cand < hi)
-    ph = 2.0 * np.pi * (cand[None] - r[:, None]) / pb[:, None]
-    score = (w[:, None] * np.cos(ph)).sum(0)
+    rr = np.take_along_axis(r, ref[None], 0)[0]
+    ks = _candidate_ks(p, lo - edge, hi + edge)
+    cand = rr[None] + ks.reshape((-1,) + (1,) * len(shp)) * pr[None]
+    inside = (cand >= lo - edge) & (cand < hi + edge)
+    active = np.any(w != 0.0, axis=tuple(range(1, w.ndim)))
+    ph = 2.0 * np.pi * (cand[None] - r[active, None]) / pb[active, None]
+    score = (w[active, None] * np.cos(ph)).sum(0)
     score = np.where(inside, score, -np.inf)
-    order = np.argsort(-score, axis=0, kind="stable")
-    best = np.take_along_axis(cand, order[:1], 0)[0]
-    s1 = np.take_along_axis(score, order[:1], 0)[0]
-    s2 = (np.take_along_axis(score, order[1:2], 0)[0] if score.shape[0] > 1
-          else np.full(shp, -np.inf))
+    best_i = np.argmax(score, axis=0)
+    best = np.take_along_axis(cand, best_i[None], 0)[0]
+    s1 = np.take_along_axis(score, best_i[None], 0)[0]
+    if score.shape[0] > 1:
+        runner = score.copy()
+        np.put_along_axis(runner, best_i[None], -np.inf, axis=0)
+        s2 = runner.max(axis=0)
+    else:
+        s2 = np.full(shp, -np.inf)
     e = _wrap_signed(r - best[None], pb)
     iv = w / pb ** 2                       # equal phase noise -> variance ~ period^2
     ivs = iv.sum(0)
@@ -251,7 +342,7 @@ def _crt_core(r, p, w, lo, hi, ref):
     return val, score_out, margin, resid, cand.shape[0]
 
 
-def residue_crt(residues, periods, weights=None, lo=0.0, hi=None) -> dict:
+def residue_crt(residues, periods, weights=None, lo=0.0, hi=None, on_outside="warn") -> dict:
     """Weighted robust CRT over real periods -> ``dict``.
 
     Solve ``v ≡ residues[i] (mod periods[i])`` for ``v`` in ``[lo, hi)``.
@@ -261,24 +352,53 @@ def residue_crt(residues, periods, weights=None, lo=0.0, hi=None) -> dict:
     typically the product of the two amplitudes the phase came from, so a band
     with no contrast gets no vote.
 
-    Method: every candidate ``v = r_ref + k p_ref`` of the longest period inside
+    Method: per sample one band is the *reference* (Wang & Xia 2010, Sec. IV-A,
+    the remainder with the smallest noise variance; the variance of band ``i`` is
+    modelled as ``p_i^2 / w_i``, i.e. equal phase noise scaled by the weight, and
+    among equal-variance bands the one whose residue modulo ``Γ`` is closest to the
+    common remainder, eq. (55)/(58)). Every candidate ``v = r_ref + k p_ref`` inside
     the range is scored by phasor agreement ``sum_i w_i cos(2 pi (v - r_i)/p_i)``
     (the maximum-likelihood criterion for von-Mises phase noise); the best one is
-    refined by the inverse-variance-weighted mean of the signed residuals.
+    refined by the inverse-variance-weighted mean of the signed residuals. A
+    candidate carries the reference's own error, so candidates up to ``Γ/4`` outside
+    ``[lo, hi)`` are admitted (never so far that one value appears twice). Until
+    2026-10-15 the longest period was always the reference: with equal phase noise
+    that is the *noisiest* residue in units of ``v``, and in indirect ToF (16/80/120
+    MHz, σ_φ 0.33 rad) the folding error rate was 0.556 against 0.116 for trying
+    every hypothesis; now it is 0.116 (public raw data, 10 frames: 0.293 -> 0.131,
+    the same as the exhaustive decoder).
+
+    Guarantee (Wang & Xia 2010, eq. (47)): write the periods as ``Γ M_i`` (``Γ`` their
+    common factor, ``M_i`` integers). If every residue error is below ``Γ/4`` the
+    folding integers are exact and ``|value - v| < Γ/4`` whichever band is the
+    reference, because a wrong candidate moves at least one band by a non-zero multiple of
+    ``Γ``, which strictly lowers that band's phasor term (if only zero-weight bands
+    tell two candidates apart, the margin is 0). In phase terms band ``i`` may err by
+    ``2 pi (Γ/4) / p_i`` — least on the longest period. A sample whose residues modulo
+    ``Γ`` do not fit in an arc shorter than ``Γ/2`` is provably outside that bound
+    (``within_bound`` False; the converse is not guaranteed — an error of a whole
+    ``Γ`` is undetectable). ``on_outside`` says what happens then: ``"warn"``
+    (default, :class:`ResidueBoundWarning`), ``"raise"`` (``ValueError``), ``"nan"``
+    (value NaN, margin 0 for those samples) or ``"flag"`` (only ``within_bound``).
+    Incommensurate periods (explicit ``hi``) have no ``Γ`` and no guarantee: every
+    sample is outside.
 
     Returns ``{"value", "score", "margin", "residual", "n_candidates",
-    "unambiguous_range"}``: ``score`` in ``[-1, 1]`` (1 = all bands agree
-    exactly), ``margin`` = best minus runner-up score (small = the answer was a
-    near tie — treat as unreliable), ``residual`` per band in the units of
-    ``v``. ``hi`` defaults to ``lo`` + the least common multiple of the periods
-    (when they are commensurate); a range wider than that is refused, because
-    two values in it would have identical residues.
+    "unambiguous_range", "gamma", "error_bound", "phase_bound_rad", "reference",
+    "within_bound"}``: ``score`` in ``[-1, 1]`` (1 = all bands agree exactly),
+    ``margin`` = best minus runner-up score (small = the answer was a near tie —
+    treat as unreliable), ``residual`` per band in the units of ``v``; ``gamma`` =
+    ``Γ``, ``error_bound`` = ``Γ/4``, ``phase_bound_rad`` per band, ``reference`` = the
+    band index used per sample. ``hi`` defaults to ``lo`` + the least common multiple
+    of the periods (when they are commensurate); a range wider than that is refused,
+    because two values in it would have identical residues.
 
     Exactness: integer residues of pairwise-coprime integer periods reproduce
-    :func:`residue_integer_crt` exactly. Robustness: with periods ``Γ M_i`` (``M_i``
-    coprime integers) a value is recovered exactly whenever every residue error is
-    below ``Γ/4`` (Wang & Xia's bound); beyond it the margin collapses first."""
+    :func:`residue_integer_crt` exactly."""
     op = "residue_crt"
+    if on_outside not in ("warn", "raise", "nan", "flag"):
+        raise ValueError("%s: on_outside must be 'warn', 'raise', 'nan' or 'flag', got %r"
+                         % (op, on_outside))
     p = _periods(periods, op)
     r = _residues(residues, p.size, op)
     w = _weights(weights, r.shape, op)
@@ -298,15 +418,42 @@ def residue_crt(residues, periods, weights=None, lo=0.0, hi=None) -> dict:
                          "(lcm of the periods) — two values would share every residue"
                          % (op, hi - lo, lcm))
     r = np.mod(r, p.reshape((p.size,) + (1,) * (r.ndim - 1)))
-    ref = int(np.argmax(p))
-    k = int(np.ceil((hi - lo) / p[ref])) + 2
+    gamma, _ = _rational_gcd(p)
+    # admit anchor candidates up to Γ/4 outside [lo, hi) (the anchor's own error inside the
+    # bound), but never so far that one value class appears twice (window <= lcm)
+    edge = min(gamma / 4.0, max(0.0, 0.5 * (lcm - (hi - lo)))) if np.isfinite(gamma) else 0.0
+    k = int(_candidate_ks(p, lo - edge, hi + edge).size)
     if k * max(r[0].size, 1) * p.size > MAX_SEARCH_ELEMENTS:
         raise ValueError("%s: %d candidates x %d samples x %d bands exceeds %d — "
                          "narrow [lo, hi) or split the samples"
                          % (op, k, r[0].size, p.size, MAX_SEARCH_ELEMENTS))
-    val, score, margin, resid, nc = _crt_core(r, p, w, lo, hi, ref)
+    ref, within = _select_reference(r, p, w, gamma)
+    val, score, margin, resid, nc = _crt_core(r, p, w, lo, hi, ref, edge)
+    outside = ~within
+    if outside.any() and on_outside != "flag":
+        if np.isfinite(gamma):
+            msg = ("%s: %d of %d samples are outside the Wang–Xia guarantee (residue errors "
+                   "< Γ/4 = %.6g; their residues modulo Γ = %.6g span half a Γ or more) — their "
+                   "folding may be wrong; per-band phase bound %s rad"
+                   % (op, int(outside.sum()), outside.size, gamma / 4.0, gamma,
+                      np.round(2.0 * np.pi * (gamma / 4.0) / p, 4).tolist()))
+        else:
+            msg = ("%s: the periods have no common factor Γ (incommensurate) — no Wang–Xia "
+                   "guarantee for any of the %d samples" % (op, outside.size))
+        if on_outside == "raise":
+            raise ValueError(msg)
+        if on_outside == "warn":
+            warnings.warn(msg, ResidueBoundWarning, stacklevel=2)
+        else:                                   # "nan"
+            val = np.where(outside, np.nan, val)
+            score = np.where(outside, np.nan, score)
+            margin = np.where(outside, 0.0, margin)
+            resid = np.where(outside[None], np.nan, resid)
     return {"value": val, "score": score, "margin": margin, "residual": resid,
-            "n_candidates": int(nc), "unambiguous_range": float(lcm)}
+            "n_candidates": int(nc), "unambiguous_range": float(lcm),
+            "gamma": float(gamma), "error_bound": float(gamma / 4.0),
+            "phase_bound_rad": 2.0 * np.pi * (gamma / 4.0) / p,
+            "reference": np.asarray(ref, dtype=np.int64), "within_bound": np.asarray(within)}
 
 
 # --------------------------------------------------------------------------- #
@@ -337,28 +484,33 @@ def residue_fault_locate(residues, periods, weights=None, lo=0.0, hi=None, tol=0
     tol = float(tol)
     if not (0.0 < tol < 0.25):
         raise ValueError("%s: tol must be in (0, 0.25) of a period, got %r" % (op, tol))
-    full = residue_crt(r, p, w, lo, hi)
+    full = residue_crt(r, p, w, lo, hi, on_outside="flag")     # a corrupted band is this op's input
     hi_eff = float(lo) + full["unambiguous_range"] if hi is None else float(hi)
     pb = p.reshape((p.size,) + (1,) * (r.ndim - 1))
     ok_all = (np.abs(full["residual"]) <= tol * pb).all(0)
-    worst, vals, outl = [], [], []
+    shp = r.shape[1:]
+    best_worst = np.full(shp, np.inf)
+    second_worst = np.full(shp, np.inf)
+    best_value = np.full(shp, np.nan)
+    best_outlier = np.zeros(shp)
+    best_index = np.zeros(shp, dtype=np.int64)
     for j in range(p.size):
         keep = [i for i in range(p.size) if i != j]
-        sub = residue_crt(r[keep], p[keep], w[keep], lo, hi_eff)   # refuses if N-1 cannot resolve
-        worst.append((np.abs(sub["residual"]) / pb[keep]).max(0))
-        vals.append(sub["value"])
-        outl.append(np.abs(_wrap_signed(r[j] - sub["value"], p[j])) / p[j])
-    worst = np.stack(worst)
-    vals = np.stack(vals)
-    outl = np.stack(outl)
-    j = np.argmin(worst, 0)
-    wj = np.take_along_axis(worst, j[None], 0)[0]
-    oj = np.take_along_axis(outl, j[None], 0)[0]
-    runner = np.sort(worst, 0)[1]
+        sub = residue_crt(r[keep], p[keep], w[keep], lo, hi_eff,   # refuses if N-1 cannot resolve
+                          on_outside="flag")
+        current = (np.abs(sub["residual"]) / pb[keep]).max(0)
+        current_outlier = np.abs(_wrap_signed(r[j] - sub["value"], p[j])) / p[j]
+        better = current < best_worst
+        second_worst = np.where(better, best_worst, np.minimum(second_worst, current))
+        best_worst = np.where(better, current, best_worst)
+        best_value = np.where(better, sub["value"], best_value)
+        best_outlier = np.where(better, current_outlier, best_outlier)
+        best_index = np.where(better, j, best_index)
+    j, wj, oj, runner = best_index, best_worst, best_outlier, second_worst
     good = (wj <= tol) & (oj > tol) & (runner > tol)
     faulty = np.where(ok_all, -1, np.where(good, j, -2)).astype(np.int64)
     value = np.where(ok_all, full["value"],
-                     np.where(good, np.take_along_axis(vals, j[None], 0)[0], np.nan))
+                     np.where(good, best_value, np.nan))
     return {"value": value, "faulty": faulty, "consistent_all": ok_all,
             "worst_leave_one_out": wj}
 
@@ -376,17 +528,20 @@ def _image(a, name: str, op: str) -> np.ndarray:
     return arr
 
 
-def _band(spec, shape, period, sigma_px, axis):
+def _band(spec, shape, period, sigma_px, axis, kernel=None):
     """Analytic band at wavelength ``period`` -> (z, k_local [rad/px along axis])."""
-    fu = np.fft.fftfreq(shape[1])[None, :]
-    fv = np.fft.fftfreq(shape[0])[:, None]
-    sf = 1.0 / (2.0 * np.pi * sigma_px)
-    if axis == 1:
-        g = np.exp(-((fu - 1.0 / period) ** 2 + fv ** 2) / (2.0 * sf * sf))
-        dgrid = fu
+    if kernel is None:
+        fu = np.fft.fftfreq(shape[1])[None, :]
+        fv = np.fft.fftfreq(shape[0])[:, None]
+        sf = 1.0 / (2.0 * np.pi * sigma_px)
+        if axis == 1:
+            g = np.exp(-((fu - 1.0 / period) ** 2 + fv ** 2) / (2.0 * sf * sf))
+            dgrid = fu
+        else:
+            g = np.exp(-(fu ** 2 + (fv - 1.0 / period) ** 2) / (2.0 * sf * sf))
+            dgrid = fv
     else:
-        g = np.exp(-(fu ** 2 + (fv - 1.0 / period) ** 2) / (2.0 * sf * sf))
-        dgrid = fv
+        g, dgrid = kernel
     zs = spec * g
     z = np.fft.ifft2(zs)
     dz = np.fft.ifft2(zs * (2j * np.pi * dgrid))
@@ -410,8 +565,17 @@ def _band_measure(img0, img1, periods, sigma_px, axis):
     s1 = np.fft.fft2(img1)
     res, per, wts = [], [], []
     for p in periods:
-        z0, k0 = _band(s0, img0.shape, p, sigma_px, axis)
-        z1, k1 = _band(s1, img1.shape, p, sigma_px, axis)
+        fu = np.fft.fftfreq(img0.shape[1])[None, :]
+        fv = np.fft.fftfreq(img0.shape[0])[:, None]
+        sf = 1.0 / (2.0 * np.pi * sigma_px)
+        if axis == 1:
+            g = np.exp(-((fu - 1.0 / p) ** 2 + fv ** 2) / (2.0 * sf * sf))
+            kernel = (g, fu)
+        else:
+            g = np.exp(-(fu ** 2 + (fv - 1.0 / p) ** 2) / (2.0 * sf * sf))
+            kernel = (g, fv)
+        z0, k0 = _band(s0, img0.shape, p, sigma_px, axis, kernel)
+        z1, k1 = _band(s1, img1.shape, p, sigma_px, axis, kernel)
         k = 0.5 * (k0 + k1)
         knom = 2.0 * np.pi / p
         k = np.where((k > knom / 3.0) & (k < 3.0 * knom), k, knom)
@@ -433,10 +597,12 @@ def _crt_core_var(r, pb, w, lo, hi):
     inside = (cand >= lo) & (cand < hi)
     score = (w[:, None] * np.cos(2.0 * np.pi * (cand[None] - r[:, None]) / pb[:, None])).sum(0)
     score = np.where(inside, score, -np.inf)
-    order = np.argsort(-score, axis=0, kind="stable")
-    best = np.take_along_axis(cand, order[:1], 0)[0]
-    s1 = np.take_along_axis(score, order[:1], 0)[0]
-    s2 = np.take_along_axis(score, order[1:2], 0)[0]
+    best_i = np.argmax(score, axis=0)
+    best = np.take_along_axis(cand, best_i[None], 0)[0]
+    s1 = np.take_along_axis(score, best_i[None], 0)[0]
+    runner = score.copy()
+    np.put_along_axis(runner, best_i[None], -np.inf, axis=0)
+    s2 = runner.max(axis=0)
     e = _wrap_signed(r - best[None], pb)
     iv = w / pb ** 2
     ivs = iv.sum(0)

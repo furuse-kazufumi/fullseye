@@ -14,6 +14,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>填补区域内的小孔。仅填补面积在 <code style="color:#22d3bf">area_threshold = 16+200a</code> 像素以下的孔（skimage 的 <code style="color:#22d3bf">remove_small_holes</code>）。b 未使用。</p>
 <p>与 HALCON 的 <code style="color:#22d3bf">fill_up_shape</code>（只填充按面积、圆形度等形状特征选出的孔的运算）不同，该实现是仅按面积上限筛选孔的简化近似 —— 无法按圆形度、凸性等其他形状特征进行过滤。</p>
+<p><b>旋钮（实测）</b>：<code style="color:#22d3bf">a</code> 以<b>离散档位</b>生效，切换点在 a ≈ 0.29、0.65（以步长 0.02 扫描实测）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

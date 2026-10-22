@@ -7,7 +7,7 @@ out: rgbimage
 examples: [machined_metal_and_materials]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # wetness — OPTICS `material` op
@@ -20,7 +20,7 @@ version: 0.6.0  # fullseye lib version this note was generated for
 濡れた面の下地色。**拡散が暗くなる**(そして鏡面が増える)。
 
 base_rgb: 乾いた状態の色 (H,W,3) または (3,)。wet: 濡れ具合(0–1)。
-ior: 水膜の屈折率。
+ior: 水膜の屈折率。数か材料表の名前(例 "WATER"、名前なら d 線 587.56 nm の n)。
 
 返り値: 濡れた状態の拡散色(同形)。
 
@@ -59,7 +59,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`rgbimage` を入力に取れる)
 
-[clearcoat_shade](clearcoat_shade.md) · [defocus_blur](../scene/defocus_blur.md) · [diffraction_blur](../scene/diffraction_blur.md) · [sensor_capture](../scene/sensor_capture.md) · [pixel_shift_capture](../pixelshift/pixel_shift_capture.md) · [false_color_metric](../pixelshift/false_color_metric.md)
+[clearcoat_shade](clearcoat_shade.md) · [defocus_blur](../scene/defocus_blur.md) · [diffraction_blur](../scene/diffraction_blur.md) · [sensor_capture](../scene/sensor_capture.md) · [underwater_image](../watermedia/underwater_image.md) · [cubemap_from_equirect](../omni360/cubemap_from_equirect.md) · [viewport_from_equirect](../omni360/viewport_from_equirect.md) · [equirect_rotate](../omni360/equirect_rotate.md)
 
 ## 同カテゴリ(`material`)
 

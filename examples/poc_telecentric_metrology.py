@@ -37,8 +37,8 @@
      部品は実物の質感で描く: アルミの治具プレート(``metalfinish`` の削り目 × ``glassmirror`` の複素屈折率の色)、
      金めっきのピン(面取りつき)、黒い樹脂モールド(``surfacelib.clearcoat_shade``、捺印つき)と銀色のリード、
      影(``render_shadow``)と AO(``render_ao``)。門: 照明を同軸落射・ドーム・低角リングに変えても、描いた画像だけから
-     円の計測モデル(``metrology``、HALCON 流)で測ったピン上面の径は閉形式と 0.34 % 以内、6 mm の上下で通常 f = 25 mm は
-     +8.3〜8.4 %、両側テレセンは ±0.13 % 以内(上の門は面の種類の地図なので照明に依らない —— こちらが画像の門)。
+     円の計測モデル(``metrology``、HALCON 流)で測ったピン上面の径は閉形式と 0.33 % 以内、6 mm の上下で通常 f = 25 mm は
+     +8.3〜8.4 %、両側テレセンは ±0.16 % 以内(上の門は面の種類の地図なので照明に依らない —— こちらが画像の門)。
      ★物体で 47 µm/画素に粗くすると、低角リング(暗視野)では上面の縁が弱く 2 % 外れた。
   4. **テレセンでも残る誤差**: 絞りが後側焦点から δ ずれると入射瞳は前側焦点から −f²/δ(Newton)。門: 物高 0.5 mm では
      実光線の傾きの増分が閉形式と 0.04 % —— 物高 8 mm では 11.8 % 大きく、その差は物高の 2 乗で育つ(4 → 8 mm で 4.6 倍、
@@ -51,7 +51,7 @@
   6. **被写界深度と NA の取引**: 門: ぼけの RMS の傾き |m|·NA/√2(一様な円の光束)を NA 0.005 / 0.01 / 0.02 で
      実光線と 0.5 % 以内。許すぼけ 22 µm(物体側)を回折の円の直径 1.22λ/NA が超えない最小の NA は 0.033 で、
      そのとき被写界深度 c/NA は 0.68 mm が上限 —— NA 0.01 なら深さは 2.2 mm あるが回折の円が 72 µm で 22 µm を分解できない。
-  付録. **第二の実装**: OSS の光線追跡 optiland(MIT)が手元にあれば同じ処方の主光線の像の高さを突き合わせる
+  付録. **第二の実装**: OSS の光線追跡 optiland(MIT)が手元にあれば同じ処方の主光線の像の高さを突き合わせ、無ければ記録値と照合する門
      (2026-10-15 に別の venv で 9e-8 mm。★内訳: 屈折率はどちらも公開の硝材カタログの同じ Sellmeier 係数なので、一致が見ているのは
      面との交点と主光線の狙いの実装だけ。optiland の狙いを近軸にすると物体側テレセンで 0.011 mm 違う)。
 
@@ -109,7 +109,9 @@ GATES: list[str] = []
 NUMBERS: dict[str, float] = {}
 
 #: 2026-10-15 に optiland 0.6.3(別の venv)で同じ処方を組んで得た主光線の像の高さ [mm](物高 8 mm、
-#: 狙い = iterative)。手元に optiland が無いときに所見として印字する(門には使わない)。
+#: 狙い = iterative)。★2026-10-15 から門に使う: 手元に optiland が無いとき(CI)は、この記録値と
+#: telecentric.chief_ray_angle・raytrace.chief_ray(入射瞳が無限遠なら絞りを狙う)の両方を 2e-6 mm で照合する
+#: (記録は 6 桁に丸めてあるので丸めの幅 5e-7 mm を含む)。
 OPTILAND_RECORDED = {"ento": -4.000118, "object": -4.131367}
 
 
@@ -840,10 +842,16 @@ def chapter_second(L):
     try:
         import optiland  # noqa: F401
     except ImportError:
-        print("   [skip] optiland が入っていない(pip install optiland で同じ突き合わせが走る)")
+        print("   optiland が入っていない —— 記録値(2026-10-15、optiland 0.6.3)で照合する")
+        worst = 0.0
         for k, y in OPTILAND_RECORDED.items():
-            print("   記録(2026-10-15、optiland 0.6.3): %s %.6f mm / telecentric %.6f mm"
-                  % (LABEL[k], y, TC.chief_ray_angle(L[k], 8.0)["image_y_mm"]))
+            tc = TC.chief_ray_angle(L[k], 8.0)["image_y_mm"]
+            rt = RT.chief_ray(L[k], field=8.0)["image_y"]
+            worst = max(worst, abs(tc - y), abs(rt - y))
+            print("   記録 %s %.6f mm / telecentric %.7f mm / raytrace.chief_ray %.7f mm" % (LABEL[k], y, tc, rt))
+        gate("optiland の記録値(物高 8 mm の主光線の像の高さ)と telecentric・raytrace の両方が 2e-6 mm 以内", worst < 2e-6,
+             "最大 %.1e mm(記録は 6 桁の丸め)。raytrace.chief_ray は入射瞳が無限遠の物体側テレセンで以前は止まっていた"
+             "(2026-10-15 から絞りを狙う)" % worst)
         return None
     from optiland import optic
     bk7 = RT.glass_catalog("BK7")["name"]
@@ -870,7 +878,9 @@ def chapter_second(L):
         o.trace_generic(Hx=0.0, Hy=1.0, Px=0.0, Py=0.0, wavelength=0.58756)
         y = float(np.asarray(o.surface_group.y)[-1].ravel()[0])
         ours = TC.chief_ray_angle(s, 8.0)["image_y_mm"]
+        rt = RT.chief_ray(s, field=8.0)["image_y"]
         out[k] = (y, ours)
+        out[k + ":raytrace"] = (y, rt)
         print("   %s: optiland %.6f mm / telecentric %.6f mm" % (LABEL[k], y, ours))
     worst = max(abs(a - b) for a, b in out.values())
     gate("optiland の主光線の像の高さ(物高 8 mm)と 1e-4 mm 以内", worst < 1e-4,
@@ -1170,22 +1180,23 @@ def _perspective_beta(rk_mm, tilt, L_mm, px_per_mm):
     return float(np.linalg.lstsq(A, np.array(cen), rcond=None)[0][0])
 
 
-def chapter_real(L):
-    """実画像の章: 論文の生画像(アライメント板・樹脂の球)を Fullseye の計測 op で測り、論文の値と突き合わせる。"""
-    print("\n0. 実画像 —— Stark ほか(Sci. Rep. 2025)のテレセン生画像を測る(%s)" % REAL_SOURCE_SHORT)
-    paths, why = real_fetch()
-    if paths is None:
-        r = REAL_RECORDED
-        print("   [skip] %s。2026-10-15 の実測: 円の間隔 %.2f px/mm(論文の K1 252.0 と %+.2f %%)、リング %d 本、"
-              "板の傾き %.1f°、楕円の中心のずれ β = %.3f ± %.3f px/mm²(入射瞳は %.0f mm より遠い)、"
-              "樹脂の球の輪郭の半径 %.3f / %.3f mm(公称 2.5 mm)" % (why, r["px_per_mm"], r["vs_K1_pct"], r["rings"],
-                                                         r["tilt_deg"], r["beta_px_per_mm2"], r["beta_se"],
-                                                         r["pupil_min_mm"], *r["sphere_r_mm"]))
-        return None
-    import measure as ME
+def _rho_of(P_, c_, phi_, q_):
+    """楕円の族の「半径」: 中心 c_ から見た点を向き phi_ の軸へ回し、短軸を縦横比 q_ で割って伸ばした距離。"""
+    dy, dx = P_[:, 0] - c_[0], P_[:, 1] - c_[1]
+    u = dx * np.cos(phi_) + dy * np.sin(phi_)
+    v = -dx * np.sin(phi_) + dy * np.cos(phi_)
+    return np.sqrt(u * u + (v / q_) ** 2)
+
+
+def plate_ring_points(g):
+    """アライメント板の画像 *g*(0〜1)から、中央の穴の中心と、リングの中心線の点・リングの番号を取る。
+
+    ``chapter_real`` と ``poc_simcal_telecentric`` が同じ読み方を使う(2026-10-15 に ``chapter_real`` から切り出した。
+    中身は切り出す前と同じ)。返り値: ``cy, cx, hole``(穴の中心と metrology の円)・``pts``(全点)・``phi, q, s, ph``
+    (族の向き・縦横比・間隔・位相の当たり)・``P``(使う点 (行, 列))・``idx``(``ks`` の中の位置)・``ks``(リングの番号)。
+    """
     from scipy import ndimage
-    g = np.asarray(fs_read(paths["plate"]), float)
-    g = g / g.max()
+    rho_of = _rho_of
     # (a) 中心: 中央の穴(暗い円板)を距離変換で当たりを付け、metrology の円 → 楕円で縁に当て直す
     dark = ndimage.gaussian_filter(g, 3) < 0.03
     dt = ndimage.distance_transform_edt(dark)
@@ -1215,7 +1226,6 @@ def chapter_real(L):
     metrology.add_metrology_object_circle_measure(mod, float(hy), float(hx), float(dtw.max()), n=90)
     hole = metrology.apply_metrology_model(mod, g, measure_length=15, sigma=2, threshold=0.1)[0]["params"]
     cy, cx = hole["row"], hole["col"]
-    print("   中央の穴: 中心 (%.1f, %.1f) px、半径 %.1f px(metrology の円)" % (cy, cx, hole["radius"]))
     # (b) リングの中心線の点 → 同心の相似な楕円の族(共通の中心・向き・縦横比 + リングごとの長半径)を当てる
     #   ★リングごとに自由な楕円(5 自由度)を当てると、影で弧が 90〜180° しか見えない外側のリングは長半径が外挿で
     #   膨らむ・縮む(2026-10-15 に元の解像度で見て分かった: 外側のリングで楕円が白い線から外れ、間隔が 246〜257 px/mm と
@@ -1225,11 +1235,6 @@ def chapter_real(L):
     pts = _ring_points(g, cy, cx)
     pts = pts[(pts[:, 2] > 15) & (pts[:, 2] < 80) & (np.hypot(pts[:, 0] - cy, pts[:, 1] - cx) > 200)]
 
-    def rho_of(P_, c_, phi_, q_):
-        dy, dx = P_[:, 0] - c_[0], P_[:, 1] - c_[1]
-        u = dx * np.cos(phi_) + dy * np.sin(phi_)
-        v = -dx * np.sin(phi_) + dy * np.cos(phi_)
-        return np.sqrt(u * u + (v / q_) ** 2)
 
     best = None
     for phi in np.deg2rad(np.arange(-90.0, 90.0, 2.0)):
@@ -1249,6 +1254,32 @@ def chapter_real(L):
     ks = np.array([kk for kk in sorted(cnt) if cnt[kk] >= 30])
     sel = np.isin(K, ks)
     P, idx = P[sel], np.searchsorted(ks, K[sel])
+    return {"cy": cy, "cx": cx, "hole": hole, "pts": pts, "phi": phi, "q": q, "s": s, "ph": ph,
+            "P": P, "idx": idx, "ks": ks}
+
+
+def chapter_real(L):
+    """実画像の章: 論文の生画像(アライメント板・樹脂の球)を Fullseye の計測 op で測り、論文の値と突き合わせる。"""
+    print("\n0. 実画像 —— Stark ほか(Sci. Rep. 2025)のテレセン生画像を測る(%s)" % REAL_SOURCE_SHORT)
+    paths, why = real_fetch()
+    if paths is None:
+        r = REAL_RECORDED
+        print("   [skip] %s。2026-10-15 の実測: 円の間隔 %.2f px/mm(論文の K1 252.0 と %+.2f %%)、リング %d 本、"
+              "板の傾き %.1f°、楕円の中心のずれ β = %.3f ± %.3f px/mm²(入射瞳は %.0f mm より遠い)、"
+              "樹脂の球の輪郭の半径 %.3f / %.3f mm(公称 2.5 mm)" % (why, r["px_per_mm"], r["vs_K1_pct"], r["rings"],
+                                                         r["tilt_deg"], r["beta_px_per_mm2"], r["beta_se"],
+                                                         r["pupil_min_mm"], *r["sphere_r_mm"]))
+        return None
+    import measure as ME
+    from scipy import ndimage
+    g = np.asarray(fs_read(paths["plate"]), float)
+    g = g / g.max()
+    rp = plate_ring_points(g)
+    cy, cx, hole = rp["cy"], rp["cx"], rp["hole"]
+    print("   中央の穴: 中心 (%.1f, %.1f) px、半径 %.1f px(metrology の円)" % (cy, cx, hole["radius"]))
+    from scipy.optimize import least_squares
+    rho_of = _rho_of
+    phi, q, s, ph, P, idx, ks = (rp[k] for k in ("phi", "q", "s", "ph", "P", "idx", "ks"))
 
     def fam_resid(x_, P_, i_):
         return rho_of(P_, x_[:2], x_[2], x_[3]) - x_[4:][i_]

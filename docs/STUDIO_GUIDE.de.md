@@ -1,5 +1,9 @@
-<!-- i18n-source-sha: 11529e905883 -->
+<!-- i18n-source-sha: 85644ff1ed7d -->
 # Vollständiger Leitfaden zu Fullseye Studio
+
+Aufwendige Verarbeitung blockiert das Fenster nicht. Unten werden die aktive Stufe und der Fortschritt angezeigt; eine Stoppanforderung wird an der nächsten Stufengrenze bestätigt. Ändern sich Einstellungen während eines Laufs, bleibt die Generation des angezeigten Ergebnisses sichtbar und man kann das ältere Ergebnis ansehen oder mit den aktuellen Einstellungen neu starten.
+
+Die Suche nach einem Verarbeitungsziel gruppiert Treffer danach, ob sie zur aktuellen Eingabe passen, eine Vorverarbeitung benötigen oder anderweitig einzuordnen sind. Ein Treffer lässt sich einmal testen, ohne eine Stufe hinzuzufügen. Bei einem Fehler zeigt der Problembereich Ursache, Ort und konkrete nächste Schritte zum erneuten Auswählen, Vergleichen, Öffnen des Protokolls, Bearbeiten eines Reglers oder Suchen einer vorgeschlagenen Stufe.
 
 [日本語](./STUDIO_GUIDE.md) · [English](./STUDIO_GUIDE.en.md) · [简体中文](./STUDIO_GUIDE.zh.md) · [繁體中文](./STUDIO_GUIDE.tw.md) · [한국어](./STUDIO_GUIDE.ko.md) · **Deutsch** · [हिन्दी](./STUDIO_GUIDE.hi.md)
 
@@ -328,6 +332,13 @@ Manche Ops laufen nicht mit ihrem Beispiel (eine Grenze der Beispielerzeugung pr
 Stichproben-Ops so). Dass das Fenster selbst keine Fehler hinzufügt, prüft ein Gate: Es muss mit der direkten Übergabe
 des Beispiels an die Op übereinstimmen.
 
+### CSV-Spalten einem Tabellen-Operator zuordnen
+
+Bei einem typisierten Eingang `table` wählt man im bestehenden Ledger-Runner **CSV-Datei…**. Rollen werden nur aus
+tatsächlichen Spalten gewählt. Für Gauge R&R sind dies `part / Teile-ID`, `operator / Prüfer` und `value / Messwert`.
+Die Prüfung nennt Zeilen, eindeutige Schlüssel, fehlende Werte und Wiederholungen. Ungleiche Gruppen werden vor dem Lauf
+namentlich abgelehnt, nie repariert. Zuordnungen gelten je Operation und Kopfzeilensignatur. Die CSV bleibt unverändert.
+
 ### Wie die Ergebnisansicht darstellt
 
 | Ergebnis | Darstellung |
@@ -337,6 +348,25 @@ des Beispiels an die Op übereinstimmen.
 | Tabelle (dict) | gleich lange numerische Spalten als Linien; x-Achse ist eine Spalte `t` / `x` / `freq` …, falls vorhanden |
 | `(h, w, 4)` / `(h, w, 1)` / komplex | RGB über Weiß / Graustufen / Betrag \|z\| |
 | leere Arrays, 4-D und mehr | Form und Wertebereich als Text (der erste Wert wird nicht als „Skalar“ gezeigt) |
+
+## Ergebnis-Cache, Prüfmarken und Eingabebild-Referenz (2026-10-19)
+
+- **Ergebnis-Cache je Stufe**: Wenn Sie einen Regler bewegen, werden nur diese Stufe und die folgenden neu berechnet; frühere Ergebnisse werden wiederverwendet. Am rechten Ende jeder Stufenzeile steht `⟳ calc` für eine diesmal berechnete und `↺ cache` für eine aus dem Cache gelieferte Stufe. Ein Bildwechsel, Umsortieren oder Löschen verwirft alles ab der betroffenen Stufe. Der Cache hält je Stufe nur das neueste Ergebnis und wächst daher beim wiederholten Ziehen nicht.
+- **Prüfmarke (⚠)**: „Lief es" (`ran`) und „ist das Ergebnis tragfähig" (`valid`) werden getrennt geführt. Enthält ein Ergebnis NaN / Inf, ist es leer oder haben alle Pixel denselben Wert, erhält die Stufenzeile ein `⚠`; der Grund steht im Tooltip und in Problems (eine andere Zeile als die `✕`-Fehler). Ist das Ergebnis eine Tabelle mit Feldern wie `converged` / `valid` / `ok`, übernimmt Studio diese Angabe. Ein Ergebnis ohne Gültigkeitsangabe heißt „Gültigkeit nicht beurteilt“, nie OK. Nach Run all zeigt die Statuszeile „Lauf: fertig / Ergebnis: prüfen (Grund)“ oder „Lauf: fertig / Ergebnis: Gültigkeit nicht beurteilt“. Studio **meldet nur**; es behebt das numerische Problem der Operation nicht und ändert keinen Wert.
+- **Eingabebild-Referenz**: Save pipeline legt im JSON unter `input` eine Referenz auf die geladene Bilddatei ab (Pfad wie angegeben, sha256 der Datei, shape, dtype). Beim Öffnen wird eine vorhandene Datei mit passendem sha256 stillschweigend neu geladen. Eine vorhandene, aber geänderte Datei wird geladen, und Problems zeigt „input file changed since save“. Fehlt sie, bleibt das aktuelle Bild, und Problems zeigt „input not found: Pfad“ (eine gleichnamige Datei neben der `.json` wird als Kandidat zum Neu-Verknüpfen versucht). Ältere JSON-Dateien ohne `input` werden wie bisher geladen.
+- **Stufen-Vorschaubilder (2026-10-20)**: Jede Stufenzeile beginnt mit einem kleinen Bild (etwa 48×36 px) des Ergebnisses dieser Stufe: ein Gebiet als Binärbild, eine Kontur als Linien, eine Tabelle oder ein Skalar als Symbol seiner Art. Das Bild entsteht nur aus dem Ergebnis, das schon im Cache liegt, und löst nie eine Neuberechnung aus. Eine noch nicht berechnete Stufe zeigt „未計算 / not computed“; eine früher berechnete, deren Regler oder Bild sich geändert hat, zeigt „再計算が必要 / recompute needed“ statt eines alten Bildes, das als aktuell ausgegeben würde. Pro Stufe wird nur ein kleines Array gehalten, der Speicher wächst also auch bei großen Bildern kaum. Das bloße Neuaufbauen der Liste berechnet keine Stufe (gerechnet wird bei Run, Step oder wenn ein Reglerzug endet). _(ja)_
+- **Panel Stufe Ein → Aus (Window ▸ Panels ▸ Stage in → out)**: Die gewählte Stufe zeigt Ein- und Ausgabe nebeneinander, mit gleichem Anzeigemodus und Wertebereich, darunter eine Zeile mit dem Unterschied: bei Gebiets- oder Label-Ergebnissen „Regionen 128 → 37“, bei Bildern Mittelwert / σ / Minimum / Maximum davor → danach, bei Tabellen Zeilen und Spalten, bei Konturen deren Anzahl. Solange das Panel geschlossen ist, wird nichts berechnet.
+- **Bypass (Strg+B / Kontextmenü der Stufe)**: Schaltet die gewählte Stufe vorübergehend ab, ohne sie zu entfernen. Sie reicht ihre Eingabe unverändert durch und erscheint in der Liste grau und durchgestrichen. Der Undo-Eintrag heißt „bypass“, nicht „remove“. Bypass wird in der Projektdatei als 4. Element `true` der Stufe gespeichert (ist er aus, wird nichts geschrieben; eine Datei ohne Bypass bleibt byte-identisch); er gehört zum Cache-Schlüssel, ein Umschalten berechnet also ab dieser Stufe neu. Der Python-Export behält nur die Kommentarzeile `# bypassed: op`, und das exportierte Skript liefert dasselbe Ergebnis wie der Bildschirm. Im Program-Text ist eine überbrückte Stufe die Zeile `# bypassed: op (a, b)`; „Apply“ liest sie zurück, die Marke bleibt also erhalten.
+- **Streifen zum Ausprobieren von Nachbarwerten ("Try nearby values", unter den Reglerzeilen)**: zeigt das Ergebnis der gewählten Stufe als kleine Bilder bei 3 (oder 5) Reglerwerten knapp unter und über dem aktuellen. Der Abstand ist die Schrittweite der Spezifikation oder 1/10 ihres Bereichs, je nachdem, was größer ist (bei logarithmischer Skala geometrisch); ein ganzzahliger oder Auswahl-Regler nimmt die benachbarten Werte, und nichts verlässt den erlaubten Bereich. Gerechnet wird nur, solange der Streifen offen ist, und zwar **nur diese Stufe** je Kandidat aus dem Cache der Vorstufe (keine andere Stufe läuft). Alle Bilder nutzen einen gemeinsamen Anzeigebereich, und es werden nur kleine Bilder gehalten, der Speicher wächst also auch bei großen Bildern kaum. Ein Klick auf ein Bild ändert nichts; "Adopt this value" unter dem gewählten Bild setzt den Wert auf demselben Weg wie der Schieberegler, als ein Undo-Schritt ("change blur σ"). Ist im Hauptbild ein Bereich markiert (Umschalt + Ziehen; Umschalt + Klick hebt ihn auf), zeichnet der Streifen nur diesen Bereich.
+- **A anheften, mit B vergleichen (Werkzeugleiste "Pin as A" / Strg+Umschalt+A, Window ▸ Panels ▸ A / B)**: friert Stufenliste (mit Bypass-Marken), Eingabereferenz, Endergebnis und Anzeigeeinstellungen ein. Das Ergebnis ist eine schreibgeschützte Kopie, die kein späterer Lauf ändern kann. Höchstens zwei bleiben erhalten; ein dritter verwirft den ältesten (die Statusleiste sagt es). Das A/B-Panel zeigt A und das aktuelle Ergebnis B nebeneinander, als Wischen (Grenze ziehen), als Blinken (standardmäßig 500 ms; stoppt, wenn das Panel geschlossen wird) oder als Differenz (Betrag / mit Vorzeichen auf symmetrischer Skala, 0 = weiß / Verhältnis als log2). A und B teilen einen aus A ∪ B gewählten Anzeigebereich. Die Liste "What changed" darunter nennt der Reihe nach, was seit A hinzugefügt, entfernt, geändert (alter → neuer Wert mit Einheit), überbrückt wurde oder welche Eingabe sich geändert hat. "Restore A" stellt die Pipeline von A wieder her (ein Undo-Schritt), "Adopt B" verwirft A, "Keep both" heftet B als zweiten Stand an. Die Projektdatei speichert unter `pinned` nur Stufen, Eingabe, Anzeige und Notiz (nie die Arrays) und berechnet die Arrays beim Öffnen neu; gelingt das nicht, bleibt der Stand erhalten und Problems meldet "cannot recompute A". Ältere Dateien ohne `pinned` öffnen sich wie bisher.
+- **Synchrones Zoomen, Verschieben und Cursor**: Die Bilder im Panel Stufe Ein → Aus und im A/B-Panel zoomen und verschieben sich gemeinsam, und der Cursor über einem Bild zeigt in den anderen ein Fadenkreuz am selben Pixel. Mit "sync the main view too" im A/B-Panel kommt das Hauptbild zur Gruppe.
+
+
+## Dieselbe Verarbeitung auf einen Ordner anwenden
+
+Unter Run ▸ **Diese Verarbeitung auf einen Ordner anwenden…** wählen Sie den Eingabeordner und das Dateimuster, prüfen das Ergebnis am ersten, mittleren, letzten oder einem beliebigen Bild und führen dann alle Dateien aus. Eingaben und Verarbeitungskette werden beim Start einmal eingefroren; ein Regler, der während des Laufs verstellt wird, ändert die Bedingungen des laufenden Stapels nicht.
+
+Bei gleichnamigen Dateien wählen Sie zwischen „nicht überschreiben“, „überschreiben“ und „Laufnummer anhängen“; sind Unterordner einbezogen, entsteht auf der Ausgabeseite dieselbe Hierarchie. `summary.csv` enthält Dateiname, Status, Verarbeitungszeit, numerische Ausgaben und den Fehlergrund. Schlägt das Lesen oder Verarbeiten eines Bildes fehl, läuft der Rest weiter; danach lassen sich die fehlgeschlagenen Dateien mit Grund in einer Liste prüfen. Eine Stopp-Anforderung wird an der Grenze nach dem aktuellen Bild angenommen, und „gestoppt“ erscheint erst, wenn der Lauf wirklich steht.
 
 ## Zusammenhang zwischen Export und Save/Open
 
@@ -359,3 +389,4 @@ Für die Seite, die das JSON entgegennimmt und ausführt, siehe [ENGINE.md](ENGI
 - [V14.md](V14.md) / [PERCEPTION.md](PERCEPTION.md) — Inhalt der Wahrnehmungspanels (flow / stereo / terrain)
 - [ENGINE.md](ENGINE.md) — exportierte Pipelines ausführen
 - [GETTING_STARTED.md](GETTING_STARTED.md) — in 5 Minuten loslegen
+- **Exportiertes Python prüfen (Run ▸ Verify exported Python / Ctrl+Shift+R)**: Führt den bearbeitbaren Export in einem isolierten Python-Prozess aus und vergleicht jede Zwischenstufe mit der GUI. Einstellbar sind absolute und relative Toleranz sowie gleiche NaN-Positionen, Ignorieren oder ein NaN-Verbot. Form und Datentyp müssen immer übereinstimmen. Eine Abweichung erscheint in Problems und führt zur ersten abweichenden Stufe; Studio meldet nur und verändert keine Werte.

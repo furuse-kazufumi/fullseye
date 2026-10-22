@@ -4,10 +4,10 @@ dim: optics
 category: design
 in: 
 out: table
-examples: [lens_design_demo, lens_optimize_demo, poc_industrial_oct, poc_material_optical_library, poc_optics_drawings]
+examples: [lens_design_demo, lens_optimize_demo, poc_industrial_oct, poc_lens_global_search, poc_material_optical_library, poc_optics_drawings]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # glass — OPTICS `design` op
@@ -51,6 +51,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 - [lens_design_demo](../../../../examples/lens_design_demo.py) — `py -3.11 examples/lens_design_demo.py`
 - [lens_optimize_demo](../../../../examples/lens_optimize_demo.py) — `py -3.11 examples/lens_optimize_demo.py`
 - [poc_industrial_oct](../../../../examples/poc_industrial_oct.py) — `py -3.11 examples/poc_industrial_oct.py`
+- [poc_lens_global_search](../../../../examples/poc_lens_global_search.py) — `py -3.11 examples/poc_lens_global_search.py`
 - [poc_material_optical_library](../../../../examples/poc_material_optical_library.py) — `py -3.11 examples/poc_material_optical_library.py`
 - [poc_optics_drawings](../../../../examples/poc_optics_drawings.py) — `py -3.11 examples/poc_optics_drawings.py`
 

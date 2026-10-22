@@ -156,6 +156,14 @@ def test_current_row_against_the_index(data):
     assert G.stale_problems(data) == [], \
         "版 %s の行がいまの docs/OP_INDEX.json と矛盾する(行 > 索引)" % data["version"]
     grown = copy.deepcopy(data)
+    # ★2026-10-18: 先に索引を版の行とぴったり揃えてから 1 本足す。揃えずに足すと「厳密一致で
+    #   何件落ちるか」が、リリース後にどの層が増えたかで変わる(ops3d の op は 2-D 橋 tb_* も
+    #   生むので registry も 1 増え、2 件のはずが 3 件になった —— 門ではなく数え方の偶然)。
+    row = G._row(grown["history"], grown["version"])
+    for k in ("registry", "nary", "color", "ledger"):
+        grown["index"]["tiers"][k] = row[k] or 0
+    grown["index"]["n_ops"] = row["index"]
+    assert G.stale_problems(grown, release=True) == []
     grown["index"]["n_ops"] += 1
     grown["index"]["tiers"]["ledger"] += 1
     assert G.stale_problems(grown) == []

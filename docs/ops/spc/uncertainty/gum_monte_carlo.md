@@ -7,13 +7,13 @@ out: table
 examples: [poc_measurement_system_analysis]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # gum_monte_carlo — SPC `uncertainty` op
 
 - **データ種**: `table` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.gum_monte_carlo(table, u='u', sensitivity='sensitivity', n=200000, seed=0, level=0.95, correlation=None, distribution=None, value=None, power=None)` (実装を直接呼ぶなら `import spc; spc.gum_monte_carlo(table, u='u', sensitivity='sensitivity', n=200000, seed=0, level=0.95, correlation=None, distribution=None, value=None, power=None)`、台帳から引くなら `opsspc.get("gum_monte_carlo")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.gum_monte_carlo(table, u='u', sensitivity='sensitivity', n=200000, seed=0, level=0.95, correlation=None, distribution=None, value=None, power=None, stream=False)` (実装を直接呼ぶなら `import spc; spc.gum_monte_carlo(table, u='u', sensitivity='sensitivity', n=200000, seed=0, level=0.95, correlation=None, distribution=None, value=None, power=None, stream=False)`、台帳から引くなら `opsspc.get("gum_monte_carlo")`)
 
 ## 使い方
 
@@ -36,7 +36,10 @@ GUM 補遺 1(JCGM 101)のモンテカルロ伝播(``table``)。
 ★これは ``gum_propagate`` の**独立な検算**である。伝播則は偏微分と分散の代数、
 こちらは乱数の標本 —— 導出も実装も別なので、線形モデルでは
 ``u_mc -> u_c``(1/sqrt(n) の速さ)に近づくはずで、近づかなければどちらかが
-壊れている。相関は Cholesky 分解で入れるので、伝播則の相関項とは別の経路を通る。
+壊れている。相関は Cholesky(特異な半正定値は固有分解)で入れるので、伝播則の相関項とは別の経路を通る。
+★正規でない入力に相関を与えるときは**ガウス copula**(``_mc_standardised``)で
+入れるので、各入力の周辺分布は指定した形のまま(矩形は矩形)で、*correlation* は
+正規スコアの相関として働く。完全相関(特異)の行列も退化した正規分布として扱う。
 
 ★★**非線形では両者が食い違うのが正しい**。規格の例(比較損失
 ``dY = X1^2 + X2^2``、各 ``u = 0.005``)を ``x1 = x2 = 0`` で回すと:
@@ -57,6 +60,11 @@ GUM 補遺 1(JCGM 101)のモンテカルロ伝播(``table``)。
 ``1.959964/(sqrt(3) x 0.95) = 1.1911`` という閉形式で、実測 1.1914。
 これは欠陥ではなく**伝播則が分布の形を捨てている**ことの現れなので、両方返して
 読み手に見せる(この 0.95 を最初 ``a`` と思い込んで門を誤らせた)。
+
+Args:
+    stream: 独立な線形モデルでは成分ごと、それ以外では行ブロックごとに計算する。
+        後者の標準化行列用一時領域は 64 MiB 以下。乱数と行列積の区切りが既定経路と
+        異なるため、同じ seed でも結果はビット一致せず、既定は従来経路のまま。
 
 ## 参考(サンプルデータ・文献)
 

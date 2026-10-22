@@ -1,12 +1,12 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">spot_stats — OPTICS <code style="color:#22d3bf">design</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spot_stats(system, field=None, rings=8, wavelength_um=None, image_mm=None, pupil_fill=1.0)</code>(要直接呼叫實作,<code style="color:#22d3bf">import raytrace; raytrace.spot_stats(system, field=None, rings=8, wavelength_um=None, image_mm=None, pupil_fill=1.0)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;spot_stats&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spot_stats(system, field=None, rings=8, wavelength_um=None, image_mm=None, pupil_fill=1.0, aim=None, vignetting=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import raytrace; raytrace.spot_stats(system, field=None, rings=8, wavelength_um=None, image_mm=None, pupil_fill=1.0, aim=None, vignetting=None)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;spot_stats&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>某個視場點的 RMS / 幾何光斑半徑(mm)與重心(<code style="color:#22d3bf">table</code>)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>*pupil_fill* &lt; 1 samples the pupil only up to that fraction of its radius:</p>
-<p>with the stop on a surface, the outermost rays sit exactly on the aperture edge and any perturbation (tilt, decenter) vignettes half of them, which makes the RMS *drop* — <code style="color:#22d3bf">tolerance_analysis</code> uses 0.99 for that reason. <code style="color:#22d3bf">n_vignetted</code> reports how many rays were lost either way.</p>
+<p>with the stop on a surface, the outermost rays sit exactly on the aperture edge and any perturbation (tilt, decenter) vignettes half of them, which makes the RMS *drop* — <code style="color:#22d3bf">tolerance_analysis</code> uses 0.99 for that reason. <code style="color:#22d3bf">n_vignetted</code> reports how many rays were lost either way. *aim* / *vignetting*: see <code style="color:#22d3bf">ray_bundle</code> — with <code style="color:#22d3bf">aim=&quot;stop&quot;</code> and the field&#x27;s vignetting factors this is the spot a lens-design program reports (no marginal rays lost to pupil aberration).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>
@@ -25,6 +25,10 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:lens_design_demo">lens_design_demo</a> — <code style="color:#22d3bf">py -3.11 examples/lens_design_demo.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:lens_optimize_demo">lens_optimize_demo</a> — <code style="color:#22d3bf">py -3.11 examples/lens_optimize_demo.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:optical_design_metrics">optical_design_metrics</a> — <code style="color:#22d3bf">py -3.11 examples/optical_design_metrics.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_lens_solves_afocal">poc_lens_solves_afocal</a> — <code style="color:#22d3bf">py -3.11 examples/poc_lens_solves_afocal.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_photograph_through_prescription">poc_photograph_through_prescription</a> — <code style="color:#22d3bf">py -3.11 examples/poc_photograph_through_prescription.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_zmx_public_verify">poc_zmx_public_verify</a> — <code style="color:#22d3bf">py -3.11 examples/poc_zmx_public_verify.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
 <p><a style="color:#22d3bf" href="opoptics:abcd_matrix">abcd_matrix</a> · <a style="color:#22d3bf" href="opoptics:wavefront_stats">wavefront_stats</a> · <a style="color:#22d3bf" href="opoptics:sfr_from_edge">sfr_from_edge</a> · <a style="color:#22d3bf" href="opoptics:paraxial_trace">paraxial_trace</a> · <a style="color:#22d3bf" href="opoptics:seidel_coefficients">seidel_coefficients</a> · <a style="color:#22d3bf" href="opoptics:tolerance_analysis">tolerance_analysis</a> · <a style="color:#22d3bf" href="opoptics:wavefront_from_opd">wavefront_from_opd</a> · <a style="color:#22d3bf" href="opoptics:spot_diagram">spot_diagram</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">design</code>)</h3>

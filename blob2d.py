@@ -21,7 +21,7 @@ region props が facade に無い」と書いた。3 層すべてを引いて確
 つまり閾値処理のあとの定番の連鎖 —— 領域を物体に切り、物体ごとに測り、
 条件で選ぶ —— が、この道具では書けなかった。
 
-## 内容(10 op)
+## 内容(11 op)
 
     切る     `blob_label`          … 二値領域 → ラベル画像(4/8 連結)
     測る     `blob_features`       … 物体ごとの 19 項目(面積・重心・慣性主軸…)
@@ -30,6 +30,7 @@ region props が facade に無い」と書いた。3 層すべてを引いて確
     割る     `blob_distance`       … 背景までの距離(**画素単位。正規化しない**)
              `blob_seeds`          … h-maxima の種(**h は絶対値**)
              `blob_split`          … 種から分水嶺で融合した塊を割る
+    数える   `blob_count_interval` … 重なった塊の個数。決まらなければ区間で返す
     取り出す `blob_region`         … 1 個を二値領域として抜く
              `blob_boundaries`     … 物体の輪郭(1 画素幅)
     見る     `blob_overlay`        … 元画像の上に色分けして重ねる
@@ -87,8 +88,9 @@ from scipy import ndimage
 __all__ = [
     "blob_label", "blob_features", "blob_select", "blob_select_largest",
     "blob_region", "blob_boundaries", "blob_overlay",
-    "blob_distance", "blob_seeds", "blob_split",
-    "FEATURE_KEYS", "CONNECTIVITIES",
+    "blob_distance", "blob_seeds", "blob_split", "blob_count_interval",
+    "FEATURE_KEYS", "CONNECTIVITIES", "COUNT_STATUSES",
+    "PEAK_NOISE", "PEAK_AMBIGUOUS", "PEAK_SURE",
 ]
 
 #: 受け付ける連結の定義。既定は 8(``ndimage.label`` と HALCON の既定)。
@@ -463,6 +465,36 @@ def _renumber(lab: np.ndarray, keep) -> np.ndarray:
     return lut[lab]
 
 
+def _selection_feature(lab: np.ndarray, feature: str, spacing: float):
+    """Return present labels and a selection feature without unrelated work."""
+    counts = np.bincount(lab.ravel(), minlength=int(lab.max()) + 1)
+    labels = np.flatnonzero(counts[1:]) + 1
+    if feature == "area":
+        return labels, counts[labels].astype(np.float64) * spacing * spacing
+    if feature == "touches_border":
+        h, w = lab.shape
+        boxes = ndimage.find_objects(lab)
+        values = [
+            box[0].start == 0 or box[1].start == 0
+            or box[0].stop == h or box[1].stop == w
+            for label in labels
+            for box in (boxes[int(label) - 1],)
+        ]
+        return labels, np.asarray(values, bool)
+    if feature == "circularity":
+        boxes = ndimage.find_objects(lab)
+        values = []
+        for label in labels:
+            box = boxes[int(label) - 1]
+            perimeter = _perimeter(lab[box] == label)
+            area = float(counts[label])
+            values.append(4.0 * math.pi * area / (perimeter * perimeter)
+                          if perimeter > 0 else 0.0)
+        return labels, np.asarray(values, np.float64)
+    features = blob_features(lab, spacing)
+    return features["label"], np.asarray(features[feature])
+
+
 def blob_select(labels: Any, feature: str, vmin: Optional[float] = None,
                 vmax: Optional[float] = None, spacing: float = 1.0) -> np.ndarray:
     """特徴量が ``[vmin, vmax]`` に入る物体だけ残す(**番号は 1 から振り直す**)。
@@ -496,16 +528,17 @@ def blob_select(labels: Any, feature: str, vmin: Optional[float] = None,
             "blob_select: give at least one of vmin / vmax - selecting with "
             "neither bound would silently return the input unchanged")
     lab = _as_labels(labels, "blob_select")
-    f = blob_features(lab, spacing)
-    if f["n"] == 0:
+    sp = _positive_float(spacing, "blob_select", "spacing")
+    labels_present, values = _selection_feature(lab, feature, sp)
+    if labels_present.size == 0:
         return np.zeros_like(lab)
-    v = np.asarray(f[feature], np.float64)
+    v = np.asarray(values, np.float64)
     ok = np.ones(v.shape, bool)
     if vmin is not None:
         ok &= v >= float(vmin)
     if vmax is not None:
         ok &= v <= float(vmax)
-    return _renumber(lab, f["label"][ok])
+    return _renumber(lab, labels_present[ok])
 
 
 def blob_select_largest(labels: Any, count: int = 1) -> np.ndarray:
@@ -520,11 +553,12 @@ def blob_select_largest(labels: Any, count: int = 1) -> np.ndarray:
     if c < 1:
         raise ValueError(f"blob_select_largest: count must be >= 1, got {count!r}")
     lab = _as_labels(labels, "blob_select_largest")
-    f = blob_features(lab)
-    if f["n"] == 0:
+    counts = np.bincount(lab.ravel(), minlength=int(lab.max()) + 1)
+    labels_present = np.flatnonzero(counts[1:]) + 1
+    if labels_present.size == 0:
         return np.zeros_like(lab)
-    order = np.argsort(-np.asarray(f["area"], np.float64), kind="stable")
-    return _renumber(lab, f["label"][order[:c]])
+    order = np.argsort(-counts[labels_present], kind="stable")
+    return _renumber(lab, labels_present[order[:c]])
 
 
 # --------------------------------------------------------------------------- #
@@ -618,13 +652,62 @@ def blob_distance(region: Any, spacing: float = 1.0) -> np.ndarray:
 
 def _reconstruct_by_dilation(seed: np.ndarray, mask: np.ndarray) -> np.ndarray:
     """測地膨張による再構成(seed <= mask)。``mask`` の外へは広がらない。"""
-    fp = np.ones((3, 3), bool)
-    prev = seed
-    while True:
-        cur = np.minimum(ndimage.grey_dilation(prev, footprint=fp), mask)
-        if np.array_equal(cur, prev):
-            return cur
-        prev = cur
+    from collections import deque
+
+    out = np.minimum(seed, mask).copy()
+    h, w = out.shape
+    before = ((-1, -1), (-1, 0), (-1, 1), (0, -1))
+    after = ((0, 1), (1, -1), (1, 0), (1, 1))
+
+    # Hybrid reconstruction: the two raster scans perform the cheap directed
+    # propagation first. The FIFO then visits only pixels on a still-growing
+    # front instead of dilating and comparing the complete image each round.
+    for row in range(h):
+        for col in range(w):
+            value = out[row, col]
+            for dr, dc in before:
+                rr, cc = row + dr, col + dc
+                if 0 <= rr < h and 0 <= cc < w and out[rr, cc] > value:
+                    value = out[rr, cc]
+            if value > out[row, col]:
+                out[row, col] = min(value, mask[row, col])
+    for row in range(h - 1, -1, -1):
+        for col in range(w - 1, -1, -1):
+            value = out[row, col]
+            for dr, dc in after:
+                rr, cc = row + dr, col + dc
+                if 0 <= rr < h and 0 <= cc < w and out[rr, cc] > value:
+                    value = out[rr, cc]
+            if value > out[row, col]:
+                out[row, col] = min(value, mask[row, col])
+
+    queued = np.zeros((h, w), bool)
+    queue = deque()
+    for row in range(h):
+        for col in range(w):
+            value = out[row, col]
+            for dr, dc in before + after:
+                rr, cc = row + dr, col + dc
+                if (0 <= rr < h and 0 <= cc < w
+                        and out[rr, cc] < value and out[rr, cc] < mask[rr, cc]):
+                    queue.append((row, col))
+                    queued[row, col] = True
+                    break
+    while queue:
+        row, col = queue.popleft()
+        queued[row, col] = False
+        value = out[row, col]
+        for dr, dc in before + after:
+            rr, cc = row + dr, col + dc
+            if not (0 <= rr < h and 0 <= cc < w):
+                continue
+            grown = min(value, mask[rr, cc])
+            if grown > out[rr, cc]:
+                out[rr, cc] = grown
+                if not queued[rr, cc]:
+                    queue.append((rr, cc))
+                    queued[rr, cc] = True
+    return out
 
 
 def blob_seeds(distance: Any, h: float, connectivity: int = 8) -> np.ndarray:
@@ -742,6 +825,275 @@ def blob_split(labels: Any, seeds: Any, distance: Any) -> np.ndarray:
         keep, _ = ndimage.label(left, structure=fp)
         cur = np.where(left, keep + int(cur.max()), cur)
     return _renumber(cur, np.unique(cur[cur > 0]))
+
+
+# --------------------------------------------------------------------------- #
+# 5b. 数える —— 決まらないときは区間で返す                                       #
+# --------------------------------------------------------------------------- #
+#: :func:`blob_count_interval` の山の判定の符号(``peaks["status"]``)。
+PEAK_NOISE, PEAK_AMBIGUOUS, PEAK_SURE = 0, 1, 2
+
+#: :func:`blob_count_interval` の成分の判定(``components["status"]``)。
+COUNT_STATUSES: tuple[str, ...] = ("determined", "ambiguous", "unexplained")
+
+
+def _component_peaks(f: np.ndarray, m: np.ndarray, st: np.ndarray):
+    """1 個の連結成分 ``m`` の中で、``f`` の極大(台地)ごとに高さと突出度を出す。
+
+    突出度 = 0 次元パーシステンス: 水位を上から下げ、その山がより高い山と
+    つながった水位までの高さ。成分でいちばん高い山は背景(0)まで生き残るので
+    突出度 = 高さ。同じ高さの山どうしは走査順の早いほうが残る(宣言順で決める)。
+
+    返り値: ``(plateau_labels, pos (k, 2), height (k,), prominence (k,))``。
+    """
+    fm = np.where(m, f, -np.inf)
+    mx = ndimage.maximum_filter(fm, footprint=st, mode="constant", cval=-np.inf)
+    cand = m & (fm >= mx)
+    plab, k = ndimage.label(cand, structure=st)
+    idx = np.arange(1, k + 1)
+    hts = np.asarray(ndimage.maximum(f, plab, idx), np.float64).reshape(-1)
+    pos = np.asarray(ndimage.maximum_position(f, plab, idx), np.int64).reshape(-1, 2)
+    prom = np.zeros(k, np.float64)
+    alive = np.ones(k, bool)
+    if k > 1:
+        second = float(np.sort(hts)[::-1][1])
+        # 2 番目に高い山より上の水位では併合は起きない(山が 1 つしか水面に出ていない)
+        for t in np.unique(f[m & (f <= second)])[::-1]:
+            lab, _ = ndimage.label(m & (f >= t), structure=st)
+            cid = lab[pos[:, 0], pos[:, 1]]
+            a = np.flatnonzero(alive & (cid > 0))
+            if a.size < 2:
+                continue
+            cs = cid[a]
+            uniq, cnt = np.unique(cs, return_counts=True)
+            for c in uniq[cnt > 1]:
+                g = a[cs == c]
+                keep = g[np.lexsort((g, -hts[g]))[0]]
+                die = g[g != keep]
+                alive[die] = False
+                prom[die] = hts[die] - float(t)
+            if int(alive.sum()) == 1:
+                break
+    prom[alive] = hts[alive]
+    return plab, pos, hts, prom
+
+
+def _power_split(lab: np.ndarray, comp, rows, cols, hts) -> np.ndarray:
+    """種(山の位置と内接円の半径)から、成分ごとに**冪図**で画素を配る。
+
+    画素 x は |x − c_i|² − h_i² が最小の種 i へ。2 つの円が重なっていれば、境は
+    2 つの交点を結ぶ弦(根軸)になる —— 円の重なりの分け方として閉形式で正しい。
+    分水嶺(:func:`blob_split`)は同じ答えに近いが、段ごとに膨張を収束まで回すので
+    520x696 の細胞の真値マスク 1 枚に 4 秒かかった(2026-10-18 実測)。ここは
+    成分ごとに (画素 × 種) の 1 回の計算で済む。種の番号は渡した順に 1..k。
+    """
+    out = np.zeros(lab.shape, np.int32)
+    comp = np.asarray(comp, np.int64)
+    if comp.size == 0:
+        return out
+    rows, cols, hts = (np.asarray(v, np.float64) for v in (rows, cols, hts))
+    ids = np.arange(1, comp.size + 1, dtype=np.int32)
+    for i, sl in enumerate(ndimage.find_objects(lab), start=1):
+        if sl is None:
+            continue
+        k = np.flatnonzero(comp == i)
+        if k.size == 0:
+            continue
+        yy, xx = np.nonzero(lab[sl] == i)
+        if k.size == 1:
+            out[sl][yy, xx] = ids[k[0]]
+            continue
+        y = yy[:, None] + sl[0].start
+        x = xx[:, None] + sl[1].start
+        d = (y - rows[k][None, :]) ** 2 + (x - cols[k][None, :]) ** 2 - hts[k][None, :] ** 2
+        out[sl][yy, xx] = ids[k][np.argmin(d, axis=1)]
+    return out
+
+
+def blob_count_interval(region: Any, rel_lo: float = 0.05, rel_hi: float = 0.15,
+                        min_prominence: float = 1.0, round_tol: Optional[float] = None,
+                        connectivity: int = 8) -> dict:
+    """重なった物体を数える。**決まらないときは個数ではなく区間を返す**(fail-closed)。
+
+    融合した塊の中の物体は、距離変換の山として現れる。2 つの円が重なると
+    くびれができ、くびれが浅くなるほど(山の**突出度**が小さいほど)「2 個か
+    1 個か」が決まらなくなる。``blob_seeds`` + ``blob_split`` は h を 1 つ選んで
+    **必ず 1 つの個数を返す** —— 重なりが深くて決まらない所でも、もっともらしい
+    数が出る。この op は山ごとに突出度を測り、閾値の帯に落ちた山を「あいまい」
+    として個数を ``lo`` 〜 ``hi`` の区間で返す。区間の幅が 0 のときだけ
+    ``count`` を返す。
+
+    山の判定(突出度 p、高さ h、相対突出度 p/h。h は内接円の半径にあたる):
+
+    * ``p >= min_prominence`` かつ ``p/h >= rel_hi`` → 確かな山(数える)
+    * ``p >= min_prominence`` かつ ``rel_lo <= p/h < rel_hi`` → あいまい
+      (lo には数えず hi には数える)
+    * それ以外 → 雑音(格子の量子化で出る山。楕円で実測 0.6 px 未満)
+
+    **相対突出度を使う理由**: 等しい半径 r の 2 円が重なり率 o(中心間
+    d = 2r(1 − o))で重なると、くびれの半幅は w = sqrt(r² − (d/2)²) で、
+    p/h = 1 − sqrt(1 − (1 − o)²) —— **半径によらない**。絶対値の h を選ぶと、
+    大きい泡と小さい泡が混ざった画像で片方にしか合わない(``poc_cell_counting``
+    が記録した穴と同じ形)。既定の帯 0.05〜0.15 は重なり率 0.69〜0.47 に当たる。
+
+    ``round_tol`` を与えると、**山では説明できない面積**も拒否する。
+    重なり率が 0.7 を超えると、くびれが格子の量子化に埋もれて山が 1 つしか
+    残らない(2 個が 1 個に見える)。そこで成分の面積を、確かな山とあいまいな山の
+    内接円の面積の和 Σπh² と比べ、面積 > (1 + round_tol + 1/h_min) · Σπh² なら
+    上限を開く(``hi = None``)。1/h_min は格子の量子化の分(半径 8 px 以上の円板で
+    比 1.09 以下、2026-10-18 実測)。``round_tol`` は**許す縦横比 − 1** にあたる
+    (縦横比 a/b の楕円は面積比 a/b)。泡のように丸い物体なら 0.1、細胞のように
+    いびつなら 0.3 程度。``None`` は形を仮定しない(深い重なりは見逃す)。
+
+    **区間の上限は保証ではない**: ``hi`` は山として見えた物体の数で、山を残さずに
+    埋もれた物体(大きい泡に食い込んだ小さい泡など)は ``hi`` にも入らない。面積の
+    検査がそれを拾えたときだけ上限を開く。``determined`` が False のときは「数を
+    言えない」ことだけが確かで、区間は目安(実際の泡の形の半合成で、決まらないと
+    答えた塊の真値が ``hi`` を 1 個上回る例が出た。``poc_dense_bubble_count``)。
+
+    Parameters
+    ----------
+    region : array_like
+        2-D の前景(``> 0`` が前景)。
+    rel_lo, rel_hi : float
+        相対突出度の帯。``0 < rel_lo <= rel_hi < 1``。
+    min_prominence : float
+        突出度の絶対の床 [px]。``>= 0``。距離変換の量子化の山を落とす。
+    round_tol : float or None
+        面積の検査の許し(上を参照)。``None`` で検査しない。
+    connectivity : {4, 8}
+        成分と水位の連結の取り方。
+
+    Returns
+    -------
+    dict
+        ``count``(区間の幅が 0 なら int、そうでなければ ``None``)、``lo``、
+        ``hi``(上限が開いていれば ``None``)、``determined``、``reason``、
+        ``labels``(確かな山だけを種にした分割、int32、内接円の冪図)、``labels_hi``
+        (あいまいな山も種にした分割)、``components``(成分ごとの ``label`` / ``lo`` /
+        ``hi``(開いていれば -1)/ ``status`` / ``area`` / ``area_ratio``)、
+        ``peaks``(山ごとの ``component`` / ``row`` / ``col`` / ``height`` /
+        ``prominence`` / ``rel_prominence`` / ``status``(0 雑音・1 あいまい・2 確か))、
+        ``params``。
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> yy, xx = np.mgrid[0:80, 0:120]
+    >>> two = ((yy - 40) ** 2 + (xx - 40) ** 2 < 400) | ((yy - 40) ** 2 + (xx - 76) ** 2 < 400)
+    >>> blob_count_interval(two)["count"]              # 重なり率 0.1: 2 個に決まる
+    2
+    >>> deep = ((yy - 40) ** 2 + (xx - 50) ** 2 < 400) | ((yy - 40) ** 2 + (xx - 66) ** 2 < 400)
+    >>> r = blob_count_interval(deep, round_tol=0.1)   # 重なり率 0.6: 決まらない
+    >>> r["count"] is None, r["lo"]
+    (True, 1)
+
+    来歴(公開文献のみ): Edelsbrunner, Letscher & Zomorodian, *Discrete Comput.
+    Geom.* 28 (2002) 511 —— パーシステンス / Vincent & Soille, *IEEE TPAMI* 13
+    (1991) 583 —— 分水嶺 / Aurenhammer, *SIAM J. Comput.* 16 (1987) 78 —— 冪図(分割)。
+    """
+    op = "blob_count_interval"
+    m = _as_binary(region, op)
+    lo_r, hi_r = float(rel_lo), float(rel_hi)
+    if not (math.isfinite(lo_r) and math.isfinite(hi_r) and 0.0 < lo_r <= hi_r < 1.0):
+        raise ValueError(
+            f"{op}: need 0 < rel_lo <= rel_hi < 1, got rel_lo={rel_lo!r}, rel_hi={rel_hi!r}")
+    mp = float(min_prominence)
+    if not math.isfinite(mp) or mp < 0.0:
+        raise ValueError(f"{op}: min_prominence must be finite and >= 0, got {min_prominence!r}")
+    rt = None
+    if round_tol is not None:
+        rt = float(round_tol)
+        if not math.isfinite(rt) or rt < 0.0:
+            raise ValueError(f"{op}: round_tol must be None or finite and >= 0, got {round_tol!r}")
+    if connectivity not in CONNECTIVITIES:
+        raise ValueError(f"{op}: connectivity must be 4 or 8, got {connectivity!r}")
+    st = (np.ones((3, 3), bool) if connectivity == 8
+          else ndimage.generate_binary_structure(2, 1))
+
+    lab, n = ndimage.label(m, structure=st)
+    lab = np.asarray(lab, np.int32)
+    f = np.asarray(ndimage.distance_transform_edt(m), np.float64)
+    c_lab, c_lo, c_hi, c_status, c_area, c_ratio = [], [], [], [], [], []
+    p_cols: dict = {k: [] for k in ("component", "row", "col", "height", "prominence",
+                                    "rel_prominence", "status")}
+    for i, sl in enumerate(ndimage.find_objects(lab), start=1):
+        if sl is None:
+            continue
+        pad = (slice(max(sl[0].start - 1, 0), sl[0].stop + 1),
+               slice(max(sl[1].start - 1, 0), sl[1].stop + 1))
+        cm = lab[pad] == i
+        cf = np.where(cm, f[pad], 0.0)
+        plab, pos, hts, prom = _component_peaks(cf, cm, st)
+        rel = prom / np.maximum(hts, 1e-12)
+        status = np.where((prom >= mp) & (rel >= hi_r), PEAK_SURE,
+                          np.where((prom >= mp) & (rel >= lo_r), PEAK_AMBIGUOUS, PEAK_NOISE))
+        # 成分でいちばん目立つ山は必ず数える(成分がある = 物体が 1 個以上ある)
+        top = int(np.lexsort((np.arange(hts.size), -prom))[0])
+        status[top] = PEAK_SURE
+        n_sure = int(np.sum(status == PEAK_SURE))
+        n_amb = int(np.sum(status == PEAK_AMBIGUOUS))
+        area = int(cm.sum())
+        # 面積の検査は上限の仮説(確か + あいまいな山)で行う: それでも説明できない面積が
+        # 残るなら、上限そのものが決まらない
+        h_up = hts[status != PEAK_NOISE]
+        disc = math.pi * float(np.sum(h_up ** 2))
+        ratio = area / disc if disc > 0 else math.inf
+        kind, hi_c = ("determined" if n_amb == 0 else "ambiguous"), n_sure + n_amb
+        if rt is not None and ratio > 1.0 + rt + 1.0 / max(float(h_up.min()), 1.0):
+            kind, hi_c = "unexplained", -1
+        c_lab.append(i)
+        c_lo.append(n_sure)
+        c_hi.append(hi_c)
+        c_status.append(kind)
+        c_area.append(area)
+        c_ratio.append(ratio)
+        for j in range(hts.size):
+            p_cols["component"].append(i)
+            p_cols["row"].append(int(pos[j, 0]) + pad[0].start)
+            p_cols["col"].append(int(pos[j, 1]) + pad[1].start)
+            p_cols["height"].append(float(hts[j]))
+            p_cols["prominence"].append(float(prom[j]))
+            p_cols["rel_prominence"].append(float(rel[j]))
+            p_cols["status"].append(int(status[j]))
+
+    lo = int(sum(c_lo))
+    open_hi = any(h < 0 for h in c_hi)
+    hi = None if open_hi else int(sum(c_hi))
+    determined = hi == lo
+    n_amb_c = sum(s == "ambiguous" for s in c_status)
+    n_unx_c = sum(s == "unexplained" for s in c_status)
+    if determined:
+        reason = "determined: every peak is clearly in or clearly out"
+    else:
+        reason = (f"undetermined: {n_amb_c} component(s) have a peak inside the "
+                  f"rel_prominence band [{lo_r}, {hi_r}), {n_unx_c} component(s) have "
+                  "area the counted peaks cannot explain (upper bound open)")
+    pk = {k: np.asarray(v) for k, v in p_cols.items()}
+    sure = pk["status"] == PEAK_SURE if n else np.zeros(0, bool)
+    up = pk["status"] != PEAK_NOISE if n else np.zeros(0, bool)
+    labels = _power_split(lab, pk["component"][sure], pk["row"][sure], pk["col"][sure], pk["height"][sure]) \
+        if n else np.zeros(m.shape, np.int32)
+    labels_hi = _power_split(lab, pk["component"][up], pk["row"][up], pk["col"][up], pk["height"][up]) \
+        if n else np.zeros(m.shape, np.int32)
+    return {
+        "count": lo if determined else None,
+        "lo": lo,
+        "hi": hi,
+        "determined": bool(determined),
+        "reason": reason,
+        "labels": labels,
+        "labels_hi": labels_hi,
+        "components": {
+            "label": np.asarray(c_lab, np.int32), "lo": np.asarray(c_lo, np.int32),
+            "hi": np.asarray(c_hi, np.int32), "status": list(c_status),
+            "area": np.asarray(c_area, np.int64), "area_ratio": np.asarray(c_ratio, np.float64),
+        },
+        "peaks": {k: np.asarray(v, np.float64 if k in ("height", "prominence", "rel_prominence")
+                                else np.int64) for k, v in p_cols.items()},
+        "params": {"rel_lo": lo_r, "rel_hi": hi_r, "min_prominence": mp,
+                   "round_tol": rt, "connectivity": int(connectivity)},
+    }
 
 
 # --------------------------------------------------------------------------- #

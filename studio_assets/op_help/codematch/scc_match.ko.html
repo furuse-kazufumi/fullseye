@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">scc_match — CODEMATCH <code style="color:#22d3bf">match</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scc_match(image, template, flat_thresh=0.01, min_valid=32, min_mask_fraction=None, mask_extension=True, z_mask=4.0) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import codematch; codematch.scc_match(image, template, flat_thresh=0.01, min_valid=32, min_mask_fraction=None, mask_extension=True, z_mask=4.0) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opscodematch.get(&quot;scc_match&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>선택적 상관 계수(SCC). 증분 부호가 일치하는 화소만으로 정규화 상관을 구한다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>テンプレートの列を (0,1), (2,3), … の組にし、組ごとに右の画素が左以上かの符号 <code style="color:#22d3bf">b</code> を作る。画像の窓の同じ組の符号 <code style="color:#22d3bf">b&#x27;</code> と一致すれば、その組の 2 画素の基本マスク <code style="color:#22d3bf">c = 1</code>、違えば 0。<code style="color:#22d3bf">r = Σ c (f - f̄)(g - ḡ) / sqrt(Σ c (f - f̄)² · Σ c (g - ḡ)²)</code>、<code style="color:#22d3bf">f̄</code> と <code style="color:#22d3bf">ḡ</code> は窓とテンプレートの<b>全画素</b>の平均。マスクが全部 1 なら NCC と厳密に一致する(列数が奇数なら最後の列は組を作らず、マスク 0)。</p>
+<p><code style="color:#22d3bf">mask_extension=True</code>(既定、論文の 3 章の拡張マスク)は、基本マスクの要素を 2 行 × 2 組(画素で 2 × 4)ずつ束ね、4 つのうち 2 つ以上が不一致なら 4 つとも外し、そうでなければ 4 つとも使う。不一致の起こる確率が <code style="color:#22d3bf">p</code> の所で、外される確率は <code style="color:#22d3bf">1 - (1-p)^4 - 4 p (1-p)^3</code>(p = 0.5 の遮蔽部で 0.6875)。端の余りの要素は基本マスクのまま。<code style="color:#22d3bf">False</code> は基本マスク(全位置を FFT で数えるので速い)。</p>
+<p>fail-closed:</p>
+<p style="margin:2px 0 2px 12px">• テンプレートの組の増分のうち <code style="color:#22d3bf">|Δ| &gt; flat_thresh</code> のものが <code style="color:#22d3bf">min_valid</code> 未満 → ValueError。</p>
+<p style="margin:2px 0 2px 12px">• 使った画素が窓の <code style="color:#22d3bf">min_mask_fraction</code> 未満の位置、窓の選ばれた画素の分散が 0 の位置は採点しない(<code style="color:#22d3bf">valid_map</code> が False、<code style="color:#22d3bf">score_map</code> は -1)。</p>
+<p style="margin:2px 0 2px 12px">• 採点できる位置が 1 つも無ければ ValueError。</p>
+<p><code style="color:#22d3bf">min_mask_fraction=None</code>(既定)は、<b>無相関の位置で期待される使用率</b>に <code style="color:#22d3bf">z_mask</code> 標準偏差を足した値を床にする。無相関なら増分符号は半々で一致するので、基本マスクの使用率の期待値は 1/2、拡張マスクは 4 要素の群で <code style="color:#22d3bf">(1/2)^4 + 4 (1/2)^4 = 5/16</code>。標準偏差は群を独立な試行とみた 2 項分布の値。★この床が無いと、SCC は「たまたま符号の合った画素だけ」を選んだ偽の位置で相関が 1 近くまで上がり、NCC より先に壊れる(選択の偏り。PoC で実測)。この床は論文の式には無く、論文の統計モデル(無相関で 0.5)から足した fail-closed。</p>
+<p>返り: <code style="color:#22d3bf">row</code> / <code style="color:#22d3bf">col</code>、<code style="color:#22d3bf">score</code>、<code style="color:#22d3bf">mask_fraction</code>(最良位置で使った画素の割合)、<code style="color:#22d3bf">mask</code>(最良位置のマスク、テンプレートと同じ形)、<code style="color:#22d3bf">score_map</code>、<code style="color:#22d3bf">valid_map</code>、<code style="color:#22d3bf">mask_fraction_map</code>、<code style="color:#22d3bf">refusal_margin</code>(テンプレートの組の余裕)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecodematch:robust_code_matching">robust_code_matching 패밀리 가이드</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_code_matching_breakdown">poc_code_matching_breakdown</a> — <code style="color:#22d3bf">py -3.11 examples/poc_code_matching_breakdown.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">match</code>)</h3>
+<p><a style="color:#22d3bf" href="opcodematch:ocm_match">ocm_match</a> · <a style="color:#22d3bf" href="opcodematch:isc_match">isc_match</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: codematch.py — CODEMATCH 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

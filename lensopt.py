@@ -102,6 +102,10 @@ def _rebuild(system, values, variables, bounds):
     for v, var in zip(values, variables):
         kind, i, j = var
         s = surf[i]
+        rule = s.get("solve")
+        if rule is not None and rule["target"] == kind and kind in ("c", "t"):
+            raise ValueError("variable %s%d is set by a %r solve on that surface; clear the solve "
+                             "(lenssolve.lens_solve_clear) before making it a variable" % (kind, i, rule["kind"]))
         if kind == "c":
             c = float(v)
             cmax = 1.0 / bounds["min_radius"]
@@ -123,7 +127,9 @@ def _rebuild(system, values, variables, bounds):
             s["asph"] = tuple(a)
     return RT.lens_system(surf, stop=system["stop"], object_mm=system["object_mm"],
                           wavelength_um=system["wavelength_um"], index_object=system["index_object"],
-                          image_mm=system["image_mm"], field=system["field"])
+                          image_mm=system["image_mm"], field=system["field"],
+                          aim=system.get("aim", "paraxial"), vignetting=system.get("vignetting"),
+                          **RT._system_extras(system))
 
 
 def _default_variables(system):
@@ -428,6 +434,9 @@ def bend_singlet(focal_mm=100.0, index=1.5168, thickness_mm=3.0, semi_aperture_m
     ``shape_factor``, ``R1``, ``R2`` and the RMS spot on axis.
     ``system["object_mm"]`` is ``inf`` for the default object at infinity (the
     lens_system convention); ``R1`` / ``R2`` are ``inf`` for a flat side (q = ±1).
+    *index* is anything :func:`raytrace.refractive_index` takes: a number, an
+    ``(nd, vd)`` pair, or a glass / material name such as ``"N-BK7"`` or
+    ``"PMMA"`` (the radii use its d-line index, the traced lens keeps its dispersion).
     """
     f = RT._finite(focal_mm, "focal_mm")
     if f == 0.0:

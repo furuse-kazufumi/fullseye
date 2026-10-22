@@ -4,16 +4,16 @@ dim: multivar
 category: analysis
 in: matrix
 out: table
-examples: [multivar_inspection_tour]
+examples: [multivar_inspection_tour, poc_simcal_thin_film]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # mv_pca — MULTIVAR `analysis` op
 
 - **データ種**: `matrix` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.mv_pca(X=None, standardize=True, n_components=None, threshold=0.9, n_parallel=200, parallel_stat='mean', seed=0) -> 'dict'` (実装を直接呼ぶなら `import multivar; multivar.mv_pca(X=None, standardize=True, n_components=None, threshold=0.9, n_parallel=200, parallel_stat='mean', seed=0) -> 'dict'`、台帳から引くなら `opsmultivar.get("mv_pca")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.mv_pca(X=None, standardize=True, n_components=None, threshold=0.9, n_parallel=200, parallel_stat='mean', seed=0, memory_budget=None) -> 'dict'` (実装を直接呼ぶなら `import multivar; multivar.mv_pca(X=None, standardize=True, n_components=None, threshold=0.9, n_parallel=200, parallel_stat='mean', seed=0, memory_budget=None) -> 'dict'`、台帳から引くなら `opsmultivar.get("mv_pca")`)
 
 ## 使い方
 
@@ -53,6 +53,7 @@ count, at least 1). Accepts a matrix or a ``feat_image_vector`` table.
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [multivar_inspection_tour](../../../../examples/multivar_inspection_tour.py) — `py -3.11 examples/multivar_inspection_tour.py`
+- [poc_simcal_thin_film](../../../../examples/poc_simcal_thin_film.py) — `py -3.11 examples/poc_simcal_thin_film.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

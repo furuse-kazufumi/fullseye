@@ -1,0 +1,113 @@
+[
+ {
+  "file": "01_breakdown_occlusion.png",
+  "name": "breakdown_occlusion",
+  "caption": "公開の実写 5 枚から切った 32 x 32 のテンプレートを、雑音 σ = 0.01 の場面で探す。点 = 段ごとの割合(各段 40 試行)。50 % を割る所が破綻点。",
+  "shape": [
+   420,
+   720,
+   3
+  ],
+  "source": "camera — scikit-image (CC0 (Lav Varshney))\nastronaut — scikit-image (Public domain (NASA))\ncoffee — scikit-image (CC0 (Rachel Michetti))\nchelsea — scikit-image (CC0 (Stefan van der Walt))\nclock — scikit-image (Public domain (Stefan van der Walt))\ngravel — CC0Textures (CC0)"
+ },
+ {
+  "file": "02_breakdown_highlight.png",
+  "name": "breakdown_highlight",
+  "caption": "公開の実写 5 枚から切った 32 x 32 のテンプレートを、雑音 σ = 0.01 の場面で探す。点 = 段ごとの割合(各段 40 試行)。50 % を割る所が破綻点。",
+  "shape": [
+   420,
+   720,
+   3
+  ],
+  "source": "camera — scikit-image (CC0 (Lav Varshney))\nastronaut — scikit-image (Public domain (NASA))\ncoffee — scikit-image (CC0 (Rachel Michetti))\nchelsea — scikit-image (CC0 (Stefan van der Walt))\nclock — scikit-image (Public domain (Stefan van der Walt))\ngravel — CC0Textures (CC0)"
+ },
+ {
+  "file": "03_breakdown_shading.png",
+  "name": "breakdown_shading",
+  "caption": "公開の実写 5 枚から切った 32 x 32 のテンプレートを、雑音 σ = 0.01 の場面で探す。点 = 段ごとの割合(各段 40 試行)。50 % を割る所が破綻点。",
+  "shape": [
+   420,
+   720,
+   3
+  ],
+  "source": "camera — scikit-image (CC0 (Lav Varshney))\nastronaut — scikit-image (Public domain (NASA))\ncoffee — scikit-image (CC0 (Rachel Michetti))\nchelsea — scikit-image (CC0 (Stefan van der Walt))\nclock — scikit-image (Public domain (Stefan van der Walt))\ngravel — CC0Textures (CC0)"
+ },
+ {
+  "file": "04_breakdown_rotation.png",
+  "name": "breakdown_rotation",
+  "caption": "公開の実写 5 枚から切った 32 x 32 のテンプレートを、雑音 σ = 0.01 の場面で探す。点 = 段ごとの割合(各段 40 試行)。50 % を割る所が破綻点。",
+  "shape": [
+   420,
+   720,
+   3
+  ],
+  "source": "camera — scikit-image (CC0 (Lav Varshney))\nastronaut — scikit-image (Public domain (NASA))\ncoffee — scikit-image (CC0 (Rachel Michetti))\nchelsea — scikit-image (CC0 (Stefan van der Walt))\nclock — scikit-image (Public domain (Stefan van der Walt))\ngravel — CC0Textures (CC0)"
+ },
+ {
+  "file": "05_highlight_sweep.gif",
+  "name": "highlight_sweep",
+  "caption": "飽和したハイライトを 0 → 60 % まで広げる(camera、CC0)。白 = 正解、橙 = NCC、青 = OCM、緑 = ISC、紫 = SCC。NCC は最初の数コマで光の縁へ飛ぶ。",
+  "shape": [
+   384,
+   384,
+   3
+  ],
+  "animated": true,
+  "frames": 16,
+  "frames_written": 16,
+  "fps": 3.0
+ },
+ {
+  "file": "06_score_maps_occlusion40.png",
+  "name": "score_maps_occlusion40",
+  "caption": "",
+  "shape": [
+   2439,
+   3496,
+   3
+  ]
+ },
+ {
+  "file": "07_flat_template_refusal.png",
+  "name": "flat_template_refusal",
+  "caption": "空の平坦な所(標準偏差 < 0.01)を切ったテンプレート。NCC は別の空を高い相関で返し、符号系は値を返さない。",
+  "shape": [
+   512,
+   512,
+   3
+  ],
+  "source": "camera — scikit-image (CC0 (Lav Varshney))\nastronaut — scikit-image (Public domain (NASA))\ncoffee — scikit-image (CC0 (Rachel Michetti))\nchelsea — scikit-image (CC0 (Stefan van der Walt))\nclock — scikit-image (Public domain (Stefan van der Walt))\ngravel — CC0Textures (CC0)"
+ },
+ {
+  "file": "08_rrf_vs_difference.png",
+  "name": "rrf_vs_difference",
+  "caption": "",
+  "shape": [
+   647,
+   808,
+   3
+  ]
+ },
+ {
+  "file": "09_closed_form_z.png",
+  "name": "closed_form_z",
+  "caption": "雑音の無い場面の増分 Δ と σ から、組ごとの一致確率 Φ(Δ/(√2σ)) が決まる。",
+  "shape": [
+   420,
+   890,
+   3
+  ]
+ },
+ {
+  "file": "10_breakdown_table.png",
+  "name": "breakdown_table",
+  "caption": "線形補間。遮蔽・ハイライトは面積比、減光は深さ、回転は度。",
+  "shape": [
+   176,
+   376,
+   3
+  ],
+  "csv": "10_breakdown_table.csv",
+  "tsv": "10_breakdown_table.tsv"
+ }
+]

@@ -631,6 +631,40 @@ def _backproject(sino: np.ndarray, angles_rad: np.ndarray, size: int) -> np.ndar
     return acc
 
 
+def _project_geometry(shape: tuple[int, int], angle: float, n_det: int,
+                      oversample: int = 1) -> tuple:
+    """Precompute one view's bilinear sampling geometry for iterative solvers."""
+    h, w = shape
+    cx, cy = (w - 1) / 2.0, (h - 1) / 2.0
+    s = np.arange(n_det, dtype=np.float64) - (n_det - 1) / 2.0
+    t_max = 0.5 * np.hypot(h, w) + 1.0
+    n_t = int(np.ceil(2.0 * t_max * oversample)) + 1
+    t = np.linspace(-t_max, t_max, n_t)
+    ca, sa = float(np.cos(angle)), float(np.sin(angle))
+    xs = s[:, None] * ca - t[None, :] * sa + cx
+    ys = s[:, None] * sa + t[None, :] * ca + cy
+    return xs, ys, float(t[1] - t[0])
+
+
+def _backproject_geometry(angle: float, size: int, n_det: int) -> tuple:
+    """Precompute one view's detector interpolation geometry."""
+    grid = np.arange(size, dtype=np.float64) - (size - 1) / 2.0
+    s = (grid[None, :] * float(np.cos(angle))
+         + grid[:, None] * float(np.sin(angle)) + (n_det - 1) / 2.0)
+    j0 = np.floor(s).astype(np.int64)
+    return np.clip(j0, 0, n_det - 2), s - j0, (j0 >= 0) & (j0 + 1 < n_det)
+
+
+def _project_from_geometry(img: np.ndarray, geometry: tuple) -> np.ndarray:
+    xs, ys, dt = geometry
+    return _bilinear_gather(img, xs, ys).sum(axis=1) * dt
+
+
+def _backproject_from_geometry(row: np.ndarray, geometry: tuple) -> np.ndarray:
+    j0, f, ok = geometry
+    return np.where(ok, row[j0] * (1.0 - f) + row[j0 + 1] * f, 0.0)
+
+
 def _ramlak_spectrum(n_pad: int) -> np.ndarray:
     """The Ram-Lak ramp, built as the DFT of its **spatial** impulse response.
 
@@ -1405,14 +1439,18 @@ def sart_reconstruct(sinogram, angles_deg=None, size=None, n_iter=10,
     ones_img = np.ones((sz, sz), dtype=np.float64)
     ones_sino = np.ones((1, n_det), dtype=np.float64)
     eps = 1e-9
-    row_sums = _project(ones_img, rad, n_det, 1)            # ray lengths, per view
-    col_sums = [np.maximum(_backproject(ones_sino, rad[i:i + 1], sz), eps)
-                for i in range(rad.size)]
+    project_geometry = [_project_geometry((sz, sz), a, n_det) for a in rad]
+    backproject_geometry = [_backproject_geometry(a, sz, n_det) for a in rad]
+    row_sums = np.stack([_project_from_geometry(ones_img, g)
+                         for g in project_geometry])
+    col_sums = [np.maximum(_backproject_from_geometry(ones_sino[0], g), eps)
+                for g in backproject_geometry]
     for _ in range(n_it):
         for i in range(rad.size):
-            fp = _project(x, rad[i:i + 1], n_det, 1)[0]
+            fp = _project_from_geometry(x, project_geometry[i])
             resid = (sino[i] - fp) / np.maximum(row_sums[i], eps)
-            x = x + lam * _backproject(resid[None, :], rad[i:i + 1], sz) / col_sums[i]
+            x = x + lam * _backproject_from_geometry(
+                resid, backproject_geometry[i]) / col_sums[i]
         if nonnegative:
             np.clip(x, 0.0, None, out=x)
     return x

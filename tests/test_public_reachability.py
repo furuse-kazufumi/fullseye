@@ -68,7 +68,11 @@ _INTERNAL = {
     "param_specs": 10, "parity": 2, "problems": 2, "recipes": 4, "references": 2,
     "report": 1, "robust": 3, "samples": 2, "shapematch_gpu": 3,
     # studio 2026-10-03 +10: 結果プレビュー・台帳 op の実行窓・エディタへ繋ぐ部品(GUI の内側)
-    "studio": 75, "sweep": 1, "typed_catalog": 1, "verify_auto": 2,
+    # studio 2026-10-19 +4: 妥当性の判定 assess_validity と入力参照 input_reference / resolve_input_ref / file_sha256(GUI の内側の部品。テストが直接呼ぶ)
+    # studio_search / studio_errors 2026-10-20: Studio の論理層(Qt 非依存)。UI への配線は次の片。
+    #   search 6 本(current_sort_of / search_grouped / search_zero_results_help / canonical_sort / clear_caches / nearest_op_names)
+    #   errors 3 本(explain_failure / format_failure / localize)。studio と同じ「GUI の内側の部品」で、テストが直接呼ぶ。
+    "studio": 90, "studio_errors": 3, "studio_search": 6, "studio_roundtrip": 5, "studio_batch": 6, "sweep": 1, "typed_catalog": 1, "verify_auto": 2,
     # ★2026-09-14: この 13 本は 2026-09-05 から wheel に**入っていなかった**もので、
     #   py-modules へ足した結果ここに現れた。演算子としては `unified._3DGS_OPS` が
     #   `_lazy_call(モジュール名, 関数名)` で**文字列から**登録しているので、利用者には
@@ -234,7 +238,9 @@ def test_pending_exposure_shrinks_when_fixed():
 #: 2026-09-14: 1231 -> 1235。opsspc 台帳の内部 API(_build/list_ops/categories/get/call/
 #: info/missing の非公開分)と spc.py の入力バリデータ(_as_float_array/_as_1d)。op 自身
 #: (spc_xbar_r/spc_cusum/spc_capability/spc_hotelling_t2)は typed_catalog と api から引ける。
-_HIDDEN_FUNCTIONS_TODAY = 852   # 2026-10-02: facade 経路を数えて 1235 → 901、unified registry を数えて 901 → 861、train_class_mlp/svm を facade に載せて 859、watershed3d を台帳に載せて 856、棚卸しの 18 本を fs.<名前> に出して 838、pipeline3d の 6 本を出して 832、2026-10-03 に Studio の GUI 部品 5 本(studio は内部専用)と examplefig.render_plot(図の書き出しの内側)で 838、エディタへ繋ぐ Studio の部品 5 本で 843、2026-10-06 に中国剰余定理の台帳 opsresidue の内部アクセサ 4 本(call/get/info/missing、他の台帳と同じ形 —— 5 op 本体は fs.ledger に載る)で 844(本線の目減り 3 本ぶんの余裕を差し引いた数)、2026-10-15 に実験計画・多変量解析の台帳 opsmultivar の内部アクセサ 4 本(call/get/info/missing、他の台帳と同じ形 —— op 本体は fs.ledger に載る)で 848、同日に sim-to-real 較正の台帳 opssimcal の内部アクセサ 4 本(同じ形)で 852(ratchet)
+
+# 2026-10-22 Studio 第8片: studio_batch のQt非依存部品6本で実測 892 → 898。
+_HIDDEN_FUNCTIONS_TODAY = 898
 
 
 def _hidden_total():

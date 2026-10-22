@@ -7,17 +7,21 @@ out: table
 examples: [astro_stacking, poc_astro_photometry, poc_exoplanet_transit, poc_nuclei_ploidy, poc_real_sky_photometry]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # aperture_photometry — ASTROSTACK `photometry` op
 
 - **データ種**: `image2d × keypoints` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.aperture_photometry(image, centers, r_aperture=5.0, r_inner=8.0, r_outer=12.0, read_sigma=0.0, gain=1.0, supersample=8)` (実装を直接呼ぶなら `import astrostack; astrostack.aperture_photometry(image, centers, r_aperture=5.0, r_inner=8.0, r_outer=12.0, read_sigma=0.0, gain=1.0, supersample=8)`、台帳から引くなら `opsastrostack.get("aperture_photometry")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.aperture_photometry(image, centers, r_aperture=5.0, r_inner=8.0, r_outer=12.0, read_sigma=0.0, gain=1.0, supersample=8, method='exact')` (実装を直接呼ぶなら `import astrostack; astrostack.aperture_photometry(image, centers, r_aperture=5.0, r_inner=8.0, r_outer=12.0, read_sigma=0.0, gain=1.0, supersample=8, method='exact')`、台帳から引くなら `opsastrostack.get("aperture_photometry")`)
 
 ## 使い方
 
 円形開口 + 環状背景の測光(古典的な CCD 測光)。
+
+``method="patch"`` は開口付近だけを確保する省メモリ変種である。2048 角画像、
+半径 8.2、8 倍標本化ではピーク 33.6 MB から 0.34 MB。加算順が変わるため大きな
+直流成分を持つ画像では最終ビットが異なり得る。既定の ``"exact"`` は従来どおり。
 
 開口内の画素は**副画素で重み付け**する(``supersample^2`` 点の標本化)ので、
 半径が整数でなくても面積が階段状に飛ばない。背景は ``r_inner``〜``r_outer``

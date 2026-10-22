@@ -467,7 +467,7 @@ def test_the_coverage_interval_of_a_rectangular_input_is_narrower_than_k_times_u
 def test_a_correlation_matrix_with_no_joint_distribution_is_refused():
     """半正定値でない相関行列は、そもそも標本が存在しないので拒む。"""
     R = np.array([[1.0, 0.9, -0.9], [0.9, 1.0, 0.9], [-0.9, 0.9, 1.0]])
-    with pytest.raises(ValueError, match="positive definite|symmetric"):
+    with pytest.raises(ValueError, match="positive semi-definite|symmetric"):
         spc.gum_monte_carlo({"u": [1.0, 1.0, 1.0], "sensitivity": [1.0, 1.0, 1.0]},
                             n=10_000, seed=1, correlation=R)
 

@@ -1,5 +1,5 @@
 {
- "generated_for": 936,
+ "generated_for": 942,
  "ops": {
   "abs_image": {
    "color_ok": true,
@@ -3049,6 +3049,31 @@
    ],
    "out_kind": "ndarray",
    "program": "threshold 0.50 0.50\ndist_transform 0.50 0.50",
+   "pseudocolor": true,
+   "status": "ok"
+  },
+  "dist_transform_abs": {
+   "color_ok": false,
+   "extra": {
+    "a": "dist_transform_abs.a.jpg",
+    "b": "dist_transform_abs.b.jpg",
+    "chain": "dist_transform_abs.chain.jpg",
+    "inputs": "dist_transform_abs.inputs.jpg"
+   },
+   "fig": "dist_transform_abs.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [],
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\ndist_transform_abs 0.50 0.50",
    "pseudocolor": true,
    "status": "ok"
   },
@@ -8094,6 +8119,31 @@
    "pseudocolor": false,
    "status": "ok"
   },
+  "kuwahara": {
+   "color_ok": true,
+   "extra": {
+    "a": "kuwahara.a.jpg",
+    "inputs": "kuwahara.inputs.jpg"
+   },
+   "fig": "kuwahara.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [
+    "b"
+   ],
+   "out_kind": "ndarray",
+   "program": "kuwahara 0.35 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
   "laplace": {
    "color_ok": true,
    "extra": {
@@ -8736,6 +8786,30 @@
    "knob_dead": [],
    "out_kind": "ndarray",
    "program": "mean_box 0.35 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
+  "mean_box_wh": {
+   "color_ok": true,
+   "extra": {
+    "a": "mean_box_wh.a.jpg",
+    "b": "mean_box_wh.b.jpg",
+    "inputs": "mean_box_wh.inputs.jpg"
+   },
+   "fig": "mean_box_wh.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [],
+   "out_kind": "ndarray",
+   "program": "mean_box_wh 0.35 0.50",
    "pseudocolor": false,
    "status": "ok"
   },
@@ -16066,6 +16140,31 @@
    "pseudocolor": false,
    "status": "ok"
   },
+  "tb_points_render": {
+   "color_ok": false,
+   "extra": {
+    "a": "tb_points_render.a.jpg",
+    "b": "tb_points_render.b.jpg",
+    "chain": "tb_points_render.chain.jpg",
+    "inputs": "tb_points_render.inputs.jpg"
+   },
+   "fig": "tb_points_render.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [],
+   "out_kind": "ndarray",
+   "program": "img_to_points 0.50 0.50\ntb_points_render 0.50 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
   "tb_points_to_voxel": {
    "color_ok": false,
    "extra": {
@@ -17506,6 +17605,32 @@
    ],
    "out_kind": "ndarray",
    "program": "img_to_points 0.50 0.50\ntb_torus_sdf 0.50 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
+  "tb_viewport_from_equirect": {
+   "color_ok": false,
+   "extra": {
+    "a": "tb_viewport_from_equirect.a.jpg",
+    "chain": "tb_viewport_from_equirect.chain.jpg",
+    "inputs": "tb_viewport_from_equirect.inputs.jpg"
+   },
+   "fig": "tb_viewport_from_equirect.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [
+    "b"
+   ],
+   "out_kind": "ndarray",
+   "program": "img_to_rgb 0.50 0.50\ntb_viewport_from_equirect 0.50 0.50",
    "pseudocolor": false,
    "status": "ok"
   },
@@ -19046,6 +19171,30 @@
    ],
    "out_kind": "ndarray",
    "program": "xcv_watershed_markers 0.50 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
+  "xdog": {
+   "color_ok": true,
+   "extra": {
+    "a": "xdog.a.jpg",
+    "b": "xdog.b.jpg",
+    "inputs": "xdog.inputs.jpg"
+   },
+   "fig": "xdog.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [],
+   "out_kind": "ndarray",
+   "program": "xdog 0.40 0.50",
    "pseudocolor": false,
    "status": "ok"
   },
@@ -21918,10 +22067,10 @@
   "domain": 4,
   "empty": 1,
   "failed": 0,
-  "ok": 931,
+  "ok": 937,
   "unreachable": 0,
-  "with_chain": 379,
+  "with_chain": 382,
   "with_gif": 40,
-  "with_sweep": 580
+  "with_sweep": 586
  }
 }

@@ -7,13 +7,13 @@ out: qimage
 examples: [quaternion_monogenic]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # quat_correlate — QUAT `match` op
 
 - **データ種**: `qimage × qimage` → `qimage`
-- **呼び出し**: `import fullseye as fs; fs.ledger.quat_correlate(qimage, template) -> 'np.ndarray'` (実装を直接呼ぶなら `import quatimage; quatimage.quat_correlate(qimage, template) -> 'np.ndarray'`、台帳から引くなら `opsquat.get("quat_correlate")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.quat_correlate(qimage, template, *, method='exact') -> 'np.ndarray'` (実装を直接呼ぶなら `import quatimage; quatimage.quat_correlate(qimage, template, *, method='exact') -> 'np.ndarray'`、台帳から引くなら `opsquat.get("quat_correlate")`)
 
 ## 使い方
 
@@ -70,7 +70,9 @@ zero-padded into the image's shape by the caller, because silently choosing
 a padding origin would move the peak.
 
 **Raises** ``ValueError``: either input is not a valid ``(H, W, 4)`` field,
-or the two shapes differ.
+or the two shapes differ. ``method="exact"`` retains the full-spectrum
+calculation; ``method="fast"`` uses a real-input half spectrum and can differ
+by floating-point roundoff.
 
 ## 詳しい使い方ガイド
 

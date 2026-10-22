@@ -5,7 +5,7 @@
 <p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.rough_transmission(...)</code> 는 <b>선언된 out 형 <code style="color:#22d3bf">pairs</code> 의 값만</b> 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.rough_transmission.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">surfacelib.rough_transmission</code> 를 직접 호출하세요.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>간유리의 투과를 「직진 성분」과 「확산 성분」으로 나눕니다.</p>
-<p>cos_i: 입사각의 cos. roughness: 면의 거칠기(0 = 투명, 1 = 완전 확산).</p>
+<p>cos_i: 입사각의 cos. roughness: 면의 거칠기(0 = 투명, 1 = 완전 확산). n1 / n2: 입사측 / 판의 굴절률. 숫자 또는 재료표의 이름(예 &quot;N-BK7&quot;, 이름이면 d선 587.56 nm의 n).</p>
 <p>반환값: (직진 T_spec, 확산 T_diff)의 2개. 합계는 투명판의 투과율과 일치한다(에너지를 만들지 않는다 ―― 테스트로 확인). 간유리 너머로 보이는 모습은, 이직진 성분이 떨어지고 확산 성분이 늘어나는 것만으로 설명할 수 있다.</p>
 <p>빈 입력(<code style="color:#22d3bf">cos_i</code> 이(가) 0 개 요소)은 <code style="color:#22d3bf">ValueError</code> 를 발생시킨다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
@@ -26,7 +26,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:machined_metal_and_materials">machined_metal_and_materials</a> — <code style="color:#22d3bf">py -3.11 examples/machined_metal_and_materials.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">pairs</code> 를 입력으로 받는 것)</h3>
-<p><a style="color:#22d3bf" href="opoptics:mtf50">mtf50</a> · <a style="color:#22d3bf" href="opoptics:energy_to_photons">energy_to_photons</a> · <a style="color:#22d3bf" href="opoptics:spectral_product">spectral_product</a> · <a style="color:#22d3bf" href="opoptics:spectral_integral">spectral_integral</a> · <a style="color:#22d3bf" href="opoptics:spectral_stats">spectral_stats</a> · <a style="color:#22d3bf" href="opoptics:kubelka_munk_reflectance">kubelka_munk_reflectance</a> · <a style="color:#22d3bf" href="opoptics:hyperspectral_capture">hyperspectral_capture</a> · <a style="color:#22d3bf" href="opoptics:film_thickness_fft">film_thickness_fft</a></p>
+<p><a style="color:#22d3bf" href="opoptics:mtf50">mtf50</a> · <a style="color:#22d3bf" href="opoptics:energy_to_photons">energy_to_photons</a> · <a style="color:#22d3bf" href="opoptics:spectral_product">spectral_product</a> · <a style="color:#22d3bf" href="opoptics:spectral_integral">spectral_integral</a> · <a style="color:#22d3bf" href="opoptics:spectral_integral_table">spectral_integral_table</a> · <a style="color:#22d3bf" href="opoptics:spectral_stats">spectral_stats</a> · <a style="color:#22d3bf" href="opoptics:kubelka_munk_reflectance">kubelka_munk_reflectance</a> · <a style="color:#22d3bf" href="opoptics:hyperspectral_capture">hyperspectral_capture</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">surface</code>)</h3>
 <p><a style="color:#22d3bf" href="opoptics:metallic_flake_normals">metallic_flake_normals</a> · <a style="color:#22d3bf" href="opoptics:weave_normals">weave_normals</a> · <a style="color:#22d3bf" href="opoptics:wood_grain">wood_grain</a> · <a style="color:#22d3bf" href="opoptics:corrosion_mask">corrosion_mask</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">

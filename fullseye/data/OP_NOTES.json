@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3295,
- "n_notes": 3301,
+ "n_ops": 3531,
+ "n_notes": 3537,
  "notes": {
   "vol_dilate": [
    {
@@ -1631,6 +1631,16 @@
     "in": "image",
     "out": "image",
     "path": "docs/ops/2d/edges/tf_steerable_filter.md"
+   }
+  ],
+  "xdog": [
+   {
+    "op": "xdog",
+    "dim": "2d",
+    "category": "edges",
+    "in": "image",
+    "out": "image",
+    "path": "docs/ops/2d/edges/xdog.md"
    }
   ],
   "xkor_dog": [
@@ -5849,6 +5859,17 @@
     "path": "docs/ops/2d/region/dist_transform.md"
    }
   ],
+  "dist_transform_abs": [
+   {
+    "op": "dist_transform_abs",
+    "dim": "2d",
+    "category": "region",
+    "in": "region",
+    "out": "image",
+    "halcon": "distance_transform",
+    "path": "docs/ops/2d/region/dist_transform_abs.md"
+   }
+  ],
   "distance_transform": [
    {
     "op": "distance_transform",
@@ -7571,6 +7592,16 @@
     "path": "docs/ops/2d/smoothing/isotropic_diffusion.md"
    }
   ],
+  "kuwahara": [
+   {
+    "op": "kuwahara",
+    "dim": "2d",
+    "category": "smoothing",
+    "in": "image",
+    "out": "image",
+    "path": "docs/ops/2d/smoothing/kuwahara.md"
+   }
+  ],
   "mean_box": [
    {
     "op": "mean_box",
@@ -7580,6 +7611,17 @@
     "out": "image",
     "halcon": "mean_image",
     "path": "docs/ops/2d/smoothing/mean_box.md"
+   }
+  ],
+  "mean_box_wh": [
+   {
+    "op": "mean_box_wh",
+    "dim": "2d",
+    "category": "smoothing",
+    "in": "image",
+    "out": "image",
+    "halcon": "mean_image",
+    "path": "docs/ops/2d/smoothing/mean_box_wh.md"
    }
   ],
   "mean_curvature_flow": [
@@ -9366,6 +9408,16 @@
     "path": "docs/ops/2d/typed/tb_plane_segmentation.md"
    }
   ],
+  "tb_points_render": [
+   {
+    "op": "tb_points_render",
+    "dim": "2d",
+    "category": "typed",
+    "in": "points",
+    "out": "rgbimage",
+    "path": "docs/ops/2d/typed/tb_points_render.md"
+   }
+  ],
   "tb_points_to_voxel": [
    {
     "op": "tb_points_to_voxel",
@@ -9934,6 +9986,16 @@
     "in": "points",
     "out": "volume",
     "path": "docs/ops/2d/typed/tb_torus_sdf.md"
+   }
+  ],
+  "tb_viewport_from_equirect": [
+   {
+    "op": "tb_viewport_from_equirect",
+    "dim": "2d",
+    "category": "typed",
+    "in": "rgbimage",
+    "out": "rgbimage",
+    "path": "docs/ops/2d/typed/tb_viewport_from_equirect.md"
    }
   ],
   "tb_voxel_grid_downsample": [
@@ -12572,6 +12634,16 @@
     "path": "docs/ops/3d/render/phong_shade.md"
    }
   ],
+  "points_render": [
+   {
+    "op": "points_render",
+    "dim": "3d",
+    "category": "render",
+    "in": "points",
+    "out": "rgbimage",
+    "path": "docs/ops/3d/render/points_render.md"
+   }
+  ],
   "project_points": [
    {
     "op": "project_points",
@@ -14778,6 +14850,16 @@
     "path": "docs/ops/blob/select/blob_select_largest.md"
    }
   ],
+  "blob_count_interval": [
+   {
+    "op": "blob_count_interval",
+    "dim": "blob",
+    "category": "split",
+    "in": "mask",
+    "out": "table",
+    "path": "docs/ops/blob/split/blob_count_interval.md"
+   }
+  ],
   "blob_distance": [
    {
     "op": "blob_distance",
@@ -14846,6 +14928,66 @@
     "in": "mesh",
     "out": "indices",
     "path": "docs/ops/cadmap/visibility/cad_visible_faces.md"
+   }
+  ],
+  "radial_reach_filter": [
+   {
+    "op": "radial_reach_filter",
+    "dim": "codematch",
+    "category": "change",
+    "in": "image2d × image2d",
+    "out": "table",
+    "path": "docs/ops/codematch/change/radial_reach_filter.md"
+   }
+  ],
+  "increment_sign": [
+   {
+    "op": "increment_sign",
+    "dim": "codematch",
+    "category": "code",
+    "in": "image2d",
+    "out": "image2d",
+    "path": "docs/ops/codematch/code/increment_sign.md"
+   }
+  ],
+  "orientation_code": [
+   {
+    "op": "orientation_code",
+    "dim": "codematch",
+    "category": "code",
+    "in": "image2d",
+    "out": "image2d",
+    "path": "docs/ops/codematch/code/orientation_code.md"
+   }
+  ],
+  "isc_match": [
+   {
+    "op": "isc_match",
+    "dim": "codematch",
+    "category": "match",
+    "in": "image2d × image2d",
+    "out": "table",
+    "path": "docs/ops/codematch/match/isc_match.md"
+   }
+  ],
+  "ocm_match": [
+   {
+    "op": "ocm_match",
+    "dim": "codematch",
+    "category": "match",
+    "in": "image2d × image2d",
+    "out": "table",
+    "path": "docs/ops/codematch/match/ocm_match.md"
+   }
+  ],
+  "scc_match": [
+   {
+    "op": "scc_match",
+    "dim": "codematch",
+    "category": "match",
+    "in": "image2d × image2d",
+    "out": "table",
+    "path": "docs/ops/codematch/match/scc_match.md"
    }
   ],
   "poisson_blend": [
@@ -15236,6 +15378,61 @@
     "in": "conn_graph",
     "out": "points",
     "path": "docs/ops/conngraph/view/graph_layout_spectral.md"
+   }
+  ],
+  "iterate_fixed_point": [
+   {
+    "op": "iterate_fixed_point",
+    "dim": "converge",
+    "category": "iterate",
+    "out": "table",
+    "path": "docs/ops/converge/iterate/iterate_fixed_point.md"
+   }
+  ],
+  "mc_photon_slab": [
+   {
+    "op": "mc_photon_slab",
+    "dim": "converge",
+    "category": "montecarlo",
+    "out": "table",
+    "path": "docs/ops/converge/montecarlo/mc_photon_slab.md"
+   }
+  ],
+  "mc_sequential_mean": [
+   {
+    "op": "mc_sequential_mean",
+    "dim": "converge",
+    "category": "montecarlo",
+    "out": "table",
+    "path": "docs/ops/converge/montecarlo/mc_sequential_mean.md"
+   }
+  ],
+  "iv_richardson_lucy_until": [
+   {
+    "op": "iv_richardson_lucy_until",
+    "dim": "converge",
+    "category": "stopping",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/converge/stopping/iv_richardson_lucy_until.md"
+   }
+  ],
+  "conv_gci": [
+   {
+    "op": "conv_gci",
+    "dim": "converge",
+    "category": "verification",
+    "out": "table",
+    "path": "docs/ops/converge/verification/conv_gci.md"
+   }
+  ],
+  "conv_observed_order": [
+   {
+    "op": "conv_observed_order",
+    "dim": "converge",
+    "category": "verification",
+    "out": "table",
+    "path": "docs/ops/converge/verification/conv_observed_order.md"
    }
   ],
   "dem_cell_size_webmercator": [
@@ -22930,6 +23127,54 @@
     "path": "docs/ops/generative/pl/pl_image_simulate.md"
    }
   ],
+  "sem_cd_measure": [
+   {
+    "op": "sem_cd_measure",
+    "dim": "generative",
+    "category": "sem",
+    "in": "pairs",
+    "out": "table",
+    "path": "docs/ops/generative/sem/sem_cd_measure.md"
+   }
+  ],
+  "sem_charging_series": [
+   {
+    "op": "sem_charging_series",
+    "dim": "generative",
+    "category": "sem",
+    "in": "image2d",
+    "out": "video",
+    "path": "docs/ops/generative/sem/sem_charging_series.md"
+   }
+  ],
+  "sem_electron_mc": [
+   {
+    "op": "sem_electron_mc",
+    "dim": "generative",
+    "category": "sem",
+    "out": "table",
+    "path": "docs/ops/generative/sem/sem_electron_mc.md"
+   }
+  ],
+  "sem_image": [
+   {
+    "op": "sem_image",
+    "dim": "generative",
+    "category": "sem",
+    "in": "image2d",
+    "out": "image2d",
+    "path": "docs/ops/generative/sem/sem_image.md"
+   }
+  ],
+  "sem_line_profile": [
+   {
+    "op": "sem_line_profile",
+    "dim": "generative",
+    "category": "sem",
+    "out": "table",
+    "path": "docs/ops/generative/sem/sem_line_profile.md"
+   }
+  ],
   "sem_render": [
    {
     "op": "sem_render",
@@ -22938,6 +23183,33 @@
     "in": "image2d",
     "out": "image2d",
     "path": "docs/ops/generative/sem/sem_render.md"
+   }
+  ],
+  "sem_se_escape_fraction": [
+   {
+    "op": "sem_se_escape_fraction",
+    "dim": "generative",
+    "category": "sem",
+    "out": "signal",
+    "path": "docs/ops/generative/sem/sem_se_escape_fraction.md"
+   }
+  ],
+  "sem_se_universal_curve": [
+   {
+    "op": "sem_se_universal_curve",
+    "dim": "generative",
+    "category": "sem",
+    "out": "signal",
+    "path": "docs/ops/generative/sem/sem_se_universal_curve.md"
+   }
+  ],
+  "sem_yield_curve": [
+   {
+    "op": "sem_yield_curve",
+    "dim": "generative",
+    "category": "sem",
+    "out": "table",
+    "path": "docs/ops/generative/sem/sem_yield_curve.md"
    }
   ],
   "perpetual_render": [
@@ -26984,6 +27256,16 @@
     "path": "docs/ops/optics/confocal/confocal_axial_response.md"
    }
   ],
+  "chief_ray": [
+   {
+    "op": "chief_ray",
+    "dim": "optics",
+    "category": "design",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/design/chief_ray.md"
+   }
+  ],
   "chromatic_shift": [
    {
     "op": "chromatic_shift",
@@ -27040,6 +27322,16 @@
     "path": "docs/ops/optics/design/opd_map.md"
    }
   ],
+  "opd_samples": [
+   {
+    "op": "opd_samples",
+    "dim": "optics",
+    "category": "design",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/design/opd_samples.md"
+   }
+  ],
   "paraxial_trace": [
    {
     "op": "paraxial_trace",
@@ -27048,6 +27340,26 @@
     "in": "table",
     "out": "table",
     "path": "docs/ops/optics/design/paraxial_trace.md"
+   }
+  ],
+  "ray_aiming": [
+   {
+    "op": "ray_aiming",
+    "dim": "optics",
+    "category": "design",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/design/ray_aiming.md"
+   }
+  ],
+  "ray_bundle": [
+   {
+    "op": "ray_bundle",
+    "dim": "optics",
+    "category": "design",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/design/ray_bundle.md"
    }
   ],
   "ray_fan": [
@@ -27077,6 +27389,16 @@
     "category": "design",
     "out": "table",
     "path": "docs/ops/optics/design/sellmeier.md"
+   }
+  ],
+  "set_vignetting": [
+   {
+    "op": "set_vignetting",
+    "dim": "optics",
+    "category": "design",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/design/set_vignetting.md"
    }
   ],
   "spot_diagram": [
@@ -27126,6 +27448,26 @@
     "in": "table",
     "out": "table",
     "path": "docs/ops/optics/design/wavefront_from_opd.md"
+   }
+  ],
+  "with_aiming": [
+   {
+    "op": "with_aiming",
+    "dim": "optics",
+    "category": "design",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/design/with_aiming.md"
+   }
+  ],
+  "with_wavelength": [
+   {
+    "op": "with_wavelength",
+    "dim": "optics",
+    "category": "design",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/design/with_wavelength.md"
    }
   ],
   "drawing_dxf": [
@@ -27186,6 +27528,16 @@
     "in": "table",
     "out": "table",
     "path": "docs/ops/optics/drawing/lens_section_drawing.md"
+   }
+  ],
+  "noncoaxial_drawing": [
+   {
+    "op": "noncoaxial_drawing",
+    "dim": "optics",
+    "category": "drawing",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/drawing/noncoaxial_drawing.md"
    }
   ],
   "svg_entities": [
@@ -27454,6 +27806,91 @@
     "path": "docs/ops/optics/glassbody/slab_transmittance.md"
    }
   ],
+  "darkfield_scatter_relation": [
+   {
+    "op": "darkfield_scatter_relation",
+    "dim": "optics",
+    "category": "grating_interf",
+    "out": "table",
+    "path": "docs/ops/optics/grating_interf/darkfield_scatter_relation.md"
+   }
+  ],
+  "dpc_integrate": [
+   {
+    "op": "dpc_integrate",
+    "dim": "optics",
+    "category": "grating_interf",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/grating_interf/dpc_integrate.md"
+   }
+  ],
+  "grating_step_period_estimate": [
+   {
+    "op": "grating_step_period_estimate",
+    "dim": "optics",
+    "category": "grating_interf",
+    "in": "images",
+    "out": "table",
+    "path": "docs/ops/optics/grating_interf/grating_step_period_estimate.md"
+   }
+  ],
+  "grating_stepping_simulate": [
+   {
+    "op": "grating_stepping_simulate",
+    "dim": "optics",
+    "category": "grating_interf",
+    "in": "image2d",
+    "out": "images",
+    "path": "docs/ops/optics/grating_interf/grating_stepping_simulate.md"
+   }
+  ],
+  "grating_three_image_retrieve": [
+   {
+    "op": "grating_three_image_retrieve",
+    "dim": "optics",
+    "category": "grating_interf",
+    "in": "images × images",
+    "out": "table",
+    "path": "docs/ops/optics/grating_interf/grating_three_image_retrieve.md"
+   }
+  ],
+  "talbot_carpet": [
+   {
+    "op": "talbot_carpet",
+    "dim": "optics",
+    "category": "grating_interf",
+    "out": "table",
+    "path": "docs/ops/optics/grating_interf/talbot_carpet.md"
+   }
+  ],
+  "talbot_grating_design": [
+   {
+    "op": "talbot_grating_design",
+    "dim": "optics",
+    "category": "grating_interf",
+    "out": "table",
+    "path": "docs/ops/optics/grating_interf/talbot_grating_design.md"
+   }
+  ],
+  "talbot_source_visibility": [
+   {
+    "op": "talbot_source_visibility",
+    "dim": "optics",
+    "category": "grating_interf",
+    "out": "table",
+    "path": "docs/ops/optics/grating_interf/talbot_source_visibility.md"
+   }
+  ],
+  "coaxial_illumination": [
+   {
+    "op": "coaxial_illumination",
+    "dim": "optics",
+    "category": "illumination",
+    "out": "table",
+    "path": "docs/ops/optics/illumination/coaxial_illumination.md"
+   }
+  ],
   "defect_contrast": [
    {
     "op": "defect_contrast",
@@ -27471,6 +27908,25 @@
     "category": "illumination",
     "out": "table",
     "path": "docs/ops/optics/illumination/illumination_design.md"
+   }
+  ],
+  "illumination_field": [
+   {
+    "op": "illumination_field",
+    "dim": "optics",
+    "category": "illumination",
+    "in": "table",
+    "out": "image2d",
+    "path": "docs/ops/optics/illumination/illumination_field.md"
+   }
+  ],
+  "illumination_train": [
+   {
+    "op": "illumination_train",
+    "dim": "optics",
+    "category": "illumination",
+    "out": "table",
+    "path": "docs/ops/optics/illumination/illumination_train.md"
    }
   ],
   "illumination_uniformity": [
@@ -27569,6 +28025,36 @@
     "path": "docs/ops/optics/imaging/edge_spread.md"
    }
   ],
+  "encircled_energy": [
+   {
+    "op": "encircled_energy",
+    "dim": "optics",
+    "category": "imaging",
+    "in": "image2d",
+    "out": "pairs",
+    "path": "docs/ops/optics/imaging/encircled_energy.md"
+   }
+  ],
+  "energy_radii": [
+   {
+    "op": "energy_radii",
+    "dim": "optics",
+    "category": "imaging",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/optics/imaging/energy_radii.md"
+   }
+  ],
+  "ensquared_energy": [
+   {
+    "op": "ensquared_energy",
+    "dim": "optics",
+    "category": "imaging",
+    "in": "image2d",
+    "out": "pairs",
+    "path": "docs/ops/optics/imaging/ensquared_energy.md"
+   }
+  ],
   "mtf50": [
    {
     "op": "mtf50",
@@ -27586,6 +28072,16 @@
     "category": "imaging",
     "out": "pairs",
     "path": "docs/ops/optics/imaging/mtf_diffraction.md"
+   }
+  ],
+  "mtf_tangential_sagittal": [
+   {
+    "op": "mtf_tangential_sagittal",
+    "dim": "optics",
+    "category": "imaging",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/optics/imaging/mtf_tangential_sagittal.md"
    }
   ],
   "psf_to_mtf": [
@@ -27677,6 +28173,16 @@
     "path": "docs/ops/optics/imaging_sim/render_through_lens.md"
    }
   ],
+  "through_focus_mtf": [
+   {
+    "op": "through_focus_mtf",
+    "dim": "optics",
+    "category": "imaging_sim",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/imaging_sim/through_focus_mtf.md"
+   }
+  ],
   "brewster_angle_deg": [
    {
     "op": "brewster_angle_deg",
@@ -27713,6 +28219,427 @@
     "in": "signal",
     "out": "signal",
     "path": "docs/ops/optics/interface/fresnel_dielectric.md"
+   }
+  ],
+  "itof_capture": [
+   {
+    "op": "itof_capture",
+    "dim": "optics",
+    "category": "itof",
+    "in": "depth",
+    "out": "table",
+    "path": "docs/ops/optics/itof/itof_capture.md"
+   }
+  ],
+  "itof_flying_pixel_mask": [
+   {
+    "op": "itof_flying_pixel_mask",
+    "dim": "optics",
+    "category": "itof",
+    "in": "depth",
+    "out": "image2d",
+    "path": "docs/ops/optics/itof/itof_flying_pixel_mask.md"
+   }
+  ],
+  "itof_multipath_separate": [
+   {
+    "op": "itof_multipath_separate",
+    "dim": "optics",
+    "category": "itof",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/itof/itof_multipath_separate.md"
+   }
+  ],
+  "itof_noise_budget": [
+   {
+    "op": "itof_noise_budget",
+    "dim": "optics",
+    "category": "itof",
+    "out": "table",
+    "path": "docs/ops/optics/itof/itof_noise_budget.md"
+   }
+  ],
+  "itof_phase_amplitude": [
+   {
+    "op": "itof_phase_amplitude",
+    "dim": "optics",
+    "category": "itof",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/itof/itof_phase_amplitude.md"
+   }
+  ],
+  "itof_unwrap_error_rate": [
+   {
+    "op": "itof_unwrap_error_rate",
+    "dim": "optics",
+    "category": "itof",
+    "out": "table",
+    "path": "docs/ops/optics/itof/itof_unwrap_error_rate.md"
+   }
+  ],
+  "itof_unwrap_multifreq": [
+   {
+    "op": "itof_unwrap_multifreq",
+    "dim": "optics",
+    "category": "itof",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/itof/itof_unwrap_multifreq.md"
+   }
+  ],
+  "itof_wiggling_correct": [
+   {
+    "op": "itof_wiggling_correct",
+    "dim": "optics",
+    "category": "itof",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/itof/itof_wiggling_correct.md"
+   }
+  ],
+  "lens_add_configuration": [
+   {
+    "op": "lens_add_configuration",
+    "dim": "optics",
+    "category": "lensconfig",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lensconfig/lens_add_configuration.md"
+   }
+  ],
+  "lens_configuration_metrics": [
+   {
+    "op": "lens_configuration_metrics",
+    "dim": "optics",
+    "category": "lensconfig",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lensconfig/lens_configuration_metrics.md"
+   }
+  ],
+  "lens_configuration_table": [
+   {
+    "op": "lens_configuration_table",
+    "dim": "optics",
+    "category": "lensconfig",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lensconfig/lens_configuration_table.md"
+   }
+  ],
+  "lens_configurations": [
+   {
+    "op": "lens_configurations",
+    "dim": "optics",
+    "category": "lensconfig",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lensconfig/lens_configurations.md"
+   }
+  ],
+  "lens_with_configuration": [
+   {
+    "op": "lens_with_configuration",
+    "dim": "optics",
+    "category": "lensconfig",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lensconfig/lens_with_configuration.md"
+   }
+  ],
+  "lens_file_read": [
+   {
+    "op": "lens_file_read",
+    "dim": "optics",
+    "category": "lensfile",
+    "out": "table",
+    "path": "docs/ops/optics/lensfile/lens_file_read.md"
+   }
+  ],
+  "lens_file_report": [
+   {
+    "op": "lens_file_report",
+    "dim": "optics",
+    "category": "lensfile",
+    "out": "table",
+    "path": "docs/ops/optics/lensfile/lens_file_report.md"
+   }
+  ],
+  "lens_file_system": [
+   {
+    "op": "lens_file_system",
+    "dim": "optics",
+    "category": "lensfile",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lensfile/lens_file_system.md"
+   }
+  ],
+  "lens_file_write": [
+   {
+    "op": "lens_file_write",
+    "dim": "optics",
+    "category": "lensfile",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lensfile/lens_file_write.md"
+   }
+  ],
+  "glass_nearest": [
+   {
+    "op": "glass_nearest",
+    "dim": "optics",
+    "category": "lensglobal",
+    "out": "table",
+    "path": "docs/ops/optics/lensglobal/glass_nearest.md"
+   }
+  ],
+  "lens_global_search": [
+   {
+    "op": "lens_global_search",
+    "dim": "optics",
+    "category": "lensglobal",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lensglobal/lens_global_search.md"
+   }
+  ],
+  "lens_substitute_glasses": [
+   {
+    "op": "lens_substitute_glasses",
+    "dim": "optics",
+    "category": "lensglobal",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lensglobal/lens_substitute_glasses.md"
+   }
+  ],
+  "merit_boundary_operands": [
+   {
+    "op": "merit_boundary_operands",
+    "dim": "optics",
+    "category": "lensmerit",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lensmerit/merit_boundary_operands.md"
+   }
+  ],
+  "merit_contributions": [
+   {
+    "op": "merit_contributions",
+    "dim": "optics",
+    "category": "lensmerit",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lensmerit/merit_contributions.md"
+   }
+  ],
+  "merit_default": [
+   {
+    "op": "merit_default",
+    "dim": "optics",
+    "category": "lensmerit",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lensmerit/merit_default.md"
+   }
+  ],
+  "merit_evaluate": [
+   {
+    "op": "merit_evaluate",
+    "dim": "optics",
+    "category": "lensmerit",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lensmerit/merit_evaluate.md"
+   }
+  ],
+  "merit_operands_list": [
+   {
+    "op": "merit_operands_list",
+    "dim": "optics",
+    "category": "lensmerit",
+    "out": "table",
+    "path": "docs/ops/optics/lensmerit/merit_operands_list.md"
+   }
+  ],
+  "optimize_lens_operands": [
+   {
+    "op": "optimize_lens_operands",
+    "dim": "optics",
+    "category": "lensmerit",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lensmerit/optimize_lens_operands.md"
+   }
+  ],
+  "bokeh_shape": [
+   {
+    "op": "bokeh_shape",
+    "dim": "optics",
+    "category": "lensrender",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lensrender/bokeh_shape.md"
+   }
+  ],
+  "exit_pupil_samples": [
+   {
+    "op": "exit_pupil_samples",
+    "dim": "optics",
+    "category": "lensrender",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lensrender/exit_pupil_samples.md"
+   }
+  ],
+  "lens_scene": [
+   {
+    "op": "lens_scene",
+    "dim": "optics",
+    "category": "lensrender",
+    "out": "table",
+    "path": "docs/ops/optics/lensrender/lens_scene.md"
+   }
+  ],
+  "render_compare_prescriptions": [
+   {
+    "op": "render_compare_prescriptions",
+    "dim": "optics",
+    "category": "lensrender",
+    "out": "table",
+    "path": "docs/ops/optics/lensrender/render_compare_prescriptions.md"
+   }
+  ],
+  "render_ghost_overlay": [
+   {
+    "op": "render_ghost_overlay",
+    "dim": "optics",
+    "category": "lensrender",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lensrender/render_ghost_overlay.md"
+   }
+  ],
+  "render_scene_through_lens": [
+   {
+    "op": "render_scene_through_lens",
+    "dim": "optics",
+    "category": "lensrender",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lensrender/render_scene_through_lens.md"
+   }
+  ],
+  "scene_radiance": [
+   {
+    "op": "scene_radiance",
+    "dim": "optics",
+    "category": "lensrender",
+    "out": "table",
+    "path": "docs/ops/optics/lensrender/scene_radiance.md"
+   }
+  ],
+  "trace_sensor_rays": [
+   {
+    "op": "trace_sensor_rays",
+    "dim": "optics",
+    "category": "lensrender",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lensrender/trace_sensor_rays.md"
+   }
+  ],
+  "afocal_system": [
+   {
+    "op": "afocal_system",
+    "dim": "optics",
+    "category": "lenssolve",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lenssolve/afocal_system.md"
+   }
+  ],
+  "lens_afocal_report": [
+   {
+    "op": "lens_afocal_report",
+    "dim": "optics",
+    "category": "lenssolve",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lenssolve/lens_afocal_report.md"
+   }
+  ],
+  "lens_apply_solves": [
+   {
+    "op": "lens_apply_solves",
+    "dim": "optics",
+    "category": "lenssolve",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lenssolve/lens_apply_solves.md"
+   }
+  ],
+  "lens_image_surface": [
+   {
+    "op": "lens_image_surface",
+    "dim": "optics",
+    "category": "lenssolve",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lenssolve/lens_image_surface.md"
+   }
+  ],
+  "lens_petzval_radius": [
+   {
+    "op": "lens_petzval_radius",
+    "dim": "optics",
+    "category": "lenssolve",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lenssolve/lens_petzval_radius.md"
+   }
+  ],
+  "lens_solve_clear": [
+   {
+    "op": "lens_solve_clear",
+    "dim": "optics",
+    "category": "lenssolve",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lenssolve/lens_solve_clear.md"
+   }
+  ],
+  "lens_solve_set": [
+   {
+    "op": "lens_solve_set",
+    "dim": "optics",
+    "category": "lenssolve",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lenssolve/lens_solve_set.md"
+   }
+  ],
+  "lens_solves_list": [
+   {
+    "op": "lens_solves_list",
+    "dim": "optics",
+    "category": "lenssolve",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lenssolve/lens_solves_list.md"
+   }
+  ],
+  "lens_zmx_solves_roundtrip": [
+   {
+    "op": "lens_zmx_solves_roundtrip",
+    "dim": "optics",
+    "category": "lenssolve",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lenssolve/lens_zmx_solves_roundtrip.md"
    }
   ],
   "form_factors_2d": [
@@ -27878,6 +28805,94 @@
     "path": "docs/ops/optics/linescan/tdi_sync_mtf.md"
    }
   ],
+  "lockin_amplitude": [
+   {
+    "op": "lockin_amplitude",
+    "dim": "optics",
+    "category": "lockin",
+    "in": "video",
+    "out": "image2d",
+    "path": "docs/ops/optics/lockin/lockin_amplitude.md"
+   }
+  ],
+  "lockin_demodulate": [
+   {
+    "op": "lockin_demodulate",
+    "dim": "optics",
+    "category": "lockin",
+    "in": "video",
+    "out": "table",
+    "path": "docs/ops/optics/lockin/lockin_demodulate.md"
+   }
+  ],
+  "lockin_noise_floor": [
+   {
+    "op": "lockin_noise_floor",
+    "dim": "optics",
+    "category": "lockin",
+    "out": "table",
+    "path": "docs/ops/optics/lockin/lockin_noise_floor.md"
+   }
+  ],
+  "lockin_phase": [
+   {
+    "op": "lockin_phase",
+    "dim": "optics",
+    "category": "lockin",
+    "in": "video",
+    "out": "image2d",
+    "path": "docs/ops/optics/lockin/lockin_phase.md"
+   }
+  ],
+  "lockin_ring_normals": [
+   {
+    "op": "lockin_ring_normals",
+    "dim": "optics",
+    "category": "lockin",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/lockin/lockin_ring_normals.md"
+   }
+  ],
+  "lockin_ring_synthesize": [
+   {
+    "op": "lockin_ring_synthesize",
+    "dim": "optics",
+    "category": "lockin",
+    "in": "image2d",
+    "out": "video",
+    "path": "docs/ops/optics/lockin/lockin_ring_synthesize.md"
+   }
+  ],
+  "lockin_separate": [
+   {
+    "op": "lockin_separate",
+    "dim": "optics",
+    "category": "lockin",
+    "in": "video",
+    "out": "table",
+    "path": "docs/ops/optics/lockin/lockin_separate.md"
+   }
+  ],
+  "lockin_thermal_wave": [
+   {
+    "op": "lockin_thermal_wave",
+    "dim": "optics",
+    "category": "lockin",
+    "in": "image2d",
+    "out": "video",
+    "path": "docs/ops/optics/lockin/lockin_thermal_wave.md"
+   }
+  ],
+  "lockin_walsh_codes": [
+   {
+    "op": "lockin_walsh_codes",
+    "dim": "optics",
+    "category": "lockin",
+    "out": "matrix",
+    "path": "docs/ops/optics/lockin/lockin_walsh_codes.md"
+   }
+  ],
   "clearcoat_shade": [
    {
     "op": "clearcoat_shade",
@@ -27980,6 +28995,15 @@
     "category": "matprop",
     "out": "pairs",
     "path": "docs/ops/optics/matprop/material_dispersion.md"
+   }
+  ],
+  "material_electron_properties": [
+   {
+    "op": "material_electron_properties",
+    "dim": "optics",
+    "category": "matprop",
+    "out": "table",
+    "path": "docs/ops/optics/matprop/material_electron_properties.md"
    }
   ],
   "material_extinction": [
@@ -28201,6 +29225,130 @@
     "path": "docs/ops/optics/moire_align/moire_talbot_gap.md"
    }
   ],
+  "beamsplitter_branches": [
+   {
+    "op": "beamsplitter_branches",
+    "dim": "optics",
+    "category": "noncoaxial",
+    "out": "table",
+    "path": "docs/ops/optics/noncoaxial/beamsplitter_branches.md"
+   }
+  ],
+  "ghost_analysis": [
+   {
+    "op": "ghost_analysis",
+    "dim": "optics",
+    "category": "noncoaxial",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/noncoaxial/ghost_analysis.md"
+   }
+  ],
+  "ghost_image": [
+   {
+    "op": "ghost_image",
+    "dim": "optics",
+    "category": "noncoaxial",
+    "in": "table",
+    "out": "image2d",
+    "path": "docs/ops/optics/noncoaxial/ghost_image.md"
+   }
+  ],
+  "ghost_path": [
+   {
+    "op": "ghost_path",
+    "dim": "optics",
+    "category": "noncoaxial",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/noncoaxial/ghost_path.md"
+   }
+  ],
+  "image_orientation": [
+   {
+    "op": "image_orientation",
+    "dim": "optics",
+    "category": "noncoaxial",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/noncoaxial/image_orientation.md"
+   }
+  ],
+  "noncoaxial_example": [
+   {
+    "op": "noncoaxial_example",
+    "dim": "optics",
+    "category": "noncoaxial",
+    "out": "table",
+    "path": "docs/ops/optics/noncoaxial/noncoaxial_example.md"
+   }
+  ],
+  "noncoaxial_layout": [
+   {
+    "op": "noncoaxial_layout",
+    "dim": "optics",
+    "category": "noncoaxial",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/noncoaxial/noncoaxial_layout.md"
+   }
+  ],
+  "noncoaxial_spot": [
+   {
+    "op": "noncoaxial_spot",
+    "dim": "optics",
+    "category": "noncoaxial",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/noncoaxial/noncoaxial_spot.md"
+   }
+  ],
+  "noncoaxial_system": [
+   {
+    "op": "noncoaxial_system",
+    "dim": "optics",
+    "category": "noncoaxial",
+    "out": "table",
+    "path": "docs/ops/optics/noncoaxial/noncoaxial_system.md"
+   }
+  ],
+  "noncoaxial_trace": [
+   {
+    "op": "noncoaxial_trace",
+    "dim": "optics",
+    "category": "noncoaxial",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/noncoaxial/noncoaxial_trace.md"
+   }
+  ],
+  "scheimpflug_tilt": [
+   {
+    "op": "scheimpflug_tilt",
+    "dim": "optics",
+    "category": "noncoaxial",
+    "out": "table",
+    "path": "docs/ops/optics/noncoaxial/scheimpflug_tilt.md"
+   }
+  ],
+  "surface_reflectance": [
+   {
+    "op": "surface_reflectance",
+    "dim": "optics",
+    "category": "noncoaxial",
+    "out": "table",
+    "path": "docs/ops/optics/noncoaxial/surface_reflectance.md"
+   }
+  ],
+  "tilted_plate_shift": [
+   {
+    "op": "tilted_plate_shift",
+    "dim": "optics",
+    "category": "noncoaxial",
+    "out": "table",
+    "path": "docs/ops/optics/noncoaxial/tilted_plate_shift.md"
+   }
+  ],
   "oct_ascan": [
    {
     "op": "oct_ascan",
@@ -28327,6 +29475,243 @@
     "path": "docs/ops/optics/oct/oct_layer_thickness.md"
    }
   ],
+  "anaglyph_crosstalk": [
+   {
+    "op": "anaglyph_crosstalk",
+    "dim": "optics",
+    "category": "omni360",
+    "in": "rgbimage × rgbimage",
+    "out": "table",
+    "path": "docs/ops/optics/omni360/anaglyph_crosstalk.md"
+   }
+  ],
+  "anaglyph_from_ods": [
+   {
+    "op": "anaglyph_from_ods",
+    "dim": "optics",
+    "category": "omni360",
+    "in": "rgbimage × rgbimage",
+    "out": "rgbimage",
+    "path": "docs/ops/optics/omni360/anaglyph_from_ods.md"
+   }
+  ],
+  "cubemap_from_equirect": [
+   {
+    "op": "cubemap_from_equirect",
+    "dim": "optics",
+    "category": "omni360",
+    "in": "rgbimage",
+    "out": "rgbvideo",
+    "path": "docs/ops/optics/omni360/cubemap_from_equirect.md"
+   }
+  ],
+  "equirect_defect_unwrap_pipe": [
+   {
+    "op": "equirect_defect_unwrap_pipe",
+    "dim": "optics",
+    "category": "omni360",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/optics/omni360/equirect_defect_unwrap_pipe.md"
+   }
+  ],
+  "equirect_filter_gaussian": [
+   {
+    "op": "equirect_filter_gaussian",
+    "dim": "optics",
+    "category": "omni360",
+    "in": "image2d",
+    "out": "image2d",
+    "path": "docs/ops/optics/omni360/equirect_filter_gaussian.md"
+   }
+  ],
+  "equirect_from_cubemap": [
+   {
+    "op": "equirect_from_cubemap",
+    "dim": "optics",
+    "category": "omni360",
+    "in": "rgbvideo",
+    "out": "rgbimage",
+    "path": "docs/ops/optics/omni360/equirect_from_cubemap.md"
+   }
+  ],
+  "equirect_from_fisheye_pair": [
+   {
+    "op": "equirect_from_fisheye_pair",
+    "dim": "optics",
+    "category": "omni360",
+    "in": "images",
+    "out": "table",
+    "path": "docs/ops/optics/omni360/equirect_from_fisheye_pair.md"
+   }
+  ],
+  "equirect_from_perspectives": [
+   {
+    "op": "equirect_from_perspectives",
+    "dim": "optics",
+    "category": "omni360",
+    "in": "images",
+    "out": "table",
+    "path": "docs/ops/optics/omni360/equirect_from_perspectives.md"
+   }
+  ],
+  "equirect_rotate": [
+   {
+    "op": "equirect_rotate",
+    "dim": "optics",
+    "category": "omni360",
+    "in": "rgbimage × matrix",
+    "out": "rgbimage",
+    "path": "docs/ops/optics/omni360/equirect_rotate.md"
+   }
+  ],
+  "equirect_stabilize": [
+   {
+    "op": "equirect_stabilize",
+    "dim": "optics",
+    "category": "omni360",
+    "in": "images",
+    "out": "table",
+    "path": "docs/ops/optics/omni360/equirect_stabilize.md"
+   }
+  ],
+  "equirect_weight_map": [
+   {
+    "op": "equirect_weight_map",
+    "dim": "optics",
+    "category": "omni360",
+    "out": "image2d",
+    "path": "docs/ops/optics/omni360/equirect_weight_map.md"
+   }
+  ],
+  "ods_depth_to_disparity": [
+   {
+    "op": "ods_depth_to_disparity",
+    "dim": "optics",
+    "category": "omni360",
+    "in": "image2d",
+    "out": "image2d",
+    "path": "docs/ops/optics/omni360/ods_depth_to_disparity.md"
+   }
+  ],
+  "ods_disparity_to_depth": [
+   {
+    "op": "ods_disparity_to_depth",
+    "dim": "optics",
+    "category": "omni360",
+    "in": "image2d",
+    "out": "image2d",
+    "path": "docs/ops/optics/omni360/ods_disparity_to_depth.md"
+   }
+  ],
+  "ods_render": [
+   {
+    "op": "ods_render",
+    "dim": "optics",
+    "category": "omni360",
+    "out": "images",
+    "path": "docs/ops/optics/omni360/ods_render.md"
+   }
+  ],
+  "omni_anaglyph_compose": [
+   {
+    "op": "omni_anaglyph_compose",
+    "dim": "optics",
+    "category": "omni360",
+    "in": "rgbimage × rgbimage",
+    "out": "rgbimage",
+    "path": "docs/ops/optics/omni360/omni_anaglyph_compose.md"
+   }
+  ],
+  "s_psnr": [
+   {
+    "op": "s_psnr",
+    "dim": "optics",
+    "category": "omni360",
+    "in": "image2d × image2d",
+    "out": "measurement",
+    "path": "docs/ops/optics/omni360/s_psnr.md"
+   }
+  ],
+  "stereo360_sbs": [
+   {
+    "op": "stereo360_sbs",
+    "dim": "optics",
+    "category": "omni360",
+    "in": "rgbimage × rgbimage",
+    "out": "rgbimage",
+    "path": "docs/ops/optics/omni360/stereo360_sbs.md"
+   }
+  ],
+  "stereo360_top_bottom": [
+   {
+    "op": "stereo360_top_bottom",
+    "dim": "optics",
+    "category": "omni360",
+    "in": "rgbimage × rgbimage",
+    "out": "rgbimage",
+    "path": "docs/ops/optics/omni360/stereo360_top_bottom.md"
+   }
+  ],
+  "stereo_pack": [
+   {
+    "op": "stereo_pack",
+    "dim": "optics",
+    "category": "omni360",
+    "in": "rgbimage × rgbimage",
+    "out": "rgbimage",
+    "path": "docs/ops/optics/omni360/stereo_pack.md"
+   }
+  ],
+  "stereo_parallax_budget": [
+   {
+    "op": "stereo_parallax_budget",
+    "dim": "optics",
+    "category": "omni360",
+    "out": "table",
+    "path": "docs/ops/optics/omni360/stereo_parallax_budget.md"
+   }
+  ],
+  "video360_tile_coverage": [
+   {
+    "op": "video360_tile_coverage",
+    "dim": "optics",
+    "category": "omni360",
+    "in": "pairs",
+    "out": "table",
+    "path": "docs/ops/optics/omni360/video360_tile_coverage.md"
+   }
+  ],
+  "video360_viewport_track": [
+   {
+    "op": "video360_viewport_track",
+    "dim": "optics",
+    "category": "omni360",
+    "in": "rgbvideo",
+    "out": "rgbvideo",
+    "path": "docs/ops/optics/omni360/video360_viewport_track.md"
+   }
+  ],
+  "viewport_from_equirect": [
+   {
+    "op": "viewport_from_equirect",
+    "dim": "optics",
+    "category": "omni360",
+    "in": "rgbimage",
+    "out": "rgbimage",
+    "path": "docs/ops/optics/omni360/viewport_from_equirect.md"
+   }
+  ],
+  "ws_psnr": [
+   {
+    "op": "ws_psnr",
+    "dim": "optics",
+    "category": "omni360",
+    "in": "image2d × image2d",
+    "out": "measurement",
+    "path": "docs/ops/optics/omni360/ws_psnr.md"
+   }
+  ],
   "bend_singlet": [
    {
     "op": "bend_singlet",
@@ -28412,6 +29797,65 @@
     "category": "pixelshift",
     "out": "table",
     "path": "docs/ops/optics/pixelshift/pixel_shift_resolution_budget.md"
+   }
+  ],
+  "mla_surface": [
+   {
+    "op": "mla_surface",
+    "dim": "optics",
+    "category": "plenoptic",
+    "out": "table",
+    "path": "docs/ops/optics/plenoptic/mla_surface.md"
+   }
+  ],
+  "plenoptic_capture": [
+   {
+    "op": "plenoptic_capture",
+    "dim": "optics",
+    "category": "plenoptic",
+    "in": "table × table",
+    "out": "table",
+    "path": "docs/ops/optics/plenoptic/plenoptic_capture.md"
+   }
+  ],
+  "plenoptic_decode": [
+   {
+    "op": "plenoptic_decode",
+    "dim": "optics",
+    "category": "plenoptic",
+    "in": "image2d × table",
+    "out": "lightfield",
+    "path": "docs/ops/optics/plenoptic/plenoptic_decode.md"
+   }
+  ],
+  "plenoptic_mla_calibrate": [
+   {
+    "op": "plenoptic_mla_calibrate",
+    "dim": "optics",
+    "category": "plenoptic",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/optics/plenoptic/plenoptic_mla_calibrate.md"
+   }
+  ],
+  "plenoptic_refocus_depth": [
+   {
+    "op": "plenoptic_refocus_depth",
+    "dim": "optics",
+    "category": "plenoptic",
+    "in": "lightfield × table",
+    "out": "table",
+    "path": "docs/ops/optics/plenoptic/plenoptic_refocus_depth.md"
+   }
+  ],
+  "plenoptic_system": [
+   {
+    "op": "plenoptic_system",
+    "dim": "optics",
+    "category": "plenoptic",
+    "in": "table × table × table",
+    "out": "table",
+    "path": "docs/ops/optics/plenoptic/plenoptic_system.md"
    }
   ],
   "jones_apply": [
@@ -28510,6 +29954,73 @@
     "in": "jones",
     "out": "stokes",
     "path": "docs/ops/optics/polarization/stokes_from_jones.md"
+   }
+  ],
+  "form_factor_matrix": [
+   {
+    "op": "form_factor_matrix",
+    "dim": "optics",
+    "category": "radiosity",
+    "in": "table",
+    "out": "matrix",
+    "path": "docs/ops/optics/radiosity/form_factor_matrix.md"
+   }
+  ],
+  "form_factor_parallel_rects": [
+   {
+    "op": "form_factor_parallel_rects",
+    "dim": "optics",
+    "category": "radiosity",
+    "out": "measurement",
+    "path": "docs/ops/optics/radiosity/form_factor_parallel_rects.md"
+   }
+  ],
+  "form_factor_perpendicular_rects": [
+   {
+    "op": "form_factor_perpendicular_rects",
+    "dim": "optics",
+    "category": "radiosity",
+    "out": "measurement",
+    "path": "docs/ops/optics/radiosity/form_factor_perpendicular_rects.md"
+   }
+  ],
+  "form_factor_polygons": [
+   {
+    "op": "form_factor_polygons",
+    "dim": "optics",
+    "category": "radiosity",
+    "in": "points × points",
+    "out": "measurement",
+    "path": "docs/ops/optics/radiosity/form_factor_polygons.md"
+   }
+  ],
+  "radiosity_patches": [
+   {
+    "op": "radiosity_patches",
+    "dim": "optics",
+    "category": "radiosity",
+    "out": "table",
+    "path": "docs/ops/optics/radiosity/radiosity_patches.md"
+   }
+  ],
+  "radiosity_progressive_3d": [
+   {
+    "op": "radiosity_progressive_3d",
+    "dim": "optics",
+    "category": "radiosity",
+    "in": "table × signal",
+    "out": "table",
+    "path": "docs/ops/optics/radiosity/radiosity_progressive_3d.md"
+   }
+  ],
+  "render_optscene_gi": [
+   {
+    "op": "render_optscene_gi",
+    "dim": "optics",
+    "category": "radiosity",
+    "in": "table × table × table",
+    "out": "table",
+    "path": "docs/ops/optics/radiosity/render_optscene_gi.md"
    }
   ],
   "airy_radius_um": [
@@ -29337,6 +30848,16 @@
     "path": "docs/ops/optics/spectral/spectral_integral.md"
    }
   ],
+  "spectral_integral_table": [
+   {
+    "op": "spectral_integral_table",
+    "dim": "optics",
+    "category": "spectral",
+    "in": "pairs",
+    "out": "table",
+    "path": "docs/ops/optics/spectral/spectral_integral_table.md"
+   }
+  ],
   "spectral_product": [
    {
     "op": "spectral_product",
@@ -29364,6 +30885,54 @@
     "in": "pairs",
     "out": "table",
     "path": "docs/ops/optics/spectral/spectral_stats.md"
+   }
+  ],
+  "czerny_turner_design": [
+   {
+    "op": "czerny_turner_design",
+    "dim": "optics",
+    "category": "spectrometer",
+    "out": "table",
+    "path": "docs/ops/optics/spectrometer/czerny_turner_design.md"
+   }
+  ],
+  "grating_dispersion": [
+   {
+    "op": "grating_dispersion",
+    "dim": "optics",
+    "category": "spectrometer",
+    "out": "table",
+    "path": "docs/ops/optics/spectrometer/grating_dispersion.md"
+   }
+  ],
+  "spectrometer_bandpass": [
+   {
+    "op": "spectrometer_bandpass",
+    "dim": "optics",
+    "category": "spectrometer",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/spectrometer/spectrometer_bandpass.md"
+   }
+  ],
+  "spectrometer_slit_image": [
+   {
+    "op": "spectrometer_slit_image",
+    "dim": "optics",
+    "category": "spectrometer",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/spectrometer/spectrometer_slit_image.md"
+   }
+  ],
+  "spectrometer_spectrum": [
+   {
+    "op": "spectrometer_spectrum",
+    "dim": "optics",
+    "category": "spectrometer",
+    "in": "table × pairs",
+    "out": "pairs",
+    "path": "docs/ops/optics/spectrometer/spectrometer_spectrum.md"
    }
   ],
   "corrosion_mask": [
@@ -29479,6 +31048,347 @@
     "in": "table",
     "out": "pairs",
     "path": "docs/ops/optics/telecentric/vignetting_vs_field.md"
+   }
+  ],
+  "tem_amorphous_film": [
+   {
+    "op": "tem_amorphous_film",
+    "dim": "optics",
+    "category": "tem",
+    "out": "image2d",
+    "path": "docs/ops/optics/tem/tem_amorphous_film.md"
+   }
+  ],
+  "tem_ctf": [
+   {
+    "op": "tem_ctf",
+    "dim": "optics",
+    "category": "tem",
+    "out": "image2d",
+    "path": "docs/ops/optics/tem/tem_ctf.md"
+   }
+  ],
+  "tem_ctf_correct": [
+   {
+    "op": "tem_ctf_correct",
+    "dim": "optics",
+    "category": "tem",
+    "in": "image2d",
+    "out": "image2d",
+    "path": "docs/ops/optics/tem/tem_ctf_correct.md"
+   }
+  ],
+  "tem_ctf_estimate": [
+   {
+    "op": "tem_ctf_estimate",
+    "dim": "optics",
+    "category": "tem",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/optics/tem/tem_ctf_estimate.md"
+   }
+  ],
+  "tem_ctf_profile": [
+   {
+    "op": "tem_ctf_profile",
+    "dim": "optics",
+    "category": "tem",
+    "out": "table",
+    "path": "docs/ops/optics/tem/tem_ctf_profile.md"
+   }
+  ],
+  "tem_image_weak_phase": [
+   {
+    "op": "tem_image_weak_phase",
+    "dim": "optics",
+    "category": "tem",
+    "in": "image2d",
+    "out": "image2d",
+    "path": "docs/ops/optics/tem/tem_image_weak_phase.md"
+   }
+  ],
+  "tem_multislice": [
+   {
+    "op": "tem_multislice",
+    "dim": "optics",
+    "category": "tem",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/optics/tem/tem_multislice.md"
+   }
+  ],
+  "tem_power_spectrum": [
+   {
+    "op": "tem_power_spectrum",
+    "dim": "optics",
+    "category": "tem",
+    "in": "image2d",
+    "out": "image2d",
+    "path": "docs/ops/optics/tem/tem_power_spectrum.md"
+   }
+  ],
+  "tem_projected_potential": [
+   {
+    "op": "tem_projected_potential",
+    "dim": "optics",
+    "category": "tem",
+    "out": "image2d",
+    "path": "docs/ops/optics/tem/tem_projected_potential.md"
+   }
+  ],
+  "tem_scherzer": [
+   {
+    "op": "tem_scherzer",
+    "dim": "optics",
+    "category": "tem",
+    "out": "table",
+    "path": "docs/ops/optics/tem/tem_scherzer.md"
+   }
+  ],
+  "tem_wavelength": [
+   {
+    "op": "tem_wavelength",
+    "dim": "optics",
+    "category": "tem",
+    "out": "table",
+    "path": "docs/ops/optics/tem/tem_wavelength.md"
+   }
+  ],
+  "tolerance_compensators": [
+   {
+    "op": "tolerance_compensators",
+    "dim": "optics",
+    "category": "tolerancing",
+    "out": "table",
+    "path": "docs/ops/optics/tolerancing/tolerance_compensators.md"
+   }
+  ],
+  "tolerance_criteria": [
+   {
+    "op": "tolerance_criteria",
+    "dim": "optics",
+    "category": "tolerancing",
+    "out": "table",
+    "path": "docs/ops/optics/tolerancing/tolerance_criteria.md"
+   }
+  ],
+  "tolerance_monte_carlo": [
+   {
+    "op": "tolerance_monte_carlo",
+    "dim": "optics",
+    "category": "tolerancing",
+    "in": "table × table × table",
+    "out": "table",
+    "path": "docs/ops/optics/tolerancing/tolerance_monte_carlo.md"
+   }
+  ],
+  "tolerance_report": [
+   {
+    "op": "tolerance_report",
+    "dim": "optics",
+    "category": "tolerancing",
+    "in": "table",
+    "out": "text",
+    "path": "docs/ops/optics/tolerancing/tolerance_report.md"
+   }
+  ],
+  "tolerance_sensitivity": [
+   {
+    "op": "tolerance_sensitivity",
+    "dim": "optics",
+    "category": "tolerancing",
+    "in": "table × table × table",
+    "out": "table",
+    "path": "docs/ops/optics/tolerancing/tolerance_sensitivity.md"
+   }
+  ],
+  "tolerance_table": [
+   {
+    "op": "tolerance_table",
+    "dim": "optics",
+    "category": "tolerancing",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/tolerancing/tolerance_table.md"
+   }
+  ],
+  "tolerance_table_from_zmx": [
+   {
+    "op": "tolerance_table_from_zmx",
+    "dim": "optics",
+    "category": "tolerancing",
+    "in": "table × text",
+    "out": "table",
+    "path": "docs/ops/optics/tolerancing/tolerance_table_from_zmx.md"
+   }
+  ],
+  "tolerance_table_zmx": [
+   {
+    "op": "tolerance_table_zmx",
+    "dim": "optics",
+    "category": "tolerancing",
+    "in": "table",
+    "out": "text",
+    "path": "docs/ops/optics/tolerancing/tolerance_table_zmx.md"
+   }
+  ],
+  "cylinder_lens_caustic": [
+   {
+    "op": "cylinder_lens_caustic",
+    "dim": "optics",
+    "category": "watermedia",
+    "out": "table",
+    "path": "docs/ops/optics/watermedia/cylinder_lens_caustic.md"
+   }
+  ],
+  "fresnel_water_air": [
+   {
+    "op": "fresnel_water_air",
+    "dim": "optics",
+    "category": "watermedia",
+    "out": "table",
+    "path": "docs/ops/optics/watermedia/fresnel_water_air.md"
+   }
+  ],
+  "ocean_height_field": [
+   {
+    "op": "ocean_height_field",
+    "dim": "optics",
+    "category": "watermedia",
+    "out": "table",
+    "path": "docs/ops/optics/watermedia/ocean_height_field.md"
+   }
+  ],
+  "ocean_spectrum": [
+   {
+    "op": "ocean_spectrum",
+    "dim": "optics",
+    "category": "watermedia",
+    "out": "table",
+    "path": "docs/ops/optics/watermedia/ocean_spectrum.md"
+   }
+  ],
+  "phase_function_hg": [
+   {
+    "op": "phase_function_hg",
+    "dim": "optics",
+    "category": "watermedia",
+    "out": "table",
+    "path": "docs/ops/optics/watermedia/phase_function_hg.md"
+   }
+  ],
+  "refracted_view": [
+   {
+    "op": "refracted_view",
+    "dim": "optics",
+    "category": "watermedia",
+    "out": "table",
+    "path": "docs/ops/optics/watermedia/refracted_view.md"
+   }
+  ],
+  "scattering_phase_petzold": [
+   {
+    "op": "scattering_phase_petzold",
+    "dim": "optics",
+    "category": "watermedia",
+    "out": "table",
+    "path": "docs/ops/optics/watermedia/scattering_phase_petzold.md"
+   }
+  ],
+  "snell_window": [
+   {
+    "op": "snell_window",
+    "dim": "optics",
+    "category": "watermedia",
+    "out": "table",
+    "path": "docs/ops/optics/watermedia/snell_window.md"
+   }
+  ],
+  "underwater_image": [
+   {
+    "op": "underwater_image",
+    "dim": "optics",
+    "category": "watermedia",
+    "in": "rgbimage × image2d × image2d",
+    "out": "table",
+    "path": "docs/ops/optics/watermedia/underwater_image.md"
+   }
+  ],
+  "water_attenuation": [
+   {
+    "op": "water_attenuation",
+    "dim": "optics",
+    "category": "watermedia",
+    "out": "table",
+    "path": "docs/ops/optics/watermedia/water_attenuation.md"
+   }
+  ],
+  "bottle_image": [
+   {
+    "op": "bottle_image",
+    "dim": "optics",
+    "category": "watervision",
+    "out": "table",
+    "path": "docs/ops/optics/watervision/bottle_image.md"
+   }
+  ],
+  "caustic_floor_segmentation": [
+   {
+    "op": "caustic_floor_segmentation",
+    "dim": "optics",
+    "category": "watervision",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/optics/watervision/caustic_floor_segmentation.md"
+   }
+  ],
+  "caustic_irradiance": [
+   {
+    "op": "caustic_irradiance",
+    "dim": "optics",
+    "category": "watervision",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/optics/watervision/caustic_irradiance.md"
+   }
+  ],
+  "fill_level_from_image": [
+   {
+    "op": "fill_level_from_image",
+    "dim": "optics",
+    "category": "watervision",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/optics/watervision/fill_level_from_image.md"
+   }
+  ],
+  "underwater_inspection_image": [
+   {
+    "op": "underwater_inspection_image",
+    "dim": "optics",
+    "category": "watervision",
+    "in": "rgbimage × image2d",
+    "out": "table",
+    "path": "docs/ops/optics/watervision/underwater_inspection_image.md"
+   }
+  ],
+  "wet_dry_inspection_pair": [
+   {
+    "op": "wet_dry_inspection_pair",
+    "dim": "optics",
+    "category": "watervision",
+    "in": "image2d × image2d",
+    "out": "table",
+    "path": "docs/ops/optics/watervision/wet_dry_inspection_pair.md"
+   }
+  ],
+  "wet_surface_appearance": [
+   {
+    "op": "wet_surface_appearance",
+    "dim": "optics",
+    "category": "watervision",
+    "out": "table",
+    "path": "docs/ops/optics/watervision/wet_surface_appearance.md"
    }
   ],
   "airy_pattern": [
@@ -31129,6 +33039,36 @@
     "path": "docs/ops/roughness/measure/surface_psd.md"
    }
   ],
+  "robust_gaussian_profile": [
+   {
+    "op": "robust_gaussian_profile",
+    "dim": "roughness",
+    "category": "prepare",
+    "in": "signal",
+    "out": "signal",
+    "path": "docs/ops/roughness/prepare/robust_gaussian_profile.md"
+   }
+  ],
+  "robust_gaussian_surface": [
+   {
+    "op": "robust_gaussian_surface",
+    "dim": "roughness",
+    "category": "prepare",
+    "in": "depth",
+    "out": "depth",
+    "path": "docs/ops/roughness/prepare/robust_gaussian_surface.md"
+   }
+  ],
+  "robust_spline_profile": [
+   {
+    "op": "robust_spline_profile",
+    "dim": "roughness",
+    "category": "prepare",
+    "in": "signal",
+    "out": "signal",
+    "path": "docs/ops/roughness/prepare/robust_spline_profile.md"
+   }
+  ],
   "surface_filter": [
    {
     "op": "surface_filter",
@@ -31196,6 +33136,26 @@
     "in": "image2d × signal",
     "out": "labels2d",
     "path": "docs/ops/segmentation/classify/classify_image_class_lut.md"
+   }
+  ],
+  "fisher_lda_fit": [
+   {
+    "op": "fisher_lda_fit",
+    "dim": "segmentation",
+    "category": "classify",
+    "in": "matrix × signal",
+    "out": "table",
+    "path": "docs/ops/segmentation/classify/fisher_lda_fit.md"
+   }
+  ],
+  "fisher_lda_score": [
+   {
+    "op": "fisher_lda_score",
+    "dim": "segmentation",
+    "category": "classify",
+    "in": "table × matrix",
+    "out": "table",
+    "path": "docs/ops/segmentation/classify/fisher_lda_score.md"
    }
   ],
   "learn_ndim_norm": [
@@ -31456,6 +33416,36 @@
     "in": "images",
     "out": "labels2d",
     "path": "docs/ops/segmentation/grow/regiongrowing_n.md"
+   }
+  ],
+  "cover_ratio_grade": [
+   {
+    "op": "cover_ratio_grade",
+    "dim": "segmentation",
+    "category": "plant",
+    "in": "signal",
+    "out": "table",
+    "path": "docs/ops/segmentation/plant/cover_ratio_grade.md"
+   }
+  ],
+  "plant_color_index": [
+   {
+    "op": "plant_color_index",
+    "dim": "segmentation",
+    "category": "plant",
+    "in": "rgbimage",
+    "out": "table",
+    "path": "docs/ops/segmentation/plant/plant_color_index.md"
+   }
+  ],
+  "superpixel_color_texture_features": [
+   {
+    "op": "superpixel_color_texture_features",
+    "dim": "segmentation",
+    "category": "plant",
+    "in": "rgbimage × labels2d",
+    "out": "table",
+    "path": "docs/ops/segmentation/plant/superpixel_color_texture_features.md"
    }
   ],
   "seg_boundary_f": [
@@ -32109,6 +34099,126 @@
     "path": "docs/ops/simcal/report/simcal_report.md"
    }
   ],
+  "anomaly_image_auroc": [
+   {
+    "op": "anomaly_image_auroc",
+    "dim": "spc",
+    "category": "anomaly_eval",
+    "in": "signal × signal",
+    "out": "table",
+    "path": "docs/ops/spc/anomaly_eval/anomaly_image_auroc.md"
+   }
+  ],
+  "anomaly_image_f1_max": [
+   {
+    "op": "anomaly_image_f1_max",
+    "dim": "spc",
+    "category": "anomaly_eval",
+    "in": "signal × signal",
+    "out": "table",
+    "path": "docs/ops/spc/anomaly_eval/anomaly_image_f1_max.md"
+   }
+  ],
+  "anomaly_operating_point": [
+   {
+    "op": "anomaly_operating_point",
+    "dim": "spc",
+    "category": "anomaly_eval",
+    "in": "signal × signal",
+    "out": "table",
+    "path": "docs/ops/spc/anomaly_eval/anomaly_operating_point.md"
+   }
+  ],
+  "anomaly_pixel_auroc": [
+   {
+    "op": "anomaly_pixel_auroc",
+    "dim": "spc",
+    "category": "anomaly_eval",
+    "in": "video × video",
+    "out": "table",
+    "path": "docs/ops/spc/anomaly_eval/anomaly_pixel_auroc.md"
+   }
+  ],
+  "anomaly_pixel_f1_max": [
+   {
+    "op": "anomaly_pixel_f1_max",
+    "dim": "spc",
+    "category": "anomaly_eval",
+    "in": "video × video",
+    "out": "table",
+    "path": "docs/ops/spc/anomaly_eval/anomaly_pixel_f1_max.md"
+   }
+  ],
+  "anomaly_pro": [
+   {
+    "op": "anomaly_pro",
+    "dim": "spc",
+    "category": "anomaly_eval",
+    "in": "video × video",
+    "out": "table",
+    "path": "docs/ops/spc/anomaly_eval/anomaly_pro.md"
+   }
+  ],
+  "anomaly_region_overlap": [
+   {
+    "op": "anomaly_region_overlap",
+    "dim": "spc",
+    "category": "anomaly_eval",
+    "in": "video × video",
+    "out": "table",
+    "path": "docs/ops/spc/anomaly_eval/anomaly_region_overlap.md"
+   }
+  ],
+  "patch_features": [
+   {
+    "op": "patch_features",
+    "dim": "spc",
+    "category": "anomaly_patch",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/spc/anomaly_patch/patch_features.md"
+   }
+  ],
+  "patchbank_fit": [
+   {
+    "op": "patchbank_fit",
+    "dim": "spc",
+    "category": "anomaly_patch",
+    "in": "video",
+    "out": "table",
+    "path": "docs/ops/spc/anomaly_patch/patchbank_fit.md"
+   }
+  ],
+  "patchbank_score": [
+   {
+    "op": "patchbank_score",
+    "dim": "spc",
+    "category": "anomaly_patch",
+    "in": "image2d × table",
+    "out": "table",
+    "path": "docs/ops/spc/anomaly_patch/patchbank_score.md"
+   }
+  ],
+  "patchdist_fit": [
+   {
+    "op": "patchdist_fit",
+    "dim": "spc",
+    "category": "anomaly_patch",
+    "in": "video",
+    "out": "table",
+    "path": "docs/ops/spc/anomaly_patch/patchdist_fit.md"
+   }
+  ],
+  "patchdist_score": [
+   {
+    "op": "patchdist_score",
+    "dim": "spc",
+    "category": "anomaly_patch",
+    "in": "image2d × table",
+    "out": "table",
+    "path": "docs/ops/spc/anomaly_patch/patchdist_score.md"
+   }
+  ],
   "spc_capability": [
    {
     "op": "spc_capability",
@@ -32327,6 +34437,55 @@
     "in": "table × table",
     "out": "table",
     "path": "docs/ops/spc/uncertainty/gum_validate.md"
+   }
+  ],
+  "varmodel_alignment": [
+   {
+    "op": "varmodel_alignment",
+    "dim": "spc",
+    "category": "variation",
+    "in": "video",
+    "out": "table",
+    "path": "docs/ops/spc/variation/varmodel_alignment.md"
+   }
+  ],
+  "varmodel_band_k": [
+   {
+    "op": "varmodel_band_k",
+    "dim": "spc",
+    "category": "variation",
+    "out": "table",
+    "path": "docs/ops/spc/variation/varmodel_band_k.md"
+   }
+  ],
+  "varmodel_calibrate": [
+   {
+    "op": "varmodel_calibrate",
+    "dim": "spc",
+    "category": "variation",
+    "in": "table × video",
+    "out": "table",
+    "path": "docs/ops/spc/variation/varmodel_calibrate.md"
+   }
+  ],
+  "varmodel_fit": [
+   {
+    "op": "varmodel_fit",
+    "dim": "spc",
+    "category": "variation",
+    "in": "video",
+    "out": "table",
+    "path": "docs/ops/spc/variation/varmodel_fit.md"
+   }
+  ],
+  "varmodel_score": [
+   {
+    "op": "varmodel_score",
+    "dim": "spc",
+    "category": "variation",
+    "in": "image2d × table",
+    "out": "table",
+    "path": "docs/ops/spc/variation/varmodel_score.md"
    }
   ],
   "deflectometry_phase_to_slope": [
@@ -32690,6 +34849,139 @@
     "in": "sinogram",
     "out": "image2d",
     "path": "docs/ops/tomography/reconstruct/sart_reconstruct.md"
+   }
+  ],
+  "basis_decomposition_crlb": [
+   {
+    "op": "basis_decomposition_crlb",
+    "dim": "tomography",
+    "category": "spectral_xray",
+    "out": "table",
+    "path": "docs/ops/tomography/spectral_xray/basis_decomposition_crlb.md"
+   }
+  ],
+  "basis_material_decompose": [
+   {
+    "op": "basis_material_decompose",
+    "dim": "tomography",
+    "category": "spectral_xray",
+    "in": "images",
+    "out": "images",
+    "path": "docs/ops/tomography/spectral_xray/basis_material_decompose.md"
+   }
+  ],
+  "dual_energy_separability": [
+   {
+    "op": "dual_energy_separability",
+    "dim": "tomography",
+    "category": "spectral_xray",
+    "out": "table",
+    "path": "docs/ops/tomography/spectral_xray/dual_energy_separability.md"
+   }
+  ],
+  "dual_kvp_channels": [
+   {
+    "op": "dual_kvp_channels",
+    "dim": "tomography",
+    "category": "spectral_xray",
+    "in": "pairs × pairs",
+    "out": "table",
+    "path": "docs/ops/tomography/spectral_xray/dual_kvp_channels.md"
+   }
+  ],
+  "effective_z_map": [
+   {
+    "op": "effective_z_map",
+    "dim": "tomography",
+    "category": "spectral_xray",
+    "in": "images",
+    "out": "image2d",
+    "path": "docs/ops/tomography/spectral_xray/effective_z_map.md"
+   }
+  ],
+  "material_effective_z": [
+   {
+    "op": "material_effective_z",
+    "dim": "tomography",
+    "category": "spectral_xray",
+    "out": "table",
+    "path": "docs/ops/tomography/spectral_xray/material_effective_z.md"
+   }
+  ],
+  "material_xray_attenuation": [
+   {
+    "op": "material_xray_attenuation",
+    "dim": "tomography",
+    "category": "spectral_xray",
+    "out": "pairs",
+    "path": "docs/ops/tomography/spectral_xray/material_xray_attenuation.md"
+   }
+  ],
+  "material_xray_constants": [
+   {
+    "op": "material_xray_constants",
+    "dim": "tomography",
+    "category": "spectral_xray",
+    "out": "table",
+    "path": "docs/ops/tomography/spectral_xray/material_xray_constants.md"
+   }
+  ],
+  "material_xray_table": [
+   {
+    "op": "material_xray_table",
+    "dim": "tomography",
+    "category": "spectral_xray",
+    "out": "table",
+    "path": "docs/ops/tomography/spectral_xray/material_xray_table.md"
+   }
+  ],
+  "photon_counting_channels": [
+   {
+    "op": "photon_counting_channels",
+    "dim": "tomography",
+    "category": "spectral_xray",
+    "in": "pairs",
+    "out": "table",
+    "path": "docs/ops/tomography/spectral_xray/photon_counting_channels.md"
+   }
+  ],
+  "r_value_map": [
+   {
+    "op": "r_value_map",
+    "dim": "tomography",
+    "category": "spectral_xray",
+    "in": "images",
+    "out": "image2d",
+    "path": "docs/ops/tomography/spectral_xray/r_value_map.md"
+   }
+  ],
+  "xray_beam_quality": [
+   {
+    "op": "xray_beam_quality",
+    "dim": "tomography",
+    "category": "spectral_xray",
+    "in": "pairs",
+    "out": "table",
+    "path": "docs/ops/tomography/spectral_xray/xray_beam_quality.md"
+   }
+  ],
+  "xray_channel_projection": [
+   {
+    "op": "xray_channel_projection",
+    "dim": "tomography",
+    "category": "spectral_xray",
+    "in": "images",
+    "out": "images",
+    "path": "docs/ops/tomography/spectral_xray/xray_channel_projection.md"
+   }
+  ],
+  "xray_tube_spectrum": [
+   {
+    "op": "xray_tube_spectrum",
+    "dim": "tomography",
+    "category": "spectral_xray",
+    "out": "pairs",
+    "path": "docs/ops/tomography/spectral_xray/xray_tube_spectrum.md"
    }
   ],
   "fbp_volume": [

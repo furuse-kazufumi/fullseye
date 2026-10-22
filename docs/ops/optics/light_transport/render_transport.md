@@ -7,7 +7,7 @@ out: images
 examples: [poc_interreflection_fringe_error]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # render_transport — OPTICS `light_transport` op
@@ -68,7 +68,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`images` を入力に取れる)
 
-[film_thickness_map](../film/film_thickness_map.md) · [separate_direct_global](separate_direct_global.md) · [micro_phase_decode](micro_phase_decode.md)
+[film_thickness_map](../film/film_thickness_map.md) · [equirect_stabilize](../omni360/equirect_stabilize.md) · [equirect_from_fisheye_pair](../omni360/equirect_from_fisheye_pair.md) · [equirect_from_perspectives](../omni360/equirect_from_perspectives.md) · [grating_three_image_retrieve](../grating_interf/grating_three_image_retrieve.md) · [grating_step_period_estimate](../grating_interf/grating_step_period_estimate.md) · [separate_direct_global](separate_direct_global.md) · [micro_phase_decode](micro_phase_decode.md)
 
 ## 同カテゴリ(`light_transport`)
 

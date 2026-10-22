@@ -1,13 +1,15 @@
 # imgevolve — cross-library operator catalog
 
-936 operators across 48 categories, typed by sort (image/region/feature). Each maps to the nearest single-call API in HALCON / OpenCV / scikit-image / MATLAB. `-` = no direct one-call analog.
+942 operators across 48 categories, typed by sort (image/region/feature). Each maps to the nearest single-call API in HALCON / OpenCV / scikit-image / MATLAB. `-` = no direct one-call analog.
 
 | op | sort | category | halcon | opencv | skimage | matlab |
 |---|---|---|---|---|---|---|
 | `identity` | any | misc | copy_image | copyTo | - | - |
 | `gaussian` | image | smoothing | gauss_filter | GaussianBlur | filters.gaussian | imgaussfilt |
 | `mean_box` | image | smoothing | mean_image | blur/boxFilter | filters.rank.mean | imboxfilt |
+| `mean_box_wh` | image | smoothing | mean_image | - | - | - |
 | `bilateral` | image | smoothing | bilateral_filter | bilateralFilter | restoration.denoise_bilateral | imbilatfilt |
+| `kuwahara` | image | smoothing | None | - | - | - |
 | `unsharp` | image | smoothing | emphasize | addWeighted | filters.unsharp_mask | imsharpen |
 | `median` | image | rank | median_image | medianBlur | filters.median | medfilt2 |
 | `min_filter` | image | rank | gray_erosion_rect | erode | filters.rank.minimum | ordfilt2 |
@@ -45,6 +47,7 @@
 | `local_bimodality` | image | texture | None | - | - | - |
 | `local_std` | image | texture | None | - | - | - |
 | `scale_select_std` | image | texture | None | - | - | - |
+| `xdog` | image | edges | None | - | - | - |
 | `bootstrap_std_error` | image | texture | None | - | - | - |
 | `persistence_map` | image | morphology | None | - | - | - |
 | `structure_tensor_orientation` | image | texture | None | - | - | - |
@@ -66,6 +69,7 @@
 | `log` | image | edges | laplace_of_gauss | - | filters.laplace(gaussian) | fspecial('log') |
 | `canny` | image->region | segmentation | edges_image | Canny | feature.canny | edge(...,'canny') |
 | `dist_transform` | region->image | region | distance_transform | distanceTransform | ndi.distance_transform_edt | bwdist |
+| `dist_transform_abs` | region->image | region | distance_transform | - | - | - |
 | `region_boundary` | region | region | boundary | findContours | segmentation.find_boundaries | bwperim |
 | `convex_fill` | region | region | shape_trans | convexHull | morphology.convex_hull_image | bwconvhull |
 | `select_contours` | contour | contour | select_contours_xld | (filter contours) | - | - |
@@ -768,6 +772,7 @@
 | `tb_iss_keypoints` | points->signal | typed |  | - | - | - |
 | `tb_project_points` | points->keypoints | typed |  | - | - | - |
 | `tb_render_point_depth` | points->image | typed |  | - | - | - |
+| `tb_points_render` | points->rgbimage | typed |  | - | - | - |
 | `tb_statistical_outlier_removal` | points | typed |  | - | - | - |
 | `tb_radius_outlier_removal` | points | typed |  | - | - | - |
 | `tb_voxel_grid_downsample` | points | typed |  | - | - | - |
@@ -854,6 +859,7 @@
 | `tb_env_studio` | points->signal | typed |  | - | - | - |
 | `tb_env_lightbox` | points->signal | typed |  | - | - | - |
 | `tb_sensor_capture` | rgbimage | typed |  | - | - | - |
+| `tb_viewport_from_equirect` | rgbimage | typed |  | - | - | - |
 | `tb_lf_to_mla` | lightfield->image | typed |  | - | - | - |
 | `tb_lf_subaperture` | lightfield->image | typed |  | - | - | - |
 | `tb_lf_center_view` | lightfield->image | typed |  | - | - | - |
@@ -942,9 +948,9 @@
 | `feature_to_img` | feature->image | bridge |  | - | - | - |
 
 ## Coverage (ops with a direct analog)
-- opencv: 310/936
-- skimage: 383/936
-- matlab: 259/936
+- opencv: 310/942
+- skimage: 383/942
+- matlab: 259/942
 
 ## Roadmap toward full coverage
 - HALCON ~2100 operators: add regions/XLD-contours/matching/OCR/calibration sorts.

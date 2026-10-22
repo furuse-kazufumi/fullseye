@@ -4,10 +4,10 @@ dim: piv
 category: validate
 in: flow2d
 out: mask
-examples: [piv_flow_from_particles, poc_change_detection_misreg, poc_river_surface_velocity]
+examples: [perf_hankel_plan_and_piv_stream, piv_flow_from_particles, poc_change_detection_misreg, poc_river_surface_velocity]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # piv_outlier_mask — PIV `validate` op
@@ -52,6 +52,7 @@ Returns:
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [perf_hankel_plan_and_piv_stream](../../../../examples/perf_hankel_plan_and_piv_stream.py) — `py -3.11 examples/perf_hankel_plan_and_piv_stream.py`
 - [piv_flow_from_particles](../../../../examples/piv_flow_from_particles.py) — `py -3.11 examples/piv_flow_from_particles.py`
 - [poc_change_detection_misreg](../../../../examples/poc_change_detection_misreg.py) — `py -3.11 examples/poc_change_detection_misreg.py`
 - [poc_river_surface_velocity](../../../../examples/poc_river_surface_velocity.py) — `py -3.11 examples/poc_river_surface_velocity.py`

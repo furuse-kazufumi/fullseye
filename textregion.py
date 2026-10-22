@@ -86,6 +86,7 @@ def swt_map(img, dark_on_light: bool = True, sigma: float = 1.0, max_width: int 
     n_rays = int(ey.size)
     n_hits = 0
     rays = []
+    opposite = -np.cos(angle_tol)
     sign = -1.0 if dark_on_light else 1.0   # 暗い文字: 勾配は暗→明なので、逆向きに進むと内側へ
     for y0, x0 in zip(ey, ex):
         # ★幅 1 のストローク(2026-09-27 実測: size 16 のフォントは縦の連が 1 px で、行の再現率が
@@ -99,7 +100,7 @@ def swt_map(img, dark_on_light: bool = True, sigma: float = 1.0, max_width: int 
         if (up and dn) or (lf and rt):
             if 1.0 < swt[y0, x0]:
                 swt[y0, x0] = 1.0
-            rays.append(([(y0, x0)], 1.0))
+            rays.append((np.array([y0 * w + x0], dtype=np.intp), 1.0))
             n_hits += 1
             continue
         m = mag[y0, x0]
@@ -123,22 +124,22 @@ def swt_map(img, dark_on_light: bool = True, sigma: float = 1.0, max_width: int 
                     break
                 dx2, dy2 = sign * gx[yi, xi] / m2, sign * gy[yi, xi] / m2
                 # 向かい合う = ほぼ逆向き
-                if dx * dx2 + dy * dy2 <= -np.cos(angle_tol):
+                if dx * dx2 + dy * dy2 <= opposite:
                     width = float(np.hypot(xi - x0, yi - y0)) + 1.0   # 境界画素の中心間 + 1
                     pts = [(y0, x0)] + path
                     for py, px in pts:
                         if width < swt[py, px]:
                             swt[py, px] = width
-                    rays.append((pts, width))
+                    rays.append((np.fromiter((py * w + px for py, px in pts), dtype=np.intp), width))
                     n_hits += 1
                 break
     # 2 回目: 光線上の中央値で頭打ち
+    flat = swt.ravel()
     for pts, width in rays:
-        vals = np.array([swt[p] for p in pts])
+        vals = flat[pts]
         med = float(np.median(vals[np.isfinite(vals)])) if np.any(np.isfinite(vals)) else width
-        for p in pts:
-            if swt[p] > med:
-                swt[p] = med
+        high = pts[vals > med]
+        flat[high] = med
     swt[~np.isfinite(swt)] = 0.0
     return {"swt": swt, "edges": edges, "n_rays": n_rays, "n_hits": n_hits}
 
@@ -176,9 +177,10 @@ def text_candidates(swt, min_area: int = 8, max_var_ratio: float = 0.5,
         boxes.append((sl[0].start, sl[1].start, sl[0].stop, sl[1].stop))
         widths.append(float(np.median(vals)))
         keep_ids.append(i)
-    out_lab = np.zeros_like(lab)
-    for k, i in enumerate(keep_ids, start=1):
-        out_lab[lab == i] = k
+    label_map = np.zeros(n + 1, dtype=lab.dtype)
+    if keep_ids:
+        label_map[np.asarray(keep_ids)] = np.arange(1, len(keep_ids) + 1)
+    out_lab = label_map[lab]
     return {"boxes": np.array(boxes, dtype=int).reshape(-1, 4), "labels": out_lab,
             "stroke_width": np.array(widths), "n_components": int(n)}
 

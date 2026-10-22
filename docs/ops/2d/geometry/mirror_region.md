@@ -8,7 +8,7 @@ halcon: mirror_region
 examples: [gallery2d_geometry]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # mirror_region — 2D `geometry` op
@@ -40,6 +40,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 領域を反転（ミラー）する。a の値で軸を切り替える: a<0.34 で上下反転（``flipud``）、0.34≤a<0.67 で左右反転（``fliplr``）、それ以外で転置（対角線反転、``x.T``）。b は未使用。フリップは値を変えない演算なので ``_rebinarise`` は実質何もしない。
 
 HALCON の ``mirror_region``（軸を指定して領域を反射する演算）に相当。HALCON は軸位置を任意に指定できるが、この実装は画像中心を通る 3 種類の軸（縦/横/対角）に固定されている近似。
+
+**つまみ(実測)**: ``a`` は**段階的**に効き、切り替わるのは a ≈ 0.33、0.67(実測。刻み 0.02 の掃きで測った位置)。
 
 ## 詳しい使い方ガイド
 

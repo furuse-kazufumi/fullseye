@@ -8,7 +8,7 @@ halcon: erosion_circle
 examples: [degenerate_inputs, gallery2d_region, poc_colocalization_crosstalk, poc_leaf_disease_area]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # reg_erode — 2D `region` op
@@ -42,6 +42,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 ``a`` が反復回数を ``1〜4``（``_it(a)``）に振る。``b`` は未使用。構造要素は ``scipy.ndimage.binary_erosion`` の既定（十字形、4近傍相当）で、HALCON の円形構造要素とは形が異なる（近似）。入力は ``v > 0.5`` で二値化してから処理する。
 
 **端の扱い**: 画像の外側は背景(0)とみなす(実測。`tools/impl2/border_probe.py`)。
+
+**つまみ(実測)**: ``a`` は**段階的**に効き、切り替わるのは a ≈ 0.33、0.67、0.99(実測。刻み 0.02 の掃きで測った位置)。
 
 ## 詳しい使い方ガイド
 

@@ -591,6 +591,27 @@
   "status": "determined"
  },
  {
+  "op": "banding_map",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.9962682401941914,
+  "b_used": true,
+  "a_effect_per_image": [
+   0.0,
+   0.0,
+   1.0,
+   0.0,
+   0.0
+  ],
+  "a_effect": 1.0,
+  "a_kind": "discrete",
+  "breakpoints": [
+   0.07
+  ],
+  "breakpoint_resolution": 0.02,
+  "status": "determined"
+ },
+ {
   "op": "bandpass_image",
   "steps": 51,
   "n_probe_images": 5,
@@ -686,6 +707,29 @@
   "breakpoints": []
  },
  {
+  "op": "bootstrap_std_error",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.24688224334793252,
+  "b_used": true,
+  "a_effect_per_image": [
+   0.856841,
+   0.589641,
+   1.928769,
+   0.071518,
+   0.551047
+  ],
+  "a_effect": 1.9287685661532215,
+  "a_kind": "discrete",
+  "breakpoints": [
+   0.25,
+   0.49,
+   0.75
+  ],
+  "breakpoint_resolution": 0.02,
+  "status": "determined"
+ },
+ {
   "op": "bothat",
   "steps": 51,
   "n_probe_images": 5,
@@ -745,6 +789,24 @@
    0.090881
   ],
   "a_effect": 0.15835610124265836,
+  "a_kind": "continuous",
+  "breakpoints": [],
+  "status": "determined"
+ },
+ {
+  "op": "companding_mu_law",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.9118444533869059,
+  "b_used": true,
+  "a_effect_per_image": [
+   1.70295,
+   5.773002,
+   3.174485,
+   0.476471,
+   3.907887
+  ],
+  "a_effect": 5.773001520838285,
   "a_kind": "continuous",
   "breakpoints": [],
   "status": "determined"
@@ -1401,6 +1463,24 @@
   "status": "determined"
  },
  {
+  "op": "deskew",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.059144687724408535,
+  "b_used": true,
+  "a_effect_per_image": [
+   0.0,
+   1.69361,
+   0.0,
+   6.237997,
+   0.0
+  ],
+  "a_effect": 6.237996564986154,
+  "a_kind": "continuous",
+  "breakpoints": [],
+  "status": "determined"
+ },
+ {
   "op": "deviation_image",
   "steps": 51,
   "n_probe_images": 5,
@@ -1437,6 +1517,42 @@
    1.633499
   ],
   "a_effect": 1.695839512305047,
+  "a_kind": "continuous",
+  "breakpoints": [],
+  "status": "determined"
+ },
+ {
+  "op": "dither_floyd_steinberg",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   1.640084,
+   1.617276,
+   1.598893,
+   0.612853,
+   1.122112
+  ],
+  "a_effect": 1.6400841735390288,
+  "a_kind": "continuous",
+  "breakpoints": [],
+  "status": "determined"
+ },
+ {
+  "op": "dither_ordered",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.032258064516129115,
+  "b_used": true,
+  "a_effect_per_image": [
+   1.187649,
+   1.183394,
+   1.052971,
+   0.612853,
+   1.1697
+  ],
+  "a_effect": 1.1876492668018017,
   "a_kind": "continuous",
   "breakpoints": [],
   "status": "determined"
@@ -1533,6 +1649,29 @@
    0.23009
   ],
   "a_effect": 2.538208093316575,
+  "a_kind": "discrete",
+  "breakpoints": [
+   0.25,
+   0.49,
+   0.75
+  ],
+  "breakpoint_resolution": 0.02,
+  "status": "determined"
+ },
+ {
+  "op": "edge_transition_width",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.896843181038912,
+  "b_used": true,
+  "a_effect_per_image": [
+   0.77652,
+   0.651217,
+   0.592577,
+   0.157135,
+   0.428919
+  ],
+  "a_effect": 0.7765198817756589,
   "a_kind": "discrete",
   "breakpoints": [
    0.25,
@@ -1825,6 +1964,24 @@
   "status": "determined"
  },
  {
+  "op": "f2_shock_diffuse",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.717722363707258,
+  "b_used": true,
+  "a_effect_per_image": [
+   0.484168,
+   0.831696,
+   0.759654,
+   0.021283,
+   0.16341
+  ],
+  "a_effect": 0.8316963041919252,
+  "a_kind": "continuous",
+  "breakpoints": [],
+  "status": "determined"
+ },
+ {
   "op": "f2_symmetry",
   "steps": 51,
   "n_probe_images": 5,
@@ -2051,8 +2208,8 @@
   "op": "gaussian",
   "steps": 51,
   "n_probe_images": 5,
-  "b_effect": 0.0,
-  "b_used": false,
+  "b_effect": 0.4983184203367858,
+  "b_used": true,
   "a_effect_per_image": [
    0.9426,
    0.278177,
@@ -2069,8 +2226,8 @@
   "op": "gclose",
   "steps": 51,
   "n_probe_images": 5,
-  "b_effect": 0.0,
-  "b_used": false,
+  "b_effect": 1.0,
+  "b_used": true,
   "a_effect_per_image": [
    1.5,
    0.509243,
@@ -2092,8 +2249,8 @@
   "op": "gdilate",
   "steps": 51,
   "n_probe_images": 5,
-  "b_effect": 0.0,
-  "b_used": false,
+  "b_effect": 1.0,
+  "b_used": true,
   "a_effect_per_image": [
    1.6,
    0.709685,
@@ -2133,8 +2290,8 @@
   "op": "gerode",
   "steps": 51,
   "n_probe_images": 5,
-  "b_effect": 0.0,
-  "b_used": false,
+  "b_effect": 0.9752022055805625,
+  "b_used": true,
   "a_effect_per_image": [
    1.415217,
    0.65652,
@@ -2156,8 +2313,8 @@
   "op": "gopen",
   "steps": 51,
   "n_probe_images": 5,
-  "b_effect": 0.0,
-  "b_used": false,
+  "b_effect": 0.8025953597235995,
+  "b_used": true,
   "a_effect_per_image": [
    1.286957,
    0.385572,
@@ -3408,6 +3565,24 @@
   "breakpoints": []
  },
  {
+  "op": "kuwahara",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   4.627813,
+   2.928224,
+   3.838781,
+   0.884654,
+   0.853213
+  ],
+  "a_effect": 4.627813394969951,
+  "a_kind": "continuous",
+  "breakpoints": [],
+  "status": "determined"
+ },
+ {
   "op": "laplace",
   "steps": 51,
   "n_probe_images": 5,
@@ -3439,6 +3614,70 @@
    1.537949
   ],
   "a_effect": 1.9002418291500214,
+  "a_kind": "continuous",
+  "breakpoints": [],
+  "status": "determined"
+ },
+ {
+  "op": "local_bimodality",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.9966901784405919,
+  "b_used": true,
+  "a_effect_per_image": [
+   0.560333,
+   1.164965,
+   2.965617,
+   0.0,
+   0.429358
+  ],
+  "a_effect": 2.965617132996596,
+  "a_kind": "discrete",
+  "breakpoints": [
+   0.25,
+   0.49,
+   0.75
+  ],
+  "breakpoint_resolution": 0.02,
+  "status": "determined"
+ },
+ {
+  "op": "local_std",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.43796782534936946,
+  "b_used": true,
+  "a_effect_per_image": [
+   0.508132,
+   0.094455,
+   1.033376,
+   0.007327,
+   0.056816
+  ],
+  "a_effect": 1.0333760309265827,
+  "a_kind": "discrete",
+  "breakpoints": [
+   0.25,
+   0.49,
+   0.75
+  ],
+  "breakpoint_resolution": 0.02,
+  "status": "determined"
+ },
+ {
+  "op": "local_thickness",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 1.0,
+  "b_used": true,
+  "a_effect_per_image": [
+   1.583333,
+   2.085714,
+   1.416667,
+   0.916667,
+   0.916667
+  ],
+  "a_effect": 2.0857142857142854,
   "a_kind": "continuous",
   "breakpoints": [],
   "status": "determined"
@@ -3560,8 +3799,8 @@
   "op": "mean_box",
   "steps": 51,
   "n_probe_images": 5,
-  "b_effect": 0.0,
-  "b_used": false,
+  "b_effect": 0.5245638297067488,
+  "b_used": true,
   "a_effect_per_image": [
    0.599826,
    0.148758,
@@ -3577,6 +3816,24 @@
    0.75
   ],
   "breakpoint_resolution": 0.02,
+  "status": "determined"
+ },
+ {
+  "op": "mean_box_wh",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.5258185721953839,
+  "b_used": true,
+  "a_effect_per_image": [
+   1.059407,
+   0.20485,
+   0.907903,
+   0.099231,
+   0.164883
+  ],
+  "a_effect": 1.0594069001315374,
+  "a_kind": "continuous",
+  "breakpoints": [],
   "status": "determined"
  },
  {
@@ -3655,8 +3912,8 @@
   "op": "median",
   "steps": 51,
   "n_probe_images": 5,
-  "b_effect": 0.0,
-  "b_used": false,
+  "b_effect": 0.9,
+  "b_used": true,
   "a_effect_per_image": [
    1.330435,
    0.217684,
@@ -3873,6 +4130,24 @@
    0.75
   ],
   "breakpoint_resolution": 0.02,
+  "status": "determined"
+ },
+ {
+  "op": "persistence_map",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 1.0,
+  "b_used": true,
+  "a_effect_per_image": [
+   2.880668,
+   0.767015,
+   0.997123,
+   0.0,
+   3.48931
+  ],
+  "a_effect": 3.489309856827287,
+  "a_kind": "continuous",
+  "breakpoints": [],
   "status": "determined"
  },
  {
@@ -4272,6 +4547,67 @@
   "status": "determined"
  },
  {
+  "op": "quantization_error",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   5.556522,
+   6.310307,
+   6.140732,
+   2.8,
+   6.340009
+  ],
+  "a_effect": 6.340008741523768,
+  "a_kind": "continuous",
+  "breakpoints": [],
+  "status": "determined"
+ },
+ {
+  "op": "quantize_lloyd_max",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.038034156037532796,
+  "b_used": true,
+  "a_effect_per_image": [
+   0.682804,
+   0.649771,
+   0.404258,
+   0.0,
+   0.303492
+  ],
+  "a_effect": 0.6828039004816868,
+  "a_kind": "discrete",
+  "breakpoints": [
+   0.07,
+   0.21,
+   0.35,
+   0.49,
+   0.65
+  ],
+  "breakpoint_resolution": 0.02,
+  "status": "determined"
+ },
+ {
+  "op": "quantize_uniform",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   0.691298,
+   0.706581,
+   0.684126,
+   0.612853,
+   0.612229
+  ],
+  "a_effect": 0.7065811270744858,
+  "a_kind": "continuous",
+  "breakpoints": [],
+  "status": "determined"
+ },
+ {
   "op": "rank_image",
   "steps": 51,
   "n_probe_images": 5,
@@ -4462,6 +4798,32 @@
   "status": "determined"
  },
  {
+  "op": "runlength_smear",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.9910656134674254,
+  "b_used": true,
+  "a_effect_per_image": [
+   1.536957,
+   0.989296,
+   2.863887,
+   0.0,
+   0.817002
+  ],
+  "a_effect": 2.86388703916852,
+  "a_kind": "discrete",
+  "breakpoints": [
+   0.15,
+   0.29,
+   0.43,
+   0.57,
+   0.71,
+   0.85
+  ],
+  "breakpoint_resolution": 0.02,
+  "status": "determined"
+ },
+ {
   "op": "scale_clip",
   "steps": 51,
   "n_probe_images": 5,
@@ -4514,6 +4876,31 @@
   "status": "determined",
   "a_kind": "unused",
   "breakpoints": []
+ },
+ {
+  "op": "scale_select_std",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.18998658285860315,
+  "b_used": true,
+  "a_effect_per_image": [
+   0.317297,
+   0.119557,
+   0.28963,
+   0.008142,
+   0.06174
+  ],
+  "a_effect": 0.31729688248052995,
+  "a_kind": "discrete",
+  "breakpoints": [
+   0.25,
+   0.41,
+   0.59,
+   0.75,
+   0.91
+  ],
+  "breakpoint_resolution": 0.02,
+  "status": "determined"
  },
  {
   "op": "sigma_image",
@@ -5210,6 +5597,42 @@
   "status": "determined"
  },
  {
+  "op": "structure_tensor_coherence",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.9593927419420701,
+  "b_used": true,
+  "a_effect_per_image": [
+   1.764459,
+   0.788406,
+   0.497409,
+   1.261746,
+   1.045193
+  ],
+  "a_effect": 1.7644586099128667,
+  "a_kind": "continuous",
+  "breakpoints": [],
+  "status": "determined"
+ },
+ {
+  "op": "structure_tensor_orientation",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.9967185200935309,
+  "b_used": true,
+  "a_effect_per_image": [
+   4.938114,
+   35.688371,
+   25.529204,
+   0.67093,
+   46.989126
+  ],
+  "a_effect": 46.98912602588553,
+  "a_kind": "continuous",
+  "breakpoints": [],
+  "status": "determined"
+ },
+ {
   "op": "tac_height_from_shading",
   "steps": 51,
   "n_probe_images": 5,
@@ -5787,6 +6210,24 @@
    0.654902
   ],
   "a_effect": 1.0156862745098039,
+  "a_kind": "continuous",
+  "breakpoints": [],
+  "status": "determined"
+ },
+ {
+  "op": "xdog",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.986600878156547,
+  "b_used": true,
+  "a_effect_per_image": [
+   11.197941,
+   4.449741,
+   8.482201,
+   2.772877,
+   3.350973
+  ],
+  "a_effect": 11.197940729125852,
   "a_kind": "continuous",
   "breakpoints": [],
   "status": "determined"
@@ -8909,6 +9350,1781 @@
    50.0
   ],
   "a_effect": 50.0,
+  "a_kind": "continuous",
+  "breakpoints": [],
+  "status": "determined"
+ },
+ {
+  "op": "affine_trans_region",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 1.0,
+  "b_used": true,
+  "a_effect_per_image": [
+   47.0,
+   46.0,
+   44.0,
+   46.0,
+   47.0
+  ],
+  "a_effect": 47.0,
+  "a_kind": "continuous",
+  "breakpoints": [],
+  "status": "determined"
+ },
+ {
+  "op": "boundary",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "a_effect": 0.0,
+  "status": "determined",
+  "a_kind": "unused",
+  "breakpoints": []
+ },
+ {
+  "op": "closing_circle",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   3.0,
+   3.0,
+   2.0,
+   3.0,
+   3.0
+  ],
+  "a_effect": 3.0,
+  "a_kind": "discrete",
+  "breakpoints": [
+   0.33,
+   0.67,
+   0.99
+  ],
+  "breakpoint_resolution": 0.02,
+  "status": "determined"
+ },
+ {
+  "op": "closing_golay",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   3.0,
+   3.0,
+   2.0,
+   3.0,
+   3.0
+  ],
+  "a_effect": 3.0,
+  "a_kind": "discrete",
+  "breakpoints": [
+   0.33,
+   0.67,
+   0.99
+  ],
+  "breakpoint_resolution": 0.02,
+  "status": "determined"
+ },
+ {
+  "op": "closing_rectangle1",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   3.0,
+   3.0,
+   2.0,
+   3.0,
+   3.0
+  ],
+  "a_effect": 3.0,
+  "a_kind": "discrete",
+  "breakpoints": [
+   0.25,
+   0.49,
+   0.75
+  ],
+  "breakpoint_resolution": 0.02,
+  "status": "determined"
+ },
+ {
+  "op": "convex_fill",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   0.0,
+   3.0,
+   3.0,
+   0.0,
+   1.0
+  ],
+  "a_effect": 3.0,
+  "a_kind": "discrete",
+  "breakpoints": [
+   0.33,
+   0.67,
+   0.99
+  ],
+  "breakpoint_resolution": 0.02,
+  "status": "determined"
+ },
+ {
+  "op": "dilation_circle",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   3.0,
+   3.0,
+   3.0,
+   0.0,
+   3.0
+  ],
+  "a_effect": 3.0,
+  "a_kind": "discrete",
+  "breakpoints": [
+   0.33,
+   0.67,
+   0.99
+  ],
+  "breakpoint_resolution": 0.02,
+  "status": "determined"
+ },
+ {
+  "op": "dilation_golay",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   3.0,
+   3.0,
+   3.0,
+   0.0,
+   3.0
+  ],
+  "a_effect": 3.0,
+  "a_kind": "discrete",
+  "breakpoints": [
+   0.33,
+   0.67,
+   0.99
+  ],
+  "breakpoint_resolution": 0.02,
+  "status": "determined"
+ },
+ {
+  "op": "dilation_rectangle1",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   2.0,
+   3.0,
+   3.0,
+   0.0,
+   3.0
+  ],
+  "a_effect": 3.0,
+  "a_kind": "discrete",
+  "breakpoints": [
+   0.25,
+   0.49,
+   0.75
+  ],
+  "breakpoint_resolution": 0.02,
+  "status": "determined"
+ },
+ {
+  "op": "dilation_seq",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   3.0,
+   3.0,
+   3.0,
+   0.0,
+   3.0
+  ],
+  "a_effect": 3.0,
+  "a_kind": "discrete",
+  "breakpoints": [
+   0.33,
+   0.67,
+   0.99
+  ],
+  "breakpoint_resolution": 0.02,
+  "status": "determined"
+ },
+ {
+  "op": "em_skeleton",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "a_effect": 0.0,
+  "status": "determined",
+  "a_kind": "unused",
+  "breakpoints": []
+ },
+ {
+  "op": "erosion_circle",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   2.0,
+   3.0,
+   2.0,
+   0.0,
+   1.0
+  ],
+  "a_effect": 3.0,
+  "a_kind": "discrete",
+  "breakpoints": [
+   0.33,
+   0.67,
+   0.99
+  ],
+  "breakpoint_resolution": 0.02,
+  "status": "determined"
+ },
+ {
+  "op": "erosion_golay",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   2.0,
+   3.0,
+   2.0,
+   0.0,
+   1.0
+  ],
+  "a_effect": 3.0,
+  "a_kind": "discrete",
+  "breakpoints": [
+   0.33,
+   0.67,
+   0.99
+  ],
+  "breakpoint_resolution": 0.02,
+  "status": "determined"
+ },
+ {
+  "op": "erosion_rectangle1",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   2.0,
+   3.0,
+   2.0,
+   0.0,
+   0.0
+  ],
+  "a_effect": 3.0,
+  "a_kind": "discrete",
+  "breakpoints": [
+   0.25,
+   0.49,
+   0.75
+  ],
+  "breakpoint_resolution": 0.02,
+  "status": "determined"
+ },
+ {
+  "op": "erosion_seq",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   2.0,
+   3.0,
+   2.0,
+   0.0,
+   1.0
+  ],
+  "a_effect": 3.0,
+  "a_kind": "discrete",
+  "breakpoints": [
+   0.33,
+   0.67,
+   0.99
+  ],
+  "breakpoint_resolution": 0.02,
+  "status": "determined"
+ },
+ {
+  "op": "fill_holes",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "a_effect": 0.0,
+  "status": "determined",
+  "a_kind": "unused",
+  "breakpoints": []
+ },
+ {
+  "op": "fill_up",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "a_effect": 0.0,
+  "status": "determined",
+  "a_kind": "unused",
+  "breakpoints": []
+ },
+ {
+  "op": "fill_up_shape",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   1.0,
+   2.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "a_effect": 2.0,
+  "a_kind": "discrete",
+  "breakpoints": [
+   0.29,
+   0.65
+  ],
+  "breakpoint_resolution": 0.02,
+  "status": "determined"
+ },
+ {
+  "op": "get_region_contour",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "a_effect": 0.0,
+  "status": "determined",
+  "a_kind": "unused",
+  "breakpoints": []
+ },
+ {
+  "op": "get_region_convex",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "a_effect": 0.0,
+  "status": "determined",
+  "a_kind": "unused",
+  "breakpoints": []
+ },
+ {
+  "op": "hx_clip_region_rel",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   20.0,
+   11.0,
+   7.0,
+   11.0,
+   11.0
+  ],
+  "a_effect": 20.0,
+  "a_kind": "continuous",
+  "breakpoints": [],
+  "status": "determined"
+ },
+ {
+  "op": "hx_closing",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   4.0,
+   4.0,
+   3.0,
+   4.0,
+   4.0
+  ],
+  "a_effect": 4.0,
+  "a_kind": "discrete",
+  "breakpoints": [
+   0.25,
+   0.49,
+   0.75,
+   0.99
+  ],
+  "breakpoint_resolution": 0.02,
+  "status": "determined"
+ },
+ {
+  "op": "hx_dilation1",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   3.0,
+   4.0,
+   4.0,
+   0.0,
+   4.0
+  ],
+  "a_effect": 4.0,
+  "a_kind": "discrete",
+  "breakpoints": [
+   0.25,
+   0.49,
+   0.75,
+   0.99
+  ],
+  "breakpoint_resolution": 0.02,
+  "status": "determined"
+ },
+ {
+  "op": "hx_dilation2",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 1.0,
+  "b_used": true,
+  "a_effect_per_image": [
+   3.0,
+   4.0,
+   4.0,
+   0.0,
+   4.0
+  ],
+  "a_effect": 4.0,
+  "a_kind": "discrete",
+  "breakpoints": [
+   0.25,
+   0.49,
+   0.75,
+   0.99
+  ],
+  "breakpoint_resolution": 0.02,
+  "status": "determined"
+ },
+ {
+  "op": "hx_erosion1",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   2.0,
+   4.0,
+   2.0,
+   0.0,
+   1.0
+  ],
+  "a_effect": 4.0,
+  "a_kind": "discrete",
+  "breakpoints": [
+   0.25,
+   0.49,
+   0.75,
+   0.99
+  ],
+  "breakpoint_resolution": 0.02,
+  "status": "determined"
+ },
+ {
+  "op": "hx_expand_region",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   3.0,
+   4.0,
+   4.0,
+   0.0,
+   4.0
+  ],
+  "a_effect": 4.0,
+  "a_kind": "discrete",
+  "breakpoints": [
+   0.25,
+   0.49,
+   0.75,
+   0.99
+  ],
+  "breakpoint_resolution": 0.02,
+  "status": "determined"
+ },
+ {
+  "op": "hx_move_region",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 1.0,
+  "b_used": true,
+  "a_effect_per_image": [
+   24.0,
+   24.0,
+   24.0,
+   24.0,
+   24.0
+  ],
+  "a_effect": 24.0,
+  "a_kind": "continuous",
+  "breakpoints": [],
+  "status": "determined"
+ },
+ {
+  "op": "hx_opening",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   2.0,
+   4.0,
+   2.0,
+   0.0,
+   1.0
+  ],
+  "a_effect": 4.0,
+  "a_kind": "discrete",
+  "breakpoints": [
+   0.25,
+   0.49,
+   0.75,
+   0.99
+  ],
+  "breakpoint_resolution": 0.02,
+  "status": "determined"
+ },
+ {
+  "op": "hx_split_skeleton_region",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "a_effect": 0.0,
+  "status": "determined",
+  "a_kind": "unused",
+  "breakpoints": []
+ },
+ {
+  "op": "invert_region",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "a_effect": 0.0,
+  "status": "determined",
+  "a_kind": "unused",
+  "breakpoints": []
+ },
+ {
+  "op": "junctions_skeleton",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "a_effect": 0.0,
+  "status": "determined",
+  "a_kind": "unused",
+  "breakpoints": []
+ },
+ {
+  "op": "mirror_region",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   2.0,
+   2.0,
+   2.0,
+   1.0,
+   2.0
+  ],
+  "a_effect": 2.0,
+  "a_kind": "discrete",
+  "breakpoints": [
+   0.33,
+   0.67
+  ],
+  "breakpoint_resolution": 0.02,
+  "status": "determined"
+ },
+ {
+  "op": "morph_skeleton",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "a_effect": 0.0,
+  "status": "determined",
+  "a_kind": "unused",
+  "breakpoints": []
+ },
+ {
+  "op": "opening_circle",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   2.0,
+   3.0,
+   2.0,
+   0.0,
+   1.0
+  ],
+  "a_effect": 3.0,
+  "a_kind": "discrete",
+  "breakpoints": [
+   0.33,
+   0.67,
+   0.99
+  ],
+  "breakpoint_resolution": 0.02,
+  "status": "determined"
+ },
+ {
+  "op": "opening_golay",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   2.0,
+   3.0,
+   2.0,
+   0.0,
+   1.0
+  ],
+  "a_effect": 3.0,
+  "a_kind": "discrete",
+  "breakpoints": [
+   0.33,
+   0.67,
+   0.99
+  ],
+  "breakpoint_resolution": 0.02,
+  "status": "determined"
+ },
+ {
+  "op": "opening_rectangle1",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   2.0,
+   3.0,
+   1.0,
+   0.0,
+   0.0
+  ],
+  "a_effect": 3.0,
+  "a_kind": "discrete",
+  "breakpoints": [
+   0.25,
+   0.49,
+   0.75
+  ],
+  "breakpoint_resolution": 0.02,
+  "status": "determined"
+ },
+ {
+  "op": "polar_trans_region_inv",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "a_effect": 0.0,
+  "status": "determined",
+  "a_kind": "unused",
+  "breakpoints": []
+ },
+ {
+  "op": "projective_trans_region",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 1.0,
+  "b_used": true,
+  "a_effect_per_image": [
+   49.0,
+   47.0,
+   32.0,
+   50.0,
+   50.0
+  ],
+  "a_effect": 50.0,
+  "a_kind": "continuous",
+  "breakpoints": [],
+  "status": "determined"
+ },
+ {
+  "op": "pruning",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   4.0,
+   4.0,
+   1.0,
+   0.0,
+   4.0
+  ],
+  "a_effect": 4.0,
+  "a_kind": "discrete",
+  "breakpoints": [
+   0.25,
+   0.49,
+   0.75,
+   0.99
+  ],
+  "breakpoint_resolution": 0.02,
+  "status": "determined"
+ },
+ {
+  "op": "r2_endpoints_skeleton",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "a_effect": 0.0,
+  "status": "determined",
+  "a_kind": "unused",
+  "breakpoints": []
+ },
+ {
+  "op": "r2_inner_circle",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   8.0,
+   44.0,
+   8.0,
+   1.0,
+   2.0
+  ],
+  "a_effect": 44.0,
+  "a_kind": "continuous",
+  "breakpoints": [],
+  "status": "determined"
+ },
+ {
+  "op": "r2_inner_rectangle1",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   5.0,
+   4.0,
+   1.0,
+   0.0,
+   1.0
+  ],
+  "a_effect": 5.0,
+  "a_kind": "discrete",
+  "breakpoints": [
+   0.13,
+   0.41,
+   0.55,
+   0.69,
+   0.97
+  ],
+  "breakpoint_resolution": 0.02,
+  "status": "determined"
+ },
+ {
+  "op": "r2_partition_rectangle",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   1.0,
+   3.0,
+   4.0,
+   0.0,
+   2.0
+  ],
+  "a_effect": 4.0,
+  "a_kind": "discrete",
+  "breakpoints": [
+   0.25,
+   0.49,
+   0.75,
+   0.99
+  ],
+  "breakpoint_resolution": 0.02,
+  "status": "determined"
+ },
+ {
+  "op": "r2_smallest_circle",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   0.0,
+   2.0,
+   18.0,
+   0.0,
+   1.0
+  ],
+  "a_effect": 18.0,
+  "a_kind": "continuous",
+  "breakpoints": [],
+  "status": "determined"
+ },
+ {
+  "op": "r2_smallest_rectangle1",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "a_effect": 0.0,
+  "status": "determined",
+  "a_kind": "unused",
+  "breakpoints": []
+ },
+ {
+  "op": "r2_smallest_rectangle2",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   0.0,
+   0.0,
+   28.0,
+   0.0,
+   0.0
+  ],
+  "a_effect": 28.0,
+  "a_kind": "continuous",
+  "breakpoints": [],
+  "status": "determined"
+ },
+ {
+  "op": "r2_sort_region",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   7.0,
+   4.0,
+   1.0,
+   50.0,
+   50.0
+  ],
+  "a_effect": 50.0,
+  "a_kind": "continuous",
+  "breakpoints": [],
+  "status": "determined"
+ },
+ {
+  "op": "r2_split_skeleton_lines",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   5.0,
+   5.0,
+   3.0,
+   1.0,
+   3.0
+  ],
+  "a_effect": 5.0,
+  "a_kind": "discrete",
+  "breakpoints": [
+   0.25,
+   0.37,
+   0.49,
+   0.63,
+   0.87
+  ],
+  "breakpoint_resolution": 0.02,
+  "status": "determined"
+ },
+ {
+  "op": "r2_union1",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "a_effect": 0.0,
+  "status": "determined",
+  "a_kind": "unused",
+  "breakpoints": []
+ },
+ {
+  "op": "r3_background_seg",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   1.0,
+   2.0,
+   1.0,
+   0.0,
+   1.0
+  ],
+  "a_effect": 2.0,
+  "a_kind": "discrete",
+  "breakpoints": [
+   0.01,
+   0.49
+  ],
+  "breakpoint_resolution": 0.02,
+  "status": "determined"
+ },
+ {
+  "op": "r3_clip_region",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 1.0,
+  "b_used": true,
+  "a_effect_per_image": [
+   23.0,
+   23.0,
+   13.0,
+   23.0,
+   23.0
+  ],
+  "a_effect": 23.0,
+  "a_kind": "continuous",
+  "breakpoints": [],
+  "status": "determined"
+ },
+ {
+  "op": "r3_eliminate_runs",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   2.0,
+   5.0,
+   3.0,
+   0.0,
+   5.0
+  ],
+  "a_effect": 5.0,
+  "a_kind": "discrete",
+  "breakpoints": [
+   0.19,
+   0.31,
+   0.43,
+   0.69,
+   0.81
+  ],
+  "breakpoint_resolution": 0.02,
+  "status": "determined"
+ },
+ {
+  "op": "r3_label_to_region",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "a_effect": 0.0,
+  "status": "determined",
+  "a_kind": "unused",
+  "breakpoints": []
+ },
+ {
+  "op": "r3_partition_dynamic",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   3.0,
+   15.0,
+   3.0,
+   1.0,
+   10.0
+  ],
+  "a_effect": 15.0,
+  "a_kind": "continuous",
+  "breakpoints": [],
+  "status": "determined"
+ },
+ {
+  "op": "r3_polar_trans_region",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 1.0,
+  "b_used": true,
+  "a_effect_per_image": [
+   50.0,
+   50.0,
+   50.0,
+   50.0,
+   50.0
+  ],
+  "a_effect": 50.0,
+  "a_kind": "continuous",
+  "breakpoints": [],
+  "status": "determined"
+ },
+ {
+  "op": "r3_rank_region",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 1.0,
+  "b_used": true,
+  "a_effect_per_image": [
+   2.0,
+   2.0,
+   2.0,
+   2.0,
+   2.0
+  ],
+  "a_effect": 2.0,
+  "a_kind": "discrete",
+  "breakpoints": [
+   0.49,
+   0.83
+  ],
+  "breakpoint_resolution": 0.02,
+  "status": "determined"
+ },
+ {
+  "op": "r3_select_region_point",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 1.0,
+  "b_used": true,
+  "a_effect_per_image": [
+   0.0,
+   4.0,
+   0.0,
+   23.0,
+   4.0
+  ],
+  "a_effect": 23.0,
+  "a_kind": "continuous",
+  "breakpoints": [],
+  "status": "determined"
+ },
+ {
+  "op": "reg_close",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   2.0,
+   3.0,
+   3.0,
+   0.0,
+   3.0
+  ],
+  "a_effect": 3.0,
+  "a_kind": "discrete",
+  "breakpoints": [
+   0.33,
+   0.67,
+   0.99
+  ],
+  "breakpoint_resolution": 0.02,
+  "status": "determined"
+ },
+ {
+  "op": "reg_dilate",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   3.0,
+   3.0,
+   3.0,
+   0.0,
+   3.0
+  ],
+  "a_effect": 3.0,
+  "a_kind": "discrete",
+  "breakpoints": [
+   0.33,
+   0.67,
+   0.99
+  ],
+  "breakpoint_resolution": 0.02,
+  "status": "determined"
+ },
+ {
+  "op": "reg_erode",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   2.0,
+   3.0,
+   2.0,
+   0.0,
+   1.0
+  ],
+  "a_effect": 3.0,
+  "a_kind": "discrete",
+  "breakpoints": [
+   0.33,
+   0.67,
+   0.99
+  ],
+  "breakpoint_resolution": 0.02,
+  "status": "determined"
+ },
+ {
+  "op": "reg_open",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   2.0,
+   3.0,
+   2.0,
+   0.0,
+   1.0
+  ],
+  "a_effect": 3.0,
+  "a_kind": "discrete",
+  "breakpoints": [
+   0.33,
+   0.67,
+   0.99
+  ],
+  "breakpoint_resolution": 0.02,
+  "status": "determined"
+ },
+ {
+  "op": "region_boundary",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "a_effect": 0.0,
+  "status": "determined",
+  "a_kind": "unused",
+  "breakpoints": []
+ },
+ {
+  "op": "remove_noise_region",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   2.0,
+   3.0,
+   2.0,
+   0.0,
+   1.0
+  ],
+  "a_effect": 3.0,
+  "a_kind": "discrete",
+  "breakpoints": [
+   0.33,
+   0.67,
+   0.99
+  ],
+  "breakpoint_resolution": 0.02,
+  "status": "determined"
+ },
+ {
+  "op": "remove_small",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   3.0,
+   0.0,
+   2.0,
+   0.0,
+   2.0
+  ],
+  "a_effect": 3.0,
+  "a_kind": "discrete",
+  "breakpoints": [
+   0.01,
+   0.49,
+   0.85
+  ],
+  "breakpoint_resolution": 0.02,
+  "status": "determined"
+ },
+ {
+  "op": "select_largest",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "a_effect": 0.0,
+  "status": "determined",
+  "a_kind": "unused",
+  "breakpoints": []
+ },
+ {
+  "op": "select_shape",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   3.0,
+   0.0,
+   2.0,
+   0.0,
+   1.0
+  ],
+  "a_effect": 3.0,
+  "a_kind": "discrete",
+  "breakpoints": [
+   0.17,
+   0.33,
+   0.65
+  ],
+  "breakpoint_resolution": 0.02,
+  "status": "determined"
+ },
+ {
+  "op": "select_shape_std",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "a_effect": 0.0,
+  "status": "determined",
+  "a_kind": "unused",
+  "breakpoints": []
+ },
+ {
+  "op": "shape_trans",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "a_effect": 0.0,
+  "status": "determined",
+  "a_kind": "unused",
+  "breakpoints": []
+ },
+ {
+  "op": "sk_clear_border",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "a_effect": 0.0,
+  "status": "determined",
+  "a_kind": "unused",
+  "breakpoints": []
+ },
+ {
+  "op": "sk_convex",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "a_effect": 0.0,
+  "status": "determined",
+  "a_kind": "unused",
+  "breakpoints": []
+ },
+ {
+  "op": "sk_find_boundaries",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "a_effect": 0.0,
+  "status": "determined",
+  "a_kind": "unused",
+  "breakpoints": []
+ },
+ {
+  "op": "sk_medial",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "a_effect": 0.0,
+  "status": "determined",
+  "a_kind": "unused",
+  "breakpoints": []
+ },
+ {
+  "op": "sk_remove_holes",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   1.0,
+   0.0,
+   1.0,
+   0.0,
+   0.0
+  ],
+  "a_effect": 1.0,
+  "a_kind": "discrete",
+  "breakpoints": [
+   0.27
+  ],
+  "breakpoint_resolution": 0.02,
+  "status": "determined"
+ },
+ {
+  "op": "sk_skeleton",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "a_effect": 0.0,
+  "status": "determined",
+  "a_kind": "unused",
+  "breakpoints": []
+ },
+ {
+  "op": "sk_thin",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "a_effect": 0.0,
+  "status": "determined",
+  "a_kind": "unused",
+  "breakpoints": []
+ },
+ {
+  "op": "skeleton",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "a_effect": 0.0,
+  "status": "determined",
+  "a_kind": "unused",
+  "breakpoints": []
+ },
+ {
+  "op": "smallest_rectangle1",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "a_effect": 0.0,
+  "status": "determined",
+  "a_kind": "unused",
+  "breakpoints": []
+ },
+ {
+  "op": "thinning",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "a_effect": 0.0,
+  "status": "determined",
+  "a_kind": "unused",
+  "breakpoints": []
+ },
+ {
+  "op": "thinning_golay",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "a_effect": 0.0,
+  "status": "determined",
+  "a_kind": "unused",
+  "breakpoints": []
+ },
+ {
+  "op": "thinning_seq",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "a_effect": 0.0,
+  "status": "determined",
+  "a_kind": "unused",
+  "breakpoints": []
+ },
+ {
+  "op": "transpose_region",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "a_effect": 0.0,
+  "status": "determined",
+  "a_kind": "unused",
+  "breakpoints": []
+ },
+ {
+  "op": "xcv2_hitmiss",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "a_effect": 0.0,
+  "status": "determined",
+  "a_kind": "unused",
+  "breakpoints": []
+ },
+ {
+  "op": "xmh_bwperim",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 1.0,
+  "b_used": true,
+  "a_effect_per_image": [
+   0.0,
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "a_effect": 0.0,
+  "status": "determined",
+  "a_kind": "unused",
+  "breakpoints": []
+ },
+ {
+  "op": "xmh_majority",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   4.0,
+   4.0,
+   4.0,
+   4.0,
+   4.0
+  ],
+  "a_effect": 4.0,
+  "a_kind": "discrete",
+  "breakpoints": [
+   0.25,
+   0.49,
+   0.75,
+   0.99
+  ],
+  "breakpoint_resolution": 0.02,
+  "status": "determined"
+ },
+ {
+  "op": "xsk2_isotropic_close",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   12.0,
+   12.0,
+   10.0,
+   12.0,
+   12.0
+  ],
+  "a_effect": 12.0,
+  "a_kind": "continuous",
+  "breakpoints": [],
+  "status": "determined"
+ },
+ {
+  "op": "xsk3_rank_majority",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   3.0,
+   3.0,
+   3.0,
+   3.0,
+   3.0
+  ],
+  "a_effect": 3.0,
+  "a_kind": "discrete",
+  "breakpoints": [
+   0.33,
+   0.67,
+   0.99
+  ],
+  "breakpoint_resolution": 0.02,
+  "status": "determined"
+ },
+ {
+  "op": "zoom_region",
+  "steps": 51,
+  "n_probe_images": 5,
+  "b_effect": 0.0,
+  "b_used": false,
+  "a_effect_per_image": [
+   43.0,
+   46.0,
+   37.0,
+   34.0,
+   46.0
+  ],
+  "a_effect": 46.0,
   "a_kind": "continuous",
   "breakpoints": [],
   "status": "determined"

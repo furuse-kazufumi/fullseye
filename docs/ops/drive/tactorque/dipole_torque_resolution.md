@@ -7,13 +7,13 @@ out: table
 examples: [poc_tactile_dipole_torque]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # dipole_torque_resolution — DRIVE `tactorque` op
 
 - **データ種**: `matrix × matrix × scalar × scalar × scalar × scalar × scalar` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.dipole_torque_resolution(pts, u, sigma_px: 'float', pitch: 'float', coef: 'float', area: 'float', radius: 'float', trials: 'int' = 100, window=None, seed: 'int' = 0, form: 'str' = 'divergence') -> 'dict'` (実装を直接呼ぶなら `import tactorque; tactorque.dipole_torque_resolution(pts, u, sigma_px: 'float', pitch: 'float', coef: 'float', area: 'float', radius: 'float', trials: 'int' = 100, window=None, seed: 'int' = 0, form: 'str' = 'divergence') -> 'dict'`、台帳から引くなら `opsdrive.get("dipole_torque_resolution")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.dipole_torque_resolution(pts, u, sigma_px: 'float', pitch: 'float', coef: 'float', area: 'float', radius: 'float', trials: 'int' = 100, window=None, seed: 'int' = 0, form: 'str' = 'divergence', method: 'str' = 'monte_carlo') -> 'dict'` (実装を直接呼ぶなら `import tactorque; tactorque.dipole_torque_resolution(pts, u, sigma_px: 'float', pitch: 'float', coef: 'float', area: 'float', radius: 'float', trials: 'int' = 100, window=None, seed: 'int' = 0, form: 'str' = 'divergence', method: 'str' = 'monte_carlo') -> 'dict'`、台帳から引くなら `opsdrive.get("dipole_torque_resolution")`)
 
 ## 使い方
 

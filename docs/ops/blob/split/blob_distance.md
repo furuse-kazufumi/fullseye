@@ -4,10 +4,10 @@ dim: blob
 category: split
 in: mask
 out: image2d
-examples: [blob_split_tour, poc_bone_trabecular_thickness, poc_segmentation_gauntlet]
+examples: [blob_split_tour, poc_bone_trabecular_thickness, poc_dense_bubble_count, poc_segmentation_gauntlet]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # blob_distance — BLOB `split` op
@@ -45,6 +45,7 @@ Examples
 
 - [blob_split_tour](../../../../examples/blob_split_tour.py) — `py -3.11 examples/blob_split_tour.py`
 - [poc_bone_trabecular_thickness](../../../../examples/poc_bone_trabecular_thickness.py) — `py -3.11 examples/poc_bone_trabecular_thickness.py`
+- [poc_dense_bubble_count](../../../../examples/poc_dense_bubble_count.py) — `py -3.11 examples/poc_dense_bubble_count.py`
 - [poc_segmentation_gauntlet](../../../../examples/poc_segmentation_gauntlet.py) — `py -3.11 examples/poc_segmentation_gauntlet.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
@@ -53,7 +54,7 @@ Examples
 
 ## 同カテゴリ(`split`)
 
-[blob_seeds](blob_seeds.md) · [blob_split](blob_split.md)
+[blob_seeds](blob_seeds.md) · [blob_split](blob_split.md) · [blob_count_interval](blob_count_interval.md)
 
 ---
 *Provenance: blob2d.py — BLOB operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

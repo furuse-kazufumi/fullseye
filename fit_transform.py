@@ -104,7 +104,8 @@ def hom_vector_to_proj_hom_mat2d(src, dst) -> np.ndarray:
     for (r, c), (r2, c2) in zip(sn, dn):
         A.append([r, c, 1, 0, 0, 0, -r2 * r, -r2 * c, -r2])
         A.append([0, 0, 0, r, c, 1, -c2 * r, -c2 * c, -c2])
-    _, _, Vt = np.linalg.svd(np.asarray(A, float))
+    A = np.asarray(A, float)
+    _, _, Vt = np.linalg.svd(A, full_matrices=A.shape[0] < A.shape[1])
     Hn = Vt[-1].reshape(3, 3)
     H = np.linalg.inv(Td) @ Hn @ Ts
     if abs(H[2, 2]) > 1e-12:

@@ -5,7 +5,7 @@
 <p style="margin:2px 0 2px 12px">• <b>經台帳呼叫的回傳值</b>: <code style="color:#22d3bf">fullseye.ledger.camera_rays(...)</code> 只回傳<b>宣告的 out 型別 <code style="color:#22d3bf">points</code> 的值</b>(底層函式還會回傳輔助資訊)。需要被捨棄的部分時,請用 <code style="color:#22d3bf">fullseye.ledger.camera_rays.raw(...)</code>,或直接呼叫 <code style="color:#22d3bf">optscene.camera_rays</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>相機 dict → 全部像素的光線:origins (H·W, 3)、directions (H·W, 3)。</p>
-<p>方向為單位向量，原點全部是視點。像素 (u, v) 按列優先排列，所以用 <code style="color:#22d3bf">reshape(height, width, 3)</code> 即可還原為影像。由於是以 K 的逆映射產生的，將交點以 K 重投影會<b>嚴格</b>回到原像素(往返誤差 &lt; 1e-9)。</p>
+<p>方向為單位向量，原點全部是視點(遠心相機中原點排列在垂直於光軸的平面上，方向全部為光軸)。像素 (u, v) 按列優先排列，所以用 <code style="color:#22d3bf">reshape(height, width, 3)</code> 即可還原為影像。由於是以 K 的逆映射產生的，將交點以 K 重投影會<b>嚴格</b>回到原像素(往返誤差 &lt; 1e-9)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>
@@ -28,9 +28,12 @@
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
 <p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_itof_multifreq">poc_itof_multifreq</a> — <code style="color:#22d3bf">py -3.11 examples/poc_itof_multifreq.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_nir_silicon_transmission">poc_nir_silicon_transmission</a> — <code style="color:#22d3bf">py -3.11 examples/poc_nir_silicon_transmission.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_pocket_interreflection">poc_pocket_interreflection</a> — <code style="color:#22d3bf">py -3.11 examples/poc_pocket_interreflection.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:studio_raytrace_scene">studio_raytrace_scene</a> — <code style="color:#22d3bf">py -3.11 examples/studio_raytrace_scene.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">points</code> 作為輸入)</h3>
-<p><a style="color:#22d3bf" href="opoptics:refract_rays">refract_rays</a> · <a style="color:#22d3bf" href="opoptics:reflect_rays">reflect_rays</a> · <a style="color:#22d3bf" href="opoptics:trace_rays">trace_rays</a> · <a style="color:#22d3bf" href="opoptics:illumination_visibility">illumination_visibility</a> · <a style="color:#22d3bf" href="opoptics:env_studio">env_studio</a> · <a style="color:#22d3bf" href="opoptics:env_lightbox">env_lightbox</a></p>
+<p><a style="color:#22d3bf" href="opoptics:refract_rays">refract_rays</a> · <a style="color:#22d3bf" href="opoptics:reflect_rays">reflect_rays</a> · <a style="color:#22d3bf" href="opoptics:trace_rays">trace_rays</a> · <a style="color:#22d3bf" href="opoptics:illumination_visibility">illumination_visibility</a> · <a style="color:#22d3bf" href="opoptics:env_studio">env_studio</a> · <a style="color:#22d3bf" href="opoptics:env_lightbox">env_lightbox</a> · <a style="color:#22d3bf" href="opoptics:form_factor_polygons">form_factor_polygons</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">scene</code>)</h3>
 <p><a style="color:#22d3bf" href="opoptics:scene_material">scene_material</a> · <a style="color:#22d3bf" href="opoptics:scene_plane">scene_plane</a> · <a style="color:#22d3bf" href="opoptics:scene_sphere">scene_sphere</a> · <a style="color:#22d3bf" href="opoptics:scene_box">scene_box</a> · <a style="color:#22d3bf" href="opoptics:scene_cylinder">scene_cylinder</a> · <a style="color:#22d3bf" href="opoptics:surface_defect">surface_defect</a> · <a style="color:#22d3bf" href="opoptics:surface_finish">surface_finish</a> · <a style="color:#22d3bf" href="opoptics:random_defects">random_defects</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">

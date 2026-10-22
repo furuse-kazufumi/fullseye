@@ -1,20 +1,27 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">thin_film_reflectance — OPTICS <code style="color:#22d3bf">appearance</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.thin_film_reflectance(nm, thickness_nm=350.0, n_film=1.33, n_sub=1.0, cos_theta=1.0, n_out=1.0, polarization=&#x27;unpolarized&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import matappear; matappear.thin_film_reflectance(nm, thickness_nm=350.0, n_film=1.33, n_sub=1.0, cos_theta=1.0, n_out=1.0, polarization=&#x27;unpolarized&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;thin_film_reflectance&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.thin_film_reflectance(nm, thickness_nm=350.0, n_film=1.33, n_sub=1.0, cos_theta=1.0, n_out=1.0, polarization=&#x27;unpolarized&#x27;, under_layers=()) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import matappear; matappear.thin_film_reflectance(nm, thickness_nm=350.0, n_film=1.33, n_sub=1.0, cos_theta=1.0, n_out=1.0, polarization=&#x27;unpolarized&#x27;, under_layers=()) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;thin_film_reflectance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
-<p>thin film (मोटाई d, refractive index n_film) की spectral reflectance। Airy (multiple reflection) का closed form।</p>
+<p>thin film (मोटाई d, अपवर्तनांक n_film) की spectral reflectance। characteristic matrix विधि का सटीक हल (सभी multiple reflections शामिल)।</p>
 <p>nm:           तरंगदैर्घ्य [nm] (array भी चलेगा)।</p>
-<p>thickness_nm: film की मोटाई [nm]। साबुन के बुलबुले के लिए 200–800, anodized परत के लिए 50–300।</p>
+<p>thickness_nm: film की मोटाई [nm]। साबुन के बुलबुले के लिए 200–800, anodized परत के लिए 50–300। nm के साथ broadcast होने वाला</p>
+<p><b>array</b> भी चलेगा (मोटाई का field; जैसे (H, W, 1) मोटाई और (K,) तरंगदैर्घ्य → (H, W, K))।</p>
 <p>n_film/n_sub: film / substrate का अपवर्तनांक। इनमें से कोई भी: वास्तविक संख्या, <b>complex n + ik</b> (k ≥ 0; धातु के substrate</p>
 <p>और अवशोषी film), <b>material का नाम</b> (साझा material table <code style="color:#22d3bf">materials</code>, जैसे &quot;TI&quot; / &quot;AL&quot; / &quot;SI&quot; —— उस</p>
-<p>तरंगदैर्घ्य का n,k), या nm के साथ broadcast होने वाला <b>हर तरंगदैर्घ्य का array</b> (film का dispersion)।</p>
-<p>n_out:        आपतन वाली ओर का अपवर्तनांक (वास्तविक संख्या या material का नाम, अवशोषण नहीं)।</p>
+<p>तरंगदैर्घ्य का n,k), material record (dict), या nm के साथ broadcast होने वाला <b>हर तरंगदैर्घ्य का array</b> (film का dispersion)।</p>
 <p>cos_theta:    आपतन वाली ओर आपतन कोण का cos (array भी चलेगा, nm के साथ broadcast होने वाले आकार में)।</p>
+<p>n_out:        आपतन वाली ओर का अपवर्तनांक (वास्तविक संख्या या material का नाम, अवशोषण नहीं)।</p>
 <p>polarization: &quot;unpolarized&quot; (डिफ़ॉल्ट, s और p का औसत) / &quot;s&quot; / &quot;p&quot;।</p>
-<p>Returns: परावर्तकता R (0–1), nm और cos_theta के broadcast आकार में।</p>
-<p>भौतिकी: film के भीतर प्रसार का phase β = 2π ñ_film d cosθ̃_film / λ (complex Snell नियम हर परत के भीतर cosθ̃ देता है)। सीमाओं के Fresnel गुणांकों को r1, r2 मानें तो R = |r1 + r2 e^{2iβ}|² / |1 + r1 r2 e^{2iβ}|²। λ/4 के विषम गुणजों पर परावर्तन अधिकतम होता है (जब n_film &gt; n_sub), और <b>मोटाई बदलने पर रंग खिसकता है</b> —— यही साबुन के बुलबुले का रंग है। film की मोटाई 0 पर R अकेले substrate के Fresnel परावर्तन से मेल खाता है (tests में जाँचा गया)।</p>
+<p>under_layers: film और substrate के बीच की परतें (आपतन वाली ओर से क्रम में <code style="color:#22d3bf">[(अपवर्तनांक, मोटाई nm), ...]</code>; अपवर्तनांक n_film</p>
+<p>की तरह लिखा जाता है)। खाली (डिफ़ॉल्ट) हो तो एक परत का film। बहुपरती AR coating, dielectric mirror, oxide के नीचे nitride आदि के लिए।</p>
+<p>Returns: परावर्तकता R (0–1), nm, thickness_nm और cos_theta के broadcast आकार में।</p>
+<p>★चिह्न की परिपाटी: complex अपवर्तनांक N = n + ik है, k ≥ 0। जो स्रोत N = n − ik लिखता है, उसका वही k धनात्मक रूप में दें (ऋणात्मक काल्पनिक भाग वाला इनपुट ValueError देता है —— परिपाटी का अनुमान नहीं लगाया जाता)।</p>
+<p>भौतिकी: हर परत का characteristic matrix [[cos δ, −i sin δ / η], [−i η sin δ, cos δ]], δ = 2π N d cosθ̃ / λ (complex Snell नियम परत के भीतर cosθ̃ देता है, क्षीण होने वाली शाखा लेकर), और झुका हुआ optical admittance η = N cosθ̃ (s) / N / cosθ̃ (p)। एक परत के लिए यह Airy सूत्र R = |r1 + r2 e^{2iβ}|² / |1 + r1 r2 e^{2iβ}|² जैसा ही मान देता है (tests में अलग से लिखे सूत्र से तुलना)। λ/4 के विषम गुणजों पर परावर्तन अधिकतम होता है (जब n_film &gt; n_sub), और <b>मोटाई बदलने पर रंग खिसकता है</b> —— यही साबुन के बुलबुले का रंग है। film की मोटाई 0 पर R अकेले substrate के Fresnel परावर्तन से मेल खाता है। गणना एक ही जगह होती है, <code style="color:#22d3bf">filmoptics</code> के characteristic matrix में (<code style="color:#22d3bf">filmoptics.multilayer_reflectance</code> वाला ही function)।</p>
 <p>★2026-10-14: पहले तीनों अपवर्तनांक केवल वास्तविक हो सकते थे (complex संख्या पर TypeError)। धातु के substrate को वास्तविक संख्या से अनुमानित करने पर (90 nm का tempered titanium, n_sub = 2.6) परावर्तकता 0.15–0.19 आती थी, जबकि Ti के n,k से 0.35–0.61 (380–780 nm) —— रंग को बिल्कुल अलग बना देने वाली, चुपचाप होने वाली गलती। अब substrate में &quot;TI&quot; लिखने पर material table का n,k आ जाता है।</p>
+<p>&gt;&gt;&gt; r = thin_film_reflectance([450.0, 550.0, 650.0], 90.0, &quot;TIO2_AMORPHOUS&quot;, &quot;TI&quot;)</p>
+<p>&gt;&gt;&gt; bool(r.min() &gt; 0.3)</p>
+<p>True</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>optics के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
 <p style="margin:2px 0 2px 12px">• <b>Unit argument के नाम में ही लिखी होती है</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>। mm और µm की गड़बड़ी crash नहीं करती, बल्कि &quot;सही दिखने वाला पर गलत उत्तर&quot; देती है, इसलिए नाम से इसे रोका जाता है। मान के आकार से unit का अनुमान बिल्कुल नहीं लगाया जाता।</p>
@@ -35,7 +42,6 @@
 <p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:appearance_structural_colour">appearance_structural_colour</a> — <code style="color:#22d3bf">py -3.11 examples/appearance_structural_colour.py</code></p>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_thin_film_reflectometry">poc_thin_film_reflectometry</a> — <code style="color:#22d3bf">py -3.11 examples/poc_thin_film_reflectometry.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:simcal_tour">simcal_tour</a> — <code style="color:#22d3bf">py -3.11 examples/simcal_tour.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">signal</code> को input के रूप में लेते हैं)</h3>
 <p><a style="color:#22d3bf" href="opoptics:emva_photon_transfer">emva_photon_transfer</a> · <a style="color:#22d3bf" href="opoptics:emva_quantum_efficiency">emva_quantum_efficiency</a> · <a style="color:#22d3bf" href="opoptics:emva_linearity_error">emva_linearity_error</a> · <a style="color:#22d3bf" href="opoptics:emva_snr_curve">emva_snr_curve</a> · <a style="color:#22d3bf" href="opoptics:emva_dark_current">emva_dark_current</a> · <a style="color:#22d3bf" href="opoptics:emva_total_snr">emva_total_snr</a> · <a style="color:#22d3bf" href="opoptics:emva_exposure_for_snr">emva_exposure_for_snr</a> · <a style="color:#22d3bf" href="opoptics:emva_photon_exposure">emva_photon_exposure</a></p>

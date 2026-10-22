@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">poisson_lite — 3D <code style="color:#22d3bf">reconstruct</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">mesh</code></p>
-<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.poisson_lite(points, size=64, sigma=1.0, iso=0.5, normals=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import recon3d; recon3d.poisson_lite(points, size=64, sigma=1.0, iso=0.5, normals=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;poisson_lite&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.poisson_lite(points, size=64, sigma=1.0, iso=0.5, normals=None, method=&#x27;exact&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import recon3d; recon3d.poisson_lite(points, size=64, sigma=1.0, iso=0.5, normals=None, method=&#x27;exact&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;poisson_lite&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>점군 (N,3) → (vertices(V,3), faces(F,3)) 의 표면 메시(스크린드 Poisson 경량 근사).</p>
 <p>점군을 size³의 voxel 격자로 splat하고, 등치면 장을 만들어 marching cubes로 삼각형 메시화한다. 출력 정점은 입력 점군과 같은 <b>월드 좌표</b>(bbox에서 역사상). bounds는 점군 bbox(+σ 의존 padding).</p>
@@ -27,6 +27,7 @@
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
 <p>점 수 부족(&lt;4), size가 너무 작음, 점유/지표 장이 얇아 iso가 장의 값 범위 밖 등.</p>
+<p>??? ?? <code style="color:#22d3bf">method=&quot;fast&quot;</code>? ? ?? ??? ??? ???? ????. <code style="color:#22d3bf">&quot;exact&quot;</code>? ???? ?? ????? ???? ??.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender와 함께 쓰기 — 형상을 만들고 fullseye로 측정(축·단위·정답 데이터의 함정)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

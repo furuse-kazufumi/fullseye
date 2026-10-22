@@ -9,10 +9,12 @@
 数値と図の経路は全言語で共有し、文字列だけを訳す。出力:
 
 * ``docs/view2026/index.md``        → https://furuse.work/view2026/      (ja、QR の行き先)
-* ``docs/view2026/<lang>/index.md`` → https://furuse.work/view2026/<lang>/ (en zh tw ko de hi)
+* ``docs/view2026/<lang>/index.md`` → https://furuse.work/view2026/<lang>/ (exhibits.json の langs の ja 以外)
 
 ページの並び(スマートフォンで開かれる前提):
 
+0. 触って見る —— ``viewers``(``docs/view2026/viewers/*.html``、``tools/build_view2026_viewers.py`` が各 PoC を
+   走らせて作る自己完結の HTML)への 7 本。リンクは ``?lang=<そのページの言語>`` 付きで、ビューアが同じ言語で開く。
 1. 見どころ —— 手で選んだ展示のサムネイルの格子(``exhibits``)。押すと動画・GIF・原寸の図。
 2. シリーズ記事 —— 大きいタイル(``series``)。各シリーズの Qiita 記事(公開のもの)へ。
 3. できること —— ``docs/capabilities/*.md`` の全件を分類ごとに。各行から説明のページと走る例へ。
@@ -90,7 +92,7 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 });
 </script>"""
 
-#: ja の入口ページだけに置く。初回の訪問で、ブラウザの言語が ja 以外の 6 言語なら 1 度だけそのページへ送る。
+#: ja の入口ページだけに置く。初回の訪問で、ブラウザの言語が ja 以外の言語なら 1 度だけそのページへ送る。
 #: サイト内から来た(言語の切り替えを押した)ときと、2 回目以降は送らない。JS が無くても全部読める。
 REDIRECT = """<script>
 (function () {
@@ -101,7 +103,7 @@ REDIRECT = """<script>
     if (document.referrer && document.referrer.indexOf(location.host) >= 0) return;
     var n = (navigator.language || "").toLowerCase(), t = "";
     if (n.indexOf("zh") === 0) t = /tw|hk|mo|hant/.test(n) ? "tw" : "zh";
-    else if (/^(en|ko|de|hi)/.test(n)) t = n.slice(0, 2);
+    else if (/^(@LATIN@)/.test(n)) t = n.slice(0, 2);
     if (t) location.replace(t + "/");
   } catch (e) {}
 })();
@@ -150,6 +152,21 @@ def validate(d: dict) -> list[str]:
             full("ui." + k, {l: v for l, v in tr.items() if l != "ja"} | {"ja": "-"})
         else:
             full("ui." + k, tr)
+    vw = d["viewers"]
+    full("viewers.h", vw["h"])
+    full("viewers.intro", vw["intro"])
+    for it in vw["items"]:
+        full("viewers.%s.title" % it["id"], it["title"])
+        full("viewers.%s.line" % it["id"], it["line"])
+        if not (BASE / "viewers" / (it["id"] + ".html")).is_file():
+            bad.append("viewers.%s: ビューアが無い (docs/view2026/viewers/%s.html) —— "
+                       "py -3.11 tools/build_view2026_viewers.py" % (it["id"], it["id"]))
+        ref = Counter(_NUM.findall(vw["intro"]["ja"] + " " + it["line"]["ja"]))
+        for l in langs[1:]:
+            got = Counter(_NUM.findall(vw["intro"][l] + " " + it["line"][l]))
+            if got != ref:
+                bad.append("viewers.%s [%s]: 数の並びが日本語と違う(日本語のみ %s / %s のみ %s)" % (
+                    it["id"], l, sorted((ref - got).elements()), l, sorted((got - ref).elements())))
     cats = {c["id"] for c in d["categories"]}
     for c in d["categories"]:
         full("categories." + c["id"], c)
@@ -298,7 +315,16 @@ def build(d: dict, lang: str) -> str:
     out = ['<div class="vlang" markdown="1">', "", " · ".join(sw), "", "</div>", "",
            "# Fullseye — ViEW2026", "", ui["tagline"], "", ui["tap"], "", STYLE, ""]
     if lang == "ja":
-        out += [REDIRECT, ""]
+        # 送り先の言語は exhibits.json の langs から(zh / tw は上の行で別に分ける)。
+        out += [REDIRECT.replace("@LATIN@", "|".join(
+            l for l in d["langs"] if l not in ("ja", "zh", "tw"))), ""]
+
+    # 0. 触って見る(docs/view2026/viewers/*.html。各ページは自分の言語で開く)
+    vw = d["viewers"]
+    out += ["## " + vw["h"][lang], "", vw["intro"][lang], ""]
+    for it in vw["items"]:
+        out.append("- **[%s](%sviewers/%s.html?lang=%s)**: %s" % (it["title"][lang], up, it["id"], lang, it["line"][lang]))
+    out.append("")
 
     # 1. 見どころ
     out += ["## " + ui["h_highlights"], "", '<div class="vg">']
@@ -390,10 +416,24 @@ def build(d: dict, lang: str) -> str:
             "- **%s**: %s" % (ui["f_title"], title),
             "- **%s**: %s" % (ui["f_author"], ui["author"]),
             "- **%s**: %s" % (ui["f_venue"], ui["venue"]),
-            "- **%s**: %s" % (ui["f_pdf"], ui["pdf_note"]),
+            _pdf_line(d, ui, lang),
             "", "**%s**: %s" % (ui["f_abstract"], d["paper"]["abstract"][lang]),
             "", "</details>", ""]
     return "\n".join(out)
+
+
+def _pdf_line(d, ui, lang):
+    """論文 PDF の行。exhibits.json の paper.files {lang: 相対パス} のうち実在するものを言語名で並べる。
+    日本語版は 2026-11-26 まで掲載しない(無ければ pdf_note の断り書き)。訳版(en/zh)は先に置ける。"""
+    files = d["paper"].get("files", {})
+    rel = "" if lang == "ja" else "../"
+    avail = [(l, f) for l, f in files.items() if (BASE / f).is_file()]
+    if not avail:
+        return "- **%s**: %s" % (ui["f_pdf"], ui["pdf_note"])
+    links = " · ".join("[%s](%s%s)" % (d["ui"]["lang_name"].get(l, l), rel, f) for l, f in avail)
+    if "ja" not in dict(avail):
+        links += "(%s: %s)" % (d["ui"]["lang_name"]["ja"], ui["pdf_note"])
+    return "- **%s**: %s" % (ui["f_pdf"], links)
 
 
 def page_path(lang: str) -> Path:

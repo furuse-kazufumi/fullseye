@@ -29,6 +29,18 @@ module puts numbers on it, from first principles:
   surface finish and defect type and ranks them by simulated contrast, with the
   rule-of-thumb it agrees or disagrees with spelled out.
 
+Microscope trains and coaxial lighting (2026-10-15):
+
+* :func:`illumination_train` — a Koehler or critical illumination train (source, collector + field
+  stop, aperture stop, condenser, specimen) laid out paraxially, with the conjugate bookkeeping
+  (which plane is imaged onto the specimen, field diameter, illumination NA).
+* :func:`illumination_field` — irradiance on the specimen by paraxial backward tracing through
+  every stop to a source radiance map: Koehler stays uniform under a structured filament,
+  critical illumination copies it (both against closed forms in the tests).
+* :func:`coaxial_illumination` — the half-mirror round trip R*T (at most (1 - A)^2 / 4 = 0.25),
+  the back-surface ghost, and the image a camera sees of a mirror-like or matte part under a
+  coaxial panel (the panel's own non-uniformity, the vignetting edge).
+
 Conventions: the part plane is ``z = 0`` with +z toward the camera, lengths in
 millimetres, radiant intensity in arbitrary units (only ratios are reported;
 irradiance therefore in units/mm²). All inputs fail closed (``ValueError``),
@@ -242,9 +254,8 @@ def _irradiance_at(points, normals, E, D, I0, m):
         d2 = np.sum(V * V, axis=2)
         d = np.sqrt(d2)
         with np.errstate(invalid="ignore", divide="ignore"):
-            U = V / d[:, :, None]
-        cos_e = np.sum(U * D[None, :, :], axis=2)                    # angle off the emitter axis
-        cos_s = -np.sum(U * Nn[:, None, :], axis=2)                  # angle at the surface
+            cos_e = np.sum(V * D[None, :, :], axis=2) / d            # angle off the emitter axis
+            cos_s = -np.sum(V * Nn[:, None, :], axis=2) / d         # angle at the surface
         cos_e = np.clip(cos_e, 0.0, None)
         cos_s = np.clip(cos_s, 0.0, None)
         with np.errstate(divide="ignore", invalid="ignore"):
@@ -286,7 +297,7 @@ def irradiance_map(light, size_mm=(50.0, 50.0), shape=(128, 128), height=None, z
     X, Y = np.meshgrid(xs, ys)
     if height is None:
         Z = np.full((H, W), z0)
-        Nn = np.tile([0.0, 0.0, 1.0], (H * W, 1))
+        Nn = np.broadcast_to([0.0, 0.0, 1.0], (H * W, 3))
     else:
         hz = np.asarray(height, dtype=np.float64)
         if hz.shape != (H, W) or not np.all(np.isfinite(hz)):
@@ -1082,19 +1093,456 @@ def solid_angle_render(normals, light, view_na=0.1, roughness_deg=0.0, f0=0.9, d
     if rg.shape != (H, W) or not np.all(np.isfinite(rg)) or np.any(rg < 0) or np.any(rg > 30.0):
         raise ValueError("roughness_deg must be a scalar or an (H, W) map of finite values in [0, 30]")
     axis = _cone_axis(psi, az)
-    G = np.random.default_rng(int(seed)).standard_normal((k, 2))
     flatN = N.reshape(-1, 3)
     flatR = np.radians(rg.reshape(-1))
     out = np.zeros(H * W)
     step = max(1, (1 << 20) // k)
     s2a = math.sin(math.radians(alpha)) ** 2
-    for a0 in range(0, len(flatN), step):
-        n0 = flatN[a0:a0 + step]
-        sg = flatR[a0:a0 + step]
-        Nn = n0[:, None, :] + np.concatenate([sg[:, None, None] * G[None, :, :], np.zeros((len(n0), k, 1))], 2)
-        Nn = Nn / np.maximum(np.linalg.norm(Nn, axis=2, keepdims=True), 1e-12)
-        share = _specular_share(Nn, alpha, float(view_na), axis, k)
-        cg = np.clip(n0 @ axis, 0.0, None)
-        out[a0:a0 + step] = F * share + rho * s2a * cg
+    if F == 0.0:
+        out = rho * s2a * np.clip(flatN @ axis, 0.0, None)
+    else:
+        G = np.random.default_rng(int(seed)).standard_normal((k, 2))
+        for a0 in range(0, len(flatN), step):
+            n0 = flatN[a0:a0 + step]
+            sg = flatR[a0:a0 + step]
+            Nn = n0[:, None, :] + np.concatenate([sg[:, None, None] * G[None, :, :], np.zeros((len(n0), k, 1))], 2)
+            Nn = Nn / np.maximum(np.linalg.norm(Nn, axis=2, keepdims=True), 1e-12)
+            share = _specular_share(Nn, alpha, float(view_na), axis, k)
+            cg = np.clip(n0 @ axis, 0.0, None)
+            out[a0:a0 + step] = F * share + rho * s2a * cg
     img = (out * L).reshape(H, W)
     return img * mask
+
+
+# --------------------------------------------------------------------------- #
+# Koehler / critical illumination trains and coaxial half mirrors (2026-10-15)
+# --------------------------------------------------------------------------- #
+# A microscope (or a telecentric machine-vision illuminator) does not light the
+# part with "a lamp" but with an *image chain*: lamp -> collector -> field stop
+# -> aperture stop -> condenser -> specimen. Which plane is conjugate to which
+# decides whether the lamp's structure (a coiled filament, an LED die with
+# bond wires, the hot spot of a fibre bundle) shows up across the field:
+#
+# * critical (Nelson) illumination images the **source onto the specimen**: the
+#   field irradiance is the source radiance map, magnified.
+# * Koehler (1893) images the **source into the condenser's front focal plane**
+#   (the aperture stop) and the **field stop onto the specimen**: each source
+#   point becomes a parallel beam that covers the whole field, so every field
+#   point sees the *whole* source and the field is uniform however structured
+#   the lamp is. The field stop sets the lit area, the aperture stop the
+#   illumination NA, independently.
+#
+# The paraxial (ABCD) backward trace below makes no assumption about which
+# arrangement it is given: a specimen point and a direction define one ray,
+# traced back through every stop to the source map. Koehler uniformity and the
+# critical copy of the filament fall out of the geometry; the tests check them
+# against the closed forms (field diameter = field stop x |M|, NA = aperture
+# radius / f_condenser, E = L pi NA^2 for a uniform source).
+#
+# Coaxial (on-axis) lighting puts a half mirror at 45 deg between camera and
+# part: the light reflects once (R) on the way in and transmits once (T) on the
+# way out, so the round trip is R*T with T = 1 - R - A, at most (1 - A)^2 / 4 =
+# 0.25 at R = 0.5. On a mirror-like part the camera sees, through the half
+# mirror, the reflection of the panel itself: like critical illumination, the
+# panel's non-uniformity is imaged straight into the picture, and the panel
+# must be larger than the field by the factor (1 + h_panel / h_camera).
+#
+# Sources: A. Koehler, "Ein neues Beleuchtungsverfahren fuer mikrophotographische
+# Zwecke", Z. wiss. Mikrosk. 10:433-440 (1893); the conjugate-plane description
+# and the critical / Koehler comparison as in standard optics texts (e.g. M. Born
+# & E. Wolf, Principles of Optics; D. B. Murphy, Fundamentals of Light
+# Microscopy and Electronic Imaging). Irradiance from a rectangular Lambertian
+# panel: the configuration-factor closed form of radiative transfer texts.
+# Paraxial throughout: obliquity (cos^4) and lens aberrations are not modelled.
+
+ILLUMINATION_TRAINS = ("kohler", "critical")
+MAX_TRAIN_WORK = 1 << 25
+
+
+def _thin(f):
+    return np.array([[1.0, 0.0], [-1.0 / f, 1.0]])
+
+
+def _gap(t):
+    return np.array([[1.0, t], [0.0, 1.0]])
+
+
+def illumination_train(kind="kohler", source_mm=2.0, collector_f_mm=20.0, condenser_f_mm=10.0,
+                       field_stop_mm=6.0, aperture_stop_mm=6.0, source_distance_mm=30.0):
+    """A microscope illumination train (``kohler`` or ``critical``) laid out paraxially (``table``).
+
+    Planes along the axis (thin lenses, distances in mm, z = 0 at the source):
+
+    * the source (a disc of diameter *source_mm*) at z = 0;
+    * the collector (focal length *collector_f_mm*) at z = *source_distance_mm*, with the
+      field stop (diameter *field_stop_mm*) right at it; it images the source to z_A;
+    * the aperture stop (diameter *aperture_stop_mm*) at z_A, on the intermediate source image;
+    * the condenser (focal length *condenser_f_mm*):
+
+      - ``kohler``: one focal length behind the aperture stop (the stop sits in its front focal
+        plane, so the source is imaged to infinity), and the specimen where the condenser images
+        the **field stop**;
+      - ``critical``: two focal lengths behind the source image (a 1:1 relay), and the specimen
+        where the condenser images the **source**. The aperture stop then sits at the source
+        image (it trims the source), the field stop is in a pupil-like plane.
+
+    Returns the element list (``elements``: dicts with ``type`` lens / stop / source / specimen,
+    ``z_mm``, ``f_mm`` or ``radius_mm``) that :func:`illumination_field` traces, plus the
+    conjugate bookkeeping read off the ABCD matrices: ``source_to_specimen`` and
+    ``field_stop_to_specimen`` (A, B, C, D — B = 0 means "imaged onto the specimen"),
+    ``source_magnification`` / ``field_stop_magnification`` (A when B = 0, else None),
+    ``field_diameter_mm`` (the lit field: field stop x |M| for Koehler, source x |M| for critical),
+    ``illumination_na`` (on-axis marginal ray: the smallest stop-limited angle), ``source_image_z_mm``.
+
+    **Raises** ``ValueError``: unknown kind, non-positive sizes or focal lengths, a source closer
+    than the collector focal length (no real intermediate image), a specimen that would be virtual.
+    """
+    op = "illumination_train"
+    if kind not in ILLUMINATION_TRAINS:
+        raise ValueError("%s: kind must be one of %s, got %r" % (op, ILLUMINATION_TRAINS, kind))
+    s_d = _finite(source_mm, "source_mm", positive=True)
+    fc = _finite(collector_f_mm, "collector_f_mm", positive=True)
+    fk = _finite(condenser_f_mm, "condenser_f_mm", positive=True)
+    fs = _finite(field_stop_mm, "field_stop_mm", positive=True)
+    ap = _finite(aperture_stop_mm, "aperture_stop_mm", positive=True)
+    s1 = _finite(source_distance_mm, "source_distance_mm", positive=True)
+    if s1 <= fc * (1.0 + 1e-9):
+        raise ValueError("%s: source_distance_mm (%g) must exceed collector_f_mm (%g) for a real source image"
+                         % (op, s1, fc))
+    s1p = 1.0 / (1.0 / fc - 1.0 / s1)                         # collector image distance
+    zc = s1
+    zA = s1 + s1p
+    if kind == "kohler":
+        zk = zA + fk
+        Lobj = zk - zc                                        # field stop -> condenser
+        if Lobj <= fk * (1.0 + 1e-9):
+            raise ValueError("%s: the field stop sits inside the condenser focal length — its image is virtual" % op)
+        v = 1.0 / (1.0 / fk - 1.0 / Lobj)
+    else:
+        zk = zA + 2.0 * fk
+        v = 2.0 * fk
+    zs = zk + v
+    elements = [
+        {"type": "source", "name": "source", "z_mm": 0.0, "radius_mm": 0.5 * s_d},
+        {"type": "lens", "name": "collector", "z_mm": zc, "f_mm": fc},
+        {"type": "stop", "name": "field_stop", "z_mm": zc, "radius_mm": 0.5 * fs},
+        {"type": "stop", "name": "aperture_stop", "z_mm": zA, "radius_mm": 0.5 * ap},
+        {"type": "lens", "name": "condenser", "z_mm": zk, "f_mm": fk},
+        {"type": "specimen", "name": "specimen", "z_mm": zs},
+    ]
+    M_src = _abcd_to_specimen(elements, 0)
+    M_fs = _abcd_to_specimen(elements, 2)
+
+    def mag(M):
+        return float(M[0, 0]) if abs(M[0, 1]) < 1e-9 * max(1.0, zs) else None
+
+    ms, mf = mag(M_src), mag(M_fs)
+    field = abs(mf) * fs if kind == "kohler" else abs(ms) * s_d
+    na = _axial_na(elements)
+    return {"kind": kind, "elements": elements,
+            "source_to_specimen": M_src.tolist(), "field_stop_to_specimen": M_fs.tolist(),
+            "source_magnification": ms, "field_stop_magnification": mf,
+            "field_diameter_mm": float(field), "illumination_na": float(na),
+            "source_image_z_mm": float(zA), "specimen_z_mm": float(zs),
+            "source_mm": s_d, "field_stop_mm": fs, "aperture_stop_mm": ap,
+            "collector_f_mm": fc, "condenser_f_mm": fk, "source_distance_mm": s1}
+
+
+def _abcd_to_specimen(elements, start):
+    """Forward ABCD matrix from plane *start* (index into *elements*) to the specimen."""
+    M = np.eye(2)
+    z = elements[start]["z_mm"]
+    for e in elements[start + 1:]:
+        M = _gap(e["z_mm"] - z) @ M
+        z = e["z_mm"]
+        if e["type"] == "lens":
+            M = _thin(e["f_mm"]) @ M
+    return M
+
+
+def _back(elements, y, u):
+    """Trace specimen rays (y, u) backward; yield (element, y at that plane) for stops and the source."""
+    z = elements[-1]["z_mm"]
+    for e in reversed(elements[:-1]):
+        t = z - e["z_mm"]
+        y = y - t * u                                         # free space, backwards
+        z = e["z_mm"]
+        if e["type"] == "lens":
+            u = u + y / e["f_mm"]                             # undo u' = u - y/f
+        yield e, y
+
+
+def _axial_na(elements):
+    """Largest on-axis specimen angle that clears every stop and the source (bisection on a 1-D ray)."""
+    def ok(u):
+        for e, y in _back(elements, np.zeros(1), np.array([u])):
+            if e["type"] in ("stop", "source") and abs(float(y[0])) > e["radius_mm"]:
+                return False
+        return True
+    lo, hi = 0.0, 1.0
+    if not ok(1e-12):
+        raise ValueError("illumination_train: no light reaches the specimen centre (a stop blocks the axis)")
+    if ok(hi):
+        return 1.0
+    for _ in range(80):
+        mid = 0.5 * (lo + hi)
+        if ok(mid):
+            lo = mid
+        else:
+            hi = mid
+    return lo
+
+
+def _cone_extent(elements, half):
+    """Largest |u| of any ray that clears every stop, from specimen points across the window (1-D scan)."""
+    u = np.linspace(-1.0, 1.0, 8001)
+    best = 0.0
+    for x0 in (-half, -0.5 * half, 0.0, 0.5 * half, half):
+        alive = np.ones(u.size, bool)
+        for e, y in _back(elements, np.full(u.size, x0), u.copy()):
+            if e["type"] in ("stop", "source"):
+                alive &= np.abs(y) <= e["radius_mm"]
+        if np.any(alive):
+            best = max(best, float(np.max(np.abs(u[alive]))) + 2.0 / 8000.0)
+    return best
+
+
+def _check_train(train, op):
+    if not isinstance(train, dict) or not isinstance(train.get("elements"), list):
+        raise ValueError("%s: expected the table returned by illumination_train()" % op)
+    els = train["elements"]
+    if len(els) < 2 or els[0].get("type") != "source" or els[-1].get("type") != "specimen":
+        raise ValueError("%s: the train must start at the source and end at the specimen" % op)
+    out, zprev = [], -math.inf
+    for e in els:
+        t = e.get("type")
+        if t not in ("source", "lens", "stop", "specimen"):
+            raise ValueError("%s: unknown element type %r" % (op, t))
+        z = _finite(e.get("z_mm"), "z_mm", )
+        if z < zprev:
+            raise ValueError("%s: elements must be ordered along the axis" % op)
+        zprev = z
+        d = {"type": t, "name": str(e.get("name", t)), "z_mm": z}
+        if t == "lens":
+            d["f_mm"] = _finite(e.get("f_mm"), "f_mm")
+            if d["f_mm"] == 0.0:
+                raise ValueError("%s: a lens has zero focal length" % op)
+        if t in ("stop", "source"):
+            d["radius_mm"] = _finite(e.get("radius_mm"), "radius_mm", positive=True)
+        out.append(d)
+    return out
+
+
+def illumination_field(train, source_radiance=None, shape=(65, 65), field_mm=None, n_pupil=16):
+    """Irradiance on the specimen of an illumination train (``image2d``), by paraxial backward tracing.
+
+    For every specimen pixel (x, y) and every direction (u, v) on an *n_pupil* x *n_pupil* grid
+    of the illumination cone, the ray is traced back through each stop (rays outside a stop are
+    blocked) to the source plane, where the radiance is looked up: ``E(x) = sum L(source point) du dv``
+    (paraxial, so for a uniform source filling the cone ``E = L pi NA^2`` — a gate).
+
+    *train*: the table from :func:`illumination_train` (or the same element list built by hand).
+    *source_radiance*: ``None`` = uniform radiance 1 over the source disc; or a 2-D array of
+    non-negative radiance laid over the square [-r, r]^2 of the source (r = source radius), bilinear
+    lookup, zero outside the disc — a filament, an LED die, a fibre bundle.
+    *shape*: the output grid (rows, cols). *field_mm*: half-width of the square specimen window
+    (``None`` = 0.65 x the lit field diameter). *n_pupil*: direction samples per axis.
+
+    Returns the irradiance map (float64, rows = +y down to -y as an image), in radiance x sr units.
+
+    **Raises** ``ValueError``: not a train, non-finite/negative radiance map, work above
+    ``MAX_TRAIN_WORK``, no light reaching the specimen.
+    """
+    op = "illumination_field"
+    els = _check_train(train, op)
+    src = els[0]
+    H, W = (_count(shape[0], "shape[0]", 3, 4096), _count(shape[1], "shape[1]", 3, 4096)) \
+        if isinstance(shape, (tuple, list)) and len(shape) == 2 else (None, None)
+    if H is None:
+        raise ValueError("%s: shape must be (rows, cols)" % op)
+    k = _count(n_pupil, "n_pupil", 2, 512)
+    if H * W * k * k > MAX_TRAIN_WORK:
+        raise ValueError("%s: rows*cols*n_pupil^2 = %d exceeds %d" % (op, H * W * k * k, MAX_TRAIN_WORK))
+    if source_radiance is None:
+        Lmap = None
+    else:
+        Lmap = np.asarray(source_radiance, dtype=np.float64)
+        if Lmap.ndim != 2 or min(Lmap.shape) < 2 or not np.all(np.isfinite(Lmap)) or np.any(Lmap < 0):
+            raise ValueError("%s: source_radiance must be a finite, non-negative 2-D map (>= 2 x 2)" % op)
+    # the cone to sample: the largest specimen angle that clears every stop, from the axis and the field edge
+    na = _axial_na(els)
+    if field_mm is None:
+        fd = train.get("field_diameter_mm") if isinstance(train, dict) else None
+        half = 0.65 * _finite(fd, "field_diameter_mm", positive=True) if fd is not None else 1.0
+    else:
+        half = _finite(field_mm, "field_mm", positive=True)
+    umax = min(1.0, 1.05 * max(na, _cone_extent(els, half)))
+    ys = np.linspace(half, -half, H)
+    xs = np.linspace(-half, half, W)
+    uu = (np.arange(k) + 0.5) / k * 2.0 * umax - umax
+    du = (2.0 * umax / k) ** 2
+    X, Y = np.meshgrid(xs, ys)
+    out = np.zeros(H * W)
+    Xf, Yf = X.ravel(), Y.ravel()
+    for u in uu:
+        U = np.full((W * H, k), u)
+        V = np.broadcast_to(uu[None, :], (W * H, k))
+        px = np.broadcast_to(Xf[:, None], (W * H, k))
+        py = np.broadcast_to(Yf[:, None], (W * H, k))
+        alive = np.ones((W * H, k), bool)
+        sx = sy = None
+        for (e, yx), (_, yy) in zip(_back(els, px, U), _back(els, py, V)):
+            if e["type"] == "stop":
+                alive &= (yx * yx + yy * yy) <= e["radius_mm"] ** 2
+            elif e["type"] == "source":
+                sx, sy = yx, yy
+                alive &= (yx * yx + yy * yy) <= e["radius_mm"] ** 2
+        if Lmap is None:
+            val = alive.astype(np.float64)
+        else:
+            r = src["radius_mm"]
+            n0, n1 = Lmap.shape
+            sparse = alive.mean() < 0.5
+            use = alive if sparse else np.ones_like(alive)
+            fx = np.clip((sx[use] + r) / (2.0 * r) * (n1 - 1), 0.0, n1 - 1.0)
+            fy = np.clip((r - sy[use]) / (2.0 * r) * (n0 - 1), 0.0, n0 - 1.0)
+            ix, iy = np.minimum(fx.astype(np.int64), n1 - 2), np.minimum(fy.astype(np.int64), n0 - 2)
+            tx, ty = fx - ix, fy - iy
+            sample = ((1 - tx) * (1 - ty) * Lmap[iy, ix] + tx * (1 - ty) * Lmap[iy, ix + 1]
+                      + (1 - tx) * ty * Lmap[iy + 1, ix] + tx * ty * Lmap[iy + 1, ix + 1])
+            if sparse:
+                val = np.zeros_like(sx)
+                val[use] = sample
+            else:
+                val = sample * alive
+        out += val.sum(axis=1) * du
+    img = out.reshape(H, W)
+    if not np.any(img > 0):
+        raise ValueError("%s: no light reaches the specimen window" % op)
+    return img
+
+
+def _rect_irradiance(L, a, b, h):
+    """Irradiance under the corner of a uniform Lambertian a x b rectangle at height h (closed form)."""
+    A, B = a / math.hypot(a, h), b / math.hypot(b, h)
+    return 0.5 * L * (A * math.atan(b / math.hypot(a, h)) + B * math.atan(a / math.hypot(b, h)))
+
+
+def coaxial_illumination(reflectance=0.5, absorptance=0.0, back_reflectance=0.04, plate_thickness_mm=1.0,
+                         plate_index=1.52, panel_mm=60.0, panel_distance_mm=60.0, camera_distance_mm=200.0,
+                         field_mm=20.0, part="mirror", telecentric=False, panel_radiance=None,
+                         shape=(65, 65), n_panel=None):
+    """Coaxial (half-mirror) lighting: the round-trip T*R budget and the image a camera sees (``table``).
+
+    The panel (square, side *panel_mm*, unfolded distance *panel_distance_mm* from the part through
+    the 45-degree half mirror) lights the part by one reflection (R); the camera (pinhole at
+    *camera_distance_mm*, or telecentric) looks through the mirror (T = 1 - R - A).
+
+    Budget: ``round_trip`` = R T (1/4 for the default lossless 50/50 mirror; ``splitter_reflectance`` /
+    ``splitter_transmittance`` carry R and T under the names the optscene coaxial light reads),
+    ``optimum_reflectance`` = (1 - A) / 2, ``max_round_trip`` =
+    (1 - A)^2 / 4 (0.25 for a lossless mirror), ``ghost_ratio`` = T^2 r_b / R (the back-surface
+    reflection of the plate, relative to the front reflection, on the illumination leg) and
+    ``ghost_offset_mm`` = 2 t tan(theta_r) cos 45 deg (its lateral shift; sin theta_r = sin 45 / n).
+
+    Image (camera view, *shape* pixels over a square field of half-width *field_mm*):
+
+    * ``part="mirror"``: a specular part shows the panel itself, so the image is
+      R T L(panel point) with the panel point x (1 + h_panel / h_camera) (x for a telecentric lens) —
+      the panel's non-uniformity is imaged one to one (like critical illumination) and the field
+      goes dark beyond ``vignetting_edge_mm`` = (panel / 2) / (1 + h_panel / h_camera).
+    * ``part="matte"``: a Lambertian part (albedo 1) returns R T E / pi, with E the irradiance of the
+      panel (numerical sum over an *n_panel* x *n_panel* grid; the closed form for a uniform rectangle
+      is ``matte_centre_closed``). *n_panel* = None uses 32.
+
+    *panel_radiance*: ``None`` = uniform 1, or a 2-D map laid over the panel square.
+    Returns also ``image``, ``uniformity`` (:func:`illumination_uniformity` of the central 80 %; None when
+    T = 0 and the image is dark by the budget, not by the geometry),
+    ``panel_scale`` (1 + h_panel / h_camera).
+
+    **Raises** ``ValueError``: R + A > 1, R = 0, a panel farther than the camera, unknown part.
+    """
+    op = "coaxial_illumination"
+    R = _finite(reflectance, "reflectance", positive=True)
+    A = _finite(absorptance, "absorptance", nonneg=True)
+    rb = _finite(back_reflectance, "back_reflectance", nonneg=True)
+    if R + A > 1.0 or rb > 1.0:
+        raise ValueError("%s: reflectance + absorptance must be <= 1 and back_reflectance <= 1" % op)
+    t = _finite(plate_thickness_mm, "plate_thickness_mm", nonneg=True)
+    n = _finite(plate_index, "plate_index", positive=True)
+    if n < 1.0:
+        raise ValueError("%s: plate_index must be >= 1" % op)
+    P = _finite(panel_mm, "panel_mm", positive=True)
+    hp = _finite(panel_distance_mm, "panel_distance_mm", positive=True)
+    hc = _finite(camera_distance_mm, "camera_distance_mm", positive=True)
+    if hp >= hc:
+        raise ValueError("%s: the panel (unfolded at %g mm) must sit closer to the part than the camera (%g mm)"
+                         % (op, hp, hc))
+    F = _finite(field_mm, "field_mm", positive=True)
+    if part not in ("mirror", "matte"):
+        raise ValueError("%s: part must be 'mirror' or 'matte', got %r" % (op, part))
+    if not isinstance(telecentric, (bool, np.bool_)):
+        raise ValueError("%s: telecentric must be True or False" % op)
+    if not isinstance(shape, (tuple, list)) or len(shape) != 2:
+        raise ValueError("%s: shape must be (rows, cols)" % op)
+    H, W = _count(shape[0], "shape[0]", 3, 4096), _count(shape[1], "shape[1]", 3, 4096)
+    kp = 32 if n_panel is None else _count(n_panel, "n_panel", 2, 1024)
+    if part == "matte" and H * W * kp * kp > MAX_TRAIN_WORK:
+        raise ValueError("%s: rows*cols*n_panel^2 exceeds %d" % (op, MAX_TRAIN_WORK))
+    T = 1.0 - R - A
+    Lmap = None
+    if panel_radiance is not None:
+        Lmap = np.asarray(panel_radiance, dtype=np.float64)
+        if Lmap.ndim != 2 or min(Lmap.shape) < 2 or not np.all(np.isfinite(Lmap)) or np.any(Lmap < 0):
+            raise ValueError("%s: panel_radiance must be a finite, non-negative 2-D map (>= 2 x 2)" % op)
+
+    def L_at(px, py):
+        inside = (np.abs(px) <= 0.5 * P) & (np.abs(py) <= 0.5 * P)
+        if Lmap is None:
+            return inside.astype(np.float64)
+        n0, n1 = Lmap.shape
+        fx = np.clip((px / P + 0.5) * (n1 - 1), 0.0, n1 - 1.0)
+        fy = np.clip((0.5 - py / P) * (n0 - 1), 0.0, n0 - 1.0)
+        ix, iy = np.minimum(fx.astype(np.int64), n1 - 2), np.minimum(fy.astype(np.int64), n0 - 2)
+        tx, ty = fx - ix, fy - iy
+        v = ((1 - tx) * (1 - ty) * Lmap[iy, ix] + tx * (1 - ty) * Lmap[iy, ix + 1]
+             + (1 - tx) * ty * Lmap[iy + 1, ix] + tx * ty * Lmap[iy + 1, ix + 1])
+        return v * inside
+
+    ys = np.linspace(F, -F, H)
+    xs = np.linspace(-F, F, W)
+    X, Y = np.meshgrid(xs, ys)
+    scale = 1.0 if telecentric else 1.0 + hp / hc
+    if part == "mirror":
+        seen = L_at(X * scale, Y * scale)
+        if not np.any(seen > 0):
+            raise ValueError("%s: the camera sees no lit part of the panel" % op)
+        img = R * T * seen
+    else:
+        g = (np.arange(kp) + 0.5) / kp * P - 0.5 * P
+        dA = (P / kp) ** 2
+        GX, GY = np.meshgrid(g, g)
+        Lp = L_at(GX, GY).ravel()
+        gx, gy = GX.ravel(), GY.ravel()
+        E = np.zeros(H * W)
+        Xf, Yf = X.ravel(), Y.ravel()
+        step = max(1, (1 << 22) // (kp * kp))
+        for a0 in range(0, H * W, step):
+            dx = gx[None, :] - Xf[a0:a0 + step, None]
+            dy = gy[None, :] - Yf[a0:a0 + step, None]
+            r2 = dx * dx + dy * dy + hp * hp
+            E[a0:a0 + step] = (Lp[None, :] * hp * hp / (r2 * r2)).sum(axis=1) * dA
+        if not np.any(E > 0):
+            raise ValueError("%s: the part receives no light from the panel" % op)
+        img = (R * T / math.pi * E).reshape(H, W)
+    theta_r = math.asin(math.sin(math.radians(45.0)) / n)
+    a = 0.5 * P
+    return {"reflectance": R, "transmittance": T, "absorptance": A, "round_trip": R * T,
+            "splitter_reflectance": R, "splitter_transmittance": T,
+            "optimum_reflectance": (1.0 - A) / 2.0, "max_round_trip": (1.0 - A) ** 2 / 4.0,
+            "ghost_ratio": T * T * rb / R,
+            "ghost_offset_mm": 2.0 * t * math.tan(theta_r) * math.cos(math.radians(45.0)),
+            "panel_scale": scale, "vignetting_edge_mm": a / scale,
+            "matte_centre_closed": R * T / math.pi * 4.0 * _rect_irradiance(1.0, a, a, hp),
+            "image": img, "uniformity": illumination_uniformity(img) if T > 0.0 else None,
+            "part": part, "telecentric": bool(telecentric), "field_mm": F}

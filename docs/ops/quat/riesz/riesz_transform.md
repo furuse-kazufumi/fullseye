@@ -7,13 +7,13 @@ out: qimage
 examples: [quaternion_monogenic]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # riesz_transform — QUAT `riesz` op
 
 - **データ種**: `image2d` → `qimage`
-- **呼び出し**: `import fullseye as fs; fs.ledger.riesz_transform(image) -> 'np.ndarray'` (実装を直接呼ぶなら `import quatimage; quatimage.riesz_transform(image) -> 'np.ndarray'`、台帳から引くなら `opsquat.get("riesz_transform")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.riesz_transform(image, *, method='exact') -> 'np.ndarray'` (実装を直接呼ぶなら `import quatimage; quatimage.riesz_transform(image, *, method='exact') -> 'np.ndarray'`、台帳から引くなら `opsquat.get("riesz_transform")`)
 
 ## 使い方
 
@@ -45,7 +45,9 @@ everywhere, correctly but uselessly. Use :func:`monogenic_signal`, which
 keeps the band-pass image in the scalar slot.
 
 **Raises** ``ValueError``: *image* is not a finite real ``(H, W)`` array with
-``H, W >= 2``, or exceeds :data:`MAX_PIXELS`.
+``H, W >= 2``, or exceeds :data:`MAX_PIXELS`. ``method="fast"`` uses a
+half-spectrum transform on odd-sized images and otherwise falls back to the
+exact path, avoiding Nyquist-row ambiguity.
 
 ## 詳しい使い方ガイド
 

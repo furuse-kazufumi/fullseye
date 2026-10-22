@@ -105,10 +105,15 @@ def optical_flow_lk(prev, nxt, window: int = 15, levels: int = 3,
         Ixx = Ixx0 + lam
         Iyy = Iyy0 + lam
         det = Ixx * Iyy - Ixy * Ixy
+        inv_xx = Iyy / det
+        inv_xy = Ixy / det
+        inv_yy = Ixx / det
         prev_res = np.inf
-        u_prev, v_prev = u.copy(), v.copy()
+        u_prev, v_prev = u, v
         for _ in range(max(1, int(iters))):
-            warped = _remap(n, xx + u, yy + v)   # align nxt onto prev with current flow
+            mapx = xx + u
+            mapy = yy + v
+            warped = _remap(n, mapx, mapy)   # align nxt onto prev with current flow
             It = warped - p
             # monotonic-residual guard: the fixed-template iteration is not
             # globally contractive, so stop (and undo the last step) once the
@@ -118,15 +123,15 @@ def optical_flow_lk(prev, nxt, window: int = 15, levels: int = 3,
                 u, v = u_prev, v_prev
                 break
             prev_res = res
-            u_prev, v_prev = u.copy(), v.copy()
+            u_prev, v_prev = u, v
             Ixt = _box(Ix * It, k)
             Iyt = _box(Iy * It, k)
             # solve [[Ixx,Ixy],[Ixy,Iyy]] [du,dv]^T = [-Ixt,-Iyt]
-            du = (-Iyy * Ixt + Ixy * Iyt) / det
-            dv = (Ixy * Ixt - Ixx * Iyt) / det
+            du = -inv_xx * Ixt + inv_xy * Iyt
+            dv = inv_xy * Ixt - inv_yy * Iyt
             # freeze pixels whose sample already left the frame: there the warp is
             # edge-clamped so dIt/dflow = 0 and the solve would push them out forever.
-            inb = (xx + u >= 0) & (xx + u <= W - 1) & (yy + v >= 0) & (yy + v <= H - 1)
+            inb = (mapx >= 0) & (mapx <= W - 1) & (mapy >= 0) & (mapy <= H - 1)
             du = np.where(inb, du, 0.0)
             dv = np.where(inb, dv, 0.0)
             # clamp the per-step magnitude so a single high-gradient pixel cannot
@@ -252,15 +257,52 @@ def flow_angle(u, v) -> np.ndarray:
     return np.arctan2(np.asarray(v, np.float64), np.asarray(u, np.float64))
 
 
-def track_points(prev, nxt, points, **flow_kwargs):
+def track_points(prev, nxt, points, method="dense", **flow_kwargs):
     """Track sparse points from *prev* to *nxt* (a Lucas-Kanade point tracker).
 
     *points* is (N, 2) as ``(x, y)`` pixel coordinates. Returns ``(tracked, ok)``:
     the (N, 2) positions in *nxt* and a boolean mask that is False where a point
     left the frame. Positions come from bilinearly sampling the dense
     :func:`optical_flow_lk` field, so *flow_kwargs* (``window``/``levels``/``iters``)
-    tune the underlying estimate. Use it to follow a marker on a limb (evis/hillco)
-    or an object across a video (onocollo)."""
+    tune the underlying estimate. ``method="sparse"`` searches only a window
+    around each point.  It is intended for few points in large frames and can
+    differ from dense-field sampling by up to 1 pixel for integer translations
+    within its search radius.  The no-argument ``"dense"`` path is unchanged.
+    Use it to follow a marker on a limb or an object across a video."""
+    if method not in ("dense", "sparse"):
+        raise ValueError("track_points: method must be 'dense' or 'sparse'")
+    if method == "sparse":
+        P = np.asarray(prev, np.float64)
+        N = np.asarray(nxt, np.float64)
+        if P.shape != N.shape or P.ndim != 2 or min(P.shape) < 2:
+            raise ValueError("prev/nxt must be equal-shape 2-D arrays of at least 2x2")
+        pts = np.asarray(points, np.float64).reshape(-1, 2)
+        window = max(3, int(flow_kwargs.pop("window", 15)))
+        levels = max(1, int(flow_kwargs.pop("levels", 3)))
+        flow_kwargs.pop("iters", 4)
+        flow_kwargs.pop("reg", 1e-3)
+        if flow_kwargs:
+            raise TypeError("track_points: unknown sparse options: %s" % sorted(flow_kwargs))
+        half = window // 2
+        radius = 2 ** levels
+        oy, ox = np.mgrid[-half:half + 1, -half:half + 1]
+        tracked = pts.copy()
+        for q, (x, y) in enumerate(pts):
+            template = ndimage.map_coordinates(P, [y + oy, x + ox], order=1,
+                                               mode="nearest")
+            best = (np.inf, 0, 0)
+            for dy in range(-radius, radius + 1):
+                for dx in range(-radius, radius + 1):
+                    patch = ndimage.map_coordinates(
+                        N, [y + dy + oy, x + dx + ox], order=1, mode="nearest")
+                    score = float(np.mean((patch - template) ** 2))
+                    if score < best[0]:
+                        best = (score, dx, dy)
+            tracked[q] += (best[1], best[2])
+        H, W = P.shape
+        ok = ((tracked[:, 0] >= 0) & (tracked[:, 0] <= W - 1)
+              & (tracked[:, 1] >= 0) & (tracked[:, 1] <= H - 1))
+        return tracked, ok
     u, v = optical_flow_lk(prev, nxt, **flow_kwargs)
     pts = np.asarray(points, np.float64).reshape(-1, 2)
     xs, ys = pts[:, 0], pts[:, 1]

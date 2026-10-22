@@ -7,13 +7,13 @@ out: rgb
 examples: [poc_tacscalib_sphere_lut]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # membrane_predict_rgb — DRIVE `tacscalib` op
 
 - **データ種**: `normalmap × table` → `rgb`
-- **呼び出し**: `import fullseye as fs; fs.ledger.membrane_predict_rgb(normals, fit: 'dict') -> 'np.ndarray'` (実装を直接呼ぶなら `import tacscalib; tacscalib.membrane_predict_rgb(normals, fit: 'dict') -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("membrane_predict_rgb")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.membrane_predict_rgb(normals, fit: 'dict', *, chunk=262144) -> 'np.ndarray'` (実装を直接呼ぶなら `import tacscalib; tacscalib.membrane_predict_rgb(normals, fit: 'dict', *, chunk=262144) -> 'np.ndarray'`、台帳から引くなら `opsdrive.get("membrane_predict_rgb")`)
 
 ## 使い方
 

@@ -8,7 +8,7 @@ halcon: dilation_golay
 examples: [gallery2d_region]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.6.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # dilation_golay — 2D `region` op
@@ -40,6 +40,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 円形構造要素（disk, 半径 ``_rad(a)``=1〜4）による二値の膨張（dilation）。b は未使用。
 
 HALCON の ``dilation_golay``（Golay アルファベットから選んだ要素で膨張する演算）とは異なり、この実装は Golay アルファベットの特定要素ではなく単純な円板構造要素で近似する。
+
+**つまみ(実測)**: ``a`` は**段階的**に効き、切り替わるのは a ≈ 0.33、0.67、0.99(実測。刻み 0.02 の掃きで測った位置)。
 
 ## 詳しい使い方ガイド
 
