@@ -4,7 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.peg_scene_mjcf(kp=None, lg: &#x27;float | None&#x27; = None, offsamples: &#x27;int&#x27; = 4, timestep: &#x27;float&#x27; = 0.0005) -&gt; &#x27;str&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pegsim; pegsim.peg_scene_mjcf(kp=None, lg: &#x27;float | None&#x27; = None, offsamples: &#x27;int&#x27; = 4, timestep: &#x27;float&#x27; = 0.0005) -&gt; &#x27;str&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;peg_scene_mjcf&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>장면의 MJCF 문자열(mujoco 불필요): 구멍 = 내접면 반경이 R인 상자 n_seg개의 고리 + 45° 모따기 고리 + 입구 면의 칼라 + 사각 틀, 위치 제어 이송대(x, y, z 슬라이드)에 스프링 관절 6개로 된 유연 손목, 그 끝에 페그(원기둥). 손목 카메라는 이송대의 60 mm 뒤·20 mm 위에서 45° 아래 방향, 측면 카메라는 고정.</p>
-<p>&quot;lg&quot; = 팁에서 회전 컴플라이언스 중심까지의 거리 (None → 손목 원점 = 페그 길이, 0 → 팁 중심 = RCC). <code style="color:#22d3bf">offsamples &#x27;&#x27;는 MSAA(RGB용 4, depth용 0으로 따로 컴파일한다 ——심도는 샘플 0의 위치가 되는 함정). </code>&lt;quality numslices=&quot;128&quot;&gt;`` 다각형 근사 반경 오차는 약 0.03% (기본값 28에서는 약 0.6%, 반경 6mm의 경우 0.04mm 안쪽). 단위 m, 입면 z = 0.</p>
+<p>&quot;lg&quot; = 팁에서 회전 컴플라이언스 중심까지의 거리 (None → 손목 원점 = 페그 길이, 0 → 팁 중심 = RCC). offsamples &#x27;&#x27;는 MSAA(RGB용 4, depth용 0으로 따로 컴파일한다 ——심도는 샘플 0의 위치가 되는 함정). &lt;quality numslices=&quot;128&quot;&gt; 다각형 근사 반경 오차는 약 0.03% (기본값 28에서는 약 0.6%, 반경 6mm의 경우 0.04mm 안쪽). 단위 m, 입면 z = 0.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

@@ -4,9 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sun_events(year: &#x27;int&#x27;, month: &#x27;int&#x27;, day: &#x27;int&#x27;, lat: &#x27;float&#x27;, lon: &#x27;float&#x27;, tz_hours: &#x27;float&#x27; = 9.0, *, h0: &#x27;float&#x27; = -0.8333) -&gt; &#x27;Dict[str, object]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import driveenv; driveenv.sun_events(year: &#x27;int&#x27;, month: &#x27;int&#x27;, day: &#x27;int&#x27;, lat: &#x27;float&#x27;, lon: &#x27;float&#x27;, tz_hours: &#x27;float&#x27; = 9.0, *, h0: &#x27;float&#x27; = -0.8333) -&gt; &#x27;Dict[str, object]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;sun_events&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>그날(지방 역일)의 일출·남중·일몰 시각과 일출·일몰 방위, 남중 고도.</p>
-<p>해돋이 = 태양 중심의 ** 기하학 ** 고도는<code style="color:#22d3bf">h0 &#x27;&#x27; 교차하는 시간. </code>h0=&quot;naoj&quot;``로 국립 천문대 달력 계산실의 정의(태양의 상변이 시지평선, 지평대기차 35′8″, 시반경은 거리로부터). 남중 = 시각 0. 둘 다 sun_at 를 시간에 대해 풀어 준다 (이분법, 구간 폭 1e-7 일 미만 ≈ 0.009 초까지).</p>
+<p>해돋이 = 태양 중심의  기하학  고도는h0 &#x27;&#x27; 교차하는 시간. h0=&quot;naoj&quot;로 국립 천문대 달력 계산실의 정의(태양의 상변이 시지평선, 지평대기차 35′8″, 시반경은 거리로부터). 남중 = 시각 0. 둘 다 sun_at 를 시간에 대해 풀어 준다 (이분법, 구간 폭 1e-7 일 미만 ≈ 0.009 초까지).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
-<p>dict :<code style="color:#22d3bf">sunrise &#x27;&#x27;/</code>transit &#x27;&#x27;/<code style="color:#22d3bf">sunset &#x27;&#x27;(시간대 datetime, 일출이 없으면 None), </code>sunrise_azimuth&#x27;&#x27; / <code style="color:#22d3bf">sunset_azimuth&#x27;&#x27;(도), </code>transit_altitude&#x27;&#x27;(도, 대기 차이가 없는 기하학적 고도, ``transit_altitude_apparent&#x27;&#x27;).</p>
+<p>dict :sunrise &#x27;&#x27;/transit &#x27;&#x27;/sunset &#x27;&#x27;(시간대 datetime, 일출이 없으면 None), sunrise_azimuth&#x27;&#x27; / sunset_azimuth&#x27;&#x27;(도), transit_altitude&#x27;&#x27;(도, 대기 차이가 없는 기하학적 고도, transit_altitude_apparent&#x27;&#x27;).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

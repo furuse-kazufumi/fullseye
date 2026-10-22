@@ -4,27 +4,28 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_label_shape_stats(labels, spacing=None, shape: &#x27;bool&#x27; = True)</code>(要直接调用实现,<code style="color:#22d3bf">import volcolor; volcolor.vol_label_shape_stats(labels, spacing=None, shape: &#x27;bool&#x27; = True)</code>;从台账取用则 <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_label_shape_stats&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>每个成分<b>线性时间可得</b>的定量值(体积・重心・包围盒・主成分形状指标)。</p>
-<p><code style="color:#22d3bf">volops.vol_region_props</code> 的姐妹，但有 <b>不同的目的</b>：</p>
-<p style="margin:2px 0 2px 12px">• 它给出了“表面积”和 Wadell“球度”。为了这个目的由于行进立方体针对每个组件运行，因此 Python 循环与组件数量成正比。转动<b>（随着 1 体素 1 标签的病理输入很快变得沉重）。* 这仅限于仅需要“np.bincount”加权和的金额。 1 个标签数组 10<code style="color:#22d3bf">bincount</code>（件数 1，坐标和 3，协方差 6）= **O(N + n)</b>。实测（<code style="color:#22d3bf">连通性=26</code>，<b>1 体素 1 标签</b> = 病理输入的棋盘图案）： 16**3 = 4096 体素/512 个分量 = 0.0037 s，32**3 = 32768 / 4096 = 0.0350 秒，64**3 = 262144 / 32768 = 0.2556 秒，128**3 = 2097152 / 262144 = 2.3122秒。 <b>每 8 个体素 9.5 / 7.3 / 9.0 次</b>（二次方 64 次），整个区域大约为 1.1 微秒/体素。同样的128**3着色是0.0357 s。</p>
-<p>（供参考：<code style="color:#22d3bf">volops.vol_region_props(surface=&quot;faces&quot;)</code> 是相同的 16**3</p>
+<p>volops.vol_region_props 的姐妹，但有 不同的目的：</p>
+<p style="margin:2px 0 2px 12px">• 它给出了“表面积”和 Wadell“球度”。为了这个目的由于行进立方体针对每个组件运行，因此 Python 循环与组件数量成正比。转动（随着 1 体素 1 标签的病理输入很快变得沉重）。</p>
+<p style="margin:2px 0 2px 12px">• 这仅限于仅需要“np.bincount”加权和的金额。 1 个标签数组 10bincount（件数 1，坐标和 3，协方差 6）= O(N + n)。实测（连通性=26，1 体素 1 标签 = 病理输入的棋盘图案）： 163 = 4096 体素/512 个分量 = 0.0037 s，323 = 32768 / 4096 = 0.0350 秒，643 = 262144 / 32768 = 0.2556 秒，1283 = 2097152 / 262144 = 2.3122秒。 每 8 个体素 9.5 / 7.3 / 9.0 次（二次方 64 次），整个区域大约为 1.1 微秒/体素。同样的1283着色是0.0357 s。</p>
+<p>（供参考：volops.vol_region_props(surface=&quot;faces&quot;) 是相同的 163</p>
 <p>0.0121 秒——由于每个组件的 Python 循环而延长了 3.5 倍。行进立方体</p>
-<p>默认使用 <code style="color:#22d3bf">surface=&quot;auto&quot;</code> 甚至更重。 ）</p>
-<p><code style="color:#22d3bf">标签</code><code style="color:#22d3bf">体素计数</code><code style="color:#22d3bf">体积</code><code style="color:#22d3bf">质心</code><code style="color:#22d3bf">bbox</code> <code style="color:#22d3bf">volops.vol_region_props</code> <b>相同的定义和相同的值</b> （<code style="color:#22d3bf">tests/test_volcolor.py::test_stats_agree_with_vol_region_props_exactly</code> 是(fixed with exact match). <code style="color:#22d3bf">bbox</code> 是<code style="color:#22d3bf">(z0, z1, y0, y1, x0, x1)</code> 并且上限是排除的。</p>
+<p>默认使用 surface=&quot;auto&quot; 甚至更重。 ）</p>
+<p>标签体素计数体积质心bbox volops.vol_region_props 相同的定义和相同的值（tests/test_volcolor.py::test_stats_agree_with_vol_region_props_exactly 是(fixed with exact match). bbox 是(z0, z1, y0, y1, x0, x1) 并且上限是排除的。</p>
 <p>我们还返回什么：</p>
-<p><code style="color:#22d3bf">centroid_mm</code> <code style="color:#22d3bf">(z, y, x)</code> 物理坐标（与没有间距的体素相同）</p>
-<p><code style="color:#22d3bf">extent</code> bbox 的物理尺寸<code style="color:#22d3bf">(dz, dy, dx)</code> · <code style="color:#22d3bf">equivalent_diameter</code></p>
-<p><code style="color:#22d3bf">(6V/pi)**(1/3)</code> · <code style="color:#22d3bf">touches_border</code> bbox 是否触及音量边缘？ ·</p>
-<p><code style="color:#22d3bf">principal_extent</code> 协方差特征值的平方根<code style="color:#22d3bf">(s1 &gt;= s2 &gt;= s3)</code>（物理单位）·</p>
-<p><code style="color:#22d3bf">线性度</code> <code style="color:#22d3bf">(l1-l2)/l1</code> · <code style="color:#22d3bf">平面性</code> <code style="color:#22d3bf">(l2-l3)/l1</code> · <code style="color:#22d3bf">各向同性</code></p>
+<p>centroid_mm (z, y, x) 物理坐标（与没有间距的体素相同）</p>
+<p>extent bbox 的物理尺寸(dz, dy, dx) · equivalent_diameter</p>
+<p>(6V/pi)(1/3) · touches_border bbox 是否触及音量边缘？ ·</p>
+<p>principal_extent 协方差特征值的平方根(s1 &gt;= s2 &gt;= s3)（物理单位）·</p>
+<p>线性度 (l1-l2)/l1 · 平面性 (l2-l3)/l1 · 各向同性</p>
 <p>“l3/l1”·“伸长率”“sqrt(l1/l2)”。</p>
-<p><b><code style="color:#22d3bf">伸长率</code>可以是无限的</b>（合同）：<code style="color:#22d3bf">l1 &gt; 0</code> 和<code style="color:#22d3bf">l2 == 0</code>，换句话说，厚度为 1 体素的完美直线分量返回“inf”。事故除以 0 相反，事实是在第二轴方向上没有扩展，并且当倒圆时，细长的顺序发生变化。他们默默地交换位置。单个体素（“l1 == 0”）是一个各向同性点，因此它是“1.0”。</p>
-<p><b>如果忘记传递空格，数字和结论将会改变</b>。实际测量-半径为6毫米的球体 <code style="color:#22d3bf">间距 = (3.0, 1.0, 1.0)</code> 当使用 mm 的各向异性网格（z 粗化 3 倍）进行采样时，它变成 293 个体素。闭合形式的真值是“4/3 pi 6**3 = 904.78 mm**3”：</p>
-<p style="margin:2px 0 2px 12px">• 当“间距” = 879.0 mm**3（误差<b>-2.85 %</b>）时，<code style="color:#22d3bf">各向同性</code> = 0.7349（近似各向同性 = 正确）。</p>
-<p style="margin:2px 0 2px 12px">• 无“间距” = 293.0（以体素为单位。当读作毫米<b>3时，错误</b>-67.62%<b>），<code style="color:#22d3bf">各向同性</code> = 0.0817 -- **球体看起来像一块“板”</b>。忽略各向异性形状索引被破坏，但返回一个有限且合理的值。</p>
+<p>伸长率可以是无限的（合同）：l1 &gt; 0 和l2 == 0，换句话说，厚度为 1 体素的完美直线分量返回“inf”。事故除以 0 相反，事实是在第二轴方向上没有扩展，并且当倒圆时，细长的顺序发生变化。他们默默地交换位置。单个体素（“l1 == 0”）是一个各向同性点，因此它是“1.0”。</p>
+<p>如果忘记传递空格，数字和结论将会改变。实际测量-半径为6毫米的球体间距 = (3.0, 1.0, 1.0) 当使用 mm 的各向异性网格（z 粗化 3 倍）进行采样时，它变成 293 个体素。闭合形式的真值是“4/3 pi 63 = 904.78 mm3”：</p>
+<p style="margin:2px 0 2px 12px">• 当“间距” = 879.0 mm3（误差-2.85 %）时，各向同性 = 0.7349（近似各向同性 = 正确）。</p>
+<p style="margin:2px 0 2px 12px">• 无“间距” = 293.0（以体素为单位。当读作毫米3时，错误-67.62%），各向同性 = 0.0817 -- 球体看起来像一块“板”。忽略各向异性形状索引被破坏，但返回一个有限且合理的值。</p>
 <p>*等效直径也相差 1.44 倍，即 11.8849 毫米与 8.2406 毫米。</p>
-<p>数值说明：二阶矩计算为“E[x**2] - E[x]**2”，因此坐标对于具有较大和较小分布的元件，可能会发生精度损失。上限：数据：<code style="color:#22d3bf">MAX_COLOR_VOXELS</code> （一侧高达 ~2000），“E[x**2] ~ 4e6” 的 float64 的相对精度为 1e-16 = 绝对 1e-10，体素方差有 10 个数量级的余量。比那个大体积应该是切完ROI之后才可以通过的（这也是上限的原因）。</p>
-<p>将 *shape* 设置为“False”将忽略协方差（bincount 为 10 中的 6），<code style="color:#22d3bf">principal_extent</code> 不要返回以下 5 项——仅需要体积过滤器有时 O(N) 临时数组可以减少为 1。</p>
-<p>以升序标签顺序返回<code style="color:#22d3bf">list[dict]</code>（<b>仅实际标签</b>）--- 即使数字中有间隙，<code style="color:#22d3bf">labels.max()</code> 也不会返回空字典）。</p>
+<p>数值说明：二阶矩计算为“E[x2] - E[x]2”，因此坐标对于具有较大和较小分布的元件，可能会发生精度损失。上限：数据：MAX_COLOR_VOXELS （一侧高达 ~2000），“E[x2] ~ 4e6” 的 float64 的相对精度为 1e-16 = 绝对 1e-10，体素方差有 10 个数量级的余量。比那个大体积应该是切完ROI之后才可以通过的（这也是上限的原因）。</p>
+<p>将 *shape* 设置为“False”将忽略协方差（bincount 为 10 中的 6），principal_extent 不要返回以下 5 项——仅需要体积过滤器有时 O(N) 临时数组可以减少为 1。</p>
+<p>以升序标签顺序返回list[dict]（仅实际标签）--- 即使数字中有间隙，labels.max() 也不会返回空字典）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_flow_direction(dem, cell_size, nodata=&#x27;error&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import demops; demops.dem_flow_direction(dem, cell_size, nodata=&#x27;error&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdem.get(&quot;dem_flow_direction&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>D8 flow direction। O&#x27;Callaghan &amp; Mark (1984)।</p>
-<p>रिटर्न मान <code style="color:#22d3bf">(H, W)</code> का पूर्णांक है, जहां 0-7 <code style="color:#22d3bf">_D8</code> का अनुक्रम है और <code style="color:#22d3bf">-1</code> <code style="color:#22d3bf">_D8</code> का अनुक्रम है। &quot;कोई मंजिल नहीं&quot; (अवसाद)। ``nodata=&#x27;आउटलेट&#x27;&#x27; की सीमा कोशिकाओं में 0-7 सीमा से बाहर जा रहे हैं।</p>
-<p>यदि <code style="color:#22d3bf">nodata=&#x27;आउटलेट&#x27;</code>, तो प्रवाह को लापता सेल में जाने की <b>अनुमति</b> दें (वहां सिस्टम से बाहर निकलें)। यदि यह <code style="color:#22d3bf">बाधा&#x27;&#x27; है, तो इससे डेटा गुम नहीं होगा। लुप्त कोशिकाएँ हमेशा </code>-1`` होती हैं।</p>
+<p>रिटर्न मान (H, W) का पूर्णांक है, जहां 0-7 _D8 का अनुक्रम है और -1 _D8 का अनुक्रम है। &quot;कोई मंजिल नहीं&quot; (अवसाद)। nodata=&#x27;आउटलेट&#x27;&#x27; की सीमा कोशिकाओं में 0-7 सीमा से बाहर जा रहे हैं।</p>
+<p>यदि nodata=&#x27;आउटलेट&#x27;, तो प्रवाह को लापता सेल में जाने की अनुमति दें (वहां सिस्टम से बाहर निकलें)। यदि यह बाधा&#x27;&#x27; है, तो इससे डेटा गुम नहीं होगा। लुप्त कोशिकाएँ हमेशा -1 होती हैं।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

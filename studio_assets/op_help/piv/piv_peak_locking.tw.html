@@ -4,19 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_peak_locking(flow, bins=20)</code>(要直接呼叫實作,<code style="color:#22d3bf">import pivops; pivops.piv_peak_locking(flow, bins=20)</code>;從台帳取用則 <code style="color:#22d3bf">opspiv.get(&quot;piv_peak_locking&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>峰值鎖定的強度：小數部分的分布偏離均勻分布的程度。</p>
-<p>當小數部分為 0 或 0.5 時，子像素估計值傾向於真實位移。偏差（由於相關峰值的形狀和擬合函數的形狀不同）教科書系統錯誤）。 <b>如果流量不均勻，小數部分應接近均勻分佈</b>，測量與那裡的偏差。</p>
-<p>索引“c0”是与样本大小无关的卡方偏差： <code style="color:#22d3bf">sum((n_i - n_bar)^2 / n_bar) / (2*bins - 1)</code>。對於結合了兩個組件的 2*bins 類，如果我們從均勻分佈中抽取樣本，我們會得到期望值是1，所以如果在1左右，就無法與uniform區分開來。 **越大，偏差越大。</p>
-<p>★ 然而，此指標假設真實位移的小數部分是均勻的。窗戶數量在位移很少或變化緩慢的場中，<b>真實值本身 c0 也會變大</b></p>
+<p>當小數部分為 0 或 0.5 時，子像素估計值傾向於真實位移。偏差（由於相關峰值的形狀和擬合函數的形狀不同）教科書系統錯誤）。 如果流量不均勻，小數部分應接近均勻分佈，測量與那裡的偏差。</p>
+<p>索引“c0”是与样本大小无关的卡方偏差： sum((n_i - n_bar)^2 / n_bar) / (2*bins - 1)。對於結合了兩個組件的 2*bins 類，如果我們從均勻分佈中抽取樣本，我們會得到期望值是1，所以如果在1左右，就無法與uniform區分開來。 越大，偏差越大。</p>
+<p>★ 然而，此指標假設真實位移的小數部分是均勻的。窗戶數量在位移很少或變化緩慢的場中，真實值本身 c0 也會變大</p>
 <p>（實測：線性燈真實值為82－視窗網格只有19列，小數部分離散。）。因此，透過與相同輸入的真實值進行比較來讀取c0。</p>
-<p><b>确诊是分开的</b> —— 将均匀平移的小数部分从0缩放到0.9，查看估計值是否位於對角線上。實測（win=32，密度0.02）：</p>
+<p>确诊是分开的 —— 将均匀平移的小数部分从0缩放到0.9，查看估計值是否位於對角線上。實測（win=32，密度0.02）：</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">估計方法 分數誤差的 RMS 最大絕對誤差</h4>
 <p>高斯3 0.0037 像素 0.0088 像素拋物線 0.0104 像素 0.0151 像素質心 0.2259 像素 0.3701 像素</p>
-<p><code style="color:#22d3bf">centroid</code> 將真實值 0.1 回答為 0.02，將 0.9 回答為 0.98 — 吸引到一個整數就像教科書上的S形。 <b>確認應該出現的結果出現了</b>，这不是实现的问题（这就是为什么所有三个都保留在原处）。</p>
+<p>centroid 將真實值 0.1 回答為 0.02，將 0.9 回答為 0.98 — 吸引到一個整數就像教科書上的S形。 確認應該出現的結果出現了，这不是实现的问题（这就是为什么所有三个都保留在原处）。</p>
 <p>參數：</p>
-<p>流程：<code style="color:#22d3bf">（2，h，w）</code>。</p>
+<p>流程：（2，h，w）。</p>
 <p>bins：小數部分中直方圖類別的數量。</p>
 <p>返回：</p>
-<p>dict：<code style="color:#22d3bf">c0</code>（兩個元件的索引組合），<code style="color:#22d3bf">hist</code>（<code style="color:#22d3bf">（2，bins）</code>），</p>
+<p>dict：c0（兩個元件的索引組合），hist（（2，bins）），</p>
 <p>“frac_mean”/“frac_std”、“bins”。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 族使用指南</a></p>

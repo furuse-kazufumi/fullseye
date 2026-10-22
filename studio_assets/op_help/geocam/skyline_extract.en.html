@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Extracts from a photo, by dynamic programming, 1 line giving <b>the row of the sky–terrain boundary for each column</b> → signal (W,).</p>
 <p>Same idea as Lie, Lin, and Hsu 2005 (*Pattern Recognition*: Robust Skyline Extraction for Navigation):</p>
-<p>Changes in brightness in the vertical direction (if the sky is bright above, <code style="color:#22d3bf">I[v−1] − I[v+1]</code> is positive) are considered <code style="color:#22d3bf">boundary-likeness&#x27;&#x27;, Choose the path with the lowest cost among consecutive paths that do not jump more than </code>max_jump<code style="color:#22d3bf"> rows from the next column (</code>jump_penalty`` × line jump). Even if there is a locally strong response at the vertical edges of clouds or buildings, the path Continuity leaves real ridgelines.</p>
+<p>Changes in brightness in the vertical direction (if the sky is bright above, I[v−1] − I[v+1] is positive) are considered boundary-likeness&#x27;&#x27;, Choose the path with the lowest cost among consecutive paths that do not jump more than max_jump rows from the next column (jump_penalty × line jump). Even if there is a locally strong response at the vertical edges of clouds or buildings, the path Continuity leaves real ridgelines.</p>
 <p>Args:</p>
 <p>image: (H, W) float. For RGB, make it gray first.</p>
 <p>sky_is_bright: The sky is brighter than the terrain (daytime). False if it is reversed in night view/backlight.</p>
@@ -13,7 +13,7 @@
 <p>max_jump: Allowed row jump in adjacent columns [pixels].</p>
 <p>jump_penalty: Cost per jump pixel (boundary likelihood is normalized from 0 to 1).</p>
 <p>Returns:</p>
-<p>signal (W,) float: Boundary row for each column (0 is the top row). ** Only the sky/topography is shown</p>
+<p>signal (W,) float: Boundary row for each column (0 is the top row).  Only the sky/topography is shown</p>
 <p>In images that are not shown, the average boundary response is close to 0, so ValueError</p>
 <p>Stop at (silence and do not return the noise line).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

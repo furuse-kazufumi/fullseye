@@ -4,19 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_peak_locking(flow, bins=20)</code> (to call the implementation directly, <code style="color:#22d3bf">import pivops; pivops.piv_peak_locking(flow, bins=20)</code>; from the registry, <code style="color:#22d3bf">opspiv.get(&quot;piv_peak_locking&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Strength of peak locking: how far the distribution of the fractional parts deviates from uniform.</p>
-<p>Subpixel estimates gravitate towards true displacements when the fractional part is 0 or 0.5. bias (due to the difference in the shape of the correlation peak and the shape of the fitted function) Textbook systematic error). <b>If the flow is not uniform, the fractional part should be close to uniform distribution</b>, Measure the deviation from there.</p>
-<p>The index <code style="color:#22d3bf">c0</code> is a chi-square deviation independent of sample size:</p>
-<p><code style="color:#22d3bf">sum((n_i - n_bar)^2 / n_bar) / (2*bins - 1)</code>. For the 2*bins class that combines both components, if we take a sample from a uniform distribution, we get The expected value is 1, so if it is around 1, it cannot be distinguished from uniform.** The larger it is, the more biased it is.</p>
-<p>★ However, this index assumes that the decimal part of the true displacement is uniform. number of windows In a field where there is little or where the displacement changes slowly, <b>the true value itself, c0, also becomes large</b> (Actual measurement: True value of linear lamp is 82 —— There are only 19 columns of window grids and the decimal part is discrete. ). Therefore, read c0 by comparing it with the true value of the same input.</p>
-<p><b>Definitive diagnosis is separate</b> —— Scaling the decimal part of uniform translation from 0 to 0.9, See if the estimated values lie on the diagonal line. Actual measurement (win=32, density 0.02):</p>
+<p>Subpixel estimates gravitate towards true displacements when the fractional part is 0 or 0.5. bias (due to the difference in the shape of the correlation peak and the shape of the fitted function) Textbook systematic error). If the flow is not uniform, the fractional part should be close to uniform distribution, Measure the deviation from there.</p>
+<p>The index c0 is a chi-square deviation independent of sample size:</p>
+<p>sum((n_i - n_bar)^2 / n_bar) / (2*bins - 1). For the 2*bins class that combines both components, if we take a sample from a uniform distribution, we get The expected value is 1, so if it is around 1, it cannot be distinguished from uniform. The larger it is, the more biased it is.</p>
+<p>★ However, this index assumes that the decimal part of the true displacement is uniform. number of windows In a field where there is little or where the displacement changes slowly, the true value itself, c0, also becomes large (Actual measurement: True value of linear lamp is 82 —— There are only 19 columns of window grids and the decimal part is discrete. ). Therefore, read c0 by comparing it with the true value of the same input.</p>
+<p>Definitive diagnosis is separate —— Scaling the decimal part of uniform translation from 0 to 0.9, See if the estimated values lie on the diagonal line. Actual measurement (win=32, density 0.02):</p>
 <p>========== ================= ================== Estimation method RMS maximum absolute error of fractional error ========== ================= ================== gauss3 0.0037 px 0.0088 px parabolic 0.0104 px 0.0151 px centroid 0.2259 px 0.3701 px ========== ================= ==================</p>
-<p><code style="color:#22d3bf">centroid</code> answers the true value 0.1 as 0.02, 0.9 as 0.98 — attracts to an integer S-shape just like in the textbook. <b>Confirmation that what was supposed to come out came out</b>, This is not a problem with the implementation (that&#x27;s why all three are left in place).</p>
+<p>centroid answers the true value 0.1 as 0.02, 0.9 as 0.98 — attracts to an integer S-shape just like in the textbook. Confirmation that what was supposed to come out came out, This is not a problem with the implementation (that&#x27;s why all three are left in place).</p>
 <p>Args:</p>
-<p>flow: <code style="color:#22d3bf">(2, h, w)</code>.</p>
+<p>flow: (2, h, w).</p>
 <p>bins: Number of histogram classes in the fractional part.</p>
 <p>Returns:</p>
-<p>dict: <code style="color:#22d3bf">c0</code>(index of both components combined), <code style="color:#22d3bf">hist</code>(<code style="color:#22d3bf">(2, bins)</code>),</p>
-<p><code style="color:#22d3bf">frac_mean</code> / <code style="color:#22d3bf">frac_std</code>, <code style="color:#22d3bf">bins</code>.</p>
+<p>dict: c0(index of both components combined), hist((2, bins)),</p>
+<p>frac_mean / frac_std, bins.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -5,14 +5,14 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>將封閉輪廓轉換為複數傅立葉級數的係數 —— <code style="color:#22d3bf">z(t) = Σ c_k exp(2πi k t)</code>。</p>
 <p>論點：</p>
-<p>點：(N,2) 個閉合輪廓頂點。 <b>（行，列）順序</b>（與<code style="color:#22d3bf">fourierdesc</code>相同）。</p>
-<p>n_harmonics：剩餘階數<code style="color:#22d3bf">K</code>(<code style="color:#22d3bf">|k| &lt;= K</code>)。 「無」至可表示的最大值。</p>
-<p>參數化：<code style="color:#22d3bf">“index”</code>=使點索引成為等距參數/</p>
-<p><code style="color:#22d3bf">“arclength”</code> = <b>弧長</b>並在轉換之前以相等的間隔重新輸入。</p>
+<p>點：(N,2) 個閉合輪廓頂點。 （行，列）順序（與fourierdesc相同）。</p>
+<p>n_harmonics：剩餘階數K(|k| &lt;= K)。 「無」至可表示的最大值。</p>
+<p>參數化：“index”=使點索引成為等距參數/</p>
+<p>“arclength” = 弧長並在轉換之前以相等的間隔重新輸入。</p>
 <p>傳回值：通常為“(2K+1, 3)”，或“(2K, 3)”的實數數組(“矩陣”)，以保留偶數點至奈奎斯特度。該行是“[k，Re c_k，Im c_k]” 「k」 是「0, 1, -1, 2, -2, …」（從低頻）。</p>
-<p>★<b>這個運算的關鍵不是默默地決定如何取得參數變數</b>。取樣不均勻使用「索引」讀取輪廓會為點密集的區域分配額外的時間，<b>圖片相似，但係數不同</b>（實際上，「k=3」的係數相差47倍）。預設是<code style="color:#22d3bf">&quot;index&quot;</code>（FFT的基本意義），但如果你用它作為形狀描述，選擇<code style="color:#22d3bf">“弧長”</code>。</p>
-<p>★★如果選擇<code style="color:#22d3bf">arclength&#x27;&#x27;</code>，輪廓將在op**內部重新繪製，因此返回的係數將是寫入<b>重繪輪廓</b>而不是傳遞的陣列。因此 <code style="color:#22d3bf">contour_fourier_truncation_energy</code> 預測“重繪輪廓” 它是嚴格的，當呼叫者使用手邊的陣列測量誤差時，它不匹配（實際測量：512點，偏差為1.15）。如果您想精確預測手邊的數組，<b>先重新輸入弧長</b> 用<code style="color:#22d3bf">&quot;index&quot;</code> 來稱呼它。</p>
-<p>★<b>重置弧長不是冪等的</b>：由於標本是用繩子綁在一起的，所以弧長的輪廓已經相等。再次將點移到 3.73 px（平均 0.84 px），並將長度額外增加 3.25% 收縮。不要撥打兩次。</p>
+<p>★這個運算的關鍵不是默默地決定如何取得參數變數。取樣不均勻使用「索引」讀取輪廓會為點密集的區域分配額外的時間，圖片相似，但係數不同（實際上，「k=3」的係數相差47倍）。預設是&quot;index&quot;（FFT的基本意義），但如果你用它作為形狀描述，選擇“弧長”。</p>
+<p>★★如果選擇arclength&#x27;&#x27;，輪廓將在op內部重新繪製，因此返回的係數將是寫入重繪輪廓而不是傳遞的陣列。因此 contour_fourier_truncation_energy 預測“重繪輪廓” 它是嚴格的，當呼叫者使用手邊的陣列測量誤差時，它不匹配（實際測量：512點，偏差為1.15）。如果您想精確預測手邊的數組，先重新輸入弧長用&quot;index&quot; 來稱呼它。</p>
+<p>★重置弧長不是冪等的：由於標本是用繩子綁在一起的，所以弧長的輪廓已經相等。再次將點移到 3.73 px（平均 0.84 px），並將長度額外增加 3.25% 收縮。不要撥打兩次。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

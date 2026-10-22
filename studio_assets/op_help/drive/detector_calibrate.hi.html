@@ -4,15 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.detector_calibrate(image, d_spacings, geometry_guess, n_azimuth=180, fit_tilt=True, min_rings=2)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pxrd; pxrd.detector_calibrate(image, d_spacings, geometry_guess, n_azimuth=180, fit_tilt=True, min_rings=2)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;detector_calibrate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>ज्ञात standard (जैसे Si) के ring से detector का केंद्र, दूरी और झुकाव calibrate करता है।</p>
-<p><code style="color:#22d3bf">d_spacings</code> मानक रिक्तियों की एक सूची है [Å] (जरूरी नहीं कि ताकत के क्रम में), <code style="color:#22d3bf">geometry_guess</code> कम से कम <code style="color:#22d3bf">पिक्सेल</code> है और</p>
-<p><code style="color:#22d3bf">तरंग दैर्ध्य</code>, यदि ज्ञात हो, <code style="color:#22d3bf">cx</code>, <code style="color:#22d3bf">cy</code>, <code style="color:#22d3bf">दूरी</code>, <code style="color:#22d3bf">झुकाव</code>, <code style="color:#22d3bf">tilt_dir</code>। कदम:</p>
+<p>d_spacings मानक रिक्तियों की एक सूची है [Å] (जरूरी नहीं कि ताकत के क्रम में), geometry_guess कम से कम पिक्सेल है और</p>
+<p>तरंग दैर्ध्य, यदि ज्ञात हो, cx, cy, दूरी, झुकाव, tilt_dir। कदम:</p>
 <p style="margin:2px 0 2px 12px">1. यदि कोई केंद्र नहीं है, तो चमकीले पिक्सेल के गुरुत्वाकर्षण के केंद्र से शुरू करें, किरण के साथ सबसे मजबूत रिंग उठाएं, और सर्कल को फिट करके केंद्र को तीन बार अपडेट करें।</p>
 <p style="margin:2px 0 2px 12px">2. यदि कोई दूरी नहीं है, तो रेडियल प्रोफ़ाइल के पहले शिखर को d (सबसे छोटे 2θ में से चार) के लिए उम्मीदवारों को निर्दिष्ट करें और उनकी तुलना अन्य रिंगों के पूर्वानुमानों से करें। सबसे अधिक मेल खाने वाले अवलोकनों वाली जोड़ी का चयन करें।</p>
-<p style="margin:2px 0 2px 12px">3. वर्तमान ज्यामिति में <code style="color:#22d3bf">n_azimuth</code> किरणों पर प्रत्येक रिंग की स्थिति की भविष्यवाणी करें, विंडो में तीव्रता के गुरुत्वाकर्षण के केंद्र पर एक बिंदु चुनें, 2θ अवशिष्ट [डिग्री] के साथ <code style="color:#22d3bf">(cx, cy, दूरी, झुकाव के दो घटक)</code> का अनुमान लगाने के लिए <code style="color:#22d3bf">scipy.optimize.least_squares</code> का उपयोग करें। खिड़की ठेकेदारी करते समय 4 बार। झुकाव को रोटेशन वेक्टर के दो घटकों <code style="color:#22d3bf">झुकाव·(कॉस φ, पाप φ)</code> का उपयोग करके हल किया जाता है (एकवचनता से बचना जहां ढलान 0 होने पर φ अनिश्चित हो जाता है)।</p>
-<p>वापसी मूल्य (तानाशाही): ज्यामिति (<code style="color:#22d3bf">cx</code>, <code style="color:#22d3bf">cy</code>, <code style="color:#22d3bf">दूरी</code>, <code style="color:#22d3bf">पिक्सेल</code>, <code style="color:#22d3bf">तरंग दैर्ध्य</code>, <code style="color:#22d3bf">झुकाव</code>, <code style="color:#22d3bf">tilt_dir</code>)</p>
-<p><code style="color:#22d3bf">rms_two_theta_deg</code>・<code style="color:#22d3bf">n_points</code>・<code style="color:#22d3bf">n_rings</code>・<code style="color:#22d3bf">rings_deg</code>・<code style="color:#22d3bf">ok</code>(rms <code style="color:#22d3bf">0.25·पिक्सेल/दूरी</code> से कम है</p>
-<p>और रिंग्स &gt;= <code style="color:#22d3bf">min_rings</code>).</p>
-<p>मान बढ़ाता हैत्रुटि: छवि 2-डी नहीं, कोई डी नहीं, कोई पिक्सेल/तरंगदैर्ध्य नहीं, ``min_rings&#x27;&#x27; रिंग नहीं मिलीं।</p>
+<p style="margin:2px 0 2px 12px">3. वर्तमान ज्यामिति में n_azimuth किरणों पर प्रत्येक रिंग की स्थिति की भविष्यवाणी करें, विंडो में तीव्रता के गुरुत्वाकर्षण के केंद्र पर एक बिंदु चुनें, 2θ अवशिष्ट [डिग्री] के साथ (cx, cy, दूरी, झुकाव के दो घटक) का अनुमान लगाने के लिए scipy.optimize.least_squares का उपयोग करें। खिड़की ठेकेदारी करते समय 4 बार। झुकाव को रोटेशन वेक्टर के दो घटकों झुकाव·(कॉस φ, पाप φ) का उपयोग करके हल किया जाता है (एकवचनता से बचना जहां ढलान 0 होने पर φ अनिश्चित हो जाता है)।</p>
+<p>वापसी मूल्य (तानाशाही): ज्यामिति (cx, cy, दूरी, पिक्सेल, तरंग दैर्ध्य, झुकाव, tilt_dir)</p>
+<p>rms_two_theta_deg・n_points・n_rings・rings_deg・ok(rms 0.25·पिक्सेल/दूरी से कम है</p>
+<p>और रिंग्स &gt;= min_rings).</p>
+<p>मान बढ़ाता हैत्रुटि: छवि 2-डी नहीं, कोई डी नहीं, कोई पिक्सेल/तरंगदैर्ध्य नहीं, min_rings&#x27;&#x27; रिंग नहीं मिलीं।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

@@ -4,19 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.measure_with(report, a, b, ms=False)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imgmetrics; imgmetrics.measure_with(report, a, b, ms=False)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsimgmetrics.get(&quot;measure_with&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p><b>पिछले माप जैसी बिल्कुल समान शर्तों में</b> एक और जोड़ी मापता है।</p>
-<p><code style="color:#22d3bf">compare_images</code> (<code style="color:#22d3bf">अनुबंध</code> सहित) का रिटर्न मान प्राप्त करें और इसे वहां लिखें। रिकॉर्ड किए गए <code style="color:#22d3bf">data_range</code> / <code style="color:#22d3bf">bins</code> / <code style="color:#22d3bf">ncd_levels</code> का उपयोग करके फिर से मापें।</p>
-<p>यह आवश्यक है क्योंकि इस रेपो में वास्तव में एक प्रकार की दुर्घटना हुई है --- <b>केवल संख्याएँ स्थितियाँ आंकड़ों और तालिकाओं में कॉपी करके गायब हो जाती हैं</b>। जब दो अलग-अलग मापे गए पीएसएनआर एक साथ रखे जाते हैं, यदि एक पक्ष <code style="color:#22d3bf">data_range=1.0</code> है और दूसरा <code style="color:#22d3bf">255</code> है, तो <b>48.13 dB अंतर &quot;सुधार&quot; है मैं देख सकता हूं</b>. यदि आप अपने आस-पास की स्थितियों को बदलते हैं, तो आप ऐसे संयोजन नहीं बना पाएंगे जिनकी तुलना नहीं की जा सके।</p>
-<p>साथ ही, यह <code style="color:#22d3bf">मेट्रिक्स</code> प्रकार का उपभोक्ता भी है। केवल <code style="color:#22d3bf">compare_images</code> इस रेपो ने बार-बार उस स्थिति पर कदम रखा है जहां <code style="color:#22d3bf">मेट्रिक्स</code> का उत्पादन होता है और कोई भी इसे नहीं खाता है। यह बिल्कुल उसी प्रकार का था ``जिस प्रकार प्रवेश तो है लेकिन उपभोग का कोई विकल्प नहीं है&#x27;&#x27; (2026-09-02 को निरीक्षण के दौरान पता चला)।</p>
+<p>compare_images (अनुबंध सहित) का रिटर्न मान प्राप्त करें और इसे वहां लिखें। रिकॉर्ड किए गए data_range / bins / ncd_levels का उपयोग करके फिर से मापें।</p>
+<p>यह आवश्यक है क्योंकि इस रेपो में वास्तव में एक प्रकार की दुर्घटना हुई है --- केवल संख्याएँ स्थितियाँ आंकड़ों और तालिकाओं में कॉपी करके गायब हो जाती हैं। जब दो अलग-अलग मापे गए पीएसएनआर एक साथ रखे जाते हैं, यदि एक पक्ष data_range=1.0 है और दूसरा 255 है, तो 48.13 dB अंतर &quot;सुधार&quot; है मैं देख सकता हूं. यदि आप अपने आस-पास की स्थितियों को बदलते हैं, तो आप ऐसे संयोजन नहीं बना पाएंगे जिनकी तुलना नहीं की जा सके।</p>
+<p>साथ ही, यह मेट्रिक्स प्रकार का उपभोक्ता भी है। केवल compare_images इस रेपो ने बार-बार उस स्थिति पर कदम रखा है जहां मेट्रिक्स का उत्पादन होता है और कोई भी इसे नहीं खाता है। यह बिल्कुल उसी प्रकार का था जिस प्रकार प्रवेश तो है लेकिन उपभोग का कोई विकल्प नहीं है&#x27;&#x27; (2026-09-02 को निरीक्षण के दौरान पता चला)।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">पैरामीटर्स</h4>
 <p>रिपोर्ट: तानाशाही</p>
-<p><code style="color:#22d3bf">compare_images</code> या <code style="color:#22d3bf">अनुबंध</code> का वापसी मूल्य।</p>
+<p>compare_images या अनुबंध का वापसी मूल्य।</p>
 <p>ए, बी: array_लाइक</p>
 <p>दोबारा मापने के लिए दो टुकड़े.</p>
 <p>एमएस: बूल</p>
-<p><code style="color:#22d3bf">compare_images</code> को पास करने के लिए मल्टीस्केल विनिर्देश।</p>
+<p>compare_images को पास करने के लिए मल्टीस्केल विनिर्देश।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">रिटर्न</h4>
 <p>हुक्म</p>
-<p>रिपोर्ट का वही रूप. <code style="color:#22d3bf">अनुबंध</code> वैसा ही है** जैसा प्राप्त हुआ था।</p>
+<p>रिपोर्ट का वही रूप. अनुबंध वैसा ही है जैसा प्राप्त हुआ था।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

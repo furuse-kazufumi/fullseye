@@ -5,11 +5,11 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Durchläuft den Kompromiss zwischen Einbettungsstärke und <b>PSNR / BER</b>. <code style="color:#22d3bf">table</code>.</p>
 <p>Führen Sie tatsächlich „embed → extract“ für jede „Stärke“ aus.</p>
-<p>„psnr_db“ PSNR des Originalbilds und des mit Wasserzeichen versehenen Bilds (Bereich [0, 1] Standard, „MAX=1“) Bitfehlerrate der „ber“-Extraktion (gezählt von <code style="color:#22d3bf">hash_distance</code>) „abgeschnitten“ Prozentsatz der Pixel im mit Wasserzeichen versehenen Bild, die außerhalb von [0, 1] liegen.</p>
-<p><b>Der Überhang geht beim Speichern immer verloren</b>, daher kann die Stärke nur anhand der PSNR ermittelt werden.</p>
+<p>„psnr_db“ PSNR des Originalbilds und des mit Wasserzeichen versehenen Bilds (Bereich [0, 1] Standard, „MAX=1“) Bitfehlerrate der „ber“-Extraktion (gezählt von hash_distance) „abgeschnitten“ Prozentsatz der Pixel im mit Wasserzeichen versehenen Bild, die außerhalb von [0, 1] liegen.</p>
+<p>Der Überhang geht beim Speichern immer verloren, daher kann die Stärke nur anhand der PSNR ermittelt werden.</p>
 <p>Wenn Sie ihn erhöhen, wird die „unermessliche Verschlechterung“ zunehmen.</p>
-<p>Wenn Sie die Qualität an „jpeg_quality“ übergeben, wird das mit Wasserzeichen versehene Bild durch ein <b>echtes JPEG</b> geleitet und dann Das extrahierte „ber_jpeg“ ist ebenfalls enthalten (Pillow ist erforderlich. Wenn es weggelassen wird, wird nicht die gesamte Spalte einbezogen. (Es wird nicht standardmäßig ausgeführt, um sicherzustellen, dass sich die zurückgegebenen Spalten nicht je nach Umgebung ändern.)</p>
-<p>Gibt „{&quot;capacity_bits&quot;: int, &quot;n_bits&quot;: int, &quot;rows&quot;: [...], &quot;caveats&quot;: [...], &quot;ll_shape&quot;: tuple}`` zurück.</p>
+<p>Wenn Sie die Qualität an „jpeg_quality“ übergeben, wird das mit Wasserzeichen versehene Bild durch ein echtes JPEG geleitet und dann Das extrahierte „ber_jpeg“ ist ebenfalls enthalten (Pillow ist erforderlich. Wenn es weggelassen wird, wird nicht die gesamte Spalte einbezogen. (Es wird nicht standardmäßig ausgeführt, um sicherzustellen, dass sich die zurückgegebenen Spalten nicht je nach Umgebung ändern.)</p>
+<p>Gibt „{&quot;capacity_bits&quot;: int, &quot;n_bits&quot;: int, &quot;rows&quot;: [...], &quot;caveats&quot;: [...], &quot;ll_shape&quot;: tuple} zurück.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
