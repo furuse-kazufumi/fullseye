@@ -480,6 +480,12 @@ def material_transmittance(material="SI", thickness_mm: float = 0.7, wl_min_nm: 
     ``extra_absorption``: 材料の表に無い吸収を足す ``pairs``(λ [nm], α [1/cm])。例: ドープした Si の自由キャリア吸収
     ``silicon_free_carrier_absorption(1e19, "n", ...)`` をそのまま渡す。格子の全波長を覆わなければ ValueError
     (外挿しない)、負の α も ValueError。表面の反射 R は材料の n,k のまま(自由キャリアの n の変化は小さいので無視)。
+
+    ``doping_cm3`` / ``carrier``: ``None`` (既定)なら未ドープの材料表をそのまま使う。値を指定すると
+    ``carrier`` (``"n"`` または ``"p"``)の自由キャリア吸収を ``silicon_free_carrier_absorption`` で加える。
+    現在は SI だけに対応し、ほかの材料では材料名を含む ValueError。ドープ濃度が負または非有限、あるいは
+    ``carrier`` が選択肢以外なら ValueError。自由キャリア吸収を先に、``extra_absorption`` を後に加算し、
+    表面反射には未ドープ材料表の n,k を使う。
     """
     op = "material_transmittance"
     rec = _record(material, op)
