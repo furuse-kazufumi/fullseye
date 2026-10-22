@@ -1,5 +1,5 @@
 {
- "generated_for": 940,
+ "generated_for": 942,
  "ops": {
   "abs_image": {
    "color_ok": true,
@@ -3049,6 +3049,31 @@
    ],
    "out_kind": "ndarray",
    "program": "threshold 0.50 0.50\ndist_transform 0.50 0.50",
+   "pseudocolor": true,
+   "status": "ok"
+  },
+  "dist_transform_abs": {
+   "color_ok": false,
+   "extra": {
+    "a": "dist_transform_abs.a.jpg",
+    "b": "dist_transform_abs.b.jpg",
+    "chain": "dist_transform_abs.chain.jpg",
+    "inputs": "dist_transform_abs.inputs.jpg"
+   },
+   "fig": "dist_transform_abs.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [],
+   "out_kind": "ndarray",
+   "program": "threshold 0.50 0.50\ndist_transform_abs 0.50 0.50",
    "pseudocolor": true,
    "status": "ok"
   },
@@ -8761,6 +8786,30 @@
    "knob_dead": [],
    "out_kind": "ndarray",
    "program": "mean_box 0.35 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
+  "mean_box_wh": {
+   "color_ok": true,
+   "extra": {
+    "a": "mean_box_wh.a.jpg",
+    "b": "mean_box_wh.b.jpg",
+    "inputs": "mean_box_wh.inputs.jpg"
+   },
+   "fig": "mean_box_wh.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [],
+   "out_kind": "ndarray",
+   "program": "mean_box_wh 0.35 0.50",
    "pseudocolor": false,
    "status": "ok"
   },
@@ -22018,10 +22067,10 @@
   "domain": 4,
   "empty": 1,
   "failed": 0,
-  "ok": 935,
+  "ok": 937,
   "unreachable": 0,
-  "with_chain": 381,
+  "with_chain": 382,
   "with_gif": 40,
-  "with_sweep": 584
+  "with_sweep": 586
  }
 }
