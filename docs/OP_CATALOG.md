@@ -2448,7 +2448,7 @@ _計 3537 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `erfc` `signal → signal` — 相補誤差関数 erfc(x) = 1 − erf(x)。大きな x で 1 − erf を引き算すると桁落ちするので別に持つ (x = 10 で 1 − erf は 0 になるが erfc は 2.1e−45)。 · 例: `poc_dfm_thickness_overhang`, `poc_itof_multifreq`
 - `gauss_cubature` `入力なし → table` — Gauss–Legendre のテンソル積で、箱 [a, b]^dim(a, b は軸ごとでも可)の求積の節点 (n^dim, dim) と重み。 · 例: `gallery_math_numerics_filters`
 - `gauss_quadrature` `入力なし → table` — n 点の Gauss 求積の節点と重み。∫ f ≈ Σ w_k f(x_k)。 · 例: `numerics_tour`
-- `integrate_hamiltonian` `signal × signal → table` — 名前つきのハミルトン系(質量 1)を時間積分する。返り値 ``{"t","q","p","energy","energy_drift"}``。 · 例: `numerics_tour`
+- `integrate_hamiltonian` `signal × signal → table` — 名前つきのハミルトン系(質量 1)を時間積分する。返り値 ``{"t","q","p","energy","energy_drift","method","system"}``。 · 例: `numerics_tour`
 - `interp_barycentric` `signal × signal × signal → signal` — 点 (xk, yk) を通る多項式(次数 len−1)を、重心公式で x に評価する(Berrut & Trefethen 2004)。 · 例: `numerics_tour`
 - `low_discrepancy` `入力なし → matrix` — [0, 1)^dim の低食い違い点列 (n, dim)。 · 例: `numerics_tour`
 
@@ -5007,7 +5007,7 @@ _計 3537 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 #### measure1d / caliper(6)
 - `fuzzy_measure_pairing` `image2d × measurehandle → table` — ファジィ基準(想定幅 pair_size)に最も合うエッジ対を選ぶ(fuzzy_measure_pairing)。 · 例: `poc_calipers_under_illusion`, `poc_dimensional_inspection`
 - `gen_measure_arc` `入力なし → measurehandle` — 測定弧(円周方向に ≈1 px 間隔でプロファイルを取る)を定義(gen_measure_arc)。 サンプル数 n = round(|angle_extent|*radius)+1、``spacing`` = 弧長/(n-1)。 · 例: `poc_dimensional_inspection`
-- `gen_measure_rectangle2` `入力なし → measurehandle` — 回転測定矩形(長軸 ``phi`` 方向に 1 px 間隔でプロファイルを取る)を定義 (gen_measure_rectangle2)。サンプル数 n = round(2*length1)+1、始点は 中心から -(n-1)/2 px の位置。``length2`` は幅方向の平均化幅 [px]。 · 例: `example_scratch_width`, `poc_barcode_1d`, `poc_battery_electrode_breathing`, `poc_calipers_under_illusion`, `poc_dimensional_inspection`, `poc_screw_thread_metrology`, `poc_solar_limb_darkening`, `poc_telecentric_metrology`, `poc_tree_ring_dendro`, `poc_water_level`, `poc_weld_bead_profile`, `poc_weld_radiograph_porosity`
+- `gen_measure_rectangle2` `入力なし → measurehandle` — 回転測定矩形(長軸 ``phi`` 方向に 1 px 間隔でプロファイルを取る)を定義 (gen_measure_rectangle2)。サンプル数 n = max(2, round(2*length1)+1)、始点は 中心から -(n-1)/2 px の位置。``length2`` は幅方向の平均化幅 [px]。 · 例: `example_scratch_width`, `poc_barcode_1d`, `poc_battery_electrode_breathing`, `poc_calipers_under_illusion`, `poc_dimensional_inspection`, `poc_screw_thread_metrology`, `poc_solar_limb_darkening`, `poc_telecentric_metrology`, `poc_tree_ring_dendro`, `poc_water_level`, `poc_weld_bead_profile`, `poc_weld_radiograph_porosity`
 - `measure_pairs` `image2d × measurehandle → table` — 立ち上がり/立ち下がりエッジのペア(構造の幅)を抽出(measure_pairs)。 ``first``/``second`` = 各エッジの ``pos``、``width`` = 幅 [px]、 ``first_point``/``second_point`` = (row, col)。 · 例: `example_scratch_width`, `poc_calipers_under_illusion`, `poc_dimensional_inspection`, `poc_weld_radiograph_porosity`
 - `measure_pos` `image2d × measurehandle → table` — 測定線上のエッジ位置(サブピクセル)と振幅を抽出(measure_pos)。 · 例: `poc_barcode_1d`, `poc_battery_electrode_breathing`, `poc_calipers_under_illusion`, `poc_dimensional_inspection`, `poc_screw_thread_metrology`, `poc_solar_limb_darkening`, `poc_telecentric_metrology`, `poc_tree_ring_dendro`, `poc_water_level`, `poc_weld_bead_profile`, `poc_weld_radiograph_porosity`
 - `translate_measure` `measurehandle → measurehandle` — 測定オブジェクトを平行移動(translate_measure)。 · 例: `poc_dimensional_inspection`

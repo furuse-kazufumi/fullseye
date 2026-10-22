@@ -31,7 +31,7 @@ the picture into integers (1, 2, 4, 8, ...) that can be checked.
 
 Returns a ``pairs`` array of ``(r, x)``.
 
-**Raises** ``ValueError``: unknown map; ``r_lo >= r_hi``; non-positive counts;
+**Raises** ``ValueError``: unknown map; ``r_lo >= r_hi``; non-positive retained/grid counts or negative burn-in;
 a grid over the cap; ``x0`` outside the unit interval.
 
 HALCON: no operator.

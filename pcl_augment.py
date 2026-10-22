@@ -47,7 +47,9 @@ def _as_points(a, name: str = "points") -> np.ndarray:
     長さ 3 の 1 次元入力は単一点として ``(1,3)`` に昇格。形状が不正なら ``ValueError``
     を送出する(縮退入力を黙って通さない = fail-closed, note_15 Class B)。"""
     arr = np.asarray(a, dtype=np.float64)
-    if arr.ndim == 1:
+    if arr.ndim == 1 and arr.size == 0:
+        arr = arr.reshape(0, 3)
+    elif arr.ndim == 1:
         if arr.shape[0] != 3:
             raise ValueError(f"{name}: 1-D input must have length 3, got {arr.shape[0]}")
         arr = arr.reshape(1, 3)

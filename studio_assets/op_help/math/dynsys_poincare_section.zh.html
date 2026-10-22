@@ -7,7 +7,7 @@
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>Takes the <code style="color:#22d3bf">x</code> block of <code style="color:#22d3bf">ode_flow_states</code> and returns the points where coordinate *axis* crosses *value* in the given *direction* (+1 upward, -1 downward, 0 either). The crossing is found by <b>linear interpolation between the two straddling samples</b>, not by taking the nearer sample — otherwise the section is quantised by the step size and a periodic orbit looks like a cloud.</p>
 <p>★<b>Why this earns its place</b>: a periodic orbit must give <b>one</b> point (to within the interpolation error), a period-2 orbit two, and a chaotic one a fractal set. That is a check with a number in it, unlike &quot;the picture looks like a strange attractor&quot;.</p>
-<p>Returns a <code style="color:#22d3bf">pairs</code> array of the remaining coordinates at each crossing.</p>
+<p>Returns a two-column <code style="color:#22d3bf">pairs</code> array: the first two remaining coordinates, or the sole remaining coordinate followed by zero for a 2-D state.</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: states not (S, n) with S &gt;= 2; axis out of range; direction not in (-1, 0, 1); non-finite input; no crossing found (reported, not returned as an empty array that a caller may read as &quot;no orbit&quot;).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>mathops 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>

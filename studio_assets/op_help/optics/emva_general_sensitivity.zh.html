@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>特性曲线、输入 SNR、绝对灵敏度阈值、DR 与以光子为单位的暗噪声(General 2.1〜2.4、6.6〜6.8 节)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>*mu_p*: 露光段ごとの画素あたりの平均光子数。*mu_y*, *var_y*: 同じ露光の 2 枚から出した平均と時間分散(式 16・18、<code style="color:#22d3bf">sensorchar.emva_pair_statistics</code>)。*mu_y_dark*, *var_y_dark*: 暗画像の同じ量。*mu_p_sat*: 飽和の露光(0.1〜0.2 % の画素が最大値になる露光、6.7 節)。0 ≤ μ_p ≤ μ_p.sat の点だけを使う。</p>
+<p>*mu_p*: 露光段ごとの画素あたりの平均光子数。*mu_y*, *var_y*: 同じ露光の 2 枚から出した平均と時間分散(式 16・18、<code style="color:#22d3bf">sensorchar.emva_pair_statistics</code>)。*mu_y_dark*, *var_y_dark*: 暗画像の同じ量。*mu_p_sat*: 飽和の露光(0.1〜0.2 % の画素が最大値になる露光、6.7 節)。負の μ_p は ValueError、μ_p.sat を超える点は除外する。</p>
 <p>手順:</p>
 <p style="margin:2px 0 2px 12px">1. 特性曲線 μ_y − μ_y.dark = R(μ_p) を [0, μ_p.sat] を P 等分した 3 次 B-スプラインで当て、各点の傾き ∂μ_y/∂μ_p と暗い所の傾き R_d = ∂μ_y/∂μ_p|μ_p=0(式 25)を出す(6.6 節)。</p>
 <p style="margin:2px 0 2px 12px">2. 出力 SNR_y = (μ_y − μ_y.dark)/σ_y(式 7)、入力 SNR_p = μ_p |∂μ_y/∂μ_p| / σ_y(式 10)、理想 √μ_p(式 15)。</p>

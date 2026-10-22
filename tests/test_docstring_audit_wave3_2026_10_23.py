@@ -13,6 +13,7 @@ import driveenv
 import drivecommonroad
 import gfx2d
 import grind
+import conngraph
 import demops
 import interferometry
 import optics
@@ -24,7 +25,16 @@ import pxrd
 import roadjp
 import mathtransforms
 import kendama
+import mathnumerics
+import mathops
+import match3d
+import measuring1d
 import render_beauty
+import drivelateral
+import sensorgeneral
+import spc
+import telecentric
+import ultrasound
 import segcontour
 
 
@@ -51,6 +61,19 @@ import segcontour
         (annotate.annotate_legend, "ceil(2r)"),
         (gfx2d.color_lut, "result is clipped once"),
         (drivecommonroad.cr_synthetic, "4 本すべて"),
+        (interferometry.csi_peak_position, "carrier-frequency checks"),
+        (optics.defocus_from_shift, "2.9 % above"),
+        (mathops.dynsys_bifurcation_map, "negative burn-in"),
+        (mathops.dynsys_poincare_section, "two-column ``pairs``"),
+        (ultrasound.echo_phase_polarity, "参照エコーに対する相対符号"),
+        (sensorgeneral.emva_general_sensitivity, "負の μ_p は ValueError"),
+        (measuring1d.gen_measure_rectangle2, "max(2, round(2*length1)+1)"),
+        (conngraph.graph_layer_propagate, "平均が ``gain``"),
+        (spc.gum_expanded, "floor(nu_eff)"),
+        (match3d.hough_plane_3d, "半 voxel ずらした"),
+        (mathnumerics.integrate_hamiltonian, '"method","system"'),
+        (telecentric.lens_equivalent_pinhole, "``width`` / ``height``"),
+        (gfx2d.lens_shading_gain, "flat-field response mean"),
     ],
 )
 def test_corrected_contract_is_public(op, statement):
@@ -74,3 +97,8 @@ def test_corrected_contracts_match_behavior():
         driveenv.road_row_distance(np.empty((0, 4)), 10, 100, 1.5)
     with pytest.raises(ValueError, match="step_divisor must be > 4"):
         interferometry.csi_design(step_divisor=4)
+    assert pcl_augment.jitter([], 1).shape == (0, 3)
+    assert pcl_augment.random_dropout([], 0.5)[0].shape == (0, 3)
+    assert pcl_augment.random_rotation([])[0].shape == (0, 3)
+    with pytest.raises(ValueError, match="start_index out of range"):
+        drivelateral.lateral_offset([[0, 0]], [[0, 0], [1, 0]], start_index=1)

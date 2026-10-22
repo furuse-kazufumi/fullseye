@@ -1008,7 +1008,7 @@ def lateral_offset(points, path, *, start_index=None, window: int = 40) -> Dict[
         raise ValueError("%s: points must be (2,) or (N, 2)" % op)
     P = _path(path, "path", op)
     cum = np.r_[0.0, np.cumsum(np.hypot(*np.diff(P, axis=0).T))]
-    si = _start(start_index, len(X), len(P), op)
+    si = _start(start_index, len(X), len(P) - 1, op)
     out_s = np.empty(len(X))
     out_n = np.empty(len(X))
     out_i = np.empty(len(X), int)

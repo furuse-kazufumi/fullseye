@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>층 0의 상태 <code style="color:#22d3bf">U</code> (N, n_0)를 블록 <code style="color:#22d3bf">W[layer a → layer a+1]</code>로 <b>앞으로 한 단씩</b> 통과시킨 전체 층의 상태 <code style="color:#22d3bf">(N, n)</code>(<code style="color:#22d3bf">matrix</code>, 열은 노드 순이며 층 0의 열은 <code style="color:#22d3bf">U</code> 그 자체).</p>
 <p>받는 쪽마다 입력 가중치의 합을 1 로 정규화한 다음 가중합을 취하고(층의 크기에 의존하지 않는다), <code style="color:#22d3bf">activation</code> 으로</p>
-<p>활성화한다: <code style="color:#22d3bf">&quot;linear&quot;</code> 는 그대로(평균 절댓값을 <code style="color:#22d3bf">gain</code> 으로), <code style="color:#22d3bf">&quot;tanh&quot;</code> 는 포화, <code style="color:#22d3bf">&quot;kwta&quot;</code> 는 각 자극에서입력이 상위 <code style="color:#22d3bf">active_frac</code> 인 받는 쪽만이(임계값 위의 잉여로) 발화하고, 평균이 1 이 되도록 정규화한다. 층을 건너뛰는 결선(층 a → a+2)과 층 안의 재귀는 <b>쓰지 않는다</b>(앞방향의 한 단씩의 사상만 보는 도구).</p>
+<p>활성화한다: <code style="color:#22d3bf">&quot;linear&quot;</code> 는 그대로(평균 절댓값을 <code style="color:#22d3bf">gain</code> 으로), <code style="color:#22d3bf">&quot;tanh&quot;</code> 는 포화, <code style="color:#22d3bf">&quot;kwta&quot;</code> 는 각 자극에서입력이 상위 <code style="color:#22d3bf">active_frac</code> 인 받는 쪽만이(임계값 위의 잉여로) 발화하고, 평균이 <code style="color:#22d3bf">gain</code> 이 되도록 정규화한다. 층을 건너뛰는 결선(층 a → a+2)과 층 안의 재귀는 <b>쓰지 않는다</b>(앞방향의 한 단씩의 사상만 보는 도구).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

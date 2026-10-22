@@ -1078,7 +1078,7 @@ def defocus_from_shift(shift_um=10.0, wavelength_um=0.55, f_number=5.6):
 
     Paraxial: ``W20 = shift/(8 N^2)`` is the small-angle expansion of the exact
     ``shift * (1 - cos theta)`` sag; at ``f/1.5`` (``sin theta = 1/3``) the exact
-    edge value is 5.7 % below the paraxial one — the number is a *defocus
+    edge value is about 2.9 % above the paraxial one — the number is a *defocus
     convention*, not a high-NA wavefront.
     """
     dz = _finite_scalar(shift_um, "shift_um")

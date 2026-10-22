@@ -24,7 +24,7 @@ from scipy.ndimage import map_coordinates, gaussian_filter1d
 
 def gen_measure_rectangle2(row, col, phi, length1, length2, shape):
     """回転測定矩形(長軸 ``phi`` 方向に 1 px 間隔でプロファイルを取る)を定義
-    (gen_measure_rectangle2)。サンプル数 n = round(2*length1)+1、始点は
+    (gen_measure_rectangle2)。サンプル数 n = max(2, round(2*length1)+1)、始点は
     中心から -(n-1)/2 px の位置。``length2`` は幅方向の平均化幅 [px]。"""
     n = max(2, int(round(2.0 * float(length1))) + 1)
     t = np.arange(n, dtype=float) - (n - 1) / 2.0

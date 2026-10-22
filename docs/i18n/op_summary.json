@@ -25910,13 +25910,13 @@
    "hi": "points (xk, yk) से गुज़रने वाले polynomial (degree len−1) को barycentric formula से x पर evaluate करता है (Berrut & Trefethen 2004)।"
   },
   "math/integrate_hamiltonian": {
-   "fp": "a906c65c5020",
-   "en": "Integrates a named Hamiltonian system (mass 1) in time. Return value ``{\"t\",\"q\",\"p\",\"energy\",\"energy_drift\"}``.",
-   "zh": "对带名称的哈密顿系统(质量 1)做时间积分。返回值 ``{\"t\",\"q\",\"p\",\"energy\",\"energy_drift\"}``。",
-   "tw": "對帶名稱的哈密頓系統(質量 1)做時間積分。回傳值 ``{\"t\",\"q\",\"p\",\"energy\",\"energy_drift\"}``。",
-   "ko": "이름이 붙은 해밀턴계(질량 1)를 시간 적분한다. 반환값 ``{\"t\",\"q\",\"p\",\"energy\",\"energy_drift\"}``.",
-   "de": "Integriert ein benanntes Hamiltonsches System (Masse 1) in der Zeit. Rückgabewert ``{\"t\",\"q\",\"p\",\"energy\",\"energy_drift\"}``.",
-   "hi": "नाम वाले Hamiltonian system (mass 1) को समय में integrate करता है। return value ``{\"t\",\"q\",\"p\",\"energy\",\"energy_drift\"}``।"
+   "fp": "38ac58a9c0a3",
+   "en": "Integrates a named Hamiltonian system (mass 1) in time. Return value ``{\"t\",\"q\",\"p\",\"energy\",\"energy_drift\",\"method\",\"system\"}``.",
+   "zh": "对带名称的哈密顿系统(质量 1)做时间积分。返回值 ``{\"t\",\"q\",\"p\",\"energy\",\"energy_drift\",\"method\",\"system\"}``。",
+   "tw": "對帶名稱的哈密頓系統(質量 1)做時間積分。回傳值 ``{\"t\",\"q\",\"p\",\"energy\",\"energy_drift\",\"method\",\"system\"}``。",
+   "ko": "이름이 붙은 해밀턴계(질량 1)를 시간 적분한다. 반환값 ``{\"t\",\"q\",\"p\",\"energy\",\"energy_drift\",\"method\",\"system\"}``.",
+   "de": "Integriert ein benanntes Hamiltonsches System (Masse 1) in der Zeit. Rückgabewert ``{\"t\",\"q\",\"p\",\"energy\",\"energy_drift\",\"method\",\"system\"}``.",
+   "hi": "नाम वाले Hamiltonian system (mass 1) को समय में integrate करता है। return value ``{\"t\",\"q\",\"p\",\"energy\",\"energy_drift\",\"method\",\"system\"}``।"
   },
   "math/lomb_scargle": {
    "fp": "ea44e1e844ee",
@@ -27296,13 +27296,13 @@
    "hi": "query point से सतह तक **sign सहित** दूरी। → ``(N,)``।"
   },
   "measure1d/gen_measure_rectangle2": {
-   "fp": "ce096c1b7728",
-   "en": "Defines a rotated measurement rectangle (the profile is sampled at 1 px spacing along the major axis in direction ``phi``) (gen_measure_rectangle2). Number of samples n = round(2*length1)+1; the start point lies -(n-1)/2 px from the center. ``length2`` is the averaging width across the profile [px].",
-   "zh": "定义旋转测量矩形(沿长轴 ``phi`` 方向以 1 px 间隔取剖面)(gen_measure_rectangle2)。采样数 n = round(2*length1)+1，起点位于距中心 -(n-1)/2 px 处。``length2`` 为宽度方向的平均宽度 [px]。",
-   "tw": "定義旋轉量測矩形(沿長軸 ``phi`` 方向以 1 px 間隔取剖面)(gen_measure_rectangle2)。取樣數 n = round(2*length1)+1，起點位於距中心 -(n-1)/2 px 處。``length2`` 為寬度方向的平均寬度 [px]。",
-   "ko": "회전 측정 직사각형(장축 ``phi`` 방향으로 1 px 간격으로 프로파일을 취함)을 정의한다(gen_measure_rectangle2). 샘플 수 n = round(2*length1)+1, 시작점은 중심에서 -(n-1)/2 px 위치. ``length2``는 폭 방향의 평균화 폭 [px].",
-   "de": "Definiert ein gedrehtes Messrechteck (das Profil wird entlang der Hauptachse in Richtung ``phi`` im Abstand von 1 px abgetastet) (gen_measure_rectangle2). Anzahl der Abtastwerte n = round(2*length1)+1, der Startpunkt liegt -(n-1)/2 px vom Mittelpunkt entfernt. ``length2`` ist die Mittelungsbreite quer zum Profil [px].",
-   "hi": "घुमाया हुआ measurement rectangle परिभाषित करता है (profile को ``phi`` दिशा वाली major axis के साथ 1 px अंतराल पर लिया जाता है) (gen_measure_rectangle2)। sample संख्या n = round(2*length1)+1, आरंभ बिंदु केंद्र से -(n-1)/2 px पर है। ``length2`` चौड़ाई की दिशा में averaging चौड़ाई [px] है।"
+   "fp": "a3621036fc7e",
+   "en": "Defines a rotated measurement rectangle (the profile is sampled at 1 px spacing along the major axis in direction ``phi``) (gen_measure_rectangle2). Number of samples n = max(2, round(2*length1)+1); the start point lies -(n-1)/2 px from the center. ``length2`` is the averaging width across the profile [px].",
+   "zh": "定义旋转测量矩形(沿长轴 ``phi`` 方向以 1 px 间隔取剖面)(gen_measure_rectangle2)。采样数 n = max(2, round(2*length1)+1)，起点位于距中心 -(n-1)/2 px 处。``length2`` 为宽度方向的平均宽度 [px]。",
+   "tw": "定義旋轉量測矩形(沿長軸 ``phi`` 方向以 1 px 間隔取剖面)(gen_measure_rectangle2)。取樣數 n = max(2, round(2*length1)+1)，起點位於距中心 -(n-1)/2 px 處。``length2`` 為寬度方向的平均寬度 [px]。",
+   "ko": "회전 측정 직사각형(장축 ``phi`` 방향으로 1 px 간격으로 프로파일을 취함)을 정의한다(gen_measure_rectangle2). 샘플 수 n = max(2, round(2*length1)+1), 시작점은 중심에서 -(n-1)/2 px 위치. ``length2``는 폭 방향의 평균화 폭 [px].",
+   "de": "Definiert ein gedrehtes Messrechteck (das Profil wird entlang der Hauptachse in Richtung ``phi`` im Abstand von 1 px abgetastet) (gen_measure_rectangle2). Anzahl der Abtastwerte n = max(2, round(2*length1)+1), der Startpunkt liegt -(n-1)/2 px vom Mittelpunkt entfernt. ``length2`` ist die Mittelungsbreite quer zum Profil [px].",
+   "hi": "घुमाया हुआ measurement rectangle परिभाषित करता है (profile को ``phi`` दिशा वाली major axis के साथ 1 px अंतराल पर लिया जाता है) (gen_measure_rectangle2)। sample संख्या n = max(2, round(2*length1)+1), आरंभ बिंदु केंद्र से -(n-1)/2 px पर है। ``length2`` चौड़ाई की दिशा में averaging चौड़ाई [px] है।"
   },
   "measure1d/gen_measure_arc": {
    "fp": "052e5e5e804c",

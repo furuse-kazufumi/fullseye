@@ -1046,7 +1046,7 @@ def graph_layer_propagate(W: Any, labels: Any, U: Any, activation: str = "kwta",
 
     受け手ごとに入力重みの和を 1 に正規化してから重みつき和を取り(層の大きさに依らない)、``activation`` で
     活性化する: ``"linear"`` はそのまま(平均絶対値を ``gain`` に)、``"tanh"`` は飽和、``"kwta"`` は各刺激で
-    入力が上位 ``active_frac`` の受け手だけが(閾値上の余剰で)発火し、平均が 1 になるよう正規化する。
+    入力が上位 ``active_frac`` の受け手だけが(閾値上の余剰で)発火し、平均が ``gain`` になるよう正規化する。
     層をまたぐ結線(層 a → a+2)と層内の再帰は**使わない**(前向きの一段ごとの写像だけを見る道具)。
     """
     op = "graph_layer_propagate"

@@ -2016,8 +2016,8 @@ def lens_shading_gain(flat, pattern=None, smooth_sigma=0.0):
     Shoot a uniform white target; vignetting and the micro-lens fall-off make
     the corners darker. Multiplying any later frame by this map undoes that.
     *smooth_sigma* > 0 Gaussian-smooths the flat first (per channel) so sensor
-    noise and dust do not become gain speckle. The gain is normalised so the
-    channel **mean** stays 1 — the map corrects shape, not exposure.
+    noise and dust do not become gain speckle. The gain is scaled so applying it
+    preserves the channel **flat-field response mean** — the map corrects shape, not exposure.
 
     Ground truth: ``lens_shading_correct(flat, lens_shading_gain(flat))`` is a
     constant frame (each channel equal to its own mean) to 1e-12.

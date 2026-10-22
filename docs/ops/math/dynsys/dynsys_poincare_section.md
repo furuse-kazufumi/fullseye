@@ -30,7 +30,8 @@ within the interpolation error), a period-2 orbit two, and a chaotic one a
 fractal set. That is a check with a number in it, unlike "the picture looks
 like a strange attractor".
 
-Returns a ``pairs`` array of the remaining coordinates at each crossing.
+Returns a two-column ``pairs`` array: the first two remaining coordinates,
+or the sole remaining coordinate followed by zero for a 2-D state.
 
 **Raises** ``ValueError``: states not (S, n) with S >= 2; axis out of range;
 direction not in (-1, 0, 1); non-finite input; no crossing found (reported,

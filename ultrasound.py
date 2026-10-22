@@ -504,7 +504,7 @@ def echo_phase_polarity(echo, interface=1, half_width=None, reference_interface=
     ★基準は**表面エコー**。表面そのものが Z の下がる界面(水より柔らかい最上層)なら表面
     エコーが反転しているので、Z の上がる深い界面が「反転」と読まれる —— 分類は「表面に対して
     同じ向きか逆向きか」であって、絶対の Z の上下ではない(``tests/test_ultrasound.py`` の門)。
-    ★``signed_peak``(ゲート内で |RF| が最大のサンプルの符号)も返す —— 現場で言う
+    ★``signed_peak``(ゲート内で |RF| が最大のサンプルの、参照エコーに対する相対符号)も返す —— 現場で言う
     「極性」はこれだが、直交のエコー(薄い層の微分形)では帯域と標本化でどちらにも
     転ぶ。``signed_peak_agrees`` が False の行はそれ。
     返り(A スキャン): ``phase`` [rad] ``phase_deg`` ``amplitude`` ``t_peak`` ``polarity``

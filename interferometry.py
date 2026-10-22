@@ -990,7 +990,7 @@ def csi_peak_position(signal, z_step_um=0.05, z_start_um=0.0, wavelength_um=0.6,
                        ``wavelength_um/4`` Nyquist ceiling — see
                        :func:`csi_design`.
     z_start_um:        height of plane 0.
-    wavelength_um:     mean wavelength, used only for the Nyquist check.
+    wavelength_um:     mean wavelength, used for the Nyquist and carrier-frequency checks.
     mode:              one of :data:`ESTIMATORS`.
     remove_bias:       passed to :func:`csi_envelope`.
     min_visibility:    refuse a scan whose envelope prominence
