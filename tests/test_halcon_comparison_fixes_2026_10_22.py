@@ -70,11 +70,13 @@ def test_reproduced_h08_connection_neighborhood_and_limit():
         profile_name = "reference" if backend == "numpy" else "industrial"
         with fslib.profile(profile_name):
             assert len(fslib.connection(reg).ids) == 1
-            assert len(fslib.connection(reg, neighborhood=4).ids) == 2
+            assert len(fslib.connection_opts(reg, neighborhood=4).ids) == 2
+            assert np.array_equal(fslib.connection(reg).labels,
+                                  fslib.connection_opts(reg).labels)
             with pytest.raises(fslib.FsValueError, match="count 2.*limit 1"):
-                fslib.connection(reg, neighborhood=4, max_connection=1)
+                fslib.connection_opts(reg, neighborhood=4, max_connection=1)
     with pytest.raises(fslib.FsValueError):
-        fslib.connection(reg, neighborhood=6)
+        fslib.connection_opts(reg, neighborhood=6)
 
 
 def test_reproduced_h14_limit_precedes_stack_and_describes_allocation(monkeypatch):

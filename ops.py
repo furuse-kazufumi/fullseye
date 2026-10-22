@@ -2647,6 +2647,8 @@ NONFINITE_IS_MEANINGFUL = {
 #: (``ops3d.py`` の同じ嘘は ``project_points`` で 2026-09-02 に直され、
 #: この 1 行が取り残されていた)。台帳行きにしていたら欠陥を隠していた。
 UNIT_RANGE_IS_NOT_THE_CONTRACT = {
+    "dist_transform_abs":
+        "絶対画素距離(物理量)。正規化版は dist_transform。",
     "tb_project_spherical":
         "画素値は slant range sqrt(x^2+y^2+z^2)(座標の単位 = メートル)。"
         "docstring が『画素値は slant range』と明記。実測 0 .. 12.53。",

@@ -33,7 +33,7 @@ __all__ = [
     "FsValueError", "FsTypeError", "FsBackendError",
     "profile", "current_profile", "backends_for", "op",
     "unmet_ops", "readiness_report", "require_ready",
-    "gauss", "threshold", "connection", "region_features", "select_shape", "measure_all",
+    "gauss", "threshold", "connection", "connection_opts", "region_features", "select_shape", "measure_all",
 ]
 
 
@@ -735,14 +735,8 @@ def threshold(img: FImage, lo: float, hi: float) -> Region:
     return _dispatch("threshold", img, lo, hi)
 
 
-def connection(reg: Region, neighborhood: int = 8,
-               max_connection: int | None = None) -> ObjectSet:
-    """Split a region using 4- or 8-neighborhood connectivity.
-
-    ``max_connection`` fails closed when the resulting count exceeds the limit;
-    it never truncates. Example: ``connection(Region(np.eye(2, dtype=bool)),
-    neighborhood=4, max_connection=2)``.
-    """
+def _connection_core(reg: Region, neighborhood: int,
+                     max_connection: int | None) -> ObjectSet:
     _require(reg, Region, "connection")
     if isinstance(neighborhood, (bool, np.bool_)) or neighborhood not in (4, 8):
         raise FsValueError("connection: neighborhood must be 4 or 8, got %r"
@@ -758,6 +752,27 @@ def connection(reg: Region, neighborhood: int = 8,
         raise FsValueError("connection: component count %d exceeds max_connection limit %d"
                            % (count, max_connection))
     return result
+
+
+def connection(reg: Region) -> ObjectSet:
+    """Split a region into components using 8-neighborhood connectivity.
+
+    Args:
+        reg: Region to split.
+    """
+    return _connection_core(reg, 8, None)
+
+
+def connection_opts(reg: Region, *, neighborhood: int = 8,
+                    max_connection: int | None = None) -> ObjectSet:
+    """Split a region with configurable connectivity and a fail-closed limit.
+
+    Args:
+        reg: Region to split.
+        neighborhood: Pixel connectivity, either 4 or 8.
+        max_connection: Maximum allowed component count. ``None`` has no limit.
+    """
+    return _connection_core(reg, neighborhood, max_connection)
 
 
 def select_shape(objs: ObjectSet, feature: str, vmin: float, vmax: float) -> ObjectSet:

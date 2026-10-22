@@ -830,9 +830,10 @@ from fullseye.fixture import (  # noqa: E402,F401
 )
 # 意味で op を引く(6 言語の要約・BM25、索引は fullseye/data/OP_SEARCH.json —— RAG の入口、2026-10-07)。
 from fullseye.opsearch import search_ops  # noqa: E402,F401
+from fslib import connection_opts  # noqa: E402,F401
 
 __all__ = [
-    "op", "ledger",
+    "op", "ledger", "connection_opts",
     "orient2d", "orient3d", "incircle", "insphere",
     "orient2d_exact", "orient3d_exact", "incircle_exact", "insphere_exact",
     "point_in_polygon", "point_in_convex_polygon", "is_convex_polygon",

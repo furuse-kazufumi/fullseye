@@ -74,7 +74,7 @@ def input_for(sort: str):
 # 全 op を明示的な文字列リテラルで列挙(op→example 逆引きインデックス用に、各 op 名  #
 # がソース中に literal で出現する必要がある)。ops レジストリから機械抽出したもの。   #
 # --------------------------------------------------------------------------- #
-OPS = ["gaussian", "mean_box", "bilateral", "kuwahara", "unsharp", "median", "min_filter",
+OPS = ["gaussian", "mean_box", "mean_box_wh", "bilateral", "kuwahara", "unsharp", "median", "min_filter",
        "max_filter", "percentile", "sk_tv", "sk_wavelet", "sk_median_disk",
        "sk_rolling_ball", "sk_nlm", "sk_tv_bregman", "cv_bilateral", "cv_median",
        "cv_box", "cv_gaussian", "cv_nlmeans", "cv_sharpen", "dl_aniso_diffusion",

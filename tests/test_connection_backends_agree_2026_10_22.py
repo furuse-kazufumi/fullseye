@@ -18,7 +18,9 @@ def _fixtures():
 
 def _result(mask, neighborhood, profile_name):
     with fslib.profile(profile_name):
-        objs = fslib.connection(fslib.Region(mask), neighborhood=neighborhood)
+        reg = fslib.Region(mask)
+        objs = (fslib.connection_opts(reg, neighborhood=4)
+                if neighborhood == 4 else fslib.connection(reg))
         components = {
             frozenset(map(tuple, np.argwhere(objs.labels == label)))
             for label in objs.ids
@@ -26,6 +28,19 @@ def _result(mask, neighborhood, profile_name):
         area, row, column = fslib.region_features(objs)
         features = sorted(zip(area.tolist(), row.tolist(), column.tolist()))
         return components, np.asarray(features, dtype=np.float64).reshape(-1, 3)
+
+
+@pytest.mark.parametrize("mask", _fixtures())
+def test_connection_and_default_facade_are_identical(mask):
+    reg = fslib.Region(mask)
+    for profile_name in ("reference", "industrial"):
+        if profile_name == "industrial" and "cv2" not in fslib.backends_for("connection"):
+            continue
+        with fslib.profile(profile_name):
+            plain = fslib.connection(reg)
+            facade = fslib.connection_opts(reg)
+        np.testing.assert_array_equal(plain.labels, facade.labels)
+        np.testing.assert_array_equal(plain.ids, facade.ids)
 
 
 @pytest.mark.parametrize("neighborhood", [4, 8])

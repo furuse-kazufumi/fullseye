@@ -10,7 +10,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - `reduce_domain` / `change_domain` に、HALCON と同様に定義域外の画素行列を保持する `keep_pixels=True` を追加しました。既定のゼロ化動作は変わりません。
 - 正規化しない絶対画素距離を返す `dist_transform_abs` を追加しました。
 - 幅と高さを独立して 1～15 の奇数へ割り当てる `mean_box_wh` を追加しました。
-- `connection` で 4/8 近傍と成分数上限を明示できるようにしました。
+- `connection_opts` で 4/8 近傍と成分数上限を明示できるようにしました。`connection` は ABI 契約どおり 8 近傍・上限なしです。
 - `connection` の全バックエンドを 4/8 近傍の境界・穴・乱数領域で比較する回帰ゲートを追加しました。
 - 動画フレームの連結前に要素数と float64 コピー費用を検査し、拒否理由へ形状・型・バイト数を含めました。
 
