@@ -7,7 +7,7 @@
 <p>고해상도·고속·라인 스캔에서는 병목이 센서가 아니라 <b>전송 대역</b>이 되는 일이흔하다. 촬영 전에 어느 쪽이 병목인지 알기 위한 op(광학의 <code style="color:#22d3bf">optical_budget</code> 와 짝을 이룬다).</p>
 <p><code style="color:#22d3bf">efficiency</code>는 부호화·패킷의 실효 효율(CoaXPress에서 대략 0.8-0.9). <code style="color:#22d3bf">line_scan=True</code>이면 1라인(폭 x 1화소)당으로 계산하고, 라인 레이트 [kHz] 를 반환한다.</p>
 <p>반환값 dict: <code style="color:#22d3bf">gbps</code>(총 대역) / <code style="color:#22d3bf">bytes_per_frame</code> / <code style="color:#22d3bf">max_fps</code> / <code style="color:#22d3bf">max_line_rate_khz</code>(line_scan일 때) / <code style="color:#22d3bf">interface</code> / <code style="color:#22d3bf">links</code>.</p>
-<p>실측 기준: CXP-12 x4 = 50 Gbps = 5 GB/s는 8 bit·16k 라인 센서를 300 kHz로돌릴 수 있는 대역과 딱 일치한다(Vieworks VT의 TDI가 이 전제). 한편 에어리어 스캔의 IMX541(20.3 MP·8 bit)은 1장 20.3 MB이므로 이론상 246 fps가 나오지만, 센서 자체가 18-42 fps이므로 <b>대역이 남는다</b>.</p>
+<p>수치 예: <code style="color:#22d3bf">interface=&quot;CXP-12&quot;</code>와 4 links의 원시 대역폭은 50 Gbit/s = 6.25 GB/s이다. 기본 <code style="color:#22d3bf">efficiency=0.85</code>에서는 실효 대역폭이 42.5 Gbit/s = 5.3125 GB/s이며, 8 bit·16k 라인 센서의 대역폭 한계는 약 332 kHz이다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

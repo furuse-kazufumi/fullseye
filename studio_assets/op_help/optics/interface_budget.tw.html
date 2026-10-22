@@ -7,7 +7,7 @@
 <p>在高解析度、高速、線掃描中，瓶頸常常不是感測器而是<b>傳輸頻帶</b>。這是在拍攝前了解哪一方是瓶頸的 op(與光學的 <code style="color:#22d3bf">optical_budget</code> 成對)。</p>
 <p><code style="color:#22d3bf">efficiency</code> 是編碼、封包的實際效率(CoaXPress 大致為 0.8-0.9)。<code style="color:#22d3bf">line_scan=True</code> 時以每 1 條線(寬 x 1 像素)計算，並回傳線速率 [kHz]。</p>
 <p>回傳值 dict：<code style="color:#22d3bf">gbps</code>(總頻帶)/ <code style="color:#22d3bf">bytes_per_frame</code> / <code style="color:#22d3bf">max_fps</code> / <code style="color:#22d3bf">max_line_rate_khz</code>(line_scan 時)/ <code style="color:#22d3bf">interface</code> / <code style="color:#22d3bf">links</code>。</p>
-<p>實測參考：CXP-12 x4 = 50 Gbps = 5 GB/s 恰好等於以 300 kHz 運作 8 bit、16k 線掃描感測器所需的頻帶(Vieworks VT 的 TDI 以此為前提)。另一方面，面掃描的 IMX541(20.3 MP、8 bit)每張 20.3 MB，理論上可達 246 fps，但感測器本身只有 18-42 fps，所以<b>頻帶有餘</b>。</p>
+<p>數值範例：<code style="color:#22d3bf">interface=&quot;CXP-12&quot;</code>、4 links 的原始頻寬為 50 Gbit/s = 6.25 GB/s。採用預設 <code style="color:#22d3bf">efficiency=0.85</code> 時，有效頻寬為 42.5 Gbit/s = 5.3125 GB/s，8 bit、16k 線掃描感測器的頻寬上限約為 332 kHz。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

@@ -81,7 +81,7 @@ _FLIP = np.diag([1.0, -1.0, -1.0])      # MuJoCo カメラ(−Z を見る、+Y �
 def peg_params(r: float = 5.0e-3, R: float = 5.2e-3, hole_depth: float = 20.0e-3, chamfer: float = 1.0e-3,
                chamfer_deg: float = 45.0, peg_length: float = 40.0e-3, mu: float = 0.3, n_seg: int = 36,
                k_trans: float = 600.0, k_rot: float = 1.5, image_size=(640, 480), fovy_deg: float = 40.0) -> dict:
-    """ペグと穴の寸法の表(m・rad): ペグ半径 r、穴半径 R、穴の深さ、面取りの幅と角、ペグ長、摩擦係数、手首剛性、手首カメラ。
+    """ペグと穴の寸法の表: 長さは m、回転剛性は N m/rad、カメラ像は px、画角は deg。
 
     既定は試作の寸法: r = 5.0 mm、R = 5.2 mm(半径 clearance 0.2 mm、c = 0.0385)、深さ 20 mm、45° の面取り 1 mm、ペグ 40 mm、
     μ = 0.3(MuJoCo の滑り摩擦)。``n_seg`` は穴の壁を近似する箱の数(MJCF)、``k_trans`` [N/m]・``k_rot`` [N m/rad] は

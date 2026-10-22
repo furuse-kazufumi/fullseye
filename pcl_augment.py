@@ -89,14 +89,16 @@ def jitter(points, sigma: float, clip: Optional[float] = None, seed: int = 0) ->
     sigma = float(sigma)
     if sigma < 0.0:
         raise ValueError("sigma must be >= 0")
-    if P.shape[0] == 0 or sigma == 0.0:
-        return P.copy()
-    rng = np.random.default_rng(int(seed))
-    noise = rng.normal(0.0, sigma, size=P.shape)
+    c = None
     if clip is not None:
         c = float(clip)
         if c <= 0.0:
             raise ValueError("clip must be > 0 when given")
+    if P.shape[0] == 0 or sigma == 0.0:
+        return P.copy()
+    rng = np.random.default_rng(int(seed))
+    noise = rng.normal(0.0, sigma, size=P.shape)
+    if c is not None:
         noise = np.clip(noise, -c, c)
     return P + noise
 

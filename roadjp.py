@@ -443,7 +443,7 @@ def add_sign(world: dict, kind: str, x: float, y: float, yaw: float, *, value=No
     """路側式の標識を立てる: 柱(円柱、灰、ラベル 6)+ 板(下端 = ``mount_height``、既定 1.8 m、ラベル 4)。
 
     規約: **yaw の向きへ進んで来る車に板の面が向く**(法線 = (−cos yaw, −sin yaw))。実装は :func:`sign_mesh`(法線 −x)を
-    :func:`driveworld.place_mesh` で回すだけ。板は柱の手前(車の側)に ``pole_radius + 1 cm`` 離して付ける。
+    :func:`driveworld.place_mesh` で回すだけ。板は柱の手前(車の側)に ``pole_radius + 1.2 cm`` 離して付ける。
     返り値 = 板の object 索引(``extra = {"kind", "value", "width", "height", "mount_height"}``)。柱は直前の別 object。
 
     空の入力(``world`` が空の dict)は ValueError。

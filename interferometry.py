@@ -1163,7 +1163,7 @@ def csi_height_map(stack, z_step_um=0.05, z_start_um=0.0, wavelength_um=0.6,
     ``"parabolic"`` and 2.08e-06 um for ``"gaussian"``. Widen the same plane to
     **2.0-10.0 um** — pixels now within 2 um of the ends of the scan — and the
     errors become 1.91e-02 / 5.98e-02 / 7.06e-03 / 7.06e-03 um: the local fits
-    lose three decades and the centroid loses four, entirely to envelope
+    and the centroid lose about three decades, entirely to envelope
     truncation at the scan ends. Accuracy here is a property of the *scan layout*,
     not of the estimator, and this is the number to look at when a real
     measurement disappoints.

@@ -43,8 +43,8 @@ the Jones family in the tests — for every kind and a sweep of angles, the
 Jones path and the Mueller path return the **same Stokes vector to 1e-14**,
 which is the only construction that catches a sign slip in either one.
 
-**Raises** ``ValueError``: an unknown *kind*; non-finite *angle_deg* or
-*retardance_deg*.
+**Raises** ``ValueError``: an unknown *kind*; non-finite *angle_deg*; or,
+for ``kind="retarder"``, non-finite *retardance_deg*.
 
 Ideal, lossless (except the polariser's physical loss), normal-incidence
 elements; no diattenuation-plus-retardance combinations, no depolarisation

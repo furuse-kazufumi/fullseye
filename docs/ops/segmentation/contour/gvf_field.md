@@ -21,7 +21,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 E = ∬ μ(u_x² + u_y² + v_x² + v_y²) + |∇f|² |(u, v) − ∇f|² の最小化。Euler 方程式
 μ∇²u − (u − f_x)(f_x² + f_y²) = 0、μ∇²v − (v − f_y)(f_x² + f_y²) = 0(線形)。
-``method="iterate"`` = 論文の時間発展 u ← u + Δt(μ∇²u − b(u − f_x))、b = |∇f|²(陽的、Δt ≤ 1/(4μ + max b))。
+``method="iterate"`` = 論文の時間発展 u ← u + Δt(μ∇²u − b(u − f_x))、b = |∇f|²(陽的、Δt ≤ 2/(8μ + max b))。
 ``method="direct"`` = 同じ離散方程式 (μL − diag b) u = −b f_x を疎行列で直接解く(定常解そのもの)。
 辺の地図 f は既定で |∇(G_σ * I)| を最大 1 に正規化したもの(``edge_map`` で直接与えてもよい)。境界は Neumann。
 u = 列(x)方向、v = 行(y)方向の成分。

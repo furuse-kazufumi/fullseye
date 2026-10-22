@@ -22193,13 +22193,13 @@
    "hi": "curve mirror (convex arc या समतल) में दिखने वाली सड़क की सीमा (ऊपर से देखा 2-D, closed form)। दृश्य S064, S130।"
   },
   "drive/peg_params": {
-   "fp": "2092225d5e2b",
-   "en": "Table of peg and hole dimensions (m, rad): peg radius r, hole radius R, hole depth, chamfer width and angle, peg length, friction coefficient, wrist stiffness, wrist camera.",
-   "zh": "销与孔的尺寸表(m、rad)：销半径 r、孔半径 R、孔深、倒角宽度与角度、销长、摩擦系数、腕部刚度、腕部相机。",
-   "tw": "銷與孔的尺寸表(m、rad)：銷半徑 r、孔半徑 R、孔深、倒角寬度與角度、銷長、摩擦係數、腕部剛度、腕部相機。",
-   "ko": "페그와 구멍의 치수 표(m·rad): 페그 반경 r, 구멍 반경 R, 구멍 깊이, 모따기의 폭과 각, 페그 길이, 마찰계수, 손목 강성, 손목 카메라.",
-   "de": "Tabelle der Stift- und Bohrungsmaße (m, rad): Stiftradius r, Bohrungsradius R, Bohrungstiefe, Fasenbreite und -winkel, Stiftlänge, Reibungskoeffizient, Handgelenksteifigkeit, Handgelenkkamera.",
-   "hi": "peg और hole के मापों की table (m, rad): peg की त्रिज्या r, hole की त्रिज्या R, hole की गहराई, chamfer की चौड़ाई और कोण, peg की लंबाई, friction coefficient, कलाई की stiffness, कलाई का camera।"
+   "fp": "2f607a03c65e",
+   "en": "Table of peg and hole dimensions: lengths in m, rotational stiffness in N m/rad, camera image in px, and field of view in deg.",
+   "zh": "销与孔的尺寸表：长度单位为 m，旋转刚度为 N m/rad，相机图像为 px，视场角为 deg。",
+   "tw": "銷與孔的尺寸表：長度單位為 m，旋轉剛度為 N m/rad，相機影像為 px，視場角為 deg。",
+   "ko": "페그와 구멍의 치수 표: 길이는 m, 회전 강성은 N m/rad, 카메라 영상은 px, 화각은 deg 단위.",
+   "de": "Tabelle der Stift- und Bohrungsmaße: Längen in m, Drehsteifigkeit in N m/rad, Kamerabild in px und Sichtfeld in deg.",
+   "hi": "peg और hole के मापों की table: लंबाई m में, rotational stiffness N m/rad में, camera image px में और field of view deg में।"
   },
   "drive/whitney_clearance": {
    "fp": "db29ff802ae4",
