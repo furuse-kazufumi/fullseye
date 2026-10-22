@@ -1,4 +1,4 @@
-> **Language**: [日本語](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/fullseye_poc_museum_device_qiita_ja.md) · **English**
+> **Language**: [日本語](https://qiita.com/furuse-kazufumi/items/8802cda8f03e9bb3025b) · **English**
 
 # A Metrology Museum on Paper — The Instrument Wing (sensors and instruments reproduced from physics)
 

@@ -7,7 +7,7 @@ out: table
 examples: [lens_design_demo, poc_optics_drawings]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.2  # fullseye lib version this note was generated for
+version: 0.8.0  # fullseye lib version this note was generated for
 ---
 
 # tolerance_analysis — OPTICS `design` op
