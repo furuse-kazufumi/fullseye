@@ -587,9 +587,13 @@ def _synthesis_axis(lo, hi, h, g, axis):
     m = lo.shape[-1]
     n = 2 * m
     out = np.zeros(lo.shape[:-1] + (n,))
-    idx = (2 * np.arange(m)[:, None] + np.arange(h.size)[None, :]) % n
     for j in range(h.size):                                   # 解析の転置(直交なので逆変換)
-        out[..., idx[:, j]] += lo * h[j] + hi * g[j]          # 1 つの j の中では添字が重ならない
+        contribution = lo * h[j] + hi * g[j]
+        shift = j % n
+        tail = (n - shift + 1) // 2
+        out[..., shift::2] += contribution[..., :tail]
+        if tail < m:
+            out[..., shift & 1:shift:2] += contribution[..., tail:]
     return np.moveaxis(out, -1, axis)
 
 
