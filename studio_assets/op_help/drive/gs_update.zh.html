@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gs_update(gs: &#x27;dict&#x27;, world: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import gsplatnp; gsplatnp.gs_update(gs: &#x27;dict&#x27;, world: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;gs_update&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>根据世界<b>当前的</b>顶点重新计算高斯的中心与朝向(原地修改并返回同一个 dict)。</p>
-<p>μ = Σ_k bary_k · V[F[face, k]] + R · offset_local,R = 面的局部坐标 [t1 t2 n]。面数与创建时不同的世界会引发 ValueError (不能用于增加或删除了物体的世界:请重新创建)。刚体移动的物体的高斯随同一刚体变换移动(门)。</p>
-<p>空输入(<code style="color:#22d3bf">gs</code> 为空 dict)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
+<p>μ = Σ_k bary_k · V[F[face, k]] + R · offset_local，R = 面的局部坐标 [t1 t2 n]。 <code style="color:#22d3bf">gs[&quot;face&quot;]</code> 指向的脸如果当前世界中不存在 ValueError。即使最后添加了表面，如果现有表面编号有效，也可以更新它。由刚体移动的物体的高斯以相同的刚体变换（门）移动。</p>
+<p>空输入（带有空<code style="color:#22d3bf">gs</code>的字典）会引发ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

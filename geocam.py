@@ -261,7 +261,7 @@ def camera_orientation_from_sun(sun_pixels, unix_times, lat_deg, lon_deg, K):
     Returns:
         table: ``yaw_deg`` / ``pitch_deg`` / ``roll_deg`` / ``residual_deg``(光線と太陽方向の
         角度残差の RMS)/ ``max_residual_deg`` / ``n`` / ``condition``(観測方向の張る面の広さ =
-        2 番目の特異値、0 に近いほど不定)。
+        2 番目と最大の特異値の比、0 に近いほど不定)。
     """
     uv = np.asarray(sun_pixels, dtype=np.float64)
     t = np.atleast_1d(np.asarray(unix_times, dtype=np.float64)).ravel()
@@ -655,7 +655,7 @@ def skyline_extract(image, sky_is_bright=True, smooth=1.5, max_jump=3, jump_pena
         jump_penalty: 飛び 1 画素あたりのコスト(境界らしさは 0〜1 に正規化してある)。
     Returns:
         signal (W,) float: 列ごとの境界の行(0 が最上段)。**空しか写っていない・地形しか
-        写っていない**画像では境界の応答が弱く、経路の平均コストが 0 に近いので ValueError
+        写っていない**画像では平均の境界応答が 0 に近いので ValueError
         で止める(黙って雑音の線を返さない)。
     """
     from scipy.ndimage import gaussian_filter1d

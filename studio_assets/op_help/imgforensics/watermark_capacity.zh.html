@@ -4,14 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.watermark_capacity(image, bits, strengths=(0.02, 0.05, 0.1, 0.2, 0.4), wavelet: &#x27;str&#x27; = &#x27;haar&#x27;, level: &#x27;int&#x27; = 1, jpeg_quality=None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import imgforensics; imgforensics.watermark_capacity(image, bits, strengths=(0.02, 0.05, 0.1, 0.2, 0.4), wavelet: &#x27;str&#x27; = &#x27;haar&#x27;, level: &#x27;int&#x27; = 1, jpeg_quality=None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsimgforensics.get(&quot;watermark_capacity&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>扫描嵌入强度与 <b>PSNR / BER</b> 之间的取舍。<code style="color:#22d3bf">table</code>。</p>
-<p>对每个 <code style="color:#22d3bf">strength</code> 实际运行嵌入 → 提取，</p>
-<p><code style="color:#22d3bf">psnr_db</code>  原图像与带水印图像的 PSNR(以值域 [0, 1] 为基准，<code style="color:#22d3bf">MAX=1</code>)</p>
-<p><code style="color:#22d3bf">ber</code>      提取的误码率(用 <code style="color:#22d3bf">hash_distance</code> 计数)</p>
-<p><code style="color:#22d3bf">clipped</code>  带水印图像中超出 [0, 1] 的像素比例。</p>
-<p><b>超出部分在保存时必然丢失</b>，所以只看 PSNR 就提高强度，</p>
-<p>会增加“没有测到的劣化”</p>
-<p>向 <code style="color:#22d3bf">jpeg_quality</code> 传入质量时，还会加入把带水印图像过一遍<b>真正的 JPEG</b> 后提取的 <code style="color:#22d3bf">ber_jpeg</code>(需要 Pillow。省略时整列都不加入 —— 为了让返回的列不随环境而变，默认不运行)。</p>
-<p>返回 <code style="color:#22d3bf">{&quot;capacity_bits&quot;: int, &quot;n_bits&quot;: int, &quot;rows&quot;: [...], &quot;caveats&quot;: [...]}</code>。</p>
+<p>实际上对每个“强度”运行嵌入→提取，</p>
+<p><code style="color:#22d3bf">psnr_db</code> 原始图像和水印图像的 PSNR（范围 [0, 1] 标准，<code style="color:#22d3bf">MAX=1</code>）<code style="color:#22d3bf">ber</code> 提取的误码率（通过 hash_distance 计算）<code style="color:#22d3bf">clipped</code> 水印图像中落在 [0, 1] 之外的像素百分比。</p>
+<p><b>保存时突出部分总会丢失</b>，因此强度只能通过查看PSNR来确定。</p>
+<p>如果提高，“不可测量的恶化”就会增加。</p>
+<p>将质量传递给“jpeg_quality”将通过<b>真正的JPEG</b>传递带水印的图像，然后还包括提取的“ber_jpeg”（需要 Pillow。如果省略，则不会包括整个列。（默认情况下不运行，以确保返回的列不会根据环境而改变）。</p>
+<p>返回 <code style="color:#22d3bf">{&quot;capacity_bits&quot;: int, &quot;n_bits&quot;: int, &quot;rows&quot;: [...], &quot;caveats&quot;: [...], &quot;ll_shape&quot;: tuple}</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

@@ -4,15 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.contour_fourier_complex(points, n_harmonics=None, parametrisation=&#x27;index&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import fourierdesc; fourierdesc.contour_fourier_complex(points, n_harmonics=None, parametrisation=&#x27;index&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">opsshape2d.get(&quot;contour_fourier_complex&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>将闭合轮廓转换为复傅里叶级数的系数 —— <code style="color:#22d3bf">z(t) = Σ c_k exp(2πi k t)</code>。</p>
-<p>参数:</p>
-<p>points: (N,2) 的闭合轮廓顶点。<b>(row, col) 顺序</b>(与 <code style="color:#22d3bf">fourierdesc</code> 相同)。</p>
-<p>n_harmonics: 保留的阶数 <code style="color:#22d3bf">K</code>(<code style="color:#22d3bf">|k| &lt;= K</code>)。为 <code style="color:#22d3bf">None</code> 时保留到可表示的上限。</p>
-<p>parametrisation: <code style="color:#22d3bf">&quot;index&quot;</code> = 把点的下标作为等间隔的参数 /</p>
-<p><code style="color:#22d3bf">&quot;arclength&quot;</code> = 先按<b>弧长</b>等间隔重新采样再变换。</p>
-<p>返回值: <code style="color:#22d3bf">(2K+1, 3)</code> 的实数组(<code style="color:#22d3bf">matrix</code>)。行为 <code style="color:#22d3bf">[k, Re c_k, Im c_k]</code>, <code style="color:#22d3bf">k</code> 依次为 <code style="color:#22d3bf">0, 1, -1, 2, -2, …</code>(从低频开始)。</p>
-<p>★<b>不在默认值里悄悄决定参数的取法</b>是本 op 的要点。对不均匀采样的轮廓用 <code style="color:#22d3bf">&quot;index&quot;</code> 读取时，点密集处会被分配多余的时间，<b>图看起来相似，系数却是另一回事</b>(实测中 <code style="color:#22d3bf">k=3</code> 的系数相差 47 倍)。默认是 <code style="color:#22d3bf">&quot;index&quot;</code>(FFT 的原始含义)，但若用作形状的描述，请选择 <code style="color:#22d3bf">&quot;arclength&quot;</code>。</p>
-<p>★★选择 <code style="color:#22d3bf">&quot;arclength&quot;</code> 时会<b>在 op 内部重新采样轮廓</b>，因此返回的系数描述的不是传入的数组，而是<b>重新采样后的轮廓</b>。因此 <code style="color:#22d3bf">contour_fourier_truncation_energy</code> 的预言「对重新采样后的轮廓」是严格的，调用方若用手头的数组测量误差就会对不上(实测: 512 点时偏差 1.15)。想要对手头数组严格成立的预言时，请<b>先按弧长重新采样</b>, 再以 <code style="color:#22d3bf">&quot;index&quot;</code> 调用。</p>
-<p>★<b>弧长重新采样不是幂等的</b>: 由于用弦连接采样点，对已经等弧长的轮廓再做 1 次，点最多会移动 3.73 px(平均 0.84 px)，长度还会再缩短 3.25 %。不要做两次。</p>
+<p>论据：</p>
+<p>点：(N,2) 个闭合轮廓顶点。 <b>（行，列）顺序</b>（与<code style="color:#22d3bf">fourierdesc</code>相同）。</p>
+<p>n_harmonics：剩余阶数<code style="color:#22d3bf">K</code>(<code style="color:#22d3bf">|k| &lt;= K</code>)。 “无”直至可表示的最大值。</p>
+<p>参数化：<code style="color:#22d3bf">“index”</code>=使点索引成为等距参数/</p>
+<p><code style="color:#22d3bf">“arclength”</code> = <b>弧长</b>并在转换之前以相等的间隔重新输入。</p>
+<p>返回值：通常为“(2K+1, 3)”，或“(2K, 3)”的实数数组(“矩阵”)，以保留偶数点至奈奎斯特度。该行是“[k，Re c_k，Im c_k]” “k” 是“0, 1, -1, 2, -2, …”（从低频）。</p>
+<p>★<b>这个操作的关键不是默默地决定如何获取参数变量</b>。采样不均匀使用“索引”读取轮廓会为点密集的区域分配额外的时间，<b>图片相似，但系数不同</b>（实际上，“k=3”的系数相差47倍）。默认是<code style="color:#22d3bf">&quot;index&quot;</code>（FFT的基本含义），但是如果你用它作为形状描述，选择<code style="color:#22d3bf">“弧长”</code>。</p>
+<p>★★如果选择<code style="color:#22d3bf">arclength&#x27;&#x27;</code>，轮廓将在op**内部重新绘制，因此返回的系数将是写入<b>重绘轮廓</b>而不是传递的数组。因此 <code style="color:#22d3bf">contour_fourier_truncation_energy</code> 预测“重绘轮廓” 它是严格的，当调用者使用手头的数组测量误差时，它不匹配（实际测量：512点，偏差为1.15）。如果您想精确预测手头的数组，<b>首先重新输入弧长</b> 用<code style="color:#22d3bf">&quot;index&quot;</code> 来称呼它。</p>
+<p>★<b>重置弧长不是幂等的</b>：由于标本是用绳子绑在一起的，所以弧长的轮廓已经相等。再次将点移动到 3.73 px（平均 0.84 px），并将长度额外增加 3.25% 收缩。不要拨打两次。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

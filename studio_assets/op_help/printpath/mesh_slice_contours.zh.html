@@ -4,7 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_slice_contours(mesh: &#x27;Any&#x27;, z: &#x27;float&#x27;, tol: &#x27;float&#x27; = 1e-06) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import printpath; printpath.mesh_slice_contours(mesh: &#x27;Any&#x27;, z: &#x27;float&#x27;, tol: &#x27;float&#x27; = 1e-06) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsprintpath.get(&quot;mesh_slice_contours&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用平面 <code style="color:#22d3bf">z</code> 切割三角形网格得到的<b>轮廓表</b> <code style="color:#22d3bf">table</code>：列 <code style="color:#22d3bf">ring</code>(环编号)、<code style="color:#22d3bf">x</code>、<code style="color:#22d3bf">y</code>(mm)。</p>
-<p>把各三角形与平面的交线作为线段,用三角形的法线定方向(外轮廓逆时针,孔顺时针),再把端点对接连成闭合环(不闭合则为开链)(经典的切片软件)。由环的带符号面积可区分实体与孔。顶点恰好落在平面上时,抬高 <code style="color:#22d3bf">tol</code> 以避免退化。平面不接触形状则 ValueError (空层就说“没有”)。</p>
+<p>将每个三角形与平面的交点形成一条线段，按三角形法线定向（轮廓为逆时针，孔为顺时针），并将端点设置为将它们对接在一起并将它们连接成一个封闭的环（如果不封闭，则连接成开链）（经典切片机）。内容物和孔洞可以通过环的标记面积来确定。当顶点正好在平面上时，将其提升<code style="color:#22d3bf">2*tol + 1e-12</code>以避免退化。如果平面不接触形状，则出现 ValueError （空层表示“不”）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">printpath 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

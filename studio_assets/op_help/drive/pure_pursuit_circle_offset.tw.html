@@ -4,9 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pure_pursuit_circle_offset(radius: &#x27;float&#x27;, lookahead: &#x27;float&#x27;, wheelbase: &#x27;float&#x27;, *, understeer: &#x27;float&#x27; = 0.0, speed: &#x27;float&#x27; = 0.0, params: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;Dict[str, float]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivelateral; drivelateral.pure_pursuit_circle_offset(radius: &#x27;float&#x27;, lookahead: &#x27;float&#x27;, wheelbase: &#x27;float&#x27;, *, understeer: &#x27;float&#x27; = 0.0, speed: &#x27;float&#x27; = 0.0, params: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;Dict[str, float]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;pure_pursuit_circle_offset&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以 pure pursuit(以後軸中心為基準)追蹤定常圓(半徑 R)時的穩態圓半徑 ρ 與橫向偏差 ρ − R(向外為正)。</p>
-<p><b>運動學 + 轉向不足</b>(<code style="color:#22d3bf">params</code> = None): 若對指令轉向角 δ = L κ_cmd,實際曲率變為 κ_cmd / (1 + K v²/L), 則在同心圓穩態下 ρ = √(R² + (K v²/L) L_d²)(本版推導的閉式解)。K = 0 時 ρ = R(橫向偏移 0)。</p>
-<p><b>線性二輪等效模型</b>(給定 <code style="color:#22d3bf">params</code>。δ = atan(L κ_cmd)): 穩態下車身朝向比後軸速度(圓的切線) 向內偏轉後軸側滑角 α_r = m l_f a_y / (C_r L),因此預視點的視角減少 α_r。將穩態關係(δ = L/R_c + K u²/R_c、β、旋轉中心)化為關於重心轉彎半徑 R_c 的單變數方程式,以二分法求解(半閉式)。運動學公式忽略了此效應,因此低估橫向偏移(PoC 中約為一半)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: R, L_d, L ≤ 0、預視點到達不了圓、1 + K v²/L ≤ 0、給定 params 時 v ≤ 0.5。</p>
+<p><b>運動學 + 轉向不足</b>(<code style="color:#22d3bf">params</code> = None)：對於指令轉向角 δ = L κ_cmd，實際曲率為 κ_cmd / (1 + K v²/L) 然後，在同心靜止狀態下，ρ = √(R² + (K v²/L) L_d²)（此版本中導出的閉合形式）。如果 K = 0，則 ρ = R（橫向滑移 0）。</p>
+<p><b>線性兩輪等效模型</b>（給定<code style="color:#22d3bf">params</code>。δ = atan(L κ_cmd)）：穩態時，車身方向小於後軸速度（與圓相切）。由於後軸向內指向側滑角α_r = m l_f a_y / (C_r L)，因此註視點的可視角度減少α_r。靜止關係將(δ = L/R_c + Ku²/R_c, β, 旋轉中心) 製成以重心迴轉半徑R_c 為一變量的方程，並使用二分法（半閉式）進行求解。運動學方程式減少了這種影響，因此估計橫向滑移很小（大約是 PoC 的一半）。</p>
+<p><b>引發</b> <code style="color:#22d3bf">ValueError</code>：R，L_d，L ≤ 0，注視點未到達圓，1 + K v²/L ≤ 0，參數中的 v &lt; 0.5。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

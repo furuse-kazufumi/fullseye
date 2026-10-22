@@ -4,32 +4,32 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.icp_point2point_3d(src, dst, iters=50, init_R=None, init_t=None, tol=1e-06, max_corr_dist=None, trim_ratio=None, device=&#x27;cpu&#x27;, reproducible=False)</code>(要直接调用实现,<code style="color:#22d3bf">import match3d; match3d.icp_point2point_3d(src, dst, iters=50, init_R=None, init_t=None, tol=1e-06, max_corr_dist=None, trim_ratio=None, device=&#x27;cpu&#x27;, reproducible=False)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;icp_point2point_3d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 point-to-point ICP(Kabsch/SVD)精化点群。</p>
-<p>以粗匹配估计(整数NCC / Fourier-Mellin±3° / Hough±0.5voxel)得到的初始位姿 (init_R, init_t) 为起点,通过刚体变换将 src 侧点云配准到 dst 侧点云。每次迭代重新建立最近邻对应(cKDTree),用 Kabsch 算法(SVD)求相对旋转、平移并累积,因此即使对应关系未知, 也能收敛到亚体素精度。</p>
-<p>对部分重叠、离群值,用 Trimmed ICP(只采用距离小的对应)和绝对距离门限(max_corr_dist)来处理。最终 RMSE 在实际采用的对应(内点)上评估,因此即使是部分观测也能正确反映位姿质量。</p>
-<p>参数:</p>
-<p>src: (N,3) 移动侧点云(torch.Tensor 或 numpy.ndarray)。</p>
-<p>dst: (M,3) 固定侧(参照)点云。</p>
-<p>iters: 最大迭代次数。</p>
-<p>init_R: (3,3) 初始旋转。None 时为单位矩阵。</p>
-<p>init_t: (3,) 初始平移。None 时为零向量。</p>
-<p>tol: RMSE 的相对改善低于此值时判定收敛并终止。</p>
-<p>max_corr_dist: 超过此距离的对应作为离群值剔除(None 为禁用)。</p>
-<p>trim_ratio: 0&lt;r&lt;=1。每次迭代只采用最近邻距离最小的前 r 比例对应的</p>
-<p>Trimmed ICP。对部分重叠(重叠率 r)有效。None 为禁用。</p>
-<p>device: torch 设备(&quot;cpu&quot; 等)。在该设备上求解 SVD。</p>
-<p>reproducible: 为 True 时采用不依赖点的顺序、BLAS 线程数的归约(默认 False = 与以前相同)。</p>
-<p>均值用 math.fsum,互协方差 H 用 ozakimm(Ozaki 方案),位姿的应用为逐元素运算,RMSE 也用 math.fsum。</p>
-<p>即使打乱 src 点的顺序,R、t、rmse 也按位相同(同一计算机、同一 LAPACK 上)。在 trim_ratio 的分界处</p>
-<p>距离恰好相同的点,其选取可能随顺序而变。20 万点时每 1 次迭代由 0.7 ms 变为约 170 ms。</p>
-<p>返回值:</p>
-<p>R: (3,3) 旋转。满足 dst ~= src @ R.T + t。<b>有 torch 的环境下为 <code style="color:#22d3bf">torch.Tensor</code>,否则为相同值的 <code style="color:#22d3bf">numpy.ndarray</code></b>(2026-09-07</p>
-<p>将主体改为 numpy 时,为了兼容仍保留了该类型)。</p>
-<p>★同一族的 <code style="color:#22d3bf">icp_point2plane</code> <b>始终返回 numpy</b> —— 族内</p>
-<p>类型不统一,因此在下游通过 <code style="color:#22d3bf">np.asarray(R)</code> 较为安全</p>
-<p>(两者都能运行。为避免破坏性变更而保留了这种不统一)。</p>
-<p>t: (3,) 平移(与 R 同类型)。</p>
-<p>info: dict。&quot;rmse&quot;(采用对应上的最终RMSE), &quot;iters&quot;(实际迭代次数),</p>
-<p>&quot;converged&quot;(bool), &quot;inliers&quot;(采用的对应数), &quot;rmse_history&quot;(list)。</p>
+<p>通过粗匹配估计获得（整数 NCC/Fourier-Mellin±3°/Hough±0.5voxel）从初始姿态（init_R，init_t）开始，src侧点被严格地变换为dst侧点。对齐。在每次迭代时，重新缝合最近邻对应关系（cKDTree）并使用 Kabsch 算法通过使用（SVD）计算和累积相对旋转和平移，即使对应关系未知，收敛到亚体素精度。</p>
+<p>对于部分重叠和异常值，请使用 Trimmed ICP（仅采用小距离对应）。使用绝对距离门（max_corr_dist）来处理这个问题。最终的RMSE被实际采用。由于评估是基于对应关系（内点），因此即使在部分观察中也能准确反映姿势质量。</p>
+<p>论据：</p>
+<p>src：（N，3）移动侧点云（torch.Tensor或numpy.ndarray）。</p>
+<p>dst：(M,3) 固定侧（参考）点组。</p>
+<p>iters：最大迭代次数。</p>
+<p>init_R: (3,3) 初始旋转。如果无，则它是单位矩阵。</p>
+<p>init_t: (3,) 初始翻译。如果没有，则它是零向量。</p>
+<p>tol：如果 RMSE 的相对改进低于该值，则收敛终止。</p>
+<p>max_corr_dist：将超过此距离的对应关系视为异常值（使用 None 禁用）。</p>
+<p>修剪比率：0&lt;r&lt;=1。在每次迭代中，只有前 r 个与最小最近邻距离对应</p>
+<p>采用修整后的 ICP。对部分重叠有效（重叠率r）。禁用无。</p>
+<p>device：放置返回值的torch设备（如“cpu”）。 SVD 是在 CPU 上使用 NumPy 求解的。</p>
+<p>可重现：如果为 True，则减少量将独立于点顺序和 BLAS 线程数（默认 False = 与之前相同）。</p>
+<p>平均值是math.fsum，互协方差H是ozakimm（Ozaki方案），方向是逐个元素计算的，RMSE也是math.fsum。</p>
+<p>即使 src 中点的顺序发生变化，R·t·rmse 的位数仍保持不变（同一台计算机，同一 LAPACK）。在trim_ratio中断时</p>
+<p>可以以不同的顺序选择相距完全相同的距离的点。在 200,000 个点时，每次重复 0.7 毫秒变为约 170 毫秒。</p>
+<p>返回值：</p>
+<p>R：(3，3)旋转。 dst ~= src @ R.T + t。 <b>在有手电筒的环境中 <code style="color:#22d3bf">torch.Tensor</code>，如果没有，则相同的值<code style="color:#22d3bf">numpy.ndarray</code></b>（于2026-09-07</p>
+<p>即使将主体转换为 numpy，为了兼容性，类型也保持不变。）</p>
+<p>★ 同族中的 <code style="color:#22d3bf">icp_point2plane</code> <b>始终返回 numpy</b> —— 在族中</p>
+<p>由于类型未对齐，因此可以安全地向下游传递“np.asarray(R)”。</p>
+<p>（两者都有效。保留这种错位以避免破坏性更改。）</p>
+<p>t: (3,) 平移（与 R 类型相同）。</p>
+<p>信息：字典。 “rmse”（招募的最终 RMSE），“iters”（实际迭代次数），</p>
+<p>“融合”（布尔），“内点”（采用次数），“rmse_history”（列表）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

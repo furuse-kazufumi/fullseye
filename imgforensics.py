@@ -865,7 +865,7 @@ def jpeg_quality_estimate(image, max_step: int = 64, n_coeff: int = 21) -> dict:
                         bool。**「JPEG である」証明ではない**(下記 caveats)
     ``quality``         推定品質 1..100(櫛が無ければ ``None``)
     ``table``           推定した ``(8, 8)`` の量子化ステップ(0 = 推定できず)
-    ``n_quantized``     櫛が立った係数の数 / ``n_coeff``
+    ``n_quantized``     DC を除く ``n_tested = n_coeff - 1`` 係数のうち櫛が立った生の個数
     ``fit_error``       選ばれた品質の標準表との平均絶対差
     ``caveats``         この数値が言えないこと
 
@@ -1499,7 +1499,7 @@ def watermark_capacity(image, bits, strengths=(0.02, 0.05, 0.1, 0.2, 0.4),
     抽出した ``ber_jpeg`` も入る(Pillow 必須。省略時は列ごと入らない ——
     環境によって返る列が変わらないようにするため、既定では走らせない)。
 
-    返りは ``{"capacity_bits": int, "n_bits": int, "rows": [...], "caveats": [...]}``。
+    返りは ``{"capacity_bits": int, "n_bits": int, "rows": [...], "caveats": [...], "ll_shape": tuple}``。
     """
     rows = []
     for s in strengths:

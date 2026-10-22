@@ -4,7 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.material_gvd(material=&#x27;SILICA&#x27;, wl_min_nm=1000.0, wl_max_nm=1700.0, n_points=71)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import fiberoptics; fiberoptics.material_gvd(material=&#x27;SILICA&#x27;, wl_min_nm=1000.0, wl_max_nm=1700.0, n_points=71)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;material_gvd&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>材料分散のパラメータ D(λ) = −(λ/c) d²n/dλ² [ps/(nm·km)] を <code style="color:#22d3bf">pairs</code>(λ [nm], D)で。</p>
-<p>D = 0 の波長が材料分散の零点(溶融石英で ≈ 1.27 µm)。正(異常分散)では長い波長が速い。</p>
+<p>D = 0 の波長が材料分散の零点(溶融石英で ≈ 1.27 µm)。正(異常分散)ではグループ遅延が波長とともに増え、長い波長が遅い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
 <p>optics の全 op は入力を検証してから計算する(黙って通さない):</p>
 <p style="margin:2px 0 2px 12px">• <b>単位は引数名に埋め込む</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。mm と µm の取り違えは crash ではなく「もっともらしく間違った答え」なので、名前で防ぐ。大きさから単位を推測する処理は一切しない。</p>

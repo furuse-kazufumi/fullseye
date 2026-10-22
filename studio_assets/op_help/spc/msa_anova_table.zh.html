@@ -4,9 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.msa_anova_table(table, part=&#x27;part&#x27;, operator=&#x27;operator&#x27;, value=&#x27;value&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import spc; spc.msa_anova_table(table, part=&#x27;part&#x27;, operator=&#x27;operator&#x27;, value=&#x27;value&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">opsspc.get(&quot;msa_anova_table&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>交叉双因子设计(零件 x 测量者 x 重复)的方差分析表(<code style="color:#22d3bf">table</code>)。</p>
-<p>*table* 是含有列 *part* / *operator* / *value* 的表。设计必须<b>均衡</b> (每个格子的重复次数相同)——不均衡则拒绝。</p>
-<p>返回 source / ss / df / ms / f / p 共 6 列。<code style="color:#22d3bf">f</code> 和 <code style="color:#22d3bf">p</code> 是以交互作用均方检验测量者与交互作用、以误差均方检验交互作用所得的值(标准的惯例)。</p>
-<p>★可作为门禁的严格恒等式: <code style="color:#22d3bf">ss_total == ss_part + ss_oper + ss_inter + ss_err</code>。这是代数分解,因此无论方差分量怎样求得都必然成立 —— 任一侧出错就不再一致。自由度也以 <code style="color:#22d3bf">df_total == 和</code> 闭合。</p>
+<p>*表*是一个包含列*部分*/*运算符*/*值*的表。设计<b>平衡</b> （每个方格的重复次数相同） - 如果不平衡，则会被拒绝。</p>
+<p>返回6列：source/ss/df/ms/f/p。 <code style="color:#22d3bf">f</code> 和 <code style="color:#22d3bf">p</code> 标识零件和测量器。交互作用均方，用误差均方（标准惯例）测试交互作用。</p>
+<p>★可用作门的精确恒等式：<code style="color:#22d3bf">ss_total == ss_part + ss_oper + ss_inter + ss_err</code>。由于这是一种代数分解，因此无论您如何导出方差分量，它总是成立 - 如果其中一个被破坏，那么不匹配。自由度也由“df_total == sum”封闭。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

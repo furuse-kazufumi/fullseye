@@ -1118,8 +1118,8 @@ def vol_local_std(vol, size=5):
 
     *size* is the edge of the cubic window in voxels (odd, >= 3), so
     ``n = size**3`` voxels enter each estimate.  **The relative standard error of
-    a single voxel's estimate is ``1/sqrt(2(n-1))``** — 3.1% for a 5x5x5 window,
-    1.1% for 9x9x9.  Quote that figure whenever a noise or roughness number is
+    a single voxel's estimate is approximately ``1/sqrt(2(n-1))``** — 6.4% for a 5x5x5 window,
+    2.6% for 9x9x9.  Quote that figure whenever a noise or roughness number is
     read off this volume.
 
     Returns a ``(D, H, W)`` float64 volume in the input's own units (it is *not*
@@ -1291,8 +1291,8 @@ def vol_granulometry(vol_binary, radii=None, spacing=None):
     **Applicability.** (1) A distribution is only as good as the threshold that
     made the binary volume — report it.  (2) Features touching the volume border
     are truncated and bias the distribution downward; crop or state it.
-    (3) ``d50`` is interpolated between the two bracketing radii, so it is no
-    finer than the radius step.
+    (3) ``d50`` is the median of foreground local-thickness values; it is not
+    quantised to or interpolated from the requested radius steps.
 
     HALCON has no granulometry operator.
 

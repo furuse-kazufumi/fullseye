@@ -4,14 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sdf_intersect(a, b)</code> (die Implementierung direkt: <code style="color:#22d3bf">import sdf_ops; sdf_ops.sdf_intersect(a, b)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;sdf_intersect&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Der Schnitt zweier SDFs, A∩B = das elementweise max(a, b) (innen nur, wo beide innen sind).</p>
-<p>Die Null-Isofläche ist der Schnitt beider Ränder. Außen exakte SDF, innen konservative untere Schranke.</p>
-<p>Berechnung: <code style="color:#22d3bf">np.maximum(np.asarray(a, float64), np.asarray(b, float64))</code>. Da es ein elementweises max ist, liegt ein Punkt nur dann innerhalb von A∩B (negativ), wenn <code style="color:#22d3bf">a &lt; 0</code> und <code style="color:#22d3bf">b &lt; 0</code>. Die Formen müssen nur broadcast-kompatibel sein (sonst wirft numpy <code style="color:#22d3bf">ValueError</code>), weitere Prüfungen gibt es nicht. NaN breitet sich aus, <code style="color:#22d3bf">±inf</code> breitet sich exakt aus (<code style="color:#22d3bf">max(a, -inf) = a</code>).</p>
-<p>Eingabe: 2 auf demselben Gitter ausgewertete SDFs (Ausgaben von <code style="color:#22d3bf">sphere_sdf</code> / <code style="color:#22d3bf">box_sdf</code> / <code style="color:#22d3bf">esdf</code> usw., innen negativ, außen positiv). Die Distanzeinheit ist die der Eingabe.</p>
-<p>Rückgabewert: float64 der Broadcast-Form. <code style="color:#22d3bf">&lt;= 0</code> ist die Belegung von A∩B.</p>
-<p>Hinweise:</p>
-<p style="margin:2px 0 2px 12px">• <b>Der Außenwert kann kleiner als die wahre Distanz ausfallen</b>: Außerhalb des Schnitts, wenn der Punkt außerhalb von A und außerhalb von B liegt, ist <code style="color:#22d3bf">max(a, b)</code> die Distanz &quot;zur ferneren Oberfläche&quot;, und die Oberfläche von A∩B kann noch weiter entfernt sein (untere Schranke). Die Null-Isofläche ist exakt.</p>
-<p style="margin:2px 0 2px 12px">• Gibt es keinen gemeinsamen Teil, sind alle Elemente positiv (Belegung 0); das ist kein Fehler.</p>
-<p style="margin:2px 0 2px 12px">• Für CSG-&quot;Ausschnitte&quot;, etwa eine Kugel mit einer Box beschneiden oder aus 2 Boxen ein Prisma bauen. B aus A herausnehmen ist <code style="color:#22d3bf">sdf_subtract</code>.</p>
+<p>Die Null-Isofläche ist der gemeinsame Teil beider Grenzen. Sowohl innerhalb als auch außerhalb gelten im Allgemeinen keine strengen SDFs, es können jedoch geringere Entfernungsgrenzen festgelegt werden.</p>
+<p>Berechnung: „np.maximum(np.asarray(a, float64), np.asarray(b, float64))“. pro Element max, also liegt ein Punkt nur dann innerhalb (negativ) A∩B, wenn „a &lt; 0“ und „b &lt; 0“ ist. Die Form muss nur konsistent übertragen werden (wenn nicht, numpys „ValueError“). Es werden keine weiteren Tests durchgeführt. NaN wird propagiert, „±inf“ wird strikt propagiert („max(a, -inf) = a“).</p>
+<p>Eingabe: Zwei SDFs, die im selben Raster ausgewertet wurden („sphere_sdf“ / „box_sdf“ / (wie die Ausgabe von „esdf“, inneres Negativ und äußeres Positiv). Die Entfernungseinheit ist dieselbe wie die Eingabe.</p>
+<p>Rückgabe: ein float64 der Form nach der Übertragung. „&lt;= 0“ ist die Besetzung von A∩B.</p>
+<p>Achtung:</p>
+<p style="margin:2px 0 2px 12px">• <b>Äußere Werte können kleiner sein als der wahre Abstand</b>: Außerhalb des Schnittpunkts, wenn der Punkt außerhalb von A und außerhalb von B liegt Wenn „max(a, b)“ der Abstand „zur am weitesten entfernten Oberfläche“ ist, ist die Oberfläche von A∩B weiter entfernt. Es gibt Dinge (Untergrenze). Die Null-Isofläche ist exakt.</p>
+<p style="margin:2px 0 2px 12px">• Wenn kein gemeinsamer Teil vorhanden ist, sind alle Elemente positiv (Belegung 0) und es tritt kein Fehler auf.</p>
+<p style="margin:2px 0 2px 12px">• Wird zum „Schneiden“ von CSG verwendet, z. B. zum Schneiden einer Kugel mit einem Kasten oder zum Herstellen eines Prismas mit zwei Kasten. Das Subtrahieren von B von A ist „sdf_subtract“.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

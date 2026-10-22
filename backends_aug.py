@@ -308,7 +308,7 @@ def aug_rolling_shutter(v, a, b):
     """Rolling-shutter skew. A CMOS rolling shutter exposes rows sequentially, so
     a scene (or camera) panning horizontally shifts each row by an amount linear
     in its row index -- a pure horizontal shear. ``a`` sets the peak shift
-    ``0.25*W*a`` px (the shear is centred so the middle row is unmoved),
+    ``0.125*W*a`` px at either edge (the shear is centred so the middle row is unmoved),
     ``b`` sets the pan direction (b < 0.5 -> shift right with increasing row,
     otherwise left). Resampled bilinearly with reflecting borders."""
     x = _img(v)

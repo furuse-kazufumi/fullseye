@@ -4,14 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.watermark_capacity(image, bits, strengths=(0.02, 0.05, 0.1, 0.2, 0.4), wavelet: &#x27;str&#x27; = &#x27;haar&#x27;, level: &#x27;int&#x27; = 1, jpeg_quality=None) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import imgforensics; imgforensics.watermark_capacity(image, bits, strengths=(0.02, 0.05, 0.1, 0.2, 0.4), wavelet: &#x27;str&#x27; = &#x27;haar&#x27;, level: &#x27;int&#x27; = 1, jpeg_quality=None) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsimgforensics.get(&quot;watermark_capacity&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Durchläuft den Kompromiss zwischen Einbettungsstärke und <b>PSNR / BER</b>. <code style="color:#22d3bf">table</code>.</p>
-<p>Für jede <code style="color:#22d3bf">strength</code> wird Einbetten → Extrahieren tatsächlich ausgeführt, mit</p>
-<p><code style="color:#22d3bf">psnr_db</code>  PSNR zwischen Original und Bild mit Wasserzeichen (Wertebereich [0, 1] als Basis, <code style="color:#22d3bf">MAX=1</code>)</p>
-<p><code style="color:#22d3bf">ber</code>      Bitfehlerrate der Extraktion (gezählt mit <code style="color:#22d3bf">hash_distance</code>)</p>
-<p><code style="color:#22d3bf">clipped</code>  Anteil der Pixel des Bildes mit Wasserzeichen, die aus [0, 1] herausfallen.</p>
-<p><b>Der Überlauf geht beim Speichern immer verloren</b>; wer die Stärke nur nach der PSNR</p>
-<p>erhöht, vergrößert die &quot;nicht gemessene Verschlechterung&quot;</p>
-<p>Wird in <code style="color:#22d3bf">jpeg_quality</code> eine Qualität übergeben, kommt auch <code style="color:#22d3bf">ber_jpeg</code> hinzu, extrahiert nachdem das Bild mit Wasserzeichen durch <b>ein echtes JPEG</b> gelaufen ist (Pillow erforderlich. Ohne Angabe fehlt die Spalte ganz —— damit die zurückgegebenen Spalten nicht von der Umgebung abhängen, läuft es per Default nicht).</p>
-<p>Die Rückgabe ist <code style="color:#22d3bf">{&quot;capacity_bits&quot;: int, &quot;n_bits&quot;: int, &quot;rows&quot;: [...], &quot;caveats&quot;: [...]}</code>.</p>
+<p>Führen Sie tatsächlich „embed → extract“ für jede „Stärke“ aus.</p>
+<p>„psnr_db“ PSNR des Originalbilds und des mit Wasserzeichen versehenen Bilds (Bereich [0, 1] Standard, „MAX=1“) Bitfehlerrate der „ber“-Extraktion (gezählt von <code style="color:#22d3bf">hash_distance</code>) „abgeschnitten“ Prozentsatz der Pixel im mit Wasserzeichen versehenen Bild, die außerhalb von [0, 1] liegen.</p>
+<p><b>Der Überhang geht beim Speichern immer verloren</b>, daher kann die Stärke nur anhand der PSNR ermittelt werden.</p>
+<p>Wenn Sie ihn erhöhen, wird die „unermessliche Verschlechterung“ zunehmen.</p>
+<p>Wenn Sie die Qualität an „jpeg_quality“ übergeben, wird das mit Wasserzeichen versehene Bild durch ein <b>echtes JPEG</b> geleitet und dann Das extrahierte „ber_jpeg“ ist ebenfalls enthalten (Pillow ist erforderlich. Wenn es weggelassen wird, wird nicht die gesamte Spalte einbezogen. (Es wird nicht standardmäßig ausgeführt, um sicherzustellen, dass sich die zurückgegebenen Spalten nicht je nach Umgebung ändern.)</p>
+<p>Gibt „{&quot;capacity_bits&quot;: int, &quot;n_bits&quot;: int, &quot;rows&quot;: [...], &quot;caveats&quot;: [...], &quot;ll_shape&quot;: tuple}`` zurück.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

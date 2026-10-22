@@ -175,7 +175,7 @@ def kendama_params(preset: str = "jka_16_2", *, trick: str = "ozara", ball_radiu
     ``rho``/``cd`` = 空気密度・抗力係数(rho = 0 で真空: 定理の門はこれで走らせる)。
 
     fail-closed: 未知の preset、寸法 ≤ 0、皿の縁 ≥ 玉(縁で受けられない = けん玉ではない)、横幅 < 大皿の直径、糸 ≤ 玉の半径、
-    穴の深さが (0, 玉の直径) の外、けん先の太さが穴に入らない、は ValueError。
+    穴の深さが (0, 玉の直径) の外、穴の半径 ≥ 玉の半径、は ValueError。けん先と穴の太さは比較しない。
     返り値には派生量 ``"cup_rest_height"`` = √(r_b² − r_c²)(受ける皿の縁に乗った玉の中心の高さ)、``"bp"``(:func:`ballistics.ball_params`、中実球)。"""
     if trick not in KENDAMA_TRICKS:
         raise ValueError("unknown trick %r (known: %s)" % (trick, ", ".join(KENDAMA_TRICKS)))

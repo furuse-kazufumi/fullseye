@@ -244,7 +244,7 @@ def tile_stream(cache: dict, i: int, j: int, tp: dict, radius: int = 1, step: fl
     """車のいる区画 (i, j) の周り (2·radius + 1)² 区画を持ち、外れた区画を捨てる(``cache`` をその場で書き換える)。
     返り値 ``{"loaded": [(i, j)], "evicted": [(i, j)], "n": 持っている区画の数}``。
 
-    空の入力(``cache`` が空の dict)は空を返す(理由: 最初の呼び出しは空の cache から始まる(その場で書き換える))。
+    空の ``cache`` から始めると対象範囲の全区画を読み込み、``loaded`` と ``n`` に反映する。
     """
     want = {(int(i) + a, int(j) + b) for a in range(-radius, radius + 1) for b in range(-radius, radius + 1)}
     evicted = [k for k in list(cache) if k not in want]

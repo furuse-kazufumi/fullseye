@@ -4,25 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_peak_locking(flow, bins=20)</code> (die Implementierung direkt: <code style="color:#22d3bf">import pivops; pivops.piv_peak_locking(flow, bins=20)</code>; aus dem Register: <code style="color:#22d3bf">opspiv.get(&quot;piv_peak_locking&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Stärke des Peak-Lockings: wie stark die Verteilung der Nachkommaanteile von der Gleichverteilung abweicht.</p>
-<p>Die Subpixel-Schätzung hat eine Verzerrung, die den Nachkommaanteil der wahren Verschiebung zu 0 oder 0.5 hinzieht, wenn er dort liegt (ein lehrbuchmäßiger systematischer Fehler von PIV, der daher rührt, dass die Form des Korrelationsgipfels von der Form der angepassten Funktion abweicht). <b>Ist die Strömung nicht gleichförmig, sollte der Nachkommaanteil nahezu gleichverteilt sein</b>, und die Abweichung davon wird gemessen.</p>
-<p>Der Index <code style="color:#22d3bf">c0</code> ist eine Chi-Quadrat-artige Abweichung, <b>unabhängig vom Stichprobenumfang</b>:</p>
-<p><code style="color:#22d3bf">sum((n_i - n_bar)^2 / n_bar) / (bins - 1)</code>. Bei Stichproben aus einer Gleichverteilung ist der Erwartungswert 1, daher <b>ist es um 1 herum nicht von gleichverteilt zu unterscheiden</b>; je größer, desto verzerrter.</p>
-<p>★ Dieser Index setzt jedoch voraus, dass &quot;der Nachkommaanteil der wahren Verschiebung gleichverteilt ist&quot;. In Feldern mit wenigen Fenstern oder langsam variierender Verschiebung <b>wird schon das c0 der Ground Truth groß</b> (gemessen: 82 für die Ground Truth einer linearen Rampe —— das Fenstergitter hat nur 19 Spalten, sodass der Nachkommaanteil nur diskret auftritt). c0 daher <b>im Vergleich mit der Ground Truth derselben Eingabe</b> lesen.</p>
-<p><b>Die entscheidende Diagnose ist eine andere</b> —— den Nachkommaanteil einer gleichförmigen Translation von 0 bis 0.9 variieren und prüfen, ob die Schätzwerte auf der Diagonale liegen. Gemessen (win=32, density 0.02):</p>
-<p>==========  =================  ==================</p>
-<p>Verfahren   RMS Bruchteilf.    max. Absolutfehler</p>
-<p>==========  =================  ==================</p>
-<p>gauss3      0.0037 px          0.0088 px</p>
-<p>parabolic   0.0104 px          0.0151 px</p>
-<p>centroid    0.2259 px          0.3701 px</p>
-<p>==========  =================  ==================</p>
-<p><code style="color:#22d3bf">centroid</code> antwortet auf wahre 0.1 mit 0.02 und auf 0.9 mit 0.98 —— die lehrbuchmäßige S-Kurve, die zu ganzen Zahlen zieht. Es bestätigt, dass <b>erschienen ist, was erscheinen sollte</b>, und ist kein Defekt der Implementierung (deshalb sind alle 3 erhalten).</p>
-<p>Args:</p>
-<p>flow: <code style="color:#22d3bf">(2, h, w)</code>.</p>
-<p>bins: Anzahl der Klassen des Histogramms des Nachkommaanteils.</p>
-<p>Returns:</p>
-<p>dict: <code style="color:#22d3bf">c0</code> (Index für beide Komponenten zusammen), <code style="color:#22d3bf">hist</code> (<code style="color:#22d3bf">(2, bins)</code>),</p>
-<p><code style="color:#22d3bf">frac_mean</code> / <code style="color:#22d3bf">frac_std</code>, <code style="color:#22d3bf">bins</code>.</p>
+<p>Subpixel-Schätzungen tendieren zu echten Verschiebungen, wenn der Bruchteil 0 oder 0,5 ist. Bias (aufgrund des Unterschieds in der Form des Korrelationspeaks und der Form der angepassten Funktion) Systematischer Fehler im Lehrbuch). <b>Wenn der Fluss nicht gleichmäßig ist, sollte der Bruchteil einer gleichmäßigen Verteilung nahe kommen</b>, Messen Sie die Abweichung von dort.</p>
+<p>Der Index „c0“ ist eine Chi-Quadrat-Abweichung unabhängig von der Stichprobengröße:</p>
+<p>„sum((n_i – n_bar)^2 / n_bar) / (2*bins – 1)“ Für die 2*bins-Klasse, die beide Komponenten kombiniert, erhalten wir, wenn wir eine Stichprobe aus einer Gleichverteilung entnehmen Der erwartete Wert ist 1. Wenn er also etwa 1 beträgt, kann er nicht von Uniform unterschieden werden.** Je größer er ist, desto stärker ist er verzerrt.</p>
+<p>★ Dieser Index geht jedoch davon aus, dass der Dezimalteil der wahren Verschiebung einheitlich ist. Anzahl der Fenster In einem Feld, in dem es wenig gibt oder in dem sich die Verschiebung langsam ändert, wird <b>der wahre Wert selbst, c0, ebenfalls groß</b> (Tatsächliche Messung: Der wahre Wert der linearen Lampe beträgt 82 – Es gibt nur 19 Spalten mit Fenstergittern und der Dezimalteil ist diskret. ). Lesen Sie daher c0, indem Sie es mit dem wahren Wert derselben Eingabe vergleichen.</p>
+<p><b>Die endgültige Diagnose erfolgt separat</b> – Skalierung des Dezimalteils der einheitlichen Übersetzung von 0 auf 0,9, Überprüfen Sie, ob die geschätzten Werte auf der Diagonalen liegen. Tatsächliche Messung (win=32, Dichte 0,02):</p>
+<p>========== ================= ================= Schätzmethode RMS maximaler absoluter Fehler oder Bruchteilfehler ========== ================= ================= Gauss3 0,0037 px 0,0088 px parabolisch 0,0104 px 0,0151 px Schwerpunkt 0,2259 px 0,3701 px ========== ================= =================</p>
+<p>„centroid“ beantwortet den wahren Wert 0,1 mit 0,02, 0,9 mit 0,98 – zieht eine Ganzzahl an S-Form wie im Lehrbuch. <b>Bestätigung, dass herausgekommen ist, was herauskommen sollte</b>, Dies stellt bei der Implementierung kein Problem dar (deshalb bleiben alle drei bestehen).</p>
+<p>Argumente:</p>
+<p>Fluss: „(2, h, w)“.</p>
+<p>Bins: Anzahl der Histogrammklassen im Bruchteil.</p>
+<p>Rückgaben:</p>
+<p>dict: <code style="color:#22d3bf">c0</code>(Index beider Komponenten zusammen), <code style="color:#22d3bf">hist</code>(<code style="color:#22d3bf">(2, bins)</code>),</p>
+<p>„frac_mean“ / „frac_std“, „bins“.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">Leitfaden zur Familie piv_displacement</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

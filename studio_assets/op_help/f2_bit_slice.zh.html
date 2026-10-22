@@ -12,7 +12,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/f2_bit_slice.inputs.jpg">f2_bit_slice: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>对图像做 8 位量化后提取其中一个位平面。<code style="color:#22d3bf">a</code> 选择位平面(0 = 最低位 LSB .. 7 = 最高位 MSB);<code style="color:#22d3bf">b</code> 被忽略。返回 {0,1} 图像。</p>
+<p>8 位量化后提取一个位平面。 0..1 中的归一化“a”选择平面“round(7*a)”（0 = LSB，1 = MSB）； <code style="color:#22d3bf">b</code> 被忽略。返回 {0,1}。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

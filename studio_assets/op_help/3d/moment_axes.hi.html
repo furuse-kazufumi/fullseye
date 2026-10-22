@@ -4,14 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.moment_axes(points, weights=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import match3d; match3d.moment_axes(points, weights=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;moment_axes&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>point cloud/weighted points का <b>centroid + principal axes</b> (inertia tensor के eigenvectors)। pose estimation का आधार।</p>
-<p>Return value (centroid(3,), axes(3,3) column = principal axis, eigvals(3,))। eigenvalue घटते क्रम में। rotation के canonicalisation के लिए उपयोग होता है।</p>
-<p>परिभाषा: <code style="color:#22d3bf">w</code> को योग 1 पर normalise करके, centroid <code style="color:#22d3bf">c = Σ w p</code>, scatter matrix <code style="color:#22d3bf">C = Σ w (p−c)(p−c)ᵀ</code> (covariance। inertia tensor <code style="color:#22d3bf">tr(C)I − C</code> के साथ eigenvector साझा हैं और eigenvalue का क्रम उलटा है) को <code style="color:#22d3bf">eigh</code> से decompose किया जाता है। <code style="color:#22d3bf">axes[:, i]</code> i-वें सबसे बड़े eigenvalue का principal axis है (घटते क्रम में)। eigenvalue variance (लंबाई²) हैं।</p>
-<p style="margin:2px 0 2px 12px">• eigenvector का sign मनमाना है, और <code style="color:#22d3bf">axes</code> left-handed (det=−1) हो सकता है (<code style="color:#22d3bf">match_pca</code> 3rd axis को</p>
-<p>उलटकर right-handed बनाता है)।</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">weights</code> की लंबाई N है। योग 0 होने पर 0 से भाग से NaN (exception नहीं)। 0 point पर विफल होता है (validation नहीं है)।</p>
-<p style="margin:2px 0 2px 12px">• principal axis degenerate हों (sphere आदि) तो axis की दिशा अनिश्चित रहती है।</p>
-<p>आगे: <code style="color:#22d3bf">match_pca</code>, <code style="color:#22d3bf">obb</code> (oriented bbox), canonical pose में rotation।</p>
-<p>खाली इनपुट (<code style="color:#22d3bf">points</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
+<p>वापसी मान (केन्द्रक(3,), अक्ष(3,3) कॉलम=मुख्य अक्ष, इग्वल(3,))। आइगेनवैल्यू अवरोही क्रम। रोटेशन सामान्यीकरण के लिए उपयोग किया जाता है।</p>
+<p>परिभाषा: <code style="color:#22d3bf">w</code> को 1 के योग तक सामान्यीकृत करें, केन्द्रक <code style="color:#22d3bf">c = Σ w p</code>, स्कैटर मैट्रिक्स <code style="color:#22d3bf">C = Σ w (p−c)(p−c)ᵀ</code> (सहप्रसरण। जड़त्व टेंसर <code style="color:#22d3bf">tr(C)I − C</code> और eigenvectors सामान्य हैं, लेकिन eigenvalues ​​का क्रम उलटा है) <code style="color:#22d3bf">eigh</code> द्वारा। जुदा करना. <code style="color:#22d3bf">अक्ष[:, i]</code> i-वें सबसे बड़े eigenvalue (घटते क्रम में) का प्रमुख अक्ष है। आइगेनवैल्यू विचरण (लंबाई²) है।</p>
+<p style="margin:2px 0 2px 12px">• eigenvectors के संकेत मनमाने हैं, और <code style="color:#22d3bf">अक्ष</code> बाएं हाथ के हो सकते हैं (det=−1) (<code style="color:#22d3bf">match_pca</code> तीसरी धुरी सेट करता है</p>
+<p>(इसे दाएं हाथ से बनाने के लिए उलटा करें)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">वजन</code> लंबाई N है। 0 से विभाजित करने पर 0 का योग NaN होता है (कोई अपवाद नहीं होता है)। 0 का स्कोर स्पष्ट रूप से एक वैल्यूएरर है।</p>
+<p style="margin:2px 0 2px 12px">• यदि मुख्य अक्ष विकृत है (जैसे कोई गोला), तो अक्ष की दिशा अनिश्चित है।</p>
+<p>बाद में: <code style="color:#22d3bf">match_pca</code>, <code style="color:#22d3bf">obb</code> (निर्देशित बॉक्स), विहित दृष्टिकोण के लिए रोटेशन।</p>
+<p>खाली इनपुट (0 तत्वों के <code style="color:#22d3bf">अंक</code>) के परिणामस्वरूप वैल्यूएरर होता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

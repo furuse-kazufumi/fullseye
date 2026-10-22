@@ -4,11 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.metrics_table(report, order=None)</code>(要直接调用实现,<code style="color:#22d3bf">import imgmetrics; imgmetrics.metrics_table(report, order=None)</code>;从台账取用则 <code style="color:#22d3bf">opsimgmetrics.get(&quot;metrics_table&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把报告整理成 <code style="color:#22d3bf">(名称, 数值)</code> 的表 —— 描述测量条件的行<b>必定一并列出</b>。</p>
-<p>本 op 的主旨是让人无法做出只有数值的表。<code style="color:#22d3bf">contract</code> 的各项会作为 <code style="color:#22d3bf">条件: &lt;名称&gt;</code> 进入同一张表。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">report</code>:<code style="color:#22d3bf">compare_images</code> 或 <code style="color:#22d3bf">measure_with</code> 的返回值(含 <code style="color:#22d3bf">contract</code> 键的 dict)。其他则为 <code style="color:#22d3bf">MetricContractError</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">order</code>:排在前面的指标名序列(省略时按键的字典序)。<code style="color:#22d3bf">report</code> 中没有的名称默默跳过,<code style="color:#22d3bf">&quot;contract&quot;</code> 不作为指标列出。</p>
-<p style="margin:2px 0 2px 12px">• 返回值:<code style="color:#22d3bf">(名称, 值)</code> 元组的 list。在指标行之后,把 <code style="color:#22d3bf">contract</code> 的各项以 <code style="color:#22d3bf">&quot;条件: data_range&quot;</code> 的形式按键的字典序追加。值不做转换(<code style="color:#22d3bf">None</code> 和 <code style="color:#22d3bf">inf</code> 也原样保留)。</p>
-<p>放在落到图注或 Markdown 表格之前。<b>不要删掉条件行再贴</b> —— 把 <code style="color:#22d3bf">data_range</code> 不同的 2 个 PSNR 并列,会出现 48 dB 的表面差异。</p>
+<p>此操作的要点是使创建仅包含数值的表变得不可能。 「契约」</p>
+<p>每个项目都与“条件：&lt;名称&gt;”位于同一个表中。</p>
+<p>-<code style="color:#22d3bf">report</code>：<code style="color:#22d3bf">compare_images</code> 或<code style="color:#22d3bf">measure_with</code> 的返回值（<code style="color:#22d3bf">contract</code></p>
+<p>字典）与键。否则“MetricContractError”。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">order</code>：要显示的索引名称的顺序。当指定时，不在这里的索引将被删除，当省略时，键按字典顺序排列。不在“报告”中该名称被默默地跳过，并且 <code style="color:#22d3bf">&quot;contract&quot;</code> 没有被列为指示符。</p>
+<p style="margin:2px 0 2px 12px">• 返回：“(name, value)”元组列表。在索引行之后，<code style="color:#22d3bf">contract</code> 中的每一项按字典顺序添加键，例如<code style="color:#22d3bf">“condition：data_range”</code>。不转换值（<code style="color:#22d3bf">None</code> 和 <code style="color:#22d3bf">inf</code> 也相同）。</p>
+<p>将其放置在将其添加到图形注释或 Markdown 表之前。 <b>删除条件行后请勿粘贴</b> -- 当两个具有不同“data_range”的 PSNR 并排放置时，明显存在 48 dB 的差异。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

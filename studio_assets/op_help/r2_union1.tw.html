@@ -13,8 +13,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r2_union1.inputs.jpg">r2_union1: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把所有連通成分併成一張遮罩(標籤的 OR)。</p>
-<p>以 <code style="color:#22d3bf">scipy.ndimage.label</code> 對前景遮罩(<code style="color:#22d3bf">&gt; 0.5</code>)進行連通元件標記，再把 <code style="color:#22d3bf">label &gt; 0</code> 還原為 1.0，作為 1 張遮罩傳回。由於是全部元件的聯集，結果與「把輸入正規化為 0/1」相同(實際效果是值的 2 值化與非有限值的去除)。<code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
-<p>回傳值是與輸入同形的 float64 0/1 遮罩。沒有前景時全為零。0.5 以下的灰階值與 NaN/Inf 全部成為背景。接收到含多個標籤值的標籤影像時，標籤編號的區別也會消失，變為單一的前景遮罩(若想依標籤取出，請用 <code style="color:#22d3bf">r3_label_to_region</code>)。在管線中，它的定位是明確表示「將區域作為 1 個物件處理」，依元件的篩選(<code style="color:#22d3bf">select_shape</code> / <code style="color:#22d3bf">r2_sort_region</code>)應放在此 op 之前。</p>
+<p>用前景遮罩（<code style="color:#22d3bf">&gt; 0.5</code>）用<code style="color:#22d3bf">scipy.ndimage.label</code> 標記連接的元件，將“label &gt; 0”設為 1.0 並將其作為遮罩返回。由於它是所有組件的聯合，結果與「將輸入歸一化為0/1」相同（值和非有限值的二值化去除是實際效果）。不使用“a”、“b”。</p>
+<p>傳回值是帶有 <code style="color:#22d3bf">_as_mask</code> 的 2-D float64 0/1 遮罩。對於二維輸入，它是同構的，如果沒有前景，則全為零。 0.5以下所有灰階值和 NaN/Inf 都成為背景。具有多個標籤值的標籤影像如果收到，標籤編號之間的差異就會消失並變成單一前景遮罩（對於每個標籤如果您想檢索它，請使用“r3_label_to_region”）。在管道中，面積為對組件單元進行排序，其位置清楚地表明它們應被視為對象(<code style="color:#22d3bf">select_shape</code> / <code style="color:#22d3bf">r2_sort_region</code>) 放置在此操作之前。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

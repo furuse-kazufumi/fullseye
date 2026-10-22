@@ -26,7 +26,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 分解する。``axes[:, i]`` が i 番目に大きい固有値の主軸(降順)。固有値は分散(長さ²)。
 - 固有ベクトルの符号は任意で、``axes`` は左手系(det=−1)になり得る(``match_pca`` は第 3 軸を
 反転して右手系にしている)。
-- ``weights`` は長さ N。総和 0 は 0 除算で NaN(例外は出ない)。点数 0 は失敗する(検証は無い)。
+- ``weights`` は長さ N。総和 0 は 0 除算で NaN(例外は出ない)。点数 0 は明示的に ValueError。
 - 主軸が縮退(球など)なら軸の向きは不定。
 後段: ``match_pca``、``obb``(有向 bbox)、正準姿勢への回転。
 

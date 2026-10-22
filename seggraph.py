@@ -297,7 +297,8 @@ def graph_cut_binary(image, *, lam: float = 1.0, mu_bg: Optional[float] = None, 
 
     データ項は D_p(0) = (I_p − μ_bg)²、D_p(1) = (I_p − μ_fg)²(μ を省くと isodata の 2 群の平均)。辺の重みは
     w_pq = exp(−(I_p − I_q)²/(2σ²)) / dist(p, q)(``contrast_sigma`` = σ、省くと 1/dist = Potts)。``seeds`` は labels2d で
-    1 = 背景の種、2 = 物体の種(Boykov–Jolly の K = 1 + max_p Σ_q λ w_pq で硬く縛る、エネルギーには数えない)。
+    1 = 背景の種、2 = 物体の種。拘束重みは ``1 + max_p Σ_q λ w_pq + max_p |D_p(0)-D_p(1)|``
+    で、自由画素のデータ項差も超える(エネルギーには数えない)。
     返す: ``mask``(物体 = True)、``energy`` = data + smooth、``cut_value`` / ``flow_value``(実数に戻した値 = 整数の値 / scale +
     定数)と ``cut_value_int`` / ``flow_value_int``(最大フロー = 最小カットの門)、``quantization_bound``(整数化による実数の
     最小との差の上界、整数の入力なら 0)。

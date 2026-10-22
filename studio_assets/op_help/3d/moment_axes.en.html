@@ -4,14 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.moment_axes(points, weights=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import match3d; match3d.moment_axes(points, weights=None)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;moment_axes&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The <b>centroid and principal axes</b> (the eigenvectors of the inertia tensor) of a point set or weighted points. The basis of pose estimation.</p>
-<p>Returns (centroid(3,), axes(3,3) columns = principal axes, eigvals(3,)). Eigenvalues in descending order. Used to canonicalise rotation.</p>
-<p>Definition: <code style="color:#22d3bf">w</code> is normalised to sum 1, centroid <code style="color:#22d3bf">c = Σ w p</code>, scatter matrix <code style="color:#22d3bf">C = Σ w (p−c)(p−c)ᵀ</code> (covariance. It shares eigenvectors with the inertia tensor <code style="color:#22d3bf">tr(C)I − C</code>, with the eigenvalue order reversed) is decomposed with <code style="color:#22d3bf">eigh</code>. <code style="color:#22d3bf">axes[:, i]</code> is the principal axis of the i-th largest eigenvalue (descending). Eigenvalues are variances (length²).</p>
-<p style="margin:2px 0 2px 12px">• The sign of the eigenvectors is arbitrary, and <code style="color:#22d3bf">axes</code> can be left-handed (det=−1) (<code style="color:#22d3bf">match_pca</code> flips the 3rd axis</p>
-<p>to make it right-handed).</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">weights</code> has length N. A sum of 0 gives NaN via division by 0 (no exception). 0 points fails (there is no validation).</p>
-<p style="margin:2px 0 2px 12px">• If the principal axes are degenerate (a sphere, etc.), the axis directions are undefined.</p>
-<p>Downstream: <code style="color:#22d3bf">match_pca</code>, <code style="color:#22d3bf">obb</code> (oriented bbox), rotation to a canonical pose.</p>
-<p>Empty input (<code style="color:#22d3bf">points</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
+<p>Return value (centroid(3,), axes(3,3) columns=main axes, eigvals(3,)). Eigenvalue descending order. Used for rotation normalization.</p>
+<p>Definition: Normalize <code style="color:#22d3bf">w</code> to a sum of 1, centroid <code style="color:#22d3bf">c = Σ w p</code>, scatter matrix <code style="color:#22d3bf">C = Σ w (p−c)(p−c)ᵀ</code> (covariance. The inertia tensor <code style="color:#22d3bf">tr(C)I − C</code> and the eigenvectors are common, but the order of the eigenvalues is reversed) by <code style="color:#22d3bf">eigh</code>. Disassemble. <code style="color:#22d3bf">axes[:, i]</code> is the principal axis of the i-th largest eigenvalue (in descending order). Eigenvalue is variance (length²).</p>
+<p style="margin:2px 0 2px 12px">• The signs of the eigenvectors are arbitrary, and <code style="color:#22d3bf">axes</code> can be left-handed (det=−1) (<code style="color:#22d3bf">match_pca</code> sets the third axis</p>
+<p>(Inverted to make it right-handed).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">weights</code> is length N. The sum of 0 is NaN when divided by 0 (no exception occurs). A score of 0 is explicitly a ValueError.</p>
+<p style="margin:2px 0 2px 12px">• If the principal axis is degenerate (such as a sphere), the direction of the axis is indeterminate.</p>
+<p>Later: <code style="color:#22d3bf">match_pca</code>, <code style="color:#22d3bf">obb</code> (directed bbox), rotation to canonical attitude.</p>
+<p>Empty input (<code style="color:#22d3bf">points</code> of 0 elements) results in a ValueError.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

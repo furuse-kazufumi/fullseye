@@ -558,7 +558,7 @@ def tree_mesh(height: float = 6.0, trunk_radius: float = 0.15, crown_radius: flo
     """手続き的な木: 幹 = 正 n 角柱(高さ 0.35·height)、樹冠 = 円錐(conifer)か回転楕円体(broadleaf、上下 0.65·height)。
 
     返り値 ``{"V", "F", "color" (M,3), "label" (13), "dims", "volume"}``。``volume`` は閉形式: 幹 = ½ n r² sin(2π/n)·h_t、
-    円錐 = ⅓·½ n R² sin(2π/n)·h_c(多角形の底面なので厳密)、楕円体は内接なので mesh_signed_volume ≤ 4/3·π R² (h_c/2)。"""
+    円錐 = ⅓·½ n R² sin(2π/n)·(0.6675·height)(多角形の底面なので厳密)、楕円体は内接なので mesh_signed_volume ≤ 4/3·π R² (h_c/2)。"""
     if height <= 0 or trunk_radius <= 0 or crown_radius <= 0 or n < 3:
         raise ValueError("bad tree dims")
     if kind not in ("broadleaf", "conifer"):

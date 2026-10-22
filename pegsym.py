@@ -561,8 +561,8 @@ def search_expected_tries(n_sym: int, phi_cap: float, order: str = "alternate", 
 
 def spiral_search_points(pitch: float, step: float, r_max: float, centre=(0.0, 0.0)) -> dict:
     """横ずれの探索点: Archimedes のらせん r = p φ/(2π) を弧長 ``step`` [m] ごとに(中心から)、半径 ``r_max`` まで。隣の巻きとの間隔 =
-    ``pitch``。面取りが捕まえる半径を c とすると、p ≤ 2c かつ step ≤ 2c で抜けなく覆う(隣の巻きの間の点の最悪の距離 √((p/2)² + (s/2)²)
-    ≤ c が十分条件、``worst_gap`` で返す)。返り ``points``(N, 2)、``worst_gap``、``n``。
+    ``pitch``。面取りが捕まえる半径を c とすると、隣の巻きの間の点の最悪距離
+    ``sqrt((pitch/2)^2 + (step/2)^2)`` が c 以下なら覆える。この値を ``worst_gap`` で返す。返り ``points``(N, 2)、``worst_gap``、``n``。
     **Raises** ValueError: pitch・step・r_max ≤ 0、点が 200,000 を超える。"""
     p, s, rm = float(pitch), float(step), float(r_max)
     if not (p > 0 and s > 0 and rm > 0):

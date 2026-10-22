@@ -4,32 +4,32 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.icp_point2point_3d(src, dst, iters=50, init_R=None, init_t=None, tol=1e-06, max_corr_dist=None, trim_ratio=None, device=&#x27;cpu&#x27;, reproducible=False)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import match3d; match3d.icp_point2point_3d(src, dst, iters=50, init_R=None, init_t=None, tol=1e-06, max_corr_dist=None, trim_ratio=None, device=&#x27;cpu&#x27;, reproducible=False)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;icp_point2point_3d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>점군을 point-to-point ICP(Kabsch/SVD)로 정련합니다.</p>
-<p>대략적 매치 추정(정수NCC / Fourier-Mellin±3° / Hough±0.5voxel)으로 얻은초기 자세 (init_R, init_t) 를 출발점으로, src 측 점군을 dst 측 점군에 강체 변환으로위치 맞춤한다. 각 반복에서 최근접 대응(cKDTree)을 다시 만들고, Kabsch 알고리즘(SVD)으로 상대 회전·병진을 구해 누적함으로써, 대응이 알려져 있지 않아도서브복셀 정밀도로 수렴시킨다.</p>
-<p>부분 겹침·이상값에는 Trimmed ICP(거리가 작은 대응만 채택)와절대 거리 게이트(max_corr_dist)로 대처한다. 최종 RMSE 는 실제로 채택한대응(인라이어) 위에서 평가하므로, 부분 관측에서도 자세 품질을 올바르게 반영한다.</p>
+<p>거친 일치 추정 (정수 NCC / Fourier-Mellin ± 3 ° / Hough ± 0.5 voxel)에서 얻은초기 자세 (init_R, init_t)를 출발점으로, src 측점군을 dst 측점군으로 강체 변환으로정렬합니다. 각 반복에서 최근 이웃 대응 (cKDTree)을 재장착하고 Kabsch 알고리즘(SVD)로 상대 회전 · 병진을 구하여 누적함으로써 대응이 알려져 있지 않아도서브 복셀 정확도로 수렴합니다.</p>
+<p>부분 중첩 · 이상치에는 Trimmed ICP (거리가 작은 대응만 채용)과절대 거리 게이트(max_corr_dist)로 대처한다. 마지막 RMSE는 실제로 채택했다대응(인라이어)상에서 평가하기 위해, 부분 관측에서도 자세 품질을 정확하게 반영한다.</p>
 <p>인수:</p>
-<p>src: (N,3) 이동 측 점군(torch.Tensor 또는 numpy.ndarray).</p>
-<p>dst: (M,3) 고정 측(참조) 점군.</p>
+<p>src: (N,3) 이동측 점군(torch.Tensor 또는 numpy.ndarray).</p>
+<p>dst: (M,3) 고정측(참조) 점군.</p>
 <p>iters: 최대 반복 횟수.</p>
-<p>init_R: (3,3) 초기 회전. None 이면 단위 행렬.</p>
-<p>init_t: (3,) 초기 병진. None 이면 영벡터.</p>
-<p>tol: RMSE 의 상대 개선이 이 값 아래로 떨어지면 수렴으로 보고 종료.</p>
-<p>max_corr_dist: 이 거리를 넘는 대응을 이상값으로 기각(None 이면 비활성).</p>
-<p>trim_ratio: 0&lt;r&lt;=1. 각 반복에서 최근접 거리가 작은 상위 r 비율의 대응만</p>
-<p>채택하는 Trimmed ICP. 부분 겹침(겹침률 r)에 유효. None 이면 비활성.</p>
-<p>device: torch 디바이스(&quot;cpu&quot; 등). SVD 를 이 디바이스에서 푼다.</p>
-<p>reproducible: True 이면 점의 순서·BLAS 스레드 수에 의존하지 않는 축약으로 한다(기본값 False = 종래대로).</p>
-<p>평균은 math.fsum, 상호 공분산 H 는 ozakimm(Ozaki 스킴), 자세 적용은 요소별 연산, RMSE 도 math.fsum.</p>
-<p>src 점의 순서를 바꿔도 R·t·rmse 가 비트 단위로 같다(같은 계산기·같은 LAPACK 위에서). trim_ratio 의 경계에서</p>
-<p>거리가 정확히 동점인 점은 순서에 따라 선택이 달라질 수 있다. 20 만 점에서 1 반복당 0.7 ms 가 170 ms 정도가 된다.</p>
+<p>init_R: (3,3) 초기 회전. None이면 단위 행렬.</p>
+<p>init_t: (3,) 초기 병진. None이면 0 벡터입니다.</p>
+<p>tol: RMSE의 상대 개선이 이 값보다 낮으면 수렴 중단.</p>
+<p>max_corr_dist: 이 거리를 넘는 대응을 이상치로서 기각(None 로 무효).</p>
+<p>trim_ratio: 0&lt;r&lt;=1. 각 반복에서 최근 방거리가 작은 상위 r 할인 대응 만</p>
+<p>채택하는 Trimmed ICP. 부분 중첩(중첩율 r)에 유효. None에서 유효하지 않습니다.</p>
+<p>device: 반환값을 배치하는 torch 디바이스(&quot;cpu&quot; 등). SVD는 CPU의 NumPy로 해결됩니다.</p>
+<p>reproducible : True이면 점의 순서 · BLAS의 스레드 수에 의존하지 않는 축약으로한다 (기본 False = 기존대로).</p>
+<p>평균은 math.fsum, 상호 공분산 H는 ozakimm(Ozaki 체계), 자세의 적용은 요소별 연산, RMSE도 math.fsum.</p>
+<p>src 의 점의 순서를 바꾸어도 R·t·rmse 가 비트 단위로 같다(같은 계산기·같은 LAPACK 위). trim_ratio의 틈으로</p>
+<p>거리가 정확히 같은 점의 점은, 순서대로 선택되는 방법이 바뀔 수 있다. 20 만점에서 1 반복당 0.7 ms가 170 ​​ms 정도가 된다.</p>
 <p>반환값:</p>
-<p>R: (3,3) 회전. dst ~= src @ R.T + t 를 만족한다. <b>torch 가 있는 환경에서는 <code style="color:#22d3bf">torch.Tensor</code>, 없으면 같은 값의 <code style="color:#22d3bf">numpy.ndarray</code></b>(2026-09-07 에</p>
-<p>본체를 numpy 화했을 때도, 호환을 위해 타입은 그대로 두었다).</p>
-<p>★같은 족의 <code style="color:#22d3bf">icp_point2plane</code> 은 <b>항상 numpy 를 반환한다</b> —— 족 안에서</p>
-<p>타입이 맞지 않으므로, 하류에서는 <code style="color:#22d3bf">np.asarray(R)</code> 를 거치는 것이 안전</p>
-<p>(어느 쪽이든 동작한다. 파괴적 변경을 피하려고 이 불일치를 남겨 두었다).</p>
-<p>t: (3,) 병진(R 과 같은 타입).</p>
-<p>info: dict. &quot;rmse&quot;(채택 대응 위의 최종RMSE), &quot;iters&quot;(실제 반복 수),</p>
-<p>&quot;converged&quot;(bool), &quot;inliers&quot;(채택 대응 수), &quot;rmse_history&quot;(list).</p>
+<p>R: (3,3) 회전. dst ~= src @ R.T + t를 만족한다. <b>torch가 있는 환경에서는 <code style="color:#22d3bf">torch.Tensor &#x27;&#x27;, 그렇지 않으면 같은 값의</code>numpy.ndarray &#x27;&#x27;</b> (2026-09-07</p>
+<p>본체를 numpy화했을 때도, 호환을 위해 형은 거치했다).</p>
+<p>★같은 족의 <code style="color:#22d3bf">icp_point2plane</code> 은 <b>항상 numpy 를 돌려준다</b> —— 족속에서</p>
+<p>형이 갖추어지지 않기 때문에, 하류에서는 「np.asarray(R)」를 통과하는 것이 안전</p>
+<p>(어느 쪽이라도 움직인다. 파괴적 변경을 피해 이 불일치를 남기고 있다).</p>
+<p>t: (3,) 병진(R 과 같은 형태).</p>
+<p>info: dict. &quot;rmse&quot;(채용 대응상의 최종 RMSE), &quot;iters&quot;(실 반복수),</p>
+<p>&quot;converged&quot;(bool), &quot;inliers&quot;(채용 대응수), &quot;rmse_history&quot;(list).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

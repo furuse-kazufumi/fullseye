@@ -4,14 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.watermark_capacity(image, bits, strengths=(0.02, 0.05, 0.1, 0.2, 0.4), wavelet: &#x27;str&#x27; = &#x27;haar&#x27;, level: &#x27;int&#x27; = 1, jpeg_quality=None) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import imgforensics; imgforensics.watermark_capacity(image, bits, strengths=(0.02, 0.05, 0.1, 0.2, 0.4), wavelet: &#x27;str&#x27; = &#x27;haar&#x27;, level: &#x27;int&#x27; = 1, jpeg_quality=None) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsimgforensics.get(&quot;watermark_capacity&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>삽입 강도와 <b>PSNR / BER</b> 의 트레이드오프를 훑어 돌려줍니다. <code style="color:#22d3bf">table</code>.</p>
-<p>각 <code style="color:#22d3bf">strength</code>에 대해 삽입 → 추출을 실제로 돌리고,</p>
-<p><code style="color:#22d3bf">psnr_db</code>  원 화상과 워터마크가 들어간 화상의 PSNR(값 범위 [0, 1] 기준, <code style="color:#22d3bf">MAX=1</code>)</p>
-<p><code style="color:#22d3bf">ber</code>      추출의 비트 오류율(<code style="color:#22d3bf">hash_distance</code>로 센다)</p>
-<p><code style="color:#22d3bf">clipped</code>  워터마크가 들어간 화상이 [0, 1]에서 벗어난 화소의 비율.</p>
-<p><b>벗어난 부분은 저장 시에 반드시 잃는다</b>므로, PSNR만 보고 강도를</p>
-<p>올리면 &quot;재지 않은 열화&quot;가 늘어난다</p>
-<p><code style="color:#22d3bf">jpeg_quality</code>에 품질을 넘기면, 워터마크가 들어간 화상을 <b>진짜 JPEG</b>에 통과시킨 뒤추출한 <code style="color:#22d3bf">ber_jpeg</code>도 들어간다(Pillow 필수. 생략 시에는 열째로 들어가지 않는다 —— 환경에 따라 반환되는 열이 바뀌지 않도록 하기 위해, 기본값으로는 돌리지 않는다).</p>
-<p>반환은 <code style="color:#22d3bf">{&quot;capacity_bits&quot;: int, &quot;n_bits&quot;: int, &quot;rows&quot;: [...], &quot;caveats&quot;: [...]}</code>.</p>
+<p>각 &quot;strength&quot;에 대해 포함 → 추출을 실제로 실행합니다.</p>
+<p><code style="color:#22d3bf">psnr_db &#x27;&#x27; 원본 이미지와 워터 마크 이미지의 PSNR (값 범위 [0, 1] 기준, &quot;MAX = 1&quot;) &quot;ber&quot;추출의 비트 오류율 (:func :`hash_distance`로 계산) </code>clipped`` 워터 마크 이미지가 [0, 1]에서 튀어 나온 픽셀의 백분율. ** 돌출은 보존시 반드시 잃어버리기 때문에 PSNR만 보고 강도를올리면 「측정하지 않은 열화」가 늘어난다</p>
+<p>&quot;jpeg_quality&quot;에 품질을 전달하면 워터 마크 이미지를 ** 진짜 JPEG **에 통과시킨 후추출한 <code style="color:#22d3bf">ber_jpeg</code>도 들어간다 (Pillow 필수. 생략시는 열마다 들어가지 않는다 —— 환경에 의해 돌려주어지는 열이 변하지 않게 하기 위해(때문에, 기본적으로 달릴 수 없다).</p>
+<p>반환은 <code style="color:#22d3bf">{&quot;capacity_bits&quot;: int, &quot;n_bits&quot;: int, &quot;rows&quot;: [...], &quot;caveats&quot;: [...], &quot;ll_shape&quot;: tuple}</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

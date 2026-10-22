@@ -25,7 +25,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 Raises
 ------
 ValueError
-    :func:`annotate_leader_layout` と同じ + 太さ・cap_size が非正。
+    :func:`annotate_leader_layout` と同じ + 太さが非正、cap_size が負。0 の cap_size は先端なし。
 
 ## 詳しい使い方ガイド
 

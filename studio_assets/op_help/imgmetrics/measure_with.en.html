@@ -4,17 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.measure_with(report, a, b, ms=False)</code> (to call the implementation directly, <code style="color:#22d3bf">import imgmetrics; imgmetrics.measure_with(report, a, b, ms=False)</code>; from the registry, <code style="color:#22d3bf">opsimgmetrics.get(&quot;measure_with&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Measure another pair <b>under exactly the same conditions as the previous measurement</b>.</p>
-<p>Takes the return value of <code style="color:#22d3bf">compare_images</code> (including <code style="color:#22d3bf">contract</code>) and re-measures using the <code style="color:#22d3bf">data_range</code> / <code style="color:#22d3bf">bins</code> / <code style="color:#22d3bf">ncd_levels</code> recorded there as is.</p>
-<p>This is needed because of a type of accident that actually happened in this repo -- <b>only the numbers get copied into figure captions or tables, and the conditions disappear</b>. When 2 separately measured PSNRs are placed side by side, if one used <code style="color:#22d3bf">data_range=1.0</code> and the other <code style="color:#22d3bf">255</code>, <b>a 48.13 dB difference looks like an &quot;improvement&quot;</b>. If the conditions are carried along, combinations that cannot be compared are never created in the first place.</p>
-<p>At the same time, this is the <b>consumer side</b> of the <code style="color:#22d3bf">metrics</code> type. A state where only <code style="color:#22d3bf">compare_images</code> produces <code style="color:#22d3bf">metrics</code> and nobody consumes it was exactly the &quot;an entry point exists but no consumer op&quot; type this repo has repeatedly stepped into (detected in the 2026-09-02 audit).</p>
+<p>Receive the return value of <code style="color:#22d3bf">compare_images</code> (including <code style="color:#22d3bf">contract</code>) and write it there. Measure again using the recorded <code style="color:#22d3bf">data_range</code> / <code style="color:#22d3bf">bins</code> / <code style="color:#22d3bf">ncd_levels</code>.</p>
+<p>This is necessary because there is a type of accident that actually occurred in this repo --- <b>Only the numbers Conditions disappear by copying them to figures and tables</b>. When two separately measured PSNRs are placed side by side, If one side is <code style="color:#22d3bf">data_range=1.0</code> and the other is <code style="color:#22d3bf">255</code>, <b>48.13 dB difference is &quot;improvement&quot; I can see</b>. If you change the conditions around, you won&#x27;t be able to create combinations that can&#x27;t be compared.</p>
+<p>At the same time, this is also the consumer of the <code style="color:#22d3bf">metrics</code> type. Only <code style="color:#22d3bf">compare_images</code> This repo has repeatedly stepped on the situation where <code style="color:#22d3bf">metrics</code> is produced and no one eats it. It was exactly the type of ``type that has an entrance but no consumption op&#x27;&#x27; (detected during inspection on 2026-09-02).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
-<p>report : dict</p>
-<p>The return value of <code style="color:#22d3bf">compare_images</code>, or <code style="color:#22d3bf">contract</code> itself.</p>
+<p>report: dict</p>
+<p>The return value of <code style="color:#22d3bf">compare_images</code> or the <code style="color:#22d3bf">contract</code> itself.</p>
 <p>a, b : array_like</p>
-<p>The 2 images to re-measure.</p>
+<p>Two pieces to remeasure.</p>
+<p>ms : bool</p>
+<p>Multiscale specification to pass to <code style="color:#22d3bf">compare_images</code>.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p>A report of the same form. <code style="color:#22d3bf">contract</code> is <b>identical</b> to the one received.</p>
+<p>Same form of report. <code style="color:#22d3bf">contract</code> is <b>same</b> as received.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

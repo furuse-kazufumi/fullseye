@@ -31,6 +31,8 @@ Args:
         格子が変わるので予測は最近傍で載せ替える。
     overlap / peak / window_func: :func:`piv_cross_correlate` と同じ。
     outlier_threshold: 段間の正規化中央値検定の閾値。``None`` で無効。
+    normalize: 各段の相互相関の正規化方式。
+    search_limit: 予測位置から探索する窓幅の割合。
 Returns:
     最終段の ``(flow, info)``。``info["passes"]`` に各段の窓の大きさ。
 

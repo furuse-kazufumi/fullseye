@@ -4,17 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.camera_orientation_from_sun(sun_pixels, unix_times, lat_deg, lon_deg, K)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import geocam; geocam.camera_orientation_from_sun(sun_pixels, unix_times, lat_deg, lon_deg, K)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsgeocam.get(&quot;camera_orientation_from_sun&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>समय सहित सूर्य की pixel position, ≥ 2 point → camera का (yaw, pitch, roll) (Wahba समस्या का SVD हल = Kabsch)।</p>
-<p>हर observation में: pixel → camera coordinates में ray d_c (K से), समय → world में सूरज की दिशा s_w (<code style="color:#22d3bf">sun_position</code>, <b>refraction सहित</b> elevation इस्तेमाल होता है: camera apparent sun देखता है)। <code style="color:#22d3bf">R = argmin Σ |R d_c − s_w|²</code> को SVD से closed form में हल करके (Kabsch 1976 / Markley 1988), <code style="color:#22d3bf">(yaw, pitch, roll)</code> में तोड़ा जाता है।</p>
-<p>2 points से यह अद्वितीय रूप से तय होता है (2 दिशाओं से बना plane चाहिए)। observation 1 ही point हो, या सभी एक ही दिशा में हों (collinear), तो ValueError -- जैसे एक ही समय की 2 images, या कई दिनों तक सिर्फ़ दोपहर। सूरज का azimuth 1 दिन में काफ़ी बदलता है, इसलिए <b>एक ही दिन की सुबह और शाम की 2 images</b> काफ़ी हैं।</p>
-<p>Args:</p>
-<p>sun_pixels: (N, 2) के (u, v)। <code style="color:#22d3bf">sun_pixel_position</code> के outputs को जोड़कर बना।</p>
-<p>unix_times: (N,) UNIX seconds (UTC)।</p>
-<p>lat_deg, lon_deg: camera की position।</p>
-<p>K: (fx, fy, cx, cy)।</p>
-<p>Returns:</p>
-<p>table: <code style="color:#22d3bf">yaw_deg</code> / <code style="color:#22d3bf">pitch_deg</code> / <code style="color:#22d3bf">roll_deg</code> / <code style="color:#22d3bf">residual_deg</code> (rays और सूरज की दिशा के बीच</p>
-<p>angular residual का RMS) / <code style="color:#22d3bf">max_residual_deg</code> / <code style="color:#22d3bf">n</code> / <code style="color:#22d3bf">condition</code> (observation दिशाओं से बने plane का फैलाव =</p>
-<p>2nd singular value; 0 के जितना क़रीब, उतना अनिश्चित)।</p>
+<p>प्रत्येक अवलोकन के लिए, पिक्सेल → कैमरा निर्देशांक किरण d_c(K से), समय → वैश्विक सूर्य दिशा s_w(<code style="color:#22d3bf">sun_position</code>, <b>अपवर्तन शामिल</b> के साथ एक उन्नयन कोण का उपयोग करें: कैमरा स्पष्ट सूर्य को देखता है)। <code style="color:#22d3bf">R = argmin Σ |R d_c - s_w|²</code> इसे एसवीडी (काब्श 1976/मार्कले 1988) का उपयोग करके बंद रूप में हल करें और इसे <code style="color:#22d3bf">(यॉ, पिच, रोल)</code> में विघटित करें।</p>
+<p>यह विशिष्ट रूप से दो बिंदुओं द्वारा निर्धारित होता है (एक ऐसी सतह की आवश्यकता होती है जो दो दिशाओं में फैली हो)। यदि प्रेक्षण एक बिंदु पर या सभी एक ही दिशा में हैं (संरेख) वैल्यूएरर - उदाहरण के लिए, एक ही समय में दो तस्वीरें, या कई दिनों तक केवल दोपहर के समय। एक दिन में सूर्य की दिशा बहुत बदल जाती है। चूँकि यह चलता है, आपको एक ही दिन में केवल दो फ़ोटो की आवश्यकता होती है, एक सुबह में ली गई और एक शाम को ली गई।</p>
+<p>तर्क:</p>
+<p>सन_पिक्सेल: (यू, वी) का (एन, 2)। <code style="color:#22d3bf">sun_ Pixel_position</code> का आउटपुट स्टैक्ड है।</p>
+<p>यूनिक्स_टाइम्स: (एन,) यूनिक्स सेकंड (यूटीसी)।</p>
+<p>lat_deg, lon_deg: कैमरा स्थिति।</p>
+<p>के: (एफएक्स, वित्तीय वर्ष, सीएक्स, साइबर)।</p>
+<p>रिटर्न:</p>
+<p>तालिका: <code style="color:#22d3bf">yaw_deg</code> / <code style="color:#22d3bf">pitch_deg</code> / <code style="color:#22d3bf">roll_deg</code> / <code style="color:#22d3bf">residual_deg</code> (किरण और सूर्य दिशा</p>
+<p>कोण अवशिष्ट का आरएमएस)/ <code style="color:#22d3bf">max_residual_deg</code> / <code style="color:#22d3bf">n</code> / <code style="color:#22d3bf">स्थिति</code> (अवलोकन दिशा में सतह की चौड़ाई =</p>
+<p>0 के करीब दूसरे और सबसे बड़े एकवचन मान का अनुपात अनिश्चित है)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegeocam:geocam">geocam family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

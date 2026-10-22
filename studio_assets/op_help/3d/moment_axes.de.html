@@ -4,14 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.moment_axes(points, weights=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import match3d; match3d.moment_axes(points, weights=None)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;moment_axes&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p><b>Schwerpunkt und Hauptachsen</b> (die Eigenvektoren des Trägheitstensors) einer Punktmenge oder gewichteter Punkte. Die Grundlage der Posenschätzung.</p>
-<p>Liefert (centroid(3,), axes(3,3) Spalten = Hauptachsen, eigvals(3,)). Eigenwerte absteigend. Dient der Kanonisierung der Rotation.</p>
-<p>Definition: <code style="color:#22d3bf">w</code> wird auf Summe 1 normiert, Schwerpunkt <code style="color:#22d3bf">c = Σ w p</code>, die Streumatrix <code style="color:#22d3bf">C = Σ w (p−c)(p−c)ᵀ</code> (Kovarianz. Sie teilt die Eigenvektoren mit dem Trägheitstensor <code style="color:#22d3bf">tr(C)I − C</code>, die Reihenfolge der Eigenwerte ist umgekehrt) wird mit <code style="color:#22d3bf">eigh</code> zerlegt. <code style="color:#22d3bf">axes[:, i]</code> ist die Hauptachse des i-größten Eigenwerts (absteigend). Eigenwerte sind Varianzen (Länge²).</p>
-<p style="margin:2px 0 2px 12px">• Das Vorzeichen der Eigenvektoren ist beliebig, und <code style="color:#22d3bf">axes</code> kann linkshändig sein (det=−1) (<code style="color:#22d3bf">match_pca</code> kehrt die 3. Achse</p>
-<p>um und macht es rechtshändig).</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">weights</code> hat Länge N. Summe 0 ergibt NaN durch Division durch 0 (keine Ausnahme). 0 Punkte schlägt fehl (es gibt keine Validierung).</p>
-<p style="margin:2px 0 2px 12px">• Bei entarteten Hauptachsen (Kugel usw.) ist die Achsrichtung unbestimmt.</p>
-<p>Nachgelagert: <code style="color:#22d3bf">match_pca</code>, <code style="color:#22d3bf">obb</code> (orientierte bbox), Rotation in eine kanonische Pose.</p>
-<p>Leere Eingabe (<code style="color:#22d3bf">points</code> mit 0 Elementen) löst <code style="color:#22d3bf">ValueError</code> aus.</p>
+<p>Rückgabewert (Schwerpunkt(3,), Achsen(3,3) Spalten=Hauptachsen, Eigvale(3,)). Eigenwert in absteigender Reihenfolge. Wird zur Rotationsnormalisierung verwendet.</p>
+<p>Definition: Normalisieren Sie „w“ auf eine Summe von 1, Schwerpunkt „c = Σ w p“, Streumatrix „C = Σ w (p−c)(p−c)ᵀ“. (Kovarianz. Der Trägheitstensor „tr(C)I − C“ und die Eigenvektoren sind gemeinsam, aber die Reihenfolge der Eigenwerte ist umgekehrt) durch „eigh“. Zerlegen. „axes[:, i]“ ist die Hauptachse des i-ten größten Eigenwerts (in absteigender Reihenfolge). Der Eigenwert ist die Varianz (Länge²).</p>
+<p style="margin:2px 0 2px 12px">• Die Vorzeichen der Eigenvektoren sind beliebig und „Achsen“ können linkshändig sein (det=−1) („match_pca“ legt die dritte Achse fest</p>
+<p>(Invertiert, um es rechtshändig zu machen).</p>
+<p style="margin:2px 0 2px 12px">• „Gewichte“ ist die Länge N. Die Summe von 0 ist NaN, wenn sie durch 0 geteilt wird (es tritt keine Ausnahme auf). Eine Punktzahl von 0 ist explizit ein ValueError.</p>
+<p style="margin:2px 0 2px 12px">• Wenn die Hauptachse entartet ist (z. B. eine Kugel), ist die Richtung der Achse unbestimmt.</p>
+<p>Später: „match_pca“, „obb“ (gerichtete Bbox), Rotation zur kanonischen Einstellung.</p>
+<p>Eine leere Eingabe („Punkte“ von 0 Elementen) führt zu einem ValueError.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

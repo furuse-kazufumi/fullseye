@@ -4,7 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.warehouse_grid(n_rack_rows=3, n_rack_cols=4, rack_len=4, aisle=1, margin=2)</code>(要直接调用实现,<code style="color:#22d3bf">import agvfleet; agvfleet.warehouse_grid(n_rack_rows=3, n_rack_cols=4, rack_len=4, aisle=1, margin=2)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;warehouse_grid&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由货架行与通道构成的仓库网格(True = 可行驶)。</p>
-<p>货架是横向 1 行 × <code style="color:#22d3bf">rack_len</code> 格的块,上下左右被宽度为 <code style="color:#22d3bf">aisle</code> 的通道包围。外周设置 <code style="color:#22d3bf">margin</code> 格的行驶带(工作站前方)。返回 <code style="color:#22d3bf">(grid, info)</code>,info 中包含货架格的列表和外周的带。</p>
+<p>架子是一个由 1 行 x <code style="color:#22d3bf">rack_len</code> 方块组成的水平块，其顶部、底部、左侧和右侧都被宽度为 <code style="color:#22d3bf">aisle</code> 的过道包围。周边的“边距” 放置方形跑步区（车站前）。返回的是“(grid, info)”，其中 info 有机架列表、“racks”和网格的“shape”。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

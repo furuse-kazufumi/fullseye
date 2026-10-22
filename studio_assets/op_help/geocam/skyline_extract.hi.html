@@ -4,17 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.skyline_extract(image, sky_is_bright=True, smooth=1.5, max_jump=3, jump_penalty=0.5)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import geocam; geocam.skyline_extract(image, sky_is_bright=True, smooth=1.5, max_jump=3, jump_penalty=0.5)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsgeocam.get(&quot;skyline_extract&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>photo से dynamic programming द्वारा <b>हर column के लिए आकाश–terrain सीमा की row</b> वाली 1 line निकालता है → signal (W,)।</p>
-<p>Lie, Lin और Hsu 2005 (*Pattern Recognition*: navigation के लिए robust skyline extraction) जैसा ही विचार:</p>
-<p>vertical दिशा में brightness के बदलाव (आसमान ऊपर ज़्यादा bright हो तो <code style="color:#22d3bf">I[v−1] − I[v+1]</code> positive) को &quot;boundary जैसापन&quot; माना जाता है, और उन continuous paths में से, जिनमें पास के column से row <code style="color:#22d3bf">max_jump</code> या उससे ज़्यादा नहीं उछलती, सबसे कम cost वाला चुना जाता है (<code style="color:#22d3bf">jump_penalty</code> × row की उछाल)। बादलों या इमारतों के vertical किनारों पर locally तेज़ response आए तब भी path की continuity असली ridge line को बचाए रखती है।</p>
-<p>Args:</p>
-<p>image: (H, W) float। RGB हो तो पहले grey में बदला जाता है।</p>
-<p>sky_is_bright: आसमान terrain से ज़्यादा bright है (दिन)। रात के दृश्य या backlight से उलटा हो तो False।</p>
-<p>smooth: vertical दिशा का Gaussian σ [pixels] (noise)। 0 पर बंद।</p>
-<p>max_jump: पास के columns के बीच अनुमत row की उछाल [pixels]।</p>
-<p>jump_penalty: हर 1 pixel उछाल की cost (boundary जैसापन 0 से 1 पर normalise है)।</p>
-<p>Returns:</p>
-<p>signal (W,) float: हर column की boundary वाली row (0 सबसे ऊपर)। <b>जिनमें केवल आसमान या केवल terrain दिखता है</b> ऐसी images में boundary response कमज़ोर होता है और path की औसत cost 0 के पास होती है, इसलिए ValueError</p>
-<p>से रुकता है (चुपचाप noise की line नहीं लौटाता)।</p>
+<p>लाई, लिन और एचएसयू 2005 के समान विचार (*पैटर्न पहचान*: नेविगेशन के लिए मजबूत स्काईलाइन एक्सट्रैक्शन):</p>
+<p>ऊर्ध्वाधर दिशा में चमक में परिवर्तन (यदि आकाश ऊपर चमकीला है, <code style="color:#22d3bf">I[v−1] − I[v+1]</code> सकारात्मक है) को <code style="color:#22d3bf">सीमा-समानता&#x27;&#x27; माना जाता है, लगातार पथों में से सबसे कम लागत वाला पथ चुनें जो अगले कॉलम से </code>max_jump<code style="color:#22d3bf"> पंक्तियों से अधिक न कूदें (</code>जंप_पेनल्टी`` × लाइन जंप)। भले ही बादलों या इमारतों के ऊर्ध्वाधर किनारों पर स्थानीय रूप से मजबूत प्रतिक्रिया हो, पथ निरंतरता वास्तविक सीमा रेखाएँ छोड़ती है।</p>
+<p>तर्क:</p>
+<p>छवि: (एच, डब्ल्यू) फ्लोट। आरजीबी के लिए, पहले इसे ग्रे बनाएं।</p>
+<p>आकाश_उज्ज्वल: आकाश भूभाग (दिन के समय) की तुलना में अधिक चमकीला है। यदि रात्रि दृश्य/बैकलाइट में यह उलटा हो तो गलत।</p>
+<p>चिकना: लंबवत गाऊसी σ [पिक्सेल] (शोर)। 0 अक्षम करता है.</p>
+<p>max_jump: आसन्न कॉलम [पिक्सेल] में पंक्ति कूद की अनुमति है।</p>
+<p>जंप_पेनल्टी: प्रति जंप पिक्सेल लागत (सीमा संभावना 0 से 1 तक सामान्यीकृत है)।</p>
+<p>रिटर्न:</p>
+<p>सिग्नल (डब्ल्यू,) फ्लोट: प्रत्येक कॉलम के लिए सीमा पंक्ति (0 शीर्ष पंक्ति है)। ** केवल आकाश/स्थलाकृति दिखाई गई है</p>
+<p>जो छवियां नहीं दिखाई गई हैं, उनमें औसत सीमा प्रतिक्रिया 0 के करीब है, इसलिए वैल्यूएरर</p>
+<p>पर रुकें (चुप रहें और शोर रेखा वापस न करें)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegeocam:geocam">geocam family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

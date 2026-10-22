@@ -31,7 +31,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 抽出した ``ber_jpeg`` も入る(Pillow 必須。省略時は列ごと入らない ——
 環境によって返る列が変わらないようにするため、既定では走らせない)。
 
-返りは ``{"capacity_bits": int, "n_bits": int, "rows": [...], "caveats": [...]}``。
+返りは ``{"capacity_bits": int, "n_bits": int, "rows": [...], "caveats": [...], "ll_shape": tuple}``。
 
 ## 参考(サンプルデータ・文献)
 

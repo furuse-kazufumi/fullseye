@@ -4,34 +4,34 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.register_fpfh(src, dst, src_normals=None, dst_normals=None, voxel_size=None, normal_k=16, feature_k=60, n_bins=11, ransac_iters=8000, inlier_thr=None, edge_sim=0.9, mutual=True, ratio=0.95, seed=0, device=&#x27;cpu&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import feat_fpfh; feat_fpfh.register_fpfh(src, dst, src_normals=None, dst_normals=None, voxel_size=None, normal_k=16, feature_k=60, n_bins=11, ransac_iters=8000, inlier_thr=None, edge_sim=0.9, mutual=True, ratio=0.95, seed=0, device=&#x27;cpu&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;register_fpfh&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>FPFH descriptor + RANSAC से <b>initial guess के बिना</b> rigid alignment (R,t) का अनुमान लगाता है।</p>
-<p>2D के Harris/SIFT के समतुल्य sparse feature matching का 3D संस्करण। दोनों cloud को FPFH descriptor से दर्शाया जाता है, descriptor space में nearest neighbour से correspondence बनाए जाते हैं (mutual nearest neighbour + Lowe ratio से filter), और RANSAC outlier के प्रति robust rigid pose हल करता है। dense matching (NCC/Hough) या PCA से अलग, इसका मूल्य यह है कि बड़े rotation (50-70°) +translation + आंशिक overlap में भी बिना प्रारंभिक अनुमान के pose देता है। प्राप्त (R,t) को ICP के प्रारंभिक मान (coarse init) के रूप में देने पर surface accuracy तक कसा जा सकता है (dst ≈ src @ R.T + t की ICP convention)।</p>
-<p>Pipeline:</p>
-<p style="margin:2px 0 2px 12px">1) voxel downsampling (स्वतंत्र रूप से sample किए गए 2 cloud के neighbourhood को एक साझा resolution पर लाता है। FPFH correspondence की सही-दर को बहुत प्रभावित करने वाला अनिवार्य preprocessing)।</p>
-<p style="margin:2px 0 2px 12px">2) normal estimation (local PCA)। src_normals/dst_normals दिए जाएँ तो वही उपयोग होते हैं।</p>
-<p style="margin:2px 0 2px 12px">3) FPFH descriptor (SPFH → दूरी-भारित संयोजन)।</p>
-<p style="margin:2px 0 2px 12px">4) descriptor NN matching (mutual + ratio)।</p>
-<p style="margin:2px 0 2px 12px">5) RANSAC: 3 point sample → edge-length संगति prefilter → Kabsch → <b>सभी points की fitness</b> से scoring (src के सभी points को transform करने पर जिनका dst nearest neighbour threshold के भीतर आए उनका अनुपात)। केवल correspondence (~100 points) पर scoring गलत pose पर अटक जाती है, इसलिए सभी points की fitness से इसे robust बनाया जाता है।</p>
-<p style="margin:2px 0 2px 12px">6) सर्वश्रेष्ठ pose के correspondence inliers पर फिर से fit।</p>
-<p>Args:</p>
-<p>src (N,3), dst (M,3): register किए जाने वाले 2 point cloud (numpy/torch)।</p>
-<p>src_normals, dst_normals ((N,3)/(M,3) or None): पहले से दिए normal। None हो तो भीतर अनुमान</p>
-<p>(पर voxel_size&gt;0 होने पर निर्देशांक बदलते हैं, इसलिए हमेशा फिर से अनुमान)।</p>
-<p>voxel_size (float or None): downsampling की edge length। None हो तो dst resolution ×2.5 अपने आप लिया जाता है।</p>
-<p>0/None पर निष्क्रिय (raw point cloud जैसा है वैसा; स्वतंत्र sampling में अनुशंसित नहीं)।</p>
-<p>normal_k (int): normal estimation के पड़ोसियों की संख्या।</p>
-<p>feature_k (int): FPFH के पड़ोसियों की संख्या (जितनी बड़ी, descriptor उतना स्थिर और विभेदक; लगभग 60 अनुशंसित)।</p>
-<p>n_bins (int): प्रति 1 feature histogram bin (descriptor का आयाम = 3*n_bins)।</p>
-<p>ransac_iters (int): RANSAC iterations की संख्या।</p>
-<p>inlier_thr (float or None): inlier distance threshold। None हो तो (downsampling के बाद) resolution ×3।</p>
-<p>edge_sim (float): triple के edge-length अनुपात की सहनशीलता (0&lt;edge_sim&lt;=1, 1 के जितना पास उतना सख्त)।</p>
-<p>mutual (bool): mutual nearest neighbour filter। ratio (float or None): Lowe ratio।</p>
-<p>seed (int): RANSAC का random seed (restart पर बदलें)। device (str): लौटाए गए tensor का device।</p>
-<p>Returns:</p>
-<p>R (3,3) torch.Tensor (device पर), t (3,) torch.Tensor,</p>
-<p>info dict: {&quot;n_corr&quot; (correspondence की संख्या), &quot;inliers&quot; (inlier की संख्या), &quot;inlier_ratio&quot;,</p>
-<p>&quot;fitness&quot; (सभी points की fitness = restart चुनने का मापदंड), &quot;rmse&quot; (inlier RMSE),</p>
-<p>&quot;inlier_thr&quot;, &quot;src_corr&quot;,&quot;dst_corr&quot; (correspondence index)}।</p>
-<p>ध्यान दें (honest): FPFH एक coarse registration है; स्वतंत्र sampling + noise + आंशिक overlap की कठिन स्थितियों में कुछ डिग्री की rotation त्रुटि बनी रहती है (मापा गया: 62° rotation, overlap ~64%, noise 0.5× resolution पर RANSAC के बाद median ~4.4°, ~90% &lt;8° हैं, बाकी ~10% 8-9° की सीमा पर। ICP से कसने पर 100% &lt;8° और median ~0.5°)। noise जब point spacing (resolution) के बराबर या अधिक हो जाता है, तो normal और कोणीय feature टूट जाते हैं और descriptor अपनी विभेदन क्षमता खो देता है (मापा गया: noise ≥1.0× resolution पर सफलता दर घटती है)। RANSAC random है, इसलिए व्यवहार में कुछ बार restart करें और सबसे बड़े info[&quot;fitness&quot;] वाला परिणाम लें।</p>
+<p>विरल फ़ीचर मिलान का एक 3D संस्करण, 2D हैरिस/SIFT के समतुल्य। दोनों बादलों को एफपीएफएच वर्णनकर्ताओं द्वारा दर्शाया गया है, डिस्क्रिप्टर स्पेस में निकटतम पड़ोसियों (पारस्परिक निकटतम पड़ोसियों + लोव अनुपात द्वारा फ़िल्टर) का उपयोग करके एक पत्राचार बनाएं, और RANSAC का उपयोग करें कठोर शारीरिक मुद्राओं को हल करना जो आउटलेर्स के लिए मजबूत हैं। क्लोज़ मैच (एनसीसी/हफ़) और पीसीए के विपरीत, बड़ा रोटेशन (50-70°) मूल्य यह है कि मुद्रा को प्रारंभिक अनुमान के बिना +अनुवाद + आंशिक ओवरलैप के साथ भी निर्धारित किया जा सकता है। प्राप्त (R,t) ICP का प्रारंभिक मान है (मोटे init) सतह परिशुद्धता को कसता है (dst ≈ src @ R.T + t का ICP सम्मेलन)।</p>
+<p>पाइपलाइन:</p>
+<p style="margin:2px 0 2px 12px">1) वोक्सेल डाउनसैंपलिंग (स्वतंत्र नमूनाकरण 2) बादलों के आसपास के क्षेत्र को एक सामान्य रिज़ॉल्यूशन पर संरेखित करें। (आवश्यक प्रीप्रोसेसिंग जो एफपीएफएच की सही प्रतिक्रिया दर को बहुत प्रभावित करती है)।</p>
+<p style="margin:2px 0 2px 12px">2) सामान्य अनुमान (स्थानीय पीसीए)। यदि आप src_normals/dst_normals पास करते हैं, तो इसका उपयोग किया जाएगा।</p>
+<p style="margin:2px 0 2px 12px">3) एफपीएफएच डिस्क्रिप्टर (एसपीएफएच → दूरी वजन संश्लेषण)।</p>
+<p style="margin:2px 0 2px 12px">4) डिस्क्रिप्टर एनएन मैच (पारस्परिक + अनुपात)।</p>
+<p style="margin:2px 0 2px 12px">5) रैनसैक: 3-पॉइंट नमूना → किनारे-लंबाई मिलान प्रीफ़िल्टर → काब्श → <b>ऑल-पॉइंट फिटनेस</b> (src सभी बिंदुओं को परिवर्तित करता है और उस दर को dst करता है जिस पर निकटतम पड़ोसी सीमा के भीतर आता है)। केवल संगत (~100 अंक)। स्कोरिंग गलत मुद्राओं पर तय होती है, इसलिए इसे ऑल-पॉइंट फिटनेस के साथ मजबूत बनाया जाता है।</p>
+<p style="margin:2px 0 2px 12px">6) सर्वोत्तम मुद्रा के लिए संबंधित इनलायर के साथ दोबारा फिट करें।</p>
+<p>तर्क:</p>
+<p>src (N,3), dst (M,3): संरेखित करने के लिए दो बिंदु समूह (सुन्न/मशाल)।</p>
+<p>src_norms, dst_norms ((N,3)/(M,3) या कोई नहीं): पूर्व सामान्य। यदि कोई नहीं, आंतरिक अनुमान</p>
+<p>(हालाँकि, जब voxel_size&gt;0 होता है, तो निर्देशांक बदल जाते हैं, इसलिए इसका हमेशा पुनः अनुमान लगाया जाता है)।</p>
+<p>voxel_size (फ्लोट या कोई नहीं): डाउनसैंपल साइड की लंबाई। कोई नहीं के साथ स्वचालित रूप से डीएसटी रिज़ॉल्यूशन x 2.5 को अपनाता है।</p>
+<p>0 के साथ अक्षम करें (कच्चे बिंदु बादल रहता है; स्वतंत्र नमूने के लिए अनुशंसित नहीं)।</p>
+<p>सामान्य_k (int): सामान्य अनुमान के लिए पड़ोसियों की संख्या।</p>
+<p>फीचर_के (इंट): एफपीएफएच के पड़ोसियों की संख्या (संख्या जितनी बड़ी होगी, विवरणक उतना ही अधिक स्थिर और भेदभावपूर्ण होगा। लगभग 60 की सिफारिश की जाती है)।</p>
+<p>n_bins (int): प्रति फीचर हिस्टोग्राम बिन्स की संख्या (डिस्क्रिप्टर आयाम = 3*n_bins)।</p>
+<p>ransac_iters (int): RANSAC पुनरावृत्ति संख्या।</p>
+<p>इनलियर_थ्र (फ्लोट या कोई नहीं): इनलियर दूरी सीमा। कोई नहीं (डाउनसैंपलिंग के बाद) रिज़ॉल्यूशन x 3।</p>
+<p>एज_सिम (फ्लोट): ट्रिपल एज लंबाई अनुपात की सहनशीलता (0&lt;एज_सिम&lt;=1, 1 के करीब सख्त है)।</p>
+<p>म्युचुअल (बूल): म्युचुअल निकटतम पड़ोसी फ़िल्टर। अनुपात (फ्लोट या कोई नहीं): लोव अनुपात।</p>
+<p>बीज (int): RANSAC यादृच्छिक संख्या बीज (पुनः प्रारंभ होने पर परिवर्तन)। डिवाइस (str): रिटर्न टेंसर का उपकरण।</p>
+<p>वापसी मूल्य:</p>
+<p>आर (3,3) टॉर्च.टेन्सर (डिवाइस पर), टी (3,) टॉर्च.टेन्सर,</p>
+<p>जानकारी निर्देश: {&quot;n_corr&quot;(पत्राचारों की संख्या), &quot;इनलियर्स&quot;(इनलियर्स की संख्या), &quot;इनलियर_रेशियो&quot;,</p>
+<p>&quot;फिटनेस&quot; (ऑल-पॉइंट फिटनेस = रिस्टार्ट सिलेक्शन इंडेक्स), &quot;आरएमएसई&quot; (इनलायर आरएमएसई),</p>
+<p>&quot;inlier_thr&quot;, &quot;src_corr&quot;, &quot;dst_corr&quot; (संबंधित सूचकांक)}।</p>
+<p>नोट (ईमानदारी से): एफपीएफएच मोटे पंजीकरण, स्वतंत्र नमूनाकरण + शोर + आंशिक ओवरलैप है कठिन परिस्थितियों में, कई डिग्री की रोटेशन त्रुटि बनी रहती है (वास्तविक माप: 62° रोटेशन, ओवरलैप ~64%, शोर 0.5 × रिज़ॉल्यूशन) पोस्ट-RANSAC माध्यिका ~4.4°, ~90% &lt;8°, शेष ~10% सीमा 8-9°। आईसीपी से कसने पर 100% &lt;8°, माध्यिका ~0.5°)। जब शोर बिंदु रिक्ति (रिज़ॉल्यूशन) के बराबर या उससे अधिक हो जाता है, तो सामान्य और कोने की विशेषताएं बन जाती हैं ढहा हुआ डिस्क्रिप्टर अपनी भेदभावपूर्ण शक्ति खो देता है (वास्तविक माप: शोर ≥ 1.0 × रिज़ॉल्यूशन होने पर सफलता दर कम हो जाती है)। RANSAC यादृच्छिक चयन है इसलिए, वास्तविक ऑपरेशन में, इसे कई बार पुनरारंभ करने और अधिकतम परिणाम की जानकारी [&quot;फिटनेस&quot;] लेने की अनुशंसा की जाती है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — Matrix decompositions धीमे क्यों हैं — BLAS threads, caches, memory layout</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

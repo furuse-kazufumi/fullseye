@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Material dispersion parameter D(λ) = −(λ/c) d²n/dλ² in ps/(nm·km), as <code style="color:#22d3bf">pairs</code> (λ [nm], D).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>D = 0 の波長が材料分散の零点(溶融石英で ≈ 1.27 µm)。正(異常分散)では長い波長が速い。</p>
+<p>D = 0 の波長が材料分散の零点(溶融石英で ≈ 1.27 µm)。正(異常分散)ではグループ遅延が波長とともに増え、長い波長が遅い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>
