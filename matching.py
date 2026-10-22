@@ -8,9 +8,26 @@ from __future__ import annotations
 import numpy as np
 from scipy import signal
 
+from fslib import FsValueError
+
 
 def _f(a):
     return np.asarray(a, dtype=np.float64)
+
+
+def _ncc_scale(a, name):
+    """Return ``(finite float64 array, exact power-of-two scale)``."""
+    value = _f(a)
+    if not np.isfinite(value).all():
+        raise FsValueError(f"{name} contains NaN or infinity")
+    maximum = float(np.max(np.abs(value), initial=0.0))
+    if maximum == 0.0:
+        return value, 1.0
+    _, exponent = np.frexp(maximum)
+    if -500 <= exponent - 1 <= 500:
+        return value, 1.0
+    shift = 1 - exponent
+    return np.ldexp(value, shift), float(np.ldexp(1.0, shift))
 
 
 def _ncc_local_variance(img, h, w):
@@ -56,8 +73,12 @@ def _ncc_unstable_count(t_or_model, img):
 def _ncc_map(t_or_model, img):
     """Return a valid Pearson NCC map with values in ``[-1, 1]``.
 
-    Scores are invariant to positive scaling.  A constant template or a
-    truly constant image window has no defined correlation and scores 0.
+    Scores are invariant to positive scaling.  To keep squares and norms
+    representable, template and image magnitudes outside ``[2**-500,
+    2**500]`` are independently brought near one by an exact power-of-two
+    factor.  Inputs in that interval retain their established score bits.
+    A constant template or a truly constant image window has no defined
+    correlation and scores 0.  NaN and infinity raise ``FsValueError``.
 
     Benchmark (512x512, median of 5), sizes 7/8/9/15/16/17/31/32/33.
     Random flagged before/after: all 0/0%; seconds before
@@ -77,12 +98,12 @@ def _ncc_map(t_or_model, img):
         t0 = t_or_model["t0n"]
         tn = float(t_or_model["norm"])
     else:
-        t = _f(t_or_model)
+        t, _ = _ncc_scale(t_or_model, "template")
         t0 = t - t.mean()
         tn = np.linalg.norm(t0)
         if tn > np.finfo(np.float64).tiny:
             t0 = t0 / tn
-    img = _f(img)
+    img, _ = _ncc_scale(img, "image")
     H, W = img.shape
     h, w = t.shape
     shape = (max(H - h + 1, 0), max(W - w + 1, 0))
@@ -115,13 +136,24 @@ def _ncc_map(t_or_model, img):
 def create_ncc_model(template) -> dict:
     """NCC モデル(=正規化テンプレート)を準備(create_ncc_model)。
 
-    呼び出し元の配列とは独立した float64 コピーと、探索で再利用する中心化・
-    単位ノルム化済みテンプレートを保持する。
+    Args:
+        template: 2次元の有限値テンプレート。呼び出し元と独立した
+            float64 コピーを保持する。
+
+    Returns:
+        中心化・単位ノルム化済みテンプレートと準備時の
+        ``template_scale`` を持つモデル。最大絶対値が ``[2**-500,
+        2**500]`` 外のときだけ、正の2のべき乗で正確に拡大縮小した
+        領域で ``norm`` を計算する。
+
+    Raises:
+        FsValueError: ``template`` が NaN または無限大を含む場合。
     """
     source = np.asarray(template)
     t = np.array(source, dtype=np.float64, copy=True)
-    mean = float(t.mean())
-    t0 = t - mean
+    prepared, template_scale = _ncc_scale(t, "template")
+    mean = float(prepared.mean())
+    t0 = prepared - mean
     norm = float(np.linalg.norm(t0))
     t0n = t0 / norm if norm > np.finfo(np.float64).tiny else np.zeros_like(t0)
     try:
@@ -134,6 +166,7 @@ def create_ncc_model(template) -> dict:
         "t0n": t0n,
         "norm": norm,
         "mean": mean,
+        "template_scale": template_scale,
         "shape": t.shape,
         "origin": (t.shape[0] // 2, t.shape[1] // 2),
         "dtype": source.dtype,
