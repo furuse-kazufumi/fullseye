@@ -18,6 +18,7 @@
 <p>정규화하지 않는 절대 픽셀 거리의 거리 변환. HALCON의 <code style="color:#22d3bf">distance_transform</code>(Compute the distance transformation of a region.)에 해당한다.</p>
 <p><code style="color:#22d3bf">a</code>로 거리 종류를 고른다: <code style="color:#22d3bf">a &lt; 1/3</code>은 유클리드, <code style="color:#22d3bf">1/3 &lt;= a &lt; 2/3</code>은 시가지(L1), 그 이상은 체스판(L∞). <code style="color:#22d3bf">b &lt; 0.5</code>는 각 전경 픽셀에서 가장 가까운 배경 픽셀까지의 거리를, <code style="color:#22d3bf">b &gt;= 0.5</code>는 각 배경 픽셀에서 가장 가까운 전경 픽셀까지의 거리를 돌려준다. 출력은 float64 영상이며 <code style="color:#22d3bf">dist_transform</code>과 달리 영상 내 최댓값으로 정규화하지 않는다(3×3과 9×9 정사각형의 중심은 각각 2와 5). 예: <code style="color:#22d3bf">_dist_transform_abs(np.ones((3, 3)), 0, 0)</code>.</p>
 <p>HALCON의 참조 op는 <code style="color:#22d3bf">int4</code> 근사를 돌려준다. 이 op는 정확한 float64 거리를 돌려주며 호환 API가 아니다.</p>
+<p>NaN? ??? region??? ???? ? NaN? ???? ????. ?? ??? ??? NaN ??? ?? <code style="color:#22d3bf">b &gt;= 0.5</code>?? ?? ???? image sort ?? ?? -1? ????.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

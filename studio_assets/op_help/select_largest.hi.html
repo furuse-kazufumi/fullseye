@@ -14,6 +14,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>केवल सबसे बड़े क्षेत्रफल वाला connected region रखता है। HALCON के <code style="color:#22d3bf">select_shape_std</code> (Select regions of a given shape.) के समकक्ष है।</p>
 <p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> उपयोग नहीं होते (हमेशा &quot;सबसे बड़ा&quot; चुना जाता है)। connected component labelling के बाद, सबसे अधिक pixel वाले केवल 1 component को 1 और बाकी सबको 0 किया जाता है। input में foreground न हो तो सब 0 लौटाया जाता है। HALCON का <code style="color:#22d3bf">select_shape_std</code> area के अलावा दूसरे shape मानदंड (circularity आदि) और एक से अधिक चयन भी support करता है, लेकिन यह implementation केवल area में सबसे बड़े एक का चयन करता है।</p>
+<p>NaN ???? region ??? binarisation ?? ??? NaN ?? background ???? ???? ?? ?? finite result ?????? ???? ???</p>
 <p><b>Border handling</b>: image के बाहर की हर चीज़ को background (0) माना जाता है (मापा गया; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>

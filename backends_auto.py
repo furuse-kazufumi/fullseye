@@ -1577,7 +1577,7 @@ SEED: list[tuple] = [
     ("gauss_image", "smoothing", IMG, IMG, "linfilter", {"kind": "gauss"},
      '実装は ``gauss_filter`` と同一(同じ ``kind: "gauss"`` 分岐、シグマ\n``0.3+2.7*a`` のガウシアンぼかし)。HALCON では ``gauss_filter``(離散近似)\nと ``gauss_image``(周波数領域/連続ガウス)は別演算子だが、この代役では\n区別せず同じ関数を指す。HALCON の ``gauss_image``（Smooth an image using\ndiscrete Gaussian functions.）の代役。\n\n``a`` がシグマを 0.3〜3.0 の範囲で振る。``b`` は未使用。'),
     ("mean_image", "smoothing", IMG, IMG, "linfilter", {"kind": "mean"},
-     '矩形平均フィルタ(box filter)。HALCON の ``mean_image``（Smooth by\naveraging.）に相当する近似で、注目画素を一辺 k の窓の平均で置き換える。\n\n``a`` が窓の一辺 k を ``{3,5,7,9}`` の 4 段階(``_k(a)``)で振る。``b`` は\n未使用。ガウシアンより速いが、エッジがぼやけずに角ばったブロック状の\nアーティファクトを残しやすい。'),
+     '矩形平均フィルタ(box filter)。HALCON の ``mean_image``（Smooth by\naveraging.）に相当する近似で、注目画素を一辺 k の窓の平均で置き換える。\n\n``a`` が窓の一辺 k を ``{3,5,7,9}`` の 4 段階(``_k(a)``)で振る。``b`` は\n未使用。ガウシアンより速いが、エッジがぼやけずに角ばったブロック状の\nアーティファクトを残しやすい。\n\nNaN を含む画像では NaN がその画素を参照する平均窓の出力へ伝播する。'),
     ("binomial_filter", "smoothing", IMG, IMG, "linfilter", {"kind": "binomial"},
      '二項係数(パスカルの三角形)を重みとする分離型平滑化フィルタ。\n``ndimage.correlate1d`` を縦・横に順に掛けることでガウシアンを離散二項核で\n近似する ―― HALCON の ``binomial_filter``（Smooth an image using the\nbinomial filter.）が使う核と同じ発想の実装。\n\n``a`` が核サイズを ``{3,5,7,9}`` の 4 段階(``_k(a)``)で振る。``b`` は\n未使用。ガウシアンぼかしより計算が軽く、リンギングも出にくい。'),
     ("smooth_image", "smoothing", IMG, IMG, "linfilter", {"kind": "smooth"},
@@ -1708,7 +1708,7 @@ SEED: list[tuple] = [
     ("auto_threshold", "segmentation", IMG, REG, "threshold", {"method": "otsu"},
      '実装は ``binary_threshold`` と同一(Otsu の判別分析法による自動\nしきい値化)。HALCON の ``auto_threshold``（Segment an image using\nthresholds determined from its histogram.）は本来ヒストグラムの複数の谷\nから**複数のしきい値**(多クラス分割)を決める演算子だが、この代役では\n単一の Otsu しきい値による二値化に単純化している(近似の限界)。\n\n``a``, ``b`` は未使用。'),
     ("dyn_threshold", "segmentation", IMG, REG, "threshold", {"method": "dyn"},
-     '局所しきい値処理。局所平均(窓一辺 ``_k(a)`` の ``uniform_filter``)に\nオフセット ``(b-0.5)*0.4`` を加えたものをしきい値として使う ―― 照明ムラの\nある画像でも局所的なコントラストで前景を抽出できる。HALCON の\n``dyn_threshold``（Segment an image using a local threshold.）に相当。\n\n``a`` が局所平均の窓サイズを、``b`` がオフセット(しきい値を上下に振る量)\nを振る。両方が使われる。'),
+     '局所しきい値処理。局所平均(窓一辺 ``_k(a)`` の ``uniform_filter``)に\nオフセット ``(b-0.5)*0.4`` を加えたものをしきい値として使う ―― 照明ムラの\nある画像でも局所的なコントラストで前景を抽出できる。HALCON の\n``dyn_threshold``（Segment an image using a local threshold.）に相当。\n\n``a`` が局所平均の窓サイズを、``b`` がオフセット(しきい値を上下に振る量)\nを振る。両方が使われる。\n\nNaN を含む画像では、NaN の影響を受けた局所平均との比較が偽になり、該当窓の出力を背景（0）とする。'),
     ("var_threshold", "segmentation", IMG, REG, "threshold", {"method": "sauvola"},
      'Sauvola の局所適応的二値化(``skimage.filters.threshold_sauvola``、\n窓サイズ ``2*int(a*6)+3``)。局所平均と局所標準偏差の両方を使ってしきい値\nを決めるため、``dyn_threshold`` より照明ムラや低コントラスト文書に強い。\nHALCON の ``var_threshold``（Threshold an image by local mean and standard\ndeviation analysis.）に相当する近似(定式化は似た発想だが Sauvola の式と\nHALCON の式は係数が異なる ―― 同一の数値結果にはならない)。\n\n``a`` が局所窓のサイズを振る。``b`` は未使用(Sauvola の k, r は skimage の\n既定値に固定)。'),
     ("local_threshold", "segmentation", IMG, REG, "threshold", {"method": "local_gauss"},
@@ -1772,7 +1772,7 @@ SEED: list[tuple] = [
     #   正規化のまま 3 週間残り、それを読んだ例が座標を (H-1) 倍して壊れた(2026-10-15)。
     #   説明と挙動の一致は tests/test_feature_units_doc_2026_10_15.py が見る。
     ("area_center", "features", REG, MAT, "region_feat", {"metric": "area_center"},
-     '領域の面積と重心を ``(面積 [画素数], 重心の行 [px], 重心の列 [px])`` の 3 成分ベクトルで返す。HALCON の ``area_center``（Area and center of regions.）と同じ 3 値・同じ単位。\n\n1 スカラーでは (Area, Row, Column) を表せないため、``match`` ソート(1 次元\nベクトル、``ncc_locate`` と同じ形)で返す点が他の region 特徴 op と異なる。\n領域が空のときは ``(0, (H-1)/2, (W-1)/2)``(面積ゼロ・中心 = 画像中心の画素座標)を\n返す fail-soft 仕様。\n\n★2026-09-26 まで 3 成分とも画像サイズで割った 0〜1 の値(面積比・正規化重心)を\n返していた。いまは画素(``docs/hardening/dimensional-features-were-normalised.md``)。\n正規化が要るなら面積を ``H*W``、行を ``H-1``、列を ``W-1`` で割る。\n\n``a``, ``b`` は未使用。'),
+     '領域の面積と重心を ``(面積 [画素数], 重心の行 [px], 重心の列 [px])`` の 3 成分ベクトルで返す。HALCON の ``area_center``（Area and center of regions.）と同じ 3 値・同じ単位。\n\n1 スカラーでは (Area, Row, Column) を表せないため、``match`` ソート(1 次元\nベクトル、``ncc_locate`` と同じ形)で返す点が他の region 特徴 op と異なる。\n領域が空のときは ``(0, (H-1)/2, (W-1)/2)``(面積ゼロ・中心 = 画像中心の画素座標)を\n返す fail-soft 仕様。\n\n★2026-09-26 まで 3 成分とも画像サイズで割った 0〜1 の値(面積比・正規化重心)を\n返していた。いまは画素(``docs/hardening/dimensional-features-were-normalised.md``)。\n正規化が要るなら面積を ``H*W``、行を ``H-1``、列を ``W-1`` で割る。\n\n``a``, ``b`` は未使用。NaN を含む region では NaN を背景として二値化し、有限な面積と重心を返す。'),
     ("count_obj", "features", REG, FEA, "region_feat", {"metric": "count"},
      '連結成分の個数を数える(``ndimage.label``、既定 8 連結)。HALCON の\n``count_obj``/``connection`` の既定と同じ 8 連結を採用しており、斜めに\n接する 2 つの塊は 1 個として数える(4 連結にすると過剰カウントになる例\n=セルカウントで実測 342 個 vs 327 個、コード内コメント参照)。HALCON の\n``count_obj``（Number of objects in a tuple.）に相当。\n\n``a``, ``b`` は未使用。'),
     ("circularity", "features", REG, FEA, "region_feat", {"metric": "circularity"},
@@ -1804,7 +1804,7 @@ SEED: list[tuple] = [
      'グレースケール階調の Shannon エントロピー(64 ビンヒストグラムから計算\nし、最大値 ``log2(64)=6`` bit で正規化)。階調分布の「ばらつき/情報量」を\n表し、一様な画像ほど値は大きく、単一階調に偏るほど 0 に近づく。HALCON の\n``entropy_gray``（Determine the entropy and anisotropy of images.）は\nエントロピーと異方性の組を返すが、この代役ではエントロピーのみを実装\nしている。\n\n``a``, ``b`` は未使用。'),
     # ---- XLD contours -----------------------------------------------------
     ("edges_sub_pix", "contour", IMG, CON, "xld", {"kind": "edges_sub_pix"},
-     'サブピクセル精度のエッジ点抽出。勾配とその法線方向(``gradient_\nnormals``)を求め、しきい値(``0.15+0.5*a``)を超える画素を連結成分化した\n後、放物線当てはめで各点をサブピクセル位置へ精密化する(``subpixel_\nrefine_edges``、``ops`` 側の同名 op と共有する実装 ―― 2026-09-02 修正で\n真の意味でサブピクセルになった。旧実装は整数画素座標をそのまま返して\nいた)。HALCON の ``edges_sub_pix``（Extract sub-pixel precise edges using\nDeriche, Lanser, Shen, or Canny filters.）に相当。\n\n``a`` がエッジ強度のしきい値を振る。``b`` は未使用。'),
+     'サブピクセル精度のエッジ点抽出。勾配とその法線方向(``gradient_\nnormals``)を求め、しきい値(``0.15+0.5*a``)を超える画素を連結成分化した\n後、放物線当てはめで各点をサブピクセル位置へ精密化する(``subpixel_\nrefine_edges``、``ops`` 側の同名 op と共有する実装 ―― 2026-09-02 修正で\n真の意味でサブピクセルになった。旧実装は整数画素座標をそのまま返して\nいた)。HALCON の ``edges_sub_pix``（Extract sub-pixel precise edges using\nDeriche, Lanser, Shen, or Canny filters.）に相当。\n\n``a`` がエッジ強度のしきい値を振る。``b`` は未使用。NaN を含む画像では NaN による非有限の勾配をしきい値未満として扱い、その周辺に輪郭を生成しない。'),
     ("lines_gauss", "contour", IMG, CON, "xld", {"kind": "lines_gauss"},
      '線状構造(リッジ)検出。``skimage.filters.frangi``(血管様のリッジ強調\nフィルタ)の応答をしきい値(``0.1+0.4*a``)で二値化し、連結成分を輪郭点群\nとして返す。HALCON の ``lines_gauss``（Detect lines and their width.）が\n本来行う「線の中心線+幅の推定」ではなく、リッジ強調画像のしきい値化に\n単純化している(線幅の情報は返らない近似)。\n\n``a`` がリッジ検出のしきい値を振る。``b`` は未使用。skimage が無い環境\nではこの分岐は呼べない。\n\n**極性も返さない**(2026-09-15 実測): 明るい地の暗線(0.6 の地に 0.1、幅 2 px)と\n暗い地の明線(0.6 の地に 1.0)を同じ ``a`` で通すと、どちらも輪郭が出て\n(a=0.5 で 3 本 / 280 点と 3 本 / 276 点)返り値からは区別できない。暗線だけが\n要るなら ``bothat``(白トップハット ``tophat`` は暗線に 0 を返す)、明線だけなら\n``tophat`` を先に掛ける。**幅を測る道は別の op**: 線に直交する測定線を\n``gen_measure_rectangle2`` で張って ``measure_pairs``(measure1d 族)で両縁を取る。\nただし幅 1〜3 px はその op の危険域(エッジ間距離 / PSF 幅 < 3.09 で大きい側に\n偏る)なので、画素以下の幅は輝度欠損の積分で測る(``examples/example_scratch_width.py``、\n``poc_crack_width``)。使い分けの表は 2d/guides/gallery2d_contour_measure.md。'),
     ("select_contours_xld", "contour", CON, CON, "xld", {"kind": "select_contours"},

@@ -206,10 +206,12 @@ def _mean_box(v, a, b):
 def _mean_box_wh(v, a, b):
     """幅と高さを独立に選ぶ平均（box）フィルタ。HALCON の ``mean_image``（Smooth by averaging.）に相当。
 
-    ``a`` が窓の幅、``b`` が窓の高さで、各ノブは ``1 + 2 * min(7, int(8 * clip(knob, 0, 1)))`` で
-    奇数 1, 3, …, 15 に写す（偶数の幅・高さを次の奇数へ切り上げるのと同じ）。境界は常に
-    ``reflect``。幅と高さが同じなら、同じ窓・``reflect`` の ``mean_box`` とビット一致する。
-    例: ``_mean_box_wh(np.eye(5), 0.2, 0.4)``。
+``a`` が窓の幅、``b`` が窓の高さで、各ノブは ``1 + 2 * min(7, int(8 * clip(knob, 0, 1)))`` で
+奇数 1, 3, …, 15 に写す（偶数の幅・高さを次の奇数へ切り上げるのと同じ）。境界は常に
+``reflect``。幅と高さが同じなら、同じ窓・``reflect`` の ``mean_box`` とビット一致する。
+例: ``_mean_box_wh(np.eye(5), 0.2, 0.4)``。
+
+NaN を含む画像では NaN がその画素を参照する平均窓の出力へ伝播する。
     """
     width = 1 + 2 * min(7, int(8 * np.clip(a, 0.0, 1.0)))
     height = 1 + 2 * min(7, int(8 * np.clip(b, 0.0, 1.0)))
@@ -217,7 +219,9 @@ def _mean_box_wh(v, a, b):
 def _median(v, a, b):
     """メディアン（中央値）フィルタ。HALCON の ``median_image``（Compute a median filter with various masks.）に相当。
 
-``a`` が窓サイズを ``3,5,7,9``（``_k(a)``）に振る。``b`` が**端の扱い**を選ぶ: ``b <= 0.5`` で ``reflect``(端画素を複製して折り返す。scipy の既定で、2026-09-17 までの挙動)、以降 ``nearest`` / ``constant``(0 で埋める)/ ``wrap``(反対側から巻き取る)。★**窓が 3 のときは ``reflect`` と ``nearest`` が原理的に一致する**(はみ出しが 1 画素なので複製先が同じ)—— 端の扱いを変えたのに結果が動かないときは、まず窓の大きさを疑うこと(窓 9 では 3 通りとも変わる)。塩胡椒ノイズなど外れ値に強く、ガウシアン平滑よりエッジを保ちやすい。"""
+``a`` が窓サイズを ``3,5,7,9``（``_k(a)``）に振る。``b`` が**端の扱い**を選ぶ: ``b <= 0.5`` で ``reflect``(端画素を複製して折り返す。scipy の既定で、2026-09-17 までの挙動)、以降 ``nearest`` / ``constant``(0 で埋める)/ ``wrap``(反対側から巻き取る)。★**窓が 3 のときは ``reflect`` と ``nearest`` が原理的に一致する**(はみ出しが 1 画素なので複製先が同じ)—— 端の扱いを変えたのに結果が動かないときは、まず窓の大きさを疑うこと(窓 9 では 3 通りとも変わる)。塩胡椒ノイズなど外れ値に強く、ガウシアン平滑よりエッジを保ちやすい。
+
+NaN を含む画像では scipy の中央値選択により NaN が一部の窓の出力へ伝播する。"""
     return ndimage.median_filter(v, size=_k(a), mode=_border(b))
 def _min_filter(v, a, b):
     """矩形窓内の最小値フィルタ（グレースケール侵食に相当）。HALCON の ``gray_erosion_rect``（Determine the minimum gray value within a rectangle.）に相当。
@@ -1370,7 +1374,9 @@ def _unsharp(v, a, b):
 def _threshold(v, a, b):
     """大域しきい値処理（グローバルスレッショルド）。HALCON の ``threshold``（Segment an image using global threshold.）に相当。
 
-``a`` がしきい値そのもの（``0〜1``）で、``v > a`` を満たす画素を前景（1）とする region を返す。``b`` は未使用。HALCON の ``threshold`` は下限・上限の 2 値を取れる帯域しきい値だが、この実装は下限のみの片側しきい値。"""
+``a`` がしきい値そのもの（``0〜1``）で、``v > a`` を満たす画素を前景（1）とする region を返す。``b`` は未使用。HALCON の ``threshold`` は下限・上限の 2 値を取れる帯域しきい値だが、この実装は下限のみの片側しきい値。
+
+NaN を含む画像では比較が偽になるため、該当画素を背景（0）として有限な region を返す。"""
     return (v > a).astype(np.float64)
 
 
@@ -1465,7 +1471,9 @@ def _fill_holes(v, a, b):
 def _select_largest(v, a, b):
     """最大面積の連結領域だけを残す。HALCON の ``select_shape_std``（Select regions of a given shape.）に相当。
 
-``a``, ``b`` は未使用（常に「最大」を選ぶ）。連結成分ラベリング後、画素数が最大の 1 成分だけを 1、それ以外を 0 にする。入力に前景が無ければ全 0 を返す。HALCON の ``select_shape_std`` は面積以外の形状基準（円形度等）や複数選択にも対応するが、この実装は面積最大の単一選択のみ。"""
+``a``, ``b`` は未使用（常に「最大」を選ぶ）。連結成分ラベリング後、画素数が最大の 1 成分だけを 1、それ以外を 0 にする。入力に前景が無ければ全 0 を返す。HALCON の ``select_shape_std`` は面積以外の形状基準（円形度等）や複数選択にも対応するが、この実装は面積最大の単一選択のみ。
+
+NaN を含む region では NaN を背景として二値化し、有限な region を返す。"""
     lab, n = ndimage.label(_bin(v))
     if n == 0:
         return np.zeros_like(v, np.float64)
@@ -1506,6 +1514,8 @@ def _blob_count(v, a, b, connectivity=8):
     2026-08-30: 8 連結既定に修正(HALCON パリティ — `connection`/計数の既定は
     8 連結。従来は scipy.ndimage.label の既定 = 4 連結で、対角接触した 2 画素を
     2 個と数えていた: KNOWN_ISSUES #1)。旧 4 連結は connectivity=4 で。
+
+    NaN を含む region では NaN を背景として二値化し、有限な個数を返す。
     """
     st = ndimage.generate_binary_structure(2, 2 if int(connectivity) == 8 else 1)
     _, n = ndimage.label(_bin(v), structure=st)
@@ -1556,7 +1566,9 @@ def _local_max(v, a, b):
 def _dist_transform(v, a, b):
     """ユークリッド距離変換。HALCON の ``distance_transform``（Compute the distance transformation of a region.）に相当。
 
-``a``, ``b`` は未使用。各前景画素について最も近い背景画素までのユークリッド距離を求め（``scipy.ndimage.distance_transform_edt``）、``_norm`` でその画像内の最大値を 1 に正規化する（画像間で絶対距離の比較はできない）。骨格化・粒の中心検出等の前処理に使う。"""
+``a``, ``b`` は未使用。各前景画素について最も近い背景画素までのユークリッド距離を求め（``scipy.ndimage.distance_transform_edt``）、``_norm`` でその画像内の最大値を 1 に正規化する（画像間で絶対距離の比較はできない）。骨格化・粒の中心検出等の前処理に使う。
+
+NaN を含む region では NaN を背景として二値化し、有限な距離画像を返す。"""
     return _norm(ndimage.distance_transform_edt(_bin(v)))
 
 
@@ -1571,6 +1583,8 @@ def _dist_transform_abs(v, a, b):
 
     HALCON の参照 op は ``int4`` の近似を返す。この op は厳密な float64 距離を返し、
     互換 API ではない。
+
+    NaN を含む region では NaN を背景として二値化する。全背景に NaN 1 画素の入力で ``b >= 0.5`` のときは全画素 -1 という image ソートの範囲外値を返す。
     """
     mask = _bin(v) if b < 0.5 else ~_bin(v)
     if a < (1.0 / 3.0):

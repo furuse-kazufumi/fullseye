@@ -39,6 +39,8 @@ region（画素マスク）の外周を、トレース順（輪郭に沿った�
 
 2026-08-30 の修正で、以前使っていた汎用の ``edges_sub_pix`` 経路をやめ、上のトレース順の抽出に置き換えた。旧経路は ``np.where`` のラスタ順で点を返しており、順序に依存する後段処理（楕円フーリエ記述子など）を壊していた。HALCON の ``gen_contour_region_xld``（region から XLD 輪郭を生成する演算）に相当する。
 
+NaN を含む region では NaN を背景として二値化し、その画素を輪郭に含めない。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_contour_measure ファミリ ガイド](../guides/gallery2d_contour_measure.md)

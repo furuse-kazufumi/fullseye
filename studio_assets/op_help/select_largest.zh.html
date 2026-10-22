@@ -14,6 +14,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>只保留面积最大的连通区域。相当于 HALCON 的 <code style="color:#22d3bf">select_shape_std</code>（Select regions of a given shape.）。</p>
 <p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用（总是选择“最大”）。连通分量标记后，只把像素数最大的 1 个分量设为 1，其余设为 0。若输入没有前景则返回全 0。HALCON 的 <code style="color:#22d3bf">select_shape_std</code> 还支持面积以外的形状基准（圆形度等）和多选，但本实现只做面积最大的单个选择。</p>
+<p>???? NaN ? region?????? NaN ????????????</p>
 <p><b>边界处理</b>：将图像外部视为背景（0）（实测。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>

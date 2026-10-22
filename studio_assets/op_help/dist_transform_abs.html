@@ -18,6 +18,7 @@
 <p>正規化しない絶対画素距離の距離変換。HALCON の <code style="color:#22d3bf">distance_transform</code>（Compute the distance transformation of a region.）に相当。</p>
 <p><code style="color:#22d3bf">a</code> で距離の種類を選ぶ: <code style="color:#22d3bf">a &lt; 1/3</code> はユークリッド、<code style="color:#22d3bf">1/3 &lt;= a &lt; 2/3</code> は市街地（L1）、それ以上はチェス盤（L∞）。<code style="color:#22d3bf">b &lt; 0.5</code> は各前景画素から最も近い背景画素までの距離、<code style="color:#22d3bf">b &gt;= 0.5</code> は各背景画素から最も近い前景画素までの距離を返す。出力は float64 の画像で、<code style="color:#22d3bf">dist_transform</code> と違い画像内の最大値で正規化しない（3×3 と 9×9 の正方形の中心はそれぞれ 2 と 5）。例: <code style="color:#22d3bf">_dist_transform_abs(np.ones((3, 3)), 0, 0)</code>。</p>
 <p>HALCON の参照 op は <code style="color:#22d3bf">int4</code> の近似を返す。この op は厳密な float64 距離を返し、互換 API ではない。</p>
+<p>NaN を含む region では NaN を背景として二値化する。全背景に NaN 1 画素の入力で <code style="color:#22d3bf">b &gt;= 0.5</code> のときは全画素 -1 という image ソートの範囲外値を返す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

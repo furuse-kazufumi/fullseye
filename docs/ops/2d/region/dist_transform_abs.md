@@ -52,6 +52,8 @@ version: 0.8.1  # fullseye lib version this note was generated for
 HALCON の参照 op は ``int4`` の近似を返す。この op は厳密な float64 距離を返し、
 互換 API ではない。
 
+NaN を含む region では NaN を背景として二値化する。全背景に NaN 1 画素の入力で ``b >= 0.5`` のときは全画素 -1 という image ソートの範囲外値を返す。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_region ファミリ ガイド](../guides/gallery2d_region.md)

@@ -7,6 +7,7 @@ fallback ledger.  Empty inputs use the real implementation, not the probe.
 """
 from __future__ import annotations
 
+import inspect
 import warnings
 
 import numpy as np
@@ -65,7 +66,9 @@ def test_legitimate_empty_input_is_not_a_fallback(name, in_sort, out_sort):
     "name,in_sort,out_sort", OPS,
     ids=[f"{name}-nan-fault" for name, _, _ in OPS],
 )
-def test_nan_failure_raw_strict_and_default_routes(monkeypatch, name, in_sort, out_sort):
+def test_nan_wrapper_routes_propagate_an_injected_failure(
+    monkeypatch, name, in_sort, out_sort
+):
     """The exact same repository exception crosses both sides of the guard."""
     bad = np.zeros((8, 8), np.float64)
     bad[3, 4] = np.nan
@@ -91,6 +94,58 @@ def test_nan_failure_raw_strict_and_default_routes(monkeypatch, name, in_sort, o
     assert event["name"] == name
     assert event["source"] == "op"
     assert "NaN" in event["error"]
+
+
+_SILENT_FINITE = {
+    "threshold", "dyn_threshold", "dist_transform", "select_largest",
+    "blob_count", "area_center", "gen_contour_region_xld", "edges_sub_pix",
+}
+
+
+@pytest.mark.parametrize(
+    "name,in_sort,out_sort",
+    [
+        pytest.param(
+            name, in_sort, out_sort,
+            marks=pytest.mark.xfail(
+                strict=True,
+                reason="H16: silent finite output on NaN input — decision pending",
+            ) if name in _SILENT_FINITE else (),
+            id=name,
+        )
+        for name, in_sort, out_sort in OPS
+    ],
+)
+def test_nan_input_contract_of_the_real_operator(name, in_sort, out_sort):
+    """Call the innermost implementation behind the registry's real callable."""
+    bad = np.zeros((8, 8), np.float64)
+    bad[3, 4] = np.nan
+    op = next(op for op in ops.REGISTRY if op.name == name)
+    raw = inspect.unwrap(op.fn)
+    result = raw(bad, 0.4, 0.6)
+
+    if name == "mean_box_wh":
+        expected = np.ones((8, 8), bool)
+        expected[:, 0] = False
+        np.testing.assert_array_equal(np.isnan(result), expected)
+    elif name == "mean_image":
+        expected = np.zeros((8, 8), bool)
+        expected[1:, 2:] = True
+        np.testing.assert_array_equal(np.isnan(result), expected)
+    elif name == "median":
+        np.testing.assert_array_equal(np.argwhere(np.isnan(result)), [[1, 5]])
+    elif name == "dist_transform_abs":
+        # Observed raw contract is deliberately pinned even though it is outside
+        # the registry image sort's [0, 1] range; the wrapper later sanitizes it.
+        np.testing.assert_array_equal(result, np.full((8, 8), -1.0))
+    else:
+        # Pending H16 decision: every case currently reaches this assertion with
+        # a finite, sort-valid value, so the strict xfail records the defect.
+        if isinstance(result, dict):
+            assert result["shape"] == (8, 8) and result["cs"] == []
+        else:
+            assert np.isfinite(np.asarray(result)).all()
+        pytest.fail("NaN was silently converted to a finite, sort-valid result")
 
 
 @pytest.mark.parametrize(

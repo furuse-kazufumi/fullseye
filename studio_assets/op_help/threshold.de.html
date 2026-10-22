@@ -14,6 +14,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Globale Schwellenwertbildung (Global Threshold). Entspricht HALCONs <code style="color:#22d3bf">threshold</code> (Segment an image using global threshold.).</p>
 <p><code style="color:#22d3bf">a</code> ist der Schwellwert selbst (<code style="color:#22d3bf">0〜1</code>); zurückgegeben wird eine region, deren Vordergrund (1) die Pixel sind, die <code style="color:#22d3bf">v &gt; a</code> erfüllen. <code style="color:#22d3bf">b</code> wird nicht verwendet. HALCONs <code style="color:#22d3bf">threshold</code> ist ein Band-Schwellwert, der 2 Werte, eine Unter- und eine Obergrenze, annehmen kann; diese Implementierung ist dagegen ein einseitiger Schwellwert nur mit Untergrenze.</p>
+<p>Bei einem Bild mit NaN ist der Vergleich falsch; das betroffene Pixel wird daher als Hintergrund (0) behandelt und eine endliche Region zur?ckgegeben.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">Leitfaden zur Familie gallery2d_segmentation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

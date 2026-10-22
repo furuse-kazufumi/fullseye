@@ -14,6 +14,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>면적이 가장 큰 연결 영역만 남긴다. HALCON의 <code style="color:#22d3bf">select_shape_std</code>(Select regions of a given shape.)에 해당한다.</p>
 <p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>는 사용하지 않는다(항상 &quot;최대&quot;를 고른다). 연결 성분 라벨링 후, 화소 수가 최대인 1 성분만 1로, 그 외는 0으로 한다. 입력에 전경이 없으면 전부 0을 반환한다. HALCON의 <code style="color:#22d3bf">select_shape_std</code>는 면적 이외의 형상 기준(원형도 등)이나 복수 선택에도 대응하지만, 이 구현은 면적 최대의 단일 선택뿐이다.</p>
+<p>NaN? ??? region??? ???? ? NaN? ???? ??? ??? ??? ????.</p>
 <p><b>가장자리 처리</b>: 이미지 바깥은 배경(0)으로 간주한다(실측. <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 패밀리 가이드</a></p>
