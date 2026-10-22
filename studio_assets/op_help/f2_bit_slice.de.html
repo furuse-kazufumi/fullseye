@@ -12,7 +12,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/f2_bit_slice.inputs.jpg">f2_bit_slice: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Extrahiert eine Bitebene des Bildes nach 8-Bit-Quantisierung. <code style="color:#22d3bf">a</code> wählt die Ebene (0 = LSB .. 7 = MSB); <code style="color:#22d3bf">b</code> wird ignoriert. Gibt ein {0,1}-Bild zurück.</p>
+<p>Extrahieren Sie eine Bitebene nach der 8-Bit-Quantisierung. Das normalisierte „a“ in 0..1 wählt die Ebene „round(7*a)“ aus (0 = LSB, 1 = MSB); „b“ wird ignoriert. Gibt {0,1} zurück.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">Leitfaden zur Familie gallery2d_gray_arith</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

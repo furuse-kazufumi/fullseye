@@ -8,8 +8,8 @@
 <p>region : array_like</p>
 <p>2-D。<code style="color:#22d3bf">&gt; 0</code> が前景(bool でも実数でもよい。NaN は背景)。</p>
 <p>connectivity : {4, 8}</p>
-<p>斜めに触れる 2 画素をつなぐか。既定 8 は <code style="color:#22d3bf">ndimage.label</code> と</p>
-<p>HALCON <code style="color:#22d3bf">connection</code> の既定に一致する。<b>4 にすると斜めに接した塊が別々に数えられる</b>。</p>
+<p>斜めに触れる 2 画素をつなぐか。既定 8 は対角接続も同じ成分にする。</p>
+<p><code style="color:#22d3bf">ndimage.label</code> の既定は 4 連結なので異なる。<b>4 にすると斜めに接した塊が別々に数えられる</b>。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>numpy.ndarray</p>
 <p><code style="color:#22d3bf">(H, W)</code> の <code style="color:#22d3bf">int32</code>。番号は 1 から連番で歯抜けが無い。</p>

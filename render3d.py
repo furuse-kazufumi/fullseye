@@ -2131,8 +2131,8 @@ def gyroid_isosurface(shape=(64, 64, 64), level=0.0, periods=1.0):
     (``indices_to_labels``: one word covering a 1-D mask and a 3-D volume).
 
     **Raises** ``ValueError``: a grid below 8 per axis or over the cap;
-    non-positive periods; a level outside the field's range (no surface exists
-    there — reported rather than returning an empty mesh); negative thickness.
+    non-positive periods; or a level outside the field's range (no surface
+    exists there — reported rather than returning an empty mesh).
     """
     op = "gyroid_isosurface"
     lv = float(level)
@@ -2232,8 +2232,8 @@ def curve3d_tube_mesh(points, radius=0.1, segments=12, closed=False):
     looks like a tube" is not.
 
     **Raises** ``ValueError``: fewer than 2 points; not (N, 3); radius not
-    positive; fewer than 3 segments; non-finite input; a curve with repeated
-    consecutive points (the direction is undefined there).
+    positive; fewer than 3 segments; non-finite input; or a zero tangent from
+    the finite-difference gradient. A single repeated interior pair can still have a non-zero tangent.
     """
     op = "curve3d_tube_mesh"
     p = np.asarray(points, dtype=np.float64)

@@ -6,15 +6,17 @@
 <p style="margin:2px 0 2px 12px">• Underlying return: <code style="color:#22d3bf">(flow, info) -&gt; flow2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Multi-pass PIV that steps down from coarse windows to fine windows. Returns <code style="color:#22d3bf">(flow, info)</code>.</p>
-<p>The result of each pass is used as <b>the predicted displacement of the next pass</b> (the 2nd image&#x27;s window is shifted by the integer amount). Removing and filling outliers between passes is intentional —— if a wrong vector is used as-is for the prediction, that window stays wrong, locked in, in the next pass as well.</p>
+<p>Use the result of each stage as the predicted displacement for the next stage (shifting the second window by an integer amount). It is intentional to remove outliers and fill in the space between the rows - the outlier vectors are used as predictions. When used, the window will remain in place on the next stage.</p>
 <p>Args:</p>
 <p>a, b: image pair.</p>
-<p>windows: sequence of windows in decreasing size. Each pass <b>need not be a multiple</b> of the previous one,</p>
-<p>but since the grid changes, the prediction is transferred by nearest neighbour.</p>
-<p>overlap / peak / window_func: same as <code style="color:#22d3bf">piv_cross_correlate</code>.</p>
-<p>outlier_threshold: threshold of the normalised median test between passes. <code style="color:#22d3bf">None</code> disables it.</p>
+<p>windows: A row of windows in descending order. Each stage does not have to be a multiple of the previous stage, but</p>
+<p>Since the grid changes, the predictions are replaced with the nearest neighbors.</p>
+<p>overlap / peak / window_func: Same as <code style="color:#22d3bf">piv_cross_correlate</code>.</p>
+<p>outlier_threshold: Threshold for normalized median test between stages. Disabled with <code style="color:#22d3bf">None</code>.</p>
+<p>normalize: Normalization method for cross-correlation in each stage.</p>
+<p>search_limit: Percentage of window width to search from predicted position.</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(flow, info)</code> of the final pass. <code style="color:#22d3bf">info[&quot;passes&quot;]</code> holds the window size of each pass.</p>
+<p>The final stage <code style="color:#22d3bf">(flow, info)</code>. The size of each row of windows in <code style="color:#22d3bf">info[&quot;passes&quot;]</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

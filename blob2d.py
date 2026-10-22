@@ -195,8 +195,8 @@ def blob_label(region: Any, connectivity: int = 8) -> np.ndarray:
     region : array_like
         2-D。``> 0`` が前景(bool でも実数でもよい。NaN は背景)。
     connectivity : {4, 8}
-        斜めに触れる 2 画素をつなぐか。既定 8 は ``ndimage.label`` と
-        HALCON ``connection`` の既定に一致する。**4 にすると斜めに接した塊が
+        斜めに触れる 2 画素をつなぐか。既定 8 は対角接続も同じ成分にする。
+        ``ndimage.label`` の既定は 4 連結なので異なる。**4 にすると斜めに接した塊が
         別々に数えられる**。
 
     Returns

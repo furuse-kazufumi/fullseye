@@ -37,7 +37,7 @@ cos θ + sec θ = 2 + O(θ⁴) なので l · sin θ ≈ l · tan θ ≈ 2 c_r(�
     depth は ``offsamples=0`` で別にコンパイルした同じ場面から取る(:func:`peg_wrist_render`)。RGB は MSAA のまま(縁の反エイリアスが
     副画素情報を運ぶ)。
   * **円柱の既定スライス数**: MuJoCo の円柱は既定 numslices=28 の多角形で描かれ、半径が最大 r(1 − cos(π/28)) ≈ 0.6 % = 0.03〜0.04 mm
-    内側に入る。depth から当てた半径が系統的に小さく出るので ``<quality numslices="128">`` にする(0.0015 %)。
+    内側に入る。depth から当てた半径が系統的に小さく出るので ``<quality numslices="128">`` にする(半径誤差は約 0.03 %)。
 
 計測(:func:`peg_offset_from_rgbd`)は 640×480 の手首 RGB-D 1 枚から、穴中心(反エイリアスの縁 → 平面に持ち上げ → 既知半径でなく
 自由な円当てはめ)、ペグ先端(depth の点群 → 既知半径の円柱 → 影の端を投影した縁の円で合わせる模型)、相対ずれ (dx, dy)。
@@ -781,7 +781,7 @@ def peg_scene_mjcf(kp=None, lg: float | None = None, offsamples: int = 4, timest
 
     ``lg`` = 先端から回転のコンプライアンス中心までの距離(None → 手首原点 = ペグ長、0 → 先端に中心 = RCC)。``offsamples`` は
     MSAA(RGB 用 4、depth 用 0 で別にコンパイルする —— 深度はサンプル 0 の位置になる罠)。``<quality numslices="128">`` で円柱の
-    多角形近似を 0.0015 % に(既定 28 では半径が 0.04 mm 内側)。単位 m、口の面 z = 0。"""
+    多角形近似の半径誤差を約 0.03 % に(既定 28 では約 0.6 %、半径 6 mm なら 0.04 mm 内側)。単位 m、口の面 z = 0。"""
     kp = _kp(kp)
     r, R, H, W = kp["r"], kp["R"], kp["hole_depth"], kp["chamfer"]
     L = kp["peg_length"]
@@ -1138,7 +1138,7 @@ def peg_depth_sample_offset(offsamples: int = 4, width: int = 320, height: int =
 
 def peg_measure_overlay(rgb, truth_uv, est_uv, edge_uv=None, size: int = 12, zoom: int = 3, crop: int = 40) -> np.ndarray:
     """計測の重ね図(numpy だけ): 真値 = 緑の大きな十字、推定 = 赤の小さな十字、円当てはめに使った縁の点 = 黄の点(imagedraw)。
-    右下に真値の重心まわり ``crop`` px 四方を ``zoom`` 倍にした拡大を貼る(副画素の一致を目で見るため)。
+    右下に真値の重心まわり ``2*crop`` px 四方(``crop`` は半幅)を ``zoom`` 倍にした拡大を貼る(副画素の一致を目で見るため)。
 
     ``rgb`` は (H, W, 3) uint8、``truth_uv``・``est_uv`` は (N, 2) の (u, v)。返りは同じ大きさの uint8。
     **Raises** ``ValueError``: rgb の形が違う、点が無い。"""

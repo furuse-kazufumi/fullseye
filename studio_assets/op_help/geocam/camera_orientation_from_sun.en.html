@@ -4,17 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.camera_orientation_from_sun(sun_pixels, unix_times, lat_deg, lon_deg, K)</code> (to call the implementation directly, <code style="color:#22d3bf">import geocam; geocam.camera_orientation_from_sun(sun_pixels, unix_times, lat_deg, lon_deg, K)</code>; from the registry, <code style="color:#22d3bf">opsgeocam.get(&quot;camera_orientation_from_sun&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Time-stamped pixel positions of the sun, ≥ 2 points → camera (yaw, pitch, roll) (SVD solution of Wahba&#x27;s problem = Kabsch).</p>
-<p>For each observation: pixel → ray in camera coordinates d_c (from K), time → sun direction in the world s_w (<code style="color:#22d3bf">sun_position</code>, using the <b>refraction-included</b> elevation: what the camera sees is the apparent sun). <code style="color:#22d3bf">R = argmin Σ |R d_c − s_w|²</code> is solved in closed form with SVD (Kabsch 1976 / Markley 1988) and decomposed into <code style="color:#22d3bf">(yaw, pitch, roll)</code>.</p>
-<p>It is uniquely determined by 2 points (the plane spanned by 2 directions is needed). If there is 1 observation, or all point the same way (collinear), ValueError -- for example 2 images at the same time, or only noon for many days. The sun&#x27;s azimuth moves a lot in 1 day, so <b>2 images, morning and evening of the same day</b>, are enough.</p>
+<p>For each observation, pixel → camera coordinate ray d_c(from K), time → global sun direction s_w(<code style="color:#22d3bf">sun_position</code>, Use an elevation angle with <b>refraction included</b>: the camera sees the apparent sun). <code style="color:#22d3bf">R = argmin Σ |R d_c − s_w|²</code> Solve it in closed form using SVD (Kabsch 1976 / Markley 1988) and decompose it into <code style="color:#22d3bf">(yaw, pitch, roll)</code>.</p>
+<p>It is uniquely determined by two points (requires a surface that extends in two directions). If the observations are at one point or all in the same direction (collinear) ValueError — For example, two photos at the same time, or only at noon for many days. The direction of the sun changes greatly in one day. Since it moves, you only need two photos from the same day, one taken in the morning and one taken in the evening.</p>
 <p>Args:</p>
-<p>sun_pixels: (N, 2) (u, v). Stacked outputs of <code style="color:#22d3bf">sun_pixel_position</code>.</p>
+<p>sun_pixels: (u, v) of (N, 2). The output of <code style="color:#22d3bf">sun_pixel_position</code> is stacked.</p>
 <p>unix_times: (N,) UNIX seconds (UTC).</p>
-<p>lat_deg, lon_deg: camera position.</p>
+<p>lat_deg, lon_deg: Camera position.</p>
 <p>K: (fx, fy, cx, cy).</p>
 <p>Returns:</p>
-<p>table: <code style="color:#22d3bf">yaw_deg</code> / <code style="color:#22d3bf">pitch_deg</code> / <code style="color:#22d3bf">roll_deg</code> / <code style="color:#22d3bf">residual_deg</code> (RMS of the angular residual between rays and</p>
-<p>sun directions) / <code style="color:#22d3bf">max_residual_deg</code> / <code style="color:#22d3bf">n</code> / <code style="color:#22d3bf">condition</code> (breadth of the plane spanned by the observation directions =</p>
-<p>the 2nd singular value; the closer to 0, the more undetermined).</p>
+<p>table: <code style="color:#22d3bf">yaw_deg</code> / <code style="color:#22d3bf">pitch_deg</code> / <code style="color:#22d3bf">roll_deg</code> / <code style="color:#22d3bf">residual_deg</code> (ray and sun direction</p>
+<p>RMS of angle residual)/ <code style="color:#22d3bf">max_residual_deg</code> / <code style="color:#22d3bf">n</code> / <code style="color:#22d3bf">condition</code>(Width of surface in observation direction =</p>
+<p>The ratio of the second and largest singular value, closer to 0 is indeterminate).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegeocam:geocam">geocam family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

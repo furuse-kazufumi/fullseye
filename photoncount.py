@@ -463,7 +463,7 @@ def photon_sample(image, photons_per_unit=100.0, dark_rate=0.0, seed=0):
     (Fano factor, Anscombe, Coates, dToF) needs ``N``, and the rescale-and-clip
     is not invertible.
 
-    ``seed`` is a required non-negative integer and the RNG is
+    ``seed`` is an optional non-negative integer (default 0) and the RNG is
     ``numpy.random.default_rng(seed)`` — same seed, same frame, on any machine.
 
     Ground truth it reproduces (pinned in ``tests/test_photoncount.py``): the
@@ -742,8 +742,9 @@ def anscombe_inverse(values, gain=1.0, read_sigma=0.0, offset=0.0,
     :func:`anscombe_transform` can produce, so over the whole valid domain the
     formula is non-negative to round-off (measured minimum -1.11e-16 over
     ``D`` in ``[A(0), 6]`` on 500001 samples). Below ``A(0)`` it does go
-    genuinely negative (-0.0217 at ``D = 1.20``), which is why values there are
-    refused outright rather than clipped.
+    genuinely negative (-0.0217 at ``D = 1.20``). Positive values below
+    ``A(0)`` are accepted and the negative inverse is clipped to zero; only
+    values ``<= 0`` are refused because the formula contains ``1/D`` terms.
 
     Returns a float64 array of the same shape as *values*.
 

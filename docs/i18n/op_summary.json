@@ -9,31 +9,231 @@
   "hi"
  ],
  "summaries": {
-  "2d/tb_viewport_from_equirect": {"fp":"5c3b6d1408ec","ja":"正距円筒画像から透視投影の視野を切り出す。","zh":"从等距柱状图提取透视视口。","tw":"從等距柱狀圖擷取透視視口。","ko":"등거리 원통 영상에서 원근 시야를 추출한다.","de":"Extrahiert eine perspektivische Ansicht aus einem Rechteckpanorama.","hi":"समदूरी बेलनाकार चित्र से परिप्रेक्ष्य दृश्य निकालता है।"},
-  "optics/omni_anaglyph_compose": {"fp":"e8aef366b701","ja":"左右像を色フィルター式の立体画像に合成する。","zh":"将左右图像合成为彩色滤镜立体图。","tw":"將左右影像合成為彩色濾鏡立體圖。","ko":"좌우 영상을 색 필터 입체 영상으로 합성한다.","de":"Setzt linkes und rechtes Bild zu einem Farbfilter-Stereobild zusammen.","hi":"बाएँ और दाएँ चित्र को रंग-फ़िल्टर त्रिविम चित्र में मिलाता है।"},
-  "optics/anaglyph_crosstalk": {"fp":"630258bbee1c","ja":"左右の見え方と誤像漏れのエネルギー比を返す。","zh":"返回双眼预览和串扰能量比。","tw":"回傳雙眼預覽與串擾能量比。","ko":"양안 미리보기와 누설 에너지 비를 반환한다.","de":"Liefert Augenansichten und das Energieverhältnis der Übersprechbilder.","hi":"दोनों आँखों के दृश्य और रिसाव ऊर्जा अनुपात देता है।"},
-  "optics/anaglyph_from_ods": {"fp":"a6d2a5dc912f","ja":"全方位立体像から視野を切り出して色フィルター像にする。","zh":"从全景立体对中提取视口并生成彩色滤镜图。","tw":"從全景立體對擷取視口並產生彩色濾鏡圖。","ko":"전방위 입체 쌍에서 시야를 추출해 색 필터 영상으로 만든다.","de":"Extrahiert Ansichten aus einem Rundum-Stereopaar und erzeugt ein Farbfilterbild.","hi":"सर्वदिशीय त्रिविम जोड़ी से दृश्य निकालकर रंग-फ़िल्टर चित्र बनाता है।"},
-  "optics/cubemap_from_equirect": {"fp":"f2bd33b61fd7","ja":"正距円筒画像を6面のキューブ面へ再標本化する。","zh":"将等距柱状图重采样为六个立方体面。","tw":"將等距柱狀圖重取樣為六個立方體面。","ko":"등거리 원통 영상을 여섯 정육면체 면으로 재표본화한다.","de":"Tastet ein Rechteckpanorama auf sechs Würfelflächen um.","hi":"समदूरी बेलनाकार चित्र को छह घन फलकों पर पुनः नमूना करता है।"},
-  "optics/equirect_defect_unwrap_pipe": {"fp":"acad0a376d95","ja":"円筒壁を平面の検査帯へ展開する。","zh":"将圆柱壁展开为平面检测条带。","tw":"將圓柱壁展開為平面檢測帶。","ko":"원통 벽을 평면 검사 띠로 펼친다.","de":"Wickelt eine Zylinderwand zu einem flachen Prüfstreifen ab.","hi":"बेलनाकार दीवार को समतल निरीक्षण पट्टी में खोलता है।"},
-  "optics/equirect_filter_gaussian": {"fp":"33fcb78ed5d4","ja":"緯度に合わせた尺度で全天球像をガウス平滑化する。","zh":"按纬度调整尺度，对全景图进行高斯滤波。","tw":"依緯度調整尺度，對全景圖進行高斯濾波。","ko":"위도에 맞춘 척도로 전방위 영상을 가우시안 필터링한다.","de":"Glättet ein Rundumbild mit einer breitenabhängigen Gauß-Skala.","hi":"अक्षांश-अनुकूल पैमाने से सर्वदिशीय चित्र का गाउस फ़िल्टर करता है।"},
-  "optics/equirect_from_cubemap": {"fp":"364147dfd7e7","ja":"6面のキューブ面を正距円筒画像へ再標本化する。","zh":"将六个立方体面重采样为等距柱状图。","tw":"將六個立方體面重取樣為等距柱狀圖。","ko":"여섯 정육면체 면을 등거리 원통 영상으로 재표본화한다.","de":"Tastet sechs Würfelflächen zu einem Rechteckpanorama um.","hi":"छह घन फलकों को समदूरी बेलनाकार चित्र में पुनः नमूना करता है।"},
-  "optics/equirect_from_fisheye_pair": {"fp":"fd85e422f4d7","ja":"校正済み魚眼2面を接合し、重なり、継ぎ目誤差、死角を報告する。","zh":"拼接两个已标定鱼眼图并报告重叠、接缝误差和盲区。","tw":"拼接兩個已校正魚眼圖並回報重疊、接縫誤差與盲區。","ko":"보정된 어안 두 장을 접합하고 겹침, 이음 오차, 사각을 보고한다.","de":"Fügt zwei kalibrierte Fischaugenbilder zusammen und meldet Überlappung, Nahtfehler und Blindstellen.","hi":"दो अंशांकित मत्स्यनेत्र चित्र जोड़कर अतिव्यापन, जोड़ त्रुटि और अंध क्षेत्र बताता है।"},
-  "optics/equirect_from_perspectives": {"fp":"d74362f6e181","ja":"校正済み透視画像群を全天球像へ混合する。","zh":"将已标定透视图组混合为全景图。","tw":"將已校正透視圖組混合為全景圖。","ko":"보정된 원근 영상들을 전방위 영상으로 혼합한다.","de":"Mischt kalibrierte Perspektivbilder zu einem Rundumbild.","hi":"अंशांकित परिप्रेक्ष्य चित्रों को सर्वदिशीय चित्र में मिलाता है।"},
-  "optics/equirect_rotate": {"fp":"edb1aac99ac2","ja":"全天球画像へ正しい3次元回転を適用する。","zh":"对全景图应用正规三维旋转。","tw":"對全景圖套用正規三維旋轉。","ko":"전방위 영상에 올바른 3차원 회전을 적용한다.","de":"Wendet eine echte dreidimensionale Drehung auf ein Rundumbild an.","hi":"सर्वदिशीय चित्र पर उचित त्रिविम घूर्णन लागू करता है।"},
-  "optics/equirect_stabilize": {"fp":"ab76886ed141","ja":"全天球系列のカメラ回転を推定して除く。","zh":"估计并消除全景序列的相机旋转。","tw":"估計並消除全景序列的相機旋轉。","ko":"전방위 연속 영상의 카메라 회전을 추정해 제거한다.","de":"Schätzt und entfernt Kameradrehungen aus einer Rundumbildfolge.","hi":"सर्वदिशीय क्रम से कैमरा घूर्णन का अनुमान लगाकर हटाता है।"},
-  "optics/equirect_weight_map": {"fp":"a74bcdc94482","ja":"余弦緯度の重み画像を返す。","zh":"返回余弦纬度权重图。","tw":"回傳餘弦緯度權重圖。","ko":"코사인 위도 가중치 영상을 반환한다.","de":"Liefert eine Gewichtskarte mit dem Kosinus der Breite.","hi":"अक्षांश के कोसाइन का भार मानचित्र देता है।"},
-  "optics/ods_depth_to_disparity": {"fp":"4eec61f70f88","ja":"半径方向距離を全方位立体の水平視差へ変換する。","zh":"将径向深度转换为全景立体水平视差。","tw":"將徑向深度轉換為全景立體水平視差。","ko":"방사 깊이를 전방위 입체 수평 시차로 변환한다.","de":"Wandelt radiale Tiefe in horizontale Rundum-Stereodisparität um.","hi":"त्रिज्यीय गहराई को सर्वदिशीय क्षैतिज त्रिविम विस्थापन में बदलता है।"},
-  "optics/ods_disparity_to_depth": {"fp":"032e90d4a997","ja":"全方位立体の水平視差を半径方向距離へ変換する。","zh":"将全景立体水平视差转换为径向深度。","tw":"將全景立體水平視差轉換為徑向深度。","ko":"전방위 입체 수평 시차를 방사 깊이로 변환한다.","de":"Wandelt horizontale Rundum-Stereodisparität in radiale Tiefe um.","hi":"सर्वदिशीय क्षैतिज त्रिविम विस्थापन को त्रिज्यीय गहराई में बदलता है।"},
-  "optics/ods_render": {"fp":"caa8ad7432d9","ja":"場面コールバックから全方位立体光線を描画する。","zh":"通过场景回调渲染全景立体射线。","tw":"透過場景回呼渲染全景立體射線。","ko":"장면 콜백으로 전방위 입체 광선을 렌더링한다.","de":"Rendert Rundum-Stereostrahlen über eine Szenenfunktion.","hi":"दृश्य फ़ंक्शन से सर्वदिशीय त्रिविम किरणें रेंडर करता है।"},
-  "optics/s_psnr": {"fp":"385d212eebb8","ja":"球面上の決定的な準一様標本でPSNRを計算する。","zh":"在球面确定性近均匀采样点上计算PSNR。","tw":"在球面確定性近均勻取樣點上計算PSNR。","ko":"구면의 결정적 준균일 표본에서 PSNR을 계산한다.","de":"Berechnet PSNR an deterministischen, nahezu gleichverteilten Kugelproben.","hi":"गोले पर नियत लगभग-समान नमूनों से PSNR गणना करता है।"},
-  "optics/stereo360_sbs": {"fp":"79bf3d05e547","ja":"全天球の左右像を横並びに詰める。","zh":"将全景左右图并排打包。","tw":"將全景左右圖並排封裝。","ko":"전방위 좌우 영상을 나란히 묶는다.","de":"Packt ein Rundum-Stereopaar nebeneinander.","hi":"सर्वदिशीय त्रिविम जोड़ी को अगल-बगल रखता है।"},
-  "optics/stereo360_top_bottom": {"fp":"948339a08e8a","ja":"全天球の左右像を上下に詰める。","zh":"将全景左右图上下打包。","tw":"將全景左右圖上下封裝。","ko":"전방위 좌우 영상을 위아래로 묶는다.","de":"Packt ein Rundum-Stereopaar übereinander.","hi":"सर्वदिशीय त्रिविम जोड़ी को ऊपर-नीचे रखता है।"},
-  "optics/stereo_pack": {"fp":"b4def7cb6684","ja":"左右像を指定した表示配置に詰める。","zh":"按指定显示布局打包左右图。","tw":"依指定顯示配置封裝左右圖。","ko":"좌우 영상을 지정한 표시 배치로 묶는다.","de":"Packt zwei Augenbilder in die angegebene Anzeigeanordnung.","hi":"दोनों आँखों के चित्र निर्दिष्ट प्रदर्शन विन्यास में रखता है।"},
-  "optics/stereo_parallax_budget": {"fp":"a26062b4e190","ja":"物理視差と画面幅の1 %・3 %限界を報告する。","zh":"报告物理视差及屏宽1%和3%限值。","tw":"回報物理視差及螢幕寬1%與3%限值。","ko":"물리 시차와 화면 너비 1%, 3% 한계를 보고한다.","de":"Meldet physische Parallaxe sowie Ein- und Drei-Prozent-Grenzen der Bildschirmbreite.","hi":"भौतिक विस्थापन और स्क्रीन चौड़ाई की एक व तीन प्रतिशत सीमाएँ बताता है।"},
-  "optics/video360_tile_coverage": {"fp":"fde6de48c5f3","ja":"視線経路が触れる経度緯度タイルを報告する。","zh":"报告视线路径触及的经纬度分块。","tw":"回報視線路徑觸及的經緯度分塊。","ko":"시선 경로가 닿는 경위도 타일을 보고한다.","de":"Meldet die von einem Blickpfad berührten Längen-Breiten-Kacheln.","hi":"दृष्टि पथ से छुए गए देशांतर-अक्षांश टाइल बताता है।"},
-  "optics/video360_viewport_track": {"fp":"eb54e9aa1cf6","ja":"全天球フレーム列から動く視野を切り出す。","zh":"从全景帧序列提取移动视口。","tw":"從全景影格序列擷取移動視口。","ko":"전방위 프레임열에서 움직이는 시야를 추출한다.","de":"Extrahiert ein bewegtes Sichtfenster aus einer Rundumbildfolge.","hi":"सर्वदिशीय फ़्रेम क्रम से चलता दृश्य क्षेत्र निकालता है।"},
-  "optics/viewport_from_equirect": {"fp":"5c3b6d1408ec","ja":"正距円筒画像から透視投影の視野を切り出す。","zh":"从等距柱状图提取透视视口。","tw":"從等距柱狀圖擷取透視視口。","ko":"등거리 원통 영상에서 원근 시야를 추출한다.","de":"Extrahiert eine perspektivische Ansicht aus einem Rechteckpanorama.","hi":"समदूरी बेलनाकार चित्र से परिप्रेक्ष्य दृश्य निकालता है।"},
-  "optics/ws_psnr": {"fp":"fa7426b404cc","ja":"余弦緯度で重み付けした球面PSNRを計算する。","zh":"计算余弦纬度加权的球面PSNR。","tw":"計算餘弦緯度加權的球面PSNR。","ko":"코사인 위도로 가중한 구면 PSNR을 계산한다.","de":"Berechnet kugelflächengewichtetes PSNR mit Kosinus-Breitengewichten.","hi":"अक्षांश-कोसाइन भारित गोलकीय PSNR गणना करता है।"},
+  "2d/tb_viewport_from_equirect": {
+   "fp": "5c3b6d1408ec",
+   "ja": "正距円筒画像から透視投影の視野を切り出す。",
+   "zh": "从等距柱状图提取透视视口。",
+   "tw": "從等距柱狀圖擷取透視視口。",
+   "ko": "등거리 원통 영상에서 원근 시야를 추출한다.",
+   "de": "Extrahiert eine perspektivische Ansicht aus einem Rechteckpanorama.",
+   "hi": "समदूरी बेलनाकार चित्र से परिप्रेक्ष्य दृश्य निकालता है।"
+  },
+  "optics/omni_anaglyph_compose": {
+   "fp": "e8aef366b701",
+   "ja": "左右像を色フィルター式の立体画像に合成する。",
+   "zh": "将左右图像合成为彩色滤镜立体图。",
+   "tw": "將左右影像合成為彩色濾鏡立體圖。",
+   "ko": "좌우 영상을 색 필터 입체 영상으로 합성한다.",
+   "de": "Setzt linkes und rechtes Bild zu einem Farbfilter-Stereobild zusammen.",
+   "hi": "बाएँ और दाएँ चित्र को रंग-फ़िल्टर त्रिविम चित्र में मिलाता है।"
+  },
+  "optics/anaglyph_crosstalk": {
+   "fp": "630258bbee1c",
+   "ja": "左右の見え方と誤像漏れのエネルギー比を返す。",
+   "zh": "返回双眼预览和串扰能量比。",
+   "tw": "回傳雙眼預覽與串擾能量比。",
+   "ko": "양안 미리보기와 누설 에너지 비를 반환한다.",
+   "de": "Liefert Augenansichten und das Energieverhältnis der Übersprechbilder.",
+   "hi": "दोनों आँखों के दृश्य और रिसाव ऊर्जा अनुपात देता है।"
+  },
+  "optics/anaglyph_from_ods": {
+   "fp": "a6d2a5dc912f",
+   "ja": "全方位立体像から視野を切り出して色フィルター像にする。",
+   "zh": "从全景立体对中提取视口并生成彩色滤镜图。",
+   "tw": "從全景立體對擷取視口並產生彩色濾鏡圖。",
+   "ko": "전방위 입체 쌍에서 시야를 추출해 색 필터 영상으로 만든다.",
+   "de": "Extrahiert Ansichten aus einem Rundum-Stereopaar und erzeugt ein Farbfilterbild.",
+   "hi": "सर्वदिशीय त्रिविम जोड़ी से दृश्य निकालकर रंग-फ़िल्टर चित्र बनाता है।"
+  },
+  "optics/cubemap_from_equirect": {
+   "fp": "f2bd33b61fd7",
+   "ja": "正距円筒画像を6面のキューブ面へ再標本化する。",
+   "zh": "将等距柱状图重采样为六个立方体面。",
+   "tw": "將等距柱狀圖重取樣為六個立方體面。",
+   "ko": "등거리 원통 영상을 여섯 정육면체 면으로 재표본화한다.",
+   "de": "Tastet ein Rechteckpanorama auf sechs Würfelflächen um.",
+   "hi": "समदूरी बेलनाकार चित्र को छह घन फलकों पर पुनः नमूना करता है।"
+  },
+  "optics/equirect_defect_unwrap_pipe": {
+   "fp": "acad0a376d95",
+   "ja": "円筒壁を平面の検査帯へ展開する。",
+   "zh": "将圆柱壁展开为平面检测条带。",
+   "tw": "將圓柱壁展開為平面檢測帶。",
+   "ko": "원통 벽을 평면 검사 띠로 펼친다.",
+   "de": "Wickelt eine Zylinderwand zu einem flachen Prüfstreifen ab.",
+   "hi": "बेलनाकार दीवार को समतल निरीक्षण पट्टी में खोलता है।"
+  },
+  "optics/equirect_filter_gaussian": {
+   "fp": "33fcb78ed5d4",
+   "ja": "緯度に合わせた尺度で全天球像をガウス平滑化する。",
+   "zh": "按纬度调整尺度，对全景图进行高斯滤波。",
+   "tw": "依緯度調整尺度，對全景圖進行高斯濾波。",
+   "ko": "위도에 맞춘 척도로 전방위 영상을 가우시안 필터링한다.",
+   "de": "Glättet ein Rundumbild mit einer breitenabhängigen Gauß-Skala.",
+   "hi": "अक्षांश-अनुकूल पैमाने से सर्वदिशीय चित्र का गाउस फ़िल्टर करता है।"
+  },
+  "optics/equirect_from_cubemap": {
+   "fp": "364147dfd7e7",
+   "ja": "6面のキューブ面を正距円筒画像へ再標本化する。",
+   "zh": "将六个立方体面重采样为等距柱状图。",
+   "tw": "將六個立方體面重取樣為等距柱狀圖。",
+   "ko": "여섯 정육면체 면을 등거리 원통 영상으로 재표본화한다.",
+   "de": "Tastet sechs Würfelflächen zu einem Rechteckpanorama um.",
+   "hi": "छह घन फलकों को समदूरी बेलनाकार चित्र में पुनः नमूना करता है।"
+  },
+  "optics/equirect_from_fisheye_pair": {
+   "fp": "fd85e422f4d7",
+   "ja": "校正済み魚眼2面を接合し、重なり、継ぎ目誤差、死角を報告する。",
+   "zh": "拼接两个已标定鱼眼图并报告重叠、接缝误差和盲区。",
+   "tw": "拼接兩個已校正魚眼圖並回報重疊、接縫誤差與盲區。",
+   "ko": "보정된 어안 두 장을 접합하고 겹침, 이음 오차, 사각을 보고한다.",
+   "de": "Fügt zwei kalibrierte Fischaugenbilder zusammen und meldet Überlappung, Nahtfehler und Blindstellen.",
+   "hi": "दो अंशांकित मत्स्यनेत्र चित्र जोड़कर अतिव्यापन, जोड़ त्रुटि और अंध क्षेत्र बताता है।"
+  },
+  "optics/equirect_from_perspectives": {
+   "fp": "d74362f6e181",
+   "ja": "校正済み透視画像群を全天球像へ混合する。",
+   "zh": "将已标定透视图组混合为全景图。",
+   "tw": "將已校正透視圖組混合為全景圖。",
+   "ko": "보정된 원근 영상들을 전방위 영상으로 혼합한다.",
+   "de": "Mischt kalibrierte Perspektivbilder zu einem Rundumbild.",
+   "hi": "अंशांकित परिप्रेक्ष्य चित्रों को सर्वदिशीय चित्र में मिलाता है।"
+  },
+  "optics/equirect_rotate": {
+   "fp": "edb1aac99ac2",
+   "ja": "全天球画像へ正しい3次元回転を適用する。",
+   "zh": "对全景图应用正规三维旋转。",
+   "tw": "對全景圖套用正規三維旋轉。",
+   "ko": "전방위 영상에 올바른 3차원 회전을 적용한다.",
+   "de": "Wendet eine echte dreidimensionale Drehung auf ein Rundumbild an.",
+   "hi": "सर्वदिशीय चित्र पर उचित त्रिविम घूर्णन लागू करता है।"
+  },
+  "optics/equirect_stabilize": {
+   "fp": "ab76886ed141",
+   "ja": "全天球系列のカメラ回転を推定して除く。",
+   "zh": "估计并消除全景序列的相机旋转。",
+   "tw": "估計並消除全景序列的相機旋轉。",
+   "ko": "전방위 연속 영상의 카메라 회전을 추정해 제거한다.",
+   "de": "Schätzt und entfernt Kameradrehungen aus einer Rundumbildfolge.",
+   "hi": "सर्वदिशीय क्रम से कैमरा घूर्णन का अनुमान लगाकर हटाता है।"
+  },
+  "optics/equirect_weight_map": {
+   "fp": "a74bcdc94482",
+   "ja": "余弦緯度の重み画像を返す。",
+   "zh": "返回余弦纬度权重图。",
+   "tw": "回傳餘弦緯度權重圖。",
+   "ko": "코사인 위도 가중치 영상을 반환한다.",
+   "de": "Liefert eine Gewichtskarte mit dem Kosinus der Breite.",
+   "hi": "अक्षांश के कोसाइन का भार मानचित्र देता है।"
+  },
+  "optics/ods_depth_to_disparity": {
+   "fp": "4eec61f70f88",
+   "ja": "半径方向距離を全方位立体の水平視差へ変換する。",
+   "zh": "将径向深度转换为全景立体水平视差。",
+   "tw": "將徑向深度轉換為全景立體水平視差。",
+   "ko": "방사 깊이를 전방위 입체 수평 시차로 변환한다.",
+   "de": "Wandelt radiale Tiefe in horizontale Rundum-Stereodisparität um.",
+   "hi": "त्रिज्यीय गहराई को सर्वदिशीय क्षैतिज त्रिविम विस्थापन में बदलता है।"
+  },
+  "optics/ods_disparity_to_depth": {
+   "fp": "032e90d4a997",
+   "ja": "全方位立体の水平視差を半径方向距離へ変換する。",
+   "zh": "将全景立体水平视差转换为径向深度。",
+   "tw": "將全景立體水平視差轉換為徑向深度。",
+   "ko": "전방위 입체 수평 시차를 방사 깊이로 변환한다.",
+   "de": "Wandelt horizontale Rundum-Stereodisparität in radiale Tiefe um.",
+   "hi": "सर्वदिशीय क्षैतिज त्रिविम विस्थापन को त्रिज्यीय गहराई में बदलता है।"
+  },
+  "optics/ods_render": {
+   "fp": "caa8ad7432d9",
+   "ja": "場面コールバックから全方位立体光線を描画する。",
+   "zh": "通过场景回调渲染全景立体射线。",
+   "tw": "透過場景回呼渲染全景立體射線。",
+   "ko": "장면 콜백으로 전방위 입체 광선을 렌더링한다.",
+   "de": "Rendert Rundum-Stereostrahlen über eine Szenenfunktion.",
+   "hi": "दृश्य फ़ंक्शन से सर्वदिशीय त्रिविम किरणें रेंडर करता है।"
+  },
+  "optics/s_psnr": {
+   "fp": "385d212eebb8",
+   "ja": "球面上の決定的な準一様標本でPSNRを計算する。",
+   "zh": "在球面确定性近均匀采样点上计算PSNR。",
+   "tw": "在球面確定性近均勻取樣點上計算PSNR。",
+   "ko": "구면의 결정적 준균일 표본에서 PSNR을 계산한다.",
+   "de": "Berechnet PSNR an deterministischen, nahezu gleichverteilten Kugelproben.",
+   "hi": "गोले पर नियत लगभग-समान नमूनों से PSNR गणना करता है।"
+  },
+  "optics/stereo360_sbs": {
+   "fp": "79bf3d05e547",
+   "ja": "全天球の左右像を横並びに詰める。",
+   "zh": "将全景左右图并排打包。",
+   "tw": "將全景左右圖並排封裝。",
+   "ko": "전방위 좌우 영상을 나란히 묶는다.",
+   "de": "Packt ein Rundum-Stereopaar nebeneinander.",
+   "hi": "सर्वदिशीय त्रिविम जोड़ी को अगल-बगल रखता है।"
+  },
+  "optics/stereo360_top_bottom": {
+   "fp": "948339a08e8a",
+   "ja": "全天球の左右像を上下に詰める。",
+   "zh": "将全景左右图上下打包。",
+   "tw": "將全景左右圖上下封裝。",
+   "ko": "전방위 좌우 영상을 위아래로 묶는다.",
+   "de": "Packt ein Rundum-Stereopaar übereinander.",
+   "hi": "सर्वदिशीय त्रिविम जोड़ी को ऊपर-नीचे रखता है।"
+  },
+  "optics/stereo_pack": {
+   "fp": "b4def7cb6684",
+   "ja": "左右像を指定した表示配置に詰める。",
+   "zh": "按指定显示布局打包左右图。",
+   "tw": "依指定顯示配置封裝左右圖。",
+   "ko": "좌우 영상을 지정한 표시 배치로 묶는다.",
+   "de": "Packt zwei Augenbilder in die angegebene Anzeigeanordnung.",
+   "hi": "दोनों आँखों के चित्र निर्दिष्ट प्रदर्शन विन्यास में रखता है।"
+  },
+  "optics/stereo_parallax_budget": {
+   "fp": "a26062b4e190",
+   "ja": "物理視差と画面幅の1 %・3 %限界を報告する。",
+   "zh": "报告物理视差及屏宽1%和3%限值。",
+   "tw": "回報物理視差及螢幕寬1%與3%限值。",
+   "ko": "물리 시차와 화면 너비 1%, 3% 한계를 보고한다.",
+   "de": "Meldet physische Parallaxe sowie Ein- und Drei-Prozent-Grenzen der Bildschirmbreite.",
+   "hi": "भौतिक विस्थापन और स्क्रीन चौड़ाई की एक व तीन प्रतिशत सीमाएँ बताता है।"
+  },
+  "optics/video360_tile_coverage": {
+   "fp": "fde6de48c5f3",
+   "ja": "視線経路が触れる経度緯度タイルを報告する。",
+   "zh": "报告视线路径触及的经纬度分块。",
+   "tw": "回報視線路徑觸及的經緯度分塊。",
+   "ko": "시선 경로가 닿는 경위도 타일을 보고한다.",
+   "de": "Meldet die von einem Blickpfad berührten Längen-Breiten-Kacheln.",
+   "hi": "दृष्टि पथ से छुए गए देशांतर-अक्षांश टाइल बताता है।"
+  },
+  "optics/video360_viewport_track": {
+   "fp": "eb54e9aa1cf6",
+   "ja": "全天球フレーム列から動く視野を切り出す。",
+   "zh": "从全景帧序列提取移动视口。",
+   "tw": "從全景影格序列擷取移動視口。",
+   "ko": "전방위 프레임열에서 움직이는 시야를 추출한다.",
+   "de": "Extrahiert ein bewegtes Sichtfenster aus einer Rundumbildfolge.",
+   "hi": "सर्वदिशीय फ़्रेम क्रम से चलता दृश्य क्षेत्र निकालता है।"
+  },
+  "optics/viewport_from_equirect": {
+   "fp": "5c3b6d1408ec",
+   "ja": "正距円筒画像から透視投影の視野を切り出す。",
+   "zh": "从等距柱状图提取透视视口。",
+   "tw": "從等距柱狀圖擷取透視視口。",
+   "ko": "등거리 원통 영상에서 원근 시야를 추출한다.",
+   "de": "Extrahiert eine perspektivische Ansicht aus einem Rechteckpanorama.",
+   "hi": "समदूरी बेलनाकार चित्र से परिप्रेक्ष्य दृश्य निकालता है।"
+  },
+  "optics/ws_psnr": {
+   "fp": "fa7426b404cc",
+   "ja": "余弦緯度で重み付けした球面PSNRを計算する。",
+   "zh": "计算余弦纬度加权的球面PSNR。",
+   "tw": "計算餘弦緯度加權的球面PSNR。",
+   "ko": "코사인 위도로 가중한 구면 PSNR을 계산한다.",
+   "de": "Berechnet kugelflächengewichtetes PSNR mit Kosinus-Breitengewichten.",
+   "hi": "अक्षांश-कोसाइन भारित गोलकीय PSNR गणना करता है।"
+  },
   "simcal/simcal_identifiability": {
    "fp": "a33c94d233ab",
    "ja": "合わせた各つまみの Fisher 情報・Cramér-Rao 下界・相関・共線性・プロファイル尤度。",
@@ -692,13 +892,14 @@
    "hi": "Additive Gaussian READ noise (amplifier + ADC noise), जिसका sigma signal पर निर्भर नहीं (shot noise के विपरीत)। ``sigma = 0.005 + 0.15*a``। ``b`` एक row-correlated component मिलाता है: पूरी row द्वारा साझा std ``0.5*b*sigma`` वाला per-row bias, जो साझा row amplifier / row-wise ADC पैदा करता है (horizontal banding के रूप में दिखता है)। (a, b) से seed किया गया।"
   },
   "2d/aug_rolling_shutter": {
-   "fp": "12b61770a98f",
+   "fp": "edc1e05148b1",
    "ja": "ローリングシャッター歪み（rolling-shutter skew）。CMOS のローリングシャッターは行を順番に露光するため、シーン（またはカメラ）が水平方向にパンすると各行が行番号に比例した量だけずれる — 純粋な水平方向のせん断（shear）になる。``a`` はピークシフト量 ``0.25*W*a`` px を決める（せん断は中央を基準にするため中央の行は動かない）、``b`` はパン方向を決める（b < 0.5 なら行番号が増えるほど右へ、それ以外は左へ）。境界は反射（reflect）としてバイリニア（bilinear）でリサンプルする。",
-   "zh": "卷帘快门(rolling shutter)倾斜。CMOS 卷帘快门逐行依次曝光,因此当场景(或相机)水平平移时,每一行会按其行索引线性偏移——即纯粹的水平剪切(shear)。``a`` 设定最大偏移量 ``0.25*W*a`` 像素(剪切以中间行为中心,中间行不动),``b`` 设定平移方向(b < 0.5 时随行数增加向右偏移,否则向左)。使用反射边界进行双线性重采样。",
-   "tw": "捲簾快門(rolling shutter)歪斜。CMOS 捲簾快門逐行依序曝光,因此當場景(或相機)水平平移時,每一行會依其行索引線性偏移——也就是純粹的水平剪切(shear)。``a`` 設定最大偏移量 ``0.25*W*a`` 像素(剪切以中間行為中心,中間行不動),``b`` 設定平移方向(b < 0.5 時隨行數增加向右偏移,否則向左)。以反射邊界進行雙線性重採樣。",
-   "ko": "롤링 셔터(rolling-shutter) 왜곡. CMOS 롤링 셔터는 각 행(row)을 순차적으로 노출하므로, 장면(또는 카메라)이 수평으로 패닝하면 각 행이 행 인덱스에 선형 비례하는 만큼 이동한다 -- 순수한 수평 전단(shear)이다. ``a`` 는 최대 이동량 ``0.25*W*a`` 픽셀을 설정하며(전단은 중앙 행이 움직이지 않도록 중심이 맞춰져 있다), ``b`` 는 패닝 방향을 설정한다(b < 0.5 이면 행 인덱스가 커질수록 오른쪽으로, 그렇지 않으면 왼쪽으로 이동). 반사 경계 조건으로 양선형(bilinear) 리샘플링한다.",
-   "de": "Rolling-Shutter-Verzerrung (Skew). Ein CMOS-Rolling-Shutter belichtet Zeilen nacheinander, sodass eine horizontal schwenkende Szene (oder Kamera) jede Zeile um einen Betrag verschiebt, der linear zu ihrem Zeilenindex ist -- eine reine horizontale Scherung. ``a`` legt die maximale Verschiebung ``0.25*W*a`` px fest (die Scherung ist so zentriert, dass die mittlere Zeile unbewegt bleibt), ``b`` legt die Schwenkrichtung fest (b < 0.5 -> Verschiebung nach rechts mit steigendem Zeilenindex, sonst nach links). Bilineares Resampling mit spiegelnden Rändern.",
-   "hi": "Rolling-shutter skew। CMOS rolling shutter rows को क्रम से expose करता है, इसलिए horizontal रूप से pan करता scene (या camera) हर row को उसके row index के linear अनुपात में खिसकाता है -- शुद्ध horizontal shear। ``a`` अधिकतम खिसकाव ``0.25*W*a`` px तय करता है (shear केंद्रित है, इसलिए बीच वाली row नहीं हिलती), ``b`` pan की दिशा तय करता है (b < 0.5 -> row बढ़ने के साथ दाईं ओर खिसकाव, अन्यथा बाईं ओर)। Reflecting borders के साथ bilinear रूप से resample किया जाता है।"
+   "zh": "卷帘快门倾斜。 CMOS 卷帘快门按顺序曝光行，因此场景（或摄像机）水平平移每行的量与其行索引成线性关系，即纯​​水平剪切。 ``a`` 设置任一边缘的峰值偏移 ``0.125*W*a`` px（剪力居中，因此中间行不移动），``b`` 设置平移方向（b < 0.5 -> 随着行的增加向右移动，否则向左移动）。使用反射边界进行双线性重采样。",
+   "tw": "捲簾快門傾斜。 CMOS 捲簾快門按順序曝光行，因此場景（或攝影機）水平平移每行的量與其行索引成線性關係，即純水平剪切。 ``a`` 設定任一邊緣的峰值偏移 ``0.125*W*a`` px（剪力居中，因此中間行不移動），``b`` 設定平移方向（b < 0.5 -> 隨著行的增加向右移動，否則向左移動）。使用反射邊界進行雙線性重採樣。",
+   "ko": "Rolling-shutter skew. A CMOS rolling shutter exposes rows sequentially, so a scene (or camera) panning horizontally shifts each row by an amount linear in its row index - a pure horizontal shear.a '' shear is centred so the middle row is unmoved), b sets the pan direction (b < 0.5 -> shift right with increasing row, otherwise left). Resampled bilinearly with reflecting borders.",
+   "de": "Rollladenversatz. Ein CMOS-Rolling-Shutter belichtet Zeilen nacheinander, sodass eine horizontale Schwenkung einer Szene (oder Kamera) jede Zeile um einen linearen Betrag in ihrem Zeilenindex verschiebt – eine reine horizontale Scherung. „a“ legt die Spitzenverschiebung „0,125*W*a“ px an beiden Kanten fest (die Scherung ist zentriert, sodass die mittlere Reihe unbewegt bleibt), „b“ legt die Schwenkrichtung fest (b < 0,5 -> Verschiebung nach rechts mit zunehmender Reihe, andernfalls nach links). Bilinear neu abgetastet mit reflektierenden Rändern.",
+   "hi": "रोलिंग-शटर तिरछा। एक सीएमओएस रोलिंग शटर पंक्तियों को क्रमिक रूप से उजागर करता है, इसलिए क्षैतिज रूप से पैनिंग करने वाला एक दृश्य (या कैमरा) प्रत्येक पंक्ति को उसके पंक्ति सूचकांक में एक रैखिक राशि द्वारा स्थानांतरित करता है - एक शुद्ध क्षैतिज कतरनी। ``a`` शीर्ष शिफ्ट ``0.125*W*a`` px को किसी भी किनारे पर सेट करता है (कतरनी केंद्रित है ताकि मध्य पंक्ति अपरिवर्तित हो), ``b`` पैन दिशा सेट करता है (b < 0.5 -> बढ़ती पंक्ति के साथ दाएं शिफ्ट करें, अन्यथा बाएं)। प्रतिबिंबित सीमाओं के साथ द्विरेखीय रूप से पुन: नमूनाकरण किया गया।",
+   "en": "Rolling-shutter skew. A CMOS rolling shutter exposes rows sequentially, so a scene (or camera) panning horizontally shifts each row by an amount linear in its row index -- a pure horizontal shear. ``a`` sets the peak shift ``0.125*W*a`` px at either edge (the shear is centered so the middle row is unmoved), ``b`` sets the pan direction (b < 0.5 -> shift right with increasing row, otherwise left). Resampled bilinearly with reflecting borders."
   },
   "2d/aug_shot_noise": {
    "fp": "c0e152b99d53",
@@ -1790,13 +1991,14 @@
    "hi": "``(exp(x) - 1) / (e - 1)`` exponential mapping से [0,1] को [0,1] में map करता है (x=1 पर ठीक 1 होने के लिए normalise किया गया)। निचले tones को compress करके चमकीले हिस्सों पर ज़ोर देने वाला contrast enhancement, जिसकी curve ``log_image`` से उलटी दिशा की है। HALCON के ``exp_image`` (Calculate the exponentiation of an image.) का विकल्प।"
   },
   "2d/f2_bit_slice": {
-   "fp": "d6e21d2bd24b",
+   "fp": "9b4137e95206",
    "ja": "8 ビット量子化後の画像から 1 つのビットプレーン（bit-plane）を抽出する。``a`` はプレーン（0 = 最下位ビット（LSB）〜7 = 最上位ビット（MSB））を選択し、``b`` は無視される。{0,1} の画像を返す。",
-   "zh": "对图像做 8 位量化后提取其中一个位平面。``a`` 选择位平面(0 = 最低位 LSB .. 7 = 最高位 MSB);``b`` 被忽略。返回 {0,1} 图像。",
-   "tw": "對影像做 8 位元量化後,擷取其中一個位元平面。``a`` 選擇位元平面(0 = 最低位元 LSB .. 7 = 最高位元 MSB);``b`` 被忽略。傳回 {0,1} 影像。",
-   "ko": "이미지를 8비트로 양자화한 뒤 비트 평면 하나를 추출한다. ``a``는 평면(0 = 최하위 비트 LSB .. 7 = 최상위 비트 MSB)을 선택하고, ``b``는 무시된다. {0,1} 이미지를 반환한다.",
-   "de": "Extrahiert eine Bitebene des Bildes nach 8-Bit-Quantisierung. ``a`` wählt die Ebene (0 = LSB .. 7 = MSB); ``b`` wird ignoriert. Gibt ein {0,1}-Bild zurück.",
-   "hi": "8-bit quantisation के बाद image का एक bit-plane निकालता है। ``a`` plane चुनता है (0 = LSB .. 7 = MSB); ``b`` अनदेखा किया जाता है। {0,1} image लौटाता है।"
+   "zh": "8 位量化后提取一个位平面。 0..1 中的归一化“a”选择平面“round(7*a)”（0 = LSB，1 = MSB）； ``b`` 被忽略。返回 {0,1}。",
+   "tw": "8 位量化後提取一個位平面。 0..1 中的歸一化「a」選擇平面「round(7*a)」(0 = LSB，1 = MSB)；``b`` 被忽略。回傳 {0,1}。",
+   "ko": "Extract one bit-plane after 8-bit quantisation. Normalised a in 0..1 selects plane round(7*a) (0 = LSB, 1 = MSB); b'' is ignored. Returns {0,1}.",
+   "de": "Extrahieren Sie eine Bitebene nach der 8-Bit-Quantisierung. Das normalisierte „a“ in 0..1 wählt die Ebene „round(7*a)“ aus (0 = LSB, 1 = MSB); „b“ wird ignoriert. Gibt {0,1} zurück.",
+   "hi": "8-बिट परिमाणीकरण के बाद एक बिट-प्लेन निकालें। 0..1 में सामान्यीकृत ``ए`` विमान ``राउंड(7*ए)`` (0 = एलएसबी, 1 = एमएसबी) का चयन करता है; ``बी`` को नजरअंदाज कर दिया गया है। {0,1} लौटाता है।",
+   "en": "Extract one bit-plane after 8-bit quantisation. Normalized ``a`` in 0..1 selects plane ``round(7*a)`` (0 = LSB, 1 = MSB); ``b`` is ignored. Returns {0,1}."
   },
   "2d/f2_expand_domain": {
    "fp": "546cefefd736",
@@ -1817,13 +2019,14 @@
    "hi": "Image के Gauss pyramid का एक level लौटाता है: ``level`` बार 2 से down-sample (blur + decimate) करके फिर मूल HxW तक up-sample किया जाता है, ताकि परिणाम कम resolution पर band-limited (low-pass) संस्करण हो। ``a`` level (1..4) चुनता है; ``b`` अनदेखा किया जाता है।"
   },
   "2d/f2_gray_inside": {
-   "fp": "66430fc37f5a",
+   "fp": "6fb32060f1b2",
    "ja": "グレースケールの穴埋め（hole-fill）: 各画素について、画像端に至る任意の経路上で到達可能な最小のグレー値を求める。これは、画像端に固定したマーカーからの浸食（erosion）によるモルフォロジー再構成（morphological reconstruction）に等しい。明るい壁に囲まれた暗い盆地は壁の高さまで持ち上げられ、画像端とつながっている領域は暗いままとなる。``a`` は最大埋め深さ h（0 = 埋めない、1 = 完全に埋める）を設定し、``b`` は無視される。",
-   "zh": "灰度孔洞填充:对每个像素,取其到图像边界任意路径上可达的最低灰度值 —— 等价于以边界锚定的标记对图像做腐蚀式形态学重建。被更亮的墙壁包围的暗盆地会被抬升至墙壁高度;与边界相连的区域保持暗。``a`` 设置最大填充深度 h(0 = 不填充,1 = 完全填充);``b`` 被忽略。",
-   "tw": "灰階孔洞填補:對每個像素,取其到影像邊界任一路徑上可達的最低灰階值 —— 相當於以邊界錨定的標記對影像做侵蝕式形態學重建。被較亮牆面包圍的暗盆地會被抬升至牆面高度;與邊界相連的區域維持暗部。``a`` 設定最大填補深度 h(0 = 不填補,1 = 完全填補);``b`` 被忽略。",
-   "ko": "그레이스케일 홀 채우기: 각 픽셀에 대해 이미지 경계까지의 어떤 경로에서든 도달 가능한 최소 그레이 값을 구한다 —— 이는 경계에 고정된 마커로부터의 침식에 의한 이미지의 형태학적 재구성과 같다. 더 밝은 벽으로 둘러싸인 어두운 분지는 벽 높이까지 끌어올려지고, 경계에 연결된 영역은 어둡게 유지된다. ``a``는 최대 채움 깊이 h(0 = 없음, 1 = 전체)를 설정하고, ``b``는 무시된다.",
-   "de": "Grauwert-Lochfüllung: Für jedes Pixel wird der niedrigste auf irgendeinem Pfad zum Bildrand erreichbare Grauwert bestimmt == morphologische Rekonstruktion des Bildes durch Erosion von einem randverankerten Marker aus. Dunkle, von helleren Wänden umschlossene Becken werden bis zur Wandhöhe angehoben; mit dem Rand verbundene Regionen bleiben dunkel. ``a`` legt die maximale Fülltiefe h fest (0 = keine, 1 = vollständig); ``b`` wird ignoriert.",
-   "hi": "Grayscale hole-fill: हर pixel के लिए, image की सीमा तक जाने वाले किसी भी रास्ते पर मिल सकने वाला सबसे कम gray value == सीमा से जुड़े marker से erosion द्वारा image का morphological reconstruction। ज़्यादा चमकीली दीवारों से घिरे अँधेरे basins को दीवार की ऊँचाई की ओर उठाया जाता है; सीमा से जुड़े regions अँधेरे ही रहते हैं। ``a`` अधिकतम fill depth h (0 = कुछ नहीं, 1 = पूरा) तय करता है; ``b`` अनदेखा किया जाता है।"
+   "zh": "灰度孔填充：对于每个像素，在到图像边界的任何路径上可达到的最低灰度值==通过边界锚定标记的侵蚀对图像进行形态学重建。较亮的墙壁围成的深色盆地向墙壁的高度升高；与边界相连的区域保持黑暗。 ``a`` 设置最大填充深度``h = 0.02 + 0.98*a``； ``b`` 被忽略。",
+   "tw": "灰階孔填充：對於每個像素，在到影像邊界的任何路徑上可達到的最低灰階值==會透過邊界錨定標記的侵蝕對影像進行形態學重建。較亮的牆壁圍成的深色盆地向牆壁的高度升高；與邊界相連的區域保持黑暗。 ``a`` 設定最大填充深度``h = 0.02 + 0.98*a``； ``b`` 被忽略。",
+   "ko": "Grayscale hole-fill: for each pixel, the lowest gray value attainable on any path to the image border == morphological reconstruction of the image by erosion from a border-anchored marker. Dark basins enclosed by brighter walls are raised toward the wall a ''의 최대 최대 fill depthh = 0.02 + 0.98 * a '';b ''가 ignored.",
+   "de": "Graustufen-Lochfüllung: für jedes Pixel der niedrigste Grauwert, der auf jedem Weg zum Bildrand erreichbar ist == morphologische Rekonstruktion des Bildes durch Erosion von einer am Rand verankerten Markierung. Dunkle Becken, die von helleren Wänden umgeben sind, sind auf Wandhöhe erhöht; Bereiche, die mit der Grenze verbunden sind, bleiben dunkel. „a“ legt die maximale Fülltiefe fest „h = 0,02 + 0,98*a“; „b“ wird ignoriert.",
+   "hi": "ग्रेस्केल होल-फिल: प्रत्येक पिक्सेल के लिए, छवि सीमा के किसी भी पथ पर प्राप्य न्यूनतम ग्रे मान == सीमा-एंकर मार्कर से क्षरण द्वारा छवि का रूपात्मक पुनर्निर्माण। चमकदार दीवारों से घिरे अंधेरे बेसिन दीवार की ऊंचाई की ओर उठाए गए हैं; सीमा से जुड़े इलाके अंधेरे में रहते हैं. ``a`` अधिकतम भरण गहराई सेट करता है ``h = 0.02 + 0.98*a``; ``बी`` को नजरअंदाज कर दिया गया है।",
+   "en": "Grayscale hole-fill: for each pixel, the lowest gray value attainable on any path to the image border == morphological reconstruction of the image by erosion from a border-anchored marker. Dark basins enclosed by brighter walls are raised toward the wall height; regions connected to the border stay dark. ``a`` sets the maximum fill depth ``h = 0.02 + 0.98*a``; ``b`` is ignored."
   },
   "2d/f2_gray_skeleton": {
    "fp": "da736211ae90",
@@ -19733,13 +19936,13 @@
    "hi": "angular velocity ω [rad/s] से dt seconds घुमाने वाला rotation matrix (Rodrigues)। R_{k+1} = R(ω dt) R_k।"
   },
   "drive/camera_rig": {
-   "fp": "e1b2de8dc1be",
-   "en": "Cameras surrounding the table (n = 2: diagonally above both ends, n = 4: the 4 corners). Return value ``[{\"pose\", \"K\", \"eye\"}, …]``; all of them look at the center of the table.",
-   "zh": "围绕球台的相机(n = 2：两端斜上方，n = 4：4 个角)。返回值 ``[{\"pose\", \"K\", \"eye\"}, …]``，全部朝向球台中心。",
-   "tw": "圍繞球桌的相機(n = 2：兩端斜上方，n = 4：4 個角)。回傳值 ``[{\"pose\", \"K\", \"eye\"}, …]``，全部朝向球桌中心。",
-   "ko": "탁구대를 둘러싼 카메라(n = 2: 양 끝의 비스듬히 위, n = 4: 4개 모서리). 반환값 ``[{\"pose\", \"K\", \"eye\"}, …]``, 모두 탁구대 중심을 봅니다.",
-   "de": "Kameras rund um den Tisch (n = 2: schräg oberhalb beider Enden, n = 4: die 4 Ecken). Rückgabewert ``[{\"pose\", \"K\", \"eye\"}, …]``; alle blicken auf die Tischmitte.",
-   "hi": "table को घेरने वाले cameras (n = 2: दोनों सिरों के तिरछे ऊपर, n = 4: 4 कोने)। return value ``[{\"pose\", \"K\", \"eye\"}, …]``, सभी table के केंद्र को देखते हैं।"
+   "fp": "00cc02a4b47e",
+   "en": "Cameras surrounding the platform (n = 2: diagonally above both ends, n = 4: 4 corners). Returns ``[{\"pose\", \"K\", \"eye\", \"width\", \"height\"}, …]``, all looking at the center of the platform.",
+   "zh": "平台周围的摄像机（n = 2：两端对角线上方，n = 4：4 个角）。返回``[{\"pose\", \"K\", \"eye\", \"width\", \"height\"}, …]``，全部看着平台的中心。",
+   "tw": "平台周圍的攝影機（n = 2：兩端對角線上方，n = 4：4 個角落）。返回``[{\"pose\", \"K\", \"eye\", \"width\", \"height\"}, …]``，全部看著平台的中心。",
+   "ko": "받침대를 둘러싸는 카메라(n = 2: 양쪽 끝의 대각선 위, n = 4: 4 모서리). 반환값 ``[{\"pose\", \"K\", \"eye\", \"width\", \"height\"}, …]``, 전부가 받침대의 중심을 본다.",
+   "de": "Kameras rund um die Plattform (n = 2: diagonal über beiden Enden, n = 4: 4 Ecken). Gibt „[{\"pose\", \"K\", \"eye\", \"width\", \"height\"}, …] zurück, alle mit Blick auf die Mitte der Plattform.",
+   "hi": "प्लेटफ़ॉर्म के चारों ओर कैमरे (n = 2: दोनों सिरों के ऊपर विकर्ण, n = 4: 4 कोने)। ``[{\"पोज़\", \"के\", \"आंख\", \"चौड़ाई\", \"ऊंचाई\"}, ...]`` लौटाता है, सभी मंच के केंद्र की ओर देखते हैं।"
   },
   "drive/ball_truth": {
    "fp": "2a188de97d6d",
@@ -20633,13 +20836,13 @@
    "hi": "rule-based आगे वाले वाहन की दूरी (दोनों worlds में एक ही सूत्र): ``depth_median`` = image के बीच की पट्टी (चौड़ाई band × W) में car pixels की depth का median (पिछला face image plane के समानांतर है इसलिए स्थिर), ``row_distance`` = car की सबसे निचली row से समतल सड़क के सूत्र (driveenv.road_row_distance) द्वारा निकाली गई क्षैतिज दूरी, ``bbox`` = (top, bottom, left, right), ``n_pixels``, ``found``। car pixels न हों तो found = False (दूरी inf)।"
   },
   "drive/scene_pair_table": {
-   "fp": "5d3bcdc62a77",
-   "en": "Scores one scene record on both the **CARLA image** and the **own-world image** and puts them side by side. Returns ``{\"truth\", \"carla\": {...lead_from_depth}, \"fullseye\": {...}, \"carla_error\", \"fullseye_error\", \"width\", \"height\"}`` (error = depth_median − ground truth; the ground truth is :func:`lead_truth_depth`).",
-   "zh": "对同一场景记录分别在 **CARLA 图像**和**自建世界图像**上评分并并列。返回值 = ``{\"truth\", \"carla\": {...lead_from_depth}, \"fullseye\": {...}, \"carla_error\", \"fullseye_error\", \"width\", \"height\"}`` (误差 = depth_median − 真值，真值为 :func:`lead_truth_depth`)。",
-   "tw": "對同一場景紀錄分別在 **CARLA 影像**與**自建世界影像**上評分並並列。回傳值 = ``{\"truth\", \"carla\": {...lead_from_depth}, \"fullseye\": {...}, \"carla_error\", \"fullseye_error\", \"width\", \"height\"}`` (誤差 = depth_median − 真值，真值為 :func:`lead_truth_depth`)。",
-   "ko": "하나의 장면 기록을 **CARLA 영상**과 **자체 월드 영상** 양쪽에서 채점해 나란히 놓습니다. 반환값 = ``{\"truth\", \"carla\": {...lead_from_depth}, \"fullseye\": {...}, \"carla_error\", \"fullseye_error\", \"width\", \"height\"}`` (오차 = depth_median − 참값, 참값은 :func:`lead_truth_depth`).",
-   "de": "Bewertet eine Szenenaufzeichnung sowohl auf dem **CARLA-Bild** als auch auf dem **Bild der eigenen Welt** und stellt beide nebeneinander. Rückgabewert = ``{\"truth\", \"carla\": {...lead_from_depth}, \"fullseye\": {...}, \"carla_error\", \"fullseye_error\", \"width\", \"height\"}`` (Fehler = depth_median − Ground Truth; die Ground Truth ist :func:`lead_truth_depth`).",
-   "hi": "1 scene record को **CARLA image** और **अपने world की image** दोनों पर score करके साथ रखता है। return value = ``{\"truth\", \"carla\": {...lead_from_depth}, \"fullseye\": {...}, \"carla_error\", \"fullseye_error\", \"width\", \"height\"}`` (त्रुटि = depth_median − ground truth, ground truth :func:`lead_truth_depth` है)।"
+   "fp": "a6782a9affec",
+   "en": "Score and line up one scene recording with both **CARLA's image** and **your own world image**. Return value = ``{\"truth\", \"carla\": {...lead_from_depth}, \"fullseye\": {...}, \"carla_error\", \"fullseye_error\", \"width\", \"height\", \"view\"}`` (error = depth_median − true value, true value is :func:`lead_truth_depth`).",
+   "zh": "使用 **CARLA 的图像** 和 **您自己的世界图像** 对一个场景录音进行评分和排列。返回值 = ``{\"truth\", \"carla\": {...lead_from_depth}, \"fullseye\": {...}, \"carla_error\", \"fullseye_error\", \"width\", \"height\", \"view\"}`` (error = depth_median − true value, true value is :func:`lead_truth_depth`)。",
+   "tw": "使用 **CARLA 的圖像** 和 **您自己的世界圖像** 對一個場景錄音進行評分和排列。傳回值 = ``{\"truth\", \"carla\": {...lead_from_depth}, \"fullseye\": {...}, \"carla_error\", \"fullseye_error\", \"width\", \"height\", \"view\"}`` (erroror = depth_median −is value :func:`lead_truth_depth`)。",
+   "ko": "1개의 장면 기록을 **CARLA의 동상**과 **자전의 세계의 동상**의 양쪽에서 채점해 늘어놓는다. 반환값 = ``{\"truth\", \"carla\": {...lead_from_depth}, \"fullseye\": {...}, \"carla_error\", \"fullseye_error\", \"width\", \"height\", \"view\"}`` (오차 = depth_median − true, true :",
+   "de": "Vertonen und ordnen Sie eine Szenenaufnahme sowohl mit **CARLAs Bild** als auch mit **Ihrem eigenen Weltbild** an. Rückgabewert = ``{\"truth\", \"carla\": {...lead_from_third}, \"fullseye\": {...}, \"carla_error\", \"fullseye_error\", \"width\", \"height\", \"view\"}`` (error = Depth_median − wahrer Wert, wahrer Wert ist :func:`lead_truth_ Depth`).",
+   "hi": "**कार्ला की छवि** और **अपनी खुद की दुनिया की छवि** दोनों के साथ एक दृश्य रिकॉर्डिंग को स्कोर और पंक्तिबद्ध करें। वापसी मूल्य = ``{\"सत्य\", \"कार्ला\": {...lead_from_depth}, \"fullseye\": {...}, \"carla_error\", \"fullseye_error\", \"चौड़ाई\", \"ऊंचाई\", \"देखें\"}`` (त्रुटि = गहराई_मध्य − सही मूल्य, सही मूल्य है :func:`lead_truth_depth`)।"
   },
   "drive/town_chain": {
    "fp": "8ccf3d03865b",
@@ -22316,13 +22519,13 @@
    "hi": "कलाई के 1 RGB-D frame से hole के केंद्र के सापेक्ष peg के सिरे का offset (dx, dy) [m], world (carriage) coordinates में —— visual servoing का observation।"
   },
   "drive/peg_measure_overlay": {
-   "fp": "c7e848e6b1df",
-   "en": "Measurement overlay (numpy only): ground truth = large green cross, estimate = small red cross, edge points used for the circle fit = yellow dots (imagedraw). A ``zoom``× magnification of the ``crop`` px square around the ground-truth centroid is pasted at the bottom right (to inspect the subpixel agreement by eye).",
-   "zh": "测量叠加图(仅用 numpy)：真值 = 绿色大十字，估计 = 红色小十字，用于圆拟合的边缘点 = 黄点(imagedraw)。在右下角贴上将真值重心周围 ``crop`` px 见方区域放大 ``zoom`` 倍的图(用于目视检查亚像素一致)。",
-   "tw": "量測疊加圖(僅用 numpy)：真值 = 綠色大十字，估計 = 紅色小十字，用於圓擬合的邊緣點 = 黃點(imagedraw)。在右下角貼上將真值重心周圍 ``crop`` px 見方區域放大 ``zoom`` 倍的圖(用於目視檢查次像素一致)。",
-   "ko": "계측 오버레이(numpy만): 참값 = 초록 큰 십자, 추정 = 빨강 작은 십자, 원 피팅에 쓴 가장자리 점 = 노란 점(imagedraw). 오른쪽 아래에 참값 무게중심 주위 ``crop`` px 사방을 ``zoom``배 확대한 그림을 붙임(서브픽셀 일치를 눈으로 보기 위해).",
-   "de": "Mess-Overlay (nur numpy): Ground Truth = großes grünes Kreuz, Schätzung = kleines rotes Kreuz, für die Kreisanpassung genutzte Kantenpunkte = gelbe Punkte (imagedraw). Unten rechts wird eine ``zoom``-fache Vergrößerung des ``crop`` px großen Quadrats um den Ground-Truth-Schwerpunkt eingefügt (um die Subpixel-Übereinstimmung mit dem Auge zu prüfen).",
-   "hi": "माप का overlay चित्र (केवल numpy): ground truth = बड़ा हरा cross, अनुमान = छोटा लाल cross, circle fit में उपयोग हुए edge points = पीले बिंदु (imagedraw)। नीचे दाईं ओर ground truth centroid के आसपास ``crop`` px के square का ``zoom`` गुना बड़ा रूप चिपकाया जाता है (subpixel मेल को आँख से देखने के लिए)।"
+   "fp": "1f7543f37bce",
+   "en": "Overlay diagram of measurements (numpy only): true value = large green cross, estimate = small red cross, edge points used for circle fitting = yellow dot (imagedraw). At the bottom right, paste an enlargement of ``2*crop`` px square (``crop`` is half width) around the center of gravity of the true value, multiplied by ``zoom`` (to visually see the coincidence of subpixels).",
+   "zh": "测量值叠加图（仅限 numpy）：真实值 = 大绿色十字，估计值 = 小红色十字，用于圆形拟合的边缘点 = 黄点（imagedraw）。在右下角，围绕真实值的重心粘贴“2*crop”像素正方形的放大图（“crop”是半宽），乘以“zoom”（以直观地看到子像素的重合度）。",
+   "tw": "測量值疊加圖（僅限 numpy）：真實值 = 大綠色十字，估計值 = 小紅色十字，用於圓形擬合的邊緣點 = 黃點（imagedraw）。在右下角，圍繞真實值的重心粘貼“2*crop”像素正方形的放大圖（“crop”是半寬），乘以“zoom”（以直觀地看到子像素的重合度）。",
+   "ko": "계측의 중첩도(numpy만): 참값 = 녹색의 큰 십자, 추정 = 빨강의 작은 십자, 원 피팅에 사용한 가장자리 점 = 노란 점(imagedraw). 오른쪽 하단에 참치의 중심 주위에 \"2*crop\"px 사방(\"crop\"는 반폭)을 \"zoom\"배로 한 확대를 붙인다(부화소의 일치를 눈으로 보기 위해).",
+   "de": "Überlagerungsdiagramm der Messungen (nur Numpy): wahrer Wert = großes grünes Kreuz, Schätzung = kleines rotes Kreuz, für die Kreisanpassung verwendete Randpunkte = gelber Punkt (Bildzeichnung). Fügen Sie unten rechts eine Vergrößerung von „2*crop“ px im Quadrat („crop“ ist die halbe Breite) um den Schwerpunkt des wahren Werts ein, multipliziert mit „zoom“ (um die Übereinstimmung der Subpixel visuell zu sehen).",
+   "hi": "माप का ओवरले आरेख (केवल संख्यात्मक): वास्तविक मान = बड़ा हरा क्रॉस, अनुमान = छोटा लाल क्रॉस, सर्कल फिटिंग के लिए उपयोग किए जाने वाले किनारे बिंदु = पीला बिंदु (इमेजड्रा)। नीचे दाईं ओर, वास्तविक मान के गुरुत्वाकर्षण के केंद्र के चारों ओर ``2*क्रॉप`` पीएक्स वर्ग (``क्रॉप`` आधी चौड़ाई है) का एक विस्तार चिपकाएँ, जिसे ``ज़ूम`` से गुणा किया जाए (उपपिक्सेल के संयोग को दृष्टिगत रूप से देखने के लिए)।"
   },
   "drive/camera_world_to_cv": {
    "fp": "5e8694a5d957",
@@ -24188,13 +24391,13 @@
    "hi": "rotation search के प्रयासों की अपेक्षित संख्या (exact, जब अज्ञात दिशा की त्रुटि e 1 period पर uniform हो)। candidate c_k (:func:`rotation_search_plan`) के साथ k-वाँ प्रयास तब सफल होता है जब e पहली बार [c_k − φ, c_k + φ] (period P) में आता है, इसलिए E = Σ_k (1 − |∪_{i<k} I_i|/P)। गणना अंतराल के छोरों पर वृत्त को बाँटती है और हर छोटे अंतराल के लिए उसे सबसे पहले ढकने वाले candidate का क्रमांक गिनती है (वही मान, O(M²) vector operation)। step ठीक 2φ हो तो E = (M + 1)/2 (``closed``)। symmetry न जानने वाले search (period 2π, M₁ = ⌈π/φ⌉) से अनुपात ``ratio_vs_blind`` → 1/n। ``estimate_sigma`` [rad] देने पर e को अनुमान के चारों ओर standard deviation σ वाला normal (period पर लपेटा हुआ) माना जाता है, और \"alternate\" क्रम में अपेक्षित संख्या भी लौटाई जाती है (``expected_with_estimate``, 4,096 point का numerical integration)। ``expected``, ``closed``, ``M``, ``blind_expected`` और ``ratio_vs_blind`` लौटाता है। **Raises** ValueError: n_sym < 1, phi_cap ≤ 0, sigma ≤ 0।"
   },
   "drive/spiral_search_points": {
-   "fp": "d44f612cebbc",
-   "en": "Search points for lateral offset: an Archimedean spiral r = p φ/(2π), sampled every arc length ``step`` [m] (from the center) up to radius ``r_max``. Spacing to the adjacent turn = ``pitch``. If c is the radius the chamfer captures, p ≤ 2c and step ≤ 2c cover without gaps (the worst distance of a point between adjacent turns, √((p/2)² + (s/2)²) ≤ c, is a sufficient condition; returned as ``worst_gap``). Returns ``points`` (N, 2), ``worst_gap`` and ``n``. **Raises** ValueError: pitch, step or r_max ≤ 0, more than 200,000 points.",
-   "zh": "横向偏差的搜索点：阿基米德螺线 r = p φ/(2π)，按弧长 ``step`` [m] (从中心起)取点，直到半径 ``r_max``。与相邻圈的间距 = ``pitch``。设倒角能捕获的半径为 c，则 p ≤ 2c 且 step ≤ 2c 时无遗漏地覆盖(相邻圈之间的点的最坏距离 √((p/2)² + (s/2)²) ≤ c 为充分条件，以 ``worst_gap`` 返回)。返回 ``points``(N, 2)、``worst_gap``、``n``。**Raises** ValueError：pitch、step、r_max ≤ 0，点数超过 200,000。",
-   "tw": "橫向偏差的搜尋點：阿基米德螺線 r = p φ/(2π)，按弧長 ``step`` [m] (從中心起)取點，直到半徑 ``r_max``。與相鄰圈的間距 = ``pitch``。設倒角能捕獲的半徑為 c，則 p ≤ 2c 且 step ≤ 2c 時無遺漏地覆蓋(相鄰圈之間的點的最壞距離 √((p/2)² + (s/2)²) ≤ c 為充分條件，以 ``worst_gap`` 回傳)。回傳 ``points``(N, 2)、``worst_gap``、``n``。**Raises** ValueError：pitch、step、r_max ≤ 0，點數超過 200,000。",
-   "ko": "횡방향 편차의 탐색점: 아르키메데스 나선 r = p φ/(2π)를 호 길이 ``step`` [m]마다(중심에서) 반경 ``r_max``까지. 이웃한 감김과의 간격 = ``pitch``. 모따기가 포착하는 반경을 c라 하면 p ≤ 2c 그리고 step ≤ 2c이면 빠짐없이 덮습니다(이웃한 감김 사이 점의 최악 거리 √((p/2)² + (s/2)²) ≤ c가 충분조건, ``worst_gap``으로 반환). 반환 ``points``(N, 2), ``worst_gap``, ``n``. **Raises** ValueError: pitch·step·r_max ≤ 0, 점이 200,000을 초과.",
-   "de": "Suchpunkte für die Querabweichung: archimedische Spirale r = p φ/(2π), alle ``step`` [m] Bogenlänge (ab der Mitte) bis zum Radius ``r_max``. Abstand zur benachbarten Windung = ``pitch``. Ist c der Radius, den die Fase einfängt, decken p ≤ 2c und step ≤ 2c lückenlos ab (der ungünstigste Abstand eines Punkts zwischen benachbarten Windungen √((p/2)² + (s/2)²) ≤ c ist eine hinreichende Bedingung; als ``worst_gap`` zurückgegeben). Gibt ``points`` (N, 2), ``worst_gap`` und ``n`` zurück. **Raises** ValueError: pitch, step oder r_max ≤ 0, mehr als 200,000 Punkte.",
-   "hi": "lateral offset के search point: Archimedes spiral r = p φ/(2π), हर arc length ``step`` [m] पर (केंद्र से) त्रिज्या ``r_max`` तक। पड़ोसी चक्कर से अंतराल = ``pitch``। अगर chamfer जिस त्रिज्या तक पकड़ता है वह c हो, तो p ≤ 2c और step ≤ 2c बिना अंतराल के ढकते हैं (पड़ोसी चक्करों के बीच के point की सबसे खराब दूरी √((p/2)² + (s/2)²) ≤ c पर्याप्त शर्त है, ``worst_gap`` के रूप में लौटाई जाती है)। ``points`` (N, 2), ``worst_gap`` और ``n`` लौटाता है। **Raises** ValueError: pitch, step या r_max ≤ 0, point 200,000 से अधिक।"
+   "fp": "e3f9c42b0731",
+   "en": "Search points for strike-slip: Archimedes' helix r = p φ/(2π) at every arc length ``step`` [m] (from the center) to radius ``r_max``. Spacing between adjacent turns = ``pitch``. If the radius to be captured by the chamfer is c, it can be covered if the worst distance between adjacent turns ``sqrt((pitch/2)^2 + (step/2)^2)`` is less than or equal to c. Return this value as ``worst_gap``. Returns ``points``(N, 2), ``worst_gap``, ``n``. **Raises** ValueError: pitch・step・r_max ≤ 0, points exceed 200,000.",
+   "zh": "走滑搜索点：阿基米德螺旋线 r = p φ/(2π) 在每个弧长``step`` [m]（从中心）到半径``r_max`` 处。相邻匝之间的间距=“节距”。如果倒角要捕获的半径为c，则相邻匝之间的最差距离``sqrt((pitch/2)^2 + (step/2)^2)``小于或等于c，则可以覆盖倒角。将此值作为“worst_gap”返回。返回“points”(N, 2)、“worst_gap”、“n”。 **引发** ValueError：pitch·step·r_max ≤ 0，点数超过200,000。",
+   "tw": "走滑搜尋點：阿基米德螺旋線 r = p φ/(2π) 在每個弧長``step`` [m]（從中心）到半徑``r_max`` 處。相鄰匝之間的間距=“節距”。如果倒角要捕獲的半徑為c，則相鄰匝之間的最差距離``sqrt((pitch/2)^2 + (step/2)^2)``小於或等於c，則可以覆蓋倒角。將此值作為“worst_gap”傳回。返回“points”(N, 2)、“worst_gap”、“n”。 **引發** ValueError：pitch·step·r_max ≤ 0，點數超過200,000。",
+   "ko": "편차의 탐색점: Archimedes의 나선 r = p φ/(2π) 를 호 길이 step [m] 마다 (중심으로부터), 반경 r_max까지. 다음 권선과의 간격 = pitch''. 모따기가 잡히는 반경을 c 로 하면, 다음의 감기 사이의 점의 최악 거리 sqrt((pitch/2)^2 + (step/2)^2)가 c 이하이면 덮는다. 이 값을 worst_gap로 돌려줍니다. 반환 points''(N, 2), worst_gap, n''. Raises ValueError: pitch, step, r_max ≤ 0, 점이 200,000을 초과합니다.",
+   "de": "Suchpunkte für Strike-Slip: Archimedes' Helix r = p φ/(2π) bei jeder Bogenlänge „step“ [m] (von der Mitte) bis zum Radius „r_max“. Abstand zwischen benachbarten Windungen = „Pitch“. Wenn der von der Fase zu erfassende Radius c ist, kann er abgedeckt werden, wenn der schlechteste Abstand zwischen benachbarten Kurven „sqrt((pitch/2)^2 + (step/2)^2)“ kleiner oder gleich c ist. Geben Sie diesen Wert als „worst_gap“ zurück. Gibt „points“(N, 2), „worst_gap“, „n“ zurück. **Erhöht** ValueError: pitch・step・r_max ≤ 0, Punkte überschreiten 200.000.",
+   "hi": "स्ट्राइक-स्लिप के लिए खोज बिंदु: आर्किमिडीज़ का हेलिक्स r = p φ/(2π) प्रत्येक चाप लंबाई ``चरण`` [m] (केंद्र से) से त्रिज्या ``r_max`` तक। आसन्न घुमावों के बीच का अंतर = ``पिच``। यदि चैम्बर द्वारा कैप्चर की जाने वाली त्रिज्या c है, तो इसे कवर किया जा सकता है यदि आसन्न घुमावों के बीच की सबसे खराब दूरी ``sqrt((pitch/2)^2 + (step/2)^2)`` c से कम या उसके बराबर है। इस मान को ``worst_gap`` के रूप में लौटाएँ। ``अंक``(एन, 2), ``सबसे खराब_गैप``, ``एन`` लौटाता है। **बढ़ता है** वैल्यूत्रुटि: पिच・स्टेप・r_max ≤ 0, अंक 200,000 से अधिक।"
   },
   "drive/spiral_expected_tries": {
    "fp": "1685b922533e",
@@ -31513,21 +31716,149 @@
    "de": "Dieselbe Szene durch zwei oder mehr Verschreibungen aufnehmen und die Qualität jedes Bildes tabellieren -> dict.",
    "hi": "एक ही दृश्य को दो या अधिक prescriptions से render करना और हर तस्वीर की गुणवत्ता को तालिका में देना -> dict।"
   },
-  "optics/mla_surface": {"fp":"d0eebb81b305","ja":"周期的な球面キャップのマイクロレンズアレイ面を記述する。","zh":"描述周期球冠微透镜阵列表面。","tw":"描述週期球冠微透鏡陣列表面。","ko":"주기적 구면 캡 마이크로렌즈 배열 면을 기술한다.","de":"Eine periodische Mikrolinsenarray-Fläche aus Kugelkappen beschreiben.","hi":"आवर्ती गोलाकार-कैप माइक्रोलेंस ऐरे सतह का वर्णन करें।"},
-  "optics/plenoptic_system": {"fp":"4de626cc52b1","ja":"主レンズ、MLA、センサを組み立て、F ナンバー整合を報告する。","zh":"组装主镜头、微透镜阵列和传感器，并报告 F 数匹配。","tw":"組裝主鏡頭、微透鏡陣列和感測器，並報告 F 數匹配。","ko":"주 렌즈, MLA, 센서를 조립하고 F 번호 정합을 보고한다.","de":"Hauptobjektiv, MLA und Sensor zusammensetzen und die F-Zahl-Anpassung berichten.","hi":"मुख्य लेंस, MLA और सेंसर को जोड़कर F-number मिलान रिपोर्ट करें।"},
-  "optics/plenoptic_capture": {"fp":"4254954e736d","ja":"プレノプティック生フレームと白色校正画像を追跡して生成する。","zh":"追迹生成光场原始帧及其白场校准图像。","tw":"追跡產生光場原始幀及其白場校正影像。","ko":"플렌옵틱 원시 프레임과 백색 보정 영상을 추적해 생성한다.","de":"Ein plenoptisches Rohbild und sein Weißbild zur Kalibrierung nachverfolgen.","hi":"प्लेनॉप्टिक raw frame और उसकी white calibration image को trace करें।"},
-  "optics/plenoptic_mla_calibrate": {"fp":"9bb6f03bef51","ja":"白色画像のピークへ回転した長方格子を当てはめ、MLA を校正する。","zh":"对白场图像峰值拟合旋转矩形晶格以校准微透镜阵列。","tw":"對白場影像峰值擬合旋轉矩形晶格以校正微透鏡陣列。","ko":"백색 영상의 피크에 회전 직사각 격자를 맞춰 MLA를 보정한다.","de":"Ein gedrehtes rechteckiges Linsengitter an die Spitzen eines Weißbildes anpassen.","hi":"white image की peaks पर घुमी हुई आयताकार lenslet lattice fit करें।"},
-  "optics/plenoptic_decode": {"fp":"2f38b9ae1d67","ja":"校正済み生フレームを整流し、光線場 L[v,u,y,x] を返す。","zh":"校正并重采样原始帧，返回光场 L[v,u,y,x]。","tw":"校正並重取樣原始幀，回傳光場 L[v,u,y,x]。","ko":"보정된 원시 프레임을 정류해 광선장 L[v,u,y,x]를 반환한다.","de":"Ein kalibriertes Rohbild entzerren und das Lichtfeld L[v,u,y,x] zurückgeben.","hi":"calibrated raw frame को rectify करके light field L[v,u,y,x] लौटाएँ।"},
-  "optics/plenoptic_refocus_depth": {"fp":"ddd177c30e78","ja":"光線場の再合焦スロープをメートル単位の物体距離へ変換する。","zh":"将光场重聚焦斜率转换为以米为单位的物距。","tw":"將光場重聚焦斜率轉換為以公尺為單位的物距。","ko":"광선장 재초점 기울기를 미터 단위 물체 거리로 변환한다.","de":"Die Lichtfeld-Refokus-Steigung in eine Objektentfernung in Metern umrechnen.","hi":"light-field refocus slope को मीटर में object distance में बदलें।"},
-  "optics/tolerance_table": {"fp":"d24d251fde5a","ja":"製造変数ごとに独立した、検証済みの公差行を作る -> dict。","zh":"为每个独立制造变量建立并验证公差行 -> 字典。","tw":"為每個獨立製造變數建立並驗證公差列 -> 字典。","ko":"독립 제조 변수마다 검증된 공차 행을 만든다 -> dict.","de":"Validierte Toleranzzeilen je unabhängiger Fertigungsvariable erstellen -> dict.","hi":"हर स्वतंत्र निर्माण चर के लिए सत्यापित tolerance row बनाएँ -> dict।"},
-  "optics/tolerance_criteria": {"fp":"a6a6d02f847d","ja":"性能基準と任意の上限・下限を検証する -> dict。","zh":"验证性能准则及可选上下限 -> 字典。","tw":"驗證性能準則及可選上下限 -> 字典。","ko":"성능 기준과 선택적 상하한을 검증한다 -> dict.","de":"Leistungskriterien und optionale Grenzwerte prüfen -> dict.","hi":"performance criteria और वैकल्पिक सीमाएँ जाँचें -> dict।"},
-  "optics/tolerance_compensators": {"fp":"216967038329","ja":"決定的で境界つきの再最適化変数を記述する -> dict。","zh":"描述确定且有界的再优化变量 -> 字典。","tw":"描述確定且有界的再最佳化變數 -> 字典。","ko":"결정적이고 경계가 있는 재최적화 변수를 기술한다 -> dict.","de":"Deterministische begrenzte Nachoptimierungsvariablen beschreiben -> dict.","hi":"नियत और सीमाबद्ध पुनः-अनुकूलन चर बताएँ -> dict।"},
-  "optics/tolerance_monte_carlo": {"fp":"2d650fdd7d4f","ja":"決定的で失敗を隠さない Monte Carlo と Wilson 95 % 歩留まり区間 -> dict。","zh":"运行确定且失败封闭的蒙特卡洛并报告 Wilson 95% 良率区间 -> 字典。","tw":"執行確定且失敗封閉的蒙地卡羅並報告 Wilson 95% 良率區間 -> 字典。","ko":"결정적 fail-closed Monte Carlo와 Wilson 95% 수율 구간을 보고한다 -> dict.","de":"Deterministische fehlersichere Monte-Carlo-Analyse mit Wilson-95-%-Ausbeuteintervall -> dict.","hi":"नियत fail-closed Monte Carlo और Wilson 95% yield interval दें -> dict।"},
-  "optics/tolerance_sensitivity": {"fp":"79ab71d117fe","ja":"中央差分、分布を反映した線形 RSS、逆公差を求める -> dict。","zh":"计算中心差分、考虑分布的线性 RSS 和反向公差 -> 字典。","tw":"計算中央差分、考慮分布的線性 RSS 與反向公差 -> 字典。","ko":"중앙 차분, 분포를 반영한 선형 RSS와 역공차를 구한다 -> dict.","de":"Zentrale Differenzen, verteilungsabhängiges lineares RSS und inverse Toleranzen -> dict.","hi":"central difference, distribution-aware linear RSS और inverse tolerance निकालें -> dict।"},
-  "optics/tolerance_report": {"fp":"f50a26a71a70","ja":"簡潔な組立報告を辞書または平文で作る -> dict。","zh":"以字典或纯文本生成简洁装配报告 -> 字典。","tw":"以字典或純文字產生簡潔組裝報告 -> 字典。","ko":"간결한 조립 보고서를 dict 또는 일반 텍스트로 만든다 -> dict.","de":"Kompakten Montagebericht als Dict oder Klartext erzeugen -> dict.","hi":"संक्षिप्त assembly report dict या plain text में बनाएँ -> dict।"},
-  "optics/tolerance_table_zmx": {"fp":"724cd2c0e5da","ja":"公差行を NOTE 行として直列化する -> text。","zh":"将公差行序列化为 NOTE 行 -> 文本。","tw":"將公差列序列化為 NOTE 行 -> 文字。","ko":"공차 행을 NOTE 행으로 직렬화한다 -> text.","de":"Toleranzzeilen als NOTE-Zeilen serialisieren -> Text.","hi":"tolerance rows को NOTE lines में serialize करें -> text।"},
-  "optics/tolerance_table_from_zmx": {"fp":"d21bbad026b5","ja":"書き出した NOTE 行から公差表を読む -> dict。","zh":"从写出的 NOTE 行读取公差表 -> 字典。","tw":"從寫出的 NOTE 行讀取公差表 -> 字典。","ko":"기록한 NOTE 행에서 공차표를 읽는다 -> dict.","de":"Toleranztabelle aus geschriebenen NOTE-Zeilen lesen -> dict.","hi":"लिखी NOTE lines से tolerance table पढ़ें -> dict।"},
-  "2d/dist_transform_abs": {"fp":"e82947918dfe","en":"Distance transform in absolute pixel distances without normalisation. Equivalent to HALCON's ``distance_transform`` (Compute the distance transformation of a region.).","zh":"不归一化的绝对像素距离变换。相当于 HALCON 的 ``distance_transform``（Compute the distance transformation of a region.）。","tw":"不正規化的絕對像素距離轉換。相當於 HALCON 的 ``distance_transform``（Compute the distance transformation of a region.）。","ko":"정규화하지 않는 절대 픽셀 거리의 거리 변환. HALCON의 ``distance_transform``(Compute the distance transformation of a region.)에 해당한다.","de":"Distanztransformation in absoluten Pixelabständen ohne Normierung. Entspricht HALCONs ``distance_transform`` (Compute the distance transformation of a region.).","hi":"बिना सामान्यीकरण के निरपेक्ष pixel दूरी का distance transform। HALCON के ``distance_transform`` (Compute the distance transformation of a region.) के समकक्ष है।"},
-  "2d/mean_box_wh": {"fp":"80854472d0bf","en":"Averaging (box) filter with independently chosen width and height. Equivalent to HALCON's ``mean_image`` (Smooth by averaging.).","zh":"宽度与高度独立选择的平均（box）滤波。相当于 HALCON 的 ``mean_image``（Smooth by averaging.）。","tw":"寬度與高度獨立選擇的平均（box）濾波。相當於 HALCON 的 ``mean_image``（Smooth by averaging.）。","ko":"너비와 높이를 독립적으로 고르는 평균(box) 필터. HALCON의 ``mean_image``(Smooth by averaging.)에 해당한다.","de":"Mittelwert-(Box-)Filter mit unabhängig gewählter Breite und Höhe. Entspricht HALCONs ``mean_image`` (Smooth by averaging.).","hi":"स्वतंत्र रूप से चुनी गई चौड़ाई और ऊँचाई वाला औसत (box) filter। HALCON के ``mean_image`` (Smooth by averaging.) के समकक्ष है।"}
+  "optics/mla_surface": {
+   "fp": "d0eebb81b305",
+   "ja": "周期的な球面キャップのマイクロレンズアレイ面を記述する。",
+   "zh": "描述周期球冠微透镜阵列表面。",
+   "tw": "描述週期球冠微透鏡陣列表面。",
+   "ko": "주기적 구면 캡 마이크로렌즈 배열 면을 기술한다.",
+   "de": "Eine periodische Mikrolinsenarray-Fläche aus Kugelkappen beschreiben.",
+   "hi": "आवर्ती गोलाकार-कैप माइक्रोलेंस ऐरे सतह का वर्णन करें।"
+  },
+  "optics/plenoptic_system": {
+   "fp": "4de626cc52b1",
+   "ja": "主レンズ、MLA、センサを組み立て、F ナンバー整合を報告する。",
+   "zh": "组装主镜头、微透镜阵列和传感器，并报告 F 数匹配。",
+   "tw": "組裝主鏡頭、微透鏡陣列和感測器，並報告 F 數匹配。",
+   "ko": "주 렌즈, MLA, 센서를 조립하고 F 번호 정합을 보고한다.",
+   "de": "Hauptobjektiv, MLA und Sensor zusammensetzen und die F-Zahl-Anpassung berichten.",
+   "hi": "मुख्य लेंस, MLA और सेंसर को जोड़कर F-number मिलान रिपोर्ट करें।"
+  },
+  "optics/plenoptic_capture": {
+   "fp": "4254954e736d",
+   "ja": "プレノプティック生フレームと白色校正画像を追跡して生成する。",
+   "zh": "追迹生成光场原始帧及其白场校准图像。",
+   "tw": "追跡產生光場原始幀及其白場校正影像。",
+   "ko": "플렌옵틱 원시 프레임과 백색 보정 영상을 추적해 생성한다.",
+   "de": "Ein plenoptisches Rohbild und sein Weißbild zur Kalibrierung nachverfolgen.",
+   "hi": "प्लेनॉप्टिक raw frame और उसकी white calibration image को trace करें।"
+  },
+  "optics/plenoptic_mla_calibrate": {
+   "fp": "9bb6f03bef51",
+   "ja": "白色画像のピークへ回転した長方格子を当てはめ、MLA を校正する。",
+   "zh": "对白场图像峰值拟合旋转矩形晶格以校准微透镜阵列。",
+   "tw": "對白場影像峰值擬合旋轉矩形晶格以校正微透鏡陣列。",
+   "ko": "백색 영상의 피크에 회전 직사각 격자를 맞춰 MLA를 보정한다.",
+   "de": "Ein gedrehtes rechteckiges Linsengitter an die Spitzen eines Weißbildes anpassen.",
+   "hi": "white image की peaks पर घुमी हुई आयताकार lenslet lattice fit करें।"
+  },
+  "optics/plenoptic_decode": {
+   "fp": "2f38b9ae1d67",
+   "ja": "校正済み生フレームを整流し、光線場 L[v,u,y,x] を返す。",
+   "zh": "校正并重采样原始帧，返回光场 L[v,u,y,x]。",
+   "tw": "校正並重取樣原始幀，回傳光場 L[v,u,y,x]。",
+   "ko": "보정된 원시 프레임을 정류해 광선장 L[v,u,y,x]를 반환한다.",
+   "de": "Ein kalibriertes Rohbild entzerren und das Lichtfeld L[v,u,y,x] zurückgeben.",
+   "hi": "calibrated raw frame को rectify करके light field L[v,u,y,x] लौटाएँ।"
+  },
+  "optics/plenoptic_refocus_depth": {
+   "fp": "ddd177c30e78",
+   "ja": "光線場の再合焦スロープをメートル単位の物体距離へ変換する。",
+   "zh": "将光场重聚焦斜率转换为以米为单位的物距。",
+   "tw": "將光場重聚焦斜率轉換為以公尺為單位的物距。",
+   "ko": "광선장 재초점 기울기를 미터 단위 물체 거리로 변환한다.",
+   "de": "Die Lichtfeld-Refokus-Steigung in eine Objektentfernung in Metern umrechnen.",
+   "hi": "light-field refocus slope को मीटर में object distance में बदलें।"
+  },
+  "optics/tolerance_table": {
+   "fp": "d24d251fde5a",
+   "ja": "製造変数ごとに独立した、検証済みの公差行を作る -> dict。",
+   "zh": "为每个独立制造变量建立并验证公差行 -> 字典。",
+   "tw": "為每個獨立製造變數建立並驗證公差列 -> 字典。",
+   "ko": "독립 제조 변수마다 검증된 공차 행을 만든다 -> dict.",
+   "de": "Validierte Toleranzzeilen je unabhängiger Fertigungsvariable erstellen -> dict.",
+   "hi": "हर स्वतंत्र निर्माण चर के लिए सत्यापित tolerance row बनाएँ -> dict।"
+  },
+  "optics/tolerance_criteria": {
+   "fp": "a6a6d02f847d",
+   "ja": "性能基準と任意の上限・下限を検証する -> dict。",
+   "zh": "验证性能准则及可选上下限 -> 字典。",
+   "tw": "驗證性能準則及可選上下限 -> 字典。",
+   "ko": "성능 기준과 선택적 상하한을 검증한다 -> dict.",
+   "de": "Leistungskriterien und optionale Grenzwerte prüfen -> dict.",
+   "hi": "performance criteria और वैकल्पिक सीमाएँ जाँचें -> dict।"
+  },
+  "optics/tolerance_compensators": {
+   "fp": "216967038329",
+   "ja": "決定的で境界つきの再最適化変数を記述する -> dict。",
+   "zh": "描述确定且有界的再优化变量 -> 字典。",
+   "tw": "描述確定且有界的再最佳化變數 -> 字典。",
+   "ko": "결정적이고 경계가 있는 재최적화 변수를 기술한다 -> dict.",
+   "de": "Deterministische begrenzte Nachoptimierungsvariablen beschreiben -> dict.",
+   "hi": "नियत और सीमाबद्ध पुनः-अनुकूलन चर बताएँ -> dict।"
+  },
+  "optics/tolerance_monte_carlo": {
+   "fp": "2d650fdd7d4f",
+   "ja": "決定的で失敗を隠さない Monte Carlo と Wilson 95 % 歩留まり区間 -> dict。",
+   "zh": "运行确定且失败封闭的蒙特卡洛并报告 Wilson 95% 良率区间 -> 字典。",
+   "tw": "執行確定且失敗封閉的蒙地卡羅並報告 Wilson 95% 良率區間 -> 字典。",
+   "ko": "결정적 fail-closed Monte Carlo와 Wilson 95% 수율 구간을 보고한다 -> dict.",
+   "de": "Deterministische fehlersichere Monte-Carlo-Analyse mit Wilson-95-%-Ausbeuteintervall -> dict.",
+   "hi": "नियत fail-closed Monte Carlo और Wilson 95% yield interval दें -> dict।"
+  },
+  "optics/tolerance_sensitivity": {
+   "fp": "79ab71d117fe",
+   "ja": "中央差分、分布を反映した線形 RSS、逆公差を求める -> dict。",
+   "zh": "计算中心差分、考虑分布的线性 RSS 和反向公差 -> 字典。",
+   "tw": "計算中央差分、考慮分布的線性 RSS 與反向公差 -> 字典。",
+   "ko": "중앙 차분, 분포를 반영한 선형 RSS와 역공차를 구한다 -> dict.",
+   "de": "Zentrale Differenzen, verteilungsabhängiges lineares RSS und inverse Toleranzen -> dict.",
+   "hi": "central difference, distribution-aware linear RSS और inverse tolerance निकालें -> dict।"
+  },
+  "optics/tolerance_report": {
+   "fp": "f50a26a71a70",
+   "ja": "簡潔な組立報告を辞書または平文で作る -> dict。",
+   "zh": "以字典或纯文本生成简洁装配报告 -> 字典。",
+   "tw": "以字典或純文字產生簡潔組裝報告 -> 字典。",
+   "ko": "간결한 조립 보고서를 dict 또는 일반 텍스트로 만든다 -> dict.",
+   "de": "Kompakten Montagebericht als Dict oder Klartext erzeugen -> dict.",
+   "hi": "संक्षिप्त assembly report dict या plain text में बनाएँ -> dict।"
+  },
+  "optics/tolerance_table_zmx": {
+   "fp": "724cd2c0e5da",
+   "ja": "公差行を NOTE 行として直列化する -> text。",
+   "zh": "将公差行序列化为 NOTE 行 -> 文本。",
+   "tw": "將公差列序列化為 NOTE 行 -> 文字。",
+   "ko": "공차 행을 NOTE 행으로 직렬화한다 -> text.",
+   "de": "Toleranzzeilen als NOTE-Zeilen serialisieren -> Text.",
+   "hi": "tolerance rows को NOTE lines में serialize करें -> text।"
+  },
+  "optics/tolerance_table_from_zmx": {
+   "fp": "d21bbad026b5",
+   "ja": "書き出した NOTE 行から公差表を読む -> dict。",
+   "zh": "从写出的 NOTE 行读取公差表 -> 字典。",
+   "tw": "從寫出的 NOTE 行讀取公差表 -> 字典。",
+   "ko": "기록한 NOTE 행에서 공차표를 읽는다 -> dict.",
+   "de": "Toleranztabelle aus geschriebenen NOTE-Zeilen lesen -> dict.",
+   "hi": "लिखी NOTE lines से tolerance table पढ़ें -> dict।"
+  },
+  "2d/dist_transform_abs": {
+   "fp": "e82947918dfe",
+   "en": "Distance transform in absolute pixel distances without normalisation. Equivalent to HALCON's ``distance_transform`` (Compute the distance transformation of a region.).",
+   "zh": "不归一化的绝对像素距离变换。相当于 HALCON 的 ``distance_transform``（Compute the distance transformation of a region.）。",
+   "tw": "不正規化的絕對像素距離轉換。相當於 HALCON 的 ``distance_transform``（Compute the distance transformation of a region.）。",
+   "ko": "정규화하지 않는 절대 픽셀 거리의 거리 변환. HALCON의 ``distance_transform``(Compute the distance transformation of a region.)에 해당한다.",
+   "de": "Distanztransformation in absoluten Pixelabständen ohne Normierung. Entspricht HALCONs ``distance_transform`` (Compute the distance transformation of a region.).",
+   "hi": "बिना सामान्यीकरण के निरपेक्ष pixel दूरी का distance transform। HALCON के ``distance_transform`` (Compute the distance transformation of a region.) के समकक्ष है।"
+  },
+  "2d/mean_box_wh": {
+   "fp": "80854472d0bf",
+   "en": "Averaging (box) filter with independently chosen width and height. Equivalent to HALCON's ``mean_image`` (Smooth by averaging.).",
+   "zh": "宽度与高度独立选择的平均（box）滤波。相当于 HALCON 的 ``mean_image``（Smooth by averaging.）。",
+   "tw": "寬度與高度獨立選擇的平均（box）濾波。相當於 HALCON 的 ``mean_image``（Smooth by averaging.）。",
+   "ko": "너비와 높이를 독립적으로 고르는 평균(box) 필터. HALCON의 ``mean_image``(Smooth by averaging.)에 해당한다.",
+   "de": "Mittelwert-(Box-)Filter mit unabhängig gewählter Breite und Höhe. Entspricht HALCONs ``mean_image`` (Smooth by averaging.).",
+   "hi": "स्वतंत्र रूप से चुनी गई चौड़ाई और ऊँचाई वाला औसत (box) filter। HALCON के ``mean_image`` (Smooth by averaging.) के समकक्ष है।"
+  }
  }
 }

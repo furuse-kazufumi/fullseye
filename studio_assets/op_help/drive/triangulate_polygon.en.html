@@ -4,13 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.triangulate_polygon(poly: &#x27;np.ndarray | Sequence[Sequence[float]]&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import driveplateau; driveplateau.triangulate_polygon(poly: &#x27;np.ndarray | Sequence[Sequence[float]]&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;triangulate_polygon&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Triangulates a simple polygon (convex or concave, no self-intersections) by ear clipping.</p>
-<p>The returned triangles are indices (k-2, 3) into the input vertices, and each triangle is counter-clockwise (if the input is clockwise it is reversed internally, and the indices are returned as the original vertex numbers).</p>
+<p>The triangle to be returned is the index of the input vertex, where m is the effective number of vertices excluding collinear vertices (m-2, 3). Each triangle rotates counterclockwise (if the input is clockwise) (It is internally reversed and the original vertex number is returned as the subscript.)</p>
 <p>Args:</p>
-<p>poly: (k,2) vertex sequence. Need not be closed.</p>
+<p>poly: (k,2) vertex sequence. It doesn&#x27;t have to be closed.</p>
 <p>Returns:</p>
-<p>(k-2, 3) int64 array.</p>
+<p>(m-2, 3) int64 array. m is the number of effective vertices excluding collinear vertices.</p>
 <p>Raises:</p>
-<p>ValueError: fewer than 3 vertices, area nearly 0, no ear found (suspected self-intersection or duplicate points).</p>
+<p>ValueError: Less than 3 vertices, area near 0, missing ears (suspected self-intersection or duplicate point).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

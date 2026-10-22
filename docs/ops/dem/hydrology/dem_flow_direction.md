@@ -20,7 +20,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 D8 流向。O'Callaghan & Mark (1984)。
 
 返り値は ``(H, W)`` の整数で、0-7 が :data:`_D8` の並び、``-1`` が
-「流出先なし」(周囲より低い = 窪地、または境界外へ出る)。
+「流出先なし」(窪地)。``nodata="outlet"`` の境界セルは境界外へ向かう 0-7 を持つ。
 
 ``nodata="outlet"`` なら、欠測セルへ向かう流れを**許す**(そこで系を出る)。
 ``"barrier"`` なら欠測へは流れない。欠測セル自身は常に ``-1``。

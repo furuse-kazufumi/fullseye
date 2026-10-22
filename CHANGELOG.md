@@ -7,6 +7,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- docstring/code 監査第2波の69行(68 op)を文書修正69件、コード修正0件、誤検出0件として整合した。
 - docstring と実装の食い違い(監査 2026-10-18)第 3 波: 確信度 low の 75 行(71 op)を探針で再現し、説明 58・コード 12(road_row_distance / csi_design / jitter / lateral_offset / random_dropout / random_rotation / pc_lod_chain / plateau_parse ほか: 空入力・境界値・非整数・複素入力の拒否と別名の切断)・偽陽性 2 を整理、6 言語の訳も追随。
 
 ### ドキュメント — 研究コーパス4本を文献層へ接続

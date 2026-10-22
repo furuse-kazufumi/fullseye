@@ -4,34 +4,34 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.register_fpfh(src, dst, src_normals=None, dst_normals=None, voxel_size=None, normal_k=16, feature_k=60, n_bins=11, ransac_iters=8000, inlier_thr=None, edge_sim=0.9, mutual=True, ratio=0.95, seed=0, device=&#x27;cpu&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import feat_fpfh; feat_fpfh.register_fpfh(src, dst, src_normals=None, dst_normals=None, voxel_size=None, normal_k=16, feature_k=60, n_bins=11, ransac_iters=8000, inlier_thr=None, edge_sim=0.9, mutual=True, ratio=0.95, seed=0, device=&#x27;cpu&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;register_fpfh&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Schätzt die starre Ausrichtung (R,t) <b>ohne Startschätzung</b> mit FPFH-Deskriptoren und RANSAC.</p>
-<p>Die 3D-Version des spärlichen Feature-Matchings, entsprechend Harris/SIFT in 2D. Beide Wolken werden durch FPFH-Deskriptoren dargestellt, Korrespondenzen werden über den nächsten Nachbarn im Deskriptorraum gebildet (gefiltert mit gegenseitigem nächstem Nachbarn + Lowe ratio), und RANSAC löst eine gegen Ausreißer robuste Starrkörperpose. Anders als dichtes Matching (NCC/Hough) oder PCA liegt sein Wert darin, dass es auch bei großer Rotation (50-70°) +Translation + teilweiser Überlappung ohne Anfangsschätzung eine Pose liefert. Das erhaltene (R,t) kann ICP als Anfangswert (coarse init) übergeben werden, um auf Oberflächengenauigkeit nachzuschärfen (ICP-Konvention dst ≈ src @ R.T + t).</p>
+<p>Eine 3D-Version des spärlichen Feature-Matchings, äquivalent zum 2D-Harris/SIFT. Beide Wolken werden durch FPFH-Deskriptoren dargestellt, Erstellen Sie eine Korrespondenz unter Verwendung der nächsten Nachbarn im Deskriptorraum (gegenseitige nächste Nachbarn + Filter nach Lowe-Verhältnis) und verwenden Sie dazu RANSAC Lösung von Starrkörper-Posen, die robust gegenüber Ausreißern sind. Im Gegensatz zu Close Match (NCC/Hough) und PCA, große Rotation (50-70°) Der Wert besteht darin, dass die Pose auch bei +Translation + teilweiser Überlappung ohne anfängliche Schätzung bestimmt werden kann. Der erhaltene (R,t) ist der Anfangswert von ICP (grobe Init) wird auf Oberflächengenauigkeit verschärft (ICP-Konvention von dst ≈ src @ R.T + t).</p>
 <p>Pipeline:</p>
-<p style="margin:2px 0 2px 12px">1) voxel-Downsampling (bringt die Nachbarschaften von 2 unabhängig abgetasteten Wolken auf eine gemeinsame Auflösung; eine unverzichtbare Vorverarbeitung, die die Trefferquote der FPFH-Korrespondenzen stark beeinflusst).</p>
-<p style="margin:2px 0 2px 12px">2) Normalenschätzung (lokale PCA). Werden src_normals/dst_normals übergeben, werden diese verwendet.</p>
-<p style="margin:2px 0 2px 12px">3) FPFH-Deskriptor (SPFH → distanzgewichtete Kombination).</p>
-<p style="margin:2px 0 2px 12px">4) Deskriptor-NN-Matching (mutual + ratio).</p>
-<p style="margin:2px 0 2px 12px">5) RANSAC: 3-Punkt-Stichprobe → Vorfilter auf edge-length-Konsistenz → Kabsch → Bewertung per <b>Fitness über alle Punkte</b> (Anteil aller transformierten src-Punkte, deren nächster dst-Nachbar innerhalb des Schwellwerts liegt). Eine Bewertung nur über die Korrespondenzen (~100 Punkte) bleibt leicht an falschen Posen hängen, daher macht die Fitness über alle Punkte es robust.</p>
-<p style="margin:2px 0 2px 12px">6) Neuanpassung mit den Korrespondenz-Inliern der besten Pose.</p>
+<p style="margin:2px 0 2px 12px">1) Voxel-Downsampling (unabhängige Abtastung). 2 Richten Sie die Umgebung von Wolken auf eine gemeinsame Auflösung aus. (Erforderliche Vorverarbeitung, die die korrekte Antwortrate von FPFH stark beeinflusst).</p>
+<p style="margin:2px 0 2px 12px">2) Normale Schätzung (lokale PCA). Wenn Sie src_normals/dst_normals übergeben, wird es verwendet.</p>
+<p style="margin:2px 0 2px 12px">3) FPFH-Deskriptor (SPFH → Distanzgewichtssynthese).</p>
+<p style="margin:2px 0 2px 12px">4) Deskriptor-NN-Übereinstimmung (gegenseitig + Verhältnis).</p>
+<p style="margin:2px 0 2px 12px">5) RANSAC: 3-Punkt-Probe → kantenlängenangepasster Vorfilter → Kabsch → <b>All-Point-Fitness</b> (src konvertiert alle Punkte und dst die Rate, mit der der nächste Nachbar innerhalb des Schwellenwerts liegt). Nur kompatibel (~100 Punkte). Die Wertung basiert in der Regel auf falschen Körperhaltungen und wird daher durch All-Point-Fitness stabilisiert.</p>
+<p style="margin:2px 0 2px 12px">6) Für die beste Haltung mit dem entsprechenden Inlier ausrüsten.</p>
 <p>Argumente:</p>
-<p>src (N,3), dst (M,3): die 2 zu registrierenden Punktwolken (numpy/torch).</p>
-<p>src_normals, dst_normals ((N,3)/(M,3) or None): vorgegebene Normalen. None bedeutet interne Schätzung</p>
-<p>(bei voxel_size&gt;0 ändern sich jedoch die Koordinaten, daher wird immer neu geschätzt).</p>
-<p>voxel_size (float or None): Kantenlänge des Downsamplings. None übernimmt automatisch dst-Auflösung ×2.5.</p>
-<p>0/None deaktiviert es (rohe Punktwolken unverändert; bei unabhängiger Abtastung nicht empfohlen).</p>
-<p>normal_k (int): Nachbarzahl für die Normalenschätzung.</p>
-<p>feature_k (int): Nachbarzahl für FPFH (je größer, desto stabiler und trennschärfer der Deskriptor; etwa 60 empfohlen).</p>
-<p>n_bins (int): Histogramm-Bins pro 1 Merkmal (Deskriptordimension = 3*n_bins).</p>
-<p>ransac_iters (int): Anzahl der RANSAC-Iterationen.</p>
-<p>inlier_thr (float or None): Inlier-Distanzschwellwert. None nimmt (nach dem Downsampling) Auflösung ×3.</p>
-<p>edge_sim (float): Toleranz des Kantenlängenverhältnisses von Tripeln (0&lt;edge_sim&lt;=1; je näher an 1, desto strenger).</p>
-<p>mutual (bool): Filter für gegenseitige nächste Nachbarn. ratio (float or None): Lowe ratio.</p>
-<p>seed (int): Zufalls-Seed für RANSAC (beim restart ändern). device (str): device der zurückgegebenen Tensoren.</p>
+<p>src (N,3), dst (M,3): Zwei auszurichtende Punktgruppen (Numpy/Torch).</p>
+<p>src_normals, dst_normals ((N,3)/(M,3) oder Keine): Vorherige Normalen. Wenn keine, interne Schätzung</p>
+<p>(Wenn jedoch voxel_size&gt;0 ist, ändern sich die Koordinaten, sodass sie immer neu geschätzt werden).</p>
+<p>voxel_size (float oder None): Downsampling-Seitenlänge. Übernimmt automatisch die DST-Auflösung x 2,5 mit „Keine“.</p>
+<p>Mit 0 deaktivieren (bleibt rohe Punktwolke; nicht für unabhängige Stichproben empfohlen).</p>
+<p>normal_k (int): Anzahl der Nachbarn für die normale Schätzung.</p>
+<p>feature_k (int): Anzahl der Nachbarn von FPFH (je größer die Zahl, desto stabiler und diskriminierender ist der Deskriptor. Etwa 60 wird empfohlen).</p>
+<p>n_bins (int): Anzahl der Histogramm-Bins pro Feature (Deskriptordimension = 3*n_bins).</p>
+<p>ransac_iters (int): RANSAC-Iterationsnummer.</p>
+<p>inlier_thr (float oder None): Inlier-Entfernungsschwellenwert. Keine (nach Downsampling) Auflösung x 3.</p>
+<p>edge_sim (float): Toleranz des dreifachen Kantenlängenverhältnisses (0&lt;edge_sim&lt;=1, näher an 1 ist strenger).</p>
+<p>Mutual (bool): Gegenseitiger Filter für den nächsten Nachbarn. Verhältnis (Float oder Keine): Lowe-Verhältnis.</p>
+<p>Seed (int): RANSAC-Zufallszahlen-Seed (Änderung beim Neustart). Gerät (str): Gerät des Rückkehrtensors.</p>
 <p>Rückgabewert:</p>
-<p>R (3,3) torch.Tensor (auf device), t (3,) torch.Tensor,</p>
-<p>info dict: {&quot;n_corr&quot; (Anzahl Korrespondenzen), &quot;inliers&quot; (Anzahl Inlier), &quot;inlier_ratio&quot;,</p>
-<p>&quot;fitness&quot; (Fitness über alle Punkte = Kriterium zur Auswahl zwischen restarts), &quot;rmse&quot; (Inlier-RMSE),</p>
-<p>&quot;inlier_thr&quot;, &quot;src_corr&quot;,&quot;dst_corr&quot; (Korrespondenz-Indizes)}.</p>
-<p>Hinweis (honest): FPFH ist eine coarse registration; unter den schweren Bedingungen unabhängige Abtastung + Rauschen + teilweise Überlappung bleibt ein Rotationsfehler von einigen Grad (gemessen: bei 62° Rotation, Überlappung ~64% und Rauschen 0.5× Auflösung nach RANSAC Median ~4.4°, ~90% liegen &lt;8°, die restlichen ~10% an der Grenze von 8-9°. Nach Nachschärfen mit ICP liegen 100% bei &lt;8° mit Median ~0.5°). Liegt das Rauschen in der Größenordnung des Punktabstands (Auflösung) oder darüber, brechen Normalen und Winkelmerkmale zusammen und der Deskriptor verliert seine Trennschärfe (gemessen: bei Rauschen ≥1.0× Auflösung sinkt die Erfolgsrate). RANSAC ist zufallsbasiert, daher sollte man im Praxisbetrieb einige restarts machen und das Ergebnis mit dem größten info[&quot;fitness&quot;] nehmen.</p>
+<p>R (3,3) Torch.Tensor(auf dem Gerät), t (3,) Torch.Tensor,</p>
+<p>info dict: {&quot;n_corr&quot;(Anzahl der Korrespondenzen), &quot;inliers&quot;(Anzahl der Inliers), &quot;inlier_ratio&quot;,</p>
+<p>„fitness“ (All-Point-Fitness = Neustart-Auswahlindex), „rmse“ (inlier RMSE),</p>
+<p>„inlier_thr“, „src_corr“, „dst_corr“ (entsprechender Index)}.</p>
+<p>Hinweis (ehrlich): FPFH ist eine grobe Registrierung, unabhängige Abtastung + Rauschen + teilweise Überlappung Unter schwierigen Bedingungen bleibt ein Rotationsfehler von mehreren Grad bestehen (tatsächliche Messung: 62° Rotation, Überlappung ~64 %, Rauschen 0,5 × Auflösung) Post-RANSAC-Median ~4,4°, ~90 % &lt;8°, verbleibende ~10 % grenzen an 8–9°. 100 % bei Verspannung mit ICP &lt;8°, Median ~0,5°). Wenn das Rauschen gleich oder größer als der Punktabstand (Auflösung) wird, werden die Normalen- und Eckmerkmale sichtbar Der kollabierte Deskriptor verliert seine Unterscheidungskraft (tatsächliche Messung: Die Erfolgsrate sinkt, wenn das Rauschen ≥ 1,0 × Auflösung ist). RANSAC ist eine Zufallsauswahl Daher wird im tatsächlichen Betrieb empfohlen, mehrmals neu zu starten und das maximale Ergebnis info[&quot;fitness&quot;] zu erzielen.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — Warum Matrixzerlegungen langsam sind — BLAS-Threads, Caches, Speicherlayout</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

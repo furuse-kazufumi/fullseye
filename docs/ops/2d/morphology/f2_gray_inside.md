@@ -39,7 +39,7 @@ Grayscale hole-fill: for each pixel, the lowest gray value attainable on
 any path to the image border == morphological reconstruction of the image by
 erosion from a border-anchored marker. Dark basins enclosed by brighter walls
 are raised toward the wall height; regions connected to the border stay dark.
-``a`` sets the maximum fill depth h (0 = none, 1 = full); ``b`` is ignored.
+``a`` sets the maximum fill depth ``h = 0.02 + 0.98*a``; ``b`` is ignored.
 
 ## 詳しい使い方ガイド
 

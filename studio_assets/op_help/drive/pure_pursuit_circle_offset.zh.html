@@ -4,9 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pure_pursuit_circle_offset(radius: &#x27;float&#x27;, lookahead: &#x27;float&#x27;, wheelbase: &#x27;float&#x27;, *, understeer: &#x27;float&#x27; = 0.0, speed: &#x27;float&#x27; = 0.0, params: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;Dict[str, float]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivelateral; drivelateral.pure_pursuit_circle_offset(radius: &#x27;float&#x27;, lookahead: &#x27;float&#x27;, wheelbase: &#x27;float&#x27;, *, understeer: &#x27;float&#x27; = 0.0, speed: &#x27;float&#x27; = 0.0, params: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;Dict[str, float]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;pure_pursuit_circle_offset&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 pure pursuit(以后轴中心为基准)跟踪定常圆(半径 R)时的稳态圆半径 ρ 与横向偏差 ρ − R(向外为正)。</p>
-<p><b>运动学 + 不足转向</b>(<code style="color:#22d3bf">params</code> = None): 若对指令转向角 δ = L κ_cmd,实际曲率变为 κ_cmd / (1 + K v²/L), 则在同心圆稳态下 ρ = √(R² + (K v²/L) L_d²)(本版推导的闭式解)。K = 0 时 ρ = R(横向偏移 0)。</p>
-<p><b>线性二轮等效模型</b>(给出 <code style="color:#22d3bf">params</code>。δ = atan(L κ_cmd)): 稳态下车身朝向比后轴速度(圆的切线) 向内偏转后轴侧偏角 α_r = m l_f a_y / (C_r L),因此预瞄点的视角减小 α_r。将稳态关系(δ = L/R_c + K u²/R_c、β、旋转中心)化为关于质心转弯半径 R_c 的单变量方程,用二分法求解(半闭式)。运动学公式忽略了这一效应,因此低估横向偏移(PoC 中约为一半)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: R, L_d, L ≤ 0、预瞄点到达不了圆、1 + K v²/L ≤ 0、给出 params 时 v ≤ 0.5。</p>
+<p><b>运动学 + 转向不足</b>(<code style="color:#22d3bf">params</code> = None)：对于指令转向角 δ = L κ_cmd，实际曲率为 κ_cmd / (1 + K v²/L) 然后，在同心静止状态下，ρ = √(R² + (K v²/L) L_d²)（此版本中导出的闭合形式）。如果 K = 0，则 ρ = R（横向滑移 0）。</p>
+<p><b>线性两轮等效模型</b>（给定<code style="color:#22d3bf">params</code>。δ = atan(L κ_cmd)）：稳态时，车身方向小于后轴速度（与圆相切）。由于后轴向内指向侧滑角α_r = m l_f a_y / (C_r L)，因此注视点的可视角度减小α_r。静止关系将(δ = L/R_c + Ku²/R_c, β, 旋转中心) 制成以重心回转半径R_c 为一变量的方程，并使用二分法（半闭式）进行求解。运动学方程减少了这种影响，因此估计横向滑移很小（大约是 PoC 中的一半）。</p>
+<p><b>引发</b> <code style="color:#22d3bf">ValueError</code>：R，L_d，L ≤ 0，注视点未到达圆，1 + K v²/L ≤ 0，参数中的 v &lt; 0.5。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

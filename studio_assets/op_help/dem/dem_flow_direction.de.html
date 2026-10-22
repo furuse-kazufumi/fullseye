@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_flow_direction(dem, cell_size, nodata=&#x27;error&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import demops; demops.dem_flow_direction(dem, cell_size, nodata=&#x27;error&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsdem.get(&quot;dem_flow_direction&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>D8-Fließrichtung. O&#x27;Callaghan &amp; Mark (1984).</p>
-<p>Der Rückgabewert ist ein <code style="color:#22d3bf">(H, W)</code>-Integer-Array: 0-7 in der Reihenfolge von <code style="color:#22d3bf">_D8</code>, <code style="color:#22d3bf">-1</code> bedeutet &quot;kein Abflussziel&quot; (niedriger als die Umgebung = Senke, oder Abfluss über den Rand).</p>
-<p>Mit <code style="color:#22d3bf">nodata=&quot;outlet&quot;</code> ist Fluss in Fehlwertzellen <b>erlaubt</b> (er verlässt dort das System). Mit <code style="color:#22d3bf">&quot;barrier&quot;</code> fließt nichts in Fehlwerte. Fehlwertzellen selbst sind immer <code style="color:#22d3bf">-1</code>.</p>
+<p>Der Rückgabewert ist eine Ganzzahl von „(H, W)“, wobei 0-7 die Sequenz von _D8 und „-1“ die Sequenz von _D8 ist. „Kein Ziel“ (Depression). Grenzzellen von „nodata=&quot;outlet&quot; haben 0-7, die außerhalb der Grenzen liegen.</p>
+<p>Wenn „nodata=&quot;outlet&quot;, dann erlauben Sie, dass der Fluss zur fehlenden Zelle geht (das System dort verlassen). Wenn es sich um eine „Barriere“ handelt, führt dies nicht zu fehlenden Daten. Fehlende Zellen selbst sind immer „-1“.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">Leitfaden zur Familie dem_terrain_analysis</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

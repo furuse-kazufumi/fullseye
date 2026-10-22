@@ -410,7 +410,7 @@ def vol_label_shape_stats(labels, spacing=None, shape: bool = True):
         成分ごとに marching cubes を回すので、**成分数に比例して Python ループが
         回る**(1 ボクセル 1 ラベルの病的入力で急速に重くなる)。
       * こちらは ``np.bincount`` の重み付き総和だけで済む量に限る。ラベル配列 1 本
-        あたり 9 回の ``bincount`` = **O(N + n)**。実測(``connectivity=26``、
+        あたり 10 回の ``bincount``(個数 1、座標和 3、共分散 6) = **O(N + n)**。実測(``connectivity=26``、
         **1 ボクセル 1 ラベル**の市松模様 = 病的入力):
         16**3 = 4096 ボクセル / 512 成分 = 0.0037 s、32**3 = 32768 / 4096 =
         0.0350 s、64**3 = 262144 / 32768 = 0.2556 s、128**3 = 2097152 / 262144 =
@@ -456,7 +456,7 @@ def vol_label_shape_stats(labels, spacing=None, shape: bool = True):
     絶対 1e-10 で、ボクセル単位の分散に対して 10 桁の余裕がある。それより大きい
     ボリュームは ROI を切ってから渡すこと(上限があるのはこのためでもある)。
 
-    *shape* を ``False`` にすると共分散(9 本のうち 6 本の bincount)を省き、
+    *shape* を ``False`` にすると共分散(10 本のうち 6 本の bincount)を省き、
     ``principal_extent`` 以下の 5 項目を返さない ―― 体積フィルタしか要らない
     ときに O(N) の一時配列を 1 本に減らせる。
 

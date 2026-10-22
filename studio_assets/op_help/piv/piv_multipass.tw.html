@@ -6,15 +6,17 @@
 <p style="margin:2px 0 2px 12px">• 底層回傳: <code style="color:#22d3bf">(flow, info) -&gt; flow2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>從粗視窗逐級降到細視窗的多級 PIV。回傳 <code style="color:#22d3bf">(flow, info)</code>。</p>
-<p>把每一段的結果用作<b>下一段的預測位移</b>(把第 2 幅的窗口錯開整數量)。在段與段之間剔除並填補離群值是有意為之 —— 若把偏離的向量直接用作預測，該窗口在下一段也會一直偏離、被固定住。</p>
-<p>Args:</p>
-<p>a, b: 影像對。</p>
-<p>windows: 由大到小的窗口序列。各段與前一段<b>不必是倍數關係</b>，</p>
-<p>但網格會改變，因此預測以最近鄰重新映射。</p>
-<p>overlap / peak / window_func: 與 <code style="color:#22d3bf">piv_cross_correlate</code> 相同。</p>
-<p>outlier_threshold: 段間正規化中位數檢定的閾值。<code style="color:#22d3bf">None</code> 為停用。</p>
-<p>Returns:</p>
-<p>最後一段的 <code style="color:#22d3bf">(flow, info)</code>。<code style="color:#22d3bf">info[&quot;passes&quot;]</code> 中為各段的窗口大小。</p>
+<p>使用每個階段的結果作為下一階段的預測位移（將第二個視窗移動整數）。有意刪除離群值並填滿行之間的空間 - 離群值向量用作預測。使用時，視窗將在下一階段保持在原位。</p>
+<p>參數：</p>
+<p>a、b：影像對。</p>
+<p>windows：依降序排列的一排視窗。每個階段不必是前一階段的倍數，但是</p>
+<p>由於網格發生變化，預測將替換為最近的鄰居。</p>
+<p>重疊/峰值/window_func：與 piv_cross_correlate 相同。</p>
+<p>outlier_threshold：階段之間標準化中位數測試的閾值。禁用“None”。</p>
+<p>Normalize：各階段互相關的歸一化方法。</p>
+<p>search_limit：從預測位置開始搜尋的視窗寬度的百分比。</p>
+<p>返回：</p>
+<p>最後階段<code style="color:#22d3bf">（流程，資訊）</code>。 <code style="color:#22d3bf">info[&quot;passes&quot;]</code> 中每行視窗的大小。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

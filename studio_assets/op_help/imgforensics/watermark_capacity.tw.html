@@ -4,14 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.watermark_capacity(image, bits, strengths=(0.02, 0.05, 0.1, 0.2, 0.4), wavelet: &#x27;str&#x27; = &#x27;haar&#x27;, level: &#x27;int&#x27; = 1, jpeg_quality=None) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import imgforensics; imgforensics.watermark_capacity(image, bits, strengths=(0.02, 0.05, 0.1, 0.2, 0.4), wavelet: &#x27;str&#x27; = &#x27;haar&#x27;, level: &#x27;int&#x27; = 1, jpeg_quality=None) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsimgforensics.get(&quot;watermark_capacity&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>掃描嵌入強度與 <b>PSNR / BER</b> 之間的取捨。<code style="color:#22d3bf">table</code>。</p>
-<p>對每個 <code style="color:#22d3bf">strength</code> 實際執行嵌入 → 擷取，</p>
-<p><code style="color:#22d3bf">psnr_db</code>  原影像與帶浮水印影像的 PSNR(以值域 [0, 1] 為基準，<code style="color:#22d3bf">MAX=1</code>)</p>
-<p><code style="color:#22d3bf">ber</code>      擷取的位元錯誤率(以 <code style="color:#22d3bf">hash_distance</code> 計數)</p>
-<p><code style="color:#22d3bf">clipped</code>  帶浮水印影像中超出 [0, 1] 的像素比例。</p>
-<p><b>超出部分在儲存時必然遺失</b>，所以只看 PSNR 就提高強度，</p>
-<p>會增加「沒有測到的劣化」</p>
-<p>向 <code style="color:#22d3bf">jpeg_quality</code> 傳入品質時，還會加入將帶浮水印影像過一遍<b>真正的 JPEG</b> 後擷取的 <code style="color:#22d3bf">ber_jpeg</code>(需要 Pillow。省略時整欄都不加入 —— 為了讓回傳的欄不隨環境而變，預設不執行)。</p>
-<p>回傳 <code style="color:#22d3bf">{&quot;capacity_bits&quot;: int, &quot;n_bits&quot;: int, &quot;rows&quot;: [...], &quot;caveats&quot;: [...]}</code>。</p>
+<p>實際上對每個“強度”運行嵌入→提取，</p>
+<p><code style="color:#22d3bf">psnr_db</code> 原始影像和浮水印影像的 PSNR（範圍 [0, 1] 標準，<code style="color:#22d3bf">MAX=1</code>）<code style="color:#22d3bf">ber</code> 提取的誤碼率（透過 hash_distance 計算）<code style="color:#22d3bf">clipped</code> 水印影像中落在 [0, 1] 之外的像素百分比。</p>
+<p><b>保存時突出部分總是會丟失</b>，因此強度只能透過查看PSNR來確定。</p>
+<p>如果提高，「不可測量的惡化」就會增加。</p>
+<p>將品質傳遞給「jpeg_quality」將透過<b>真正的JPEG</b>傳遞帶有浮水印的影像，然後還包括提取的“ber_jpeg”（需要 Pillow。如果省略，則不會包括整個列。（預設不會運行，以確保傳回的列不會根據環境而改變）。</p>
+<p>返回 <code style="color:#22d3bf">{&quot;capacity_bits&quot;: int, &quot;n_bits&quot;: int, &quot;rows&quot;: [...], &quot;caveats&quot;: [...], &quot;ll_shape&quot;: tuple}</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

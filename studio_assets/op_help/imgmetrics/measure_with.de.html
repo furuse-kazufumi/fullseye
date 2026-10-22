@@ -4,17 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.measure_with(report, a, b, ms=False)</code> (die Implementierung direkt: <code style="color:#22d3bf">import imgmetrics; imgmetrics.measure_with(report, a, b, ms=False)</code>; aus dem Register: <code style="color:#22d3bf">opsimgmetrics.get(&quot;measure_with&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Misst ein weiteres Paar <b>unter exakt denselben Bedingungen wie die vorige Messung</b>.</p>
-<p>Nimmt den Rückgabewert von <code style="color:#22d3bf">compare_images</code> (einschließlich <code style="color:#22d3bf">contract</code>) entgegen und misst mit den dort festgehaltenen <code style="color:#22d3bf">data_range</code> / <code style="color:#22d3bf">bins</code> / <code style="color:#22d3bf">ncd_levels</code> unverändert neu.</p>
-<p>Nötig ist das wegen eines Unfalltyps, der in diesem repo tatsächlich passiert ist -- <b>nur die Zahlen werden in Bildunterschriften oder Tabellen übernommen, und die Bedingungen verschwinden</b>. Stellt man 2 getrennt gemessene PSNR nebeneinander und das eine nutzte <code style="color:#22d3bf">data_range=1.0</code>, das andere <code style="color:#22d3bf">255</code>, <b>wirkt eine Differenz von 48.13 dB wie eine &quot;Verbesserung&quot;</b>. Werden die Bedingungen mitgeführt, entstehen nicht vergleichbare Kombinationen gar nicht erst.</p>
-<p>Zugleich ist dies die <b>Verbraucherseite</b> des Typs <code style="color:#22d3bf">metrics</code>. Ein Zustand, in dem nur <code style="color:#22d3bf">compare_images</code> <code style="color:#22d3bf">metrics</code> erzeugt und niemand sie verbraucht, war genau der Typ &quot;Einstieg vorhanden, aber keine verbrauchende op&quot;, in den dieses repo wiederholt getreten ist (gefunden bei der Prüfung am 2026-09-02).</p>
-<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
-<p>report : dict</p>
-<p>Der Rückgabewert von <code style="color:#22d3bf">compare_images</code> oder <code style="color:#22d3bf">contract</code> selbst.</p>
-<p>a, b : array_like</p>
-<p>Die 2 neu zu messenden Bilder.</p>
-<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>Erhalten Sie den Rückgabewert von <code style="color:#22d3bf">compare_images</code> (einschließlich „Vertrag“) und schreiben Sie ihn dort. Messen Sie erneut mit den aufgezeichneten „data_range“ / „bins“ / „ncd_levels“.</p>
+<p>Dies ist notwendig, da in diesem Repo tatsächlich eine Art Unfall aufgetreten ist --- <b>Nur die Zahlen Bedingungen verschwinden durch das Kopieren in Abbildungen und Tabellen</b>. Wenn zwei separat gemessene PSNRs nebeneinander platziert werden, Wenn eine Seite „data_range=1.0“ und die andere „255“ ist, ist der Unterschied von <b>48,13 dB „Verbesserung“. Ich kann sehen</b>. Wenn Sie die Bedingungen ändern, können Sie keine Kombinationen erstellen, die nicht vergleichbar sind.</p>
+<p>Gleichzeitig ist dies auch der Konsument des Typs „Metriken“. Nur „compare_images“. Dieses Repo ist wiederholt auf die Situation gestoßen, in der „Metriken“ erstellt werden und niemand sie isst. Es handelte sich genau um den Typ „Typ, der einen Eingang, aber keinen Verbrauchsbetrieb hat“ (entdeckt bei der Inspektion am 02.09.2026).</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameter</h4>
+<p>Bericht: Diktat</p>
+<p>Der Rückgabewert von <code style="color:#22d3bf">compare_images</code> oder der <code style="color:#22d3bf">Vertrag</code> selbst.</p>
+<p>a, b: array_like</p>
+<p>Zwei Stücke zum Nachmessen.</p>
+<p>ms: bool</p>
+<p>Multiskalenspezifikation zur Übergabe an „compare_images“.</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Rückgaben</h4>
 <p>dict</p>
-<p>Ein Bericht derselben Form. <code style="color:#22d3bf">contract</code> ist <b>identisch</b> mit dem empfangenen.</p>
+<p>Gleiche Berichtsform. „Vertrag“ ist <b>derselbe</b> wie erhalten.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">Leitfaden zur Familie image_difference_metrics</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -35,7 +35,7 @@ Args:
 Returns:
     table: ``yaw_deg`` / ``pitch_deg`` / ``roll_deg`` / ``residual_deg``(光線と太陽方向の
     角度残差の RMS)/ ``max_residual_deg`` / ``n`` / ``condition``(観測方向の張る面の広さ =
-    2 番目の特異値、0 に近いほど不定)。
+    2 番目と最大の特異値の比、0 に近いほど不定)。
 
 ## 詳しい使い方ガイド
 

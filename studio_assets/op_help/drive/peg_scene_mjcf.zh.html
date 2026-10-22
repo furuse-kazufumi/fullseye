@@ -4,7 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.peg_scene_mjcf(kp=None, lg: &#x27;float | None&#x27; = None, offsamples: &#x27;int&#x27; = 4, timestep: &#x27;float&#x27; = 0.0005) -&gt; &#x27;str&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import pegsim; pegsim.peg_scene_mjcf(kp=None, lg: &#x27;float | None&#x27; = None, offsamples: &#x27;int&#x27; = 4, timestep: &#x27;float&#x27; = 0.0005) -&gt; &#x27;str&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;peg_scene_mjcf&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>场景的 MJCF 字符串(无需 mujoco)：孔 = 内切面半径为 R 的 n_seg 个箱体组成的环 + 45° 倒角的环 + 孔口面的环圈 + 方框；位置控制的滑台(x, y, z 滑动)上装有由 6 个弹簧关节构成的柔顺腕部，其末端为销(圆柱)。腕部相机位于滑台后方 60 mm、上方 20 mm，向下 45°；侧面相机固定。</p>
-<p><code style="color:#22d3bf">lg</code> = 从尖端到旋转柔顺中心的距离(None → 手腕原点 = 销钉长度,0 → 中心在尖端 = RCC)。<code style="color:#22d3bf">offsamples</code> 为 MSAA(RGB 用 4,depth 用 0 另行编译 —— 陷阱:深度会取样本 0 的位置)。<code style="color:#22d3bf">&lt;quality numslices=&quot;128&quot;&gt;</code> 把圆柱的多边形近似降到 0.0015 %(默认 28 时半径向内偏 0.04 mm)。单位 m,孔口面 z = 0。</p>
+<p><code style="color:#22d3bf">lg</code> = 从尖端到旋转顺应中心的距离（无 → 手腕原点 = 销钉长度，0 → 尖端中心 = RCC）。 <code style="color:#22d3bf">offsamples</code> 是 MSAA（分别编译 RGB 为 4 和深度为 0 — 深度是样本 0 处的陷阱）。气缸的<code style="color:#22d3bf">&lt;quality numslices=&quot;128&quot;&gt;</code> 多边形近似的半径误差约为0.03%（默认28约为0.6%，半径6毫米内部为0.04毫米）。单位 m，嘴平面 z = 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

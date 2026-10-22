@@ -40,7 +40,7 @@ gaps : ints
     a short curve simply has nothing to say about a long gap).
 
 Returns a ``table``: ``gap`` (int), ``mean_distance``, and ``ratio`` =
-``mean_distance / mean_distance[gap == 1]`` so curves of different scales can
+the first result when the first gap is 1, otherwise the minimum mean distance; a zero base yields NaN. Thus curves of different scales can
 be compared directly.
 
 **Raises** ``ValueError``: not an (N, 2) array; fewer than 2 points;

@@ -49,8 +49,8 @@ lies about its output is the defect class this library keeps catching
 (``indices_to_labels``: one word covering a 1-D mask and a 3-D volume).
 
 **Raises** ``ValueError``: a grid below 8 per axis or over the cap;
-non-positive periods; a level outside the field's range (no surface exists
-there — reported rather than returning an empty mesh); negative thickness.
+non-positive periods; or a level outside the field's range (no surface
+exists there — reported rather than returning an empty mesh).
 
 ## 参考(サンプルデータ・文献)
 

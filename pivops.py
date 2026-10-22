@@ -631,6 +631,8 @@ def piv_multipass(a, b, windows=(64, 32), overlap=0.5, peak="gauss3",
             格子が変わるので予測は最近傍で載せ替える。
         overlap / peak / window_func: :func:`piv_cross_correlate` と同じ。
         outlier_threshold: 段間の正規化中央値検定の閾値。``None`` で無効。
+        normalize: 各段の相互相関の正規化方式。
+        search_limit: 予測位置から探索する窓幅の割合。
     Returns:
         最終段の ``(flow, info)``。``info["passes"]`` に各段の窓の大きさ。
     """
@@ -949,7 +951,7 @@ def piv_peak_locking(flow, bins=20):
     そこからのずれを測る。
 
     指標 ``c0`` は**標本数に依らない**カイ二乗型のずれ:
-    ``sum((n_i - n_bar)^2 / n_bar) / (bins - 1)``。一様分布から標本を取ると
+    ``sum((n_i - n_bar)^2 / n_bar) / (2*bins - 1)``。両成分を合わせた 2*bins 階級について、一様分布から標本を取ると
     期待値 1 になるので、**1 前後なら一様と区別できない**、大きいほど偏っている。
 
     ★ ただしこの指標は「真の変位の小数部が一様である」ことを仮定する。窓の数が

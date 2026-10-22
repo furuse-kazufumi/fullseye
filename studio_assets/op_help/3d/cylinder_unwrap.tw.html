@@ -5,11 +5,11 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>:該運算子有 GPU 路徑(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把體素的圓柱面展開為 (height×θ×r)(圓柱零件/管道的內外壁檢測)。軸 = z(D 軸)。</p>
-<p>θ 軸是無 endpoint 的週期網格(與 polar_unwrap 相同的 2026-08-30 修正)。</p>
-<p>Raises ValueError: 輸入中有 NaN/Inf/float32 溢位時。</p>
-<p>參數: <code style="color:#22d3bf">vol</code> 為 <code style="color:#22d3bf">(D,H,W)</code>,<code style="color:#22d3bf">center=(cy, cx)</code> 為各 z 切片內的 <b>(列, 行)</b>(預設為切片中心)。將 <code style="color:#22d3bf">r_in</code>〜<code style="color:#22d3bf">r_out</code>(voxel,預設 <code style="color:#22d3bf">min(H,W)/2 − 1</code>)等分為 <code style="color:#22d3bf">nr</code> 份,角度等分為 <code style="color:#22d3bf">ntheta</code> 份。輸出 <code style="color:#22d3bf">(D, ntheta, nr)</code> float32: 軸 0 為 z(高度,與輸入相同),第 k 列的角度 <code style="color:#22d3bf">θ = k·2π/ntheta</code>,第 j 行的半徑。取樣點為 <code style="color:#22d3bf">(z, cy + r sinθ, cx + r cosθ)</code>,volume 外為 0。D, H, W 為 1 的軸在正規化時會除以 0(與 <code style="color:#22d3bf">polar_unwrap</code> 不同,沒有檢查)。</p>
-<p>後續: 取 <code style="color:#22d3bf">[:, :, j]</code> 即得到半徑 j 的圓柱面的 (D×θ) 2-D 影像,可使用 2-D 的刮痕檢測、<code style="color:#22d3bf">ncc_locate</code>。</p>
-<p>空輸入(<code style="color:#22d3bf">vol</code> 為 0 個元素)會引發 <code style="color:#22d3bf">ValueError</code>。</p>
+<p>θ軸是一個沒有端點的週期性網格（與polar_unwrap相同，修改於2026-08-30）。</p>
+<p>引發 ValueError：如果輸入有 NaN/Inf/float32 溢位。</p>
+<p>參數：<code style="color:#22d3bf">vol</code> 是<code style="color:#22d3bf">(D,H,W)</code>，<code style="color:#22d3bf">center=(cy, cx)</code> 是 <b>(row, column)</b> （預設為切片中心）。 <code style="color:#22d3bf">r_in</code> ~ <code style="color:#22d3bf">r_out</code> （體素，預設 <code style="color:#22d3bf">min(H,W)/2 − 1</code>）被分成 <code style="color:#22d3bf">nr</code> 等份，角度為 <code style="color:#22d3bf">ntheta</code> 等份。輸出<code style="color:#22d3bf">(D, ntheta, nr)</code> float32：軸0是z（高度，與輸入相同），第k行的角度 <code style="color:#22d3bf">θ = k·2π/ntheta</code>，柱 j 的半徑。採樣點為<code style="color:#22d3bf">(z, cy + r sinθ, cx + r cosθ)</code>，體積外為0。D、H、W為1的軸也以像素座標進行內插，不會發生0除的情況。</p>
+<p>第二部分：如果取<code style="color:#22d3bf">[:,:,j]</code>，半徑為j的圓柱面就變成(D×θ)的二維影像，二維探傷/ 可以使用<code style="color:#22d3bf">ncc_locate</code>。</p>
+<p>空輸入（帶有 0 個元素的“vol”）會導致 ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

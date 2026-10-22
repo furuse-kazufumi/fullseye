@@ -1035,7 +1035,7 @@ def diabolo_axis_from_image(img, cam: dict, params: dict, *, refine: bool = True
     厳密な透視投影の多角形モーメント(面積・重心・2 次)を、マスクのモーメントに Gauss–Newton で合わせる(5 自由度、8 残差)。
     残差 ``residual_px`` が 0.15 px を超えたら ``ok = False``(底の板が壁に隠れた等。視線から 45° で 2.8 px、38° まで ≤ 0.02 px)。
 
-    返り ``{"center", "center_rim", "axis", "axis_init", "tilt_init_deg", "a_px", "b_px", "residual_px", "ok", "seg"}``。
+    返り ``{"center", "center_rim", "axis", "axis_init", "tilt_init_deg", "a_px", "b_px", "hub_px", "rim_px", "residual_px", "ok", "seg"}``。
     **Raises** ``ValueError``: 画像の形、カップの内側か底の板が見えない(推定不能)。"""
     who = "diabolo_axis_from_image"
     im = _check_rgb(img, who)

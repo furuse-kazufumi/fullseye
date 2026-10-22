@@ -4,11 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.metrics_table(report, order=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imgmetrics; imgmetrics.metrics_table(report, order=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsimgmetrics.get(&quot;metrics_table&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>report को <code style="color:#22d3bf">(name, value)</code> की table में बदलता है — शर्तों वाली row भी <b>हमेशा साथ में</b> रखी जाती हैं।</p>
-<p>इस op का मुख्य उद्देश्य यह है कि केवल संख्याओं वाली तालिका बन ही न सके। <code style="color:#22d3bf">contract</code> की हर प्रविष्टि <code style="color:#22d3bf">条件: &lt;name&gt;</code> के रूप में उसी तालिका में आती है।</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">report</code>: <code style="color:#22d3bf">compare_images</code> या <code style="color:#22d3bf">measure_with</code> का return value (<code style="color:#22d3bf">contract</code> key वाला dict)। इसके अलावा कुछ भी हो तो <code style="color:#22d3bf">MetricContractError</code>।</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">order</code>: सबसे आगे रखे जाने वाले metric नामों का क्रम (न दें तो keys का dictionary क्रम)। <code style="color:#22d3bf">report</code> में न होने वाले नाम चुपचाप छोड़ दिए जाते हैं, और <code style="color:#22d3bf">&quot;contract&quot;</code> को metric के रूप में नहीं रखा जाता।</p>
-<p style="margin:2px 0 2px 12px">• return value: <code style="color:#22d3bf">(name, value)</code> tuples की list। metric rows के बाद <code style="color:#22d3bf">contract</code> की हर प्रविष्टि <code style="color:#22d3bf">&quot;条件: data_range&quot;</code> की तरह keys के dictionary क्रम में जोड़ी जाती है। मान रूपांतरित नहीं होते (<code style="color:#22d3bf">None</code> और <code style="color:#22d3bf">inf</code> भी वैसे ही रहते हैं)।</p>
-<p>figure caption या Markdown तालिका में उतारने से ठीक पहले रखें। <b>शर्त वाली rows हटाकर paste न करें</b> -- अलग <code style="color:#22d3bf">data_range</code> वाले 2 PSNR साथ रखने पर 48 dB का दिखावटी अंतर आता है।</p>
+<p>इस ऑप का सार केवल संख्यात्मक मानों के साथ तालिकाएँ बनाना असंभव बनाना है। अनुबंध प्रत्येक आइटम स्थिति: &lt;नाम&gt; के समान तालिका में है।</p>
+<p style="margin:2px 0 2px 12px">• रिपोर्ट: compare_images या measure_with (अनुबंध का वापसी मूल्य dict) चाबियों के साथ। अन्यथा MetricContractError।</p>
+<p style="margin:2px 0 2px 12px">• आदेश: प्रदर्शित करने के लिए सूचकांक नामों का क्रम। जब निर्दिष्ट किया जाता है, तो जो अनुक्रमणिकाएँ यहाँ नहीं हैं उन्हें हटा दिया जाता है, और जब हटा दिया जाता है, तो कुंजियाँ शब्दकोश क्रम में होती हैं। रिपोर्ट&#x27;&#x27; में नहीं नाम चुपचाप छोड़ दिया गया है, और &quot;अनुबंध&quot; को संकेतक के रूप में सूचीबद्ध नहीं किया गया है।</p>
+<p style="margin:2px 0 2px 12px">• रिटर्न: (नाम, मूल्य) टुपल्स की एक सूची। सूचकांक पंक्ति के बाद, अनुबंध में प्रत्येक आइटम</p>
+<p>&quot;condition: data_range&quot; जैसे शब्दकोषीय क्रम में कुंजियाँ जोड़ें। मान परिवर्तित न करें</p>
+<p>(कोई नहीं और inf भी समान हैं)।</p>
+<p>इसे चित्र एनोटेशन या मार्कडाउन तालिका में जोड़ने से ठीक पहले रखें। कंडीशन लाइन हटाने के बाद पेस्ट न करें -- जब अलग-अलग data_range वाले दो PSNR को एक साथ रखा जाता है, तो 48 dB का स्पष्ट अंतर होता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

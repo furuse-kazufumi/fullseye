@@ -4,32 +4,28 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_label_shape_stats(labels, spacing=None, shape: &#x27;bool&#x27; = True)</code>(要直接呼叫實作,<code style="color:#22d3bf">import volcolor; volcolor.vol_label_shape_stats(labels, spacing=None, shape: &#x27;bool&#x27; = True)</code>;從台帳取用則 <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_label_shape_stats&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>每個成分<b>線性時間可得</b>的定量值(體積・重心・包圍盒・主成分形狀指標)。</p>
-<p>是 <code style="color:#22d3bf">volops.vol_region_props</code> 的姊妹,但<b>目的不同</b>:</p>
-<p style="margin:2px 0 2px 12px">• 那邊輸出 <code style="color:#22d3bf">surface_area</code> 與 Wadell <code style="color:#22d3bf">sphericity</code>。為此要對每個成分執行 marching cubes,所以 <b>Python 迴圈的次數與成分數成正比</b>(在 1 體素 1 標籤的病態輸入下會迅速變重)。</p>
-<p style="margin:2px 0 2px 12px">• 這邊只限於用 <code style="color:#22d3bf">np.bincount</code> 的加權總和就能得到的量。每 1 個標籤陣列 9 次 <code style="color:#22d3bf">bincount</code> = <b>O(N + n)</b>。實測(<code style="color:#22d3bf">connectivity=26</code>, <b>1 體素 1 標籤</b>的棋盤格 = 病態輸入):</p>
-<p>16 ** 3 = 4096 體素 / 512 成分 = 0.0037 s,32 ** 3 = 32768 / 4096 =</p>
-<p>0.0350 s,64 ** 3 = 262144 / 32768 = 0.2556 s,128 ** 3 = 2097152 / 262144 =</p>
-<p>2.3122 s。<b>體素每增加 8 倍,耗時為 9.5 / 7.3 / 9.0 倍</b>(若是二次則為 64 倍),</p>
-<p>全程約 1.1 微秒/體素。同樣 128 ** 3 的上色為 0.0357 s。</p>
-<p>(參考: <code style="color:#22d3bf">volops.vol_region_props(surface=&quot;faces&quot;)</code> 在同樣的 16 ** 3 上為</p>
-<p>0.0121 s —— 因為有逐成分的 Python 迴圈,是 3.5 倍。使用 marching cubes 的</p>
-<p>預設 <code style="color:#22d3bf">surface=&quot;auto&quot;</code> 更重。)</p>
-<p><code style="color:#22d3bf">label</code> <code style="color:#22d3bf">voxel_count</code> <code style="color:#22d3bf">volume</code> <code style="color:#22d3bf">centroid</code> <code style="color:#22d3bf">bbox</code> 這 5 項與 <code style="color:#22d3bf">volops.vol_region_props</code> <b>定義相同、值相同</b> (由 <code style="color:#22d3bf">tests/test_volcolor.py::test_stats_agree_with_vol_region_props_exactly</code> 以嚴格一致固定)。<code style="color:#22d3bf">bbox</code> 為 <code style="color:#22d3bf">(z0, z1, y0, y1, x0, x1)</code>,上限為開區間。</p>
-<p>另外還回傳:</p>
-<p><code style="color:#22d3bf">centroid_mm</code> <code style="color:#22d3bf">(z, y, x)</code> 物理座標(無 spacing 時與 voxel 相同)·</p>
-<p><code style="color:#22d3bf">extent</code> bbox 的物理尺寸 <code style="color:#22d3bf">(dz, dy, dx)</code> · <code style="color:#22d3bf">equivalent_diameter</code></p>
-<p><code style="color:#22d3bf">(6V/pi)**(1/3)</code> · <code style="color:#22d3bf">touches_border</code> bbox 是否接觸體資料邊緣 ·</p>
-<p><code style="color:#22d3bf">principal_extent</code> 共變異數特徵值的平方根 <code style="color:#22d3bf">(s1 &gt;= s2 &gt;= s3)</code>(物理單位) ·</p>
-<p><code style="color:#22d3bf">linearity</code> <code style="color:#22d3bf">(l1-l2)/l1</code> · <code style="color:#22d3bf">planarity</code> <code style="color:#22d3bf">(l2-l3)/l1</code> · <code style="color:#22d3bf">isotropy</code></p>
-<p><code style="color:#22d3bf">l3/l1</code> · <code style="color:#22d3bf">elongation</code> <code style="color:#22d3bf">sqrt(l1/l2)</code>。</p>
-<p><b><code style="color:#22d3bf">elongation</code> 可能為無窮</b>(約定): <code style="color:#22d3bf">l1 &gt; 0</code> 且 <code style="color:#22d3bf">l2 == 0</code>, 即厚度 1 體素的完全直線狀成分時回傳 <code style="color:#22d3bf">inf</code>。這不是除以 0 的事故, 而是「第 2 軸方向沒有延展」這項事實,若加以捨入,細長程度的排名會默默調換。單一體素(<code style="color:#22d3bf">l1 == 0</code>)是等向的點,所以為 <code style="color:#22d3bf">1.0</code>。</p>
-<p><b>忘記傳 spacing,數字和結論都會變</b>。實測 —— 把半徑 6 mm 的球以 <code style="color:#22d3bf">spacing = (3.0, 1.0, 1.0)</code> mm 的異向性網格(只有 z 粗 3 倍)取樣, 得到 293 體素。閉合式的真值為 <code style="color:#22d3bf">4/3 pi 6**3 = 904.78 mm**3</code>:</p>
-<p style="margin:2px 0 2px 12px">• 有 <code style="color:#22d3bf">spacing</code> = 879.0 mm ** 3(誤差 <b>-2.85 %</b>), <code style="color:#22d3bf">isotropy</code> = 0.7349(近乎等向 = 正確)。</p>
-<p style="margin:2px 0 2px 12px">• 無 <code style="color:#22d3bf">spacing</code> = 293.0(voxel 單位。若讀作 mm ** 3 則誤差 <b>-67.62 %</b>), <code style="color:#22d3bf">isotropy</code> = 0.0817 —— <b>球看起來像「板」</b>。忽略異向性, 形狀指標就會失效,而且作為有限且看似合理的值回傳。</p>
-<p style="margin:2px 0 2px 12px">• 等效直徑也是 11.8849 mm 對 8.2406,差 1.44 倍。</p>
-<p>數值上的注意: 2 階矩以 <code style="color:#22d3bf">E[x**2] - E[x]**2</code> 求得,所以對座標大而延展小的成分可能發生有效位數流失。在上限 <code style="color:#22d3bf">MAX_COLOR_VOXELS</code> (1 邊至 ~2000)下,相對 <code style="color:#22d3bf">E[x**2] ~ 4e6</code>,float64 的相對精度 1e-16 = 絕對 1e-10,相對體素單位的變異數有 10 位的餘裕。比這更大的體資料請先裁出 ROI 再傳入(設定上限也是為此)。</p>
-<p>把 *shape* 設為 <code style="color:#22d3bf">False</code> 時省略共變異數(9 次中的 6 次 bincount), 不回傳 <code style="color:#22d3bf">principal_extent</code> 及其後的 5 項 —— 只需要體積過濾時,可把 O(N) 的暫存陣列減為 1 個。</p>
-<p>依標籤升冪回傳 <code style="color:#22d3bf">list[dict]</code>(<b>僅實際存在的標籤</b> —— 即使編號有缺號,也不會回傳 <code style="color:#22d3bf">labels.max()</code> 那麼多的空 dict)。</p>
+<p>volops.vol_region_props 的姊妹，但有 不同的目的：</p>
+<p style="margin:2px 0 2px 12px">• 它給出了“表面積”和 Wadell“球度”。為了這個目的由於行進立方體針對每個元件運行，因此 Python 循環與元件數量成正比。轉動（隨著 1 體素 1 標籤的病理輸入很快變得沉重）。</p>
+<p style="margin:2px 0 2px 12px">• 這僅限於僅需要「np.bincount」加權和的金額。 1 個標籤數組 10bincount（件數 1，座標和 3，協方差 6）= O(N + n)。實測（連通性=26，1 體素 1 標籤 = 病理輸入的棋盤圖案）： 163 = 4096 體素/512 個分量 = 0.0037 s，323 = 32768 / 4096 = 0.0350 秒，643 = 262144 / 32768 = 0.2556 秒，1283 = 2097152 / 262144 = 2.3122秒。 每 8 個體素 9.5 / 7.3 / 9.0 次（二次方 64 次），整個區域大約為 1.1 微秒/體素。同樣的1283著色是0.0357 s。</p>
+<p>（供參考：volops.vol_region_props(surface=&quot;faces&quot;) 是相同的 163</p>
+<p>0.0121 秒－由於每個元件的 Python 循環而延長了 3.5 倍。行進立方體</p>
+<p>預設使用 surface=&quot;auto&quot; 甚至更重。 ）</p>
+<p>標籤體素計數體積質心bbox volops.vol_region_props 相同的定義和相同的值（tests/test_volcolor.py::test_stats_agree_with_vol_region_props_exactly 是（固定為精確匹配）。 bbox 是(z0, z1, y0, y1, x0, x1) 且上限是排除的。</p>
+<p>我們還回傳什麼：</p>
+<p>centroid_mm (z, y, x) 物理座標（與沒有間距的體素相同）</p>
+<p>extent bbox 的物理尺寸(dz, dy, dx) · equivalent_diameter</p>
+<p>(6V/pi)(1/3) · touches_border bbox 是否觸及音量邊緣？ ·</p>
+<p>principal_extent 協方差特徵值的平方根(s1 &gt;= s2 &gt;= s3)（物理單位）·</p>
+<p>線性度 (l1-l2)/l1 · 平面性 (l2-l3)/l1 · 各向同性</p>
+<p>“l3/l1”·“伸長率”“sqrt(l1/l2)”。</p>
+<p>伸長率可以是無限的（合約）：l1 &gt; 0 和l2 == 0，換句話說，厚度為 1 體素的完美直線分量回傳「inf」。事故除以 0 相反，事實是在第二軸方向上沒有擴展，並且當倒圓時，細長的順序發生變化。他們默默地交換位置。單一體素（“l1 == 0”）是一個各向同性點，因此它是“1.0”。</p>
+<p>如果忘記傳遞空格，數字和結論將會改變。實際測量-半徑為6毫米的球體間距 = (3.0, 1.0, 1.0) 當使用 mm 的各向異性網格（z 粗化 3 倍）進行採樣時，它變成 293 個體素。閉合形式的真值是「4/3 pi 63 = 904.78 mm3」：</p>
+<p style="margin:2px 0 2px 12px">• 當「間距」 = 879.0 mm3（誤差-2.85 %）時，各向同性 = 0.7349（近似各向同性 = 正確）。</p>
+<p style="margin:2px 0 2px 12px">• 無「間距」 = 293.0（以體素為單位。當讀作毫米3時，錯誤-67.62%），各向同性 = 0.0817 -- 球體看起來像一塊「板」。忽略各向異性形狀索引被破壞，但傳回一個有限且合理的值。</p>
+<p>*等效直徑也相差 1.44 倍，即 11.8849 毫米與 8.2406 毫米。</p>
+<p>數值說明：二階矩計算為“E[x2] - E[x]2”，因此座標對於具有較大和較小分佈的元件，可能會發生精度損失。上限：資料：MAX_COLOR_VOXELS （一側高達 ~2000），「E[x2] ~ 4e6” 的 float64 的相對精度為 1e-16 = 絕對 1e-10，體素變異數有 10 個數量級的餘裕。比那個大體積應該是切完ROI之後才可以通過的（這也是上限的原因）。</p>
+<p>將 *shape* 設定為「False」將忽略協方差（bincount 為 10 中的 6），principal_extent 不要傳回以下 5 項－只需要體積過濾器有時 O(N) 臨時數組可以減少為 1。</p>
+<p>以升序標籤順序返回list[dict]（僅實際標籤）--- 即使數字中有間隙，labels.max() 也不會傳回空字典）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

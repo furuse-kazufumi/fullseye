@@ -15,7 +15,7 @@
 <p>Unit cells along each axis.</p>
 <p>Returns a <code style="color:#22d3bf">mesh</code> (vertices, faces).</p>
 <p>★The thickened <b>solid</b> form lives in <code style="color:#22d3bf">gyroid_solid_mask</code>, not behind a keyword here —— one function that returns a mesh or a volume depending on an argument cannot be given a single declared output type, and a ledger row that lies about its output is the defect class this library keeps catching (<code style="color:#22d3bf">indices_to_labels</code>: one word covering a 1-D mask and a 3-D volume).</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: a grid below 8 per axis or over the cap; non-positive periods; a level outside the field&#x27;s range (no surface exists there — reported rather than returning an empty mesh); negative thickness.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: a grid below 8 per axis or over the cap; non-positive periods; or a level outside the field&#x27;s range (no surface exists there — reported rather than returning an empty mesh).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

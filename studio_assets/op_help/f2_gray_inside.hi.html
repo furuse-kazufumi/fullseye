@@ -12,7 +12,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/f2_gray_inside.inputs.jpg">f2_gray_inside: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
-<p>Grayscale hole-fill: हर pixel के लिए, image की सीमा तक जाने वाले किसी भी रास्ते पर मिल सकने वाला सबसे कम gray value == सीमा से जुड़े marker से erosion द्वारा image का morphological reconstruction। ज़्यादा चमकीली दीवारों से घिरे अँधेरे basins को दीवार की ऊँचाई की ओर उठाया जाता है; सीमा से जुड़े regions अँधेरे ही रहते हैं। <code style="color:#22d3bf">a</code> अधिकतम fill depth h (0 = कुछ नहीं, 1 = पूरा) तय करता है; <code style="color:#22d3bf">b</code> अनदेखा किया जाता है।</p>
+<p>ग्रेस्केल होल-फिल: प्रत्येक पिक्सेल के लिए, छवि सीमा के किसी भी पथ पर प्राप्य न्यूनतम ग्रे मान == सीमा-एंकर मार्कर से क्षरण द्वारा छवि का रूपात्मक पुनर्निर्माण। चमकदार दीवारों से घिरे अंधेरे बेसिन दीवार की ऊंचाई की ओर उठाए गए हैं; सीमा से जुड़े इलाके अंधेरे में रहते हैं. <code style="color:#22d3bf">a</code> अधिकतम भरण गहराई सेट करता है <code style="color:#22d3bf">h = 0.02 + 0.98*a</code>; <code style="color:#22d3bf">बी</code> को नजरअंदाज कर दिया गया है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

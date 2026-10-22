@@ -23,7 +23,7 @@ P(θ) = 1 / ‖E_nᴴ a(θ)‖²。真の向きでは分母がほぼ 0 になり
 **前提**: 波源の数が正しい・波源どうしが無相関(相関した波 = 多重反射では部分空間が潰れて峰が消える)。
 ``n_sources=None`` なら :func:`n_sources_mdl` で推定し、返り値の ``n_sources_estimated`` を True にする。
 返り値 ``{"grid_deg", "pseudo_spectrum_db", "doa_deg", "eigenvalues", "n_sources", "n_sources_estimated"}``
-(doa は峰の大きい順に n 個、格子の分解能)。
+(doa は峰の大きさで n 個を選び、角度の昇順で返す。分解能は格子の刻み)。
 
 ## ファミリ共通の入力契約(fail-closed)
 

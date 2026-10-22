@@ -567,7 +567,7 @@ def lead_from_depth(depth, label, K, cam_height: float, *, pitch: float = 0.0, b
 
 def scene_pair_table(scene, *, lead_asset: str = "sedan", asset_root=None) -> dict:
     """1 つの場面記録を **CARLA の像**と**自前の世界の像**の両方で採点して並べる。
-    返り値 = ``{"truth", "carla": {...lead_from_depth}, "fullseye": {...}, "carla_error", "fullseye_error", "width", "height"}``
+    返り値 = ``{"truth", "carla": {...lead_from_depth}, "fullseye": {...}, "carla_error", "fullseye_error", "width", "height", "view"}``
     (誤差 = depth_median − 真値、真値は :func:`lead_truth_depth`)。"""
     info = carla_scene_check(scene)
     truth = lead_truth_depth(scene)

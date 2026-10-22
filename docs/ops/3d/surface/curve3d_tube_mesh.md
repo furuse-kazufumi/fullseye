@@ -31,8 +31,8 @@ independent implementations meeting at a closed form is a real check; "it
 looks like a tube" is not.
 
 **Raises** ``ValueError``: fewer than 2 points; not (N, 3); radius not
-positive; fewer than 3 segments; non-finite input; a curve with repeated
-consecutive points (the direction is undefined there).
+positive; fewer than 3 segments; non-finite input; or a zero tangent from
+the finite-difference gradient. A single repeated interior pair can still have a non-zero tangent.
 
 ## 参考(サンプルデータ・文献)
 

@@ -1844,9 +1844,10 @@ def cplx_rational_field(zeros, poles, gain=1.0, centre=0j, half_width=2.0,
     centre, half_width, shape :
         The window, as in :func:`cplx_plane_grid`.
 
-    **Raises** ``ValueError``: a pole (or zero) lands *exactly* on a sample, so
-    the value there is not a number — nudge ``centre`` by half a pixel or take
-    an odd ``shape`` (the message says which pole and where); non-finite input;
+    **Raises** ``ValueError``: a pole lands *exactly* on a sample, so the value
+    there is not finite — nudge ``centre`` by half a pixel or change ``shape``
+    (the message says which pole and where). A sampled zero is returned as zero.
+    Also raises for non-finite input;
     the window is degenerate; the result overflows to infinity anyway (the gain
     and the window disagree by more than float64 can hold).
 
@@ -2916,7 +2917,7 @@ def curve_locality(points, gaps=(1, 2, 4, 8, 16, 32)):
         a short curve simply has nothing to say about a long gap).
 
     Returns a ``table``: ``gap`` (int), ``mean_distance``, and ``ratio`` =
-    ``mean_distance / mean_distance[gap == 1]`` so curves of different scales can
+    the first result when the first gap is 1, otherwise the minimum mean distance; a zero base yields NaN. Thus curves of different scales can
     be compared directly.
 
     **Raises** ``ValueError``: not an (N, 2) array; fewer than 2 points;

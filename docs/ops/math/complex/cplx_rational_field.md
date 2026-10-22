@@ -46,9 +46,10 @@ gain : complex
 centre, half_width, shape :
     The window, as in :func:`cplx_plane_grid`.
 
-**Raises** ``ValueError``: a pole (or zero) lands *exactly* on a sample, so
-the value there is not a number — nudge ``centre`` by half a pixel or take
-an odd ``shape`` (the message says which pole and where); non-finite input;
+**Raises** ``ValueError``: a pole lands *exactly* on a sample, so the value
+there is not finite — nudge ``centre`` by half a pixel or change ``shape``
+(the message says which pole and where). A sampled zero is returned as zero.
+Also raises for non-finite input;
 the window is degenerate; the result overflows to infinity anyway (the gain
 and the window disagree by more than float64 can hold).
 

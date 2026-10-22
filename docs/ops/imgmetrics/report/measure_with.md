@@ -37,6 +37,8 @@ report : dict
     :func:`compare_images` の返り値、または ``contract`` そのもの。
 a, b : array_like
     測り直す 2 枚。
+ms : bool
+    ``compare_images`` へ渡すマルチスケール指定。
 
 Returns
 -------

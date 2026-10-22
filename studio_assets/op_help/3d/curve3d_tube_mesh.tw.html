@@ -7,7 +7,7 @@
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>Sweeps a circle of *radius* along the polyline using a <b>parallel-transport</b> frame (no Frenet frame: the normal of a straight segment is undefined and the binormal flips at an inflection, which twists the tube). Returns <code style="color:#22d3bf">(vertices, faces)</code> for the existing 3-D viewers and mesh ops.</p>
 <p>★<b>Why this earns its place</b>: for a closed circular centre line the tube is a torus, whose volume <code style="color:#22d3bf">2 pi^2 R r^2</code> and area <code style="color:#22d3bf">4 pi^2 R r</code> are analytic — and the existing <code style="color:#22d3bf">mesh_volume</code> / <code style="color:#22d3bf">mesh_area</code> ops measure the result. Two independent implementations meeting at a closed form is a real check; &quot;it looks like a tube&quot; is not.</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: fewer than 2 points; not (N, 3); radius not positive; fewer than 3 segments; non-finite input; a curve with repeated consecutive points (the direction is undefined there).</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: fewer than 2 points; not (N, 3); radius not positive; fewer than 3 segments; non-finite input; or a zero tangent from the finite-difference gradient. A single repeated interior pair can still have a non-zero tangent.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

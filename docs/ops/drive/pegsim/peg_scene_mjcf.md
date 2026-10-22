@@ -23,7 +23,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 ``lg`` = 先端から回転のコンプライアンス中心までの距離(None → 手首原点 = ペグ長、0 → 先端に中心 = RCC)。``offsamples`` は
 MSAA(RGB 用 4、depth 用 0 で別にコンパイルする —— 深度はサンプル 0 の位置になる罠)。``<quality numslices="128">`` で円柱の
-多角形近似を 0.0015 % に(既定 28 では半径が 0.04 mm 内側)。単位 m、口の面 z = 0。
+多角形近似の半径誤差を約 0.03 % に(既定 28 では約 0.6 %、半径 6 mm なら 0.04 mm 内側)。単位 m、口の面 z = 0。
 
 ## 参考(サンプルデータ・文献)
 

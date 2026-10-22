@@ -4,13 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.triangulate_polygon(poly: &#x27;np.ndarray | Sequence[Sequence[float]]&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import driveplateau; driveplateau.triangulate_polygon(poly: &#x27;np.ndarray | Sequence[Sequence[float]]&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;triangulate_polygon&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>simple polygon (convex या concave, self-intersection के बिना) को ear clipping से triangles में बाँटता है।</p>
-<p>लौटाए गए त्रिभुज इनपुट शीर्षों के सूचकांक (k-2, 3) हैं, और प्रत्येक त्रिभुज वामावर्त है (इनपुट दक्षिणावर्त हो तो आंतरिक रूप से उलटकर संभाला जाता है, और सूचकांक मूल शीर्ष क्रमांकों के रूप में लौटाए जाते हैं)।</p>
-<p>Args:</p>
-<p>poly: (k,2) शीर्षों का क्रम। बंद होना आवश्यक नहीं।</p>
-<p>Returns:</p>
-<p>(k-2, 3) int64 ऐरे।</p>
-<p>Raises:</p>
-<p>ValueError: शीर्ष 3 से कम, क्षेत्रफल लगभग 0, कान नहीं मिला (स्व-प्रतिच्छेदन या दोहरे बिंदुओं का संदेह)।</p>
+<p>लौटाया जाने वाला त्रिभुज इनपुट शीर्ष का सूचकांक है, जहां m संरेख शीर्षों (m-2, 3) को छोड़कर शीर्षों की प्रभावी संख्या है। प्रत्येक त्रिभुज वामावर्त घूमता है (यदि इनपुट दक्षिणावर्त है) (इसे आंतरिक रूप से उलट दिया गया है और मूल शीर्ष संख्या को सबस्क्रिप्ट के रूप में वापस कर दिया गया है।)</p>
+<p>तर्क:</p>
+<p>पॉली: (के,2) शीर्ष क्रम। इसे बंद करना जरूरी नहीं है.</p>
+<p>रिटर्न:</p>
+<p>(एम-2,3) int64 सरणी। मी संरेख शीर्षों को छोड़कर प्रभावी शीर्षों की संख्या है।</p>
+<p>उठाता है:</p>
+<p>वैल्यूएरर: 3 से कम शीर्ष, 0 के पास का क्षेत्र, गायब कान (संदिग्ध स्व-प्रतिच्छेदन या डुप्लिकेट बिंदु)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

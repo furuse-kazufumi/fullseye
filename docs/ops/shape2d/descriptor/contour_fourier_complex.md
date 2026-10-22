@@ -25,7 +25,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
     parametrisation: ``"index"`` = 点の添字を等間隔の媒介変数にする /
         ``"arclength"`` = **弧長**で等間隔に打ち直してから変換する。
 
-返り値: ``(2K+1, 3)`` の実配列(``matrix``)。行は ``[k, Re c_k, Im c_k]`` で
+返り値: 通常 ``(2K+1, 3)``、偶数点で Nyquist 次数まで残すときは ``(2K, 3)`` の実配列(``matrix``)。行は ``[k, Re c_k, Im c_k]`` で
 ``k`` は ``0, 1, -1, 2, -2, …``(低い周波数から)。
 
 ★**媒介変数の取り方を既定で黙って決めない**のがこの op の肝。不均一に標本化された

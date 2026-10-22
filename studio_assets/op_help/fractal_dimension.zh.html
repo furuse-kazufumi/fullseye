@@ -9,8 +9,8 @@
 <p>*旋钮 b 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>测量纹理复杂度的 Minkowski-Bouligand(盒计数)分形维数。</p>
-<p>以阈值 <code style="color:#22d3bf">a</code>（默认 0.5）二值化，对箱子尺寸 <code style="color:#22d3bf">s = 1, 2, 4, …</code> 统计“含有结构的 s×s 箱子”的个数 <code style="color:#22d3bf">N(s)</code>，返回 <code style="color:#22d3bf">log N(s)</code> 对 <code style="color:#22d3bf">log(1/s)</code> 做最小二乘回归所得的斜率（Mandelbrot 1982）。直线状结构约为 ~1，填满平面的区域约为 ~2，自相似的边缘为介于其间的非整数（Sierpinski 三角形为 <code style="color:#22d3bf">log 3 / log 2 ≈ 1.585</code>）。可用作表面粗糙度、组织纹理、地形、断口等的廉价复杂度特征。</p>
-<p>由于分辨率有限，填满的区域会略低于 2（粗尺度下箱子饱和导致的已知低估）。<code style="color:#22d3bf">a</code> 是二值化的阈值，<code style="color:#22d3bf">b</code> 未使用。没有结构/只能取到 1 个尺度时返回 0。</p>
+<p>使用所需的阈值“a”进行二值化，并定义框大小的结构“s = 1, 2, 4, …”。计算“包含 s×s 个盒子”的数量“N(s)”，并在“log(1/s)”上执行“log N(s)”的最小二乘回归。返回斜率（Mandelbrot 1982）。线性结构~1，填充平面的面积~2，自相似的边是中间非整数（对于谢尔宾斯基三角形，“log 3 / log 2 ≈ 1.585”）。表面它可用于廉价的复杂特征，例如粗糙度、组织纹理、形貌和断裂表面。</p>
+<p>由于分辨率有限（已知框在粗尺度下饱和），填充区域略小于 2。低估）。 <code style="color:#22d3bf">a</code> 是二值化阈值，<code style="color:#22d3bf">b</code> 不使用。无结构/1 只能取比例如果返回 0</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

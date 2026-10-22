@@ -12,7 +12,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/f2_gray_inside.inputs.jpg">f2_gray_inside: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>灰階孔洞填補:對每個像素,取其到影像邊界任一路徑上可達的最低灰階值 —— 相當於以邊界錨定的標記對影像做侵蝕式形態學重建。被較亮牆面包圍的暗盆地會被抬升至牆面高度;與邊界相連的區域維持暗部。<code style="color:#22d3bf">a</code> 設定最大填補深度 h(0 = 不填補,1 = 完全填補);<code style="color:#22d3bf">b</code> 被忽略。</p>
+<p>灰階孔填充：對於每個像素，在到影像邊界的任何路徑上可達到的最低灰階值==會透過邊界錨定標記的侵蝕對影像進行形態學重建。較亮的牆壁圍成的深色盆地向牆壁的高度升高；與邊界相連的區域保持黑暗。 <code style="color:#22d3bf">a</code> 設定最大填充深度<code style="color:#22d3bf">h = 0.02 + 0.98*a</code>； <code style="color:#22d3bf">b</code> 被忽略。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

@@ -4,32 +4,32 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.icp_point2point_3d(src, dst, iters=50, init_R=None, init_t=None, tol=1e-06, max_corr_dist=None, trim_ratio=None, device=&#x27;cpu&#x27;, reproducible=False)</code> (die Implementierung direkt: <code style="color:#22d3bf">import match3d; match3d.icp_point2point_3d(src, dst, iters=50, init_R=None, init_t=None, tol=1e-06, max_corr_dist=None, trim_ratio=None, device=&#x27;cpu&#x27;, reproducible=False)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;icp_point2point_3d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Verfeinert Punktmengen mit Point-to-Point-ICP (Kabsch/SVD).</p>
-<p>Ausgehend von der Anfangspose (init_R, init_t) aus einer groben Match-Schätzung (ganzzahliges NCC / Fourier-Mellin±3° / Hough±0.5voxel) registriert es die src-Punktwolke per Starrkörpertransformation auf die dst-Punktwolke. In jeder Iteration werden die Nächster-Nachbar-Korrespondenzen (cKDTree) neu aufgebaut, mit dem Kabsch-Algorithmus (SVD) relative Rotation und Translation bestimmt und akkumuliert, sodass es auch ohne bekannte Korrespondenzen auf Subvoxel-Genauigkeit konvergiert.</p>
-<p>Teilüberlappung und Ausreißer werden mit Trimmed ICP (nur Korrespondenzen mit kleinem Abstand werden verwendet) und einem absoluten Abstandsgate (max_corr_dist) behandelt. Der finale RMSE wird über die tatsächlich verwendeten Korrespondenzen (Inlier) ausgewertet und spiegelt daher die Posenqualität auch bei Teilbeobachtungen korrekt wider.</p>
+<p>Erhalten mit grober Übereinstimmungsschätzung (ganzzahliges NCC/Fourier-Mellin ±3°/Hough±0,5 Voxel) Ausgehend von der anfänglichen Pose (init_R, init_t) werden die src-Seitenpunkte starr in die dst-Seitenpunkte umgewandelt. Ausrichten. Bei jeder Iteration wird die Nächste-Nachbarn-Korrespondenz (cKDTree) neu zusammengefügt und der Kabsch-Algorithmus verwendet Durch Berechnen und Akkumulieren relativer Drehungen und Verschiebungen mithilfe von (SVD), auch wenn die Entsprechung nicht bekannt ist, Konvergieren Sie zur Subvoxel-Präzision.</p>
+<p>Für teilweise Überlappungen und Ausreißer verwenden Sie Trimmed ICP (übernehmen Sie nur Korrespondenzen mit kleinen Abständen). Behandeln Sie dies mit dem absoluten Distanztor (max_corr_dist). Der endgültige RMSE wurde tatsächlich übernommen. Da die Bewertung auf Korrespondenzen (Inliers) basiert, wird die Haltungsqualität auch in Teilbeobachtungen genau wiedergegeben.</p>
 <p>Argumente:</p>
-<p>src: (N,3) bewegte Punktwolke (torch.Tensor oder numpy.ndarray).</p>
-<p>dst: (M,3) feste (Referenz-)Punktwolke.</p>
-<p>iters: maximale Anzahl der Iterationen.</p>
-<p>init_R: (3,3) Anfangsrotation. Bei None die Einheitsmatrix.</p>
-<p>init_t: (3,) Anfangstranslation. Bei None der Nullvektor.</p>
-<p>tol: Abbruch als konvergiert, wenn die relative RMSE-Verbesserung diesen Wert unterschreitet.</p>
-<p>max_corr_dist: Korrespondenzen jenseits dieses Abstands werden als Ausreißer verworfen (None deaktiviert).</p>
-<p>trim_ratio: 0&lt;r&lt;=1. Trimmed ICP, das in jeder Iteration nur den obersten Anteil r der Korrespondenzen mit dem kleinsten</p>
-<p>Nächster-Nachbar-Abstand verwendet. Wirksam bei Teilüberlappung (Überlappungsgrad r). None deaktiviert.</p>
-<p>device: torch-Gerät (&quot;cpu&quot; usw.). Die SVD wird auf diesem Gerät gelöst.</p>
-<p>reproducible: bei True hängen die Reduktionen nicht von der Punktreihenfolge und der Zahl der BLAS-Threads ab (Standard False = wie bisher).</p>
-<p>Der Mittelwert nutzt math.fsum, die Kreuzkovarianz H ozakimm (Ozaki-Schema), die Pose wird elementweise angewandt, der RMSE nutzt ebenfalls math.fsum.</p>
-<p>Auch bei vertauschter Reihenfolge der src-Punkte sind R, t und rmse bitgleich (auf demselben Rechner, mit demselben LAPACK). Punkte, deren Abstände an der</p>
-<p>trim_ratio-Grenze exakt gleich sind, können je nach Reihenfolge anders ausgewählt werden. Bei 200.000 Punkten werden aus 0.7 ms pro 1 Iteration etwa 170 ms.</p>
+<p>src: (N,3) Bewegliche seitliche Punktwolke (torch.Tensor oder numpy.ndarray).</p>
+<p>dst: (M,3) Punktgruppe mit fester Seite (Referenz).</p>
+<p>iters: Maximale Anzahl von Iterationen.</p>
+<p>init_R: (3,3) Anfangsdrehung. Wenn keine, handelt es sich um eine Identitätsmatrix.</p>
+<p>init_t: (3,) Erstübersetzung. Wenn „Keine“, handelt es sich um einen Nullvektor.</p>
+<p>tol: Die Konvergenz wird beendet, wenn die relative Verbesserung des RMSE unter diesem Wert liegt.</p>
+<p>max_corr_dist: Korrespondenzen, die diesen Abstand überschreiten, werden als Ausreißer verworfen (deaktiviert mit „Keine“).</p>
+<p>trim_ratio: 0&lt;r&lt;=1. Bei jeder Iteration entsprechen nur die obersten r den kleinsten Abständen zum nächsten Nachbarn</p>
+<p>Gekürzter ICP soll übernommen werden. Wirksam bei teilweiser Überlappung (Überlappungsrate r). Deaktiviert mit „Keine“.</p>
+<p>Gerät: Das Brennergerät (z. B. „CPU“) zum Platzieren des Rückgabewerts. SVD wird mithilfe von NumPy auf der CPU gelöst.</p>
+<p>reproduzierbar: Wenn „True“, ist die Reduzierung unabhängig von der Punktreihenfolge und der Anzahl der BLAS-Threads (Standard: „False“ = dasselbe wie zuvor).</p>
+<p>Der Durchschnitt ist math.fsum, die gegenseitige Kovarianz H ist ozakimm (Ozaki-Schema), die Orientierung wird Element für Element berechnet und der RMSE ist ebenfalls math.fsum.</p>
+<p>Auch wenn die Reihenfolge der Punkte in src geändert wird, bleibt R・t・rmse in Bits gleich (gleicher Computer, gleicher LAPACK). Bei trim_ratio Pause</p>
+<p>Punkte, die genau den gleichen Abstand voneinander haben, können in unterschiedlicher Reihenfolge ausgewählt werden. Bei 200.000 Punkten werden aus 0,7 ms pro Wiederholung etwa 170 ms.</p>
 <p>Rückgabewert:</p>
-<p>R: (3,3) Rotation. Erfüllt dst ~= src @ R.T + t. <b>In einer Umgebung mit torch ein <code style="color:#22d3bf">torch.Tensor</code>, sonst ein <code style="color:#22d3bf">numpy.ndarray</code> mit denselben Werten</b> (als der Kern am 2026-09-07</p>
-<p>auf numpy umgestellt wurde, blieb der Typ aus Kompatibilitätsgründen erhalten).</p>
-<p>★<code style="color:#22d3bf">icp_point2plane</code> aus derselben Familie <b>gibt immer numpy zurück</b> — innerhalb der Familie</p>
-<p>sind die Typen nicht einheitlich, daher ist es sicher, nachgelagert <code style="color:#22d3bf">np.asarray(R)</code> zu verwenden</p>
-<p>(beides funktioniert; diese Uneinheitlichkeit bleibt bestehen, um eine inkompatible Änderung zu vermeiden).</p>
-<p>t: (3,) Translation (gleicher Typ wie R).</p>
-<p>info: dict. &quot;rmse&quot; (finaler RMSE über die verwendeten Korrespondenzen), &quot;iters&quot; (tatsächliche Iterationszahl),</p>
-<p>&quot;converged&quot; (bool), &quot;inliers&quot; (Anzahl verwendeter Korrespondenzen), &quot;rmse_history&quot; (list).</p>
+<p>R: (3,3) Rotation. dst ~= src @ R.T + t. <b>In einer Umgebung mit Taschenlampe „torch.Tensor“, wenn nicht, der gleiche Wert „numpy.ndarray“</b> (am 07.09.2026</p>
+<p>Auch bei der Konvertierung des Hauptteils in Numpy wurde der Typ aus Kompatibilitätsgründen unverändert gelassen.)</p>
+<p>★ <code style="color:#22d3bf">icp_point2plane</code> in derselben Familie <b>gibt immer numpy zurück</b> —— in der Familie</p>
+<p>Da die Typen nicht ausgerichtet sind, ist es sicher, „np.asarray(R)“ stromabwärts zu übergeben.</p>
+<p>(Beides funktioniert. Diese Fehlausrichtung bleibt bestehen, um fehlerhafte Änderungen zu vermeiden.)</p>
+<p>t: (3,) Übersetzung (gleicher Typ wie R).</p>
+<p>Info: dict. „rmse“ (endgültiger RMSE für die Rekrutierung), „iters“ (tatsächliche Anzahl der Iterationen),</p>
+<p>„converged“ (bool), „inliers“ (Anzahl der Adoptionen), „rmse_history“ (Liste).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

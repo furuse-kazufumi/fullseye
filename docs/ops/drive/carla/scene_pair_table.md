@@ -18,7 +18,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 ## 使い方
 
 1 つの場面記録を **CARLA の像**と**自前の世界の像**の両方で採点して並べる。
-返り値 = ``{"truth", "carla": {...lead_from_depth}, "fullseye": {...}, "carla_error", "fullseye_error", "width", "height"}``
+返り値 = ``{"truth", "carla": {...lead_from_depth}, "fullseye": {...}, "carla_error", "fullseye_error", "width", "height", "view"}``
 (誤差 = depth_median − 真値、真値は :func:`lead_truth_depth`)。
 
 ## 参考(サンプルデータ・文献)

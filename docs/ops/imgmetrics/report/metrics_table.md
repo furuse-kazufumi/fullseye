@@ -24,7 +24,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 - ``report``: ``compare_images`` または ``measure_with`` の返り値(``contract``
   キーを持つ dict)。それ以外は ``MetricContractError``。
-- ``order``: 先頭に並べる指標名の並び(省略時はキーの辞書順)。``report`` に無い
+- ``order``: 表示する指標名の並び。指定時はここに無い指標を落とし、省略時はキーの辞書順。``report`` に無い
   名前は黙って飛ばし、``"contract"`` は指標として並べない。
 - 返り値: ``(名前, 値)`` タプルの list。指標行のあと、``contract`` の各項目を
   ``"条件: data_range"`` のようにキーの辞書順で追加する。値は変換しない

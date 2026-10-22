@@ -19,7 +19,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 2 SDF の積集合 A∩B = 要素ごとの max(a, b)(両方の内側でのみ内側)。
 
-ゼロ等値面は両境界の共通部分。外側で厳密 SDF、内側は保守的下界。
+ゼロ等値面は両境界の共通部分。内外とも一般には厳密な SDF ではなく、距離の下界になりうる。
 
 計算: ``np.maximum(np.asarray(a, float64), np.asarray(b, float64))``。要素ごとの
 max なので、ある点が A∩B の内側(負)になるのは ``a < 0`` かつ ``b < 0`` のときだけ。

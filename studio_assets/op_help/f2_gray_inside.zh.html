@@ -12,7 +12,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/f2_gray_inside.inputs.jpg">f2_gray_inside: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>灰度孔洞填充:对每个像素,取其到图像边界任意路径上可达的最低灰度值 —— 等价于以边界锚定的标记对图像做腐蚀式形态学重建。被更亮的墙壁包围的暗盆地会被抬升至墙壁高度;与边界相连的区域保持暗。<code style="color:#22d3bf">a</code> 设置最大填充深度 h(0 = 不填充,1 = 完全填充);<code style="color:#22d3bf">b</code> 被忽略。</p>
+<p>灰度孔填充：对于每个像素，在到图像边界的任何路径上可达到的最低灰度值==通过边界锚定标记的侵蚀对图像进行形态学重建。较亮的墙壁围成的深色盆地向墙壁的高度升高；与边界相连的区域保持黑暗。 <code style="color:#22d3bf">a</code> 设置最大填充深度<code style="color:#22d3bf">h = 0.02 + 0.98*a</code>； <code style="color:#22d3bf">b</code> 被忽略。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

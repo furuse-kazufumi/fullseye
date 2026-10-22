@@ -9,8 +9,8 @@
 <p>*旋鈕 b 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>測量紋理複雜度的 Minkowski-Bouligand(盒計數)碎形維度。</p>
-<p>以閾值 <code style="color:#22d3bf">a</code>（預設 0.5）二值化，對箱子尺寸 <code style="color:#22d3bf">s = 1, 2, 4, …</code> 統計「含有結構的 s×s 箱子」的個數 <code style="color:#22d3bf">N(s)</code>，回傳 <code style="color:#22d3bf">log N(s)</code> 對 <code style="color:#22d3bf">log(1/s)</code> 做最小平方迴歸所得的斜率（Mandelbrot 1982）。直線狀結構約為 ~1，填滿平面的區域約為 ~2，自相似的邊緣為介於其間的非整數（Sierpinski 三角形為 <code style="color:#22d3bf">log 3 / log 2 ≈ 1.585</code>）。可作為表面粗糙度、組織紋理、地形、斷面等的低成本複雜度特徵。</p>
-<p>由於解析度有限，填滿的區域會略低於 2（粗尺度下箱子飽和所導致的已知低估）。<code style="color:#22d3bf">a</code> 是二值化的閾值，<code style="color:#22d3bf">b</code> 未使用。沒有結構/只能取得 1 個尺度時回傳 0。</p>
+<p>使用所需的閾值「a」進行二值化，並定義框大小的結構「s = 1, 2, 4, …」。計算“包含 s×s 個盒子”的數量“N(s)”，並在“log(1/s)”上執行“log N(s)”的最小二乘回歸。返回斜率（Mandelbrot 1982）。線性結構~1，填充平面的面積~2，自相似的邊是中間非整數（對於謝爾賓斯基三角形，“log 3 / log 2 ≈ 1.585”）。表面它可用於廉價的複雜特徵，例如粗糙度、組織紋理、形貌和斷裂表面。</p>
+<p>由於解析度有限（已知框在粗尺度下飽和），填充區域略小於 2。低估）。 <code style="color:#22d3bf">a</code> 是二值化閾值，<code style="color:#22d3bf">b</code> 不使用。無結構/1 只能取比例如果返回 0</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

@@ -4,17 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.skyline_extract(image, sky_is_bright=True, smooth=1.5, max_jump=3, jump_penalty=0.5)</code> (to call the implementation directly, <code style="color:#22d3bf">import geocam; geocam.skyline_extract(image, sky_is_bright=True, smooth=1.5, max_jump=3, jump_penalty=0.5)</code>; from the registry, <code style="color:#22d3bf">opsgeocam.get(&quot;skyline_extract&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Extracts from a photo, by dynamic programming, 1 line giving <b>the row of the sky–terrain boundary for each column</b> → signal (W,).</p>
-<p>The same idea as Lie, Lin and Hsu 2005 (*Pattern Recognition*: robust skyline extraction for navigation):</p>
-<p>the vertical change in brightness (positive <code style="color:#22d3bf">I[v−1] − I[v+1]</code> if the sky above is brighter) is taken as &quot;boundary-likeness&quot;, and among continuous paths whose row does not jump by <code style="color:#22d3bf">max_jump</code> or more from the neighbouring column, the one with minimum cost is chosen (<code style="color:#22d3bf">jump_penalty</code> × row jump). Even if clouds or vertical edges of buildings give locally strong responses, the continuity of the path keeps the real ridge line.</p>
+<p>Same idea as Lie, Lin, and Hsu 2005 (*Pattern Recognition*: Robust Skyline Extraction for Navigation):</p>
+<p>Changes in brightness in the vertical direction (if the sky is bright above, I[v−1] − I[v+1] is positive) are considered boundary-likeness&#x27;&#x27;, Choose the path with the lowest cost among consecutive paths that do not jump more than max_jump rows from the next column (jump_penalty × line jump). Even if there is a locally strong response at the vertical edges of clouds or buildings, the path Continuity leaves real ridgelines.</p>
 <p>Args:</p>
-<p>image: (H, W) float. RGB is converted to grey first.</p>
-<p>sky_is_bright: the sky is brighter than the terrain (daytime). False if inverted in night scenes or backlight.</p>
-<p>smooth: vertical Gaussian σ [pixels] (noise). 0 disables it.</p>
-<p>max_jump: row jump allowed between neighbouring columns [pixels].</p>
-<p>jump_penalty: cost per 1 pixel of jump (boundary-likeness is normalised to 0 to 1).</p>
+<p>image: (H, W) float. For RGB, make it gray first.</p>
+<p>sky_is_bright: The sky is brighter than the terrain (daytime). False if it is reversed in night view/backlight.</p>
+<p>smooth: Vertical Gaussian σ [pixels] (noise). 0 disables.</p>
+<p>max_jump: Allowed row jump in adjacent columns [pixels].</p>
+<p>jump_penalty: Cost per jump pixel (boundary likelihood is normalized from 0 to 1).</p>
 <p>Returns:</p>
-<p>signal (W,) float: the boundary row for each column (0 is the top). For images that <b>show only sky, or only terrain</b>, the boundary response is weak and the mean path cost is close to 0, so it stops with ValueError</p>
-<p>(it does not silently return a line of noise).</p>
+<p>signal (W,) float: Boundary row for each column (0 is the top row).  Only the sky/topography is shown</p>
+<p>In images that are not shown, the average boundary response is close to 0, so ValueError</p>
+<p>Stop at (silence and do not return the noise line).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegeocam:geocam">geocam family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

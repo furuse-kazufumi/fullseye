@@ -231,7 +231,7 @@ def register_fpfh(src, dst, src_normals=None, dst_normals=None,
         src_normals, dst_normals ((N,3)/(M,3) or None): 事前法線。None なら内部推定
             (ただし voxel_size>0 のときは座標が変わるため常に再推定)。
         voxel_size (float or None): ダウンサンプル辺長。None で dst 解像度×2.5 を自動採用。
-            0/None で無効化(生点群のまま。独立サンプリングでは非推奨)。
+            0 で無効化(生点群のまま。独立サンプリングでは非推奨)。
         normal_k (int): 法線推定の近傍数。
         feature_k (int): FPFH の近傍数(大きいほど記述子が安定・識別的。60 前後を推奨)。
         n_bins (int): 1 特徴あたりのヒストグラムビン数(記述子次元 = 3*n_bins)。

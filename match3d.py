@@ -428,7 +428,7 @@ def moment_axes(points, weights=None):
     分解する。``axes[:, i]`` が i 番目に大きい固有値の主軸(降順)。固有値は分散(長さ²)。
     - 固有ベクトルの符号は任意で、``axes`` は左手系(det=−1)になり得る(``match_pca`` は第 3 軸を
     反転して右手系にしている)。
-    - ``weights`` は長さ N。総和 0 は 0 除算で NaN(例外は出ない)。点数 0 は失敗する(検証は無い)。
+    - ``weights`` は長さ N。総和 0 は 0 除算で NaN(例外は出ない)。点数 0 は明示的に ValueError。
     - 主軸が縮退(球など)なら軸の向きは不定。
     後段: ``match_pca``、``obb``(有向 bbox)、正準姿勢への回転。
 
@@ -557,6 +557,7 @@ def match_chamfer_3d(scene, template, device="cpu", thr=0.3, edt="scipy"):
     テンプレにエッジが無い(``thr`` が高すぎる等)と score が全 0 になり index (0,0,0) が返る。
     scene にエッジが無い場合の距離場は意味を持たない(``thr`` を下げる)。
     ``edt="jfa"`` は ``edt_jfa`` を使い ``device`` 上で完結、それ以外は scipy(CPU)。
+    テンプレにエッジが無い場合は score が全 0 になり、有効範囲の先頭 ``(pd, ph, pw)`` を返す。
 
     空の入力(``scene`` が 0 要素)は ValueError。
     """
@@ -1757,7 +1758,7 @@ def icp_point2point_3d(src, dst, iters=50, init_R=None, init_t=None,
         max_corr_dist: この距離を超える対応を外れ値として棄却(None で無効)。
         trim_ratio: 0<r<=1。各反復で最近傍距離の小さい上位 r 割の対応のみ
             採用する Trimmed ICP。部分重なり(重なり率 r)に有効。None で無効。
-        device: torch デバイス("cpu" 等)。SVD をこのデバイス上で解く。
+        device: 返り値を配置する torch デバイス("cpu" 等)。SVD は CPU 上の NumPy で解く。
         reproducible: True なら点の順・BLAS のスレッド数に依らない縮約にする(既定 False = 従来どおり)。
             平均は math.fsum、相互共分散 H は ozakimm(Ozaki スキーム)、姿勢の適用は要素ごとの演算、RMSE も math.fsum。
             src の点の順を入れ替えても R・t・rmse がビット単位で同じ(同じ計算機・同じ LAPACK の上)。trim_ratio の切れ目で
@@ -3105,7 +3106,7 @@ def cylinder_unwrap(vol, center=None, r_in=0.0, r_out=None, ntheta=180, nr=32, d
     スライス中心)。``r_in``〜``r_out``(voxel、既定 ``min(H,W)/2 − 1``)を ``nr`` 等分、角度を
     ``ntheta`` 等分。出力 ``(D, ntheta, nr)`` float32: 軸 0 は z(高さ、入力と同じ)、行 k の角度
     ``θ = k·2π/ntheta``、列 j の半径。サンプル点は ``(z, cy + r sinθ, cx + r cosθ)``、volume 外は 0。
-    D, H, W が 1 の軸は正規化で 0 除算になる(``polar_unwrap`` と違い検査は無い)。
+    D, H, W が 1 の軸も画素座標のまま補間し、0 除算は生じない。
     後段: ``[:, :, j]`` を取れば半径 j の円筒面が (D×θ) の 2-D 画像になり、2-D の傷検査・
     ``ncc_locate`` が使える。
 

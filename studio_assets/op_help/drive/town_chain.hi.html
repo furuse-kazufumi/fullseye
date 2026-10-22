@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.town_chain(elements, *, start=(0.0, 0.0, 0.0), overlap: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivetown; drivetown.town_chain(elements, *, start=(0.0, 0.0, 0.0), overlap: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;town_chain&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>elements को क्रम से जोड़कर रखता है: element k+1 के entry को element k के exit (उससे <code style="color:#22d3bf">overlap</code> पहले) से मिलाने वाली rigid placement closed form में निकालता है और <code style="color:#22d3bf">drivecourse.course_layout</code> को देता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
-<p>elements : drivecourse の要素(dict)の列。順に継ぐ。</p>
-<p>start : 最初の要素の entry を置く世界姿勢 (x, y, yaw)。</p>
-<p>overlap : 継ぎ目の食い込み [m] (≥ 0。3-D 化で継ぎ目に縁石が立たないため)。要素の中心線より短いこと。</p>
+<p>elements : drivecourse तत्वों (dict) का क्रम। क्रम से जोड़े जाते हैं।</p>
+<p>start : वह विश्व मुद्रा (x, y, yaw) जहाँ पहले तत्व का entry रखा जाता है।</p>
+<p>overlap : जोड़ों पर अतिव्याप्ति [m] (≥ 0। ताकि 3-D बनाने पर जोड़ों पर कर्ब न खड़ा हो)। दूसरे तत्व से आगे, overlap उस तत्व की मध्य-रेखा से अधिक नहीं होना चाहिए।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
-<p>dict : course_layout の dict に <code style="color:#22d3bf">&quot;chain&quot;</code> を足したもの。<code style="color:#22d3bf">chain = {&quot;overlap&quot;, &quot;s_start&quot; (n,) 各要素の entry の弧長, &quot;lengths&quot; (n,) 各要素の centerline_length, &quot;polyline_lengths&quot; (n,) 中心線の折線長, &quot;total_length&quot; (= Σ 折線長 − overlap × (n − 1)), &quot;joints&quot;: [(exit_k, entry_k+1), ...] 世界姿勢}</code>。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 要素が空・layout の入れ子・entry/exit/centerline が無い、start/overlap が非有限、overlap が負、2 番目以降の overlap がその要素の中心線以上。</p>
+<p>dict : course_layout के dict में <code style="color:#22d3bf">&quot;chain&quot;</code> जोड़कर। <code style="color:#22d3bf">chain = {&quot;overlap&quot;, &quot;s_start&quot; (n,) 各要素の entry の弧長, &quot;lengths&quot; (n,) 各要素の centerline_length, &quot;polyline_lengths&quot; (n,) 中心線の折線長, &quot;total_length&quot; (= Σ 折線長 − overlap × (n − 1)), &quot;joints&quot;: [(exit_k, entry_k+1), ...] 世界姿勢}</code>।</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: तत्व खाली / layout नेस्टेड / entry/exit/centerline नहीं, start/overlap अपरिमित, overlap ऋणात्मक, overlap तत्व की मध्य-रेखा से लंबा।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

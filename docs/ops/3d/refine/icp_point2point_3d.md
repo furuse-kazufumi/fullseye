@@ -39,7 +39,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
     max_corr_dist: この距離を超える対応を外れ値として棄却(None で無効)。
     trim_ratio: 0<r<=1。各反復で最近傍距離の小さい上位 r 割の対応のみ
         採用する Trimmed ICP。部分重なり(重なり率 r)に有効。None で無効。
-    device: torch デバイス("cpu" 等)。SVD をこのデバイス上で解く。
+    device: 返り値を配置する torch デバイス("cpu" 等)。SVD は CPU 上の NumPy で解く。
     reproducible: True なら点の順・BLAS のスレッド数に依らない縮約にする(既定 False = 従来どおり)。
         平均は math.fsum、相互共分散 H は ozakimm(Ozaki スキーム)、姿勢の適用は要素ごとの演算、RMSE も math.fsum。
         src の点の順を入れ替えても R・t・rmse がビット単位で同じ(同じ計算機・同じ LAPACK の上)。trim_ratio の切れ目で

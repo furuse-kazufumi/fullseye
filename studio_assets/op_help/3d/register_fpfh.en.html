@@ -4,34 +4,34 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.register_fpfh(src, dst, src_normals=None, dst_normals=None, voxel_size=None, normal_k=16, feature_k=60, n_bins=11, ransac_iters=8000, inlier_thr=None, edge_sim=0.9, mutual=True, ratio=0.95, seed=0, device=&#x27;cpu&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import feat_fpfh; feat_fpfh.register_fpfh(src, dst, src_normals=None, dst_normals=None, voxel_size=None, normal_k=16, feature_k=60, n_bins=11, ransac_iters=8000, inlier_thr=None, edge_sim=0.9, mutual=True, ratio=0.95, seed=0, device=&#x27;cpu&#x27;)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;register_fpfh&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Estimate the rigid alignment (R,t) <b>without an initial guess</b> using FPFH descriptors and RANSAC.</p>
-<p>The 3D version of sparse feature matching, corresponding to Harris/SIFT in 2D. Both clouds are represented by FPFH descriptors, correspondences are set up by nearest neighbours in descriptor space (filtered by mutual nearest neighbour + Lowe ratio), and RANSAC solves a rigid pose robust to outliers. Unlike dense matching (NCC/Hough) or PCA, its value is that it yields the pose without an initial estimate even under large rotation (50-70°) +translation + partial overlap. The obtained (R,t) can be passed to ICP as the initial value (coarse init) to tighten to surface accuracy (ICP convention dst ≈ src @ R.T + t).</p>
+<p>A 3D version of sparse feature matching, equivalent to the 2D Harris/SIFT. Both clouds are represented by FPFH descriptors, Create a correspondence using the nearest neighbors in the descriptor space (mutual nearest neighbors + filter by Lowe ratio), and use RANSAC to Solving rigid body poses that are robust to outliers. Unlike close match (NCC/Hough) and PCA, large rotation (50-70°) The value is that the pose can be determined without initial estimation even with +translation + partial overlap. The obtained (R,t) is the initial value of ICP (coarse init) tightens to surface precision (ICP convention of dst ≈ src @ R.T + t).</p>
 <p>Pipeline:</p>
-<p style="margin:2px 0 2px 12px">1) voxel downsampling (brings the neighbourhoods of 2 independently sampled clouds to a common resolution; an essential preprocessing step that strongly affects the FPFH correspondence accuracy).</p>
-<p style="margin:2px 0 2px 12px">2) normal estimation (local PCA). If src_normals/dst_normals are passed, they are used.</p>
-<p style="margin:2px 0 2px 12px">3) FPFH descriptor (SPFH → distance-weighted combination).</p>
-<p style="margin:2px 0 2px 12px">4) descriptor NN matching (mutual + ratio).</p>
-<p style="margin:2px 0 2px 12px">5) RANSAC: 3-point sample → edge-length consistency prefilter → Kabsch → scoring by <b>all-point fitness</b> (the fraction of all src points that, once transformed, have their dst nearest neighbour within the threshold). Scoring only the correspondences (~100 points) tends to stick to wrong poses, so all-point fitness makes it robust.</p>
-<p style="margin:2px 0 2px 12px">6) refit on the correspondence inliers of the best pose.</p>
-<p>Args:</p>
-<p>src (N,3), dst (M,3): the 2 point clouds to register (numpy/torch).</p>
-<p>src_normals, dst_normals ((N,3)/(M,3) or None): precomputed normals. None means internal estimation</p>
-<p>(but when voxel_size&gt;0 the coordinates change, so they are always re-estimated).</p>
-<p>voxel_size (float or None): downsampling edge length. None automatically uses dst resolution ×2.5.</p>
-<p>0/None disables it (raw point clouds as is; not recommended for independent sampling).</p>
-<p>normal_k (int): number of neighbours for normal estimation.</p>
-<p>feature_k (int): number of FPFH neighbours (larger makes the descriptor more stable and discriminative; around 60 recommended).</p>
-<p>n_bins (int): histogram bins per 1 feature (descriptor dimension = 3*n_bins).</p>
-<p>ransac_iters (int): number of RANSAC iterations.</p>
-<p>inlier_thr (float or None): inlier distance threshold. None uses (post-downsampling) resolution ×3.</p>
-<p>edge_sim (float): tolerance of the edge-length ratio of triples (0&lt;edge_sim&lt;=1; the closer to 1, the stricter).</p>
-<p>mutual (bool): mutual nearest-neighbour filter. ratio (float or None): Lowe ratio.</p>
-<p>seed (int): RANSAC random seed (change it on restart). device (str): device of the returned tensors.</p>
-<p>Returns:</p>
-<p>R (3,3) torch.Tensor (on device), t (3,) torch.Tensor,</p>
-<p>info dict: {&quot;n_corr&quot; (number of correspondences), &quot;inliers&quot; (number of inliers), &quot;inlier_ratio&quot;,</p>
-<p>&quot;fitness&quot; (all-point fitness = the criterion for choosing among restarts), &quot;rmse&quot; (inlier RMSE),</p>
-<p>&quot;inlier_thr&quot;, &quot;src_corr&quot;,&quot;dst_corr&quot; (correspondence indices)}.</p>
-<p>Notes (honest): FPFH is coarse registration; under hard conditions of independent sampling + noise + partial overlap a rotation error of a few degrees remains (measured: with 62° rotation, overlap ~64% and noise 0.5× resolution, after RANSAC the median is ~4.4°, ~90% are &lt;8°, and the remaining ~10% sit at the 8-9° boundary. Tightening with ICP brings 100% to &lt;8° with a median of ~0.5°). Once the noise is on the order of the point spacing (resolution) or larger, the normals and angular features break down and the descriptor loses its discriminative power (measured: the success rate drops at noise ≥1.0× resolution). RANSAC is randomised, so in practice restart it a few times and take the result with the largest info[&quot;fitness&quot;].</p>
+<p style="margin:2px 0 2px 12px">1) Voxel downsampling (independent sampling 2 Align the vicinity of clouds to a common resolution. (Required preprocessing that greatly affects the correct response rate of FPFH).</p>
+<p style="margin:2px 0 2px 12px">2) Normal estimation (local PCA). If you pass src_normals/dst_normals, it will be used.</p>
+<p style="margin:2px 0 2px 12px">3) FPFH descriptor (SPFH → distance weight synthesis).</p>
+<p style="margin:2px 0 2px 12px">4) Descriptor NN match (mutual + ratio).</p>
+<p style="margin:2px 0 2px 12px">5) RANSAC: 3-point sample → edge-length matched prefilter → Kabsch → <b>All-point fitness</b> (src convert all points and dst the rate at which the nearest neighbor falls within the threshold). Compatible (~100 points) only Scoring tends to be fixed on incorrect postures, so it is made robust with all-point fitness.</p>
+<p style="margin:2px 0 2px 12px">6) Refit with the corresponding inlier for the best posture.</p>
+<p>Arguments:</p>
+<p>src (N,3), dst (M,3): Two point groups to align (numpy/torch).</p>
+<p>src_normals, dst_normals ((N,3)/(M,3) or None): Prior normals. If None, internal estimation</p>
+<p>(However, when voxel_size&gt;0, the coordinates change, so it is always re-estimated).</p>
+<p>voxel_size (float or None): Downsample side length. Automatically adopts DST resolution x 2.5 with None.</p>
+<p>Disable with 0 (remains raw point cloud; not recommended for independent sampling).</p>
+<p>normal_k (int): Number of neighbors for normal estimation.</p>
+<p>feature_k (int): Number of neighbors of FPFH (the larger the number, the more stable and discriminative the descriptor is. Around 60 is recommended).</p>
+<p>n_bins (int): Number of histogram bins per feature (descriptor dimension = 3*n_bins).</p>
+<p>ransac_iters (int): RANSAC iteration number.</p>
+<p>inlier_thr (float or None): Inlier distance threshold. None (after downsampling) resolution x 3.</p>
+<p>edge_sim (float): Tolerance of triple edge length ratio (0&lt;edge_sim&lt;=1, closer to 1 is stricter).</p>
+<p>mutual (bool): Mutual nearest neighbor filter. ratio (float or None): Lowe ratio.</p>
+<p>seed (int): RANSAC random number seed (change at restart). device (str): device of return tensor.</p>
+<p>Return value:</p>
+<p>R (3,3) torch.Tensor(on device), t (3,) torch.Tensor,</p>
+<p>info dict: {&quot;n_corr&quot;(number of correspondences), &quot;inliers&quot;(number of inliers), &quot;inlier_ratio&quot;,</p>
+<p>&quot;fitness&quot; (all-point fitness = restart selection index), &quot;rmse&quot; (inlier RMSE),</p>
+<p>&quot;inlier_thr&quot;, &quot;src_corr&quot;, &quot;dst_corr&quot; (corresponding index)}.</p>
+<p>Note (honest): FPFH is coarse registration, independent sampling + noise + partial overlap Under difficult conditions, a rotation error of several degrees remains (actual measurement: 62° rotation, overlap ~64%, noise 0.5 × resolution) Post-RANSAC median ~4.4°, ~90% &lt;8°, remaining ~10% bordering 8-9°. 100% when tightened with ICP &lt;8°, median ~0.5°). When the noise becomes equal to or higher than the point spacing (resolution), the normal and corner features become The collapsed descriptor loses its discriminative power (actual measurement: success rate decreases when noise ≥ 1.0 × resolution). RANSAC is random selection Therefore, in actual operation, it is recommended to restart several times and take the maximum result info[&quot;fitness&quot;].</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — Why matrix decompositions are slow — BLAS threads, caches, memory layout</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

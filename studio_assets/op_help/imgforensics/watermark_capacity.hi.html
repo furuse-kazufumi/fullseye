@@ -4,14 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.watermark_capacity(image, bits, strengths=(0.02, 0.05, 0.1, 0.2, 0.4), wavelet: &#x27;str&#x27; = &#x27;haar&#x27;, level: &#x27;int&#x27; = 1, jpeg_quality=None) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imgforensics; imgforensics.watermark_capacity(image, bits, strengths=(0.02, 0.05, 0.1, 0.2, 0.4), wavelet: &#x27;str&#x27; = &#x27;haar&#x27;, level: &#x27;int&#x27; = 1, jpeg_quality=None) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsimgforensics.get(&quot;watermark_capacity&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>embedding की शक्ति और <b>PSNR / BER</b> के trade-off को sweep करके लौटाता है। <code style="color:#22d3bf">table</code>।</p>
-<p>हर <code style="color:#22d3bf">strength</code> के लिए यह वास्तव में embed → extract चलाता है, और लौटाता है</p>
-<p><code style="color:#22d3bf">psnr_db</code>  मूल और watermarked image के बीच PSNR (मान range [0, 1] आधार, <code style="color:#22d3bf">MAX=1</code>)</p>
-<p><code style="color:#22d3bf">ber</code>      extraction की bit error rate (<code style="color:#22d3bf">hash_distance</code> से गिनी गई)</p>
-<p><code style="color:#22d3bf">clipped</code>  watermarked image के pixels का वह अंश जो [0, 1] से बाहर जाता है।</p>
-<p><b>save करते समय overflow हमेशा खो जाता है</b>, इसलिए केवल PSNR देखकर strength बढ़ाने से</p>
-<p>&quot;वह गिरावट जिसे आपने मापा नहीं&quot; बढ़ती है</p>
-<p>यदि <code style="color:#22d3bf">jpeg_quality</code> में कोई quality दी जाए, तो <code style="color:#22d3bf">ber_jpeg</code>, जो watermarked image को <b>असली JPEG</b> से गुज़ारने के बाद निकाला जाता है, भी शामिल होता है (Pillow आवश्यक। छोड़ने पर वह column पूरी तरह अनुपस्थित रहता है —— यह default रूप से नहीं चलता, ताकि लौटाए गए columns environment के साथ न बदलें)।</p>
-<p>आउटपुट <code style="color:#22d3bf">{&quot;capacity_bits&quot;: int, &quot;n_bits&quot;: int, &quot;rows&quot;: [...], &quot;caveats&quot;: [...]}</code> है।</p>
+<p>वास्तव में प्रत्येक शक्ति के लिए एंबेड → एक्सट्रैक्ट चलाएं,</p>
+<p>psnr_db मूल छवि और वॉटरमार्क छवि का PSNR (श्रेणी [0, 1] मानक, MAX=1) ber निष्कर्षण की बिट त्रुटि दर (hash_distance द्वारा गिना गया) क्लिप किया गया&#x27;&#x27; वॉटरमार्क वाली छवि में पिक्सेल का प्रतिशत जो [0, 1] के बाहर आता है।</p>
+<p>बचाते समय ओवरहैंग हमेशा खो जाएगा, इसलिए ताकत केवल पीएसएनआर को देखकर ही निर्धारित की जा सकती है।</p>
+<p>यदि आप इसे बढ़ाते हैं, तो &quot;अनियंत्रित गिरावट&quot; बढ़ जाएगी।</p>
+<p>गुणवत्ता को jpeg_quality में पास करने से वॉटरमार्क वाली छवि वास्तविक JPEG से होकर गुजर जाएगी और फिर निकाला गया ber_jpeg भी शामिल है (तकिया आवश्यक है। यदि छोड़ा गया है, तो पूरा कॉलम शामिल नहीं किया जाएगा। (यह सुनिश्चित करने के लिए डिफ़ॉल्ट रूप से नहीं चलाया जाता है कि लौटाए गए कॉलम पर्यावरण के आधार पर नहीं बदलते हैं)।</p>
+<p>रिटर्न {&quot;capacity_bits&quot;: int, &quot;n_bits&quot;: int, &quot;rows&quot;: [...], &quot;caveats&quot;: [...], &quot;ll_shape&quot;: tuple}।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

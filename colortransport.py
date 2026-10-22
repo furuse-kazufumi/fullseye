@@ -523,7 +523,7 @@ def transport_cost(plan, cost):
 
     計画は「行和・列和が周辺分布に一致する」という意味を持つ行列で、普通の
     ``matrix`` として扱うと質量保存が黙って壊れる。ここは計画としての検査
-    (非負・和が 1 前後)を通してから費用を出す。
+    (非負・有限)を通してから費用を出す。質量の合計は制限しない。
     """
     p = np.asarray(plan, dtype=np.float64)
     c = np.asarray(cost, dtype=np.float64)

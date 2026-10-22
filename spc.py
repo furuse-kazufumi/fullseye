@@ -556,7 +556,7 @@ def msa_anova_table(table, part="part", operator="operator", value="value"):
     こと(升目ごとの繰り返し数が同じ)——釣り合っていなければ拒む。
 
     返りは source / ss / df / ms / f / p の 6 列と ``n_parts`` / ``n_operators`` /
-    ``n_replicates``。``f`` と ``p`` は測定者と交互作用を
+    ``n_replicates``。``f`` と ``p`` は部品と測定者を
     交互作用平均平方で、交互作用を誤差平均平方で検定した値(規格の慣行)。
 
     ★門にできる厳密な恒等式: ``ss_total == ss_part + ss_oper + ss_inter + ss_err``。

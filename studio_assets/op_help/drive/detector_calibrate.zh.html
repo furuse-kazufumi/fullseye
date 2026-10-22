@@ -4,15 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.detector_calibrate(image, d_spacings, geometry_guess, n_azimuth=180, fit_tilt=True, min_rings=2)</code>(要直接调用实现,<code style="color:#22d3bf">import pxrd; pxrd.detector_calibrate(image, d_spacings, geometry_guess, n_azimuth=180, fit_tilt=True, min_rings=2)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;detector_calibrate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由已知标准样品(如 Si)的衍射环标定探测器的中心、距离与倾斜。</p>
-<p><code style="color:#22d3bf">d_spacings</code> 为标准晶面间距 [Å] 的 list(不必按强度排序),<code style="color:#22d3bf">geometry_guess</code> 中至少放入 <code style="color:#22d3bf">pixel</code> 和</p>
-<p><code style="color:#22d3bf">wavelength</code>,若已知则还放入 <code style="color:#22d3bf">cx</code>、<code style="color:#22d3bf">cy</code>、<code style="color:#22d3bf">distance</code>、<code style="color:#22d3bf">tilt</code>、<code style="color:#22d3bf">tilt_dir</code>。步骤:</p>
-<p style="margin:2px 0 2px 12px">1. 若无中心,则从亮像素的重心开始,沿射线拾取最强的环,用圆拟合将中心更新 3 次。</p>
-<p style="margin:2px 0 2px 12px">2. 若无距离,则将径向剖面的第一个峰与 d 的候选(从小 2θ 起 4 条)匹配,选择其他环的预测与观测峰一致最多的组合。</p>
-<p style="margin:2px 0 2px 12px">3. 用当前几何在 <code style="color:#22d3bf">n_azimuth</code> 条射线上预测各环位置,以窗口内强度的重心拾取点, 用 <code style="color:#22d3bf">scipy.optimize.least_squares</code> 以 2θ 残差 [deg] 拟合 <code style="color:#22d3bf">(cx, cy, distance, tilt の 2 成分)</code>。边缩小窗口边进行 3 次。倾斜用旋转向量的 2 个分量 <code style="color:#22d3bf">tilt·(cos φ, sin φ)</code> 求解(避免倾斜为 0 时 φ 不定的奇点)。</p>
-<p>返回值(dict): 在几何参数(<code style="color:#22d3bf">cx</code>、<code style="color:#22d3bf">cy</code>、<code style="color:#22d3bf">distance</code>、<code style="color:#22d3bf">pixel</code>、<code style="color:#22d3bf">wavelength</code>、<code style="color:#22d3bf">tilt</code>、<code style="color:#22d3bf">tilt_dir</code>)基础上</p>
-<p>增加 <code style="color:#22d3bf">rms_two_theta_deg</code>、<code style="color:#22d3bf">n_points</code>、<code style="color:#22d3bf">n_rings</code>、<code style="color:#22d3bf">rings_deg</code>、<code style="color:#22d3bf">ok</code>(rms 小于 1/4 像素对应的角度 <code style="color:#22d3bf">0.25·pixel/distance</code></p>
-<p>且环数 &gt;= <code style="color:#22d3bf">min_rings</code>)。</p>
-<p>Raises ValueError: 图像不是 2-D、一个 d 都没有、缺少 pixel / wavelength、找不到 <code style="color:#22d3bf">min_rings</code> 个环。</p>
+<p><code style="color:#22d3bf">d_spacings</code> 是标准间距 [Å] 的列表（不一定按强度顺序），<code style="color:#22d3bf">geometry_guess</code> 至少是 <code style="color:#22d3bf">pixel</code> 并且</p>
+<p><code style="color:#22d3bf">波长</code>，如果已知，<code style="color:#22d3bf">cx</code>，<code style="color:#22d3bf">cy</code>，<code style="color:#22d3bf">距离</code>，<code style="color:#22d3bf">倾斜</code>，<code style="color:#22d3bf">tilt_dir</code>。步骤：</p>
+<p>1、如果没有中心，则从亮像素的重心开始，沿射线拾取最强的环，通过拟合圆来更新中心3次。</p>
+<p style="margin:2px 0 2px 12px">2. 如果没有距离，则将径向轮廓的第一个峰值分配给 d 的候选值（最小 2θ 中的四个），并将它们与其他环的预测进行比较。选择匹配观测值数量最多的对。</p>
+<p style="margin:2px 0 2px 12px">3. 预测当前几何中“n_azimuth”射线上每个环的位置，在窗口中的强度重心处选取一个点，使用 scipy.optimize.least_squares 来猜测（cx、cy、距离、倾斜的两个分量）和 2θ 残差 [deg]。窗户契约时4次。使用旋转矢量“tilt·(cos φ, sin φ)”的两个分量求解倾斜（避免当斜率为 0 时 φ 变得不确定的奇点）。</p>
+<p>返回值（dict）：Geometry（<code style="color:#22d3bf">cx</code>，<code style="color:#22d3bf">cy</code>，<code style="color:#22d3bf">distance</code>，<code style="color:#22d3bf">pixel</code>，<code style="color:#22d3bf">wavelength</code>，<code style="color:#22d3bf">tilt</code>，<code style="color:#22d3bf">tilt_dir</code>）</p>
+<p><code style="color:#22d3bf">rms_two_theta_deg</code>・<code style="color:#22d3bf">n_points</code>・<code style="color:#22d3bf">n_rings</code>・<code style="color:#22d3bf">rings_deg</code>・<code style="color:#22d3bf">ok</code>（rms 小于 <code style="color:#22d3bf">0.25·像素/距离</code></p>
+<p>和环 &gt;= <code style="color:#22d3bf">min_rings</code>）。</p>
+<p>引发 ValueError：图像不是 2-D，没有 d，没有像素/波长，未找到“min_rings”环。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

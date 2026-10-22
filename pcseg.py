@@ -397,9 +397,9 @@ def region_growing(points, normals=None, angle_deg: float = 15.0,
                    curv_thresh: float = 0.1, k: int = 16):
     """Smoothness-constraint region growing (Rabbani 2006).
 
-    Grows regions from low-curvature seeds, adding a neighbour when its normal is
-    within *angle_deg* of the seed region's and its curvature is below
-    *curv_thresh*. Segments a cloud into smooth surface patches — e.g. separating
+    Grows regions from low-curvature seeds. A neighbour is labelled when its normal is
+    within *angle_deg* of the current point's; it is expanded further only when its
+    curvature is below *curv_thresh*. Segments a cloud into smooth surface patches — e.g. separating
     the several faces of a box, or floor vs. ramp. Returns integer labels (N,) in
     ``[0, n_regions)``; every point is assigned (a high-curvature/isolated point no
     region grows into becomes its own singleton region, so rough areas fragment —

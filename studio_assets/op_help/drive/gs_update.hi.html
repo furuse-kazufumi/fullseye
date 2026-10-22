@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gs_update(gs: &#x27;dict&#x27;, world: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import gsplatnp; gsplatnp.gs_update(gs: &#x27;dict&#x27;, world: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;gs_update&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>world के <b>वर्तमान</b> vertices से Gaussians के केंद्र और दिशाएँ फिर से गणना करता है (in place बदलता है, वही dict लौटाता है)।</p>
-<p>μ = Σ_k bary_k · V[F[face, k]] + R · offset_local, R = फलक के स्थानीय निर्देशांक [t1 t2 n]। जिस world में फलकों की संख्या बनाते समय से भिन्न हो, वह ValueError उठाता है (वस्तुएँ जोड़े या हटाए गए world पर उपयोग नहीं हो सकता: दोबारा बनाएँ)। दृढ़ रूप से हिलाई गई वस्तु के Gaussian उसी दृढ़ रूपांतरण से हिलते हैं (gate)।</p>
-<p>खाली इनपुट (<code style="color:#22d3bf">gs</code> खाली dict) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
+<p>μ = Σ_k bary_k · V[F[चेहरा, k]] + R · ऑफसेट_लोकल, R = चेहरे के स्थानीय निर्देशांक [t1 t2 n]। चेहरा <code style="color:#22d3bf">gs[&quot;face&quot;]</code> द्वारा इंगित किया गया है वैल्यूएरर यदि यह वर्तमान दुनिया में मौजूद नहीं है। भले ही अंत में एक सतह जोड़ दी जाए, यदि मौजूदा सतह संख्या वैध है तो इसे अद्यतन किया जा सकता है। किसी कठोर पिंड द्वारा गतिमान वस्तु का गॉसियन उसी कठोर पिंड परिवर्तन (गेट) के साथ चलता है।</p>
+<p>खाली इनपुट (खाली <code style="color:#22d3bf">जीएस</code> के साथ निर्देश) वैल्यूएरर बढ़ाता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

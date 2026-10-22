@@ -31,7 +31,7 @@ PNG に保存し直された / 貼り付けられた画像でも「元は JPEG �
                     bool。**「JPEG である」証明ではない**(下記 caveats)
 ``quality``         推定品質 1..100(櫛が無ければ ``None``)
 ``table``           推定した ``(8, 8)`` の量子化ステップ(0 = 推定できず)
-``n_quantized``     櫛が立った係数の数 / ``n_coeff``
+``n_quantized``     DC を除く ``n_tested = n_coeff - 1`` 係数のうち櫛が立った生の個数
 ``fit_error``       選ばれた品質の標準表との平均絶対差
 ``caveats``         この数値が言えないこと
 
