@@ -7,7 +7,7 @@ out: image2d
 examples: [poc_laser_line_speckle_floor]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.2  # fullseye lib version this note was generated for
+version: 0.8.0  # fullseye lib version this note was generated for
 ---
 
 # speckle_field — OPTICS `coherent` op
