@@ -7,6 +7,8 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- 12 演算子と domain・blob・型付き演算子について、正常な空結果、NaN 障害、入力型の取り違え、厳密／既定フォールバック経路を区別する fault-injection gate を追加した。
+
 - 失敗と正常な空結果の監査台帳を追加し、domain 操作で不正な型、形状、NaN/inf を専用例外として通知するようにした。
 
 - 逆離散ウェーブレット変換の合成を係数ごとのスライス加算に変え、出力と加算順を保ったまま添字散布行列を除いた。
