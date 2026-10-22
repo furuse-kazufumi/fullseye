@@ -7,7 +7,7 @@
 <p>पृथ्वी के केंद्र पर मूल वाला दाएँ-हाथ का system, जिसमें x भूमध्यरेखीय तल में prime meridian की ओर, y 90 degrees पूर्व देशांतर पर, और z उत्तरी ध्रुव पर है। जब terrain को &quot;पृथ्वी के केंद्र से देखे गए coordinates&quot; में संभालना हो तब का entry point।</p>
 <p><b>WGS84 ellipsoid</b> पर गणना की जाती है, गोले पर नहीं —— गोलाकार सन्निकटन (approximation) 45 degrees अक्षांश के आसपास 21 km तक विचलित होता है (क्योंकि ध्रुवीय radius भूमध्यरेखीय radius से छोटी है)।</p>
 <p>Args:</p>
-<p>lat_deg / lon_deg: अक्षांश और देशांतर [degrees]। Arrays अनुमत (समान shape)।</p>
+<p>lat_deg / lon_deg: अक्षांश और देशांतर [degrees]। परस्पर broadcast-compatible shapes के arrays अनुमत हैं।</p>
 <p>height_m: ellipsoidal ऊँचाई [m]। Scalar या array।</p>
 <p>Returns:</p>
 <p><code style="color:#22d3bf">(N, 3)</code> ECEF coordinates [m]；input के broadcast परिणाम को समतल किया जाता है।</p>

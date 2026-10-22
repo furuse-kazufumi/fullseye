@@ -1985,7 +1985,7 @@ def rounded_rect(img, rect, radius=8, color="neutral", width=2, fill=False,
     Raises
     ------
     ValueError
-        矩形が画像の外、radius が負か辺の半分を超える、alpha が [0,1] の外。
+        矩形が画像の外、radius が非有限・負・辺の半分を超える、alpha が [0,1] の外。
 
     描画: 画素中心から「角を丸めた矩形」までの距離で内側判定し、``fill=False``
     なら外周から ``max(1, width)`` px 幅の帯だけを載せる(距離判定の 1 段階、
@@ -2008,7 +2008,7 @@ def rounded_rect(img, rect, radius=8, color="neutral", width=2, fill=False,
     x, y, w, h = _rect(rect)
     _check_inside(a, (x, y, w, h), name="rect", what="rounded rectangle")
     r = float(radius)
-    if r < 0:
+    if not np.isfinite(r) or r < 0:
         raise ValueError(f"radius must be >= 0 (got: {radius})")
     if r > min(w, h) / 2.0:
         raise ValueError(f"radius {r} exceeds half of the shorter side ({min(w, h) / 2.0})")
@@ -2022,10 +2022,9 @@ def rounded_rect(img, rect, radius=8, color="neutral", width=2, fill=False,
     inside = (xx >= x) & (xx <= x1) & (yy >= y) & (yy <= y1) & (d <= r + 1e-9)
     if fill:
         m = inside
-    elif r == 0.0:
-        m = inside & _rect_ring(xx, yy, x, y, x1, y1, width, r)
     else:
-        m = (inside & (d >= r - max(1.0, float(width)) + 1e-9)) | (
+        corner = (xx != cx) & (yy != cy)
+        m = (inside & corner & (d >= r - max(1.0, float(width)) + 1e-9)) | (
             inside & _rect_ring(xx, yy, x, y, x1, y1, width, r))
     return _blend(a, m.astype(np.float64), _channel_color(a, color, scheme), alpha)
 
