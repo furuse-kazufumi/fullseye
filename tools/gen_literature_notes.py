@@ -104,7 +104,11 @@ CORPORA = {
 
 #: 厳選の層: 名前 → repo 内の目録(手で書いた JSON)。生のコーパス(v2 の階層なし)から論文を人が選ぶ。
 CURATED = {
+    "convergent_numerics_light_transport": "docs/literature/curated/convergent_numerics_light_transport.json",
+    "electron_microscopy": "docs/literature/curated/electron_microscopy.json",
+    "industrial_optical_sensing": "docs/literature/curated/industrial_optical_sensing.json",
     "optical_metrology": "docs/literature/curated/optical_metrology.json",
+    "sensitivity_uq_calibration": "docs/literature/curated/sensitivity_uq_calibration.json",
 }
 
 #: 知識のテーマ(クラスタ名・葉の名前に出る語)→ 使う op と、その理由。**op 名は生成時に実在を検証**する。
@@ -740,7 +744,7 @@ def load_manifest(repo: str, name: str) -> dict:
     if not os.path.isfile(path):
         raise SystemExit("curated manifest not found: %s (fail-closed)" % CURATED[name])
     man = json.load(open(path, encoding="utf-8"))
-    for key in ("name", "corpus", "title", "what", "why", "axes"):
+    for key in ("name", "corpus", "title", "what", "why", "selection_rule", "axes"):
         if key not in man:
             raise SystemExit("%s: manifest key %r missing (fail-closed)" % (CURATED[name], key))
     if man["name"] != name:
