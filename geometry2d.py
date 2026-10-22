@@ -172,11 +172,18 @@ def area_intersection_rectangle2(row1, col1, phi1, l1a, l1b,
                                  method: str = "exact") -> float:
     """Return the intersection area of two oriented rectangles.
 
-    ``method="exact"`` (the default) clips the two convex polygons.  When the
-    representative length is outside ``[2**-20, 2**20]``, it first translates
-    both rectangles to their common midpoint and divides coordinates by a
-    nearby power of two.  Thus the clipping tolerance is relative to the
-    geometry and a positive tiny intersection is not mistaken for contact.
+    ``method="exact"`` (the default) translates the rectangles to their common
+    midpoint, normalizes all lengths by the largest half-side, then clips the
+    two convex polygons.  Its inside tolerance is eight floating-point ulps
+    relative to the edge and point distances; an exact separating-axis test
+    still makes edge/corner contact and every representable positive gap have
+    area zero.  Containment is evaluated analytically, so nested rectangles
+    retain the smaller area down to the floating-point range.  The final area
+    is multiplied in two guarded steps; it is zero or infinity only when the
+    mathematical result is outside the binary64 range.
+    Crossing needles whose normalized thickness is below one ulp remain a
+    precision limit and may return zero even when their exact overlap is
+    positive; analytic containment does not have this limitation.
     ``method="grid"`` is a selectable sampling approximation.  For identical
     half-side-one squares at angle pi/4 its measured absolute error is 0.13333
     at ``n=60`` and 0.01333 at ``n=600``.  Touching edges and zero half-lengths
@@ -184,6 +191,12 @@ def area_intersection_rectangle2(row1, col1, phi1, l1a, l1b,
     """
     if method not in {"grid", "exact"}:
         raise ValueError("method must be 'grid' or 'exact'")
+
+    values = (row1, col1, phi1, l1a, l1b,
+              row2, col2, phi2, l2a, l2b)
+    if not all(np.isfinite(value) for value in values):
+        from fslib import FsValueError
+        raise FsValueError("area_intersection_rectangle2: non-finite input")
 
     def vertices(r, c, phi, la, lb):
         cp, sp = np.cos(phi), np.sin(phi)
@@ -197,45 +210,120 @@ def area_intersection_rectangle2(row1, col1, phi1, l1a, l1b,
         if min(l1a, l1b, l2a, l2b) <= 0:
             return 0.0
 
-        distance = float(np.hypot(row2 - row1, col2 - col1))
-        representative = max(l1a, l1b, l2a, l2b, distance)
-        _, exponent = np.frexp(representative)
-        rescale = exponent - 1 < -20 or exponent - 1 > 20
-        if rescale:
-            length_scale = float(np.ldexp(1.0, exponent - 1))
-            origin_row = 0.5 * row1 + 0.5 * row2
-            origin_col = 0.5 * col1 + 0.5 * col2
-            exact_args = (
-                (row1 - origin_row) / length_scale,
-                (col1 - origin_col) / length_scale,
-                phi1, l1a / length_scale, l1b / length_scale,
-                (row2 - origin_row) / length_scale,
-                (col2 - origin_col) / length_scale,
-                phi2, l2a / length_scale, l2b / length_scale,
-            )
+        # Subtract before constructing vertices: centre +/- half-side loses the
+        # half-side outright when a perfectly ordinary rectangle is far away.
+        origin_row = 0.5 * row1 + 0.5 * row2
+        origin_col = 0.5 * col1 + 0.5 * col2
+        row_delta, col_delta = row2 - row1, col2 - col1
+        if np.isfinite(row_delta):
+            r1, r2 = -0.5 * row_delta, 0.5 * row_delta
         else:
-            length_scale = 1.0
-            exact_args = (row1, col1, phi1, l1a, l1b,
-                          row2, col2, phi2, l2a, l2b)
+            r1, r2 = row1 - origin_row, row2 - origin_row
+        if np.isfinite(col_delta):
+            c1, c2 = -0.5 * col_delta, 0.5 * col_delta
+        else:
+            c1, c2 = col1 - origin_col, col2 - origin_col
+
+        # Overflow-safe circumcircle rejection.  Scaling by the largest item
+        # keeps both the centre separation and radii finite.
+        sep_scale = max(abs(r1), abs(c1), abs(r2), abs(c2),
+                        l1a, l1b, l2a, l2b)
+        sr1, sc1, sr2, sc2 = (r1 / sep_scale, c1 / sep_scale,
+                              r2 / sep_scale, c2 / sep_scale)
+        distance = float(np.hypot(sr2 - sr1, sc2 - sc1))
+        radii = (float(np.hypot(l1a / sep_scale, l1b / sep_scale)) +
+                 float(np.hypot(l2a / sep_scale, l2b / sep_scale)))
+        if distance > radii:
+            return 0.0
+
+        length_scale = max(l1a, l1b, l2a, l2b)
+        exact_args = (r1 / length_scale, c1 / length_scale,
+                      phi1, l1a / length_scale, l1b / length_scale,
+                      r2 / length_scale, c2 / length_scale,
+                      phi2, l2a / length_scale, l2b / length_scale)
+
+        def axes(phi):
+            cp, sp = float(np.cos(phi)), float(np.sin(phi))
+            return (np.array([cp, sp]), np.array([-sp, cp]))
+
+        centre1 = np.array([exact_args[1], exact_args[0]])
+        centre2 = np.array([exact_args[6], exact_args[5]])
+        axes1, axes2 = axes(phi1), axes(phi2)
+        delta = centre2 - centre1
+
+        def radius_on(axis, rect_axes, la, lb):
+            return la * abs(float(np.dot(axis, rect_axes[0]))) + \
+                   lb * abs(float(np.dot(axis, rect_axes[1])))
+
+        # The four rectangle normals form an exact separating-axis test.
+        for axis in axes1 + axes2:
+            reach1 = radius_on(axis, axes1, exact_args[3], exact_args[4])
+            reach2 = radius_on(axis, axes2, exact_args[8], exact_args[9])
+            if abs(float(np.dot(delta, axis))) >= reach1 + reach2:
+                return 0.0
+
+        def contains(host_centre, host_axes, ha, hb,
+                     inner_centre, inner_axes, ia, ib):
+            d = inner_centre - host_centre
+            return all(abs(float(np.dot(d, axis))) +
+                       radius_on(axis, inner_axes, ia, ib) <= half
+                       for axis, half in zip(host_axes, (ha, hb)))
+
+        def restore_area(area_normalized):
+            # This order avoids forming S**2, which can overflow or underflow
+            # even when the final result is representable.
+            with np.errstate(over="ignore", under="ignore"):
+                return float((area_normalized * length_scale) * length_scale)
+
+        if contains(centre1, axes1, exact_args[3], exact_args[4],
+                    centre2, axes2, exact_args[8], exact_args[9]):
+            with np.errstate(over="ignore", under="ignore"):
+                return float((4.0 * min(l2a, l2b)) * max(l2a, l2b))
+        if contains(centre2, axes2, exact_args[8], exact_args[9],
+                    centre1, axes1, exact_args[3], exact_args[4]):
+            with np.errstate(over="ignore", under="ignore"):
+                return float((4.0 * min(l1a, l1b)) * max(l1a, l1b))
+
+        # Parallel rectangles have a closed-form interval intersection.  Apart
+        # from being faster, this preserves very shallow representable overlap
+        # without polygon-coordinate cancellation.
+        if phi1 == phi2:
+            cp, sp = float(np.cos(phi1)), float(np.sin(phi1))
+            dc, dr = col2 - col1, row2 - row1
+            du = dc * cp + dr * sp
+            dv = -dc * sp + dr * cp
+            overlap_u = max(0.0, min(l1a, du + l2a) - max(-l1a, du - l2a))
+            overlap_v = max(0.0, min(l1b, dv + l2b) - max(-l1b, dv - l2b))
+            contact_tol = 8 * np.finfo(float).eps * max(l1a, l1b, l2a, l2b)
+            if overlap_u <= contact_tol or overlap_v <= contact_tol:
+                return 0.0
+            return float(overlap_u * overlap_v)
+
         subject = vertices(*exact_args[:5])
         clip = vertices(*exact_args[5:])
-        eps = np.finfo(float).eps * 64
+        eps_rel = np.finfo(float).eps * 8
         for a, b in zip(clip, clip[1:] + clip[:1]):
             edge = b - a
             def side(p):
                 return edge[0] * (p[1] - a[1]) - edge[1] * (p[0] - a[0])
+            def is_inside(p, value):
+                return value >= -eps_rel * np.hypot(*edge) * np.hypot(*(p - a))
             old, subject = subject, []
             if not old:
                 break
             prev, prev_side = old[-1], side(old[-1])
             for cur in old:
                 cur_side = side(cur)
-                if cur_side >= -eps:
-                    if prev_side < -eps:
-                        subject.append(prev + (cur - prev) * prev_side / (prev_side - cur_side))
+                cur_inside = is_inside(cur, cur_side)
+                prev_inside = is_inside(prev, prev_side)
+                if cur_inside:
+                    if not prev_inside:
+                        t = float(np.clip(prev_side / (prev_side - cur_side), 0.0, 1.0))
+                        subject.append(prev + (cur - prev) * t)
                     subject.append(cur)
-                elif prev_side >= -eps:
-                    subject.append(prev + (cur - prev) * prev_side / (prev_side - cur_side))
+                elif prev_inside:
+                    t = float(np.clip(prev_side / (prev_side - cur_side), 0.0, 1.0))
+                    subject.append(prev + (cur - prev) * t)
                 prev, prev_side = cur, cur_side
         if len(subject) < 3:
             return 0.0
@@ -243,7 +331,7 @@ def area_intersection_rectangle2(row1, col1, phi1, l1a, l1b,
         p = p - p[0]
         area = 0.5 * abs(np.dot(p[:, 0], np.roll(p[:, 1], -1)) -
                          np.dot(p[:, 1], np.roll(p[:, 0], -1)))
-        return float(area * length_scale * length_scale)
+        return restore_area(area)
 
     def inside(pts, r, c, phi, la, lb):
         d = pts - [r, c]
