@@ -64,6 +64,8 @@ CHAIN = [
     (["tools/gen_op_catalog.py"], "1 ページの op カタログ"),
     (["tools/gen_capabilities_index.py"], "能力索引(docs/capabilities/*.md から)"),
     (["tools/gen_hardening_index.py"], "堅牢性台帳"),
+    # 入力は公開 op のモジュールの原文だけ(他の段の生成物を読まない)。
+    (["tools/audit_fallbacks.py"], "失敗と空結果の棚卸し docs/fallback_audit.json(H16、--check で drift)"),
     (["tools/gen_maturity.py"], "成熟度台帳(生成物 + 機械可読 JSON)"),
     # ★展示館より**先**に回す —— 生成器は見出しに収蔵番号を出すので、
     #   未発行の展示が 1 つでもあると BuildError で止まる。
@@ -139,6 +141,7 @@ OUTPUTS = {
     "tools/gen_op_catalog.py": ["docs/OP_CATALOG.md", "fullseye/OP_CATALOG.md"],
     "tools/gen_capabilities_index.py": ["docs/CAPABILITIES.md", "docs/CAPABILITIES.*.md"],
     "tools/gen_hardening_index.py": ["docs/HARDENING.md", "docs/HARDENING.*.md"],
+    "tools/audit_fallbacks.py": ["docs/fallback_audit.json"],
     "tools/gen_maturity.py": ["docs/MATURITY.md", "docs/maturity.json"],
     "tools/gen_exhibit_numbers.py": ["docs/articles/exhibits/exhibit_numbers.json"],
     "tools/gen_wingpoc_gallery.py": ["docs/articles/exhibits/wingpoc.*.md",
