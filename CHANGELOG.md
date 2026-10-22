@@ -7,6 +7,12 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### 追加 — 材料の音響物性と自由キャリア吸収
+
+- 超音波計算の 7 材料について、密度・縦波音速・減衰・音響インピーダンスと出典を材料レコードへ統合しました。
+- `material_acoustic` と `acoustic_impedance_mismatch` を追加しました。
+- `material_transmittance` に任意のキャリア密度と型を渡し、Si の固有吸収へ既存の自由キャリア吸収を合成できるようにしました。指定しない場合の結果は変わりません。
+
 - 修正: 外れ値や定数で崩れていた NCC の窓検出。
 - 修正: NCC モデルの subnormal スケール。
 

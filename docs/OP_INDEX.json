@@ -1,8 +1,8 @@
 {
- "n_ops": 3531,
+ "n_ops": 3533,
  "tiers": {
   "color": 12,
-  "ledger": 2572,
+  "ledger": 2574,
   "nary": 17,
   "registry": 930
  },
@@ -408,6 +408,17 @@
    "in_sorts": [
     "any"
    ]
+  },
+  {
+   "name": "acoustic_impedance_mismatch",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "matprop",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "acoustic_interface_coefficients",
@@ -16077,6 +16088,17 @@
    "halcon": "",
    "in_sort": null,
    "out_sort": "pairs",
+   "category": "matprop",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "material_acoustic",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
    "category": "matprop",
    "tier": "ledger",
    "ledger": "opsoptics",

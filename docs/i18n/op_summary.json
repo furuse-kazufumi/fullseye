@@ -14497,6 +14497,12 @@
    "de": "Reflexionsgrad R(λ) der Grenzfläche Luft–Material als pairs (λ [nm], R) (Fresnel, komplexer Index).",
    "hi": "air-से-material interface की reflectance R(λ) pairs (λ [nm], R) के रूप में (Fresnel, complex index)।"
   },
+  "optics/acoustic_impedance_mismatch": {
+   "fp": "94e6c000e29b", "en": "Return the acoustic-impedance mismatch at normal incidence between two materials.", "zh": "返回两种材料在垂直入射时的声阻抗失配。", "tw": "回傳兩種材料在垂直入射時的聲阻抗失配。", "ko": "두 재료의 수직 입사 음향 임피던스 불일치를 반환한다.", "de": "Gibt die akustische Impedanzfehlanpassung bei senkrechtem Einfall zwischen zwei Materialien zurück.", "hi": "दो materials के बीच सामान्य आपतन पर acoustic-impedance mismatch लौटाता है।"
+  },
+  "optics/material_acoustic": {
+   "fp": "6ca8e48be748", "en": "Return acoustic properties and provenance stored in a material record.", "zh": "返回材料记录中保存的声学属性和来源。", "tw": "回傳材料記錄中保存的聲學屬性與來源。", "ko": "재료 레코드에 저장된 음향 물성과 출처를 반환한다.", "de": "Gibt die in einem Materialdatensatz gespeicherten akustischen Eigenschaften und Quellen zurück.", "hi": "material record में संग्रहीत acoustic properties और provenance लौटाता है।"
+  },
   "optics/abbe_number": {
    "fp": "12d31951577d",
    "en": "Refractive indices at the Fraunhofer lines, Abbe numbers (d and e systems) and partial dispersion P_g,F.",

@@ -1,5 +1,5 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
-"""PoC: 材料の光学物性ライブラリ —— 硝材・結晶・半導体・金属・液体・プラスチック 86 種を 1 つの表にし、
+"""PoC: 材料の光学物性ライブラリ —— 光学・音響材料 89 種を 1 つの表にし、
 カタログ公表値と第二実装で採点する。
 
 【問い】観察用の光学系(レンズ・窓・鏡・膜)と観察対象(ウェハ・モールド・はんだ)は、どちらも材料の
@@ -155,7 +155,7 @@ def chapter_glass():
     cat = MT.material_table()
     print("   同梱 %d 材料: %s" % (len(cat), ", ".join("%s %d" % (c, sum(r["class"] == c for r in cat))
                                                    for c in MT.CLASSES[:-1])))
-    gate("同梱の材料は 86 種(硝材 46・結晶 12・半導体 6・膜 7・金属 10・液体 1・高分子 4)", len(cat) == 86
+    gate("同梱の材料は 89 種(光学 86 種と音響専用 3 種)", len(cat) == 89
          and sum(r["class"] == "glass" for r in cat) == 46)
     rec = MT.material_record("SI")
     print("   例: Si のレコード = %s、区間 %s" % (rec["class"], ", ".join("%s %s %.3g-%.3g µm (%s)" % (
@@ -472,10 +472,30 @@ def _refuses(fn) -> bool:
     return False
 
 
+def chapter_acoustic_and_doping():
+    """7 材料の音響表と、ドープ濃度を配線した Si 透過率を採点する。"""
+    print("\n7. 同じ材料レコードの音響物性とドープ Si の透過率")
+    names = ("water", "silicon", "sio2", "copper", "air", "polyimide", "epoxy_underfill")
+    acoustic = [MT.material_acoustic(name) for name in names]
+    gate("7 材料の密度・縦波音速・音響インピーダンスに出典がある",
+         all(r["acoustic_source"] and r["acoustic_impedance_mrayl"] ==
+             r["density_kg_m3"] * r["sound_speed_longitudinal_m_s"] / 1e6 for r in acoustic))
+    mismatch = MT.acoustic_impedance_mismatch("water", "silicon")
+    z1, z2 = mismatch["impedance1_mrayl"], mismatch["impedance2_mrayl"]
+    gate("水と Si の音響反射率はインピーダンス不整合の閉形式と一致",
+         mismatch["reflection"] == ((z2 - z1) / (z2 + z1)) ** 2)
+    doping = (0.0, 1e15, 1e18)
+    curves = [MT.material_transmittance("SI", 0.775, 1100, 1600, 101,
+                                       doping_cm3=None if n == 0 else n) for n in doping]
+    gate("775 µm Si の 1.2 µm 透過率はキャリア密度 0 → 1e15 → 1e18 cm⁻³ で単調減少",
+         _at(curves[0], 1200) > _at(curves[1], 1200) > _at(curves[2], 1200))
+    return acoustic, doping, curves
+
+
 # --------------------------------------------------------------------------- #
 # 図                                                                            #
 # --------------------------------------------------------------------------- #
-def make_figures(glass, si, mirror, plastic, agf, shared):
+def make_figures(glass, si, mirror, plastic, agf, shared, acoustic_doping):
     import matappear  # noqa: F401
     rows, gm = glass
     T, Ti, fc = si
@@ -603,6 +623,16 @@ def make_figures(glass, si, mirror, plastic, agf, shared):
                      for m, d in DATASET_R550.items()],
                     title="材料表の選定の誤り: W と Pt",
                     caption="同じ金属でも一次文献で反射率が 0.3 違う。表を 1 本に決めるなら、別の測定と突き合わせる門が要る。")
+    acoustic, doping, curves = acoustic_doping
+    figs.save_table("material_acoustic", ["材料", "密度 kg/m³", "縦波音速 m/s", "音響インピーダンス MRayl", "検証"],
+                    [[r["material"], "%.4g" % r["density_kg_m3"], "%.5g" % r["sound_speed_longitudinal_m_s"],
+                      "%.5g" % r["acoustic_impedance_mrayl"], "済" if r["verified"] else "代表値"] for r in acoustic],
+                    title="同じ材料レコードから引く音響物性 7 種",
+                    caption="音響インピーダンスは密度と縦波音速の積。未検証の代表値は表で明示し、既定では超音波計算に使わない。")
+    figs.save_plot("silicon_doped_transmittance",
+                   [("真性" if n == 0 else "%.0e cm⁻³" % n, c[:, 0], c[:, 1]) for n, c in zip(doping, curves)],
+                   xlabel="波長 [nm]", ylabel="透過率", title="775 µm Si: 自由キャリア濃度による透過率低下",
+                   ylim=(0.0, 0.6), caption="材料固有の k(λ)へ既存の λ² 自由キャリア吸収を加えた。濃度が高いほど透過率が下がる。")
 
 
 def main():
@@ -614,8 +644,9 @@ def main():
     plastic = chapter_plastic()
     agf = chapter_import()
     shared = chapter_shared()
+    acoustic_doping = chapter_acoustic_and_doping()
     if not REDUCED and figs.target_dir() is not None:
-        make_figures(glass, si, mirror, plastic, agf, shared)
+        make_figures(glass, si, mirror, plastic, agf, shared, acoustic_doping)
     print("\n所要 %.1f s、門 %d 件中 NG %d 件" % (time.time() - t0, len(GATES), len(FAILS)))
     if FAILS:
         print("FAIL: " + ", ".join(FAILS))
