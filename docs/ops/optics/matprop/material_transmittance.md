@@ -13,7 +13,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 # material_transmittance — OPTICS `matprop` op
 
 - **データ種**: `なし` → `pairs`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import fullseye as fs; fs.ledger.material_transmittance(material='SI', thickness_mm: 'float' = 0.7, wl_min_nm: 'float' = 900.0, wl_max_nm: 'float' = 1400.0, n_points: 'int' = 101, include_fresnel: 'bool' = True, extra_absorption=None) -> 'np.ndarray'` (実装を直接呼ぶなら `import materials; materials.material_transmittance(material='SI', thickness_mm: 'float' = 0.7, wl_min_nm: 'float' = 900.0, wl_max_nm: 'float' = 1400.0, n_points: 'int' = 101, include_fresnel: 'bool' = True, extra_absorption=None) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("material_transmittance")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.material_transmittance(material='SI', thickness_mm: 'float' = 0.7, wl_min_nm: 'float' = 900.0, wl_max_nm: 'float' = 1400.0, n_points: 'int' = 101, include_fresnel: 'bool' = True, extra_absorption=None, doping_cm3=None, carrier: 'str' = 'n') -> 'np.ndarray'` (実装を直接呼ぶなら `import materials; materials.material_transmittance(material='SI', thickness_mm: 'float' = 0.7, wl_min_nm: 'float' = 900.0, wl_max_nm: 'float' = 1400.0, n_points: 'int' = 101, include_fresnel: 'bool' = True, extra_absorption=None, doping_cm3=None, carrier: 'str' = 'n') -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("material_transmittance")`)
 
 ## 使い方
 
@@ -62,7 +62,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 同カテゴリ(`matprop`)
 
-[material_table](material_table.md) · [material_record](material_record.md) · [material_optical_constants](material_optical_constants.md) · [material_dispersion](material_dispersion.md) · [material_extinction](material_extinction.md) · [material_absorption](material_absorption.md) · [material_reflectance](material_reflectance.md) · [abbe_number](abbe_number.md)
+[material_table](material_table.md) · [material_record](material_record.md) · [material_acoustic](material_acoustic.md) · [acoustic_impedance_mismatch](acoustic_impedance_mismatch.md) · [material_optical_constants](material_optical_constants.md) · [material_dispersion](material_dispersion.md) · [material_extinction](material_extinction.md) · [material_absorption](material_absorption.md)
 
 ---
 *Provenance: materials.py — OPTICS operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

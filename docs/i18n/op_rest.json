@@ -20026,5 +20026,23 @@
    "de": "``a`` ist die Fensterbreite, ``b`` die Fensterhöhe; jeder Regler wird über ``1 + 2 * min(7, int(8 * clip(knob, 0, 1)))`` auf die ungeraden Größen 1, 3, …, 15 abgebildet (dasselbe wie das Aufrunden einer geraden Breite oder Höhe auf den nächsten ungeraden Wert). Ränder verwenden immer ``reflect``. Bei gleicher Breite und Höhe ist das Ergebnis bitidentisch mit ``mean_box`` bei gleichem Fenster und ``reflect``. Beispiel: ``_mean_box_wh(np.eye(5), 0.2, 0.4)``.",
    "hi": "``a`` window की चौड़ाई और ``b`` window की ऊँचाई है; हर knob ``1 + 2 * min(7, int(8 * clip(knob, 0, 1)))`` से विषम आकार 1, 3, …, 15 पर जाता है (सम चौड़ाई या ऊँचाई को अगले विषम मान तक ऊपर करने के समान)। सीमाएँ हमेशा ``reflect`` उपयोग करती हैं। चौड़ाई और ऊँचाई समान होने पर परिणाम उसी window और ``reflect`` वाले ``mean_box`` से bit-समान होता है। उदाहरण: ``_mean_box_wh(np.eye(5), 0.2, 0.4)``।"
   }
- }
+ },
+  "optics/acoustic_impedance_mismatch": {
+   "fp": "a84647745e0a",
+   "en": "\nParameters\n----------\nmaterial1, material2 : str or dict\n    Material names, aliases, or material records.\n\nReturns\n-------\ndict\n    Intensity reflection coefficient ``R=((Z2-Z1)/(Z2+Z1))**2`` and intensity transmission coefficient ``T=1-R``.\n\nRaises\n------\nValueError\n    If a material is unknown, lacks acoustic properties, or has non-positive impedance.",
+   "zh": "\nParameters\n----------\nmaterial1, material2 : str or dict\n    材料名、别名或材料记录。\n\nReturns\n-------\ndict\n    强度反射系数 ``R=((Z2-Z1)/(Z2+Z1))**2`` 和强度透射系数 ``T=1-R``。\n\nRaises\n------\nValueError\n    材料未知、缺少声学属性或阻抗非正时。",
+   "tw": "\nParameters\n----------\nmaterial1, material2 : str or dict\n    材料名、別名或材料記錄。\n\nReturns\n-------\ndict\n    強度反射係數 ``R=((Z2-Z1)/(Z2+Z1))**2`` 與強度透射係數 ``T=1-R``。\n\nRaises\n------\nValueError\n    材料未知、缺少聲學屬性或阻抗非正時。",
+   "ko": "\nParameters\n----------\nmaterial1, material2 : str or dict\n    재료명, 별칭 또는 재료 레코드.\n\nReturns\n-------\ndict\n    세기 반사 계수 ``R=((Z2-Z1)/(Z2+Z1))**2`` 와 세기 투과 계수 ``T=1-R``.\n\nRaises\n------\nValueError\n    재료가 알려지지 않았거나 음향 물성이 없거나 임피던스가 양수가 아닐 때.",
+   "de": "\nParameters\n----------\nmaterial1, material2 : str or dict\n    Materialnamen, Aliase oder Materialdatensätze.\n\nReturns\n-------\ndict\n    Intensitätsreflexionskoeffizient ``R=((Z2-Z1)/(Z2+Z1))**2`` und Intensitätstransmissionskoeffizient ``T=1-R``.\n\nRaises\n------\nValueError\n    Wenn ein Material unbekannt ist, akustische Eigenschaften fehlen oder die Impedanz nicht positiv ist.",
+   "hi": "\nParameters\n----------\nmaterial1, material2 : str or dict\n    Material names, aliases या material records।\n\nReturns\n-------\ndict\n    Intensity reflection coefficient ``R=((Z2-Z1)/(Z2+Z1))**2`` और intensity transmission coefficient ``T=1-R``।\n\nRaises\n------\nValueError\n    Material अज्ञात हो, acoustic properties न हों, या impedance धनात्मक न हो।"
+  },
+  "optics/material_acoustic": {
+   "fp": "471e150f0c1c",
+   "en": "\nParameters\n----------\nmaterial : str or dict\n    A material name, alias, or material record.\n\nReturns\n-------\ndict\n    Density, longitudinal sound speed, acoustic impedance, attenuation coefficient and frequency exponent, verification state, provenance, and uncertainty.\n\nRaises\n------\nValueError\n    If the material is unknown or has no acoustic properties.",
+   "zh": "\nParameters\n----------\nmaterial : str or dict\n    材料名、别名或材料记录。\n\nReturns\n-------\ndict\n    密度、纵波声速、声阻抗、衰减系数和频率指数、验证状态、来源与不确定度。\n\nRaises\n------\nValueError\n    材料未知或没有声学属性时。",
+   "tw": "\nParameters\n----------\nmaterial : str or dict\n    材料名、別名或材料記錄。\n\nReturns\n-------\ndict\n    密度、縱波聲速、聲阻抗、衰減係數與頻率指數、驗證狀態、來源及不確定度。\n\nRaises\n------\nValueError\n    材料未知或沒有聲學屬性時。",
+   "ko": "\nParameters\n----------\nmaterial : str or dict\n    재료명, 별칭 또는 재료 레코드.\n\nReturns\n-------\ndict\n    밀도, 종파 음속, 음향 임피던스, 감쇠 계수와 주파수 지수, 검증 상태, 출처 및 불확도.\n\nRaises\n------\nValueError\n    재료가 알려지지 않았거나 음향 물성이 없을 때.",
+   "de": "\nParameters\n----------\nmaterial : str or dict\n    Materialname, Alias oder Materialdatensatz.\n\nReturns\n-------\ndict\n    Dichte, Longitudinalwellengeschwindigkeit, akustische Impedanz, Dämpfungskoeffizient und Frequenzexponent, Prüfstatus, Quelle und Unsicherheit.\n\nRaises\n------\nValueError\n    Wenn das Material unbekannt ist oder keine akustischen Eigenschaften besitzt.",
+   "hi": "\nParameters\n----------\nmaterial : str or dict\n    Material name, alias या material record।\n\nReturns\n-------\ndict\n    Density, longitudinal sound speed, acoustic impedance, attenuation coefficient और frequency exponent, verification state, provenance तथा uncertainty।\n\nRaises\n------\nValueError\n    Material अज्ञात हो या उसमें acoustic properties न हों।"
+  }
 }
