@@ -12,7 +12,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/iv_wiener_deconv_spatial.inputs.jpg">iv_wiener_deconv_spatial: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p>*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>Self-contained spatial Wiener deconvolution of an assumed small Gaussian PSF. <code style="color:#22d3bf">a</code> sets the assumed blur sigma in (0, <code style="color:#22d3bf">WIENER_SIGMA_MAX</code>] to invert (larger a -&gt; stronger sharpening); <code style="color:#22d3bf">b</code> sets the noise-to-signal ratio nsr = 1e-3 + b*0.15 (larger b -&gt; gentler, more regularized restoration).</p>
+<p>Self-contained spatial Wiener deconvolution of an assumed small Gaussian PSF. <code style="color:#22d3bf">a</code> sets the assumed blur sigma in [0.4, <code style="color:#22d3bf">WIENER_SIGMA_MAX</code>] to invert (larger a -&gt; stronger sharpening); <code style="color:#22d3bf">b</code> sets the noise-to-signal ratio nsr = 1e-3 + b*0.15 (larger b -&gt; gentler, more regularized restoration).</p>
 <p><b>端の扱い</b>: 反対側へ巻き付ける(周期)(実測。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank ファミリ ガイド</a></p>

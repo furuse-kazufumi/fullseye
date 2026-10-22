@@ -13,10 +13,9 @@
 <p>區域。布林值或 [0,1] 的權重。<b>與影像形狀不同則拋出例外</b>。</p>
 <p>draw : {&quot;fill&quot;, &quot;margin&quot;}</p>
 <p>與 HALCON 的 <code style="color:#22d3bf">set_draw</code> 同一個詞。<code style="color:#22d3bf">&quot;fill&quot;</code> 連同內部一起反轉,<code style="color:#22d3bf">&quot;margin&quot;</code></p>
-<p><b>只反轉輪廓</b>。輪廓是粗 <code style="color:#22d3bf">width</code> 像素(捨入為整數)的</p>
-<p>帶,向區域內外各擴展一半。</p>
+<p><b>只反轉輪廓</b>。輪廓是向區域內外各擴展 <code style="color:#22d3bf">max(1, round(width / 2))</code> 像素的帶。</p>
 <p>width : float</p>
-<p><code style="color:#22d3bf">draw=&quot;margin&quot;</code> 時帶的粗細(像素)。</p>
+<p><code style="color:#22d3bf">draw=&quot;margin&quot;</code> 時決定帶寬的值(像素)。</p>
 <p>mode : str</p>
 <p><code style="color:#22d3bf">INVERT_MODES</code>。<code style="color:#22d3bf">&quot;complement&quot;</code> 保留底圖的紋理,<code style="color:#22d3bf">&quot;xor&quot;</code></p>
 <p>在保留紋理的同時保證不消失,<code style="color:#22d3bf">&quot;contrast&quot;</code> 改為黑白以</p>

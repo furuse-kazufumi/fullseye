@@ -31,7 +31,7 @@ flattest ``smooth_fraction`` of the area is sea. Deterministic; fail-closed on b
 ``method`` ごとにスコアを 1 つ作り、スコアの小さい面から面積を累積して全面積の
 ``smooth_fraction`` に達するまでを「海」(0)にする。
 
-- ``'neck'``: 面重心の面積重み付き主軸(SVD 第 1 成分)に沿って、主軸座標の 20〜80 %
+- ``'neck'``: 面積重み付き中心からの面重心について、重みなし SVD の主軸(第 1 成分)に沿って、主軸座標の 20〜80 %
   区間を 24 ビンに切り、各ビンの半径 90 percentile が最小のビン中心を「くびれ」とし、
   くびれ面からの距離をスコアにする。8 面未満のビンは無視。``seed`` は使わない。
 - ``'noise'``: 面重心での :func:`fbm_noise`(波長 = 境界箱対角 / 3、2 オクターブ、

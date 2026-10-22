@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>避开禁止停车区间(合并后的 (k, 2))、使车身 [rear, rear + car_length] 完整容纳的<b>车尾位置</b>区间 (m, 2)。</p>
 <p>区间端点恰好处(例如距离恰为 5 m)归入禁止一侧(&quot;以内&quot;),因此车身仅接触端点时允许(闭区间补集的闭包)。</p>
-<p>空输入(<code style="color:#22d3bf">merged</code> 为 0 个元素)返回空结果(理由:禁止区间为 0 个时,整条道路就是正确答案。no_stopping_zones 即使有设施也可能返回空的 merged(只有运营时间外的公交车站时))。</p>
+<p>空输入（<code style="color:#22d3bf">merged</code> 为 0 个元素）返回整条道路扣除车长后的区间（理由：没有禁止区间时，整条道路就是正确答案）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

@@ -129,7 +129,7 @@ def emva_general_nonuniformity(dark_stack, bright_stack, slope_50, mu_p_50, Rd, 
     *highpass*: 既定 ``"r4"``(General 8.1 節も Linear と同じフィルタ)、``"r3.1"``、None。
 
     返り値 ``{"DSNU1288_p", "DSNU1288_y", "PRNU1288", "dsnu_p": {"col", "row", "pixel"}, "prnu": {...},
-    "s2_p_dark", "s2_p_50", "linear": Linear の計算(K = 1 のときの値), "highpass"}``。
+    "s2_p_dark", "s2_p_50", "dark", "bright", "highpass"}``。
 
     **Raises** ``ValueError``: :func:`sensorchar.emva_spatial_nonuniformity` と同じ / slope_50・μ_p.50・R_d が正でない /
     s²_p.50 < s²_p.dark。

@@ -36,7 +36,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 ## 使い方
 
 Self-contained spatial Wiener deconvolution of an assumed small Gaussian
-PSF. ``a`` sets the assumed blur sigma in (0, ``WIENER_SIGMA_MAX``] to invert
+PSF. ``a`` sets the assumed blur sigma in [0.4, ``WIENER_SIGMA_MAX``] to invert
 (larger a -> stronger sharpening); ``b`` sets the noise-to-signal ratio nsr =
 1e-3 + b*0.15 (larger b -> gentler, more regularized restoration).
 

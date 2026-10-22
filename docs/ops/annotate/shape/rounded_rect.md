@@ -22,7 +22,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 Raises
 ------
 ValueError
-    矩形が画像の外、radius が負か辺の半分を超える、alpha が [0,1] の外。
+    矩形が画像の外、radius が非有限・負・辺の半分を超える、alpha が [0,1] の外。
 
 描画: 画素中心から「角を丸めた矩形」までの距離で内側判定し、``fill=False``
 なら外周から ``max(1, width)`` px 幅の帯だけを載せる(距離判定の 1 段階、

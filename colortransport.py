@@ -292,7 +292,7 @@ COLOR_TRANSFER_METHODS = ("reinhard", "gaussian", "histogram")
 
 
 def gaussian_transport_map(src_samples, ref_samples):
-    """2 つの点群を正規分布とみなしたときの Monge 写像 ``(A, b)``。
+    """2 つの点群を正規分布とみなしたときの Monge 写像の線形部 ``A`` と平均 ``m1, m2``。
 
     ``x -> A (x - m1) + m2`` で、``A`` は
     ``S1^-1/2 (S1^1/2 S2 S1^1/2)^1/2 S1^-1/2``(Bures 幾何の閉じた形)。

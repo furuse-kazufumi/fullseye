@@ -1149,7 +1149,7 @@ def cr_synthetic(kind: str = "tjunction", *, dt: float = 0.1, speed_limit: float
     ``straight``: 101 も直線(3 本で 120 m)。``blocked``: straight の 101 の中央に静止障害物(衝突の門用)。
     車線幅 3.5 m。中心線の長さ = 40 + 6π(≒ 18.85、円弧は 16 分割の折線) + 40(tjunction)/ 120(straight)。
 
-    **Raises** ``ValueError``: kind が :data:`SYNTHETIC_KINDS` 以外、dt / speed_limit / v0 が正でない。"""
+    **Raises** ``ValueError``: kind が :data:`SYNTHETIC_KINDS` 以外、dt / speed_limit が正でない、v0 が負。"""
     op = "cr_synthetic"
     if kind not in SYNTHETIC_KINDS:
         raise ValueError("%s: kind must be one of %s, got %r" % (op, SYNTHETIC_KINDS, kind))

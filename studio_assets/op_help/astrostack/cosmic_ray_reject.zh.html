@@ -10,7 +10,7 @@
 <p style="margin:2px 0 2px 12px">1. 构造用噪声归一化拉普拉斯 <code style="color:#22d3bf">L</code> 正分量的显著度 <code style="color:#22d3bf">S = L / (2 sigma_noise)</code>，</p>
 <p style="margin:2px 0 2px 12px">2. 与精细结构像 <code style="color:#22d3bf">F = median3 - median7(median3)</code> 比较，只有 <code style="color:#22d3bf">L / F</code> 超过 <code style="color:#22d3bf">f_lim</code> 的才判为宇宙线。</p>
 <p>没有第 2 个条件，<b>星的中心必定看起来像宇宙线</b>(星在局部也是尖的)。<code style="color:#22d3bf">f_lim</code> 就是这条分界，原论文推荐 2.0。</p>
-<p>增大 <code style="color:#22d3bf">iters</code> 会重复 去除 → 重新测量(大的击中留下裙边时)。替换值为 <code style="color:#22d3bf">replace_box</code> 窗口内<b>未污染像素的中位数</b>。</p>
+<p>增大 <code style="color:#22d3bf">iters</code> 会重复 去除 → 重新测量(大的击中留下裙边时)。替换值为 <code style="color:#22d3bf">replace_box</code> 窗口内所有像素的中位数（包括判定为污染的像素）。</p>
 <p>Returns <code style="color:#22d3bf">(cleaned, mask)</code>:</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cleaned</code> —— <code style="color:#22d3bf">(H, W)</code> float64，替换了宇宙线像素的像。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">mask</code> —— <code style="color:#22d3bf">(H, W)</code> bool，<code style="color:#22d3bf">True</code> = 判定为宇宙线的像素。</p>

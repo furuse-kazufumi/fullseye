@@ -11,10 +11,9 @@
 <p>region। boolean या [0,1] के weights। <b>image से shape अलग हो तो exception</b>।</p>
 <p>draw : {&quot;fill&quot;, &quot;margin&quot;}</p>
 <p>HALCON के <code style="color:#22d3bf">set_draw</code> वाला ही शब्द। <code style="color:#22d3bf">&quot;fill&quot;</code> अंदर के हिस्से सहित, <code style="color:#22d3bf">&quot;margin&quot;</code></p>
-<p><b>केवल contour</b> को invert करता है। contour <code style="color:#22d3bf">width</code> pixel मोटी (integer पर round की गई)</p>
-<p>band है, जो region के अंदर और बाहर आधी-आधी फैलती है।</p>
+<p><b>केवल contour</b> को invert करता है। contour ऐसी band है जो region के अंदर और बाहर प्रत्येक ओर <code style="color:#22d3bf">max(1, round(width / 2))</code> pixels फैलती है।</p>
 <p>width : float</p>
-<p><code style="color:#22d3bf">draw=&quot;margin&quot;</code> होने पर band की मोटाई (pixels)।</p>
+<p><code style="color:#22d3bf">draw=&quot;margin&quot;</code> होने पर band की चौड़ाई तय करने वाला मान (pixels)।</p>
 <p>mode : str</p>
 <p><code style="color:#22d3bf">INVERT_MODES</code>। <code style="color:#22d3bf">&quot;complement&quot;</code> पृष्ठभूमि का pattern रखता है, <code style="color:#22d3bf">&quot;xor&quot;</code></p>
 <p>pattern रखते हुए गायब न होने की guarantee देता है, और <code style="color:#22d3bf">&quot;contrast&quot;</code> black-white पर जाकर</p>

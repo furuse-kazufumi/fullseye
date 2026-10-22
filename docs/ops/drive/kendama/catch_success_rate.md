@@ -26,7 +26,7 @@ h_c + 0.9 r_b 上)。``contact(hand, p) → 隙間`` を渡すとけん玉に触
 知覚: 既定は :func:`noisy_perceiver`(noise_pos [m]、noise_vel [m/s]; 0 なら真値)。``perceiver_factory(i) → perceive`` を
 渡すとそれを使う(試行 i ごとに新しい知覚: :func:`kendamaworld.camera_perceiver` で画像だけから予測する閉ループ)。
 初期状態の揺らぎは知覚によらず seed で決まる(同じ seed なら真値と画像の試行が対になる)。
-返り値 ``{"rate", "n", "caught_list", "mean_lateral", "catch_times", "end_reasons", "laterals", "starts"}``
+返り値 ``{"rate", "n", "caught_list", "mean_lateral", "catch_times", "end_reasons", "laterals", "starts", "lift"}``
 (mean_lateral = 捕った試行の捕球時の横ずれの平均、無ければ nan。starts = 各試行の (p0, v0))。``dodge`` / ``clearance`` は
 :func:`swing_up_plan` / :func:`catch_plan_ballistic` へ(既定 = 手元を糸穴の側(−y)へ 10 cm 逃がし、玉が大皿の縁より上に出てから
 皿を戻す: 玉がけん玉を突き抜けない構え。逃がさない (0, 0, 0)・False だと 20 試行すべてで玉が皿胴を突き抜けた —— 測って退けた。

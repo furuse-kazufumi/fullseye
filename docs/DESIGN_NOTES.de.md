@@ -41,7 +41,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `annotate.py`
 
-- **L3101** — ★Satzzeichen (。、) sollten nicht gedreht, sondern **nach oben rechts gerückt** werden, doch hier rücken wir sie nicht —— statt das Nichtmachbare stillschweigend zu approximieren, schreiben wir es ins Docstring. Zeichen (Satzzeichen), die im Vertikalsatz **nach oben rechts rücken**. Ein Punkt, der im Horizontalsatz unten links am Glyph sitzt, kommt im Vertikalsatz nach oben rechts —— die typografische Sitte ist, die **Position zu verschieben**, nicht zu drehen. Windows' ``@``-Fonts (das Vertikalsatz-Face, das GDI per Face-Name wählt) erledigten das auf Font-Seite. Pillow öffnet eine Schrift per **Dateipfad** und erreicht das ``@``-Face nicht, und HarfBuzz' ``direction="ttb"`` liefert mit und ohne installiertes Raqm unterschiedliche Ergebnisse (Pillows 12.3.0 dieser Maschine hat ``features.check("raqm")`` False). Der Leitlinie **das plattformübergreifend Konsistente wählen** folgend, rücken wir hier per Komposition.
+- **L3105** — ★Satzzeichen (。、) sollten nicht gedreht, sondern **nach oben rechts gerückt** werden, doch hier rücken wir sie nicht —— statt das Nichtmachbare stillschweigend zu approximieren, schreiben wir es ins Docstring. Zeichen (Satzzeichen), die im Vertikalsatz **nach oben rechts rücken**. Ein Punkt, der im Horizontalsatz unten links am Glyph sitzt, kommt im Vertikalsatz nach oben rechts —— die typografische Sitte ist, die **Position zu verschieben**, nicht zu drehen. Windows' ``@``-Fonts (das Vertikalsatz-Face, das GDI per Face-Name wählt) erledigten das auf Font-Seite. Pillow öffnet eine Schrift per **Dateipfad** und erreicht das ``@``-Face nicht, und HarfBuzz' ``direction="ttb"`` liefert mit und ohne installiertes Raqm unterschiedliche Ergebnisse (Pillows 12.3.0 dieser Maschine hat ``features.check("raqm")`` False). Der Leitlinie **das plattformübergreifend Konsistente wählen** folgend, rücken wir hier per Komposition.
 
 ## `api.py`
 
@@ -1628,21 +1628,21 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L114** _(ja)_ — 定理が門になる図(2026-09-23)。★`MATHOPS`(台帳が読む一覧)と `__all__` (import * の公開面)は**別物**で、両方に書かないと片方だけ通る。
 - **L1734** _(ja)_ — ★既存の cplx_* は閉曲線を点列で持つ層(積分・巻き数・ローラン・等角写像)。# ここで足すのは**領域**の層 —— 値の場・位相彩色・ニュートンの吸引域・ # 脱出時間・翼まわりのポテンシャル流。新しい語は 1 つも作らない # (cimage / rgbimage / labels2d / mask / roots / signal はすべて既存)。 # 真値は「使った式」ではなく、偏角の原理・Cayley の定理・主カージオイドの # 閉形式内部判定・c=0 のジュリア集合(単位円板)・そして既存 op である # cplx_winding_number / cplx_cr_residual / cplx_joukowski / poly_roots。 # --------------------------------------------------------------------------- #
-- **L2204** _(ja)_ — ★もう一方の臨界点 -b は円の**内側**になければならない。外に出ると dz/dzeta = 0 が流れの領域に現れ、そこで速度が発散する(翼でなく尖りが 2 つある図形になる)。
-- **L2317** _(ja)_ — ★どれも「きれいな図」だが、**採ったのはきれいだからではなく、 正しさを定理が言えるから**である。数学の図はきれいなので、合って いるかを誰も確かめない —— だから絵の外に真値を置く: circle_packing_apollonian デカルトの円定理(厳密な代数等式)+ 整数充填 ford_circles 接するのは |ps - qr| = 1 のときに限る(整数で厳密) phyllotaxis_pattern 隣の番号差がフィボナッチ数(黄金角のときだけ) ifs_fractal モランの式 sum r^d = 1 と、既存 fractal_dimension space_filling_curve 4^n 点をちょうど 1 回ずつ・隣は必ず距離 1 相棒(neighbour_index_gaps / ifs_similarity_dimension / curve_locality)は **主張を数にする側**で、これが無いと「それらしい絵」しか残らない。 ------------------------------------------------------------------------- #
-- **L2430** _(ja)_ — ★四つ組の**最後**が「直前に生まれた円」。それを落とす反射は**親をもう一度** 作るので、種の四つ組だけ 4 方向、以降は 3 方向に進む。ここを間違えると depth 3 で 56 個のはずが 88 個になった(実測。一意な円は 56 のままなので、 絵は正しく見えるが同じ円を何度も描き、以降の段が指数的に太る)。
-- **L2771** _(ja)_ — ★2026-10-07: 縮小しない写像(r >= 1)を黙って通すと二分法が上端 8.0 に張り付き (r=1.2 の 2 枚で 7.99999…)、恒等写像 1 枚では 0 を返していた。Moran の式は 全写像が縮小(r < 1)のときだけ意味を持つので、ここで明示的に拒否する。
-- **L2780** _(ja)_ — ★2026-10-07: 写像の数が多いと解が 8 を超えうる —— 上端を広げてから二分する。
-- **L2848** _(ja)_ — ★ムーア曲線 = ヒルベルト曲線 4 本を輪に閉じたもの。四分割の**向きと進む方向**は 総当たり(8 対称 x 反転、4096 通り)で「継ぎ目 3 か所と折り返しが全部距離 1」を 満たす 32 解を出し、その 1 つを固定した。手で置くと隣接条件が静かに壊れる (最初の実装は隣接 False・閉 False のまま、絵としては正しく見えていた)。
-- **L2954** _(ja)_ — ★クラドニ図形は「板」ではなく**膜**の解である。よく見る cos*cos - cos*cos は ヘルムホルツ方程式 + ノイマン境界の膜のモードで、実際のクラドニ板は **重調和方程式**に従う別物。砂が節線に集まる絵は同じでも周波数比は合わない。 ここでは膜と明記し、膜の真値(閉形式の固有値・ベッセル零点)だけで採点する。 干渉と回折の真値は既存 op(grating_wavelengths / fraunhofer_pattern)。 ------------------------------------------------------------------------- #
-- **L3044** _(ja)_ — ★2026-10-07: 矩形は [0,1] x [0,aspect](wave_mode_frequencies の pi**2 (m**2 + n**2/aspect**2) と同じ規約)。以前は y を [0,1] で取りつつ n pi y/aspect を 使っていたので、aspect != 1 で y=1 の辺が境界条件(Dirichlet なら 0)を破っていた。
-- **L3052** _(ja)_ — ★2026-10-07: Dirichlet(sin x sin)は m=0 か n=0 で恒等的に 0 —— 全ゼロの場を 「固有モード」として返していた。拒否する。
-- **L3057** _(ja)_ — ★2026-10-07: 組合せ (m,n)-(n,m) の 2 項は aspect != 1 だと固有値が pi**2 (m**2 + n**2/a**2) と pi**2 (n**2 + m**2/a**2) で異なり、和は固有モードでない。
-- **L3126** _(ja)_ — ★2026-10-07: 以前は「集めた数が c+8 を超えたら止める」で、低い次数(m=0..2)の 高い零点ばかり集めて m>=3 の低い固有値(j'_{3,1}**2 = 17.65 …)を落としていた。 j'_{m,1} は m について単調増加なので、次の次数の最初の零点が、集めた中の c 番目を 超えた時点で打ち切れば取りこぼしは無い。
-- **L3325** _(ja)_ — ★真値は**公表値か閉形式だけ**: 線形系は expm(At)x0 が厳密解で刻み半分に すると誤差が 1/16(4 次)、Lorenz のリアプノフ指数の**和**はトレース恒等式 により厳密に -(sigma+1+beta)、ロジスティック写像の周期倍分岐は 3 と 1+sqrt6、 相関次元は円 1・カントール log2/log3。絵では何も確かめられない。
-- **L3329** _(ja)_ — ★関数(callable)を引数に取らない —— 型付き台帳は入力を sort で登録し、 連鎖ファザーがデータから引数を組むので callable は載らない。系は族名か係数配列。 ------------------------------------------------------------------------- #
-- **L3512** _(ja)_ — ★`table` は**列名 -> 1-D 配列**。状態を (S, n) のまま 1 列に入れると型の嘘に なるので、成分ごとの列に開く(x0, x1, ... と時刻 t)。
-- **L3856** _(ja)_ — ★上限は 60 パーセンタイルにしていたが、有界な集合では大きい r で C(r) が 飽和して**傾きが下がる**(充填した正方形で 1.83、真値 2.0)。飽和の 手前に寄せる。下限は近傍の離散化(雑音の床)を避ける。
+- **L2205** _(ja)_ — ★もう一方の臨界点 -b は円の**内側**になければならない。外に出ると dz/dzeta = 0 が流れの領域に現れ、そこで速度が発散する(翼でなく尖りが 2 つある図形になる)。
+- **L2318** _(ja)_ — ★どれも「きれいな図」だが、**採ったのはきれいだからではなく、 正しさを定理が言えるから**である。数学の図はきれいなので、合って いるかを誰も確かめない —— だから絵の外に真値を置く: circle_packing_apollonian デカルトの円定理(厳密な代数等式)+ 整数充填 ford_circles 接するのは |ps - qr| = 1 のときに限る(整数で厳密) phyllotaxis_pattern 隣の番号差がフィボナッチ数(黄金角のときだけ) ifs_fractal モランの式 sum r^d = 1 と、既存 fractal_dimension space_filling_curve 4^n 点をちょうど 1 回ずつ・隣は必ず距離 1 相棒(neighbour_index_gaps / ifs_similarity_dimension / curve_locality)は **主張を数にする側**で、これが無いと「それらしい絵」しか残らない。 ------------------------------------------------------------------------- #
+- **L2431** _(ja)_ — ★四つ組の**最後**が「直前に生まれた円」。それを落とす反射は**親をもう一度** 作るので、種の四つ組だけ 4 方向、以降は 3 方向に進む。ここを間違えると depth 3 で 56 個のはずが 88 個になった(実測。一意な円は 56 のままなので、 絵は正しく見えるが同じ円を何度も描き、以降の段が指数的に太る)。
+- **L2772** _(ja)_ — ★2026-10-07: 縮小しない写像(r >= 1)を黙って通すと二分法が上端 8.0 に張り付き (r=1.2 の 2 枚で 7.99999…)、恒等写像 1 枚では 0 を返していた。Moran の式は 全写像が縮小(r < 1)のときだけ意味を持つので、ここで明示的に拒否する。
+- **L2781** _(ja)_ — ★2026-10-07: 写像の数が多いと解が 8 を超えうる —— 上端を広げてから二分する。
+- **L2849** _(ja)_ — ★ムーア曲線 = ヒルベルト曲線 4 本を輪に閉じたもの。四分割の**向きと進む方向**は 総当たり(8 対称 x 反転、4096 通り)で「継ぎ目 3 か所と折り返しが全部距離 1」を 満たす 32 解を出し、その 1 つを固定した。手で置くと隣接条件が静かに壊れる (最初の実装は隣接 False・閉 False のまま、絵としては正しく見えていた)。
+- **L2955** _(ja)_ — ★クラドニ図形は「板」ではなく**膜**の解である。よく見る cos*cos - cos*cos は ヘルムホルツ方程式 + ノイマン境界の膜のモードで、実際のクラドニ板は **重調和方程式**に従う別物。砂が節線に集まる絵は同じでも周波数比は合わない。 ここでは膜と明記し、膜の真値(閉形式の固有値・ベッセル零点)だけで採点する。 干渉と回折の真値は既存 op(grating_wavelengths / fraunhofer_pattern)。 ------------------------------------------------------------------------- #
+- **L3045** _(ja)_ — ★2026-10-07: 矩形は [0,1] x [0,aspect](wave_mode_frequencies の pi**2 (m**2 + n**2/aspect**2) と同じ規約)。以前は y を [0,1] で取りつつ n pi y/aspect を 使っていたので、aspect != 1 で y=1 の辺が境界条件(Dirichlet なら 0)を破っていた。
+- **L3053** _(ja)_ — ★2026-10-07: Dirichlet(sin x sin)は m=0 か n=0 で恒等的に 0 —— 全ゼロの場を 「固有モード」として返していた。拒否する。
+- **L3058** _(ja)_ — ★2026-10-07: 組合せ (m,n)-(n,m) の 2 項は aspect != 1 だと固有値が pi**2 (m**2 + n**2/a**2) と pi**2 (n**2 + m**2/a**2) で異なり、和は固有モードでない。
+- **L3127** _(ja)_ — ★2026-10-07: 以前は「集めた数が c+8 を超えたら止める」で、低い次数(m=0..2)の 高い零点ばかり集めて m>=3 の低い固有値(j'_{3,1}**2 = 17.65 …)を落としていた。 j'_{m,1} は m について単調増加なので、次の次数の最初の零点が、集めた中の c 番目を 超えた時点で打ち切れば取りこぼしは無い。
+- **L3326** _(ja)_ — ★真値は**公表値か閉形式だけ**: 線形系は expm(At)x0 が厳密解で刻み半分に すると誤差が 1/16(4 次)、Lorenz のリアプノフ指数の**和**はトレース恒等式 により厳密に -(sigma+1+beta)、ロジスティック写像の周期倍分岐は 3 と 1+sqrt6、 相関次元は円 1・カントール log2/log3。絵では何も確かめられない。
+- **L3330** _(ja)_ — ★関数(callable)を引数に取らない —— 型付き台帳は入力を sort で登録し、 連鎖ファザーがデータから引数を組むので callable は載らない。系は族名か係数配列。 ------------------------------------------------------------------------- #
+- **L3514** _(ja)_ — ★`table` は**列名 -> 1-D 配列**。状態を (S, n) のまま 1 列に入れると型の嘘に なるので、成分ごとの列に開く(x0, x1, ... と時刻 t)。
+- **L3858** _(ja)_ — ★上限は 60 パーセンタイルにしていたが、有界な集合では大きい r で C(r) が 飽和して**傾きが下がる**(充填した正方形で 1.83、真値 2.0)。飽和の 手前に寄せる。下限は近傍の離散化(雑音の床)を避ける。
 
 ## `measuring1d.py`
 
@@ -1967,10 +1967,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `profileops.py`
 
-- **L269** — ★ Zunächst schrieben wir es als "die mit größerer Krümmung" und **beurteilten die Hinterkante als Vorderkante** bei NACA 2412. Die Krümmung des 3-Punkte-Kreises fällt an der Hinterkante, wo Ober- und Unterseite sich fast berühren, größer aus als an der Rundung der Vorderkante —— die Intuition "die Vorderkante ist rund" kehrt sich um, wenn man mit 3 Punkten auf der Kontur misst.
-- **L276** — ★ Wenn die Hinterkante offen ist, greifen die 2 entferntesten Punkte **eine der Ecken** der Hinterkante und die Sehne kippt. Wir nehmen sie am Mittelpunkt des Spalts neu, dann bestimmen wir die Vorderkante als "den Punkt, der am weitesten von diesem Mittelpunkt entfernt ist". Ohne dies zeigt selbst ein symmetrisches Profil eine Wölbung um den halben Spalt der Hinterkante (gemessen 0.001257).
-- **L642** — ★ Vor dem Vergleichen **mit derselben Methode neu nehmen**. Der Sehnenrahmen (besonders der Mittelpunkt der Hinterkante) hängt leicht von der Platzierung der Punkte ab, sodass das Abgleichen einer rohen Kontur gegen eine neu genommene Kontur selbst bei identischer Form eine Rotation von 0.02 Grad und eine Translation von 7.8e-4 einbringt —— das selbst wurde zum Boden der Abweichung (gemessen rms 6.05e-4). Stelle das, was du vergleichst, auf denselben Boden.
-- **L653** — ★ Miss nicht Punkt-zu-Punkt, sondern **Punkt-zu-Polylinie**. Selbst nach Neunahme bei gleicher Bogenlänge stimmen die Phasen der beiden nicht überein, sodass das Herstellen der Korrespondenz per Index die Phasenverschiebung direkt zur Abweichung macht (gemessen: dieselbe Form mit sich selbst zu vergleichen ergibt rms 6.05e-4 —— dieselbe Größenordnung wie der Defekt, den wir erkennen wollen).
+- **L270** — ★ Zunächst schrieben wir es als "die mit größerer Krümmung" und **beurteilten die Hinterkante als Vorderkante** bei NACA 2412. Die Krümmung des 3-Punkte-Kreises fällt an der Hinterkante, wo Ober- und Unterseite sich fast berühren, größer aus als an der Rundung der Vorderkante —— die Intuition "die Vorderkante ist rund" kehrt sich um, wenn man mit 3 Punkten auf der Kontur misst.
+- **L277** — ★ Wenn die Hinterkante offen ist, greifen die 2 entferntesten Punkte **eine der Ecken** der Hinterkante und die Sehne kippt. Wir nehmen sie am Mittelpunkt des Spalts neu, dann bestimmen wir die Vorderkante als "den Punkt, der am weitesten von diesem Mittelpunkt entfernt ist". Ohne dies zeigt selbst ein symmetrisches Profil eine Wölbung um den halben Spalt der Hinterkante (gemessen 0.001257).
+- **L643** — ★ Vor dem Vergleichen **mit derselben Methode neu nehmen**. Der Sehnenrahmen (besonders der Mittelpunkt der Hinterkante) hängt leicht von der Platzierung der Punkte ab, sodass das Abgleichen einer rohen Kontur gegen eine neu genommene Kontur selbst bei identischer Form eine Rotation von 0.02 Grad und eine Translation von 7.8e-4 einbringt —— das selbst wurde zum Boden der Abweichung (gemessen rms 6.05e-4). Stelle das, was du vergleichst, auf denselben Boden.
+- **L654** — ★ Miss nicht Punkt-zu-Punkt, sondern **Punkt-zu-Polylinie**. Selbst nach Neunahme bei gleicher Bogenlänge stimmen die Phasen der beiden nicht überein, sodass das Herstellen der Korrespondenz per Index die Phasenverschiebung direkt zur Abweichung macht (gemessen: dieselbe Form mit sich selbst zu vergleichen ergibt rms 6.05e-4 —— dieselbe Größenordnung wie der Defekt, den wir erkennen wollen).
 
 ## `pxrd.py`
 
@@ -2072,7 +2072,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L1150** _(ja)_ — ★**区間が定義域を出たら、それは測定の主張でなく近似の破綻**。 比較損失(二乗の和)は構成上非負なのに、規格の例題では伝播則の 95 % 区間が [-96, +296]e-6 と負側へ張り出す。伝播則は出力を正規と見なすので 境界を知らない —— 知っているのは呼ぶ側だけなので、境界を渡されたときに 限って検査する(既定で勝手に 0 を下限と仮定はしない)。
 - **L1529** _(ja)_ — ★"no spread" is not "std == 0.0". A column holding one repeated value leaves rounding dust behind: 4.2 stored 200 times gives std = 1.3e-14, not zero (measured). Dividing by that dust amplifies it into a distance of nonsense, and the absolute test never fires. Put the floor at the *relative* scale of the column, below which a spread cannot be represented in the data itself.
 - **L1561** _(ja)_ — ★ std = 1 alone does NOT make a flat feature "contribute nothing": a new observation that leaves the flat value is scored in raw units, so the same physical data in mm vs um gave MD 1.73 vs 1732 (2026-10-07 review). Zero its row and column of the inverse correlation instead — then its z drops out of z' R^-1 z whatever the new value is.
-- **L1669** _(ja)_ — ★A unit space given in part is the dangerous case: the missing piece would be silently estimated from the very data under test, so a drifted batch would score itself as normal. Refuse instead.
+- **L1671** _(ja)_ — ★A unit space given in part is the dangerous case: the missing piece would be silently estimated from the very data under test, so a drifted batch would score itself as normal. Refuse instead.
 
 ## `specops.py`
 

@@ -63,7 +63,7 @@ border clamping.
 **Raises** ``ValueError``: an empty or over-long *slopes* list
 (:data:`MAX_LAYERS`), a non-finite or over-large slope
 (:data:`MAX_ABS_SLOPE`), an angular or spatial shape outside
-``[1, MAX_ANGULAR]`` / ``[1, MAX_SPATIAL]``, a total size over
+``[1, MAX_ANGULAR]`` / ``[2, MAX_SPATIAL]``, a total size over
 :data:`MAX_LF_ELEMENTS`, *coverage* outside ``(0, 1]``, a *texture_sigma*
 so large the smoothed texture's dynamic range falls below
 :data:`MIN_TEXTURE_RANGE`, and an unknown *interp* / *edge*.
