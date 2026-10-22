@@ -170,6 +170,13 @@ def main(argv=None) -> int:
         return 0
     PROFILE.write_text(_dump(profile), encoding="utf-8")
     if args.manifest:
+        if MANIFEST.is_file():
+            try:
+                old = json.loads(MANIFEST.read_text(encoding="utf-8"))
+                manifest["git"] = old["git"]
+                manifest["generation_date"] = old["generation_date"]
+            except (KeyError, ValueError):
+                pass
         MANIFEST.write_text(_dump(manifest), encoding="utf-8")
     import lib_coverage
     lib_coverage.main(["--compat-only"])
