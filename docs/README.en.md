@@ -141,7 +141,7 @@ Every one carries a closed-form or synthetic ground truth and a null model. Fail
 
 **Measured coverage**: evolvable ops 942/942, typed ledger 2576/2588, one-line facade `fullseye.<name>` 703/1480 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
 
-**Measured substance**: of 3539 notes, **3528** link at least one runnable example (11 have none) and **3351** have a usage section of 120+ characters (188 are a one-line summary). The structure (call form, types, ops that chain next) is present in all 3539.
+**Measured substance**: of 3539 notes, **3528** link at least one runnable example (11 have none) and **3352** have a usage section of 120+ characters (187 are a one-line summary). The structure (call form, types, ops that chain next) is present in all 3539.
 
 | dimension | ops | entry |
 |---|---:|---|
