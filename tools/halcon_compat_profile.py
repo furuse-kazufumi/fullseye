@@ -21,7 +21,6 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "tools"))
 
-import imgevolve  # noqa: E402
 import op_example_index  # noqa: E402
 
 PROFILE = ROOT / "docs" / "halcon_compat_profile.json"
@@ -36,8 +35,20 @@ TEST_FILES = [
 
 
 def registry_rows() -> list[dict]:
-    """Use the canonical index discovery rather than duplicating it."""
-    return [r for r in imgevolve._all_ops() if r.get("halcon")]
+    """Rows of the committed machine-readable index that carry a reference mapping.
+
+    The live registry (``imgevolve._all_ops()``) depends on which optional backends are
+    installed, so a profile generated on one machine drifted on CI (2026-10-22: 512 vs
+    510 entries). ``docs/OP_INDEX.json`` is committed and checked by ``regen_all --check``,
+    so it is the environment-independent scope.
+    """
+    index = json.loads((ROOT / "docs" / "OP_INDEX.json").read_text(encoding="utf-8"))
+    return [r for r in index["ops"] if r.get("halcon")]
+
+
+def _normalised_sha256(path: Path) -> str:
+    """SHA-256 of the file with CRLF folded to LF (checkouts differ by OS)."""
+    return hashlib.sha256(path.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
 
 
 def _test_functions(path: Path) -> set[str]:
@@ -69,7 +80,8 @@ def generate_profile() -> dict:
         for node in item["evidence"]:
             validate_evidence(node)
 
-    _, examples = op_example_index.build_index(split=True)
+    # 例の有無は registry でなく索引の名前で静的に走査する(registry は環境依存)。
+    examples = op_example_index._index_for([r["name"] for r in rows], "examples")
     entries = []
     for row in sorted(rows, key=lambda r: r["name"]):
         name = row["name"]
@@ -111,8 +123,7 @@ def generate_manifest() -> dict:
     package_version = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))["project"]["version"]
     tests = []
     for rel in TEST_FILES:
-        data = (ROOT / rel).read_bytes()
-        tests.append({"file": rel, "sha256": hashlib.sha256(data).hexdigest(),
+        tests.append({"file": rel, "sha256": _normalised_sha256(ROOT / rel),
                       "seeds": _literal_seeds(ROOT / rel)})
     commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
     dirty = bool(subprocess.check_output(["git", "status", "--porcelain"], cwd=ROOT, text=True).strip())

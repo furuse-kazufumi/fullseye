@@ -6,7 +6,6 @@ import re
 import subprocess
 import sys
 
-import imgevolve
 
 ROOT = Path(__file__).resolve().parents[1]
 PROFILE = ROOT / "docs" / "halcon_compat_profile.json"
@@ -27,7 +26,9 @@ def test_profile_json_is_current():
 
 
 def test_profile_and_registry_are_bijective(capsys):
-    registry = {r["name"] for r in imgevolve._all_ops() if r.get("halcon")}
+    # 索引(committed)と照合する。live registry は optional backend の有無で変わる。
+    index = json.loads((ROOT / "docs" / "OP_INDEX.json").read_text(encoding="utf-8"))
+    registry = {r["name"] for r in index["ops"] if r.get("halcon")}
     profiled = {e["op"] for e in _profile()["entries"]}
     print(f"registry={len(registry)} profile={len(profiled)}")
     assert profiled == registry
@@ -67,7 +68,7 @@ def test_manifest_hashes_and_files_match():
         path = ROOT / item["file"]
         if not path.is_file():
             errors.append(f"missing: {item['file']}")
-        elif hashlib.sha256(path.read_bytes()).hexdigest() != item["sha256"]:
+        elif hashlib.sha256(path.read_bytes().replace(b"\r\n", b"\n")).hexdigest() != item["sha256"]:
             errors.append(f"hash mismatch: {item['file']}")
     assert not errors, errors
 

@@ -95,7 +95,7 @@ _OLD_ORDER = [
     "tools/gen_exhibit_numbers.py", "tools/gen_wingpoc_gallery.py", "tools/gen_examples_readme.py",
     "tools/gen_oss_landscape.py", "tools/gen_view2026_pages.py", "tools/gen_trust_block.py",
     "tools/gen_literature_counts.py", "tools/gen_docs_index_ops.py", "tools/gen_examples3d_doc.py",
-    "tools/gen_sensor_playbook.py", "imgevolve.py", "catalog.py", "dispositions.py", "references.py", "samples.py",
+    "tools/gen_sensor_playbook.py", "imgevolve.py", "tools/halcon_compat_profile.py", "catalog.py", "dispositions.py", "references.py", "samples.py",
     "tools/gen_mcp_data.py", "tools/conversion_matrix.py", "tools/gen_design_notes.py",
     "tools/gen_doc_counts.py",
 ]
@@ -125,6 +125,8 @@ def test_the_order_gate_catches_the_old_order():
     expect = {
         ("tools/gen_capabilities_index.py", "imgevolve.py"),
         ("tools/gen_trust_block.py", "imgevolve.py"),
+        # 2026-10-22: 互換プロファイルは HALCON_PARITY.md を書き、旧順序では docs 索引がそれを先に読む。
+        ("tools/gen_docs_index_ops.py", "tools/halcon_compat_profile.py"),
     } | {("tools/gen_docs_index_ops.py", w) for w in (
         "tools/gen_examples3d_doc.py", "tools/gen_sensor_playbook.py", "catalog.py",
         "references.py", "samples.py", "tools/conversion_matrix.py", "tools/gen_design_notes.py")}

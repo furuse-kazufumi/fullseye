@@ -14,19 +14,19 @@
   "tests": [
     {
       "file": "tests/test_halcon_comparison_fixes_2026_10_21.py",
-      "sha256": "9d9b654350329a7389056dc6dfcbae9e7746e6aa9541fe5358a7e8ad5e3b232f",
+      "sha256": "8ea82972302d16c18694307852004ff85790f27f9f254c544ae6018f0995171f",
       "seeds": [
         42
       ]
     },
     {
       "file": "tests/test_halcon_comparison_fixes_2026_10_22.py",
-      "sha256": "c59b08b6a28e4d8356309442ddd8d3ae9c6ad561a8c6e098c52df310509102f9",
+      "sha256": "c1815e70983f20a25e7c470a11b2b2eb70b4079579d877c0b9d4b228282a5da9",
       "seeds": []
     },
     {
       "file": "tests/test_halcon_ncc_entry_2026_10_22.py",
-      "sha256": "c57880cfdd1aaf97d2723af3a9ae0470bcc41ed5616d0242619193de1b6b2c19",
+      "sha256": "dc534e2f4118bbe46aedc5216abb06a60b400f99525f3d87ad3b078b240861b2",
       "seeds": [
         101022,
         7022,
@@ -35,7 +35,7 @@
     },
     {
       "file": "tests/test_connection_backends_agree_2026_10_22.py",
-      "sha256": "da38bd5f8d392727e00335a2f4a6905e64e91218679da5e2b64be59ccf80093a",
+      "sha256": "51a54b6e574b673942317fae3d9c4012ae6908170d0bb5252deeca12bbe57564",
       "seeds": [
         20261022
       ]
