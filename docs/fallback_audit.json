@@ -121,7 +121,7 @@
     {
       "module": "geometry2d.py",
       "function": "distance_lc",
-      "line": 269,
+      "line": 357,
       "exception_types": [],
       "returned_or_assigned": "0.0",
       "classification": "legitimate_empty",
@@ -130,7 +130,7 @@
     {
       "module": "geometry2d.py",
       "function": "distance_lr",
-      "line": 278,
+      "line": 366,
       "exception_types": [],
       "returned_or_assigned": "0.0",
       "classification": "legitimate_empty",
@@ -139,7 +139,7 @@
     {
       "module": "geometry2d.py",
       "function": "distance_sr",
-      "line": 287,
+      "line": 375,
       "exception_types": [],
       "returned_or_assigned": "0.0",
       "classification": "legitimate_empty",
@@ -148,7 +148,7 @@
     {
       "module": "geometry2d.py",
       "function": "distance_cc_min_points",
-      "line": 296,
+      "line": 384,
       "exception_types": [],
       "returned_or_assigned": "{'distance': 0.0}",
       "classification": "legitimate_empty",
