@@ -44,6 +44,9 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 ``a``, ``b`` は未使用。
 
+Raises:
+    FsValueError: NaN / inf を含む画像。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_features ファミリ ガイド](../guides/gallery2d_features.md)

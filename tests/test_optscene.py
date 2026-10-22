@@ -43,11 +43,32 @@ def test_camera_rays_reproject_to_the_originating_pixel():
     assert np.abs(uv[:, :2] - px).max() < 1e-9
 
 
-def test_field_of_view_matches_the_thin_lens_relation():
-    cam = _cam(resolution=(200, 100), focal_mm=12.0, working_distance_mm=250.0)
-    w = 200 * 3.45e-3 * 250.0 / 12.0
-    assert cam["fov_mm"][0] == pytest.approx(w, rel=1e-12)
-    assert cam["fov_mm"][1] == pytest.approx(w / 2.0, rel=1e-12)
+def _measured_fov(cam):
+    """視野を撮像で数える: 端の画素の中心を通る光線を台(z = 0)に当て、両端の距離を (N−1) 画素ぶんとして N 画素に直す。"""
+    o, d = OS.camera_rays(cam)
+    hit = OS.trace_rays([OS.scene_plane(0.0)], o, d)
+    assert (hit["index"] >= 0).all()
+    P = hit["point"].reshape(cam["height"], cam["width"], 3)
+    w, h = cam["width"], cam["height"]
+    span_x = np.linalg.norm(P[h // 2, -1] - P[h // 2, 0]) * w / (w - 1)
+    span_y = np.linalg.norm(P[-1, w // 2] - P[0, w // 2]) * h / (h - 1)
+    return span_x, span_y
+
+
+def test_field_of_view_is_what_the_rays_land_on():
+    """2026-10-15: 以前の名前は「薄肉レンズの関係」だったが、中身は fov_mm の式(画素数 × 画素 × WD / f)を写した
+    比較で、既定(像距離 = f)は薄肉レンズでなくピンホールの相似三角形。今は台に当たった光線の端から端を数える。
+    像距離を薄肉レンズの v = f·WD/(WD − f) にすれば、視野は薄肉レンズの倍率 f/(WD − f) の閉形式に一致する。"""
+    f, wd, px = 12.0, 250.0, 3.45e-3
+    cam = _cam(resolution=(201, 101), focal_mm=f, working_distance_mm=wd)
+    sx, sy = _measured_fov(cam)
+    assert cam["fov_mm"][0] == pytest.approx(sx, rel=1e-9) and cam["fov_mm"][1] == pytest.approx(sy, rel=1e-9)
+    assert sx == pytest.approx(201 * px * wd / f, rel=1e-9)                       # ピンホール: 倍率 f/WD
+    v = f * wd / (wd - f)
+    thin = _cam(resolution=(201, 101), focal_mm=f, working_distance_mm=wd, image_distance_mm=v)
+    tx, ty = _measured_fov(thin)
+    assert tx == pytest.approx(201 * px * (wd - f) / f, rel=1e-9)                 # 薄肉レンズ: 倍率 f/(WD − f)
+    assert thin["fov_mm"][0] == pytest.approx(tx, rel=1e-9) and thin["fov_mm"][1] == pytest.approx(ty, rel=1e-9)
 
 
 def test_reflect_rays_preserves_angle_and_plane():
