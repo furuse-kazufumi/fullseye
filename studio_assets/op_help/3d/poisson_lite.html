@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">poisson_lite — 3D <code style="color:#22d3bf">reconstruct</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">mesh</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.poisson_lite(points, size=64, sigma=1.0, iso=0.5, normals=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import recon3d; recon3d.poisson_lite(points, size=64, sigma=1.0, iso=0.5, normals=None)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;poisson_lite&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.poisson_lite(points, size=64, sigma=1.0, iso=0.5, normals=None, method=&#x27;exact&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import recon3d; recon3d.poisson_lite(points, size=64, sigma=1.0, iso=0.5, normals=None, method=&#x27;exact&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;poisson_lite&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>点群 (N,3) → (vertices(V,3), faces(F,3)) の表面メッシュ(スクリーンド Poisson 軽量近似)。</p>
 <p>点群を size³ の voxel 格子へ splat し、等値面場を作って marching cubes で三角形メッシュ化する。出力頂点は入力点群と同じ<b>世界座標</b>(bbox から逆写像)。bounds は点群 bbox(+σ 依存の padding)。</p>
@@ -19,6 +19,9 @@
 <p>等値面レベル。正規化場 [0,1] 上の値(既定 0.5)。</p>
 <p>normals : array_like (N,3) or None</p>
 <p>点法線。与えると winding number モード、None なら占有モード。</p>
+<p>method : {&quot;exact&quot;, &quot;fast&quot;}</p>
+<p><code style="color:#22d3bf">&quot;exact&quot;</code> keeps the historical three convolutions. <code style="color:#22d3bf">&quot;fast&quot;</code></p>
+<p>accumulates them in frequency space; rounding differs, so it is opt-in.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>vertices : numpy.ndarray (V,3) float64</p>
 <p>世界座標の頂点。</p>

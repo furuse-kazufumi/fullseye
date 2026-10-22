@@ -760,11 +760,9 @@ def components(V, F) -> list:
     out = []
     for _, flist in groups.items():
         fsel = F[flist]
-        used = np.unique(fsel)
-        remap = -np.ones(nv, np.int64)
-        remap[used] = np.arange(used.size)
+        used, local_faces = np.unique(fsel, return_inverse=True)
         out.append((int(used.min()),
                     np.ascontiguousarray(V[used], np.float64),
-                    np.ascontiguousarray(remap[fsel], np.int64)))
+                    np.ascontiguousarray(local_faces.reshape(fsel.shape), np.int64)))
     out.sort(key=lambda t: t[0])
     return [(v, f) for _, v, f in out]

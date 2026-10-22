@@ -117,7 +117,7 @@ def face_normals(mesh) -> np.ndarray:
     return cr / mag[:, None]
 
 
-def vertex_normals(mesh) -> np.ndarray:
+def vertex_normals(mesh, method="exact") -> np.ndarray:
     """三角形メッシュの**頂点法線**(面積重み付きで集約した単位法線)。→ (N,3)。
 
     各三角形の外積ベクトル(=面法線×2·面積)を、その 3 頂点へ散布加算し、頂点ごとに正規化する。
@@ -125,6 +125,10 @@ def vertex_normals(mesh) -> np.ndarray:
     ``normals_orient.estimate_normals``(点群 PCA・符号未定)と違い、追加の向き付け工程は不要。
 
     Args:
+        method: ``"exact"`` keeps the historical accumulation order.
+            ``"fast"`` uses component-wise ``bincount``; on measured probes
+            it differed by at most 3.6e-15 and may differ at vertices whose
+            incident face normals nearly cancel.
         mesh: (vertices (N,3), faces (M,3)) のタプル。
 
     Returns:
@@ -136,9 +140,19 @@ def vertex_normals(mesh) -> np.ndarray:
     """
     V, F = _as_mesh(mesh)
     cr = _face_cross(V, F)                  # (M,3) 面積重み付きベクトル
-    vn = np.zeros_like(V)                   # (N,3)
-    for c in range(3):                      # 各面を構成する 3 頂点へ散布
-        np.add.at(vn, F[:, c], cr)
+    if method == "exact":
+        vn = np.zeros_like(V)               # (N,3)
+        for c in range(3):                  # historical summation order
+            np.add.at(vn, F[:, c], cr)
+    elif method == "fast":
+        indices = F.ravel()
+        values = np.repeat(cr, 3, axis=0)
+        vn = np.column_stack([
+            np.bincount(indices, weights=values[:, axis], minlength=len(V))
+            for axis in range(3)
+        ])
+    else:
+        raise ValueError("method must be 'exact' or 'fast', got %r" % (method,))
     mag = np.linalg.norm(vn, axis=1)
     scale = float(np.median(mag[mag > 0])) if np.any(mag > 0) else 0.0
     bad = mag <= _DEGEN_REL * scale if scale > 0 else mag <= 0
