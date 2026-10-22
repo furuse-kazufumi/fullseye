@@ -14,7 +14,7 @@
 <p>Unit cells along each axis.</p>
 <p>Returns a <code style="color:#22d3bf">mesh</code> (vertices, faces).</p>
 <p>★The thickened <b>solid</b> form lives in <code style="color:#22d3bf">gyroid_solid_mask</code>, not behind a keyword here —— one function that returns a mesh or a volume depending on an argument cannot be given a single declared output type, and a ledger row that lies about its output is the defect class this library keeps catching (<code style="color:#22d3bf">indices_to_labels</code>: one word covering a 1-D mask and a 3-D volume).</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: a grid below 8 per axis or over the cap; non-positive periods; a level outside the field&#x27;s range (no surface exists there — reported rather than returning an empty mesh); negative thickness.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: a grid below 8 per axis or over the cap; non-positive periods; or a level outside the field&#x27;s range (no surface exists there — reported rather than returning an empty mesh).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

@@ -37,7 +37,7 @@ A スキャンでは界面のエコーの**期待時刻** ``t_interfaces[interfa
 返り(A スキャン): ``phase`` [rad] ``phase_deg`` ``amplitude`` ``t_peak`` ``polarity``
 (+1/−1/0)``label`` ``signed_peak`` ``signed_peak_agrees``。
 返り(C スキャン): ``polarity`` の地図と各分類の画素数。
-Raises ValueError: A/C スキャンの印の無い入力、界面の番号が範囲外、tol_deg が [0, 90) の外、
+Raises ValueError: A/C スキャンの印の無い入力、界面の番号が範囲外、tol_deg が (0, 90) の外、
 ゲートの中の標本が 3 未満。
 
 ## 詳しい使い方ガイド

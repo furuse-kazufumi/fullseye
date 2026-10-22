@@ -2199,7 +2199,7 @@ def traj_tau_dot(points, t_s, target=(0.0, 0.0, 0.0), normal=None):
             normal: the distance is then ``(p - target) . normal / |normal|``.
 
     Returns a dict ``{"t_s", "distance_m", "speed_m_s", "tau_s", "tau_dot",
-    "closest_m", "t_closest_s", "n"}``. Samples where the agent is not
+    "closest_m", "t_closest_s", "n", "mode"}``. Samples where the agent is not
     approaching (``v <= 0``) carry ``NaN`` in ``tau_s`` and ``tau_dot`` — a
     documented non-finite: a receding agent has no time-to-contact.
 

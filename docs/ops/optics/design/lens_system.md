@@ -44,8 +44,8 @@ Build a validated sequential prescription (the ``table`` every other op consumes
   Seidel terms and no dispersion, takes no mirror / conic / asph, and the
   non-coaxial ``raytrace3d`` does not read it.
 * *stop*: index of the aperture-stop surface (default: the first surface).
-  The stop's ``ap`` is the stop radius (required unless every surface has
-  one, in which case the smallest is used).
+  The stop's ``ap`` is the stop radius. If omitted, the smallest non-null
+  aperture on any surface is used; an error is raised only if none exists.
 * *object_mm*: distance from the first vertex to the object (``inf`` for a
   collimated object); *index_object*: index of object space.
 * *field*: default field for the analysis ops — degrees (infinite object)

@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>thickness_mm मोटाई की plane-parallel plate की transmittance T(λ) pairs (λ [nm], T) के रूप में।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>T = (1 − R)² e^{−αt} / (1 − R² e^{−2αt})(両面の多重反射を足した非コヒーレントの式、R は垂直入射の |(m − 1)/(m + 1)|²、α = 4πk/λ)。<code style="color:#22d3bf">include_fresnel=False</code> で内部透過率 e^{−αt} だけにする(硝材カタログの「内部透過率」と同じ量)。厚さ 0 は T = 1 になるが、負や非有限は ValueError。</p>
+<p>T = (1 − R)² e^{−αt} / (1 − R² e^{−2αt})(両面の多重反射を足した非コヒーレントの式、R は垂直入射の |(m − 1)/(m + 1)|²、α = 4πk/λ)。<code style="color:#22d3bf">include_fresnel=False</code> で内部透過率 e^{−αt} だけにする(硝材カタログの「内部透過率」と同じ量)。厚さ 0 でも <code style="color:#22d3bf">include_fresnel=True</code> なら <code style="color:#22d3bf">T=(1-R)/(1+R)</code>、False なら 1。負や非有限は ValueError。</p>
 <p><code style="color:#22d3bf">extra_absorption</code>: 材料の表に無い吸収を足す <code style="color:#22d3bf">pairs</code>(λ [nm], α [1/cm])。例: ドープした Si の自由キャリア吸収 <code style="color:#22d3bf">silicon_free_carrier_absorption(1e19, &quot;n&quot;, ...)</code> をそのまま渡す。格子の全波長を覆わなければ ValueError (外挿しない)、負の α も ValueError。表面の反射 R は材料の n,k のまま(自由キャリアの n の変化は小さいので無視)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>optics के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>

@@ -32,7 +32,7 @@ to ``[0, 1]`` for training-data augmentation: every operator downstream here
 (Fano factor, Anscombe, Coates, dToF) needs ``N``, and the rescale-and-clip
 is not invertible.
 
-``seed`` is a required non-negative integer and the RNG is
+``seed`` is an optional non-negative integer (default 0) and the RNG is
 ``numpy.random.default_rng(seed)`` — same seed, same frame, on any machine.
 
 Ground truth it reproduces (pinned in ``tests/test_photoncount.py``): the

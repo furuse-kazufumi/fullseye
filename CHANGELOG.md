@@ -7,6 +7,8 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- docstring/code 監査第2波のうち12行(11 op)を文書修正、コード修正0件、誤検出0件として整合した。
+
 ### 修正 — 外部報告(0.8.0 の端条件、2026-10-22 受領)
 
 - NCC のテンプレートと探索画像を必要時に独立した2のべき乗で正規化し、有限の非定数画像の極端な大きさでも相関係数を求められるようにした。
