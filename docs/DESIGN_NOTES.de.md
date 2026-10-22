@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 613 von 1545. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 613 von 1546. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -812,6 +812,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `examples/poc_material_optical_library.py`
 
 - **L111** _(ja)_ — ★2026-10-15: 水の k を Hale & Querry 1973 から Segelstein 1981 に差し替えた(RII の Hale の表は NIR を 0.2 µm おきにしか持たず、1.45 / 1.94 µm の吸収帯を線形補間で 1/3 に潰していた。n は滑らかなので Hale のまま)。 1500 nm の k は optiland 0.6.3 の MaterialFile で Segelstein.yml を評価し直した値(2.2392e-4)。
+- **L195** _(ja)_ — ★2026-10-15: 以前は k の相対差に 1e-6 を掛けて n の門に混ぜていたので、k が ±100 % ずれても通った。 写した k は有効数字 5 桁(1.4361e-07 など)なので、丸めの幅は相対 5e-5。optiland が k を持たない点(0)では こちらも 1e-8 未満(水の 500 nm は Segelstein の 9e-10、吸収の無い区間)。
 
 ## `examples/poc_measurement_system_analysis.py`
 
@@ -2493,7 +2494,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `tests/test_optdraw.py`
 
-- **L256** _(ja)_ — ★2026-10-15 から鏡は折り返した系の断面図(noncoaxial_drawing)に、接合レンズは組図になった(拒否しない)
+- **L285** _(ja)_ — ★2026-10-15 から鏡は折り返した系の断面図(noncoaxial_drawing)に、接合レンズは組図になった(拒否しない)
 
 ## `tests/test_packaging_foundation.py`
 
