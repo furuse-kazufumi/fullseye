@@ -7,7 +7,7 @@ out: table
 examples: [multivar_inspection_tour, poc_simcal_thin_film]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.8.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # mv_pca — MULTIVAR `analysis` op

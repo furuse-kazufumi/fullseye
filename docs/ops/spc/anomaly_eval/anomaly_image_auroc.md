@@ -7,7 +7,7 @@ out: table
 examples: [anomaly_eval_metrics, poc_good_sample_variation_model, poc_patch_anomaly]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.8.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # anomaly_image_auroc — SPC `anomaly_eval` op

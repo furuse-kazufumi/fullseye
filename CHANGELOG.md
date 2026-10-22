@@ -7,6 +7,8 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+## 0.8.1 — 2026-10-22
+
 ### 追加 — HALCON 比較キット A(定義域の保持・絶対画素距離・縦横独立の平均窓・連結成分の近傍指定)
 - `reduce_domain` / `change_domain` に、HALCON と同様に定義域外の画素行列を保持する `keep_pixels=True` を追加しました。既定のゼロ化動作は変わりません。
 - 正規化しない絶対画素距離を返す `dist_transform_abs` を追加しました。

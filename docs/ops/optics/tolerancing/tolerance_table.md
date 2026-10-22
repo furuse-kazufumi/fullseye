@@ -7,7 +7,7 @@ out: table
 examples: [lensfile_tolerance_worst_mtf, optimized_lens_tolerance_sensitivity, poc_lens_tolerancing]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.8.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # tolerance_table — OPTICS `tolerancing` op
