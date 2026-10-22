@@ -27,9 +27,22 @@ def test_p030_block_mode_covers_correlated_and_power_models():
         stream=True,
     )
     measured_max_diff = _max_result_diff(default, blocked)
-    assert abs(measured_max_diff - 0.13626698757917066) < 1e-15, (
-        f"stream と既定の全戻り値の実測 max |diff|={measured_max_diff:.17g}"
-    )
+    # stream は乱数の消費順と行列積の区切りが違う別の実現なので、ビット一致ではなく
+    # Monte Carlo のばらつきの範囲で一致することを門にする(受け取り時の実測 2026-10-22:
+    # u 0.0079、mean 0.0021、low 0.100、high 0.054、half_width 0.023、全体 max 0.136)。
+    # 定数との 1e-15 比較は BLAS や OS で乱数以外の桁が変わると落ちるので使わない。
+    u0 = float(np.asarray(default["u_monte_carlo"]).ravel()[0])
+    u1 = float(np.asarray(blocked["u_monte_carlo"]).ravel()[0])
+    assert abs(u1 - u0) <= 0.02 * u0, f"u_monte_carlo 既定 {u0:.6g} / stream {u1:.6g}"
+    se = u0 / np.sqrt(n)
+    m0 = float(np.asarray(default["mean"]).ravel()[0]); m1 = float(np.asarray(blocked["mean"]).ravel()[0])
+    assert abs(m1 - m0) <= 5.0 * se, f"mean 既定 {m0:.6g} / stream {m1:.6g} / 標準誤差 {se:.3g}"
+    hw = float(np.asarray(default["half_width"]).ravel()[0])
+    for key in ("low", "high", "half_width"):
+        d = float(np.max(np.abs(np.asarray(default[key], float) - np.asarray(blocked[key], float))))
+        assert d <= 0.05 * hw, f"{key} の差 {d:.4g} が半幅 {hw:.4g} の 5 % を超える"
+    assert measured_max_diff < 1.0, f"全戻り値の実測 max |diff|={measured_max_diff:.6g}"
+    assert default["n"] == blocked["n"] and default["level"] == blocked["level"]
 
 
 def test_p030_block_generator_obeys_64_mib_workspace_limit():
