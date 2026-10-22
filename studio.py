@@ -40,6 +40,7 @@ import studio_errors
 import studio_roundtrip
 import studio_batch
 import studio_display
+import studio_layout
 
 
 # --------------------------------------------------------------------------- #
@@ -6500,8 +6501,8 @@ def build_window(model=None):
     act_zin = _act("Zoom in", "Ctrl+=", "Zoom the image in")
     act_zout = _act("Zoom out", "Ctrl+-", "Zoom the image out")
     act_fit = _act("Fit to window", "Ctrl+0", "Fit the image to the view")
-    act_11 = _act("Actual size (1:1)", "Ctrl+1", "Reset zoom to 1:1")
-    act_3d = _act("3D surface", "Ctrl+3", "Open a rotatable 3-D surface of the result")
+    act_11 = _act("Actual size (1:1)", "Ctrl+Alt+1", "Reset zoom to 1:1")
+    act_3d = _act("3D surface", "Ctrl+Alt+3", "Open a rotatable 3-D surface of the result")
     act_reset = _act("Reset to start", "Home", "Show the raw image (before stage 1)")
     act_step = _act("Step forward", "Ctrl+Right", "Advance one pipeline stage")
     act_runall = _act("Run all", "Ctrl+Return", "Show the final pipeline result")
@@ -6515,13 +6516,23 @@ def build_window(model=None):
     act_featins = _act("Feature inspection…", "Ctrl+F5",
                        "Per-region / per-cluster feature table with two-way highlight "
                        "(rows ↔ image / 3-D view)")
-    act_viewer3d = _act("3D viewer…", "Ctrl+4",
+    act_viewer3d = _act("3D viewer…", "Ctrl+Alt+4",
                         "Open the interactive 3-D viewer (point cloud / mesh file, "
                         "orbit / zoom / pan)")
     act_shortcuts = _act("Keyboard shortcuts", "F1", "Show all keyboard shortcuts")
     act_op_help = _act("Operator reference…", "Shift+F1", "Browse every operator with its sorts + HALCON alias")
     act_samples = _act("Samples & code…", None, "Load a sample pipeline and see its code")
     act_about = _act("About Fullseye Studio", None, "About this application")
+    work_mode_actions = {}
+    for _number, (_mode_id, _mode) in enumerate(studio_layout.MODES.items(), 1):
+        _action = _act(_mode.label, "Ctrl+%d" % _number,
+                       "%s作業に合わせてパネルを切り替えます" % _mode.label)
+        _action.setCheckable(True)
+        work_mode_actions[_mode_id] = _action
+    act_focus_image = _act("画像だけ大きく", "F11", "作業状態を保ったまま画像だけを大きく表示します")
+    act_focus_image.setCheckable(True)
+    act_find_panel = _act("パネルを探す…", "Ctrl+Shift+P", "名前から隠れたパネルを表示します")
+    act_leave_focus = _act("画像だけ大きくを終了", "Esc", "元のパネル配置に戻します")
 
     # Menu bar — standard IDE semantics, one home per concern (simple + multifunctional):
     # File = document I/O, Edit = pipeline-stage edits, View = display, Run = execution,
@@ -7289,6 +7300,103 @@ def build_window(model=None):
     win.resizeDocks([dock_code], [300], QtCore.Qt.Vertical)         # wide bottom code strip = 2nd largest
     win._docks = {"operators": dock_ops, "pipeline": dock_pipe, "display": dock_disp,
                   "program": dock_code, "variables": dock_vars, "compare": dock_cmp, "ab": dock_ab}
+    # Work modes are view state only.  The central result is registered alongside
+    # the real docks so the Qt-free preset model can describe focus and sizing.
+    win._layout_panels = dict(win._docks)
+    win._layout_panels["result"] = image_panel
+    win._layout_state = studio_layout.LayoutState()
+    win._applying_layout = False
+
+    mode_bar = QtWidgets.QToolBar("作業モード", win)
+    mode_bar.setObjectName("work_modes")
+    mode_bar.setMovable(False); mode_bar.setFloatable(False)
+    win.addToolBar(QtCore.Qt.TopToolBarArea, mode_bar)
+    mode_group = QtGui.QActionGroup(win); mode_group.setExclusive(True)
+    for _mode_id, _action in work_mode_actions.items():
+        mode_group.addAction(_action); mode_bar.addAction(_action)
+    mode_bar.addSeparator(); mode_bar.addAction(act_focus_image); mode_bar.addAction(act_find_panel)
+
+    def _save_layout_state():
+        try:
+            _settings().setValue("studio/work_mode_layout", studio_layout.to_json(win._layout_state))
+        except Exception as exc:
+            _log_soft_failure("could not save work-mode layout", exc)
+
+    def _apply_layout_state():
+        win._applying_layout = True
+        try:
+            for _panel, _dock in win._docks.items():
+                _flags = win._layout_state.panels[_panel]
+                _dock.setVisible(bool(_flags["visible"] and not _flags["collapsed"]))
+            _mode = studio_layout.MODES[win._layout_state.mode]
+            for _id, _action in work_mode_actions.items():
+                _action.setChecked(_id == win._layout_state.mode)
+            act_focus_image.setChecked(win._layout_state.focus_image)
+            # Docks selected as "large" receive most of the relevant dock axis.
+            _large = win._docks.get(_mode.large)
+            if _large is not None and _large.isVisible():
+                _orientation = (QtCore.Qt.Vertical if _mode.large == "program"
+                                else QtCore.Qt.Horizontal)
+                win.resizeDocks([_large], [max(600, win.width() * 2 // 3)], _orientation)
+            elif _mode.large == "result":
+                _shown = [d for d in win._docks.values() if d.isVisible()]
+                if _shown:
+                    win.resizeDocks(_shown, [max(180, win.width() // 5)] * len(_shown),
+                                    QtCore.Qt.Horizontal)
+        finally:
+            win._applying_layout = False
+
+    def set_work_mode(mode_id):
+        win._layout_state = studio_layout.apply_mode(win._layout_state, mode_id)
+        _apply_layout_state(); _save_layout_state()
+
+    def toggle_focus_image(checked=None):
+        want = (not win._layout_state.focus_image) if checked is None else bool(checked)
+        if want != win._layout_state.focus_image:
+            win._layout_state = studio_layout.toggle_focus_image(win._layout_state)
+            _apply_layout_state(); _save_layout_state()
+
+    def find_panel_dialog():
+        dialog = QtWidgets.QDialog(win); dialog.setWindowTitle("パネルを探す")
+        layout = QtWidgets.QVBoxLayout(dialog)
+        query = QtWidgets.QLineEdit(); query.setPlaceholderText("パネル名を入力…")
+        found = QtWidgets.QListWidget(); layout.addWidget(query); layout.addWidget(found)
+        def refill(text=""):
+            found.clear()
+            for panel in studio_layout.find_panels(text):
+                item = QtWidgets.QListWidgetItem(studio_layout.PANELS[panel]["name"])
+                item.setData(QtCore.Qt.UserRole, panel); found.addItem(item)
+        def reveal(item):
+            panel = item.data(QtCore.Qt.UserRole)
+            if panel != "result":
+                win._layout_state = studio_layout.set_override(
+                    win._layout_state, panel, visible=True, collapsed=False)
+                _apply_layout_state(); win._docks[panel].raise_(); _save_layout_state()
+            dialog.accept()
+        query.textChanged.connect(refill); found.itemActivated.connect(reveal)
+        refill(); dialog.resize(380, 300); query.setFocus(); dialog.show()
+        win._panel_search_dialog = dialog
+        return dialog
+
+    for _mode_id, _action in work_mode_actions.items():
+        _action.triggered.connect(lambda _checked=False, mid=_mode_id: set_work_mode(mid))
+    act_focus_image.triggered.connect(toggle_focus_image)
+    act_leave_focus.triggered.connect(lambda: toggle_focus_image(False))
+    act_find_panel.triggered.connect(find_panel_dialog)
+    win.addAction(act_leave_focus)
+    for _panel, _dock in win._docks.items():
+        def _record(visible, panel=_panel):
+            if win._applying_layout or win._layout_state.focus_image:
+                return
+            win._layout_state = studio_layout.set_override(
+                win._layout_state, panel, visible=bool(visible), collapsed=False)
+            _save_layout_state()
+        _dock.visibilityChanged.connect(_record)
+    win._set_work_mode = set_work_mode
+    win._toggle_focus_image = toggle_focus_image
+    win._find_panel_dialog = find_panel_dialog
+    win._apply_layout_state = _apply_layout_state
+    win._work_mode_actions = work_mode_actions
     # On-demand panels + less-common actions live behind ONE small popup menu button
     # (per user direction: prefer popup menus, keep buttons small) instead of a row of
     # wide toggles. Each panel toggle's text is the panel name; checking it shows it.
@@ -14602,6 +14710,14 @@ def build_window(model=None):
     # Default (factory) panel layout — captured before any saved layout is applied,
     # so "Reset panel layout" always has somewhere to go back to.
     win._default_state = win.saveState()
+    _restore_work_layout = False
+    try:
+        _saved_work_layout = _settings().value("studio/work_mode_layout")
+        if _saved_work_layout:
+            win._layout_state = studio_layout.from_json(str(_saved_work_layout))
+            _restore_work_layout = True
+    except (TypeError, ValueError) as exc:
+        _log_soft_failure("could not restore work-mode layout", exc)
     try:                                     # restore the user's remembered geometry + layout
         if os.environ.get("QT_QPA_PLATFORM") != "offscreen":
             s = _settings()
@@ -14617,6 +14733,8 @@ def build_window(model=None):
                 win.restoreState(st)
     except Exception:
         pass
+    if _restore_work_layout:
+        win._apply_layout_state()
     try:
         gsub.showMaximized()                 # the primary graphics window fills the workspace
     except Exception:
