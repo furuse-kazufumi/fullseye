@@ -15,7 +15,13 @@ from pathlib import Path
 import re
 import subprocess
 import sys
-import tomllib
+try:
+    import tomllib                                  # Python 3.11+
+except ModuleNotFoundError:                         # 3.10 の CI: tomli があればそれ、無ければ version 行だけ読む
+    try:
+        import tomli as tomllib
+    except ModuleNotFoundError:
+        tomllib = None
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
@@ -33,6 +39,17 @@ TEST_FILES = [
     "tests/test_connection_backends_agree_2026_10_22.py",
 ]
 
+
+
+def _project_version(pyproject_text: str) -> str:
+    """pyproject の [project].version。tomllib / tomli が無い環境(3.10)では version 行だけを読む。"""
+    if tomllib is not None:
+        return str(tomllib.loads(pyproject_text)["project"]["version"])
+    import re
+    m = re.search(r'^version\s*=\s*"([^"]+)"', pyproject_text, re.M)
+    if not m:
+        raise RuntimeError("pyproject.toml に version 行が無い")
+    return m.group(1)
 
 def registry_rows() -> list[dict]:
     """Rows of the committed machine-readable index that carry a reference mapping.
@@ -120,7 +137,7 @@ def _literal_seeds(path: Path) -> list[int]:
 
 def generate_manifest() -> dict:
     source_line, source_url, version = _source_line()
-    package_version = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))["project"]["version"]
+    package_version = _project_version((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
     tests = []
     for rel in TEST_FILES:
         tests.append({"file": rel, "sha256": _normalised_sha256(ROOT / rel),
