@@ -14,6 +14,10 @@
 <p>モンテカルロ  <code style="color:#22d3bf">dy = 50e-6</code>、<code style="color:#22d3bf">u = 50e-6</code>、区間 <code style="color:#22d3bf">[0, 150e-6]</code></p>
 <p>伝播則は「不確かさゼロ」と答える —— これは実装の誤りではなく、<b>1 次近似が極値で情報を失う</b>という手法そのものの限界。こういう場面があるから補遺 1 のモンテカルロが要る。<code style="color:#22d3bf">x1 = 0.010</code> では伝播則の区間が <code style="color:#22d3bf">[-96, +296]e-6</code> と <b>負の損失</b>を含み(物理的にありえない)、<code style="color:#22d3bf">x1 = 0.050</code> まで離れると <code style="color:#22d3bf">[1520, 3480]</code> 対 <code style="color:#22d3bf">[1590, 3543]</code> と近づく。</p>
 <p>★★<b>正規分布でない入力では、包含区間は <code style="color:#22d3bf">k u_c</code> と一致しない</b>。矩形分布を足し合わせると中心極限定理で正規に近づくが、成分が 1 つだけなら最短 95 % 区間の半幅は <b><code style="color:#22d3bf">0.95 a</code></b>(支持の端 <code style="color:#22d3bf">a</code> ではない —— 95 % ぶんの幅しか要らない)で、<code style="color:#22d3bf">k u = 1.96 a/sqrt(3) = 1.1316 a</code> より<b>狭い</b>。比は <code style="color:#22d3bf">1.959964/(sqrt(3) x 0.95) = 1.1911</code> という閉形式で、実測 1.1914。これは欠陥ではなく<b>伝播則が分布の形を捨てている</b>ことの現れなので、両方返して読み手に見せる(この 0.95 を最初 <code style="color:#22d3bf">a</code> と思い込んで門を誤らせた)。</p>
+<p>Args:</p>
+<p>stream: 独立な線形モデルでは成分ごと、それ以外では行ブロックごとに計算する。</p>
+<p>後者の標準化行列用一時領域は 64 MiB 以下。乱数と行列積の区切りが既定経路と</p>
+<p>異なるため、同じ seed でも結果はビット一致せず、既定は従来経路のまま。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

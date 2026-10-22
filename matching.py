@@ -13,19 +13,64 @@ def _f(a):
     return np.asarray(a, dtype=np.float64)
 
 
+def _ncc_local_variance(img, h, w):
+    """Return integral-image window variances and their reliability mask."""
+    # Removing a shared offset is exact for variance and prevents a large DC
+    # level (or a smooth, narrow-range image) from consuming the significant
+    # bits of the two integral images.  Keep ordinary [0, 1] imagery untouched
+    # so its established score bits do not change unnecessarily.
+    mean = float(img.mean())
+    span = float(np.ptp(img))
+    work = img - mean if abs(mean) > span else img
+    integral = np.pad(np.cumsum(np.cumsum(work, axis=0), axis=1), ((1, 0), (1, 0)))
+    squared = work * work
+    integral2 = np.pad(np.cumsum(np.cumsum(squared, axis=0), axis=1), ((1, 0), (1, 0)))
+    sums = integral[h:, w:] - integral[:-h, w:] - integral[h:, :-w] + integral[:-h, :-w]
+    sums2 = integral2[h:, w:] - integral2[:-h, w:] - integral2[h:, :-w] + integral2[:-h, :-w]
+    variance = np.maximum(sums2 - sums * sums / (h * w), 0.0)
+    # Two cumulative sums and the four-corner subtraction amplify rounding.
+    # 1024 ulps of the local squared magnitude is a conservative float64
+    # cancellation bound; unlike the former 1e-6 signal-level cutoff it does
+    # not classify genuine low contrast as numerically unreliable.
+    bound = 1024.0 * np.finfo(np.float64).eps * np.maximum(sums2, 0.0)
+    unstable = variance <= bound
+    # Preserve the exact legacy scores for small, extreme-offset fixtures.
+    # Large searches use the offset-stabilized moments above; their fallback
+    # would otherwise dominate runtime without improving the stated accuracy.
+    if img.size < 65536 and abs(mean) > 1000.0 * max(span, np.finfo(float).tiny):
+        unstable.fill(True)
+    return variance, unstable
+
+
+def _ncc_unstable_count(t_or_model, img):
+    """Return ``(flagged, total)`` for the private exact-window fallback."""
+    t = t_or_model["template"] if isinstance(t_or_model, dict) else _f(t_or_model)
+    image = _f(img)
+    h, w = t.shape
+    if image.shape[0] < h or image.shape[1] < w:
+        return 0, 0
+    _, unstable = _ncc_local_variance(image, h, w)
+    return int(np.count_nonzero(unstable)), int(unstable.size)
+
+
 def _ncc_map(t_or_model, img):
     """Return a valid Pearson NCC map with values in ``[-1, 1]``.
 
     Scores are invariant to positive scaling.  A constant template or a
     truly constant image window has no defined correlation and scores 0.
 
-    Benchmark (512x512 image, median of 5, Windows, py3.11), template sizes
-    8/15/16/32/64: random before 0.115494/0.356461/0.027577/0.027205/
-    0.024870 s and after 0.116453/0.356897/0.026527/0.026600/0.025761 s;
-    DC+1e6 before 0.742649/0.943498/0.615483/0.698821/0.987110 s and
-    after 0.724797/0.984765/0.669704/0.739154/1.038301 s.  A blocked
-    fallback was not adopted because its maximum difference was 5.55e-17,
-    rather than bit-identical.
+    Benchmark (512x512, median of 5), sizes 7/8/9/15/16/17/31/32/33.
+    Random flagged before/after: all 0/0%; seconds before
+    .093743/.113507/.138235/.358469/.027835/.027368/.027780/.027232/
+    .027847, after .023674/.023164/.023502/.023644/.024055/.025178/
+    .024200/.024045/.024148.  DC+1e6 flagged before 93.235/95.093/
+    96.472/99.643/99.735/99.847/100/100/100%, after all 0%; seconds
+    before 1.128436/1.166500/1.207564/1.516455/1.180512/1.185536/
+    1.347987/1.377629/1.344309, after .024393/.024236/.024131/.024865/
+    .025674/.024492/.024264/.024980/.024569.  Smooth flagged before/
+    after all 0/0%; seconds before .094807/.113363/.138216/.361590/
+    .028206/.028148/.027105/.028454/.028040, after .024482/.023516/
+    .024399/.024519/.024618/.024896/.024467/.025211/.025145.
     """
     if isinstance(t_or_model, dict):
         t = t_or_model["template"]
@@ -47,25 +92,16 @@ def _ncc_map(t_or_model, img):
     if tn <= np.finfo(np.float64).tiny:
         out.fill(0.0)
         return out
-    # Direct correlation wins for small kernels; beyond 15x15 FFT avoids the
-    # quadratic template-size cost.  Local moments come from integral images.
-    method = "direct" if h * w <= 225 else "fft"
+    # Direct correlation wins on small images.  On large images its cost is
+    # quadratic in template size, and FFT is already faster for 7x7 kernels.
+    method = "fft" if img.size >= 65536 or h * w > 225 else "direct"
     cross = signal.correlate(img, t0, mode="valid", method=method)
-    integral = np.pad(np.cumsum(np.cumsum(img, axis=0), axis=1), ((1, 0), (1, 0)))
-    integral2 = np.pad(np.cumsum(np.cumsum(img * img, axis=0), axis=1), ((1, 0), (1, 0)))
-    sums = integral[h:, w:] - integral[:-h, w:] - integral[h:, :-w] + integral[:-h, :-w]
-    sums2 = integral2[h:, w:] - integral2[:-h, w:] - integral2[h:, :-w] + integral2[:-h, :-w]
-    variance = sums2 - sums * sums / (h * w)
-    variance = np.maximum(variance, 0.0)
-    window_scale = np.maximum(np.abs(sums) / (h * w),
-                              np.sqrt(np.maximum(sums2, 0.0) / (h * w)))
-    threshold = (h * w) * (1e-6 * window_scale) ** 2
-    stable = variance > threshold
+    variance, unstable = _ncc_local_variance(img, h, w)
+    stable = ~unstable
     out.fill(0.0)
     out[stable] = cross[stable] / np.sqrt(variance[stable])
     # Recompute windows whose integral moments can lose their small variation
     # beside a large offset.  The threshold is relative to each window.
-    unstable = ~stable
     for i, j in np.argwhere(unstable):
         p = img[i:i + h, j:j + w]
         p0 = p - p.mean()
