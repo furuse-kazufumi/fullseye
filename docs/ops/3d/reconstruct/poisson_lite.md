@@ -13,7 +13,7 @@ version: 0.7.2  # fullseye lib version this note was generated for
 # poisson_lite — 3D `reconstruct` op
 
 - **データ種**: `points` → `mesh`
-- **呼び出し**: `import fullseye as fs; fs.ledger.poisson_lite(points, size=64, sigma=1.0, iso=0.5, normals=None)` (実装を直接呼ぶなら `import recon3d; recon3d.poisson_lite(points, size=64, sigma=1.0, iso=0.5, normals=None)`、台帳から引くなら `ops3d.get("poisson_lite")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.poisson_lite(points, size=64, sigma=1.0, iso=0.5, normals=None, method='exact')` (実装を直接呼ぶなら `import recon3d; recon3d.poisson_lite(points, size=64, sigma=1.0, iso=0.5, normals=None, method='exact')`、台帳から引くなら `ops3d.get("poisson_lite")`)
 
 ## 使い方
 
@@ -44,6 +44,9 @@ iso : float
     等値面レベル。正規化場 [0,1] 上の値(既定 0.5)。
 normals : array_like (N,3) or None
     点法線。与えると winding number モード、None なら占有モード。
+method : {"exact", "fast"}
+    ``"exact"`` keeps the historical three convolutions. ``"fast"``
+    accumulates them in frequency space; rounding differs, so it is opt-in.
 
 Returns
 -------
