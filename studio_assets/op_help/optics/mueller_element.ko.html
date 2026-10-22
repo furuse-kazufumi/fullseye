@@ -10,7 +10,7 @@
 <p>Returns a <code style="color:#22d3bf">(4, 4)</code> float64 matrix acting on <code style="color:#22d3bf">[S0, S1, S2, S3]</code>; apply it</p>
 <p>with <code style="color:#22d3bf">mueller_apply</code> and compose a train as <code style="color:#22d3bf">M_last @ ... @ M_first</code>.</p>
 <p>Ground truth it reproduces exactly: an ideal polariser transmits exactly half of unpolarised light (<code style="color:#22d3bf">[1,0,0,0] -&gt; S0 = 0.5</code>) and fully polarises it; two polarisers at relative angle theta transmit <code style="color:#22d3bf">0.5*cos^2(theta)</code> (Malus); a rotator by 45 degrees turns horizontal into 45-degree linear; the depolariser leaves <code style="color:#22d3bf">S0</code> and kills <code style="color:#22d3bf">S1..S3</code>. Cross-checked against the Jones family in the tests — for every kind and a sweep of angles, the Jones path and the Mueller path return the <b>same Stokes vector to 1e-14</b>, which is the only construction that catches a sign slip in either one.</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: an unknown *kind*; non-finite *angle_deg* or *retardance_deg*.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: an unknown *kind*; non-finite *angle_deg*; or, for <code style="color:#22d3bf">kind=&quot;retarder&quot;</code>, non-finite *retardance_deg*.</p>
 <p>Ideal, lossless (except the polariser&#x27;s physical loss), normal-incidence elements; no diattenuation-plus-retardance combinations, no depolarisation other than the ideal case.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>

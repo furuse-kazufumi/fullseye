@@ -21,7 +21,7 @@ The coarsest LOD level whose geometric error projects below *pixel_tolerance* (`
 
 Screen-space error ``e_px = error × focal_px / distance`` (pinhole, mesh
 units for *distance*). Returns ``{"level", "error_px", "n_faces",
-"candidates": [e_px per level]}``; ``use`` picks ``"max_error"`` (safe) or
+"candidates": [e_px per level], "pixel_tolerance"}``; ``use`` picks ``"max_error"`` (safe) or
 ``"rms_error"``. Level 0 (the input) is chosen when nothing else fits.
 
 ## 背景知識ガイド(この op の手前にある物理・規約)

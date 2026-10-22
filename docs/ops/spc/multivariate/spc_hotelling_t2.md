@@ -31,7 +31,7 @@ charted against the phase-II control limit::
 
 at false-alarm rate ``alpha`` (default 0.0027, the 3-sigma-equivalent). Returns
 a dict with the per-row ``t2`` array, the ``ucl``, the integer indices
-``out_of_control``, and ``in_control``. The mean row (``x == mu``) has
+``out_of_control``, and boolean ``in_control``. The mean row (``x == mu``) has
 ``T^2 == 0`` (pinned in the tests).
 
 **Raises** ``ValueError``: a non-2-D / empty *data*, fewer observations than

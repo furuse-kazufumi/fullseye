@@ -7,7 +7,7 @@
 <p>高解像度・高速・ラインスキャンでは、律速がセンサではなく<b>伝送帯域</b>になることが普通にある。撮る前にどちらが律速かを知るための op(光学の <code style="color:#22d3bf">optical_budget</code> と対になる)。</p>
 <p><code style="color:#22d3bf">efficiency</code> は符号化・パケットの実効効率(CoaXPress で概ね 0.8-0.9)。<code style="color:#22d3bf">line_scan=True</code> なら 1 ライン(幅 x 1 画素)あたりで計算し、ラインレート [kHz] を返す。</p>
 <p>返り値 dict: <code style="color:#22d3bf">gbps</code>(総帯域)/ <code style="color:#22d3bf">bytes_per_frame</code> / <code style="color:#22d3bf">max_fps</code> / <code style="color:#22d3bf">max_line_rate_khz</code>(line_scan のとき)/ <code style="color:#22d3bf">interface</code> / <code style="color:#22d3bf">links</code>。</p>
-<p>実測の目安: CXP-12 x4 = 50 Gbps = 5 GB/s は、8 bit・16k ラインセンサを 300 kHz で回せる帯域にちょうど一致する(Vieworks VT の TDI がこの前提)。一方エリアスキャンの IMX541(20.3 MP・8 bit)は 1 枚 20.3 MB なので理論 246 fps 出るが、センサ自体が 18-42 fps なので<b>帯域は余る</b>。</p>
+<p>数値例: <code style="color:#22d3bf">interface=&quot;CXP-12&quot;</code>、4 links の生帯域は 50 Gbit/s = 6.25 GB/s。既定の <code style="color:#22d3bf">efficiency=0.85</code> では実効 42.5 Gbit/s = 5.3125 GB/s となり、8 bit・16k ラインセンサなら帯域上限は約 332 kHz。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
 <p>optics の全 op は入力を検証してから計算する(黙って通さない):</p>
 <p style="margin:2px 0 2px 12px">• <b>単位は引数名に埋め込む</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。mm と µm の取り違えは crash ではなく「もっともらしく間違った答え」なので、名前で防ぐ。大きさから単位を推測する処理は一切しない。</p>

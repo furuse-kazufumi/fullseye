@@ -604,7 +604,7 @@ def car_hybrid_astar(occupancy, poses, radius=1.0, cell=1.0, step=None, n_theta=
         return (h, ok[:8]) if keep_candidates else h
 
     def shot_cost(word, lens, prev_gear, prev_steer):
-        """解析的な一撃の費用(同じ費用モデル)。(length, cost, gear_last, steer_last)。"""
+        """解析的な一撃の費用(同じ費用モデル)。(length, cost)。"""
         length = cost = 0.0
         g, st = prev_gear, prev_steer
         for k, l in zip(word, lens):

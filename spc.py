@@ -357,7 +357,7 @@ def spc_hotelling_t2(data, alpha=0.0027, mean=None, cov=None):
 
     at false-alarm rate ``alpha`` (default 0.0027, the 3-sigma-equivalent). Returns
     a dict with the per-row ``t2`` array, the ``ucl``, the integer indices
-    ``out_of_control``, and ``in_control``. The mean row (``x == mu``) has
+    ``out_of_control``, and boolean ``in_control``. The mean row (``x == mu``) has
     ``T^2 == 0`` (pinned in the tests).
 
     **Raises** ``ValueError``: a non-2-D / empty *data*, fewer observations than
@@ -555,7 +555,8 @@ def msa_anova_table(table, part="part", operator="operator", value="value"):
     *table* は列 *part* / *operator* / *value* を持つ表。設計は**釣り合っている**
     こと(升目ごとの繰り返し数が同じ)——釣り合っていなければ拒む。
 
-    返りは source / ss / df / ms / f / p の 6 列。``f`` と ``p`` は測定者と交互作用を
+    返りは source / ss / df / ms / f / p の 6 列と ``n_parts`` / ``n_operators`` /
+    ``n_replicates``。``f`` と ``p`` は測定者と交互作用を
     交互作用平均平方で、交互作用を誤差平均平方で検定した値(規格の慣行)。
 
     ★門にできる厳密な恒等式: ``ss_total == ss_part + ss_oper + ss_inter + ss_err``。
@@ -1083,7 +1084,7 @@ def gum_expanded(table, u="u", sensitivity="sensitivity", dof="dof", level=0.95,
                  correlation=None, estimate=None, lower_bound=None, upper_bound=None):
     """Welch-Satterthwaite の有効自由度と包含係数 k、拡張不確かさ U(``table``)。
 
-        nu_eff = u_c^4 / sum_i (c_i u_i)^4 / nu_i        U = k u_c,  k = t_{p}(nu_eff)
+        nu_eff = u_c^4 / sum_i (c_i u_i)^4 / nu_i        U = k u_c,  k = t_{p}(floor(nu_eff))
 
     ★門にできる厳密な性質が 3 つある:
 
@@ -1587,7 +1588,8 @@ def spc_mt_unit_space(data):
 
     Returns a dict with ``mean``, ``std``, ``corr`` and ``inv_corr`` arrays, the
     unit space's own ``md`` per row, ``md_sq_mean``, the exact expected value
-    ``md_sq_mean_exact = (n-1)/n``, the counts ``n`` and ``p``, how many features
+    ``md_sq_mean_exact = (n-1)/n`` for a full-rank non-flat unit space (degenerate
+    features can make the measured mean smaller), the counts ``n`` and ``p``, how many features
     had no spread (``flat_features``), and whether the correlation matrix was
     singular enough to need a pseudo-inverse (``pseudo_inverse``).
 

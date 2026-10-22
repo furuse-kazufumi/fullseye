@@ -19,7 +19,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 Welch-Satterthwaite の有効自由度と包含係数 k、拡張不確かさ U(``table``)。
 
-    nu_eff = u_c^4 / sum_i (c_i u_i)^4 / nu_i        U = k u_c,  k = t_{p}(nu_eff)
+    nu_eff = u_c^4 / sum_i (c_i u_i)^4 / nu_i        U = k u_c,  k = t_{p}(floor(nu_eff))
 
 ★門にできる厳密な性質が 3 つある:
 

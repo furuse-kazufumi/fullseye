@@ -729,7 +729,7 @@ def paraxial_trace(system):
     (transverse; 0 for an object at infinity), ``ep_position`` / ``ep_radius``
     (entrance pupil from the first vertex), ``xp_position`` / ``xp_radius``
     (exit pupil from the last vertex), ``fno`` (image-space f-number,
-    ``efl / (2·ep_radius)``), ``na_image``, ``lagrange`` (the Lagrange invariant
+    ``|efl| / (2·ep_radius)``), ``na_image``, ``lagrange`` (the Lagrange invariant
     for the system's default field), ``marginal`` / ``chief`` (the two paraxial
     rays: heights and post-surface slopes at every surface).
 
@@ -2106,7 +2106,7 @@ def wavefront_from_opd(system, field=None, size=64, n_max=6, wavelength_um=None,
 # Seidel sums
 # --------------------------------------------------------------------------- #
 def seidel_coefficients(system, field=None):
-    """Third-order (Seidel) aberration sums per surface and total (``table``).
+    """Third-order (Seidel) aberration sums in ``per_surface`` and ``total``.
 
     Uses the paraxial marginal ray (through the stop edge) and chief ray (through
     the stop centre) at the system's default field (or *field*), with Welford's

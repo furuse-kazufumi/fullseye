@@ -30,10 +30,9 @@ version: 0.8.1  # fullseye lib version this note was generated for
 返り値 dict: ``gbps``(総帯域)/ ``bytes_per_frame`` / ``max_fps`` /
 ``max_line_rate_khz``(line_scan のとき)/ ``interface`` / ``links``。
 
-実測の目安: CXP-12 x4 = 50 Gbps = 5 GB/s は、8 bit・16k ラインセンサを 300 kHz で
-回せる帯域にちょうど一致する(Vieworks VT の TDI がこの前提)。一方エリアスキャンの
-IMX541(20.3 MP・8 bit)は 1 枚 20.3 MB なので理論 246 fps 出るが、センサ自体が
-18-42 fps なので**帯域は余る**。
+数値例: ``interface="CXP-12"``、4 links の生帯域は 50 Gbit/s = 6.25 GB/s。
+既定の ``efficiency=0.85`` では実効 42.5 Gbit/s = 5.3125 GB/s となり、
+8 bit・16k ラインセンサなら帯域上限は約 332 kHz。
 
 ## ファミリ共通の入力契約(fail-closed)
 

@@ -7,6 +7,8 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- docstring と実装の食い違い(監査 2026-10-18)第 3 波: 確信度 low の 75 行(71 op)を探針で再現し、説明 58・コード 12(road_row_distance / csi_design / jitter / lateral_offset / random_dropout / random_rotation / pc_lod_chain / plateau_parse ほか: 空入力・境界値・非整数・複素入力の拒否と別名の切断)・偽陽性 2 を整理、6 言語の訳も追随。
+
 ### ドキュメント — 研究コーパス4本を文献層へ接続
 
 - 感度解析・不確かさ定量化・較正、収束型数値計算と光輸送、電子顕微鏡、工業用光学センシングの各コーパスについて、被引用数順で各軸の上位6本を選ぶ再現可能な目録を追加した。

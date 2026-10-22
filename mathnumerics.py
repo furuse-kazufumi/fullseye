@@ -304,7 +304,7 @@ def _force(system, q, params):
 
 def integrate_hamiltonian(q0, p0, dt: float = 0.05, n_steps: int = 1000, *, system: str = "harmonic",
                           method: str = "verlet", **params) -> dict:
-    """名前つきのハミルトン系(質量 1)を時間積分する。返り値 ``{"t","q","p","energy","energy_drift"}``。
+    """名前つきのハミルトン系(質量 1)を時間積分する。返り値 ``{"t","q","p","energy","energy_drift","method","system"}``。
 
     ``method``:
       * ``"verlet"`` —— 速度 Verlet(シンプレクティック・時間反転対称)。エネルギー誤差は O(dt²) で**有界**のまま

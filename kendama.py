@@ -852,7 +852,7 @@ def swing_up_lift(kp: dict, *, apex_above_cup: float = None, T_lift: float = 0.1
     """振り上げ(bang)の持ち上げ量を閉形式で: 玉の頂点が受ける皿の中心の ``apex_above_cup`` 上に来る lift(:func:`swing_up_apex` の逆)。
     頂点 − lift − cup_z = tie_z + lift/2 − L + 2 lift²/(g T²) − lift − cup_z = A を lift の 2 次方程式として正の根。
     既定 A = max(h_c + 0.9 r_b, (top_offset − cup_z) + r_b + 0.035): 玉の下端がけん玉のいちばん高い所を 35 mm 越える頂点
-    (:func:`catch_plan_staged` の hold は玉がそこを越えるまで皿を寄せない。越えている時間 ≈ 2√(2·0.03/g) = 0.17 s で皿を
+    (:func:`catch_plan_staged` の hold は玉がそこを越えるまで皿を寄せない。越えている時間 ≈ 2√(2·0.035/g) = 0.17 s で皿を
     横へ 10 cm 戻す)。減速の加速度 4·lift/T² が g を超えないと玉は飛ばない(ValueError)。
 
     空の入力(``kp`` が空の dict)は ValueError。

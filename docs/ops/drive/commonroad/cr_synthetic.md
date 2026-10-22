@@ -20,7 +20,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 テスト・CI 用の最小 CommonRoad 2020a XML を文字列で返す。
 
 ``tjunction``: lanelet 100(直線 40 m, +x)→ 101(左 90° 円弧、中心線半径 12 m)→ 102(直線 40 m, +y)、対向 lanelet 200
-(100 の左隣、−x 向き)に対向車 1 台(8 m/s、矩形 4.5 × 1.8)、標識 274(speed_limit m/s)は 3 本すべてに、stopLine は 100 の
+(100 の左隣、−x 向き)に対向車 1 台(8 m/s、矩形 4.5 × 1.8)、標識 274(speed_limit m/s)は 4 本すべてに、stopLine は 100 の
 終端(交差点の手前)、planning problem = (5, 0) から v0 でゴール lanelet 102・time_step [100, 200]・速度 [0, 15]。
 ``straight``: 101 も直線(3 本で 120 m)。``blocked``: straight の 101 の中央に静止障害物(衝突の門用)。
 車線幅 3.5 m。中心線の長さ = 40 + 6π(≒ 18.85、円弧は 16 分割の折線) + 40(tjunction)/ 120(straight)。

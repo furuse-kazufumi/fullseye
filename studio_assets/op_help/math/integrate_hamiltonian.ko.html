@@ -3,7 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.integrate_hamiltonian(q0, p0, dt: &#x27;float&#x27; = 0.05, n_steps: &#x27;int&#x27; = 1000, *, system: &#x27;str&#x27; = &#x27;harmonic&#x27;, method: &#x27;str&#x27; = &#x27;verlet&#x27;, **params) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathnumerics; mathnumerics.integrate_hamiltonian(q0, p0, dt: &#x27;float&#x27; = 0.05, n_steps: &#x27;int&#x27; = 1000, *, system: &#x27;str&#x27; = &#x27;harmonic&#x27;, method: &#x27;str&#x27; = &#x27;verlet&#x27;, **params) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;integrate_hamiltonian&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>이름이 붙은 해밀턴계(질량 1)를 시간 적분한다. 반환값 <code style="color:#22d3bf">{&quot;t&quot;,&quot;q&quot;,&quot;p&quot;,&quot;energy&quot;,&quot;energy_drift&quot;}</code>.</p>
+<p>이름이 붙은 해밀턴계(질량 1)를 시간 적분한다. 반환값 <code style="color:#22d3bf">{&quot;t&quot;,&quot;q&quot;,&quot;p&quot;,&quot;energy&quot;,&quot;energy_drift&quot;,&quot;method&quot;,&quot;system&quot;}</code>.</p>
 <p><code style="color:#22d3bf">method</code>:</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;verlet&quot;</code> —— 속도 Verlet(심플렉틱·시간 반전 대칭). 에너지 오차는 O(dt²)로 <b>유계</b>인 채로진동하며, 장시간에도 늘지 않는다. dt를 음수로 해서 돌리면 원래 상태로(반올림 오차까지) 돌아온다.</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;euler&quot;</code> —— 양적 Euler(비교용 실패 예). 조화 진동자에서는 에너지가 매 스텝 (1 + ω²dt²)배로 늘어나, 위상 공간에서 바깥쪽으로 향하는 소용돌이가 된다.</p>

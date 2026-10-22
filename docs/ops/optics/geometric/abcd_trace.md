@@ -26,7 +26,7 @@ paraxial angle is small by definition and mrad keeps the numbers readable.
 Returns a dict: ``height_mm`` and ``angle_mrad`` of the outgoing ray ·
 ``determinant`` of *M* (``= n_in/n_out``; a value that is not 1 for a
 same-medium system means the matrix is wrong, so it is reported rather than
-assumed) · ``imaging`` — True when ``|B| <= 1e-12 * (1 + |A| + |C| + |D|)``,
+assumed) · ``imaging`` — True when ``|B| <= 1e-12 * (1 + |A| + |B| + |C| + |D|)``,
 i.e. the output height does not depend on the input angle, which is the
 definition of a conjugate (image) plane.
 

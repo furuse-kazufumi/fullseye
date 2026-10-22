@@ -104,7 +104,7 @@ measured estimator table lives in the module docstring.
 non-positive wavelength / bandwidth / range, a *bandwidth_um* at or above
 *wavelength_um* (a source whose spectrum reaches zero frequency is not a
 quasi-monochromatic source and the coherence-length formula does not apply to
-it), a *min_visibility* outside ``(0, 1)``, a *step_divisor* below 4 (which
+    it), a *min_visibility* outside ``(0, 1)``, a *step_divisor* at or below 4 (which
 would recommend a step at or past its own Nyquist ceiling), and pixel counts
 outside ``[1, 65536]``.
 

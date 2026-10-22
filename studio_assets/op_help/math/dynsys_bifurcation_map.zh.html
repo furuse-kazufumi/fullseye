@@ -8,7 +8,7 @@
 <p>For each parameter value the map is iterated <code style="color:#22d3bf">burn_in</code> times (discarded) and the next <code style="color:#22d3bf">keep</code> states are returned. <code style="color:#22d3bf">logistic</code> is <code style="color:#22d3bf">r x (1 - x)</code>, <code style="color:#22d3bf">sine</code> is <code style="color:#22d3bf">r sin(pi x)</code>, <code style="color:#22d3bf">tent</code> is <code style="color:#22d3bf">r min(x, 1-x) * 2</code>.</p>
 <p>★<b>Why this earns its place</b>: the first period-doubling values are known exactly for the logistic map — <code style="color:#22d3bf">r = 3</code> and <code style="color:#22d3bf">r = 1 + sqrt 6 = 3.449489...</code> — and the ratio of successive intervals tends to <b>Feigenbaum&#x27;s constant</b> <code style="color:#22d3bf">4.669201...</code>, which is universal. Counting distinct states per <code style="color:#22d3bf">r</code> turns the picture into integers (1, 2, 4, 8, ...) that can be checked.</p>
 <p>Returns a <code style="color:#22d3bf">pairs</code> array of <code style="color:#22d3bf">(r, x)</code>.</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: unknown map; <code style="color:#22d3bf">r_lo &gt;= r_hi</code>; non-positive counts; a grid over the cap; <code style="color:#22d3bf">x0</code> outside the unit interval.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: unknown map; <code style="color:#22d3bf">r_lo &gt;= r_hi</code>; non-positive retained/grid counts or negative burn-in; a grid over the cap; <code style="color:#22d3bf">x0</code> outside the unit interval.</p>
 <p>HALCON: no operator.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>mathops 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>

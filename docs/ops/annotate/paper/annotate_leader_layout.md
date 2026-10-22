@@ -41,7 +41,7 @@ Returns
 -------
 dict
     ``{"n", "gap", "items": [{"point", "elbow", "text_xy", "anchor",
-    "box", "side"}]}``。``box`` は板の ``(x, y, w, h)``。
+    "box", "side", "label"}]}``。``box`` は板の ``(x, y, w, h)``。
 
 Raises
 ------

@@ -741,7 +741,10 @@ def detector_two_theta(shape, geometry):
     """
     if not isinstance(shape, (tuple, list)) or len(shape) != 2:
         raise ValueError("shape must be (H, W), got %r" % (shape,))
-    H, W = (int(_num(s, "shape", positive=True)) for s in shape)
+    dims = [_num(s, "shape", positive=True) for s in shape]
+    if any(not float(s).is_integer() for s in dims):
+        raise ValueError("shape must contain positive integers, got %r" % (shape,))
+    H, W = (int(s) for s in dims)
     g = _geometry(geometry)
     rr, cc = np.mgrid[0:H, 0:W]
     tth, chi, om = _tth_chi(rr, cc, g)

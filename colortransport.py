@@ -327,6 +327,11 @@ def gaussian_transport_map(src_samples, ref_samples):
             "undefined. A pseudo-inverse here would return a map that moves nothing along the "
             "degenerate direction while looking like a valid transport"
         )
+    _, w2 = _sqrtm_psd(s2, "reference covariance")
+    if np.min(w2) <= 1e-12 * max(1.0, float(np.max(w2))):
+        raise MetricContractError(
+            f"reference covariance is singular (min eigenvalue {np.min(w2):.3e}); the Monge map is undefined"
+        )
     r1_inv = np.linalg.inv(r1)
     mid, _ = _sqrtm_psd(r1 @ s2 @ r1, "intermediate")
     A = r1_inv @ mid @ r1_inv

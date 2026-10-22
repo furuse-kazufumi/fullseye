@@ -33,7 +33,7 @@ dict : course_layout の dict に ``"chain"`` を足したもの。``chain = {"o
 (= Σ 折線長 − overlap × (n − 1)), "joints": [(exit_k, entry_k+1), ...] 世界姿勢}``。
 
 **Raises** ``ValueError``: 要素が空・layout の入れ子・entry/exit/centerline が無い、start/overlap が非有限、overlap が負、
-overlap が要素の中心線より長い。
+2 番目以降の overlap がその要素の中心線以上。
 
 ## 参考(サンプルデータ・文献)
 

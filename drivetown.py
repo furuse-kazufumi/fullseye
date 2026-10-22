@@ -327,7 +327,7 @@ def town_chain(elements, *, start=(0.0, 0.0, 0.0), overlap: float = 0.05) -> dic
     (= Σ 折線長 − overlap × (n − 1)), "joints": [(exit_k, entry_k+1), ...] 世界姿勢}``。
 
     **Raises** ``ValueError``: 要素が空・layout の入れ子・entry/exit/centerline が無い、start/overlap が非有限、overlap が負、
-    overlap が要素の中心線より長い。"""
+    2 番目以降の overlap がその要素の中心線以上。"""
     op = "town_chain"
     if not isinstance(elements, (list, tuple)) or len(elements) == 0:
         raise ValueError("%s: elements must be a non-empty list of course dicts" % op)

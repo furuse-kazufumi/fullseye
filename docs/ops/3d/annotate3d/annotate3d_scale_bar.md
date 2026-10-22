@@ -42,7 +42,7 @@ ValueError
 - ``width`` [px] ``>= 0.5``、``tick`` [px] ``>= 0``(0 で目盛なし)、``font_size`` /
   ``box_alpha`` / ``text_color`` / ``font_path``: 文字箱の見た目。
 - ``depth``: 前方距離画像。**両端とも**隠れていれば線を破線にする。
-- ``color``: 既定 ``"neutral"``(役割名)。``occlusion_tol``: ``[0, 1)``。
+- ``color``: 既定 ``"neutral"``(役割名)。``scheme``: 色名の配色。``occlusion_tol``: ``[0, 1)``。
 
 返り値: 描画済みの新しい画像(float64 ``[0, 1]``)。
 

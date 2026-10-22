@@ -62,7 +62,7 @@ z_step_um:         spacing of the scan planes. Must be below the
                    ``wavelength_um/4`` Nyquist ceiling — see
                    :func:`csi_design`.
 z_start_um:        height of plane 0.
-wavelength_um:     mean wavelength, used only for the Nyquist check.
+wavelength_um:     mean wavelength, used for the Nyquist and carrier-frequency checks.
 mode:              one of :data:`ESTIMATORS`.
 remove_bias:       passed to :func:`csi_envelope`.
 min_visibility:    refuse a scan whose envelope prominence

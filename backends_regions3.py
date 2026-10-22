@@ -226,7 +226,7 @@ def r3_runlength_distribution(v, a, b):
 
 
 def r3_select_region_point(v, a, b):
-    """Keep the connected component containing the point at (a*H, b*W) (select_region_point).
+    """Keep the connected component at ``(round(a*(H-1)), round(b*(W-1)))`` (select_region_point).
 
     If the addressed pixel is background, the result is empty.
     """

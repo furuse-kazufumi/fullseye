@@ -990,7 +990,7 @@ def csi_peak_position(signal, z_step_um=0.05, z_start_um=0.0, wavelength_um=0.6,
                        ``wavelength_um/4`` Nyquist ceiling — see
                        :func:`csi_design`.
     z_start_um:        height of plane 0.
-    wavelength_um:     mean wavelength, used only for the Nyquist check.
+    wavelength_um:     mean wavelength, used for the Nyquist and carrier-frequency checks.
     mode:              one of :data:`ESTIMATORS`.
     remove_bias:       passed to :func:`csi_envelope`.
     min_visibility:    refuse a scan whose envelope prominence
@@ -1163,7 +1163,7 @@ def csi_height_map(stack, z_step_um=0.05, z_start_um=0.0, wavelength_um=0.6,
     ``"parabolic"`` and 2.08e-06 um for ``"gaussian"``. Widen the same plane to
     **2.0-10.0 um** — pixels now within 2 um of the ends of the scan — and the
     errors become 1.91e-02 / 5.98e-02 / 7.06e-03 / 7.06e-03 um: the local fits
-    lose three decades and the centroid loses four, entirely to envelope
+    and the centroid lose about three decades, entirely to envelope
     truncation at the scan ends. Accuracy here is a property of the *scan layout*,
     not of the estimator, and this is the number to look at when a real
     measurement disappoints.
@@ -1577,7 +1577,7 @@ def csi_design(wavelength_um=0.6, bandwidth_um=0.1, z_range_um=12.0,
     non-positive wavelength / bandwidth / range, a *bandwidth_um* at or above
     *wavelength_um* (a source whose spectrum reaches zero frequency is not a
     quasi-monochromatic source and the coherence-length formula does not apply to
-    it), a *min_visibility* outside ``(0, 1)``, a *step_divisor* below 4 (which
+        it), a *min_visibility* outside ``(0, 1)``, a *step_divisor* at or below 4 (which
     would recommend a step at or past its own Nyquist ceiling), and pixel counts
     outside ``[1, 65536]``.
     """
@@ -1600,8 +1600,8 @@ def csi_design(wavelength_um=0.6, bandwidth_um=0.1, z_range_um=12.0,
                          "the capture range infinite and 1 makes it zero"
                          % (op, vis))
     div = _finite_scalar(step_divisor, "step_divisor")
-    if div < 4.0:
-        raise ValueError("%s: step_divisor must be >= 4 (lambda/4 is the Nyquist "
+    if div <= 4.0:
+        raise ValueError("%s: step_divisor must be > 4 (lambda/4 is the Nyquist "
                          "ceiling itself); got %g" % (op, div))
 
     lc = (4.0 * np.log(2.0) / np.pi) * lam * lam / dlam   # FWHM in OPD

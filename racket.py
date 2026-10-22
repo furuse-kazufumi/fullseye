@@ -165,7 +165,7 @@ def racket_move(pos, vel, target, dt: float, rp: dict) -> tuple:
 
 
 def strategy_attacker(side: int, ctx: dict, rng) -> dict:
-    """勝つための打ち方: 相手のラケットから遠い隅(左右の端、前後を交互)へ、短い滞空時間で。スピンの狙いも交互に変える。
+    """勝つための打ち方: 相手のラケットから遠い隅(左右の端、前後を交互)へ、短い滞空時間で。スピンは 3 打ごとに flat、それ以外は topspin。
     ``ctx`` = {"opp_pos" (3,), "shot_index", "tp"}。返り値 {"target" (x, y), "T", "spin"}。"""
     tp = ctx["tp"]
     L, Wd = tp["length"], tp["width"]

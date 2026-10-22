@@ -486,7 +486,7 @@ def lens_equivalent_pinhole(system, pixel_pitch_um=25.0, width=240, height=240, 
     物体側テレセン(L = ∞)は L を *max_pupil_distance_mm* に置いた**平行投影の代理**にし、``orthographic_proxy``
     を True で返す。入射瞳が物体の裏(L < 0、ハイパーセントリック)はピンホールで再現できないので ValueError。
     像の上下反転(実像)は写さない(センサの読み出しで戻すのと同じ)。返り値: ``pose`` / ``K`` / ``magnification`` /
-    ``pupil_distance_mm`` / ``orthographic_proxy`` / ``pixel_pitch_um``。
+    ``pupil_distance_mm`` / ``orthographic_proxy`` / ``pixel_pitch_um`` / ``width`` / ``height``。
     """
     op = "lens_equivalent_pinhole"
     _system(system, op)

@@ -756,7 +756,7 @@ def profile_perturb(contour, kind="thicken", amount=0.001, extent=0.1, cycles=6.
     Args:
         contour: 元の輪郭。
         kind: 欠陥の種類。
-        amount: 大きさ(翼弦比)。``"twist"`` だけは度。
+        amount: 大きさ。``"twist"`` は度、それ以外は contour の座標と同じ単位。
         extent: ``"le_erosion"`` が及ぶ弦方向の範囲。
         cycles: ``"waviness"`` の波数。
     """

@@ -2380,7 +2380,7 @@ def annotate_leader_layout(shape, points, labels=None, font_size=12, pad=4, gap=
     -------
     dict
         ``{"n", "gap", "items": [{"point", "elbow", "text_xy", "anchor",
-        "box", "side"}]}``。``box`` は板の ``(x, y, w, h)``。
+        "box", "side", "label"}]}``。``box`` は板の ``(x, y, w, h)``。
 
     Raises
     ------
@@ -2570,7 +2570,7 @@ def annotate_legend(img, labels, xy, anchor="lt", start=1, radius=7.0, color="em
                     font_path=None, min_font_size=9, numbers=None):
     """画像(image2d)を返す: 番号つき丸マーカー × 説明の凡例(:func:`annotate_markers` の対)。
 
-    箱の高さは閉形式 ``2*pad + n*row_h + (n-1)*row_gap``(``row_h = max(2r, 文字高)``)。
+    箱の高さは閉形式 ``2*pad + n*row_h + (n-1)*row_gap``(``row_h = max(ceil(2r), 文字高)``)。
 
     Parameters
     ----------
@@ -3735,6 +3735,10 @@ def annotate_table_layout(text, xy, anchor="lt", font_size=13, font_path=None, p
         ``anchor`` で指す位置(**x=col, y=row**)。
     anchor : str
         ``'lt','ct','rt','lm','cm','rm','lb','cb','rb'`` の 9 通り。
+    font_size : int
+        文字サイズ [px]。
+    font_path : str or None
+        使用するフォントファイル。None は既定フォント。
     pad : int
         表の内側余白 [px]。
     col_gap : int or None
@@ -3742,6 +3746,8 @@ def annotate_table_layout(text, xy, anchor="lt", font_size=13, font_path=None, p
         フォントサイズを変えれば間隔も一緒に動く。
     row_gap : int
         行の間に足す [px](0 なら行送りのまま)。
+    line_spacing : float
+        セル内の複数行テキストの行送り倍率。
     align : str or sequence
         :data:`TABLE_ALIGNS` のいずれか、または桁ごとの並び。``"auto"``
         (既定)は**その桁の値がすべて数に見えるときだけ右そろえ**にする。

@@ -21,7 +21,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 *mu_p*: 露光段ごとの画素あたりの平均光子数。*mu_y*, *var_y*: 同じ露光の 2 枚から出した平均と時間分散(式 16・18、
 :func:`sensorchar.emva_pair_statistics`)。*mu_y_dark*, *var_y_dark*: 暗画像の同じ量。*mu_p_sat*: 飽和の露光
-(0.1〜0.2 % の画素が最大値になる露光、6.7 節)。0 ≤ μ_p ≤ μ_p.sat の点だけを使う。
+(0.1〜0.2 % の画素が最大値になる露光、6.7 節)。負の μ_p は ValueError、μ_p.sat を超える点は除外する。
 
 手順:
 1. 特性曲線 μ_y − μ_y.dark = R(μ_p) を [0, μ_p.sat] を P 等分した 3 次 B-スプラインで当て、各点の傾き ∂μ_y/∂μ_p

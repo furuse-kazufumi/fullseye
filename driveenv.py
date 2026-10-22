@@ -309,7 +309,7 @@ def road_row_distance(rows, horizon_row: float, focal: float, cam_height: float,
 
     空の入力(``rows`` が 0 件)は ValueError。
     """
-    if isinstance(rows, (list, tuple)) and len(rows) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+    if np.asarray(rows).size == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
         raise ValueError("road_row_distance: rows is empty — pass at least one item")
     op = "road_row_distance"
     vh = _finite(horizon_row, "horizon_row", op)

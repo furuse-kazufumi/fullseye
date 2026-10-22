@@ -1634,8 +1634,8 @@ def color_lut(size=17, gain=(1.0, 1.0, 1.0), lift=(0.0, 0.0, 0.0),
               gamma=(1.0, 1.0, 1.0), saturation=1.0):
     """Build a 3-D colour LUT, ``(n, n, n, 3)`` indexed ``[r, g, b]``.
 
-    ``out = clip(lift + gain * in**gamma)`` per channel, then saturation is
-    applied about the Rec. 709 luma. With all defaults this is the **identity
+    ``out = lift + gain * in**gamma`` per channel, then saturation is
+    applied about the Rec. 709 luma and the result is clipped once. With all defaults this is the **identity
     LUT**, and because trilinear interpolation is exact for a function that is
     linear in each variable, :func:`color_grade` with the identity LUT is the
     identity to float64 rounding (measured maximum 3.3e-16 at size 17 and
@@ -2016,8 +2016,8 @@ def lens_shading_gain(flat, pattern=None, smooth_sigma=0.0):
     Shoot a uniform white target; vignetting and the micro-lens fall-off make
     the corners darker. Multiplying any later frame by this map undoes that.
     *smooth_sigma* > 0 Gaussian-smooths the flat first (per channel) so sensor
-    noise and dust do not become gain speckle. The gain is normalised so the
-    channel **mean** stays 1 — the map corrects shape, not exposure.
+    noise and dust do not become gain speckle. The gain is scaled so applying it
+    preserves the channel **flat-field response mean** — the map corrects shape, not exposure.
 
     Ground truth: ``lens_shading_correct(flat, lens_shading_gain(flat))`` is a
     constant frame (each channel equal to its own mean) to 1e-12.

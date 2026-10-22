@@ -148,6 +148,7 @@ def test_parse_from_file_path(tmp_path: Path):
 
 def test_parse_max_buildings():
     xml = pp.citygml_synthetic(5, origin=ORIGIN)
+    assert len(pp.plateau_parse(xml, origin=ORIGIN, max_buildings=0)["buildings"]) == 0
     assert len(pp.plateau_parse(xml, origin=ORIGIN, max_buildings=2)["buildings"]) == 2
     with pytest.raises(ValueError):
         pp.plateau_parse(xml, origin=ORIGIN, max_buildings=-1)
