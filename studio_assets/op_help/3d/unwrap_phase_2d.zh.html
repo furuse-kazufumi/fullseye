@@ -7,7 +7,7 @@
 <p>wrapped:wrapped_phase 的输出(2D)。可以含 NaN(作为无效像素处理)。</p>
 <p>mask:    可省略。True = 有效像素(与 numpy masked array 的惯例相反的直观方向)。</p>
 <p>NaN 像素和 mask=False 像素视为无效,从解包裹中排除,输出中返回 NaN。</p>
-<p>crop_valid: 可选(默认 False = 全幅处理)。为 True 时只把有效像素的外接矩形交给 skimage,外侧保持 NaN 返回(对无效像素很多的带边框图像更快的替代路径;结果与全幅处理完全一致)。</p>
+<p>crop_valid: 可选(默认 False = 全幅处理)。为 True 时只把有效像素的外接矩形交给 skimage,外侧保持 NaN 返回(对无效像素很多的带边框图像更快的替代路径;有效像素的相位与全幅处理一致,仅相差每个岛各自的 2π 整数倍;该偏移可能随 skimage 版本而不同)。</p>
 <p>返回值:连续相位(2D float)。无效像素为 NaN。全局偏移(+2πm)的不确定性仍然存在。</p>
 <p>步骤:若没有无效像素(<code style="color:#22d3bf">wrapped</code> 的非有限值 ∪ <code style="color:#22d3bf">mask == False</code>),则直接调用 <code style="color:#22d3bf">skimage.restoration.unwrap_phase(arr)</code>。若有,则把无效像素用 0 填充后作为 <code style="color:#22d3bf">numpy.ma</code> 的 masked array 传入(skimage 会把 masked 像素从展开中排除),再把输出的无效像素恢复为 NaN。</p>
 <p>校验:在无法 import scikit-image 的环境中抛出 <code style="color:#22d3bf">RuntimeError</code>(而不是 <code style="color:#22d3bf">ImportError</code>)。<code style="color:#22d3bf">wrapped</code> 不是 2-D、<code style="color:#22d3bf">mask</code> 形状不同、<b>全部像素无效</b> (没有可解包裹的像素)时抛出 <code style="color:#22d3bf">ValueError</code>。</p>

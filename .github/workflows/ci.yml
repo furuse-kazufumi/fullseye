@@ -270,9 +270,9 @@ jobs:
         # 失敗したのか要約に出ず**、生ログを掘る羽目になる(2026-09-05 に実際に踏んだ)。
         # ★2026-10-07: --cov は py3.11 だけ。3.10/3.12 の coverage データはアップロードせず捨てていた
         #   (計測の上乗せだけ払っていた)。結合ジョブが読むのは py3.11 の 6 片。
-        # ★.test_durations の出自(2026-10-21): 手元(Windows)の全数計測を 1 時間で打ち切った実測 3,900 件 +
-        #   残り 17,310 件は pytest-split と同じ平均値で初期化。本物の均しは Linux の artifact
-        #   (test-durations-py*-shard*)を tools/merge_test_durations.py で結合して commit してから。
+        # ★.test_durations の出自(2026-10-22): master の run 39678056044(Linux、3 版 × 6 片)の artifact を
+        #   tools/merge_test_durations.py --baseline で合流した実測 22,053 件(平均値の仮置きが残るのは 22 件)。
+        #   次からは duration-baseline ジョブの artifact(test-durations-merged)を同じ道具で取り込む。
         # ★コメントは `run: >` の中に書かない: 折り畳みスカラーでは `#` 行も本文で、シェルの
         #   コメントになって**その後ろの引数(--store-durations)が消える**(2026-10-22 に実際に消えていた)。
         run: >
@@ -321,7 +321,9 @@ jobs:
         run: |
           mapfile -t files < <(find test-durations -type f -name '.test_durations-*' -print)
           [[ ${#files[@]} -gt 0 ]] || { echo "no duration artifacts"; exit 1; }
-          python tools/merge_test_durations.py "${files[@]}" -o .test_durations
+          # ★--baseline: 各片のファイルは走らなかった試験の値(= checkout の seed)をそのまま含む。
+          #   seed と同じ値は観測でないので無視する(無いと seed の平均値が max で実測に勝つ、2026-10-22)。
+          python tools/merge_test_durations.py "${files[@]}" -o .test_durations --baseline .test_durations
           echo "## Test duration baseline: $(python -c 'import json; print(len(json.load(open(".test_durations"))))') tests" >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4
         with:
