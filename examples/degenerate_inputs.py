@@ -90,18 +90,26 @@ def main() -> int:
     except ValueError as e:
         assert "expects a image" in str(e)
         print("3. 1-D   :", str(e)[:90])
-    # 4. 部分 NaN: 出力は有限に「なる」が、黙ってはならない(台帳に output 起源の記録 / raise では停止)
+    # 4. 部分 NaN: 入口が方針に依らず止める(2026-10-23 の契約変更 —— 監査で 431 op が NaN を黙って
+    #    有限の答えに変えていた)。知った上で渡す allow_nonfinite=True では出力は有限に「なる」が、
+    #    黙ってはならない(台帳に output 起源の記録 / raise では停止)
     x = np.random.default_rng(0).random((9, 9))
     x[4, 4] = np.nan
+    try:
+        fs.apply(x, "gaussian")
+        raise AssertionError("部分 NaN が入口を通った")
+    except ValueError as e:
+        assert "input contains NaN or infinity" in str(e)
+        print("4. NaN in :", str(e)[:80], "...")
     fs.clear_fallbacks()
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        out = fs.apply(x, "gaussian")
+        out = fs.apply(x, "gaussian", allow_nonfinite=True)
     recs = [e for e in fs.fallbacks() if e["source"] == "output" and "non_finite_output" in e["error"]]
     assert np.isfinite(out).all() and recs, recs
-    print("4. NaN in :", "finite output, recorded:", recs[0]["error"][:90], "...")
+    print("   allowed:", "finite output, recorded:", recs[0]["error"][:90], "...")
     try:
-        fs.apply(x, "gaussian", on_error="raise")
+        fs.apply(x, "gaussian", on_error="raise", allow_nonfinite=True)
         raise AssertionError("部分 NaN が raise で通った")
     except ValueError as e:
         assert "non_finite_output" in str(e)
