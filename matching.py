@@ -6,6 +6,7 @@ model は軽量 dict(create → find のペア)。画像は [0,1] の 2D float64
 from __future__ import annotations
 
 import numpy as np
+from numpy.lib.stride_tricks import sliding_window_view
 from scipy import signal
 
 from fslib import FsValueError
@@ -15,19 +16,29 @@ def _f(a):
     return np.asarray(a, dtype=np.float64)
 
 
-def _ncc_scale(a, name):
+def _ncc_scale(a, name, *, return_constant=False):
     """Return ``(finite float64 array, exact power-of-two scale)``."""
     value = _f(a)
     if not np.isfinite(value).all():
         raise FsValueError(f"{name} contains NaN or infinity")
-    maximum = float(np.max(np.abs(value), initial=0.0))
-    if maximum == 0.0:
-        return value, 1.0
-    _, exponent = np.frexp(maximum)
+    if value.size:
+        minimum = float(np.min(value))
+        maximum = float(np.max(value))
+        magnitude = max(abs(minimum), abs(maximum))
+        is_constant = minimum == maximum
+    else:
+        magnitude = 0.0
+        is_constant = False
+    if magnitude == 0.0:
+        result = value, 1.0
+        return (*result, is_constant) if return_constant else result
+    _, exponent = np.frexp(magnitude)
     if -500 <= exponent - 1 <= 500:
-        return value, 1.0
-    shift = 1 - exponent
-    return np.ldexp(value, shift), float(np.ldexp(1.0, shift))
+        result = value, 1.0
+    else:
+        shift = 1 - exponent
+        result = np.ldexp(value, shift), float(np.ldexp(1.0, shift))
+    return (*result, is_constant) if return_constant else result
 
 
 def _ncc_local_variance(img, h, w):
@@ -80,6 +91,11 @@ def _ncc_map(t_or_model, img):
     A constant template or a truly constant image window has no defined
     correlation and scores 0.  NaN and infinity raise ``FsValueError``.
 
+    Returns:
+        A float64 array with shape ``(H-h+1, W-w+1)`` (each dimension is
+        clamped at zero).  Undefined correlations from a constant template,
+        a constant search image, or a constant image window are exactly 0.
+
     Benchmark (512x512, median of 5), sizes 7/8/9/15/16/17/31/32/33.
     Random flagged before/after: all 0/0%; seconds before
     .093743/.113507/.138235/.358469/.027835/.027368/.027780/.027232/
@@ -103,7 +119,7 @@ def _ncc_map(t_or_model, img):
         tn = np.linalg.norm(t0)
         if tn > np.finfo(np.float64).tiny:
             t0 = t0 / tn
-    img, _ = _ncc_scale(img, "image")
+    img, _, image_is_constant = _ncc_scale(img, "image", return_constant=True)
     H, W = img.shape
     h, w = t.shape
     shape = (max(H - h + 1, 0), max(W - w + 1, 0))
@@ -111,6 +127,11 @@ def _ncc_map(t_or_model, img):
     if not out.size:
         return out
     if tn <= np.finfo(np.float64).tiny:
+        out.fill(0.0)
+        return out
+    # Every Pearson denominator is zero for a constant search image.  Detect
+    # that case before correlation and integral-image construction.
+    if image_is_constant:
         out.fill(0.0)
         return out
     # Direct correlation wins on small images.  On large images its cost is
@@ -122,13 +143,33 @@ def _ncc_map(t_or_model, img):
     out.fill(0.0)
     out[stable] = cross[stable] / np.sqrt(variance[stable])
     # Recompute windows whose integral moments can lose their small variation
-    # beside a large offset.  The threshold is relative to each window.
-    for i, j in np.argwhere(unstable):
-        p = img[i:i + h, j:j + w]
-        p0 = p - p.mean()
-        pn = np.linalg.norm(p0)
-        if pn > np.finfo(np.float64).tiny:
-            out[i, j] = float((p0 * t0).sum() / pn)
+    # beside a large offset.  Process selected sliding-window views in bounded
+    # blocks; patches, centered patches, and their product together stay at or
+    # below a conservative 64 MiB working-set budget per block.
+    coordinates = np.argwhere(unstable)
+    if coordinates.size:
+        windows = sliding_window_view(img, (h, w))
+        bytes_per_window = h * w * np.dtype(np.float64).itemsize
+        block_size = max(1, (64 * 1024**2) // (3 * bytes_per_window))
+        for start in range(0, len(coordinates), block_size):
+            block = coordinates[start:start + block_size]
+            patches = windows[block[:, 0], block[:, 1]]
+            flat = patches.reshape(len(block), -1)
+            centered = flat - flat.mean(axis=1, keepdims=True)
+            # A 2-D ``norm`` uses the established flattened BLAS reduction;
+            # the axis form rounds some values one ulp differently.  Retain
+            # that reduction while batching extraction, centering, products,
+            # division, and assignment so fallback scores stay bit-identical.
+            norms = np.fromiter(
+                (np.linalg.norm(row) for row in centered),
+                dtype=np.float64,
+                count=len(block),
+            )
+            defined = norms > np.finfo(np.float64).tiny
+            numerators = (centered * t0.ravel()).sum(axis=1)
+            values = np.zeros(len(block), dtype=np.float64)
+            values[defined] = numerators[defined] / norms[defined]
+            out[block[:, 0], block[:, 1]] = values
     np.clip(out, -1.0, 1.0, out=out)
     return out
 
