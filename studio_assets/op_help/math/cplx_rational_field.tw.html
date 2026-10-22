@@ -18,7 +18,7 @@
 <p>The window, as in <code style="color:#22d3bf">cplx_plane_grid</code>.</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: a pole (or zero) lands *exactly* on a sample, so the value there is not a number — nudge <code style="color:#22d3bf">centre</code> by half a pixel or take an odd <code style="color:#22d3bf">shape</code> (the message says which pole and where); non-finite input; the window is degenerate; the result overflows to infinity anyway (the gain and the window disagree by more than float64 can hold).</p>
 <p>HALCON: no operator (HALCON has no complex-plane family).</p>
-<p>Empty <code style="color:#22d3bf">zeros</code> leaves the poles-only field with the same shape as <code style="color:#22d3bf">z</code>.</p>
+<p>Empty input (<code style="color:#22d3bf">zeros</code> with 0 elements) returns the poles-only field with the same shape as <code style="color:#22d3bf">z</code> (reason: an empty product is the multiplicative identity).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>mathops 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 輸入一律 <code style="color:#22d3bf">ValueError</code></b> —— 強制轉成 float64 會無聲丟掉虛部(numpy 只發一個 ComplexWarning,然後回傳一個「看似合理卻是錯的」實數)。請明確寫出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支援複數的 complexops。</p>

@@ -761,7 +761,7 @@ def legal_stop_intervals(merged, road_start: float, road_end: float, car_length:
     区間の端ちょうど(距離がちょうど 5 m など)は禁止の側に含める(「以内」)ので、車体が端に触れるだけなら許す
     (閉区間の補集合の閉包)。
 
-    空の入力(``merged`` が 0 要素)は道路全体から車長を引いた区間を返す(禁止区間が 0 件なら道路全体が正しい答え)。
+    空の入力(``merged`` が 0 要素)は道路全体から車長を引いた区間を返す(理由: 禁止区間が 0 件なら道路全体が正しい答え)。
     """
     op = "legal_stop_intervals"
     M = _array(merged, "merged", op).reshape(-1, 2)

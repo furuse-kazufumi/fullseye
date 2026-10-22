@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>VDA 5050 order के <b>structure के नियम</b> जाँचता है (आधिकारिक JSON schema से अलग, हमारा अपना 2nd implementation)।</p>
 <p>नियम: आवश्यक कुंजियाँ / नोड के sequenceId 0 से क्रमागत सम संख्याएँ, एज क्रमागत विषम / एज की संख्या = नोड की संख्या − 1 / प्रत्येक एज का आरंभ और अंत पहले और बाद के नोड / released, base के आरंभ से निरंतर (base → horizon का केवल 1 बार परिवर्तन) / एज का released उसके अंत-नोड के समान। रिटर्न उल्लंघन संदेशों की सूची है (खाली = उत्तीर्ण)।</p>
-<p>खाली input (<code style="color:#22d3bf">order</code> एक खाली dict) missing required keys की list लौटाता है।</p>
+<p>खाली input (<code style="color:#22d3bf">order</code> एक खाली dict) missing required keys की list लौटाता है (कारण: खाली dict में कोई required key नहीं है)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

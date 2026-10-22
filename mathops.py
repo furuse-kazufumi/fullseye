@@ -1852,7 +1852,8 @@ def cplx_rational_field(zeros, poles, gain=1.0, centre=0j, half_width=2.0,
 
     HALCON: no operator (HALCON has no complex-plane family).
 
-    Empty ``zeros`` leaves the poles-only field with the same shape as ``z``.
+    Empty input (``zeros`` with 0 elements) returns the poles-only field with
+    the same shape as ``z`` (reason: an empty product is the multiplicative identity).
     """
     op = "cplx_rational_field"
     z = cplx_plane_grid(centre, half_width, shape)
