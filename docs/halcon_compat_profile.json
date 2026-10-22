@@ -1,0 +1,3598 @@
+{
+  "about": "A name mapping is not a compatibility claim. Unknown is never promoted to PASS.",
+  "profiles": {
+    "contract_verified": 2,
+    "functional_analogue": 510,
+    "unknown": 0
+  },
+  "entries": [
+    {
+      "op": "abs_diff_image",
+      "halcon": "abs_diff_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "abs_image",
+      "halcon": "abs_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "access_channel",
+      "halcon": "access_channel",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "acos_image",
+      "halcon": "acos_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "adaptive_gauss_thresh",
+      "halcon": "local_threshold",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "add_image",
+      "halcon": "add_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "add_noise_distribution",
+      "halcon": "add_noise_distribution",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "add_noise_white",
+      "halcon": "add_noise_white",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "affine_trans_contour_xld",
+      "halcon": "affine_trans_contour_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "affine_trans_image",
+      "halcon": "affine_trans_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "affine_trans_image_size",
+      "halcon": "affine_trans_image_size",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "affine_trans_polygon_xld",
+      "halcon": "affine_trans_polygon_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "affine_trans_region",
+      "halcon": "affine_trans_region",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "affine_warp",
+      "halcon": "affine_trans_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "anisotropic_diffusion",
+      "halcon": "anisotropic_diffusion",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "area_center",
+      "halcon": "area_center",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "area_center_xld",
+      "halcon": "area_center_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "area_frac",
+      "halcon": "area_center",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "area_holes",
+      "halcon": "area_holes",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "asin_image",
+      "halcon": "asin_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "atan_image",
+      "halcon": "atan_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "auto_threshold",
+      "halcon": "auto_threshold",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "bandpass_image",
+      "halcon": "bandpass_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "bilateral",
+      "halcon": "bilateral_filter",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "bilateral_filter",
+      "halcon": "bilateral_filter",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "bin_threshold",
+      "halcon": "bin_threshold",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "binary_threshold",
+      "halcon": "binary_threshold",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "binomial_filter",
+      "halcon": "binomial_filter",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "bit_and",
+      "halcon": "bit_and",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "bit_not",
+      "halcon": "bit_not",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "bit_or",
+      "halcon": "bit_or",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "blob_count",
+      "halcon": "count_obj",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "bothat",
+      "halcon": "gray_bothat",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "boundary",
+      "halcon": "boundary",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "canny",
+      "halcon": "edges_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "cfa_to_rgb",
+      "halcon": "cfa_to_rgb",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "circularity",
+      "halcon": "circularity",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "circularity_xld",
+      "halcon": "circularity_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "close_contours_xld",
+      "halcon": "close_contours_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "closest_point_transform",
+      "halcon": "closest_point_transform",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "closing_circle",
+      "halcon": "closing_circle",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "closing_golay",
+      "halcon": "closing_golay",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "closing_rectangle1",
+      "halcon": "closing_rectangle1",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "coherence_enhancing_diff",
+      "halcon": "coherence_enhancing_diff",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "compactness",
+      "halcon": "compactness",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "compactness_xld",
+      "halcon": "compactness_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "connect_and_holes",
+      "halcon": "connect_and_holes",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "contlength",
+      "halcon": "contlength",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "contour_point_num_xld",
+      "halcon": "contour_point_num_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "contours_to_region",
+      "halcon": "gen_region_contour_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "convex_fill",
+      "halcon": "shape_trans",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "convexity",
+      "halcon": "convexity",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "convexity_xld",
+      "halcon": "convexity_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "convol_image",
+      "halcon": "convol_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "cooc_feature_matrix",
+      "halcon": "cooc_feature_matrix",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "corner_response",
+      "halcon": "points_harris",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "cos_image",
+      "halcon": "cos_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "count_channels",
+      "halcon": "count_channels",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "count_contours",
+      "halcon": "count_obj",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "count_obj",
+      "halcon": "count_obj",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "cv_adaptive_gauss",
+      "halcon": "local_threshold",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "cv_adaptive_mean",
+      "halcon": "dyn_threshold",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "cv_bilateral",
+      "halcon": "bilateral_filter",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "cv_blackhat",
+      "halcon": "gray_bothat",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "cv_box",
+      "halcon": "mean_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "cv_canny",
+      "halcon": "edges_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "cv_cc_count",
+      "halcon": "connection",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "cv_close",
+      "halcon": "gray_closing",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "cv_corner_harris",
+      "halcon": "points_harris",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "cv_dilate",
+      "halcon": "gray_dilation",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "cv_dist",
+      "halcon": "distance_transform",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "cv_erode",
+      "halcon": "gray_erosion",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "cv_gaussian",
+      "halcon": "gauss_filter",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "cv_gradient",
+      "halcon": "gray_range_rect",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "cv_hough_circles",
+      "halcon": "hough_circles",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "cv_hough_lines",
+      "halcon": "hough_lines",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "cv_laplacian",
+      "halcon": "laplace",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "cv_median",
+      "halcon": "median_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "cv_min_eigen",
+      "halcon": "points_harris",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "cv_open",
+      "halcon": "gray_opening",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "cv_otsu",
+      "halcon": "binary_threshold",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "cv_precorner",
+      "halcon": "corner_response",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "cv_scharr",
+      "halcon": "edges_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "cv_sharpen",
+      "halcon": "emphasize",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "cv_tophat",
+      "halcon": "gray_tophat",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "cv_trunc",
+      "halcon": "scale_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "decode_barcode",
+      "halcon": "find_bar_code",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "derivate_gauss",
+      "halcon": "derivate_gauss",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "deviation_image",
+      "halcon": "deviation_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "diameter_region",
+      "halcon": "diameter_region",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "diameter_xld",
+      "halcon": "diameter_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "diff_of_gauss",
+      "halcon": "diff_of_gauss",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "difference",
+      "halcon": "difference",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "dilation_circle",
+      "halcon": "dilation_circle",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "dilation_golay",
+      "halcon": "dilation_golay",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "dilation_rectangle1",
+      "halcon": "dilation_rectangle1",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "dilation_seq",
+      "halcon": "dilation_seq",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "dist_transform",
+      "halcon": "distance_transform",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "dist_transform_abs",
+      "halcon": "distance_transform",
+      "profile": "contract_verified",
+      "evidence": [
+        "tests/test_halcon_comparison_fixes_2026_10_22.py::test_reproduced_h05_absolute_distance_is_not_normalized"
+      ],
+      "notes": "Verified dtype and unnormalized distance units for representative inputs."
+    },
+    {
+      "op": "distance_transform",
+      "halcon": "distance_transform",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "div_image",
+      "halcon": "div_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "dl_aniso_diffusion",
+      "halcon": "anisotropic_diffusion",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "dl_guided_filter",
+      "halcon": "guided_filter",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "dog",
+      "halcon": "diff_of_gauss",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "dots_image",
+      "halcon": "dots_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "dual_rank",
+      "halcon": "dual_rank",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "dual_threshold",
+      "halcon": "dual_threshold",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "dyn_threshold",
+      "halcon": "dyn_threshold",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "eccentricity",
+      "halcon": "eccentricity",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "eccentricity_xld",
+      "halcon": "eccentricity_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "edges_color",
+      "halcon": "edges_color",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "edges_color_sub_pix",
+      "halcon": "edges_color_sub_pix",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "edges_image",
+      "halcon": "edges_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "edges_sub_pix",
+      "halcon": "edges_sub_pix",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "eliminate_min_max",
+      "halcon": "eliminate_min_max",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "eliminate_sp",
+      "halcon": "eliminate_sp",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "elliptic_axis",
+      "halcon": "elliptic_axis",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "elliptic_axis_xld",
+      "halcon": "elliptic_axis_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "entropy_gray",
+      "halcon": "entropy_gray",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "entropy_image",
+      "halcon": "entropy_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "equ_histo_image",
+      "halcon": "equ_histo_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "equ_histo_image_rect",
+      "halcon": "equ_histo_image_rect",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "equalize",
+      "halcon": "equ_histo_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "erosion_circle",
+      "halcon": "erosion_circle",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "erosion_golay",
+      "halcon": "erosion_golay",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "erosion_rectangle1",
+      "halcon": "erosion_rectangle1",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "erosion_seq",
+      "halcon": "erosion_seq",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "estimate_noise",
+      "halcon": "estimate_noise",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "euler_number",
+      "halcon": "euler_number",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "exp_image",
+      "halcon": "exp_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "f2_bit_slice",
+      "halcon": "bit_slice",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "f2_expand_domain",
+      "halcon": "expand_domain_gray",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "f2_gauss_pyramid",
+      "halcon": "gen_gauss_pyramid",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "f2_gray_inside",
+      "halcon": "gray_inside",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "f2_gray_skeleton",
+      "halcon": "gray_skeleton",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "f2_lut_trans",
+      "halcon": "lut_trans",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "f2_shock",
+      "halcon": "shock_filter",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "f2_symmetry",
+      "halcon": "symmetry",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "f2_topographic",
+      "halcon": "topographic_sketch",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "fast_threshold",
+      "halcon": "fast_threshold",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "fft_generic",
+      "halcon": "fft_generic",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "fft_image",
+      "halcon": "fft_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "fft_image_inv",
+      "halcon": "fft_image_inv",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "fill_holes",
+      "halcon": "fill_up",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "fill_up",
+      "halcon": "fill_up",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "fill_up_shape",
+      "halcon": "fill_up_shape",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "fit_line_contours",
+      "halcon": "fit_line_contour_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "frei_amp",
+      "halcon": "frei_amp",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "frei_dir",
+      "halcon": "frei_dir",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "gabor",
+      "halcon": "gen_gabor",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "gamma",
+      "halcon": "pow_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "gamma_image",
+      "halcon": "gamma_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "gauss_filter",
+      "halcon": "gauss_filter",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "gauss_image",
+      "halcon": "gauss_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "gaussian",
+      "halcon": "gauss_filter",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "gclose",
+      "halcon": "gray_closing",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "gdilate",
+      "halcon": "gray_dilation",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "gen_contour_region_xld",
+      "halcon": "gen_contour_region_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "gen_gabor",
+      "halcon": "gen_gabor",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "gen_region_contour_xld",
+      "halcon": "gen_region_contour_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "gen_region_polygon_xld",
+      "halcon": "gen_region_polygon_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "gerode",
+      "halcon": "gray_erosion",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "get_region_contour",
+      "halcon": "get_region_contour",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "get_region_convex",
+      "halcon": "get_region_convex",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "get_region_thickness",
+      "halcon": "get_region_thickness",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "gopen",
+      "halcon": "gray_opening",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "gray_bothat",
+      "halcon": "gray_bothat",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "gray_closing",
+      "halcon": "gray_closing",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "gray_closing_rect",
+      "halcon": "gray_closing_rect",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "gray_closing_shape",
+      "halcon": "gray_closing_shape",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "gray_dilation",
+      "halcon": "gray_dilation",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "gray_dilation_rect",
+      "halcon": "gray_dilation_rect",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "gray_dilation_shape",
+      "halcon": "gray_dilation_shape",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "gray_erosion",
+      "halcon": "gray_erosion",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "gray_erosion_rect",
+      "halcon": "gray_erosion_rect",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "gray_erosion_shape",
+      "halcon": "gray_erosion_shape",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "gray_histo_abs",
+      "halcon": "gray_histo_abs",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "gray_opening",
+      "halcon": "gray_opening",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "gray_opening_rect",
+      "halcon": "gray_opening_rect",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "gray_opening_shape",
+      "halcon": "gray_opening_shape",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "gray_range_rect",
+      "halcon": "gray_range_rect",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "gray_tophat",
+      "halcon": "gray_tophat",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "guided_filter",
+      "halcon": "guided_filter",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "h_threshold",
+      "halcon": "threshold",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "height_width_ratio",
+      "halcon": "height_width_ratio",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "highpass",
+      "halcon": "highpass_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "highpass_image",
+      "halcon": "highpass_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hough_circle_trans",
+      "halcon": "hough_circle_trans",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hough_line_trans",
+      "halcon": "hough_line_trans",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_add_noise_contour",
+      "halcon": "add_noise_white_contour_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_char_threshold",
+      "halcon": "char_threshold",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_clip_contours",
+      "halcon": "clip_contours_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_clip_end_points",
+      "halcon": "clip_end_points_contours_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_clip_region_rel",
+      "halcon": "clip_region_rel",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_close_edges",
+      "halcon": "close_edges",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_close_edges_length",
+      "halcon": "close_edges_length",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_closing",
+      "halcon": "closing",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_cooc_feature",
+      "halcon": "cooc_feature_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_crop_contours",
+      "halcon": "crop_contours_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_detect_edge_segments",
+      "halcon": "detect_edge_segments",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_dilation1",
+      "halcon": "dilation1",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_dilation2",
+      "halcon": "dilation2",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_disparity_to_xyz",
+      "halcon": "disparity_image_to_xyz",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_dist_ellipse_contour",
+      "halcon": "dist_ellipse_contour_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_dist_ellipse_points",
+      "halcon": "dist_ellipse_contour_points_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_dist_rect2_points",
+      "halcon": "dist_rectangle2_contour_points_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_distance_pc",
+      "halcon": "distance_pc",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_distance_pr",
+      "halcon": "distance_pr",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_distance_sc",
+      "halcon": "distance_sc",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_erosion1",
+      "halcon": "erosion1",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_estimate_al_am",
+      "halcon": "estimate_al_am",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_estimate_sl_al_lr",
+      "halcon": "estimate_sl_al_lr",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_estimate_sl_al_zc",
+      "halcon": "estimate_sl_al_zc",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_estimate_tilt_lr",
+      "halcon": "estimate_tilt_lr",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_estimate_tilt_zc",
+      "halcon": "estimate_tilt_zc",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_expand_region",
+      "halcon": "expand_region",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_fill_interlace",
+      "halcon": "fill_interlace",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_fit_circle_contour",
+      "halcon": "fit_circle_contour_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_fit_ellipse_contour",
+      "halcon": "fit_ellipse_contour_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_fit_rectangle2_contour",
+      "halcon": "fit_rectangle2_contour_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_fit_surface1",
+      "halcon": "fit_surface_first_order",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_fit_surface2",
+      "halcon": "fit_surface_second_order",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_full_domain",
+      "halcon": "full_domain",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_fuzzy_measure_pairs",
+      "halcon": "fuzzy_measure_pairs",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_gabor",
+      "halcon": "convol_gabor",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_gen_bandfilter",
+      "halcon": "gen_bandfilter",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_gen_bandpass",
+      "halcon": "gen_bandpass",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_gen_checker_region",
+      "halcon": "gen_checker_region",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_gen_circle",
+      "halcon": "gen_circle",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_gen_circle_sector",
+      "halcon": "gen_circle_sector",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_gen_derivative_filter",
+      "halcon": "gen_derivative_filter",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_gen_disc_se",
+      "halcon": "gen_disc_se",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_gen_ellipse",
+      "halcon": "gen_ellipse",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_gen_ellipse_sector",
+      "halcon": "gen_ellipse_sector",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_gen_empty_region",
+      "halcon": "gen_empty_region",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_gen_grid_region",
+      "halcon": "gen_grid_region",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_gen_highpass",
+      "halcon": "gen_highpass",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_gen_image_proto",
+      "halcon": "gen_image_proto",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_gen_lowpass",
+      "halcon": "gen_lowpass",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_gen_parallel_contour",
+      "halcon": "gen_parallel_contour_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_gen_rectangle2",
+      "halcon": "gen_rectangle2",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_get_domain",
+      "halcon": "get_domain",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_histo_to_thresh",
+      "halcon": "histo_to_thresh",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_lowlands",
+      "halcon": "lowlands",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_mean_shape",
+      "halcon": "mean_image_shape",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_moments_any_xld",
+      "halcon": "moments_any_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_move_region",
+      "halcon": "move_region",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_nonmax_dir",
+      "halcon": "nonmax_suppression_dir",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_opening",
+      "halcon": "opening",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_plane_deviation",
+      "halcon": "plane_deviation",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_plateaus_center",
+      "halcon": "plateaus_center",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_polar_trans_inv",
+      "halcon": "polar_trans_contour_xld_inv",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_radial_distort_contour",
+      "halcon": "change_radial_distortion_contours_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_rectangle1_domain",
+      "halcon": "rectangle1_domain",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_region_to_label",
+      "halcon": "region_to_label",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_region_to_mean",
+      "halcon": "region_to_mean",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_regress_contours",
+      "halcon": "regress_contours_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_select_xld_point",
+      "halcon": "select_xld_point",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_shade_height_field",
+      "halcon": "shade_height_field",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_smallest_circle_xld",
+      "halcon": "smallest_circle_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_smallest_rect1_xld",
+      "halcon": "smallest_rectangle1_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_smallest_rect2_xld",
+      "halcon": "smallest_rectangle2_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_sort_contours",
+      "halcon": "sort_contours_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_split_contours",
+      "halcon": "split_contours_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_split_skeleton_region",
+      "halcon": "split_skeleton_region",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_test_closed_xld",
+      "halcon": "test_closed_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_test_region_point",
+      "halcon": "test_region_point",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_test_region_points",
+      "halcon": "test_region_points",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_test_self_intersect",
+      "halcon": "test_self_intersection_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hx_union_adjacent",
+      "halcon": "union_adjacent_contours_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "hysteresis_threshold",
+      "halcon": "hysteresis_threshold",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "identity",
+      "halcon": "copy_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "illuminate",
+      "halcon": "illuminate",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "intensity",
+      "halcon": "intensity",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "intersection",
+      "halcon": "intersection",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "invert",
+      "halcon": "invert_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "invert_image",
+      "halcon": "invert_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "invert_region",
+      "halcon": "complement",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "isotropic_diffusion",
+      "halcon": "isotropic_diffusion",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "it_add_image_border",
+      "halcon": "add_image_border",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "it_bit_lshift",
+      "halcon": "bit_lshift",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "it_bit_mask",
+      "halcon": "bit_mask",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "it_bit_rshift",
+      "halcon": "bit_rshift",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "it_change_format",
+      "halcon": "change_format",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "it_convert_image_type",
+      "halcon": "convert_image_type",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "it_crop_domain",
+      "halcon": "crop_domain",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "it_crop_part",
+      "halcon": "crop_part",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "it_crop_rectangle1",
+      "halcon": "crop_rectangle1",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "it_region_to_bin",
+      "halcon": "region_to_bin",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "junctions_skeleton",
+      "halcon": "junctions_skeleton",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "kirsch_amp",
+      "halcon": "kirsch_amp",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "kirsch_dir",
+      "halcon": "kirsch_dir",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "laplace",
+      "halcon": "laplace",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "laplace_of_gauss",
+      "halcon": "laplace_of_gauss",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "length_xld",
+      "halcon": "length_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "linear_trans_color",
+      "halcon": "linear_trans_color",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "lines_color",
+      "halcon": "lines_color",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "lines_facet",
+      "halcon": "lines_facet",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "lines_gauss",
+      "halcon": "lines_gauss",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "local_max",
+      "halcon": "local_max",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "local_min",
+      "halcon": "local_min",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "local_threshold",
+      "halcon": "local_threshold",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "log",
+      "halcon": "laplace_of_gauss",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "log_image",
+      "halcon": "log_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "m1_fuzzy_measure_pos",
+      "halcon": "fuzzy_measure_pos",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "m1_measure_pairs",
+      "halcon": "measure_pairs",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "m1_measure_pos",
+      "halcon": "measure_pos",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "m1_measure_projection",
+      "halcon": "measure_projection",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "m1_measure_thresh",
+      "halcon": "measure_thresh",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "max_filter",
+      "halcon": "gray_dilation_rect",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "max_image",
+      "halcon": "max_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "mean_box",
+      "halcon": "mean_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "mean_box_wh",
+      "halcon": "mean_image",
+      "profile": "contract_verified",
+      "evidence": [
+        "tests/test_halcon_comparison_fixes_2026_10_22.py::test_reproduced_h06_mean_width_height_are_independent_and_odd"
+      ],
+      "notes": "Verified independent width/height parameter semantics and odd window sizing."
+    },
+    {
+      "op": "mean_curvature_flow",
+      "halcon": "mean_curvature_flow",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "mean_image",
+      "halcon": "mean_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "mean_sp",
+      "halcon": "mean_sp",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "median",
+      "halcon": "median_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "median_image",
+      "halcon": "median_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "median_rect",
+      "halcon": "median_rect",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "median_separate",
+      "halcon": "median_separate",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "median_weighted",
+      "halcon": "median_weighted",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "min_filter",
+      "halcon": "gray_erosion_rect",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "min_image",
+      "halcon": "min_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "min_max_gray",
+      "halcon": "min_max_gray",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "mirror_image",
+      "halcon": "mirror_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "mirror_region",
+      "halcon": "mirror_region",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "moments_region_2nd",
+      "halcon": "moments_region_2nd",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "moments_region_2nd_invar",
+      "halcon": "moments_region_2nd_invar",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "moments_region_2nd_rel_invar",
+      "halcon": "moments_region_2nd_rel_invar",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "moments_region_3rd",
+      "halcon": "moments_region_3rd",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "moments_region_3rd_invar",
+      "halcon": "moments_region_3rd_invar",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "moments_region_central",
+      "halcon": "moments_region_central",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "moments_region_central_invar",
+      "halcon": "moments_region_central_invar",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "moments_xld",
+      "halcon": "moments_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "monotony",
+      "halcon": "monotony",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "morph_grad",
+      "halcon": "gray_range_rect",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "morph_skeleton",
+      "halcon": "morph_skeleton",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "mult_image",
+      "halcon": "mult_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "ncc_locate",
+      "halcon": "find_ncc_model",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "nonmax_suppression_amp",
+      "halcon": "nonmax_suppression_amp",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "opening_circle",
+      "halcon": "opening_circle",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "opening_golay",
+      "halcon": "opening_golay",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "opening_rectangle1",
+      "halcon": "opening_rectangle1",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "orientation_region",
+      "halcon": "orientation_region",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "orientation_xld",
+      "halcon": "orientation_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "otsu",
+      "halcon": "binary_threshold",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "overpaint_region",
+      "halcon": "overpaint_region",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "paint_gray",
+      "halcon": "paint_gray",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "percentile",
+      "halcon": "rank_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "phase_deg",
+      "halcon": "phase_deg",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "phase_rad",
+      "halcon": "phase_rad",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "points_foerstner",
+      "halcon": "points_foerstner",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "points_harris_binomial",
+      "halcon": "points_harris_binomial",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "polar_trans_contour_xld",
+      "halcon": "polar_trans_contour_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "polar_trans_image",
+      "halcon": "polar_trans_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "polar_trans_image_ext",
+      "halcon": "polar_trans_image_ext",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "polar_trans_image_inv",
+      "halcon": "polar_trans_image_inv",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "polar_trans_region_inv",
+      "halcon": "polar_trans_region_inv",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "pouring",
+      "halcon": "pouring",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "pow_image",
+      "halcon": "pow_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "power_byte",
+      "halcon": "power_byte",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "power_ln",
+      "halcon": "power_ln",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "power_real",
+      "halcon": "power_real",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "prewitt_amp",
+      "halcon": "prewitt_amp",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "prewitt_dir",
+      "halcon": "prewitt_dir",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "prewitt_mag",
+      "halcon": "prewitt_amp",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "principal_comp",
+      "halcon": "principal_comp",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "projective_trans_contour_xld",
+      "halcon": "projective_trans_contour_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "projective_trans_image",
+      "halcon": "projective_trans_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "projective_trans_image_size",
+      "halcon": "projective_trans_image_size",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "projective_trans_region",
+      "halcon": "projective_trans_region",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "pruning",
+      "halcon": "pruning",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "r2_inner_circle",
+      "halcon": "inner_circle",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "r2_inner_rectangle1",
+      "halcon": "inner_rectangle1",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "r2_partition_rectangle",
+      "halcon": "partition_rectangle",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "r2_runlength_features",
+      "halcon": "runlength_features",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "r2_smallest_circle",
+      "halcon": "smallest_circle",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "r2_smallest_rectangle2",
+      "halcon": "smallest_rectangle2",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "r2_sort_region",
+      "halcon": "sort_region",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "r2_split_skeleton_lines",
+      "halcon": "split_skeleton_lines",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "r2_union1",
+      "halcon": "union1",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "r3_background_seg",
+      "halcon": "background_seg",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "r3_clip_region",
+      "halcon": "clip_region",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "r3_eliminate_runs",
+      "halcon": "eliminate_runs",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "r3_label_to_region",
+      "halcon": "label_to_region",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "r3_partition_dynamic",
+      "halcon": "partition_dynamic",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "r3_polar_trans_region",
+      "halcon": "polar_trans_region",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "r3_rank_region",
+      "halcon": "rank_region",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "r3_region_features",
+      "halcon": "region_features",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "r3_runlength_distribution",
+      "halcon": "runlength_distribution",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "r3_select_region_point",
+      "halcon": "select_region_point",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "rank_image",
+      "halcon": "rank_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "rank_rect",
+      "halcon": "rank_rect",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "rectangularity",
+      "halcon": "rectangularity",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "rectangularity_xld",
+      "halcon": "rectangularity_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "reduce_domain",
+      "halcon": "reduce_domain",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "reg_close",
+      "halcon": "closing_circle",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "reg_dilate",
+      "halcon": "dilation_circle",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "reg_erode",
+      "halcon": "erosion_circle",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "reg_open",
+      "halcon": "opening_circle",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "region_boundary",
+      "halcon": "boundary",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "regiongrowing",
+      "halcon": "regiongrowing",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "regiongrowing_mean",
+      "halcon": "regiongrowing_mean",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "remove_noise_region",
+      "halcon": "remove_noise_region",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "remove_small",
+      "halcon": "select_shape",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "rescale_img",
+      "halcon": "zoom_image_factor",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "rft_generic",
+      "halcon": "rft_generic",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "rgb1_to_gray",
+      "halcon": "rgb1_to_gray",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "rgb3_to_gray",
+      "halcon": "rgb3_to_gray",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "roberts",
+      "halcon": "roberts",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "roberts_mag",
+      "halcon": "roberts",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "robinson_amp",
+      "halcon": "robinson_amp",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "robinson_dir",
+      "halcon": "robinson_dir",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "rotate_image",
+      "halcon": "rotate_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "rotate_img",
+      "halcon": "rotate_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "roundness",
+      "halcon": "roundness",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "scale_clip",
+      "halcon": "scale_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "scale_image",
+      "halcon": "scale_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "scale_image_max",
+      "halcon": "scale_image_max",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "segment_image_mser",
+      "halcon": "segment_image_mser",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "select_contours",
+      "halcon": "select_contours_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "select_contours_xld",
+      "halcon": "select_contours_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "select_largest",
+      "halcon": "select_shape_std",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "select_shape",
+      "halcon": "select_shape",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "select_shape_std",
+      "halcon": "select_shape_std",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "select_shape_xld",
+      "halcon": "select_shape_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "shape_locate",
+      "halcon": "find_shape_model",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "shape_trans",
+      "halcon": "shape_trans",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "shape_trans_xld",
+      "halcon": "shape_trans_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "sigma_image",
+      "halcon": "sigma_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "sigmoid",
+      "halcon": "scale_image_max",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "simulate_defocus",
+      "halcon": "simulate_defocus",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "simulate_motion",
+      "halcon": "simulate_motion",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "sin_image",
+      "halcon": "sin_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "sk_adjust_log",
+      "halcon": "log_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "sk_autolevel",
+      "halcon": "scale_image_max",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "sk_canny",
+      "halcon": "edges_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "sk_convex",
+      "halcon": "shape_trans",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "sk_corner_harris",
+      "halcon": "points_harris",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "sk_dog",
+      "halcon": "diff_of_gauss",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "sk_entropy",
+      "halcon": "entropy_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "sk_entropy_feat",
+      "halcon": "entropy_gray",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "sk_euler",
+      "halcon": "euler_number",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "sk_farid",
+      "halcon": "edges_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "sk_find_boundaries",
+      "halcon": "boundary",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "sk_frangi",
+      "halcon": "lines_gauss",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "sk_gabor",
+      "halcon": "gen_gabor",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "sk_hessian",
+      "halcon": "lines_gauss",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "sk_hysteresis",
+      "halcon": "hysteresis_threshold",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "sk_li",
+      "halcon": "binary_threshold",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "sk_local_maxima",
+      "halcon": "local_max",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "sk_medial",
+      "halcon": "skeleton",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "sk_median_disk",
+      "halcon": "median_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "sk_meijering",
+      "halcon": "lines_gauss",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "sk_niblack",
+      "halcon": "var_threshold",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "sk_otsu",
+      "halcon": "binary_threshold",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "sk_remove_holes",
+      "halcon": "fill_up",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "sk_sauvola",
+      "halcon": "var_threshold",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "sk_scharr",
+      "halcon": "edges_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "sk_skeleton",
+      "halcon": "skeleton",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "sk_swirl",
+      "halcon": "polar_trans_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "sk_thin",
+      "halcon": "thinning",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "sk_yen",
+      "halcon": "binary_threshold",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "skeleton",
+      "halcon": "skeleton",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "smallest_rectangle1",
+      "halcon": "smallest_rectangle1",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "smooth_contours",
+      "halcon": "smooth_contours_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "smooth_contours_xld",
+      "halcon": "smooth_contours_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "smooth_image",
+      "halcon": "smooth_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "sobel_amp",
+      "halcon": "sobel_amp",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "sobel_dir",
+      "halcon": "sobel_dir",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "sobel_mag",
+      "halcon": "sobel_amp",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "sp_critical_points_sub_pix",
+      "halcon": "critical_points_sub_pix",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "sp_local_max_sub_pix",
+      "halcon": "local_max_sub_pix",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "sp_local_min_sub_pix",
+      "halcon": "local_min_sub_pix",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "sp_lowlands_center",
+      "halcon": "lowlands_center",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "sp_plateaus",
+      "halcon": "plateaus",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "sp_saddle_points_sub_pix",
+      "halcon": "saddle_points_sub_pix",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "sqrt_image",
+      "halcon": "sqrt_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "std_filter",
+      "halcon": "deviation_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "sub_image",
+      "halcon": "sub_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "symm_difference",
+      "halcon": "symm_difference",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "tan_image",
+      "halcon": "tan_image",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "texture_laws",
+      "halcon": "texture_laws",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "thinning",
+      "halcon": "thinning",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "thinning_golay",
+      "halcon": "thinning_golay",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "thinning_seq",
+      "halcon": "thinning_seq",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "threshold",
+      "halcon": "threshold",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "threshold_sub_pix",
+      "halcon": "threshold_sub_pix",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "tophat",
+      "halcon": "gray_tophat",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "total_length",
+      "halcon": "length_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "trans_from_rgb",
+      "halcon": "trans_from_rgb",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "trans_to_rgb",
+      "halcon": "trans_to_rgb",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "transpose_region",
+      "halcon": "transpose_region",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "trimmed_mean",
+      "halcon": "trimmed_mean",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "union2",
+      "halcon": "union2",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "unsharp",
+      "halcon": "emphasize",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "var_threshold",
+      "halcon": "var_threshold",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "watersheds",
+      "halcon": "watersheds",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "watersheds_threshold",
+      "halcon": "watersheds_threshold",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "xcv_watershed_markers",
+      "halcon": "watersheds",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "xg_area_center",
+      "halcon": "area_center_points_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "xg_eccentricity",
+      "halcon": "eccentricity_points_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "xg_elliptic_axis",
+      "halcon": "elliptic_axis_points_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "xg_gen_polygons",
+      "halcon": "gen_polygons_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "xg_height_width_ratio",
+      "halcon": "height_width_ratio_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "xg_moments",
+      "halcon": "moments_points_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "xg_orientation",
+      "halcon": "orientation_points_xld",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "zero_crossing",
+      "halcon": "zero_crossing",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "zero_crossing_sub_pix",
+      "halcon": "zero_crossing_sub_pix",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "zoom_image_factor",
+      "halcon": "zoom_image_factor",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "zoom_image_size",
+      "halcon": "zoom_image_size",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    },
+    {
+      "op": "zoom_region",
+      "halcon": "zoom_region",
+      "profile": "functional_analogue",
+      "evidence": [],
+      "notes": "A worked example exercises this op; reference-contract equivalence is not verified."
+    }
+  ]
+}

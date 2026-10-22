@@ -59,6 +59,8 @@ CHAIN = [
     #   (統合作業で `imgevolve.py index` を手で先に回して回避していた)。順序は
     #   下の OUTPUTS / READS から `order_violations()` が検査する。
     (["imgevolve.py", "index"], "docs/OP_INDEX.json(レジストリの機械可読索引)"),
+    (["tools/halcon_compat_profile.py", "--manifest"],
+     "HALCON 互換プロファイル + 比較試験 manifest + HALCON_PARITY の H15 節"),
     (["tools/opdocs.py", "all"],
      "op ノート + SAMPLES + TOC + RAG skill のコーパス地図 + Studio help HTML(6 言語)"),
     (["tools/gen_op_catalog.py"], "1 ページの op カタログ"),
@@ -136,6 +138,9 @@ CHAIN = [
 OUTPUTS = {
     "gen_auto_specs_data.py": ["auto_specs_data.py"],
     "imgevolve.py": ["docs/OP_INDEX.json"],
+    "tools/halcon_compat_profile.py": ["docs/halcon_compat_profile.json",
+                                        "docs/halcon_comparison_manifest.json",
+                                        "docs/HALCON_PARITY.md"],
     "tools/opdocs.py": ["docs/ops/*", "studio_assets/op_help/*", "docs/i18n/help_coverage.json",
                         "fullseye/skill_template/SKILL.md", "skills/fullseye-ops/SKILL.md"],
     "tools/gen_op_catalog.py": ["docs/OP_CATALOG.md", "fullseye/OP_CATALOG.md"],
@@ -199,6 +204,7 @@ MAY_OUTPUTS = {
 #: 2026-10-15 に audit hook の実測(全 23 段)から起こした。
 READS = {
     "imgevolve.py": ["fullseye/data/OP_INDEX.json", "fullseye/data/op_knob.json"],
+    "tools/halcon_compat_profile.py": ["docs/OP_INDEX.json"],
     "tools/gen_capabilities_index.py": ["docs/OP_INDEX.json"],
     "tools/gen_wingpoc_gallery.py": ["docs/articles/exhibits/exhibit_numbers.json"],
     "tools/gen_trust_block.py": ["docs/OP_INDEX.json", "docs/maturity.json",
@@ -215,6 +221,7 @@ READS = {
         "docs/README.md", "docs/README.*.md", "docs/OP_COUNT_HISTORY.md",
         "docs/EXAMPLES_3D.md", "docs/SENSOR_PLAYBOOK.md", "docs/OPERATORS.md",
         "docs/REFERENCES.md", "docs/EXAMPLES.md", "docs/CONVERSION_MATRIX.md",
+        "docs/HALCON_PARITY.md",
         "docs/DESIGN_NOTES.md", "docs/DESIGN_NOTES.*.md",
         "docs/AI_RAG_GUIDE.md", "docs/AI_RAG_GUIDE.*.md"],
     "tools/gen_mcp_data.py": ["docs/OP_INDEX.json", "docs/ops/*"],

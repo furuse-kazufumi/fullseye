@@ -15,6 +15,7 @@ addressable image-op subset is smaller, so raw percentages understate reach.
 from __future__ import annotations
 
 import importlib
+import argparse
 import json
 import os
 import re
@@ -82,7 +83,27 @@ def registry_by_library():
     return c
 
 
-def main() -> int:
+def main(argv=None) -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--compat-only", action="store_true")
+    args = parser.parse_args(argv)
+    if args.compat_only:
+        profile = json.load(open(os.path.join(HERE, "docs", "halcon_compat_profile.json"),
+                                 encoding="utf-8"))
+        path = os.path.join(HERE, "docs", "HALCON_PARITY.md")
+        text = open(path, encoding="utf-8").read()
+        marker = "## Compatibility profile (H15)"
+        text = text.split(marker, 1)[0].rstrip() + "\n\n"
+        counts = profile["profiles"]
+        text += "\n".join([
+            marker, "", "| profile | ops |", "|---|---:|",
+            "| contract_verified | %d |" % counts["contract_verified"],
+            "| functional_analogue | %d |" % counts["functional_analogue"],
+            "| unknown | %d |" % counts["unknown"], "",
+            "Unknown is never promoted to PASS.", "",
+        ])
+        open(path, "w", encoding="utf-8").write(text)
+        return 0
     inv = inventory()
     ref = _referenced()
     by_lib = registry_by_library()
