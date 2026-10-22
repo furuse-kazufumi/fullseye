@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>检查 VDA 5050 order 的<b>结构规则</b>(独立于官方 JSON 模式的自研第二实现(独立实现))。</p>
 <p>规则: 必需键/节点的 sequenceId 从 0 起为连续偶数,边为连续奇数/边数 = 节点数 − 1/ 各边的起点、终点为前后节点/released 从 base 开头连续(仅有一次 base → horizon 的切换)/ 边的 released 与其终点节点相同。返回违规文字的列表(空 = 合格)。</p>
-<p>空输入(<code style="color:#22d3bf">order</code> 为空 dict)返回空结果(理由: 作为检查器,空的 order 也是检查对象。缺失键的列表才是正确答案)。</p>
+<p>空输入（<code style="color:#22d3bf">order</code> 为空 dict）返回缺少的必需键列表（理由：空 dict 不含任何必需键）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

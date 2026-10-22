@@ -45,6 +45,9 @@ Deriche, Lanser, Shen, or Canny filters.）に相当。
 
 ``a`` がエッジ強度のしきい値を振る。``b`` は未使用。
 
+Raises:
+    FsValueError: NaN / inf を含む画像。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_contour_measure ファミリ ガイド](../guides/gallery2d_contour_measure.md)

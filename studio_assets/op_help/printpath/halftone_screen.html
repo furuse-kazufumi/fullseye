@@ -4,7 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.halftone_screen(image, lpi=60.0, angle_deg=45.0, pixel_um=25.4, sharpness=8.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import printpath; printpath.halftone_screen(image, lpi=60.0, angle_deg=45.0, pixel_um=25.4, sharpness=8.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsprintpath.get(&quot;halftone_screen&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>A classic rotated halftone screen — dots whose area carries the tone.</p>
-<p>Thresholds the image against a rotated periodic spot function (the product of two shifted cosines, the classical round-dot screen). *lpi* is lines per inch and *pixel_um* the pixel pitch, so the screen frequency in pixels follows the printing convention rather than a bare &quot;period in pixels&quot;.</p>
+<p>Thresholds the image against a rotated periodic spot function (the scaled sum of two shifted cosines, a round-dot screen). *lpi* is lines per inch and *pixel_um* the pixel pitch, so the screen frequency in pixels follows the printing convention rather than a bare &quot;period in pixels&quot;.</p>
 <p>★<b>Why this earns its place</b>: two screens at different angles beat against one another, and the <b>period and direction of that moiré are a closed form</b> (<code style="color:#22d3bf">halftone_moire_period</code>) that can be predicted *before* anything is drawn and then measured out of the image. That is why newspaper printing puts the plates at 15°/45°/75° — the beat is pushed to a frequency the eye does not resolve — and this op lets that be shown as numbers, not folklore.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>image : 2-D array in [0, 1]</p>

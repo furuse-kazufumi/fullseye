@@ -10,7 +10,7 @@
 <p style="margin:2px 0 2px 12px">1. build the significance <code style="color:#22d3bf">S = L / (2 sigma_noise)</code>, the positive part of the Laplacian <code style="color:#22d3bf">L</code> normalised by the noise, and</p>
 <p style="margin:2px 0 2px 12px">2. compare it with the fine-structure image <code style="color:#22d3bf">F = median3 - median7(median3)</code>; only where <code style="color:#22d3bf">L / F</code> exceeds <code style="color:#22d3bf">f_lim</code> is it taken as a cosmic ray.</p>
 <p>Without the 2nd condition, <b>the centre of a star always looks like a cosmic ray</b> (stars are locally peaked too). <code style="color:#22d3bf">f_lim</code> is that boundary; the original paper recommends 2.0.</p>
-<p>Increasing <code style="color:#22d3bf">iters</code> repeats removal → re-measurement (when the wings of large hits remain). Replacement uses the <b>median of uncontaminated pixels</b> in a <code style="color:#22d3bf">replace_box</code> window.</p>
+<p>Increasing <code style="color:#22d3bf">iters</code> repeats removal → re-measurement (when the wings of large hits remain). Replacement uses the median of all pixels in the <code style="color:#22d3bf">replace_box</code> window (including pixels marked as contaminated).</p>
 <p>Returns <code style="color:#22d3bf">(cleaned, mask)</code>:</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cleaned</code> —— <code style="color:#22d3bf">(H, W)</code> float64, the image with cosmic-ray pixels replaced.</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">mask</code> —— <code style="color:#22d3bf">(H, W)</code> bool, <code style="color:#22d3bf">True</code> = pixel judged to be a cosmic ray.</p>

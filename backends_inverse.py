@@ -189,7 +189,7 @@ def iv_richardson_lucy(v, a, b):
 
 def iv_wiener_deconv_spatial(v, a, b):
     """Self-contained spatial Wiener deconvolution of an assumed small Gaussian
-    PSF. ``a`` sets the assumed blur sigma in (0, ``WIENER_SIGMA_MAX``] to invert
+    PSF. ``a`` sets the assumed blur sigma in [0.4, ``WIENER_SIGMA_MAX``] to invert
     (larger a -> stronger sharpening); ``b`` sets the noise-to-signal ratio nsr =
     1e-3 + b*0.15 (larger b -> gentler, more regularized restoration)."""
     x = _img(v)

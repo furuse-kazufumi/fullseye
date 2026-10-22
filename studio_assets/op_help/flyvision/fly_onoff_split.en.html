@@ -10,7 +10,7 @@
 <p>rectify: <code style="color:#22d3bf">True</code> half-wave rectifies (<code style="color:#22d3bf">ON = max(c, 0)</code>, <code style="color:#22d3bf">OFF = max(-c, 0)</code>, both &gt;= 0); <code style="color:#22d3bf">False</code> passes the signed contrast into the ON channel and its negation into the OFF channel, which is the linear L1/L2 case and lets the rectification happen downstream instead.</p>
 <p>Returns <code style="color:#22d3bf">(T, 2n)</code> float64: columns <code style="color:#22d3bf">0..n-1</code> are ON, <code style="color:#22d3bf">n..2n-1</code> are OFF, the same ommatidium order in each half.</p>
 <p>Ground truth (exact, with <code style="color:#22d3bf">tau_on_s == tau_off_s</code> so the two channels share one filter):</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ON - OFF</code> is the low-passed input, whichever *rectify* you chose;</p>
+<p style="margin:2px 0 2px 12px">• with <code style="color:#22d3bf">rectify=True</code>, <code style="color:#22d3bf">ON - OFF</code> is the low-passed input; with <code style="color:#22d3bf">rectify=False</code> it is twice the low-passed input;</p>
 <p style="margin:2px 0 2px 12px">• with <code style="color:#22d3bf">rectify=True</code>, <code style="color:#22d3bf">ON + OFF</code> is the low-passed <b>absolute value</b>;</p>
 <p style="margin:2px 0 2px 12px">• a movie that never goes negative leaves the OFF channel identically zero (and vice versa) — the split does not invent a dark event.</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: a non-2-D / too-short / non-finite *movie*, a movie</p>

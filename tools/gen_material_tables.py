@@ -120,6 +120,68 @@ SELECTION += [
     ("ZEONEX_E48R", "polymer", [("other/commercial polymers/ZeonexE48R/nk/Sultanova.yml", "cyclo-olefin polymer")], ["COP"]),
 ]
 
+
+def _acoustic_properties(rho, c, alpha0, alpha_n, verified, source, uncertainty):
+    """既存の超音波表を材料レコードへ移すためのキュレート済み物性。"""
+    return {
+        "density_kg_m3": float(rho),
+        "sound_speed_longitudinal_m_s": float(c),
+        "acoustic_attenuation_coefficient_np_per_m_hz_power": float(alpha0),
+        "acoustic_attenuation_frequency_exponent": float(alpha_n),
+        "acoustic_impedance_mrayl": float(rho * c / 1.0e6),
+        "acoustic_verified": bool(verified),
+        "acoustic_source": source,
+        "acoustic_uncertainty": uncertainty,
+    }
+
+
+_WATER_ALPHA0 = 2.17e-3 / (20.0 / 2.302585092994046) * 100.0 / 1.0e12
+CURATED_ACOUSTIC_PROPERTIES = {
+    "WATER": _acoustic_properties(
+        998.0, 1481.0, _WATER_ALPHA0, 2.0, True,
+        "c = 1481 m/s at 20 C (Wikipedia 'Speed of sound', fresh water); rho = 998 kg/m3 "
+        "lies between the tabulated 999.84 (0 C) and 997.05 (25 C) of Wikipedia "
+        "'Properties of water' (interpolated, +-0.2 %%); attenuation 2.17e-3 dB/(cm MHz^2) "
+        "(Szabo 2004 power law, as quoted beside Pinkerton 1949 in the open-source k-Wave "
+        "attenuationWater help) = %.4g Np/(m Hz^2)" % _WATER_ALPHA0,
+        "c and rho ~0.2 % (temperature: c moves ~3 m/s per K near 20 C); alpha ~10 %"),
+    "SI": _acoustic_properties(
+        2329.0, 8430.0, 0.0, 2.0, True,
+        "[100] longitudinal V_L = sqrt(C11/rho) = 8.43e5 cm/s with C11 = 16.60e11 dyn/cm2 "
+        "(McSkimin 1953) and rho = 2.329 g/cm3, Ioffe Institute NSM database 'Si - "
+        "mechanical properties'. Attenuation NOT verified: set to 0 (assumption)",
+        "c, rho < 1 % for [100]; [110]/[111] are 9.13e5 / 9.36e5 cm/s (anisotropy); "
+        "attenuation unverified"),
+    "SILICA": _acoustic_properties(
+        2203.0, (71.7e9 * (1.0 - 0.17) / (2203.0 * (1.0 + 0.17) * (1.0 - 2.0 * 0.17))) ** 0.5,
+        0.0, 2.0, True,
+        "fused silica: rho = 2.203 g/cm3, E = 71.7 GPa, nu = 0.17 (Wikipedia 'Fused quartz'); "
+        "c = sqrt(E(1-nu)/(rho(1+nu)(1-2nu))) computed here. Attenuation set to 0 (thin layers)",
+        "bulk fused silica; deposited bonding oxides (PECVD, thermal) differ by an "
+        "unverified amount - treat as representative"),
+    "CU": _acoustic_properties(
+        8935.0, ((140e9 + 4.0 * 48e9 / 3.0) / 8935.0) ** 0.5, 0.0, 1.0, True,
+        "rho = 8.935 g/cm3 at 20 C, bulk modulus 140 GPa, shear modulus 48 GPa "
+        "(Wikipedia 'Copper' infobox); c = sqrt((K + 4G/3)/rho) computed here. "
+        "Attenuation set to 0 (micrometre layers)",
+        "polycrystalline average; the same infobox gives E = 110-128 GPa, nu = 0.34, "
+        "which spans c = 4.4-4.8 km/s - about +-5 %"),
+    "AIR": _acoustic_properties(
+        1.2041, 343.0, 0.0, 2.0, True,
+        "c = 343 m/s and rho = 1.2041 kg/m3 at 20 C (Wikipedia 'Speed of sound'). "
+        "Attenuation irrelevant for sub-micrometre gaps (set to 0)",
+        "continuum value; a 0.1 um gap is comparable to the mean free path, but the "
+        "echo is ~-1 for any gap above a few nm"),
+    "POLYIMIDE": _acoustic_properties(
+        1420.0, 2300.0, 1.0e-6, 1.0, False,
+        "UNVERIFIED representative placeholder (no freely readable primary source was "
+        "read). Pass allow_unverified=True and replace with your own measured values", "unknown"),
+    "EPOXY_UNDERFILL": _acoustic_properties(
+        1800.0, 2800.0, 2.0e-6, 1.0, False,
+        "UNVERIFIED representative placeholder for a filled epoxy (no source read). Pass "
+        "allow_unverified=True and replace with your own measured values", "unknown"),
+}
+
 _TAG = re.compile(r"<[^>]+>")
 
 
@@ -230,8 +292,17 @@ def build(rii_dir):
                 datasets.append(ds)
             props.update(_props(y.get("PROPERTIES")))
             cites.append(_plain(y.get("REFERENCES")))
+        props.update(CURATED_ACOUSTIC_PROPERTIES.get(name, {}))
         recs.append({"name": name, "class": cls, "aliases": tuple(aliases), "datasets": datasets,
                      "properties": props})
+    recs.extend([
+        {"name": "AIR", "class": "gas", "aliases": (), "datasets": [],
+         "properties": CURATED_ACOUSTIC_PROPERTIES["AIR"]},
+        {"name": "POLYIMIDE", "class": "polymer", "aliases": (), "datasets": [],
+         "properties": CURATED_ACOUSTIC_PROPERTIES["POLYIMIDE"]},
+        {"name": "EPOXY_UNDERFILL", "class": "composite", "aliases": ("UNDERFILL",), "datasets": [],
+         "properties": CURATED_ACOUSTIC_PROPERTIES["EPOXY_UNDERFILL"]},
+    ])
     return recs
 
 

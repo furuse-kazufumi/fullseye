@@ -19,8 +19,8 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 A classic rotated halftone screen — dots whose area carries the tone.
 
-Thresholds the image against a rotated periodic spot function (the product of
-two shifted cosines, the classical round-dot screen). *lpi* is lines per inch
+Thresholds the image against a rotated periodic spot function (the scaled sum
+of two shifted cosines, a round-dot screen). *lpi* is lines per inch
 and *pixel_um* the pixel pitch, so the screen frequency in pixels follows the
 printing convention rather than a bare "period in pixels".
 

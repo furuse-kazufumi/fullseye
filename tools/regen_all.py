@@ -59,6 +59,8 @@ CHAIN = [
     #   (統合作業で `imgevolve.py index` を手で先に回して回避していた)。順序は
     #   下の OUTPUTS / READS から `order_violations()` が検査する。
     (["imgevolve.py", "index"], "docs/OP_INDEX.json(レジストリの機械可読索引)"),
+    (["tools/halcon_compat_profile.py", "--manifest"],
+     "HALCON 互換プロファイル + 比較試験 manifest + HALCON_PARITY の H15 節"),
     (["tools/opdocs.py", "all"],
      "op ノート + SAMPLES + TOC + RAG skill のコーパス地図 + Studio help HTML(6 言語)"),
     (["tools/gen_op_catalog.py"], "1 ページの op カタログ"),
@@ -136,6 +138,9 @@ CHAIN = [
 OUTPUTS = {
     "gen_auto_specs_data.py": ["auto_specs_data.py"],
     "imgevolve.py": ["docs/OP_INDEX.json"],
+    "tools/halcon_compat_profile.py": ["docs/halcon_compat_profile.json",
+                                        "docs/halcon_comparison_manifest.json",
+                                        "docs/HALCON_PARITY.md"],
     "tools/opdocs.py": ["docs/ops/*", "studio_assets/op_help/*", "docs/i18n/help_coverage.json",
                         "fullseye/skill_template/SKILL.md", "skills/fullseye-ops/SKILL.md"],
     "tools/gen_op_catalog.py": ["docs/OP_CATALOG.md", "fullseye/OP_CATALOG.md"],
@@ -199,6 +204,7 @@ MAY_OUTPUTS = {
 #: 2026-10-15 に audit hook の実測(全 23 段)から起こした。
 READS = {
     "imgevolve.py": ["fullseye/data/OP_INDEX.json", "fullseye/data/op_knob.json"],
+    "tools/halcon_compat_profile.py": ["docs/OP_INDEX.json"],
     "tools/gen_capabilities_index.py": ["docs/OP_INDEX.json"],
     "tools/gen_wingpoc_gallery.py": ["docs/articles/exhibits/exhibit_numbers.json"],
     "tools/gen_trust_block.py": ["docs/OP_INDEX.json", "docs/maturity.json",
@@ -215,6 +221,7 @@ READS = {
         "docs/README.md", "docs/README.*.md", "docs/OP_COUNT_HISTORY.md",
         "docs/EXAMPLES_3D.md", "docs/SENSOR_PLAYBOOK.md", "docs/OPERATORS.md",
         "docs/REFERENCES.md", "docs/EXAMPLES.md", "docs/CONVERSION_MATRIX.md",
+        "docs/HALCON_PARITY.md",
         "docs/DESIGN_NOTES.md", "docs/DESIGN_NOTES.*.md",
         "docs/AI_RAG_GUIDE.md", "docs/AI_RAG_GUIDE.*.md"],
     "tools/gen_mcp_data.py": ["docs/OP_INDEX.json", "docs/ops/*"],
@@ -280,6 +287,9 @@ _IMAGE_REASON = ("画像・動画の書き手。PNG/GIF のバイトは Pillow �
 _SPIKE_REASON = ("スパイク(実験)の記録。spikes/out_gallery/ の図は当時の証跡として凍結してあり、"
                  "再描画(matplotlib / GUI)はバイトが変わる。")
 EXCLUDED = {
+    "tools/audit_nan_inputs.py": ("全登録 op を別プロセスで基準、NaN、+inf の順に実測し、"
+                                  "3 分を大きく超えるため通常の再生成鎖には入れない。"
+                                  "docs/nan_input_audit.json と docs/NAN_INPUT_AUDIT.md は手動で更新する。"),
     "tools/merge_test_durations.py": "CI の片割りの重み(.test_durations)。入力は CI の run が残す所要時間の artifact(repo の外)なので手元では作れない —— 取ってきた artifact を合流して commit する。中身は実測値で、回すたびに変わる。",
     "tools/seed_test_durations.py": "同じ .test_durations の初回の穴埋め(未計測の試験を平均値で仮置き)。最初の 1 回だけの道具で、以後は merge_test_durations.py の実測が置き換える。",
     "tools/gen_thin_film_real.py": "薄膜 PoC の実測データ(Zenodo 13753754・figshare 23285603、どちらも CC BY 4.0)の抜き出し。入力の原本(xlsx・写真、計 60 MB)は repo の外で手で取得するので CI では作れない —— 抜き出した小さな表と縮小写真を data/thin_film_real/ に commit し、出典と改変は同じ場所の README.md に書く。",
@@ -412,7 +422,7 @@ EXCLUDED = {
 #: だから**釣れたものは全部ここに名前と理由を書いて外す**(印は緩めない)。
 _OUT_REASON = "出力は out/(gitignore)で、コミット物を書かない。"
 NOT_A_GENERATOR = {
-    "tools/algo_gate.py": "門(algo 層の合否を出す)。出力は out/ へ。",
+    "tools/algo_gate.py": "門(algo 層の合否を出す)。出力は out/ へ。", "tools/mutation_probe.py": "門の実測。出力は指定先、一時変更は復元。",
     "pocviewer.py": "ライブラリ(fs.write_viewer)。呼び出し側が指定した出力先へ 1 つの HTML を書く道具で、repo の生成物ではない(ビューアの生成器は tools/build_view2026_viewers.py)。",
     "tools/bench_ops.py": "ベンチ。実測値なので回すたびに変わる。",
     "tools/bench_realtime.py": "ベンチ(実時間)。",

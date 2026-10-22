@@ -12,10 +12,9 @@
 <p>영역. 참거짓 또는 [0,1]의 가중치. <b>영상과 형태가 다르면 예외</b>.</p>
 <p>draw : {&quot;fill&quot;, &quot;margin&quot;}</p>
 <p>HALCON의 <code style="color:#22d3bf">set_draw</code>와 같은 말. <code style="color:#22d3bf">&quot;fill&quot;</code>은 내부째로, <code style="color:#22d3bf">&quot;margin&quot;</code></p>
-<p>은 <b>윤곽만</b> 반전한다. 윤곽은 굵기 <code style="color:#22d3bf">width</code> 화소(정수로 반올림)의</p>
-<p>띠이며, 영역의 안팎으로 절반씩 퍼진다.</p>
+<p>은 <b>윤곽만</b> 반전한다. 윤곽은 영역 안팎으로 각각 <code style="color:#22d3bf">max(1, round(width / 2))</code> 화소씩 퍼지는 띠다.</p>
 <p>width : float</p>
-<p><code style="color:#22d3bf">draw=&quot;margin&quot;</code>일 때 띠의 굵기(화소).</p>
+<p><code style="color:#22d3bf">draw=&quot;margin&quot;</code>일 때 띠 폭을 정하는 값(화소).</p>
 <p>mode : str</p>
 <p><code style="color:#22d3bf">INVERT_MODES</code>. <code style="color:#22d3bf">&quot;complement&quot;</code>는 바탕의 무늬를 남기고, <code style="color:#22d3bf">&quot;xor&quot;</code>는</p>
 <p>무늬를 남긴 채 사라지지 않음을 보장하며, <code style="color:#22d3bf">&quot;contrast&quot;</code>는 흑백으로 바꿔</p>

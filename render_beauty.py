@@ -245,6 +245,7 @@ def render_beauty(V, F, *, pose=None, intrinsics=None, size: int = 512, ss: int 
                         ―― 遮蔽された半球の分だけ隣の地形が見えており、その地形が平均的な
                         明るさで光っているという近似(相互反射の厳密解ではない、要 ``ao=True``)。
                         宇宙では環境光が無いので ``ambient=0`` とこれで影の底が決まる。
+      * ``surface`` / ``surface_params`` 表面反射モデル名とその追加パラメータ。
       * ``bump``        ``dict(wavelengths, amplitudes[, seed, nyquist, fade, complement_edges])``
                         → 物体画素の陰影法線を :func:`render3d.bump_normals_fbm`(値ノイズ高さ場の
                         勾配)で摂動する。幾何(depth/影/AO)は不変。``complement_edges=True``

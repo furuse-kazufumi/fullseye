@@ -22,7 +22,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 かつ色度(RGB / |RGB|)が玉の色度の中央値から ``min_chroma`` 以上離れた(陰になった玉の面は明るさだけが落ちて色度は同じ
 —— 明るさだけで拾うと影を穴と取り違えた、測って退けた)画素の連結成分のうち最大のもの。返り値 ``{"found", "col", "row", "angle" (玉の中心 → 穴の重心の像の角度 [rad]、
 atan2(Δrow, Δcol)), "offset" (距離 / ball_radius: 0 = 正面、→ 1 = 縁), "ellipticity" (短軸 / 長軸、2 次モーメントから:
-1 = 正面の円、→ 0 = 真横), "area" [px]}``。見つからなければ found False(他は NaN)。
+1 = 正面の円、→ 0 = 真横), "area" [px]}``。見つからなければ found False、area は 0、他は NaN。
 正面から見た穴の中心は玉の中心と重なり、横へ回るほど縁へ寄って潰れる(offset ≈ sin φ、ellipticity ≈ cos φ、φ = 穴の軸と視線の角)。
 img (H, W, 3)、ball_radius > 0 でなければ ValueError。
 

@@ -15,6 +15,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Averaging (box) filter with independently chosen width and height. Equivalent to HALCON&#x27;s <code style="color:#22d3bf">mean_image</code> (Smooth by averaging.).</p>
 <p><code style="color:#22d3bf">a</code> is the window width and <code style="color:#22d3bf">b</code> the window height; each knob maps to the odd sizes 1, 3, …, 15 by <code style="color:#22d3bf">1 + 2 * min(7, int(8 * clip(knob, 0, 1)))</code> (the same as rounding an even width or height up to the next odd value). Borders always use <code style="color:#22d3bf">reflect</code>. When width and height are equal the result is bit-identical to <code style="color:#22d3bf">mean_box</code> with the same window and <code style="color:#22d3bf">reflect</code>. Example: <code style="color:#22d3bf">_mean_box_wh(np.eye(5), 0.2, 0.4)</code>.</p>
+<p>For an image containing NaN, NaN propagates to the output of averaging windows that reference that pixel.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
