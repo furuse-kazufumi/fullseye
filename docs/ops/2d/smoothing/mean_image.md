@@ -8,7 +8,7 @@ halcon: mean_image
 examples: [gallery2d_smoothing_rank, poc_document_scan, poc_focus_stacking, poc_white_balance]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.8.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # mean_image — 2D `smoothing` op
@@ -71,11 +71,11 @@ mean_image 0.35 0.50
 
 ## 型が繋がる次の op(`image` を入力に取れる)
 
-[identity](../misc/identity.md) · [gaussian](gaussian.md) · [mean_box](mean_box.md) · [bilateral](bilateral.md) · [kuwahara](kuwahara.md) · [unsharp](unsharp.md) · [median](../rank/median.md) · [min_filter](../rank/min_filter.md)
+[identity](../misc/identity.md) · [gaussian](gaussian.md) · [mean_box](mean_box.md) · [mean_box_wh](mean_box_wh.md) · [bilateral](bilateral.md) · [kuwahara](kuwahara.md) · [unsharp](unsharp.md) · [median](../rank/median.md)
 
 ## 同カテゴリ(`smoothing`)
 
-[gaussian](gaussian.md) · [mean_box](mean_box.md) · [bilateral](bilateral.md) · [kuwahara](kuwahara.md) · [unsharp](unsharp.md) · [sk_tv](sk_tv.md) · [sk_wavelet](sk_wavelet.md) · [sk_rolling_ball](sk_rolling_ball.md)
+[gaussian](gaussian.md) · [mean_box](mean_box.md) · [mean_box_wh](mean_box_wh.md) · [bilateral](bilateral.md) · [kuwahara](kuwahara.md) · [unsharp](unsharp.md) · [sk_tv](sk_tv.md) · [sk_wavelet](sk_wavelet.md)
 
 ---
 *Provenance: ops.py — 2D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

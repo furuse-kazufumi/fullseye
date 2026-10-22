@@ -1,12 +1,13 @@
 # imgevolve — cross-library operator catalog
 
-940 operators across 48 categories, typed by sort (image/region/feature). Each maps to the nearest single-call API in HALCON / OpenCV / scikit-image / MATLAB. `-` = no direct one-call analog.
+942 operators across 48 categories, typed by sort (image/region/feature). Each maps to the nearest single-call API in HALCON / OpenCV / scikit-image / MATLAB. `-` = no direct one-call analog.
 
 | op | sort | category | halcon | opencv | skimage | matlab |
 |---|---|---|---|---|---|---|
 | `identity` | any | misc | copy_image | copyTo | - | - |
 | `gaussian` | image | smoothing | gauss_filter | GaussianBlur | filters.gaussian | imgaussfilt |
 | `mean_box` | image | smoothing | mean_image | blur/boxFilter | filters.rank.mean | imboxfilt |
+| `mean_box_wh` | image | smoothing | mean_image | - | - | - |
 | `bilateral` | image | smoothing | bilateral_filter | bilateralFilter | restoration.denoise_bilateral | imbilatfilt |
 | `kuwahara` | image | smoothing | None | - | - | - |
 | `unsharp` | image | smoothing | emphasize | addWeighted | filters.unsharp_mask | imsharpen |
@@ -68,6 +69,7 @@
 | `log` | image | edges | laplace_of_gauss | - | filters.laplace(gaussian) | fspecial('log') |
 | `canny` | image->region | segmentation | edges_image | Canny | feature.canny | edge(...,'canny') |
 | `dist_transform` | region->image | region | distance_transform | distanceTransform | ndi.distance_transform_edt | bwdist |
+| `dist_transform_abs` | region->image | region | distance_transform | - | - | - |
 | `region_boundary` | region | region | boundary | findContours | segmentation.find_boundaries | bwperim |
 | `convex_fill` | region | region | shape_trans | convexHull | morphology.convex_hull_image | bwconvhull |
 | `select_contours` | contour | contour | select_contours_xld | (filter contours) | - | - |
@@ -946,9 +948,9 @@
 | `feature_to_img` | feature->image | bridge |  | - | - | - |
 
 ## Coverage (ops with a direct analog)
-- opencv: 310/940
-- skimage: 383/940
-- matlab: 259/940
+- opencv: 310/942
+- skimage: 383/942
+- matlab: 259/942
 
 ## Roadmap toward full coverage
 - HALCON ~2100 operators: add regions/XLD-contours/matching/OCR/calibration sorts.

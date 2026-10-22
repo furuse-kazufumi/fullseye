@@ -8,7 +8,7 @@ halcon: laplace_of_gauss
 examples: [gallery2d_edges, gallery_spectrum_signal_bridge, poc_colormap_readability, poc_datacenter_thermal_field, poc_dehazing, poc_driving_longitudinal, poc_emva1288_in_camera_processing, poc_eye_to_brain, poc_pocket_interreflection, poc_powder_grinding_ae, poc_registration_basin, poc_simcal_pixel_shift, poc_simcal_thin_film, poc_wound_area_tracking, simcal_checks_tour, simcal_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.8.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # log — 2D `edges` op
@@ -82,7 +82,7 @@ log 0.40 0.50
 
 ## 型が繋がる次の op(`image` を入力に取れる)
 
-[identity](../misc/identity.md) · [gaussian](../smoothing/gaussian.md) · [mean_box](../smoothing/mean_box.md) · [bilateral](../smoothing/bilateral.md) · [kuwahara](../smoothing/kuwahara.md) · [unsharp](../smoothing/unsharp.md) · [median](../rank/median.md) · [min_filter](../rank/min_filter.md)
+[identity](../misc/identity.md) · [gaussian](../smoothing/gaussian.md) · [mean_box](../smoothing/mean_box.md) · [mean_box_wh](../smoothing/mean_box_wh.md) · [bilateral](../smoothing/bilateral.md) · [kuwahara](../smoothing/kuwahara.md) · [unsharp](../smoothing/unsharp.md) · [median](../rank/median.md)
 
 ## 同カテゴリ(`edges`)
 

@@ -7,7 +7,7 @@ out: signal
 examples: [annotate_gallery, poc_dehazing, poc_driving_decisions, poc_driving_traffic, poc_measurement_system_analysis, poc_moire_alignment, poc_pxrd_phase_peel, poc_simcal_thin_film]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.8.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # nice_ticks — ANNOTATE `plot` op

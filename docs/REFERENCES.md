@@ -1,12 +1,13 @@
 # imgevolve — operator research provenance
 
-Seminal references for the 940 operators (families collapse many variants). The point: a designed pipeline is traceable to the literature, and the RAD image corpus is the mining source for *new* operators.
+Seminal references for the 942 operators (families collapse many variants). The point: a designed pipeline is traceable to the literature, and the RAD image corpus is the mining source for *new* operators.
 
 | op | category | seminal reference |
 |---|---|---|
 | `identity` | misc | - |
 | `gaussian` | smoothing | - |
 | `mean_box` | smoothing | - |
+| `mean_box_wh` | smoothing | - |
 | `bilateral` | smoothing | Tomasi & Manduchi (1998). Bilateral filtering for gray and color images. ICCV. |
 | `kuwahara` | smoothing | - |
 | `unsharp` | smoothing | - |
@@ -68,6 +69,7 @@ Seminal references for the 940 operators (families collapse many variants). The 
 | `log` | edges | Marr & Hildreth (1980). Theory of edge detection. Proc. R. Soc. Lond. B. |
 | `canny` | segmentation | Canny, J. (1986). A computational approach to edge detection. IEEE TPAMI. |
 | `dist_transform` | region | Rosenfeld & Pfaltz (1966). Sequential operations in digital picture processing. JACM. |
+| `dist_transform_abs` | region | Rosenfeld & Pfaltz (1966). Sequential operations in digital picture processing. JACM. |
 | `region_boundary` | region | - |
 | `convex_fill` | region | - |
 | `select_contours` | contour | Steger, C. (1998). An unbiased detector of curvilinear structures (subpixel edges). IEEE TPAMI. |
@@ -945,7 +947,7 @@ Seminal references for the 940 operators (families collapse many variants). The 
 | `contour_to_img` | bridge | - |
 | `feature_to_img` | bridge | - |
 
-**Provenance coverage: 174/940 operators cite a seminal paper.**
+**Provenance coverage: 175/942 operators cite a seminal paper.**
 
 ## Mining new operators from research (RAD)
 - RAD image / diffusion / deep_learning corpora (thousands of papers) = the source for operators beyond the classics: modern denoisers (BM3D, DnCNN), learned edges (HED), superpixels (SLIC), diffusion priors, foundation segmenters (SAM).

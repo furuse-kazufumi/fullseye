@@ -3819,6 +3819,24 @@
     "status": "determined"
   },
   {
+    "op": "mean_box_wh",
+    "steps": 51,
+    "n_probe_images": 5,
+    "b_effect": 0.5258185721953839,
+    "b_used": true,
+    "a_effect_per_image": [
+      1.059407,
+      0.20485,
+      0.907903,
+      0.099231,
+      0.164883
+    ],
+    "a_effect": 1.0594069001315374,
+    "a_kind": "continuous",
+    "breakpoints": [],
+    "status": "determined"
+  },
+  {
     "op": "mean_curvature_flow",
     "steps": 51,
     "n_probe_images": 5,

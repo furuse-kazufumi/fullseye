@@ -7,7 +7,7 @@ out: table
 examples: [lens_calibration_loop_demo, lens_defect_dataset_demo, lens_design_demo, lens_optimize_demo, optical_design_metrics, plenoptic_capture_pipeline, poc_chromatic_confocal, poc_lens_file_roundtrip, poc_lens_global_search, poc_lens_merit_operands, poc_lens_solves_afocal, poc_lens_tolerancing, poc_material_optical_library, poc_noncoaxial_optics, poc_optics_drawings, poc_photograph_through_prescription, poc_plenoptic_camera, poc_tdi_linescan, poc_telecentric_metrology, poc_zoom_configurations]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.8.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # lens_system — OPTICS `design` op

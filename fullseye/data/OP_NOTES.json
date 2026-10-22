@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3529,
- "n_notes": 3535,
+ "n_ops": 3531,
+ "n_notes": 3537,
  "notes": {
   "vol_dilate": [
    {
@@ -5859,6 +5859,17 @@
     "path": "docs/ops/2d/region/dist_transform.md"
    }
   ],
+  "dist_transform_abs": [
+   {
+    "op": "dist_transform_abs",
+    "dim": "2d",
+    "category": "region",
+    "in": "region",
+    "out": "image",
+    "halcon": "distance_transform",
+    "path": "docs/ops/2d/region/dist_transform_abs.md"
+   }
+  ],
   "distance_transform": [
    {
     "op": "distance_transform",
@@ -7600,6 +7611,17 @@
     "out": "image",
     "halcon": "mean_image",
     "path": "docs/ops/2d/smoothing/mean_box.md"
+   }
+  ],
+  "mean_box_wh": [
+   {
+    "op": "mean_box_wh",
+    "dim": "2d",
+    "category": "smoothing",
+    "in": "image",
+    "out": "image",
+    "halcon": "mean_image",
+    "path": "docs/ops/2d/smoothing/mean_box_wh.md"
    }
   ],
   "mean_curvature_flow": [

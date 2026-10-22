@@ -8,7 +8,7 @@ halcon: median_image
 examples: [astro_stacking, blas_thread_budget, ct_reconstruction, gallery2d_smoothing_rank, genspark_external_review, lightfield_depth, photon_timeresolved, piv_flow_from_particles, poc_am_thermal_to_ct, poc_astro_photometry, poc_compound_eye, poc_dtof_ranging, poc_geodetic_height_frames, poc_hyperspectral_foreign_matter, poc_lidar_terrain_change, poc_nuclei_ploidy, poc_pv_thermal_survey, poc_river_surface_velocity, poc_tacscalib_sphere_lut, poc_web_roll_periodicity, poc_weld_bead_profile, quickstart, specular_photometric]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.8.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # median — 2D `rank` op
@@ -89,7 +89,7 @@ median 0.50 0.50
 
 ## 型が繋がる次の op(`image` を入力に取れる)
 
-[identity](../misc/identity.md) · [gaussian](../smoothing/gaussian.md) · [mean_box](../smoothing/mean_box.md) · [bilateral](../smoothing/bilateral.md) · [kuwahara](../smoothing/kuwahara.md) · [unsharp](../smoothing/unsharp.md) · [min_filter](min_filter.md) · [max_filter](max_filter.md)
+[identity](../misc/identity.md) · [gaussian](../smoothing/gaussian.md) · [mean_box](../smoothing/mean_box.md) · [mean_box_wh](../smoothing/mean_box_wh.md) · [bilateral](../smoothing/bilateral.md) · [kuwahara](../smoothing/kuwahara.md) · [unsharp](../smoothing/unsharp.md) · [min_filter](min_filter.md)
 
 ## 同カテゴリ(`rank`)
 

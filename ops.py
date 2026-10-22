@@ -201,6 +201,19 @@ def _mean_box(v, a, b):
 
 **端の扱い**: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 ``reflect``)(2026-09-16 に実測して記録)。"""
     return ndimage.uniform_filter(v, size=_k(a), mode=_border(b))
+
+
+def _mean_box_wh(v, a, b):
+    """幅と高さを独立に選ぶ平均（box）フィルタ。HALCON の ``mean_image``（Smooth by averaging.）に相当。
+
+    ``a`` が窓の幅、``b`` が窓の高さで、各ノブは ``1 + 2 * min(7, int(8 * clip(knob, 0, 1)))`` で
+    奇数 1, 3, …, 15 に写す（偶数の幅・高さを次の奇数へ切り上げるのと同じ）。境界は常に
+    ``reflect``。幅と高さが同じなら、同じ窓・``reflect`` の ``mean_box`` とビット一致する。
+    例: ``_mean_box_wh(np.eye(5), 0.2, 0.4)``。
+    """
+    width = 1 + 2 * min(7, int(8 * np.clip(a, 0.0, 1.0)))
+    height = 1 + 2 * min(7, int(8 * np.clip(b, 0.0, 1.0)))
+    return ndimage.uniform_filter(v, size=(height, width), mode="reflect")
 def _median(v, a, b):
     """メディアン（中央値）フィルタ。HALCON の ``median_image``（Compute a median filter with various masks.）に相当。
 
@@ -1547,6 +1560,25 @@ def _dist_transform(v, a, b):
     return _norm(ndimage.distance_transform_edt(_bin(v)))
 
 
+def _dist_transform_abs(v, a, b):
+    """正規化しない絶対画素距離の距離変換。HALCON の ``distance_transform``（Compute the distance transformation of a region.）に相当。
+
+    ``a`` で距離の種類を選ぶ: ``a < 1/3`` はユークリッド、``1/3 <= a < 2/3`` は市街地（L1）、
+    それ以上はチェス盤（L∞）。``b < 0.5`` は各前景画素から最も近い背景画素までの距離、
+    ``b >= 0.5`` は各背景画素から最も近い前景画素までの距離を返す。出力は float64 の画像で、
+    ``dist_transform`` と違い画像内の最大値で正規化しない（3×3 と 9×9 の正方形の中心は
+    それぞれ 2 と 5）。例: ``_dist_transform_abs(np.ones((3, 3)), 0, 0)``。
+
+    HALCON の参照 op は ``int4`` の近似を返す。この op は厳密な float64 距離を返し、
+    互換 API ではない。
+    """
+    mask = _bin(v) if b < 0.5 else ~_bin(v)
+    if a < (1.0 / 3.0):
+        return ndimage.distance_transform_edt(mask).astype(np.float64)
+    metric = "taxicab" if a < (2.0 / 3.0) else "chessboard"
+    return ndimage.distance_transform_cdt(mask, metric=metric).astype(np.float64)
+
+
 def _region_boundary(v, a, b):
     """領域の輪郭（境界リング）を抽出する。HALCON の ``boundary``（Reduce a region to its boundary.）に相当。
 
@@ -2247,6 +2279,7 @@ _DEFS = [
     # image -> image
     ("gaussian", "smoothing", "gauss_filter", IMAGE, IMAGE, _gaussian),
     ("mean_box", "smoothing", "mean_image", IMAGE, IMAGE, _mean_box),
+    ("mean_box_wh", "smoothing", "mean_image", IMAGE, IMAGE, _mean_box_wh),
     ("bilateral", "smoothing", "bilateral_filter", IMAGE, IMAGE, _bilateral),
     ("kuwahara", "smoothing", None, IMAGE, IMAGE, _kuwahara),
     ("unsharp", "smoothing", "emphasize", IMAGE, IMAGE, _unsharp),
@@ -2317,6 +2350,7 @@ _DEFS = [
     ("local_max", "segmentation", "local_max_sub_pix", IMAGE, REGION, _local_max),
     # extra region ops
     ("dist_transform", "region", "distance_transform", REGION, IMAGE, _dist_transform),
+    ("dist_transform_abs", "region", "distance_transform", REGION, IMAGE, _dist_transform_abs),
     ("region_boundary", "region", "boundary", REGION, REGION, _region_boundary),
     ("convex_fill", "region", "shape_trans", REGION, REGION, _convex_fill),
     # image -> contour (XLD)
@@ -2613,6 +2647,8 @@ NONFINITE_IS_MEANINGFUL = {
 #: (``ops3d.py`` の同じ嘘は ``project_points`` で 2026-09-02 に直され、
 #: この 1 行が取り残されていた)。台帳行きにしていたら欠陥を隠していた。
 UNIT_RANGE_IS_NOT_THE_CONTRACT = {
+    "dist_transform_abs":
+        "絶対画素距離(物理量)。正規化版は dist_transform。",
     "tb_project_spherical":
         "画素値は slant range sqrt(x^2+y^2+z^2)(座標の単位 = メートル)。"
         "docstring が『画素値は slant range』と明記。実測 0 .. 12.53。",

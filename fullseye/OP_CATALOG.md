@@ -773,11 +773,11 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3535 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3537 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 957 · **3d** 373 · **math** 114 · **optics** 462 · **lightfield** 17 · **photon** 17 · **specular** 19 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 39 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 694 · **tomography** 31 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族の一覧: **2d** 959 · **3d** 373 · **math** 114 · **optics** 462 · **lightfield** 17 · **photon** 17 · **specular** 19 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 39 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 694 · **tomography** 31 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
-### 2d(957 ops / 49 categories)
+### 2d(959 ops / 49 categories)
 
 1 画像を取り 1 画像/領域/輪郭/特徴を返すパイプライン op(`ops.REGISTRY`)と、複数画像を取る n-ary op(`imgops_nary`)。`in → out` のデータ種で連鎖を組む。HALCON 別名は用途の手掛かり。
 
@@ -1379,7 +1379,7 @@ _計 3535 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `xpil_mode_filter` `image → image` — 最頻値フィルタ。``PIL.ImageFilter.ModeFilter`` で窓内の最頻出画素値に置き換える（中央値でなく最頻値を取る点がメディアンフィルタと異なる）。 · 例: `gallery2d_smoothing_rank`
 - `xsk2_rank_geomean` `image → image` — ランクフィルタの一種、幾何平均フィルタ。``skimage.filters.rank.geometric_mean`` を 8bit 化した画像に円形構造要素（``skimage.morphology.disk``）で掛ける。 · 例: `gallery2d_smoothing_rank`
 
-#### 2d / region(78)
+#### 2d / region(79)
 - `boundary` (halcon: `boundary`) `region → region` — 領域からその 1 画素収縮版を引くことで外周境界線(輪郭の内側 1 画素の リング)を取り出す。塗りつぶされた領域を輪郭線に変換する。HALCON の ``boundary``（Reduce a region to its boundary.）に相当。 · 例: `gallery2d_region`, `poc_complex_plane_fields`, `poc_driving_commonroad`, `voxel_labels_color`
 - `closest_point_transform` (halcon: `closest_point_transform`) `region → image` — 領域の**補集合**に対するユークリッド距離変換を正規化して返す ―― 各 画素から最も近い領域(前景)画素までの距離を表す、``distance_transform`` とは前景/背景が逆の距離場。出力は ``image`` 型。HALCON の ``closest_point_transform``（Compute the closest-point transformation of a region.）に相当。 · 例: `gallery2d_region`
 - `closing_circle` (halcon: `closing_circle`) `region → region` — 円盤形構造要素による二値クロージング(膨張の後に収縮)。小さな穴や くびれを埋める、``opening_circle`` と対の演算。HALCON の ``closing_circle``（Close a region with a circular structuring element.）に相当。 · 例: `gallery2d_region`, `poc_bev_sensor_fusion`
@@ -1392,6 +1392,7 @@ _計 3535 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `dilation_rectangle1` (halcon: `dilation_rectangle1`) `region → region` — 正方形構造要素による二値膨張。``dilation_circle`` の矩形版。HALCON の ``dilation_rectangle1``（Dilate a region with a rectangular structuring element.）に相当。 · 例: `gallery2d_region`
 - `dilation_seq` (halcon: `dilation_seq`) `region → region` — 既定の十字形構造要素（4 近傍）で、a に応じて 1〜4 回反復して膨張（dilation）する逐次的膨張。b は未使用。 · 例: `gallery2d_region`
 - `dist_transform` (halcon: `distance_transform`) `region → image` — ユークリッド距離変換。HALCON の ``distance_transform``（Compute the distance transformation of a region.）に相当。 · 例: `gallery2d_region`, `poc_bone_trabecular_thickness`
+- `dist_transform_abs` (halcon: `distance_transform`) `region → image` — 正規化しない絶対画素距離の距離変換。HALCON の ``distance_transform``（Compute the distance transformation of a region.）に相当。 · 例: `gallery2d_region`
 - `distance_transform` (halcon: `distance_transform`) `region → image` — ユークリッド距離変換(``ndimage.distance_transform_edt``)を最大値で 正規化した画像。各前景画素について最も近い背景画素までの距離を表す ―― 値が大きいほど領域の「奥」にある画素。出力は ``region`` ではなく ``image`` 型になる点に注意。HALCON の ``distance_transform``（Compute the distance transformation of a region.）に相当。 · 例: `gallery2d_region`, `poc_cell_counting`, `poc_crack_width`, `poc_fresco_craquelure`, `poc_particle_sizing`, `poc_vessel_network`
 - `em_skeleton` `region → region` — Eckhardt–Maderlechner 型の不変細線化(HALCON `skeleton` と同系統)。 · 例: `gallery2d_region`
 - `erosion_circle` (halcon: `erosion_circle`) `region → region` — 円盤形構造要素による二値収縮(``ndimage.binary_erosion``)。前景領域を 外周から侵食して縮める、最も基本的な二値モルフォロジー演算。HALCON の ``erosion_circle``（Erode a region with a circular structuring element.） に相当。 · 例: `gallery2d_region`, `poc_livestock_body_volume`
@@ -1547,7 +1548,7 @@ _計 3535 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 #### 2d / self-similarity(1)
 - `xmh_selfmatch` `image → image` — 自己相似マップ(``mahotas.template_match`` による自己テンプレートマッチング)。画像中心から切り出した小さなパッチを画像全体に対してテンプレートマッチングし、パッチに似た場所ほど 1 に近い値になるよう正規化して返す。 · 例: `gallery2d_features`
 
-#### 2d / smoothing(49)
+#### 2d / smoothing(50)
 - `anisotropic_diffusion` (halcon: `anisotropic_diffusion`) `image → image` — Perona-Malik 型の異方性拡散。上下左右 4 方向の画素差にガウス型の 伝導度関数 ``exp(-(Δ/K)^2)`` を掛けて反復的に加算する ―― 差が閾値 K より 大きい(=エッジ)方向には拡散させず、小さい(=平坦)方向だけ滑らかにする エッジ保存平滑化。HALCON の ``anisotropic_diffusion``（Perform an anisotropic diffusion of an image.）に相当。 · 例: `gallery2d_smoothing_rank`
 - `bilateral` (halcon: `bilateral_filter`) `image → image` — エッジ保存平滑化（bilateral filter）。HALCON の ``bilateral_filter``（bilateral filtering of an image.）に相当。 · 例: `gallery2d_smoothing_rank`, `quickstart`
 - `bilateral_filter` (halcon: `bilateral_filter`) `image → image` — OpenCV のバイラテラルフィルタ(``cv2.bilateralFilter``)。近傍画素を 空間距離と輝度差の両方で重み付けして平均する、エッジを保ったまま平滑化する 定番手法。HALCON の ``bilateral_filter``（bilateral filtering of an image.）に相当。 · 例: `gallery2d_smoothing_rank`
@@ -1568,6 +1569,7 @@ _計 3535 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `isotropic_diffusion` (halcon: `isotropic_diffusion`) `image → image` — 実装は単純なガウシアンぼかし(``gaussian_filter``、シグマ ``0.5+2.5*a``)。等方拡散方程式の解はガウシアン核による畳み込みと数学的に 等価なので、この近似は理論的にも妥当(異方性拡散のようなエッジ保存効果は 無く、方向を問わず一様に滑らかになる)。HALCON の ``isotropic_diffusion`` （Perform an isotropic diffusion of an image.）に相当。 · 例: `gallery2d_smoothing_rank`
 - `kuwahara` `image → image` — Kuwahara フィルタ(1976)。4 つの重なる窓のうち分散が最小の窓の平均を出す、縁を保つ平滑化。 · 例: `gallery2d_smoothing_rank`
 - `mean_box` (halcon: `mean_image`) `image → image` — 矩形窓の単純平均（box）フィルタ。HALCON の ``mean_image``（Smooth by averaging.）に相当。 · 例: `gallery2d_smoothing_rank`
+- `mean_box_wh` (halcon: `mean_image`) `image → image` — 幅と高さを独立に選ぶ平均（box）フィルタ。HALCON の ``mean_image``（Smooth by averaging.）に相当。 · 例: `gallery2d_smoothing_rank`
 - `mean_curvature_flow` (halcon: `mean_curvature_flow`) `image → image` — 小さなシグマ(0.6)のガウシアンぼかしを繰り返し適用することで平均曲率流を **近似**したスムージング。真の平均曲率 PDE(``ops`` 側の別実装が本来やる 拡散方程式)ではなく、反復ぼかしという計算コストの軽い代用になっている点が このバックエンド固有の近似の限界。HALCON の ``mean_curvature_flow`` （Apply the mean curvature flow to an image.）の代役。 · 例: `gallery2d_smoothing_rank`
 - `mean_image` (halcon: `mean_image`) `image → image` — 矩形平均フィルタ(box filter)。HALCON の ``mean_image``（Smooth by averaging.）に相当する近似で、注目画素を一辺 k の窓の平均で置き換える。 · 例: `gallery2d_smoothing_rank`, `poc_document_scan`, `poc_focus_stacking`, `poc_white_balance`
 - `sigma_image` (halcon: `sigma_image`) `image → image` — シグマフィルタによる非線形平滑化。中心画素値に近い(``|x-mean|<σ``) 近傍画素だけを平均する ―― エッジ付近では反対側の階調が平均に混ざらないため、 平均フィルタよりエッジを保ちやすいノイズ除去になる。HALCON の ``sigma_image``（Non-linear smoothing with the sigma filter.）に相当。 · 例: `gallery2d_smoothing_rank`

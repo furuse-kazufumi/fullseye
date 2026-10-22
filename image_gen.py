@@ -59,25 +59,33 @@ def gen_image1_rect(image, row, col, width, height) -> np.ndarray:
     return im[r:r + int(height), c:c + int(width)].copy()
 
 
-def change_domain(image, region):
-    """Replace the domain with ``region`` and zero pixels outside it.
+def change_domain(image, region, *, keep_pixels: bool = False):
+    """Replace the domain with ``region``.
 
-    Unlike the HALCON reference operator, this implementation does not retain
-    pixel values outside the domain.  This also applies to dictionary inputs.
+    The default zeroes outside pixels for compatibility. ``keep_pixels=True``
+    retains the untouched matrix, which is the HALCON reference policy.
+    Example: ``change_domain(np.ones((2, 2)), [[1, 0], [0, 0]], keep_pixels=True)``.
     """
     im, _ = _as_image_domain(image); m = np.asarray(region, bool)
-    return {"image": np.where(m, im, 0.0), "domain": m}
+    if not isinstance(keep_pixels, (bool, np.bool_)):
+        raise ValueError("keep_pixels must be a bool")
+    return {"image": im.copy() if keep_pixels else np.where(m, im, 0.0), "domain": m}
 
 
-def reduce_domain(image, region):
-    """Intersect the existing domain with ``region`` and zero outside it.
+def reduce_domain(image, region, *, keep_pixels: bool = False):
+    """Intersect the existing domain with ``region``.
 
-    Unlike the HALCON reference operator, pixels outside the resulting domain
-    are zeroed rather than retained.  Plain arrays start with a full domain.
+    The default zeroes outside pixels for compatibility. ``keep_pixels=True``
+    retains the untouched matrix, which is the HALCON reference policy. Plain
+    arrays start with a full domain. Array-only consumers ignore explicit
+    domains; the functions in this module which accept dictionaries preserve
+    them. Example: ``reduce_domain(np.ones((2, 2)), [[1, 0], [0, 0]], keep_pixels=True)``.
     """
+    if not isinstance(keep_pixels, (bool, np.bool_)):
+        raise ValueError("keep_pixels must be a bool")
     im, domain = _as_image_domain(image)
     m = domain & np.asarray(region, bool)
-    return {"image": np.where(m, im, 0.0), "domain": m}
+    return {"image": im.copy() if keep_pixels else np.where(m, im, 0.0), "domain": m}
 
 
 def get_domain(image):
@@ -90,8 +98,10 @@ def get_domain(image):
     return domain.copy()
 
 
-def crop_domain(image, region):
+def crop_domain(image, region, *, keep_pixels: bool = False):
     """domain の外接矩形で画像を切り出す(crop_domain)。"""
+    if not isinstance(keep_pixels, (bool, np.bool_)):
+        raise ValueError("keep_pixels must be a bool")
     is_domain_image = isinstance(image, dict)
     im, domain = _as_image_domain(image); m = np.asarray(region, bool)
     if not m.any():
@@ -103,8 +113,10 @@ def crop_domain(image, region):
     return {"image": cropped, "domain": domain[sl].copy()} if is_domain_image else cropped
 
 
-def crop_domain_rel(image, region, top=0, left=0, bottom=0, right=0):
+def crop_domain_rel(image, region, top=0, left=0, bottom=0, right=0, *, keep_pixels: bool = False):
     """domain 外接矩形を相対マージン付きで切り出す(crop_domain_rel)。"""
+    if not isinstance(keep_pixels, (bool, np.bool_)):
+        raise ValueError("keep_pixels must be a bool")
     is_domain_image = isinstance(image, dict)
     im, domain = _as_image_domain(image); m = np.asarray(region, bool)
     if not m.any():

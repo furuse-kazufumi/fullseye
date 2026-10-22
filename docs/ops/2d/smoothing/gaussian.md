@@ -8,7 +8,7 @@ halcon: gauss_filter
 examples: [coherence_scanning, color_transport, ct_inspection, degenerate_inputs, example_inner_diameter_mm, gallery2d_smoothing_rank, genspark_external_review, inspection_workflow, perf_pointcloud_descriptors, photon_timeresolved, poc_bone_trabecular_thickness, poc_chromatic_confocal, poc_dtof_ranging, poc_flybrain_pointcloud, poc_interferometry_step, poc_itof_multifreq, poc_leaf_disease_area, poc_nir_silicon_transmission, poc_nuclei_ploidy, poc_simcal_telecentric, poc_simcal_thin_film, poc_solar_el_inspection, poc_solar_limb_darkening, poc_star_astrometry, poc_wound_area_tracking, quickstart, typed_results_json, video_streaming]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.8.0  # fullseye lib version this note was generated for
+version: 0.8.1  # fullseye lib version this note was generated for
 ---
 
 # gaussian — 2D `smoothing` op
@@ -92,11 +92,11 @@ gaussian 0.35 0.50
 
 ## 型が繋がる次の op(`image` を入力に取れる)
 
-[identity](../misc/identity.md) · [mean_box](mean_box.md) · [bilateral](bilateral.md) · [kuwahara](kuwahara.md) · [unsharp](unsharp.md) · [median](../rank/median.md) · [min_filter](../rank/min_filter.md) · [max_filter](../rank/max_filter.md)
+[identity](../misc/identity.md) · [mean_box](mean_box.md) · [mean_box_wh](mean_box_wh.md) · [bilateral](bilateral.md) · [kuwahara](kuwahara.md) · [unsharp](unsharp.md) · [median](../rank/median.md) · [min_filter](../rank/min_filter.md)
 
 ## 同カテゴリ(`smoothing`)
 
-[mean_box](mean_box.md) · [bilateral](bilateral.md) · [kuwahara](kuwahara.md) · [unsharp](unsharp.md) · [sk_tv](sk_tv.md) · [sk_wavelet](sk_wavelet.md) · [sk_rolling_ball](sk_rolling_ball.md) · [sk_nlm](sk_nlm.md)
+[mean_box](mean_box.md) · [mean_box_wh](mean_box_wh.md) · [bilateral](bilateral.md) · [kuwahara](kuwahara.md) · [unsharp](unsharp.md) · [sk_tv](sk_tv.md) · [sk_wavelet](sk_wavelet.md) · [sk_rolling_ball](sk_rolling_ball.md)
 
 ---
 *Provenance: ops.py — 2D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
