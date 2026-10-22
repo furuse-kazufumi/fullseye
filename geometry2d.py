@@ -172,7 +172,11 @@ def area_intersection_rectangle2(row1, col1, phi1, l1a, l1b,
                                  method: str = "exact") -> float:
     """Return the intersection area of two oriented rectangles.
 
-    ``method="exact"`` (the default) clips the two convex polygons.
+    ``method="exact"`` (the default) clips the two convex polygons.  When the
+    representative length is outside ``[2**-20, 2**20]``, it first translates
+    both rectangles to their common midpoint and divides coordinates by a
+    nearby power of two.  Thus the clipping tolerance is relative to the
+    geometry and a positive tiny intersection is not mistaken for contact.
     ``method="grid"`` is a selectable sampling approximation.  For identical
     half-side-one squares at angle pi/4 its measured absolute error is 0.13333
     at ``n=60`` and 0.01333 at ``n=600``.  Touching edges and zero half-lengths
@@ -193,8 +197,28 @@ def area_intersection_rectangle2(row1, col1, phi1, l1a, l1b,
         if min(l1a, l1b, l2a, l2b) <= 0:
             return 0.0
 
-        subject = vertices(row1, col1, phi1, l1a, l1b)
-        clip = vertices(row2, col2, phi2, l2a, l2b)
+        distance = float(np.hypot(row2 - row1, col2 - col1))
+        representative = max(l1a, l1b, l2a, l2b, distance)
+        _, exponent = np.frexp(representative)
+        rescale = exponent - 1 < -20 or exponent - 1 > 20
+        if rescale:
+            length_scale = float(np.ldexp(1.0, exponent - 1))
+            origin_row = 0.5 * row1 + 0.5 * row2
+            origin_col = 0.5 * col1 + 0.5 * col2
+            exact_args = (
+                (row1 - origin_row) / length_scale,
+                (col1 - origin_col) / length_scale,
+                phi1, l1a / length_scale, l1b / length_scale,
+                (row2 - origin_row) / length_scale,
+                (col2 - origin_col) / length_scale,
+                phi2, l2a / length_scale, l2b / length_scale,
+            )
+        else:
+            length_scale = 1.0
+            exact_args = (row1, col1, phi1, l1a, l1b,
+                          row2, col2, phi2, l2a, l2b)
+        subject = vertices(*exact_args[:5])
+        clip = vertices(*exact_args[5:])
         eps = np.finfo(float).eps * 64
         for a, b in zip(clip, clip[1:] + clip[:1]):
             edge = b - a
@@ -219,7 +243,7 @@ def area_intersection_rectangle2(row1, col1, phi1, l1a, l1b,
         p = p - p[0]
         area = 0.5 * abs(np.dot(p[:, 0], np.roll(p[:, 1], -1)) -
                          np.dot(p[:, 1], np.roll(p[:, 0], -1)))
-        return float(area if area > eps else 0.0)
+        return float(area * length_scale * length_scale)
 
     def inside(pts, r, c, phi, la, lb):
         d = pts - [r, c]
