@@ -120,8 +120,15 @@ def test_gui_region_overlay_uses_apply_display_with_resolved_range(monkeypatch):
     monkeypatch.setattr(studio, "apply_display", recording_apply)
     win, _ = studio.build_window(model)
     win._set_display_mode("region overlay")
-    app.processEvents()
-    value, mode, kwargs = calls[-1]
+    # 再描画はワーカー経由で遅れて届くことがある(CI の shard では calls[-1] がまだ
+    # build_window 時の gray だった)。region overlay で描画された呼び出しが届くまで待つ。
+    import time
+    deadline = time.monotonic() + 5.0
+    while time.monotonic() < deadline and not any(c[1] == "region overlay" for c in calls):
+        app.processEvents(); time.sleep(0.01)
+    overlay_calls = [c for c in calls if c[1] == "region overlay"]
+    assert overlay_calls, [c[1] for c in calls]
+    value, mode, kwargs = overlay_calls[-1]
     resolved = win._display_range([value])
     assert mode == "region overlay"
     assert kwargs["vmin"] == resolved.lo and kwargs["vmax"] == resolved.hi
