@@ -149,6 +149,18 @@ def test_selected_rewritten_contracts_have_behavior_checks():
     with pytest.raises(ValueError, match="two_theta must be in"):
         pxrd.cubic_index([0.0, 20.0], wavelength=1.54)
 
+    dimension = annotate.annotate_dimension_layout(
+        (0, 0), (10, 0), offset=5, extension=2, text_gap=3
+    )
+    assert dimension["ext0"] == ((0.0, 0.0), (0.0, 7.0))
+    assert dimension["text_xy"] == (5.0, 8.0)
+
+    scale_bar = annotate.annotate_scale_bar_layout(
+        (100, 200), 1.0, target_fraction=0.2, margin=10
+    )
+    assert scale_bar["length"] == 20.0
+    assert scale_bar["rect"] == (170, 85, 20, 5)
+
 
 @pytest.mark.parametrize(("n_inliers", "raises"), [(3, False), (2, True)])
 def test_frame_align_minimum_ransac_inliers_is_inclusive(monkeypatch, n_inliers, raises):
