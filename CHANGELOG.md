@@ -7,6 +7,8 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- 失敗と正常な空結果の監査台帳を追加し、domain 操作で不正な型、形状、NaN/inf を専用例外として通知するようにした。
+
 - 逆離散ウェーブレット変換の合成を係数ごとのスライス加算に変え、出力と加算順を保ったまま添字散布行列を除いた。
 
 - `gum_monte_carlo(stream=True)` が相関入力と非線形モデルも64 MiB以下の行ブロックで処理し、全標本×成分の行列を保持しないようにした。乱数列の割当てが変わるため既定経路は維持した。
