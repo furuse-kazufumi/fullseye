@@ -569,7 +569,10 @@ AUTO_SPECS = [{'halcon': 'tan_image',
          '\n'
          '2026-08-30 の修正で、以前使っていた汎用の ``edges_sub_pix`` 経路をやめ、上のトレース順の抽出に置き換えた。旧経路は ``np.where`` '
          'のラスタ順で点を返しており、順序に依存する後段処理（楕円フーリエ記述子など）を壊していた。HALCON の ``gen_contour_region_xld``（region '
-         'から XLD 輪郭を生成する演算）に相当する。'},
+         'から XLD 輪郭を生成する演算）に相当する。\n'
+         '\n'
+         'Raises:\n'
+         '    FsValueError: NaN / inf を含む画像。'},
  {'halcon': 'select_shape_xld',
   'category': 'contour',
   'in_sort': 'contour',

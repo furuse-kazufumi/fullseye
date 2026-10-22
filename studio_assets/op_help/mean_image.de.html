@@ -14,6 +14,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Rechteckiger Mittelwertfilter (Box-Filter). Eine Näherung, die HALCONs <code style="color:#22d3bf">mean_image</code> (Smooth by averaging.) entspricht und den betrachteten Pixel durch den Mittelwert eines Fensters der Seitenlänge k ersetzt.</p>
 <p><code style="color:#22d3bf">a</code> variiert die Fensterseitenlänge k in den 4 Stufen <code style="color:#22d3bf">{3,5,7,9}</code> (<code style="color:#22d3bf">_k(a)</code>). <code style="color:#22d3bf">b</code> wird nicht verwendet. Schneller als ein Gauß, doch statt Kanten zu verwischen, hinterlässt es leicht kantige, blockartige Artefakte.</p>
+<p>Bei einem Bild mit NaN breitet sich NaN auf die Ausgabe der Mittelwertfenster aus, die dieses Pixel einbeziehen.</p>
 <p><b>Randbehandlung</b>: mit Wiederholung des Randpixels spiegeln (d c b a | a b c d — scipys Standard <code style="color:#22d3bf">reflect</code>) (gemessen; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">Leitfaden zur Familie gallery2d_smoothing_rank</a></p>

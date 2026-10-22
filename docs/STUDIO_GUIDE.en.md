@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: d7ced9102dcd -->
+<!-- i18n-source-sha: 4d87be350a9b -->
 # The complete guide to Fullseye Studio
 
 A purpose search groups candidates by whether they fit the current input, need preprocessing, or belong elsewhere. You can try a candidate once without adding a stage. Failures in the Problems pane show the cause, location, and concrete next actions for reselecting input, comparing values, opening the log, editing a knob, or finding a suggested stage.
@@ -373,6 +373,10 @@ Results that are not pixels are drawn according to their shape (the right panel 
 Run ▸ **Apply this processing to a folder…** lets you pick an input folder and a file pattern, check the result on the first, middle, last or any chosen image, and then run the whole set. The inputs and the processing chain are frozen once at the start, so turning a knob during the run does not change the conditions of the running batch.
 
 For files with the same name you choose between "do not overwrite", "overwrite" and "add a sequence number"; when subfolders are included, the same hierarchy is created on the output side. `summary.csv` holds the file name, status, processing time, numeric outputs and the error reason. If reading or processing one image fails, the rest continues, and after the run you can review the failed files with their reasons in a list. A stop request is accepted at the boundary after the current image, and "stopped" is not shown until the run has actually stopped.
+
+## Work modes and panels
+
+Choose Build processing, Compare results, Inspect values, or Make code in the top bar to enlarge the panels needed for that task and collapse the rest. Ctrl+1–4 switches modes. Inputs, processing steps, and computed results remain unchanged, and manual panel adjustments are remembered per mode. F11 temporarily shows only the image; Esc restores the exact previous layout. Find panel… recalls hidden panels by a Japanese or English name.
 
 ## Display range and source data
 

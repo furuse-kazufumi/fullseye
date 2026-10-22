@@ -14,6 +14,7 @@
 <p>由于单个标量无法表示 (Area, Row, Column),本 op 以 <code style="color:#22d3bf">match</code> 类型(一维向量,与 <code style="color:#22d3bf">ncc_locate</code> 同形)返回,这一点与其他 region 特征 op 不同。区域为空时返回 <code style="color:#22d3bf">(0, (H-1)/2, (W-1)/2)</code>(面积为零、中心 = 图像中心的像素坐标),为 fail-soft 规格。</p>
 <p>★直到 2026-09-26,3 个分量都除以图像尺寸,返回 0〜1 的值(面积比、归一化质心)。现在为像素单位(<code style="color:#22d3bf">docs/hardening/dimensional-features-were-normalised.md</code>)。若需要归一化值,把面积除以 <code style="color:#22d3bf">H*W</code>、行除以 <code style="color:#22d3bf">H-1</code>、列除以 <code style="color:#22d3bf">W-1</code>。</p>
 <p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
+<p>??? FsValueError????? NaN / inf?</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

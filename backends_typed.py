@@ -306,6 +306,8 @@ _OP_BRIDGE_SKIP = {
     # 表か曲線(pairs)を返す側で、画像を受けない。台帳(`fullseye.ledger.material_transmittance` …)から使う。
     "material_table",
     "material_record",
+    "material_acoustic",
+    "acoustic_impedance_mismatch",
     "material_optical_constants",
     "material_dispersion",
     "material_extinction",

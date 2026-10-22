@@ -18,15 +18,17 @@ import materials_data as MD
 # --------------------------------------------------------------------------- #
 # 表そのもの                                                                     #
 # --------------------------------------------------------------------------- #
-def test_table_has_86_materials_in_seven_classes():
+def test_table_has_89_materials_in_nine_classes():
     cat = M.material_table()
-    assert len(cat) == 86 == len(M.MATERIALS)
+    assert len(cat) == 89 == len(M.MATERIALS)
     counts = {c: sum(r["class"] == c for r in cat) for c in M.CLASSES[:-1]}
-    assert counts == {"glass": 46, "crystal": 12, "semiconductor": 6, "film": 7, "metal": 10, "liquid": 1, "polymer": 4}
+    assert counts == {"glass": 46, "crystal": 12, "semiconductor": 6, "film": 7, "metal": 10,
+                      "liquid": 1, "polymer": 5, "gas": 1, "composite": 1}
     for r in cat:
         assert r["reference"], r["name"]                     # 出典の無い行は無い
-        assert r["range_um"][0] < r["range_um"][1]
-        assert r["intervals_um"][0][0] == r["range_um"][0]
+        if r["range_um"] is not None:
+            assert r["range_um"][0] < r["range_um"][1]
+            assert r["intervals_um"][0][0] == r["range_um"][0]
 
 
 def test_every_generated_record_cites_a_cc0_page():
@@ -330,7 +332,7 @@ def test_ledger_registration():
     names = [r[0] for r in opsoptics._CATALOG["matprop"]]
     assert sorted(names) == sorted(n for n in M.__all__ if n not in ("MATERIALS", "CLASSES", "AGF_EXAMPLE", "NIR_BAND_MODELS",
                                                                      "ELEMENTS", "ELECTRON_SOLID"))
-    assert len(names) == 20                                   # + 近赤外の吸収帯 3 op + 電子線の物性 1 op(2026-10-15)
+    assert len(names) == 22                                   # + 音響物性 2 op(2026-10-22)
     for n in names:
         assert opsoptics.get(n) is getattr(M, n)
     import fullseye as fs

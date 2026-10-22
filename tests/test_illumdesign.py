@@ -360,6 +360,26 @@ def test_solid_angle_sweep_ends_and_roughness_kills_the_contrast():
     assert rough < 0.5 * smooth
 
 
+def _pupil_share_grid(normal, na, alpha_deg, M=1201):
+    """瞳(NA の円、方向余弦の一様格子 = 射影立体角)の光線を法線で鏡映し、+z の円錐(半角 α)に入る割合。"""
+    g = np.linspace(-na, na, M)
+    X, Y = np.meshgrid(g, g)
+    m = X * X + Y * Y <= na * na
+    V = np.stack([X[m], Y[m], np.sqrt(1.0 - X[m] ** 2 - Y[m] ** 2)], 1)
+    n = np.asarray(normal, float) / np.linalg.norm(normal)
+    R = 2.0 * (V @ n)[:, None] * n - V
+    return float(np.mean(R[:, 2] >= math.cos(math.radians(alpha_deg))))
+
+
+def _cap_cosine_grid(normal, alpha_deg, M=2000):
+    """+z の円錐(半角 α、輝度 1)が法線 n の拡散面に作る照度 / π: ∫ max(0, n·ω) dΩ を (cos θ, φ) の中点則で。"""
+    ca = math.cos(math.radians(alpha_deg))
+    CZ, PH = np.meshgrid(1.0 - (1.0 - ca) * (np.arange(M) + 0.5) / M, 2.0 * math.pi * (np.arange(M) + 0.5) / M)
+    SZ = np.sqrt(1.0 - CZ * CZ)
+    D = np.stack([SZ * np.cos(PH), SZ * np.sin(PH), CZ], -1)
+    return float(np.clip(D @ np.asarray(normal, float), 0.0, None).mean() * 2.0 * math.pi * (1.0 - ca) / math.pi)
+
+
 def test_solid_angle_render_matches_the_brightness_op_and_the_diffuse_closed_form():
     lt = ID.solid_angle_light(8.0)
     th = math.radians(5.0)
@@ -369,12 +389,18 @@ def test_solid_angle_render_matches_the_brightness_op_and_the_diffuse_closed_for
     N[3, 4] = 0.0                                       # background
     img = ID.solid_angle_render(N, lt, view_na=0.1, f0=1.0, n_samples=1024)
     ref = ID.solid_angle_brightness(lt, view_na=0.1, slopes_deg=[0.0, 5.0], n_samples=1024)["rows"]
-    assert img[0, 0] == pytest.approx(ref[0]["numeric"], abs=1e-12)
+    assert img[0, 0] == pytest.approx(ref[0]["numeric"], abs=1e-12)     # 2 つの op が同じ答え(整合)
     assert img[1, 1] == pytest.approx(ref[1]["numeric"], abs=1e-12)
+    # 2026-10-15: 上の 2 行は同じ _specular_share の出力どうし、下の拡散は実装と同じ閉形式 sin²α·cos γ の写しで、
+    # どちらも外の真値ではなかった。真値を独立に数える: 鏡面 = 瞳(方向余弦の 1201² の格子)の各光線を
+    # 斜面で鏡映し、光源の円錐に入る割合 / 拡散 = 円錐の中の cos γ を立体角の格子で積分して π で割る。
+    assert img[0, 0] == pytest.approx(_pupil_share_grid((0.0, 0.0, 1.0), 0.1, 8.0), abs=1e-12)    # 平らなら瞳は全部光る
+    assert img[1, 1] == pytest.approx(_pupil_share_grid(N[1, 1], 0.1, 8.0), abs=3e-3)             # 1024 標本の量子化
+    assert 0.2 < img[1, 1] < 0.26                                        # 探針が素通しでない(一部だけ光る)
     assert img[3, 4] == 0.0
     dif = ID.solid_angle_render(N, lt, view_na=0.1, f0=0.0, diffuse_albedo=1.0)
-    assert dif[0, 0] == pytest.approx(math.sin(math.radians(8.0)) ** 2, rel=1e-12)
-    assert dif[1, 1] == pytest.approx(math.sin(math.radians(8.0)) ** 2 * math.cos(th), rel=1e-12)
+    assert dif[0, 0] == pytest.approx(_cap_cosine_grid((0.0, 0.0, 1.0), 8.0), rel=1e-6)
+    assert dif[1, 1] == pytest.approx(_cap_cosine_grid(N[1, 1], 8.0), rel=1e-6)
     # a roughness map: the rough patch dims under a narrow cone
     rg = np.zeros((4, 5))
     rg[2, :] = 6.0

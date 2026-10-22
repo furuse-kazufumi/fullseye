@@ -773,9 +773,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3537 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3539 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 959 · **3d** 373 · **math** 114 · **optics** 462 · **lightfield** 17 · **photon** 17 · **specular** 19 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 39 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 694 · **tomography** 31 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族の一覧: **2d** 959 · **3d** 373 · **math** 114 · **optics** 464 · **lightfield** 17 · **photon** 17 · **specular** 19 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 39 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 694 · **tomography** 31 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d(959 ops / 49 categories)
 
@@ -2493,7 +2493,7 @@ _計 3537 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `wave_nodal_lines` `matrix → mask` — Where a signed field changes sign — the nodal set, as a mask. · 例: `poc_beats_fringes_and_screens`
 - `wave_two_slit` `入力なし → image2d` — Two-slit interference on a screen — built from the physics, not the fringe formula. · 例: `poc_beats_fringes_and_screens`
 
-### optics(462 ops / 51 categories)
+### optics(464 ops / 51 categories)
 
 レンズより上・画素より下の層。幾何光学(薄レンズ結像・ABCD 光線伝達・被写界深度・cos⁴ 口径食)/ 波動光学(Airy パターン・角スペクトル伝搬・Fraunhofer 回折・ガウシアンビーム)/ 結像品質(PSF→MTF・回折限界 MTF・Zernike 波面統計)/ 偏光(Jones・Stokes・Mueller)/ 材料の物性表(matprop)・光ファイバ(fiber)・センサーの特性(sensorchar)・大域光輸送ほか。
 
@@ -2750,11 +2750,13 @@ _計 3537 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `subsurface_approx` `normalmap → image2d` — 半透明の回り込み(葉・肌・大理石・プラ乳白)の近似。 · 例: `machined_metal_and_materials`
 - `wetness` `rgbimage → rgbimage` — 濡れた面の下地色。**拡散が暗くなる**(そして鏡面が増える)。 · 例: `machined_metal_and_materials`
 
-#### optics / matprop(20)
+#### optics / matprop(22)
 - `abbe_number` `入力なし → table` — フラウンホーファー線の屈折率と Abbe 数(d 線系・e 線系)、部分分散 P_g,F を返す。 · 例: `poc_chromatic_confocal`, `poc_material_optical_library`
+- `acoustic_impedance_mismatch` `入力なし → table` — 2 材料の垂直入射における音響インピーダンス不整合を返す。 · 例: `poc_material_optical_library`
 - `carbon_black_absorption` `入力なし → pairs` — カーボンブラック(黒い樹脂の顔料)が足す吸収係数 α [1/mm]。 · 例: `poc_hyperspectral_foreign_matter`
 - `glass_map` `入力なし → table` — Abbe 図(V_d 対 n_d)の点の列: 可視で透明な材料ごとに name / class / nd / vd / PgF。 · 例: `poc_lens_global_search`, `poc_material_optical_library`, `poc_optics_drawings`
 - `material_absorption` `入力なし → pairs` — 吸収係数の曲線 α(λ) = 4πk/λ [1/cm] を ``pairs``(λ [nm], α)で返す。 · 例: `poc_material_optical_library`
+- `material_acoustic` `入力なし → table` — 材料レコードに保存した音響物性と出典を返す。 · 例: `poc_material_optical_library`
 - `material_dispersion` `入力なし → pairs` — 屈折率の分散曲線 n(λ) を ``pairs``(λ [nm], n)で返す(等間隔 ``n_points`` 点)。 · 例: `poc_fiber_light_guide`, `poc_material_optical_library`
 - `material_electron_properties` `入力なし → table` — 電子線の物性(元素ごとの Z・A・質量分率、密度、二次電子の脱出深さと生成エネルギー)を返す。 · 例: `poc_virtual_sem_kv_cd_bse`
 - `material_extinction` `入力なし → pairs` — 消衰係数の曲線 k(λ) を ``pairs``(λ [nm], k)で返す。k の表が無い区間は 0。 · 例: `poc_material_optical_library`

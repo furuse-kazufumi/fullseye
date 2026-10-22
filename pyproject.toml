@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "fullseye"
 version = "0.8.1"
-description = "Numpy-native operator library for vision, 3-D and measurement (3,531 typed ops in the machine-readable index: imaging, point clouds, optics, tomography, metrology) with an evolutionary pipeline designer and honest holdout gating"
+description = "Numpy-native operator library for vision, 3-D and measurement (3,533 typed ops in the machine-readable index: imaging, point clouds, optics, tomography, metrology) with an evolutionary pipeline designer and honest holdout gating"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "Apache-2.0" }
@@ -228,7 +228,7 @@ py-modules = [
   # グリフ照合(指定の字と合っているかを測り、誤字を置き換える)。annotate の
   # フォント解決と豆腐検出を使い回す。2026-09-17 追加。
   "glyphops",
-  "recipes", "measure", "studio", "studio_search", "studio_errors", "studio_roundtrip", "studio_batch", "studio_display", "sample_images", "sample_data", "accuracy_bench",
+  "recipes", "measure", "studio", "studio_search", "studio_errors", "studio_roundtrip", "studio_batch", "studio_display", "studio_layout", "sample_images", "sample_data", "accuracy_bench",
   "evolve", "problems", "baseline", "robust",
   "verify_auto", "honest_summary", "dispositions", "catalog", "report",
   "samples", "references", "codegen", "difftest", "parity", "accel", "accel_bridge", "accel_match", "accel_vol", "bench",
