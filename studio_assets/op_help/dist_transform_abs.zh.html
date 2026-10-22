@@ -18,7 +18,7 @@
 <p>不归一化的绝对像素距离变换。相当于 HALCON 的 <code style="color:#22d3bf">distance_transform</code>（Compute the distance transformation of a region.）。</p>
 <p><code style="color:#22d3bf">a</code> 选择距离类型：<code style="color:#22d3bf">a &lt; 1/3</code> 为欧氏距离，<code style="color:#22d3bf">1/3 &lt;= a &lt; 2/3</code> 为城市街区（L1），其余为棋盘（L∞）。<code style="color:#22d3bf">b &lt; 0.5</code> 对每个前景像素返回到最近背景像素的距离；<code style="color:#22d3bf">b &gt;= 0.5</code> 对每个背景像素返回到最近前景像素的距离。输出为 float64 图像，与 <code style="color:#22d3bf">dist_transform</code> 不同，不按图像内最大值归一化（3×3 与 9×9 正方形的中心分别为 2 与 5）。例：<code style="color:#22d3bf">_dist_transform_abs(np.ones((3, 3)), 0, 0)</code>。</p>
 <p>HALCON 的参考算子返回 <code style="color:#22d3bf">int4</code> 近似值。本 op 返回精确的 float64 距离，不是兼容 API。</p>
-<p>???? NaN ? region?????? NaN ??????????? NaN ? <code style="color:#22d3bf">b &gt;= 0.5</code> ????????? -1??? image sort ????</p>
+<p>??? FsValueError????? NaN / inf?</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

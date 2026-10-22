@@ -45,7 +45,8 @@ version: 0.8.1  # fullseye lib version this note was generated for
 ``a`` が局所平均の窓サイズを、``b`` がオフセット(しきい値を上下に振る量)
 を振る。両方が使われる。
 
-NaN を含む画像では、NaN の影響を受けた局所平均との比較が偽になり、該当窓の出力を背景（0）とする。
+Raises:
+    FsValueError: NaN / inf を含む画像。
 
 **端の扱い**: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 ``reflect``)(実測。`tools/impl2/border_probe.py`)。
 

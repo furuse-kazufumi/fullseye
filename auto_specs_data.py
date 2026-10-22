@@ -571,7 +571,8 @@ AUTO_SPECS = [{'halcon': 'tan_image',
          'のラスタ順で点を返しており、順序に依存する後段処理（楕円フーリエ記述子など）を壊していた。HALCON の ``gen_contour_region_xld``（region '
          'から XLD 輪郭を生成する演算）に相当する。\n'
          '\n'
-         'NaN を含む region では NaN を背景として二値化し、その画素を輪郭に含めない。'},
+         'Raises:\n'
+         '    FsValueError: NaN / inf を含む画像。'},
  {'halcon': 'select_shape_xld',
   'category': 'contour',
   'in_sort': 'contour',

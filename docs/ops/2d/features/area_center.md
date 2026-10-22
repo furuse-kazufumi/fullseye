@@ -42,7 +42,10 @@ version: 0.8.1  # fullseye lib version this note was generated for
 返していた。いまは画素(``docs/hardening/dimensional-features-were-normalised.md``)。
 正規化が要るなら面積を ``H*W``、行を ``H-1``、列を ``W-1`` で割る。
 
-``a``, ``b`` は未使用。NaN を含む region では NaN を背景として二値化し、有限な面積と重心を返す。
+``a``, ``b`` は未使用。
+
+Raises:
+    FsValueError: NaN / inf を含む画像。
 
 ## 詳しい使い方ガイド
 

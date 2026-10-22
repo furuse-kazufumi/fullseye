@@ -28,6 +28,8 @@ from typing import Callable, Optional
 import numpy as np
 from scipy import ndimage
 
+from fslib import FsValueError
+
 IMAGE, REGION, FEATURE, ANY = "image", "region", "feature", "any"
 CONTOUR, MATCH = "contour", "match"   # XLD subpixel contours / template-match result
 VOLUME = "volume"                     # 3D voxel array (CT/MRI/depth stacks)
@@ -129,6 +131,13 @@ def _k(a: float) -> int:
 
 def _it(a: float) -> int:
     return 1 + int(a * 3)  # morphology iterations 1..4
+
+
+def _require_finite_image(v, operator: str) -> None:
+    """Reject non-finite floating/complex raster inputs without scanning integers."""
+    x = np.asarray(v)
+    if x.dtype.kind in "fc" and not np.isfinite(x).all():
+        raise FsValueError(f"{operator}: image input contains NaN or infinity")
 
 
 def _norm(x):
@@ -1376,7 +1385,9 @@ def _threshold(v, a, b):
 
 ``a`` がしきい値そのもの（``0〜1``）で、``v > a`` を満たす画素を前景（1）とする region を返す。``b`` は未使用。HALCON の ``threshold`` は下限・上限の 2 値を取れる帯域しきい値だが、この実装は下限のみの片側しきい値。
 
-NaN を含む画像では比較が偽になるため、該当画素を背景（0）として有限な region を返す。"""
+Raises:
+    FsValueError: NaN / inf を含む画像。"""
+    _require_finite_image(v, "threshold")
     return (v > a).astype(np.float64)
 
 
@@ -1434,6 +1445,7 @@ _FLAT_TOL = 1e-9
 
 
 def _dyn_threshold(v, a, b):
+    _require_finite_image(v, "dyn_threshold")
     return (v - ndimage.uniform_filter(v, size=_k(a))
             > (b - 0.5) * 0.4 + _FLAT_TOL).astype(np.float64)
 
@@ -1473,7 +1485,9 @@ def _select_largest(v, a, b):
 
 ``a``, ``b`` は未使用（常に「最大」を選ぶ）。連結成分ラベリング後、画素数が最大の 1 成分だけを 1、それ以外を 0 にする。入力に前景が無ければ全 0 を返す。HALCON の ``select_shape_std`` は面積以外の形状基準（円形度等）や複数選択にも対応するが、この実装は面積最大の単一選択のみ。
 
-NaN を含む region では NaN を背景として二値化し、有限な region を返す。"""
+Raises:
+    FsValueError: NaN / inf を含む画像。"""
+    _require_finite_image(v, "select_largest")
     lab, n = ndimage.label(_bin(v))
     if n == 0:
         return np.zeros_like(v, np.float64)
@@ -1515,8 +1529,10 @@ def _blob_count(v, a, b, connectivity=8):
     8 連結。従来は scipy.ndimage.label の既定 = 4 連結で、対角接触した 2 画素を
     2 個と数えていた: KNOWN_ISSUES #1)。旧 4 連結は connectivity=4 で。
 
-    NaN を含む region では NaN を背景として二値化し、有限な個数を返す。
+    Raises:
+        FsValueError: NaN / inf を含む画像。
     """
+    _require_finite_image(v, "blob_count")
     st = ndimage.generate_binary_structure(2, 2 if int(connectivity) == 8 else 1)
     _, n = ndimage.label(_bin(v), structure=st)
     return np.float64(n)
@@ -1568,7 +1584,9 @@ def _dist_transform(v, a, b):
 
 ``a``, ``b`` は未使用。各前景画素について最も近い背景画素までのユークリッド距離を求め（``scipy.ndimage.distance_transform_edt``）、``_norm`` でその画像内の最大値を 1 に正規化する（画像間で絶対距離の比較はできない）。骨格化・粒の中心検出等の前処理に使う。
 
-NaN を含む region では NaN を背景として二値化し、有限な距離画像を返す。"""
+Raises:
+    FsValueError: NaN / inf を含む画像。"""
+    _require_finite_image(v, "dist_transform")
     return _norm(ndimage.distance_transform_edt(_bin(v)))
 
 
@@ -1584,8 +1602,10 @@ def _dist_transform_abs(v, a, b):
     HALCON の参照 op は ``int4`` の近似を返す。この op は厳密な float64 距離を返し、
     互換 API ではない。
 
-    NaN を含む region では NaN を背景として二値化する。全背景に NaN 1 画素の入力で ``b >= 0.5`` のときは全画素 -1 という image ソートの範囲外値を返す。
+    Raises:
+        FsValueError: NaN / inf を含む画像。
     """
+    _require_finite_image(v, "dist_transform_abs")
     mask = _bin(v) if b < 0.5 else ~_bin(v)
     if a < (1.0 / 3.0):
         return ndimage.distance_transform_edt(mask).astype(np.float64)
@@ -1629,7 +1649,10 @@ def _edges_sub_pix(v, a, b):
     していない)なので、太いエッジでは帯の全画素が稜線へ寄せられて **重なった
     点**になる。1 画素幅の連鎖が要るなら `canny` を、より高精度な等値線が要るなら
     `threshold_sub_pix`(実測 0.001 px)を使うこと。
+    Raises:
+        FsValueError: NaN / inf を含む画像。
     """
+    _require_finite_image(v, "edges_sub_pix")
     from backend_safe import gradient_normals, subpixel_refine_edges
 
     g, ny, nx = gradient_normals(v)

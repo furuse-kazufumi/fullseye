@@ -14,7 +14,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Behält nur die zusammenhängende Region mit der größten Fläche. Entspricht HALCONs <code style="color:#22d3bf">select_shape_std</code> (Select regions of a given shape.).</p>
 <p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> werden nicht verwendet (es wählt immer das &quot;größte&quot;). Nach der Beschriftung der Zusammenhangskomponenten wird nur die 1 Komponente mit der größten Pixelzahl auf 1 gesetzt, alles andere auf 0. Hat die Eingabe keinen Vordergrund, wird überall 0 zurückgegeben. HALCONs <code style="color:#22d3bf">select_shape_std</code> unterstützt auch andere Formkriterien als die Fläche (Kreisförmigkeit usw.) und Mehrfachauswahl, diese Implementierung jedoch nur die Einzelauswahl der größten Fläche.</p>
-<p>Bei einer Region mit NaN wird NaN bei der Binarisierung als Hintergrund behandelt und ein endliches Ergebnis zur?ckgegeben.</p>
+<p>L?st aus:</p>
+<p>FsValueError: Das Bild enth?lt NaN / inf.</p>
 <p><b>Randbehandlung</b>: alles außerhalb des Bildes als Hintergrund (0) behandeln (gemessen; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">Leitfaden zur Familie gallery2d_region</a></p>

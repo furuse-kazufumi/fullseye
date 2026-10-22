@@ -39,7 +39,8 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 ``a`` がしきい値そのもの（``0〜1``）で、``v > a`` を満たす画素を前景（1）とする region を返す。``b`` は未使用。HALCON の ``threshold`` は下限・上限の 2 値を取れる帯域しきい値だが、この実装は下限のみの片側しきい値。
 
-NaN を含む画像では比較が偽になるため、該当画素を背景（0）として有限な region を返す。
+Raises:
+    FsValueError: NaN / inf を含む画像。
 
 ## 詳しい使い方ガイド
 

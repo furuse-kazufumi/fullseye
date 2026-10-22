@@ -15,7 +15,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>欧几里得距离变换。相当于 HALCON 的 <code style="color:#22d3bf">distance_transform</code>（Compute the distance transformation of a region.）。</p>
 <p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。对每个前景像素求出到最近背景像素的欧氏距离（<code style="color:#22d3bf">scipy.ndimage.distance_transform_edt</code>），并用 <code style="color:#22d3bf">_norm</code> 把该图像内的最大值归一化为 1（无法在图像之间比较绝对距离）。用于骨架化、颗粒中心检测等的预处理。</p>
-<p>???? NaN ? region?????? NaN ????????????</p>
+<p>??? FsValueError????? NaN / inf?</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

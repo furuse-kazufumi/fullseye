@@ -13,7 +13,9 @@
 <p>*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>サブピクセル精度のエッジ点抽出。勾配とその法線方向(<code style="color:#22d3bf">gradient_ normals</code>)を求め、しきい値(<code style="color:#22d3bf">0.15+0.5*a</code>)を超える画素を連結成分化した後、放物線当てはめで各点をサブピクセル位置へ精密化する(<code style="color:#22d3bf">subpixel_ refine_edges</code>、<code style="color:#22d3bf">ops</code> 側の同名 op と共有する実装 ―― 2026-09-02 修正で真の意味でサブピクセルになった。旧実装は整数画素座標をそのまま返していた)。HALCON の <code style="color:#22d3bf">edges_sub_pix</code>（Extract sub-pixel precise edges using Deriche, Lanser, Shen, or Canny filters.）に相当。</p>
-<p><code style="color:#22d3bf">a</code> がエッジ強度のしきい値を振る。<code style="color:#22d3bf">b</code> は未使用。NaN を含む画像では NaN による非有限の勾配をしきい値未満として扱い、その周辺に輪郭を生成しない。</p>
+<p><code style="color:#22d3bf">a</code> がエッジ強度のしきい値を振る。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p>Raises:</p>
+<p>FsValueError: NaN / inf を含む画像。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

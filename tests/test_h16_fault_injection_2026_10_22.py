@@ -96,25 +96,17 @@ def test_nan_wrapper_routes_propagate_an_injected_failure(
     assert "NaN" in event["error"]
 
 
-_SILENT_FINITE = {
-    "threshold", "dyn_threshold", "dist_transform", "select_largest",
-    "blob_count", "area_center", "gen_contour_region_xld", "edges_sub_pix",
+_FAIL_CLOSED = {
+    "threshold", "dyn_threshold", "dist_transform", "dist_transform_abs",
+    "select_largest", "blob_count", "area_center",
+    "gen_contour_region_xld", "edges_sub_pix",
 }
 
 
 @pytest.mark.parametrize(
     "name,in_sort,out_sort",
-    [
-        pytest.param(
-            name, in_sort, out_sort,
-            marks=pytest.mark.xfail(
-                strict=True,
-                reason="H16: silent finite output on NaN input — decision pending",
-            ) if name in _SILENT_FINITE else (),
-            id=name,
-        )
-        for name, in_sort, out_sort in OPS
-    ],
+    OPS,
+    ids=[name for name, _, _ in OPS],
 )
 def test_nan_input_contract_of_the_real_operator(name, in_sort, out_sort):
     """Call the innermost implementation behind the registry's real callable."""
@@ -122,30 +114,23 @@ def test_nan_input_contract_of_the_real_operator(name, in_sort, out_sort):
     bad[3, 4] = np.nan
     op = next(op for op in ops.REGISTRY if op.name == name)
     raw = inspect.unwrap(op.fn)
-    result = raw(bad, 0.4, 0.6)
+    if name in _FAIL_CLOSED:
+        with pytest.raises(FsValueError, match=rf"{name}.*NaN"):
+            raw(bad, 0.4, 0.6)
+        with pytest.raises(FsValueError, match=rf"{name}.*NaN"):
+            api.apply(bad, name, 0.4, 0.6, on_error="raise")
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", bs.FullseyeFallbackWarning)
+            assert api.apply(bad, name, 0.4, 0.6) is not None
+        event = bs.fallbacks()[-1]
+        assert event["name"] == name and "NaN" in event["error"]
+        return
 
-    if name == "mean_box_wh":
-        expected = np.ones((8, 8), bool)
-        expected[:, 0] = False
-        np.testing.assert_array_equal(np.isnan(result), expected)
-    elif name == "mean_image":
-        expected = np.zeros((8, 8), bool)
-        expected[1:, 2:] = True
-        np.testing.assert_array_equal(np.isnan(result), expected)
-    elif name == "median":
-        np.testing.assert_array_equal(np.argwhere(np.isnan(result)), [[1, 5]])
-    elif name == "dist_transform_abs":
-        # Observed raw contract is deliberately pinned even though it is outside
-        # the registry image sort's [0, 1] range; the wrapper later sanitizes it.
-        np.testing.assert_array_equal(result, np.full((8, 8), -1.0))
-    else:
-        # Pending H16 decision: every case currently reaches this assertion with
-        # a finite, sort-valid value, so the strict xfail records the defect.
-        if isinstance(result, dict):
-            assert result["shape"] == (8, 8) and result["cs"] == []
-        else:
-            assert np.isfinite(np.asarray(result)).all()
-        pytest.fail("NaN was silently converted to a finite, sort-valid result")
+    result = raw(bad, 0.4, 0.6)
+    nan = np.isnan(result)
+    assert nan.sum() >= 1
+    if name != "median":
+        assert nan[3, 4]
 
 
 @pytest.mark.parametrize(

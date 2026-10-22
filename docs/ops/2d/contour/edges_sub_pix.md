@@ -43,7 +43,10 @@ refine_edges``、``ops`` 側の同名 op と共有する実装 ―― 2026-09-02
 いた)。HALCON の ``edges_sub_pix``（Extract sub-pixel precise edges using
 Deriche, Lanser, Shen, or Canny filters.）に相当。
 
-``a`` がエッジ強度のしきい値を振る。``b`` は未使用。NaN を含む画像では NaN による非有限の勾配をしきい値未満として扱い、その周辺に輪郭を生成しない。
+``a`` がエッジ強度のしきい値を振る。``b`` は未使用。
+
+Raises:
+    FsValueError: NaN / inf を含む画像。
 
 ## 詳しい使い方ガイド
 

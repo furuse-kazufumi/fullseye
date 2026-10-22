@@ -13,7 +13,9 @@
 <p>領域の面積と重心を <code style="color:#22d3bf">(面積 [画素数], 重心の行 [px], 重心の列 [px])</code> の 3 成分ベクトルで返す。HALCON の <code style="color:#22d3bf">area_center</code>（Area and center of regions.）と同じ 3 値・同じ単位。</p>
 <p>1 スカラーでは (Area, Row, Column) を表せないため、<code style="color:#22d3bf">match</code> ソート(1 次元ベクトル、<code style="color:#22d3bf">ncc_locate</code> と同じ形)で返す点が他の region 特徴 op と異なる。領域が空のときは <code style="color:#22d3bf">(0, (H-1)/2, (W-1)/2)</code>(面積ゼロ・中心 = 画像中心の画素座標)を返す fail-soft 仕様。</p>
 <p>★2026-09-26 まで 3 成分とも画像サイズで割った 0〜1 の値(面積比・正規化重心)を返していた。いまは画素(<code style="color:#22d3bf">docs/hardening/dimensional-features-were-normalised.md</code>)。正規化が要るなら面積を <code style="color:#22d3bf">H*W</code>、行を <code style="color:#22d3bf">H-1</code>、列を <code style="color:#22d3bf">W-1</code> で割る。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。NaN を含む region では NaN を背景として二値化し、有限な面積と重心を返す。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p>Raises:</p>
+<p>FsValueError: NaN / inf を含む画像。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
