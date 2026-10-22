@@ -1229,6 +1229,38 @@ def _mc_samples(table, correlation, n, seed, distribution="dist"):
     return _mc_standardised(kinds, correlation, int(n), seed, "gum_monte_carlo")
 
 
+def _mc_standardised_blocks(kinds, correlation, n, seed, op):
+    """標準化した入力を、64 MiB 以下の行ブロックとして順に返す。"""
+    from scipy.special import ndtr
+
+    m = len(kinds)
+    rng = np.random.default_rng(int(seed))
+    R = None if correlation is None else _validate_correlation(correlation, m, op)
+    mixing = None if R is None else _mixing_matrix(R)
+    is_normal = [k == "normal" or k.startswith("normal_") for k in kinds]
+    # g・p・z が同時に存在する最悪時にも、標準化行列用の一時領域を 64 MiB に抑える。
+    block_rows = max(1, min(32_768,
+                            (64 * 1024 ** 2) // (3 * np.dtype(np.float64).itemsize * m)))
+    for start in range(0, n, block_rows):
+        rows = min(block_rows, n - start)
+        if R is not None:
+            g = rng.standard_normal((rows, m)) @ mixing.T
+            if all(is_normal):
+                yield g
+                continue
+            p = np.clip(ndtr(g), 1e-16, 1.0 - 1e-16)
+            z = np.empty_like(g)
+            for i, kind in enumerate(kinds):
+                z[:, i] = g[:, i] if is_normal[i] else _std_inverse_cdf(kind, p[:, i])
+            yield z
+            continue
+        z = np.empty((rows, m), dtype=np.float64)
+        for i, kind in enumerate(kinds):
+            z[:, i] = (rng.standard_normal(rows) if is_normal[i]
+                       else _legacy_draw(rng, kind, rows))
+        yield z
+
+
 def gum_monte_carlo(table, u="u", sensitivity="sensitivity", n=200_000, seed=0,
                     level=0.95, correlation=None, distribution=None,
                     value=None, power=None, stream=False):
@@ -1275,6 +1307,11 @@ def gum_monte_carlo(table, u="u", sensitivity="sensitivity", n=200_000, seed=0,
     ``1.959964/(sqrt(3) x 0.95) = 1.1911`` という閉形式で、実測 1.1914。
     これは欠陥ではなく**伝播則が分布の形を捨てている**ことの現れなので、両方返して
     読み手に見せる(この 0.95 を最初 ``a`` と思い込んで門を誤らせた)。
+
+    Args:
+        stream: 独立な線形モデルでは成分ごと、それ以外では行ブロックごとに計算する。
+            後者の標準化行列用一時領域は 64 MiB 以下。乱数と行列積の区切りが既定経路と
+            異なるため、同じ seed でも結果はビット一致せず、既定は従来経路のまま。
     """
     op = "gum_monte_carlo"
     uu, cc = _uncertainty_terms(table, op, u, sensitivity)
@@ -1308,6 +1345,16 @@ def gum_monte_carlo(table, u="u", sensitivity="sensitivity", n=200_000, seed=0,
             normal = kind == "normal" or kind.startswith("normal_")
             draw = rng.standard_normal(n) if normal else _legacy_draw(rng, kind, n)
             y += draw * weight
+    elif stream:
+        y = np.empty(n, dtype=np.float64)
+        start = 0
+        for z in _mc_standardised_blocks(kinds, correlation, n, seed, op):
+            stop = start + z.shape[0]
+            if value is None and power is None:
+                y[start:stop] = z @ (cc * uu)
+            else:
+                y[start:stop] = ((xs + z * uu) ** ps) @ cc
+            start = stop
     elif value is None and power is None:
         z = _mc_standardised(kinds, correlation, n, seed, op)
         y = z @ (cc * uu)                    # 線形(既定)—— 従来と同じ経路
