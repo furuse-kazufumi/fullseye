@@ -7,7 +7,7 @@ out: table
 examples: [gallery_math_numerics_filters]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.2  # fullseye lib version this note was generated for
+version: 0.8.0  # fullseye lib version this note was generated for
 ---
 
 # n_sources_mdl — MATH `spectral` op
