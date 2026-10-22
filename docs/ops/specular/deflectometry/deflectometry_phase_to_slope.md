@@ -7,7 +7,7 @@ out: normalmap
 examples: [poc_phase_measuring_deflectometry]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.2  # fullseye lib version this note was generated for
+version: 0.8.0  # fullseye lib version this note was generated for
 ---
 
 # deflectometry_phase_to_slope — SPECULAR `deflectometry` op
