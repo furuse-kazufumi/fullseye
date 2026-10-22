@@ -1560,7 +1560,7 @@ def cosmic_ray_reject(frame, sigma=5.0, f_lim=2.0, replace_box=5, iters=1):
     尖っている)。``f_lim`` はその境目で、原論文の推奨は 2.0。
 
     ``iters`` を増やすと、除去 → 再測定を繰り返す(大きなヒットの裾が残るとき)。
-    置換は ``replace_box`` の窓での**非汚染画素の中央値**。
+    置換は ``replace_box`` の窓にある全画素の中央値(汚染判定画素も含む)。
 
     Returns ``(cleaned, mask)``:
 
@@ -1894,8 +1894,6 @@ def frame_align(reference, frame, model="similarity", threshold_sigma=5.0,
         # 既存の 2-D 点対応 RANSAC を内点判定にだけ使う(当てはめは下で行う)
         r = mosaic.proj_match_points_ransac(a, b, thresh=tol, iters=it, seed=sd)
         inl = np.asarray(r["inliers"], dtype=bool)
-        if inl.sum() < mi:
-            inl = np.ones(a.shape[0], dtype=bool)
     else:
         inl = np.ones(a.shape[0], dtype=bool)
     if int(inl.sum()) < mi:

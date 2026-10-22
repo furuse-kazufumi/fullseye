@@ -121,7 +121,7 @@
     {
       "module": "geometry2d.py",
       "function": "distance_lc",
-      "line": 269,
+      "line": 357,
       "exception_types": [],
       "returned_or_assigned": "0.0",
       "classification": "legitimate_empty",
@@ -130,7 +130,7 @@
     {
       "module": "geometry2d.py",
       "function": "distance_lr",
-      "line": 278,
+      "line": 366,
       "exception_types": [],
       "returned_or_assigned": "0.0",
       "classification": "legitimate_empty",
@@ -139,7 +139,7 @@
     {
       "module": "geometry2d.py",
       "function": "distance_sr",
-      "line": 287,
+      "line": 375,
       "exception_types": [],
       "returned_or_assigned": "0.0",
       "classification": "legitimate_empty",
@@ -148,7 +148,7 @@
     {
       "module": "geometry2d.py",
       "function": "distance_cc_min_points",
-      "line": 296,
+      "line": 384,
       "exception_types": [],
       "returned_or_assigned": "{'distance': 0.0}",
       "classification": "legitimate_empty",
@@ -179,7 +179,7 @@
     {
       "module": "ops.py",
       "function": "_MatchCtx.__getitem__",
-      "line": 102,
+      "line": 104,
       "exception_types": [
         "AttributeError"
       ],
@@ -190,7 +190,7 @@
     {
       "module": "ops.py",
       "function": "_effective_bit_depth",
-      "line": 1271,
+      "line": 1284,
       "exception_types": [],
       "returned_or_assigned": "1.0 / 16.0",
       "classification": "legitimate_empty",
@@ -199,7 +199,7 @@
     {
       "module": "ops.py",
       "function": "_ncc_locate",
-      "line": 1759,
+      "line": 1796,
       "exception_types": [],
       "returned_or_assigned": "np.array([0.0, 0.0, 0.0])",
       "classification": "legitimate_empty",
@@ -208,7 +208,7 @@
     {
       "module": "ops.py",
       "function": "_shape_locate",
-      "line": 2085,
+      "line": 2122,
       "exception_types": [],
       "returned_or_assigned": "np.array([0.0, 0.0, 0.0, 0.0])",
       "classification": "legitimate_empty",
@@ -217,7 +217,7 @@
     {
       "module": "ops.py",
       "function": "module_requirements",
-      "line": 2473,
+      "line": 2510,
       "exception_types": [
         "Exception"
       ],
@@ -228,7 +228,7 @@
     {
       "module": "ops.py",
       "function": "<module>",
-      "line": 2542,
+      "line": 2579,
       "exception_types": [
         "Exception"
       ],
@@ -239,7 +239,7 @@
     {
       "module": "ops.py",
       "function": "<module>",
-      "line": 2550,
+      "line": 2587,
       "exception_types": [
         "Exception"
       ],
@@ -250,7 +250,7 @@
     {
       "module": "ops.py",
       "function": "_label_guarded_functions_with_their_op_name",
-      "line": 2819,
+      "line": 2856,
       "exception_types": [
         "AttributeError, TypeError"
       ],
@@ -261,7 +261,7 @@
     {
       "module": "ops.py",
       "function": "apply_genome",
-      "line": 2933,
+      "line": 2970,
       "exception_types": [
         "Exception"
       ],

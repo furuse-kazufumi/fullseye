@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>橫式的車輛用號誌燈具(日本式)。原點 = 燈具底面中心，顯示面朝向 −x。</p>
 <p>箱體:寬 = n·(lens + 0.10) + 0.05(3 燈、300 mm 時為 1.25 m),高 = lens + 0.13(0.43 m),深 0.30 m,深灰色。透鏡 = 半徑 lens/2 的圓盤(24 分割),置於前面外側 5 mm(−x 側)。排列為 <b>朝 −x 方向看從左起 綠、黃、紅</b> = 綠在 +y、紅在 −y(從駕駛人看從左起綠、黃、紅 —— Wikipedia 日本的交通號誌,有待以一手資料確認)。n = 2 時為黃、紅,n = 1 時為黃(單燈閃爍式)。各透鏡上方有遮簷(薄箱,長 0.25 m,<code style="color:#22d3bf">hood</code>)。透鏡直徑為 300 mm(自 2017 年度起標準為 250 mm,兩者皆在使用中)。</p>
-<p>回傳值 <code style="color:#22d3bf">{&quot;V&quot;, &quot;F&quot;, &quot;color&quot;, &quot;label&quot;: 3, &quot;lamp_faces&quot;: {&quot;green&quot;: (f0, f1), ...}, &quot;width&quot;, &quot;height&quot;, &quot;depth&quot;, &quot;lens&quot;}</code>。<code style="color:#22d3bf">lamp_faces</code> 為該網格內面索引的範圍(加入世界時平移到 world_add 回傳的範圍 ——</p>
+<p>回傳值 <code style="color:#22d3bf">{&quot;V&quot;, &quot;F&quot;, &quot;color&quot;, &quot;label&quot;: 3, &quot;lamp_faces&quot;: {&quot;green&quot;: (f0, f1), ...}, &quot;width&quot;, &quot;height&quot;, &quot;depth&quot;, &quot;lens&quot;, &quot;state&quot;}</code>。<code style="color:#22d3bf">lamp_faces</code> 為該網格內面索引的範圍(加入世界時平移到 world_add 回傳的範圍 ——</p>
 <p>與 <code style="color:#22d3bf">driveworld.add_signal</code> 相同的機制)。只有 <code style="color:#22d3bf">state</code> 的燈使用 driveworld._LAMP 的顏色,其餘為 &quot;off&quot; 的顏色。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

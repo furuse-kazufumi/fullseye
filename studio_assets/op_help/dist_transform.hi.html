@@ -15,6 +15,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Euclidean distance transform। HALCON के <code style="color:#22d3bf">distance_transform</code> (Compute the distance transformation of a region.) के समकक्ष है।</p>
 <p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> उपयोग नहीं होते। हर foreground pixel के लिए सबसे नज़दीकी background pixel तक की Euclidean distance निकाली जाती है (<code style="color:#22d3bf">scipy.ndimage.distance_transform_edt</code>), और <code style="color:#22d3bf">_norm</code> से उस image के भीतर के maximum को 1 पर normalise किया जाता है (image के बीच absolute distance की तुलना नहीं हो सकती)। skeletonisation, कणों के केंद्र की पहचान आदि के preprocessing में उपयोग होता है।</p>
+<p>?????:</p>
+<p>FsValueError: image ??? NaN / inf ????? ???</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

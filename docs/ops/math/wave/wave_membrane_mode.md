@@ -39,7 +39,7 @@ Returns a ``matrix`` (signed displacement, peak scaled to 1). Use
 :func:`wave_nodal_lines` for the zero set.
 
 **Raises** ``ValueError``: unknown kind; ``m``/``n`` below the valid range;
-a grid over the cap; non-positive aspect; ``free_edge=False`` combined with
+a grid over the cap; non-positive aspect; ``free_edge=True`` combined with
 ``m == n`` for the combined mode (the difference vanishes identically).
 
 HALCON: no operator.

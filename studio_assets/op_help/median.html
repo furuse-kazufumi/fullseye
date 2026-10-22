@@ -15,6 +15,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>メディアン（中央値）フィルタ。HALCON の <code style="color:#22d3bf">median_image</code>（Compute a median filter with various masks.）に相当。</p>
 <p><code style="color:#22d3bf">a</code> が窓サイズを <code style="color:#22d3bf">3,5,7,9</code>（<code style="color:#22d3bf">_k(a)</code>）に振る。<code style="color:#22d3bf">b</code> が<b>端の扱い</b>を選ぶ: <code style="color:#22d3bf">b &lt;= 0.5</code> で <code style="color:#22d3bf">reflect</code>(端画素を複製して折り返す。scipy の既定で、2026-09-17 までの挙動)、以降 <code style="color:#22d3bf">nearest</code> / <code style="color:#22d3bf">constant</code>(0 で埋める)/ <code style="color:#22d3bf">wrap</code>(反対側から巻き取る)。★<b>窓が 3 のときは <code style="color:#22d3bf">reflect</code> と <code style="color:#22d3bf">nearest</code> が原理的に一致する</b>(はみ出しが 1 画素なので複製先が同じ)—— 端の扱いを変えたのに結果が動かないときは、まず窓の大きさを疑うこと(窓 9 では 3 通りとも変わる)。塩胡椒ノイズなど外れ値に強く、ガウシアン平滑よりエッジを保ちやすい。</p>
+<p>NaN を含む画像では scipy の中央値選択により NaN が一部の窓の出力へ伝播する。</p>
 <p><b>つまみ(実測)</b>: <code style="color:#22d3bf">a</code> は<b>段階的</b>に効き、切り替わるのは a ≈ 0.25、0.49、0.75(実測。刻み 0.02 の掃きで測った位置)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank ファミリ ガイド</a></p>

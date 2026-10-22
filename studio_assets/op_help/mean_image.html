@@ -14,6 +14,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>矩形平均フィルタ(box filter)。HALCON の <code style="color:#22d3bf">mean_image</code>（Smooth by averaging.）に相当する近似で、注目画素を一辺 k の窓の平均で置き換える。</p>
 <p><code style="color:#22d3bf">a</code> が窓の一辺 k を <code style="color:#22d3bf">{3,5,7,9}</code> の 4 段階(<code style="color:#22d3bf">_k(a)</code>)で振る。<code style="color:#22d3bf">b</code> は未使用。ガウシアンより速いが、エッジがぼやけずに角ばったブロック状のアーティファクトを残しやすい。</p>
+<p>NaN を含む画像では NaN がその画素を参照する平均窓の出力へ伝播する。</p>
 <p><b>端の扱い</b>: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 <code style="color:#22d3bf">reflect</code>)(実測。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank ファミリ ガイド</a></p>

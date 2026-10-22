@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3531,
- "n_notes": 3537,
+ "n_ops": 3533,
+ "n_notes": 3539,
  "notes": {
   "vol_dilate": [
    {
@@ -28961,6 +28961,15 @@
     "path": "docs/ops/optics/matprop/abbe_number.md"
    }
   ],
+  "acoustic_impedance_mismatch": [
+   {
+    "op": "acoustic_impedance_mismatch",
+    "dim": "optics",
+    "category": "matprop",
+    "out": "table",
+    "path": "docs/ops/optics/matprop/acoustic_impedance_mismatch.md"
+   }
+  ],
   "carbon_black_absorption": [
    {
     "op": "carbon_black_absorption",
@@ -28986,6 +28995,15 @@
     "category": "matprop",
     "out": "pairs",
     "path": "docs/ops/optics/matprop/material_absorption.md"
+   }
+  ],
+  "material_acoustic": [
+   {
+    "op": "material_acoustic",
+    "dim": "optics",
+    "category": "matprop",
+    "out": "table",
+    "path": "docs/ops/optics/matprop/material_acoustic.md"
    }
   ],
   "material_dispersion": [

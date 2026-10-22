@@ -20,7 +20,8 @@ version: 0.8.1  # fullseye lib version this note was generated for
 弦(最も離れた 2 点)を見つける。返りは dict。
 
 翼型の慣行どおり、**最も離れた 2 点**を前縁・後縁とみなす。どちらが前縁かは
-**その点の近傍の曲率が大きいほう**で決める(前縁は丸く、後縁は尖る)。
+**その点の近傍の厚み(girth)が大きいほう**で決める。曲率は尖った後縁を
+前縁と誤分類するため使わない。
 
 Returns:
     dict: ``le`` / ``te``(座標)、``le_index`` / ``te_index``、

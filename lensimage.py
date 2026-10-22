@@ -839,7 +839,8 @@ def calibration_views(system, image_size=(1024, 1024), pixel_pitch_um=5.5, targe
     A chessboard-like grid of *target* = (cols, rows, pitch_mm) corner points
     on the plane z = 0 is placed at each of *poses* — ``(rx_deg, ry_deg,
     rz_deg, tx_mm, ty_mm, tz_mm)`` in the camera frame (camera at the origin
-    looking along +z; default: five poses, frontal and ±20° about x and y, at
+    looking along +z; default: six poses, frontal, ±20° about x and y, and one
+    oblique pose, at
     *distance_mm* — default the distance at which the target spans 60 % of
     the sensor width) — projected by a pinhole of the prescription's EFL and
     then displaced by the lens's **real radial distortion** (the polynomial

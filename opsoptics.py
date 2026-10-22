@@ -532,6 +532,8 @@ _CATALOG = {
         #   描く側(画像を受けない)なので 2-D の橋は架けない(_OP_BRIDGE_SKIP)。
         ("material_table", "materials", [], "table"),
         ("material_record", "materials", [], "table"),
+        ("material_acoustic", "materials", [], "table"),
+        ("acoustic_impedance_mismatch", "materials", [], "table"),
         ("material_optical_constants", "materials", [], "table"),
         ("material_dispersion", "materials", [], "pairs"),
         ("material_extinction", "materials", [], "pairs"),

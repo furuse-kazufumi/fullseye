@@ -4,7 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_dimension_layout(p0, p1, offset=20.0, extension=6.0, text_gap=8.0)</code>(要直接调用实现,<code style="color:#22d3bf">import annotate; annotate.annotate_dimension_layout(p0, p1, offset=20.0, extension=6.0, text_gap=8.0)</code>;从台账取用则 <code style="color:#22d3bf">opsannotate.get(&quot;annotate_dimension_layout&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>返回表(dict):以闭式确定尺寸线的几何(尺寸线・界线・文字位置)。</p>
-<p>以 <code style="color:#22d3bf">n</code> 为 p0→p1 的左法线(屏幕坐标),尺寸线为 <code style="color:#22d3bf">p + n*offset</code>,辅助线从 <code style="color:#22d3bf">p</code> 到 <code style="color:#22d3bf">p + n*(offset+extension)</code>,文字位于距尺寸线中点 <code style="color:#22d3bf">n*text_gap</code> 处。以 <code style="color:#22d3bf">offset</code> 的符号选择哪一侧。</p>
+<p>以 <code style="color:#22d3bf">n</code> 为 p0→p1 的左法线(屏幕坐标),尺寸线为 <code style="color:#22d3bf">p + n*offset</code>,辅助线从 <code style="color:#22d3bf">p</code> 到 <code style="color:#22d3bf">p + n*(offset + sign(offset)*extension)</code>,文字位于距尺寸线中点 <code style="color:#22d3bf">sign(offset)*n*text_gap</code> 处。以 <code style="color:#22d3bf">offset</code> 的符号选择哪一侧。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
 <p><code style="color:#22d3bf">{&quot;p0&quot;,&quot;p1&quot;,&quot;line&quot;:(q0,q1),&quot;ext0&quot;,&quot;ext1&quot;,&quot;text_xy&quot;,&quot;normal&quot;, &quot;angle_deg&quot;,&quot;length_px&quot;}</code>。</p>

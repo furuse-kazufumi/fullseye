@@ -11,10 +11,9 @@
 <p>Region. Boolean or weights in [0,1]. <b>A shape different from the image is an exception</b>.</p>
 <p>draw : {&quot;fill&quot;, &quot;margin&quot;}</p>
 <p>Same word as HALCON&#x27;s <code style="color:#22d3bf">set_draw</code>. <code style="color:#22d3bf">&quot;fill&quot;</code> inverts including the interior, <code style="color:#22d3bf">&quot;margin&quot;</code></p>
-<p>inverts <b>only the contour</b>. The contour is a band <code style="color:#22d3bf">width</code> pixels thick (rounded to an integer)</p>
-<p>that extends half inward and half outward from the region.</p>
+<p>inverts <b>only the contour</b>. The contour is a band extending <code style="color:#22d3bf">max(1, round(width / 2))</code> pixels both inward and outward from the region.</p>
 <p>width : float</p>
-<p>Band thickness (pixels) when <code style="color:#22d3bf">draw=&quot;margin&quot;</code>.</p>
+<p>Value that determines the band width (pixels) when <code style="color:#22d3bf">draw=&quot;margin&quot;</code>.</p>
 <p>mode : str</p>
 <p><code style="color:#22d3bf">INVERT_MODES</code>. <code style="color:#22d3bf">&quot;complement&quot;</code> keeps the ground&#x27;s pattern, <code style="color:#22d3bf">&quot;xor&quot;</code></p>
 <p>keeps the pattern while guaranteeing it does not vanish, and <code style="color:#22d3bf">&quot;contrast&quot;</code> falls back to black and white and</p>

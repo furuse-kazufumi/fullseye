@@ -44,7 +44,7 @@ From the subtended angle and its rate::
 
 ★ The two object models differ by 33% at a 60-degree subtense (``sin 60 = 0.866``
 vs ``2 tan 30 = 1.155``); using the wrong one silently mis-times a landing, so
-the model is a required, named choice rather than a default guess.
+the model is a named choice, with ``"sphere"`` as the default.
 
 theta_signal: the full subtended angle per sample, radians.
 dt_s:  the sample interval, seconds.

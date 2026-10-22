@@ -10,7 +10,7 @@
 <p style="margin:2px 0 2px 12px">1. Laplacian <code style="color:#22d3bf">L</code> के धनात्मक भाग को noise से normalise करके significance <code style="color:#22d3bf">S = L / (2 sigma_noise)</code> बनाएँ, और</p>
 <p style="margin:2px 0 2px 12px">2. इसकी तुलना fine-structure image <code style="color:#22d3bf">F = median3 - median7(median3)</code> से करें; केवल जहाँ <code style="color:#22d3bf">L / F</code> <code style="color:#22d3bf">f_lim</code> से अधिक हो उसे cosmic ray माना जाता है।</p>
 <p>शर्त 2 के बिना, <b>तारे का केंद्र हमेशा cosmic ray जैसा दिखता है</b> (तारे भी स्थानीय रूप से नुकीले होते हैं)। <code style="color:#22d3bf">f_lim</code> वही सीमा है; मूल पेपर 2.0 की सिफ़ारिश करता है।</p>
-<p><code style="color:#22d3bf">iters</code> बढ़ाने से हटाना → फिर से मापना दोहराया जाता है (जब बड़े hits के wings बचे रहें)। बदलने के लिए <code style="color:#22d3bf">replace_box</code> window में <b>बिना दूषित pixels का median</b> उपयोग होता है।</p>
+<p><code style="color:#22d3bf">iters</code> बढ़ाने से हटाना → फिर से मापना दोहराया जाता है (जब बड़े hits के wings बचे रहें)। बदलने के लिए <code style="color:#22d3bf">replace_box</code> window के सभी pixels का median उपयोग होता है (दूषित माने गए pixels सहित)।</p>
 <p><code style="color:#22d3bf">(cleaned, mask)</code> लौटाता है:</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cleaned</code> —— <code style="color:#22d3bf">(H, W)</code> float64, cosmic-ray pixels बदली हुई image।</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">mask</code> —— <code style="color:#22d3bf">(H, W)</code> bool, <code style="color:#22d3bf">True</code> = cosmic ray माना गया pixel।</p>

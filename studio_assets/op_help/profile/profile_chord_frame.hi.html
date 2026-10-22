@@ -4,7 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_chord_frame(contour)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import profileops; profileops.profile_chord_frame(contour)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsprofile.get(&quot;profile_chord_frame&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>chord (सबसे दूर के 2 point) खोजता है। dict लौटाता है।</p>
-<p>airfoil की परंपरा के अनुसार, <b>सबसे दूर के 2 points</b> को leading edge और trailing edge माना जाता है। कौन-सा leading edge है, यह <b>उस point के neighbourhood में जिसकी curvature बड़ी हो</b> उससे तय होता है (leading edge गोल होता है, trailing edge नुकीला)।</p>
+<p>airfoil की परंपरा के अनुसार, <b>सबसे दूर के 2 points</b> को leading edge और trailing edge माना जाता है। कौन-सा leading edge है, यह <b>उस बिंदु के पास अधिक मोटाई (girth) वाली ओर</b>; curvature का उपयोग नहीं होता क्योंकि वह नुकीले trailing edge को leading edge समझ लेता है।</p>
 <p>Returns:</p>
 <p>dict: <code style="color:#22d3bf">le</code> / <code style="color:#22d3bf">te</code> (coordinates), <code style="color:#22d3bf">le_index</code> / <code style="color:#22d3bf">te_index</code>,</p>
 <p><code style="color:#22d3bf">chord</code> (लंबाई), <code style="color:#22d3bf">angle_deg</code> (chord की दिशा)।</p>
