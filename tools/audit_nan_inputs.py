@@ -13,6 +13,7 @@ import json
 import multiprocessing as mp
 import numbers
 import queue
+import sys
 import time
 import warnings
 from collections import Counter, defaultdict
@@ -22,6 +23,9 @@ import numpy as np
 
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) in sys.path:
+    sys.path.remove(str(ROOT))
+sys.path.insert(0, str(ROOT))
 JSON_PATH = ROOT / "docs" / "nan_input_audit.json"
 MD_PATH = ROOT / "docs" / "NAN_INPUT_AUDIT.md"
 COMMAND = "py -3.11 tools/audit_nan_inputs.py"
@@ -151,27 +155,42 @@ def _call(name: str, value: np.ndarray):
                     "warnings": [f"{w.category.__name__}: {w.message}"[:240] for w in caught]}
 
 
-def _child(name: str, value: np.ndarray, out) -> None:
-    out.put(_call(name, value))
+def _session_child(name: str, incoming, out) -> None:
+    while True:
+        value = incoming.get()
+        if value is None:
+            return
+        out.put(_call(name, value))
 
 
-def timed_call(name: str, value: np.ndarray, timeout: float = TIMEOUT) -> tuple[dict, float]:
+def timed_calls(name: str, values: list[np.ndarray],
+                timeout: float = TIMEOUT) -> list[tuple[dict, float]]:
+    """同じ隔離プロセスを再利用しつつ、各呼出しを個別に監視する。"""
     ctx = mp.get_context("spawn")
-    out = ctx.Queue()
-    proc = ctx.Process(target=_child, args=(name, value, out))
-    started = time.perf_counter()
-    proc.start()
-    try:
-        answer = out.get(timeout=timeout)
-    except queue.Empty:
-        proc.terminate()
+    incoming = out = proc = None
+    answers = []
+    for value in values:
+        if proc is None:
+            incoming, out = ctx.Queue(), ctx.Queue()
+            proc = ctx.Process(target=_session_child, args=(name, incoming, out))
+            proc.start()
+        started = time.perf_counter()
+        incoming.put(value)
+        try:
+            answer = out.get(timeout=timeout)
+        except queue.Empty:
+            proc.terminate()
+            proc.join(5)
+            proc = None
+            answer = {"kind": "timeout"}
+        answers.append((answer, time.perf_counter() - started))
+    if proc is not None:
+        incoming.put(None)
         proc.join(5)
-        return {"kind": "timeout"}, time.perf_counter() - started
-    proc.join(5)
-    if proc.is_alive():
-        proc.terminate()
-        proc.join(5)
-    return answer, time.perf_counter() - started
+        if proc.is_alive():
+            proc.terminate()
+            proc.join(5)
+    return answers
 
 
 def _exception_outcome(answer: dict) -> str:
@@ -196,7 +215,12 @@ def audit_one(meta: dict[str, object], timeout: float = TIMEOUT) -> dict[str, ob
     if value is None:
         return base
     name = str(meta["name"])
-    normal, sec = timed_call(name, value, timeout)
+    changed_nan = value.copy()
+    changed_nan.flat[changed_nan.size // 2] = np.nan
+    changed_inf = value.copy()
+    changed_inf.flat[changed_inf.size // 2] = np.inf
+    calls = timed_calls(name, [value, changed_nan, changed_inf], timeout)
+    normal, sec = calls[0]
     base["elapsed"]["baseline"] = round(sec, 6)
     if normal["kind"] != "return":
         base["nan_outcome"] = base["inf_outcome"] = "baseline_failed"
@@ -207,10 +231,8 @@ def audit_one(meta: dict[str, object], timeout: float = TIMEOUT) -> dict[str, ob
         return base
     base["warnings"]["baseline"] = normal.get("warnings", [])
     baseline_result = normal["value"]
-    for label, injected in (("nan", np.nan), ("inf", np.inf)):
-        changed = value.copy()
-        changed.flat[changed.size // 2] = injected
-        answer, sec = timed_call(name, changed, timeout)
+    for label, changed, (answer, sec) in zip(
+            ("nan", "inf"), (changed_nan, changed_inf), calls[1:]):
         base["elapsed"][label] = round(sec, 6)
         base["warnings"][label] = answer.get("warnings", [])
         if answer["kind"] == "timeout":
@@ -281,6 +303,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--check", action="store_true")
     parser.add_argument("--markdown-from-json", action="store_true")
     parser.add_argument("--limit", type=int)
+    parser.add_argument("--names", help="comma-separated subset to measure")
+    parser.add_argument("--merge", action="store_true",
+                        help="merge the measured subset into the existing JSON")
     args = parser.parse_args(argv)
     if args.markdown_from_json:
         data = json.loads(JSON_PATH.read_text(encoding="utf-8"))
@@ -289,13 +314,27 @@ def main(argv: list[str] | None = None) -> int:
         return 0 if ok else 1
     started = time.perf_counter()
     metas = enumerate_ops()
+    all_metas = metas
+    if args.names:
+        wanted = {name.strip() for name in args.names.split(",") if name.strip()}
+        metas = [meta for meta in metas if meta["name"] in wanted]
+        missing = wanted - {str(meta["name"]) for meta in metas}
+        if missing:
+            parser.error("unknown op names: " + ", ".join(sorted(missing)))
     if args.limit is not None:
         metas = metas[:args.limit]
     records = []
     for index, meta in enumerate(metas, 1):
         records.append(audit_one(meta))
         print(f"{index:4}/{len(metas)} {meta['name']}", flush=True)
-    data = make_document(records, time.perf_counter() - started)
+    run_elapsed = time.perf_counter() - started
+    if args.merge:
+        previous = json.loads(JSON_PATH.read_text(encoding="utf-8"))
+        by_name = {str(row["name"]): row for row in previous["records"]}
+        by_name.update({str(row["name"]): row for row in records})
+        records = [by_name[str(meta["name"])] for meta in all_metas]
+        run_elapsed += float(previous["header"].get("elapsed_seconds", 0.0))
+    data = make_document(records, run_elapsed)
     json_text = json.dumps(data, ensure_ascii=False, indent=2) + "\n"
     md_text = render_markdown(data)
     ok = _write_text(JSON_PATH, json_text, args.check) & _write_text(MD_PATH, md_text, args.check)

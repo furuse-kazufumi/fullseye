@@ -26,6 +26,7 @@ def test_enumeration_covers_the_whole_primary_registry():
     rows = audit.enumerate_ops()
     assert len(rows) >= 900
     assert len(rows) == len({row["name"] for row in rows})
+    assert rows
     assert all({"name", "category", "in_sort", "out_sort", "module", "applicable"} <= row.keys()
                for row in rows)
 
@@ -39,8 +40,10 @@ def test_committed_json_schema_and_complete_enumeration():
     required = {"name", "category", "in_sort", "out_sort", "module",
                 "nan_outcome", "inf_outcome", "exceptions", "wrapper_behaviour",
                 "warnings", "elapsed"}
-    assert all(required == set(row) for row in data["records"])
-    assert [row["name"] for row in data["records"]] == [row["name"] for row in audit.enumerate_ops()]
+    records = data["records"]
+    assert records
+    assert all(required == set(row) for row in records)
+    assert [row["name"] for row in records] == [row["name"] for row in audit.enumerate_ops()]
 
 
 def test_markdown_is_generated_only_from_the_json():
