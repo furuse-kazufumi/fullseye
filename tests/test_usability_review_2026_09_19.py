@@ -150,18 +150,21 @@ def test_run_pipeline_bad_forms_say_why():
 # ------------------------------------------------------------------ #7 / #8: otsu の判別できない入力
 def test_otsu_all_nan_is_an_explicit_error_not_a_numpy_runtime_warning():
     nan = np.full((8, 8), np.nan)
-    with pytest.raises(ValueError, match="no finite pixel"):
+    # 2026-10-23 の契約変更: 入口が方針に依らず先に止める。op 自身の明示的な誤りは allow_nonfinite=True で届く
+    with pytest.raises(ValueError, match="input contains NaN or infinity"):
         fs.apply(nan, "otsu", on_error="raise")
+    with pytest.raises(ValueError, match="no finite pixel"):
+        fs.apply(nan, "otsu", on_error="raise", allow_nonfinite=True)
     fs.clear_fallbacks()
     with warnings.catch_warnings():
         warnings.simplefilter("error", RuntimeWarning)           # numpy の All-NaN slice が出たら落ちる
         warnings.simplefilter("ignore", fs.FullseyeFallbackWarning)   # 台帳の 1 度目の警告は別物
-        out = fs.apply(nan, "otsu")
+        out = fs.apply(nan, "otsu", allow_nonfinite=True)
     assert out.shape == (8, 8) and set(np.unique(out)) <= {0.0, 1.0}
     assert any(e["name"] == "otsu" and "no finite pixel" in e["error"] for e in fs.fallbacks())
     x = IMG.copy()
-    x[::3] = np.nan                                             # 一部の NaN は今までどおり通す
-    assert set(np.unique(fs.apply(x, "otsu", on_error="raise"))) <= {0.0, 1.0}
+    x[::3] = np.nan                                             # 一部の NaN は、知った上で渡せば今までどおり通る
+    assert set(np.unique(fs.apply(x, "otsu", on_error="raise", allow_nonfinite=True))) <= {0.0, 1.0}
 
 
 def test_otsu_constant_image_behaviour_is_pinned_and_documented():

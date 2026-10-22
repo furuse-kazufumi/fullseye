@@ -129,5 +129,6 @@ def test_the_ledger_shows_zero_passthrough_on_the_wrapped_route():
     assert w["passthrough"] == []
     # 生の実装の表はそのまま(監査は変えていない): 入口で止めるという設計の根拠が残っていること
     assert data["summary"]["counts"]["nan"]["silent_finite"] >= 200
-    assert all(r["wrapper_behaviour"].get("nan") == audit.WRAPPER_REFUSAL
-               for r in data["records"] if r["in_sort"] in audit.ARRAY_SORTS)
+    rows = [r for r in data["records"] if r["in_sort"] in audit.ARRAY_SORTS]
+    assert len(rows) == w["applicable"] >= 850                     # 空の対象への all() は無条件に通るので件数を先に
+    assert all(r["wrapper_behaviour"].get("nan") == audit.WRAPPER_REFUSAL for r in rows)
