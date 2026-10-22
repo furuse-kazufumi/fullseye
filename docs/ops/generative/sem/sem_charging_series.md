@@ -7,7 +7,7 @@ out: video
 examples: [poc_virtual_sem_kv_cd_bse]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.2  # fullseye lib version this note was generated for
+version: 0.8.0  # fullseye lib version this note was generated for
 ---
 
 # sem_charging_series — GENERATIVE `sem` op

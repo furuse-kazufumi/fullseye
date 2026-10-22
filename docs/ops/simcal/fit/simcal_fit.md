@@ -7,7 +7,7 @@ out: calresult
 examples: [poc_pocket_interreflection, poc_simcal_pixel_shift, poc_simcal_telecentric, poc_simcal_thin_film, simcal_checks_tour, simcal_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.2  # fullseye lib version this note was generated for
+version: 0.8.0  # fullseye lib version this note was generated for
 ---
 
 # simcal_fit — SIMCAL `fit` op
