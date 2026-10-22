@@ -7,6 +7,7 @@ import pytest
 import colortransport
 import acoustics
 import annotate
+import annotate3d
 import backends_regions3
 import carpath
 import driveenv
@@ -39,6 +40,11 @@ import reprconv
 import raytrace
 import agvfleet
 import pegsym
+import quatimage
+import racket
+import seggraph
+import driveinf
+import drivetown
 import render_beauty
 import drivelateral
 import sensorgeneral
@@ -95,6 +101,21 @@ import segcontour
         (agvfleet.plan_conflicts, "t には v から出た"),
         (pegsym.plane_topview, "(H, W, 3/4)"),
         (pegsym.polygon_peg, "``cut``"),
+        (quatimage.riesz_displacement, "closed-form monogenic identities"),
+        (pegsym.rotation_window, "``phi_eff``"),
+        (raytrace.seidel_coefficients, "``per_surface``"),
+        (spc.spc_hotelling_t2, "boolean ``in_control``"),
+        (spc.spc_mt_unit_space, "full-rank non-flat"),
+        (seggraph.statistical_region_merging, "``q``、``g``"),
+        (racket.strategy_attacker, "3 打ごとに flat"),
+        (acoustics.synthesize_bearing_signal, "in impulse mode"),
+        (driveinf.tile_mesh, '"ij"'),
+        (drivetown.town_chain, "2 番目以降の overlap"),
+        (acoustics.transfer_function, "``rate``, ``ref``"),
+        (annotate3d.annotate3d_scale_bar, "``scheme``: 色名の配色"),
+        (annotate.annotate_table_layout, "font_path : str or None"),
+        (annotate.annotate_table_layout, "line_spacing : float"),
+        (render_beauty.render_beauty, "``albedo_variation``"),
     ],
 )
 def test_corrected_contract_is_public(op, statement):
@@ -126,3 +147,14 @@ def test_corrected_contracts_match_behavior():
     points = np.array([[0.0, 0.0, 0.0], [1, 0, 0]])
     lod = meshres.pc_lod_chain(points, 0.5, levels=1)
     assert not np.shares_memory(lod["levels"][0], points)
+
+
+def test_plateau_parse_max_buildings_limit_is_a_ceiling_including_zero():
+    """監査(第 3 波)のコード修正: ``max_buildings=0`` が 1 棟を通していた(上限判定の前に append していた)。"""
+    import driveplateau as pp
+
+    origin = (35.681, 139.767)
+    xml = pp.citygml_synthetic(3, origin=origin, size=12.0, heights=[8.0, 15.5, 31.0])
+    assert len(pp.plateau_parse(xml, origin=origin, max_buildings=0)["buildings"]) == 0
+    assert len(pp.plateau_parse(xml, origin=origin, max_buildings=2)["buildings"]) == 2
+    assert len(pp.plateau_parse(xml, origin=origin)["buildings"]) == 3

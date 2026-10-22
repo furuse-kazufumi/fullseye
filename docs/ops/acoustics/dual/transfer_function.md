@@ -30,7 +30,7 @@ Estimate ``H(f)`` with ``x`` in and ``y`` out, with its coherence.
 
 Returns a dict: ``freqs``, ``response`` (complex), ``magnitude``,
 ``magnitude_db`` (relative to ``ref``), ``phase_rad``, ``coherence``,
-``estimator``, ``n_frames``, ``win``, ``hop``, ``rate``.
+``estimator``, ``n_frames``, ``win``, ``hop``, ``rate``, ``ref``.
 
 Measured at 16 kHz over 16384 samples, win = 1024, 31 frames, white input:
 

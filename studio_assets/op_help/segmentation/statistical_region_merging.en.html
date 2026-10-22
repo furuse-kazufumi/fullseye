@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Statistical region merging SRM (Nock–Nielsen 2004): processes pairs of neighbouring pixels in ascending order of |I_p − I_q| and merges them when the predicate P(R, R&#x27;) holds (statistical_region_merging).</p>
 <p>Pixel values are used after mapping <code style="color:#22d3bf">value_range</code> linearly onto [0, g − 1] (values outside the range give ValueError). P(R, R&#x27;) ⇔ |R̄ − R̄&#x27;| ≤ √(b²(R) + b²(R&#x27;)), b(R) = g √(ln(|R_|R||/δ) / (2Q|R|)), ln|R_l| = min(l, g) ln(l + 1), δ = 1/(6|I|²) (the coefficients of the predicate are <b>to be verified</b>, see the module description). The larger Q (<code style="color:#22d3bf">q</code>), the smaller b and the more reluctant the merging (finer).</p>
-<p>Returns: <code style="color:#22d3bf">labels</code> (1..k), <code style="color:#22d3bf">n_regions</code>, <code style="color:#22d3bf">means</code> (mean per region, on the original value scale), <code style="color:#22d3bf">n_merges</code>, <code style="color:#22d3bf">q</code>.</p>
+<p>Returns: <code style="color:#22d3bf">labels</code> (1..k), <code style="color:#22d3bf">n_regions</code>, <code style="color:#22d3bf">means</code> (mean per region, on the original value scale), <code style="color:#22d3bf">n_merges</code>, <code style="color:#22d3bf">q</code>, <code style="color:#22d3bf">g</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>

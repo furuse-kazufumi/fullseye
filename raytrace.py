@@ -2106,7 +2106,7 @@ def wavefront_from_opd(system, field=None, size=64, n_max=6, wavelength_um=None,
 # Seidel sums
 # --------------------------------------------------------------------------- #
 def seidel_coefficients(system, field=None):
-    """Third-order (Seidel) aberration sums per surface and total (``table``).
+    """Third-order (Seidel) aberration sums in ``per_surface`` and ``total``.
 
     Uses the paraxial marginal ray (through the stop edge) and chief ray (through
     the stop centre) at the system's default field (or *field*), with Welford's

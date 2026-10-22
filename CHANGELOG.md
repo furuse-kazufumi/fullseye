@@ -7,6 +7,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- docstring と実装の食い違い(監査 2026-10-18)第 3 波: 確信度 low の 75 行(71 op)を探針で再現し、説明 58・コード 12(road_row_distance / csi_design / jitter / lateral_offset / random_dropout / random_rotation / pc_lod_chain / plateau_parse ほか: 空入力・境界値・非整数・複素入力の拒否と別名の切断)・偽陽性 2 を整理、6 言語の訳も追随。
 - Studio の既存表示モードへ画像別自動・A/B 共通・手動の表示レンジを渡せるようにし、NaN/Inf と範囲外画素の警告、元値と表示値を分けた画素表示、元データまたは画面どおりの表示画像の保存を追加した。
 
 ### 修正 — 外部報告(0.8.0 の端条件、2026-10-22 受領)

@@ -185,7 +185,8 @@ def rotation_window(n: int, apothem: float, clearance: float, chamfer: float = 0
         φ = π/n − arccos(x)、x = (A + δ + W) cos(π/n)/A(x ≥ 1 なら窓は半周期 π/n いっぱい)。
     arccos は 1 の近くで丸めの床があるので atan2(√(1 − x²), x) で書く。``peg_vertices``・``hole_vertices`` を渡すと、線形計画
     (:func:`polygon_fit_check`、平行移動も自由)の二分法で正・負の向きの窓も測る(第 2 実装。キー付きはこちらだけ)。
-    返り ``phi_fit``(口でなく最狭部)・``phi_cap``(面取りの口)・``period`` = 2π/n、``M`` = ⌈period/(2 phi_cap)⌉、
+    返り ``phi_fit``(口でなく最狭部)・``phi_cap``(面取りの口)・``period`` = 2π/n、``M`` = ⌈period/(2 cap)⌉
+    (``cap`` は ``mu`` 指定時 ``phi_eff``、それ以外は有限な ``phi_cap``、または ``lp`` の最小窓)、
     ``lp``(``plus``/``minus``: 頂点を渡した時、口に入る窓の両端 = 0 を含む連結な区間。走査は半周期を 360 刻み、端は二分法)。
 
     ``mu`` を渡すと**摩擦で止まる限界**も返す(導出、45° の面取り): 口に載った頂点(面の法線から β = π/n − φ の向き)が面取りを滑り下りる

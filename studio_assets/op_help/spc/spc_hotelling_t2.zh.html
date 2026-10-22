@@ -9,7 +9,7 @@
 <p>T^2_i = (x_i - mu)&#x27; S^-1 (x_i - mu)</p>
 <p>charted against the phase-II control limit::</p>
 <p>UCL = p (m+1)(m-1) / (m (m-p)) * F_{alpha, p, m-p}</p>
-<p>at false-alarm rate <code style="color:#22d3bf">alpha</code> (default 0.0027, the 3-sigma-equivalent). Returns a dict with the per-row <code style="color:#22d3bf">t2</code> array, the <code style="color:#22d3bf">ucl</code>, the integer indices <code style="color:#22d3bf">out_of_control</code>, and <code style="color:#22d3bf">in_control</code>. The mean row (<code style="color:#22d3bf">x == mu</code>) has <code style="color:#22d3bf">T^2 == 0</code> (pinned in the tests).</p>
+<p>at false-alarm rate <code style="color:#22d3bf">alpha</code> (default 0.0027, the 3-sigma-equivalent). Returns a dict with the per-row <code style="color:#22d3bf">t2</code> array, the <code style="color:#22d3bf">ucl</code>, the integer indices <code style="color:#22d3bf">out_of_control</code>, and boolean <code style="color:#22d3bf">in_control</code>. The mean row (<code style="color:#22d3bf">x == mu</code>) has <code style="color:#22d3bf">T^2 == 0</code> (pinned in the tests).</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: a non-2-D / empty *data*, fewer observations than features plus one (covariance not invertible), <code style="color:#22d3bf">alpha</code> outside <code style="color:#22d3bf">(0, 1)</code>, a singular covariance, or non-finite / mislabelled input.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

@@ -52,7 +52,7 @@ still 18x below what the envelope spectrum recovers from the same record.
 ``rate <= 0``, ``duration <= 0``, ``modulation`` outside ``[0, 1)`` in am
 mode (at ``m >= 1`` the envelope is ``|1 + m cos|``, which folds and puts
 energy at ``2 f_d`` — a rectified envelope, not the modulation), ``damping``
-outside ``(0, 1)``, a total length over :data:`MAX_SAMPLES`, and — the one
+outside ``(0, 1)`` in impulse mode, a total length over :data:`MAX_SAMPLES`, and — the one
 that matters — **any requested frequency at or above Nyquist, including the
 upper modulation sideband** ``f_c + f_d``. An aliased carrier would come
 back as a plausible signal at the wrong frequency with no error.

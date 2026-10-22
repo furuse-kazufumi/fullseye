@@ -3,7 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seidel_coefficients(system, field=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import raytrace; raytrace.seidel_coefficients(system, field=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;seidel_coefficients&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>3 차(Seidel) 수차 합을 면별과 총합으로(<code style="color:#22d3bf">table</code>).</p>
+<p>3 차(Seidel) 수차 합을 면별과 총합으로(<code style="color:#22d3bf">per_surface</code> / <code style="color:#22d3bf">total</code>).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>Uses the paraxial marginal ray (through the stop edge) and chief ray (through the stop centre) at the system&#x27;s default field (or *field*), with Welford&#x27;s refraction-invariant form: <code style="color:#22d3bf">A = n(yc + u)</code>, <code style="color:#22d3bf">Δ(u/n)</code>, Lagrange invariant <code style="color:#22d3bf">H = n(ūy − uȳ)</code>::</p>
 <p>S_I   = −Σ A² y Δ(u/n)            spherical</p>

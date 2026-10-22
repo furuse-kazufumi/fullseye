@@ -17,7 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 ## 使い方
 
-勝つための打ち方: 相手のラケットから遠い隅(左右の端、前後を交互)へ、短い滞空時間で。スピンの狙いも交互に変える。
+勝つための打ち方: 相手のラケットから遠い隅(左右の端、前後を交互)へ、短い滞空時間で。スピンは 3 打ごとに flat、それ以外は topspin。
 ``ctx`` = {"opp_pos" (3,), "shot_index", "tp"}。返り値 {"target" (x, y), "T", "spin"}。
 
 ## 参考(サンプルデータ・文献)

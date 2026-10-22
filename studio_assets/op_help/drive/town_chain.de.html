@@ -11,6 +11,7 @@
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict : das course_layout-dict mit hinzugefügtem <code style="color:#22d3bf">&quot;chain&quot;</code>. <code style="color:#22d3bf">chain = {&quot;overlap&quot;, &quot;s_start&quot; (n,) 各要素の entry の弧長, &quot;lengths&quot; (n,) 各要素の centerline_length, &quot;polyline_lengths&quot; (n,) 中心線の折線長, &quot;total_length&quot; (= Σ 折線長 − overlap × (n − 1)), &quot;joints&quot;: [(exit_k, entry_k+1), ...] 世界姿勢}</code>.</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: Elemente leer / verschachteltes layout / entry/exit/centerline fehlt, start/overlap nicht endlich, overlap negativ, overlap länger als die Mittellinie eines Elements.</p>
+<p>nur Elemente ab dem zweiten: overlap muss kürzer als die Mittellinie dieses Elements sein.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

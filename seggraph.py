@@ -510,7 +510,7 @@ def statistical_region_merging(image, *, q: float = 32.0, g: int = 256, value_ra
     画素の値は ``value_range`` を [0, g − 1] に線形に写して使う(範囲の外の値は ValueError)。
     P(R, R') ⇔ |R̄ − R̄'| ≤ √(b²(R) + b²(R'))、b(R) = g √(ln(|R_|R||/δ) / (2Q|R|))、ln|R_l| = min(l, g) ln(l + 1)、
     δ = 1/(6|I|²)(述語の係数は **要確認**、モジュールの説明参照)。Q(``q``)が大きいほど b が小さく、併合を渋る(細かい)。
-    返す: ``labels``(1..k)、``n_regions``、``means``(領域ごとの平均、元の値の尺度)、``n_merges``、``q``。
+    返す: ``labels``(1..k)、``n_regions``、``means``(領域ごとの平均、元の値の尺度)、``n_merges``、``q``、``g``。
     """
     op = "statistical_region_merging"
     img = _image(image, "image", op)

@@ -27,7 +27,8 @@ data. Feed it to :func:`spc_mt_distance` to score new observations.
 
 Returns a dict with ``mean``, ``std``, ``corr`` and ``inv_corr`` arrays, the
 unit space's own ``md`` per row, ``md_sq_mean``, the exact expected value
-``md_sq_mean_exact = (n-1)/n``, the counts ``n`` and ``p``, how many features
+``md_sq_mean_exact = (n-1)/n`` for a full-rank non-flat unit space (degenerate
+features can make the measured mean smaller), the counts ``n`` and ``p``, how many features
 had no spread (``flat_features``), and whether the correlation matrix was
 singular enough to need a pseudo-inverse (``pseudo_inverse``).
 

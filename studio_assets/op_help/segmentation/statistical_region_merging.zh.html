@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>统计区域合并 SRM（Nock–Nielsen 2004）：按 |I_p − I_q| 的升序处理相邻像素对，谓词 P(R, R&#x27;) 为真则合并（statistical_region_merging）。</p>
 <p>像素值把 <code style="color:#22d3bf">value_range</code> 线性映射到 [0, g − 1] 后使用(范围外的值 ValueError)。P(R, R&#x27;) ⇔ |R̄ − R̄&#x27;| ≤ √(b²(R) + b²(R&#x27;)),b(R) = g √(ln(|R_|R||/δ) / (2Q|R|)),ln|R_l| = min(l, g) ln(l + 1), δ = 1/(6|I|²)(谓词的系数 <b>有待确认</b>,参见模块的说明)。Q(<code style="color:#22d3bf">q</code>)越大 b 越小,越不愿合并(更细)。</p>
-<p>返回: <code style="color:#22d3bf">labels</code>(1..k)、<code style="color:#22d3bf">n_regions</code>、<code style="color:#22d3bf">means</code>(各区域的平均,原始值的尺度)、<code style="color:#22d3bf">n_merges</code>、<code style="color:#22d3bf">q</code>。</p>
+<p>返回: <code style="color:#22d3bf">labels</code>(1..k)、<code style="color:#22d3bf">n_regions</code>、<code style="color:#22d3bf">means</code>(各区域的平均,原始值的尺度)、<code style="color:#22d3bf">n_merges</code>、<code style="color:#22d3bf">q</code>、<code style="color:#22d3bf">g</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>

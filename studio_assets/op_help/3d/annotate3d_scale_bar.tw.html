@@ -17,7 +17,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">color</code>： 預設 <code style="color:#22d3bf">&quot;neutral&quot;</code>（角色名）。<code style="color:#22d3bf">occlusion_tol</code>： <code style="color:#22d3bf">[0, 1)</code>。</p>
 <p>回傳值： 繪製後的新影像(float64 <code style="color:#22d3bf">[0, 1]</code>)。</p>
 <p>報錯條件： <code style="color:#22d3bf">direction</code> 的範數小於 1e-12 / <code style="color:#22d3bf">length &lt;= 0</code> / 任一端點 <code style="color:#22d3bf">z &lt;= 1e-9</code> / <b>任一端點在影像外</b>（本 op 要求兩端都 <code style="color:#22d3bf">in_image</code> — 與箭頭不同，框外會被拒絕） / 位姿、<code style="color:#22d3bf">K</code>、<code style="color:#22d3bf">depth</code> 不正確 / 文字框放不下。</p>
-<p>注意： 像素上的長度會隨相對視線的傾斜而縮短（與像平面平行時為 <code style="color:#22d3bf">f * length / z</code> px）。沿深度方向放置會顯得短，但那才是如實的投影。若要顯示 2 點間的實測值，用 <code style="color:#22d3bf">annotate3d_measure</code>。</p>
+<p>注意： 像素上的長度會隨相對視線的傾斜而縮短（與像平面平行時為 <code style="color:#22d3bf">f * length / z</code> px）。沿深度方向放置會顯得短，但那才是如實的投影。若要顯示 2 點間的實測值，用 <code style="color:#22d3bf">annotate3d_measure</code>。 <code style="color:#22d3bf">scheme</code> 選擇具名顏色的配色。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

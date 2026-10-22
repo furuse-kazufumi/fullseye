@@ -18,7 +18,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 ## 使い方
 
 区画 (i, j) の地面の格子メッシュ(区画の中の座標)と道の面。返り値 ``{"V" (N, 3), "F" (M, 3), "label" (M,),
-"color" (M, 3), "roads" (tile_roads の返り値)}``。地面 = ラベル 0、道 = ラベル 1(道は地面の少し上の帯)。
+"color" (M, 3), "roads" (tile_roads の返り値), "ij"}``。地面 = ラベル 0、道 = ラベル 1(道は地面の少し上の帯)。
 
 ## 参考(サンプルデータ・文献)
 

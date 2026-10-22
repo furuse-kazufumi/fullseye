@@ -11,6 +11,7 @@
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict : course_layout के dict में <code style="color:#22d3bf">&quot;chain&quot;</code> जोड़कर। <code style="color:#22d3bf">chain = {&quot;overlap&quot;, &quot;s_start&quot; (n,) 各要素の entry の弧長, &quot;lengths&quot; (n,) 各要素の centerline_length, &quot;polyline_lengths&quot; (n,) 中心線の折線長, &quot;total_length&quot; (= Σ 折線長 − overlap × (n − 1)), &quot;joints&quot;: [(exit_k, entry_k+1), ...] 世界姿勢}</code>।</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: तत्व खाली / layout नेस्टेड / entry/exit/centerline नहीं, start/overlap अपरिमित, overlap ऋणात्मक, overlap तत्व की मध्य-रेखा से लंबा।</p>
+<p>केवल दूसरे और बाद के elements में overlap उस element की centreline से छोटा होना चाहिए।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

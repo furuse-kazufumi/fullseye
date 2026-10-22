@@ -210,6 +210,7 @@ def render_beauty(V, F, *, pose=None, intrinsics=None, size: int = 512, ss: int 
       * ``size``        出力の一辺(正方)。``ss``  スーパーサンプリング倍率(整数 >= 1)。
       * ``light``       **ワールド座標**の光源方向(シーン→光源)。陰影と接地影で共有。
       * ``albedo``      物体の反射色 RGB。``material``  ``'plastic'`` | ``'metal'`` | ``'matcap'``。
+      * ``albedo_variation`` アルベドに加える決定的な空間むらの比率(0 以上 1 未満)。
       * ``matcap``      ``material='matcap'`` のとき必須の lit-sphere テクスチャ ``(h,w[,C])``。
       * ``ambient``     環境光係数。``ao``  アンビエントオクルージョンを掛けるか。
       * ``ground_shadow`` 地面平面 + 接地影を焼き込むか。
