@@ -93,8 +93,9 @@ def test_monte_carlo_default_seed_unchanged_and_stream_rules(monkeypatch):
     streamed = spc.gum_monte_carlo(table, n=5000, seed=7, stream=True)
     np.testing.assert_allclose(streamed["u_monte_carlo"], got["u_monte_carlo"], rtol=1e-12)
     called = []
-    original = spc._mc_standardised
-    monkeypatch.setattr(spc, "_mc_standardised", lambda *a, **k: (called.append(True), original(*a, **k))[1])
+    original = spc._mc_standardised_blocks
+    monkeypatch.setattr(spc, "_mc_standardised_blocks",
+                        lambda *a, **k: (called.append(True), original(*a, **k))[1])
     spc.gum_monte_carlo(table, n=1000, stream=True, correlation=np.eye(3))
     assert called == [True]
 
