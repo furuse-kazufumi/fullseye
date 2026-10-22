@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import subprocess
+from pathlib import Path
 import sys
 
 import numpy as np
@@ -72,7 +73,7 @@ def test_typed_connection_rejects_swapped_sort():
 def test_fallback_audit_is_current():
     completed = subprocess.run(
         [sys.executable, "tools/audit_fallbacks.py", "--check"],
-        cwd=image_gen.__file__.rsplit("\\", 1)[0], check=False,
+        cwd=str(Path(image_gen.__file__).resolve().parent), check=False,
         capture_output=True, text=True,
     )
     assert completed.returncode == 0, completed.stdout + completed.stderr
