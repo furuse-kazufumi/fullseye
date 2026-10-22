@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 71c18c518f4c -->
+<!-- i18n-source-sha: 85644ff1ed7d -->
 # The complete guide to Fullseye Studio
 
 A purpose search groups candidates by whether they fit the current input, need preprocessing, or belong elsewhere. You can try a candidate once without adding a stage. Failures in the Problems pane show the cause, location, and concrete next actions for reselecting input, comparing values, opening the log, editing a knob, or finding a suggested stage.
@@ -367,6 +367,12 @@ Results that are not pixels are drawn according to their shape (the right panel 
 - **Pin A, compare with B (toolbar "Pin as A" / Ctrl+Shift+A, Window ▸ Panels ▸ A / B)**: freezes the stage list (bypass flags included), the input reference, the final result and the display settings. The result is one read-only copy that no later run can change. At most two are kept; a third drops the oldest (the status bar says so). The A / B panel shows A and the live result B side by side, as a swipe (drag the boundary), as a blink (500 ms by default; it stops when the panel is closed) or as a difference (absolute / signed on a symmetric map where 0 is white / ratio as log2). A and B share one display range chosen from A ∪ B. The "What changed" list below names, in order, what was added, removed, changed (old → new value with its unit), bypassed, or which input changed since A. "Restore A" puts A's pipeline back (one undo step), "Adopt B" drops A, "Keep both" pins B as a second snapshot. The project file keeps only the stages, input, display and note under `pinned` (never the arrays) and recomputes the arrays when it is opened; if one cannot be recomputed the pin is kept and Problems says "cannot recompute A". Older files without `pinned` open as before.
 - **Synchronised zoom, pan and cursor**: the pictures in the Stage in → out panel and the A / B panel zoom and pan together, and putting the cursor over one shows a crosshair at the same pixel in the others. Turning on "sync the main view too" in the A / B panel adds the main image to the group.
 
+
+## Apply the same processing to a folder
+
+Run ▸ **Apply this processing to a folder…** lets you pick an input folder and a file pattern, check the result on the first, middle, last or any chosen image, and then run the whole set. The inputs and the processing chain are frozen once at the start, so turning a knob during the run does not change the conditions of the running batch.
+
+For files with the same name you choose between "do not overwrite", "overwrite" and "add a sequence number"; when subfolders are included, the same hierarchy is created on the output side. `summary.csv` holds the file name, status, processing time, numeric outputs and the error reason. If reading or processing one image fails, the rest continues, and after the run you can review the failed files with their reasons in a list. A stop request is accepted at the boundary after the current image, and "stopped" is not shown until the run has actually stopped.
 
 ## The relationship between Export and Save/Open
 
