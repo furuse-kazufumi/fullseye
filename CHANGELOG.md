@@ -7,6 +7,8 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- 全登録 op の基準入力、NaN、+inf に対する実測監査と、機械可読な台帳および日本語レポートを追加した。
+
 ### 修正 — docstring と実装の食い違い(監査 2026-10-18 の第 1 波)
 
 - 監査対象の公開契約を実装・既存利用例に合わせて明確化し、MT 距離の空入力、星対応の内点不足、角丸矩形の輪郭描画(radius が幅より小さい場合を含む)を修正した。
