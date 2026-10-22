@@ -292,7 +292,7 @@ COLOR_TRANSFER_METHODS = ("reinhard", "gaussian", "histogram")
 
 
 def gaussian_transport_map(src_samples, ref_samples):
-    """2 つの点群を正規分布とみなしたときの Monge 写像 ``(A, b)``。
+    """2 つの点群を正規分布とみなしたときの Monge 写像の線形部 ``A`` と平均 ``m1, m2``。
 
     ``x -> A (x - m1) + m2`` で、``A`` は
     ``S1^-1/2 (S1^1/2 S2 S1^1/2)^1/2 S1^-1/2``(Bures 幾何の閉じた形)。
@@ -326,6 +326,11 @@ def gaussian_transport_map(src_samples, ref_samples):
             f"source covariance is singular (min eigenvalue {np.min(w1):.3e}); the Monge map is "
             "undefined. A pseudo-inverse here would return a map that moves nothing along the "
             "degenerate direction while looking like a valid transport"
+        )
+    _, w2 = _sqrtm_psd(s2, "reference covariance")
+    if np.min(w2) <= 1e-12 * max(1.0, float(np.max(w2))):
+        raise MetricContractError(
+            f"reference covariance is singular (min eigenvalue {np.min(w2):.3e}); the Monge map is undefined"
         )
     r1_inv = np.linalg.inv(r1)
     mid, _ = _sqrtm_psd(r1 @ s2 @ r1, "intermediate")

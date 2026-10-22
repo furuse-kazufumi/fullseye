@@ -1022,7 +1022,7 @@ def hough_plane_3d(vol, device="cpu", ndir=200, nd=128, mc=0.0, iso=0.5, tol=1.0
 
     手順: ``(vol > iso)`` の 1 voxel 厚の境界面(占有 voxel のうち 3³ erosion で消えるもの)を取り、
     その voxel の単位勾配(``sobel3d``、``mc`` は生出力への閾値)を法線 ``n`` にする。``n`` は軸 0
-    成分が非負になるよう半球へ畳み、``d = n·p``(``p`` は整数 voxel index ``(z,y,x)``)。``ndir``
+    成分が非負になるよう半球へ畳み、``d = n·p``(``p`` は voxel 中心へ半 voxel ずらした ``(z,y,x)``)。``ndir``
     本の参照方向(26 以下は 26 近傍、それ以上は fibonacci 球)と ``nd`` 個の d ビンに投票し、
     最多ビンの実法線平均で n を、その n への射影ヒストグラムのモード近傍の中央値で d を精緻化する。
     返り値 ``(n(3,), d, inliers, total)``: ``n`` は **(z,y,x) 順**の単位法線(numpy float32)、

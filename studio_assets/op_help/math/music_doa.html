@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>MUSIC(Schmidt 1986): 共分散の雑音部分空間に直交する向きを探す。</p>
 <p>P(θ) = 1 / ‖E_nᴴ a(θ)‖²。真の向きでは分母がほぼ 0 になり鋭い峰が立つ。</p>
-<p><b>前提</b>: 波源の数が正しい・波源どうしが無相関(相関した波 = 多重反射では部分空間が潰れて峰が消える)。<code style="color:#22d3bf">n_sources=None</code> なら <code style="color:#22d3bf">n_sources_mdl</code> で推定し、返り値の <code style="color:#22d3bf">n_sources_estimated</code> を True にする。返り値 <code style="color:#22d3bf">{&quot;grid_deg&quot;, &quot;pseudo_spectrum_db&quot;, &quot;doa_deg&quot;, &quot;eigenvalues&quot;}</code>(doa は峰の大きさで n 個を選び、角度の昇順で返す)。</p>
+<p><b>前提</b>: 波源の数が正しい・波源どうしが無相関(相関した波 = 多重反射では部分空間が潰れて峰が消える)。<code style="color:#22d3bf">n_sources=None</code> なら <code style="color:#22d3bf">n_sources_mdl</code> で推定し、返り値の <code style="color:#22d3bf">n_sources_estimated</code> を True にする。返り値 <code style="color:#22d3bf">{&quot;grid_deg&quot;, &quot;pseudo_spectrum_db&quot;, &quot;doa_deg&quot;, &quot;eigenvalues&quot;, &quot;n_sources&quot;, &quot;n_sources_estimated&quot;}</code> (doa は峰の大きさで n 個を選び、角度の昇順で返す。分解能は格子の刻み)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
 <p>mathops の全 op は入力を検証してから計算する(黙って通さない):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 入力は <code style="color:#22d3bf">ValueError</code></b> — float64 への強制変換は虚部を黙って捨てる(numpy は ComplexWarning だけ出して「もっともらしく間違った」実数を返す)。<code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> を明示するか、複素対応の complexops を使う。</p>

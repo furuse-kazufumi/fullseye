@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>DSNU と PRNU を入力(光子)の単位で(General 8 節、式 55・56・58・59)。</p>
 <p>General は不均一を特性曲線の傾きで入力へ戻す(式 55: 不均一は信号の幅より小さいので曲線を局所的に直線とみなす)。分散は傾きの二乗で割る(式 56)。暗画像の傾きは R_d(式 25)、明るい画像(飽和の約 50 %)の傾きは *slope_50*。DSNU1288 = s_y.dark/R_d [光子] (式 58)、PRNU1288 = √(s²_p.50 − s²_p.dark)/μ_p.50(式 59、比)。列・行・画素の成分(式 37〜39)にも同じ式を当てる(8.3 節の最後の段落)。成分の差が雑音で負になるときは 0 とする。*highpass*: 既定 <code style="color:#22d3bf">&quot;r4&quot;</code>(General 8.1 節も Linear と同じフィルタ)、<code style="color:#22d3bf">&quot;r3.1&quot;</code>、None。</p>
-<p>返り値 <code style="color:#22d3bf">{&quot;DSNU1288_p&quot;, &quot;DSNU1288_y&quot;, &quot;PRNU1288&quot;, &quot;dsnu_p&quot;: {&quot;col&quot;, &quot;row&quot;, &quot;pixel&quot;}, &quot;prnu&quot;: {...}, &quot;s2_p_dark&quot;, &quot;s2_p_50&quot;, &quot;linear&quot;: Linear の計算(K = 1 のときの値), &quot;highpass&quot;}</code>。</p>
+<p>返り値 <code style="color:#22d3bf">{&quot;DSNU1288_p&quot;, &quot;DSNU1288_y&quot;, &quot;PRNU1288&quot;, &quot;dsnu_p&quot;: {&quot;col&quot;, &quot;row&quot;, &quot;pixel&quot;}, &quot;prnu&quot;: {...}, &quot;s2_p_dark&quot;, &quot;s2_p_50&quot;, &quot;dark&quot;, &quot;bright&quot;, &quot;highpass&quot;}</code>。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: <code style="color:#22d3bf">sensorchar.emva_spatial_nonuniformity</code> と同じ / slope_50・μ_p.50・R_d が正でない / s²_p.50 &lt; s²_p.dark。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
 <p>optics の全 op は入力を検証してから計算する(黙って通さない):</p>

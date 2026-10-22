@@ -732,10 +732,10 @@ def dem_geodetic_to_ecef(lat_deg, lon_deg, height_m=0.0):
     最大 21 km ずれる(極半径が赤道半径より短いぶん)。
 
     Args:
-        lat_deg / lon_deg: 緯度・経度 [度]。配列可(同じ形)。
+        lat_deg / lon_deg: 緯度・経度 [度]。互いに broadcast 可能な形の配列可。
         height_m: 楕円体高 [m]。スカラでも配列でも可。
     Returns:
-        ``(..., 3)`` の ECEF 座標 [m]。
+        ``(N, 3)`` の ECEF 座標 [m]。入力の broadcast 結果を平坦化する。
     """
     lat = np.asarray(lat_deg, dtype=np.float64)
     lon = np.asarray(lon_deg, dtype=np.float64)
@@ -915,7 +915,7 @@ def dem_cell_size_webmercator(zoom, lat_deg):
     ``156543.03392804097 * cos(lat) / 2^zoom``(タイルが 256 px の場合)。
 
     実測の目安: 東京(北緯 35.68 度)の z=15 で **3.880 m**、赤道では 4.777 m。
-    赤道の値をそのまま使うと東京で傾斜が **23 % 過小**になります —— これは
+    赤道の値をそのまま使うと東京で傾斜が **約 19 % 過小**になります —— これは
     例外を出さずに全部の下流の数字を狂わせるので、この族で最も多い事故です。
     """
     z = int(zoom)

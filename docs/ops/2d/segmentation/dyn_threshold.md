@@ -45,6 +45,9 @@ version: 0.8.1  # fullseye lib version this note was generated for
 ``a`` が局所平均の窓サイズを、``b`` がオフセット(しきい値を上下に振る量)
 を振る。両方が使われる。
 
+Raises:
+    FsValueError: NaN / inf を含む画像。
+
 **端の扱い**: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 ``reflect``)(実測。`tools/impl2/border_probe.py`)。
 
 **つまみ(実測)**: ``a`` は**段階的**に効き、切り替わるのは a ≈ 0.25、0.49、0.75(実測。刻み 0.02 の掃きで測った位置)。

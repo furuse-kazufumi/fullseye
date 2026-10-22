@@ -7,7 +7,7 @@
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>elements : drivecourse 要素(dict)的序列。按顺序连接。</p>
 <p>start : 放置第一个要素 entry 的世界位姿 (x, y, yaw)。</p>
-<p>overlap : 接缝处的重叠 [m] (≥ 0。为了 3-D 化时接缝处不立起路缘石)。须短于要素的中心线。</p>
+<p>overlap : 接缝处的重叠 [m] (≥ 0。为了 3-D 化时接缝处不立起路缘石)。第 2 个及之后的要素,overlap 不得超过该要素的中心线。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict : 在 course_layout 的 dict 中加入 <code style="color:#22d3bf">&quot;chain&quot;</code>。<code style="color:#22d3bf">chain = {&quot;overlap&quot;, &quot;s_start&quot; (n,) 各要素の entry の弧長, &quot;lengths&quot; (n,) 各要素の centerline_length, &quot;polyline_lengths&quot; (n,) 中心線の折線長, &quot;total_length&quot; (= Σ 折線長 − overlap × (n − 1)), &quot;joints&quot;: [(exit_k, entry_k+1), ...] 世界姿勢}</code>。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 要素为空 / layout 嵌套 / 缺少 entry/exit/centerline、start/overlap 非有限、overlap 为负、overlap 长于要素的中心线。</p>

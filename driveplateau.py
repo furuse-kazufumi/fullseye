@@ -346,9 +346,9 @@ def plateau_parse(
                     if rec is None:
                         n_skipped += 1
                     else:
-                        raw.append(rec)
                         if max_buildings is not None and len(raw) >= max_buildings:
                             break
+                        raw.append(rec)
                 elif name == "cityObjectMember":
                     # Building を包む要素も空にして木の成長を止める。
                     elem.clear()

@@ -3,7 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">measurehandle</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gen_measure_rectangle2(row, col, phi, length1, length2, shape)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import measuring1d; measuring1d.gen_measure_rectangle2(row, col, phi, length1, length2, shape)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmeasure1d.get(&quot;gen_measure_rectangle2&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
-<p>घुमाया हुआ measurement rectangle परिभाषित करता है (profile को <code style="color:#22d3bf">phi</code> दिशा वाली major axis के साथ 1 px अंतराल पर लिया जाता है) (gen_measure_rectangle2)। sample संख्या n = round(2*length1)+1, आरंभ बिंदु केंद्र से -(n-1)/2 px पर है। <code style="color:#22d3bf">length2</code> चौड़ाई की दिशा में averaging चौड़ाई [px] है।</p>
+<p>घुमाया हुआ measurement rectangle परिभाषित करता है (profile को <code style="color:#22d3bf">phi</code> दिशा वाली major axis के साथ 1 px अंतराल पर लिया जाता है) (gen_measure_rectangle2)। sample संख्या n = max(2, round(2*length1)+1), आरंभ बिंदु केंद्र से -(n-1)/2 px पर है। <code style="color:#22d3bf">length2</code> चौड़ाई की दिशा में averaging चौड़ाई [px] है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

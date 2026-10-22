@@ -340,7 +340,7 @@ def _raster_geometry(op, seg_or_pts_x, seg_or_pts_y, px_per_mm, bounds):
 
 def gcode_layer_image(table: Any, layer: int, px_per_mm: float = 10.0, line_width_mm: float = 0.4,
                       bounds=None, travel: bool = False) -> np.ndarray:
-    """1 層の経路を**線幅つきのラスタ** ``image2d``(0 / 1、y 下向き = 行)に描く。
+    """1 層の経路を**線幅つきのラスタ** ``image2d``(造形 1、背景 0、移動を描く場合 0.5、y 下向き = 行)に描く。
 
     押し出しのある線分だけを ``line_width_mm`` の太さで塗る(``travel=True`` なら移動も細線で)。画素は ``px_per_mm``、
     範囲は ``bounds=(xmin, ymin, xmax, ymax)`` mm(無ければ表全体 + 2 mm の余白 —— 層をまたいで同じ範囲にしたければ
@@ -1110,8 +1110,8 @@ def _npr_screen_frequency(lpi, pixel_um):
 def halftone_screen(image, lpi=60.0, angle_deg=45.0, pixel_um=25.4, sharpness=8.0):
     """A classic rotated halftone screen — dots whose area carries the tone.
 
-    Thresholds the image against a rotated periodic spot function (the product of
-    two shifted cosines, the classical round-dot screen). *lpi* is lines per inch
+    Thresholds the image against a rotated periodic spot function (the scaled sum
+    of two shifted cosines, a round-dot screen). *lpi* is lines per inch
     and *pixel_um* the pixel pitch, so the screen frequency in pixels follows the
     printing convention rather than a bare "period in pixels".
 

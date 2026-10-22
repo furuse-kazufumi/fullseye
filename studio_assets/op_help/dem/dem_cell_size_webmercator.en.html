@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Ground resolution of a Web Mercator tile [m/px]. <b>It varies with latitude</b>.</p>
 <p><code style="color:#22d3bf">156543.03392804097 * cos(lat) / 2^zoom</code> (for 256 px tiles).</p>
-<p>Measured guide: Tokyo (35.68 degrees north) at z=15 gives <b>3.880 m</b>, the equator 4.777 m. Using the equator value as is makes slopes in Tokyo <b>23 % too small</b> —— this throws no exception and skews every downstream number, making it the most common accident in this family.</p>
+<p>Measured guide: Tokyo (35.68 degrees north) at z=15 gives <b>3.880 m</b>, the equator 4.777 m. Using the equator value as is makes slopes in Tokyo <b>about 19 % too small</b> —— this throws no exception and skews every downstream number, making it the most common accident in this family.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

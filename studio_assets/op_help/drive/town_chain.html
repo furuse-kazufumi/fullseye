@@ -10,7 +10,7 @@
 <p>overlap : 継ぎ目の食い込み [m] (≥ 0。3-D 化で継ぎ目に縁石が立たないため)。要素の中心線より短いこと。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict : course_layout の dict に <code style="color:#22d3bf">&quot;chain&quot;</code> を足したもの。<code style="color:#22d3bf">chain = {&quot;overlap&quot;, &quot;s_start&quot; (n,) 各要素の entry の弧長, &quot;lengths&quot; (n,) 各要素の centerline_length, &quot;polyline_lengths&quot; (n,) 中心線の折線長, &quot;total_length&quot; (= Σ 折線長 − overlap × (n − 1)), &quot;joints&quot;: [(exit_k, entry_k+1), ...] 世界姿勢}</code>。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 要素が空・layout の入れ子・entry/exit/centerline が無い、start/overlap が非有限、overlap が負、overlap が要素の中心線より長い。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 要素が空・layout の入れ子・entry/exit/centerline が無い、start/overlap が非有限、overlap が負、2 番目以降の overlap がその要素の中心線以上。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

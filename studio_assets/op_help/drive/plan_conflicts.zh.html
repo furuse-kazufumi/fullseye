@@ -4,7 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plan_conflicts(paths)</code>(要直接调用实现,<code style="color:#22d3bf">import agvfleet; agvfleet.plan_conflicts(paths)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;plan_conflicts&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>冲突列表：同一时刻同一格子(vertex)、交错而过(edge)、跟随(follow)。</p>
-<p>返回 <code style="color:#22d3bf">[(種類, i, j, 時刻, マス)]</code>。已到达的车辆视为停留在原地进行计数。follow 指&quot;i 在时刻 t <b>进入</b>格子 v 时,j 在 t-1 时位于 v&quot;(i ≠ j)。</p>
+<p>返回 <code style="color:#22d3bf">[(種類, i, j, 時刻, マス)]</code>。已到达的车辆视为停留在原地进行计数。follow 指&quot;i 在时刻 t <b>进入</b>格子 v 时,j 在 t-1 时位于 v 且在 t 时已离开 v&quot;(i ≠ j)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

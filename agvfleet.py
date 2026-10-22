@@ -132,7 +132,7 @@ def plan_conflicts(paths):
     """衝突の一覧: 同じ時刻に同じマス(vertex)・すれ違い(edge)・追従(follow)。
 
     返りは ``[(種類, i, j, 時刻, マス)]``。着いた車両はその場に居続けるものとして数える。
-    follow は「i が時刻 t にマス v へ**入った**とき、j が t-1 に v に居た」(i ≠ j)。
+    follow は「i が時刻 t にマス v へ**入った**とき、j が t-1 に v に居て t には v から出た」(i ≠ j)。
     """
     out = []
     T = max(len(p) for p in paths)
@@ -665,7 +665,7 @@ def vda5050_check(order):
     各エッジの始点・終点が前後のノード / released は base の先頭から連続(base → horizon の 1 回の切替のみ)/
     エッジの released はその終点ノードと同じ。返りは違反の文言のリスト(空 = 合格)。
 
-    空の入力(``order`` が空の dict)は空を返す(理由: 検査器なので、空の order も検査の対象。足りない鍵の一覧が正しい答え)。
+    空の入力(``order`` が空の dict)は足りない必須キーの一覧を返す(理由: 空の dict には必須キーが 1 つも無い)。
     """
     errs = []
     for key in ("headerId", "timestamp", "version", "manufacturer", "serialNumber", "orderId",

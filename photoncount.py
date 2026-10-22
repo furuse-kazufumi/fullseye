@@ -1618,8 +1618,8 @@ def lifetime_fit(decay, bin_ps=100.0, background=None, min_counts=1.0,
     the median of the **last decile** of bins, which for a decay is tail. Pass
     ``0.0`` to state that the data are already background free.
 
-    Returns a dict: ``lifetime_ps`` · ``amplitude`` (the fitted ``A`` at ``t=0``
-    of the fit window, in counts per bin) · ``background`` (the level used) ·
+    Returns a dict: ``lifetime_ps`` · ``amplitude`` (the fitted value at the
+    centre time of the first usable bin, in counts per bin) · ``background`` (the level used) ·
     ``start_bin`` · ``n_bins_used`` · ``r_squared`` (of the weighted log fit).
 
     Ground truth: on a **noiseless** exponential the recovery is exact —

@@ -53,7 +53,8 @@ __all__ = [
     "MATERIALS", "CLASSES", "AGF_EXAMPLE",
     "material_table", "material_record", "material_optical_constants",
     "material_dispersion", "material_extinction", "material_absorption",
-    "material_transmittance", "material_reflectance", "abbe_number", "glass_map",
+    "material_transmittance", "material_reflectance", "material_acoustic",
+    "acoustic_impedance_mismatch", "abbe_number", "glass_map",
     "thermo_optic_coefficient", "plate_focus_shift", "silicon_free_carrier_absorption",
     "material_from_sellmeier", "material_from_curves", "read_glass_catalog_agf",
     "NIR_BAND_MODELS", "material_nir_absorption", "carbon_black_absorption", "nir_model_info",
@@ -64,7 +65,8 @@ __all__ = [
 WL_F, WL_D, WL_C = 0.48613, 0.58756, 0.65627
 WL_E, WL_FP, WL_CP, WL_G = 0.54607, 0.47999, 0.64385, 0.43583
 
-CLASSES = ("glass", "crystal", "semiconductor", "film", "metal", "liquid", "polymer", "custom")
+CLASSES = ("glass", "crystal", "semiconductor", "film", "metal", "liquid", "polymer", "gas",
+           "composite", "custom")
 
 _RECORDS = {r["name"]: r for r in _md.MATERIAL_RECORDS}
 _ALIASES = {a: r["name"] for r in _md.MATERIAL_RECORDS for a in r["aliases"]}
@@ -323,11 +325,12 @@ def material_table(material_class: str = None) -> list:
         nds = [ds for ds in r["datasets"] if ds["type"] in ("formula", "nk", "n")]
         iv = _intervals(nds)
         rows.append({"name": name, "class": r["class"], "aliases": tuple(r["aliases"]),
-                     "range_um": (iv[0][0], iv[-1][1]), "intervals_um": iv,
+                     "range_um": (iv[0][0], iv[-1][1]) if iv else None, "intervals_um": iv,
                      "nd": r["properties"].get("nd"), "vd": r["properties"].get("Vd"),
                      "density_kg_m3": r["properties"].get("density_kg_m3"),
                      "k_data": any(ds["type"] in ("nk", "k") for ds in r["datasets"]),
-                     "reference": nds[0].get("reference", "")})
+                     "reference": nds[0].get("reference", "") if nds else
+                                  r["properties"].get("acoustic_source", "")})
     return rows
 
 
@@ -339,6 +342,68 @@ def material_record(material="N-BK7") -> dict:
     (``rows`` が整数)。知らない名前は ValueError。
     """
     return _summary(_record(material, "material_record"))
+
+
+def material_acoustic(material="WATER") -> dict:
+    """材料レコードに保存した音響物性と出典を返す。
+
+    Parameters
+    ----------
+    material : str or dict
+        材料名、別名、または材料レコード。
+
+    Returns
+    -------
+    dict
+        密度、縦波音速、音響インピーダンス、減衰係数と周波数指数、検証状態、出典、不確かさ。
+
+    Raises
+    ------
+    ValueError
+        材料が未知、または音響物性を持たない場合。
+    """
+    op = "material_acoustic"
+    rec = _record(material, op)
+    p = rec.get("properties", {})
+    required = ("density_kg_m3", "sound_speed_longitudinal_m_s", "acoustic_impedance_mrayl",
+                "acoustic_attenuation_coefficient_np_per_m_hz_power",
+                "acoustic_attenuation_frequency_exponent", "acoustic_source")
+    if any(k not in p for k in required):
+        raise ValueError("%s: acoustic properties not available for %s" % (op, rec["name"]))
+    return {"material": rec["name"], **{k: p[k] for k in required},
+            "sound_speed_shear_m_s": p.get("sound_speed_shear_m_s"),
+            "verified": p.get("acoustic_verified"),
+            "uncertainty": p.get("acoustic_uncertainty")}
+
+
+def acoustic_impedance_mismatch(material1="WATER", material2="SI") -> dict:
+    """2 材料の垂直入射における音響インピーダンス不整合を返す。
+
+    Parameters
+    ----------
+    material1, material2 : str or dict
+        材料名、別名、または材料レコード。
+
+    Returns
+    -------
+    dict
+        強度反射係数 ``R=((Z2-Z1)/(Z2+Z1))**2`` と強度透過係数 ``T=1-R``。
+
+    Raises
+    ------
+    ValueError
+        材料が未知、音響物性が無い、またはインピーダンスが正でない場合。
+    """
+    op = "acoustic_impedance_mismatch"
+    a = material_acoustic(material1)
+    b = material_acoustic(material2)
+    z1, z2 = float(a["acoustic_impedance_mrayl"]), float(b["acoustic_impedance_mrayl"])
+    if not (np.isfinite(z1) and np.isfinite(z2) and z1 > 0.0 and z2 > 0.0):
+        raise ValueError("%s: acoustic impedances must be finite and > 0" % op)
+    reflection = ((z2 - z1) / (z2 + z1)) ** 2
+    return {"material1": a["material"], "material2": b["material"],
+            "impedance1_mrayl": z1, "impedance2_mrayl": z2,
+            "reflection": reflection, "transmission": 1.0 - reflection}
 
 
 def material_optical_constants(material="SI", wavelength_nm: float = 1000.0) -> dict:
@@ -403,7 +468,8 @@ def material_absorption(material="SI", wl_min_nm: float = 400.0, wl_max_nm: floa
 
 def material_transmittance(material="SI", thickness_mm: float = 0.7, wl_min_nm: float = 900.0,
                            wl_max_nm: float = 1400.0, n_points: int = 101,
-                           include_fresnel: bool = True, extra_absorption=None) -> np.ndarray:
+                           include_fresnel: bool = True, extra_absorption=None,
+                           doping_cm3=None, carrier: str = "n") -> np.ndarray:
     """平行平板(厚さ ``thickness_mm``)の透過率 T(λ) を ``pairs``(λ [nm], T)で返す。
 
     T = (1 − R)² e^{−αt} / (1 − R² e^{−2αt})(両面の多重反射を足した非コヒーレントの式、
@@ -414,6 +480,12 @@ def material_transmittance(material="SI", thickness_mm: float = 0.7, wl_min_nm: 
     ``extra_absorption``: 材料の表に無い吸収を足す ``pairs``(λ [nm], α [1/cm])。例: ドープした Si の自由キャリア吸収
     ``silicon_free_carrier_absorption(1e19, "n", ...)`` をそのまま渡す。格子の全波長を覆わなければ ValueError
     (外挿しない)、負の α も ValueError。表面の反射 R は材料の n,k のまま(自由キャリアの n の変化は小さいので無視)。
+
+    ``doping_cm3`` / ``carrier``: ``None`` (既定)なら未ドープの材料表をそのまま使う。値を指定すると
+    ``carrier`` (``"n"`` または ``"p"``)の自由キャリア吸収を ``silicon_free_carrier_absorption`` で加える。
+    現在は SI だけに対応し、ほかの材料では材料名を含む ValueError。ドープ濃度が負または非有限、あるいは
+    ``carrier`` が選択肢以外なら ValueError。自由キャリア吸収を先に、``extra_absorption`` を後に加算し、
+    表面反射には未ドープ材料表の n,k を使う。
     """
     op = "material_transmittance"
     rec = _record(material, op)
@@ -423,6 +495,11 @@ def material_transmittance(material="SI", thickness_mm: float = 0.7, wl_min_nm: 
     wl = _grid_nm(wl_min_nm, wl_max_nm, n_points, op)
     n, k, _, _ = _nk(rec, wl * 1e-3, op)
     alpha_per_um = 4.0 * np.pi * k / (wl * 1e-3)
+    if doping_cm3 is not None:
+        if rec["name"] != "SI":
+            raise ValueError("%s: free-carrier coefficients not available for %s" % (op, rec["name"]))
+        fc = silicon_free_carrier_absorption(doping_cm3, carrier, wl[0], wl[-1], len(wl))
+        alpha_per_um = alpha_per_um + fc[:, 1] * 1e-4
     if extra_absorption is not None:
         ea = np.asarray(extra_absorption, dtype=np.float64)
         if ea.ndim != 2 or ea.shape[1] != 2 or ea.shape[0] < 2 or not np.all(np.isfinite(ea)):

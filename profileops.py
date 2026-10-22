@@ -251,7 +251,8 @@ def profile_chord_frame(contour):
     """弦(最も離れた 2 点)を見つける。返りは dict。
 
     翼型の慣行どおり、**最も離れた 2 点**を前縁・後縁とみなす。どちらが前縁かは
-    **その点の近傍の曲率が大きいほう**で決める(前縁は丸く、後縁は尖る)。
+    **その点の近傍の厚み(girth)が大きいほう**で決める。曲率は尖った後縁を
+    前縁と誤分類するため使わない。
 
     Returns:
         dict: ``le`` / ``te``(座標)、``le_index`` / ``te_index``、
@@ -755,7 +756,7 @@ def profile_perturb(contour, kind="thicken", amount=0.001, extent=0.1, cycles=6.
     Args:
         contour: 元の輪郭。
         kind: 欠陥の種類。
-        amount: 大きさ(翼弦比)。``"twist"`` だけは度。
+        amount: 大きさ。``"twist"`` は度、それ以外は contour の座標と同じ単位。
         extent: ``"le_erosion"`` が及ぶ弦方向の範囲。
         cycles: ``"waviness"`` の波数。
     """

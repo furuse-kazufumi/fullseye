@@ -44,6 +44,8 @@ version: 0.8.1  # fullseye lib version this note was generated for
 ``reflect``。幅と高さが同じなら、同じ窓・``reflect`` の ``mean_box`` とビット一致する。
 例: ``_mean_box_wh(np.eye(5), 0.2, 0.4)``。
 
+NaN を含む画像では NaN がその画素を参照する平均窓の出力へ伝播する。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_smoothing_rank ファミリ ガイド](../guides/gallery2d_smoothing_rank.md)

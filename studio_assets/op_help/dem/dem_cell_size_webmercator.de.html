@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Bodenauflösung einer Web-Mercator-Kachel [m/px]. <b>Sie ändert sich mit der Breite</b>.</p>
 <p><code style="color:#22d3bf">156543.03392804097 * cos(lat) / 2^zoom</code> (bei Kacheln von 256 px).</p>
-<p>Gemessene Richtwerte: Tokio (35.68 Grad Nord) bei z=15 ergibt <b>3.880 m</b>, der Äquator 4.777 m. Übernimmt man den Äquatorwert unverändert, werden Neigungen in Tokio <b>um 23 % zu klein</b> —— das löst keine Exception aus und verfälscht alle nachgelagerten Zahlen, daher der häufigste Unfall dieser Familie.</p>
+<p>Gemessene Richtwerte: Tokio (35.68 Grad Nord) bei z=15 ergibt <b>3.880 m</b>, der Äquator 4.777 m. Übernimmt man den Äquatorwert unverändert, werden Neigungen in Tokio <b>um etwa 19 % zu klein</b> —— das löst keine Exception aus und verfälscht alle nachgelagerten Zahlen, daher der häufigste Unfall dieser Familie.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">Leitfaden zur Familie dem_terrain_analysis</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

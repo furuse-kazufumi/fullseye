@@ -26,6 +26,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
   * ``size``        出力の一辺(正方)。``ss``  スーパーサンプリング倍率(整数 >= 1)。
   * ``light``       **ワールド座標**の光源方向(シーン→光源)。陰影と接地影で共有。
   * ``albedo``      物体の反射色 RGB。``material``  ``'plastic'`` | ``'metal'`` | ``'matcap'``。
+  * ``albedo_variation`` アルベドに加える決定的な空間むらの比率(0 以上 1 未満)。
   * ``matcap``      ``material='matcap'`` のとき必須の lit-sphere テクスチャ ``(h,w[,C])``。
   * ``ambient``     環境光係数。``ao``  アンビエントオクルージョンを掛けるか。
   * ``ground_shadow`` 地面平面 + 接地影を焼き込むか。
@@ -37,7 +38,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
                     「遮蔽物の高さ × tan(penumbra)」。既定の 2.5 度は、地面から
                     1 単位の高さの物体で半影が **1〜2 画素**にしかならない
                     (2026-09-02 実測: 320px の絵で半影は 283/102400 画素、
-                    値の種類は ``shadow_samples+1`` の 7 段だけ)。柔らかい影が
+                    値の種類は ``shadow_samples+1`` 段、既定では 13 段だけ)。柔らかい影が
                     欲しいなら 10 度前後まで上げ、段が見えないよう
                     ``shadow_samples`` も一緒に増やす。
   * ``shadow_pcf``  shadow map を引くときに混ぜる近傍半径 [texel] (既定 1 = 3x3)。
@@ -61,6 +62,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
                     ―― 遮蔽された半球の分だけ隣の地形が見えており、その地形が平均的な
                     明るさで光っているという近似(相互反射の厳密解ではない、要 ``ao=True``)。
                     宇宙では環境光が無いので ``ambient=0`` とこれで影の底が決まる。
+  * ``surface`` / ``surface_params`` 表面反射モデル名とその追加パラメータ。
   * ``bump``        ``dict(wavelengths, amplitudes[, seed, nyquist, fade, complement_edges])``
                     → 物体画素の陰影法線を :func:`render3d.bump_normals_fbm`(値ノイズ高さ場の
                     勾配)で摂動する。幾何(depth/影/AO)は不変。``complement_edges=True``

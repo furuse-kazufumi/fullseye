@@ -443,8 +443,8 @@ def add_sign(world: dict, kind: str, x: float, y: float, yaw: float, *, value=No
     """路側式の標識を立てる: 柱(円柱、灰、ラベル 6)+ 板(下端 = ``mount_height``、既定 1.8 m、ラベル 4)。
 
     規約: **yaw の向きへ進んで来る車に板の面が向く**(法線 = (−cos yaw, −sin yaw))。実装は :func:`sign_mesh`(法線 −x)を
-    :func:`driveworld.place_mesh` で回すだけ。板は柱の手前(車の側)に ``pole_radius + 1 cm`` 離して付ける。
-    返り値 = 板の object 索引(``extra = {"kind", "value", "width", "height", "mount_height"}``)。柱は直前の別 object。
+    :func:`driveworld.place_mesh` で回すだけ。板は柱の手前(車の側)に ``pole_radius + 1.2 cm`` 離して付ける。
+    返り値 = 板の object 索引(``extra = {"kind", "value", "width", "height", "mount_height", "front_faces"}``)。柱は直前の別 object。
 
     空の入力(``world`` が空の dict)は ValueError。
     """
@@ -482,7 +482,7 @@ def signal_jp_mesh(*, lens: float = LENS_DIAMETER, n: int = 3, hood: bool = True
     n = 2 なら 黄・赤、n = 1 なら 黄(一灯点滅式)。各レンズの上に庇(薄い箱、長さ 0.25 m、``hood``)。
     レンズ径は 300 mm(2017 年度から標準 250 mm、どちらも現役)。
 
-    返り値 ``{"V", "F", "color", "label": 3, "lamp_faces": {"green": (f0, f1), ...}, "width", "height", "depth", "lens"}``。
+    返り値 ``{"V", "F", "color", "label": 3, "lamp_faces": {"green": (f0, f1), ...}, "width", "height", "depth", "lens", "state"}``。
     ``lamp_faces`` はこのメッシュ内の面の索引の範囲(世界に足すときは world_add の返す範囲へ平行移動する —
     :func:`driveworld.add_signal` と同じ仕組み)。``state`` の灯だけ driveworld._LAMP の色、他は "off" の色。"""
     lens = float(lens)

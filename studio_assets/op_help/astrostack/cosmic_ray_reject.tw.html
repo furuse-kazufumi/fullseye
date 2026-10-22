@@ -10,7 +10,7 @@
 <p style="margin:2px 0 2px 12px">1. 建立以雜訊正規化拉普拉斯 <code style="color:#22d3bf">L</code> 正分量的顯著度 <code style="color:#22d3bf">S = L / (2 sigma_noise)</code>，</p>
 <p style="margin:2px 0 2px 12px">2. 與精細結構像 <code style="color:#22d3bf">F = median3 - median7(median3)</code> 比較，只有 <code style="color:#22d3bf">L / F</code> 超過 <code style="color:#22d3bf">f_lim</code> 者才判為宇宙射線。</p>
 <p>沒有第 2 個條件，<b>星的中心必定看起來像宇宙射線</b>(星在局部也是尖的)。<code style="color:#22d3bf">f_lim</code> 就是這條分界，原論文建議 2.0。</p>
-<p>增大 <code style="color:#22d3bf">iters</code> 會重複 去除 → 重新量測(大的擊中留下裙邊時)。替換值為 <code style="color:#22d3bf">replace_box</code> 窗口內<b>未污染像素的中位數</b>。</p>
+<p>增大 <code style="color:#22d3bf">iters</code> 會重複 去除 → 重新量測(大的擊中留下裙邊時)。替換值為 <code style="color:#22d3bf">replace_box</code> 窗口內所有像素的中位數（包括判定為污染的像素）。</p>
 <p>Returns <code style="color:#22d3bf">(cleaned, mask)</code>:</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cleaned</code> —— <code style="color:#22d3bf">(H, W)</code> float64，替換了宇宙射線像素的影像。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">mask</code> —— <code style="color:#22d3bf">(H, W)</code> bool，<code style="color:#22d3bf">True</code> = 判定為宇宙射線的像素。</p>

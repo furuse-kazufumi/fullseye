@@ -42,7 +42,7 @@ def emva_general_sensitivity(mu_p, mu_y, var_y, mu_y_dark, var_y_dark, mu_p_sat,
 
     *mu_p*: 露光段ごとの画素あたりの平均光子数。*mu_y*, *var_y*: 同じ露光の 2 枚から出した平均と時間分散(式 16・18、
     :func:`sensorchar.emva_pair_statistics`)。*mu_y_dark*, *var_y_dark*: 暗画像の同じ量。*mu_p_sat*: 飽和の露光
-    (0.1〜0.2 % の画素が最大値になる露光、6.7 節)。0 ≤ μ_p ≤ μ_p.sat の点だけを使う。
+    (0.1〜0.2 % の画素が最大値になる露光、6.7 節)。負の μ_p は ValueError、μ_p.sat を超える点は除外する。
 
     手順:
     1. 特性曲線 μ_y − μ_y.dark = R(μ_p) を [0, μ_p.sat] を P 等分した 3 次 B-スプラインで当て、各点の傾き ∂μ_y/∂μ_p
@@ -129,7 +129,7 @@ def emva_general_nonuniformity(dark_stack, bright_stack, slope_50, mu_p_50, Rd, 
     *highpass*: 既定 ``"r4"``(General 8.1 節も Linear と同じフィルタ)、``"r3.1"``、None。
 
     返り値 ``{"DSNU1288_p", "DSNU1288_y", "PRNU1288", "dsnu_p": {"col", "row", "pixel"}, "prnu": {...},
-    "s2_p_dark", "s2_p_50", "linear": Linear の計算(K = 1 のときの値), "highpass"}``。
+    "s2_p_dark", "s2_p_50", "dark", "bright", "highpass"}``。
 
     **Raises** ``ValueError``: :func:`sensorchar.emva_spatial_nonuniformity` と同じ / slope_50・μ_p.50・R_d が正でない /
     s²_p.50 < s²_p.dark。

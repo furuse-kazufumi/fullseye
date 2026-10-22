@@ -6,7 +6,7 @@
 <p>sample की संख्या (HALCON <code style="color:#22d3bf">num_points_funct_1d</code>)।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <p>:param y: 1-D function (may be empty). :raises ValueError: non-1-D / NaN / Inf input.</p>
-<p>Empty input (<code style="color:#22d3bf">y</code> with 0 elements) returns an empty result (reason: a 1-D function with 0 samples is a valid function (as in HALCON&#x27;s funct_1d), and empty functions flow through chains of function ops).</p>
+<p>Empty input (<code style="color:#22d3bf">y</code> with 0 elements) returns integer <code style="color:#22d3bf">0</code> (reason: the result is the sample count of a valid empty 1-D function).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

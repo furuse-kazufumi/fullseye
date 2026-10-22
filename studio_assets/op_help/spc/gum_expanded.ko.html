@@ -4,7 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gum_expanded(table, u=&#x27;u&#x27;, sensitivity=&#x27;sensitivity&#x27;, dof=&#x27;dof&#x27;, level=0.95, correlation=None, estimate=None, lower_bound=None, upper_bound=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import spc; spc.gum_expanded(table, u=&#x27;u&#x27;, sensitivity=&#x27;sensitivity&#x27;, dof=&#x27;dof&#x27;, level=0.95, correlation=None, estimate=None, lower_bound=None, upper_bound=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsspc.get(&quot;gum_expanded&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>Welch-Satterthwaite 유효자유도와 포함인자 k, 확장불확도 U (<code style="color:#22d3bf">table</code>).</p>
-<p>nu_eff = u_c^4 / sum_i (c_i u_i)^4 / nu_i        U = k u_c,  k = t_{p}(nu_eff)</p>
+<p>nu_eff = u_c^4 / sum_i (c_i u_i)^4 / nu_i        U = k u_c,  k = t_{p}(floor(nu_eff))</p>
 <p>★게이트로 쓸 수 있는 엄밀한 성질이 3 개 있다:</p>
 <p style="margin:2px 0 2px 12px">• 성분이 1 개뿐이면 <code style="color:#22d3bf">nu_eff == nu</code>(엄밀).</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">nu_eff &gt;= min_i nu_i</code> 가 <b>항상</b> 성립한다. 증명은 <code style="color:#22d3bf">sum u_i^4/nu_i &lt;= (1/nu_min) sum u_i^4 &lt;= (1/nu_min)(sum u_i^2)^2</code>. 유효 자유도가 최소 성분보다 작아지면 계산이 깨진 것이다.</p>

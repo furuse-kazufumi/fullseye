@@ -20,7 +20,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 世界をカメラで撮る: ``{"color" (H,W,3), "label" (H,W) int(−1 = 空), "depth" (H,W), "face" (H,W), "shade" (H,W)}``。
 
 render3d.render_mesh(attributes=True) の三角形 id から面の色・ラベルを引き、色は Lambert
-(``ambient + (1−ambient)·max(n·l, 0)``、n は render3d のカメラ系法線を世界系に戻さず、光をカメラ系で与える)。
+(``ambient + (1−ambient)·|n·l|``、両面三角形を同じ明るさで扱う。n は render3d のカメラ系法線を世界系に戻さず、光をカメラ系で与える)。
 ``ego=(V, F, color)`` を渡すと自車のメッシュも一緒に描く(世界には足さない)。
 
 空の入力(``world`` が空の dict)は ValueError。

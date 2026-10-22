@@ -50,7 +50,7 @@ is 25.3 waves.
 
 Paraxial: ``W20 = shift/(8 N^2)`` is the small-angle expansion of the exact
 ``shift * (1 - cos theta)`` sag; at ``f/1.5`` (``sin theta = 1/3``) the exact
-edge value is 5.7 % below the paraxial one — the number is a *defocus
+edge value is about 2.9 % above the paraxial one — the number is a *defocus
 convention*, not a high-NA wavefront.
 
 ## ファミリ共通の入力契約(fail-closed)

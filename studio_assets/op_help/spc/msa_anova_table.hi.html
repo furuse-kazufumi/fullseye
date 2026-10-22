@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>crossed 2-factor design (part x operator x repetition) की analysis of variance table (<code style="color:#22d3bf">table</code>)।</p>
 <p>*टेबल* *पार्ट* / *ऑपरेटर* / *वैल्यू* कॉलम वाली एक टेबल है। डिज़ाइन <b>संतुलित</b> है (प्रत्येक वर्ग के लिए दोहराव की संख्या समान है) - यदि यह संतुलित नहीं है, तो इसे अस्वीकार कर दिया जाएगा।</p>
-<p>रिटर्न 6 कॉलम है: स्रोत / एसएस / डीएफ / एमएस / एफ / पी। <code style="color:#22d3bf">f</code> और <code style="color:#22d3bf">p</code> भाग और मापक की पहचान करते हैं। इंटरेक्शन माध्य वर्ग, इंटरेक्शन का परीक्षण त्रुटि माध्य वर्ग (मानक सम्मेलन) के साथ किया जाता है।</p>
+<p>return में source / ss / df / ms / f / p के 6 columns और <code style="color:#22d3bf">n_parts</code> / <code style="color:#22d3bf">n_operators</code> / <code style="color:#22d3bf">n_replicates</code> हैं। <code style="color:#22d3bf">f</code> और <code style="color:#22d3bf">p</code> part और operator को interaction mean square से, और interaction को error mean square से परखे गए मान हैं (मानक की प्रथा)।</p>
 <p>★सटीक पहचान जिसका उपयोग गेट के रूप में किया जा सकता है: <code style="color:#22d3bf">ss_total == ss_part + ss_oper + ss_inter + ss_err</code>। चूँकि यह एक बीजगणितीय अपघटन है, यह हमेशा सत्य होता है चाहे आप विचरण घटकों को कैसे प्राप्त करें - यदि उनमें से एक टूटा हुआ है, तो मेल नहीं खाता. स्वतंत्रता की कोटियाँ भी <code style="color:#22d3bf">df_total == sum</code> से बंद होती हैं।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>

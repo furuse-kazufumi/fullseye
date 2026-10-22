@@ -4,7 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pairs_to_table(pairs)</code> (die Implementierung direkt: <code style="color:#22d3bf">import reprconv; reprconv.pairs_to_table(pairs)</code>; aus dem Register: <code style="color:#22d3bf">opsreprconv.get(&quot;pairs_to_table&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Paare <code style="color:#22d3bf">(N,2)</code> → eine zusammenfassende <code style="color:#22d3bf">table</code>. <b>Einwegs.</b></p>
-<p><code style="color:#22d3bf">x_uniform</code> ist der Test &quot;ist Spalte 0 äquidistant&quot;; Paare, bei denen er False ist, verlieren beim Durchlauf durch <code style="color:#22d3bf">pairs_to_signal</code> stillschweigend x (siehe Docstring oben). Getestet wird über das Verhältnis von größter zu kleinster Differenz, Schwellwert 1e-9 (relativ).</p>
+<p><code style="color:#22d3bf">x_uniform</code> ist der Test &quot;ist Spalte 0 äquidistant&quot;; Paare, bei denen er False ist, verlieren beim Durchlauf durch <code style="color:#22d3bf">pairs_to_signal</code> stillschweigend x (siehe Docstring oben). Getestet wird über den Abstand zwischen größter und kleinster Differenz, Schwellwert 1e-9 relativ zur Gesamtspanne.</p>
 <p>Args:</p>
 <p>pairs: (N, 2).</p>
 <p>Returns:</p>

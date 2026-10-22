@@ -17,7 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 ## 使い方
 
-Third-order (Seidel) aberration sums per surface and total (``table``).
+Third-order (Seidel) aberration sums in ``per_surface`` and ``total``.
 
 Uses the paraxial marginal ray (through the stop edge) and chief ray (through
 the stop centre) at the system's default field (or *field*), with Welford's

@@ -21,7 +21,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 炎・プラズマ・噴流の写真は、奥行き方向に足し合わさった投影しか写らない。各行を中心列で左右に分け、
 2 つの半分を平均してから(左右の非対称を均す)逆 Abel する。``center`` は対称軸の列(既定 = 明るさの重心、
-行ごとではなく画像全体で 1 本)。返り値 ``{"slice", "center", "asymmetry"}`` —— slice は (H, R) の f(z, r)、
+行ごとではなく画像全体で 1 本)。返り値 ``{"slice", "center", "asymmetry"}`` —— slice は (H, R+1) の f(z, r)、
 asymmetry は左右の半分の差の大きさ(0 に近いほど軸対称の仮定が成り立つ)。
 門: 3-D のガウスの塊の投影から、断面のガウスが戻る(閉じた式)。
 

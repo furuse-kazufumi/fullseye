@@ -12,6 +12,10 @@
 <p><code style="color:#22d3bf">anchor</code> 所指的位置(<b>x=col, y=row</b>)。</p>
 <p>anchor : str</p>
 <p><code style="color:#22d3bf">&#x27;lt&#x27;,&#x27;ct&#x27;,&#x27;rt&#x27;,&#x27;lm&#x27;,&#x27;cm&#x27;,&#x27;rm&#x27;,&#x27;lb&#x27;,&#x27;cb&#x27;,&#x27;rb&#x27;</code> 共 9 种。</p>
+<p>font_size : int</p>
+<p>文字大小 [px]。</p>
+<p>font_path : str or None</p>
+<p>使用的字体文件。None 为默认字体。</p>
 <p>pad : int</p>
 <p>表格内侧边距 [px]。</p>
 <p>col_gap : int or None</p>
@@ -19,6 +23,8 @@
 <p>改变字体大小时间距也随之变化。</p>
 <p>row_gap : int</p>
 <p>行之间追加的量 [px] (0 则保持原行距)。</p>
+<p>line_spacing : float</p>
+<p>单元格内多行文本的行距倍率。</p>
 <p>align : str or sequence</p>
 <p><code style="color:#22d3bf">TABLE_ALIGNS</code> 之一,或逐列的序列。<code style="color:#22d3bf">&quot;auto&quot;</code></p>
 <p>(默认)<b>仅当该列的值全部看起来是数字时才右对齐</b>。</p>

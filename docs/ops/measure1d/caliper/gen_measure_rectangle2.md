@@ -18,7 +18,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 ## 使い方
 
 回転測定矩形(長軸 ``phi`` 方向に 1 px 間隔でプロファイルを取る)を定義
-(gen_measure_rectangle2)。サンプル数 n = round(2*length1)+1、始点は
+(gen_measure_rectangle2)。サンプル数 n = max(2, round(2*length1)+1)、始点は
 中心から -(n-1)/2 px の位置。``length2`` は幅方向の平均化幅 [px]。
 
 ## 詳しい使い方ガイド

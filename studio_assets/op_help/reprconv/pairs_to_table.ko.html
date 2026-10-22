@@ -4,7 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pairs_to_table(pairs)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import reprconv; reprconv.pairs_to_table(pairs)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsreprconv.get(&quot;pairs_to_table&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>쌍 <code style="color:#22d3bf">(N,2)</code> → 요약 <code style="color:#22d3bf">table</code>. <b>일방향</b>.</p>
-<p><code style="color:#22d3bf">x_uniform</code>은 &quot;열 0이 등간격인가&quot;의 판정이며, 이것이 False인 쌍을 <code style="color:#22d3bf">pairs_to_signal</code>에 통과시키면 x가 조용히 사라진다(위의 docstring 참조). 판정은 최대 차분과 최소 차분의 비로 하며, 임계값은 1e-9(상대).</p>
+<p><code style="color:#22d3bf">x_uniform</code>은 &quot;열 0이 등간격인가&quot;의 판정이며, 이것이 False인 쌍을 <code style="color:#22d3bf">pairs_to_signal</code>에 통과시키면 x가 조용히 사라진다(위의 docstring 참조). 판정은 최대 차분과 최소 차분의 차로 하며, 임계값은 전체 폭에 대해 1e-9(상대).</p>
 <p>Args:</p>
 <p>pairs: (N, 2).</p>
 <p>Returns:</p>

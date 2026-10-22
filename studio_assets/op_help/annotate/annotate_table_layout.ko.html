@@ -12,6 +12,10 @@
 <p><code style="color:#22d3bf">anchor</code>로 가리키는 위치(<b>x=col, y=row</b>).</p>
 <p>anchor : str</p>
 <p><code style="color:#22d3bf">&#x27;lt&#x27;,&#x27;ct&#x27;,&#x27;rt&#x27;,&#x27;lm&#x27;,&#x27;cm&#x27;,&#x27;rm&#x27;,&#x27;lb&#x27;,&#x27;cb&#x27;,&#x27;rb&#x27;</code>의 9가지.</p>
+<p>font_size : int</p>
+<p>글자 크기 [px].</p>
+<p>font_path : str or None</p>
+<p>사용할 글꼴 파일. None 이면 기본 글꼴.</p>
 <p>pad : int</p>
 <p>표의 안쪽 여백 [px].</p>
 <p>col_gap : int or None</p>
@@ -19,6 +23,8 @@
 <p>글꼴 크기를 바꾸면 간격도 함께 움직인다.</p>
 <p>row_gap : int</p>
 <p>행 사이에 더하는 값 [px] (0이면 줄 간격 그대로).</p>
+<p>line_spacing : float</p>
+<p>셀 안의 여러 줄 텍스트의 줄 간격 배율.</p>
 <p>align : str or sequence</p>
 <p><code style="color:#22d3bf">TABLE_ALIGNS</code> 중 하나, 또는 열별 나열. <code style="color:#22d3bf">&quot;auto&quot;</code></p>
 <p>(기본값)는 <b>그 열의 값이 모두 수로 보일 때만 오른쪽 정렬</b>한다.</p>

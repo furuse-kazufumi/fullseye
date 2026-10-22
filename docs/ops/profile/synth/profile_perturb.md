@@ -25,7 +25,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 Args:
     contour: 元の輪郭。
     kind: 欠陥の種類。
-    amount: 大きさ(翼弦比)。``"twist"`` だけは度。
+    amount: 大きさ。``"twist"`` は度、それ以外は contour の座標と同じ単位。
     extent: ``"le_erosion"`` が及ぶ弦方向の範囲。
     cycles: ``"waviness"`` の波数。
 

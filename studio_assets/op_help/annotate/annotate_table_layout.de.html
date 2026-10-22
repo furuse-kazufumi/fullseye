@@ -12,6 +12,10 @@
 <p>Die Position, auf die <code style="color:#22d3bf">anchor</code> zeigt (<b>x=col, y=row</b>).</p>
 <p>anchor : str</p>
 <p>Eine der 9 Varianten <code style="color:#22d3bf">&#x27;lt&#x27;,&#x27;ct&#x27;,&#x27;rt&#x27;,&#x27;lm&#x27;,&#x27;cm&#x27;,&#x27;rm&#x27;,&#x27;lb&#x27;,&#x27;cb&#x27;,&#x27;rb&#x27;</code>.</p>
+<p>font_size : int</p>
+<p>Schriftgröße [px].</p>
+<p>font_path : str or None</p>
+<p>Zu verwendende Schriftdatei. None bedeutet die Standardschrift.</p>
 <p>pad : int</p>
 <p>Innenabstand der Tabelle [px].</p>
 <p>col_gap : int or None</p>
@@ -19,6 +23,8 @@
 <p>ändert sich der Abstand mit der Schriftgröße.</p>
 <p>row_gap : int</p>
 <p>Zusätzlich zwischen Zeilen [px] (0 belässt den normalen Zeilenabstand).</p>
+<p>line_spacing : float</p>
+<p>Zeilenabstandsfaktor für mehrzeiligen Text in einer Zelle.</p>
 <p>align : str or sequence</p>
 <p>Einer der Werte aus <code style="color:#22d3bf">TABLE_ALIGNS</code> oder eine Folge pro Spalte. <code style="color:#22d3bf">&quot;auto&quot;</code></p>
 <p>(Standard) <b>richtet eine Spalte nur rechtsbündig aus, wenn alle ihre Werte wie Zahlen aussehen</b>.</p>

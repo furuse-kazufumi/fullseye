@@ -55,7 +55,8 @@ and the window disagree by more than float64 can hold).
 
 HALCON: no operator (HALCON has no complex-plane family).
 
-Empty input (``zeros`` with 0 elements) returns an empty result (reason: a rational function without zeros (``1/q``) is a valid mathematical object).
+Empty input (``zeros`` with 0 elements) returns the poles-only field with
+the same shape as ``z`` (reason: an empty product is the multiplicative identity).
 
 ## ファミリ共通の入力契約(fail-closed)
 

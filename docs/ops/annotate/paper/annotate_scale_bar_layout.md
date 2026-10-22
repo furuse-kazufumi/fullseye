@@ -19,7 +19,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 table(dict)を返す: 画像幅の ``target_fraction`` 以下で**切りのよい**長さのバー。
 
-長さは ``1/2/5 × 10^k`` のうち ``target_fraction * W * units_per_pixel`` 以下の
+長さは ``1/2/5 × 10^k`` のうち ``target_fraction * (W - 2*margin) * units_per_pixel`` 以下の
 最大値。画素長 = ``round(length / units_per_pixel)``。
 
 Returns

@@ -468,7 +468,7 @@ def lf_synthesize(slopes=(0.0,), angular=(5, 5), shape=(64, 64), *,
     **Raises** ``ValueError``: an empty or over-long *slopes* list
     (:data:`MAX_LAYERS`), a non-finite or over-large slope
     (:data:`MAX_ABS_SLOPE`), an angular or spatial shape outside
-    ``[1, MAX_ANGULAR]`` / ``[1, MAX_SPATIAL]``, a total size over
+    ``[1, MAX_ANGULAR]`` / ``[2, MAX_SPATIAL]``, a total size over
     :data:`MAX_LF_ELEMENTS`, *coverage* outside ``(0, 1]``, a *texture_sigma*
     so large the smoothed texture's dynamic range falls below
     :data:`MIN_TEXTURE_RANGE`, and an unknown *interp* / *edge*.
@@ -903,7 +903,8 @@ def lf_aperture_mask(angular=(5, 5), shape="circle", *, radius=None,
     :func:`lf_refocus`. Set it to ``False`` to keep 0/1 selection weights.
 
     **Raises** ``ValueError``: an angular shape outside ``[1, MAX_ANGULAR]``, a
-    negative *radius* / *inner* / *sigma*, ``inner >= radius``, an unknown
+    negative *radius* / *inner*, ``inner >= radius`` for an annulus, non-positive
+    *sigma* for a Gaussian, an unknown
     *shape*, and — explicitly rather than returning a field of zeros — a mask
     that selects **no** view at all (an opaque aperture), which would make every
     downstream weighted mean a 0/0.

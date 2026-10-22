@@ -51,7 +51,8 @@ t_end, dt : float
     Integration window and step. ``t_end / dt`` must stay under 4,000,000.
 method : "rk4" | "euler"
 
-Returns a ``states`` table: ``t`` (S,) and ``x`` (S, n).
+Returns a ``states`` table: ``t`` (S,) and one (S,) column per state,
+named ``x0``, ``x1``, ... .
 
 **Raises** ``ValueError``: unknown system or method; wrong parameter count;
 non-finite input; ``dt`` not positive; a step count over the cap; a trajectory

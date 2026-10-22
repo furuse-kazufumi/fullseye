@@ -1853,7 +1853,8 @@ def cplx_rational_field(zeros, poles, gain=1.0, centre=0j, half_width=2.0,
 
     HALCON: no operator (HALCON has no complex-plane family).
 
-    Empty input (``zeros`` with 0 elements) returns an empty result (reason: a rational function without zeros (``1/q``) is a valid mathematical object).
+    Empty input (``zeros`` with 0 elements) returns the poles-only field with
+    the same shape as ``z`` (reason: an empty product is the multiplicative identity).
     """
     op = "cplx_rational_field"
     z = cplx_plane_grid(centre, half_width, shape)
@@ -3025,7 +3026,7 @@ def wave_membrane_mode(kind="rectangular", m=2, n=3, shape=(256, 256), aspect=1.
     :func:`wave_nodal_lines` for the zero set.
 
     **Raises** ``ValueError``: unknown kind; ``m``/``n`` below the valid range;
-    a grid over the cap; non-positive aspect; ``free_edge=False`` combined with
+    a grid over the cap; non-positive aspect; ``free_edge=True`` combined with
     ``m == n`` for the combined mode (the difference vanishes identically).
 
     HALCON: no operator.
@@ -3450,7 +3451,8 @@ def ode_flow_states(system="lorenz", params=None, x0=None, t_end=40.0, dt=0.005,
         Integration window and step. ``t_end / dt`` must stay under 4,000,000.
     method : "rk4" | "euler"
 
-    Returns a ``states`` table: ``t`` (S,) and ``x`` (S, n).
+    Returns a ``states`` table: ``t`` (S,) and one (S,) column per state,
+    named ``x0``, ``x1``, ... .
 
     **Raises** ``ValueError``: unknown system or method; wrong parameter count;
     non-finite input; ``dt`` not positive; a step count over the cap; a trajectory
@@ -3590,7 +3592,8 @@ def dynsys_poincare_section(states, axis=2, value=None, direction=1):
     fractal set. That is a check with a number in it, unlike "the picture looks
     like a strange attractor".
 
-    Returns a ``pairs`` array of the remaining coordinates at each crossing.
+    Returns a two-column ``pairs`` array: the first two remaining coordinates,
+    or the sole remaining coordinate followed by zero for a 2-D state.
 
     **Raises** ``ValueError``: states not (S, n) with S >= 2; axis out of range;
     direction not in (-1, 0, 1); non-finite input; no crossing found (reported,
@@ -3766,7 +3769,7 @@ def dynsys_bifurcation_map(kind="logistic", r_lo=2.5, r_hi=4.0, n_r=800,
 
     Returns a ``pairs`` array of ``(r, x)``.
 
-    **Raises** ``ValueError``: unknown map; ``r_lo >= r_hi``; non-positive counts;
+    **Raises** ``ValueError``: unknown map; ``r_lo >= r_hi``; non-positive retained/grid counts or negative burn-in;
     a grid over the cap; ``x0`` outside the unit interval.
 
     HALCON: no operator.

@@ -4,7 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pairs_to_table(pairs)</code> (to call the implementation directly, <code style="color:#22d3bf">import reprconv; reprconv.pairs_to_table(pairs)</code>; from the registry, <code style="color:#22d3bf">opsreprconv.get(&quot;pairs_to_table&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Pairs <code style="color:#22d3bf">(N,2)</code> → a summary <code style="color:#22d3bf">table</code>. <b>One-way.</b></p>
-<p><code style="color:#22d3bf">x_uniform</code> is the test of &quot;is column 0 equally spaced&quot;; pairs for which it is False silently lose x when passed through <code style="color:#22d3bf">pairs_to_signal</code> (see the docstring above). The test uses the ratio of the largest to the smallest difference, with threshold 1e-9 (relative).</p>
+<p><code style="color:#22d3bf">x_uniform</code> is the test of &quot;is column 0 equally spaced&quot;; pairs for which it is False silently lose x when passed through <code style="color:#22d3bf">pairs_to_signal</code> (see the docstring above). The test uses the spread between the largest and the smallest difference, with threshold 1e-9 relative to the full range.</p>
 <p>Args:</p>
 <p>pairs: (N, 2).</p>
 <p>Returns:</p>

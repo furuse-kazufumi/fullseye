@@ -502,7 +502,7 @@ def abcd_trace(matrix, height_mm=1.0, angle_mrad=0.0):
     Returns a dict: ``height_mm`` and ``angle_mrad`` of the outgoing ray ·
     ``determinant`` of *M* (``= n_in/n_out``; a value that is not 1 for a
     same-medium system means the matrix is wrong, so it is reported rather than
-    assumed) · ``imaging`` — True when ``|B| <= 1e-12 * (1 + |A| + |C| + |D|)``,
+    assumed) · ``imaging`` — True when ``|B| <= 1e-12 * (1 + |A| + |B| + |C| + |D|)``,
     i.e. the output height does not depend on the input angle, which is the
     definition of a conjugate (image) plane.
 
@@ -1078,7 +1078,7 @@ def defocus_from_shift(shift_um=10.0, wavelength_um=0.55, f_number=5.6):
 
     Paraxial: ``W20 = shift/(8 N^2)`` is the small-angle expansion of the exact
     ``shift * (1 - cos theta)`` sag; at ``f/1.5`` (``sin theta = 1/3``) the exact
-    edge value is 5.7 % below the paraxial one — the number is a *defocus
+    edge value is about 2.9 % above the paraxial one — the number is a *defocus
     convention*, not a high-NA wavefront.
     """
     dz = _finite_scalar(shift_um, "shift_um")
@@ -2175,8 +2175,8 @@ def mueller_element(kind="polarizer", angle_deg=0.0, retardance_deg=90.0):
     Jones path and the Mueller path return the **same Stokes vector to 1e-14**,
     which is the only construction that catches a sign slip in either one.
 
-    **Raises** ``ValueError``: an unknown *kind*; non-finite *angle_deg* or
-    *retardance_deg*.
+    **Raises** ``ValueError``: an unknown *kind*; non-finite *angle_deg*; or,
+    for ``kind="retarder"``, non-finite *retardance_deg*.
 
     Ideal, lossless (except the polariser's physical loss), normal-incidence
     elements; no diattenuation-plus-retardance combinations, no depolarisation
@@ -2575,6 +2575,8 @@ def mueller_checks(mueller, tol=1e-9):
     what py-pol (del Hoyo & Sánchez Brea, MIT) exposes as ``is_physical`` /
     ``is_pure`` / ``is_transmissive``, re-implemented from the definitions.
     """
+    if np.ma.isMaskedArray(mueller) or np.iscomplexobj(mueller):
+        raise ValueError("mueller_checks: the matrix must be real and unmasked")
     m = np.asarray(mueller, dtype=np.float64)
     if m.shape != (4, 4):
         raise ValueError("mueller_checks: expected a (4, 4) matrix, got shape %r" % (m.shape,))

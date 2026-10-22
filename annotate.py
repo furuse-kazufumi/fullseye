@@ -1985,7 +1985,7 @@ def rounded_rect(img, rect, radius=8, color="neutral", width=2, fill=False,
     Raises
     ------
     ValueError
-        矩形が画像の外、radius が負か辺の半分を超える、alpha が [0,1] の外。
+        矩形が画像の外、radius が非有限・負・辺の半分を超える、alpha が [0,1] の外。
 
     描画: 画素中心から「角を丸めた矩形」までの距離で内側判定し、``fill=False``
     なら外周から ``max(1, width)`` px 幅の帯だけを載せる(距離判定の 1 段階、
@@ -2008,7 +2008,7 @@ def rounded_rect(img, rect, radius=8, color="neutral", width=2, fill=False,
     x, y, w, h = _rect(rect)
     _check_inside(a, (x, y, w, h), name="rect", what="rounded rectangle")
     r = float(radius)
-    if r < 0:
+    if not np.isfinite(r) or r < 0:
         raise ValueError(f"radius must be >= 0 (got: {radius})")
     if r > min(w, h) / 2.0:
         raise ValueError(f"radius {r} exceeds half of the shorter side ({min(w, h) / 2.0})")
@@ -2020,8 +2020,12 @@ def rounded_rect(img, rect, radius=8, color="neutral", width=2, fill=False,
     cy = np.clip(yy, y + r, y1 - r)
     d = np.hypot(xx - cx, yy - cy)
     inside = (xx >= x) & (xx <= x1) & (yy >= y) & (yy <= y1) & (d <= r + 1e-9)
-    m = inside if fill else (inside & (d >= r - max(1.0, float(width)) + 1e-9)) | (
-        inside & _rect_ring(xx, yy, x, y, x1, y1, width, r))
+    if fill:
+        m = inside
+    else:
+        corner = (xx != cx) & (yy != cy)
+        m = (inside & corner & (d >= r - max(1.0, float(width)) + 1e-9)) | (
+            inside & _rect_ring(xx, yy, x, y, x1, y1, width, r))
     return _blend(a, m.astype(np.float64), _channel_color(a, color, scheme), alpha)
 
 
@@ -2376,7 +2380,7 @@ def annotate_leader_layout(shape, points, labels=None, font_size=12, pad=4, gap=
     -------
     dict
         ``{"n", "gap", "items": [{"point", "elbow", "text_xy", "anchor",
-        "box", "side"}]}``。``box`` は板の ``(x, y, w, h)``。
+        "box", "side", "label"}]}``。``box`` は板の ``(x, y, w, h)``。
 
     Raises
     ------
@@ -2566,7 +2570,7 @@ def annotate_legend(img, labels, xy, anchor="lt", start=1, radius=7.0, color="em
                     font_path=None, min_font_size=9, numbers=None):
     """画像(image2d)を返す: 番号つき丸マーカー × 説明の凡例(:func:`annotate_markers` の対)。
 
-    箱の高さは閉形式 ``2*pad + n*row_h + (n-1)*row_gap``(``row_h = max(2r, 文字高)``)。
+    箱の高さは閉形式 ``2*pad + n*row_h + (n-1)*row_gap``(``row_h = max(ceil(2r), 文字高)``)。
 
     Parameters
     ----------
@@ -2630,8 +2634,8 @@ def annotate_dimension_layout(p0, p1, offset=20.0, extension=6.0, text_gap=8.0):
     """table(dict)を返す: 寸法線の幾何(寸法線・補助線・文字位置)を閉形式で決める。
 
     ``n`` を p0→p1 の左法線(画面座標)として、寸法線は ``p + n*offset``、補助線は
-    ``p`` から ``p + n*(offset+extension)``、文字は寸法線の中点から ``n*text_gap``。
-    ``offset`` の符号で側を選ぶ。
+    ``p`` から ``p + n*(offset + sign(offset)*extension)``、文字は寸法線の中点から
+    ``sign(offset)*n*text_gap``。``offset`` の符号で側を選ぶ。
 
     Returns
     -------
@@ -2810,7 +2814,7 @@ def annotate_scale_bar_layout(shape, units_per_pixel, unit="µm", corner="rb",
                               target_fraction=0.2, margin=14, thickness=5):
     """table(dict)を返す: 画像幅の ``target_fraction`` 以下で**切りのよい**長さのバー。
 
-    長さは ``1/2/5 × 10^k`` のうち ``target_fraction * W * units_per_pixel`` 以下の
+    長さは ``1/2/5 × 10^k`` のうち ``target_fraction * (W - 2*margin) * units_per_pixel`` 以下の
     最大値。画素長 = ``round(length / units_per_pixel)``。
 
     Returns
@@ -3543,10 +3547,10 @@ def annotate_invert(img, mask, draw="fill", width=1.5, mode="complement", alpha=
         領域。真偽か [0,1] の重み。**画像と形が違えば例外**。
     draw : {"fill", "margin"}
         HALCON の ``set_draw`` と同じ語。``"fill"`` は中身ごと、``"margin"``
-        は**輪郭だけ**を反転する。輪郭は太さ ``width`` 画素(整数に丸める)の
-        帯で、領域の内外へ半分ずつ広がる。
+        は**輪郭だけ**を反転する。輪郭は領域の内外へそれぞれ
+        ``max(1, round(width / 2))`` 画素ずつ広がる帯。
     width : float
-        ``draw="margin"`` のときの帯の太さ(画素)。
+        ``draw="margin"`` のときの帯幅を決める値(画素)。
     mode : str
         :data:`INVERT_MODES`。``"complement"`` は地の模様を残し、``"xor"`` は
         模様を残したまま消えないことを保証し、``"contrast"`` は白黒に倒して
@@ -3731,6 +3735,10 @@ def annotate_table_layout(text, xy, anchor="lt", font_size=13, font_path=None, p
         ``anchor`` で指す位置(**x=col, y=row**)。
     anchor : str
         ``'lt','ct','rt','lm','cm','rm','lb','cb','rb'`` の 9 通り。
+    font_size : int
+        文字サイズ [px]。
+    font_path : str or None
+        使用するフォントファイル。None は既定フォント。
     pad : int
         表の内側余白 [px]。
     col_gap : int or None
@@ -3738,6 +3746,8 @@ def annotate_table_layout(text, xy, anchor="lt", font_size=13, font_path=None, p
         フォントサイズを変えれば間隔も一緒に動く。
     row_gap : int
         行の間に足す [px](0 なら行送りのまま)。
+    line_spacing : float
+        セル内の複数行テキストの行送り倍率。
     align : str or sequence
         :data:`TABLE_ALIGNS` のいずれか、または桁ごとの並び。``"auto"``
         (既定)は**その桁の値がすべて数に見えるときだけ右そろえ**にする。

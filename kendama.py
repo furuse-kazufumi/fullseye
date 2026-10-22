@@ -852,7 +852,7 @@ def swing_up_lift(kp: dict, *, apex_above_cup: float = None, T_lift: float = 0.1
     """振り上げ(bang)の持ち上げ量を閉形式で: 玉の頂点が受ける皿の中心の ``apex_above_cup`` 上に来る lift(:func:`swing_up_apex` の逆)。
     頂点 − lift − cup_z = tie_z + lift/2 − L + 2 lift²/(g T²) − lift − cup_z = A を lift の 2 次方程式として正の根。
     既定 A = max(h_c + 0.9 r_b, (top_offset − cup_z) + r_b + 0.035): 玉の下端がけん玉のいちばん高い所を 35 mm 越える頂点
-    (:func:`catch_plan_staged` の hold は玉がそこを越えるまで皿を寄せない。越えている時間 ≈ 2√(2·0.03/g) = 0.17 s で皿を
+    (:func:`catch_plan_staged` の hold は玉がそこを越えるまで皿を寄せない。越えている時間 ≈ 2√(2·0.035/g) = 0.17 s で皿を
     横へ 10 cm 戻す)。減速の加速度 4·lift/T² が g を超えないと玉は飛ばない(ValueError)。
 
     空の入力(``kp`` が空の dict)は ValueError。
@@ -910,7 +910,7 @@ def catch_success_rate(kp: dict, *, n: int = 20, seed: int = 0, noise_pos: float
     知覚: 既定は :func:`noisy_perceiver`(noise_pos [m]、noise_vel [m/s]; 0 なら真値)。``perceiver_factory(i) → perceive`` を
     渡すとそれを使う(試行 i ごとに新しい知覚: :func:`kendamaworld.camera_perceiver` で画像だけから予測する閉ループ)。
     初期状態の揺らぎは知覚によらず seed で決まる(同じ seed なら真値と画像の試行が対になる)。
-    返り値 ``{"rate", "n", "caught_list", "mean_lateral", "catch_times", "end_reasons", "laterals", "starts"}``
+    返り値 ``{"rate", "n", "caught_list", "mean_lateral", "catch_times", "end_reasons", "laterals", "starts", "lift"}``
     (mean_lateral = 捕った試行の捕球時の横ずれの平均、無ければ nan。starts = 各試行の (p0, v0))。``dodge`` / ``clearance`` は
     :func:`swing_up_plan` / :func:`catch_plan_ballistic` へ(既定 = 手元を糸穴の側(−y)へ 10 cm 逃がし、玉が大皿の縁より上に出てから
     皿を戻す: 玉がけん玉を突き抜けない構え。逃がさない (0, 0, 0)・False だと 20 試行すべてで玉が皿胴を突き抜けた —— 測って退けた。
@@ -977,7 +977,7 @@ def hole_detect(img, ball_center, ball_radius, *, dark_ratio: float = 0.45, min_
     かつ色度(RGB / |RGB|)が玉の色度の中央値から ``min_chroma`` 以上離れた(陰になった玉の面は明るさだけが落ちて色度は同じ
     —— 明るさだけで拾うと影を穴と取り違えた、測って退けた)画素の連結成分のうち最大のもの。返り値 ``{"found", "col", "row", "angle" (玉の中心 → 穴の重心の像の角度 [rad]、
     atan2(Δrow, Δcol)), "offset" (距離 / ball_radius: 0 = 正面、→ 1 = 縁), "ellipticity" (短軸 / 長軸、2 次モーメントから:
-    1 = 正面の円、→ 0 = 真横), "area" [px]}``。見つからなければ found False(他は NaN)。
+    1 = 正面の円、→ 0 = 真横), "area" [px]}``。見つからなければ found False、area は 0、他は NaN。
     正面から見た穴の中心は玉の中心と重なり、横へ回るほど縁へ寄って潰れる(offset ≈ sin φ、ellipticity ≈ cos φ、φ = 穴の軸と視線の角)。
     img (H, W, 3)、ball_radius > 0 でなければ ValueError。
 

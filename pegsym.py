@@ -92,7 +92,7 @@ def _halfplanes(p: np.ndarray):
 def polygon_peg(n: int, apothem: float = 5.0e-3, yaw: float = 0.0, cut: float = 0.0, centre=(0.0, 0.0)) -> dict:
     """ペグの断面(反時計回りの頂点列): 正 n 角形(辺心距離 ``apothem`` [m]、面 0 の法線が ``yaw`` [rad])。``cut`` > 0 なら頂点 0
     (面 0 と面 1 の間)を、その頂点の向きを法線とする直線で外接円から ``cut`` [m] 内側で落とす —— キー付き(対称は n = 1)。
-    返り ``vertices``(V, 2)、``n``(形の名目の n 回対称: キー付きは 1)、``apothem``、``circumradius``、``yaw``。
+    返り ``vertices``(V, 2)、``n``(形の名目の n 回対称: キー付きは 1)、``apothem``、``circumradius``、``yaw``、``cut``。
     **Raises** ValueError: n < 3、apothem ≤ 0、cut < 0 か外接円と内接円の差以上(辺が消える)。"""
     n = int(n)
     A = float(apothem)
@@ -185,7 +185,8 @@ def rotation_window(n: int, apothem: float, clearance: float, chamfer: float = 0
         φ = π/n − arccos(x)、x = (A + δ + W) cos(π/n)/A(x ≥ 1 なら窓は半周期 π/n いっぱい)。
     arccos は 1 の近くで丸めの床があるので atan2(√(1 − x²), x) で書く。``peg_vertices``・``hole_vertices`` を渡すと、線形計画
     (:func:`polygon_fit_check`、平行移動も自由)の二分法で正・負の向きの窓も測る(第 2 実装。キー付きはこちらだけ)。
-    返り ``phi_fit``(口でなく最狭部)・``phi_cap``(面取りの口)・``period`` = 2π/n、``M`` = ⌈period/(2 phi_cap)⌉、
+    返り ``phi_fit``(口でなく最狭部)・``phi_cap``(面取りの口)・``period`` = 2π/n、``M`` = ⌈period/(2 cap)⌉
+    (``cap`` は ``mu`` 指定時 ``phi_eff``、それ以外は有限な ``phi_cap``、または ``lp`` の最小窓)、
     ``lp``(``plus``/``minus``: 頂点を渡した時、口に入る窓の両端 = 0 を含む連結な区間。走査は半周期を 360 刻み、端は二分法)。
 
     ``mu`` を渡すと**摩擦で止まる限界**も返す(導出、45° の面取り): 口に載った頂点(面の法線から β = π/n − φ の向き)が面取りを滑り下りる
@@ -294,7 +295,7 @@ def polygon_two_point_depth(peg_vertices, hole_vertices, theta: float, tilt_dir:
     奇数の n(三角形)は面の向かいが頂点なので、どの向きでも内接円の式より深い。偶数の n は面の法線の向きで内接円の式に一致する
     (正方形で 1e-11 m)。内接円の側に 0.03 % まで出る組がある(傾き 6°、面から 15°)。
     返り ``l2``・``circle_in``・``circle_out``・``goli_small_angle``(δ は辺心距離の差の平均、n は頂点数)。
-    **Raises** ValueError: θ ≤ 0 か ≥ 30°、まっすぐでも入らない、depth_max まで二点接触しない。"""
+    **Raises** ValueError: θ ≤ 0 か ≥ 30°、傾けた状態で最狭部に入らない、depth_max まで二点接触しない。"""
     P = _poly(peg_vertices, "polygon_two_point_depth")
     H = _poly(hole_vertices, "polygon_two_point_depth")
     th = float(theta)
@@ -372,7 +373,7 @@ def plane_topview(image, K, R, t, z: float = 0.0, centre=(0.0, 0.0), extent: flo
     カメラは世界 → OpenCV カメラの ``R``・``t``(x_c = R X + t)、内部 ``K``(画素中心が整数の規約)。格子は ``centre`` = (x, y) を中心に
     一辺 ``extent`` [m]、画素 ``res`` [m]。列 = +x、行 = −y(北が上)。下から見た画像(鏡像)もこの図では同じ向きになる。カメラの後ろ・
     画像の外の格子点は ``fill``。返り = (S, S) の濃淡(カラーは輝度にする)。
-    **Raises** ValueError: 画像が 2-D 濃淡か (H, W, 3) でない、K・R が 3×3 でない、t が 3 成分でない、extent ≤ 0、res ≤ 0、S > 4096。"""
+    **Raises** ValueError: 画像が 2-D 濃淡か (H, W, 3/4) でない、K・R が 3×3 でない、t が 3 成分でない、extent ≤ 0、res ≤ 0、S > 4096。"""
     g = _gray(image)
     Km, Rm = np.asarray(K, np.float64), np.asarray(R, np.float64)
     tv = np.asarray(t, np.float64).reshape(-1)

@@ -12,10 +12,9 @@
 <p>Region. Boolesch oder Gewichte in [0,1]. <b>Eine vom Bild abweichende Form ist eine Exception</b>.</p>
 <p>draw : {&quot;fill&quot;, &quot;margin&quot;}</p>
 <p>Dasselbe Wort wie HALCONs <code style="color:#22d3bf">set_draw</code>. <code style="color:#22d3bf">&quot;fill&quot;</code> invertiert samt Innerem, <code style="color:#22d3bf">&quot;margin&quot;</code></p>
-<p>invertiert <b>nur die Kontur</b>. Die Kontur ist ein Band von <code style="color:#22d3bf">width</code> Pixeln Stärke (auf eine Ganzzahl gerundet),</p>
-<p>das sich je zur Hälfte nach innen und außen ausdehnt.</p>
+<p>invertiert <b>nur die Kontur</b>. Die Kontur ist ein Band, das sich jeweils <code style="color:#22d3bf">max(1, round(width / 2))</code> Pixel nach innen und außen aus der Region erstreckt.</p>
 <p>width : float</p>
-<p>Bandstärke (Pixel) bei <code style="color:#22d3bf">draw=&quot;margin&quot;</code>.</p>
+<p>Wert, der bei <code style="color:#22d3bf">draw=&quot;margin&quot;</code> die Bandbreite (Pixel) bestimmt.</p>
 <p>mode : str</p>
 <p><code style="color:#22d3bf">INVERT_MODES</code>. <code style="color:#22d3bf">&quot;complement&quot;</code> erhält das Muster des Grunds, <code style="color:#22d3bf">&quot;xor&quot;</code></p>
 <p>erhält das Muster und garantiert, dass es nicht verschwindet, <code style="color:#22d3bf">&quot;contrast&quot;</code> weicht auf Schwarzweiß aus und</p>

@@ -641,7 +641,7 @@ def mesh_select_lod(lod, distance, focal_px, pixel_tolerance=0.5, use="max_error
 
     Screen-space error ``e_px = error × focal_px / distance`` (pinhole, mesh
     units for *distance*). Returns ``{"level", "error_px", "n_faces",
-    "candidates": [e_px per level]}``; ``use`` picks ``"max_error"`` (safe) or
+    "candidates": [e_px per level], "pixel_tolerance"}``; ``use`` picks ``"max_error"`` (safe) or
     ``"rms_error"``. Level 0 (the input) is chosen when nothing else fits.
     """
     if not isinstance(lod, dict) or "levels" not in lod:
@@ -799,7 +799,7 @@ def pc_lod_chain(points, spacing, levels=3, seed=0):
     ``pc_thinning_report(points, levels[k])`` で数える。メッシュの LOD は
     ``mesh_lod_chain``。
     """
-    P = _points(points)
+    P = _points(points).copy()
     sp = _num(spacing, "spacing", positive=True)
     nl = _int(levels, "levels", 1, 16)
     out, sps = [P], [0.0]

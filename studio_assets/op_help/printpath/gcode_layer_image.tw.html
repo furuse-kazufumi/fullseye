@@ -3,7 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gcode_layer_image(table: &#x27;Any&#x27;, layer: &#x27;int&#x27;, px_per_mm: &#x27;float&#x27; = 10.0, line_width_mm: &#x27;float&#x27; = 0.4, bounds=None, travel: &#x27;bool&#x27; = False) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import printpath; printpath.gcode_layer_image(table: &#x27;Any&#x27;, layer: &#x27;int&#x27;, px_per_mm: &#x27;float&#x27; = 10.0, line_width_mm: &#x27;float&#x27; = 0.4, bounds=None, travel: &#x27;bool&#x27; = False) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsprintpath.get(&quot;gcode_layer_image&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>把一層的路徑繪成<b>帶線寬的點陣</b> <code style="color:#22d3bf">image2d</code>(0 / 1，y 向下 = 列)。</p>
+<p>把一層的路徑繪成<b>帶線寬的點陣</b> <code style="color:#22d3bf">image2d</code>(成形 1、背景 0、繪製移動時為 0.5，y 向下 = 行)。</p>
 <p>只把有擠出的線段以 <code style="color:#22d3bf">line_width_mm</code> 的粗細塗上(<code style="color:#22d3bf">travel=True</code> 時移動也以細線畫出)。像素為 <code style="color:#22d3bf">px_per_mm</code>, 範圍為 <code style="color:#22d3bf">bounds=(xmin, ymin, xmax, ymax)</code> mm(沒有則為整張表 + 2 mm 的留白 —— 若想跨層保持相同範圍, 就傳入它)。這就是「這一層應該看起來是這樣」的期望影像,用 <code style="color:#22d3bf">print_layer_defect_map</code> 與相機的層影像比較。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">printpath 族使用指南</a></p>

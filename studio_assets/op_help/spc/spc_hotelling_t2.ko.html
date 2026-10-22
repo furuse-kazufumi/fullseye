@@ -9,7 +9,7 @@
 <p>T^2_i = (x_i - mu)&#x27; S^-1 (x_i - mu)</p>
 <p>charted against the phase-II control limit::</p>
 <p>UCL = p (m+1)(m-1) / (m (m-p)) * F_{alpha, p, m-p}</p>
-<p>at false-alarm rate <code style="color:#22d3bf">alpha</code> (default 0.0027, the 3-sigma-equivalent). Returns a dict with the per-row <code style="color:#22d3bf">t2</code> array, the <code style="color:#22d3bf">ucl</code>, the integer indices <code style="color:#22d3bf">out_of_control</code>, and <code style="color:#22d3bf">in_control</code>. The mean row (<code style="color:#22d3bf">x == mu</code>) has <code style="color:#22d3bf">T^2 == 0</code> (pinned in the tests).</p>
+<p>at false-alarm rate <code style="color:#22d3bf">alpha</code> (default 0.0027, the 3-sigma-equivalent). Returns a dict with the per-row <code style="color:#22d3bf">t2</code> array, the <code style="color:#22d3bf">ucl</code>, the integer indices <code style="color:#22d3bf">out_of_control</code>, and boolean <code style="color:#22d3bf">in_control</code>. The mean row (<code style="color:#22d3bf">x == mu</code>) has <code style="color:#22d3bf">T^2 == 0</code> (pinned in the tests).</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: a non-2-D / empty *data*, fewer observations than features plus one (covariance not invertible), <code style="color:#22d3bf">alpha</code> outside <code style="color:#22d3bf">(0, 1)</code>, a singular covariance, or non-finite / mislabelled input.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>

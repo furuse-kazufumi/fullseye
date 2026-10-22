@@ -12,6 +12,10 @@
 <p>The position pointed to by <code style="color:#22d3bf">anchor</code> (<b>x=col, y=row</b>).</p>
 <p>anchor : str</p>
 <p>One of the 9 options <code style="color:#22d3bf">&#x27;lt&#x27;,&#x27;ct&#x27;,&#x27;rt&#x27;,&#x27;lm&#x27;,&#x27;cm&#x27;,&#x27;rm&#x27;,&#x27;lb&#x27;,&#x27;cb&#x27;,&#x27;rb&#x27;</code>.</p>
+<p>font_size : int</p>
+<p>Font size [px].</p>
+<p>font_path : str or None</p>
+<p>Font file to use. None means the default font.</p>
 <p>pad : int</p>
 <p>Inner padding of the table [px].</p>
 <p>col_gap : int or None</p>
@@ -19,6 +23,8 @@
 <p>changing the font size moves the spacing along with it.</p>
 <p>row_gap : int</p>
 <p>Added between rows [px] (0 keeps the plain line pitch).</p>
+<p>line_spacing : float</p>
+<p>Line-spacing factor for multi-line text inside a cell.</p>
 <p>align : str or sequence</p>
 <p>One of <code style="color:#22d3bf">TABLE_ALIGNS</code>, or a per-column sequence. <code style="color:#22d3bf">&quot;auto&quot;</code></p>
 <p>(default) <b>right-aligns a column only when all its values look like numbers</b>.</p>

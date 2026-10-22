@@ -17,7 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 ## 使い方
 
-ペグと穴の寸法の表(m・rad): ペグ半径 r、穴半径 R、穴の深さ、面取りの幅と角、ペグ長、摩擦係数、手首剛性、手首カメラ。
+ペグと穴の寸法の表: 長さは m、回転剛性は N m/rad、カメラ像は px、画角は deg。
 
 既定は試作の寸法: r = 5.0 mm、R = 5.2 mm(半径 clearance 0.2 mm、c = 0.0385)、深さ 20 mm、45° の面取り 1 mm、ペグ 40 mm、
 μ = 0.3(MuJoCo の滑り摩擦)。``n_seg`` は穴の壁を近似する箱の数(MJCF)、``k_trans`` [N/m]・``k_rot`` [N m/rad] は

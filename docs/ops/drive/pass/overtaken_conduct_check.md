@@ -23,7 +23,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 "route_bus" / "trolleybus")以外で、追いついた車の最高速度が高い(``overtaker_higher_limit``)か、同じか低くても
 その速さより遅く進み続ける(``continuing_slower``)とき。その間 [t_caught, t_passed] に **速度を増した量** =
 max_t (v(t) − min_{s ≤ t} v(s)) が ``tol``(**仮定** 0.2 m/s)を超えると ``speed_increased``。
-27 条 2 項: 車両通行帯の無い道路(``lanes`` が偽)で中央との間の余地 ``room`` < ``room_needed`` なら ``must_yield_left``。
+27 条 2 項: 1 項の対象条件 ``applies`` を満たし、車両通行帯の無い道路(``lanes`` が偽)で中央との間の余地 ``room`` < ``room_needed`` なら ``must_yield_left``。
 返り値: ``applies``、``increase``、``violations``、``must_yield_left``。
 
 ## 参考(サンプルデータ・文献)

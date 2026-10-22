@@ -1709,9 +1709,9 @@ def riesz_displacement(video, f_lo, f_hi, fps, scales: int = 4) -> dict:
     Per radial band, the temporal phase deviation obeys
     ``dphi = -(kx*dx + ky*dy)`` where ``(kx, ky)`` is the local wave vector —
     here ``k * n``, with the *direction* ``n`` read straight off the Riesz pair
-    (continuous, per pixel) and the *magnitude* ``k`` from the spectral
-    derivative ``Im(conj(z) d_n z)/|z|^2``. Each band gives one linear
-    constraint on the same two unknowns and the bands are combined per pixel by
+    (continuous, per pixel) and the *magnitude* ``k`` from the
+    closed-form monogenic identities ``dI/dx = -|k| R1`` and ``dI/dy = -|k| R2``.
+    Each band gives one linear constraint on the same two unknowns and the bands are combined per pixel by
     weighted least squares with weights ``|z|^2``, solved by the closed-form 2x2
     pseudo-inverse so that a rank-1 pixel (the aperture problem) returns the
     component that *was* observed and exactly zero in the direction nothing

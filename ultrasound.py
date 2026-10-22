@@ -72,6 +72,7 @@ from __future__ import annotations
 import math
 
 import numpy as np
+import materials as _materials
 
 __all__ = [
     "acoustic_material_table",
@@ -117,60 +118,19 @@ def _cl_from_K_G(K, G, rho):
 _WATER_ALPHA0 = 2.17e-3 / DB_PER_NP * 100.0 / 1.0e12
 
 _MATERIALS = {
-    "water": {
-        "rho": 998.0, "c": 1481.0, "alpha0": _WATER_ALPHA0, "alpha_n": 2.0, "verified": True,
-        "source": "c = 1481 m/s at 20 C (Wikipedia 'Speed of sound', fresh water); rho = 998 kg/m3 "
-                  "lies between the tabulated 999.84 (0 C) and 997.05 (25 C) of Wikipedia "
-                  "'Properties of water' (interpolated, +-0.2 %%); attenuation 2.17e-3 dB/(cm MHz^2) "
-                  "(Szabo 2004 power law, as quoted beside Pinkerton 1949 in the open-source k-Wave "
-                  "attenuationWater help) = %.4g Np/(m Hz^2)" % _WATER_ALPHA0,
-        "uncertainty": "c and rho ~0.2 % (temperature: c moves ~3 m/s per K near 20 C); alpha ~10 %",
-    },
-    "silicon": {
-        "rho": 2329.0, "c": 8430.0, "alpha0": 0.0, "alpha_n": 2.0, "verified": True,
-        "source": "[100] longitudinal V_L = sqrt(C11/rho) = 8.43e5 cm/s with C11 = 16.60e11 dyn/cm2 "
-                  "(McSkimin 1953) and rho = 2.329 g/cm3, Ioffe Institute NSM database 'Si - "
-                  "mechanical properties'. Attenuation NOT verified: set to 0 (assumption)",
-        "uncertainty": "c, rho < 1 % for [100]; [110]/[111] are 9.13e5 / 9.36e5 cm/s (anisotropy); "
-                       "attenuation unverified",
-    },
-    "sio2": {
-        "rho": 2203.0, "c": _cl_from_E_nu(71.7e9, 0.17, 2203.0), "alpha0": 0.0, "alpha_n": 2.0,
-        "verified": True,
-        "source": "fused silica: rho = 2.203 g/cm3, E = 71.7 GPa, nu = 0.17 (Wikipedia 'Fused quartz'); "
-                  "c = sqrt(E(1-nu)/(rho(1+nu)(1-2nu))) computed here. Attenuation set to 0 (thin layers)",
-        "uncertainty": "bulk fused silica; deposited bonding oxides (PECVD, thermal) differ by an "
-                       "unverified amount - treat as representative",
-    },
-    "copper": {
-        "rho": 8935.0, "c": _cl_from_K_G(140e9, 48e9, 8935.0), "alpha0": 0.0, "alpha_n": 1.0,
-        "verified": True,
-        "source": "rho = 8.935 g/cm3 at 20 C, bulk modulus 140 GPa, shear modulus 48 GPa "
-                  "(Wikipedia 'Copper' infobox); c = sqrt((K + 4G/3)/rho) computed here. "
-                  "Attenuation set to 0 (micrometre layers)",
-        "uncertainty": "polycrystalline average; the same infobox gives E = 110-128 GPa, nu = 0.34, "
-                       "which spans c = 4.4-4.8 km/s - about +-5 %",
-    },
-    "air": {
-        "rho": 1.2041, "c": 343.0, "alpha0": 0.0, "alpha_n": 2.0, "verified": True,
-        "source": "c = 343 m/s and rho = 1.2041 kg/m3 at 20 C (Wikipedia 'Speed of sound'). "
-                  "Attenuation irrelevant for sub-micrometre gaps (set to 0)",
-        "uncertainty": "continuum value; a 0.1 um gap is comparable to the mean free path, but the "
-                       "echo is ~-1 for any gap above a few nm",
-    },
-    "polyimide": {
-        "rho": 1420.0, "c": 2300.0, "alpha0": 1.0e-6, "alpha_n": 1.0, "verified": False,
-        "source": "UNVERIFIED representative placeholder (no freely readable primary source was "
-                  "read). Pass allow_unverified=True and replace with your own measured values",
-        "uncertainty": "unknown",
-    },
-    "epoxy_underfill": {
-        "rho": 1800.0, "c": 2800.0, "alpha0": 2.0e-6, "alpha_n": 1.0, "verified": False,
-        "source": "UNVERIFIED representative placeholder for a filled epoxy (no source read). Pass "
-                  "allow_unverified=True and replace with your own measured values",
-        "uncertainty": "unknown",
-    },
+    "water": "WATER", "silicon": "SI", "sio2": "SILICA", "copper": "CU",
+    "air": "AIR", "polyimide": "POLYIMIDE", "epoxy_underfill": "EPOXY_UNDERFILL",
 }
+
+
+def _builtin_material(key):
+    """材料ライブラリの音響物性を従来の ultrasound 内部形式へ写す薄いビュー。"""
+    a = _materials.material_acoustic(_MATERIALS[key])
+    return {"rho": a["density_kg_m3"], "c": a["sound_speed_longitudinal_m_s"],
+            "alpha0": a["acoustic_attenuation_coefficient_np_per_m_hz_power"],
+            "alpha_n": a["acoustic_attenuation_frequency_exponent"],
+            "verified": a["verified"], "source": a["acoustic_source"],
+            "uncertainty": a["uncertainty"]}
 
 
 # --------------------------------------------------------------------------- #
@@ -205,7 +165,7 @@ def _material(spec, op, allow_unverified):
         if key not in _MATERIALS:
             raise ValueError("%s: unknown material %r (known: %s; or pass a dict with rho and c)"
                              % (op, spec, ", ".join(sorted(_MATERIALS))))
-        m = dict(_MATERIALS[key])
+        m = _builtin_material(key)
         if not m["verified"] and not allow_unverified:
             raise ValueError("%s: material %r has unverified constants (%s); pass "
                              "allow_unverified=True to use it knowingly" % (op, key, m["source"]))
@@ -261,7 +221,8 @@ def acoustic_material_table():
     Raises: 何も拒まない(引数が無い)。返す dict は毎回の複製で、書き換えても表は変わらない。
     """
     out = {}
-    for k, m in _MATERIALS.items():
+    for k in _MATERIALS:
+        m = _builtin_material(k)
         e = dict(m)
         e["Z"] = m["rho"] * m["c"]
         out[k] = e
@@ -504,7 +465,7 @@ def echo_phase_polarity(echo, interface=1, half_width=None, reference_interface=
     ★基準は**表面エコー**。表面そのものが Z の下がる界面(水より柔らかい最上層)なら表面
     エコーが反転しているので、Z の上がる深い界面が「反転」と読まれる —— 分類は「表面に対して
     同じ向きか逆向きか」であって、絶対の Z の上下ではない(``tests/test_ultrasound.py`` の門)。
-    ★``signed_peak``(ゲート内で |RF| が最大のサンプルの符号)も返す —— 現場で言う
+    ★``signed_peak``(ゲート内で |RF| が最大のサンプルの、参照エコーに対する相対符号)も返す —— 現場で言う
     「極性」はこれだが、直交のエコー(薄い層の微分形)では帯域と標本化でどちらにも
     転ぶ。``signed_peak_agrees`` が False の行はそれ。
     返り(A スキャン): ``phase`` [rad] ``phase_deg`` ``amplitude`` ``t_peak`` ``polarity``

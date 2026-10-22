@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>no-stopping-or-parking खंडों (मिलाए गए (k, 2)) से बचते हुए, वाहन का body [rear, rear + car_length] पूरा समा सके ऐसी <b>पिछले सिरे की स्थितियों</b> के अंतराल (m, 2)।</p>
 <p>अंतराल के ठीक सिरे (जैसे दूरी ठीक 5 m) निषिद्ध पक्ष में गिने जाते हैं (&quot;भीतर&quot;), इसलिए वाहन का ढाँचा केवल सिरे को छूए तो अनुमति है (बंद अंतरालों के पूरक का संवरण)।</p>
-<p>खाली इनपुट (<code style="color:#22d3bf">merged</code> में 0 तत्व) खाली परिणाम लौटाता है (कारण: निषिद्ध अंतराल 0 हों तो पूरी सड़क ही सही उत्तर है। no_stopping_zones सुविधाएँ होने पर भी खाली merged लौटा सकता है (जब केवल सेवा-समय के बाहर के बस स्टॉप हों))।</p>
+<p>खाली input (<code style="color:#22d3bf">merged</code> में 0 elements) पूरी सड़क से वाहन की लंबाई घटाकर interval लौटाता है (कारण: कोई prohibited interval न हो तो पूरी सड़क सही उत्तर है)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

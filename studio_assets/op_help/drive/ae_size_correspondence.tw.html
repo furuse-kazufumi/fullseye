@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>AE 頻帶功率與 D50 的對應關係(單調性、相關性、log–log 斜率 α，<code style="color:#22d3bf">P ∝ D50^α</code>)。</p>
 <p>傳入 <code style="color:#22d3bf">group</code> 則按群(材料)分別輸出(不同材料的功率水準差了數個數量級,混在一起的相關會撿到水準的差異 —— <code style="color:#22d3bf">pooled</code> 僅供參考)。</p>
-<p>回傳: 群 → <code style="color:#22d3bf">n</code>、<code style="color:#22d3bf">spearman</code>(等級相關)、<code style="color:#22d3bf">alpha</code>(以 ln P 對 ln D50 擬合的斜率)、<code style="color:#22d3bf">sign_agree</code>(所有配對中「D50 較大者 P 也較大」的比例)。<b>只有 2 個點時 spearman 只能取 ±1</b>(務必一併列出 <code style="color:#22d3bf">n</code>)。</p>
+<p>回傳: <code style="color:#22d3bf">{&quot;groups&quot;: 群 → 結果, &quot;pooled&quot;: 全部點的參考結果}</code>。各結果含 <code style="color:#22d3bf">n</code>、<code style="color:#22d3bf">spearman</code>(等級相關)、<code style="color:#22d3bf">alpha</code>(以 ln P 對 ln D50 擬合的斜率)、<code style="color:#22d3bf">sign_agree</code>(所有配對中「D50 較大者 P 也較大」的比例)。<b>只有 2 個點時 spearman 只能取 ±1</b>(務必一併列出 <code style="color:#22d3bf">n</code>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

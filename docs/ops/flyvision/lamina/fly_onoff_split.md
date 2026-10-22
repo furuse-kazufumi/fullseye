@@ -42,7 +42,8 @@ the same ommatidium order in each half.
 Ground truth (exact, with ``tau_on_s == tau_off_s`` so the two channels share
 one filter):
 
-  * ``ON - OFF`` is the low-passed input, whichever *rectify* you chose;
+  * with ``rectify=True``, ``ON - OFF`` is the low-passed input; with
+    ``rectify=False`` it is twice the low-passed input;
   * with ``rectify=True``, ``ON + OFF`` is the low-passed **absolute value**;
   * a movie that never goes negative leaves the OFF channel identically zero
     (and vice versa) — the split does not invent a dark event.
