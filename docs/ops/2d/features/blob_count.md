@@ -40,6 +40,9 @@ Number of connected components in the region (HALCON `count_obj`).
 8 連結。従来は scipy.ndimage.label の既定 = 4 連結で、対角接触した 2 画素を
 2 個と数えていた: KNOWN_ISSUES #1)。旧 4 連結は connectivity=4 で。
 
+Raises:
+    FsValueError: NaN / inf を含む画像。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_features ファミリ ガイド](../guides/gallery2d_features.md)

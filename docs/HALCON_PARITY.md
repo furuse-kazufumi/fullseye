@@ -31,3 +31,13 @@ excluded here, not counted).
   trained-model/proprietary chapters (OCR/Classification/Deep-Learning/3D/
   Calibration), where only generic approximations are possible.
 - Coverage counts a nearest functional analogue, not signature-level parity.
+
+## Compatibility profile (H15)
+
+| profile | ops |
+|---|---:|
+| contract_verified | 2 |
+| functional_analogue | 510 |
+| unknown | 0 |
+
+Unknown is never promoted to PASS.

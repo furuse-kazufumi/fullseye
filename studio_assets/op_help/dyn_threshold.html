@@ -15,6 +15,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>局所しきい値処理。局所平均(窓一辺 <code style="color:#22d3bf">_k(a)</code> の <code style="color:#22d3bf">uniform_filter</code>)にオフセット <code style="color:#22d3bf">(b-0.5)*0.4</code> を加えたものをしきい値として使う ―― 照明ムラのある画像でも局所的なコントラストで前景を抽出できる。HALCON の <code style="color:#22d3bf">dyn_threshold</code>（Segment an image using a local threshold.）に相当。</p>
 <p><code style="color:#22d3bf">a</code> が局所平均の窓サイズを、<code style="color:#22d3bf">b</code> がオフセット(しきい値を上下に振る量) を振る。両方が使われる。</p>
+<p>Raises:</p>
+<p>FsValueError: NaN / inf を含む画像。</p>
 <p><b>端の扱い</b>: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 <code style="color:#22d3bf">reflect</code>)(実測。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>)。</p>
 <p><b>つまみ(実測)</b>: <code style="color:#22d3bf">a</code> は<b>段階的</b>に効き、切り替わるのは a ≈ 0.25、0.49、0.75(実測。刻み 0.02 の掃きで測った位置)。</p>
 <p><b>何も写っていないフレーム(実測)</b>: 明るさが一様な画像を入れると、<b>明るさに関係なく空(全画素が背景 0)</b>になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。</p>

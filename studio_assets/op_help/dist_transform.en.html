@@ -15,6 +15,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Euclidean distance transform. Equivalent to HALCON&#x27;s <code style="color:#22d3bf">distance_transform</code> (Compute the distance transformation of a region.).</p>
 <p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> are unused. For each foreground pixel it computes the Euclidean distance to the nearest background pixel (<code style="color:#22d3bf">scipy.ndimage.distance_transform_edt</code>) and normalises with <code style="color:#22d3bf">_norm</code> so that the maximum within that image becomes 1 (absolute distances cannot be compared between images). Used as preprocessing for skeletonisation, detection of grain centres, and so on.</p>
+<p>Raises:</p>
+<p>FsValueError: The image contains NaN / inf.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
