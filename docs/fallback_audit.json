@@ -1,0 +1,300 @@
+{
+  "header": {
+    "scan_date": "2026-10-22",
+    "command": "py -3.11 tools/audit_fallbacks.py",
+    "modules": [
+      "ops.py",
+      "fslib.py",
+      "image_gen.py",
+      "geometry2d.py",
+      "regions_gen.py",
+      "regions_setops.py",
+      "region_morph.py",
+      "opsblob.py",
+      "blob2d.py",
+      "imagemorph.py",
+      "morph_minkowski.py"
+    ]
+  },
+  "counts": {
+    "fail_closed": 3,
+    "documented_fallback": 6,
+    "silent_fallback": 0,
+    "legitimate_empty": 18,
+    "undecided": 1
+  },
+  "sites": [
+    {
+      "module": "blob2d.py",
+      "function": "_convex_area",
+      "line": 273,
+      "exception_types": [],
+      "returned_or_assigned": "0.0",
+      "classification": "legitimate_empty",
+      "reason": "空入力を明示的に検査して空の値を返す経路"
+    },
+    {
+      "module": "blob2d.py",
+      "function": "blob_select",
+      "line": 534,
+      "exception_types": [],
+      "returned_or_assigned": "np.zeros_like(lab)",
+      "classification": "legitimate_empty",
+      "reason": "空入力を明示的に検査して空の値を返す経路"
+    },
+    {
+      "module": "blob2d.py",
+      "function": "blob_select_largest",
+      "line": 559,
+      "exception_types": [],
+      "returned_or_assigned": "np.zeros_like(lab)",
+      "classification": "legitimate_empty",
+      "reason": "空入力を明示的に検査して空の値を返す経路"
+    },
+    {
+      "module": "fslib.py",
+      "function": "Region.runs",
+      "line": 111,
+      "exception_types": [],
+      "returned_or_assigned": "np.zeros((0, 3), dtype=np.int32)",
+      "classification": "legitimate_empty",
+      "reason": "空入力を明示的に検査して空の値を返す経路"
+    },
+    {
+      "module": "fslib.py",
+      "function": "Seq.__post_init__",
+      "line": 281,
+      "exception_types": [
+        "TypeError, ValueError"
+      ],
+      "returned_or_assigned": "-",
+      "classification": "fail_closed",
+      "reason": "捕捉した例外をリポジトリ側の例外として送出する経路"
+    },
+    {
+      "module": "fslib.py",
+      "function": "_have_cv2",
+      "line": 460,
+      "exception_types": [
+        "Exception"
+      ],
+      "returned_or_assigned": "False",
+      "classification": "documented_fallback",
+      "reason": "optional backendの既存選択機構が不在をFalseとして扱う"
+    },
+    {
+      "module": "geometry2d.py",
+      "function": "_cs_pts",
+      "line": 128,
+      "exception_types": [],
+      "returned_or_assigned": "np.concatenate([np.asarray(c, float) for c in cs], 0) if cs else np.zeros((0, 2))",
+      "classification": "legitimate_empty",
+      "reason": "空入力を明示的に検査して空の値を返す経路"
+    },
+    {
+      "module": "geometry2d.py",
+      "function": "distance_cc_min",
+      "line": 137,
+      "exception_types": [],
+      "returned_or_assigned": "0.0",
+      "classification": "legitimate_empty",
+      "reason": "空入力を明示的に検査して空の値を返す経路"
+    },
+    {
+      "module": "geometry2d.py",
+      "function": "distance_cc",
+      "line": 146,
+      "exception_types": [],
+      "returned_or_assigned": "0.0",
+      "classification": "legitimate_empty",
+      "reason": "空入力を明示的に検査して空の値を返す経路"
+    },
+    {
+      "module": "geometry2d.py",
+      "function": "distance_contours_xld",
+      "line": 155,
+      "exception_types": [],
+      "returned_or_assigned": "0.0",
+      "classification": "legitimate_empty",
+      "reason": "空入力を明示的に検査して空の値を返す経路"
+    },
+    {
+      "module": "geometry2d.py",
+      "function": "distance_lc",
+      "line": 245,
+      "exception_types": [],
+      "returned_or_assigned": "0.0",
+      "classification": "legitimate_empty",
+      "reason": "空入力を明示的に検査して空の値を返す経路"
+    },
+    {
+      "module": "geometry2d.py",
+      "function": "distance_lr",
+      "line": 254,
+      "exception_types": [],
+      "returned_or_assigned": "0.0",
+      "classification": "legitimate_empty",
+      "reason": "空入力を明示的に検査して空の値を返す経路"
+    },
+    {
+      "module": "geometry2d.py",
+      "function": "distance_sr",
+      "line": 263,
+      "exception_types": [],
+      "returned_or_assigned": "0.0",
+      "classification": "legitimate_empty",
+      "reason": "空入力を明示的に検査して空の値を返す経路"
+    },
+    {
+      "module": "geometry2d.py",
+      "function": "distance_cc_min_points",
+      "line": 272,
+      "exception_types": [],
+      "returned_or_assigned": "{'distance': 0.0}",
+      "classification": "legitimate_empty",
+      "reason": "空入力を明示的に検査して空の値を返す経路"
+    },
+    {
+      "module": "image_gen.py",
+      "function": "_img",
+      "line": 16,
+      "exception_types": [
+        "TypeError, ValueError"
+      ],
+      "returned_or_assigned": "-",
+      "classification": "fail_closed",
+      "reason": "捕捉した例外をリポジトリ側の例外として送出する経路"
+    },
+    {
+      "module": "image_gen.py",
+      "function": "_region",
+      "line": 32,
+      "exception_types": [
+        "TypeError, ValueError"
+      ],
+      "returned_or_assigned": "-",
+      "classification": "fail_closed",
+      "reason": "捕捉した例外をリポジトリ側の例外として送出する経路"
+    },
+    {
+      "module": "ops.py",
+      "function": "_MatchCtx.__getitem__",
+      "line": 102,
+      "exception_types": [
+        "AttributeError"
+      ],
+      "returned_or_assigned": "self._shared[key]",
+      "classification": "documented_fallback",
+      "reason": "docstringにスレッドローカル値の共有fallbackが明記されている"
+    },
+    {
+      "module": "ops.py",
+      "function": "_effective_bit_depth",
+      "line": 1271,
+      "exception_types": [],
+      "returned_or_assigned": "1.0 / 16.0",
+      "classification": "legitimate_empty",
+      "reason": "空入力を明示的に検査して空の値を返す経路"
+    },
+    {
+      "module": "ops.py",
+      "function": "_ncc_locate",
+      "line": 1759,
+      "exception_types": [],
+      "returned_or_assigned": "np.array([0.0, 0.0, 0.0])",
+      "classification": "legitimate_empty",
+      "reason": "空入力を明示的に検査して空の値を返す経路"
+    },
+    {
+      "module": "ops.py",
+      "function": "_shape_locate",
+      "line": 2085,
+      "exception_types": [],
+      "returned_or_assigned": "np.array([0.0, 0.0, 0.0, 0.0])",
+      "classification": "legitimate_empty",
+      "reason": "空入力を明示的に検査して空の値を返す経路"
+    },
+    {
+      "module": "ops.py",
+      "function": "module_requirements",
+      "line": 2473,
+      "exception_types": [
+        "Exception"
+      ],
+      "returned_or_assigned": "tree = None",
+      "classification": "documented_fallback",
+      "reason": "docstringに代替経路が明記されている"
+    },
+    {
+      "module": "ops.py",
+      "function": "<module>",
+      "line": 2542,
+      "exception_types": [
+        "Exception"
+      ],
+      "returned_or_assigned": "pass",
+      "classification": "documented_fallback",
+      "reason": "optional backendの失敗をFAILED_BACKENDSと台帳へ記録する既存機構"
+    },
+    {
+      "module": "ops.py",
+      "function": "<module>",
+      "line": 2550,
+      "exception_types": [
+        "Exception"
+      ],
+      "returned_or_assigned": "pass",
+      "classification": "documented_fallback",
+      "reason": "optional backendの失敗をFAILED_BACKENDSと台帳へ記録する既存機構"
+    },
+    {
+      "module": "ops.py",
+      "function": "_label_guarded_functions_with_their_op_name",
+      "line": 2819,
+      "exception_types": [
+        "AttributeError, TypeError"
+      ],
+      "returned_or_assigned": "pass",
+      "classification": "documented_fallback",
+      "reason": "変更不能なbuiltin/partialを飛ばす補助的なラベル処理"
+    },
+    {
+      "module": "ops.py",
+      "function": "apply_genome",
+      "line": 2933,
+      "exception_types": [
+        "Exception"
+      ],
+      "returned_or_assigned": "m = 0.0",
+      "classification": "undecided",
+      "reason": "tests/test_known_bugs.py::test_apply_genome_handles_contour_ending_pipelineが例外を許さないため変更を保留"
+    },
+    {
+      "module": "regions_setops.py",
+      "function": "_bbox",
+      "line": 65,
+      "exception_types": [],
+      "returned_or_assigned": "None",
+      "classification": "legitimate_empty",
+      "reason": "空入力を明示的に検査して空の値を返す経路"
+    },
+    {
+      "module": "regions_setops.py",
+      "function": "select_region_spatial",
+      "line": 114,
+      "exception_types": [],
+      "returned_or_assigned": "[]",
+      "classification": "legitimate_empty",
+      "reason": "空入力を明示的に検査して空の値を返す経路"
+    },
+    {
+      "module": "regions_setops.py",
+      "function": "get_region_polygon",
+      "line": 187,
+      "exception_types": [],
+      "returned_or_assigned": "np.zeros((0, 2))",
+      "classification": "legitimate_empty",
+      "reason": "空入力を明示的に検査して空の値を返す経路"
+    }
+  ]
+}

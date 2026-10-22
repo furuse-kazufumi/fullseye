@@ -7,20 +7,51 @@ from __future__ import annotations
 
 import numpy as np
 
-
-def _img(a):
-    return np.asarray(a, dtype=np.float64)
+from fslib import FsTypeError, FsValueError
 
 
-def _as_image_domain(value):
+def _img(a, operator="image operator"):
+    try:
+        value = np.asarray(a)
+    except (TypeError, ValueError) as exc:
+        raise FsTypeError("%s: image input must be a numeric 2-D array: %s" %
+                          (operator, exc)) from exc
+    if value.ndim != 2 or value.dtype.kind not in "iuf":
+        raise FsTypeError("%s: image input must be a numeric 2-D array, got shape %r and dtype %s"
+                          % (operator, value.shape, value.dtype))
+    image = value.astype(np.float64, copy=False)
+    if not np.isfinite(image).all():
+        raise FsValueError("%s: image input contains NaN or infinity" % operator)
+    return image
+
+
+def _region(value, shape, operator):
+    """Validate a domain mask without inferring its sort from numeric pixels."""
+    try:
+        mask = np.asarray(value)
+    except (TypeError, ValueError) as exc:
+        raise FsTypeError("%s: region input must be a bool 2-D array: %s" %
+                          (operator, exc)) from exc
+    if mask.ndim != 2 or mask.dtype != np.bool_:
+        raise FsTypeError("%s: region input must be a bool 2-D array, got shape %r and dtype %s"
+                          % (operator, mask.shape, mask.dtype))
+    if mask.shape != shape:
+        raise FsValueError("%s: image shape %r does not match region shape %r" %
+                           (operator, shape, mask.shape))
+    return mask
+
+
+def _as_image_domain(value, operator="image operator"):
     """Return an image and its explicit domain, accepting either public form."""
     if isinstance(value, dict):
-        im = _img(value["image"])
-        domain = np.asarray(value["domain"], dtype=bool)
+        if "image" not in value or "domain" not in value:
+            raise FsTypeError("%s: domain image requires image and domain keys" % operator)
+        im = _img(value["image"], operator)
+        domain = _region(value["domain"], im.shape, operator)
         if domain.shape != im.shape:
             raise ValueError("image and domain must have the same shape")
         return im, domain
-    im = _img(value)
+    im = _img(value, operator)
     return im, np.ones(im.shape, dtype=bool)
 
 
@@ -62,29 +93,34 @@ def gen_image1_rect(image, row, col, width, height) -> np.ndarray:
 def change_domain(image, region, *, keep_pixels: bool = False):
     """Replace the domain with ``region``.
 
-    The default zeroes outside pixels for compatibility. ``keep_pixels=True``
+    An empty region is valid and returns a dictionary whose ``image`` is a
+    float64 array and whose ``domain`` is an all-false bool array of the input
+    shape. The default zeroes outside pixels for compatibility. ``keep_pixels=True``
     retains the untouched matrix, which is the HALCON reference policy.
     Example: ``change_domain(np.ones((2, 2)), [[1, 0], [0, 0]], keep_pixels=True)``.
     """
-    im, _ = _as_image_domain(image); m = np.asarray(region, bool)
+    im, _ = _as_image_domain(image, "change_domain")
+    m = _region(region, im.shape, "change_domain")
     if not isinstance(keep_pixels, (bool, np.bool_)):
-        raise ValueError("keep_pixels must be a bool")
+        raise FsTypeError("change_domain: keep_pixels must be a bool")
     return {"image": im.copy() if keep_pixels else np.where(m, im, 0.0), "domain": m}
 
 
 def reduce_domain(image, region, *, keep_pixels: bool = False):
     """Intersect the existing domain with ``region``.
 
-    The default zeroes outside pixels for compatibility. ``keep_pixels=True``
+    An empty region is valid and returns a dictionary whose ``image`` is a
+    float64 array and whose ``domain`` is an all-false bool array of the input
+    shape. The default zeroes outside pixels for compatibility. ``keep_pixels=True``
     retains the untouched matrix, which is the HALCON reference policy. Plain
     arrays start with a full domain. Array-only consumers ignore explicit
     domains; the functions in this module which accept dictionaries preserve
     them. Example: ``reduce_domain(np.ones((2, 2)), [[1, 0], [0, 0]], keep_pixels=True)``.
     """
     if not isinstance(keep_pixels, (bool, np.bool_)):
-        raise ValueError("keep_pixels must be a bool")
-    im, domain = _as_image_domain(image)
-    m = domain & np.asarray(region, bool)
+        raise FsTypeError("reduce_domain: keep_pixels must be a bool")
+    im, domain = _as_image_domain(image, "reduce_domain")
+    m = domain & _region(region, im.shape, "reduce_domain")
     return {"image": im.copy() if keep_pixels else np.where(m, im, 0.0), "domain": m}
 
 
