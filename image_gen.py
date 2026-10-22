@@ -16,7 +16,7 @@ def _img(a, operator="image operator"):
     except (TypeError, ValueError) as exc:
         raise FsTypeError("%s: image input must be a numeric 2-D array: %s" %
                           (operator, exc)) from exc
-    if value.ndim != 2 or value.dtype.kind not in "iuf":
+    if value.ndim != 2 or value.dtype.kind not in "biuf":
         raise FsTypeError("%s: image input must be a numeric 2-D array, got shape %r and dtype %s"
                           % (operator, value.shape, value.dtype))
     image = value.astype(np.float64, copy=False)
@@ -26,15 +26,25 @@ def _img(a, operator="image operator"):
 
 
 def _region(value, shape, operator):
-    """Validate a domain mask without inferring its sort from numeric pixels."""
+    """Validate a domain mask: bool, or a numeric 0/1 mask (the documented list form).
+
+    A numeric array with values other than 0 and 1 is not a mask (it is most
+    likely an image passed in the region's place) and is rejected instead of
+    being silently thresholded.
+    """
     try:
         mask = np.asarray(value)
     except (TypeError, ValueError) as exc:
         raise FsTypeError("%s: region input must be a bool 2-D array: %s" %
                           (operator, exc)) from exc
-    if mask.ndim != 2 or mask.dtype != np.bool_:
+    if mask.ndim != 2 or mask.dtype.kind not in "biu" and mask.dtype.kind != "f":
         raise FsTypeError("%s: region input must be a bool 2-D array, got shape %r and dtype %s"
                           % (operator, mask.shape, mask.dtype))
+    if mask.dtype != np.bool_:
+        if mask.size and not np.isin(mask, (0, 1)).all():
+            raise FsTypeError("%s: region input must be a bool or 0/1 mask, got values outside {0, 1} (dtype %s)"
+                              % (operator, mask.dtype))
+        mask = mask.astype(bool)
     if mask.shape != shape:
         raise FsValueError("%s: image shape %r does not match region shape %r" %
                            (operator, shape, mask.shape))

@@ -35,8 +35,9 @@ def test_domain_operator_rejects_nan_with_named_reason(operator):
 @pytest.mark.parametrize("operator", [image_gen.change_domain, image_gen.reduce_domain],
                          ids=lambda fn: fn.__name__)
 def test_domain_operator_rejects_swapped_sorts(operator):
-    with pytest.raises(FsTypeError, match=rf"{operator.__name__}.*image"):
-        operator(np.zeros((3, 4), dtype=bool), np.ones((3, 4), dtype=np.float64))
+    with pytest.raises(FsTypeError, match=rf"{operator.__name__}.*region"):
+        # 画像(0/1 以外の実数)を領域の位置に渡す。0/1 だけの実数配列は文書化された mask の形なので通る。
+        operator(np.zeros((3, 4), dtype=np.float64), np.full((3, 4), 0.37))
 
 
 @pytest.mark.parametrize("operator", [image_gen.change_domain, image_gen.reduce_domain],
@@ -75,3 +76,17 @@ def test_fallback_audit_is_current():
         capture_output=True, text=True,
     )
     assert completed.returncode == 0, completed.stdout + completed.stderr
+
+
+@pytest.mark.parametrize("operator", [image_gen.change_domain, image_gen.reduce_domain],
+                         ids=lambda fn: fn.__name__)
+def test_domain_operator_accepts_the_documented_0_1_mask_forms(operator):
+    """docstring の例(int のリスト)と uint8 / float の 0/1 mask は bool と同じ結果。"""
+    im = np.arange(6, dtype=np.float64).reshape(2, 3)
+    ref = operator(im, np.array([[1, 0, 1], [0, 0, 1]], dtype=bool))
+    for region in ([[1, 0, 1], [0, 0, 1]], np.array([[1, 0, 1], [0, 0, 1]], np.uint8),
+                   np.array([[1, 0, 1], [0, 0, 1]], np.float64)):
+        got = operator(im, region)
+        assert got["domain"].dtype == np.bool_
+        np.testing.assert_array_equal(got["domain"], ref["domain"])
+        np.testing.assert_array_equal(got["image"], ref["image"])

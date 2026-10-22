@@ -168,7 +168,7 @@
     {
       "module": "image_gen.py",
       "function": "_region",
-      "line": 32,
+      "line": 37,
       "exception_types": [
         "TypeError, ValueError"
       ],
