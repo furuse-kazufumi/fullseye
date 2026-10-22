@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 85644ff1ed7d -->
+<!-- i18n-source-sha: d7ced9102dcd -->
 # Vollständiger Leitfaden zu Fullseye Studio
 
 Aufwendige Verarbeitung blockiert das Fenster nicht. Unten werden die aktive Stufe und der Fortschritt angezeigt; eine Stoppanforderung wird an der nächsten Stufengrenze bestätigt. Ändern sich Einstellungen während eines Laufs, bleibt die Generation des angezeigten Ergebnisses sichtbar und man kann das ältere Ergebnis ansehen oder mit den aktuellen Einstellungen neu starten.
@@ -367,6 +367,10 @@ namentlich abgelehnt, nie repariert. Zuordnungen gelten je Operation und Kopfzei
 Unter Run ▸ **Diese Verarbeitung auf einen Ordner anwenden…** wählen Sie den Eingabeordner und das Dateimuster, prüfen das Ergebnis am ersten, mittleren, letzten oder einem beliebigen Bild und führen dann alle Dateien aus. Eingaben und Verarbeitungskette werden beim Start einmal eingefroren; ein Regler, der während des Laufs verstellt wird, ändert die Bedingungen des laufenden Stapels nicht.
 
 Bei gleichnamigen Dateien wählen Sie zwischen „nicht überschreiben“, „überschreiben“ und „Laufnummer anhängen“; sind Unterordner einbezogen, entsteht auf der Ausgabeseite dieselbe Hierarchie. `summary.csv` enthält Dateiname, Status, Verarbeitungszeit, numerische Ausgaben und den Fehlergrund. Schlägt das Lesen oder Verarbeiten eines Bildes fehl, läuft der Rest weiter; danach lassen sich die fehlgeschlagenen Dateien mit Grund in einer Liste prüfen. Eine Stopp-Anforderung wird an der Grenze nach dem aktuellen Bild angenommen, und „gestoppt“ erscheint erst, wenn der Lauf wirklich steht.
+
+## Anzeigebereich und Rohdaten
+
+**Automatisch je Bild** berechnet für jedes Bild einen eigenen Bereich, **Gemeinsam für Vergleichsbilder** verwendet einen Bereich für A/B und **Manuell** wendet die eingegebenen Grenzen auf Anzeigemodi an, die einen Wertebereich verwenden. Ein Modus ohne Wertebereich, etwa `region overlay`, weist im Label darauf hin. Der Hinweis „nur Anzeigeverarbeitung“ bedeutet, dass die Rohwerte unverändert bleiben. NaN und Inf erscheinen magenta; Werte außerhalb des Bereichs erhalten die Endfarbe und lösen eine Warnung mit Pixelzahl aus. Beim Speichern stehen **Originalwerte**, **aktuelles Anzeigebild** und **beides** zur Wahl; Originalwerte sind voreingestellt.
 
 ## Zusammenhang zwischen Export und Save/Open
 
