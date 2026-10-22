@@ -2376,7 +2376,7 @@ def annotate_leader_layout(shape, points, labels=None, font_size=12, pad=4, gap=
     -------
     dict
         ``{"n", "gap", "items": [{"point", "elbow", "text_xy", "anchor",
-        "box", "side"}]}``。``box`` は板の ``(x, y, w, h)``。
+        "box", "side", "label"}]}``。``box`` は板の ``(x, y, w, h)``。
 
     Raises
     ------
@@ -2566,7 +2566,7 @@ def annotate_legend(img, labels, xy, anchor="lt", start=1, radius=7.0, color="em
                     font_path=None, min_font_size=9, numbers=None):
     """画像(image2d)を返す: 番号つき丸マーカー × 説明の凡例(:func:`annotate_markers` の対)。
 
-    箱の高さは閉形式 ``2*pad + n*row_h + (n-1)*row_gap``(``row_h = max(2r, 文字高)``)。
+    箱の高さは閉形式 ``2*pad + n*row_h + (n-1)*row_gap``(``row_h = max(ceil(2r), 文字高)``)。
 
     Parameters
     ----------

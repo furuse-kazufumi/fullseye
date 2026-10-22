@@ -4,7 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_legend(img, labels, xy, anchor=&#x27;lt&#x27;, start=1, radius=7.0, color=&#x27;emphasis&#x27;, text_color=None, font_size=12, pad=8, row_gap=4, box_color=None, box_alpha=0.72, border=1, border_color=&#x27;neutral&#x27;, scheme=&#x27;okabe_ito&#x27;, font_path=None, min_font_size=9, numbers=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import annotate; annotate.annotate_legend(img, labels, xy, anchor=&#x27;lt&#x27;, start=1, radius=7.0, color=&#x27;emphasis&#x27;, text_color=None, font_size=12, pad=8, row_gap=4, box_color=None, box_alpha=0.72, border=1, border_color=&#x27;neutral&#x27;, scheme=&#x27;okabe_ito&#x27;, font_path=None, min_font_size=9, numbers=None)</code>; aus dem Register: <code style="color:#22d3bf">opsannotate.get(&quot;annotate_legend&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Liefert ein Bild (image2d): eine Legende aus nummerierten runden Markern und ihren Beschreibungen (das Gegenstück zu <code style="color:#22d3bf">annotate_markers</code>).</p>
-<p>Die Boxhöhe ist die geschlossene Form <code style="color:#22d3bf">2*pad + n*row_h + (n-1)*row_gap</code> (<code style="color:#22d3bf">row_h = max(2r, text height)</code>).</p>
+<p>Die Boxhöhe ist die geschlossene Form <code style="color:#22d3bf">2*pad + n*row_h + (n-1)*row_gap</code> (<code style="color:#22d3bf">row_h = max(ceil(2r), text height)</code>).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>labels : sequence of str</p>
 <p>Beschreibung jeder Zeile.</p>

@@ -1577,7 +1577,7 @@ def csi_design(wavelength_um=0.6, bandwidth_um=0.1, z_range_um=12.0,
     non-positive wavelength / bandwidth / range, a *bandwidth_um* at or above
     *wavelength_um* (a source whose spectrum reaches zero frequency is not a
     quasi-monochromatic source and the coherence-length formula does not apply to
-    it), a *min_visibility* outside ``(0, 1)``, a *step_divisor* below 4 (which
+        it), a *min_visibility* outside ``(0, 1)``, a *step_divisor* at or below 4 (which
     would recommend a step at or past its own Nyquist ceiling), and pixel counts
     outside ``[1, 65536]``.
     """
@@ -1600,8 +1600,8 @@ def csi_design(wavelength_um=0.6, bandwidth_um=0.1, z_range_um=12.0,
                          "the capture range infinite and 1 makes it zero"
                          % (op, vis))
     div = _finite_scalar(step_divisor, "step_divisor")
-    if div < 4.0:
-        raise ValueError("%s: step_divisor must be >= 4 (lambda/4 is the Nyquist "
+    if div <= 4.0:
+        raise ValueError("%s: step_divisor must be > 4 (lambda/4 is the Nyquist "
                          "ceiling itself); got %g" % (op, div))
 
     lc = (4.0 * np.log(2.0) / np.pi) * lam * lam / dlam   # FWHM in OPD

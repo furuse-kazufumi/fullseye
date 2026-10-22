@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>AE 대역 전력과 D50의 대응(단조성·상관·log–log 기울기 α, <code style="color:#22d3bf">P ∝ D50^α</code>).</p>
 <p><code style="color:#22d3bf">group</code> 을 넘기면 군(재료)별로 산출한다(재료에 따라 전력 수준이 자릿수 단위로 다르므로, 섞은 상관은 수준의 차이를 잡는다 —— <code style="color:#22d3bf">pooled</code> 는 참고용).</p>
-<p>반환: 군 → <code style="color:#22d3bf">n</code>·<code style="color:#22d3bf">spearman</code>(순위 상관)·<code style="color:#22d3bf">alpha</code>(ln P 를 ln D50 에 맞춘 기울기)·<code style="color:#22d3bf">sign_agree</code>(모든 쌍에서 &quot;D50 이 큰 쪽이 P 도 크다&quot;의 비율). <b>점이 2 개이면 spearman 은 ±1 밖에 취할 수 없다</b>(<code style="color:#22d3bf">n</code> 을 반드시 병기한다).</p>
+<p>반환: <code style="color:#22d3bf">{&quot;groups&quot;: 군 → 결과, &quot;pooled&quot;: 전체 점의 참고 결과}</code>. 각 결과에는 <code style="color:#22d3bf">n</code>, 반환: 군 → <code style="color:#22d3bf">n</code>·<code style="color:#22d3bf">spearman</code>(순위 상관)·<code style="color:#22d3bf">alpha</code>(ln P 를 ln D50 에 맞춘 기울기)·<code style="color:#22d3bf">sign_agree</code>(모든 쌍에서 &quot;D50 이 큰 쪽이 P 도 크다&quot;의 비율). <b>점이 2 개이면 spearman 은 ±1 밖에 취할 수 없다</b>(<code style="color:#22d3bf">n</code> 을 반드시 병기한다).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

@@ -21,7 +21,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 規約: **yaw の向きへ進んで来る車に板の面が向く**(法線 = (−cos yaw, −sin yaw))。実装は :func:`sign_mesh`(法線 −x)を
 :func:`driveworld.place_mesh` で回すだけ。板は柱の手前(車の側)に ``pole_radius + 1.2 cm`` 離して付ける。
-返り値 = 板の object 索引(``extra = {"kind", "value", "width", "height", "mount_height"}``)。柱は直前の別 object。
+返り値 = 板の object 索引(``extra = {"kind", "value", "width", "height", "mount_height", "front_faces"}``)。柱は直前の別 object。
 
 空の入力(``world`` が空の dict)は ValueError。
 

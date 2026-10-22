@@ -2063,7 +2063,7 @@ def weighting_response(freqs, kind="A", floor_db=FLOOR_DB):
 
     That last caveat is real and is why the floor is an argument: with the
     default ``floor_db = -200`` the A curve reaches the floor below about
-    0.35 Hz (unfloored, ``A(0.1) = -228.55`` dB), so the asymptote measured
+    0.23 Hz (unfloored, ``A(0.1) = -228.55`` dB), so the asymptote measured
     against the default floor comes out as 0.0 dB/decade between 0.01 and
     0.1 Hz — a clamp, correctly reported, that would look like a bug if the
     floor were not visible.

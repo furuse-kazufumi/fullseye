@@ -19,7 +19,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 画像(image2d)を返す: 番号つき丸マーカー × 説明の凡例(:func:`annotate_markers` の対)。
 
-箱の高さは閉形式 ``2*pad + n*row_h + (n-1)*row_gap``(``row_h = max(2r, 文字高)``)。
+箱の高さは閉形式 ``2*pad + n*row_h + (n-1)*row_gap``(``row_h = max(ceil(2r), 文字高)``)。
 
 Parameters
 ----------

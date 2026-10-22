@@ -5,6 +5,14 @@ import numpy as np
 import pytest
 
 import colortransport
+import acoustics
+import annotate
+import backends_regions3
+import carpath
+import driveenv
+import drivecommonroad
+import gfx2d
+import grind
 import demops
 import interferometry
 import optics
@@ -14,6 +22,9 @@ import pegsim
 import profileops
 import pxrd
 import roadjp
+import mathtransforms
+import kendama
+import render_beauty
 import segcontour
 
 
@@ -29,6 +40,17 @@ import segcontour
         (optics.mueller_element, 'kind="retarder"'),
         (pegsim.peg_params, "カメラ像は px、画角は deg"),
         (profileops.profile_perturb, "contour の座標と同じ単位"),
+        (render_beauty.render_beauty, "既定では 13 段"),
+        (kendama.swing_up_lift, "2√(2·0.035/g)"),
+        (acoustics.weighting_response, "0.23 Hz"),
+        (backends_regions3.r3_select_region_point, "round(a*(H-1))"),
+        (mathtransforms.abel_inverse_image, "(H, R+1)"),
+        (roadjp.add_sign, '"front_faces"'),
+        (grind.ae_size_correspondence, '"groups": 群 → 結果'),
+        (annotate.annotate_leader_layout, '"label"'),
+        (annotate.annotate_legend, "ceil(2r)"),
+        (gfx2d.color_lut, "result is clipped once"),
+        (drivecommonroad.cr_synthetic, "4 本すべて"),
     ],
 )
 def test_corrected_contract_is_public(op, statement):
@@ -36,6 +58,7 @@ def test_corrected_contract_is_public(op, statement):
 
 
 def test_corrected_contracts_match_behavior():
+    assert '(length, cost)。' in inspect.getsource(carpath.car_hybrid_astar)
     geometry = {"cx": 0, "cy": 0, "distance": 100, "pixel": 0.1, "wavelength": 0.5}
     with pytest.raises(ValueError, match="positive integers"):
         pxrd.detector_two_theta((2.5, 3), geometry)
@@ -47,3 +70,7 @@ def test_corrected_contracts_match_behavior():
         pcl_augment.jitter(np.empty((0, 3)), 1, clip=0)
     with pytest.raises(ValueError, match="real and unmasked"):
         optics.mueller_checks(np.eye(4, dtype=complex))
+    with pytest.raises(ValueError, match="rows is empty"):
+        driveenv.road_row_distance(np.empty((0, 4)), 10, 100, 1.5)
+    with pytest.raises(ValueError, match="step_divisor must be > 4"):
+        interferometry.csi_design(step_divisor=4)

@@ -550,7 +550,7 @@ def ae_size_correspondence(power, d50, group=None) -> dict:
     """AE の帯域電力と D50 の対応(単調性・相関・log–log の傾き α、``P ∝ D50^α``)。
 
     ``group`` を渡すと群(材料)ごとに出す(材料で電力の水準が桁で違うので、混ぜた相関は水準の差を拾う —— ``pooled`` は参考)。
-    返り: 群 → ``n``・``spearman``(順位相関)・``alpha``(ln P を ln D50 に当てた傾き)・``sign_agree``(全ての組で
+    返り: ``{"groups": 群 → 結果, "pooled": 全点の参考結果}``。各結果は ``n``・``spearman``(順位相関)・``alpha``(ln P を ln D50 に当てた傾き)・``sign_agree``(全ての組で
     「D50 が大きい方が P も大きい」の割合)。**点が 2 つなら spearman は ±1 しか取れない**(``n`` を必ず併記する)。
     """
     P = _vec(power, "power", min_len=2, positive=True)

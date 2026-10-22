@@ -221,7 +221,7 @@ def render_beauty(V, F, *, pose=None, intrinsics=None, size: int = 512, ss: int 
                         「遮蔽物の高さ × tan(penumbra)」。既定の 2.5 度は、地面から
                         1 単位の高さの物体で半影が **1〜2 画素**にしかならない
                         (2026-09-02 実測: 320px の絵で半影は 283/102400 画素、
-                        値の種類は ``shadow_samples+1`` の 7 段だけ)。柔らかい影が
+                        値の種類は ``shadow_samples+1`` 段、既定では 13 段だけ)。柔らかい影が
                         欲しいなら 10 度前後まで上げ、段が見えないよう
                         ``shadow_samples`` も一緒に増やす。
       * ``shadow_pcf``  shadow map を引くときに混ぜる近傍半径 [texel](既定 1 = 3x3)。

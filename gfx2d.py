@@ -1634,8 +1634,8 @@ def color_lut(size=17, gain=(1.0, 1.0, 1.0), lift=(0.0, 0.0, 0.0),
               gamma=(1.0, 1.0, 1.0), saturation=1.0):
     """Build a 3-D colour LUT, ``(n, n, n, 3)`` indexed ``[r, g, b]``.
 
-    ``out = clip(lift + gain * in**gamma)`` per channel, then saturation is
-    applied about the Rec. 709 luma. With all defaults this is the **identity
+    ``out = lift + gain * in**gamma`` per channel, then saturation is
+    applied about the Rec. 709 luma and the result is clipped once. With all defaults this is the **identity
     LUT**, and because trilinear interpolation is exact for a function that is
     linear in each variable, :func:`color_grade` with the identity LUT is the
     identity to float64 rounding (measured maximum 3.3e-16 at size 17 and
