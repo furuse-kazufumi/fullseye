@@ -7,7 +7,7 @@ out: table
 examples: [gallery_drive_kendama_racket, poc_table_tennis_rally_loop]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.2  # fullseye lib version this note was generated for
+version: 0.8.0  # fullseye lib version this note was generated for
 ---
 
 # aim_velocity — DRIVE `racket` op

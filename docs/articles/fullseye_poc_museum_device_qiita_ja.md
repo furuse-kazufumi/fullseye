@@ -1,4 +1,4 @@
-> **言語 / Language**: **日本語** · [English](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/fullseye_poc_museum_device_qiita_en.md)
+> **言語 / Language**: **日本語** · [English](https://qiita.com/furuse-kazufumi/items/43e090b439d9d9183f60)
 
 # 紙面の計測館 —— 装置の棟(センサーと計測器を物理から再現する)
 

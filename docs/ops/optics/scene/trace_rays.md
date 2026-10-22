@@ -7,7 +7,7 @@ out: table
 examples: [poc_chromatic_confocal, poc_lens_file_roundtrip, poc_lens_solves_afocal, poc_noncoaxial_optics, poc_pocket_interreflection, poc_telecentric_metrology, studio_raytrace_scene]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.2  # fullseye lib version this note was generated for
+version: 0.8.0  # fullseye lib version this note was generated for
 ---
 
 # trace_rays — OPTICS `scene` op

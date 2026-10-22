@@ -7,7 +7,7 @@ out: rgbimage
 examples: [poc_omni360_inspection]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.7.2  # fullseye lib version this note was generated for
+version: 0.8.0  # fullseye lib version this note was generated for
 ---
 
 # equirect_rotate — OPTICS `omni360` op
