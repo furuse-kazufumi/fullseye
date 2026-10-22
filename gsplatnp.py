@@ -174,8 +174,9 @@ def gs_from_world(world: dict, *, spacing: float = 0.004, max_per_object: int = 
 def gs_update(gs: dict, world: dict) -> dict:
     """世界の**いまの**頂点からガウシアンの中心・向きを計算し直す(その場で書き換えて同じ dict を返す)。
 
-    μ = Σ_k bary_k · V[F[face, k]] + R · offset_local、R = 面の局所座標 [t1 t2 n]。面の数が作ったときと違う世界は ValueError
-    (物体を足した・消した世界には使えない: 作り直すこと)。剛体で動かした物体のガウシアンは同じ剛体変換で動く(門)。
+    μ = Σ_k bary_k · V[F[face, k]] + R · offset_local、R = 面の局所座標 [t1 t2 n]。``gs["face"]`` が指す面が
+    現在の世界に無いと ValueError。末尾に面が追加されても、既存の面番号が有効なら更新できる。
+    剛体で動かした物体のガウシアンは同じ剛体変換で動く(門)。
 
     空の入力(``gs`` が空の dict)は ValueError。
     """

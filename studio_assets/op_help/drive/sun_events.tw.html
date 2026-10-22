@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sun_events(year: &#x27;int&#x27;, month: &#x27;int&#x27;, day: &#x27;int&#x27;, lat: &#x27;float&#x27;, lon: &#x27;float&#x27;, tz_hours: &#x27;float&#x27; = 9.0, *, h0: &#x27;float&#x27; = -0.8333) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import driveenv; driveenv.sun_events(year: &#x27;int&#x27;, month: &#x27;int&#x27;, day: &#x27;int&#x27;, lat: &#x27;float&#x27;, lon: &#x27;float&#x27;, tz_hours: &#x27;float&#x27; = 9.0, *, h0: &#x27;float&#x27; = -0.8333) -&gt; &#x27;Dict[str, object]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;sun_events&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>當日(當地曆日)的日出、正午(中天)、日落時刻，以及日出日落的方位角與中天高度。</p>
-<p>日出日落 = 太陽中心的 <b>幾何</b> 高度穿過 <code style="color:#22d3bf">h0</code>(預設 −0.8333° = 大氣折射 34′ + 視半徑 16′,上緣與地平線相切)的時刻。<code style="color:#22d3bf">h0=&quot;naoj&quot;</code> 採用日本國立天文台曆書計算室的定義(太陽上緣位於視地平線,地平大氣折射 35′8″,視半徑由距離求得)。中天 = 時角 0。兩者都透過對時間求解 sun_at 得到(二分法,精確到 1e-6 日 ≈ 0.1 秒)。</p>
-<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
-<p>dict : <code style="color:#22d3bf">sunrise</code> / <code style="color:#22d3bf">transit</code> / <code style="color:#22d3bf">sunset</code>(帶時區的 datetime,無日出日落時為 None)、</p>
-<p><code style="color:#22d3bf">sunrise_azimuth</code> / <code style="color:#22d3bf">sunset_azimuth</code>(度)、<code style="color:#22d3bf">transit_altitude</code>(度,不含大氣折射的幾何高度,以及 <code style="color:#22d3bf">transit_altitude_apparent</code>)。</p>
+<p>日落=太陽中心的<b>幾何</b>高度為「h0」（預設−0.8333°=大氣差34′+視半徑16′，頂部接觸地平線）是時候穿越了。 <code style="color:#22d3bf">h0=&quot;naoj&quot;</code> 是日本國家天文台星曆計算室的定義（太陽上側為視平線，水平大氣差為35&#x27;8&#x27;&#x27;，視半徑為從遠處看）。南中 = 時角 0。兩者皆解 sun_at 求時間（二分法，間隔寬度小於 1e-7 天 ≈ 最多 0.009 秒）。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">退貨</h4>
+<p>dict: <code style="color:#22d3bf">sunrise</code> / <code style="color:#22d3bf">transit</code> / <code style="color:#22d3bf">sunset</code> （帶時區的日期時間，如果沒有日出或日落則無），<code style="color:#22d3bf">sunrise_azimuth</code> / <code style="color:#22d3bf">sunset_azimuth</code>（度），<code style="color:#22d3bf">transit_altitude</code>（度，沒有大氣差異的幾何高度和<code style="color:#22d3bf">transit_altitude_apparent</code>）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

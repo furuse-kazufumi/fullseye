@@ -12,7 +12,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/aug_rolling_shutter.inputs.jpg">aug_rolling_shutter: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>捲簾快門(rolling shutter)歪斜。CMOS 捲簾快門逐行依序曝光,因此當場景(或相機)水平平移時,每一行會依其行索引線性偏移——也就是純粹的水平剪切(shear)。<code style="color:#22d3bf">a</code> 設定最大偏移量 <code style="color:#22d3bf">0.25*W*a</code> 像素(剪切以中間行為中心,中間行不動),<code style="color:#22d3bf">b</code> 設定平移方向(b &lt; 0.5 時隨行數增加向右偏移,否則向左)。以反射邊界進行雙線性重採樣。</p>
+<p>捲簾快門傾斜。 CMOS 捲簾快門按順序曝光行，因此場景（或攝影機）水平平移每行的量與其行索引成線性關係，即純水平剪切。 <code style="color:#22d3bf">a</code> 設定任一邊緣的峰值偏移 <code style="color:#22d3bf">0.125*W*a</code> px（剪力居中，因此中間行不移動），<code style="color:#22d3bf">b</code> 設定平移方向（b &lt; 0.5 -&gt; 隨著行的增加向右移動，否則向左移動）。使用反射邊界進行雙線性重採樣。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

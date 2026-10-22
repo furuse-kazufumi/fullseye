@@ -4,18 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blob_label(region: &#x27;Any&#x27;, connectivity: &#x27;int&#x27; = 8) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import blob2d; blob2d.blob_label(region: &#x27;Any&#x27;, connectivity: &#x27;int&#x27; = 8) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsblob.get(&quot;blob_label&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>binary region को connected component में बाँटकर <code style="color:#22d3bf">int32</code> label image (background 0, object 1..n) लौटाता है।</p>
-<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
-<p>region : array_like</p>
-<p>2-D। <code style="color:#22d3bf">&gt; 0</code> foreground है (bool या real दोनों चलेंगे। NaN background है)।</p>
-<p>connectivity : {4, 8}</p>
-<p>तिरछे छूने वाले 2 pixels को जोड़ना है या नहीं। default 8 <code style="color:#22d3bf">ndimage.label</code> और</p>
-<p>HALCON <code style="color:#22d3bf">connection</code> के default से मेल खाता है। <b>4 करने पर तिरछे छूने वाले blobs अलग-अलग गिने जाते हैं</b> ।</p>
-<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">पैरामीटर्स</h4>
+<p>क्षेत्र: array_लाइक</p>
+<p>2-डी. <code style="color:#22d3bf">&gt; 0</code> अग्रभूमि है (एक बूल या वास्तविक संख्या हो सकती है; NaN पृष्ठभूमि है)।</p>
+<p>कनेक्टिविटी : {4, 8}</p>
+<p>तिरछे स्पर्श करने वाले दो पिक्सेल कनेक्ट करें? डिफ़ॉल्ट 8 है, जो विकर्ण कनेक्शन को समान घटक बनाता है।</p>
+<p><code style="color:#22d3bf">nimage.label</code> के लिए डिफ़ॉल्ट 4 संयोजन है, इसलिए यह अलग है। <b>यदि आप इसे 4 पर सेट करते हैं, तो ब्लॉक तिरछे स्पर्श करेंगे अलग से गिना गया</b>.</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">रिटर्न</h4>
 <p>numpy.ndarray</p>
-<p><code style="color:#22d3bf">(H, W)</code> का <code style="color:#22d3bf">int32</code>। नंबर 1 से लगातार हैं, बीच में कोई गायब नहीं।</p>
-<h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
-<p>&gt;&gt;&gt; import numpy as np</p>
-<p>&gt;&gt;&gt; m = np.zeros((6, 9), bool); m[1:4, 1:4] = True; m[1:4, 5:8] = True</p>
+<p><code style="color:#22d3bf">int32</code> <code style="color:#22d3bf">(H, W)</code> का। संख्याएँ 1 से लगातार हैं और कोई अंतराल नहीं है।</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">उदाहरण</h4>
+<p>&gt;&gt;&gt; एनपी के रूप में सुन्न आयात करें</p>
+<p>&gt;&gt;&gt; एम = एनपी.जीरोस((6, 9), बूल); एम[1:4, 1:4] = सत्य; एम[1:4, 5:8] = सत्य</p>
 <p>&gt;&gt;&gt; int(blob_label(m).max())</p>
 <p>2</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>

@@ -20,7 +20,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 棚の列と通路でできた倉庫の格子(True = 走れる)。
 
 棚は横長の 1 行 × ``rack_len`` マスのブロックで、上下左右を幅 ``aisle`` の通路が囲む。外周に ``margin``
-マスの走行帯(ステーションの前)を置く。返りは ``(grid, info)``、info に棚のマスの一覧と外周の帯。
+マスの走行帯(ステーションの前)を置く。返りは ``(grid, info)``、info は棚のマスの一覧 ``racks`` と格子の ``shape`` を持つ。
 
 ## 参考(サンプルデータ・文献)
 

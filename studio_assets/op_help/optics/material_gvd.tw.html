@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>材料色散參數 D(λ) = −(λ/c) d²n/dλ²,單位 ps/(nm·km),以 <code style="color:#22d3bf">pairs</code>(λ [nm],D)回傳。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>D = 0 の波長が材料分散の零点(溶融石英で ≈ 1.27 µm)。正(異常分散)では長い波長が速い。</p>
+<p>D = 0 の波長が材料分散の零点(溶融石英で ≈ 1.27 µm)。正(異常分散)ではグループ遅延が波長とともに増え、長い波長が遅い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

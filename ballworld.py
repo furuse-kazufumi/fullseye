@@ -185,7 +185,7 @@ def rotation_from_omega(omega, dt: float) -> np.ndarray:
 
 def camera_rig(tp: dict = None, *, n: int = 2, distance: float = 2.2, height: float = 1.7, fov_deg: float = 55.0,
                width: int = 1280, height_px: int = 1024) -> list:
-    """台を囲むカメラ(n = 2: 両端の斜め上、n = 4: 4 隅)。返り値 ``[{"pose", "K", "eye"}, …]``、全部が台の中心を見る。
+    """台を囲むカメラ(n = 2: 両端の斜め上、n = 4: 4 隅)。返り値 ``[{"pose", "K", "eye", "width", "height"}, …]``、全部が台の中心を見る。
 
     空の入力(``tp`` が空の dict)は ValueError。
     """

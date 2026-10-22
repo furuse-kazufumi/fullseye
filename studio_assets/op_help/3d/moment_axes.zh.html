@@ -4,14 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.moment_axes(points, weights=None)</code>(要直接调用实现,<code style="color:#22d3bf">import match3d; match3d.moment_axes(points, weights=None)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;moment_axes&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>点群/加权点的 <b>重心 + 主轴</b>(惯性张量的特征向量)。位姿估计的基础。</p>
-<p>返回 (centroid(3,), axes(3,3) 列=主轴, eigvals(3,))。特征值降序。用于旋转的规范化。</p>
-<p>定义:将 <code style="color:#22d3bf">w</code> 归一化为总和 1,质心 <code style="color:#22d3bf">c = Σ w p</code>,散布矩阵 <code style="color:#22d3bf">C = Σ w (p−c)(p−c)ᵀ</code> (协方差。与惯性张量 <code style="color:#22d3bf">tr(C)I − C</code> 特征向量相同而特征值顺序相反)用 <code style="color:#22d3bf">eigh</code> 分解。<code style="color:#22d3bf">axes[:, i]</code> 是第 i 大特征值的主轴(降序)。特征值为方差(长度²)。</p>
-<p style="margin:2px 0 2px 12px">• 特征向量的符号任意,<code style="color:#22d3bf">axes</code> 可能是左手系(det=−1)(<code style="color:#22d3bf">match_pca</code> 将第 3 轴</p>
-<p>反转为右手系)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">weights</code> 长度为 N。总和为 0 时除以 0 得 NaN(不抛异常)。点数为 0 会失败(没有验证)。</p>
-<p style="margin:2px 0 2px 12px">• 主轴退化(球等)时轴的方向不确定。</p>
-<p>后段:<code style="color:#22d3bf">match_pca</code>、<code style="color:#22d3bf">obb</code>(有向 bbox)、旋转到规范位姿。</p>
-<p>空输入(<code style="color:#22d3bf">points</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
+<p>返回值（质心（3，），轴（3，3）列=主轴，eigvals（3，））。特征值降序排列。用于旋转标准化。</p>
+<p>定义：将<code style="color:#22d3bf">w</code>标准化为总和1，质心<code style="color:#22d3bf">c = Σ w p</code>，散点矩阵<code style="color:#22d3bf">C = Σ w (p−c)(p−c)ᵀ</code> （协方差。惯性张量<code style="color:#22d3bf">tr(C)I − C</code>和特征向量是通用的，但特征值的顺序相反）通过<code style="color:#22d3bf">eigh</code>。拆卸。 <code style="color:#22d3bf">axes[:, i]</code> 是第 i 个最大特征值的主轴（按降序排列）。特征值是方差（长度²）。</p>
+<p style="margin:2px 0 2px 12px">• 特征向量的符号是任意的，并且“axes”可以是左手的（det=−1）（“match_pca”设置第三个轴</p>
+<p>（颠倒过来使其成为右手）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">weights</code> 的长度为 N。0 的和除以 0 时为 NaN（无例外）。 0 分显然是一个 ValueError。</p>
+<p style="margin:2px 0 2px 12px">• 如果主轴是退化的（例如球体），则轴的方向是不确定的。</p>
+<p>后来：<code style="color:#22d3bf">match_pca</code>，<code style="color:#22d3bf">obb</code>（定向 bbox），旋转到规范态度。</p>
+<p>空输入（0 个元素的“points”）会导致 ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

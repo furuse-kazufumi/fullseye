@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>한 파장의 광학 상수 n, k와 그로부터 정해지는 흡수계수·복소 유전율·수직 입사 반사율을 반환.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">alpha_per_cm</code> = 4πk/λ(Beer–Lambert の吸収係数 [1/cm])、<code style="color:#22d3bf">epsilon</code> = (n + ik)²、<code style="color:#22d3bf">reflectance_normal</code> = |(m − 1)/(m + 1)|²。<code style="color:#22d3bf">n_source</code> / <code style="color:#22d3bf">k_source</code> はどの一次文献の区間から取ったか(k の表が無ければ <code style="color:#22d3bf">k_source</code> は <code style="color:#22d3bf">None</code> で k = 0)。波長がデータ区間の外なら ValueError(外挿しない)。</p>
+<p><code style="color:#22d3bf">alpha_per_cm</code> = 4πk/λ(Beer–Lambert の吸収係数 [1/cm])、<code style="color:#22d3bf">epsilon_re</code> / <code style="color:#22d3bf">epsilon_im</code> = (n + ik)² の実部 / 虚部、<code style="color:#22d3bf">reflectance_normal</code> = |(m − 1)/(m + 1)|²。<code style="color:#22d3bf">n_source</code> / <code style="color:#22d3bf">k_source</code> はどの一次文献の区間から取ったか(k の表が無ければ <code style="color:#22d3bf">k_source</code> は <code style="color:#22d3bf">None</code> で k = 0)。波長がデータ区間の外なら ValueError(外挿しない)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

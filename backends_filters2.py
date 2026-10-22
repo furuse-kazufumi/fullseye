@@ -306,7 +306,7 @@ def f2_gray_inside(v, a, b):
     any path to the image border == morphological reconstruction of the image by
     erosion from a border-anchored marker. Dark basins enclosed by brighter walls
     are raised toward the wall height; regions connected to the border stay dark.
-    ``a`` sets the maximum fill depth h (0 = none, 1 = full); ``b`` is ignored."""
+    ``a`` sets the maximum fill depth ``h = 0.02 + 0.98*a``; ``b`` is ignored."""
     x = _img(v)
     if _skmorph is None or x.size < 4:
         return x
@@ -322,8 +322,8 @@ def f2_gray_inside(v, a, b):
 
 
 def f2_bit_slice(v, a, b):
-    """Extract one bit-plane of the image after 8-bit quantisation. ``a`` selects
-    the plane (0 = LSB .. 7 = MSB); ``b`` is ignored. Returns a {0,1} image."""
+    """Extract one bit-plane after 8-bit quantisation. Normalised ``a`` in 0..1
+    selects plane ``round(7*a)`` (0 = LSB, 1 = MSB); ``b`` is ignored. Returns {0,1}."""
     x = _img(v)
     q = np.clip(np.round(x * 255.0), 0, 255).astype(np.uint8)
     plane = int(round(float(a) * 7))              # 0..7

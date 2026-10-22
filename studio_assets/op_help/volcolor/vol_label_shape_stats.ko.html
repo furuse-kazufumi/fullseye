@@ -4,32 +4,34 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_label_shape_stats(labels, spacing=None, shape: &#x27;bool&#x27; = True)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import volcolor; volcolor.vol_label_shape_stats(labels, spacing=None, shape: &#x27;bool&#x27; = True)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_label_shape_stats&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>성분별로 <b>선형 시간에 낼 수 있는</b> 정량값(부피·무게중심·박스·주성분 형상 지표).</p>
-<p><code style="color:#22d3bf">volops.vol_region_props</code> 의 자매이지만, <b>목적이 다르다</b>:</p>
-<p style="margin:2px 0 2px 12px">• 저쪽은 <code style="color:#22d3bf">surface_area</code> 와 Wadell <code style="color:#22d3bf">sphericity</code> 를 낸다. 그 때문에성분마다 marching cubes 를 돌리므로, <b>성분 수에 비례해 Python 루프가돈다</b>(1 복셀 1 라벨의 병적 입력에서 급속히 무거워진다).</p>
-<p style="margin:2px 0 2px 12px">• 이쪽은 <code style="color:#22d3bf">np.bincount</code> 의 가중 총합만으로 끝나는 양으로 한정한다. 라벨 배열 1 개당 9 회의 <code style="color:#22d3bf">bincount</code> = <b>O(N + n)</b>. 실측(<code style="color:#22d3bf">connectivity=26</code>, <b>1 복셀 1 라벨</b>의 체커보드 = 병적 입력):</p>
-<p>16 ** 3 = 4096 복셀 / 512 성분 = 0.0037 s, 32 ** 3 = 32768 / 4096 =</p>
-<p>0.0350 s, 64 ** 3 = 262144 / 32768 = 0.2556 s, 128 ** 3 = 2097152 / 262144 =</p>
-<p>2.3122 s. <b>복셀 8 배마다 9.5 / 7.3 / 9.0 배</b>(이차라면 64 배)이며,</p>
-<p>전 구간에서 약 1.1 마이크로초/복셀. 같은 128 ** 3 의 색칠은 0.0357 s.</p>
-<p>(참고: <code style="color:#22d3bf">volops.vol_region_props(surface=&quot;faces&quot;)</code> 는 같은 16 ** 3 에서</p>
-<p>0.0121 s ―― 성분마다의 Python 루프가 있는 만큼 3.5 배. marching cubes 를</p>
-<p>쓰는 기본값 <code style="color:#22d3bf">surface=&quot;auto&quot;</code> 는 더 무겁다.)</p>
-<p><code style="color:#22d3bf">label</code> <code style="color:#22d3bf">voxel_count</code> <code style="color:#22d3bf">volume</code> <code style="color:#22d3bf">centroid</code> <code style="color:#22d3bf">bbox</code> 의 5 가지는 <code style="color:#22d3bf">volops.vol_region_props</code> 와 <b>동일한 정의 · 동일한 값</b>이다(<code style="color:#22d3bf">tests/test_volcolor.py::test_stats_agree_with_vol_region_props_exactly</code> 가엄밀 일치로 고정). <code style="color:#22d3bf">bbox</code> 는 <code style="color:#22d3bf">(z0, z1, y0, y1, x0, x1)</code> 이며 상한은 배타적.</p>
-<p>추가로 반환하는 것:</p>
-<p><code style="color:#22d3bf">centroid_mm</code> <code style="color:#22d3bf">(z, y, x)</code> 물리 좌표(spacing 이 없으면 voxel 과 같은 값)·</p>
-<p><code style="color:#22d3bf">extent</code> bbox 의 물리 치수 <code style="color:#22d3bf">(dz, dy, dx)</code> · <code style="color:#22d3bf">equivalent_diameter</code></p>
-<p><code style="color:#22d3bf">(6V/pi)**(1/3)</code> · <code style="color:#22d3bf">touches_border</code> bbox 가 볼륨 끝에 닿는지 ·</p>
-<p><code style="color:#22d3bf">principal_extent</code> 공분산 고윳값의 제곱근 <code style="color:#22d3bf">(s1 &gt;= s2 &gt;= s3)</code>(물리 단위) ·</p>
-<p><code style="color:#22d3bf">linearity</code> <code style="color:#22d3bf">(l1-l2)/l1</code> · <code style="color:#22d3bf">planarity</code> <code style="color:#22d3bf">(l2-l3)/l1</code> · <code style="color:#22d3bf">isotropy</code></p>
-<p><code style="color:#22d3bf">l3/l1</code> · <code style="color:#22d3bf">elongation</code> <code style="color:#22d3bf">sqrt(l1/l2)</code>.</p>
-<p><b><code style="color:#22d3bf">elongation</code> 은 무한이 될 수 있다</b>(계약): <code style="color:#22d3bf">l1 &gt; 0</code> 이고 <code style="color:#22d3bf">l2 == 0</code>, 즉 두께 1 복셀의 완전한 직선 성분에서는 <code style="color:#22d3bf">inf</code> 를 반환한다. 0 으로 나눈 사고가아니라 &quot;제 2 축 방향으로 퍼짐이 없다&quot;는 사실이며, 반올림하면 가늘고 긴 정도의 순위가조용히 뒤바뀐다. 단일 복셀(<code style="color:#22d3bf">l1 == 0</code>)은 등방적인 점이므로 <code style="color:#22d3bf">1.0</code>.</p>
-<p><b>spacing 을 넘기는 것을 잊으면 숫자도 결론도 바뀐다</b>. 실측 ―― 반지름 6 mm 의 구를 <code style="color:#22d3bf">spacing = (3.0, 1.0, 1.0)</code> mm 의 이방 격자(z 만 3 배 성김)로 샘플링하면 293 복셀이 된다. 닫힌 식의 참값은 <code style="color:#22d3bf">4/3 pi 6**3 = 904.78 mm**3</code>:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">spacing</code> 있음 = 879.0 mm ** 3(오차 <b>-2.85 %</b>), <code style="color:#22d3bf">isotropy</code> = 0.7349(거의 등방 = 올바름).</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">spacing</code> 없음 = 293.0(voxel 단위. mm ** 3 으로 읽으면 오차 <b>-67.62 %</b>), <code style="color:#22d3bf">isotropy</code> = 0.0817 ―― <b>구가 &quot;판&quot;으로 보인다</b>. 이방성을 무시하면형상 지표는 파탄 나고, 게다가 유한하고 타당해 보이는 값으로 반환된다.</p>
-<p style="margin:2px 0 2px 12px">• 등가 직경도 11.8849 mm 대 8.2406 으로 1.44 배 어긋난다.</p>
-<p>수치상의 주의: 2 차 모멘트는 <code style="color:#22d3bf">E[x**2] - E[x]**2</code> 로 구하므로, 좌표가크고 퍼짐이 작은 성분에서는 자릿수 손실이 일어날 수 있다. 상한 <code style="color:#22d3bf">MAX_COLOR_VOXELS</code> (1 변 ~2000 까지)에서는 <code style="color:#22d3bf">E[x**2] ~ 4e6</code> 에 대해 float64 의 상대 정밀도 1e-16 = 절대 1e-10 으로, 복셀 단위의 분산에 대해 10 자리의 여유가 있다. 그보다 큰볼륨은 ROI 를 잘라낸 다음 넘길 것(상한이 있는 것은 이 때문이기도 하다).</p>
-<p>*shape* 를 <code style="color:#22d3bf">False</code> 로 하면 공분산(9 개 중 6 개의 bincount)을 생략하고, <code style="color:#22d3bf">principal_extent</code> 이하의 5 항목을 반환하지 않는다 ―― 부피 필터만 필요할때 O(N) 의 임시 배열을 1 개로 줄일 수 있다.</p>
-<p>라벨 오름차순으로 <code style="color:#22d3bf">list[dict]</code> 를 반환한다(<b>실재하는 라벨만</b> ―― 번호에 결번이 있어도 <code style="color:#22d3bf">labels.max()</code> 만큼의 빈 dict 는 반환하지 않는다).</p>
+<p>volops.vol_region_props의 자매이지만 목적이 다르다:</p>
+<p style="margin:2px 0 2px 12px">• 우리는surface_area &#x27;&#x27;와 Wadellsphericity &#x27;&#x27;를 발행합니다. 이를 위해각 구성 요소에 대해 marching cubes를 돌리므로  구성 요소 수에 비례하여 Python 루프가도는  (1 복셀 1 라벨의 병적 입력으로 빠르게 무거워진다).</p>
+<p style="margin:2px 0 2px 12px">• 이것은 &quot;np.bincount&quot;의 가중치 합계만으로 끝나는 양에 한합니다. 라벨 배열 1개당 10 회의 &quot;bincount&quot;(개수 1, 좌표 합계 3, 공분산 6) = O(N + n). 실측 (connectivity = 26 &#x27;&#x27;, 1 복셀 1 라벨 체크 무늬 = 병적 입력):</p>
+<p>163 = 4096 복셀 / 512 성분 = 0.0037 s, 323 = 32768 / 4096 =</p>
+<p>0.0350s, 643=262144/32768=0.2556s, 1283=2097152/262144=</p>
+<p>2.3122 초. 복셀 8배마다 9.5/7.3/9.0배(2차라면 64배)로,</p>
+<p>전역에서 약 1.1 마이크로초/복셀. 동일한 1283 색칠은 0.0357 s.</p>
+<p>(참고 : &quot;volops.vol_region_props (surface = &quot;faces&quot;)&quot;&quot;는 동일한 16  3입니다.</p>
+<p>0.0121 s - 구성 요소 당 Python 루프가있는 3.5 배. marching cubes 을</p>
+<p>사용하는 기본 surface=&quot;auto&quot;는 더 무겁습니다. )</p>
+<p>&quot;label&quot;, &quot;voxel_count&quot;, &quot;volume&quot;, &quot;centroid&quot;, &quot;bbox&quot;의 다섯 가지 volops.vol_region_props 와 동일한 정의·동일한 값(tests/test_volcolor.py :: test_stats_agree_with_vol_region_props_exactly 엄격한 일치로 고정). bbox는 (z0, z1, y0, y1, x0, x1)로 상한은 배타적.</p>
+<p>덧붙여 돌려주는 것:</p>
+<p>centroid_mm &#x27;&#x27;,(z, y, x) &#x27;&#x27;물리적 좌표 (spacing이 없다면 voxel과 동일)</p>
+<p>extent &#x27;&#x27;bbox의 물리적 치수(dz, dy, dx) &#x27;&#x27;,equivalent_diameter &#x27;&#x27;</p>
+<p>&quot;(6V / pi)  (1/3)&quot;</p>
+<p>principal_extent &#x27;&#x27;공분산 고유 값의 제곱근(s1&gt; = s2&gt; = s3)(물리적 단위) ·</p>
+<p>linearity &#x27;&#x27;(l1-l2) / l1 &#x27;&#x27;,planarity &#x27;&#x27;(l2-l3) / l1 &#x27;&#x27;</p>
+<p>l3/l1&#x27;&#x27; · elongation&#x27;&#x27; sqrt(l1/l2).</p>
+<p>elongation &#x27;&#x27;은 무한할 수 있습니다  (계약) :l1&gt; 0 &#x27;&#x27;및l2 == 0 &#x27;&#x27;, 즉 두께 1 복셀의 완전한 직선의 성분에서는 「inf」를 돌려준다. 0으로 나눈 사고대신 &quot;제 2 축 방향으로 퍼짐이 없다&quot;는 사실이며, 반올림하면 가늘기의 순위가조용히 바뀐다. 단일 복셀 (l1 == 0)은 등방 점이므로 1.0.</p>
+<p>spacing 을 건네주고 잊으면 숫자도 결론도 바뀐다. 실측 ―― 반경 6mm의 구를 spacing = (3.0, 1.0, 1.0) mm의 이방 격자 (z 만 3 배 거친)로 표본화하면 293 복셀이 된다. 닫힌 형식의 참값은 &quot;4/3 pi 63 = 904.78 mm3&quot;:</p>
+<p style="margin:2px 0 2px 12px">• &quot;spacing&quot; 예 = 879.0 mm3(오차 -2.85 %), isotropy = 0.7349 (거의 등방 = 정확).</p>
+<p style="margin:2px 0 2px 12px">• spacing&#x27;&#x27; 없음 = 293.0(voxel 단위. mm3 라고 읽으면 오차 -67.62 %), isotropy = 0.0817 ―― 구가 「판」으로 보인다. 이방성을 무시하면형상 지표는 파탄하고 유한하고 합리적인 값으로 반환됩니다.</p>
+<p style="margin:2px 0 2px 12px">• 등가 직경도 11.8849 mm 대 8.2406 과 1.44 배 어긋난다.</p>
+<p>수치상의주의 : 2 차 모멘트는E [x  2] - E [x]  2 &#x27;&#x27;로 구하기 때문에 좌표가</p>
+<p>크게 퍼짐이 작은 성분에서는 자릿수 떨어지는 일이 생길 수 있다. 상한 : data :MAX_COLOR_VOXELS</p>
+<p>(1 변 ~ 2000까지)에서는 &quot;E [x  2] ~ 4e6&quot;에 대해 float64의 상대 정밀도 1e-16 = 절대 1e-10 으로, 복셀 단위의 분산에 대해 10 자리수의 여유가 있다. 그것보다 큰볼륨은 ROI를 자르고 나서 전달하는 것(상한이 있는 것은 이 때문에이기도 하다).</p>
+<p>*shape*를 &quot;False&quot;로 설정하면 공분산(10개 중 6개의 bincount)을 생략하고, principal_extent &#x27;&#x27;아래 5 개 항목을 반환하지 않습니다. - 볼륨 필터 만 필요합니다. 때때로 O(N)의 임시 배열을 1개로 줄일 수 있다.</p>
+<p>Returnslist[dict] in ascending label order (실제 라벨만 ―― 번호에 결번이 있어도, labels.max() 빈 dict 는 돌려주지 않는다).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

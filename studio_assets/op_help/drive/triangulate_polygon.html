@@ -4,11 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.triangulate_polygon(poly: &#x27;np.ndarray | Sequence[Sequence[float]]&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import driveplateau; driveplateau.triangulate_polygon(poly: &#x27;np.ndarray | Sequence[Sequence[float]]&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;triangulate_polygon&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>単純多角形(凸・凹どちらも、自己交差なし)を耳切り法で三角形分割する。</p>
-<p>返す三角形は入力頂点の添字 (k-2, 3) で、各三角形は反時計回り(入力が時計回りなら内部で反転して扱い、添字は元の頂点番号で返す)。</p>
+<p>返す三角形は入力頂点の添字で、共線頂点を除いた有効頂点数を m として (m-2, 3)。各三角形は反時計回り(入力が時計回りなら内部で反転して扱い、添字は元の頂点番号で返す)。</p>
 <p>Args:</p>
 <p>poly: (k,2) 頂点列。閉じていなくてよい。</p>
 <p>Returns:</p>
-<p>(k-2, 3) int64 配列。</p>
+<p>(m-2, 3) int64 配列。m は共線頂点を除いた有効頂点数。</p>
 <p>Raises:</p>
 <p>ValueError: 頂点が 3 未満、面積がほぼ 0、耳が見つからない(自己交差や重複点の疑い)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

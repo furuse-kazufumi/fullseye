@@ -394,7 +394,7 @@ def mesh_slice_contours(mesh: Any, z: float, tol: float = 1e-6) -> dict[str, np.
 
     各三角形と平面の交差を線分にし、三角形の法線で向きを付けて(外輪郭は反時計回り、穴は時計回り)、端点を
     突き合わせて閉じた輪(閉じなければ開いた鎖)に繋ぐ(古典のスライサ)。輪の符号つき面積で中身と穴が分かる。
-    頂点がちょうど平面に乗るときは ``tol`` だけ持ち上げて退化を避ける。平面が形に触れなければ ValueError
+    頂点がちょうど平面に乗るときは ``2*tol + 1e-12`` 持ち上げて退化を避ける。平面が形に触れなければ ValueError
     (空の層は「無い」と言う)。
     """
     op = "mesh_slice_contours"
@@ -1210,7 +1210,7 @@ def engrave_lines(image, spacing_px=6.0, angle_deg=0.0, gamma=1.0, max_width=0.9
 
     ★**Why this earns its place**: while the lines do not touch, the ink coverage
     of a ruling of width ``w`` and spacing ``d`` is exactly ``w / d``. So the width
-    needed for a target tone is **solved, not tuned**: ``w = (1 - tone) * d``. The
+    needed for a target tone is **solved, not tuned**: ``w = (1 - tone) * max_width * d``. The
     op therefore has a closed form to be graded against — blur the result and the
     local mean must come back to the tone you asked for.
 

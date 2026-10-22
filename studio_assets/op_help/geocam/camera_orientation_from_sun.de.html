@@ -4,17 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.camera_orientation_from_sun(sun_pixels, unix_times, lat_deg, lon_deg, K)</code> (die Implementierung direkt: <code style="color:#22d3bf">import geocam; geocam.camera_orientation_from_sun(sun_pixels, unix_times, lat_deg, lon_deg, K)</code>; aus dem Register: <code style="color:#22d3bf">opsgeocam.get(&quot;camera_orientation_from_sun&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Zeitgestempelte Pixelpositionen der Sonne, ≥ 2 Punkte → Kameraorientierung (yaw, pitch, roll) (SVD-Lösung des Wahba-Problems = Kabsch).</p>
-<p>Für jede Beobachtung: Pixel → Strahl in Kamerakoordinaten d_c (aus K), Zeit → Sonnenrichtung in der Welt s_w (<code style="color:#22d3bf">sun_position</code>, mit der Elevation <b>inklusive Refraktion</b>: die Kamera sieht die scheinbare Sonne). <code style="color:#22d3bf">R = argmin Σ |R d_c − s_w|²</code> wird mit SVD in geschlossener Form gelöst (Kabsch 1976 / Markley 1988) und in <code style="color:#22d3bf">(yaw, pitch, roll)</code> zerlegt.</p>
-<p>Es ist durch 2 Punkte eindeutig bestimmt (die von 2 Richtungen aufgespannte Ebene wird benötigt). Bei 1 Beobachtung oder wenn alle in dieselbe Richtung zeigen (kollinear), ValueError -- zum Beispiel 2 Bilder zur selben Zeit oder nur Mittag an vielen Tagen. Das Azimut der Sonne bewegt sich an 1 Tag stark, daher genügen <b>2 Bilder, morgens und abends am selben Tag</b>.</p>
-<p>Args:</p>
-<p>sun_pixels: (N, 2) (u, v). Gestapelte Ausgaben von <code style="color:#22d3bf">sun_pixel_position</code>.</p>
+<p>Für jede Beobachtung, Pixel → Kamerakoordinatenstrahl d_c(von K), Zeit → globale Sonnenrichtung s_w(<code style="color:#22d3bf">sun_position</code>, Verwenden Sie einen Elevationswinkel mit <b>Refraktion</b>: Die Kamera sieht die scheinbare Sonne. „R = argmin Σ |R d_c − s_w|²“. Lösen Sie es in geschlossener Form mit SVD (Kabsch 1976 / Markley 1988) und zerlegen Sie es in „(yaw, pitch, roll)“.</p>
+<p>Es wird eindeutig durch zwei Punkte bestimmt (erfordert eine Fläche, die sich in zwei Richtungen erstreckt). Wenn die Beobachtungen an einem Punkt oder alle in die gleiche Richtung erfolgen (kollinear) ValueError – Zum Beispiel zwei Fotos gleichzeitig oder viele Tage lang nur mittags. Die Richtung der Sonne ändert sich an einem Tag stark. Da es sich bewegt, benötigen Sie nur zwei Fotos vom selben Tag, eines morgens und eines abends.</p>
+<p>Argumente:</p>
+<p>sun_pixels: (u, v) von (N, 2). Die Ausgabe von „sun_pixel_position“ ist gestapelt.</p>
 <p>unix_times: (N,) UNIX-Sekunden (UTC).</p>
 <p>lat_deg, lon_deg: Kameraposition.</p>
 <p>K: (fx, fy, cx, cy).</p>
-<p>Returns:</p>
-<p>table: <code style="color:#22d3bf">yaw_deg</code> / <code style="color:#22d3bf">pitch_deg</code> / <code style="color:#22d3bf">roll_deg</code> / <code style="color:#22d3bf">residual_deg</code> (RMS des Winkelresiduums zwischen Strahlen und</p>
-<p>Sonnenrichtungen) / <code style="color:#22d3bf">max_residual_deg</code> / <code style="color:#22d3bf">n</code> / <code style="color:#22d3bf">condition</code> (Ausdehnung der von den Beobachtungsrichtungen aufgespannten Ebene =</p>
-<p>der 2. Singulärwert; je näher an 0, desto unbestimmter).</p>
+<p>Rückgaben:</p>
+<p>Tabelle: „yaw_deg“ / „pitch_deg“ / „roll_deg“ / „residual_deg“ (Strahl- und Sonnenrichtung).</p>
+<p>RMS des Winkelresiduals)/ „max_residual_deg“ / „n“ / „Bedingung“ (Breite der Oberfläche in Beobachtungsrichtung =</p>
+<p>Das Verhältnis des zweiten und größten Singulärwerts, der näher an 0 liegt, ist unbestimmt.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegeocam:geocam">Leitfaden zur Familie geocam</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

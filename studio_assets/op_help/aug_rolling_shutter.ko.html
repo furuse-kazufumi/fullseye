@@ -12,7 +12,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/aug_rolling_shutter.inputs.jpg">aug_rolling_shutter: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>롤링 셔터(rolling-shutter) 왜곡. CMOS 롤링 셔터는 각 행(row)을 순차적으로 노출하므로, 장면(또는 카메라)이 수평으로 패닝하면 각 행이 행 인덱스에 선형 비례하는 만큼 이동한다 -- 순수한 수평 전단(shear)이다. <code style="color:#22d3bf">a</code> 는 최대 이동량 <code style="color:#22d3bf">0.25*W*a</code> 픽셀을 설정하며(전단은 중앙 행이 움직이지 않도록 중심이 맞춰져 있다), <code style="color:#22d3bf">b</code> 는 패닝 방향을 설정한다(b &lt; 0.5 이면 행 인덱스가 커질수록 오른쪽으로, 그렇지 않으면 왼쪽으로 이동). 반사 경계 조건으로 양선형(bilinear) 리샘플링한다.</p>
+<p>Rolling-shutter skew. A CMOS rolling shutter exposes rows sequentially, so a scene (or camera) panning horizontally shifts each row by an amount linear in its row index - a pure horizontal shear.a &#x27;&#x27; shear is centred so the middle row is unmoved), b sets the pan direction (b &lt; 0.5 -&gt; shift right with increasing row, otherwise left). Resampled bilinearly with reflecting borders.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

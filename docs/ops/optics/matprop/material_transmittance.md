@@ -22,7 +22,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 T = (1 − R)² e^{−αt} / (1 − R² e^{−2αt})(両面の多重反射を足した非コヒーレントの式、
 R は垂直入射の |(m − 1)/(m + 1)|²、α = 4πk/λ)。``include_fresnel=False`` で内部透過率
 e^{−αt} だけにする(硝材カタログの「内部透過率」と同じ量)。
-厚さ 0 は T = 1 になるが、負や非有限は ValueError。
+厚さ 0 でも ``include_fresnel=True`` なら ``T=(1-R)/(1+R)``、False なら 1。負や非有限は ValueError。
 
 ``extra_absorption``: 材料の表に無い吸収を足す ``pairs``(λ [nm], α [1/cm])。例: ドープした Si の自由キャリア吸収
 ``silicon_free_carrier_absorption(1e19, "n", ...)`` をそのまま渡す。格子の全波長を覆わなければ ValueError

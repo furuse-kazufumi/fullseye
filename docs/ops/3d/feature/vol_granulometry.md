@@ -43,8 +43,8 @@ means.
 **Applicability.** (1) A distribution is only as good as the threshold that
 made the binary volume — report it.  (2) Features touching the volume border
 are truncated and bias the distribution downward; crop or state it.
-(3) ``d50`` is interpolated between the two bracketing radii, so it is no
-finer than the radius step.
+(3) ``d50`` is the median of foreground local-thickness values; it is not
+quantised to or interpolated from the requested radius steps.
 
 HALCON has no granulometry operator.
 

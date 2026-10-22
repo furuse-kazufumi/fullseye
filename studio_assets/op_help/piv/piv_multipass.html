@@ -13,6 +13,8 @@
 <p>格子が変わるので予測は最近傍で載せ替える。</p>
 <p>overlap / peak / window_func: <code style="color:#22d3bf">piv_cross_correlate</code> と同じ。</p>
 <p>outlier_threshold: 段間の正規化中央値検定の閾値。<code style="color:#22d3bf">None</code> で無効。</p>
+<p>normalize: 各段の相互相関の正規化方式。</p>
+<p>search_limit: 予測位置から探索する窓幅の割合。</p>
 <p>Returns:</p>
 <p>最終段の <code style="color:#22d3bf">(flow, info)</code>。<code style="color:#22d3bf">info[&quot;passes&quot;]</code> に各段の窓の大きさ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>

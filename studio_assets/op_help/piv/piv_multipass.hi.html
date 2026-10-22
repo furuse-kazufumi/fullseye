@@ -6,15 +6,17 @@
 <p style="margin:2px 0 2px 12px">• मूल function का return: <code style="color:#22d3bf">(flow, info) -&gt; flow2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>मोटी window से बारीक window तक चरण घटाने वाला multi-pass PIV। <code style="color:#22d3bf">(flow, info)</code> लौटाता है।</p>
-<p>हर pass का परिणाम <b>अगले pass के अनुमानित displacement</b> के रूप में इस्तेमाल होता है (2nd image की window integer मात्रा से खिसकाई जाती है)। Passes के बीच outliers हटाना और भरना जानबूझकर है —— अगर गलत vector को जैसे का तैसा prediction में इस्तेमाल किया जाए, तो वह window अगले pass में भी गलत ही बंद रहती है।</p>
-<p>Args:</p>
-<p>a, b: image pair।</p>
-<p>windows: घटते आकार में windows का sequence। हर pass को पिछले का <b>गुणज होना ज़रूरी नहीं</b>,</p>
-<p>लेकिन चूँकि grid बदलता है, prediction nearest neighbour से स्थानांतरित किया जाता है।</p>
-<p>overlap / peak / window_func: <code style="color:#22d3bf">piv_cross_correlate</code> के समान।</p>
-<p>outlier_threshold: passes के बीच normalised median test का threshold। <code style="color:#22d3bf">None</code> इसे बंद करता है।</p>
-<p>Returns:</p>
-<p>अंतिम pass का <code style="color:#22d3bf">(flow, info)</code>। <code style="color:#22d3bf">info[&quot;passes&quot;]</code> में हर pass का window size होता है।</p>
+<p>प्रत्येक चरण के परिणाम को अगले चरण के लिए अनुमानित विस्थापन के रूप में उपयोग करें (एक पूर्णांक राशि द्वारा दूसरी विंडो को स्थानांतरित करना)। यह जानबूझकर आउटलेर्स को हटाने और पंक्तियों के बीच की जगह को भरने के लिए है - आउटलेर्स वैक्टर का उपयोग भविष्यवाणियों के रूप में किया जाता है। उपयोग करने पर, विंडो अगले चरण पर अपनी जगह पर बनी रहेगी।</p>
+<p>तर्क:</p>
+<p>ए, बी: छवि जोड़ी।</p>
+<p>विंडोज़: घटते क्रम में विंडोज़ की एक पंक्ति। प्रत्येक चरण का पिछले चरण का गुणज होना ज़रूरी नहीं है, लेकिन</p>
+<p>चूंकि ग्रिड बदलता है, इसलिए भविष्यवाणियों को निकटतम पड़ोसियों से बदल दिया जाता है।</p>
+<p>ओवरलैप/पीक/विंडो_फंक: <code style="color:#22d3bf">piv_cross_correlate</code> के समान।</p>
+<p>आउटलेयर_थ्रेशोल्ड: चरणों के बीच सामान्यीकृत माध्यिका परीक्षण के लिए सीमा। <code style="color:#22d3bf">कोई नहीं</code> के साथ अक्षम।</p>
+<p>सामान्यीकरण: प्रत्येक चरण में क्रॉस-सहसंबंध के लिए सामान्यीकरण विधि।</p>
+<p>search_limit: अनुमानित स्थिति से खोजने के लिए विंडो की चौड़ाई का प्रतिशत।</p>
+<p>रिटर्न:</p>
+<p>अंतिम चरण <code style="color:#22d3bf">(प्रवाह, जानकारी)</code>। <code style="color:#22d3bf">info[&quot;passes&quot;]</code> में विंडोज़ की प्रत्येक पंक्ति का आकार।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

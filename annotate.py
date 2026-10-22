@@ -2466,7 +2466,7 @@ def annotate_leader(img, points, labels=None, color="emphasis", width=1.5, cap_s
     Raises
     ------
     ValueError
-        :func:`annotate_leader_layout` と同じ + 太さ・cap_size が非正。
+        :func:`annotate_leader_layout` と同じ + 太さが非正、cap_size が負。0 の cap_size は先端なし。
     """
     a = _prep(img)
     w = _num(width, "width", lo=0.5)

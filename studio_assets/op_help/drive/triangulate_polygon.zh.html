@@ -4,13 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.triangulate_polygon(poly: &#x27;np.ndarray | Sequence[Sequence[float]]&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import driveplateau; driveplateau.triangulate_polygon(poly: &#x27;np.ndarray | Sequence[Sequence[float]]&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;triangulate_polygon&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用耳切法对简单多边形(凸或凹均可，无自交)进行三角剖分。</p>
-<p>返回的三角形是输入顶点的下标 (k-2, 3),每个三角形为逆时针(若输入为顺时针则在内部反转处理,下标按原顶点编号返回)。</p>
-<p>Args:</p>
-<p>poly: (k,2) 顶点序列。不必闭合。</p>
-<p>Returns:</p>
-<p>(k-2, 3) int64 数组。</p>
-<p>Raises:</p>
-<p>ValueError: 顶点少于 3、面积几乎为 0、找不到耳(疑似自相交或重复点)。</p>
+<p>要返回的三角形是输入顶点的索引，其中 m 是不包括共线顶点 (m-2, 3) 的有效顶点数。每个三角形逆时针旋转（如果输入是顺时针）（内部进行反转，并返回原始顶点编号作为下标。）</p>
+<p>参数：</p>
+<p>poly：(k,2) 顶点序列。它不必关闭。</p>
+<p>返回：</p>
+<p>(m-2, 3) int64 数组。 m 是不包括共线顶点的有效顶点数。</p>
+<p>加薪：</p>
+<p>ValueError：少于3个顶点，面积接近0，缺少耳朵（疑似自相交或重复点）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

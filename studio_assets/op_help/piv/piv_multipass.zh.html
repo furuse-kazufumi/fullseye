@@ -6,15 +6,17 @@
 <p style="margin:2px 0 2px 12px">• 底层返回: <code style="color:#22d3bf">(flow, info) -&gt; flow2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>从粗窗口逐级降到细窗口的多级 PIV。返回 <code style="color:#22d3bf">(flow, info)</code>。</p>
-<p>把每一级的结果用作<b>下一级的预测位移</b>(把第 2 幅的窗口错开整数量)。在级与级之间剔除并填补离群值是有意为之 —— 若把偏离的向量直接用作预测，该窗口在下一级也会一直偏离、被固定住。</p>
-<p>Args:</p>
-<p>a, b: 图像对。</p>
-<p>windows: 由大到小的窗口序列。各级与前一级<b>不必是倍数关系</b>，</p>
-<p>但网格会改变，因此预测用最近邻重新映射。</p>
-<p>overlap / peak / window_func: 与 <code style="color:#22d3bf">piv_cross_correlate</code> 相同。</p>
-<p>outlier_threshold: 级间归一化中位数检验的阈值。<code style="color:#22d3bf">None</code> 为禁用。</p>
-<p>Returns:</p>
-<p>最后一级的 <code style="color:#22d3bf">(flow, info)</code>。<code style="color:#22d3bf">info[&quot;passes&quot;]</code> 中为各级的窗口大小。</p>
+<p>使用每个阶段的结果作为下一阶段的预测位移（将第二个窗口移动整数）。有意删除离群值并填充行之间的空间 - 离群值向量用作预测。使用时，窗口将在下一阶段保持在原位。</p>
+<p>参数：</p>
+<p>a、b：图像对。</p>
+<p>windows：按降序排列的一排窗口。每个阶段不必是前一阶段的倍数，但是</p>
+<p>由于网格发生变化，预测将替换为最近的邻居。</p>
+<p>重叠/峰值/window_func：与 piv_cross_correlate 相同。</p>
+<p>outlier_threshold：阶段之间标准化中值测试的阈值。禁用“None”。</p>
+<p>Normalize：各阶段互相关的归一化方法。</p>
+<p>search_limit：从预测位置开始搜索的窗口宽度的百分比。</p>
+<p>返回：</p>
+<p>最后阶段<code style="color:#22d3bf">（流程，信息）</code>。 <code style="color:#22d3bf">info[&quot;passes&quot;]</code> 中每行窗口的大小。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

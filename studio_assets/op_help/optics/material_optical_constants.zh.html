@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>单一波长的光学常数 n、k，以及由此得到的吸收系数、复介电常数与垂直入射反射率。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">alpha_per_cm</code> = 4πk/λ(Beer–Lambert の吸収係数 [1/cm])、<code style="color:#22d3bf">epsilon</code> = (n + ik)²、<code style="color:#22d3bf">reflectance_normal</code> = |(m − 1)/(m + 1)|²。<code style="color:#22d3bf">n_source</code> / <code style="color:#22d3bf">k_source</code> はどの一次文献の区間から取ったか(k の表が無ければ <code style="color:#22d3bf">k_source</code> は <code style="color:#22d3bf">None</code> で k = 0)。波長がデータ区間の外なら ValueError(外挿しない)。</p>
+<p><code style="color:#22d3bf">alpha_per_cm</code> = 4πk/λ(Beer–Lambert の吸収係数 [1/cm])、<code style="color:#22d3bf">epsilon_re</code> / <code style="color:#22d3bf">epsilon_im</code> = (n + ik)² の実部 / 虚部、<code style="color:#22d3bf">reflectance_normal</code> = |(m − 1)/(m + 1)|²。<code style="color:#22d3bf">n_source</code> / <code style="color:#22d3bf">k_source</code> はどの一次文献の区間から取ったか(k の表が無ければ <code style="color:#22d3bf">k_source</code> は <code style="color:#22d3bf">None</code> で k = 0)。波長がデータ区間の外なら ValueError(外挿しない)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>

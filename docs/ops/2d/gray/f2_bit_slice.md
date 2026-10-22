@@ -35,8 +35,8 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 ## 使い方
 
-Extract one bit-plane of the image after 8-bit quantisation. ``a`` selects
-the plane (0 = LSB .. 7 = MSB); ``b`` is ignored. Returns a {0,1} image.
+Extract one bit-plane after 8-bit quantisation. Normalised ``a`` in 0..1
+selects plane ``round(7*a)`` (0 = LSB, 1 = MSB); ``b`` is ignored. Returns {0,1}.
 
 ## 詳しい使い方ガイド
 

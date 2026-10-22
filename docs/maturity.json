@@ -1266,10 +1266,9 @@
    "note": "docs/capabilities/pictures-that-carry-their-own-truth.md",
    "status": "verified-synthetic",
    "ops_total": 16,
-   "ops_named_in_tests": 14,
+   "ops_named_in_tests": 15,
    "ops_not_named_in_tests": [
-    "illusion_fraser_spiral",
-    "perpetual_flow_field"
+    "illusion_fraser_spiral"
    ],
    "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
    "examples": [

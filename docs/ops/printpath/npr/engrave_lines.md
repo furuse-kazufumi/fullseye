@@ -21,7 +21,7 @@ Copperplate engraving — parallel lines whose **width** carries the tone.
 
 ★**Why this earns its place**: while the lines do not touch, the ink coverage
 of a ruling of width ``w`` and spacing ``d`` is exactly ``w / d``. So the width
-needed for a target tone is **solved, not tuned**: ``w = (1 - tone) * d``. The
+needed for a target tone is **solved, not tuned**: ``w = (1 - tone) * max_width * d``. The
 op therefore has a closed form to be graded against — blur the result and the
 local mean must come back to the tone you asked for.
 

@@ -4,14 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.moment_axes(points, weights=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import match3d; match3d.moment_axes(points, weights=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;moment_axes&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>점군/가중 점의 <b>무게중심 + 주축</b>(관성 텐서의 고유벡터). 자세 추정의 기초.</p>
-<p>반환값 (centroid(3,), axes(3,3) 열=주축, eigvals(3,)). 고윳값 내림차순. 회전의 정준화에 쓴다.</p>
-<p>정의: <code style="color:#22d3bf">w</code>를 총합 1로 정규화하고, 무게중심 <code style="color:#22d3bf">c = Σ w p</code>, 산포 행렬 <code style="color:#22d3bf">C = Σ w (p−c)(p−c)ᵀ</code> (공분산. 관성 텐서 <code style="color:#22d3bf">tr(C)I − C</code>와 고유벡터는 공통이고 고윳값의 순서가 반대)를 <code style="color:#22d3bf">eigh</code>로분해한다. <code style="color:#22d3bf">axes[:, i]</code>가 i번째로 큰 고윳값의 주축(내림차순). 고윳값은 분산(길이²).</p>
-<p style="margin:2px 0 2px 12px">• 고유벡터의 부호는 임의이며 <code style="color:#22d3bf">axes</code>는 왼손계(det=−1)가 될 수 있다(<code style="color:#22d3bf">match_pca</code>는 제3축을</p>
-<p>반전해 오른손계로 만든다).</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">weights</code>는 길이 N. 총합 0은 0 나눗셈으로 NaN(예외는 나지 않음). 점 수 0은 실패한다(검증은 없음).</p>
-<p style="margin:2px 0 2px 12px">• 주축이 축퇴(구 등)되면 축의 방향은 정해지지 않는다.</p>
-<p>후단: <code style="color:#22d3bf">match_pca</code>, <code style="color:#22d3bf">obb</code>(방향 있는 bbox), 정준 자세로의 회전.</p>
-<p>빈 입력(<code style="color:#22d3bf">points</code> 이(가) 0 개 요소)은 <code style="color:#22d3bf">ValueError</code> 를 발생시킨다.</p>
+<p>반환값 (centroid(3,), axes(3,3) 열 = 주축, eigvals(3,)). 고유값 내림차순. 회전 정규화에 사용한다.</p>
+<p>정의 : &quot;w&quot;를 합계 1로 정규화하고 무게 중심 &quot;c = Σ w p&quot;, 산점 행렬 &quot;C = Σ w (p-c) (p-c)ᵀ&quot;</p>
+<p>(공분산. 관성 텐서 tr(C)I-C와 고유 벡터는 공통이고 고유치의 순서가 역)를 eigh&#x27;&#x27;로분해한다. axes[:, i] 가 i번째로 큰 고유치의 주축(내림차순). 고유치는 분산(길이²).</p>
+<p style="margin:2px 0 2px 12px">• 고유 벡터의 부호는 임의이며, &quot;axes&quot;는 왼손 시스템 (det = -1)이 될 수있다 ( &quot;match_pca&quot;는 제 3 축</p>
+<p>반전하여 오른손으로 하고 있다).</p>
+<p style="margin:2px 0 2px 12px">• &quot;weights&quot;는 길이 N. 합계 0은 0 나누기로 NaN (예외는 나오지 않음). 점수 0 은 명시적으로 ValueError.</p>
+<p style="margin:2px 0 2px 12px">• 주축이 축퇴(구 등)라면 축의 방향은 부정.</p>
+<p>후단 : &quot;match_pca&quot;, &quot;obb&quot;(유향 bbox), 정규 자세로 회전.</p>
+<p>빈 입력 (points이 0 요소)은 ValueError입니다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

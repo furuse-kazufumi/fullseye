@@ -15,7 +15,7 @@
 <p>Unit cells along each axis.</p>
 <p>Returns a <code style="color:#22d3bf">mesh</code> (vertices, faces).</p>
 <p>★The thickened <b>solid</b> form lives in <code style="color:#22d3bf">gyroid_solid_mask</code>, not behind a keyword here —— one function that returns a mesh or a volume depending on an argument cannot be given a single declared output type, and a ledger row that lies about its output is the defect class this library keeps catching (<code style="color:#22d3bf">indices_to_labels</code>: one word covering a 1-D mask and a 3-D volume).</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: a grid below 8 per axis or over the cap; non-positive periods; a level outside the field&#x27;s range (no surface exists there — reported rather than returning an empty mesh); negative thickness.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: a grid below 8 per axis or over the cap; non-positive periods; or a level outside the field&#x27;s range (no surface exists there — reported rather than returning an empty mesh).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

@@ -86,7 +86,7 @@ def material_group_index(material="SILICA", wl_min_nm=800.0, wl_max_nm=1700.0, n
 def material_gvd(material="SILICA", wl_min_nm=1000.0, wl_max_nm=1700.0, n_points=71):
     """材料分散のパラメータ D(λ) = −(λ/c) d²n/dλ² [ps/(nm·km)] を ``pairs``(λ [nm], D)で。
 
-    D = 0 の波長が材料分散の零点(溶融石英で ≈ 1.27 µm)。正(異常分散)では長い波長が速い。
+    D = 0 の波長が材料分散の零点(溶融石英で ≈ 1.27 µm)。正(異常分散)ではグループ遅延が波長とともに増え、長い波長が遅い。
     """
     op = "material_gvd"
     wl = _grid(wl_min_nm, wl_max_nm, n_points, op)

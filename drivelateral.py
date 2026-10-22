@@ -772,7 +772,7 @@ def pure_pursuit_circle_offset(radius: float, lookahead: float, wheelbase: float
     (δ = L/R_c + K u²/R_c、β、回転の中心)を重心の旋回半径 R_c の 1 変数の方程式にして二分法で解く(半閉形式)。
     運動学の式はこの効果を落とすので横ずれを小さく見積もる(PoC では約半分)。
 
-    **Raises** ``ValueError``: R, L_d, L ≤ 0、注視点が円に届かない、1 + K v²/L ≤ 0、params で v ≤ 0.5。"""
+    **Raises** ``ValueError``: R, L_d, L ≤ 0、注視点が円に届かない、1 + K v²/L ≤ 0、params で v < 0.5。"""
     op = "pure_pursuit_circle_offset"
     R = _positive(radius, "radius", op)
     Ld = _positive(lookahead, "lookahead", op)

@@ -29,7 +29,7 @@ Raises ValueError: 入力に NaN/Inf/float32 桁あふれがある場合。
 スライス中心)。``r_in``〜``r_out``(voxel、既定 ``min(H,W)/2 − 1``)を ``nr`` 等分、角度を
 ``ntheta`` 等分。出力 ``(D, ntheta, nr)`` float32: 軸 0 は z(高さ、入力と同じ)、行 k の角度
 ``θ = k·2π/ntheta``、列 j の半径。サンプル点は ``(z, cy + r sinθ, cx + r cosθ)``、volume 外は 0。
-D, H, W が 1 の軸は正規化で 0 除算になる(``polar_unwrap`` と違い検査は無い)。
+D, H, W が 1 の軸も画素座標のまま補間し、0 除算は生じない。
 後段: ``[:, :, j]`` を取れば半径 j の円筒面が (D×θ) の 2-D 画像になり、2-D の傷検査・
 ``ncc_locate`` が使える。
 

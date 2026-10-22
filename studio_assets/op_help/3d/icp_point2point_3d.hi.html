@@ -4,32 +4,32 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.icp_point2point_3d(src, dst, iters=50, init_R=None, init_t=None, tol=1e-06, max_corr_dist=None, trim_ratio=None, device=&#x27;cpu&#x27;, reproducible=False)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import match3d; match3d.icp_point2point_3d(src, dst, iters=50, init_R=None, init_t=None, tol=1e-06, max_corr_dist=None, trim_ratio=None, device=&#x27;cpu&#x27;, reproducible=False)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;icp_point2point_3d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>point cloud को point-to-point ICP (Kabsch/SVD) से refine करता है।</p>
-<p>मोटे match अनुमान (integer NCC / Fourier-Mellin±3° / Hough±0.5voxel) से मिले initial pose (init_R, init_t) से शुरू करके, src point cloud को dst point cloud पर rigid transform से align करता है। हर iteration में nearest neighbour correspondences (cKDTree) फिर से बनाता है, Kabsch algorithm (SVD) से relative rotation और translation निकालकर जोड़ता जाता है, इसलिए correspondences ज्ञात न होने पर भी sub-voxel सटीकता तक converge करता है।</p>
-<p>partial overlap और outlier को Trimmed ICP (केवल कम दूरी वाले correspondences लिए जाते हैं) और absolute distance gate (max_corr_dist) से संभाला जाता है। अंतिम RMSE वास्तव में अपनाए गए correspondences (inliers) पर मापा जाता है, इसलिए partial observation में भी pose की गुणवत्ता सही दिखती है।</p>
-<p>Arguments:</p>
-<p>src: (N,3) चलने वाला point cloud (torch.Tensor या numpy.ndarray)।</p>
-<p>dst: (M,3) स्थिर (reference) point cloud।</p>
-<p>iters: iterations की अधिकतम संख्या।</p>
-<p>init_R: (3,3) initial rotation। None होने पर identity matrix।</p>
-<p>init_t: (3,) initial translation। None होने पर zero vector।</p>
-<p>tol: RMSE का relative सुधार इस मान से कम होने पर convergence मानकर रुकता है।</p>
-<p>max_corr_dist: इस दूरी से अधिक के correspondences outlier मानकर हटाए जाते हैं (None से बंद)।</p>
-<p>trim_ratio: 0&lt;r&lt;=1। हर iteration में nearest neighbour दूरी सबसे कम वाले ऊपरी r हिस्से के correspondences ही</p>
-<p>अपनाने वाला Trimmed ICP। partial overlap (overlap ratio r) के लिए उपयोगी। None से बंद।</p>
-<p>device: torch device (&quot;cpu&quot; आदि)। SVD इसी device पर हल होता है।</p>
-<p>reproducible: True होने पर reduction points के क्रम और BLAS threads की संख्या पर निर्भर नहीं करता (default False = पहले जैसा)।</p>
-<p>mean के लिए math.fsum, cross-covariance H के लिए ozakimm (Ozaki scheme), pose element-wise लागू होता है, RMSE भी math.fsum से।</p>
-<p>src points का क्रम बदलने पर भी R, t और rmse bit स्तर पर समान रहते हैं (उसी computer और उसी LAPACK पर)। trim_ratio की सीमा पर</p>
-<p>ठीक बराबर दूरी वाले points क्रम के अनुसार अलग चुने जा सकते हैं। 200,000 points पर प्रति 1 iteration 0.7 ms से लगभग 170 ms हो जाता है।</p>
-<p>Returns:</p>
-<p>R: (3,3) rotation। dst ~= src @ R.T + t को संतुष्ट करता है। <b>torch वाले environment में <code style="color:#22d3bf">torch.Tensor</code>, नहीं तो समान मानों वाला <code style="color:#22d3bf">numpy.ndarray</code></b> (2026-09-07 को</p>
-<p>मुख्य भाग को numpy में बदलते समय भी compatibility के लिए type वही रखा गया)।</p>
-<p>★उसी family का <code style="color:#22d3bf">icp_point2plane</code> <b>हमेशा numpy लौटाता है</b> — family के भीतर</p>
-<p>types एक जैसे नहीं हैं, इसलिए downstream में <code style="color:#22d3bf">np.asarray(R)</code> से गुज़ारना सुरक्षित है</p>
-<p>(दोनों चलते हैं। breaking change से बचने के लिए यह असमानता छोड़ी गई है)।</p>
-<p>t: (3,) translation (R जैसा ही type)।</p>
-<p>info: dict। &quot;rmse&quot; (अपनाए गए correspondences पर अंतिम RMSE), &quot;iters&quot; (वास्तविक iterations की संख्या),</p>
-<p>&quot;converged&quot; (bool), &quot;inliers&quot; (अपनाए गए correspondences की संख्या), &quot;rmse_history&quot; (list)।</p>
+<p>मोटे मिलान अनुमान (पूर्णांक एनसीसी/फूरियर-मेलिन±3°/हफ±0.5वोक्सेल) के साथ प्राप्त किया गया प्रारंभिक मुद्रा (init_R, init_t) से शुरू करके, src साइड पॉइंट को कठोरता से dst साइड पॉइंट में बदल दिया जाता है। संरेखित करें. प्रत्येक पुनरावृत्ति पर, निकटतम पड़ोसी पत्राचार (cKDTree) को फिर से सिला जाता है और काब्श एल्गोरिथ्म (एसवीडी) का उपयोग करके सापेक्ष घुमावों और अनुवादों की गणना और संचय करके, भले ही पत्राचार ज्ञात न हो, उप-स्वर परिशुद्धता में अभिसरण करें।</p>
+<p>आंशिक ओवरलैप्स और आउटलेर्स के लिए, ट्रिम किए गए आईसीपी का उपयोग करें (केवल छोटी दूरी के साथ पत्राचार को अपनाएं)। पूर्ण दूरी गेट (max_corr_dist) का उपयोग करके इससे निपटें। अंतिम आरएमएसई वास्तव में अपनाया गया था। चूंकि मूल्यांकन पत्राचार (इनलियर्स) पर आधारित है, आंशिक अवलोकनों में भी मुद्रा की गुणवत्ता सटीक रूप से प्रतिबिंबित होती है।</p>
+<p>तर्क:</p>
+<p>src: (एन,3) मूविंग साइड पॉइंट क्लाउड (टॉर्च.टेन्सर या numpy.ndarray)।</p>
+<p>डीएसटी: (एम,3) निश्चित पक्ष (संदर्भ) बिंदु समूह।</p>
+<p>पुनरावृत्तियाँ: पुनरावृत्तियों की अधिकतम संख्या।</p>
+<p>init_R: (3,3) प्रारंभिक रोटेशन। यदि कोई नहीं, तो यह एक पहचान मैट्रिक्स है।</p>
+<p>init_t: (3,) प्रारंभिक अनुवाद। यदि कोई नहीं, तो यह एक शून्य वेक्टर है।</p>
+<p>टोल: यदि आरएमएसई में सापेक्ष सुधार इस मूल्य से नीचे है तो अभिसरण समाप्त कर दिया जाता है।</p>
+<p>max_corr_dist: इस दूरी से अधिक के पत्राचार को आउटलेर्स के रूप में त्यागें (कोई नहीं के साथ अक्षम)।</p>
+<p>ट्रिम_अनुपात: 0&lt;r&lt;=1. प्रत्येक पुनरावृत्ति पर, केवल शीर्ष r सबसे छोटी निकटतम पड़ोसी दूरी के साथ मेल खाता है</p>
+<p>छंटनी की गई आईसीपी को अपनाया जाएगा। आंशिक ओवरलैप (ओवरलैप दर आर) के लिए प्रभावी। किसी के साथ अक्षम.</p>
+<p>डिवाइस: रिटर्न वैल्यू रखने के लिए टॉर्च डिवाइस (जैसे &quot;सीपीयू&quot;)। SVD को CPU पर NumPy का उपयोग करके हल किया जाता है।</p>
+<p>प्रतिलिपि प्रस्तुत करने योग्य: यदि सत्य है, तो कटौती बिंदु क्रम और बीएलएएस थ्रेड्स की संख्या से स्वतंत्र होगी (डिफ़ॉल्ट गलत = पहले के समान)।</p>
+<p>औसत गणित.fsum है, पारस्परिक सहप्रसरण H ozakim (Ozaki योजना) है, अभिविन्यास की गणना तत्व दर तत्व की जाती है, और RMSE भी गणित.fsum है।</p>
+<p>भले ही src में बिंदुओं का क्रम बदल दिया जाए, R・t・rmse बिट्स में समान रहता है (वही कंप्यूटर, वही LAPACK)। ट्रिम_रेशियो ब्रेक पर</p>
+<p>बिल्कुल समान दूरी वाले बिंदुओं को अलग-अलग क्रम में चुना जा सकता है। 200,000 अंक पर, 0.7 एमएस प्रति पुनरावृत्ति लगभग 170 एमएस बन जाता है।</p>
+<p>वापसी मूल्य:</p>
+<p>आर: (3,3) रोटेशन। डीएसटी ~= स्रोत @ आर.टी. + टी. <b>मशाल वाले वातावरण में <code style="color:#22d3bf">torch.Tensor</code>, यदि नहीं, तो वही मान <code style="color:#22d3bf">numpy.ndarray</code></b> (2026-09-07 को)</p>
+<p>यहां तक कि मुख्य बॉडी को सुन्न में परिवर्तित करते समय भी अनुकूलता के लिए प्रकार को अपरिवर्तित छोड़ दिया गया था।)</p>
+<p>★ <code style="color:#22d3bf">icp_point2plane</code> एक ही परिवार में <b>हमेशा सुन्न होकर लौटता है</b> —— परिवार में</p>
+<p>चूंकि प्रकार संरेखित नहीं हैं, इसलिए <code style="color:#22d3bf">np.asarray(R)</code> को डाउनस्ट्रीम से गुजारना सुरक्षित है।</p>
+<p>(दोनों में से कोई भी काम करता है। परिवर्तनों को तोड़ने से बचने के लिए इस गलत संरेखण को जगह पर छोड़ दिया गया है।)</p>
+<p>टी: (3,) अनुवाद (आर के समान प्रकार)।</p>
+<p>जानकारी: तानाशाही. &quot;आरएमएसई&quot; (भर्ती के लिए अंतिम आरएमएसई), &quot;इटर्स&quot; (पुनरावृत्तियों की वास्तविक संख्या),</p>
+<p>&quot;अभिसरण&quot; (बूल), &quot;इनलियर्स&quot; (गोद लेने की संख्या), &quot;rmse_history&quot; (सूची)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

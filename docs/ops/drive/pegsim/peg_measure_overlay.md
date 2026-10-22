@@ -18,7 +18,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 ## 使い方
 
 計測の重ね図(numpy だけ): 真値 = 緑の大きな十字、推定 = 赤の小さな十字、円当てはめに使った縁の点 = 黄の点(imagedraw)。
-右下に真値の重心まわり ``crop`` px 四方を ``zoom`` 倍にした拡大を貼る(副画素の一致を目で見るため)。
+右下に真値の重心まわり ``2*crop`` px 四方(``crop`` は半幅)を ``zoom`` 倍にした拡大を貼る(副画素の一致を目で見るため)。
 
 ``rgb`` は (H, W, 3) uint8、``truth_uv``・``est_uv`` は (N, 2) の (u, v)。返りは同じ大きさの uint8。
 **Raises** ``ValueError``: rgb の形が違う、点が無い。

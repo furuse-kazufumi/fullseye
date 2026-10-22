@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_flow_direction(dem, cell_size, nodata=&#x27;error&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import demops; demops.dem_flow_direction(dem, cell_size, nodata=&#x27;error&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdem.get(&quot;dem_flow_direction&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>D8 유향. O&#x27;Callaghan &amp; Mark (1984).</p>
-<p>반환값은 <code style="color:#22d3bf">(H, W)</code>의 정수로, 0-7이 <code style="color:#22d3bf">_D8</code>의 순서, <code style="color:#22d3bf">-1</code>이 &quot;유출처 없음&quot;(주위보다 낮음 = 와지, 또는 경계 밖으로 나감).</p>
-<p><code style="color:#22d3bf">nodata=&quot;outlet&quot;</code>이면 결측 셀로 향하는 흐름을 <b>허용한다</b>(거기서 계를 나간다). <code style="color:#22d3bf">&quot;barrier&quot;</code>이면 결측으로는 흐르지 않는다. 결측 셀 자신은 항상 <code style="color:#22d3bf">-1</code>.</p>
+<p>반환 값은(H, W) &#x27;&#x27;의 정수이며, 0-7은 : data :_D8 &#x27;, &#x27;-1&#x27;은「유출처 없음」(가옥). &quot;nodata = &quot;outlet&quot;&quot;의 경계 셀은 경계 밖으로 향하는 0-7을 갖는다.</p>
+<p>nodata = &quot;outlet&quot;이라면, 누락 된 셀로 향하는 흐름을  용서  (거기에서 시스템을 나간다). &quot;barrier&quot;는 결측으로 흐르지 않습니다. 결측 셀 자체는 항상 &quot;-1&quot;.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

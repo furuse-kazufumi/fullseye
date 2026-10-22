@@ -27,7 +27,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
        観測の山が最も多く一致する組を選ぶ。
     3. 現在の幾何で各環の位置を ``n_azimuth`` 本の光線上で予測し、窓の中の強度の重心で点を拾い、
        ``scipy.optimize.least_squares`` で ``(cx, cy, distance, tilt の 2 成分)`` を 2θ の残差 [deg] で当てる。窓を
-       縮めながら 3 回。傾きは回転ベクトルの 2 成分 ``tilt·(cos φ, sin φ)`` で解く(傾き 0 で φ が不定になる特異点を避ける)。
+       縮めながら 4 回。傾きは回転ベクトルの 2 成分 ``tilt·(cos φ, sin φ)`` で解く(傾き 0 で φ が不定になる特異点を避ける)。
 
     返り値(dict): 幾何(``cx``・``cy``・``distance``・``pixel``・``wavelength``・``tilt``・``tilt_dir``)に
     ``rms_two_theta_deg``・``n_points``・``n_rings``・``rings_deg``・``ok``(rms が画素 1/4 の角 ``0.25·pixel/distance`` 未満

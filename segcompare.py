@@ -378,7 +378,7 @@ def seg_synapse_nri(a, b, synapses, spacing=None, background=0):
     ``TP = sum C(n_ij, 2)``, ``TP + FN = sum C(s_i, 2)``, ``TP + FP = sum C(t_j, 2)``, so NRI
     is exactly ``1 - adapted_rand_error`` of :func:`seg_rand` taken over the ends (the
     ``- N`` form of the pair counts is ``2 C(n, 2)``). Both are computed and must agree to
-    1e-12. Returns ``nri``, ``precision``, ``recall``, ``tp``, ``fp``, ``fn``, ``n_ends``.
+    1e-12. Returns ``nri``, ``precision``, ``recall``, ``tp``, ``fp``, ``fn``, ``n_ends``, and ``n_lost``.
 
     **Raises** ``ValueError``: as :func:`seg_wiring_variation`; fewer than 2 ends.
     """

@@ -4,30 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.jpeg_quality_estimate(image, max_step: &#x27;int&#x27; = 64, n_coeff: &#x27;int&#x27; = 21) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import imgforensics; imgforensics.jpeg_quality_estimate(image, max_step: &#x27;int&#x27; = 64, n_coeff: &#x27;int&#x27; = 21) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsimgforensics.get(&quot;jpeg_quality_estimate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由已解码图像<b>盲估量化表与 JPEG 质量</b>。<code style="color:#22d3bf">table</code>。</p>
-<p>不读取文件的 DQT，而是<b>只从像素</b>来估计(要点就在这里，即使是重新保存为 PNG / 被粘贴的图像，也能看出“原本是 JPEG 质量 N”)。取 8x8 块 DCT，对每个系数估计梳状间隔(Fan &amp; de Queiroz 2003)，再从按 IJG 公开的缩放规则生成的标准表族中选出最吻合的质量。</p>
-<p>返回(dict)：</p>
-<p><code style="color:#22d3bf">jpeg_compressed</code> 根据 <code style="color:#22d3bf">n_coeff</code> 个系数中出现梳状的有几个来判断的</p>
-<p>bool。<b>并不是“是 JPEG”的证明</b>(见下方 caveats)</p>
-<p><code style="color:#22d3bf">quality</code>         估计质量 1..100(没有梳状时为 <code style="color:#22d3bf">None</code>)</p>
-<p><code style="color:#22d3bf">table</code>           估计出的 <code style="color:#22d3bf">(8, 8)</code> 量化步长(0 = 无法估计)</p>
-<p><code style="color:#22d3bf">n_quantized</code>     出现梳状的系数数 / <code style="color:#22d3bf">n_coeff</code></p>
-<p><code style="color:#22d3bf">fit_error</code>       与所选质量的标准表的平均绝对差</p>
-<p><code style="color:#22d3bf">caveats</code>         此数值无法断言的事</p>
-<p>实测(<code style="color:#22d3bf">tests/test_imgforensics.py::test_jpeg_quality_estimate_recovers_quality</code>，将 256x256 的 1/f^1.6 图像用 Pillow 编码 → 解码后估计)：</p>
-<p>======= ========= =============== ============</p>
-<p>真 Q    估计 Q    出现梳状的系数  fit_error</p>
-<p>======= ========= =============== ============</p>
-<p>95      95        11/20           0.091</p>
-<p>90      90        19/20           0.579</p>
-<p>80      80        13/20           1.308</p>
-<p>70      <b>71</b>    12/20           2.083</p>
-<p>60      60         9/20           2.111</p>
-<p>50      <b>52</b>     7/20           1.857</p>
-<p>40      40         6/20           3.333</p>
-<p>30      <b>None</b>   4/20           —</p>
-<p>======= ========= =============== ============</p>
-<p><b>在低质量一侧崩溃是原理上的极限</b>。质量越低，高频系数越多地被量化为 0，读取梳状的材料本身就从图像中消失了(“出现梳状的系数”一列就是它消失的过程)。质量 30 时材料不足，<b>不返回估计</b>(<code style="color:#22d3bf">quality=None</code>)。不在这里勉强给出答案，是本 op 的设计方针。</p>
-<p>而且<b>在无压缩 PNG 上为 <code style="color:#22d3bf">jpeg_compressed=False</code> / <code style="color:#22d3bf">quality=None</code></b> (用 4 个 seed 确认，并在同一测试中固定)。关键在于此处不默默回答“质量 100”，否则“无压缩”与“几乎无损的 JPEG”会得到相同的答案。</p>
+<p>不要读取文件的 DQT，而是仅根据 <b>像素</b> 来估计它（这就是重点，即使图像被重新保存/粘贴为 PNG，也会显示“原始 JPEG 质量 N”。可见）。采用 8x8 块 DCT 并估计每个系数的梳间距(Fan &amp; de Queiroz 2003)，来自使用 IJG 的公共缩放规则创建的一系列标准表。选择最适合您的品质。</p>
+<p>返回（字典）：</p>
+<p><code style="color:#22d3bf">jpeg_compressed</code> 通过梳理了多少个<code style="color:#22d3bf">n_coeff</code>系数来判断</p>
+<p>布尔。 <b>这并不能证明它是 JPEG</b>（注意事项如下）</p>
+<p>“质量” 估计质量 1..100（如果没有梳子，则为“无”）<code style="color:#22d3bf">table</code> <code style="color:#22d3bf">(8, 8)</code> 的估计量化步长（0 = 未估计）<code style="color:#22d3bf">n_quantized</code> 梳状系数的原始数量，不包括 DC <code style="color:#22d3bf">n_tested = n_coeff - 1</code> <code style="color:#22d3bf">fit_error</code> 与所选质量标准表的平均绝对差 <code style="color:#22d3bf">警告</code>这个数字不能说明什么</p>
+<p>实际测量（<code style="color:#22d3bf">tests/test_imgforensics.py::test_jpeg_quality_estimate_recovers_quality</code>, 使用 Pillow 对 256x256 1/f^1.6 图像进行编码 → 解码和估计）：</p>
+<p>======= ========= =========================== 真实 Q 估计 Q 梳状系数 fit_error ======= ========= =========================== 95 95 11/20 0.091 90 90 19/20 0.579 80 80 13/20 1.308 70 <b>71</b> 12/20 2.083 60 60 9/20 2.111 50 <b>52</b> 7/20 1.857 40 40 6/20 3.333 30 <b>无</b> 4/20 — ======= ========= ===========================</p>
+<p><b>这是一个理论上的限制，它会在低质量方面崩溃</b>。随着质量下降，高频系数变为0。量化，并且梳状读取材料本身从图像中消失（“梳状系数”列是怎么消失的）。在质量 30 时，没有足够的材料并且<b>不返回估计</b>（“质量=无”）。此操作的设计策略不是在这里强制给出答案。</p>
+<p>和 <code style="color:#22d3bf">jpeg_compressed=False</code> / <code style="color:#22d3bf">quality=None</code>** 用于未压缩的 PNG。（用4颗种子确认，在同一测试中固定）。你能做的最好的事情不仅仅是说“质量100”。在这种情况下，“未压缩”和“几乎未降级的 JPEG”将是相同的答案。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

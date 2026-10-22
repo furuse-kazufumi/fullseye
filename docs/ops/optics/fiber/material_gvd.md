@@ -19,7 +19,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 材料分散のパラメータ D(λ) = −(λ/c) d²n/dλ² [ps/(nm·km)] を ``pairs``(λ [nm], D)で。
 
-D = 0 の波長が材料分散の零点(溶融石英で ≈ 1.27 µm)。正(異常分散)では長い波長が速い。
+D = 0 の波長が材料分散の零点(溶融石英で ≈ 1.27 µm)。正(異常分散)ではグループ遅延が波長とともに増え、長い波長が遅い。
 
 ## ファミリ共通の入力契約(fail-closed)
 

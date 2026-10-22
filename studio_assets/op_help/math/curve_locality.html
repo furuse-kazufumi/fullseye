@@ -12,7 +12,7 @@
 <p>gaps : ints</p>
 <p>Index gaps to report. Gaps at or beyond <code style="color:#22d3bf">N</code> are dropped (not an error;</p>
 <p>a short curve simply has nothing to say about a long gap).</p>
-<p>Returns a <code style="color:#22d3bf">table</code>: <code style="color:#22d3bf">gap</code> (int), <code style="color:#22d3bf">mean_distance</code>, and <code style="color:#22d3bf">ratio</code> = <code style="color:#22d3bf">mean_distance / mean_distance[gap == 1]</code> so curves of different scales can be compared directly.</p>
+<p>Returns a <code style="color:#22d3bf">table</code>: <code style="color:#22d3bf">gap</code> (int), <code style="color:#22d3bf">mean_distance</code>, and <code style="color:#22d3bf">ratio</code> = the first result when the first gap is 1, otherwise the minimum mean distance; a zero base yields NaN. Thus curves of different scales can be compared directly.</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: not an (N, 2) array; fewer than 2 points; non-finite coordinates; every requested gap out of range.</p>
 <p>HALCON: no operator.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>

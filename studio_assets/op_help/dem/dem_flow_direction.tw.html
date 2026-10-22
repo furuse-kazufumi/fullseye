@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_flow_direction(dem, cell_size, nodata=&#x27;error&#x27;)</code>(要直接呼叫實作,<code style="color:#22d3bf">import demops; demops.dem_flow_direction(dem, cell_size, nodata=&#x27;error&#x27;)</code>;從台帳取用則 <code style="color:#22d3bf">opsdem.get(&quot;dem_flow_direction&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>D8 流向。O&#x27;Callaghan &amp; Mark (1984)。</p>
-<p>回傳值為 <code style="color:#22d3bf">(H, W)</code> 的整數,0-7 是 <code style="color:#22d3bf">_D8</code> 的順序,<code style="color:#22d3bf">-1</code> 表示「無流出目標」(比周圍低 = 窪地,或流出邊界之外)。</p>
-<p><code style="color:#22d3bf">nodata=&quot;outlet&quot;</code> 時<b>允許</b>流向缺測單元(在那裡離開系統)。<code style="color:#22d3bf">&quot;barrier&quot;</code> 時不流向缺測。缺測單元本身始終為 <code style="color:#22d3bf">-1</code>。</p>
+<p>傳回值是一個整數(H, W)，其中0-7是_D8的序列，-1是_D8的序列。「沒有目的地」（憂鬱症）。 nodata=&quot;outlet&quot; 的邊界單元有 0-7 出界。</p>
+<p>如果nodata =“outlet”，則允許流前往遺失的儲存格（在那裡退出系統）。如果是“barrier”，就不會導致資料遺失。缺少的單元格本身總是“-1”。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

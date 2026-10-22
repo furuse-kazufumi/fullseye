@@ -19,7 +19,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 1 波長の光学定数 n, k と、そこから決まる吸収係数・複素誘電率・垂直入射反射率を返す。
 
-``alpha_per_cm`` = 4πk/λ(Beer–Lambert の吸収係数 [1/cm])、``epsilon`` = (n + ik)²、
+``alpha_per_cm`` = 4πk/λ(Beer–Lambert の吸収係数 [1/cm])、``epsilon_re`` / ``epsilon_im`` = (n + ik)² の実部 / 虚部、
 ``reflectance_normal`` = |(m − 1)/(m + 1)|²。``n_source`` / ``k_source`` はどの一次文献の
 区間から取ったか(k の表が無ければ ``k_source`` は ``None`` で k = 0)。
 波長がデータ区間の外なら ValueError(外挿しない)。

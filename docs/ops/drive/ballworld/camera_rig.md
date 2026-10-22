@@ -17,7 +17,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 ## 使い方
 
-台を囲むカメラ(n = 2: 両端の斜め上、n = 4: 4 隅)。返り値 ``[{"pose", "K", "eye"}, …]``、全部が台の中心を見る。
+台を囲むカメラ(n = 2: 両端の斜め上、n = 4: 4 隅)。返り値 ``[{"pose", "K", "eye", "width", "height"}, …]``、全部が台の中心を見る。
 
 空の入力(``tp`` が空の dict)は ValueError。
 

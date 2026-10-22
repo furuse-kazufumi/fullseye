@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_flow_field(size: &#x27;int&#x27; = 520, seed: &#x27;int&#x27; = 0, lines: &#x27;int&#x27; = 420, steps: &#x27;int&#x27; = 150, scale: &#x27;float&#x27; = 0.01) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import perpetual; perpetual.perpetual_flow_field(size: &#x27;int&#x27; = 520, seed: &#x27;int&#x27; = 0, lines: &#x27;int&#x27; = 420, steps: &#x27;int&#x27; = 150, scale: &#x27;float&#x27; = 0.01) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_flow_field&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Flow field — keeps advecting particles along the field (it does not end unless stopped).</p>
-<p>★The field is built <b>as the curl of a potential ψ</b>. Hence <b>the divergence is identically 0</b> (incompressible), and particles neither appear nor vanish. This is the difference from a flow field built from &quot;plausible noise&quot;,</p>
-<p>and <code style="color:#22d3bf">perpetual_identities</code> reports it as a number.</p>
-<p>★Line colour and width are tied to the <b>flow speed</b> |∇ψ| (if width and darkness were both constant, drawing from the same field would give nothing but &quot;scribbles&quot;).</p>
+<p>★The field is created by normalizing the rotation of the potential ψ to unit length at each point. The rotating field before normalization is Although the divergence is uniformly 0, the normalized field that moves the particles is not a strictly incompressible field. perpetual_identities gives the identities before normalization as numbers.</p>
+<p>★The color and thickness of the line are related to flow velocity |∇ψ| (if the thickness and density are constant, Even if you draw from the same place, it will only become a doodle&#x27;&#x27;).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">generative_art family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -1205,12 +1205,13 @@ def lf_disparity_to_depth(slope, focal_px=1000.0, baseline=1.0, *,
     explicit saturation distance as *far_depth* and get that value there. There
     is no silent ``inf`` and no silent clamp.
 
-    Accepts a scalar or any array; returns the same shape (a scalar in gives a
-    0-d array out, so downstream code has one type to handle).
+    Accepts a scalar or any array; array shapes are preserved, while a scalar
+    is normalised to and returned as a one-element ``(1,)`` array.
 
     **Raises** ``ValueError``: non-finite *slope* / *focal_px* / *baseline*, a
-    non-positive *focal_px* / *baseline* / *min_slope*, a negative *far_depth*,
-    and ``|slope| < min_slope`` anywhere when *far_depth* is ``None``.
+    non-positive *focal_px* / *baseline* / *min_slope*. A negative or non-finite
+    *far_depth* is rejected when at least one slope is below *min_slope*;
+    ``|slope| < min_slope`` raises when *far_depth* is ``None``.
 
     Empty input (``slope`` with 0 elements) raises ``ValueError``.
     """

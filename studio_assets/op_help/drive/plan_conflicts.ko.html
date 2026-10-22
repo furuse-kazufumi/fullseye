@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plan_conflicts(paths)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import agvfleet; agvfleet.plan_conflicts(paths)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;plan_conflicts&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>충돌 목록: 같은 시각에 같은 칸(vertex)·엇갈림(edge)·추종(follow).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>返りは <code style="color:#22d3bf">[(種類, i, j, 時刻, マス)]</code>。着いた車両はその場に居続けるものとして数える。follow は「i が時刻 t にマス v へ<b>入った</b>とき、j が t-1 に v に居て t には v から出た」(i ≠ j)。</p>
+<p>반환은 <code style="color:#22d3bf">[(種類, i, j, 時刻, マス)]</code>. 도착한 차량은 그 자리에 계속 머무는 것으로 센다. follow 는 &quot;i 가 시각 t 에 칸 v 에 <b>들어갔을</b> 때, j 가 t-1 에 v 에 있었고 t 에는 v 에서 나갔다&quot;(i ≠ j).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

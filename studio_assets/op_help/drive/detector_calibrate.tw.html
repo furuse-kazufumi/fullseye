@@ -4,15 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.detector_calibrate(image, d_spacings, geometry_guess, n_azimuth=180, fit_tilt=True, min_rings=2)</code>(要直接呼叫實作,<code style="color:#22d3bf">import pxrd; pxrd.detector_calibrate(image, d_spacings, geometry_guess, n_azimuth=180, fit_tilt=True, min_rings=2)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;detector_calibrate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由已知標準樣品(如 Si)的繞射環校正偵測器的中心、距離與傾斜。</p>
-<p><code style="color:#22d3bf">d_spacings</code> 為標準面間距 [Å] 的 list(不必依強度排序),<code style="color:#22d3bf">geometry_guess</code> 至少要有 <code style="color:#22d3bf">pixel</code> 與</p>
-<p><code style="color:#22d3bf">wavelength</code>,若已知也放入 <code style="color:#22d3bf">cx</code>、<code style="color:#22d3bf">cy</code>、<code style="color:#22d3bf">distance</code>、<code style="color:#22d3bf">tilt</code>、<code style="color:#22d3bf">tilt_dir</code>。步驟:</p>
-<p style="margin:2px 0 2px 12px">1. 若無中心,從明亮像素的重心開始,沿光線拾取最強的環,以圓擬合更新中心 3 次。</p>
-<p style="margin:2px 0 2px 12px">2. 若無距離,將徑向剖面的第一個峰套用到 d 的候選(從小的 2θ 起 4 條),選出其他環的預測與觀測峰吻合最多的組合。</p>
-<p style="margin:2px 0 2px 12px">3. 以目前的幾何在 <code style="color:#22d3bf">n_azimuth</code> 條光線上預測各環的位置,以視窗內強度的重心拾取點, 用 <code style="color:#22d3bf">scipy.optimize.least_squares</code> 以 2θ 的殘差 [deg] 擬合 <code style="color:#22d3bf">(cx, cy, distance, tilt の 2 成分)</code>。視窗逐步縮小共 3 次。傾斜以旋轉向量的 2 分量 <code style="color:#22d3bf">tilt·(cos φ, sin φ)</code> 求解(避開傾斜 0 時 φ 不定的奇異點)。</p>
-<p>回傳值(dict): 在幾何(<code style="color:#22d3bf">cx</code>、<code style="color:#22d3bf">cy</code>、<code style="color:#22d3bf">distance</code>、<code style="color:#22d3bf">pixel</code>、<code style="color:#22d3bf">wavelength</code>、<code style="color:#22d3bf">tilt</code>、<code style="color:#22d3bf">tilt_dir</code>)之外</p>
-<p>加上 <code style="color:#22d3bf">rms_two_theta_deg</code>、<code style="color:#22d3bf">n_points</code>、<code style="color:#22d3bf">n_rings</code>、<code style="color:#22d3bf">rings_deg</code>、<code style="color:#22d3bf">ok</code>(rms 小於 1/4 像素的角度 <code style="color:#22d3bf">0.25·pixel/distance</code></p>
-<p>且環 &gt;= <code style="color:#22d3bf">min_rings</code>)。</p>
-<p>Raises ValueError: 影像非 2-D、一個 d 都沒有、沒有 pixel / wavelength、找不到 <code style="color:#22d3bf">min_rings</code> 個環。</p>
+<p><code style="color:#22d3bf">d_spacings</code> 是標準間距 [Å] 的清單（不一定是強度順序），<code style="color:#22d3bf">geometry_guess</code> 至少是 <code style="color:#22d3bf">pixel</code> 並且</p>
+<p><code style="color:#22d3bf">波長</code>，如果已知，<code style="color:#22d3bf">cx</code>，<code style="color:#22d3bf">cy</code>，<code style="color:#22d3bf">距離</code>，<code style="color:#22d3bf">傾斜</code>，<code style="color:#22d3bf">tilt_dir</code>。步驟：</p>
+<p>1.如果沒有中心，則從亮像素的重心開始，沿著射線拾取最強的環，透過擬合圓來更新中心3次。</p>
+<p style="margin:2px 0 2px 12px">2. 如果沒有距離，則將徑向輪廓的第一個峰值分配給 d 的候選值（最小 2θ 中的四個），並將它們與其他環的預測進行比較。選擇匹配觀測值數量最多的對。</p>
+<p style="margin:2px 0 2px 12px">3. 預測目前幾何中「n_azimuth」射線上每個環的位置，在視窗中的強度重心處選取一個點，使用 scipy.optimize.least_squares 來猜測（cx、cy、距離、傾斜的兩個分量）和 2θ 殘差 [deg]。窗戶契約時4次。使用旋轉向量“tilt·(cos φ, sin φ)”的兩個分量求解傾斜（避免當斜率為 0 時 φ 變得不確定的奇點）。</p>
+<p>傳回值（dict）：Geometry（<code style="color:#22d3bf">cx</code>，<code style="color:#22d3bf">cy</code>，<code style="color:#22d3bf">distance</code>，<code style="color:#22d3bf">pixel</code>，<code style="color:#22d3bf">wavelength</code>，<code style="color:#22d3bf">tilt</code>，<code style="color:#22d3bf">tilt_dir</code>）</p>
+<p><code style="color:#22d3bf">rms_two_theta_deg</code>・<code style="color:#22d3bf">n_points</code>・<code style="color:#22d3bf">n_rings</code>・<code style="color:#22d3bf">rings_deg</code>・<code style="color:#22d3bf">ok</code>（rms 小於 <code style="color:#22d3bf">0.25·像素/距離</code></p>
+<p>和環 &gt;= <code style="color:#22d3bf">min_rings</code>）。</p>
+<p>引發 ValueError：影像不是 2-D，沒有 d，沒有像素/波長，找不到「min_rings」環。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

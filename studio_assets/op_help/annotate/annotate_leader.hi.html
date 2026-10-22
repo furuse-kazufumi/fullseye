@@ -4,10 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_leader(img, points, labels=None, color=&#x27;emphasis&#x27;, width=1.5, cap_size=3.0, font_size=12, pad=4, gap=22, side=&#x27;auto&#x27;, box_alpha=0.72, text_color=None, scheme=&#x27;okabe_ito&#x27;, font_path=None, min_font_size=9, layout=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import annotate; annotate.annotate_leader(img, points, labels=None, color=&#x27;emphasis&#x27;, width=1.5, cap_size=3.0, font_size=12, pad=4, gap=22, side=&#x27;auto&#x27;, box_alpha=0.72, text_color=None, scheme=&#x27;okabe_ito&#x27;, font_path=None, min_font_size=9, layout=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsannotate.get(&quot;annotate_leader&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>image (image2d) लौटाता है: कोहनी वाली leader line + text (कई point के बीच टकराव से बचाव सहित)।</p>
-<p>placement <code style="color:#22d3bf">annotate_leader_layout</code> तय करता है (<code style="color:#22d3bf">layout=</code> में देने पर दोबारा इस्तेमाल होता है)। lines anti-aliased होती हैं, वस्तु की ओर वाले सिरे पर एक बिंदु होता है, और text <code style="color:#22d3bf">text_box</code> है।</p>
-<h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
-<p>ValueError</p>
-<p><code style="color:#22d3bf">annotate_leader_layout</code> के समान + मोटाई या cap_size positive नहीं।</p>
+<p>लेआउट <code style="color:#22d3bf">annotate_leader_layout</code> द्वारा निर्धारित किया जाता है (इसे <code style="color:#22d3bf">layout=</code> में पास करके पुन: उपयोग किया जा सकता है)। पंक्तियाँ एंटी-अलियास्ड हैं, लक्ष्य के अंत में बिंदु हैं, और टेक्स्ट <code style="color:#22d3bf">text_box</code> है।</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">उठाता है</h4>
+<p>मूल्य त्रुटि</p>
+<p>समान <code style="color:#22d3bf">annotate_leader_layout</code> + गैर-सकारात्मक मोटाई, नकारात्मक कैप_साइज़। 0 के कैप आकार का मतलब कोई टिप नहीं है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
