@@ -18,6 +18,7 @@
 from __future__ import annotations
 
 import numpy as np
+from scipy.fft import irfftn, next_fast_len, rfftn
 from scipy.ndimage import gaussian_filter, binary_fill_holes
 from scipy.signal import fftconvolve
 from scipy.spatial import Delaunay, cKDTree
@@ -69,7 +70,7 @@ def _grid_coords(P, size, pad_vox):
 # ═══════════════════════════════════════════════════════════════════════════
 # 1. poisson_lite: 点群 → 等値面メッシュ(スクリーンド Poisson の軽量近似)
 # ═══════════════════════════════════════════════════════════════════════════
-def _winding_indicator(gp, normals, size, sigma, idx):
+def _winding_indicator(gp, normals, size, sigma, idx, method="exact"):
     """向き付き点(oriented points)→ 内外指標場 [0,1]。generalized winding number の格子版。
 
     winding number w(x) = (1/4π) Σ_i n_i·(p_i − x)/|p_i − x|³ は、閉じた向き付き曲面の
@@ -101,10 +102,24 @@ def _winding_indicator(gp, normals, size, sigma, idx):
 
     # ベクトル場3成分を同時に保持せず、1成分ずつ voxel 化して加える。
     w = np.zeros((size, size, size), dtype=np.float64)
-    for component, kernel in zip(range(3), (Kz, Ky, Kx)):
-        splat = np.zeros_like(w)
-        np.add.at(splat, ijk, nn[:, component])
-        w += fftconvolve(splat, kernel, mode="same")
+    if method == "exact":
+        for component, kernel in zip(range(3), (Kz, Ky, Kx)):
+            splat = np.zeros_like(w)
+            np.add.at(splat, ijk, nn[:, component])
+            w += fftconvolve(splat, kernel, mode="same")
+    elif method == "fast":
+        fft_shape = tuple(next_fast_len(2 * size - 1, real=True) for _ in range(3))
+        spectrum = None
+        for component, kernel in zip(range(3), (Kz, Ky, Kx)):
+            splat = np.zeros_like(w)
+            np.add.at(splat, ijk, nn[:, component])
+            term = rfftn(splat, fft_shape) * rfftn(kernel, fft_shape)
+            spectrum = term if spectrum is None else spectrum + term
+        full = irfftn(spectrum, fft_shape)
+        start = (size - 1) // 2
+        w = full[start:start + size, start:start + size, start:start + size].copy()
+    else:
+        raise ValueError("method must be 'exact' or 'fast', got %r" % (method,))
     w /= 4.0 * np.pi
     w = gaussian_filter(w, sigma)
 
@@ -120,7 +135,8 @@ def _winding_indicator(gp, normals, size, sigma, idx):
     return field
 
 
-def poisson_lite(points, size=64, sigma=1.0, iso=0.5, normals=None):
+def poisson_lite(points, size=64, sigma=1.0, iso=0.5, normals=None,
+                 method="exact"):
     """点群 (N,3) → (vertices(V,3), faces(F,3)) の表面メッシュ(スクリーンド Poisson 軽量近似)。
 
     点群を size³ の voxel 格子へ splat し、等値面場を作って marching cubes で三角形メッシュ化する。
@@ -148,6 +164,9 @@ def poisson_lite(points, size=64, sigma=1.0, iso=0.5, normals=None):
         等値面レベル。正規化場 [0,1] 上の値(既定 0.5)。
     normals : array_like (N,3) or None
         点法線。与えると winding number モード、None なら占有モード。
+    method : {"exact", "fast"}
+        ``"exact"`` keeps the historical three convolutions. ``"fast"``
+        accumulates them in frequency space; rounding differs, so it is opt-in.
 
     Returns
     -------
@@ -168,6 +187,8 @@ def poisson_lite(points, size=64, sigma=1.0, iso=0.5, normals=None):
         raise ValueError(f"size={size} is too small (>=8 recommended)")
     if sigma <= 0:
         raise ValueError("sigma must be positive")
+    if method not in ("exact", "fast"):
+        raise ValueError("method must be 'exact' or 'fast', got %r" % (method,))
 
     pad_vox = int(np.ceil(3.0 * sigma)) + 2
     gp, lo, span, inner = _grid_coords(P, size, pad_vox)
@@ -198,7 +219,7 @@ def poisson_lite(points, size=64, sigma=1.0, iso=0.5, normals=None):
                 occ = filled / fmx
         field = occ
     else:
-        field = _winding_indicator(gp, normals, size, sigma, idx)
+        field = _winding_indicator(gp, normals, size, sigma, idx, method=method)
 
     level = float(iso)
     fmin, fmax = float(field.min()), float(field.max())
