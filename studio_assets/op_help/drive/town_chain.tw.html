@@ -4,14 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.town_chain(elements, *, start=(0.0, 0.0, 0.0), overlap: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivetown; drivetown.town_chain(elements, *, start=(0.0, 0.0, 0.0), overlap: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;town_chain&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>依序拼接並放置各要素: 以閉合式求出使要素 k+1 的 entry 對齊要素 k 的 exit(其前方 <code style="color:#22d3bf">overlap</code> 處)的剛體配置，並傳給 <code style="color:#22d3bf">drivecourse.course_layout</code>。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
-<p>elements : drivecourse 要素(dict)的序列。依序連接。</p>
-<p>start : 放置第一個要素 entry 的世界位姿 (x, y, yaw)。</p>
-<p>overlap : 接縫處的重疊 [m] (≥ 0。為了 3-D 化時接縫處不立起路緣石)。須短於要素的中心線。</p>
+<p>elements : drivecourse の要素(dict)の列。順に継ぐ。</p>
+<p>start : 最初の要素の entry を置く世界姿勢 (x, y, yaw)。</p>
+<p>overlap : 継ぎ目の食い込み [m] (≥ 0。3-D 化で継ぎ目に縁石が立たないため)。要素の中心線より短いこと。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
-<p>dict : 在 course_layout 的 dict 中加入 <code style="color:#22d3bf">&quot;chain&quot;</code>。<code style="color:#22d3bf">chain = {&quot;overlap&quot;, &quot;s_start&quot; (n,) 各要素の entry の弧長, &quot;lengths&quot; (n,) 各要素の centerline_length, &quot;polyline_lengths&quot; (n,) 中心線の折線長, &quot;total_length&quot; (= Σ 折線長 − overlap × (n − 1)), &quot;joints&quot;: [(exit_k, entry_k+1), ...] 世界姿勢}</code>。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 要素為空 / layout 巢狀 / 缺少 entry/exit/centerline、start/overlap 非有限、overlap 為負、overlap 長於要素的中心線。</p>
-<p>僅第 2 個及之後的元素：overlap 必須短於該元素的中心線。</p>
+<p>dict : course_layout の dict に <code style="color:#22d3bf">&quot;chain&quot;</code> を足したもの。<code style="color:#22d3bf">chain = {&quot;overlap&quot;, &quot;s_start&quot; (n,) 各要素の entry の弧長, &quot;lengths&quot; (n,) 各要素の centerline_length, &quot;polyline_lengths&quot; (n,) 中心線の折線長, &quot;total_length&quot; (= Σ 折線長 − overlap × (n − 1)), &quot;joints&quot;: [(exit_k, entry_k+1), ...] 世界姿勢}</code>。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 要素が空・layout の入れ子・entry/exit/centerline が無い、start/overlap が非有限、overlap が負、2 番目以降の overlap がその要素の中心線以上。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

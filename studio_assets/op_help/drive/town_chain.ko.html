@@ -4,14 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.town_chain(elements, *, start=(0.0, 0.0, 0.0), overlap: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivetown; drivetown.town_chain(elements, *, start=(0.0, 0.0, 0.0), overlap: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;town_chain&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>요소를 순서대로 이어 배치합니다: 요소 k+1의 entry를 요소 k의 exit(의 <code style="color:#22d3bf">overlap</code> 앞)에 맞추는 강체 배치를 닫힌 식으로 구해 <code style="color:#22d3bf">drivecourse.course_layout</code>에 넘깁니다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
-<p>elements : drivecourse 의 요소(dict)의 열. 순서대로 잇는다.</p>
-<p>start : 첫 요소의 entry 를 놓는 세계 자세 (x, y, yaw).</p>
-<p>overlap : 이음매의 겹침 [m] (≥ 0. 3-D 화에서 이음매에 연석이 서지 않도록). 요소의 중심선보다 짧을 것.</p>
+<p>elements : drivecourse の要素(dict)の列。順に継ぐ。</p>
+<p>start : 最初の要素の entry を置く世界姿勢 (x, y, yaw)。</p>
+<p>overlap : 継ぎ目の食い込み [m] (≥ 0。3-D 化で継ぎ目に縁石が立たないため)。要素の中心線より短いこと。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
-<p>dict : course_layout 의 dict 에 <code style="color:#22d3bf">&quot;chain&quot;</code> 을 더한 것. <code style="color:#22d3bf">chain = {&quot;overlap&quot;, &quot;s_start&quot; (n,) 各要素の entry の弧長, &quot;lengths&quot; (n,) 各要素の centerline_length, &quot;polyline_lengths&quot; (n,) 中心線の折線長, &quot;total_length&quot; (= Σ 折線長 − overlap × (n − 1)), &quot;joints&quot;: [(exit_k, entry_k+1), ...] 世界姿勢}</code>.</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 요소가 비어 있음 / layout 의 중첩 / entry/exit/centerline 이 없음, start/overlap 이 비유한, overlap 이 음수, overlap 이 요소의 중심선보다 김.</p>
-<p>두 번째 이후 요소만 overlap은 해당 요소의 중심선보다 짧아야 한다.</p>
+<p>dict : course_layout の dict に <code style="color:#22d3bf">&quot;chain&quot;</code> を足したもの。<code style="color:#22d3bf">chain = {&quot;overlap&quot;, &quot;s_start&quot; (n,) 各要素の entry の弧長, &quot;lengths&quot; (n,) 各要素の centerline_length, &quot;polyline_lengths&quot; (n,) 中心線の折線長, &quot;total_length&quot; (= Σ 折線長 − overlap × (n − 1)), &quot;joints&quot;: [(exit_k, entry_k+1), ...] 世界姿勢}</code>。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 要素が空・layout の入れ子・entry/exit/centerline が無い、start/overlap が非有限、overlap が負、2 番目以降の overlap がその要素の中心線以上。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
