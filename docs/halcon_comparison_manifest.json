@@ -1,0 +1,44 @@
+{
+  "about": "Test paths, hashes, seeds, documentation source, and package version are normative. Generation date, commit, and dirty are informational and ignored by --check.",
+  "reference_documentation": {
+    "version": "2605",
+    "source_url": "https://www.mvtec.com/doc/halcon/2605/en/",
+    "source_line": "Source: `https://www.mvtec.com/doc/halcon/2605/en/` (version 2605)."
+  },
+  "package_version": "0.8.1",
+  "git": {
+    "commit": "62d66cbea178cd6233aa7c70b4c76d7ca1f3c869",
+    "dirty": true
+  },
+  "generation_date": "2026-10-22",
+  "tests": [
+    {
+      "file": "tests/test_halcon_comparison_fixes_2026_10_21.py",
+      "sha256": "8ea82972302d16c18694307852004ff85790f27f9f254c544ae6018f0995171f",
+      "seeds": [
+        42
+      ]
+    },
+    {
+      "file": "tests/test_halcon_comparison_fixes_2026_10_22.py",
+      "sha256": "c1815e70983f20a25e7c470a11b2b2eb70b4079579d877c0b9d4b228282a5da9",
+      "seeds": []
+    },
+    {
+      "file": "tests/test_halcon_ncc_entry_2026_10_22.py",
+      "sha256": "dc534e2f4118bbe46aedc5216abb06a60b400f99525f3d87ad3b078b240861b2",
+      "seeds": [
+        101022,
+        7022,
+        7007
+      ]
+    },
+    {
+      "file": "tests/test_connection_backends_agree_2026_10_22.py",
+      "sha256": "51a54b6e574b673942317fae3d9c4012ae6908170d0bb5252deeca12bbe57564",
+      "seeds": [
+        20261022
+      ]
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "about": "Only registry operators directly exercised by comparison-kit tests belong here.",
+  "overrides": {
+    "dist_transform_abs": {
+      "evidence": [
+        "tests/test_halcon_comparison_fixes_2026_10_22.py::test_reproduced_h05_absolute_distance_is_not_normalized"
+      ],
+      "notes": "Verified dtype and unnormalized distance units for representative inputs."
+    },
+    "mean_box_wh": {
+      "evidence": [
+        "tests/test_halcon_comparison_fixes_2026_10_22.py::test_reproduced_h06_mean_width_height_are_independent_and_odd"
+      ],
+      "notes": "Verified independent width/height parameter semantics and odd window sizing."
+    }
+  }
+}

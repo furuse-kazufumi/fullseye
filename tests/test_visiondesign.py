@@ -18,8 +18,72 @@ import pytest
 
 pytest.importorskip("scipy")
 
+import math
+
 import optics
+import raytrace as RT
 import visiondesign as vd
+from scipy.special import jn_zeros
+
+
+# --------------------------------------------------------------------------- #
+# 独立の経路(2026-10-15): 以前の門の大半は visiondesign の式(m = f/(s − f)、N(1 + m)、2.44 λ N、
+# 500 / um_per_pixel)をそのまま写していた。ここで真値を外から作る —— 実光線(Snell の法則だけ)で
+# 薄い単レンズの像点を数える、Bessel J1 の第 1 零点、瞳の円板の射影立体角の求積、共役の二分法。
+# --------------------------------------------------------------------------- #
+def _ray_image(f_mm, wd_mm, h_mm, a=0.05):
+    """厚さ 0.02 mm の両凸 N-BK7 単レンズ(薄肉で焦点 f)に、物点 (0, h, −wd) から 2 本の近い光線を通し、
+    出た 2 本の交点 = 像点を返す ``(像距離 [mm、レンズから], 像高 [mm])``。近軸の行列も薄肉の式も通らない。"""
+    n = RT.refractive_index("N-BK7", RT.WL_D)
+    R = 2.0 * (n - 1.0) * f_mm
+    s = RT.lens_system([{"R": R, "t": 0.02, "n": "N-BK7", "ap": 5.0}, {"R": -R, "t": 100.0, "n": 1.0}],
+                       stop=0, object_mm=1e3)
+    O = np.array([[0.0, h_mm, -wd_mm]] * 2)
+    D = np.array([[0.0, a, 0.0], [0.0, -a, 0.0]]) - O
+    tr = RT.trace_rays(s, O, D / np.linalg.norm(D, axis=1, keepdims=True), image_mm=1.0)
+    P, V = tr["points"][:, -2], tr["dirs"][:, -1]
+    t = np.linalg.solve(np.array([[V[0, 2], -V[1, 2]], [V[0, 1], -V[1, 1]]]),
+                        np.array([P[1, 2] - P[0, 2], P[1, 1] - P[0, 1]]))
+    return float(P[0, 2] + t[0] * V[0, 2] - 0.02), float(P[0, 1] + t[0] * V[0, 1])
+
+
+def _ray_magnification(f_mm, wd_mm):
+    return -_ray_image(f_mm, wd_mm, 0.5)[1] / 0.5
+
+
+def _airy_diameter(lam_um, n_work):
+    """Airy の暗輪の直径 = 2 · j₁,₁/π · λ · N(J1 の第 1 零点、2.44 は丸めた値)。"""
+    return 2.0 * float(jn_zeros(1, 1)[0]) / math.pi * lam_um * n_work
+
+
+def _disc_relative_illumination(r_mm, v_mm, a_mm, M=600):
+    """距離 v の円板(半径 a、Lambert)が像面の半径 r の点に作る照度 / 軸上(∫ v²/d⁴ dA の極座標の中点則)。"""
+    rho = a_mm * np.sqrt((np.arange(M) + 0.5) / M)
+    ph = 2.0 * math.pi * (np.arange(M) + 0.5) / M
+    Rr, Pp = np.meshgrid(rho, ph)
+    x, y = Rr * np.cos(Pp), Rr * np.sin(Pp)
+    E = lambda r0: np.mean(v_mm * v_mm / ((x - r0) ** 2 + y * y + v_mm * v_mm) ** 2)
+    return float(E(r_mm) / E(0.0))
+
+
+def _thin_lens_dof_mm(f, N, s, c):
+    """共役 1/s + 1/v = 1/f だけで: 像面のぼけ D·|v' − v|/v' が c になる近点と遠点を二分法で探した差。"""
+    v, D = f * s / (s - f), f / N
+
+    def blur(sp):
+        vp = f * sp / (sp - f)
+        return D * abs(vp - v) / vp
+
+    def root(lo, hi):
+        for _ in range(200):
+            mid = 0.5 * (lo + hi)
+            if (blur(lo) - c) * (blur(mid) - c) <= 0:
+                hi = mid
+            else:
+                lo = mid
+        return 0.5 * (lo + hi)
+
+    return root(s, 1e9) - root(1.0001 * f, s)
 
 
 # --------------------------------------------------------------------------- #
@@ -29,14 +93,16 @@ def test_geometry_matches_thin_lens_closed_form():
     for f_mm, wd_mm in ((50.0, 500.0), (25.0, 1000.0)):      # 2 スケール
         g = vd.system_geometry(focal_mm=f_mm, working_distance_mm=wd_mm,
                                pixel_pitch_um=3.45, width_px=2448, height_px=2048)
-        # m = f / (s - f)
-        assert g["magnification"] == pytest.approx(f_mm / (wd_mm - f_mm), rel=1e-9)
+        # 倍率と像距離は実光線の像点で数える(厚さ 0.02 mm の主点のずれで 1e-4 の桁まで)
+        v_ray, _ = _ray_image(f_mm, wd_mm, 0.0)
+        assert g["magnification"] == pytest.approx(_ray_magnification(f_mm, wd_mm), rel=1e-3)
+        assert g["image_distance_mm"] == pytest.approx(v_ray, rel=1e-3)
         # センサ寸法 = 画素数 * ピッチ
         assert g["sensor_w_mm"] == pytest.approx(2448 * 3.45e-3, rel=1e-12)
         # 視野 = センサ / 倍率、um/px = ピッチ / 倍率
         assert g["fov_w_mm"] == pytest.approx(g["sensor_w_mm"] / g["magnification"], rel=1e-12)
         assert g["um_per_pixel"] == pytest.approx(3.45 / g["magnification"], rel=1e-12)
-        # optics.thin_lens と食い違わない(式を二重に持たない、の担保)
+        # optics.thin_lens と食い違わない(式を二重に持たない、の担保 —— 整合で、真値ではない)
         conj = optics.thin_lens(focal_mm=f_mm, object_mm=wd_mm)
         assert g["image_distance_mm"] == pytest.approx(float(conj["image_mm"]), rel=1e-12)
 
@@ -63,13 +129,16 @@ def test_geometry_rejects_text_and_bad_pixel_counts():
 # 2. 分解能 — 2 つの限界と「どちらが律速か」                                     #
 # --------------------------------------------------------------------------- #
 def test_resolving_power_matches_closed_form_both_limits():
-    pitch, n, m, lam = 3.45, 8.0, 0.1, 0.55
+    pitch, n, lam = 3.45, 8.0, 0.55
+    f, wd = 50.0, 550.0                                    # m = 0.1
+    m = _ray_magnification(f, wd)
+    v_ray, _ = _ray_image(f, wd, 0.0)
+    n_eff = v_ray / (f / n)                                # 作動 F 値 = 像距離 / 瞳の直径(絞り = レンズ)
     r = vd.resolving_power(pitch, n, m, lam)
-    n_eff = n * (1.0 + m)
-    assert r["working_f_number"] == pytest.approx(n_eff, rel=1e-12)
-    assert r["airy_diameter_um"] == pytest.approx(2.44 * lam * n_eff, rel=1e-12)
-    assert r["nyquist_object_um"] == pytest.approx(2.0 * pitch / m, rel=1e-12)
-    assert r["diffraction_object_um"] == pytest.approx(2.44 * lam * n_eff / m, rel=1e-12)
+    assert r["working_f_number"] == pytest.approx(n_eff, rel=1e-3)
+    assert r["airy_diameter_um"] == pytest.approx(_airy_diameter(lam, n_eff), rel=1.5e-3)
+    assert r["nyquist_object_um"] == pytest.approx(2.0 * pitch / m, rel=1e-12)   # 定義(2 画素)
+    assert r["diffraction_object_um"] == pytest.approx(_airy_diameter(lam, n_eff) / m, rel=1.5e-3)
     assert r["resolution_object_um"] == pytest.approx(
         max(r["nyquist_object_um"], r["diffraction_object_um"]), rel=1e-12)
 
@@ -90,7 +159,8 @@ def test_working_f_number_grows_with_magnification():
     """有限共役では作動 F 値 = N(1+m)。マクロで見落とされる典型。"""
     low = vd.resolving_power(3.45, 8.0, 0.05)
     high = vd.resolving_power(3.45, 8.0, 1.0)
-    assert high["working_f_number"] == pytest.approx(16.0, rel=1e-12)
+    v_ray, _ = _ray_image(50.0, 100.0, 0.0)               # 等倍: 物体を 2f に置いた実光線の像距離
+    assert high["working_f_number"] == pytest.approx(v_ray / (50.0 / 8.0), rel=1e-3)
     assert high["working_f_number"] > low["working_f_number"]
 
 
@@ -105,8 +175,27 @@ def test_feasibility_verdict_tracks_the_resolution_limit():
     big = vd.system_feasibility(defect_um=500.0, **base)
     assert big["verdict"] in ("resolvable", "marginal")
     assert big["pixels_across"] > r["pixels_across"]
-    # 画素数 = 欠陥サイズ / (um/画素)
-    assert big["pixels_across"] == pytest.approx(500.0 / big["um_per_pixel"], rel=1e-12)
+    # 画素数 = 欠陥の像の大きさ / 画素ピッチ(像の大きさは実光線の倍率で)
+    assert big["pixels_across"] == pytest.approx(500.0 * _ray_magnification(50.0, 150.0) / 3.45, rel=1e-3)
+
+
+@pytest.mark.parametrize("f,wd,N", [(50.0, 150.0, 4.0), (50.0, 500.0, 8.0), (25.0, 1000.0, 8.0), (35.0, 200.0, 4.0)])
+def test_depth_of_field_is_where_the_blur_reaches_one_pixel(f, wd, N):
+    """被写界深度 = 像面のぼけが 1 画素(3.45 µm)に達する近点と遠点の間(共役の二分法、近似式なし)。"""
+    r = vd.system_feasibility(100.0, f, wd, 3.45, N)
+    assert r["depth_of_field_mm"] == pytest.approx(_thin_lens_dof_mm(f, N, wd, 3.45e-3), rel=1e-6)
+
+
+@pytest.mark.parametrize("f,wd,N", [(35.0, 200.0, 4.0), (12.0, 300.0, 8.0), (100.0, 300.0, 2.8)])
+def test_corner_illumination_is_the_projected_solid_angle_of_the_pupil(f, wd, N):
+    """角の照度 = 瞳の円板(Lambert)が角の画素に張る射影立体角 / 軸上。瞳が小さい極限で cos⁴ に一致し(1e-5)、
+    実際の瞳(直径 f/N)でも 3e-3 以内(瞳の大きさの補正 ∝ (D/v)²)。"""
+    r = vd.system_feasibility(60.0, f, wd, 3.45, N)
+    g = vd.system_geometry(f, wd, 3.45)
+    v, rc = g["image_distance_mm"], g["sensor_diagonal_mm"] / 2.0
+    assert r["corner_illumination"] == pytest.approx(_disc_relative_illumination(rc, v, 1e-3 * v), abs=1e-5)
+    assert r["corner_illumination"] == pytest.approx(_disc_relative_illumination(rc, v, f / N / 2.0), abs=3e-3)
+    assert r["corner_illumination"] < 0.999 or f == 100.0                      # 探針が素通しでない
 
 
 def test_depth_tolerance_downgrades_a_resolvable_defect_to_marginal():
