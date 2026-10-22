@@ -453,8 +453,6 @@ def _near_axis_crossing(system, object_mm):
     return float(P[2] - P[1] * D[2] / D[1] - z_last)
 
 
-@pytest.mark.xfail(strict=True, reason="2026-10-15 所見(本体は別の作業が直す): _intersect_conic は |t| の小さい根を取るが、"
-                   "t は前の面の点から測るので、空気の間隔が次の凹面の |R| を越えると球の裏側(t < 0)を選び、光線を全部落とす")
 def test_a_gap_longer_than_the_next_concave_radius_still_transmits():
     """間隔 7 mm では通り、9 mm(> |R| = 8 mm)では軸に平行な光線まで valid = False になる(ValueError も出ない)。
     裏返した C マウントの模型(絞りの前の間隔 8.79 mm、R −8.61 mm)で、全光線が落ちて見つかった。"""
