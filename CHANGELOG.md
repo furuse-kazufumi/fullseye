@@ -7,6 +7,9 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- 修正: 外れ値や定数で崩れていた NCC の窓検出。
+- 修正: NCC モデルの subnormal スケール。
+
 ### 修正 — 外部報告(0.8.0 の端条件、2026-10-22 受領)
 
 - NCC のテンプレートと探索画像を必要時に独立した2のべき乗で正規化し、有限の非定数画像の極端な大きさでも相関係数を求められるようにした。

@@ -16,7 +16,7 @@ def _f(a):
     return np.asarray(a, dtype=np.float64)
 
 
-def _ncc_scale(a, name, *, return_constant=False):
+def _ncc_scale(a, name, *, return_constant=False, return_exponent=False):
     """Return ``(finite float64 array, exact power-of-two scale)``."""
     value = _f(a)
     if not np.isfinite(value).all():
@@ -30,15 +30,21 @@ def _ncc_scale(a, name, *, return_constant=False):
         magnitude = 0.0
         is_constant = False
     if magnitude == 0.0:
-        result = value, 1.0
-        return (*result, is_constant) if return_constant else result
+        result = value, 1.0, 0
+        selected = result if return_exponent else result[:2]
+        return (*selected, is_constant) if return_constant else selected
     _, exponent = np.frexp(magnitude)
     if -500 <= exponent - 1 <= 500:
-        result = value, 1.0
+        result = value, 1.0, 0
     else:
-        shift = 1 - exponent
-        result = np.ldexp(value, shift), float(np.ldexp(1.0, shift))
-    return (*result, is_constant) if return_constant else result
+        # A subnormal may request shift=1074.  Materialising 2**1074 as a
+        # float overflows even though scaling the array is safe.  2**1023 is
+        # finite and already brings every non-zero binary64 value into the
+        # normal range, so cap only the stored/materialised scale.
+        shift = min(1 - exponent, 1023)
+        result = np.ldexp(value, shift), float(np.ldexp(1.0, shift)), shift
+    selected = result if return_exponent else result[:2]
+    return (*selected, is_constant) if return_constant else selected
 
 
 def _ncc_local_variance(img, h, w):
@@ -56,11 +62,13 @@ def _ncc_local_variance(img, h, w):
     sums = integral[h:, w:] - integral[:-h, w:] - integral[h:, :-w] + integral[:-h, :-w]
     sums2 = integral2[h:, w:] - integral2[:-h, w:] - integral2[h:, :-w] + integral2[:-h, :-w]
     variance = np.maximum(sums2 - sums * sums / (h * w), 0.0)
-    # Two cumulative sums and the four-corner subtraction amplify rounding.
-    # 1024 ulps of the local squared magnitude is a conservative float64
-    # cancellation bound; unlike the former 1e-6 signal-level cutoff it does
-    # not classify genuine low contrast as numerically unreliable.
-    bound = 1024.0 * np.finfo(np.float64).eps * np.maximum(sums2, 0.0)
+    # Two cumulative sums and the four-corner subtraction expose each local
+    # moment to error set by the largest cumulative squared magnitude, not by
+    # the (possibly tiny) local result.  1e6 eps is deliberately conservative:
+    # adversarial hot-pixel sweeps need this margin, while ordinary 512-square
+    # random images flag no windows.
+    accumulation = float(np.max(np.abs(integral2)))
+    bound = 1e6 * np.finfo(np.float64).eps * accumulation
     unstable = variance <= bound
     # Preserve the exact legacy scores for small, extreme-offset fixtures.
     # Large searches use the offset-stabilized moments above; their fallback
@@ -70,6 +78,46 @@ def _ncc_local_variance(img, h, w):
     return variance, unstable
 
 
+def _ncc_extreme_dynamic_range(value):
+    """Whether one global scale would discard meaningful finite values."""
+    nonzero = np.abs(value[value != 0.0])
+    if not nonzero.size:
+        return False
+    _, maximum_exp = np.frexp(float(nonzero.max()))
+    _, minimum_exp = np.frexp(float(nonzero.min()))
+    return maximum_exp - minimum_exp > 500
+
+
+def _ncc_exact_windows(out, img, t0, coordinates, h, w, *, local_scale=False):
+    """Recompute selected Pearson scores with a scale local to each window."""
+    if not len(coordinates):
+        return
+    windows = sliding_window_view(img, (h, w))
+    bytes_per_window = h * w * np.dtype(np.float64).itemsize
+    block_size = max(1, (64 * 1024**2) // (4 * bytes_per_window))
+    for start in range(0, len(coordinates), block_size):
+        block = coordinates[start:start + block_size]
+        flat = windows[block[:, 0], block[:, 1]].reshape(len(block), -1)
+        constant = np.max(flat, axis=1) == np.min(flat, axis=1)
+        if local_scale:
+            scales = np.max(np.abs(flat), axis=1)
+            work = np.divide(flat, scales[:, None], out=np.zeros_like(flat),
+                             where=scales[:, None] != 0.0)
+        else:
+            work = flat
+        centered = work - work.mean(axis=1, keepdims=True)
+        # Preserve the established flattened reduction when no extreme-range
+        # local scaling is required.
+        norms = np.fromiter((np.linalg.norm(row) for row in centered),
+                            dtype=np.float64, count=len(block))
+        numerators = (centered * t0.ravel()).sum(axis=1)
+        values = np.divide(numerators, norms, out=np.zeros(len(block)),
+                           where=(norms != 0.0) & ~constant)
+        values[np.abs(values - 1.0) <= 8.0 * np.finfo(np.float64).eps] = 1.0
+        values[np.abs(values + 1.0) <= 8.0 * np.finfo(np.float64).eps] = -1.0
+        out[block[:, 0], block[:, 1]] = values
+
+
 def _ncc_unstable_count(t_or_model, img):
     """Return ``(flagged, total)`` for the private exact-window fallback."""
     t = t_or_model["template"] if isinstance(t_or_model, dict) else _f(t_or_model)
@@ -77,6 +125,10 @@ def _ncc_unstable_count(t_or_model, img):
     h, w = t.shape
     if image.shape[0] < h or image.shape[1] < w:
         return 0, 0
+    total = (image.shape[0] - h + 1) * (image.shape[1] - w + 1)
+    if _ncc_extreme_dynamic_range(image):
+        return total, total
+    image, _ = _ncc_scale(image, "image")
     _, unstable = _ncc_local_variance(image, h, w)
     return int(np.count_nonzero(unstable)), int(unstable.size)
 
@@ -84,12 +136,13 @@ def _ncc_unstable_count(t_or_model, img):
 def _ncc_map(t_or_model, img):
     """Return a valid Pearson NCC map with values in ``[-1, 1]``.
 
-    Scores are invariant to positive scaling.  To keep squares and norms
-    representable, template and image magnitudes outside ``[2**-500,
-    2**500]`` are independently brought near one by an exact power-of-two
-    factor.  Inputs in that interval retain their established score bits.
-    A constant template or a truly constant image window has no defined
-    correlation and scores 0.  NaN and infinity raise ``FsValueError``.
+    Scores are invariant to positive scaling.  Magnitudes with a binary
+    exponent below -500 or above 500 (that is, below ``2**-500`` or at least
+    ``2**501``) are brought near one by an exact power-of-two factor.  Images
+    spanning more than 500 binary exponents instead use a scale local to each
+    window.  A constant template or window, detected by exact range, scores
+    0.  Every finite non-constant input self-matches within 1e-12, including
+    mixed ``1e-200``/``1e200`` data.  NaN and infinity raise ``FsValueError``.
 
     Returns:
         A float64 array with shape ``(H-h+1, W-w+1)`` (each dimension is
@@ -113,26 +166,45 @@ def _ncc_map(t_or_model, img):
         t = t_or_model["template"]
         t0 = t_or_model["t0n"]
         tn = float(t_or_model["norm"])
+        template_is_constant = bool(t_or_model.get("constant", np.max(t) == np.min(t)))
     else:
-        t, _ = _ncc_scale(t_or_model, "template")
-        t0 = t - t.mean()
-        tn = np.linalg.norm(t0)
-        if tn > np.finfo(np.float64).tiny:
+        source_template = _f(t_or_model)
+        template_is_constant = bool(
+            source_template.size and np.max(source_template) == np.min(source_template)
+        )
+        t, _ = _ncc_scale(source_template, "template")
+        t0 = t - t.mean() if not template_is_constant else np.zeros_like(t)
+        tn = np.linalg.norm(t0) if not template_is_constant else 0.0
+        if tn != 0.0:
             t0 = t0 / tn
-    img, _, image_is_constant = _ncc_scale(img, "image", return_constant=True)
+    source_image = _f(img)
+    if not np.isfinite(source_image).all():
+        raise FsValueError("image contains NaN or infinity")
+    dangerous_range = _ncc_extreme_dynamic_range(source_image)
+    if dangerous_range:
+        img = source_image
+        image_is_constant = bool(img.size and np.max(img) == np.min(img))
+    else:
+        img, _, image_is_constant = _ncc_scale(source_image, "image", return_constant=True)
     H, W = img.shape
     h, w = t.shape
     shape = (max(H - h + 1, 0), max(W - w + 1, 0))
     out = np.full(shape, -1.0)
     if not out.size:
         return out
-    if tn <= np.finfo(np.float64).tiny:
+    if template_is_constant:
         out.fill(0.0)
         return out
     # Every Pearson denominator is zero for a constant search image.  Detect
     # that case before correlation and integral-image construction.
     if image_is_constant:
         out.fill(0.0)
+        return out
+    if dangerous_range:
+        out.fill(0.0)
+        coordinates = np.argwhere(np.ones(shape, dtype=bool))
+        _ncc_exact_windows(out, img, t0, coordinates, h, w, local_scale=True)
+        np.clip(out, -1.0, 1.0, out=out)
         return out
     # Direct correlation wins on small images.  On large images its cost is
     # quadratic in template size, and FFT is already faster for 7x7 kernels.
@@ -147,30 +219,10 @@ def _ncc_map(t_or_model, img):
     # blocks; patches, centered patches, and their product together stay at or
     # below a conservative 64 MiB working-set budget per block.
     coordinates = np.argwhere(unstable)
-    if coordinates.size:
-        windows = sliding_window_view(img, (h, w))
-        bytes_per_window = h * w * np.dtype(np.float64).itemsize
-        block_size = max(1, (64 * 1024**2) // (3 * bytes_per_window))
-        for start in range(0, len(coordinates), block_size):
-            block = coordinates[start:start + block_size]
-            patches = windows[block[:, 0], block[:, 1]]
-            flat = patches.reshape(len(block), -1)
-            centered = flat - flat.mean(axis=1, keepdims=True)
-            # A 2-D ``norm`` uses the established flattened BLAS reduction;
-            # the axis form rounds some values one ulp differently.  Retain
-            # that reduction while batching extraction, centering, products,
-            # division, and assignment so fallback scores stay bit-identical.
-            norms = np.fromiter(
-                (np.linalg.norm(row) for row in centered),
-                dtype=np.float64,
-                count=len(block),
-            )
-            defined = norms > np.finfo(np.float64).tiny
-            numerators = (centered * t0.ravel()).sum(axis=1)
-            values = np.zeros(len(block), dtype=np.float64)
-            values[defined] = numerators[defined] / norms[defined]
-            out[block[:, 0], block[:, 1]] = values
+    _ncc_exact_windows(out, img, t0, coordinates, h, w)
     np.clip(out, -1.0, 1.0, out=out)
+    out[np.abs(out - 1.0) <= 8.0 * np.finfo(np.float64).eps] = 1.0
+    out[np.abs(out + 1.0) <= 8.0 * np.finfo(np.float64).eps] = -1.0
     return out
 
 
@@ -183,20 +235,28 @@ def create_ncc_model(template) -> dict:
 
     Returns:
         中心化・単位ノルム化済みテンプレートと準備時の
-        ``template_scale`` を持つモデル。最大絶対値が ``[2**-500,
-        2**500]`` 外のときだけ、正の2のべき乗で正確に拡大縮小した
-        領域で ``norm`` を計算する。
+        ``template_scale``、整数の ``template_scale_exp`` を持つモデル。
+        最大絶対値の2進指数が -500 未満または 500 超、すなわち
+        ``2**-500`` 未満または ``2**501`` 以上のとき、有限な正の
+        2のべき乗で拡大縮小して ``norm`` を計算する。有限の非定数
+        テンプレートは倍率によらず自己一致が 1（誤差 1e-12 以下）に
+        なり、``1e-200`` と ``1e200`` の混在も含む。最大値と最小値が
+        等しい定数テンプレートは ``constant=True``、``norm=0``、
+        ``t0n`` が全ゼロとなり、すべての窓にスコア0を返す。
 
     Raises:
         FsValueError: ``template`` が NaN または無限大を含む場合。
     """
     source = np.asarray(template)
     t = np.array(source, dtype=np.float64, copy=True)
-    prepared, template_scale = _ncc_scale(t, "template")
+    constant = bool(t.size and np.max(t) == np.min(t))
+    prepared, template_scale, template_scale_exp = _ncc_scale(
+        t, "template", return_exponent=True
+    )
     mean = float(prepared.mean())
-    t0 = prepared - mean
-    norm = float(np.linalg.norm(t0))
-    t0n = t0 / norm if norm > np.finfo(np.float64).tiny else np.zeros_like(t0)
+    t0 = np.zeros_like(prepared) if constant else prepared - mean
+    norm = 0.0 if constant else float(np.linalg.norm(t0))
+    t0n = t0 / norm if norm != 0.0 else np.zeros_like(t0)
     try:
         from fullseye import __version__
         version = __version__
@@ -208,6 +268,8 @@ def create_ncc_model(template) -> dict:
         "norm": norm,
         "mean": mean,
         "template_scale": template_scale,
+        "template_scale_exp": template_scale_exp,
+        "constant": constant,
         "shape": t.shape,
         "origin": (t.shape[0] // 2, t.shape[1] // 2),
         "dtype": source.dtype,
@@ -277,7 +339,9 @@ def find_ncc_model(model, image, min_score: float = 0.5, *, num_matches=1,
 
     Args:
         model: ``create_ncc_model`` の結果、または2次元テンプレート。
-        image: 探索対象の2次元画像。
+        image: 探索対象の有限値2次元画像。最大値と最小値が等しい窓は
+            スコア0。有限の非定数窓は倍率によらず自己一致が1（誤差
+            1e-12以下）となり、``1e-200`` と ``1e200`` の混在も含む。
         min_score: 複数候補に含める最小NCCスコア。
         num_matches: 返す候補の最大数。既定は1。
         max_overlap: テンプレート矩形間のIoUがこの値を超える候補を抑制する。
@@ -290,6 +354,7 @@ def find_ncc_model(model, image, min_score: float = 0.5, *, num_matches=1,
         min_distance: 旧``find_ncc_models``入口用の行列方向抑制距離。
 
     最良候補の従来キーに、スコア降順の ``matches`` を加えて返す。
+    モデルまたは画像に NaN、無限大があれば ``FsValueError`` を送出する。
     """
     unsupported = {"angle_start": angle_start, "angle_extent": angle_extent,
                    "num_levels": num_levels}
