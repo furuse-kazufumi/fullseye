@@ -18,6 +18,8 @@
 <p>Distance transform in absolute pixel distances without normalisation. Equivalent to HALCON&#x27;s <code style="color:#22d3bf">distance_transform</code> (Compute the distance transformation of a region.).</p>
 <p><code style="color:#22d3bf">a</code> selects the distance type: <code style="color:#22d3bf">a &lt; 1/3</code> Euclidean, <code style="color:#22d3bf">1/3 &lt;= a &lt; 2/3</code> city-block (L1), otherwise chessboard (L∞). <code style="color:#22d3bf">b &lt; 0.5</code> returns, for every foreground pixel, the distance to the nearest background pixel; <code style="color:#22d3bf">b &gt;= 0.5</code> returns, for every background pixel, the distance to the nearest foreground pixel. The output is a float64 image and, unlike <code style="color:#22d3bf">dist_transform</code>, is not normalised by the per-image maximum (the centres of a 3×3 and a 9×9 square are 2 and 5). Example: <code style="color:#22d3bf">_dist_transform_abs(np.ones((3, 3)), 0, 0)</code>.</p>
 <p>The HALCON reference operator returns <code style="color:#22d3bf">int4</code> approximations. This op returns exact float64 distances and is not a compatibility API.</p>
+<p>Raises:</p>
+<p>FsValueError: The image contains NaN / inf.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

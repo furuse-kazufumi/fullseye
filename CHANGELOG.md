@@ -7,6 +7,10 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- 修正: NaN 画像で黙って有限値を返していた 9 op を fail-closed に。
+
+- 12 演算子と domain・blob・型付き演算子について、正常な空結果、NaN 障害、入力型の取り違え、厳密／既定フォールバック経路を区別する fault-injection gate を追加した。
+
 - 層ごとの壊れた演算を一時注入し、基準実行の失敗を除外して検出門を再計測できる変異探針を追加した。中断再開、時間上限、JUnit と JSON の記録に対応する。
 
 - Add an evidence-based HALCON compatibility profile and a pinned comparison-test manifest.

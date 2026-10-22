@@ -15,6 +15,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Mittelwert-(Box-)Filter mit unabhängig gewählter Breite und Höhe. Entspricht HALCONs <code style="color:#22d3bf">mean_image</code> (Smooth by averaging.).</p>
 <p><code style="color:#22d3bf">a</code> ist die Fensterbreite, <code style="color:#22d3bf">b</code> die Fensterhöhe; jeder Regler wird über <code style="color:#22d3bf">1 + 2 * min(7, int(8 * clip(knob, 0, 1)))</code> auf die ungeraden Größen 1, 3, …, 15 abgebildet (dasselbe wie das Aufrunden einer geraden Breite oder Höhe auf den nächsten ungeraden Wert). Ränder verwenden immer <code style="color:#22d3bf">reflect</code>. Bei gleicher Breite und Höhe ist das Ergebnis bitidentisch mit <code style="color:#22d3bf">mean_box</code> bei gleichem Fenster und <code style="color:#22d3bf">reflect</code>. Beispiel: <code style="color:#22d3bf">_mean_box_wh(np.eye(5), 0.2, 0.4)</code>.</p>
+<p>Bei einem Bild mit NaN breitet sich NaN auf die Ausgabe der Mittelwertfenster aus, die dieses Pixel einbeziehen.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">Leitfaden zur Familie gallery2d_smoothing_rank</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

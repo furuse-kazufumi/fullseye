@@ -15,6 +15,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Euklidische Distanztransformation. Entspricht HALCONs <code style="color:#22d3bf">distance_transform</code> (Compute the distance transformation of a region.).</p>
 <p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> werden nicht verwendet. Für jedes Vordergrundpixel wird der euklidische Abstand zum nächsten Hintergrundpixel berechnet (<code style="color:#22d3bf">scipy.ndimage.distance_transform_edt</code>) und mit <code style="color:#22d3bf">_norm</code> so normiert, dass das Maximum innerhalb dieses Bildes 1 wird (absolute Abstände lassen sich zwischen Bildern nicht vergleichen). Dient als Vorverarbeitung für Skelettierung, Erkennung von Kornmittelpunkten usw.</p>
+<p>L?st aus:</p>
+<p>FsValueError: Das Bild enth?lt NaN / inf.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">Leitfaden zur Familie gallery2d_region</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

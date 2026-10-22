@@ -52,6 +52,9 @@ version: 0.8.1  # fullseye lib version this note was generated for
 HALCON の参照 op は ``int4`` の近似を返す。この op は厳密な float64 距離を返し、
 互換 API ではない。
 
+Raises:
+    FsValueError: NaN / inf を含む画像。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_region ファミリ ガイド](../guides/gallery2d_region.md)
