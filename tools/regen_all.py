@@ -172,9 +172,19 @@ OUTPUTS = {
                                  "docs/AI_RAG_GUIDE.md", "docs/AI_RAG_GUIDE.*.md"],
     "tools/gen_mcp_data.py": ["fullseye/data/OP_INDEX.json", "fullseye/data/OP_NOTES.json",
                               "fullseye/data/OP_SEARCH.json", "fullseye/data/op_knob.json"],
-    "tools/gen_literature_counts.py": ["docs/literature/INDEX.md", "docs/literature/driving_simulation.md",
-                                       "docs/literature/manufacturing_processes.md", "docs/literature/mech_design.md",
-                                       "docs/literature/mechatronics_parts.md", "docs/literature/optical_metrology.md",
+    # ★2026-10-23: 手で列挙していて #116 の文献 4 本が漏れ、regen が exit 1(--check は緑)だった。
+    #   実ファイルと合わせる(OSS_LANDSCAPE.md は gen_oss_landscape.py の生成物なのでここには入れない)。
+    "tools/gen_literature_counts.py": ["docs/literature/INDEX.md",
+                                       "docs/literature/convergent_numerics_light_transport.md",
+                                       "docs/literature/driving_simulation.md",
+                                       "docs/literature/electron_microscopy.md",
+                                       "docs/literature/industrial_optical_sensing.md",
+                                       "docs/literature/manufacturing_processes.md",
+                                       "docs/literature/mech_design.md",
+                                       "docs/literature/mechatronics_parts.md",
+                                       "docs/literature/optical_metrology.md",
+                                       "docs/literature/oss_landscape_notes.md",
+                                       "docs/literature/sensitivity_uq_calibration.md",
                                        "docs/literature/sensor_simulation.md"],
 }
 
