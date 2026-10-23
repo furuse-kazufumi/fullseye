@@ -11,7 +11,10 @@ time_stretch_from_gravity)の門。実行: ``py -3.11 -m pytest tests/test_video
  6. aic_from_rss の式と拒否(RSS ≤ 0・n ≤ k・非有限)
  7. time_stretch_from_gravity の閉形式(k 倍に引き延ばした時刻で放物線を当てると k が戻る)と拒否
  8. 空の入力・NaN・時刻が増えない・平面でも 3-D でもない形は ValueError(fail-closed)
- 9. 包み紙(fullseye.apply)経由でも NaN 入力は入口で拒否される(2026-10-23 の契約)
+ 9. 公開面 fullseye.ledger 経由でも NaN 入力は(op 自身の検査で)ValueError になる(包み紙は素通し、2026-10-23 の契約)
+10. 敵対的レビュー(2026-10-23)の所見: 雑音ゼロの軌跡(残差が離散化の床)は AIC の比較を拒否 / dt > 標本間隔・iters < 1・
+    真空・bp の鍵欠落や非有限や質量 0・t_end や dt の非有限・文字列 は全部 ValueError(KeyError / ZeroDivisionError / NaN を出さない)/
+    単位違い(ms の t)は歩数の上限で即座に止まる / rss_floor は雑音のある当てはめでは RSS の 1e-3 未満
 """
 from __future__ import annotations
 
@@ -98,7 +101,8 @@ def test_nested_models_delta_aic_is_bounded_below_and_follows_the_truth():
 def test_no_verdict_is_bundled_only_the_aic_difference():
     """op は判定を返さない(閾値は呼び手)。返るのは 2 つの当てはめと AIC の差だけ。"""
     bp = car()
-    PT = sample(P0, V0, 0.3 * V0 / np.linalg.norm(V0), bp)[:, [0, 2]]
+    rng = np.random.default_rng(7)
+    PT = sample(P0, V0, 0.3 * V0 / np.linalg.norm(V0), bp)[:, [0, 2]] + rng.normal(0.0, 0.01, (len(T), 2))
     r = B.ballistic_vs_thrust(T, PT, bp, dt=1.0 / 120.0)
     assert set(r) == {"ballistic", "thrust", "aic_ballistic", "aic_thrust", "delta_aic", "thrust_norm"}
     assert r["delta_aic"] > 0 and r["thrust"]["k"] == r["ballistic"]["k"] + 2
@@ -151,9 +155,71 @@ def test_degenerate_inputs_are_refused():
             fn(T, P[:, :1], bp)                            # (N, 1) は平面でも 3-D でもない
 
 
+def test_noise_free_track_is_refused_because_residuals_are_discretisation_not_noise():
+    """★ 雑音ゼロの真値に既定の dt = 1e-3 で ΔAIC = +144(推力の推定値は 3e-14 m/s²)が出ていた(2026-10-23 の敵対的レビュー)。
+    残差が離散化の床 ``rss_floor`` の 10 倍を下回るときは比較を拒否する。雑音があれば床は RSS の 1e-3 未満で、結果は変わらない。"""
+    bp = car()
+    PB = sample(P0, V0, (0.0, 0.0, 0.0), bp)[:, [0, 2]]
+    for dt in (1e-3, 1.0 / 120.0):
+        with pytest.raises(ValueError, match="discretisation floor"):
+            B.ballistic_vs_thrust(T, PB, bp, dt=dt)
+    rng = np.random.default_rng(3)
+    r = B.ballistic_vs_thrust(T, PB + rng.normal(0.0, 0.03, PB.shape), bp, dt=1.0 / 120.0)
+    f = r["thrust"]
+    assert 0.0 < f["rss_floor"] < 1e-3 * f["rss"], (f["rss_floor"], f["rss"])
+    assert f["rss_floor"] == pytest.approx(f["n"] * ((bp["g"] + f["thrust_norm"]) * (1.0 / 120.0) ** 2 / 8.0) ** 2)
+    assert -4.0 - 1e-6 <= r["delta_aic"] < 10.0
+
+
+def test_review_findings_are_value_errors_not_silent_answers():
+    """dt > 標本間隔(模型が区分線形になり C_d 0.33 → 3.1 に化けていた)、iters < 1(放物線の初期値をそのまま返していた)、
+    真空(C_d が同定不能で初期値のまま cond = inf)、bp の欠落 / NaN / 質量 0(KeyError / NaN の軌跡 / ZeroDivisionError だった)、
+    t_end や dt の非有限・文字列、ms で渡した t(2×10⁶ 歩 × 数百回の評価で止まらなかった)は、全部 ValueError で即座に止まる。"""
+    import time
+    bp = car()
+    rng = np.random.default_rng(5)
+    P = sample(P0, V0, (0.0, 0.0, 0.0), bp)[:, [0, 2]] + rng.normal(0.0, 0.03, (len(T), 2))
+    for fn in (B.drag_fit, B.thrust_fit, B.ballistic_vs_thrust):
+        with pytest.raises(ValueError, match="sample spacing"):
+            fn(T, P, bp, dt=0.5)
+        for it in (0, -5, True, 2.0):
+            with pytest.raises(ValueError, match="iters"):
+                fn(T, P, bp, iters=it)
+        with pytest.raises(ValueError, match="vacuum"):
+            fn(T, P, dict(bp, rho=0.0))
+        with pytest.raises(ValueError, match="bp"):
+            fn(T, P, {})
+        with pytest.raises(ValueError, match="bp"):
+            fn(T, P, None)
+        with pytest.raises(ValueError, match="finite"):
+            fn(T, P, dict(bp, g=float("nan")))
+        with pytest.raises(ValueError, match="mass"):
+            fn(T, P, dict(bp, mass=0.0))
+        t0 = time.time()
+        with pytest.raises(ValueError, match="units"):
+            fn(T * 1000.0, P, bp)                       # ms で渡した t: 歩数の上限で止まる
+        assert time.time() - t0 < 2.0
+        with pytest.raises(ValueError, match="dt"):
+            fn(T, P, bp, dt=float("inf"))
+    for bad_t in (float("inf"), float("nan"), "1"):
+        with pytest.raises(ValueError):
+            B.thrust_ode(P0, V0, (0.0, 0.0, 0.0), bp, bad_t)
+    with pytest.raises(ValueError):
+        B.thrust_ode(P0, V0, (0.0, 0.0, 0.0), bp, 1.0, float("inf"))
+    with pytest.raises(ValueError, match="steps"):
+        B.thrust_ode(P0, V0, (0.0, 0.0, 0.0), bp, 1e4, 1e-3)
+    for bad_bp in ({}, None, dict(bp, g=float("nan")), dict(bp, mass=0.0), dict(bp, cd=-1.0), dict(bp, cd="cube")):
+        with pytest.raises(ValueError):
+            B.thrust_ode(P0, V0, (0.0, 0.0, 0.0), bad_bp, 0.01)
+    assert B.thrust_ode(P0, V0, (0.0, 0.0, 0.0), dict(bp, rho=0.0), 0.01)["p"].shape == (11, 3)   # 真空の積分は可
+    for g in ("9", b"9", True):
+        with pytest.raises(ValueError):
+            B.time_stretch_from_gravity(g)
+
+
 def test_public_tier_route_works_and_refuses_nan_at_the_entrance():
     """公開面 ``fullseye.ledger.<名前>`` と opsdrive の台帳から呼べること(登録を 1 つ落とすと静かに消える)、
-    NaN は入口で ValueError になること。"""
+    NaN は ValueError になること(包み紙は素通しなので、見ているのは op 自身の入口検査)。"""
     import fullseye as fs
     import opsdrive
     bp = car()

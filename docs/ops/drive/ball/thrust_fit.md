@@ -17,12 +17,14 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 ## 使い方
 
-軌跡 (t_i, p_i) に「重力 + 抗力 + 一定の比推力」の模型を **(p₀, v₀, C_d, a_T) の 10 パラメータ** で Gauss–Newton
-(有限差分のヤコビアン)で当てる。``p`` は (N, 3) の世界座標か、単眼の側面視で起こした **(N, 2) の平面 (x, z)**(そのときは
+軌跡 (t_i, p_i) に「重力 + 抗力 + 一定の比推力」の模型を **(p₀, v₀, C_d, a_T) の 10 パラメータ** で Levenberg–Marquardt
+(有限差分のヤコビアン、C_d ≥ 0 は射影)で当てる。``p`` は (N, 3) の世界座標か、単眼の側面視で起こした **(N, 2) の平面 (x, z)**(そのときは
 y 成分を観測も未知数も持たないので 7 パラメータ、``n`` = 2 × 点数)。``bp`` は :func:`ball_params` の表(質量・前面積・空気密度・g。
 ``radius`` は前面積を与えるためだけに使う: 車なら A = πr² が前面積になる r を渡す)。
-返り値 ``{"p0", "v0", "cd", "thrust" (3,), "thrust_norm", "rms", "rss", "n", "k", "dims", "cond", "iters", "t0"}``
-(``n`` は残差の個数、``k`` は動かしたパラメータ数。:func:`aic_from_rss` の入力)。
+返り値 ``{"p0", "v0", "cd", "thrust" (3,), "thrust_norm", "rms", "rss", "rss_floor", "n", "k", "dims", "cond", "iters", "t0"}``
+(``n`` は残差の個数、``k`` は動かしたパラメータ数。:func:`aic_from_rss` の入力。``rss_floor`` = RK4 格子を標本時刻へ線形補間する
+誤差 ≤ a dt² / 8 が残差に残しうる平方和の上限)。``dt`` は標本間隔以下(超えると模型が標本の間で区分線形になる)、``iters`` ≥ 1、
+真空(rho = 0)では C_d が同定できないので、どれも ValueError。
 推力つきの真値の軌跡なら a_T は 1e-5 m/s² で戻り、推力 0 で作った軌跡なら ``thrust_norm`` は 1e-5 以下になる(門)。
 
 空の入力(``t`` が 0 要素)は ValueError。

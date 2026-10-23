@@ -21,6 +21,8 @@ version: 0.8.1  # fullseye lib version this note was generated for
 返り値 ``{"t" (N,), "p" (N, 3), "v" (N, 3)}``(t = 0, dt, …, ≤ t_end)。``thrust`` が零ベクトルなら :func:`flight_ode`(ω = 0)と
 1e-12 で一致し、真空(rho = 0)なら閉形式 p₀ + v₀ t + ½ (a_T − g ẑ) t² と 1e-9 で一致する(門)。
 「ほぼロケット」の映像を扱う最小の模型で、推力が機体に固定されて向きを変える場合は近似になる(短い区間ほど良い)。
+``t_end`` / ``dt`` は有限の数、``bp`` は :func:`ball_params` の表(鍵の欠落・非有限・質量 0 は ValueError)、歩数 t_end / dt は
+5×10⁶ まで(秒でなく ms で渡した t をここで止める)。
 
 空の入力(``thrust`` が 0 要素)は ValueError。
 

@@ -7,6 +7,26 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### 修正 — 映像の物理整合性 op の入口検査(敵対的レビュー 2026-10-23、所見 8 件を一件ずつ再現してから)
+
+- `ballistic_vs_thrust` は、推力側の RSS が離散化の床 `rss_floor`(RK4 格子を標本時刻へ線形補間する誤差 ≤ a dt²/8 の平方和)の
+  10 倍を下回ると ValueError。雑音ゼロの真値に既定の dt = 1e-3 で ΔAIC = +144(推力の推定値は 3e-14 m/s²)が「結果」として
+  返っていた —— n ln(RSS_b / RSS_t) は丸め屑の比を増幅する。雑音のある軌跡では床は RSS の 1e-3 未満で結果は変わらない。
+  `drag_fit` / `thrust_fit` の返り値に `rss_floor` を足した。
+- `drag_fit` / `thrust_fit` / `ballistic_vs_thrust`: `dt` が標本間隔を超えると模型が標本の間で区分線形になり C_d 0.33 → 3.1 に
+  化けていた(例外も NaN も無し)→ ValueError。`iters` < 1 は放物線の初期値をそのまま「当てはめ」として返していた → ValueError。
+  真空(rho = 0)は C_d が同定できず初期値のまま cond = inf だった → ValueError。ms で渡した t は 2×10⁶ 歩 × 数百回の評価で
+  止まらなかった → 1 回の評価の歩数に上限(2×10⁵)。
+- `thrust_ode` / 当てはめ 3 op: `ball_params` の表の鍵欠落は KeyError、g = nan は NaN の軌跡、mass = 0 は ZeroDivisionError、
+  `t_end` / `dt` の inf は OverflowError か `[nan]`、文字列は TypeError だった → 全部 ValueError(公開面 `fullseye.ledger` は
+  素通しなので op 自身で止める)。`thrust_ode` の歩数は 5×10⁶ まで。`time_stretch_from_gravity` も文字列・bool を拒否。
+- 文書: `thrust_fit` は Gauss–Newton でなく Levenberg–Marquardt(C_d ≥ 0 は射影)。雑音だけの ΔAIC は「−2Δk を中心」でなく
+  「−2Δk を下限」(中央値は −2Δk + 1 ほど、C_d = 0 の壁に当たる当てはめが混じる混合分布)。訳 6 言語を更新。
+- PoC 2026.276: 画面の縁に触れた bbox(辺が切り詰められている)はその発射を引き直す(発射条件の端で 3000 本中 2 本、位置が
+  0.36 m ずれて黙って軌跡に入っていた)。`aic_from_rss` を直接呼んで op の ΔAIC と一致する門を足した(呼び出し例を同じ便で)。
+  閾値のリテラル 10 を `MIN_DELTA` に。
+- tests 15 → 17(雑音ゼロの拒否と床、入口検査 10 種が ValueError で即座に止まること)。fuzz のビルダは 1 mm の雑音を足す。
+
 ### 追加 — 映像の物理整合性(弾道か推力か、時間は引き延ばされていないか)
 
 - `ballistics` に 6 op: `thrust_ode`(重力+抗力+一定の比推力の RK4)、`drag_fit` / `thrust_fit`(軌跡から (p₀, v₀, C_d[, a_T]) を射影つき Levenberg–Marquardt で同定、(N, 3) でも単眼の平面 (N, 2) でも)、`aic_from_rss`、`ballistic_vs_thrust`(2 模型の当てはめと ΔAIC を返す。判定は返さず、閾値は呼び手。節約則)、`time_stretch_from_gravity`(k = √(g_ref / g_fit))。推力つきの当てはめは抗力だけの解を始点に含むので ΔAIC ≥ −2Δk が保たれる。
