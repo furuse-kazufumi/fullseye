@@ -89,7 +89,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 能做什麼
 
-共 95 項,每項都有說明頁(用法與限制)與可執行的範例。
+共 96 項,每項都有說明頁(用法與限制)與可執行的範例。
 
 <div class="vl" markdown="1">
 
@@ -127,6 +127,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - 這個數字有多少來自量測方式(量具 R&R 與量測不確定度): [說明](../../capabilities/measurement-system-and-uncertainty.md) _(ja)_ · 範例 [poc_measurement_system_analysis](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_measurement_system_analysis.py)
 - 疊紋對準(節距略異的兩片光柵 → 條紋相位 → nm 位移,差動與 Talbot 間隙): [說明](../../capabilities/moire-alignment.md) _(ja)_ · 範例 [poc_moire_alignment](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_moire_alignment.py)
 - 用條紋的鏡像量測光澤面的微米凹坑(相位量測偏折術: 條紋 → 相位 → 斜率 → 曲率): [說明](../../capabilities/phase-measuring-deflectometry.md) _(ja)_ · 範例 [poc_phase_measuring_deflectometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_phase_measuring_deflectometry.py)
+- 以光彈性量測應力(應力場 → 條紋 → 偏振影像 → 相位延遲與主軸): [說明](../../capabilities/photoelasticity.md) _(ja)_ · 範例 [poc_photoelasticity](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_photoelasticity.py)
 - 由三維點雲求平面度: [說明](../../capabilities/planarity-from-point-cloud.md) _(ja)_ · 範例 [geometry_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples_3d/geometry_metrology.py) · [poc_bump_coplanarity](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bump_coplanarity.py) · [poc_scan_to_bim_asbuilt](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_scan_to_bim_asbuilt.py)
 - 多大的缺陷能被發現(檢出機率 POD 與 a90/95,MIL-HDBK-1823A): [說明](../../capabilities/probability-of-detection.md) _(ja)_ · 範例 [poc_pod_lighting](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pod_lighting.py)
 - 不被刮痕與突起拖動的平均線(穩健高斯迴歸與樣條濾波,截面與曲面): [說明](../../capabilities/robust-gaussian-spline-profile-filter.md) _(ja)_ · 範例 [poc_robust_profile_filter](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_robust_profile_filter.py) · [example_robust_profile_filter](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/example_robust_profile_filter.py)
@@ -214,7 +215,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 </div>
 
-[其他 164 個使用範例(非 PoC)的列表](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[其他 165 個使用範例(非 PoC)的列表](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## 全部看
 

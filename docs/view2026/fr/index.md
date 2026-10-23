@@ -89,7 +89,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 
 ## Ce qu'il permet de faire
 
-95 sujets, chacun avec une page d'explication (utilisation et limites) et des liens vers des exemples exécutables.
+96 sujets, chacun avec une page d'explication (utilisation et limites) et des liens vers des exemples exécutables.
 
 <div class="vl" markdown="1">
 
@@ -127,6 +127,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 - Quelle part de ce chiffre revient à la méthode de mesure (R&R du système de mesure et incertitude de mesure): [explication](../../capabilities/measurement-system-and-uncertainty.md) _(ja)_ · exemples [poc_measurement_system_analysis](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_measurement_system_analysis.py)
 - Alignement par moiré (deux réseaux de pas légèrement différents, phase des franges, décalage en nm, paires différentielles et distance de Talbot): [explication](../../capabilities/moire-alignment.md) _(ja)_ · exemples [poc_moire_alignment](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_moire_alignment.py)
 - Mesurer des creux de l'ordre du µm sur une surface brillante grâce à l'image miroir de franges (déflectométrie à mesure de phase : franges → phase → pente → courbure): [explication](../../capabilities/phase-measuring-deflectometry.md) _(ja)_ · exemples [poc_phase_measuring_deflectometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_phase_measuring_deflectometry.py)
+- Mesurer les contraintes par photoélasticité (champ de contraintes, franges, images de polarisation, retard et axe): [explication](../../capabilities/photoelasticity.md) _(ja)_ · exemples [poc_photoelasticity](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_photoelasticity.py)
 - Calculer la planéité à partir d'un nuage de points 3-D: [explication](../../capabilities/planarity-from-point-cloud.md) _(ja)_ · exemples [geometry_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples_3d/geometry_metrology.py) · [poc_bump_coplanarity](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bump_coplanarity.py) · [poc_scan_to_bim_asbuilt](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_scan_to_bim_asbuilt.py)
 - À partir de quelle taille un défaut est-il détecté (probabilité de détection POD et a90/95, MIL-HDBK-1823A): [explication](../../capabilities/probability-of-detection.md) _(ja)_ · exemples [poc_pod_lighting](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pod_lighting.py)
 - Une ligne moyenne que ni les rayures ni les pics ne peuvent tirer (régression gaussienne robuste et filtre spline, profil et surface): [explication](../../capabilities/robust-gaussian-spline-profile-filter.md) _(ja)_ · exemples [poc_robust_profile_filter](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_robust_profile_filter.py) · [example_robust_profile_filter](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/example_robust_profile_filter.py)
@@ -214,7 +215,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 
 </div>
 
-[Liste des 164 exemples d'utilisation qui ne sont pas des PoC](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[Liste des 165 exemples d'utilisation qui ne sont pas des PoC](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## Tout voir
 

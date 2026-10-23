@@ -1,8 +1,8 @@
 {
- "n_ops": 3563,
+ "n_ops": 3575,
  "tiers": {
   "color": 12,
-  "ledger": 2604,
+  "ledger": 2616,
   "nary": 17,
   "registry": 930
  },
@@ -2635,6 +2635,17 @@
    "in_sorts": [
     "coordgrid"
    ]
+  },
+  {
+   "name": "brazilian_disc_stress",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "photoelastic",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "brdf_blinn_phong",
@@ -5538,6 +5549,21 @@
    "in_sorts": [
     "signal",
     "scalar"
+   ]
+  },
+  {
+   "name": "cubic_photoelastic_birefringence",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "photoelastic",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d",
+    "image2d",
+    "image2d"
    ]
   },
   {
@@ -14163,6 +14189,17 @@
    ]
   },
   {
+   "name": "kirsch_plate_stress",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "photoelastic",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
    "name": "knife_edge_track",
    "halcon": "",
    "in_sort": "rgb",
@@ -20715,6 +20752,45 @@
    ]
   },
   {
+   "name": "photoelastic_phase_estimate",
+   "halcon": "",
+   "in_sort": "polsweep",
+   "out_sort": "table",
+   "category": "photoelastic",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "polsweep"
+   ]
+  },
+  {
+   "name": "photoelastic_polarization_images",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "polsweep",
+   "category": "photoelastic",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "photoelastic_retardation",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "photoelastic",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
    "name": "photometric_residual",
    "halcon": "",
    "in_sort": "images",
@@ -21790,6 +21866,19 @@
    ]
   },
   {
+   "name": "polariscope_intensity",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "photoelastic",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
    "name": "polarization_demosaic",
    "halcon": "",
    "in_sort": "image2d",
@@ -22294,6 +22383,21 @@
    "dim": "3d",
    "in_sorts": [
     "points"
+   ]
+  },
+  {
+   "name": "principal_stress",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "photoelastic",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d",
+    "image2d",
+    "image2d"
    ]
   },
   {
@@ -24697,6 +24801,45 @@
    ]
   },
   {
+   "name": "retardation_convert",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "photoelastic",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "retardation_from_birefringence",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "photoelastic",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "retardation_unwrap_multiwavelength",
+   "halcon": "",
+   "in_sort": "images",
+   "out_sort": "table",
+   "category": "photoelastic",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "images"
+   ]
+  },
+  {
    "name": "revolution_volume_side",
    "halcon": "",
    "in_sort": "image2d",
@@ -27043,6 +27186,17 @@
    "in_sort": null,
    "out_sort": "pairs",
    "category": "spectral",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "silicon_piezo_optic_coefficients",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "photoelastic",
    "tier": "ledger",
    "ledger": "opsoptics",
    "dim": "optics",

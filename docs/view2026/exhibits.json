@@ -7554,6 +7554,14 @@
     "hi": "MTF और yield से lens manufacturing tolerances तय करना",
     "fr": "Budgéter les tolérances de fabrication d'un objectif selon la FTM et le rendement"
    },
+   "photoelasticity": {
+    "zh": "用光弹性测量应力(应力场 → 条纹 → 偏振图像 → 相位延迟与主轴)",
+    "tw": "以光彈性量測應力(應力場 → 條紋 → 偏振影像 → 相位延遲與主軸)",
+    "ko": "광탄성으로 응력 측정(응력장 → 무늬 → 편광 영상 → 위상 지연과 주축)",
+    "de": "Spannungen spannungsoptisch messen (Spannungsfeld, Isochromaten, Polarisationsbilder, Gangunterschied und Hauptachse)",
+    "hi": "प्रकाश-प्रत्यास्थता से प्रतिबल मापना (प्रतिबल क्षेत्र → फ्रिंज → ध्रुवण छवियाँ → मंदन और मुख्य अक्ष)",
+    "fr": "Mesurer les contraintes par photoélasticité (champ de contraintes, franges, images de polarisation, retard et axe)"
+   },
    "plenoptic-camera": {
     "zh": "基于镜头处方的光场相机",
     "tw": "基於鏡頭處方的光場相機",

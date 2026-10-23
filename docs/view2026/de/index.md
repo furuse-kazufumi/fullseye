@@ -89,7 +89,7 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 
 ## Was es kann
 
-95 Themen, jeweils mit Erklärseite (Anwendung und Grenzen) und lauffähigen Beispielen.
+96 Themen, jeweils mit Erklärseite (Anwendung und Grenzen) und lauffähigen Beispielen.
 
 <div class="vl" markdown="1">
 
@@ -127,6 +127,7 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 - Wie viel dieser Zahl ist das Messen und nicht der Prozess (Gauge R&R und Messunsicherheit): [Erklärung](../../capabilities/measurement-system-and-uncertainty.md) _(ja)_ · Beispiele [poc_measurement_system_analysis](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_measurement_system_analysis.py)
 - Moiré-Justierung (zwei Gitter leicht verschiedener Periode, Streifenphase, Verschiebung in nm, Differenzpaar und Talbot-Spalt): [Erklärung](../../capabilities/moire-alignment.md) _(ja)_ · Beispiele [poc_moire_alignment](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_moire_alignment.py)
 - Mikrometer-Dellen auf glänzenden Flächen im Spiegelbild eines Streifenbildschirms messen (phasenmessende Deflektometrie: Streifen, Phase, Neigung, Krümmung): [Erklärung](../../capabilities/phase-measuring-deflectometry.md) _(ja)_ · Beispiele [poc_phase_measuring_deflectometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_phase_measuring_deflectometry.py)
+- Spannungen spannungsoptisch messen (Spannungsfeld, Isochromaten, Polarisationsbilder, Gangunterschied und Hauptachse): [Erklärung](../../capabilities/photoelasticity.md) _(ja)_ · Beispiele [poc_photoelasticity](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_photoelasticity.py)
 - Ebenheit einer Fläche aus einer 3-D-Punktwolke: [Erklärung](../../capabilities/planarity-from-point-cloud.md) _(ja)_ · Beispiele [geometry_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples_3d/geometry_metrology.py) · [poc_bump_coplanarity](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bump_coplanarity.py) · [poc_scan_to_bim_asbuilt](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_scan_to_bim_asbuilt.py)
 - Welche Fehlergröße wird tatsächlich gefunden (Auffindwahrscheinlichkeit POD und a90/95, MIL-HDBK-1823A): [Erklärung](../../capabilities/probability-of-detection.md) _(ja)_ · Beispiele [poc_pod_lighting](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pod_lighting.py)
 - Eine Mittellinie, die sich von Kratzern und Spitzen nicht ziehen lässt (robuste Gauß-Regression und Spline, Profil und Fläche): [Erklärung](../../capabilities/robust-gaussian-spline-profile-filter.md) _(ja)_ · Beispiele [poc_robust_profile_filter](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_robust_profile_filter.py) · [example_robust_profile_filter](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/example_robust_profile_filter.py)
@@ -214,7 +215,7 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 
 </div>
 
-[Alle 164 Anwendungsbeispiele, die keine PoCs sind](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[Alle 165 Anwendungsbeispiele, die keine PoCs sind](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## Alles ansehen
 
