@@ -18,8 +18,8 @@ version: 0.8.1  # fullseye lib version this note was generated for
 ## 使い方
 
 軌跡 (t_i, p_i) に「重力 + 抗力」の模型を **(p₀, v₀, C_d) の 7 パラメータ**(平面入力なら 5)で当てる(:func:`thrust_fit` の
-推力なし版。:func:`flight_fit` は C_d を既知として 6 パラメータ、こちらは C_d も同定する)。返り値の鍵は :func:`thrust_fit` と同じで
-``thrust`` は零ベクトル。真値の軌跡なら C_d は 1e-4 で戻る(門)。
+推力なし版。:func:`flight_fit` は C_d を既知として 6 パラメータ、こちらは C_d も同定する)。返り値の鍵と入口の検査
+(``dt`` ≤ 標本間隔、``iters`` ≥ 1、真空は拒否)は :func:`thrust_fit` と同じで、``thrust`` は零ベクトル。真値の軌跡なら C_d は 1e-4 で戻る(門)。
 
 空の入力(``t`` が 0 要素)は ValueError。
 

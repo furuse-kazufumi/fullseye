@@ -137,17 +137,17 @@
 
 ## 查找算子
 
-共有 **3,547 篇算子说明**(调用形式、类型契约、HALCON 对应、参考文献、来源)与 **67 篇族指南**。按维度的入口:
+共有 **3,545 篇算子说明**(调用形式、类型契约、HALCON 对应、参考文献、来源)与 **67 篇族指南**。按维度的入口:
 
-**实测覆盖**: 演化算子 942/942、类型化台账 2584/2596、单行门面 `fullseye.<名称>` 705/1482 —— **门面侧仅覆盖一半**。
+**实测覆盖**: 演化算子 942/942、类型化台账 2582/2594、单行门面 `fullseye.<名称>` 703/1480 —— **门面侧仅覆盖一半**。
 
-**内容实测**: 3547 篇中，附有可运行示例的 **3535** 篇(12 篇没有)，用法说明 120 字以上的 **3360** 篇(187 篇仅一行)。结构(调用形式、类型、可衔接算子)3547 篇全有。
+**内容实测**: 3545 篇中，附有可运行示例的 **3534** 篇(11 篇没有)，用法说明 120 字以上的 **3358** 篇(187 篇仅一行)。结构(调用形式、类型、可衔接算子)3545 篇全有。
 
 | 维度 | 算子数 | 入口 |
 |---|---:|---|
 | `2d` | 959 | [INDEX](ops/2d/INDEX.md) |
 | `drive` | 700 | [INDEX](ops/drive/INDEX.md) |
-| `optics` | 465 | [INDEX](ops/optics/INDEX.md) · [guide](ops/optics/guides/optics_imaging.md) |
+| `optics` | 464 | [INDEX](ops/optics/INDEX.md) · [guide](ops/optics/guides/optics_imaging.md) |
 | `3d` | 373 | [INDEX](ops/3d/INDEX.md) |
 | `math` | 114 | [INDEX](ops/math/INDEX.md) · [guide](ops/math/guides/math_metrology.md) |
 | `segmentation` | 59 | [INDEX](ops/segmentation/INDEX.md) · [guide](ops/segmentation/guides/halcon_segmentation.md) |
@@ -166,8 +166,8 @@
 | `printpath` | 23 | [INDEX](ops/printpath/INDEX.md) · [guide](ops/printpath/guides/printpath.md) |
 | `flyvision` | 22 | [INDEX](ops/flyvision/INDEX.md) · [guide](ops/flyvision/guides/fly_vision.md) |
 | `graph` | 20 | [INDEX](ops/graph/INDEX.md) |
-| `specular` | 20 | [INDEX](ops/specular/INDEX.md) · [guide](ops/specular/guides/specular_photometric.md) |
 | `quat` | 19 | [INDEX](ops/quat/INDEX.md) · [guide](ops/quat/guides/quaternion_monogenic.md) |
+| `specular` | 19 | [INDEX](ops/specular/INDEX.md) · [guide](ops/specular/guides/specular_photometric.md) |
 | `multivar` | 18 | [INDEX](ops/multivar/INDEX.md) · [guide](ops/multivar/guides/design_of_experiments.md) |
 | `lightfield` | 17 | [INDEX](ops/lightfield/INDEX.md) · [guide](ops/lightfield/guides/lightfield_depth.md) |
 | `measure1d` | 17 | [INDEX](ops/measure1d/INDEX.md) · [guide](ops/measure1d/guides/subpixel_measuring.md) |
@@ -296,7 +296,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## 文档地图 — 共 288 篇
 
-完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 3,547 篇算子说明与 67 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
+完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 3,545 篇算子说明与 67 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
 
 **Getting started**(12)
 
