@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3563,
- "n_notes": 3569,
+ "n_ops": 3575,
+ "n_notes": 3581,
  "notes": {
   "vol_dilate": [
    {
@@ -30048,6 +30048,123 @@
     "in": "table",
     "out": "table",
     "path": "docs/ops/optics/optimization/optimize_lens.md"
+   }
+  ],
+  "brazilian_disc_stress": [
+   {
+    "op": "brazilian_disc_stress",
+    "dim": "optics",
+    "category": "photoelastic",
+    "out": "table",
+    "path": "docs/ops/optics/photoelastic/brazilian_disc_stress.md"
+   }
+  ],
+  "cubic_photoelastic_birefringence": [
+   {
+    "op": "cubic_photoelastic_birefringence",
+    "dim": "optics",
+    "category": "photoelastic",
+    "in": "image2d × image2d × image2d",
+    "out": "table",
+    "path": "docs/ops/optics/photoelastic/cubic_photoelastic_birefringence.md"
+   }
+  ],
+  "kirsch_plate_stress": [
+   {
+    "op": "kirsch_plate_stress",
+    "dim": "optics",
+    "category": "photoelastic",
+    "out": "table",
+    "path": "docs/ops/optics/photoelastic/kirsch_plate_stress.md"
+   }
+  ],
+  "photoelastic_phase_estimate": [
+   {
+    "op": "photoelastic_phase_estimate",
+    "dim": "optics",
+    "category": "photoelastic",
+    "in": "polsweep",
+    "out": "table",
+    "path": "docs/ops/optics/photoelastic/photoelastic_phase_estimate.md"
+   }
+  ],
+  "photoelastic_polarization_images": [
+   {
+    "op": "photoelastic_polarization_images",
+    "dim": "optics",
+    "category": "photoelastic",
+    "in": "image2d",
+    "out": "polsweep",
+    "path": "docs/ops/optics/photoelastic/photoelastic_polarization_images.md"
+   }
+  ],
+  "photoelastic_retardation": [
+   {
+    "op": "photoelastic_retardation",
+    "dim": "optics",
+    "category": "photoelastic",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/optics/photoelastic/photoelastic_retardation.md"
+   }
+  ],
+  "polariscope_intensity": [
+   {
+    "op": "polariscope_intensity",
+    "dim": "optics",
+    "category": "photoelastic",
+    "in": "image2d",
+    "out": "image2d",
+    "path": "docs/ops/optics/photoelastic/polariscope_intensity.md"
+   }
+  ],
+  "principal_stress": [
+   {
+    "op": "principal_stress",
+    "dim": "optics",
+    "category": "photoelastic",
+    "in": "image2d × image2d × image2d",
+    "out": "table",
+    "path": "docs/ops/optics/photoelastic/principal_stress.md"
+   }
+  ],
+  "retardation_convert": [
+   {
+    "op": "retardation_convert",
+    "dim": "optics",
+    "category": "photoelastic",
+    "in": "image2d",
+    "out": "image2d",
+    "path": "docs/ops/optics/photoelastic/retardation_convert.md"
+   }
+  ],
+  "retardation_from_birefringence": [
+   {
+    "op": "retardation_from_birefringence",
+    "dim": "optics",
+    "category": "photoelastic",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/optics/photoelastic/retardation_from_birefringence.md"
+   }
+  ],
+  "retardation_unwrap_multiwavelength": [
+   {
+    "op": "retardation_unwrap_multiwavelength",
+    "dim": "optics",
+    "category": "photoelastic",
+    "in": "images",
+    "out": "table",
+    "path": "docs/ops/optics/photoelastic/retardation_unwrap_multiwavelength.md"
+   }
+  ],
+  "silicon_piezo_optic_coefficients": [
+   {
+    "op": "silicon_piezo_optic_coefficients",
+    "dim": "optics",
+    "category": "photoelastic",
+    "out": "table",
+    "path": "docs/ops/optics/photoelastic/silicon_piezo_optic_coefficients.md"
    }
   ],
   "false_color_metric": [
