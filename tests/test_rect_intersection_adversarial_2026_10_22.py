@@ -200,4 +200,7 @@ def test_500_ordinary_inputs_preserve_legacy_results():
         got, expected = area(*args), legacy(args)
         exact += got == expected
         assert got == expected or got == pytest.approx(expected, rel=1e-12, abs=1e-15)
-    assert exact >= 470
+    # ビット一致の件数は環境(Python 版ごとの numpy wheel の FMA / 縮約順)で揺れる: CI は 3.11 で 470 超、
+    # 3.12 で 469(2026-10-23、master run 39879999855)。契約は上の近似一致(500/500)で、この床は
+    # 「丸ごと別の計算になった」ことだけを検出する ⇒ 9 割に置く。
+    assert exact >= 450, exact
