@@ -378,7 +378,9 @@ def test_dark_and_unpolarised_pixels_are_masked_never_nan():
     for v in r.values():
         assert np.isfinite(v).all() if v.dtype != bool else True
     assert not r["lit"][2, 2] and r["dolp"][2, 2] == 0.0 and r["aolp_deg"][2, 2] == 0.0
-    assert r["lit"][0, 0] and r["dolp"][0, 0] == 0.0 and not r["aolp_defined"][0, 0]
+    # Lit and unpolarised: DoLP is rounding dust of the fit (0 on Windows, 5.6e-17 on the Linux CI
+    # runner), never exactly-zero by contract; the angle is what must stay undefined.
+    assert r["lit"][0, 0] and r["dolp"][0, 0] <= 1e-15 and not r["aolp_defined"][0, 0]
     assert r["aolp_defined"][1, 1] and r["dolp"][1, 1] == pytest.approx(1.0, abs=1e-15)
     assert min(r["aolp_deg"][1, 1], 180 - r["aolp_deg"][1, 1]) <= 1e-12
 
