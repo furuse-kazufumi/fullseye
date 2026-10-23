@@ -1,0 +1,104 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<p style="color:#f5a524;font-size:11px;margin:0 0 8px 0">Dieser Leitfaden liegt nur auf Japanisch vor (es ist von Menschen geschriebene Prosa, hier wird nichts maschinell ersetzt).</p>
+<h2 style="color:#f5a524;margin:0 0 4px 0">外観検査の前段(測る前に、照明と位置とタイルを決める) — 使い方ガイド</h2>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
+<p>検査ラインが<b>測る</b>前に必ず通る 3 段です。3 op / 3 カテゴリ(numpy のみ。台帳は <code style="color:#22d3bf">opsaoi.py</code>、実体は <code style="color:#22d3bf">aoi.py</code>):</p>
+<p style="margin:2px 0 2px 12px">• <b>photometric(1)</b> — <code style="color:#22d3bf">flat_field_correct</code>: 照明の落ちとセンサの感度ばらつきを、暗電流つきの割り算で戻す。</p>
+<p style="margin:2px 0 2px 12px">• <b>geometric(1)</b> — <code style="color:#22d3bf">register_image</code>: 検査画像を基準画像へ合わせる平行移動を、<b>合っていないと分かる量つき</b>で返す。</p>
+<p style="margin:2px 0 2px 12px">• <b>aggregate(1)</b> — <code style="color:#22d3bf">tiled_map</code>: 画像をタイルに割り、タイルごとの量を小さな地図にする。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">なぜ足したか —— 在庫を数えた結果(2026-09-15)</h3>
+<p>この repo は「測る」層を深く持っています(<code style="color:#22d3bf">measure1d</code> のサブピクセル計測、<code style="color:#22d3bf">blob2d</code> の連結成分、<code style="color:#22d3bf">shapestats</code> の形態統計、<code style="color:#22d3bf">spc</code> の管理図)。ところが<b>その手前の 3 段</b>が、公開層 4 つ(<code style="color:#22d3bf">fullseye.&lt;名前&gt;</code> / <code style="color:#22d3bf">fullseye.op.&lt;名前&gt;</code> / <code style="color:#22d3bf">fullseye.ledger.&lt;名前&gt;</code> / <code style="color:#22d3bf">fullseye.op_find</code>)のどこにもありませんでした。</p>
+<p>| 既にあったもの | 何をするか | なぜ代わりにならないか |</p>
+<p>|---|---|---|</p>
+<p>| <code style="color:#22d3bf">background_flatten</code> | 低次曲面を当てはめて<b>引く</b> | 照明の落ちは<b>掛け算</b>で効く。同じ絵で隅/中心は 0.6436 にしかならない(真値 0.1209)。暗電流の項も無い |</p>
+<p>| <code style="color:#22d3bf">xsp_detrend_flatten</code> | 1 次トレンド除去 | つまみが <code style="color:#22d3bf">a</code>/<code style="color:#22d3bf">b</code> の 2 つだけ。基準のフラット画像を渡す口が無い |</p>
+<p>| <code style="color:#22d3bf">vignette</code> / <code style="color:#22d3bf">aug_vignette</code> | 照明の落ちを<b>掛ける</b> | 合成・水増しの側。戻す側ではない |</p>
+<p>| <code style="color:#22d3bf">relative_illumination</code> | cos⁴ 則の曲線 | 光学計算。画像を補正しない |</p>
+<p>| <code style="color:#22d3bf">frame_align</code> | 星の対応から変換を推定 | 点状の特徴が要る。周期構造では <code style="color:#22d3bf">inlier_ratio</code> 1.00 のまま外す(その op 自身が実測を docstring に書いている) |</p>
+<p>| <code style="color:#22d3bf">piv_cross_correlate</code> | 窓ごとの<b>変位場</b> | 画像 2 枚の並進を 1 個返す口ではない。台帳の口は <code style="color:#22d3bf">info</code> を捨てる |</p>
+<p>| <code style="color:#22d3bf">ncc_locate</code> | テンプレート位置 | テンプレートを事前に積む 2-D op。返りは <code style="color:#22d3bf">[相関, y, x]</code> で不定性の量が出ない |</p>
+<p>| <code style="color:#22d3bf">scale.process_tiled</code> / <code style="color:#22d3bf">vol_tiled_map</code> | タイルごとに op を掛ける | 返るのは<b>同じ大きさの出力</b>(記憶量を抑える道具)。タイルごとの<b>量</b>は返らない |</p>
+<p>この穴のうち「画像 2 枚の並進を 1 個返す口が無い」は、<code style="color:#22d3bf">examples/poc_print_registration.py</code> の 9 節が<b>独立に</b>、4 層すべてを引いた実測つきで報告していたものです。</p>
+<p><b>新しい型語彙は 1 つも作っていません</b>(既存の <code style="color:#22d3bf">image2d</code> と <code style="color:#22d3bf">table</code>)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使う順序</h3>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid-Diagramm (Quelltext):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart TD
+    RAW[&quot;検査画像 (H, W)&quot;] --&gt; FFC
+    FLAT[&quot;フラット画像&lt;br/&gt;(一様面を撮ったもの)&quot;] --&gt; FFC
+    DARK[&quot;暗画像 or 暗電流の実数&quot;] --&gt; FFC
+    FFC[&quot;flat_field_correct&lt;br/&gt;(I - D) / (F - D) * target&quot;] --&gt; CLEAN[&quot;照明を戻した画像&quot;]
+    CLEAN --&gt; REG[&quot;register_image&lt;br/&gt;平行移動 + 当てになるかの量&quot;]
+    REFIMG[&quot;基準画像&quot;] --&gt; REG
+    REG --&gt; CHK{&quot;consistent?&quot;}
+    CHK -- &quot;False&quot; --&gt; STOP[&quot;平行移動では説明できない&lt;br/&gt;(回転・倍率・別物)&quot;]
+    CHK -- &quot;True&quot; --&gt; TM[&quot;tiled_map&lt;br/&gt;タイルごとの量 → 地図&quot;]
+    CLEAN --&gt; TM
+    TM --&gt; SPC[&quot;spc_xbar_r / spc_cusum&lt;br/&gt;(工程が管理下か)&quot;]
+    TM --&gt; BLOB[&quot;閾値 → blob_features&lt;br/&gt;(欠陥を数える)&quot;]</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">いちばん短い例</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import numpy as np
+import aoi
+
+# 照明を戻す(target=1.0 なら真の反射率へ戻る)
+clean = aoi.flat_field_correct(raw, flat, dark=0.05, target=1.0)
+
+# 基準へ合わせる。**返り値を必ず見る**
+r = aoi.register_image(reference, clean)
+if not r[&quot;consistent&quot;]:
+    raise RuntimeError(&quot;平行移動では説明できない: 残差 %.3f&quot; % r[&quot;residual&quot;])
+if r[&quot;ambiguous&quot;]:
+    print(&quot;周期構造かもしれない(peak_ratio %.3f)&quot; % r[&quot;peak_ratio&quot;])
+
+# タイルごとの明るさの地図
+t = aoi.tiled_map(clean, tile=16, stat=&quot;mean&quot;)
+print(t[&quot;map&quot;].shape, t[&quot;partial_tiles&quot;], t[&quot;covered_fraction&quot;])</pre>
+<p><code style="color:#22d3bf">fullseye.ledger.&lt;名前&gt;</code> からも同じものが引けます(<code style="color:#22d3bf">fs.ledger.register_image(ref, mov)</code>)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">つまみの実効範囲(すべてこのガイドの合成系での実測)</h3>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0"><code style="color:#22d3bf">flat_field_correct</code></h3>
+<p>合成系: 128x128、cos⁴ 型のビネットで<b>隅が中心の 0.196 倍</b>、利得 0.9、暗電流 0.05。</p>
+<p>| つまみ | 効く範囲 | 実測 |</p>
+<p>|---|---|---|</p>
+<p>| <code style="color:#22d3bf">dark</code> | ここが全部 | 渡すと最大相対誤差 <b>1.755e-16</b>、省くと <b>2.252e-01</b>(<b>1.3e+15 倍</b>の差) |</p>
+<p>| <code style="color:#22d3bf">target</code> | 出力の尺度 | 既定 <code style="color:#22d3bf">mean(flat-dark)</code> なら出力は <code style="color:#22d3bf">真値 x 0.490532</code>(差 8.3e-17)。<code style="color:#22d3bf">1.0</code> で反射率そのもの |</p>
+<p>| <code style="color:#22d3bf">min_response</code> | 死んだ画素 | 未指定なら応答 0 以下は <b>ValueError</b>。指定するとその値で下から抑える |</p>
+<p>| <code style="color:#22d3bf">clip</code> | 飽和 | <code style="color:#22d3bf">True</code> で <code style="color:#22d3bf">[0, 1]</code>。3 倍露光の絵では <b>5342 / 16384 画素</b>が飽和。<code style="color:#22d3bf">False</code> なら最大 2.9585 |</p>
+<p><b><code style="color:#22d3bf">dark</code> を省いても絵は破綻しません</b>。隅が明るいまま残るだけで、隅/中心の比は真値 0.1209 に対し <b>0.4867</b>。目では合格に見えて数字だけが狂う、いちばん危ない形です。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0"><code style="color:#22d3bf">register_image</code></h3>
+<p>合成系: 128x128、勾配 + 円 + 棒 + 雑音(乱数だけの絵は対称性の破れを隠すので使わない)。</p>
+<p>| 与えた変形 | <code style="color:#22d3bf">residual</code> | <code style="color:#22d3bf">peak_ratio</code> | <code style="color:#22d3bf">consistent</code> |</p>
+<p>|---|---|---|---|</p>
+<p>| 並進 (3, 5) px 整数 | 0.000000 | 0.0081 | True |</p>
+<p>| 並進 (2.5, -1.5) px | 0.058785 | 0.2050 | True |</p>
+<p>| 並進 (0.5, 0) px | 0.038918 | 0.2022 | True |</p>
+<p>| 回転 2 度 | 0.5886 | 0.1303 | <b>False</b> |</p>
+<p>| 回転 5 度 | 0.6555 | 0.4827 | <b>False</b> |</p>
+<p>| 倍率 1.05 | 0.6073 | 0.1687 | <b>False</b> |</p>
+<p>副画素は <code style="color:#22d3bf">upsample=20</code> で<b>誤差 0.0000 px</b>(刻みは 0.05 px)。<code style="color:#22d3bf">upsample=1</code> にすると整数画素までしか出ません。</p>
+<p><b>この op は平行移動しか扱いません。</b> 回転を渡しても例外は出ず、「いちばん近い平行移動」が返ります(回転 2 度 → ずれ 0.14 px)。だから <code style="color:#22d3bf">dy</code>/<code style="color:#22d3bf">dx</code> だけを使ってはいけません ——<code style="color:#22d3bf">consistent</code> か <code style="color:#22d3bf">residual</code> を必ず見ること。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">周期のある模様 — 正直な限界</h3>
+<p>| 模様(周期 8 px、(3,5) ずらし) | <code style="color:#22d3bf">dy</code> | <code style="color:#22d3bf">dx</code> | <code style="color:#22d3bf">peak_ratio</code> | <code style="color:#22d3bf">ambiguous</code> |</p>
+<p>|---|---|---|---|---|</p>
+<p>| 市松 | +2.950 | +4.850 | 1.0000 | <b>True</b> |</p>
+<p>| 縞 | +0.000 | +4.900 | 0.1996 | <b>False</b> |</p>
+<p>市松は狙いどおり捕まります(答えは周期 8 を法として等価なものが並ぶので、返る値は <b>そのうちの 1 つ</b>。間違いではないが一意でもない)。</p>
+<p>★<b>縞は捕まりません。</b> 縞は縦方向に模様が無いので <code style="color:#22d3bf">dy</code> は原理的に決まらないのに、<code style="color:#22d3bf">ambiguous</code> は False で <code style="color:#22d3bf">dy=0.000</code> が返ります。<code style="color:#22d3bf">peak_ratio</code> は「離れた 2 番目の<b>山</b>」を見る量で、縞が作るのは山ではなく<b>尾根</b>(<code style="color:#22d3bf">dy</code> 方向に平らな筋)だから検出できません。しかも尾根から <code style="color:#22d3bf">dy=0</code> を選んでいるのは画像ではなく <b>Hann 窓の包絡</b>で、<code style="color:#22d3bf">window=&quot;none&quot;</code> では別の値が出ます。<b>片方向にしか模様の無い面(縞・織り目・筋目)を測るなら、直交する模様を画面に入れてください。</b> この限界は <code style="color:#22d3bf">tests/test_aoi.py::test_register_does_not_catch_a_one_directional_stripe</code> が「捕まらないことそのもの」として固定してあります(直したらそこが赤くなります)。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0"><code style="color:#22d3bf">tiled_map</code></h3>
+<p>| つまみ | 効く範囲 | 実測(64px / 70px の絵) |</p>
+<p>|---|---|---|</p>
+<p>| <code style="color:#22d3bf">tile</code> | 地図の粗さ | 64px を 16px 角 → 地図 (4,4)、端数 0 枚。画像より大きい <code style="color:#22d3bf">tile</code> は 1 枚の端数タイル |</p>
+<p>| <code style="color:#22d3bf">overlap</code> | 重なり | <code style="color:#22d3bf">0</code> で (5,5)・覆い 1.0000、<code style="color:#22d3bf">8</code> で (8,8)・覆い <b>3.2400</b>(重なるので 1 を超える) |</p>
+<p>| <code style="color:#22d3bf">drop_partial</code> | 端数の扱い | <code style="color:#22d3bf">False</code>(既定)= 端数 <b>9 枚</b>を数える。<code style="color:#22d3bf">True</code> = <b>捨てた 9 枚</b>と覆い <b>0.8360</b> を返す |</p>
+<p>| <code style="color:#22d3bf">stat</code> | 出す量 | <code style="color:#22d3bf">mean</code>/<code style="color:#22d3bf">sum</code>/<code style="color:#22d3bf">count</code> は<b>分解可能</b>、<code style="color:#22d3bf">std</code>/<code style="color:#22d3bf">median</code>/<code style="color:#22d3bf">min</code>/<code style="color:#22d3bf">max</code>/<code style="color:#22d3bf">ptp</code> はそうではない |</p>
+<p><b>分解可能な量なら検算できます。</b> <code style="color:#22d3bf">overlap=0</code> ならタイルは画像を重なりなく覆うので、<code style="color:#22d3bf">mean</code> の地図を <code style="color:#22d3bf">counts</code> で重み付けした平均は<b>全画素の平均に一致</b>します(実測 <b>0.0e+00</b>、端数のあるタイルを含めても同じ)。<code style="color:#22d3bf">std</code> にこの性質はありません —— タイル std の平均 <b>0.105824</b> に対し全体 std は <b>0.155527</b> で、まとめ直すと別の数になります。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">落とし穴 3 つ</h3>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">1. 「補正した」と「戻った」は別</h3>
+<p><code style="color:#22d3bf">dark</code> を省いた補正は絵として自然に見えます。合否が数字で決まる工程では、<b>戻ったことを比で確かめて</b>ください(隅/中心の比が真値に一致するか)。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">2. 位置合わせの成功判定に「賛成率」を使わない</h3>
+<p><code style="color:#22d3bf">frame_align</code> の <code style="color:#22d3bf">inlier_ratio</code> が周期構造で 1.00 のまま外す話と同じ形です。この op では <code style="color:#22d3bf">peak_ratio</code>(不定性)と <code style="color:#22d3bf">residual</code>(模型の当てはまり)が<b>別の量</b>で、前者は「答えが 1 つか」、後者は「平行移動で説明できるか」を見ています。片方だけでは足りません。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">3. タイルの地図を「まとめ直す」なら量を選ぶ</h3>
+<p>タイルごとの <code style="color:#22d3bf">std</code> を平均しても全体の <code style="color:#22d3bf">std</code> にはなりません。地図から全体量へ戻す使い方をするなら <code style="color:#22d3bf">mean</code> / <code style="color:#22d3bf">sum</code> / <code style="color:#22d3bf">count</code> に限ること。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">裏づけ</h3>
+<p style="margin:2px 0 2px 12px">• 動く例: <a style="color:#22d3bf" href="example2d:aoi_frontend_tour"><code style="color:#22d3bf">aoi_frontend_tour</code></a> — <code style="color:#22d3bf">py -3.11 examples/aoi_frontend_tour.py</code></p>
+<p style="margin:2px 0 2px 12px">• 門: <code style="color:#22d3bf">tests/test_aoi.py</code>(このガイドの数値はすべてここで固定されている)</p>
+<p style="margin:2px 0 2px 12px">• 来歴: Janesick, *Scientific Charge-Coupled Devices*, SPIE 2001(フラットフィールド)/ Kuglin &amp; Hines 1975(位相相関)/ Guizar-Sicairos, Thurman &amp; Fienup, *Optics Letters* 2008 (上標本 DFT)/ Lewis 1995(正規化相互相関)</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

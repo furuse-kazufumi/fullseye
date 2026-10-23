@@ -55,12 +55,12 @@
 
 ### 検証の段
 
-能力 96 件を、何で確かめたかで分けた数(`docs/maturity.json`。いまのツリー(pyproject の版 0.8.1)から `tools/gen_maturity.py` が作る。段の定義は [MATURITY.md](MATURITY.md))。
+能力 95 件を、何で確かめたかで分けた数(`docs/maturity.json`。いまのツリー(pyproject の版 0.8.1)から `tools/gen_maturity.py` が作る。段の定義は [MATURITY.md](MATURITY.md))。
 
 | 段 | 意味 | 能力 |
 |---|---|---|
 | `research-prototype` | 実装はあるが、試験や走る例が揃っていない | 0 |
-| `verified-synthetic` | 真値を持つ合成データで自動検証 | 78 |
+| `verified-synthetic` | 真値を持つ合成データで自動検証 | 77 |
 | `validated-public-real-data` | 公開の実測データを使う例が門で走る | 18 |
 | `validated-hardware` | 実機で検証(外部の報告を受理したときだけ) | 0 |
 
@@ -139,17 +139,17 @@
 
 ## オペレータを探す
 
-**3,557 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **67 本の族ガイド**があります。次元ごとの入口:
+**3,581 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **69 本の族ガイド**があります。次元ごとの入口:
 
-**網羅の実測**: 進化 op 942/942、型つき台帳 2594/2606、1 行ファサード `fullseye.<名前>` 703/1480。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
+**網羅の実測**: 進化 op 942/942、型つき台帳 2606/2618、1 行ファサード `fullseye.<名前>` 704/1480。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
 
-**ノートの中身の実測**: 3557 本のうち、実行できる例が付いているのは **3546 本**(11 本は例ゼロ)、使い方の説明が 120 字以上あるのは **3370 本**(187 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 3557 本すべてにある。
+**ノートの中身の実測**: 3581 本のうち、実行できる例が付いているのは **3542 本**(27 本は例ゼロ)、使い方の説明が 120 字以上あるのは **3371 本**(198 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 3581 本すべてにある。
 
 | 次元 | op 数 | 入口 |
 |---|---:|---|
 | `2d` — 進化する 2-D op(`fullseye.op.<名前>`) | 959 | [INDEX](ops/2d/INDEX.md) |
 | `drive` | 700 | [INDEX](ops/drive/INDEX.md) |
-| `optics` — レンズ・収差・光線追跡・照明設計 | 476 | [INDEX](ops/optics/INDEX.md) · [ガイド](ops/optics/guides/optics_imaging.md) |
+| `optics` — レンズ・収差・光線追跡・照明設計 | 464 | [INDEX](ops/optics/INDEX.md) · [ガイド](ops/optics/guides/optics_imaging.md) |
 | `3d` — 点群 / メッシュ / 体積 / SDF / 6-DoF | 373 | [INDEX](ops/3d/INDEX.md) |
 | `math` — 数値・線形代数 | 114 | [INDEX](ops/math/INDEX.md) · [ガイド](ops/math/guides/math_metrology.md) |
 | `segmentation` | 59 | [INDEX](ops/segmentation/INDEX.md) · [ガイド](ops/segmentation/guides/halcon_segmentation.md) |
@@ -167,6 +167,7 @@
 | `dem` — 地形 | 25 | [INDEX](ops/dem/INDEX.md) · [ガイド](ops/dem/guides/dem_terrain_analysis.md) |
 | `printpath` | 23 | [INDEX](ops/printpath/INDEX.md) · [ガイド](ops/printpath/guides/printpath.md) |
 | `flyvision` | 22 | [INDEX](ops/flyvision/INDEX.md) · [ガイド](ops/flyvision/guides/fly_vision.md) |
+| `calib` | 21 | [INDEX](ops/calib/INDEX.md) · [ガイド](ops/calib/guides/camera_calibration.md) |
 | `graph` | 20 | [INDEX](ops/graph/INDEX.md) |
 | `quat` — 四元数・単元信号 | 19 | [INDEX](ops/quat/INDEX.md) · [ガイド](ops/quat/guides/quaternion_monogenic.md) |
 | `specular` — 鏡面分離 | 19 | [INDEX](ops/specular/INDEX.md) · [ガイド](ops/specular/guides/specular_photometric.md) |
@@ -198,6 +199,7 @@
 | `videocube` | 6 | [INDEX](ops/videocube/INDEX.md) · [ガイド](ops/videocube/guides/videocube.md) |
 | `residue` | 5 | [INDEX](ops/residue/INDEX.md) |
 | `cadmap` — CAD 対応づけ | 4 | [INDEX](ops/cadmap/INDEX.md) |
+| `aoi` | 3 | [INDEX](ops/aoi/INDEX.md) · [ガイド](ops/aoi/guides/aoi_frontend.md) |
 | `text` | 3 | [INDEX](ops/text/INDEX.md) |
 
 名前で引くなら `py -3.11 imgevolve.py ops --search edge`、全 op の対応表は [OP_CATALOG.md](OP_CATALOG.md)、次元をまたぐ入口は [ops/INDEX.md](ops/INDEX.md)。
@@ -296,9 +298,9 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## ドキュメント地図 — 全 289 本
+## ドキュメント地図 — 全 288 本
 
-**索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 3,557 本と族ガイド 67 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
+**索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 3,581 本と族ガイド 69 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
 
 **はじめに・使い方**(12)
 
@@ -438,7 +440,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) |
 
-**そのほか**(206)
+**そのほか**(205)
 
 | 文書 | 内容 |
 |---|---|
@@ -562,7 +564,6 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`capabilities/patch-feature-anomaly-detection.md`](capabilities/patch-feature-anomaly-detection.md) | id: patch-feature-anomaly-detection |
 | [`capabilities/periodic-defects-in-1d-signals.md`](capabilities/periodic-defects-in-1d-signals.md) | id: periodic-defects-in-1d-signals |
 | [`capabilities/phase-measuring-deflectometry.md`](capabilities/phase-measuring-deflectometry.md) | id: phase-measuring-deflectometry |
-| [`capabilities/photoelasticity.md`](capabilities/photoelasticity.md) | id: photoelasticity |
 | [`capabilities/photograph-through-prescription.md`](capabilities/photograph-through-prescription.md) | id: photograph-through-prescription |
 | [`capabilities/pictures-that-carry-their-own-truth.md`](capabilities/pictures-that-carry-their-own-truth.md) | id: pictures-that-carry-their-own-truth |
 | [`capabilities/pixel-shift-imaging.md`](capabilities/pixel-shift-imaging.md) | id: pixel-shift-imaging |

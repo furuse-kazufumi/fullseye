@@ -1,0 +1,41 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">tiled_map — AOI <code style="color:#22d3bf">aggregate</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tiled_map(image, tile=16, stat=&#x27;mean&#x27;, overlap=0, drop_partial=False)</code>(要直接调用实现,<code style="color:#22d3bf">import aoi; aoi.tiled_map(image, tile=16, stat=&#x27;mean&#x27;, overlap=0, drop_partial=False)</code>;从台账取用则 <code style="color:#22d3bf">opsaoi.get(&quot;tiled_map&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>将图像划分为图块，把每个图块的统计量做成一张小地图。→ dict。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p><code style="color:#22d3bf">tile</code> 画素角のタイルを <code style="color:#22d3bf">tile - overlap</code> 画素ずつずらして敷き、各タイルの中の量(<code style="color:#22d3bf">TILE_STATS</code>)を 1 つずつ計算して <code style="color:#22d3bf">(h, w)</code> の地図にする。AOI では、明るさのむら・ざらつき・欠陥の密度を「どのあたりが怪しいか」の粗い地図にして、次の段(閾値・<code style="color:#22d3bf">spc</code> の管理図)へ渡すのに使う。</p>
+<p><b>半端なタイルを黙って捨てない。</b> 画像の辺が <code style="color:#22d3bf">tile</code> で割り切れないとき、縁のタイルは小さくなる。既定(<code style="color:#22d3bf">drop_partial=False</code>)ではそれも計算に入れ、<code style="color:#22d3bf">partial_tiles</code> に件数を出す。<code style="color:#22d3bf">drop_partial=True</code> にすると縁を落とすが、そのときも <code style="color:#22d3bf">dropped_tiles</code> と <code style="color:#22d3bf">covered_fraction</code> に<b>何をどれだけ捨てたか</b>が出る —— どちらを選んでも、捨てたことが返り値に残る。</p>
+<p><b>分解可能な量なら検算できる。</b> <code style="color:#22d3bf">overlap=0</code> なら、タイルは画像を重なりなく覆う。<code style="color:#22d3bf">stat=&quot;mean&quot;</code> の地図を <code style="color:#22d3bf">counts</code> で重み付けして平均すると、<b>全画素の平均に一致する</b> (門で 1e-15 の水準を固定してある)。<code style="color:#22d3bf">&quot;std&quot;</code> や <code style="color:#22d3bf">&quot;median&quot;</code> にこの性質は無い —— タイルごとの標準偏差を平均しても全体の標準偏差にはならないので、地図を「まとめ直す」使い方をするなら <code style="color:#22d3bf">&quot;mean&quot;</code> / <code style="color:#22d3bf">&quot;sum&quot;</code> / <code style="color:#22d3bf">&quot;count&quot;</code> に限ること。</p>
+<p><code style="color:#22d3bf">tile</code> が画像より大きいときは、タイルは 1 枚(= 画像全体)で <code style="color:#22d3bf">partial_tiles=1</code>。<code style="color:#22d3bf">drop_partial=True</code> だと残るタイルが 1 枚も無くなるので <code style="color:#22d3bf">ValueError</code> にする(空の地図を返すと、後段が「異常なし」と読む)。</p>
+<p>Args:</p>
+<p>image: <code style="color:#22d3bf">(H, W)</code>。</p>
+<p>tile: タイルの一辺[px]。1 以上。</p>
+<p>stat: <code style="color:#22d3bf">TILE_STATS</code> のどれか。</p>
+<p>overlap: 隣のタイルと重ねる画素数。<code style="color:#22d3bf">0 &lt;= overlap &lt; tile</code>。</p>
+<p>drop_partial: 縁の半端なタイルを落とすか。</p>
+<p>Returns:</p>
+<p>dict。<code style="color:#22d3bf">map</code>(<code style="color:#22d3bf">(h, w)</code> float64)、<code style="color:#22d3bf">counts</code>(<code style="color:#22d3bf">(h, w)</code> int、タイルごとの画素数)、</p>
+<p><code style="color:#22d3bf">rows</code> / <code style="color:#22d3bf">cols</code>(各タイルの左上の座標)、<code style="color:#22d3bf">tile</code> / <code style="color:#22d3bf">overlap</code> / <code style="color:#22d3bf">stat</code>、</p>
+<p><code style="color:#22d3bf">partial_tiles</code>(小さいタイルの数)、<code style="color:#22d3bf">dropped_tiles</code>(落とした数)、</p>
+<p><code style="color:#22d3bf">covered_fraction</code>(残したタイルが覆う画素の割合。<code style="color:#22d3bf">overlap&gt;0</code> では重なるので</p>
+<p>1 を超えうる)、<code style="color:#22d3bf">shape</code>(元の画像の形)。</p>
+<p>Raises:</p>
+<p>ValueError: 2-D でない / 非有限 / <code style="color:#22d3bf">stat</code> が未知 / <code style="color:#22d3bf">overlap</code> が範囲外 /</p>
+<p><code style="color:#22d3bf">drop_partial=True</code> でタイルが 1 枚も残らない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideaoi:aoi_frontend">aoi_frontend 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:aoi_frontend_tour">aoi_frontend_tour</a> — <code style="color:#22d3bf">py -3.11 examples/aoi_frontend_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">aggregate</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: aoi.py — AOI 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

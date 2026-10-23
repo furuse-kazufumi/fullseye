@@ -31050,6 +31050,222 @@
    "de": "Radial Reach Filter (RRF): vergleicht Hintergrund und aktuelles Bild über die Vorzeichen der Reaches in 8 Richtungen.",
    "hi": "Radial Reach Filter (RRF): background और वर्तमान image की तुलना 8 दिशाओं के reach चिह्नों से करता है।"
   },
+  "aoi/flat_field_correct": {
+   "fp": "e342d096aa10",
+   "en": "Undoes uneven illumination and sensor-sensitivity variation by a dark-subtracted division. → corrected image.",
+   "zh": "通过扣除暗电流后的除法，校正照明不均与传感器灵敏度的差异。→ 校正后的图像。",
+   "tw": "透過扣除暗電流後的除法，校正照明不均與感測器靈敏度的差異。→ 校正後的影像。",
+   "ko": "조명 불균일과 센서 감도 편차를 암전류를 뺀 나눗셈으로 되돌린다. → 보정된 영상.",
+   "de": "Gleicht ungleichmäßige Beleuchtung und Empfindlichkeitsschwankungen des Sensors durch eine Division mit Dunkelstromabzug aus. → korrigiertes Bild.",
+   "hi": "असमान प्रकाश और sensor संवेदनशीलता के अंतर को dark current घटाकर भाग देने से ठीक करता है। → सुधारी गई image."
+  },
+  "aoi/register_image": {
+   "fp": "5bb96337072a",
+   "en": "Returns the translation that aligns an inspection image to a reference image, together with quantities that reveal when it does not fit. → dict.",
+   "zh": "返回将检测图像对齐到基准图像的平移量，并附带能看出对不上的指标。→ dict。",
+   "tw": "回傳將檢測影像對齊到基準影像的平移量，並附帶能看出對不上的指標。→ dict。",
+   "ko": "검사 영상을 기준 영상에 맞추는 평행 이동을, 맞지 않음을 알 수 있는 양과 함께 돌려준다. → dict.",
+   "de": "Liefert die Verschiebung, die ein Prüfbild auf ein Referenzbild ausrichtet, zusammen mit Größen, die erkennen lassen, wenn sie nicht passt. → dict.",
+   "hi": "निरीक्षण image को संदर्भ image से मिलाने वाला translation लौटाता है, साथ में वे मान भी जिनसे पता चले कि मेल नहीं बैठा। → dict."
+  },
+  "aoi/tiled_map": {
+   "fp": "e7073ec85a79",
+   "en": "Splits an image into tiles and turns a per-tile quantity into a small map. → dict.",
+   "zh": "将图像划分为图块，把每个图块的统计量做成一张小地图。→ dict。",
+   "tw": "將影像切分為圖塊，把每個圖塊的統計量做成一張小地圖。→ dict。",
+   "ko": "영상을 타일로 나누고 타일별 양을 작은 지도로 만든다. → dict.",
+   "de": "Teilt ein Bild in Kacheln und macht aus einer Größe je Kachel eine kleine Karte. → dict.",
+   "hi": "image को tiles में बाँटता है और हर tile की मात्रा से एक छोटा map बनाता है। → dict."
+  },
+  "calib/project_3d_point": {
+   "fp": "d3fc949c7a2d",
+   "en": "Perspective-projects 3-D points into the camera and returns pixels (row, col) (project_3d_point).",
+   "zh": "将 3D 点透视投影到相机，返回像素 (row, col)(project_3d_point)。",
+   "tw": "將 3D 點透視投影到相機，回傳像素 (row, col)(project_3d_point)。",
+   "ko": "3D 점을 카메라에 투시 투영하여 화소 (row, col)를 돌려준다(project_3d_point).",
+   "de": "Projiziert 3-D-Punkte perspektivisch in die Kamera und liefert Pixel (row, col) (project_3d_point).",
+   "hi": "3-D points को camera में perspective projection करके pixel (row, col) लौटाता है (project_3d_point)।"
+  },
+  "calib/project_point_hom_mat3d": {
+   "fp": "861bf17c02df",
+   "en": "Projects 3-D points with a 4x4 or 3x4 projection matrix P=K[R|t] and returns pixels (row, col) (project_point_hom_mat3d).",
+   "zh": "用 4x4 或 3x4 投影矩阵 P=K[R|t] 投影 3D 点，返回像素 (row, col)(project_point_hom_mat3d)。",
+   "tw": "用 4x4 或 3x4 投影矩陣 P=K[R|t] 投影 3D 點，回傳像素 (row, col)(project_point_hom_mat3d)。",
+   "ko": "4x4 또는 3x4 투영 행렬 P=K[R|t]로 3D 점을 투영하여 화소 (row, col)를 돌려준다 (project_point_hom_mat3d).",
+   "de": "Projiziert 3-D-Punkte mit einer 4x4- oder 3x4-Projektionsmatrix P=K[R|t] und liefert Pixel (row, col) (project_point_hom_mat3d).",
+   "hi": "4x4 या 3x4 projection matrix P=K[R|t] से 3-D points को project करके pixel (row, col) लौटाता है (project_point_hom_mat3d)।"
+  },
+  "calib/project_hom_point_hom_mat3d": {
+   "fp": "6ca5b2e7dab1",
+   "en": "Projects homogeneous 3-D points (4,) with a 3x4/4x4 projection matrix and returns pixels (row, col) (project_hom_point_hom_mat3d).",
+   "zh": "用 3x4/4x4 投影矩阵投影齐次 3D 点 (4,)，返回像素 (row, col)(project_hom_point_hom_mat3d)。",
+   "tw": "用 3x4/4x4 投影矩陣投影齊次 3D 點 (4,)，回傳像素 (row, col)(project_hom_point_hom_mat3d)。",
+   "ko": "동차 3D 점 (4,)를 3x4/4x4 투영 행렬로 투영하여 화소 (row, col)를 돌려준다 (project_hom_point_hom_mat3d).",
+   "de": "Projiziert homogene 3-D-Punkte (4,) mit einer 3x4/4x4-Projektionsmatrix und liefert Pixel (row, col) (project_hom_point_hom_mat3d).",
+   "hi": "homogeneous 3-D points (4,) को 3x4/4x4 projection matrix से project करके pixel (row, col) लौटाता है (project_hom_point_hom_mat3d)।"
+  },
+  "calib/image_to_world_plane": {
+   "fp": "a0980b84de02",
+   "en": "Maps image points to the world plane (z=0) with a plane homography (image_to_world_plane).",
+   "zh": "用平面单应把图像点映射到世界平面(z=0)(image_to_world_plane)。",
+   "tw": "用平面單應把影像點映射到世界平面(z=0)(image_to_world_plane)。",
+   "ko": "평면 호모그래피로 영상 점을 world 평면(z=0)에 옮긴다(image_to_world_plane).",
+   "de": "Bildet Bildpunkte mit einer Ebenen-Homographie auf die Weltebene (z=0) ab (image_to_world_plane).",
+   "hi": "plane homography से image points को world plane (z=0) पर map करता है (image_to_world_plane)।"
+  },
+  "calib/image_points_to_world_plane": {
+   "fp": "2887c5880614",
+   "en": "Back-projects pixels onto the world plane z=0 from the camera intrinsics and extrinsics (image_points_to_world_plane).",
+   "zh": "由相机内参/外参将像素反投影到世界平面 z=0(image_points_to_world_plane)。",
+   "tw": "由相機內參/外參將像素反投影到世界平面 z=0(image_points_to_world_plane)。",
+   "ko": "카메라 내부/외부 파라미터로 화소를 world 평면 z=0에 역투영한다(image_points_to_world_plane).",
+   "de": "Projiziert Pixel aus Kamera-Intrinsik und -Extrinsik zurück auf die Weltebene z=0 (image_points_to_world_plane).",
+   "hi": "camera के intrinsics/extrinsics से pixels को world plane z=0 पर back-project करता है (image_points_to_world_plane)।"
+  },
+  "calib/contour_to_world_plane_xld": {
+   "fp": "dd6f2ff26c83",
+   "en": "Maps an XLD contour (dict {cs:[Nx2]}) to the world plane (contour_to_world_plane_xld).",
+   "zh": "把 XLD 轮廓(dict {cs:[Nx2]})映射到世界平面(contour_to_world_plane_xld)。",
+   "tw": "把 XLD 輪廓(dict {cs:[Nx2]})映射到世界平面(contour_to_world_plane_xld)。",
+   "ko": "XLD 윤곽(dict {cs:[Nx2]})을 world 평면에 옮긴다(contour_to_world_plane_xld).",
+   "de": "Bildet eine XLD-Kontur (dict {cs:[Nx2]}) auf die Weltebene ab (contour_to_world_plane_xld).",
+   "hi": "XLD contour (dict {cs:[Nx2]}) को world plane पर map करता है (contour_to_world_plane_xld)।"
+  },
+  "calib/gen_image_to_world_plane_map": {
+   "fp": "b4ffef4a3891",
+   "en": "Builds the image → world plane (z=0) mapping table (gen_image_to_world_plane_map).",
+   "zh": "生成 图像→世界平面(z=0)的映射表(gen_image_to_world_plane_map)。",
+   "tw": "產生 影像→世界平面(z=0)的映射表(gen_image_to_world_plane_map)。",
+   "ko": "영상→world 평면(z=0)의 사상 테이블을 만든다(gen_image_to_world_plane_map).",
+   "de": "Erzeugt die Abbildungstabelle Bild → Weltebene (z=0) (gen_image_to_world_plane_map).",
+   "hi": "image → world plane (z=0) की mapping table बनाता है (gen_image_to_world_plane_map)।"
+  },
+  "calib/gen_radial_distortion_map": {
+   "fp": "e3f4616e4b7d",
+   "en": "Builds the inverse map (row_map, col_map) of a radial distortion (gen_radial_distortion_map).",
+   "zh": "生成径向畸变的逆映射(row_map, col_map)(gen_radial_distortion_map)。",
+   "tw": "產生徑向畸變的逆映射(row_map, col_map)(gen_radial_distortion_map)。",
+   "ko": "반경 왜곡의 역 사상(row_map, col_map)을 만든다(gen_radial_distortion_map).",
+   "de": "Erzeugt die inverse Abbildung (row_map, col_map) einer radialen Verzeichnung (gen_radial_distortion_map).",
+   "hi": "radial distortion का inverse map (row_map, col_map) बनाता है (gen_radial_distortion_map)।"
+  },
+  "calib/caltab_points": {
+   "fp": "3baf2a698da8",
+   "en": "Returns the ideal mark coordinates of a calibration plate (world, mm; origin = first mark) as (y, x) (caltab_points).",
+   "zh": "以 (y, x) 返回标定板的理想标记坐标(世界坐标, mm; 原点=第一个标记)(caltab_points)。",
+   "tw": "以 (y, x) 回傳校正板的理想標記座標(世界座標, mm; 原點=第一個標記)(caltab_points)。",
+   "ko": "교정판의 이상적인 마크 좌표(world, mm; 원점=첫 마크)를 (y, x)로 돌려준다(caltab_points).",
+   "de": "Liefert die idealen Markenkoordinaten einer Kalibrierplatte (Welt, mm; Ursprung = erste Marke) als (y, x) (caltab_points).",
+   "hi": "calibration plate के आदर्श mark निर्देशांक (world, mm; मूल बिंदु = पहला mark) (y, x) में लौटाता है (caltab_points)।"
+  },
+  "calib/create_caltab": {
+   "fp": "d1f550f4686c",
+   "en": "Creates a calibration-plate description (ideal points, origin at the plate centre) (create_caltab).",
+   "zh": "生成标定板的描述(理想点，原点在板中心)(create_caltab)。",
+   "tw": "產生校正板的描述(理想點，原點在板中心)(create_caltab)。",
+   "ko": "교정판의 기술(이상 점, 판 중심이 원점)을 만든다(create_caltab).",
+   "de": "Erzeugt eine Beschreibung der Kalibrierplatte (ideale Punkte, Ursprung in der Plattenmitte) (create_caltab).",
+   "hi": "calibration plate का विवरण बनाता है (आदर्श points, मूल बिंदु plate का केंद्र) (create_caltab)।"
+  },
+  "calib/gen_caltab": {
+   "fp": "2ff344a52dec",
+   "en": "Generates an image of a calibration plate with a grid of circular marks (gen_caltab).",
+   "zh": "生成圆形标记网格的标定板图像(gen_caltab)。",
+   "tw": "產生圓形標記格網的校正板影像(gen_caltab)。",
+   "ko": "원형 마크 격자의 교정판 영상을 생성한다(gen_caltab).",
+   "de": "Erzeugt ein Bild einer Kalibrierplatte mit einem Raster kreisförmiger Marken (gen_caltab).",
+   "hi": "गोल marks के grid वाली calibration plate की image बनाता है (gen_caltab)।"
+  },
+  "calib/sim_caltab": {
+   "fp": "284ff220ed64",
+   "en": "Simulates the image of a calibration plate projected with a given camera pose (sim_caltab).",
+   "zh": "模拟按指定相机位姿投影的标定板图像(sim_caltab)。",
+   "tw": "模擬依指定相機姿態投影的校正板影像(sim_caltab)。",
+   "ko": "지정한 카메라 자세로 투영한 교정판 영상을 시뮬레이션한다(sim_caltab).",
+   "de": "Simuliert das Bild einer Kalibrierplatte, projiziert mit einer gegebenen Kamerapose (sim_caltab).",
+   "hi": "दिए गए camera pose से project की गई calibration plate की image simulate करता है (sim_caltab)।"
+  },
+  "calib/disp_caltab": {
+   "fp": "6e8f11749018",
+   "en": "Returns the calibration-plate image (for display) (disp_caltab).",
+   "zh": "返回标定板图像(用于显示)(disp_caltab)。",
+   "tw": "回傳校正板影像(用於顯示)(disp_caltab)。",
+   "ko": "교정판 영상을 돌려준다(표시용)(disp_caltab).",
+   "de": "Liefert das Bild der Kalibrierplatte (zur Anzeige) (disp_caltab).",
+   "hi": "calibration plate की image लौटाता है (दिखाने के लिए) (disp_caltab)।"
+  },
+  "calib/find_caltab": {
+   "fp": "c8d7ed93012c",
+   "en": "Detects the centres of the circular marks of a calibration plate in an image (centroids of connected components) (find_caltab).",
+   "zh": "从图像中检测标定板圆形标记的中心(连通域的重心)(find_caltab)。",
+   "tw": "從影像中偵測校正板圓形標記的中心(連通區的重心)(find_caltab)。",
+   "ko": "영상에서 교정판 원형 마크의 중심을 검출한다(연결 성분의 무게중심)(find_caltab).",
+   "de": "Findet die Mittelpunkte der Kreismarken einer Kalibrierplatte im Bild (Schwerpunkte der Zusammenhangskomponenten) (find_caltab).",
+   "hi": "image में calibration plate के गोल marks के केंद्र खोजता है (connected components के centroid) (find_caltab)।"
+  },
+  "calib/camera_calibration": {
+   "fp": "082e79cd209c",
+   "en": "Estimates the intrinsic matrix K from several views of a planar target by Zhang's method (camera_calibration).",
+   "zh": "用 Zhang 法从平面靶标的多个视角估计内参矩阵 K(camera_calibration)。",
+   "tw": "用 Zhang 法從平面靶標的多個視角估計內參矩陣 K(camera_calibration)。",
+   "ko": "Zhang 법으로 평면 타깃의 다시점에서 내부 행렬 K를 추정한다(camera_calibration).",
+   "de": "Schätzt die intrinsische Matrix K aus mehreren Ansichten eines ebenen Targets nach Zhang (camera_calibration).",
+   "hi": "Zhang विधि से planar target के कई views से intrinsic matrix K का अनुमान लगाता है (camera_calibration)।"
+  },
+  "calib/find_marks_and_pose": {
+   "fp": "7399df102562",
+   "en": "Mark detection + pose estimation of the calibration plate (plane homography → pose) (find_marks_and_pose).",
+   "zh": "标记检测 + 标定板位姿估计(平面单应 → 位姿)(find_marks_and_pose)。",
+   "tw": "標記偵測 + 校正板姿態估計(平面單應 → 姿態)(find_marks_and_pose)。",
+   "ko": "마크 검출 + 교정판 자세 추정(평면 호모그래피 → pose)(find_marks_and_pose).",
+   "de": "Markenerkennung + Posenschätzung der Kalibrierplatte (Ebenen-Homographie → Pose) (find_marks_and_pose).",
+   "hi": "mark पहचान + calibration plate का pose अनुमान (plane homography → pose) (find_marks_and_pose)।"
+  },
+  "calib/hand_eye_calibration": {
+   "fp": "deb6d179aa6c",
+   "en": "Solves AX=XB from a series of motion pairs and estimates X (4x4) (hand_eye_calibration).",
+   "zh": "由一系列运动对求解 AX=XB，估计 X(4x4)(hand_eye_calibration)。",
+   "tw": "由一系列運動對求解 AX=XB，估計 X(4x4)(hand_eye_calibration)。",
+   "ko": "일련의 운동 쌍으로부터 AX=XB를 풀어 X(4x4)를 추정한다(hand_eye_calibration).",
+   "de": "Löst AX=XB aus einer Folge von Bewegungspaaren und schätzt X (4x4) (hand_eye_calibration).",
+   "hi": "motion pairs की श्रृंखला से AX=XB हल करके X (4x4) का अनुमान लगाता है (hand_eye_calibration)।"
+  },
+  "calib/vector_to_rigid": {
+   "fp": "ac65ce653465",
+   "en": "Finds a 2-D rigid transform (rotation + translation, Kabsch) from point correspondences (vector_to_rigid).",
+   "zh": "由对应点求 2D 刚体变换(旋转+平移, Kabsch)(vector_to_rigid)。",
+   "tw": "由對應點求 2D 剛體變換(旋轉+平移, Kabsch)(vector_to_rigid)。",
+   "ko": "대응점으로부터 2D 강체 변환(회전+평행이동, Kabsch)을 구한다(vector_to_rigid).",
+   "de": "Bestimmt aus Punktkorrespondenzen eine starre 2-D-Transformation (Rotation + Translation, Kabsch) (vector_to_rigid).",
+   "hi": "point correspondences से 2-D rigid transform (rotation + translation, Kabsch) निकालता है (vector_to_rigid)।"
+  },
+  "calib/vector_to_similarity": {
+   "fp": "573c4b2aaccc",
+   "en": "Finds a 2-D similarity transform (rotation + scale + translation, Umeyama) from point correspondences (vector_to_similarity).",
+   "zh": "由对应点求 2D 相似变换(旋转+尺度+平移, Umeyama)(vector_to_similarity)。",
+   "tw": "由對應點求 2D 相似變換(旋轉+尺度+平移, Umeyama)(vector_to_similarity)。",
+   "ko": "대응점으로부터 2D 닮음 변환(회전+스케일+평행이동, Umeyama)을 구한다(vector_to_similarity).",
+   "de": "Bestimmt aus Punktkorrespondenzen eine 2-D-Ähnlichkeitstransformation (Rotation + Skalierung + Translation, Umeyama) (vector_to_similarity).",
+   "hi": "point correspondences से 2-D similarity transform (rotation + scale + translation, Umeyama) निकालता है (vector_to_similarity)।"
+  },
+  "calib/vector_angle_to_rigid": {
+   "fp": "4ae72a63547c",
+   "en": "Finds a 2-D rigid transform from one pair of (point, angle) (vector_angle_to_rigid).",
+   "zh": "由一组 (点, 角度) 求 2D 刚体变换(vector_angle_to_rigid)。",
+   "tw": "由一組 (點, 角度) 求 2D 剛體變換(vector_angle_to_rigid)。",
+   "ko": "(점, 각도) 1쌍으로부터 2D 강체 변환을 구한다(vector_angle_to_rigid).",
+   "de": "Bestimmt eine starre 2-D-Transformation aus einem Paar (Punkt, Winkel) (vector_angle_to_rigid).",
+   "hi": "(point, angle) की एक जोड़ी से 2-D rigid transform निकालता है (vector_angle_to_rigid)।"
+  },
+  "calib/hom_vector_to_proj_hom_mat2d": {
+   "fp": "6a0661fa46ed",
+   "en": "Finds a 3x3 projective transform (homography, DLT) from 4 or more correspondences (hom_vector_to_proj_hom_mat2d).",
+   "zh": "由 4 个以上对应求射影变换(单应, DLT)3x3(hom_vector_to_proj_hom_mat2d)。",
+   "tw": "由 4 個以上對應求射影變換(單應, DLT)3x3(hom_vector_to_proj_hom_mat2d)。",
+   "ko": "4점 이상의 대응으로부터 사영 변환(homography, DLT) 3x3을 구한다(hom_vector_to_proj_hom_mat2d).",
+   "de": "Bestimmt aus 4 oder mehr Korrespondenzen eine projektive 3x3-Transformation (Homographie, DLT) (hom_vector_to_proj_hom_mat2d).",
+   "hi": "4 या अधिक correspondences से 3x3 projective transform (homography, DLT) निकालता है (hom_vector_to_proj_hom_mat2d)।"
+  },
   "spc/anomaly_image_auroc": {
    "fp": "7145079fe2a4",
    "ja": "画像ごとの異常スコアと良/不良のラベルから画像単位の AUROC(``table``)。",

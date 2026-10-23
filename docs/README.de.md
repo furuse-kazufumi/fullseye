@@ -53,12 +53,12 @@ Nicht gemessen: plausible, aber falsche Werte (Abstand zur Grundwahrheit), Gesch
 
 ### Verifikationsstufe
 
-Die 96 Fähigkeiten, aufgeteilt nach Art der Prüfung (`docs/maturity.json`, von `tools/gen_maturity.py` aus dem aktuellen Stand (pyproject-Version 0.8.1) erzeugt; Stufen erklärt in [MATURITY.md](MATURITY.md)).
+Die 95 Fähigkeiten, aufgeteilt nach Art der Prüfung (`docs/maturity.json`, von `tools/gen_maturity.py` aus dem aktuellen Stand (pyproject-Version 0.8.1) erzeugt; Stufen erklärt in [MATURITY.md](MATURITY.md)).
 
 | Stufe | Bedeutung | Fähigkeiten |
 |---|---|---|
 | `research-prototype` | implementiert; Tests oder ein laufendes Beispiel fehlen noch | 0 |
-| `verified-synthetic` | automatisch gegen synthetische Grundwahrheit geprüft | 78 |
+| `verified-synthetic` | automatisch gegen synthetische Grundwahrheit geprüft | 77 |
 | `validated-public-real-data` | ein Beispiel mit öffentlichen Messdaten läuft in einem Gate | 18 |
 | `validated-hardware` | an Hardware validiert (nur über angenommene externe Berichte) | 0 |
 
@@ -137,17 +137,17 @@ Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. F
 
 ## Einen Operator finden
 
-**3,557 Operator-Notizen** (Aufrufform, Typvertrag, HALCON-Pendant, Literatur, Provenienz) und **67 Familien-Leitfäden**. Einstiegspunkte nach Dimension:
+**3,581 Operator-Notizen** (Aufrufform, Typvertrag, HALCON-Pendant, Literatur, Provenienz) und **69 Familien-Leitfäden**. Einstiegspunkte nach Dimension:
 
-**Gemessene Abdeckung**: evolvierbare Ops 942/942, typisiertes Ledger 2594/2606, Fassade `fullseye.<name>` 703/1480 — **die Fassade ist erst zur Hälfte abgedeckt**.
+**Gemessene Abdeckung**: evolvierbare Ops 942/942, typisiertes Ledger 2606/2618, Fassade `fullseye.<name>` 704/1480 — **die Fassade ist erst zur Hälfte abgedeckt**.
 
-**Gemessener Inhalt**: von 3557 Notizen verweisen **3546** auf mindestens ein lauffähiges Beispiel (11 ohne), **3370** haben einen Nutzungsabschnitt ab 120 Zeichen (187 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 3557.
+**Gemessener Inhalt**: von 3581 Notizen verweisen **3542** auf mindestens ein lauffähiges Beispiel (27 ohne), **3371** haben einen Nutzungsabschnitt ab 120 Zeichen (198 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 3581.
 
 | Dimension | Ops | Einstieg |
 |---|---:|---|
 | `2d` | 959 | [INDEX](ops/2d/INDEX.md) |
 | `drive` | 700 | [INDEX](ops/drive/INDEX.md) |
-| `optics` | 476 | [INDEX](ops/optics/INDEX.md) · [guide](ops/optics/guides/optics_imaging.md) |
+| `optics` | 464 | [INDEX](ops/optics/INDEX.md) · [guide](ops/optics/guides/optics_imaging.md) |
 | `3d` | 373 | [INDEX](ops/3d/INDEX.md) |
 | `math` | 114 | [INDEX](ops/math/INDEX.md) · [guide](ops/math/guides/math_metrology.md) |
 | `segmentation` | 59 | [INDEX](ops/segmentation/INDEX.md) · [guide](ops/segmentation/guides/halcon_segmentation.md) |
@@ -165,6 +165,7 @@ Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. F
 | `dem` | 25 | [INDEX](ops/dem/INDEX.md) · [guide](ops/dem/guides/dem_terrain_analysis.md) |
 | `printpath` | 23 | [INDEX](ops/printpath/INDEX.md) · [guide](ops/printpath/guides/printpath.md) |
 | `flyvision` | 22 | [INDEX](ops/flyvision/INDEX.md) · [guide](ops/flyvision/guides/fly_vision.md) |
+| `calib` | 21 | [INDEX](ops/calib/INDEX.md) · [guide](ops/calib/guides/camera_calibration.md) |
 | `graph` | 20 | [INDEX](ops/graph/INDEX.md) |
 | `quat` | 19 | [INDEX](ops/quat/INDEX.md) · [guide](ops/quat/guides/quaternion_monogenic.md) |
 | `specular` | 19 | [INDEX](ops/specular/INDEX.md) · [guide](ops/specular/guides/specular_photometric.md) |
@@ -196,6 +197,7 @@ Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. F
 | `videocube` | 6 | [INDEX](ops/videocube/INDEX.md) · [guide](ops/videocube/guides/videocube.md) |
 | `residue` | 5 | [INDEX](ops/residue/INDEX.md) |
 | `cadmap` | 4 | [INDEX](ops/cadmap/INDEX.md) |
+| `aoi` | 3 | [INDEX](ops/aoi/INDEX.md) · [guide](ops/aoi/guides/aoi_frontend.md) |
 | `text` | 3 | [INDEX](ops/text/INDEX.md) |
 
 Nach Namen suchen mit `py -3.11 imgevolve.py ops --search edge`; die vollständige Tabelle ist [OP_CATALOG.md](OP_CATALOG.md), der dimensionsübergreifende Einstieg [ops/INDEX.md](ops/INDEX.md).
@@ -294,9 +296,9 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## Dokumentkarte — alle 289
+## Dokumentkarte — alle 288
 
-Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** (die 3,557 Operator-Notizen und 67 Familien-Leitfäden unter `docs/ops/` über den Operator-Abschnitt oben; Artikel über [articles/](articles/README.md)). **Die Texte sind überwiegend japanisch.**
+Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** (die 3,581 Operator-Notizen und 69 Familien-Leitfäden unter `docs/ops/` über den Operator-Abschnitt oben; Artikel über [articles/](articles/README.md)). **Die Texte sind überwiegend japanisch.**
 
 **Getting started**(12)
 
@@ -436,7 +438,7 @@ Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** 
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(206)
+**Other**(205)
 
 | Dokument | Inhalt |
 |---|---|
@@ -560,7 +562,6 @@ Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** 
 | [`capabilities/patch-feature-anomaly-detection.md`](capabilities/patch-feature-anomaly-detection.md) | id: patch-feature-anomaly-detection |
 | [`capabilities/periodic-defects-in-1d-signals.md`](capabilities/periodic-defects-in-1d-signals.md) | id: periodic-defects-in-1d-signals |
 | [`capabilities/phase-measuring-deflectometry.md`](capabilities/phase-measuring-deflectometry.md) | id: phase-measuring-deflectometry |
-| [`capabilities/photoelasticity.md`](capabilities/photoelasticity.md) | id: photoelasticity |
 | [`capabilities/photograph-through-prescription.md`](capabilities/photograph-through-prescription.md) | id: photograph-through-prescription |
 | [`capabilities/pictures-that-carry-their-own-truth.md`](capabilities/pictures-that-carry-their-own-truth.md) | id: pictures-that-carry-their-own-truth |
 | [`capabilities/pixel-shift-imaging.md`](capabilities/pixel-shift-imaging.md) | id: pixel-shift-imaging |

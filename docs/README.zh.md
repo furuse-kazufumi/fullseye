@@ -53,12 +53,12 @@
 
 ### 验证阶段
 
-96 项能力按验证方式分类的数量(`docs/maturity.json`,由 `tools/gen_maturity.py` 从当前代码树(pyproject 版本 0.8.1)生成;阶段定义见 [MATURITY.md](MATURITY.md))。
+95 项能力按验证方式分类的数量(`docs/maturity.json`,由 `tools/gen_maturity.py` 从当前代码树(pyproject 版本 0.8.1)生成;阶段定义见 [MATURITY.md](MATURITY.md))。
 
 | 阶段 | 含义 | 能力 |
 |---|---|---|
 | `research-prototype` | 已实现,但测试或可运行的示例尚不齐全 | 0 |
-| `verified-synthetic` | 已用合成真值自动验证 | 78 |
+| `verified-synthetic` | 已用合成真值自动验证 | 77 |
 | `validated-public-real-data` | 使用公开实测数据的示例在检查中实际运行 | 18 |
 | `validated-hardware` | 已在实机上验证(仅在接受外部报告时) | 0 |
 
@@ -137,17 +137,17 @@
 
 ## 查找算子
 
-共有 **3,557 篇算子说明**(调用形式、类型契约、HALCON 对应、参考文献、来源)与 **67 篇族指南**。按维度的入口:
+共有 **3,581 篇算子说明**(调用形式、类型契约、HALCON 对应、参考文献、来源)与 **69 篇族指南**。按维度的入口:
 
-**实测覆盖**: 演化算子 942/942、类型化台账 2594/2606、单行门面 `fullseye.<名称>` 703/1480 —— **门面侧仅覆盖一半**。
+**实测覆盖**: 演化算子 942/942、类型化台账 2606/2618、单行门面 `fullseye.<名称>` 704/1480 —— **门面侧仅覆盖一半**。
 
-**内容实测**: 3557 篇中，附有可运行示例的 **3546** 篇(11 篇没有)，用法说明 120 字以上的 **3370** 篇(187 篇仅一行)。结构(调用形式、类型、可衔接算子)3557 篇全有。
+**内容实测**: 3581 篇中，附有可运行示例的 **3542** 篇(27 篇没有)，用法说明 120 字以上的 **3371** 篇(198 篇仅一行)。结构(调用形式、类型、可衔接算子)3581 篇全有。
 
 | 维度 | 算子数 | 入口 |
 |---|---:|---|
 | `2d` | 959 | [INDEX](ops/2d/INDEX.md) |
 | `drive` | 700 | [INDEX](ops/drive/INDEX.md) |
-| `optics` | 476 | [INDEX](ops/optics/INDEX.md) · [guide](ops/optics/guides/optics_imaging.md) |
+| `optics` | 464 | [INDEX](ops/optics/INDEX.md) · [guide](ops/optics/guides/optics_imaging.md) |
 | `3d` | 373 | [INDEX](ops/3d/INDEX.md) |
 | `math` | 114 | [INDEX](ops/math/INDEX.md) · [guide](ops/math/guides/math_metrology.md) |
 | `segmentation` | 59 | [INDEX](ops/segmentation/INDEX.md) · [guide](ops/segmentation/guides/halcon_segmentation.md) |
@@ -165,6 +165,7 @@
 | `dem` | 25 | [INDEX](ops/dem/INDEX.md) · [guide](ops/dem/guides/dem_terrain_analysis.md) |
 | `printpath` | 23 | [INDEX](ops/printpath/INDEX.md) · [guide](ops/printpath/guides/printpath.md) |
 | `flyvision` | 22 | [INDEX](ops/flyvision/INDEX.md) · [guide](ops/flyvision/guides/fly_vision.md) |
+| `calib` | 21 | [INDEX](ops/calib/INDEX.md) · [guide](ops/calib/guides/camera_calibration.md) |
 | `graph` | 20 | [INDEX](ops/graph/INDEX.md) |
 | `quat` | 19 | [INDEX](ops/quat/INDEX.md) · [guide](ops/quat/guides/quaternion_monogenic.md) |
 | `specular` | 19 | [INDEX](ops/specular/INDEX.md) · [guide](ops/specular/guides/specular_photometric.md) |
@@ -196,6 +197,7 @@
 | `videocube` | 6 | [INDEX](ops/videocube/INDEX.md) · [guide](ops/videocube/guides/videocube.md) |
 | `residue` | 5 | [INDEX](ops/residue/INDEX.md) |
 | `cadmap` | 4 | [INDEX](ops/cadmap/INDEX.md) |
+| `aoi` | 3 | [INDEX](ops/aoi/INDEX.md) · [guide](ops/aoi/guides/aoi_frontend.md) |
 | `text` | 3 | [INDEX](ops/text/INDEX.md) |
 
 按名称检索用 `py -3.11 imgevolve.py ops --search edge`;全部算子的对照表见 [OP_CATALOG.md](OP_CATALOG.md)，跨维度入口见 [ops/INDEX.md](ops/INDEX.md)。
@@ -294,9 +296,9 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## 文档地图 — 共 289 篇
+## 文档地图 — 共 288 篇
 
-完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 3,557 篇算子说明与 67 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
+完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 3,581 篇算子说明与 69 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
 
 **Getting started**(12)
 
@@ -436,7 +438,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(206)
+**Other**(205)
 
 | 文档 | 内容 |
 |---|---|
@@ -560,7 +562,6 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`capabilities/patch-feature-anomaly-detection.md`](capabilities/patch-feature-anomaly-detection.md) | id: patch-feature-anomaly-detection |
 | [`capabilities/periodic-defects-in-1d-signals.md`](capabilities/periodic-defects-in-1d-signals.md) | id: periodic-defects-in-1d-signals |
 | [`capabilities/phase-measuring-deflectometry.md`](capabilities/phase-measuring-deflectometry.md) | id: phase-measuring-deflectometry |
-| [`capabilities/photoelasticity.md`](capabilities/photoelasticity.md) | id: photoelasticity |
 | [`capabilities/photograph-through-prescription.md`](capabilities/photograph-through-prescription.md) | id: photograph-through-prescription |
 | [`capabilities/pictures-that-carry-their-own-truth.md`](capabilities/pictures-that-carry-their-own-truth.md) | id: pictures-that-carry-their-own-truth |
 | [`capabilities/pixel-shift-imaging.md`](capabilities/pixel-shift-imaging.md) | id: pixel-shift-imaging |

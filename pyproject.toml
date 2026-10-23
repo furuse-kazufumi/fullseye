@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "fullseye"
 version = "0.8.1"
-description = "Numpy-native operator library for vision, 3-D and measurement (3,551 typed ops in the machine-readable index: imaging, point clouds, optics, tomography, metrology) with an evolutionary pipeline designer and honest holdout gating"
+description = "Numpy-native operator library for vision, 3-D and measurement (3,575 typed ops in the machine-readable index: imaging, point clouds, optics, tomography, metrology) with an evolutionary pipeline designer and honest holdout gating"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "Apache-2.0" }
@@ -160,8 +160,6 @@ py-modules = [
   "lenstol", "llmcore", "opsllmcore",
   # 2026-10-21: the shipped omni360/plenoptic examples import these root modules.
   "omni360", "plenoptic",
-  # 2026-10-23: 光弾性の族(opsoptics の photoelastic カテゴリの実体)。
-  "photoelastic",
   # 2026-10-02: HALCON Segmentation 章の 9 op の台帳。実体 segmentation は下の facade 群に既載。
   "opssegmentation",
   # 2026-10-02: セグメンテーション第 1 陣。採点の物差し(segeval)と真値つき合成世界(segworld)の実体。
@@ -230,6 +228,13 @@ py-modules = [
   # グリフ照合(指定の字と合っているかを測り、誤字を置き換える)。annotate の
   # フォント解決と豆腐検出を使い回す。2026-09-17 追加。
   "glyphops",
+  # AOI(自動外観検査)の前段 3 op(フラット補正 / 平行移動の位置合わせ / タイル統計の地図)。
+  # 測る層の手前が公開面のどこにも無かった(実装 2026-09-15、台帳に載せたのは 2026-10-23)。
+  "aoi", "opsaoi",
+  # opscalib: カメラ校正・平面写像・対応点からの変換推定の台帳(2026-10-23)。実体の
+  # calib / caltab / fit_transform は前から同梱されていたが、台帳が無いため op ノートも
+  # OP_INDEX.json の行も無く、fs.op_find("caltab") が 0 件だった。
+  "opscalib",
   "recipes", "measure", "studio", "studio_search", "studio_errors", "studio_roundtrip", "studio_batch", "studio_display", "studio_layout", "sample_images", "sample_data", "accuracy_bench",
   "evolve", "problems", "baseline", "robust",
   "verify_auto", "honest_summary", "dispositions", "catalog", "report",

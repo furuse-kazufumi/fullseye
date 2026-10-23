@@ -1,0 +1,52 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">flat_field_correct — AOI <code style="color:#22d3bf">photometric</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.flat_field_correct(image, flat, dark=None, target=None, min_response=None, clip=True)</code>(要直接呼叫實作,<code style="color:#22d3bf">import aoi; aoi.flat_field_correct(image, flat, dark=None, target=None, min_response=None, clip=True)</code>;從台帳取用則 <code style="color:#22d3bf">opsaoi.get(&quot;flat_field_correct&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>透過扣除暗電流後的除法，校正照明不均與感測器靈敏度的差異。→ 校正後的影像。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>検査画像 <code style="color:#22d3bf">I</code>、フラット画像(一様な面を撮ったもの)<code style="color:#22d3bf">F</code>、暗画像(遮光して撮ったもの) <code style="color:#22d3bf">D</code> から::</p>
+<p>out = (I - D) / (F - D) * target</p>
+<p><code style="color:#22d3bf">target</code> の既定は <code style="color:#22d3bf">mean(F - D)</code>。このとき返る絵は <b><code style="color:#22d3bf">真の反射率 x mean(F - D)</code></b> に厳密に等しい(実測の差 8.3e-17)。<code style="color:#22d3bf">target=1.0</code> を渡せば反射率そのものへ戻る。</p>
+<p>★<b>「入力の明るさが保たれる」とは書かない。</b> 既定で保たれるのは*尺度*であって平均ではない —— 被写体と感度分布に相関があると平均はずれる。実測(下と同じ合成系):</p>
+<p><code style="color:#22d3bf">mean(raw - dark) = 0.109256</code> に対し <code style="color:#22d3bf">mean(out) = 0.099548</code> で <b>8.9 % 低い</b>。暗いところほど感度も低い、というありふれた配置でこうなる。</p>
+<p><b>暗電流を無視すると戻らない。</b> <code style="color:#22d3bf">D</code> を省くと <code style="color:#22d3bf">D = 0</code> として扱うが、実際に暗電流がある系ではそれは誤りで、補正後も勾配が残る。実測(cos⁴ 型のビネットで隅の感度が中心の 0.196 倍、暗電流 0.05、<code style="color:#22d3bf">target=1.0</code>):</p>
+<p>===========================  =====================  ======================</p>
+<p>量                            dark を渡す            dark を省く</p>
+<p>===========================  =====================  ======================</p>
+<p>真値との最大相対誤差            <b>1.755e-16</b>          <b>2.252e-01</b></p>
+<p>隅 / 中心の明るさの比           0.1209(真値と一致)     0.4867(真値 0.1209)</p>
+<p>===========================  =====================  ======================</p>
+<p>誤差の比は <b>1.3e+15 倍</b>。しかも省いた側も絵としては破綻せず「それらしく」出る —— 隅が明るいまま残るだけなので、<b>目では合格に見えて数字だけが狂う</b>。この 2 行は <code style="color:#22d3bf">tests/test_aoi.py::test_flat_field_without_dark_does_not_recover</code> が固定しており、式が本当に <code style="color:#22d3bf">D</code> を使っている証拠でもある。</p>
+<p>参考: 引き算で照明ムラを取る <code style="color:#22d3bf">background_flatten</code>(低次曲面の当てはめ)を同じ絵に当てると、隅 / 中心の比は <b>0.6436</b>(真値 0.1209)にしかならない。掛け算で効く感度ムラは、引き算では戻らない。</p>
+<p><b>ゼロ割りは黙って通さない(既定は fail-closed)。</b> <code style="color:#22d3bf">F - D</code> に 0 以下の画素があると <code style="color:#22d3bf">ValueError</code> を送出する。「そこは応答が無い画素」だと分かっていて先へ進めたいときだけ、<code style="color:#22d3bf">min_response</code> に<b>明示の下限</b>(正の実数)を与える —— そのとき応答はその値で下から抑えられ、割り算は有限に保たれる。既定で下限を置かないのは、下限を既定にすると「死んだ画素の上に、それらしい値が生える」ことが黙って起きるため。</p>
+<p>Args:</p>
+<p>image: 検査画像 <code style="color:#22d3bf">(H, W)</code>。</p>
+<p>flat: フラット画像 <code style="color:#22d3bf">(H, W)</code>。<code style="color:#22d3bf">image</code> と同じ形。</p>
+<p>dark: 暗画像 <code style="color:#22d3bf">(H, W)</code>、一様な暗電流を表す実数 1 つ、または <code style="color:#22d3bf">None</code></p>
+<p>(= 暗電流 0 として扱う。<b>その仮定が誤りなら補正は戻らない</b> —— 下の門を参照)。</p>
+<p>target: 補正後の基準レベル。<code style="color:#22d3bf">None</code> なら <code style="color:#22d3bf">mean(flat - dark)</code>。</p>
+<p>min_response: <code style="color:#22d3bf">flat - dark</code> の下限(正)。<code style="color:#22d3bf">None</code> なら 0 以下を拒否する。</p>
+<p>clip: <code style="color:#22d3bf">True</code>(既定)なら結果を <code style="color:#22d3bf">[0, 1]</code>(この library の画像の約束)へ丸める。</p>
+<p><b>飽和はここで起きる</b>ので、生の値が要るなら <code style="color:#22d3bf">False</code> にする。</p>
+<p>Returns:</p>
+<p><code style="color:#22d3bf">(H, W)</code> float64。<code style="color:#22d3bf">clip=True</code> なら値域は <code style="color:#22d3bf">[0, 1]</code>、<code style="color:#22d3bf">clip=False</code> なら</p>
+<p>入力しだいで 1 を超えうる。dtype はどちらでも float64。</p>
+<p>Raises:</p>
+<p>ValueError: 形が違う / 2-D でない / 非有限 / <code style="color:#22d3bf">flat - dark</code> が 0 以下</p>
+<p>(<code style="color:#22d3bf">min_response</code> 未指定時)/ <code style="color:#22d3bf">min_response</code> や <code style="color:#22d3bf">target</code> が正の有限でない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideaoi:aoi_frontend">aoi_frontend 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:aoi_frontend_tour">aoi_frontend_tour</a> — <code style="color:#22d3bf">py -3.11 examples/aoi_frontend_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">image2d</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opaoi:register_image">register_image</a> · <a style="color:#22d3bf" href="opaoi:tiled_map">tiled_map</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">photometric</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: aoi.py — AOI 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -53,12 +53,12 @@ Not measured: plausible but wrong values (distance from ground truth), speed, OS
 
 ### Verification stage
 
-The 96 capabilities, split by how they are verified (`docs/maturity.json`, rebuilt by `tools/gen_maturity.py` from the current tree (pyproject version 0.8.1); stage definitions in [MATURITY.md](MATURITY.md)).
+The 95 capabilities, split by how they are verified (`docs/maturity.json`, rebuilt by `tools/gen_maturity.py` from the current tree (pyproject version 0.8.1); stage definitions in [MATURITY.md](MATURITY.md)).
 
 | stage | meaning | capabilities |
 |---|---|---|
 | `research-prototype` | implemented; tests or a running example still missing | 0 |
-| `verified-synthetic` | verified automatically against synthetic ground truth | 78 |
+| `verified-synthetic` | verified automatically against synthetic ground truth | 77 |
 | `validated-public-real-data` | an example on public measured data runs in a gate | 18 |
 | `validated-hardware` | validated on hardware (only from accepted external reports) | 0 |
 
@@ -137,17 +137,17 @@ Every one carries a closed-form or synthetic ground truth and a null model. Fail
 
 ## Find an operator
 
-**3,557 per-operator notes** (call form, type contract, HALCON counterpart, references, provenance) and **67 family guides**. Entry points by dimension:
+**3,581 per-operator notes** (call form, type contract, HALCON counterpart, references, provenance) and **69 family guides**. Entry points by dimension:
 
-**Measured coverage**: evolvable ops 942/942, typed ledger 2594/2606, one-line facade `fullseye.<name>` 703/1480 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
+**Measured coverage**: evolvable ops 942/942, typed ledger 2606/2618, one-line facade `fullseye.<name>` 704/1480 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
 
-**Measured substance**: of 3557 notes, **3546** link at least one runnable example (11 have none) and **3370** have a usage section of 120+ characters (187 are a one-line summary). The structure (call form, types, ops that chain next) is present in all 3557.
+**Measured substance**: of 3581 notes, **3542** link at least one runnable example (27 have none) and **3371** have a usage section of 120+ characters (198 are a one-line summary). The structure (call form, types, ops that chain next) is present in all 3581.
 
 | dimension | ops | entry |
 |---|---:|---|
 | `2d` | 959 | [INDEX](ops/2d/INDEX.md) |
 | `drive` | 700 | [INDEX](ops/drive/INDEX.md) |
-| `optics` | 476 | [INDEX](ops/optics/INDEX.md) · [guide](ops/optics/guides/optics_imaging.md) |
+| `optics` | 464 | [INDEX](ops/optics/INDEX.md) · [guide](ops/optics/guides/optics_imaging.md) |
 | `3d` | 373 | [INDEX](ops/3d/INDEX.md) |
 | `math` | 114 | [INDEX](ops/math/INDEX.md) · [guide](ops/math/guides/math_metrology.md) |
 | `segmentation` | 59 | [INDEX](ops/segmentation/INDEX.md) · [guide](ops/segmentation/guides/halcon_segmentation.md) |
@@ -165,6 +165,7 @@ Every one carries a closed-form or synthetic ground truth and a null model. Fail
 | `dem` | 25 | [INDEX](ops/dem/INDEX.md) · [guide](ops/dem/guides/dem_terrain_analysis.md) |
 | `printpath` | 23 | [INDEX](ops/printpath/INDEX.md) · [guide](ops/printpath/guides/printpath.md) |
 | `flyvision` | 22 | [INDEX](ops/flyvision/INDEX.md) · [guide](ops/flyvision/guides/fly_vision.md) |
+| `calib` | 21 | [INDEX](ops/calib/INDEX.md) · [guide](ops/calib/guides/camera_calibration.md) |
 | `graph` | 20 | [INDEX](ops/graph/INDEX.md) |
 | `quat` | 19 | [INDEX](ops/quat/INDEX.md) · [guide](ops/quat/guides/quaternion_monogenic.md) |
 | `specular` | 19 | [INDEX](ops/specular/INDEX.md) · [guide](ops/specular/guides/specular_photometric.md) |
@@ -196,6 +197,7 @@ Every one carries a closed-form or synthetic ground truth and a null model. Fail
 | `videocube` | 6 | [INDEX](ops/videocube/INDEX.md) · [guide](ops/videocube/guides/videocube.md) |
 | `residue` | 5 | [INDEX](ops/residue/INDEX.md) |
 | `cadmap` | 4 | [INDEX](ops/cadmap/INDEX.md) |
+| `aoi` | 3 | [INDEX](ops/aoi/INDEX.md) · [guide](ops/aoi/guides/aoi_frontend.md) |
 | `text` | 3 | [INDEX](ops/text/INDEX.md) |
 
 Search by name with `py -3.11 imgevolve.py ops --search edge`; the full cross-library table is [OP_CATALOG.md](OP_CATALOG.md) and the cross-dimension entry point is [ops/INDEX.md](ops/INDEX.md).
@@ -294,9 +296,9 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## Document map — all 289
+## Document map — all 288
 
-The complete map, so that **no document is unreachable from this index** (the 3,557 per-op notes and 67 family guides under `docs/ops/` are reached from the operator section above; articles from [articles/](articles/README.md)). One unreachable file fails `tests/test_docs_index_reachable.py`. **Most bodies are in Japanese.**
+The complete map, so that **no document is unreachable from this index** (the 3,581 per-op notes and 69 family guides under `docs/ops/` are reached from the operator section above; articles from [articles/](articles/README.md)). One unreachable file fails `tests/test_docs_index_reachable.py`. **Most bodies are in Japanese.**
 
 **Getting started**(12)
 
@@ -436,7 +438,7 @@ The complete map, so that **no document is unreachable from this index** (the 3,
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(206)
+**Other**(205)
 
 | document | what it covers |
 |---|---|
@@ -560,7 +562,6 @@ The complete map, so that **no document is unreachable from this index** (the 3,
 | [`capabilities/patch-feature-anomaly-detection.md`](capabilities/patch-feature-anomaly-detection.md) | id: patch-feature-anomaly-detection |
 | [`capabilities/periodic-defects-in-1d-signals.md`](capabilities/periodic-defects-in-1d-signals.md) | id: periodic-defects-in-1d-signals |
 | [`capabilities/phase-measuring-deflectometry.md`](capabilities/phase-measuring-deflectometry.md) | id: phase-measuring-deflectometry |
-| [`capabilities/photoelasticity.md`](capabilities/photoelasticity.md) | id: photoelasticity |
 | [`capabilities/photograph-through-prescription.md`](capabilities/photograph-through-prescription.md) | id: photograph-through-prescription |
 | [`capabilities/pictures-that-carry-their-own-truth.md`](capabilities/pictures-that-carry-their-own-truth.md) | id: pictures-that-carry-their-own-truth |
 | [`capabilities/pixel-shift-imaging.md`](capabilities/pixel-shift-imaging.md) | id: pixel-shift-imaging |

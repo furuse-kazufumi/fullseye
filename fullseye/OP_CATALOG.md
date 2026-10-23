@@ -233,6 +233,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **精度ユニオン型ストレージ(PrecisionUnion)を N-D の実データ様式で使う** — ラベルボリューム(無損失)と深度ボリューム(atol 量子化)をタイル別最小ビット深さで保持し、メモリ比・save/load のファイル比・遅延アフィン連鎖の一致を数値で確かめる。高エントロピー画像では勝たないことも同じ場で示す(honest な境界)。 `py -3.11 examples/precision_union_volume.py`
 - **imgevolve quickstart — 全ワークフローを 1 ファイルで** — レジストリ→型付き手組みパイプライン→ゲノム復号→タスク採点→進化ドライバ→codegen + 差分テスト(約 1.5 分、repo root から実行)。 `py -3.11 examples/quickstart.py`
 - **やりたいことを 6 言語で書いて同じ op にたどり着く(RAG の入口)** — fullseye.search_ops で「エッジ検出 / edge detection / 边缘检测 / 에지 검출 / Kantenerkennung / 邊緣」と「ノイズ除去」を 6 言語で引き、全言語で意味の合う op が上位 8 件に入ること、返った op を呼んで段差で応答が最大・雑音の標準偏差が下がることを確かめる(grep では 0 件の言葉でも引ける)。 `py -3.11 examples/find_ops_by_meaning.py`
+- **外観検査の「測る前」の 3 段(照明を戻す / 位置を合わせる / タイルの地図にする)** — 検査ラインが寸法や欠陥を測る手前に必ず入る 3 段(aoi 族 3 op)を、真値を植えた合成ラインで一巡する。★既知の cos⁴ ビネット(隅が中心の 0.196 倍)+ 暗電流 0.05 は flat_field_correct で 最大相対誤差 1.8e-16 まで戻るが、**dark を省くと 2.3e-01 までしか戻らず**隅/中心の比は 真値 0.1209 に対し 0.4867 のまま —— 絵は破綻しないので目では合格に見えて数字だけ狂う。★register_image は整数 (3,5) px を残差 0.000000 で、副画素 (2.5,-1.5) px を誤差 0.0000 px で 回収する一方、回転 5 度では残差 0.6537 で **consistent=False** を返す(小さい並進として 返りはするが、合っていないと分かる量が一緒に出る)。★周期 8 px の市松は peak_ratio 1.0000 で ambiguous=True になるが、**縞は ambiguous=False のまま** —— peak_ratio は離れた 2 番目の『山』を見る量で、縞が作るのは『尾根』だから数えられない(正直な限界として門に固定)。★tiled_map は分解可能な平均をタイル統計から全体平均へ誤差 0.0e+00 で戻し、70px を 16px 角で 割った端数 9 枚を黙って捨てない。捨てる指定をしたときだけ dropped_tiles=9 / covered_fraction=0.8359 として返り値に残る。 `py -3.11 examples/aoi_frontend_tour.py`
 
 **analysis**
 - **欠陥図の方法を比べる物差し —— 画素 AUROC は大きな傷 1 つで満点近くになり、小さな傷の見落としを PRO が出す** — 16 枚に大きな傷 1 つ(900 画素)と小さな傷 9 つ(4 画素ずつ)。大きな傷だけ当てる検出器は画素 AUROC 0.981 で勝つが、傷を 1 つずつ数える AUPRO(FPR 0.3 まで)は 0.255。小さな傷を全部当てる検出器は画素 AUROC 0.747・AUPRO 0.957。閾値 1 点の PRO は手計算の 0.1 と 0.95 に一致。anomaly_image_auroc / anomaly_pixel_auroc / anomaly_pro / anomaly_region_overlap はどの方法(良品統計・RPCA・ゴールデン差分)にも同じ物差しとして使える。 `py -3.11 examples/anomaly_eval_metrics.py`
@@ -470,7 +471,6 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **同じ3次元場面を間接ToFと直接ToFで測る――多経路・混合画素・pile-up・体積誤差** — 箱、コーナー、透明板、光沢面、細い柱、暗明市松を同じ解析的な光線真値で測る。20/80/100 MHz・4相の間接方式と光子到着ヒストグラムの直接方式を、曖昧距離、雑音予算、高調波、多経路、混合画素、時間ビン、pile-up、反射率、箱体積について閉形式と比較する。新しいopは追加しない。学習0、較正0、門27件。 `py -3.11 examples/poc_tof_camera.py`
 - **公開 .zmx 処方を独立計算で照合し、検査レンズとして採点する** — 4 本の処方を別の読取器と光線追跡器で照合し、無限遠・入口瞳径 1 mm・5.5 µm 画素の条件で照明、歪曲、色ずれ、MTF、3 画素傷の視認性を採点する。OPD の規約差も図に残す。 `py -3.11 examples/poc_zmx_public_verify.py`
 - **全天球の検査撮影と立体表示を一つの測定工程として確かめる** — 合成トンネルを全天球、キューブ面、魚眼対、立体視、赤シアン表示、移動映像へ変換し、継ぎ目、死角、球面画質、距離、安定化、タイル範囲、欠陥寸法を真値と照合する。 `py -3.11 examples/poc_omni360_inspection.py`
-- **光弾性の族を一巡する ―― 応力場から縞、偏光像、そして応力へ** — 直径圧縮の円板と Kirsch の板の応力場を閉形式で作り、応力光学則で位相差に、平面・円偏光器の縞と 6 強度の偏光計の像にして、閉形式で主応力差と主軸へ戻す。3 波長で 1 波長を超える次数を決め、Si(100) では結晶方位で複屈折が変わることを出典つきの係数で示す。 `py -3.11 examples/photoelastic_roundtrip.py`
 - **全天球画像と既存の画像処理を双方向につなぐ最小例** — 全天球像から通常視野を切り出して刃を検出し、通常画像を立方体面経由で全天球へ戻す。立体配置と複数視点の合成例も同じ場面で実行する。 `py -3.11 examples/omni360_roundtrip.py`
 - **水と透明媒質 ―― 海の波・水面の屈折・水中の色・瓶の焦線を、閉形式と公表値と第 2 実装で採点** — 水は上から見れば動くレンズ、下から見れば距離で濃くなる色フィルタ。新 op 10 本(`watermedia`、`opsoptics` の `watermedia`): `ocean_spectrum`(Pierson–Moskowitz と JONSWAP の S(ω)、有義波高・周期)/ `ocean_height_field`(Tessendorf の FFT の海: 高さ・傾き・法線・荒れ・水深)/ `fresnel_water_air`(水の屈折率は材料表の実部で分散込み、全反射の旗つき)/ `snell_window`(窓の半径と見かけの深さ)/ `refracted_view`(水中の点の見かけの位置を光路長の停留点で。平面は二分法、波面はニュートン法でベクトルのスネルの式を検算し、外れた点は NaN)/ `water_attenuation`(Pope & Fry の純水の吸収、Smith & Baker の散乱、Solonenko & Mobley のジャーロフ型の a・b・Kd)/ `underwater_image`(Akkaynak & Treibitz の画像形成: 直接光 + 後方散乱)/ `phase_function_hg` / `scattering_phase_petzold`(Petzold の体積散乱関数)/ `cylinder_lens_caustic`(円柱の近軸焦点と実光線の焦線)。(1) 風速 8 m/s の PM の海: 有義波高 1.3656 m(0.21 U²/g = 1.3705 m、0.36 %)、ピーク 1.0753 rad/s(0.877 g/U = 1.0751、2e-4)、JONSWAP(γ = 1)は PM と 1e-9 で一致、高さは実数(虚部 3.5e-16)、空間の分散はスペクトルの積分に 0.02 %(8 種)、単一モードの周期は 2π/ω に 2.8e-16。傾きの分散は Cox & Munk(0.003 + 0.00512 U)と比べると、格子で解ける波だけでは 5 m/s で 11 %、10 m/s で 16 %(PM は毛管波を持たない)。飽和域を毛管波数 370 /m まで延ばすと 5 m/s は 98 %(−2.5 %)だが 10 m/s は 61 %(−38.7 %)で、PM の α は風速で増えない限界として門に残す。(2) 2 m のプールの底の市松模様: 真上の見かけの深さは d/n に 0、見つけた経路はスネルの式を 7.8e-16、平面の屈折点は 4 次方程式に 1e-15・光路長の直接最小化に 2.8e-8、波面では屈折点から画像を作る逆向きの光線追跡で同じ底の点に 9.6e-9 m で戻る。水中から見上げた魚眼で全反射が始まる角は臨界角 48.59° の直後の 1 画素(1.5°)以内。(3) 水を入れた瓶(R = 30 mm、n = 1.52、壁 1.5 mm、水 1.333): 近軸焦点 61.24 mm、周縁光線 40.01 mm(球面収差 21.23 mm)、棒の近軸焦点は n R / (2 (n − 1)) に一致し、実光線の焦点は弦の三角関数と 3.6e-14。屈折力は水入り 0.01633 /mm、空 −0.00120 /mm(比 13.6)で、背後 50 mm の面の強度は水のある所の中心が入射の 4.88 倍(最大 13.97 倍)、空の所は 0.94 倍。(4) 色票を深さ 1・5・15 m で: Pope & Fry の吸収は 417.5 nm で最小 0.00442 /m、700 nm で 0.624 /m(表の値)、Beer–Lambert は glassmirror と 1.1e-16、光子 20 万個の数え上げが指数則に 0.2σ、Kd(500 nm)は 0.029 < 0.064 < 0.109 < 0.120(I < II < III < 1C)、I 型で赤は青の 12.2 倍の速さで減衰(10 m で透過率 赤 0.074・緑 0.557・青 0.807)、15 m の赤の票の R は 0.010。(5) 限界: 平らな水の見かけの深さ d/n は斜めに見るほど外れる(30° で 7 %、60° で 52 % の過大評価)。壊して確かめる探針(屈折率 1.4、α を 10 % 変える、スネルの式の向きを逆にする)は門が赤になる。学習 0、較正 0、門 43 件。 `py -3.11 examples/poc_water_transparent_media.py`
 - **水が検査画像にどう写るか ―― プールの底のコースティクス・瓶の側面像・濡れた板・船体の水中画像を、閉形式と第 2 の方法で採点** — 水は検査カメラの映像を 4 通りに変える。新 op 7 本(`watervision`、`opsoptics` の `watervision`): `caustic_irradiance`(光子の数え上げとヤコビアンの 2 方法で水底の照度)/ `bottle_image`(円柱の断面を行ごとに追跡した瓶の側面像)/ `fill_level_from_image` / `wet_surface_appearance`(Lekner & Dorf)/ `wet_dry_inspection_pair` / `underwater_inspection_image`(ランプがカメラの横の船体と SNR)/ `caustic_floor_segmentation`。平らな水面は一様に cos θ · T(1e-9)、光子の総量は入射 × 平均透過率に 1e-6、光子とヤコビアンは滑らかな面で 0.30 %、折り目では波面法が inf と旗を出す。ひび割れ検出器(`canny`)はコースティクスの縁を拾って適合率 0.05、分割で縁を除くと 1.00(再現率 1.00 → 0.45)、強い波では照度で割って戻す。瓶は液面の上下が空・満の断面と bit 一致、明るい帯の半幅 9.50 mm(近軸焦点からの予測 9.91 mm)、液面は 1 画素以内、気泡の輪の外径は近軸の倍率 1.333 に ± 1 画素。濡れた面は a = 0.5 で 0.673 倍(閉形式に 1.1e-16)、傷のコントラストは 0.411 → 0.494。船体の SNR は距離で単調に落ちる。限界として、縦の傾き 40 度で帯の半幅が 29 % 動く。 `py -3.11 examples/poc_water_inspection_images.py`
@@ -775,9 +775,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3557 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3569 ops / 54 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 959 · **3d** 373 · **math** 114 · **optics** 476 · **lightfield** 17 · **photon** 17 · **specular** 19 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 39 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 700 · **tomography** 31 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族の一覧: **2d** 959 · **3d** 373 · **math** 114 · **optics** 464 · **lightfield** 17 · **photon** 17 · **specular** 19 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 39 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 700 · **tomography** 31 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 3 · **calib** 21 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d(959 ops / 49 categories)
 
@@ -2495,7 +2495,7 @@ _計 3557 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `wave_nodal_lines` `matrix → mask` — Where a signed field changes sign — the nodal set, as a mask. · 例: `poc_beats_fringes_and_screens`
 - `wave_two_slit` `入力なし → image2d` — Two-slit interference on a screen — built from the physics, not the fringe formula. · 例: `poc_beats_fringes_and_screens`
 
-### optics(476 ops / 52 categories)
+### optics(464 ops / 51 categories)
 
 レンズより上・画素より下の層。幾何光学(薄レンズ結像・ABCD 光線伝達・被写界深度・cos⁴ 口径食)/ 波動光学(Airy パターン・角スペクトル伝搬・Fraunhofer 回折・ガウシアンビーム)/ 結像品質(PSF→MTF・回折限界 MTF・Zernike 波面統計)/ 偏光(Jones・Stokes・Mueller)/ 材料の物性表(matprop)・光ファイバ(fiber)・センサーの特性(sensorchar)・大域光輸送ほか。
 
@@ -2850,20 +2850,6 @@ _計 3557 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `bend_singlet` `入力なし → table` — A thin singlet of given focal length at a Coddington shape factor (``table``). · 例: `lens_optimize_demo`
 - `merit_function` `table → table` — The DLS merit ``Σ residual²`` and its parts for one prescription (``table``). · 例: `lens_optimize_demo`, `poc_lens_file_roundtrip`, `poc_lens_merit_operands`
 - `optimize_lens` `table → table` — Damped-least-squares (Levenberg–Marquardt) optimisation of a prescription (``table``). · 例: `lens_optimize_demo`, `poc_lens_file_roundtrip`
-
-#### optics / photoelastic(12)
-- `brazilian_disc_stress` `入力なし → table` — 直径方向に圧縮された円板(Brazilian disc)の平面応力 σx, σy, τxy の閉形式 → dict。 · 例: `photoelastic_roundtrip`
-- `cubic_photoelastic_birefringence` `image2d × image2d × image2d → table` — 立方晶 {100} 面(Si ウェハなど)の応力複屈折 Δn と遅相軸 → dict。 · 例: `photoelastic_roundtrip`
-- `kirsch_plate_stress` `入力なし → table` — 穴のある無限板の一軸引張(Kirsch の解)の σx, σy, τxy と極座標成分の閉形式 → dict。 · 例: `photoelastic_roundtrip`
-- `photoelastic_phase_estimate` `polsweep → table` — 偏光像から位相差 δ と主軸 θ を閉形式で逆算 → dict。 · 例: `photoelastic_roundtrip`
-- `photoelastic_polarization_images` `image2d → polsweep` — 円偏光照明の試料を偏光カメラ(0/45/90/135 度)または 6 強度の偏光計で撮った像 → (K, H, W)。 · 例: `photoelastic_roundtrip`
-- `photoelastic_retardation` `image2d → table` — 等方材料の応力光学則 δ = 2π t C (σ1−σ2)/λ → dict(rad・nm・縞次数・材料縞値)。 · 例: `photoelastic_roundtrip`
-- `polariscope_intensity` `image2d → image2d` — 平面・円偏光器の明暗視野の強度(等色線・等傾線)の閉形式。 · 例: `photoelastic_roundtrip`
-- `principal_stress` `image2d × image2d × image2d → table` — 平面応力の主応力 σ1 ≥ σ2、主応力差、σ1 の向き(等傾角)→ dict。 · 例: `photoelastic_roundtrip`
-- `retardation_convert` `image2d → image2d` — 位相差の単位換算(rad / deg / nm / waves = 縞次数)。 · 例: `photoelastic_roundtrip`
-- `retardation_from_birefringence` `image2d → table` — 複屈折 Δn から位相差 → dict(rad・nm・縞次数を並べて返す)。 · 例: `photoelastic_roundtrip`
-- `retardation_unwrap_multiwavelength` `images → table` — 複数波長の巻いた位相差から絶対位相差(nm)を決める(分散なしの仮定)→ dict。 · 例: `photoelastic_roundtrip`
-- `silicon_piezo_optic_coefficients` `入力なし → table` — 単結晶シリコンの圧電光学係数 π11−π12・π44 [Pa⁻¹] を出典つきで返す → dict。 · 例: `photoelastic_roundtrip`
 
 #### optics / pixelshift(6)
 - `false_color_metric` `rgbimage → table` — 偽色の量: 色差(BT.601 の Cb, Cr)の大きさの統計。 · 例: `poc_pixel_shift`
@@ -4679,6 +4665,50 @@ _計 3557 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `isc_match` `image2d × image2d → table` — 増分符号相関(ISC)。増分符号が一致する割合が最大の位置を返す。 · 例: `poc_code_matching_breakdown`
 - `ocm_match` `image2d × image2d → table` — 方向符号照合(OCM)。符号の巡回差の平均が最小の位置を返す。 · 例: `poc_code_matching_breakdown`
 - `scc_match` `image2d × image2d → table` — 選択的相関係数(SCC)。増分符号の一致する画素だけで正規化相関を取る。 · 例: `poc_code_matching_breakdown`
+
+### aoi(3 ops / 3 categories)
+
+#### aoi / aggregate(1)
+- `tiled_map` `image2d → table` — 画像をタイルに割り、タイルごとの量を小さな地図にする。→ dict。 · 例: `aoi_frontend_tour`
+
+#### aoi / geometric(1)
+- `register_image` `image2d × image2d → table` — 検査画像を基準画像へ合わせる平行移動を、合っていないと分かる量つきで返す。→ dict。 · 例: `aoi_frontend_tour`
+
+#### aoi / photometric(1)
+- `flat_field_correct` `image2d × image2d → image2d` — 照明ムラとセンサ感度のばらつきを、暗電流つきの割り算で戻す。→ 補正済み画像。 · 例: `aoi_frontend_tour`
+
+### calib(21 ops / 5 categories)
+
+#### calib / calibrate(3)
+- `camera_calibration` `keypoints → table` — Zhang 法で平面ターゲット多視点から内部行列 K を推定(camera_calibration)。 · 例: `camera_intrinsics_calibration`, `lens_calibration_loop_demo`, `poc_camera_calibration`
+- `find_marks_and_pose` `image2d → table` — マーク検出 + 校正板の姿勢推定(平面ホモグラフィ → pose)(find_marks_and_pose)。
+- `hand_eye_calibration` `入力なし → matrix` — 一連の運動対から AX=XB を解き X(4x4)を推定(hand_eye_calibration)。
+
+#### calib / fit(4)
+- `hom_vector_to_proj_hom_mat2d` `keypoints → matrix` — 4 点以上の対応から射影変換(homography, DLT)3x3 を求める(hom_vector_to_proj_hom_mat2d)。 · 例: `poc_panorama_drift`, `poc_wound_area_tracking`
+- `vector_angle_to_rigid` `入力なし → matrix` — 1 組の (点, 角度) から 2D 剛体変換を求める(vector_angle_to_rigid)。
+- `vector_to_rigid` `keypoints → matrix` — 対応点から 2D 剛体変換(回転+並進、Kabsch)を求める(vector_to_rigid)。
+- `vector_to_similarity` `keypoints → matrix` — 対応点から 2D 相似変換(回転+スケール+並進、Umeyama)を求める(vector_to_similarity)。 · 例: `poc_document_scan`, `poc_star_astrometry`
+
+#### calib / plane(5)
+- `contour_to_world_plane_xld` `table → table` — XLD 輪郭(dict {cs:[Nx2]})を world 平面へ写す(contour_to_world_plane_xld)。 · 例: `poc_wound_area_tracking`
+- `gen_image_to_world_plane_map` `入力なし → table` — 画像→ワールド平面(z=0)の写像テーブルを生成(gen_image_to_world_plane_map)。
+- `gen_radial_distortion_map` `入力なし → table` — 半径歪みの逆マップ(row_map, col_map)を生成(gen_radial_distortion_map)。
+- `image_points_to_world_plane` `table → keypoints` — カメラ内部/外部から画素を world 平面 z=0 へ逆投影(image_points_to_world_plane)。
+- `image_to_world_plane` `keypoints → keypoints` — 画像点を平面ホモグラフィで world 平面(z=0)へ写す(image_to_world_plane)。 · 例: `poc_document_scan`, `poc_matrix_code_reading`, `poc_wound_area_tracking`
+
+#### calib / project(3)
+- `project_3d_point` `points → keypoints` — 3D 点をカメラへ透視投影し画素 (row, col) を返す(project_3d_point)。
+- `project_hom_point_hom_mat3d` `matrix → keypoints` — 同次 3D 点 (4,) を 3x4/4x4 射影行列で投影し画素 (row, col) を返す(project_hom_point_hom_mat3d)。
+- `project_point_hom_mat3d` `points → keypoints` — 4x4 or 3x4 射影行列 P=K[R|t] で 3D 点を投影し画素 (row, col) を返す(project_point_hom_mat3d)。
+
+#### calib / target(6)
+- `caltab_points` `入力なし → keypoints` — 校正板の理想マーク座標(ワールド, mm; 原点=最初のマーク)を (y, x) で返す(caltab_points)。
+- `create_caltab` `入力なし → table` — 校正板の記述(理想点、板中心が原点)を作る(create_caltab)。
+- `disp_caltab` `table → image2d` — 校正板画像を返す(表示用)(disp_caltab)。
+- `find_caltab` `image2d → keypoints` — 画像から校正板の円マーク中心を検出(連結成分の重心)(find_caltab)。
+- `gen_caltab` `入力なし → table` — 円マーク格子の校正板画像を生成(gen_caltab)。
+- `sim_caltab` `table → table` — 校正板を指定カメラ姿勢で投影した画像をシミュレート(sim_caltab)。
 
 ### generative(42 ops / 6 categories)
 
