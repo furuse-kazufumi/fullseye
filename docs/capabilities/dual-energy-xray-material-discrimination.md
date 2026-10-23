@@ -3,7 +3,7 @@ id: dual-energy-xray-material-discrimination
 title: X 線の 2 つのエネルギーで厚みと材質を分ける(デュアルエナジー / フォトンカウンティング: スペクトル → 窓 → 基底分解 → 実効 Z)
 title_en: Separate thickness from material with two X-ray energies (dual-energy and photon-counting X-ray: spectrum, energy windows, basis decomposition, effective Z)
 category: 見つける
-ops: [material_xray_table, material_xray_attenuation, material_xray_constants, material_effective_z, xray_tube_spectrum, xray_beam_quality, photon_counting_channels, dual_kvp_channels, xray_channel_projection, basis_material_decompose, basis_decomposition_crlb, r_value_map, effective_z_map, dual_energy_separability]
+ops: [material_xray_table, material_xray_attenuation, material_xray_constants, material_effective_z, xray_tube_spectrum, xray_beam_quality, photon_counting_channels, dual_kvp_channels, xray_channel_projection, basis_material_decompose, basis_decomposition_crlb, r_value_map, effective_z_map, dual_energy_separability, scintillator_sensor_qe]
 examples: [poc_dual_energy_xray]
 version: 0.6.1
 inputs: [images]
@@ -19,16 +19,17 @@ calibration: 較正の op は無い。管電圧・ろ過・検出器の材料と
 
 1 枚の X 線透過像は、各画素で L = −ln(I/I₀) = Σ μₘ tₘ という**1 つの数**しか測りません。厚い肉と薄い骨片・ガラスは同じ L を作れるので、厚みと材質は分けられません。光子のエネルギーを 2 つ以上の窓で数え分ける検出器(フォトンカウンティング)か、2 つの管電圧で撮ると、μ(E) の**形**が材質で違う(光電効果は ≈ Z³/E³、コンプトン散乱は電子密度だけ)ので、各画素で方程式が窓の数だけ立ち、2 つの基底物質の厚みに分けられます(Alvarez & Macovski 1976、Lehmann ら 1981)。
 
-- 材料表(`materials`)に **X 線の列**があります。`material_xray_attenuation` / `material_xray_constants` は質量減衰係数 μ/ρ(E)(1 keV〜1 MeV)を、光学の列と**同じ名前**で引きます。元素 49 種と化合物 21 種(水・ICRU 44 の筋肉・脂肪・皮質骨・PE・PMMA・PVC・PTFE・ガラス・CsI・CdTe …)は NIST SRD 126(Hubbell & Seltzer)の表の部分集合そのもの、組成の分かる材料(サファイア、ソーダ石灰ガラス、天然ゴム、方解石、ステンレス、はんだ …)と化学式(`"Al2O3"`)は混合則で作ります。組成が公表されていない硝材は拒否します。`material_effective_z` は Mayneord の式の実効原子番号と電子密度です。
+- 材料表(`materials`)に **X 線の列**があります。`material_xray_attenuation` / `material_xray_constants` は質量減衰係数 μ/ρ(E)(1 keV〜1 MeV)を、光学の列と**同じ名前**で引きます。元素 51 種と化合物 21 種(水・ICRU 44 の筋肉・脂肪・皮質骨・PE・PMMA・PVC・PTFE・ガラス・CsI・CdTe …)は NIST SRD 126(Hubbell & Seltzer)の表の部分集合そのもの、組成の分かる材料(サファイア、ソーダ石灰ガラス、天然ゴム、方解石、ステンレス、はんだ …)と化学式(`"Al2O3"`)は混合則で作ります。組成が公表されていない硝材は拒否します。`material_effective_z` は Mayneord の式の実効原子番号と電子密度です。
 - `xray_tube_spectrum` は W 陽極の管のスペクトル(Kramers の厚い陽極 + 電子の深さ + 自己吸収 + K 線 + フィルタ)、`xray_beam_quality` はその半価層(空気カーマで定義)・均等度・実効エネルギーです。
-- `photon_counting_channels` はエネルギーの窓(検出器の吸収効率・エネルギー分解能・電荷共有の尾つき)、`dual_kvp_channels` は 2 管電圧のエネルギー積分型です。
+- `photon_counting_channels` はエネルギーの窓(検出器の吸収効率・エネルギー分解能・電荷共有の尾つき)、`dual_kvp_channels` は 2 管電圧のエネルギー積分型です。`dual_kvp_channels` の検出器は材料表のシンチレータの名前(`CSI:TL` / `GD2O2S:TB` / `BGO` / `LYSO` …)でも選べます。
+- `scintillator_sensor_qe` はシンチレータ積層のセンサの量子効率です。X 線のエネルギーごとに、シンチレータの吸収効率 1 − e^{−μt} → 光子数(光収率 × 吸収したエネルギー)→ 発光スペクトルと光検出器の QE(既定は Si フォトダイオード)の重なり → X 線 1 個あたりの電子数。光収率・発光の極大・減衰時間は材料表のシンチレータ 7 種(値ごとに出典つき)から引きます。発光の幅は一次情報で確かめられなかったので、表からは極大の 1 本の線として扱います(実測の発光スペクトルは引数で渡せます)。
 - `xray_channel_projection` は材料ごとの厚み図からチャネルごとの計数像を作ります(Poisson 雑音は `photoncount.photon_sample`)。
 - `basis_material_decompose` は多色の順方向模型を画素ごとに Gauss–Newton で解き、基底物質の厚み図を返します。収束しない・信号 0・飛ぶ画素は NaN にして数えます(黙って値を作らない)。`basis_decomposition_crlb` はその分散の下限(Fisher 情報の逆行列)です。
 - `r_value_map` は R = L_低 / L_高(単色なら材質だけで決まる指標)、`effective_z_map` は R を元素の曲線と同じ L_高 で照合した実効 Z、`dual_energy_separability` は 2 つの材料(高い窓で同じ L になる「交絡の組」も作れる)の d′ と誤り率 Φ(−d′/2) の閉形式です。
 
 ## What it does
 
-Dual-energy and photon-counting X-ray material discrimination. The material table gains an X-ray column: mass attenuation coefficients from a bundled subset of NIST SRD 126 (Hubbell and Seltzer; 49 elements, 21 materials, 1 keV to 1 MeV) and the mixture rule for anything with a known composition, under the same names as the optical column. On top of it: a tungsten-anode tube spectrum and its half-value layer, photon-counting energy windows (absorption efficiency, energy resolution, charge-sharing tail) and dual-kVp channels, a noisy channel projection, a per-pixel polychromatic basis-material decomposition that rejects pixels it cannot solve, its Cramér-Rao bound, the R value, an effective-Z map and the closed-form separability of two materials. The PoC finds bone and glass fragments that a single X-ray image buries under the thickness variation of meat.
+Dual-energy and photon-counting X-ray material discrimination. The material table gains an X-ray column: mass attenuation coefficients from a bundled subset of NIST SRD 126 (Hubbell and Seltzer; 51 elements, 21 materials, 1 keV to 1 MeV) and the mixture rule for anything with a known composition, under the same names as the optical column. On top of it: a tungsten-anode tube spectrum and its half-value layer, photon-counting energy windows (absorption efficiency, energy resolution, charge-sharing tail) and dual-kVp channels, a noisy channel projection, a per-pixel polychromatic basis-material decomposition that rejects pixels it cannot solve, its Cramér-Rao bound, the R value, an effective-Z map and the closed-form separability of two materials. Seven inorganic scintillators (CsI:Tl, NaI:Tl, Bi4Ge3O12, Lu2SiO5:Ce, Lu1.8Y0.2SiO5:Ce, CdWO4, Gd2O2S:Tb) carry an emission column with a source for every value, and a scintillator-coupled sensor model follows one X-ray photon through absorption, light yield and the overlap of the emission with a photodetector's quantum efficiency. The PoC finds bone and glass fragments that a single X-ray image buries under the thickness variation of meat.
 
 ## 向くところ / 向かないところ
 
@@ -78,6 +79,6 @@ print(fs.ledger.material_xray_constants("CU", 8.0)["mu_rho_cm2_g"])     # 52.55(
 
 ## 裏づけ
 
-- op: `material_xray_table` / `material_xray_attenuation` / `material_xray_constants` / `material_effective_z` / `xray_tube_spectrum` / `xray_beam_quality` / `photon_counting_channels` / `dual_kvp_channels` / `xray_channel_projection` / `basis_material_decompose` / `basis_decomposition_crlb` / `r_value_map` / `effective_z_map` / `dual_energy_separability`
-- 門: `tests/test_dualxray.py`(NIST の公表値 11 点と K 端、元素の表 × 組成の混合則と NIST の化合物の表、水の Z_eff 7.42、Kramers の閉形式、IEC 61267 の線質 8 つ、雑音なしの分解の回収 1e-14、CRLB と分解の雑音、誤り率の閉形式とモンテカルロ、fail-closed 14 本(拒否の 12 通り + 0 計数・暴走の画素 2 本)、光子断面積とスペクトルの公開ライブラリがあれば第 2 実装と照合)と PoC の 21 門。
-- 出典: Alvarez & Macovski, Phys. Med. Biol. 21, 733 (1976) / Lehmann ら, Med. Phys. 8, 659 (1981) / Roessl & Herrmann, Phys. Med. Biol. 54, 1307 (2009) / Hubbell & Seltzer, NIST SRD 126 (2004) / ICRU Report 44 (1989) / Kanaya & Okayama, J. Phys. D 5, 43 (1972) / X-ray Data Booklet (LBNL 2009) / Poludniowski ら, Med. Phys. 48, 3630 (2021) / IEC 61267:2005 の値は Tanguay & Persson, arXiv:2205.03362 表 I。
+- op: `material_xray_table` / `material_xray_attenuation` / `material_xray_constants` / `material_effective_z` / `xray_tube_spectrum` / `xray_beam_quality` / `photon_counting_channels` / `dual_kvp_channels` / `xray_channel_projection` / `basis_material_decompose` / `basis_decomposition_crlb` / `r_value_map` / `effective_z_map` / `dual_energy_separability` / `scintillator_sensor_qe`
+- 門: `tests/test_scintillator_materials_2026_10_23.py`(吸収効率の閉形式、厚さ → ∞ で 1、発光スペクトルの正規化、`dual_kvp_channels` の CsI 既定との一致、極大での屈折率を独立な分散式で検算、fail-closed)と `tests/test_dualxray.py`(NIST の公表値 11 点と K 端、元素の表 × 組成の混合則と NIST の化合物の表、水の Z_eff 7.42、Kramers の閉形式、IEC 61267 の線質 8 つ、雑音なしの分解の回収 1e-14、CRLB と分解の雑音、誤り率の閉形式とモンテカルロ、fail-closed 14 本(拒否の 12 通り + 0 計数・暴走の画素 2 本)、光子断面積とスペクトルの公開ライブラリがあれば第 2 実装と照合)と PoC の 21 門。
+- 出典: Alvarez & Macovski, Phys. Med. Biol. 21, 733 (1976) / Lehmann ら, Med. Phys. 8, 659 (1981) / Roessl & Herrmann, Phys. Med. Biol. 54, 1307 (2009) / Hubbell & Seltzer, NIST SRD 126 (2004) / ICRU Report 44 (1989) / Kanaya & Okayama, J. Phys. D 5, 43 (1972) / X-ray Data Booklet (LBNL 2009) / Poludniowski ら, Med. Phys. 48, 3630 (2021) / IEC 61267:2005 の値は Tanguay & Persson, arXiv:2205.03362 表 I / シンチレータ: Particle Data Group, Phys. Rev. D 110, 030001 (2024) 表 35.4、Berkeley Lab Inorganic Scintillator Library、Tang ら, Molecules 28, 1815 (2023)。

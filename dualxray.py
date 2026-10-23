@@ -13,6 +13,7 @@
     xray_beam_quality            スペクトル → 半価層(空気カーマで重みづけ、IEC の線質と比べる量)
     photon_counting_channels     スペクトル + エネルギーの窓 → チャネル(検出器の吸収・エネルギー分解能・電荷共有)
     dual_kvp_channels            2 つの管電圧のスペクトル → エネルギー積分型の 2 チャネル
+    scintillator_sensor_qe       シンチレータの吸収 → 発光 → 光検出器の QE の重なり(X 線 1 個あたりの電子数)
     xray_channel_projection      材料ごとの厚み図 → チャネルごとの計数像(Poisson 雑音、photoncount.photon_sample)
     basis_material_decompose     計数像 → 基底物質の厚み図(重みつき最小二乗 = 高計数で最尤、収束しない画素は拒否)
     basis_decomposition_crlb     厚み → 分解の分散の下限(Fisher 情報の逆行列、Roessl & Herrmann 2009 の形)
@@ -40,7 +41,7 @@ import photoncount
 __all__ = [
     "xray_tube_spectrum", "xray_beam_quality", "photon_counting_channels", "dual_kvp_channels",
     "xray_channel_projection", "basis_material_decompose", "basis_decomposition_crlb",
-    "r_value_map", "effective_z_map", "dual_energy_separability",
+    "r_value_map", "effective_z_map", "dual_energy_separability", "scintillator_sensor_qe",
 ]
 
 #: 陽極の材料: (Z, A [g/mol], 密度 [g/cm³], K 端 [keV], K 線 ((名前, keV, 相対強度), …))
@@ -341,6 +342,13 @@ def dual_kvp_channels(spectrum_low, spectrum_high, detector: str = "CSI", detect
     信号は吸収した光子のエネルギーの和(gain = E)。分散は Σ φ E² e^{−μt}(複合 Poisson、
     Swank の雑音の増えは入れない)。2 つのスペクトルは同じエネルギーの格子に載せる(線形補間、
     範囲の外は 0)。返り値の形は :func:`photon_counting_channels` と同じ(mode = "integrating")。
+
+    ``detector`` は X 線の列の名前(既定 ``CSI`` = NIST の CsI の表)か、材料表のシンチレータの名前
+    (``CSI:TL`` / ``GD2O2S:TB`` / ``BGO`` / ``LYSO`` …)。シンチレータの名前なら吸収効率 1 − e^{−μt} の μ は
+    そのレコードの X 線の列と密度で、``response["scintillator"]`` に光収率・発光の極大・減衰時間を足す
+    (光の量は ``light_photons_per_kev`` = 光収率 / 1000 —— 吸収したエネルギー [keV] に掛ける)。重みと gain は
+    名前の種類に依らず同じ式で、既定の ``CSI`` の結果は 2026-10-23 の前と 1 ビットも変わらない
+    (``CSI:TL`` は同じ NIST の表と密度なので重みも同じ)。光検出器の QE まで通すのは :func:`scintillator_sensor_qe`。
     """
     op = "dual_kvp_channels"
     El, pl, dl = _spectrum(spectrum_low, op)
@@ -354,9 +362,158 @@ def dual_kvp_channels(spectrum_low, spectrum_high, detector: str = "CSI", detect
         s = np.interp(E, Es, ps, left=0.0, right=0.0)
         s = s / (np.sum(s) * de)
         W.append(s * de * qe)
+    response = {"detector": detector, "detector_mm": d}
+    sc = materials._scintillator(detector, op)
+    if sc is not None:
+        response["scintillator"] = _scint_summary(*sc)
     return {"energy_kev": E, "weights": np.array(W), "gain": E.copy(), "mode": "integrating",
             "labels": ["low kVp", "high kVp"], "thresholds_kev": None, "upper_kev": None,
-            "response": {"detector": detector, "detector_mm": d}}
+            "response": response}
+
+
+# --------------------------------------------------------------------------- #
+# シンチレータ積層のセンサ(2026-10-23)                                         #
+# --------------------------------------------------------------------------- #
+#: 発光スペクトルの格子の上限(点数)と、ガウスの発光帯を打ち切る幅(σ の倍数)。引数にしない内部定数。
+SCINT_MAX_EMISSION_POINTS = 100_000
+SCINT_GAUSS_HALF_WIDTH_SIGMA = 6.0
+#: 与えた発光スペクトルのうち、光検出器の QE の波長範囲の外に出てよい割合の上限。外の光を 0 と数えると
+#: 重なりが黙って小さく出るので、これを超えたら ValueError(QE の範囲を広げるか発光を切り詰めて渡す)。
+SCINT_OUTSIDE_QE_TOLERANCE = 1e-6
+
+
+def _scint_summary(name, sc):
+    return {"name": name, "light_yield_photons_per_mev": sc["light_yield_photons_per_mev"],
+            "light_photons_per_kev": (None if sc["light_yield_photons_per_mev"] is None
+                                      else sc["light_yield_photons_per_mev"] / 1000.0),
+            "emission_peak_nm": sc["emission_peak_nm"], "emission_fwhm_nm": sc["emission_fwhm_nm"],
+            "decay_time_ns": sc["decay_time_ns"], "density_g_cm3": sc["density_g_cm3"],
+            "unverified": tuple(sc["unverified"])}
+
+
+def _curve(curve, name, op, lo=0.0, hi=None):
+    a = np.asarray(curve, dtype=np.float64)
+    if a.ndim != 2 or a.shape[1] != 2 or a.shape[0] < 2 or not np.all(np.isfinite(a)):
+        raise ValueError("%s: %s must be finite pairs (wavelength nm, value), shape (K, 2), K >= 2" % (op, name))
+    if a.shape[0] > SCINT_MAX_EMISSION_POINTS:
+        raise ValueError("%s: %s has more than %d points" % (op, name, SCINT_MAX_EMISSION_POINTS))
+    if np.any(np.diff(a[:, 0]) <= 0) or a[0, 0] <= 0:
+        raise ValueError("%s: %s wavelengths must be positive and strictly increasing" % (op, name))
+    if np.any(a[:, 1] < lo) or (hi is not None and np.any(a[:, 1] > hi)):
+        raise ValueError("%s: %s values must lie in [%g, %s]" % (op, name, lo, "inf" if hi is None else "%g" % hi))
+    return a[:, 0].copy(), a[:, 1].copy()
+
+
+def _trapz(y, x):
+    return float(np.sum(0.5 * (y[1:] + y[:-1]) * np.diff(x)))
+
+
+def scintillator_sensor_qe(scintillator="CSI:TL", thickness_mm: float = 0.6, e_min_kev: float = 10.0,
+                           e_max_kev: float = 150.0, n_points: int = 141, photodetector_qe=None,
+                           emission_spectrum=None, light_yield_per_mev=None, light_collection: float = 1.0) -> dict:
+    """シンチレータ積層のセンサの量子効率: X 線 1 個 → シンチレータの吸収 → 発光 → 光検出器の電子の数。
+
+    エネルギー E の X 線 1 個あたり:
+
+      * 吸収効率 A(E) = 1 − exp(−μ(E) t)。μ は ``scintillator`` のレコードの X 線の列(NIST SRD 126)と密度、
+        t = ``thickness_mm``。:func:`dual_kvp_channels` と同じ関数で計算する(CSI:TL は既定の ``CSI`` と同じ値)。
+      * 光子の数 N(E) = A(E) · Y · E · η_c。Y = 光収率(単位 photons/MeV。材料表の値で、``light_yield_per_mev``
+        で上書き)、E は MeV、η_c = ``light_collection``(光が光検出器に届く割合、既定 1 = 全部届く理想)。
+        吸収した X 線はエネルギーを全部置いていくとみなす(K 蛍光の逃げとコンプトンの逃げは入れない)。
+      * 重なり Q̄ = ∫ S(λ) QE(λ) dλ(S は ∫ S dλ = 1 に正規化した発光スペクトル)。電子の数 = N(E) · Q̄。
+
+    発光スペクトル S: ``emission_spectrum`` に (λ nm, 相対強度) の pairs を渡せばそれを正規化して使う。
+    渡さなければ材料表から —— 表に発光の幅(FWHM)があればその幅のガウス、**無ければ発光の極大の 1 本の線**
+    (Q̄ = QE(λ_peak))。2026-10-23 時点で幅を一次情報で確かめられた材料は無いので、表から作るのは線になる。
+    返り値の ``emission_model`` がどちらかを言う。``photodetector_qe`` は (λ nm, QE) の pairs で、既定は
+    ``spectralrad.silicon_photodiode_qe()``(Si フォトダイオード、集める深さ 3 µm、反射防止膜なし)。
+    発光が QE の波長範囲の外にはみ出すと ValueError(外の光を 0 と数えて重なりを小さく出さない)。
+
+    返り値: dict(scintillator, thickness_mm, energy_kev, absorption_efficiency, light_photons, electrons,
+    overlap = Q̄, light_yield_photons_per_mev, light_collection, emission_model, emission(正規化した pairs、
+    線なら None), emission_peak_nm, photodetector, decay_time_ns, sources(使った値の出典), unverified)。
+    光収率の無い材料(GD2O2S:TB)で ``light_yield_per_mev`` を渡さなければ ValueError。
+    """
+    op = "scintillator_sensor_qe"
+    found = materials._scintillator(scintillator, op)
+    if found is None:
+        names = sorted(n for n, r in materials._RECORDS.items() if "scintillator" in r.get("properties", {}))
+        raise ValueError("%s: %r is not a scintillator in the material table (known: %s)"
+                         % (op, scintillator, ", ".join(names)))
+    name, sc = found
+    t = _f(thickness_mm, "thickness_mm", op, 0.0, 100.0, lo_open=True)
+    lo = _f(e_min_kev, "e_min_kev", op, materials.XRAY_E_MIN_KEV)
+    hi = _f(e_max_kev, "e_max_kev", op, lo, materials.XRAY_E_MAX_KEV, lo_open=True)
+    try:
+        n = int(n_points)
+    except (TypeError, ValueError):
+        raise ValueError("%s: n_points must be an integer, got %r" % (op, n_points))
+    if n != n_points or not (2 <= n <= 100000):
+        raise ValueError("%s: n_points must be an integer in [2, 100000], got %r" % (op, n_points))
+    eta_c = _f(light_collection, "light_collection", op, 0.0, 1.0, lo_open=True)
+    if light_yield_per_mev is None:
+        y = sc["light_yield_photons_per_mev"]
+        if y is None:
+            raise ValueError("%s: the material table has no verified light yield for %s - pass light_yield_per_mev="
+                             % (op, name))
+        y_src = sc["sources"]["light_yield_photons_per_mev"]
+    else:
+        y = _f(light_yield_per_mev, "light_yield_per_mev", op, 0.0, 1e6, lo_open=True)
+        y_src = "given (light_yield_per_mev)"
+
+    E = np.geomspace(lo, hi, n)
+    A = _absorption_efficiency(name, t, E, op)
+    photons = A * y * (E / 1000.0) * eta_c
+
+    if photodetector_qe is None:
+        import spectralrad
+        qe_curve = spectralrad.silicon_photodiode_qe()
+        det = "spectralrad.silicon_photodiode_qe() (Si photodiode, 3 um collection depth, no AR coating)"
+    else:
+        qe_curve = photodetector_qe
+        det = "given (photodetector_qe)"
+    lq, q = _curve(qe_curve, "photodetector_qe", op, 0.0, 1.0)
+
+    peak = sc["emission_peak_nm"]
+    if emission_spectrum is not None:
+        ls, s = _curve(emission_spectrum, "emission_spectrum", op, 0.0)
+        model = "given (emission_spectrum)"
+    elif sc["emission_fwhm_nm"] is not None:
+        sig = float(sc["emission_fwhm_nm"]) / (2.0 * math.sqrt(2.0 * math.log(2.0)))
+        ls = np.linspace(peak - SCINT_GAUSS_HALF_WIDTH_SIGMA * sig, peak + SCINT_GAUSS_HALF_WIDTH_SIGMA * sig, 2001)
+        s = np.exp(-0.5 * ((ls - peak) / sig) ** 2)
+        model = "gaussian (peak %g nm, FWHM %g nm from the material table)" % (peak, sc["emission_fwhm_nm"])
+    else:
+        ls, s = None, None
+        model = "line at the emission peak %g nm (the material table has no verified emission width)" % peak
+
+    if ls is None:
+        if not (lq[0] <= peak <= lq[-1]):
+            raise ValueError("%s: the emission peak %g nm lies outside the photodetector QE range [%g, %g] nm"
+                             % (op, peak, lq[0], lq[-1]))
+        overlap = float(np.interp(peak, lq, q))
+        emission = None
+    else:
+        total = _trapz(s, ls)
+        if not (total > 0.0):
+            raise ValueError("%s: the emission spectrum integrates to %r (needs a positive area)" % (op, total))
+        s = s / total
+        inside = (ls >= lq[0]) & (ls <= lq[-1])
+        outside = 1.0 - (_trapz(s[inside], ls[inside]) if inside.sum() >= 2 else 0.0)
+        if outside > SCINT_OUTSIDE_QE_TOLERANCE:
+            raise ValueError("%s: %.3g of the emission lies outside the photodetector QE range [%g, %g] nm"
+                             % (op, outside, lq[0], lq[-1]))
+        overlap = _trapz(s[inside] * np.interp(ls[inside], lq, q), ls[inside])
+        emission = np.column_stack([ls, s])
+
+    used = {k: sc["sources"][k] for k in ("density_g_cm3", "emission_peak_nm", "decay_time_ns", "xray_material")
+            if k in sc["sources"]}
+    used["light_yield_photons_per_mev"] = y_src
+    return {"scintillator": name, "thickness_mm": t, "energy_kev": E, "absorption_efficiency": A,
+            "light_photons": photons, "electrons": photons * overlap, "overlap": overlap,
+            "light_yield_photons_per_mev": float(y), "light_collection": eta_c, "emission_model": model,
+            "emission": emission, "emission_peak_nm": peak, "photodetector": det,
+            "decay_time_ns": sc["decay_time_ns"], "sources": used, "unverified": tuple(sc["unverified"])}
 
 
 # --------------------------------------------------------------------------- #

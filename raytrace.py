@@ -165,11 +165,22 @@ _GLASS_ALIASES = {"BK7": "N-BK7", "FUSED_SILICA": "SILICA", "SIO2": "SILICA", "F
 _MATERIAL_CLASSES = ("glass", "crystal", "polymer", "liquid")
 
 
+def _has_index(rec):
+    """レコードに屈折率 n のデータ(分散式か n の表)があるか。
+
+    ★2026-10-23: シンチレータのレコード(LU2SIO5:CE / CDWO4 …)は class が crystal でも発光の列だけで n の
+    データが無い。透過材の一覧に載せると ``glass_catalog`` が min() の空列で落ちていた —— n の無い材料は
+    レンズの媒質にしない(一覧から外し、名指しは ValueError)。
+    """
+    return any(d["type"] in ("formula", "nk", "n") for d in rec["datasets"])
+
+
 def _material_names():
-    """materials の透過材の名前(手元の 20 種と重なるものを除く)。"""
+    """materials の透過材の名前(手元の 20 種と重なるものを除く。n のデータの無いレコードも除く)。"""
     import materials as _mat
     return sorted(k for k in _mat.MATERIALS
-                  if _mat._record(k, "glass_catalog")["class"] in _MATERIAL_CLASSES and k not in _SELLMEIER)
+                  if _mat._record(k, "glass_catalog")["class"] in _MATERIAL_CLASSES and k not in _SELLMEIER
+                  and _has_index(_mat._record(k, "glass_catalog")))
 
 
 def _material_key(name):
@@ -182,6 +193,9 @@ def _material_key(name):
     if rec["class"] not in _MATERIAL_CLASSES:
         raise ValueError("%r is a %s in the material table, not a lens medium (classes: %s)"
                          % (name, rec["class"], ", ".join(_MATERIAL_CLASSES)))
+    if not _has_index(rec):
+        raise ValueError("%r has no refractive-index data in the material table (an emission-only "
+                         "record), not a lens medium" % (name,))
     return rec["name"]
 
 

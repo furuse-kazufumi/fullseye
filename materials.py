@@ -35,6 +35,13 @@ k の表が無い区間は k = 0 とし、返り値の ``k_source`` を ``None``
     7: n = C₀ + C₁ L + C₂ L² + C₃ λ² + C₄ λ⁴ + C₅ λ⁶ (L = 1/(λ² − 0.028))
     8: (n² − 1)/(n² + 2) = C₀ + C₁ λ²/(λ² − C₂) + C₃ λ²   9: n² = C₀ + C₁/(λ² − C₂) + C₃ (λ − C₄)/((λ − C₄)² + C₅)
 
+**シンチレータ・蛍光体の発光の列**(2026-10-23): CsI:Tl / NaI:Tl / Bi4Ge3O12 / Lu2SiO5:Ce /
+Lu1.8Y0.2SiO5:Ce / CdWO4 / Gd2O2S:Tb の 7 レコード(化学式で名前を付ける。別名 BGO / LSO / LYSO /
+GOS:TB …)は ``properties["scintillator"]`` に発光の極大 [nm]・光収率 [photons/MeV]・減衰時間 [ns]・
+密度・X 線の列の引き先(``xray_material``)を持ち、値ごとの出典を ``sources``、確かめられなかった値の
+名前を ``unverified`` に置く(Gd2O2S:Tb の光収率と全材料の発光の幅は ``None``)。同じ名前で X 線の
+減衰も引ける(:func:`material_xray_attenuation` / ``dualxray.dual_kvp_channels(detector=...)``)。
+
 真値の門(tests/test_materials.py): カタログ公表値の n_d / V_d(RII の PROPERTIES)、Si の
 k(1.0 µm) = 5.09e-4 と k(1.2 µm) = 2.1e-7(Green 2008)、Ag の 500 nm で n = 0.05 / k = 3.13
 (Johnson & Christy 1972)、水の n(589 nm, 20 ℃) = 1.3330(Daimon & Masumura 2007)。
@@ -330,8 +337,35 @@ def material_table(material_class: str = None) -> list:
                      "density_kg_m3": r["properties"].get("density_kg_m3"),
                      "k_data": any(ds["type"] in ("nk", "k") for ds in r["datasets"]),
                      "reference": nds[0].get("reference", "") if nds else
-                                  r["properties"].get("acoustic_source", "")})
+                                  r["properties"].get("acoustic_source", "") or _scint_reference(r)})
     return rows
+
+
+def _scint_reference(rec: dict) -> str:
+    """シンチレータのレコードの代表の出典(光学の表の無いレコードの ``reference`` 列)。"""
+    sc = rec.get("properties", {}).get("scintillator")
+    if not sc:
+        return ""
+    src = sc["sources"]
+    return src.get("light_yield_photons_per_mev") or src.get("emission_peak_nm") or ""
+
+
+def _scintillator(material, op: str):
+    """名前(別名可)→ (レコード名, 発光の列 dict)。シンチレータでなければ ``None``(例外にしない)。
+
+    X 線の列の名前(``CSI`` / ``GOS`` …、NIST の化合物の表)は**シンチレータのレコードに読み替えない** ——
+    ``dualxray.dual_kvp_channels`` の既定 ``detector="CSI"`` の結果を 1 ビットも変えないため。
+    """
+    if not isinstance(material, str):
+        return None
+    key = _key(material)
+    if key in _XC or key in _XRAY_ALIASES:
+        return None
+    key = _ALIASES.get(key, key)
+    rec = _RECORDS.get(key)
+    if rec is None or "scintillator" not in rec.get("properties", {}):
+        return None
+    return key, rec["properties"]["scintillator"]
 
 
 def material_record(material="N-BK7") -> dict:
@@ -1101,6 +1135,25 @@ def _xray_source(material, op: str, density_g_cm3=None) -> dict:
             src = {"name": key, "kind": "mixture", "composition": _record_composition(rec, op),
                    "density_g_cm3": rec["density_g_cm3"],
                    "reference": "mixture rule over NIST SRD 126 elemental tables; nominal density"}
+        elif _scintillator(key, op) is not None:
+            # シンチレータのレコード(CSI:TL / BGO / LYSO …): X 線の列は ``xray_material``(NIST の化合物の表か
+            # 化学式)、密度はレコードの値。付活剤(Tl / Ce / Tb、≲ 1 %)は組成に入れない —— 吸収端の近くの
+            # 数 % を除き μ/ρ に効かない。CSI:TL は NIST の CsI の表そのもの(密度 4.51 も同じ)なので
+            # ``CSI`` と μ が 1 ビットも違わない(tests/test_scintillator_materials_2026_10_23.py)。
+            # ★引き先は「NIST の化合物の表の名前」か「化学式」だけ。化学式を名前として引き直すと、化学式と
+            # 同じ名前のレコード(BI4GE3O12、CDWO4)が自分自身に戻って無限に再帰する(2026-10-23 に実際に踏んだ)。
+            name, sc = _scintillator(key, op)
+            xm = sc["xray_material"]
+            if _key(xm) in _XC:
+                inner = _xray_source(_key(xm), op)
+            else:
+                inner = {"kind": "mixture", "composition": _composition(xm, op),
+                         "reference": "chemical formula %s; mixture rule over NIST SRD 126" % xm}
+            src = dict(inner)
+            src["name"] = name
+            src["density_g_cm3"] = sc["density_g_cm3"]
+            src["reference"] = ("%s; scintillator record %s (activator neglected, density from the record)"
+                                % (inner["reference"], name))
         elif _FORMULA_TOKEN.sub("", str(material).strip()) == "" and re.search(r"[A-Z]", str(material)):
             src = {"name": str(material).strip(), "kind": "mixture", "composition": _composition(material, op),
                    "density_g_cm3": density_g_cm3, "reference": "chemical formula; mixture rule over NIST SRD 126"}
@@ -1160,8 +1213,9 @@ def material_xray_table() -> list:
 
     返り値: 1 材料 1 行の dict(name, kind = table / mixture / element, density_g_cm3, composition
     ((記号, 質量分率), …), optical(光学の表にも同じ名前のレコードがあるか), reference)。
-    元素 49 種と NIST の化合物 20 種は NIST SRD 126(Hubbell & Seltzer)の表そのもの、それ以外は
-    :data:`XRAY_SOLID`(と電子線の表)の組成から混合則で作る。範囲は 1 keV〜1 MeV(表の外は外挿しない)。
+    元素 51 種と NIST の化合物 21 種は NIST SRD 126(Hubbell & Seltzer)の表そのもの、それ以外は
+    :data:`XRAY_SOLID`(と電子線の表)の組成から混合則で作る。シンチレータのレコード(CSI:TL / BI4GE3O12 …)は
+    その ``xray_material`` の列とレコードの密度。範囲は 1 keV〜1 MeV(表の外は外挿しない)。
     """
     rows = []
     for z in sorted(_XE):
@@ -1170,7 +1224,8 @@ def material_xray_table() -> list:
                      "composition": ((e["symbol"], 1.0),), "optical": e["symbol"].upper() in _RECORDS,
                      "reference": "NIST SRD 126 " + e["page"]})
     es = globals().get("ELECTRON_SOLID") or {}
-    for key in list(_XC) + sorted(set(XRAY_SOLID) | {k for k in es if k not in _XC and k not in _XE_SYMBOL}):
+    scint = sorted(n for n, r in _RECORDS.items() if "scintillator" in r.get("properties", {}))
+    for key in list(_XC) + sorted(set(XRAY_SOLID) | {k for k in es if k not in _XC and k not in _XE_SYMBOL}) + scint:
         src = _xray_source(key, "material_xray_table")
         rows.append({"name": key, "kind": src["kind"], "density_g_cm3": src["density_g_cm3"],
                      "composition": tuple((_XE[z]["symbol"], round(w, 6)) for z, w in src["composition"]),

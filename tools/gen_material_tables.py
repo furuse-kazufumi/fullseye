@@ -28,6 +28,14 @@ n(10 µm) = 3.96)と Burnett(結晶)を継ぎ、SiC は 6H の Singh と Larruqu
 (2〜14 µm)、SiC = Wang の 4H 常光線(0.40〜5 µm、ウェハの主流)。``tests/test_materials.py`` が継ぎ目の差(≤ 0.01)と
 独立の表(Ge: Li 293 K、SiC: Singh の 6H、Si: Li 293 K)との差を数える。
 ``tests/test_materials.py`` が 550 nm の反射率を別の測定の表の値と突き合わせる。
+
+**シンチレータ・蛍光体の発光の列**(2026-10-23、``SCINTILLATORS``): X 線・γ 線を光に変える無機の
+シンチレータ 7 種(化学式で名前を付ける。商品名は使わない)。RII の表ではないので、値は一次情報を
+読んで写した**キュレート済みの定数**で、値ごとに出典を ``sources`` に残す(PDG 2024 の表 35.4・
+Berkeley Lab の Inorganic Scintillator Library の csv の行・論文)。確かめられなかった値は ``None``
+にして ``unverified`` に名前を並べる(推測で埋めない)。屈折率の表が RII にある材料(CsI / NaI /
+Bi4Ge3O12)は ``datasets`` にその一次文献も載せる。X 線の列は ``xray_material``(NIST の化合物の表の
+名前か化学式)で ``materials`` の X 線の列が引く。
 """
 from __future__ import annotations
 
@@ -119,6 +127,110 @@ SELECTION += [
     ("POLYSTYRENE", "polymer", [("organic/(C8H8)n - polystyrene/nk/Sultanova.yml", "")], ["PS"]),
     ("ZEONEX_E48R", "polymer", [("other/commercial polymers/ZeonexE48R/nk/Sultanova.yml", "cyclo-olefin polymer")], ["COP"]),
 ]
+
+
+# --------------------------------------------------------------------------- #
+# シンチレータ・蛍光体の発光の列(2026-10-23)                                   #
+# --------------------------------------------------------------------------- #
+# 値は一次情報を読んで写した定数(RII の表ではない)。1 値 1 出典で ``sources`` に残す。
+#   PDG  = Particle Data Group, S. Navas et al., Phys. Rev. D 110, 030001 (2024), review "Particle detectors at
+#          accelerators", Table 35.4 "Properties of several inorganic crystals"(密度・減衰時間・発光の極大・
+#          極大での屈折率。光収率は NaI(Tl) を 100 とする相対値なので絶対値には使わない)。
+#   LBNL = Berkeley Lab "Inorganic Scintillator Library"(https://scintillator.lbl.gov/inorganic-scintillator-library/、
+#          公開の csv を 2026-10-23 に読んだ。SHA-256 6085c865…940a)。行ごとに原著の略号(Sakai1987 など)がある。
+#          光収率 [photons/MeV] はここから取り、どの行かを書く。
+# 発光スペクトルの**幅**(FWHM)は、確かめられる一次情報を見つけられなかったので全材料 ``None``。
+# 消費側(``dualxray.scintillator_sensor_qe``)は幅が無いとき発光を極大の 1 本の線として扱い、そう返り値に書く
+# (幅を推測で入れない)。実測の発光スペクトルがあれば ``emission_spectrum=`` で渡す。
+_PDG_2024 = ("Particle Data Group, S. Navas et al., Phys. Rev. D 110, 030001 (2024), review 35 'Particle detectors "
+             "at accelerators', Table 35.4")
+_LBNL = ("Berkeley Lab Inorganic Scintillator Library, https://scintillator.lbl.gov/inorganic-scintillator-library/ "
+         "(csv read 2026-10-23), row ")
+
+SCINTILLATORS = [
+    {"name": "CSI:TL", "class": "crystal", "aliases": ["CSI(TL)", "CSI_TL"],
+     "pages": [("main/CsI/nk/Li.yml", "undoped CsI; the Tl activator (~0.1 %) is not resolved in n")],
+     "activator": "Tl+", "form": "single crystal", "xray_material": "CSI",
+     "density_g_cm3": 4.51, "light_yield_photons_per_mev": 56000.0, "decay_time_ns": 1220.0,
+     "emission_peak_nm": 550.0, "emission_fwhm_nm": None, "refractive_index_at_peak": 1.79,
+     "sources": {"density_g_cm3": _PDG_2024, "decay_time_ns": _PDG_2024, "emission_peak_nm": _PDG_2024,
+                 "refractive_index_at_peak": _PDG_2024,
+                 "light_yield_photons_per_mev": _LBNL + "Sakai1987 (56,000; deHaas2005 and dehaas2008 also 56,000)",
+                 "xray_material": "NIST SRD 126 compound table 'Cesium Iodide' (Tl neglected)"}},
+    {"name": "NAI:TL", "class": "crystal", "aliases": ["NAI(TL)", "NAI_TL"],
+     "pages": [("main/NaI/nk/Li.yml", "undoped NaI; the Tl activator is not resolved in n")],
+     "activator": "Tl+", "form": "single crystal", "xray_material": "NaI",
+     "density_g_cm3": 3.67, "light_yield_photons_per_mev": 45000.0, "decay_time_ns": 245.0,
+     "emission_peak_nm": 410.0, "emission_fwhm_nm": None, "refractive_index_at_peak": 1.85,
+     "sources": {"density_g_cm3": _PDG_2024, "decay_time_ns": _PDG_2024, "emission_peak_nm": _PDG_2024,
+                 "refractive_index_at_peak": _PDG_2024,
+                 "light_yield_photons_per_mev": _LBNL + "Sakai1987 (45,000; dehaas2008 also 45,000)",
+                 "xray_material": "chemical formula NaI, mixture rule over NIST SRD 126 (Tl neglected)"}},
+    {"name": "BI4GE3O12", "class": "crystal", "aliases": ["BGO"],
+     "pages": [("main/Bi4Ge3O12/nk/Williams.yml", "")],
+     "activator": "Bi3+ (intrinsic)", "form": "single crystal", "xray_material": "Bi4Ge3O12",
+     "density_g_cm3": 7.13, "light_yield_photons_per_mev": 8500.0, "decay_time_ns": 300.0,
+     "emission_peak_nm": 480.0, "emission_fwhm_nm": None, "refractive_index_at_peak": 2.15,
+     "sources": {"density_g_cm3": _PDG_2024, "decay_time_ns": _PDG_2024, "emission_peak_nm": _PDG_2024,
+                 "refractive_index_at_peak": _PDG_2024,
+                 "light_yield_photons_per_mev": _LBNL + "Moszynski1997a (8,500; the room-temperature rows span "
+                                                "7,100-10,600)",
+                 "xray_material": "chemical formula Bi4Ge3O12, mixture rule over NIST SRD 126"}},
+    {"name": "LU2SIO5:CE", "class": "crystal", "aliases": ["LSO", "LSO:CE", "LU2SIO5(CE)"],
+     "pages": [],
+     "activator": "Ce3+", "form": "single crystal", "xray_material": "Lu2SiO5",
+     "density_g_cm3": 7.40, "light_yield_photons_per_mev": 27000.0, "decay_time_ns": 40.0,
+     "emission_peak_nm": 402.0, "emission_fwhm_nm": None, "refractive_index_at_peak": 1.82,
+     "sources": {"density_g_cm3": _PDG_2024, "decay_time_ns": _PDG_2024, "emission_peak_nm": _PDG_2024,
+                 "refractive_index_at_peak": _PDG_2024,
+                 "light_yield_photons_per_mev": _LBNL + "Melcher1996 (27,000; the rows span 22,200-33,000 with "
+                                                "Ce content)",
+                 "xray_material": "chemical formula Lu2SiO5, mixture rule over NIST SRD 126 (Ce neglected)"}},
+    {"name": "LU1.8Y0.2SIO5:CE", "class": "crystal", "aliases": ["LYSO", "LYSO:CE"],
+     "pages": [],
+     "activator": "Ce3+", "form": "single crystal", "xray_material": "Lu1.8Y0.2SiO5",
+     "density_g_cm3": 7.1, "light_yield_photons_per_mev": 34000.0, "decay_time_ns": 41.0,
+     "emission_peak_nm": 397.0, "emission_fwhm_nm": None, "refractive_index_at_peak": None,
+     "sources": {"density_g_cm3": _LBNL + "Pidol2004", "light_yield_photons_per_mev": _LBNL + "Pidol2004",
+                 "decay_time_ns": _LBNL + "Pidol2004 ('41 + slow': the fast component; a slow tail is not given)",
+                 "emission_peak_nm": _LBNL + "Pidol2004",
+                 "xray_material": "chemical formula Lu1.8Y0.2SiO5, mixture rule over NIST SRD 126 (Ce neglected)"}},
+    {"name": "CDWO4", "class": "crystal", "aliases": [],
+     "pages": [],
+     "activator": "self-activated", "form": "single crystal", "xray_material": "CdWO4",
+     "density_g_cm3": 7.9, "light_yield_photons_per_mev": 27000.0, "decay_time_ns": 12000.0,
+     "emission_peak_nm": 495.0, "emission_fwhm_nm": None, "refractive_index_at_peak": None,
+     "sources": {"density_g_cm3": _LBNL + "Moszynski2005", "light_yield_photons_per_mev":
+                 _LBNL + "Moszynski2005 (27,000; the other rows give 7,800-15,800 - the spread is large)",
+                 "decay_time_ns": _LBNL + "Moszynski2005", "emission_peak_nm": _LBNL + "Moszynski2005",
+                 "xray_material": "chemical formula CdWO4, mixture rule over NIST SRD 126"}},
+    {"name": "GD2O2S:TB", "class": "crystal", "aliases": ["GOS:TB", "GD2O2S(TB)"],
+     "pages": [],
+     "activator": "Tb3+", "form": "powder phosphor / ceramic", "xray_material": "GOS",
+     "density_g_cm3": 7.44, "light_yield_photons_per_mev": None, "decay_time_ns": 638000.0,
+     "emission_peak_nm": 545.0, "emission_fwhm_nm": None, "refractive_index_at_peak": None,
+     "sources": {"density_g_cm3": "NIST SRD 126 Table 2 'Gadolinium Oxysulfide' (bulk; a powder screen is less dense)",
+                 "decay_time_ns": "B. Tang et al., Molecules 28, 1815 (2023), doi:10.3390/molecules28041815, Table 1 "
+                                  "(x = 0: 638 us; photoluminescence lifetime of Tb3+ under 293-298 nm excitation, "
+                                  "not X-ray)",
+                 "emission_peak_nm": "B. Tang et al., Molecules 28, 1815 (2023): strongest line 545 nm (5D4 -> 7F5); "
+                                     "further lines at 494 / 589 / 623 nm (a line spectrum, not one band)",
+                 "xray_material": "NIST SRD 126 compound table 'Gadolinium Oxysulfide' (Tb neglected)"}},
+]
+_SCINT_FIELDS = ("activator", "form", "xray_material", "density_g_cm3", "light_yield_photons_per_mev",
+                 "decay_time_ns", "emission_peak_nm", "emission_fwhm_nm", "refractive_index_at_peak")
+_SCINT_BY_NAME = {s["name"]: s for s in SCINTILLATORS}
+
+
+def _scintillator_properties(s):
+    """SCINTILLATORS の 1 行 → レコードの ``properties``(密度は kg/m³ にも、発光の列は ``scintillator`` に)。"""
+    sc = {k: s[k] for k in _SCINT_FIELDS}
+    sc["sources"] = dict(s["sources"])
+    sc["unverified"] = tuple(k for k in _SCINT_FIELDS if s[k] is None)
+    for k in _SCINT_FIELDS:
+        if s[k] is not None and k not in ("activator", "form") and k not in s["sources"]:
+            raise SystemExit("%s: %s has a value but no source" % (s["name"], k))
+    return {"density_kg_m3": float(s["density_g_cm3"]) * 1000.0, "scintillator": sc}
 
 
 def _acoustic_properties(rho, c, alpha0, alpha_n, verified, source, uncertainty):
@@ -257,7 +369,8 @@ def _props(p):
 def build(rii_dir):
     data_dir = os.path.join(rii_dir, "data")
     recs = []
-    for name, cls, pages, aliases in SELECTION:
+    for name, cls, pages, aliases in SELECTION + [(s["name"], s["class"], s["pages"], s["aliases"])
+                                                 for s in SCINTILLATORS]:
         datasets = []
         props = {}
         cites = []
@@ -293,6 +406,8 @@ def build(rii_dir):
             props.update(_props(y.get("PROPERTIES")))
             cites.append(_plain(y.get("REFERENCES")))
         props.update(CURATED_ACOUSTIC_PROPERTIES.get(name, {}))
+        if name in _SCINT_BY_NAME:
+            props.update(_scintillator_properties(_SCINT_BY_NAME[name]))
         recs.append({"name": name, "class": cls, "aliases": tuple(aliases), "datasets": datasets,
                      "properties": props})
     recs.extend([

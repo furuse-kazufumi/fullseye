@@ -7,6 +7,13 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### 追加 — シンチレータ・蛍光体の発光の列と、シンチレータ積層のセンサの QE
+
+- 材料表(`materials` / 生成物 `materials_data.py`、生成器 `tools/gen_material_tables.py`)にシンチレータ 7 種: `CSI:TL` / `NAI:TL` / `BI4GE3O12`(BGO)/ `LU2SIO5:CE`(LSO)/ `LU1.8Y0.2SIO5:CE`(LYSO)/ `CDWO4` / `GD2O2S:TB`(GOS:Tb)。化学式で名前を付け(別名 BGO / LSO / LYSO …)、`properties["scintillator"]` に発光の極大・光収率 [photons/MeV]・減衰時間・密度・極大での屈折率・X 線の列の引き先を持つ。値は一次情報を読んで写し、値ごとに出典(PDG 2024 表 35.4 / Berkeley Lab Inorganic Scintillator Library の csv の行 / Tang ら Molecules 28, 1815 (2023))。**確かめられなかった値は入れていない**: GOS:Tb の光収率と、全材料の発光の幅(FWHM)は `None` で `unverified` に名前が出る。CsI / NaI / BGO は RII の屈折率の一次文献も載せ、PDG の「極大での n」と独立に照合する(CsI・BGO は 0.01 以内、NaI は Li 1976 の 1 点の Sellmeier が 0.026 低い)。材料の件数 89 → 96。
+- X 線の列(`materials_xray_data.py`、`tools/gen_xray_tables.py`)に NIST SRD 126 の Lu(71)と Bi(83)を足した(元素 49 → 51)。シンチレータの名前で μ/ρ を引ける(`CSI:TL` は NIST の CsI の表そのもの、他は化学式の混合則とレコードの密度。付活剤は無視)。
+- `dualxray.dual_kvp_channels(detector=...)` が材料表のシンチレータの名前を受ける(`response["scintillator"]` に光収率・発光の極大・減衰時間)。既定の `detector="CSI"` の重み・gain・response は変わらない(master の値と 1e-13、同じプロセスでは `CSI` と `CSI:TL` が 1 ビットも違わないことをテストで固定)。
+- 新 op `dualxray.scintillator_sensor_qe`(spectral_xray): X 線のエネルギー → 吸収効率 1 − e^{−μt} → 光子数(光収率 × 吸収エネルギー × 集光率)→ 発光スペクトル × 光検出器の QE(既定 `spectralrad.silicon_photodiode_qe()`)の重なり → X 線 1 個あたりの電子数。表に幅が無いので、発光は既定で極大の 1 本の線として扱い(`emission_model` にそう書く)、実測の発光は `emission_spectrum=` で渡す。門 `tests/test_scintillator_materials_2026_10_23.py`(吸収効率の閉形式、厚さ → ∞ で 1、発光の正規化、細いガウス → 線、dual_kvp の CsI 既定との一致、fail-closed)。
+
 ### 追加 — 映像の物理整合性(弾道か推力か、時間は引き延ばされていないか)
 
 - `ballistics` に 6 op: `thrust_ode`(重力+抗力+一定の比推力の RK4)、`drag_fit` / `thrust_fit`(軌跡から (p₀, v₀, C_d[, a_T]) を射影つき Levenberg–Marquardt で同定、(N, 3) でも単眼の平面 (N, 2) でも)、`aic_from_rss`、`ballistic_vs_thrust`(2 模型の当てはめと ΔAIC を返す。判定は返さず、閾値は呼び手。節約則)、`time_stretch_from_gravity`(k = √(g_ref / g_fit))。推力つきの当てはめは抗力だけの解を始点に含むので ΔAIC ≥ −2Δk が保たれる。

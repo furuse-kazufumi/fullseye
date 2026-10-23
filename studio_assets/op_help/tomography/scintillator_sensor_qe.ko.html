@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">scintillator_sensor_qe — TOMOGRAPHY <code style="color:#22d3bf">spectral_xray</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">table</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scintillator_sensor_qe(scintillator=&#x27;CSI:TL&#x27;, thickness_mm: &#x27;float&#x27; = 0.6, e_min_kev: &#x27;float&#x27; = 10.0, e_max_kev: &#x27;float&#x27; = 150.0, n_points: &#x27;int&#x27; = 141, photodetector_qe=None, emission_spectrum=None, light_yield_per_mev=None, light_collection: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import dualxray; dualxray.scintillator_sensor_qe(scintillator=&#x27;CSI:TL&#x27;, thickness_mm: &#x27;float&#x27; = 0.6, e_min_kev: &#x27;float&#x27; = 10.0, e_max_kev: &#x27;float&#x27; = 150.0, n_points: &#x27;int&#x27; = 141, photodetector_qe=None, emission_spectrum=None, light_yield_per_mev=None, light_collection: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opstomography.get(&quot;scintillator_sensor_qe&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>신틸레이터 결합 센서의 양자 효율: X선 광자 1개 → 신틸레이터의 흡수 → 발광 → 광검출기의 전자 수.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>エネルギー E の X 線 1 個あたり:</p>
+<p style="margin:2px 0 2px 12px">• 吸収効率 A(E) = 1 − exp(−μ(E) t)。μ は <code style="color:#22d3bf">scintillator</code> のレコードの X 線の列(NIST SRD 126)と密度、t = <code style="color:#22d3bf">thickness_mm</code>。<code style="color:#22d3bf">dual_kvp_channels</code> と同じ関数で計算する(CSI:TL は既定の <code style="color:#22d3bf">CSI</code> と同じ値)。</p>
+<p style="margin:2px 0 2px 12px">• 光子の数 N(E) = A(E) · Y · E · η_c。Y = 光収率 <a style="color:#22d3bf" href="材料表、``light_yield_per_mev`` で上書き">photons/MeV</a>、E は MeV、η_c = <code style="color:#22d3bf">light_collection</code>(光が光検出器に届く割合、既定 1 = 全部届く理想)。吸収した X 線はエネルギーを全部置いていくとみなす(K 蛍光の逃げとコンプトンの逃げは入れない)。</p>
+<p style="margin:2px 0 2px 12px">• 重なり Q̄ = ∫ S(λ) QE(λ) dλ(S は ∫ S dλ = 1 に正規化した発光スペクトル)。電子の数 = N(E) · Q̄。</p>
+<p>発光スペクトル S: <code style="color:#22d3bf">emission_spectrum</code> に (λ nm, 相対強度) の pairs を渡せばそれを正規化して使う。渡さなければ材料表から —— 表に発光の幅(FWHM)があればその幅のガウス、<b>無ければ発光の極大の 1 本の線</b> (Q̄ = QE(λ_peak))。2026-10-23 時点で幅を一次情報で確かめられた材料は無いので、表から作るのは線になる。返り値の <code style="color:#22d3bf">emission_model</code> がどちらかを言う。<code style="color:#22d3bf">photodetector_qe</code> は (λ nm, QE) の pairs で、既定は <code style="color:#22d3bf">spectralrad.silicon_photodiode_qe()</code>(Si フォトダイオード、集める深さ 3 µm、反射防止膜なし)。発光が QE の波長範囲の外にはみ出すと ValueError(外の光を 0 と数えて重なりを小さく出さない)。</p>
+<p>返り値: dict(scintillator, thickness_mm, energy_kev, absorption_efficiency, light_photons, electrons, overlap = Q̄, light_yield_photons_per_mev, light_collection, emission_model, emission(正規化した pairs、線なら None), emission_peak_nm, photodetector, decay_time_ns, sources(使った値の出典), unverified)。光収率の無い材料(GD2O2S:TB)で <code style="color:#22d3bf">light_yield_per_mev</code> を渡さなければ ValueError。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• (아직 없음)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">spectral_xray</code>)</h3>
+<p><a style="color:#22d3bf" href="optomography:material_xray_table">material_xray_table</a> · <a style="color:#22d3bf" href="optomography:material_xray_attenuation">material_xray_attenuation</a> · <a style="color:#22d3bf" href="optomography:material_xray_constants">material_xray_constants</a> · <a style="color:#22d3bf" href="optomography:material_effective_z">material_effective_z</a> · <a style="color:#22d3bf" href="optomography:xray_tube_spectrum">xray_tube_spectrum</a> · <a style="color:#22d3bf" href="optomography:xray_beam_quality">xray_beam_quality</a> · <a style="color:#22d3bf" href="optomography:photon_counting_channels">photon_counting_channels</a> · <a style="color:#22d3bf" href="optomography:dual_kvp_channels">dual_kvp_channels</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: dualxray.py — TOMOGRAPHY 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
