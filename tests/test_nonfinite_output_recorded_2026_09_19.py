@@ -33,7 +33,7 @@ def test_partial_nan_input_is_recorded_as_a_nonfinite_output_under_the_default_p
     fs.clear_fallbacks()
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        out = fs.apply(_nan_image(), name)
+        out = fs.apply(_nan_image(), name, allow_nonfinite=True)
     assert np.isfinite(out).all()                          # 置き換え自体は従来どおり(有限で sort として妥当)
     recs = [e for e in fs.fallbacks() if e["name"] == name and e["source"] == "output"]
     assert recs and "non_finite_output" in recs[0]["error"], fs.fallbacks()
@@ -42,7 +42,7 @@ def test_partial_nan_input_is_recorded_as_a_nonfinite_output_under_the_default_p
 
 def test_partial_nan_input_stops_under_raise():
     with pytest.raises(ValueError, match="non_finite_output"):
-        fs.apply(_nan_image(), "gaussian", on_error="raise")
+        fs.apply(_nan_image(), "gaussian", on_error="raise", allow_nonfinite=True)
 
 
 def test_finite_output_is_not_recorded():
@@ -54,7 +54,7 @@ def test_finite_output_is_not_recorded():
 def test_nan_handling_ops_that_return_finite_results_are_untouched():
     # otsu は NaN を無視して有限の region を返す —— 出力が有限なら記録も例外も無い
     fs.clear_fallbacks()
-    out = fs.apply(_nan_image(), "otsu", on_error="raise")
+    out = fs.apply(_nan_image(), "otsu", on_error="raise", allow_nonfinite=True)
     assert set(np.unique(out)) <= {0.0, 1.0} and not fs.fallbacks()
 
 

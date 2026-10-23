@@ -22,7 +22,7 @@ def test_complex_sort_op_returns_finite_for_nonfinite_input(name, kind):
         pytest.skip("%s は この環境で登録されていない" % name)
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        out = np.asarray(F.apply(INPUTS[kind], name, 0.5, 0.5))
+        out = np.asarray(F.apply(INPUTS[kind], name, 0.5, 0.5, allow_nonfinite=True))   # 入口の拒否を越えて出口の埋めを見る
     assert np.isfinite(out).all()
 
 

@@ -34,6 +34,8 @@ OUTCOMES = (
     "raises_fsvalueerror", "raises_other", "propagates_nan", "silent_finite",
     "silent_identical", "timeout", "baseline_failed", "not_applicable",
 )
+# 公開の入口(fullseye.apply)が非有限な入力に対して取るべき挙動(2026-10-23 の契約変更: 入口で拒否)
+WRAPPER_REFUSAL = "raised_FsValueError"
 
 # ndarray として一画素を書き換えられる登録 sort。一覧にない sort も黙って
 # 落とさず not_applicable 行に残す。
@@ -207,6 +209,31 @@ def _wrapper_behaviour(name: str, value: np.ndarray) -> str:
         return f"raised_{type(exc).__name__}"
 
 
+def injected_inputs(value: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    """基準入力の中央の 1 要素だけを NaN / +inf にした 2 本を返す。"""
+    changed_nan = value.copy()
+    changed_nan.flat[changed_nan.size // 2] = np.nan
+    changed_inf = value.copy()
+    changed_inf.flat[changed_inf.size // 2] = np.inf
+    return changed_nan, changed_inf
+
+
+def measure_wrapper(records: list[dict[str, object]]) -> None:
+    """包み紙(fullseye.apply)経由の挙動だけを全行で計り直す(生の実測は使い回す)。
+
+    入口は op を呼ぶ前に拒否するので同じプロセスで計れる(停止する実装に当たらない)。
+    """
+    for record in records:
+        value = baseline_for_sort(str(record["in_sort"]))
+        if value is None:
+            record["wrapper_behaviour"] = {}
+            continue
+        changed_nan, changed_inf = injected_inputs(value)
+        name = str(record["name"])
+        record["wrapper_behaviour"] = {"nan": _wrapper_behaviour(name, changed_nan),
+                                       "inf": _wrapper_behaviour(name, changed_inf)}
+
+
 def audit_one(meta: dict[str, object], timeout: float = TIMEOUT) -> dict[str, object]:
     base = {k: meta[k] for k in ("name", "category", "in_sort", "out_sort", "module")}
     base.update(nan_outcome="not_applicable", inf_outcome="not_applicable",
@@ -215,10 +242,10 @@ def audit_one(meta: dict[str, object], timeout: float = TIMEOUT) -> dict[str, ob
     if value is None:
         return base
     name = str(meta["name"])
-    changed_nan = value.copy()
-    changed_nan.flat[changed_nan.size // 2] = np.nan
-    changed_inf = value.copy()
-    changed_inf.flat[changed_inf.size // 2] = np.inf
+    changed_nan, changed_inf = injected_inputs(value)
+    # 包み紙経由は生の結果に依らず常に計る(以前は生の実装が例外を投げた行だけだった)
+    base["wrapper_behaviour"] = {"nan": _wrapper_behaviour(name, changed_nan),
+                                 "inf": _wrapper_behaviour(name, changed_inf)}
     calls = timed_calls(name, [value, changed_nan, changed_inf], timeout)
     normal, sec = calls[0]
     base["elapsed"]["baseline"] = round(sec, 6)
@@ -241,7 +268,6 @@ def audit_one(meta: dict[str, object], timeout: float = TIMEOUT) -> dict[str, ob
             outcome = _exception_outcome(answer)
             base["exceptions"][label] = {"type": answer["exception_type"],
                                                    "message": answer["exception_message"]}
-            base["wrapper_behaviour"][label] = _wrapper_behaviour(name, changed)
         else:
             outcome = classify_result(answer["value"], baseline_result)
         base[f"{label}_outcome"] = outcome
@@ -257,12 +283,20 @@ def make_document(records: list[dict[str, object]], elapsed: float) -> dict[str,
         if kinds:
             silent[str(record["module"])].append({"name": record["name"], "inputs": kinds})
     families = dict(sorted(Counter(str(r["in_sort"]) for r in records).items()))
+    applicable = [r for r in records if str(r["in_sort"]) in ARRAY_SORTS]
+    wrapper_counts = {kind: dict(sorted(Counter(
+        str(r["wrapper_behaviour"].get(kind, "not_measured")) for r in applicable).items()))
+        for kind in ("nan", "inf")}
+    passthrough = sorted(str(r["name"]) for r in applicable
+                         if any(r["wrapper_behaviour"].get(k) != WRAPPER_REFUSAL for k in ("nan", "inf")))
     return {
         "header": {"command": COMMAND, "timeout_seconds": TIMEOUT,
                    "elapsed_seconds": round(elapsed, 3), "registry_entries": len(records)},
         "summary": {"families": families, "counts": counts,
                     "silent_finite_by_module": dict(sorted(silent.items())),
-                    "contaminated": any(r["nan_outcome"] == "baseline_failed" for r in records)},
+                    "contaminated": any(r["nan_outcome"] == "baseline_failed" for r in records),
+                    "wrapper": {"refusal": WRAPPER_REFUSAL, "applicable": len(applicable),
+                                "counts": wrapper_counts, "passthrough": passthrough}},
         "records": records,
     }
 
@@ -275,6 +309,18 @@ def render_markdown(data: dict[str, object]) -> str:
              "", "## 結果", "", "| outcome | NaN | +inf |", "|---|---:|---:|"]
     for outcome in OUTCOMES:
         lines.append(f"| `{outcome}` | {summary['counts']['nan'][outcome]} | {summary['counts']['inf'][outcome]} |")
+    wrapper = summary.get("wrapper")
+    if wrapper is not None:
+        lines += ["", "## 包み紙(fullseye.apply)経由", "",
+                  "上の表は生の実装(登録表の関数を直接呼んだ結果)で、そちらは変えていない。公開の入口 `fullseye.apply` は "
+                  "非有限な浮動小数の入力を op を呼ぶ前に `FsValueError` で拒否する(2026-10-23 の契約変更、逃げ道は "
+                  f"`allow_nonfinite=True`)。適用可能な {wrapper['applicable']} op を同じ注入入力で入口経由に通した結果:",
+                  "", "| behaviour | NaN | +inf |", "|---|---:|---:|"]
+        behaviours = sorted(set(wrapper["counts"]["nan"]) | set(wrapper["counts"]["inf"]))
+        for behaviour in behaviours:
+            lines.append(f"| `{behaviour}` | {wrapper['counts']['nan'].get(behaviour, 0)} | {wrapper['counts']['inf'].get(behaviour, 0)} |")
+        lines += ["", "入口が拒否しなかった op(silent_finite の包み紙版): "
+                  + (", ".join(f"`{n}`" for n in wrapper["passthrough"]) if wrapper["passthrough"] else "なし。")]
     lines += ["", "## silent_finite", ""]
     if summary["silent_finite_by_module"]:
         for module, rows in summary["silent_finite_by_module"].items():
@@ -306,11 +352,23 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--names", help="comma-separated subset to measure")
     parser.add_argument("--merge", action="store_true",
                         help="merge the measured subset into the existing JSON")
+    parser.add_argument("--wrapper-only", action="store_true",
+                        help="re-measure only the fullseye.apply route on every row of the saved JSON")
     args = parser.parse_args(argv)
     if args.markdown_from_json:
         data = json.loads(JSON_PATH.read_text(encoding="utf-8"))
         fresh = render_markdown(data)
         ok = _write_text(MD_PATH, fresh, args.check)
+        return 0 if ok else 1
+    if args.wrapper_only:
+        previous = json.loads(JSON_PATH.read_text(encoding="utf-8"))
+        records = previous["records"]
+        measure_wrapper(records)
+        data = make_document(records, float(previous["header"].get("elapsed_seconds", 0.0)))
+        json_text = json.dumps(data, ensure_ascii=False, indent=2) + "\n"
+        ok = _write_text(JSON_PATH, json_text, args.check) & _write_text(MD_PATH, render_markdown(data), args.check)
+        w = data["summary"]["wrapper"]
+        print("wrapper route: applicable", w["applicable"], "counts", w["counts"], "passthrough", len(w["passthrough"]))
         return 0 if ok else 1
     started = time.perf_counter()
     metas = enumerate_ops()

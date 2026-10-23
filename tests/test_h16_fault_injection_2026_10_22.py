@@ -82,13 +82,16 @@ def test_nan_wrapper_routes_propagate_an_injected_failure(
         raw(bad, 0.4, 0.6)
 
     monkeypatch.setitem(ops.RT, name, bs.guard(raw, out_sort, name=name))
+    # 2026-10-23: 入口が方針に依らず先に拒否する(契約変更)。関門の経路は allow_nonfinite=True で見る
+    with pytest.raises(FsValueError, match=rf"{name}: input contains NaN or infinity"):
+        api.apply(bad, name, 0.4, 0.6)
     with pytest.raises(FsValueError, match=rf"{name}.*NaN"):
-        api.apply(bad, name, 0.4, 0.6, on_error="raise")
+        api.apply(bad, name, 0.4, 0.6, on_error="raise", allow_nonfinite=True)
     assert bs.fallbacks() == []
 
     with warnings.catch_warnings():
         warnings.simplefilter("ignore", bs.FullseyeFallbackWarning)
-        degraded = api.apply(bad, name, 0.4, 0.6)
+        degraded = api.apply(bad, name, 0.4, 0.6, allow_nonfinite=True)
     assert degraded is not None
     event = bs.fallbacks()[-1]
     assert event["name"] == name
@@ -118,10 +121,10 @@ def test_nan_input_contract_of_the_real_operator(name, in_sort, out_sort):
         with pytest.raises(FsValueError, match=rf"{name}.*NaN"):
             raw(bad, 0.4, 0.6)
         with pytest.raises(FsValueError, match=rf"{name}.*NaN"):
-            api.apply(bad, name, 0.4, 0.6, on_error="raise")
+            api.apply(bad, name, 0.4, 0.6, on_error="raise", allow_nonfinite=True)
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", bs.FullseyeFallbackWarning)
-            assert api.apply(bad, name, 0.4, 0.6) is not None
+            assert api.apply(bad, name, 0.4, 0.6, allow_nonfinite=True) is not None
         event = bs.fallbacks()[-1]
         assert event["name"] == name and "NaN" in event["error"]
         return

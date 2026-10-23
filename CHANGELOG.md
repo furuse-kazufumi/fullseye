@@ -7,6 +7,12 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### 契約変更 — 非有限な入力は入口で拒否する(fail-closed)
+
+- `fullseye.apply` と `run_pipeline` は、浮動小数の配列入力(画像・体積・点・信号、n 項 op の入力リストの各要素、XLD や表の数値の葉)に NaN か ±inf が 1 つでもあると、`on_error` に依らず `FsValueError("<op>: input contains NaN or infinity")` で止める。非有限入力の実測監査(`docs/NAN_INPUT_AUDIT.md`)で 431 op が NaN / +inf を黙って有限のもっともらしい答えに変えていたため(受け入れでも拒否でもない第 3 の状態)。整数・bool の配列は NaN を持てないので検査しない。生の実装は変えていない。知った上で op に渡すときの逃げ道は `apply(..., allow_nonfinite=True)` だけ(pipeline には無い)。
+- 監査ツール `tools/audit_nan_inputs.py` に包み紙(`fullseye.apply`)経由の結果表と、生の実測を使い回して包み紙だけ計り直す `--wrapper-only` を足した。門 `tests/test_nonfinite_input_refused_2026_10_23.py` が台帳の包み紙経路で silent_finite が 0 であること(適用可能な全 op が FsValueError で拒否)を固定する。
+
+
 - docstring/code 監査第2波の69行(68 op)を文書修正69件、コード修正0件、誤検出0件として整合した。
 - docstring と実装の食い違い(監査 2026-10-18)第 3 波: 確信度 low の 75 行(71 op)を探針で再現し、説明 58・コード 12(road_row_distance / csi_design / jitter / lateral_offset / random_dropout / random_rotation / pc_lod_chain / plateau_parse ほか: 空入力・境界値・非整数・複素入力の拒否と別名の切断)・偽陽性 2 を整理、6 言語の訳も追随。
 

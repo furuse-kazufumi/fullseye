@@ -118,5 +118,8 @@ def test_native_guards_still_refuse_non_finite_input_with_the_reason():
             pytest.skip("backend for %s not installed" % name)
         x = np.random.default_rng(0).random((32, 32))
         x[3, 3] = np.nan
-        with pytest.raises(ValueError, match="非有限"):
+        # 2026-10-23: 入口が先に止める(契約変更)。生の関門の文は allow_nonfinite=True で op まで届けたときに見える
+        with pytest.raises(ValueError, match="input contains NaN or infinity"):
             fs.apply(x, name, on_error="raise")
+        with pytest.raises(ValueError, match="非有限"):
+            fs.apply(x, name, on_error="raise", allow_nonfinite=True)

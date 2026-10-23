@@ -100,16 +100,17 @@ def main() -> int:
             assert why in str(e), (why, str(e))
             print("2.  %-13s:" % why, str(e)[:100], "...")
 
-    # 3. 判別できない入力
+    # 3. 判別できない入力(2026-10-23: 非有限な入力は方針に依らず入口で拒否。知った上で渡すなら allow_nonfinite=True)
     try:
-        fs.apply(np.full((8, 8), np.nan), "otsu", on_error="raise")
-        raise AssertionError("全 NaN の otsu が通った")
+        fs.apply(np.full((8, 8), np.nan), "otsu")
+        raise AssertionError("全 NaN の otsu が入口を通った")
     except ValueError as e:
+        assert "input contains NaN or infinity" in str(e)
         print("3a. all-NaN  :", str(e)[:90], "...")
     fs.clear_fallbacks()
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        out = fs.apply(np.full((8, 8), np.nan), "otsu")          # 既定方針: 台帳に記録して region の既定値
+        out = fs.apply(np.full((8, 8), np.nan), "otsu", allow_nonfinite=True)   # 既定方針: 台帳に記録して region の既定値
     assert out.shape == (8, 8) and any(e["name"] == "otsu" for e in fs.fallbacks())
     for arr, why in ((np.array([["a"] * 4] * 4), "numeric"), (img + 1j * img[::-1], "imaginary")):
         last = ""
