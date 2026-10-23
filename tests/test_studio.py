@@ -1505,6 +1505,9 @@ def test_current_graphics_window_model():
     m.add_stage("gaussian"); m.add_stage("otsu")
     from PySide6 import QtCore
     win, model = studio.build_window(m)
+    # this test picks ops regardless of the previous stage's output (Run once on the raw image /
+    # insertion mechanics): switch the browser's type filter (018, default on) off
+    win._ops_fit["check"].setChecked(False)
     disp = win._variables["display"]; lst = win._variables["list"]
     win._variables["refresh"](); lst.setCurrentRow(1)          # an iconic variable
     # current defaults to the resident primary window (handle 1)

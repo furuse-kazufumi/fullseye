@@ -365,6 +365,9 @@ def test_stage_knob_widgets_follow_the_spec():
 def test_operator_panel_typed_widgets_and_labels():
     from PySide6 import QtCore
     win, model = _build()
+    # this test picks ops regardless of the previous stage's output (Run once on the raw image /
+    # insertion mechanics): switch the browser's type filter (018, default on) off
+    win._ops_fit["check"].setChecked(False)
     ol = win._op_list
     ra, rb = win._op_knob_rows
     lbl_a, lbl_b = win._op_arg_labels
@@ -393,6 +396,9 @@ def test_insert_writes_program_line_at_cursor_and_keeps_stage_lines():
     `<op> (a, b)` (full-precision repr) at the cursor AND the pipeline the stage."""
     from PySide6 import QtCore
     win, model = _build(("gaussian", 0.5, 0.5), ("otsu", 0.5, 0.5))
+    # this test picks ops regardless of the previous stage's output (Run once on the raw image /
+    # insertion mechanics): switch the browser's type filter (018, default on) off
+    win._ops_fit["check"].setChecked(False)
     ed = win._program["edit"]
     ol = win._op_list
     a_spin, b_spin = win._op_arg_spins
