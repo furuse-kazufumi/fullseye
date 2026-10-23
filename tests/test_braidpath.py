@@ -427,6 +427,21 @@ def test_bad_inputs_raise():
     assert _raises(lambda: B.homotopy_shortest_paths(_pillar_grid(), (4, 6), (4, 11)))       # 塞がったマス
 
 
+
+def test_endpoint_tolerance_is_an_argument_that_only_passes_or_refuses():
+    # tol は答えを変えず、端のずれを通すか拒むかだけを決める(効かないノブの台帳に理由つき、2026-10-24)。
+    A = _orbit(1)
+    Bm = A.copy()
+    Bm[0, -1] += 1e-6                                   # 計画器ごとの丸めで端が少しずれた、同じ回り方の計画
+    assert _raises(lambda: B.homotopy_class_compare(A, Bm))                 # 既定 ENDPOINT_TOL = 1e-9 では拒む
+    wide = B.homotopy_class_compare(A, Bm, tol=1e-5)
+    assert wide["same"] and wide["endpoint_error"] == pytest.approx(1e-6, rel=1e-6)
+    exact = B.homotopy_class_compare(A, A.copy())
+    assert exact["same"] == B.homotopy_class_compare(A, A.copy(), tol=1e-3)["same"]   # 答えは tol に依らない
+    for bad in (-1e-9, float("nan"), float("inf"), "1e-9x", None):
+        assert _raises(lambda bad=bad: B.homotopy_class_compare(A, A.copy(), tol=bad)), bad
+
+
 def test_outputs_are_not_empty_constant_or_infinite():
     w = [1, 2, -1, 3, 2, 2, -3, 1]
     d = B.dynnikov_coordinates(w, 4)

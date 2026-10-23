@@ -619,7 +619,8 @@ def braid_equivalent(word_a, word_b, n_strands, method="dynnikov"):
     return out
 
 
-def homotopy_class_compare(traj_a, traj_b, obstacles=None, angle=DEFAULT_ANGLE, jitter="auto"):
+def homotopy_class_compare(traj_a, traj_b, obstacles=None, angle=DEFAULT_ANGLE, jitter="auto",
+                           tol=ENDPOINT_TOL):
     """始点と終点が同じ 2 つの経路族(複数エージェントの計画)が、同じホモトピー類か。
 
     衝突せずに(エージェント同士も障害物の点とも重ならずに)始点と終点を止めたまま連続に変形できる ⇔ 組紐が等しい。
@@ -627,20 +628,26 @@ def homotopy_class_compare(traj_a, traj_b, obstacles=None, angle=DEFAULT_ANGLE, 
 
     Returns: dict ``same``、``word_a`` / ``word_b``、``key_a`` / ``key_b``、``quotient``(a b⁻¹ を簡約した語 —— 空なら同じ類、
     空でなければ「どう回り方が違うか」の語)、``endpoint_error``(始点・終点の最大のずれ)。
-    始点と終点は ``ENDPOINT_TOL``(1e-9、座標の単位)以内でそろっていること。★許容は引数にしない: 答えを変えずに
-    通す / 拒むだけの門は「効かないノブ」になる(2026-10-23)。計画器ごとに端が丸めで違うときは、比べる前に端を
-    そろえる(類は端を止めた変形の類なので、端の違う 2 つの計画は比べられない)。
+    始点と終点は ``tol``(既定 ``ENDPOINT_TOL`` = 1e-9、座標の単位)以内でそろっていること。``tol`` は答えを
+    変えず通す / 拒むだけの門で、効かないノブの台帳に理由つきで載せている。計画器ごとに端が丸めで違うときは
+    ``tol`` を広げるか、比べる前に端をそろえる(類は端を止めた変形の類なので、端の違う 2 つの計画は比べられない)。
 
-    Raises: ValueError(台数が違う、始点か終点が ``ENDPOINT_TOL`` より離れている、衝突)。
+    Raises: ValueError(台数が違う、始点か終点が ``tol`` より離れている、``tol`` が負か非有限、衝突)。
     """
     op = "homotopy_class_compare"
+    try:
+        tol = float(tol)
+    except (TypeError, ValueError):
+        raise ValueError("%s: tol must be a finite number >= 0, got %r" % (op, tol))
+    if not (math.isfinite(tol) and tol >= 0.0):
+        raise ValueError("%s: tol must be a finite number >= 0, got %r" % (op, tol))
     A, B = _as_traj(traj_a, op), _as_traj(traj_b, op)
     if A.shape[0] != B.shape[0]:
         raise ValueError("%s: the two plans have %d and %d agents" % (op, A.shape[0], B.shape[0]))
     err = max(float(np.max(np.abs(A[:, 0] - B[:, 0]))), float(np.max(np.abs(A[:, -1] - B[:, -1]))))
-    if not err <= ENDPOINT_TOL:
+    if not err <= tol:
         raise ValueError("%s: start / goal positions differ by %.3g (> tol %.3g) — homotopy classes compare plans "
-                         "with the same endpoints" % (op, err, ENDPOINT_TOL))
+                         "with the same endpoints" % (op, err, tol))
     (ba, bb), clear = _braids_consistent([A, B], obstacles, _angle(angle, op), jitter, op)
     if not np.array_equal(ba["start_order"], bb["start_order"]):
         raise ValueError("%s: the start order along the projection differs (two strands tie within tol); pass another "
