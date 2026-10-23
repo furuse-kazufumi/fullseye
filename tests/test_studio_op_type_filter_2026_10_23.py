@@ -74,6 +74,7 @@ def test_ops_accepting_hides_only_and_keeps_rows_untouched():
     before = [dict(r) for r in rows]
     shown = studio._ops_accepting(rows, "region")
     assert rows == before                       # nothing converted or rewritten
+    assert shown                                # a non-empty listing, so all() below is not vacuous
     assert all(r in rows for r in shown)
     assert studio._ops_accepting(rows, None) == rows
 
@@ -178,6 +179,7 @@ def test_switch_label_and_notes_are_translated():
     for k in keys:
         row = studio.STRINGS_I18N.get(k)
         assert row and set(row) >= {"ja", "zh", "tw", "ko", "de", "hi"}, k
+        assert len(row) >= 6, k
         for t in row.values():
             assert t.count("%d") == k.count("%d") and t.count("%s") == k.count("%s")
 
