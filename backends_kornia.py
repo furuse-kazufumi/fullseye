@@ -84,6 +84,26 @@ def _np(t):
     return t.detach().cpu().numpy()[0, 0].astype(np.float64)
 
 
+def _zero_border(fn, v, ksize):
+    """``fn`` を **外側 0 埋め** の境界で呼ぶ(kornia の版に依らない)。
+
+    kornia 0.9.0 で ``median_blur`` と ``motion_blur`` の境界が 0 埋めから鏡映
+    (reflect)に変わった(実測 2026-10-24: 16x16 の乱数画像で縁の画素が最大 0.77
+    ずれ、内側は一致。ほかの filter は版で変わらない)。鏡映は窓の半径が画像の辺
+    以上だと torch が例外を出すので、4x4 の画像に 9x9 の窓で op が落ち、CI が
+    新しい kornia を入れた日に赤になった。
+
+    自前で半径ぶん 0 を足してから呼び、内側を切り出す: 切り出した画素の窓は
+    足した 0 の内側に収まるので、kornia がその外にどんな境界を置いても結果は
+    変わらない = 0.8.x と同じ出力が 0.9 でも出る。
+    """
+    r = int(ksize) // 2
+    x = _m()["torch"].nn.functional.pad(_t(v), (r, r, r, r), mode="constant",
+                                        value=0.0)
+    y = fn(x)
+    return _np(y[..., r:y.shape[-2] - r, r:y.shape[-1] - r])
+
+
 def _norm(x, ref=None):
     """最大絶対値で正規化する。ただし **応答が丸め屑しか無いときは正規化しない**。
 
@@ -187,7 +207,8 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
         外れ値ノイズに強く、ガウシアンぼかしよりエッジを保ちやすい。
         """
         k = _k(a)
-        return _np(_m()["KF"].median_blur(_t(v), (k, k)))
+        # 境界は外側 0 埋め(kornia 0.8 の規約。0.9 の鏡映に任せない —— _zero_border)
+        return _zero_border(lambda x: _m()["KF"].median_blur(x, (k, k)), v, k)
 
     def _unsharp(v, a, b):
         """アンシャープマスク（鮮鋭化）。``kornia.filters.unsharp_mask`` を 5x5
@@ -215,8 +236,10 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
         # ある(実測 max=1+2e-7)。`image` は [0,1] 契約なので出口で clip する
         # (`ops._apply` が段間で掛けている clip と同じ = パイプライン結果は不変)。
         ks = 2 * int(2 + a * 6) + 1
-        return np.clip(_np(_m()["KF"].motion_blur(_t(v), ks, float(360 * a),
-                                                  float(2 * b - 1))), 0, 1)
+        # 境界は外側 0 埋め(kornia 0.8 の規約。0.9 の鏡映に任せない —— _zero_border)
+        return np.clip(_zero_border(
+            lambda x: _m()["KF"].motion_blur(x, ks, float(360 * a),
+                                             float(2 * b - 1)), v, ks), 0, 1)
 
     def _canny(v, a, b):
         """Canny 法によるエッジ（二値領域）検出。``kornia.filters.canny`` を呼び、
