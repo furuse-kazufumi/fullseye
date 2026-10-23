@@ -84,9 +84,13 @@ def _run_one(path: Path) -> tuple[str, int, str]:
     env.pop("FULLSEYE_FIGURE_DIR", None)
     env["FULLSEYE_FIGURES"] = "off"                 # 既定の out/figures にも書かせない(2026-09-20)
     try:
+        # ★stdin は /dev/null(2026-10-23)。渡さないと子は親(xdist の worker)の stdin = execnet の
+        #   パイプを継ぐ。worker が死んだあとも子がそのパイプを握り、controller が「node down」の後に
+        #   固まる形になりうる(手元で torch+libiomp5md の子が消えないゾンビになった日に疑った経路。
+        #   再現はしなかったが、子に親の制御パイプを継がせる理由は無い)。
         r = subprocess.run([sys.executable, str(path)], env=env,
                            cwd=str(path.parent), capture_output=True,
-                           timeout=PER_SCRIPT_TIMEOUT)
+                           stdin=subprocess.DEVNULL, timeout=PER_SCRIPT_TIMEOUT)
     except subprocess.TimeoutExpired:
         return path.name, -1, "%d 秒で返ってこなかった" % PER_SCRIPT_TIMEOUT
     # ★失敗時は stdout の末尾も返す。PoC は所見と「どの検査が落ちたか」を
