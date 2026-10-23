@@ -197,5 +197,5 @@ py -3.11 studio.py             # the IDE
 
 CI (GitHub Actions) runs on every push/PR: a **minimal numpy+scipy job** that
 executes the "core runs without extras" claim, plus the full suite with coverage
-on Python 3.10–3.12. Tags `vX.Y.Z` build from a clean checkout and publish to
+on Python 3.11 / 3.12 / 3.14 (3.13 nightly). Tags `vX.Y.Z` build from a clean checkout and publish to
 PyPI automatically.

@@ -7,6 +7,14 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### 変更(破壊的) — Python 3.10 のサポートを終了(requires-python >= 3.11)
+
+- Python 3.10 は 2026-10-01 に寿命が切れた(上流のセキュリティ修正が止まった)。**3.10 の利用者は 0.8.x に留まる**
+  (pip は requires-python を見て 0.8.x を選ぶので、何もしなくても壊れた版は入らない)。
+- 理由: 既知の脆弱性が 0 件の Pillow(13.0.0)は Python 3.11 以上でしか入らない。下限を 9 のままにすると
+  OSV で 72 件の脆弱性を持つ版が入りうる。3.10 を残すと安全な画像入出力を用意できない。
+- 3.10 向けの互換コード(tomllib の fallback・pyproject を正規表現で読む代用)を消した。ruff の target-version は py311。
+
 ### 追加 — Studio: 前段の出力を受けられる op だけを一覧に出す(改善案 018 の残り)
 
 - op 一覧の上にスイッチ「前段の出力を受けられる op だけ表示」(既定 on)と状況の 1 行(例「998 件中 135 件、段 2 threshold の出力 'region'」)。

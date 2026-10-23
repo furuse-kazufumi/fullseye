@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: b5eeee92dc95 -->
+<!-- i18n-source-sha: eb721ee44823 -->
 # Installation / Environment Setup — Complete Guide
 
 [日本語](./INSTALL.md) · **English** · [简体中文](./INSTALL.zh.md) · [繁體中文](./INSTALL.tw.md) · [한국어](./INSTALL.ko.md) · [Deutsch](./INSTALL.de.md) · [हिन्दी](./INSTALL.hi.md)
@@ -17,7 +17,7 @@ are disabled; the core always runs (graceful degradation).
 
 | Item | Requirement |
 |---|---|
-| Python | **3.11** (`pyproject.toml` sets `requires-python = ">=3.10"`; development and testing use 3.11) |
+| Python | **3.11** (`pyproject.toml` sets `requires-python = ">=3.11"`; development and testing use 3.11) |
 | Run command | Windows: `py -3.11` / Linux: `python3.11` |
 | Core dependencies | `numpy>=1.23`, `scipy>=1.9` (pulled in automatically by `pip install -e .`) |
 | OS | Windows 10/11, Linux (embedded included). macOS works too, wherever Python runs |

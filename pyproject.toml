@@ -7,7 +7,7 @@ name = "fullseye"
 version = "0.8.1"
 description = "Numpy-native operator library for vision, 3-D and measurement (3,563 typed ops in the machine-readable index: imaging, point clouds, optics, tomography, metrology) with an evolutionary pipeline designer and honest holdout gating"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 license = { text = "Apache-2.0" }
 authors = [{ name = "Kazufumi Furuse", email = "kazufumi@furuse.work" }]
 keywords = ["image-processing", "computer-vision", "evolutionary-algorithm", "pipeline", "operators"]
@@ -398,7 +398,7 @@ addopts = "-p no:randomly"
 # 「物理条件を満たす絵が一度も来ない」ため永久に拒否され、「死んだ op」として
 # 台帳に載っていた。同じ重複があと 3 組(radius / leader_line / sphere_sdf.R)。
 line-length = 100
-target-version = "py310"
+target-version = "py311"
 extend-exclude = ["experiments", "out", ".out", "docs"]
 
 [tool.ruff.lint]

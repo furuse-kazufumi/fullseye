@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: b5eeee92dc95 -->
+<!-- i18n-source-sha: eb721ee44823 -->
 # Installation / Environment Setup — पूरी गाइड
 
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · [简体中文](./INSTALL.zh.md) · [繁體中文](./INSTALL.tw.md) · [한국어](./INSTALL.ko.md) · [Deutsch](./INSTALL.de.md) · **हिन्दी**
@@ -17,7 +17,7 @@ dependency optional है।"** किसी extra backend के बिना 
 
 | Item | ज़रूरत |
 |---|---|
-| Python | **3.11** (`pyproject.toml` में `requires-python = ">=3.10"` set है; development और testing 3.11 पर होती है) |
+| Python | **3.11** (`pyproject.toml` में `requires-python = ">=3.11"` set है; development और testing 3.11 पर होती है) |
 | चलाने का command | Windows: `py -3.11` / Linux: `python3.11` |
 | Core dependencies | `numpy>=1.23`, `scipy>=1.9` (`pip install -e .` से अपने-आप install होती हैं) |
 | OS | Windows 10/11, Linux (embedded सहित)। जहाँ Python चलता है, वहाँ macOS पर भी काम करता है |

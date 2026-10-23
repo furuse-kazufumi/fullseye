@@ -10,7 +10,7 @@ Fullseye の設計方針は **「numpy + scipy だけで動くコア」+「重�
 
 | 項目 | 要件 |
 |---|---|
-| Python | **3.11**（`pyproject.toml` の `requires-python = ">=3.10"`。開発・検証は 3.11） |
+| Python | **3.11**（`pyproject.toml` の `requires-python = ">=3.11"`。開発・検証は 3.11） |
 | 実行コマンド | Windows: `py -3.11` / Linux: `python3.11` |
 | コア依存 | `numpy>=1.23`, `scipy>=1.9`（`pip install -e .` で自動導入） |
 | OS | Windows 10/11、Linux（組み込み含む）。macOS も Python が動けば可 |

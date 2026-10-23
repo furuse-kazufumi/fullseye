@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: b5eeee92dc95 -->
+<!-- i18n-source-sha: eb721ee44823 -->
 # Installations- und Einrichtungshandbuch
 
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · [简体中文](./INSTALL.zh.md) · [繁體中文](./INSTALL.tw.md) · [한국어](./INSTALL.ko.md) · **Deutsch** · [हिन्दी](./INSTALL.hi.md)
@@ -13,7 +13,7 @@ Das Designprinzip von Fullseye lautet: **"ein Kern, der allein mit numpy + scipy
 
 | Punkt | Anforderung |
 |---|---|
-| Python | **3.11** (`requires-python = ">=3.10"` in `pyproject.toml`; Entwicklung und Verifikation erfolgen mit 3.11) |
+| Python | **3.11** (`requires-python = ">=3.11"` in `pyproject.toml`; Entwicklung und Verifikation erfolgen mit 3.11) |
 | Ausführungsbefehl | Windows: `py -3.11` / Linux: `python3.11` |
 | Kernabhängigkeiten | `numpy>=1.23`, `scipy>=1.9` (werden durch `pip install -e .` automatisch installiert) |
 | Betriebssystem | Windows 10/11, Linux (auch eingebettet). Auch macOS funktioniert, solange Python läuft |

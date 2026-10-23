@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: b5eeee92dc95 -->
+<!-- i18n-source-sha: eb721ee44823 -->
 # 安装 / 环境搭建完全指南
 
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · **简体中文** · [繁體中文](./INSTALL.tw.md) · [한국어](./INSTALL.ko.md) · [Deutsch](./INSTALL.de.md) · [हिन्दी](./INSTALL.hi.md)
@@ -13,7 +13,7 @@ Fullseye 的设计方针是 **「仅靠 numpy + scipy 就能运行的核心」+�
 
 | 项目 | 要求 |
 |---|---|
-| Python | **3.11**(`pyproject.toml` 中 `requires-python = ">=3.10"`；开发与验证使用 3.11) |
+| Python | **3.11**(`pyproject.toml` 中 `requires-python = ">=3.11"`；开发与验证使用 3.11) |
 | 执行命令 | Windows: `py -3.11` / Linux: `python3.11` |
 | 核心依赖 | `numpy>=1.23`, `scipy>=1.9`(`pip install -e .` 会自动安装) |
 | 操作系统 | Windows 10/11、Linux(含嵌入式)。只要 Python 能运行，macOS 也可以 |

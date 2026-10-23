@@ -1597,8 +1597,8 @@ def _resolve_version() -> str:
     どちらも駄目なら最後の既知版。
     """
     import os as _os                                      # noqa: PLC0415
+    import tomllib as _toml                               # noqa: PLC0415
     try:
-        import tomllib as _toml                           # noqa: PLC0415
         _pp = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "pyproject.toml")
         if _os.path.exists(_pp):
             with open(_pp, "rb") as _f:

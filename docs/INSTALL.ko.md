@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: b5eeee92dc95 -->
+<!-- i18n-source-sha: eb721ee44823 -->
 # 설치 / 환경 구축 완전 가이드
 
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · [简体中文](./INSTALL.zh.md) · [繁體中文](./INSTALL.tw.md) · **한국어** · [Deutsch](./INSTALL.de.md) · [हिन्दी](./INSTALL.hi.md)
@@ -13,7 +13,7 @@ Fullseye의 설계 방침은 **"numpy + scipy만으로 동작하는 코어" + "�
 
 | 항목 | 요구 사항 |
 |---|---|
-| Python | **3.11**(`pyproject.toml`의 `requires-python = ">=3.10"`. 개발·검증은 3.11 사용) |
+| Python | **3.11**(`pyproject.toml`의 `requires-python = ">=3.11"`. 개발·검증은 3.11 사용) |
 | 실행 명령 | Windows: `py -3.11` / Linux: `python3.11` |
 | 코어 의존성 | `numpy>=1.23`, `scipy>=1.9`(`pip install -e .`로 자동 설치) |
 | OS | Windows 10/11, Linux(임베디드 포함). Python이 동작하면 macOS도 가능 |

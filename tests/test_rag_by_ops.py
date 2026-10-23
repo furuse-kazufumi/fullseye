@@ -245,7 +245,7 @@ def test_search_recall_on_the_evaluation_set_does_not_fall():
 # 3. op の台帳を持つモジュールは全部 RAG に配線されている                           #
 # --------------------------------------------------------------------------- #
 def _py_modules():
-    """``pyproject.toml`` の ``py-modules``(wheel に載るモジュール)。tomllib に頼らない(3.10 でも同じ答え)。"""
+    """``pyproject.toml`` の ``py-modules``(wheel に載るモジュール)。行頭の ``]`` までを読む。"""
     txt = _read(os.path.join(ROOT, "pyproject.toml"))
     m = re.search(r"^py-modules\s*=\s*\[(.*?)^\]", txt, re.S | re.M)
     assert m, "pyproject.toml に py-modules が無い"
