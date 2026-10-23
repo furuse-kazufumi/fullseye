@@ -7,6 +7,17 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### 追加 — Studio: 前段の出力を受けられる op だけを一覧に出す(改善案 018 の残り)
+
+- op 一覧の上にスイッチ「前段の出力を受けられる op だけ表示」(既定 on)と状況の 1 行(例「998 件中 135 件、段 2 threshold の出力 'region'」)。
+  検索語の無い一覧は 998 op を型に関係なく全部出していた。**隠すだけで型の変換はしない**。
+- 判定は実行時に処理列を拒否する規則そのもの(`api._check_chain_sorts` の `engine._thread_sort` / `_compatible`)で流すので、
+  「一覧から消えた op」=「入れたら実行前に拒否される op」が全 registry op で一致する(門)。先頭段(入力は入口で型を合わせる)・
+  バイパス中の段・未知の op の後は絞らない。`opassist.accepted_sorts` の実測は宣言より緩く、通ると出して挿入直後に拒否される
+  ので一覧には使わない(検索語のある目的検索の群分けは従来どおり実測を使う)。
+- 挿入位置の規則を `add_op` と 1 関数に寄せ、一覧を作り直しても選択中の op を保つ(Insert 直後の Run once が効かなくなる回帰を防ぐ)。
+- tests: `test_studio_op_type_filter_2026_10_23.py` 16 件。Studio テスト 23 ファイル 461 → 547 passed。
+
 ### 修正 — 映像の物理整合性 op の入口検査(敵対的レビュー 2026-10-23、所見 8 件を一件ずつ再現してから)
 
 - `ballistic_vs_thrust` は、推力側の RSS が離散化の床 `rss_floor`(RK4 格子を標本時刻へ線形補間する誤差 ≤ a dt²/8 の平方和)の
