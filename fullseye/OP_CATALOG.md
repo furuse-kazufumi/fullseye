@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(432 例)
+### 2-D 画像/信号/幾何(433 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -233,6 +233,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **精度ユニオン型ストレージ(PrecisionUnion)を N-D の実データ様式で使う** — ラベルボリューム(無損失)と深度ボリューム(atol 量子化)をタイル別最小ビット深さで保持し、メモリ比・save/load のファイル比・遅延アフィン連鎖の一致を数値で確かめる。高エントロピー画像では勝たないことも同じ場で示す(honest な境界)。 `py -3.11 examples/precision_union_volume.py`
 - **imgevolve quickstart — 全ワークフローを 1 ファイルで** — レジストリ→型付き手組みパイプライン→ゲノム復号→タスク採点→進化ドライバ→codegen + 差分テスト(約 1.5 分、repo root から実行)。 `py -3.11 examples/quickstart.py`
 - **やりたいことを 6 言語で書いて同じ op にたどり着く(RAG の入口)** — fullseye.search_ops で「エッジ検出 / edge detection / 边缘检测 / 에지 검출 / Kantenerkennung / 邊緣」と「ノイズ除去」を 6 言語で引き、全言語で意味の合う op が上位 8 件に入ること、返った op を呼んで段差で応答が最大・雑音の標準偏差が下がることを確かめる(grep では 0 件の言葉でも引ける)。 `py -3.11 examples/find_ops_by_meaning.py`
+- **外観検査の「測る前」の 3 段(照明を戻す / 位置を合わせる / タイルの地図にする)** — 検査ラインが寸法や欠陥を測る手前に必ず入る 3 段(aoi 族 3 op)を、真値を植えた合成ラインで一巡する。★既知の cos⁴ ビネット(隅が中心の 0.196 倍)+ 暗電流 0.05 は flat_field_correct で 最大相対誤差 1.8e-16 まで戻るが、**dark を省くと 2.3e-01 までしか戻らず**隅/中心の比は 真値 0.1209 に対し 0.4867 のまま —— 絵は破綻しないので目では合格に見えて数字だけ狂う。★register_image は整数 (3,5) px を残差 0.000000 で、副画素 (2.5,-1.5) px を誤差 0.0000 px で 回収する一方、回転 5 度では残差 0.6537 で **consistent=False** を返す(小さい並進として 返りはするが、合っていないと分かる量が一緒に出る)。★周期 8 px の市松は peak_ratio 1.0000 で ambiguous=True になるが、**縞は ambiguous=False のまま** —— peak_ratio は離れた 2 番目の『山』を見る量で、縞が作るのは『尾根』だから数えられない(正直な限界として門に固定)。★tiled_map は分解可能な平均をタイル統計から全体平均へ誤差 0.0e+00 で戻し、70px を 16px 角で 割った端数 9 枚を黙って捨てない。捨てる指定をしたときだけ dropped_tiles=9 / covered_fraction=0.8359 として返り値に残る。 `py -3.11 examples/aoi_frontend_tour.py`
 
 **analysis**
 - **欠陥図の方法を比べる物差し —— 画素 AUROC は大きな傷 1 つで満点近くになり、小さな傷の見落としを PRO が出す** — 16 枚に大きな傷 1 つ(900 画素)と小さな傷 9 つ(4 画素ずつ)。大きな傷だけ当てる検出器は画素 AUROC 0.981 で勝つが、傷を 1 つずつ数える AUPRO(FPR 0.3 まで)は 0.255。小さな傷を全部当てる検出器は画素 AUROC 0.747・AUPRO 0.957。閾値 1 点の PRO は手計算の 0.1 と 0.95 に一致。anomaly_image_auroc / anomaly_pixel_auroc / anomaly_pro / anomaly_region_overlap はどの方法(良品統計・RPCA・ゴールデン差分)にも同じ物差しとして使える。 `py -3.11 examples/anomaly_eval_metrics.py`
@@ -774,9 +775,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3547 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3569 ops / 54 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 959 · **3d** 373 · **math** 114 · **optics** 465 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 39 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 700 · **tomography** 31 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族の一覧: **2d** 959 · **3d** 373 · **math** 114 · **optics** 464 · **lightfield** 17 · **photon** 17 · **specular** 19 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 39 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 700 · **tomography** 31 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 3 · **calib** 21 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d(959 ops / 49 categories)
 
@@ -2494,7 +2495,7 @@ _計 3547 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `wave_nodal_lines` `matrix → mask` — Where a signed field changes sign — the nodal set, as a mask. · 例: `poc_beats_fringes_and_screens`
 - `wave_two_slit` `入力なし → image2d` — Two-slit interference on a screen — built from the physics, not the fringe formula. · 例: `poc_beats_fringes_and_screens`
 
-### optics(465 ops / 51 categories)
+### optics(464 ops / 51 categories)
 
 レンズより上・画素より下の層。幾何光学(薄レンズ結像・ABCD 光線伝達・被写界深度・cos⁴ 口径食)/ 波動光学(Airy パターン・角スペクトル伝搬・Fraunhofer 回折・ガウシアンビーム)/ 結像品質(PSF→MTF・回折限界 MTF・Zernike 波面統計)/ 偏光(Jones・Stokes・Mueller)/ 材料の物性表(matprop)・光ファイバ(fiber)・センサーの特性(sensorchar)・大域光輸送ほか。
 
@@ -2866,14 +2867,13 @@ _計 3547 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `plenoptic_refocus_depth` `lightfield × table → table` — Convert light-field refocus slope(s) to object distance in metres. · 例: `poc_plenoptic_camera`
 - `plenoptic_system` `table × table × table → table` — Assemble a main lens, MLA and sensor and report F-number matching. · 例: `plenoptic_capture_pipeline`, `poc_plenoptic_camera`
 
-#### optics / polarization(11)
+#### optics / polarization(10)
 - `jones_apply` `cimage × jones → jones` — Push a Jones vector through a Jones matrix: ``[Ex', Ey'] = J @ [Ex, Ey]``. · 例: `optics_imaging`
 - `jones_element` `入力なし → cimage` — A 2x2 complex Jones matrix for one polarisation element. · 例: `optics_imaging`
-- `mueller_apply` `matrix × stokes → stokes` — Push a Stokes vector through a Mueller matrix: ``S' = M @ S``. · 例: `optics_imaging`, `poc_photoelasticity`, `polarization_camera_pipeline`
+- `mueller_apply` `matrix × stokes → stokes` — Push a Stokes vector through a Mueller matrix: ``S' = M @ S``. · 例: `optics_imaging`, `poc_photoelasticity`
 - `mueller_checks` `matrix → table` — Say whether a 4x4 matrix is a physically realisable Mueller matrix, and how depolarising it is. · 例: `polarization_camera_pipeline`
 - `mueller_element` `入力なし → matrix` — A 4x4 real Mueller matrix for one polarisation element. · 例: `optics_imaging`, `poc_photoelasticity`, `polarization_camera_pipeline`
 - `mueller_from_intensities` `signal → matrix` — Recover a Mueller matrix from intensities measured through known generator / analyser states (polarimetric least squares). · 例: `polarization_camera_pipeline`
-- `mueller_partial_polarizer` `入力なし → matrix` — Mueller matrix of a linear polariser with a finite extinction ratio (a linear diattenuator). → (4, 4), or (*shape, 4, 4) for an angle field. · 例: `polarization_camera_pipeline`
 - `polarization_demosaic` `image2d → polsweep` — Split a polarisation-sensor mosaic into the four analyser images. · 例: `poc_shape_from_polarization`, `polarization_camera_pipeline`
 - `polarization_demosaic_color` `image2d → rgbvolume` — Split a **colour** polarisation-sensor mosaic (Sony IMX250MYR family, a 4x4 block = a 2x2 Bayer block whose every colour site is itself a 2x2 block of polarisers) into four RGB images: ``(4, H, W, 3)`` in :data:`POLARIZATION_SWEEP_ANGLES` order, each channel interpolated to full resolution. The ``rgbvolume`` sort carries it (four "slices" of RGB). · 例: `polarization_camera_pipeline`
 - `stokes_analyze` `stokes → table` — Read a Stokes vector: degree of polarisation, azimuth, ellipticity. · 例: `optics_imaging`, `polarization_camera_pipeline`, `specular_photometric`
@@ -3125,7 +3125,7 @@ _計 3547 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `anscombe_inverse` `image2d → image2d` — Invert :func:`anscombe_transform` — algebraically, or without bias. · 例: `photon_timeresolved`
 - `anscombe_transform` `image2d → image2d` — Anscombe variance-stabilising transform: Poisson counts -> ~unit-variance. · 例: `photon_timeresolved`
 
-### specular(20 ops / 5 categories)
+### specular(19 ops / 5 categories)
 
 #### specular / deflectometry(6)
 - `deflectometry_phase_to_slope` `image2d × image2d → normalmap` — 画面の絶対位相 2 枚(u 方向・v 方向の縞)→ 面の格子上の法線マップ (H, W, 3)。 · 例: `poc_phase_measuring_deflectometry`
@@ -3145,12 +3145,11 @@ _計 3547 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `photometric_residual` `images → image2d` — How badly the Lambertian model fails, per pixel. → (H, W) RMS residual. · 例: `specular_photometric`
 - `photometric_stereo_robust` `images → normalmap` — Photometric stereo that survives shadows and highlights. → (normals, albedo, inliers). · 例: `poc_shape_from_polarization`, `specular_photometric`
 
-#### specular / polarization(5)
+#### specular / polarization(4)
 - `polarization_dolp_map` `polsweep → image2d` — Degree of linear polarisation, per pixel. → (H, W) in [0, 1]. · 例: `example_polarization_metal`, `perf_polarization_analyze`, `poc_polarization_specular`, `polarization_camera_pipeline`, `specular_photometric`
 - `polarization_render` `image2d × image2d → polsweep` — Forward model of a polariser sweep: turn a known split into the frames a polarisation camera would record. → (N, H, W). · 例: `example_polarization_metal`, `poc_polarization_specular`, `specular_photometric`
 - `polarization_separate` `polsweep → image2d` — Split a polariser sweep into its unpolarised and linearly polarised radiance. → (diffuse, specular), both (H, W). · 例: `perf_polarization_analyze`, `poc_polarization_specular`, `specular_photometric`
 - `polarization_stokes` `polsweep → stokes` — The scene-integrated Stokes vector of a polariser sweep. → (4,), ready for :func:`optics.stokes_analyze`. · 例: `perf_polarization_analyze`, `poc_polarization_specular`, `polarization_camera_pipeline`, `specular_photometric`
-- `polarization_stokes_map` `polsweep → table` — Per-pixel linear Stokes images with DoLP and AoLP maps from an analyser sweep (4 DoFP angles or any N >= 3, least squares). → dict of (H, W) maps. · 例: `polarization_camera_pipeline`
 
 #### specular / reflectance(3)
 - `brdf_blinn_phong` `normalmap → image2d` — Blinn's half-vector specular lobe. → (H, W) in [0, 1]. · 例: `poc_shape_from_polarization`, `specular_photometric`
@@ -4666,6 +4665,50 @@ _計 3547 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `isc_match` `image2d × image2d → table` — 増分符号相関(ISC)。増分符号が一致する割合が最大の位置を返す。 · 例: `poc_code_matching_breakdown`
 - `ocm_match` `image2d × image2d → table` — 方向符号照合(OCM)。符号の巡回差の平均が最小の位置を返す。 · 例: `poc_code_matching_breakdown`
 - `scc_match` `image2d × image2d → table` — 選択的相関係数(SCC)。増分符号の一致する画素だけで正規化相関を取る。 · 例: `poc_code_matching_breakdown`
+
+### aoi(3 ops / 3 categories)
+
+#### aoi / aggregate(1)
+- `tiled_map` `image2d → table` — 画像をタイルに割り、タイルごとの量を小さな地図にする。→ dict。 · 例: `aoi_frontend_tour`
+
+#### aoi / geometric(1)
+- `register_image` `image2d × image2d → table` — 検査画像を基準画像へ合わせる平行移動を、合っていないと分かる量つきで返す。→ dict。 · 例: `aoi_frontend_tour`
+
+#### aoi / photometric(1)
+- `flat_field_correct` `image2d × image2d → image2d` — 照明ムラとセンサ感度のばらつきを、暗電流つきの割り算で戻す。→ 補正済み画像。 · 例: `aoi_frontend_tour`
+
+### calib(21 ops / 5 categories)
+
+#### calib / calibrate(3)
+- `camera_calibration` `keypoints → table` — Zhang 法で平面ターゲット多視点から内部行列 K を推定(camera_calibration)。 · 例: `camera_intrinsics_calibration`, `lens_calibration_loop_demo`, `poc_camera_calibration`
+- `find_marks_and_pose` `image2d → table` — マーク検出 + 校正板の姿勢推定(平面ホモグラフィ → pose)(find_marks_and_pose)。
+- `hand_eye_calibration` `入力なし → matrix` — 一連の運動対から AX=XB を解き X(4x4)を推定(hand_eye_calibration)。
+
+#### calib / fit(4)
+- `hom_vector_to_proj_hom_mat2d` `keypoints → matrix` — 4 点以上の対応から射影変換(homography, DLT)3x3 を求める(hom_vector_to_proj_hom_mat2d)。 · 例: `poc_panorama_drift`, `poc_wound_area_tracking`
+- `vector_angle_to_rigid` `入力なし → matrix` — 1 組の (点, 角度) から 2D 剛体変換を求める(vector_angle_to_rigid)。
+- `vector_to_rigid` `keypoints → matrix` — 対応点から 2D 剛体変換(回転+並進、Kabsch)を求める(vector_to_rigid)。
+- `vector_to_similarity` `keypoints → matrix` — 対応点から 2D 相似変換(回転+スケール+並進、Umeyama)を求める(vector_to_similarity)。 · 例: `poc_document_scan`, `poc_star_astrometry`
+
+#### calib / plane(5)
+- `contour_to_world_plane_xld` `table → table` — XLD 輪郭(dict {cs:[Nx2]})を world 平面へ写す(contour_to_world_plane_xld)。 · 例: `poc_wound_area_tracking`
+- `gen_image_to_world_plane_map` `入力なし → table` — 画像→ワールド平面(z=0)の写像テーブルを生成(gen_image_to_world_plane_map)。
+- `gen_radial_distortion_map` `入力なし → table` — 半径歪みの逆マップ(row_map, col_map)を生成(gen_radial_distortion_map)。
+- `image_points_to_world_plane` `table → keypoints` — カメラ内部/外部から画素を world 平面 z=0 へ逆投影(image_points_to_world_plane)。
+- `image_to_world_plane` `keypoints → keypoints` — 画像点を平面ホモグラフィで world 平面(z=0)へ写す(image_to_world_plane)。 · 例: `poc_document_scan`, `poc_matrix_code_reading`, `poc_wound_area_tracking`
+
+#### calib / project(3)
+- `project_3d_point` `points → keypoints` — 3D 点をカメラへ透視投影し画素 (row, col) を返す(project_3d_point)。
+- `project_hom_point_hom_mat3d` `matrix → keypoints` — 同次 3D 点 (4,) を 3x4/4x4 射影行列で投影し画素 (row, col) を返す(project_hom_point_hom_mat3d)。
+- `project_point_hom_mat3d` `points → keypoints` — 4x4 or 3x4 射影行列 P=K[R|t] で 3D 点を投影し画素 (row, col) を返す(project_point_hom_mat3d)。
+
+#### calib / target(6)
+- `caltab_points` `入力なし → keypoints` — 校正板の理想マーク座標(ワールド, mm; 原点=最初のマーク)を (y, x) で返す(caltab_points)。
+- `create_caltab` `入力なし → table` — 校正板の記述(理想点、板中心が原点)を作る(create_caltab)。
+- `disp_caltab` `table → image2d` — 校正板画像を返す(表示用)(disp_caltab)。
+- `find_caltab` `image2d → keypoints` — 画像から校正板の円マーク中心を検出(連結成分の重心)(find_caltab)。
+- `gen_caltab` `入力なし → table` — 円マーク格子の校正板画像を生成(gen_caltab)。
+- `sim_caltab` `table → table` — 校正板を指定カメラ姿勢で投影した画像をシミュレート(sim_caltab)。
 
 ### generative(42 ops / 6 categories)
 
