@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">homotopy_shortest_paths — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × any × any</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.homotopy_shortest_paths(grid, start, goal, k=4, obstacles=None, angle=0.1, max_states=400000, max_cost=None)</code>(要直接调用实现,<code style="color:#22d3bf">import braidpath; braidpath.homotopy_shortest_paths(grid, start, goal, k=4, obstacles=None, angle=0.1, max_states=400000, max_cost=None)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;homotopy_shortest_paths&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>在网格(True = 可通行,4 邻域)上,按从短到长给出从 start 到 goal 的、同伦类各不相同的 k 条最短路径。</p>
+<p>状态 = (单元格, 辫的 Dynnikov 坐标)。把障碍物点当作不动的股,每走 1 步就追加交叉字母并更新坐标(坐标是类的完全不变量,因此相同的 (单元格, 坐标) 只展开 1 次)。Dijkstra 将这个“按类提升”的网格按费用顺序展开,因此以新坐标到达 goal 的顺序,就是各类最短路径从短到长的顺序。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>obstacles : 孔的代表点 (M, 2)。省略时用 <code style="color:#22d3bf">grid_hole_points</code>(每个不接触外周的阻塞连通分量取 1 点)。</p>
+<p>max_states / max_cost : 展开状态数、费用的上限(类有无穷多个 —— 可以绕孔转任意圈)。</p>
+<p>Returns: dict <code style="color:#22d3bf">paths</code>(各类的 (L, 2) 的 (row, col) 序列,短的在前)、<code style="color:#22d3bf">costs</code>、<code style="color:#22d3bf">words</code>(含障碍物的辫字)、<code style="color:#22d3bf">keys</code>、<code style="color:#22d3bf">obstacles</code>、<code style="color:#22d3bf">states</code>(展开的状态数)、<code style="color:#22d3bf">complete</code>(是否凑齐 k 条)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_braid_homotopy_classes">poc_braid_homotopy_classes</a> — <code style="color:#22d3bf">py -3.11 examples/poc_braid_homotopy_classes.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">braidpath</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:braid_from_trajectories">braid_from_trajectories</a> · <a style="color:#22d3bf" href="opdrive:braid_reduce">braid_reduce</a> · <a style="color:#22d3bf" href="opdrive:braid_artin_images">braid_artin_images</a> · <a style="color:#22d3bf" href="opdrive:dynnikov_coordinates">dynnikov_coordinates</a> · <a style="color:#22d3bf" href="opdrive:dynnikov_act">dynnikov_act</a> · <a style="color:#22d3bf" href="opdrive:braid_equivalent">braid_equivalent</a> · <a style="color:#22d3bf" href="opdrive:homotopy_class_compare">homotopy_class_compare</a> · <a style="color:#22d3bf" href="opdrive:pairwise_winding">pairwise_winding</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: braidpath.py — DRIVE 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

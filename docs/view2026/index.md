@@ -234,7 +234,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## ぜんぶ見る
 
-PoC 277 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
+PoC 278 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
 
 <noscript><p><a href="../GALLERY.html">(JavaScript が無い環境では、ギャラリーのページで全部の図を見られます)</a></p></noscript>
 
@@ -253,7 +253,7 @@ PoC 277 本と、ロボットの例 5 本。グループを開くとサムネイ
 </div>
 </details>
 
-<details class="vall"><summary><b>産業検査</b> (46)</summary>
+<details class="vall"><summary><b>産業検査</b> (47)</summary>
 <div class="vg vs">
 <a href="../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_barcode_1d.jpg" alt="1 次元バーコード" width="200" height="200"><span>1 次元バーコード</span></a>
 <a href="../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_battery_electrode_tortuosity.jpg" alt="電極の屈曲度" width="200" height="200"><span>電極の屈曲度</span></a>
@@ -301,6 +301,7 @@ PoC 277 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_code_matching_breakdown/05_highlight_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_code_matching_breakdown.jpg" alt="照明と遮蔽に強い符号の照合" width="200" height="200"><b>&#9654;</b><span>照明と遮蔽に強い符号の照合</span></a>
 <a href="../articles/assets/poc/poc_good_sample_variation_model/01_band_width_alignment.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_good_sample_variation_model.jpg" alt="良品統計の変動モデル" width="200" height="200"><span>良品統計の変動モデル</span></a>
 <a href="../articles/assets/poc/poc_patch_anomaly/01_anomaly_maps.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_patch_anomaly.jpg" alt="良品だけから学ぶパッチ特徴の異常検知(古典特徴の分布と記憶)" width="200" height="200"><span>良品だけから学ぶパッチ特徴の異常検知(古典特徴の分布と記憶)</span></a>
+<a href="../articles/assets/poc/poc_braid_homotopy_classes/01_braid_classes_spacetime.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_braid_homotopy_classes.jpg" alt="複数ロボットの計画を組紐の回り方で分ける" width="200" height="200"><b>&#9654;</b><span>複数ロボットの計画を組紐の回り方で分ける</span></a>
 </div>
 </details>
 

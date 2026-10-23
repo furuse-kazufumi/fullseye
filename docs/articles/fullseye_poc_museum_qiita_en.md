@@ -34,7 +34,7 @@ The museum is split across several articles; **each wing reads on its own** — 
 
 | Article | Wings | Exhibits |
 |---|---|---:|
-| [A Metrology Museum on Paper — The What-Is-Measured Wing (industrial, dimensional, biomedical, sky and ground)](https://qiita.com/furuse-kazufumi/items/4f65e33d11099a1ebbca) | The Industrial Inspection / The Dimensional and Shape Metrology / The Medical and Biological / The Astronomy and Environment | 129 |
+| [A Metrology Museum on Paper — The What-Is-Measured Wing (industrial, dimensional, biomedical, sky and ground)](https://qiita.com/furuse-kazufumi/items/4f65e33d11099a1ebbca) | The Industrial Inspection / The Dimensional and Shape Metrology / The Medical and Biological / The Astronomy and Environment | 130 |
 | [A Metrology Museum on Paper — The How-It-Is-Measured Wing (restoration, space-time, calibration, colour, forensics, 3-D shape)](https://qiita.com/furuse-kazufumi/items/9468b213793e3f6b1dc8) | The Image Quality and Restoration / The Time-as-3-D / The Geometry and Calibration / The Colour and Separation / The Forensics and Documents / The 3-D Shape | 96 |
 | [A Metrology Museum on Paper — The Instrument Wing (sensors and instruments reproduced from physics)](https://qiita.com/furuse-kazufumi/items/43e090b439d9d9183f60) | The Instrument | 32 |
 | [Nobody Checks a Mathematical Picture, Because It Already Looks Right — A PoC Series Where the Theorem Is the Test](https://qiita.com/furuse-kazufumi/items/dc100e7ea90e9575c40b) | Mathematical pictures | 7 |
@@ -63,12 +63,12 @@ Three rules survive even if the author is forgotten. **Count failures by kind** 
 
 - 2026-10-23 — No.2026.277 Fourier Ptychography — 20x-Equivalent Resolution and Phase from a 4x Objective's Wide Field, by Iterative Phase Retrieval
 - 2026-10-23 — No.2026.276 Physical Consistency of Footage — Ballistic or Thrusted, and Was the Clock Stretched?
+- 2026-10-23 — No.2026.278 Sorting Multi-Robot Plans with the Same Starts and Goals by How They Wind — Counting Homotopy Classes with Space-Time Braids and Dynnikov Coordinates, 61 Planner Candidates in 26 Classes
 - 2026-10-21 — No.2026.275 Measurable Omnidirectional Inspection, Stereo Display and Moving Viewports
 - 2026-10-20 — No.2026.267 Keeping a Design's Relations as Solves — A Double-Gauss Type Whose Focus and F-Number Follow the Stop, Afocal Telescopes, a Curved Image Surface and Odd Aspheres
 - 2026-10-20 — No.2026.270 Verifying Public .zmx Prescriptions Independently and Scoring Them as Inspection Lenses
 - 2026-10-20 — No.2026.268 How Water Looks in Inspection Images — Pool-Floor Caustics, a Bottle from the Side, a Wet Plate and a Hull Under Water, Scored Against Closed Forms and Second Methods
 - 2026-10-20 — No.2026.269 Photographing a 3-D Scene Through the Actual Lens Prescription — Depth of Field, Cat's-Eye Bokeh, Corner Illumination, Colour Fringes and Ghosts, Scored Against Closed Forms, Existing Ops and an Independent Trace
-- 2026-10-20 — No.2026.271 Budgeting Lens Manufacturing Tolerances through MTF, Yield, and Compensator Travel
 
 ## Applying it to your own problem
 

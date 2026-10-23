@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">pairwise_winding — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">matrix</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pairwise_winding(trajectories, obstacles=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import braidpath; braidpath.pairwise_winding(trajectories, obstacles=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;pairwise_winding&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>हर strand pair का relative winding number [घुमाव] (relative vector के argument का कुल परिवर्तन / 2π)। Symmetric matrix, diagonal 0।</p>
+<p>Argument का increment atan2(cross product, dot product) से लिया जाता है (principal value (−π, π])। 1 step में आधा घुमाव या अधिक हो तो दिशा तय नहीं होती, इसलिए रुक जाता है। Closed form: pure braid में दोनों strands के बीच crossings की signed संख्या c हो तो 2π·W = π c ठीक-ठीक (gate)। Winding number एक commutative invariant है, इसलिए commutator [A, B] रूप के braids (सभी pairs में winding number 0 फिर भी non-trivial) को अलग नहीं कर पाता —— यही braid के उपयोग का कारण है।</p>
+<p>Returns: (n, n) का float array (n = agents + obstacle points)।</p>
+<p>Raises: ValueError (दो strands एक ही point पर पहुँचें, 1 step का increment π तक पहुँचे —— steps को और बारीक करें)।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_braid_homotopy_classes">poc_braid_homotopy_classes</a> — <code style="color:#22d3bf">py -3.11 examples/poc_braid_homotopy_classes.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">matrix</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:relative_motion">relative_motion</a> · <a style="color:#22d3bf" href="opdrive:foe_from_motion">foe_from_motion</a> · <a style="color:#22d3bf" href="opdrive:flow_from_depth_motion">flow_from_depth_motion</a> · <a style="color:#22d3bf" href="opdrive:ttc_truth">ttc_truth</a> · <a style="color:#22d3bf" href="opdrive:world_materials">world_materials</a> · <a style="color:#22d3bf" href="opdrive:mesh_signed_volume">mesh_signed_volume</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">braidpath</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:braid_from_trajectories">braid_from_trajectories</a> · <a style="color:#22d3bf" href="opdrive:braid_reduce">braid_reduce</a> · <a style="color:#22d3bf" href="opdrive:braid_artin_images">braid_artin_images</a> · <a style="color:#22d3bf" href="opdrive:dynnikov_coordinates">dynnikov_coordinates</a> · <a style="color:#22d3bf" href="opdrive:dynnikov_act">dynnikov_act</a> · <a style="color:#22d3bf" href="opdrive:braid_equivalent">braid_equivalent</a> · <a style="color:#22d3bf" href="opdrive:homotopy_class_compare">homotopy_class_compare</a> · <a style="color:#22d3bf" href="opdrive:homotopy_shortest_paths">homotopy_shortest_paths</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: braidpath.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

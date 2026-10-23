@@ -219,7 +219,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 
 ## Tout voir
 
-277 PoC et 5 exemples de robots. Ouvrez un groupe pour afficher ses vignettes.
+278 PoC et 5 exemples de robots. Ouvrez un groupe pour afficher ses vignettes.
 
 <noscript><p><a href="../../GALLERY.en.html">(Sans JavaScript, toutes les figures sont visibles sur la page de la galerie.)</a></p></noscript>
 
@@ -238,7 +238,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 </div>
 </details>
 
-<details class="vall"><summary><b>Inspection industrielle</b> (46)</summary>
+<details class="vall"><summary><b>Inspection industrielle</b> (47)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_barcode_1d.jpg" alt="Code-barres 1-D" width="200" height="200"><span>Code-barres 1-D</span></a>
 <a href="../../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_battery_electrode_tortuosity.jpg" alt="Tortuosité des électrodes" width="200" height="200"><span>Tortuosité des électrodes</span></a>
@@ -286,6 +286,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 <a href="../../articles/assets/poc/poc_code_matching_breakdown/05_highlight_sweep.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_code_matching_breakdown.jpg" alt="Appariement de codes sous lumière variable et occlusion" width="200" height="200"><b>&#9654;</b><span>Appariement de codes sous lumière variable et occlusion</span></a>
 <a href="../../articles/assets/poc/poc_good_sample_variation_model/01_band_width_alignment.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_good_sample_variation_model.jpg" alt="Modèle de variation des pièces bonnes" width="200" height="200"><span>Modèle de variation des pièces bonnes</span></a>
 <a href="../../articles/assets/poc/poc_patch_anomaly/01_anomaly_maps.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_patch_anomaly.jpg" alt="Détection d'anomalies à partir des seules bonnes pièces (caractéristiques classiques : distribution contre mémoire)" width="200" height="200"><span>Détection d'anomalies à partir des seules bonnes pièces (caractéristiques classiques : distribution contre mémoire)</span></a>
+<a href="../../articles/assets/poc/poc_braid_homotopy_classes/01_braid_classes_spacetime.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_braid_homotopy_classes.jpg" alt="Classer des plans multi-robots selon leur tresse" width="200" height="200"><b>&#9654;</b><span>Classer des plans multi-robots selon leur tresse</span></a>
 </div>
 </details>
 

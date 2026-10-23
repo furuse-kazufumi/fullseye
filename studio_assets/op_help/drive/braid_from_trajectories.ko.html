@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">braid_from_trajectories — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.braid_from_trajectories(trajectories, obstacles=None, angle=0.1, jitter=&#x27;auto&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import braidpath; braidpath.braid_from_trajectories(trajectories, obstacles=None, angle=0.1, jitter=&#x27;auto&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;braid_from_trajectories&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>평면 궤적들(과 움직이지 않는 장애물 점)로부터 브레이드 단어(교차 부호의 열)를 만든다.</p>
+<p>각 스텝 사이에서는 직선으로 움직인다고 보고, 사영 축 x&#x27; = x cos θ + y sin θ 위에서 이웃한 두 가닥의 순서가 바뀌는 시각을닫힌 형태로 구하고(상대 운동도 직선이므로 영점은 많아야 1 개), 시각 순으로 문자로 만든다. 왼쪽 가닥이 <b>아래</b>(y&#x27; 가 작은 쪽)를지나 오른쪽으로 나가면 <code style="color:#22d3bf">+i</code>(반시계 방향 반회전), 위를 지나면 <code style="color:#22d3bf">−i</code>.</p>
+<p>★사영의 삼중점: 격자의 대칭적인 움직임(2 대가 장애물 점을 사이에 두고 점대칭으로 움직이는 등)에서는 3 가닥이 일직선을 유지한 채 돌아, 어느 각도에서도 3 개의 교차가 동시에 일어난다. <code style="color:#22d3bf">jitter=&quot;auto&quot;</code> 는 그때만 가닥마다 일정한 작은 어긋남(최소 거리 × <code style="color:#22d3bf">JITTER_FRACTION</code>, 방향은 황금각)을 더해 다시 구한다. 어긋남은 최소 거리보다 훨씬 작으므로 브레이드는바뀌지 않는다(게이트로 확인).</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>trajectories : numpy 의 (K, T, 2) = [x, y], 또는 list 형태의 격자 경로(각 대의 (row, col) 열) / 계획기의 dict(<code style="color:#22d3bf">paths</code>).</p>
+<p>obstacles : (M, 2) 의 점, 선택. 구멍을 1 점으로 대표시킨다(구멍 안의 점이면 어느 것이든 류는 바뀌지 않는다).</p>
+<p>angle : 사영 축의 각도 [rad]. 류의 판정(<code style="color:#22d3bf">homotopy_class_compare</code>)은 각도에 의존하지 않지만, 단어 자체는 바뀐다.</p>
+<p>jitter : <code style="color:#22d3bf">&quot;auto&quot;</code> 또는 어긋남의 크기(0 = 어긋나게 하지 않음, 상한은 최소 거리의 1 %).</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict: <code style="color:#22d3bf">word</code> (int 의 1-D 배열), <code style="color:#22d3bf">n_strands</code>, <code style="color:#22d3bf">n_agents</code>, <code style="color:#22d3bf">start_order</code> / <code style="color:#22d3bf">end_order</code>(위치 순의 가닥 번호), <code style="color:#22d3bf">times</code>(각 문자의 시각, 스텝 단위), <code style="color:#22d3bf">angle</code>, <code style="color:#22d3bf">jitter</code>(사용한 어긋남), <code style="color:#22d3bf">clearance</code>(가닥 사이의 최소 거리).</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
+<p>ValueError: 두 가닥이 같은 점에 온다(충돌에는 브레이드가 없다), jitter=0 에서 삼중점(TriplePointError), 형태가 다름, NaN.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_braid_homotopy_classes">poc_braid_homotopy_classes</a> — <code style="color:#22d3bf">py -3.11 examples/poc_braid_homotopy_classes.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">braidpath</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:braid_reduce">braid_reduce</a> · <a style="color:#22d3bf" href="opdrive:braid_artin_images">braid_artin_images</a> · <a style="color:#22d3bf" href="opdrive:dynnikov_coordinates">dynnikov_coordinates</a> · <a style="color:#22d3bf" href="opdrive:dynnikov_act">dynnikov_act</a> · <a style="color:#22d3bf" href="opdrive:braid_equivalent">braid_equivalent</a> · <a style="color:#22d3bf" href="opdrive:homotopy_class_compare">homotopy_class_compare</a> · <a style="color:#22d3bf" href="opdrive:pairwise_winding">pairwise_winding</a> · <a style="color:#22d3bf" href="opdrive:homotopy_shortest_paths">homotopy_shortest_paths</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: braidpath.py — DRIVE 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
