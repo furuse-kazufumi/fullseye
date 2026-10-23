@@ -47,7 +47,8 @@ def test_the_ledger_lists_every_op_and_nothing_is_missing():
     # 673 → 676: 粉の粒径から含量の CV と粉砕時間 3(doseunif: 対数正規の閉形式と Monte Carlo・測った粒径(画像の標本 / 粒度分布の表)からの CV と区間・粉砕則での逆算と合格の確率、2026-10-06。numpy + scipy)
     # 676 → 679: 包丁を指先の視触覚で持って切る 3(cuttouch: 部分滑りのねじりの数値解・2 パッドの読みから V・H・M_x と当たり位置・靱性、2026-10-06。numpy + scipy)
     # 679 → 694: 惑星ローバーの車輪の滑り 15(roverslip: Bekker の圧力・沈下の近似 2・Wong–Reece の力・沈下・牽引–滑り 3・斜面の滑り・視覚オドメトリ 2・ガウス過程・分位点回帰・予測・CVaR 4・コスト地図・経路・経路の評価 3、2026-10-06。numpy)
-    assert len(opsdrive.OPSDRIVE) == 694
+    # 694 → 700: 映像の物理整合性 6(ballistics: 推力つき RK4・推力あり/なしの当てはめ・AIC・弾道 vs 推力・g からの時間引き延ばし、2026-10-23)
+    assert len(opsdrive.OPSDRIVE) == 700
     # 台帳の op は実装モジュールの __all__ に在る(逆は要らない: 補助関数は台帳に載せない)
     import drivecourse, driveworld, lidarsim, drivettc, rsssafety, driveterrain, ballistics, balltrack, ballworld, racket
     import roadjp
@@ -115,7 +116,7 @@ def test_the_typed_catalog_declares_the_family():
     import typed_catalog as tc
 
     rows = [r for r in tc.catalog() if r[1] == "drive"]
-    assert len(rows) == 694
+    assert len(rows) == 700
     assert {r[3] for r in rows} == {"table", "image2d", "signal", "matrix", "scalar", "any", "points", "rgba", "rgb", "voxel", "normalmap"}
 
 

@@ -1,8 +1,8 @@
 {
- "n_ops": 3533,
+ "n_ops": 3539,
  "tiers": {
   "color": 12,
-  "ledger": 2574,
+  "ledger": 2580,
   "nary": 17,
   "registry": 930
  },
@@ -693,6 +693,17 @@
    "in_sorts": [
     "table"
    ]
+  },
+  {
+   "name": "aic_from_rss",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "scalar",
+   "category": "ball",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
   },
   {
    "name": "aim_velocity",
@@ -1977,6 +1988,21 @@
    "dim": "drive",
    "in_sorts": [
     "table",
+    "table"
+   ]
+  },
+  {
+   "name": "ballistic_vs_thrust",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "ball",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "points",
     "table"
    ]
   },
@@ -7396,6 +7422,21 @@
    "dim": "drive",
    "in_sorts": [
     "signal"
+   ]
+  },
+  {
+   "name": "drag_fit",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "ball",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "points",
+    "table"
    ]
   },
   {
@@ -30207,6 +30248,34 @@
    ]
   },
   {
+   "name": "thrust_fit",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "ball",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "points",
+    "table"
+   ]
+  },
+  {
+   "name": "thrust_ode",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "ball",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "ticks",
    "halcon": "",
    "in_sort": "image2d",
@@ -30531,6 +30600,17 @@
     "scalar",
     "scalar"
    ]
+  },
+  {
+   "name": "time_stretch_from_gravity",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "ball",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
   },
   {
    "name": "time_to_line_crossing",

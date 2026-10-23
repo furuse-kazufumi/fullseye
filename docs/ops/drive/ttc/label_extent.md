@@ -4,7 +4,7 @@ dim: drive
 category: ttc
 in: labels2d
 out: table
-examples: [poc_ttc_rss]
+examples: [poc_ttc_rss, poc_video_physics_consistency]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.8.1  # fullseye lib version this note was generated for
@@ -32,6 +32,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_ttc_rss](../../../../examples/poc_ttc_rss.py) — `py -3.11 examples/poc_ttc_rss.py`
+- [poc_video_physics_consistency](../../../../examples/poc_video_physics_consistency.py) — `py -3.11 examples/poc_video_physics_consistency.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

@@ -218,7 +218,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 全部看
 
-PoC 275 個,另有機器人範例 5 個。展開分組即可載入縮圖。
+PoC 276 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 
 <noscript><p><a href="../../GALLERY.en.html">(沒有 JavaScript 時,可在圖庫頁面查看全部圖。)</a></p></noscript>
 
@@ -538,12 +538,13 @@ PoC 275 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 </div>
 </details>
 
-<details class="vall"><summary><b>鑑識與文件</b> (4)</summary>
+<details class="vall"><summary><b>鑑識與文件</b> (5)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_document_scan/01_rectify_zero_points.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_document_scan.jpg" alt="文件校正" width="200" height="200"><span>文件校正</span></a>
 <a href="../../articles/assets/poc/poc_forensics_roc/01_score_maps.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_forensics_roc.jpg" alt="竄改偵測 ROC" width="200" height="200"><span>竄改偵測 ROC</span></a>
 <a href="../../articles/assets/poc/poc_fresco_craquelure/01_ridge_ops.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_fresco_craquelure.jpg" alt="畫作龜裂網" width="200" height="200"><span>畫作龜裂網</span></a>
 <a href="../../articles/assets/poc/poc_prnu_camera_fingerprint/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_prnu_camera_fingerprint.jpg" alt="相機指紋" width="200" height="200"><span>相機指紋</span></a>
+<a href="../../articles/assets/poc/poc_video_physics_consistency/01_monocular_clip.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_video_physics_consistency.jpg" alt="影像的物理一致性:彈道還是推力、時間拉伸" width="200" height="200"><b>&#9654;</b><span>影像的物理一致性:彈道還是推力、時間拉伸</span></a>
 </div>
 </details>
 

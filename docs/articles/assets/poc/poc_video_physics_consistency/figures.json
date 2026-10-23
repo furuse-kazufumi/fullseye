@@ -1,0 +1,78 @@
+[
+ {
+  "file": "01_monocular_clip.gif",
+  "name": "monocular_clip",
+  "caption": "推力 4 m/s² の車を 45 m 先の単眼カメラで写した合成映像(960 × 540、30 fps)。箱の影絵と bbox、bbox と車の寸法から起こした位置の軌跡(点)、地面の線。",
+  "shape": [
+   540,
+   960,
+   3
+  ],
+  "animated": true,
+  "frames": 60,
+  "frames_written": 60,
+  "fps": 15.0
+ },
+ {
+  "file": "02_trajectories.png",
+  "name": "trajectories",
+  "caption": "点は bbox から、破線は世界の真値。同じ発射でも推力があると放物線から外れて伸びる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_delta_aic_ballistic.png",
+  "name": "delta_aic_ballistic",
+  "caption": "雑音だけなら ΔAIC は −2Δk = −4 を中心に χ²(2) の幅で散る。10 を超えたら『推力あり』。",
+  "shape": [
+   360,
+   739,
+   3
+  ]
+ },
+ {
+  "file": "04_delta_aic_thrusted.png",
+  "name": "delta_aic_thrusted",
+  "caption": "1 m/s²(g の 10 %)でも 60 コマで決定的。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_detection_floor.png",
+  "name": "detection_floor",
+  "caption": "g の 2.5 % の推力でも床の 10 を超える。床は雑音(画素)とコマ数で決まる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_time_stretch.png",
+  "name": "time_stretch",
+  "caption": "k = √(g_ref / g_fit)。偏りは抗力を放物線が g に吸う分で、帰無分布(破線)に含めて読む。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "07_summary.png",
+  "name": "summary",
+  "caption": "全部、合成の世界の真値に対する実測。",
+  "shape": [
+   296,
+   446,
+   3
+  ],
+  "csv": "07_summary.csv",
+  "tsv": "07_summary.tsv"
+ }
+]

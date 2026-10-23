@@ -1,0 +1,19 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">time_stretch_from_gravity — DRIVE <code style="color:#22d3bf">ball</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">table</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.time_stretch_from_gravity(g_fit: &#x27;float&#x27;, g_ref: &#x27;float&#x27; = 9.81) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import ballistics; ballistics.time_stretch_from_gravity(g_fit: &#x27;float&#x27;, g_ref: &#x27;float&#x27; = 9.81) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;time_stretch_from_gravity&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>맞춘 중력가속도에서 영상의 시간 늘림 배율을 닫힌 식으로 역산합니다. 시간을 k배 늘린(슬로모션이나 프레임레이트 바꿔 달기) 영상에서는 궤적의 모양은 같고 g가 g/k²로 보이므로 k = √(g_ref / g_fit)입니다. 반환값 <code style="color:#22d3bf">{&quot;k&quot;, &quot;g_fit&quot;, &quot;g_ref&quot;, &quot;log_k&quot;}</code>(<code style="color:#22d3bf">log_k</code> = ln k는 개변 없이 0이고 부호가 빠름/느림을 나타냄. <code style="color:#22d3bf">imgforensics.evidence_quantile</code>에 넘기려면 |log_k|를 &quot;클수록 강한&quot; 증거로 사용). g_fit ≤ 0이나 비유한 값, g_ref ≤ 0은 ValueError(중력이 위를 향하거나 없는 궤적에 배율은 정의되지 않음).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_video_physics_consistency">poc_video_physics_consistency</a> — <code style="color:#22d3bf">py -3.11 examples/poc_video_physics_consistency.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">ball</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:ball_params">ball_params</a> · <a style="color:#22d3bf" href="opdrive:impact_params">impact_params</a> · <a style="color:#22d3bf" href="opdrive:flight_vacuum">flight_vacuum</a> · <a style="color:#22d3bf" href="opdrive:flight_ode">flight_ode</a> · <a style="color:#22d3bf" href="opdrive:flight_simulate">flight_simulate</a> · <a style="color:#22d3bf" href="opdrive:flight_state_at">flight_state_at</a> · <a style="color:#22d3bf" href="opdrive:magnus_lift_coefficient">magnus_lift_coefficient</a> · <a style="color:#22d3bf" href="opdrive:drag_coefficient_sphere">drag_coefficient_sphere</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ballistics.py — DRIVE 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -6774,7 +6774,7 @@ Ops used (notes): [`chromatic_shift`](https://furuse.work/ops/optics/design/chro
 
 ### The Forensics and Documents Wing — One Successful Image Is Not Evidence
 
-Forgery detection and document rectification. Both tend to be presented through 'the one image where it was found' or 'the one page that came out straight'. The 4 exhibits here fix the paste location and quality, the homography and the lighting themselves, then score with a per-pixel ROC and pixel-level geometric error.
+Forgery detection and document rectification. Both tend to be presented through 'the one image where it was found' or 'the one page that came out straight'. The 5 exhibits here fix the paste location and quality, the homography and the lighting themselves, then score with a per-pixel ROC and pixel-level geometric error.
 
 The forgery exhibit is on the detection (defensive) side. Forgeries are generated only because scoring a detector needs ground truth, and the generator is kept to the crudest form possible. What the exhibit shows most strongly is the fact that works against the detector: one press of the save button weakens every cue.
 
@@ -6907,6 +6907,42 @@ Source: [examples/poc_prnu_camera_fingerprint.py](https://github.com/furuse-kazu
 This run produced **12 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_prnu_camera_fingerprint)
 
 Ops used (notes): [`aug_jpeg_blocks`](https://furuse.work/ops/2d/augmentation/aug_jpeg_blocks.html) · [`evidence_quantile`](https://furuse.work/ops/imgforensics/calibration/evidence_quantile.html) · [`fingerprint_correlate`](https://furuse.work/ops/imgforensics/sensor/fingerprint_correlate.html) · [`gauss_image`](https://furuse.work/ops/2d/smoothing/gauss_image.html) · [`median_image`](https://furuse.work/ops/2d/rank/median_image.html) · [`null_distribution`](https://furuse.work/ops/imgforensics/calibration/null_distribution.html) · [`reflect`](https://furuse.work/ops/3d/optics/reflect.html) · [`sensor_fingerprint`](https://furuse.work/ops/imgforensics/sensor/sensor_fingerprint.html) · [`sk_nlm`](https://furuse.work/ops/2d/smoothing/sk_nlm.html) · [`sk_tv`](https://furuse.work/ops/2d/smoothing/sk_tv.html) · [`sk_wavelet`](https://furuse.work/ops/2d/smoothing/sk_wavelet.html) · [`xsp_dct_denoise`](https://furuse.work/ops/2d/smoothing/xsp_dct_denoise.html) · [`xsp_wiener`](https://furuse.work/ops/2d/smoothing/xsp_wiener.html)
+
+## No.2026.276 —— Physical Consistency of Footage — Ballistic or Thrusted, and Was the Clock Stretched?
+
+[![Physical Consistency of Footage — Ballistic or Thrusted, and Was the Clock Stretched?](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_physics_consistency/04_delta_aic_thrusted_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_physics_consistency/04_delta_aic_thrusted.png)
+
+*↑ **Physical Consistency of Footage — Ballistic or Thrusted, and Was the Clock Stretched?** ―― A synthetic car box filmed by a monocular camera 45 m away (960 × 540, 30 fps, one pixel ≈ 7.5 cm) is tracked by its bounding box and scaled by the known car size; the planar track sits 2.8 cm (median) from the truth. Fitting gravity + drag against gravity + drag + constant thrust and choosing by the AIC difference classifies 79 of 80 clips (40 ballistic, 40 thrusted): thrusted ΔAIC is at least 382, while one ballistic clip reaches 10.4 and is misjudged (noise alone scatters around −4 with a χ² width). Thrust magnitude comes back with a median estimate/truth ratio of 1.022, and 2.5 % of g (0.25 m/s²) is still visible with a median ΔAIC of 79. Stretching the clock by k makes g look like g/k², so k is inverted in closed form: at most 0.32 % error for k in [0.5, 4], position 1.000 against a 200-clip clean null, and 2 false positives in 100 further clean clips. A ballistic clip slowed 1.5× reads as an upward thrust of 5.46 m/s² (closed form g(1 − 1/k²) = 5.45): vertical thrust and time stretch are degenerate in a monocular view. No learning, no real footage.*
+
+[![推力 4 m/s² の車を 45 m 先の単眼カメラで写した合成映像(960 × 540、30 fps)。箱の影絵と bbox、bbox と車の寸法から起こした位置の軌跡(点)、地面の線。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_physics_consistency/01_monocular_clip.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_physics_consistency/01_monocular_clip.gif)
+
+*↑ The measurement ―― 推力 4 m/s² の車を 45 m 先の単眼カメラで写した合成映像(960 × 540、30 fps)。箱の影絵と bbox、bbox と車の寸法から起こした位置の軌跡(点)、地面の線。 (figure labels are in Japanese; the numbers are the same)*
+
+[![点は bbox から、破線は世界の真値。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_physics_consistency/02_trajectories_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_physics_consistency/02_trajectories.png)
+
+*↑ 点は bbox から、破線は世界の真値。*
+
+[![雑音だけなら ΔAIC は −2Δk = −4 を中心に χ²(2) の幅で散る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_physics_consistency/03_delta_aic_ballistic_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_physics_consistency/03_delta_aic_ballistic.png)
+
+*↑ 雑音だけなら ΔAIC は −2Δk = −4 を中心に χ²(2) の幅で散る。*
+
+[![g の 2.5 % の推力でも床の 10 を超える。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_physics_consistency/05_detection_floor_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_physics_consistency/05_detection_floor.png)
+
+*↑ g の 2.5 % の推力でも床の 10 を超える。*
+
+[![k = √(g_ref / g_fit)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_physics_consistency/06_time_stretch_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_physics_consistency/06_time_stretch.png)
+
+*↑ k = √(g_ref / g_fit)。*
+
+```
+py -3.11 examples/poc_video_physics_consistency.py
+```
+
+Source: [examples/poc_video_physics_consistency.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_video_physics_consistency.py)
+
+This run produced **7 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_video_physics_consistency)
+
+Ops used (notes): [`ball_params`](https://furuse.work/ops/drive/ball/ball_params.html) · [`ballistic_vs_thrust`](https://furuse.work/ops/drive/ball/ballistic_vs_thrust.html) · [`convex_hull`](https://furuse.work/ops/3d/bounds/convex_hull.html) · [`drag_fit`](https://furuse.work/ops/drive/ball/drag_fit.html) · [`evidence_quantile`](https://furuse.work/ops/imgforensics/calibration/evidence_quantile.html) · [`fit_parabola`](https://furuse.work/ops/drive/ball/fit_parabola.html) · [`flight_ode`](https://furuse.work/ops/drive/ball/flight_ode.html) · [`label_extent`](https://furuse.work/ops/drive/ttc/label_extent.html) · [`null_distribution`](https://furuse.work/ops/imgforensics/calibration/null_distribution.html) · [`project`](https://furuse.work/ops/3d/bundle_adjust/project.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`thrust_fit`](https://furuse.work/ops/drive/ball/thrust_fit.html) · [`thrust_ode`](https://furuse.work/ops/drive/ball/thrust_ode.html) · [`time_stretch_from_gravity`](https://furuse.work/ops/drive/ball/time_stretch_from_gravity.html)
 
 ### Autonomous driving — where the theorem and a second implementation are the test (separate article)
 

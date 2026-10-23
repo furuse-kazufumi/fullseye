@@ -1990,6 +1990,27 @@ def _b_cup(pool, rng):
     return ((0.0, 0.0, 0.03), (0.0, 0.0, -0.3), (0.0, 0.0, 0.0), (0.0, 0.0, 1.0), 0.03, 0.02), {}
 
 
+def _b_thrust_ode(pool, rng):
+    return ((0.0, 0.0, 0.5), (3.0, 0.2, 1.0), (0.5, 0.0, 0.2), _b_ball_bp(pool, rng), 0.05), {"dt": 1e-3}
+
+
+def _b_thrust_tp(pool, rng):
+    import ballistics as BL
+    # 推力あり/なしの当てはめは ≥ 8 標本が要る。推力つきの軌跡を 10 点で渡す(ファザーは型と走ることだけ見る)。
+    bp = _b_ball_bp(pool, rng)
+    f = BL.thrust_ode((0.0, 0.0, 0.5), (3.0, 0.2, 1.0), (0.5, 0.0, 0.2), bp, 0.101, 1e-3)
+    idx = np.arange(0, 100, 10)
+    return (f["t"][idx], f["p"][idx], bp), {"iters": 2, "dt": 1e-3}
+
+
+def _b_aic(pool, rng):
+    return (2.0, 10, 3), {}
+
+
+def _b_time_stretch(pool, rng):
+    return (9.80665 / 4.0,), {}
+
+
 def _b_ball_img(pool, rng):
     rr, cc = np.mgrid[0:60, 0:96]
     img = 0.05 * rng.random((60, 96))
@@ -7142,6 +7163,8 @@ OP_ARG_BUILDERS = {
     "slide_stop_distance": _b_slide, "incline_slip_angle": _b_mu, "mu_from_stop_distance": _b_mu_from_stop,
     "roll_slide_state": _b_roll_slide, "tether_simulate": _b_tether, "pendulum_period": _b_pendulum,
     "cup_catch_check": _b_cup,
+    "thrust_ode": _b_thrust_ode, "thrust_fit": _b_thrust_tp, "drag_fit": _b_thrust_tp, "ballistic_vs_thrust": _b_thrust_tp,
+    "aic_from_rss": _b_aic, "time_stretch_from_gravity": _b_time_stretch,
     "ball_detect": _b_ball_img, "ball_track": _b_ball_dets, "kalman_ca": _b_kalman, "triangulate_dlt": _b_tri_dlt,
     "track_triangulate": _b_track_tri, "bounce_detect": _b_bounce_det, "marker_direction": _b_marker_dir,
     "spin_from_markers": _b_spin_markers, "spin_from_marker_sequence": _b_spin_marker_seq, "reproject": _b_reproject,

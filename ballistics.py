@@ -27,6 +27,12 @@ __all__ = [
     "restitution_from_apexes", "restitution_from_intervals", "fit_parabola", "flight_fit", "fit_aero", "fit_spin", "fit_bounce",
     "slide_stop_distance", "incline_slip_angle", "mu_from_stop_distance", "roll_slide_state", "tether_simulate",
     "pendulum_period", "cup_catch_check",
+    "thrust_ode",
+    "thrust_fit",
+    "drag_fit",
+    "aic_from_rss",
+    "ballistic_vs_thrust",
+    "time_stretch_from_gravity",
 ]
 
 G = 9.81
@@ -676,3 +682,231 @@ def cup_catch_check(p_ball, v_ball, cup_center, cup_axis, cup_radius: float, bal
     speed = float(np.linalg.norm(v))
     caught = lateral <= max(cup_radius - ball_radius, 0.0) and 0.0 <= height <= 1.5 * ball_radius and speed <= v_rel_max
     return {"caught": bool(caught), "lateral": lateral, "height": height, "speed": speed}
+
+
+# ─────────────────── 推力の有無と時間の引き延ばし(映像の物理整合性、2026-10-23) ───────────────────
+# 単眼の映像から尺度つきで起こした軌跡に、「重力 + 抗力」と「重力 + 抗力 + 一定の比推力」の 2 つの模型を当て、
+# AIC の差で選ぶ。時刻を k 倍に引き延ばした映像では当てはめた g が g/k² に見えるので、k は閉形式で戻る。
+# どれも**判定の閾値を同梱しない**(ΔAIC の床は呼び手が渡し、k は清浄な映像の分布と並べて読む: imgforensics の流儀)。
+
+def _acc_thrust(vx, vy, vz, bp, thrust):
+    ax, ay, az = _acc(vx, vy, vz, 0.0, 0.0, 0.0, bp)
+    return ax + thrust[0], ay + thrust[1], az + thrust[2]
+
+
+def _rk4_thrust(p, v, h, bp, thrust):
+    px, py, pz = p
+    vx, vy, vz = v
+    a1 = _acc_thrust(vx, vy, vz, bp, thrust)
+    v2 = (vx + 0.5 * h * a1[0], vy + 0.5 * h * a1[1], vz + 0.5 * h * a1[2])
+    a2 = _acc_thrust(v2[0], v2[1], v2[2], bp, thrust)
+    v3 = (vx + 0.5 * h * a2[0], vy + 0.5 * h * a2[1], vz + 0.5 * h * a2[2])
+    a3 = _acc_thrust(v3[0], v3[1], v3[2], bp, thrust)
+    v4 = (vx + h * a3[0], vy + h * a3[1], vz + h * a3[2])
+    a4 = _acc_thrust(v4[0], v4[1], v4[2], bp, thrust)
+    h6 = h / 6.0
+    pn = (px + h6 * (vx + 2 * v2[0] + 2 * v3[0] + v4[0]), py + h6 * (vy + 2 * v2[1] + 2 * v3[1] + v4[1]),
+          pz + h6 * (vz + 2 * v2[2] + 2 * v3[2] + v4[2]))
+    vn = (vx + h6 * (a1[0] + 2 * a2[0] + 2 * a3[0] + a4[0]), vy + h6 * (a1[1] + 2 * a2[1] + 2 * a3[1] + a4[1]),
+          vz + h6 * (a1[2] + 2 * a2[2] + 2 * a3[2] + a4[2]))
+    return pn, vn
+
+
+def thrust_ode(p0, v0, thrust, bp: dict, t_end: float, dt: float = 1e-3) -> dict:
+    """重力 + 抗力 + **一定の比推力**(質量あたりの推力 [m/s²]、世界座標で向きも大きさも一定)の RK4。スピンは持たない(ω = 0)。
+    返り値 ``{"t" (N,), "p" (N, 3), "v" (N, 3)}``(t = 0, dt, …, ≤ t_end)。``thrust`` が零ベクトルなら :func:`flight_ode`(ω = 0)と
+    1e-12 で一致し、真空(rho = 0)なら閉形式 p₀ + v₀ t + ½ (a_T − g ẑ) t² と 1e-9 で一致する(門)。
+    「ほぼロケット」の映像を扱う最小の模型で、推力が機体に固定されて向きを変える場合は近似になる(短い区間ほど良い)。
+
+    空の入力(``thrust`` が 0 要素)は ValueError。
+    """
+    if (len(thrust) if isinstance(thrust, (list, tuple)) else np.asarray(thrust).size) == 0:
+        raise ValueError("thrust_ode: thrust is empty — pass a 3-vector in m/s²")
+    p = tuple(_v3(p0, "p0"))
+    v = tuple(_v3(v0, "v0"))
+    a = tuple(_v3(thrust, "thrust"))
+    if t_end < 0 or dt <= 0:
+        raise ValueError("need t_end ≥ 0 and dt > 0")
+    n = int(math.floor(t_end / dt + 1e-9)) + 1
+    P, V = [p], [v]
+    for _ in range(n - 1):
+        p, v = _rk4_thrust(p, v, dt, bp, a)
+        P.append(p)
+        V.append(v)
+    return {"t": np.arange(n, dtype=np.float64) * dt, "p": np.asarray(P), "v": np.asarray(V)}
+
+
+def _fit_thrust_model(t, p, bp, fit_thrust, iters, dt, who, init=None):
+    t = np.asarray(t, np.float64).reshape(-1)
+    P = np.asarray(p, np.float64)
+    if t.size == 0 or P.size == 0:
+        raise ValueError("%s: t/p is empty — pass at least 8 samples" % who)
+    if P.ndim != 2 or P.shape[1] not in (2, 3):
+        raise ValueError("%s: p must be (N, 3) world points or (N, 2) planar (x, z) points" % who)
+    planar = P.shape[1] == 2
+    if planar:
+        P = np.column_stack([P[:, 0], np.zeros(len(P)), P[:, 1]])
+    if t.size != len(P) or t.size < 8 or not np.all(np.isfinite(P)) or not np.all(np.isfinite(t)) or not np.all(np.diff(t) > 0):
+        raise ValueError("%s: need ≥ 8 finite samples with increasing t" % who)
+    t0 = float(t[0])
+    tau = t - t0
+    par = fit_parabola(tau, P)
+    cd0 = 0.4 if isinstance(bp["cd"], str) else float(bp["cd"])
+    # 10 個 = p0(3) v0(3) C_d thrust(3)。C_d ≥ 0 は**射影**で保つ(反復のあとで負なら 0 に戻す)。模型の中で max(0, ·) と
+    # 切るとヤコビアンが 0 になって止まり、ln C_d にすると C_d → 0 側でヤコビアンが C_d 倍に消えて粘る(2026-10-23 に両方踏んだ)。
+    # 射影なら境界 0 でも前進差分のヤコビアンは消えないので、推力の段で C_d が 0 から戻れる。
+    full = np.r_[par["p0"], par["v0"], cd0, 0.0, 0.0, 0.0]
+    scales_full = np.r_[np.ones(6), 0.1, np.ones(3)]
+    free = [0, 1, 2, 3, 4, 5, 6] + ([7, 8, 9] if fit_thrust else [])
+    if planar:
+        free = [i for i in free if i not in (1, 4, 8)]              # y 成分は観測が無いので動かさない(= 0)
+        full[[1, 4, 8]] = 0.0
+    free = np.asarray(free)
+    obs = np.asarray([0, 2]) if planar else np.asarray([0, 1, 2])
+
+    def model(xf):
+        x = full.copy()
+        x[free] = xf
+        b = dict(bp)
+        b["cd"] = max(0.0, float(x[6]))
+        f = thrust_ode(x[:3], x[3:6], tuple(float(c) for c in x[7:10]), b, tau[-1] + dt, dt)
+        return np.column_stack([np.interp(tau, f["t"], f["p"][:, k]) for k in obs])
+
+    Pobs = P[:, obs]
+    sc = scales_full[free]
+    pos_cd = int(np.where(free == 6)[0][0])
+
+    def jac(xf, base):
+        J = np.empty((base.size, len(xf)))
+        for j in range(len(xf)):
+            xp = xf.copy()
+            h = 1e-6 * sc[j]
+            xp[j] += h
+            J[:, j] = ((model(xp) - Pobs).ravel() - base) / h
+        return J
+
+    # Levenberg–Marquardt(対角減衰、尺度を揃えた座標で): 「後ろ向きの小さな推力」と抗力が縮退する方向で
+    # 素の Gauss–Newton は大きな歩を出して振動し、後退探索では尺を縮めきって途中で止まった(ΔAIC が負に膨らむ)。
+    # 減衰を残差が減るまで強め、減ったら弱める。残差は単調に減るので、推力 0 から出発すれば抗力だけの模型より悪くならない。
+    xf = full[free].copy() if init is None else np.asarray(init, np.float64)[free].copy()
+    res = (model(xf) - Pobs).ravel()
+    rss = float(np.dot(res, res))
+    mu = 1e-3
+    it = 0
+    for it in range(1, iters + 1):
+        Js = jac(xf, res) * sc                        # d res / d(x / sc)
+        A = Js.T @ Js
+        g = Js.T @ res
+        D = np.diag(np.maximum(np.diag(A), 1e-300))
+        accepted = False
+        for _ in range(16):
+            try:
+                step_s = np.linalg.solve(A + mu * D, -g)
+            except np.linalg.LinAlgError:
+                step_s = np.linalg.lstsq(A + mu * D, -g, rcond=None)[0]
+            cand = xf + step_s * sc
+            cand[pos_cd] = max(cand[pos_cd], 0.0)        # 射影: 抗力係数は負にしない
+            r2 = (model(cand) - Pobs).ravel()
+            rss2 = float(np.dot(r2, r2))
+            if rss2 < rss:
+                accepted = True
+                mu = max(mu / 3.0, 1e-12)
+                break
+            mu *= 4.0
+        if not accepted:
+            break
+        improved = rss - rss2
+        xf, res, rss = cand, r2, rss2
+        if np.linalg.norm(step_s) < 1e-10 or improved <= 1e-14 * max(rss, 1e-300):
+            break
+    J = jac(xf, res)
+    x = full.copy()
+    x[free] = xf
+    out = {"p0": x[:3], "v0": x[3:6], "cd": max(0.0, float(x[6])), "thrust": x[7:10].copy(),
+           "rms": float(np.sqrt(np.mean(np.sum(res.reshape(-1, len(obs)) ** 2, axis=1)))),
+           "rss": rss, "n": int(res.size), "k": int(len(free)), "dims": int(len(obs)),
+           "cond": float(np.linalg.cond(J)), "iters": it, "t0": t0}
+    out["thrust_norm"] = float(np.linalg.norm(out["thrust"]))
+    return out
+
+
+def thrust_fit(t, p, bp: dict, *, iters: int = 20, dt: float = 1e-3) -> dict:
+    """軌跡 (t_i, p_i) に「重力 + 抗力 + 一定の比推力」の模型を **(p₀, v₀, C_d, a_T) の 10 パラメータ** で Gauss–Newton
+    (有限差分のヤコビアン)で当てる。``p`` は (N, 3) の世界座標か、単眼の側面視で起こした **(N, 2) の平面 (x, z)**(そのときは
+    y 成分を観測も未知数も持たないので 7 パラメータ、``n`` = 2 × 点数)。``bp`` は :func:`ball_params` の表(質量・前面積・空気密度・g。
+    ``radius`` は前面積を与えるためだけに使う: 車なら A = πr² が前面積になる r を渡す)。
+    返り値 ``{"p0", "v0", "cd", "thrust" (3,), "thrust_norm", "rms", "rss", "n", "k", "dims", "cond", "iters", "t0"}``
+    (``n`` は残差の個数、``k`` は動かしたパラメータ数。:func:`aic_from_rss` の入力)。
+    推力つきの真値の軌跡なら a_T は 1e-5 m/s² で戻り、推力 0 で作った軌跡なら ``thrust_norm`` は 1e-5 以下になる(門)。
+
+    空の入力(``t`` が 0 要素)は ValueError。
+    """
+    # 2 段: 先に抗力だけの模型(推力 0)を解き、その解から推力を動かす。放物線から直接 10 パラメータを動かすと、
+    # 「後ろ向きの推力」と抗力が縮退する谷で C_d → 0 の偽解に落ちることがある(真値の軌跡で 0.1 m/s² 外れた、2026-10-23)。
+    b = _fit_thrust_model(t, p, bp, False, iters, dt, "thrust_fit")
+    return _thrust_fit_two_starts(t, p, bp, iters, dt, "thrust_fit", b)
+
+
+def _thrust_fit_two_starts(t, p, bp, iters, dt, who, b):
+    """推力つきの当てはめを 2 つの始点から解き、残差の小さい方を採る: (1) 抗力だけの解(推力 0)から、(2) 放物線 + 表の C_d から。
+    「後ろ向きの推力」と抗力が縮退する谷は壁(C_d = 0)で終わっていて、片方の始点からは壁際に止まることがある
+    (真値の推力軌跡で (1) だけだと C_d = 0・|Δa_T| = 0.2 m/s²、(2) だけだと雑音のある弾道で C_d = 0 に固着、2026-10-23)。
+    (1) を含むので RSS_推力 ≤ RSS_弾道 は保たれる。"""
+    init = np.r_[b["p0"], b["v0"], b["cd"], 0.0, 0.0, 0.0]
+    f1 = _fit_thrust_model(t, p, bp, True, iters, dt, who, init=init)
+    if f1["cd"] > 1e-6:
+        return f1                                     # 壁(C_d = 0)に当たっていなければ谷の底
+    f2 = _fit_thrust_model(t, p, bp, True, iters, dt, who)
+    return f1 if f1["rss"] <= f2["rss"] else f2
+
+
+def drag_fit(t, p, bp: dict, *, iters: int = 20, dt: float = 1e-3) -> dict:
+    """軌跡 (t_i, p_i) に「重力 + 抗力」の模型を **(p₀, v₀, C_d) の 7 パラメータ**(平面入力なら 5)で当てる(:func:`thrust_fit` の
+    推力なし版。:func:`flight_fit` は C_d を既知として 6 パラメータ、こちらは C_d も同定する)。返り値の鍵は :func:`thrust_fit` と同じで
+    ``thrust`` は零ベクトル。真値の軌跡なら C_d は 1e-4 で戻る(門)。
+
+    空の入力(``t`` が 0 要素)は ValueError。
+    """
+    return _fit_thrust_model(t, p, bp, False, iters, dt, "drag_fit")
+
+
+def aic_from_rss(rss: float, n: int, k: int) -> float:
+    """最小二乗の残差平方和から赤池情報量規準 AIC = n ln(RSS/n) + 2k(ガウス雑音、分散は最尤で推定、定数項は落とす)。
+    同じデータに当てた模型どうしの**差**だけに意味がある(絶対値は尺度と n に依る)。n ≤ k・RSS ≤ 0・非有限は ValueError
+    (RSS = 0 は AIC = −∞ で、模型選択の問いが立たない)。"""
+    if not (np.isfinite(rss) and rss > 0.0) or n <= k or k < 1:
+        raise ValueError("aic_from_rss: need finite RSS > 0 and n > k ≥ 1")
+    return float(n * math.log(rss / n) + 2.0 * k)
+
+
+def ballistic_vs_thrust(t, p, bp: dict, *, iters: int = 20, dt: float = 1e-3) -> dict:
+    """同じ軌跡に「重力 + 抗力」(:func:`drag_fit`)と「重力 + 抗力 + 一定の比推力」(:func:`thrust_fit`)を当て、
+    AIC(:func:`aic_from_rss`)の差 ΔAIC = AIC_弾道 − AIC_推力 を返す。
+    返り値 ``{"ballistic", "thrust"}``(2 つの当てはめ)に ``"aic_ballistic", "aic_thrust", "delta_aic", "thrust_norm"`` を添える。
+    **判定は返さない**(:mod:`imgforensics` と同じ流儀): 読み方は **節約則**で、推力の模型はパラメータが 3 つ多いので雑音だけでも
+    RSS を僅かに下げる —— 罰則 2Δk を超えて勝たない限り、単純な方(弾道)を採る。雑音だけの ΔAIC は −2Δk を中心に χ²(Δk) の
+    幅で散り、推力側は弾道側の解から出発するので ΔAIC ≥ −2Δk が保たれる。「決定的」の慣用は 10(偽陽性 1 % を大きく下回る)だが、
+    閾値は同梱せず呼び手が決める。
+
+    空の入力(``t`` が 0 要素)は ValueError。
+    """
+    b = drag_fit(t, p, bp, iters=iters, dt=dt)
+    # 推力側は弾道側の解(推力 0)から出発する: 推力の模型は抗力だけの模型を含むので、残差が単調に減る当てはめなら
+    # RSS_推力 ≤ RSS_弾道 が構造的に保証され、ΔAIC ≥ −2Δk になる。
+    f = _thrust_fit_two_starts(t, p, bp, iters, dt, "thrust_fit", b)
+    ab = aic_from_rss(b["rss"], b["n"], b["k"])
+    af = aic_from_rss(f["rss"], f["n"], f["k"])
+    return {"ballistic": b, "thrust": f, "aic_ballistic": ab, "aic_thrust": af, "delta_aic": float(ab - af),
+            "thrust_norm": f["thrust_norm"]}
+
+
+def time_stretch_from_gravity(g_fit: float, g_ref: float = G) -> dict:
+    """当てはめた重力加速度から、映像の時間の引き延ばし倍率を閉形式で逆算する。時刻を k 倍に引き延ばした(スローモーションや
+    フレームレートの付け替えをした)映像では、軌跡は同じ形のまま g が g/k² に見えるので、k = √(g_ref / g_fit)。
+    返り値 ``{"k", "g_fit", "g_ref", "log_k"}``(``log_k`` = ln k は改変なしで 0、符号が速い/遅いを表す: :func:`imgforensics.evidence_quantile`
+    に渡すなら |log_k| を「大きいほど強い」証拠として使う)。
+    g_fit ≤ 0 や非有限、g_ref ≤ 0 は ValueError(重力が上を向く・無い軌跡に倍率は定義できない)。"""
+    if not (np.isfinite(g_fit) and g_fit > 0.0) or not (np.isfinite(g_ref) and g_ref > 0.0):
+        raise ValueError("time_stretch_from_gravity: need finite g_fit > 0 and g_ref > 0")
+    k = math.sqrt(g_ref / g_fit)
+    return {"k": float(k), "g_fit": float(g_fit), "g_ref": float(g_ref), "log_k": float(math.log(k))}
