@@ -4,7 +4,7 @@
 
 > **[紙面の計測館 総合案内](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6)** の一棟です。ほかの棟・用語・テーゼは案内にあります。
 
-この棟には **95 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
+この棟には **96 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
 
 > 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。
 
@@ -2594,7 +2594,7 @@ py -3.11 examples/poc_zmx_public_verify.py
 
 ### 法科学・文書ウィング ―― 1 枚の成功例は証拠にならない
 
-改竄検出と書類の正対化。どちらも「見つかった 1 枚」「まっすぐになった 1 枚」で語られがちですが、この部屋の 4 点は、貼付の場所と品質、既知のホモグラフィと照明、を自分で決めた上で、画素ごとの ROC と画素単位の幾何誤差で採点しています。
+改竄検出と書類の正対化。どちらも「見つかった 1 枚」「まっすぐになった 1 枚」で語られがちですが、この部屋の 5 点は、貼付の場所と品質、既知のホモグラフィと照明、を自分で決めた上で、画素ごとの ROC と画素単位の幾何誤差で採点しています。
 
 改竄検出は検出側(防御)の PoC です。改竄を自分で作るのは検出器を測るのに真値が要るためだけで、作り方は最も稚拙なものに留めてあります。この展示がいちばん強く示すのは、保存ボタン 1 回でどの手掛かりも弱る、という検出側に不利な事実のほうです。
 
@@ -2727,6 +2727,42 @@ py -3.11 examples/poc_prnu_camera_fingerprint.py
 この回が作った図は全部で **12 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_prnu_camera_fingerprint)
 
 使用 op(ノートへ): [`aug_jpeg_blocks`](https://furuse.work/ops/2d/augmentation/aug_jpeg_blocks.html) · [`evidence_quantile`](https://furuse.work/ops/imgforensics/calibration/evidence_quantile.html) · [`fingerprint_correlate`](https://furuse.work/ops/imgforensics/sensor/fingerprint_correlate.html) · [`gauss_image`](https://furuse.work/ops/2d/smoothing/gauss_image.html) · [`median_image`](https://furuse.work/ops/2d/rank/median_image.html) · [`null_distribution`](https://furuse.work/ops/imgforensics/calibration/null_distribution.html) · [`reflect`](https://furuse.work/ops/3d/optics/reflect.html) · [`sensor_fingerprint`](https://furuse.work/ops/imgforensics/sensor/sensor_fingerprint.html) · [`sk_nlm`](https://furuse.work/ops/2d/smoothing/sk_nlm.html) · [`sk_tv`](https://furuse.work/ops/2d/smoothing/sk_tv.html) · [`sk_wavelet`](https://furuse.work/ops/2d/smoothing/sk_wavelet.html) · [`xsp_dct_denoise`](https://furuse.work/ops/2d/smoothing/xsp_dct_denoise.html) · [`xsp_wiener`](https://furuse.work/ops/2d/smoothing/xsp_wiener.html)
+
+## No.2026.276 —— 映像の物理整合性 ―― 壁を上って跳ぶ車は弾道か推力か、時間は引き延ばされていないか
+
+[![映像の物理整合性 ―― 壁を上って跳ぶ車は弾道か推力か、時間は引き延ばされていないか](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_physics_consistency/04_delta_aic_thrusted_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_physics_consistency/04_delta_aic_thrusted.png)
+
+*↑ **映像の物理整合性 ―― 壁を上って跳ぶ車は弾道か推力か、時間は引き延ばされていないか** ―― 45 m 先の単眼カメラ(960 × 540、30 fps、1 画素 7.5 cm)で写した合成の車の箱を bbox で追い、既知の車の寸法で尺度を入れた平面軌跡は真値と中央値 2.8 cm。重力+抗力と一定推力つきの運動方程式を当てて AIC の差で選ぶと、弾道 40 本・推力 40 本の正答 79/80、推力の ΔAIC は最小 382、弾道は 1 本だけ 10.4 で誤判定(雑音だけなら −4 を中心に χ² の幅)。推力の大きさは推定/真値の中央値 1.022、g の 2.5 %(0.25 m/s²)でも ΔAIC 中央値 79 で見える。時間を k 倍に引き延ばした映像は g が g/k² に見えるので k を閉形式で逆算し、k ∈ [0.5, 4] で誤差最大 0.32 %、清浄 200 本の帰無分布での位置は 1.000、清浄な別の 100 本の偽陽性 2。1.5 倍に引き延ばした弾道の映像は推力検査に「上向き 5.46 m/s²」(閉形式 g(1 − 1/k²) = 5.45)として映る ―― 鉛直推力と時間の引き延ばしは単眼では縮退する。学習 0、実写 0。*
+
+[![推力 4 m/s² の車を 45 m 先の単眼カメラで写した合成映像(960 × 540、30 fps)。箱の影絵と bbox、bbox と車の寸法から起こした位置の軌跡(点)、地面の線。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_physics_consistency/01_monocular_clip.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_physics_consistency/01_monocular_clip.gif)
+
+*↑ 測定の図 ―― 推力 4 m/s² の車を 45 m 先の単眼カメラで写した合成映像(960 × 540、30 fps)。箱の影絵と bbox、bbox と車の寸法から起こした位置の軌跡(点)、地面の線。*
+
+[![点は bbox から、破線は世界の真値。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_physics_consistency/02_trajectories_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_physics_consistency/02_trajectories.png)
+
+*↑ 点は bbox から、破線は世界の真値。*
+
+[![雑音だけなら ΔAIC は −2Δk = −4 を中心に χ²(2) の幅で散る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_physics_consistency/03_delta_aic_ballistic_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_physics_consistency/03_delta_aic_ballistic.png)
+
+*↑ 雑音だけなら ΔAIC は −2Δk = −4 を中心に χ²(2) の幅で散る。*
+
+[![g の 2.5 % の推力でも床の 10 を超える。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_physics_consistency/05_detection_floor_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_physics_consistency/05_detection_floor.png)
+
+*↑ g の 2.5 % の推力でも床の 10 を超える。*
+
+[![k = √(g_ref / g_fit)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_physics_consistency/06_time_stretch_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_physics_consistency/06_time_stretch.png)
+
+*↑ k = √(g_ref / g_fit)。*
+
+```
+py -3.11 examples/poc_video_physics_consistency.py
+```
+
+ソース: [examples/poc_video_physics_consistency.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_video_physics_consistency.py)
+
+この回が作った図は全部で **7 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_video_physics_consistency)
+
+使用 op(ノートへ): [`ball_params`](https://furuse.work/ops/drive/ball/ball_params.html) · [`ballistic_vs_thrust`](https://furuse.work/ops/drive/ball/ballistic_vs_thrust.html) · [`convex_hull`](https://furuse.work/ops/3d/bounds/convex_hull.html) · [`drag_fit`](https://furuse.work/ops/drive/ball/drag_fit.html) · [`evidence_quantile`](https://furuse.work/ops/imgforensics/calibration/evidence_quantile.html) · [`fit_parabola`](https://furuse.work/ops/drive/ball/fit_parabola.html) · [`flight_ode`](https://furuse.work/ops/drive/ball/flight_ode.html) · [`label_extent`](https://furuse.work/ops/drive/ttc/label_extent.html) · [`null_distribution`](https://furuse.work/ops/imgforensics/calibration/null_distribution.html) · [`project`](https://furuse.work/ops/3d/bundle_adjust/project.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`thrust_fit`](https://furuse.work/ops/drive/ball/thrust_fit.html) · [`thrust_ode`](https://furuse.work/ops/drive/ball/thrust_ode.html) · [`time_stretch_from_gravity`](https://furuse.work/ops/drive/ball/time_stretch_from_gravity.html)
 
 ### 3-D 形状ウィング ―― 合わせてから測ると、合わせた分だけ欠陥が消える
 

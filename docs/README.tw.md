@@ -62,7 +62,7 @@
 | `validated-public-real-data` | 使用公開實測資料的範例在檢查中實際執行 | 18 |
 | `validated-hardware` | 已在實機上驗證(僅在接受外部報告時) | 0 |
 
-431 個範例中,檢查實際執行的有 431 個。
+432 個範例中,檢查實際執行的有 432 個。
 
 ### 各版本的運算子數
 
@@ -90,7 +90,7 @@
 
 <!-- poc-index:start -->
 
-## PoC 系列 — 帶真值求解的 275 個實際問題
+## PoC 系列 — 帶真值求解的 276 個實際問題
 
 每一個都具有閉式或合成的真值，並必定附上零點(什麼都不做)。失敗方式分開計數，原因以對照組區分。完整列表: [examples/README.md](../examples/README.md)。
 
@@ -114,11 +114,11 @@
 | inspection (4) | [`poc_em_second_opinion`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_em_second_opinion.py) A Second Opinion for EM Connectome Proofreading — Membranes Belong Only on Label Boundaries<br>[`poc_illumination_cone_vs_na`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_illumination_cone_vs_na.py) Illumination Cone versus Imaging NA — Change Only the Opening of the Light Cone and the Same Dent, Scratch and Satin Patch Vanish or Appear<br>[`poc_print_layer_inspection`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_print_layer_inspection.py) Print Layer Inspection — Closing the Shape → Layer → Path → Image Loop and Catching Planted Defects by the Numbers<br>[`poc_sam_hybrid_bonding_voids`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_sam_hybrid_bonding_voids.py) Find Hybrid-Bond Voids by Echo Phase, Not Brightness - Small Voids Hide in the Amplitude Image and Light Up Inverted in the Phase Image |
 | tomography_3d (4) | [`poc_battery_ct_degradation`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_battery_ct_degradation.py) Battery cell degradation by CT — the swelling shows outside, the cause stays inside<br>[`poc_battery_electrode_tortuosity`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_battery_electrode_tortuosity.py) Electrode tortuosity from CT — the rule of thumb only sees porosity<br>[`poc_ct_void_morphology`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_void_morphology.py) Collapsing joint voids into one number — what the number drops is the shape that matters<br>[`poc_die_tilt_tsv_overlay`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_die_tilt_tsv_overlay.py) Die tilt and TSV overlay from one CT — tilt fakes rotation too |
 | depth (3) | [`poc_focus_stacking`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_focus_stacking.py) Focus Stacking — The All-in-Focus Image and the Depth Map Are Different Things<br>[`poc_lightfield_depth`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lightfield_depth.py) Depth From a Light Field — A Light Field of Known Depth, Confronted With Its Nulls<br>[`poc_real_stereo_depth`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_stereo_depth.py) Measuring on a Real Stereo Photograph — Three Stumbles Synthesis Never Produces |
+| forensics (3) | [`poc_forensics_roc`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_forensics_roc.py) Forgery Detection as an ROC — Not the One Image Found, but Detection at a Fixed False-Positive Rate<br>[`poc_fresco_craquelure`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_fresco_craquelure.py) Craquelure networks — of three indicators, only junction degree breaks under imaging conditions<br>[`poc_video_physics_consistency`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_video_physics_consistency.py) Physical Consistency of Footage — Ballistic or Thrusted, and Was the Clock Stretched? |
 | perception_templates (3) | [`poc_bev_sensor_fusion`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bev_sensor_fusion.py) Fusing two sensors into a bird's-eye grid — a calibration that passes in pixels turns into metres at range<br>[`poc_code_matching_breakdown`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_code_matching_breakdown.py) Matching on the Direction of Brightness Change — NCC Falls at 10 % Occlusion, Code Matching Holds to Over 60 %<br>[`poc_safety_clearance`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_safety_clearance.py) Human-machine clearance — swap the body for a point, and the hazard vanishes with it |
 | restoration (3) | [`poc_camera_shake_deblur`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_camera_shake_deblur.py) How Much Camera Shake Can Be Undone — Make the Kernel, Apply It, Invert It, Compare<br>[`poc_dehazing`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dehazing.py) Removing Haze — Ground Truth From the Scattering Model, Transmission and Airlight Scored Apart<br>[`poc_real_deblur_honesty`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_deblur_honesty.py) Deblurring a Real Photograph — Three Rulers, Three Different Winners |
 | terrain (3) | [`poc_crop_phenotyping`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_crop_phenotyping.py) Crop leaf area from above — folded by projection before it is ever hidden<br>[`poc_dem_terrain`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dem_terrain.py) Measuring Terrain — Slope, Flow and Insolation Against Closed Forms<br>[`poc_lidar_terrain_change`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lidar_terrain_change.py) Earthwork on a slope — align first and the scar gets shallower |
 | decoding (2) | [`poc_barcode_1d`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_barcode_1d.py) Where a 1-D Barcode Stops Reading — Counting Misreads and Unreadables Separately<br>[`poc_matrix_code_reading`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_matrix_code_reading.py) Reading a Binary Matrix Code — Geometry Always Dies First |
-| forensics (2) | [`poc_forensics_roc`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_forensics_roc.py) Forgery Detection as an ROC — Not the One Image Found, but Detection at a Fixed False-Positive Rate<br>[`poc_fresco_craquelure`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_fresco_craquelure.py) Craquelure networks — of three indicators, only junction degree breaks under imaging conditions |
 | morphology (2) | [`poc_bilateral_asymmetry`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bilateral_asymmetry.py) Measuring Bilateral Asymmetry — The Symmetry Plane Gets Dragged by the Deformation<br>[`poc_vessel_network`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_vessel_network.py) Extracting a Vessel Network — Spurs, Overestimated Radii Near Branches, and a Fragile Exponent |
 | optics (2) | [`poc_compound_eye`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_compound_eye.py) The Fly's Compound Eye Is a Light-Field Sensor — Neural Superposition Pays Only Up to the Knee<br>[`poc_fly_vision`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_fly_vision.py) The Fly's Visual Front End as a Chain of Operators — Turning and Walking Through a Synthetic Sky, What Can and Cannot Be Read |
 | ranging (2) | [`poc_dtof_ranging`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dtof_ranging.py) Ranging by Counting Photons — How Many for How Many Millimetres?<br>[`poc_leak_localization`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_leak_localization.py) Digging Where the Sound Says — A Clean Correlation Still Digs in the Wrong Place |
@@ -137,16 +137,16 @@
 
 ## 尋找運算子
 
-共有 **3,539 篇運算子說明**(呼叫方式、型別契約、HALCON 對應、參考文獻、來源)與 **67 篇族群指南**。依維度的入口:
+共有 **3,545 篇運算子說明**(呼叫方式、型別契約、HALCON 對應、參考文獻、來源)與 **67 篇族群指南**。依維度的入口:
 
-**實測涵蓋**: 演化運算子 942/942、型別台帳 2576/2588、單行門面 `fullseye.<名稱>` 703/1480 —— **門面側僅涵蓋一半**。
+**實測涵蓋**: 演化運算子 942/942、型別台帳 2582/2594、單行門面 `fullseye.<名稱>` 703/1480 —— **門面側僅涵蓋一半**。
 
-**內容實測**: 3539 篇中，附有可執行範例的 **3528** 篇(11 篇沒有)，用法說明 120 字以上的 **3352** 篇(187 篇僅一行)。結構(呼叫形式、型別、可銜接運算子)3539 篇全有。
+**內容實測**: 3545 篇中，附有可執行範例的 **3533** 篇(12 篇沒有)，用法說明 120 字以上的 **3358** 篇(187 篇僅一行)。結構(呼叫形式、型別、可銜接運算子)3545 篇全有。
 
 | 維度 | 運算子數 | 入口 |
 |---|---:|---|
 | `2d` | 959 | [INDEX](ops/2d/INDEX.md) |
-| `drive` | 694 | [INDEX](ops/drive/INDEX.md) |
+| `drive` | 700 | [INDEX](ops/drive/INDEX.md) |
 | `optics` | 464 | [INDEX](ops/optics/INDEX.md) · [guide](ops/optics/guides/optics_imaging.md) |
 | `3d` | 373 | [INDEX](ops/3d/INDEX.md) |
 | `math` | 114 | [INDEX](ops/math/INDEX.md) · [guide](ops/math/guides/math_metrology.md) |
@@ -296,7 +296,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## 文件地圖 — 共 288 篇
 
-完整地圖，確保**沒有任何文件無法從索引到達**(`docs/ops/` 下的 3,539 篇運算子說明與 67 篇族群指南從上面的「尋找運算子」進入; 文章見 [articles/](articles/README.md))。**內文多為日文。**
+完整地圖，確保**沒有任何文件無法從索引到達**(`docs/ops/` 下的 3,545 篇運算子說明與 67 篇族群指南從上面的「尋找運算子」進入; 文章見 [articles/](articles/README.md))。**內文多為日文。**
 
 **Getting started**(12)
 

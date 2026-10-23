@@ -218,7 +218,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 전부 보기
 
-PoC 275개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
+PoC 276개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript가 없으면 갤러리 페이지에서 모든 그림을 볼 수 있습니다.)</a></p></noscript>
 
@@ -538,12 +538,13 @@ PoC 275개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 </div>
 </details>
 
-<details class="vall"><summary><b>법과학·문서</b> (4)</summary>
+<details class="vall"><summary><b>법과학·문서</b> (5)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_document_scan/01_rectify_zero_points.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_document_scan.jpg" alt="문서 바로잡기" width="200" height="200"><span>문서 바로잡기</span></a>
 <a href="../../articles/assets/poc/poc_forensics_roc/01_score_maps.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_forensics_roc.jpg" alt="위변조 검출 ROC" width="200" height="200"><span>위변조 검출 ROC</span></a>
 <a href="../../articles/assets/poc/poc_fresco_craquelure/01_ridge_ops.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_fresco_craquelure.jpg" alt="그림 균열망" width="200" height="200"><span>그림 균열망</span></a>
 <a href="../../articles/assets/poc/poc_prnu_camera_fingerprint/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_prnu_camera_fingerprint.jpg" alt="카메라 지문" width="200" height="200"><span>카메라 지문</span></a>
+<a href="../../articles/assets/poc/poc_video_physics_consistency/01_monocular_clip.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_video_physics_consistency.jpg" alt="영상의 물리 정합성: 탄도인가 추력인가, 시간 늘림" width="200" height="200"><b>&#9654;</b><span>영상의 물리 정합성: 탄도인가 추력인가, 시간 늘림</span></a>
 </div>
 </details>
 

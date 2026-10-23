@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3533,
- "n_notes": 3539,
+ "n_ops": 3539,
+ "n_notes": 3545,
  "notes": {
   "vol_dilate": [
    {
@@ -15809,6 +15809,15 @@
     "path": "docs/ops/drive/agv/warehouse_grid.md"
    }
   ],
+  "aic_from_rss": [
+   {
+    "op": "aic_from_rss",
+    "dim": "drive",
+    "category": "ball",
+    "out": "scalar",
+    "path": "docs/ops/drive/ball/aic_from_rss.md"
+   }
+  ],
   "apex_sequence": [
    {
     "op": "apex_sequence",
@@ -15825,6 +15834,16 @@
     "category": "ball",
     "out": "table",
     "path": "docs/ops/drive/ball/ball_params.md"
+   }
+  ],
+  "ballistic_vs_thrust": [
+   {
+    "op": "ballistic_vs_thrust",
+    "dim": "drive",
+    "category": "ball",
+    "in": "signal × points × table",
+    "out": "table",
+    "path": "docs/ops/drive/ball/ballistic_vs_thrust.md"
    }
   ],
   "bounce": [
@@ -15873,6 +15892,16 @@
     "in": "signal",
     "out": "signal",
     "path": "docs/ops/drive/ball/drag_coefficient_sphere.md"
+   }
+  ],
+  "drag_fit": [
+   {
+    "op": "drag_fit",
+    "dim": "drive",
+    "category": "ball",
+    "in": "signal × points × table",
+    "out": "table",
+    "path": "docs/ops/drive/ball/drag_fit.md"
    }
   ],
   "fit_aero": [
@@ -16057,6 +16086,35 @@
     "category": "ball",
     "out": "table",
     "path": "docs/ops/drive/ball/tether_simulate.md"
+   }
+  ],
+  "thrust_fit": [
+   {
+    "op": "thrust_fit",
+    "dim": "drive",
+    "category": "ball",
+    "in": "signal × points × table",
+    "out": "table",
+    "path": "docs/ops/drive/ball/thrust_fit.md"
+   }
+  ],
+  "thrust_ode": [
+   {
+    "op": "thrust_ode",
+    "dim": "drive",
+    "category": "ball",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/ball/thrust_ode.md"
+   }
+  ],
+  "time_stretch_from_gravity": [
+   {
+    "op": "time_stretch_from_gravity",
+    "dim": "drive",
+    "category": "ball",
+    "out": "table",
+    "path": "docs/ops/drive/ball/time_stretch_from_gravity.md"
    }
   ],
   "ball_detect": [

@@ -133,8 +133,8 @@
 
 | | 件数 |
 |---|---|
-| 2-D 台帳の例 | 431 |
-| `tests/test_poc_scripts_run.py` が走らせる | 275 |
+| 2-D 台帳の例 | 432 |
+| `tests/test_poc_scripts_run.py` が走らせる | 276 |
 | `tests/test_example_scripts_run.py` が走らせる | 156 |
 | **どの門も走らせていない** | **0** |
 

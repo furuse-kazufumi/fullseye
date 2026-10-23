@@ -226,6 +226,13 @@ _CATALOG = {
         ("tether_simulate", "ballistics", [], "table"),
         ("pendulum_period", "ballistics", [], "scalar"),
         ("cup_catch_check", "ballistics", [], "table"),
+        # 映像の物理整合性(2026-10-23): 推力つき RK4、推力あり/なしの当てはめと AIC の選択、g から時間の引き延ばし倍率。
+        ("thrust_ode", "ballistics", ["table"], "table"),
+        ("thrust_fit", "ballistics", ["signal", "points", "table"], "table"),
+        ("drag_fit", "ballistics", ["signal", "points", "table"], "table"),
+        ("aic_from_rss", "ballistics", [], "scalar"),
+        ("ballistic_vs_thrust", "ballistics", ["signal", "points", "table"], "table"),
+        ("time_stretch_from_gravity", "ballistics", [], "table"),
     ],
     # 球の追跡(17 巡目): しきい値 → 連結成分のサブピクセル重心、等速予測の追跡、等加速度 Kalman(放物線に厳密)、DLT の三角測量、
     # 高さの局所最小の跳ね検出、模様の向きの Kabsch で角速度。

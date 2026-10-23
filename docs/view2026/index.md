@@ -233,7 +233,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## ぜんぶ見る
 
-PoC 275 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
+PoC 276 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
 
 <noscript><p><a href="../GALLERY.html">(JavaScript が無い環境では、ギャラリーのページで全部の図を見られます)</a></p></noscript>
 
@@ -553,12 +553,13 @@ PoC 275 本と、ロボットの例 5 本。グループを開くとサムネイ
 </div>
 </details>
 
-<details class="vall"><summary><b>法科学・文書</b> (4)</summary>
+<details class="vall"><summary><b>法科学・文書</b> (5)</summary>
 <div class="vg vs">
 <a href="../articles/assets/poc/poc_document_scan/01_rectify_zero_points.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_document_scan.jpg" alt="書類をまっすぐに" width="200" height="200"><span>書類をまっすぐに</span></a>
 <a href="../articles/assets/poc/poc_forensics_roc/01_score_maps.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_forensics_roc.jpg" alt="改竄検出の ROC" width="200" height="200"><span>改竄検出の ROC</span></a>
 <a href="../articles/assets/poc/poc_fresco_craquelure/01_ridge_ops.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_fresco_craquelure.jpg" alt="絵画のひび割れ網" width="200" height="200"><span>絵画のひび割れ網</span></a>
 <a href="../articles/assets/poc/poc_prnu_camera_fingerprint/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_prnu_camera_fingerprint.jpg" alt="カメラ指紋" width="200" height="200"><span>カメラ指紋</span></a>
+<a href="../articles/assets/poc/poc_video_physics_consistency/01_monocular_clip.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_video_physics_consistency.jpg" alt="映像の物理整合性 ―― 弾道か推力か、時間の引き延ばし" width="200" height="200"><b>&#9654;</b><span>映像の物理整合性 ―― 弾道か推力か、時間の引き延ばし</span></a>
 </div>
 </details>
 

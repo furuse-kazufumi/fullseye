@@ -218,7 +218,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 全部看
 
-PoC 275 个,另有机器人示例 5 个。展开分组即可加载缩略图。
+PoC 276 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 
 <noscript><p><a href="../../GALLERY.en.html">(没有 JavaScript 时,可在图库页面查看全部图。)</a></p></noscript>
 
@@ -538,12 +538,13 @@ PoC 275 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 </div>
 </details>
 
-<details class="vall"><summary><b>法证与文档</b> (4)</summary>
+<details class="vall"><summary><b>法证与文档</b> (5)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_document_scan/01_rectify_zero_points.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_document_scan.jpg" alt="文档矫正" width="200" height="200"><span>文档矫正</span></a>
 <a href="../../articles/assets/poc/poc_forensics_roc/01_score_maps.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_forensics_roc.jpg" alt="篡改检测 ROC" width="200" height="200"><span>篡改检测 ROC</span></a>
 <a href="../../articles/assets/poc/poc_fresco_craquelure/01_ridge_ops.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_fresco_craquelure.jpg" alt="画作龟裂网" width="200" height="200"><span>画作龟裂网</span></a>
 <a href="../../articles/assets/poc/poc_prnu_camera_fingerprint/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_prnu_camera_fingerprint.jpg" alt="相机指纹" width="200" height="200"><span>相机指纹</span></a>
+<a href="../../articles/assets/poc/poc_video_physics_consistency/01_monocular_clip.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_video_physics_consistency.jpg" alt="影像的物理一致性:弹道还是推力、时间拉伸" width="200" height="200"><b>&#9654;</b><span>影像的物理一致性:弹道还是推力、时间拉伸</span></a>
 </div>
 </details>
 

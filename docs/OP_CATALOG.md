@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(431 例)
+### 2-D 画像/信号/幾何(432 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -308,6 +308,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 **forensics**
 - **画像改ざん検出の ROC(保存ボタン 1 回で何が消えるか)** — 改ざんを自分で入れて画素ごとの ROC を出す。JPEG ゴーストの谷の深さで AUC 0.997 / 偽陽性 1 % で検出率 0.944。だが**全体を q60 で保存し直すと 0.475 と乱数を下回る**。雑音 σ は AUC 0.764 なのに偽陽性 1 % での検出率が 0.000 —— AUC だけで語ると効いて見える典型。 `py -3.11 examples/poc_forensics_roc.py`
+- **映像の物理整合性 ―― 壁を上って跳ぶ車は弾道か推力か、時間は引き延ばされていないか** — 単眼の合成映像から車の箱を追って尺度つきの平面軌跡にし、重力+抗力と一定推力つきの運動方程式を AIC で選んで推力の大きさを返す。当てはめた g から時間の引き延ばし倍率を閉形式で逆算し、清浄な映像の帰無分布での位置で返す。鉛直推力と時間の引き延ばしが単眼では縮退することも数字で示す。 `py -3.11 examples/poc_video_physics_consistency.py`
 - **絵画のひび割れ網(壊れるのは分岐次数だけ)** — ★★乾燥ひびと経年ひびをボロノイ網の真値 2 種で作り、セル径・直線度・次数 4 割合の 3 指標で分ける(真値 18.0 vs 45.2 px / 0.960 vs 1.000 / 0.20 vs 0.83)。**質感と斜光で動くのは次数 4 割合だけ**(経年 0.87 → 0.64 / 0.70)で、予想した「直線度が壊れる」は外れた。★幅の崖も質感の爆発も来ない(0.15 px で再現率 0.696、c = 0.64 で偽陽性 0.382)—— 線検出は線に沿って積分する。★sk_frangi は分岐点で落ちて斜光でセルが 52 → 16 個に崩れ、暗さそのもの(cv_blackhat)が全リッジ op に勝つ。 `py -3.11 examples/poc_fresco_craquelure.py`
 
 **morphology**
@@ -773,9 +774,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3539 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3545 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 959 · **3d** 373 · **math** 114 · **optics** 464 · **lightfield** 17 · **photon** 17 · **specular** 19 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 39 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 694 · **tomography** 31 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族の一覧: **2d** 959 · **3d** 373 · **math** 114 · **optics** 464 · **lightfield** 17 · **photon** 17 · **specular** 19 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 39 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 700 · **tomography** 31 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d(959 ops / 49 categories)
 
@@ -3491,7 +3492,7 @@ _計 3539 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 #### vx / suppress(1)
 - `vx_nonmax_suppression` `image2d → image2d` — 非極大の抑制(3.39 節)。画素 (x, y) は、窓の中で**自分より前(上の行と、同じ行の左)の隣には ≥、後ろの隣には >** の ときだけ残る(REQ-0337)。平らな頂上が 1 画素だけ残るのはこの非対称のため。*mask* の非ゼロ画素は比べず、そのまま残す (他の画素の比較にも使わない、REQ-0336)。抑制した画素は U8 なら 0、S16 なら INT16_MIN(REQ-0335)。窓の外にはみ出す隣は比べない。 · 例: `gallery_openvx_spec_values`
 
-### drive(694 ops / 51 categories)
+### drive(700 ops / 51 categories)
 
 名前は運転だが、中身は**物理シミュレーションとロボットの PoC の台帳**: 運転(コース・交通・判断・CARLA / CommonRoad)に加え、触覚(tac*)・peg-in-hole(peg*)・研磨(polish)・研削(grind)・切削(cutting)・粉体(granular / scoop)・粉末 X 線回折(pxrd)・球技(ball / puck)などがカテゴリとして同居している。カテゴリ名で引くこと。
 
@@ -3510,20 +3511,23 @@ _計 3539 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `vda5050_order` `table → table` — 1 台の計画(マスの列)を VDA 5050 の order(dict)にする。待ちは除き、マスの中心をノードにする。 · 例: `poc_agv_fleet`
 - `warehouse_grid` `入力なし → any` — 棚の列と通路でできた倉庫の格子(True = 走れる)。 · 例: `poc_agv_fleet`
 
-#### drive / ball(26)
+#### drive / ball(32)
+- `aic_from_rss` `入力なし → scalar` — 最小二乗の残差平方和から赤池情報量規準 AIC = n ln(RSS/n) + 2k(ガウス雑音、分散は最尤で推定、定数項は落とす)。 同じデータに当てた模型どうしの**差**だけに意味がある(絶対値は尺度と n に依る)。n ≤ k・RSS ≤ 0・非有限は ValueError (RSS = 0 は AIC = −∞ で、模型選択の問いが立たない)。
 - `apex_sequence` `入力なし → signal` — 落として跳ねる列の頂点高さ h_k = e^{2k} h₀(k = 0..n)。 · 例: `poc_ball_bounce`
-- `ball_params` `入力なし → table` — 球の表。既定は卓球の球(ITTF: 直径 40 mm、2.7 g、薄殻)。 · 例: `gallery_drive_ballistics`, `gallery_drive_kendama_racket`, `poc_ball_bounce`, `poc_table_tennis_bounce`, `poc_table_tennis_rally_loop`, `poc_table_tennis_spin`
+- `ball_params` `入力なし → table` — 球の表。既定は卓球の球(ITTF: 直径 40 mm、2.7 g、薄殻)。 · 例: `gallery_drive_ballistics`, `gallery_drive_kendama_racket`, `poc_ball_bounce`, `poc_table_tennis_bounce`, `poc_table_tennis_rally_loop`, `poc_table_tennis_spin`, `poc_video_physics_consistency`
+- `ballistic_vs_thrust` `signal × points × table → table` — 同じ軌跡に「重力 + 抗力」(:func:`drag_fit`)と「重力 + 抗力 + 一定の比推力」(:func:`thrust_fit`)を当て、 AIC(:func:`aic_from_rss`)の差 ΔAIC = AIC_弾道 − AIC_推力 を返す。 返り値 ``{"ballistic", "thrust"}``(2 つの当てはめ)に ``"aic_ballistic", "aic_thrust", "delta_aic", "thrust_norm"`` を添える。 **判定は返さない**(:mod:`imgforensics` と同じ流儀): 読み方は **節約則**で、推力の模型はパラメータが 3 つ多いので雑音だけでも RSS を僅かに下げる —— 罰則 2Δk を超えて勝たない限り、単純な方(弾道)を採る。雑音だけの ΔAIC は −2Δk を中心に χ²(Δk) の 幅で散り、推力側は弾道側の解から出発するので ΔAIC ≥ −2Δk が保たれる。「決定的」の慣用は 10(偽陽性 1 % を大きく下回る)だが、 閾値は同梱せず呼び手が決める。 · 例: `poc_video_physics_consistency`
 - `bounce` `table × table → table` — 剛体球が平面に当たる瞬間の速度・角速度の更新(クーロン摩擦、Cross 2002 / Garwin 1969 の 2 領域)。 · 例: `gallery_drive_ballistics`, `poc_ball_bounce`, `poc_table_tennis_bounce`
 - `bounce_total_time` `入力なし → scalar` — 高さ h₀ から落として止まるまでの総時間 = √(2h₀/g)·(1 + e)/(1 − e)(等比級数の閉形式、e < 1)。 · 例: `poc_ball_bounce`
 - `contact_angular_momentum` `table → signal` — 接触点まわりの角運動量 L_c = I ω + m (p − p_c) × v = I ω + m r (n × v)。跳ねの前後で不変(定理)。 · 例: `poc_ball_bounce`
 - `cup_catch_check` `入力なし → table` — 玉が皿(中心・軸・半径)に入る幾何の判定: 玉の中心が皿の軸から (cup_radius − ball_radius) 以内、皿の面から玉の半径の 1.5 倍以内の 高さ(0 ≤ height ≤ 1.5 r)、速さ ≤ v_rel_max。``{"caught", "lateral", "height", "speed"}``。皿が玉より小さければ ValueError。 · 例: `gallery_drive_ballistics`
 - `drag_coefficient_sphere` `signal → signal` — 滑らかな球の抗力係数の経験式(Morrison 2013、Re ≲ 1e6): 24/Re + 2.6(Re/5)/(1 + (Re/5)^1.52) + 0.411(Re/263000)^−7.94/(1 + (Re/263000)^−8) + 0.25(Re/1e6)/(1 + Re/1e6)。卓球の球(Re ≈ 1〜5 × 10⁴)で ≈ 0.4〜0.5。 · 例: `gallery_drive_ballistics`
+- `drag_fit` `signal × points × table → table` — 軌跡 (t_i, p_i) に「重力 + 抗力」の模型を **(p₀, v₀, C_d) の 7 パラメータ**(平面入力なら 5)で当てる(:func:`thrust_fit` の 推力なし版。:func:`flight_fit` は C_d を既知として 6 パラメータ、こちらは C_d も同定する)。返り値の鍵は :func:`thrust_fit` と同じで ``thrust`` は零ベクトル。真値の軌跡なら C_d は 1e-4 で戻る(門)。 · 例: `poc_video_physics_consistency`
 - `fit_aero` `signal × points × table → table` — 軌跡から **空力係数も** 同定する: (p₀, v₀, C_d, C_L) の 8 パラメータを Gauss–Newton(ω は既知、C_L は定数として当てる)。 抗力は速さの 2 乗、マグヌスは ω × v なので、直線的でない軌跡(スピンあり・十分な長さ)でないと C_L は決まりにくい (``rms`` と一緒に ``cond`` = ヤコビアンの条件数を返すので、それで判る)。返り値 ``{"p0", "v0", "cd", "cl", "rms", "cond", "iters"}``。 真値の軌跡(C_L 定数で作った)なら 1e-6 で戻る(門)。 · 例: `gallery_drive_ballistics`
 - `fit_bounce` `table → table` — 跳ねの前後の (v, ω) から (e, μ) を閉形式で戻す(同定)。e = −v_n'/v_n。接線力積 J_t = m(v_t' − v_t) の大きさと J_n = m(v_n' − v_n) の比が μ —— 滑ったままの領域なら等号、途中で転がりに移った(grip)領域なら **下界**(μ ≥ |J_t|/J_n)。 どちらかは、跳ねた後の接触点の滑り速度が 0 か(grip)で判る。返り値 ``{"e", "mu", "mu_is_lower_bound", "regime", "J_n", "J_t"}``。 · 例: `gallery_drive_ballistics`
-- `fit_parabola` `signal × points → table` — 観測 (t_i, p_i) に p = p₀ + v₀ t − ½ g t² ẑ を最小二乗で当てる(線形、閉形式)。``{"p0", "v0", "g", "rms"}``。 真空の真値なら 1e-9 で戻る(門)。 · 例: `poc_ball_bounce`
+- `fit_parabola` `signal × points → table` — 観測 (t_i, p_i) に p = p₀ + v₀ t − ½ g t² ẑ を最小二乗で当てる(線形、閉形式)。``{"p0", "v0", "g", "rms"}``。 真空の真値なら 1e-9 で戻る(門)。 · 例: `poc_ball_bounce`, `poc_video_physics_consistency`
 - `fit_spin` `signal × points × table → table` — **曲がり方から回転を読む**: 軌跡 (t_i, p_i)(跳ねを含まない区間)に、抗力 + マグヌスの運動方程式を (p₀, v₀, ω) の 9 パラメータで Gauss–Newton で当てる(空力係数は ``bp`` の値 = 既知とする)。 · 例: `poc_table_tennis_spin`
 - `flight_fit` `signal × points × table → table` — 観測 (t_i, p_i)(跳ねを含まない区間)に、抗力 + マグヌス(ω 既知)の運動方程式を **初期状態 (p₀, v₀) の 6 パラメータ** で Gauss–Newton(有限差分のヤコビアン)で当てる。放物線の当てはめは抗力・マグヌスを g と v₀ に吸うので予測が曲がる —— こちらは 先駆者の「空力モデルつきの追跡」に当たる。返り値 ``{"p0", "v0", "rms", "iters", "t0"}``(p₀・v₀ は t = t[0] での状態)。 真値の軌跡を入れると 1e-9 で戻る(門)。 · 例: `poc_ball_bounce`, `poc_table_tennis_bounce`
-- `flight_ode` `table → table` — 重力 + 抗力 + マグヌス(+ スピン減衰)の RK4。返り値 ``{"t" (N,), "p" (N, 3), "v" (N, 3), "omega" (N, 3)}`` (t = 0, dt, …, ≤ t_end)。真空(rho = 0)なら :func:`flight_vacuum` と一致(門)。 · 例: `gallery_drive_ballistics`, `gallery_drive_kendama_racket`, `poc_ball_bounce`, `poc_table_tennis_bounce`, `poc_table_tennis_spin`
+- `flight_ode` `table → table` — 重力 + 抗力 + マグヌス(+ スピン減衰)の RK4。返り値 ``{"t" (N,), "p" (N, 3), "v" (N, 3), "omega" (N, 3)}`` (t = 0, dt, …, ≤ t_end)。真空(rho = 0)なら :func:`flight_vacuum` と一致(門)。 · 例: `gallery_drive_ballistics`, `gallery_drive_kendama_racket`, `poc_ball_bounce`, `poc_table_tennis_bounce`, `poc_table_tennis_spin`, `poc_video_physics_consistency`
 - `flight_simulate` `table × table → table` — 飛翔 + 卓上(z = table_z の平面、``table_xy`` = (xmin, xmax, ymin, ymax) の範囲内だけ)での跳ねを、接触時刻を 2 分法で 区間内に求めて繋ぐ。返り値 ``{"t", "p", "v", "omega" (N, 3), "contacts": [{"t", "p", "v_in", "v_out", "omega_in", "omega_out", "regime"}], "rest_t"}``。球は半径 r なので中心が table_z + r に達した所が接触。跳ねは無限に続く(Zeno)ので、 接触時の |v_n| < ``v_rest`` になったら卓上に置く(以後 z は固定、水平は摩擦無しで続く。``rest_t`` = その時刻、無ければ None)。 · 例: `poc_ball_bounce`, `poc_table_tennis_bounce`, `poc_table_tennis_rally_loop`, `poc_table_tennis_spin`
 - `flight_state_at` `table → table` — 状態 (p₀, v₀, ω) を T 秒だけ運動方程式で進める(T < 0 なら **戻す**: RK4 の刻みを負にする)。``{"p", "v", "omega"}``。 · 例: `poc_ball_bounce`, `poc_table_tennis_bounce`
 - `flight_vacuum` `signal → points` — 真空の放物線(閉形式): p(t) = p₀ + v₀ t − ½ g t² ẑ。``t`` はスカラか (N,)、返り値 (3,) か (N, 3)。 · 例: `gallery_drive_kendama_racket`, `poc_ball_bounce`
@@ -3537,6 +3541,9 @@ _計 3539 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `roll_slide_state` `table → table` — 平面上の球が転がっているか滑っているか: 接触点の滑り速度 s = v_t − r(ω × n)。``{"slip_speed", "rolling"}`` (|s| < 1e-9 なら転がり)。 · 例: `gallery_drive_ballistics`
 - `slide_stop_distance` `入力なし → scalar` — 水平面を初速 v₀ で滑る物の停止距離 = v₀² / (2μg)(μ > 0)。 · 例: `gallery_drive_ballistics`, `poc_air_hockey_intercept`
 - `tether_simulate` `入力なし → table` — 伸びないひも(長さ L)で手元 ``handle`` に繋がれた質点の運動(けん玉の玉)。 · 例: `poc_kendama`
+- `thrust_fit` `signal × points × table → table` — 軌跡 (t_i, p_i) に「重力 + 抗力 + 一定の比推力」の模型を **(p₀, v₀, C_d, a_T) の 10 パラメータ** で Gauss–Newton (有限差分のヤコビアン)で当てる。``p`` は (N, 3) の世界座標か、単眼の側面視で起こした **(N, 2) の平面 (x, z)**(そのときは y 成分を観測も未知数も持たないので 7 パラメータ、``n`` = 2 × 点数)。``bp`` は :func:`ball_params` の表(質量・前面積・空気密度・g。 ``radius`` は前面積を与えるためだけに使う: 車なら A = πr² が前面積になる r を渡す)。 返り値 ``{"p0", "v0", "cd", "thrust" (3,), "thrust_norm", "rms", "rss", "n", "k", "dims", "cond", "iters", "t0"}`` (``n`` は残差の個数、``k`` は動かしたパラメータ数。:func:`aic_from_rss` の入力)。 推力つきの真値の軌跡なら a_T は 1e-5 m/s² で戻り、推力 0 で作った軌跡なら ``thrust_norm`` は 1e-5 以下になる(門)。 · 例: `poc_video_physics_consistency`
+- `thrust_ode` `table → table` — 重力 + 抗力 + **一定の比推力**(質量あたりの推力 [m/s²]、世界座標で向きも大きさも一定)の RK4。スピンは持たない(ω = 0)。 返り値 ``{"t" (N,), "p" (N, 3), "v" (N, 3)}``(t = 0, dt, …, ≤ t_end)。``thrust`` が零ベクトルなら :func:`flight_ode`(ω = 0)と 1e-12 で一致し、真空(rho = 0)なら閉形式 p₀ + v₀ t + ½ (a_T − g ẑ) t² と 1e-9 で一致する(門)。 「ほぼロケット」の映像を扱う最小の模型で、推力が機体に固定されて向きを変える場合は近似になる(短い区間ほど良い)。 · 例: `poc_video_physics_consistency`
+- `time_stretch_from_gravity` `入力なし → table` — 当てはめた重力加速度から、映像の時間の引き延ばし倍率を閉形式で逆算する。時刻を k 倍に引き延ばした(スローモーションや フレームレートの付け替えをした)映像では、軌跡は同じ形のまま g が g/k² に見えるので、k = √(g_ref / g_fit)。 返り値 ``{"k", "g_fit", "g_ref", "log_k"}``(``log_k`` = ln k は改変なしで 0、符号が速い/遅いを表す: :func:`imgforensics.evidence_quantile` に渡すなら |log_k| を「大きいほど強い」証拠として使う)。 g_fit ≤ 0 や非有限、g_ref ≤ 0 は ValueError(重力が上を向く・無い軌跡に倍率は定義できない)。 · 例: `poc_video_physics_consistency`
 
 #### drive / balltrack(10)
 - `ball_detect` `image2d → table` — 画像から球の候補を出す: しきい値 → 連結成分 → 明るさ重みのサブピクセル重心・等価半径・充填率。 · 例: `poc_ball_bounce`, `poc_driving_longitudinal`, `poc_driving_school`, `poc_driving_weather`, `poc_kendama`, `poc_table_tennis_bounce`, `poc_table_tennis_spin`
@@ -4278,7 +4285,7 @@ _計 3539 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 - `flow_from_depth_motion` `image2d × matrix × matrix → table` — 深度像と剛体運動から **真の像の流れ**: ``{"u", "v", "valid", "depth1"}``(各 (H, W))。 · 例: `poc_ttc_rss`, `poc_world_terrain`
 - `foe_from_flow` `image2d × image2d → table` — 光学流から拡大の中心(FoE)を推定する: ``{"foe": (col, row), "n", "residual"}``。 · 例: `poc_world_terrain`
 - `foe_from_motion` `matrix × matrix → signal` — 拡大の中心(FoE)の画素 ``(col, row)``: 相対運動の並進 ``t`` を無限遠で投影した点。 · 例: `poc_ttc_rss`, `poc_world_terrain`
-- `label_extent` `labels2d → table` — ラベル像の中で値 ``value`` の画素の箱: ``{"col0", "col1", "row0", "row1", "width", "height", "n"}``。 · 例: `poc_ttc_rss`
+- `label_extent` `labels2d → table` — ラベル像の中で値 ``value`` の画素の箱: ``{"col0", "col1", "row0", "row1", "width", "height", "n"}``。 · 例: `poc_ttc_rss`, `poc_video_physics_consistency`
 - `relative_motion` `matrix × matrix → matrix` — 2 コマの間の、カメラ座標で見た点の剛体運動 ``T_rel``(``P_c1 = T_rel · P_c0``)。 · 例: `poc_ttc_rss`, `poc_world_terrain`
 - `ttc_from_flow` `image2d × image2d → table` — 光学流から τ(秒): ``{"tau_map", "tau", "n", "foe"}``。 · 例: `poc_ttc_rss`
 - `ttc_from_range` `入力なし → scalar` — 距離と閉じる速さから τ = d / v(秒)。世界の姿勢から出す真値(v ≤ 0 なら ``inf``、d < 0 は ``ValueError``)。 · 例: `poc_ttc_rss`
@@ -4510,7 +4517,7 @@ _計 3539 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 
 #### annotate / text(2)
 - `measure_text` `text → table` — 文字を**描く前に**測る。収まらないなら折り返すか縮め、駄目なら例外。 · 例: `annotate_gallery`, `annotate_paper_tour`, `poc_diabolo_model_and_vision`
-- `text_box` `image2d × text → image2d` — 下敷き(半透明の板)つきの文字。**はみ出しは黙って切らず例外**。 · 例: `annotate_gallery`, `annotate_paper_tour`, `drawlist_deferred`, `poc_active_contours`, `poc_agv_fleet`, `poc_air_hockey_intercept`, `poc_ball_bounce`, `poc_beam_modal_video`, `poc_cad_scan_deviation`, `poc_camera_calibration`, `poc_camera_shake_deblur`, `poc_chromatic_confocal`, `poc_code_matching_breakdown`, `poc_connectome_across_worms`, `poc_crack_width_timeseries`, `poc_ct_void_morphology`, `poc_dehazing`, `poc_dem_terrain`, `poc_dense_bubble_count`, `poc_diabolo_model_and_vision`, `poc_dic_strain`, `poc_driving_crossing`, `poc_driving_decisions`, `poc_driving_endless_map`, `poc_driving_lateral`, `poc_driving_longitudinal`, `poc_driving_pass`, `poc_driving_school`, `poc_driving_traffic`, `poc_driving_weather`, `poc_emva1288_sensor`, `poc_eye_to_brain`, `poc_flybrain_pointcloud`, `poc_focus_stacking`, `poc_food_cutting_measure`, `poc_granular_heap_repose`, `poc_graph_hierarchy_segmentation`, `poc_hyperspectral_foreign_matter`, `poc_illumination_cone_vs_na`, `poc_interferometry_step`, `poc_kendama`, `poc_leak_localization`, `poc_lens_merit_operands`, `poc_lens_solves_afocal`, `poc_lidar_terrain_change`, `poc_livestock_body_volume`, `poc_machine_condition_fusion`, `poc_malecns_activity_wave`, `poc_material_optical_library`, `poc_measurement_system_analysis`, `poc_mesh_quality_repair`, `poc_moire_alignment`, `poc_motion_magnification`, `poc_multibeam_bathymetry`, `poc_nir_silicon_transmission`, `poc_noncoaxial_optics`, `poc_panorama_drift`, `poc_particle_tracking`, `poc_peg_failure_recovery`, `poc_peg_insertion_tactile`, `poc_phase_measuring_deflectometry`, `poc_photoelasticity`, `poc_pixel_shift`, `poc_powder_scoop_pour`, `poc_print_warpage_risk`, `poc_pxrd_phase_peel`, `poc_registration_basin`, `poc_river_surface_velocity`, `poc_rotation_invariance_audit`, `poc_rover_slip_risk_path`, `poc_segmentation_gauntlet`, `poc_sem_tem_same_particle`, `poc_simcal_pixel_shift`, `poc_simcal_telecentric`, `poc_simcal_thin_film`, `poc_spectrometer_illumination`, `poc_stockpile_volume`, `poc_strain_history`, `poc_structure_4d_deterioration`, `poc_superresolution_limits`, `poc_swarm_obstacle_from_flow`, `poc_table_tennis_bounce`, `poc_table_tennis_rally_loop`, `poc_table_tennis_spin`, `poc_tacscalib_sphere_lut`, `poc_telecentric_metrology`, `poc_template_tracking`, `poc_thin_film_reflectometry`, `poc_timelapse_growth`, `poc_traffic_counting`, `poc_ttc_rss`, `poc_world_terrain`, `poc_wound_area_tracking`, `poc_xyt_event_surface`, `poc_zebra_stripes_fly_eye`
+- `text_box` `image2d × text → image2d` — 下敷き(半透明の板)つきの文字。**はみ出しは黙って切らず例外**。 · 例: `annotate_gallery`, `annotate_paper_tour`, `drawlist_deferred`, `poc_active_contours`, `poc_agv_fleet`, `poc_air_hockey_intercept`, `poc_ball_bounce`, `poc_beam_modal_video`, `poc_cad_scan_deviation`, `poc_camera_calibration`, `poc_camera_shake_deblur`, `poc_chromatic_confocal`, `poc_code_matching_breakdown`, `poc_connectome_across_worms`, `poc_crack_width_timeseries`, `poc_ct_void_morphology`, `poc_dehazing`, `poc_dem_terrain`, `poc_dense_bubble_count`, `poc_diabolo_model_and_vision`, `poc_dic_strain`, `poc_driving_crossing`, `poc_driving_decisions`, `poc_driving_endless_map`, `poc_driving_lateral`, `poc_driving_longitudinal`, `poc_driving_pass`, `poc_driving_school`, `poc_driving_traffic`, `poc_driving_weather`, `poc_emva1288_sensor`, `poc_eye_to_brain`, `poc_flybrain_pointcloud`, `poc_focus_stacking`, `poc_food_cutting_measure`, `poc_granular_heap_repose`, `poc_graph_hierarchy_segmentation`, `poc_hyperspectral_foreign_matter`, `poc_illumination_cone_vs_na`, `poc_interferometry_step`, `poc_kendama`, `poc_leak_localization`, `poc_lens_merit_operands`, `poc_lens_solves_afocal`, `poc_lidar_terrain_change`, `poc_livestock_body_volume`, `poc_machine_condition_fusion`, `poc_malecns_activity_wave`, `poc_material_optical_library`, `poc_measurement_system_analysis`, `poc_mesh_quality_repair`, `poc_moire_alignment`, `poc_motion_magnification`, `poc_multibeam_bathymetry`, `poc_nir_silicon_transmission`, `poc_noncoaxial_optics`, `poc_panorama_drift`, `poc_particle_tracking`, `poc_peg_failure_recovery`, `poc_peg_insertion_tactile`, `poc_phase_measuring_deflectometry`, `poc_photoelasticity`, `poc_pixel_shift`, `poc_powder_scoop_pour`, `poc_print_warpage_risk`, `poc_pxrd_phase_peel`, `poc_registration_basin`, `poc_river_surface_velocity`, `poc_rotation_invariance_audit`, `poc_rover_slip_risk_path`, `poc_segmentation_gauntlet`, `poc_sem_tem_same_particle`, `poc_simcal_pixel_shift`, `poc_simcal_telecentric`, `poc_simcal_thin_film`, `poc_spectrometer_illumination`, `poc_stockpile_volume`, `poc_strain_history`, `poc_structure_4d_deterioration`, `poc_superresolution_limits`, `poc_swarm_obstacle_from_flow`, `poc_table_tennis_bounce`, `poc_table_tennis_rally_loop`, `poc_table_tennis_spin`, `poc_tacscalib_sphere_lut`, `poc_telecentric_metrology`, `poc_template_tracking`, `poc_thin_film_reflectometry`, `poc_timelapse_growth`, `poc_traffic_counting`, `poc_ttc_rss`, `poc_video_physics_consistency`, `poc_world_terrain`, `poc_wound_area_tracking`, `poc_xyt_event_surface`, `poc_zebra_stripes_fly_eye`
 
 ### gfx2d(44 ops / 9 categories)
 
@@ -4859,8 +4866,8 @@ _計 3539 ops / 52 families。並びとノートの在り処は `docs/ops/INDEX.
 ### imgforensics(16 ops / 7 categories)
 
 #### imgforensics / calibration(2)
-- `evidence_quantile` `measurement × table → table` — 証拠量が、清浄な分布の**どのあたりに座るか**を返す。判定は返さない。 · 例: `image_forensics_audit`, `poc_prnu_camera_fingerprint`
-- `null_distribution` `signal → table` — **改竄が無い**と分かっている標本から、証拠量の帰無分布をまとめる。 · 例: `image_forensics_audit`, `poc_prnu_camera_fingerprint`
+- `evidence_quantile` `measurement × table → table` — 証拠量が、清浄な分布の**どのあたりに座るか**を返す。判定は返さない。 · 例: `image_forensics_audit`, `poc_prnu_camera_fingerprint`, `poc_video_physics_consistency`
+- `null_distribution` `signal → table` — **改竄が無い**と分かっている標本から、証拠量の帰無分布をまとめる。 · 例: `image_forensics_audit`, `poc_prnu_camera_fingerprint`, `poc_video_physics_consistency`
 
 #### imgforensics / compression(4)
 - `error_level_map` `image2d → image2d` — ELA(誤差レベル解析)。指定品質で **再圧縮した差分**の地図を返す。``image2d``。 · 例: `image_forensics_audit`, `poc_forensics_roc`

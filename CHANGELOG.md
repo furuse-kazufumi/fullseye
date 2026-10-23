@@ -7,9 +7,15 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### 追加 — 映像の物理整合性(弾道か推力か、時間は引き延ばされていないか)
+
+- `ballistics` に 6 op: `thrust_ode`(重力+抗力+一定の比推力の RK4)、`drag_fit` / `thrust_fit`(軌跡から (p₀, v₀, C_d[, a_T]) を射影つき Levenberg–Marquardt で同定、(N, 3) でも単眼の平面 (N, 2) でも)、`aic_from_rss`、`ballistic_vs_thrust`(2 模型の当てはめと ΔAIC を返す。判定は返さず、閾値は呼び手。節約則)、`time_stretch_from_gravity`(k = √(g_ref / g_fit))。推力つきの当てはめは抗力だけの解を始点に含むので ΔAIC ≥ −2Δk が保たれる。
+- PoC `examples/poc_video_physics_consistency.py`(収蔵 2026.276、法科学・文書の棟): 単眼の合成映像 → bbox → 既知の寸法で尺度 → 2 模型の AIC 選択 → 推力の大きさ / g から時間の引き延ばし倍率 → 帰無分布での位置。鉛直推力と時間の引き延ばしが単眼では縮退することを閉形式で示す(門 16)。
+
 ### CI — docs だけの PR の検査ジョブが任意依存なしで走っていた
 
 - `documentation checks`(docs だけの変更で全数スイートの代わりに走るジョブ、0.8.0 の CI 高速化で追加)は core だけの install で `tests/test_capabilities.py` などを走らせていたため、skimage/opencv/pywt の op・PIL・openpyxl が無い環境で「実在しない op」として落ちた。docs だけの PR が初めて来た 2026-10-23(#123)まで一度も走っておらず、赤であることに気づけなかった。全数スイートと同じ任意依存を入れる。同じ理由で CJK フォント(能力ノートの例が日本語を描く)も全数スイートと同じものを入れる。
+
 
 ### 契約変更 — 非有限な入力は入口で拒否する(fail-closed)
 

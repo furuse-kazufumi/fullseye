@@ -20034,6 +20034,42 @@
    "ko": "``a``는 창의 너비, ``b``는 창의 높이이며 각 노브는 ``1 + 2 * min(7, int(8 * clip(knob, 0, 1)))``로 홀수 1, 3, …, 15에 대응한다(짝수 너비·높이를 다음 홀수로 올림하는 것과 같다). 경계는 항상 ``reflect``. 너비와 높이가 같으면 같은 창·``reflect``의 ``mean_box``와 비트 단위로 일치한다. 예: ``_mean_box_wh(np.eye(5), 0.2, 0.4)``.\n\nNaN? ??? ????? ?? ??? ???? ?? ?? ???? NaN? ????.",
    "de": "``a`` ist die Fensterbreite, ``b`` die Fensterhöhe; jeder Regler wird über ``1 + 2 * min(7, int(8 * clip(knob, 0, 1)))`` auf die ungeraden Größen 1, 3, …, 15 abgebildet (dasselbe wie das Aufrunden einer geraden Breite oder Höhe auf den nächsten ungeraden Wert). Ränder verwenden immer ``reflect``. Bei gleicher Breite und Höhe ist das Ergebnis bitidentisch mit ``mean_box`` bei gleichem Fenster und ``reflect``. Beispiel: ``_mean_box_wh(np.eye(5), 0.2, 0.4)``.\n\nBei einem Bild mit NaN breitet sich NaN auf die Ausgabe der Mittelwertfenster aus, die dieses Pixel einbeziehen.",
    "hi": "``a`` window की चौड़ाई और ``b`` window की ऊँचाई है; हर knob ``1 + 2 * min(7, int(8 * clip(knob, 0, 1)))`` से विषम आकार 1, 3, …, 15 पर जाता है (सम चौड़ाई या ऊँचाई को अगले विषम मान तक ऊपर करने के समान)। सीमाएँ हमेशा ``reflect`` उपयोग करती हैं। चौड़ाई और ऊँचाई समान होने पर परिणाम उसी window और ``reflect`` वाले ``mean_box`` से bit-समान होता है। उदाहरण: ``_mean_box_wh(np.eye(5), 0.2, 0.4)``।\n\nNaN ???? image ??? ?? pixel ?? ???????? ???? ???? averaging windows ?? output ?? NaN ????? ???"
+  },
+  "drive/thrust_ode": {
+   "fp": "123860defd6d",
+   "en": "Empty input (``thrust`` with 0 elements) raises ValueError.",
+   "zh": "空输入(``thrust`` 为 0 个元素)会引发 ValueError。",
+   "tw": "空輸入(``thrust`` 為 0 個元素)會引發 ValueError。",
+   "ko": "빈 입력(``thrust``가 0개 요소)은 ValueError.",
+   "de": "Leere Eingabe (``thrust`` mit 0 Elementen) löst ValueError aus.",
+   "hi": "खाली input (``thrust`` में 0 elements) पर ValueError आता है।"
+  },
+  "drive/thrust_fit": {
+   "fp": "916ea026a143",
+   "en": "Empty input (``t`` with 0 elements) raises ValueError.",
+   "zh": "空输入(``t`` 为 0 个元素)会引发 ValueError。",
+   "tw": "空輸入(``t`` 為 0 個元素)會引發 ValueError。",
+   "ko": "빈 입력(``t``가 0개 요소)은 ValueError.",
+   "de": "Leere Eingabe (``t`` mit 0 Elementen) löst ValueError aus.",
+   "hi": "खाली input (``t`` में 0 elements) पर ValueError आता है।"
+  },
+  "drive/drag_fit": {
+   "fp": "916ea026a143",
+   "en": "Empty input (``t`` with 0 elements) raises ValueError.",
+   "zh": "空输入(``t`` 为 0 个元素)会引发 ValueError。",
+   "tw": "空輸入(``t`` 為 0 個元素)會引發 ValueError。",
+   "ko": "빈 입력(``t``가 0개 요소)은 ValueError.",
+   "de": "Leere Eingabe (``t`` mit 0 Elementen) löst ValueError aus.",
+   "hi": "खाली input (``t`` में 0 elements) पर ValueError आता है।"
+  },
+  "drive/ballistic_vs_thrust": {
+   "fp": "916ea026a143",
+   "en": "Empty input (``t`` with 0 elements) raises ValueError.",
+   "zh": "空输入(``t`` 为 0 个元素)会引发 ValueError。",
+   "tw": "空輸入(``t`` 為 0 個元素)會引發 ValueError。",
+   "ko": "빈 입력(``t``가 0개 요소)은 ValueError.",
+   "de": "Leere Eingabe (``t`` mit 0 Elementen) löst ValueError aus.",
+   "hi": "खाली input (``t`` में 0 elements) पर ValueError आता है।"
   }
  },
  "optics/acoustic_impedance_mismatch": {

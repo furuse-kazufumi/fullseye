@@ -3417,6 +3417,18 @@
    "caption_ja": "半径3 mの合成トンネルを魚眼2面から全天球へ戻し、継ぎ目誤差0.01569、死角0.000 %を測った。球面重み、視野移動、32枚中16枚のタイル範囲、3 mの距離を3.000000 mへ戻す立体視、回転補正によるWS-PSNR 20.13 dBから33.51 dB、円筒展開、赤シアン表示を同じ場面で確かめた。理想フィルターの漏れは0、10 %漏れでは左右0.0693/0.0014。画面上視差は1.80 mm。8章、静止画8枚、30フレームの動画。学習0、校正0。",
    "caption_en": "A synthetic 3 m-radius tunnel is captured by two fisheyes and stitched back to a panorama: measured seam error 0.01569 and 0.000 percent blind pixels. The same scene checks solid-angle weighting, moving viewports, 16 of 32 requested tiles, spherical stereo that recovers 3 m as 3.000000 m, rotation correction that raises WS-PSNR from 20.13 to 33.51 dB, cylindrical defect unwrapping, and an actual red/cyan pair. Ideal filters have zero leakage; 10 percent leakage measures 0.0693/0.0014 for the two eyes. On-screen parallax is 1.80 mm. Eight chapters, eight figures, and a 30-frame video. No learning and no calibration.",
    "run": "py -3.11 examples/poc_omni360_inspection.py"
+  },
+  {
+   "id": "poc_video_physics_consistency",
+   "wing": "wing_forensics",
+   "added": "2026-10-23",
+   "numbers_source": "log",
+   "figure": "delta_aic_thrusted",
+   "title_ja": "映像の物理整合性 ―― 壁を上って跳ぶ車は弾道か推力か、時間は引き延ばされていないか",
+   "title_en": "Physical Consistency of Footage — Ballistic or Thrusted, and Was the Clock Stretched?",
+   "caption_ja": "45 m 先の単眼カメラ(960 × 540、30 fps、1 画素 7.5 cm)で写した合成の車の箱を bbox で追い、既知の車の寸法で尺度を入れた平面軌跡は真値と中央値 2.8 cm。重力+抗力と一定推力つきの運動方程式を当てて AIC の差で選ぶと、弾道 40 本・推力 40 本の正答 79/80、推力の ΔAIC は最小 382、弾道は 1 本だけ 10.4 で誤判定(雑音だけなら −4 を中心に χ² の幅)。推力の大きさは推定/真値の中央値 1.022、g の 2.5 %(0.25 m/s²)でも ΔAIC 中央値 79 で見える。時間を k 倍に引き延ばした映像は g が g/k² に見えるので k を閉形式で逆算し、k ∈ [0.5, 4] で誤差最大 0.32 %、清浄 200 本の帰無分布での位置は 1.000、清浄な別の 100 本の偽陽性 2。1.5 倍に引き延ばした弾道の映像は推力検査に「上向き 5.46 m/s²」(閉形式 g(1 − 1/k²) = 5.45)として映る ―― 鉛直推力と時間の引き延ばしは単眼では縮退する。学習 0、実写 0。",
+   "caption_en": "A synthetic car box filmed by a monocular camera 45 m away (960 × 540, 30 fps, one pixel ≈ 7.5 cm) is tracked by its bounding box and scaled by the known car size; the planar track sits 2.8 cm (median) from the truth. Fitting gravity + drag against gravity + drag + constant thrust and choosing by the AIC difference classifies 79 of 80 clips (40 ballistic, 40 thrusted): thrusted ΔAIC is at least 382, while one ballistic clip reaches 10.4 and is misjudged (noise alone scatters around −4 with a χ² width). Thrust magnitude comes back with a median estimate/truth ratio of 1.022, and 2.5 % of g (0.25 m/s²) is still visible with a median ΔAIC of 79. Stretching the clock by k makes g look like g/k², so k is inverted in closed form: at most 0.32 % error for k in [0.5, 4], position 1.000 against a 200-clip clean null, and 2 false positives in 100 further clean clips. A ballistic clip slowed 1.5× reads as an upward thrust of 5.46 m/s² (closed form g(1 − 1/k²) = 5.45): vertical thrust and time stretch are degenerate in a monocular view. No learning, no real footage.",
+   "run": "py -3.11 examples/poc_video_physics_consistency.py"
   }
  ]
 }

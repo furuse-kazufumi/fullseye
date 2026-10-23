@@ -616,6 +616,7 @@ from ballistics import (  # noqa: E402,F401
     drag_coefficient_sphere, bounce, contact_angular_momentum, apex_sequence, bounce_total_time, restitution_from_apexes,
     restitution_from_intervals, fit_parabola, flight_fit, fit_aero, fit_spin, fit_bounce, slide_stop_distance, incline_slip_angle,
     mu_from_stop_distance, roll_slide_state, tether_simulate, pendulum_period, cup_catch_check,
+    thrust_ode, thrust_fit, drag_fit, aic_from_rss, ballistic_vs_thrust, time_stretch_from_gravity,
 )
 import balltrack  # noqa: E402  (球の追跡: サブピクセル検出 → 追跡 → DLT 三角測量 → 等加速度 Kalman、模様から角速度)
 from balltrack import (  # noqa: E402,F401

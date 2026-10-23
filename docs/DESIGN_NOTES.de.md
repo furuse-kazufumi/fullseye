@@ -46,25 +46,25 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `api.py`
 
 - **L166** _(ja)_ — ★2026-10-02: 合成パイプライン 6 本を fs.<名前> から出す。以前は ``fs.pipeline3d.<fn>`` でしか届かず、 公開経路の門では「1 本も届かない島」として _INTERNAL に置かれていた。import 自体は torch が無くても 通る(torch_lazy)。torch を要るのは呼んだときの FPFH / ICP の側だけ。
-- **L868** _(ja)_ — ★名前はすべて glyph_ で始める。1-D / 2-D / 3-D でレジストリが分かれている repo なので、接頭辞の無い名前は公開経路ごとに別物を指す事故を起こす。
-- **L884** _(ja)_ — ★JSON 一枚で受ける入口。op ではなく API 層の関数(レジストリの op は (画像, a, b) 固定でノブ 2 つなので、文字列も JSON も渡せない)。
-- **L939** — ★``annotate.overlay_mask`` wird **bewusst nicht auf oberster Ebene exponiert**. Das gleichnamige ``imgio.overlay_mask`` ist bereits als ``fs.overlay_mask`` öffentlich, und Argumente wie Bedeutung unterscheiden sich (imgio = rohes RGB, mask>0.5, fill/margin / annotate = Rollenname-Farbe, Gewichte [0,1] erlaubt, lehnt Form-Fehlanpassung ab). Legt man dem gleichen Namen ein anderes Versprechen auf, erhält der Aufrufer keine Ausnahme, sondern **ein plausibel anderes Bild**. Breaking Changes an der öffentlichen API machen wir nicht im Alleingang, daher die rollentragende Variante über ``fs.annotate.overlay_mask`` beziehen.
-- **L1094** _(ja)_ — ★2026-10-02: 「名前の無い非公開関数」の棚卸しで、op として振る舞うのに公開経路が 1 本も無かった 18 本。 どれも既存の型つき台帳の約束(台帳 = 実装モジュールの集合)に合わないので、facade(fs.<名前>)から出す。 門は tests/test_hidden_ops_exposed_2026_10_02.py(定理か第 2 実装)。
-- **L1650** _(ja)_ — ★空・空白だけの名前は「無い」(2026-09-20、GenSpark N27): 多くの op は halcon 別名が "" なので、 `name == halcon` の一致で "" が **lowpass に解決**し、保存したパイプラインに空名が混ざると 別の op が黙って走っていた。名前の照合はこの先で行うので、ここで先に切る。
-- **L1653** _(ja)_ — ★2026-10-11: このコメントと判定が docstring より**前**にあったので、関数に docstring が 無かった(``find_op.__doc__`` が None)。説明の門(台帳・facade 版)が拾った。
-- **L1669** _(ja)_ — ★大小文字とハイフンだけ違う名前は同じ op(2026-09-20、GenSpark N50): HALCON のリファレンスは GAUSS_FILTER のように大文字で書かれることが多く、`GAUSS_FILTER` / `Gauss-Filter` が unknown だった。 正規化して 1 度だけ引き直す(元の綴りに一致が無いときだけなので、既存の解決は変わらない)。
-- **L1738** _(ja)_ — ★2026-09-20(GenSpark 第 35 報 N124): 台帳 op の名前を apply に渡すと「unknown operator」と言い、 op_names() を案内していた(そこにも無い)。索引は tier を知っているので、正しい入口を言う。
-- **L2033** _(ja)_ — ★2026-09-20(GenSpark 第 55 報 N199): `with strict_mode(): apply(gray, "access_channel")` が例外にならず、 入力型の fallback(source="input")が台帳に残っていた。strict は op 本体の例外と GPU / 高速路だけが見ていて、 `_guard_input` と非有限出力の門は `on_error` しか見ていなかった —— 「厳密」が経路ごとに別の意味だった。 strict(strict_mode / set_strict / FULLSEYE_STRICT)は on_error=None のとき "raise" と同じ。明示の on_error は文脈より強い(引数 > 文脈 > 環境変数 > 既定)。
-- **L2064** — ★ **Für Farbbilder gibt es derzeit keinen korrekten Aufruf**: Übergibt man sie gemeinsam, vermischen sich die Farben, und ruft man pro Kanal dreimal auf, teilt ein selbstnormalisierender op jeden Kanal durch sein eigenes Maximum und zerstört die Verhältnisse zwischen den Kanälen (der Winkelfehler der Grey-Edge-Methode steigt von 1.03 Grad mit unserem eigenen Sobel -> 4.17 Grad pro Bild -> 27.86 Grad pro Kanal, 29.14 Grad am Nullpunkt). Wohin man sich neigt, ist eine **Vertragsentscheidung**, deshalb ändern wir hier keinen einzigen Standardwert, verweigern nur bei `on_error="raise"` und protokollieren es standardmäßig im Register, damit es sichtbar bleibt. Details und Optionen in docs/KNOWN_ISSUES.md.
-- **L2352** _(ja)_ — ★2026-09-20(GenSpark 第 26 報 N97): 素の str / dict / スカラーは ndarray でないのでここを素通りし、 既定の fallback 方針では**入力がそのまま**返っていた(``apply("abc", "gaussian") == "abc"``)。 raster を取る op には、配列にしてから同じ検査を掛ける。list / tuple は数値の入れ子として下で配列化される。
-- **L2388** _(ja)_ — ★float16 / float32 → float64 の昇格は無損失(値も範囲も変わらない)なので記録しない(2026-09-20、 GenSpark N29): float16 は scipy.ndimage が扱えず op が RuntimeError → fallback で**入力のコピー**が 返っていた。float32 は op が float32 で走り float32 を返していた(契約は float64)。
-- **L2657** _(ja)_ — ★2026-10-18(外部レビュー 0.6.0 N224): 以前の文は「got name=ndarray」だけで、受け取った image 側 (op 名の文字列)を言わず、規約の説明と食い違って読めた。受け取った 2 つと、直した呼び方を言う。
-- **L2778** _(ja)_ — ★形状不一致(2026-09-19 外部レビュー #13): ラスタ同士の n-ary で形が違うと numpy の 「could not be broadcast」がそのまま台帳に残り、既定の方針では**第 1 入力が そのまま返る**(sort として妥当な fallback)。返り値の形だけ見た利用者には 「(32,32)+(32,16) が (32,32) で成功した」と映った。何が要るかを文で言う。
-- **L2782** _(ja)_ — ★ただし第 2 入力がマスク(畳み込みの核)の op は形が違って当然 —— 3×3 のマスクを 画像と同じ大きさに埋めないと呼べない、では入口として壊れている(2026-10-12、例の 付与で発見)。核を取る op だけ名指しで外す。
-- **L3091** _(ja)_ — ★2026-09-20(GenSpark 第 15・16 報 N67): 4 op の入口の関門(ops.NATIVE_CRASHES_ON_DEGENERATE)は 効いているのに、その事実は ops.py の中にしか無く、registry を使う側からは見えなかった。 行に載せる(None = 関門なし。理由の文がそのまま値)。
-- **L3095** _(ja)_ — ★2026-09-20(GenSpark 第 20 報 N84): 同じ HALCON 別名を複数の op が名乗る(cv_ / sk_ の移植と コアの実装)。どれが走るかは find_op の規則(完全一致 → name == halcon → _ALIAS_CANONICAL)で 決まっていて曖昧ではないが、その事実が行に無かった。halcon_peers = 同じ別名を名乗る他の op。
-- **L3216** _(ja)_ — ★2026-09-20(GenSpark 第 24 報 N95): 綴り違いの sort が黙って 0 行だった(「該当なし」と区別できない)。
-- **L3226** _(ja)_ — ★台帳には**入力ゼロ**の op(カタログを返すだけ)が在り ``in_sort`` が None になる。 生の None を並べ替えの鍵に混ぜると TypeError で落ちる —— レジストリと n-ary だけ だった頃は None が現れなかったので、この鍵は 2026-09-25 まで壊れずに済んでいた。
+- **L869** _(ja)_ — ★名前はすべて glyph_ で始める。1-D / 2-D / 3-D でレジストリが分かれている repo なので、接頭辞の無い名前は公開経路ごとに別物を指す事故を起こす。
+- **L885** _(ja)_ — ★JSON 一枚で受ける入口。op ではなく API 層の関数(レジストリの op は (画像, a, b) 固定でノブ 2 つなので、文字列も JSON も渡せない)。
+- **L940** — ★``annotate.overlay_mask`` wird **bewusst nicht auf oberster Ebene exponiert**. Das gleichnamige ``imgio.overlay_mask`` ist bereits als ``fs.overlay_mask`` öffentlich, und Argumente wie Bedeutung unterscheiden sich (imgio = rohes RGB, mask>0.5, fill/margin / annotate = Rollenname-Farbe, Gewichte [0,1] erlaubt, lehnt Form-Fehlanpassung ab). Legt man dem gleichen Namen ein anderes Versprechen auf, erhält der Aufrufer keine Ausnahme, sondern **ein plausibel anderes Bild**. Breaking Changes an der öffentlichen API machen wir nicht im Alleingang, daher die rollentragende Variante über ``fs.annotate.overlay_mask`` beziehen.
+- **L1095** _(ja)_ — ★2026-10-02: 「名前の無い非公開関数」の棚卸しで、op として振る舞うのに公開経路が 1 本も無かった 18 本。 どれも既存の型つき台帳の約束(台帳 = 実装モジュールの集合)に合わないので、facade(fs.<名前>)から出す。 門は tests/test_hidden_ops_exposed_2026_10_02.py(定理か第 2 実装)。
+- **L1651** _(ja)_ — ★空・空白だけの名前は「無い」(2026-09-20、GenSpark N27): 多くの op は halcon 別名が "" なので、 `name == halcon` の一致で "" が **lowpass に解決**し、保存したパイプラインに空名が混ざると 別の op が黙って走っていた。名前の照合はこの先で行うので、ここで先に切る。
+- **L1654** _(ja)_ — ★2026-10-11: このコメントと判定が docstring より**前**にあったので、関数に docstring が 無かった(``find_op.__doc__`` が None)。説明の門(台帳・facade 版)が拾った。
+- **L1670** _(ja)_ — ★大小文字とハイフンだけ違う名前は同じ op(2026-09-20、GenSpark N50): HALCON のリファレンスは GAUSS_FILTER のように大文字で書かれることが多く、`GAUSS_FILTER` / `Gauss-Filter` が unknown だった。 正規化して 1 度だけ引き直す(元の綴りに一致が無いときだけなので、既存の解決は変わらない)。
+- **L1739** _(ja)_ — ★2026-09-20(GenSpark 第 35 報 N124): 台帳 op の名前を apply に渡すと「unknown operator」と言い、 op_names() を案内していた(そこにも無い)。索引は tier を知っているので、正しい入口を言う。
+- **L2034** _(ja)_ — ★2026-09-20(GenSpark 第 55 報 N199): `with strict_mode(): apply(gray, "access_channel")` が例外にならず、 入力型の fallback(source="input")が台帳に残っていた。strict は op 本体の例外と GPU / 高速路だけが見ていて、 `_guard_input` と非有限出力の門は `on_error` しか見ていなかった —— 「厳密」が経路ごとに別の意味だった。 strict(strict_mode / set_strict / FULLSEYE_STRICT)は on_error=None のとき "raise" と同じ。明示の on_error は文脈より強い(引数 > 文脈 > 環境変数 > 既定)。
+- **L2065** — ★ **Für Farbbilder gibt es derzeit keinen korrekten Aufruf**: Übergibt man sie gemeinsam, vermischen sich die Farben, und ruft man pro Kanal dreimal auf, teilt ein selbstnormalisierender op jeden Kanal durch sein eigenes Maximum und zerstört die Verhältnisse zwischen den Kanälen (der Winkelfehler der Grey-Edge-Methode steigt von 1.03 Grad mit unserem eigenen Sobel -> 4.17 Grad pro Bild -> 27.86 Grad pro Kanal, 29.14 Grad am Nullpunkt). Wohin man sich neigt, ist eine **Vertragsentscheidung**, deshalb ändern wir hier keinen einzigen Standardwert, verweigern nur bei `on_error="raise"` und protokollieren es standardmäßig im Register, damit es sichtbar bleibt. Details und Optionen in docs/KNOWN_ISSUES.md.
+- **L2353** _(ja)_ — ★2026-09-20(GenSpark 第 26 報 N97): 素の str / dict / スカラーは ndarray でないのでここを素通りし、 既定の fallback 方針では**入力がそのまま**返っていた(``apply("abc", "gaussian") == "abc"``)。 raster を取る op には、配列にしてから同じ検査を掛ける。list / tuple は数値の入れ子として下で配列化される。
+- **L2389** _(ja)_ — ★float16 / float32 → float64 の昇格は無損失(値も範囲も変わらない)なので記録しない(2026-09-20、 GenSpark N29): float16 は scipy.ndimage が扱えず op が RuntimeError → fallback で**入力のコピー**が 返っていた。float32 は op が float32 で走り float32 を返していた(契約は float64)。
+- **L2658** _(ja)_ — ★2026-10-18(外部レビュー 0.6.0 N224): 以前の文は「got name=ndarray」だけで、受け取った image 側 (op 名の文字列)を言わず、規約の説明と食い違って読めた。受け取った 2 つと、直した呼び方を言う。
+- **L2779** _(ja)_ — ★形状不一致(2026-09-19 外部レビュー #13): ラスタ同士の n-ary で形が違うと numpy の 「could not be broadcast」がそのまま台帳に残り、既定の方針では**第 1 入力が そのまま返る**(sort として妥当な fallback)。返り値の形だけ見た利用者には 「(32,32)+(32,16) が (32,32) で成功した」と映った。何が要るかを文で言う。
+- **L2783** _(ja)_ — ★ただし第 2 入力がマスク(畳み込みの核)の op は形が違って当然 —— 3×3 のマスクを 画像と同じ大きさに埋めないと呼べない、では入口として壊れている(2026-10-12、例の 付与で発見)。核を取る op だけ名指しで外す。
+- **L3092** _(ja)_ — ★2026-09-20(GenSpark 第 15・16 報 N67): 4 op の入口の関門(ops.NATIVE_CRASHES_ON_DEGENERATE)は 効いているのに、その事実は ops.py の中にしか無く、registry を使う側からは見えなかった。 行に載せる(None = 関門なし。理由の文がそのまま値)。
+- **L3096** _(ja)_ — ★2026-09-20(GenSpark 第 20 報 N84): 同じ HALCON 別名を複数の op が名乗る(cv_ / sk_ の移植と コアの実装)。どれが走るかは find_op の規則(完全一致 → name == halcon → _ALIAS_CANONICAL)で 決まっていて曖昧ではないが、その事実が行に無かった。halcon_peers = 同じ別名を名乗る他の op。
+- **L3217** _(ja)_ — ★2026-09-20(GenSpark 第 24 報 N95): 綴り違いの sort が黙って 0 行だった(「該当なし」と区別できない)。
+- **L3227** _(ja)_ — ★台帳には**入力ゼロ**の op(カタログを返すだけ)が在り ``in_sort`` が None になる。 生の None を並べ替えの鍵に混ぜると TypeError で落ちる —— レジストリと n-ary だけ だった頃は None が現れなかったので、この鍵は 2026-09-25 まで壊れずに済んでいた。
 
 ## `astrostack.py`
 
@@ -169,7 +169,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `ballistics.py`
 
-- **L303** _(ja)_ — ★減衰つき(Levenberg–Marquardt)。素の Gauss–Newton は軌跡が短い(曲がりが雑音に埋もれる)と ω の方向が ほぼ不定になり、1 歩で 1e7 rad/s へ飛んだ(2026-09-30、PoC ㉔ の 10〜45 コマ)。費用が下がる歩だけ受け入れる。
+- **L309** _(ja)_ — ★減衰つき(Levenberg–Marquardt)。素の Gauss–Newton は軌跡が短い(曲がりが雑音に埋もれる)と ω の方向が ほぼ不定になり、1 歩で 1e7 rad/s へ飛んだ(2026-09-30、PoC ㉔ の 10〜45 コマ)。費用が下がる歩だけ受け入れる。
 
 ## `blob2d.py`
 
@@ -2678,22 +2678,22 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L805** _(ja)_ — ★2026-10-13: TYPE_CHECKS["pose"] は (R, t, info) の 3 つ組も pose として通す (register_spin / register_shot / register_cpd_rigid / icp …)。ここで 2 つに 展開すると、その組が引かれた連鎖で ValueError(seed 3_000_0xx、縞に近づく ハエの眼の 5 op を足して抽選がずれた回で露見)。先頭 2 つだけ取る。
 - **L938** — ★Eine Punktwolke mit nicht-endlichen Werten **bringt die KD-Baum-Konstruktion selbst mit einem rohen ValueError zum Absturz** (scipy: "data must be finite"). Der Pool ist so ausgelegt, dass er NONFINITE protokolliert und die Werte behaelt, daher ist eine verunreinigte Punktwolke hier erwartbar -- die bauende Seite muss absichern. Am 2026-09-06 real getroffen: eine neue Familie kam hinzu, die Art, wie Ketten durchlaufen werden, aenderte sich, und bei seed 3_000_0xx wurde dieser Pfad getroffen und der fuzzer selbst hielt an (kein Defekt der op, sondern **ein Defekt des Werkzeugs**. Die Zusage ist, dass nicht bindbare Eingabe uebersprungen und nicht geworfen wird).
 - **L1290** _(ja)_ — ★単位空間は渡さない(渡すなら 3 つ全部)。渡さない形は「データ自身から 作る」訓練時の呼び方で、ファザーが最も広く回せる。
-- **L6720** _(ja)_ — ★2026-10-18: 窓 3 つ + 厚さ 0 から始まる勾配。窓の番号(low / high)のノブは窓が 3 つないと どの値も同じ 2 窓を指し、min_log(素通しに近い画素を拒否する下限)は L が 0.01〜0.04 の画素が 無いと効かない —— 効く入力を渡す(効かないノブを台帳に載せない)。 窓は 120 kV で 20 / 40 / 60 keV(隣り合う狭い窓 20〜35 / 35〜55 では Cr と Mn の R が逆転し、 effective_z_map が単調でないとして拒否する —— それは op の正しい拒否で、ノブの検査にならない)。
-- **L7759** _(ja)_ — ★2026-10-11: file = 書き出したファイルのパス(write_wav の返り、read_wav の入力)。 述語が無いあいだ、write_wav が None を返しても誰も気づかなかった。
-- **L7881** — ★Bis 2026-09-02 war es ``lambda v: True`` = **da das Praedikat als "vorhanden" gezaehlt wird, ist es schlimmer als gar keins** (auch das Pruefskript zaehlt es als "hat ein Praedikat"). Gemessen liess es sogar None / 42 / einen String / ein dict durch. Der Kanon wurde festgelegt, indem alle 6 konsumierenden op (reprconvs pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar) **vollstaendig ausgefuehrt** wurden: alle 6 op akzeptieren nur die beiden obigen Formen, alles andere wird zu einem namentlichen fail-closed mit "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" (gemessen). Da **(2,N) nicht akzeptiert wird**, wurden die 3 adapter, die ein 2-tuple mit np.stack zu (2,N) zusammendrueckten, auf axis=1 korrigiert. Zwei Arrays unterschiedlicher Laenge (histograms counts/edges) sind ebenfalls kein "Paar" und werden abgewiesen.
-- **L8013** — ★"Genau 2 Elemente" ist **absichtlich anders** als pose (das via `len >= 2` info erlaubt). Gemessen 2026-09-02: die 4 bestehenden consumer, die ein mesh als ein Argument nehmen (face_normals / vertex_normals / mesh_area / vertex_curvature), geben fuer ein 3-tuple "mesh must be a 2-element tuple (vertices, faces)" aus, und cadmaps `_mesh` und render3d._mesh_arrays akzeptieren ebenfalls nur 2 Elemente. Das heisst **der Kanon fuer den mesh sort dieses repo ist ein 2-tuple**, und ein zusaetzliches Element ist nicht "mehr Information", sondern eine Luege auf Typ-Ebene, die alles Nachgelagerte ausloescht. Die einzige Ausnahme `voxel_to_mesh` (die (v, f, n) zurueckgibt) laesst jetzt die kanonische Reihenfolge in ops3d.RESULT_ADAPTERS extrahieren (gleich behandelt wie gicp / vol_label).
-- **L8222** _(ja)_ — ★2026-10-11: ``system`` キーに最適化後の処方(同じ object_mm = inf)
-- **L8224** _(ja)_ — ★2026-10-15: 絞りと像面の前の面は平面(R = inf、lens_system の規約どおり)
-- **L8226** _(ja)_ — ★2026-10-15: 図の values に処方の平面の R = inf と、無焦点の EFL / BFL = inf、 分散の無い媒質の ν_d = inf を写す(lens_system の規約どおり)
-- **L8229** _(ja)_ — ★2026-10-15: 非共軸の系(raytrace3d)は面の R = inf・物体の inf を記録に持ち、 ゴーストの表・光線の束は「届かない光線 = NaN」(trace_rays と同じ規約)、 図の values にも平面の R = inf を写す。opd_samples は瞳の外 = NaN、 with_wavelength は処方(object_mm = inf)をそのまま返す。
-- **L8236** _(ja)_ — ★2026-10-19: 照準 / ケラレ係数を設定した処方もそのまま返す(R = inf、object_mm = inf)
-- **L8238** _(ja)_ — ★2026-10-18: .zmx から読んだ処方(lensfile)は lens_system そのもの(物体が無限遠 なら object_mm = inf、平面の R = inf、ファイル側の面の表の DISZ = INFINITY)
-- **L8241** _(ja)_ — ★2026-10-19: 構成ごとに解決した処方も lens_system そのもの(R = inf、object_mm = inf)
-- **L8243** _(ja)_ — ★2026-10-19: 硝材置換・大域探索は処方(R = inf)を入れ子で返す
-- **L8245** _(ja)_ — ★2026-10-19: 最適化後の処方(R = inf)を返す
-- **L8247** _(ja)_ — ★2026-10-20: 解を解いた・解を外した・afocal の・像面を曲げた処方(R = inf、object_mm = inf)と、 その解の一覧(R = inf の行)を返す
-- **L8270** _(ja)_ — ★2026-10-11(tests/test_ledger_contracts.py が初めて全台帳 op を呼んで挙げた分のうち、 **docstring が非有限を名指ししている**もの)。どれも「無い・測れない・届かない」を 0 で埋めず nan / inf で言う設計で、実際に非有限だった欄と docstring の欄が一致する ことを 1 本ずつ確かめた。docstring に書かれていない非有限(world_camera の depth の inf など)は**載せていない** —— 台帳の負債(docs/LEDGER_CONTRACT_DEBT.json)に残る。
-- **L8394** _(ja)_ — ★2026-10-07: プロセスごとに分ける。固定名だと xdist の別ワーカーが同じ捨て場を共有し、片方の テストが「中身を消してから、何か落ちたことを確かめる」間に相手が消す/書く(Windows では開いている ファイルの unlink が PermissionError)。
+- **L6741** _(ja)_ — ★2026-10-18: 窓 3 つ + 厚さ 0 から始まる勾配。窓の番号(low / high)のノブは窓が 3 つないと どの値も同じ 2 窓を指し、min_log(素通しに近い画素を拒否する下限)は L が 0.01〜0.04 の画素が 無いと効かない —— 効く入力を渡す(効かないノブを台帳に載せない)。 窓は 120 kV で 20 / 40 / 60 keV(隣り合う狭い窓 20〜35 / 35〜55 では Cr と Mn の R が逆転し、 effective_z_map が単調でないとして拒否する —— それは op の正しい拒否で、ノブの検査にならない)。
+- **L7782** _(ja)_ — ★2026-10-11: file = 書き出したファイルのパス(write_wav の返り、read_wav の入力)。 述語が無いあいだ、write_wav が None を返しても誰も気づかなかった。
+- **L7904** — ★Bis 2026-09-02 war es ``lambda v: True`` = **da das Praedikat als "vorhanden" gezaehlt wird, ist es schlimmer als gar keins** (auch das Pruefskript zaehlt es als "hat ein Praedikat"). Gemessen liess es sogar None / 42 / einen String / ein dict durch. Der Kanon wurde festgelegt, indem alle 6 konsumierenden op (reprconvs pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar) **vollstaendig ausgefuehrt** wurden: alle 6 op akzeptieren nur die beiden obigen Formen, alles andere wird zu einem namentlichen fail-closed mit "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" (gemessen). Da **(2,N) nicht akzeptiert wird**, wurden die 3 adapter, die ein 2-tuple mit np.stack zu (2,N) zusammendrueckten, auf axis=1 korrigiert. Zwei Arrays unterschiedlicher Laenge (histograms counts/edges) sind ebenfalls kein "Paar" und werden abgewiesen.
+- **L8036** — ★"Genau 2 Elemente" ist **absichtlich anders** als pose (das via `len >= 2` info erlaubt). Gemessen 2026-09-02: die 4 bestehenden consumer, die ein mesh als ein Argument nehmen (face_normals / vertex_normals / mesh_area / vertex_curvature), geben fuer ein 3-tuple "mesh must be a 2-element tuple (vertices, faces)" aus, und cadmaps `_mesh` und render3d._mesh_arrays akzeptieren ebenfalls nur 2 Elemente. Das heisst **der Kanon fuer den mesh sort dieses repo ist ein 2-tuple**, und ein zusaetzliches Element ist nicht "mehr Information", sondern eine Luege auf Typ-Ebene, die alles Nachgelagerte ausloescht. Die einzige Ausnahme `voxel_to_mesh` (die (v, f, n) zurueckgibt) laesst jetzt die kanonische Reihenfolge in ops3d.RESULT_ADAPTERS extrahieren (gleich behandelt wie gicp / vol_label).
+- **L8245** _(ja)_ — ★2026-10-11: ``system`` キーに最適化後の処方(同じ object_mm = inf)
+- **L8247** _(ja)_ — ★2026-10-15: 絞りと像面の前の面は平面(R = inf、lens_system の規約どおり)
+- **L8249** _(ja)_ — ★2026-10-15: 図の values に処方の平面の R = inf と、無焦点の EFL / BFL = inf、 分散の無い媒質の ν_d = inf を写す(lens_system の規約どおり)
+- **L8252** _(ja)_ — ★2026-10-15: 非共軸の系(raytrace3d)は面の R = inf・物体の inf を記録に持ち、 ゴーストの表・光線の束は「届かない光線 = NaN」(trace_rays と同じ規約)、 図の values にも平面の R = inf を写す。opd_samples は瞳の外 = NaN、 with_wavelength は処方(object_mm = inf)をそのまま返す。
+- **L8259** _(ja)_ — ★2026-10-19: 照準 / ケラレ係数を設定した処方もそのまま返す(R = inf、object_mm = inf)
+- **L8261** _(ja)_ — ★2026-10-18: .zmx から読んだ処方(lensfile)は lens_system そのもの(物体が無限遠 なら object_mm = inf、平面の R = inf、ファイル側の面の表の DISZ = INFINITY)
+- **L8264** _(ja)_ — ★2026-10-19: 構成ごとに解決した処方も lens_system そのもの(R = inf、object_mm = inf)
+- **L8266** _(ja)_ — ★2026-10-19: 硝材置換・大域探索は処方(R = inf)を入れ子で返す
+- **L8268** _(ja)_ — ★2026-10-19: 最適化後の処方(R = inf)を返す
+- **L8270** _(ja)_ — ★2026-10-20: 解を解いた・解を外した・afocal の・像面を曲げた処方(R = inf、object_mm = inf)と、 その解の一覧(R = inf の行)を返す
+- **L8293** _(ja)_ — ★2026-10-11(tests/test_ledger_contracts.py が初めて全台帳 op を呼んで挙げた分のうち、 **docstring が非有限を名指ししている**もの)。どれも「無い・測れない・届かない」を 0 で埋めず nan / inf で言う設計で、実際に非有限だった欄と docstring の欄が一致する ことを 1 本ずつ確かめた。docstring に書かれていない非有限(world_camera の depth の inf など)は**載せていない** —— 台帳の負債(docs/LEDGER_CONTRACT_DEBT.json)に残る。
+- **L8417** _(ja)_ — ★2026-10-07: プロセスごとに分ける。固定名だと xdist の別ワーカーが同じ捨て場を共有し、片方の テストが「中身を消してから、何か落ちたことを確かめる」間に相手が消す/書く(Windows では開いている ファイルの unlink が PermissionError)。
 
 ## `tools/chain_mine.py`
 

@@ -6713,6 +6713,23 @@
     "hi": "एक ही 3-D दृश्य पर indirect और direct time of flight: multipath, mixed pixels, pile-up और volume error",
     "fr": "Temps de vol indirect et direct sur une même scène 3-D : trajets multiples, pixels mixtes, pile-up et erreur de volume"
    }
+  },
+  {
+   "id": "poc_video_physics_consistency",
+   "group": "wing_forensics",
+   "media": "01_monocular_clip.gif",
+   "motion": true,
+   "thumb_src": "02_trajectories.png",
+   "label": {
+    "ja": "映像の物理整合性 ―― 弾道か推力か、時間の引き延ばし",
+    "en": "Physical consistency of footage: ballistic or thrusted, time stretch",
+    "zh": "影像的物理一致性:弹道还是推力、时间拉伸",
+    "tw": "影像的物理一致性:彈道還是推力、時間拉伸",
+    "ko": "영상의 물리 정합성: 탄도인가 추력인가, 시간 늘림",
+    "de": "Physikalische Konsistenz von Aufnahmen: ballistisch oder mit Schub, Zeitdehnung",
+    "hi": "फ़ुटेज की भौतिक संगति: ballistic या thrust, समय-खिंचाव",
+    "fr": "Cohérence physique d'une vidéo : balistique ou propulsé, dilatation du temps"
+   }
   }
  ],
  "all_source": "docs/articles/exhibits/poc_captions.json",
