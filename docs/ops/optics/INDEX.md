@@ -1,4 +1,4 @@
-# OPTICS operator help — 464 ops in 51 categories
+# OPTICS operator help — 476 ops in 52 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -153,6 +153,10 @@
 ### optimization (3)
 
 [bend_singlet](optimization/bend_singlet.md) · [merit_function](optimization/merit_function.md) · [optimize_lens](optimization/optimize_lens.md)
+
+### photoelastic (12)
+
+[brazilian_disc_stress](photoelastic/brazilian_disc_stress.md) · [cubic_photoelastic_birefringence](photoelastic/cubic_photoelastic_birefringence.md) · [kirsch_plate_stress](photoelastic/kirsch_plate_stress.md) · [photoelastic_phase_estimate](photoelastic/photoelastic_phase_estimate.md) · [photoelastic_polarization_images](photoelastic/photoelastic_polarization_images.md) · [photoelastic_retardation](photoelastic/photoelastic_retardation.md) · [polariscope_intensity](photoelastic/polariscope_intensity.md) · [principal_stress](photoelastic/principal_stress.md) · [retardation_convert](photoelastic/retardation_convert.md) · [retardation_from_birefringence](photoelastic/retardation_from_birefringence.md) · [retardation_unwrap_multiwavelength](photoelastic/retardation_unwrap_multiwavelength.md) · [silicon_piezo_optic_coefficients](photoelastic/silicon_piezo_optic_coefficients.md)
 
 ### pixelshift (6)
 

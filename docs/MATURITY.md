@@ -78,6 +78,7 @@
 | [良品だけから学んで外れたパッチを指す(古典特徴の「位置ごとの正規分布」と「記憶バンク」、再現率を保証する運用点)](capabilities/patch-feature-anomaly-detection.md) | Flag patches that leave what good samples look like (classical features, a normal distribution per position or a memory bank, and a recall-guaranteeing operating point) | 見つける | `validated-public-real-data` | 12/12 | `poc_patch_anomaly` real → tests/test_poc_scripts_run.py<br>`anomaly_eval_metrics` synthetic → tests/test_example_scripts_run.py |
 | [1-D 信号の周期欠陥を見つける](capabilities/periodic-defects-in-1d-signals.md) | Periodic defects in a 1-D signal | 波と信号 | `verified-synthetic` | 5/5 | `poc_web_roll_periodicity` synthetic → tests/test_poc_scripts_run.py<br>`poc_rail_corrugation` synthetic → tests/test_poc_scripts_run.py<br>`poc_bearing_diagnosis` synthetic → tests/test_poc_scripts_run.py |
 | [光沢面の µm の凹みを縞の鏡像で測る(位相計測デフレクトメトリ: 縞 → 位相 → 傾き → 曲率)](capabilities/phase-measuring-deflectometry.md) | Find micrometre dents on glossy surfaces from the mirror image of a fringe screen (phase-measuring deflectometry) | 測る | `verified-synthetic` | 6/6 | `poc_phase_measuring_deflectometry` synthetic → tests/test_poc_scripts_run.py |
+| [光弾性で応力を測る(応力場 → 縞 → 偏光像 → 位相差と主軸)](capabilities/photoelasticity.md) | Measure stress by photoelasticity (stress field, fringes, polarisation images, retardation and axis) | 測る | `verified-synthetic` | 13/13 | `poc_photoelasticity` synthetic → tests/test_poc_scripts_run.py |
 | [処方どおりのレンズ越しに 3 次元の場面を撮る(被写界深度・猫の目のボケ・隅の光量・色収差・ゴースト)](capabilities/photograph-through-prescription.md) | Photographing a 3-D scene through the actual lens prescription (depth of field, cat's-eye bokeh, corner illumination, colour fringes, ghosts) | 描く | `verified-synthetic` | 8/8 | `poc_photograph_through_prescription` synthetic → tests/test_poc_scripts_run.py |
 | [目が嘘をつく絵を作って、測る側を採点する(錯視・無限描画・循環動画)](capabilities/pictures-that-carry-their-own-truth.md) | Pictures that carry their own ground truth (illusions, endless drawing, seamless loops) | 描く | `verified-synthetic` | 15/16 | `poc_illusions_and_perpetual_drawing` synthetic → tests/test_poc_scripts_run.py |
 | [ピクセルシフト撮像(1 画素シフトで全色、半画素シフトで折り返しを消す、壊れる条件まで)](capabilities/pixel-shift-imaging.md) | Pixel-shift imaging (full colour from 1-pixel shifts, no aliasing from half-pixel shifts, and where it breaks) | 光と色 | `verified-synthetic` | 6/6 | `poc_pixel_shift` synthetic → tests/test_poc_scripts_run.py |
@@ -133,9 +134,9 @@
 
 | | 件数 |
 |---|---|
-| 2-D 台帳の例 | 432 |
+| 2-D 台帳の例 | 433 |
 | `tests/test_poc_scripts_run.py` が走らせる | 276 |
-| `tests/test_example_scripts_run.py` が走らせる | 156 |
+| `tests/test_example_scripts_run.py` が走らせる | 157 |
 | **どの門も走らせていない** | **0** |
 
 走らせない門は、実行時の壊れに盲目です。2026-09-06 に PoC 側で穴が見つかり

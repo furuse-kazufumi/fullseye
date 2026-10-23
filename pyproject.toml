@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "fullseye"
 version = "0.8.1"
-description = "Numpy-native operator library for vision, 3-D and measurement (3,539 typed ops in the machine-readable index: imaging, point clouds, optics, tomography, metrology) with an evolutionary pipeline designer and honest holdout gating"
+description = "Numpy-native operator library for vision, 3-D and measurement (3,551 typed ops in the machine-readable index: imaging, point clouds, optics, tomography, metrology) with an evolutionary pipeline designer and honest holdout gating"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "Apache-2.0" }
@@ -160,6 +160,8 @@ py-modules = [
   "lenstol", "llmcore", "opsllmcore",
   # 2026-10-21: the shipped omni360/plenoptic examples import these root modules.
   "omni360", "plenoptic",
+  # 2026-10-23: 光弾性の族(opsoptics の photoelastic カテゴリの実体)。
+  "photoelastic",
   # 2026-10-02: HALCON Segmentation 章の 9 op の台帳。実体 segmentation は下の facade 群に既載。
   "opssegmentation",
   # 2026-10-02: セグメンテーション第 1 陣。採点の物差し(segeval)と真値つき合成世界(segworld)の実体。

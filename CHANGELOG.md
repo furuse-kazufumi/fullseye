@@ -7,6 +7,14 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### 追加 — 光弾性の族(応力場 → 縞 → 偏光像 → 位相差と主軸)
+
+- 新モジュール `photoelastic`(opsoptics のカテゴリ `photoelastic`、12 op)。単位は SI、位相差は rad・nm・縞次数を並べて返し、mm を m に・nm を m に・表の ×10⁻⁷ MPa⁻¹ を Pa⁻¹ に渡す取り違えは ValueError で拒否する。
+  - 応力場の閉形式: `brazilian_disc_stress`(直径圧縮の円板)、`kirsch_plate_stress`(穴のある無限板の一軸引張)、`principal_stress`。門 = 外周・穴の縁で表面力 0、中心値 2P/(πDt)・−6P/(πDt)、水平直径の力の釣り合い、遠方の一様応力、平衡方程式(差分)。
+  - 応力光学則: `photoelastic_retardation`(δ = 2π t C (σ1−σ2)/λ と材料縞値)、`retardation_from_birefringence`、`retardation_convert`(rad / deg / nm / waves)。
+  - 立方晶 {100} 面: `cubic_photoelastic_birefringence`(4 階の圧電光学テンソルを結晶方位で回す。Stoehr ら 2020, J. Sens. Sens. Syst. 9:209 の式 (26) と 1e-12 で一致、π44 = π11 − π12 で等方の式に戻る)、`silicon_piezo_optic_coefficients`(同論文の表 1 を出典つきで。同論文の測定値以外の 4 行は同表の引用値で、原論文は未照合)。
+  - 偏光器と偏光像: `polariscope_intensity`(平面・円偏光器の明暗視野、`optics.mueller_element` の鎖と 1e-12 で一致)、`photoelastic_polarization_images`(円偏光照明の試料を偏光カメラ 4 方位 / 6 強度の偏光計で撮る)、`photoelastic_phase_estimate`(閉形式の逆算: 4 方位は δ ≤ π/2、6 強度は δ ≤ π。合成 → 推定で δ と主軸が 1e-9、円板の応力場から主応力差が 1e-6 で戻る)、`retardation_unwrap_multiwavelength`(分散なしの仮定で多波長から次数を決め、別の次数との差 `margin_nm` を返す)。
+
 ### 追加 — 映像の物理整合性(弾道か推力か、時間は引き延ばされていないか)
 
 - `ballistics` に 6 op: `thrust_ode`(重力+抗力+一定の比推力の RK4)、`drag_fit` / `thrust_fit`(軌跡から (p₀, v₀, C_d[, a_T]) を射影つき Levenberg–Marquardt で同定、(N, 3) でも単眼の平面 (N, 2) でも)、`aic_from_rss`、`ballistic_vs_thrust`(2 模型の当てはめと ΔAIC を返す。判定は返さず、閾値は呼び手。節約則)、`time_stretch_from_gravity`(k = √(g_ref / g_fit))。推力つきの当てはめは抗力だけの解を始点に含むので ΔAIC ≥ −2Δk が保たれる。

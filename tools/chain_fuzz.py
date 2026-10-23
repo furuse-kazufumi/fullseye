@@ -6939,8 +6939,46 @@ def _b_omni_stabilise(pool, rng):
     return (np.stack((ref, changed)),), {"sample_shape": (12, 24)}
 
 
+def _photoel_field(rng, n=24):
+    """光弾性の op 用の滑らかな場(一様乱数ではなく勾配 + 円)。"""
+    yy, xx = np.mgrid[0:n, 0:n] / float(n - 1)
+    return 0.3 + 0.5 * xx + 0.2 * ((xx - 0.5) ** 2 + (yy - 0.4) ** 2 < 0.1) + 0.01 * rng.random((n, n))
+
+
+def _b_photoel_birefringence(pool, rng):
+    # Δn ~ 1e-5、厚さ 6 mm、波長 550 nm(引数名どおり SI)
+    return (1e-5 * _photoel_field(rng), 0.006, 5.5e-7), {}
+
+
+def _b_photoel_retardation(pool, rng):
+    # 主応力差 ~ 数 MPa、C = 5e-11 Pa^-1(樹脂の桁)
+    return (2e6 * _photoel_field(rng), 0.006, 5e-11, 5.5e-7), {}
+
+
+def _b_photoel_cubic(pool, rng):
+    import photoelastic
+    c = photoelastic.silicon_piezo_optic_coefficients()
+    f = _photoel_field(rng)
+    return (3e7 * f, -2e7 * f.T, 1e7 * (f - 0.5), c["pi11_minus_pi12"], c["pi44"], 3.5), {"crystal_angle_deg": 20.0}
+
+
+def _b_photoel_unwrap(pool, rng):
+    ret = 1500.0 * _photoel_field(rng)
+    lams = [450.0, 532.0, 633.0]
+    phases = []
+    for lam in lams:
+        p = np.mod(2.0 * np.pi * ret / lam, 2.0 * np.pi)
+        phases.append(np.minimum(p, 2.0 * np.pi - p))
+    return (phases, lams, 3000.0), {}
+
+
 OP_ARG_BUILDERS = {
     "plenoptic_system": _b_plenoptic_system,
+    # --- 光弾性(photoelastic、2026-10-23): 単位つきの必須引数を SI の桁で渡す --- #
+    "retardation_from_birefringence": _b_photoel_birefringence,
+    "photoelastic_retardation": _b_photoel_retardation,
+    "cubic_photoelastic_birefringence": _b_photoel_cubic,
+    "retardation_unwrap_multiwavelength": _b_photoel_unwrap,
     "plenoptic_capture": _b_plenoptic_capture,
     "plenoptic_mla_calibrate": _b_plenoptic_mla_calibrate,
     "plenoptic_decode": _b_plenoptic_decode,
