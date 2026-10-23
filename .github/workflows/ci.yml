@@ -76,8 +76,22 @@ jobs:
           python-version: "3.11"
           cache: pip
           cache-dependency-path: pyproject.toml
-      - name: Install documentation-check dependencies
-        run: pip install -e . pytest
+      # ★core だけ(`pip install -e .`)では**このジョブは一度も緑にならなかった**(2026-10-23、
+      # 初めて docs だけの PR #123 が来て判明)。test_capabilities は能力台帳の op が
+      # 実在するかを**生きたレジストリ**で数えるので、skimage/opencv/pywt の op や
+      # PIL(gallery)・openpyxl(xlsxio)が無い環境では「実在しない op」として落ちる。
+      # 全数スイートと同じ extras を入れる(torch/kornia/mahotas 無しの shard でも
+      # これらのテストは緑なので、その集合で足りる)。
+      # 能力ノートの例(text-and-tables-on-images)は日本語を描くので CJK フォントが要る(全数スイートと同じ 2 つ。
+      # 無いと「the font has no glyph for '項目'」で落ちる —— #124 で extras を入れたあと、#123 の再実行で判明、2026-10-23)。
+      - name: CJK fonts for the capability samples
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q fonts-noto-cjk fonts-ipafont-gothic
+      - name: Install documentation-check dependencies (same optional backends as the full suite)
+        run: >
+          pip install -e ".[opencv,skimage,pil,wavelets,gui,video,volume,gltf,lidar,pcd,xlsx]"
+          pytest matplotlib sympy ziglang hypothesis pytest-timeout
       - name: Run documentation invariants
         run: >
           pytest -q
