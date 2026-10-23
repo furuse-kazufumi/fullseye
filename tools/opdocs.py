@@ -125,6 +125,12 @@ LEDGER_DIMS = {
     # タイルごとの量を地図にする)。新しい型語彙は 1 つも作らない(既存の image2d と table)。
     "aoi": {"registry": "opsaoi", "table": "OPSAOI",
             "module": "aoi", "family": "aoi_frontend"},
+    # 2026-10-23: カメラ校正・平面写像・対応点からの変換推定。実装(calib / caltab /
+    # fit_transform)は 2026-08 から在り tests も 30 本超あったのに、**台帳が無いので
+    # docs/ops にノートが 1 枚も無く**、RAG コーパスからも op_find からも欠けていた。
+    # 新しい型語彙は作らない(points / pose / matrix / table / contour / image2d)。
+    "calib": {"registry": "opscalib", "table": "OPSCALIB",
+              "module": "calib", "family": "camera_calibration"},
     "generative": {"registry": "opsgenerative", "table": "OPSGENERATIVE",
                    "module": "perpetual", "family": "generative_art"},
     "imgmetrics": {"registry": "opsimgmetrics", "table": "OPSIMGMETRICS",

@@ -775,9 +775,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3548 ops / 53 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3569 ops / 54 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 959 · **3d** 373 · **math** 114 · **optics** 464 · **lightfield** 17 · **photon** 17 · **specular** 19 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 39 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 700 · **tomography** 31 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 3 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族の一覧: **2d** 959 · **3d** 373 · **math** 114 · **optics** 464 · **lightfield** 17 · **photon** 17 · **specular** 19 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 39 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 700 · **tomography** 31 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 3 · **calib** 21 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d(959 ops / 49 categories)
 
@@ -4676,6 +4676,39 @@ _計 3548 ops / 53 families。並びとノートの在り処は `docs/ops/INDEX.
 
 #### aoi / photometric(1)
 - `flat_field_correct` `image2d × image2d → image2d` — 照明ムラとセンサ感度のばらつきを、暗電流つきの割り算で戻す。→ 補正済み画像。 · 例: `aoi_frontend_tour`
+
+### calib(21 ops / 5 categories)
+
+#### calib / calibrate(3)
+- `camera_calibration` `keypoints → table` — Zhang 法で平面ターゲット多視点から内部行列 K を推定(camera_calibration)。 · 例: `camera_intrinsics_calibration`, `lens_calibration_loop_demo`, `poc_camera_calibration`
+- `find_marks_and_pose` `image2d → table` — マーク検出 + 校正板の姿勢推定(平面ホモグラフィ → pose)(find_marks_and_pose)。
+- `hand_eye_calibration` `入力なし → matrix` — 一連の運動対から AX=XB を解き X(4x4)を推定(hand_eye_calibration)。
+
+#### calib / fit(4)
+- `hom_vector_to_proj_hom_mat2d` `keypoints → matrix` — 4 点以上の対応から射影変換(homography, DLT)3x3 を求める(hom_vector_to_proj_hom_mat2d)。 · 例: `poc_panorama_drift`, `poc_wound_area_tracking`
+- `vector_angle_to_rigid` `入力なし → matrix` — 1 組の (点, 角度) から 2D 剛体変換を求める(vector_angle_to_rigid)。
+- `vector_to_rigid` `keypoints → matrix` — 対応点から 2D 剛体変換(回転+並進、Kabsch)を求める(vector_to_rigid)。
+- `vector_to_similarity` `keypoints → matrix` — 対応点から 2D 相似変換(回転+スケール+並進、Umeyama)を求める(vector_to_similarity)。 · 例: `poc_document_scan`, `poc_star_astrometry`
+
+#### calib / plane(5)
+- `contour_to_world_plane_xld` `table → table` — XLD 輪郭(dict {cs:[Nx2]})を world 平面へ写す(contour_to_world_plane_xld)。 · 例: `poc_wound_area_tracking`
+- `gen_image_to_world_plane_map` `入力なし → table` — 画像→ワールド平面(z=0)の写像テーブルを生成(gen_image_to_world_plane_map)。
+- `gen_radial_distortion_map` `入力なし → table` — 半径歪みの逆マップ(row_map, col_map)を生成(gen_radial_distortion_map)。
+- `image_points_to_world_plane` `table → keypoints` — カメラ内部/外部から画素を world 平面 z=0 へ逆投影(image_points_to_world_plane)。
+- `image_to_world_plane` `keypoints → keypoints` — 画像点を平面ホモグラフィで world 平面(z=0)へ写す(image_to_world_plane)。 · 例: `poc_document_scan`, `poc_matrix_code_reading`, `poc_wound_area_tracking`
+
+#### calib / project(3)
+- `project_3d_point` `points → keypoints` — 3D 点をカメラへ透視投影し画素 (row, col) を返す(project_3d_point)。
+- `project_hom_point_hom_mat3d` `matrix → keypoints` — 同次 3D 点 (4,) を 3x4/4x4 射影行列で投影し画素 (row, col) を返す(project_hom_point_hom_mat3d)。
+- `project_point_hom_mat3d` `points → keypoints` — 4x4 or 3x4 射影行列 P=K[R|t] で 3D 点を投影し画素 (row, col) を返す(project_point_hom_mat3d)。
+
+#### calib / target(6)
+- `caltab_points` `入力なし → keypoints` — 校正板の理想マーク座標(ワールド, mm; 原点=最初のマーク)を (y, x) で返す(caltab_points)。
+- `create_caltab` `入力なし → table` — 校正板の記述(理想点、板中心が原点)を作る(create_caltab)。
+- `disp_caltab` `table → image2d` — 校正板画像を返す(表示用)(disp_caltab)。
+- `find_caltab` `image2d → keypoints` — 画像から校正板の円マーク中心を検出(連結成分の重心)(find_caltab)。
+- `gen_caltab` `入力なし → table` — 円マーク格子の校正板画像を生成(gen_caltab)。
+- `sim_caltab` `table → table` — 校正板を指定カメラ姿勢で投影した画像をシミュレート(sim_caltab)。
 
 ### generative(42 ops / 6 categories)
 
