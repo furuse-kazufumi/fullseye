@@ -64,7 +64,7 @@
 | `validated-public-real-data` | 公開の実測データを使う例が門で走る | 18 |
 | `validated-hardware` | 実機で検証(外部の報告を受理したときだけ) | 0 |
 
-例 432 本のうち、門が実際に走らせるもの 432 本。
+例 433 本のうち、門が実際に走らせるもの 433 本。
 
 ### 版ごとの op の数
 
@@ -139,11 +139,11 @@
 
 ## オペレータを探す
 
-**3,545 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **67 本の族ガイド**があります。次元ごとの入口:
+**3,569 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **69 本の族ガイド**があります。次元ごとの入口:
 
-**網羅の実測**: 進化 op 942/942、型つき台帳 2582/2594、1 行ファサード `fullseye.<名前>` 703/1480。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
+**網羅の実測**: 進化 op 942/942、型つき台帳 2606/2618、1 行ファサード `fullseye.<名前>` 704/1480。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
 
-**ノートの中身の実測**: 3545 本のうち、実行できる例が付いているのは **3534 本**(11 本は例ゼロ)、使い方の説明が 120 字以上あるのは **3358 本**(187 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 3545 本すべてにある。
+**ノートの中身の実測**: 3569 本のうち、実行できる例が付いているのは **3542 本**(27 本は例ゼロ)、使い方の説明が 120 字以上あるのは **3371 本**(198 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 3569 本すべてにある。
 
 | 次元 | op 数 | 入口 |
 |---|---:|---|
@@ -167,6 +167,7 @@
 | `dem` — 地形 | 25 | [INDEX](ops/dem/INDEX.md) · [ガイド](ops/dem/guides/dem_terrain_analysis.md) |
 | `printpath` | 23 | [INDEX](ops/printpath/INDEX.md) · [ガイド](ops/printpath/guides/printpath.md) |
 | `flyvision` | 22 | [INDEX](ops/flyvision/INDEX.md) · [ガイド](ops/flyvision/guides/fly_vision.md) |
+| `calib` | 21 | [INDEX](ops/calib/INDEX.md) · [ガイド](ops/calib/guides/camera_calibration.md) |
 | `graph` | 20 | [INDEX](ops/graph/INDEX.md) |
 | `quat` — 四元数・単元信号 | 19 | [INDEX](ops/quat/INDEX.md) · [ガイド](ops/quat/guides/quaternion_monogenic.md) |
 | `specular` — 鏡面分離 | 19 | [INDEX](ops/specular/INDEX.md) · [ガイド](ops/specular/guides/specular_photometric.md) |
@@ -198,6 +199,7 @@
 | `videocube` | 6 | [INDEX](ops/videocube/INDEX.md) · [ガイド](ops/videocube/guides/videocube.md) |
 | `residue` | 5 | [INDEX](ops/residue/INDEX.md) |
 | `cadmap` — CAD 対応づけ | 4 | [INDEX](ops/cadmap/INDEX.md) |
+| `aoi` | 3 | [INDEX](ops/aoi/INDEX.md) · [ガイド](ops/aoi/guides/aoi_frontend.md) |
 | `text` | 3 | [INDEX](ops/text/INDEX.md) |
 
 名前で引くなら `py -3.11 imgevolve.py ops --search edge`、全 op の対応表は [OP_CATALOG.md](OP_CATALOG.md)、次元をまたぐ入口は [ops/INDEX.md](ops/INDEX.md)。
@@ -298,7 +300,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## ドキュメント地図 — 全 288 本
 
-**索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 3,545 本と族ガイド 67 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
+**索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 3,569 本と族ガイド 69 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
 
 **はじめに・使い方**(12)
 

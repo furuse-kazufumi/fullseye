@@ -12,6 +12,30 @@ def _pts(a):
     return np.asarray(a, dtype=np.float64).reshape(-1, 2)
 
 
+def _pairs(src, dst, op, minimum):
+    """有限な対応点 ``(N, 2)`` 2 組(同数・``minimum`` 組以上)を返す(2026-10-23 の fail-closed)。"""
+    out = []
+    for name, a in (("src", src), ("dst", dst)):
+        if isinstance(a, (str, bytes)):
+            raise ValueError("%s: %s is a string — expected (N, 2) points" % (op, name))
+        try:
+            arr = np.asarray(a, dtype=np.float64)
+        except (TypeError, ValueError) as e:
+            raise ValueError("%s: %s is not numeric (%s)" % (op, name, e)) from None
+        if arr.size % 2:
+            raise ValueError("%s: %s has %d values — expected (N, 2) points" % (op, name, arr.size))
+        arr = arr.reshape(-1, 2)
+        if not np.isfinite(arr).all():
+            raise ValueError("%s: %s has non-finite coordinates — refused rather than propagated"
+                             % (op, name))
+        out.append(arr)
+    s, d = out
+    if len(s) != len(d) or len(s) < minimum:
+        raise ValueError("%s: needs >= %d matching (row, col) pairs, got %d src / %d dst"
+                         % (op, minimum, len(s), len(d)))
+    return s, d
+
+
 def vector_to_hom_mat2d(src, dst) -> np.ndarray:
     """対応点から 2D アフィン変換行列(3x3)を最小二乗で求める(vector_to_hom_mat2d)。"""
     s, d = _pts(src), _pts(dst)
@@ -26,8 +50,14 @@ def vector_to_hom_mat2d(src, dst) -> np.ndarray:
 
 
 def vector_to_rigid(src, dst) -> np.ndarray:
-    """対応点から 2D 剛体変換(回転+並進、Kabsch)を求める(vector_to_rigid)。"""
-    s, d = _pts(src), _pts(dst)
+    """対応点から 2D 剛体変換(回転+並進、Kabsch)を求める(vector_to_rigid)。
+
+    fail-closed: 対応が 2 組未満・数が合わない・非有限・src の点が全部 1 点に重なる
+    (回転が決まらない)ときは ``ValueError``。
+    """
+    s, d = _pairs(src, dst, "vector_to_rigid", 2)
+    if float(np.ptp(s, axis=0).max()) == 0.0:
+        raise ValueError("vector_to_rigid: all src points coincide — the rotation is not determined")
     sc, dc = s.mean(0), d.mean(0)
     H_ = (s - sc).T @ (d - dc)
     U, _, Vt = np.linalg.svd(H_)
@@ -43,8 +73,15 @@ def vector_to_rigid(src, dst) -> np.ndarray:
 
 
 def vector_to_similarity(src, dst) -> np.ndarray:
-    """対応点から 2D 相似変換(回転+スケール+並進、Umeyama)を求める(vector_to_similarity)。"""
-    s, d = _pts(src), _pts(dst)
+    """対応点から 2D 相似変換(回転+スケール+並進、Umeyama)を求める(vector_to_similarity)。
+
+    fail-closed: 対応が 2 組未満・数が合わない・非有限・src の点が全部 1 点に重なる
+    (尺度が 0 割りになる)ときは ``ValueError``。
+    """
+    s, d = _pairs(src, dst, "vector_to_similarity", 2)
+    if float(np.ptp(s, axis=0).max()) == 0.0:
+        raise ValueError("vector_to_similarity: all src points coincide — scale and rotation "
+                         "are not determined")
     sc, dc = s.mean(0), d.mean(0)
     sd, dd = s - sc, d - dc
     H_ = sd.T @ dd / len(s)
@@ -64,7 +101,20 @@ def vector_to_similarity(src, dst) -> np.ndarray:
 
 
 def vector_angle_to_rigid(row1, col1, angle1, row2, col2, angle2) -> np.ndarray:
-    """1 組の (点, 角度) から 2D 剛体変換を求める(vector_angle_to_rigid)。"""
+    """1 組の (点, 角度) から 2D 剛体変換を求める(vector_angle_to_rigid)。
+
+    fail-closed: 6 つの引数のどれかが実数でない・非有限なら ``ValueError``。
+    """
+    vals = []
+    for name, v in (("row1", row1), ("col1", col1), ("angle1", angle1),
+                    ("row2", row2), ("col2", col2), ("angle2", angle2)):
+        if isinstance(v, (bool, np.bool_, str, bytes)) or np.ndim(v) != 0:
+            raise ValueError("vector_angle_to_rigid: %s must be a real number, got %r" % (name, v))
+        f = float(v)
+        if not np.isfinite(f):
+            raise ValueError("vector_angle_to_rigid: %s must be finite, got %r" % (name, v))
+        vals.append(f)
+    row1, col1, angle1, row2, col2, angle2 = vals
     dphi = angle2 - angle1
     c, s = np.cos(dphi), np.sin(dphi)
     R = np.array([[c, -s], [s, c]])
@@ -95,9 +145,7 @@ def hom_vector_to_proj_hom_mat2d(src, dst) -> np.ndarray:
     (旧実装は DLT 行を ``(col, row)`` 順で組んでいたため、``(row, col, 1)`` に適用すると
     2 座標を取り違えた行列を返していた — 2026-09-02 実測 max err 27 px。)
     """
-    s, d = _pts(src), _pts(dst)
-    if len(s) < 4 or len(s) != len(d):
-        raise ValueError("hom_vector_to_proj_hom_mat2d needs >= 4 matching (row, col) pairs")
+    s, d = _pairs(src, dst, "hom_vector_to_proj_hom_mat2d", 4)
     Ts, sn = _hartley_norm(s)
     Td, dn = _hartley_norm(d)
     A = []

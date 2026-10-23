@@ -748,6 +748,10 @@ def section7_gaps():
       fit_transform` と書かないと平面計測が組めない。**推定と適用が別の層に
       いるのは、この repo が繰り返している「実装は在るが公開経路が無い」形**。
       (`poc_matrix_code_reading` が同じ穴を別角度から報告している。)
+      【解消 2026-10-23】推定する側の `hom_vector_to_proj_hom_mat2d` と、写す側の
+      `image_to_world_plane` / `contour_to_world_plane_xld` は台帳 `opscalib` に載り
+      `fullseye.ledger` から引ける。`calib.vector_to_hom_mat2d` は同名で座標規約の違う
+      実装が 2 つあるので載せていない(取り違えても例外にならず行列が静かに狂う)。
 
   (b) ★`warp_by_plane` に**出力の大きさを指定する口が無い**。出力は入力と同じ
       形で固定。正対化は「mm/px を決めて必要な画角ぶん出す」操作なので、
@@ -771,10 +775,10 @@ def section7_gaps():
 """)
     # 現状を機械で固定する(直ったら落ちる = 良い落ち方)
     assert hasattr(fs.ledger, "warp_by_plane"), "適用側まで消えた"
-    for name in ("hom_vector_to_proj_hom_mat2d", "vector_to_hom_mat2d",
-                 "image_to_world_plane", "contour_to_world_plane_xld"):
-        assert not hasattr(fs, name), "%s が公開された(この節を書き換えること)" % name
-        assert not hasattr(fs.ledger, name), "%s が台帳に出た(良い変化)" % name
+    for name in ("hom_vector_to_proj_hom_mat2d", "image_to_world_plane",
+                 "contour_to_world_plane_xld"):
+        assert hasattr(fs.ledger, name), "%s が台帳から消えた(2026-10-23 に opscalib で公開)" % name
+    assert not hasattr(fs.ledger, "vector_to_hom_mat2d"),         "vector_to_hom_mat2d が台帳に出た(同名 2 実装の規約の違いを解いたなら、この節を書き換えること)"
     import inspect
     assert "shape" not in inspect.signature(fs.ledger.warp_by_plane.__wrapped__).parameters \
         if hasattr(fs.ledger.warp_by_plane, "__wrapped__") else True
