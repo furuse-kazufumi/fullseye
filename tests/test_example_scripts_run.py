@@ -92,7 +92,8 @@ def _run_one(path: Path) -> tuple[str, int, str]:
     env["FULLSEYE_FIGURES"] = "off"                 # 既定の out/figures にも書かせない(2026-09-20)
     try:
         r = subprocess.run([sys.executable, str(path)], env=env, cwd=str(ROOT),
-                           capture_output=True, timeout=PER_SCRIPT_TIMEOUT)
+                           capture_output=True, stdin=subprocess.DEVNULL,   # 親の制御パイプを継がせない(test_poc_scripts_run.py と同じ)
+                           timeout=PER_SCRIPT_TIMEOUT)
     except subprocess.TimeoutExpired:
         return path.name, -1, "%d 秒で返ってこなかった" % PER_SCRIPT_TIMEOUT
     tail = (r.stderr.decode("utf-8", "replace")[-1200:]
