@@ -9,7 +9,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ### CI — docs だけの PR の検査ジョブが任意依存なしで走っていた
 
-- `documentation checks`(docs だけの変更で全数スイートの代わりに走るジョブ、0.8.0 の CI 高速化で追加)は core だけの install で `tests/test_capabilities.py` などを走らせていたため、skimage/opencv/pywt の op・PIL・openpyxl が無い環境で「実在しない op」として落ちた。docs だけの PR が初めて来た 2026-10-23(#123)まで一度も走っておらず、赤であることに気づけなかった。全数スイートと同じ任意依存を入れる。
+- `documentation checks`(docs だけの変更で全数スイートの代わりに走るジョブ、0.8.0 の CI 高速化で追加)は core だけの install で `tests/test_capabilities.py` などを走らせていたため、skimage/opencv/pywt の op・PIL・openpyxl が無い環境で「実在しない op」として落ちた。docs だけの PR が初めて来た 2026-10-23(#123)まで一度も走っておらず、赤であることに気づけなかった。全数スイートと同じ任意依存を入れる。同じ理由で CJK フォント(能力ノートの例が日本語を描く)も全数スイートと同じものを入れる。
 
 ### 契約変更 — 非有限な入力は入口で拒否する(fail-closed)
 
