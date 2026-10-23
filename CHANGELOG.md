@@ -14,6 +14,25 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
   - 応力光学則: `photoelastic_retardation`(δ = 2π t C (σ1−σ2)/λ と材料縞値)、`retardation_from_birefringence`、`retardation_convert`(rad / deg / nm / waves)。
   - 立方晶 {100} 面: `cubic_photoelastic_birefringence`(4 階の圧電光学テンソルを結晶方位で回す。Stoehr ら 2020, J. Sens. Sens. Syst. 9:209 の式 (26) と 1e-12 で一致、π44 = π11 − π12 で等方の式に戻る)、`silicon_piezo_optic_coefficients`(同論文の表 1 を出典つきで。同論文の測定値以外の 4 行は同表の引用値で、原論文は未照合)。
   - 偏光器と偏光像: `polariscope_intensity`(平面・円偏光器の明暗視野、`optics.mueller_element` の鎖と 1e-12 で一致)、`photoelastic_polarization_images`(円偏光照明の試料を偏光カメラ 4 方位 / 6 強度の偏光計で撮る)、`photoelastic_phase_estimate`(閉形式の逆算: 4 方位は δ ≤ π/2、6 強度は δ ≤ π。合成 → 推定で δ と主軸が 1e-9、円板の応力場から主応力差が 1e-6 で戻る)、`retardation_unwrap_multiwavelength`(分散なしの仮定で多波長から次数を決め、別の次数との差 `margin_nm` を返す)。
+### 修正 — 映像の物理整合性 op の入口検査(敵対的レビュー 2026-10-23、所見 8 件を一件ずつ再現してから)
+
+- `ballistic_vs_thrust` は、推力側の RSS が離散化の床 `rss_floor`(RK4 格子を標本時刻へ線形補間する誤差 ≤ a dt²/8 の平方和)の
+  10 倍を下回ると ValueError。雑音ゼロの真値に既定の dt = 1e-3 で ΔAIC = +144(推力の推定値は 3e-14 m/s²)が「結果」として
+  返っていた —— n ln(RSS_b / RSS_t) は丸め屑の比を増幅する。雑音のある軌跡では床は RSS の 1e-3 未満で結果は変わらない。
+  `drag_fit` / `thrust_fit` の返り値に `rss_floor` を足した。
+- `drag_fit` / `thrust_fit` / `ballistic_vs_thrust`: `dt` が標本間隔を超えると模型が標本の間で区分線形になり C_d 0.33 → 3.1 に
+  化けていた(例外も NaN も無し)→ ValueError。`iters` < 1 は放物線の初期値をそのまま「当てはめ」として返していた → ValueError。
+  真空(rho = 0)は C_d が同定できず初期値のまま cond = inf だった → ValueError。ms で渡した t は 2×10⁶ 歩 × 数百回の評価で
+  止まらなかった → 1 回の評価の歩数に上限(2×10⁵)。
+- `thrust_ode` / 当てはめ 3 op: `ball_params` の表の鍵欠落は KeyError、g = nan は NaN の軌跡、mass = 0 は ZeroDivisionError、
+  `t_end` / `dt` の inf は OverflowError か `[nan]`、文字列は TypeError だった → 全部 ValueError(公開面 `fullseye.ledger` は
+  素通しなので op 自身で止める)。`thrust_ode` の歩数は 5×10⁶ まで。`time_stretch_from_gravity` も文字列・bool を拒否。
+- 文書: `thrust_fit` は Gauss–Newton でなく Levenberg–Marquardt(C_d ≥ 0 は射影)。雑音だけの ΔAIC は「−2Δk を中心」でなく
+  「−2Δk を下限」(中央値は −2Δk + 1 ほど、C_d = 0 の壁に当たる当てはめが混じる混合分布)。訳 6 言語を更新。
+- PoC 2026.276: 画面の縁に触れた bbox(辺が切り詰められている)はその発射を引き直す(発射条件の端で 3000 本中 2 本、位置が
+  0.36 m ずれて黙って軌跡に入っていた)。`aic_from_rss` を直接呼んで op の ΔAIC と一致する門を足した(呼び出し例を同じ便で)。
+  閾値のリテラル 10 を `MIN_DELTA` に。
+- tests 15 → 17(雑音ゼロの拒否と床、入口検査 10 種が ValueError で即座に止まること)。fuzz のビルダは 1 mm の雑音を足す。
 
 ### 追加 — 映像の物理整合性(弾道か推力か、時間は引き延ばされていないか)
 
