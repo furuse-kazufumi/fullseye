@@ -15,6 +15,17 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
   OSV で 72 件の脆弱性を持つ版が入りうる。3.10 を残すと安全な画像入出力を用意できない。
 - 3.10 向けの互換コード(tomllib の fallback・pyproject を正規表現で読む代用)を消した。ruff の target-version は py311。
 
+### 変更 — 依存の下限を「既知の脆弱性 0 件の最も古い版」へ上げた(OSV、2026-10-24 照会)
+
+- 必要以上に新しい版は求めない(入れられる人を減らさない)。件数は旧い下限の版で数えた。
+  - scipy 1.9 → 1.10(PYSEC-2023-102 = CVE-2023-25399)
+  - opencv-python 4.6 → 4.8.1.78(GHSA-qr4w-53vh-m672 / PYSEC-2023-183)
+  - Pillow 9 → 13.0(72 件)
+  - torch 2.0 → 2.13(28 件。CVE-2025-32434 は 2.6.0、最後の CVE-2025-3000 は 2.13.0 で修正)
+  - pytest 7 → 9.0.3(dev のみ。GHSA-6w46-j5rx-g56g)
+  - setuptools 61 → 84.1(ビルド時のみ。9 件)
+- numpy 1.23 / threadpoolctl 3.1 と、その他の extras は旧い下限の版でも 0 件だったので据え置き。
+
 ### 追加 — Studio: 前段の出力を受けられる op だけを一覧に出す(改善案 018 の残り)
 
 - op 一覧の上にスイッチ「前段の出力を受けられる op だけ表示」(既定 on)と状況の 1 行(例「998 件中 135 件、段 2 threshold の出力 'region'」)。

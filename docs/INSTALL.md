@@ -12,7 +12,7 @@ Fullseye の設計方針は **「numpy + scipy だけで動くコア」+「重�
 |---|---|
 | Python | **3.11**（`pyproject.toml` の `requires-python = ">=3.11"`。開発・検証は 3.11） |
 | 実行コマンド | Windows: `py -3.11` / Linux: `python3.11` |
-| コア依存 | `numpy>=1.23`, `scipy>=1.9`（`pip install -e .` で自動導入） |
+| コア依存 | `numpy>=1.23`, `scipy>=1.10`（`pip install -e .` で自動導入） |
 | OS | Windows 10/11、Linux（組み込み含む）。macOS も Python が動けば可 |
 
 ---
@@ -30,11 +30,11 @@ py -3.11 -m pip install -e .            # コアのみ（numpy + scipy。全 op 
 
 | extras | 追加される依存 | 何が有効になるか |
 |---|---|---|
-| `opencv` | `opencv-python>=4.6` | 画像ファイル I/O（`apply`/`pipeline` CLI が必須とする）、`cv_*` 系オペレータ |
+| `opencv` | `opencv-python>=4.8.1.78` | 画像ファイル I/O（`apply`/`pipeline` CLI が必須とする）、`cv_*` 系オペレータ |
 | `skimage` | `scikit-image>=0.20` | `sk_*` / `xsk_*` 系（多数の自動生成オペレータの土台） |
-| `pil` | `Pillow>=9` | 画像 I/O のフォールバック、`xpil_*` 系（emboss/posterize/solarize 等） |
+| `pil` | `Pillow>=13.0` | 画像 I/O のフォールバック、`xpil_*` 系（emboss/posterize/solarize 等） |
 | `wavelets` | `PyWavelets>=1.4` | ウェーブレット系（VisuShrink/サブバンド/パケット等） |
-| `gpu` | `torch>=2.0`, `kornia>=0.7` | GPU バッチバックエンド（`accel.py`/`bench.py`）、`xkor_*`（kornia）系 |
+| `gpu` | `torch>=2.13`, `kornia>=0.7` | GPU バッチバックエンド（`accel.py`/`bench.py`）、`xkor_*`（kornia）系 |
 | `extra` | `mahotas>=1.4`, `SimpleITK>=2.2` | `xsitk_*`（curvature flow 等）、mahotas 由来（Zernike/pftas 等） |
 | `gui` | `PySide6>=6.5` | **Fullseye Studio**（`studio.py` / `fullseye-studio`） |
 | `all` | 上記 GUI 以外の全部（opencv, skimage, pil, wavelets, gpu, extra） | 全オペレータ・バックエンド |

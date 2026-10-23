@@ -268,10 +268,10 @@ jobs:
       - name: Optional backends (py3.11 only — 不変条件を実際に走らせる)
         if: matrix.python-version == '3.11'
         run: |
-          pip install --index-url https://download.pytorch.org/whl/cpu "torch>=2.0"
+          pip install --index-url https://download.pytorch.org/whl/cpu "torch>=2.13"
           pip install "kornia>=0.7" "mahotas>=1.4"
           pip uninstall -y opencv-python
-          pip install "opencv-contrib-python>=4.6"
+          pip install "opencv-contrib-python>=4.8.1.78"
           python -c "import torch, kornia, mahotas, cv2; print(torch.__version__, cv2.__version__); assert hasattr(cv2, 'xfeatures2d')"
       - name: Run tests with coverage (shard ${{ matrix.shard }}/6)
         env:

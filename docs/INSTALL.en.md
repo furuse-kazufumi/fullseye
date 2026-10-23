@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: eb721ee44823 -->
+<!-- i18n-source-sha: 07a040311789 -->
 # Installation / Environment Setup — Complete Guide
 
 [日本語](./INSTALL.md) · **English** · [简体中文](./INSTALL.zh.md) · [繁體中文](./INSTALL.tw.md) · [한국어](./INSTALL.ko.md) · [Deutsch](./INSTALL.de.md) · [हिन्दी](./INSTALL.hi.md)
@@ -19,7 +19,7 @@ are disabled; the core always runs (graceful degradation).
 |---|---|
 | Python | **3.11** (`pyproject.toml` sets `requires-python = ">=3.11"`; development and testing use 3.11) |
 | Run command | Windows: `py -3.11` / Linux: `python3.11` |
-| Core dependencies | `numpy>=1.23`, `scipy>=1.9` (pulled in automatically by `pip install -e .`) |
+| Core dependencies | `numpy>=1.23`, `scipy>=1.10` (pulled in automatically by `pip install -e .`) |
 | OS | Windows 10/11, Linux (embedded included). macOS works too, wherever Python runs |
 
 ---
@@ -38,11 +38,11 @@ Additional backends are selected through **extras** (defined in `pyproject.toml`
 
 | extras | Dependencies added | What it enables |
 |---|---|---|
-| `opencv` | `opencv-python>=4.6` | image file I/O (required by the `apply`/`pipeline` CLI), the `cv_*` operators |
+| `opencv` | `opencv-python>=4.8.1.78` | image file I/O (required by the `apply`/`pipeline` CLI), the `cv_*` operators |
 | `skimage` | `scikit-image>=0.20` | the `sk_*` / `xsk_*` families (the base for many auto-generated operators) |
-| `pil` | `Pillow>=9` | image I/O fallback, the `xpil_*` family (emboss/posterize/solarize, etc.) |
+| `pil` | `Pillow>=13.0` | image I/O fallback, the `xpil_*` family (emboss/posterize/solarize, etc.) |
 | `wavelets` | `PyWavelets>=1.4` | the wavelet family (VisuShrink / subbands / packets, etc.) |
-| `gpu` | `torch>=2.0`, `kornia>=0.7` | the GPU batch backend (`accel.py`/`bench.py`), the `xkor_*` (kornia) family |
+| `gpu` | `torch>=2.13`, `kornia>=0.7` | the GPU batch backend (`accel.py`/`bench.py`), the `xkor_*` (kornia) family |
 | `extra` | `mahotas>=1.4`, `SimpleITK>=2.2` | `xsitk_*` (curvature flow, etc.), mahotas-derived (Zernike / pftas, etc.) |
 | `gui` | `PySide6>=6.5` | **Fullseye Studio** (`studio.py` / `fullseye-studio`) |
 | `all` | everything above except GUI (opencv, skimage, pil, wavelets, gpu, extra) | all operators and backends |

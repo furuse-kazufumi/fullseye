@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: eb721ee44823 -->
+<!-- i18n-source-sha: 07a040311789 -->
 # Installation / Environment Setup — पूरी गाइड
 
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · [简体中文](./INSTALL.zh.md) · [繁體中文](./INSTALL.tw.md) · [한국어](./INSTALL.ko.md) · [Deutsch](./INSTALL.de.md) · **हिन्दी**
@@ -19,7 +19,7 @@ dependency optional है।"** किसी extra backend के बिना 
 |---|---|
 | Python | **3.11** (`pyproject.toml` में `requires-python = ">=3.11"` set है; development और testing 3.11 पर होती है) |
 | चलाने का command | Windows: `py -3.11` / Linux: `python3.11` |
-| Core dependencies | `numpy>=1.23`, `scipy>=1.9` (`pip install -e .` से अपने-आप install होती हैं) |
+| Core dependencies | `numpy>=1.23`, `scipy>=1.10` (`pip install -e .` से अपने-आप install होती हैं) |
 | OS | Windows 10/11, Linux (embedded सहित)। जहाँ Python चलता है, वहाँ macOS पर भी काम करता है |
 
 ---
@@ -38,11 +38,11 @@ py -3.11 -m pip install -e .            # core only (numpy + scipy; every op is 
 
 | extras | जुड़ने वाली dependencies | क्या चालू होता है |
 |---|---|---|
-| `opencv` | `opencv-python>=4.6` | image file I/O (`apply`/`pipeline` CLI के लिए ज़रूरी), `cv_*` operators |
+| `opencv` | `opencv-python>=4.8.1.78` | image file I/O (`apply`/`pipeline` CLI के लिए ज़रूरी), `cv_*` operators |
 | `skimage` | `scikit-image>=0.20` | `sk_*` / `xsk_*` families (कई auto-generated operators का आधार) |
-| `pil` | `Pillow>=9` | image I/O fallback, `xpil_*` family (emboss/posterize/solarize आदि) |
+| `pil` | `Pillow>=13.0` | image I/O fallback, `xpil_*` family (emboss/posterize/solarize आदि) |
 | `wavelets` | `PyWavelets>=1.4` | wavelet family (VisuShrink / subbands / packets आदि) |
-| `gpu` | `torch>=2.0`, `kornia>=0.7` | GPU batch backend (`accel.py`/`bench.py`), `xkor_*` (kornia) family |
+| `gpu` | `torch>=2.13`, `kornia>=0.7` | GPU batch backend (`accel.py`/`bench.py`), `xkor_*` (kornia) family |
 | `extra` | `mahotas>=1.4`, `SimpleITK>=2.2` | `xsitk_*` (curvature flow आदि), mahotas से बने (Zernike / pftas आदि) |
 | `gui` | `PySide6>=6.5` | **Fullseye Studio** (`studio.py` / `fullseye-studio`) |
 | `all` | GUI को छोड़कर ऊपर का सब कुछ (opencv, skimage, pil, wavelets, gpu, extra) | सभी operators और backends |

@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: eb721ee44823 -->
+<!-- i18n-source-sha: 07a040311789 -->
 # 설치 / 환경 구축 완전 가이드
 
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · [简体中文](./INSTALL.zh.md) · [繁體中文](./INSTALL.tw.md) · **한국어** · [Deutsch](./INSTALL.de.md) · [हिन्दी](./INSTALL.hi.md)
@@ -15,7 +15,7 @@ Fullseye의 설계 방침은 **"numpy + scipy만으로 동작하는 코어" + "�
 |---|---|
 | Python | **3.11**(`pyproject.toml`의 `requires-python = ">=3.11"`. 개발·검증은 3.11 사용) |
 | 실행 명령 | Windows: `py -3.11` / Linux: `python3.11` |
-| 코어 의존성 | `numpy>=1.23`, `scipy>=1.9`(`pip install -e .`로 자동 설치) |
+| 코어 의존성 | `numpy>=1.23`, `scipy>=1.10`(`pip install -e .`로 자동 설치) |
 | OS | Windows 10/11, Linux(임베디드 포함). Python이 동작하면 macOS도 가능 |
 
 ---
@@ -33,11 +33,11 @@ py -3.11 -m pip install -e .            # 코어만(numpy + scipy. 모든 op가 
 
 | extras | 추가되는 의존성 | 활성화되는 내용 |
 |---|---|---|
-| `opencv` | `opencv-python>=4.6` | 이미지 파일 I/O(`apply`/`pipeline` CLI가 필수로 요구), `cv_*` 계열 오퍼레이터 |
+| `opencv` | `opencv-python>=4.8.1.78` | 이미지 파일 I/O(`apply`/`pipeline` CLI가 필수로 요구), `cv_*` 계열 오퍼레이터 |
 | `skimage` | `scikit-image>=0.20` | `sk_*` / `xsk_*` 계열(다수의 자동 생성 오퍼레이터의 기반) |
-| `pil` | `Pillow>=9` | 이미지 I/O의 대체 수단, `xpil_*` 계열(emboss/posterize/solarize 등) |
+| `pil` | `Pillow>=13.0` | 이미지 I/O의 대체 수단, `xpil_*` 계열(emboss/posterize/solarize 등) |
 | `wavelets` | `PyWavelets>=1.4` | 웨이블릿 계열(VisuShrink/서브밴드/패킷 등) |
-| `gpu` | `torch>=2.0`, `kornia>=0.7` | GPU 배치 백엔드(`accel.py`/`bench.py`), `xkor_*`(kornia) 계열 |
+| `gpu` | `torch>=2.13`, `kornia>=0.7` | GPU 배치 백엔드(`accel.py`/`bench.py`), `xkor_*`(kornia) 계열 |
 | `extra` | `mahotas>=1.4`, `SimpleITK>=2.2` | `xsitk_*`(curvature flow 등), mahotas 유래(Zernike/pftas 등) |
 | `gui` | `PySide6>=6.5` | **Fullseye Studio**(`studio.py` / `fullseye-studio`) |
 | `all` | 위 항목 중 GUI를 제외한 전부(opencv, skimage, pil, wavelets, gpu, extra) | 모든 오퍼레이터·백엔드 |
