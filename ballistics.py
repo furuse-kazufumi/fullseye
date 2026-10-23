@@ -712,11 +712,50 @@ def _rk4_thrust(p, v, h, bp, thrust):
     return pn, vn
 
 
+_MAX_ODE_STEPS = 5_000_001        # 純 Python の RK4 が 1 回の評価で数十秒を超えない上限。t を ms で渡す単位違いをここで止める
+_MAX_FIT_STEPS = 200_001          # 当てはめは 1 回で模型を数百回評価する(反復 × ヤコビアン 10 列 × 減衰の試行)ので上限は 25 分の 1
+
+
+def _finite_scalar(x, name, who):
+    if isinstance(x, (str, bytes, bool)):
+        raise ValueError("%s: %s must be a number, got %r" % (who, name, x))
+    try:
+        v = float(x)
+    except (TypeError, ValueError):
+        raise ValueError("%s: %s must be a finite number, got %r" % (who, name, x)) from None
+    if not math.isfinite(v):
+        raise ValueError("%s: %s must be finite, got %r" % (who, name, x))
+    return v
+
+
+def _check_bp(bp, who):
+    """:func:`ball_params` の表の入口検査(fail-closed)。★ 鍵の欠落・非有限・質量 0 は、黙って NaN の軌跡や KeyError /
+    ZeroDivisionError になる前に ValueError で止める(2026-10-23 の敵対的レビュー: bp={} で KeyError、g=nan で NaN の軌跡、
+    mass=0 で ZeroDivisionError、どれも公開面を素通りしていた)。"""
+    if not isinstance(bp, dict):
+        raise ValueError("%s: bp must be the dict from ball_params(), got %s" % (who, type(bp).__name__))
+    missing = [k for k in ("cd", "mass", "area", "rho", "g") if k not in bp]
+    if missing:
+        raise ValueError("%s: bp lacks %s — build it with ball_params()" % (who, ", ".join(missing)))
+    for k, positive in (("mass", True), ("area", True), ("g", True), ("rho", False)):
+        v = _finite_scalar(bp[k], "bp[%r]" % k, who)
+        if v < 0.0 or (positive and v == 0.0):
+            raise ValueError("%s: bp[%r] must be %s, got %r" % (who, k, "> 0" if positive else "≥ 0", bp[k]))
+    cd = bp["cd"]
+    if isinstance(cd, str):
+        if cd != "sphere":
+            raise ValueError("%s: bp['cd'] must be a number or 'sphere', got %r" % (who, cd))
+    elif _finite_scalar(cd, "bp['cd']", who) < 0.0:
+        raise ValueError("%s: bp['cd'] must be ≥ 0, got %r" % (who, cd))
+
+
 def thrust_ode(p0, v0, thrust, bp: dict, t_end: float, dt: float = 1e-3) -> dict:
     """重力 + 抗力 + **一定の比推力**(質量あたりの推力 [m/s²]、世界座標で向きも大きさも一定)の RK4。スピンは持たない(ω = 0)。
     返り値 ``{"t" (N,), "p" (N, 3), "v" (N, 3)}``(t = 0, dt, …, ≤ t_end)。``thrust`` が零ベクトルなら :func:`flight_ode`(ω = 0)と
     1e-12 で一致し、真空(rho = 0)なら閉形式 p₀ + v₀ t + ½ (a_T − g ẑ) t² と 1e-9 で一致する(門)。
     「ほぼロケット」の映像を扱う最小の模型で、推力が機体に固定されて向きを変える場合は近似になる(短い区間ほど良い)。
+    ``t_end`` / ``dt`` は有限の数、``bp`` は :func:`ball_params` の表(鍵の欠落・非有限・質量 0 は ValueError)、歩数 t_end / dt は
+    5×10⁶ まで(秒でなく ms で渡した t をここで止める)。
 
     空の入力(``thrust`` が 0 要素)は ValueError。
     """
@@ -725,9 +764,15 @@ def thrust_ode(p0, v0, thrust, bp: dict, t_end: float, dt: float = 1e-3) -> dict
     p = tuple(_v3(p0, "p0"))
     v = tuple(_v3(v0, "v0"))
     a = tuple(_v3(thrust, "thrust"))
+    _check_bp(bp, "thrust_ode")
+    t_end = _finite_scalar(t_end, "t_end", "thrust_ode")
+    dt = _finite_scalar(dt, "dt", "thrust_ode")
     if t_end < 0 or dt <= 0:
-        raise ValueError("need t_end ≥ 0 and dt > 0")
+        raise ValueError("thrust_ode: need t_end ≥ 0 and dt > 0, got t_end=%r dt=%r" % (t_end, dt))
     n = int(math.floor(t_end / dt + 1e-9)) + 1
+    if n > _MAX_ODE_STEPS:
+        raise ValueError("thrust_ode: t_end / dt = %d steps exceeds %d — check the units (t in seconds) or use a larger dt"
+                         % (n - 1, _MAX_ODE_STEPS - 1))
     P, V = [p], [v]
     for _ in range(n - 1):
         p, v = _rk4_thrust(p, v, dt, bp, a)
@@ -748,8 +793,24 @@ def _fit_thrust_model(t, p, bp, fit_thrust, iters, dt, who, init=None):
         P = np.column_stack([P[:, 0], np.zeros(len(P)), P[:, 1]])
     if t.size != len(P) or t.size < 8 or not np.all(np.isfinite(P)) or not np.all(np.isfinite(t)) or not np.all(np.diff(t) > 0):
         raise ValueError("%s: need ≥ 8 finite samples with increasing t" % who)
+    _check_bp(bp, who)
+    if isinstance(iters, bool) or not isinstance(iters, (int, np.integer)) or iters < 1:
+        raise ValueError("%s: iters must be an integer ≥ 1 (with 0 the parabola start would be returned as the fit), got %r" % (who, iters))
+    dt = _finite_scalar(dt, "dt", who)
+    if dt <= 0.0:
+        raise ValueError("%s: dt must be > 0, got %r" % (who, dt))
     t0 = float(t[0])
     tau = t - t0
+    # ★ dt が標本間隔を超えると模型は標本の間で区分線形になり、C_d と推力が別の値に化けるのに例外も NaN も出ない
+    # (30 fps の同じ軌跡で dt = 0.5 s にすると C_d 0.33 → 3.1、2026-10-23 の敵対的レビュー)。歩数の上限は ms で渡した t を止める。
+    gap = float(np.min(np.diff(tau)))
+    if dt > gap:
+        raise ValueError("%s: dt = %g exceeds the sample spacing %g — the model would be piecewise linear between samples" % (who, dt, gap))
+    if tau[-1] / dt + 2 > _MAX_FIT_STEPS:
+        raise ValueError("%s: (t[-1] - t[0]) / dt = %.3g steps per model evaluation exceeds %d — check the units (t in seconds) or use a larger dt"
+                         % (who, tau[-1] / dt, _MAX_FIT_STEPS - 1))
+    if float(bp["rho"]) <= 0.0:
+        raise ValueError("%s: rho = 0 (vacuum) makes C_d unidentifiable — use fit_parabola or flight_fit" % who)
     par = fit_parabola(tau, P)
     cd0 = 0.4 if isinstance(bp["cd"], str) else float(bp["cd"])
     # 10 個 = p0(3) v0(3) C_d thrust(3)。C_d ≥ 0 は**射影**で保つ(反復のあとで負なら 0 に戻す)。模型の中で max(0, ·) と
@@ -827,16 +888,21 @@ def _fit_thrust_model(t, p, bp, fit_thrust, iters, dt, who, init=None):
            "rss": rss, "n": int(res.size), "k": int(len(free)), "dims": int(len(obs)),
            "cond": float(np.linalg.cond(J)), "iters": it, "t0": t0}
     out["thrust_norm"] = float(np.linalg.norm(out["thrust"]))
+    # 模型は RK4 の格子を標本時刻へ線形補間するので、残差には補間誤差(≤ a dt² / 8、a = 加速度の尺度)が残りうる。
+    # その平方和の上限を添える: 残差がこの床にあるなら、それは雑音でなく離散化で、AIC の問いは立たない。
+    out["rss_floor"] = float(out["n"] * ((float(bp["g"]) + out["thrust_norm"]) * dt * dt / 8.0) ** 2)
     return out
 
 
 def thrust_fit(t, p, bp: dict, *, iters: int = 20, dt: float = 1e-3) -> dict:
-    """軌跡 (t_i, p_i) に「重力 + 抗力 + 一定の比推力」の模型を **(p₀, v₀, C_d, a_T) の 10 パラメータ** で Gauss–Newton
-    (有限差分のヤコビアン)で当てる。``p`` は (N, 3) の世界座標か、単眼の側面視で起こした **(N, 2) の平面 (x, z)**(そのときは
+    """軌跡 (t_i, p_i) に「重力 + 抗力 + 一定の比推力」の模型を **(p₀, v₀, C_d, a_T) の 10 パラメータ** で Levenberg–Marquardt
+    (有限差分のヤコビアン、C_d ≥ 0 は射影)で当てる。``p`` は (N, 3) の世界座標か、単眼の側面視で起こした **(N, 2) の平面 (x, z)**(そのときは
     y 成分を観測も未知数も持たないので 7 パラメータ、``n`` = 2 × 点数)。``bp`` は :func:`ball_params` の表(質量・前面積・空気密度・g。
     ``radius`` は前面積を与えるためだけに使う: 車なら A = πr² が前面積になる r を渡す)。
-    返り値 ``{"p0", "v0", "cd", "thrust" (3,), "thrust_norm", "rms", "rss", "n", "k", "dims", "cond", "iters", "t0"}``
-    (``n`` は残差の個数、``k`` は動かしたパラメータ数。:func:`aic_from_rss` の入力)。
+    返り値 ``{"p0", "v0", "cd", "thrust" (3,), "thrust_norm", "rms", "rss", "rss_floor", "n", "k", "dims", "cond", "iters", "t0"}``
+    (``n`` は残差の個数、``k`` は動かしたパラメータ数。:func:`aic_from_rss` の入力。``rss_floor`` = RK4 格子を標本時刻へ線形補間する
+    誤差 ≤ a dt² / 8 が残差に残しうる平方和の上限)。``dt`` は標本間隔以下(超えると模型が標本の間で区分線形になる)、``iters`` ≥ 1、
+    真空(rho = 0)では C_d が同定できないので、どれも ValueError。
     推力つきの真値の軌跡なら a_T は 1e-5 m/s² で戻り、推力 0 で作った軌跡なら ``thrust_norm`` は 1e-5 以下になる(門)。
 
     空の入力(``t`` が 0 要素)は ValueError。
@@ -862,8 +928,8 @@ def _thrust_fit_two_starts(t, p, bp, iters, dt, who, b):
 
 def drag_fit(t, p, bp: dict, *, iters: int = 20, dt: float = 1e-3) -> dict:
     """軌跡 (t_i, p_i) に「重力 + 抗力」の模型を **(p₀, v₀, C_d) の 7 パラメータ**(平面入力なら 5)で当てる(:func:`thrust_fit` の
-    推力なし版。:func:`flight_fit` は C_d を既知として 6 パラメータ、こちらは C_d も同定する)。返り値の鍵は :func:`thrust_fit` と同じで
-    ``thrust`` は零ベクトル。真値の軌跡なら C_d は 1e-4 で戻る(門)。
+    推力なし版。:func:`flight_fit` は C_d を既知として 6 パラメータ、こちらは C_d も同定する)。返り値の鍵と入口の検査
+    (``dt`` ≤ 標本間隔、``iters`` ≥ 1、真空は拒否)は :func:`thrust_fit` と同じで、``thrust`` は零ベクトル。真値の軌跡なら C_d は 1e-4 で戻る(門)。
 
     空の入力(``t`` が 0 要素)は ValueError。
     """
@@ -884,9 +950,11 @@ def ballistic_vs_thrust(t, p, bp: dict, *, iters: int = 20, dt: float = 1e-3) ->
     AIC(:func:`aic_from_rss`)の差 ΔAIC = AIC_弾道 − AIC_推力 を返す。
     返り値 ``{"ballistic", "thrust"}``(2 つの当てはめ)に ``"aic_ballistic", "aic_thrust", "delta_aic", "thrust_norm"`` を添える。
     **判定は返さない**(:mod:`imgforensics` と同じ流儀): 読み方は **節約則**で、推力の模型はパラメータが 3 つ多いので雑音だけでも
-    RSS を僅かに下げる —— 罰則 2Δk を超えて勝たない限り、単純な方(弾道)を採る。雑音だけの ΔAIC は −2Δk を中心に χ²(Δk) の
-    幅で散り、推力側は弾道側の解から出発するので ΔAIC ≥ −2Δk が保たれる。「決定的」の慣用は 10(偽陽性 1 % を大きく下回る)だが、
-    閾値は同梱せず呼び手が決める。
+    RSS を僅かに下げる —— 罰則 2Δk を超えて勝たない限り、単純な方(弾道)を採る。雑音だけの ΔAIC は **−2Δk を下限に** χ²(Δk) 近似の
+    幅で散り(中央値は −2Δk + 1 ほど。C_d = 0 の壁に当たる当てはめが混じるので正確には混合分布)、推力側は弾道側の解から出発するので
+    ΔAIC ≥ −2Δk が保たれる。「決定的」の慣用は 10(偽陽性 1 % を大きく下回る)だが、閾値は同梱せず呼び手が決める。
+    推力側の RSS が離散化の床 ``rss_floor`` の 10 倍を下回る(雑音の無い、または格子より細かく解けた軌跡)ときは ValueError ——
+    AIC が比べるのは雑音で、丸め屑ではない(雑音ゼロの真値に既定の dt で ΔAIC = +144 が出た、2026-10-23)。
 
     空の入力(``t`` が 0 要素)は ValueError。
     """
@@ -894,6 +962,11 @@ def ballistic_vs_thrust(t, p, bp: dict, *, iters: int = 20, dt: float = 1e-3) ->
     # 推力側は弾道側の解(推力 0)から出発する: 推力の模型は抗力だけの模型を含むので、残差が単調に減る当てはめなら
     # RSS_推力 ≤ RSS_弾道 が構造的に保証され、ΔAIC ≥ −2Δk になる。
     f = _thrust_fit_two_starts(t, p, bp, iters, dt, "thrust_fit", b)
+    # ★ 残差が離散化の床にあるなら n·ln(RSS_b / RSS_t) は丸め屑の比を増幅するだけ(雑音ゼロの真値で +144、推力の推定値は 3e-14 m/s²)。
+    if f["rss"] < 10.0 * f["rss_floor"]:
+        raise ValueError("ballistic_vs_thrust: the thrust fit's RSS %.3g is within 10× the discretisation floor %.3g (noise-free or "
+                         "over-resolved track) — AIC compares noise, not rounding; add the measurement noise or compare rms directly"
+                         % (f["rss"], f["rss_floor"]))
     ab = aic_from_rss(b["rss"], b["n"], b["k"])
     af = aic_from_rss(f["rss"], f["n"], f["k"])
     return {"ballistic": b, "thrust": f, "aic_ballistic": ab, "aic_thrust": af, "delta_aic": float(ab - af),
@@ -906,7 +979,9 @@ def time_stretch_from_gravity(g_fit: float, g_ref: float = G) -> dict:
     返り値 ``{"k", "g_fit", "g_ref", "log_k"}``(``log_k`` = ln k は改変なしで 0、符号が速い/遅いを表す: :func:`imgforensics.evidence_quantile`
     に渡すなら |log_k| を「大きいほど強い」証拠として使う)。
     g_fit ≤ 0 や非有限、g_ref ≤ 0 は ValueError(重力が上を向く・無い軌跡に倍率は定義できない)。"""
-    if not (np.isfinite(g_fit) and g_fit > 0.0) or not (np.isfinite(g_ref) and g_ref > 0.0):
+    g_fit = _finite_scalar(g_fit, "g_fit", "time_stretch_from_gravity")
+    g_ref = _finite_scalar(g_ref, "g_ref", "time_stretch_from_gravity")
+    if g_fit <= 0.0 or g_ref <= 0.0:
         raise ValueError("time_stretch_from_gravity: need finite g_fit > 0 and g_ref > 0")
     k = math.sqrt(g_ref / g_fit)
     return {"k": float(k), "g_fit": float(g_fit), "g_ref": float(g_ref), "log_k": float(math.log(k))}
