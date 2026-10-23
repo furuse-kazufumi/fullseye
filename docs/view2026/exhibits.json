@@ -6171,6 +6171,23 @@
    }
   },
   {
+   "id": "poc_fourier_ptychography",
+   "group": "wing_industrial",
+   "media": "01_usaf_4x_fp_20x.png",
+   "motion": false,
+   "thumb_src": "01_usaf_4x_fp_20x.png",
+   "label": {
+    "ja": "フーリエ・タイコグラフィ(4 倍の視野で 20 倍の分解能)",
+    "en": "Fourier ptychography (20x resolution in a 4x field)",
+    "zh": "傅里叶叠层成像(4 倍视野中的 20 倍分辨率)",
+    "tw": "傅立葉疊層成像(4 倍視野中的 20 倍解析度)",
+    "ko": "푸리에 타이코그래피(4배 시야에서 20배 분해능)",
+    "de": "Fourier-Ptychographie (20x-Auflösung im 4x-Sehfeld)",
+    "hi": "Fourier ptychography (4x field में 20x resolution)",
+    "fr": "Ptychographie de Fourier (résolution 20x dans un champ 4x)"
+   }
+  },
+  {
    "id": "poc_dense_bubble_count",
    "group": "wing_industrial",
    "media": "12_pair_merging.gif",
@@ -7577,6 +7594,14 @@
     "de": "Dieselbe 3-D-Szene mit indirekter und direkter Laufzeitmessung erfassen",
     "hi": "एक ही 3-D दृश्य को indirect और direct time of flight से मापना",
     "fr": "Mesurer une même scène 3-D par temps de vol indirect et direct"
+   },
+   "fourier-ptychography": {
+    "zh": "傅里叶叠层成像(LED 斜向照明的图像组 → 相位恢复得到高 NA 的振幅与相位,不收敛则拒绝)",
+    "tw": "傅立葉疊層成像(LED 斜向照明的影像組 → 相位恢復得到高 NA 的振幅與相位,不收斂則拒絕)",
+    "ko": "푸리에 타이코그래피(LED 경사 조명 영상 묶음 → 위상 복원으로 고 NA 진폭과 위상, 수렴하지 않으면 거부)",
+    "de": "Fourier-Ptychographie (schräge LED-Beleuchtung, Phasenrückgewinnung zu hochaperturiger Amplitude und Phase, Ablehnung ohne Konvergenz)",
+    "hi": "Fourier ptychography (तिरछी LED रोशनी, phase retrieval से high-NA amplitude और phase, converge न हो तो मना)",
+    "fr": "Ptychographie de Fourier (éclairage LED oblique, récupération de phase vers amplitude et phase à grande ouverture, refus sans convergence)"
    }
   }
  },

@@ -1,4 +1,4 @@
-# OPTICS operator help — 464 ops in 51 categories
+# OPTICS operator help — 470 ops in 52 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -53,6 +53,10 @@
 ### finish (5)
 
 [blast_normals](finish/blast_normals.md) · [finish_catalog](finish/finish_catalog.md) · [finish_shade](finish/finish_shade.md) · [micro_normals](finish/micro_normals.md) · [tangent_field](finish/tangent_field.md)
+
+### fpm (6)
+
+[fp_capture](fpm/fp_capture.md) · [fp_design](fpm/fp_design.md) · [fp_element_contrast](fpm/fp_element_contrast.md) · [fp_reconstruct](fpm/fp_reconstruct.md) · [fp_stack_from_images](fpm/fp_stack_from_images.md) · [fp_usaf_target](fpm/fp_usaf_target.md)
 
 ### geometric (5)
 

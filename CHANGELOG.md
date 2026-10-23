@@ -7,6 +7,12 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### 追加 — フーリエ・タイコグラフィ(fourierptycho 6 op + PoC、取り込まれずに残っていた枝を今の master の上に作り直し)
+
+- `fourierptycho`(`opsoptics` の新カテゴリ `fpm`、6 op): `fp_design`(合成 NA・遮断周期 λ/NA_syn・隣り合う瞳の重なり率(2 円の交わり、公表の下限 35 %)・LED の数・標本化 Δx ≤ λ/(2 NA_obj)・明視野と暗視野の境の LED)/ `fp_usaf_target`(振幅・位相・両方の 3 種)/ `fp_capture`(斜めの平面波 → 瞳 → 強度、LED の明るさ・暗視野の露光・雑音・収差・LED アレイのずれ・反射型の高さ)/ `fp_stack_from_images` / `fp_reconstruct`(逐次の位相回復、瞳の同時推定、LED の位置の補正。収束の履歴・止めた理由・合成 NA を返し、残差が停留しない・初期値の違う 2 本が一致しないときは `FPNotConvergedError`(`MetricContractError`、記録つき)で拒否)/ `fp_element_contrast`。非有限・空・縮退の入力は ValueError。
+- PoC `examples/poc_fourier_ptychography.py`(収蔵 2026.277、産業検査の棟。元の枝の仮番 2026.243 は master で別の展示が使っているので振り直した): 4 倍 / NA 0.1 で 20 倍 / NA 0.40 と同じ G9 E5 まで分解、位相・反射型の段差、重なりと収束(境が 35 % を挟む、残差だけでは見抜けない)、瞳の推定、LED のずれ、k の符号の双子。公開の FP データの章は CC BY / CC0 ではないので repo に入れず、データがあるときだけ走る。
+- ★効かないノブを台帳に足さない: 元の枝は `dead_knob` の負債に 3 行(`fp_design.boundary_tolerance_na` / `fp_usaf_target.phase_rad` / `fp_reconstruct.led_start`)を足していた。探針の入力を効く条件(境の近くの NA_obj・振幅と位相の両方の物体 `kind="both"`・LED の補正つき)に替えて 0 行にした。
+
 ### 追加 — 映像の物理整合性(弾道か推力か、時間は引き延ばされていないか)
 
 - `ballistics` に 6 op: `thrust_ode`(重力+抗力+一定の比推力の RK4)、`drag_fit` / `thrust_fit`(軌跡から (p₀, v₀, C_d[, a_T]) を射影つき Levenberg–Marquardt で同定、(N, 3) でも単眼の平面 (N, 2) でも)、`aic_from_rss`、`ballistic_vs_thrust`(2 模型の当てはめと ΔAIC を返す。判定は返さず、閾値は呼び手。節約則)、`time_stretch_from_gravity`(k = √(g_ref / g_fit))。推力つきの当てはめは抗力だけの解を始点に含むので ΔAIC ≥ −2Δk が保たれる。

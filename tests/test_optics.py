@@ -919,7 +919,9 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # 2026-10-20: 3 次元のシーンを処方どおりのレンズ越しに撮る(lensrender)8 op(415 → 423)。
     # 2026-10-20: 製造公差・補償・歩留まり(lenstol)8 op(423 → 431)。
     # 2026-10-20: spectral_integral_table 1 op を追加。
-    assert len(opsoptics.OPSOPTICS) == 464
+    # 2026-10-23: fpm(フーリエ・タイコグラフィ、fourierptycho)6 op を新しい族として追加(464 → 470)。
+    assert len(opsoptics.OPSOPTICS) == 470
+    assert len(opsoptics.list_ops("fpm")) == 6
     assert len(opsoptics.list_ops("tolerancing")) == 8
     assert len(opsoptics.list_ops("omni360")) == 24
     assert len(opsoptics.list_ops("grating_interf")) == 8
@@ -948,7 +950,7 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # glassmirror "interface" 4・"mirror" 2・"glassbody" 4 / metalfinish "finish" 5 /
     # surfacelib "material" 6・"surface" 5。下の module 検査と同じ形で実装元も固定する。
     assert sorted(opsoptics.categories()) == [
-        "appearance", "cavity", "coherent", "confocal", "design", "drawing", "fiber", "film", "finish", "geometric", "glassbody", "grating_interf", "illumination",
+        "appearance", "cavity", "coherent", "confocal", "design", "drawing", "fiber", "film", "finish", "fpm", "geometric", "glassbody", "grating_interf", "illumination",
         "imaging", "imaging_sim", "interface", "itof", "lensconfig", "lensfile", "lensglobal", "lensmerit", "lensrender", "lenssolve", "light_transport", "linescan", "lockin", "material", "matprop", "mirror", "moire_align", "noncoaxial", "oct", "omni360", "optimization",
             "pixelshift", "plenoptic", "polarization", "radiosity", "scene", "sensorchar", "sensorgeneral", "shape_from_polarization", "spectral", "spectrometer", "surface", "telecentric", "tem", "tolerancing", "watermedia", "watervision", "wave"]
     assert len(opsoptics.list_ops("scene")) == 44

@@ -1,0 +1,114 @@
+[
+ {
+  "file": "01_usaf_4x_fp_20x.png",
+  "name": "usaf_4x_fp_20x",
+  "caption": "同じ視野で、4 倍の 1 枚の限界 5.53 µm が FP で 1.22 µm に(20 倍 / NA 0.40 は 1.22 µm、閉形式 λ/NA_syn = 1.25 µm)。",
+  "shape": [
+   538,
+   798,
+   3
+  ]
+ },
+ {
+  "file": "02_group9_zoom.png",
+  "name": "group9_zoom",
+  "caption": "G9(周期 1.95〜1.06 µm)を 3 倍に拡大。FP は E5(1.22 µm)まで 3 本の棒が分かれる。",
+  "shape": [
+   121,
+   1804,
+   3
+  ]
+ },
+ {
+  "file": "03_element_modulation.png",
+  "name": "element_modulation",
+  "caption": "",
+  "shape": [
+   360,
+   721,
+   3
+  ]
+ },
+ {
+  "file": "04_phase_object.png",
+  "name": "phase_object",
+  "caption": "位相だけの物体。強度の 1 枚にはほとんど写らないが、FP の位相は帯域制限した真値と rms 0.129 rad。",
+  "shape": [
+   436,
+   1192,
+   3
+  ]
+ },
+ {
+  "file": "05_overlap_vs_convergence.png",
+  "name": "overlap_vs_convergence",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_overlap_table.png",
+  "name": "overlap_table",
+  "caption": "",
+  "shape": [
+   224,
+   726,
+   3
+  ],
+  "csv": "06_overlap_table.csv",
+  "tsv": "06_overlap_table.tsv"
+ },
+ {
+  "file": "07_pupil_phase.png",
+  "name": "pupil_phase",
+  "caption": "瞳の円(NA 0.1)の中の位相。推定は 2〜4 次の多項式へ射影した EPRY 型の更新。",
+  "shape": [
+   256,
+   438,
+   3
+  ]
+ },
+ {
+  "file": "08_pupil_recovery.png",
+  "name": "pupil_recovery",
+  "caption": "デフォーカス 0.2 波 + 非点 0.1 波。推定した瞳は真値と 0.005 波(ピストンと傾きを除く)。",
+  "shape": [
+   274,
+   798,
+   3
+  ]
+ },
+ {
+  "file": "09_led_misalignment.png",
+  "name": "led_misalignment",
+  "caption": "LED アレイが (0.6, −0.4) mm・1°・高さ 1.5 mm ずれている。補正で (0.62, -0.36) mm・0.93°・1.25 mm と読み戻す。",
+  "shape": [
+   436,
+   798,
+   3
+  ]
+ },
+ {
+  "file": "10_reflective_heights.png",
+  "name": "reflective_heights",
+  "caption": "反射型: 高さ 20・30・40 nm の線と間隔(周期 2.6・3.9・6.5 µm)を往復の位相で。誤差 rms 3.97 nm。",
+  "shape": [
+   348,
+   622,
+   3
+  ]
+ },
+ {
+  "file": "11_residual_history.png",
+  "name": "residual_history",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]

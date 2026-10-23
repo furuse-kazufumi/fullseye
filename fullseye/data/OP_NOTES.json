@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3539,
- "n_notes": 3545,
+ "n_ops": 3545,
+ "n_notes": 3551,
  "notes": {
   "vol_dilate": [
    {
@@ -27775,6 +27775,64 @@
     "category": "finish",
     "out": "normalmap",
     "path": "docs/ops/optics/finish/tangent_field.md"
+   }
+  ],
+  "fp_capture": [
+   {
+    "op": "fp_capture",
+    "dim": "optics",
+    "category": "fpm",
+    "in": "image2d × image2d",
+    "out": "table",
+    "path": "docs/ops/optics/fpm/fp_capture.md"
+   }
+  ],
+  "fp_design": [
+   {
+    "op": "fp_design",
+    "dim": "optics",
+    "category": "fpm",
+    "out": "table",
+    "path": "docs/ops/optics/fpm/fp_design.md"
+   }
+  ],
+  "fp_element_contrast": [
+   {
+    "op": "fp_element_contrast",
+    "dim": "optics",
+    "category": "fpm",
+    "in": "image2d × table",
+    "out": "table",
+    "path": "docs/ops/optics/fpm/fp_element_contrast.md"
+   }
+  ],
+  "fp_reconstruct": [
+   {
+    "op": "fp_reconstruct",
+    "dim": "optics",
+    "category": "fpm",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/fpm/fp_reconstruct.md"
+   }
+  ],
+  "fp_stack_from_images": [
+   {
+    "op": "fp_stack_from_images",
+    "dim": "optics",
+    "category": "fpm",
+    "in": "volume × signal × signal",
+    "out": "table",
+    "path": "docs/ops/optics/fpm/fp_stack_from_images.md"
+   }
+  ],
+  "fp_usaf_target": [
+   {
+    "op": "fp_usaf_target",
+    "dim": "optics",
+    "category": "fpm",
+    "out": "table",
+    "path": "docs/ops/optics/fpm/fp_usaf_target.md"
    }
   ],
   "abcd_matrix": [

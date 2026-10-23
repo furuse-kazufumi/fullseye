@@ -161,6 +161,7 @@ import linescan
 import pixelshift
 import octscan
 import itof
+import fourierptycho
 
 _MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "chromconf": chromconf, "gratingspec": gratingspec, "gratinginterf": gratinginterf, "fiberoptics": fiberoptics, "temsim": temsim, "lensfile": lensfile, "lensconfig": lensconfig, "lockin": lockin, "watermedia": watermedia, "watervision": watervision, "omni360": omni360, "lensglobal": lensglobal, "lensmerit": lensmerit, "lensrender": lensrender, "lenstol": lenstol, "plenoptic": plenoptic, "lenssolve": lenssolve, "filmoptics": filmoptics, "moirealign": moirealign,
         "telecentric": telecentric,
@@ -170,6 +171,7 @@ _MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityo
         "pixelshift": pixelshift,
         "octscan": octscan,
         "itof": itof,
+        "fourierptycho": fourierptycho,
         "matappear": matappear, "glassmirror": glassmirror,
         "metalfinish": metalfinish, "surfacelib": surfacelib,
         "lensopt": lensopt, "illumdesign": illumdesign, "edgesfr": edgesfr, "sensorchar": sensorchar, "sensorgeneral": sensorgeneral,
@@ -886,6 +888,18 @@ _CATALOG = {
         ("itof_multipath_separate", "itof", ["table"], "table"),
         ("itof_flying_pixel_mask", "itof", ["depth"], "image2d"),
         ("itof_wiggling_correct", "itof", ["table"], "table"),
+    ],
+    # fpm(fourierptycho、2026-10-18): フーリエ・タイコグラフィ。LED アレイの斜め照明で撮った低 NA の像の組 → 位相回復で
+    # 高 NA の複素像。★新しい型の語は作らない。像の組は kind="fp_stack" の印つきの table、復元は kind="fp_result" で、
+    # fp_reconstruct は印の違う table を ValueError で拒む。撮像の入口は振幅と位相の image2d、装置の像の組は volume と
+    # 照明の方向余弦 2 本の signal。
+    "fpm": [
+        ("fp_design", "fourierptycho", [], "table"),
+        ("fp_usaf_target", "fourierptycho", [], "table"),
+        ("fp_capture", "fourierptycho", ["image2d", "image2d"], "table"),
+        ("fp_stack_from_images", "fourierptycho", ["volume", "signal", "signal"], "table"),
+        ("fp_reconstruct", "fourierptycho", ["table"], "table"),
+        ("fp_element_contrast", "fourierptycho", ["image2d", "table"], "table"),
     ],
     "cavity": [  # 光共振器と Michelson(重力波望遠鏡の設計の式 = エタロン・レーザー共振器・干渉計測の式)
         ("fabry_perot_response", "cavityoptics", [], "table"),

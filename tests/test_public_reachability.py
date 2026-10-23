@@ -242,7 +242,9 @@ def test_pending_exposure_shrinks_when_fixed():
 # 2026-10-22 Studio 第8片: studio_batch のQt非依存部品6本で実測 892 → 898。
 # 2026-10-22 Studio 第9片: studio_display のQt非依存部品6本を内部部品として登録。実測 898 → 904。
 # 2026-10-22 Studio 第9片修正: range_info / mark_nonfinite の2本を追加。実測 904 → 906。
-_HIDDEN_FUNCTIONS_TODAY = 912
+# 2026-10-23 フーリエ・タイコグラフィの例外の型 fourierptycho.FPNotConvergedError(converge の NotConvergedError と同じ形、
+#   6 op 本体は fs.ledger に載る)。実測 912 → 913。
+_HIDDEN_FUNCTIONS_TODAY = 913
 
 
 def _hidden_total():

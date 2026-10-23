@@ -31913,6 +31913,60 @@
    "ko": "너비와 높이를 독립적으로 고르는 평균(box) 필터. HALCON의 ``mean_image``(Smooth by averaging.)에 해당한다.",
    "de": "Mittelwert-(Box-)Filter mit unabhängig gewählter Breite und Höhe. Entspricht HALCONs ``mean_image`` (Smooth by averaging.).",
    "hi": "स्वतंत्र रूप से चुनी गई चौड़ाई और ऊँचाई वाला औसत (box) filter। HALCON के ``mean_image`` (Smooth by averaging.) के समकक्ष है।"
+  },
+  "optics/fp_design": {
+   "fp": "7363712c22b1",
+   "en": "Fourier ptychography performance in closed form **before measuring** (``table``): synthetic NA, cut-off period, spectral overlap ratio, number of LEDs and pixel sampling.",
+   "zh": "在**拍摄之前**用闭式求出傅里叶叠层成像的性能(``table``):合成 NA、截止周期、频谱重叠率、LED 数量与像素采样。",
+   "tw": "在**拍攝之前**用閉式求出傅立葉疊層成像的性能(``table``):合成 NA、截止週期、頻譜重疊率、LED 數量與像素取樣。",
+   "ko": "**촬영하기 전에** 푸리에 타이코그래피의 성능을 닫힌 형식으로(``table``): 합성 NA, 차단 주기, 스펙트럼 중첩률, LED 수, 화소 샘플링.",
+   "de": "Leistung der Fourier-Ptychographie in geschlossener Form **vor der Aufnahme** (``table``): synthetische NA, Grenzperiode, spektraler Überlappungsgrad, Anzahl der LEDs und Pixelabtastung.",
+   "hi": "**लेने से पहले** Fourier ptychography का प्रदर्शन closed form में (``table``): synthetic NA, cut-off period, spectral overlap ratio, LED की संख्या और pixel sampling।"
+  },
+  "optics/fp_usaf_target": {
+   "fp": "5ae26f933ca2",
+   "en": "Object made of tiled USAF 1951 chart elements (``table``): amplitude (dark bars), phase (bar phase is ``phase_rad``), or both.",
+   "zh": "由 USAF 1951 分辨率板元素排列而成的物体(``table``):振幅(条纹为暗)、相位(条纹相位为 ``phase_rad``)或两者兼有。",
+   "tw": "由 USAF 1951 解析度板元素排列而成的物體(``table``):振幅(線條為暗)、相位(線條相位為 ``phase_rad``)或兩者兼具。",
+   "ko": "USAF 1951 차트의 요소를 나열한 물체(``table``): 진폭(막대가 어두움), 위상(막대의 위상이 ``phase_rad``) 또는 둘 다.",
+   "de": "Objekt aus aneinandergereihten Elementen der USAF-1951-Testtafel (``table``): Amplitude (Balken dunkel), Phase (Balkenphase ``phase_rad``) oder beides.",
+   "hi": "USAF 1951 chart के elements को क्रम से रखकर बना object (``table``): amplitude (bars गहरे), phase (bars का phase ``phase_rad``) या दोनों।"
+  },
+  "optics/fp_capture": {
+   "fp": "96aac181256a",
+   "en": "Simulate the set of low-resolution images taken under oblique illumination from an LED array (``table``, kind=\"fp_stack\").",
+   "zh": "合成由 LED 阵列斜向照明拍摄的一组低分辨率图像(``table``,kind=\"fp_stack\")。",
+   "tw": "合成由 LED 陣列斜向照明拍攝的一組低解析度影像(``table``,kind=\"fp_stack\")。",
+   "ko": "LED 어레이로 비스듬히 비춘 저해상도 영상의 묶음을 합성한다(``table``, kind=\"fp_stack\").",
+   "de": "Simuliert den Satz niedrig aufgelöster Bilder unter schräger Beleuchtung durch ein LED-Array (``table``, kind=\"fp_stack\").",
+   "hi": "LED array की तिरछी रोशनी में लिए गए कम-resolution images के समूह का simulation (``table``, kind=\"fp_stack\")।"
+  },
+  "optics/fp_stack_from_images": {
+   "fp": "c7efd50878af",
+   "en": "Turn an image set from an instrument or public data into this family's table (``table``, kind=\"fp_stack\").",
+   "zh": "把装置或公开数据的一组图像转换为本族的表(``table``,kind=\"fp_stack\")。",
+   "tw": "把裝置或公開資料的一組影像轉換為本族的表(``table``,kind=\"fp_stack\")。",
+   "ko": "장치·공개 데이터의 영상 묶음을 이 군의 표로 만든다(``table``, kind=\"fp_stack\").",
+   "de": "Wandelt einen Bildsatz aus einem Gerät oder aus öffentlichen Daten in die Tabelle dieser Familie um (``table``, kind=\"fp_stack\").",
+   "hi": "किसी उपकरण या public data के image set को इस family की table में बदलना (``table``, kind=\"fp_stack\")।"
+  },
+  "optics/fp_reconstruct": {
+   "fp": "5dcdf9993536",
+   "en": "Recover the high-resolution amplitude and phase from the set of low-resolution images (``table``, kind=\"fp_result\"). Refuses if it does not converge.",
+   "zh": "从一组低分辨率图像恢复高分辨率的振幅与相位(``table``,kind=\"fp_result\")。不收敛则拒绝。",
+   "tw": "從一組低解析度影像恢復高解析度的振幅與相位(``table``,kind=\"fp_result\")。不收斂則拒絕。",
+   "ko": "저해상도 영상의 묶음에서 고해상도의 진폭과 위상을 되돌린다(``table``, kind=\"fp_result\"). 수렴하지 않으면 거부한다.",
+   "de": "Gewinnt hochaufgelöste Amplitude und Phase aus dem Satz niedrig aufgelöster Bilder zurück (``table``, kind=\"fp_result\"). Lehnt ab, wenn die Iteration nicht konvergiert.",
+   "hi": "कम-resolution images के समूह से उच्च-resolution amplitude और phase वापस पाना (``table``, kind=\"fp_result\")। converge न हो तो मना करता है।"
+  },
+  "optics/fp_element_contrast": {
+   "fp": "4c393acd11fb",
+   "en": "Measure the modulation of the three bars of every USAF element and read how far the image resolves (``table``).",
+   "zh": "测量 USAF 每个要素三条条纹的调制度,读出图像分辨到哪一个要素(``table``)。",
+   "tw": "量測 USAF 每個要素三條條紋的調制度,讀出影像解析到哪一個要素(``table``)。",
+   "ko": "USAF의 요소마다 막대 3개의 변조를 재고, 어디까지 분해했는지 읽는다(``table``).",
+   "de": "Misst die Modulation der drei Balken jedes USAF-Elements und liest ab, bis zu welchem Element das Bild auflöst (``table``).",
+   "hi": "हर USAF element की तीन bars का modulation मापकर पढ़ना कि image कहाँ तक resolve करता है (``table``)।"
   }
  }
 }
