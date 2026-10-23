@@ -7,6 +7,10 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### CI — docs だけの PR の検査ジョブが任意依存なしで走っていた
+
+- `documentation checks`(docs だけの変更で全数スイートの代わりに走るジョブ、0.8.0 の CI 高速化で追加)は core だけの install で `tests/test_capabilities.py` などを走らせていたため、skimage/opencv/pywt の op・PIL・openpyxl が無い環境で「実在しない op」として落ちた。docs だけの PR が初めて来た 2026-10-23(#123)まで一度も走っておらず、赤であることに気づけなかった。全数スイートと同じ任意依存を入れる。
+
 ### 契約変更 — 非有限な入力は入口で拒否する(fail-closed)
 
 - `fullseye.apply` と `run_pipeline` は、浮動小数の配列入力(画像・体積・点・信号、n 項 op の入力リストの各要素、XLD や表の数値の葉)に NaN か ±inf が 1 つでもあると、`on_error` に依らず `FsValueError("<op>: input contains NaN or infinity")` で止める。非有限入力の実測監査(`docs/NAN_INPUT_AUDIT.md`)で 431 op が NaN / +inf を黙って有限のもっともらしい答えに変えていたため(受け入れでも拒否でもない第 3 の状態)。整数・bool の配列は NaN を持てないので検査しない。生の実装は変えていない。知った上で op に渡すときの逃げ道は `apply(..., allow_nonfinite=True)` だけ(pipeline には無い)。
