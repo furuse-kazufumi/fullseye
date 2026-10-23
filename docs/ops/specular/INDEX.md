@@ -1,4 +1,4 @@
-# SPECULAR operator help — 19 ops in 5 categories
+# SPECULAR operator help — 20 ops in 5 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/specular/<category>/<op>.md` を走査。
 
@@ -20,9 +20,9 @@
 
 [photometric_residual](photometric/photometric_residual.md) · [photometric_stereo_robust](photometric/photometric_stereo_robust.md)
 
-### polarization (4)
+### polarization (5)
 
-[polarization_dolp_map](polarization/polarization_dolp_map.md) · [polarization_render](polarization/polarization_render.md) · [polarization_separate](polarization/polarization_separate.md) · [polarization_stokes](polarization/polarization_stokes.md)
+[polarization_dolp_map](polarization/polarization_dolp_map.md) · [polarization_render](polarization/polarization_render.md) · [polarization_separate](polarization/polarization_separate.md) · [polarization_stokes](polarization/polarization_stokes.md) · [polarization_stokes_map](polarization/polarization_stokes_map.md)
 
 ### reflectance (3)
 

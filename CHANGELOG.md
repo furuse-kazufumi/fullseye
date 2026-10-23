@@ -7,6 +7,17 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### 追加 — 偏光を画素ごとに(Stokes / DoLP / AoLP の地図、素子の場、有限の消光比、角度と左右の規約)
+
+非公開 PoC(Si の光弾性・SWIR 偏光)を走らせて見つかった 4 つの穴を埋めた。真値はすべて閉形式(Malus の法則・Mueller 計算・ダイアテニュエータの行列・独立に書いた Jones → Mueller 変換)。門は `tests/test_polarization_per_pixel_2026_10_23.py`(85 件)。
+
+- 新 op `polarization_stokes_map`(specularity、台帳 polarization、polsweep → table): 4 方位(0/45/90/135、DoFP の閉形式 S0 = ΣI/2・S1 = I0 − I90・S2 = I45 − I135)または任意の N ≥ 3 方位(最小二乗)から、画素ごとの `s0`/`s1`/`s2`・`dolp`・`aolp_deg` と 2 つのマスク(`lit` = S0 > 0、`aolp_defined`)を返す。これまでの `polarization_stokes` は場全体の平均だけだった。**NaN は出さない**: S0 = 0 の DoLP は 0(`polarization_dolp_map` と同じ規約)で `lit` が False、直線偏光成分の無い画素の AoLP は 0 で `aolp_defined` が False。「無い」の判定は `hypot(S1, S2) ≤ 1e-12·S0` —— 一様な無偏光の掃引は当てはめの丸め屑で DoLP ≈ 3e-16 になり(1e-6〜1e9 の全スケールで実測)、厳密な 0 判定だと 400/400 画素が丸め屑の「角度」を返していた。
+- `mueller_element` / `jones_element` が**角度・位相差の配列**(画素ごとの主軸角・位相差の場)を受けて `(…, 4, 4)` / `(…, 2, 2)` を返す(前: ValueError)。配列どうしは broadcast、出力は `MAX_FIELD_ELEMENTS` まで。スカラーは従来のコード経路のまま —— 旧コードの逐語コピーと全 kind × 14 角度 × 6 位相差でバイト一致を門にした。場の各要素はスカラー呼び出しと ≤ 1e-15 で一致(実測は 0)。暗視野円偏光器を場で組んで `I = ½ sin²(δ/2)` と 1e-15 で一致。
+- 新 op `mueller_partial_polarizer(angle_deg, extinction_ratio, transmission)`(optics、台帳 polarization): 消光比 ER が有限の直線偏光子 = 透過軸 T1・直交 T2 = T1/ER の部分偏光子。Jones の `R(a) diag(√T1, √T2) R(−a)` を一般の Jones → Mueller 変換に通したものと 1e-15 で一致、無偏光入射の DoP = (ER − 1)/(ER + 1)、平行 / 直交の対の透過 (T1² + T2²)/2 / T1·T2(対で測った消光比は ER ではなく (ER² + 1)/(2ER))、漏れのある Malus `T2 + (T1 − T2) cos²θ`、ER = 1 は ND フィルタ `T1·I`。角度は配列も可。ER < 1・ER = ∞・T1 ∉ (0, 1] は ValueError。
+- **角度の向きと円偏光の左右を docstring に明記**(optics の偏光節の冒頭・`jones_element`・`mueller_element`・`stokes_from_jones`・`stokes_analyze`・specularity の掃引角): 角度は +x(列方向)から +y(行方向 = **下**)へ測る = 表示画像で**時計回り**。決めたのではなく既存実装が暗黙に使っていた向きを実行して確かめた(`sfpolar.sfp_render` は法線の方位 `atan2(ny, nx)` = 30° の拡散面を AoLP 30° で描き、光弾性 PoC は画像座標の応力の `½ atan2(2τxy, σxx − σyy)` をそのまま `mueller_element` に渡している)。y 上向きで反時計回りに数えるセンサ・文献の角度は符号を反転して渡す(取り違えると 21.5° が 158.5° になり例外は出ない)。円偏光: `S3 > 0` = Jones `[1, −i]/√2`(`exp(−iωt)`)で、電場は +x から −y へ回る = **表示画像で反時計回り**(受け取るカメラから見た向き)。`stokes_analyze` の `"right"` という呼び名は y 上向きの座標系での名前で、互換のため残した(契約は S3 の符号と docstring の文)。門: 既知角(21.5°)の合成画像で AoLP が 21.5° に戻り、同じフレームを逆向きの角度で読むと 158.5° になる / 法線の方位 30° の拡散面で 30°(150° でなく)/ 放射状偏光子の場で全画素の AoLP が `atan2(row, col)` / `E(t)` を標本化して S3 > 0 が画面で反時計回り。
+- ★`polarization_stokes_map.max_violation_frac` を効かないノブの台帳(`docs/LEDGER_GAP_DEBT.json`、601 → 602)に兄弟 3 本(`polarization_separate` / `_dolp_map` / `_stokes`)と同じ区分で足した。このノブは「何割の画素の負の最小値まで許すか」の門で、出力の値は変えず通すか断るかだけを決めるため、きれいな探針入力では原理的に動かない。実カメラの掃引(デモザイクの誤差)を通すのに要る(例の 6 は 0.05 で通す)ので外さなかった —— 台帳を増やした判断として明記する。
+- 例 `examples/polarization_camera_pipeline.py` に 6・7 を追加(画素ごとの AoLP が真値と 0.18° 以内、角度の向きを逆に読むと中央値 46° ずれる / ER = 100 の検光子で完全偏光の DoLP が 0.9802 で頭打ち)。
+
 ### 追加 — 映像の物理整合性(弾道か推力か、時間は引き延ばされていないか)
 
 - `ballistics` に 6 op: `thrust_ode`(重力+抗力+一定の比推力の RK4)、`drag_fit` / `thrust_fit`(軌跡から (p₀, v₀, C_d[, a_T]) を射影つき Levenberg–Marquardt で同定、(N, 3) でも単眼の平面 (N, 2) でも)、`aic_from_rss`、`ballistic_vs_thrust`(2 模型の当てはめと ΔAIC を返す。判定は返さず、閾値は呼び手。節約則)、`time_stretch_from_gravity`(k = √(g_ref / g_fit))。推力つきの当てはめは抗力だけの解を始点に含むので ΔAIC ≥ −2Δk が保たれる。

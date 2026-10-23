@@ -50,21 +50,21 @@
 - **L885** _(ja)_ — ★JSON 一枚で受ける入口。op ではなく API 層の関数(レジストリの op は (画像, a, b) 固定でノブ 2 つなので、文字列も JSON も渡せない)。
 - **L940** — ★``annotate.overlay_mask`` **有意不暴露到顶层**。同名的 ``imgio.overlay_mask`` 已作为 ``fs.overlay_mask`` 公开，其参数与含义都不同(imgio = 原始 RGB、mask>0.5、fill/margin / annotate = 角色名的颜色、也可用权重 [0,1]、拒绝形状不匹配)。在同名上加载不同的约定，调用方收到的不是异常而是**看似合理却不同的图**。公开 API 的破坏性变更不擅自做，故带角色的那个用 ``fs.annotate.overlay_mask`` 取用。
 - **L1095** _(ja)_ — ★2026-10-02: 「名前の無い非公開関数」の棚卸しで、op として振る舞うのに公開経路が 1 本も無かった 18 本。 どれも既存の型つき台帳の約束(台帳 = 実装モジュールの集合)に合わないので、facade(fs.<名前>)から出す。 門は tests/test_hidden_ops_exposed_2026_10_02.py(定理か第 2 実装)。
-- **L1651** _(ja)_ — ★空・空白だけの名前は「無い」(2026-09-20、GenSpark N27): 多くの op は halcon 別名が "" なので、 `name == halcon` の一致で "" が **lowpass に解決**し、保存したパイプラインに空名が混ざると 別の op が黙って走っていた。名前の照合はこの先で行うので、ここで先に切る。
-- **L1654** _(ja)_ — ★2026-10-11: このコメントと判定が docstring より**前**にあったので、関数に docstring が 無かった(``find_op.__doc__`` が None)。説明の門(台帳・facade 版)が拾った。
-- **L1670** _(ja)_ — ★大小文字とハイフンだけ違う名前は同じ op(2026-09-20、GenSpark N50): HALCON のリファレンスは GAUSS_FILTER のように大文字で書かれることが多く、`GAUSS_FILTER` / `Gauss-Filter` が unknown だった。 正規化して 1 度だけ引き直す(元の綴りに一致が無いときだけなので、既存の解決は変わらない)。
-- **L1739** _(ja)_ — ★2026-09-20(GenSpark 第 35 報 N124): 台帳 op の名前を apply に渡すと「unknown operator」と言い、 op_names() を案内していた(そこにも無い)。索引は tier を知っているので、正しい入口を言う。
-- **L2034** _(ja)_ — ★2026-09-20(GenSpark 第 55 報 N199): `with strict_mode(): apply(gray, "access_channel")` が例外にならず、 入力型の fallback(source="input")が台帳に残っていた。strict は op 本体の例外と GPU / 高速路だけが見ていて、 `_guard_input` と非有限出力の門は `on_error` しか見ていなかった —— 「厳密」が経路ごとに別の意味だった。 strict(strict_mode / set_strict / FULLSEYE_STRICT)は on_error=None のとき "raise" と同じ。明示の on_error は文脈より強い(引数 > 文脈 > 環境変数 > 既定)。
-- **L2065** — ★ **目前对彩色图像没有正确的调用方式**:整批传入会混色,按通道调用 3 次会让自归一化的 op 把每个通道除以各自的最大值,破坏通道间的比值(灰度边缘法的角度误差从自建 Sobel 的 1.03 度 -> 每图 4.17 度 -> 每通道 27.86 度,零点 29.14 度)。倒向哪一边是**契约的决定**,所以这里不改动任何一个默认数值,仅在 `on_error="raise"` 时拒绝,默认则记入台账使其可见。详情与选项见 docs/KNOWN_ISSUES.md。
-- **L2353** _(ja)_ — ★2026-09-20(GenSpark 第 26 報 N97): 素の str / dict / スカラーは ndarray でないのでここを素通りし、 既定の fallback 方針では**入力がそのまま**返っていた(``apply("abc", "gaussian") == "abc"``)。 raster を取る op には、配列にしてから同じ検査を掛ける。list / tuple は数値の入れ子として下で配列化される。
-- **L2389** _(ja)_ — ★float16 / float32 → float64 の昇格は無損失(値も範囲も変わらない)なので記録しない(2026-09-20、 GenSpark N29): float16 は scipy.ndimage が扱えず op が RuntimeError → fallback で**入力のコピー**が 返っていた。float32 は op が float32 で走り float32 を返していた(契約は float64)。
-- **L2658** _(ja)_ — ★2026-10-18(外部レビュー 0.6.0 N224): 以前の文は「got name=ndarray」だけで、受け取った image 側 (op 名の文字列)を言わず、規約の説明と食い違って読めた。受け取った 2 つと、直した呼び方を言う。
-- **L2779** _(ja)_ — ★形状不一致(2026-09-19 外部レビュー #13): ラスタ同士の n-ary で形が違うと numpy の 「could not be broadcast」がそのまま台帳に残り、既定の方針では**第 1 入力が そのまま返る**(sort として妥当な fallback)。返り値の形だけ見た利用者には 「(32,32)+(32,16) が (32,32) で成功した」と映った。何が要るかを文で言う。
-- **L2783** _(ja)_ — ★ただし第 2 入力がマスク(畳み込みの核)の op は形が違って当然 —— 3×3 のマスクを 画像と同じ大きさに埋めないと呼べない、では入口として壊れている(2026-10-12、例の 付与で発見)。核を取る op だけ名指しで外す。
-- **L3092** _(ja)_ — ★2026-09-20(GenSpark 第 15・16 報 N67): 4 op の入口の関門(ops.NATIVE_CRASHES_ON_DEGENERATE)は 効いているのに、その事実は ops.py の中にしか無く、registry を使う側からは見えなかった。 行に載せる(None = 関門なし。理由の文がそのまま値)。
-- **L3096** _(ja)_ — ★2026-09-20(GenSpark 第 20 報 N84): 同じ HALCON 別名を複数の op が名乗る(cv_ / sk_ の移植と コアの実装)。どれが走るかは find_op の規則(完全一致 → name == halcon → _ALIAS_CANONICAL)で 決まっていて曖昧ではないが、その事実が行に無かった。halcon_peers = 同じ別名を名乗る他の op。
-- **L3217** _(ja)_ — ★2026-09-20(GenSpark 第 24 報 N95): 綴り違いの sort が黙って 0 行だった(「該当なし」と区別できない)。
-- **L3227** _(ja)_ — ★台帳には**入力ゼロ**の op(カタログを返すだけ)が在り ``in_sort`` が None になる。 生の None を並べ替えの鍵に混ぜると TypeError で落ちる —— レジストリと n-ary だけ だった頃は None が現れなかったので、この鍵は 2026-09-25 まで壊れずに済んでいた。
+- **L1652** _(ja)_ — ★空・空白だけの名前は「無い」(2026-09-20、GenSpark N27): 多くの op は halcon 別名が "" なので、 `name == halcon` の一致で "" が **lowpass に解決**し、保存したパイプラインに空名が混ざると 別の op が黙って走っていた。名前の照合はこの先で行うので、ここで先に切る。
+- **L1655** _(ja)_ — ★2026-10-11: このコメントと判定が docstring より**前**にあったので、関数に docstring が 無かった(``find_op.__doc__`` が None)。説明の門(台帳・facade 版)が拾った。
+- **L1671** _(ja)_ — ★大小文字とハイフンだけ違う名前は同じ op(2026-09-20、GenSpark N50): HALCON のリファレンスは GAUSS_FILTER のように大文字で書かれることが多く、`GAUSS_FILTER` / `Gauss-Filter` が unknown だった。 正規化して 1 度だけ引き直す(元の綴りに一致が無いときだけなので、既存の解決は変わらない)。
+- **L1740** _(ja)_ — ★2026-09-20(GenSpark 第 35 報 N124): 台帳 op の名前を apply に渡すと「unknown operator」と言い、 op_names() を案内していた(そこにも無い)。索引は tier を知っているので、正しい入口を言う。
+- **L2035** _(ja)_ — ★2026-09-20(GenSpark 第 55 報 N199): `with strict_mode(): apply(gray, "access_channel")` が例外にならず、 入力型の fallback(source="input")が台帳に残っていた。strict は op 本体の例外と GPU / 高速路だけが見ていて、 `_guard_input` と非有限出力の門は `on_error` しか見ていなかった —— 「厳密」が経路ごとに別の意味だった。 strict(strict_mode / set_strict / FULLSEYE_STRICT)は on_error=None のとき "raise" と同じ。明示の on_error は文脈より強い(引数 > 文脈 > 環境変数 > 既定)。
+- **L2066** — ★ **目前对彩色图像没有正确的调用方式**:整批传入会混色,按通道调用 3 次会让自归一化的 op 把每个通道除以各自的最大值,破坏通道间的比值(灰度边缘法的角度误差从自建 Sobel 的 1.03 度 -> 每图 4.17 度 -> 每通道 27.86 度,零点 29.14 度)。倒向哪一边是**契约的决定**,所以这里不改动任何一个默认数值,仅在 `on_error="raise"` 时拒绝,默认则记入台账使其可见。详情与选项见 docs/KNOWN_ISSUES.md。
+- **L2354** _(ja)_ — ★2026-09-20(GenSpark 第 26 報 N97): 素の str / dict / スカラーは ndarray でないのでここを素通りし、 既定の fallback 方針では**入力がそのまま**返っていた(``apply("abc", "gaussian") == "abc"``)。 raster を取る op には、配列にしてから同じ検査を掛ける。list / tuple は数値の入れ子として下で配列化される。
+- **L2390** _(ja)_ — ★float16 / float32 → float64 の昇格は無損失(値も範囲も変わらない)なので記録しない(2026-09-20、 GenSpark N29): float16 は scipy.ndimage が扱えず op が RuntimeError → fallback で**入力のコピー**が 返っていた。float32 は op が float32 で走り float32 を返していた(契約は float64)。
+- **L2659** _(ja)_ — ★2026-10-18(外部レビュー 0.6.0 N224): 以前の文は「got name=ndarray」だけで、受け取った image 側 (op 名の文字列)を言わず、規約の説明と食い違って読めた。受け取った 2 つと、直した呼び方を言う。
+- **L2780** _(ja)_ — ★形状不一致(2026-09-19 外部レビュー #13): ラスタ同士の n-ary で形が違うと numpy の 「could not be broadcast」がそのまま台帳に残り、既定の方針では**第 1 入力が そのまま返る**(sort として妥当な fallback)。返り値の形だけ見た利用者には 「(32,32)+(32,16) が (32,32) で成功した」と映った。何が要るかを文で言う。
+- **L2784** _(ja)_ — ★ただし第 2 入力がマスク(畳み込みの核)の op は形が違って当然 —— 3×3 のマスクを 画像と同じ大きさに埋めないと呼べない、では入口として壊れている(2026-10-12、例の 付与で発見)。核を取る op だけ名指しで外す。
+- **L3093** _(ja)_ — ★2026-09-20(GenSpark 第 15・16 報 N67): 4 op の入口の関門(ops.NATIVE_CRASHES_ON_DEGENERATE)は 効いているのに、その事実は ops.py の中にしか無く、registry を使う側からは見えなかった。 行に載せる(None = 関門なし。理由の文がそのまま値)。
+- **L3097** _(ja)_ — ★2026-09-20(GenSpark 第 20 報 N84): 同じ HALCON 別名を複数の op が名乗る(cv_ / sk_ の移植と コアの実装)。どれが走るかは find_op の規則(完全一致 → name == halcon → _ALIAS_CANONICAL)で 決まっていて曖昧ではないが、その事実が行に無かった。halcon_peers = 同じ別名を名乗る他の op。
+- **L3218** _(ja)_ — ★2026-09-20(GenSpark 第 24 報 N95): 綴り違いの sort が黙って 0 行だった(「該当なし」と区別できない)。
+- **L3228** _(ja)_ — ★台帳には**入力ゼロ**の op(カタログを返すだけ)が在り ``in_sort`` が None になる。 生の None を並べ替えの鍵に混ぜると TypeError で落ちる —— レジストリと n-ary だけ だった頃は None が現れなかったので、この鍵は 2026-09-25 まで壊れずに済んでいた。
 
 ## `astrostack.py`
 
@@ -1325,7 +1325,7 @@
 
 ## `examples/polarization_camera_pipeline.py`
 
-- **L103** _(ja)_ — ★雑音つきで回復した行列は coherency の最小固有値が僅かに負に出る(雑音 1e-4 → -1e-4 程度)。tol は雑音の水準で置く。tol を勘で小さくすると「非物理」に化ける。
+- **L110** _(ja)_ — ★雑音つきで回復した行列は coherency の最小固有値が僅かに負に出る(雑音 1e-4 → -1e-4 程度)。tol は雑音の水準で置く。tol を勘で小さくすると「非物理」に化ける。
 
 ## `examples/profile_shape_inspection.py`
 
@@ -1449,11 +1449,11 @@
 
 ## `fullseye/__init__.py`
 
-- **L461** _(ja)_ — ★2026-10-02: 「名前の無い非公開関数」の棚卸しで、op として振る舞うのに公開経路が 1 本も無かった 18 本。 どれも既存の型つき台帳の約束(台帳 = 実装モジュールの集合)に合わないので、facade(fs.<名前>)から出す。 門は tests/test_hidden_ops_exposed_2026_10_02.py(定理か第 2 実装)。
-- **L500** _(ja)_ — ★1-D 版は **signal_ 接頭辞**で出す。素の名前で出すと `fs.local_std`(1-D)と `fs.ledger.local_std`(2-D)が別物を指す —— 既に `lowpass` がその状態になっており(facade=dsp / ledger=2-D)、 同じ罠を増やさない。次元をまたぐ同名は、呼ぶ側で見分けがつく形にする。
-- **L730** — ★与声明 out 类型对齐的 adapter，会**丢弃返回元组的 op 的第 2 项及以后**(``drizzle_resample`` 的 ``wht``、``piv_cross_correlate`` 的 ``info``)。当被丢弃的一侧需要用到时,从台账入口就够不着。2026-09-06,某超分辨率 PoC 写成 ``flow, info = fs.ledger.piv_cross_correlate(...)``,沿第 1 轴拆开 (2,R,C),把 dy 的第 2 行当作 dx 使用,使偏移估计从 0.12 -> 0.74 像素(不抛异常)。用 ``.raw`` 可够到原始返回:``fs.ledger.piv_cross_correlate.raw(a, b)``。
-- **L1214** _(ja)_ — ★字の検証・修正(glyph_*)。**dir() でなく __all__ が一次情報**なので ここに載せる —— dir は環境依存で、載せ忘れは全体スイートでしか出ない。
-- **L1301** _(ja)_ — ★2026-09-20(GenSpark 第 50 報 N175 / N176): `import fullseye; fullseye.os` が通っていた —— import に使った 道具(os / sys / warnings と __future__ の annotations)は facade の名前ではない。tab 補完と dir() を汚さない。
+- **L462** _(ja)_ — ★2026-10-02: 「名前の無い非公開関数」の棚卸しで、op として振る舞うのに公開経路が 1 本も無かった 18 本。 どれも既存の型つき台帳の約束(台帳 = 実装モジュールの集合)に合わないので、facade(fs.<名前>)から出す。 門は tests/test_hidden_ops_exposed_2026_10_02.py(定理か第 2 実装)。
+- **L501** _(ja)_ — ★1-D 版は **signal_ 接頭辞**で出す。素の名前で出すと `fs.local_std`(1-D)と `fs.ledger.local_std`(2-D)が別物を指す —— 既に `lowpass` がその状態になっており(facade=dsp / ledger=2-D)、 同じ罠を増やさない。次元をまたぐ同名は、呼ぶ側で見分けがつく形にする。
+- **L731** — ★与声明 out 类型对齐的 adapter，会**丢弃返回元组的 op 的第 2 项及以后**(``drizzle_resample`` 的 ``wht``、``piv_cross_correlate`` 的 ``info``)。当被丢弃的一侧需要用到时,从台账入口就够不着。2026-09-06,某超分辨率 PoC 写成 ``flow, info = fs.ledger.piv_cross_correlate(...)``,沿第 1 轴拆开 (2,R,C),把 dy 的第 2 行当作 dx 使用,使偏移估计从 0.12 -> 0.74 像素(不抛异常)。用 ``.raw`` 可够到原始返回:``fs.ledger.piv_cross_correlate.raw(a, b)``。
+- **L1216** _(ja)_ — ★字の検証・修正(glyph_*)。**dir() でなく __all__ が一次情報**なので ここに載せる —— dir は環境依存で、載せ忘れは全体スイートでしか出ない。
+- **L1303** _(ja)_ — ★2026-09-20(GenSpark 第 50 報 N175 / N176): `import fullseye; fullseye.os` が通っていた —— import に使った 道具(os / sys / warnings と __future__ の annotations)は facade の名前ではない。tab 補完と dir() を汚さない。
 
 ## `fullseye/mcp/catalog.py`
 
@@ -1798,39 +1798,39 @@
 - **L221** _(ja)_ — ★真値が閉形式で外部参照が要らない: 恒等フィルタ → 180 度回転、 (i2πf)^n → n 階微分(ガウシアンの微分は閉じた式)、渦位相板の **巻き数が整数**。fourier_plane_filter は入力を取らない生成器で、 four_f_filter が場と透過関数を受ける(cimage 2 つ)。
 - **L232** _(ja)_ — ★ pupil_blur は「画像 × カーネル」の一般畳み込み(filters_freq.convol_fft) ではない —— PSF の標本間隔 λN/oversample を検出器ピッチへ面積積分して から畳む、その単位合わせが本体。だから PSF を作る側に置く。
 - **L293** — ★ 不是 normals（点云的 (N,3) 法线），而是 normalmap。二者形状相似，但传入 (N,3) 会被 _normal_map 以 ValueError 拒绝。此处若声明为 normals，便是“可以传入点云法线”的谎言，链式 fuzzer 每次都会以 CONTRACT 结束，从而**一次也不执行此族**（＝化为发现为零）。
-- **L394** _(ja)_ — ★trace_rays は登録しない: 台帳の trace_rays は optscene が持ち、正準名 lens_trace_rays は窓口(facade)の 別名として予約済み(opnames.FACADE_ALIASES)で、台帳に置くと test_op_names_phase1 の衝突の門が赤になる。 台帳からは ray_bundle / noncoaxial_trace で同じ追跡に届く。refractive_index は別の作業が中を直しているので この回は登録しない(既定の媒質が要る)。
-- **L525** _(ja)_ — ★新しい型の語は作らない(位相も image2d、統計は table)。
-- **L526** _(ja)_ — ★2-D の橋(tb_*)は架からない: 1 入力の op は speckle_statistics だけで、その in の image2d は sort ``image``(_NEW_SORTS の外)、out の table は sort に写らない (2026-10-13 に backends_typed.build の条件で確かめて決めた。_OP_BRIDGE_SKIP 不要)。
-- **L530** _(ja)_ — ★材料は名前(別名可)かレコード dict で受ける。波長曲線はすべて pairs(λ [nm], 値)= 光源・QE・ ライトガイドの曲線と同じ形(像 = 光源 × 光学系 × 対象 × QE の波長積分へ渡す)。全部が引数だけで 描く側(画像を受けない)なので 2-D の橋は架けない(_OP_BRIDGE_SKIP)。
-- **L561** _(ja)_ — ★曲線は materials と同じ pairs(λ [nm], 値)。像の明るさ = ∫ 光源 × 光学系・対象 × QE dλ を spectral_product で 1 本ずつ掛けて spectral_integral で積む。QE を掛ける前に energy_to_photons。 画像を受けないので 2-D の橋は架けない(_OP_BRIDGE_SKIP)。
-- **L584** _(ja)_ — ★膜も基板も材料表(materials)の鍵で指定する。画像(分光の帯域画像)を受ける map も表を返すので 2-D の橋は架けない。
-- **L592** _(ja)_ — ★レンズの処方(raytrace)と硝材の分散(materials)→ 波長ごとの焦点位置の較正表 → 戻りスペクトル → ピーク → 高さ・透明板の厚さ。観察対象(透明板・金属)の反射率も同じ材料表から。画像を受けないので 2-D の橋は架けない。
-- **L603** _(ja)_ — ★画像を受ける op の in は image2d(橋の外)、引数だけの op は表 / 曲線を返す側なので 2-D の橋は架けない。
-- **L618** _(ja)_ — ★fail-closed: 扱えない面の種類・座標変換面・r² の非球面項・別名でしか表に無い硝材は拒否、近似は allow_partial で明示したときだけ(結果に approximate=True)。画像を受けないので 2-D の橋は架けない(_OP_BRIDGE_SKIP)。
-- **L627** _(ja)_ — ★fail-closed: 無い面・未知の欄・lens_system が拒否する値は ValueError。基の系は書き換えない。
-- **L635** _(ja)_ — ★fail-closed: 矩形窓は参照の周期が整数のときだけ(そうでなければ拒否し、窓の宣言 hann を促す)、ナイキスト以上・1 周期未満は拒否。 法線の復元は影の無い画素だけ有効(他は NaN と valid = False)。雑音の模擬は種を明示。
-- **L648** _(ja)_ — merit を再実装しない。★fail-closed: カタログに許容距離内の近傍が無いモデル硝材・無効な始点・未知の merit 欄は ValueError。
-- **L654** _(ja)_ — lensopt の変数・LM をそのまま使い、硝材を変数にできる(離散の外側ループ)。★fail-closed: 未知のオペランド・足りない/余計な引数・ 範囲外の添字・有限でない値・重みが全部 0 の表は ValueError。
-- **L664** _(ja)_ — 追跡の前に毎回解き直される(傍らの数値は解いた値)。★fail-closed: 未知の種類・循環したピックアップ・絞りを動かす厚みの解・ 軸上の主光線の解・根の無い F/# の解・collimate しない afocal は ValueError。
-- **L677** _(ja)_ — ★fail-closed: 収束しない屈折は NaN と converged = False、表の外の波長・未知の水の種類・|g| >= 1・n <= 1 は拒否。 波のスペクトルは Pierson-Moskowitz(1964)/ JONSWAP(1973)、水の吸収は Pope & Fry(1997)、散乱の位相関数は Petzold(1972)。
-- **L691** _(ja)_ — Kolb, Mitchell & Hanrahan (1995)。幾何光学のみ(回折なし)。★fail-closed: 射出瞳が無限遠の系・非有限の入力・範囲外の波長/照明の表・ 軸対称でない系への点光源(前方追跡で回す)は ValueError。ケラレ/全反射の光線は NaN と vignetted = True で返す。
-- **L747** _(ja)_ — ★fail-closed: 非有限の高さ・波頭より浅い底・下を向かない光・n <= 1・充填率の範囲外・定数画像・両クラスのない欠陥マスクは拒否。 濡れ面は Lekner & Dorf(1988)、水中画像は watermedia(Akkaynak & Treibitz 2018)、瓶は 2 次元の断面の光線追跡。
-- **L758** _(ja)_ — ★格子の式 mλ = d(sin α + sin β) と Czerny–Turner の幾何から、角分散・分解能 mN・帯域の幅(スリットの像 ⊗ 画素 ⊗ 回折)・smile / keystone(3 次元の格子の式)・高次の重なりまで。chromconf の spectrometer_fwhm_nm と spectralrad の band_fwhm_nm を、スリット・格子・焦点距離・画素から実体化する。画像を受けないので 2-D の橋は 架からない(table は sort に写らず、spectrum は 2 入力)。
-- **L769** _(ja)_ — ★LP モードは特性方程式の数値解(遮断 = Bessel の零点)。画像を受けないので 2-D の橋は架けない。
-- **L779** _(ja)_ — ★縞はずれを M = p_m/|Δp| 倍(ウェハが動く)/ p_w/|Δp| 倍(マスクが動く)に拡大する。差動の 2 対で共通の誤差を消す。
-- **L790** _(ja)_ — ★暗視野は縞の可視度の比(試料あり / なし)で、画素より小さい構造の小角散乱を測る。散乱角の広がりへは公表式で換算。
-- **L802** _(ja)_ — 読み戻す。★新しい型の語は作らない: 図は印つきの dict(table)で、印の無い table は書き出しの op が ValueError で拒む。SVG / DXF は既存の text(文字列)、画像は rgbimage。
-- **L832** _(ja)_ — 高さで変わる倍率・ケラレ・ぼけを実光線で。★光線は入射瞳でなく絞りを狙う(入射瞳が無限遠でも動く)。
-- **L851** _(ja)_ — ★1 画素 4 枚 = 各画素で R・G・B(偽色が消える、解像はそのまま)/ 半画素 = 折り返しが消える(開口の MTF は上がらない)。
-- **L860** _(ja)_ — ★新しい型の語は作らない。干渉スペクトル・A スキャン・B スキャンの束は kind の印つきの dict(table)で渡し、 印の違う table は消費する op がすべて ValueError で拒む(oct_interferogram / oct_bscan_spectra / oct_ascan / oct_bscan の 4 種)—— 別の族の table を黙って読む経路が無い。B スキャンの画像だけは image2d(dB)で出し、 界面を辿る op は装置の出力の図(実画像)も同じ image2d で受ける。
-- **L880** _(ja)_ — ★距離は周期 c/(2f) の剰余。高い f ほど細かいが折り返す / 多重反射・縁の混合・高調波・背景光で壊れる。
-- **L908** _(ja)_ — ★新しい型の語は作らない。曖昧な法線の**集合**(候補 2 本 / 4 本)を normalmap と 区別するために新 sort を作るかを考えたが、集合は ``kind == "sfp_candidates"`` の dict(= table)で返す: (K,H,W,3) を normalmap と申告すると法線を食う op(積分・ 陰影)に 4 本重ねの配列が渡るが、table なら normalmap の枠には入らず、逆に sfp_disambiguate は印の無い table を ValueError で拒む —— 混ぜても黙って嘘を 返す経路が無いので、語彙を増やす理由が無い(2026-10-13 に確かめて決めた)。
-- **L914** _(ja)_ — ★2-D の橋(tb_*)は架からない: 1 入力の op の in は image2d(sort image、_NEW_SORTS の外) か normalmap / polsweep / table(TYPE_TO_SORT に無い)。_OP_BRIDGE_SKIP 不要。
-- **L929** _(ja)_ — ★新しい型の語は作らない。断面と輸送行列は kind の印つきの dict(table)で渡し、印の無い table は消費する 5 op がすべて ValueError で拒む —— 別の族の table を幾何として黙って 読む経路が無い。パターンと画像は既存の images(2-D 画像の list、fringe の位相シフトと同じ)。
-- **L932** _(ja)_ — ★縞と ToF は 1 つの族(このカテゴリ)にまとめ、sort は分けない。物理は同じ「経路ごとの フェーザの和の偏角」で、op の入出力はどちらも名前つきの値の dict(table)—— 縞は bias [rad] と height_error、ToF は depth / bias [m] と鍵の名前も単位も違い、位置で 並んだ配列を取り違えて渡す経路が無い(混ぜても黙って嘘を返さない)ので語彙を増やす理由が無い。
-- **L936** _(ja)_ — ★2-D の橋(tb_*)は架からない: 1 入力の op の in は table / images(TYPE_TO_SORT に無い)。
-- **L953** _(ja)_ — ★新しい型の語は作らない。パッチの組・解・描画の結果は kind の印つきの dict(table)で、印の無い table は消費する op が ValueError で拒む。多角形は points((V, 3))、放射は signal((N,))。
-- **L955** _(ja)_ — ★2-D の橋(tb_*)は架からない: 1 入力の op の in は table(TYPE_TO_SORT に無い)。
+- **L396** _(ja)_ — ★trace_rays は登録しない: 台帳の trace_rays は optscene が持ち、正準名 lens_trace_rays は窓口(facade)の 別名として予約済み(opnames.FACADE_ALIASES)で、台帳に置くと test_op_names_phase1 の衝突の門が赤になる。 台帳からは ray_bundle / noncoaxial_trace で同じ追跡に届く。refractive_index は別の作業が中を直しているので この回は登録しない(既定の媒質が要る)。
+- **L527** _(ja)_ — ★新しい型の語は作らない(位相も image2d、統計は table)。
+- **L528** _(ja)_ — ★2-D の橋(tb_*)は架からない: 1 入力の op は speckle_statistics だけで、その in の image2d は sort ``image``(_NEW_SORTS の外)、out の table は sort に写らない (2026-10-13 に backends_typed.build の条件で確かめて決めた。_OP_BRIDGE_SKIP 不要)。
+- **L532** _(ja)_ — ★材料は名前(別名可)かレコード dict で受ける。波長曲線はすべて pairs(λ [nm], 値)= 光源・QE・ ライトガイドの曲線と同じ形(像 = 光源 × 光学系 × 対象 × QE の波長積分へ渡す)。全部が引数だけで 描く側(画像を受けない)なので 2-D の橋は架けない(_OP_BRIDGE_SKIP)。
+- **L563** _(ja)_ — ★曲線は materials と同じ pairs(λ [nm], 値)。像の明るさ = ∫ 光源 × 光学系・対象 × QE dλ を spectral_product で 1 本ずつ掛けて spectral_integral で積む。QE を掛ける前に energy_to_photons。 画像を受けないので 2-D の橋は架けない(_OP_BRIDGE_SKIP)。
+- **L586** _(ja)_ — ★膜も基板も材料表(materials)の鍵で指定する。画像(分光の帯域画像)を受ける map も表を返すので 2-D の橋は架けない。
+- **L594** _(ja)_ — ★レンズの処方(raytrace)と硝材の分散(materials)→ 波長ごとの焦点位置の較正表 → 戻りスペクトル → ピーク → 高さ・透明板の厚さ。観察対象(透明板・金属)の反射率も同じ材料表から。画像を受けないので 2-D の橋は架けない。
+- **L605** _(ja)_ — ★画像を受ける op の in は image2d(橋の外)、引数だけの op は表 / 曲線を返す側なので 2-D の橋は架けない。
+- **L620** _(ja)_ — ★fail-closed: 扱えない面の種類・座標変換面・r² の非球面項・別名でしか表に無い硝材は拒否、近似は allow_partial で明示したときだけ(結果に approximate=True)。画像を受けないので 2-D の橋は架けない(_OP_BRIDGE_SKIP)。
+- **L629** _(ja)_ — ★fail-closed: 無い面・未知の欄・lens_system が拒否する値は ValueError。基の系は書き換えない。
+- **L637** _(ja)_ — ★fail-closed: 矩形窓は参照の周期が整数のときだけ(そうでなければ拒否し、窓の宣言 hann を促す)、ナイキスト以上・1 周期未満は拒否。 法線の復元は影の無い画素だけ有効(他は NaN と valid = False)。雑音の模擬は種を明示。
+- **L650** _(ja)_ — merit を再実装しない。★fail-closed: カタログに許容距離内の近傍が無いモデル硝材・無効な始点・未知の merit 欄は ValueError。
+- **L656** _(ja)_ — lensopt の変数・LM をそのまま使い、硝材を変数にできる(離散の外側ループ)。★fail-closed: 未知のオペランド・足りない/余計な引数・ 範囲外の添字・有限でない値・重みが全部 0 の表は ValueError。
+- **L666** _(ja)_ — 追跡の前に毎回解き直される(傍らの数値は解いた値)。★fail-closed: 未知の種類・循環したピックアップ・絞りを動かす厚みの解・ 軸上の主光線の解・根の無い F/# の解・collimate しない afocal は ValueError。
+- **L679** _(ja)_ — ★fail-closed: 収束しない屈折は NaN と converged = False、表の外の波長・未知の水の種類・|g| >= 1・n <= 1 は拒否。 波のスペクトルは Pierson-Moskowitz(1964)/ JONSWAP(1973)、水の吸収は Pope & Fry(1997)、散乱の位相関数は Petzold(1972)。
+- **L693** _(ja)_ — Kolb, Mitchell & Hanrahan (1995)。幾何光学のみ(回折なし)。★fail-closed: 射出瞳が無限遠の系・非有限の入力・範囲外の波長/照明の表・ 軸対称でない系への点光源(前方追跡で回す)は ValueError。ケラレ/全反射の光線は NaN と vignetted = True で返す。
+- **L749** _(ja)_ — ★fail-closed: 非有限の高さ・波頭より浅い底・下を向かない光・n <= 1・充填率の範囲外・定数画像・両クラスのない欠陥マスクは拒否。 濡れ面は Lekner & Dorf(1988)、水中画像は watermedia(Akkaynak & Treibitz 2018)、瓶は 2 次元の断面の光線追跡。
+- **L760** _(ja)_ — ★格子の式 mλ = d(sin α + sin β) と Czerny–Turner の幾何から、角分散・分解能 mN・帯域の幅(スリットの像 ⊗ 画素 ⊗ 回折)・smile / keystone(3 次元の格子の式)・高次の重なりまで。chromconf の spectrometer_fwhm_nm と spectralrad の band_fwhm_nm を、スリット・格子・焦点距離・画素から実体化する。画像を受けないので 2-D の橋は 架からない(table は sort に写らず、spectrum は 2 入力)。
+- **L771** _(ja)_ — ★LP モードは特性方程式の数値解(遮断 = Bessel の零点)。画像を受けないので 2-D の橋は架けない。
+- **L781** _(ja)_ — ★縞はずれを M = p_m/|Δp| 倍(ウェハが動く)/ p_w/|Δp| 倍(マスクが動く)に拡大する。差動の 2 対で共通の誤差を消す。
+- **L792** _(ja)_ — ★暗視野は縞の可視度の比(試料あり / なし)で、画素より小さい構造の小角散乱を測る。散乱角の広がりへは公表式で換算。
+- **L804** _(ja)_ — 読み戻す。★新しい型の語は作らない: 図は印つきの dict(table)で、印の無い table は書き出しの op が ValueError で拒む。SVG / DXF は既存の text(文字列)、画像は rgbimage。
+- **L834** _(ja)_ — 高さで変わる倍率・ケラレ・ぼけを実光線で。★光線は入射瞳でなく絞りを狙う(入射瞳が無限遠でも動く)。
+- **L853** _(ja)_ — ★1 画素 4 枚 = 各画素で R・G・B(偽色が消える、解像はそのまま)/ 半画素 = 折り返しが消える(開口の MTF は上がらない)。
+- **L862** _(ja)_ — ★新しい型の語は作らない。干渉スペクトル・A スキャン・B スキャンの束は kind の印つきの dict(table)で渡し、 印の違う table は消費する op がすべて ValueError で拒む(oct_interferogram / oct_bscan_spectra / oct_ascan / oct_bscan の 4 種)—— 別の族の table を黙って読む経路が無い。B スキャンの画像だけは image2d(dB)で出し、 界面を辿る op は装置の出力の図(実画像)も同じ image2d で受ける。
+- **L882** _(ja)_ — ★距離は周期 c/(2f) の剰余。高い f ほど細かいが折り返す / 多重反射・縁の混合・高調波・背景光で壊れる。
+- **L910** _(ja)_ — ★新しい型の語は作らない。曖昧な法線の**集合**(候補 2 本 / 4 本)を normalmap と 区別するために新 sort を作るかを考えたが、集合は ``kind == "sfp_candidates"`` の dict(= table)で返す: (K,H,W,3) を normalmap と申告すると法線を食う op(積分・ 陰影)に 4 本重ねの配列が渡るが、table なら normalmap の枠には入らず、逆に sfp_disambiguate は印の無い table を ValueError で拒む —— 混ぜても黙って嘘を 返す経路が無いので、語彙を増やす理由が無い(2026-10-13 に確かめて決めた)。
+- **L916** _(ja)_ — ★2-D の橋(tb_*)は架からない: 1 入力の op の in は image2d(sort image、_NEW_SORTS の外) か normalmap / polsweep / table(TYPE_TO_SORT に無い)。_OP_BRIDGE_SKIP 不要。
+- **L931** _(ja)_ — ★新しい型の語は作らない。断面と輸送行列は kind の印つきの dict(table)で渡し、印の無い table は消費する 5 op がすべて ValueError で拒む —— 別の族の table を幾何として黙って 読む経路が無い。パターンと画像は既存の images(2-D 画像の list、fringe の位相シフトと同じ)。
+- **L934** _(ja)_ — ★縞と ToF は 1 つの族(このカテゴリ)にまとめ、sort は分けない。物理は同じ「経路ごとの フェーザの和の偏角」で、op の入出力はどちらも名前つきの値の dict(table)—— 縞は bias [rad] と height_error、ToF は depth / bias [m] と鍵の名前も単位も違い、位置で 並んだ配列を取り違えて渡す経路が無い(混ぜても黙って嘘を返さない)ので語彙を増やす理由が無い。
+- **L938** _(ja)_ — ★2-D の橋(tb_*)は架からない: 1 入力の op の in は table / images(TYPE_TO_SORT に無い)。
+- **L955** _(ja)_ — ★新しい型の語は作らない。パッチの組・解・描画の結果は kind の印つきの dict(table)で、印の無い table は消費する op が ValueError で拒む。多角形は points((V, 3))、放射は signal((N,))。
+- **L957** _(ja)_ — ★2-D の橋(tb_*)は架からない: 1 入力の op の in は table(TYPE_TO_SORT に無い)。
 
 ## `opsphoton.py`
 
@@ -1861,7 +1861,7 @@
 
 ## `opsspecular.py`
 
-- **L156** _(ja)_ — ★出力は既存の語彙(images / normalmap / image2d / table)だけ。法線マップは photometric と同じ規約なので integrate_normals(高さ)・render_shaded へ無改造で流れる。装置の幾何は table(rig)で、他の op は rig= で受ける(既定の装置なら省略可)。順方向は高さ場(image2d)→ 縞の鏡像(images)。
+- **L160** _(ja)_ — ★出力は既存の語彙(images / normalmap / image2d / table)だけ。法線マップは photometric と同じ規約なので integrate_normals(高さ)・render_shaded へ無改造で流れる。装置の幾何は table(rig)で、他の op は rig= で受ける(既定の装置なら省略可)。順方向は高さ場(image2d)→ 縞の鏡像(images)。
 
 ## `opstomography.py`
 
@@ -1882,7 +1882,7 @@
 - **L871** _(ja)_ — ★奇数次の微分は奇関数。偶数長の ``fftfreq`` はナイキストの ``-1/2`` だけを 持ち対の ``+1/2`` が無いので、そこを残すと実の場の「微分」に虚部が出た (実測 max|Im| 0.34)。hilbert_x と同じくそのビンを 0 にする。
 - **L887** _(ja)_ — ★補集合はここで作る。`1 - lowpass` を呼び出し側に作らせると、 境界の扱いが 2 通りに分かれて lowpass + highpass = 1 が崩れる。
 - **L892** _(ja)_ — ★ナイキストのビンを 0 にする。``fftfreq`` は偶数長で ``-1/2`` だけを 返し、対になる ``+1/2`` が無いので、そこを残すと片側位相が**奇対称を 厳密に満たさない**(実測: 残差 1.6e-09 → 0 にすると 2.3e-16)。 離散ヒルベルト変換で標準的な扱いで、`scipy.signal.hilbert` も同じ。
-- **L2457** _(ja)_ — ★縁は**モザイクのまま**鏡映で 2 画素広げてから抜く。広げ幅が偶数で ``reflect`` (縁の画素を重ねない鏡映)なら 2x2 の位相が保たれる。マスク後の面を伸ばすと 未計測の 0 が縁に写り、一様な場でも縁が暗くなった(実測 16 画素)。
+- **L2746** _(ja)_ — ★縁は**モザイクのまま**鏡映で 2 画素広げてから抜く。広げ幅が偶数で ``reflect`` (縁の画素を重ねない鏡映)なら 2x2 の位相が保たれる。マスク後の面を伸ばすと 未計測の 0 が縁に写り、一様な場でも縁が暗くなった(実測 16 画素)。
 
 ## `optscene.py`
 
@@ -2488,9 +2488,9 @@
 ## `tests/test_opdocs.py`
 
 - **L212** — ★2026-09-03：由于所有 backend 的 _safe 都汇聚到了 backend_safe.guard，所以按 guard 立起的结构化标记来判定，而不是按 qualname 的字符串匹配（guard 也会在 qualname 里留下 "_safe(...)"，但那是给显示用的）。
-- **L767** _(ja)_ — ★2026-10-12: 図が無い理由(``gen_op_figures.DOMAIN_MISMATCH`` の値)も ``T()`` を通すので、その表の原文もキーとして正しい
-- **L883** _(ja)_ — ★2026-10-12: 本文の訳が 2,212 本そろい、実データに「本文だけ未訳」の op が無くなった (以前はここで実在の頁を 1 枚選んでいた → StopIteration)。将来 op を足した瞬間に通る道なので、 本文の訳を 1 本だけ外した状態で生成器を直接呼んで固定する(test_notice_when_nothing_is_translated と同じ作法)。
-- **L1236** — ★没找到的原因：`ops.REGISTRY`（899）与 2-D 笔记（899）一致，所以**只要从 registry 一侧计数就会看起来「零缺失」**。曾经这样下结论并搞错了。所以这个门从跨 tier 的索引一侧计数（memory: feedback_search_all_tiers_before_declaring_a_gap）。 --------------------------------------------------------------------------- #
+- **L768** _(ja)_ — ★2026-10-12: 図が無い理由(``gen_op_figures.DOMAIN_MISMATCH`` の値)も ``T()`` を通すので、その表の原文もキーとして正しい
+- **L884** _(ja)_ — ★2026-10-12: 本文の訳が 2,212 本そろい、実データに「本文だけ未訳」の op が無くなった (以前はここで実在の頁を 1 枚選んでいた → StopIteration)。将来 op を足した瞬間に通る道なので、 本文の訳を 1 本だけ外した状態で生成器を直接呼んで固定する(test_notice_when_nothing_is_translated と同じ作法)。
+- **L1237** — ★没找到的原因：`ops.REGISTRY`（899）与 2-D 笔记（899）一致，所以**只要从 registry 一侧计数就会看起来「零缺失」**。曾经这样下结论并搞错了。所以这个门从跨 tier 的索引一侧计数（memory: feedback_search_all_tiers_before_declaring_a_gap）。 --------------------------------------------------------------------------- #
 
 ## `tests/test_optdraw.py`
 

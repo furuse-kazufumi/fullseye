@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3539,
- "n_notes": 3545,
+ "n_ops": 3541,
+ "n_notes": 3547,
  "notes": {
   "vol_dilate": [
    {
@@ -29992,6 +29992,15 @@
     "path": "docs/ops/optics/polarization/mueller_from_intensities.md"
    }
   ],
+  "mueller_partial_polarizer": [
+   {
+    "op": "mueller_partial_polarizer",
+    "dim": "optics",
+    "category": "polarization",
+    "out": "matrix",
+    "path": "docs/ops/optics/polarization/mueller_partial_polarizer.md"
+   }
+  ],
   "polarization_demosaic": [
    {
     "op": "polarization_demosaic",
@@ -34719,6 +34728,16 @@
     "in": "polsweep",
     "out": "stokes",
     "path": "docs/ops/specular/polarization/polarization_stokes.md"
+   }
+  ],
+  "polarization_stokes_map": [
+   {
+    "op": "polarization_stokes_map",
+    "dim": "specular",
+    "category": "polarization",
+    "in": "polsweep",
+    "out": "table",
+    "path": "docs/ops/specular/polarization/polarization_stokes_map.md"
    }
   ],
   "brdf_blinn_phong": [

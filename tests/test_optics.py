@@ -860,6 +860,7 @@ def _ledger_args():
                                              np.array([1.0 + 0j, 0.0 + 0j])),
         "stokes_from_jones": (np.array([1.0 + 0j, 0.0 + 0j]),),
         "mueller_element": (),
+        "mueller_partial_polarizer": (),
         "mueller_apply": (O.mueller_element("polarizer"),
                           np.array([1.0, 0.0, 0.0, 0.0])),
         "stokes_analyze": (np.array([1.0, 1.0, 0.0, 0.0]),),
@@ -919,7 +920,8 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # 2026-10-20: 3 次元のシーンを処方どおりのレンズ越しに撮る(lensrender)8 op(415 → 423)。
     # 2026-10-20: 製造公差・補償・歩留まり(lenstol)8 op(423 → 431)。
     # 2026-10-20: spectral_integral_table 1 op を追加。
-    assert len(opsoptics.OPSOPTICS) == 464
+    # 2026-10-23: 有限の消光比の偏光子 mueller_partial_polarizer 1 op(464 → 465)。
+    assert len(opsoptics.OPSOPTICS) == 465
     assert len(opsoptics.list_ops("tolerancing")) == 8
     assert len(opsoptics.list_ops("omni360")) == 24
     assert len(opsoptics.list_ops("grating_interf")) == 8
@@ -970,8 +972,9 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # half lives in raytrace (its own ledger checks are in tests/test_raytrace.py)
     from_optics = {n for n, m in opsoptics.OPSOPTICS.items() if m["module"] == "optics"}
     assert from_optics == set(O.OPTICS) == set(O.__all__) & set(O.OPTICS)
-    assert len(from_optics) == 31                       # 18 + 3 pupil-shape (2026-09-15) + 4 polarisation camera (2026-09-18)
+    assert len(from_optics) == 32                       # 18 + 3 pupil-shape (2026-09-15) + 4 polarisation camera (2026-09-18)
     #                                                   + 2 四f 光学プロセッサ (2026-09-26)
+    #                                                   + 1 有限消光比の偏光子 (2026-10-23)
     assert all(m["module"] == "raytrace" for n, m in opsoptics.OPSOPTICS.items()
                if m["category"] == "design")
     assert all(m["module"] == "lensimage" for n, m in opsoptics.OPSOPTICS.items()
