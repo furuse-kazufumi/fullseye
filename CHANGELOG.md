@@ -19,6 +19,26 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - PoC `examples/poc_fourier_ptychography.py`(収蔵 2026.277、産業検査の棟。元の枝の仮番 2026.243 は master で別の展示が使っているので振り直した): 4 倍 / NA 0.1 で 20 倍 / NA 0.40 と同じ G9 E5 まで分解、位相・反射型の段差、重なりと収束(境が 35 % を挟む、残差だけでは見抜けない)、瞳の推定、LED のずれ、k の符号の双子。公開の FP データの章は CC BY / CC0 ではないので repo に入れず、データがあるときだけ走る。
 - ★効かないノブを台帳に足さない: 元の枝は `dead_knob` の負債に 3 行(`fp_design.boundary_tolerance_na` / `fp_usaf_target.phase_rad` / `fp_reconstruct.led_start`)を足していた。探針の入力を効く条件(境の近くの NA_obj・振幅と位相の両方の物体 `kind="both"`・LED の補正つき)に替えて 0 行にした。
 
+### 修正 — 映像の物理整合性 op の入口検査(敵対的レビュー 2026-10-23、所見 8 件を一件ずつ再現してから)
+
+- `ballistic_vs_thrust` は、推力側の RSS が離散化の床 `rss_floor`(RK4 格子を標本時刻へ線形補間する誤差 ≤ a dt²/8 の平方和)の
+  10 倍を下回ると ValueError。雑音ゼロの真値に既定の dt = 1e-3 で ΔAIC = +144(推力の推定値は 3e-14 m/s²)が「結果」として
+  返っていた —— n ln(RSS_b / RSS_t) は丸め屑の比を増幅する。雑音のある軌跡では床は RSS の 1e-3 未満で結果は変わらない。
+  `drag_fit` / `thrust_fit` の返り値に `rss_floor` を足した。
+- `drag_fit` / `thrust_fit` / `ballistic_vs_thrust`: `dt` が標本間隔を超えると模型が標本の間で区分線形になり C_d 0.33 → 3.1 に
+  化けていた(例外も NaN も無し)→ ValueError。`iters` < 1 は放物線の初期値をそのまま「当てはめ」として返していた → ValueError。
+  真空(rho = 0)は C_d が同定できず初期値のまま cond = inf だった → ValueError。ms で渡した t は 2×10⁶ 歩 × 数百回の評価で
+  止まらなかった → 1 回の評価の歩数に上限(2×10⁵)。
+- `thrust_ode` / 当てはめ 3 op: `ball_params` の表の鍵欠落は KeyError、g = nan は NaN の軌跡、mass = 0 は ZeroDivisionError、
+  `t_end` / `dt` の inf は OverflowError か `[nan]`、文字列は TypeError だった → 全部 ValueError(公開面 `fullseye.ledger` は
+  素通しなので op 自身で止める)。`thrust_ode` の歩数は 5×10⁶ まで。`time_stretch_from_gravity` も文字列・bool を拒否。
+- 文書: `thrust_fit` は Gauss–Newton でなく Levenberg–Marquardt(C_d ≥ 0 は射影)。雑音だけの ΔAIC は「−2Δk を中心」でなく
+  「−2Δk を下限」(中央値は −2Δk + 1 ほど、C_d = 0 の壁に当たる当てはめが混じる混合分布)。訳 6 言語を更新。
+- PoC 2026.276: 画面の縁に触れた bbox(辺が切り詰められている)はその発射を引き直す(発射条件の端で 3000 本中 2 本、位置が
+  0.36 m ずれて黙って軌跡に入っていた)。`aic_from_rss` を直接呼んで op の ΔAIC と一致する門を足した(呼び出し例を同じ便で)。
+  閾値のリテラル 10 を `MIN_DELTA` に。
+- tests 15 → 17(雑音ゼロの拒否と床、入口検査 10 種が ValueError で即座に止まること)。fuzz のビルダは 1 mm の雑音を足す。
+
 ### 追加 — 映像の物理整合性(弾道か推力か、時間は引き延ばされていないか)
 
 - `ballistics` に 6 op: `thrust_ode`(重力+抗力+一定の比推力の RK4)、`drag_fit` / `thrust_fit`(軌跡から (p₀, v₀, C_d[, a_T]) を射影つき Levenberg–Marquardt で同定、(N, 3) でも単眼の平面 (N, 2) でも)、`aic_from_rss`、`ballistic_vs_thrust`(2 模型の当てはめと ΔAIC を返す。判定は返さず、閾値は呼び手。節約則)、`time_stretch_from_gravity`(k = √(g_ref / g_fit))。推力つきの当てはめは抗力だけの解を始点に含むので ΔAIC ≥ −2Δk が保たれる。
@@ -70,6 +90,22 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - Studio に4つの作業モード、結果画像だけを一時的に大きくする表示、名前で隠れたパネルを呼び出す検索を追加した。モードごとのパネル調整は保存され、切替時も入力・処理手順・計算結果を変更しない。
 
 - Studio の既存表示モードへ画像別自動・A/B 共通・手動の表示レンジを渡せるようにし、NaN/Inf と範囲外画素の警告、元値と表示値を分けた画素表示、元データまたは画面どおりの表示画像の保存を追加した。
+
+### 追加 — 外観検査の前段 3 op(台帳 `opsaoi`。実装は 2026-09-15 にあったのに本線に入っていなかった)
+
+- なぜ: `flat_field_correct` / `register_image` / `tiled_map` の実装と 45 本の試験は 2026-09-15 に書かれたが、作業枝(`ops2d/aoi-frontend`)に残ったまま本線へ入らず、利用者から見える公開面 4 層(`fullseye.<名前>` / `fullseye.op` / `fullseye.ledger` / `op_find`)では **3 op 中 0 op**、`docs/OP_INDEX.json` でも 0 行だった。測る層(`measure1d` / `blob2d` / `spc`)の**手前**の 3 段 —— 照明の落ちを戻す・基準画像へ合わせる・タイルごとの量を地図にする —— は、それに近い既存 op(`background_flatten` は引き算、`frame_align` は点の対応が要る、`scale.process_tiled` は量を返さない)では代わりにならない。
+- `flat_field_correct`: `(I - D) / (F - D) * target`。cos⁴ ビネット + 暗電流 0.05 の合成で最大相対誤差 1.8e-16、dark を省くと 2.3e-01(隅 / 中心 0.4867、真値 0.1209)。`F - D <= 0` は既定で `ValueError`。
+- `register_image`: 位相相関 + 上標本 DFT の平行移動 1 個を dict で返し、`peak_ratio` / `ambiguous` / `residual` / `consistent` を必ず一緒に返す(回転 5 度は `consistent=False`)。しきい値(`ambiguity_ratio` / `residual_tolerance` / `max_shift`)に NaN・0 以下を渡すと判定が黙って False に固定されるので入口で拒否、`upsample` は 1000 まで(本線に載せる便で追加)。縞(片方向だけ模様が無い)を `ambiguous` が捕まえない限界は docstring と門に固定。
+- `tiled_map`: タイルごとの統計の地図。端数のタイルを黙って捨てず、捨てる指定のときは `dropped_tiles` / `covered_fraction` を返す。
+- 台帳 `opsaoi`(新語なし: `image2d` / `table`)、op ノート 3 枚 + 族ガイド、6 言語の要約訳、Studio ヘルプ、作例 `examples/aoi_frontend_tour.py`、試験 `tests/test_aoi.py`(58 本、docstring の呼び出し例の実行を含む)。探針の dead_knob: `register_image` のしきい値 2 本は乱数の探針入力では量がしきい値から遠く「効かない」と出たので、量がしきい値の間に来る入力(8 px 市松 + 二重写り)を `tools/ledger_contracts._knob_builders` に足した(台帳に足して黙らせてはいない)。
+
+### 追加 — カメラ校正の 21 op を台帳 `opscalib` で公開面へ(実装は 2026-08 からあった)
+
+- なぜ: `calib` / `caltab` / `fit_transform` の実装と 30 本超の試験は 2026-08 から同梱されていたのに、21 op について公開面を引くと `fullseye.<名前>` は **21 中 1**(`camera_calibration` だけ)、`fullseye.ledger` は **0**、`docs/OP_INDEX.json` は **0 行**、`docs/ops` の op ノートは **0 枚**、`fs.op_find("caltab")` は **0 件**だった(2026-10-23 実測)。外部の AI 2 体が独立に「カメラ校正の op は確認できなかった」と報告していた。後: 21 op すべてが `fs.ledger` / OP_INDEX / op ノート / 6 言語の要約訳 / Studio ヘルプから引ける。
+- 台帳 `opscalib`(5 カテゴリ: project / plane / target / calibrate / fit。新語なし: 画素と平面の点は `keypoints`、3-D 点は `points`、3x3・4x4 の同次変換は `matrix`、校正板と結果の dict は `table`)。載せなかった実装(同名で座標規約の違う `vector_to_hom_mat2d`、別名 3 本、相対姿勢の代わりに文字列を返す `binocular_calibration`、歪みを推定しない `mosaic` の歪み込み対応推定)は理由を台帳の docstring に記録。
+- 現行の門に合わせて直したもの(契約変更): 21 op の入口で非有限・空・形違いの入力を `ValueError` にした(以前は NaN の点が NaN の画素に、`cam_par` の鍵の欠けが `KeyError` に、視線と平行な点が inf に、`gen_caltab(1, 1)` が `ZeroDivisionError` に、`points` の無い板が黙って既定の 7x7 板に、`disp_caltab` が画像の無い dict をそのまま返していた)。`hand_eye_calibration` は姿勢 3 未満・回転軸が 1 方向だけ(X の回転が決まらない)を拒否。`vector_to_rigid` / `vector_to_similarity` は src が 1 点に重なる入力を拒否。
+- 探針が見つけた効かないつまみ 2 本を直した(台帳に足して黙らせていない): `gen_caltab` の `spacing` は返りのどこにも効いていなかった → 返りに `create_caltab` と同じ板の記述(`points` [mm] / `spacing`)を足し、そのまま `sim_caltab` / `find_marks_and_pose` に渡せるようにした。`find_marks_and_pose` の `max_reproj_rms` は拒否の線にしか効かない → 拒否の線までの余裕 `reproj_margin` を返す。`thresh` は二値の合成板では動けないので、探針に灰色で片側が暗い板を足した。
+- 族ガイド `docs/ops/calib/guides/camera_calibration.md`(最初の 1 本の回転行列が直交でなかったのを直した)、docstring の呼び出し例と、それを実行する門 `tests/test_opscalib.py`(42 件)。
 
 ### 修正 — 外部報告(0.8.0 の端条件、2026-10-22 受領)
 

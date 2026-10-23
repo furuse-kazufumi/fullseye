@@ -10,31 +10,31 @@
  ],
  "summaries": {
   "drive/thrust_ode": {
-   "fp": "7c43e63af6ad",
-   "en": "RK4 for gravity + drag + a **constant specific thrust** (thrust per unit mass [m/s²], fixed in direction and magnitude in world coordinates). No spin (ω = 0). Returns ``{\"t\" (N,), \"p\" (N, 3), \"v\" (N, 3)}`` (t = 0, dt, …, ≤ t_end). With a zero ``thrust`` it matches :func:`flight_ode` (ω = 0) to 1e-12, and in vacuum (rho = 0) it matches the closed form p₀ + v₀ t + ½ (a_T − g ẑ) t² to 1e-9 (gate). The smallest model for \"almost a rocket\" footage; a thrust fixed to the body that turns with it is only approximated (the shorter the segment, the better).",
-   "zh": "重力 + 阻力 + **恒定比推力**(单位质量的推力 [m/s²],在世界坐标中方向与大小都不变)的 RK4。无自旋(ω = 0)。返回 ``{\"t\" (N,), \"p\" (N, 3), \"v\" (N, 3)}``(t = 0, dt, …, ≤ t_end)。``thrust`` 为零向量时与 :func:`flight_ode`(ω = 0)在 1e-12 内一致;真空(rho = 0)时与闭式 p₀ + v₀ t + ½ (a_T − g ẑ) t² 在 1e-9 内一致(门禁)。这是处理\"几乎是火箭\"的影像的最小模型;推力固定在机体上并随之转向时只是近似(区间越短越好)。",
-   "tw": "重力 + 阻力 + **恆定比推力**(單位質量的推力 [m/s²],在世界座標中方向與大小都不變)的 RK4。無自旋(ω = 0)。回傳 ``{\"t\" (N,), \"p\" (N, 3), \"v\" (N, 3)}``(t = 0, dt, …, ≤ t_end)。``thrust`` 為零向量時與 :func:`flight_ode`(ω = 0)在 1e-12 內一致;真空(rho = 0)時與閉合式 p₀ + v₀ t + ½ (a_T − g ẑ) t² 在 1e-9 內一致(門檻)。這是處理「幾乎是火箭」影像的最小模型;推力固定在機體上並隨之轉向時只是近似(區間越短越好)。",
-   "ko": "중력 + 항력 + **일정한 비추력**(단위 질량당 추력 [m/s²], 세계 좌표에서 방향과 크기가 일정)의 RK4. 스핀은 없습니다(ω = 0). 반환값 ``{\"t\" (N,), \"p\" (N, 3), \"v\" (N, 3)}``(t = 0, dt, …, ≤ t_end). ``thrust``가 영벡터이면 :func:`flight_ode`(ω = 0)와 1e-12로 일치하고, 진공(rho = 0)이면 닫힌 식 p₀ + v₀ t + ½ (a_T − g ẑ) t²와 1e-9로 일치합니다(게이트). \"거의 로켓\"인 영상을 다루는 최소 모형이며, 추력이 기체에 고정되어 방향을 바꾸는 경우는 근사입니다(구간이 짧을수록 좋음).",
-   "de": "RK4 für Schwerkraft + Luftwiderstand + einen **konstanten spezifischen Schub** (Schub pro Masse [m/s²], in Weltkoordinaten nach Richtung und Betrag fest). Kein Spin (ω = 0). Rückgabe ``{\"t\" (N,), \"p\" (N, 3), \"v\" (N, 3)}`` (t = 0, dt, …, ≤ t_end). Bei ``thrust`` = Nullvektor stimmt es mit :func:`flight_ode` (ω = 0) auf 1e-12 überein, im Vakuum (rho = 0) mit der geschlossenen Form p₀ + v₀ t + ½ (a_T − g ẑ) t² auf 1e-9 (Gate). Das kleinste Modell für „fast eine Rakete“-Aufnahmen; ein körperfester, mitdrehender Schub wird nur angenähert (je kürzer der Abschnitt, desto besser).",
-   "hi": "गुरुत्व + drag + **स्थिर specific thrust**(प्रति द्रव्यमान thrust [m/s²], world coordinates में दिशा और परिमाण दोनों स्थिर)का RK4। spin नहीं (ω = 0)। लौटाता है ``{\"t\" (N,), \"p\" (N, 3), \"v\" (N, 3)}``(t = 0, dt, …, ≤ t_end)। ``thrust`` शून्य vector हो तो :func:`flight_ode`(ω = 0)से 1e-12 पर मेल, और निर्वात (rho = 0) में closed form p₀ + v₀ t + ½ (a_T − g ẑ) t² से 1e-9 पर मेल (gate)। \"लगभग रॉकेट\" जैसी footage के लिए सबसे छोटा model; body से जुड़ा, साथ घूमता thrust केवल सन्निकटन है (segment जितना छोटा, उतना बेहतर)।"
+   "fp": "843e51f6e791",
+   "en": "RK4 for gravity + drag + a **constant specific thrust** (thrust per unit mass [m/s²], fixed in direction and magnitude in world coordinates). No spin (ω = 0). Returns ``{\"t\" (N,), \"p\" (N, 3), \"v\" (N, 3)}`` (t = 0, dt, …, ≤ t_end). With a zero ``thrust`` it matches :func:`flight_ode` (ω = 0) to 1e-12, and in vacuum (rho = 0) it matches the closed form p₀ + v₀ t + ½ (a_T − g ẑ) t² to 1e-9 (gate). The smallest model for \"almost a rocket\" footage; a thrust fixed to the body that turns with it is only approximated (the shorter the segment, the better). ``t_end`` / ``dt`` must be finite numbers, ``bp`` the table from :func:`ball_params` (a missing key, a non-finite value or zero mass is a ValueError), and the step count t_end / dt is capped at 5×10⁶ (this stops a t passed in ms instead of seconds).",
+   "zh": "重力 + 阻力 + **恒定比推力**(单位质量的推力 [m/s²],在世界坐标中方向与大小都不变)的 RK4。无自旋(ω = 0)。返回 ``{\"t\" (N,), \"p\" (N, 3), \"v\" (N, 3)}``(t = 0, dt, …, ≤ t_end)。``thrust`` 为零向量时与 :func:`flight_ode`(ω = 0)在 1e-12 内一致;真空(rho = 0)时与闭式 p₀ + v₀ t + ½ (a_T − g ẑ) t² 在 1e-9 内一致(门禁)。这是处理\"几乎是火箭\"的影像的最小模型;推力固定在机体上并随之转向时只是近似(区间越短越好)。``t_end`` / ``dt`` 须为有限数,``bp`` 须为 :func:`ball_params` 的表(缺键、非有限、质量为 0 均为 ValueError),步数 t_end / dt 上限为 5×10⁶(以此拦住以 ms 而非秒传入的 t)。",
+   "tw": "重力 + 阻力 + **恆定比推力**(單位質量的推力 [m/s²],在世界座標中方向與大小都不變)的 RK4。無自旋(ω = 0)。回傳 ``{\"t\" (N,), \"p\" (N, 3), \"v\" (N, 3)}``(t = 0, dt, …, ≤ t_end)。``thrust`` 為零向量時與 :func:`flight_ode`(ω = 0)在 1e-12 內一致;真空(rho = 0)時與閉合式 p₀ + v₀ t + ½ (a_T − g ẑ) t² 在 1e-9 內一致(門檻)。這是處理「幾乎是火箭」影像的最小模型;推力固定在機體上並隨之轉向時只是近似(區間越短越好)。``t_end`` / ``dt`` 須為有限數,``bp`` 須為 :func:`ball_params` 的表(缺鍵、非有限、質量為 0 均為 ValueError),步數 t_end / dt 上限為 5×10⁶(以此攔住以 ms 而非秒傳入的 t)。",
+   "ko": "중력 + 항력 + **일정한 비추력**(단위 질량당 추력 [m/s²], 세계 좌표에서 방향과 크기가 일정)의 RK4. 스핀은 없습니다(ω = 0). 반환값 ``{\"t\" (N,), \"p\" (N, 3), \"v\" (N, 3)}``(t = 0, dt, …, ≤ t_end). ``thrust``가 영벡터이면 :func:`flight_ode`(ω = 0)와 1e-12로 일치하고, 진공(rho = 0)이면 닫힌 식 p₀ + v₀ t + ½ (a_T − g ẑ) t²와 1e-9로 일치합니다(게이트). \"거의 로켓\"인 영상을 다루는 최소 모형이며, 추력이 기체에 고정되어 방향을 바꾸는 경우는 근사입니다(구간이 짧을수록 좋음). ``t_end`` / ``dt``는 유한한 수, ``bp``는 :func:`ball_params`의 표(키 누락·비유한·질량 0은 ValueError)이며, 걸음 수 t_end / dt는 5×10⁶까지입니다(초가 아니라 ms로 넘긴 t를 여기서 막음).",
+   "de": "RK4 für Schwerkraft + Luftwiderstand + einen **konstanten spezifischen Schub** (Schub pro Masse [m/s²], in Weltkoordinaten nach Richtung und Betrag fest). Kein Spin (ω = 0). Rückgabe ``{\"t\" (N,), \"p\" (N, 3), \"v\" (N, 3)}`` (t = 0, dt, …, ≤ t_end). Bei ``thrust`` = Nullvektor stimmt es mit :func:`flight_ode` (ω = 0) auf 1e-12 überein, im Vakuum (rho = 0) mit der geschlossenen Form p₀ + v₀ t + ½ (a_T − g ẑ) t² auf 1e-9 (Gate). Das kleinste Modell für „fast eine Rakete“-Aufnahmen; ein körperfester, mitdrehender Schub wird nur angenähert (je kürzer der Abschnitt, desto besser). ``t_end`` / ``dt`` müssen endliche Zahlen sein, ``bp`` die Tabelle aus :func:`ball_params` (fehlender Schlüssel, nicht-endlicher Wert oder Masse 0 ist ein ValueError), und die Schrittzahl t_end / dt ist auf 5×10⁶ begrenzt (das stoppt ein in ms statt Sekunden übergebenes t).",
+   "hi": "गुरुत्व + drag + **स्थिर specific thrust**(प्रति द्रव्यमान thrust [m/s²], world coordinates में दिशा और परिमाण दोनों स्थिर)का RK4। spin नहीं (ω = 0)। लौटाता है ``{\"t\" (N,), \"p\" (N, 3), \"v\" (N, 3)}``(t = 0, dt, …, ≤ t_end)। ``thrust`` शून्य vector हो तो :func:`flight_ode`(ω = 0)से 1e-12 पर मेल, और निर्वात (rho = 0) में closed form p₀ + v₀ t + ½ (a_T − g ẑ) t² से 1e-9 पर मेल (gate)। \"लगभग रॉकेट\" जैसी footage के लिए सबसे छोटा model; body से जुड़ा, साथ घूमता thrust केवल सन्निकटन है (segment जितना छोटा, उतना बेहतर)। ``t_end`` / ``dt`` finite numbers होने चाहिए, ``bp`` :func:`ball_params` की table (key गायब, non-finite या mass 0 पर ValueError), और steps t_end / dt की सीमा 5×10⁶ है (seconds की जगह ms में दिया t यहीं रुकता है)।"
   },
   "drive/thrust_fit": {
-   "fp": "58ca8c6e5b63",
-   "en": "Fits the \"gravity + drag + constant specific thrust\" model to a trajectory (t_i, p_i) with **10 parameters (p₀, v₀, C_d, a_T)** by Gauss–Newton (finite-difference Jacobian). ``p`` is either (N, 3) world points or the **(N, 2) planar (x, z)** track lifted from a monocular side view (then the y component has neither observation nor unknown: 7 parameters, ``n`` = 2 × samples). ``bp`` is a :func:`ball_params` table (mass, frontal area, air density, g; ``radius`` is used only to give the frontal area — for a car pass the r whose A = πr² is the frontal area). Returns ``{\"p0\", \"v0\", \"cd\", \"thrust\" (3,), \"thrust_norm\", \"rms\", \"rss\", \"n\", \"k\", \"dims\", \"cond\", \"iters\", \"t0\"}`` (``n`` = number of residuals, ``k`` = number of parameters moved; the inputs of :func:`aic_from_rss`). From a thrusted ground-truth trajectory a_T returns to 1e-5 m/s²; from a trajectory made with zero thrust ``thrust_norm`` is 1e-5 or less (gate).",
-   "zh": "用 Gauss–Newton(有限差分雅可比)以 **(p₀, v₀, C_d, a_T) 共 10 个参数** 把\"重力 + 阻力 + 恒定比推力\"模型拟合到轨迹 (t_i, p_i)。``p`` 可以是 (N, 3) 的世界坐标,也可以是从单目侧视图起出的 **(N, 2) 平面 (x, z)**(此时 y 分量既无观测也无未知数:7 个参数,``n`` = 2 × 点数)。``bp`` 是 :func:`ball_params` 的表(质量、迎风面积、空气密度、g;``radius`` 只用来给出迎风面积——对汽车请传入使 A = πr² 等于迎风面积的 r)。返回 ``{\"p0\", \"v0\", \"cd\", \"thrust\" (3,), \"thrust_norm\", \"rms\", \"rss\", \"n\", \"k\", \"dims\", \"cond\", \"iters\", \"t0\"}``(``n`` 为残差个数,``k`` 为被移动的参数数;即 :func:`aic_from_rss` 的输入)。真值带推力的轨迹可将 a_T 还原到 1e-5 m/s²;零推力生成的轨迹 ``thrust_norm`` 不超过 1e-5(门禁)。",
-   "tw": "用 Gauss–Newton(有限差分雅可比)以 **(p₀, v₀, C_d, a_T) 共 10 個參數** 把「重力 + 阻力 + 恆定比推力」模型擬合到軌跡 (t_i, p_i)。``p`` 可以是 (N, 3) 的世界座標,也可以是從單目側視圖起出的 **(N, 2) 平面 (x, z)**(此時 y 分量既無觀測也無未知數:7 個參數,``n`` = 2 × 點數)。``bp`` 是 :func:`ball_params` 的表(質量、迎風面積、空氣密度、g;``radius`` 只用來給出迎風面積——對汽車請傳入使 A = πr² 等於迎風面積的 r)。回傳 ``{\"p0\", \"v0\", \"cd\", \"thrust\" (3,), \"thrust_norm\", \"rms\", \"rss\", \"n\", \"k\", \"dims\", \"cond\", \"iters\", \"t0\"}``(``n`` 為殘差個數,``k`` 為被移動的參數數;即 :func:`aic_from_rss` 的輸入)。真值帶推力的軌跡可將 a_T 還原到 1e-5 m/s²;零推力生成的軌跡 ``thrust_norm`` 不超過 1e-5(門檻)。",
-   "ko": "궤적 (t_i, p_i)에 \"중력 + 항력 + 일정한 비추력\" 모형을 **(p₀, v₀, C_d, a_T) 10개 파라미터**로 Gauss–Newton(유한차분 야코비안)으로 맞춥니다. ``p``는 (N, 3) 세계 좌표이거나, 단안 측면 영상에서 일으킨 **(N, 2) 평면 (x, z)**(이때 y 성분은 관측도 미지수도 없으므로 7개 파라미터, ``n`` = 2 × 점 수)입니다. ``bp``는 :func:`ball_params`의 표(질량·전면적·공기 밀도·g. ``radius``는 전면적을 주기 위해서만 사용: 자동차라면 A = πr²가 전면적이 되는 r을 넘깁니다). 반환값 ``{\"p0\", \"v0\", \"cd\", \"thrust\" (3,), \"thrust_norm\", \"rms\", \"rss\", \"n\", \"k\", \"dims\", \"cond\", \"iters\", \"t0\"}``(``n``은 잔차 개수, ``k``는 움직인 파라미터 수. :func:`aic_from_rss`의 입력). 추력이 있는 참값 궤적이면 a_T는 1e-5 m/s²로 돌아오고, 추력 0으로 만든 궤적이면 ``thrust_norm``은 1e-5 이하입니다(게이트).",
-   "de": "Passt das Modell „Schwerkraft + Luftwiderstand + konstanter spezifischer Schub“ mit **10 Parametern (p₀, v₀, C_d, a_T)** per Gauß–Newton (Finite-Differenzen-Jacobi) an eine Trajektorie (t_i, p_i) an. ``p`` ist entweder (N, 3) in Weltkoordinaten oder die aus einer monokularen Seitenansicht gewonnene **(N, 2) ebene Bahn (x, z)** (dann hat die y-Komponente weder Beobachtung noch Unbekannte: 7 Parameter, ``n`` = 2 × Stützstellen). ``bp`` ist eine :func:`ball_params`-Tabelle (Masse, Stirnfläche, Luftdichte, g; ``radius`` dient nur der Stirnfläche — für ein Auto das r übergeben, dessen A = πr² die Stirnfläche ist). Rückgabe ``{\"p0\", \"v0\", \"cd\", \"thrust\" (3,), \"thrust_norm\", \"rms\", \"rss\", \"n\", \"k\", \"dims\", \"cond\", \"iters\", \"t0\"}`` (``n`` = Zahl der Residuen, ``k`` = Zahl der bewegten Parameter; die Eingaben von :func:`aic_from_rss`). Aus einer Wahrheitsbahn mit Schub kehrt a_T auf 1e-5 m/s² zurück; aus einer ohne Schub erzeugten Bahn ist ``thrust_norm`` höchstens 1e-5 (Gate).",
-   "hi": "trajectory (t_i, p_i) पर \"गुरुत्व + drag + स्थिर specific thrust\" model को **(p₀, v₀, C_d, a_T) के 10 parameters** से Gauss–Newton (finite-difference Jacobian) द्वारा fit करता है। ``p`` या तो (N, 3) world points है या monocular side view से उठाया **(N, 2) planar (x, z)** track (तब y घटक का न observation है न unknown: 7 parameters, ``n`` = 2 × samples)। ``bp`` :func:`ball_params` की table है (mass, frontal area, air density, g; ``radius`` केवल frontal area देने के लिए — car के लिए वह r दें जिसका A = πr² frontal area हो)। लौटाता है ``{\"p0\", \"v0\", \"cd\", \"thrust\" (3,), \"thrust_norm\", \"rms\", \"rss\", \"n\", \"k\", \"dims\", \"cond\", \"iters\", \"t0\"}``(``n`` = residuals की संख्या, ``k`` = हिलाए गए parameters की संख्या; :func:`aic_from_rss` के input)। thrust वाली ground-truth trajectory से a_T 1e-5 m/s² पर लौटता है; शून्य thrust से बनी trajectory में ``thrust_norm`` 1e-5 या कम रहता है (gate)।"
+   "fp": "8e5f3975dc77",
+   "en": "Fits the \"gravity + drag + constant specific thrust\" model to a trajectory (t_i, p_i) with **10 parameters (p₀, v₀, C_d, a_T)** by Levenberg–Marquardt (finite-difference Jacobian, C_d ≥ 0 kept by projection). ``p`` is either (N, 3) world points or the **(N, 2) planar (x, z)** track lifted from a monocular side view (then the y component has neither observation nor unknown: 7 parameters, ``n`` = 2 × samples). ``bp`` is a :func:`ball_params` table (mass, frontal area, air density, g; ``radius`` is used only to give the frontal area — for a car pass the r whose A = πr² is the frontal area). Returns ``{\"p0\", \"v0\", \"cd\", \"thrust\" (3,), \"thrust_norm\", \"rms\", \"rss\", \"rss_floor\", \"n\", \"k\", \"dims\", \"cond\", \"iters\", \"t0\"}`` (``n`` = number of residuals, ``k`` = number of parameters moved; the inputs of :func:`aic_from_rss`). From a thrusted ground-truth trajectory a_T returns to 1e-5 m/s²; from a trajectory made with zero thrust ``thrust_norm`` is 1e-5 or less (gate). ``rss_floor`` is the upper bound of the sum of squares that the error ≤ a dt²/8 of linearly interpolating the RK4 grid onto the sample times can leave in the residuals. ``dt`` must not exceed the sample spacing (beyond it the model is piecewise linear between samples), ``iters`` must be ≥ 1, and in vacuum (rho = 0) C_d cannot be identified — each is a ValueError.",
+   "zh": "用 Levenberg–Marquardt(有限差分雅可比,C_d ≥ 0 由投影保持)以 **(p₀, v₀, C_d, a_T) 共 10 个参数** 把\"重力 + 阻力 + 恒定比推力\"模型拟合到轨迹 (t_i, p_i)。``p`` 可以是 (N, 3) 的世界坐标,也可以是从单目侧视图起出的 **(N, 2) 平面 (x, z)**(此时 y 分量既无观测也无未知数:7 个参数,``n`` = 2 × 点数)。``bp`` 是 :func:`ball_params` 的表(质量、迎风面积、空气密度、g;``radius`` 只用来给出迎风面积——对汽车请传入使 A = πr² 等于迎风面积的 r)。返回 ``{\"p0\", \"v0\", \"cd\", \"thrust\" (3,), \"thrust_norm\", \"rms\", \"rss\", \"rss_floor\", \"n\", \"k\", \"dims\", \"cond\", \"iters\", \"t0\"}``(``n`` 为残差个数,``k`` 为被移动的参数数;即 :func:`aic_from_rss` 的输入)。真值带推力的轨迹可将 a_T 还原到 1e-5 m/s²;零推力生成的轨迹 ``thrust_norm`` 不超过 1e-5(门禁)。``rss_floor`` 是把 RK4 网格线性插值到采样时刻的误差 ≤ a dt²/8 可能留在残差中的平方和上界。``dt`` 不得超过采样间隔(超过则模型在采样点之间成为分段线性),``iters`` ≥ 1,真空(rho = 0)下 C_d 不可辨识——均为 ValueError。",
+   "tw": "用 Levenberg–Marquardt(有限差分雅可比,C_d ≥ 0 由投影保持)以 **(p₀, v₀, C_d, a_T) 共 10 個參數** 把「重力 + 阻力 + 恆定比推力」模型擬合到軌跡 (t_i, p_i)。``p`` 可以是 (N, 3) 的世界座標,也可以是從單目側視圖起出的 **(N, 2) 平面 (x, z)**(此時 y 分量既無觀測也無未知數:7 個參數,``n`` = 2 × 點數)。``bp`` 是 :func:`ball_params` 的表(質量、迎風面積、空氣密度、g;``radius`` 只用來給出迎風面積——對汽車請傳入使 A = πr² 等於迎風面積的 r)。回傳 ``{\"p0\", \"v0\", \"cd\", \"thrust\" (3,), \"thrust_norm\", \"rms\", \"rss\", \"rss_floor\", \"n\", \"k\", \"dims\", \"cond\", \"iters\", \"t0\"}``(``n`` 為殘差個數,``k`` 為被移動的參數數;即 :func:`aic_from_rss` 的輸入)。真值帶推力的軌跡可將 a_T 還原到 1e-5 m/s²;零推力生成的軌跡 ``thrust_norm`` 不超過 1e-5(門檻)。``rss_floor`` 是把 RK4 網格線性內插到取樣時刻的誤差 ≤ a dt²/8 可能留在殘差中的平方和上界。``dt`` 不得超過取樣間隔(超過則模型在取樣點之間成為分段線性),``iters`` ≥ 1,真空(rho = 0)下 C_d 不可辨識——均為 ValueError。",
+   "ko": "궤적 (t_i, p_i)에 \"중력 + 항력 + 일정한 비추력\" 모형을 **(p₀, v₀, C_d, a_T) 10개 파라미터**로 Levenberg–Marquardt(유한차분 야코비안, C_d ≥ 0은 사영으로 유지)로 맞춥니다. ``p``는 (N, 3) 세계 좌표이거나, 단안 측면 영상에서 일으킨 **(N, 2) 평면 (x, z)**(이때 y 성분은 관측도 미지수도 없으므로 7개 파라미터, ``n`` = 2 × 점 수)입니다. ``bp``는 :func:`ball_params`의 표(질량·전면적·공기 밀도·g. ``radius``는 전면적을 주기 위해서만 사용: 자동차라면 A = πr²가 전면적이 되는 r을 넘깁니다). 반환값 ``{\"p0\", \"v0\", \"cd\", \"thrust\" (3,), \"thrust_norm\", \"rms\", \"rss\", \"rss_floor\", \"n\", \"k\", \"dims\", \"cond\", \"iters\", \"t0\"}``(``n``은 잔차 개수, ``k``는 움직인 파라미터 수. :func:`aic_from_rss`의 입력). 추력이 있는 참값 궤적이면 a_T는 1e-5 m/s²로 돌아오고, 추력 0으로 만든 궤적이면 ``thrust_norm``은 1e-5 이하입니다(게이트). ``rss_floor``는 RK4 격자를 표본 시각으로 선형보간하는 오차 ≤ a dt²/8가 잔차에 남길 수 있는 제곱합의 상한입니다. ``dt``는 표본 간격 이하(넘으면 모형이 표본 사이에서 구분선형이 됨), ``iters`` ≥ 1, 진공(rho = 0)에서는 C_d를 동정할 수 없으므로 모두 ValueError입니다.",
+   "de": "Passt das Modell „Schwerkraft + Luftwiderstand + konstanter spezifischer Schub“ mit **10 Parametern (p₀, v₀, C_d, a_T)** per Levenberg–Marquardt (Finite-Differenzen-Jacobi, C_d ≥ 0 durch Projektion) an eine Trajektorie (t_i, p_i) an. ``p`` ist entweder (N, 3) in Weltkoordinaten oder die aus einer monokularen Seitenansicht gewonnene **(N, 2) ebene Bahn (x, z)** (dann hat die y-Komponente weder Beobachtung noch Unbekannte: 7 Parameter, ``n`` = 2 × Stützstellen). ``bp`` ist eine :func:`ball_params`-Tabelle (Masse, Stirnfläche, Luftdichte, g; ``radius`` dient nur der Stirnfläche — für ein Auto das r übergeben, dessen A = πr² die Stirnfläche ist). Rückgabe ``{\"p0\", \"v0\", \"cd\", \"thrust\" (3,), \"thrust_norm\", \"rms\", \"rss\", \"rss_floor\", \"n\", \"k\", \"dims\", \"cond\", \"iters\", \"t0\"}`` (``n`` = Zahl der Residuen, ``k`` = Zahl der bewegten Parameter; die Eingaben von :func:`aic_from_rss`). Aus einer Wahrheitsbahn mit Schub kehrt a_T auf 1e-5 m/s² zurück; aus einer ohne Schub erzeugten Bahn ist ``thrust_norm`` höchstens 1e-5 (Gate). ``rss_floor`` ist die obere Schranke der Quadratsumme, die der Fehler ≤ a dt²/8 der linearen Interpolation des RK4-Gitters auf die Abtastzeiten in den Residuen hinterlassen kann. ``dt`` darf den Abtastabstand nicht überschreiten (sonst ist das Modell zwischen den Abtastwerten stückweise linear), ``iters`` muss ≥ 1 sein, und im Vakuum (rho = 0) ist C_d nicht identifizierbar — jeweils ein ValueError.",
+   "hi": "trajectory (t_i, p_i) पर \"गुरुत्व + drag + स्थिर specific thrust\" model को **(p₀, v₀, C_d, a_T) के 10 parameters** से Levenberg–Marquardt (finite-difference Jacobian, C_d ≥ 0 projection से) द्वारा fit करता है। ``p`` या तो (N, 3) world points है या monocular side view से उठाया **(N, 2) planar (x, z)** track (तब y घटक का न observation है न unknown: 7 parameters, ``n`` = 2 × samples)। ``bp`` :func:`ball_params` की table है (mass, frontal area, air density, g; ``radius`` केवल frontal area देने के लिए — car के लिए वह r दें जिसका A = πr² frontal area हो)। लौटाता है ``{\"p0\", \"v0\", \"cd\", \"thrust\" (3,), \"thrust_norm\", \"rms\", \"rss\", \"rss_floor\", \"n\", \"k\", \"dims\", \"cond\", \"iters\", \"t0\"}``(``n`` = residuals की संख्या, ``k`` = हिलाए गए parameters की संख्या; :func:`aic_from_rss` के input)। thrust वाली ground-truth trajectory से a_T 1e-5 m/s² पर लौटता है; शून्य thrust से बनी trajectory में ``thrust_norm`` 1e-5 या कम रहता है (gate)। ``rss_floor`` वह ऊपरी सीमा (sum of squares) है जो RK4 grid को sample times पर linear interpolate करने की त्रुटि ≤ a dt²/8 residuals में छोड़ सकती है। ``dt`` sample spacing से अधिक नहीं हो सकता (अन्यथा model samples के बीच piecewise linear हो जाता है), ``iters`` ≥ 1, और vacuum (rho = 0) में C_d पहचाना नहीं जा सकता — हर एक ValueError।"
   },
   "drive/drag_fit": {
-   "fp": "9c5e9980d0ff",
-   "en": "Fits the \"gravity + drag\" model to a trajectory (t_i, p_i) with **7 parameters (p₀, v₀, C_d)** (5 for planar input) — the no-thrust version of :func:`thrust_fit` (:func:`flight_fit` keeps C_d known with 6 parameters; this one identifies C_d too). The result keys are those of :func:`thrust_fit`, with ``thrust`` a zero vector. From a ground-truth trajectory C_d returns to 1e-4 (gate).",
-   "zh": "以 **(p₀, v₀, C_d) 共 7 个参数**(平面输入则为 5 个)把\"重力 + 阻力\"模型拟合到轨迹 (t_i, p_i)——是 :func:`thrust_fit` 的无推力版本(:func:`flight_fit` 把 C_d 视为已知、6 个参数;这里连 C_d 一起辨识)。返回键与 :func:`thrust_fit` 相同,``thrust`` 为零向量。真值轨迹可将 C_d 还原到 1e-4(门禁)。",
-   "tw": "以 **(p₀, v₀, C_d) 共 7 個參數**(平面輸入則為 5 個)把「重力 + 阻力」模型擬合到軌跡 (t_i, p_i)——是 :func:`thrust_fit` 的無推力版本(:func:`flight_fit` 把 C_d 視為已知、6 個參數;這裡連 C_d 一起辨識)。回傳鍵與 :func:`thrust_fit` 相同,``thrust`` 為零向量。真值軌跡可將 C_d 還原到 1e-4(門檻)。",
-   "ko": "궤적 (t_i, p_i)에 \"중력 + 항력\" 모형을 **(p₀, v₀, C_d) 7개 파라미터**(평면 입력이면 5개)로 맞춥니다 — :func:`thrust_fit`의 추력 없는 판(:func:`flight_fit`은 C_d를 기지로 두고 6개 파라미터, 여기서는 C_d도 동정). 반환 키는 :func:`thrust_fit`과 같고 ``thrust``는 영벡터입니다. 참값 궤적이면 C_d는 1e-4로 돌아옵니다(게이트).",
-   "de": "Passt das Modell „Schwerkraft + Luftwiderstand“ mit **7 Parametern (p₀, v₀, C_d)** (5 bei ebener Eingabe) an eine Trajektorie (t_i, p_i) an — die schublose Variante von :func:`thrust_fit` (:func:`flight_fit` hält C_d bekannt mit 6 Parametern; hier wird auch C_d identifiziert). Die Rückgabeschlüssel sind die von :func:`thrust_fit`, ``thrust`` ist der Nullvektor. Aus einer Wahrheitsbahn kehrt C_d auf 1e-4 zurück (Gate).",
-   "hi": "trajectory (t_i, p_i) पर \"गुरुत्व + drag\" model को **(p₀, v₀, C_d) के 7 parameters**(planar input में 5)से fit करता है — :func:`thrust_fit` का बिना-thrust रूप (:func:`flight_fit` C_d को ज्ञात मानकर 6 parameters रखता है; यह C_d भी पहचानता है)। result keys :func:`thrust_fit` जैसी हैं, ``thrust`` शून्य vector है। ground-truth trajectory से C_d 1e-4 पर लौटता है (gate)।"
+   "fp": "d432f0b56895",
+   "en": "Fits the \"gravity + drag\" model to a trajectory (t_i, p_i) with **7 parameters (p₀, v₀, C_d)** (5 for planar input) — the no-thrust version of :func:`thrust_fit` (:func:`flight_fit` keeps C_d known with 6 parameters; this one identifies C_d too). The result keys and the entrance checks (``dt`` ≤ sample spacing, ``iters`` ≥ 1, vacuum refused) are those of :func:`thrust_fit`, with ``thrust`` a zero vector. From a ground-truth trajectory C_d returns to 1e-4 (gate).",
+   "zh": "以 **(p₀, v₀, C_d) 共 7 个参数**(平面输入则为 5 个)把\"重力 + 阻力\"模型拟合到轨迹 (t_i, p_i)——是 :func:`thrust_fit` 的无推力版本(:func:`flight_fit` 把 C_d 视为已知、6 个参数;这里连 C_d 一起辨识)。返回键与入口检查(``dt`` ≤ 采样间隔、``iters`` ≥ 1、拒绝真空)与 :func:`thrust_fit` 相同,``thrust`` 为零向量。真值轨迹可将 C_d 还原到 1e-4(门禁)。",
+   "tw": "以 **(p₀, v₀, C_d) 共 7 個參數**(平面輸入則為 5 個)把「重力 + 阻力」模型擬合到軌跡 (t_i, p_i)——是 :func:`thrust_fit` 的無推力版本(:func:`flight_fit` 把 C_d 視為已知、6 個參數;這裡連 C_d 一起辨識)。回傳鍵與入口檢查(``dt`` ≤ 取樣間隔、``iters`` ≥ 1、拒絕真空)與 :func:`thrust_fit` 相同,``thrust`` 為零向量。真值軌跡可將 C_d 還原到 1e-4(門檻)。",
+   "ko": "궤적 (t_i, p_i)에 \"중력 + 항력\" 모형을 **(p₀, v₀, C_d) 7개 파라미터**(평면 입력이면 5개)로 맞춥니다 — :func:`thrust_fit`의 추력 없는 판(:func:`flight_fit`은 C_d를 기지로 두고 6개 파라미터, 여기서는 C_d도 동정). 반환 키와 입구 검사(``dt`` ≤ 표본 간격, ``iters`` ≥ 1, 진공은 거부)는 :func:`thrust_fit`과 같고 ``thrust``는 영벡터입니다. 참값 궤적이면 C_d는 1e-4로 돌아옵니다(게이트).",
+   "de": "Passt das Modell „Schwerkraft + Luftwiderstand“ mit **7 Parametern (p₀, v₀, C_d)** (5 bei ebener Eingabe) an eine Trajektorie (t_i, p_i) an — die schublose Variante von :func:`thrust_fit` (:func:`flight_fit` hält C_d bekannt mit 6 Parametern; hier wird auch C_d identifiziert). Die Rückgabeschlüssel und die Eingangsprüfungen (``dt`` ≤ Abtastabstand, ``iters`` ≥ 1, Vakuum abgelehnt) sind die von :func:`thrust_fit`, ``thrust`` ist der Nullvektor. Aus einer Wahrheitsbahn kehrt C_d auf 1e-4 zurück (Gate).",
+   "hi": "trajectory (t_i, p_i) पर \"गुरुत्व + drag\" model को **(p₀, v₀, C_d) के 7 parameters**(planar input में 5)से fit करता है — :func:`thrust_fit` का बिना-thrust रूप (:func:`flight_fit` C_d को ज्ञात मानकर 6 parameters रखता है; यह C_d भी पहचानता है)। result keys और entrance checks (``dt`` ≤ sample spacing, ``iters`` ≥ 1, vacuum अस्वीकृत) :func:`thrust_fit` जैसी हैं, ``thrust`` शून्य vector है। ground-truth trajectory से C_d 1e-4 पर लौटता है (gate)।"
   },
   "drive/aic_from_rss": {
    "fp": "f959abeb5f5b",
@@ -46,13 +46,13 @@
    "hi": "least-squares के residual sum of squares से Akaike information criterion: AIC = n ln(RSS/n) + 2k(Gaussian noise, variance maximum likelihood से अनुमानित, constant term हटाया)। केवल एक ही data पर fit किए गए models के बीच का **अंतर** अर्थपूर्ण है (निरपेक्ष मान scale और n पर निर्भर)। n ≤ k, RSS ≤ 0 और non-finite मानों पर ValueError (RSS = 0 पर AIC = −∞, model-selection का प्रश्न ही नहीं बनता)।"
   },
   "drive/ballistic_vs_thrust": {
-   "fp": "8f50ff1a8278",
-   "en": "Fits both \"gravity + drag\" (:func:`drag_fit`) and \"gravity + drag + constant specific thrust\" (:func:`thrust_fit`) to the same trajectory and returns the AIC difference (:func:`aic_from_rss`) ΔAIC = AIC_ballistic − AIC_thrust. Returns ``{\"ballistic\", \"thrust\"}`` (the two fits) plus ``\"aic_ballistic\", \"aic_thrust\", \"delta_aic\", \"thrust_norm\"``. **No verdict is returned** (the :mod:`imgforensics` convention): read it by **parsimony** — the thrust model has 3 more parameters and lowers RSS slightly even on pure noise, so unless it wins by more than the penalty 2Δk the simpler (ballistic) model is kept. Noise-only ΔAIC scatters around −2Δk with a χ²(Δk) width, and because the thrust fit starts from the ballistic solution ΔAIC ≥ −2Δk holds. The customary \"decisive\" value is 10 (false positives well below 1 %), but no threshold is bundled; the caller decides.",
-   "zh": "对同一条轨迹同时拟合\"重力 + 阻力\"(:func:`drag_fit`)与\"重力 + 阻力 + 恒定比推力\"(:func:`thrust_fit`),返回 AIC(:func:`aic_from_rss`)之差 ΔAIC = AIC_弹道 − AIC_推力。返回 ``{\"ballistic\", \"thrust\"}``(两个拟合)并附上 ``\"aic_ballistic\", \"aic_thrust\", \"delta_aic\", \"thrust_norm\"``。**不返回判定**(与 :mod:`imgforensics` 同一流派):按**简约原则**来读——推力模型多 3 个参数,即使只有噪声也会略微降低 RSS,除非赢过罚项 2Δk,否则取更简单的弹道模型。仅有噪声时 ΔAIC 以 −2Δk 为中心、按 χ²(Δk) 的宽度散布;推力侧从弹道侧的解出发,所以 ΔAIC ≥ −2Δk 成立。\"决定性\"的惯用值是 10(假阳性远低于 1 %),但不内置阈值,由调用方决定。",
-   "tw": "對同一條軌跡同時擬合「重力 + 阻力」(:func:`drag_fit`)與「重力 + 阻力 + 恆定比推力」(:func:`thrust_fit`),回傳 AIC(:func:`aic_from_rss`)之差 ΔAIC = AIC_彈道 − AIC_推力。回傳 ``{\"ballistic\", \"thrust\"}``(兩個擬合)並附上 ``\"aic_ballistic\", \"aic_thrust\", \"delta_aic\", \"thrust_norm\"``。**不回傳判定**(與 :mod:`imgforensics` 同一流派):按**簡約原則**來讀——推力模型多 3 個參數,即使只有雜訊也會略微降低 RSS,除非贏過罰項 2Δk,否則取較簡單的彈道模型。僅有雜訊時 ΔAIC 以 −2Δk 為中心、按 χ²(Δk) 的寬度散布;推力側從彈道側的解出發,所以 ΔAIC ≥ −2Δk 成立。「決定性」的慣用值是 10(偽陽性遠低於 1 %),但不內建閾值,由呼叫方決定。",
-   "ko": "같은 궤적에 \"중력 + 항력\"(:func:`drag_fit`)과 \"중력 + 항력 + 일정한 비추력\"(:func:`thrust_fit`)을 맞추고, AIC(:func:`aic_from_rss`)의 차 ΔAIC = AIC_탄도 − AIC_추력을 반환합니다. 반환값 ``{\"ballistic\", \"thrust\"}``(두 피팅)에 ``\"aic_ballistic\", \"aic_thrust\", \"delta_aic\", \"thrust_norm\"``를 더합니다. **판정은 반환하지 않습니다**(:mod:`imgforensics`와 같은 유파): **절약 원칙**으로 읽습니다 — 추력 모형은 파라미터가 3개 많아 잡음만으로도 RSS를 조금 낮추므로, 벌점 2Δk를 넘어 이기지 않는 한 단순한 쪽(탄도)을 택합니다. 잡음만의 ΔAIC는 −2Δk를 중심으로 χ²(Δk)의 폭으로 흩어지며, 추력 측은 탄도 측의 해에서 출발하므로 ΔAIC ≥ −2Δk가 유지됩니다. \"결정적\"의 관용값은 10(거짓 양성은 1 %를 크게 밑돎)이지만 문턱은 동봉하지 않고 호출자가 정합니다.",
-   "de": "Passt an dieselbe Trajektorie sowohl „Schwerkraft + Luftwiderstand“ (:func:`drag_fit`) als auch „Schwerkraft + Luftwiderstand + konstanter spezifischer Schub“ (:func:`thrust_fit`) an und gibt die AIC-Differenz (:func:`aic_from_rss`) ΔAIC = AIC_ballistisch − AIC_Schub zurück. Rückgabe ``{\"ballistic\", \"thrust\"}`` (die beiden Anpassungen) plus ``\"aic_ballistic\", \"aic_thrust\", \"delta_aic\", \"thrust_norm\"``. **Kein Urteil wird zurückgegeben** (die Konvention von :mod:`imgforensics`): gelesen wird nach **Sparsamkeit** — das Schubmodell hat 3 Parameter mehr und senkt die RSS selbst bei reinem Rauschen leicht; gewinnt es nicht über die Strafe 2Δk hinaus, bleibt das einfachere (ballistische) Modell. ΔAIC aus reinem Rauschen streut um −2Δk mit χ²(Δk)-Breite, und weil die Schubanpassung von der ballistischen Lösung ausgeht, gilt ΔAIC ≥ −2Δk. Der übliche Wert für „entscheidend“ ist 10 (falsch Positive deutlich unter 1 %), aber keine Schwelle wird mitgeliefert; der Aufrufer entscheidet.",
-   "hi": "एक ही trajectory पर \"गुरुत्व + drag\"(:func:`drag_fit`)और \"गुरुत्व + drag + स्थिर specific thrust\"(:func:`thrust_fit`)दोनों fit करके AIC(:func:`aic_from_rss`)का अंतर ΔAIC = AIC_ballistic − AIC_thrust लौटाता है। लौटाता है ``{\"ballistic\", \"thrust\"}``(दोनों fit)के साथ ``\"aic_ballistic\", \"aic_thrust\", \"delta_aic\", \"thrust_norm\"``। **कोई verdict नहीं लौटाता**(:mod:`imgforensics` की रीति): **parsimony** से पढ़ें — thrust model में 3 parameters अधिक हैं और शुद्ध noise पर भी RSS थोड़ा घटाता है, इसलिए penalty 2Δk से अधिक जीते बिना सरल (ballistic) model रखा जाता है। केवल noise का ΔAIC −2Δk के आसपास χ²(Δk) चौड़ाई में बिखरता है, और thrust fit ballistic solution से शुरू होता है इसलिए ΔAIC ≥ −2Δk बना रहता है। \"निर्णायक\" का पारंपरिक मान 10 है (false positive 1 % से काफी कम), पर कोई threshold bundled नहीं; caller तय करता है।"
+   "fp": "1c3092adbd5c",
+   "en": "Fits both \"gravity + drag\" (:func:`drag_fit`) and \"gravity + drag + constant specific thrust\" (:func:`thrust_fit`) to the same trajectory and returns the AIC difference (:func:`aic_from_rss`) ΔAIC = AIC_ballistic − AIC_thrust. Returns ``{\"ballistic\", \"thrust\"}`` (the two fits) plus ``\"aic_ballistic\", \"aic_thrust\", \"delta_aic\", \"thrust_norm\"``. **No verdict is returned** (the :mod:`imgforensics` convention): read it by **parsimony** — the thrust model has 3 more parameters and lowers RSS slightly even on pure noise, so unless it wins by more than the penalty 2Δk the simpler (ballistic) model is kept. Noise-only ΔAIC scatters with **−2Δk as its lower bound** and roughly a χ²(Δk) width (median about −2Δk + 1; strictly a mixture, since some fits hit the wall C_d = 0), and because the thrust fit starts from the ballistic solution ΔAIC ≥ −2Δk holds. The customary \"decisive\" value is 10 (false positives well below 1 %), but no threshold is bundled; the caller decides. When the thrust fit's RSS is below 10× the discretisation floor ``rss_floor`` (a noise-free track, or one resolved finer than the grid) it raises ValueError — AIC compares noise, not rounding (the noise-free truth gave ΔAIC = +144 at the default dt, 2026-10-23).",
+   "zh": "对同一条轨迹同时拟合\"重力 + 阻力\"(:func:`drag_fit`)与\"重力 + 阻力 + 恒定比推力\"(:func:`thrust_fit`),返回 AIC(:func:`aic_from_rss`)之差 ΔAIC = AIC_弹道 − AIC_推力。返回 ``{\"ballistic\", \"thrust\"}``(两个拟合)并附上 ``\"aic_ballistic\", \"aic_thrust\", \"delta_aic\", \"thrust_norm\"``。**不返回判定**(与 :mod:`imgforensics` 同一流派):按**简约原则**来读——推力模型多 3 个参数,即使只有噪声也会略微降低 RSS,除非赢过罚项 2Δk,否则取更简单的弹道模型。仅有噪声时 ΔAIC **以 −2Δk 为下界**、按 χ²(Δk) 近似的宽度散布(中位数约 −2Δk + 1;严格说是混合分布,因为有些拟合撞到 C_d = 0 的壁);推力侧从弹道侧的解出发,所以 ΔAIC ≥ −2Δk 成立。\"决定性\"的惯用值是 10(假阳性远低于 1 %),但不内置阈值,由调用方决定。当推力侧的 RSS 低于离散化下限 ``rss_floor`` 的 10 倍(无噪声、或比网格解得更细的轨迹)时引发 ValueError——AIC 比较的是噪声而不是舍入屑(无噪声真值在默认 dt 下曾得到 ΔAIC = +144,2026-10-23)。",
+   "tw": "對同一條軌跡同時擬合「重力 + 阻力」(:func:`drag_fit`)與「重力 + 阻力 + 恆定比推力」(:func:`thrust_fit`),回傳 AIC(:func:`aic_from_rss`)之差 ΔAIC = AIC_彈道 − AIC_推力。回傳 ``{\"ballistic\", \"thrust\"}``(兩個擬合)並附上 ``\"aic_ballistic\", \"aic_thrust\", \"delta_aic\", \"thrust_norm\"``。**不回傳判定**(與 :mod:`imgforensics` 同一流派):按**簡約原則**來讀——推力模型多 3 個參數,即使只有雜訊也會略微降低 RSS,除非贏過罰項 2Δk,否則取較簡單的彈道模型。僅有雜訊時 ΔAIC **以 −2Δk 為下界**、按 χ²(Δk) 近似的寬度散布(中位數約 −2Δk + 1;嚴格說是混合分布,因為有些擬合撞到 C_d = 0 的牆);推力側從彈道側的解出發,所以 ΔAIC ≥ −2Δk 成立。「決定性」的慣用值是 10(偽陽性遠低於 1 %),但不內建閾值,由呼叫方決定。當推力側的 RSS 低於離散化下限 ``rss_floor`` 的 10 倍(無雜訊、或比網格解得更細的軌跡)時引發 ValueError——AIC 比較的是雜訊而不是捨入屑(無雜訊真值在預設 dt 下曾得到 ΔAIC = +144,2026-10-23)。",
+   "ko": "같은 궤적에 \"중력 + 항력\"(:func:`drag_fit`)과 \"중력 + 항력 + 일정한 비추력\"(:func:`thrust_fit`)을 맞추고, AIC(:func:`aic_from_rss`)의 차 ΔAIC = AIC_탄도 − AIC_추력을 반환합니다. 반환값 ``{\"ballistic\", \"thrust\"}``(두 피팅)에 ``\"aic_ballistic\", \"aic_thrust\", \"delta_aic\", \"thrust_norm\"``를 더합니다. **판정은 반환하지 않습니다**(:mod:`imgforensics`와 같은 유파): **절약 원칙**으로 읽습니다 — 추력 모형은 파라미터가 3개 많아 잡음만으로도 RSS를 조금 낮추므로, 벌점 2Δk를 넘어 이기지 않는 한 단순한 쪽(탄도)을 택합니다. 잡음만의 ΔAIC는 **−2Δk를 하한으로** χ²(Δk) 근사의 폭으로 흩어지며(중앙값은 −2Δk + 1 정도, C_d = 0의 벽에 닿는 맞춤이 섞이므로 엄밀히는 혼합분포), 추력 측은 탄도 측의 해에서 출발하므로 ΔAIC ≥ −2Δk가 유지됩니다. \"결정적\"의 관용값은 10(거짓 양성은 1 %를 크게 밑돎)이지만 문턱은 동봉하지 않고 호출자가 정합니다. 추력 측의 RSS가 이산화의 바닥 ``rss_floor``의 10배를 밑돌면(잡음 없는 궤적, 또는 격자보다 잘게 풀린 궤적) ValueError입니다 — AIC가 비교하는 것은 잡음이지 반올림 찌꺼기가 아닙니다(잡음 없는 참값에 기본 dt로 ΔAIC = +144가 나왔음, 2026-10-23).",
+   "de": "Passt an dieselbe Trajektorie sowohl „Schwerkraft + Luftwiderstand“ (:func:`drag_fit`) als auch „Schwerkraft + Luftwiderstand + konstanter spezifischer Schub“ (:func:`thrust_fit`) an und gibt die AIC-Differenz (:func:`aic_from_rss`) ΔAIC = AIC_ballistisch − AIC_Schub zurück. Rückgabe ``{\"ballistic\", \"thrust\"}`` (die beiden Anpassungen) plus ``\"aic_ballistic\", \"aic_thrust\", \"delta_aic\", \"thrust_norm\"``. **Kein Urteil wird zurückgegeben** (die Konvention von :mod:`imgforensics`): gelesen wird nach **Sparsamkeit** — das Schubmodell hat 3 Parameter mehr und senkt die RSS selbst bei reinem Rauschen leicht; gewinnt es nicht über die Strafe 2Δk hinaus, bleibt das einfachere (ballistische) Modell. ΔAIC aus reinem Rauschen streut mit **−2Δk als unterer Schranke** und etwa χ²(Δk)-Breite (Median etwa −2Δk + 1; streng genommen eine Mischverteilung, weil manche Anpassungen an die Wand C_d = 0 stoßen), und weil die Schubanpassung von der ballistischen Lösung ausgeht, gilt ΔAIC ≥ −2Δk. Der übliche Wert für „entscheidend“ ist 10 (falsch Positive deutlich unter 1 %), aber keine Schwelle wird mitgeliefert; der Aufrufer entscheidet. Liegt die RSS der Schubanpassung unter dem 10-Fachen der Diskretisierungsschranke ``rss_floor`` (rauschfreie oder feiner als das Gitter aufgelöste Trajektorie), wird ValueError ausgelöst — AIC vergleicht Rauschen, nicht Rundungsreste (die rauschfreie Wahrheit ergab beim Standard-dt ΔAIC = +144, 2026-10-23).",
+   "hi": "एक ही trajectory पर \"गुरुत्व + drag\"(:func:`drag_fit`)और \"गुरुत्व + drag + स्थिर specific thrust\"(:func:`thrust_fit`)दोनों fit करके AIC(:func:`aic_from_rss`)का अंतर ΔAIC = AIC_ballistic − AIC_thrust लौटाता है। लौटाता है ``{\"ballistic\", \"thrust\"}``(दोनों fit)के साथ ``\"aic_ballistic\", \"aic_thrust\", \"delta_aic\", \"thrust_norm\"``। **कोई verdict नहीं लौटाता**(:mod:`imgforensics` की रीति): **parsimony** से पढ़ें — thrust model में 3 parameters अधिक हैं और शुद्ध noise पर भी RSS थोड़ा घटाता है, इसलिए penalty 2Δk से अधिक जीते बिना सरल (ballistic) model रखा जाता है। केवल noise का ΔAIC **−2Δk को निचली सीमा** मानकर लगभग χ²(Δk) चौड़ाई में बिखरता है (median लगभग −2Δk + 1; कुछ fits C_d = 0 की दीवार से टकराते हैं इसलिए सख्ती से यह mixture है), और thrust fit ballistic solution से शुरू होता है इसलिए ΔAIC ≥ −2Δk बना रहता है। \"निर्णायक\" का पारंपरिक मान 10 है (false positive 1 % से काफी कम), पर कोई threshold bundled नहीं; caller तय करता है। जब thrust fit का RSS discretisation floor ``rss_floor`` के 10 गुना से कम हो (noise-free trajectory, या grid से बारीक हल की गई) तो ValueError — AIC noise की तुलना करता है, rounding की नहीं (noise-free truth ने default dt पर ΔAIC = +144 दिया, 2026-10-23)।"
   },
   "drive/time_stretch_from_gravity": {
    "fp": "3404ccefff80",
@@ -30941,6 +30941,222 @@
    "ko": "Radial Reach Filter(RRF). 배경과 현재 영상을 8방향 reach의 부호로 비교한다.",
    "de": "Radial Reach Filter (RRF): vergleicht Hintergrund und aktuelles Bild über die Vorzeichen der Reaches in 8 Richtungen.",
    "hi": "Radial Reach Filter (RRF): background और वर्तमान image की तुलना 8 दिशाओं के reach चिह्नों से करता है।"
+  },
+  "aoi/flat_field_correct": {
+   "fp": "e342d096aa10",
+   "en": "Undoes uneven illumination and sensor-sensitivity variation by a dark-subtracted division. → corrected image.",
+   "zh": "通过扣除暗电流后的除法，校正照明不均与传感器灵敏度的差异。→ 校正后的图像。",
+   "tw": "透過扣除暗電流後的除法，校正照明不均與感測器靈敏度的差異。→ 校正後的影像。",
+   "ko": "조명 불균일과 센서 감도 편차를 암전류를 뺀 나눗셈으로 되돌린다. → 보정된 영상.",
+   "de": "Gleicht ungleichmäßige Beleuchtung und Empfindlichkeitsschwankungen des Sensors durch eine Division mit Dunkelstromabzug aus. → korrigiertes Bild.",
+   "hi": "असमान प्रकाश और sensor संवेदनशीलता के अंतर को dark current घटाकर भाग देने से ठीक करता है। → सुधारी गई image."
+  },
+  "aoi/register_image": {
+   "fp": "5bb96337072a",
+   "en": "Returns the translation that aligns an inspection image to a reference image, together with quantities that reveal when it does not fit. → dict.",
+   "zh": "返回将检测图像对齐到基准图像的平移量，并附带能看出对不上的指标。→ dict。",
+   "tw": "回傳將檢測影像對齊到基準影像的平移量，並附帶能看出對不上的指標。→ dict。",
+   "ko": "검사 영상을 기준 영상에 맞추는 평행 이동을, 맞지 않음을 알 수 있는 양과 함께 돌려준다. → dict.",
+   "de": "Liefert die Verschiebung, die ein Prüfbild auf ein Referenzbild ausrichtet, zusammen mit Größen, die erkennen lassen, wenn sie nicht passt. → dict.",
+   "hi": "निरीक्षण image को संदर्भ image से मिलाने वाला translation लौटाता है, साथ में वे मान भी जिनसे पता चले कि मेल नहीं बैठा। → dict."
+  },
+  "aoi/tiled_map": {
+   "fp": "e7073ec85a79",
+   "en": "Splits an image into tiles and turns a per-tile quantity into a small map. → dict.",
+   "zh": "将图像划分为图块，把每个图块的统计量做成一张小地图。→ dict。",
+   "tw": "將影像切分為圖塊，把每個圖塊的統計量做成一張小地圖。→ dict。",
+   "ko": "영상을 타일로 나누고 타일별 양을 작은 지도로 만든다. → dict.",
+   "de": "Teilt ein Bild in Kacheln und macht aus einer Größe je Kachel eine kleine Karte. → dict.",
+   "hi": "image को tiles में बाँटता है और हर tile की मात्रा से एक छोटा map बनाता है। → dict."
+  },
+  "calib/project_3d_point": {
+   "fp": "d3fc949c7a2d",
+   "en": "Perspective-projects 3-D points into the camera and returns pixels (row, col) (project_3d_point).",
+   "zh": "将 3D 点透视投影到相机，返回像素 (row, col)(project_3d_point)。",
+   "tw": "將 3D 點透視投影到相機，回傳像素 (row, col)(project_3d_point)。",
+   "ko": "3D 점을 카메라에 투시 투영하여 화소 (row, col)를 돌려준다(project_3d_point).",
+   "de": "Projiziert 3-D-Punkte perspektivisch in die Kamera und liefert Pixel (row, col) (project_3d_point).",
+   "hi": "3-D points को camera में perspective projection करके pixel (row, col) लौटाता है (project_3d_point)।"
+  },
+  "calib/project_point_hom_mat3d": {
+   "fp": "861bf17c02df",
+   "en": "Projects 3-D points with a 4x4 or 3x4 projection matrix P=K[R|t] and returns pixels (row, col) (project_point_hom_mat3d).",
+   "zh": "用 4x4 或 3x4 投影矩阵 P=K[R|t] 投影 3D 点，返回像素 (row, col)(project_point_hom_mat3d)。",
+   "tw": "用 4x4 或 3x4 投影矩陣 P=K[R|t] 投影 3D 點，回傳像素 (row, col)(project_point_hom_mat3d)。",
+   "ko": "4x4 또는 3x4 투영 행렬 P=K[R|t]로 3D 점을 투영하여 화소 (row, col)를 돌려준다 (project_point_hom_mat3d).",
+   "de": "Projiziert 3-D-Punkte mit einer 4x4- oder 3x4-Projektionsmatrix P=K[R|t] und liefert Pixel (row, col) (project_point_hom_mat3d).",
+   "hi": "4x4 या 3x4 projection matrix P=K[R|t] से 3-D points को project करके pixel (row, col) लौटाता है (project_point_hom_mat3d)।"
+  },
+  "calib/project_hom_point_hom_mat3d": {
+   "fp": "6ca5b2e7dab1",
+   "en": "Projects homogeneous 3-D points (4,) with a 3x4/4x4 projection matrix and returns pixels (row, col) (project_hom_point_hom_mat3d).",
+   "zh": "用 3x4/4x4 投影矩阵投影齐次 3D 点 (4,)，返回像素 (row, col)(project_hom_point_hom_mat3d)。",
+   "tw": "用 3x4/4x4 投影矩陣投影齊次 3D 點 (4,)，回傳像素 (row, col)(project_hom_point_hom_mat3d)。",
+   "ko": "동차 3D 점 (4,)를 3x4/4x4 투영 행렬로 투영하여 화소 (row, col)를 돌려준다 (project_hom_point_hom_mat3d).",
+   "de": "Projiziert homogene 3-D-Punkte (4,) mit einer 3x4/4x4-Projektionsmatrix und liefert Pixel (row, col) (project_hom_point_hom_mat3d).",
+   "hi": "homogeneous 3-D points (4,) को 3x4/4x4 projection matrix से project करके pixel (row, col) लौटाता है (project_hom_point_hom_mat3d)।"
+  },
+  "calib/image_to_world_plane": {
+   "fp": "a0980b84de02",
+   "en": "Maps image points to the world plane (z=0) with a plane homography (image_to_world_plane).",
+   "zh": "用平面单应把图像点映射到世界平面(z=0)(image_to_world_plane)。",
+   "tw": "用平面單應把影像點映射到世界平面(z=0)(image_to_world_plane)。",
+   "ko": "평면 호모그래피로 영상 점을 world 평면(z=0)에 옮긴다(image_to_world_plane).",
+   "de": "Bildet Bildpunkte mit einer Ebenen-Homographie auf die Weltebene (z=0) ab (image_to_world_plane).",
+   "hi": "plane homography से image points को world plane (z=0) पर map करता है (image_to_world_plane)।"
+  },
+  "calib/image_points_to_world_plane": {
+   "fp": "2887c5880614",
+   "en": "Back-projects pixels onto the world plane z=0 from the camera intrinsics and extrinsics (image_points_to_world_plane).",
+   "zh": "由相机内参/外参将像素反投影到世界平面 z=0(image_points_to_world_plane)。",
+   "tw": "由相機內參/外參將像素反投影到世界平面 z=0(image_points_to_world_plane)。",
+   "ko": "카메라 내부/외부 파라미터로 화소를 world 평면 z=0에 역투영한다(image_points_to_world_plane).",
+   "de": "Projiziert Pixel aus Kamera-Intrinsik und -Extrinsik zurück auf die Weltebene z=0 (image_points_to_world_plane).",
+   "hi": "camera के intrinsics/extrinsics से pixels को world plane z=0 पर back-project करता है (image_points_to_world_plane)।"
+  },
+  "calib/contour_to_world_plane_xld": {
+   "fp": "dd6f2ff26c83",
+   "en": "Maps an XLD contour (dict {cs:[Nx2]}) to the world plane (contour_to_world_plane_xld).",
+   "zh": "把 XLD 轮廓(dict {cs:[Nx2]})映射到世界平面(contour_to_world_plane_xld)。",
+   "tw": "把 XLD 輪廓(dict {cs:[Nx2]})映射到世界平面(contour_to_world_plane_xld)。",
+   "ko": "XLD 윤곽(dict {cs:[Nx2]})을 world 평면에 옮긴다(contour_to_world_plane_xld).",
+   "de": "Bildet eine XLD-Kontur (dict {cs:[Nx2]}) auf die Weltebene ab (contour_to_world_plane_xld).",
+   "hi": "XLD contour (dict {cs:[Nx2]}) को world plane पर map करता है (contour_to_world_plane_xld)।"
+  },
+  "calib/gen_image_to_world_plane_map": {
+   "fp": "b4ffef4a3891",
+   "en": "Builds the image → world plane (z=0) mapping table (gen_image_to_world_plane_map).",
+   "zh": "生成 图像→世界平面(z=0)的映射表(gen_image_to_world_plane_map)。",
+   "tw": "產生 影像→世界平面(z=0)的映射表(gen_image_to_world_plane_map)。",
+   "ko": "영상→world 평면(z=0)의 사상 테이블을 만든다(gen_image_to_world_plane_map).",
+   "de": "Erzeugt die Abbildungstabelle Bild → Weltebene (z=0) (gen_image_to_world_plane_map).",
+   "hi": "image → world plane (z=0) की mapping table बनाता है (gen_image_to_world_plane_map)।"
+  },
+  "calib/gen_radial_distortion_map": {
+   "fp": "e3f4616e4b7d",
+   "en": "Builds the inverse map (row_map, col_map) of a radial distortion (gen_radial_distortion_map).",
+   "zh": "生成径向畸变的逆映射(row_map, col_map)(gen_radial_distortion_map)。",
+   "tw": "產生徑向畸變的逆映射(row_map, col_map)(gen_radial_distortion_map)。",
+   "ko": "반경 왜곡의 역 사상(row_map, col_map)을 만든다(gen_radial_distortion_map).",
+   "de": "Erzeugt die inverse Abbildung (row_map, col_map) einer radialen Verzeichnung (gen_radial_distortion_map).",
+   "hi": "radial distortion का inverse map (row_map, col_map) बनाता है (gen_radial_distortion_map)।"
+  },
+  "calib/caltab_points": {
+   "fp": "3baf2a698da8",
+   "en": "Returns the ideal mark coordinates of a calibration plate (world, mm; origin = first mark) as (y, x) (caltab_points).",
+   "zh": "以 (y, x) 返回标定板的理想标记坐标(世界坐标, mm; 原点=第一个标记)(caltab_points)。",
+   "tw": "以 (y, x) 回傳校正板的理想標記座標(世界座標, mm; 原點=第一個標記)(caltab_points)。",
+   "ko": "교정판의 이상적인 마크 좌표(world, mm; 원점=첫 마크)를 (y, x)로 돌려준다(caltab_points).",
+   "de": "Liefert die idealen Markenkoordinaten einer Kalibrierplatte (Welt, mm; Ursprung = erste Marke) als (y, x) (caltab_points).",
+   "hi": "calibration plate के आदर्श mark निर्देशांक (world, mm; मूल बिंदु = पहला mark) (y, x) में लौटाता है (caltab_points)।"
+  },
+  "calib/create_caltab": {
+   "fp": "d1f550f4686c",
+   "en": "Creates a calibration-plate description (ideal points, origin at the plate centre) (create_caltab).",
+   "zh": "生成标定板的描述(理想点，原点在板中心)(create_caltab)。",
+   "tw": "產生校正板的描述(理想點，原點在板中心)(create_caltab)。",
+   "ko": "교정판의 기술(이상 점, 판 중심이 원점)을 만든다(create_caltab).",
+   "de": "Erzeugt eine Beschreibung der Kalibrierplatte (ideale Punkte, Ursprung in der Plattenmitte) (create_caltab).",
+   "hi": "calibration plate का विवरण बनाता है (आदर्श points, मूल बिंदु plate का केंद्र) (create_caltab)।"
+  },
+  "calib/gen_caltab": {
+   "fp": "2ff344a52dec",
+   "en": "Generates an image of a calibration plate with a grid of circular marks (gen_caltab).",
+   "zh": "生成圆形标记网格的标定板图像(gen_caltab)。",
+   "tw": "產生圓形標記格網的校正板影像(gen_caltab)。",
+   "ko": "원형 마크 격자의 교정판 영상을 생성한다(gen_caltab).",
+   "de": "Erzeugt ein Bild einer Kalibrierplatte mit einem Raster kreisförmiger Marken (gen_caltab).",
+   "hi": "गोल marks के grid वाली calibration plate की image बनाता है (gen_caltab)।"
+  },
+  "calib/sim_caltab": {
+   "fp": "284ff220ed64",
+   "en": "Simulates the image of a calibration plate projected with a given camera pose (sim_caltab).",
+   "zh": "模拟按指定相机位姿投影的标定板图像(sim_caltab)。",
+   "tw": "模擬依指定相機姿態投影的校正板影像(sim_caltab)。",
+   "ko": "지정한 카메라 자세로 투영한 교정판 영상을 시뮬레이션한다(sim_caltab).",
+   "de": "Simuliert das Bild einer Kalibrierplatte, projiziert mit einer gegebenen Kamerapose (sim_caltab).",
+   "hi": "दिए गए camera pose से project की गई calibration plate की image simulate करता है (sim_caltab)।"
+  },
+  "calib/disp_caltab": {
+   "fp": "6e8f11749018",
+   "en": "Returns the calibration-plate image (for display) (disp_caltab).",
+   "zh": "返回标定板图像(用于显示)(disp_caltab)。",
+   "tw": "回傳校正板影像(用於顯示)(disp_caltab)。",
+   "ko": "교정판 영상을 돌려준다(표시용)(disp_caltab).",
+   "de": "Liefert das Bild der Kalibrierplatte (zur Anzeige) (disp_caltab).",
+   "hi": "calibration plate की image लौटाता है (दिखाने के लिए) (disp_caltab)।"
+  },
+  "calib/find_caltab": {
+   "fp": "c8d7ed93012c",
+   "en": "Detects the centres of the circular marks of a calibration plate in an image (centroids of connected components) (find_caltab).",
+   "zh": "从图像中检测标定板圆形标记的中心(连通域的重心)(find_caltab)。",
+   "tw": "從影像中偵測校正板圓形標記的中心(連通區的重心)(find_caltab)。",
+   "ko": "영상에서 교정판 원형 마크의 중심을 검출한다(연결 성분의 무게중심)(find_caltab).",
+   "de": "Findet die Mittelpunkte der Kreismarken einer Kalibrierplatte im Bild (Schwerpunkte der Zusammenhangskomponenten) (find_caltab).",
+   "hi": "image में calibration plate के गोल marks के केंद्र खोजता है (connected components के centroid) (find_caltab)।"
+  },
+  "calib/camera_calibration": {
+   "fp": "082e79cd209c",
+   "en": "Estimates the intrinsic matrix K from several views of a planar target by Zhang's method (camera_calibration).",
+   "zh": "用 Zhang 法从平面靶标的多个视角估计内参矩阵 K(camera_calibration)。",
+   "tw": "用 Zhang 法從平面靶標的多個視角估計內參矩陣 K(camera_calibration)。",
+   "ko": "Zhang 법으로 평면 타깃의 다시점에서 내부 행렬 K를 추정한다(camera_calibration).",
+   "de": "Schätzt die intrinsische Matrix K aus mehreren Ansichten eines ebenen Targets nach Zhang (camera_calibration).",
+   "hi": "Zhang विधि से planar target के कई views से intrinsic matrix K का अनुमान लगाता है (camera_calibration)।"
+  },
+  "calib/find_marks_and_pose": {
+   "fp": "7399df102562",
+   "en": "Mark detection + pose estimation of the calibration plate (plane homography → pose) (find_marks_and_pose).",
+   "zh": "标记检测 + 标定板位姿估计(平面单应 → 位姿)(find_marks_and_pose)。",
+   "tw": "標記偵測 + 校正板姿態估計(平面單應 → 姿態)(find_marks_and_pose)。",
+   "ko": "마크 검출 + 교정판 자세 추정(평면 호모그래피 → pose)(find_marks_and_pose).",
+   "de": "Markenerkennung + Posenschätzung der Kalibrierplatte (Ebenen-Homographie → Pose) (find_marks_and_pose).",
+   "hi": "mark पहचान + calibration plate का pose अनुमान (plane homography → pose) (find_marks_and_pose)।"
+  },
+  "calib/hand_eye_calibration": {
+   "fp": "deb6d179aa6c",
+   "en": "Solves AX=XB from a series of motion pairs and estimates X (4x4) (hand_eye_calibration).",
+   "zh": "由一系列运动对求解 AX=XB，估计 X(4x4)(hand_eye_calibration)。",
+   "tw": "由一系列運動對求解 AX=XB，估計 X(4x4)(hand_eye_calibration)。",
+   "ko": "일련의 운동 쌍으로부터 AX=XB를 풀어 X(4x4)를 추정한다(hand_eye_calibration).",
+   "de": "Löst AX=XB aus einer Folge von Bewegungspaaren und schätzt X (4x4) (hand_eye_calibration).",
+   "hi": "motion pairs की श्रृंखला से AX=XB हल करके X (4x4) का अनुमान लगाता है (hand_eye_calibration)।"
+  },
+  "calib/vector_to_rigid": {
+   "fp": "ac65ce653465",
+   "en": "Finds a 2-D rigid transform (rotation + translation, Kabsch) from point correspondences (vector_to_rigid).",
+   "zh": "由对应点求 2D 刚体变换(旋转+平移, Kabsch)(vector_to_rigid)。",
+   "tw": "由對應點求 2D 剛體變換(旋轉+平移, Kabsch)(vector_to_rigid)。",
+   "ko": "대응점으로부터 2D 강체 변환(회전+평행이동, Kabsch)을 구한다(vector_to_rigid).",
+   "de": "Bestimmt aus Punktkorrespondenzen eine starre 2-D-Transformation (Rotation + Translation, Kabsch) (vector_to_rigid).",
+   "hi": "point correspondences से 2-D rigid transform (rotation + translation, Kabsch) निकालता है (vector_to_rigid)।"
+  },
+  "calib/vector_to_similarity": {
+   "fp": "573c4b2aaccc",
+   "en": "Finds a 2-D similarity transform (rotation + scale + translation, Umeyama) from point correspondences (vector_to_similarity).",
+   "zh": "由对应点求 2D 相似变换(旋转+尺度+平移, Umeyama)(vector_to_similarity)。",
+   "tw": "由對應點求 2D 相似變換(旋轉+尺度+平移, Umeyama)(vector_to_similarity)。",
+   "ko": "대응점으로부터 2D 닮음 변환(회전+스케일+평행이동, Umeyama)을 구한다(vector_to_similarity).",
+   "de": "Bestimmt aus Punktkorrespondenzen eine 2-D-Ähnlichkeitstransformation (Rotation + Skalierung + Translation, Umeyama) (vector_to_similarity).",
+   "hi": "point correspondences से 2-D similarity transform (rotation + scale + translation, Umeyama) निकालता है (vector_to_similarity)।"
+  },
+  "calib/vector_angle_to_rigid": {
+   "fp": "4ae72a63547c",
+   "en": "Finds a 2-D rigid transform from one pair of (point, angle) (vector_angle_to_rigid).",
+   "zh": "由一组 (点, 角度) 求 2D 刚体变换(vector_angle_to_rigid)。",
+   "tw": "由一組 (點, 角度) 求 2D 剛體變換(vector_angle_to_rigid)。",
+   "ko": "(점, 각도) 1쌍으로부터 2D 강체 변환을 구한다(vector_angle_to_rigid).",
+   "de": "Bestimmt eine starre 2-D-Transformation aus einem Paar (Punkt, Winkel) (vector_angle_to_rigid).",
+   "hi": "(point, angle) की एक जोड़ी से 2-D rigid transform निकालता है (vector_angle_to_rigid)।"
+  },
+  "calib/hom_vector_to_proj_hom_mat2d": {
+   "fp": "6a0661fa46ed",
+   "en": "Finds a 3x3 projective transform (homography, DLT) from 4 or more correspondences (hom_vector_to_proj_hom_mat2d).",
+   "zh": "由 4 个以上对应求射影变换(单应, DLT)3x3(hom_vector_to_proj_hom_mat2d)。",
+   "tw": "由 4 個以上對應求射影變換(單應, DLT)3x3(hom_vector_to_proj_hom_mat2d)。",
+   "ko": "4점 이상의 대응으로부터 사영 변환(homography, DLT) 3x3을 구한다(hom_vector_to_proj_hom_mat2d).",
+   "de": "Bestimmt aus 4 oder mehr Korrespondenzen eine projektive 3x3-Transformation (Homographie, DLT) (hom_vector_to_proj_hom_mat2d).",
+   "hi": "4 या अधिक correspondences से 3x3 projective transform (homography, DLT) निकालता है (hom_vector_to_proj_hom_mat2d)।"
   },
   "spc/anomaly_image_auroc": {
    "fp": "7145079fe2a4",

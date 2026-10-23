@@ -242,11 +242,15 @@ def test_pending_exposure_shrinks_when_fixed():
 # 2026-10-22 Studio 第8片: studio_batch のQt非依存部品6本で実測 892 → 898。
 # 2026-10-22 Studio 第9片: studio_display のQt非依存部品6本を内部部品として登録。実測 898 → 904。
 # 2026-10-22 Studio 第9片修正: range_info / mark_nonfinite の2本を追加。実測 904 → 906。
+# 2026-10-23 opsaoi 台帳(AOI の前段 3 op): 台帳の内部 API(list_ops/categories/get/call/info/missing
+#   のうち公開経路に出ない分)で実測 912 → 916。op 自身は fs.ledger と typed_catalog から引ける。
+# 2026-10-23 opscalib 台帳(カメラ校正 21 op): 台帳の内部 API 4 本で実測 916 → 920。21 op 自身は
+#   fs.ledger から引けるようになった(以前は fs.<名前> の camera_calibration 1 本だけ)。
 # 2026-10-23 フーリエ・タイコグラフィの例外の型 fourierptycho.FPNotConvergedError(converge の NotConvergedError と同じ形、
-#   6 op 本体は fs.ledger に載る)。実測 912 → 913。
+#   6 op 本体は fs.ledger に載る)。実測 920 → 921。
 # 2026-10-23 組紐の例外の型 braidpath.TriplePointError(射影の三重点で組紐語が決まらない —— ValueError の子、
-#   12 op 本体は fs.ledger に載る)。実測 913 → 914。
-_HIDDEN_FUNCTIONS_TODAY = 914
+#   12 op 本体は fs.ledger に載る)。実測 921 → 922。
+_HIDDEN_FUNCTIONS_TODAY = 922
 
 
 def _hidden_total():

@@ -157,6 +157,10 @@ def solve_box_centre(obs, x0, free):
     return x
 
 
+class FrameClipped(ValueError):
+    """bbox が画像の縁に触れた(辺が切り詰められていて、既知の寸法から奥行きを読めない)。"""
+
+
 def track_from_video(frames_labels, rng):
     """各コマの bbox → 既知の車の寸法で奥行き → 平面 (x, z)。2 段: (1) 各コマで (x, y, z) を解いて奥行き y の**中央値**を
     その映像の奥行きにする(平面運動 = 奥行き一定の仮定。1 コマの奥行きは 1 % 揺れるが 60 コマの中央値は 0.2 %)、
@@ -168,6 +172,10 @@ def track_from_video(frames_labels, rng):
         if e["n"] == 0:
             obs_list.append(None)
             continue
+        # ★ 縁に触れた bbox の辺は車の縁でなく画像の縁。そのまま使うと位置が 0.36 m ずれて黙って軌跡に入る(2026-10-23 の敵対的レビュー、
+        # 発射条件の端 3000 本中 2 本)。label_extent は切り詰めを知らないので、ここで止める。
+        if e["col0"] <= 0 or e["row0"] <= 0 or e["col1"] >= IMG_W - 1 or e["row1"] >= IMG_H - 1:
+            raise FrameClipped("bbox touches the image border — the extent is truncated")
         j = rng.normal(0.0, JITTER_PX, 4)
         obs_list.append(np.array([e["col0"], e["col1"] + 1.0, e["row0"], e["row1"] + 1.0]) + j)
     depths, guesses = [], []
@@ -218,14 +226,25 @@ def track_from_video(frames_labels, rng):
     return xz
 
 
+CLIPPED = [0]                         # 画面の縁に触れて引き直した発射の数(正直に表に出す)
+
+
 def make_clip(rng, thrust_mag, bp, t, keep_labels=False, launch_at=None):
-    p0, v0 = launch(rng) if launch_at is None else launch_at
-    direction = v0 / np.linalg.norm(v0)
-    thrust = thrust_mag * direction
-    P = truth_track(p0, v0, thrust, bp, t)
-    labels = [render_label(c) for c in P]
-    xz = track_from_video(labels, rng)
-    return {"p0": p0, "v0": v0, "thrust": thrust, "truth": P, "xz": xz, "labels": labels if keep_labels else None}
+    for _ in range(50):
+        p0, v0 = launch(rng) if launch_at is None else launch_at
+        direction = v0 / np.linalg.norm(v0)
+        thrust = thrust_mag * direction
+        P = truth_track(p0, v0, thrust, bp, t)
+        labels = [render_label(c) for c in P]
+        try:
+            xz = track_from_video(labels, rng)
+        except FrameClipped:
+            if launch_at is not None:
+                raise                                 # 発射条件を指定された映像は引き直せない(fail-closed)
+            CLIPPED[0] += 1
+            continue
+        return {"p0": p0, "v0": v0, "thrust": thrust, "truth": P, "xz": xz, "labels": labels if keep_labels else None}
+    raise RuntimeError("50 launches in a row left the frame — widen the camera or narrow the launch range")
 
 
 def draw_frame(lab, bbox, text, trail_uv=None, depth=None):
@@ -308,12 +327,16 @@ def main() -> int:
         ratio.append(r["thrust_norm"] / a)
         rows.append(("推力", a, r["delta_aic"], r["thrust_norm"], r["delta_aic"] >= MIN_DELTA))
     correct = sum(1 for r in rows if r[4] == (r[1] > 0))
-    n_false = sum(d >= 10 for d in dA_b)
+    n_false = sum(d >= MIN_DELTA for d in dA_b)
     gate("正答率 ≥ 95 %", correct >= 76, "%d / 80" % correct)
     gate("弾道 40 本のうち『推力あり』の誤判定は 2 本以下", n_false <= 2,
-         "%d 本(ΔAIC 中央値 %.1f、90 %% 点 %.1f、最大 %.1f —— 雑音だけなら −2Δk = −4 を中心に χ²(2) の幅、量子化の鋸歯で裾が少し重い)" % (
+         "%d 本(ΔAIC 中央値 %.1f、90 %% 点 %.1f、最大 %.1f —— 雑音だけなら下限 −2Δk = −4、χ²(2) 近似の幅で中央値は −3 ほど、量子化の鋸歯で裾が少し重い)" % (
              n_false, np.median(dA_b), np.quantile(dA_b, 0.9), max(dA_b)))
     gate("推力の ΔAIC は全部 10 以上", min(dA_t) >= 10, "最小 %.0f、中央値 %.0f" % (min(dA_t), np.median(dA_t)))
+    rb, rt = r["ballistic"], r["thrust"]                      # 最後の推力の 1 本で AIC を式から組み直す
+    d_by_hand = B.aic_from_rss(rb["rss"], rb["n"], rb["k"]) - B.aic_from_rss(rt["rss"], rt["n"], rt["k"])
+    gate("aic_from_rss で組み直した AIC の差が op の ΔAIC と 1e-9 で一致", abs(d_by_hand - r["delta_aic"]) < 1e-9,
+         "n = %d、k = %d / %d、残差の床 %.1e ≪ RSS %.3g" % (rt["n"], rb["k"], rt["k"], rt["rss_floor"], rt["rss"]))
     med_ratio = float(np.median(ratio))
     gate("推力の大きさは中央値で 15 % 以内", abs(med_ratio - 1) < 0.15, "推定/真値 中央値 %.3f(範囲 %.2f〜%.2f)" % (med_ratio, min(ratio), max(ratio)))
 
@@ -423,6 +446,7 @@ def main() -> int:
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))
         OK.append(False)
+    print("画面の縁に触れて引き直した発射: %d 本(縁に触れた bbox は切り詰められているので使わない)" % CLIPPED[0])
     print("所要 %.1f 秒" % (time.time() - T0))
     print("PASS" if all(OK) else "FAIL")
     return 0 if all(OK) else 1

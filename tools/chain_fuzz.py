@@ -1484,6 +1484,131 @@ def _b_simcal_uncertainty(pool, rng):
     return (res,), {"method": "bootstrap", "n_boot": 8}
 
 
+# --- カメラ校正(opscalib、2026-10-23)。引数は既知寸法の校正板と既知の姿勢から閉形式で作る。 --- #
+#: 族の共通の真値: 内部パラメータ・校正板(7x7、10 mm)・板の姿勢(600 mm 先で x 軸まわり 0.2 rad)。
+_CALIB_K = {"fx": 500.0, "fy": 500.0, "cx": 128.0, "cy": 128.0}
+
+
+def _calib_pose(rx=0.2, ry=0.0, rz=0.0, t=(0.0, 0.0, 600.0)):
+    cx, sx, cy, sy, cz, sz = (np.cos(rx), np.sin(rx), np.cos(ry), np.sin(ry),
+                              np.cos(rz), np.sin(rz))
+    R = (np.array([[cz, -sz, 0], [sz, cz, 0], [0, 0, 1.0]])
+         @ np.array([[cy, 0, sy], [0, 1.0, 0], [-sy, 0, cy]])
+         @ np.array([[1.0, 0, 0], [0, cx, -sx], [0, sx, cx]]))
+    T = np.eye(4)
+    T[:3, :3] = R
+    T[:3, 3] = t
+    return T
+
+
+def _calib_world():
+    import caltab as _ct
+    xy = _ct.create_caltab(7, 7, 10.0)["points"][:, ::-1]          # (y, x) -> (x, y) mm
+    return xy, np.column_stack([xy, np.zeros(len(xy))])
+
+
+def _b_calib_project(pool, rng):
+    return (_calib_world()[1], _CALIB_K, _calib_pose()), {}
+
+
+def _b_calib_project_P(pool, rng):
+    import calib as _cb
+    P = _cb._K(_CALIB_K) @ _calib_pose()[:3]
+    return (_calib_world()[1], P), {}
+
+
+def _b_calib_project_hom(pool, rng):
+    import calib as _cb
+    w = _calib_world()[1]
+    return (np.column_stack([w, np.ones(len(w))]), _cb._K(_CALIB_K) @ _calib_pose()[:3]), {}
+
+
+def _b_calib_plane_H(pool, rng):
+    # 画素 (col, row) -> 板の (x, y) mm の平面ホモグラフィ(K [r1 r2 t] の逆)
+    import calib as _cb
+    T = _calib_pose()
+    H = np.linalg.inv(_cb._K(_CALIB_K) @ np.column_stack([T[:3, 0], T[:3, 1], T[:3, 3]]))
+    return H / H[2, 2]
+
+
+def _b_calib_i2w(pool, rng):
+    import calib as _cb
+    px = _cb.project_3d_point(_calib_world()[1], _CALIB_K, _calib_pose())
+    return (px[:, ::-1].copy(), _b_calib_plane_H(pool, rng)), {}
+
+
+def _b_calib_ip2w(pool, rng):
+    import calib as _cb
+    px = _cb.project_3d_point(_calib_world()[1], _CALIB_K, _calib_pose())
+    return (_CALIB_K, _calib_pose(), px), {}
+
+
+def _b_calib_contour(pool, rng):
+    import calib as _cb
+    px = _cb.project_3d_point(_calib_world()[1], _CALIB_K, _calib_pose())
+    return ({"shape": "polyline", "cs": [px[:7, ::-1].copy(), px[7:14, ::-1].copy()]},
+            _b_calib_plane_H(pool, rng)), {}
+
+
+def _b_calib_i2w_map(pool, rng):
+    return (_CALIB_K, _calib_pose(), (24, 32)), {}
+
+
+def _b_calib_radial(pool, rng):
+    return (_CALIB_K, -1e-6, (24, 32)), {}
+
+
+def _b_calib_sim(pool, rng):
+    import caltab as _ct
+    return (_ct.create_caltab(7, 7, 10.0), _CALIB_K, _calib_pose(), 256), {}
+
+
+def _b_calib_disp(pool, rng):
+    import caltab as _ct
+    return (_ct.gen_caltab(5, 5, 10.0, 0.3, 64),), {}
+
+
+def _b_calib_find(pool, rng):
+    import caltab as _ct
+    return (_ct.sim_caltab(_ct.create_caltab(7, 7, 10.0), _CALIB_K, _calib_pose(), 256)["image"],), {}
+
+
+def _b_calib_marks_pose(pool, rng):
+    import caltab as _ct
+    board = _ct.create_caltab(7, 7, 10.0)
+    img = _ct.sim_caltab(board, _CALIB_K, _calib_pose(), 256)["image"]
+    return (img, _CALIB_K, board), {}
+
+
+def _b_calib_zhang(pool, rng):
+    import calib as _cb
+    xy, world = _calib_world()
+    poses = [_calib_pose(0.3, -0.2, 0.1, (5, -3, 400)), _calib_pose(-0.25, 0.35, -0.4, (-10, 8, 450)),
+             _calib_pose(0.15, 0.15, 0.9, (0, 0, 380)), _calib_pose(-0.4, -0.1, 0.3, (12, -4, 420))]
+    return (xy, [_cb.project_3d_point(world, _CALIB_K, P) for P in poses]), {}
+
+
+def _b_calib_hand_eye(pool, rng):
+    X = _calib_pose(0.3, -0.2, 0.15, (12.0, -5.0, 30.0))
+    A = [_calib_pose(0, 0, 0, (0, 0, 0)), _calib_pose(0.4, 0, 0, (10, 0, 5)),
+         _calib_pose(0, 0.5, 0, (0, 12, -4)), _calib_pose(0, 0, 0.6, (-6, 3, 9))]
+    Xi = np.linalg.inv(X)
+    return (A, [Xi @ a @ X for a in A]), {}
+
+
+def _b_calib_fit2d(pool, rng):
+    # 非等方ピッチの格子(行と列の取り違えは格子でしか露見しない)を回して縮めて動かす
+    r, c = np.mgrid[0:6, 0:6]
+    src = np.column_stack([r.ravel() * 4.0, c.ravel() * 7.0])
+    th = 0.37
+    R = np.array([[np.cos(th), -np.sin(th)], [np.sin(th), np.cos(th)]])
+    return (src, 1.5 * (src @ R.T) + np.array([13.0, -21.0])), {}
+
+
+def _b_calib_angle_rigid(pool, rng):
+    return (10.0, 20.0, 0.2, 35.0, -4.0, 0.9), {}
+
+
 # --- 符号系の頑健照合(opscodematch)。乱数は共有の列を引かず、固定の種で 1 枚の場面を作る。 --- #
 def _codematch_scene():
     from scipy import ndimage as _ndi
@@ -2000,7 +2125,8 @@ def _b_thrust_tp(pool, rng):
     bp = _b_ball_bp(pool, rng)
     f = BL.thrust_ode((0.0, 0.0, 0.5), (3.0, 0.2, 1.0), (0.5, 0.0, 0.2), bp, 0.101, 1e-3)
     idx = np.arange(0, 100, 10)
-    return (f["t"][idx], f["p"][idx], bp), {"iters": 2, "dt": 1e-3}
+    # 1 mm の雑音を足す: 雑音ゼロの真値は残差が離散化の床にあり、ballistic_vs_thrust は AIC の比較を拒否する(2026-10-23)
+    return (f["t"][idx], f["p"][idx] + rng.normal(0.0, 1e-3, (len(idx), 3)), bp), {"iters": 2, "dt": 1e-3}
 
 
 def _b_aic(pool, rng):
@@ -7547,6 +7673,24 @@ OP_ARG_BUILDERS = {
     "isc_match": _b_codematch_pair,
     "scc_match": _b_codematch_pair,
     "radial_reach_filter": _b_codematch_rrf,
+    "project_3d_point": _b_calib_project,
+    "project_point_hom_mat3d": _b_calib_project_P,
+    "project_hom_point_hom_mat3d": _b_calib_project_hom,
+    "image_to_world_plane": _b_calib_i2w,
+    "image_points_to_world_plane": _b_calib_ip2w,
+    "contour_to_world_plane_xld": _b_calib_contour,
+    "gen_image_to_world_plane_map": _b_calib_i2w_map,
+    "gen_radial_distortion_map": _b_calib_radial,
+    "sim_caltab": _b_calib_sim,
+    "disp_caltab": _b_calib_disp,
+    "find_caltab": _b_calib_find,
+    "find_marks_and_pose": _b_calib_marks_pose,
+    "camera_calibration": _b_calib_zhang,
+    "hand_eye_calibration": _b_calib_hand_eye,
+    "vector_to_rigid": _b_calib_fit2d,
+    "vector_to_similarity": _b_calib_fit2d,
+    "hom_vector_to_proj_hom_mat2d": _b_calib_fit2d,
+    "vector_angle_to_rigid": _b_calib_angle_rigid,
     "residue_integer_crt": _b_residue_int,
     "residue_crt": _b_residue_real,
     "residue_fault_locate": _b_residue_real,

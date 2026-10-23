@@ -9,47 +9,134 @@ from __future__ import annotations
 import numpy as np
 
 
-def _K(cam_par):
+# ── 入口の検査(fail-closed、2026-10-23 に台帳 opscalib へ載せる便で追加)────────── #
+# 非有限・空・形の合わない入力は ValueError で拒否する。以前は NaN の点が NaN の画素に、
+# 欠けた鍵が KeyError に、視線と平行な点が inf になって黙って下流へ流れていた。
+def _finite_array(a, name, op, cols=None, min_rows=1):
+    """有限な float64 配列 ``(N, cols)``(``cols`` 指定時)を返す。空・非有限・形違いは拒否。"""
+    if isinstance(a, (str, bytes)):
+        raise ValueError("%s: %s is a string — expected an array of numbers" % (op, name))
+    try:
+        arr = np.asarray(a, dtype=np.float64)
+    except (TypeError, ValueError) as e:
+        raise ValueError("%s: %s is not numeric (%s)" % (op, name, e)) from None
+    if cols is not None:
+        if arr.size % cols:
+            raise ValueError("%s: %s has %d values, not a multiple of %d (expected (N, %d))"
+                             % (op, name, arr.size, cols, cols))
+        arr = arr.reshape(-1, cols)
+    if arr.size == 0 or (arr.ndim >= 1 and len(arr) < min_rows):
+        raise ValueError("%s: %s is empty or has fewer than %d row(s) — nothing to compute on"
+                         % (op, name, min_rows))
+    if not np.isfinite(arr).all():
+        raise ValueError("%s: %s has %d non-finite value(s) — refused rather than propagated"
+                         % (op, name, int((~np.isfinite(arr)).sum())))
+    return arr
+
+
+def _finite_scalar(v, name, op, positive=False):
+    """有限な実数(``positive`` なら正)を返す。bool・文字列・NaN・Inf は拒否。"""
+    if isinstance(v, (bool, np.bool_, str, bytes)) or np.ndim(v) != 0:
+        raise ValueError("%s: %s must be a real number, got %r" % (op, name, v))
+    try:
+        f = float(v)
+    except (TypeError, ValueError):
+        raise ValueError("%s: %s must be a real number, got %r" % (op, name, v)) from None
+    if not np.isfinite(f) or (positive and f <= 0.0):
+        raise ValueError("%s: %s must be a %sfinite number, got %r"
+                         % (op, name, "positive " if positive else "", v))
+    return f
+
+
+def _shape2(shape, op):
+    """``(H, W)`` の正の整数 2 つを返す。"""
+    try:
+        h, w = shape
+    except (TypeError, ValueError):
+        raise ValueError("%s: shape must be (H, W), got %r" % (op, shape)) from None
+    out = []
+    for v in (h, w):
+        if isinstance(v, (bool, np.bool_)) or not isinstance(v, (int, np.integer)) or int(v) < 1:
+            raise ValueError("%s: shape must be two positive integers, got %r" % (op, shape))
+        out.append(int(v))
+    return tuple(out)
+
+
+def _pose_matrix(pose, op, name="pose"):
+    """有限な 4x4(または 3x4)の剛体変換を 4x4 で返す。"""
+    P = _finite_array(pose, name, op)
+    if P.shape == (3, 4):
+        P = np.vstack([P, [0.0, 0.0, 0.0, 1.0]])
+    if P.shape != (4, 4):
+        raise ValueError("%s: %s must be a 4x4 (or 3x4) transform, got shape %r"
+                         % (op, name, P.shape))
+    return P
+
+
+def _checked_div(num, den, op, what):
+    """同次座標の割り算。分母 0(視線・地平線上の点)で inf を返さず拒否する。"""
+    with np.errstate(divide="ignore", invalid="ignore"):
+        out = num / den
+    bad = ~np.isfinite(out)
+    if bad.any():
+        n = int(bad.any(axis=-1).sum()) if bad.ndim > 1 else int(bad.sum())
+        raise ValueError("%s: %d point(s) have a zero homogeneous coordinate (%s) — "
+                         "their image is at infinity" % (op, n, what))
+    return out
+
+
+def _K(cam_par, op="camera"):
+    """``cam_par``({"fx","fy","cx","cy"} または 3x3 K)→ 有限な 3x3 K。"""
     if isinstance(cam_par, dict):
-        return np.array([[cam_par["fx"], 0, cam_par["cx"]],
-                         [0, cam_par["fy"], cam_par["cy"]], [0, 0, 1.0]])
-    return np.asarray(cam_par, float)
+        missing = [k for k in ("fx", "fy", "cx", "cy") if k not in cam_par]
+        if missing:
+            raise ValueError("%s: cam_par is missing %s (expected keys fx, fy, cx, cy)"
+                             % (op, ", ".join(missing)))
+        fx = _finite_scalar(cam_par["fx"], "cam_par['fx']", op, positive=True)
+        fy = _finite_scalar(cam_par["fy"], "cam_par['fy']", op, positive=True)
+        cx = _finite_scalar(cam_par["cx"], "cam_par['cx']", op)
+        cy = _finite_scalar(cam_par["cy"], "cam_par['cy']", op)
+        return np.array([[fx, 0, cx], [0, fy, cy], [0, 0, 1.0]])
+    K = _finite_array(cam_par, "cam_par", op)
+    if K.shape != (3, 3):
+        raise ValueError("%s: cam_par must be a dict {fx, fy, cx, cy} or a 3x3 K, got shape %r"
+                         % (op, K.shape))
+    return K
 
 
 def project_3d_point(points_3d, cam_par, pose=None):
     """3D 点をカメラへ透視投影し画素 (row, col) を返す(project_3d_point)。"""
-    P = np.asarray(points_3d, float).reshape(-1, 3)
-    K = _K(cam_par)
+    op = "project_3d_point"
+    P = _finite_array(points_3d, "points_3d", op, cols=3)
+    K = _K(cam_par, op)
     if pose is not None:
-        pose = np.asarray(pose, float)
+        pose = _pose_matrix(pose, op)
         P = (P @ pose[:3, :3].T) + pose[:3, 3]
     uvw = P @ K.T
-    uv = uvw[:, :2] / uvw[:, 2:3]
+    uv = _checked_div(uvw[:, :2], uvw[:, 2:3], op, "z = 0 in the camera frame")
     return np.column_stack([uv[:, 1], uv[:, 0]])          # (row=y, col=x)
 
 
 def project_point_hom_mat3d(points_3d, hom_mat3d):
-    """4x4 or 3x4 射影行列 P=K[R|t] で 3D 点を投影し画素 (row, col) を返す
-    (project_point_hom_mat3d)。``project_3d_point`` と同じ (row, col) 規約
+    """4x4 or 3x4 射影行列 P=K[R|t] で 3D 点を投影し画素 (row, col) を返す(project_point_hom_mat3d)。
+
+    ``project_3d_point`` と同じ (row, col) 規約
     (2026-09-02 以前は (x, y) を返しており兄弟 API と食い違っていた)。"""
-    P = np.asarray(points_3d, float).reshape(-1, 3)
-    Hm = np.asarray(hom_mat3d, float)
-    if Hm.shape == (4, 4):
-        Hm = Hm[:3]
+    op = "project_point_hom_mat3d"
+    P = _finite_array(points_3d, "points_3d", op, cols=3)
+    Hm = _pose_matrix(hom_mat3d, op, "hom_mat3d")[:3]
     out = (np.column_stack([P, np.ones(len(P))]) @ Hm.T)
-    uv = out[:, :2] / out[:, 2:3]
+    uv = _checked_div(out[:, :2], out[:, 2:3], op, "w = 0")
     return np.column_stack([uv[:, 1], uv[:, 0]])
 
 
 def project_hom_point_hom_mat3d(points_hom, hom_mat3d):
-    """同次 3D 点 (4,) を 3x4/4x4 射影行列で投影し画素 (row, col) を返す
-    (project_hom_point_hom_mat3d)。"""
-    P = np.asarray(points_hom, float).reshape(-1, 4)
-    Hm = np.asarray(hom_mat3d, float)
-    if Hm.shape == (4, 4):
-        Hm = Hm[:3]
+    """同次 3D 点 (4,) を 3x4/4x4 射影行列で投影し画素 (row, col) を返す(project_hom_point_hom_mat3d)。"""
+    op = "project_hom_point_hom_mat3d"
+    P = _finite_array(points_hom, "points_hom", op, cols=4)
+    Hm = _pose_matrix(hom_mat3d, op, "hom_mat3d")[:3]
     out = P @ Hm.T
-    uv = out[:, :2] / out[:, 2:3]
+    uv = _checked_div(out[:, :2], out[:, 2:3], op, "w = 0")
     return np.column_stack([uv[:, 1], uv[:, 0]])
 
 
@@ -73,38 +160,50 @@ def vector_to_hom_mat2d(src_points, dst_points):
 
 def image_to_world_plane(image_points, homography):
     """画像点を平面ホモグラフィで world 平面(z=0)へ写す(image_to_world_plane)。
+
     規約に依らず ``homography`` を点に **そのまま** 適用する: H を (x=col, y=row)
     で推定したなら点も (col, row) で渡す(``camera_calibration`` の
     ``homographies`` は (x,y)→(col,row) なので、その逆行列をこの向きで使う)。"""
-    p = np.asarray(image_points, float).reshape(-1, 2)
-    H = np.asarray(homography, float)
+    op = "image_to_world_plane"
+    p = _finite_array(image_points, "image_points", op, cols=2)
+    H = _finite_array(homography, "homography", op)
+    if H.shape != (3, 3):
+        raise ValueError("%s: homography must be 3x3, got shape %r" % (op, H.shape))
     h = np.column_stack([p, np.ones(len(p))]) @ H.T
-    return h[:, :2] / h[:, 2:3]
+    return _checked_div(h[:, :2], h[:, 2:3], op, "the point maps to the horizon")
 
 
 def image_points_to_world_plane(cam_par, pose, image_points, scale=1.0):
     """カメラ内部/外部から画素を world 平面 z=0 へ逆投影(image_points_to_world_plane)。"""
-    K = _K(cam_par); pose = np.asarray(pose, float)
+    op = "image_points_to_world_plane"
+    K = _K(cam_par, op); pose = _pose_matrix(pose, op)
+    sc = _finite_scalar(scale, "scale", op, positive=True)
     R = pose[:3, :3]; t = pose[:3, 3]
     ray_transform = R.T @ np.linalg.inv(K)
     o = -R.T @ t
-    p = np.asarray(image_points, float).reshape(-1, 2)
+    p = _finite_array(image_points, "image_points", op, cols=2)
     rays = np.column_stack((p[:, 1], p[:, 0], np.ones(len(p)))) @ ray_transform.T
-    lam = -o[2] / rays[:, 2]
-    return (o[None, :2] + lam[:, None] * rays[:, :2]) * scale
+    lam = _checked_div(-o[2], rays[:, 2], op, "the viewing ray is parallel to the z = 0 plane")
+    return (o[None, :2] + lam[:, None] * rays[:, :2]) * sc
 
 
 def contour_to_world_plane_xld(contour, homography):
     """XLD 輪郭(dict {cs:[Nx2]})を world 平面へ写す(contour_to_world_plane_xld)。"""
+    op = "contour_to_world_plane_xld"
+    if not isinstance(contour, dict) or not contour.get("cs"):
+        raise ValueError("%s: contour must be an XLD dict with a non-empty 'cs' list of (N, 2) "
+                         "arrays, got %r" % (op, type(contour).__name__))
     out = {"shape": contour.get("shape"), "cs": []}
-    for arr in contour.get("cs", []):
+    for arr in contour["cs"]:
         out["cs"].append(image_to_world_plane(arr, homography))
     return out
 
 
 def gen_radial_distortion_map(cam_par, kappa, shape):
     """半径歪みの逆マップ(row_map, col_map)を生成(gen_radial_distortion_map)。"""
-    K = _K(cam_par); H, W = shape
+    op = "gen_radial_distortion_map"
+    K = _K(cam_par, op); H, W = _shape2(shape, op)
+    kappa = _finite_scalar(kappa, "kappa", op)
     cx = K[0, 2]; cy = K[1, 2]
     rr, cc = np.mgrid[0:H, 0:W].astype(float)
     x = cc - cx; y = rr - cy
@@ -146,7 +245,7 @@ def camera_calibration(object_points, image_points_list):
     この比のほうは 129 倍動く。ただし**歪み補正前の点では意味を持たない**
     (下の門の注記を見よ)。
     """
-    obj = np.asarray(object_points, float).reshape(-1, 2)
+    obj = _finite_array(object_points, "object_points", "camera_calibration", cols=2)
     views = [np.asarray(ip, float).reshape(-1, 2) for ip in image_points_list]
     if len(views) < 3:
         raise ValueError(f"camera_calibration needs >= 3 views (got {len(views)}); "
@@ -246,9 +345,20 @@ def _axis_to_rot(v):
 
 def hand_eye_calibration(poses_a, poses_b):
     """一連の運動対から AX=XB を解き X(4x4)を推定(hand_eye_calibration)。
+
+    fail-closed: 姿勢が 3 未満・組の数が合わない・非有限・相対運動の回転軸が 1 方向にしか
+    散っていない(X の回転が決まらない)ときは ``ValueError``。
+
     poses_a/poses_b: 4x4 剛体変換のリスト。隣接運動から相対運動を構成。"""
-    A = [np.asarray(p, float) for p in poses_a]
-    B = [np.asarray(p, float) for p in poses_b]
+    op = "hand_eye_calibration"
+    A = [_pose_matrix(p, op, "poses_a[%d]" % i) for i, p in enumerate(poses_a)]
+    B = [_pose_matrix(p, op, "poses_b[%d]" % i) for i, p in enumerate(poses_b)]
+    if len(A) != len(B):
+        raise ValueError("%s: poses_a and poses_b must pair up, got %d and %d poses"
+                         % (op, len(A), len(B)))
+    if len(A) < 3:
+        raise ValueError("%s: needs >= 3 poses (>= 2 relative motions with different rotation "
+                         "axes) to fix the rotation, got %d" % (op, len(A)))
     # 回転: 相対運動の回転軸から最小二乗で Rx を解く(修正 Rodrigues)
     Msum = np.zeros((3, 3)); bsum = np.zeros(3)
     rels = []
@@ -260,6 +370,12 @@ def hand_eye_calibration(poses_a, poses_b):
         # Park-Martin/Procrustes: Rx beta ~= alpha なので M = sum(alpha beta^T)
         Msum += np.outer(alpha, beta)
     U, S, Vt = np.linalg.svd(Msum)
+    # 回転軸が 1 方向にしか散っていないと Procrustes の行列がランク落ちし、
+    # 軸まわりの回転が決まらない(それでも行列は返る = 静かな誤り)。手前で拒む。
+    if S[0] <= 0.0 or S[1] <= 1e-9 * S[0]:
+        raise ValueError("%s: the relative motions rotate about a single axis (or not at all) — "
+                         "the rotation of X is not determined; move about >= 2 different axes"
+                         % op)
     d = np.sign(np.linalg.det(U @ Vt))
     Rx = U @ np.diag([1, 1, d]) @ Vt
     # 並進: (Ra - I) tx = Rx tb - ta
