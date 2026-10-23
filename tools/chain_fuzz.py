@@ -2125,7 +2125,8 @@ def _b_thrust_tp(pool, rng):
     bp = _b_ball_bp(pool, rng)
     f = BL.thrust_ode((0.0, 0.0, 0.5), (3.0, 0.2, 1.0), (0.5, 0.0, 0.2), bp, 0.101, 1e-3)
     idx = np.arange(0, 100, 10)
-    return (f["t"][idx], f["p"][idx], bp), {"iters": 2, "dt": 1e-3}
+    # 1 mm の雑音を足す: 雑音ゼロの真値は残差が離散化の床にあり、ballistic_vs_thrust は AIC の比較を拒否する(2026-10-23)
+    return (f["t"][idx], f["p"][idx] + rng.normal(0.0, 1e-3, (len(idx), 3)), bp), {"iters": 2, "dt": 1e-3}
 
 
 def _b_aic(pool, rng):
