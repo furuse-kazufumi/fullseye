@@ -172,9 +172,19 @@ OUTPUTS = {
                                  "docs/AI_RAG_GUIDE.md", "docs/AI_RAG_GUIDE.*.md"],
     "tools/gen_mcp_data.py": ["fullseye/data/OP_INDEX.json", "fullseye/data/OP_NOTES.json",
                               "fullseye/data/OP_SEARCH.json", "fullseye/data/op_knob.json"],
-    "tools/gen_literature_counts.py": ["docs/literature/INDEX.md", "docs/literature/driving_simulation.md",
-                                       "docs/literature/manufacturing_processes.md", "docs/literature/mech_design.md",
-                                       "docs/literature/mechatronics_parts.md", "docs/literature/optical_metrology.md",
+    # 2026-10-23: 手で列挙していて #116 の文献 4 本が漏れ、regen が exit 1(--check は緑)だった。
+    #   件数を打ち直す文献ノートの実ファイルと合わせる(OSS_LANDSCAPE.md は gen_oss_landscape.py の生成物、
+    #   oss_landscape_notes.md は手書きの注で、どちらもこの段は書かない)。
+    "tools/gen_literature_counts.py": ["docs/literature/INDEX.md",
+                                       "docs/literature/convergent_numerics_light_transport.md",
+                                       "docs/literature/driving_simulation.md",
+                                       "docs/literature/electron_microscopy.md",
+                                       "docs/literature/industrial_optical_sensing.md",
+                                       "docs/literature/manufacturing_processes.md",
+                                       "docs/literature/mech_design.md",
+                                       "docs/literature/mechatronics_parts.md",
+                                       "docs/literature/optical_metrology.md",
+                                       "docs/literature/sensitivity_uq_calibration.md",
                                        "docs/literature/sensor_simulation.md"],
 }
 
@@ -214,10 +224,7 @@ READS = {
         "docs/ops/*", "docs/OP_CATALOG.md", "docs/CAPABILITIES.md", "docs/CAPABILITIES.*.md",
         "docs/HARDENING.md", "docs/HARDENING.*.md", "docs/MATURITY.md",
         "docs/articles/exhibits/wingpoc.*.md", "docs/articles/fullseye_poc_museum_qiita_*.md", "docs/articles/fullseye_poc_museum_*_qiita_*.md",
-        "docs/literature/OSS_LANDSCAPE.md", "docs/literature/INDEX.md", "docs/literature/driving_simulation.md",
-        "docs/literature/manufacturing_processes.md", "docs/literature/mech_design.md",
-        "docs/literature/mechatronics_parts.md", "docs/literature/optical_metrology.md",
-        "docs/literature/sensor_simulation.md",
+        "docs/literature/*.md",                       # 文献ノート全部(2026-10-23: 列挙だと増えた分が READS から漏れる)
         "docs/README.md", "docs/README.*.md", "docs/OP_COUNT_HISTORY.md",
         "docs/EXAMPLES_3D.md", "docs/SENSOR_PLAYBOOK.md", "docs/OPERATORS.md",
         "docs/REFERENCES.md", "docs/EXAMPLES.md", "docs/CONVERSION_MATRIX.md",

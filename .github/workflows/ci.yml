@@ -82,6 +82,12 @@ jobs:
       # PIL(gallery)・openpyxl(xlsxio)が無い環境では「実在しない op」として落ちる。
       # 全数スイートと同じ extras を入れる(torch/kornia/mahotas 無しの shard でも
       # これらのテストは緑なので、その集合で足りる)。
+      # 能力ノートの例(text-and-tables-on-images)は日本語を描くので CJK フォントが要る(全数スイートと同じ 2 つ。
+      # 無いと「the font has no glyph for '項目'」で落ちる —— #124 で extras を入れたあと、#123 の再実行で判明、2026-10-23)。
+      - name: CJK fonts for the capability samples
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q fonts-noto-cjk fonts-ipafont-gothic
       - name: Install documentation-check dependencies (same optional backends as the full suite)
         run: >
           pip install -e ".[opencv,skimage,pil,wavelets,gui,video,volume,gltf,lidar,pcd,xlsx]"
