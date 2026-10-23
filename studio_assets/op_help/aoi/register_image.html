@@ -1,0 +1,65 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">register_image — AOI <code style="color:#22d3bf">geometric</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.register_image(reference, moving, upsample=20, method=&#x27;phase&#x27;, window=&#x27;hann&#x27;, max_shift=None, ambiguity_ratio=0.8, residual_tolerance=0.25)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import aoi; aoi.register_image(reference, moving, upsample=20, method=&#x27;phase&#x27;, window=&#x27;hann&#x27;, max_shift=None, ambiguity_ratio=0.8, residual_tolerance=0.25)</code>、台帳から引くなら <code style="color:#22d3bf">opsaoi.get(&quot;register_image&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>検査画像を基準画像へ合わせる平行移動を、合っていないと分かる量つきで返す。→ dict。</p>
+<p>相関面(既定は位相相関)の山を整数画素で見つけ、その近傍を上標本 DFT で <code style="color:#22d3bf">1/upsample</code> 画素まで詰める。返りは dict 1 つで、<b>並進だけでなく「その答えがどれくらい当てになるか」を必ず一緒に返す</b>。</p>
+<p>符号の約束: <code style="color:#22d3bf">moving(y, x) ≈ reference(y - dy, x - dx)</code>。つまり <code style="color:#22d3bf">moving</code> は <code style="color:#22d3bf">reference</code> を <code style="color:#22d3bf">(dy, dx)</code> だけずらしたもので、<code style="color:#22d3bf">moving</code> を <code style="color:#22d3bf">(-dy, -dx)</code> 動かせば重なる。<code style="color:#22d3bf">np.roll(ref, (3, 5), axis=(0, 1))</code> を渡せば <code style="color:#22d3bf">dy=3, dx=5</code> が返る。</p>
+<p><b>平行移動しか扱わない。</b> 回転や倍率が入った対を渡しても例外は出ないが、<code style="color:#22d3bf">residual</code> が跳ね <code style="color:#22d3bf">consistent</code> が False になる。実測(128x128 の合成模様。勾配 + 円 + 棒 + 雑音で、乱数だけの画像は対称性の破れを隠すので使わない):</p>
+<p>=====================  ==========  ============  ========  ============</p>
+<p>与えた変形              residual    peak_ratio    peak      consistent</p>
+<p>=====================  ==========  ============  ========  ============</p>
+<p>並進 (3, 5) px 整数     0.000000    0.0081        0.9698    True</p>
+<p>並進 (2.5, -1.5) px     0.058785    0.2050        —         True</p>
+<p>並進 (0.5, 0) px        0.038918    0.2022        —         True</p>
+<p>回転 2 度               0.5886      0.1303        0.3200    <b>False</b></p>
+<p>回転 5 度               0.6555      0.4827        0.1132    <b>False</b></p>
+<p>倍率 1.05               0.6073      0.1687        0.2196    <b>False</b></p>
+<p>倍率 1.10               0.6767      0.5205        0.0968    <b>False</b></p>
+<p>=====================  ==========  ============  ========  ============</p>
+<p>副画素の並進は <code style="color:#22d3bf">upsample=20</code> で<b>誤差 0.0000 px</b>(上の 2 例とも真値と一致)。数字は <code style="color:#22d3bf">tests/test_aoi.py</code> が固定している。<b>黙って「いちばん近い平行移動」を成功として返さない</b>ための量がこの <code style="color:#22d3bf">residual</code> で、返り値を見ずに <code style="color:#22d3bf">dy</code>/<code style="color:#22d3bf">dx</code> だけ使うと回転 2 度を「ずれ 0.14 px」として飲み込む(上の表の 4 行目)。</p>
+<p><b>周期のある模様では答えが 1 つに決まらない —— そして <code style="color:#22d3bf">peak_ratio</code> はその半分しか見ていない。</b> 実測(周期 8 px、<code style="color:#22d3bf">np.roll</code> で (3, 5) ずらした対):</p>
+<p>===========  =========  =========  ============  ===========  ==========</p>
+<p>模様          dy         dx         peak_ratio    ambiguous    residual</p>
+<p>===========  =========  =========  ============  ===========  ==========</p>
+<p>市松 8 px    +2.950     +4.850     1.0000        <b>True</b>     0.1322</p>
+<p>縞 8 px      +0.000     +4.900     0.1996        <b>False</b>    0.0838</p>
+<p>===========  =========  =========  ============  ===========  ==========</p>
+<p>市松は狙いどおり <code style="color:#22d3bf">ambiguous=True</code> になる(答えは周期 8 を法として等価なものが並ぶので、返る値は<b>そのうちの 1 つ</b>であって間違いではないが一意でもない)。</p>
+<p>★<b>縞は捕まらない、という限界を正直に書いておく。</b> 縞は縦方向に模様が無いので <code style="color:#22d3bf">dy</code> は原理的に決まらないのに、<code style="color:#22d3bf">ambiguous</code> は False で <code style="color:#22d3bf">dy=0.000</code> が返る。<code style="color:#22d3bf">peak_ratio</code> は「離れた 2 番目の<b>山</b>」を見る量で、縞が作るのは山ではなく <b>尾根</b>(<code style="color:#22d3bf">dy</code> 方向に平らな筋)だから検出できない。しかも尾根の中から <code style="color:#22d3bf">dy=0</code> を選んでいるのは画像ではなく <b>Hann 窓の包絡</b>で、<code style="color:#22d3bf">window=&quot;none&quot;</code> にすると別の値が出うる。<b>片方向だけ模様が無い被写体(縞・織り目・筋目)では <code style="color:#22d3bf">dy</code>/<code style="color:#22d3bf">dx</code> のどちらかが窓の産物になりうる</b>ので、そういう面を測るなら直交する模様を画面に入れること。この限界は <code style="color:#22d3bf">tests/test_aoi.py</code> が両方向とも固定してある(市松が True・縞が False であることを、直すまで忘れないために)。</p>
+<p>Args:</p>
+<p>reference: 基準画像 <code style="color:#22d3bf">(H, W)</code>。</p>
+<p>moving: 合わせる画像 <code style="color:#22d3bf">(H, W)</code>。<code style="color:#22d3bf">reference</code> と同じ形。</p>
+<p>upsample: 副画素の分解能の逆数(<code style="color:#22d3bf">1</code> なら整数画素まで)。</p>
+<p>method: <code style="color:#22d3bf">REGISTER_METHODS</code>。<code style="color:#22d3bf">&quot;phase&quot;</code> は振幅を正規化するので明るさの</p>
+<p>違いに強く、<code style="color:#22d3bf">&quot;cross&quot;</code> は素の相互相関で雑音に強い。</p>
+<p>window: <code style="color:#22d3bf">REGISTER_WINDOWS</code>。</p>
+<p>max_shift: 探索するずれの上限[px]。<code style="color:#22d3bf">None</code> なら画像の半分。</p>
+<p>ambiguity_ratio: <code style="color:#22d3bf">peak_ratio</code> がこれ以上なら <code style="color:#22d3bf">ambiguous=True</code>。</p>
+<p>residual_tolerance: <code style="color:#22d3bf">residual</code> がこれ以下なら <code style="color:#22d3bf">consistent=True</code>。</p>
+<p>Returns:</p>
+<p>dict。<code style="color:#22d3bf">dy</code> / <code style="color:#22d3bf">dx</code>(px、副画素)、<code style="color:#22d3bf">peak</code>(正規化した山の高さ <code style="color:#22d3bf">[0, 1]</code>)、</p>
+<p><code style="color:#22d3bf">peak_ratio</code>(第 2 の山 / 第 1 の山。1 に近いほど当てにならない)、</p>
+<p><code style="color:#22d3bf">ambiguous</code>(bool)、<code style="color:#22d3bf">residual</code>(合わせたあとの残差 rms / 基準の rms)、</p>
+<p><code style="color:#22d3bf">consistent</code>(bool。平行移動だけで説明できるか)、<code style="color:#22d3bf">model</code>(<code style="color:#22d3bf">&quot;translation&quot;</code>)、</p>
+<p><code style="color:#22d3bf">method</code> / <code style="color:#22d3bf">window</code> / <code style="color:#22d3bf">upsample</code>。</p>
+<p>Raises:</p>
+<p>ValueError: 形が違う / 2-D でない / 非有限 / どちらかが定数画像(模様が無いので</p>
+<p>ずれが定義できない)/ 引数が値域外(<code style="color:#22d3bf">upsample</code> が 1 未満か <code style="color:#22d3bf">MAX_UPSAMPLE</code></p>
+<p>超、<code style="color:#22d3bf">max_shift</code> / <code style="color:#22d3bf">ambiguity_ratio</code> / <code style="color:#22d3bf">residual_tolerance</code> が正の有限でない)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideaoi:aoi_frontend">aoi_frontend ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:aoi_frontend_tour">aoi_frontend_tour</a> — <code style="color:#22d3bf">py -3.11 examples/aoi_frontend_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">geometric</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: aoi.py — AOI operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

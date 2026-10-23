@@ -30942,6 +30942,33 @@
    "de": "Radial Reach Filter (RRF): vergleicht Hintergrund und aktuelles Bild über die Vorzeichen der Reaches in 8 Richtungen.",
    "hi": "Radial Reach Filter (RRF): background और वर्तमान image की तुलना 8 दिशाओं के reach चिह्नों से करता है।"
   },
+  "aoi/flat_field_correct": {
+   "fp": "e342d096aa10",
+   "en": "Undoes uneven illumination and sensor-sensitivity variation by a dark-subtracted division. → corrected image.",
+   "zh": "通过扣除暗电流后的除法，校正照明不均与传感器灵敏度的差异。→ 校正后的图像。",
+   "tw": "透過扣除暗電流後的除法，校正照明不均與感測器靈敏度的差異。→ 校正後的影像。",
+   "ko": "조명 불균일과 센서 감도 편차를 암전류를 뺀 나눗셈으로 되돌린다. → 보정된 영상.",
+   "de": "Gleicht ungleichmäßige Beleuchtung und Empfindlichkeitsschwankungen des Sensors durch eine Division mit Dunkelstromabzug aus. → korrigiertes Bild.",
+   "hi": "असमान प्रकाश और sensor संवेदनशीलता के अंतर को dark current घटाकर भाग देने से ठीक करता है। → सुधारी गई image."
+  },
+  "aoi/register_image": {
+   "fp": "5bb96337072a",
+   "en": "Returns the translation that aligns an inspection image to a reference image, together with quantities that reveal when it does not fit. → dict.",
+   "zh": "返回将检测图像对齐到基准图像的平移量，并附带能看出对不上的指标。→ dict。",
+   "tw": "回傳將檢測影像對齊到基準影像的平移量，並附帶能看出對不上的指標。→ dict。",
+   "ko": "검사 영상을 기준 영상에 맞추는 평행 이동을, 맞지 않음을 알 수 있는 양과 함께 돌려준다. → dict.",
+   "de": "Liefert die Verschiebung, die ein Prüfbild auf ein Referenzbild ausrichtet, zusammen mit Größen, die erkennen lassen, wenn sie nicht passt. → dict.",
+   "hi": "निरीक्षण image को संदर्भ image से मिलाने वाला translation लौटाता है, साथ में वे मान भी जिनसे पता चले कि मेल नहीं बैठा। → dict."
+  },
+  "aoi/tiled_map": {
+   "fp": "e7073ec85a79",
+   "en": "Splits an image into tiles and turns a per-tile quantity into a small map. → dict.",
+   "zh": "将图像划分为图块，把每个图块的统计量做成一张小地图。→ dict。",
+   "tw": "將影像切分為圖塊，把每個圖塊的統計量做成一張小地圖。→ dict。",
+   "ko": "영상을 타일로 나누고 타일별 양을 작은 지도로 만든다. → dict.",
+   "de": "Teilt ein Bild in Kacheln und macht aus einer Größe je Kachel eine kleine Karte. → dict.",
+   "hi": "image को tiles में बाँटता है और हर tile की मात्रा से एक छोटा map बनाता है। → dict."
+  },
   "spc/anomaly_image_auroc": {
    "fp": "7145079fe2a4",
    "ja": "画像ごとの異常スコアと良/不良のラベルから画像単位の AUROC(``table``)。",

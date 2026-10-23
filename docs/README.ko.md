@@ -62,7 +62,7 @@
 | `validated-public-real-data` | 공개 실측 데이터를 쓰는 예가 게이트에서 실제로 실행됨 | 18 |
 | `validated-hardware` | 실기로 검증(외부 보고를 수리한 경우에만) | 0 |
 
-예 432건 중 게이트가 실제로 실행하는 것은 432건.
+예 433건 중 게이트가 실제로 실행하는 것은 433건.
 
 ### 버전별 연산자 수
 
@@ -137,11 +137,11 @@
 
 ## 연산자 찾기
 
-**3,545개의 연산자 노트**(호출 형식, 타입 계약, HALCON 대응, 참고문헌, 출처)와 **67개의 패밀리 가이드**가 있습니다. 차원별 입구:
+**3,548개의 연산자 노트**(호출 형식, 타입 계약, HALCON 대응, 참고문헌, 출처)와 **68개의 패밀리 가이드**가 있습니다. 차원별 입구:
 
-**실측 커버리지**: 진화 연산자 942/942, 타입 台帳 2582/2594, 한 줄 파사드 `fullseye.<이름>` 703/1480 — **파사드는 아직 절반**.
+**실측 커버리지**: 진화 연산자 942/942, 타입 台帳 2585/2597, 한 줄 파사드 `fullseye.<이름>` 703/1480 — **파사드는 아직 절반**.
 
-**내용 실측**: 3545건 중 실행 가능한 예제가 붙은 것은 **3533**건(12건은 없음), 사용법이 120자 이상인 것은 **3358**건(187건은 한 줄 요약). 구조(호출 형식·타입·다음 연산자)는 3545건 모두.
+**내용 실측**: 3548건 중 실행 가능한 예제가 붙은 것은 **3536**건(12건은 없음), 사용법이 120자 이상인 것은 **3361**건(187건은 한 줄 요약). 구조(호출 형식·타입·다음 연산자)는 3548건 모두.
 
 | 차원 | 연산자 수 | 입구 |
 |---|---:|---|
@@ -196,6 +196,7 @@
 | `videocube` | 6 | [INDEX](ops/videocube/INDEX.md) · [guide](ops/videocube/guides/videocube.md) |
 | `residue` | 5 | [INDEX](ops/residue/INDEX.md) |
 | `cadmap` | 4 | [INDEX](ops/cadmap/INDEX.md) |
+| `aoi` | 3 | [INDEX](ops/aoi/INDEX.md) · [guide](ops/aoi/guides/aoi_frontend.md) |
 | `text` | 3 | [INDEX](ops/text/INDEX.md) |
 
 이름으로 찾으려면 `py -3.11 imgevolve.py ops --search edge`, 전체 대응표는 [OP_CATALOG.md](OP_CATALOG.md), 차원을 가로지르는 입구는 [ops/INDEX.md](ops/INDEX.md).
@@ -296,7 +297,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## 문서 지도 — 전 288건
 
-**색인에서 닿지 않는 문서를 만들지 않기** 위한 전체 지도입니다(`docs/ops/`의 연산자 노트 3,545건과 패밀리 가이드 67건은 위의 「연산자 찾기」에서, 기사는 [articles/](articles/README.md)에서). **본문은 대부분 일본어입니다.**
+**색인에서 닿지 않는 문서를 만들지 않기** 위한 전체 지도입니다(`docs/ops/`의 연산자 노트 3,548건과 패밀리 가이드 68건은 위의 「연산자 찾기」에서, 기사는 [articles/](articles/README.md)에서). **본문은 대부분 일본어입니다.**
 
 **Getting started**(12)
 

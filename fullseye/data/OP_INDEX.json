@@ -1,8 +1,8 @@
 {
- "n_ops": 3539,
+ "n_ops": 3542,
  "tiers": {
   "color": 12,
-  "ledger": 2580,
+  "ledger": 2583,
   "nary": 17,
   "registry": 930
  },
@@ -9626,6 +9626,20 @@
    "dim": "drive",
    "in_sorts": [
     "signal"
+   ]
+  },
+  {
+   "name": "flat_field_correct",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "photometric",
+   "tier": "ledger",
+   "ledger": "opsaoi",
+   "dim": "aoi",
+   "in_sorts": [
+    "image2d",
+    "image2d"
    ]
   },
   {
@@ -23921,6 +23935,20 @@
    ]
   },
   {
+   "name": "register_image",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "geometric",
+   "tier": "ledger",
+   "ledger": "opsaoi",
+   "dim": "aoi",
+   "in_sorts": [
+    "image2d",
+    "image2d"
+   ]
+  },
+  {
    "name": "register_light",
    "halcon": "",
    "in_sort": null,
@@ -30509,6 +30537,19 @@
    "ledger": "opsdrive",
    "dim": "drive",
    "in_sorts": []
+  },
+  {
+   "name": "tiled_map",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "aggregate",
+   "tier": "ledger",
+   "ledger": "opsaoi",
+   "dim": "aoi",
+   "in_sorts": [
+    "image2d"
+   ]
   },
   {
    "name": "tilemap_render",

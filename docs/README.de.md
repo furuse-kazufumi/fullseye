@@ -62,7 +62,7 @@ Die 95 Fähigkeiten, aufgeteilt nach Art der Prüfung (`docs/maturity.json`, von
 | `validated-public-real-data` | ein Beispiel mit öffentlichen Messdaten läuft in einem Gate | 18 |
 | `validated-hardware` | an Hardware validiert (nur über angenommene externe Berichte) | 0 |
 
-Von 432 Beispielen werden 432 tatsächlich von einem Gate ausgeführt.
+Von 433 Beispielen werden 433 tatsächlich von einem Gate ausgeführt.
 
 ### Operatorzahlen pro Version
 
@@ -137,11 +137,11 @@ Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. F
 
 ## Einen Operator finden
 
-**3,545 Operator-Notizen** (Aufrufform, Typvertrag, HALCON-Pendant, Literatur, Provenienz) und **67 Familien-Leitfäden**. Einstiegspunkte nach Dimension:
+**3,548 Operator-Notizen** (Aufrufform, Typvertrag, HALCON-Pendant, Literatur, Provenienz) und **68 Familien-Leitfäden**. Einstiegspunkte nach Dimension:
 
-**Gemessene Abdeckung**: evolvierbare Ops 942/942, typisiertes Ledger 2582/2594, Fassade `fullseye.<name>` 703/1480 — **die Fassade ist erst zur Hälfte abgedeckt**.
+**Gemessene Abdeckung**: evolvierbare Ops 942/942, typisiertes Ledger 2585/2597, Fassade `fullseye.<name>` 703/1480 — **die Fassade ist erst zur Hälfte abgedeckt**.
 
-**Gemessener Inhalt**: von 3545 Notizen verweisen **3533** auf mindestens ein lauffähiges Beispiel (12 ohne), **3358** haben einen Nutzungsabschnitt ab 120 Zeichen (187 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 3545.
+**Gemessener Inhalt**: von 3548 Notizen verweisen **3536** auf mindestens ein lauffähiges Beispiel (12 ohne), **3361** haben einen Nutzungsabschnitt ab 120 Zeichen (187 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 3548.
 
 | Dimension | Ops | Einstieg |
 |---|---:|---|
@@ -196,6 +196,7 @@ Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. F
 | `videocube` | 6 | [INDEX](ops/videocube/INDEX.md) · [guide](ops/videocube/guides/videocube.md) |
 | `residue` | 5 | [INDEX](ops/residue/INDEX.md) |
 | `cadmap` | 4 | [INDEX](ops/cadmap/INDEX.md) |
+| `aoi` | 3 | [INDEX](ops/aoi/INDEX.md) · [guide](ops/aoi/guides/aoi_frontend.md) |
 | `text` | 3 | [INDEX](ops/text/INDEX.md) |
 
 Nach Namen suchen mit `py -3.11 imgevolve.py ops --search edge`; die vollständige Tabelle ist [OP_CATALOG.md](OP_CATALOG.md), der dimensionsübergreifende Einstieg [ops/INDEX.md](ops/INDEX.md).
@@ -296,7 +297,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## Dokumentkarte — alle 288
 
-Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** (die 3,545 Operator-Notizen und 67 Familien-Leitfäden unter `docs/ops/` über den Operator-Abschnitt oben; Artikel über [articles/](articles/README.md)). **Die Texte sind überwiegend japanisch.**
+Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** (die 3,548 Operator-Notizen und 68 Familien-Leitfäden unter `docs/ops/` über den Operator-Abschnitt oben; Artikel über [articles/](articles/README.md)). **Die Texte sind überwiegend japanisch.**
 
 **Getting started**(12)
 

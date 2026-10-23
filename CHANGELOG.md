@@ -59,6 +59,14 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 - Studio の既存表示モードへ画像別自動・A/B 共通・手動の表示レンジを渡せるようにし、NaN/Inf と範囲外画素の警告、元値と表示値を分けた画素表示、元データまたは画面どおりの表示画像の保存を追加した。
 
+### 追加 — 外観検査の前段 3 op(台帳 `opsaoi`。実装は 2026-09-15 にあったのに本線に入っていなかった)
+
+- なぜ: `flat_field_correct` / `register_image` / `tiled_map` の実装と 45 本の試験は 2026-09-15 に書かれたが、作業枝(`ops2d/aoi-frontend`)に残ったまま本線へ入らず、利用者から見える公開面 4 層(`fullseye.<名前>` / `fullseye.op` / `fullseye.ledger` / `op_find`)では **3 op 中 0 op**、`docs/OP_INDEX.json` でも 0 行だった。測る層(`measure1d` / `blob2d` / `spc`)の**手前**の 3 段 —— 照明の落ちを戻す・基準画像へ合わせる・タイルごとの量を地図にする —— は、それに近い既存 op(`background_flatten` は引き算、`frame_align` は点の対応が要る、`scale.process_tiled` は量を返さない)では代わりにならない。
+- `flat_field_correct`: `(I - D) / (F - D) * target`。cos⁴ ビネット + 暗電流 0.05 の合成で最大相対誤差 1.8e-16、dark を省くと 2.3e-01(隅 / 中心 0.4867、真値 0.1209)。`F - D <= 0` は既定で `ValueError`。
+- `register_image`: 位相相関 + 上標本 DFT の平行移動 1 個を dict で返し、`peak_ratio` / `ambiguous` / `residual` / `consistent` を必ず一緒に返す(回転 5 度は `consistent=False`)。しきい値(`ambiguity_ratio` / `residual_tolerance` / `max_shift`)に NaN・0 以下を渡すと判定が黙って False に固定されるので入口で拒否、`upsample` は 1000 まで(本線に載せる便で追加)。縞(片方向だけ模様が無い)を `ambiguous` が捕まえない限界は docstring と門に固定。
+- `tiled_map`: タイルごとの統計の地図。端数のタイルを黙って捨てず、捨てる指定のときは `dropped_tiles` / `covered_fraction` を返す。
+- 台帳 `opsaoi`(新語なし: `image2d` / `table`)、op ノート 3 枚 + 族ガイド、6 言語の要約訳、Studio ヘルプ、作例 `examples/aoi_frontend_tour.py`、試験 `tests/test_aoi.py`(58 本、docstring の呼び出し例の実行を含む)。探針の dead_knob: `register_image` のしきい値 2 本は乱数の探針入力では量がしきい値から遠く「効かない」と出たので、量がしきい値の間に来る入力(8 px 市松 + 二重写り)を `tools/ledger_contracts._knob_builders` に足した(台帳に足して黙らせてはいない)。
+
 ### 修正 — 外部報告(0.8.0 の端条件、2026-10-22 受領)
 
 - NCC のテンプレートと探索画像を必要時に独立した2のべき乗で正規化し、有限の非定数画像の極端な大きさでも相関係数を求められるようにした。

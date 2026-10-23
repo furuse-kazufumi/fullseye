@@ -228,6 +228,9 @@ py-modules = [
   # グリフ照合(指定の字と合っているかを測り、誤字を置き換える)。annotate の
   # フォント解決と豆腐検出を使い回す。2026-09-17 追加。
   "glyphops",
+  # AOI(自動外観検査)の前段 3 op(フラット補正 / 平行移動の位置合わせ / タイル統計の地図)。
+  # 測る層の手前が公開面のどこにも無かった(実装 2026-09-15、台帳に載せたのは 2026-10-23)。
+  "aoi", "opsaoi",
   "recipes", "measure", "studio", "studio_search", "studio_errors", "studio_roundtrip", "studio_batch", "studio_display", "studio_layout", "sample_images", "sample_data", "accuracy_bench",
   "evolve", "problems", "baseline", "robust",
   "verify_auto", "honest_summary", "dispositions", "catalog", "report",

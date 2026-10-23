@@ -121,6 +121,10 @@ LEDGER_DIMS = {
                  "module": "converge", "family": "convergent_computation"},
     "codematch": {"registry": "opscodematch", "table": "OPSCODEMATCH",
                   "module": "codematch", "family": "robust_code_matching"},
+    # 2026-10-23(実装は 2026-09-15): AOI の前段(照明の落ちを戻す / 基準画像へ合わせる /
+    # タイルごとの量を地図にする)。新しい型語彙は 1 つも作らない(既存の image2d と table)。
+    "aoi": {"registry": "opsaoi", "table": "OPSAOI",
+            "module": "aoi", "family": "aoi_frontend"},
     "generative": {"registry": "opsgenerative", "table": "OPSGENERATIVE",
                    "module": "perpetual", "family": "generative_art"},
     "imgmetrics": {"registry": "opsimgmetrics", "table": "OPSIMGMETRICS",

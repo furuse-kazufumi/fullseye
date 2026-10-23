@@ -62,7 +62,7 @@ The 95 capabilities, split by how they are verified (`docs/maturity.json`, rebui
 | `validated-public-real-data` | an example on public measured data runs in a gate | 18 |
 | `validated-hardware` | validated on hardware (only from accepted external reports) | 0 |
 
-Of 432 examples, 432 are actually run by a gate.
+Of 433 examples, 433 are actually run by a gate.
 
 ### Operator counts by version
 
@@ -137,11 +137,11 @@ Every one carries a closed-form or synthetic ground truth and a null model. Fail
 
 ## Find an operator
 
-**3,545 per-operator notes** (call form, type contract, HALCON counterpart, references, provenance) and **67 family guides**. Entry points by dimension:
+**3,548 per-operator notes** (call form, type contract, HALCON counterpart, references, provenance) and **68 family guides**. Entry points by dimension:
 
-**Measured coverage**: evolvable ops 942/942, typed ledger 2582/2594, one-line facade `fullseye.<name>` 703/1480 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
+**Measured coverage**: evolvable ops 942/942, typed ledger 2585/2597, one-line facade `fullseye.<name>` 703/1480 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
 
-**Measured substance**: of 3545 notes, **3533** link at least one runnable example (12 have none) and **3358** have a usage section of 120+ characters (187 are a one-line summary). The structure (call form, types, ops that chain next) is present in all 3545.
+**Measured substance**: of 3548 notes, **3536** link at least one runnable example (12 have none) and **3361** have a usage section of 120+ characters (187 are a one-line summary). The structure (call form, types, ops that chain next) is present in all 3548.
 
 | dimension | ops | entry |
 |---|---:|---|
@@ -196,6 +196,7 @@ Every one carries a closed-form or synthetic ground truth and a null model. Fail
 | `videocube` | 6 | [INDEX](ops/videocube/INDEX.md) · [guide](ops/videocube/guides/videocube.md) |
 | `residue` | 5 | [INDEX](ops/residue/INDEX.md) |
 | `cadmap` | 4 | [INDEX](ops/cadmap/INDEX.md) |
+| `aoi` | 3 | [INDEX](ops/aoi/INDEX.md) · [guide](ops/aoi/guides/aoi_frontend.md) |
 | `text` | 3 | [INDEX](ops/text/INDEX.md) |
 
 Search by name with `py -3.11 imgevolve.py ops --search edge`; the full cross-library table is [OP_CATALOG.md](OP_CATALOG.md) and the cross-dimension entry point is [ops/INDEX.md](ops/INDEX.md).
@@ -296,7 +297,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## Document map — all 288
 
-The complete map, so that **no document is unreachable from this index** (the 3,545 per-op notes and 67 family guides under `docs/ops/` are reached from the operator section above; articles from [articles/](articles/README.md)). One unreachable file fails `tests/test_docs_index_reachable.py`. **Most bodies are in Japanese.**
+The complete map, so that **no document is unreachable from this index** (the 3,548 per-op notes and 68 family guides under `docs/ops/` are reached from the operator section above; articles from [articles/](articles/README.md)). One unreachable file fails `tests/test_docs_index_reachable.py`. **Most bodies are in Japanese.**
 
 **Getting started**(12)
 
