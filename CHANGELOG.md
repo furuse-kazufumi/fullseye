@@ -7,6 +7,18 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### 追加 — 複数ロボットの計画を回り方で分ける(braidpath 12 op + PoC、取り込まれずに残っていた枝を今の master の上に作り直し)
+
+- `braidpath`(台帳 `opsdrive` の `braidpath`、12 op、numpy + scipy): 軌道群と障害物の点を時空の組紐にして交差の符号列(組紐語)を作り(`braid_from_trajectories`)、Dynnikov 座標(`dynnikov_coordinates` / `dynnikov_act`)・Dehornoy の取っ手簡約(`braid_reduce`)・Artin 表現(`braid_artin_images`)の 3 つの独立な判定で同じ組紐か(`braid_equivalent`)= 同じホモトピー類か(`homotopy_class_compare`)を決める。対ごとの巻き数(`pairwise_winding`)、格子の上で類ごとの最短経路(`homotopy_shortest_paths`)、計画器の候補を類に分けて代表を選ぶ(`braid_class_representatives`)、格子の穴の点・経路の写し(`grid_hole_points` / `grid_paths_to_xy`)。
+- PoC `examples/poc_braid_homotopy_classes.py`(収蔵 2026.278、産業検査の棟。元の枝の仮番 2026.218 は master で別の展示が使っているので振り直した): 組紐の関係式 1311 通りが Dynnikov の作用で整数のずれ 0、3 つの判定が 100/100 で一致、参照実装(MIT)の出力と 240/240、1 台が柱を回る類ごとの最短 = 閉形式 14 + 16m、計画器の候補 61 本 → 26 類。外の真値の参照出力は `tests/data/braidpath_reference.json`。
+- 元の枝から今の門に合わせて直したこと: 空の語(単位元)を返す 4 op は docstring に台帳の定型文(空の入力(``word`` が 0 要素)は…を返す(理由: …))を、`grid_hole_points` は空・2 次元でない・非有限の格子を ValueError に(以前は IndexError、NaN を「走れる」と読んでいた)、`homotopy_shortest_paths` は非有限の格子・障害物の点を、`braid_class_representatives` は非有限の費用を拒否。答えを変えない打ち切りだけの引数(`braid_artin_images` の `max_length`、`homotopy_class_compare` の `tol`)は効かないノブなので外し、定数 `MAX_WORD` / `ENDPOINT_TOL` にした。射影の角 `angle`・状態の上限 `max_states` は効く入力で探る(効かないノブの負債は 0 行のまま)。展示の GIF は 36 → 24 コマ(3.4 → 2.2 MB、展示の上限 3 MiB)。
+
+### 追加 — フーリエ・タイコグラフィ(fourierptycho 6 op + PoC、取り込まれずに残っていた枝を今の master の上に作り直し)
+
+- `fourierptycho`(`opsoptics` の新カテゴリ `fpm`、6 op): `fp_design`(合成 NA・遮断周期 λ/NA_syn・隣り合う瞳の重なり率(2 円の交わり、公表の下限 35 %)・LED の数・標本化 Δx ≤ λ/(2 NA_obj)・明視野と暗視野の境の LED)/ `fp_usaf_target`(振幅・位相・両方の 3 種)/ `fp_capture`(斜めの平面波 → 瞳 → 強度、LED の明るさ・暗視野の露光・雑音・収差・LED アレイのずれ・反射型の高さ)/ `fp_stack_from_images` / `fp_reconstruct`(逐次の位相回復、瞳の同時推定、LED の位置の補正。収束の履歴・止めた理由・合成 NA を返し、残差が停留しない・初期値の違う 2 本が一致しないときは `FPNotConvergedError`(`MetricContractError`、記録つき)で拒否)/ `fp_element_contrast`。非有限・空・縮退の入力は ValueError。
+- PoC `examples/poc_fourier_ptychography.py`(収蔵 2026.277、産業検査の棟。元の枝の仮番 2026.243 は master で別の展示が使っているので振り直した): 4 倍 / NA 0.1 で 20 倍 / NA 0.40 と同じ G9 E5 まで分解、位相・反射型の段差、重なりと収束(境が 35 % を挟む、残差だけでは見抜けない)、瞳の推定、LED のずれ、k の符号の双子。公開の FP データの章は CC BY / CC0 ではないので repo に入れず、データがあるときだけ走る。
+- ★効かないノブを台帳に足さない: 元の枝は `dead_knob` の負債に 3 行(`fp_design.boundary_tolerance_na` / `fp_usaf_target.phase_rad` / `fp_reconstruct.led_start`)を足していた。探針の入力を効く条件(境の近くの NA_obj・振幅と位相の両方の物体 `kind="both"`・LED の補正つき)に替えて 0 行にした。
+
 ### 修正 — 映像の物理整合性 op の入口検査(敵対的レビュー 2026-10-23、所見 8 件を一件ずつ再現してから)
 
 - `ballistic_vs_thrust` は、推力側の RSS が離散化の床 `rss_floor`(RK4 格子を標本時刻へ線形補間する誤差 ≤ a dt²/8 の平方和)の

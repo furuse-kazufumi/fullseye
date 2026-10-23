@@ -380,6 +380,19 @@ def _oct_edge_ascan():
     return octscan.oct_ascan(it, window="hann", zero_pad=4)
 
 
+def _fp_target():
+    """FP の小さな真値(128 画素、G8〜G9 の 3 要素)。"""
+    import fourierptycho
+    return fourierptycho.fp_usaf_target(groups=(8, 9), elements=(1, 2, 3), shape=(128, 128))
+
+
+def _fp_stack():
+    """FP の像の組(5 × 5 の LED、低解像 32 画素): 位相のある振幅チャートを撮ったもの。"""
+    import fourierptycho
+    t = _fp_target()
+    return fourierptycho.fp_capture(t["amplitude"], 0.5 * t["coverage"], n_side=5)
+
+
 def _oct_two_lines():
     """傾いた 2 本の界面(1.5 画素 / 列、間隔 6 画素)+ 粒状の雑音: 跳びの上限・間隔・跳びの罰が効く入力。"""
     rng = np.random.default_rng(7)
@@ -640,6 +653,23 @@ def _optics_builders():
                                                      "mismatch_length_mm": 5.0}),
         "oct_bscan_flatten": lambda pool, rng: (
             [__import__("octscan").oct_bscan(_oct_bs()), np.full(12, 60.0)], {"above_um": 10.0, "below_um": 100.0}),
+        # フーリエ・タイコグラフィ(fourierptycho): 表は kind の印つきなので、前段の op の本物の出力から作る
+        # ★効かないノブを台帳に足して黙らせない(2026-10-23): 既定の入力では効かない 3 本は、効く入力で探る。
+        # fp_design の境の許容は NA_obj = 0.12 で軸の 2 番目の LED(NA 0.1135・0.1267、差 0.0065)が許容の 2 倍の内側に入る。
+        "fp_design": lambda pool, rng: ([], {"na_obj": 0.12}),
+        # fp_usaf_target の phase_rad は位相の、bar_value は振幅の物体のときだけ効く → 両方の物体(kind="both")で探る。
+        "fp_usaf_target": lambda pool, rng: ([], {"kind": "both", "groups": (8, 9), "elements": (1, 2, 3),
+                                                   "shape": (128, 128)}),
+        "fp_capture": lambda pool, rng: ([_fp_target()["amplitude"], 0.5 * _fp_target()["coverage"]], {"n_side": 5}),
+        "fp_stack_from_images": lambda pool, rng: (
+            [_fp_stack()["images"], _fp_stack()["kx"] * 0.532, _fp_stack()["ky"] * 0.532],
+            {"wavelength_um": 0.532, "na_obj": 0.1, "pixel_um": 1.3}),
+        # fp_reconstruct の led_start は LED の位置の補正(led_correction=True)を始める回なので、補正つきで探る。
+        # 補正の開始が 3 回目(既定)だと 40 回で回数切れになり agree_tol が効かない → 6 回目から(2 本の差 0.15 が
+        # 許容 0.08 の 2 倍の内側に入り、agree_tol の半分・倍で判定が変わる)。
+        "fp_reconstruct": lambda pool, rng: ([_fp_stack()], {"n_iter": 40, "on_fail": "record", "led_correction": True,
+                                                            "led_start": 6}),
+        "fp_element_contrast": lambda pool, rng: ([_fp_target()["amplitude"], _fp_target()], {}),
         "inspection_dataset": os_call(lambda OS, cam, sc, li, rng: ([sc, cam, [li]], {"n": 2})),
         "dataset_throughput": os_call(lambda OS, cam, sc, li, rng: (
             [OS.inspection_dataset(sc, cam, [li], n=2)], {})),

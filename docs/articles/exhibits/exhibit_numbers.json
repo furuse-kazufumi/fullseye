@@ -81,6 +81,10 @@
    "accessioned": "2026-09-07",
    "no": "2026.057"
   },
+  "poc_braid_homotopy_classes": {
+   "accessioned": "2026-10-23",
+   "no": "2026.278"
+  },
   "poc_bump_coplanarity": {
    "accessioned": "2026-09-08",
    "no": "2026.094"
@@ -360,6 +364,10 @@
   "poc_four_dimensions_by_three_d_tools": {
    "accessioned": "2026-09-24",
    "no": "2026.149"
+  },
+  "poc_fourier_ptychography": {
+   "accessioned": "2026-10-23",
+   "no": "2026.277"
   },
   "poc_fresco_craquelure": {
    "accessioned": "2026-09-07",

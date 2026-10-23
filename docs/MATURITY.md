@@ -45,6 +45,7 @@
 | [光ファイバとライトガイド(ガラスの分散 → LP モード → モード径 → 照明の効率)](capabilities/fiber-and-light-guide.md) | Optical fibres and light guides (glass dispersion, LP modes, mode field diameter, illumination efficiency) | 光と色 | `verified-synthetic` | 7/7 | `poc_fiber_light_guide` synthetic → tests/test_poc_scripts_run.py |
 | [結果を人が読める図にする](capabilities/figures-and-annotation.md) | Turn results into figures people can read | 見せる | `verified-synthetic` | 3/3 | `poc_colormap_readability` synthetic → tests/test_poc_scripts_run.py<br>`poc_dem_terrain` synthetic → tests/test_poc_scripts_run.py |
 | [画像の中の文字を、正しい文字列に合わせて直す](capabilities/fix-text-in-images.md) | Fix the text inside an image against the string it should read | 見つける | `verified-synthetic` | 1/11 | `fix_text_in_image` synthetic → tests/test_example_scripts_run.py<br>`poc_glyph_typo_detection` synthetic → tests/test_poc_scripts_run.py |
+| [フーリエ・タイコグラフィ(LED の斜め照明の像の組 → 位相回復で高 NA の振幅と位相、収束しなければ拒否)](capabilities/fourier-ptychography.md) | Fourier ptychography (oblique LED illumination, phase retrieval to a high-NA amplitude and phase, refused unless it converges) | 測る | `verified-synthetic` | 6/6 | `poc_fourier_ptychography` synthetic → tests/test_poc_scripts_run.py |
 | [地球規模の座標に載せる(ECEF・高さの基準・局所 ENU)](capabilities/geodetic-frames.md) | Put measurements on the Earth (ECEF, height frames, local ENU) | 測る | `validated-public-real-data` | 8/8 | `poc_geodetic_height_frames` synthetic → tests/test_poc_scripts_run.py<br>`poc_geodetic_benchmarks_real` real → tests/test_poc_scripts_run.py<br>`dem_geodesy_tour` synthetic → tests/test_example_scripts_run.py |
 | [基準画像(ゴールデン)と比べて欠陥を測り、ロットごと判定する](capabilities/golden-compare.md) | Compare against a golden image — align, diff, count defects, judge the lot | 組み立てる | `verified-synthetic` | 7/7 | `golden_compare` synthetic → tests/test_example_scripts_run.py |
 | [良品を並べて「いつもと違う」を言う(良品統計の変動モデル、誤検出率の宣言つき)](capabilities/good-sample-variation-model.md) | Flag what differs from aligned good samples (a per-pixel variation model with a declared false-alarm rate) | 見つける | `validated-public-real-data` | 10/10 | `poc_good_sample_variation_model` real → tests/test_poc_scripts_run.py<br>`anomaly_eval_metrics` synthetic → tests/test_example_scripts_run.py |
@@ -133,8 +134,8 @@
 
 | | 件数 |
 |---|---|
-| 2-D 台帳の例 | 433 |
-| `tests/test_poc_scripts_run.py` が走らせる | 276 |
+| 2-D 台帳の例 | 435 |
+| `tests/test_poc_scripts_run.py` が走らせる | 278 |
 | `tests/test_example_scripts_run.py` が走らせる | 157 |
 | **どの門も走らせていない** | **0** |
 

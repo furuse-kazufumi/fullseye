@@ -201,6 +201,14 @@ _OP_BRIDGE_SKIP = {
     "pdh_error_signal", "quantum_noise_budget",
     "psd_welch", "whiten_by_psd", "chirp_newtonian", "chirp_mass_from_track",
     "matched_filter_snr", "optimal_snr", "coincidence_delay",
+    # 2026-10-18 フーリエ・タイコグラフィ 6 本(fourierptycho、fpm): 表(像の組・復元)を作り・受ける側で、画像 → 画像の
+    # op ではない。fp_capture は振幅と位相の 2 枚 → 表、fp_element_contrast は画像と表 → 表。台帳(`fullseye.ledger.fp_*`)から使う。
+    "fp_design",
+    "fp_usaf_target",
+    "fp_capture",
+    "fp_stack_from_images",
+    "fp_reconstruct",
+    "fp_element_contrast",
     # 2026-10-15 光干渉断層 13 本(octscan、oct): 表(干渉スペクトル・A スキャン)を受けて表を返す側で、画像 → 画像の
     # op ではない。oct_bscan は表 → 断面像、oct_bscan_boundaries は断面像 → 表。台帳(`fullseye.ledger.oct_*`)から使う。
     "oct_design",
