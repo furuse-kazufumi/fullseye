@@ -16119,6 +16119,15 @@
    "de": "Eine reelle 4x4-Müller-Matrix für ein Polarisationselement.",
    "hi": "एक polarisation element के लिए 4x4 real Mueller matrix।"
   },
+  "optics/mueller_partial_polarizer": {
+   "fp": "5ec490362f8c",
+   "ja": "消光比が有限の直線偏光子(直線ダイアテニュエータ)の Mueller 行列。→ (4, 4)、角度の場なら (*shape, 4, 4)。",
+   "zh": "消光比有限的线偏振器(线性二向衰减器)的 Mueller 矩阵。→ (4, 4),角度场则为 (*shape, 4, 4)。",
+   "tw": "消光比有限的線偏振器(線性二向衰減器)的 Mueller 矩陣。→ (4, 4),角度場則為 (*shape, 4, 4)。",
+   "ko": "소광비가 유한한 선형 편광자(선형 이색 감쇠기)의 뮐러 행렬. → (4, 4), 각도 장이면 (*shape, 4, 4).",
+   "de": "Müller-Matrix eines linearen Polarisators mit endlichem Extinktionsverhältnis (ein linearer Diattenuator). → (4, 4), bei einem Winkelfeld (*shape, 4, 4).",
+   "hi": "सीमित extinction ratio वाले linear polariser (linear diattenuator) का Mueller matrix। → (4, 4), angle field हो तो (*shape, 4, 4)।"
+  },
   "optics/mueller_from_intensities": {
    "fp": "bec98dc0d53b",
    "ja": "既知の生成器・検光子の状態で測った強度から Mueller 行列を取り戻す(偏光計測の最小二乗)。",
@@ -17873,6 +17882,15 @@
    "ko": "편광판 회전의 장면 적분 Stokes 벡터. → (4,), :func:`optics.stokes_analyze` 에 그대로 넘길 수 있습니다.",
    "de": "Der szenenintegrierte Stokes-Vektor eines Polarisatordurchlaufs. → (4,), direkt für :func:`optics.stokes_analyze`.",
    "hi": "polariser sweep का scene-integrated Stokes vector। → (4,), :func:`optics.stokes_analyze` के लिए तैयार।"
+  },
+  "specular/polarization_stokes_map": {
+   "fp": "305f0f1ccacc",
+   "ja": "検光子の掃引(DoFP の 4 方位、または任意の N >= 3 方位を最小二乗)から、画素ごとの直線 Stokes 画像と DoLP・AoLP の地図。→ (H, W) の地図の dict。",
+   "zh": "由检偏器扫描(DoFP 的 4 个方位,或任意 N >= 3 个方位的最小二乘)得到逐像素线性 Stokes 图像以及 DoLP、AoLP 图。→ (H, W) 图的 dict。",
+   "tw": "由檢偏器掃描(DoFP 的 4 個方位,或任意 N >= 3 個方位的最小平方)得到逐像素線性 Stokes 影像以及 DoLP、AoLP 圖。→ (H, W) 圖的 dict。",
+   "ko": "검광자 스윕(DoFP 4 방위, 또는 임의의 N >= 3 방위를 최소제곱)으로부터 화소별 선형 Stokes 영상과 DoLP·AoLP 지도. → (H, W) 지도의 dict.",
+   "de": "Pixelweise lineare Stokes-Bilder mit DoLP- und AoLP-Karten aus einem Analysatordurchlauf (4 DoFP-Winkel oder beliebige N >= 3, kleinste Quadrate). → dict von (H, W)-Karten.",
+   "hi": "analyser sweep (DoFP के 4 कोण या कोई भी N >= 3, least squares) से प्रति-pixel linear Stokes images और DoLP व AoLP maps। → (H, W) maps का dict।"
   },
   "specular/specular_coefficient_map": {
    "fp": "49b4cfe79767",

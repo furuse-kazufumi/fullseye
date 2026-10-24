@@ -138,7 +138,7 @@ __all__ = [
     "psf_to_mtf", "mtf_diffraction", "wavefront_stats",
     "encircled_energy", "ensquared_energy", "energy_radii", "mtf_tangential_sagittal",
     "jones_element", "jones_apply", "stokes_from_jones",
-    "mueller_element", "mueller_apply", "stokes_analyze",
+    "mueller_element", "mueller_apply", "stokes_analyze", "mueller_partial_polarizer",
     "polarization_demosaic", "polarization_demosaic_color", "mueller_from_intensities", "mueller_checks",
     "POLARIZATION_MOSAIC_LAYOUT", "POLARIZATION_SWEEP_ANGLES",
     "OPTICS", "MAX_GRID", "MAX_FIELD_ELEMENTS", "MAX_SYSTEM_ELEMENTS",
@@ -157,7 +157,7 @@ OPTICS = [
     "psf_to_mtf", "mtf_diffraction", "wavefront_stats",
     "encircled_energy", "ensquared_energy", "energy_radii", "mtf_tangential_sagittal",
     "jones_element", "jones_apply", "stokes_from_jones",
-    "mueller_element", "mueller_apply", "stokes_analyze",
+    "mueller_element", "mueller_apply", "stokes_analyze", "mueller_partial_polarizer",
     "polarization_demosaic", "polarization_demosaic_color", "mueller_from_intensities", "mueller_checks",
 ]
 
@@ -2001,6 +2001,28 @@ def wavefront_stats(coeffs, radial=128, angular=192):
 # --------------------------------------------------------------------------- #
 # polarisation                                                                 #
 # --------------------------------------------------------------------------- #
+# Conventions (pinned 2026-10-23 by tests/test_polarization_per_pixel_2026_10_23.py).
+#
+# * **Angles.** Every polarisation angle in this library (``angle_deg`` of the
+#   element builders, analyser angles of a sweep, AoLP, ``stokes_analyze``'s
+#   ``azimuth_deg``) is measured in the image plane from +x (along a row, to the
+#   right) toward +y (down the rows). On an image displayed with row 0 at the
+#   top that is **clockwise**. This was not chosen here; it is what the existing
+#   code already did, measured before writing it down: the Jones vector is
+#   ``[Ex, Ey]`` with ``Ey`` along the rows, ``sfpolar`` renders a diffuse
+#   normal at ``atan2(ny, nx) = 30`` degrees as AoLP 30, and the photoelasticity
+#   PoC feeds ``0.5 * atan2(2 txy, sxx - syy)`` of image-coordinate stresses
+#   straight into ``mueller_element``. A sensor or paper that counts
+#   counter-clockwise on a y-up display must negate its angles first (45 <-> 135);
+#   mixing the two mirrors every axis about x (21.5 reads as 158.5, 45 as 135)
+#   and raises nothing.
+# * **Handedness.** ``S3 > 0`` is the Jones vector ``[1, -i]/sqrt(2)`` under the
+#   ``exp(-i w t)`` time dependence. Its field ``E(t) = (cos wt, -sin wt)`` turns
+#   from +x toward -y, i.e. **counter-clockwise on the displayed image** (the
+#   view of the camera receiving the beam). ``stokes_analyze`` calls this
+#   ``"right"``: that is the name the same vector gets in a y-up frame, where it
+#   turns clockwise as seen by the receiver. The label is kept for
+#   compatibility; the sign of ``S3`` and this sentence are the contract.
 def _rot2(a: float) -> np.ndarray:
     c, s = np.cos(a), np.sin(a)
     return np.array([[c, -s], [s, c]], dtype=np.float64)
@@ -2046,14 +2068,31 @@ def jones_element(kind="polarizer", angle_deg=0.0, retardance_deg=90.0):
     ones); non-finite *angle_deg* or *retardance_deg*.
 
     Ideal, lossless, normal-incidence elements. A real polariser has a finite
-    extinction ratio and a real waveplate is chromatic; neither is modelled, and
-    neither is silently approximated. Jones algebra can only carry **fully
+    extinction ratio and a real waveplate is chromatic; the waveplate's
+    chromatism is not modelled and not silently approximated, and the finite
+    extinction ratio exists only in the Mueller family
+    (:func:`mueller_partial_polarizer`). Jones algebra can only carry **fully
     polarised** light — for partial polarisation use :func:`mueller_element`.
+
+    **Per-pixel fields (2026-10-23).** An array *angle_deg* (or, for
+    ``kind="retarder"``, an array *retardance_deg*) builds one element per
+    entry: the result is ``(*shape, 2, 2)`` where *shape* is the broadcast of
+    the array arguments — a fast-axis or retardance map of a photoelastic part,
+    one matrix per pixel. Scalars take the original code path untouched, so a
+    scalar call returns exactly what it always did. The output is capped at
+    :data:`MAX_FIELD_ELEMENTS` numbers.
+
+    **Angle convention.** *angle_deg* is measured from +x (along a row) toward
+    +y (**down** the rows): clockwise on a displayed image. See the comment at
+    the top of the polarisation section of this module for how that was
+    established and what a counter-clockwise sensor must do.
     """
     if not isinstance(kind, str):
         raise ValueError("jones_element: kind must be a string, got %r"
                          % (type(kind).__name__,))
     k = kind.strip().lower()
+    if _is_field(angle_deg) or (k == "retarder" and _is_field(retardance_deg)):
+        return _jones_field(k, kind, angle_deg, retardance_deg)
     a = np.radians(_finite_scalar(angle_deg, "angle_deg"))
     if k == "rotator":
         return np.ascontiguousarray(_rot2(a), dtype=np.complex128)
@@ -2072,6 +2111,150 @@ def jones_element(kind="polarizer", angle_deg=0.0, retardance_deg=90.0):
                          % (kind, "/".join(JONES_KINDS)))
     r = _rot2(a).astype(np.complex128)
     return np.ascontiguousarray(r @ j0 @ r.T, dtype=np.complex128)
+
+
+def _is_field(v) -> bool:
+    """True when *v* is array-like with at least one axis (a per-pixel field).
+
+    0-d arrays and numpy scalars are **not** fields: they keep the scalar code
+    path, which is what makes the scalar behaviour bit-for-bit unchanged.
+    """
+    if isinstance(v, (str, bytes, np.str_, np.bytes_)):
+        return False
+    try:
+        return np.ndim(v) > 0
+    except (TypeError, ValueError):       # ragged nesting: let the coercion name it
+        return True
+
+
+def _field_arg(v, name: str, op: str) -> np.ndarray:
+    """A float64 field of degrees, refusing the traps ``_finite_scalar`` refuses."""
+    if np.ma.is_masked(v):
+        raise ValueError("%s: %s is a masked array with masked entries — fill or "
+                         "drop them explicitly" % (op, name))
+    try:
+        raw = np.asarray(v)
+    except (TypeError, ValueError):
+        raise ValueError("%s: %s is a ragged nested sequence, not a field of "
+                         "angles" % (op, name)) from None
+    if raw.dtype.kind == "b":
+        raise ValueError("%s: %s is a bool array — refusing the silent True==1 "
+                         "promotion" % (op, name))
+    if raw.dtype.kind == "c":
+        raise ValueError("%s: %s is complex — an angle is a real quantity"
+                         % (op, name))
+    if raw.dtype.kind not in "iuf":
+        raise ValueError("%s: %s must be numeric degrees, got dtype %s (strings "
+                         "would convert silently and hide an unparsed value)"
+                         % (op, name, raw.dtype))
+    if raw.size == 0:
+        raise ValueError("%s: %s is empty — no element to build" % (op, name))
+    return _as_float_array(raw, "%s: %s" % (op, name))
+
+
+def _element_field_args(op, k, angle_deg, retardance_deg, per_entry):
+    """Broadcast angle (and, for a free retarder, retardance) to one shape."""
+    a = (_field_arg(angle_deg, "angle_deg", op) if _is_field(angle_deg)
+         else np.float64(_finite_scalar(angle_deg, "angle_deg")))
+    d = None
+    if k == "retarder":
+        d = (_field_arg(retardance_deg, "retardance_deg", op)
+             if _is_field(retardance_deg)
+             else np.float64(_finite_scalar(retardance_deg, "retardance_deg")))
+    try:
+        shape = np.broadcast_shapes(np.shape(a), np.shape(d) if d is not None else ())
+    except ValueError:
+        raise ValueError("%s: angle_deg %r and retardance_deg %r do not broadcast"
+                         % (op, tuple(np.shape(a)), tuple(np.shape(d)))) from None
+    n = int(np.prod(shape, dtype=np.int64)) * per_entry
+    if n > MAX_FIELD_ELEMENTS:
+        raise ValueError("%s: a field of shape %r gives %d output numbers, over the "
+                         "%d cap (optics.MAX_FIELD_ELEMENTS)"
+                         % (op, tuple(shape), n, MAX_FIELD_ELEMENTS))
+    a = np.broadcast_to(a, shape)
+    if d is not None:
+        d = np.broadcast_to(d, shape)
+    return a, d, shape
+
+
+def _jones_field(k, kind, angle_deg, retardance_deg):
+    """``jones_element`` for array arguments → ``(*shape, 2, 2)`` complex128."""
+    op = "jones_element"
+    if k not in JONES_KINDS:
+        raise ValueError("jones_element: unknown kind %r — expected one of %s"
+                         % (kind, "/".join(JONES_KINDS)))
+    a_deg, d_deg, shape = _element_field_args(op, k, angle_deg, retardance_deg, 4)
+    a = np.radians(a_deg)
+    c, s = np.cos(a), np.sin(a)
+    r = np.zeros(shape + (2, 2), dtype=np.complex128)
+    r[..., 0, 0] = c
+    r[..., 0, 1] = -s
+    r[..., 1, 0] = s
+    r[..., 1, 1] = c
+    if k == "rotator":
+        return np.ascontiguousarray(r)
+    j0 = np.zeros(shape + (2, 2), dtype=np.complex128)
+    if k == "polarizer":
+        j0[..., 0, 0] = 1.0
+    else:
+        if k == "retarder":
+            d = np.radians(d_deg)
+        else:
+            d = np.full(shape, np.radians({"quarter_wave": 90.0,
+                                           "half_wave": 180.0}[k]))
+        j0[..., 0, 0] = np.exp(-0.5j * d)
+        j0[..., 1, 1] = np.exp(0.5j * d)
+    out = r @ j0 @ np.swapaxes(r, -1, -2)
+    return np.ascontiguousarray(out, dtype=np.complex128)
+
+
+def _mueller_field(k, kind, angle_deg, retardance_deg):
+    """``mueller_element`` for array arguments → ``(*shape, 4, 4)`` float64.
+
+    Same expressions, in the same order, as the scalar path; only the
+    container differs.
+    """
+    op = "mueller_element"
+    if k not in MUELLER_KINDS:
+        raise ValueError("mueller_element: unknown kind %r — expected one of %s"
+                         % (kind, "/".join(MUELLER_KINDS)))
+    a_deg, d_deg, shape = _element_field_args(op, k, angle_deg, retardance_deg, 16)
+    a = np.radians(a_deg)
+    c, s = np.cos(2.0 * a), np.sin(2.0 * a)
+    m = np.zeros(shape + (4, 4), dtype=np.float64)
+    if k == "depolarizer":
+        m[..., 0, 0] = 1.0
+    elif k == "polarizer":
+        m[..., 0, 0] = 0.5 * 1.0
+        m[..., 0, 1] = m[..., 1, 0] = 0.5 * c
+        m[..., 0, 2] = m[..., 2, 0] = 0.5 * s
+        m[..., 1, 1] = 0.5 * (c * c)
+        m[..., 1, 2] = m[..., 2, 1] = 0.5 * (c * s)
+        m[..., 2, 2] = 0.5 * (s * s)
+    elif k == "rotator":
+        m[..., 0, 0] = 1.0
+        m[..., 1, 1] = c
+        m[..., 1, 2] = -s
+        m[..., 2, 1] = s
+        m[..., 2, 2] = c
+        m[..., 3, 3] = 1.0
+    else:
+        if k == "retarder":
+            d = np.radians(d_deg)
+        else:
+            d = np.full(shape, np.radians({"quarter_wave": 90.0,
+                                           "half_wave": 180.0}[k]))
+        cd, sd = np.cos(d), np.sin(d)
+        m[..., 0, 0] = 1.0
+        m[..., 1, 1] = c * c + s * s * cd
+        m[..., 1, 2] = m[..., 2, 1] = c * s * (1.0 - cd)
+        m[..., 1, 3] = -s * sd
+        m[..., 2, 2] = s * s + c * c * cd
+        m[..., 2, 3] = c * sd
+        m[..., 3, 1] = s * sd
+        m[..., 3, 2] = -c * sd
+        m[..., 3, 3] = cd
+    return np.ascontiguousarray(m, dtype=np.float64)
 
 
 def jones_apply(jones, state):
@@ -2125,6 +2308,16 @@ def stokes_from_jones(state):
     ``tests/test_polarization_external_diff.py``.) The convention is pinned by a test rather than left to
     the reader, because every textbook picks a different one and a sign slip
     here is invisible in intensity measurements.
+
+    **What the sign means on an image (2026-10-23).** ``Ex`` is along the rows
+    (+x right) and ``Ey`` down the rows (+y down), as for every camera op. The
+    ``S3 > 0`` vector ``[1, -i]/sqrt(2)`` has field ``(cos wt, -sin wt)``: it
+    turns from +x toward -y, **counter-clockwise on the displayed image**,
+    i.e. as seen by the camera receiving the beam. The word ``"right"`` that
+    :func:`stokes_analyze` attaches to ``S3 > 0`` is the name of the same
+    vector in a y-up frame (where it turns clockwise as seen by the receiver);
+    it is kept for compatibility, and ``tests/test_polarization_per_pixel_2026_10_23.py``
+    pins the on-screen sense by sampling ``E(t)``.
 
     Returns a ``(4,)`` float64 vector. A Jones vector always describes fully
     polarised light, so the result always satisfies ``S0^2 = S1^2+S2^2+S3^2``
@@ -2180,12 +2373,32 @@ def mueller_element(kind="polarizer", angle_deg=0.0, retardance_deg=90.0):
 
     Ideal, lossless (except the polariser's physical loss), normal-incidence
     elements; no diattenuation-plus-retardance combinations, no depolarisation
-    other than the ideal case.
+    other than the ideal case. A polariser with a **finite extinction ratio**
+    is :func:`mueller_partial_polarizer`.
+
+    **Per-pixel fields (2026-10-23).** An array *angle_deg* (or, for
+    ``kind="retarder"``, an array *retardance_deg*) returns
+    ``(*shape, 4, 4)``, one matrix per entry of the broadcast shape — an
+    isoclinic angle map and a retardance map of a photoelastic part give the
+    whole field in one call, ready for :func:`mueller_apply`'s field form.
+    Before this the call raised ``ValueError`` and the photoelasticity PoC had
+    to assemble ``(H, W, 4, 4)`` by hand. Scalars take the original code path
+    untouched (scalar results are bit-for-bit what they were; pinned by a test
+    against a verbatim copy of the old code). Output capped at
+    :data:`MAX_FIELD_ELEMENTS` numbers.
+
+    **Angle convention.** *angle_deg* is measured from +x (along a row) toward
+    +y (**down** the rows): clockwise on a displayed image — the sense of
+    ``atan2(ny, nx)`` of a normal map and of ``0.5 * atan2(2 txy, sxx - syy)``
+    for image-coordinate stresses. See the polarisation section comment of this
+    module.
     """
     if not isinstance(kind, str):
         raise ValueError("mueller_element: kind must be a string, got %r"
                          % (type(kind).__name__,))
     k = kind.strip().lower()
+    if _is_field(angle_deg) or (k == "retarder" and _is_field(retardance_deg)):
+        return _mueller_field(k, kind, angle_deg, retardance_deg)
     a = np.radians(_finite_scalar(angle_deg, "angle_deg"))
     c, s = np.cos(2.0 * a), np.sin(2.0 * a)
     if k == "depolarizer":
@@ -2213,6 +2426,78 @@ def mueller_element(kind="polarizer", angle_deg=0.0, retardance_deg=90.0):
     else:
         raise ValueError("mueller_element: unknown kind %r — expected one of %s"
                          % (kind, "/".join(MUELLER_KINDS)))
+    return np.ascontiguousarray(m, dtype=np.float64)
+
+
+def mueller_partial_polarizer(angle_deg=0.0, extinction_ratio=1000.0, transmission=1.0):
+    """Mueller matrix of a linear polariser with a finite extinction ratio (a linear diattenuator). → (4, 4), or (*shape, 4, 4) for an angle field.
+
+    A real polariser passes intensity transmittance ``T1 = transmission`` for
+    light polarised along its axis and ``T2 = T1 / extinction_ratio`` for light
+    across it. Writing ``P = T1 + T2``, ``D = T1 - T2``, ``Q = 2 sqrt(T1 T2)``
+    and ``c = cos 2a``, ``s = sin 2a`` (the axis at *angle_deg*), the matrix is
+
+        ``0.5 * [[P,   D c,             D s,             0],``
+        ``       [D c, P c^2 + Q s^2,   (P - Q) c s,     0],``
+        ``       [D s, (P - Q) c s,     P s^2 + Q c^2,   0],``
+        ``       [0,   0,               0,               Q]]``
+
+    — the textbook diattenuator ``diag``-block form rotated to *angle_deg*.
+    It is also exactly the Mueller matrix of the Jones matrix
+    ``R(a) diag(sqrt T1, sqrt T2) R(-a)`` (a pure diattenuator has no
+    retardance and no depolarisation), and the tests check that equality
+    through the generic Jones → Mueller conversion, a separate code path.
+
+    Ground truth (closed form, checked in the tests): unpolarised light comes
+    out with intensity ``(T1 + T2)/2`` and degree of polarisation
+    ``(ER - 1)/(ER + 1)``; the intensity transmitted through two such
+    polarisers, parallel vs crossed, is ``(T1^2 + T2^2)/2`` vs ``T1 T2`` —
+    the measured extinction ratio of the pair is ``(ER^2 + 1)/(2 ER)``, not
+    ``ER``; Malus's law becomes ``T2 + (T1 - T2) cos^2(theta)`` for fully
+    polarised input at angle theta to the axis; ``ER -> infinity`` tends to
+    ``T1 *`` :func:`mueller_element` ``("polarizer")``; ``ER = 1`` is a
+    neutral-density filter ``T1 * I``.
+
+    *angle_deg* may be an array (one matrix per entry, as
+    :func:`mueller_element`); *extinction_ratio* and *transmission* are
+    scalars. Angles follow the module convention (from +x toward +y = down the
+    rows, clockwise on a displayed image).
+
+    **Raises** ``ValueError``: non-finite / non-real / bool / string arguments;
+    *extinction_ratio* < 1 (an "extinction ratio" below 1 means the axis is the
+    other one — rotate by 90 degrees instead of passing the reciprocal) or
+    infinite (use :func:`mueller_element` for the ideal polariser);
+    *transmission* outside ``(0, 1]`` (a passive element cannot amplify, and a
+    zero-transmission element has no axis); an angle field over
+    :data:`MAX_FIELD_ELEMENTS` / 16 entries.
+    """
+    op = "mueller_partial_polarizer"
+    er = _finite_scalar(extinction_ratio, "extinction_ratio")
+    if er < 1.0:
+        raise ValueError("%s: extinction_ratio must be >= 1, got %g — a ratio "
+                         "below 1 says the transmission axis is the other one; "
+                         "pass angle_deg + 90 and the reciprocal instead"
+                         % (op, er))
+    t1 = _finite_scalar(transmission, "transmission")
+    if not (0.0 < t1 <= 1.0):
+        raise ValueError("%s: transmission (intensity transmittance along the "
+                         "axis) must be in (0, 1], got %g" % (op, t1))
+    t2 = t1 / er
+    if _is_field(angle_deg):
+        a_deg, _d, shape = _element_field_args(op, "polarizer", angle_deg, None, 16)
+    else:
+        a_deg, shape = np.float64(_finite_scalar(angle_deg, "angle_deg")), ()
+    a = np.radians(a_deg)
+    c, s = np.cos(2.0 * a), np.sin(2.0 * a)
+    p, d, q = t1 + t2, t1 - t2, 2.0 * np.sqrt(t1 * t2)
+    m = np.zeros(shape + (4, 4), dtype=np.float64)
+    m[..., 0, 0] = 0.5 * p
+    m[..., 0, 1] = m[..., 1, 0] = 0.5 * d * c
+    m[..., 0, 2] = m[..., 2, 0] = 0.5 * d * s
+    m[..., 1, 1] = 0.5 * (p * c * c + q * s * s)
+    m[..., 1, 2] = m[..., 2, 1] = 0.5 * (p - q) * c * s
+    m[..., 2, 2] = 0.5 * (p * s * s + q * c * c)
+    m[..., 3, 3] = 0.5 * q
     return np.ascontiguousarray(m, dtype=np.float64)
 
 
@@ -2330,6 +2615,10 @@ def stokes_analyze(stokes):
     polarisation ellipse ``0.5*atan2(S2, S1)`` mapped into ``[0, 180)`` ·
     ``ellipticity_deg`` ``0.5*asin(S3/|S|)`` in ``[-45, +45]`` ·
     ``handedness`` one of ``"right"`` / ``"left"`` / ``"linear"``.
+    ``azimuth_deg`` is measured from +x (along a row) toward +y (down the
+    rows) — clockwise on a displayed image; ``"right"`` means ``S3 > 0``,
+    which on a displayed image (y down) is a **counter-clockwise** field
+    rotation as seen by the camera (see :func:`stokes_from_jones`).
     The ellipticity is that of the **polarised part** (``S3`` over
     ``sqrt(S1^2+S2^2+S3^2)``); pypolar divides by ``S0`` instead, which for
     partially polarised light mixes the unpolarised part into the ellipse —

@@ -1,8 +1,8 @@
 {
- "n_ops": 3563,
+ "n_ops": 3565,
  "tiers": {
   "color": 12,
-  "ledger": 2604,
+  "ledger": 2606,
   "nary": 17,
   "registry": 930
  },
@@ -18239,6 +18239,17 @@
    ]
   },
   {
+   "name": "mueller_partial_polarizer",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "matrix",
+   "category": "polarization",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
    "name": "multilayer_reflectance",
    "halcon": "",
    "in_sort": null,
@@ -21860,6 +21871,19 @@
    "halcon": "",
    "in_sort": "polsweep",
    "out_sort": "stokes",
+   "category": "polarization",
+   "tier": "ledger",
+   "ledger": "opsspecular",
+   "dim": "specular",
+   "in_sorts": [
+    "polsweep"
+   ]
+  },
+  {
+   "name": "polarization_stokes_map",
+   "halcon": "",
+   "in_sort": "polsweep",
+   "out_sort": "table",
    "category": "polarization",
    "tier": "ledger",
    "ledger": "opsspecular",

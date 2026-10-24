@@ -1,4 +1,4 @@
-# OPTICS operator help — 464 ops in 51 categories
+# OPTICS operator help — 465 ops in 51 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -162,9 +162,9 @@
 
 [mla_surface](plenoptic/mla_surface.md) · [plenoptic_capture](plenoptic/plenoptic_capture.md) · [plenoptic_decode](plenoptic/plenoptic_decode.md) · [plenoptic_mla_calibrate](plenoptic/plenoptic_mla_calibrate.md) · [plenoptic_refocus_depth](plenoptic/plenoptic_refocus_depth.md) · [plenoptic_system](plenoptic/plenoptic_system.md)
 
-### polarization (10)
+### polarization (11)
 
-[jones_apply](polarization/jones_apply.md) · [jones_element](polarization/jones_element.md) · [mueller_apply](polarization/mueller_apply.md) · [mueller_checks](polarization/mueller_checks.md) · [mueller_element](polarization/mueller_element.md) · [mueller_from_intensities](polarization/mueller_from_intensities.md) · [polarization_demosaic](polarization/polarization_demosaic.md) · [polarization_demosaic_color](polarization/polarization_demosaic_color.md) · [stokes_analyze](polarization/stokes_analyze.md) · [stokes_from_jones](polarization/stokes_from_jones.md)
+[jones_apply](polarization/jones_apply.md) · [jones_element](polarization/jones_element.md) · [mueller_apply](polarization/mueller_apply.md) · [mueller_checks](polarization/mueller_checks.md) · [mueller_element](polarization/mueller_element.md) · [mueller_from_intensities](polarization/mueller_from_intensities.md) · [mueller_partial_polarizer](polarization/mueller_partial_polarizer.md) · [polarization_demosaic](polarization/polarization_demosaic.md) · [polarization_demosaic_color](polarization/polarization_demosaic_color.md) · [stokes_analyze](polarization/stokes_analyze.md) · [stokes_from_jones](polarization/stokes_from_jones.md)
 
 ### radiosity (7)
 
