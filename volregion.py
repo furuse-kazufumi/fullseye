@@ -385,7 +385,7 @@ def vol_rle_intersect(a, b):
 
 
 def vol_rle_difference(a, b):
-    """Set difference ``a \ b`` on the runs (no decode).
+    """Set difference ``a \\ b`` on the runs (no decode).
 
     ``a`` に含まれ ``b`` に含まれない voxel の region。掃引エンジン(``_rle_boolean``)
     で区間ごとの被覆状態が ``ia & ~ib`` の区間を run として残す。非可換
