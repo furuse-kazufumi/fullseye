@@ -37,12 +37,24 @@ def test_median_border_is_zero_padding_like_scipy(a, shape):
     np.testing.assert_allclose(got, want, rtol=0, atol=1e-7)
 
 
-@pytest.mark.parametrize("a", [0.0, 0.5, 1.0])
-@pytest.mark.parametrize("shape", [(4, 4), (16, 16)])
-def test_motion_blur_runs_on_tiny_images_and_borders_see_zeros(a, shape):
+@pytest.mark.parametrize("a, b", [(0.0, 0.5), (0.3, 0.1), (0.5, 0.5), (1.0, 0.9)])
+@pytest.mark.parametrize("shape", [(4, 4), (16, 16), (7, 12)])
+def test_motion_blur_border_is_zero_padding_like_scipy(a, b, shape):
+    """全画素を scipy の 0 埋め相関と比べる(2026-10-24 のレビュー指摘 8)。
+
+    前の版は一様な 1 の画像の隅 1 画素が 1 未満かしか見ておらず、縁の他の画素や
+    内側がずれても通っていた。カーネルは kornia の ``get_motion_kernel2d`` から取り
+    (op が使う窓そのもの)、境界と畳み込みは scipy で独立に計算する。
+    """
+    import kornia.filters as KF
+
     op = _op("xkor_motion_blur")
-    v = np.ones(shape)
-    got = op.fn(v, a, 0.5)
-    assert got.shape == v.shape and np.isfinite(got).all()
-    # 一様な 1 の画像: 0 埋めなら縁は 1 未満に暗くなり、鏡映なら 1 のまま
-    assert got[0, 0] < 1.0 - 1e-3
+    v = np.random.default_rng(8).random(shape)
+    ks = 2 * int(2 + a * 6) + 1                     # backends_kornia._motion と同じ写し
+    ker = KF.get_motion_kernel2d(ks, float(360 * a), float(2 * b - 1)).numpy()[0]
+    x = v.astype(np.float32).astype(np.float64)
+    want = np.clip(ndi.correlate(x, ker.astype(np.float64), mode="constant", cval=0.0), 0, 1)
+    got = op.fn(v, a, b)
+    assert got.shape == v.shape
+    # 実測(kornia 0.8.3 / 0.9.0): 最大 1.3e-7(float32 の和の丸め)
+    np.testing.assert_allclose(got, want, rtol=0, atol=1e-6)

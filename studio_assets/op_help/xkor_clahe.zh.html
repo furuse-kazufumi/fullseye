@@ -13,6 +13,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>CLAHE(对比度受限自适应直方图均衡化)。调用 <code style="color:#22d3bf">kornia.enhance.equalize_clahe</code>。</p>
 <p>a 调节裁剪限制（<code style="color:#22d3bf">1.0 + 4.0 * a</code>，范围 1.0~5.0）。值越大对比度提升得越强，但噪声也越容易被强调。b 未使用。</p>
+<p><b>需要 kornia 0.9 及以上</b>。0.8 及更早版本的 <code style="color:#22d3bf">equalize_clahe</code> 与 OpenCV 的 CLAHE 平均相差 0.04~0.17，最大相差 0.46（0.9 修正了直方图的分箱、被裁剪余量的分配方式、LUT 的取整和分块插值）。为了不让数值随版本悄然改变，低于 0.9 时会附带理由拒绝。分块网格显式传入 8x8。</p>
 <p><b>旋钮（实测）</b>：将 <code style="color:#22d3bf">a</code> 从 0 扫到 1 <b>输出不变</b>（以 5 种输入实测）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 族使用指南</a></p>

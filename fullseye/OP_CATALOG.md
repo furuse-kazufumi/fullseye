@@ -968,7 +968,7 @@ _計 3571 ops / 54 families。並びとノートの在り処は `docs/ops/INDEX.
 - `xkor_dog` `image → image` — DoG（Difference of Gaussians）ブロブ応答。``kornia.feature.dog_response_single``（無ければ ``dog_response`` にフォールバック）を既定パラメータで呼び、絶対値を取って最大絶対値で正規化する。 · 例: `gallery2d_edges`
 - `xkor_gftt` `image → image` — GFTT（Good Features To Track、Shi-Tomasi）コーナー応答。``kornia.feature.gftt_response`` を既定パラメータで呼び、絶対値を取って最大絶対値で正規化する。 · 例: `gallery2d_edges`
 - `xkor_harris` `image → image` — Harris コーナー応答。``kornia.feature.harris_response`` を呼び、符号付き応答を ``signed01`` で [0,1] に写像する（コーナーは正、エッジは負に出るHarris 応答の符号情報を保ったまま可視化域に収める）。 · 例: `gallery2d_edges`
-- `xkor_hessian` `image → image` — ヘシアン行列に基づくブロブ・コーナー応答。``kornia.feature.hessian_response`` を既定パラメータで呼び、絶対値を取って最大絶対値で正規化する。 · 例: `gallery2d_edges`
+- `xkor_hessian` `image → image` — ヘシアン行列の行列式 det H = Ixx·Iyy − Ixy² によるブロブ・コーナー応答。``kornia.filters.spatial_gradient`` の 5x5 Sobel 2 階微分カーネルを正規化なし（``normalized=False``）で掛けて 64 で割り（2 次・3 次の曲面で微分値そのものになる）、端は複製、絶対値を取って最大絶対値で正規化する。 · 例: `gallery2d_edges`
 - `xkor_laplacian` `image → image` — ラプラシアン（2 階微分）によるエッジ・ブロブ応答。 ``kornia.filters.laplacian`` を呼び、絶対値を取ってから最大絶対値で 正規化する。 · 例: `gallery2d_edges`
 - `xpil_contour` `image → image` — Pillow の輪郭抽出フィルタ。``PIL.ImageFilter.CONTOUR`` の固定カーネルで輪郭線だけを白背景に黒線で残すような効果を作る（ペン画・線画調のエフェクト）。 · 例: `gallery2d_edges`
 - `xpil_find_edges` `image → image` — Pillow のエッジ検出フィルタ。``PIL.ImageFilter.FIND_EDGES`` の固定カーネル（ラプラシアン系）でエッジを強調する。 · 例: `find_ops_by_meaning`, `gallery2d_edges`

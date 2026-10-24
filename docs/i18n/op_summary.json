@@ -7744,13 +7744,13 @@
    "hi": "Harris corner response। ``kornia.feature.harris_response`` को call करता है और signed response को ``signed01`` से [0,1] में map करता है (corner धनात्मक और edge ऋणात्मक आने वाले Harris response की चिह्न जानकारी बनाए रखते हुए दिखाने योग्य range में लाता है)।"
   },
   "2d/xkor_hessian": {
-   "fp": "309fc4f64029",
-   "en": "Blob/corner response based on the Hessian matrix. Calls ``kornia.feature.hessian_response`` with default parameters, takes the absolute value, and normalizes by the maximum absolute value.",
-   "zh": "基于 Hessian 矩阵的斑点/角点响应。以默认参数调用 ``kornia.feature.hessian_response``，取绝对值后按最大绝对值归一化。",
-   "tw": "基於 Hessian 矩陣的斑點/角點響應。以預設參數呼叫 ``kornia.feature.hessian_response``，取絕對值後依最大絕對值正規化。",
-   "ko": "Hessian 행렬 기반의 블롭·코너 응답. 기본 매개변수로 ``kornia.feature.hessian_response``를 호출하여 절댓값을 취한 뒤 최대 절댓값으로 정규화한다.",
-   "de": "Blob-/Eckenantwort basierend auf der Hesse-Matrix. Ruft ``kornia.feature.hessian_response`` mit Standardparametern auf, bildet den Absolutwert und normiert auf den maximalen Absolutwert.",
-   "hi": "Hessian matrix पर आधारित blob/corner response। ``kornia.feature.hessian_response`` को default parameters से call करता है, absolute value लेकर अधिकतम absolute value से normalise करता है।"
+   "fp": "a40804fe5807",
+   "en": "Blob/corner response from the determinant of the Hessian, det H = Ixx·Iyy − Ixy². Applies the 5x5 Sobel second-derivative kernels of ``kornia.filters.spatial_gradient`` without normalisation (``normalized=False``) and divides by 64 (which gives the derivatives themselves on quadratic and cubic surfaces), replicates the border, takes the absolute value and normalises by the maximum absolute value.",
+   "zh": "由 Hessian 矩阵的行列式 det H = Ixx·Iyy − Ixy² 得到的斑点/角点响应。以不归一化（``normalized=False``）的方式应用 ``kornia.filters.spatial_gradient`` 的 5x5 Sobel 二阶导数核并除以 64（在二次、三次曲面上恰好得到导数本身），边界复制，取绝对值后按最大绝对值归一化。",
+   "tw": "由 Hessian 矩陣的行列式 det H = Ixx·Iyy − Ixy² 得到的斑點/角點響應。以不正規化（``normalized=False``）的方式套用 ``kornia.filters.spatial_gradient`` 的 5x5 Sobel 二階導數核並除以 64（在二次、三次曲面上恰好得到導數本身），邊界複製，取絕對值後依最大絕對值正規化。",
+   "ko": "Hessian 행렬의 행렬식 det H = Ixx·Iyy − Ixy²에 의한 블롭·코너 응답. ``kornia.filters.spatial_gradient``의 5x5 Sobel 2차 미분 커널을 정규화 없이(``normalized=False``) 적용하고 64로 나누며(2차·3차 곡면에서 미분값 자체가 된다), 경계는 복제하고 절댓값을 취한 뒤 최대 절댓값으로 정규화한다.",
+   "de": "Blob-/Eckenantwort aus der Determinante der Hesse-Matrix, det H = Ixx·Iyy − Ixy². Wendet die 5x5-Sobel-Kerne zweiter Ableitung von ``kornia.filters.spatial_gradient`` ohne Normierung (``normalized=False``) an und teilt durch 64 (auf quadratischen und kubischen Flächen ergibt das genau die Ableitungen), repliziert den Rand, bildet den Absolutwert und normiert auf den maximalen Absolutwert.",
+   "hi": "Hessian matrix के determinant det H = Ixx·Iyy − Ixy² से blob/corner response। ``kornia.filters.spatial_gradient`` के 5x5 Sobel second-derivative kernels को बिना normalisation (``normalized=False``) लगाकर 64 से भाग देता है (quadratic और cubic surfaces पर यही ठीक derivative देता है), border को replicate करता है, absolute value लेकर अधिकतम absolute value से normalise करता है।"
   },
   "2d/xkor_laplacian": {
    "fp": "81c2485f0850",

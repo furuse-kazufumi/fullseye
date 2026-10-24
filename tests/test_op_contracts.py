@@ -178,10 +178,6 @@ KNOWN_FALLS_BACK_ON_EDGE: dict = {
         "OpenCV BRISK の内部 resize が 4x4 で assert"),
     "xkor_clahe": (BACKEND, frozenset({"tiny4"}),
         "kornia CLAHE のタイル格子が 4x4 画像に収まらない"),
-    "xkor_dog": (BACKEND, frozenset({"tiny4"}),
-        "kornia の padding が 4x4 画像より大きい"),
-    "xkor_laplacian": (BACKEND, frozenset({"tiny4"}),
-        "kornia の padding が 4x4 画像より大きい"),
     "xsk2_hog": (BACKEND, frozenset({"tiny4"}),
         "skimage HOG は 12x12 以上を要求"),
     "xsk2_multiotsu": (BACKEND, frozenset({"const0", "const1", "const_mid", "single_bright"}),
@@ -201,6 +197,28 @@ KNOWN_FALLS_BACK_ON_EDGE: dict = {
     "xwt_mra_component": (BACKEND, frozenset({"tiny4"}),
         "pywt MRA の分解段数が 4x4 画像に足りない"),
 }
+
+#: ★2026-10-24: kornia 0.9 未満の環境でだけ **全入力で理由つきで断る** op。
+#: ``xkor_clahe``: 0.8 以前の ``equalize_clahe`` は OpenCV の CLAHE と最大 0.46 ずれ、0.9 で直った
+#: (backends_kornia._clahe)。CI は最新の kornia を入れるので、そこでは上の台帳どおり tiny4 だけが
+#: 落ちる。古い kornia では「その拒否文で落ちた」入力だけを許す —— ほかの理由の劣化は従来どおり赤。
+#: (2026-10-24 に xkor_dog / xkor_laplacian の tiny4 を台帳から消した: 鏡映を自前で足すようにして
+#: 4x4 でも走る。tests/test_kornia_version_drift_2026_10_24.py)
+KNOWN_REFUSES_ON_OLD_KORNIA: dict = {
+    "xkor_clahe": ((0, 9), "kornia 0.9 以上が要る"),
+}
+
+
+def _kornia_version():
+    """入っている kornia の (major, minor)。無ければ None(import はしない —— metadata だけ)。"""
+    import re
+    from importlib.metadata import PackageNotFoundError, version
+    try:
+        m = re.match(r"(\d+)\.(\d+)", version("kornia"))
+    except PackageNotFoundError:
+        return None
+    return (int(m.group(1)), int(m.group(2))) if m else None
+
 
 #: ★2026-10-07: 宣言した out_sort の形を守っていない op(``test_op_honours_declared_sort`` の
 #: else 枝 = points/signal/matrix/video/qimage/cimage/… の 120 op を新たに検査して見つかった)。
@@ -276,6 +294,11 @@ def _assert_no_unledgered_fallback(op, fell):
     if op.name in KNOWN_ORDER_DEPENDENT:
         allowed = allowed | KNOWN_ORDER_DEPENDENT[op.name][0]
     new = {k: v for k, v in fell.items() if k not in allowed}
+    if op.name in KNOWN_REFUSES_ON_OLD_KORNIA:
+        need, refusal = KNOWN_REFUSES_ON_OLD_KORNIA[op.name]
+        ver = _kornia_version()
+        if ver is not None and ver < need:
+            new = {k: v for k, v in new.items() if refusal not in v}
     assert not new, (
         "%s が契約電池で guard の fallback に落ちた(例外か非有限の出力を guard が握り潰して"
         "いた)。直すか、理由つきで KNOWN_FALLS_BACK_ON_EDGE に載せる: %s" % (op.name, new))
