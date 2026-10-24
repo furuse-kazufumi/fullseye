@@ -188,7 +188,7 @@ __all__ = [
     "brdf_blinn_phong", "brdf_microfacet", "dichromatic_render",
     "photometric_stereo_robust", "photometric_residual",
     "polarization_render", "polarization_separate", "polarization_dolp_map", "polarization_analyze",
-    "polarization_stokes",
+    "polarization_stokes", "polarization_stokes_map",
     "SPECULARITY", "ROBUST_METHODS", "BRDF_MODELS",
     "MAX_PIXELS", "MAX_STACK_ELEMENTS", "MAX_LIGHTS", "MAX_ROBUST_PIXELS",
     "MAX_ROBUST_WORK", "MAX_SUBSETS", "MAX_MATERIALS",
@@ -201,7 +201,7 @@ SPECULARITY = [
     "brdf_blinn_phong", "brdf_microfacet", "dichromatic_render",
     "photometric_stereo_robust", "photometric_residual",
     "polarization_render", "polarization_separate", "polarization_dolp_map",
-    "polarization_stokes",
+    "polarization_stokes", "polarization_stokes_map",
 ]
 
 #: Estimators accepted by :func:`photometric_stereo_robust`. ``"lstsq"`` is the
@@ -1532,6 +1532,17 @@ def photometric_residual(images, lights, normals=None, albedo=None,
 # polarisation                                                                 #
 # --------------------------------------------------------------------------- #
 #: The four orientations of a division-of-focal-plane polarisation sensor.
+#:
+#: **Angle convention (pinned 2026-10-23).** Analyser angles, the azimuth of
+#: :func:`polarization_render` and the AoLP of :func:`polarization_stokes_map`
+#: are measured in the image plane from +x (along a row) toward +y (**down**
+#: the rows) — clockwise on a displayed image. It is the convention of
+#: :mod:`optics` (``jones_element`` / ``mueller_element``) and of
+#: :mod:`sfpolar` (``atan2(ny, nx)``), measured, not chosen. A camera whose
+#: angles count counter-clockwise on a y-up display needs ``angles_deg``
+#: negated; otherwise every axis comes back mirrored about x (21.5 as 158.5)
+#: with no exception. Linear analysers cannot see circular polarisation, so
+#: no handedness enters here; see :func:`optics.stokes_from_jones` for that.
 _DEFAULT_ANGLES = (0.0, 45.0, 90.0, 135.0)
 
 
@@ -1793,3 +1804,107 @@ def polarization_stokes(images, angles_deg=_DEFAULT_ANGLES,
             s1, s2 = s1 * k, s2 * k
     del amp
     return np.array([s0, s1, s2, 0.0], dtype=np.float64)
+
+
+def polarization_stokes_map(images, angles_deg=_DEFAULT_ANGLES,
+                            max_violation_frac=0.0):
+    """Per-pixel linear Stokes images with DoLP and AoLP maps from an analyser sweep (4 DoFP angles or any N >= 3, least squares). → dict of (H, W) maps.
+
+    :func:`polarization_stokes` answers for the whole field (a spatial mean);
+    this is the same fit kept **per pixel**:
+    ``I(t) = 0.5 (S0 + S1 cos 2t + S2 sin 2t)`` solved for every pixel —
+    in closed form for the four angles 0/45/90/135 of a division-of-focal-plane
+    sensor (``S0 = (I0 + I45 + I90 + I135)/2``, ``S1 = I0 - I90``,
+    ``S2 = I45 - I135``, the least-squares solution for that design), and by
+    least squares for any other set of N >= 3 analyser angles.
+
+    Returns a dict:
+
+    * ``s0``, ``s1``, ``s2`` — ``(H, W)`` linear Stokes images. Stack them with
+      a zero ``S3`` (``np.stack([s0, s1, s2, 0 * s0], -1)``) and they feed
+      :func:`optics.mueller_apply`'s field form directly.
+    * ``dolp`` — ``sqrt(S1^2 + S2^2) / S0`` in ``[0, 1]``.
+    * ``aolp_deg`` — ``0.5 * atan2(S2, S1)`` in degrees, mapped into
+      ``[0, 180)`` (an axis, so 0 and 180 are the same).
+    * ``lit`` — bool, ``S0 > 0``.
+    * ``aolp_defined`` — bool, ``S0 > 0`` and ``hypot(S1, S2) > 1e-12 * S0``.
+
+    **Where the ratios do not exist, the value is 0 and a mask says so — never
+    NaN.** At ``S0 = 0`` DoLP is 0/0: it is returned as 0.0, the same
+    convention :func:`polarization_dolp_map` states, with ``lit`` False. Where
+    the linear part is zero (unpolarised light, or no light) AoLP has no
+    orientation: ``aolp_deg`` is 0.0 there and ``aolp_defined`` is False.
+    "Zero" is relative — ``hypot(S1, S2) <= 1e-12 * S0`` — because the fit
+    leaves rounding dust: a uniform unpolarised sweep fits DoLP ~3e-16 at
+    every scale from 1e-6 to 1e9 (measured), and with an exact-zero test
+    400/400 such pixels reported an "angle" that was pure rounding. DoLP itself
+    is returned as fitted (that 3e-16 is an honest number).
+    Use the masks before thresholding or averaging angles; a 0 in
+    ``aolp_deg`` is not a measurement of 0 degrees.
+
+    **Angles.** *angles_deg* and the returned AoLP use the library convention:
+    from +x (along a row) toward +y (down the rows), clockwise on a displayed
+    image (see ``_DEFAULT_ANGLES`` in this module and the polarisation section
+    of :mod:`optics`). A synthetic sweep made with
+    ``optics.mueller_element("polarizer", t)`` of a beam at 21.5 degrees comes
+    back as 21.5; the same frames labelled with negated angles come back as
+    158.5 — the test file pins both.
+
+    **Physicality.** The fit refuses sweeps whose fitted minimum is negative
+    (as :func:`polarization_separate`, controlled by *max_violation_frac*).
+    When that clamp is allowed, a pixel can fit ``hypot(S1, S2) > S0``; its
+    ``(S1, S2)`` is then scaled back onto ``S0`` (as
+    :func:`polarization_stokes` does for the mean) and a negative ``S0`` is
+    set to 0, so every returned pixel is a physical Stokes vector. With the
+    default ``max_violation_frac=0`` that only touches rounding-level
+    excesses.
+
+    Ground truth (closed form, in ``tests/test_polarization_per_pixel_2026_10_23.py``):
+    unpolarised light through an ideal polariser → DoLP 1 and AoLP = the
+    polariser angle, per pixel, for a whole field of different angles; through
+    :func:`optics.mueller_partial_polarizer` → DoLP ``(ER - 1)/(ER + 1)``;
+    Malus's law frames rebuilt from the returned ``S0, S1, S2`` reproduce the
+    input frames; the spatial mean of ``s0, s1, s2`` equals
+    :func:`polarization_stokes` (no clamp in play).
+
+    S3 is not returned: linear analysers cannot measure it (see
+    :func:`polarization_stokes`).
+
+    **Raises** ``ValueError``: as :func:`polarization_separate` — *images* is
+    not an ``(N, H, W)`` stack with N >= 3, exceeds the caps, or is
+    non-finite; *angles_deg* does not match N or leaves the fit
+    rank-deficient; more than *max_violation_frac* of the pixels fit a negative
+    minimum.
+    """
+    op = "polarization_stokes_map"
+    max_violation_frac = _finite_scalar(max_violation_frac, "max_violation_frac")
+    if not (0.0 <= max_violation_frac <= 1.0):
+        raise ValueError("max_violation_frac must be in [0, 1], got %g"
+                         % max_violation_frac)
+    a0, a1, a2, _amp, _i_min, (H, W) = _polar_fit(images, angles_deg, op,
+                                                  max_violation_frac)
+    s0 = np.maximum(2.0 * a0, 0.0)
+    s1 = 2.0 * a1
+    s2 = 2.0 * a2
+    lin = np.hypot(s1, s2)
+    over = lin > s0
+    if over.any():
+        k = np.ones_like(s0)
+        np.divide(s0, lin, out=k, where=over)
+        s1 = np.where(over, s1 * k, s1)
+        s2 = np.where(over, s2 * k, s2)
+        lin = np.hypot(s1, s2)
+    lit = s0 > 0.0
+    dolp = np.zeros_like(s0)
+    np.divide(lin, s0, out=dolp, where=lit)
+    dolp = np.clip(dolp, 0.0, 1.0)
+    defined = lit & (lin > 1e-12 * s0)
+    aolp = np.zeros_like(s0)
+    ang = np.degrees(0.5 * np.arctan2(s2, s1)) % 180.0
+    ang = np.where(ang >= 180.0, 0.0, ang)       # -tiny % 180 rounds to 180.0
+    aolp[defined] = ang[defined]
+    return {
+        "s0": s0.reshape(H, W), "s1": s1.reshape(H, W), "s2": s2.reshape(H, W),
+        "dolp": dolp.reshape(H, W), "aolp_deg": aolp.reshape(H, W),
+        "lit": lit.reshape(H, W), "aolp_defined": defined.reshape(H, W),
+    }

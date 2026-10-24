@@ -17,6 +17,13 @@
 
 5. ``polarization_demosaic_color`` でカラー偏光センサ(4x4 ブロック)を 4 角度 x RGB に戻す。
 
+6. ``polarization_stokes_map`` で**画素ごとの** S0/S1/S2・DoLP・AoLP を取る(``polarization_stokes``
+   は場全体の平均だけ)。AoLP の向きは「+x(列方向)から +y(行方向 = 下)へ」= 表示画像で時計回り。
+   この場面は AoLP が行を下るほど増えるので、符号を取り違えると 180 − AoLP が返る —— 例の中で確かめる。
+7. ``mueller_partial_polarizer`` で消光比が有限の偏光子(T2 = T1/ER)を検光子にすると、完全偏光の光でも
+   DoLP が (ER − 1)/(ER + 1) までしか出ない。``mueller_element`` に角度の**場**を渡すと画素ごとの
+   行列 (H, W, 4, 4) が 1 回で返る。
+
 【真値】全部合成。Stokes 場を決めて Malus の式で 4 枚を作り、モザイクに畳む。Mueller は
 既知の素子の積。だから「戻った値 − 真値」がそのまま誤差になる(assert で落とす)。
 
@@ -127,6 +134,33 @@ def main() -> int:
                for k, a in enumerate(fs.POLARIZATION_SWEEP_ANGLES))
     print("5. カラー偏光(4x4): %s、真値との最大差 %.2e(縁 4 画素を除く)" % (csweep.shape, cerr))
     assert cerr < 1e-2, cerr
+
+    # 6. 画素ごとの Stokes / DoLP / AoLP。真値は自分で決めた dolp / aolp(行を下るほど方位が増える)。
+    smap = fs.polarization_stokes_map(sweep, max_violation_frac=0.05)
+    inner = (slice(2, -2), slice(2, -2))
+    ok = smap["aolp_defined"][inner]
+    da = np.abs(smap["aolp_deg"][inner] - np.degrees(aolp)[inner])
+    aerr = float(np.minimum(da, 180.0 - da)[ok].max())
+    flip = fs.polarization_stokes_map(sweep, angles_deg=(0.0, -45.0, -90.0, -135.0),
+                                      max_violation_frac=0.05)["aolp_deg"][inner]
+    df = np.abs(flip - np.degrees(aolp)[inner])
+    ferr = float(np.median(np.minimum(df, 180.0 - df)))
+    print("6. 画素ごとの AoLP: 真値との最大差 %.2e deg(定義のある %d 画素)/ 角度の向きを逆に"
+          "読むと中央値 %.1f deg ずれる" % (aerr, int(ok.sum()), ferr))
+    assert aerr < 1.5, aerr
+    assert ferr > 20.0, ferr
+
+    # 7. 消光比 ER = 100 の検光子で撮ると、完全偏光でも DoLP は (ER-1)/(ER+1) = 0.9802 で頭打ち。
+    er = 100.0
+    beam = fs.mueller_apply(fs.mueller_element("polarizer", np.full((4, 4), 30.0)),
+                            np.array([1.0, 0.0, 0.0, 0.0]))                # (4, 4, 4) DoLP 1 の場
+    leaky = np.stack([fs.mueller_apply(fs.mueller_partial_polarizer(t, er), beam)[..., 0]
+                      for t in fs.POLARIZATION_SWEEP_ANGLES])
+    lmap = fs.polarization_stokes_map(leaky)
+    lerr = float(np.abs(lmap["dolp"] - (er - 1.0) / (er + 1.0)).max())
+    print("7. ER=%g の検光子: 完全偏光の DoLP %.4f(閉形式 (ER-1)/(ER+1) = %.4f、差 %.1e)、AoLP %.2f deg"
+          % (er, float(lmap["dolp"].mean()), (er - 1.0) / (er + 1.0), lerr, float(lmap["aolp_deg"].mean())))
+    assert lerr < 1e-12, lerr
 
     figs.save_grid("polarization_camera_pipeline",
                    [raw, sweep[0], sweep[2], d, dolp, np.degrees(aolp)],

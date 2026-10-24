@@ -394,6 +394,46 @@
   "hi": "Fullseye Studio — क्विक गाइड\n\n• Operators panel: कोई op चुनें, उसका signature + HTML help पढ़ें, Insert से pipeline में डालें।\n• Program (code) panel: pipeline को text के रूप में edit करें, टाइप करते समय autocomplete,\n  breakpoints के लिए gutter पर क्लिक करें, Run (timed) हर line का ms दिखाता है।\n• Variables & Objects: हर stage का output; इनमें से किसी को भी graphics window में दिखाएँ।\n• Windows मेनू: हर panel को दिखाएँ/float करें, कई graphics windows खोलें,\n  या multi-monitor काम के लिए 'Float all panels'।\n• Drag & drop: images, .py scripts, pipelines (.json), 3-D फ़ाइलें (PLY / STL / PCD / OBJ, ASCII या binary में,\n  3DGS .ply / .splat, glTF, LAS, MJCF / URDF, BVH, SWC, volumes), videos, event-camera data, Markdown / SVG\n  और audio — हर एक सही window में खुलता है। सहायता ▸ खोली जा सकने वाली फ़ाइलें हर प्रकार की सूची देता है।\n• Window की position, panel layout और भाषा sessions के बीच याद रखी जाती हैं।"
  },
  "strings": {
+  "Only operators that take the previous stage's output": {
+   "ja": "前段の出力を受けられる op だけ表示",
+   "zh": "只显示能接收前一段输出的算子",
+   "tw": "只顯示能接收前一段輸出的運算子",
+   "ko": "앞 단계 출력을 받을 수 있는 연산자만 표시",
+   "de": "Nur Operatoren, die die Ausgabe der vorigen Stufe annehmen",
+   "hi": "केवल वे ऑपरेटर जो पिछले चरण का आउटपुट लेते हैं"
+  },
+  "Showing every operator (the type filter is off).": {
+   "ja": "すべての op を表示しています(型の絞り込みは解除中)。",
+   "zh": "正在显示全部算子(类型筛选已关闭)。",
+   "tw": "正在顯示全部運算子(型別篩選已關閉)。",
+   "ko": "모든 연산자를 표시합니다(형식 필터 꺼짐).",
+   "de": "Alle Operatoren werden angezeigt (Typfilter aus).",
+   "hi": "सभी ऑपरेटर दिखाए जा रहे हैं (प्रकार फ़िल्टर बंद है)।"
+  },
+  "First stage: every operator is listed (the input image is matched at the entry).": {
+   "ja": "先頭の段: すべての op を表示しています(入力画像は入口で型が合わせられます)。",
+   "zh": "第一段:列出全部算子(输入图像在入口处匹配类型)。",
+   "tw": "第一段:列出全部運算子(輸入影像在入口處匹配型別)。",
+   "ko": "첫 단계: 모든 연산자를 표시합니다(입력 이미지는 입구에서 형식이 맞춰집니다).",
+   "de": "Erste Stufe: alle Operatoren werden angezeigt (das Eingabebild wird am Eingang angepasst).",
+   "hi": "पहला चरण: सभी ऑपरेटर सूचीबद्ध हैं (इनपुट छवि का प्रकार प्रवेश पर मिलाया जाता है)।"
+  },
+  "The previous stage's output type is open ('any'), so every operator is listed.": {
+   "ja": "前段の出力の型が決まっていない('any')ので、すべての op を表示しています。",
+   "zh": "前一段的输出类型未确定('any'),因此列出全部算子。",
+   "tw": "前一段的輸出型別未確定('any'),因此列出全部運算子。",
+   "ko": "앞 단계의 출력 형식이 정해지지 않아('any') 모든 연산자를 표시합니다.",
+   "de": "Der Ausgabetyp der vorigen Stufe ist offen ('any'), daher werden alle Operatoren angezeigt.",
+   "hi": "पिछले चरण का आउटपुट प्रकार खुला है ('any'), इसलिए सभी ऑपरेटर सूचीबद्ध हैं।"
+  },
+  "Showing %d of %d operators that take '%s' (the output of stage %d, %s). The others would be refused before running.": {
+   "ja": "%d / %d 件の op を表示('%s' を受けられるもの。段 %d %s の出力)。他は実行前に拒否されます。",
+   "zh": "显示 %d / %d 个能接收 '%s' 的算子(第 %d 段 %s 的输出)。其余算子会在运行前被拒绝。",
+   "tw": "顯示 %d / %d 個能接收 '%s' 的運算子(第 %d 段 %s 的輸出)。其餘運算子會在執行前被拒絕。",
+   "ko": "%d / %d개 연산자 표시('%s'를 받는 것, %d단계 %s의 출력). 나머지는 실행 전에 거부됩니다.",
+   "de": "%d von %d Operatoren, die '%s' annehmen (Ausgabe von Stufe %d, %s). Die übrigen würden vor dem Lauf abgelehnt.",
+   "hi": "%d / %d ऑपरेटर दिखाए जा रहे हैं जो '%s' लेते हैं (चरण %d, %s का आउटपुट)। बाकी चलने से पहले अस्वीकार हो जाएँगे।"
+  },
   "&File": {
    "ja": "ファイル(&F)",
    "zh": "文件(&F)",

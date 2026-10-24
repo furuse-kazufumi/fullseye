@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3581,
- "n_notes": 3587,
+ "n_ops": 3565,
+ "n_notes": 3571,
  "notes": {
   "vol_dilate": [
    {
@@ -16535,126 +16535,6 @@
     "path": "docs/ops/drive/ballworld/table_world.md"
    }
   ],
-  "braid_artin_images": [
-   {
-    "op": "braid_artin_images",
-    "dim": "drive",
-    "category": "braidpath",
-    "in": "signal × scalar",
-    "out": "table",
-    "path": "docs/ops/drive/braidpath/braid_artin_images.md"
-   }
-  ],
-  "braid_class_representatives": [
-   {
-    "op": "braid_class_representatives",
-    "dim": "drive",
-    "category": "braidpath",
-    "in": "any",
-    "out": "table",
-    "path": "docs/ops/drive/braidpath/braid_class_representatives.md"
-   }
-  ],
-  "braid_equivalent": [
-   {
-    "op": "braid_equivalent",
-    "dim": "drive",
-    "category": "braidpath",
-    "in": "signal × signal × scalar",
-    "out": "table",
-    "path": "docs/ops/drive/braidpath/braid_equivalent.md"
-   }
-  ],
-  "braid_from_trajectories": [
-   {
-    "op": "braid_from_trajectories",
-    "dim": "drive",
-    "category": "braidpath",
-    "in": "any",
-    "out": "table",
-    "path": "docs/ops/drive/braidpath/braid_from_trajectories.md"
-   }
-  ],
-  "braid_reduce": [
-   {
-    "op": "braid_reduce",
-    "dim": "drive",
-    "category": "braidpath",
-    "in": "signal × scalar",
-    "out": "signal",
-    "path": "docs/ops/drive/braidpath/braid_reduce.md"
-   }
-  ],
-  "dynnikov_act": [
-   {
-    "op": "dynnikov_act",
-    "dim": "drive",
-    "category": "braidpath",
-    "in": "any × signal",
-    "out": "table",
-    "path": "docs/ops/drive/braidpath/dynnikov_act.md"
-   }
-  ],
-  "dynnikov_coordinates": [
-   {
-    "op": "dynnikov_coordinates",
-    "dim": "drive",
-    "category": "braidpath",
-    "in": "signal × scalar",
-    "out": "table",
-    "path": "docs/ops/drive/braidpath/dynnikov_coordinates.md"
-   }
-  ],
-  "grid_hole_points": [
-   {
-    "op": "grid_hole_points",
-    "dim": "drive",
-    "category": "braidpath",
-    "in": "image2d",
-    "out": "matrix",
-    "path": "docs/ops/drive/braidpath/grid_hole_points.md"
-   }
-  ],
-  "grid_paths_to_xy": [
-   {
-    "op": "grid_paths_to_xy",
-    "dim": "drive",
-    "category": "braidpath",
-    "in": "any",
-    "out": "any",
-    "path": "docs/ops/drive/braidpath/grid_paths_to_xy.md"
-   }
-  ],
-  "homotopy_class_compare": [
-   {
-    "op": "homotopy_class_compare",
-    "dim": "drive",
-    "category": "braidpath",
-    "in": "any × any",
-    "out": "table",
-    "path": "docs/ops/drive/braidpath/homotopy_class_compare.md"
-   }
-  ],
-  "homotopy_shortest_paths": [
-   {
-    "op": "homotopy_shortest_paths",
-    "dim": "drive",
-    "category": "braidpath",
-    "in": "image2d × any × any",
-    "out": "table",
-    "path": "docs/ops/drive/braidpath/homotopy_shortest_paths.md"
-   }
-  ],
-  "pairwise_winding": [
-   {
-    "op": "pairwise_winding",
-    "dim": "drive",
-    "category": "braidpath",
-    "in": "any",
-    "out": "matrix",
-    "path": "docs/ops/drive/braidpath/pairwise_winding.md"
-   }
-  ],
   "camera_pose_to_carla": [
    {
     "op": "camera_pose_to_carla",
@@ -28130,64 +28010,6 @@
     "path": "docs/ops/optics/finish/tangent_field.md"
    }
   ],
-  "fp_capture": [
-   {
-    "op": "fp_capture",
-    "dim": "optics",
-    "category": "fpm",
-    "in": "image2d × image2d",
-    "out": "table",
-    "path": "docs/ops/optics/fpm/fp_capture.md"
-   }
-  ],
-  "fp_design": [
-   {
-    "op": "fp_design",
-    "dim": "optics",
-    "category": "fpm",
-    "out": "table",
-    "path": "docs/ops/optics/fpm/fp_design.md"
-   }
-  ],
-  "fp_element_contrast": [
-   {
-    "op": "fp_element_contrast",
-    "dim": "optics",
-    "category": "fpm",
-    "in": "image2d × table",
-    "out": "table",
-    "path": "docs/ops/optics/fpm/fp_element_contrast.md"
-   }
-  ],
-  "fp_reconstruct": [
-   {
-    "op": "fp_reconstruct",
-    "dim": "optics",
-    "category": "fpm",
-    "in": "table",
-    "out": "table",
-    "path": "docs/ops/optics/fpm/fp_reconstruct.md"
-   }
-  ],
-  "fp_stack_from_images": [
-   {
-    "op": "fp_stack_from_images",
-    "dim": "optics",
-    "category": "fpm",
-    "in": "volume × signal × signal",
-    "out": "table",
-    "path": "docs/ops/optics/fpm/fp_stack_from_images.md"
-   }
-  ],
-  "fp_usaf_target": [
-   {
-    "op": "fp_usaf_target",
-    "dim": "optics",
-    "category": "fpm",
-    "out": "table",
-    "path": "docs/ops/optics/fpm/fp_usaf_target.md"
-   }
-  ],
   "abcd_matrix": [
    {
     "op": "abcd_matrix",
@@ -30401,6 +30223,15 @@
     "in": "signal",
     "out": "matrix",
     "path": "docs/ops/optics/polarization/mueller_from_intensities.md"
+   }
+  ],
+  "mueller_partial_polarizer": [
+   {
+    "op": "mueller_partial_polarizer",
+    "dim": "optics",
+    "category": "polarization",
+    "out": "matrix",
+    "path": "docs/ops/optics/polarization/mueller_partial_polarizer.md"
    }
   ],
   "polarization_demosaic": [
@@ -35130,6 +34961,16 @@
     "in": "polsweep",
     "out": "stokes",
     "path": "docs/ops/specular/polarization/polarization_stokes.md"
+   }
+  ],
+  "polarization_stokes_map": [
+   {
+    "op": "polarization_stokes_map",
+    "dim": "specular",
+    "category": "polarization",
+    "in": "polsweep",
+    "out": "table",
+    "path": "docs/ops/specular/polarization/polarization_stokes_map.md"
    }
   ],
   "brdf_blinn_phong": [

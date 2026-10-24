@@ -362,6 +362,8 @@ _CATALOG = {
         ("jones_apply", "optics", ["cimage", "jones"], "jones"),
         ("stokes_from_jones", "optics", ["jones"], "stokes"),
         ("mueller_element", "optics", [], "matrix"),
+        # 2026-10-23: 有限の消光比の直線偏光子(T2 = T1/ER の部分偏光子)。
+        ("mueller_partial_polarizer", "optics", [], "matrix"),
         ("mueller_apply", "optics", ["matrix", "stokes"], "stokes"),
         ("stokes_analyze", "optics", ["stokes"], "table"),
         # 2026-09-18: 偏光カメラの 3 本(Polanalyser / py-pol の一次情報から再実装)。

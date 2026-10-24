@@ -4,7 +4,7 @@
  "counts": {
   "description": 0,
   "empty_input": 0,
-  "dead_knob": 602
+  "dead_knob": 603
  },
  "debt": {
   "description": {},
@@ -410,6 +410,7 @@
    "polarization_dolp_map.max_violation_frac": "size_or_count",
    "polarization_separate.max_violation_frac": "size_or_count",
    "polarization_stokes.max_violation_frac": "size_or_count",
+   "polarization_stokes_map.max_violation_frac": "size_or_count",
    "poly_roots.imag_tol": "tolerance_or_iterations",
    "polygon_two_point_depth.depth_max": "size_or_count",
    "polygon_yaw_read.rel": "other",

@@ -32,6 +32,16 @@ pypolar, py-pol and polanalyser to 1e-16. See
 the reader, because every textbook picks a different one and a sign slip
 here is invisible in intensity measurements.
 
+**What the sign means on an image (2026-10-23).** ``Ex`` is along the rows
+(+x right) and ``Ey`` down the rows (+y down), as for every camera op. The
+``S3 > 0`` vector ``[1, -i]/sqrt(2)`` has field ``(cos wt, -sin wt)``: it
+turns from +x toward -y, **counter-clockwise on the displayed image**,
+i.e. as seen by the camera receiving the beam. The word ``"right"`` that
+:func:`stokes_analyze` attaches to ``S3 > 0`` is the name of the same
+vector in a y-up frame (where it turns clockwise as seen by the receiver);
+it is kept for compatibility, and ``tests/test_polarization_per_pixel_2026_10_23.py``
+pins the on-screen sense by sampling ``E(t)``.
+
 Returns a ``(4,)`` float64 vector. A Jones vector always describes fully
 polarised light, so the result always satisfies ``S0^2 = S1^2+S2^2+S3^2``
 exactly (degree of polarisation 1) — verified to 1e-15 in the tests. That
@@ -73,7 +83,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 同カテゴリ(`polarization`)
 
-[jones_element](jones_element.md) · [jones_apply](jones_apply.md) · [mueller_element](mueller_element.md) · [mueller_apply](mueller_apply.md) · [stokes_analyze](stokes_analyze.md) · [polarization_demosaic](polarization_demosaic.md) · [polarization_demosaic_color](polarization_demosaic_color.md) · [mueller_from_intensities](mueller_from_intensities.md)
+[jones_element](jones_element.md) · [jones_apply](jones_apply.md) · [mueller_element](mueller_element.md) · [mueller_partial_polarizer](mueller_partial_polarizer.md) · [mueller_apply](mueller_apply.md) · [stokes_analyze](stokes_analyze.md) · [polarization_demosaic](polarization_demosaic.md) · [polarization_demosaic_color](polarization_demosaic_color.md)
 
 ---
 *Provenance: optics.py — OPTICS operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
