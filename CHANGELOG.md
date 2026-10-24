@@ -14,6 +14,78 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - `dualxray.dual_kvp_channels(detector=...)` が材料表のシンチレータの名前を受ける(`response["scintillator"]` に光収率・発光の極大・減衰時間)。既定の `detector="CSI"` の重み・gain・response は変わらない(master の値と 1e-13、同じプロセスでは `CSI` と `CSI:TL` が 1 ビットも違わないことをテストで固定)。
 - 新 op `dualxray.scintillator_sensor_qe`(spectral_xray): X 線のエネルギー → 吸収効率 1 − e^{−μt} → 光子数(光収率 × 吸収エネルギー × 集光率)→ 発光スペクトル × 光検出器の QE(既定 `spectralrad.silicon_photodiode_qe()`)の重なり → X 線 1 個あたりの電子数。表に幅が無いので、発光は既定で極大の 1 本の線として扱い(`emission_model` にそう書く)、実測の発光は `emission_spectrum=` で渡す。門 `tests/test_scintillator_materials_2026_10_23.py`(吸収効率の閉形式、厚さ → ∞ で 1、発光の正規化、細いガウス → 線、dual_kvp の CsI 既定との一致、fail-closed)。
 
+### 変更(破壊的) — Python 3.10 のサポートを終了(requires-python >= 3.11)
+
+- Python 3.10 は 2026-10-01 に寿命が切れた(上流のセキュリティ修正が止まった)。**3.10 の利用者は 0.8.x に留まる**
+  (pip は requires-python を見て 0.8.x を選ぶので、何もしなくても壊れた版は入らない)。
+- 理由: 既知の脆弱性が 0 件の Pillow(13.0.0)は Python 3.11 以上でしか入らない。下限を 9 のままにすると
+  OSV で 72 件の脆弱性を持つ版が入りうる。3.10 を残すと安全な画像入出力を用意できない。
+- 3.10 向けの互換コード(tomllib の fallback・pyproject を正規表現で読む代用)を消した。ruff の target-version は py311。
+
+### 変更 — 依存の下限を「既知の脆弱性 0 件の最も古い版」へ上げた(OSV、2026-10-24 照会)
+
+- 必要以上に新しい版は求めない(入れられる人を減らさない)。件数は旧い下限の版で数えた。
+  - scipy 1.9 → 1.10(PYSEC-2023-102 = CVE-2023-25399)
+  - opencv-python 4.6 → 4.8.1.78(GHSA-qr4w-53vh-m672 / PYSEC-2023-183)
+  - Pillow 9 → 13.0(72 件)
+  - torch 2.0 → 2.13(28 件。CVE-2025-32434 は 2.6.0、最後の CVE-2025-3000 は 2.13.0 で修正)
+  - pytest 7 → 9.0.3(dev のみ。GHSA-6w46-j5rx-g56g)
+  - setuptools 61 → 84.1(ビルド時のみ。9 件)
+- numpy 1.23 / threadpoolctl 3.1 と、その他の extras は旧い下限の版でも 0 件だったので据え置き。
+
+### 追加 — 依存の既知脆弱性の門(pip-audit を効かせた)
+
+- これまで CI は lint ジョブの環境(ruff と pip-audit だけ)を `pip-audit ... || true` で検査していて、
+  利用者に入る依存を一度も見ておらず、落ちることも無かった。
+- `tools/pip_audit_gate.py`: pyproject の全依存(core + 全 extras + CI のテスト用)を Linux / py3.11 向けに
+  pip で解決し(--dry-run、入れない)、その版を OSV で `pip-audit --strict` する。見つかれば CI を落とす
+  (2026-10-24 時点で 112 パッケージ、0 件)。CI の道具(pip / setuptools / wheel / build)は別の段で警告だけ。
+- 例外の台帳 `docs/security/pip_audit_allowlist.json`(`{id, aliases, package, reason, expires}`)。
+  いまは torch の修正版の記録が無い 7 件(CVE-2025-2148 / 2149 / 2998 / 3121 / 3136 / 63396、CVE-2026-4538)。
+  期限切れ・理由なし・1 年を超える期限は `tests/test_pip_audit_allowlist.py` が落とす。
+
+### 追加 — 偏光を画素ごとに(Stokes / DoLP / AoLP の地図、素子の場、有限の消光比、角度と左右の規約)
+
+非公開 PoC(Si の光弾性・SWIR 偏光)を走らせて見つかった 4 つの穴を埋めた。真値はすべて閉形式(Malus の法則・Mueller 計算・ダイアテニュエータの行列・独立に書いた Jones → Mueller 変換)。門は `tests/test_polarization_per_pixel_2026_10_23.py`(85 件)。
+
+- 新 op `polarization_stokes_map`(specularity、台帳 polarization、polsweep → table): 4 方位(0/45/90/135、DoFP の閉形式 S0 = ΣI/2・S1 = I0 − I90・S2 = I45 − I135)または任意の N ≥ 3 方位(最小二乗)から、画素ごとの `s0`/`s1`/`s2`・`dolp`・`aolp_deg` と 2 つのマスク(`lit` = S0 > 0、`aolp_defined`)を返す。これまでの `polarization_stokes` は場全体の平均だけだった。**NaN は出さない**: S0 = 0 の DoLP は 0(`polarization_dolp_map` と同じ規約)で `lit` が False、直線偏光成分の無い画素の AoLP は 0 で `aolp_defined` が False。「無い」の判定は `hypot(S1, S2) ≤ 1e-12·S0` —— 一様な無偏光の掃引は当てはめの丸め屑で DoLP ≈ 3e-16 になり(1e-6〜1e9 の全スケールで実測)、厳密な 0 判定だと 400/400 画素が丸め屑の「角度」を返していた。
+- `mueller_element` / `jones_element` が**角度・位相差の配列**(画素ごとの主軸角・位相差の場)を受けて `(…, 4, 4)` / `(…, 2, 2)` を返す(前: ValueError)。配列どうしは broadcast、出力は `MAX_FIELD_ELEMENTS` まで。スカラーは従来のコード経路のまま —— 旧コードの逐語コピーと全 kind × 14 角度 × 6 位相差でバイト一致を門にした。場の各要素はスカラー呼び出しと ≤ 1e-15 で一致(実測は 0)。暗視野円偏光器を場で組んで `I = ½ sin²(δ/2)` と 1e-15 で一致。
+- 新 op `mueller_partial_polarizer(angle_deg, extinction_ratio, transmission)`(optics、台帳 polarization): 消光比 ER が有限の直線偏光子 = 透過軸 T1・直交 T2 = T1/ER の部分偏光子。Jones の `R(a) diag(√T1, √T2) R(−a)` を一般の Jones → Mueller 変換に通したものと 1e-15 で一致、無偏光入射の DoP = (ER − 1)/(ER + 1)、平行 / 直交の対の透過 (T1² + T2²)/2 / T1·T2(対で測った消光比は ER ではなく (ER² + 1)/(2ER))、漏れのある Malus `T2 + (T1 − T2) cos²θ`、ER = 1 は ND フィルタ `T1·I`。角度は配列も可。ER < 1・ER = ∞・T1 ∉ (0, 1] は ValueError。
+- **角度の向きと円偏光の左右を docstring に明記**(optics の偏光節の冒頭・`jones_element`・`mueller_element`・`stokes_from_jones`・`stokes_analyze`・specularity の掃引角): 角度は +x(列方向)から +y(行方向 = **下**)へ測る = 表示画像で**時計回り**。決めたのではなく既存実装が暗黙に使っていた向きを実行して確かめた(`sfpolar.sfp_render` は法線の方位 `atan2(ny, nx)` = 30° の拡散面を AoLP 30° で描き、光弾性 PoC は画像座標の応力の `½ atan2(2τxy, σxx − σyy)` をそのまま `mueller_element` に渡している)。y 上向きで反時計回りに数えるセンサ・文献の角度は符号を反転して渡す(取り違えると 21.5° が 158.5° になり例外は出ない)。円偏光: `S3 > 0` = Jones `[1, −i]/√2`(`exp(−iωt)`)で、電場は +x から −y へ回る = **表示画像で反時計回り**(受け取るカメラから見た向き)。`stokes_analyze` の `"right"` という呼び名は y 上向きの座標系での名前で、互換のため残した(契約は S3 の符号と docstring の文)。門: 既知角(21.5°)の合成画像で AoLP が 21.5° に戻り、同じフレームを逆向きの角度で読むと 158.5° になる / 法線の方位 30° の拡散面で 30°(150° でなく)/ 放射状偏光子の場で全画素の AoLP が `atan2(row, col)` / `E(t)` を標本化して S3 > 0 が画面で反時計回り。
+- ★`polarization_stokes_map.max_violation_frac` を効かないノブの台帳(`docs/LEDGER_GAP_DEBT.json`、601 → 602)に兄弟 3 本(`polarization_separate` / `_dolp_map` / `_stokes`)と同じ区分で足した。このノブは「何割の画素の負の最小値まで許すか」の門で、出力の値は変えず通すか断るかだけを決めるため、きれいな探針入力では原理的に動かない。実カメラの掃引(デモザイクの誤差)を通すのに要る(例の 6 は 0.05 で通す)ので外さなかった —— 台帳を増やした判断として明記する。
+- 例 `examples/polarization_camera_pipeline.py` に 6・7 を追加(画素ごとの AoLP が真値と 0.18° 以内、角度の向きを逆に読むと中央値 46° ずれる / ER = 100 の検光子で完全偏光の DoLP が 0.9802 で頭打ち)。
+
+### 追加 — Studio: 前段の出力を受けられる op だけを一覧に出す(改善案 018 の残り)
+
+- op 一覧の上にスイッチ「前段の出力を受けられる op だけ表示」(既定 on)と状況の 1 行(例「998 件中 135 件、段 2 threshold の出力 'region'」)。
+  検索語の無い一覧は 998 op を型に関係なく全部出していた。**隠すだけで型の変換はしない**。
+- 判定は実行時に処理列を拒否する規則そのもの(`api._check_chain_sorts` の `engine._thread_sort` / `_compatible`)で流すので、
+  「一覧から消えた op」=「入れたら実行前に拒否される op」が全 registry op で一致する(門)。先頭段(入力は入口で型を合わせる)・
+  バイパス中の段・未知の op の後は絞らない。`opassist.accepted_sorts` の実測は宣言より緩く、通ると出して挿入直後に拒否される
+  ので一覧には使わない(検索語のある目的検索の群分けは従来どおり実測を使う)。
+- 挿入位置の規則を `add_op` と 1 関数に寄せ、一覧を作り直しても選択中の op を保つ(Insert 直後の Run once が効かなくなる回帰を防ぐ)。
+- tests: `test_studio_op_type_filter_2026_10_23.py` 16 件。Studio テスト 23 ファイル 461 → 547 passed。
+
+### 修正 — 映像の物理整合性 op の入口検査(敵対的レビュー 2026-10-23、所見 8 件を一件ずつ再現してから)
+
+- `ballistic_vs_thrust` は、推力側の RSS が離散化の床 `rss_floor`(RK4 格子を標本時刻へ線形補間する誤差 ≤ a dt²/8 の平方和)の
+  10 倍を下回ると ValueError。雑音ゼロの真値に既定の dt = 1e-3 で ΔAIC = +144(推力の推定値は 3e-14 m/s²)が「結果」として
+  返っていた —— n ln(RSS_b / RSS_t) は丸め屑の比を増幅する。雑音のある軌跡では床は RSS の 1e-3 未満で結果は変わらない。
+  `drag_fit` / `thrust_fit` の返り値に `rss_floor` を足した。
+- `drag_fit` / `thrust_fit` / `ballistic_vs_thrust`: `dt` が標本間隔を超えると模型が標本の間で区分線形になり C_d 0.33 → 3.1 に
+  化けていた(例外も NaN も無し)→ ValueError。`iters` < 1 は放物線の初期値をそのまま「当てはめ」として返していた → ValueError。
+  真空(rho = 0)は C_d が同定できず初期値のまま cond = inf だった → ValueError。ms で渡した t は 2×10⁶ 歩 × 数百回の評価で
+  止まらなかった → 1 回の評価の歩数に上限(2×10⁵)。
+- `thrust_ode` / 当てはめ 3 op: `ball_params` の表の鍵欠落は KeyError、g = nan は NaN の軌跡、mass = 0 は ZeroDivisionError、
+  `t_end` / `dt` の inf は OverflowError か `[nan]`、文字列は TypeError だった → 全部 ValueError(公開面 `fullseye.ledger` は
+  素通しなので op 自身で止める)。`thrust_ode` の歩数は 5×10⁶ まで。`time_stretch_from_gravity` も文字列・bool を拒否。
+- 文書: `thrust_fit` は Gauss–Newton でなく Levenberg–Marquardt(C_d ≥ 0 は射影)。雑音だけの ΔAIC は「−2Δk を中心」でなく
+  「−2Δk を下限」(中央値は −2Δk + 1 ほど、C_d = 0 の壁に当たる当てはめが混じる混合分布)。訳 6 言語を更新。
+- PoC 2026.276: 画面の縁に触れた bbox(辺が切り詰められている)はその発射を引き直す(発射条件の端で 3000 本中 2 本、位置が
+  0.36 m ずれて黙って軌跡に入っていた)。`aic_from_rss` を直接呼んで op の ΔAIC と一致する門を足した(呼び出し例を同じ便で)。
+  閾値のリテラル 10 を `MIN_DELTA` に。
+- tests 15 → 17(雑音ゼロの拒否と床、入口検査 10 種が ValueError で即座に止まること)。fuzz のビルダは 1 mm の雑音を足す。
+
 ### 追加 — 映像の物理整合性(弾道か推力か、時間は引き延ばされていないか)
 
 - `ballistics` に 6 op: `thrust_ode`(重力+抗力+一定の比推力の RK4)、`drag_fit` / `thrust_fit`(軌跡から (p₀, v₀, C_d[, a_T]) を射影つき Levenberg–Marquardt で同定、(N, 3) でも単眼の平面 (N, 2) でも)、`aic_from_rss`、`ballistic_vs_thrust`(2 模型の当てはめと ΔAIC を返す。判定は返さず、閾値は呼び手。節約則)、`time_stretch_from_gravity`(k = √(g_ref / g_fit))。推力つきの当てはめは抗力だけの解を始点に含むので ΔAIC ≥ −2Δk が保たれる。
@@ -65,6 +137,22 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - Studio に4つの作業モード、結果画像だけを一時的に大きくする表示、名前で隠れたパネルを呼び出す検索を追加した。モードごとのパネル調整は保存され、切替時も入力・処理手順・計算結果を変更しない。
 
 - Studio の既存表示モードへ画像別自動・A/B 共通・手動の表示レンジを渡せるようにし、NaN/Inf と範囲外画素の警告、元値と表示値を分けた画素表示、元データまたは画面どおりの表示画像の保存を追加した。
+
+### 追加 — 外観検査の前段 3 op(台帳 `opsaoi`。実装は 2026-09-15 にあったのに本線に入っていなかった)
+
+- なぜ: `flat_field_correct` / `register_image` / `tiled_map` の実装と 45 本の試験は 2026-09-15 に書かれたが、作業枝(`ops2d/aoi-frontend`)に残ったまま本線へ入らず、利用者から見える公開面 4 層(`fullseye.<名前>` / `fullseye.op` / `fullseye.ledger` / `op_find`)では **3 op 中 0 op**、`docs/OP_INDEX.json` でも 0 行だった。測る層(`measure1d` / `blob2d` / `spc`)の**手前**の 3 段 —— 照明の落ちを戻す・基準画像へ合わせる・タイルごとの量を地図にする —— は、それに近い既存 op(`background_flatten` は引き算、`frame_align` は点の対応が要る、`scale.process_tiled` は量を返さない)では代わりにならない。
+- `flat_field_correct`: `(I - D) / (F - D) * target`。cos⁴ ビネット + 暗電流 0.05 の合成で最大相対誤差 1.8e-16、dark を省くと 2.3e-01(隅 / 中心 0.4867、真値 0.1209)。`F - D <= 0` は既定で `ValueError`。
+- `register_image`: 位相相関 + 上標本 DFT の平行移動 1 個を dict で返し、`peak_ratio` / `ambiguous` / `residual` / `consistent` を必ず一緒に返す(回転 5 度は `consistent=False`)。しきい値(`ambiguity_ratio` / `residual_tolerance` / `max_shift`)に NaN・0 以下を渡すと判定が黙って False に固定されるので入口で拒否、`upsample` は 1000 まで(本線に載せる便で追加)。縞(片方向だけ模様が無い)を `ambiguous` が捕まえない限界は docstring と門に固定。
+- `tiled_map`: タイルごとの統計の地図。端数のタイルを黙って捨てず、捨てる指定のときは `dropped_tiles` / `covered_fraction` を返す。
+- 台帳 `opsaoi`(新語なし: `image2d` / `table`)、op ノート 3 枚 + 族ガイド、6 言語の要約訳、Studio ヘルプ、作例 `examples/aoi_frontend_tour.py`、試験 `tests/test_aoi.py`(58 本、docstring の呼び出し例の実行を含む)。探針の dead_knob: `register_image` のしきい値 2 本は乱数の探針入力では量がしきい値から遠く「効かない」と出たので、量がしきい値の間に来る入力(8 px 市松 + 二重写り)を `tools/ledger_contracts._knob_builders` に足した(台帳に足して黙らせてはいない)。
+
+### 追加 — カメラ校正の 21 op を台帳 `opscalib` で公開面へ(実装は 2026-08 からあった)
+
+- なぜ: `calib` / `caltab` / `fit_transform` の実装と 30 本超の試験は 2026-08 から同梱されていたのに、21 op について公開面を引くと `fullseye.<名前>` は **21 中 1**(`camera_calibration` だけ)、`fullseye.ledger` は **0**、`docs/OP_INDEX.json` は **0 行**、`docs/ops` の op ノートは **0 枚**、`fs.op_find("caltab")` は **0 件**だった(2026-10-23 実測)。外部の AI 2 体が独立に「カメラ校正の op は確認できなかった」と報告していた。後: 21 op すべてが `fs.ledger` / OP_INDEX / op ノート / 6 言語の要約訳 / Studio ヘルプから引ける。
+- 台帳 `opscalib`(5 カテゴリ: project / plane / target / calibrate / fit。新語なし: 画素と平面の点は `keypoints`、3-D 点は `points`、3x3・4x4 の同次変換は `matrix`、校正板と結果の dict は `table`)。載せなかった実装(同名で座標規約の違う `vector_to_hom_mat2d`、別名 3 本、相対姿勢の代わりに文字列を返す `binocular_calibration`、歪みを推定しない `mosaic` の歪み込み対応推定)は理由を台帳の docstring に記録。
+- 現行の門に合わせて直したもの(契約変更): 21 op の入口で非有限・空・形違いの入力を `ValueError` にした(以前は NaN の点が NaN の画素に、`cam_par` の鍵の欠けが `KeyError` に、視線と平行な点が inf に、`gen_caltab(1, 1)` が `ZeroDivisionError` に、`points` の無い板が黙って既定の 7x7 板に、`disp_caltab` が画像の無い dict をそのまま返していた)。`hand_eye_calibration` は姿勢 3 未満・回転軸が 1 方向だけ(X の回転が決まらない)を拒否。`vector_to_rigid` / `vector_to_similarity` は src が 1 点に重なる入力を拒否。
+- 探針が見つけた効かないつまみ 2 本を直した(台帳に足して黙らせていない): `gen_caltab` の `spacing` は返りのどこにも効いていなかった → 返りに `create_caltab` と同じ板の記述(`points` [mm] / `spacing`)を足し、そのまま `sim_caltab` / `find_marks_and_pose` に渡せるようにした。`find_marks_and_pose` の `max_reproj_rms` は拒否の線にしか効かない → 拒否の線までの余裕 `reproj_margin` を返す。`thresh` は二値の合成板では動けないので、探針に灰色で片側が暗い板を足した。
+- 族ガイド `docs/ops/calib/guides/camera_calibration.md`(最初の 1 本の回転行列が直交でなかったのを直した)、docstring の呼び出し例と、それを実行する門 `tests/test_opscalib.py`(42 件)。
 
 ### 修正 — 外部報告(0.8.0 の端条件、2026-10-22 受領)
 

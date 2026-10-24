@@ -733,7 +733,7 @@ def _registry_adapters():
                  "opsimgforensics", "opsastrostack", "opsdem", "opspiv",
                  "opsprofile", "opsshapestat", "opsshape2d", "opsroughness",
                  "opsmeasure1d", "opsblob", "opsflyvision", "opsspc",
-                 "opsgraph", "opstext", "opsvx", "opsdrive", "opsresidue", "opsmultivar", "opssimcal", "opsconverge", "opscodematch", "opsgenerative",
+                 "opsgraph", "opstext", "opsvx", "opsdrive", "opsresidue", "opsmultivar", "opssimcal", "opsconverge", "opscodematch", "opsaoi", "opscalib", "opsgenerative",
                  "opssegmentation"):
         try:
             d.update(getattr(__import__(_mod), "RESULT_ADAPTERS", {}))
@@ -944,6 +944,22 @@ def catalog():
     for n, m in opscodematch.OPSCODEMATCH.items():
         if m["func"] is not None:
             ops.append((n, "codematch", list(m["in"]), m["out"], m["func"]))
+    # AOI の前段 3 op(opsaoi 台帳、実装 2026-09-15 / 台帳 2026-10-23)。**新語なし**:
+    # 入出力は既存の image2d と table。register_image が table を返すのは意図的 ——
+    # 並進だけを返すと「その答えが当てになるか」(peak_ratio / residual / consistent)が
+    # 捨てられ、台帳の adapter はタプルの 2 番目以降を落とすので info へ届かなくなる
+    # (piv_cross_correlate で実際に起きた事故)。dict 1 つなら量が揃って出る。
+    import opsaoi
+    for n, m in opsaoi.OPSAOI.items():
+        if m["func"] is not None:
+            ops.append((n, "aoi", list(m["in"]), m["out"], m["func"]))
+    # カメラ校正(opscalib 台帳、実装 2026-08 / 台帳 2026-10-23)。**新語なし**: cam_par の
+    # {fx, fy, cx, cy} は table に収まり、族の外に消費者がいない(camera.py の K は 3x3 matrix)。
+    # 1 族の中で閉じる型に新語を与えても連鎖は 1 本も増えない。
+    import opscalib
+    for n, m in opscalib.OPSCALIB.items():
+        if m["func"] is not None:
+            ops.append((n, "calib", list(m["in"]), m["out"], m["func"]))
     # 絵を作る側(opsgenerative 台帳)。**新しい型語彙を 1 つも作らない**判断:
     # 30 op の返りは既存の rgb((H,W,3))/ rgbvideo((T,H,W,3))/ table に収まる。
     # 「錯視画像」という型を作らないのが要点で、作った絵に既存の 2,147 op が

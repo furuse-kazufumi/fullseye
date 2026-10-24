@@ -63,7 +63,7 @@ thresholding routine is exactly the silent failure this library refuses.
 
 ## 同カテゴリ(`polarization`)
 
-[polarization_render](polarization_render.md) · [polarization_separate](polarization_separate.md) · [polarization_stokes](polarization_stokes.md)
+[polarization_render](polarization_render.md) · [polarization_separate](polarization_separate.md) · [polarization_stokes](polarization_stokes.md) · [polarization_stokes_map](polarization_stokes_map.md)
 
 ---
 *Provenance: specularity.py — SPECULAR operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

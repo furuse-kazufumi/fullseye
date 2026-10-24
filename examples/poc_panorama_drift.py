@@ -46,6 +46,10 @@
     は ``import fullseye as fs`` の公開名にも ``fs.op`` の 885 op にも出て
     こない。``import mosaic`` と裸で書くしかなく、ファサードだけを見る利用者には
     「パノラマ合成が無いライブラリ」に見える。
+    【一部解消 2026-10-23】``fit_transform`` のうち 4 関数(``vector_to_rigid`` /
+    ``vector_to_similarity`` / ``vector_angle_to_rigid`` / ``hom_vector_to_proj_hom_mat2d``)は
+    台帳 ``opscalib`` に載り ``fs.ledger`` から引ける。``mosaic`` は名乗りと中身の食い違い
+    ((b)〜(d))が残るので載せていない。
 (b) **``bundle_adjust_mosaic`` は束調整ではない**。中身は「画像 0 と直接対応の
     ある相手だけを個別に RANSAC する」ループで、同時最適化も残差の再配分も
     しない。画像 0 と直接の対応が無いフレームは **黙って単位行列のまま返る**。

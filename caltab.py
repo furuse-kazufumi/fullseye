@@ -14,16 +14,50 @@ from __future__ import annotations
 
 import numpy as np
 
+from calib import _finite_array, _finite_scalar
+
+
+def _grid(rows, cols, op, minimum=1):
+    """格子の行数・列数(``minimum`` 以上の整数)。"""
+    out = []
+    for name, v in (("rows", rows), ("cols", cols)):
+        if isinstance(v, (bool, np.bool_)) or not isinstance(v, (int, np.integer)) or int(v) < minimum:
+            raise ValueError("%s: %s must be an integer >= %d, got %r" % (op, name, minimum, v))
+        out.append(int(v))
+    return out
+
+
+def _image_size(v, op, minimum=8):
+    if isinstance(v, (bool, np.bool_)) or not isinstance(v, (int, np.integer)) or int(v) < minimum:
+        raise ValueError("%s: image_size must be an integer >= %d, got %r" % (op, minimum, v))
+    return int(v)
+
 
 def caltab_points(rows=7, cols=7, spacing=1.0):
     """校正板の理想マーク座標(ワールド, mm; 原点=最初のマーク)を (y, x) で返す(caltab_points)。"""
+    op = "caltab_points"
+    rows, cols = _grid(rows, cols, op)
+    spacing = _finite_scalar(spacing, "spacing", op, positive=True)
     r, c = np.mgrid[0:rows, 0:cols]
     x = c.ravel() * spacing; y = r.ravel() * spacing
     return np.column_stack([y, x]).astype(np.float64)
 
 
 def gen_caltab(rows=7, cols=7, spacing=1.0, radius=0.3, image_size=256):
-    """円マーク格子の校正板画像を生成(gen_caltab)。"""
+    """円マーク格子の校正板画像を生成(gen_caltab)。
+
+    返りは ``image``(板の絵)・``centers``(絵の上のマーク中心 (row, col) [px])に加えて、
+    ``create_caltab`` と同じ板の記述(``points`` = 板中心を原点にした (y, x) [mm]、``spacing``)
+    を持つ —— この dict はそのまま ``sim_caltab`` / ``find_marks_and_pose`` の板として使える。
+    ★2026-10-23 まで ``spacing`` は受け取るだけで返りのどこにも効いていなかった(台帳の
+    探針が「効かないつまみ」として検出)。絵の配置は ``image_size`` で決まり、実寸は
+    ``points`` に載る。
+    """
+    op = "gen_caltab"
+    rows, cols = _grid(rows, cols, op, minimum=2)        # 1x1 だとマーク間隔が 0 で割り算になる
+    _finite_scalar(spacing, "spacing", op, positive=True)
+    radius = _finite_scalar(radius, "radius", op, positive=True)
+    image_size = _image_size(image_size, op)
     img = np.zeros((image_size, image_size))
     margin = image_size * 0.1
     step = (image_size - 2 * margin) / max(rows - 1, cols - 1)
@@ -34,7 +68,9 @@ def gen_caltab(rows=7, cols=7, spacing=1.0, radius=0.3, image_size=256):
             cy = margin + i * step; cx = margin + j * step
             img[(yy - cy) ** 2 + (xx - cx) ** 2 <= (radius * step) ** 2] = 1.0
             centers.append([cy, cx])
-    return {"image": img, "centers": np.asarray(centers), "rows": rows, "cols": cols}
+    desc = create_caltab(rows, cols, spacing)
+    return {"image": img, "centers": np.asarray(centers), "rows": rows, "cols": cols,
+            "points": desc["points"], "spacing": desc["spacing"], "origin": desc["origin"]}
 
 
 def create_caltab(rows=7, cols=7, spacing=1.0):
@@ -45,15 +81,27 @@ def create_caltab(rows=7, cols=7, spacing=1.0):
             "origin": "center"}
 
 
-def _ideal_points(caltab):
-    return caltab["points"] if isinstance(caltab, dict) and "points" in caltab else caltab_points()
+def _ideal_points(caltab, op="caltab"):
+    """板の記述 dict(``points`` を持つ)から理想点 (N, 2) を取り出す。
+
+    以前は ``points`` の無い入力を黙って既定の 7x7 板にすり替えていた —— 渡した板と
+    違う板で姿勢が解かれ、例外なしに間違った距離が返る。いまは拒否する。
+    """
+    if not isinstance(caltab, dict) or "points" not in caltab:
+        raise ValueError("%s: caltab must be a plate description with 'points' "
+                         "(see create_caltab), got %r" % (op, type(caltab).__name__))
+    return _finite_array(caltab["points"], "caltab['points']", op, cols=2)
 
 
 def sim_caltab(caltab, cam_par, pose, image_size=256, mark_radius=3.0):
     """校正板を指定カメラ姿勢で投影した画像をシミュレート(sim_caltab)。
+
     world = (x, y, 0) with (y, x) = ``caltab["points"]`` そのまま(中心化しない)。"""
     from calib import project_3d_point
-    pts = _ideal_points(caltab)
+    op = "sim_caltab"
+    pts = _ideal_points(caltab, op)
+    image_size = _image_size(image_size, op)
+    mark_radius = _finite_scalar(mark_radius, "mark_radius", op, positive=True)
     world = np.column_stack([pts[:, 1], pts[:, 0], np.zeros(len(pts))])
     px = project_3d_point(world, cam_par, pose)
     img = np.zeros((image_size, image_size)); yy, xx = np.mgrid[0:image_size, 0:image_size]
@@ -64,14 +112,31 @@ def sim_caltab(caltab, cam_par, pose, image_size=256, mark_radius=3.0):
 
 
 def disp_caltab(caltab):
-    """校正板画像を返す(表示用)(disp_caltab)。"""
-    return caltab["image"] if isinstance(caltab, dict) and "image" in caltab else caltab
+    """校正板画像を返す(表示用)(disp_caltab)。
+
+    ``gen_caltab`` / ``sim_caltab`` の返り(``image`` を持つ dict)か、2-D の画像そのもの。
+    画像を持たない dict や非有限の画像は ``ValueError``(以前は dict をそのまま返していた)。
+    """
+    op = "disp_caltab"
+    img = caltab["image"] if isinstance(caltab, dict) and "image" in caltab else caltab
+    if isinstance(img, dict):
+        raise ValueError("%s: the plate description has no 'image' (create_caltab only describes "
+                         "the points; use gen_caltab or sim_caltab to draw it)" % op)
+    img = _finite_array(img, "image", op)
+    if img.ndim != 2:
+        raise ValueError("%s: image must be 2-D, got shape %r" % (op, img.shape))
+    return img
 
 
 def find_caltab(image, thresh=0.5):
     """画像から校正板の円マーク中心を検出(連結成分の重心)(find_caltab)。"""
     from scipy import ndimage
-    m = np.asarray(image, float) > thresh
+    op = "find_caltab"
+    img = _finite_array(image, "image", op)
+    if img.ndim != 2:
+        raise ValueError("%s: image must be 2-D, got shape %r" % (op, img.shape))
+    thresh = _finite_scalar(thresh, "thresh", op)
+    m = img > thresh
     lab, n = ndimage.label(m)
     if n == 0:
         return np.zeros((0, 2))
@@ -150,14 +215,16 @@ def find_marks_and_pose(image, cam_par, caltab, thresh=0.5, max_reproj_rms=3.0):
     fail-closed: マークが 4 個未満/対応が 4 組未満/再投影 RMS が
     ``max_reproj_rms`` [px] を超えるときは ``ValueError``(``None`` で無効化可)。
     戻り値: ``marks`` (M,2) 対応づいた検出マーク(``ideal_index`` の順)、``pose`` 4x4、
-    ``homography`` (x,y)→(col,row)、``reproj_rms`` [px]、``residuals`` (M,)、``n_marks``。
+    ``homography`` (x,y)→(col,row)、``reproj_rms`` [px]、``residuals`` (M,)、``n_marks``、
+    ``reproj_margin``(``max_reproj_rms - reproj_rms`` [px]。拒否の線までの余裕で、小さいほど
+    「かろうじて通った」。``max_reproj_rms=None`` なら ``None``)。
     world は ``caltab["points"]`` の (y, x) をそのまま (x, y, 0) とする。
     """
     from calib import _K
     from transforms import proj_hom_mat2d_to_pose
     marks = find_caltab(image, thresh)
-    ideal = _ideal_points(caltab)
-    K = _K(cam_par)
+    ideal = _ideal_points(caltab, "find_marks_and_pose")
+    K = _K(cam_par, "find_marks_and_pose")
     if len(marks) < 4 or len(ideal) < 4:
         raise ValueError(f"find_marks_and_pose: need >= 4 marks (detected {len(marks)}, "
                          f"ideal {len(ideal)})")
@@ -195,11 +262,15 @@ def find_marks_and_pose(image, cam_par, caltab, thresh=0.5, max_reproj_rms=3.0):
     # **最適化の収束先の違いだけで「検出できたりできなかったり」する**。
     # 内部パラメータを検証したいなら、視点を 3 枚以上取るか非平面のターゲットを使う。
     # ここが効くのは「姿勢では吸収できない」不整合(対応付けの誤り、非平面の板)。
+    if max_reproj_rms is not None:
+        max_reproj_rms = _finite_scalar(max_reproj_rms, "max_reproj_rms", "find_marks_and_pose",
+                                        positive=True)
     if max_reproj_rms is not None and rms > max_reproj_rms:
         raise ValueError(f"find_marks_and_pose: pose reprojection RMS {rms:.2f} px > "
                          f"{max_reproj_rms} px — correspondence or calibration is wrong")
     return {"marks": marks[jj], "ideal_index": ii, "pose": pose, "homography": H,
-            "reproj_rms": rms, "residuals": residuals, "n_marks": int(len(marks))}
+            "reproj_rms": rms, "residuals": residuals, "n_marks": int(len(marks)),
+            "reproj_margin": None if max_reproj_rms is None else float(max_reproj_rms) - rms}
 
 
 def _rotvec_to_mat(v):

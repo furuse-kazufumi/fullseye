@@ -1097,6 +1097,12 @@ def _knob_builders():
       12-point H-equation; pi with tol 0.05 and a 6,000-sample budget; RL with a PSF too wide
       for the data, which levels off outside the model's range, with max_iter = that iteration).
       No random numbers are drawn here (only the ops' own fixed seeds).
+    * ``register_image`` (2026-10-23, opsaoi) -- ``ambiguity_ratio`` and ``residual_tolerance``
+      only turn a measured quantity into a bool, so they show only when the quantity sits
+      between the default and x0.5 / x2. On the pool's noise pair ``peak_ratio`` and
+      ``residual`` were far from both. Here: an 8 px checkerboard (``peak_ratio`` 0.92, the
+      period makes the answer non-unique) shifted by (3, 5) with a 0.3 ghost of a (1, 1)
+      shift on top (``residual`` 0.31, a double exposure is not one translation).
     """
     def oblique(pool, rng):
         th = np.deg2rad(np.linspace(10.0, 60.0, 12))
@@ -1164,16 +1170,44 @@ def _knob_builders():
         n_p = ds.iv_richardson_lucy_until(y, psf_sigma=2.5, keep_history=False)["n_iter"]
         return [y], {"psf_sigma": 2.5, "max_iter": n_p}
 
+    def ghost_checker(pool, rng):
+        yy, xx = np.mgrid[0:64, 0:64]
+        cb = (((yy // 8) + (xx // 8)) % 2).astype(np.float64)
+        mov = np.roll(cb, (3, 5), axis=(0, 1)) + 0.3 * np.roll(cb, (1, 1), axis=(0, 1))
+        return [cb, mov], {}
+
     return {"refract_rays": oblique, "env_lightbox": sphere_dirs,
             "print_layer_defect_map": layers, "photometric_stereo": ps, "gs_render": gs,
             "slope_to_curvature": bowl_normals, "deflectometry_render": plate,
             "iterate_fixed_point": fixed_point, "mc_sequential_mean": seq_mean,
-            "iv_richardson_lucy_until": rl_until}
+            "iv_richardson_lucy_until": rl_until, "register_image": ghost_checker}
+
+
+def _calib_builders():
+    """opscalib (2026-10-23): inputs the pool cannot make.
+
+    * ``contour_to_world_plane_xld`` -- no ledger op declares ``contour`` as its output, so the
+      sort never enters the pool. Here: two rows of the projected calibration plate as an XLD
+      dict, with the plane homography of the same pose (``chain_fuzz._b_calib_contour``).
+    * ``find_marks_and_pose`` -- on the binary simulated plate ``thresh`` (0.5 -> 0.25 / 1.0)
+      cannot move a centroid: every mark pixel is 0 or 1. Here: the same plate blurred once
+      and lit by a 0.7 -> 1.0 ramp across the columns, so each mark is grey and lopsided and
+      the threshold decides which pixels count (pose moves by ~0.1 mm; 49 marks either way).
+    """
+    def grey_plate(pool, rng):
+        (img, K, board), _kw = _cf()._b_calib_marks_pose(pool, rng)
+        a = (np.roll(img, 1, 0) + 2.0 * img + np.roll(img, -1, 0)) / 4.0
+        a = (np.roll(a, 1, 1) + 2.0 * a + np.roll(a, -1, 1)) / 4.0
+        return [a * np.linspace(0.7, 1.0, a.shape[1])[None, :], K, board], {}
+
+    return {"contour_to_world_plane_xld": lambda pool, rng: _cf()._b_calib_contour(pool, rng),
+            "find_marks_and_pose": grey_plate}
 
 
 def probe_builders():
     """Every probe-local builder (name -> builder)."""
     out = dict(_optics_builders())
+    out.update(_calib_builders())
     out.update(_array_builders())
     out.update(_batch2_builders())
     out.update(_knob_builders())

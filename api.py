@@ -1043,7 +1043,7 @@ from specularity import (  # noqa: E402,F401
     brdf_blinn_phong, brdf_microfacet, dichromatic_render,
     photometric_stereo_robust, photometric_residual, polarization_render,
     polarization_separate, polarization_dolp_map, polarization_stokes,
-    polarization_analyze,
+    polarization_analyze, polarization_stokes_map,
 )
 from optics import (  # noqa: E402,F401
     thin_lens, abcd_matrix, abcd_trace, depth_of_field, relative_illumination,
@@ -1053,7 +1053,7 @@ from optics import (  # noqa: E402,F401
     psf_to_mtf, mtf_diffraction, wavefront_stats,
     encircled_energy, ensquared_energy, energy_radii, mtf_tangential_sagittal,
     jones_element, jones_apply, stokes_from_jones,
-    mueller_element, mueller_apply, stokes_analyze,
+    mueller_element, mueller_apply, stokes_analyze, mueller_partial_polarizer,
     polarization_demosaic, polarization_demosaic_color, mueller_from_intensities, mueller_checks,
     POLARIZATION_MOSAIC_LAYOUT, POLARIZATION_SWEEP_ANGLES,
 )
@@ -1505,6 +1505,7 @@ __all__ = [
     "photometric_stereo_robust", "photometric_residual",
     "polarization_render", "polarization_separate",
     "polarization_dolp_map", "polarization_stokes", "polarization_analyze",
+    "polarization_stokes_map",
     "optics", "thin_lens", "abcd_matrix", "abcd_trace", "depth_of_field",
     "relative_illumination",
     "airy_pattern", "angular_spectrum_propagate", "fraunhofer_pattern",
@@ -1513,7 +1514,7 @@ __all__ = [
     "psf_to_mtf", "mtf_diffraction", "wavefront_stats",
     "encircled_energy", "ensquared_energy", "energy_radii", "mtf_tangential_sagittal",
     "jones_element", "jones_apply", "stokes_from_jones",
-    "mueller_element", "mueller_apply", "stokes_analyze",
+    "mueller_element", "mueller_apply", "stokes_analyze", "mueller_partial_polarizer",
     "polarization_demosaic", "polarization_demosaic_color", "mueller_from_intensities", "mueller_checks",
     "POLARIZATION_MOSAIC_LAYOUT", "POLARIZATION_SWEEP_ANGLES",
     "raytrace", "lens_system", "thick_lens", "glass", "refractive_index",
@@ -1597,8 +1598,8 @@ def _resolve_version() -> str:
     どちらも駄目なら最後の既知版。
     """
     import os as _os                                      # noqa: PLC0415
+    import tomllib as _toml                               # noqa: PLC0415
     try:
-        import tomllib as _toml                           # noqa: PLC0415
         _pp = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "pyproject.toml")
         if _os.path.exists(_pp):
             with open(_pp, "rb") as _f:
