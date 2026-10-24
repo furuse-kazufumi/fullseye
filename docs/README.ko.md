@@ -62,7 +62,7 @@
 | `validated-public-real-data` | 공개 실측 데이터를 쓰는 예가 게이트에서 실제로 실행됨 | 18 |
 | `validated-hardware` | 실기로 검증(외부 보고를 수리한 경우에만) | 0 |
 
-예 433건 중 게이트가 실제로 실행하는 것은 433건.
+예 434건 중 게이트가 실제로 실행하는 것은 434건.
 
 ### 버전별 연산자 수
 
@@ -137,11 +137,11 @@
 
 ## 연산자 찾기
 
-**3,571개의 연산자 노트**(호출 형식, 타입 계약, HALCON 대응, 참고문헌, 출처)와 **69개의 패밀리 가이드**가 있습니다. 차원별 입구:
+**3,572개의 연산자 노트**(호출 형식, 타입 계약, HALCON 대응, 참고문헌, 출처)와 **69개의 패밀리 가이드**가 있습니다. 차원별 입구:
 
-**실측 커버리지**: 진화 연산자 942/942, 타입 台帳 2608/2620, 한 줄 파사드 `fullseye.<이름>` 706/1482 — **파사드는 아직 절반**.
+**실측 커버리지**: 진화 연산자 942/942, 타입 台帳 2609/2621, 한 줄 파사드 `fullseye.<이름>` 706/1482 — **파사드는 아직 절반**.
 
-**내용 실측**: 3571건 중 실행 가능한 예제가 붙은 것은 **3544**건(27건은 없음), 사용법이 120자 이상인 것은 **3373**건(198건은 한 줄 요약). 구조(호출 형식·타입·다음 연산자)는 3571건 모두.
+**내용 실측**: 3572건 중 실행 가능한 예제가 붙은 것은 **3545**건(27건은 없음), 사용법이 120자 이상인 것은 **3374**건(198건은 한 줄 요약). 구조(호출 형식·타입·다음 연산자)는 3572건 모두.
 
 | 차원 | 연산자 수 | 입구 |
 |---|---:|---|
@@ -158,7 +158,7 @@
 | `imgmetrics` | 42 | [INDEX](ops/imgmetrics/INDEX.md) · [guide](ops/imgmetrics/guides/image_difference_metrics.md) |
 | `reprconv` | 42 | [INDEX](ops/reprconv/INDEX.md) |
 | `spc` | 39 | [INDEX](ops/spc/INDEX.md) |
-| `tomography` | 31 | [INDEX](ops/tomography/INDEX.md) |
+| `tomography` | 32 | [INDEX](ops/tomography/INDEX.md) |
 | `piv` | 29 | [INDEX](ops/piv/INDEX.md) · [guide](ops/piv/guides/piv_displacement.md) |
 | `conngraph` | 28 | [INDEX](ops/conngraph/INDEX.md) · [guide](ops/conngraph/guides/conngraph.md) |
 | `acoustics` | 27 | [INDEX](ops/acoustics/INDEX.md) · [guide](ops/acoustics/guides/acoustic_condition_monitoring.md) |
@@ -298,7 +298,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## 문서 지도 — 전 288건
 
-**색인에서 닿지 않는 문서를 만들지 않기** 위한 전체 지도입니다(`docs/ops/`의 연산자 노트 3,571건과 패밀리 가이드 69건은 위의 「연산자 찾기」에서, 기사는 [articles/](articles/README.md)에서). **본문은 대부분 일본어입니다.**
+**색인에서 닿지 않는 문서를 만들지 않기** 위한 전체 지도입니다(`docs/ops/`의 연산자 노트 3,572건과 패밀리 가이드 69건은 위의 「연산자 찾기」에서, 기사는 [articles/](articles/README.md)에서). **본문은 대부분 일본어입니다.**
 
 **Getting started**(12)
 

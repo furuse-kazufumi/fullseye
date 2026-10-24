@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(433 例)
+### 2-D 画像/信号/幾何(434 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -442,6 +442,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 **optics_sensing**
 - **光学 op(optics)で検査機を 1 台、紙の上で設計する** — 倍率→焦点距離/物体距離、ABCD 行列で結像確認、回折限界・被写界深度・MTF を要求分解能に対して合否判定する。 `py -3.11 examples/optics_imaging.py`
+- **X 線 1 個は Si フォトダイオードの電子何個になるか —— シンチレータ 7 種を K 吸収端・光収率の幅・発光の形で比べる** — 止める割合 × 光の数 × 光が電子になる割合(fs.ledger.scintillator_sensor_qe)。厚さ 0.6 mm の吸収は重い元素のK 端で跳ぶ(Gd 50.2 keV で GOS:Tb 0.76 → 1.00)。BGO は 95 keV で CsI:Tl の 1.8 倍を止めるのに電子は 0.29 倍。CdWO4 の光収率の幅 20,000〜28,000(絶対測定どうしの違い)を帯で描くと電子の数が 30 % 動く。発光は材料表の成分(エネルギー軸のガウス、GOS:Tb は Tb の線の束)で、極大の線で近似すると Si の QE の山頂で重なりを大きく見積もる(BGO +6.6 %)。LSO は厚い結晶を通ると自己吸収で重なりが 0.506 → 0.560。 `py -3.11 examples/scintillator_sensor_tour.py`
 - **理想レンズ面と、PSF から読む設計の指標(囲みエネルギー・子午/球欠 MTF・スルーフォーカス MTF)** — 理想レンズ(f)の焦点とガウスの結像公式、Airy の囲みエネルギー 83.8 %、円形瞳の MTF の閉形式との一致を確かめ、絞った単レンズの 8 度の視野で子午/球欠 MTF が割れることを見る。 `py -3.11 examples/optical_design_metrics.py`
 - **実光線設計 op(raytrace)で singlet と doublet を比べる** — 処方(lens_system)から近軸表・面ごとの Seidel・軸上/5 deg のスポット RMS・OPD→Zernike・Monte-Carlo 公差 p95 を出し、閉形式(thick_lens / 放物面鏡の完全結像)と突き合わせる。 `py -3.11 examples/lens_design_demo.py`
 - **実硝材で色収差を見て、減衰最小二乗でレンズを最適化する(lensopt)** — glass_catalog(Sellmeier)→ chromatic_shift で singlet/doublet の F-C 焦点移動、bend_singlet の Coddington 形状因子を optimize_lens が等凸から再発見、円錐 k=-n² と非球面 A4..A8 で無収差化、merit_function を 3 視野 × 3 波長で評価。 `py -3.11 examples/lens_optimize_demo.py`
@@ -775,9 +776,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3571 ops / 54 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3572 ops / 54 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 959 · **3d** 373 · **math** 114 · **optics** 465 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 39 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 700 · **tomography** 31 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 3 · **calib** 21 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族の一覧: **2d** 959 · **3d** 373 · **math** 114 · **optics** 465 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 39 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 700 · **tomography** 32 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 3 · **calib** 21 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d(959 ops / 49 categories)
 
@@ -2981,7 +2982,7 @@ _計 3571 ops / 54 families。並びとノートの在り処は `docs/ops/INDEX.
 - `ingaas_photodiode_qe` `入力なし → pairs` — InGaAs フォトダイオードの外部量子効率(電子/光子)を、吸収層と窓層の直接遷移の吸収端から。 · 例: `poc_hyperspectral_foreign_matter`
 - `kubelka_munk_reflectance` `pairs → pairs` — 散乱する層の拡散反射率を Kubelka–Munk の閉形式で(吸収係数の曲線から)。 · 例: `poc_hyperspectral_foreign_matter`
 - `led_spectrum` `入力なし → pairs` — LED の相対分光分布(ピークで 1)。 · 例: `poc_chromatic_confocal`, `poc_fiber_light_guide`, `poc_nir_silicon_transmission`
-- `silicon_photodiode_qe` `入力なし → pairs` — Si フォトダイオードの外部量子効率(電子/光子)を Si の n,k から。 · 例: `poc_fiber_light_guide`, `poc_nir_silicon_transmission`
+- `silicon_photodiode_qe` `入力なし → pairs` — Si フォトダイオードの外部量子効率(電子/光子)を Si の n,k から。 · 例: `poc_fiber_light_guide`, `poc_nir_silicon_transmission`, `scintillator_sensor_tour`
 - `spectral_integral` `pairs → measurement` — 曲線の波長積分 ∫ s(λ) dλ(台形則、λ は nm)。区間を与えればその中だけ(端は線形補間)。 · 例: `poc_fiber_light_guide`, `poc_nir_silicon_transmission`
 - `spectral_integral_table` `pairs → table` — Build a reusable cumulative trapezoid table for repeated band integrals. · 例: `poc_nir_silicon_transmission`
 - `spectral_product` `pairs × pairs → pairs` — 2 本の曲線の積を *a* の波長で(*b* は線形補間)。光源 × 透過率 × QE を 1 本ずつ掛ける。 · 例: `poc_fiber_light_guide`, `poc_nir_silicon_transmission`
@@ -4301,7 +4302,7 @@ _計 3571 ops / 54 families。並びとノートの在り処は `docs/ops/INDEX.
 - `world_camera` `table × matrix × matrix → table` — 世界をカメラで撮る: ``{"color" (H,W,3), "label" (H,W) int(−1 = 空), "depth" (H,W), "face" (H,W), "shade" (H,W)}``。 · 例: `poc_ball_bounce`, `poc_driving_crossing`, `poc_driving_decisions`, `poc_driving_endless_map`, `poc_driving_humanoids`, `poc_driving_japan_town`, `poc_driving_lateral`, `poc_driving_longitudinal`, `poc_driving_pass`, `poc_driving_school`, `poc_driving_town`, `poc_driving_traffic`, `poc_kendama`, `poc_table_tennis_bounce`, `poc_table_tennis_spin`, `poc_ttc_rss`, `poc_world_terrain`
 - `world_move` `table → any` — 物体 i(資産で置いたもの)を新しい姿勢 (x, y, yaw) へ動かす(頂点だけ書き換える。面・ラベル・色は不変)。 · 例: `poc_driving_crossing`, `poc_driving_decisions`, `poc_driving_lateral`, `poc_ttc_rss`, `poc_world_terrain`
 
-### tomography(31 ops / 7 categories)
+### tomography(32 ops / 7 categories)
 
 #### tomography / artifact(5)
 - `beam_hardening_apply` `sinogram → sinogram` — Turn a monochromatic sinogram into a **polychromatic** one — cupping. · 例: `ct_reconstruction`, `poc_battery_ct_degradation`
@@ -4328,7 +4329,7 @@ _計 3571 ops / 54 families。並びとノートの在り処は `docs/ops/INDEX.
 - `filtered_backprojection` `sinogram → image2d` — Filtered back-projection (FBP) — the standard CT reconstruction. · 例: `ct_reconstruction`, `poc_aoi_ct_traceability`, `poc_ct_fidelity`, `poc_sem_tem_same_particle`
 - `sart_reconstruct` `sinogram → image2d` — SART — simultaneous algebraic reconstruction, one angle at a time. · 例: `ct_reconstruction`
 
-#### tomography / spectral_xray(14)
+#### tomography / spectral_xray(15)
 - `basis_decomposition_crlb` `入力なし → table` — 基底の厚み b での分解の分散の下限(Cramér–Rao)を閉形式で返す。 · 例: `poc_dual_energy_xray`
 - `basis_material_decompose` `images → images` — チャネルの信号 → 基底物質の厚み図(Alvarez–Macovski / Lehmann の基底分解)。 · 例: `poc_dual_energy_xray`
 - `dual_energy_separability` `入力なし → table` — 2 つの材料(厚み)が、チャネルの対数減衰でどれだけ分けられるか(d′ と誤り率の閉形式)。 · 例: `poc_dual_energy_xray`
@@ -4340,6 +4341,7 @@ _計 3571 ops / 54 families。並びとノートの在り処は `docs/ops/INDEX.
 - `material_xray_table` `入力なし → table` — X 線の列(質量減衰係数 μ/ρ)を引ける材料の一覧を返す。
 - `photon_counting_channels` `pairs → table` — フォトンカウンティング検出器のエネルギーの窓 → チャネル(1 光子 1 カウント)。 · 例: `poc_dual_energy_xray`
 - `r_value_map` `images → image2d` — R = L_low / L_high(低エネルギーと高エネルギーの対数減衰の比)の像を返す。
+- `scintillator_sensor_qe` `入力なし → table` — シンチレータ積層のセンサの量子効率: X 線 1 個 → シンチレータの吸収 → 発光 → 光検出器の電子の数。 · 例: `scintillator_sensor_tour`
 - `xray_beam_quality` `pairs → table` — スペクトルの線質: 第 1・第 2 半価層、均等度、平均エネルギー、実効エネルギーを返す。 · 例: `poc_dual_energy_xray`
 - `xray_channel_projection` `images → images` — 材料ごとの厚み図 → チャネルごとの信号の像 (C, H, W)。 · 例: `poc_dual_energy_xray`
 - `xray_tube_spectrum` `入力なし → pairs` — X 線管の光子スペクトルを ``pairs``(E [keV], 光子数 / keV)で返す(Σ φ ΔE = 1 に正規化)。 · 例: `poc_dual_energy_xray`

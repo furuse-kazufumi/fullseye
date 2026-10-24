@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3565,
- "n_notes": 3571,
+ "n_ops": 3566,
+ "n_notes": 3572,
  "notes": {
   "vol_dilate": [
    {
@@ -35281,6 +35281,15 @@
     "in": "images",
     "out": "image2d",
     "path": "docs/ops/tomography/spectral_xray/r_value_map.md"
+   }
+  ],
+  "scintillator_sensor_qe": [
+   {
+    "op": "scintillator_sensor_qe",
+    "dim": "tomography",
+    "category": "spectral_xray",
+    "out": "table",
+    "path": "docs/ops/tomography/spectral_xray/scintillator_sensor_qe.md"
    }
   ],
   "xray_beam_quality": [

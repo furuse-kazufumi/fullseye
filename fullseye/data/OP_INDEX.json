@@ -1,8 +1,8 @@
 {
- "n_ops": 3565,
+ "n_ops": 3566,
  "tiers": {
   "color": 12,
-  "ledger": 2606,
+  "ledger": 2607,
   "nary": 17,
   "registry": 930
  },
@@ -25753,6 +25753,17 @@
     "scalar",
     "scalar"
    ]
+  },
+  {
+   "name": "scintillator_sensor_qe",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "spectral_xray",
+   "tier": "ledger",
+   "ledger": "opstomography",
+   "dim": "tomography",
+   "in_sorts": []
   },
   {
    "name": "scoop_count",

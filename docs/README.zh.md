@@ -62,7 +62,7 @@
 | `validated-public-real-data` | 使用公开实测数据的示例在检查中实际运行 | 18 |
 | `validated-hardware` | 已在实机上验证(仅在接受外部报告时) | 0 |
 
-433 个示例中,检查实际运行的有 433 个。
+434 个示例中,检查实际运行的有 434 个。
 
 ### 各版本的算子数
 
@@ -137,11 +137,11 @@
 
 ## 查找算子
 
-共有 **3,571 篇算子说明**(调用形式、类型契约、HALCON 对应、参考文献、来源)与 **69 篇族指南**。按维度的入口:
+共有 **3,572 篇算子说明**(调用形式、类型契约、HALCON 对应、参考文献、来源)与 **69 篇族指南**。按维度的入口:
 
-**实测覆盖**: 演化算子 942/942、类型化台账 2608/2620、单行门面 `fullseye.<名称>` 706/1482 —— **门面侧仅覆盖一半**。
+**实测覆盖**: 演化算子 942/942、类型化台账 2609/2621、单行门面 `fullseye.<名称>` 706/1482 —— **门面侧仅覆盖一半**。
 
-**内容实测**: 3571 篇中，附有可运行示例的 **3544** 篇(27 篇没有)，用法说明 120 字以上的 **3373** 篇(198 篇仅一行)。结构(调用形式、类型、可衔接算子)3571 篇全有。
+**内容实测**: 3572 篇中，附有可运行示例的 **3545** 篇(27 篇没有)，用法说明 120 字以上的 **3374** 篇(198 篇仅一行)。结构(调用形式、类型、可衔接算子)3572 篇全有。
 
 | 维度 | 算子数 | 入口 |
 |---|---:|---|
@@ -158,7 +158,7 @@
 | `imgmetrics` | 42 | [INDEX](ops/imgmetrics/INDEX.md) · [guide](ops/imgmetrics/guides/image_difference_metrics.md) |
 | `reprconv` | 42 | [INDEX](ops/reprconv/INDEX.md) |
 | `spc` | 39 | [INDEX](ops/spc/INDEX.md) |
-| `tomography` | 31 | [INDEX](ops/tomography/INDEX.md) |
+| `tomography` | 32 | [INDEX](ops/tomography/INDEX.md) |
 | `piv` | 29 | [INDEX](ops/piv/INDEX.md) · [guide](ops/piv/guides/piv_displacement.md) |
 | `conngraph` | 28 | [INDEX](ops/conngraph/INDEX.md) · [guide](ops/conngraph/guides/conngraph.md) |
 | `acoustics` | 27 | [INDEX](ops/acoustics/INDEX.md) · [guide](ops/acoustics/guides/acoustic_condition_monitoring.md) |
@@ -298,7 +298,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## 文档地图 — 共 288 篇
 
-完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 3,571 篇算子说明与 69 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
+完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 3,572 篇算子说明与 69 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
 
 **Getting started**(12)
 
