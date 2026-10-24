@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>RMS- / geometrischer Spotradius (mm) und Schwerpunkt auf der (ggf. gekippten) Bildebene (<code style="color:#22d3bf">table</code>).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>Same statistics as <code style="color:#22d3bf">raytrace.spot_stats</code> (RMS about the centroid of the valid rays), with the image coordinates in the image plane&#x27;s local frame. *field* is <code style="color:#22d3bf">(fx, fy)</code> or a number (= fy).</p>
+<p>Same statistics as <code style="color:#22d3bf">raytrace.spot_stats</code> (RMS about the centroid of the valid rays), with the image coordinates in the image plane&#x27;s local frame (with <code style="color:#22d3bf">image_tilt</code>, measured on the tilted plane itself, so the radius is not shrunk by cos θ&#x27; along the tilt). *field* is <code style="color:#22d3bf">(fx, fy)</code> or a number (= fy).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>

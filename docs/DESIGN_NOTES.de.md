@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 612 von 1552. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 612 von 1553. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -1999,7 +1999,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `raytrace3d.py`
 
-- **L628** _(ja)_ — ★光線が像面とほぼ平行・逆向き(像面の +z へ進まない)なら像面に届かない —— 無効にする。 以前の raytrace は傾いた鏡の後で D_z ≈ 1e-17 の光線を巨大な有限の点(rms 3e18 mm)として有効に数えた。
+- **L652** _(ja)_ — ★光線が像面とほぼ平行・逆向き(像面の +z へ進まない)なら像面に届かない —— 無効にする。 以前の raytrace は傾いた鏡の後で D_z ≈ 1e-17 の光線を巨大な有限の点(rms 3e18 mm)として有効に数えた。
+- **L657** _(ja)_ — ★局所座標は傾いた像面そのものの基底で取る(以前は傾けない座標系へ射影し、傾けた向きが cos θ' 倍に縮んでいた)
 
 ## `realdata.py`
 
