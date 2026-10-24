@@ -13,6 +13,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>CLAHE(대비 제한 적응형 히스토그램 균등화). <code style="color:#22d3bf">kornia.enhance.equalize_clahe</code>를 호출한다.</p>
 <p>a가 클립 제한(<code style="color:#22d3bf">1.0 + 4.0 * a</code>, 범위 1.0~5.0)을 바꾼다. 값이 클수록 대비가 강하게 올라가는 대신 잡음도 강조되기 쉽다. b는 사용하지 않는다.</p>
+<p><b>kornia 0.9 이상이 필요하다</b>. 0.8 이전의 <code style="color:#22d3bf">equalize_clahe</code>는 OpenCV의 CLAHE와평균 0.04~0.17, 최대 0.46 어긋난다(0.9에서 히스토그램의 bin, 잘라 낸 나머지의 분배 방식, LUT의 반올림, 타일 보간이 고쳐졌다). 버전에 따라 값이 조용히 바뀌지 않도록 0.9 미만에서는이유를 붙여 거부한다. 타일 격자는 8x8을 명시해 넘긴다.</p>
 <p><b>노브(실측)</b>: <code style="color:#22d3bf">a</code>를 0에서 1까지 변화시켜도 <b>출력이 바뀌지 않는다</b>(5가지 입력으로 실측).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 패밀리 가이드</a></p>
