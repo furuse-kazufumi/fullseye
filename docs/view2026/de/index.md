@@ -198,7 +198,7 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 **Darstellen**
 
 - Ergebnisse in lesbare Abbildungen verwandeln: [Erklärung](../../capabilities/figures-and-annotation.md) _(ja)_ · Beispiele [poc_colormap_readability](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_colormap_readability.py) · [poc_dem_terrain](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dem_terrain.py)
-- Ergebnisse als einzelne Seite zum Anfassen (Tabs, Abzeichen, 3-D, Video, Sprachen): [Erklärung](../../capabilities/interactive-poc-viewer.md) _(ja)_ · Beispiele [interactive_poc_viewer](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_poc_viewer.py)
+- Ergebnisse als einzelne Seite zum Anfassen (Tabs, Abzeichen, 3-D, Video, Sprachen): [Erklärung](../../capabilities/interactive-poc-viewer.md) _(ja)_ · Beispiele [interactive_poc_viewer](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_poc_viewer.py) · [interactive_anim3d_viewer](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
 - Linien und Flächen ohne Kenntnis der Hintergrundfarbe zeichnen (invertierte Farbe): [Erklärung](../../capabilities/inverted-colour-overlays.md) _(ja)_ · Beispiele [annotate_paper_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/annotate_paper_tour.py)
 - Eine Punktwolke direkt als Farbbild zeichnen (Subpixel-Splats, tiefensortierte Überlagerung, lichtmengenerhaltende Addition): [Erklärung](../../capabilities/point-cloud-to-picture.md) _(ja)_ · Beispiele [points_render_basics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples_3d/points_render_basics.py) · [poc_flybrain_pointcloud](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_flybrain_pointcloud.py)
 - Text und Tabellen genau an die gewünschte Stelle im Bild setzen: [Erklärung](../../capabilities/text-and-tables-on-images.md) _(ja)_ · Beispiele [annotate_paper_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/annotate_paper_tour.py)
@@ -214,7 +214,7 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 
 </div>
 
-[Alle 164 Anwendungsbeispiele, die keine PoCs sind](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[Alle 165 Anwendungsbeispiele, die keine PoCs sind](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## Alles ansehen
 

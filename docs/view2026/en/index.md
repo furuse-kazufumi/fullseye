@@ -198,7 +198,7 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 **Show**
 
 - Turn results into figures people can read: [explanation](../../capabilities/figures-and-annotation.md) _(ja)_ · examples [poc_colormap_readability](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_colormap_readability.py) · [poc_dem_terrain](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dem_terrain.py)
-- Turn results into one self-contained page you can touch (tabs, badges, 3-D, video, languages): [explanation](../../capabilities/interactive-poc-viewer.md) _(ja)_ · examples [interactive_poc_viewer](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_poc_viewer.py)
+- Turn results into one self-contained page you can touch (tabs, badges, 3-D, video, languages): [explanation](../../capabilities/interactive-poc-viewer.md) _(ja)_ · examples [interactive_poc_viewer](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_poc_viewer.py) · [interactive_anim3d_viewer](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
 - Draw lines and regions without knowing the background colour: [explanation](../../capabilities/inverted-colour-overlays.md) _(ja)_ · examples [annotate_paper_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/annotate_paper_tour.py)
 - Draw a point cloud as a colour picture: [explanation](../../capabilities/point-cloud-to-picture.md) _(ja)_ · examples [points_render_basics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples_3d/points_render_basics.py) · [poc_flybrain_pointcloud](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_flybrain_pointcloud.py)
 - Put text and tables exactly where you want them on an image: [explanation](../../capabilities/text-and-tables-on-images.md) _(ja)_ · examples [annotate_paper_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/annotate_paper_tour.py)
@@ -214,7 +214,7 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 
 </div>
 
-[All 164 usage examples that are not PoCs](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[All 165 usage examples that are not PoCs](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## See everything
 

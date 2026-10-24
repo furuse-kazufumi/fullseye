@@ -198,7 +198,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 **Afficher**
 
 - Transformer les résultats en figures lisibles par l'humain: [explication](../../capabilities/figures-and-annotation.md) _(ja)_ · exemples [poc_colormap_readability](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_colormap_readability.py) · [poc_dem_terrain](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dem_terrain.py)
-- Transformer les résultats en une page autonome à manipuler (onglets, badges, 3-D, vidéo, langues): [explication](../../capabilities/interactive-poc-viewer.md) _(ja)_ · exemples [interactive_poc_viewer](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_poc_viewer.py)
+- Transformer les résultats en une page autonome à manipuler (onglets, badges, 3-D, vidéo, langues): [explication](../../capabilities/interactive-poc-viewer.md) _(ja)_ · exemples [interactive_poc_viewer](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_poc_viewer.py) · [interactive_anim3d_viewer](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
 - Tracer des lignes et des régions sans connaître la couleur du fond (couleur inversée): [explication](../../capabilities/inverted-colour-overlays.md) _(ja)_ · exemples [annotate_paper_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/annotate_paper_tour.py)
 - Dessiner directement un nuage de points en image couleur (empreintes sous-pixel, composition triée par profondeur, addition conservant la quantité de lumière): [explication](../../capabilities/point-cloud-to-picture.md) _(ja)_ · exemples [points_render_basics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples_3d/points_render_basics.py) · [poc_flybrain_pointcloud](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_flybrain_pointcloud.py)
 - Placer du texte et des tableaux à l'endroit souhaité sur une image: [explication](../../capabilities/text-and-tables-on-images.md) _(ja)_ · exemples [annotate_paper_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/annotate_paper_tour.py)
@@ -214,7 +214,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 
 </div>
 
-[Liste des 164 exemples d'utilisation qui ne sont pas des PoC](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[Liste des 165 exemples d'utilisation qui ne sont pas des PoC](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## Tout voir
 

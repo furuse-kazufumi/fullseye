@@ -198,7 +198,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 **दिखाना**
 
 - नतीजों को पढ़ने लायक figures में बदलना: [explanation](../../capabilities/figures-and-annotation.md) _(ja)_ · examples [poc_colormap_readability](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_colormap_readability.py) · [poc_dem_terrain](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dem_terrain.py)
-- नतीजों को एक ही स्वयं-निहित HTML पेज में बदलें (tab, badge, 3-D, video, कई भाषाएँ): [explanation](../../capabilities/interactive-poc-viewer.md) _(ja)_ · examples [interactive_poc_viewer](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_poc_viewer.py)
+- नतीजों को एक ही स्वयं-निहित HTML पेज में बदलें (tab, badge, 3-D, video, कई भाषाएँ): [explanation](../../capabilities/interactive-poc-viewer.md) _(ja)_ · examples [interactive_poc_viewer](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_poc_viewer.py) · [interactive_anim3d_viewer](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
 - Background का रंग जाने बिना lines और regions बनाना (inverted colour): [explanation](../../capabilities/inverted-colour-overlays.md) _(ja)_ · examples [annotate_paper_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/annotate_paper_tour.py)
 - point cloud को सीधे रंगीन चित्र में बनाना (sub-pixel footprints, depth क्रम में compositing, कुल प्रकाश बनाए रखने वाला जोड़): [explanation](../../capabilities/point-cloud-to-picture.md) _(ja)_ · examples [points_render_basics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples_3d/points_render_basics.py) · [poc_flybrain_pointcloud](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_flybrain_pointcloud.py)
 - Image पर text और tables ठीक मनचाही जगह रखना: [explanation](../../capabilities/text-and-tables-on-images.md) _(ja)_ · examples [annotate_paper_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/annotate_paper_tour.py)
@@ -214,7 +214,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 </div>
 
-[PoC के अलावा 164 usage examples की सूची](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[PoC के अलावा 165 usage examples की सूची](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## सब कुछ देखें
 
