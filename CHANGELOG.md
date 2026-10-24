@@ -26,6 +26,17 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
   - setuptools 61 → 84.1(ビルド時のみ。9 件)
 - numpy 1.23 / threadpoolctl 3.1 と、その他の extras は旧い下限の版でも 0 件だったので据え置き。
 
+### 追加 — 依存の既知脆弱性の門(pip-audit を効かせた)
+
+- これまで CI は lint ジョブの環境(ruff と pip-audit だけ)を `pip-audit ... || true` で検査していて、
+  利用者に入る依存を一度も見ておらず、落ちることも無かった。
+- `tools/pip_audit_gate.py`: pyproject の全依存(core + 全 extras + CI のテスト用)を Linux / py3.11 向けに
+  pip で解決し(--dry-run、入れない)、その版を OSV で `pip-audit --strict` する。見つかれば CI を落とす
+  (2026-10-24 時点で 112 パッケージ、0 件)。CI の道具(pip / setuptools / wheel / build)は別の段で警告だけ。
+- 例外の台帳 `docs/security/pip_audit_allowlist.json`(`{id, aliases, package, reason, expires}`)。
+  いまは torch の修正版の記録が無い 7 件(CVE-2025-2148 / 2149 / 2998 / 3121 / 3136 / 63396、CVE-2026-4538)。
+  期限切れ・理由なし・1 年を超える期限は `tests/test_pip_audit_allowlist.py` が落とす。
+
 ### 追加 — Studio: 前段の出力を受けられる op だけを一覧に出す(改善案 018 の残り)
 
 - op 一覧の上にスイッチ「前段の出力を受けられる op だけ表示」(既定 on)と状況の 1 行(例「998 件中 135 件、段 2 threshold の出力 'region'」)。

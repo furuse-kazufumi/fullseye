@@ -187,14 +187,25 @@ jobs:
         run: pip install "ruff>=0.4"
       - name: ruff check
         run: ruff check . --output-format=github
-      - name: 依存の既知脆弱性(pip-audit)
-        # 供給網の検査。**落とさない**(continue-on-error) —— 上流の CVE で
-        # 自分のリリースが止まるのは筋が違う。出たら見えるようにするのが目的で、
-        # 対処するかどうかはこちらの判断。
+      # 依存の既知脆弱性(2026-10-24 に作り直した)。以前はこのジョブの環境(ruff と pip-audit だけ)を
+      # `|| true` で検査していて、利用者に入る依存は一度も見ておらず、落ちることも無かった。
+      # いまは pyproject の全依存(core + 全 extras + CI のテスト用)を Linux / py3.11 向けに pip で
+      # 解決し(--dry-run、wheel の metadata を読むだけで入れない)、その版を OSV で監査する。
+      # 見つかれば CI を落とす。版で避けられないものは docs/security/pip_audit_allowlist.json に
+      # 理由と期限つきで書く(期限切れは tests/test_pip_audit_allowlist.py が落とす)。
+      # 置き場所: 全数スイートの片に足すと torch(CPU 版の索引)を入れた環境を検査することになり、
+      # 利用者が PyPI から得る版と違う。runner も増やさない(この lint ジョブは 1 分ほど)。
+      - name: 依存の既知脆弱性(pip-audit、利用者に入る依存。見つかれば落とす)
+        run: |
+          pip install "pip-audit>=2.7"
+          python tools/pip_audit_gate.py --python-version 3.11 --platform manylinux_2_28_x86_64 --platform manylinux_2_17_x86_64 --platform manylinux2014_x86_64
+      # CI の道具(pip / setuptools / wheel / build)は runner 側の版で、利用者の環境ではない。
+      # 上流の CVE で本流を止めるのは筋が違うので警告にとどめる(赤い印は残る)。
+      - name: CI の道具の既知脆弱性(pip-audit、警告のみ)
         continue-on-error: true
         run: |
-          pip install pip-audit
-          pip-audit --progress-spinner=off || true
+          pip install build
+          python tools/pip_audit_gate.py tools
 
   test:
     # ★6 分割(2026-10-21): 4 片の実測が 24:54〜55:33 と偏ったため、履歴を使って6片に均す。
