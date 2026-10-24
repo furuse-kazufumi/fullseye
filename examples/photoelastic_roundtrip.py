@@ -53,13 +53,15 @@ def main():
     n_dark = int(np.sum(inside & (dark_circ < 1e-3)))
     print("circular dark field: %d pixels darker than 1e-3 (isochromatics N = 0, 1, 2 ...)" % n_dark)
 
-    # 4. 6 強度の偏光計 → 位相差と主軸(1/2 波長まで一意)
-    images = pe.photoelastic_polarization_images(ret["delta_rad"], p["angle_deg"], "stokes6")
+    # 4. 6 強度の偏光計 → 位相差と主軸(1/2 波長まで一意)。C > 0 では σ1 が遅相軸なので、
+    #    進相軸を取る位相子(optics.mueller_element と同じ規約)には σ1 + 90° を渡す。
+    fast_deg = p["angle_deg"] + 90.0
+    images = pe.photoelastic_polarization_images(ret["delta_rad"], fast_deg, "stokes6")
     est = pe.photoelastic_phase_estimate(images, "stokes6")
     m = inside & (ret["delta_rad"] > 0.05) & (ret["delta_rad"] < np.pi - 0.05)
     back = est["delta_rad"] * LAMBDA_M / (2 * np.pi * THICK_M * C_PA)
     rel = float(np.max(np.abs(back[m] - p["difference"][m]) / p["difference"][m]))
-    ang = float(np.max(np.abs((est["axis_deg"] - p["angle_deg"] + 90.0) % 180.0 - 90.0)[m]))
+    ang = float(np.max(np.abs((est["axis_deg"] - fast_deg + 90.0) % 180.0 - 90.0)[m]))
     print("polarimeter -> sigma1 - sigma2: max relative error %.2e over %d unwrapped pixels; "
           "axis error %.2e deg" % (rel, int(m.sum()), ang))
     ok &= rel < 1e-6 and ang < 1e-6
@@ -72,7 +74,7 @@ def main():
     folded = []
     for lam in lams:
         e = pe.photoelastic_phase_estimate(
-            pe.photoelastic_polarization_images(2 * np.pi * true_nm / lam, p["angle_deg"], "stokes6"),
+            pe.photoelastic_polarization_images(2 * np.pi * true_nm / lam, fast_deg, "stokes6"),
             "stokes6")
         folded.append(e["delta_rad"])
     un = pe.retardation_unwrap_multiwavelength(folded, lams, 3000.0)

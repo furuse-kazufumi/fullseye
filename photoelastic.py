@@ -343,8 +343,12 @@ def photoelastic_retardation(stress_difference_pa, thickness_m, stress_optic_coe
     ``stress_optic_coefficient`` C is in Pa⁻¹ (1 brewster = 1e-12 Pa⁻¹); the
     birefringence is ``Δn = C (σ1 − σ2)`` and the material fringe value
     ``f_σ = λ/C`` [N/m per fringe], so ``N = t (σ1 − σ2) / f_σ``.
-    The retarder axis is the σ1 direction (:func:`principal_stress`
-    ``angle_deg``) in the convention of ``optics.mueller_element``.
+    Sign: ``Δn = n_σ1 − n_σ2``, so for C > 0 the σ1 direction
+    (:func:`principal_stress` ``angle_deg``) is the **slow** axis. The retarder
+    angle of ``optics.mueller_element`` and :func:`photoelastic_polarization_images`
+    is the **fast** axis (``exp(−iωt)``, the fast axis leads), so pass
+    ``axis_deg = angle_deg + 90`` together with this ``delta_rad`` — for either
+    sign of C (equivalently ``−delta_rad`` with ``angle_deg``).
 
     Returns ``delta_rad``, ``retardation_nm``, ``fringe_order``,
     ``birefringence`` and ``fringe_value_n_per_m``.
@@ -462,12 +466,20 @@ def cubic_photoelastic_birefringence(sxx, syy, txy, pi11_minus_pi12, pi44, refra
                                               + 4τ(σx−σy) sin 4φ] )
 
     With ``π44 = π11 − π12`` the material is photoelastically isotropic and
-    ``Δn = (n³/2)(π11 − π12)(σ1 − σ2)``, i.e. ``C = n³(π11−π12)/2``.
+    ``Δn = (n³/2)|π11 − π12|(σ1 − σ2)``. In the sign of
+    :func:`photoelastic_retardation` (``n_σ1 − n_σ2 = C(σ1 − σ2)``; a change of
+    impermeability ``ΔB`` changes the index by ``−(n³/2)ΔB``) that is
+    ``C = −n³(π11−π12)/2``, returned as ``isotropic_coefficient``: π11 − π12 > 0
+    makes σ1 the fast axis, and the value can be passed to
+    :func:`photoelastic_retardation` as it is.
 
     Coefficients are in Pa⁻¹ (:func:`silicon_piezo_optic_coefficients`).
     Returns ``delta_n`` (≥ 0), ``slow_axis_deg`` (direction of the larger
-    refractive index, (−90, 90]; 0 where Δn = 0), ``effective_coefficient``
-    (Δn/(σ1−σ2) [Pa⁻¹], 0 where σ1 = σ2) and ``isotropic`` (σ1 = σ2).
+    refractive index, (−90, 90]; 0 where Δn = 0 to 1e-12 of that pixel's own
+    stress scale — the fast axis that ``optics.mueller_element`` and
+    :func:`photoelastic_polarization_images` take is ``slow_axis_deg + 90``),
+    ``effective_coefficient`` (|Δn|/(σ1−σ2) ≥ 0 [Pa⁻¹], 0 where σ1 = σ2),
+    ``isotropic_coefficient`` (signed, as above) and ``isotropic`` (σ1 = σ2).
 
     **Raises** ``ValueError``: non-finite / empty / non-broadcasting stresses,
     |π| outside [1e-15, 1e-9] Pa⁻¹ (a table value in ×10⁻⁷ MPa⁻¹ or in MPa⁻¹
@@ -499,12 +511,15 @@ def cubic_photoelastic_birefringence(sxx, syy, txy, pi11_minus_pi12, pi44, refra
     ang_max = 0.5 * np.arctan2(2.0 * db[(0, 1)], db[(0, 0)] - db[(1, 1)])
     slow = np.degrees(ang_max) + 90.0
     slow = np.where(slow > 90.0, slow - 180.0, slow)
-    zero = dn <= 1e-15 * np.maximum(np.max(np.abs(dn)), 1e-300)
+    # ゼロの判定は画素ごと: その画素の応力の桁 × 係数の桁が丸めの床の基準
+    # (配列全体の最大で割ると、大きな画素の隣の小さいが確かな Δn が 0 に化ける)。
+    scale = n0 ** 3 * max(abs(d), abs(p44)) * np.maximum.reduce([np.abs(sx), np.abs(sy), np.abs(t)])
+    zero = dn <= 1e-12 * scale
     slow = np.where(zero, 0.0, slow)
     ps = principal_stress(sx, sy, t)
     eff = np.divide(dn, ps["difference"], out=np.zeros_like(dn), where=~ps["isotropic"])
     return {"delta_n": dn, "slow_axis_deg": slow, "effective_coefficient": eff,
-            "isotropic": ps["isotropic"], "isotropic_coefficient": 0.5 * n0 ** 3 * d}
+            "isotropic": ps["isotropic"], "isotropic_coefficient": -0.5 * n0 ** 3 * d}
 
 
 # --------------------------------------------------------------------------- #
@@ -588,9 +603,11 @@ _ANALYZERS = {"camera4": (0.0, 45.0, 90.0, 135.0),
 def photoelastic_polarization_images(delta_rad, axis_deg=0.0, analyzers="camera4", intensity=1.0):
     """円偏光照明の試料を偏光カメラ(0/45/90/135 度)または 6 強度の偏光計で撮った像 → (K, H, W)。
 
-    The specimen (retardance δ, axis θ) is lit with right-circular light
+    The specimen (retardance δ, **fast** axis θ) is lit with right-circular light
     ``S = I(1, 0, 0, 1)``; the emerging Stokes vector is computed with a
-    per-pixel Mueller retarder (same convention as ``optics.mueller_element``),
+    per-pixel Mueller retarder (same convention as ``optics.mueller_element``,
+    whose angle is the fast axis — for a stress field pass ``angle_deg + 90``,
+    see :func:`photoelastic_retardation`),
     ``S' = I(1, −sin2θ sinδ, cos2θ sinδ, cosδ)``. Each analyser transmits
     ``½(S0 + S1 cos2α + S2 sin2α)`` (linear at α) or ``½(S0 ± S3)`` (right /
     left circular).
@@ -628,11 +645,12 @@ def photoelastic_polarization_images(delta_rad, axis_deg=0.0, analyzers="camera4
     return np.clip(np.stack(frames), 0.0, None)
 
 
-def photoelastic_phase_estimate(images, analyzers="camera4", min_modulation=0.01):
+def photoelastic_phase_estimate(images, analyzers="camera4", min_modulation=0.01, sum_tolerance=0.05):
     """偏光像から位相差 δ と主軸 θ を閉形式で逆算 → dict。
 
     Inverse of :func:`photoelastic_polarization_images` (right-circular
-    illumination). With ``S0 = I0 + I90``, ``S1 = I0 − I90``, ``S2 = I45 − I135``:
+    illumination). With ``S0 = ½(I0 + I90 + I45 + I135)`` (the mean of the two
+    pair sums), ``S1 = I0 − I90``, ``S2 = I45 − I135``:
 
     * ``camera4`` (4 linear analysers): ``sin δ = √(S1² + S2²)/S0`` and
       ``δ = arcsin(·)`` — **unique only for δ ∈ [0, π/2]** (a quarter wave):
@@ -640,7 +658,8 @@ def photoelastic_phase_estimate(images, analyzers="camera4", min_modulation=0.01
     * ``stokes6`` (+ right/left circular): ``S3 = IR − IL`` and
       ``δ = atan2(√(S1² + S2²), S3)`` ∈ [0, π].
 
-    In both, ``θ = ½ atan2(−S1, S2)`` mod 180 deg, in (−90, 90]. The pair
+    In both, ``θ = ½ atan2(−S1, S2)`` mod 180 deg, in (−90, 90] — the fast axis
+    (for a material with C > 0, σ1 lies at θ + 90°). The pair
     ``(δ, θ)`` and ``(−δ, θ + 90°)`` give identical images; the estimate
     returns the representative with δ ≥ 0. Where the modulation
     ``√(S1²+S2²)/S0`` (= |sin δ|) is at or below ``min_modulation`` (default
@@ -648,13 +667,35 @@ def photoelastic_phase_estimate(images, analyzers="camera4", min_modulation=0.01
     turns the axis by tens of degrees) the axis is undefined: ``axis_valid`` is
     False and ``axis_deg`` is 0 there.
 
-    Returns ``delta_rad``, ``axis_deg``, ``axis_valid``, ``modulation``,
-    ``intensity`` (S0) and ``stokes`` (``(4, H, W)``; S3 = 0 for camera4,
-    which is a limitation, not a measurement).
+    One exposure obeys ``I0 + I90 = I45 + I135`` (and ``= IR + IL``). Real frames
+    do so only to the noise and the demosaic interpolation, so the check is per
+    pixel and relative: ``sum_mismatch = |I45 + I135 − (I0 + I90)| / S0`` (for
+    stokes6 the larger of that and ``|IR + IL − S0| / S0``).
+
+    Parameters
+    ----------
+    images : ``(K, H, W)`` array or list of K frames in the order of ``analyzers``.
+    analyzers : ``"camera4"`` (0/45/90/135) or ``"stokes6"`` (+ right/left circular).
+    min_modulation : modulation at or below which the axis is not reported.
+    sum_tolerance : largest ``sum_mismatch`` a pixel may have and stay ``valid``
+        (relative to S0, default 0.05). Measured basis: with 1 % independent
+        noise per frame the mismatch stays below it (99th percentile 2.9 %,
+        maximum 4.6 % over 40 000 pixels), and the bilinear interpolation of
+        ``optics.polarization_demosaic`` leaves ≤ 1.5 % on 95 % of a disc with
+        nine resolved fringes; pixels above it are aliased fringes, saturated
+        or moving pixels, or frames from another exposure. Must lie in [0, 1].
+
+    Returns ``delta_rad``, ``axis_deg``, ``axis_valid``, ``valid`` (``sum_mismatch``
+    ≤ ``sum_tolerance``; ``delta_rad`` is still computed where it is False but is
+    not a measurement there, and ``axis_valid`` is False), ``sum_mismatch``,
+    ``modulation``, ``intensity`` (S0) and ``stokes`` (``(4, H, W)``; S3 = 0 for
+    camera4, which is a limitation, not a measurement).
 
     **Raises** ``ValueError``: wrong number of frames, non-2-D / non-finite /
-    negative frames, a dark pixel (S0 = 0), or frames that violate
-    ``I0 + I90 = I45 + I135`` by more than 1e-6·S0 (not one camera exposure).
+    negative frames, a dark pixel (S0 = 0), ``sum_tolerance`` outside [0, 1], or
+    frames whose pair sums disagree by more than ``sum_tolerance`` on more than
+    half of the pixels (not one camera exposure, the wrong frame order, or
+    fringes too dense for the sensor).
     """
     op = "photoelastic_phase_estimate"
     if analyzers not in _ANALYZERS:
@@ -678,16 +719,20 @@ def photoelastic_phase_estimate(images, analyzers="camera4", min_modulation=0.01
         raise ValueError("%s: %d negative intensities — frames must be radiance"
                          % (op, int((st < 0).sum())))
     mm = _scalar(min_modulation, "min_modulation", op, lo=0.0, hi=1.0, lo_open=False)
+    tol = _scalar(sum_tolerance, "sum_tolerance", op, lo=0.0, hi=1.0, lo_open=False)
     i0, i45, i90, i135 = st[0], st[1], st[2], st[3]
-    s0 = i0 + i90
+    pa, pb = i0 + i90, i45 + i135
+    s0 = 0.5 * (pa + pb)
     if (s0 <= 0).any():
-        raise ValueError("%s: %d dark pixel(s) (I0 + I90 = 0) — no phase can be read there"
+        raise ValueError("%s: %d dark pixel(s) (I0 + I90 + I45 + I135 = 0) — no phase can be read there"
                          % (op, int((s0 <= 0).sum())))
-    mismatch = np.abs((i45 + i135) - s0)
-    if (mismatch > 1e-6 * s0 + 1e-12).any():
-        raise ValueError("%s: I0 + I90 != I45 + I135 by up to %.3g (relative) — the frames are "
-                         "not one exposure of four linear analysers in the order 0/45/90/135"
-                         % (op, float((mismatch / s0).max())))
+    floor = tol + 1e-12                                  # 合成した厳密な像の丸め屑は許す
+    mismatch = np.abs(pb - pa) / s0
+    if float(np.median(mismatch)) > floor:
+        raise ValueError("%s: I0 + I90 != I45 + I135 by more than sum_tolerance = %.3g on more than "
+                         "half of the pixels (median %.3g relative) — the frames are not one exposure "
+                         "of four linear analysers in the order 0/45/90/135 (or the fringes are too "
+                         "dense for the sensor)" % (op, tol, float(np.median(mismatch))))
     s1 = i0 - i90
     s2 = i45 - i135
     lin = np.hypot(s1, s2)
@@ -698,16 +743,21 @@ def photoelastic_phase_estimate(images, analyzers="camera4", min_modulation=0.01
     else:
         ir, il = st[4], st[5]
         s3 = ir - il
-        if (np.abs((ir + il) - s0) > 1e-6 * s0 + 1e-12).any():
-            raise ValueError("%s: IR + IL != I0 + I90 — the circular frames are not from the "
-                             "same exposure" % op)
+        circ = np.abs((ir + il) - s0) / s0
+        if float(np.median(circ)) > floor:
+            raise ValueError("%s: IR + IL != I0 + I90 by more than sum_tolerance = %.3g on more than "
+                             "half of the pixels (median %.3g relative) — the circular frames are not "
+                             "from the same exposure" % (op, tol, float(np.median(circ))))
+        mismatch = np.maximum(mismatch, circ)
         delta = np.arctan2(lin, s3)
         mod = np.clip(lin / s0, 0.0, 1.0)
-    valid = mod > mm
+    ok = mismatch <= floor
+    valid = (mod > mm) & ok
     ax = np.degrees(0.5 * np.arctan2(-s1, s2))
     ax = np.where(ax <= -90.0, ax + 180.0, ax)
     ax = np.where(valid, ax, 0.0)
-    return {"delta_rad": delta, "axis_deg": ax, "axis_valid": valid, "modulation": mod,
+    return {"delta_rad": delta, "axis_deg": ax, "axis_valid": valid, "valid": ok,
+            "sum_mismatch": mismatch, "modulation": mod,
             "intensity": s0, "stokes": np.stack([s0, s1, s2, s3])}
 
 
@@ -726,14 +776,17 @@ def retardation_unwrap_multiwavelength(deltas_rad, wavelengths_nm, max_retardati
     is for phases wrapped into [0, 2π).
 
     Returns ``retardation_nm``, ``delta_rad`` (the unwrapped phase at the first
-    wavelength), ``residual_nm`` (best score) and ``margin_nm`` (second best −
+    wavelength), ``residual_nm`` (best score), ``margin_nm`` (second best −
     best, among candidates more than λ_min/4 away from the answer: when it is
     small another order fits almost as well — add a wavelength or reduce
-    ``max_retardation_nm``).
+    ``max_retardation_nm``) and ``valid``: False where no candidate up to
+    ``max_retardation_nm`` exists for that pixel (its first-wavelength phase
+    alone already needs more), and the four numbers are NaN there.
 
     **Raises** ``ValueError``: fewer than 2 wavelengths, mismatched counts or
     shapes, wavelengths outside [10, 20000] nm or repeated, phases outside
-    [0, π] (folded) / [0, 2π) (unfolded), or a range over 1000 waves.
+    [0, π] (folded) / [0, 2π) (unfolded), a range over 1000 waves, or a
+    ``max_retardation_nm`` below the smallest candidate of every pixel.
     """
     op = "retardation_unwrap_multiwavelength"
     if not isinstance(deltas_rad, (list, tuple)) or len(deltas_rad) < 2:
@@ -763,6 +816,12 @@ def retardation_unwrap_multiwavelength(deltas_rad, wavelengths_nm, max_retardati
     if folded:
         cand = np.concatenate([cand, (ks + 1.0 - f) * lams[0]])
     cand = np.where(cand <= rmax * (1 + 1e-12) + 1e-9, cand, np.inf)
+    has = np.isfinite(cand).any(axis=0)
+    if not has.any():
+        need = (np.minimum(f, 1.0 - f) if folded else f) * lams[0]
+        raise ValueError("%s: no pixel has a candidate retardation up to max_retardation_nm = %g nm — "
+                         "the first wavelength's phase alone needs at least %.6g nm; raise "
+                         "max_retardation_nm" % (op, rmax, float(need.min())))
     cost = np.zeros(cand.shape)
     for p, lam in zip(ph[1:], lams[1:]):
         pred = np.mod(2.0 * math.pi * np.where(np.isfinite(cand), cand, 0.0) / lam, 2.0 * math.pi)
@@ -776,16 +835,19 @@ def retardation_unwrap_multiwavelength(deltas_rad, wavelengths_nm, max_retardati
     order = np.argsort(cost, axis=0)
     best = np.take_along_axis(cand, order[:1], axis=0)[0]
     c_best = np.take_along_axis(cost, order[:1], axis=0)[0]
-    if cost.shape[0] > 1:
-        # 2 番目は「別の次数」に限る: 最良から λ_min/4 以内の候補は同じ答えの数え直し
-        # (折り返し点 f ≈ 0, ½ の近くでは (k+f)λ と (k+1−f)λ がほぼ同じ R になる)。
-        cs = np.take_along_axis(cost, order, axis=0)
-        rs = np.take_along_axis(cand, order, axis=0)
-        same = np.abs(rs - best) <= 0.25 * min(lams)
-        cs = np.where(same, np.inf, cs)
-        second = cs.min(axis=0)
-    else:                                                       # pragma: no cover
-        second = np.full(best.shape, np.inf)
-    margin = np.where(np.isfinite(second), second - c_best, np.inf)
+    with np.errstate(invalid="ignore"):                         # 候補の無い画素の inf − inf
+        if cost.shape[0] > 1:
+            # 2 番目は「別の次数」に限る: 最良から λ_min/4 以内の候補は同じ答えの数え直し
+            # (折り返し点 f ≈ 0, ½ の近くでは (k+f)λ と (k+1−f)λ がほぼ同じ R になる)。
+            cs = np.take_along_axis(cost, order, axis=0)
+            rs = np.take_along_axis(cand, order, axis=0)
+            same = np.abs(rs - best) <= 0.25 * min(lams)
+            cs = np.where(same, np.inf, cs)
+            second = cs.min(axis=0)
+        else:                                                   # pragma: no cover
+            second = np.full(best.shape, np.inf)
+        margin = np.where(np.isfinite(second), second - c_best, np.inf)
+    best = np.where(has, best, np.nan)
     return {"retardation_nm": best, "delta_rad": 2.0 * math.pi * best / lams[0],
-            "residual_nm": c_best, "margin_nm": margin, "wavelength_nm": lams[0]}
+            "residual_nm": np.where(has, c_best, np.nan), "margin_nm": np.where(has, margin, np.nan),
+            "valid": has, "wavelength_nm": lams[0]}

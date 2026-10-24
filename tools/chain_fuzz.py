@@ -7088,6 +7088,17 @@ def _b_photoel_cubic(pool, rng):
     return (3e7 * f, -2e7 * f.T, 1e7 * (f - 0.5), c["pi11_minus_pi12"], c["pi44"], 3.5), {"crystal_angle_deg": 20.0}
 
 
+def _b_photoel_phase_estimate(pool, rng):
+    # 偏光カメラの実際の 1 露光に似せる: 位相差 0〜1 rad の滑らかな場(左端は δ ≈ 0 で主軸が
+    # 決まらない)を 0/45/90/135 度で撮り、各コマに 2 % の独立な雑音。厳密に合成しただけの像
+    # (polsweep の種)は I0 + I90 = I45 + I135 を丸めの桁で満たすので、sum_tolerance を
+    # 振っても出力が変わらない —— 雑音のある像でだけ、許容の境目にかかる画素が出る。
+    import photoelastic
+    f = _photoel_field(rng)
+    im = photoelastic.photoelastic_polarization_images(1.5 * (f - f.min()), 30.0 + 40.0 * f, "camera4")
+    return (np.clip(im * (1.0 + 0.02 * rng.standard_normal(im.shape)), 0.0, None),), {}
+
+
 def _b_photoel_unwrap(pool, rng):
     ret = 1500.0 * _photoel_field(rng)
     lams = [450.0, 532.0, 633.0]
@@ -7105,6 +7116,7 @@ OP_ARG_BUILDERS = {
     "photoelastic_retardation": _b_photoel_retardation,
     "cubic_photoelastic_birefringence": _b_photoel_cubic,
     "retardation_unwrap_multiwavelength": _b_photoel_unwrap,
+    "photoelastic_phase_estimate": _b_photoel_phase_estimate,
     "plenoptic_capture": _b_plenoptic_capture,
     "plenoptic_mla_calibrate": _b_plenoptic_mla_calibrate,
     "plenoptic_decode": _b_plenoptic_decode,

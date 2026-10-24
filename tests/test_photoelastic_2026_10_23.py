@@ -11,6 +11,7 @@
 import math
 import os
 import sys
+import warnings
 
 import numpy as np
 import pytest
@@ -298,6 +299,41 @@ def test_phase_estimate_takes_the_demosaic_order_and_refuses_bad_frames():
         P.photoelastic_phase_estimate(np.zeros((4, 3, 3)))
 
 
+@pytest.mark.parametrize("analyzers", ["camera4", "stokes6"])
+def test_phase_estimate_takes_noisy_frames_and_marks_inconsistent_pixels(analyzers):
+    """雑音 1e-4 で「別の露光」と拒否しない。食い違う画素だけ valid=False、全体が外れたら拒否。"""
+    rng = np.random.default_rng(11)
+    d = rng.uniform(0.2, 1.3, (24, 24))
+    th = rng.uniform(-80.0, 80.0, (24, 24))
+    im = P.photoelastic_polarization_images(d, th, analyzers)
+    noisy = im * (1.0 + 1e-4 * rng.standard_normal(im.shape))
+    e = P.photoelastic_phase_estimate(noisy, analyzers)
+    assert e["valid"].all() and e["axis_valid"].all()
+    assert float(e["sum_mismatch"].max()) < 1e-3
+    assert np.max(np.abs(e["delta_rad"] - d)) < 2e-3
+    # S0 は 2 組の和の平均
+    assert np.allclose(e["intensity"], 0.5 * (noisy[0] + noisy[2] + noisy[1] + noisy[3]), rtol=0, atol=1e-15)
+    # 1 画素だけ I45 を 1.5 倍: その画素だけ valid=False(主軸も)、ほかは生きる
+    bad = noisy.copy()
+    bad[1, 5, 7] *= 1.5
+    eb = P.photoelastic_phase_estimate(bad, analyzers)
+    assert not eb["valid"][5, 7] and not eb["axis_valid"][5, 7] and eb["axis_deg"][5, 7] == 0.0
+    assert int((~eb["valid"]).sum()) == 1
+    assert float(eb["sum_mismatch"][5, 7]) > 0.05
+    # 許容を引数で: 0.5 まで許せば同じ画素も valid
+    assert P.photoelastic_phase_estimate(bad, analyzers, sum_tolerance=0.5)["valid"].all()
+    # 許容 0 で雑音の像 → ほぼ全画素が外れる = 別の露光として拒否
+    with pytest.raises(ValueError, match="not one exposure"):
+        P.photoelastic_phase_estimate(noisy, analyzers, sum_tolerance=0.0)
+    with pytest.raises(ValueError, match="sum_tolerance"):
+        P.photoelastic_phase_estimate(noisy, analyzers, sum_tolerance=-0.1)
+    if analyzers == "stokes6":
+        circ = noisy.copy()
+        circ[4:] *= 1.3                                         # 円の 2 枚だけ別の露光
+        with pytest.raises(ValueError, match="circular frames"):
+            P.photoelastic_phase_estimate(circ, analyzers)
+
+
 # --------------------------------------------------------------------------- #
 # 立方晶 {100} 面
 # --------------------------------------------------------------------------- #
@@ -330,7 +366,8 @@ def test_cubic_reduces_to_isotropic_when_pi44_equals_pi11_minus_pi12():
     for phi in (0.0, 31.0):
         r = P.cubic_photoelastic_birefringence(sx, sy, t, a, a, n, phi)
         assert np.allclose(r["delta_n"], 0.5 * n ** 3 * a * p["difference"], rtol=1e-12)
-        assert np.allclose(r["effective_coefficient"], r["isotropic_coefficient"], rtol=1e-12)
+        assert np.allclose(r["effective_coefficient"], abs(r["isotropic_coefficient"]), rtol=1e-12)
+        assert r["isotropic_coefficient"] == pytest.approx(-0.5 * n ** 3 * a, rel=1e-12)   # n_σ1 − n_σ2 の符号
         # π11 − π12 > 0 なら屈折率の大きい向き(遅相軸)は σ2 = σ1 に直交
         assert np.allclose((r["slow_axis_deg"] - p["angle_deg"]) % 180.0, 90.0, atol=1e-9)
 
@@ -344,6 +381,89 @@ def test_cubic_anisotropy_depends_on_crystal_orientation():
     assert float(r0["delta_n"]) == pytest.approx(n ** 3 * abs(p44) * tau, rel=1e-12)
     assert float(r45["delta_n"]) == pytest.approx(n ** 3 * abs(a) * tau, rel=1e-12)
     assert float(r45["delta_n"]) / float(r0["delta_n"]) == pytest.approx(14.4 / 9.4, rel=1e-12)
+
+
+def _jones_truth(dn_tensor, thickness_m, wavelength_m):
+    """面内の屈折率の変化 Δn_ij(2x2 対称)の板を右回り円偏光が通った Stokes(独立の経路)。
+
+    ``optics`` の規約は exp(−iωt) で、前進伝搬は exp(+i k n L) を掛ける —— 屈折率の大きい
+    向き(遅相軸)ほど位相が進む。対称行列の固有分解で伝搬 Jones 行列を作るので、
+    photoelastic の角度の式(½atan2)も Mueller の位相子も通らない。
+    """
+    k0 = 2.0 * np.pi / wavelength_m
+    w, v = np.linalg.eigh(np.asarray(dn_tensor, float))
+    jm = v @ np.diag(np.exp(1j * k0 * thickness_m * (w - w.mean()))) @ v.T
+    return optics.stokes_from_jones(jm @ (np.array([1.0, -1.0j]) / math.sqrt(2.0)))
+
+
+def _stress(s1, s2, ang_deg):
+    a = math.radians(ang_deg)
+    c, s = math.cos(a), math.sin(a)
+    return s1 * c * c + s2 * s * s, s1 * s * s + s2 * c * c, (s1 - s2) * s * c
+
+
+def _chain_stokes(delta, fast_axis_deg):
+    im = P.photoelastic_polarization_images(np.full((1, 1), float(delta)), float(fast_axis_deg), "stokes6")
+    return P.photoelastic_phase_estimate(im, "stokes6")["stokes"][:, 0, 0]
+
+
+def test_axis_convention_chain_matches_an_independent_jones_propagation():
+    """既知の応力 → 応力光学則 → 偏光像の S1, S2 の符号 = 屈折率テンソルからの独立計算。
+
+    ``optics.mueller_element`` の位相子の角度は**進相軸**(jones_element の文書、exp(−iωt))。
+    ``n_σ1 − n_σ2 = C(σ1 − σ2)`` なので C > 0 では σ1 が遅相軸で、像に渡す軸は σ1 + 90°。
+    """
+    lam = 5.5e-7
+    # (a) 等方の樹脂 C > 0、σ1 は 30° の向き
+    sx, sy, t = _stress(5e5, 1e5, 30.0)
+    p = P.principal_stress(sx, sy, t)
+    c, thick = 5e-11, 0.006
+    r = P.photoelastic_retardation(p["difference"], thick, c, lam)
+    a = math.radians(float(p["angle_deg"]))
+    u = np.array([math.cos(a), math.sin(a)])
+    truth = _jones_truth(c * float(p["difference"]) * np.outer(u, u), thick, lam)
+    got = _chain_stokes(r["delta_rad"], float(p["angle_deg"]) + 90.0)
+    assert abs(truth[1]) > 0.1 and abs(truth[2]) > 0.1               # 符号が読める向き
+    assert np.allclose(got, truth, atol=1e-9), (got, truth)
+    # 軸 = σ1 を渡すと S1, S2 の符号が逆になる(門がその取り違えを見分ける)
+    wrong = _chain_stokes(r["delta_rad"], float(p["angle_deg"]))
+    assert np.allclose(wrong[1:3], -truth[1:3], atol=1e-9)
+    # (b) 立方晶で π44 = π11 − π12(等方): isotropic_coefficient を C としてそのまま使える
+    n0, d, thin = 3.5, 1.44e-12, 1e-4
+    sx, sy, t = _stress(5e7, 1e7, 30.0)
+    cu = P.cubic_photoelastic_birefringence(sx, sy, t, d, d, n0)
+    assert cu["isotropic_coefficient"] == pytest.approx(-0.5 * n0 ** 3 * d, rel=1e-12)
+    p = P.principal_stress(sx, sy, t)
+    r = P.photoelastic_retardation(p["difference"], thin, cu["isotropic_coefficient"], lam)
+    db = d * np.array([[sx, t], [t, sy]])                             # ΔB = π σ(π12 = 0、共通項は位相だけ)
+    truth = _jones_truth(-0.5 * n0 ** 3 * db, thin, lam)              # Δn_ij = −(n³/2) ΔB_ij
+    assert np.allclose(_chain_stokes(r["delta_rad"], float(p["angle_deg"]) + 90.0), truth, atol=1e-9)
+    # (c) 異方な Si(Stoehr 2020)、結晶方位 20°: δ = 2π t Δn/λ ≥ 0、進相軸 = slow_axis_deg + 90
+    co = P.silicon_piezo_optic_coefficients("stoehr2020")
+    a11, p44, phi = co["pi11_minus_pi12"], co["pi44"], 20.0
+    sx, sy, t = 3e7, -1e7, 1.5e7
+    cu = P.cubic_photoelastic_birefringence(sx, sy, t, a11, p44, n0, phi)
+    rb = P.retardation_from_birefringence(cu["delta_n"], thin, lam)
+    f = math.radians(phi)
+    rot = np.array([[math.cos(f), -math.sin(f)], [math.sin(f), math.cos(f)]])
+    sc = rot.T @ np.array([[sx, t], [t, sy]]) @ rot                   # 結晶軸での応力
+    dbc = np.array([[a11 * sc[0, 0], p44 * sc[0, 1]], [p44 * sc[0, 1], a11 * sc[1, 1]]])   # Voigt(π12 = 0)
+    truth = _jones_truth(-0.5 * n0 ** 3 * (rot @ dbc @ rot.T), thin, lam)
+    got = _chain_stokes(rb["delta_rad"], float(cu["slow_axis_deg"]) + 90.0)
+    assert abs(truth[1]) > 0.05 or abs(truth[2]) > 0.05
+    assert np.allclose(got, truth, atol=1e-9), (got, truth)
+
+
+def test_cubic_zero_birefringence_is_judged_per_pixel():
+    """Δn がゼロかどうかは画素ごとの応力の桁で決める(配列全体の最大値で決めない)。"""
+    co = P.silicon_piezo_optic_coefficients("stoehr2020")
+    a11, p44 = co["pi11_minus_pi12"], co["pi44"]
+    small = P.cubic_photoelastic_birefringence(1e-7, 0.0, 3e-8, a11, p44, 3.5, 10.0)
+    assert float(small["slow_axis_deg"]) != 0.0
+    both = P.cubic_photoelastic_birefringence([1e9, 1e-7], [0.0, 0.0], [0.0, 3e-8], a11, p44, 3.5, 10.0)
+    assert both["slow_axis_deg"][1] == pytest.approx(float(small["slow_axis_deg"]), abs=1e-9)
+    iso = P.cubic_photoelastic_birefringence([1e9, 2e6], [0.0, 2e6], [0.0, 0.0], a11, p44, 3.5, 10.0)
+    assert iso["slow_axis_deg"][1] == 0.0                             # σx = σy・τ = 0 は本当にゼロ
 
 
 def test_silicon_table_is_the_published_table_and_unit_slips_are_refused():
@@ -382,8 +502,21 @@ def test_multiwavelength_resolves_orders_beyond_one_wave():
     assert np.allclose(u["delta_rad"], 2 * np.pi * ret / 450.0, atol=1e-8)
     assert np.max(u["residual_nm"]) < 1e-6
     assert np.min(u["margin_nm"]) > 0.5                 # 3 波長なら 3000 nm まで一意
+    assert u["valid"].all()
     two = P.retardation_unwrap_multiwavelength([_folded(ret, l) for l in lams[1:]], lams[1:], 3000.0)
-    assert np.min(two["margin_nm"]) < np.min(u["margin_nm"])   # 2 波長は余裕が小さい(曖昧に近い)
+    assert np.max(np.abs(two["retardation_nm"] - ret)) < 1e-6
+    # R = 0 の画素の余裕を手で数えた値と比べる: 次点は λ1 の整数倍 kλ1(折り返しても同じ)で、
+    # その残差 = 他の波長で kλ1 が最寄りの整数波からどれだけ外れるか [nm] の二乗和の平方根
+    def dist(x):
+        return abs(x - round(x))
+    z = [np.zeros((1, 1))] * 3
+    m3 = P.retardation_unwrap_multiwavelength(z, lams, 3000.0)["margin_nm"][0, 0]
+    e3 = min(math.hypot(532.0 * dist(450.0 * k / 532.0), 633.0 * dist(450.0 * k / 633.0)) for k in range(1, 7))
+    m2 = P.retardation_unwrap_multiwavelength(z[:2], lams[1:], 3000.0)["margin_nm"][0, 0]
+    e2 = min(633.0 * dist(532.0 * k / 633.0) for k in range(1, 6))
+    assert m3 == pytest.approx(e3, rel=1e-9) and m2 == pytest.approx(e2, rel=1e-9)
+    assert m2 == pytest.approx(101.0, abs=0.1)          # 532×1 = 0.840 波 @633 → 0.160 波 = 101 nm
+    assert m3 > 1.5 * m2                                # 3 本目の波長が次点を遠ざける
     # 巻いた [0, 2π) の位相でも
     w = [np.mod(2 * np.pi * ret / l, 2 * np.pi) for l in lams]
     u2 = P.retardation_unwrap_multiwavelength(w, lams, 3000.0, folded=False)
@@ -400,6 +533,22 @@ def test_multiwavelength_refuses_bad_inputs():
         P.retardation_unwrap_multiwavelength([np.full((3, 3), 4.0), ph[1]], [532.0, 633.0], 1000.0)
     with pytest.raises(ValueError, match=">= 2"):
         P.retardation_unwrap_multiwavelength([ph[0]], [532.0], 1000.0)
+
+
+def test_multiwavelength_without_candidates_refuses_or_marks_the_pixel():
+    """候補が 1 つも無い場合は全画素 inf ではなく ValueError、画素単位なら valid=False。"""
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")                  # RuntimeWarning も出さない
+        with pytest.raises(ValueError, match="max_retardation_nm"):
+            P.retardation_unwrap_multiwavelength([np.full((2, 2), np.pi / 2), np.full((2, 2), 1.0)],
+                                                 [550.0, 633.0], 10.0)
+        ret = np.array([[100.0, 300.0]])                # 上限 200 nm: 300 nm の画素には候補が無い
+        u = P.retardation_unwrap_multiwavelength([_folded(ret, 550.0), _folded(ret, 633.0)],
+                                                 [550.0, 633.0], 200.0)
+    assert u["valid"].tolist() == [[True, False]]
+    assert u["retardation_nm"][0, 0] == pytest.approx(100.0, abs=1e-9)
+    for k in ("retardation_nm", "delta_rad", "residual_nm", "margin_nm"):
+        assert np.isnan(u[k][0, 1]), k
 
 
 # --------------------------------------------------------------------------- #
