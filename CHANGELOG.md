@@ -17,6 +17,18 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - **角度の向きと円偏光の左右を docstring に明記**(optics の偏光節の冒頭・`jones_element`・`mueller_element`・`stokes_from_jones`・`stokes_analyze`・specularity の掃引角): 角度は +x(列方向)から +y(行方向 = **下**)へ測る = 表示画像で**時計回り**。決めたのではなく既存実装が暗黙に使っていた向きを実行して確かめた(`sfpolar.sfp_render` は法線の方位 `atan2(ny, nx)` = 30° の拡散面を AoLP 30° で描き、光弾性 PoC は画像座標の応力の `½ atan2(2τxy, σxx − σyy)` をそのまま `mueller_element` に渡している)。y 上向きで反時計回りに数えるセンサ・文献の角度は符号を反転して渡す(取り違えると 21.5° が 158.5° になり例外は出ない)。円偏光: `S3 > 0` = Jones `[1, −i]/√2`(`exp(−iωt)`)で、電場は +x から −y へ回る = **表示画像で反時計回り**(受け取るカメラから見た向き)。`stokes_analyze` の `"right"` という呼び名は y 上向きの座標系での名前で、互換のため残した(契約は S3 の符号と docstring の文)。門: 既知角(21.5°)の合成画像で AoLP が 21.5° に戻り、同じフレームを逆向きの角度で読むと 158.5° になる / 法線の方位 30° の拡散面で 30°(150° でなく)/ 放射状偏光子の場で全画素の AoLP が `atan2(row, col)` / `E(t)` を標本化して S3 > 0 が画面で反時計回り。
 - ★`polarization_stokes_map.max_violation_frac` を効かないノブの台帳(`docs/LEDGER_GAP_DEBT.json`、601 → 602)に兄弟 3 本(`polarization_separate` / `_dolp_map` / `_stokes`)と同じ区分で足した。このノブは「何割の画素の負の最小値まで許すか」の門で、出力の値は変えず通すか断るかだけを決めるため、きれいな探針入力では原理的に動かない。実カメラの掃引(デモザイクの誤差)を通すのに要る(例の 6 は 0.05 で通す)ので外さなかった —— 台帳を増やした判断として明記する。
 - 例 `examples/polarization_camera_pipeline.py` に 6・7 を追加(画素ごとの AoLP が真値と 0.18° 以内、角度の向きを逆に読むと中央値 46° ずれる / ER = 100 の検光子で完全偏光の DoLP が 0.9802 で頭打ち)。
+
+### 追加 — Studio: 前段の出力を受けられる op だけを一覧に出す(改善案 018 の残り)
+
+- op 一覧の上にスイッチ「前段の出力を受けられる op だけ表示」(既定 on)と状況の 1 行(例「998 件中 135 件、段 2 threshold の出力 'region'」)。
+  検索語の無い一覧は 998 op を型に関係なく全部出していた。**隠すだけで型の変換はしない**。
+- 判定は実行時に処理列を拒否する規則そのもの(`api._check_chain_sorts` の `engine._thread_sort` / `_compatible`)で流すので、
+  「一覧から消えた op」=「入れたら実行前に拒否される op」が全 registry op で一致する(門)。先頭段(入力は入口で型を合わせる)・
+  バイパス中の段・未知の op の後は絞らない。`opassist.accepted_sorts` の実測は宣言より緩く、通ると出して挿入直後に拒否される
+  ので一覧には使わない(検索語のある目的検索の群分けは従来どおり実測を使う)。
+- 挿入位置の規則を `add_op` と 1 関数に寄せ、一覧を作り直しても選択中の op を保つ(Insert 直後の Run once が効かなくなる回帰を防ぐ)。
+- tests: `test_studio_op_type_filter_2026_10_23.py` 16 件。Studio テスト 23 ファイル 461 → 547 passed。
+
 ### 修正 — 映像の物理整合性 op の入口検査(敵対的レビュー 2026-10-23、所見 8 件を一件ずつ再現してから)
 
 - `ballistic_vs_thrust` は、推力側の RSS が離散化の床 `rss_floor`(RK4 格子を標本時刻へ線形補間する誤差 ≤ a dt²/8 の平方和)の
