@@ -294,3 +294,27 @@ def test_every_module_the_registry_actually_loads_is_shipped():
     assert not missing, (
         "レジストリが読み込むのに py-modules に無い root モジュール "
         "(非 editable な wheel から丸ごと消える): %s" % missing)
+
+
+def test_python_classifiers_match_requires_python_and_the_ci_matrix():
+    """PyPI に「対応」と書く版は、CI の行列で実際に回っている版だけ(2026-10-24)。
+
+    3.10 を外したとき、requires-python・classifier・CI の行列の 3 か所を手で揃えた。
+    どれか 1 か所だけ直すと「書いてあるが試していない版」ができるので、ここで突き合わせる。
+    """
+    with open(os.path.join(ROOT, "pyproject.toml"), "rb") as f:
+        project = tomllib.load(f)["project"]
+    m = re.fullmatch(r">=\s*3\.(\d+)", project["requires-python"].strip())
+    assert m, project["requires-python"]
+    minimum = int(m.group(1))
+    minors = sorted(int(c.rsplit(".", 1)[1]) for c in project["classifiers"]
+                    if re.fullmatch(r"Programming Language :: Python :: 3\.\d+", c))
+    assert minors and minors[0] == minimum, (
+        "classifier の最小版 %s と requires-python >=3.%d が食い違う" % (minors, minimum))
+    ci = _read(os.path.join(".github", "workflows", "ci.yml"))
+    line = next(ln for ln in ci.splitlines() if "python-version: ${{ fromJSON(" in ln)
+    in_ci = {int(v) for v in re.findall(r'"3\.(\d+)"', line)}
+    untested = [v for v in minors if v not in in_ci]
+    assert not untested, "classifier にあるが CI の行列で回っていない版: %s" % untested
+    assert minimum in in_ci and (minimum - 1) not in in_ci, (
+        "CI の行列が requires-python と食い違う: %s" % sorted(in_ci))
