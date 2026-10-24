@@ -1,8 +1,8 @@
 {
- "n_ops": 3565,
+ "n_ops": 3583,
  "tiers": {
   "color": 12,
-  "ledger": 2606,
+  "ledger": 2624,
   "nary": 17,
   "registry": 930
  },
@@ -2634,6 +2634,75 @@
    "dim": "3d",
    "in_sorts": [
     "coordgrid"
+   ]
+  },
+  {
+   "name": "braid_artin_images",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "braidpath",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "scalar"
+   ]
+  },
+  {
+   "name": "braid_class_representatives",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "braidpath",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any"
+   ]
+  },
+  {
+   "name": "braid_equivalent",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "braidpath",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "signal",
+    "scalar"
+   ]
+  },
+  {
+   "name": "braid_from_trajectories",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "braidpath",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any"
+   ]
+  },
+  {
+   "name": "braid_reduce",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "signal",
+   "category": "braidpath",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "scalar"
    ]
   },
   {
@@ -7681,6 +7750,34 @@
    ]
   },
   {
+   "name": "dynnikov_act",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "braidpath",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any",
+    "signal"
+   ]
+  },
+  {
+   "name": "dynnikov_coordinates",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "braidpath",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "scalar"
+   ]
+  },
+  {
    "name": "dynsys_bifurcation_map",
    "halcon": "",
    "in_sort": null,
@@ -10387,6 +10484,84 @@
    "in_sorts": []
   },
   {
+   "name": "fp_capture",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "fpm",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d",
+    "image2d"
+   ]
+  },
+  {
+   "name": "fp_design",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "fpm",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
+   "name": "fp_element_contrast",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "fpm",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d",
+    "table"
+   ]
+  },
+  {
+   "name": "fp_reconstruct",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "fpm",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "fp_stack_from_images",
+   "halcon": "",
+   "in_sort": "volume",
+   "out_sort": "table",
+   "category": "fpm",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "volume",
+    "signal",
+    "signal"
+   ]
+  },
+  {
+   "name": "fp_usaf_target",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "fpm",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
+  },
+  {
    "name": "frame_align",
    "halcon": "",
    "in_sort": "image2d",
@@ -11751,6 +11926,19 @@
    ]
   },
   {
+   "name": "grid_hole_points",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "matrix",
+   "category": "braidpath",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
    "name": "grid_lines",
    "halcon": "",
    "in_sort": "image2d",
@@ -11762,6 +11950,19 @@
    "in_sorts": [
     "image2d",
     "axes"
+   ]
+  },
+  {
+   "name": "grid_paths_to_xy",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "any",
+   "category": "braidpath",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any"
    ]
   },
   {
@@ -12513,6 +12714,35 @@
    "dim": "calib",
    "in_sorts": [
     "keypoints"
+   ]
+  },
+  {
+   "name": "homotopy_class_compare",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "braidpath",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any",
+    "any"
+   ]
+  },
+  {
+   "name": "homotopy_shortest_paths",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "braidpath",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "image2d",
+    "any",
+    "any"
    ]
   },
   {
@@ -19789,6 +20019,19 @@
    "dim": "reprconv",
    "in_sorts": [
     "pairs"
+   ]
+  },
+  {
+   "name": "pairwise_winding",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "matrix",
+   "category": "braidpath",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any"
    ]
   },
   {

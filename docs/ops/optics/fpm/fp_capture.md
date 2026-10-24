@@ -31,6 +31,8 @@ LED ごとに o に傾いた平面波 e^{i2π(kx x + ky y)} を掛け(**画素�
   乱数は ``seed`` の ``np.random.default_rng``。
 * LED アレイのずれ(``led_offset_mm`` / ``led_rotation_deg`` / ``led_height_error_mm``)は**撮像にだけ**入れ、
   表の名目の ``kx`` / ``ky`` には入れない(真の値は ``kx_true`` / ``ky_true``)。
+* 照明の k の規約: kx = x/(rλ)、ky = y/(rλ)(LED の位置 (x, y, z) は試料が原点、r = |(x, y, z)|)—— LED の
+  x/r を +k とする。LED が試料の下にあり光が LED から試料へ進む実機では、物理の横の波数は −x/(rλ) になりうる。
 * 低解像の画素 = pixel_um · downsample が λ/(2 NA_obj) を超えると拒否(FP の標本化条件)。
 
 返り値: dict(kind="fp_stack", images (K, n, n) 電子数、照明の NA の小さい順, exposure, led_brightness, photons,

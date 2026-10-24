@@ -10,6 +10,7 @@
 <p style="margin:2px 0 2px 12px">• 露光: 明視野(NA_ill &lt; NA_obj)は 1、暗視野は <code style="color:#22d3bf">darkfield_gain</code> 倍(暗視野を長く撮る実装の慣習)。</p>
 <p style="margin:2px 0 2px 12px">• 雑音: 背景 1 あたり <code style="color:#22d3bf">photons</code> 電子 × 露光 × 明るさの Poisson + 読み出し <code style="color:#22d3bf">read_noise_e</code> のガウス。乱数は <code style="color:#22d3bf">seed</code> の <code style="color:#22d3bf">np.random.default_rng</code>。</p>
 <p style="margin:2px 0 2px 12px">• LED アレイのずれ(<code style="color:#22d3bf">led_offset_mm</code> / <code style="color:#22d3bf">led_rotation_deg</code> / <code style="color:#22d3bf">led_height_error_mm</code>)は<b>撮像にだけ</b>入れ、表の名目の <code style="color:#22d3bf">kx</code> / <code style="color:#22d3bf">ky</code> には入れない(真の値は <code style="color:#22d3bf">kx_true</code> / <code style="color:#22d3bf">ky_true</code>)。</p>
+<p style="margin:2px 0 2px 12px">• 照明の k の規約: kx = x/(rλ)、ky = y/(rλ)(LED の位置 (x, y, z) は試料が原点、r = |(x, y, z)|)—— LED の x/r を +k とする。LED が試料の下にあり光が LED から試料へ進む実機では、物理の横の波数は −x/(rλ) になりうる。</p>
 <p style="margin:2px 0 2px 12px">• 低解像の画素 = pixel_um · downsample が λ/(2 NA_obj) を超えると拒否(FP の標本化条件)。</p>
 <p>返り値: dict(kind=&quot;fp_stack&quot;, images (K, n, n) 電子数、照明の NA の小さい順, exposure, led_brightness, photons, read_noise_e, kx, ky, kx_true, ky_true, na_illumination, led_index, led_xyz_mm(名目), pixel_um(低解像), wavelength_um, na_obj, pupil_true, na_synthetic_design, …)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>

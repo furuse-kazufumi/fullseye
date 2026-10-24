@@ -10,6 +10,7 @@
 <p style="margin:2px 0 2px 12px">• 노출: 명시야(NA_ill &lt; NA_obj)는 1, 암시야는 <code style="color:#22d3bf">darkfield_gain</code>배(암시야를 길게 찍는 구현의 관례).</p>
 <p style="margin:2px 0 2px 12px">• 잡음: 배경 1당 <code style="color:#22d3bf">photons</code> 전자 × 노출 × 밝기의 Poisson + 판독 <code style="color:#22d3bf">read_noise_e</code>의 가우스. 난수는 <code style="color:#22d3bf">seed</code>의 <code style="color:#22d3bf">np.random.default_rng</code>.</p>
 <p style="margin:2px 0 2px 12px">• LED 어레이의 어긋남(<code style="color:#22d3bf">led_offset_mm</code> / <code style="color:#22d3bf">led_rotation_deg</code> / <code style="color:#22d3bf">led_height_error_mm</code>)은 <b>촬상에만</b> 넣고, 표의 명목 <code style="color:#22d3bf">kx</code> / <code style="color:#22d3bf">ky</code>에는 넣지 않는다(참값은 <code style="color:#22d3bf">kx_true</code> / <code style="color:#22d3bf">ky_true</code>).</p>
+<p style="margin:2px 0 2px 12px">• 조명 k의 규약: kx = x/(rλ), ky = y/(rλ)(LED의 위치 (x, y, z)는 시료가 원점, r = |(x, y, z)|) —— LED의 x/r을 +k로 한다. LED가 시료 아래에 있고 빛이 LED에서 시료로 진행하는 실제 장치에서는 물리적인 횡방향 파수가 −x/(rλ)가 될 수 있다.</p>
 <p style="margin:2px 0 2px 12px">• 저해상도 화소 = pixel_um · downsample 이 λ/(2 NA_obj)를 넘으면 거부(FP의 샘플링 조건).</p>
 <p>반환값: dict(kind=&quot;fp_stack&quot;, images (K, n, n) 전자 수, 조명 NA가 작은 순, exposure, led_brightness, photons, read_noise_e, kx, ky, kx_true, ky_true, na_illumination, led_index, led_xyz_mm(명목), pixel_um(저해상도), wavelength_um, na_obj, pupil_true, na_synthetic_design, …).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>

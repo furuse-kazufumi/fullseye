@@ -39,12 +39,21 @@ version: 0.8.1  # fullseye lib version this note was generated for
   残差が下がらない・回数が尽きた・2 本が別の答えに着いた、のどれでも「収束しない」。
   ``on_fail="raise"``(既定)は :class:`FPNotConvergedError`(``MetricContractError``、``record`` に記録)、
   ``"record"`` は記録を返す(``converged=False``)。
+* ``starts=1`` は一意性の門を通らない(停留だけで ``converged=True`` になりうる): ``uniqueness_checked`` が False に
+  なり、``reason`` に「uniqueness not checked」を足す。
+* 残差の上限: 収束の判定は残差の**変化**しか見ない。最後の残差が ``RESIDUAL_WARN``(0.1)を超えたら
+  ``residual_warning=True`` にし、``reason`` に警告を足す(判定は変えない)。合成で実測: 収束した復元は 0.004〜0.03
+  (rms 0.12 波の収差を含む)、照明の k と無関係な乱数の像は初期値 1 本で停留して 0.17。
 
 返り値: dict(kind="fp_result", converged, reason, n_iter, residual, residual_history,
 residual_history_starts, step_history(1 周ごとの物体のスペクトルの相対変化), start_disagreement,
 field_second_start, amplitude, phase, field, pupil, pupil_support, na_synthetic
 (= NA_obj + 使った照明の NA の最大、対角の LED を含む), na_synthetic_axis(x・y の方向余弦の最大で取った値 = 軸に
-沿った棒の分解を決める値), pixel_um, upsample, margin_px, led_centres, led_geometry, intensity_scale)。
+沿った棒の分解を決める値), pixel_um, upsample, margin_px, led_centres, led_geometry, intensity_scale,
+uniqueness_checked, residual_warning, residual_ceiling)。
+
+Raises: ValueError(表が欠けている・値が範囲外、像のエネルギーが 0(露光で割った後、端を除いた全部の像の和)、
+LED の補正で当てはめた幾何が瞳の中心を高解像の格子の外に置いた)。
 
 ## ファミリ共通の入力契約(fail-closed)
 

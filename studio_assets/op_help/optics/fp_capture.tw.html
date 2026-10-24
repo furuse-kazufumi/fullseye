@@ -10,6 +10,7 @@
 <p style="margin:2px 0 2px 12px">• 曝光:明場(NA_ill &lt; NA_obj)為 1,暗場為 <code style="color:#22d3bf">darkfield_gain</code> 倍(暗場拍得較久的實作慣例)。</p>
 <p style="margin:2px 0 2px 12px">• 雜訊:每單位背景 <code style="color:#22d3bf">photons</code> 電子 × 曝光 × 亮度的 Poisson + 讀出 <code style="color:#22d3bf">read_noise_e</code> 的高斯。亂數來自以 <code style="color:#22d3bf">seed</code> 初始化的 <code style="color:#22d3bf">np.random.default_rng</code>。</p>
 <p style="margin:2px 0 2px 12px">• LED 陣列的偏差(<code style="color:#22d3bf">led_offset_mm</code> / <code style="color:#22d3bf">led_rotation_deg</code> / <code style="color:#22d3bf">led_height_error_mm</code>)<b>只施加於成像</b>, 不施加於表中的標稱 <code style="color:#22d3bf">kx</code> / <code style="color:#22d3bf">ky</code>(真值為 <code style="color:#22d3bf">kx_true</code> / <code style="color:#22d3bf">ky_true</code>)。</p>
+<p style="margin:2px 0 2px 12px">• 照明 k 的約定:kx = x/(rλ)、ky = y/(rλ)(LED 位置 (x, y, z) 以試樣為原點,r = |(x, y, z)|)—— 取 LED 的 x/r 為 +k。在 LED 位於試樣下方、光從 LED 射向試樣的實際裝置中,物理上的橫向波數可能是 −x/(rλ)。</p>
 <p style="margin:2px 0 2px 12px">• 低解析度像素 = pixel_um · downsample 超過 λ/(2 NA_obj) 時拒絕(FP 的取樣條件)。</p>
 <p>傳回值:dict(kind=&quot;fp_stack&quot;, images (K, n, n) 電子數、依照明 NA 由小到大排列, exposure, led_brightness, photons, read_noise_e, kx, ky, kx_true, ky_true, na_illumination, led_index, led_xyz_mm(標稱), pixel_um(低解析度), wavelength_um, na_obj, pupil_true, na_synthetic_design, …)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
