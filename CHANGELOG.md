@@ -7,6 +7,24 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### 修正(値が変わる) — 傾けた像面の座標を、傾いた面そのものの上で返す(`raytrace3d`)
+
+- `noncoaxial_trace` / `noncoaxial_spot` の `image_xy`(と `chief`・重心)は、`image_tilt` を与えると**傾けない像面へ
+  射影した座標**を返していた(docstring は「像面の局所の座標」)。傾けた向きの長さが cos θ' 倍に縮み、
+  `noncoaxial_spot` の RMS・幾何半径も同じだけ小さく出ていた。今は傾いた像面の正規直交基底(x = 面と xz 面の交線、
+  法線 = (−tan ty, −tan tx, 1)/‖·‖、y = 法線 × x)で測り、傾いた受光素子の上の距離がそのまま出る。
+- **値が変わる**のは `image_tilt` ≠ (0, 0) の系だけ(傾けない系は基底が厳密に単位行列で、数値は 1 ビットも変わらない)。
+  例: 30° の傾きで、瞳の上下の 2 点の距離は 10 → 10/cos 30° = 11.547 mm、RMS は 3.8037 → 4.1085 mm。
+  `noncoaxial_example("scheimpflug")`(θ' = −28.0°)では傾けた向きの長さが 1/cos θ' = 1.133 倍になり、視野 −3 mm の
+  RMS は 0.2439 → 0.2609 mm。`poc_noncoaxial_optics` の第 4 章の最大 RMS は
+  0.0170 → 0.0185 mm(reduced 予算の実行。門 = 傾けない像面の 3 分の 1 以下、は通ったまま)。
+- 同じ型の兄弟も揃えた: `noncoaxial_layout` の `image.rotation` / `image.normal` は傾いた面の姿勢になった(以前は
+  傾けない座標系の値で、`tilt` を別に読む必要があった)。`image_orientation` のヤコビアン、`ghost_analysis` /
+  `ghost_path` / `ghost_image` の像面の座標と焦点ずれ(法線方向)も傾いた面の上で測る。
+- 呼び出し側で cos θ' を割り戻していたコードは、この版からその補正を外すこと(二重に補正すると逆に 1/cos θ' 倍に
+  なる)。門 = `tests/test_raytrace3d_tilted_image.py`(閉形式の 2 点の距離・RMS、2 軸の傾きの等長性、収差のある
+  系の RMS = 大域の 3-D 点の RMS)。
+
 ### 変更(破壊的) — Python 3.10 のサポートを終了(requires-python >= 3.11)
 
 - Python 3.10 は 2026-10-01 に寿命が切れた(上流のセキュリティ修正が止まった)。**3.10 の利用者は 0.8.x に留まる**
