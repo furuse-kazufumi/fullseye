@@ -109,6 +109,9 @@ MAX_ITER_CAP = 2000
 AGREE_TOL = 0.08
 #: 残差がこれまでの最小のこの倍を超えたら「発散」として止める(``converge`` の DIVERGENCE_FACTOR と同じ考え)。
 DIVERGENCE_FACTOR = 100.0
+#: 最後の振幅の相対残差の警告の上限(判定は変えず、``residual_warning`` を立てる)。合成で実測: 収束した復元は
+#: 0.004〜0.03(rms 0.12 波の収差を含む)、照明の k と無関係な乱数の像は初期値 1 本で停留して 0.17。
+RESIDUAL_WARN = 0.1
 #: 公表の重なり率の下限(Sun ら 2016 の抄録)と、原論文の値(Zheng ら 2013)。
 OVERLAP_MIN_PUBLISHED = 0.35
 OVERLAP_ZHENG_2013 = 0.65
@@ -713,6 +716,13 @@ def _run(amp, centres, P0, S, O0, n_iter, pupil_update, pupil_start, alpha, beta
             geo = _fit_led_geometry(cy.astype(float), cx.astype(float), xyz, lam, df, sign, w)
             py_, px_ = _predict_centres(geo, xyz, lam, df, sign)
             cy, cx = np.round(py_).astype(int), np.round(px_).astype(int)
+            out = (off + cy < 0) | (off + cx < 0) | (off + cy + n > N) | (off + cx + n > N)
+            if out.any():
+                j = int(np.flatnonzero(out)[0])
+                raise ValueError("fp_reconstruct: led_correction: the fitted LED geometry puts the pupil of image %d at "
+                                 "(%d, %d) px, outside the high-resolution grid (|centre| <= %d px) — the nominal "
+                                 "led_xyz_mm does not describe the array, or upsample is too small"
+                                 % (j, int(cy[j]), int(cx[j]), N // 2 - n // 2))
         e = acc / max(total, 1e-300)
         hist.append(e)
         steps.append(float(np.linalg.norm(O - O_prev) / max(np.linalg.norm(O), 1e-300)))
@@ -787,12 +797,21 @@ def fp_reconstruct(stack, upsample=None, n_iter=200, pupil_update=True, pupil_st
       残差が下がらない・回数が尽きた・2 本が別の答えに着いた、のどれでも「収束しない」。
       ``on_fail="raise"``(既定)は :class:`FPNotConvergedError`(``MetricContractError``、``record`` に記録)、
       ``"record"`` は記録を返す(``converged=False``)。
+    * ``starts=1`` は一意性の門を通らない(停留だけで ``converged=True`` になりうる): ``uniqueness_checked`` が False に
+      なり、``reason`` に「uniqueness not checked」を足す。
+    * 残差の上限: 収束の判定は残差の**変化**しか見ない。最後の残差が ``RESIDUAL_WARN``(0.1)を超えたら
+      ``residual_warning=True`` にし、``reason`` に警告を足す(判定は変えない)。合成で実測: 収束した復元は 0.004〜0.03
+      (rms 0.12 波の収差を含む)、照明の k と無関係な乱数の像は初期値 1 本で停留して 0.17。
 
     返り値: dict(kind="fp_result", converged, reason, n_iter, residual, residual_history,
     residual_history_starts, step_history(1 周ごとの物体のスペクトルの相対変化), start_disagreement,
     field_second_start, amplitude, phase, field, pupil, pupil_support, na_synthetic
     (= NA_obj + 使った照明の NA の最大、対角の LED を含む), na_synthetic_axis(x・y の方向余弦の最大で取った値 = 軸に
-    沿った棒の分解を決める値), pixel_um, upsample, margin_px, led_centres, led_geometry, intensity_scale)。
+    沿った棒の分解を決める値), pixel_um, upsample, margin_px, led_centres, led_geometry, intensity_scale,
+    uniqueness_checked, residual_warning, residual_ceiling)。
+
+    Raises: ValueError(表が欠けている・値が範囲外、像のエネルギーが 0(露光で割った後、端を除いた全部の像の和)、
+    LED の補正で当てはめた幾何が瞳の中心を高解像の格子の外に置いた)。
     """
     op = "fp_reconstruct"
     if not isinstance(stack, dict) or stack.get("kind") != "fp_stack":
@@ -850,6 +869,9 @@ def fp_reconstruct(stack, upsample=None, n_iter=200, pupil_update=True, pupil_st
     if n - 2 * mg < 8:
         raise ValueError("%s: the images (%d px) are too small for the edge margin %d px" % (op, n, mg))
     inner = slice(mg, n - mg)
+    if not float(np.sum(amp[:, inner, inner] ** 2)) > 0.0:
+        raise ValueError("%s: the images carry no energy (all zero inside the edge margin after dividing by the "
+                         "exposure) — a zero field is a trivial fixed point, not a reconstruction" % op)
     P0, S = _pupil(n, (na / lam) / df, {})
     basis = _pupil_basis(S, p_deg) if (pupil_update and p_deg is not None) else None
     j0 = int(np.argmin(na_ill))
@@ -892,6 +914,14 @@ def fp_reconstruct(stack, upsample=None, n_iter=200, pupil_update=True, pupil_st
                   % (disagree, a_tol))
     else:
         reason = main["reason"] + ("; two starts agree to %.3f" % disagree if disagree is not None else "")
+    checked = len(runs) > 1
+    if not checked:
+        reason += "; uniqueness not checked (starts=1)"
+    last = float(main["hist"][-1]) if main["hist"] else None
+    warn = bool(last is not None and not last <= RESIDUAL_WARN)
+    if warn:
+        reason += ("; warning: the final relative amplitude residual %.3g exceeds RESIDUAL_WARN %.3g (the stop rule only "
+                   "looks at its change)" % (last, RESIDUAL_WARN))
     geo = main["geometry"]
     rec = {
         "kind": "fp_result", "op": op, "converged": bool(converged), "reason": reason,
@@ -910,6 +940,7 @@ def fp_reconstruct(stack, upsample=None, n_iter=200, pupil_update=True, pupil_st
         {"offset_x_mm": float(geo[0]), "offset_y_mm": float(geo[1]),
          "rotation_deg": math.degrees(float(geo[2])), "height_error_mm": float(geo[3])},
         "intensity_scale": main["scale"],
+        "uniqueness_checked": checked, "residual_warning": warn, "residual_ceiling": RESIDUAL_WARN,
     }
     if not converged and on_fail == "raise":
         raise FPNotConvergedError("%s: %s — no image is returned as converged" % (op, reason), rec)

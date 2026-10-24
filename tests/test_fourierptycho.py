@@ -202,6 +202,38 @@ def test_known_phase_sample_fixes_the_k_sign_that_the_residual_cannot():
     assert corr(c) < 0.5
 
 
+def test_zero_energy_images_are_refused():
+    """全部 0 の像は残差 0 の自明な不動点に着く —— 収束と呼ばず ValueError。"""
+    _, st = _small_stack()
+    z = FP.fp_stack_from_images(np.zeros((25, 32, 32)), st["kx"] * 0.532, st["ky"] * 0.532, 0.532, 0.1, 1.3)
+    for starts in (1, 2):
+        with pytest.raises(ValueError, match="energy"):
+            FP.fp_reconstruct(z, starts=starts, on_fail="record")
+
+
+def test_single_start_is_marked_unchecked_and_a_large_residual_warns():
+    _, st = _small_stack()
+    one = FP.fp_reconstruct(st, starts=1)
+    assert one["converged"] and one["uniqueness_checked"] is False and "uniqueness not checked" in one["reason"]
+    two = FP.fp_reconstruct(st)
+    assert two["uniqueness_checked"] is True and "uniqueness not checked" not in two["reason"]
+    assert two["residual_warning"] is False and two["residual_ceiling"] == FP.RESIDUAL_WARN
+    # 照明の k と無関係な乱数の像: 初期値 1 本なら停留して「収束」するが、残差が上限を超えて警告が出る
+    rng = np.random.default_rng(1)
+    g = FP.fp_stack_from_images(rng.random((25, 32, 32)) * 100 + 1, st["kx"] * 0.532, st["ky"] * 0.532, 0.532, 0.1, 1.3)
+    rg = FP.fp_reconstruct(g, starts=1, on_fail="record")
+    assert rg["residual"] > FP.RESIDUAL_WARN and rg["residual_warning"] is True and "warning" in rg["reason"]
+
+
+def test_led_fit_outside_the_grid_is_a_named_error():
+    """LED の幾何の当てはめが瞳の中心を高解像の格子の外へ置いたら、名前つきの ValueError(TypeError で落ちない)。"""
+    _, st = _small_stack()
+    xyz = st["led_xyz_mm"].copy()
+    xyz[-1] = (50.0, 0.0, 0.01)                               # 1 個だけ横 90° 近くに置いた、当てはまらない LED
+    with pytest.raises(ValueError, match="outside the high-resolution grid"):
+        FP.fp_reconstruct(dict(st, led_xyz_mm=xyz), led_correction=True, on_fail="record", n_iter=8, starts=1)
+
+
 def test_reconstruct_rejects_foreign_tables():
     with pytest.raises(ValueError, match="fp_stack"):
         FP.fp_reconstruct({"kind": "oct_ascan"})
