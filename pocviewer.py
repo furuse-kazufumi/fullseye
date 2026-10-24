@@ -14,6 +14,9 @@
 * **タブ** —— 同じ課題を違う方法で試した記録。各タブに **正直なバッジ**・短い説明・実測の数字。
 * **3-D** —— ドラッグで回す / ホイールとピンチで拡大 / 視点ボタン / 再生(ターンテーブル)/ 時間つまみ / 速度。
 * **2-D 動画** —— コマ送り、重ねた枠(真値と推定)、時系列グラフ(しきい値の線つき)。
+* **動く 3-D** —— 物体ごとの剛体姿勢をコマごとに再生(残像の軌跡・点群の時系列・段の区切り・
+  同じ時間軸で並ぶ 2-D の画像列と時系列)。再生 / コマ送り・戻し / 段へのジャンプ / 速度 0.25〜4 倍 /
+  ループ / カメラの追従(平滑化して揺らさない)。
 * **ja / en の切り替え**(既定は ja)。すべての文字列は仕様側が両言語で渡す。
 
 バッジは 3 種に固定する(Fullseye の流儀: 成功だけを並べない):
@@ -34,7 +37,7 @@
         "id": "a", "label": {...}, "badge": "passed" | "limit" | "null",
         "text": {...},                         # 短い正直な説明
         "numbers": [{"label": {...}, "value": "81.7 µm" | {"ja":..., "en":...}}, ...],
-        "kind": "mesh" | "points" | "frames" | "split",
+        "kind": "mesh" | "points" | "frames" | "split" | "anim3d",
         ...ペイロード(下)...
       }]
     }
@@ -50,20 +53,31 @@
     ``frames`` (T,H,W) か (T,H,W,3)(uint8、または 0..1 の float)/ ``dt``(秒)/
     ``boxes`` ``[{label, color, xy (T,2), size [w,h], flag (T,) 任意, flag_color, flag_text}]`` /
     ``series`` ``[{label, color, values (T,), lo, hi, unit, threshold, decimals}]``
+    任意: ``png=True`` でコマを無損失の PNG にして埋める(生の u8 より小さいことが多い。間引かない)。
 ``split`` 前後の画像 + ドラッグで動く分割線
     ``before`` / ``after`` (H,W) か (H,W,3) uint8 / ``label_before`` / ``label_after``
+``anim3d`` 動く 3-D(物体ごとのメッシュは 1 回だけ、コマごとには剛体姿勢だけを持つ)
+    ``t`` (T,) 狭義の増加(秒)/
+    ``bodies`` ``[{name, pos (N,3) 物体のローカル座標, faces (M,3), rgb (3,)|(N,3) か val (N,)(+タブの cbar), label 任意}]`` /
+    ``xyz`` (T,B,3) 位置 / ``quat`` (T,B,4) 姿勢の四元数 **(w, x, y, z)**(正規化して w>=0 に揃える)/
+    任意: ``trails`` ``[{body, offset (3,) | xyz (T,3), color "#rrggbb", tail 秒(0 = 全履歴), label}]`` /
+    ``clouds`` ``[{k コマ, pos (N,3), rgb (N,3) | color, point_size}]``(k から次の雲まで出す)/
+    ``events`` ``[{t, label}]``(段の区切り。ジャンプのボタンになる)/ ``series``(frames と同じ形、長さ T)/
+    ``panes`` ``[{label, frames (T,H,W[,3]), boxes, png=True}]``(同じ時間軸で並べる 2-D)/
+    ``follow``(追従する物体の name。無ければ全物体の重心)/ ``cbar``
 
 共通の任意項目: ``view`` ``{az, el, dist}``(3-D の初期視点。dist は既定距離の倍率)。
 
 データの詰め方 —— **間引かない、量子化する**
 --------------------------------------------
 位置は軸ごとに uint16(最小値と範囲から等間隔。刻み = 範囲 / 65535)、値は uint16(カラーバーの
-範囲でクリップ。色が飽和するのと同じ範囲)、画像と索引は無損失の整数。点を減らすことはしない
+範囲でクリップ。色が飽和するのと同じ範囲)、四元数は int16(刻み 1/32767)、画像と索引は無損失の整数
+(画像は無損失の PNG も選べる)。点を減らすことはしない
 (見せたい欠陥を消さないため)。同じ配列は内容のハッシュで 1 本にまとめる(タブ間で位置を共有)。
 :func:`_decode_array` が Python 側の逆変換で、テストは「戻した値が量子化の刻みの半分以内」を確かめる。
 
-★fail-closed: NaN / inf、両言語がそろわない文字列、未知のバッジ・種類、範囲外の索引は、
-黙って通さず ``ValueError`` で止める。
+★fail-closed: NaN / inf、両言語がそろわない文字列、未知のバッジ・種類、範囲外の索引、
+ノルム 0 の四元数、コマ数 T の不一致、未知の色指定は、黙って通さず ``ValueError`` で止める。
 """
 from __future__ import annotations
 
@@ -72,7 +86,10 @@ import base64
 import hashlib
 import html
 import json
+import re
+import struct
 import sys
+import zlib
 from pathlib import Path
 from typing import Any
 
@@ -83,7 +100,7 @@ LANGS = ("ja", "en", "zh", "tw", "ko", "de", "hi", "fr")
 #: 言語の自称(切り替えの選択肢に出す)。
 LANG_NAMES = {"ja": "日本語", "en": "English", "zh": "简体中文", "tw": "繁體中文", "ko": "한국어",
               "de": "Deutsch", "hi": "हिन्दी", "fr": "Français"}
-KINDS = ("mesh", "points", "frames", "split")
+KINDS = ("mesh", "points", "frames", "split", "anim3d")
 
 
 def _t(ja, en, zh, tw, ko, de, hi, fr):
@@ -133,6 +150,18 @@ UI: dict[str, dict[str, str]] = {
     "below": _t("しきい値未満", "below threshold", "低于阈值", "低於閾值", "임계값 미만",
                 "unter Schwelle", "सीमा से नीचे", "sous le seuil"),
     "azimuth": _t("方位", "azimuth", "方位角", "方位角", "방위각", "Azimut", "दिगंश", "azimut"),
+    "back1": _t("◀ 1 コマ戻す", "◀ 1 frame back", "◀ 后退 1 帧", "◀ 倒退 1 格", "◀ 1 프레임 뒤로",
+                "◀ 1 Bild zurück", "◀ 1 फ़्रेम पीछे", "◀ 1 image en arrière"),
+    "fwd1": _t("1 コマ進める ▶", "1 frame forward ▶", "前进 1 帧 ▶", "前進 1 格 ▶", "1 프레임 앞으로 ▶",
+               "1 Bild vor ▶", "1 फ़्रेम आगे ▶", "1 image en avant ▶"),
+    "evprev": _t("⏮ 前の段", "⏮ Previous stage", "⏮ 上一阶段", "⏮ 上一階段", "⏮ 이전 단계",
+                 "⏮ Vorherige Phase", "⏮ पिछला चरण", "⏮ Étape précédente"),
+    "evnext": _t("次の段 ⏭", "Next stage ⏭", "下一阶段 ⏭", "下一階段 ⏭", "다음 단계 ⏭",
+                 "Nächste Phase ⏭", "अगला चरण ⏭", "Étape suivante ⏭"),
+    "follow": _t("カメラを追従させる", "Camera follows", "镜头跟随物体", "鏡頭跟隨物體", "카메라가 따라감",
+                 "Kamera folgt", "कैमरा साथ चले", "Caméra qui suit"),
+    "stage": _t("段", "stage", "阶段", "階段", "단계", "Phase", "चरण", "étape"),
+    "bodies": _t("物体", "bodies", "个物体", "個物體", "개 물체", "Körper", "वस्तुएँ", "objets"),
 }
 
 _MAXV = {"q8": 255, "q16": 65535}
@@ -157,6 +186,8 @@ def _encode_array(a, t: str = "q16", lo=None, hi=None, per_axis: bool = False) -
         復元の誤差は **刻み (hi-lo)/最大値 の半分以内**(クリップした値を除く)。
       * ``"u8"`` / ``"u16"`` / ``"u32"`` —— 整数を無損失で。
       * ``"f32"`` —— float32 のまま。
+      * ``"s16"`` —— -1..1 の浮動小数を int16 へ(``rint(x * 32767)``)。四元数の成分用。刻みは 1/32767。
+      * ``"png"`` —— (T,H,W) / (T,H,W,3) の uint8 をコマごとの無損失 PNG(base64 の列)に。
     """
     a = np.asarray(a)
     shape = list(a.shape)
@@ -193,6 +224,18 @@ def _encode_array(a, t: str = "q16", lo=None, hi=None, per_axis: bool = False) -
     elif t == "f32":
         raw = np.ascontiguousarray(_finite(a, "float32 の配列").astype(np.float32)).tobytes()
         rec = {"t": t, "shape": shape}
+    elif t == "s16":
+        x = _finite(a, "s16 で詰める配列")
+        if x.size and np.abs(x).max() > 1.0 + 1e-9:
+            raise ValueError("s16 で詰めるのは -1..1 の値だけ(最大 %r)" % float(np.abs(x).max()))
+        raw = np.rint(np.clip(x, -1.0, 1.0) * 32767.0).astype("<i2").tobytes()
+        rec = {"t": t, "shape": shape}
+    elif t == "png":
+        u = np.asarray(a)
+        if u.dtype != np.uint8 or u.ndim not in (3, 4) or (u.ndim == 4 and u.shape[3] != 3) or len(u) == 0:
+            raise ValueError("png で詰めるのは (T,H,W) か (T,H,W,3) の uint8")
+        return {"t": t, "shape": shape,
+                "png": [base64.b64encode(_png_encode(f)).decode("ascii") for f in u]}
     else:
         raise ValueError("未知の詰め方: %r" % t)
     rec["b64"] = base64.b64encode(raw).decode("ascii")
@@ -202,8 +245,12 @@ def _encode_array(a, t: str = "q16", lo=None, hi=None, per_axis: bool = False) -
 def _decode_array(rec: dict) -> np.ndarray:
     """:func:`_encode_array` の逆。量子化した配列は float64 で返る(JS 側と同じ式)。"""
     t = rec["t"]
-    raw = base64.b64decode(rec["b64"])
     shape = tuple(rec["shape"])
+    if t == "png":
+        return np.stack([_png_decode(base64.b64decode(x)) for x in rec["png"]]).reshape(shape)
+    raw = base64.b64decode(rec["b64"])
+    if t == "s16":
+        return (np.frombuffer(raw, dtype="<i2").astype(np.float64) / 32767.0).reshape(shape)
     if t in _MAXV:
         q = np.frombuffer(raw, dtype=np.uint8 if t == "q8" else np.dtype("<u2")).astype(np.float64)
         lo = np.asarray(rec["lo"], float)
@@ -218,8 +265,88 @@ def _decode_array(rec: dict) -> np.ndarray:
 
 def _quant_step(rec: dict) -> np.ndarray:
     """量子化した配列の刻み(軸ごと)。復元誤差の上限は刻みの半分。"""
+    if rec["t"] == "s16":
+        return np.array([1.0 / 32767.0])
     maxv = _MAXV[rec["t"]]
     return (np.asarray(rec["hi"], float) - np.asarray(rec["lo"], float)) / maxv
+
+
+# --------------------------------------------------------------------------- #
+# 無損失 PNG(標準ライブラリの zlib だけ。間引かない・色を減らさない)            #
+# --------------------------------------------------------------------------- #
+_PNG_SIG = b"\x89PNG\r\n\x1a\n"
+
+
+def _png_chunk(tag: bytes, body: bytes) -> bytes:
+    return struct.pack(">I", len(body)) + tag + body + struct.pack(">I", zlib.crc32(tag + body) & 0xFFFFFFFF)
+
+
+def _png_encode(img) -> bytes:
+    """(H,W) か (H,W,3) の uint8 を無損失の PNG のバイト列にする。
+
+    行ごとのフィルタは None / Sub / Up から「符号つきの大きさの和が最小」のものを選ぶ(PNG 仕様の
+    推奨ヒューリスティク)。3 種に絞るのは、Python 側の逆変換(:func:`_png_decode`)を numpy で
+    素直に書けるようにするため(ブラウザはどのフィルタでも読む)。
+    """
+    a = np.asarray(img)
+    if a.dtype != np.uint8 or a.ndim not in (2, 3) or (a.ndim == 3 and a.shape[2] != 3) or a.size == 0:
+        raise ValueError("PNG にする画像は (H,W) か (H,W,3) の uint8")
+    H, W = a.shape[:2]
+    ch = 1 if a.ndim == 2 else 3
+    rows = a.reshape(H, W * ch).astype(np.int16)
+    sub = rows.copy()
+    sub[:, ch:] -= rows[:, :-ch]
+    up = rows.copy()
+    up[1:] -= rows[:-1]
+    cand = np.stack([rows, sub, up]) & 0xFF                          # (3,H,W*ch) 0..255
+    cost = np.minimum(cand, 256 - cand).sum(axis=2)                  # (3,H)
+    pick = cost.argmin(axis=0)
+    chosen = cand[pick, np.arange(H)]
+    raw = np.concatenate([pick.astype(np.uint8)[:, None], chosen.astype(np.uint8)], axis=1).tobytes()
+    ihdr = struct.pack(">IIBBBBB", W, H, 8, 0 if ch == 1 else 2, 0, 0, 0)
+    return (_PNG_SIG + _png_chunk(b"IHDR", ihdr) + _png_chunk(b"IDAT", zlib.compress(raw, 9))
+            + _png_chunk(b"IEND", b""))
+
+
+def _png_decode(data: bytes) -> np.ndarray:
+    """:func:`_png_encode` の逆(8 bit のグレー / RGB、フィルタ 0/1/2、CRC を検査)。"""
+    if data[:8] != _PNG_SIG:
+        raise ValueError("PNG の署名が無い")
+    pos, ihdr, idat = 8, None, []
+    while pos + 12 <= len(data):
+        n = struct.unpack(">I", data[pos:pos + 4])[0]
+        tag, body = data[pos + 4:pos + 8], data[pos + 8:pos + 8 + n]
+        if struct.unpack(">I", data[pos + 8 + n:pos + 12 + n])[0] != zlib.crc32(tag + body) & 0xFFFFFFFF:
+            raise ValueError("PNG の CRC が合わない(%r)" % tag)
+        if tag == b"IHDR":
+            ihdr = struct.unpack(">IIBBBBB", body)
+        elif tag == b"IDAT":
+            idat.append(body)
+        elif tag == b"IEND":
+            break
+        pos += 12 + n
+    if ihdr is None:
+        raise ValueError("PNG に IHDR が無い")
+    W, H, depth, ctype, _c, _f, inter = ihdr
+    if depth != 8 or ctype not in (0, 2) or inter:
+        raise ValueError("この復号器は 8 bit のグレー / RGB、インタレース無しだけ")
+    ch = 1 if ctype == 0 else 3
+    raw = np.frombuffer(zlib.decompress(b"".join(idat)), np.uint8).reshape(H, 1 + W * ch)
+    out = np.zeros((H, W * ch), np.uint8)
+    prev = np.zeros(W * ch, np.int64)
+    for y in range(H):
+        f, row = int(raw[y, 0]), raw[y, 1:].astype(np.int64)
+        if f == 0:
+            cur = row
+        elif f == 1:
+            cur = np.cumsum(row.reshape(W, ch), axis=0).ravel() % 256
+        elif f == 2:
+            cur = (row + prev) % 256
+        else:
+            raise ValueError("この復号器はフィルタ 0/1/2 だけ(書く側と同じ): %d" % f)
+        out[y] = cur
+        prev = cur
+    return out.reshape(H, W) if ch == 1 else out.reshape(H, W, 3)
 
 
 class _Store:
@@ -320,6 +447,278 @@ def _as_u8(a, where: str) -> np.ndarray:
     return np.rint(np.clip(x, 0.0, 1.0) * 255.0).astype(np.uint8)
 
 
+def _pack_boxes(raw, T: int, where: str, ctx: _Ctx) -> list:
+    """2-D の画像列に重ねる枠(``xy`` (T,2)・任意の ``flag`` (T,))を検査して詰める。"""
+    boxes = []
+    for j, b in enumerate(raw or []):
+        xy = _finite(b.get("xy"), where + ".boxes.xy")
+        if xy.shape != (T, 2):
+            raise ValueError("%s: boxes[%d].xy は (T,2)" % (where, j))
+        box = {"label": _bi(b.get("label"), where + ".boxes.label", ctx), "color": str(b.get("color", "#4fc3f7")),
+               "xy": [[round(float(x), 3), round(float(y), 3)] for x, y in xy],
+               "size": [float(b["size"][0]), float(b["size"][1])]}
+        if b.get("flag") is not None:
+            fl = np.asarray(b["flag"]).astype(bool)
+            if fl.shape != (T,):
+                raise ValueError("%s: boxes[%d].flag は (T,)" % (where, j))
+            box["flag"] = [bool(x) for x in fl]
+            box["flag_color"] = str(b.get("flag_color", "#ff5252"))
+            if b.get("flag_text") is not None:
+                box["flag_text"] = _bi(b["flag_text"], where + ".boxes.flag_text", ctx)
+        boxes.append(box)
+    return boxes
+
+
+def _pack_series(raw, T: int, where: str, ctx: _Ctx) -> list:
+    """時系列グラフ(``values`` (T,)・``lo`` < ``hi``・任意の ``threshold``)を検査して詰める。"""
+    series = []
+    for j, s in enumerate(raw or []):
+
+        v = np.asarray(s.get("values"), dtype=np.float64)
+        if v.shape != (T,):
+            raise ValueError("%s: series[%d].values は (T,)" % (where, j))
+        se = {"label": _bi(s.get("label"), where + ".series.label", ctx), "color": str(s.get("color", "#ffb74d")),
+              "values": _clean_list(v), "lo": float(s.get("lo", 0.0)), "hi": float(s.get("hi", 1.0)),
+              "unit": str(s.get("unit", "")), "decimals": int(s.get("decimals", 3))}
+        if not se["hi"] > se["lo"]:
+            raise ValueError("%s: series[%d] の lo < hi" % (where, j))
+        if s.get("threshold") is not None:
+            se["threshold"] = float(s["threshold"])
+        series.append(se)
+    return series
+
+
+_HEX = re.compile(r"#[0-9a-fA-F]{6}\Z")
+_BODY_KEYS = frozenset({"name", "label", "pos", "faces", "rgb", "val"})
+_TRAIL_KEYS = frozenset({"body", "offset", "xyz", "color", "tail", "label"})
+_CLOUD_KEYS = frozenset({"k", "pos", "rgb", "color", "point_size"})
+_PANE_KEYS = frozenset({"label", "frames", "boxes", "png"})
+_EVENT_KEYS = frozenset({"t", "label"})
+
+
+def _hexcolor(c, where: str) -> str:
+    if not isinstance(c, str) or not _HEX.match(c):
+        raise ValueError("%s: 色は '#rrggbb'(未知の色指定は通さない): %r" % (where, c))
+    return c
+
+
+def _keys(d, allowed, where: str) -> dict:
+    if not isinstance(d, dict):
+        raise ValueError("%s: dict でなければならない(%s)" % (where, type(d).__name__))
+    extra = sorted(set(d) - allowed)
+    if extra:
+        raise ValueError("%s: 未知の鍵 %s(使えるのは %s)" % (where, extra, sorted(allowed)))
+    return d
+
+
+def _real(x, where: str) -> float:
+    if isinstance(x, bool) or not isinstance(x, (int, float, np.integer, np.floating)) or not np.isfinite(x):
+        raise ValueError("%s: 有限の数でなければならない: %r" % (where, x))
+    return float(x)
+
+
+def _faces(raw, n: int, where: str) -> np.ndarray:
+    f = np.asarray(raw)
+    if f.ndim != 2 or f.shape[1] != 3 or len(f) == 0 or f.dtype.kind not in "iuf":
+        raise ValueError("%s: faces は (M,3) の整数" % where)
+    if f.dtype.kind == "f" and (not np.isfinite(f).all() or not np.array_equal(f, np.rint(f))):
+        raise ValueError("%s: faces が整数でない" % where)
+    if f.min() < 0 or f.max() >= n:
+        raise ValueError("%s: faces の索引が範囲外(頂点 %d 個)" % (where, n))
+    return f.astype(np.int64)
+
+
+def _quat_canon(raw, where: str) -> np.ndarray:
+    """四元数 (…,4) = (w,x,y,z) を正規化し、符号を揃える(w>0、w=0 なら最初の非零成分を正)。
+
+    q と -q は同じ回転なので、符号を揃えても姿勢は変わらない(量子化の前に揃えると、同じ姿勢が
+    同じ整数になる)。ノルムが 0 の四元数は回転を表さないので ``ValueError``。
+    """
+    q = _finite(raw, where)
+    n = np.linalg.norm(q, axis=-1)
+    bad = np.argwhere(~(n > 1e-12))
+    if bad.size:
+        raise ValueError("%s: 四元数のノルムが 0(位置 %s)—— 回転を表さない" % (where, tuple(int(v) for v in bad[0])))
+    q = q / n[..., None]
+    sg = np.sign(q[..., 0])
+    for k in (1, 2, 3):
+        sg = np.where(sg == 0, np.sign(q[..., k]), sg)
+    return q * sg[..., None]
+
+
+def _quat_matrix(q: np.ndarray) -> np.ndarray:
+    """単位四元数 (…,4) = (w,x,y,z) → 回転行列 (…,3,3)(JS の quatMat と同じ式)。"""
+    w, x, y, z = np.moveaxis(np.asarray(q, float), -1, 0)
+    m = np.stack([1 - 2 * (y * y + z * z), 2 * (x * y - w * z), 2 * (x * z + w * y),
+                  2 * (x * y + w * z), 1 - 2 * (x * x + z * z), 2 * (y * z - w * x),
+                  2 * (x * z - w * y), 2 * (y * z + w * x), 1 - 2 * (x * x + y * y)], axis=-1)
+    return m.reshape(np.shape(q)[:-1] + (3, 3))
+
+
+def _pack_anim3d(tab: dict, out: dict, store: _Store, where: str, ctx: _Ctx) -> None:
+    """kind "anim3d" を検査して詰める(物体のメッシュは 1 回、コマごとは姿勢だけ)。"""
+    t = _finite(tab.get("t"), where + ".t")
+    if t.ndim != 1 or len(t) < 1:
+        raise ValueError("%s: t は (T,)" % where)
+    if len(t) > 1 and not (np.diff(t) > 0).all():
+        raise ValueError("%s: t は狭義の増加でなければならない" % where)
+    T = len(t)
+    out["t"] = [float(v) for v in t]
+    bodies = tab.get("bodies")
+    if not isinstance(bodies, (list, tuple)) or not bodies:
+        raise ValueError("%s: bodies が空" % where)
+    cb = _cbar(tab["cbar"], where, ctx) if tab.get("cbar") is not None else None
+    if cb is not None:
+        out["cbar"] = cb
+    names: list = []
+    packed = []
+    for j, b in enumerate(bodies):
+        wb = "%s.bodies[%d]" % (where, j)
+        _keys(b, _BODY_KEYS, wb)
+        name = b.get("name")
+        if not isinstance(name, str) or not name.strip():
+            raise ValueError("%s: name(文字列)が要る" % wb)
+        if name in names:
+            raise ValueError("%s: name が重複: %r" % (wb, name))
+        names.append(name)
+        if b.get("pos") is None:
+            raise ValueError("%s: pos が要る" % wb)
+        pos = _finite(b["pos"], wb + ".pos")
+        if pos.ndim != 2 or pos.shape[1] != 3 or len(pos) == 0:
+            raise ValueError("%s: pos は (N,3)" % wb)
+        faces = _faces(b.get("faces"), len(pos), wb)
+        pb: dict[str, Any] = {"name": name, "n": int(len(pos)), "nf": int(len(faces)),
+                              "pos": store.put(pos, "q16", per_axis=True),
+                              "faces": store.put(faces, "u32" if len(pos) > 65535 else "u16")}
+        if b.get("label") is not None:
+            pb["label"] = _bi(b["label"], wb + ".label", ctx)
+        has_rgb, has_val = b.get("rgb") is not None, b.get("val") is not None
+        if has_rgb == has_val:
+            raise ValueError("%s: 色は rgb か val(+タブの cbar)のどちらか 1 つ" % wb)
+        if has_rgb:
+            rgb = np.asarray(b["rgb"])
+            if rgb.shape == (3,):
+                pb["rgb1"] = [int(v) for v in _as_u8(rgb, wb + ".rgb")]
+            elif rgb.shape == pos.shape:
+                pb["rgb"] = store.put(_as_u8(rgb, wb + ".rgb"), "u8")
+            else:
+                raise ValueError("%s: rgb は (3,) か (N,3)" % wb)
+        else:
+            if cb is None:
+                raise ValueError("%s: val を使うならタブに cbar が要る" % wb)
+            val = _finite(b["val"], wb + ".val")
+            if val.shape != (len(pos),):
+                raise ValueError("%s: val は (N,)" % wb)
+            pb["val"] = store.put(val, "q16", lo=cb["lo"], hi=cb["hi"])
+        packed.append(pb)
+    out["bodies"] = packed
+    B = len(packed)
+    xyz = _finite(tab.get("xyz"), where + ".xyz")
+    if xyz.shape != (T, B, 3):
+        raise ValueError("%s: xyz は (T,B,3) = (%d,%d,3) でなければならない(実際 %s)—— T の不一致"
+                         % (where, T, B, xyz.shape))
+    qraw = np.asarray(tab.get("quat"), dtype=np.float64)
+    if qraw.shape != (T, B, 4):
+        raise ValueError("%s: quat は (T,B,4) = (%d,%d,4) でなければならない(実際 %s)—— T の不一致"
+                         % (where, T, B, qraw.shape))
+    quat = _quat_canon(qraw, where + ".quat")
+    out["xyz"] = store.put(xyz, "q16", per_axis=True)
+    out["quat"] = store.put(quat, "s16")
+    if tab.get("follow") is not None:
+        if tab["follow"] not in names:
+            raise ValueError("%s: follow の物体 %r が bodies に無い" % (where, tab["follow"]))
+        out["follow"] = names.index(tab["follow"])
+    trails, R = [], None
+    for j, tr in enumerate(tab.get("trails") or []):
+        wt = "%s.trails[%d]" % (where, j)
+        _keys(tr, _TRAIL_KEYS, wt)
+        if (tr.get("body") is None) == (tr.get("xyz") is None):
+            raise ValueError("%s: body(+offset)か xyz のどちらか 1 つ" % wt)
+        if tr.get("body") is not None:
+            if tr["body"] not in names:
+                raise ValueError("%s: 物体 %r が bodies に無い" % (wt, tr["body"]))
+            k = names.index(tr["body"])
+            off = _finite(tr.get("offset", (0.0, 0.0, 0.0)), wt + ".offset")
+            if off.shape != (3,):
+                raise ValueError("%s: offset は (3,)" % wt)
+            if R is None:
+                R = _quat_matrix(quat)
+            p = xyz[:, k] + R[:, k] @ off
+        else:
+            p = _finite(tr["xyz"], wt + ".xyz")
+            if p.shape != (T, 3):
+                raise ValueError("%s: xyz は (T,3) = (%d,3)—— T の不一致" % (wt, T))
+        tail = _real(tr.get("tail", 0.0), wt + ".tail")
+        if tail < 0:
+            raise ValueError("%s: tail は 0 以上(0 = 全履歴)" % wt)
+        e = {"xyz": store.put(p, "q16", per_axis=True), "color": _hexcolor(tr.get("color", "#ffd54f"), wt),
+             "tail": tail}
+        if tr.get("label") is not None:
+            e["label"] = _bi(tr["label"], wt + ".label", ctx)
+        trails.append(e)
+    out["trails"] = trails
+    clouds, lastk = [], -1
+    for j, c in enumerate(tab.get("clouds") or []):
+        wc = "%s.clouds[%d]" % (where, j)
+        _keys(c, _CLOUD_KEYS, wc)
+        k = c.get("k")
+        if isinstance(k, bool) or not isinstance(k, (int, np.integer)) or not (0 <= int(k) < T):
+            raise ValueError("%s: k はコマの番号 0..%d の整数: %r" % (wc, T - 1, k))
+        if int(k) <= lastk:
+            raise ValueError("%s: k は狭義の増加(雲は時刻順)" % wc)
+        lastk = int(k)
+        if c.get("pos") is None:
+            raise ValueError("%s: pos が要る" % wc)
+        pos = _finite(c["pos"], wc + ".pos")
+        if pos.ndim != 2 or pos.shape[1] != 3 or len(pos) == 0:
+            raise ValueError("%s: pos は (N,3)" % wc)
+        e = {"k": int(k), "n": int(len(pos)), "pos": store.put(pos, "q16", per_axis=True)}
+        if c.get("rgb") is not None and c.get("color") is not None:
+            raise ValueError("%s: rgb と color は片方だけ" % wc)
+        if c.get("rgb") is not None:
+            rgb = np.asarray(c["rgb"])
+            if rgb.shape != pos.shape:
+                raise ValueError("%s: rgb は pos と同じ形" % wc)
+            e["rgb"] = store.put(_as_u8(rgb, wc + ".rgb"), "u8")
+        else:
+            e["color"] = _hexcolor(c.get("color", "#80cbc4"), wc)
+        if c.get("point_size") is not None:
+            ps = _real(c["point_size"], wc + ".point_size")
+            if ps <= 0:
+                raise ValueError("%s: point_size は正" % wc)
+            e["point_size"] = ps
+        clouds.append(e)
+    out["clouds"] = clouds
+    evs = []
+    span_eps = 1e-9 * max(1.0, float(np.abs(t).max()))
+    for j, e in enumerate(tab.get("events") or []):
+        we = "%s.events[%d]" % (where, j)
+        _keys(e, _EVENT_KEYS, we)
+        et = _real(e.get("t"), we + ".t")
+        if et < t[0] - span_eps or et > t[-1] + span_eps:
+            raise ValueError("%s: 段の時刻 %r が t の範囲 [%r, %r] の外" % (we, et, float(t[0]), float(t[-1])))
+        k = min(T - 1, int(np.searchsorted(t, et - span_eps, side="left")))
+        evs.append({"t": et, "k": k, "label": _bi(e.get("label"), we + ".label", ctx)})
+    evs.sort(key=lambda x: x["t"])
+    out["events"] = evs
+    out["series"] = _pack_series(tab.get("series") or [], T, where, ctx)
+    panes = []
+    for j, p in enumerate(tab.get("panes") or []):
+        wp = "%s.panes[%d]" % (where, j)
+        _keys(p, _PANE_KEYS, wp)
+        if p.get("frames") is None:
+            raise ValueError("%s: frames が要る" % wp)
+        fr = _as_u8(p["frames"], wp + ".frames")
+        if fr.ndim not in (3, 4) or (fr.ndim == 4 and fr.shape[3] != 3):
+            raise ValueError("%s: frames は (T,H,W) か (T,H,W,3)" % wp)
+        if len(fr) != T:
+            raise ValueError("%s: frames のコマ数 %d が t の %d と違う—— T の不一致" % (wp, len(fr), T))
+        panes.append({"label": _bi(p.get("label"), wp + ".label", ctx),
+                      "frames": store.put(fr, "png" if p.get("png", True) else "u8"),
+                      "boxes": _pack_boxes(p.get("boxes") or [], T, wp, ctx)})
+    out["panes"] = panes
+
+
 def _pack_tab(tab: dict, store: _Store, idx: int, ctx: _Ctx) -> dict:
     where = "tabs[%d]" % idx
     tid = str(tab.get("id", ""))
@@ -383,40 +782,12 @@ def _pack_tab(tab: dict, store: _Store, idx: int, ctx: _Ctx) -> dict:
         if fr.ndim not in (3, 4) or (fr.ndim == 4 and fr.shape[3] != 3) or len(fr) < 1:
             raise ValueError("%s: frames は (T,H,W) か (T,H,W,3)" % where)
         T = len(fr)
-        out["frames"] = store.put(fr, "u8")
+        out["frames"] = store.put(fr, "png" if tab.get("png") else "u8")
         out["dt"] = float(tab.get("dt", 0.2))
-        boxes = []
-        for j, b in enumerate(tab.get("boxes", [])):
-            xy = _finite(b.get("xy"), where + ".boxes.xy")
-            if xy.shape != (T, 2):
-                raise ValueError("%s: boxes[%d].xy は (T,2)" % (where, j))
-            box = {"label": _bi(b.get("label"), where + ".boxes.label", ctx), "color": str(b.get("color", "#4fc3f7")),
-                   "xy": [[round(float(x), 3), round(float(y), 3)] for x, y in xy],
-                   "size": [float(b["size"][0]), float(b["size"][1])]}
-            if b.get("flag") is not None:
-                fl = np.asarray(b["flag"]).astype(bool)
-                if fl.shape != (T,):
-                    raise ValueError("%s: boxes[%d].flag は (T,)" % (where, j))
-                box["flag"] = [bool(x) for x in fl]
-                box["flag_color"] = str(b.get("flag_color", "#ff5252"))
-                if b.get("flag_text") is not None:
-                    box["flag_text"] = _bi(b["flag_text"], where + ".boxes.flag_text", ctx)
-            boxes.append(box)
-        out["boxes"] = boxes
-        series = []
-        for j, s in enumerate(tab.get("series", [])):
-            v = np.asarray(s.get("values"), dtype=np.float64)
-            if v.shape != (T,):
-                raise ValueError("%s: series[%d].values は (T,)" % (where, j))
-            se = {"label": _bi(s.get("label"), where + ".series.label", ctx), "color": str(s.get("color", "#ffb74d")),
-                  "values": _clean_list(v), "lo": float(s.get("lo", 0.0)), "hi": float(s.get("hi", 1.0)),
-                  "unit": str(s.get("unit", "")), "decimals": int(s.get("decimals", 3))}
-            if not se["hi"] > se["lo"]:
-                raise ValueError("%s: series[%d] の lo < hi" % (where, j))
-            if s.get("threshold") is not None:
-                se["threshold"] = float(s["threshold"])
-            series.append(se)
-        out["series"] = series
+        out["boxes"] = _pack_boxes(tab.get("boxes", []), T, where, ctx)
+        out["series"] = _pack_series(tab.get("series", []), T, where, ctx)
+    elif kind == "anim3d":
+        _pack_anim3d(tab, out, store, where, ctx)
     else:  # split
         b, a = _as_u8(tab.get("before"), where + ".before"), _as_u8(tab.get("after"), where + ".after")
         if b.shape != a.shape or b.ndim not in (2, 3) or (b.ndim == 3 and b.shape[2] != 3):
@@ -510,6 +881,15 @@ _CSS = """
   #plot { width:calc(100% - 36px); margin:4px 18px; height:150px; }
   .hint { padding:2px 18px 10px; color:#7d8b99; font-size:12.5px; line-height:1.8; }
   .credit { padding:0 18px 26px; color:#6b7886; font-size:12px; line-height:1.7; }
+  #wrap.a3w { height:min(52vh,480px); }
+  #rate { padding:3px 6px; font-size:13px; background:var(--panel); color:var(--fg); border:1px solid var(--line); border-radius:6px; }
+  .evs { display:flex; flex-wrap:wrap; gap:6px; padding:0 18px 6px; }
+  .evs button { padding:4px 10px; font-size:12.5px; }
+  .evs button.on { background:#2c6fb5; border-color:#2c6fb5; color:#fff; }
+  .panes { display:flex; flex-wrap:wrap; gap:10px; margin:6px 18px; }
+  .pane { flex:1 1 220px; min-width:0; }
+  .pane .pl { font-size:12.5px; color:var(--dim); margin-bottom:3px; }
+  .pane canvas { width:100%; height:auto; max-height:36vh; object-fit:contain; image-rendering:pixelated; }
 """
 
 _BODY = """
@@ -528,11 +908,17 @@ _BODY = """
 </div>
 <div class="ctl" id="ctl">
   <button id="play" class="pri"></button>
+  <button id="b1" class="a3" style="display:none"></button><button id="f1" class="a3" style="display:none"></button>
+  <button id="evp" class="a3" style="display:none"></button><button id="evn" class="a3" style="display:none"></button>
   <input type="range" id="scrub" min="0" max="1000" value="0">
   <span class="read" id="tlabel"></span>
   <label class="read" id="spl"><span id="spd"></span> <input type="range" id="speed" min="10" max="300" value="100" style="width:80px;vertical-align:middle"></label>
+  <label class="read a3" id="rtl" style="display:none"><span id="rtt"></span> <select id="rate"><option value="0.25">&times;0.25</option><option value="0.5">&times;0.5</option><option value="1" selected>&times;1</option><option value="2">&times;2</option><option value="4">&times;4</option></select></label>
   <label class="read" id="lpl"><input type="checkbox" id="loop" checked> <span id="lpt"></span></label>
+  <label class="read a3" id="fwl" style="display:none"><input type="checkbox" id="follow"> <span id="fwt"></span></label>
 </div>
+<div class="evs" id="evs" style="display:none"></div>
+<div class="panes" id="panes" style="display:none"></div>
 <canvas id="plot" style="display:none"></canvas>
 <div class="hint" id="hint"></div>
 <div class="credit" id="credit"></div>
@@ -556,13 +942,16 @@ const get = () => tabs.find(t => t.id === cur);
 const cache = {};
 function arr(key){
   if (cache[key]) return cache[key];
-  const rec = D.arrays[key], b = atob(rec.b64), u = new Uint8Array(b.length);
+  const rec = D.arrays[key];
+  if (rec.t === 'png') return cache[key] = {a: null, shape: rec.shape, png: rec.png};   /* コマごとの PNG は pngImg で読む */
+  const b = atob(rec.b64), u = new Uint8Array(b.length);
   for (let i = 0; i < b.length; i++) u[i] = b.charCodeAt(i);
   let r;
   switch (rec.t) {
     case 'u8': case 'q8': r = u; break;
     case 'u16': case 'q16': r = new Uint16Array(u.buffer); break;
     case 'u32': r = new Uint32Array(u.buffer); break;
+    case 's16': r = new Int16Array(u.buffer); break;
     default: r = new Float32Array(u.buffer);
   }
   let out = r;
@@ -571,6 +960,7 @@ function arr(key){
     out = new Float64Array(r.length);
     for (let i = 0; i < r.length; i++) { const a = i % nax; out[i] = rec.lo[a] + r[i] * (rec.hi[a] - rec.lo[a]) / maxv; }
   }
+  if (rec.t === 's16') { out = new Float64Array(r.length); for (let i = 0; i < r.length; i++) out[i] = r[i] / 32767; }
   return cache[key] = {a: out, shape: rec.shape};
 }
 
@@ -631,6 +1021,7 @@ function bbox(P){
 }
 function centred(P, ctr){ const o = new Float32Array(P.length); for (let i = 0; i < P.length; i++) o[i] = P[i] - ctr[i % 3]; return o; }
 function scene3d(tab){
+  if (tab.kind === 'anim3d') return sceneAnim(tab);
   if (scenes[tab.id]) return scenes[tab.id];
   const P = arr(tab.pos).a, bb = bbox(P), n = tab.n;
   const rad = 0.5 * Math.hypot(bb.hi[0]-bb.lo[0], bb.hi[1]-bb.lo[1], bb.hi[2]-bb.lo[2]) || 1;
@@ -661,6 +1052,7 @@ function scene3d(tab){
 
 /* ---------- 状態 ---------- */
 let az = -1.0, el = 0.5, dist = 3, playing = false, frame = 0, last = performance.now(), dirty = true;
+let atime = 0;   /* anim3d の再生時刻(秒、t と同じ尺度) */
 let splitX = 0.5;
 const PRESETS = {front:[-Math.PI/2, 0.08, 1], side:[0, 0.08, 1], iso:[-1.0, 0.5, 1], top:[-Math.PI/2, 1.5, 1]};
 function dist0(S){ return S.rad * 2.0; }
@@ -677,6 +1069,7 @@ function resize3d(){
   gl.viewport(0, 0, cv.width, cv.height);
 }
 function draw3d(tab){
+  if (tab.kind === 'anim3d') { drawAnim(tab); return; }
   const S = scene3d(tab);
   if (S.fail || !PP) { showErr(U('nogl')); return; }
   resize3d();
@@ -715,9 +1108,251 @@ function draw3d(tab){
   $('scrub').value = String(Math.round(deg / 360 * 1000));
 }
 
+/* ---------- 動く 3-D(anim3d)。物体の頂点は GPU に 1 回だけ上げ、コマごとには姿勢(model 行列)だけを渡す ---------- */
+let AP = null, LP = null;
+if (gl) {
+  AP = prog('attribute vec3 a_p;attribute vec3 a_n;attribute vec3 a_c;uniform mat4 u_vp;uniform mat4 u_m;varying vec3 v_n;varying vec3 v_c;'+
+    'void main(){gl_Position=u_vp*u_m*vec4(a_p,1.0);v_n=(u_m*vec4(a_n,0.0)).xyz;v_c=a_c;}',
+    'precision mediump float;varying vec3 v_n;varying vec3 v_c;uniform vec3 u_l;'+
+    'void main(){float d=abs(dot(normalize(v_n),u_l))*0.65+0.38;gl_FragColor=vec4(v_c*d,1.0);}');
+  LP = prog('attribute vec3 a_p;attribute float a_s;uniform mat4 u_vp;uniform float u_tc;uniform float u_tail;varying float v_a;'+
+    'void main(){gl_Position=u_vp*vec4(a_p,1.0);v_a=u_tail>0.0?clamp(1.0-(u_tc-a_s)/u_tail,0.0,1.0):1.0;}',
+    'precision mediump float;uniform vec3 u_col;varying float v_a;void main(){gl_FragColor=vec4(u_col,v_a);}');
+}
+const anims = {};
+function attrsOff(){ if (!gl) return; const n = gl.getParameter(gl.MAX_VERTEX_ATTRIBS); for (let i = 0; i < Math.min(n, 8); i++) gl.disableVertexAttribArray(i); }
+function normalsOf(P, F){
+  const N = new Float32Array(P.length);
+  for (let f = 0; f < F.length; f += 3) {
+    const a = F[f]*3, b = F[f+1]*3, c = F[f+2]*3;
+    const ux = P[b]-P[a], uy = P[b+1]-P[a+1], uz = P[b+2]-P[a+2], vx = P[c]-P[a], vy = P[c+1]-P[a+1], vz = P[c+2]-P[a+2];
+    const nx = uy*vz-uz*vy, ny = uz*vx-ux*vz, nz = ux*vy-uy*vx;
+    for (const q of [a,b,c]) { N[q] += nx; N[q+1] += ny; N[q+2] += nz; }
+  }
+  for (let i = 0; i < N.length; i += 3) { const l = Math.hypot(N[i],N[i+1],N[i+2]) || 1; N[i]/=l; N[i+1]/=l; N[i+2]/=l; }
+  return N;
+}
+/* 単位四元数 (w,x,y,z) + 位置 → 列優先の 4x4(Python の _quat_matrix と同じ式) */
+function quatMat(w, x, y, z, px, py, pz){
+  const n = Math.hypot(w, x, y, z) || 1; w /= n; x /= n; y /= n; z /= n;
+  return new Float32Array([1-2*(y*y+z*z), 2*(x*y+w*z), 2*(x*z-w*y), 0,
+                           2*(x*y-w*z), 1-2*(x*x+z*z), 2*(y*z+w*x), 0,
+                           2*(x*z+w*y), 2*(y*z-w*x), 1-2*(x*x+y*y), 0,
+                           px, py, pz, 1]);
+}
+function frameAt(tab, tt){
+  const t = tab.t; let a = 0, b = t.length - 1;
+  if (tt <= t[0]) return 0; if (tt >= t[b]) return b;
+  while (b - a > 1) { const m = (a + b) >> 1; if (t[m] <= tt) a = m; else b = m; }
+  return a;
+}
+function seekFrame(tab, k){
+  if (tab.kind !== 'anim3d') return;
+  k = Math.max(0, Math.min(tab.t.length - 1, k)); atime = tab.t[k]; frame = k; dirty = true;
+}
+function animStep(tab, dt){
+  const n = tab.t.length, t0 = tab.t[0], tN = tab.t[n-1], step = n > 1 ? (tN - t0) / (n - 1) : 0;
+  atime += dt * (+$('rate').value || 1);
+  if (atime >= tN + step) {                       /* 最後のコマも 1 コマぶん見せてから */
+    if ($('loop').checked && n > 1) atime = t0 + (atime - t0) % (tN - t0 + step);
+    else { atime = tN; playing = false; setBtn(); }
+  }
+  frame = frameAt(tab, atime);
+}
+function sceneAnim(tab){
+  if (anims[tab.id]) return anims[tab.id];
+  if (!gl) return anims[tab.id] = {fail: true, rad: 1, ctr: [0,0,0], tgt: [0,0,0]};
+  const X = arr(tab.xyz).a, Q = arr(tab.quat).a, B = tab.bodies.length, T_ = tab.t.length, t0 = tab.t[0];
+  const S = {B, T: T_, X, Q, bodies: [], trails: [], clouds: []};
+  const lo = [Infinity,Infinity,Infinity], hi = [-Infinity,-Infinity,-Infinity];
+  const grow = (x, y, z, r) => { const v = [x, y, z]; for (let k = 0; k < 3; k++) { if (v[k]-r < lo[k]) lo[k] = v[k]-r; if (v[k]+r > hi[k]) hi[k] = v[k]+r; } };
+  for (let j = 0; j < B; j++) {
+    const b = tab.bodies[j], P = arr(b.pos).a, F = arr(b.faces).a;
+    if (b.n > 65535 && !u32ext) { S.fail = true; return anims[tab.id] = Object.assign(S, {rad: 1, ctr: [0,0,0], tgt: [0,0,0]}); }
+    const blo = [Infinity,Infinity,Infinity], bhi = [-Infinity,-Infinity,-Infinity];   /* 物体の局所 AABB */
+    for (let i = 0; i < P.length; i += 3) for (let k = 0; k < 3; k++) { blo[k] = Math.min(blo[k], P[i+k]); bhi[k] = Math.max(bhi[k], P[i+k]); }
+    const corners = [];
+    for (const x of [blo[0], bhi[0]]) for (const y of [blo[1], bhi[1]]) for (const z of [blo[2], bhi[2]]) corners.push([x, y, z]);
+    const col = new Uint8Array(b.n * 3);
+    if (b.rgb1) { for (let i = 0; i < b.n; i++) col.set(b.rgb1, i*3); }
+    else if (b.rgb != null) col.set(arr(b.rgb).a);
+    else { const V = arr(b.val).a, cb = tab.cbar, sp = cb.hi - cb.lo;
+      for (let i = 0; i < b.n; i++) { const c = cmapRGB(cb.cmap, (V[i] - cb.lo) / sp); col[i*3] = c[0]; col[i*3+1] = c[1]; col[i*3+2] = c[2]; } }
+    const idx = b.n > 65535 ? new Uint32Array(F) : new Uint16Array(F);
+    S.bodies.push({pos: buf(new Float32Array(P)), nrm: buf(normalsOf(P, F)), col: buf(col),
+      idx: buf(idx, gl.ELEMENT_ARRAY_BUFFER), count: idx.length, itype: b.n > 65535 ? gl.UNSIGNED_INT : gl.UNSIGNED_SHORT});
+    for (let f = 0; f < T_; f++) {                  /* 場面の大きさ = 全コマで動かした AABB の角 */
+      const o = f*B + j, m = quatMat(Q[o*4], Q[o*4+1], Q[o*4+2], Q[o*4+3], X[o*3], X[o*3+1], X[o*3+2]);
+      for (const c of corners) grow(m[0]*c[0]+m[4]*c[1]+m[8]*c[2]+m[12], m[1]*c[0]+m[5]*c[1]+m[9]*c[2]+m[13], m[2]*c[0]+m[6]*c[1]+m[10]*c[2]+m[14], 0);
+    }
+  }
+  for (const tr of tab.trails) {
+    const P = arr(tr.xyz).a, s = new Float32Array(T_);
+    for (let f = 0; f < T_; f++) { s[f] = tab.t[f] - t0; grow(P[f*3], P[f*3+1], P[f*3+2], 0); }
+    S.trails.push({pos: buf(new Float32Array(P)), s: buf(s), col: hex(tr.color).map(v => v / 255), tail: tr.tail});
+  }
+  for (const c of tab.clouds) {
+    const P = arr(c.pos).a; let col;
+    if (c.rgb != null) col = new Uint8Array(arr(c.rgb).a);
+    else { col = new Uint8Array(c.n * 3); const h = hex(c.color); for (let i = 0; i < c.n; i++) col.set(h, i*3); }
+    for (let i = 0; i < P.length; i += 3) grow(P[i], P[i+1], P[i+2], 0);
+    S.clouds.push({k: c.k, n: c.n, pos: buf(new Float32Array(P)), col: buf(col), ps: c.point_size || 0});
+  }
+  S.ctr = [0,1,2].map(k => (lo[k] + hi[k]) / 2);
+  S.rad = 0.5 * Math.hypot(hi[0]-lo[0], hi[1]-lo[1], hi[2]-lo[2]) || 1;
+  for (const c of S.clouds) if (!c.ps) c.ps = 3.2 * S.rad / Math.sqrt(c.n) * 0.5;
+  S.tgt = S.ctr.slice();                          /* 追従の注視点(平滑化して動かす) */
+  return anims[tab.id] = S;
+}
+function followPoint(tab, S, f){
+  if (tab.follow != null) { const o = (f*S.B + tab.follow)*3; return [S.X[o], S.X[o+1], S.X[o+2]]; }
+  const c = [0, 0, 0];
+  for (let j = 0; j < S.B; j++) { const o = (f*S.B + j)*3; c[0] += S.X[o]; c[1] += S.X[o+1]; c[2] += S.X[o+2]; }
+  return c.map(v => v / S.B);
+}
+/* 追従: 目標へ指数で寄せる(時定数 0.35 s)。コマごとの小さな揺れはならされ、カメラは跳ばない */
+function followTick(tab, dt){
+  const S = sceneAnim(tab); if (S.fail) return false;
+  const p = followPoint(tab, S, Math.floor(frame)), a = 1 - Math.exp(-Math.max(dt, 1e-3) / 0.35);
+  let moved = 0;
+  for (let k = 0; k < 3; k++) { const d = p[k] - S.tgt[k]; S.tgt[k] += d * a; moved = Math.max(moved, Math.abs(d)); }
+  return moved > S.rad * 1e-4;
+}
+function curEvent(tab, f){ let e = -1; tab.events.forEach((ev, j) => { if (ev.k <= f) e = j; }); return e; }
+function drawAnimHud(tab, f){
+  const T_ = tab.t.length, ei = curEvent(tab, f);
+  let hud = U('frame') + ' ' + f + ' / ' + (T_-1) + '  (' + (tab.t[f] - tab.t[0]).toFixed(2) + ' s)';
+  if (ei >= 0) hud += '<br>' + esc(U('stage')) + ': <b>' + esc(T(tab.events[ei].label)) + '</b>';
+  for (const s of tab.series) {
+    const v = s.values[f]; let line = esc(T(s.label)) + ': ' + (v == null ? '—' : v.toFixed(s.decimals) + (s.unit ? ' ' + esc(s.unit) : ''));
+    if (s.threshold != null && v != null) line += ' (' + esc(v >= s.threshold ? U('above') : U('below')) + ' ' + s.threshold.toFixed(s.decimals) + ')';
+    hud += '<br><span style="color:' + esc(s.color) + '">■</span> ' + line;
+  }
+  hud += '<br>' + esc(tab.bodies.length + ' ' + U('bodies') + ' · ' + U('drag'));
+  $('hud').innerHTML = hud;
+  $('tlabel').textContent = (tab.t[f] - tab.t[0]).toFixed(2) + ' s';
+  $('scrub').value = String(Math.round(f / Math.max(1, T_-1) * 1000));
+  document.querySelectorAll('#evs [data-ev]').forEach(b => b.classList.toggle('on', +b.dataset.ev === ei));
+}
+function drawAnim(tab){
+  const S = sceneAnim(tab), f = Math.max(0, Math.min(tab.t.length - 1, Math.floor(frame)));
+  if (S.fail || !AP || !LP || !PP) { showErr(U('nogl')); drawAnimHud(tab, f); return; }
+  resize3d();
+  const tg = $('follow').checked ? S.tgt : S.ctr;
+  const cd = Math.cos(el), sd = Math.sin(el), ca = Math.cos(az), sa = Math.sin(az);
+  const eye = [tg[0] + dist*cd*ca, tg[1] + dist*cd*sa, tg[2] + dist*sd];
+  const fy = 0.9, vp = mul(persp(fy, cv.width/cv.height, S.rad*0.02, S.rad*40), look(eye, tg, [0,0,1]));
+  gl.enable(gl.DEPTH_TEST); gl.disable(gl.BLEND); gl.clearColor(0.051, 0.067, 0.086, 1); gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  attrsOff();
+  /* 物体 */
+  gl.useProgram(AP);
+  const lp = gl.getAttribLocation(AP, 'a_p'), ln = gl.getAttribLocation(AP, 'a_n'), lc = gl.getAttribLocation(AP, 'a_c');
+  const um = gl.getUniformLocation(AP, 'u_m');
+  let l = [ca*cd*0.5, sa*cd*0.5, sd*0.5 + 0.5]; const ll = Math.hypot(l[0], l[1], l[2]); l = l.map(v => v/ll);
+  gl.uniform3f(gl.getUniformLocation(AP, 'u_l'), l[0], l[1], l[2]);
+  gl.uniformMatrix4fv(gl.getUniformLocation(AP, 'u_vp'), false, vp);
+  gl.enableVertexAttribArray(lp); gl.enableVertexAttribArray(ln); gl.enableVertexAttribArray(lc);
+  S.bodies.forEach((b, j) => {
+    const o = f*S.B + j;
+    gl.bindBuffer(gl.ARRAY_BUFFER, b.pos); gl.vertexAttribPointer(lp, 3, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ARRAY_BUFFER, b.nrm); gl.vertexAttribPointer(ln, 3, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ARRAY_BUFFER, b.col); gl.vertexAttribPointer(lc, 3, gl.UNSIGNED_BYTE, true, 0, 0);
+    gl.uniformMatrix4fv(um, false, quatMat(S.Q[o*4], S.Q[o*4+1], S.Q[o*4+2], S.Q[o*4+3], S.X[o*3], S.X[o*3+1], S.X[o*3+2]));
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, b.idx);
+    gl.drawElements(gl.TRIANGLES, b.count, b.itype, 0);
+  });
+  attrsOff();
+  /* 軌跡(残像: tail 秒より古い部分は薄く消える) */
+  if (S.trails.length) {
+    gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    gl.useProgram(LP);
+    const pl = gl.getAttribLocation(LP, 'a_p'), sl = gl.getAttribLocation(LP, 'a_s');
+    gl.uniformMatrix4fv(gl.getUniformLocation(LP, 'u_vp'), false, vp);
+    gl.uniform1f(gl.getUniformLocation(LP, 'u_tc'), tab.t[f] - tab.t[0]);
+    gl.enableVertexAttribArray(pl); gl.enableVertexAttribArray(sl);
+    tab.trails.forEach((tr, j) => {
+      const R = S.trails[j], start = R.tail > 0 ? frameAt(tab, tab.t[f] - R.tail) : 0, cnt = f - start + 1;
+      if (cnt < 2) return;
+      gl.bindBuffer(gl.ARRAY_BUFFER, R.pos); gl.vertexAttribPointer(pl, 3, gl.FLOAT, false, 0, 0);
+      gl.bindBuffer(gl.ARRAY_BUFFER, R.s); gl.vertexAttribPointer(sl, 1, gl.FLOAT, false, 0, 0);
+      gl.uniform1f(gl.getUniformLocation(LP, 'u_tail'), R.tail);
+      gl.uniform3f(gl.getUniformLocation(LP, 'u_col'), R.col[0], R.col[1], R.col[2]);
+      gl.drawArrays(gl.LINE_STRIP, start, cnt);
+    });
+    attrsOff(); gl.disable(gl.BLEND);
+  }
+  /* 点群: k が今のコマ以下で最も新しい雲を、次の雲まで出す */
+  let cl = null; for (const c of S.clouds) if (c.k <= f) cl = c;
+  if (cl) {
+    gl.useProgram(PP);
+    const pl = gl.getAttribLocation(PP, 'a_p'), cc = gl.getAttribLocation(PP, 'a_c');
+    gl.uniformMatrix4fv(gl.getUniformLocation(PP, 'u_vp'), false, vp);
+    gl.uniform1f(gl.getUniformLocation(PP, 'u_ps'), cl.ps * cv.height / (2 * Math.tan(fy / 2)));
+    gl.enableVertexAttribArray(pl); gl.enableVertexAttribArray(cc);
+    gl.bindBuffer(gl.ARRAY_BUFFER, cl.pos); gl.vertexAttribPointer(pl, 3, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ARRAY_BUFFER, cl.col); gl.vertexAttribPointer(cc, 3, gl.UNSIGNED_BYTE, true, 0, 0);
+    gl.drawArrays(gl.POINTS, 0, cl.n);
+    attrsOff();
+  }
+  drawAnimHud(tab, f);
+}
+/* 同じ時間軸の 2-D(センサー画像・op の結果)。PNG はブラウザが無損失で復号する */
+const imgs = {}, pimgs = {};
+function pngImg(key, t){
+  const id = key + ':' + t; let im = pimgs[id];
+  if (!im) { im = new Image(); im.onload = () => { dirty = true; }; im.src = 'data:image/png;base64,' + D.arrays[key].png[t]; pimgs[id] = im; }
+  return im.complete && im.naturalWidth > 0 ? im : null;
+}
+function paneImage(key, t){
+  if (D.arrays[key].t === 'png') return pngImg(key, t);
+  const id = key + ':' + t; if (imgs[id]) return imgs[id];
+  const A = arr(key), sh_ = A.shape, H = sh_[1], W = sh_[2], ch = sh_.length === 4 ? 3 : 1, base = t * H * W * ch;
+  const o = document.createElement('canvas'); o.width = W; o.height = H;
+  const im = o.getContext('2d').createImageData(W, H), d = im.data;
+  for (let i = 0; i < W * H; i++) {
+    if (ch === 3) { d[i*4] = A.a[base+i*3]; d[i*4+1] = A.a[base+i*3+1]; d[i*4+2] = A.a[base+i*3+2]; }
+    else { const g = A.a[base+i]; d[i*4] = g; d[i*4+1] = g; d[i*4+2] = g; }
+    d[i*4+3] = 255;
+  }
+  o.getContext('2d').putImageData(im, 0, 0);
+  return imgs[id] = o;
+}
+function buildPanes(tab){
+  const box = $('panes');
+  if (tab.kind !== 'anim3d' || !tab.panes.length) { box.style.display = 'none'; box.innerHTML = ''; return; }
+  box.style.display = 'flex';
+  box.innerHTML = tab.panes.map((p, j) => '<div class="pane"><div class="pl">' + esc(T(p.label)) + '</div><canvas id="pane' + j + '"></canvas></div>').join('');
+}
+function buildEvents(tab){
+  const box = $('evs');
+  if (tab.kind !== 'anim3d' || !tab.events.length) { box.style.display = 'none'; box.innerHTML = ''; return; }
+  box.style.display = 'flex';
+  box.innerHTML = tab.events.map((e, j) => '<button data-ev="' + j + '">' + esc(T(e.label)) + ' · ' + (e.t - tab.t[0]).toFixed(2) + ' s</button>').join('');
+  box.querySelectorAll('[data-ev]').forEach(b => { b.onclick = () => seekFrame(tab, tab.events[+b.dataset.ev].k); });
+}
+function drawPanes(tab, f){
+  tab.panes.forEach((p, j) => {
+    const c = $('pane' + j); if (!c) return;
+    const rec = D.arrays[p.frames], sh_ = rec.shape, H = sh_[1], W = sh_[2], k = Math.max(1, Math.round(320 / W));
+    if (c.width !== W*k || c.height !== H*k) { c.width = W*k; c.height = H*k; }
+    if (rec.t === 'png') for (let i = 1; i <= 6 && f + i < sh_[0]; i++) pngImg(p.frames, f + i);   /* 先読み */
+    const im = paneImage(p.frames, f); if (!im) return;                                          /* 読めるまで前のコマを残す */
+    const g = c.getContext('2d'); g.imageSmoothingEnabled = false; g.clearRect(0, 0, c.width, c.height);
+    g.drawImage(im, 0, 0, W*k, H*k);
+    g.font = (12 * Math.max(1, k/2)) + 'px sans-serif'; g.textBaseline = 'bottom';
+    for (const b of p.boxes) {
+      const fl = b.flag ? b.flag[f] : false, [x, y] = b.xy[f], w = b.size[0]*k, h = b.size[1]*k;
+      g.strokeStyle = fl ? b.flag_color : b.color; g.lineWidth = Math.max(2, k * 0.8);
+      g.strokeRect((x + 0.5)*k - w/2, (y + 0.5)*k - h/2, w, h);
+      g.fillStyle = fl ? b.flag_color : b.color;
+      g.fillText(T(b.label) + (fl && b.flag_text ? ' ' + T(b.flag_text) : ''), (x + 0.5)*k - w/2, (y + 0.5)*k - h/2 - 2);
+    }
+  });
+}
+
 /* ---------- 2-D(動画・分割) ---------- */
-const imgs = {};
 function frameCanvas(tab, key, t){
+  if (tab.kind === 'frames') return paneImage(tab.frames, t);
   const id = tab.id + ':' + key + ':' + t;
   if (imgs[id]) return imgs[id];
   const A = arr(tab[key] || tab.frames), sh_ = A.shape;
@@ -742,6 +1377,12 @@ function fit2d(tab){
 }
 function draw2d(tab){
   const k = fit2d(tab), [W, H] = dims(tab);
+  let fimg = null;
+  if (tab.kind === 'frames') {                   /* PNG がまだ読めていなければ前のコマを残す(ちらつかせない) */
+    const T0 = arr(tab.frames).shape[0], f0 = Math.min(T0 - 1, Math.max(0, Math.floor(frame)));
+    if (D.arrays[tab.frames].t === 'png') for (let j = 1; j <= 6 && f0 + j < T0; j++) pngImg(tab.frames, f0 + j);
+    fimg = frameCanvas(tab, 'frames', f0); if (!fimg) return;
+  }
   ctx.imageSmoothingEnabled = false; ctx.clearRect(0, 0, c2.width, c2.height);
   if (tab.kind === 'split') {
     ctx.drawImage(frameCanvas(tab, 'after', 0), 0, 0, W*k, H*k);
@@ -756,7 +1397,7 @@ function draw2d(tab){
     return;
   }
   const T_ = arr(tab.frames).shape[0], f = Math.min(T_-1, Math.max(0, Math.floor(frame)));
-  ctx.drawImage(frameCanvas(tab, 'frames', f), 0, 0, W*k, H*k);
+  ctx.drawImage(fimg, 0, 0, W*k, H*k);
   let hud = U('frame') + ' ' + f + ' / ' + (T_-1) + '  (' + (f * tab.dt).toFixed(2) + ' s)';
   for (const b of tab.boxes) {
     const fl = b.flag ? b.flag[f] : false, [x, y] = b.xy[f], w = b.size[0]*k, h = b.size[1]*k;
@@ -797,6 +1438,9 @@ function drawPlot(tab, f){
     g.globalAlpha = 1; g.fillStyle = s.color;
     const lab = T(s.label) + ' [' + s.lo + '–' + s.hi + (s.unit ? ' ' + s.unit : '') + ']'; g.fillText(lab, lx, h - 6); lx += g.measureText(lab).width + 16;
   }
+  if (tab.events) { g.strokeStyle = '#93a2b1'; g.globalAlpha = 0.55; g.setLineDash([2, 3]);
+    for (const e of tab.events) { g.beginPath(); g.moveTo(X(e.k), mt); g.lineTo(X(e.k), h - mb); g.stroke(); }
+    g.setLineDash([]); g.globalAlpha = 1; }
   g.strokeStyle = '#ffffff'; g.globalAlpha = 0.7; g.beginPath(); g.moveTo(X(f), mt); g.lineTo(X(f), h - mb); g.stroke(); g.globalAlpha = 1;
 }
 
@@ -829,7 +1473,9 @@ function renderText(){
   sel.innerHTML = D.langs.map(l => '<option value="' + l + '"' + (l === L ? ' selected' : '') + '>' + esc(D.langnames[l]) + '</option>').join('');
   document.querySelectorAll('[data-v]').forEach(b => b.textContent = U(b.dataset.v));
   $('spd').textContent = U('speed'); $('lpt').textContent = U('loop'); $('err').textContent = U('nogl');
-  setBtn(); renderTabs(); renderMeta(); colorbar(get());
+  $('b1').textContent = U('back1'); $('f1').textContent = U('fwd1'); $('evp').textContent = U('evprev'); $('evn').textContent = U('evnext');
+  $('rtt').textContent = U('speed'); $('fwt').textContent = U('follow');
+  setBtn(); renderTabs(); renderMeta(); colorbar(get()); buildPanes(get()); buildEvents(get());
 }
 function setBtn(){ $('play').textContent = playing ? U('pause') : U('play'); }
 function select(id){
@@ -837,17 +1483,22 @@ function select(id){
   try { const u = new URL(location.href); u.searchParams.set('tab', cur); history.replaceState(null, '', u); } catch (e) {}
   $('err').style.display = 'none';
   const two = isTwoD(t);
-  $('wrap').className = two ? 'two' : ''; cv.style.display = two ? 'none' : 'block'; c2.style.display = two ? 'block' : 'none';
+  const an = t.kind === 'anim3d';
+  $('wrap').className = two ? 'two' : (an && t.panes.length ? 'a3w' : ''); cv.style.display = two ? 'none' : 'block'; c2.style.display = two ? 'block' : 'none';
+  document.querySelectorAll('.a3').forEach(e => { e.style.display = an ? '' : 'none'; });
+  $('spl').style.display = an ? 'none' : '';
+  if (an) { atime = t.t[0]; $('follow').checked = false; }
   $('views').style.display = two ? 'none' : 'flex';
   $('ctl').style.display = t.kind === 'split' ? 'none' : 'flex';
-  $('lpl').style.display = t.kind === 'frames' ? 'inline' : 'none';
-  $('plot').style.display = t.kind === 'frames' && t.series.length ? 'block' : 'none';
-  playing = t.kind === 'frames'; last = performance.now();
+  $('lpl').style.display = t.kind === 'frames' || an ? 'inline' : 'none';
+  $('plot').style.display = (t.kind === 'frames' || an) && t.series.length ? 'block' : 'none';
+  playing = t.kind === 'frames' || an; last = performance.now();
   if (!two) { if (!gl) showErr(U('nogl')); else { const S = scene3d(t); applyView(t, S); } }
-  renderTabs(); renderMeta(); colorbar(t); setBtn(); dirty = true;
+  renderTabs(); renderMeta(); colorbar(t); setBtn(); buildPanes(t); buildEvents(t); dirty = true;
 }
 function render(){
   const t = get();
+  if (t.kind === 'anim3d') { const f = Math.floor(frame); if (gl) draw3d(t); else drawAnimHud(t, f); drawPanes(t, f); drawPlot(t, f); return; }
   if (isTwoD(t)) draw2d(t); else if (gl) draw3d(t);
 }
 function tick(now){
@@ -857,18 +1508,34 @@ function tick(now){
     if (t.kind === 'frames') {
       const n = arr(t.frames).shape[0]; frame += dt * sp / t.dt;
       if (frame >= n - 1) { if ($('loop').checked) frame = frame % (n - 1 || 1); else { frame = n - 1; playing = false; setBtn(); } }
-    } else if (!isTwoD(t)) { az += dt * sp * 0.6; }
+    } else if (t.kind === 'anim3d') { animStep(t, dt); } else if (!isTwoD(t)) { az += dt * sp * 0.6; }
     dirty = true;
   }
+  if (t.kind === 'anim3d' && gl && $('follow').checked && followTick(t, dt)) dirty = true;
   if (dirty) { dirty = false; render(); }
   requestAnimationFrame(tick);
 }
 
 /* ---------- 入力 ---------- */
-$('play').onclick = () => { playing = !playing; setBtn(); last = performance.now(); dirty = true; };
+$('play').onclick = () => {
+  const t = get();
+  if (!playing && t.kind === 'anim3d' && Math.floor(frame) >= t.t.length - 1) { atime = t.t[0]; frame = 0; }   /* 終わりからは頭へ */
+  playing = !playing; setBtn(); last = performance.now(); dirty = true; };
+$('b1').onclick = () => { playing = false; setBtn(); seekFrame(get(), Math.floor(frame) - 1); };
+$('f1').onclick = () => { playing = false; setBtn(); seekFrame(get(), Math.floor(frame) + 1); };
+$('evp').onclick = () => { const t = get(), f = Math.floor(frame); let k = 0; for (const e of t.events) if (e.k < f) k = e.k; seekFrame(t, k); };
+$('evn').onclick = () => { const t = get(), f = Math.floor(frame), e = t.events.find(e => e.k > f); if (e) seekFrame(t, e.k); };
+$('follow').onchange = () => { const t = get(); if (t.kind === 'anim3d' && gl) { const S = sceneAnim(t); if (!$('follow').checked) S.tgt = S.ctr.slice(); } dirty = true; };
+document.addEventListener('keydown', e => {
+  const t = get(); if (t.kind !== 'anim3d' || /^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName)) return;
+  if (e.key === ' ') { e.preventDefault(); $('play').onclick(); }
+  else if (e.key === 'ArrowLeft') { e.preventDefault(); $('b1').onclick(); }
+  else if (e.key === 'ArrowRight') { e.preventDefault(); $('f1').onclick(); }
+});
 $('lang').onchange = e => { L = e.target.value; try { const u = new URL(location.href); u.searchParams.set('lang', L); history.replaceState(null, '', u); } catch (e) {} renderText(); dirty = true; };
 $('scrub').oninput = e => {
   const t = get(); playing = false; setBtn();
+  if (t.kind === 'anim3d') { seekFrame(t, Math.round(e.target.value / 1000 * (t.t.length - 1))); return; }
   if (t.kind === 'frames') frame = e.target.value / 1000 * (arr(t.frames).shape[0] - 1); else az = e.target.value / 1000 * 2 * Math.PI;
   dirty = true;
 };
@@ -968,10 +1635,14 @@ def viewer_points_tab(tab_id, label, badge, text, pos, val=None, cbar=None, rgb=
 
 
 def viewer_frames_tab(tab_id, label, badge, text, frames, dt=0.2, boxes=None, series=None,
-                      numbers=None) -> dict:
-    """2-D の画像列のタブ。``boxes`` は重ねる枠(真値と推定)、``series`` は時系列グラフ。"""
+                      numbers=None, png=False) -> dict:
+    """2-D の画像列のタブ。``boxes`` は重ねる枠(真値と推定)、``series`` は時系列グラフ。
+
+    ``png=True`` ならコマを無損失の PNG で埋める(画素は 1 つも変えない。生の u8 より小さいことが多い)。
+    """
     return _tab("frames", tab_id, label, badge, text, numbers,
-                {"frames": frames, "dt": dt, "boxes": boxes or [], "series": series or []})
+                {"frames": frames, "dt": dt, "boxes": boxes or [], "series": series or [],
+                 "png": True if png else None})
 
 
 def viewer_split_tab(tab_id, label, badge, text, before, after, label_before, label_after,
@@ -980,6 +1651,76 @@ def viewer_split_tab(tab_id, label, badge, text, before, after, label_before, la
     return _tab("split", tab_id, label, badge, text, numbers,
                 {"before": before, "after": after, "label_before": label_before,
                  "label_after": label_after})
+
+
+def viewer_anim3d_tab(tab_id, label, badge, text, t, bodies, xyz, quat, trails=None, clouds=None,
+                      events=None, series=None, panes=None, cbar=None, follow=None, numbers=None,
+                      view=None) -> dict:
+    """動く 3-D のタブ: 物体ごとの剛体姿勢をコマごとに再生する(2-D の画像列・時系列も同じ時間軸で)。
+
+    物体のメッシュは **1 回だけ** 持ち、コマごとには姿勢(位置 + 四元数)だけを持つ。ページでは
+    ドラッグで回す・ホイール/ピンチで拡大・視点ボタン・再生/一時停止・コマ送り/戻し・スライダ・
+    速度(0.25〜4 倍)・ループ・段へのジャンプ・カメラの追従(平滑化して揺らさない)ができる。
+    キーボードでは空白で再生/一時停止、← → でコマ送り。
+
+    Parameters
+    ----------
+    t : (T,)
+        各コマの時刻 [秒]。狭義の増加(等間隔でなくてよい。再生は t に従う)。
+    bodies : list of dict
+        ``{"name": str, "pos": (N,3) 物体のローカル座標, "faces": (M,3) int,
+        "rgb": (3,) か (N,3)(uint8 か 0..1)| "val": (N,)(+ ``cbar``), "label": 文字列の辞書(任意)}``。
+        色は rgb か val のどちらか 1 つ。未知の鍵(``"color": "red"`` など)は ``ValueError``。
+    xyz : (T,B,3)
+        各コマの物体の位置(ローカル原点の世界座標)。B = ``len(bodies)``。
+    quat : (T,B,4)
+        各コマの物体の姿勢の四元数 **(w, x, y, z)**。正規化して w>=0 に揃えてから int16 にする
+        (q と -q は同じ回転)。ノルム 0 は ``ValueError``。世界座標 = R(quat) @ pos + xyz。
+    trails : list of dict, optional
+        軌跡の線。``{"body": name, "offset": (3,) ローカル点}`` か ``{"xyz": (T,3)}``、
+        ``"color": "#rrggbb"``、``"tail": 秒``(0 = 全履歴。正なら残像として古い部分が薄れる)。
+    clouds : list of dict, optional
+        点群の時系列(少数のコマ)。``{"k": コマ番号, "pos": (N,3) 世界座標, "rgb": (N,3) | "color": "#rrggbb",
+        "point_size": 世界単位}``。k から次の雲の k まで表示する。k は狭義の増加。
+    events : list of dict, optional
+        段の区切り ``{"t": 秒, "label": 文字列の辞書}``。ジャンプのボタンとグラフの縦線になる。
+    series : list of dict, optional
+        時系列グラフ(:func:`viewer_frames_tab` と同じ形、``values`` は (T,))。
+    panes : list of dict, optional
+        同じ時間軸で並べる 2-D(センサー画像・op の結果)。``{"label": ..., "frames": (T,H,W[,3]),
+        "boxes": [...](frames と同じ形), "png": True}``。既定は無損失の PNG で埋める(画素は変えない)。
+    cbar : dict, optional
+        ``val`` で色づけする物体があるときのカラーバー ``{lo, hi, unit, cmap, label}``。
+    follow : str, optional
+        追従するときに注視する物体の name(無ければ全物体の位置の平均)。追従は既定で切。
+
+    容量: 位置は軸ごとの uint16(刻み = 範囲/65535)、四元数は int16(刻み 1/32767)、メッシュは 1 回だけ。
+    コマ数 T が合わない(xyz / quat / series / panes / 軌跡)、NaN / inf、範囲外の索引、未知の色指定は
+    ``ValueError``(黙って通さない)。
+
+    Examples
+    --------
+    >>> import numpy as np, fullseye as fs
+    >>> cube = np.array([[x, y, z] for x in (-.5, .5) for y in (-.5, .5) for z in (-.5, .5)])
+    >>> tri = [[0, 1, 3], [0, 3, 2], [4, 6, 7], [4, 7, 5], [0, 4, 5], [0, 5, 1],
+    ...        [2, 3, 7], [2, 7, 6], [0, 2, 6], [0, 6, 4], [1, 5, 7], [1, 7, 3]]
+    >>> T = 60; t = np.arange(T) / 30.0; ang = np.pi * t
+    >>> xyz = np.stack([np.cos(ang), np.sin(ang), 0 * t], -1)[:, None, :]          # (T,1,3)
+    >>> quat = np.stack([np.cos(ang / 2), 0 * t, 0 * t, np.sin(ang / 2)], -1)[:, None, :]  # z 軸まわり
+    >>> tab = fs.viewer_anim3d_tab(
+    ...     "spin", fs.viewer_text("回る箱", "A spinning box"), "passed",
+    ...     fs.viewer_text("円を描いて回る。", "It goes round."), t,
+    ...     [{"name": "box", "pos": cube, "faces": tri, "rgb": [79, 195, 247]}], xyz, quat,
+    ...     trails=[{"body": "box", "color": "#ffd54f", "tail": 0.5}],
+    ...     events=[{"t": 1.0, "label": fs.viewer_text("半周", "Half a turn")}])
+    >>> spec = fs.viewer_spec("spin", fs.viewer_text("見本", "Sample"), fs.viewer_text("副題", "Sub"),
+    ...                       fs.viewer_text("操作", "Hint"), [tab])
+    >>> html = fs.pocviewer._build_html(spec, ["ja", "en"])                         # write_viewer で書く
+    """
+    return _tab("anim3d", tab_id, label, badge, text, numbers,
+                {"t": t, "bodies": list(bodies), "xyz": xyz, "quat": quat, "trails": list(trails or []),
+                 "clouds": list(clouds or []), "events": list(events or []), "series": list(series or []),
+                 "panes": list(panes or []), "cbar": cbar, "follow": follow, "view": view})
 
 
 def viewer_spec(viewer_id: str, title: dict, subtitle: dict, hint: dict, tabs, credit=None) -> dict:
@@ -993,7 +1734,7 @@ def viewer_spec(viewer_id: str, title: dict, subtitle: dict, hint: dict, tabs, c
 
 __all__ = [
     "BADGES", "UI", "LANGS", "LANG_NAMES", "KINDS", "viewer_text", "viewer_number", "viewer_spec", "viewer_mesh_tab",
-    "viewer_points_tab", "viewer_frames_tab", "viewer_split_tab", "write_viewer",
+    "viewer_points_tab", "viewer_frames_tab", "viewer_split_tab", "viewer_anim3d_tab", "write_viewer",
 ]
 
 

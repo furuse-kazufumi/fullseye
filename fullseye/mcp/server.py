@@ -298,7 +298,8 @@ TOOLS: dict[str, dict] = {
     "fullseye_write_viewer": {
         "description": (
             "PoC の結果を、自己完結した 1 枚の HTML ビューア(タブ・正直なバッジ・3-D の点群/メッシュ・"
-            "2-D 動画・前後の分割・言語切り替え)にして書く。spec は fullseye.viewer_spec が作る辞書と同じ形の"
+            "2-D 動画・前後の分割・動く 3-D(kind anim3d: 物体ごとの剛体姿勢の再生 + 同じ時間軸の 2-D)・"
+            "言語切り替え)にして書く。spec は fullseye.viewer_spec が作る辞書と同じ形の"
             "JSON(配列は入れ子の数値リスト)、lang は言語の配列(ja/en/zh/tw/ko/de/hi/fr、先頭が既定)。"
             "文字列は要求した全言語ぶんが要る(足りなければ欠けた鍵を並べて -32602、他言語で補わない)。"
             "バッジは passed / limit / null の 3 種。HTML は MCP のサンドボックスの作業ディレクトリに"
