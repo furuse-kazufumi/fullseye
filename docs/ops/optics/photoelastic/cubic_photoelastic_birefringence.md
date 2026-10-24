@@ -31,12 +31,20 @@ is ``ΔB_ij = π'_ijkl σ_kl`` and the in-plane birefringence is
                                           + 4τ(σx−σy) sin 4φ] )
 
 With ``π44 = π11 − π12`` the material is photoelastically isotropic and
-``Δn = (n³/2)(π11 − π12)(σ1 − σ2)``, i.e. ``C = n³(π11−π12)/2``.
+``Δn = (n³/2)|π11 − π12|(σ1 − σ2)``. In the sign of
+:func:`photoelastic_retardation` (``n_σ1 − n_σ2 = C(σ1 − σ2)``; a change of
+impermeability ``ΔB`` changes the index by ``−(n³/2)ΔB``) that is
+``C = −n³(π11−π12)/2``, returned as ``isotropic_coefficient``: π11 − π12 > 0
+makes σ1 the fast axis, and the value can be passed to
+:func:`photoelastic_retardation` as it is.
 
 Coefficients are in Pa⁻¹ (:func:`silicon_piezo_optic_coefficients`).
 Returns ``delta_n`` (≥ 0), ``slow_axis_deg`` (direction of the larger
-refractive index, (−90, 90]; 0 where Δn = 0), ``effective_coefficient``
-(Δn/(σ1−σ2) [Pa⁻¹], 0 where σ1 = σ2) and ``isotropic`` (σ1 = σ2).
+refractive index, (−90, 90]; 0 where Δn = 0 to 1e-12 of that pixel's own
+stress scale — the fast axis that ``optics.mueller_element`` and
+:func:`photoelastic_polarization_images` take is ``slow_axis_deg + 90``),
+``effective_coefficient`` (|Δn|/(σ1−σ2) ≥ 0 [Pa⁻¹], 0 where σ1 = σ2),
+``isotropic_coefficient`` (signed, as above) and ``isotropic`` (σ1 = σ2).
 
 **Raises** ``ValueError``: non-finite / empty / non-broadcasting stresses,
 |π| outside [1e-15, 1e-9] Pa⁻¹ (a table value in ×10⁻⁷ MPa⁻¹ or in MPa⁻¹

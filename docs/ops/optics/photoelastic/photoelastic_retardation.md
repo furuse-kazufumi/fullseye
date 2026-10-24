@@ -22,8 +22,12 @@ version: 0.8.1  # fullseye lib version this note was generated for
 ``stress_optic_coefficient`` C is in Pa⁻¹ (1 brewster = 1e-12 Pa⁻¹); the
 birefringence is ``Δn = C (σ1 − σ2)`` and the material fringe value
 ``f_σ = λ/C`` [N/m per fringe], so ``N = t (σ1 − σ2) / f_σ``.
-The retarder axis is the σ1 direction (:func:`principal_stress`
-``angle_deg``) in the convention of ``optics.mueller_element``.
+Sign: ``Δn = n_σ1 − n_σ2``, so for C > 0 the σ1 direction
+(:func:`principal_stress` ``angle_deg``) is the **slow** axis. The retarder
+angle of ``optics.mueller_element`` and :func:`photoelastic_polarization_images`
+is the **fast** axis (``exp(−iωt)``, the fast axis leads), so pass
+``axis_deg = angle_deg + 90`` together with this ``delta_rad`` — for either
+sign of C (equivalently ``−delta_rad`` with ``angle_deg``).
 
 Returns ``delta_rad``, ``retardation_nm``, ``fringe_order``,
 ``birefringence`` and ``fringe_value_n_per_m``.

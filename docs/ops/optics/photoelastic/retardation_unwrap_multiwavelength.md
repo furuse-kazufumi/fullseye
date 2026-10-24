@@ -31,14 +31,17 @@ the best candidate wins.
 is for phases wrapped into [0, 2π).
 
 Returns ``retardation_nm``, ``delta_rad`` (the unwrapped phase at the first
-wavelength), ``residual_nm`` (best score) and ``margin_nm`` (second best −
+wavelength), ``residual_nm`` (best score), ``margin_nm`` (second best −
 best, among candidates more than λ_min/4 away from the answer: when it is
 small another order fits almost as well — add a wavelength or reduce
-``max_retardation_nm``).
+``max_retardation_nm``) and ``valid``: False where no candidate up to
+``max_retardation_nm`` exists for that pixel (its first-wavelength phase
+alone already needs more), and the four numbers are NaN there.
 
 **Raises** ``ValueError``: fewer than 2 wavelengths, mismatched counts or
 shapes, wavelengths outside [10, 20000] nm or repeated, phases outside
-[0, π] (folded) / [0, 2π) (unfolded), or a range over 1000 waves.
+[0, π] (folded) / [0, 2π) (unfolded), a range over 1000 waves, or a
+``max_retardation_nm`` below the smallest candidate of every pixel.
 
 ## ファミリ共通の入力契約(fail-closed)
 

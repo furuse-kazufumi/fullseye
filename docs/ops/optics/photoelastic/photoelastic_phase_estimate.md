@@ -13,14 +13,15 @@ version: 0.8.1  # fullseye lib version this note was generated for
 # photoelastic_phase_estimate — OPTICS `photoelastic` op
 
 - **データ種**: `polsweep` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.photoelastic_phase_estimate(images, analyzers='camera4', min_modulation=0.01)` (実装を直接呼ぶなら `import photoelastic; photoelastic.photoelastic_phase_estimate(images, analyzers='camera4', min_modulation=0.01)`、台帳から引くなら `opsoptics.get("photoelastic_phase_estimate")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.photoelastic_phase_estimate(images, analyzers='camera4', min_modulation=0.01, sum_tolerance=0.05)` (実装を直接呼ぶなら `import photoelastic; photoelastic.photoelastic_phase_estimate(images, analyzers='camera4', min_modulation=0.01, sum_tolerance=0.05)`、台帳から引くなら `opsoptics.get("photoelastic_phase_estimate")`)
 
 ## 使い方
 
 偏光像から位相差 δ と主軸 θ を閉形式で逆算 → dict。
 
 Inverse of :func:`photoelastic_polarization_images` (right-circular
-illumination). With ``S0 = I0 + I90``, ``S1 = I0 − I90``, ``S2 = I45 − I135``:
+illumination). With ``S0 = ½(I0 + I90 + I45 + I135)`` (the mean of the two
+pair sums), ``S1 = I0 − I90``, ``S2 = I45 − I135``:
 
 * ``camera4`` (4 linear analysers): ``sin δ = √(S1² + S2²)/S0`` and
   ``δ = arcsin(·)`` — **unique only for δ ∈ [0, π/2]** (a quarter wave):
@@ -28,7 +29,8 @@ illumination). With ``S0 = I0 + I90``, ``S1 = I0 − I90``, ``S2 = I45 − I135`
 * ``stokes6`` (+ right/left circular): ``S3 = IR − IL`` and
   ``δ = atan2(√(S1² + S2²), S3)`` ∈ [0, π].
 
-In both, ``θ = ½ atan2(−S1, S2)`` mod 180 deg, in (−90, 90]. The pair
+In both, ``θ = ½ atan2(−S1, S2)`` mod 180 deg, in (−90, 90] — the fast axis
+(for a material with C > 0, σ1 lies at θ + 90°). The pair
 ``(δ, θ)`` and ``(−δ, θ + 90°)`` give identical images; the estimate
 returns the representative with δ ≥ 0. Where the modulation
 ``√(S1²+S2²)/S0`` (= |sin δ|) is at or below ``min_modulation`` (default
@@ -36,13 +38,35 @@ returns the representative with δ ≥ 0. Where the modulation
 turns the axis by tens of degrees) the axis is undefined: ``axis_valid`` is
 False and ``axis_deg`` is 0 there.
 
-Returns ``delta_rad``, ``axis_deg``, ``axis_valid``, ``modulation``,
-``intensity`` (S0) and ``stokes`` (``(4, H, W)``; S3 = 0 for camera4,
-which is a limitation, not a measurement).
+One exposure obeys ``I0 + I90 = I45 + I135`` (and ``= IR + IL``). Real frames
+do so only to the noise and the demosaic interpolation, so the check is per
+pixel and relative: ``sum_mismatch = |I45 + I135 − (I0 + I90)| / S0`` (for
+stokes6 the larger of that and ``|IR + IL − S0| / S0``).
+
+Parameters
+----------
+images : ``(K, H, W)`` array or list of K frames in the order of ``analyzers``.
+analyzers : ``"camera4"`` (0/45/90/135) or ``"stokes6"`` (+ right/left circular).
+min_modulation : modulation at or below which the axis is not reported.
+sum_tolerance : largest ``sum_mismatch`` a pixel may have and stay ``valid``
+    (relative to S0, default 0.05). Measured basis: with 1 % independent
+    noise per frame the mismatch stays below it (99th percentile 2.9 %,
+    maximum 4.6 % over 40 000 pixels), and the bilinear interpolation of
+    ``optics.polarization_demosaic`` leaves ≤ 1.5 % on 95 % of a disc with
+    nine resolved fringes; pixels above it are aliased fringes, saturated
+    or moving pixels, or frames from another exposure. Must lie in [0, 1].
+
+Returns ``delta_rad``, ``axis_deg``, ``axis_valid``, ``valid`` (``sum_mismatch``
+≤ ``sum_tolerance``; ``delta_rad`` is still computed where it is False but is
+not a measurement there, and ``axis_valid`` is False), ``sum_mismatch``,
+``modulation``, ``intensity`` (S0) and ``stokes`` (``(4, H, W)``; S3 = 0 for
+camera4, which is a limitation, not a measurement).
 
 **Raises** ``ValueError``: wrong number of frames, non-2-D / non-finite /
-negative frames, a dark pixel (S0 = 0), or frames that violate
-``I0 + I90 = I45 + I135`` by more than 1e-6·S0 (not one camera exposure).
+negative frames, a dark pixel (S0 = 0), ``sum_tolerance`` outside [0, 1], or
+frames whose pair sums disagree by more than ``sum_tolerance`` on more than
+half of the pixels (not one camera exposure, the wrong frame order, or
+fringes too dense for the sensor).
 
 ## ファミリ共通の入力契約(fail-closed)
 

@@ -19,9 +19,11 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 円偏光照明の試料を偏光カメラ(0/45/90/135 度)または 6 強度の偏光計で撮った像 → (K, H, W)。
 
-The specimen (retardance δ, axis θ) is lit with right-circular light
+The specimen (retardance δ, **fast** axis θ) is lit with right-circular light
 ``S = I(1, 0, 0, 1)``; the emerging Stokes vector is computed with a
-per-pixel Mueller retarder (same convention as ``optics.mueller_element``),
+per-pixel Mueller retarder (same convention as ``optics.mueller_element``,
+whose angle is the fast axis — for a stress field pass ``angle_deg + 90``,
+see :func:`photoelastic_retardation`),
 ``S' = I(1, −sin2θ sinδ, cos2θ sinδ, cosδ)``. Each analyser transmits
 ``½(S0 + S1 cos2α + S2 sin2α)`` (linear at α) or ``½(S0 ± S3)`` (right /
 left circular).
