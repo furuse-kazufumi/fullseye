@@ -567,3 +567,24 @@ def test_energy_conservation_uses_the_given_emission_spectrum():
     D.scintillator_sensor_qe("BGO", light_yield_per_mev=0.999 * y_max, emission_spectrum=spec)
     with pytest.raises(ValueError, match="energy conservation"):
         D.scintillator_sensor_qe("BGO", light_yield_per_mev=1.001 * y_max, emission_spectrum=spec)
+
+
+# --------------------------------------------------------------------------- #
+# 材料表の注記(2026-10-24)                                                     #
+# --------------------------------------------------------------------------- #
+def test_notes_say_where_a_value_needs_care_and_reach_the_op():
+    for n in SCINT:
+        for note in _sc(n)["notes"]:
+            assert note.split(":", 1)[0] in FIELDS, (n, note)
+    gos = " ".join(_sc("GD2O2S:TB")["notes"])
+    # 密度は塊の値(粉末・セラミックでは充填率で下がる)
+    assert "bulk" in gos and "packing fraction" in gos and "7.44" in gos
+    # 線の位置: 図から読んだ 490/587/620 と、Tang 2023 の 494/589/623 は別の測定
+    assert all(x in gos for x in ("490", "587", "620", "494", "589", "623", "different measurement"))
+    assert "approximation" in " ".join(_sc("LU2SIO5:CE")["notes"])
+    assert _sc("CSI:TL")["notes"] == ()
+    r = D.scintillator_sensor_qe("GD2O2S:TB", 0.2, light_yield_per_mev=1000.0)
+    assert r["notes"] == _sc("GD2O2S:TB")["notes"]
+    lo, hi = _spectra()
+    ch = D.dual_kvp_channels(lo, hi, detector="GD2O2S:TB", detector_mm=0.2)
+    assert ch["response"]["scintillator"]["notes"] == _sc("GD2O2S:TB")["notes"]

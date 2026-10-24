@@ -400,7 +400,7 @@ def _scint_summary(name, sc):
             "emission_geometries": tuple(g for g in SCINT_EMISSION_GEOMETRIES if any(c["geometry"] == g for c in comps)),
             "emission_default_geometry": sc.get("emission_default_geometry"),
             "decay_time_ns": sc["decay_time_ns"], "density_g_cm3": sc["density_g_cm3"],
-            "unverified": tuple(sc["unverified"])}
+            "unverified": tuple(sc["unverified"]), "notes": tuple(sc.get("notes", ()))}
 
 
 def _curve(curve, name, op, lo=0.0, hi=None):
@@ -567,7 +567,8 @@ def scintillator_sensor_qe(scintillator="CSI:TL", thickness_mm: float = 0.6, e_m
     overlap = Q̄, light_yield_photons_per_mev, light_yield_range_photons_per_mev, electrons_light_yield_range,
     light_collection, emission_model, emission(帯の部分の正規化した pairs、線だけなら None),
     emission_components(成分ごとの中心・幅・重み・qe_overlap・出典、表を使わなければ None), emission_geometry,
-    emission_peak_nm, photodetector, decay_time_ns, sources(使った値の出典), unverified)。
+    emission_peak_nm, photodetector, decay_time_ns, sources(使った値の出典), unverified, notes(材料表の注記 ——
+    値はあるが使い方に条件が付くもの。GD2O2S:TB の密度は塊の値で、粉末のスクリーンでは充填率の分だけ下がる))。
     光収率の無い材料(GD2O2S:TB)で ``light_yield_per_mev`` を渡さなければ ValueError。
     """
     op = "scintillator_sensor_qe"
@@ -681,7 +682,8 @@ def scintillator_sensor_qe(scintillator="CSI:TL", thickness_mm: float = 0.6, e_m
             "electrons_light_yield_range": e_rng, "light_collection": eta_c, "emission_model": model,
             "emission": emission, "emission_components": rows, "emission_geometry": geometry,
             "emission_peak_nm": peak, "photodetector": det,
-            "decay_time_ns": sc["decay_time_ns"], "sources": used, "unverified": tuple(sc["unverified"])}
+            "decay_time_ns": sc["decay_time_ns"], "sources": used, "unverified": tuple(sc["unverified"]),
+            "notes": tuple(sc.get("notes", ()))}
 
 
 # --------------------------------------------------------------------------- #

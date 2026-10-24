@@ -231,7 +231,10 @@ SCINTILLATORS = [
                  "light_yield_photons_per_mev": _LBNL + "Melcher1996 (27,000; the rows span 22,200-33,000 with "
                                                 "Ce content; " + _DEHAAS_2008 + " agrees)",
                  "emission_components": "one Gaussian per geometry, read from figures (see the components)",
-                 "xray_material": "chemical formula Lu2SiO5, mixture rule over NIST SRD 126 (Ce neglected)"}},
+                 "xray_material": "chemical formula Lu2SiO5, mixture rule over NIST SRD 126 (Ce neglected)"},
+     "notes": ("emission_components: the band shape is an approximation - the Ce3+ 5d-4f emission is two "
+               "overlapping bands (to the 2F5/2 and 2F7/2 levels, as kept for LYSO), merged here into one "
+               "Gaussian in energy per geometry",)},
     {"name": "LU1.8Y0.2SIO5:CE", "class": "crystal", "aliases": ["LYSO", "LYSO:CE"],
      "pages": [],
      "activator": "Ce3+", "form": "single crystal", "xray_material": "Lu1.8Y0.2SiO5",
@@ -310,7 +313,12 @@ SCINTILLATORS = [
                  "emission_peak_nm": "B. Tang et al., Molecules 28, 1815 (2023): strongest line 545 nm (5D4 -> 7F5); "
                                      "further lines at 494 / 589 / 623 nm (a line spectrum, not one band)",
                  "emission_components": "a bundle of six lines (weights read from a figure, see the components)",
-                 "xray_material": "NIST SRD 126 compound table 'Gadolinium Oxysulfide' (Tb neglected)"}},
+                 "xray_material": "NIST SRD 126 compound table 'Gadolinium Oxysulfide' (Tb neglected)"},
+     "notes": ("density_g_cm3: the bulk value 7.44 g/cm3 - a powder screen or a porous ceramic is less dense by "
+               "its packing fraction, so the absorption computed with it is an upper bound for a powder screen",
+               "emission_components: the line positions 490 / 587 / 620 nm were read from the J. Inorg. Mater. "
+               "2023 figure; the 494 / 589 / 623 nm quoted with emission_peak_nm (Tang 2023) are a different "
+               "measurement (other sample and spectrometer) - both kept as read, not reconciled")},
 ]
 _SCINT_FIELDS = ("activator", "form", "xray_material", "density_g_cm3", "light_yield_photons_per_mev",
                  "light_yield_range_photons_per_mev", "decay_time_ns", "emission_peak_nm", "emission_components",
@@ -350,6 +358,11 @@ def _scintillator_properties(s):
     sc = {k: s[k] for k in _SCINT_FIELDS}
     sc["sources"] = dict(s["sources"])
     sc["unverified"] = tuple(k for k in _SCINT_FIELDS if s[k] is None)
+    # 注記(値はあるが、使い方に条件が付くもの)。「<欄の名前>: <説明>」の文の並び。
+    sc["notes"] = tuple(s.get("notes", ()))
+    for note in sc["notes"]:
+        if not isinstance(note, str) or note.split(":", 1)[0] not in _SCINT_FIELDS:
+            raise SystemExit("%s: a note must start with a field name and a colon, got %r" % (s["name"], note))
     for k in _SCINT_FIELDS:
         if s[k] is not None and k not in ("activator", "form") and k not in s["sources"]:
             raise SystemExit("%s: %s has a value but no source" % (s["name"], k))

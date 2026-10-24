@@ -10668,6 +10668,7 @@ MATERIAL_RECORDS = [
                     'xray_material': "NIST SRD 126 compound table 'Cesium Iodide' (Tl neglected)"
                 },
                 'unverified': ('light_yield_range_photons_per_mev', 'emission_components'),
+                'notes': (),
                 'emission_default_geometry': None
             }
         }
@@ -10710,6 +10711,7 @@ MATERIAL_RECORDS = [
                     'xray_material': 'chemical formula NaI, mixture rule over NIST SRD 126 (Tl neglected)'
                 },
                 'unverified': ('light_yield_range_photons_per_mev', 'emission_components'),
+                'notes': (),
                 'emission_default_geometry': None
             }
         }
@@ -10761,6 +10763,7 @@ MATERIAL_RECORDS = [
                     'xray_material': 'chemical formula Bi4Ge3O12, mixture rule over NIST SRD 126'
                 },
                 'unverified': ('light_yield_range_photons_per_mev',),
+                'notes': (),
                 'emission_default_geometry': 'surface'
             }
         }
@@ -10812,6 +10815,7 @@ MATERIAL_RECORDS = [
                     'xray_material': 'chemical formula Lu2SiO5, mixture rule over NIST SRD 126 (Ce neglected)'
                 },
                 'unverified': ('light_yield_range_photons_per_mev',),
+                'notes': ('emission_components: the band shape is an approximation - the Ce3+ 5d-4f emission is two overlapping bands (to the 2F5/2 and 2F7/2 levels, as kept for LYSO), merged here into one Gaussian in energy per geometry',),
                 'emission_default_geometry': 'surface'
             }
         }
@@ -10865,6 +10869,7 @@ MATERIAL_RECORDS = [
                     'xray_material': 'chemical formula Lu1.8Y0.2SiO5, mixture rule over NIST SRD 126 (Ce neglected)'
                 },
                 'unverified': ('refractive_index_at_peak',),
+                'notes': (),
                 'emission_default_geometry': 'surface'
             }
         }
@@ -10907,6 +10912,7 @@ MATERIAL_RECORDS = [
                     'xray_material': 'chemical formula CdWO4, mixture rule over NIST SRD 126'
                 },
                 'unverified': ('refractive_index_at_peak',),
+                'notes': (),
                 'emission_default_geometry': 'thick_crystal_transmission'
             }
         }
@@ -10992,6 +10998,7 @@ MATERIAL_RECORDS = [
                     'xray_material': "NIST SRD 126 compound table 'Gadolinium Oxysulfide' (Tb neglected)"
                 },
                 'unverified': ('light_yield_photons_per_mev', 'light_yield_range_photons_per_mev', 'refractive_index_at_peak'),
+                'notes': ('density_g_cm3: the bulk value 7.44 g/cm3 - a powder screen or a porous ceramic is less dense by its packing fraction, so the absorption computed with it is an upper bound for a powder screen', 'emission_components: the line positions 490 / 587 / 620 nm were read from the J. Inorg. Mater. 2023 figure; the 494 / 589 / 623 nm quoted with emission_peak_nm (Tang 2023) are a different measurement (other sample and spectrometer) - both kept as read, not reconciled'),
                 'emission_default_geometry': 'surface'
             }
         }
