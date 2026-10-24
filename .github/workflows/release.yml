@@ -43,6 +43,9 @@ jobs:
       # `RELEASE-OVERRIDE: <理由>` を書いた場合だけ通す。
       #   例: git tag -a v0.1.9 -F msg.txt   (msg.txt の末尾に
       #       RELEASE-OVERRIDE: 上流 CVE で pip-audit が落ちるだけ  と書く)
+      # 数えるのは「この repo の ci.yml が master への push で走った run」だけ(2026-10-24 の
+      # レビュー): 名前 "CI" だけで選ぶと、同じ SHA の pull_request の run や、fork が足した
+      # 同名の workflow でも条件を満たしてしまう。
       - name: Guard - CI is green for this commit
         env:
           GH_TOKEN: ${{ github.token }}
@@ -53,7 +56,7 @@ jobs:
             echo "::warning::CI ゲートを明示的に迂回しました —— $(printf '%s' "$NOTE" | grep 'RELEASE-OVERRIDE:')"
             exit 0
           fi
-          CONC=$(gh api "repos/${{ github.repository }}/actions/runs?head_sha=$SHA&per_page=50"                  --jq '[.workflow_runs[] | select(.name=="CI")] | sort_by(.created_at) | last | .conclusion')
+          CONC=$(gh api "repos/${{ github.repository }}/actions/runs?head_sha=$SHA&per_page=50"                  --jq '[.workflow_runs[] | select(.path==".github/workflows/ci.yml" and .event=="push" and .head_branch=="master" and .head_repository.full_name==env.GITHUB_REPOSITORY)] | sort_by(.created_at) | last | .conclusion')
           echo "CI conclusion for $SHA: ${CONC:-<none>}"
           if [ "$CONC" != "success" ]; then
             echo "CI がこのコミットで緑ではありません(${CONC:-未実行})。"

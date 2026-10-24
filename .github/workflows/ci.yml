@@ -229,14 +229,14 @@ jobs:
       # 数段だけ渡すと 2_27 の wheel しか無い依存(torch の nvidia-cudnn-cu13)が解決できなかった。
       - name: 依存の既知脆弱性(pip-audit、利用者に入る依存。見つかれば落とす)
         run: |
-          pip install "pip-audit>=2.7"
+          pip install "pip-audit==2.10.1"
           python tools/pip_audit_gate.py --python-version 3.11 --manylinux-glibc 2.39
       # CI の道具(pip / setuptools / wheel / build)は runner 側の版で、利用者の環境ではない。
       # 上流の CVE で本流を止めるのは筋が違うので警告にとどめる(赤い印は残る)。
       - name: CI の道具の既知脆弱性(pip-audit、警告のみ)
         continue-on-error: true
         run: |
-          pip install build
+          pip install "pip-audit==2.10.1" "build==1.6.1"
           python tools/pip_audit_gate.py tools
 
   test:
