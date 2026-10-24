@@ -62,7 +62,7 @@ Die 95 Fähigkeiten, aufgeteilt nach Art der Prüfung (`docs/maturity.json`, von
 | `validated-public-real-data` | ein Beispiel mit öffentlichen Messdaten läuft in einem Gate | 18 |
 | `validated-hardware` | an Hardware validiert (nur über angenommene externe Berichte) | 0 |
 
-Von 432 Beispielen werden 432 tatsächlich von einem Gate ausgeführt.
+Von 433 Beispielen werden 433 tatsächlich von einem Gate ausgeführt.
 
 ### Operatorzahlen pro Version
 
@@ -141,7 +141,7 @@ Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. F
 
 **Gemessene Abdeckung**: evolvierbare Ops 942/942, typisiertes Ledger 2583/2595, Fassade `fullseye.<name>` 703/1480 — **die Fassade ist erst zur Hälfte abgedeckt**.
 
-**Gemessener Inhalt**: von 3546 Notizen verweisen **3533** auf mindestens ein lauffähiges Beispiel (13 ohne), **3359** haben einen Nutzungsabschnitt ab 120 Zeichen (187 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 3546.
+**Gemessener Inhalt**: von 3546 Notizen verweisen **3534** auf mindestens ein lauffähiges Beispiel (12 ohne), **3359** haben einen Nutzungsabschnitt ab 120 Zeichen (187 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 3546.
 
 | Dimension | Ops | Einstieg |
 |---|---:|---|

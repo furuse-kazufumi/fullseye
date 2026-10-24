@@ -62,7 +62,7 @@ The 95 capabilities, split by how they are verified (`docs/maturity.json`, rebui
 | `validated-public-real-data` | an example on public measured data runs in a gate | 18 |
 | `validated-hardware` | validated on hardware (only from accepted external reports) | 0 |
 
-Of 432 examples, 432 are actually run by a gate.
+Of 433 examples, 433 are actually run by a gate.
 
 ### Operator counts by version
 
@@ -141,7 +141,7 @@ Every one carries a closed-form or synthetic ground truth and a null model. Fail
 
 **Measured coverage**: evolvable ops 942/942, typed ledger 2583/2595, one-line facade `fullseye.<name>` 703/1480 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
 
-**Measured substance**: of 3546 notes, **3533** link at least one runnable example (13 have none) and **3359** have a usage section of 120+ characters (187 are a one-line summary). The structure (call form, types, ops that chain next) is present in all 3546.
+**Measured substance**: of 3546 notes, **3534** link at least one runnable example (12 have none) and **3359** have a usage section of 120+ characters (187 are a one-line summary). The structure (call form, types, ops that chain next) is present in all 3546.
 
 | dimension | ops | entry |
 |---|---:|---|

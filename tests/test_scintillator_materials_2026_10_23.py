@@ -4,6 +4,9 @@
 真値の門:
   * 吸収効率は閉形式 1 − exp(−ρ (μ/ρ) t)(μ/ρ は NIST SRD 126 の列)、厚さ → ∞ で 1、厚さに単調。
   * 発光スペクトルは ∫ S dλ = 1 に正規化される(倍率に依らない)。細いガウスの極限は「極大の 1 本の線」に戻る。
+  * 発光の成分(2026-10-24): エネルギー軸のガウスは波長軸でも面積 1(ヤコビアン hc/λ²)、重なりはどちらの軸で
+    積分しても同じ、線の束は Σ wᵢ·QE(λᵢ)、QE の山頂(480 nm)では線が帯より大きく出る(BGO +6.6 %)。
+  * 光収率の幅の両端の電子の数は、値に比例する。
   * 既存の ``dual_kvp_channels`` の既定(CsI 0.6 mm)は 2026-10-23 の前(master 125dc785c8 で採った値)と一致し、
     同じプロセスの中では既定・明示の ``CSI``・シンチレータの ``CSI:TL`` が 1 ビットも違わない。
   * 材料表の発光の極大での屈折率(PDG 2024 表 35.4)を、独立な一次文献の分散式(RII の CsI / NaI / BGO)で検算する。
@@ -22,8 +25,8 @@ import materials_xray_data as MX
 import spectralrad as SR
 
 SCINT = ("BI4GE3O12", "CDWO4", "CSI:TL", "GD2O2S:TB", "LU1.8Y0.2SIO5:CE", "LU2SIO5:CE", "NAI:TL")
-FIELDS = ("density_g_cm3", "light_yield_photons_per_mev", "decay_time_ns", "emission_peak_nm",
-          "emission_fwhm_nm", "refractive_index_at_peak", "xray_material")
+FIELDS = ("density_g_cm3", "light_yield_photons_per_mev", "light_yield_range_photons_per_mev", "decay_time_ns",
+          "emission_peak_nm", "emission_components", "refractive_index_at_peak", "xray_material")
 
 
 def _sc(name):
@@ -52,17 +55,22 @@ def test_every_value_has_a_source_and_missing_values_are_declared():
                 assert f not in sc["unverified"], (n, f)
                 assert sc["sources"].get(f), (n, f)
         assert M._RECORDS[n]["properties"]["density_kg_m3"] == pytest.approx(sc["density_g_cm3"] * 1000.0)
-    # 一次情報で確かめられなかったもの(推測で埋めない): GOS の光収率、全材料の発光の幅
+    # 一次情報で確かめられなかったもの(推測で埋めない): GOS の光収率、CsI:Tl と NaI:Tl の発光の形
     assert _sc("GD2O2S:TB")["light_yield_photons_per_mev"] is None
-    assert all(_sc(n)["emission_fwhm_nm"] is None for n in SCINT)
+    assert [n for n in SCINT if _sc(n)["emission_components"] is None] == ["CSI:TL", "NAI:TL"]
 
 
 def test_published_values_as_copied():
-    """写した公表値の回帰(PDG 2024 表 35.4 / LBNL の行 / Tang 2023)。値を変えるなら出典も読み直すこと。"""
+    """写した公表値の回帰(PDG 2024 表 35.4 / LBNL の行 / Tang 2023 / de Haas 2008 / Bardelli 2006)。
+
+    値を変えるなら出典も読み直すこと。2026-10-24: LYSO の光収率 34,000(LBNL の Pidol2004 の行)→ 27,000
+    (de Haas & Dorenbos 2008 Table II、APD 26,000 / PD 27,000)、CdWO4 の発光の極大 495 → 480 nm
+    (Bardelli 2006 Table 1。495 は Moszynski2005 の行だけ)。
+    """
     want = {  # (密度, 光収率, 減衰 ns, 極大 nm)
         "CSI:TL": (4.51, 56000.0, 1220.0, 550.0), "NAI:TL": (3.67, 45000.0, 245.0, 410.0),
         "BI4GE3O12": (7.13, 8500.0, 300.0, 480.0), "LU2SIO5:CE": (7.40, 27000.0, 40.0, 402.0),
-        "LU1.8Y0.2SIO5:CE": (7.1, 34000.0, 41.0, 397.0), "CDWO4": (7.9, 27000.0, 12000.0, 495.0),
+        "LU1.8Y0.2SIO5:CE": (7.1, 27000.0, 41.0, 397.0), "CDWO4": (7.9, 27000.0, 12000.0, 480.0),
         "GD2O2S:TB": (7.44, None, 638000.0, 545.0)}
     for n, (rho, ly, tau, peak) in want.items():
         sc = _sc(n)
@@ -241,19 +249,6 @@ def test_narrow_band_tends_to_the_line_model():
     assert band == pytest.approx(line, rel=1e-5)
 
 
-def test_a_table_width_turns_into_a_gaussian(monkeypatch):
-    sc = dict(_sc("CSI:TL"))
-    sc["emission_fwhm_nm"] = 80.0
-    monkeypatch.setattr(M, "_scintillator", lambda m, op: ("CSI:TL", sc) if m == "CSI:TL" else None)
-    r = D.scintillator_sensor_qe("CSI:TL")
-    assert "gaussian" in r["emission_model"]
-    em = r["emission"]
-    half = em[em[:, 1] >= 0.5 * em[:, 1].max(), 0]
-    assert half[-1] - half[0] == pytest.approx(80.0, abs=0.5)        # 格子 2001 点の刻み 0.24 nm
-    area = float(np.sum(0.5 * (em[1:, 1] + em[:-1, 1]) * np.diff(em[:, 0])))
-    assert area == pytest.approx(1.0, rel=1e-12)
-
-
 def test_light_yield_override_for_the_material_without_one():
     with pytest.raises(ValueError, match="no verified light yield"):
         D.scintillator_sensor_qe("GD2O2S:TB")
@@ -272,6 +267,7 @@ def test_light_yield_override_for_the_material_without_one():
     {"emission_spectrum": [[400.0, 0.0], [500.0, 0.0]]}, {"emission_spectrum": [[100.0, 1.0], [500.0, 1.0]]},
     {"emission_spectrum": [[400.0, float("nan")], [500.0, 1.0]]}, {"emission_spectrum": [[400.0, 1.0]]},
     {"photodetector_qe": [[300.0, 1.2], [900.0, 0.5]]}, {"photodetector_qe": [[600.0, 0.5], [900.0, 0.5]]},
+    {"emission_geometry": "surface"},
 ])
 def test_fail_closed(kw):
     with pytest.raises(ValueError):
@@ -298,3 +294,167 @@ def test_registered_in_the_spectral_xray_ledger():
     assert "scintillator_sensor_qe" in D.__all__
     r = T.call("scintillator_sensor_qe")
     assert isinstance(r, dict) and math.isfinite(r["overlap"])
+
+
+# --------------------------------------------------------------------------- #
+# 光収率の幅と発光の成分(2026-10-24)                                            #
+# --------------------------------------------------------------------------- #
+QE = SR.silicon_photodiode_qe()
+LQ, Q = QE[:, 0], QE[:, 1]
+
+
+def _qe(lam):
+    return float(np.interp(lam, LQ, Q))
+
+
+def test_light_yield_ranges_only_where_the_spread_was_read():
+    """幅は文献のばらつきの理由を読んだ材料だけ(CdWO4: 絶対値の Holl 1988〜Dorenbos 1995、LYSO: de Haas 2008 の APD/PD)。"""
+    want = {"CDWO4": (20000.0, 28000.0), "LU1.8Y0.2SIO5:CE": (26000.0, 27000.0)}
+    for n in SCINT:
+        sc = _sc(n)
+        rng = sc["light_yield_range_photons_per_mev"]
+        assert rng == want.get(n), n
+        if rng is not None:
+            assert rng[0] <= sc["light_yield_photons_per_mev"] <= rng[1]
+            assert sc["sources"]["light_yield_range_photons_per_mev"]
+    # CdWO4 の出典は条件の分かる書き方(光電子数 → 光子数の換算と、低い値の理由)
+    src = _sc("CDWO4")["sources"]["light_yield_photons_per_mev"]
+    for frag in ("6,500 +- 200 phe/MeV", "27,400 ph/MeV", "arXiv:1001.5461", "Holl", "20,000", "Dorenbos", "28,000",
+                 "shaping"):
+        assert frag in src, frag
+    assert "de Haas" in _sc("LU1.8Y0.2SIO5:CE")["sources"]["light_yield_photons_per_mev"]
+    assert "not stated" in _sc("LU1.8Y0.2SIO5:CE")["sources"]["light_yield_photons_per_mev"]
+
+
+def test_emission_components_are_well_formed():
+    geos = {"surface", "thick_crystal_transmission"}
+    for n in SCINT:
+        comps = _sc(n)["emission_components"]
+        if n in ("CSI:TL", "NAI:TL"):
+            assert comps is None and "emission_components" in _sc(n)["unverified"]
+            assert _sc(n)["emission_default_geometry"] is None
+            continue
+        sums = {}
+        for c in comps:
+            assert c["geometry"] in geos and c["excitation"] in ("xray", "gamma", "uv")
+            assert c["digitized_from_figure"] is True and c["source"]
+            sums[c["geometry"]] = sums.get(c["geometry"], 0.0) + c["weight"]
+        assert all(abs(v - 1.0) < 1e-12 for v in sums.values()), (n, sums)
+        assert _sc(n)["emission_default_geometry"] == ("surface" if "surface" in sums else next(iter(sums)))
+    assert {c["geometry"] for c in _sc("LU2SIO5:CE")["emission_components"]} == geos
+    assert [c["center_nm"] for c in _sc("GD2O2S:TB")["emission_components"]] == [411.0, 490.0, 545.0, 587.0, 620.0,
+                                                                                  667.0]
+    assert all(c["fwhm_ev"] is None for c in _sc("GD2O2S:TB")["emission_components"])
+    assert [(c["center_nm"], c["fwhm_ev"]) for c in _sc("BI4GE3O12")["emission_components"]] == [(480.0, 0.70)]
+    assert [(c["center_nm"], c["fwhm_ev"]) for c in _sc("CDWO4")["emission_components"]] == [(480.0, 0.58)]
+
+
+@pytest.mark.parametrize("center_nm,fwhm_ev", [(480.0, 0.70), (402.0, 0.50), (550.0, 0.05), (900.0, 0.4)])
+def test_component_gaussian_has_unit_area_in_wavelength(center_nm, fwhm_ev):
+    """エネルギー軸で面積 1 のガウスは、ヤコビアン hc/λ² を掛けた波長の密度でも面積 1。"""
+    ce = D.HC_EV_NM / center_nm
+    lam = D._component_grid(ce, fwhm_ev, "t")
+    area = float(np.trapezoid(D._gauss_ev_per_nm(lam, ce, fwhm_ev), lam))
+    assert area == pytest.approx(1.0, abs=1e-6)
+    # ヤコビアンを落とすと面積は 1 にならない(壊して赤になることの確認)
+    sig = fwhm_ev / (2.0 * math.sqrt(2.0 * math.log(2.0)))
+    no_jac = np.exp(-0.5 * ((D.HC_EV_NM / lam - ce) / sig) ** 2) / (sig * math.sqrt(2.0 * math.pi))
+    assert abs(float(np.trapezoid(no_jac, lam)) - 1.0) > 0.1
+    # 帯の裾が光子のエネルギー 0 に届く(幅が広すぎる)成分は拒否する
+    with pytest.raises(ValueError, match="zero photon energy"):
+        D._component_grid(D.HC_EV_NM / 900.0, 0.9, "t")
+
+
+@pytest.mark.parametrize("center_nm,fwhm_ev", [(480.0, 0.70), (402.0, 0.50), (453.0, 0.63)])
+def test_overlap_is_the_same_on_the_energy_and_the_wavelength_axis(center_nm, fwhm_ev):
+    """∫ g_λ(λ) QE(λ) dλ = ∫ g_E(E) QE(hc/E) dE(ヤコビアンの確認)。"""
+    ce = D.HC_EV_NM / center_nm
+    comps = [{"center_nm": center_nm, "fwhm_ev": fwhm_ev, "weight": 1.0, "digitized_from_figure": True,
+              "source": "t"}]
+    _, ov_lam, _ = D._emission_components_overlap(comps, LQ, Q, "t")
+    sig = fwhm_ev / (2.0 * math.sqrt(2.0 * math.log(2.0)))
+    E = np.linspace(ce - 6 * sig, ce + 6 * sig, 200001)
+    gE = np.exp(-0.5 * ((E - ce) / sig) ** 2) / (sig * math.sqrt(2.0 * math.pi))
+    ov_E = float(np.trapezoid(gE * np.interp(D.HC_EV_NM / E, LQ, Q), E) / np.trapezoid(gE, E))
+    assert ov_lam == pytest.approx(ov_E, rel=2e-5)
+
+
+def test_single_gaussian_tends_to_the_line_as_the_width_goes_to_zero():
+    errs = []
+    for fw in (0.3, 0.03, 0.003, 0.0003):
+        comps = [{"center_nm": 480.0, "fwhm_ev": fw, "weight": 1.0, "digitized_from_figure": False, "source": "t"}]
+        errs.append(abs(D._emission_components_overlap(comps, LQ, Q, "t")[1] - _qe(480.0)))
+    assert errs[-1] < 1e-5 * _qe(480.0)
+    assert errs == sorted(errs, reverse=True)
+
+
+def test_line_bundle_overlap_is_the_weighted_sum_of_qe():
+    """GOS:Tb の線の束: Q̄ = Σ wᵢ·QE(λᵢ)(J. Inorg. Mater. 2023 の図から読んだ割合)。"""
+    r = D.scintillator_sensor_qe("GD2O2S:TB", 0.2, light_yield_per_mev=1.0)
+    comps = _sc("GD2O2S:TB")["emission_components"]
+    want = sum(c["weight"] * _qe(c["center_nm"]) for c in comps)
+    assert r["overlap"] == pytest.approx(want, rel=1e-14)
+    assert r["emission"] is None and "line bundle" in r["emission_model"]
+    assert [round(x["weight"], 12) for x in r["emission_components"]] == [0.10, 0.12, 0.53, 0.13, 0.08, 0.04]
+    # 545 nm の 1 本の線で近似すると Si の QE の山の上で大きく出る
+    assert _qe(545.0) > r["overlap"]
+
+
+@pytest.mark.parametrize("name,band_over_line", [("BI4GE3O12", 0.066), ("CDWO4", 0.046)])
+def test_the_line_model_overestimates_on_the_top_of_the_qe_hill(name, band_over_line):
+    """QE が上に凸の山頂付近(480 nm)では、極大の線は帯の重なりより大きい(調査の計算 BGO +6.6 %)。"""
+    r = D.scintillator_sensor_qe(name)
+    line = _qe(r["emission_peak_nm"])
+    assert "Gaussian in energy" in r["emission_model"]
+    assert line > r["overlap"]
+    assert line / r["overlap"] - 1.0 == pytest.approx(band_over_line, abs=0.002)
+
+
+def test_electrons_at_the_ends_of_the_light_yield_range_are_proportional():
+    r = D.scintillator_sensor_qe("CDWO4", 0.5, 20.0, 150.0, 15)
+    lo, hi = r["electrons_light_yield_range"]
+    assert r["light_yield_range_photons_per_mev"] == (20000.0, 28000.0)
+    np.testing.assert_allclose(lo, r["electrons"] * 20000.0 / 27000.0, rtol=1e-14)
+    np.testing.assert_allclose(hi, r["electrons"] * 28000.0 / 27000.0, rtol=1e-14)
+    np.testing.assert_allclose(lo, r["absorption_efficiency"] * 20000.0 * r["energy_kev"] / 1000 * r["overlap"],
+                               rtol=1e-13)
+    assert r["sources"]["light_yield_range_photons_per_mev"].startswith("absolute")
+    # 幅の無い材料と、光収率を上書きしたときは None
+    assert D.scintillator_sensor_qe("CSI:TL")["electrons_light_yield_range"] is None
+    assert D.scintillator_sensor_qe("CDWO4", light_yield_per_mev=1e4)["electrons_light_yield_range"] is None
+
+
+def test_lso_geometry_is_chosen_by_argument_and_defaults_to_the_surface():
+    surf = D.scintillator_sensor_qe("LSO")
+    thick = D.scintillator_sensor_qe("LSO", emission_geometry="thick_crystal_transmission")
+    assert surf["emission_geometry"] == "surface" and thick["emission_geometry"] == "thick_crystal_transmission"
+    assert surf["overlap"] == D.scintillator_sensor_qe("LSO", emission_geometry="surface")["overlap"]
+    # 厚い結晶では自己吸収で極大が 453 nm へ動き、Si の QE が高い側へ寄る
+    assert thick["overlap"] > surf["overlap"]
+    assert thick["emission_components"][0]["center_nm"] == 453.0
+    assert "gamma" in thick["emission_model"] and "uv" in surf["emission_model"]
+    # CdWO4 は厚い結晶の測定しか無いので、既定はそれ
+    assert D.scintillator_sensor_qe("CDWO4")["emission_geometry"] == "thick_crystal_transmission"
+    lyso = D.scintillator_sensor_qe("LYSO")
+    assert "assumed" in lyso["emission_model"] and all(c["weight_assumed"] for c in lyso["emission_components"])
+
+
+@pytest.mark.parametrize("kw", [
+    {"scintillator": "CDWO4", "emission_geometry": "surface"},
+    {"scintillator": "CSI:TL", "emission_geometry": "surface"},
+    {"scintillator": "LSO", "emission_geometry": "bulk"},
+    {"scintillator": "LSO", "emission_geometry": 3},
+    {"scintillator": "LSO", "emission_geometry": "surface",
+     "emission_spectrum": [[380.0, 0.0], [400.0, 1.0], [420.0, 0.0]]},
+])
+def test_emission_geometry_fails_closed(kw):
+    with pytest.raises(ValueError):
+        D.scintillator_sensor_qe(**kw)
+
+
+def test_band_outside_the_qe_range_is_refused():
+    narrow = np.array([[470.0, 0.5], [490.0, 0.5]])
+    with pytest.raises(ValueError, match="outside the photodetector QE range"):
+        D.scintillator_sensor_qe("BGO", photodetector_qe=narrow)
+    with pytest.raises(ValueError, match="outside the photodetector QE range"):
+        D.scintillator_sensor_qe("GOS:TB", light_yield_per_mev=1.0, photodetector_qe=narrow)

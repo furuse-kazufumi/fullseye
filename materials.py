@@ -39,7 +39,10 @@ k の表が無い区間は k = 0 とし、返り値の ``k_source`` を ``None``
 Lu1.8Y0.2SiO5:Ce / CdWO4 / Gd2O2S:Tb の 7 レコード(化学式で名前を付ける。別名 BGO / LSO / LYSO /
 GOS:TB …)は ``properties["scintillator"]`` に発光の極大 [nm]・光収率 [photons/MeV]・減衰時間 [ns]・
 密度・X 線の列の引き先(``xray_material``)を持ち、値ごとの出典を ``sources``、確かめられなかった値の
-名前を ``unverified`` に置く(Gd2O2S:Tb の光収率と全材料の発光の幅は ``None``)。同じ名前で X 線の
+名前を ``unverified`` に置く(Gd2O2S:Tb の光収率、CsI:Tl と NaI:Tl の発光の形は ``None``)。2026-10-24 から
+光収率の幅 ``light_yield_range_photons_per_mev``(CdWO4 / LYSO だけ)と、発光の形を成分の並び
+``emission_components``(中心・エネルギー軸の FWHM・重み・測定配置・励起の種類・出典・図から読み取りの印)で
+持つ(消費側は ``dualxray.scintillator_sensor_qe``)。同じ名前で X 線の
 減衰も引ける(:func:`material_xray_attenuation` / ``dualxray.dual_kvp_channels(detector=...)``)。
 
 真値の門(tests/test_materials.py): カタログ公表値の n_d / V_d(RII の PROPERTIES)、Si の

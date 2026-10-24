@@ -4,7 +4,7 @@ dim: tomography
 category: spectral_xray
 in: 
 out: table
-examples: []
+examples: [scintillator_sensor_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.8.1  # fullseye lib version this note was generated for
@@ -13,7 +13,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 # scintillator_sensor_qe — TOMOGRAPHY `spectral_xray` op
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import fullseye as fs; fs.ledger.scintillator_sensor_qe(scintillator='CSI:TL', thickness_mm: 'float' = 0.6, e_min_kev: 'float' = 10.0, e_max_kev: 'float' = 150.0, n_points: 'int' = 141, photodetector_qe=None, emission_spectrum=None, light_yield_per_mev=None, light_collection: 'float' = 1.0) -> 'dict'` (実装を直接呼ぶなら `import dualxray; dualxray.scintillator_sensor_qe(scintillator='CSI:TL', thickness_mm: 'float' = 0.6, e_min_kev: 'float' = 10.0, e_max_kev: 'float' = 150.0, n_points: 'int' = 141, photodetector_qe=None, emission_spectrum=None, light_yield_per_mev=None, light_collection: 'float' = 1.0) -> 'dict'`、台帳から引くなら `opstomography.get("scintillator_sensor_qe")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.scintillator_sensor_qe(scintillator='CSI:TL', thickness_mm: 'float' = 0.6, e_min_kev: 'float' = 10.0, e_max_kev: 'float' = 150.0, n_points: 'int' = 141, photodetector_qe=None, emission_spectrum=None, light_yield_per_mev=None, light_collection: 'float' = 1.0, emission_geometry=None) -> 'dict'` (実装を直接呼ぶなら `import dualxray; dualxray.scintillator_sensor_qe(scintillator='CSI:TL', thickness_mm: 'float' = 0.6, e_min_kev: 'float' = 10.0, e_max_kev: 'float' = 150.0, n_points: 'int' = 141, photodetector_qe=None, emission_spectrum=None, light_yield_per_mev=None, light_collection: 'float' = 1.0, emission_geometry=None) -> 'dict'`、台帳から引くなら `opstomography.get("scintillator_sensor_qe")`)
 
 ## 使い方
 
@@ -28,16 +28,36 @@ version: 0.8.1  # fullseye lib version this note was generated for
     吸収した X 線はエネルギーを全部置いていくとみなす(K 蛍光の逃げとコンプトンの逃げは入れない)。
   * 重なり Q̄ = ∫ S(λ) QE(λ) dλ(S は ∫ S dλ = 1 に正規化した発光スペクトル)。電子の数 = N(E) · Q̄。
 
+光収率の幅: 材料表に幅(文献の絶対値のばらつき。CdWO4 は 20,000〜28,000、LYSO は 26,000〜27,000)が
+あれば、両端で数えた電子の数も返す(``electrons_light_yield_range``、1 行目が下限・2 行目が上限)。電子の数は
+光収率に比例するので、両端の電子の数は中央の値の Y_lo/Y 倍と Y_hi/Y 倍。``light_yield_per_mev`` で
+上書きしたとき・表に幅が無いときは ``None``。
+
 発光スペクトル S: ``emission_spectrum`` に (λ nm, 相対強度) の pairs を渡せばそれを正規化して使う。
-渡さなければ材料表から —— 表に発光の幅(FWHM)があればその幅のガウス、**無ければ発光の極大の 1 本の線**
-(Q̄ = QE(λ_peak))。2026-10-23 時点で幅を一次情報で確かめられた材料は無いので、表から作るのは線になる。
-返り値の ``emission_model`` がどちらかを言う。``photodetector_qe`` は (λ nm, QE) の pairs で、既定は
-``spectralrad.silicon_photodiode_qe()``(Si フォトダイオード、集める深さ 3 µm、反射防止膜なし)。
+渡さなければ材料表の**発光の成分の並び**から作る —— 1 成分 = 中心・FWHM [eV]・重み。ガウスは**エネルギー軸**
+で作り、波長軸へはヤコビアン hc/λ² を掛けて移す(Q̄ = Σ wᵢ ∫ gᵢ(λ) QE(λ) dλ)。FWHM の無い成分は線で、
+GD2O2S:TB の Tb³⁺ の線の束は Q̄ = Σ wᵢ·QE(λᵢ)。幅は全部、一次文献の図から読み取った値(室温の X 線・γ 線
+励起で FWHM を数値で書いた一次文献は見つからなかった)で、成分ごとに出典と ``digitized_from_figure`` の印を
+返す。成分の中心は**エネルギー軸の**中心なので、波長軸の山はヤコビアンの分だけ短波長に出る(BGO: 中心
+480 nm・FWHM 0.70 eV で山 468 nm)。公表の「極大」が波長軸の値だとすると中心はやや長波長で、Q̄ の差は
+1.4 % 以内(BGO −0.8 %、LSO +1.4 %)。幅の分からない材料(CSI:TL・NAI:TL)は**発光の極大の 1 本の線**
+(Q̄ = QE(λ_peak))。
+``emission_model`` がどれを使ったかを言う。QE が上に凸の山の上では、線は帯より大きく出る(BGO で +6.6 %)。
+
+``emission_geometry`` は表の成分の測定配置: ``"surface"``(励起した面から出る光)か
+``"thick_crystal_transmission"``(厚い結晶の中を通って出てくる光。LSO は Ce³⁺ の自己吸収で極大が
+402 → 453 nm に動く)。``None`` は表の既定(表面の成分があれば表面、無ければ表にある唯一の配置)。
+表にその配置が無い材料・成分の無い材料・``emission_spectrum`` と同時に渡すと ValueError。
+
+``photodetector_qe`` は (λ nm, QE) の pairs で、既定は ``spectralrad.silicon_photodiode_qe()``
+(Si フォトダイオード、集める深さ 3 µm、反射防止膜なし)。
 発光が QE の波長範囲の外にはみ出すと ValueError(外の光を 0 と数えて重なりを小さく出さない)。
 
 返り値: dict(scintillator, thickness_mm, energy_kev, absorption_efficiency, light_photons, electrons,
-overlap = Q̄, light_yield_photons_per_mev, light_collection, emission_model, emission(正規化した pairs、
-線なら None), emission_peak_nm, photodetector, decay_time_ns, sources(使った値の出典), unverified)。
+overlap = Q̄, light_yield_photons_per_mev, light_yield_range_photons_per_mev, electrons_light_yield_range,
+light_collection, emission_model, emission(帯の部分の正規化した pairs、線だけなら None),
+emission_components(成分ごとの中心・幅・重み・qe_overlap・出典、表を使わなければ None), emission_geometry,
+emission_peak_nm, photodetector, decay_time_ns, sources(使った値の出典), unverified)。
 光収率の無い材料(GD2O2S:TB)で ``light_yield_per_mev`` を渡さなければ ValueError。
 
 ## 参考(サンプルデータ・文献)
@@ -48,7 +68,7 @@ overlap = Q̄, light_yield_photons_per_mev, light_collection, emission_model, em
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [scintillator_sensor_tour](../../../../examples/scintillator_sensor_tour.py) — `py -3.11 examples/scintillator_sensor_tour.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

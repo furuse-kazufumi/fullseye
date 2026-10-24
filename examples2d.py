@@ -1223,6 +1223,13 @@ EXAMPLES = [
      "name": "光学 op(optics)で検査機を 1 台、紙の上で設計する",
      "summary": "倍率→焦点距離/物体距離、ABCD 行列で結像確認、回折限界・被写界深度・MTF を"
                 "要求分解能に対して合否判定する。"},
+    {"id": "scintillator_sensor_tour", "task": "optics_sensing", "data": "synthetic",
+     "name": "X 線 1 個は Si フォトダイオードの電子何個になるか —— シンチレータ 7 種を K 吸収端・光収率の幅・発光の形で比べる",
+     "summary": "止める割合 × 光の数 × 光が電子になる割合(fs.ledger.scintillator_sensor_qe)。厚さ 0.6 mm の吸収は重い元素の"
+                "K 端で跳ぶ(Gd 50.2 keV で GOS:Tb 0.76 → 1.00)。BGO は 95 keV で CsI:Tl の 1.8 倍を止めるのに電子は 0.29 倍。"
+                "CdWO4 の光収率の幅 20,000〜28,000(絶対測定どうしの違い)を帯で描くと電子の数が 30 % 動く。発光は材料表の"
+                "成分(エネルギー軸のガウス、GOS:Tb は Tb の線の束)で、極大の線で近似すると Si の QE の山頂で重なりを"
+                "大きく見積もる(BGO +6.6 %)。LSO は厚い結晶を通ると自己吸収で重なりが 0.506 → 0.560。"},
     {"id": "optical_design_metrics", "task": "optics_sensing", "data": "synthetic",
      "name": "理想レンズ面と、PSF から読む設計の指標(囲みエネルギー・子午/球欠 MTF・スルーフォーカス MTF)",
      "summary": "理想レンズ(f)の焦点とガウスの結像公式、Airy の囲みエネルギー 83.8 %、円形瞳の MTF の閉形式との"

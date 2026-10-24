@@ -380,13 +380,25 @@ SCINT_GAUSS_HALF_WIDTH_SIGMA = 6.0
 #: 与えた発光スペクトルのうち、光検出器の QE の波長範囲の外に出てよい割合の上限。外の光を 0 と数えると
 #: 重なりが黙って小さく出るので、これを超えたら ValueError(QE の範囲を広げるか発光を切り詰めて渡す)。
 SCINT_OUTSIDE_QE_TOLERANCE = 1e-6
+#: 発光の 1 成分(エネルギー軸のガウス)を載せる格子の点数(エネルギーで等間隔、±SCINT_GAUSS_HALF_WIDTH_SIGMA σ)。
+SCINT_COMPONENT_POINTS = 2001
+#: hc [eV·nm]。E [eV] = HC_EV_NM / λ [nm](CODATA 2018 の h・c から 1239.841984)。
+HC_EV_NM = 1239.841984
+#: 材料表の発光の成分の測定配置(``emission_geometry`` に渡せる語)。
+#: ``surface`` = 励起した面から出る光、``thick_crystal_transmission`` = 厚い結晶の中を通って出てくる光
+#: (Ce³⁺ の自己吸収で青い側が削れ、極大が長波長へ動く —— LSO で 402 → 430〜453 nm)。
+SCINT_EMISSION_GEOMETRIES = ("surface", "thick_crystal_transmission")
 
 
 def _scint_summary(name, sc):
+    comps = sc.get("emission_components") or ()
     return {"name": name, "light_yield_photons_per_mev": sc["light_yield_photons_per_mev"],
             "light_photons_per_kev": (None if sc["light_yield_photons_per_mev"] is None
                                       else sc["light_yield_photons_per_mev"] / 1000.0),
-            "emission_peak_nm": sc["emission_peak_nm"], "emission_fwhm_nm": sc["emission_fwhm_nm"],
+            "light_yield_range_photons_per_mev": sc.get("light_yield_range_photons_per_mev"),
+            "emission_peak_nm": sc["emission_peak_nm"],
+            "emission_geometries": tuple(g for g in SCINT_EMISSION_GEOMETRIES if any(c["geometry"] == g for c in comps)),
+            "emission_default_geometry": sc.get("emission_default_geometry"),
             "decay_time_ns": sc["decay_time_ns"], "density_g_cm3": sc["density_g_cm3"],
             "unverified": tuple(sc["unverified"])}
 
@@ -408,9 +420,99 @@ def _trapz(y, x):
     return float(np.sum(0.5 * (y[1:] + y[:-1]) * np.diff(x)))
 
 
+def _gauss_ev_per_nm(lam_nm, center_ev, fwhm_ev):
+    """エネルギー軸で面積 1 のガウス(中心 ``center_ev``、FWHM ``fwhm_ev``)を、波長軸の密度 [1/nm] で返す。
+
+    g_λ(λ) = g_E(E(λ)) · |dE/dλ| = g_E(hc/λ) · hc/λ²(ヤコビアン)。だから ∫ g_λ dλ = ∫ g_E dE = 1。
+    ★ヤコビアンを掛けずに g_E(hc/λ) を波長で正規化すると、帯の長波長側が重くなりすぎる(λ² の分だけ)。
+    """
+    sig = fwhm_ev / (2.0 * math.sqrt(2.0 * math.log(2.0)))
+    E = HC_EV_NM / np.asarray(lam_nm, dtype=np.float64)
+    gE = np.exp(-0.5 * ((E - center_ev) / sig) ** 2) / (sig * math.sqrt(2.0 * math.pi))
+    return gE * HC_EV_NM / np.asarray(lam_nm, dtype=np.float64) ** 2
+
+
+def _component_grid(center_ev, fwhm_ev, op):
+    """1 成分の波長の格子 [nm](エネルギーで等間隔に ±6σ、昇順)。"""
+    sig = fwhm_ev / (2.0 * math.sqrt(2.0 * math.log(2.0)))
+    lo = center_ev - SCINT_GAUSS_HALF_WIDTH_SIGMA * sig
+    if not lo > 0.0:
+        raise ValueError("%s: an emission band at %g eV with FWHM %g eV reaches zero photon energy"
+                         % (op, center_ev, fwhm_ev))
+    E = np.linspace(lo, center_ev + SCINT_GAUSS_HALF_WIDTH_SIGMA * sig, SCINT_COMPONENT_POINTS)
+    return np.sort(HC_EV_NM / E)
+
+
+def _emission_components_overlap(comps, lq, q, op):
+    """発光の成分の並び → (帯の部分の (λ, S) の pairs か None, 重なり Q̄, 成分ごとの内訳)。
+
+    重みは和 1 に正規化する。帯(``fwhm_ev`` あり)は成分ごとに Q̄_i = ∫ g_λ,i QE dλ / ∫ g_λ,i dλ(台形、
+    QE は線形補間)、線(``fwhm_ev`` = ``None``)は Q̄_j = QE(λ_j)。Q̄ = Σ w_i Q̄_i(線の束なら Σ wⱼ·QE(λⱼ))。
+    返す pairs は帯の部分 Σ w_i g_λ,i を全成分の格子の和集合に載せたもので、面積は帯の重みの和
+    (帯だけなら 1)。帯が QE の範囲の外へ出る割合が SCINT_OUTSIDE_QE_TOLERANCE を超えたら ValueError。
+    """
+    w = np.array([float(c["weight"]) for c in comps], dtype=np.float64)
+    if w.size == 0 or not np.all(np.isfinite(w)) or np.any(w <= 0.0):
+        raise ValueError("%s: emission components need positive finite weights" % op)
+    w = w / w.sum()
+    rows, overlap, grids = [], 0.0, []
+    for c, wi in zip(comps, w):
+        lam_c = float(c["center_nm"])
+        row = {"center_nm": lam_c, "center_ev": HC_EV_NM / lam_c, "fwhm_ev": c["fwhm_ev"], "weight": float(wi),
+               "kind": "line" if c["fwhm_ev"] is None else "gaussian_in_energy",
+               "digitized_from_figure": bool(c["digitized_from_figure"]),
+               "weight_assumed": bool(c.get("weight_assumed", False)), "source": c["source"]}
+        if c["fwhm_ev"] is None:
+            if not (lq[0] <= lam_c <= lq[-1]):
+                raise ValueError("%s: the emission line at %g nm lies outside the photodetector QE range [%g, %g] nm"
+                                 % (op, lam_c, lq[0], lq[-1]))
+            qi = float(np.interp(lam_c, lq, q))
+        else:
+            ls = _component_grid(HC_EV_NM / lam_c, float(c["fwhm_ev"]), op)
+            g = _gauss_ev_per_nm(ls, HC_EV_NM / lam_c, float(c["fwhm_ev"]))
+            total = _trapz(g, ls)
+            inside = (ls >= lq[0]) & (ls <= lq[-1])
+            outside = 1.0 - (_trapz(g[inside], ls[inside]) / total if inside.sum() >= 2 else 0.0)
+            if outside > SCINT_OUTSIDE_QE_TOLERANCE:
+                raise ValueError("%s: %.3g of the emission band at %g nm lies outside the photodetector QE range "
+                                 "[%g, %g] nm" % (op, outside, lam_c, lq[0], lq[-1]))
+            qi = _trapz(g[inside] * np.interp(ls[inside], lq, q), ls[inside]) / total
+            grids.append((ls, wi, HC_EV_NM / lam_c, float(c["fwhm_ev"]), total))
+        row["qe_overlap"] = qi
+        overlap += wi * qi
+        rows.append(row)
+    pairs = None
+    if grids:
+        lam = np.unique(np.concatenate([gr[0] for gr in grids]))
+        S = np.zeros_like(lam)
+        for _, wi, ce, fw, total in grids:
+            S += wi * _gauss_ev_per_nm(lam, ce, fw) / total
+        pairs = np.column_stack([lam, S])
+    return pairs, float(overlap), rows
+
+
+def _emission_model_text(geometry, comps, rows):
+    exc = sorted({c["excitation"] for c in comps})
+    parts = []
+    for r in rows:
+        if r["kind"] == "line":
+            parts.append("line %g nm x%.2f" % (r["center_nm"], r["weight"]))
+        else:
+            parts.append("Gaussian in energy %g nm FWHM %g eV x%.2f" % (r["center_nm"], r["fwhm_ev"], r["weight"]))
+    kind = "line bundle sum w*QE(lambda)" if all(r["kind"] == "line" for r in rows) else "components"
+    notes = []
+    if any(r["digitized_from_figure"] for r in rows):
+        notes.append("widths/weights read from figures")
+    if any(r["weight_assumed"] for r in rows):
+        notes.append("band ratio assumed, not verified")
+    return "%s from the material table (geometry %s, %s excitation; %s): %s" % (
+        kind, geometry, "/".join(exc), "; ".join(notes) or "published values", ", ".join(parts))
+
+
 def scintillator_sensor_qe(scintillator="CSI:TL", thickness_mm: float = 0.6, e_min_kev: float = 10.0,
                            e_max_kev: float = 150.0, n_points: int = 141, photodetector_qe=None,
-                           emission_spectrum=None, light_yield_per_mev=None, light_collection: float = 1.0) -> dict:
+                           emission_spectrum=None, light_yield_per_mev=None, light_collection: float = 1.0,
+                           emission_geometry=None) -> dict:
     """シンチレータ積層のセンサの量子効率: X 線 1 個 → シンチレータの吸収 → 発光 → 光検出器の電子の数。
 
     エネルギー E の X 線 1 個あたり:
@@ -422,16 +524,36 @@ def scintillator_sensor_qe(scintillator="CSI:TL", thickness_mm: float = 0.6, e_m
         吸収した X 線はエネルギーを全部置いていくとみなす(K 蛍光の逃げとコンプトンの逃げは入れない)。
       * 重なり Q̄ = ∫ S(λ) QE(λ) dλ(S は ∫ S dλ = 1 に正規化した発光スペクトル)。電子の数 = N(E) · Q̄。
 
+    光収率の幅: 材料表に幅(文献の絶対値のばらつき。CdWO4 は 20,000〜28,000、LYSO は 26,000〜27,000)が
+    あれば、両端で数えた電子の数も返す(``electrons_light_yield_range``、1 行目が下限・2 行目が上限)。電子の数は
+    光収率に比例するので、両端の電子の数は中央の値の Y_lo/Y 倍と Y_hi/Y 倍。``light_yield_per_mev`` で
+    上書きしたとき・表に幅が無いときは ``None``。
+
     発光スペクトル S: ``emission_spectrum`` に (λ nm, 相対強度) の pairs を渡せばそれを正規化して使う。
-    渡さなければ材料表から —— 表に発光の幅(FWHM)があればその幅のガウス、**無ければ発光の極大の 1 本の線**
-    (Q̄ = QE(λ_peak))。2026-10-23 時点で幅を一次情報で確かめられた材料は無いので、表から作るのは線になる。
-    返り値の ``emission_model`` がどちらかを言う。``photodetector_qe`` は (λ nm, QE) の pairs で、既定は
-    ``spectralrad.silicon_photodiode_qe()``(Si フォトダイオード、集める深さ 3 µm、反射防止膜なし)。
+    渡さなければ材料表の**発光の成分の並び**から作る —— 1 成分 = 中心・FWHM [eV]・重み。ガウスは**エネルギー軸**
+    で作り、波長軸へはヤコビアン hc/λ² を掛けて移す(Q̄ = Σ wᵢ ∫ gᵢ(λ) QE(λ) dλ)。FWHM の無い成分は線で、
+    GD2O2S:TB の Tb³⁺ の線の束は Q̄ = Σ wᵢ·QE(λᵢ)。幅は全部、一次文献の図から読み取った値(室温の X 線・γ 線
+    励起で FWHM を数値で書いた一次文献は見つからなかった)で、成分ごとに出典と ``digitized_from_figure`` の印を
+    返す。成分の中心は**エネルギー軸の**中心なので、波長軸の山はヤコビアンの分だけ短波長に出る(BGO: 中心
+    480 nm・FWHM 0.70 eV で山 468 nm)。公表の「極大」が波長軸の値だとすると中心はやや長波長で、Q̄ の差は
+    1.4 % 以内(BGO −0.8 %、LSO +1.4 %)。幅の分からない材料(CSI:TL・NAI:TL)は**発光の極大の 1 本の線**
+    (Q̄ = QE(λ_peak))。
+    ``emission_model`` がどれを使ったかを言う。QE が上に凸の山の上では、線は帯より大きく出る(BGO で +6.6 %)。
+
+    ``emission_geometry`` は表の成分の測定配置: ``"surface"``(励起した面から出る光)か
+    ``"thick_crystal_transmission"``(厚い結晶の中を通って出てくる光。LSO は Ce³⁺ の自己吸収で極大が
+    402 → 453 nm に動く)。``None`` は表の既定(表面の成分があれば表面、無ければ表にある唯一の配置)。
+    表にその配置が無い材料・成分の無い材料・``emission_spectrum`` と同時に渡すと ValueError。
+
+    ``photodetector_qe`` は (λ nm, QE) の pairs で、既定は ``spectralrad.silicon_photodiode_qe()``
+    (Si フォトダイオード、集める深さ 3 µm、反射防止膜なし)。
     発光が QE の波長範囲の外にはみ出すと ValueError(外の光を 0 と数えて重なりを小さく出さない)。
 
     返り値: dict(scintillator, thickness_mm, energy_kev, absorption_efficiency, light_photons, electrons,
-    overlap = Q̄, light_yield_photons_per_mev, light_collection, emission_model, emission(正規化した pairs、
-    線なら None), emission_peak_nm, photodetector, decay_time_ns, sources(使った値の出典), unverified)。
+    overlap = Q̄, light_yield_photons_per_mev, light_yield_range_photons_per_mev, electrons_light_yield_range,
+    light_collection, emission_model, emission(帯の部分の正規化した pairs、線だけなら None),
+    emission_components(成分ごとの中心・幅・重み・qe_overlap・出典、表を使わなければ None), emission_geometry,
+    emission_peak_nm, photodetector, decay_time_ns, sources(使った値の出典), unverified)。
     光収率の無い材料(GD2O2S:TB)で ``light_yield_per_mev`` を渡さなければ ValueError。
     """
     op = "scintillator_sensor_qe"
@@ -451,15 +573,21 @@ def scintillator_sensor_qe(scintillator="CSI:TL", thickness_mm: float = 0.6, e_m
     if n != n_points or not (2 <= n <= 100000):
         raise ValueError("%s: n_points must be an integer in [2, 100000], got %r" % (op, n_points))
     eta_c = _f(light_collection, "light_collection", op, 0.0, 1.0, lo_open=True)
+    y_rng = None
     if light_yield_per_mev is None:
         y = sc["light_yield_photons_per_mev"]
         if y is None:
             raise ValueError("%s: the material table has no verified light yield for %s - pass light_yield_per_mev="
                              % (op, name))
         y_src = sc["sources"]["light_yield_photons_per_mev"]
+        y_rng = sc.get("light_yield_range_photons_per_mev")
     else:
         y = _f(light_yield_per_mev, "light_yield_per_mev", op, 0.0, 1e6, lo_open=True)
         y_src = "given (light_yield_per_mev)"
+    if emission_geometry is not None and (not isinstance(emission_geometry, str)
+                                          or emission_geometry not in SCINT_EMISSION_GEOMETRIES):
+        raise ValueError("%s: emission_geometry must be None or one of %s, got %r"
+                         % (op, ", ".join(SCINT_EMISSION_GEOMETRIES), emission_geometry))
 
     E = np.geomspace(lo, hi, n)
     A = _absorption_efficiency(name, t, E, op)
@@ -475,25 +603,14 @@ def scintillator_sensor_qe(scintillator="CSI:TL", thickness_mm: float = 0.6, e_m
     lq, q = _curve(qe_curve, "photodetector_qe", op, 0.0, 1.0)
 
     peak = sc["emission_peak_nm"]
+    comps_all = sc.get("emission_components")
+    rows, geometry = None, None
     if emission_spectrum is not None:
+        if emission_geometry is not None:
+            raise ValueError("%s: emission_geometry selects the material-table emission; it cannot be combined with "
+                             "emission_spectrum" % op)
         ls, s = _curve(emission_spectrum, "emission_spectrum", op, 0.0)
         model = "given (emission_spectrum)"
-    elif sc["emission_fwhm_nm"] is not None:
-        sig = float(sc["emission_fwhm_nm"]) / (2.0 * math.sqrt(2.0 * math.log(2.0)))
-        ls = np.linspace(peak - SCINT_GAUSS_HALF_WIDTH_SIGMA * sig, peak + SCINT_GAUSS_HALF_WIDTH_SIGMA * sig, 2001)
-        s = np.exp(-0.5 * ((ls - peak) / sig) ** 2)
-        model = "gaussian (peak %g nm, FWHM %g nm from the material table)" % (peak, sc["emission_fwhm_nm"])
-    else:
-        ls, s = None, None
-        model = "line at the emission peak %g nm (the material table has no verified emission width)" % peak
-
-    if ls is None:
-        if not (lq[0] <= peak <= lq[-1]):
-            raise ValueError("%s: the emission peak %g nm lies outside the photodetector QE range [%g, %g] nm"
-                             % (op, peak, lq[0], lq[-1]))
-        overlap = float(np.interp(peak, lq, q))
-        emission = None
-    else:
         total = _trapz(s, ls)
         if not (total > 0.0):
             raise ValueError("%s: the emission spectrum integrates to %r (needs a positive area)" % (op, total))
@@ -505,14 +622,44 @@ def scintillator_sensor_qe(scintillator="CSI:TL", thickness_mm: float = 0.6, e_m
                              % (op, outside, lq[0], lq[-1]))
         overlap = _trapz(s[inside] * np.interp(ls[inside], lq, q), ls[inside])
         emission = np.column_stack([ls, s])
+    elif comps_all:
+        geos = tuple(g for g in SCINT_EMISSION_GEOMETRIES if any(c["geometry"] == g for c in comps_all))
+        geometry = sc.get("emission_default_geometry") if emission_geometry is None else emission_geometry
+        if geometry not in geos:
+            raise ValueError("%s: the material table has no %s emission for %s (has: %s)"
+                             % (op, geometry, name, ", ".join(geos)))
+        comps = [c for c in comps_all if c["geometry"] == geometry]
+        emission, overlap, rows = _emission_components_overlap(comps, lq, q, op)
+        model = _emission_model_text(geometry, comps, rows)
+    else:
+        if emission_geometry is not None:
+            raise ValueError("%s: the material table has no emission components for %s, so emission_geometry cannot "
+                             "be chosen (the emission is the line at its peak)" % (op, name))
+        if not (lq[0] <= peak <= lq[-1]):
+            raise ValueError("%s: the emission peak %g nm lies outside the photodetector QE range [%g, %g] nm"
+                             % (op, peak, lq[0], lq[-1]))
+        overlap = float(np.interp(peak, lq, q))
+        emission = None
+        model = "line at the emission peak %g nm (the material table has no verified emission width)" % peak
 
     used = {k: sc["sources"][k] for k in ("density_g_cm3", "emission_peak_nm", "decay_time_ns", "xray_material")
             if k in sc["sources"]}
     used["light_yield_photons_per_mev"] = y_src
+    if y_rng is not None:
+        used["light_yield_range_photons_per_mev"] = sc["sources"]["light_yield_range_photons_per_mev"]
+    if rows is not None:
+        used["emission_components"] = sc["sources"]["emission_components"]
+    electrons = photons * overlap
+    e_rng = None
+    if y_rng is not None:
+        e_rng = np.vstack([electrons * (y_rng[0] / y), electrons * (y_rng[1] / y)])
     return {"scintillator": name, "thickness_mm": t, "energy_kev": E, "absorption_efficiency": A,
-            "light_photons": photons, "electrons": photons * overlap, "overlap": overlap,
-            "light_yield_photons_per_mev": float(y), "light_collection": eta_c, "emission_model": model,
-            "emission": emission, "emission_peak_nm": peak, "photodetector": det,
+            "light_photons": photons, "electrons": electrons, "overlap": overlap,
+            "light_yield_photons_per_mev": float(y),
+            "light_yield_range_photons_per_mev": None if y_rng is None else (float(y_rng[0]), float(y_rng[1])),
+            "electrons_light_yield_range": e_rng, "light_collection": eta_c, "emission_model": model,
+            "emission": emission, "emission_components": rows, "emission_geometry": geometry,
+            "emission_peak_nm": peak, "photodetector": det,
             "decay_time_ns": sc["decay_time_ns"], "sources": used, "unverified": tuple(sc["unverified"])}
 
 

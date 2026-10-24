@@ -33,7 +33,9 @@ n(10 µm) = 3.96)と Burnett(結晶)を継ぎ、SiC は 6H の Singh と Larruqu
 シンチレータ 7 種(化学式で名前を付ける。商品名は使わない)。RII の表ではないので、値は一次情報を
 読んで写した**キュレート済みの定数**で、値ごとに出典を ``sources`` に残す(PDG 2024 の表 35.4・
 Berkeley Lab の Inorganic Scintillator Library の csv の行・論文)。確かめられなかった値は ``None``
-にして ``unverified`` に名前を並べる(推測で埋めない)。屈折率の表が RII にある材料(CsI / NaI /
+にして ``unverified`` に名前を並べる(推測で埋めない)。2026-10-24 から、光収率の幅(文献のばらつきの理由を
+読んだ材料だけ)と、発光の形を成分の並び(中心・エネルギー軸の FWHM・重み・測定配置・励起の種類、
+成分ごとの出典と「図から読み取り」の印)で持つ。屈折率の表が RII にある材料(CsI / NaI /
 Bi4Ge3O12)は ``datasets`` にその一次文献も載せる。X 線の列は ``xray_material``(NIST の化合物の表の
 名前か化学式)で ``materials`` の X 線の列が引く。
 """
@@ -130,7 +132,7 @@ SELECTION += [
 
 
 # --------------------------------------------------------------------------- #
-# シンチレータ・蛍光体の発光の列(2026-10-23)                                   #
+# シンチレータ・蛍光体の発光の列(2026-10-23、発光の形と光収率の幅は 2026-10-24)  #
 # --------------------------------------------------------------------------- #
 # 値は一次情報を読んで写した定数(RII の表ではない)。1 値 1 出典で ``sources`` に残す。
 #   PDG  = Particle Data Group, S. Navas et al., Phys. Rev. D 110, 030001 (2024), review "Particle detectors at
@@ -139,20 +141,42 @@ SELECTION += [
 #   LBNL = Berkeley Lab "Inorganic Scintillator Library"(https://scintillator.lbl.gov/inorganic-scintillator-library/、
 #          公開の csv を 2026-10-23 に読んだ。SHA-256 6085c865…940a)。行ごとに原著の略号(Sakai1987 など)がある。
 #          光収率 [photons/MeV] はここから取り、どの行かを書く。
-# 発光スペクトルの**幅**(FWHM)は、確かめられる一次情報を見つけられなかったので全材料 ``None``。
-# 消費側(``dualxray.scintillator_sensor_qe``)は幅が無いとき発光を極大の 1 本の線として扱い、そう返り値に書く
-# (幅を推測で入れない)。実測の発光スペクトルがあれば ``emission_spectrum=`` で渡す。
+#
+# ★光収率の幅(``light_yield_range_photons_per_mev``、2026-10-24): 文献の値のばらつきが「何の違い」から来るかを
+#   読んだ材料だけに (下限, 上限) を入れる(CdWO4 と LYSO)。それ以外は ``None``(幅が無いのではなく、確かめていない)。
+#   CdWO4 の 7,800〜15,800 という低い値の多くは、減衰 13 µs に対して整形時間が短い(1 µs では光の 2〜3 割しか
+#   拾わない)ことと、光電子数 phe/MeV(光検出器の QE と光の集め方を掛けた後)を光子数 ph/MeV と混ぜたことによる。
+#   こうした値は幅に入れない —— 幅は「絶対値として測った値」どうしの違いだけにする。
+#
+# ★発光の形(``emission_components``、2026-10-24): 室温・X 線/γ 線励起で FWHM を**数値で**書いた一次文献は
+#   見つからなかった。幅は全部、一次文献の図から読み取った値で、成分ごとに ``digitized_from_figure`` の印を付ける。
+#   1 成分 = 中心 [nm]・FWHM [eV](``None`` は線)・積分の重み・測定配置(``surface`` = 励起した面から出る光 /
+#   ``thick_crystal_transmission`` = 厚い結晶の中を通って出てくる光)・励起の種類(``xray`` / ``gamma`` / ``uv``)・
+#   出典。ガウスは**エネルギー軸**の形(Ce³⁺・自己束縛励起子の帯はエネルギーで対称)で、波長軸へは消費側
+#   (``dualxray.scintillator_sensor_qe``)がヤコビアン hc/λ² を掛けて移す。同じ測定配置の成分の重みの和は 1。
+#   ★``center_nm`` はエネルギー軸の中心(hc/E_c)。波長軸の山はヤコビアンで数 nm 短波長に出る(BGO 480 → 468 nm)。
+#   図の「極大」は波長軸で読んだ値なので、厳密には中心をやや長波長に置くべきかもしれない —— 差は Q̄ で 1.4 % 以内
+#   (2026-10-24 に計算)で、調査で承認された値(中心 = 公表の極大)をそのまま使う。
+#   幅の分からない材料(CsI:Tl / NaI:Tl)は ``None`` のまま —— 消費側は発光の極大の 1 本の線として扱い、そう
+#   返り値に書く(幅を推測で入れない)。実測の発光スペクトルがあれば ``emission_spectrum=`` で渡す
+#   (CsI:Tl は 2.25 / 2.55 eV の 2 帯だと分かっているが、幅と強度比を確かめられなかった)。
 _PDG_2024 = ("Particle Data Group, S. Navas et al., Phys. Rev. D 110, 030001 (2024), review 35 'Particle detectors "
              "at accelerators', Table 35.4")
 _LBNL = ("Berkeley Lab Inorganic Scintillator Library, https://scintillator.lbl.gov/inorganic-scintillator-library/ "
          "(csv read 2026-10-23), row ")
+_DEHAAS_2008 = ("J. T. M. de Haas and P. Dorenbos, IEEE Trans. Nucl. Sci. 55, 1086 (2008), doi:10.1109/TNS.2008.922819, "
+                "Table II")
+_MAO_2008 = ("R. Mao, L. Zhang and R.-Y. Zhu, IEEE Trans. Nucl. Sci. 55, 1759 (2008), Figs. 7-8")
+_GOS_JIM_2023 = ("J. Inorg. Mater. 38 (2023), doi:10.15541/jim20220542, Fig. 5(a) (commercial Gd2O2S:Tb powder, "
+                 "X-ray 75 kV); integrated shares read from the digitized figure")
 
 SCINTILLATORS = [
     {"name": "CSI:TL", "class": "crystal", "aliases": ["CSI(TL)", "CSI_TL"],
      "pages": [("main/CsI/nk/Li.yml", "undoped CsI; the Tl activator (~0.1 %) is not resolved in n")],
      "activator": "Tl+", "form": "single crystal", "xray_material": "CSI",
-     "density_g_cm3": 4.51, "light_yield_photons_per_mev": 56000.0, "decay_time_ns": 1220.0,
-     "emission_peak_nm": 550.0, "emission_fwhm_nm": None, "refractive_index_at_peak": 1.79,
+     "density_g_cm3": 4.51, "light_yield_photons_per_mev": 56000.0, "light_yield_range_photons_per_mev": None,
+     "decay_time_ns": 1220.0, "emission_peak_nm": 550.0, "emission_components": None,
+     "refractive_index_at_peak": 1.79,
      "sources": {"density_g_cm3": _PDG_2024, "decay_time_ns": _PDG_2024, "emission_peak_nm": _PDG_2024,
                  "refractive_index_at_peak": _PDG_2024,
                  "light_yield_photons_per_mev": _LBNL + "Sakai1987 (56,000; deHaas2005 and dehaas2008 also 56,000)",
@@ -160,8 +184,9 @@ SCINTILLATORS = [
     {"name": "NAI:TL", "class": "crystal", "aliases": ["NAI(TL)", "NAI_TL"],
      "pages": [("main/NaI/nk/Li.yml", "undoped NaI; the Tl activator is not resolved in n")],
      "activator": "Tl+", "form": "single crystal", "xray_material": "NaI",
-     "density_g_cm3": 3.67, "light_yield_photons_per_mev": 45000.0, "decay_time_ns": 245.0,
-     "emission_peak_nm": 410.0, "emission_fwhm_nm": None, "refractive_index_at_peak": 1.85,
+     "density_g_cm3": 3.67, "light_yield_photons_per_mev": 45000.0, "light_yield_range_photons_per_mev": None,
+     "decay_time_ns": 245.0, "emission_peak_nm": 410.0, "emission_components": None,
+     "refractive_index_at_peak": 1.85,
      "sources": {"density_g_cm3": _PDG_2024, "decay_time_ns": _PDG_2024, "emission_peak_nm": _PDG_2024,
                  "refractive_index_at_peak": _PDG_2024,
                  "light_yield_photons_per_mev": _LBNL + "Sakai1987 (45,000; dehaas2008 also 45,000)",
@@ -169,57 +194,155 @@ SCINTILLATORS = [
     {"name": "BI4GE3O12", "class": "crystal", "aliases": ["BGO"],
      "pages": [("main/Bi4Ge3O12/nk/Williams.yml", "")],
      "activator": "Bi3+ (intrinsic)", "form": "single crystal", "xray_material": "Bi4Ge3O12",
-     "density_g_cm3": 7.13, "light_yield_photons_per_mev": 8500.0, "decay_time_ns": 300.0,
-     "emission_peak_nm": 480.0, "emission_fwhm_nm": None, "refractive_index_at_peak": 2.15,
+     "density_g_cm3": 7.13, "light_yield_photons_per_mev": 8500.0, "light_yield_range_photons_per_mev": None,
+     "decay_time_ns": 300.0, "emission_peak_nm": 480.0,
+     "emission_components": (
+         {"geometry": "surface", "excitation": "uv", "center_nm": 480.0, "fwhm_ev": 0.70, "weight": 1.0,
+          "digitized_from_figure": True,
+          "source": "M. Itoh and T. Katagiri, J. Phys. Soc. Jpn., 'Intrinsic luminescence from self-trapped excitons in "
+                    "Bi4Ge3O12 and Bi12GeO20', Fig. 2 (300 K, 150 nm excitation, light from the sample surface): one "
+                    "Gaussian in energy, FWHM 0.70 eV read from the figure; the 90 kVp X-ray spectrum of "
+                    "H. V. Piltingsrud, J. Nucl. Med. 20, 1279 (1979), Table 2 peaks at the same place"},),
+     "refractive_index_at_peak": 2.15,
      "sources": {"density_g_cm3": _PDG_2024, "decay_time_ns": _PDG_2024, "emission_peak_nm": _PDG_2024,
                  "refractive_index_at_peak": _PDG_2024,
                  "light_yield_photons_per_mev": _LBNL + "Moszynski1997a (8,500; the room-temperature rows span "
                                                 "7,100-10,600)",
+                 "emission_components": "one Gaussian, read from a figure (see the component)",
                  "xray_material": "chemical formula Bi4Ge3O12, mixture rule over NIST SRD 126"}},
     {"name": "LU2SIO5:CE", "class": "crystal", "aliases": ["LSO", "LSO:CE", "LU2SIO5(CE)"],
      "pages": [],
      "activator": "Ce3+", "form": "single crystal", "xray_material": "Lu2SiO5",
-     "density_g_cm3": 7.40, "light_yield_photons_per_mev": 27000.0, "decay_time_ns": 40.0,
-     "emission_peak_nm": 402.0, "emission_fwhm_nm": None, "refractive_index_at_peak": 1.82,
+     "density_g_cm3": 7.40, "light_yield_photons_per_mev": 27000.0, "light_yield_range_photons_per_mev": None,
+     "decay_time_ns": 40.0, "emission_peak_nm": 402.0,
+     "emission_components": (
+         {"geometry": "surface", "excitation": "uv", "center_nm": 402.0, "fwhm_ev": 0.50, "weight": 1.0,
+          "digitized_from_figure": True,
+          "source": _MAO_2008 + ": UV-excited emission taken from the excited surface, peak 402 nm, FWHM 0.50 eV "
+                                "read from the figure"},
+         {"geometry": "thick_crystal_transmission", "excitation": "gamma", "center_nm": 453.0, "fwhm_ev": 0.63,
+          "weight": 1.0, "digitized_from_figure": True,
+          "source": _MAO_2008 + ": gamma-excited emission after passing through a long crystal - the blue side is "
+                                "re-absorbed by Ce3+ (self-absorption) and the peak moves to 430-453 nm depending on "
+                                "the sample; 453 nm and FWHM 0.63 eV read from the figure"}),
+     "refractive_index_at_peak": 1.82,
      "sources": {"density_g_cm3": _PDG_2024, "decay_time_ns": _PDG_2024, "emission_peak_nm": _PDG_2024,
                  "refractive_index_at_peak": _PDG_2024,
                  "light_yield_photons_per_mev": _LBNL + "Melcher1996 (27,000; the rows span 22,200-33,000 with "
-                                                "Ce content)",
+                                                "Ce content; " + _DEHAAS_2008 + " agrees)",
+                 "emission_components": "one Gaussian per geometry, read from figures (see the components)",
                  "xray_material": "chemical formula Lu2SiO5, mixture rule over NIST SRD 126 (Ce neglected)"}},
     {"name": "LU1.8Y0.2SIO5:CE", "class": "crystal", "aliases": ["LYSO", "LYSO:CE"],
      "pages": [],
      "activator": "Ce3+", "form": "single crystal", "xray_material": "Lu1.8Y0.2SiO5",
-     "density_g_cm3": 7.1, "light_yield_photons_per_mev": 34000.0, "decay_time_ns": 41.0,
-     "emission_peak_nm": 397.0, "emission_fwhm_nm": None, "refractive_index_at_peak": None,
-     "sources": {"density_g_cm3": _LBNL + "Pidol2004", "light_yield_photons_per_mev": _LBNL + "Pidol2004",
+     "density_g_cm3": 7.1, "light_yield_photons_per_mev": 27000.0,
+     "light_yield_range_photons_per_mev": (26000.0, 27000.0),
+     "decay_time_ns": 41.0, "emission_peak_nm": 397.0,
+     "emission_components": (
+         {"geometry": "surface", "excitation": "xray", "center_nm": 397.0, "fwhm_ev": 0.43, "weight": 0.5,
+          "digitized_from_figure": True, "weight_assumed": True,
+          "source": "L. Pidol et al. 2007 (hal-02423145), Table 2 (emission 397/427 nm, the two Ce3+ 5d-4f bands) and "
+                    "Fig. 2 (X-ray excitation, room temperature): FWHM 0.37-0.50 eV read from figures, 0.43 eV used; "
+                    "the intensity ratio of the two bands is not verified - 1:1 is an assumption"},
+         {"geometry": "surface", "excitation": "xray", "center_nm": 427.0, "fwhm_ev": 0.43, "weight": 0.5,
+          "digitized_from_figure": True, "weight_assumed": True,
+          "source": "L. Pidol et al. 2007 (hal-02423145), Table 2 / Fig. 2 (as the 397 nm band; ratio assumed 1:1)"}),
+     "refractive_index_at_peak": None,
+     "sources": {"density_g_cm3": _LBNL + "Pidol2004",
+                 "light_yield_photons_per_mev": _DEHAAS_2008 + " (APD 26,000 / PD 27,000 ph/MeV, 10 us shaping; the "
+                                                "Lu:Y ratio of the measured sample is not stated). The earlier "
+                                                + _LBNL + "Pidol2004 value 34,000 is not used",
+                 "light_yield_range_photons_per_mev": _DEHAAS_2008 + ": the APD and PD readings of the same crystal "
+                                                      "(26,000 and 27,000)",
                  "decay_time_ns": _LBNL + "Pidol2004 ('41 + slow': the fast component; a slow tail is not given)",
                  "emission_peak_nm": _LBNL + "Pidol2004",
+                 "emission_components": "two Gaussians, widths read from figures, ratio assumed (see the components)",
                  "xray_material": "chemical formula Lu1.8Y0.2SiO5, mixture rule over NIST SRD 126 (Ce neglected)"}},
     {"name": "CDWO4", "class": "crystal", "aliases": [],
      "pages": [],
      "activator": "self-activated", "form": "single crystal", "xray_material": "CdWO4",
-     "density_g_cm3": 7.9, "light_yield_photons_per_mev": 27000.0, "decay_time_ns": 12000.0,
-     "emission_peak_nm": 495.0, "emission_fwhm_nm": None, "refractive_index_at_peak": None,
-     "sources": {"density_g_cm3": _LBNL + "Moszynski2005", "light_yield_photons_per_mev":
-                 _LBNL + "Moszynski2005 (27,000; the other rows give 7,800-15,800 - the spread is large)",
-                 "decay_time_ns": _LBNL + "Moszynski2005", "emission_peak_nm": _LBNL + "Moszynski2005",
+     "density_g_cm3": 7.9, "light_yield_photons_per_mev": 27000.0,
+     "light_yield_range_photons_per_mev": (20000.0, 28000.0),
+     "decay_time_ns": 12000.0, "emission_peak_nm": 480.0,
+     "emission_components": (
+         {"geometry": "thick_crystal_transmission", "excitation": "gamma", "center_nm": 480.0, "fwhm_ev": 0.58,
+          "weight": 1.0, "digitized_from_figure": True,
+          "source": "L. Bardelli et al., Nucl. Instrum. Meth. A 569, 743 (2006), arXiv:nucl-ex/0608004, Table 1 "
+                    "(emission maximum 480 nm) and Fig. 6a (60Co gamma, crystal 42 mm diameter x 25 mm): one "
+                    "Gaussian in energy, FWHM 0.58 eV read from the figure; the weak long-wavelength tail is "
+                    "neglected"},),
+     "refractive_index_at_peak": None,
+     "sources": {"density_g_cm3": _LBNL + "Moszynski2005",
+                 "light_yield_photons_per_mev":
+                     "M. Moszynski et al., IEEE Trans. Nucl. Sci. 52, 3124 (2005) (abstract: 6,500 +- 200 phe/MeV, "
+                     "10x10x3 mm) -> 27,400 ph/MeV as tabulated in V. B. Mikhailik and H. Kraus, arXiv:1001.5461 "
+                     "(2010), Table 2; P. Dorenbos et al., IEEE Trans. Nucl. Sci. 42, 2190 (1995), Table I ~28,000 "
+                     "(estimate); R. Holl et al., IEEE Trans. Nucl. Sci. 35, 105 (1988), Si photodiode absolute "
+                     "20,000. Lower published values (7,800-15,800) mostly come from shaping times short against "
+                     "the 13 us decay and from quoting photoelectrons (phe/MeV) as photons",
+                 "light_yield_range_photons_per_mev": "absolute measurements only: Holl 1988 (20,000) to Dorenbos 1995 "
+                                                      "(~28,000); see light_yield_photons_per_mev",
+                 "decay_time_ns": _LBNL + "Moszynski2005",
+                 "emission_peak_nm": "L. Bardelli et al., Nucl. Instrum. Meth. A 569, 743 (2006), "
+                                     "arXiv:nucl-ex/0608004, Table 1 (480 nm; the 495 nm of the Moszynski2005 row is "
+                                     "the outlier)",
+                 "emission_components": "one Gaussian, read from a figure (see the component)",
                  "xray_material": "chemical formula CdWO4, mixture rule over NIST SRD 126"}},
     {"name": "GD2O2S:TB", "class": "crystal", "aliases": ["GOS:TB", "GD2O2S(TB)"],
      "pages": [],
      "activator": "Tb3+", "form": "powder phosphor / ceramic", "xray_material": "GOS",
-     "density_g_cm3": 7.44, "light_yield_photons_per_mev": None, "decay_time_ns": 638000.0,
-     "emission_peak_nm": 545.0, "emission_fwhm_nm": None, "refractive_index_at_peak": None,
+     "density_g_cm3": 7.44, "light_yield_photons_per_mev": None, "light_yield_range_photons_per_mev": None,
+     "decay_time_ns": 638000.0, "emission_peak_nm": 545.0,
+     # Tb³⁺ の 4f-4f の線の束(各線の幅 ≲ 10 nm は Si の QE の変化に比べて細いので線として持つ)。⁵D₃ 群の割合は
+     # Tb の濃度で変わる(濃いと ⁵D₃ → ⁵D₄ の交差緩和で減る)—— 市販の粉末 1 つの値。
+     "emission_components": tuple(
+         {"geometry": "surface", "excitation": "xray", "center_nm": c, "fwhm_ev": None, "weight": w,
+          "digitized_from_figure": True, "source": _GOS_JIM_2023 + " (" + lab + ")"}
+         for c, w, lab in ((411.0, 0.10, "5D3 group 380-460 nm, centroid 411 nm, ~10 %; depends on the Tb content"),
+                           (490.0, 0.12, "5D4 -> 7F6, ~12 %"), (545.0, 0.53, "5D4 -> 7F5, ~53 %"),
+                           (587.0, 0.13, "5D4 -> 7F4, ~13 %"), (620.0, 0.08, "5D4 -> 7F3, ~8 %"),
+                           (667.0, 0.04, "5D4 -> 7F2..0, centroid 667 nm, ~4 %"))),
+     "refractive_index_at_peak": None,
      "sources": {"density_g_cm3": "NIST SRD 126 Table 2 'Gadolinium Oxysulfide' (bulk; a powder screen is less dense)",
                  "decay_time_ns": "B. Tang et al., Molecules 28, 1815 (2023), doi:10.3390/molecules28041815, Table 1 "
                                   "(x = 0: 638 us; photoluminescence lifetime of Tb3+ under 293-298 nm excitation, "
                                   "not X-ray)",
                  "emission_peak_nm": "B. Tang et al., Molecules 28, 1815 (2023): strongest line 545 nm (5D4 -> 7F5); "
                                      "further lines at 494 / 589 / 623 nm (a line spectrum, not one band)",
+                 "emission_components": "a bundle of six lines (weights read from a figure, see the components)",
                  "xray_material": "NIST SRD 126 compound table 'Gadolinium Oxysulfide' (Tb neglected)"}},
 ]
 _SCINT_FIELDS = ("activator", "form", "xray_material", "density_g_cm3", "light_yield_photons_per_mev",
-                 "decay_time_ns", "emission_peak_nm", "emission_fwhm_nm", "refractive_index_at_peak")
+                 "light_yield_range_photons_per_mev", "decay_time_ns", "emission_peak_nm", "emission_components",
+                 "refractive_index_at_peak")
 _SCINT_BY_NAME = {s["name"]: s for s in SCINTILLATORS}
+#: 発光の成分の測定配置と励起の種類(これ以外の語は生成を止める)。表の既定の配置は ``surface``(あれば)。
+EMISSION_GEOMETRIES = ("surface", "thick_crystal_transmission")
+EMISSION_EXCITATIONS = ("xray", "gamma", "uv")
+_COMPONENT_KEYS = {"geometry", "excitation", "center_nm", "fwhm_ev", "weight", "digitized_from_figure", "source",
+                   "weight_assumed"}
+
+
+def _check_components(name, comps):
+    """発光の成分の並びを検める(配置・励起の語、中心と幅が正、配置ごとの重みの和が 1、出典が空でない)。"""
+    if not isinstance(comps, tuple) or not comps:
+        raise SystemExit("%s: emission_components must be a non-empty tuple or None" % name)
+    sums = {}
+    for c in comps:
+        if set(c) - _COMPONENT_KEYS or not {"geometry", "excitation", "center_nm", "fwhm_ev", "weight",
+                                             "digitized_from_figure", "source"} <= set(c):
+            raise SystemExit("%s: bad emission component keys %s" % (name, sorted(c)))
+        if c["geometry"] not in EMISSION_GEOMETRIES or c["excitation"] not in EMISSION_EXCITATIONS:
+            raise SystemExit("%s: unknown geometry/excitation %r/%r" % (name, c["geometry"], c["excitation"]))
+        if not (c["center_nm"] > 0.0 and c["weight"] > 0.0) or (c["fwhm_ev"] is not None and not c["fwhm_ev"] > 0.0):
+            raise SystemExit("%s: emission component needs centre > 0, weight > 0, FWHM > 0 or None" % name)
+        if not c["source"] or not isinstance(c["digitized_from_figure"], bool):
+            raise SystemExit("%s: emission component needs a source and a digitized_from_figure flag" % name)
+        sums[c["geometry"]] = sums.get(c["geometry"], 0.0) + c["weight"]
+    for g, s in sums.items():
+        if abs(s - 1.0) > 1e-9:
+            raise SystemExit("%s: emission weights of geometry %s sum to %r (need 1)" % (name, g, s))
+    return tuple(dict(c) for c in comps), ("surface" if "surface" in sums else comps[0]["geometry"])
 
 
 def _scintillator_properties(s):
@@ -230,6 +353,17 @@ def _scintillator_properties(s):
     for k in _SCINT_FIELDS:
         if s[k] is not None and k not in ("activator", "form") and k not in s["sources"]:
             raise SystemExit("%s: %s has a value but no source" % (s["name"], k))
+    rng = s["light_yield_range_photons_per_mev"]
+    if rng is not None:
+        lo, hi = rng
+        y = s["light_yield_photons_per_mev"]
+        if y is None or not (0.0 < lo <= y <= hi):
+            raise SystemExit("%s: light-yield range %r must bracket the value %r" % (s["name"], rng, y))
+        sc["light_yield_range_photons_per_mev"] = (float(lo), float(hi))
+    sc["emission_default_geometry"] = None
+    if s["emission_components"] is not None:
+        sc["emission_components"], sc["emission_default_geometry"] = _check_components(s["name"],
+                                                                                       s["emission_components"])
     return {"density_kg_m3": float(s["density_g_cm3"]) * 1000.0, "scintillator": sc}
 
 
@@ -428,6 +562,9 @@ def _fmt(v, indent=0):
         for k, x in v.items():
             items.append("%s    %r: %s" % (pad, k, _fmt(x, indent + 4)))
         return "{\n" + ",\n".join(items) + "\n" + pad + "}"
+    if isinstance(v, tuple) and v and all(isinstance(x, dict) for x in v):
+        # 辞書の並び(シンチレータの発光の成分): 1 成分 1 塊
+        return "(\n" + ",\n".join(pad + "    " + _fmt(x, indent + 4) for x in v) + ",\n" + pad + ")"
     if isinstance(v, (list, tuple)) and v and isinstance(v[0], (list, tuple)):
         # 数表: 1 行 1 点
         lines = [pad + "    " + repr(tuple(r)) for r in v]
