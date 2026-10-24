@@ -35,11 +35,22 @@ partially polarised light mixes the unpolarised part into the ellipse —
 the two agree only for fully polarised light (measured 2026-09-18).
 
 **``azimuth_deg`` and ``ellipticity_deg`` are ``None`` when they are
-undefined** — azimuth when the linear part is exactly zero (circular or
+undefined** — azimuth when the linear part is zero (circular or
 unpolarised light has no orientation), ellipticity when the polarised part
 is zero (unpolarised light has no ellipse). Returning 0.0 there would be a
 fabricated angle; ``None`` says the truth and forces the caller to handle
 it.
+
+**"Zero" is relative: ``<= 1e-12 * S0`` (2026-10-24).** Mueller products
+leave rounding dust: ``mueller_element("half_wave", 22.5)`` applied to
+``[1, 1, 0, 0]`` gives ``S3 = 8.7e-17``, which an exact ``S3 == 0`` test
+reported as ``"right"``-handed, and a quarter-wave plate at 45 on the same
+beam leaves a linear part of 8.7e-17 that came back as an azimuth of 22.5.
+The same floor decides ``handedness`` (``"linear"`` when
+``|S3| <= 1e-12 * S0``), ``azimuth_deg`` and ``ellipticity_deg``; it is
+relative to ``S0`` so that it means the same at every intensity scale.
+``dop`` / ``dolp`` / ``docp`` are returned as computed (the dust is an
+honest number there, as in :func:`specularity.polarization_stokes_map`).
 
 Ground truth it reproduces exactly: ``[1,1,0,0]`` -> dop 1, azimuth 0,
 ellipticity 0, linear; ``[1,-1,0,0]`` -> azimuth 90; ``[1,0,1,0]`` ->

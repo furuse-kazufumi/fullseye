@@ -37,6 +37,12 @@ Returns a dict:
   ``[0, 180)`` (an axis, so 0 and 180 are the same).
 * ``lit`` — bool, ``S0 > 0``.
 * ``aolp_defined`` — bool, ``S0 > 0`` and ``hypot(S1, S2) > 1e-12 * S0``.
+* ``residual`` — RMS over the N frames of ``frame - fitted Malus curve``,
+  in the frames' units (added 2026-10-24). A sweep of a real scene fits
+  exactly, so a large value says the frames do not agree with each other:
+  a misregistered or saturated channel. For the four DoFP angles it is
+  ``|I0 + I90 - I45 - I135| / 4``; for three angles it is always 0 (the
+  fit is exact and nothing is left to check).
 
 **Where the ratios do not exist, the value is 0 and a mask says so — never
 NaN.** At ``S0 = 0`` DoLP is 0/0: it is returned as 0.0, the same
@@ -83,7 +89,9 @@ S3 is not returned: linear analysers cannot measure it (see
 not an ``(N, H, W)`` stack with N >= 3, exceeds the caps, or is
 non-finite; *angles_deg* does not match N or leaves the fit
 rank-deficient; more than *max_violation_frac* of the pixels fit a negative
-minimum.
+minimum. Also (2026-10-24): *images* has no pixels; *angles_deg* is
+ill-conditioned or looks like radians; a frame value below the negative
+floor counts as a violating pixel.
 
 ## 詳しい使い方ガイド
 
