@@ -8,6 +8,8 @@
     積分しても同じ、線の束は Σ wᵢ·QE(λᵢ)(重みの和が 1 でない合成も、解析式の QE で独立に数えた値と一致)、
     QE の山頂(480 nm)では線が帯より大きく出る(向きだけが真値の門。大きさ BGO +6.6 % / CdWO4 +4.6 % は
     回帰の定数)。
+  * エネルギー保存: 発光の光子のエネルギーの和は吸収したエネルギーを超えない(Y·⟨E_ph⟩ ≤ 10⁶ eV/MeV)。
+    超える光収率は拒否し、材料表の全材料が下回る。
   * 光収率の幅の両端の電子の数は、値に比例する。
   * 既存の ``dual_kvp_channels`` の既定(CsI 0.6 mm)は 2026-10-23 の前(master 125dc785c8 で採った値)と一致し、
     同じプロセスの中では既定・明示の ``CSI``・シンチレータの ``CSI:TL`` が 1 ビットも違わない。
@@ -505,3 +507,63 @@ def test_line_bundle_through_the_op_matches_the_analytic_qe():
     table = [(411.0, 0.10), (490.0, 0.12), (545.0, 0.53), (587.0, 0.13), (620.0, 0.08), (667.0, 0.04)]
     want = sum(w * float(_analytic_qe(c)) for c, w in table) / sum(w for _, w in table)
     assert r["overlap"] == pytest.approx(want, rel=1e-8)
+
+
+# --------------------------------------------------------------------------- #
+# エネルギー保存: 光収率の物理上限(2026-10-24)                                   #
+# --------------------------------------------------------------------------- #
+def _mean_photon_ev(r):
+    """返り値から発光の光子のエネルギーの平均 [eV] を独立に数える(波長軸の pairs を ∫ S·hc/λ dλ で)。"""
+    comps = r["emission_components"]
+    if comps is None:
+        if r["emission"] is not None:
+            lam, S = r["emission"][:, 0], r["emission"][:, 1]
+            return float(np.trapezoid(S * D.HC_EV_NM / lam, lam) / np.trapezoid(S, lam))
+        return D.HC_EV_NM / r["emission_peak_nm"]
+    band = [c for c in comps if c["kind"] != "line"]
+    e = sum(c["weight"] * D.HC_EV_NM / c["center_nm"] for c in comps if c["kind"] == "line")
+    if band:
+        lam, S = r["emission"][:, 0], r["emission"][:, 1]
+        e += float(np.trapezoid(S * D.HC_EV_NM / lam, lam))      # 帯の部分の面積は帯の重みの和
+    return e
+
+
+def test_material_table_light_yields_obey_energy_conservation():
+    """材料表の全材料で Y·⟨E_ph⟩ < 10⁶ eV/MeV(光のエネルギーが吸収したエネルギーを超えない)。
+
+    材料表に禁制帯幅は無いので、Y ≤ 10⁶/(β·E_g) の門は置けない(エネルギー保存だけ)。
+    """
+    seen = 0
+    for n in SCINT:
+        y = _sc(n)["light_yield_photons_per_mev"]
+        if y is None:
+            continue
+        r = D.scintillator_sensor_qe(n)
+        eff = y * _mean_photon_ev(r) / 1e6          # 固有の変換効率(吸収したエネルギーのうち光になる割合)
+        assert 0.0 < eff < 1.0, (n, eff)
+        seen += 1
+    assert seen == 6
+
+
+@pytest.mark.parametrize("name", ["BI4GE3O12", "CSI:TL", "LU2SIO5:CE", "LU1.8Y0.2SIO5:CE", "GD2O2S:TB"])
+def test_light_yield_above_energy_conservation_is_refused(name):
+    """上書きの光収率が 10⁶/⟨E_ph⟩ を超えたら ValueError(fail-closed)。境界の直下は通る。"""
+    r = D.scintillator_sensor_qe(name, light_yield_per_mev=1000.0)
+    y_max = 1e6 / _mean_photon_ev(r)
+    ok = D.scintillator_sensor_qe(name, light_yield_per_mev=0.999 * y_max)
+    assert ok["light_yield_photons_per_mev"] == pytest.approx(0.999 * y_max)
+    with pytest.raises(ValueError, match="energy conservation"):
+        D.scintillator_sensor_qe(name, light_yield_per_mev=1.001 * y_max)
+    with pytest.raises(ValueError, match="energy conservation"):
+        D.scintillator_sensor_qe(name, light_yield_per_mev=9e5)
+
+
+def test_energy_conservation_uses_the_given_emission_spectrum():
+    """``emission_spectrum`` を渡したときは、その平均の光子のエネルギーで上限を決める。"""
+    lam = np.linspace(380.0, 420.0, 401)
+    spec = np.column_stack([lam, np.exp(-0.5 * ((lam - 400.0) / 5.0) ** 2)])
+    e_mean = float(np.trapezoid(spec[:, 1] * D.HC_EV_NM / lam, lam) / np.trapezoid(spec[:, 1], lam))
+    y_max = 1e6 / e_mean                          # ≈ 3.23e5(400 nm の光子は 3.10 eV)
+    D.scintillator_sensor_qe("BGO", light_yield_per_mev=0.999 * y_max, emission_spectrum=spec)
+    with pytest.raises(ValueError, match="energy conservation"):
+        D.scintillator_sensor_qe("BGO", light_yield_per_mev=1.001 * y_max, emission_spectrum=spec)

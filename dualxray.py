@@ -521,8 +521,22 @@ def scintillator_sensor_qe(scintillator="CSI:TL", thickness_mm: float = 0.6, e_m
         t = ``thickness_mm``。:func:`dual_kvp_channels` と同じ関数で計算する(CSI:TL は既定の ``CSI`` と同じ値)。
       * 光子の数 N(E) = A(E) · Y · E · η_c。Y = 光収率(単位 photons/MeV。材料表の値で、``light_yield_per_mev``
         で上書き)、E は MeV、η_c = ``light_collection``(光が光検出器に届く割合、既定 1 = 全部届く理想)。
-        吸収した X 線はエネルギーを全部置いていくとみなす(K 蛍光の逃げとコンプトンの逃げは入れない)。
+        吸収した X 線はエネルギーを全部置いていくとみなす(入れないものは下に並べる)。
       * 重なり Q̄ = ∫ S(λ) QE(λ) dλ(S は ∫ S dλ = 1 に正規化した発光スペクトル)。電子の数 = N(E) · Q̄。
+
+    光収率の物理上限(エネルギー保存): 光の光子のエネルギーの和は吸収したエネルギーを超えないので、
+    Y · ⟨E_ph⟩ ≤ 10⁶ eV/MeV を満たさない Y は ValueError(上書きの値も表の値も同じ門を通る)。⟨E_ph⟩ は
+    **使う発光スペクトルの光子のエネルギーの平均**(重心。ピークの波長ではない): ``emission_spectrum`` なら
+    ∫ S(λ) hc/λ dλ、材料表の成分なら Σ wᵢ hc/λᵢ(エネルギー軸のガウスの平均は中心)、極大の線なら hc/λ_peak。
+    BGO(480 nm、2.58 eV)の上限は約 387,000 photons/MeV。禁制帯幅 E_g からのもっときつい上限
+    Y ≤ 10⁶/(β E_g)(β ≈ 2.35〜2.5)は、材料表に E_g が無いので置いていない。
+
+    入れないもの:
+
+      * K 蛍光の逃げとコンプトンの逃げ(吸収した X 線はエネルギーを全部置いていくとみなす)。重い元素の K 端の
+        すぐ上では、逃げる K X 線が持ち出すエネルギーが大きいので、高 Z の材料ほど電子の数を大きく見積もる。
+      * 光収率のエネルギー非比例性(材料表の光収率は γ 線、多くは 662 keV 前後で測った値で、それを
+        10〜150 keV に一律に掛けている)。
 
     光収率の幅: 材料表に幅(文献の絶対値のばらつき。CdWO4 は 20,000〜28,000、LYSO は 26,000〜27,000)が
     あれば、両端で数えた電子の数も返す(``electrons_light_yield_range``、1 行目が下限・2 行目が上限)。電子の数は
@@ -622,6 +636,7 @@ def scintillator_sensor_qe(scintillator="CSI:TL", thickness_mm: float = 0.6, e_m
                              % (op, outside, lq[0], lq[-1]))
         overlap = _trapz(s[inside] * np.interp(ls[inside], lq, q), ls[inside])
         emission = np.column_stack([ls, s])
+        e_ph = _trapz(s * HC_EV_NM / ls, ls)
     elif comps_all:
         geos = tuple(g for g in SCINT_EMISSION_GEOMETRIES if any(c["geometry"] == g for c in comps_all))
         geometry = sc.get("emission_default_geometry") if emission_geometry is None else emission_geometry
@@ -631,6 +646,7 @@ def scintillator_sensor_qe(scintillator="CSI:TL", thickness_mm: float = 0.6, e_m
         comps = [c for c in comps_all if c["geometry"] == geometry]
         emission, overlap, rows = _emission_components_overlap(comps, lq, q, op)
         model = _emission_model_text(geometry, comps, rows)
+        e_ph = float(sum(r["weight"] * r["center_ev"] for r in rows))
     else:
         if emission_geometry is not None:
             raise ValueError("%s: the material table has no emission components for %s, so emission_geometry cannot "
@@ -641,6 +657,11 @@ def scintillator_sensor_qe(scintillator="CSI:TL", thickness_mm: float = 0.6, e_m
         overlap = float(np.interp(peak, lq, q))
         emission = None
         model = "line at the emission peak %g nm (the material table has no verified emission width)" % peak
+        e_ph = HC_EV_NM / peak
+    if not (y * e_ph <= 1e6):
+        raise ValueError("%s: light yield %g photons/MeV breaks energy conservation - with a mean photon energy of "
+                         "%.4g eV the light would carry %.3g MeV per MeV absorbed (limit %.6g photons/MeV)"
+                         % (op, y, e_ph, y * e_ph / 1e6, 1e6 / e_ph))
 
     used = {k: sc["sources"][k] for k in ("density_g_cm3", "emission_peak_nm", "decay_time_ns", "xray_material")
             if k in sc["sources"]}
