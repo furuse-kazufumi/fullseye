@@ -30,6 +30,8 @@ jobs:
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0  # v7.1.0
         with:
           python-version: "3.11"
+      - name: pip と証明書を更新(eMudhra / emSign の中間 CA 失効 = pip>=26.2.2・certifi>=2026.10.19)
+        run: python -m pip install --upgrade "pip>=26.2.2" "certifi>=2026.10.19"
       - name: Guard - tag matches pyproject version
         run: |
           V=$(python -c "import tomllib;print(tomllib.load(open('pyproject.toml','rb'))['project']['version'])")
@@ -43,6 +45,9 @@ jobs:
       # `RELEASE-OVERRIDE: <理由>` を書いた場合だけ通す。
       #   例: git tag -a v0.1.9 -F msg.txt   (msg.txt の末尾に
       #       RELEASE-OVERRIDE: 上流 CVE で pip-audit が落ちるだけ  と書く)
+      # 数えるのは「この repo の ci.yml が master への push で走った run」だけ(2026-10-24 の
+      # レビュー): 名前 "CI" だけで選ぶと、同じ SHA の pull_request の run や、fork が足した
+      # 同名の workflow でも条件を満たしてしまう。
       - name: Guard - CI is green for this commit
         env:
           GH_TOKEN: ${{ github.token }}
@@ -53,7 +58,7 @@ jobs:
             echo "::warning::CI ゲートを明示的に迂回しました —— $(printf '%s' "$NOTE" | grep 'RELEASE-OVERRIDE:')"
             exit 0
           fi
-          CONC=$(gh api "repos/${{ github.repository }}/actions/runs?head_sha=$SHA&per_page=50"                  --jq '[.workflow_runs[] | select(.name=="CI")] | sort_by(.created_at) | last | .conclusion')
+          CONC=$(gh api "repos/${{ github.repository }}/actions/runs?head_sha=$SHA&per_page=50"                  --jq '[.workflow_runs[] | select(.path==".github/workflows/ci.yml" and .event=="push" and .head_branch=="master" and .head_repository.full_name==env.GITHUB_REPOSITORY)] | sort_by(.created_at) | last | .conclusion')
           echo "CI conclusion for $SHA: ${CONC:-<none>}"
           if [ "$CONC" != "success" ]; then
             echo "CI がこのコミットで緑ではありません(${CONC:-未実行})。"

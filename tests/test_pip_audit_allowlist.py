@@ -70,12 +70,39 @@ def test_missing_ledger_fails_closed(tmp_path):
         G.load_allowlist(tmp_path / "absent.json")
 
 
-def test_every_id_and_alias_becomes_an_ignore_flag():
+def _report(*deps):
+    return {"dependencies": list(deps), "fixes": []}
+
+
+def test_a_waiver_needs_both_the_package_and_an_id():
+    # 2026-10-24 のレビュー: --ignore-vuln は id だけで効き、torch に書いた id が別の
+    # パッケージの同じ id まで黙らせた。台帳の免除は (package, id) の組で効くこと。
     entries = [_entry(aliases=["PYSEC-2025-189", "CVE-2025-2148"])]
-    assert G.ignore_args(entries) == [
-        "--ignore-vuln", "GHSA-c678-jfcj-6jmf",
-        "--ignore-vuln", "PYSEC-2025-189",
-        "--ignore-vuln", "CVE-2025-2148"]
+    torch = {"name": "torch", "version": "2.13.0",
+             "vulns": [{"id": "PYSEC-2025-189", "aliases": [], "fix_versions": []}]}
+    other = {"name": "numpy", "version": "2.0.0",
+             "vulns": [{"id": "CVE-2025-2148", "aliases": [], "fix_versions": ["2.0.1"]}]}
+    problems, unused = G.unwaived(_report(torch), entries)
+    assert problems == [] and unused == []
+    problems, _ = G.unwaived(_report(torch, other), entries)
+    assert len(problems) == 1 and problems[0].startswith("numpy==2.0.0"), problems
+    # 名前の正規化(PEP 503): Torch / torch は同じ project
+    problems, _ = G.unwaived(_report(dict(torch, name="Torch")), entries)
+    assert problems == []
+
+
+def test_unwaived_fails_closed_on_skips_and_empty_reports():
+    entries = [_entry()]
+    problems, _ = G.unwaived(_report({"name": "x", "version": "1", "skip_reason": "not on PyPI"}), entries)
+    assert problems and "not audited" in problems[0]
+    for empty in ({}, {"dependencies": []}, {"dependencies": None}):
+        problems, _ = G.unwaived(empty, entries)
+        assert problems, empty
+
+
+def test_an_entry_that_matches_nothing_is_reported_as_unused():
+    problems, unused = G.unwaived(_report({"name": "numpy", "version": "2", "vulns": []}), [_entry()])
+    assert problems == [] and unused == ["GHSA-c678-jfcj-6jmf"]
 
 
 def test_declared_requirements_cover_every_extra():
