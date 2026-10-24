@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(434 例)
+### 2-D 画像/信号/幾何(433 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -471,7 +471,6 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **同じ3次元場面を間接ToFと直接ToFで測る――多経路・混合画素・pile-up・体積誤差** — 箱、コーナー、透明板、光沢面、細い柱、暗明市松を同じ解析的な光線真値で測る。20/80/100 MHz・4相の間接方式と光子到着ヒストグラムの直接方式を、曖昧距離、雑音予算、高調波、多経路、混合画素、時間ビン、pile-up、反射率、箱体積について閉形式と比較する。新しいopは追加しない。学習0、較正0、門27件。 `py -3.11 examples/poc_tof_camera.py`
 - **公開 .zmx 処方を独立計算で照合し、検査レンズとして採点する** — 4 本の処方を別の読取器と光線追跡器で照合し、無限遠・入口瞳径 1 mm・5.5 µm 画素の条件で照明、歪曲、色ずれ、MTF、3 画素傷の視認性を採点する。OPD の規約差も図に残す。 `py -3.11 examples/poc_zmx_public_verify.py`
 - **全天球の検査撮影と立体表示を一つの測定工程として確かめる** — 合成トンネルを全天球、キューブ面、魚眼対、立体視、赤シアン表示、移動映像へ変換し、継ぎ目、死角、球面画質、距離、安定化、タイル範囲、欠陥寸法を真値と照合する。 `py -3.11 examples/poc_omni360_inspection.py`
-- **光弾性の族を一巡する ―― 応力場から縞、偏光像、そして応力へ** — 直径圧縮の円板と Kirsch の板の応力場を閉形式で作り、応力光学則で位相差に、平面・円偏光器の縞と 6 強度の偏光計の像にして、閉形式で主応力差と主軸へ戻す。3 波長で 1 波長を超える次数を決め、Si(100) では結晶方位で複屈折が変わることを出典つきの係数で示す。 `py -3.11 examples/photoelastic_roundtrip.py`
 - **全天球画像と既存の画像処理を双方向につなぐ最小例** — 全天球像から通常視野を切り出して刃を検出し、通常画像を立方体面経由で全天球へ戻す。立体配置と複数視点の合成例も同じ場面で実行する。 `py -3.11 examples/omni360_roundtrip.py`
 - **水と透明媒質 ―― 海の波・水面の屈折・水中の色・瓶の焦線を、閉形式と公表値と第 2 実装で採点** — 水は上から見れば動くレンズ、下から見れば距離で濃くなる色フィルタ。新 op 10 本(`watermedia`、`opsoptics` の `watermedia`): `ocean_spectrum`(Pierson–Moskowitz と JONSWAP の S(ω)、有義波高・周期)/ `ocean_height_field`(Tessendorf の FFT の海: 高さ・傾き・法線・荒れ・水深)/ `fresnel_water_air`(水の屈折率は材料表の実部で分散込み、全反射の旗つき)/ `snell_window`(窓の半径と見かけの深さ)/ `refracted_view`(水中の点の見かけの位置を光路長の停留点で。平面は二分法、波面はニュートン法でベクトルのスネルの式を検算し、外れた点は NaN)/ `water_attenuation`(Pope & Fry の純水の吸収、Smith & Baker の散乱、Solonenko & Mobley のジャーロフ型の a・b・Kd)/ `underwater_image`(Akkaynak & Treibitz の画像形成: 直接光 + 後方散乱)/ `phase_function_hg` / `scattering_phase_petzold`(Petzold の体積散乱関数)/ `cylinder_lens_caustic`(円柱の近軸焦点と実光線の焦線)。(1) 風速 8 m/s の PM の海: 有義波高 1.3656 m(0.21 U²/g = 1.3705 m、0.36 %)、ピーク 1.0753 rad/s(0.877 g/U = 1.0751、2e-4)、JONSWAP(γ = 1)は PM と 1e-9 で一致、高さは実数(虚部 3.5e-16)、空間の分散はスペクトルの積分に 0.02 %(8 種)、単一モードの周期は 2π/ω に 2.8e-16。傾きの分散は Cox & Munk(0.003 + 0.00512 U)と比べると、格子で解ける波だけでは 5 m/s で 11 %、10 m/s で 16 %(PM は毛管波を持たない)。飽和域を毛管波数 370 /m まで延ばすと 5 m/s は 98 %(−2.5 %)だが 10 m/s は 61 %(−38.7 %)で、PM の α は風速で増えない限界として門に残す。(2) 2 m のプールの底の市松模様: 真上の見かけの深さは d/n に 0、見つけた経路はスネルの式を 7.8e-16、平面の屈折点は 4 次方程式に 1e-15・光路長の直接最小化に 2.8e-8、波面では屈折点から画像を作る逆向きの光線追跡で同じ底の点に 9.6e-9 m で戻る。水中から見上げた魚眼で全反射が始まる角は臨界角 48.59° の直後の 1 画素(1.5°)以内。(3) 水を入れた瓶(R = 30 mm、n = 1.52、壁 1.5 mm、水 1.333): 近軸焦点 61.24 mm、周縁光線 40.01 mm(球面収差 21.23 mm)、棒の近軸焦点は n R / (2 (n − 1)) に一致し、実光線の焦点は弦の三角関数と 3.6e-14。屈折力は水入り 0.01633 /mm、空 −0.00120 /mm(比 13.6)で、背後 50 mm の面の強度は水のある所の中心が入射の 4.88 倍(最大 13.97 倍)、空の所は 0.94 倍。(4) 色票を深さ 1・5・15 m で: Pope & Fry の吸収は 417.5 nm で最小 0.00442 /m、700 nm で 0.624 /m(表の値)、Beer–Lambert は glassmirror と 1.1e-16、光子 20 万個の数え上げが指数則に 0.2σ、Kd(500 nm)は 0.029 < 0.064 < 0.109 < 0.120(I < II < III < 1C)、I 型で赤は青の 12.2 倍の速さで減衰(10 m で透過率 赤 0.074・緑 0.557・青 0.807)、15 m の赤の票の R は 0.010。(5) 限界: 平らな水の見かけの深さ d/n は斜めに見るほど外れる(30° で 7 %、60° で 52 % の過大評価)。壊して確かめる探針(屈折率 1.4、α を 10 % 変える、スネルの式の向きを逆にする)は門が赤になる。学習 0、較正 0、門 43 件。 `py -3.11 examples/poc_water_transparent_media.py`
 - **水が検査画像にどう写るか ―― プールの底のコースティクス・瓶の側面像・濡れた板・船体の水中画像を、閉形式と第 2 の方法で採点** — 水は検査カメラの映像を 4 通りに変える。新 op 7 本(`watervision`、`opsoptics` の `watervision`): `caustic_irradiance`(光子の数え上げとヤコビアンの 2 方法で水底の照度)/ `bottle_image`(円柱の断面を行ごとに追跡した瓶の側面像)/ `fill_level_from_image` / `wet_surface_appearance`(Lekner & Dorf)/ `wet_dry_inspection_pair` / `underwater_inspection_image`(ランプがカメラの横の船体と SNR)/ `caustic_floor_segmentation`。平らな水面は一様に cos θ · T(1e-9)、光子の総量は入射 × 平均透過率に 1e-6、光子とヤコビアンは滑らかな面で 0.30 %、折り目では波面法が inf と旗を出す。ひび割れ検出器(`canny`)はコースティクスの縁を拾って適合率 0.05、分割で縁を除くと 1.00(再現率 1.00 → 0.45)、強い波では照度で割って戻す。瓶は液面の上下が空・満の断面と bit 一致、明るい帯の半幅 9.50 mm(近軸焦点からの予測 9.91 mm)、液面は 1 画素以内、気泡の輪の外径は近軸の倍率 1.333 に ± 1 画素。濡れた面は a = 0.5 で 0.673 倍(閉形式に 1.1e-16)、傷のコントラストは 0.411 → 0.494。船体の SNR は距離で単調に落ちる。限界として、縦の傾き 40 度で帯の半幅が 29 % 動く。 `py -3.11 examples/poc_water_inspection_images.py`
@@ -776,9 +775,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3581 ops / 54 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3571 ops / 54 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 959 · **3d** 373 · **math** 114 · **optics** 476 · **lightfield** 17 · **photon** 17 · **specular** 19 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 39 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 700 · **tomography** 31 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 3 · **calib** 21 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族の一覧: **2d** 959 · **3d** 373 · **math** 114 · **optics** 465 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 39 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 700 · **tomography** 31 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 3 · **calib** 21 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d(959 ops / 49 categories)
 
@@ -2496,7 +2495,7 @@ _計 3581 ops / 54 families。並びとノートの在り処は `docs/ops/INDEX.
 - `wave_nodal_lines` `matrix → mask` — Where a signed field changes sign — the nodal set, as a mask. · 例: `poc_beats_fringes_and_screens`
 - `wave_two_slit` `入力なし → image2d` — Two-slit interference on a screen — built from the physics, not the fringe formula. · 例: `poc_beats_fringes_and_screens`
 
-### optics(476 ops / 52 categories)
+### optics(465 ops / 51 categories)
 
 レンズより上・画素より下の層。幾何光学(薄レンズ結像・ABCD 光線伝達・被写界深度・cos⁴ 口径食)/ 波動光学(Airy パターン・角スペクトル伝搬・Fraunhofer 回折・ガウシアンビーム)/ 結像品質(PSF→MTF・回折限界 MTF・Zernike 波面統計)/ 偏光(Jones・Stokes・Mueller)/ 材料の物性表(matprop)・光ファイバ(fiber)・センサーの特性(sensorchar)・大域光輸送ほか。
 
@@ -2852,20 +2851,6 @@ _計 3581 ops / 54 families。並びとノートの在り処は `docs/ops/INDEX.
 - `merit_function` `table → table` — The DLS merit ``Σ residual²`` and its parts for one prescription (``table``). · 例: `lens_optimize_demo`, `poc_lens_file_roundtrip`, `poc_lens_merit_operands`
 - `optimize_lens` `table → table` — Damped-least-squares (Levenberg–Marquardt) optimisation of a prescription (``table``). · 例: `lens_optimize_demo`, `poc_lens_file_roundtrip`
 
-#### optics / photoelastic(12)
-- `brazilian_disc_stress` `入力なし → table` — 直径方向に圧縮された円板(Brazilian disc)の平面応力 σx, σy, τxy の閉形式 → dict。 · 例: `photoelastic_roundtrip`
-- `cubic_photoelastic_birefringence` `image2d × image2d × image2d → table` — 立方晶 {100} 面(Si ウェハなど)の応力複屈折 Δn と遅相軸 → dict。 · 例: `photoelastic_roundtrip`
-- `kirsch_plate_stress` `入力なし → table` — 穴のある無限板の一軸引張(Kirsch の解)の σx, σy, τxy と極座標成分の閉形式 → dict。 · 例: `photoelastic_roundtrip`
-- `photoelastic_phase_estimate` `polsweep → table` — 偏光像から位相差 δ と主軸 θ を閉形式で逆算 → dict。 · 例: `photoelastic_roundtrip`
-- `photoelastic_polarization_images` `image2d → polsweep` — 円偏光照明の試料を偏光カメラ(0/45/90/135 度)または 6 強度の偏光計で撮った像 → (K, H, W)。 · 例: `photoelastic_roundtrip`
-- `photoelastic_retardation` `image2d → table` — 等方材料の応力光学則 δ = 2π t C (σ1−σ2)/λ → dict(rad・nm・縞次数・材料縞値)。 · 例: `photoelastic_roundtrip`
-- `polariscope_intensity` `image2d → image2d` — 平面・円偏光器の明暗視野の強度(等色線・等傾線)の閉形式。 · 例: `photoelastic_roundtrip`
-- `principal_stress` `image2d × image2d × image2d → table` — 平面応力の主応力 σ1 ≥ σ2、主応力差、σ1 の向き(等傾角)→ dict。 · 例: `photoelastic_roundtrip`
-- `retardation_convert` `image2d → image2d` — 位相差の単位換算(rad / deg / nm / waves = 縞次数)。 · 例: `photoelastic_roundtrip`
-- `retardation_from_birefringence` `image2d → table` — 複屈折 Δn から位相差 → dict(rad・nm・縞次数を並べて返す)。 · 例: `photoelastic_roundtrip`
-- `retardation_unwrap_multiwavelength` `images → table` — 複数波長の巻いた位相差から絶対位相差(nm)を決める(分散なしの仮定)→ dict。 · 例: `photoelastic_roundtrip`
-- `silicon_piezo_optic_coefficients` `入力なし → table` — 単結晶シリコンの圧電光学係数 π11−π12・π44 [Pa⁻¹] を出典つきで返す → dict。 · 例: `photoelastic_roundtrip`
-
 #### optics / pixelshift(6)
 - `false_color_metric` `rgbimage → table` — 偽色の量: 色差(BT.601 の Cb, Cr)の大きさの統計。 · 例: `poc_pixel_shift`
 - `pixel_shift_capture` `rgbimage × matrix → video` — シフトした撮像素子で撮る: シーンを画素の開口(正方形の箱)で**厳密に**積分し、Bayer か白黒の生の画像を返す。 · 例: `poc_pixel_shift`, `poc_simcal_pixel_shift`
@@ -2882,13 +2867,14 @@ _計 3581 ops / 54 families。並びとノートの在り処は `docs/ops/INDEX.
 - `plenoptic_refocus_depth` `lightfield × table → table` — Convert light-field refocus slope(s) to object distance in metres. · 例: `poc_plenoptic_camera`
 - `plenoptic_system` `table × table × table → table` — Assemble a main lens, MLA and sensor and report F-number matching. · 例: `plenoptic_capture_pipeline`, `poc_plenoptic_camera`
 
-#### optics / polarization(10)
+#### optics / polarization(11)
 - `jones_apply` `cimage × jones → jones` — Push a Jones vector through a Jones matrix: ``[Ex', Ey'] = J @ [Ex, Ey]``. · 例: `optics_imaging`
 - `jones_element` `入力なし → cimage` — A 2x2 complex Jones matrix for one polarisation element. · 例: `optics_imaging`
-- `mueller_apply` `matrix × stokes → stokes` — Push a Stokes vector through a Mueller matrix: ``S' = M @ S``. · 例: `optics_imaging`, `poc_photoelasticity`
+- `mueller_apply` `matrix × stokes → stokes` — Push a Stokes vector through a Mueller matrix: ``S' = M @ S``. · 例: `optics_imaging`, `poc_photoelasticity`, `polarization_camera_pipeline`
 - `mueller_checks` `matrix → table` — Say whether a 4x4 matrix is a physically realisable Mueller matrix, and how depolarising it is. · 例: `polarization_camera_pipeline`
 - `mueller_element` `入力なし → matrix` — A 4x4 real Mueller matrix for one polarisation element. · 例: `optics_imaging`, `poc_photoelasticity`, `polarization_camera_pipeline`
 - `mueller_from_intensities` `signal → matrix` — Recover a Mueller matrix from intensities measured through known generator / analyser states (polarimetric least squares). · 例: `polarization_camera_pipeline`
+- `mueller_partial_polarizer` `入力なし → matrix` — Mueller matrix of a linear polariser with a finite extinction ratio (a linear diattenuator). → (4, 4), or (*shape, 4, 4) for an angle field. · 例: `polarization_camera_pipeline`
 - `polarization_demosaic` `image2d → polsweep` — Split a polarisation-sensor mosaic into the four analyser images. · 例: `poc_shape_from_polarization`, `polarization_camera_pipeline`
 - `polarization_demosaic_color` `image2d → rgbvolume` — Split a **colour** polarisation-sensor mosaic (Sony IMX250MYR family, a 4x4 block = a 2x2 Bayer block whose every colour site is itself a 2x2 block of polarisers) into four RGB images: ``(4, H, W, 3)`` in :data:`POLARIZATION_SWEEP_ANGLES` order, each channel interpolated to full resolution. The ``rgbvolume`` sort carries it (four "slices" of RGB). · 例: `polarization_camera_pipeline`
 - `stokes_analyze` `stokes → table` — Read a Stokes vector: degree of polarisation, azimuth, ellipticity. · 例: `optics_imaging`, `polarization_camera_pipeline`, `specular_photometric`
@@ -3140,7 +3126,7 @@ _計 3581 ops / 54 families。並びとノートの在り処は `docs/ops/INDEX.
 - `anscombe_inverse` `image2d → image2d` — Invert :func:`anscombe_transform` — algebraically, or without bias. · 例: `photon_timeresolved`
 - `anscombe_transform` `image2d → image2d` — Anscombe variance-stabilising transform: Poisson counts -> ~unit-variance. · 例: `photon_timeresolved`
 
-### specular(19 ops / 5 categories)
+### specular(20 ops / 5 categories)
 
 #### specular / deflectometry(6)
 - `deflectometry_phase_to_slope` `image2d × image2d → normalmap` — 画面の絶対位相 2 枚(u 方向・v 方向の縞)→ 面の格子上の法線マップ (H, W, 3)。 · 例: `poc_phase_measuring_deflectometry`
@@ -3160,11 +3146,12 @@ _計 3581 ops / 54 families。並びとノートの在り処は `docs/ops/INDEX.
 - `photometric_residual` `images → image2d` — How badly the Lambertian model fails, per pixel. → (H, W) RMS residual. · 例: `specular_photometric`
 - `photometric_stereo_robust` `images → normalmap` — Photometric stereo that survives shadows and highlights. → (normals, albedo, inliers). · 例: `poc_shape_from_polarization`, `specular_photometric`
 
-#### specular / polarization(4)
+#### specular / polarization(5)
 - `polarization_dolp_map` `polsweep → image2d` — Degree of linear polarisation, per pixel. → (H, W) in [0, 1]. · 例: `example_polarization_metal`, `perf_polarization_analyze`, `poc_polarization_specular`, `polarization_camera_pipeline`, `specular_photometric`
 - `polarization_render` `image2d × image2d → polsweep` — Forward model of a polariser sweep: turn a known split into the frames a polarisation camera would record. → (N, H, W). · 例: `example_polarization_metal`, `poc_polarization_specular`, `specular_photometric`
 - `polarization_separate` `polsweep → image2d` — Split a polariser sweep into its unpolarised and linearly polarised radiance. → (diffuse, specular), both (H, W). · 例: `perf_polarization_analyze`, `poc_polarization_specular`, `specular_photometric`
 - `polarization_stokes` `polsweep → stokes` — The scene-integrated Stokes vector of a polariser sweep. → (4,), ready for :func:`optics.stokes_analyze`. · 例: `perf_polarization_analyze`, `poc_polarization_specular`, `polarization_camera_pipeline`, `specular_photometric`
+- `polarization_stokes_map` `polsweep → table` — Per-pixel linear Stokes images with DoLP and AoLP maps from an analyser sweep (4 DoFP angles or any N >= 3, least squares). → dict of (H, W) maps. · 例: `polarization_camera_pipeline`
 
 #### specular / reflectance(3)
 - `brdf_blinn_phong` `normalmap → image2d` — Blinn's half-vector specular lobe. → (H, W) in [0, 1]. · 例: `poc_shape_from_polarization`, `specular_photometric`

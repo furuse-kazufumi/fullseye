@@ -1,7 +1,7 @@
 {
  "_note": "空になりうる対象への表明の既存分。増やさないための床。減らしたら下げる。",
  "_measured": "2026-09-26",
- "total": 125,
+ "total": 124,
  "per_file": {
   "test_abi_conformance.py": 1,
   "test_accel_3d_toolkit.py": 3,
@@ -60,7 +60,6 @@
   "test_opassist.py": 1,
   "test_ops3d_ledger.py": 2,
   "test_optics.py": 2,
-  "test_packaging_foundation.py": 1,
   "test_packaging_subpackages.py": 1,
   "test_palette.py": 1,
   "test_physarum_search.py": 1,

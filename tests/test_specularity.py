@@ -1128,6 +1128,7 @@ def _ledger_args():
         "polarization_separate": ((frames,), {}),
         "polarization_dolp_map": ((frames,), {}),
         "polarization_stokes": ((frames,), {}),
+        "polarization_stokes_map": ((frames,), {}),
         # デフレクトメトリ(2026-10-15): 既定の装置で、32 x 32 の小さな面
         "deflectometry_rig": ((), {}),
         "deflectometry_screen_pattern": ((), {"max_side_px": 64}),
@@ -1159,8 +1160,8 @@ NEW_SORTS = {"rgbimage": RGBIMAGE_CHECK, "polsweep": POLSWEEP_CHECK}
 def test_ledger_is_complete_and_every_op_has_an_implementation():
     assert opsspecular.missing() == []
     import deflectometry
-    # 13 + デフレクトメトリ 6(2026-10-15)
-    assert len(opsspecular.OPSSPECULAR) == 19
+    # 13 + デフレクトメトリ 6(2026-10-15)+ 画素ごとの Stokes 1(2026-10-23)
+    assert len(opsspecular.OPSSPECULAR) == 20
     assert sorted(opsspecular.categories()) == ["deflectometry", "dichromatic", "photometric",
                                                 "polarization", "reflectance"]
     assert set(opsspecular.OPSSPECULAR) == set(S.SPECULARITY) | set(deflectometry.DEFLECTOMETRY)
@@ -1276,8 +1277,8 @@ def test_the_polsweep_sort_is_reachable_and_returns_to_existing_sorts():
     assert entries == ["polarization_render"]
     assert ins["polarization_render"] == ["image2d", "image2d"]
     assert set(exits) == {"polarization_separate", "polarization_dolp_map",
-                          "polarization_stokes"}
-    assert {outs[e] for e in exits} == {"image2d", "stokes"}
+                          "polarization_stokes", "polarization_stokes_map"}
+    assert {outs[e] for e in exits} == {"image2d", "stokes", "table"}
 
 
 def test_a_light_stack_is_silently_accepted_by_the_polarisation_operators():

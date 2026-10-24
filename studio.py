@@ -3823,6 +3823,53 @@ def _op_row(name):
     return None
 
 
+def _upstream_sort(stages, insert_at):
+    """The sort that flows into insertion position *insert_at* (the "previous stage's output").
+
+    Threads the declared sorts of the ACTIVE stages before *insert_at* with the very rule the
+    runtime uses to refuse a chain (``api._check_chain_sorts`` -> ``engine._thread_sort`` /
+    ``engine._compatible``), so "hidden in the operator list" means exactly "would be refused
+    before any stage runs". Returns ``(sort, (index, op_name))``.
+
+    * no active stage before *insert_at* -> ``(None, None)``: the first stage meets the input
+      image, which ``api._coerce_input`` matches at the entry (a grey image into a region op is
+      binarised, a mask into an image op is accepted), so the declared sort says nothing there
+      and the list is not narrowed;
+    * a bypassed stage is not part of the chain (same as the Problems panel);
+    * an unknown op threads ``"any"`` (same as ``engine.diagnose_stages``: do not narrow past it).
+
+    ★設計判断(2026-10-23): ``opassist.accepted_sorts`` の実測(宣言外でも通る型)はここでは使わない。
+    処理列に入れた段は ``_check_chain_sorts`` が**宣言の型だけ**で拒否するので、実測で通る op を
+    「受けられる」と出すと、挿入した直後に実行前拒否される。実測は値に対する目的検索
+    (``studio_search.search_grouped`` の applicable 群)が既に使っている。
+    """
+    stages = list(stages)
+    if isinstance(insert_at, bool) or not isinstance(insert_at, int):
+        raise ValueError("_upstream_sort: insert_at must be an int, got %r" % (insert_at,))
+    if not 0 <= insert_at <= len(stages):
+        raise ValueError("_upstream_sort: insert_at=%d is outside 0..%d" % (insert_at, len(stages)))
+    cur = None
+    prev = None
+    for i, st in enumerate(stages[:insert_at]):
+        if _is_bypassed(st):
+            continue
+        name = engine.stage_name(st)
+        op = api.find_op(name)
+        cur = engine._ANY if op is None else engine._thread_sort(cur, op)
+        prev = (i, name)
+    return cur, prev
+
+
+def _ops_accepting(rows, sort):
+    """The rows (``api.list_ops`` shape) whose first input takes *sort*; all rows when *sort*
+    is None. Uses ``engine._compatible`` (the runtime's chain rule). It only HIDES the others —
+    nothing is converted, and a hidden op is one click away (switch the filter off)."""
+    rows = list(rows)
+    if sort is None:
+        return rows
+    return [r for r in rows if engine._compatible(sort, r.get("in_sort") or "")]
+
+
 #: Sample image the dev_* visualization demo loads (a collected, license-clean image).
 HDEV_VISUAL_DEMO_IMAGE = "coins"
 
@@ -6768,6 +6815,16 @@ def build_window(model=None):
     search = QtWidgets.QLineEdit(); search.setPlaceholderText("search / autocomplete operators…")
     search.setClearButtonEnabled(True)
     search.setToolTip("Filter by op name, HALCON alias or category")
+    # 018: narrow the browser to the operators that take the previous stage's output (the
+    # chain rule the runtime enforces). Hide only — never convert — and one click turns it off.
+    ops_fit_only = QtWidgets.QCheckBox("Only operators that take the previous stage's output")
+    ops_fit_only.setChecked(True)
+    ops_fit_only.setToolTip("On: operators whose input type does not match the output of the stage "
+                            "before the insertion point are hidden (they would be refused before "
+                            "running). Nothing is converted. Off: list every operator.")
+    ops_fit_note = QtWidgets.QLabel("")
+    ops_fit_note.setProperty("muted", True); ops_fit_note.setWordWrap(True)
+    ops_fit_state = {}                  # last (switch, upstream sort) the list was filled for
     op_list = QtWidgets.QListWidget()
     op_list.setToolTip("Double-click an operator to insert it into the pipeline")
     op_hint = QtWidgets.QLabel("set a, b · Insert into pipeline or Run once · double-click = insert")
@@ -6793,7 +6850,9 @@ def build_window(model=None):
     b_help = _tbtn("help", "Operator help (image-processing details)")
     b_help.setEnabled(False)
     olay = QtWidgets.QVBoxLayout()
-    olay.addWidget(cat); olay.addWidget(search); olay.addWidget(op_list, 1)
+    olay.addWidget(cat); olay.addWidget(search)
+    olay.addWidget(ops_fit_only); olay.addWidget(ops_fit_note)
+    olay.addWidget(op_list, 1)
     olay.addWidget(op_param)
     argrow = QtWidgets.QHBoxLayout()
     lbl_a = QtWidgets.QLabel("a"); lbl_b = QtWidgets.QLabel("b")
@@ -6884,15 +6943,56 @@ def build_window(model=None):
             chip.setSizeHint(chiprow.sizeHint()); op_list.setItemWidget(chip, chiprow)
         return result
 
+    def _ops_insert_position():
+        """Where Insert / double-click will put the next stage (the same rule as ``add_op``):
+        after the Program cursor's stage, else after the selected stage, else at the end."""
+        n = len(model.stages)
+        if not n:
+            return 0
+        try:
+            if state.get("stage_lines") is None:
+                i = stage_list.currentRow()
+                return (i + 1) if 0 <= i < n else n
+            return min(n, _stages_done(code_edit.textCursor().blockNumber() + 1))
+        except NameError:                  # the first fill runs before the pipeline widgets exist
+            return n
+
+    def _ops_upstream():
+        return _upstream_sort(model.stages, _ops_insert_position())
+
+    def _ops_fit_note_text(fit_sort, prev, shown, total):
+        if not ops_fit_only.isChecked():
+            return tr("Showing every operator (the type filter is off).")
+        if fit_sort is None:
+            return tr("First stage: every operator is listed (the input image is matched at the entry).")
+        if fit_sort == engine._ANY:
+            return tr("The previous stage's output type is open ('any'), so every operator is listed.")
+        return (tr("Showing %d of %d operators that take '%s' (the output of stage %d, %s). "
+                   "The others would be refused before running.")
+                % (shown, total, fit_sort, prev[0] + 1, prev[1]))
+
     def refill_ops():
         kw = search.text().lower(); c = cat.currentText()
         if kw:
             grouped_search(kw)
             return
+        # keep the highlighted op when it is still listed: the list refills whenever the
+        # insertion point moves (e.g. right after Insert), and Run once / Insert act on it
+        _cur = op_list.currentItem()
+        keep = _cur.data(QtCore.Qt.UserRole) if _cur is not None else None
         op_list.clear()
+        fit_sort, fit_prev = _ops_upstream()
+        ops_fit_state["key"] = (ops_fit_only.isChecked(), fit_sort)
+        fit_names = None
+        if ops_fit_only.isChecked() and fit_sort not in (None, engine._ANY):
+            fit_names = {r["name"] for r in _ops_accepting(all_ops, fit_sort)}
         ranked = []
+        in_category = 0
         for r in all_ops:
             if c != "all categories" and r["category"] != c:
+                continue
+            in_category += 1
+            if fit_names is not None and r["name"] not in fit_names:
                 continue
             hay = r.get("_search")
             if hay is None:
@@ -6925,6 +7025,17 @@ def build_window(model=None):
             it.setData(QtCore.Qt.UserRole, r["name"])
             it.setToolTip(op_tooltip(r))
             op_list.addItem(it)
+            if keep is not None and r["name"] == keep:
+                op_list.setCurrentItem(it)
+        ops_fit_note.setText(_ops_fit_note_text(fit_sort, fit_prev, len(ranked), in_category))
+
+    def _ops_follow_upstream():
+        """Refill the browser when the insertion point's upstream sort (or the switch) changed.
+        A typed query keeps its own grouping by the current value (``grouped_search``)."""
+        if search.text().strip():
+            return
+        if (ops_fit_only.isChecked(), _ops_upstream()[0]) != ops_fit_state.get("key"):
+            refill_ops()
     refill_ops()
 
     # -- centre: pipeline + knobs + export ----------------------------------- #
@@ -7802,6 +7913,7 @@ def build_window(model=None):
         stage_list.blockSignals(False)
         state["reordering"] = False
         refresh_problems(states)
+        _ops_follow_upstream()                        # the insertion point's upstream sort may have changed
         sync_stage_ui()
         if sync_code:                                 # (a run keeps the editor's cursor / timings: sync_code=False)
             getattr(win, "_code_sync", lambda: None)()   # keep the program (code) view in sync
@@ -8899,6 +9011,7 @@ def build_window(model=None):
         update_actions()
 
     def on_stage_selected():
+        _ops_follow_upstream()
         sync_stage_ui()
         show_result()
         # the Program window follows the selection (HDevelop) — unless the user is
@@ -9066,11 +9179,8 @@ def build_window(model=None):
         push_undo()
         # Insertion point = the Program cursor (which follows the selected stage, so a
         # selected stage still means "insert right after it"; no selection = the end).
-        cur_line = code_edit.textCursor().blockNumber() + 1
-        newpos = min(len(model.stages), _stages_done(cur_line)) if model.stages else 0
-        if not model.stages or state.get("stage_lines") is None:
-            i = selected_index()
-            newpos = (i + 1) if 0 <= i < len(model.stages) else len(model.stages)
+        # (one rule, shared with the operator browser's type filter: _ops_insert_position)
+        newpos = _ops_insert_position()
         model.add_stage(name, a_val, b_val)
         last = len(model.stages) - 1
         if newpos < last:
@@ -11117,6 +11227,10 @@ def build_window(model=None):
     search_timer.timeout.connect(refill_ops)
     search.textChanged.connect(lambda _=None: search_timer.start())
     cat.currentIndexChanged.connect(refill_ops)
+    ops_fit_only.toggled.connect(lambda _=False: refill_ops())
+    code_edit.cursorPositionChanged.connect(lambda: _ops_follow_upstream())
+    win._ops_fit = {"check": ops_fit_only, "note": ops_fit_note, "upstream": _ops_upstream,
+                    "insert_at": _ops_insert_position, "category": cat}
 
     # HDevelop-style autocomplete: typing shows op-name candidates in a popup; picking
     # one clears the category filter, filters the list to it, and selects it.

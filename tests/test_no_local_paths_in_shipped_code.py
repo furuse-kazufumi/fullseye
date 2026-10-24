@@ -19,21 +19,8 @@ import sys
 
 import pytest
 
-# ★`tomllib` は Python 3.11 から。**モジュール先頭で素の import をすると
-# 3.10 で収集が中断し、テストが 1 件も走らない** —— 2026-09-05 に hypothesis で
-# 同じことを踏んだ直後に、この検査で再発させた(CI py3.10 が collection error)。
-# import 失敗は必ず skip に落とす。
-try:
-    import tomllib
-except ModuleNotFoundError:                                  # pragma: no cover (py<=3.10)
-    try:
-        import tomli as tomllib
-    except ModuleNotFoundError:
-        tomllib = None
-
-pytestmark = pytest.mark.skipif(
-    tomllib is None,
-    reason="tomllib/tomli が無い(Python 3.11 未満)。この検査は版に依らないので 1 つで足りる")
+# tomllib は標準ライブラリ(requires-python >= 3.11。3.10 の fallback は 2026-10-24 に外した)。
+import tomllib
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
