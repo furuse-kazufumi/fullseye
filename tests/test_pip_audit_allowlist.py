@@ -111,7 +111,21 @@ def test_ci_runs_the_gate_and_does_not_swallow_it():
     """門がある ≠ 経路が通る。ci.yml が deps の監査を `|| true` 無しで呼んでいること。"""
     with open(os.path.join(ROOT, ".github", "workflows", "ci.yml"), encoding="utf-8") as f:
         ci = f.read()
-    assert "tools/pip_audit_gate.py --python-version 3.11 --platform" in ci, "CI が依存の監査を回していない"
+    assert "tools/pip_audit_gate.py --python-version 3.11 --manylinux-glibc" in ci, "CI が依存の監査を回していない"
     swallowed = [ln.strip() for ln in ci.splitlines()
                  if ("pip-audit" in ln or "pip_audit_gate" in ln) and "|| true" in ln]
     assert not swallowed, "監査の失敗を握り潰す形が残っている: %s" % swallowed
+
+
+def test_manylinux_ladder_covers_every_rung_down_to_2014():
+    # 2026-10-24: 2_28 / 2_17 / 2014 だけ渡して、2_27 の wheel しか無い nvidia-cudnn-cu13 が落ちた。
+    tags = G.manylinux_ladder("2.39", "x86_64")
+    assert tags[0] == "manylinux_2_39_x86_64" and tags[-1] == "manylinux2014_x86_64"
+    assert "manylinux_2_27_x86_64" in tags and "manylinux_2_17_x86_64" in tags
+    assert len(tags) == 39 - 17 + 1 + 1
+    for bad in ("3.1", "2.16", "abc", "2"):
+        try:
+            G.manylinux_ladder(bad, "x86_64")
+        except ValueError:
+            continue
+        raise AssertionError(bad)

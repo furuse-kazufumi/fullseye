@@ -156,7 +156,7 @@ def resolve(requirements: list[str], platforms: list[str] | None, python_version
     with tempfile.TemporaryDirectory() as tmp:
         report = Path(tmp) / "report.json"
         cmd = [sys.executable, "-m", "pip", "install", "--dry-run", "--ignore-installed",
-               "--quiet", "--disable-pip-version-check", "--report", str(report)]
+               "--disable-pip-version-check", "--report", str(report)]
         if platforms or python_version:
             # pip only allows a foreign target for wheels (no sdist build on this host).
             # pip does not widen a manylinux tag to the older ones, so pass each tag.
@@ -209,11 +209,34 @@ def _installed_tools() -> list[str]:
     return pins
 
 
+def manylinux_ladder(glibc: str, arch: str) -> list[str]:
+    """Every manylinux tag a host with *glibc* (e.g. ``"2.39"``) accepts, newest first.
+
+    pip does not widen a foreign ``--platform`` to older tags, so the gate has to pass the
+    whole ladder a real runner would accept.  Passing only a few rungs (2_28 / 2_17 / 2014)
+    made torch unresolvable on CI (2026-10-24): its Linux dependency ``nvidia-cudnn-cu13``
+    ships only ``manylinux_2_27`` wheels, a rung that was missing.
+    """
+    try:
+        major, minor = (int(x) for x in glibc.split("."))
+    except ValueError:
+        raise ValueError(f"--manylinux-glibc must look like 2.39, got {glibc!r}") from None
+    if major != 2 or not 17 <= minor <= 99:
+        raise ValueError(f"--manylinux-glibc must be 2.17 .. 2.99, got {glibc!r}")
+    if not arch or not arch.replace("_", "").isalnum():
+        raise ValueError(f"--arch must be a wheel arch such as x86_64, got {arch!r}")
+    tags = [f"manylinux_2_{m}_{arch}" for m in range(minor, 16, -1)]
+    return tags + [f"manylinux2014_{arch}"]
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("mode", nargs="?", choices=("deps", "tools"), default="deps")
     ap.add_argument("--platform", action="append",
                     help="target wheel platform tag (repeatable), e.g. manylinux_2_28_x86_64")
+    ap.add_argument("--manylinux-glibc",
+                    help="target glibc, e.g. 2.39; expands to every manylinux tag down to 2_17")
+    ap.add_argument("--arch", default="x86_64", help="wheel arch for --manylinux-glibc")
     ap.add_argument("--python-version", help="target Python, e.g. 3.11")
     ap.add_argument("--check-allowlist", action="store_true", help="validate the ledger only")
     ap.add_argument("--write-pins", type=Path, help="also save the resolved pins here")
@@ -235,7 +258,10 @@ def main(argv: list[str] | None = None) -> int:
             return 2
         return run_pip_audit(pins, entries, "tools")
 
-    pins = resolve(declared_requirements(), args.platform, args.python_version)
+    platforms = list(args.platform or [])
+    if args.manylinux_glibc:
+        platforms += manylinux_ladder(args.manylinux_glibc, args.arch)
+    pins = resolve(declared_requirements(), platforms or None, args.python_version)
     if args.write_pins:
         args.write_pins.write_text("\n".join(pins) + "\n", encoding="utf-8")
     return run_pip_audit(pins, entries, "deps")
