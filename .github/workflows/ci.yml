@@ -472,7 +472,9 @@ jobs:
           sudo apt-get install -y -q fonts-noto-cjk fonts-ipafont-gothic
       - name: Install with optional backends (no torch)
         run: >
-          pip install -e ".[opencv,skimage,pil,wavelets,gui,video,volume,gltf,lidar,pcd]"
+          # xlsx も入れる(2026-10-24: この行だけ抜けていて、能力ノートの Excel 出力の例が
+          # 「xlsxio needs openpyxl」で落ちた。順番の問題ではなく入れ忘れ)。
+          pip install -e ".[opencv,skimage,pil,wavelets,gui,video,volume,gltf,lidar,pcd,xlsx]"
           pytest pytest-xdist pytest-randomly matplotlib sympy ziglang
       # 種を出力に残す —— 落ちたら `-p randomly --randomly-seed=<種>` で再現できる。
       - name: Shuffled, serial (順序依存だけを見る)
