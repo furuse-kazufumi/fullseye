@@ -61,8 +61,9 @@ import op_probe                                           # noqa: E402
 #: **この集合は縮む方向にしか動かしてはいけない**(直したら消す)。
 #: 一件ずつの背景は docs/KNOWN_ISSUES.md #12〜#26。
 KNOWN_DEAD_KNOBS = {
-    ("binomial_filter", "b"), ("erosion_circle", "b"), ("gray_erosion", "b"),
-    ("mean_image", "b"),
+    # binomial_filter / mean_image の b は 2026-10-24 に外した: 説明は「``b`` は<改行>未使用」と
+    # 正直に書いてあったが、続きの行が字下げ無しで始まるため折り返しを戻せず、主張と誤読していた。
+    ("erosion_circle", "b"), ("gray_erosion", "b"),
     ("sp_local_max_sub_pix", "a"), ("sp_local_min_sub_pix", "a"),
     ("xcv3_sift_count", "a"), ("xcv_grabcut", "a"), ("xsk_orb_count", "a"),
     ("tb_beamform_delay_sum", "a"), ("tb_env_studio", "a"), ("tb_mat_pinv", "a"),
@@ -126,10 +127,24 @@ def _knob_live(op, which, v):
 def _claims(doc, which):
     # 行の折り返し(「``b`` は<改行>    未使用」)を 1 行に戻してから判定する。
     # 2026-09-07 に折り返しだけで 2 件が「振ると書いてあるのに効かない」に化けた。
-    doc = re.sub(r"\n[ \t]+", " ", doc)
+    # 字下げの有無に頼らない: Python 3.13 から docstring の共通字下げはコンパイル時に
+    # 取り除かれ、続きの行が行頭から始まる(2026-10-24、3.14 の CI で r2_smallest_circle と
+    # xg_area_center の「``b`` は未使用」が読めず、効かないノブ 2 件に化けた)。
+    # 空行(段落の区切り)だけは残す。
+    doc = re.sub(r"[ \t]*\n[ \t]*(?=\S)", " ", doc)
     if _UNUSED_BOTH.search(doc) or _UNUSED[which].search(doc):
         return False
     return bool(_CLAIM[which].search(doc))
+
+
+def test_claims_read_the_same_with_or_without_docstring_indentation():
+    """3.12 まで(字下げが残る)と 3.13 から(取り除かれる)で判定が変わらないこと。"""
+    indented = "Area.\n\n    ``a``, ``b`` は\n    未使用。\n"
+    dedented = "Area.\n\n``a``, ``b`` は\n未使用。\n"
+    for doc in (indented, dedented):
+        assert _claims(doc, "b") is False, doc
+    # 段落の区切りは跨がない(別の段落の「未使用」が前の段落の主張を打ち消さない)
+    assert "\n" in re.sub(r"[ \t]*\n[ \t]*(?=\S)", " ", "x\n\ny")
 
 
 @pytest.fixture(scope="module")
