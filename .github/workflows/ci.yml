@@ -166,6 +166,31 @@ jobs:
           FULLSEYE_WHEEL_PYTHON: .wheelenv/bin/python
         run: pytest tests/test_mcp_wheel.py tests/test_abi_wheel.py -q -ra
 
+  # 次の Python(3.15)の試験的なジョブ。scikit-image / torch / mahotas / mitsuba / lazrs には
+  # まだ cp315 の wheel が無いので extras は入れず、core だけの smoke と op の契約テストだけを回す。
+  # 落ちても本流は止めない(continue-on-error)。何が先に壊れるかを早く知るためのもの。PR では回さない。
+  python-next:
+    name: python 3.15 preview (core + op contracts, allowed to fail)
+    needs: changes
+    if: github.event_name != 'pull_request' && needs.changes.outputs.docs-only != 'true'
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5
+        with:
+          python-version: "3.15"
+          allow-prereleases: true
+      - name: Install core only (no extras)
+        run: pip install -e . pytest pytest-timeout
+      - name: Import + registry smoke (same as core-minimal)
+        run: |
+          python -c "import sys, fullseye, fsi18n; print(sys.version)"
+          python -c "import fullseye; n=len(fullseye.op_names()); print(n, 'ops'); assert n > 500"
+          python -c "import ops3d, pipeline3d, measure3d; assert len(ops3d.list_ops()) > 200"
+      - name: Op contracts
+        run: pytest -q -ra tests/test_op_contracts.py
+
   lint:
     # 静的解析。**様式を揃えるためではなく、実害のあるバグを止めるため**に入れている。
     # 2026-09-05 の実測: テスト 11,254 件が全部緑のまま、tools/chain_fuzz.py の
@@ -220,9 +245,11 @@ jobs:
       fail-fast: false
       matrix:
         # ★PR は py3.11 の 6 片だけ(2026-10-21): runner の同時枠を複数runで奪い合い、
-        #   1時間queuedが常態化した。py3.10/3.12の差はmasterへのpush・nightly・
+        #   1時間queuedが常態化した。版の差はmasterへのpush・nightly・
         #   手動 dispatch のフルマトリクスで拾う(coverage は元から py3.11 だけ)。
-        python-version: ${{ fromJSON(github.event_name == 'pull_request' && '["3.11"]' || '["3.10", "3.11", "3.12"]') }}
+        # 2026-10-24: 3.10 を外して 3.14 に入れ替えた(push・手動は 3 版 × 6 片 = 18 ジョブのまま)。
+        #   3.13 は schedule(週次)だけで足す —— 3.12 と 3.14 に挟まれていて、毎回払うほどの差は出にくい。
+        python-version: ${{ fromJSON(github.event_name == 'pull_request' && '["3.11"]' || github.event_name == 'schedule' && '["3.11", "3.12", "3.13", "3.14"]' || '["3.11", "3.12", "3.14"]') }}
         shard: [1, 2, 3, 4, 5, 6]
     env:
       QT_QPA_PLATFORM: offscreen
@@ -293,7 +320,7 @@ jobs:
           COVERAGE_FILE: .coverage.shard${{ matrix.shard }}
         # `-ra` = 合格以外を全部要約に出す。`-rs`(skip だけ)だと**どのテストが
         # 失敗したのか要約に出ず**、生ログを掘る羽目になる(2026-09-05 に実際に踏んだ)。
-        # ★2026-10-07: --cov は py3.11 だけ。3.10/3.12 の coverage データはアップロードせず捨てていた
+        # ★2026-10-07: --cov は py3.11 だけ。ほかの版の coverage データはアップロードせず捨てていた
         #   (計測の上乗せだけ払っていた)。結合ジョブが読むのは py3.11 の 6 片。
         # ★.test_durations の出自(2026-10-22): master の run 39678056044(Linux、3 版 × 6 片)の artifact を
         #   tools/merge_test_durations.py --baseline で合流した実測 22,053 件(平均値の仮置きが残るのは 22 件)。
