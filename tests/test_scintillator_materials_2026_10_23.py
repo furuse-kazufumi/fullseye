@@ -5,7 +5,9 @@
   * 吸収効率は閉形式 1 − exp(−ρ (μ/ρ) t)(μ/ρ は NIST SRD 126 の列)、厚さ → ∞ で 1、厚さに単調。
   * 発光スペクトルは ∫ S dλ = 1 に正規化される(倍率に依らない)。細いガウスの極限は「極大の 1 本の線」に戻る。
   * 発光の成分(2026-10-24): エネルギー軸のガウスは波長軸でも面積 1(ヤコビアン hc/λ²)、重なりはどちらの軸で
-    積分しても同じ、線の束は Σ wᵢ·QE(λᵢ)、QE の山頂(480 nm)では線が帯より大きく出る(BGO +6.6 %)。
+    積分しても同じ、線の束は Σ wᵢ·QE(λᵢ)(重みの和が 1 でない合成も、解析式の QE で独立に数えた値と一致)、
+    QE の山頂(480 nm)では線が帯より大きく出る(向きだけが真値の門。大きさ BGO +6.6 % / CdWO4 +4.6 % は
+    回帰の定数)。
   * 光収率の幅の両端の電子の数は、値に比例する。
   * 既存の ``dual_kvp_channels`` の既定(CsI 0.6 mm)は 2026-10-23 の前(master 125dc785c8 で採った値)と一致し、
     同じプロセスの中では既定・明示の ``CSI``・シンチレータの ``CSI:TL`` が 1 ビットも違わない。
@@ -402,7 +404,11 @@ def test_line_bundle_overlap_is_the_weighted_sum_of_qe():
 
 @pytest.mark.parametrize("name,band_over_line", [("BI4GE3O12", 0.066), ("CDWO4", 0.046)])
 def test_the_line_model_overestimates_on_the_top_of_the_qe_hill(name, band_over_line):
-    """QE が上に凸の山頂付近(480 nm)では、極大の線は帯の重なりより大きい(調査の計算 BGO +6.6 %)。"""
+    """QE が上に凸の山頂付近(480 nm)では、極大の線は帯の重なりより大きい。
+
+    向き(線 > 帯)は QE が上に凸であることから出る真値の門。大きさ(BGO +6.6 %、CdWO4 +4.6 %)は調査のときに
+    同じ模型で計算した値で、独立の真値ではなく**回帰の定数**(模型・QE の曲線を変えたら読み直す)。
+    """
     r = D.scintillator_sensor_qe(name)
     line = _qe(r["emission_peak_nm"])
     assert "Gaussian in energy" in r["emission_model"]
@@ -458,3 +464,44 @@ def test_band_outside_the_qe_range_is_refused():
         D.scintillator_sensor_qe("BGO", photodetector_qe=narrow)
     with pytest.raises(ValueError, match="outside the photodetector QE range"):
         D.scintillator_sensor_qe("GOS:TB", light_yield_per_mev=1.0, photodetector_qe=narrow)
+
+
+# --------------------------------------------------------------------------- #
+# 重みの和が 1 でない合成を、独立に数えた値と比べる(2026-10-24)                    #
+# --------------------------------------------------------------------------- #
+def _analytic_qe(lam):
+    """解析式の QE(λ)(実装の np.interp を通さずに真値を出すため)。300〜1000 nm で 0.2〜0.8。"""
+    return 0.5 + 0.3 * np.sin(np.pi * (np.asarray(lam, dtype=np.float64) - 300.0) / 700.0)
+
+
+#: 解析式の QE を 0.05 nm 刻みで標本化した曲線(区分線形の補間誤差は 1e-8 未満)
+QE_AN = np.column_stack([np.linspace(300.0, 1000.0, 14001), _analytic_qe(np.linspace(300.0, 1000.0, 14001))])
+
+
+def test_unnormalised_mixed_components_match_an_independent_sum():
+    """重み 2 : 3 : 1(和 6)の 線・エネルギー軸のガウス・線 —— 期待値は解析式の QE とエネルギー軸の求積で独立に。"""
+    comps = [{"center_nm": 545.0, "fwhm_ev": None, "weight": 2.0, "digitized_from_figure": False, "source": "t"},
+             {"center_nm": 450.0, "fwhm_ev": 0.5, "weight": 3.0, "digitized_from_figure": False, "source": "t"},
+             {"center_nm": 600.0, "fwhm_ev": None, "weight": 1.0, "digitized_from_figure": False, "source": "t"}]
+    pairs, ov, rows = D._emission_components_overlap(comps, QE_AN[:, 0], QE_AN[:, 1], "t")
+    # 帯の部分: エネルギー軸で ±6σ を 20 万点の台形(実装は波長軸の格子)
+    ce = D.HC_EV_NM / 450.0
+    sig = 0.5 / (2.0 * math.sqrt(2.0 * math.log(2.0)))
+    E = np.linspace(ce - 6 * sig, ce + 6 * sig, 200001)
+    gE = np.exp(-0.5 * ((E - ce) / sig) ** 2)
+    q_band = float(np.trapezoid(gE * _analytic_qe(D.HC_EV_NM / E), E) / np.trapezoid(gE, E))
+    want = (2.0 * float(_analytic_qe(545.0)) + 3.0 * q_band + 1.0 * float(_analytic_qe(600.0))) / 6.0
+    assert ov == pytest.approx(want, rel=1e-7)
+    # 正規化を忘れた和(Σ wᵢ Q̄ᵢ をそのまま)とは 6 倍違う —— 壊したら赤になる
+    assert abs(ov * 6.0 - want) > 1.0
+    assert [r["weight"] for r in rows] == pytest.approx([2 / 6, 3 / 6, 1 / 6], rel=1e-15)
+    # 返す pairs は帯の部分だけで、面積は帯の重みの割合 3/6
+    assert float(np.trapezoid(pairs[:, 1], pairs[:, 0])) == pytest.approx(0.5, abs=1e-6)
+
+
+def test_line_bundle_through_the_op_matches_the_analytic_qe():
+    """GOS:Tb の線の束を公開の op に解析式の QE で通す: Q̄ = Σ wᵢ·f(λᵢ)(f は解析式、補間を通さない)。"""
+    r = D.scintillator_sensor_qe("GD2O2S:TB", 0.2, light_yield_per_mev=1.0, photodetector_qe=QE_AN)
+    table = [(411.0, 0.10), (490.0, 0.12), (545.0, 0.53), (587.0, 0.13), (620.0, 0.08), (667.0, 0.04)]
+    want = sum(w * float(_analytic_qe(c)) for c, w in table) / sum(w for _, w in table)
+    assert r["overlap"] == pytest.approx(want, rel=1e-8)
