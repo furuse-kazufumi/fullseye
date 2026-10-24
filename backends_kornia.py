@@ -30,6 +30,7 @@ from __future__ import annotations
 import importlib
 import importlib.util
 import os
+import re
 
 import numpy as np
 
@@ -84,24 +85,56 @@ def _np(t):
     return t.detach().cpu().numpy()[0, 0].astype(np.float64)
 
 
-def _zero_border(fn, v, ksize):
-    """``fn`` を **外側 0 埋め** の境界で呼ぶ(kornia の版に依らない)。
+def _own_border(fn, v, r, mode):
+    """``fn`` を **自前の境界**(``numpy.pad`` の ``mode``)で呼び、元の大きさに切り戻す。
 
-    kornia 0.9.0 で ``median_blur`` と ``motion_blur`` の境界が 0 埋めから鏡映
-    (reflect)に変わった(実測 2026-10-24: 16x16 の乱数画像で縁の画素が最大 0.77
-    ずれ、内側は一致。ほかの filter は版で変わらない)。鏡映は窓の半径が画像の辺
-    以上だと torch が例外を出すので、4x4 の画像に 9x9 の窓で op が落ち、CI が
-    新しい kornia を入れた日に赤になった。
+    画像の外側に半径 ``r`` ぶん ``mode`` で画素を足してから kornia に渡し、内側を
+    切り出す。切り出した画素の窓は足した画素の内側に収まるので、kornia が自分で
+    どんな境界を置いても(版で既定が変わっても)結果は変わらない。窓が 1 段だけの
+    filter(median・motion・laplacian・gaussian の差 = DoG)では、kornia 自身の境界と
+    同じ ``mode`` を渡せば **値は 1 ビットも変わらない**。
 
-    自前で半径ぶん 0 を足してから呼び、内側を切り出す: 切り出した画素の窓は
-    足した 0 の内側に収まるので、kornia がその外にどんな境界を置いても結果は
-    変わらない = 0.8.x と同じ出力が 0.9 でも出る。
+    もう一つの効き目: torch の鏡映(reflect)は「半径 < 画像の辺」でしか動かず、
+    4x4 の画像に 9x9 の窓で ``Padding size should be less than…`` を投げて op が
+    fallback に落ちていた。``numpy.pad`` の reflect は半径が辺を超えても折り返しを
+    繰り返して足せる(同じ規約をそのまま外へ延ばしたもの)ので、小さい画像も通る。
+
+    経緯(2026-10-24): kornia 0.9.0 で ``median_blur`` と ``motion_blur`` の境界が
+    0 埋めから鏡映に変わった(16x16 の乱数画像で縁の画素が最大 0.77 ずれた)。
+    版で変わったのは境界だけではない —— ``spatial_gradient`` の 2 階微分の正規化
+    (→ ``xkor_hessian``)と ``equalize_clahe`` の中身(→ ``xkor_clahe``)も変わった。
+    xkor_* の全 op を両版で比べる門は ``tests/test_kornia_version_drift_2026_10_24.py``。
     """
-    r = int(ksize) // 2
-    x = _m()["torch"].nn.functional.pad(_t(v), (r, r, r, r), mode="constant",
-                                        value=0.0)
-    y = fn(x)
-    return _np(y[..., r:y.shape[-2] - r, r:y.shape[-1] - r])
+    r = int(r)
+    x = np.clip(np.asarray(v, np.float64), 0, 1)
+    if r > 0:
+        x = np.pad(x, r, mode=mode)            # "constant" は 0 を足す
+    y = _np(fn(_t(x)))
+    return y[r:y.shape[0] - r, r:y.shape[1] - r]
+
+
+def _zero_border(fn, v, ksize):
+    """``fn`` を **外側 0 埋め** の境界で呼ぶ(kornia 0.8 の median / motion の規約)。
+
+    kornia 0.9.0 で ``median_blur`` と ``motion_blur`` の境界が 0 埋めから鏡映に
+    変わった。窓の半径ぶん 0 を自前で足すので版に依らない(:func:`_own_border`)。
+    """
+    return _own_border(fn, v, int(ksize) // 2, "constant")
+
+
+def _kornia_version() -> tuple:
+    """入っている kornia の (major, minor)。読めなければ (0, 0)(= 古い側に倒す)。"""
+    _m()
+    m = re.match(r"(\d+)\.(\d+)", str(getattr(importlib.import_module("kornia"),
+                                             "__version__", "")))
+    return (int(m.group(1)), int(m.group(2))) if m else (0, 0)
+
+
+#: ``kornia.feature.harris_response`` / ``gftt_response`` の窓(7x7 ガウシアン、鏡映)の半径。
+#: 画像の辺がこれ以下だと torch の鏡映が例外を出す。
+_CORNER_WINDOW_R = 3
+#: ``dog_response_single(σ1=1.0, σ2=1.6)`` の大きい方のガウシアン(13x13)の半径。
+_DOG_R = 6
 
 
 def _norm(x, ref=None):
@@ -156,10 +189,14 @@ DOCS = {
         "**a, b は未使用**（共通ヘルパー ``_resp`` が a, b を受け取るだけで捨てる）。"
     ),
     "xkor_hessian": (
-        "ヘシアン行列に基づくブロブ・コーナー応答。"
-        "``kornia.feature.hessian_response`` を既定パラメータで呼び、絶対値を"
-        "取って最大絶対値で正規化する。\n\n"
-        "**a, b は未使用**（共通ヘルパー ``_resp`` が a, b を受け取るだけで捨てる）。"
+        "ヘシアン行列の行列式 det H = Ixx·Iyy − Ixy² によるブロブ・コーナー応答。"
+        "``kornia.filters.spatial_gradient`` の 5x5 Sobel 2 階微分カーネルを正規化なし"
+        "（``normalized=False``）で掛けて 64 で割り（2 次・3 次の曲面で微分値そのものに"
+        "なる）、端は複製、絶対値を取って最大絶対値で正規化する。\n\n"
+        "**a, b は未使用**。``kornia.feature.hessian_response`` を呼ばないのは、kornia 0.9 で "
+        "2 階微分カーネルの正規化が変わったため（0.8 は各カーネルを絶対値和で割るので Ixy だけが "
+        "64/36 倍に効き、行列式が Hessian の行列式にならない。同じ画像で内側の値が最大 0.68 "
+        "ずれた）。正規化を自前で固定したので版に依らず、0.9 の値と一致する。"
     ),
     "xkor_dog": (
         "DoG（Difference of Gaussians）ブロブ応答。"
@@ -261,8 +298,20 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
         a がクリップ制限（``1.0 + 4.0 * a``、範囲 1.0〜5.0）を振る。値が大きい
         ほどコントラストが強く持ち上がる代わりにノイズも強調されやすい。
         b は未使用。
+
+        **kornia 0.9 以上が要る**。0.8 以前の ``equalize_clahe`` は OpenCV の CLAHE と
+        平均 0.04〜0.17、最大 0.46 ずれる（0.9 でヒストグラムの bin・切った余りの配り方・
+        LUT の丸め・タイル補間が直った）。版で値が黙って変わらないよう、0.9 未満では
+        理由つきで断る。タイルの格子は 8x8 を明示して渡す。
         """
-        return np.clip(_np(_m()["KE"].equalize_clahe(_t(v), clip_limit=1.0 + 4.0 * a)), 0, 1)
+        ver = _kornia_version()
+        if ver < (0, 9):
+            raise ValueError(
+                "xkor_clahe は kornia 0.9 以上が要る(入っているのは %d.%d): 0.8 以前の "
+                "equalize_clahe は OpenCV の CLAHE と最大 0.46 ずれ、0.9 で直った。"
+                "版で値が変わる結果は出さない —— kornia を 0.9 以上に上げる" % ver)
+        return np.clip(_np(_m()["KE"].equalize_clahe(
+            _t(v), clip_limit=1.0 + 4.0 * a, grid_size=(8, 8))), 0, 1)
 
     def _laplacian(v, a, b):
         """ラプラシアン（2 階微分）によるエッジ・ブロブ応答。
@@ -272,10 +321,45 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
         a でカーネルサイズを 3/5/7/9 の 4 段階から選ぶ（``_k(a)``、``_median``
         と同じ量子化）。b は未使用。
         """
-        return _norm(np.abs(_np(_m()["KF"].laplacian(_t(v), _k(a)))), v)
+        k = _k(a)
+        # 境界は鏡映(kornia の既定)を自前で足す —— 値は同じで、4x4 に 9x9 の窓でも落ちない
+        return _norm(np.abs(_own_border(
+            lambda x: _m()["KF"].laplacian(x, k, border_type="reflect", normalized=True),
+            v, k // 2, "reflect")), v)
 
-    def _resp(*attrs):
-        return lambda v, a, b: _norm(np.abs(_np(_feat(*attrs)(_t(v)))), v)
+    def _corner(v, call):
+        """コーナー応答を kornia で。画像の辺が窓(7x7 の鏡映)以下のときだけ自前で鏡映を足す。
+
+        harris / gftt は「勾配(端は複製)→ 7x7 ガウシアン(端は鏡映)」の 2 段なので、
+        外側に足すと普通の大きさの画像では縁の値が変わる。kornia が例外を出す大きさ
+        (辺 <= 3)に限って足す —— それ以外の画像の値は 1 ビットも変えない。
+        """
+        if min(np.shape(v)[:2]) <= _CORNER_WINDOW_R:
+            return _own_border(call, v, _CORNER_WINDOW_R, "reflect")
+        return _np(call(_t(v)))
+
+    def _harris(v, a, b):
+        return signed01(_corner(v, lambda x: _feat("harris_response")(x, k=0.04 + 0.02 * a)))
+
+    def _resp(attr):
+        # a, b は受け取るだけで捨てる(DOCS["xkor_gftt"])。kornia は呼ぶ時に引く(遅延 import)
+        return lambda v, a, b: _norm(np.abs(_corner(v, lambda x: _feat(attr)(x))), v)
+
+    def _hessian(v, a, b):
+        # 正規化なしの 5x5 Sobel 2 階カーネル(Ixx, Ixy, Iyy)を 64 で割る = 微分値そのもの。
+        # kornia の normalized=True は 0.8 と 0.9 で割る数が違う(DOCS["xkor_hessian"])。
+        # 版でカーネルの符号が 3 本そろって反転しても det は変わらない。端は複製(両版)。
+        g = _m()["KF"].spatial_gradient(_t(v), mode="sobel", order=2, normalized=False) / 64.0
+        dxx, dxy, dyy = g[:, :, 0], g[:, :, 1], g[:, :, 2]
+        return _norm(np.abs(_np(dxx * dyy - dxy * dxy)), v)
+
+    def _dog(v, a, b):
+        fn = _feat("dog_response_single", "dog_response")
+        if getattr(fn, "__name__", "") != "dog_response_single":   # 古い kornia の代替
+            return _norm(np.abs(_np(fn(_t(v)))), v)
+        # 2 つのガウシアン(9x9・13x13、端は鏡映)の差。鏡映を自前で足す —— 値は同じで、
+        # 4x4 の画像でも落ちない。σ は既定に頼らず明示する。
+        return _norm(np.abs(_own_border(lambda x: fn(x, 1.0, 1.6), v, _DOG_R, "reflect")), v)
 
     defs = [
         ("xkor_gaussian", "smoothing", IMAGE, IMAGE, _gauss),
@@ -286,10 +370,9 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
         ("xkor_canny", "segmentation", IMAGE, REGION, _canny),
         ("xkor_clahe", "gray", IMAGE, IMAGE, _clahe),
         ("xkor_laplacian", "edges", IMAGE, IMAGE, _laplacian),
-        ("xkor_harris", "edges", IMAGE, IMAGE,
-         lambda v, a, b: signed01(_np(_feat("harris_response")(_t(v), k=0.04 + 0.02 * a)))),
+        ("xkor_harris", "edges", IMAGE, IMAGE, _harris),
         ("xkor_gftt", "edges", IMAGE, IMAGE, _resp("gftt_response")),
-        ("xkor_hessian", "edges", IMAGE, IMAGE, _resp("hessian_response")),
-        ("xkor_dog", "edges", IMAGE, IMAGE, _resp("dog_response_single", "dog_response")),
+        ("xkor_hessian", "edges", IMAGE, IMAGE, _hessian),
+        ("xkor_dog", "edges", IMAGE, IMAGE, _dog),
     ]
     return [Op(n, c, "", i, o, _safe(f, o)) for (n, c, i, o, f) in defs]

@@ -7,6 +7,16 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### 修正 — kornia の版で xkor_* の値が変わる・小さい画像で落ちる(マージ後レビュー 2026-10-24、指摘を一件ずつ再現してから)
+
+pyproject の制約は `kornia>=0.7`(上限なし)で、CI は最新(0.9.0)、手元は 0.8.3。PR #134 で `xkor_median` / `xkor_motion_blur` の境界(0.9 で 0 埋め → 鏡映)を `_zero_border` で固定したが、版で変わったのは境界だけではなかった。0.8.3 と 0.9.0(`--target` で別に入れた)で xkor_* 全 12 op を 5 画像 × 4 ノブで比べて確かめた。
+
+- `xkor_hessian`: 0.8.3 と 0.9.0 で内側(縁 3 画素を除く)でも最大 0.68 ずれていた。原因は `kornia.filters.spatial_gradient(order=2, normalized=True)` の正規化の変更 —— 0.8 は各カーネルを絶対値和で割る(Ixx・Iyy は 64、Ixy は 36)ので Ixy だけが 64/36 倍に効き、`hessian_response` の値は Hessian の行列式ではなかった。0.9 は 2 次曲面への応答で割る(3 本とも 64)。正規化なしの 5x5 Sobel 2 階カーネル(`normalized=False`、版で符号が 3 本そろって反転するだけ = 行列式は不変)を自前で 64 で割る形にした。0.9 では出力が 1 ビットも変わらず、0.8.3 でも 0.9 と一致する(手元 0.8.3 の値は変わる —— 正しい側へ)。門: scipy で独立に組んだ行列式と 2e-5、3 次曲面 `f = (x−10)³/6 + xy + y²/2` で det H = x − 11 が内側で厳密(0.8 の正規化だと零点が x ≈ 13.2 にずれる)。
+- `xkor_clahe`: 版で最大 0.46 ずれていた。0.9 で `equalize_clahe` の中身(ヒストグラムの bin、切った余りの配り方、LUT の丸め、タイル補間の縦横の取り違え)が OpenCV に寄せて直された —— OpenCV の CLAHE(8x8)との差は 0.8.3 が平均 0.04〜0.17・最大 0.46、0.9.0 が平均 0.001〜0.012・最大 0.047。引数では揃えられないので、**kornia 0.9 未満では理由つきで断る**(ValueError)。上限で 0.8 に固定するのは誤っている側に固定することになるので採らなかった。格子 8x8 を明示して渡す。手元が 0.8.3 のままだと `xkor_clahe` は fallback になる(`test_op_contracts` は古い kornia でだけその拒否文の劣化を許す: `KNOWN_REFUSES_ON_OLD_KORNIA`)。
+- `xkor_laplacian` / `xkor_dog` / `xkor_harris` / `xkor_gftt` が 4x4・3x7 の画像で `Padding size should be less than…`(torch の鏡映は半径 < 画像の辺でしか動かない)で fallback に落ちていた(両版とも)。laplacian と DoG は窓が 1 段の filter なので、kornia と同じ鏡映を `numpy.pad` で自前で足してから呼び切り戻す(`_own_border`)—— 普通の大きさの画像では値は 1 ビットも変わらず、numpy の鏡映は半径が辺を超えても折り返しを続けるので小さい画像も通る。harris / gftt は「勾配(端は複製)→ 7x7 ガウシアン(端は鏡映)」の 2 段で、外側に足すと縁の値が変わるため、kornia が例外を出す大きさ(辺 ≤ 3)に限って足す。`KNOWN_FALLS_BACK_ON_EDGE` から `xkor_dog` / `xkor_laplacian` の tiny4 を消した(台帳 −2)。
+- 門 `tests/test_kornia_version_drift_2026_10_24.py`: 上の独立参照(scipy / OpenCV / 手で書いたカーネル)に加え、**全 xkor_* op の golden 値**(0.9.0 で取り、0.8.3 でも 9e-7 以内)。CI は最新の kornia を入れるので、次に kornia が既定や中身を変えた日に黙って値が変わる代わりにここが赤になる。xkor_* を足すと表に無い op として赤になる。直す前のコードで、golden を除く門が 0.8.3 では 25 件、0.9.0 では 18 件赤(0.9.0 で通るのは hessian と clahe —— 0.9 の値が正しい側だから)。
+- `test_kornia_border_2026_10_24.py` の motion blur の門は一様な 1 の画像の隅 1 画素しか見ていなかった → kornia の `get_motion_kernel2d` を scipy の 0 埋め相関に通した参照と全画素を atol 1e-6 で比べる(両版で 1.3e-7 まで一致。#134 の前のコードでは 0.9.0 で 12 件すべて赤)。
+
 ### 追加 — 偏光を画素ごとに(Stokes / DoLP / AoLP の地図、素子の場、有限の消光比、角度と左右の規約)
 
 非公開 PoC(Si の光弾性・SWIR 偏光)を走らせて見つかった 4 つの穴を埋めた。真値はすべて閉形式(Malus の法則・Mueller 計算・ダイアテニュエータの行列・独立に書いた Jones → Mueller 変換)。門は `tests/test_polarization_per_pixel_2026_10_23.py`(85 件)。
