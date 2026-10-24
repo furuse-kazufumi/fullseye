@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>(संभवतः झुके) image plane पर RMS / geometric spot त्रिज्या (mm) और centroid (<code style="color:#22d3bf">table</code>)।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>Same statistics as <code style="color:#22d3bf">raytrace.spot_stats</code> (RMS about the centroid of the valid rays), with the image coordinates in the image plane&#x27;s local frame. *field* is <code style="color:#22d3bf">(fx, fy)</code> or a number (= fy).</p>
+<p>Same statistics as <code style="color:#22d3bf">raytrace.spot_stats</code> (RMS about the centroid of the valid rays), with the image coordinates in the image plane&#x27;s local frame (with <code style="color:#22d3bf">image_tilt</code>, measured on the tilted plane itself, so the radius is not shrunk by cos θ&#x27; along the tilt). *field* is <code style="color:#22d3bf">(fx, fy)</code> or a number (= fy).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>optics के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
 <p style="margin:2px 0 2px 12px">• <b>Unit argument के नाम में ही लिखी होती है</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>। mm और µm की गड़बड़ी crash नहीं करती, बल्कि &quot;सही दिखने वाला पर गलत उत्तर&quot; देती है, इसलिए नाम से इसे रोका जाता है। मान के आकार से unit का अनुमान बिल्कुल नहीं लगाया जाता।</p>
