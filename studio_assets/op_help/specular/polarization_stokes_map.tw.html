@@ -1,0 +1,34 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">polarization_stokes_map — SPECULAR <code style="color:#22d3bf">polarization</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">polsweep</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.polarization_stokes_map(images, angles_deg=(0.0, 45.0, 90.0, 135.0), max_violation_frac=0.0)</code>(要直接呼叫實作,<code style="color:#22d3bf">import specularity; specularity.polarization_stokes_map(images, angles_deg=(0.0, 45.0, 90.0, 135.0), max_violation_frac=0.0)</code>;從台帳取用則 <code style="color:#22d3bf">opsspecular.get(&quot;polarization_stokes_map&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>由檢偏器掃描(DoFP 的 4 個方位,或任意 N &gt;= 3 個方位的最小平方)得到逐像素線性 Stokes 影像以及 DoLP、AoLP 圖。→ (H, W) 圖的 dict。</p>
+<p><code style="color:#22d3bf">polarization_stokes</code> 回答的是整個視場(空間平均);本函式把同一擬合<b>逐像素</b>保留: 對每個像素求解 <code style="color:#22d3bf">I(t) = 0.5 (S0 + S1 cos 2t + S2 sin 2t)</code> —— 對分焦平面(DoFP)感測器的四個方位 0/45/90/135 為閉式(<code style="color:#22d3bf">S0 = (I0 + I45 + I90 + I135)/2</code>、<code style="color:#22d3bf">S1 = I0 - I90</code>、<code style="color:#22d3bf">S2 = I45 - I135</code>,即該配置下的最小平方解),對其他任意 N &gt;= 3 個檢偏角則用最小平方。</p>
+<p>回傳一個 dict:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">s0</code>、<code style="color:#22d3bf">s1</code>、<code style="color:#22d3bf">s2</code> —— <code style="color:#22d3bf">(H, W)</code> 線性 Stokes 影像。補上為零的 <code style="color:#22d3bf">S3</code> 堆疊(<code style="color:#22d3bf">np.stack([s0, s1, s2, 0 * s0], -1)</code>)即可直接送入 <code style="color:#22d3bf">optics.mueller_apply</code> 的場形式。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">dolp</code> —— <code style="color:#22d3bf">sqrt(S1^2 + S2^2) / S0</code>,取值 <code style="color:#22d3bf">[0, 1]</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">aolp_deg</code> —— <code style="color:#22d3bf">0.5 * atan2(S2, S1)</code>(度),映射到 <code style="color:#22d3bf">[0, 180)</code>(是軸,0 與 180 相同)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">lit</code> —— bool,<code style="color:#22d3bf">S0 &gt; 0</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">aolp_defined</code> —— bool,<code style="color:#22d3bf">S0 &gt; 0</code> 且 <code style="color:#22d3bf">hypot(S1, S2) &gt; 1e-12 * S0</code>。</p>
+<p><b>比值不存在之處,值為 0 並由遮罩說明 —— 絕不輸出 NaN。</b> 在 <code style="color:#22d3bf">S0 = 0</code> 處 DoLP 為 0/0: 依 <code style="color:#22d3bf">polarization_dolp_map</code> 的同一約定回傳 0.0,且 <code style="color:#22d3bf">lit</code> 為 False。線偏振分量為零之處(非偏振光或無光)AoLP 沒有方向: <code style="color:#22d3bf">aolp_deg</code> 為 0.0,<code style="color:#22d3bf">aolp_defined</code> 為 False。「零」是相對判定 —— <code style="color:#22d3bf">hypot(S1, S2) &lt;= 1e-12 * S0</code> —— 因為擬合會留下捨入殘渣: 均勻的非偏振掃描在 1e-6 到 1e9 的各個尺度上擬合出 DoLP ~3e-16(實測),若用嚴格的零判定,400/400 個這樣的像素會回報一個純屬捨入的「角度」。DoLP 本身依擬合值回傳(那個 3e-16 是誠實的數字)。在閾值處理或對角度取平均之前請先使用遮罩;<code style="color:#22d3bf">aolp_deg</code> 中的 0 並不是 0 度的量測值。</p>
+<p><b>角度。</b> *angles_deg* 與回傳的 AoLP 遵循函式庫的約定: 從 +x(沿列)向 +y(沿列向下),在顯示的影像上為順時針(見本模組的 <code style="color:#22d3bf">_DEFAULT_ANGLES</code> 和 <code style="color:#22d3bf">optics</code> 的偏振一節)。用 <code style="color:#22d3bf">optics.mueller_element(&quot;polarizer&quot;, t)</code> 合成的 21.5 度光束的掃描會回傳 21.5;同樣的影格若標上取反的角度則回傳 158.5 —— 測試檔把兩者都固定下來。</p>
+<p><b>物理性。</b> 擬合出的最小值為負的掃描會被拒絕(與 <code style="color:#22d3bf">polarization_separate</code> 相同,由 *max_violation_frac* 控制)。允許這種鉗制時,某像素可能擬合出 <code style="color:#22d3bf">hypot(S1, S2) &gt; S0</code>;此時其 <code style="color:#22d3bf">(S1, S2)</code> 被縮放回 <code style="color:#22d3bf">S0</code>(與 <code style="color:#22d3bf">polarization_stokes</code> 對平均值的處理相同),負的 <code style="color:#22d3bf">S0</code> 設為 0,因此回傳的每個像素都是物理的 Stokes 向量。在預設的 <code style="color:#22d3bf">max_violation_frac=0</code> 下這只涉及捨入級的超出。</p>
+<p>真值(閉式,見 <code style="color:#22d3bf">tests/test_polarization_per_pixel_2026_10_23.py</code>): 非偏振光經理想偏振器 → 逐像素 DoLP 1、AoLP = 偏振器角度(整幅角度各不相同的場亦然);經 <code style="color:#22d3bf">optics.mueller_partial_polarizer</code> → DoLP <code style="color:#22d3bf">(ER - 1)/(ER + 1)</code>;由回傳的 <code style="color:#22d3bf">S0, S1, S2</code> 依 Malus 定律重建的影格與輸入影格一致;<code style="color:#22d3bf">s0, s1, s2</code> 的空間平均等於 <code style="color:#22d3bf">polarization_stokes</code>(無鉗制時)。</p>
+<p>不回傳 S3: 線檢偏器無法量測它(見 <code style="color:#22d3bf">polarization_stokes</code>)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 同 <code style="color:#22d3bf">polarization_separate</code> —— *images* 不是 N &gt;= 3 的 <code style="color:#22d3bf">(N, H, W)</code> 堆疊、超出上限或含非有限值;*angles_deg* 與 N 不符或使擬合秩虧;擬合出負最小值的像素比例超過 *max_violation_frac*。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidespecular:specular_photometric">specular_photometric 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:polarization_camera_pipeline">polarization_camera_pipeline</a> — <code style="color:#22d3bf">py -3.11 examples/polarization_camera_pipeline.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">polarization</code>)</h3>
+<p><a style="color:#22d3bf" href="opspecular:polarization_render">polarization_render</a> · <a style="color:#22d3bf" href="opspecular:polarization_separate">polarization_separate</a> · <a style="color:#22d3bf" href="opspecular:polarization_dolp_map">polarization_dolp_map</a> · <a style="color:#22d3bf" href="opspecular:polarization_stokes">polarization_stokes</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: specularity.py — SPECULAR 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

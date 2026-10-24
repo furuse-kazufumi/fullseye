@@ -25,6 +25,10 @@ Returns a dict: ``intensity`` ``S0`` · ``dop`` degree of polarisation
 polarisation ellipse ``0.5*atan2(S2, S1)`` mapped into ``[0, 180)`` ·
 ``ellipticity_deg`` ``0.5*asin(S3/|S|)`` in ``[-45, +45]`` ·
 ``handedness`` one of ``"right"`` / ``"left"`` / ``"linear"``.
+``azimuth_deg`` is measured from +x (along a row) toward +y (down the
+rows) — clockwise on a displayed image; ``"right"`` means ``S3 > 0``,
+which on a displayed image (y down) is a **counter-clockwise** field
+rotation as seen by the camera (see :func:`stokes_from_jones`).
 The ellipticity is that of the **polarised part** (``S3`` over
 ``sqrt(S1^2+S2^2+S3^2)``); pypolar divides by ``S0`` instead, which for
 partially polarised light mixes the unpolarised part into the ellipse —
@@ -84,7 +88,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 同カテゴリ(`polarization`)
 
-[jones_element](jones_element.md) · [jones_apply](jones_apply.md) · [stokes_from_jones](stokes_from_jones.md) · [mueller_element](mueller_element.md) · [mueller_apply](mueller_apply.md) · [polarization_demosaic](polarization_demosaic.md) · [polarization_demosaic_color](polarization_demosaic_color.md) · [mueller_from_intensities](mueller_from_intensities.md)
+[jones_element](jones_element.md) · [jones_apply](jones_apply.md) · [stokes_from_jones](stokes_from_jones.md) · [mueller_element](mueller_element.md) · [mueller_partial_polarizer](mueller_partial_polarizer.md) · [mueller_apply](mueller_apply.md) · [polarization_demosaic](polarization_demosaic.md) · [polarization_demosaic_color](polarization_demosaic_color.md)
 
 ---
 *Provenance: optics.py — OPTICS operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

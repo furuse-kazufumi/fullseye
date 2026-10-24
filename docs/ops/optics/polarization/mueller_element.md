@@ -48,7 +48,25 @@ for ``kind="retarder"``, non-finite *retardance_deg*.
 
 Ideal, lossless (except the polariser's physical loss), normal-incidence
 elements; no diattenuation-plus-retardance combinations, no depolarisation
-other than the ideal case.
+other than the ideal case. A polariser with a **finite extinction ratio**
+is :func:`mueller_partial_polarizer`.
+
+**Per-pixel fields (2026-10-23).** An array *angle_deg* (or, for
+``kind="retarder"``, an array *retardance_deg*) returns
+``(*shape, 4, 4)``, one matrix per entry of the broadcast shape — an
+isoclinic angle map and a retardance map of a photoelastic part give the
+whole field in one call, ready for :func:`mueller_apply`'s field form.
+Before this the call raised ``ValueError`` and the photoelasticity PoC had
+to assemble ``(H, W, 4, 4)`` by hand. Scalars take the original code path
+untouched (scalar results are bit-for-bit what they were; pinned by a test
+against a verbatim copy of the old code). Output capped at
+:data:`MAX_FIELD_ELEMENTS` numbers.
+
+**Angle convention.** *angle_deg* is measured from +x (along a row) toward
++y (**down** the rows): clockwise on a displayed image — the sense of
+``atan2(ny, nx)`` of a normal map and of ``0.5 * atan2(2 txy, sxx - syy)``
+for image-coordinate stresses. See the polarisation section comment of this
+module.
 
 ## ファミリ共通の入力契約(fail-closed)
 
@@ -84,7 +102,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 同カテゴリ(`polarization`)
 
-[jones_element](jones_element.md) · [jones_apply](jones_apply.md) · [stokes_from_jones](stokes_from_jones.md) · [mueller_apply](mueller_apply.md) · [stokes_analyze](stokes_analyze.md) · [polarization_demosaic](polarization_demosaic.md) · [polarization_demosaic_color](polarization_demosaic_color.md) · [mueller_from_intensities](mueller_from_intensities.md)
+[jones_element](jones_element.md) · [jones_apply](jones_apply.md) · [stokes_from_jones](stokes_from_jones.md) · [mueller_partial_polarizer](mueller_partial_polarizer.md) · [mueller_apply](mueller_apply.md) · [stokes_analyze](stokes_analyze.md) · [polarization_demosaic](polarization_demosaic.md) · [polarization_demosaic_color](polarization_demosaic_color.md)
 
 ---
 *Provenance: optics.py — OPTICS operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

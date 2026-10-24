@@ -56,9 +56,24 @@ theta.
 ones); non-finite *angle_deg* or *retardance_deg*.
 
 Ideal, lossless, normal-incidence elements. A real polariser has a finite
-extinction ratio and a real waveplate is chromatic; neither is modelled, and
-neither is silently approximated. Jones algebra can only carry **fully
+extinction ratio and a real waveplate is chromatic; the waveplate's
+chromatism is not modelled and not silently approximated, and the finite
+extinction ratio exists only in the Mueller family
+(:func:`mueller_partial_polarizer`). Jones algebra can only carry **fully
 polarised** light — for partial polarisation use :func:`mueller_element`.
+
+**Per-pixel fields (2026-10-23).** An array *angle_deg* (or, for
+``kind="retarder"``, an array *retardance_deg*) builds one element per
+entry: the result is ``(*shape, 2, 2)`` where *shape* is the broadcast of
+the array arguments — a fast-axis or retardance map of a photoelastic part,
+one matrix per pixel. Scalars take the original code path untouched, so a
+scalar call returns exactly what it always did. The output is capped at
+:data:`MAX_FIELD_ELEMENTS` numbers.
+
+**Angle convention.** *angle_deg* is measured from +x (along a row) toward
++y (**down** the rows): clockwise on a displayed image. See the comment at
+the top of the polarisation section of this module for how that was
+established and what a counter-clockwise sensor must do.
 
 ## ファミリ共通の入力契約(fail-closed)
 
@@ -92,7 +107,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 同カテゴリ(`polarization`)
 
-[jones_apply](jones_apply.md) · [stokes_from_jones](stokes_from_jones.md) · [mueller_element](mueller_element.md) · [mueller_apply](mueller_apply.md) · [stokes_analyze](stokes_analyze.md) · [polarization_demosaic](polarization_demosaic.md) · [polarization_demosaic_color](polarization_demosaic_color.md) · [mueller_from_intensities](mueller_from_intensities.md)
+[jones_apply](jones_apply.md) · [stokes_from_jones](stokes_from_jones.md) · [mueller_element](mueller_element.md) · [mueller_partial_polarizer](mueller_partial_polarizer.md) · [mueller_apply](mueller_apply.md) · [stokes_analyze](stokes_analyze.md) · [polarization_demosaic](polarization_demosaic.md) · [polarization_demosaic_color](polarization_demosaic_color.md)
 
 ---
 *Provenance: optics.py — OPTICS operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

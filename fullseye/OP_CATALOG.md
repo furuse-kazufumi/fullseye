@@ -775,9 +775,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3569 ops / 54 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3571 ops / 54 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 959 · **3d** 373 · **math** 114 · **optics** 464 · **lightfield** 17 · **photon** 17 · **specular** 19 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 39 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 700 · **tomography** 31 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 3 · **calib** 21 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族の一覧: **2d** 959 · **3d** 373 · **math** 114 · **optics** 465 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 39 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 700 · **tomography** 31 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 3 · **calib** 21 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d(959 ops / 49 categories)
 
@@ -2495,7 +2495,7 @@ _計 3569 ops / 54 families。並びとノートの在り処は `docs/ops/INDEX.
 - `wave_nodal_lines` `matrix → mask` — Where a signed field changes sign — the nodal set, as a mask. · 例: `poc_beats_fringes_and_screens`
 - `wave_two_slit` `入力なし → image2d` — Two-slit interference on a screen — built from the physics, not the fringe formula. · 例: `poc_beats_fringes_and_screens`
 
-### optics(464 ops / 51 categories)
+### optics(465 ops / 51 categories)
 
 レンズより上・画素より下の層。幾何光学(薄レンズ結像・ABCD 光線伝達・被写界深度・cos⁴ 口径食)/ 波動光学(Airy パターン・角スペクトル伝搬・Fraunhofer 回折・ガウシアンビーム)/ 結像品質(PSF→MTF・回折限界 MTF・Zernike 波面統計)/ 偏光(Jones・Stokes・Mueller)/ 材料の物性表(matprop)・光ファイバ(fiber)・センサーの特性(sensorchar)・大域光輸送ほか。
 
@@ -2867,13 +2867,14 @@ _計 3569 ops / 54 families。並びとノートの在り処は `docs/ops/INDEX.
 - `plenoptic_refocus_depth` `lightfield × table → table` — Convert light-field refocus slope(s) to object distance in metres. · 例: `poc_plenoptic_camera`
 - `plenoptic_system` `table × table × table → table` — Assemble a main lens, MLA and sensor and report F-number matching. · 例: `plenoptic_capture_pipeline`, `poc_plenoptic_camera`
 
-#### optics / polarization(10)
+#### optics / polarization(11)
 - `jones_apply` `cimage × jones → jones` — Push a Jones vector through a Jones matrix: ``[Ex', Ey'] = J @ [Ex, Ey]``. · 例: `optics_imaging`
 - `jones_element` `入力なし → cimage` — A 2x2 complex Jones matrix for one polarisation element. · 例: `optics_imaging`
-- `mueller_apply` `matrix × stokes → stokes` — Push a Stokes vector through a Mueller matrix: ``S' = M @ S``. · 例: `optics_imaging`, `poc_photoelasticity`
+- `mueller_apply` `matrix × stokes → stokes` — Push a Stokes vector through a Mueller matrix: ``S' = M @ S``. · 例: `optics_imaging`, `poc_photoelasticity`, `polarization_camera_pipeline`
 - `mueller_checks` `matrix → table` — Say whether a 4x4 matrix is a physically realisable Mueller matrix, and how depolarising it is. · 例: `polarization_camera_pipeline`
 - `mueller_element` `入力なし → matrix` — A 4x4 real Mueller matrix for one polarisation element. · 例: `optics_imaging`, `poc_photoelasticity`, `polarization_camera_pipeline`
 - `mueller_from_intensities` `signal → matrix` — Recover a Mueller matrix from intensities measured through known generator / analyser states (polarimetric least squares). · 例: `polarization_camera_pipeline`
+- `mueller_partial_polarizer` `入力なし → matrix` — Mueller matrix of a linear polariser with a finite extinction ratio (a linear diattenuator). → (4, 4), or (*shape, 4, 4) for an angle field. · 例: `polarization_camera_pipeline`
 - `polarization_demosaic` `image2d → polsweep` — Split a polarisation-sensor mosaic into the four analyser images. · 例: `poc_shape_from_polarization`, `polarization_camera_pipeline`
 - `polarization_demosaic_color` `image2d → rgbvolume` — Split a **colour** polarisation-sensor mosaic (Sony IMX250MYR family, a 4x4 block = a 2x2 Bayer block whose every colour site is itself a 2x2 block of polarisers) into four RGB images: ``(4, H, W, 3)`` in :data:`POLARIZATION_SWEEP_ANGLES` order, each channel interpolated to full resolution. The ``rgbvolume`` sort carries it (four "slices" of RGB). · 例: `polarization_camera_pipeline`
 - `stokes_analyze` `stokes → table` — Read a Stokes vector: degree of polarisation, azimuth, ellipticity. · 例: `optics_imaging`, `polarization_camera_pipeline`, `specular_photometric`
@@ -3125,7 +3126,7 @@ _計 3569 ops / 54 families。並びとノートの在り処は `docs/ops/INDEX.
 - `anscombe_inverse` `image2d → image2d` — Invert :func:`anscombe_transform` — algebraically, or without bias. · 例: `photon_timeresolved`
 - `anscombe_transform` `image2d → image2d` — Anscombe variance-stabilising transform: Poisson counts -> ~unit-variance. · 例: `photon_timeresolved`
 
-### specular(19 ops / 5 categories)
+### specular(20 ops / 5 categories)
 
 #### specular / deflectometry(6)
 - `deflectometry_phase_to_slope` `image2d × image2d → normalmap` — 画面の絶対位相 2 枚(u 方向・v 方向の縞)→ 面の格子上の法線マップ (H, W, 3)。 · 例: `poc_phase_measuring_deflectometry`
@@ -3145,11 +3146,12 @@ _計 3569 ops / 54 families。並びとノートの在り処は `docs/ops/INDEX.
 - `photometric_residual` `images → image2d` — How badly the Lambertian model fails, per pixel. → (H, W) RMS residual. · 例: `specular_photometric`
 - `photometric_stereo_robust` `images → normalmap` — Photometric stereo that survives shadows and highlights. → (normals, albedo, inliers). · 例: `poc_shape_from_polarization`, `specular_photometric`
 
-#### specular / polarization(4)
+#### specular / polarization(5)
 - `polarization_dolp_map` `polsweep → image2d` — Degree of linear polarisation, per pixel. → (H, W) in [0, 1]. · 例: `example_polarization_metal`, `perf_polarization_analyze`, `poc_polarization_specular`, `polarization_camera_pipeline`, `specular_photometric`
 - `polarization_render` `image2d × image2d → polsweep` — Forward model of a polariser sweep: turn a known split into the frames a polarisation camera would record. → (N, H, W). · 例: `example_polarization_metal`, `poc_polarization_specular`, `specular_photometric`
 - `polarization_separate` `polsweep → image2d` — Split a polariser sweep into its unpolarised and linearly polarised radiance. → (diffuse, specular), both (H, W). · 例: `perf_polarization_analyze`, `poc_polarization_specular`, `specular_photometric`
 - `polarization_stokes` `polsweep → stokes` — The scene-integrated Stokes vector of a polariser sweep. → (4,), ready for :func:`optics.stokes_analyze`. · 例: `perf_polarization_analyze`, `poc_polarization_specular`, `polarization_camera_pipeline`, `specular_photometric`
+- `polarization_stokes_map` `polsweep → table` — Per-pixel linear Stokes images with DoLP and AoLP maps from an analyser sweep (4 DoFP angles or any N >= 3, least squares). → dict of (H, W) maps. · 例: `polarization_camera_pipeline`
 
 #### specular / reflectance(3)
 - `brdf_blinn_phong` `normalmap → image2d` — Blinn's half-vector specular lobe. → (H, W) in [0, 1]. · 例: `poc_shape_from_polarization`, `specular_photometric`

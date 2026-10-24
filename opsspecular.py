@@ -5,8 +5,9 @@
 「Lambertian + 既知光源 + 影なし」の場合だけで、**影とスペキュラは線形性を破る**
 ので頑健版が別途要る、と。本族はその「別途」であり、加えて **形状復元にかける前に
 ハイライトを取り除く** 2 つの経路(色・偏光)を第一級の op にしたもの。
-13 op / 4 カテゴリ(numpy のみ、実体は `specularity.py`)+ 2026-10-15 デフレクトメトリ 6 op
-(`deflectometry.py`、光沢面に映した縞の鏡像から傾きを測る)= 19 op / 5 カテゴリ。
+14 op / 4 カテゴリ(numpy のみ、実体は `specularity.py`)+ 2026-10-15 デフレクトメトリ 6 op
+(`deflectometry.py`、光沢面に映した縞の鏡像から傾きを測る)= 20 op / 5 カテゴリ。
+2026-10-23 に画素ごとの Stokes(`polarization_stokes_map`)を足して 13 → 14。
 
 すべて閉形式なので、真値を持った合成データで機械精度まで検証できる — それが
 本 repo で op を足してよい条件そのもの。
@@ -151,6 +152,9 @@ _CATALOG = {
         ("polarization_separate", "specularity", ["polsweep"], "image2d"),
         ("polarization_dolp_map", "specularity", ["polsweep"], "image2d"),
         ("polarization_stokes", "specularity", ["polsweep"], "stokes"),
+        # 2026-10-23: 画素ごとの Stokes / DoLP / AoLP(polarization_stokes は画面平均だけだった)。
+        # 返りは dict(s0/s1/s2/dolp/aolp_deg と 2 つのマスク)なので table。
+        ("polarization_stokes_map", "specularity", ["polsweep"], "table"),
     ],
     # 2026-10-15 位相計測デフレクトメトリ(PMD、deflectometry.py): 光沢面に映した画面の縞の鏡像 → 位相 → 法線 → 曲率。
     # ★出力は既存の語彙(images / normalmap / image2d / table)だけ。法線マップは photometric と同じ規約なので

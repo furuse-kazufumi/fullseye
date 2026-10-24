@@ -54,11 +54,11 @@ fewer than 3 entries or does not determine the three unknowns.
 
 ## 型が繋がる次の op(`polsweep` を入力に取れる)
 
-[polarization_separate](polarization_separate.md) · [polarization_dolp_map](polarization_dolp_map.md) · [polarization_stokes](polarization_stokes.md)
+[polarization_separate](polarization_separate.md) · [polarization_dolp_map](polarization_dolp_map.md) · [polarization_stokes](polarization_stokes.md) · [polarization_stokes_map](polarization_stokes_map.md)
 
 ## 同カテゴリ(`polarization`)
 
-[polarization_separate](polarization_separate.md) · [polarization_dolp_map](polarization_dolp_map.md) · [polarization_stokes](polarization_stokes.md)
+[polarization_separate](polarization_separate.md) · [polarization_dolp_map](polarization_dolp_map.md) · [polarization_stokes](polarization_stokes.md) · [polarization_stokes_map](polarization_stokes_map.md)
 
 ---
 *Provenance: specularity.py — SPECULAR operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
