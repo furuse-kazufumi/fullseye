@@ -1,6 +1,6 @@
 """``fullseye.mcp.catalog.scan_notes`` の並びが OS の区切り文字に依らないこと(2026-10-02 の回帰)。
 
-素の ``sorted()`` で全パスを並べていたため、Windows(``\`` = 0x5C)と Linux(``/`` = 0x2F)で
+素の ``sorted()`` で全パスを並べていたため、Windows(``\\`` = 0x5C)と Linux(``/`` = 0x2F)で
 ``segmentation/watershed/`` と ``segmentation/watershed3d/`` の前後が入れ替わり、生成物
 ``fullseye/data/OP_NOTES.json`` の鍵の順が OS ごとに違った(手元の regen は緑、CI の ``regen_all --check`` が赤)。
 """

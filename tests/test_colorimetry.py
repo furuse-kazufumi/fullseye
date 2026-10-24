@@ -5,7 +5,7 @@
 
 2026-09-05: この repo には RGB→L*a*b* が 2 か所ある。**尺度が違うので混ぜられない**:
 
-* :mod:`imgmetrics` —— **CIE の定義どおり**(sRGB 原色・白色点を選べる・L\* は 0-100)。
+* :mod:`imgmetrics` —— **CIE の定義どおり**(sRGB 原色・白色点を選べる・L\\* は 0-100)。
   **これが正**で、ここで固定するのはこちら。
 * op 台帳経由の ``trans_from_rgb``(``backends_color``、OpenCV 実装)—— **uint8 に
   量子化**してから変換し 255 で割った 8-bit スケール。同じ名前でも別物。
@@ -99,7 +99,7 @@ def test_luminance_row_is_the_photopic_weighting():
 def test_the_two_lab_paths_are_different_scales_on_purpose():
     """CIE の Lab(:mod:`imgmetrics`)と op 台帳の Lab(OpenCV)は**別の尺度**。
 
-    同じ名前なので混ぜられがちだが、片方は L\* が 0-100 の実数、もう片方は uint8 に
+    同じ名前なので混ぜられがちだが、片方は L\\* が 0-100 の実数、もう片方は uint8 に
     量子化した 8-bit スケール。**一致しないことを固定**しておかないと、どちらかを
     「バグ」と思って揃えてしまう。背景は docs/ops/2d/guides/colorimetry.md。
     """
