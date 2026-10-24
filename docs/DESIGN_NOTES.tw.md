@@ -5,7 +5,7 @@
 
 本倉庫把「為什麼是這樣」寫在**原始碼註解**裡。其中標了 `★` 的是真正管用的部分——量出來的結論、踩過的坑、這樣做的理由。本頁由它們機械彙集而成，正本在原始碼一側，因此兩者不會走樣。
 
-**翻譯進度**：613 / 1553 條。未翻譯的條目照原文（日文）顯示——悄悄回退到原文會看著像已翻譯，所以沒譯就明說沒譯。
+**翻譯進度**：612 / 1552 條。未翻譯的條目照原文（日文）顯示——悄悄回退到原文會看著像已翻譯，所以沒譯就明說沒譯。
 
 
 ## `accel.py`
@@ -2453,8 +2453,7 @@
 
 ## `tests/test_no_local_paths_in_shipped_code.py`
 
-- **L22** — ★`tomllib` 是從 Python 3.11 才有的。**在模組頂部做裸 import 會在 3.10 上中斷收集，一個測試也不跑** —— 2026-09-05 用 hypothesis 踩了同樣的坑之後，緊接著在這項檢查裡又復現了（CI py3.10 collection error）。import 失敗一定降為 skip。
-- **L53** _(ja)_ — ★2026-09-14 追加: MSVC の標準インストール先。`fullseye_3dgs._find_cl_dir()` が `cl.exe` を**探すための候補**として持っている。これは「私のマシンの作業物を 指している」のではなく「Visual Studio インストーラが決める場所」なので、 環境変数に追い出しても他人の環境で当たりやすくはならない(むしろ探索が 効かなくなる)。glob で実在を確かめてから使い、無ければ None を返す作りに なっていることを確認済み。 ※ `_WIN_ABS` は空白入りの語を 2 つ目までしか拾わないので、切り出される断片は `C:\Program Files\Microsoft` までになる。許可文字列は**実際に切り出される形**に 合わせる —— 正規表現の結果を見ずに「あるべき文字列」を書いて外した(2026-09-14)。
+- **L40** _(ja)_ — ★2026-09-14 追加: MSVC の標準インストール先。`fullseye_3dgs._find_cl_dir()` が `cl.exe` を**探すための候補**として持っている。これは「私のマシンの作業物を 指している」のではなく「Visual Studio インストーラが決める場所」なので、 環境変数に追い出しても他人の環境で当たりやすくはならない(むしろ探索が 効かなくなる)。glob で実在を確かめてから使い、無ければ None を返す作りに なっていることを確認済み。 ※ `_WIN_ABS` は空白入りの語を 2 つ目までしか拾わないので、切り出される断片は `C:\Program Files\Microsoft` までになる。許可文字列は**実際に切り出される形**に 合わせる —— 正規表現の結果を見ずに「あるべき文字列」を書いて外した(2026-09-14)。
 
 ## `tests/test_op_contract_property.py`
 
@@ -2513,7 +2512,7 @@
 
 ## `tests/test_packaging_foundation.py`
 
-- **L176** — ★2026-09-07：本地 wheel 上帶著 sample_sources_ai 的 42 MB（共 96 MB）。原因是舊的 build/lib/ 快取（從 package-data 移除前的殘骸被重新打包進去）。這是讀設定的檢查抓不到的事故，所以由 tools/ci_wheel_check.py（unshipped_present）與 ci.yml 的大小上限去看 wheel 實物。目錄也被移到了 package 外（tools/fops_article/）。這裡要求明示排除（作為保險）。
+- **L158** — ★2026-09-07：本地 wheel 上帶著 sample_sources_ai 的 42 MB（共 96 MB）。原因是舊的 build/lib/ 快取（從 package-data 移除前的殘骸被重新打包進去）。這是讀設定的檢查抓不到的事故，所以由 tools/ci_wheel_check.py（unshipped_present）與 ci.yml 的大小上限去看 wheel 實物。目錄也被移到了 package 外（tools/fops_article/）。這裡要求明示排除（作為保險）。
 
 ## `tests/test_pivops.py`
 

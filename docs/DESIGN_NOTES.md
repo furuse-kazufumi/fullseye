@@ -2451,8 +2451,7 @@
 
 ## `tests/test_no_local_paths_in_shipped_code.py`
 
-- **L22** — ★`tomllib` は Python 3.11 から。**モジュール先頭で素の import をすると 3.10 で収集が中断し、テストが 1 件も走らない** —— 2026-09-05 に hypothesis で 同じことを踏んだ直後に、この検査で再発させた(CI py3.10 が collection error)。 import 失敗は必ず skip に落とす。
-- **L53** — ★2026-09-14 追加: MSVC の標準インストール先。`fullseye_3dgs._find_cl_dir()` が `cl.exe` を**探すための候補**として持っている。これは「私のマシンの作業物を 指している」のではなく「Visual Studio インストーラが決める場所」なので、 環境変数に追い出しても他人の環境で当たりやすくはならない(むしろ探索が 効かなくなる)。glob で実在を確かめてから使い、無ければ None を返す作りに なっていることを確認済み。 ※ `_WIN_ABS` は空白入りの語を 2 つ目までしか拾わないので、切り出される断片は `C:\Program Files\Microsoft` までになる。許可文字列は**実際に切り出される形**に 合わせる —— 正規表現の結果を見ずに「あるべき文字列」を書いて外した(2026-09-14)。
+- **L40** — ★2026-09-14 追加: MSVC の標準インストール先。`fullseye_3dgs._find_cl_dir()` が `cl.exe` を**探すための候補**として持っている。これは「私のマシンの作業物を 指している」のではなく「Visual Studio インストーラが決める場所」なので、 環境変数に追い出しても他人の環境で当たりやすくはならない(むしろ探索が 効かなくなる)。glob で実在を確かめてから使い、無ければ None を返す作りに なっていることを確認済み。 ※ `_WIN_ABS` は空白入りの語を 2 つ目までしか拾わないので、切り出される断片は `C:\Program Files\Microsoft` までになる。許可文字列は**実際に切り出される形**に 合わせる —— 正規表現の結果を見ずに「あるべき文字列」を書いて外した(2026-09-14)。
 
 ## `tests/test_op_contract_property.py`
 
@@ -2511,7 +2510,7 @@
 
 ## `tests/test_packaging_foundation.py`
 
-- **L176** — ★2026-09-07: 手元の wheel に sample_sources_ai が 42 MB 乗っていた(96 MB)。 原因は古い build/lib/ のキャッシュ(package-data から外す前の残骸が詰め直される)。 設定を読む検査では捕まらない事故なので、wheel 実物の側を tools/ci_wheel_check.py (unshipped_present)と ci.yml のサイズ上限が見る。ディレクトリも package の外へ 移した(tools/fops_article/)。ここでは除外の明示を要求する(保険)。
+- **L158** — ★2026-09-07: 手元の wheel に sample_sources_ai が 42 MB 乗っていた(96 MB)。 原因は古い build/lib/ のキャッシュ(package-data から外す前の残骸が詰め直される)。 設定を読む検査では捕まらない事故なので、wheel 実物の側を tools/ci_wheel_check.py (unshipped_present)と ci.yml のサイズ上限が見る。ディレクトリも package の外へ 移した(tools/fops_article/)。ここでは除外の明示を要求する(保険)。
 
 ## `tests/test_pivops.py`
 

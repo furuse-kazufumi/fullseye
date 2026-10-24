@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 635 of 1553. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 634 of 1552. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -2453,8 +2453,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `tests/test_no_local_paths_in_shipped_code.py`
 
-- **L22** — ★`tomllib` is from Python 3.11. **A bare import at the module top aborts collection on 3.10, and not a single test runs** —— right after stepping on the same thing with hypothesis on 2026-09-05, I reproduced it in this check (CI py3.10 collection error). Always drop import failures to skip.
-- **L53** _(ja)_ — ★2026-09-14 追加: MSVC の標準インストール先。`fullseye_3dgs._find_cl_dir()` が `cl.exe` を**探すための候補**として持っている。これは「私のマシンの作業物を 指している」のではなく「Visual Studio インストーラが決める場所」なので、 環境変数に追い出しても他人の環境で当たりやすくはならない(むしろ探索が 効かなくなる)。glob で実在を確かめてから使い、無ければ None を返す作りに なっていることを確認済み。 ※ `_WIN_ABS` は空白入りの語を 2 つ目までしか拾わないので、切り出される断片は `C:\Program Files\Microsoft` までになる。許可文字列は**実際に切り出される形**に 合わせる —— 正規表現の結果を見ずに「あるべき文字列」を書いて外した(2026-09-14)。
+- **L40** _(ja)_ — ★2026-09-14 追加: MSVC の標準インストール先。`fullseye_3dgs._find_cl_dir()` が `cl.exe` を**探すための候補**として持っている。これは「私のマシンの作業物を 指している」のではなく「Visual Studio インストーラが決める場所」なので、 環境変数に追い出しても他人の環境で当たりやすくはならない(むしろ探索が 効かなくなる)。glob で実在を確かめてから使い、無ければ None を返す作りに なっていることを確認済み。 ※ `_WIN_ABS` は空白入りの語を 2 つ目までしか拾わないので、切り出される断片は `C:\Program Files\Microsoft` までになる。許可文字列は**実際に切り出される形**に 合わせる —— 正規表現の結果を見ずに「あるべき文字列」を書いて外した(2026-09-14)。
 
 ## `tests/test_op_contract_property.py`
 
@@ -2513,7 +2512,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `tests/test_packaging_foundation.py`
 
-- **L176** — ★2026-09-07: the local wheel had sample_sources_ai adding 42 MB (96 MB). The cause was a stale build/lib/ cache (leftovers from before it was removed from package-data get repacked). It is an accident a config-reading check cannot catch, so the actual wheel is checked by tools/ci_wheel_check.py (unshipped_present) and the size cap in ci.yml. The directory was also moved outside the package (tools/fops_article/). Here we require the exclusion to be explicit (as insurance).
+- **L158** — ★2026-09-07: the local wheel had sample_sources_ai adding 42 MB (96 MB). The cause was a stale build/lib/ cache (leftovers from before it was removed from package-data get repacked). It is an accident a config-reading check cannot catch, so the actual wheel is checked by tools/ci_wheel_check.py (unshipped_present) and the size cap in ci.yml. The directory was also moved outside the package (tools/fops_article/). Here we require the exclusion to be explicit (as insurance).
 
 ## `tests/test_pivops.py`
 

@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 613 von 1553. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 612 von 1552. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -2453,8 +2453,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `tests/test_no_local_paths_in_shipped_code.py`
 
-- **L22** — ★`tomllib` gibt es ab Python 3.11. **Ein nackter import am Modulanfang bricht auf 3.10 die Sammlung ab, und kein einziger Test läuft** —— direkt nachdem ich am 2026-09-05 mit hypothesis in dieselbe Falle trat, habe ich es in dieser Prüfung reproduziert (CI py3.10 collection error). Import-Fehler immer auf skip herabstufen.
-- **L53** _(ja)_ — ★2026-09-14 追加: MSVC の標準インストール先。`fullseye_3dgs._find_cl_dir()` が `cl.exe` を**探すための候補**として持っている。これは「私のマシンの作業物を 指している」のではなく「Visual Studio インストーラが決める場所」なので、 環境変数に追い出しても他人の環境で当たりやすくはならない(むしろ探索が 効かなくなる)。glob で実在を確かめてから使い、無ければ None を返す作りに なっていることを確認済み。 ※ `_WIN_ABS` は空白入りの語を 2 つ目までしか拾わないので、切り出される断片は `C:\Program Files\Microsoft` までになる。許可文字列は**実際に切り出される形**に 合わせる —— 正規表現の結果を見ずに「あるべき文字列」を書いて外した(2026-09-14)。
+- **L40** _(ja)_ — ★2026-09-14 追加: MSVC の標準インストール先。`fullseye_3dgs._find_cl_dir()` が `cl.exe` を**探すための候補**として持っている。これは「私のマシンの作業物を 指している」のではなく「Visual Studio インストーラが決める場所」なので、 環境変数に追い出しても他人の環境で当たりやすくはならない(むしろ探索が 効かなくなる)。glob で実在を確かめてから使い、無ければ None を返す作りに なっていることを確認済み。 ※ `_WIN_ABS` は空白入りの語を 2 つ目までしか拾わないので、切り出される断片は `C:\Program Files\Microsoft` までになる。許可文字列は**実際に切り出される形**に 合わせる —— 正規表現の結果を見ずに「あるべき文字列」を書いて外した(2026-09-14)。
 
 ## `tests/test_op_contract_property.py`
 
@@ -2513,7 +2512,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `tests/test_packaging_foundation.py`
 
-- **L176** — ★2026-09-07: das lokale wheel trug sample_sources_ai mit 42 MB (96 MB). Ursache war ein veralteter build/lib/-Cache (Überreste von vor der Entfernung aus package-data werden neu eingepackt). Es ist ein Unfall, den eine konfigurationslesende Prüfung nicht fängt, daher betrachten tools/ci_wheel_check.py (unshipped_present) und die Größengrenze in ci.yml das echte wheel. Das Verzeichnis wurde zudem aus dem Paket verschoben (tools/fops_article/). Hier verlangen wir die explizite Ausschlussangabe (als Absicherung).
+- **L158** — ★2026-09-07: das lokale wheel trug sample_sources_ai mit 42 MB (96 MB). Ursache war ein veralteter build/lib/-Cache (Überreste von vor der Entfernung aus package-data werden neu eingepackt). Es ist ein Unfall, den eine konfigurationslesende Prüfung nicht fängt, daher betrachten tools/ci_wheel_check.py (unshipped_present) und die Größengrenze in ci.yml das echte wheel. Das Verzeichnis wurde zudem aus dem Paket verschoben (tools/fops_article/). Hier verlangen wir die explizite Ausschlussangabe (als Absicherung).
 
 ## `tests/test_pivops.py`
 
