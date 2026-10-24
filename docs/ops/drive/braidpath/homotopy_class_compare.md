@@ -13,7 +13,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 # homotopy_class_compare — DRIVE `braidpath` op
 
 - **データ種**: `any × any` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.homotopy_class_compare(traj_a, traj_b, obstacles=None, angle=0.1, jitter='auto')` (実装を直接呼ぶなら `import braidpath; braidpath.homotopy_class_compare(traj_a, traj_b, obstacles=None, angle=0.1, jitter='auto')`、台帳から引くなら `opsdrive.get("homotopy_class_compare")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.homotopy_class_compare(traj_a, traj_b, obstacles=None, angle=0.1, jitter='auto', tol=1e-09)` (実装を直接呼ぶなら `import braidpath; braidpath.homotopy_class_compare(traj_a, traj_b, obstacles=None, angle=0.1, jitter='auto', tol=1e-09)`、台帳から引くなら `opsdrive.get("homotopy_class_compare")`)
 
 ## 使い方
 
@@ -24,11 +24,11 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 Returns: dict ``same``、``word_a`` / ``word_b``、``key_a`` / ``key_b``、``quotient``(a b⁻¹ を簡約した語 —— 空なら同じ類、
 空でなければ「どう回り方が違うか」の語)、``endpoint_error``(始点・終点の最大のずれ)。
-始点と終点は ``ENDPOINT_TOL``(1e-9、座標の単位)以内でそろっていること。★許容は引数にしない: 答えを変えずに
-通す / 拒むだけの門は「効かないノブ」になる(2026-10-23)。計画器ごとに端が丸めで違うときは、比べる前に端を
-そろえる(類は端を止めた変形の類なので、端の違う 2 つの計画は比べられない)。
+始点と終点は ``tol``(既定 ``ENDPOINT_TOL`` = 1e-9、座標の単位)以内でそろっていること。``tol`` は答えを
+変えず通す / 拒むだけの門で、効かないノブの台帳に理由つきで載せている。計画器ごとに端が丸めで違うときは
+``tol`` を広げるか、比べる前に端をそろえる(類は端を止めた変形の類なので、端の違う 2 つの計画は比べられない)。
 
-Raises: ValueError(台数が違う、始点か終点が ``ENDPOINT_TOL`` より離れている、衝突)。
+Raises: ValueError(台数が違う、始点か終点が ``tol`` より離れている、``tol`` が負か非有限、衝突)。
 
 ## 参考(サンプルデータ・文献)
 

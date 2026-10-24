@@ -1,13 +1,13 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">homotopy_class_compare — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any × any</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.homotopy_class_compare(traj_a, traj_b, obstacles=None, angle=0.1, jitter=&#x27;auto&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import braidpath; braidpath.homotopy_class_compare(traj_a, traj_b, obstacles=None, angle=0.1, jitter=&#x27;auto&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;homotopy_class_compare&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.homotopy_class_compare(traj_a, traj_b, obstacles=None, angle=0.1, jitter=&#x27;auto&#x27;, tol=1e-09)</code>(要直接调用实现,<code style="color:#22d3bf">import braidpath; braidpath.homotopy_class_compare(traj_a, traj_b, obstacles=None, angle=0.1, jitter=&#x27;auto&#x27;, tol=1e-09)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;homotopy_class_compare&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>起点与终点相同的两个路径族(多智能体的规划)是否属于同一同伦类。</p>
 <p>能在不碰撞(智能体之间、与障碍物点都不重叠)且固定起点和终点的情况下连续变形 ⇔ 辫相等。</p>
 <p>辫由 <code style="color:#22d3bf">braid_from_trajectories</code> 得到,比较用 Dynnikov 坐标。与投影角度无关(门中扫描多个角度)。</p>
-<p>Returns: dict <code style="color:#22d3bf">same</code>、<code style="color:#22d3bf">word_a</code> / <code style="color:#22d3bf">word_b</code>、<code style="color:#22d3bf">key_a</code> / <code style="color:#22d3bf">key_b</code>、<code style="color:#22d3bf">quotient</code>(a b⁻¹ 约化后的字 —— 为空则同类, 不为空则是表示“绕法有何不同”的字)、<code style="color:#22d3bf">endpoint_error</code>(起点、终点的最大偏差)。起点和终点须在 <code style="color:#22d3bf">ENDPOINT_TOL</code>(1e-9,坐标单位)以内一致。★容差不作为参数:不改变答案、只做通过 / 拒绝的门会成为“无效的旋钮”(2026-10-23)。若各规划器的端点因舍入而不同,请在比较前将端点对齐(类是固定端点的变形的类,端点不同的两个规划无法比较)。</p>
-<p>Raises: ValueError(智能体数不同、起点或终点相距超过 <code style="color:#22d3bf">ENDPOINT_TOL</code>、碰撞)。</p>
+<p>Returns: dict <code style="color:#22d3bf">same</code>、<code style="color:#22d3bf">word_a</code> / <code style="color:#22d3bf">word_b</code>、<code style="color:#22d3bf">key_a</code> / <code style="color:#22d3bf">key_b</code>、<code style="color:#22d3bf">quotient</code>(a b⁻¹ 约化后的字 —— 为空则同类, 不为空则是表示“绕法有何不同”的字)、<code style="color:#22d3bf">endpoint_error</code>(起点、终点的最大偏差)。起点和终点须在 <code style="color:#22d3bf">tol</code>(默认 <code style="color:#22d3bf">ENDPOINT_TOL</code> = 1e-9,坐标单位)以内一致。<code style="color:#22d3bf">tol</code> 是不改变答案、只做通过 / 拒绝的门,已附理由登记在“无效的旋钮”台账中。若各规划器的端点因舍入而不同,请放宽 <code style="color:#22d3bf">tol</code> 或在比较前将端点对齐(类是固定端点的变形的类,端点不同的两个规划无法比较)。</p>
+<p>Raises: ValueError(智能体数不同、起点或终点相距超过 <code style="color:#22d3bf">tol</code>、<code style="color:#22d3bf">tol</code> 为负或非有限、碰撞)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
