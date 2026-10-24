@@ -19,6 +19,9 @@ FP は LED アレイで照明の角度を変えながら低倍率で何枚も撮
   計測      `fp_element_contrast`(USAF の要素ごとに 3 本の棒の変調を測り、どの要素まで分解したかを読む)
 
 規約: 長さは µm(LED の幾何だけ mm)、波長は µm。照明の空間周波数 k = sinθ/λ(1/µm)、sinθ は LED の方向余弦。
+k の符号: 試料を原点にした LED の位置 (x, y, z) の x/r・y/r を +k とする(r = |(x, y, z)|)。LED が試料の下にあり光が
+LED から試料へ進む実機では、物理の横の波数は −x/(rλ) になりうる(座標の取り方による)。符号の取り違えは残差では
+見抜けない(両軸の反転は位相の符号が反転した共役像に同じ残差で着く)ので、実機では既知の位相の試料で確かめる。
 画像の行が y、列が x。スペクトルは中心が DC(fftshift の並び)。強度は「透明な背景 = 1」の単位
 (fp_capture の ``photons`` は背景 1 あたりの電子数)。
 
@@ -439,6 +442,8 @@ def fp_capture(amplitude, phase=None, pixel_um=0.325, wavelength_um=0.532, na_ob
       乱数は ``seed`` の ``np.random.default_rng``。
     * LED アレイのずれ(``led_offset_mm`` / ``led_rotation_deg`` / ``led_height_error_mm``)は**撮像にだけ**入れ、
       表の名目の ``kx`` / ``ky`` には入れない(真の値は ``kx_true`` / ``ky_true``)。
+    * 照明の k の規約: kx = x/(rλ)、ky = y/(rλ)(LED の位置 (x, y, z) は試料が原点、r = |(x, y, z)|)—— LED の
+      x/r を +k とする。LED が試料の下にあり光が LED から試料へ進む実機では、物理の横の波数は −x/(rλ) になりうる。
     * 低解像の画素 = pixel_um · downsample が λ/(2 NA_obj) を超えると拒否(FP の標本化条件)。
 
     返り値: dict(kind="fp_stack", images (K, n, n) 電子数、照明の NA の小さい順, exposure, led_brightness, photons,
@@ -532,8 +537,11 @@ def fp_stack_from_images(images, na_x, na_y, wavelength_um, na_obj, pixel_um, va
     """装置・公開データの像の組を、この族の表にする(``table``、kind="fp_stack")。
 
     ``images`` は (K, n, n) の正方の像(``values="amplitude"`` なら振幅、2 乗して強度にする)。``na_x`` / ``na_y`` は
-    LED ごとの照明の方向余弦 sinθx・sinθy(**この族の符号**: 物体のスペクトルの u_ℓ = (na_x, na_y)/λ を中心に
-    瞳が切り出す。装置の座標系が逆なら符号を反転して渡す —— 合わないと残差が下がらないか、像が鏡に写る)。
+    LED ごとの照明の方向余弦 sinθx・sinθy(**この族の符号**: :func:`fp_capture` と同じく LED の位置の x/r・y/r を
+    + とし、u_ℓ = (na_x, na_y)/λ のとき瞳は物体のスペクトルの −u_ℓ を中心に切り出す(I = |F⁻¹{P(u)·O(u − u_ℓ)}|²)。
+    LED が試料の下にあり光が LED から試料へ進む装置では、物理の横の波数は −x/r になりうる)。
+    ★符号の取り違えは残差では検出できない: 両軸の反転は位相の符号が反転した像(共役)に同じ残差で着き、片軸の反転も
+    合成では残差が 1.8 倍になるだけで「収束」した。位相の符号が分かっている試料で、復元の位相の符号を確かめて決める。
     ``exposure`` は像ごとの露光の比(像をこれで割る)。``led_xyz_mm`` を渡すと LED の位置の補正が使える。
     照明の NA の小さい順に並べ替え、元の番号を ``source_order`` に残す。
     カメラの画素(物体側)が λ/(2 NA_obj) を超えると拒否(FP の標本化条件)。

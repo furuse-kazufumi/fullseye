@@ -158,6 +158,50 @@ def test_flipped_k_gives_the_conjugate():
     assert b["residual"] == pytest.approx(a["residual"], rel=1e-9)
 
 
+def test_reconstruction_is_closer_to_the_truth_than_the_bright_field_image():
+    """復元を真値と比べる: 振幅のチャートで、真値との相対誤差が明視野の 1 枚の拡大より 3 割以上小さい。
+    像と LED の対応をずらした組(区別できる設定)は真値から離れ、拒否される。"""
+    t = FP.fp_usaf_target(groups=(8, 9), elements=(1, 2, 3), shape=(128, 128))
+    st = FP.fp_capture(t["amplitude"], None, n_side=5)
+    r = FP.fp_reconstruct(st, upsample=4)                   # 高解像の格子 = 真値の格子(0.325 µm)
+    m = r["margin_px"]
+    s = slice(m, 128 - m)
+
+    def err(X):
+        X = X / np.mean(X[s, s])
+        T = t["amplitude"] / np.mean(t["amplitude"][s, s])
+        return float(np.linalg.norm(X[s, s] - T[s, s]) / np.linalg.norm(T[s, s]))
+
+    bf = np.kron(np.sqrt(np.clip(st["images"][0], 0, None)), np.ones((4, 4)))
+    assert r["converged"] and err(r["amplitude"]) < 0.25 and err(r["amplitude"]) < 0.7 * err(bf), (err(r["amplitude"]), err(bf))
+    perm = np.arange(25)
+    perm[9:] = np.roll(perm[9:], 1)
+    bad = FP.fp_reconstruct(dict(st, images=st["images"][perm]), upsample=4, on_fail="record")
+    assert not bad["converged"] and err(bad["amplitude"]) > err(r["amplitude"]) + 0.1
+
+
+def test_known_phase_sample_fixes_the_k_sign_that_the_residual_cannot():
+    """符号の取り違えは残差では見抜けない(両軸の反転は同じ残差で共役像に着く)。位相の符号が分かっている試料なら
+    復元の位相と真値の相関の符号で分かる —— 実機の校正の手順をそのまま門にしたもの。"""
+    t = FP.fp_usaf_target(groups=(8, 9), elements=(1, 2, 3), shape=(128, 128))
+    ph = 0.8 * t["coverage"]                                  # 棒の位相は +0.8 rad(符号が既知)
+    st = FP.fp_capture(np.ones((128, 128)), ph, n_side=5)
+
+    def corr(r):
+        m = r["margin_px"]
+        s = slice(m, 128 - m)
+        f = r["field"] * np.conj(np.mean(r["field"][s, s]))    # 大域の位相をそろえる
+        return float(np.corrcoef(np.angle(f)[s, s].ravel(), ph[s, s].ravel())[0, 1])
+
+    a = FP.fp_reconstruct(st, pupil_update=False, starts=1, upsample=4)
+    b = FP.fp_reconstruct(dict(st, kx=-st["kx"], ky=-st["ky"]), pupil_update=False, starts=1, upsample=4)
+    assert b["residual"] == pytest.approx(a["residual"], rel=1e-9)   # 残差は区別しない
+    assert corr(a) > 0.5 and corr(b) < -0.5                           # 既知の位相は区別する
+    # 片軸の反転も、残差が少し大きいだけで「収束」しうる(残差では検出できないことの裏づけ)
+    c = FP.fp_reconstruct(dict(st, kx=-st["kx"]), pupil_update=False, starts=1, upsample=4, on_fail="record")
+    assert corr(c) < 0.5
+
+
 def test_reconstruct_rejects_foreign_tables():
     with pytest.raises(ValueError, match="fp_stack"):
         FP.fp_reconstruct({"kind": "oct_ascan"})
@@ -195,5 +239,6 @@ def test_element_contrast_reads_truth_and_refuses_blur():
 
 
 def test_registered_in_opsoptics():
-    assert {r for r in opsoptics.list_ops("fpm")} >= {"fp_design", "fp_usaf_target", "fp_capture", "fp_stack_from_images",
-                                                        "fp_reconstruct", "fp_element_contrast"} or len(opsoptics.list_ops("fpm")) == 6
+    want = {"fp_design", "fp_usaf_target", "fp_capture", "fp_stack_from_images", "fp_reconstruct", "fp_element_contrast"}
+    got = list(opsoptics.list_ops("fpm"))
+    assert set(got) == want and len(got) == len(want) and set(FP.__all__) == want
