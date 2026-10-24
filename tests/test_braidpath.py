@@ -428,6 +428,22 @@ def test_bad_inputs_raise():
 
 
 
+def _tie_plan():
+    """2 台が x = 0 の同じ縦線の上で止まる計画(角度 0 の射影で終点が同点 —— 端のずれが並びを入れ替える場所)。"""
+    s = np.linspace(0.0, 1.0, 11)
+    A = np.zeros((2, 11, 2))
+    A[0, :, 0], A[0, :, 1] = -1.0 + s, 1.0             # (-1, 1) → (0, 1)
+    A[1, :, 0], A[1, :, 1] = 1.0 - s, -1.0             # (1, -1) → (0, -1)
+    return A
+
+
+_ANGLES = (0.0, 0.1, -0.1, 0.5, 1.3, -2.0)
+
+
+def _verdicts(A, Bm, tols):
+    return {(a, t): B.homotopy_class_compare(A, Bm, angle=a, tol=t)["same"] for a in _ANGLES for t in tols}
+
+
 def test_endpoint_tolerance_is_an_argument_that_only_passes_or_refuses():
     # tol は答えを変えず、端のずれを通すか拒むかだけを決める(効かないノブの台帳に理由つき、2026-10-24)。
     A = _orbit(1)
@@ -436,8 +452,25 @@ def test_endpoint_tolerance_is_an_argument_that_only_passes_or_refuses():
     assert _raises(lambda: B.homotopy_class_compare(A, Bm))                 # 既定 ENDPOINT_TOL = 1e-9 では拒む
     wide = B.homotopy_class_compare(A, Bm, tol=1e-5)
     assert wide["same"] and wide["endpoint_error"] == pytest.approx(1e-6, rel=1e-6)
-    exact = B.homotopy_class_compare(A, A.copy())
-    assert exact["same"] == B.homotopy_class_compare(A, A.copy(), tol=1e-3)["same"]   # 答えは tol に依らない
+    # ずれのある B で、答えが角度にも tol にも依らない(両側: 同じ類も違う類も)。
+    assert set(_verdicts(A, Bm, (1e-5, 1e-3, 0.1)).values()) == {True}
+    C = _orbit(2)
+    C[0, -1] += 1e-6                                    # 1 周多く回った別の類、端は同じく 1e-6 ずれ
+    assert set(_verdicts(A, C, (1e-5, 1e-3, 0.1)).values()) == {False}
+    # 角度 0 で終点が同点の計画: 既定 tol 内(2e-10)のずれでも、どちらの向きでも、どの角度でも同じ類。
+    T = _tie_plan()
+    for d in (2e-10, -2e-10):
+        Tb = T.copy()
+        Tb[0, -1, 0] += d
+        Tb[1, 0, 1] -= d
+        assert set(_verdicts(T, Tb, (1e-9, 1e-3)).values()) == {True}, d
+    # 上限: tol_limit = d / (2√2)(_orbit は紐どうしの距離 1)。超える tol は端が同じでも拒む。
+    lim = B.homotopy_class_compare(A, A.copy())["tol_limit"]
+    assert lim == pytest.approx(1.0 / (2.0 * math.sqrt(2.0)))
+    assert _raises(lambda: B.homotopy_class_compare(A, A.copy(), tol=lim))
+    far = T.copy()
+    far[0, :, 0] = -1.0 + 3.0 * np.linspace(0.0, 1.0, 11)   # 終点が (2, 1) の、端の違う計画
+    assert _raises(lambda: B.homotopy_class_compare(T, far, tol=100.0))
     for bad in (-1e-9, float("nan"), float("inf"), "1e-9x", None):
         assert _raises(lambda bad=bad: B.homotopy_class_compare(A, A.copy(), tol=bad)), bad
 

@@ -627,12 +627,19 @@ def homotopy_class_compare(traj_a, traj_b, obstacles=None, angle=DEFAULT_ANGLE, 
     組紐は :func:`braid_from_trajectories`、比較は Dynnikov 座標。射影の角度に依らない(門で複数の角度を振る)。
 
     Returns: dict ``same``、``word_a`` / ``word_b``、``key_a`` / ``key_b``、``quotient``(a b⁻¹ を簡約した語 —— 空なら同じ類、
-    空でなければ「どう回り方が違うか」の語)、``endpoint_error``(始点・終点の最大のずれ)。
-    始点と終点は ``tol``(既定 ``ENDPOINT_TOL`` = 1e-9、座標の単位)以内でそろっていること。``tol`` は答えを
-    変えず通す / 拒むだけの門で、効かないノブの台帳に理由つきで載せている。計画器ごとに端が丸めで違うときは
-    ``tol`` を広げるか、比べる前に端をそろえる(類は端を止めた変形の類なので、端の違う 2 つの計画は比べられない)。
+    空でなければ「どう回り方が違うか」の語)、``endpoint_error``(始点・終点の最大のずれ)、``tol_limit``(``tol`` の上限)。
+    始点と終点は ``tol``(既定 ``ENDPOINT_TOL`` = 1e-9、座標の単位、各座標の差の最大)以内でそろっていること。
+    ``tol`` は答えを変えず通す / 拒むだけの門で、効かないノブの台帳に理由つきで載せている。``tol`` 以内でずれた
+    B の端は、A の端へ直線で寄せる区間を B の前後に足してから比べる(``word_b`` はその寄せた計画の語)。
+    ``tol`` の上限は ``tol_limit`` = d / (2√2)(d = A の始点と終点の配置での紐どうしの最小距離、障害物の点を含む):
+    各台は各座標で ``tol`` 以内 = 距離 √2·``tol`` 以内しか動かないので、2 台の距離の変化は 2√2·``tol`` 未満に収まり、
+    寄せる区間は衝突しない。しかも A の端から各座標 ``tol`` 以内の配置の集まりは凸で衝突を含まないので、どう寄せても
+    類は同じ —— 答えが射影の角度にも ``tol`` にも依らない。上限を超える ``tol`` は端の違う計画どうしを同じ類と
+    呼べてしまうので拒む。計画器ごとに端が丸めで違うときは ``tol`` を上限の内側で広げるか、比べる前に端をそろえる
+    (類は端を止めた変形の類なので、端の違う 2 つの計画は比べられない)。
 
-    Raises: ValueError(台数が違う、始点か終点が ``tol`` より離れている、``tol`` が負か非有限、衝突)。
+    Raises: ValueError(台数が違う、始点か終点が ``tol`` より離れている、``tol`` が負か非有限か ``tol_limit`` 以上、
+    射影の上で始点か終点の並びが食い違う、衝突)。
     """
     op = "homotopy_class_compare"
     try:
@@ -645,12 +652,27 @@ def homotopy_class_compare(traj_a, traj_b, obstacles=None, angle=DEFAULT_ANGLE, 
     if A.shape[0] != B.shape[0]:
         raise ValueError("%s: the two plans have %d and %d agents" % (op, A.shape[0], B.shape[0]))
     err = max(float(np.max(np.abs(A[:, 0] - B[:, 0]))), float(np.max(np.abs(A[:, -1] - B[:, -1]))))
+    # tol の上限: A の端の配置で紐どうしの最小距離 d → d / (2√2)(docstring の根拠)。
+    SA, _KA = _strands(A, obstacles, op)
+    ends = SA[:, [0, -1]]
+    d_end = min(_clearance(ends[:, :1]), _clearance(ends[:, 1:]))
+    tol_limit = d_end / (2.0 * math.sqrt(2.0))
+    if not tol < tol_limit:
+        raise ValueError("%s: tol %.3g must be < tol_limit = d / (2*sqrt(2)) = %.3g (d = %.3g, the smallest distance "
+                         "between strands at the start / goal of plan A) — a wider tol would call plans with different "
+                         "endpoints the same class" % (op, tol, tol_limit, d_end))
     if not err <= tol:
         raise ValueError("%s: start / goal positions differ by %.3g (> tol %.3g) — homotopy classes compare plans "
                          "with the same endpoints" % (op, err, tol))
+    if err > 0.0:
+        # tol 以内のずれ: B の前後に A の端へ直線で寄せる区間を足す(上限の内側なので衝突せず、類は寄せ方に依らない)。
+        B = np.concatenate([A[:, :1], B, A[:, -1:]], axis=1)
     (ba, bb), clear = _braids_consistent([A, B], obstacles, _angle(angle, op), jitter, op)
     if not np.array_equal(ba["start_order"], bb["start_order"]):
         raise ValueError("%s: the start order along the projection differs (two strands tie within tol); pass another "
+                         "angle" % op)
+    if not np.array_equal(ba["end_order"], bb["end_order"]):
+        raise ValueError("%s: the goal order along the projection differs (two strands tie within tol); pass another "
                          "angle" % op)
     n = ba["n_strands"]
     da, db = dynnikov_coordinates(ba["word"], n), dynnikov_coordinates(bb["word"], n)
@@ -660,7 +682,7 @@ def homotopy_class_compare(traj_a, traj_b, obstacles=None, angle=DEFAULT_ANGLE, 
         raise RuntimeError("%s: Dynnikov and handle reduction disagree (same=%s, |quotient|=%d)" % (op, same, len(q)))
     return {"same": bool(same), "word_a": ba["word"], "word_b": bb["word"], "key_a": da["key"], "key_b": db["key"],
             "quotient": np.asarray(q, dtype=np.int64), "endpoint_error": err, "n_strands": n, "clearance": clear,
-            "jitter": ba["jitter"]}
+            "jitter": ba["jitter"], "tol_limit": tol_limit}
 
 
 # ======================================================================================================================
