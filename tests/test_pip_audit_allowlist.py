@@ -31,8 +31,9 @@ def _entry(**kw):
 
 def test_the_committed_ledger_is_valid_and_not_expired():
     entries = G.load_allowlist()
-    for e in entries:
-        assert e["package"].strip() and e["reason"].strip()
+    # 空の台帳は正当(免除が要らなくなった状態)なので件数は求めない。中身の欠けだけを数える。
+    blank = [e for e in entries if not (e["package"].strip() and e["reason"].strip())]
+    assert not blank, "package / reason が空の行: %r" % blank
 
 
 def test_an_expired_entry_fails(tmp_path):
