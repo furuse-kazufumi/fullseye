@@ -25,6 +25,10 @@
 * ``limit`` 「限界を見せる」 —— 壊れ方を正直に見せるための回。
 * ``null``  「何もしない場合」 —— 比べるための零点(何もしない/素朴にやる)。
 
+どれかのタブが ``checks`` を持つページでは、バッジに定義の一言(ホバー・タップ。「門 = 自動の答え合わせ」)
+と 3 種の凡例が付き、押すと確かめた項目の表が開く。「門」は初めて見る人に通じないので、en の表記は
+"Checked"(gate は定義の文の中だけ)。``checks`` を持たないページは前と同じバイト列。
+
 仕様 (spec) の形
 ----------------
 ::
@@ -37,6 +41,8 @@
         "id": "a", "label": {...}, "badge": "passed" | "limit" | "null",
         "text": {...},                         # 短い正直な説明
         "numbers": [{"label": {...}, "value": "81.7 µm" | {"ja":..., "en":...}}, ...],
+        "checks": [{"what": {...}, "criterion": "< 1e-9" | {...}, "result": "3.2e-12" | {...},
+                    "ok": True}, ...],     # 任意。バッジを押すと開く「確かめた項目 / 基準 / 結果」の表
         "kind": "mesh" | "points" | "frames" | "split" | "anim3d",
         ...ペイロード(下)...
       }]
@@ -115,6 +121,90 @@ BADGES: dict[str, dict[str, str]] = {
                 "Zeigt die Grenze", "सीमा दिखाता है", "Montre la limite"),
     "null": _t("何もしない場合", "Doing nothing", "什么都不做时", "什麼都不做時", "아무것도 안 할 때",
                "Ohne Maßnahme", "कुछ न करने पर", "Sans rien faire"),
+}
+
+#: バッジの説明つきのページ(どれかのタブが ``checks`` を持つ場面)で使う表記と定義の一言(8 言語)。
+#: 「門」は初めて見る人に通じないので、en は表記を "Checked" にし、"gate" は定義の文の中でだけ使う。
+#: 他の言語も「検証済み」に近い語にする。``checks`` の無い場面は従来の :data:`BADGES` のまま(ページは変わらない)。
+_BADGE_HELP: dict[str, dict[str, dict[str, str]]] = {
+    "passed": {
+        "label": _t("門を通った", "Checked", "已验证", "已驗證", "검증됨", "Geprüft", "जाँचा गया", "Vérifié"),
+        "def": _t("門 = 自動の答え合わせ。op の値を理論値・別の方法と突き合わせ、基準の内に入ったら通る。",
+                  "Checked — an automatic answer check (a 'gate'): the op's value is compared with theory or "
+                  "an independent method, and passes when it falls within the criterion.",
+                  "已验证 —— 自动核对答案(“门”):把 op 的值与理论值或另一种独立方法对照,落在基准之内即通过。",
+                  "已驗證 —— 自動核對答案(「門」):把 op 的值與理論值或另一種獨立方法對照,落在基準之內即通過。",
+                  "검증됨 — 자동 정답 대조('게이트'): op의 값을 이론값이나 다른 독립된 방법과 맞대어 보고, "
+                  "기준 안에 들면 통과합니다.",
+                  "Geprüft — ein automatischer Abgleich (ein „Gate“): Der Wert des Ops wird mit der Theorie oder "
+                  "einer unabhängigen Methode verglichen und besteht, wenn er im Kriterium liegt.",
+                  "जाँचा गया — स्वचालित उत्तर-मिलान (एक 'gate'): op के मान को सिद्धांत या किसी स्वतंत्र विधि से "
+                  "मिलाया जाता है; मानदंड के भीतर हो तो पास।",
+                  "Vérifié — une vérification automatique (une « porte ») : la valeur de l'op est comparée à la "
+                  "théorie ou à une méthode indépendante, et passe si elle reste dans le critère."),
+    },
+    "limit": {
+        "label": BADGES["limit"],
+        "def": _t("限界を見せる = わざと方法が壊れる条件で回し、どこで・どう外れるかを正直に見せる回。「門を通った」回と対で読む。",
+                  "Shows the limit — the method is run on purpose where it breaks, to show honestly where and "
+                  "how it goes wrong. Read it as the pair of the checked runs.",
+                  "展示极限 —— 故意在方法会失效的条件下运行,如实展示在哪里、怎样出错。与“已验证”成对阅读。",
+                  "展示極限 —— 刻意在方法會失效的條件下執行,如實呈現在哪裡、如何出錯。與「已驗證」成對閱讀。",
+                  "한계를 보여줌 — 방법이 무너지는 조건에서 일부러 돌려, 어디서 어떻게 어긋나는지 정직하게 "
+                  "보여 줍니다. '검증됨'과 짝으로 읽습니다.",
+                  "Zeigt die Grenze — die Methode wird absichtlich dort betrieben, wo sie versagt, um ehrlich zu "
+                  "zeigen, wo und wie sie danebenliegt. Gehört zu den geprüften Läufen.",
+                  "सीमा दिखाता है — विधि को जानबूझकर वहाँ चलाया जाता है जहाँ वह टूटती है, ताकि ईमानदारी से दिखे "
+                  "कि कहाँ और कैसे चूकती है। इसे 'जाँचा गया' के साथ जोड़ी में पढ़ें।",
+                  "Montre la limite — la méthode est lancée exprès là où elle casse, pour montrer honnêtement où "
+                  "et comment elle se trompe. À lire en paire avec les cas vérifiés."),
+    },
+    "null": {
+        "label": BADGES["null"],
+        "def": _t("何もしない場合 = 比べるための零点。補正をしない・素朴にやると、こうなる。",
+                  "Doing nothing — the zero point for comparison: what you get with no correction, or the naive "
+                  "approach.",
+                  "什么都不做时 —— 用于比较的零点:不做校正、或用最朴素的方法时的结果。",
+                  "什麼都不做時 —— 用來比較的零點:不做校正、或用最樸素的方法時的結果。",
+                  "아무것도 안 할 때 — 비교를 위한 영점: 보정하지 않거나 가장 소박한 방법을 썼을 때의 결과.",
+                  "Ohne Maßnahme — der Nullpunkt zum Vergleich: was ohne Korrektur oder mit dem naiven Ansatz "
+                  "herauskommt.",
+                  "कुछ न करने पर — तुलना का शून्य-बिंदु: बिना सुधार के, या सबसे सीधे तरीके से क्या मिलता है।",
+                  "Sans rien faire — le point zéro de comparaison : ce qu'on obtient sans correction, ou avec "
+                  "l'approche naïve."),
+    },
+}
+
+#: 3 種のバッジの凡例の 1 行(8 言語)。「門を通った」と「限界を見せる」が対であることを先に言う(成功だけを並べない)。
+_BADGE_LEGEND: dict[str, str] = _t(
+    "バッジの見方: 「門を通った」と「限界を見せる」は対で読む —— うまくいく回だけでなく、外れる回も並べる。"
+    "「何もしない場合」は比べるための零点。バッジを押すと、確かめた項目・基準・結果が開く。",
+    "How to read the badges: 'Checked' and 'Shows the limit' come as a pair — the page shows where a method "
+    "fails, not only where it works. 'Doing nothing' is the zero point for comparison. Tap a badge to open what "
+    "was checked, the criterion and the result.",
+    "徽章的读法:“已验证”与“展示极限”成对阅读 —— 不只列出成功的情况,也列出失败的情况。"
+    "“什么都不做时”是用于比较的零点。点按徽章可展开检验项目、基准和结果。",
+    "徽章的讀法:「已驗證」與「展示極限」成對閱讀 —— 不只列出成功的情況,也列出失敗的情況。"
+    "「什麼都不做時」是用來比較的零點。點按徽章可展開檢驗項目、基準與結果。",
+    "배지 읽는 법: '검증됨'과 '한계를 보여줌'은 짝으로 읽습니다 — 잘 되는 경우만이 아니라 어긋나는 경우도 "
+    "함께 보여 줍니다. '아무것도 안 할 때'는 비교를 위한 영점입니다. 배지를 누르면 확인한 항목·기준·결과가 열립니다.",
+    "So liest man die Abzeichen: „Geprüft“ und „Zeigt die Grenze“ gehören zusammen — die Seite zeigt, wo eine "
+    "Methode versagt, nicht nur, wo sie funktioniert. „Ohne Maßnahme“ ist der Nullpunkt zum Vergleich. Ein "
+    "Abzeichen antippen öffnet, was geprüft wurde, das Kriterium und das Ergebnis.",
+    "बैज कैसे पढ़ें: 'जाँचा गया' और 'सीमा दिखाता है' को जोड़ी में पढ़ें — पेज केवल सफल मामले नहीं, विफल मामले भी "
+    "दिखाता है। 'कुछ न करने पर' तुलना का शून्य-बिंदु है। बैज दबाने पर क्या जाँचा गया, मानदंड और परिणाम खुलते हैं।",
+    "Lire les badges : « Vérifié » et « Montre la limite » vont par paire — la page montre où une méthode "
+    "échoue, pas seulement où elle marche. « Sans rien faire » est le point zéro de comparaison. Touchez un "
+    "badge pour ouvrir ce qui a été vérifié, le critère et le résultat.")
+
+#: 確かめた項目の表の見出しと合否(8 言語)。
+_CHECK_UI: dict[str, dict[str, str]] = {
+    "what": _t("確かめた項目", "What was checked", "检验项目", "檢驗項目", "확인한 항목", "Geprüft wurde",
+               "क्या जाँचा गया", "Ce qui a été vérifié"),
+    "criterion": _t("基準", "Criterion", "基准", "基準", "기준", "Kriterium", "मानदंड", "Critère"),
+    "result": _t("結果", "Result", "结果", "結果", "결과", "Ergebnis", "परिणाम", "Résultat"),
+    "ok": _t("通った", "pass", "通过", "通過", "통과", "bestanden", "पास", "réussi"),
+    "ng": _t("外れた", "outside", "超出", "超出", "벗어남", "außerhalb", "सीमा से बाहर", "hors critère"),
 }
 
 #: ページの固定文字列(8 言語)。仕様のものではなく、ビューアの操作系。
@@ -733,6 +823,40 @@ def _pack_anim3d(tab: dict, out: dict, store: _Store, where: str, ctx: _Ctx) -> 
     out["panes"] = panes
 
 
+_CHECK_KEYS = frozenset({"what", "criterion", "result", "ok"})
+
+
+def _pack_checks(raw: Any, badge: str, where: str, ctx: _Ctx) -> list:
+    """タブの ``checks``(確かめた項目 / 基準 / 結果 / 合否)を検査して詰める。
+
+    ``what`` は文字列の辞書、``criterion`` / ``result`` は文字列(全言語共通)か文字列の辞書、
+    ``ok`` は True / False だけ(0 / 1 や "yes" は通さない)。空の list・未知の鍵・欠けた鍵は ``ValueError``。
+    ★fail-closed: ``ok`` が False の行があるのに ``badge`` が ``"passed"`` なら ``ValueError``
+    (落ちた項目を抱えたまま「門を通った」と出さない。badge を limit にするか、門を直す)。
+    """
+    if not isinstance(raw, (list, tuple)) or not raw:
+        raise ValueError("%s: checks は 1 行以上の list(確かめた項目が無いなら checks の鍵ごと外す): %r"
+                         % (where, raw))
+    rows = []
+    for j, c in enumerate(raw):
+        wc = "%s.checks[%d]" % (where, j)
+        _keys(c, _CHECK_KEYS, wc)
+        lack = sorted(_CHECK_KEYS - set(c))
+        if lack:
+            raise ValueError("%s: 鍵 %s が要る(what / criterion / result / ok の 4 つ)" % (wc, lack))
+        if not isinstance(c["ok"], (bool, np.bool_)):
+            raise ValueError("%s: ok は True / False だけ: %r" % (wc, c["ok"]))
+        rows.append({"what": _bi(c["what"], wc + ".what", ctx),
+                     "criterion": _num_value(c["criterion"], wc + ".criterion", ctx),
+                     "result": _num_value(c["result"], wc + ".result", ctx),
+                     "ok": bool(c["ok"])})
+    bad = [j for j, r in enumerate(rows) if not r["ok"]]
+    if bad and badge == "passed":
+        raise ValueError("%s: badge が passed なのに ok:false の行がある(checks %s)—— 落ちた項目を抱えたまま"
+                         "「門を通った」と出さない。badge を limit にするか、門を直す" % (where, bad))
+    return rows
+
+
 def _pack_tab(tab: dict, store: _Store, idx: int, ctx: _Ctx) -> dict:
     where = "tabs[%d]" % idx
     tid = str(tab.get("id", ""))
@@ -752,6 +876,8 @@ def _pack_tab(tab: dict, store: _Store, idx: int, ctx: _Ctx) -> dict:
                      "value": _num_value(n.get("value"), where + ".numbers.value", ctx)}
                     for n in tab.get("numbers", [])],
     }
+    if tab.get("checks") is not None:                     # 任意。無いタブの JSON は前と同じ
+        out["checks"] = _pack_checks(tab["checks"], tab["badge"], where, ctx)
     if tab.get("view"):
         out["view"] = {k: float(v) for k, v in tab["view"].items() if k in ("az", "el", "dist")}
 
@@ -841,6 +967,11 @@ def _pack_spec(spec: dict, lang="ja") -> dict:
     if ctx.missing:
         raise ValueError("訳が足りない(要求した言語 %s): %s" % (list(langs), ", ".join(ctx.missing)))
     data["badges"] = {k: {l: v[l] for l in langs} for k, v in BADGES.items()}
+    if any("checks" in t for t in data["tabs"]):        # 説明つきのページ(無ければ DATA は前と同じ)
+        data["badges"] = {k: {l: v["label"][l] for l in langs} for k, v in _BADGE_HELP.items()}
+        data["bh"] = {"def": {k: {l: v["def"][l] for l in langs} for k, v in _BADGE_HELP.items()},
+                      "legend": {l: _BADGE_LEGEND[l] for l in langs},
+                      "ui": {k: {l: v[l] for l in langs} for k, v in _CHECK_UI.items()}}
     data["ui"] = {k: {l: v[l] for l in langs} for k, v in UI.items()}
     data["arrays"] = store.arrays
     return data
@@ -1688,6 +1819,66 @@ let L = pickLang(qs.get('lang'), (typeof navigator !== 'undefined' && navigator.
 """
 
 
+#: バッジの説明(定義の一言 + 確かめた項目の表 + 凡例)。どれかのタブが ``checks`` を持つ場面だけページに入る。
+_CSS_BH = """
+  .legend { display:flex; flex-wrap:wrap; align-items:center; gap:4px 6px; padding:2px 18px 0; font-size:12.5px;
+            color:var(--dim); line-height:1.7; }
+  .legend .badge { margin-right:0; }
+  .legend .lgt { flex:1 1 260px; min-width:0; }
+  .bh { cursor:pointer; user-select:none; }
+  .bh:focus-visible { outline:2px solid #8ec5ff; outline-offset:2px; }
+  .bhq { font-weight:400; opacity:.85; margin-left:2px; }
+  .bhbox { margin:6px 0 4px; padding:8px 10px; border:1px solid var(--line); border-radius:6px; background:#121a22; }
+  .bhbox[hidden] { display:none; }
+  .bhdef { color:#c8d4df; }
+  .bhscroll { overflow-x:auto; }
+  .bht { border-collapse:collapse; margin-top:6px; width:100%; font-size:12.5px; font-variant-numeric:tabular-nums; }
+  .bht th, .bht td { border-top:1px solid var(--line); padding:3px 8px 3px 0; text-align:left; vertical-align:top; }
+  .bht th { color:var(--dim); font-weight:600; }
+  .bht td.v { white-space:nowrap; }
+  .bht tr.ok td.v { color:#9fd3ff; } .bht tr.ng td.v { color:#ffb37a; }
+"""
+_BODY_BH_ANCHOR = '<div class="tabs" id="tabs"></div>\n'
+_BODY_BH = '<div class="legend" id="legend"></div>\n'
+_JS_BH_ANCHOR = "/* ---------- ページ ---------- */\n"
+_JS_BH = r"""/* ---------- バッジの説明(定義の一言 + 確かめた項目の表 + 凡例)。この塊は checks を持つ場面だけページに入る ----------
+   ホバーで定義の一言(title)。押す・Enter・Space で開閉(aria-expanded)。checks の無いタブは定義の一言だけ。 */
+const bhOpen = {};
+const BU = k => T(D.bh.ui[k]);
+function badgeHTML(t){
+  const open = !!bhOpen[t.id];
+  return '<span class="badge ' + t.badge + ' bh" role="button" tabindex="0" aria-expanded="' + open + '" aria-controls="bhbox" title="' +
+    esc(T(D.bh.def[t.badge])) + '">' + esc(T(D.badges[t.badge])) + '<span class="bhq" aria-hidden="true">' + (open ? ' \u25be' : ' \u24d8') + '</span></span>';
+}
+function checksHTML(t){
+  let h = '<div class="bhbox" id="bhbox"' + (bhOpen[t.id] ? '' : ' hidden') + '><div class="bhdef">' + esc(T(D.bh.def[t.badge])) + '</div>';
+  if (t.checks && t.checks.length) {
+    h += '<div class="bhscroll"><table class="bht"><thead><tr><th>' + esc(BU('what')) + '</th><th>' + esc(BU('criterion')) + '</th><th>' +
+      esc(BU('result')) + '</th><th></th></tr></thead><tbody>' +
+      t.checks.map(c => '<tr class="' + (c.ok ? 'ok' : 'ng') + '"><td>' + esc(T(c.what)) + '</td><td class="v">' + esc(T(c.criterion)) +
+        '</td><td class="v">' + esc(T(c.result)) + '</td><td class="v">' + (c.ok ? '\u2713 ' + esc(BU('ok')) : '\u2717 ' + esc(BU('ng'))) + '</td></tr>').join('') +
+      '</tbody></table></div>';
+  }
+  return h + '</div>';
+}
+function bhToggle(){ const t = get(); bhOpen[t.id] = !bhOpen[t.id]; renderMeta(); const b = document.querySelector('#meta .bh'); if (b) b.focus(); }
+function renderLegend(){
+  $('legend').innerHTML = ['passed', 'limit', 'null'].map(k => '<span class="badge ' + k + '" title="' + esc(T(D.bh.def[k])) + '">' +
+    esc(T(D.badges[k])) + '</span>').join('') + '<span class="lgt">' + esc(T(D.bh.legend)) + '</span>';
+}
+$('meta').addEventListener('click', e => { if (e.target.closest('.bh')) bhToggle(); });
+$('meta').addEventListener('keydown', e => {
+  if ((e.key === 'Enter' || e.key === ' ') && e.target.closest('.bh')) { e.preventDefault(); e.stopPropagation(); bhToggle(); }
+});
+"""
+_JS_BH_SUBS = (
+    ("""'<span class="badge ' + t.badge + '">' + esc(T(D.badges[t.badge])) + '</span><b>'""", "badgeHTML(t) + '<b>'"),
+    ("""    (nums ? '<div class="nums">' + nums + '</div>' : '');\n""",
+     """    (nums ? '<div class="nums">' + nums + '</div>' : '') + checksHTML(t);\n"""),
+    ("  setBtn(); renderTabs(); renderMeta(); colorbar(get());", "  setBtn(); renderLegend(); renderTabs(); renderMeta(); colorbar(get());"),
+)
+
+
 def _has_translucent(data: dict) -> bool:
     """詰めた仕様に alpha < 1 の物体があるか(あれば _JS_ALPHA を差し込む)。"""
     return any(t.get("kind") == "anim3d" and any("alpha" in b for b in t.get("bodies", ()))
@@ -1711,13 +1902,23 @@ def _build_html(spec: dict, lang="ja", detect_lang: bool = False) -> str:
         if js.count(_JS_ALPHA_ANCHOR) != 1:
             raise AssertionError("半透明の塊の差し込み位置が 1 回でない")
         js = js.replace(_JS_ALPHA_ANCHOR, _JS_ALPHA + _JS_ALPHA_ANCHOR)
+    css, body = _CSS, _BODY
+    if "bh" in data:                                     # checks を持つ場面だけ(無ければ今と同じページ)
+        for old, new in ((_JS_BH_ANCHOR, _JS_BH + _JS_BH_ANCHOR),) + _JS_BH_SUBS:
+            if js.count(old) != 1:
+                raise AssertionError("バッジの説明の差し込み位置が 1 回でない: %r" % old[:60])
+            js = js.replace(old, new)
+        if body.count(_BODY_BH_ANCHOR) != 1:
+            raise AssertionError("凡例の差し込み位置が 1 回でない")
+        body = body.replace(_BODY_BH_ANCHOR, _BODY_BH + _BODY_BH_ANCHOR)
+        css = _CSS + _CSS_BH
     js = js.replace("__DATA__", blob)
     if js.count(blob) != 1:
         raise AssertionError("DATA の差し込みが 1 回でない")
     title = html.escape(data["title"][data["langs"][0]])
     return ("<!doctype html>\n<html lang=\"%s\">\n<meta charset=\"utf-8\">\n"
             "<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n"
-            "<title>%s</title>\n<style>%s</style>\n%s\n<script>%s</script>\n</html>\n" % (data["langs"][0], title, _CSS, _BODY, js))
+            "<title>%s</title>\n<style>%s</style>\n%s\n<script>%s</script>\n</html>\n" % (data["langs"][0], title, css, body, js))
 
 
 def write_viewer(spec: dict, path, lang="ja", detect_lang: bool = False) -> str:
@@ -1763,42 +1964,43 @@ def _tab(kind: str, tab_id: str, label: dict, badge: str, text: dict, numbers, e
     return d
 
 
-def viewer_mesh_tab(tab_id, label, badge, text, pos, faces, val, cbar, numbers=None, view=None) -> dict:
-    """三角形メッシュ + 頂点ごとの値(色)+ カラーバーのタブ。"""
+def viewer_mesh_tab(tab_id, label, badge, text, pos, faces, val, cbar, numbers=None, view=None,
+                    checks=None) -> dict:
+    """三角形メッシュ + 頂点ごとの値(色)+ カラーバーのタブ。``checks`` は :func:`viewer_anim3d_tab` と同じ。"""
     return _tab("mesh", tab_id, label, badge, text, numbers,
-                {"pos": pos, "faces": faces, "val": val, "cbar": cbar, "view": view})
+                {"pos": pos, "faces": faces, "val": val, "cbar": cbar, "view": view, "checks": checks})
 
 
 def viewer_points_tab(tab_id, label, badge, text, pos, val=None, cbar=None, rgb=None, ghost=None,
-                      point_size=None, numbers=None, view=None) -> dict:
+                      point_size=None, numbers=None, view=None, checks=None) -> dict:
     """点群のタブ。``val`` + ``cbar``(値の色)か ``rgb``(点ごとの色)。``ghost`` は灰色の参照点群。"""
     return _tab("points", tab_id, label, badge, text, numbers,
                 {"pos": pos, "val": val, "cbar": cbar, "rgb": rgb, "ghost": ghost,
-                 "point_size": point_size, "view": view})
+                 "point_size": point_size, "view": view, "checks": checks})
 
 
 def viewer_frames_tab(tab_id, label, badge, text, frames, dt=0.2, boxes=None, series=None,
-                      numbers=None, png=False) -> dict:
+                      numbers=None, png=False, checks=None) -> dict:
     """2-D の画像列のタブ。``boxes`` は重ねる枠(真値と推定)、``series`` は時系列グラフ。
 
     ``png=True`` ならコマを無損失の PNG で埋める(画素は 1 つも変えない。生の u8 より小さいことが多い)。
     """
     return _tab("frames", tab_id, label, badge, text, numbers,
                 {"frames": frames, "dt": dt, "boxes": boxes or [], "series": series or [],
-                 "png": True if png else None})
+                 "png": True if png else None, "checks": checks})
 
 
 def viewer_split_tab(tab_id, label, badge, text, before, after, label_before, label_after,
-                     numbers=None) -> dict:
+                     numbers=None, checks=None) -> dict:
     """前後の画像を、ドラッグで動く分割線で比べるタブ。"""
     return _tab("split", tab_id, label, badge, text, numbers,
                 {"before": before, "after": after, "label_before": label_before,
-                 "label_after": label_after})
+                 "label_after": label_after, "checks": checks})
 
 
 def viewer_anim3d_tab(tab_id, label, badge, text, t, bodies, xyz, quat, trails=None, clouds=None,
                       events=None, series=None, panes=None, cbar=None, follow=None, numbers=None,
-                      view=None) -> dict:
+                      view=None, checks=None) -> dict:
     """動く 3-D のタブ: 物体ごとの剛体姿勢をコマごとに再生する(2-D の画像列・時系列も同じ時間軸で)。
 
     物体のメッシュは **1 回だけ** 持ち、コマごとには姿勢(位置 + 四元数)だけを持つ。ページでは
@@ -1840,6 +2042,13 @@ def viewer_anim3d_tab(tab_id, label, badge, text, t, bodies, xyz, quat, trails=N
         ``val`` で色づけする物体があるときのカラーバー ``{lo, hi, unit, cmap, label}``。
     follow : str, optional
         追従するときに注視する物体の name(無ければ全物体の位置の平均)。追従は既定で切。
+    checks : list of dict, optional
+        バッジを押すと開く「確かめた項目 / 基準 / 結果」の表。``{"what": 文字列の辞書,
+        "criterion": "< 1e-9" | 文字列の辞書, "result": "3.2e-12" | 文字列の辞書, "ok": True | False}`` の列。
+        値は実際の門(テスト・作例の計算)の値を入れる。どれかのタブが checks を持つページでは、バッジに
+        定義の一言(ホバー・タップ)と 3 種のバッジの凡例が付き、en の表記は "Checked" になる
+        (checks の無いタブは定義の一言だけ)。どのタブも持たないページは前と同じ。
+        ``ok`` が False の行があるのに badge が ``"passed"`` なら ``ValueError``(fail-closed)。
 
     容量: 位置は軸ごとの uint16(刻み = 範囲/65535)、四元数は int16(刻み 1/32767)、メッシュは 1 回だけ。
     コマ数 T が合わない(xyz / quat / series / panes / 軌跡)、NaN / inf、範囲外の索引、未知の色指定は
@@ -1867,7 +2076,7 @@ def viewer_anim3d_tab(tab_id, label, badge, text, t, bodies, xyz, quat, trails=N
     return _tab("anim3d", tab_id, label, badge, text, numbers,
                 {"t": t, "bodies": list(bodies), "xyz": xyz, "quat": quat, "trails": list(trails or []),
                  "clouds": list(clouds or []), "events": list(events or []), "series": list(series or []),
-                 "panes": list(panes or []), "cbar": cbar, "follow": follow, "view": view})
+                 "panes": list(panes or []), "cbar": cbar, "follow": follow, "view": view, "checks": checks})
 
 
 def viewer_spec(viewer_id: str, title: dict, subtitle: dict, hint: dict, tabs, credit=None) -> dict:
