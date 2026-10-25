@@ -55,6 +55,7 @@ def test_the_ledger_lists_every_op_and_nothing_is_missing():
     import roadjp
     import kendama, kendamaworld
     import gsplatnp
+    import gsviewer
     import drivelong
     import driveenv
     import driveinf
@@ -96,7 +97,7 @@ def test_the_ledger_lists_every_op_and_nothing_is_missing():
     pub = (set(drivecourse.__all__) | set(driveworld.__all__) | set(lidarsim.__all__) | set(drivettc.__all__)
            | set(rsssafety.__all__) | set(driveterrain.__all__) | set(ballistics.__all__) | set(balltrack.__all__)
            | set(ballworld.__all__) | set(racket.__all__) | set(roadjp.__all__)
-           | set(kendama.__all__) | set(kendamaworld.__all__) | set(gsplatnp.__all__) | set(drivelong.__all__)
+           | set(kendama.__all__) | set(kendamaworld.__all__) | set(gsplatnp.__all__) | set(gsviewer.__all__) | set(drivelong.__all__)
            | set(driveenv.__all__) | set(driveinf.__all__) | set(drivetraffic.__all__)
            | set(drivedecide.__all__) | set(drivelateral.__all__)
            | set(drivecrossing.__all__) | set(drivepass.__all__) | set(motionio.__all__)
