@@ -190,6 +190,7 @@ def test_entry_page_links_anim3d_with_lang_and_size():
         html = open(path, encoding="utf-8").read()
         assert "function pickLang" in html and "http://" not in html and "https://" not in html
         mb = G._viewer_mb(d, e)
+        assert len(d["langs"]) == 8
         for l in d["langs"]:
             page = G.build(d, l)
             assert "%s?lang=%s" % (G._media_rel(d, e), l) in page
@@ -200,6 +201,7 @@ def test_entry_page_links_anim3d_with_lang_and_size():
 def test_viewer_lacking_a_language_stops_the_generator(monkeypatch):
     monkeypatch.setattr(G, "_viewer_langs", lambda p: ["ja", "en"])
     bad = G.validate(G.load())
+    assert bad, "言語の欠けたビューアを止めなかった"
     assert any("ビューアに無い言語" in b for b in bad)
 
 
