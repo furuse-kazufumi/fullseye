@@ -2,10 +2,11 @@
 """anim3d_lens_aberrations — レンズの収差を、実際に追った光線で見る(動く 3-D + Fullseye の処理の帯)。
 
     py -3.11 examples/anim3d_lens_aberrations.py                     # 検査だけ(コマを減らし、一時フォルダに書く。十数秒)
-    py -3.11 examples/anim3d_lens_aberrations.py --out out/ab.html   # 開いて触れる HTML を残す(58 コマ、約 1 分、3 MB)
+    py -3.11 examples/anim3d_lens_aberrations.py --out out/ab.html   # 開いて触れる HTML を残す(56 コマ、約 1 分、3.2 MB)
     py -3.11 examples/anim3d_lens_aberrations.py --out a.html --quick  # 残すが、コマは少なく
     # repo に置いてある完成品 docs/anim3d/poc_lens_aberrations.html は
-    #   py -3.11 examples/anim3d_lens_aberrations.py --out docs/anim3d/poc_lens_aberrations.html で作り直す
+    #   py -3.11 tools/anim3d_i18n.py --build anim3d_lens_aberrations --script-arg=--out --script-arg=x.html \
+    #       --out docs/anim3d/poc_lens_aberrations.html で作り直す(8 言語。この作例を直接回すと ja/en だけになる)
 
 【この例が示すこと】
 教科書の収差の図は 1 枚の静止画だが、ここでは **1 つのつまみ(絞り・画角・波長)をゆっくり振り**、
@@ -91,7 +92,7 @@ import materials  # noqa: E402
 pv = fs.pocviewer
 INF = float("inf")
 FPS = 15
-T_FULL = 58                     # 約 4 秒(再生の速さは 0.25〜4 倍で変えられる)
+T_FULL = 56                     # 約 4 秒(再生の速さは 0.25〜4 倍で変えられる)。58 → 56(2026-10-25、8 言語の学習用の型を足して 3.3 MB の門に収める)
 T_QUICK = 10
 WL_F, WL_D, WL_C = 0.4861327, 0.5875618, 0.6562725
 RAY_W = 0.32                    # 3-D の光線の太さ [mm]
@@ -1000,7 +1001,7 @@ def tab_spherical(fr, t):
     nums = [fs.viewer_number(_t("レンズ", "Lens"), _t("平凸、%s、f = %.1f mm" % (glass_label("N-BK7"), f_s),
                                                     "plano-convex, %s, f = %.1f mm" % (glass_label("N-BK7", "en"), f_s))),
             fs.viewer_number(_t("つまみ", "Knob"), _t("絞りの半径 1.5 → 20 mm(f/33 → f/2.5)", "stop radius 1.5 → 20 mm")),
-            fs.viewer_number(_t("実光線 / 3 次(f/33 → f/4 → f/2.5)", "Real / third order"),
+            fs.viewer_number(_t("実光線 / 3 次(f/33 → f/4 → f/2.5)", "Real / third order (f/33 → f/4 → f/2.5)"),
                              "%.3f → %.3f → %.3f" % (ratio[0], ratio[np.argmin(np.abs([f["fno"] - 4 for f in fr]))],
                                                     ratio[-1]))]
     text = _t("球面収差: 絞りを開くと、レンズの縁を通る光ほど手前で軸を横切る(橙の箱 = 周辺の光の焦点、"
@@ -1324,10 +1325,10 @@ def run(quick=False):
 
 
 def gates(rec):
-    """理論の線(3 次の式・閉形式)と実光線の照合。戻り値 = 表示用の数字。失敗は AssertionError。"""
+    """理論の線(3 次の式・閉形式)と実光線の照合。戻り値 = 門の値(表示・checks・lesson の数字はここから)。失敗は AssertionError。"""
     out = {}
     # ---- 球面: 小さい絞りで 1 %、単調に開き、最後で 8 % 超
-    gap = []
+    gap, z40 = [], []
     for a in (1.5, 3.0, 4.0, 6.0, 9.0, 12.5, 16.0, 20.0):
         s = singlet(a)
         W = fs.seidel_coefficients(s, field=0.0)["wavefront_mm"]
@@ -1339,46 +1340,63 @@ def gates(rec):
             assert abs(r - 1) < 0.01, ("球面: 小さい絞りで 3 次と合わない", a, r)
         if a <= 6.0:
             z = fs.wavefront_from_opd(s, n_max=6)["zernike"][(4, 0)]
-            assert abs(6 * z / (W["W040"] / (WL_D * 1e-3)) - 1) < 0.03, ("球面: Z40", a, z)
+            z40.append(abs(6 * z / (W["W040"] / (WL_D * 1e-3)) - 1))
+            assert z40[-1] < 0.03, ("球面: Z40", a, z)
     rs = [r for _a, r in gap]
     assert all(b > a for a, b in zip(rs, rs[1:])), ("球面: 比が単調でない", rs)
     assert rs[-1] > 1.08, ("球面: f/2.5 で 3 次から外れない(限界が見えない)", rs[-1])
     out["sph"] = gap
+    out["sph_small_dev"] = max(abs(r - 1) for a, r in gap if a <= 4.0)
+    out["sph_z40_dev"] = max(z40)
+    out["sph_monotonic"] = all(b > a for a, b in zip(rs, rs[1:]))
+    out["sph_last"] = rs[-1]
     # ---- コマ
     s = descartes()
     um = fs.paraxial_trace(s)["marginal"]["u"][-1]
+    mer, sag = [], []
     for f in (0.5, 1.0, 2.0):
         W = fs.seidel_coefficients(s, field=f)["wavefront_mm"]
         ft = fs.ray_fan(s, field=f, n=21, axis="y")
         sym = 0.5 * (ft[-1, 1] + ft[0, 1])
         th = 3 * W["W131"] / um
-        assert abs(sym / th - 1) < 0.01, ("コマ: メリディオナル", f, sym, th)
+        mer.append(abs(sym / th - 1))
+        assert mer[-1] < 0.01, ("コマ: メリディオナル", f, sym, th)
         sc = coma_sagittal_y(s, f)
-        assert f > 1.0 or abs(3 * sc / sym - 1) < 0.02, ("コマ: サジタル 1/3", f, sc / sym)
+        if f <= 1.0:
+            sag.append(abs(3 * sc / sym - 1))
+            assert sag[-1] < 0.02, ("コマ: サジタル 1/3", f, sc / sym)
     st0 = fs.spot_stats(s, field=0.0)
     assert st0["geo_radius"] < 1e-3, ("コマ: 軸上で無収差でない", st0["geo_radius"])
     out["coma_axis_um"] = st0["geo_radius"] * 1000
+    out["coma_mer_dev"], out["coma_sag_dev"] = max(mer), max(sag)
     # ---- 非点
     s = stop_front()
     um = fs.paraxial_trace(s)["marginal"]["u"][-1]
     img = fs.paraxial_trace(s)["bfl"] + 29.0
+    ts, r31 = [], []
     for f in (1.0, 2.0):
         W = fs.seidel_coefficients(s, field=f)["wavefront_mm"]
         PT, PS = diff_foci(s, f, 4.0)
         dzT, dzS = PT[2] - img, PS[2] - img
         tT, tS = -2 * (W["W220"] + W["W222"]) / um ** 2, -2 * W["W220"] / um ** 2
         tP = tS - 0.5 * (tT - tS)
-        assert abs(dzT / tT - 1) < 0.01 and abs(dzS / tS - 1) < 0.01, ("非点: T/S", f, dzT, tT, dzS, tS)
-        assert abs((dzT - tP) / (dzS - tP) / 3 - 1) < 0.02, ("非点: 3 対 1", f)
+        ts.append(max(abs(dzT / tT - 1), abs(dzS / tS - 1)))
+        r31.append(abs((dzT - tP) / (dzS - tP) / 3 - 1))
+        assert ts[-1] < 0.01, ("非点: T/S", f, dzT, tT, dzS, tS)
+        assert r31[-1] < 0.02, ("非点: 3 対 1", f)
+    out["astig_ts_dev"], out["astig_31_dev"] = max(ts), max(r31)
     # ---- 色
     s1 = singlet(12.5)
+    cf = []
     for wl in (0.43, WL_F, WL_D, WL_C, 0.70):
         n = fs.refractive_index("N-BK7", wl)
-        assert abs(bfl_at(s1, wl) - (51.68 / (n - 1) - 9.0 / n)) < 1e-9, ("色: 閉形式", wl)
+        cf.append(abs(bfl_at(s1, wl) - (51.68 / (n - 1) - 9.0 / n)))
+        assert cf[-1] < 1e-9, ("色: 閉形式", wl)
     fc1 = bfl_at(s1, WL_F) - bfl_at(s1, WL_C)
     sd = fs.seidel_coefficients(s1)
     um = fs.paraxial_trace(s1)["marginal"]["u"][-1]
-    assert abs(fc1 / (sd["total"]["C_L"] / um ** 2) - 1) < 0.015, ("色: C_L", fc1, sd["total"]["C_L"] / um ** 2)
+    out["chroma_cl_dev"] = abs(fc1 / (sd["total"]["C_L"] / um ** 2) - 1)
+    assert out["chroma_cl_dev"] < 0.015, ("色: C_L", fc1, sd["total"]["C_L"] / um ** 2)
     s2 = achromat(rec["R3"])
     fc2 = bfl_at(s2, WL_F) - bfl_at(s2, WL_C)
     assert abs(fc2) < 1e-6, ("色: アクロマートの F−C", fc2)
@@ -1386,14 +1404,235 @@ def gates(rec):
     sp1 = np.ptp([bfl_at(s1, w) for w in wls])
     sp2 = np.ptp([bfl_at(s2, w) for w in wls])
     assert sp2 < sp1 / 20, ("色: 二次スペクトルが大きい", sp1, sp2)
-    out.update({"fc1": fc1, "fc2": fc2, "sec1": sp1, "sec2": sp2})
+    out.update({"fc1": fc1, "fc2": fc2, "sec1": sp1, "sec2": sp2, "chroma_closed_dev": max(cf)})
     # ---- 幾何の PSF: 回折の PSF も作れる重なりの領域で、集中半径が 12 % 以内
     out["geo_vs_diff"] = []
     for name, sys_, fd in (("sph f/3.6", singlet(14.0), 0.0), ("coma 4deg", descartes(), 4.0)):
         r50, r80 = geo_vs_diffraction(sys_, fd)
         assert abs(r50 - 1) < 0.12 and abs(r80 - 1) < 0.12, ("幾何の PSF が回折の PSF と合わない", name, r50, r80)
         out["geo_vs_diff"].append((name, r50, r80))
+    # ---- 限界(つまみの端の実光線 / 3 次の式。表示と checks の限界の行)
+    out["sph_end"] = (float(rec["sph"][-1]["fno"]), float(rec["sph"][-1]["ta_real"] / rec["sph"][-1]["ta_th"]))
+    out["coma_end"] = (float(rec["coma"][-1]["knob"]), float(rec["coma"][-1]["tc_real"] / rec["coma"][-1]["tc_th"]))
+    out["astig_end"] = (float(rec["astig"][-1]["knob"]), float(rec["astig"][-1]["dzT"] / rec["astig"][-1]["dzT_th"]),
+                        float(rec["astig"][-1]["dzS"] / rec["astig"][-1]["dzS_th"]))
     return out
+
+
+# =========================================================================== 学習用の型(2026-10-25)
+def _e(x):
+    """門の値の印字(0 はそのまま 0、他は指数 1 桁)。"""
+    return "0" if x == 0 else "%.1e" % x
+
+
+def _row(what_ja, what_en, criterion, result, ok):
+    """checks の 1 行。ok は門の値と基準の比較で決める(手で True と書かない)。"""
+    return {"what": _t(what_ja, what_en), "criterion": criterion, "result": result, "ok": bool(ok)}
+
+
+def textbook_checks(g):
+    """各タブの「確かめた項目 / 基準 / 結果」。値は :func:`gates` の値(同じ基準で assert している)。
+
+    3 次の式(seidel_coefficients)と実光線(ray_fan・trace_rays)は別の経路。閉形式どうし・同じ式の比較は
+    「規約の確認」と書く。ok:false の行(3 次の式が実光線から外れる所)がある回だけ badge を limit にする。
+    """
+    a_s, r_s = zip(*g["sph"])
+    fno_end, sph_end = g["sph_end"]
+    f_end, coma_end = g["coma_end"]
+    fa_end, aT_end, aS_end = g["astig_end"]
+    yes, no = _t("成立", "holds"), _t("不成立", "fails")
+    return {
+        "spherical": [
+            _row("横収差: 実光線(ray_fan)/ 3 次の式 4·W040/(n′u′)(seidel_coefficients)、絞りの半径 4 mm 以下",
+                 "transverse aberration: real rays (ray_fan) / third order 4·W040/(n′u′) (seidel_coefficients), stop radius up to 4 mm",
+                 "|ratio − 1| < 0.01", "%.4f" % g["sph_small_dev"], g["sph_small_dev"] < 0.01),
+            _row("瞳の波面のゼルニケ Z40 × 6(wavefront_from_opd)と W040、絞りの半径 6 mm 以下",
+                 "pupil wavefront Zernike Z40 × 6 (wavefront_from_opd) vs W040, stop radius up to 6 mm",
+                 "< 0.03", "%.4f" % g["sph_z40_dev"], g["sph_z40_dev"] < 0.03),
+            _row("比 実光線 / 3 次の式 が絞りとともに単調に開く(半径 %s mm)" % " / ".join("%g" % a for a in a_s),
+                 "ratio real / third order grows monotonically with the stop (radius %s mm)" % " / ".join("%g" % a for a in a_s),
+                 _t("単調に増える", "increases monotonically"), yes if g["sph_monotonic"] else no, g["sph_monotonic"]),
+            _row("f/%.1f で 3 次の式から外れる(限界が見えること)" % fno_end,
+                 "departure from third order at f/%.1f (the limit must show)" % fno_end,
+                 "> 1.08", "%.3f" % sph_end, sph_end > 1.08)],
+        "coma": [
+            _row("軸上のスポット半径(spot_stats、非球面の無収差)", "on-axis spot radius (spot_stats; stigmatic asphere)",
+                 "< 1 µm", "%.2g µm" % g["coma_axis_um"], g["coma_axis_um"] < 1.0),
+            _row("メリディオナルのコマ: 実光線(ray_fan)/ 3·W131/(n′u′)(画角 0.5 / 1 / 2°)",
+                 "tangential coma: real rays (ray_fan) / 3·W131/(n′u′) (field 0.5 / 1 / 2°)",
+                 "< 0.01", "%.4f" % g["coma_mer_dev"], g["coma_mer_dev"] < 0.01),
+            _row("サジタルのコマ = メリディオナルの 1/3(実光線どうし、画角 1° 以下)",
+                 "sagittal coma = one third of tangential (real rays only, field up to 1°)",
+                 "< 0.02", "%.4f" % g["coma_sag_dev"], g["coma_sag_dev"] < 0.02),
+            _row("幾何の PSF(光線の密度 ⊗ airy_pattern)と回折の PSF(psf_field_grid)の 50 % / 80 % 集中半径の比",
+                 "geometric PSF (ray density ⊗ airy_pattern) vs diffraction PSF (psf_field_grid): 50 % / 80 % encircled radius ratio",
+                 "|ratio − 1| < 0.12", " · ".join("%s %.3f / %.3f" % (nm, a, b) for nm, a, b in g["geo_vs_diff"]),
+                 all(abs(a - 1) < 0.12 and abs(b - 1) < 0.12 for _n, a, b in g["geo_vs_diff"])),
+            _row("%.0f° で 3 次の式から外れる量(実光線 / 3 次の式)" % f_end, "departure from third order at %.0f° (real / third order)" % f_end,
+                 "< 1.10", "%.3f" % coma_end, coma_end < 1.10)],
+        "astig": [
+            _row("T・S の焦点: 2 本の近い実光線の交点(trace_rays)と −2(W220+W222)/u′²・−2·W220/u′²(画角 1 / 2°)",
+                 "T and S foci: crossing of two close real rays (trace_rays) vs −2(W220+W222)/u′² and −2·W220/u′² (field 1 / 2°)",
+                 "< 0.01", "%.4f" % g["astig_ts_dev"], g["astig_ts_dev"] < 0.01),
+            _row("3 対 1 の規則: (T − P) / (S − P) = 3(実光線の焦点、P = 3 次の式のペッツバール面)",
+                 "3-to-1 rule: (T − P) / (S − P) = 3 (real-ray foci; P = third-order Petzval surface)",
+                 "< 0.02", "%.4f" % g["astig_31_dev"], g["astig_31_dev"] < 0.02),
+            _row("S 像面: 実光線 / 3 次の式(%.0f°)" % fa_end, "S surface: real / third order (%.0f°)" % fa_end,
+                 "0.9–1.1", "%.3f" % aS_end, 0.9 <= aS_end <= 1.1),
+            _row("限界: T 像面の実光線 / 3 次の式が %.0f° で 1 の 10%% 以内か" % fa_end,
+                 "limit: is the T surface real / third order within 10%% of 1 at %.0f°?" % fa_end,
+                 "0.9–1.1", "%.3f" % aT_end, 0.9 <= aT_end <= 1.1)],
+        "chroma": [
+            _row("単レンズの焦点: paraxial_trace と厚肉の閉形式 R1/(n(λ)−1) − t/n(λ)(5 波長)",
+                 "singlet focus: paraxial_trace vs thick-lens closed form R1/(n(λ)−1) − t/n(λ) (5 wavelengths)",
+                 "< 1e-9 mm", "%s mm" % _e(g["chroma_closed_dev"]), g["chroma_closed_dev"] < 1e-9),
+            _row("F − C の焦点差: paraxial_trace と ザイデルの C_L/u′²", "F − C focus difference: paraxial_trace vs Seidel C_L/u′²",
+                 "< 0.015", "%.4f" % g["chroma_cl_dev"], g["chroma_cl_dev"] < 0.015),
+            _row("アクロマートの F − C の焦点差", "achromat F − C focus difference",
+                 "< 1e-6 mm", "%s mm" % _e(abs(g["fc2"])), abs(g["fc2"]) < 1e-6),
+            _row("F..C の焦点のゆれ(二次スペクトル): アクロマート / 単レンズ", "focus wander over F..C (secondary spectrum): achromat / singlet",
+                 "< 0.05", "%.4f" % (g["sec2"] / g["sec1"]), g["sec2"] / g["sec1"] < 0.05)],
+    }
+
+
+def textbook_lessons(rec, g):
+    """各タブの学習用の型(問い → 予想 → 再生 → 式 → 限界)。答えの説明の数字は :func:`gates` と記録の値。"""
+    sph, coma, ast = rec["sph"], rec["coma"], rec["astig"]
+    fno0, fno_end = sph[0]["fno"], sph[-1]["fno"]
+    _a0, r0 = g["sph"][0]
+    shift_end = sph[-1]["z_marg"] - sph[-1]["img_z"]
+    f_end, coma_end = g["coma_end"]
+    fa_end, aT_end, aS_end = g["astig_end"]
+    return {
+        "spherical": {
+            "question": _t("平凸レンズの絞りを f/%.0f から f/%.1f まで開いていく。レンズの縁を通る光は、中心の近くを通る光と同じ所に集まる?"
+                           % (fno0, fno_end),
+                           "Open the stop of a plano-convex lens from f/%.0f to f/%.1f. Do the rays through the rim meet at the same "
+                           "place as the rays near the centre?" % (fno0, fno_end)),
+            "choices": [_t("同じ所に集まる", "Yes, at the same place"),
+                        _t("縁を通る光ほど手前(レンズ寄り)で軸を横切る", "Rim rays cross the axis earlier (closer to the lens)"),
+                        _t("縁を通る光ほど奥で軸を横切る", "Rim rays cross the axis further away")],
+            "answer": 1,
+            "explain": _t("球面のレンズは縁で光を曲げすぎる。f/%.1f では周辺光線の焦点が近軸の像面より %.2f mm 手前になる。"
+                          "3 次の式 ε = 4·W040·ρ³/u′ は f/%.0f で実光線と比 %.3f、f/%.1f で %.3f —— 暗い絞りでは当たり、"
+                          "開くほど外れる。" % (fno_end, -shift_end, fno0, r0, fno_end, g["sph_end"][1]),
+                          "A spherical lens over-bends the rim rays. At f/%.1f the marginal focus lies %.2f mm before the "
+                          "paraxial image. The third-order formula ε = 4·W040·ρ³/u′ matches real rays with ratio %.3f at f/%.0f "
+                          "and %.3f at f/%.1f: right for small stops, off as the stop opens."
+                          % (fno_end, -shift_end, r0, fno0, g["sph_end"][1], fno_end)),
+            "formula": _t("波面のずれ: W = W040 ρ⁴\n横収差: ε = (1/(n′u′)) ∂W/∂ρ = 4 W040 ρ³ / (n′u′)\n"
+                          "W040 は絞りの半径 a の 4 乗に比例(ε は a³ に比例)",
+                          "wavefront error: W = W040 ρ⁴\ntransverse aberration: ε = (1/(n′u′)) ∂W/∂ρ = 4 W040 ρ³ / (n′u′)\n"
+                          "W040 grows as the 4th power of the stop radius a (ε as a³)"),
+            "limit": _t("3 次の式は近軸の次の近似にすぎない(f/%.1f で比 %.3f)。瞳の波面が数十波長を越えると回折の PSF は作れず、"
+                        "帯の③は幾何の PSF(光線の密度 ⊗ Airy)に切り替える。単色(d 線)だけを追っている。"
+                        % (fno_end, g["sph_end"][1]),
+                        "The third-order formula is only the next step beyond paraxial (ratio %.3f at f/%.1f). Once the pupil "
+                        "wavefront is tens of waves, no diffraction PSF can be made and band 3 switches to the geometric PSF "
+                        "(ray density ⊗ Airy). Only one colour (the d line) is traced." % (g["sph_end"][1], fno_end)),
+        },
+        "coma": {
+            "question": _t("軸上では 1 点に集まるよう作った非球面レンズに、斜め(画角 0 → %.0f°)から平行光を入れる。像面の像はどうなる?" % f_end,
+                           "A lens shaped to focus perfectly on axis gets parallel light at a slant (field 0 → %.0f°). What does "
+                           "the image look like?" % f_end),
+            "choices": [_t("1 点のまま", "Still a point"),
+                        _t("同じ大きさの丸にぼける", "A round blur of the same size everywhere"),
+                        _t("彗星の形に広がる(瞳の 1 つの輪が像で 2 周する円になる)", "A comet shape (one pupil ring becomes a circle traced twice)")],
+            "answer": 2,
+            "explain": _t("軸上のスポット半径は %.2g µm(無収差)だが、斜めの光では瞳の輪ごとに大きさの違う円がずれて重なり、"
+                          "彗星の形になる。メリディオナルのコマは 3·W131/u′、サジタルはその 1/3。%.0f° でのメリディオナルのコマは"
+                          " %.1f µm(実光線)、3 次の式との比 %.3f。" % (g["coma_axis_um"], f_end, coma[-1]["tc_real"], coma_end),
+                          "The on-axis spot radius is %.2g µm (stigmatic), but for oblique light each pupil ring makes a circle "
+                          "of a different size, shifted, and they pile up into a comet. Tangential coma is 3·W131/u′, sagittal one "
+                          "third of that. At %.0f° the tangential coma is %.1f µm (real rays), ratio %.3f to third order."
+                          % (g["coma_axis_um"], f_end, coma[-1]["tc_real"], coma_end)),
+            "formula": _t("W = W131 H ρ³ cos φ(H = 画角に比例)\nメリディオナルのコマ: 3 W131 / (n′u′)\n"
+                          "サジタルのコマ: W131 / (n′u′)(1/3)",
+                          "W = W131 H ρ³ cos φ (H proportional to the field)\ntangential coma: 3 W131 / (n′u′)\n"
+                          "sagittal coma: W131 / (n′u′) (one third)"),
+            "limit": _t("3 次の式は画角が小さいときの近似(%.0f° で比 %.3f)。画角 %.1f° より小さいと比は 0/0 に近く意味が無いので「—」で出す。"
+                        "非球面は軸上の 1 点だけを無収差にしていて、斜めの光には効かない。" % (f_end, coma_end, SMALL_FIELD),
+                        "Third order is a small-field approximation (ratio %.3f at %.0f°). Below %.1f° the ratio is near 0/0 and "
+                        "shown as '—'. The asphere only corrects the single on-axis point, not oblique light."
+                        % (coma_end, f_end, SMALL_FIELD)),
+        },
+        "astig": {
+            "question": _t("絞りを前に出した単レンズで、画角を 0 → %.0f° と広げる。縦の面(T)と横の面(S)の光の焦点はどうなる?" % fa_end,
+                           "A singlet with the stop moved ahead; the field goes 0 → %.0f°. What happens to the foci of the "
+                           "tangential (T) and sagittal (S) fans?" % fa_end),
+            "choices": [_t("どちらも同じ平らな像面に集まる", "Both stay on one flat image plane"),
+                        _t("別々に手前へ曲がる(T の方が S より大きくずれる)", "They curve inwards separately (T moves more than S)"),
+                        _t("どちらも奥へ曲がる", "Both curve away from the lens")],
+            "answer": 1,
+            "explain": _t("%.0f° で T の焦点は %.2f mm、S は %.2f mm 手前へずれる(実光線)。ペッツバール面 P から測ると T − P = 3(S − P)"
+                          "(3 対 1 の規則、2° 以下で %.1f%% 以内)。T と S の間では像が線(焦線)になる。"
+                          % (fa_end, -ast[-1]["dzT"], -ast[-1]["dzS"], 100 * g["astig_31_dev"]),
+                          "At %.0f° the T focus moves %.2f mm and the S focus %.2f mm towards the lens (real rays). Measured from "
+                          "the Petzval surface P, T − P = 3(S − P) (3-to-1 rule, within %.1f%% up to 2°). Between T and S the image "
+                          "is a line (focal line)." % (fa_end, -ast[-1]["dzT"], -ast[-1]["dzS"], 100 * g["astig_31_dev"])),
+            "formula": _t("Δz_T = −2 (W220 + W222) / u′²\nΔz_S = −2 W220 / u′²\nT − P = 3 (S − P)(P = ペッツバール面)",
+                          "Δz_T = −2 (W220 + W222) / u′²\nΔz_S = −2 W220 / u′²\nT − P = 3 (S − P) (P = Petzval surface)"),
+            "limit": _t("これが限界の回: %.0f° では T 像面の実光線 / 3 次の式が %.3f で、3 次の式は %.0f%% ずれる(バッジの表の外れた行)。"
+                        "実光線の焦点は主光線の上で 2 本の近い光線の交点として求めていて、3 次の式より像面に近い。"
+                        % (fa_end, aT_end, 100 * abs(1 - aT_end)),
+                        "This is the limit tab: at %.0f° the T surface real / third order is %.3f, so third order is off by "
+                        "%.0f%% (the failed row in the badge's table). Real-ray foci are found as the crossing of two "
+                        "close rays on the chief ray, nearer the image than third order predicts." % (fa_end, aT_end, 100 * abs(1 - aT_end))),
+        },
+        "chroma": {
+            "question": _t("単レンズに当てる光の波長を 430 → 700 nm と変える。焦点はどう動く? クラウンとフリントの貼り合わせ"
+                           "(アクロマート)ではどうなる?",
+                           "Sweep the wavelength from 430 to 700 nm through a singlet. How does the focus move? And for a cemented "
+                           "crown + flint achromat?"),
+            "choices": [_t("どちらも焦点は動かない", "Neither focus moves"),
+                        _t("単レンズは青ほど手前で焦点を結び、アクロマートは F 線と C 線の焦点がそろう(端はまだ少しずれる)",
+                           "The singlet focuses blue closer; the achromat brings the F and C foci together (the ends still drift a little)"),
+                        _t("単レンズは赤ほど手前で焦点を結ぶ", "The singlet focuses red closer")],
+            "answer": 1,
+            "explain": _t("屈折率は青ほど大きいので、単レンズの F − C の焦点差は %.3f mm(青が手前)。アクロマートは F − C の差が %s で、"
+                          "F..C の範囲の焦点のゆれは単レンズの %.3f mm に対して %.4f mm(二次スペクトル)。"
+                          % (g["fc1"], fmt_fc(g["fc2"]), g["sec1"], g["sec2"]),
+                          "The index is higher for blue, so the singlet's F − C focus difference is %.3f mm (blue closer). The "
+                          "achromat has F − C = %s, and its focus wanders %.4f mm over F..C against %.3f mm for the singlet "
+                          "(secondary spectrum)." % (g["fc1"], fmt_fc(g["fc2"], "en"), g["sec2"], g["sec1"])),
+            "formula": _t("1/f = (n(λ) − 1)(1/R1 − 1/R2)\nアッベ数: V_d = (n_d − 1) / (n_F − n_C)\n"
+                          "アクロマートの条件: φ1/V1 + φ2/V2 = 0(φ = 1/f)",
+                          "1/f = (n(λ) − 1)(1/R1 − 1/R2)\nAbbe number: V_d = (n_d − 1) / (n_F − n_C)\n"
+                          "achromat condition: φ1/V1 + φ2/V2 = 0 (φ = 1/f)"),
+            "limit": _t("アクロマートがそろえるのは 2 つの波長(F 線と C 線)だけで、その間と外では焦点が少しずれる(二次スペクトル)。"
+                        "近軸の焦点だけを比べていて、色ごとの球面収差(色の球面収差)は入れていない。",
+                        "An achromat matches only two wavelengths (F and C); between and beyond them the focus still drifts "
+                        "(secondary spectrum). Only paraxial foci are compared; the colour dependence of spherical aberration "
+                        "(spherochromatism) is left out."),
+        },
+    }
+
+
+def textbook_axes(rec):
+    """各タブの時間つまみの読み(物理量)。"""
+    return {
+        "spherical": {"values": np.array([f["knob"] for f in rec["sph"]]),
+                      "segments": [{"k": 0, "label": _t("絞りの半径 a", "stop radius a"), "unit": "mm", "decimals": 1}]},
+        "coma": {"values": np.array([f["knob"] for f in rec["coma"]]),
+                 "segments": [{"k": 0, "label": _t("画角 θ", "field angle θ"), "unit": "°", "decimals": 1}]},
+        "astig": {"values": np.array([f["knob"] for f in rec["astig"]]),
+                  "segments": [{"k": 0, "label": _t("画角 θ(絞りを前に出した単レンズ)", "field angle θ (singlet, stop ahead)"),
+                                "unit": "°", "decimals": 1}]},
+        "chroma": {"values": np.array([f["knob"] * 1000.0 for f in rec["chroma"]]),
+                   "segments": [{"k": 0, "label": _t("波長 λ", "wavelength λ"), "unit": "nm", "decimals": 0}]},
+    }
+
+
+def attach_lessons(tabs, rec, g):
+    """タブに checks・lesson・axis を付ける。ok:false の行がある回だけ badge を limit に。限界の回を最初にしない。"""
+    checks, lessons, axes = textbook_checks(g), textbook_lessons(rec, g), textbook_axes(rec)
+    for tb in tabs:
+        tid = tb["id"]
+        tb["checks"], tb["lesson"], tb["axis"] = checks[tid], lessons[tid], axes[tid]
+        tb["badge"] = "limit" if any(not r["ok"] for r in checks[tid]) else "passed"
+    if tabs[0]["badge"] == "limit":
+        raise AssertionError("限界の回を最初のタブにしない(成功の回を見てから壊れ方を見る順)")
+    return tabs
 
 
 def encircled_radius(img, pitch_um, frac):
@@ -1432,6 +1671,13 @@ def geo_vs_diffraction(system, field, n=200):
     return tuple(encircled_radius(G, pitch, q) / encircled_radius(D, pitch, q) for q in (0.5, 0.8))
 
 
+def band_frames(stored, pane):
+    """ページに入った帯のコマを、コマの順に戻す。同じコマは 1 回だけ持つので(pocviewer の dedupe)、
+    ``index`` があればそれで引き直す(無ければ持ったコマがそのまま全コマ)。"""
+    idx = pane.get("index")
+    return stored if idx is None else stored[np.asarray(idx, int)]
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--out", help="HTML を残す先(省略すると一時フォルダに書いて検査だけ。そのときはコマを減らす)")
@@ -1446,18 +1692,23 @@ def main(argv=None) -> int:
                           _t("絞り・画角・波長をゆっくり振り、fullseye の光線追跡で追った光線と、スポット・PSF・波面を同じ時間軸で。",
                              "Sweep the stop, the field and the wavelength; rays traced by Fullseye with spot, PSF and "
                              "wavefront on the same time axis."),
-                          _t("ドラッグで回転、ホイールで拡大。空白で再生/停止、← → でコマ送り。段のボタンで跳ぶ。"
+                          _t("各タブは ① 問い → ② 予想(選択肢を押すと答えが開く)→ ③ 再生 → ④ 式 → ⑤ 限界 の順。"
+                             "時間つまみの読みは絞りの半径・画角・波長。バッジを押すと、確かめた項目・基準・結果の表が開く。"
+                             "ドラッグで回転、ホイールで拡大。空白で再生/停止、← → でコマ送り。段のボタンで跳ぶ。"
                              "レンズは半透明で、ガラスの中を通る光線が透けて見える。",
-                             "Drag to rotate, wheel to zoom. Space plays/pauses, arrow keys step. Stage buttons jump. "
-                             "The lenses are translucent, so the rays inside the glass show through."),
-                          [b[0] for b in built])
+                             "Each tab runs ① question → ② predict (tap a choice to reveal the answer) → ③ play → ④ equation "
+                             "→ ⑤ limit. The time slider reads the stop radius, field angle or wavelength. Tap a badge to open "
+                             "what was checked, the criterion and the result. Drag to rotate, wheel to zoom. Space plays/pauses, "
+                             "arrow keys step. Stage buttons jump. The lenses are translucent, so the rays inside the glass show "
+                             "through."),
+                          attach_lessons([b[0] for b in built], rec, g))
     with tempfile.TemporaryDirectory() as d:
         path = fs.write_viewer(spec, a.out or os.path.join(d, "ab.html"), ["ja", "en"])
         html = open(path, encoding="utf-8").read()
         size = os.path.getsize(path)
         data = json.loads(re.search(r"const D = (\{.*?\});\nconst \$ = ", html, re.S).group(1))
         A_ = data["arrays"]
-        same = all(np.array_equal(pv._decode_array(A_[tb["panes"][0]["frames"]]), b[1])
+        same = all(np.array_equal(band_frames(pv._decode_array(A_[tb["panes"][0]["frames"]]), tb["panes"][0]), b[1])
                    for tb, b in zip(data["tabs"], built))
         # 光線の棒の端(戻した姿勢)が op の点に一致するか: 各棒の始点は P + u·off
         worst = 0.0

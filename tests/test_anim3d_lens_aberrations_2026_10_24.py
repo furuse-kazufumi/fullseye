@@ -12,6 +12,8 @@
 * 収差が大きすぎる瞳では回折の PSF を作らず(``psf_safe`` が None)、幾何の PSF(光線の密度 ⊗ Airy)に切り替える。
   幾何の PSF は、回折の PSF も作れる重なりの領域で集中半径が 12 % 以内。
 * レンズは半透明(alpha 0.25〜0.4)の全周の形(手前半分を切り取らない)で、中を通る光線が透ける。
+* 学習用の型(2026-10-25): 全タブに lesson(問い → 予想 → 再生 → 式 → 限界)・axis(物理量の読み)・checks(値は gates() の値)。
+  ok:false の行がある回(非点: T 像面が 3 次の式から 2 割外れる)だけ limit、限界の回は最初に置かない。
 """
 from __future__ import annotations
 
@@ -168,3 +170,64 @@ def test_lenses_are_translucent_full_bodies():
                                         np.zeros((2, 1, 3)), np.tile([1.0, 0, 0, 0], (2, 1, 1)))
     html = fs.pocviewer._build_html(fs.viewer_spec("t", A._t("a", "a"), A._t("b", "b"), A._t("c", "c"), [ok]), "ja")
     assert "drawTranslucent" in html and '"alpha":' in html.replace(" ", "")
+
+
+# --------------------------------------------------------------------------- 学習用の型(2026-10-25)
+@pytest.fixture(scope="module")
+def built():
+    rec = A.run(quick=True)
+    g = A.gates(rec)
+    tabs = [A.tab_spherical(rec["sph"], rec["t"]), A.tab_coma(rec["coma"], rec["t"]), A.tab_astig(rec["astig"], rec["t"]),
+            A.tab_chroma(rec["chroma"], rec["t"], rec["R3"])]
+    return rec, g, A.attach_lessons([b[0] for b in tabs], rec, g)
+
+
+def test_every_tab_follows_the_textbook_flow(built):
+    rec, g, tabs = built
+    assert [t["id"] for t in tabs] == ["spherical", "coma", "astig", "chroma"]
+    assert tabs[0]["badge"] != "limit"                                   # 限界の回を最初にしない
+    assert tabs
+    for t in tabs:
+        ls = t["lesson"]
+        assert set(ls) == {"question", "choices", "answer", "explain", "formula", "limit"}, t["id"]
+        assert 2 <= len(ls["choices"]) <= 3 and 0 <= ls["answer"] < len(ls["choices"])
+        assert len(t["axis"]["values"]) == len(t["t"])                   # 時間つまみの読みは物理量
+        assert t["axis"]["segments"]
+        assert all("コマ" not in seg["label"]["ja"] for seg in t["axis"]["segments"])
+        assert t["checks"], t["id"]
+    assert np.allclose(tabs[0]["axis"]["values"], [f["knob"] for f in rec["sph"]])
+    assert np.allclose(tabs[3]["axis"]["values"], [f["knob"] * 1000 for f in rec["chroma"]])   # nm
+
+
+def test_checks_come_from_the_gates_and_only_failed_rows_make_a_limit_tab(built):
+    rec, g, tabs = built
+    rows = {t["id"]: t["checks"] for t in tabs}
+    assert tabs
+    for t in tabs:
+        failed = [c for c in t["checks"] if not c["ok"]]
+        assert (t["badge"] == "limit") == bool(failed), t["id"]
+    assert [t["badge"] for t in tabs] == ["passed", "passed", "limit", "passed"]
+    assert rows["spherical"][0]["result"] == "%.4f" % g["sph_small_dev"]
+    assert rows["chroma"][0]["result"] == "%s mm" % A._e(g["chroma_closed_dev"])
+    lim = rows["astig"][-1]                                              # 限界の回は外れた行を正直に出す
+    assert lim["ok"] is False and lim["result"] == "%.3f" % g["astig_end"][1]
+    assert g["astig_end"][1] < 0.9
+    assert "%.3f" % g["astig_end"][1] in tabs[2]["lesson"]["limit"]["en"]
+
+
+def test_page_has_lesson_axis_checks_and_no_catalogue_names(built):
+    rec, g, tabs = built
+    spec = fs.viewer_spec("t", A._t("a", "a"), A._t("b", "b"), A._t("c", "c"), tabs)
+    html = fs.pocviewer._build_html(spec, ["ja", "en"])
+    for piece in ("function lessonTop", "function axisText", "function checksHTML", '"lesson"', '"axis"', '"checks"'):
+        assert piece in html, piece
+    for bad in ("N-BK7", "N-SF2", "**", "http://", "https://"):
+        assert bad not in html, bad
+
+
+def test_band_frames_follow_the_dedupe_index():
+    """帯の PNG は同じコマを 1 回だけ持つ(土台の dedupe)。索引で引き直すと元のコマの列に戻る。"""
+    stored = np.arange(3 * 2 * 2).reshape(3, 2, 2)
+    back = A.band_frames(stored, {"index": [0, 0, 1, 2, 2]})
+    assert back.shape == (5, 2, 2) and np.array_equal(back[1], stored[0]) and np.array_equal(back[4], stored[2])
+    assert A.band_frames(stored, {}) is stored
