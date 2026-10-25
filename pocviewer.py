@@ -602,7 +602,7 @@ _HEX = re.compile(r"#[0-9a-fA-F]{6}\Z")
 _BODY_KEYS = frozenset({"name", "label", "pos", "faces", "rgb", "val", "alpha"})
 _TRAIL_KEYS = frozenset({"body", "offset", "xyz", "color", "tail", "label"})
 _CLOUD_KEYS = frozenset({"k", "pos", "rgb", "color", "point_size"})
-_PANE_KEYS = frozenset({"label", "frames", "boxes", "png"})
+_PANE_KEYS = frozenset({"label", "frames", "boxes", "png", "dedupe", "wide"})
 _EVENT_KEYS = frozenset({"t", "label"})
 
 
@@ -673,6 +673,27 @@ def _quat_matrix(q: np.ndarray) -> np.ndarray:
                   2 * (x * y + w * z), 1 - 2 * (x * x + z * z), 2 * (y * z - w * x),
                   2 * (x * z - w * y), 2 * (y * z + w * x), 1 - 2 * (x * x + y * y)], axis=-1)
     return m.reshape(np.shape(q)[:-1] + (3, 3))
+
+
+def _dedupe_frames(fr: np.ndarray):
+    """``(unique_rows, index)`` of a frame stack: row ``index[k]`` of ``fr[unique_rows]`` equals ``fr[k]``.
+
+    Exact byte comparison (a hash narrows, ``np.array_equal`` decides), first occurrence kept."""
+    import hashlib
+    seen, rows, index = {}, [], []
+    for k in range(len(fr)):
+        h = hashlib.blake2b(np.ascontiguousarray(fr[k]).tobytes(), digest_size=16).digest()
+        hit = None
+        for j in seen.get(h, ()):
+            if np.array_equal(fr[rows[j]], fr[k]):
+                hit = j
+                break
+        if hit is None:
+            hit = len(rows)
+            rows.append(k)
+            seen.setdefault(h, []).append(hit)
+        index.append(hit)
+    return np.asarray(rows, int), np.asarray(index, int)
 
 
 def _pack_anim3d(tab: dict, out: dict, store: _Store, where: str, ctx: _Ctx) -> None:
@@ -837,9 +858,21 @@ def _pack_anim3d(tab: dict, out: dict, store: _Store, where: str, ctx: _Ctx) -> 
             raise ValueError("%s: frames は (T,H,W) か (T,H,W,3)" % wp)
         if len(fr) != T:
             raise ValueError("%s: frames のコマ数 %d が t の %d と違う—— T の不一致" % (wp, len(fr), T))
-        panes.append({"label": _bi(p.get("label"), wp + ".label", ctx),
-                      "frames": store.put(fr, "png" if p.get("png", True) else "u8"),
-                      "boxes": _pack_boxes(p.get("boxes") or [], T, wp, ctx)})
+        label = _bi(p.get("label"), wp + ".label", ctx)
+        uniq, index = _dedupe_frames(fr) if p.get("dedupe", True) else (None, None)
+        dup = uniq is not None and len(uniq) < T
+        # identical frames (a sensor that only captures at a scan, a still strip) are stored
+        # once; ``index[k]`` is the stored frame shown at frame k. The pixels do not change.
+        # Key order label → frames → boxes is kept so a spec without duplicates (and without
+        # ``wide``) writes the same bytes as before dedupe existed; extras are appended.
+        entry = {"label": label,
+                 "frames": store.put(fr[uniq] if dup else fr, "png" if p.get("png", True) else "u8"),
+                 "boxes": _pack_boxes(p.get("boxes") or [], T, wp, ctx)}
+        if p.get("wide"):
+            entry["wide"] = True                     # a row of its own (a wide strip of small pictures)
+        if dup:
+            entry["index"] = [int(i) for i in index]
+        panes.append(entry)
     out["panes"] = panes
 
 
@@ -970,6 +1003,11 @@ def _pack_tab(tab: dict, store: _Store, idx: int, ctx: _Ctx) -> dict:
         raise ValueError("%s: axis は kind \"anim3d\" だけ(%s には時間つまみが無い)" % (where, kind))
     if tab.get("view"):
         out["view"] = {k: float(v) for k, v in tab["view"].items() if k in ("az", "el", "dist")}
+        if tab["view"].get("target") is not None:     # anim3d: look at this world point instead of the scene centre
+            tg = _finite(np.asarray(tab["view"]["target"], float), where + ".view.target")
+            if tg.shape != (3,):
+                raise ValueError("%s: view.target は (x, y, z)" % where)
+            out["view"]["target"] = [float(v) for v in tg]
 
     if kind in ("mesh", "points"):
         pos = _finite(tab.get("pos"), where + ".pos")
@@ -1127,6 +1165,7 @@ _CSS = """
   .evs button.on { background:#2c6fb5; border-color:#2c6fb5; color:#fff; }
   .panes { display:flex; flex-wrap:wrap; gap:10px; margin:6px 18px; }
   .pane { flex:1 1 220px; min-width:0; }
+  .pane.wide { flex:1 1 100%; }
   .pane .pl { font-size:12.5px; color:var(--dim); margin-bottom:3px; }
   .pane canvas { width:100%; height:auto; max-height:36vh; object-fit:contain; image-rendering:pixelated; }
 """
@@ -1438,6 +1477,7 @@ function sceneAnim(tab){
     S.clouds.push({k: c.k, n: c.n, pos: buf(new Float32Array(P)), col: buf(col), ps: c.point_size || 0});
   }
   S.ctr = [0,1,2].map(k => (lo[k] + hi[k]) / 2);
+  if (tab.view && tab.view.target) S.ctr = tab.view.target.slice();   /* 見たい所(作業域)を中心に */
   S.rad = 0.5 * Math.hypot(hi[0]-lo[0], hi[1]-lo[1], hi[2]-lo[2]) || 1;
   for (const c of S.clouds) if (!c.ps) c.ps = 3.2 * S.rad / Math.sqrt(c.n) * 0.5;
   S.tgt = S.ctr.slice();                          /* 追従の注視点(平滑化して動かす) */
@@ -1560,7 +1600,7 @@ function buildPanes(tab){
   const box = $('panes');
   if (tab.kind !== 'anim3d' || !tab.panes.length) { box.style.display = 'none'; box.innerHTML = ''; return; }
   box.style.display = 'flex';
-  box.innerHTML = tab.panes.map((p, j) => '<div class="pane"><div class="pl">' + esc(T(p.label)) + '</div><canvas id="pane' + j + '"></canvas></div>').join('');
+  box.innerHTML = tab.panes.map((p, j) => '<div class="pane' + (p.wide ? ' wide' : '') + '"><div class="pl">' + esc(T(p.label)) + '</div><canvas id="pane' + j + '"></canvas></div>').join('');
 }
 function buildEvents(tab){
   const box = $('evs');
@@ -1573,9 +1613,10 @@ function drawPanes(tab, f){
   tab.panes.forEach((p, j) => {
     const c = $('pane' + j); if (!c) return;
     const rec = D.arrays[p.frames], sh_ = rec.shape, H = sh_[1], W = sh_[2], k = Math.max(1, Math.round(320 / W));
+    const at = i => p.index ? p.index[Math.min(i, p.index.length - 1)] : i;                      /* 同じ絵は 1 回だけ持つ */
     if (c.width !== W*k || c.height !== H*k) { c.width = W*k; c.height = H*k; }
-    if (rec.t === 'png') for (let i = 1; i <= 6 && f + i < sh_[0]; i++) pngImg(p.frames, f + i);   /* 先読み */
-    const im = paneImage(p.frames, f); if (!im) return;                                          /* 読めるまで前のコマを残す */
+    if (rec.t === 'png') for (let i = 1; i <= 6 && at(f + i) < sh_[0]; i++) pngImg(p.frames, at(f + i));   /* 先読み */
+    const im = paneImage(p.frames, at(f)); if (!im) return;                                      /* 読めるまで前のコマを残す */
     const g = c.getContext('2d'); g.imageSmoothingEnabled = false; g.clearRect(0, 0, c.width, c.height);
     g.drawImage(im, 0, 0, W*k, H*k);
     g.font = (12 * Math.max(1, k/2)) + 'px sans-serif'; g.textBaseline = 'bottom';
@@ -2212,7 +2253,10 @@ def viewer_anim3d_tab(tab_id, label, badge, text, t, bodies, xyz, quat, trails=N
         時系列グラフ(:func:`viewer_frames_tab` と同じ形、``values`` は (T,))。
     panes : list of dict, optional
         同じ時間軸で並べる 2-D(センサー画像・op の結果)。``{"label": ..., "frames": (T,H,W[,3]),
-        "boxes": [...](frames と同じ形), "png": True}``。既定は無損失の PNG で埋める(画素は変えない)。
+        "boxes": [...](frames と同じ形), "png": True, "dedupe": True, "wide": False}``(``wide`` = 1 行を
+        占める横長のペイン)。既定は無損失の PNG で埋める
+        (画素は変えない)。まったく同じコマ(撮った時だけ変わるセンサーの絵、止まった帯)は 1 回だけ持ち、
+        コマごとの索引で引く(``dedupe=False`` で切る)。
     cbar : dict, optional
         ``val`` で色づけする物体があるときのカラーバー ``{lo, hi, unit, cmap, label}``。
     follow : str, optional
@@ -2232,6 +2276,9 @@ def viewer_anim3d_tab(tab_id, label, badge, text, t, bodies, xyz, quat, trails=N
         学習用の型。``{"question", "choices"(2〜3 個), "answer"(0 始まり), "explain", "formula", "limit"}``
         (文字列はすべて文字列の辞書)。カードは ① 問い → ② 予想(選択肢を押すと答えが開く)→ ③ 再生 の順、
         再生の下のカードに ④ 式 → 説明(``text``)→ ⑤ 限界 が並ぶ。他の kind のタブでも辞書の鍵として使える。
+    view : dict, optional
+        最初の視点 ``{az, el, dist}``(dist は場面の大きさに対する倍率)。``target``: (x, y, z) を渡すと
+        場面の中心でなくその点を見る(作業域に寄せるとき)。
 
     容量: 位置は軸ごとの uint16(刻み = 範囲/65535)、四元数は int16(刻み 1/32767)、メッシュは 1 回だけ。
     コマ数 T が合わない(xyz / quat / series / panes / 軌跡)、NaN / inf、範囲外の索引、未知の色指定は
