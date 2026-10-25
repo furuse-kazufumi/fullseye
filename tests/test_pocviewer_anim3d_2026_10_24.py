@@ -10,6 +10,8 @@
   範囲外の段の時刻・雲のコマ、存在しない物体の名指しは ValueError(黙って通さない)。
 * PNG は画素ごとに無損失で、外部の復号器(Pillow があれば)とも一致する。frames の png=True も同じ。
 * ページの JS が構文として正しい(node があれば)、外部 URL が無い、公開の入口から呼べる。
+* 物体の alpha(2026-10-25): 0 < alpha <= 1 以外・NaN・bool・文字列は ValueError。alpha が 1 か無い場面の
+  ページは前と同じ(半透明の塊は入らない)。半透明の物体は JSON に載り、不透明・軌跡・点群の後に描く。
 """
 from __future__ import annotations
 
@@ -373,3 +375,99 @@ def test_mcp_tool_accepts_an_anim3d_spec_as_json():
     bad["tabs"][0]["quat"][0][0] = [0, 0, 0, 0]                     # ノルム 0 は -32602
     with pytest.raises(ArgError, match="ノルムが 0"):
         call_tool("fullseye_write_viewer", {"spec": bad, "lang": ["ja"]}, cat, store)
+
+
+# --------------------------------------------------------------------------- 半透明の物体(alpha)
+def _with_alpha(alpha, j=0):
+    d = _tab()
+    d["bodies"] = [dict(b) for b in d["bodies"]]
+    d["bodies"][j]["alpha"] = alpha
+    return d
+
+
+@pytest.mark.parametrize("bad", [0, 0.0, -0.1, 1.0000001, 2, float("nan"), float("inf"), np.nan,
+                                 True, False, "0.3", None, [0.3], np.array([0.3])])
+def test_alpha_out_of_range_nan_and_wrong_types_are_rejected(bad):
+    with pytest.raises(ValueError, match="alpha"):
+        pv._build_html(_spec([_with_alpha(bad)]), "ja")
+
+
+@pytest.mark.parametrize("ok", [0.3, 1e-6, 1, 1.0, np.float32(0.25), np.int64(1)])
+def test_alpha_accepts_numbers_in_the_open_closed_unit_interval(ok):
+    d = _data(pv._build_html(_spec([_with_alpha(ok)]), "ja"))
+    b = d["tabs"][0]["bodies"][0]
+    if float(ok) < 1:
+        assert b["alpha"] == pytest.approx(float(ok))
+    else:
+        assert "alpha" not in b                                     # 1 は既定: 載せない
+
+
+def test_alpha_one_or_absent_leaves_the_page_byte_identical():
+    """alpha を使わない場面は、alpha を足す前と同じページ(公開済みのビューアに drift を出さない)。
+
+    差し込みの塊が入らないこと・本体の JS がそのまま入っていることも確かめる(=前と同じ JS)。
+    """
+    global RNG
+    saved = RNG
+    try:
+        RNG = np.random.default_rng(7)
+        plain = pv._build_html(_spec([_tab()]), ["ja", "en"])
+        RNG = np.random.default_rng(7)
+        one = pv._build_html(_spec([_with_alpha(1.0)]), ["ja", "en"])
+    finally:
+        RNG = saved
+    assert plain == one
+    assert "drawTranslucent" not in plain and "depthMask" not in plain and "u_eye" not in plain
+    head = pv._JS.split("__DATA__")[0]
+    assert head in plain and pv._JS.split("__DATA__")[1] in plain
+
+
+def test_translucent_body_is_in_the_json_and_drawn_after_trails_and_clouds():
+    html = pv._build_html(_spec([_with_alpha(0.3, j=1)]), ["ja", "en"])
+    d = _data(html)
+    assert [("alpha" in b) for b in d["tabs"][0]["bodies"]] == [False, True, False]
+    assert d["tabs"][0]["bodies"][1]["alpha"] == pytest.approx(0.3)
+    js = re.search(r"<script>(.*)</script>", html, re.S).group(1)
+    assert js.count(pv._JS_ALPHA) == 1
+    # 差し込みは drawAnim の定義の後・2-D の前(drawAnim を包むので、定義より後でなければならない)
+    assert js.index("function drawAnim(tab)") < js.index("const drawAnimOpaque = drawAnim;") < js.index(pv._JS_ALPHA_ANCHOR)
+    # 不透明のパス(不透明の物体 → 軌跡 → 点群)の後に半透明を描く
+    body = js[js.index("drawAnim = function(tab)"):js.index("function drawTranslucent")]
+    assert body.index("drawAnimOpaque(tab)") < body.index("drawTranslucent(tab, S, L)")
+    op = js[js.index("function drawAnim(tab)"):js.index("/* 同じ時間軸の 2-D")]
+    assert op.index("/* 物体 */") < op.index("/* 軌跡") < op.index("/* 点群")
+    tr = js[js.index("function drawTranslucent"):]
+    for sym in ("gl.enable(gl.BLEND)", "gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)", "gl.depthMask(false)",
+                "gl.enable(gl.DEPTH_TEST)", "gl.enable(gl.CULL_FACE)", ".sort((p, q) => q.d - p.d)",
+                "[gl.FRONT, gl.BACK]", "gl.depthMask(true)", "gl.disable(gl.BLEND)", "gl.disable(gl.CULL_FACE)",
+                "gl.uniform1f(ua, it.e.a)"):
+        assert sym in tr, sym
+    assert tr.index("gl.depthMask(false)") < tr.index("gl.drawElements") < tr.index("gl.depthMask(true)")
+    assert "uniform float u_a" in js and "uniform vec3 u_eye" in js
+
+
+def test_translucent_camera_matches_drawanim():
+    """半透明のパスは drawAnim と同じカメラで描く(式が食い違うと重ねた物体がずれる)。"""
+    op = pv._JS[pv._JS.index("function drawAnim(tab)"):pv._JS.index("/* 同じ時間軸の 2-D")]
+    tr = pv._JS_ALPHA[pv._JS_ALPHA.index("function drawTranslucent"):]
+    for line in ("const tg = $('follow').checked ? S.tgt : S.ctr;",
+                 "const cd = Math.cos(el), sd = Math.sin(el), ca = Math.cos(az), sa = Math.sin(az);",
+                 "const eye = [tg[0] + dist*cd*ca, tg[1] + dist*cd*sa, tg[2] + dist*sd];",
+                 "const fy = 0.9, vp = mul(persp(fy, cv.width/cv.height, S.rad*0.02, S.rad*40), look(eye, tg, [0,0,1]));",
+                 "let l = [ca*cd*0.5, sa*cd*0.5, sd*0.5 + 0.5]; const ll = Math.hypot(l[0], l[1], l[2]); l = l.map(v => v/ll);"):
+        assert line in op and line in tr, line
+
+
+@pytest.mark.skipif(shutil.which("node") is None, reason="node が無い")
+def test_the_translucent_page_script_is_valid_javascript(tmp_path):
+    html = pv._build_html(_spec([_with_alpha(0.3)]), ["ja", "en"])
+    js = re.search(r"<script>(.*)</script>", html, re.S).group(1)
+    f = tmp_path / "v.js"
+    f.write_text(js, encoding="utf-8")
+    r = subprocess.run(["node", "--check", str(f)], capture_output=True, text=True, stdin=subprocess.DEVNULL)
+    assert r.returncode == 0, r.stderr
+
+
+def test_alpha_is_documented():
+    doc = pv.viewer_anim3d_tab.__doc__
+    assert '"alpha"' in doc and "0 < alpha <= 1" in doc

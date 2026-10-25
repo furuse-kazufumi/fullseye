@@ -625,7 +625,8 @@ EXAMPLES = [
      "summary": "fs.viewer_anim3d_tab の最小例。3 関節のアームが箱を運ぶ運動学(外部の物理エンジン無し)を、"
                 "物体ごとのメッシュ 1 回 + コマごとの姿勢(位置 uint16・四元数 int16)で 1 本の自己完結 HTML に"
                 "する。残像の軌跡・点群の時系列・段の区切り・時系列グラフ・上から見たカメラ画像と二値化"
-                "(無損失 PNG)を同じ時間軸で再生。姿勢の復元が量子化の刻みの半分以内、PNG が画素ごとに一致。"},
+                "(無損失 PNG)を同じ時間軸で再生。半透明のレンズ(alpha 0.3)を貫いて焦点へ集まる光線が透けて見える。"
+                "姿勢の復元が量子化の刻みの半分以内、PNG が画素ごとに一致。"},
     {"id": "camera_intrinsics_calibration", "task": "calibration", "data": "synthetic",
      "name": "平面ターゲットの多視点から内部行列 K を推定する(Zhang 法)",
      "summary": "fs.camera_calibration を facade から呼ぶ最小例。傾けた 6 視点で K を厳密回収し"

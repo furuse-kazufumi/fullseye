@@ -4,6 +4,10 @@
     py -3.11 examples/interactive_anim3d_viewer.py                    # 一時フォルダに書いて検査だけ
     py -3.11 examples/interactive_anim3d_viewer.py --out out/arm.html # 開いて触れる HTML を残す
 
+    # 半透明の物体は bodies の 1 つに "alpha" を足すだけ(0 < alpha <= 1、レンズ・ガラスは 0.25〜0.35)
+    fs.viewer_anim3d_tab(..., bodies=[..., {"name": "lens", "pos": P, "faces": F,
+                                            "rgb": [170, 220, 255], "alpha": 0.3}], ...)
+
 【この例が示すこと】
 3 関節のアーム(旋回 + 肩 + 肘、手先は常に真下)が、床の箱をつかんで別の台へ運ぶ。物理エンジンは
 使わず、手先の通り道を決めて逆運動学で関節角を出す(外部依存なし、numpy だけ)。それを
@@ -16,10 +20,16 @@
 (手先の高さ・指の開き)・**上から見たカメラの高さ画像と、その二値化(op の結果に相当)** を
 同じ時間軸で再生する。2-D の画像は無損失の PNG で埋める(画素は 1 つも変えない、間引かない)。
 
+台の脇には **半透明のレンズ**(``"alpha": 0.3``)を置き、3 本の光線がそれを貫いて焦点へ集まる
+(薄肉レンズの近似)。半透明の物体は軌跡・点群の後に重ねて描かれるので、レンズの中と後ろの光線が
+透けて見える(alpha を付けなければ、レンズは光線を隠す不透明の塊になる)。
+
 検査(PASS の条件):
 * 埋めた姿勢を Python 側で戻すと、位置は量子化の刻みの半分以内、四元数の角度の誤差は 1e-4 rad 未満。
 * 戻した姿勢で手先の点を動かしても、真の手先とのずれが刻みから見積もった上限以内。
 * PNG で埋めた 2 枚の画像列が、描いた画像と画素ごとに一致する。外部 URL は無い。
+* レンズは alpha 0.3 のまま JSON に載り、ページに半透明の描画(drawTranslucent)が入る。3 本の光線は
+  どれもレンズの中を通り、レンズの後ろで焦点(レンズから f)の 1 mm 以内に集まる。
 
 EXTEND: 実機やシミュレータの記録なら、物体ごとのメッシュ(ローカル座標)と、コマごとの世界姿勢
 (位置 + 四元数 w,x,y,z)を渡すだけ。2-D の列はセンサー画像や op の出力をそのまま ``panes`` へ。
@@ -77,6 +87,61 @@ def cylinder_mesh(r, h, n=24):
     top = np.vstack([[0, 0, h], np.column_stack([ring, np.full(n, h)])])
     tri += [[top0, top0 + 1 + i, top0 + 1 + (i + 1) % n] for i in range(n)]
     return np.vstack([side, top]), np.array(tri)
+
+
+def lens_mesh(a=0.05, tc=0.026, te=0.004, nr=8, ns=32):
+    """両凸レンズ(光軸 = ローカル x、中心が原点)。半径 a、中心の厚み tc、縁の厚み te。
+
+    面の半分の厚み h(r) = te/2 + (tc-te)/2 · (1 - r²/a²)(放物面の近似)。閉じた凸の立体で、三角形は
+    すべて外向き(反時計回り)に揃える —— 半透明の描画は裏面 → 表面の 2 パスなので巻き順を揃えておく。
+    """
+    def h(r):
+        return te / 2 + (tc - te) / 2 * (1 - (r / a) ** 2)
+    ang = np.linspace(0, 2 * np.pi, ns, endpoint=False)
+    pos, tri = [], []
+    ring_ids = {}
+    for side in (1, -1):
+        pos.append([side * h(0.0), 0.0, 0.0])
+        ring_ids[(side, 0)] = [len(pos) - 1] * ns
+        for k in range(1, nr + 1):
+            r = a * k / nr
+            ids = []
+            for t in ang:
+                ids.append(len(pos))
+                pos.append([side * h(r), r * np.cos(t), r * np.sin(t)])
+            ring_ids[(side, k)] = ids
+        for k in range(nr):
+            i0, i1 = ring_ids[(side, k)], ring_ids[(side, k + 1)]
+            for m in range(ns):
+                n = (m + 1) % ns
+                if k == 0:
+                    tri.append([i0[0], i1[m], i1[n]])
+                else:
+                    tri += [[i0[m], i1[m], i1[n]], [i0[m], i1[n], i0[n]]]
+    f, b = ring_ids[(1, nr)], ring_ids[(-1, nr)]                      # 縁の帯
+    for m in range(ns):
+        n = (m + 1) % ns
+        tri += [[f[m], b[m], b[n]], [f[m], b[n], f[n]]]
+    pos, tri = np.array(pos), np.array(tri)
+    a_, b_, c_ = pos[tri[:, 0]], pos[tri[:, 1]], pos[tri[:, 2]]
+    out = np.einsum("ij,ij->i", np.cross(b_ - a_, c_ - a_), (a_ + b_ + c_) / 3) < 0   # 凸なので重心で外向きを判定
+    tri[out] = tri[out][:, ::-1]
+    return pos, tri
+
+
+LENS_C, LENS_F = np.array([0.62, 0.42, 0.20]), 0.13                 # レンズの中心と焦点距離 [m]
+RAY_X0, RAY_X1, RAY_T = 0.36, 0.84, 2.4                             # 光線の始点・終点の x、届くまでの時間 [s]
+RAY_H = (0.032, 0.0, -0.032)                                        # 光軸からの高さ(z)
+
+
+def rays(t):
+    """平行光が薄肉レンズで焦点へ曲がる 3 本(光の先端が RAY_T 秒で端まで進み、その後は止まる)。"""
+    x = RAY_X0 + (RAY_X1 - RAY_X0) * np.clip(t / RAY_T, 0, 1)
+    out = []
+    for hgt in RAY_H:
+        z = np.where(x < LENS_C[0], hgt, hgt * (1 - (x - LENS_C[0]) / LENS_F))
+        out.append(np.column_stack([x, np.full_like(x, LENS_C[1]), LENS_C[2] + z]))
+    return out
 
 
 # --------------------------------------------------------------------------- 四元数 (w,x,y,z)
@@ -176,11 +241,12 @@ def build():
               ("turret", base, [120, 132, 146]), ("upper_arm", link1, [79, 150, 220]),
               ("forearm", link2, [104, 180, 240]), ("palm", palm, [200, 205, 212]),
               ("finger_l", finger, [230, 230, 236]), ("finger_r", finger, [230, 230, 236]),
-              ("box", payload, [240, 176, 64])]
+              ("box", payload, [240, 176, 64]), ("lens", lens_mesh(), [170, 220, 255])]
     Bn = len(shapes)
     xyz, quat = np.zeros((T, Bn, 3)), np.zeros((T, Bn, 4))
     quat[..., 0] = 1.0
     xyz[:, 1, :2], xyz[:, 2, :2] = A, B
+    xyz[:, 10] = LENS_C                                               # レンズは据え置き
     box_q = qz(np.arctan2(A[1], A[0]))                              # 箱は放射方向に向いて置いてある
     box_p = np.r_[A, BOX / 2]
     rel = None
@@ -207,6 +273,7 @@ def build():
                 rel = None
         xyz[i, 9], quat[i, 9] = box_p, box_q
     bodies = [{"name": n, "pos": m[0], "faces": m[1], "rgb": c} for n, m, c in shapes]
+    bodies[10]["alpha"] = 0.3                                         # 半透明: 中を通る光線が見える
     return t, tip, grip, events, grasped, bodies, xyz, quat
 
 
@@ -249,7 +316,7 @@ def main(argv=None) -> int:
     a = ap.parse_args(argv)
 
     t, tip, grip, events, grasped, bodies, xyz, quat = build()
-    depth = height_images(bodies, xyz, quat)
+    depth = height_images(bodies[:10], xyz[:, :10], quat[:, :10])     # レンズ(宙に浮く)は高さ画像に入れない
     lo8, hi8 = int(np.rint(0.02 / 0.6 * 255)), int(np.rint(0.10 / 0.6 * 255))
     mask = (((depth >= lo8) & (depth <= hi8)) * 255).astype(np.uint8)   # 床より高く腕より低い = 置かれた物
     box_px = np.column_stack([(xyz[:, 9, 1] - Y0) / RES - 0.5, (xyz[:, 9, 0] - X0) / RES - 0.5])
@@ -266,13 +333,17 @@ def main(argv=None) -> int:
     tab = fs.viewer_anim3d_tab(
         "arm", _t("アームが箱を運ぶ", "An arm carries a box"), "passed",
         _t("3 関節のアーム(旋回・肩・肘)が箱をつかみ、台へ運ぶ。逆運動学だけの合成(物理なし)。"
-           "右下は真上からの高さ画像と、その二値化(置かれた物だけが残る)。",
+           "右下は真上からの高さ画像と、その二値化(置かれた物だけが残る)。"
+           "台の脇の半透明のレンズ(alpha 0.3)を 3 本の光線が貫き、焦点へ集まる。",
            "A three-joint arm (yaw, shoulder, elbow) grasps a box and carries it to a stand. Pure inverse "
-           "kinematics (no physics). Below: a top-down height image and its binarisation (only resting objects remain)."),
+           "kinematics (no physics). Below: a top-down height image and its binarisation (only resting objects remain). "
+           "Beside the stand, three rays pass through a translucent lens (alpha 0.3) and meet at its focus."),
         t, bodies, xyz, quat,
         trails=[{"body": "palm", "offset": [0, 0, -LG], "color": "#ffd54f", "tail": 1.2,
                  "label": _t("手先(残像 1.2 s)", "Fingertip (1.2 s trail)")},
-                {"body": "box", "color": "#4dd0e1", "label": _t("箱の中心", "Box centre")}],
+                {"body": "box", "color": "#4dd0e1", "label": _t("箱の中心", "Box centre")}]
+               + [{"xyz": p, "color": c, "label": _t("光線 %d" % (k + 1), "Ray %d" % (k + 1))}
+                  for k, (p, c) in enumerate(zip(rays(t), ("#ff5252", "#ff8a65", "#ff4081")))],
         clouds=[cloud(0), cloud(rel_k)],
         events=events,
         series=[{"label": _t("手先の高さ", "Fingertip height"), "values": tip[:, 2], "lo": 0.0, "hi": 0.5,
@@ -326,6 +397,24 @@ def main(argv=None) -> int:
         assert "http://" not in html and "https://" not in html, "外部 URL がある"
         assert len(tb["events"]) == 6 and tb["events"][0]["k"] == 0
         assert mask[0].any() and mask[rel_k].any(), "二値化に箱が写っていない"
+        # 半透明のレンズ: JSON に alpha が載り、ページに半透明の描画が入る。光線はレンズを貫いて焦点へ
+        lens_j = [b["name"] for b in bodies].index("lens")
+        assert tb["bodies"][lens_j]["alpha"] == 0.3 and "drawTranslucent" in html
+        assert all("alpha" not in b for k, b in enumerate(tb["bodies"]) if k != lens_j)
+        lp, lf = bodies[lens_j]["pos"], bodies[lens_j]["faces"]
+        vol = float(np.einsum("ij,ij->i", lp[lf[:, 0]], np.cross(lp[lf[:, 1]], lp[lf[:, 2]])).sum() / 6)
+        assert vol > 0, "レンズの三角形が外向きに揃っていない"
+        half_t = float(lp[:, 0].max())
+        inside, focus_err = 0, 0.0
+        for p in rays(t):
+            rel_p = p - LENS_C
+            inside += int(np.any((np.abs(rel_p[:, 0]) < half_t) & (np.hypot(rel_p[:, 1], rel_p[:, 2]) < 0.05)))
+            at_f = np.interp(LENS_C[0] + LENS_F, p[:, 0], p[:, 2]) if p[-1, 0] > LENS_C[0] + LENS_F else np.nan
+            focus_err = max(focus_err, abs(at_f - LENS_C[2]))
+        print("半透明のレンズ: alpha %.2f、符号付き体積 %.2e m^3(外向き)、貫く光線 %d / %d 本、焦点でのずれ最大 %.1e m"
+              % (tb["bodies"][lens_j]["alpha"], vol, inside, len(RAY_H), focus_err))
+        assert inside == len(RAY_H), "光線がレンズの中を通っていない"
+        assert focus_err < 1e-3, focus_err
         try:                                                             # 四元数のノルム 0 は止まる
             bad = quat.copy()
             bad[3, 9] = 0.0
