@@ -75,6 +75,7 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 <a href="../../articles/assets/poc/poc_microns_brain_wave/04_wave_on_wiring.gif"><img src="../thumbs/poc_microns_brain_wave.jpg" alt="Mauskortex-Welle" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Mauskortex-Welle</span></a>
 <a href="../../articles/assets/media/evis_stereo_fullseye.mp4"><img src="../thumbs/evis_stereo_depth.jpg" alt="Stereoaugen" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Stereoaugen</span></a>
 <a href="../../articles/assets/media/evis_bean_track_fullseye.mp4"><img src="../thumbs/evis_bean_track.jpg" alt="Stäbchenkamera-Tracking" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Stäbchenkamera-Tracking</span></a>
+<a href="../../view2026/anim3d/interactive_anim3d_viewer.html?lang=de"><img src="../thumbs/interactive_anim3d_viewer.jpg" alt="Arm und halbtransparente Linse" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Arm und halbtransparente Linse · 0.3 MB</span></a>
 </div>
 
 ## Artikelserien (englische Artikel auf Qiita)
@@ -653,6 +654,10 @@ Jede Zahl ist gegen eine Ground Truth gemessen, die der PoC selbst eingesetzt ha
 
 - [Stereoaugen](../../articles/assets/media/evis_stereo_fullseye.mp4) (Video): Ein Muskel-Skelett-Humanoid schlägt mit Stäbchen eine Bohne, gefilmt mit den eigenen Augen (64 mm Abstand); Fullseye berechnet je Frame Stereo-Disparität -> Tiefe. **Fehler der Bohnenentfernung: Median 0.66 %, max. 1.91 % (229 / 241 Frames lesbar).** [Quelle](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/gen_evis_media.py)
 - [Stäbchenkamera-Tracking](../../articles/assets/media/evis_bean_track_fullseye.mp4) (Video): Im Video der Stäbchenspitzen-Kamera derselben Szene erkennt und verfolgt Fullseye die Bohne. **In allen 163 sichtbaren Frames erkannt (163 / 163); Schwerpunktfehler gegenüber der Wahrheit im Median 0.10 px.** [Quelle](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/gen_evis_media.py)
+
+**Bewegtes 3-D zum Drehen**
+
+- [Arm und halbtransparente Linse](../../view2026/anim3d/interactive_anim3d_viewer.html?lang=de) (bewegtes 3-D, drehbar, 0.3 MB): Mit dem Finger drehen und den Arm beim Tragen einer Kiste aus jedem Winkel ansehen. Strahlen laufen durch eine halbtransparente Linse in den Brennpunkt, darunter laufen ein Höhenbild von oben und seine Binarisierung zeitgleich mit. [Quelle](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
 
 </div>
 

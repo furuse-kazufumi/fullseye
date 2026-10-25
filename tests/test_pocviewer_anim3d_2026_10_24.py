@@ -471,3 +471,34 @@ def test_the_translucent_page_script_is_valid_javascript(tmp_path):
 def test_alpha_is_documented():
     doc = pv.viewer_anim3d_tab.__doc__
     assert '"alpha"' in doc and "0 < alpha <= 1" in doc
+
+
+# ----------------------------- placed last: they use the shared RNG, the earlier tests depend on its order
+def test_identical_pane_frames_are_stored_once_and_indexed():
+    """A sensor that only changes at a scan: each distinct frame is stored once, the index restores all T."""
+    tab = _tab()
+    a, b = (RNG.integers(0, 256, (9, 13, 3), dtype=np.uint8) for _ in range(2))
+    seq = np.stack([a if k < 4 else b for k in range(T)])
+    seq[T - 1] = a                                                   # an earlier picture coming back
+    tab["panes"] = [{"label": _tx("cam"), "frames": seq}, {"label": _tx("off"), "frames": seq, "dedupe": False}]
+    d = _data(pv._build_html(_spec([tab]), "ja"))
+    p0, p1 = d["tabs"][0]["panes"]
+    stored = pv._decode_array(d["arrays"][p0["frames"]])
+    assert len(stored) == 2 and len(p0["index"]) == T
+    assert np.array_equal(stored[np.asarray(p0["index"])], seq)       # lossless, frame by frame
+    assert "index" not in p1 and len(pv._decode_array(d["arrays"][p1["frames"]])) == T
+
+
+def test_view_target_and_wide_pane_pass_through():
+    """view.target (look at the work area) and pane wide (a row of its own) reach the page; bad target refused."""
+    tab = _tab()
+    tab["view"] = {"az": 0.6, "el": 0.5, "dist": 0.4, "target": [0.1, -0.2, 0.3]}
+    tab["panes"] = [dict(tab["panes"][0], wide=True), tab["panes"][1]]
+    html = pv._build_html(_spec([tab]), "ja")
+    d = _data(html)
+    assert d["tabs"][0]["view"]["target"] == [0.1, -0.2, 0.3] and d["tabs"][0]["view"]["dist"] == 0.4
+    assert d["tabs"][0]["panes"][0]["wide"] is True and "wide" not in d["tabs"][0]["panes"][1]
+    assert "tab.view.target" in html and ".pane.wide" in html
+    tab["view"] = {"target": [0.0, 1.0]}
+    with pytest.raises(ValueError):
+        pv._build_html(_spec([tab]), "ja")
