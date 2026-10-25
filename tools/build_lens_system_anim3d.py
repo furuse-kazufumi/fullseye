@@ -254,7 +254,7 @@ class Scene:
     def park(self, half_len=0.0):
         return np.array([self.park_x - half_len, 0.0, PARK_Z])
 
-    def add(self, name, mesh, rgb, xyz=None, quat=None, label=None):
+    def add(self, name, mesh, rgb, xyz=None, quat=None, label=None, alpha=None):
         pos, tri = mesh
         xyz = np.zeros((self.n, 3)) if xyz is None else np.asarray(xyz, float)
         if xyz.shape == (3,):
@@ -265,6 +265,8 @@ class Scene:
         b = {"name": name, "pos": pos, "faces": tri, "rgb": list(rgb)}
         if label is not None:
             b["label"] = label
+        if alpha is not None:                                  # 光が通る部品(レンズ)は半透明
+            b["alpha"] = float(alpha)
         self.items.append((b, xyz, quat))
 
     def color(self, key, rgb):
@@ -918,6 +920,9 @@ def run_pupils(n_frames=NF):
 # 3-D と帯の組み立て(タブごと)                                               #
 # =========================================================================== #
 GLASS_RGB = (170, 214, 238)
+# レンズの不透明度(pocviewer の bodies[*]["alpha"])。半透明にして、ガラスの中と後ろを通る光線を透かして見せる。
+# 鏡筒の絞り・スクリーン・センサー・台・支柱は光を通さないので不透明のまま。
+GLASS_ALPHA = 0.3
 MAT_RGB = {"WATER": (120, 180, 255), "PMMA": (200, 230, 245), "N-BK7": GLASS_RGB,
            "POLYCARBONATE": (225, 215, 190), "N-SF11": (230, 200, 160), "N-LASF9": (240, 180, 150)}
 WHITE = (235, 235, 235)
@@ -940,7 +945,7 @@ def _draw_paths(sc, k, paths, key, block_key=None, stop_index=None, stop_key="gr
 
 
 def _lens_body(sc, name, L, n_xyz, rgb=GLASS_RGB, post=True):
-    sc.add(name, lens_mesh(L["R1"], L["R2"], L["t"], L["ap"]), rgb, xyz=n_xyz)
+    sc.add(name, lens_mesh(L["R1"], L["R2"], L["t"], L["ap"]), rgb, xyz=n_xyz, alpha=GLASS_ALPHA)
     if post:
         xyz = np.asarray(n_xyz, float)
         xyz = (np.tile(xyz, (sc.n, 1)) if xyz.shape == (3,) else xyz) + np.array([L["t"] / 2, 0.0, 0.0])
@@ -1125,7 +1130,8 @@ def build_lensmaker_tab(rec):
         on = np.array([rec["shape"][k] == sh for k in range(n_)])
         xyz = np.where(on[:, None], 0.0, np.array([sc.park_x, 0.0, PARK_Z - t_ / 2])[None, :])
         quat = np.where(on[:, None], Q0[None, :], Q_FLAT[None, :])
-        sc.add("lens_%d" % sh, lens_mesh(R, -R, t_, AP_B), MAT_RGB.get(mat, GLASS_RGB), xyz=xyz, quat=quat)
+        sc.add("lens_%d" % sh, lens_mesh(R, -R, t_, AP_B), MAT_RGB.get(mat, GLASS_RGB), xyz=xyz, quat=quat,
+               alpha=GLASS_ALPHA)
     sc.add("lens_post", cylinder_z(2.2, BENCH_TOP, -AP_B - 0.5), (120, 124, 132), xyz=np.array([1.0, 0, 0]))
     fpar = np.full((n_, 3), np.nan)
     fthin = np.full((n_, 3), np.nan)
@@ -1542,7 +1548,7 @@ def build_spec(res):
             pv.viewer_number(T("材料", "materials"), "WATER · PMMA · N-BK7 · POLYCARBONATE · N-SF11 · N-LASF9")]
     tabs.append(pv.viewer_anim3d_tab(
         "lensmaker", T("レンズメーカーの式", "Lensmaker's equation"), "passed", text, B["t"], bodies, xyz, quat,
-        events=events, series=series, numbers=nums, view=dict(VIEW_LONG, dist=0.5),
+        events=events, series=series, numbers=nums, view=dict(VIEW_LONG, dist=0.42),
         panes=[_pane(frames, "Fullseye の処理の帯: material_optical_constants(材料ライブラリの n、分散曲線の上の点)→ "
                              "thick_lens(厚いレンズの閉形式、オレンジ = 後ろの主点 H′)→ paraxial_trace(近軸の光線、緑 = F′)→ "
                              "trace_rays(実光線、黄)。右端: 白い線 = 薄肉の式(門の値)、横軸 (n−1)(1/R1−1/R2)、縦軸 1/f",
@@ -1580,7 +1586,7 @@ def build_spec(res):
             pv.viewer_number(T("望遠鏡になる間隔 f1 + f2", "telescope spacing f1 + f2"), "%.1f mm" % S["C_afocal_d"])]
     tabs.append(pv.viewer_anim3d_tab(
         "doublet", T("2 枚組と ABCD 行列", "Two lenses and ABCD matrices"), "passed", text, C["t"], bodies, xyz, quat,
-        events=events, series=series, numbers=nums, view=dict(VIEW_LONG, dist=0.5),
+        events=events, series=series, numbers=nums, view=dict(VIEW_LONG, dist=0.42),
         panes=[_pane(frames, "Fullseye の処理の帯: abcd_matrix(2×2 の行列、水色 = 主点 H′)→ abcd_trace(高さ 9 mm の近軸光線)"
                              "→ paraxial_trace(実の処方の f と F′、緑)→ trace_rays(実光線、黄)。右端: 白い線 = "
                              "1/f1 + 1/f2 − d/(f1·f2)(門の値)",
@@ -1632,8 +1638,9 @@ def build_spec(res):
         T("レンズ 1 枚から光学系へ", "From one lens to an optical system"),
         T("教科書の結像を、つまみを振って動かす。光線は fullseye の光線追跡、式は門の値",
           "Textbook imaging with the knob turning. Rays come from fullseye's ray tracer; the formulas are the gates"),
-        T("▶ で再生。帯の 4 段は 0.6 秒ずつ順に光る。ドラッグで視点を回す。",
-          "Press ▶ to play; the four band stages light up in turn. Drag to orbit."),
+        T("▶ で再生。帯の 4 段は 0.6 秒ずつ順に光る。ドラッグで視点を回す。レンズは半透明で、ガラスの中を通る光線が透けて見える。",
+          "Press ▶ to play; the four band stages light up in turn. Drag to orbit. The lenses are translucent, so the rays "
+          "inside the glass show through."),
         tabs)
     return spec, S, infos
 

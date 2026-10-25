@@ -13,6 +13,8 @@
 * 瞳: chief_ray は絞りの中心を通る。小さな画角の主光線の延長が光軸と交わる所 = 入射瞳(独立経路)。縁で切らない
   系では 10° まで cos⁴ に 1% で合い、縁で切る系では 21° で cos⁴ の半分未満。
 * ページ: 4 タブ・op の登録名・3 MB 以内。
+* 半透明: レンズは alpha 0.25〜0.4(中を通る光線が透ける)、台・支柱・スクリーン・センサー・絞りは不透明のまま。
+  HTML の JSON に alpha が載り、半透明の描画(drawTranslucent)が入る。
 """
 from __future__ import annotations
 
@@ -216,3 +218,26 @@ def test_page_has_four_tabs_with_op_names_and_fits_3mb(res, tmp_path):
                "abcd_trace", "chief_ray", "ray_bundle", "relative_illumination"):
         assert op in html
     assert "http://" not in html and "https://" not in html
+
+
+def test_lenses_are_translucent_and_opaque_parts_stay_opaque(res, tmp_path):
+    L, r = res
+    import re
+
+    import pocviewer as pv
+    spec, S, infos = L.build_spec(r)
+    assert 0.25 <= L.GLASS_ALPHA <= 0.4
+    for t in spec["tabs"]:
+        lenses = [b for b in t["bodies"] if b["name"].startswith("lens") and not b["name"].endswith("_post")]
+        assert lenses, t["id"]
+        for b in lenses:
+            assert b.get("alpha") == L.GLASS_ALPHA, (t["id"], b["name"])
+        for b in t["bodies"]:
+            opaque = (b["name"] in ("bench", "screen", "sensor", "stop") or b["name"].endswith("_post")
+                      or b["name"].startswith("ray_"))
+            if opaque:
+                assert "alpha" not in b, (t["id"], b["name"])
+    out = pv.write_viewer(spec, str(tmp_path / "lens.html"), list(L.LANGS))
+    html = open(out, encoding="utf-8").read()
+    assert re.search(r'"alpha":\s*%s' % re.escape(repr(L.GLASS_ALPHA)), html)
+    assert "drawTranslucent" in html
