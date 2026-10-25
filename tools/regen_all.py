@@ -304,6 +304,10 @@ EXCLUDED = {
     "tools/gen_xray_tables.py": "材料表の X 線の列(materials_xray_data.py)。入力は NIST SRD 126(Hubbell & Seltzer)の公開ページを手で保存したもの(repo の外、著作権の表示があるので部分集合だけを同梱)で CI では作れない —— 生成物を commit し、手元では `--nist <dir> --check` が drift を見る。tests/test_dualxray.py が NIST の公表値と化合物の表で中身を守る。",
     "tools/gen_pmd_real.py": "デフレクトメトリの PoC の実データ(DataverseNO doi:10.18710/TKS7SI、CC0 1.0)の抜き出しと全解析の記録。入力の原本(16 bit TIFF 280 枚、110 MB)は repo の外で手で取得するので CI では作れない —— 3 枚の切り出しと解析の記録の小さな npz を data/pmd_real/ に commit し、出典と改変は同じ場所の README.md に書く。PoC は FULLSEYE_PMD_HAMMER_DATA があるとき原本から解析し直して記録との差を門で見る。",
     "tools/gen_material_tables.py": "材料表(materials_data.py)。入力の refractiveindex.info database(CC0、71 MB)は repo の外にあるので CI では作れない —— 生成物を commit し、手元では `--rii <database dir> --check` が drift を見る。tests/test_materials.py がカタログ公表値(n_d / V_d)と一次文献の点で中身を守る。",
+    "tools/build_lens_system_anim3d.py": ("教科書の光学「レンズ 1 枚から光学系へ」の動く 3-D(docs/anim3d/textbook_lens_system.html、"
+                                         "約 3 MB)。pocviewer の kind anim3d(枝 feat/pocviewer-anim3d)が固まるまでは形が動くので、"
+                                         "手で回して commit する(build_view2026_viewers と同じ扱い)。中身は "
+                                         "tests/test_lens_system_anim3d.py が理論の式と独立経路で守る。"),
     "tools/gen_wing1d_gallery.py": _ARTICLE_REASON,
     "tools/gen_wing2d_gallery.py": _ARTICLE_REASON,
     "tools/gen_wing3d_gallery.py": _ARTICLE_REASON,
