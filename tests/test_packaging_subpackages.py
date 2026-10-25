@@ -16,46 +16,15 @@ import は通り、テストは緑、wheel からは丸ごと消える。root �
 from __future__ import annotations
 
 import os
-import re
+import tomllib
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 def _declared_packages() -> list[str]:
-    """`packages = [...]` を読む。tomllib(3.11+)があればそれで、無ければコメントを
-    落として正規表現で。
-
-    ★2026-09-15: 最初は ``import tomllib`` をモジュール先頭に置いていた。3.11 の手元では
-    通り、**3.10 の CI では収集段階で ModuleNotFoundError → スイート全体が止まる**
-    ([[feedback_test_import_kills_collection]] を自分で再演)。標準ライブラリでも
-    版で無いものがある。
-    """
-    try:
-        import tomllib
-    except ImportError:                                       # 3.10
-        return _declared_packages_regex()
+    """`packages = [...]` を tomllib で読む(3.10 向けの正規表現の代用は 2026-10-24 に外した)。"""
     with open(os.path.join(ROOT, "pyproject.toml"), "rb") as f:
         return list(tomllib.load(f)["tool"]["setuptools"]["packages"])
-
-
-def _declared_packages_regex() -> list[str]:
-    """tomllib が無い版のための読み方。コメントを落としてから切り出す
-    (`test_packaging_foundation._py_modules` がコメント内の `]` で切れていた前科)。"""
-    with open(os.path.join(ROOT, "pyproject.toml"), encoding="utf-8") as f:
-        src = re.sub(r"#[^\n]*", "", f.read())
-    m = re.search(r"^packages\s*=\s*\[(.*?)\]", src, re.M | re.S)
-    assert m, "packages の宣言が見つからない"
-    return re.findall(r'"([^"]+)"', m.group(1))
-
-
-def test_the_regex_fallback_reads_the_same_packages_as_tomllib():
-    """3.10 が使う経路を、tomllib のある版で検算しておく(3.10 でこの検算は skip)。"""
-    try:
-        import tomllib  # noqa: F401
-    except ImportError:
-        import pytest
-        pytest.skip("tomllib が無い版では正規表現が唯一の経路(検算相手が無い)")
-    assert _declared_packages_regex() == _declared_packages()
 
 
 def _subpackages_on_disk(top: str) -> list[str]:
