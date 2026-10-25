@@ -923,6 +923,31 @@ GLASS_RGB = (170, 214, 238)
 # レンズの不透明度(pocviewer の bodies[*]["alpha"])。半透明にして、ガラスの中と後ろを通る光線を透かして見せる。
 # 鏡筒の絞り・スクリーン・センサー・台・支柱は光を通さないので不透明のまま。
 GLASS_ALPHA = 0.3
+#: 材料表のキー(コードの中だけ) → 画面に出す一般名 (ja, en, 帯の短い英字)。硝材のカタログ名(製品の型番)は
+#: 公開物の画面にも帯の PNG にも出さない(tests/test_no_company_names_in_public_pocs.py)。ガラスは一般名 +
+#: (n_d, V_d)を出す(値は materials.abbe_number のカタログ値)。
+MAT_NAMES = {"WATER": ("水", "water", "water"), "PMMA": ("アクリル(PMMA)", "acrylic (PMMA)", "acrylic"),
+             "POLYCARBONATE": ("ポリカーボネート", "polycarbonate", "polycarbonate"),
+             "N-BK7": ("クラウンガラス", "crown glass", "crown"),
+             "N-SF11": ("重フリントガラス", "dense flint glass", "dense flint"),
+             "N-LASF9": ("ランタン系高屈折率ガラス", "lanthanum dense flint glass", "La dense flint")}
+_GLASSES = ("N-BK7", "N-SF11", "N-LASF9")
+
+
+def mat_label(key, lang="ja", nd_vd=True):
+    """材料表のキーの一般名。ja / en はガラスなら「クラウンガラス(n_d = 1.5168, V_d = 64.17)」、band は帯の短い英字。"""
+    ja, en, band = MAT_NAMES[key]
+    if lang == "band":
+        return band
+    name = ja if lang == "ja" else en
+    if not (nd_vd and key in _GLASSES):
+        return name
+    ab = materials.abbe_number(key)
+    nd = ab["nd_catalog"] if ab.get("nd_catalog") is not None else ab["nd"]
+    vd = ab["vd_catalog"] if ab.get("vd_catalog") is not None else ab["vd"]
+    return ("%s(n_d = %.4f, V_d = %.2f)" if lang == "ja" else "%s (n_d = %.4f, V_d = %.2f)") % (name, nd, vd)
+
+
 MAT_RGB = {"WATER": (120, 180, 255), "PMMA": (200, 230, 245), "N-BK7": GLASS_RGB,
            "POLYCARBONATE": (225, 215, 190), "N-SF11": (230, 200, 160), "N-LASF9": (240, 180, 150)}
 WHITE = (235, 235, 235)
@@ -1044,7 +1069,7 @@ def build_imaging_tab(rec):
             c1.dot(x, 0, 2.0, STAGE_RGB[0])
         c1.line(-fr["obj"], 0, -fr["obj"], H_OBJ * 2, (0.92, 0.92, 0.92), 0.8)
         c1.textpx("f = %.2f mm" % f, 3, 2, STAGE_RGB[0], 9)
-        c1.textpx("N-BK7  R ±102  t 5", 3, PH - 2, (0.7, 0.7, 0.7), 8, "lb")
+        c1.textpx("%s  R ±102  t 5" % mat_label(LENS_A["glass"], "band"), 3, PH - 2, (0.7, 0.7, 0.7), 8, "lb")
         # 2: thin_lens → b, m(数直線、f 単位)
         c2 = Canvas((-3.6, 4.6), (-5.5, 5.5))
         c2.line(-3.6, 0, 4.6, 0, (0.35, 0.35, 0.38))
@@ -1168,7 +1193,7 @@ def build_lensmaker_tab(rec):
         _graph_axes(c1, xt=(500, 600, 700), yt=(1.4, 1.5, 1.6, 1.7, 1.8, 1.9))
         c1.poly(d[:, 0], d[:, 1], (0.75, 0.75, 0.75))
         c1.dot(WL_NM, n, 2.2, STAGE_RGB[0])
-        c1.textpx("%s  n_d = %.4f" % (mat, n), 3, 2, STAGE_RGB[0], 9)
+        c1.textpx("%s  n_d = %.4f" % (mat_label(mat, "band"), n), 3, 2, STAGE_RGB[0], 9)
         c1.textpx("λ 440–800 nm", PW - 3, PH - 2, (0.6, 0.6, 0.6), 8, "rb")
         c2 = Canvas((-14, 30), (-13, 13))
         rr = np.linspace(-AP_B, AP_B, 60)
@@ -1195,7 +1220,7 @@ def build_lensmaker_tab(rec):
         c4.textpx("(n−1)(1/R1−1/R2) [D]", PW - 3, PH - 2, (0.7, 0.7, 0.7), 8, "rb")
         dev = 100 * (rec["f_thick"][k] - rec["f_thin"][k]) / rec["f_thin"][k]
         l1 = ("1/f = (n − 1)(1/R1 − 1/R2) = (%.4f − 1)(1/%.1f + 1/%.1f)  →  f = %.2f mm   [%s]   thick_lens %.2f (%+.1f%%)"
-              % (n, R, R, rec["f_thin"][k], mat, rec["f_thick"][k],
+              % (n, R, R, rec["f_thin"][k], mat_label(mat, "band"), rec["f_thick"][k],
                  100 * (rec["f_thick"][k] - rec["f_thin"][k]) / rec["f_thin"][k]))
         frames.append(band_frame([c1.img, c2.img, c3.img, c4.img], active_stage(k), heads,
                                  [(l1, STAGE_RGB[3])]))
@@ -1207,7 +1232,8 @@ def build_lensmaker_tab(rec):
               {"t": float(t[NF_B1]), "label": T("材料を替える(R = 50 mm)", "change the material (R = 50 mm)")}]
     for mname in ("N-SF11",):
         events.append({"t": float(t[rec["mat"].index(mname)]),
-                       "label": T("高屈折率のガラス(%s)" % mname, "high-index glass (%s)" % mname)})
+                       "label": T("高屈折率のガラス(%s)" % mat_label(mname, "ja", False),
+                                  "high-index glass (%s)" % mat_label(mname, "en", False))})
     series = [{"label": T("n(材料ライブラリ)", "n (material library)"), "values": rec["n"], "lo": 1.3, "hi": 1.9,
                "color": STAGE_HEX[0], "unit": "", "decimals": 4},
               {"label": T("f(薄肉の式)", "f (thin formula)"), "values": rec["f_thin"], "lo": 0, "hi": 300,
@@ -1521,7 +1547,8 @@ def build_spec(res):
         "【言葉】屈折率 n = 光がその材料の中でどれだけ遅くなるか(水 1.33、ふつうのガラス 1.52)。曲率半径 R = レンズの面を"
         "球の一部とみたときの球の半径(小さいほど強く曲がった面)。屈折力 1/f = 光を曲げる強さ(単位 D = 1/m)。\n"
         "前半は両凸レンズの面の半径 R を 300 mm から 24 mm まで小さくし、後半は R = 50 mm のまま材料を 水 → アクリル(PMMA)→ "
-        "N-BK7 → ポリカーボネート → N-SF11 → N-LASF9 と替える。屈折率は fullseye の材料ライブラリ "
+        "クラウンガラス → ポリカーボネート → 重フリントガラス → ランタン系高屈折率ガラスと替える(各ガラスの n_d・V_d は下の数値)。"
+        "屈折率は fullseye の材料ライブラリ "
         "(material_optical_constants)から引き、同じ数字を光線追跡に渡す。白い点が薄肉の式 1/f = (n−1)(1/R1 − 1/R2) の焦点、"
         "緑の点が paraxial_trace の焦点、黄色の線が trace_rays の実光線。\n"
         "限界: 薄肉の式はレンズの厚みを 0 とみなす。R = 300 mm では差 %.2f%% だが、R = 24 mm(厚さ 7.9 mm)では %.1f%% 外れる"
@@ -1533,7 +1560,8 @@ def build_spec(res):
         "Radius of curvature R = the radius of the sphere a lens surface is part of (smaller = more strongly curved). "
         "Power 1/f = how strongly the lens bends light (unit D = 1/m).\n"
         "First the surfaces of a biconvex lens go from R = 300 mm to 24 mm; then, at R = 50 mm, the material changes: "
-        "water → acrylic (PMMA) → N-BK7 → polycarbonate → N-SF11 → N-LASF9. The index comes from fullseye's material "
+        "water → acrylic (PMMA) → crown glass → polycarbonate → dense flint glass → lanthanum dense flint glass (n_d and V_d "
+        "of each glass are in the numbers below). The index comes from fullseye's material "
         "library (material_optical_constants) and the same number goes into the ray trace. White dot: focus from the "
         "thin-lens formula 1/f = (n−1)(1/R1 − 1/R2); green dot: paraxial_trace; yellow lines: real rays from trace_rays.\n"
         "Limit: the thin-lens formula treats the lens as having zero thickness. At R = 300 mm it is off by %.2f%%; at "
@@ -1545,7 +1573,8 @@ def build_spec(res):
                              "%.0e" % S["B_thick_vs_para"]),
             pv.viewer_number(T("薄肉の式のずれ(R = 300 / 24 mm)", "thin formula error (R = 300 / 24 mm)"),
                              "%.2f%% / %.1f%%" % (100 * S["B_dev_R300"], 100 * S["B_dev_R24"])),
-            pv.viewer_number(T("材料", "materials"), "WATER · PMMA · N-BK7 · POLYCARBONATE · N-SF11 · N-LASF9")]
+            pv.viewer_number(T("材料", "materials"), T(" · ".join(mat_label(m, "ja") for m in MATS_B),
+                                                       " · ".join(mat_label(m, "en") for m in MATS_B)))]
     tabs.append(pv.viewer_anim3d_tab(
         "lensmaker", T("レンズメーカーの式", "Lensmaker's equation"), "passed", text, B["t"], bodies, xyz, quat,
         events=events, series=series, numbers=nums, view=dict(VIEW_LONG, dist=0.42),
