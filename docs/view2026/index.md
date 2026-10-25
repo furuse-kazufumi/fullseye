@@ -91,6 +91,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../articles/assets/media/evis_stereo_fullseye.mp4"><img src="thumbs/evis_stereo_depth.jpg" alt="ヒューマノイドの両眼" loading="lazy" width="320" height="320"><b>&#9654;</b><span>ヒューマノイドの両眼</span></a>
 <a href="../articles/assets/media/evis_bean_track_fullseye.mp4"><img src="thumbs/evis_bean_track.jpg" alt="箸先カメラの豆追跡" loading="lazy" width="320" height="320"><b>&#9654;</b><span>箸先カメラの豆追跡</span></a>
 <a href="../view2026/anim3d/interactive_anim3d_viewer.html?lang=ja"><img src="thumbs/interactive_anim3d_viewer.jpg" alt="アームと半透明のレンズ" loading="lazy" width="320" height="320"><b>&#9654;</b><span>アームと半透明のレンズ · 0.3 MB</span></a>
+<a href="../view2026/anim3d/salt_xrd_anim3d.html?lang=ja"><img src="thumbs/salt_xrd_anim3d.jpg" alt="塩の結晶の粉末 X 線回折" loading="lazy" width="320" height="320"><b>&#9654;</b><span>塩の結晶の粉末 X 線回折 · 2.5 MB</span></a>
 </div>
 
 ## シリーズ記事
@@ -673,6 +674,7 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 **動く 3-D(触って回せる)**
 
 - [アームと半透明のレンズ](../view2026/anim3d/interactive_anim3d_viewer.html?lang=ja) (動く 3-D・触って回せる, 0.3 MB): アームが箱を運ぶ様子を、指で回して好きな向きから見る。光線が半透明のレンズを貫いて焦点へ集まり、右下では真上からの高さ画像とその二値化が同じ時間軸で進む。 [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
+- [塩の結晶の粉末 X 線回折](../view2026/anim3d/salt_xrd_anim3d.html?lang=ja) (動く 3-D・触って回せる, 2.5 MB): 塩の単位胞に格子面の板を重ね、Bragg の角度を振ると行路差が λ の整数倍の所だけ受光面が光る。粒の向きをばらばらにすると点が環に育ち、波長を長くすると環は広がって消える。消滅則は 8 原子の波を足して見せる。 [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_saltxrd_anim3d.py)
 
 </div>
 

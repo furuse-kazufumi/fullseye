@@ -76,6 +76,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 <a href="../../articles/assets/media/evis_stereo_fullseye.mp4"><img src="../thumbs/evis_stereo_depth.jpg" alt="Les deux yeux du humanoïde" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Les deux yeux du humanoïde</span></a>
 <a href="../../articles/assets/media/evis_bean_track_fullseye.mp4"><img src="../thumbs/evis_bean_track.jpg" alt="Suivi du haricot par la caméra au bout des baguettes" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Suivi du haricot par la caméra au bout des baguettes</span></a>
 <a href="../../view2026/anim3d/interactive_anim3d_viewer.html?lang=fr"><img src="../thumbs/interactive_anim3d_viewer.jpg" alt="Bras et lentille translucide" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Bras et lentille translucide · 0.3 MB</span></a>
+<a href="../../view2026/anim3d/salt_xrd_anim3d.html?lang=fr"><img src="../thumbs/salt_xrd_anim3d.jpg" alt="Diffraction des rayons X sur poudre de sel" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Diffraction des rayons X sur poudre de sel · 2.5 MB</span></a>
 </div>
 
 ## Série d'articles (articles sur Qiita)
@@ -658,6 +659,7 @@ Chaque valeur est mesurée par rapport à la vérité terrain que chaque PoC a e
 **3-D animée à faire pivoter**
 
 - [Bras et lentille translucide](../../view2026/anim3d/interactive_anim3d_viewer.html?lang=fr) (3-D animée, à faire pivoter, 0.3 MB): Faites pivoter du doigt et regardez le bras porter une boîte sous n'importe quel angle. Des rayons traversent une lentille translucide jusqu'à son foyer, tandis qu'une image de hauteur vue de dessus et sa binarisation avancent sur la même échelle de temps. [source](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
+- [Diffraction des rayons X sur poudre de sel](../../view2026/anim3d/salt_xrd_anim3d.html?lang=fr) (3-D animée, à faire pivoter, 2.5 MB): Des plans réticulaires sont posés sur la maille du sel ; balayez l'angle de Bragg et le détecteur ne s'allume que là où la différence de marche est un multiple entier de λ. Dispersez les orientations des grains et les points deviennent des anneaux ; allongez la longueur d'onde et les anneaux s'élargissent puis disparaissent. La règle d'extinction est montrée en additionnant les ondes des 8 atomes. [source](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_saltxrd_anim3d.py)
 
 </div>
 

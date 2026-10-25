@@ -20,6 +20,9 @@ data/*
 !data/oct_real/
 # Public deflectometry grid images and the full-run record for the PMD PoC (CC0 1.0, a small extract; source and changes in its README.md).
 !data/pmd_real/
+# Crystal structure of NaCl from the Crystallography Open Database, entry 1000041 (CC0, public domain;
+# the retrieval comment header is removed, the data block is verbatim). Read by tools/build_saltxrd_anim3d.py.
+!data/cod_1000041/
 
 # packaging build artifacts
 *.egg-info/

@@ -76,6 +76,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/media/evis_stereo_fullseye.mp4"><img src="../thumbs/evis_stereo_depth.jpg" alt="Humanoid stereo eyes" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Humanoid stereo eyes</span></a>
 <a href="../../articles/assets/media/evis_bean_track_fullseye.mp4"><img src="../thumbs/evis_bean_track.jpg" alt="Chopstick-cam tracking" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Chopstick-cam tracking</span></a>
 <a href="../../view2026/anim3d/interactive_anim3d_viewer.html?lang=hi"><img src="../thumbs/interactive_anim3d_viewer.jpg" alt="Arm और अर्ध-पारदर्शी lens" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Arm और अर्ध-पारदर्शी lens · 0.3 MB</span></a>
+<a href="../../view2026/anim3d/salt_xrd_anim3d.html?lang=hi"><img src="../thumbs/salt_xrd_anim3d.jpg" alt="नमक के क्रिस्टल का powder X-ray diffraction" loading="lazy" width="320" height="320"><b>&#9654;</b><span>नमक के क्रिस्टल का powder X-ray diffraction · 2.5 MB</span></a>
 </div>
 
 ## Article series (Qiita पर English articles)
@@ -658,6 +659,7 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 **घुमाकर देखें: चलता 3-D**
 
 - [Arm और अर्ध-पारदर्शी lens](../../view2026/anim3d/interactive_anim3d_viewer.html?lang=hi) (चलता 3-D, drag से घुमाएँ, 0.3 MB): उंगली से घुमाकर किसी भी कोण से देखें कि arm box कैसे ले जाता है। किरणें अर्ध-पारदर्शी lens से होकर focus पर मिलती हैं, और नीचे ऊपर से ली गई height image और उसका binarisation उसी timeline पर चलते हैं। [source](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
+- [नमक के क्रिस्टल का powder X-ray diffraction](../../view2026/anim3d/salt_xrd_anim3d.html?lang=hi) (चलता 3-D, drag से घुमाएँ, 2.5 MB): नमक की unit cell पर lattice plane की चादरें रखी हैं; Bragg कोण घुमाइए तो detector केवल वहाँ जलता है जहाँ path difference λ का पूर्ण गुणज है। दानों के orientation बिखेरिए तो बिंदु ring बन जाते हैं; तरंगदैर्घ्य लंबी कीजिए तो ring फैलकर गायब हो जाते हैं। extinction नियम 8 परमाणुओं की तरंगें जोड़कर दिखाया गया है। [source](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_saltxrd_anim3d.py)
 
 </div>
 

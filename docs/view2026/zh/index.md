@@ -76,6 +76,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/media/evis_stereo_fullseye.mp4"><img src="../thumbs/evis_stereo_depth.jpg" alt="人形机器人双眼" loading="lazy" width="320" height="320"><b>&#9654;</b><span>人形机器人双眼</span></a>
 <a href="../../articles/assets/media/evis_bean_track_fullseye.mp4"><img src="../thumbs/evis_bean_track.jpg" alt="筷尖相机追踪豆子" loading="lazy" width="320" height="320"><b>&#9654;</b><span>筷尖相机追踪豆子</span></a>
 <a href="../../view2026/anim3d/interactive_anim3d_viewer.html?lang=zh"><img src="../thumbs/interactive_anim3d_viewer.jpg" alt="机械臂与半透明透镜" loading="lazy" width="320" height="320"><b>&#9654;</b><span>机械臂与半透明透镜 · 0.3 MB</span></a>
+<a href="../../view2026/anim3d/salt_xrd_anim3d.html?lang=zh"><img src="../thumbs/salt_xrd_anim3d.jpg" alt="食盐晶体的粉末 X 射线衍射" loading="lazy" width="320" height="320"><b>&#9654;</b><span>食盐晶体的粉末 X 射线衍射 · 2.5 MB</span></a>
 </div>
 
 ## 系列文章 (Qiita 上的英文文章)
@@ -658,6 +659,7 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 **可旋转的动态 3-D**
 
 - [机械臂与半透明透镜](../../view2026/anim3d/interactive_anim3d_viewer.html?lang=zh) (动态 3-D,可拖动旋转, 0.3 MB): 用手指旋转,从任意角度观看机械臂搬运箱子。光线穿过半透明透镜会聚到焦点,下方的俯视高度图像及其二值化结果在同一时间轴上同步播放。 [源码](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
+- [食盐晶体的粉末 X 射线衍射](../../view2026/anim3d/salt_xrd_anim3d.html?lang=zh) (动态 3-D,可拖动旋转, 2.5 MB): 在食盐晶胞上叠加晶格面的薄板;扫过 Bragg 角时,只有光程差为 λ 整数倍处探测器才会亮。把晶粒取向打乱,点就长成环;把波长拉长,环扩大并消失。消光规则通过把 8 个原子的波相加来展示。 [源码](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_saltxrd_anim3d.py)
 
 </div>
 

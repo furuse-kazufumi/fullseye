@@ -74,6 +74,7 @@ SPEC = [
     ("evis_bean_track", "articles/assets/evis_bean_track_fullseye_still.png", None, (0.5, 0.0, 1.0)),
     # 動く 3-D: 元はビューアをスマホ幅(375 px、WebGL)で開いた画面から 3-D の部分だけを切った静止画
     ("interactive_anim3d_viewer", "view2026/anim3d/interactive_anim3d_viewer_poster.jpg", None, None),
+    ("salt_xrd_anim3d", "view2026/anim3d/salt_xrd_anim3d_poster.jpg", None, None),
 ]
 
 #: シリーズの入口の動くサムネイル。(名前, 元の GIF(docs/ からの相対), コマ数, 幅)。64 色に減らす。

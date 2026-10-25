@@ -76,6 +76,7 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 <a href="../../articles/assets/media/evis_stereo_fullseye.mp4"><img src="../thumbs/evis_stereo_depth.jpg" alt="Stereoaugen" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Stereoaugen</span></a>
 <a href="../../articles/assets/media/evis_bean_track_fullseye.mp4"><img src="../thumbs/evis_bean_track.jpg" alt="Stäbchenkamera-Tracking" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Stäbchenkamera-Tracking</span></a>
 <a href="../../view2026/anim3d/interactive_anim3d_viewer.html?lang=de"><img src="../thumbs/interactive_anim3d_viewer.jpg" alt="Arm und halbtransparente Linse" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Arm und halbtransparente Linse · 0.3 MB</span></a>
+<a href="../../view2026/anim3d/salt_xrd_anim3d.html?lang=de"><img src="../thumbs/salt_xrd_anim3d.jpg" alt="Pulver-Röntgenbeugung an Salz" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Pulver-Röntgenbeugung an Salz · 2.5 MB</span></a>
 </div>
 
 ## Artikelserien (englische Artikel auf Qiita)
@@ -658,6 +659,7 @@ Jede Zahl ist gegen eine Ground Truth gemessen, die der PoC selbst eingesetzt ha
 **Bewegtes 3-D zum Drehen**
 
 - [Arm und halbtransparente Linse](../../view2026/anim3d/interactive_anim3d_viewer.html?lang=de) (bewegtes 3-D, drehbar, 0.3 MB): Mit dem Finger drehen und den Arm beim Tragen einer Kiste aus jedem Winkel ansehen. Strahlen laufen durch eine halbtransparente Linse in den Brennpunkt, darunter laufen ein Höhenbild von oben und seine Binarisierung zeitgleich mit. [Quelle](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
+- [Pulver-Röntgenbeugung an Salz](../../view2026/anim3d/salt_xrd_anim3d.html?lang=de) (bewegtes 3-D, drehbar, 2.5 MB): Gitterebenen liegen über der Elementarzelle des Salzes; beim Durchfahren des Bragg-Winkels leuchtet der Detektor nur dort, wo der Gangunterschied ein ganzes Vielfaches von λ ist. Werden die Körner zufällig gedreht, wachsen Punkte zu Ringen; wird die Wellenlänge länger, dehnen sich die Ringe aus und verschwinden. Die Auslöschungsregel zeigt sich beim Addieren der Wellen der 8 Atome. [Quelle](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_saltxrd_anim3d.py)
 
 </div>
 
