@@ -75,6 +75,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 <a href="../../articles/assets/poc/poc_microns_brain_wave/04_wave_on_wiring.gif"><img src="../thumbs/poc_microns_brain_wave.jpg" alt="Onde dans le cortex visuel de la souris" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Onde dans le cortex visuel de la souris</span></a>
 <a href="../../articles/assets/media/evis_stereo_fullseye.mp4"><img src="../thumbs/evis_stereo_depth.jpg" alt="Les deux yeux du humanoïde" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Les deux yeux du humanoïde</span></a>
 <a href="../../articles/assets/media/evis_bean_track_fullseye.mp4"><img src="../thumbs/evis_bean_track.jpg" alt="Suivi du haricot par la caméra au bout des baguettes" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Suivi du haricot par la caméra au bout des baguettes</span></a>
+<a href="../../view2026/anim3d/interactive_anim3d_viewer.html?lang=fr"><img src="../thumbs/interactive_anim3d_viewer.jpg" alt="Bras et lentille translucide" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Bras et lentille translucide · 0.3 MB</span></a>
 </div>
 
 ## Série d'articles (articles sur Qiita)
@@ -198,7 +199,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 **Afficher**
 
 - Transformer les résultats en figures lisibles par l'humain: [explication](../../capabilities/figures-and-annotation.md) _(ja)_ · exemples [poc_colormap_readability](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_colormap_readability.py) · [poc_dem_terrain](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dem_terrain.py)
-- Transformer les résultats en une page autonome à manipuler (onglets, badges, 3-D, vidéo, langues): [explication](../../capabilities/interactive-poc-viewer.md) _(ja)_ · exemples [interactive_poc_viewer](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_poc_viewer.py)
+- Transformer les résultats en une page autonome à manipuler (onglets, badges, 3-D, vidéo, langues): [explication](../../capabilities/interactive-poc-viewer.md) _(ja)_ · exemples [interactive_poc_viewer](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_poc_viewer.py) · [interactive_anim3d_viewer](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
 - Tracer des lignes et des régions sans connaître la couleur du fond (couleur inversée): [explication](../../capabilities/inverted-colour-overlays.md) _(ja)_ · exemples [annotate_paper_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/annotate_paper_tour.py)
 - Dessiner directement un nuage de points en image couleur (empreintes sous-pixel, composition triée par profondeur, addition conservant la quantité de lumière): [explication](../../capabilities/point-cloud-to-picture.md) _(ja)_ · exemples [points_render_basics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples_3d/points_render_basics.py) · [poc_flybrain_pointcloud](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_flybrain_pointcloud.py)
 - Placer du texte et des tableaux à l'endroit souhaité sur une image: [explication](../../capabilities/text-and-tables-on-images.md) _(ja)_ · exemples [annotate_paper_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/annotate_paper_tour.py)
@@ -214,7 +215,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 
 </div>
 
-[Liste des 164 exemples d'utilisation qui ne sont pas des PoC](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[Liste des 165 exemples d'utilisation qui ne sont pas des PoC](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## Tout voir
 
@@ -653,6 +654,10 @@ Chaque valeur est mesurée par rapport à la vérité terrain que chaque PoC a e
 
 - [Les deux yeux du humanoïde](../../articles/assets/media/evis_stereo_fullseye.mp4) (vidéo): Un humanoïde musculo-squelettique frappe un haricot avec des baguettes, filmé par ses propres deux yeux (distance interpupillaire de 64 mm) ; Fullseye calcule à chaque image la disparité stéréo → profondeur. **Erreur sur la distance au haricot : médiane 0.66 %, maximum 1.91 % (229 / 241 images lisibles).** [source](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/gen_evis_media.py)
 - [Suivi du haricot par la caméra au bout des baguettes](../../articles/assets/media/evis_bean_track_fullseye.mp4) (vidéo): Dans la vidéo de la caméra placée au bout des baguettes pour la même scène, Fullseye détecte le haricot et le suit. **Détection sur la totalité des 163 images où il est visible (163 / 163) ; erreur du centroïde, médiane de 0.10 px par rapport à la vérité terrain.** [source](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/gen_evis_media.py)
+
+**3-D animée à faire pivoter**
+
+- [Bras et lentille translucide](../../view2026/anim3d/interactive_anim3d_viewer.html?lang=fr) (3-D animée, à faire pivoter, 0.3 MB): Faites pivoter du doigt et regardez le bras porter une boîte sous n'importe quel angle. Des rayons traversent une lentille translucide jusqu'à son foyer, tandis qu'une image de hauteur vue de dessus et sa binarisation avancent sur la même échelle de temps. [source](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
 
 </div>
 

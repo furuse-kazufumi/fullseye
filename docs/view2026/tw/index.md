@@ -75,6 +75,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_microns_brain_wave/04_wave_on_wiring.gif"><img src="../thumbs/poc_microns_brain_wave.jpg" alt="小鼠視皮質波" loading="lazy" width="320" height="320"><b>&#9654;</b><span>小鼠視皮質波</span></a>
 <a href="../../articles/assets/media/evis_stereo_fullseye.mp4"><img src="../thumbs/evis_stereo_depth.jpg" alt="人形機器人雙眼" loading="lazy" width="320" height="320"><b>&#9654;</b><span>人形機器人雙眼</span></a>
 <a href="../../articles/assets/media/evis_bean_track_fullseye.mp4"><img src="../thumbs/evis_bean_track.jpg" alt="筷尖相機追蹤豆子" loading="lazy" width="320" height="320"><b>&#9654;</b><span>筷尖相機追蹤豆子</span></a>
+<a href="../../view2026/anim3d/interactive_anim3d_viewer.html?lang=tw"><img src="../thumbs/interactive_anim3d_viewer.jpg" alt="機械臂與半透明透鏡" loading="lazy" width="320" height="320"><b>&#9654;</b><span>機械臂與半透明透鏡 · 0.3 MB</span></a>
 </div>
 
 ## 系列文章 (Qiita 上的英文文章)
@@ -198,7 +199,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 **呈現**
 
 - 把結果做成人能讀懂的圖: [說明](../../capabilities/figures-and-annotation.md) _(ja)_ · 範例 [poc_colormap_readability](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_colormap_readability.py) · [poc_dem_terrain](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dem_terrain.py)
-- 把結果做成可以動手操作的單頁 HTML(分頁、徽章、3-D、影片、多語言): [說明](../../capabilities/interactive-poc-viewer.md) _(ja)_ · 範例 [interactive_poc_viewer](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_poc_viewer.py)
+- 把結果做成可以動手操作的單頁 HTML(分頁、徽章、3-D、影片、多語言): [說明](../../capabilities/interactive-poc-viewer.md) _(ja)_ · 範例 [interactive_poc_viewer](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_poc_viewer.py) · [interactive_anim3d_viewer](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
 - 不知道底色也能畫線與區域(反色): [說明](../../capabilities/inverted-colour-overlays.md) _(ja)_ · 範例 [annotate_paper_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/annotate_paper_tour.py)
 - 把點雲原樣畫成彩色影像(次像素足跡、依深度合成、保持光總量的疊加): [說明](../../capabilities/point-cloud-to-picture.md) _(ja)_ · 範例 [points_render_basics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples_3d/points_render_basics.py) · [poc_flybrain_pointcloud](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_flybrain_pointcloud.py)
 - 把文字與表格放到影像上想要的位置: [說明](../../capabilities/text-and-tables-on-images.md) _(ja)_ · 範例 [annotate_paper_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/annotate_paper_tour.py)
@@ -214,7 +215,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 </div>
 
-[其他 164 個使用範例(非 PoC)的列表](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[其他 165 個使用範例(非 PoC)的列表](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## 全部看
 
@@ -653,6 +654,10 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 
 - [人形機器人雙眼](../../articles/assets/media/evis_stereo_fullseye.mp4) (影片): 肌肉骨骼人形機器人用筷子擊豆,以自己的雙眼(瞳距 64 mm)拍攝,Fullseye 每影格計算立體視差 → 深度。 **到豆距離誤差:中位數 0.66 %,最大 1.91 %(可讀 229 / 241 影格)。** [原始碼](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/gen_evis_media.py)
 - [筷尖相機追蹤豆子](../../articles/assets/media/evis_bean_track_fullseye.mp4) (影片): 在同一場景的筷尖相機畫面中,Fullseye 偵測並追蹤豆子。 **可見的 163 影格全部偵測到(163 / 163),重心誤差相對真值中位數 0.10 px。** [原始碼](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/gen_evis_media.py)
+
+**可旋轉的動態 3-D**
+
+- [機械臂與半透明透鏡](../../view2026/anim3d/interactive_anim3d_viewer.html?lang=tw) (動態 3-D,可拖曳旋轉, 0.3 MB): 用手指旋轉,從任意角度觀看機械臂搬運箱子。光線穿過半透明透鏡匯聚到焦點,下方的俯視高度影像及其二值化結果在同一時間軸上同步播放。 [原始碼](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
 
 </div>
 

@@ -369,3 +369,47 @@ def test_dirty_ignores_touched_but_identical_files(tmp_path, monkeypatch):
     assert len([ln for ln in lines if ln.endswith("real.txt")]) == 1, lines
     assert len([ln for ln in lines if ln.startswith("??") and ln.endswith("new.txt")]) == 1, lines
     assert len(lines) == 2, lines
+
+
+# ----------------------------------------------------------------------------- 2026-10-25
+#: 印ごとに「その印が無いと釣れない実在の生成器」。2026-10-25 まで write_viewer( の生成器
+#: (ViEW のビューア、題材の枝の tools/build_*_anim3d.py)がどの表にも載っていなかった。
+_MARK_WITNESSES = (
+    ("tools/build_view2026_viewers.py", r"\bwrite_viewer\(", "pv.write_viewer( で HTML を書く"),
+    ("tools/fops_article/gen_ai_inputs.py", r'open\([^)]*,\s*(?:mode\s*=\s*)?["\'](?:w|wb|w\+|wb\+|a|ab|x|xb)["\']',
+     'io.open(.., "wb") で PNG を書く'),
+    ("tools/update_fullseye.py", r"\bshutil\.(?:copy|copy2|copyfile|copytree|move)\(", "shutil.copytree"),
+)
+
+
+def test_each_write_mark_catches_its_own_real_generator():
+    """印を 1 つ消すと、その印でしか釣れない実在の生成器が列挙から落ちる —— だから印は消せない。"""
+    import re
+
+    found = RA.discover_generators()
+    assert len(_MARK_WITNESSES) == 3
+    for path, mark, why in _MARK_WITNESSES:
+        assert path in found, "%s(%s)が列挙から落ちている —— _WRITES の印 %s が消えていないか" % (path, why, mark)
+        assert mark in RA._WRITES.pattern, "_WRITES に印 %s が無い" % mark
+        # その印を外した _WRITES では釣れない(= この印が要る)ことも確かめる。
+        rest = RA._WRITES.pattern.replace("|" + mark, "").replace(mark + "|", "")
+        assert rest != RA._WRITES.pattern
+        src = open(os.path.join(ROOT, path), encoding="utf-8").read()
+        assert re.search(mark, src) and not re.search(rest, src), (path, mark)
+
+
+def test_write_viewer_generators_are_found_and_must_be_classified(tmp_path, monkeypatch):
+    """pv.write_viewer( / fs.write_viewer( だけで HTML を書く tools/build_*_anim3d.py 型の生成器は
+    列挙に載り、表に無ければ unclassified() に出る(= test_every_generator_is_classified が落ちる)。"""
+    tools = tmp_path / "tools"
+    tools.mkdir()
+    (tools / "build_demo_anim3d.py").write_text(
+        "import pocviewer as pv\n\ndef main():\n    pv.write_viewer({}, 'docs/anim3d/demo.html', ['ja'])\n\n"
+        "if __name__ == '__main__':\n    main()\n", encoding="utf-8")
+    (tools / "build_demo2_viewer.py").write_text(
+        "import fullseye as fs\nfs.write_viewer({}, 'x.html')\n", encoding="utf-8")
+    (tools / "reads_only.py").write_text("print(open('x').read(), open('w'), open('y', 'r'))\n", encoding="utf-8")
+    monkeypatch.setattr(RA, "_ROOT", str(tmp_path))
+    found = RA.discover_generators()
+    assert found == ["tools/build_demo2_viewer.py", "tools/build_demo_anim3d.py"], found
+    assert RA.unclassified() == found

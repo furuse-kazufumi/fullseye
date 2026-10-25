@@ -75,6 +75,7 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 <a href="../../articles/assets/poc/poc_microns_brain_wave/04_wave_on_wiring.gif"><img src="../thumbs/poc_microns_brain_wave.jpg" alt="Mouse cortex wave" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Mouse cortex wave</span></a>
 <a href="../../articles/assets/media/evis_stereo_fullseye.mp4"><img src="../thumbs/evis_stereo_depth.jpg" alt="Humanoid stereo eyes" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Humanoid stereo eyes</span></a>
 <a href="../../articles/assets/media/evis_bean_track_fullseye.mp4"><img src="../thumbs/evis_bean_track.jpg" alt="Chopstick-cam tracking" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Chopstick-cam tracking</span></a>
+<a href="../../view2026/anim3d/interactive_anim3d_viewer.html?lang=en"><img src="../thumbs/interactive_anim3d_viewer.jpg" alt="Arm and translucent lens" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Arm and translucent lens · 0.3 MB</span></a>
 </div>
 
 ## Article series (articles on Qiita)
@@ -198,7 +199,7 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 **Show**
 
 - Turn results into figures people can read: [explanation](../../capabilities/figures-and-annotation.md) _(ja)_ · examples [poc_colormap_readability](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_colormap_readability.py) · [poc_dem_terrain](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dem_terrain.py)
-- Turn results into one self-contained page you can touch (tabs, badges, 3-D, video, languages): [explanation](../../capabilities/interactive-poc-viewer.md) _(ja)_ · examples [interactive_poc_viewer](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_poc_viewer.py)
+- Turn results into one self-contained page you can touch (tabs, badges, 3-D, video, languages): [explanation](../../capabilities/interactive-poc-viewer.md) _(ja)_ · examples [interactive_poc_viewer](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_poc_viewer.py) · [interactive_anim3d_viewer](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
 - Draw lines and regions without knowing the background colour: [explanation](../../capabilities/inverted-colour-overlays.md) _(ja)_ · examples [annotate_paper_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/annotate_paper_tour.py)
 - Draw a point cloud as a colour picture: [explanation](../../capabilities/point-cloud-to-picture.md) _(ja)_ · examples [points_render_basics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples_3d/points_render_basics.py) · [poc_flybrain_pointcloud](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_flybrain_pointcloud.py)
 - Put text and tables exactly where you want them on an image: [explanation](../../capabilities/text-and-tables-on-images.md) _(ja)_ · examples [annotate_paper_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/annotate_paper_tour.py)
@@ -214,7 +215,7 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 
 </div>
 
-[All 164 usage examples that are not PoCs](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[All 165 usage examples that are not PoCs](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## See everything
 
@@ -653,6 +654,10 @@ Every number is measured against ground truth the PoC planted itself (closed for
 
 - [Humanoid stereo eyes](../../articles/assets/media/evis_stereo_fullseye.mp4) (video): A musculoskeletal humanoid strikes a bean with chopsticks, filmed by its own two eyes (64 mm apart); Fullseye computes stereo disparity -> depth every frame. **Bean-distance error: median 0.66 %, max 1.91 % (229 / 241 frames readable).** [source](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/gen_evis_media.py)
 - [Chopstick-cam tracking](../../articles/assets/media/evis_bean_track_fullseye.mp4) (video): In the chopstick-tip camera of the same scene, Fullseye detects and tracks the bean. **Detected in all 163 visible frames (163 / 163); centroid error median 0.10 px against truth.** [source](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/gen_evis_media.py)
+
+**Moving 3-D you can rotate**
+
+- [Arm and translucent lens](../../view2026/anim3d/interactive_anim3d_viewer.html?lang=en) (moving 3-D, drag to rotate, 0.3 MB): Rotate with a finger and watch the arm carry a box from any angle. Rays pass through a translucent lens to its focus, while a top-down height image and its binarisation advance on the same timeline. [source](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
 
 </div>
 
