@@ -12,7 +12,9 @@
   ごく低い実光線の焦点が paraxial_trace の F′ に一致(独立経路)。
 * 瞳: chief_ray は絞りの中心を通る。小さな画角の主光線の延長が光軸と交わる所 = 入射瞳(独立経路)。縁で切らない
   系では 10° まで cos⁴ に 1% で合い、縁で切る系では 21° で cos⁴ の半分未満。
-* ページ: 4 タブ・op の登録名・3 MB 以内。
+* ページ: 4 タブ・op の登録名・3.3 MB 以内(8 言語の文字列を足した分、3 MB から上げた)。
+* 学習用の型(2026-10-25): 全タブに lesson(問い → 予想 → 再生 → 式 → 限界)・axis(物理量の読み)・checks
+  (値は gates() の門の値)。ok:false の行がある回だけ limit、限界の回は最初に置かない。
 * 半透明: レンズは alpha 0.25〜0.4(中を通る光線が透ける)、台・支柱・スクリーン・センサー・絞りは不透明のまま。
   HTML の JSON に alpha が載り、半透明の描画(drawTranslucent)が入る。
 """
@@ -195,6 +197,7 @@ def test_rods_cover_segments_exactly():
         D = np.linalg.norm(q)
         u = q / D
         ivs = sorted((float(np.dot(p, u)), float(np.dot(p, u)) + L_) for (_, L_, _), p, _ in plan)
+        assert ivs
         assert ivs[0][0] > -1e-9 and ivs[-1][1] < D + 1e-9                 # はみ出さない
         cur = 0.0
         for a, b in ivs:
@@ -213,7 +216,7 @@ def test_page_has_four_tabs_with_op_names_and_fits_3mb(res, tmp_path):
         assert np.asarray(t["panes"][0]["frames"]).shape[0] == len(t["t"]) == L.NF
     out = pv.write_viewer(spec, str(tmp_path / "lens.html"), list(L.LANGS))
     html = open(out, encoding="utf-8").read()
-    assert len(html.encode("utf-8")) < 3_000_000
+    assert len(html.encode("utf-8")) < 3_300_000
     for op in ("paraxial_trace", "thin_lens", "trace_rays", "thick_lens", "material_optical_constants", "abcd_matrix",
                "abcd_trace", "chief_ray", "ray_bundle", "relative_illumination"):
         assert op in html
@@ -241,3 +244,61 @@ def test_lenses_are_translucent_and_opaque_parts_stay_opaque(res, tmp_path):
     html = open(out, encoding="utf-8").read()
     assert re.search(r'"alpha":\s*%s' % re.escape(repr(L.GLASS_ALPHA)), html)
     assert "drawTranslucent" in html
+
+
+# --------------------------------------------------------------------------- 学習用の型(2026-10-25)
+@pytest.fixture(scope="module")
+def built(res):
+    L, r = res
+    spec, g, infos = L.build_spec(r)
+    return L, r, g, spec
+
+
+def test_every_tab_follows_the_textbook_flow(built):
+    L, r, g, spec = built
+    tabs = spec["tabs"]
+    assert tabs
+    assert tabs[0]["badge"] != "limit"                                   # 限界の回を最初にしない
+    for t in tabs:
+        ls = t["lesson"]
+        assert set(ls) == {"question", "choices", "answer", "explain", "formula", "limit"}, t["id"]
+        assert 2 <= len(ls["choices"]) <= 3 and 0 <= ls["answer"] < len(ls["choices"])
+        assert ls["limit"]["ja"] and ls["limit"]["en"]
+        assert "限界: " not in t["text"]["ja"] and "Limit: " not in t["text"]["en"]   # 限界の段は ⑤ へ移した
+        assert len(t["axis"]["values"]) == len(t["t"])                   # 時間つまみの読みは物理量
+        assert t["axis"]["segments"]
+        assert all("コマ" not in seg["label"]["ja"] for seg in t["axis"]["segments"])
+        assert t["checks"], t["id"]
+    assert np.allclose(tabs[0]["axis"]["values"], r["imaging"]["a"])
+    assert np.allclose(tabs[3]["axis"]["values"], r["pupils"]["theta"])
+
+
+def test_checks_come_from_the_gates_and_only_failed_rows_make_a_limit_tab(built):
+    L, r, g, spec = built
+    rows = {t["id"]: t["checks"] for t in spec["tabs"]}
+    assert spec["tabs"]
+    for t in spec["tabs"]:
+        assert t["checks"]
+        failed = [c for c in t["checks"] if not c["ok"]]
+        assert (t["badge"] == "limit") == bool(failed), t["id"]
+        n_indep = sum(1 for c in t["checks"] if "independent path" in c["what"]["en"])
+        n_conv = sum(1 for c in t["checks"] if "convention check" in c["what"]["en"])
+        if n_conv:                                                       # 同じ式どうしの比較には独立経路を添える
+            assert n_indep >= 1, t["id"]
+    assert rows["imaging"][0]["result"] == L._e(g["A_para_vs_thin"])
+    assert rows["imaging"][1]["result"] == L._e(g["A_stopdown_rel"])
+    assert rows["doublet"][2]["result"] == "%s mm" % L._e(g["C_low_ray_mm"])
+    lim = rows["pupils"][-1]                                             # 限界の回は外れた行を正直に出す
+    assert lim["ok"] is False and lim["result"] == "%.3f" % g["D_ratio_end"]
+    assert g["D_ratio_end"] < 0.5
+    assert [t["badge"] for t in spec["tabs"]] == ["passed", "passed", "passed", "limit"]
+
+
+def test_page_has_lesson_axis_checks_and_no_catalogue_names(built):
+    L, r, g, spec = built
+    import pocviewer as pv
+    html = pv._build_html(spec, list(L.LANGS))
+    for piece in ("function lessonTop", "function axisText", "function checksHTML", '"lesson"', '"axis"', '"checks"'):
+        assert piece in html, piece
+    for bad in ("N-BK7", "N-SF11", "N-LASF9", "**", "http://", "https://"):
+        assert bad not in html, bad

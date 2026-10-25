@@ -24,6 +24,13 @@
   (ケラレ)→ ``relative_illumination``(cos⁴ 則)。実光線から求めた周辺の明るさ(瞳の見かけの面積 ×
   像の面積の伸び)を cos⁴ と比べ、レンズの縁が光束を切る所から cos⁴ より暗くなる(限界)。
 
+学習用の型(2026-10-25): 各タブは pocviewer の ``lesson``(① 問い → ② 予想 → ③ 再生 → ④ 式 → ⑤ 限界)、
+時間つまみの読みは ``axis``(物体の位置 a・曲率半径 R と屈折率 n・主点の間隔 d・画角 θ)、バッジの表は ``checks``
+(値は :func:`gates` の門の値、ok は基準との比較で決める)。ok:false の行がある回だけ badge を limit にし、限界の回は
+最初に置かない。説明文の「限界:」の段は lesson の ⑤ 限界へ移す。8 言語版は
+``py -3.11 tools/anim3d_i18n.py --build build_lens_system_anim3d --out docs/anim3d/textbook_lens_system.html``
+で書く(この生成器を直接回すと ja/en だけになる)。
+
 収差の題材(``feat/anim3d-textbook-aberrations``)と重ならないよう、ここは**結像の位置と大きさ・瞳**に
 重心を置く。出典は一般的な教科書の式(Hecht『Optics』5 章・6 章、Born & Wolf 4 章、鶴田匡夫『応用光学』)。
 
@@ -1494,8 +1501,339 @@ def summary(res) -> dict:
     }
 
 
+# =========================================================================== #
+# 学習用の型(2026-10-25): 門の値 → checks / lesson / axis                     #
+# =========================================================================== #
+def _stopped_down_rel(a_over_f_list=(3.0, 2.0, 1.5)):
+    """独立経路: 半径の 5% の輪だけの実光線が集まる位置と thin_lens の像の位置の相対差(最大)。"""
+    Ls = LENS_A
+    n = n_of(Ls["glass"])
+    worst = 0.0
+    for a_over_f in a_over_f_list:
+        p0 = rt.paraxial_trace(rt.lens_system(singlet(Ls["R1"], Ls["R2"], Ls["t"], Ls["ap"], n), stop=0, object_mm=200.0))
+        f, xH, xH2 = p0["efl"], p0["pp_front"], Ls["t"] + p0["pp_rear"]
+        a = a_over_f * f
+        system = rt.lens_system(singlet(Ls["R1"], Ls["R2"], Ls["t"], Ls["ap"], n), stop=0, object_mm=a - xH)
+        tip = np.array([0.0, 0.0, -(a - xH)])
+        q = [np.array([0.05 * Ls["ap"] * math.cos(t), 0.05 * Ls["ap"] * math.sin(t), 0.0]) for t in np.linspace(0, 6.2, 8)]
+        D = np.array([x - tip for x in q])
+        D /= np.linalg.norm(D, axis=1, keepdims=True)
+        tr = rt.trace_rays(system, np.tile(tip, (len(D), 1)), D, image_mm=50.0)
+        ns = len(system["surfaces"])
+        p = nearest_point(tr["points"][:, ns], tr["dirs"][:, ns])
+        b = optics.thin_lens(focal_mm=f, object_mm=a)["image_mm"]
+        worst = max(worst, abs((p[2] - xH2) - b) / b)
+    return float(worst)
+
+
+def _low_ray_focus_diff(gaps=(10.0, 60.0, 200.0)):
+    """独立経路: 高さ 0.01 mm の実光線が光軸を横切る z と paraxial_trace の F′ の差(mm、2 枚組の間隔 3 通り)。"""
+    n = n_of(L1_C["glass"])
+    worst = 0.0
+    for g in gaps:
+        surf = singlet(L1_C["R1"], L1_C["R2"], L1_C["t"], L1_C["ap"], n, nxt=g) + \
+            singlet(L2_C["R1"], L2_C["R2"], L2_C["t"], L2_C["ap"], n, nxt=100.0)
+        system = rt.lens_system(surf, stop=0)
+        para = rt.paraxial_trace(system)
+        z_last = L1_C["t"] + g + L2_C["t"]
+        O, D = collimated([0.01])
+        tr = rt.trace_rays(system, O, D)
+        zc = axis_crossing(tr["points"][0, 4], tr["dirs"][0, 4])
+        worst = max(worst, abs(zc - (z_last + para["bfl"])))
+    return float(worst)
+
+
+def gates(res) -> dict:
+    """門の値(テストと同じ量)。checks・lesson の数字はすべてここから引く(手で書いた数字は入れない)。"""
+    g = dict(summary(res))
+    A, B, C, D = res["imaging"], res["lensmaker"], res["doublet"], res["pupils"]
+    # 薄レンズの結像
+    g["A_resid"] = float(np.max(np.abs(1.0 / A["a"] + 1.0 / A["b_thin"] - 1.0 / A["f"])))
+    k2 = int(np.argmin(np.abs(A["a"] - 2 * A["f"])))
+    g["A_m_2f_err"] = float(abs(A["m_thin"][k2] + 1.0))
+    g["A_stopdown_rel"] = _stopped_down_rel()
+    rel = np.abs(A["b_ray"] - A["b_thin"]) / np.abs(A["b_thin"])
+    far = A["a"] >= 2 * A["f"] - 1e-9
+    near = (A["a"] > A["f"]) & (A["a"] < 1.3 * A["f"])
+    g["A_edge_far"], g["A_edge_near"] = float(rel[far].max()), float(rel[near].max())
+    g["A_virtual_ok"] = bool(np.all(A["b_thin"][A["a"] > A["f"]] > 0) and np.all(A["b_thin"][A["a"] < A["f"]] < 0))
+    g["A_a_range_f"] = (float(A["a"][0] / A["f"]), float(A["a"][-1] / A["f"]))
+    # レンズメーカーの式
+    g["B_n_lib"] = float(max(abs(n - materials.material_optical_constants(m, WL_NM)["n"]) for m, n in zip(B["mat"], B["n"])))
+    phase2 = B["mat"][NF_B1:]
+    kk = [NF_B1 + phase2.index(m) for m in MATS_B]
+    g["B_f_by_mat"] = {m: float(B["f_thick"][k]) for m, k in zip(MATS_B, kk)}
+    g["B_n_by_mat"] = {m: float(B["n"][k]) for m, k in zip(MATS_B, kk)}
+    g["B_f_shrinks"] = bool(np.all(np.diff(B["f_thick"][kk]) < 0))
+    g["B_thick_R24_mm"] = float(B["thick"][NF_B1 - 1])
+    # 2 枚組と ABCD
+    fin = np.isfinite(C["x_F"])
+    g["C_xF_mm"] = float(np.max(np.abs(C["x_F"][fin] - C["x_F_para"][fin])))
+    g["C_low_ray_mm"] = _low_ray_focus_diff()
+    P = 1.0 / C["f_abcd"]
+    k = int(np.argmax(C["d_pp"] > C["f1"] + C["f2"]))
+    g["C_power_flips"] = bool(np.all(np.diff(P) < 0) and P[k - 1] > 0 > P[k])
+    g["C_d_range"] = (float(C["d_pp"][0]), float(C["d_pp"][-1]))
+    g["C_f_first"] = float(C["f_abcd"][0])
+    # 絞りと瞳
+    cr = rt.chief_ray(D["system"], field=0.5)
+    p, d = cr["points"][0], cr["dirs"][0]
+    g["D_ep_cross_mm"] = float(abs(p[2] - p[1] / d[1] * d[2] - D["para"]["ep_position"]))
+    g["D_xp_sym"] = float(abs(D["para"]["xp_position"] + D["para"]["ep_position"]))
+    g["D_cos4_op"] = float(np.max(np.abs(D["cos4"] - np.cos(np.radians(D["theta"])) ** 4)))
+    g["D_near_axis"] = float(abs(D["ri_real"][1] - D["cos4"][1]))
+    g["D_theta_near"] = float(D["theta"][1])
+    g["D_ratio_end"] = float(D["ri_real"][-1] / D["cos4"][-1])
+    return g
+
+
+def _e(x):
+    """門の値の印字(0 はそのまま 0、他は指数 1 桁)。"""
+    return "0" if x == 0 else "%.1e" % x
+
+
+def _row(what_ja, what_en, criterion, result, ok):
+    """checks の 1 行。ok は門の値と基準の比較で決める(手で True と書かない)。"""
+    return {"what": T(what_ja, what_en), "criterion": criterion, "result": result, "ok": bool(ok)}
+
+
+def textbook_checks(g):
+    """各タブの「確かめた項目 / 基準 / 結果」。値は :func:`gates` の値(tests/test_lens_system_anim3d.py と同じ基準)。
+
+    同じ式から出した値どうしの比較は「規約の確認」と書き、独立した経路(実光線)の検算を必ず 1 行入れる。
+    """
+    yes, no = T("成立", "holds"), T("不成立", "fails")
+    return {
+        "imaging": [
+            _row("像の位置 b: thin_lens(薄レンズの式)と paraxial_trace(厚いレンズの近軸追跡、主点から測る)、全コマ",
+                 "image distance b: thin_lens (thin-lens formula) vs paraxial_trace (thick-lens paraxial trace from the principal planes), every frame",
+                 "< 1e-9", _e(g["A_para_vs_thin"]), g["A_para_vs_thin"] < 1e-9),
+            _row("独立経路: 半径の 5% の実光線(trace_rays)が集まる位置と thin_lens の b(a = 3f / 2f / 1.5f)",
+                 "independent path: where real rays at 5% of the radius (trace_rays) meet vs thin_lens b (a = 3f / 2f / 1.5f)",
+                 "< 1e-3", _e(g["A_stopdown_rel"]), g["A_stopdown_rel"] < 1e-3),
+            _row("規約の確認: thin_lens の b が 1/a + 1/b = 1/f を満たす(同じ式の残差)",
+                 "convention check: thin_lens b satisfies 1/a + 1/b = 1/f (residual of the same formula)",
+                 "< 1e-12", _e(g["A_resid"]), g["A_resid"] < 1e-12),
+            _row("規約の確認: a = 2f の倍率 m と −1 の差", "convention check: magnification m at a = 2f vs −1",
+                 "< 1e-12", _e(g["A_m_2f_err"]), g["A_m_2f_err"] < 1e-12),
+            _row("a > f で実像(b > 0)、a < f で虚像(b < 0)", "a > f gives a real image (b > 0), a < f a virtual one (b < 0)",
+                 T("全コマ", "every frame"), yes if g["A_virtual_ok"] else no, g["A_virtual_ok"]),
+            _row("縁(半径の 0.45)の実光線と thin_lens の差: a ≥ 2f", "edge rays (0.45 of the radius) vs thin_lens: a ≥ 2f",
+                 "< 0.02", "%.4f" % g["A_edge_far"], g["A_edge_far"] < 0.02),
+            _row("縁の実光線と thin_lens の差: f < a < 1.3f(限界が見えること)",
+                 "edge rays vs thin_lens: f < a < 1.3f (the limit must show)",
+                 "> 0.10", "%.3f" % g["A_edge_near"], g["A_edge_near"] > 0.10)],
+        "lensmaker": [
+            _row("独立経路: 焦点距離を thick_lens(厚肉の閉形式)と paraxial_trace(面ごとの近軸追跡)で、全コマ",
+                 "independent path: focal length from thick_lens (closed form) vs paraxial_trace (surface-by-surface paraxial trace), every frame",
+                 "< 1e-12", _e(g["B_thick_vs_para"]), g["B_thick_vs_para"] < 1e-12),
+            _row("規約の確認: 光線追跡に渡した n と material_optical_constants(d 線)の n",
+                 "convention check: n given to the ray trace vs material_optical_constants (d line)",
+                 "= 0", _e(g["B_n_lib"]), g["B_n_lib"] == 0.0),
+            _row("R = 50 mm で n が上がると f が縮む(材料 6 種、thick_lens)",
+                 "at R = 50 mm, f shrinks as n rises (6 materials, thick_lens)",
+                 T("単調に減る", "decreases monotonically"), yes if g["B_f_shrinks"] else no, g["B_f_shrinks"]),
+            _row("薄肉の式のずれ(R = 300 mm)", "thin-lens formula error (R = 300 mm)",
+                 "< 0.002", "%.5f" % g["B_dev_R300"], g["B_dev_R300"] < 0.002),
+            _row("薄肉の式のずれ(R = 24 mm、限界が見えること)", "thin-lens formula error (R = 24 mm; the limit must show)",
+                 "> 0.05", "%.4f" % g["B_dev_R24"], g["B_dev_R24"] > 0.05)],
+        "doublet": [
+            _row("焦点距離: abcd_matrix(主点から測った薄レンズ 2 枚)と paraxial_trace(実の処方)、全コマ",
+                 "focal length: abcd_matrix (two thin lenses from the principal planes) vs paraxial_trace (real prescription), every frame",
+                 "< 1e-9", _e(g["C_abcd_vs_para"]), g["C_abcd_vs_para"] < 1e-9),
+            _row("後ろの焦点 F′ の位置: ABCD と paraxial_trace", "rear focus F′ position: ABCD vs paraxial_trace",
+                 "< 1e-6 mm", "%s mm" % _e(g["C_xF_mm"]), g["C_xF_mm"] < 1e-6),
+            _row("独立経路: 高さ 0.01 mm の実光線(trace_rays)が光軸を横切る所と paraxial_trace の F′(間隔 3 通り)",
+                 "independent path: where a 0.01 mm real ray (trace_rays) crosses the axis vs paraxial_trace F′ (3 spacings)",
+                 "< 1e-3 mm", "%s mm" % _e(g["C_low_ray_mm"]), g["C_low_ray_mm"] < 1e-3),
+            _row("1/f1 + 1/f2 − d/(f1 f2) と abcd_matrix の f", "1/f1 + 1/f2 − d/(f1 f2) vs abcd_matrix f",
+                 "< 1e-9", _e(g["C_formula_vs_abcd"]), g["C_formula_vs_abcd"] < 1e-9),
+            _row("det M = 1(abcd_trace)", "det M = 1 (abcd_trace)", "< 1e-12", _e(g["C_det"]), g["C_det"] < 1e-12),
+            _row("屈折力 1/f が d について単調に減り、d = f1 + f2 で正から負へ",
+                 "power 1/f decreases with d and changes sign at d = f1 + f2",
+                 T("成立すること", "must hold"), yes if g["C_power_flips"] else no, g["C_power_flips"])],
+        "pupils": [
+            _row("主光線(chief_ray)が絞りの面を通る高さ、全コマ", "height of the chief ray (chief_ray) at the stop, every frame",
+                 "< 1e-6 mm", "%s mm" % _e(g["D_stop_hit"]), g["D_stop_hit"] < 1e-6),
+            _row("独立経路: 画角 0.5° の主光線を物体側へ延ばして光軸と交わる所と、paraxial_trace の入射瞳",
+                 "independent path: the 0.5° chief ray extended backwards to the axis vs paraxial_trace entrance pupil",
+                 "< 0.05 mm", "%.4f mm" % g["D_ep_cross_mm"], g["D_ep_cross_mm"] < 0.05),
+            _row("規約の確認: 対称な系で射出瞳 = 入射瞳の鏡像", "convention check: in a symmetric system the exit pupil mirrors the entrance pupil",
+                 "< 1e-9 mm", "%s mm" % _e(g["D_xp_sym"]), g["D_xp_sym"] < 1e-9),
+            _row("規約の確認: relative_illumination と cos⁴θ(同じ式)", "convention check: relative_illumination vs cos⁴θ (same formula)",
+                 "< 1e-12", _e(g["D_cos4_op"]), g["D_cos4_op"] < 1e-12),
+            _row("縁で切らない実光線の明るさと cos⁴(10° まで)", "real-ray illumination without rim clipping vs cos⁴ (up to 10°)",
+                 "< 0.01", "%.4f" % g["D_noclip_10deg"], g["D_noclip_10deg"] < 0.01),
+            _row("光軸の近く(%.2f°)の実光線の明るさと cos⁴" % g["D_theta_near"],
+                 "real-ray illumination near the axis (%.2f°) vs cos⁴" % g["D_theta_near"],
+                 "< 0.01", "%.4f" % g["D_near_axis"], g["D_near_axis"] < 0.01),
+            _row("限界: レンズの縁で切るとき、%.0f° の実光線の明るさ ÷ cos⁴ が 1 の 10%% 以内か" % g["D_theta_end"],
+                 "limit: with the rims clipping, is real-ray illumination ÷ cos⁴ at %.0f° within 10%% of 1?" % g["D_theta_end"],
+                 "0.9–1.1", "%.3f" % g["D_ratio_end"], 0.9 <= g["D_ratio_end"] <= 1.1)],
+    }
+
+
+def textbook_lessons(res, g):
+    """各タブの学習用の型(問い → 予想 → 再生 → 式 → 限界)。答えの説明の数字は :func:`gates` の値。"""
+    C = res["doublet"]
+    a0, a1 = g["A_a_range_f"]
+    nb = g["B_n_by_mat"]
+    return {
+        "imaging": {
+            "question": T("凸レンズの前の物体を、%.1ff の所から %.1ff までレンズに近づけていく。スクリーンに映る像はどうなる?" % (a0, a1),
+                          "An object in front of a convex lens moves from %.1ff to %.1ff. What happens to the image on the screen?" % (a0, a1)),
+            "choices": [T("近づくほど小さくなる", "It gets smaller as the object comes closer"),
+                        T("大きくなりながら遠ざかり、f より近いとスクリーンに映らなくなる", "It grows and moves away; inside f nothing forms on the screen"),
+                        T("大きさは変わらず、位置だけ動く", "Same size; only its position moves")],
+            "answer": 1,
+            "explain": T("1/a + 1/b = 1/f から、a = 2f で b = 2f・倍率 m = %+.3f(同じ大きさで上下さかさま)。a が f に近づくと b は"
+                         "どんどん大きくなり、a < f では b < 0: 光は集まらず、レンズ越しに見える正立の虚像(虫めがね)になる。"
+                         "このレンズの f = %.2f mm(paraxial_trace)。" % (g["A_m_2f"], g["A_f"]),
+                         "From 1/a + 1/b = 1/f: at a = 2f, b = 2f and m = %+.3f (same size, upside down). As a nears f, b grows "
+                         "without bound; for a < f, b < 0: the light no longer meets and you see an upright virtual image through "
+                         "the lens (a magnifier). This lens has f = %.2f mm (paraxial_trace)." % (g["A_m_2f"], g["A_f"])),
+            "formula": T("1/a + 1/b = 1/f(a, b は主点から測る)\n倍率: m = −b / a\nb < 0 なら虚像(正立)",
+                         "1/a + 1/b = 1/f (a and b measured from the principal planes)\nmagnification: m = −b / a\n"
+                         "b < 0 means a virtual (upright) image"),
+            "limit": None,
+        },
+        "lensmaker": {
+            "question": T("両凸レンズの面の曲率半径 R を 300 mm から 24 mm まで小さくする(強く曲げる)。焦点距離と薄肉の式はどうなる?",
+                          "Make the surfaces of a biconvex lens more curved: R from 300 mm down to 24 mm. What happens to the focal "
+                          "length and to the thin-lens formula?"),
+            "choices": [T("焦点距離は短くなり、薄肉の式はずっと当たる", "f gets shorter and the thin-lens formula stays exact"),
+                        T("焦点距離は短くなるが、強く曲げるほど薄肉の式から外れる", "f gets shorter, but the more curved, the further it drifts from the thin-lens formula"),
+                        T("焦点距離は長くなる", "f gets longer")],
+            "answer": 1,
+            "explain": T("1/f は (1/R1 − 1/R2) に比例するので、R を小さくすると f は短くなる。ただし強く曲げたレンズは厚くなる"
+                         "(R = 24 mm で %.1f mm)。薄肉の式のずれは R = 300 mm で %.2f%%、R = 24 mm で %.1f%%(薄肉 %.1f mm、"
+                         "厚肉 %.1f mm)。後半の材料の入れ替えでは、R = 50 mm のまま n が水 %.4f → ランタン系 %.4f と上がり、"
+                         "f は %.1f mm → %.1f mm に縮む。" % (
+                             g["B_thick_R24_mm"], 100 * g["B_dev_R300"], 100 * g["B_dev_R24"], g["B_thin_R24"], g["B_thick_R24"],
+                             nb["WATER"], nb["N-LASF9"], g["B_f_by_mat"]["WATER"], g["B_f_by_mat"]["N-LASF9"]),
+                         "1/f is proportional to (1/R1 − 1/R2), so a smaller R gives a shorter f. But a strongly curved lens is "
+                         "thick (%.1f mm at R = 24 mm). The thin-lens error is %.2f%% at R = 300 mm and %.1f%% at R = 24 mm "
+                         "(thin %.1f mm, thick %.1f mm). In the second half, at R = 50 mm, n goes from water %.4f to the "
+                         "lanthanum glass %.4f and f shrinks from %.1f mm to %.1f mm." % (
+                             g["B_thick_R24_mm"], 100 * g["B_dev_R300"], 100 * g["B_dev_R24"], g["B_thin_R24"], g["B_thick_R24"],
+                             nb["WATER"], nb["N-LASF9"], g["B_f_by_mat"]["WATER"], g["B_f_by_mat"]["N-LASF9"])),
+            "formula": T("薄肉: 1/f = (n − 1)(1/R1 − 1/R2)\n厚肉: 1/f = (n − 1)[1/R1 − 1/R2 + (n − 1) t / (n R1 R2)]\n"
+                         "両凸(R1 = R, R2 = −R)の薄肉: f = R / (2(n − 1))",
+                         "thin lens: 1/f = (n − 1)(1/R1 − 1/R2)\nthick lens: 1/f = (n − 1)[1/R1 − 1/R2 + (n − 1) t / (n R1 R2)]\n"
+                         "biconvex (R1 = R, R2 = −R), thin: f = R / (2(n − 1))"),
+            "limit": None,
+        },
+        "doublet": {
+            "question": T("f1 = %.1f mm と f2 = %.1f mm の凸レンズ 2 枚の間隔を広げていく。全体の焦点距離はどうなる?" % (C["f1"], C["f2"]),
+                          "Two convex lenses, f1 = %.1f mm and f2 = %.1f mm, move apart. What happens to the focal length of the pair?"
+                          % (C["f1"], C["f2"])),
+            "choices": [T("間隔によらず一定", "It stays the same whatever the gap"),
+                        T("短くなり続ける", "It keeps getting shorter"),
+                        T("長くなり、d = f1 + f2 で無限大(望遠鏡)、その先は負になる", "It grows, becomes infinite at d = f1 + f2 (a telescope), then turns negative")],
+            "answer": 2,
+            "explain": T("屈折力 1/f = 1/f1 + 1/f2 − d/(f1 f2) は間隔 d の一次式で、d が増えると減る。d = %.1f mm(主点の間)で f = %.1f mm、"
+                         "d = f1 + f2 = %.1f mm で屈折力が 0、平行光が平行光のまま出る(望遠鏡)。その先は f < 0(発散)。"
+                         % (g["C_d_range"][0], g["C_f_first"], g["C_afocal_d"]),
+                         "The power 1/f = 1/f1 + 1/f2 − d/(f1 f2) is linear in the gap d and falls as d grows. At d = %.1f mm "
+                         "(between principal planes) f = %.1f mm; at d = f1 + f2 = %.1f mm the power is zero and parallel light "
+                         "leaves parallel (a telescope). Beyond that f < 0 (diverging)." % (g["C_d_range"][0], g["C_f_first"], g["C_afocal_d"])),
+            "formula": T("1/f = 1/f1 + 1/f2 − d / (f1 f2)\nM = [[1, 0], [−1/f2, 1]] · [[1, d], [0, 1]] · [[1, 0], [−1/f1, 1]]\n"
+                         "f = −1 / C(M = [[A, B], [C, D]])、det M = AD − BC = 1",
+                         "1/f = 1/f1 + 1/f2 − d / (f1 f2)\nM = [[1, 0], [−1/f2, 1]] · [[1, d], [0, 1]] · [[1, 0], [−1/f1, 1]]\n"
+                         "f = −1 / C (M = [[A, B], [C, D]]), det M = AD − BC = 1"),
+            "limit": None,
+        },
+        "pupils": {
+            "question": T("斜めから入る平行光の角度 θ を 0° から %.0f° まで上げる。画面の端の明るさは、教科書の cos⁴θ 則どおりに落ちる?" % FIELD_MAX,
+                          "Raise the angle θ of the incoming parallel light from 0° to %.0f°. Does the brightness at the edge of "
+                          "the picture fall exactly as the textbook cos⁴θ law says?" % FIELD_MAX),
+            "choices": [T("いつも cos⁴θ どおり", "Always exactly cos⁴θ"),
+                        T("レンズの縁が光束を切り始めると、cos⁴θ よりずっと暗くなる", "Once a lens rim starts clipping the beam, it gets much darker than cos⁴θ"),
+                        T("角度によらず同じ明るさ", "Same brightness at every angle")],
+            "answer": 1,
+            "explain": T("縁で切らない場合、10° までは実光線の明るさが cos⁴ と %.1f%% 以内で合う。縁で切ると %.0f° で cos⁴ の %.3f に"
+                         "対し実光線は %.3f(比 %.3f)。ray_bundle で瞳を通る光線は %.0f%% しか残らない(ケラレ)。"
+                         % (100 * g["D_noclip_10deg"], g["D_theta_end"], g["D_cos4_end"], g["D_ri_end"], g["D_ratio_end"], 100 * g["D_vig_end"]),
+                         "Without rim clipping, real-ray illumination matches cos⁴ within %.1f%% up to 10°. With the rims, at "
+                         "%.0f° cos⁴ gives %.3f but the real rays give %.3f (ratio %.3f); only %.0f%% of the rays from ray_bundle "
+                         "get through (vignetting)." % (100 * g["D_noclip_10deg"], g["D_theta_end"], g["D_cos4_end"], g["D_ri_end"],
+                                                          g["D_ratio_end"], 100 * g["D_vig_end"])),
+            "formula": T("cos⁴ 則: E/E0 = cos⁴θ\n実光線: E/E0 = [A(θ) / A(0)] · f² sinθ / (y dy/dθ)\n"
+                         "A = 像まで届く光束の断面積、y = 主光線の像高(≈ f tanθ)",
+                         "cos⁴ law: E/E0 = cos⁴θ\nreal rays: E/E0 = [A(θ) / A(0)] · f² sinθ / (y dy/dθ)\n"
+                         "A = cross-section of the beam reaching the image, y = chief-ray image height (≈ f tanθ)"),
+            "limit": None,
+        },
+    }
+
+
+#: 説明文(text)の限界の段を lesson の「⑤ 限界」に移すときの足し書き(式が仮定していること)。
+LIMIT_EXTRA = {
+    "imaging": T("式は単色(d 線)の光で、収差は入れていない。",
+                 "The formula uses one colour (the d line) and leaves out aberrations."),
+    "lensmaker": T("屈折率は d 線の 1 つだけで、色による焦点のずれ(色収差)は入れていない。",
+                   "Only the d-line index is used; the colour-dependent focus shift (chromatic aberration) is left out."),
+    "doublet": T("d は頂点の間でなく主点の間で測る(頂点の間で測ると式が合わない)。",
+                 "d is measured between the principal planes, not the vertices (vertex spacing does not fit the formula)."),
+    "pupils": T("物体側の明るさ(放射輝度)は一様と仮定している。",
+                "The object side is assumed to have uniform radiance."),
+}
+
+
+def split_limit(text):
+    """説明文の「限界:」の段を切り出す → (説明, 限界)。ja は「限界: 」、en は「Limit: 」でちょうど 1 回ずつ。"""
+    head, tail = {}, {}
+    for lang, mark in (("ja", "限界: "), ("en", "Limit: ")):
+        s = text[lang]
+        if s.count(mark) != 1:
+            raise ValueError("説明文の %s に「%s」がちょうど 1 回ない(%d 回)" % (lang, mark, s.count(mark)))
+        a, b = s.split(mark)
+        head[lang], tail[lang] = a.rstrip(), b.strip()
+    return T(head["ja"], head["en"]), T(tail["ja"], tail["en"])
+
+
+def textbook_axes(res):
+    """各タブの時間つまみの読み(物理量)。"""
+    A, B, C, D = res["imaging"], res["lensmaker"], res["doublet"], res["pupils"]
+    return {
+        "imaging": {"values": np.asarray(A["a"], float),
+                    "segments": [{"k": 0, "label": T("物体の位置 a(前の主点から)", "object distance a (from the front principal plane)"),
+                                  "unit": "mm", "decimals": 1}]},
+        "lensmaker": {"values": np.r_[B["R"][:NF_B1], B["n"][NF_B1:]],
+                      "segments": [{"k": 0, "label": T("面の曲率半径 R(クラウンガラス)", "surface radius R (crown glass)"),
+                                    "unit": "mm", "decimals": 0},
+                                   {"k": NF_B1, "label": T("屈折率 n(d 線、R = 50 mm のまま材料を替える)",
+                                                           "index n (d line; material changes at R = 50 mm)"),
+                                    "unit": "", "decimals": 4}]},
+        "doublet": {"values": np.asarray(C["d_pp"], float),
+                    "segments": [{"k": 0, "label": T("2 枚の間隔 d(主点の間)", "lens spacing d (between principal planes)"),
+                                  "unit": "mm", "decimals": 1}]},
+        "pupils": {"values": np.asarray(D["theta"], float),
+                   "segments": [{"k": 0, "label": T("光の入射角(画角)θ", "field angle θ"), "unit": "°", "decimals": 1}]},
+    }
+
+
+def attach_lessons(tabs, res, g):
+    """タブに checks・lesson・axis を付ける。説明文の限界の段は lesson の ⑤ 限界へ移す。
+
+    ★ok:false の行がある回だけ badge を limit にする(全部通った回は passed)。限界の回を最初のタブにしない。
+    """
+    checks, lessons, axes = textbook_checks(g), textbook_lessons(res, g), textbook_axes(res)
+    for tb in tabs:
+        tid = tb["id"]
+        text, lim = split_limit(tb["text"])
+        ex = LIMIT_EXTRA[tid]
+        ls = dict(lessons[tid])
+        ls["limit"] = T(lim["ja"] + ex["ja"], lim["en"] + " " + ex["en"])
+        tb["text"], tb["lesson"], tb["checks"], tb["axis"] = text, ls, checks[tid], axes[tid]
+        tb["badge"] = "limit" if any(not r["ok"] for r in checks[tid]) else "passed"
+    if tabs[0]["badge"] == "limit":
+        raise AssertionError("限界の回を最初のタブにしない(成功の回を見てから壊れ方を見る順)")
+    return tabs
+
+
 def build_spec(res):
-    S = summary(res)
+    S = gates(res)
     A, B, C, D = res["imaging"], res["lensmaker"], res["doublet"], res["pupils"]
     tabs, infos = [], {}
     # ------------------------------------------------------------- 薄レンズの結像
@@ -1662,14 +2000,19 @@ def build_spec(res):
                      "Fullseye processing band: paraxial_trace (entrance / exit pupils, light blue) → chief_ray (orange; white "
                      "line = f·tanθ) → ray_bundle (rays across the pupil: green passes, red is clipped) → relative_illumination "
                      "(white = cos⁴ = the gate, yellow = real rays, grey = no rim clipping)")]))
+    attach_lessons(tabs, res, S)
     spec = pv.viewer_spec(
         "textbook_lens_system",
         T("レンズ 1 枚から光学系へ", "From one lens to an optical system"),
         T("教科書の結像を、つまみを振って動かす。光線は fullseye の光線追跡、式は門の値",
           "Textbook imaging with the knob turning. Rays come from fullseye's ray tracer; the formulas are the gates"),
-        T("▶ で再生。帯の 4 段は 0.6 秒ずつ順に光る。ドラッグで視点を回す。レンズは半透明で、ガラスの中を通る光線が透けて見える。",
-          "Press ▶ to play; the four band stages light up in turn. Drag to orbit. The lenses are translucent, so the rays "
-          "inside the glass show through."),
+        T("各タブは ① 問い → ② 予想(選択肢を押すと答えが開く)→ ③ 再生(▶)→ ④ 式 → ⑤ 限界 の順。時間つまみの読みは"
+          "物体の位置・曲率半径・間隔・入射角などの物理量。帯の 4 段は 0.6 秒ずつ順に光る。バッジを押すと、確かめた項目・基準・"
+          "結果の表が開く。ドラッグで視点を回す。レンズは半透明で、ガラスの中を通る光線が透けて見える。",
+          "Each tab runs ① question → ② predict (tap a choice to reveal the answer) → ③ play (▶) → ④ equation → ⑤ limit. "
+          "The time slider reads a physical quantity: object distance, radius, spacing or field angle. The four band stages "
+          "light up in turn. Tap a badge to open what was checked, the criterion and the result. Drag to orbit. The lenses "
+          "are translucent, so the rays inside the glass show through."),
         tabs)
     return spec, S, infos
 

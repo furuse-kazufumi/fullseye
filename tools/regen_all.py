@@ -319,7 +319,10 @@ EXCLUDED = {
     "tools/build_lens_system_anim3d.py": ("教科書の光学「レンズ 1 枚から光学系へ」の動く 3-D(docs/anim3d/textbook_lens_system.html、"
                                          "約 3 MB)。pocviewer の kind anim3d(枝 feat/pocviewer-anim3d)が固まるまでは形が動くので、"
                                          "手で回して commit する(build_view2026_viewers と同じ扱い)。中身は "
-                                         "tests/test_lens_system_anim3d.py が理論の式と独立経路で守る。"),
+                                         "tests/test_lens_system_anim3d.py が理論の式と独立経路で守る。8 言語版は "
+                                         "`py -3.11 tools/anim3d_i18n.py --build build_lens_system_anim3d --out "
+                                         "docs/anim3d/textbook_lens_system.html` で書く(生成器を直接回すと ja/en に戻る。"
+                                         "門は tests/test_anim3d_i18n_lens_system_2026_10_25.py)。"),
     "tools/gen_wing1d_gallery.py": _ARTICLE_REASON,
     "tools/gen_wing2d_gallery.py": _ARTICLE_REASON,
     "tools/gen_wing3d_gallery.py": _ARTICLE_REASON,

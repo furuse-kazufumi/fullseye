@@ -1,0 +1,1248 @@
+{
+ "_": "レンズ 1 枚から光学系への動く 3-D の教科書(docs/anim3d/textbook_lens_system.html)の翻訳表。キー = en の文字列、ja = 訳した時点の日本語の控え。ViEW2026 の来場者(理系の学生)向けに各言語の教科書の用語で。数値・単位・op 名・式は en のまま。",
+ "example": "build_lens_system_anim3d",
+ "strings": {
+  "From one lens to an optical system": {
+   "ja": "レンズ 1 枚から光学系へ",
+   "zh": "从单片透镜到光学系统",
+   "tw": "從單片透鏡到光學系統",
+   "ko": "렌즈 한 개에서 광학계로",
+   "de": "Von der Einzellinse zum optischen System",
+   "hi": "एक लेंस से प्रकाशिक तंत्र तक",
+   "fr": "D'une lentille à un système optique"
+  },
+  "Textbook imaging with the knob turning. Rays come from fullseye's ray tracer; the formulas are the gates": {
+   "ja": "教科書の結像を、つまみを振って動かす。光線は fullseye の光線追跡、式は門の値",
+   "zh": "转动旋钮，让教科书里的成像动起来。光线来自 fullseye 的光线追迹器；公式就是检验门。",
+   "tw": "轉動旋鈕，讓教科書裡的成像動起來。光線來自 fullseye 的光線追蹤器；公式就是檢驗門。",
+   "ko": "손잡이를 돌리며 보는 교과서의 결상. 광선은 fullseye의 광선 추적기에서 나오고, 식은 검증 기준이다",
+   "de": "Lehrbuch-Abbildung zum Drehen am Regler. Die Strahlen stammen aus dem Raytracer von fullseye; die Formeln sind die Prüfkriterien",
+   "hi": "घुंडी घुमाते हुए पाठ्यपुस्तक का प्रतिबिंब-निर्माण। किरणें fullseye के किरण-अनुरेखक से आती हैं; सूत्र जाँच की कसौटी हैं",
+   "fr": "La formation des images du manuel, en tournant le bouton. Les rayons viennent du traceur de rayons de fullseye ; les formules servent de critère de contrôle"
+  },
+  "Each tab runs ① question → ② predict (tap a choice to reveal the answer) → ③ play (▶) → ④ equation → ⑤ limit. The time slider reads a physical quantity: object distance, radius, spacing or field angle. The four band stages light up in turn. Tap a badge to open what was checked, the criterion and the result. Drag to orbit. The lenses are translucent, so the rays inside the glass show through.": {
+   "ja": "各タブは ① 問い → ② 予想(選択肢を押すと答えが開く)→ ③ 再生(▶)→ ④ 式 → ⑤ 限界 の順。時間つまみの読みは物体の位置・曲率半径・間隔・入射角などの物理量。帯の 4 段は 0.6 秒ずつ順に光る。バッジを押すと、確かめた項目・基準・結果の表が開く。ドラッグで視点を回す。レンズは半透明で、ガラスの中を通る光線が透けて見える。",
+   "zh": "每个标签页依次为 ① 问题 → ② 预测(点选项即可显示答案)→ ③ 播放(▶)→ ④ 公式 → ⑤ 局限。时间滑块的读数是一个物理量：物距、曲率半径、间距或视场角。条带的四个阶段依次点亮。点按徽章可打开检验项目、判据和结果。拖动可旋转视角。透镜是半透明的，因此能看到玻璃内部的光线。",
+   "tw": "每個分頁依序為 ① 問題 → ② 預測(點選項即可顯示答案)→ ③ 播放(▶)→ ④ 公式 → ⑤ 限制。時間滑桿的讀數是一個物理量：物距、曲率半徑、間距或視場角。條帶的四個階段依序亮起。點按徽章可開啟檢驗項目、判準與結果。拖曳可旋轉視角。透鏡是半透明的，因此能看到玻璃內部的光線。",
+   "ko": "각 탭은 ① 질문 → ② 예상(선택지를 누르면 답이 열림) → ③ 재생(▶) → ④ 식 → ⑤ 한계 순서로 진행된다. 시간 슬라이더의 값은 물리량이다: 물체 거리, 곡률 반지름, 간격 또는 화각. 띠의 네 단계가 차례로 켜진다. 배지를 누르면 확인한 항목, 기준, 결과가 열린다. 드래그하면 시점이 돈다. 렌즈는 반투명이어서 유리 속을 지나는 광선이 비쳐 보인다.",
+   "de": "Jeder Tab läuft ab: ① Frage → ② Vorhersage (Antwort antippen, um die Lösung aufzudecken) → ③ Abspielen (▶) → ④ Gleichung → ⑤ Grenze. Der Zeitregler zeigt eine physikalische Größe: Gegenstandsweite, Radius, Abstand oder Feldwinkel. Die vier Stufen des Bandes leuchten nacheinander auf. Tippe auf ein Abzeichen, um zu sehen, was geprüft wurde, das Kriterium und das Ergebnis. Ziehen, um die Ansicht zu drehen. Die Linsen sind durchscheinend, sodass die Strahlen im Glas sichtbar sind.",
+   "hi": "हर टैब इस क्रम में चलता है: ① प्रश्न → ② अनुमान (उत्तर देखने के लिए कोई विकल्प दबाएँ) → ③ चलाएँ (▶) → ④ समीकरण → ⑤ सीमा। समय-स्लाइडर एक भौतिक राशि दिखाता है: वस्तु-दूरी, त्रिज्या, अंतराल या क्षेत्र-कोण। पट्टी के चार चरण बारी-बारी से चमकते हैं। क्या जाँचा गया, कसौटी और परिणाम देखने के लिए बैज दबाएँ। दृश्य घुमाने के लिए खींचें। लेंस पारभासी हैं, इसलिए काँच के भीतर की किरणें दिखाई देती हैं।",
+   "fr": "Chaque onglet suit : ① question → ② prédiction (touchez un choix pour révéler la réponse) → ③ lecture (▶) → ④ équation → ⑤ limite. Le curseur de temps indique une grandeur physique : distance de l'objet, rayon, écartement ou angle de champ. Les quatre étapes du bandeau s'allument tour à tour. Touchez un badge pour afficher ce qui a été vérifié, le critère et le résultat. Faites glisser pour tourner autour de la scène. Les lentilles sont translucides : on voit les rayons à l'intérieur du verre."
+  },
+  "Thin-lens imaging": {
+   "ja": "薄レンズの結像",
+   "zh": "薄透镜成像",
+   "tw": "薄透鏡成像",
+   "ko": "얇은 렌즈의 결상",
+   "de": "Abbildung mit der dünnen Linse",
+   "hi": "पतले लेंस से प्रतिबिंब-निर्माण",
+   "fr": "Formation d'image par une lentille mince"
+  },
+  "Terms: focal length f = where parallel light meets. Principal planes H, H′ = the reference planes from which distances are measured in a thick lens (the middle of a thin lens). Real image = light really converges and shows on a screen. Virtual image = light never meets; you only see it through the lens. Magnification m = image size / object size (minus = upside down).\nThe object (white arrow) moves from 3f to 0.5f. Green lines are rays that fullseye's trace_rays actually traced; the orange arrow is the image thin_lens computes from 1/a + 1/b = 1/f. At a = 2f the image is the same size; as a approaches f the image runs away and grows; inside f the light no longer meets and the image becomes an upright virtual image (a magnifier; grey lines are the outgoing rays extended backwards).": {
+   "ja": "【言葉】焦点距離 f = 平行な光が 1 点に集まるまでの距離。主点 H, H′ = 厚いレンズで距離を測る基準の面(薄いレンズならレンズの真ん中)。実像 = 光が本当に集まってスクリーンに映る像。虚像 = 光は集まらず、レンズ越しに見えるだけの像。倍率 m = 像の大きさ ÷ 物体の大きさ(マイナスは上下さかさま)。\n物体(白い矢印)をレンズから 3f の所から 0.5f まで近づける。緑の線は fullseye の光線追跡 trace_rays が実際に追った光、オレンジの矢印は thin_lens が 1/a + 1/b = 1/f から出した像。a = 2f で同じ大きさ、a が f に近づくと像は遠くへ逃げて大きくなり、f を割ると光は集まらなくなって正立の虚像(虫めがね)に変わる(灰の線 = 出た光を後ろへ伸ばした線)。",
+   "zh": "术语：焦距 f = 平行光会聚的位置。主平面 H, H′ = 厚透镜中测量距离的基准面(薄透镜即透镜中央)。实像 = 光真正会聚，能在屏上显示。虚像 = 光从不相交，只能透过透镜看到。放大率 m = 像的大小 / 物的大小(负号表示倒立)。\n物体(白色箭头)从 3f 移动到 0.5f。绿线是 fullseye 的 trace_rays 实际追迹的光线；橙色箭头是 thin_lens 由 1/a + 1/b = 1/f 算出的像。在 a = 2f 时像与物等大；a 接近 f 时像迅速远离并变大；进入 f 以内后光不再会聚，像变为正立的虚像(放大镜；灰线是出射光线反向延长的线)。",
+   "tw": "術語：焦距 f = 平行光會聚的位置。主平面 H, H′ = 厚透鏡中量測距離的基準面(薄透鏡即透鏡中央)。實像 = 光真正會聚，能在屏幕上顯示。虛像 = 光從不相交，只能透過透鏡看到。放大率 m = 像的大小 / 物的大小(負號表示倒立)。\n物體(白色箭頭)從 3f 移動到 0.5f。綠線是 fullseye 的 trace_rays 實際追蹤的光線；橙色箭頭是 thin_lens 由 1/a + 1/b = 1/f 算出的像。在 a = 2f 時像與物等大；a 接近 f 時像迅速遠離並變大；進入 f 以內後光不再會聚，像變為正立的虛像(放大鏡；灰線是出射光線反向延長的線)。",
+   "ko": "용어: 초점 거리 f = 평행광이 모이는 곳. 주평면 H, H′ = 두꺼운 렌즈에서 거리를 재는 기준 평면(얇은 렌즈에서는 렌즈의 한가운데). 실상 = 빛이 실제로 모여 스크린에 맺히는 상. 허상 = 빛이 모이지 않아 렌즈를 통해서만 보이는 상. 배율 m = 상의 크기 / 물체의 크기(음수면 거꾸로 선 상).\n물체(흰 화살표)가 3f에서 0.5f까지 움직인다. 초록 선은 fullseye의 trace_rays가 실제로 추적한 광선이고, 주황 화살표는 thin_lens가 1/a + 1/b = 1/f로 계산한 상이다. a = 2f에서 상의 크기가 같고, a가 f에 가까워지면 상이 멀리 달아나며 커진다. f 안쪽에서는 빛이 더 이상 모이지 않고 상은 바로 선 허상이 된다(돋보기; 회색 선은 나가는 광선을 뒤로 연장한 선).",
+   "de": "Begriffe: Brennweite f = wo sich paralleles Licht trifft. Hauptebenen H, H′ = die Bezugsebenen, von denen aus bei einer dicken Linse die Abstände gemessen werden (bei einer dünnen Linse deren Mitte). Reelles Bild = das Licht läuft tatsächlich zusammen und erscheint auf einem Schirm. Virtuelles Bild = das Licht trifft sich nie; man sieht es nur durch die Linse. Abbildungsmaßstab m = Bildgröße / Gegenstandsgröße (Minus = auf dem Kopf).\nDer Gegenstand (weißer Pfeil) wandert von 3f nach 0.5f. Die grünen Linien sind Strahlen, die trace_rays von fullseye tatsächlich verfolgt hat; der orange Pfeil ist das Bild, das thin_lens aus 1/a + 1/b = 1/f berechnet. Bei a = 2f ist das Bild gleich groß; nähert sich a an f, wandert das Bild weg und wächst; innerhalb von f treffen sich die Strahlen nicht mehr, und das Bild wird ein aufrechtes virtuelles Bild (eine Lupe; graue Linien sind die rückwärts verlängerten austretenden Strahlen).",
+   "hi": "शब्द: फ़ोकस दूरी f = जहाँ समांतर प्रकाश मिलता है। मुख्य तल H, H′ = मोटे लेंस में वे संदर्भ तल जिनसे दूरियाँ मापी जाती हैं (पतले लेंस में लेंस का मध्य)। वास्तविक प्रतिबिंब = प्रकाश सचमुच अभिसरित होता है और परदे पर दिखता है। आभासी प्रतिबिंब = प्रकाश कभी नहीं मिलता; वह केवल लेंस के आर-पार दिखता है। आवर्धन m = प्रतिबिंब का आकार / वस्तु का आकार (ऋण = उल्टा)।\nवस्तु (सफ़ेद तीर) 3f से 0.5f तक चलती है। हरी रेखाएँ वे किरणें हैं जिन्हें fullseye के trace_rays ने वास्तव में अनुरेखित किया; नारंगी तीर वह प्रतिबिंब है जिसे thin_lens 1/a + 1/b = 1/f से गणना करता है। a = 2f पर प्रतिबिंब समान आकार का होता है; a के f के पास आने पर प्रतिबिंब दूर भागता है और बड़ा होता है; f के भीतर प्रकाश अब नहीं मिलता और प्रतिबिंब सीधा आभासी प्रतिबिंब बन जाता है (आवर्धक लेंस; धूसर रेखाएँ निर्गत किरणों को पीछे की ओर बढ़ाकर बनी हैं)।",
+   "fr": "Termes : distance focale f = l'endroit où la lumière parallèle converge. Plans principaux H, H′ = les plans de référence à partir desquels on mesure les distances dans une lentille épaisse (le milieu d'une lentille mince). Image réelle = la lumière converge réellement et apparaît sur un écran. Image virtuelle = la lumière ne converge jamais ; on ne la voit qu'à travers la lentille. Grandissement m = taille de l'image / taille de l'objet (négatif = renversée).\nL'objet (flèche blanche) se déplace de 3f à 0.5f. Les lignes vertes sont les rayons réellement tracés par trace_rays de fullseye ; la flèche orange est l'image que thin_lens calcule à partir de 1/a + 1/b = 1/f. À a = 2f l'image a la même taille ; quand a s'approche de f, l'image s'éloigne et grandit ; en deçà de f la lumière ne converge plus et l'image devient une image virtuelle droite (une loupe ; les lignes grises sont les rayons sortants prolongés vers l'arrière)."
+  },
+  "focal length f (paraxial_trace)": {
+   "ja": "焦点距離 f(paraxial_trace)",
+   "zh": "焦距 f(paraxial_trace)",
+   "tw": "焦距 f(paraxial_trace)",
+   "ko": "초점 거리 f(paraxial_trace)",
+   "de": "Brennweite f (paraxial_trace)",
+   "hi": "फ़ोकस दूरी f (paraxial_trace)",
+   "fr": "distance focale f (paraxial_trace)"
+  },
+  "thin_lens vs paraxial_trace (max)": {
+   "ja": "thin_lens と paraxial_trace の差(最大)",
+   "zh": "thin_lens 与 paraxial_trace 之差(最大)",
+   "tw": "thin_lens 與 paraxial_trace 之差(最大)",
+   "ko": "thin_lens와 paraxial_trace의 차이(최대)",
+   "de": "thin_lens vs. paraxial_trace (max.)",
+   "hi": "thin_lens बनाम paraxial_trace (अधिकतम)",
+   "fr": "thin_lens vs paraxial_trace (max)"
+  },
+  "magnification at a = 2f": {
+   "ja": "a = 2f の倍率",
+   "zh": "a = 2f 时的放大率",
+   "tw": "a = 2f 時的放大率",
+   "ko": "a = 2f에서의 배율",
+   "de": "Abbildungsmaßstab bei a = 2f",
+   "hi": "a = 2f पर आवर्धन",
+   "fr": "grandissement à a = 2f"
+  },
+  "real-ray image shift (3f / 2f)": {
+   "ja": "実光線の像の位置のずれ(3f / 2f)",
+   "zh": "实际光线的像位置偏移(3f / 2f)",
+   "tw": "實際光線的像位置偏移(3f / 2f)",
+   "ko": "실광선 상 위치의 어긋남(3f / 2f)",
+   "de": "Bildverschiebung der realen Strahlen (3f / 2f)",
+   "hi": "वास्तविक किरणों के प्रतिबिंब का विस्थापन (3f / 2f)",
+   "fr": "décalage de l'image des rayons réels (3f / 2f)"
+  },
+  "object (arrow, 8 mm tall)": {
+   "ja": "物体(矢印、高さ 8 mm)",
+   "zh": "物体(箭头，高 8 mm)",
+   "tw": "物體(箭頭，高 8 mm)",
+   "ko": "물체(화살표, 높이 8 mm)",
+   "de": "Gegenstand (Pfeil, 8 mm hoch)",
+   "hi": "वस्तु (तीर, 8 mm ऊँचा)",
+   "fr": "objet (flèche, 8 mm de haut)"
+  },
+  "image (b and m from thin_lens)": {
+   "ja": "像(thin_lens の b と m)",
+   "zh": "像(b 与 m 来自 thin_lens)",
+   "tw": "像(b 與 m 來自 thin_lens)",
+   "ko": "상(thin_lens의 b와 m)",
+   "de": "Bild (b und m aus thin_lens)",
+   "hi": "प्रतिबिंब (thin_lens से b और m)",
+   "fr": "image (b et m de thin_lens)"
+  },
+  "screen (moves to the image when it is real)": {
+   "ja": "スクリーン(実像のときだけ像の位置へ)",
+   "zh": "屏幕(成实像时移到像的位置)",
+   "tw": "屏幕(成實像時移到像的位置)",
+   "ko": "스크린(실상일 때만 상의 위치로 이동)",
+   "de": "Schirm (fährt zum Bild, wenn es reell ist)",
+   "hi": "परदा (प्रतिबिंब वास्तविक होने पर उसके स्थान पर जाता है)",
+   "fr": "écran (se place sur l'image quand elle est réelle)"
+  },
+  "image point of the real rays": {
+   "ja": "実光線の像の点",
+   "zh": "实际光线的像点",
+   "tw": "實際光線的像點",
+   "ko": "실광선의 상점",
+   "de": "Bildpunkt der realen Strahlen",
+   "hi": "वास्तविक किरणों का प्रतिबिंब-बिंदु",
+   "fr": "point image des rayons réels"
+  },
+  "a = 3f: small inverted real image": {
+   "ja": "a = 3f: 小さな倒立の実像",
+   "zh": "a = 3f：缩小的倒立实像",
+   "tw": "a = 3f：縮小的倒立實像",
+   "ko": "a = 3f: 작은 도립 실상",
+   "de": "a = 3f: kleines umgekehrtes reelles Bild",
+   "hi": "a = 3f: छोटा उल्टा वास्तविक प्रतिबिंब",
+   "fr": "a = 3f : petite image réelle renversée"
+  },
+  "a = 2f: same size (m = −1)": {
+   "ja": "a = 2f: 同じ大きさ(m = −1)",
+   "zh": "a = 2f：等大(m = −1)",
+   "tw": "a = 2f：等大(m = −1)",
+   "ko": "a = 2f: 같은 크기(m = −1)",
+   "de": "a = 2f: gleich groß (m = −1)",
+   "hi": "a = 2f: समान आकार (m = −1)",
+   "fr": "a = 2f : même taille (m = −1)"
+  },
+  "limit: real rays 10% off the paraxial formula": {
+   "ja": "限界: 実光線が近軸の式から 10% ずれる",
+   "zh": "局限：实际光线偏离近轴公式 10%",
+   "tw": "限制：實際光線偏離近軸公式 10%",
+   "ko": "한계: 실광선이 근축 식에서 10% 벗어남",
+   "de": "Grenze: reale Strahlen weichen 10% von der paraxialen Formel ab",
+   "hi": "सीमा: वास्तविक किरणें उपाक्षीय सूत्र से 10% हटती हैं",
+   "fr": "limite : les rayons réels s'écartent de 10% de la formule paraxiale"
+  },
+  "a < f: virtual image (magnifier)": {
+   "ja": "a < f: 虚像(虫めがね)",
+   "zh": "a < f：虚像(放大镜)",
+   "tw": "a < f：虛像(放大鏡)",
+   "ko": "a < f: 허상(돋보기)",
+   "de": "a < f: virtuelles Bild (Lupe)",
+   "hi": "a < f: आभासी प्रतिबिंब (आवर्धक लेंस)",
+   "fr": "a < f : image virtuelle (loupe)"
+  },
+  "b (thin_lens)": {
+   "ja": "b(thin_lens)",
+   "zh": "b(thin_lens)",
+   "tw": "b(thin_lens)",
+   "ko": "b(thin_lens)",
+   "de": "b (thin_lens)",
+   "hi": "b (thin_lens)",
+   "fr": "b (thin_lens)"
+  },
+  "b (paraxial_trace)": {
+   "ja": "b(paraxial_trace)",
+   "zh": "b(paraxial_trace)",
+   "tw": "b(paraxial_trace)",
+   "ko": "b(paraxial_trace)",
+   "de": "b (paraxial_trace)",
+   "hi": "b (paraxial_trace)",
+   "fr": "b (paraxial_trace)"
+  },
+  "b (real rays)": {
+   "ja": "b(実光線)",
+   "zh": "b(实际光线)",
+   "tw": "b(實際光線)",
+   "ko": "b(실광선)",
+   "de": "b (reale Strahlen)",
+   "hi": "b (वास्तविक किरणें)",
+   "fr": "b (rayons réels)"
+  },
+  "real − formula": {
+   "ja": "差(実光線 − 式)",
+   "zh": "实际光线 − 公式",
+   "tw": "實際光線 − 公式",
+   "ko": "실광선 − 식",
+   "de": "real − Formel",
+   "hi": "वास्तविक − सूत्र",
+   "fr": "réel − formule"
+  },
+  "m (magnification)": {
+   "ja": "m(倍率)",
+   "zh": "m(放大率)",
+   "tw": "m(放大率)",
+   "ko": "m(배율)",
+   "de": "m (Abbildungsmaßstab)",
+   "hi": "m (आवर्धन)",
+   "fr": "m (grandissement)"
+  },
+  "Fullseye processing band: paraxial_trace (f and principal planes, light-blue F) → thin_lens (b and m, orange arrow) → trace_rays (the arrow carried point by point by real rays, green) → compare with the theory line b(a) (white; yellow dot). Bottom line: the formula with this instant's numbers (per-op values in the list at top left and the graph below)": {
+   "ja": "Fullseye の処理の帯: paraxial_trace(f と主点、水色の点 F)→ thin_lens(b と m、オレンジの矢印)→ trace_rays(矢印の各点を実光線で運んだ像、緑の線)→ 理論の線 b(a)(白)と比べる(黄色の点)。下の 1 行 = その時刻の式と数字(op ごとの値は左上の一覧と下のグラフ)",
+   "zh": "Fullseye 处理条带：paraxial_trace(f 与主平面，浅蓝色 F)→ thin_lens(b 与 m，橙色箭头)→ trace_rays(用实际光线逐点搬运箭头，绿色)→ 与理论曲线 b(a) 比较(白色；黄点)。最下一行：此刻的公式及其数值(各 op 的值见左上角列表和下方图表)",
+   "tw": "Fullseye 處理條帶：paraxial_trace(f 與主平面，淺藍色 F)→ thin_lens(b 與 m，橙色箭頭)→ trace_rays(以實際光線逐點搬運箭頭，綠色)→ 與理論曲線 b(a) 比較(白色；黃點)。最下一行：此刻的公式及其數值(各 op 的值見左上角列表與下方圖表)",
+   "ko": "Fullseye 처리 띠: paraxial_trace(f와 주평면, 하늘색 F) → thin_lens(b와 m, 주황 화살표) → trace_rays(실광선이 화살표를 점마다 옮긴 상, 초록) → 이론선 b(a)(흰색; 노란 점)와 비교. 맨 아래 줄: 이 순간의 숫자를 넣은 식(op별 값은 왼쪽 위 목록과 아래 그래프)",
+   "de": "Fullseye-Verarbeitungsband: paraxial_trace (f und Hauptebenen, hellblaues F) → thin_lens (b und m, oranger Pfeil) → trace_rays (der Pfeil Punkt für Punkt von realen Strahlen übertragen, grün) → Vergleich mit der Theorielinie b(a) (weiß; gelber Punkt). Unterste Zeile: die Formel mit den Zahlen dieses Moments (Werte je op in der Liste oben links und im Diagramm unten)",
+   "hi": "Fullseye प्रसंस्करण पट्टी: paraxial_trace (f और मुख्य तल, हल्का नीला F) → thin_lens (b और m, नारंगी तीर) → trace_rays (वास्तविक किरणों द्वारा बिंदु-दर-बिंदु ले जाया गया तीर, हरा) → सैद्धांतिक रेखा b(a) (सफ़ेद; पीला बिंदु) से तुलना। नीचे की पंक्ति: इस क्षण के अंकों के साथ सूत्र (हर op के मान ऊपर बाईं सूची और नीचे के ग्राफ़ में)",
+   "fr": "Bandeau de traitement Fullseye : paraxial_trace (f et plans principaux, F bleu clair) → thin_lens (b et m, flèche orange) → trace_rays (la flèche transportée point par point par les rayons réels, vert) → comparaison avec la courbe théorique b(a) (blanc ; point jaune). Ligne du bas : la formule avec les valeurs de cet instant (valeurs par op dans la liste en haut à gauche et le graphique ci-dessous)"
+  },
+  "An object in front of a convex lens moves from 3.3f to 0.5f. What happens to the image on the screen?": {
+   "ja": "凸レンズの前の物体を、3.3f の所から 0.5f までレンズに近づけていく。スクリーンに映る像はどうなる?",
+   "zh": "凸透镜前的物体从 3.3f 移到 0.5f。屏上的像会怎样？",
+   "tw": "凸透鏡前的物體從 3.3f 移到 0.5f。屏幕上的像會怎樣？",
+   "ko": "볼록 렌즈 앞의 물체가 3.3f에서 0.5f까지 움직인다. 스크린의 상은 어떻게 될까?",
+   "de": "Ein Gegenstand vor einer Sammellinse wandert von 3.3f nach 0.5f. Was passiert mit dem Bild auf dem Schirm?",
+   "hi": "उत्तल लेंस के सामने रखी वस्तु 3.3f से 0.5f तक चलती है। परदे पर प्रतिबिंब का क्या होता है?",
+   "fr": "Un objet devant une lentille convergente se déplace de 3.3f à 0.5f. Que devient l'image sur l'écran ?"
+  },
+  "It gets smaller as the object comes closer": {
+   "ja": "近づくほど小さくなる",
+   "zh": "物体越近，像越小",
+   "tw": "物體越近，像越小",
+   "ko": "물체가 가까워질수록 작아진다",
+   "de": "Es wird kleiner, je näher der Gegenstand kommt",
+   "hi": "वस्तु पास आने पर यह छोटा होता जाता है",
+   "fr": "Elle rétrécit à mesure que l'objet s'approche"
+  },
+  "It grows and moves away; inside f nothing forms on the screen": {
+   "ja": "大きくなりながら遠ざかり、f より近いとスクリーンに映らなくなる",
+   "zh": "像变大并远离；进入 f 以内后屏上不再成像",
+   "tw": "像變大並遠離；進入 f 以內後屏幕上不再成像",
+   "ko": "커지면서 멀어지고, f 안쪽에서는 스크린에 아무것도 맺히지 않는다",
+   "de": "Es wächst und wandert weg; innerhalb von f entsteht nichts auf dem Schirm",
+   "hi": "यह बड़ा होता है और दूर जाता है; f के भीतर परदे पर कुछ नहीं बनता",
+   "fr": "Elle grandit et s'éloigne ; en deçà de f, rien ne se forme sur l'écran"
+  },
+  "Same size; only its position moves": {
+   "ja": "大きさは変わらず、位置だけ動く",
+   "zh": "大小不变，只有位置移动",
+   "tw": "大小不變，只有位置移動",
+   "ko": "크기는 같고 위치만 움직인다",
+   "de": "Gleich groß; nur seine Lage ändert sich",
+   "hi": "आकार वही रहता है; केवल स्थिति बदलती है",
+   "fr": "Même taille ; seule sa position change"
+  },
+  "From 1/a + 1/b = 1/f: at a = 2f, b = 2f and m = -1.000 (same size, upside down). As a nears f, b grows without bound; for a < f, b < 0: the light no longer meets and you see an upright virtual image through the lens (a magnifier). This lens has f = 99.52 mm (paraxial_trace).": {
+   "ja": "1/a + 1/b = 1/f から、a = 2f で b = 2f・倍率 m = -1.000(同じ大きさで上下さかさま)。a が f に近づくと b はどんどん大きくなり、a < f では b < 0: 光は集まらず、レンズ越しに見える正立の虚像(虫めがね)になる。このレンズの f = 99.52 mm(paraxial_trace)。",
+   "zh": "由 1/a + 1/b = 1/f 可知：a = 2f 时 b = 2f，m = -1.000(等大、倒立)。a 接近 f 时 b 无限增大；a < f 时 b < 0：光不再会聚，透过透镜看到的是正立的虚像(放大镜)。这片透镜的 f = 99.52 mm(paraxial_trace)。",
+   "tw": "由 1/a + 1/b = 1/f 可知：a = 2f 時 b = 2f，m = -1.000(等大、倒立)。a 接近 f 時 b 無限增大；a < f 時 b < 0：光不再會聚，透過透鏡看到的是正立的虛像(放大鏡)。這片透鏡的 f = 99.52 mm(paraxial_trace)。",
+   "ko": "1/a + 1/b = 1/f에서: a = 2f이면 b = 2f, m = -1.000(같은 크기, 거꾸로). a가 f에 가까워지면 b는 한없이 커지고, a < f이면 b < 0: 빛은 더 이상 모이지 않고 렌즈를 통해 바로 선 허상이 보인다(돋보기). 이 렌즈의 f = 99.52 mm(paraxial_trace).",
+   "de": "Aus 1/a + 1/b = 1/f: Bei a = 2f ist b = 2f und m = -1.000 (gleich groß, auf dem Kopf). Nähert sich a an f, wächst b unbegrenzt; für a < f ist b < 0: Das Licht trifft sich nicht mehr, und man sieht durch die Linse ein aufrechtes virtuelles Bild (eine Lupe). Diese Linse hat f = 99.52 mm (paraxial_trace).",
+   "hi": "1/a + 1/b = 1/f से: a = 2f पर b = 2f और m = -1.000 (समान आकार, उल्टा)। a के f के पास आने पर b असीम रूप से बढ़ता है; a < f के लिए b < 0: प्रकाश अब नहीं मिलता और लेंस के आर-पार सीधा आभासी प्रतिबिंब दिखता है (आवर्धक लेंस)। इस लेंस की f = 99.52 mm (paraxial_trace)।",
+   "fr": "D'après 1/a + 1/b = 1/f : à a = 2f, b = 2f et m = -1.000 (même taille, renversée). Quand a s'approche de f, b croît sans limite ; pour a < f, b < 0 : la lumière ne converge plus et l'on voit à travers la lentille une image virtuelle droite (une loupe). Cette lentille a f = 99.52 mm (paraxial_trace)."
+  },
+  "1/a + 1/b = 1/f (a and b measured from the principal planes)\nmagnification: m = −b / a\nb < 0 means a virtual (upright) image": {
+   "ja": "1/a + 1/b = 1/f(a, b は主点から測る)\n倍率: m = −b / a\nb < 0 なら虚像(正立)",
+   "zh": "1/a + 1/b = 1/f(a 和 b 从主平面量起)\n放大率：m = −b / a\nb < 0 表示虚像(正立)",
+   "tw": "1/a + 1/b = 1/f(a 與 b 從主平面量起)\n放大率：m = −b / a\nb < 0 表示虛像(正立)",
+   "ko": "1/a + 1/b = 1/f(a와 b는 주평면에서 잰다)\n배율: m = −b / a\nb < 0이면 허상(정립)",
+   "de": "1/a + 1/b = 1/f (a und b von den Hauptebenen aus gemessen)\nAbbildungsmaßstab: m = −b / a\nb < 0 bedeutet ein virtuelles (aufrechtes) Bild",
+   "hi": "1/a + 1/b = 1/f (a और b मुख्य तलों से मापे जाते हैं)\nआवर्धन: m = −b / a\nb < 0 का अर्थ आभासी (सीधा) प्रतिबिंब",
+   "fr": "1/a + 1/b = 1/f (a et b mesurés depuis les plans principaux)\ngrandissement : m = −b / a\nb < 0 signifie une image virtuelle (droite)"
+  },
+  "the paraxial formula is for rays close to the axis. Real rays through 0.45 of the radius meet 1.0% short at a = 3f and 1.5% at a = 2f, and the gap opens up as a nears f (formula: infinity; real rays: finite). thin_lens and paraxial_trace (thick lens, measured from the principal planes) agree to 3e-14 on every frame (gate). The formula uses one colour (the d line) and leaves out aberrations.": {
+   "ja": "近軸の式は「光軸のすぐそばの光」だけの式。レンズの縁寄り(半径の 0.45)を通る実光線は a = 3f で 1.0%、a = 2f で 1.5% 手前で集まり、a が f に近づくと差が大きく開く(式は無限遠、実光線は有限)。thin_lens と paraxial_trace(厚いレンズの近軸の追跡、主点から測る)は全コマで相対 3e-14 以内で一致(門)。式は単色(d 線)の光で、収差は入れていない。",
+   "zh": "近轴公式只适用于靠近光轴的光线。通过半径 0.45 处的实际光线在 a = 3f 时提前 1.0% 会聚，在 a = 2f 时提前 1.5%，且 a 越接近 f 差距越大(公式给出无穷远，实际光线为有限值)。thin_lens 与 paraxial_trace(厚透镜，从主平面量起)在每一帧都相符到 3e-14 以内(检验门)。公式只用一种颜色(d 线)，并忽略像差。",
+   "tw": "近軸公式只適用於靠近光軸的光線。通過半徑 0.45 處的實際光線在 a = 3f 時提前 1.0% 會聚，在 a = 2f 時提前 1.5%，且 a 越接近 f 差距越大(公式給出無窮遠，實際光線為有限值)。thin_lens 與 paraxial_trace(厚透鏡，從主平面量起)在每一影格都吻合到 3e-14 以內(檢驗門)。公式只用一種顏色(d 線)，並忽略像差。",
+   "ko": "근축 식은 광축에 가까운 광선에 대한 식이다. 반지름의 0.45를 지나는 실광선은 a = 3f에서 1.0%, a = 2f에서 1.5% 앞에서 모이고, a가 f에 가까워지면 차이가 크게 벌어진다(식: 무한대, 실광선: 유한). thin_lens와 paraxial_trace(두꺼운 렌즈, 주평면에서 잼)는 모든 프레임에서 3e-14 이내로 일치한다(검증 기준). 식은 한 가지 색(d 선)만 쓰고 수차는 빠져 있다.",
+   "de": "Die paraxiale Formel gilt für achsnahe Strahlen. Reale Strahlen durch 0.45 des Radius treffen sich bei a = 3f um 1.0% und bei a = 2f um 1.5% zu früh, und die Lücke wächst, wenn a sich f nähert (Formel: unendlich; reale Strahlen: endlich). thin_lens und paraxial_trace (dicke Linse, von den Hauptebenen aus gemessen) stimmen in jedem Frame auf 3e-14 überein (Prüfkriterium). Die Formel verwendet eine Farbe (die d-Linie) und lässt Abbildungsfehler weg.",
+   "hi": "उपाक्षीय सूत्र अक्ष के निकट की किरणों के लिए है। त्रिज्या के 0.45 से गुज़रने वाली वास्तविक किरणें a = 3f पर 1.0% और a = 2f पर 1.5% पहले मिलती हैं, और a के f के पास आने पर अंतर बढ़ता जाता है (सूत्र: अनंत; वास्तविक किरणें: परिमित)। thin_lens और paraxial_trace (मोटा लेंस, मुख्य तलों से मापा गया) हर फ्रेम पर 3e-14 तक मेल खाते हैं (जाँच)। सूत्र एक ही रंग (d रेखा) का उपयोग करता है और विपथन को छोड़ देता है।",
+   "fr": "la formule paraxiale vaut pour les rayons proches de l'axe. Les rayons réels passant à 0.45 du rayon convergent 1.0% plus tôt à a = 3f et 1.5% à a = 2f, et l'écart se creuse quand a s'approche de f (formule : infini ; rayons réels : fini). thin_lens et paraxial_trace (lentille épaisse, mesurée depuis les plans principaux) concordent à 3e-14 près sur chaque image (contrôle). La formule utilise une seule couleur (la raie d) et ignore les aberrations."
+  },
+  "image distance b: thin_lens (thin-lens formula) vs paraxial_trace (thick-lens paraxial trace from the principal planes), every frame": {
+   "ja": "像の位置 b: thin_lens(薄レンズの式)と paraxial_trace(厚いレンズの近軸追跡、主点から測る)、全コマ",
+   "zh": "像距 b：thin_lens(薄透镜公式)与 paraxial_trace(从主平面量起的厚透镜近轴追迹)，每一帧",
+   "tw": "像距 b：thin_lens(薄透鏡公式)與 paraxial_trace(從主平面量起的厚透鏡近軸追蹤)，每一影格",
+   "ko": "상 거리 b: thin_lens(얇은 렌즈 공식)와 paraxial_trace(주평면에서 잰 두꺼운 렌즈 근축 추적), 모든 프레임",
+   "de": "Bildweite b: thin_lens (Formel der dünnen Linse) vs. paraxial_trace (paraxiale Durchrechnung der dicken Linse ab den Hauptebenen), jedes Frame",
+   "hi": "प्रतिबिंब-दूरी b: thin_lens (पतले लेंस का सूत्र) बनाम paraxial_trace (मुख्य तलों से मोटे लेंस का उपाक्षीय अनुरेखण), हर फ्रेम",
+   "fr": "distance image b : thin_lens (formule de la lentille mince) vs paraxial_trace (tracé paraxial de lentille épaisse depuis les plans principaux), chaque image"
+  },
+  "independent path: where real rays at 5% of the radius (trace_rays) meet vs thin_lens b (a = 3f / 2f / 1.5f)": {
+   "ja": "独立経路: 半径の 5% の実光線(trace_rays)が集まる位置と thin_lens の b(a = 3f / 2f / 1.5f)",
+   "zh": "独立路径：半径 5% 处的实际光线(trace_rays)的会聚位置与 thin_lens 的 b(a = 3f / 2f / 1.5f)",
+   "tw": "獨立路徑：半徑 5% 處的實際光線(trace_rays)的會聚位置與 thin_lens 的 b(a = 3f / 2f / 1.5f)",
+   "ko": "독립 경로: 반지름의 5%를 지나는 실광선(trace_rays)이 모이는 곳과 thin_lens의 b(a = 3f / 2f / 1.5f)",
+   "de": "unabhängiger Weg: Treffpunkt realer Strahlen bei 5% des Radius (trace_rays) vs. b aus thin_lens (a = 3f / 2f / 1.5f)",
+   "hi": "स्वतंत्र पथ: त्रिज्या के 5% पर वास्तविक किरणें (trace_rays) कहाँ मिलती हैं बनाम thin_lens b (a = 3f / 2f / 1.5f)",
+   "fr": "chemin indépendant : point de convergence des rayons réels à 5% du rayon (trace_rays) vs b de thin_lens (a = 3f / 2f / 1.5f)"
+  },
+  "convention check: thin_lens b satisfies 1/a + 1/b = 1/f (residual of the same formula)": {
+   "ja": "規約の確認: thin_lens の b が 1/a + 1/b = 1/f を満たす(同じ式の残差)",
+   "zh": "约定检查：thin_lens 的 b 满足 1/a + 1/b = 1/f(同一公式的残差)",
+   "tw": "約定檢查：thin_lens 的 b 滿足 1/a + 1/b = 1/f(同一公式的殘差)",
+   "ko": "규약 확인: thin_lens의 b가 1/a + 1/b = 1/f를 만족(같은 식의 잔차)",
+   "de": "Konventionsprüfung: b aus thin_lens erfüllt 1/a + 1/b = 1/f (Residuum derselben Formel)",
+   "hi": "परिपाटी जाँच: thin_lens का b 1/a + 1/b = 1/f को संतुष्ट करता है (उसी सूत्र का अवशेष)",
+   "fr": "vérification de convention : le b de thin_lens satisfait 1/a + 1/b = 1/f (résidu de la même formule)"
+  },
+  "convention check: magnification m at a = 2f vs −1": {
+   "ja": "規約の確認: a = 2f の倍率 m と −1 の差",
+   "zh": "约定检查：a = 2f 时的放大率 m 与 −1 比较",
+   "tw": "約定檢查：a = 2f 時的放大率 m 與 −1 比較",
+   "ko": "규약 확인: a = 2f에서의 배율 m과 −1",
+   "de": "Konventionsprüfung: Abbildungsmaßstab m bei a = 2f vs. −1",
+   "hi": "परिपाटी जाँच: a = 2f पर आवर्धन m बनाम −1",
+   "fr": "vérification de convention : grandissement m à a = 2f vs −1"
+  },
+  "a > f gives a real image (b > 0), a < f a virtual one (b < 0)": {
+   "ja": "a > f で実像(b > 0)、a < f で虚像(b < 0)",
+   "zh": "a > f 时成实像(b > 0)，a < f 时成虚像(b < 0)",
+   "tw": "a > f 時成實像(b > 0)，a < f 時成虛像(b < 0)",
+   "ko": "a > f이면 실상(b > 0), a < f이면 허상(b < 0)",
+   "de": "a > f ergibt ein reelles Bild (b > 0), a < f ein virtuelles (b < 0)",
+   "hi": "a > f पर वास्तविक प्रतिबिंब (b > 0), a < f पर आभासी (b < 0)",
+   "fr": "a > f donne une image réelle (b > 0), a < f une image virtuelle (b < 0)"
+  },
+  "every frame": {
+   "ja": "全コマ",
+   "zh": "每一帧",
+   "tw": "每一影格",
+   "ko": "모든 프레임",
+   "de": "jedes Frame",
+   "hi": "हर फ्रेम",
+   "fr": "chaque image"
+  },
+  "holds": {
+   "ja": "成立",
+   "zh": "成立",
+   "tw": "成立",
+   "ko": "성립",
+   "de": "gilt",
+   "hi": "लागू",
+   "fr": "vérifié"
+  },
+  "edge rays (0.45 of the radius) vs thin_lens: a ≥ 2f": {
+   "ja": "縁(半径の 0.45)の実光線と thin_lens の差: a ≥ 2f",
+   "zh": "边缘光线(半径 0.45 处)与 thin_lens 比较：a ≥ 2f",
+   "tw": "邊緣光線(半徑 0.45 處)與 thin_lens 比較：a ≥ 2f",
+   "ko": "가장자리 광선(반지름의 0.45)과 thin_lens의 차이: a ≥ 2f",
+   "de": "Randstrahlen (0.45 des Radius) vs. thin_lens: a ≥ 2f",
+   "hi": "किनारे की किरणें (त्रिज्या का 0.45) बनाम thin_lens: a ≥ 2f",
+   "fr": "rayons marginaux (0.45 du rayon) vs thin_lens : a ≥ 2f"
+  },
+  "edge rays vs thin_lens: f < a < 1.3f (the limit must show)": {
+   "ja": "縁の実光線と thin_lens の差: f < a < 1.3f(限界が見えること)",
+   "zh": "边缘光线与 thin_lens 比较：f < a < 1.3f(必须显现局限)",
+   "tw": "邊緣光線與 thin_lens 比較：f < a < 1.3f(必須顯現限制)",
+   "ko": "가장자리 광선과 thin_lens의 차이: f < a < 1.3f(한계가 보여야 함)",
+   "de": "Randstrahlen vs. thin_lens: f < a < 1.3f (die Grenze muss sichtbar werden)",
+   "hi": "किनारे की किरणें बनाम thin_lens: f < a < 1.3f (सीमा दिखनी चाहिए)",
+   "fr": "rayons marginaux vs thin_lens : f < a < 1.3f (la limite doit apparaître)"
+  },
+  "object distance a (from the front principal plane)": {
+   "ja": "物体の位置 a(前の主点から)",
+   "zh": "物距 a(从前主平面量起)",
+   "tw": "物距 a(從前主平面量起)",
+   "ko": "물체 거리 a(앞쪽 주평면에서)",
+   "de": "Gegenstandsweite a (ab der vorderen Hauptebene)",
+   "hi": "वस्तु-दूरी a (सामने के मुख्य तल से)",
+   "fr": "distance de l'objet a (depuis le plan principal objet)"
+  },
+  "Lensmaker's equation": {
+   "ja": "レンズメーカーの式",
+   "zh": "透镜制造者公式",
+   "tw": "造鏡者公式",
+   "ko": "렌즈 제작자 공식",
+   "de": "Linsenschleiferformel",
+   "hi": "लेंस-निर्माता सूत्र",
+   "fr": "Formule des opticiens (lensmaker)"
+  },
+  "Terms: refractive index n = how much light slows down in the material (water 1.33, ordinary glass 1.52). Radius of curvature R = the radius of the sphere a lens surface is part of (smaller = more strongly curved). Power 1/f = how strongly the lens bends light (unit D = 1/m).\nFirst the surfaces of a biconvex lens go from R = 300 mm to 24 mm; then, at R = 50 mm, the material changes: water → acrylic (PMMA) → crown glass → polycarbonate → dense flint glass → lanthanum dense flint glass (n_d and V_d of each glass are in the numbers below). The index comes from fullseye's material library (material_optical_constants) and the same number goes into the ray trace. White dot: focus from the thin-lens formula 1/f = (n−1)(1/R1 − 1/R2); green dot: paraxial_trace; yellow lines: real rays from trace_rays.": {
+   "ja": "【言葉】屈折率 n = 光がその材料の中でどれだけ遅くなるか(水 1.33、ふつうのガラス 1.52)。曲率半径 R = レンズの面を球の一部とみたときの球の半径(小さいほど強く曲がった面)。屈折力 1/f = 光を曲げる強さ(単位 D = 1/m)。\n前半は両凸レンズの面の半径 R を 300 mm から 24 mm まで小さくし、後半は R = 50 mm のまま材料を 水 → アクリル(PMMA)→ クラウンガラス → ポリカーボネート → 重フリントガラス → ランタン系高屈折率ガラスと替える(各ガラスの n_d・V_d は下の数値)。屈折率は fullseye の材料ライブラリ (material_optical_constants)から引き、同じ数字を光線追跡に渡す。白い点が薄肉の式 1/f = (n−1)(1/R1 − 1/R2) の焦点、緑の点が paraxial_trace の焦点、黄色の線が trace_rays の実光線。",
+   "zh": "术语：折射率 n = 光在该材料中变慢的程度(水 1.33，普通玻璃 1.52)。曲率半径 R = 透镜表面所在球面的半径(越小弯曲越强)。光焦度 1/f = 透镜使光偏折的强弱(单位 D = 1/m)。\n先让双凸透镜的表面从 R = 300 mm 变到 24 mm；然后在 R = 50 mm 下更换材料：水 → 亚克力(PMMA)→ 冕牌玻璃 → 聚碳酸酯 → 重火石玻璃 → 镧系重火石玻璃(各玻璃的 n_d 和 V_d 见下方数值)。折射率取自 fullseye 的材料库(material_optical_constants)，同一数值也用于光线追迹。白点：由薄透镜公式 1/f = (n−1)(1/R1 − 1/R2) 得到的焦点；绿点：paraxial_trace；黄线：trace_rays 的实际光线。",
+   "tw": "術語：折射率 n = 光在該材料中變慢的程度(水 1.33，一般玻璃 1.52)。曲率半徑 R = 透鏡表面所在球面的半徑(越小彎曲越強)。屈光力 1/f = 透鏡使光偏折的強弱(單位 D = 1/m)。\n先讓雙凸透鏡的表面從 R = 300 mm 變到 24 mm；接著在 R = 50 mm 下更換材料：水 → 壓克力(PMMA)→ 冕牌玻璃 → 聚碳酸酯 → 重火石玻璃 → 鑭系重火石玻璃(各玻璃的 n_d 與 V_d 見下方數值)。折射率取自 fullseye 的材料庫(material_optical_constants)，同一數值也用於光線追蹤。白點：由薄透鏡公式 1/f = (n−1)(1/R1 − 1/R2) 得到的焦點；綠點：paraxial_trace；黃線：trace_rays 的實際光線。",
+   "ko": "용어: 굴절률 n = 빛이 그 물질 속에서 얼마나 느려지는가(물 1.33, 보통 유리 1.52). 곡률 반지름 R = 렌즈 면이 일부를 이루는 구의 반지름(작을수록 더 강하게 휘어짐). 굴절능 1/f = 렌즈가 빛을 꺾는 세기(단위 D = 1/m).\n먼저 양볼록 렌즈의 면이 R = 300 mm에서 24 mm로 바뀌고, 이어서 R = 50 mm에서 재료가 바뀐다: 물 → 아크릴(PMMA) → 크라운 유리 → 폴리카보네이트 → 고밀도 플린트 유리 → 란탄 고밀도 플린트 유리(각 유리의 n_d와 V_d는 아래 수치). 굴절률은 fullseye의 재료 라이브러리(material_optical_constants)에서 가져오고, 같은 숫자가 광선 추적에 들어간다. 흰 점: 얇은 렌즈 공식 1/f = (n−1)(1/R1 − 1/R2)의 초점, 초록 점: paraxial_trace, 노란 선: trace_rays의 실광선.",
+   "de": "Begriffe: Brechzahl n = wie stark sich Licht im Material verlangsamt (Wasser 1.33, gewöhnliches Glas 1.52). Krümmungsradius R = Radius der Kugel, zu der eine Linsenfläche gehört (kleiner = stärker gekrümmt). Brechkraft 1/f = wie stark die Linse Licht bricht (Einheit D = 1/m).\nZuerst gehen die Flächen einer Bikonvexlinse von R = 300 mm auf 24 mm; dann wechselt bei R = 50 mm das Material: Wasser → Acryl (PMMA) → Kronglas → Polycarbonat → Schwerflintglas → Lanthan-Schwerflintglas (n_d und V_d jedes Glases stehen in den Zahlen unten). Die Brechzahl stammt aus der Materialbibliothek von fullseye (material_optical_constants), und dieselbe Zahl geht in die Strahldurchrechnung. Weißer Punkt: Brennpunkt aus der Formel der dünnen Linse 1/f = (n−1)(1/R1 − 1/R2); grüner Punkt: paraxial_trace; gelbe Linien: reale Strahlen aus trace_rays.",
+   "hi": "शब्द: अपवर्तनांक n = पदार्थ में प्रकाश कितना धीमा होता है (जल 1.33, साधारण काँच 1.52)। वक्रता त्रिज्या R = उस गोले की त्रिज्या जिसका भाग लेंस की सतह है (छोटी = अधिक वक्र)। क्षमता 1/f = लेंस प्रकाश को कितना मोड़ता है (मात्रक D = 1/m)।\nपहले उभयोत्तल लेंस की सतहें R = 300 mm से 24 mm तक जाती हैं; फिर R = 50 mm पर पदार्थ बदलता है: जल → ऐक्रिलिक (PMMA) → क्राउन काँच → पॉलीकार्बोनेट → सघन फ्लिंट काँच → लैंथेनम सघन फ्लिंट काँच (हर काँच के n_d और V_d नीचे के अंकों में हैं)। अपवर्तनांक fullseye की पदार्थ-लाइब्रेरी (material_optical_constants) से आता है और वही संख्या किरण-अनुरेखण में जाती है। सफ़ेद बिंदु: पतले लेंस के सूत्र 1/f = (n−1)(1/R1 − 1/R2) से फ़ोकस; हरा बिंदु: paraxial_trace; पीली रेखाएँ: trace_rays की वास्तविक किरणें।",
+   "fr": "Termes : indice de réfraction n = de combien la lumière ralentit dans le matériau (eau 1.33, verre ordinaire 1.52). Rayon de courbure R = le rayon de la sphère dont la surface de la lentille fait partie (plus petit = plus fortement courbé). Vergence 1/f = la force avec laquelle la lentille dévie la lumière (unité D = 1/m).\nD'abord les faces d'une lentille biconvexe passent de R = 300 mm à 24 mm ; puis, à R = 50 mm, le matériau change : eau → acrylique (PMMA) → verre crown → polycarbonate → verre flint dense → verre flint dense au lanthane (n_d et V_d de chaque verre figurent dans les valeurs ci-dessous). L'indice vient de la bibliothèque de matériaux de fullseye (material_optical_constants) et la même valeur est transmise au tracé de rayons. Point blanc : foyer donné par la formule de la lentille mince 1/f = (n−1)(1/R1 − 1/R2) ; point vert : paraxial_trace ; lignes jaunes : rayons réels de trace_rays."
+  },
+  "thick_lens vs paraxial_trace (max)": {
+   "ja": "thick_lens と paraxial_trace の差(最大)",
+   "zh": "thick_lens 与 paraxial_trace 之差(最大)",
+   "tw": "thick_lens 與 paraxial_trace 之差(最大)",
+   "ko": "thick_lens와 paraxial_trace의 차이(최대)",
+   "de": "thick_lens vs. paraxial_trace (max.)",
+   "hi": "thick_lens बनाम paraxial_trace (अधिकतम)",
+   "fr": "thick_lens vs paraxial_trace (max)"
+  },
+  "thin formula error (R = 300 / 24 mm)": {
+   "ja": "薄肉の式のずれ(R = 300 / 24 mm)",
+   "zh": "薄透镜公式误差(R = 300 / 24 mm)",
+   "tw": "薄透鏡公式誤差(R = 300 / 24 mm)",
+   "ko": "얇은 렌즈 공식의 오차(R = 300 / 24 mm)",
+   "de": "Fehler der Dünnlinsenformel (R = 300 / 24 mm)",
+   "hi": "पतले सूत्र की त्रुटि (R = 300 / 24 mm)",
+   "fr": "erreur de la formule mince (R = 300 / 24 mm)"
+  },
+  "materials": {
+   "ja": "材料",
+   "zh": "材料",
+   "tw": "材料",
+   "ko": "재료",
+   "de": "Materialien",
+   "hi": "पदार्थ",
+   "fr": "matériaux"
+  },
+  "water · acrylic (PMMA) · crown glass (n_d = 1.5168, V_d = 64.17) · polycarbonate · dense flint glass (n_d = 1.7847, V_d = 25.68) · lanthanum dense flint glass (n_d = 1.8502, V_d = 32.17)": {
+   "ja": "水 · アクリル(PMMA) · クラウンガラス(n_d = 1.5168, V_d = 64.17) · ポリカーボネート · 重フリントガラス(n_d = 1.7847, V_d = 25.68) · ランタン系高屈折率ガラス(n_d = 1.8502, V_d = 32.17)",
+   "zh": "水 · 亚克力(PMMA) · 冕牌玻璃(n_d = 1.5168, V_d = 64.17) · 聚碳酸酯 · 重火石玻璃(n_d = 1.7847, V_d = 25.68) · 镧系重火石玻璃(n_d = 1.8502, V_d = 32.17)",
+   "tw": "水 · 壓克力(PMMA) · 冕牌玻璃(n_d = 1.5168, V_d = 64.17) · 聚碳酸酯 · 重火石玻璃(n_d = 1.7847, V_d = 25.68) · 鑭系重火石玻璃(n_d = 1.8502, V_d = 32.17)",
+   "ko": "물 · 아크릴(PMMA) · 크라운 유리(n_d = 1.5168, V_d = 64.17) · 폴리카보네이트 · 고밀도 플린트 유리(n_d = 1.7847, V_d = 25.68) · 란탄 고밀도 플린트 유리(n_d = 1.8502, V_d = 32.17)",
+   "de": "Wasser · Acryl (PMMA) · Kronglas (n_d = 1.5168, V_d = 64.17) · Polycarbonat · Schwerflintglas (n_d = 1.7847, V_d = 25.68) · Lanthan-Schwerflintglas (n_d = 1.8502, V_d = 32.17)",
+   "hi": "जल · ऐक्रिलिक (PMMA) · क्राउन काँच (n_d = 1.5168, V_d = 64.17) · पॉलीकार्बोनेट · सघन फ्लिंट काँच (n_d = 1.7847, V_d = 25.68) · लैंथेनम सघन फ्लिंट काँच (n_d = 1.8502, V_d = 32.17)",
+   "fr": "eau · acrylique (PMMA) · verre crown (n_d = 1.5168, V_d = 64.17) · polycarbonate · verre flint dense (n_d = 1.7847, V_d = 25.68) · verre flint dense au lanthane (n_d = 1.8502, V_d = 32.17)"
+  },
+  "focus F′ (paraxial_trace)": {
+   "ja": "焦点 F′(paraxial_trace)",
+   "zh": "焦点 F′(paraxial_trace)",
+   "tw": "焦點 F′(paraxial_trace)",
+   "ko": "초점 F′(paraxial_trace)",
+   "de": "Brennpunkt F′ (paraxial_trace)",
+   "hi": "फ़ोकस F′ (paraxial_trace)",
+   "fr": "foyer F′ (paraxial_trace)"
+  },
+  "focus by the thin-lens lensmaker formula": {
+   "ja": "薄肉の式の焦点",
+   "zh": "薄透镜制造者公式给出的焦点",
+   "tw": "薄透鏡造鏡者公式給出的焦點",
+   "ko": "얇은 렌즈 제작자 공식에 의한 초점",
+   "de": "Brennpunkt nach der Linsenschleiferformel für dünne Linsen",
+   "hi": "पतले लेंस के लेंस-निर्माता सूत्र से फ़ोकस",
+   "fr": "foyer selon la formule des opticiens pour lentille mince"
+  },
+  "rear principal point H′ (thick_lens)": {
+   "ja": "後ろの主点 H′(thick_lens)",
+   "zh": "后主点 H′(thick_lens)",
+   "tw": "後主點 H′(thick_lens)",
+   "ko": "뒤쪽 주점 H′(thick_lens)",
+   "de": "hinterer Hauptpunkt H′ (thick_lens)",
+   "hi": "पिछला मुख्य बिंदु H′ (thick_lens)",
+   "fr": "point principal image H′ (thick_lens)"
+  },
+  "R = 300 mm: a thin lens": {
+   "ja": "R = 300 mm: 薄いレンズ",
+   "zh": "R = 300 mm：薄透镜",
+   "tw": "R = 300 mm：薄透鏡",
+   "ko": "R = 300 mm: 얇은 렌즈",
+   "de": "R = 300 mm: eine dünne Linse",
+   "hi": "R = 300 mm: एक पतला लेंस",
+   "fr": "R = 300 mm : une lentille mince"
+  },
+  "limit: 5% off the thin-lens formula": {
+   "ja": "限界: 薄肉の式から 5% ずれる",
+   "zh": "局限：偏离薄透镜公式 5%",
+   "tw": "限制：偏離薄透鏡公式 5%",
+   "ko": "한계: 얇은 렌즈 공식에서 5% 벗어남",
+   "de": "Grenze: 5% Abweichung von der Dünnlinsenformel",
+   "hi": "सीमा: पतले लेंस के सूत्र से 5% विचलन",
+   "fr": "limite : écart de 5% par rapport à la formule de la lentille mince"
+  },
+  "change the material (R = 50 mm)": {
+   "ja": "材料を替える(R = 50 mm)",
+   "zh": "更换材料(R = 50 mm)",
+   "tw": "更換材料(R = 50 mm)",
+   "ko": "재료를 바꾼다(R = 50 mm)",
+   "de": "Material wechseln (R = 50 mm)",
+   "hi": "पदार्थ बदलें (R = 50 mm)",
+   "fr": "changer le matériau (R = 50 mm)"
+  },
+  "high-index glass (dense flint glass)": {
+   "ja": "高屈折率のガラス(重フリントガラス)",
+   "zh": "高折射率玻璃(重火石玻璃)",
+   "tw": "高折射率玻璃(重火石玻璃)",
+   "ko": "고굴절률 유리(고밀도 플린트 유리)",
+   "de": "hochbrechendes Glas (Schwerflintglas)",
+   "hi": "उच्च-अपवर्तनांक काँच (सघन फ्लिंट काँच)",
+   "fr": "verre à haut indice (verre flint dense)"
+  },
+  "n (material library)": {
+   "ja": "n(材料ライブラリ)",
+   "zh": "n(材料库)",
+   "tw": "n(材料庫)",
+   "ko": "n(재료 라이브러리)",
+   "de": "n (Materialbibliothek)",
+   "hi": "n (पदार्थ-लाइब्रेरी)",
+   "fr": "n (bibliothèque de matériaux)"
+  },
+  "f (thin formula)": {
+   "ja": "f(薄肉の式)",
+   "zh": "f(薄透镜公式)",
+   "tw": "f(薄透鏡公式)",
+   "ko": "f(얇은 렌즈 공식)",
+   "de": "f (Dünnlinsenformel)",
+   "hi": "f (पतला सूत्र)",
+   "fr": "f (formule mince)"
+  },
+  "f (thick_lens)": {
+   "ja": "f(thick_lens)",
+   "zh": "f(thick_lens)",
+   "tw": "f(thick_lens)",
+   "ko": "f(thick_lens)",
+   "de": "f (thick_lens)",
+   "hi": "f (thick_lens)",
+   "fr": "f (thick_lens)"
+  },
+  "f (paraxial_trace)": {
+   "ja": "f(paraxial_trace)",
+   "zh": "f(paraxial_trace)",
+   "tw": "f(paraxial_trace)",
+   "ko": "f(paraxial_trace)",
+   "de": "f (paraxial_trace)",
+   "hi": "f (paraxial_trace)",
+   "fr": "f (paraxial_trace)"
+  },
+  "f (real ray, 10 mm)": {
+   "ja": "f(実光線、高さ 10 mm)",
+   "zh": "f(实际光线，10 mm)",
+   "tw": "f(實際光線，10 mm)",
+   "ko": "f(실광선, 10 mm)",
+   "de": "f (realer Strahl, 10 mm)",
+   "hi": "f (वास्तविक किरण, 10 mm)",
+   "fr": "f (rayon réel, 10 mm)"
+  },
+  "Fullseye processing band: material_optical_constants (n from the material library, on its dispersion curve) → thick_lens (closed form; orange = rear principal plane H′) → paraxial_trace (paraxial ray; green = F′) → trace_rays (real rays, yellow). Right: white line = thin-lens formula (the gate), x = (n−1)(1/R1−1/R2), y = 1/f": {
+   "ja": "Fullseye の処理の帯: material_optical_constants(材料ライブラリの n、分散曲線の上の点)→ thick_lens(厚いレンズの閉形式、オレンジ = 後ろの主点 H′)→ paraxial_trace(近軸の光線、緑 = F′)→ trace_rays(実光線、黄)。右端: 白い線 = 薄肉の式(門の値)、横軸 (n−1)(1/R1−1/R2)、縦軸 1/f",
+   "zh": "Fullseye 处理条带：material_optical_constants(取自材料库的 n，位于其色散曲线上)→ thick_lens(闭合解；橙色 = 后主平面 H′)→ paraxial_trace(近轴光线；绿色 = F′)→ trace_rays(实际光线，黄色)。右侧：白线 = 薄透镜公式(检验门)，x = (n−1)(1/R1−1/R2)，y = 1/f",
+   "tw": "Fullseye 處理條帶：material_optical_constants(取自材料庫的 n，位於其色散曲線上)→ thick_lens(封閉解；橙色 = 後主平面 H′)→ paraxial_trace(近軸光線；綠色 = F′)→ trace_rays(實際光線，黃色)。右側：白線 = 薄透鏡公式(檢驗門)，x = (n−1)(1/R1−1/R2)，y = 1/f",
+   "ko": "Fullseye 처리 띠: material_optical_constants(재료 라이브러리의 n, 분산 곡선 위의 점) → thick_lens(닫힌 형식; 주황 = 뒤쪽 주평면 H′) → paraxial_trace(근축 광선; 초록 = F′) → trace_rays(실광선, 노랑). 오른쪽: 흰 선 = 얇은 렌즈 공식(검증 기준), x = (n−1)(1/R1−1/R2), y = 1/f",
+   "de": "Fullseye-Verarbeitungsband: material_optical_constants (n aus der Materialbibliothek, auf ihrer Dispersionskurve) → thick_lens (geschlossene Form; orange = hintere Hauptebene H′) → paraxial_trace (paraxialer Strahl; grün = F′) → trace_rays (reale Strahlen, gelb). Rechts: weiße Linie = Dünnlinsenformel (das Prüfkriterium), x = (n−1)(1/R1−1/R2), y = 1/f",
+   "hi": "Fullseye प्रसंस्करण पट्टी: material_optical_constants (पदार्थ-लाइब्रेरी से n, उसके वर्ण-विक्षेपण वक्र पर) → thick_lens (बंद रूप; नारंगी = पिछला मुख्य तल H′) → paraxial_trace (उपाक्षीय किरण; हरा = F′) → trace_rays (वास्तविक किरणें, पीली)। दाएँ: सफ़ेद रेखा = पतले लेंस का सूत्र (जाँच), x = (n−1)(1/R1−1/R2), y = 1/f",
+   "fr": "Bandeau de traitement Fullseye : material_optical_constants (n issu de la bibliothèque de matériaux, sur sa courbe de dispersion) → thick_lens (forme fermée ; orange = plan principal image H′) → paraxial_trace (rayon paraxial ; vert = F′) → trace_rays (rayons réels, jaune). À droite : ligne blanche = formule de la lentille mince (le contrôle), x = (n−1)(1/R1−1/R2), y = 1/f"
+  },
+  "Make the surfaces of a biconvex lens more curved: R from 300 mm down to 24 mm. What happens to the focal length and to the thin-lens formula?": {
+   "ja": "両凸レンズの面の曲率半径 R を 300 mm から 24 mm まで小さくする(強く曲げる)。焦点距離と薄肉の式はどうなる?",
+   "zh": "让双凸透镜的表面更弯：R 从 300 mm 减小到 24 mm。焦距和薄透镜公式会怎样？",
+   "tw": "讓雙凸透鏡的表面更彎：R 從 300 mm 減小到 24 mm。焦距與薄透鏡公式會怎樣？",
+   "ko": "양볼록 렌즈의 면을 더 휘게 한다: R을 300 mm에서 24 mm까지 줄인다. 초점 거리와 얇은 렌즈 공식은 어떻게 될까?",
+   "de": "Krümme die Flächen einer Bikonvexlinse stärker: R von 300 mm hinunter auf 24 mm. Was passiert mit der Brennweite und mit der Dünnlinsenformel?",
+   "hi": "उभयोत्तल लेंस की सतहों को अधिक वक्र करें: R को 300 mm से घटाकर 24 mm करें। फ़ोकस दूरी और पतले लेंस के सूत्र का क्या होता है?",
+   "fr": "Courbez davantage les faces d'une lentille biconvexe : R passe de 300 mm à 24 mm. Que deviennent la distance focale et la formule de la lentille mince ?"
+  },
+  "f gets shorter and the thin-lens formula stays exact": {
+   "ja": "焦点距離は短くなり、薄肉の式はずっと当たる",
+   "zh": "f 变短，薄透镜公式始终精确",
+   "tw": "f 變短，薄透鏡公式始終精確",
+   "ko": "f는 짧아지고 얇은 렌즈 공식은 계속 정확하다",
+   "de": "f wird kürzer, und die Dünnlinsenformel bleibt exakt",
+   "hi": "f छोटी होती है और पतले लेंस का सूत्र सटीक बना रहता है",
+   "fr": "f diminue et la formule de la lentille mince reste exacte"
+  },
+  "f gets shorter, but the more curved, the further it drifts from the thin-lens formula": {
+   "ja": "焦点距離は短くなるが、強く曲げるほど薄肉の式から外れる",
+   "zh": "f 变短，但弯得越厉害，偏离薄透镜公式越远",
+   "tw": "f 變短，但彎得越厲害，偏離薄透鏡公式越遠",
+   "ko": "f는 짧아지지만, 더 휠수록 얇은 렌즈 공식에서 더 멀어진다",
+   "de": "f wird kürzer, aber je stärker gekrümmt, desto weiter weicht es von der Dünnlinsenformel ab",
+   "hi": "f छोटी होती है, पर जितना अधिक वक्र, उतना ही पतले लेंस के सूत्र से दूर",
+   "fr": "f diminue, mais plus la courbure est forte, plus on s'écarte de la formule de la lentille mince"
+  },
+  "f gets longer": {
+   "ja": "焦点距離は長くなる",
+   "zh": "f 变长",
+   "tw": "f 變長",
+   "ko": "f가 길어진다",
+   "de": "f wird länger",
+   "hi": "f लंबी होती है",
+   "fr": "f augmente"
+  },
+  "1/f is proportional to (1/R1 − 1/R2), so a smaller R gives a shorter f. But a strongly curved lens is thick (7.9 mm at R = 24 mm). The thin-lens error is 0.11% at R = 300 mm and 6.0% at R = 24 mm (thin 23.2 mm, thick 24.6 mm). In the second half, at R = 50 mm, n goes from water 1.3334 to the lanthanum glass 1.8502 and f shrinks from 75.8 mm to 30.0 mm.": {
+   "ja": "1/f は (1/R1 − 1/R2) に比例するので、R を小さくすると f は短くなる。ただし強く曲げたレンズは厚くなる(R = 24 mm で 7.9 mm)。薄肉の式のずれは R = 300 mm で 0.11%、R = 24 mm で 6.0%(薄肉 23.2 mm、厚肉 24.6 mm)。後半の材料の入れ替えでは、R = 50 mm のまま n が水 1.3334 → ランタン系 1.8502 と上がり、f は 75.8 mm → 30.0 mm に縮む。",
+   "zh": "1/f 与 (1/R1 − 1/R2) 成正比，所以 R 越小 f 越短。但弯曲很强的透镜很厚(R = 24 mm 时为 7.9 mm)。薄透镜公式的误差在 R = 300 mm 时为 0.11%，在 R = 24 mm 时为 6.0%(薄透镜 23.2 mm，厚透镜 24.6 mm)。后半段在 R = 50 mm 下，n 从水的 1.3334 升到镧系玻璃的 1.8502，f 从 75.8 mm 缩短到 30.0 mm。",
+   "tw": "1/f 與 (1/R1 − 1/R2) 成正比，所以 R 越小 f 越短。但彎曲很強的透鏡很厚(R = 24 mm 時為 7.9 mm)。薄透鏡公式的誤差在 R = 300 mm 時為 0.11%，在 R = 24 mm 時為 6.0%(薄透鏡 23.2 mm，厚透鏡 24.6 mm)。後半段在 R = 50 mm 下，n 從水的 1.3334 升到鑭系玻璃的 1.8502，f 從 75.8 mm 縮短到 30.0 mm。",
+   "ko": "1/f는 (1/R1 − 1/R2)에 비례하므로 R이 작을수록 f는 짧아진다. 하지만 강하게 휜 렌즈는 두껍다(R = 24 mm에서 7.9 mm). 얇은 렌즈 공식의 오차는 R = 300 mm에서 0.11%, R = 24 mm에서 6.0%이다(얇은 렌즈 23.2 mm, 두꺼운 렌즈 24.6 mm). 후반에는 R = 50 mm에서 n이 물 1.3334에서 란탄 유리 1.8502로 오르고 f는 75.8 mm에서 30.0 mm로 줄어든다.",
+   "de": "1/f ist proportional zu (1/R1 − 1/R2), also ergibt ein kleineres R ein kürzeres f. Eine stark gekrümmte Linse ist aber dick (7.9 mm bei R = 24 mm). Der Fehler der Dünnlinsenformel beträgt 0.11% bei R = 300 mm und 6.0% bei R = 24 mm (dünn 23.2 mm, dick 24.6 mm). In der zweiten Hälfte steigt n bei R = 50 mm von Wasser 1.3334 auf das Lanthanglas 1.8502, und f schrumpft von 75.8 mm auf 30.0 mm.",
+   "hi": "1/f, (1/R1 − 1/R2) के समानुपाती है, इसलिए छोटा R छोटी f देता है। पर अधिक वक्र लेंस मोटा होता है (R = 24 mm पर 7.9 mm)। पतले लेंस की त्रुटि R = 300 mm पर 0.11% और R = 24 mm पर 6.0% है (पतला 23.2 mm, मोटा 24.6 mm)। दूसरे भाग में, R = 50 mm पर, n जल के 1.3334 से लैंथेनम काँच के 1.8502 तक जाता है और f 75.8 mm से घटकर 30.0 mm हो जाती है।",
+   "fr": "1/f est proportionnel à (1/R1 − 1/R2), donc un R plus petit donne un f plus court. Mais une lentille fortement courbée est épaisse (7.9 mm à R = 24 mm). L'erreur de la formule mince est de 0.11% à R = 300 mm et de 6.0% à R = 24 mm (mince 23.2 mm, épaisse 24.6 mm). Dans la seconde partie, à R = 50 mm, n passe de l'eau 1.3334 au verre au lanthane 1.8502 et f diminue de 75.8 mm à 30.0 mm."
+  },
+  "thin lens: 1/f = (n − 1)(1/R1 − 1/R2)\nthick lens: 1/f = (n − 1)[1/R1 − 1/R2 + (n − 1) t / (n R1 R2)]\nbiconvex (R1 = R, R2 = −R), thin: f = R / (2(n − 1))": {
+   "ja": "薄肉: 1/f = (n − 1)(1/R1 − 1/R2)\n厚肉: 1/f = (n − 1)[1/R1 − 1/R2 + (n − 1) t / (n R1 R2)]\n両凸(R1 = R, R2 = −R)の薄肉: f = R / (2(n − 1))",
+   "zh": "薄透镜：1/f = (n − 1)(1/R1 − 1/R2)\n厚透镜：1/f = (n − 1)[1/R1 − 1/R2 + (n − 1) t / (n R1 R2)]\n双凸(R1 = R, R2 = −R)，薄透镜：f = R / (2(n − 1))",
+   "tw": "薄透鏡：1/f = (n − 1)(1/R1 − 1/R2)\n厚透鏡：1/f = (n − 1)[1/R1 − 1/R2 + (n − 1) t / (n R1 R2)]\n雙凸(R1 = R, R2 = −R)，薄透鏡：f = R / (2(n − 1))",
+   "ko": "얇은 렌즈: 1/f = (n − 1)(1/R1 − 1/R2)\n두꺼운 렌즈: 1/f = (n − 1)[1/R1 − 1/R2 + (n − 1) t / (n R1 R2)]\n양볼록(R1 = R, R2 = −R), 얇은 렌즈: f = R / (2(n − 1))",
+   "de": "dünne Linse: 1/f = (n − 1)(1/R1 − 1/R2)\ndicke Linse: 1/f = (n − 1)[1/R1 − 1/R2 + (n − 1) t / (n R1 R2)]\nbikonvex (R1 = R, R2 = −R), dünn: f = R / (2(n − 1))",
+   "hi": "पतला लेंस: 1/f = (n − 1)(1/R1 − 1/R2)\nमोटा लेंस: 1/f = (n − 1)[1/R1 − 1/R2 + (n − 1) t / (n R1 R2)]\nउभयोत्तल (R1 = R, R2 = −R), पतला: f = R / (2(n − 1))",
+   "fr": "lentille mince : 1/f = (n − 1)(1/R1 − 1/R2)\nlentille épaisse : 1/f = (n − 1)[1/R1 − 1/R2 + (n − 1) t / (n R1 R2)]\nbiconvexe (R1 = R, R2 = −R), mince : f = R / (2(n − 1))"
+  },
+  "the thin-lens formula treats the lens as having zero thickness. At R = 300 mm it is off by 0.11%; at R = 24 mm (7.9 mm thick) by 6.0% (thin 23.2 mm, thick 24.6 mm), and the edge ray (10 mm high) meets at 17.2 mm. The closed-form thick_lens and paraxial_trace agree to 3e-16 on every frame (gate). Only the d-line index is used; the colour-dependent focus shift (chromatic aberration) is left out.": {
+   "ja": "薄肉の式はレンズの厚みを 0 とみなす。R = 300 mm では差 0.11% だが、R = 24 mm(厚さ 7.9 mm)では 6.0% 外れる(薄肉 23.2 mm、厚肉 24.6 mm)。さらに縁(高さ 10 mm)の実光線は 17.2 mm で集まる。厚肉の閉形式 thick_lens とparaxial_trace は全コマ相対 3e-16 以内で一致(門)。屈折率は d 線の 1 つだけで、色による焦点のずれ(色収差)は入れていない。",
+   "zh": "薄透镜公式把透镜当作厚度为零。R = 300 mm 时误差 0.11%；R = 24 mm(厚 7.9 mm)时误差 6.0%(薄透镜 23.2 mm，厚透镜 24.6 mm)，而边缘光线(高 10 mm)在 17.2 mm 处会聚。闭合解 thick_lens 与 paraxial_trace 在每一帧都相符到 3e-16 以内(检验门)。只使用 d 线折射率；随颜色变化的焦点偏移(色差)未计入。",
+   "tw": "薄透鏡公式把透鏡當作厚度為零。R = 300 mm 時誤差 0.11%；R = 24 mm(厚 7.9 mm)時誤差 6.0%(薄透鏡 23.2 mm，厚透鏡 24.6 mm)，而邊緣光線(高 10 mm)在 17.2 mm 處會聚。封閉解 thick_lens 與 paraxial_trace 在每一影格都吻合到 3e-16 以內(檢驗門)。只使用 d 線折射率；隨顏色變化的焦點偏移(色像差)未計入。",
+   "ko": "얇은 렌즈 공식은 렌즈의 두께가 없다고 본다. R = 300 mm에서는 0.11% 어긋나고, R = 24 mm(두께 7.9 mm)에서는 6.0% 어긋난다(얇은 렌즈 23.2 mm, 두꺼운 렌즈 24.6 mm). 가장자리 광선(높이 10 mm)은 17.2 mm에서 모인다. 닫힌 형식의 thick_lens와 paraxial_trace는 모든 프레임에서 3e-16 이내로 일치한다(검증 기준). d 선의 굴절률만 쓰며, 색에 따른 초점 이동(색수차)은 빠져 있다.",
+   "de": "Die Dünnlinsenformel behandelt die Linse als unendlich dünn. Bei R = 300 mm weicht sie um 0.11% ab; bei R = 24 mm (7.9 mm dick) um 6.0% (dünn 23.2 mm, dick 24.6 mm), und der Randstrahl (10 mm hoch) trifft sich bei 17.2 mm. Die geschlossene Form thick_lens und paraxial_trace stimmen in jedem Frame auf 3e-16 überein (Prüfkriterium). Es wird nur die Brechzahl der d-Linie verwendet; die farbabhängige Fokusverschiebung (chromatische Aberration) bleibt unberücksichtigt.",
+   "hi": "पतले लेंस का सूत्र लेंस की मोटाई शून्य मानता है। R = 300 mm पर यह 0.11% हटता है; R = 24 mm (7.9 mm मोटा) पर 6.0% (पतला 23.2 mm, मोटा 24.6 mm), और किनारे की किरण (10 mm ऊँची) 17.2 mm पर मिलती है। बंद रूप thick_lens और paraxial_trace हर फ्रेम पर 3e-16 तक मेल खाते हैं (जाँच)। केवल d रेखा का अपवर्तनांक उपयोग होता है; रंग पर निर्भर फ़ोकस-विस्थापन (वर्ण विपथन) छोड़ दिया गया है।",
+   "fr": "la formule de la lentille mince considère la lentille comme d'épaisseur nulle. À R = 300 mm elle s'écarte de 0.11% ; à R = 24 mm (7.9 mm d'épaisseur) de 6.0% (mince 23.2 mm, épaisse 24.6 mm), et le rayon marginal (à 10 mm de hauteur) converge à 17.2 mm. La forme fermée thick_lens et paraxial_trace concordent à 3e-16 près sur chaque image (contrôle). Seul l'indice à la raie d est utilisé ; le décalage du foyer selon la couleur (aberration chromatique) est ignoré."
+  },
+  "convention check: n given to the ray trace vs material_optical_constants (d line)": {
+   "ja": "規約の確認: 光線追跡に渡した n と material_optical_constants(d 線)の n",
+   "zh": "约定检查：传给光线追迹的 n 与 material_optical_constants(d 线)",
+   "tw": "約定檢查：傳給光線追蹤的 n 與 material_optical_constants(d 線)",
+   "ko": "규약 확인: 광선 추적에 넣은 n과 material_optical_constants(d 선)",
+   "de": "Konventionsprüfung: an die Strahldurchrechnung übergebenes n vs. material_optical_constants (d-Linie)",
+   "hi": "परिपाटी जाँच: किरण-अनुरेखण को दिया गया n बनाम material_optical_constants (d रेखा)",
+   "fr": "vérification de convention : n transmis au tracé de rayons vs material_optical_constants (raie d)"
+  },
+  "at R = 50 mm, f shrinks as n rises (6 materials, thick_lens)": {
+   "ja": "R = 50 mm で n が上がると f が縮む(材料 6 種、thick_lens)",
+   "zh": "R = 50 mm 时，n 增大则 f 缩短(6 种材料，thick_lens)",
+   "tw": "R = 50 mm 時，n 增大則 f 縮短(6 種材料，thick_lens)",
+   "ko": "R = 50 mm에서 n이 오르면 f가 줄어든다(재료 6종, thick_lens)",
+   "de": "bei R = 50 mm schrumpft f mit steigendem n (6 Materialien, thick_lens)",
+   "hi": "R = 50 mm पर n बढ़ने के साथ f घटती है (6 पदार्थ, thick_lens)",
+   "fr": "à R = 50 mm, f diminue quand n augmente (6 matériaux, thick_lens)"
+  },
+  "decreases monotonically": {
+   "ja": "単調に減る",
+   "zh": "单调减小",
+   "tw": "單調遞減",
+   "ko": "단조 감소",
+   "de": "nimmt monoton ab",
+   "hi": "एकदिष्ट रूप से घटती है",
+   "fr": "décroît de façon monotone"
+  },
+  "thin-lens formula error (R = 300 mm)": {
+   "ja": "薄肉の式のずれ(R = 300 mm)",
+   "zh": "薄透镜公式误差(R = 300 mm)",
+   "tw": "薄透鏡公式誤差(R = 300 mm)",
+   "ko": "얇은 렌즈 공식의 오차(R = 300 mm)",
+   "de": "Fehler der Dünnlinsenformel (R = 300 mm)",
+   "hi": "पतले लेंस के सूत्र की त्रुटि (R = 300 mm)",
+   "fr": "erreur de la formule de la lentille mince (R = 300 mm)"
+  },
+  "thin-lens formula error (R = 24 mm; the limit must show)": {
+   "ja": "薄肉の式のずれ(R = 24 mm、限界が見えること)",
+   "zh": "薄透镜公式误差(R = 24 mm；必须显现局限)",
+   "tw": "薄透鏡公式誤差(R = 24 mm；必須顯現限制)",
+   "ko": "얇은 렌즈 공식의 오차(R = 24 mm; 한계가 보여야 함)",
+   "de": "Fehler der Dünnlinsenformel (R = 24 mm; die Grenze muss sichtbar werden)",
+   "hi": "पतले लेंस के सूत्र की त्रुटि (R = 24 mm; सीमा दिखनी चाहिए)",
+   "fr": "erreur de la formule de la lentille mince (R = 24 mm ; la limite doit apparaître)"
+  },
+  "surface radius R (crown glass)": {
+   "ja": "面の曲率半径 R(クラウンガラス)",
+   "zh": "表面曲率半径 R(冕牌玻璃)",
+   "tw": "表面曲率半徑 R(冕牌玻璃)",
+   "ko": "면의 곡률 반지름 R(크라운 유리)",
+   "de": "Flächenradius R (Kronglas)",
+   "hi": "सतह की त्रिज्या R (क्राउन काँच)",
+   "fr": "rayon de la surface R (verre crown)"
+  },
+  "index n (d line; material changes at R = 50 mm)": {
+   "ja": "屈折率 n(d 線、R = 50 mm のまま材料を替える)",
+   "zh": "折射率 n(d 线；在 R = 50 mm 时更换材料)",
+   "tw": "折射率 n(d 線；在 R = 50 mm 時更換材料)",
+   "ko": "굴절률 n(d 선; R = 50 mm에서 재료가 바뀜)",
+   "de": "Brechzahl n (d-Linie; Materialwechsel bei R = 50 mm)",
+   "hi": "अपवर्तनांक n (d रेखा; R = 50 mm पर पदार्थ बदलता है)",
+   "fr": "indice n (raie d ; le matériau change à R = 50 mm)"
+  },
+  "Two lenses and ABCD matrices": {
+   "ja": "2 枚組と ABCD 行列",
+   "zh": "双透镜与 ABCD 矩阵",
+   "tw": "雙透鏡與 ABCD 矩陣",
+   "ko": "렌즈 두 개와 ABCD 행렬",
+   "de": "Zwei Linsen und ABCD-Matrizen",
+   "hi": "दो लेंस और ABCD आव्यूह",
+   "fr": "Deux lentilles et matrices ABCD"
+  },
+  "Terms: ABCD matrix = a way to carry a ray's height y and slope θ through each lens or gap by multiplying a 2×2 matrix; the whole system becomes one matrix and its focal length is f = −1/C. Principal plane H′ = where the pair acts like one thin lens (grey lines: the incoming and outgoing rays extended until they meet).\nThe gap between f1 = 99.5 mm and f2 = 51.1 mm widens. 1/f = 1/f1 + 1/f2 − d/(f1·f2) is a straight line in d (white line in the right graph). At d = f1 + f2 = 150.7 mm the power is zero (infinite focal length): parallel light leaves parallel — a telescope. Beyond that f is negative.\nKey point: real lenses are thick, and if d is measured between the principal planes the thin-lens ABCD holds exactly (abcd_matrix vs paraxial_trace of the real prescription agree to 7e-15 on every frame; det M = 1 to 9e-16: gates).": {
+   "ja": "【言葉】ABCD 行列 = 光線の「高さ y と傾き θ」の 2 つの数を、レンズや空間を通すたびに 2×2 の行列を掛けて運ぶ計算の道具。系全体も 1 つの行列にまとまり、焦点距離は f = −1/C。主点 H′ = 2 枚組を「1 枚の薄いレンズ」とみなしたときのレンズの位置(灰の線: 入ってくる光線と出ていく光線を延ばして交わる所)。\nf1 = 99.5 mm と f2 = 51.1 mm の 2 枚の間隔を広げていく。1/f = 1/f1 + 1/f2 − d/(f1·f2) は d について一直線(右端のグラフの白い線)。d = f1 + f2 = 150.7 mm で屈折力が 0(焦点距離が無限大)、平行光が平行光のまま出る = 望遠鏡。その先は f が負になる。\nここで大事な点: 実のレンズは厚いので、d を「主点の間」で測ると薄レンズの ABCD がそのまま当たる (abcd_matrix と実の処方の paraxial_trace が全コマ相対 7e-15 で一致、det M = 1 も 9e-16 で成立: 門)。",
+   "zh": "术语：ABCD 矩阵 = 用 2×2 矩阵相乘，把光线的高度 y 和斜率 θ 逐个通过每片透镜或间隔的方法；整个系统成为一个矩阵，其焦距为 f = −1/C。主平面 H′ = 双透镜组等效为一片薄透镜的位置(灰线：入射与出射光线延长后的交点)。\nf1 = 99.5 mm 与 f2 = 51.1 mm 之间的间距逐渐增大。1/f = 1/f1 + 1/f2 − d/(f1·f2) 是关于 d 的直线(右侧图中的白线)。在 d = f1 + f2 = 150.7 mm 时光焦度为零(焦距无穷大)：平行光入射、平行光出射 —— 即望远镜。超过此值 f 为负。\n要点：实际透镜有厚度，若 d 在主平面之间测量，薄透镜的 ABCD 就严格成立(abcd_matrix 与实际处方的 paraxial_trace 在每一帧都相符到 7e-15 以内；det M = 1 精确到 9e-16：检验门)。",
+   "tw": "術語：ABCD 矩陣 = 用 2×2 矩陣相乘，把光線的高度 y 與斜率 θ 逐一通過每片透鏡或間隔的方法；整個系統成為一個矩陣，其焦距為 f = −1/C。主平面 H′ = 雙透鏡組等效為一片薄透鏡的位置(灰線：入射與出射光線延長後的交點)。\nf1 = 99.5 mm 與 f2 = 51.1 mm 之間的間距逐漸增大。1/f = 1/f1 + 1/f2 − d/(f1·f2) 是關於 d 的直線(右側圖中的白線)。在 d = f1 + f2 = 150.7 mm 時屈光力為零(焦距無限大)：平行光入射、平行光出射 —— 即望遠鏡。超過此值 f 為負。\n重點：實際透鏡有厚度，若 d 在主平面之間量測，薄透鏡的 ABCD 就嚴格成立(abcd_matrix 與實際處方的 paraxial_trace 在每一影格都吻合到 7e-15 以內；det M = 1 精確到 9e-16：檢驗門)。",
+   "ko": "용어: ABCD 행렬 = 광선의 높이 y와 기울기 θ를 렌즈나 간격마다 2×2 행렬을 곱해 전달하는 방법. 계 전체가 하나의 행렬이 되고, 그 초점 거리는 f = −1/C이다. 주평면 H′ = 렌즈 쌍이 하나의 얇은 렌즈처럼 작용하는 위치(회색 선: 들어오는 광선과 나가는 광선을 만날 때까지 연장한 선).\nf1 = 99.5 mm와 f2 = 51.1 mm 사이의 간격이 넓어진다. 1/f = 1/f1 + 1/f2 − d/(f1·f2)는 d에 대한 직선이다(오른쪽 그래프의 흰 선). d = f1 + f2 = 150.7 mm에서 굴절능이 사라진다(초점 거리 무한대): 평행광이 평행하게 나간다 — 망원경. 그보다 넓으면 f는 음수가 된다.\n핵심: 실제 렌즈는 두껍지만, d를 주평면 사이에서 재면 얇은 렌즈 ABCD가 정확히 성립한다(abcd_matrix와 실제 처방의 paraxial_trace가 모든 프레임에서 7e-15로 일치; det M = 1이 9e-16로 성립: 검증 기준).",
+   "de": "Begriffe: ABCD-Matrix = ein Verfahren, Höhe y und Neigung θ eines Strahls durch jede Linse oder Lücke zu tragen, indem man eine 2×2-Matrix multipliziert; das ganze System wird zu einer Matrix, und seine Brennweite ist f = −1/C. Hauptebene H′ = wo das Paar wie eine einzige dünne Linse wirkt (graue Linien: ein- und austretende Strahlen, verlängert bis zu ihrem Schnittpunkt).\nDer Abstand zwischen f1 = 99.5 mm und f2 = 51.1 mm wird größer. 1/f = 1/f1 + 1/f2 − d/(f1·f2) ist eine Gerade in d (weiße Linie im rechten Diagramm). Bei d = f1 + f2 = 150.7 mm verschwindet die Brechkraft (unendliche Brennweite): Paralleles Licht tritt parallel aus — ein Fernrohr. Darüber hinaus wird f negativ.\nKernpunkt: Reale Linsen sind dick, und wenn d zwischen den Hauptebenen gemessen wird, gilt die ABCD-Rechnung der dünnen Linse exakt (abcd_matrix und paraxial_trace der realen Vorschrift stimmen in jedem Frame auf 7e-15 überein; det M = 1 auf 9e-16: Prüfkriterien).",
+   "hi": "शब्द: ABCD आव्यूह = किरण की ऊँचाई y और ढाल θ को हर लेंस या अंतराल से 2×2 आव्यूह से गुणा करके ले जाने का तरीका; पूरा तंत्र एक आव्यूह बन जाता है और उसकी फ़ोकस दूरी f = −1/C है। मुख्य तल H′ = जहाँ यह जोड़ी एक पतले लेंस की तरह व्यवहार करती है (धूसर रेखाएँ: आपतित और निर्गत किरणें, मिलने तक बढ़ाई गईं)।\nf1 = 99.5 mm और f2 = 51.1 mm के बीच का अंतराल बढ़ता है। 1/f = 1/f1 + 1/f2 − d/(f1·f2) d में एक सीधी रेखा है (दाएँ ग्राफ़ में सफ़ेद रेखा)। d = f1 + f2 = 150.7 mm पर क्षमता शून्य होती है (अनंत फ़ोकस दूरी): समांतर प्रकाश समांतर ही निकलता है — एक दूरबीन। उसके आगे f ऋणात्मक होती है।\nमुख्य बात: वास्तविक लेंस मोटे होते हैं, और यदि d मुख्य तलों के बीच मापा जाए तो पतले लेंस का ABCD ठीक-ठीक लागू होता है (abcd_matrix और वास्तविक नुस्खे का paraxial_trace हर फ्रेम पर 7e-15 तक मेल खाते हैं; det M = 1, 9e-16 तक: जाँच)।",
+   "fr": "Termes : matrice ABCD = une façon de transporter la hauteur y et la pente θ d'un rayon à travers chaque lentille ou intervalle en multipliant par une matrice 2×2 ; le système entier devient une seule matrice et sa distance focale est f = −1/C. Plan principal H′ = l'endroit où le doublet agit comme une seule lentille mince (lignes grises : rayons entrant et sortant prolongés jusqu'à leur intersection).\nL'écart entre f1 = 99.5 mm et f2 = 51.1 mm augmente. 1/f = 1/f1 + 1/f2 − d/(f1·f2) est une droite en d (ligne blanche du graphique de droite). À d = f1 + f2 = 150.7 mm la vergence est nulle (distance focale infinie) : la lumière parallèle ressort parallèle — une lunette. Au-delà, f devient négatif.\nPoint clé : les lentilles réelles sont épaisses, et si d est mesuré entre les plans principaux, l'ABCD des lentilles minces est exact (abcd_matrix et paraxial_trace de la combinaison réelle concordent à 7e-15 près sur chaque image ; det M = 1 à 9e-16 près : contrôles)."
+  },
+  "f1 / f2 (paraxial_trace)": {
+   "ja": "f1 / f2(paraxial_trace)",
+   "zh": "f1 / f2(paraxial_trace)",
+   "tw": "f1 / f2(paraxial_trace)",
+   "ko": "f1 / f2(paraxial_trace)",
+   "de": "f1 / f2 (paraxial_trace)",
+   "hi": "f1 / f2 (paraxial_trace)",
+   "fr": "f1 / f2 (paraxial_trace)"
+  },
+  "abcd_matrix vs paraxial_trace (max)": {
+   "ja": "abcd_matrix と paraxial_trace の差(最大)",
+   "zh": "abcd_matrix 与 paraxial_trace 之差(最大)",
+   "tw": "abcd_matrix 與 paraxial_trace 之差(最大)",
+   "ko": "abcd_matrix와 paraxial_trace의 차이(최대)",
+   "de": "abcd_matrix vs. paraxial_trace (max.)",
+   "hi": "abcd_matrix बनाम paraxial_trace (अधिकतम)",
+   "fr": "abcd_matrix vs paraxial_trace (max)"
+  },
+  "telescope spacing f1 + f2": {
+   "ja": "望遠鏡になる間隔 f1 + f2",
+   "zh": "望远镜间距 f1 + f2",
+   "tw": "望遠鏡間距 f1 + f2",
+   "ko": "망원경 간격 f1 + f2",
+   "de": "Fernrohrabstand f1 + f2",
+   "hi": "दूरबीन अंतराल f1 + f2",
+   "fr": "écartement de lunette f1 + f2"
+  },
+  "rear principal plane H′ of the pair (abcd_matrix)": {
+   "ja": "系の後ろの主点 H′(abcd_matrix)",
+   "zh": "透镜组的后主平面 H′(abcd_matrix)",
+   "tw": "透鏡組的後主平面 H′(abcd_matrix)",
+   "ko": "렌즈 쌍의 뒤쪽 주평면 H′(abcd_matrix)",
+   "de": "hintere Hauptebene H′ des Paares (abcd_matrix)",
+   "hi": "जोड़ी का पिछला मुख्य तल H′ (abcd_matrix)",
+   "fr": "plan principal image H′ du doublet (abcd_matrix)"
+  },
+  "lenses together: 1/f ≈ 1/f1 + 1/f2": {
+   "ja": "くっつけた 2 枚: 1/f ≈ 1/f1 + 1/f2",
+   "zh": "两片透镜贴合：1/f ≈ 1/f1 + 1/f2",
+   "tw": "兩片透鏡貼合：1/f ≈ 1/f1 + 1/f2",
+   "ko": "붙인 두 렌즈: 1/f ≈ 1/f1 + 1/f2",
+   "de": "Linsen zusammen: 1/f ≈ 1/f1 + 1/f2",
+   "hi": "लेंस साथ-साथ: 1/f ≈ 1/f1 + 1/f2",
+   "fr": "lentilles accolées : 1/f ≈ 1/f1 + 1/f2"
+  },
+  "d = f1 + f2: infinite focal length (telescope)": {
+   "ja": "d = f1 + f2: 焦点距離が無限大(望遠鏡)",
+   "zh": "d = f1 + f2：焦距无穷大(望远镜)",
+   "tw": "d = f1 + f2：焦距無限大(望遠鏡)",
+   "ko": "d = f1 + f2: 초점 거리 무한대(망원경)",
+   "de": "d = f1 + f2: unendliche Brennweite (Fernrohr)",
+   "hi": "d = f1 + f2: अनंत फ़ोकस दूरी (दूरबीन)",
+   "fr": "d = f1 + f2 : distance focale infinie (lunette)"
+  },
+  "beyond: f turns negative (light focuses once between the lenses)": {
+   "ja": "その先: f が負(光は 2 枚の間で 1 度集まる)",
+   "zh": "超过之后：f 变为负值(光在两透镜之间会聚一次)",
+   "tw": "超過之後：f 變為負值(光在兩透鏡之間會聚一次)",
+   "ko": "그 너머: f가 음수가 된다(빛이 렌즈 사이에서 한 번 모인다)",
+   "de": "darüber hinaus: f wird negativ (das Licht fokussiert einmal zwischen den Linsen)",
+   "hi": "आगे: f ऋणात्मक होती है (प्रकाश लेंसों के बीच एक बार फ़ोकस होता है)",
+   "fr": "au-delà : f devient négatif (la lumière converge une fois entre les lentilles)"
+  },
+  "1/f (formula)": {
+   "ja": "1/f(式)",
+   "zh": "1/f(公式)",
+   "tw": "1/f(公式)",
+   "ko": "1/f(식)",
+   "de": "1/f (Formel)",
+   "hi": "1/f (सूत्र)",
+   "fr": "1/f (formule)"
+  },
+  "1/f (abcd_matrix)": {
+   "ja": "1/f(abcd_matrix)",
+   "zh": "1/f(abcd_matrix)",
+   "tw": "1/f(abcd_matrix)",
+   "ko": "1/f(abcd_matrix)",
+   "de": "1/f (abcd_matrix)",
+   "hi": "1/f (abcd_matrix)",
+   "fr": "1/f (abcd_matrix)"
+  },
+  "1/f (paraxial_trace)": {
+   "ja": "1/f(paraxial_trace)",
+   "zh": "1/f(paraxial_trace)",
+   "tw": "1/f(paraxial_trace)",
+   "ko": "1/f(paraxial_trace)",
+   "de": "1/f (paraxial_trace)",
+   "hi": "1/f (paraxial_trace)",
+   "fr": "1/f (paraxial_trace)"
+  },
+  "1/f (real ray, 9 mm)": {
+   "ja": "1/f(実光線、高さ 9 mm)",
+   "zh": "1/f(实际光线，9 mm)",
+   "tw": "1/f(實際光線，9 mm)",
+   "ko": "1/f(실광선, 9 mm)",
+   "de": "1/f (realer Strahl, 9 mm)",
+   "hi": "1/f (वास्तविक किरण, 9 mm)",
+   "fr": "1/f (rayon réel, 9 mm)"
+  },
+  "det M": {
+   "ja": "det M",
+   "zh": "det M",
+   "tw": "det M",
+   "ko": "det M",
+   "de": "det M",
+   "hi": "det M",
+   "fr": "det M"
+  },
+  "Fullseye processing band: abcd_matrix (the 2×2 matrix; light blue = principal plane H′) → abcd_trace (the paraxial 9 mm ray) → paraxial_trace (f and F′ of the real prescription, green) → trace_rays (real rays, yellow). Right: white line = 1/f1 + 1/f2 − d/(f1·f2) (the gate)": {
+   "ja": "Fullseye の処理の帯: abcd_matrix(2×2 の行列、水色 = 主点 H′)→ abcd_trace(高さ 9 mm の近軸光線)→ paraxial_trace(実の処方の f と F′、緑)→ trace_rays(実光線、黄)。右端: 白い線 = 1/f1 + 1/f2 − d/(f1·f2)(門の値)",
+   "zh": "Fullseye 处理条带：abcd_matrix(2×2 矩阵；浅蓝色 = 主平面 H′)→ abcd_trace(9 mm 高的近轴光线)→ paraxial_trace(实际处方的 f 与 F′，绿色)→ trace_rays(实际光线，黄色)。右侧：白线 = 1/f1 + 1/f2 − d/(f1·f2)(检验门)",
+   "tw": "Fullseye 處理條帶：abcd_matrix(2×2 矩陣；淺藍色 = 主平面 H′)→ abcd_trace(9 mm 高的近軸光線)→ paraxial_trace(實際處方的 f 與 F′，綠色)→ trace_rays(實際光線，黃色)。右側：白線 = 1/f1 + 1/f2 − d/(f1·f2)(檢驗門)",
+   "ko": "Fullseye 처리 띠: abcd_matrix(2×2 행렬; 하늘색 = 주평면 H′) → abcd_trace(높이 9 mm의 근축 광선) → paraxial_trace(실제 처방의 f와 F′, 초록) → trace_rays(실광선, 노랑). 오른쪽: 흰 선 = 1/f1 + 1/f2 − d/(f1·f2)(검증 기준)",
+   "de": "Fullseye-Verarbeitungsband: abcd_matrix (die 2×2-Matrix; hellblau = Hauptebene H′) → abcd_trace (der paraxiale Strahl in 9 mm Höhe) → paraxial_trace (f und F′ der realen Vorschrift, grün) → trace_rays (reale Strahlen, gelb). Rechts: weiße Linie = 1/f1 + 1/f2 − d/(f1·f2) (das Prüfkriterium)",
+   "hi": "Fullseye प्रसंस्करण पट्टी: abcd_matrix (2×2 आव्यूह; हल्का नीला = मुख्य तल H′) → abcd_trace (9 mm की उपाक्षीय किरण) → paraxial_trace (वास्तविक नुस्खे की f और F′, हरा) → trace_rays (वास्तविक किरणें, पीली)। दाएँ: सफ़ेद रेखा = 1/f1 + 1/f2 − d/(f1·f2) (जाँच)",
+   "fr": "Bandeau de traitement Fullseye : abcd_matrix (la matrice 2×2 ; bleu clair = plan principal H′) → abcd_trace (le rayon paraxial à 9 mm) → paraxial_trace (f et F′ de la combinaison réelle, vert) → trace_rays (rayons réels, jaune). À droite : ligne blanche = 1/f1 + 1/f2 − d/(f1·f2) (le contrôle)"
+  },
+  "Two convex lenses, f1 = 99.5 mm and f2 = 51.1 mm, move apart. What happens to the focal length of the pair?": {
+   "ja": "f1 = 99.5 mm と f2 = 51.1 mm の凸レンズ 2 枚の間隔を広げていく。全体の焦点距離はどうなる?",
+   "zh": "两片凸透镜 f1 = 99.5 mm 和 f2 = 51.1 mm 逐渐分开。组合的焦距会怎样？",
+   "tw": "兩片凸透鏡 f1 = 99.5 mm 與 f2 = 51.1 mm 逐漸分開。組合的焦距會怎樣？",
+   "ko": "볼록 렌즈 두 개, f1 = 99.5 mm와 f2 = 51.1 mm가 서로 멀어진다. 렌즈 쌍의 초점 거리는 어떻게 될까?",
+   "de": "Zwei Sammellinsen, f1 = 99.5 mm und f2 = 51.1 mm, rücken auseinander. Was passiert mit der Brennweite des Paares?",
+   "hi": "दो उत्तल लेंस, f1 = 99.5 mm और f2 = 51.1 mm, दूर हटते हैं। जोड़ी की फ़ोकस दूरी का क्या होता है?",
+   "fr": "Deux lentilles convergentes, f1 = 99.5 mm et f2 = 51.1 mm, s'écartent. Que devient la distance focale du doublet ?"
+  },
+  "It stays the same whatever the gap": {
+   "ja": "間隔によらず一定",
+   "zh": "无论间距多大都不变",
+   "tw": "無論間距多大都不變",
+   "ko": "간격에 상관없이 그대로다",
+   "de": "Sie bleibt gleich, egal wie groß der Abstand ist",
+   "hi": "अंतराल कुछ भी हो, यह वही रहती है",
+   "fr": "Elle reste la même quel que soit l'écart"
+  },
+  "It keeps getting shorter": {
+   "ja": "短くなり続ける",
+   "zh": "一直变短",
+   "tw": "一直變短",
+   "ko": "계속 짧아진다",
+   "de": "Sie wird immer kürzer",
+   "hi": "यह लगातार छोटी होती जाती है",
+   "fr": "Elle ne cesse de diminuer"
+  },
+  "It grows, becomes infinite at d = f1 + f2 (a telescope), then turns negative": {
+   "ja": "長くなり、d = f1 + f2 で無限大(望遠鏡)、その先は負になる",
+   "zh": "变长，在 d = f1 + f2 时变为无穷大(望远镜)，之后变为负值",
+   "tw": "變長，在 d = f1 + f2 時變為無限大(望遠鏡)，之後變為負值",
+   "ko": "길어지다가 d = f1 + f2에서 무한대가 되고(망원경), 그 뒤 음수가 된다",
+   "de": "Sie wächst, wird bei d = f1 + f2 unendlich (ein Fernrohr) und dann negativ",
+   "hi": "यह बढ़ती है, d = f1 + f2 पर अनंत हो जाती है (दूरबीन), फिर ऋणात्मक हो जाती है",
+   "fr": "Elle augmente, devient infinie à d = f1 + f2 (une lunette), puis devient négative"
+  },
+  "The power 1/f = 1/f1 + 1/f2 − d/(f1 f2) is linear in the gap d and falls as d grows. At d = 7.3 mm (between principal planes) f = 35.5 mm; at d = f1 + f2 = 150.7 mm the power is zero and parallel light leaves parallel (a telescope). Beyond that f < 0 (diverging).": {
+   "ja": "屈折力 1/f = 1/f1 + 1/f2 − d/(f1 f2) は間隔 d の一次式で、d が増えると減る。d = 7.3 mm(主点の間)で f = 35.5 mm、d = f1 + f2 = 150.7 mm で屈折力が 0、平行光が平行光のまま出る(望遠鏡)。その先は f < 0(発散)。",
+   "zh": "光焦度 1/f = 1/f1 + 1/f2 − d/(f1 f2) 是间距 d 的线性函数，随 d 增大而减小。d = 7.3 mm(主平面之间)时 f = 35.5 mm；d = f1 + f2 = 150.7 mm 时光焦度为零，平行光入射、平行光出射(望远镜)。超过此值 f < 0(发散)。",
+   "tw": "屈光力 1/f = 1/f1 + 1/f2 − d/(f1 f2) 是間距 d 的線性函數，隨 d 增大而減小。d = 7.3 mm(主平面之間)時 f = 35.5 mm；d = f1 + f2 = 150.7 mm 時屈光力為零，平行光入射、平行光出射(望遠鏡)。超過此值 f < 0(發散)。",
+   "ko": "굴절능 1/f = 1/f1 + 1/f2 − d/(f1 f2)는 간격 d에 대해 선형이며 d가 커지면 줄어든다. d = 7.3 mm(주평면 사이)에서 f = 35.5 mm이고, d = f1 + f2 = 150.7 mm에서 굴절능이 사라져 평행광이 평행하게 나간다(망원경). 그 너머에서는 f < 0(발산).",
+   "de": "Die Brechkraft 1/f = 1/f1 + 1/f2 − d/(f1 f2) ist linear im Abstand d und nimmt mit wachsendem d ab. Bei d = 7.3 mm (zwischen den Hauptebenen) ist f = 35.5 mm; bei d = f1 + f2 = 150.7 mm verschwindet die Brechkraft, und paralleles Licht tritt parallel aus (ein Fernrohr). Darüber hinaus ist f < 0 (zerstreuend).",
+   "hi": "क्षमता 1/f = 1/f1 + 1/f2 − d/(f1 f2) अंतराल d में रैखिक है और d बढ़ने पर घटती है। d = 7.3 mm (मुख्य तलों के बीच) पर f = 35.5 mm; d = f1 + f2 = 150.7 mm पर क्षमता शून्य है और समांतर प्रकाश समांतर ही निकलता है (दूरबीन)। उसके आगे f < 0 (अपसारी)।",
+   "fr": "La vergence 1/f = 1/f1 + 1/f2 − d/(f1 f2) est linéaire en l'écart d et diminue quand d augmente. À d = 7.3 mm (entre plans principaux) f = 35.5 mm ; à d = f1 + f2 = 150.7 mm la vergence est nulle et la lumière parallèle ressort parallèle (une lunette). Au-delà, f < 0 (divergent)."
+  },
+  "1/f = 1/f1 + 1/f2 − d / (f1 f2)\nM = [[1, 0], [−1/f2, 1]] · [[1, d], [0, 1]] · [[1, 0], [−1/f1, 1]]\nf = −1 / C (M = [[A, B], [C, D]]), det M = AD − BC = 1": {
+   "ja": "1/f = 1/f1 + 1/f2 − d / (f1 f2)\nM = [[1, 0], [−1/f2, 1]] · [[1, d], [0, 1]] · [[1, 0], [−1/f1, 1]]\nf = −1 / C(M = [[A, B], [C, D]])、det M = AD − BC = 1",
+   "zh": "1/f = 1/f1 + 1/f2 − d / (f1 f2)\nM = [[1, 0], [−1/f2, 1]] · [[1, d], [0, 1]] · [[1, 0], [−1/f1, 1]]\nf = −1 / C (M = [[A, B], [C, D]]), det M = AD − BC = 1",
+   "tw": "1/f = 1/f1 + 1/f2 − d / (f1 f2)\nM = [[1, 0], [−1/f2, 1]] · [[1, d], [0, 1]] · [[1, 0], [−1/f1, 1]]\nf = −1 / C (M = [[A, B], [C, D]]), det M = AD − BC = 1",
+   "ko": "1/f = 1/f1 + 1/f2 − d / (f1 f2)\nM = [[1, 0], [−1/f2, 1]] · [[1, d], [0, 1]] · [[1, 0], [−1/f1, 1]]\nf = −1 / C(M = [[A, B], [C, D]]), det M = AD − BC = 1",
+   "de": "1/f = 1/f1 + 1/f2 − d / (f1 f2)\nM = [[1, 0], [−1/f2, 1]] · [[1, d], [0, 1]] · [[1, 0], [−1/f1, 1]]\nf = −1 / C (M = [[A, B], [C, D]]), det M = AD − BC = 1",
+   "hi": "1/f = 1/f1 + 1/f2 − d / (f1 f2)\nM = [[1, 0], [−1/f2, 1]] · [[1, d], [0, 1]] · [[1, 0], [−1/f1, 1]]\nf = −1 / C (M = [[A, B], [C, D]]), det M = AD − BC = 1",
+   "fr": "1/f = 1/f1 + 1/f2 − d / (f1 f2)\nM = [[1, 0], [−1/f2, 1]] · [[1, d], [0, 1]] · [[1, 0], [−1/f1, 1]]\nf = −1 / C (M = [[A, B], [C, D]]), det M = AD − BC = 1"
+  },
+  "the real 9 mm ray (yellow) meets short of the paraxial focus, and near the telescope setting the gap opens up. d is measured between the principal planes, not the vertices (vertex spacing does not fit the formula).": {
+   "ja": "高さ 9 mm の実光線(黄色)は近軸の焦点より手前で集まり、望遠鏡の近くでは差が大きく開く。d は頂点の間でなく主点の間で測る(頂点の間で測ると式が合わない)。",
+   "zh": "9 mm 高的实际光线(黄色)在近轴焦点之前会聚，而在接近望远镜配置时差距会扩大。d 在主平面之间测量，而不是在顶点之间(顶点间距不符合该公式)。",
+   "tw": "9 mm 高的實際光線(黃色)在近軸焦點之前會聚，而在接近望遠鏡配置時差距會擴大。d 在主平面之間量測，而不是在頂點之間(頂點間距不符合該公式)。",
+   "ko": "높이 9 mm의 실광선(노랑)은 근축 초점보다 앞에서 모이고, 망원경 설정 근처에서는 차이가 크게 벌어진다. d는 꼭짓점 사이가 아니라 주평면 사이에서 잰다(꼭짓점 간격은 식에 맞지 않는다).",
+   "de": "Der reale, 9 mm hohe Strahl (gelb) trifft sich vor dem paraxialen Brennpunkt, und nahe der Fernrohrstellung wächst die Lücke. d wird zwischen den Hauptebenen gemessen, nicht zwischen den Scheiteln (der Scheitelabstand passt nicht zur Formel).",
+   "hi": "9 mm की वास्तविक किरण (पीली) उपाक्षीय फ़ोकस से पहले मिलती है, और दूरबीन-स्थिति के पास अंतर बढ़ जाता है। d मुख्य तलों के बीच मापा जाता है, शीर्षों के बीच नहीं (शीर्ष-अंतराल सूत्र में नहीं बैठता)।",
+   "fr": "le rayon réel à 9 mm (jaune) converge avant le foyer paraxial, et près du réglage en lunette l'écart se creuse. d se mesure entre les plans principaux, pas entre les sommets (l'écart entre sommets ne vérifie pas la formule)."
+  },
+  "focal length: abcd_matrix (two thin lenses from the principal planes) vs paraxial_trace (real prescription), every frame": {
+   "ja": "焦点距離: abcd_matrix(主点から測った薄レンズ 2 枚)と paraxial_trace(実の処方)、全コマ",
+   "zh": "焦距：abcd_matrix(从主平面量起的两片薄透镜)与 paraxial_trace(实际处方)，每一帧",
+   "tw": "焦距：abcd_matrix(從主平面量起的兩片薄透鏡)與 paraxial_trace(實際處方)，每一影格",
+   "ko": "초점 거리: abcd_matrix(주평면에서 잰 얇은 렌즈 두 개)와 paraxial_trace(실제 처방), 모든 프레임",
+   "de": "Brennweite: abcd_matrix (zwei dünne Linsen ab den Hauptebenen) vs. paraxial_trace (reale Vorschrift), jedes Frame",
+   "hi": "फ़ोकस दूरी: abcd_matrix (मुख्य तलों से दो पतले लेंस) बनाम paraxial_trace (वास्तविक नुस्खा), हर फ्रेम",
+   "fr": "distance focale : abcd_matrix (deux lentilles minces depuis les plans principaux) vs paraxial_trace (combinaison réelle), chaque image"
+  },
+  "rear focus F′ position: ABCD vs paraxial_trace": {
+   "ja": "後ろの焦点 F′ の位置: ABCD と paraxial_trace",
+   "zh": "后焦点 F′ 位置：ABCD 与 paraxial_trace",
+   "tw": "後焦點 F′ 位置：ABCD 與 paraxial_trace",
+   "ko": "뒤쪽 초점 F′의 위치: ABCD와 paraxial_trace",
+   "de": "Lage des hinteren Brennpunkts F′: ABCD vs. paraxial_trace",
+   "hi": "पिछले फ़ोकस F′ की स्थिति: ABCD बनाम paraxial_trace",
+   "fr": "position du foyer image F′ : ABCD vs paraxial_trace"
+  },
+  "independent path: where a 0.01 mm real ray (trace_rays) crosses the axis vs paraxial_trace F′ (3 spacings)": {
+   "ja": "独立経路: 高さ 0.01 mm の実光線(trace_rays)が光軸を横切る所と paraxial_trace の F′(間隔 3 通り)",
+   "zh": "独立路径：0.01 mm 高的实际光线(trace_rays)与光轴的交点与 paraxial_trace 的 F′ 比较(3 种间距)",
+   "tw": "獨立路徑：0.01 mm 高的實際光線(trace_rays)與光軸的交點與 paraxial_trace 的 F′ 比較(3 種間距)",
+   "ko": "독립 경로: 높이 0.01 mm의 실광선(trace_rays)이 광축을 지나는 곳과 paraxial_trace의 F′(간격 3가지)",
+   "de": "unabhängiger Weg: wo ein realer Strahl in 0.01 mm Höhe (trace_rays) die Achse kreuzt vs. F′ aus paraxial_trace (3 Abstände)",
+   "hi": "स्वतंत्र पथ: 0.01 mm की वास्तविक किरण (trace_rays) अक्ष को कहाँ काटती है बनाम paraxial_trace F′ (3 अंतराल)",
+   "fr": "chemin indépendant : point où un rayon réel à 0.01 mm (trace_rays) coupe l'axe vs F′ de paraxial_trace (3 écartements)"
+  },
+  "1/f1 + 1/f2 − d/(f1 f2) vs abcd_matrix f": {
+   "ja": "1/f1 + 1/f2 − d/(f1 f2) と abcd_matrix の f",
+   "zh": "1/f1 + 1/f2 − d/(f1 f2) 与 abcd_matrix 的 f",
+   "tw": "1/f1 + 1/f2 − d/(f1 f2) 與 abcd_matrix 的 f",
+   "ko": "1/f1 + 1/f2 − d/(f1 f2)와 abcd_matrix의 f",
+   "de": "1/f1 + 1/f2 − d/(f1 f2) vs. f aus abcd_matrix",
+   "hi": "1/f1 + 1/f2 − d/(f1 f2) बनाम abcd_matrix f",
+   "fr": "1/f1 + 1/f2 − d/(f1 f2) vs f de abcd_matrix"
+  },
+  "det M = 1 (abcd_trace)": {
+   "ja": "det M = 1(abcd_trace)",
+   "zh": "det M = 1(abcd_trace)",
+   "tw": "det M = 1(abcd_trace)",
+   "ko": "det M = 1(abcd_trace)",
+   "de": "det M = 1 (abcd_trace)",
+   "hi": "det M = 1 (abcd_trace)",
+   "fr": "det M = 1 (abcd_trace)"
+  },
+  "power 1/f decreases with d and changes sign at d = f1 + f2": {
+   "ja": "屈折力 1/f が d について単調に減り、d = f1 + f2 で正から負へ",
+   "zh": "光焦度 1/f 随 d 减小，并在 d = f1 + f2 处变号",
+   "tw": "屈光力 1/f 隨 d 減小，並在 d = f1 + f2 處變號",
+   "ko": "굴절능 1/f는 d에 따라 감소하고 d = f1 + f2에서 부호가 바뀐다",
+   "de": "die Brechkraft 1/f nimmt mit d ab und wechselt bei d = f1 + f2 das Vorzeichen",
+   "hi": "क्षमता 1/f, d के साथ घटती है और d = f1 + f2 पर चिह्न बदलती है",
+   "fr": "la vergence 1/f diminue avec d et change de signe à d = f1 + f2"
+  },
+  "must hold": {
+   "ja": "成立すること",
+   "zh": "必须成立",
+   "tw": "必須成立",
+   "ko": "성립해야 함",
+   "de": "muss gelten",
+   "hi": "लागू होना चाहिए",
+   "fr": "doit être vérifié"
+  },
+  "lens spacing d (between principal planes)": {
+   "ja": "2 枚の間隔 d(主点の間)",
+   "zh": "透镜间距 d(主平面之间)",
+   "tw": "透鏡間距 d(主平面之間)",
+   "ko": "렌즈 간격 d(주평면 사이)",
+   "de": "Linsenabstand d (zwischen den Hauptebenen)",
+   "hi": "लेंसों का अंतराल d (मुख्य तलों के बीच)",
+   "fr": "écartement des lentilles d (entre plans principaux)"
+  },
+  "Stops and pupils (cos⁴)": {
+   "ja": "絞りと瞳(cos⁴)",
+   "zh": "光阑与光瞳(cos⁴)",
+   "tw": "光闌與光瞳(cos⁴)",
+   "ko": "조리개와 동공(cos⁴)",
+   "de": "Blenden und Pupillen (cos⁴)",
+   "hi": "द्वारक और पुतलियाँ (cos⁴)",
+   "fr": "Diaphragmes et pupilles (cos⁴)"
+  },
+  "Terms: aperture stop = the hole that sets how thick the beam is (dark ring). Entrance pupil = the stop as seen from the front; exit pupil = as seen from the back (light-blue rings). Chief ray = the ray through the centre of the stop (orange). Vignetting = a lens rim clipping an oblique beam (red = rays clipped by a rim; grey = rays stopped by the stop). Relative illumination = the picture getting darker towards the edge; the textbook cos⁴ law says E/E0 = cos⁴θ.\nA symmetric system with the stop between two lenses; the angle θ of the incoming parallel light goes 0 → 21°. paraxial_trace puts the entrance pupil 23.5 mm from the first vertex with radius 5.11 mm, and chief_ray passes within 1e-10 mm of the stop centre on every frame (gate).": {
+   "ja": "【言葉】開口絞り = 光束の太さを決める穴(暗い輪)。入射瞳 = 前から覗いたときに見える絞りの像、射出瞳 = 後ろから見た絞りの像(水色の輪)。主光線 = 絞りの中心を通る光線(オレンジ)。ケラレ = レンズの縁が斜めの光束を切ること(赤い線 = 縁で切られた光、灰の線 = 絞りで止まった光)。周辺減光 = 画面の端ほど暗くなること。教科書の cos⁴ 則: E/E0 = cos⁴θ。\n2 枚のレンズの間に絞りを置いた対称な系で、斜めから来る平行光の角度 θ を 0 → 21° に振る。paraxial_trace が入射瞳を頂点から 23.5 mm・半径 5.11 mm と出し、chief_ray は全コマで絞りの中心から 1e-10 mm 以内を通る(門)。",
+   "zh": "术语：孔径光阑 = 决定光束粗细的孔(深色圆环)。入射光瞳 = 从前方看到的光阑；出射光瞳 = 从后方看到的光阑(浅蓝色圆环)。主光线 = 通过光阑中心的光线(橙色)。渐晕 = 透镜边缘截掉斜入射光束(红色 = 被边缘截掉的光线；灰色 = 被光阑挡住的光线)。相对照度 = 画面越靠边缘越暗；教科书的 cos⁴ 定律为 E/E0 = cos⁴θ。\n一个光阑位于两片透镜之间的对称系统；入射平行光的角度 θ 从 0 → 21°。paraxial_trace 给出入射光瞳距第一顶点 23.5 mm、半径 5.11 mm，chief_ray 在每一帧都从距光阑中心 1e-10 mm 以内通过(检验门)。",
+   "tw": "術語：孔徑光闌 = 決定光束粗細的孔(深色圓環)。入射光瞳 = 從前方看到的光闌；出射光瞳 = 從後方看到的光闌(淺藍色圓環)。主光線 = 通過光闌中心的光線(橙色)。暈影 = 透鏡邊緣截掉斜入射光束(紅色 = 被邊緣截掉的光線；灰色 = 被光闌擋住的光線)。相對照度 = 畫面越靠邊緣越暗；教科書的 cos⁴ 定律為 E/E0 = cos⁴θ。\n一個光闌位於兩片透鏡之間的對稱系統；入射平行光的角度 θ 從 0 → 21°。paraxial_trace 給出入射光瞳距第一頂點 23.5 mm、半徑 5.11 mm，chief_ray 在每一影格都從距光闌中心 1e-10 mm 以內通過(檢驗門)。",
+   "ko": "용어: 개구 조리개 = 광속의 굵기를 정하는 구멍(어두운 고리). 입사동 = 앞에서 본 조리개, 사출동 = 뒤에서 본 조리개(하늘색 고리). 주광선 = 조리개 중심을 지나는 광선(주황). 비네팅 = 렌즈 가장자리가 비스듬한 광속을 잘라 내는 것(빨강 = 가장자리에 잘린 광선, 회색 = 조리개에 막힌 광선). 상대 조도 = 화면 가장자리로 갈수록 어두워지는 정도; 교과서의 cos⁴ 법칙은 E/E0 = cos⁴θ.\n두 렌즈 사이에 조리개가 있는 대칭 계에서 입사 평행광의 각 θ가 0 → 21°로 변한다. paraxial_trace는 입사동을 첫 번째 꼭짓점에서 23.5 mm, 반지름 5.11 mm로 계산하고, chief_ray는 모든 프레임에서 조리개 중심의 1e-10 mm 이내를 지난다(검증 기준).",
+   "de": "Begriffe: Aperturblende = das Loch, das die Dicke des Bündels festlegt (dunkler Ring). Eintrittspupille = die Blende von vorne gesehen; Austrittspupille = von hinten gesehen (hellblaue Ringe). Hauptstrahl = der Strahl durch die Blendenmitte (orange). Vignettierung = ein Linsenrand beschneidet ein schräges Bündel (rot = von einem Rand abgeschnittene Strahlen; grau = von der Blende aufgehaltene Strahlen). Relative Beleuchtungsstärke = das Bild wird zum Rand hin dunkler; das cos⁴-Gesetz des Lehrbuchs sagt E/E0 = cos⁴θ.\nEin symmetrisches System mit der Blende zwischen zwei Linsen; der Winkel θ des einfallenden parallelen Lichts geht von 0 → 21°. paraxial_trace legt die Eintrittspupille 23.5 mm hinter den ersten Scheitel mit Radius 5.11 mm, und chief_ray verläuft in jedem Frame innerhalb von 1e-10 mm um die Blendenmitte (Prüfkriterium).",
+   "hi": "शब्द: द्वारक रोध = वह छिद्र जो किरण-पुंज की मोटाई तय करता है (गहरा वलय)। प्रवेश पुतली = सामने से दिखने वाला द्वारक; निकास पुतली = पीछे से दिखने वाला (हल्के नीले वलय)। मुख्य किरण = द्वारक के केंद्र से गुज़रने वाली किरण (नारंगी)। विग्नेटिंग = लेंस का किनारा तिरछे पुंज को काटता है (लाल = किनारे से कटी किरणें; धूसर = द्वारक से रुकी किरणें)। सापेक्ष प्रदीप्ति = चित्र का किनारों की ओर गहरा होना; पाठ्यपुस्तक का cos⁴ नियम कहता है E/E0 = cos⁴θ।\nदो लेंसों के बीच द्वारक वाला एक सममित तंत्र; आने वाले समांतर प्रकाश का कोण θ 0 → 21° जाता है। paraxial_trace प्रवेश पुतली को पहले शीर्ष से 23.5 mm पर, त्रिज्या 5.11 mm के साथ रखता है, और chief_ray हर फ्रेम पर द्वारक-केंद्र से 1e-10 mm के भीतर गुज़रती है (जाँच)।",
+   "fr": "Termes : diaphragme d'ouverture = le trou qui fixe l'épaisseur du faisceau (anneau sombre). Pupille d'entrée = le diaphragme vu de l'avant ; pupille de sortie = vu de l'arrière (anneaux bleu clair). Rayon principal = le rayon qui passe par le centre du diaphragme (orange). Vignettage = le bord d'une lentille qui coupe un faisceau oblique (rouge = rayons coupés par un bord ; gris = rayons arrêtés par le diaphragme). Éclairement relatif = l'image qui s'assombrit vers le bord ; la loi du cos⁴ des manuels donne E/E0 = cos⁴θ.\nUn système symétrique avec le diaphragme entre deux lentilles ; l'angle θ de la lumière parallèle incidente va de 0 → 21°. paraxial_trace place la pupille d'entrée à 23.5 mm du premier sommet avec un rayon de 5.11 mm, et chief_ray passe à moins de 1e-10 mm du centre du diaphragme sur chaque image (contrôle)."
+  },
+  "entrance pupil (position / radius)": {
+   "ja": "入射瞳(位置 / 半径)",
+   "zh": "入射光瞳(位置 / 半径)",
+   "tw": "入射光瞳(位置 / 半徑)",
+   "ko": "입사동(위치 / 반지름)",
+   "de": "Eintrittspupille (Lage / Radius)",
+   "hi": "प्रवेश पुतली (स्थिति / त्रिज्या)",
+   "fr": "pupille d'entrée (position / rayon)"
+  },
+  "F-number (paraxial_trace)": {
+   "ja": "F 値(paraxial_trace)",
+   "zh": "F 数(paraxial_trace)",
+   "tw": "F 數(paraxial_trace)",
+   "ko": "F 수(paraxial_trace)",
+   "de": "Blendenzahl (paraxial_trace)",
+   "hi": "F-संख्या (paraxial_trace)",
+   "fr": "nombre d'ouverture (paraxial_trace)"
+  },
+  "illumination at 21°: cos⁴ / real rays": {
+   "ja": "21° の周辺光量: cos⁴ / 実光線",
+   "zh": "21° 处的照度：cos⁴ / 实际光线",
+   "tw": "21° 處的照度：cos⁴ / 實際光線",
+   "ko": "21°에서의 조도: cos⁴ / 실광선",
+   "de": "Beleuchtungsstärke bei 21°: cos⁴ / reale Strahlen",
+   "hi": "21° पर प्रदीप्ति: cos⁴ / वास्तविक किरणें",
+   "fr": "éclairement à 21° : cos⁴ / rayons réels"
+  },
+  "aperture stop (radius 4 mm)": {
+   "ja": "開口絞り(半径 4 mm)",
+   "zh": "孔径光阑(半径 4 mm)",
+   "tw": "孔徑光闌(半徑 4 mm)",
+   "ko": "개구 조리개(반지름 4 mm)",
+   "de": "Aperturblende (Radius 4 mm)",
+   "hi": "द्वारक रोध (त्रिज्या 4 mm)",
+   "fr": "diaphragme d'ouverture (rayon 4 mm)"
+  },
+  "entrance pupil (the stop seen from the front)": {
+   "ja": "入射瞳(前から見た絞りの像)",
+   "zh": "入射光瞳(从前方看到的光阑)",
+   "tw": "入射光瞳(從前方看到的光闌)",
+   "ko": "입사동(앞에서 본 조리개)",
+   "de": "Eintrittspupille (die Blende von vorne gesehen)",
+   "hi": "प्रवेश पुतली (सामने से दिखा द्वारक)",
+   "fr": "pupille d'entrée (le diaphragme vu de l'avant)"
+  },
+  "exit pupil (the stop seen from the back)": {
+   "ja": "射出瞳(後ろから見た絞りの像)",
+   "zh": "出射光瞳(从后方看到的光阑)",
+   "tw": "出射光瞳(從後方看到的光闌)",
+   "ko": "사출동(뒤에서 본 조리개)",
+   "de": "Austrittspupille (die Blende von hinten gesehen)",
+   "hi": "निकास पुतली (पीछे से दिखा द्वारक)",
+   "fr": "pupille de sortie (le diaphragme vu de l'arrière)"
+  },
+  "image plane (sensor)": {
+   "ja": "像面(センサー)",
+   "zh": "像面(传感器)",
+   "tw": "像面(感測器)",
+   "ko": "상면(센서)",
+   "de": "Bildebene (Sensor)",
+   "hi": "प्रतिबिंब तल (सेंसर)",
+   "fr": "plan image (capteur)"
+  },
+  "image point (where the chief ray lands)": {
+   "ja": "像の点(主光線が像面に届く所)",
+   "zh": "像点(主光线到达之处)",
+   "tw": "像點(主光線到達之處)",
+   "ko": "상점(주광선이 닿는 곳)",
+   "de": "Bildpunkt (wo der Hauptstrahl auftrifft)",
+   "hi": "प्रतिबिंब-बिंदु (जहाँ मुख्य किरण पहुँचती है)",
+   "fr": "point image (là où arrive le rayon principal)"
+  },
+  "θ = 0: on axis": {
+   "ja": "θ = 0: 光軸の上",
+   "zh": "θ = 0：在光轴上",
+   "tw": "θ = 0：在光軸上",
+   "ko": "θ = 0: 광축 위",
+   "de": "θ = 0: auf der Achse",
+   "hi": "θ = 0: अक्ष पर",
+   "fr": "θ = 0 : sur l'axe"
+  },
+  "vignetting starts (a lens rim clips the beam)": {
+   "ja": "ケラレ始め(レンズの縁が光束を切る)",
+   "zh": "渐晕开始(透镜边缘截掉光束)",
+   "tw": "暈影開始(透鏡邊緣截掉光束)",
+   "ko": "비네팅 시작(렌즈 가장자리가 광속을 자름)",
+   "de": "Vignettierung beginnt (ein Linsenrand beschneidet das Bündel)",
+   "hi": "विग्नेटिंग शुरू (लेंस का किनारा पुंज को काटता है)",
+   "fr": "début du vignettage (le bord d'une lentille coupe le faisceau)"
+  },
+  "limit: 20% darker than cos⁴": {
+   "ja": "限界: cos⁴ より 20% 暗い",
+   "zh": "局限：比 cos⁴ 暗 20%",
+   "tw": "限制：比 cos⁴ 暗 20%",
+   "ko": "한계: cos⁴보다 20% 어두움",
+   "de": "Grenze: 20% dunkler als cos⁴",
+   "hi": "सीमा: cos⁴ से 20% अधिक गहरा",
+   "fr": "limite : 20% plus sombre que cos⁴"
+  },
+  "θ": {
+   "ja": "θ",
+   "zh": "θ",
+   "tw": "θ",
+   "ko": "θ",
+   "de": "θ",
+   "hi": "θ",
+   "fr": "θ"
+  },
+  "cos⁴θ (relative_illumination)": {
+   "ja": "cos⁴θ(relative_illumination)",
+   "zh": "cos⁴θ(relative_illumination)",
+   "tw": "cos⁴θ(relative_illumination)",
+   "ko": "cos⁴θ(relative_illumination)",
+   "de": "cos⁴θ (relative_illumination)",
+   "hi": "cos⁴θ (relative_illumination)",
+   "fr": "cos⁴θ (relative_illumination)"
+  },
+  "real-ray illumination": {
+   "ja": "実光線の周辺光量",
+   "zh": "实际光线照度",
+   "tw": "實際光線照度",
+   "ko": "실광선 조도",
+   "de": "Beleuchtungsstärke der realen Strahlen",
+   "hi": "वास्तविक किरणों की प्रदीप्ति",
+   "fr": "éclairement des rayons réels"
+  },
+  "ray_bundle pass fraction": {
+   "ja": "ray_bundle の通る割合",
+   "zh": "ray_bundle 通过比例",
+   "tw": "ray_bundle 通過比例",
+   "ko": "ray_bundle 통과 비율",
+   "de": "Durchlassanteil von ray_bundle",
+   "hi": "ray_bundle पारगमन अंश",
+   "fr": "fraction transmise par ray_bundle"
+  },
+  "chief-ray height (chief_ray)": {
+   "ja": "主光線の像高(chief_ray)",
+   "zh": "主光线高度(chief_ray)",
+   "tw": "主光線高度(chief_ray)",
+   "ko": "주광선 높이(chief_ray)",
+   "de": "Hauptstrahlhöhe (chief_ray)",
+   "hi": "मुख्य किरण की ऊँचाई (chief_ray)",
+   "fr": "hauteur du rayon principal (chief_ray)"
+  },
+  "Fullseye processing band: paraxial_trace (entrance / exit pupils, light blue) → chief_ray (orange; white line = f·tanθ) → ray_bundle (rays across the pupil: green passes, red is clipped) → relative_illumination (white = cos⁴ = the gate, yellow = real rays, grey = no rim clipping)": {
+   "ja": "Fullseye の処理の帯: paraxial_trace(入射瞳・射出瞳、水色)→ chief_ray(主光線、オレンジ。白い線 = f·tanθ)→ ray_bundle(瞳の上の光線、緑 = 通る・赤 = 切られる)→ relative_illumination(白い線 = cos⁴ = 門の値、黄 = 実光線、灰 = 縁で切らない場合)",
+   "zh": "Fullseye 处理条带：paraxial_trace(入射 / 出射光瞳，浅蓝色)→ chief_ray(橙色；白线 = f·tanθ)→ ray_bundle(遍布光瞳的光线：绿色通过，红色被截掉)→ relative_illumination(白色 = cos⁴ = 检验门，黄色 = 实际光线，灰色 = 无边缘截光)",
+   "tw": "Fullseye 處理條帶：paraxial_trace(入射 / 出射光瞳，淺藍色)→ chief_ray(橙色；白線 = f·tanθ)→ ray_bundle(遍布光瞳的光線：綠色通過，紅色被截掉)→ relative_illumination(白色 = cos⁴ = 檢驗門，黃色 = 實際光線，灰色 = 無邊緣截光)",
+   "ko": "Fullseye 처리 띠: paraxial_trace(입사동 / 사출동, 하늘색) → chief_ray(주황; 흰 선 = f·tanθ) → ray_bundle(동공을 가로지르는 광선: 초록은 통과, 빨강은 잘림) → relative_illumination(흰색 = cos⁴ = 검증 기준, 노랑 = 실광선, 회색 = 가장자리 잘림 없음)",
+   "de": "Fullseye-Verarbeitungsband: paraxial_trace (Eintritts- / Austrittspupille, hellblau) → chief_ray (orange; weiße Linie = f·tanθ) → ray_bundle (Strahlen über die Pupille: grün geht durch, rot wird abgeschnitten) → relative_illumination (weiß = cos⁴ = das Prüfkriterium, gelb = reale Strahlen, grau = ohne Randbeschnitt)",
+   "hi": "Fullseye प्रसंस्करण पट्टी: paraxial_trace (प्रवेश / निकास पुतलियाँ, हल्का नीला) → chief_ray (नारंगी; सफ़ेद रेखा = f·tanθ) → ray_bundle (पुतली के आर-पार किरणें: हरी गुज़रती हैं, लाल कटती हैं) → relative_illumination (सफ़ेद = cos⁴ = जाँच, पीला = वास्तविक किरणें, धूसर = किनारे से कटाव नहीं)",
+   "fr": "Bandeau de traitement Fullseye : paraxial_trace (pupilles d'entrée / de sortie, bleu clair) → chief_ray (orange ; ligne blanche = f·tanθ) → ray_bundle (rayons répartis sur la pupille : vert passe, rouge est coupé) → relative_illumination (blanc = cos⁴ = le contrôle, jaune = rayons réels, gris = sans coupure par les bords)"
+  },
+  "Raise the angle θ of the incoming parallel light from 0° to 21°. Does the brightness at the edge of the picture fall exactly as the textbook cos⁴θ law says?": {
+   "ja": "斜めから入る平行光の角度 θ を 0° から 21° まで上げる。画面の端の明るさは、教科書の cos⁴θ 則どおりに落ちる?",
+   "zh": "将入射平行光的角度 θ 从 0° 增加到 21°。画面边缘的亮度是否严格按照教科书的 cos⁴θ 定律下降？",
+   "tw": "將入射平行光的角度 θ 從 0° 增加到 21°。畫面邊緣的亮度是否嚴格依照教科書的 cos⁴θ 定律下降？",
+   "ko": "입사 평행광의 각 θ를 0°에서 21°까지 올린다. 화면 가장자리의 밝기는 교과서의 cos⁴θ 법칙대로 정확히 떨어질까?",
+   "de": "Erhöhe den Winkel θ des einfallenden parallelen Lichts von 0° auf 21°. Fällt die Helligkeit am Bildrand genau so ab, wie es das cos⁴θ-Gesetz des Lehrbuchs sagt?",
+   "hi": "आने वाले समांतर प्रकाश का कोण θ 0° से 21° तक बढ़ाएँ। क्या चित्र के किनारे की चमक ठीक पाठ्यपुस्तक के cos⁴θ नियम के अनुसार घटती है?",
+   "fr": "Augmentez l'angle θ de la lumière parallèle incidente de 0° à 21°. La luminosité au bord de l'image baisse-t-elle exactement selon la loi du cos⁴θ des manuels ?"
+  },
+  "Always exactly cos⁴θ": {
+   "ja": "いつも cos⁴θ どおり",
+   "zh": "始终严格等于 cos⁴θ",
+   "tw": "始終嚴格等於 cos⁴θ",
+   "ko": "항상 정확히 cos⁴θ",
+   "de": "Immer genau cos⁴θ",
+   "hi": "हमेशा ठीक cos⁴θ",
+   "fr": "Toujours exactement cos⁴θ"
+  },
+  "Once a lens rim starts clipping the beam, it gets much darker than cos⁴θ": {
+   "ja": "レンズの縁が光束を切り始めると、cos⁴θ よりずっと暗くなる",
+   "zh": "一旦透镜边缘开始截掉光束，就会比 cos⁴θ 暗得多",
+   "tw": "一旦透鏡邊緣開始截掉光束，就會比 cos⁴θ 暗得多",
+   "ko": "렌즈 가장자리가 광속을 자르기 시작하면 cos⁴θ보다 훨씬 어두워진다",
+   "de": "Sobald ein Linsenrand das Bündel beschneidet, wird es viel dunkler als cos⁴θ",
+   "hi": "जैसे ही लेंस का किनारा पुंज को काटने लगता है, यह cos⁴θ से बहुत अधिक गहरा हो जाता है",
+   "fr": "Dès qu'un bord de lentille commence à couper le faisceau, elle devient bien plus sombre que cos⁴θ"
+  },
+  "Same brightness at every angle": {
+   "ja": "角度によらず同じ明るさ",
+   "zh": "各个角度亮度相同",
+   "tw": "各個角度亮度相同",
+   "ko": "모든 각도에서 같은 밝기",
+   "de": "Gleiche Helligkeit bei jedem Winkel",
+   "hi": "हर कोण पर समान चमक",
+   "fr": "Même luminosité à tous les angles"
+  },
+  "Without rim clipping, real-ray illumination matches cos⁴ within 0.7% up to 10°. With the rims, at 21° cos⁴ gives 0.760 but the real rays give 0.237 (ratio 0.312); only 40% of the rays from ray_bundle get through (vignetting).": {
+   "ja": "縁で切らない場合、10° までは実光線の明るさが cos⁴ と 0.7% 以内で合う。縁で切ると 21° で cos⁴ の 0.760 に対し実光線は 0.237(比 0.312)。ray_bundle で瞳を通る光線は 40% しか残らない(ケラレ)。",
+   "zh": "无边缘截光时，实际光线照度在 10° 以内与 cos⁴ 相符到 0.7% 以内。有边缘截光时，在 21° 处 cos⁴ 给出 0.760，而实际光线只有 0.237(比值 0.312)；ray_bundle 的光线只有 40% 能通过(渐晕)。",
+   "tw": "無邊緣截光時，實際光線照度在 10° 以內與 cos⁴ 吻合到 0.7% 以內。有邊緣截光時，在 21° 處 cos⁴ 給出 0.760，而實際光線只有 0.237(比值 0.312)；ray_bundle 的光線只有 40% 能通過(暈影)。",
+   "ko": "가장자리 잘림이 없으면 실광선 조도는 10°까지 cos⁴와 0.7% 이내로 일치한다. 가장자리가 있으면 21°에서 cos⁴는 0.760이지만 실광선은 0.237이다(비 0.312). ray_bundle의 광선 중 40%만 통과한다(비네팅).",
+   "de": "Ohne Randbeschnitt stimmt die Beleuchtungsstärke der realen Strahlen bis 10° auf 0.7% mit cos⁴ überein. Mit den Rändern liefert cos⁴ bei 21° den Wert 0.760, die realen Strahlen aber 0.237 (Verhältnis 0.312); nur 40% der Strahlen aus ray_bundle kommen durch (Vignettierung).",
+   "hi": "किनारे से कटाव के बिना, वास्तविक किरणों की प्रदीप्ति 10° तक cos⁴ से 0.7% के भीतर मेल खाती है। किनारों के साथ, 21° पर cos⁴ 0.760 देता है पर वास्तविक किरणें 0.237 देती हैं (अनुपात 0.312); ray_bundle की केवल 40% किरणें पार होती हैं (विग्नेटिंग)।",
+   "fr": "Sans coupure par les bords, l'éclairement des rayons réels suit cos⁴ à 0.7% près jusqu'à 10°. Avec les bords, à 21° cos⁴ donne 0.760 mais les rayons réels donnent 0.237 (rapport 0.312) ; seuls 40% des rayons de ray_bundle passent (vignettage)."
+  },
+  "cos⁴ law: E/E0 = cos⁴θ\nreal rays: E/E0 = [A(θ) / A(0)] · f² sinθ / (y dy/dθ)\nA = cross-section of the beam reaching the image, y = chief-ray image height (≈ f tanθ)": {
+   "ja": "cos⁴ 則: E/E0 = cos⁴θ\n実光線: E/E0 = [A(θ) / A(0)] · f² sinθ / (y dy/dθ)\nA = 像まで届く光束の断面積、y = 主光線の像高(≈ f tanθ)",
+   "zh": "cos⁴ 定律：E/E0 = cos⁴θ\n实际光线：E/E0 = [A(θ) / A(0)] · f² sinθ / (y dy/dθ)\nA = 到达像面的光束截面积，y = 主光线像高(≈ f tanθ)",
+   "tw": "cos⁴ 定律：E/E0 = cos⁴θ\n實際光線：E/E0 = [A(θ) / A(0)] · f² sinθ / (y dy/dθ)\nA = 到達像面的光束截面積，y = 主光線像高(≈ f tanθ)",
+   "ko": "cos⁴ 법칙: E/E0 = cos⁴θ\n실광선: E/E0 = [A(θ) / A(0)] · f² sinθ / (y dy/dθ)\nA = 상까지 도달하는 광속의 단면적, y = 주광선 상 높이(≈ f tanθ)",
+   "de": "cos⁴-Gesetz: E/E0 = cos⁴θ\nreale Strahlen: E/E0 = [A(θ) / A(0)] · f² sinθ / (y dy/dθ)\nA = Querschnitt des Bündels, das das Bild erreicht, y = Bildhöhe des Hauptstrahls (≈ f tanθ)",
+   "hi": "cos⁴ नियम: E/E0 = cos⁴θ\nवास्तविक किरणें: E/E0 = [A(θ) / A(0)] · f² sinθ / (y dy/dθ)\nA = प्रतिबिंब तक पहुँचने वाले पुंज का अनुप्रस्थ-काट, y = मुख्य किरण की प्रतिबिंब-ऊँचाई (≈ f tanθ)",
+   "fr": "loi du cos⁴ : E/E0 = cos⁴θ\nrayons réels : E/E0 = [A(θ) / A(0)] · f² sinθ / (y dy/dθ)\nA = section du faisceau atteignant l'image, y = hauteur image du rayon principal (≈ f tanθ)"
+  },
+  "cos⁴ assumes an undistorted pupil and no clipping. Without rim clipping it holds within 0.7% up to 10°, beyond which the pupil looks larger and the edge is up to 6% brighter than cos⁴ (grey dots). With the rims, at 21° cos⁴ gives 0.760 but the real rays give 0.237 (ray_bundle passes 40% of the rays) — cos⁴ alone is the wrong estimate. The object side is assumed to have uniform radiance.": {
+   "ja": "cos⁴ は「瞳がゆがまず、どこも切られない」ときの式。縁で切らない場合でも 10° までは 0.7% 以内で合うが、その先は瞳の見かけが広がって cos⁴ より最大 6% 明るい(灰の点)。縁で切ると 21° で cos⁴ の 0.760 に対し実光線は 0.237(ray_bundle で通る光線は 40%)—— cos⁴ だけで周辺の明るさを見積もると外れる。物体側の明るさ(放射輝度)は一様と仮定している。",
+   "zh": "cos⁴ 假设光瞳不畸变且无截光。无边缘截光时，它在 10° 以内成立到 0.7% 以内，超过后光瞳看起来变大，边缘比 cos⁴ 最多亮 6%(灰点)。有边缘截光时，在 21° 处 cos⁴ 给出 0.760，而实际光线只有 0.237(ray_bundle 的光线通过 40%)—— 仅靠 cos⁴ 估计是错误的。假设物方辐亮度均匀。",
+   "tw": "cos⁴ 假設光瞳不畸變且無截光。無邊緣截光時，它在 10° 以內成立到 0.7% 以內，超過後光瞳看起來變大，邊緣比 cos⁴ 最多亮 6%(灰點)。有邊緣截光時，在 21° 處 cos⁴ 給出 0.760，而實際光線只有 0.237(ray_bundle 的光線通過 40%)—— 僅靠 cos⁴ 估計是錯誤的。假設物方輻射亮度均勻。",
+   "ko": "cos⁴는 왜곡되지 않은 동공과 잘림 없음을 가정한다. 가장자리 잘림이 없으면 10°까지 0.7% 이내로 성립하고, 그 너머에서는 동공이 더 크게 보여 가장자리가 cos⁴보다 최대 6% 밝다(회색 점). 가장자리가 있으면 21°에서 cos⁴는 0.760이지만 실광선은 0.237이다(ray_bundle은 광선의 40%를 통과시킨다) — cos⁴만으로는 잘못된 추정이다. 물체 쪽은 복사 휘도가 균일하다고 가정한다.",
+   "de": "cos⁴ setzt eine unverzerrte Pupille und keinen Beschnitt voraus. Ohne Randbeschnitt gilt es bis 10° auf 0.7%, darüber hinaus erscheint die Pupille größer und der Rand ist bis zu 6% heller als cos⁴ (graue Punkte). Mit den Rändern liefert cos⁴ bei 21° den Wert 0.760, die realen Strahlen aber 0.237 (ray_bundle lässt 40% der Strahlen durch) — cos⁴ allein ist die falsche Schätzung. Auf der Objektseite wird eine gleichmäßige Strahldichte angenommen.",
+   "hi": "cos⁴ एक अविकृत पुतली और बिना कटाव की कल्पना करता है। किनारे से कटाव के बिना यह 10° तक 0.7% के भीतर लागू है, उसके आगे पुतली बड़ी दिखती है और किनारा cos⁴ से 6% तक अधिक चमकीला होता है (धूसर बिंदु)। किनारों के साथ, 21° पर cos⁴ 0.760 देता है पर वास्तविक किरणें 0.237 देती हैं (ray_bundle 40% किरणें पार करता है) — अकेले cos⁴ गलत अनुमान है। वस्तु-पक्ष की विकिरण-चमक एकसमान मानी गई है।",
+   "fr": "le cos⁴ suppose une pupille non déformée et aucune coupure. Sans coupure par les bords, il tient à 0.7% près jusqu'à 10°, au-delà la pupille paraît plus grande et le bord est jusqu'à 6% plus lumineux que cos⁴ (points gris). Avec les bords, à 21° cos⁴ donne 0.760 mais les rayons réels donnent 0.237 (ray_bundle laisse passer 40% des rayons) — le cos⁴ seul est une estimation fausse. La luminance côté objet est supposée uniforme."
+  },
+  "height of the chief ray (chief_ray) at the stop, every frame": {
+   "ja": "主光線(chief_ray)が絞りの面を通る高さ、全コマ",
+   "zh": "主光线(chief_ray)在光阑处的高度，每一帧",
+   "tw": "主光線(chief_ray)在光闌處的高度，每一影格",
+   "ko": "조리개 면에서의 주광선(chief_ray) 높이, 모든 프레임",
+   "de": "Höhe des Hauptstrahls (chief_ray) in der Blende, jedes Frame",
+   "hi": "द्वारक पर मुख्य किरण (chief_ray) की ऊँचाई, हर फ्रेम",
+   "fr": "hauteur du rayon principal (chief_ray) au diaphragme, chaque image"
+  },
+  "independent path: the 0.5° chief ray extended backwards to the axis vs paraxial_trace entrance pupil": {
+   "ja": "独立経路: 画角 0.5° の主光線を物体側へ延ばして光軸と交わる所と、paraxial_trace の入射瞳",
+   "zh": "独立路径：0.5° 主光线反向延长至光轴的交点与 paraxial_trace 的入射光瞳",
+   "tw": "獨立路徑：0.5° 主光線反向延長至光軸的交點與 paraxial_trace 的入射光瞳",
+   "ko": "독립 경로: 0.5° 주광선을 광축까지 뒤로 연장한 점과 paraxial_trace의 입사동",
+   "de": "unabhängiger Weg: der 0.5°-Hauptstrahl rückwärts bis zur Achse verlängert vs. Eintrittspupille aus paraxial_trace",
+   "hi": "स्वतंत्र पथ: 0.5° की मुख्य किरण को पीछे अक्ष तक बढ़ाना बनाम paraxial_trace प्रवेश पुतली",
+   "fr": "chemin indépendant : le rayon principal à 0.5° prolongé vers l'arrière jusqu'à l'axe vs pupille d'entrée de paraxial_trace"
+  },
+  "convention check: in a symmetric system the exit pupil mirrors the entrance pupil": {
+   "ja": "規約の確認: 対称な系で射出瞳 = 入射瞳の鏡像",
+   "zh": "约定检查：对称系统中出射光瞳是入射光瞳的镜像",
+   "tw": "約定檢查：對稱系統中出射光瞳是入射光瞳的鏡像",
+   "ko": "규약 확인: 대칭 계에서 사출동은 입사동의 거울상",
+   "de": "Konventionsprüfung: In einem symmetrischen System spiegelt die Austrittspupille die Eintrittspupille",
+   "hi": "परिपाटी जाँच: सममित तंत्र में निकास पुतली प्रवेश पुतली का दर्पण-प्रतिबिंब है",
+   "fr": "vérification de convention : dans un système symétrique, la pupille de sortie est le miroir de la pupille d'entrée"
+  },
+  "convention check: relative_illumination vs cos⁴θ (same formula)": {
+   "ja": "規約の確認: relative_illumination と cos⁴θ(同じ式)",
+   "zh": "约定检查：relative_illumination 与 cos⁴θ(同一公式)",
+   "tw": "約定檢查：relative_illumination 與 cos⁴θ(同一公式)",
+   "ko": "규약 확인: relative_illumination과 cos⁴θ(같은 식)",
+   "de": "Konventionsprüfung: relative_illumination vs. cos⁴θ (dieselbe Formel)",
+   "hi": "परिपाटी जाँच: relative_illumination बनाम cos⁴θ (वही सूत्र)",
+   "fr": "vérification de convention : relative_illumination vs cos⁴θ (même formule)"
+  },
+  "real-ray illumination without rim clipping vs cos⁴ (up to 10°)": {
+   "ja": "縁で切らない実光線の明るさと cos⁴(10° まで)",
+   "zh": "无边缘截光的实际光线照度与 cos⁴(至 10°)",
+   "tw": "無邊緣截光的實際光線照度與 cos⁴(至 10°)",
+   "ko": "가장자리 잘림 없는 실광선 조도와 cos⁴(10°까지)",
+   "de": "Beleuchtungsstärke realer Strahlen ohne Randbeschnitt vs. cos⁴ (bis 10°)",
+   "hi": "किनारे से कटाव के बिना वास्तविक किरणों की प्रदीप्ति बनाम cos⁴ (10° तक)",
+   "fr": "éclairement des rayons réels sans coupure par les bords vs cos⁴ (jusqu'à 10°)"
+  },
+  "real-ray illumination near the axis (0.24°) vs cos⁴": {
+   "ja": "光軸の近く(0.24°)の実光線の明るさと cos⁴",
+   "zh": "光轴附近(0.24°)的实际光线照度与 cos⁴",
+   "tw": "光軸附近(0.24°)的實際光線照度與 cos⁴",
+   "ko": "광축 근처(0.24°)의 실광선 조도와 cos⁴",
+   "de": "Beleuchtungsstärke realer Strahlen nahe der Achse (0.24°) vs. cos⁴",
+   "hi": "अक्ष के निकट (0.24°) वास्तविक किरणों की प्रदीप्ति बनाम cos⁴",
+   "fr": "éclairement des rayons réels près de l'axe (0.24°) vs cos⁴"
+  },
+  "limit: with the rims clipping, is real-ray illumination ÷ cos⁴ at 21° within 10% of 1?": {
+   "ja": "限界: レンズの縁で切るとき、21° の実光線の明るさ ÷ cos⁴ が 1 の 10% 以内か",
+   "zh": "局限：有边缘截光时，21° 处的实际光线照度 ÷ cos⁴ 是否在 1 的 10% 以内？",
+   "tw": "限制：有邊緣截光時，21° 處的實際光線照度 ÷ cos⁴ 是否在 1 的 10% 以內？",
+   "ko": "한계: 가장자리가 잘라 낼 때, 21°에서 실광선 조도 ÷ cos⁴가 1의 10% 이내인가?",
+   "de": "Grenze: Liegt bei Randbeschnitt die Beleuchtungsstärke realer Strahlen ÷ cos⁴ bei 21° innerhalb von 10% um 1?",
+   "hi": "सीमा: किनारों से कटाव होने पर, क्या 21° पर वास्तविक किरणों की प्रदीप्ति ÷ cos⁴, 1 के 10% के भीतर है?",
+   "fr": "limite : avec la coupure par les bords, l'éclairement des rayons réels ÷ cos⁴ à 21° est-il à 10% près de 1 ?"
+  },
+  "field angle θ": {
+   "ja": "光の入射角(画角)θ",
+   "zh": "视场角 θ",
+   "tw": "視場角 θ",
+   "ko": "화각 θ",
+   "de": "Feldwinkel θ",
+   "hi": "क्षेत्र-कोण θ",
+   "fr": "angle de champ θ"
+  },
+  "independent path: focal length from thick_lens (closed form) vs paraxial_trace (surface-by-surface paraxial trace), every frame": {
+   "ja": "独立経路: 焦点距離を thick_lens(厚肉の閉形式)と paraxial_trace(面ごとの近軸追跡)で、全コマ",
+   "zh": "独立路径：焦距由 thick_lens(闭合解)与 paraxial_trace(逐面近轴追迹)分别求出，每一帧",
+   "tw": "獨立路徑：焦距由 thick_lens(封閉解)與 paraxial_trace(逐面近軸追蹤)分別求出，每一影格",
+   "ko": "독립 경로: 초점 거리를 thick_lens(닫힌 형식)와 paraxial_trace(면마다 근축 추적)로 각각 구함, 모든 프레임",
+   "de": "unabhängiger Weg: Brennweite aus thick_lens (geschlossene Form) vs. paraxial_trace (paraxiale Durchrechnung Fläche für Fläche), jedes Frame",
+   "hi": "स्वतंत्र पथ: फ़ोकस दूरी thick_lens (बंद रूप) बनाम paraxial_trace (सतह-दर-सतह उपाक्षीय अनुरेखण) से, हर फ्रेम",
+   "fr": "chemin indépendant : distance focale par thick_lens (forme fermée) vs paraxial_trace (tracé paraxial surface par surface), chaque image"
+  }
+ }
+}
