@@ -1,4 +1,4 @@
-# DRIVE operator help — 700 ops in 51 categories
+# DRIVE operator help — 702 ops in 51 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/drive/<category>/<op>.md` を走査。
 
@@ -68,9 +68,9 @@
 
 [ae_band_power](grind/ae_band_power.md) · [ae_read_csv](grind/ae_read_csv.md) · [ae_size_correspondence](grind/ae_size_correspondence.md) · [breakage_first_order_fit](grind/breakage_first_order_fit.md) · [comminution_energy](grind/comminution_energy.md) · [comminution_law_fit](grind/comminution_law_fit.md) · [particle_image_d50](grind/particle_image_d50.md) · [particle_image_synth](grind/particle_image_synth.md) · [particle_size_dx](grind/particle_size_dx.md) · [particle_size_oversize](grind/particle_size_oversize.md) · [particle_size_read](grind/particle_size_read.md) · [particle_size_synth](grind/particle_size_synth.md) · [replicate_compare](grind/replicate_compare.md)
 
-### gsplat (5)
+### gsplat (7)
 
-[gs_from_world](gsplat/gs_from_world.md) · [gs_read_file](gsplat/gs_read_file.md) · [gs_render](gsplat/gs_render.md) · [gs_render_fn](gsplat/gs_render_fn.md) · [gs_update](gsplat/gs_update.md)
+[gs_catalog_html](gsplat/gs_catalog_html.md) · [gs_from_world](gsplat/gs_from_world.md) · [gs_read_file](gsplat/gs_read_file.md) · [gs_render](gsplat/gs_render.md) · [gs_render_fn](gsplat/gs_render_fn.md) · [gs_update](gsplat/gs_update.md) · [gs_viewer_html](gsplat/gs_viewer_html.md)
 
 ### humanoid (4)
 
