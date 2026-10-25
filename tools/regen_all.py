@@ -299,6 +299,13 @@ EXCLUDED = {
                              "docs/view2026/anim3d/*.html は `--build <作例> --out ...` を手で回して commit する。"
                              "8 言語そろうことは gen_view2026_pages の検査、翻訳表が今の作例の文字列と合うことは"
                              " tests/test_anim3d_i18n_2026_10_25.py が見る。--missing の JSON は訳す作業用で repo の外へ。"),
+    "tools/build_view2026_viewers.py": ("ViEW2026 の「触って見る」ビューア 7 本(docs/view2026/viewers/*.html)。"
+                                        "LiDAR の実データ(FULLSEYE_DATA_DIR、repo の外)が要り、無い CI では作れない"
+                                        " —— 手で回して commit し、`--check` で命令と配列の健全さを見る(本体の docstring にも明記)。"
+                                        "2026-10-25 まで _WRITES が write_viewer( を拾えず、どの表にも載っていなかった。"),
+    "tools/fops_article/gen_ai_inputs.py": ("記事用の入力写真を Gemini で作る(GEMINI_API_KEY を読み、外部 API を呼ぶ)。"
+                                            "出力は tools/fops_article/sample_sources_ai/ —— 生成のたびに絵が変わるので CI では回さない。"
+                                            "2026-10-25 まで open(.., \"wb\") を拾えず、どの表にも載っていなかった。"),
     "tools/audit_nan_inputs.py": ("全登録 op を別プロセスで基準、NaN、+inf の順に実測し、"
                                   "3 分を大きく超えるため通常の再生成鎖には入れない。"
                                   "docs/nan_input_audit.json と docs/NAN_INPUT_AUDIT.md は手動で更新する。"),
@@ -437,6 +444,8 @@ NOT_A_GENERATOR = {
     "tools/algo_gate.py": "門(algo 層の合否を出す)。出力は out/ へ。", "tools/mutation_probe.py": "門の実測。出力は指定先、一時変更は復元。",
     "pocviewer.py": "ライブラリ(fs.write_viewer)。呼び出し側が指定した出力先へ 1 つの HTML を書く道具で、repo の生成物ではない(ビューアの生成器は tools/build_view2026_viewers.py)。",
     "tools/bench_ops.py": "ベンチ。実測値なので回すたびに変わる。",
+    "tools/update_fullseye.py": ("安全アップデータ(git pull --ff-only と、導入済みの RAG スキルの更新)。"
+                                 "shutil.copytree は利用者の ~/.claude/skills のバックアップで、repo の生成物は書かない。"),
     "tools/bench_realtime.py": "ベンチ(実時間)。",
     "tools/bench_soak.py": "ベンチ(長時間)。",
     "tools/chain_fuzz.py": "ファザー。out/ に結果を落とす。",
@@ -527,10 +536,17 @@ NOT_A_GENERATOR = {
 #:
 #: 印を広げれば門・デモ・ライブラリも釣れる。それは構わない —— **釣れたものは全部
 #: 上の表に理由つきで載せる**(印は緩めない)。
+#:
+#: ★2026-10-25: まだ狭かった。``pv.write_viewer(`` / ``fs.write_viewer(`` で HTML を書く生成器
+#: (``tools/build_view2026_viewers.py``、題材の枝の ``tools/build_*_anim3d.py``)がどの表にも
+#: 載っていなかった。同じ洗い出しで ``open(.., "wb")``(``"w"`` しか見ていなかった)と
+#: ``shutil.copy*`` / ``copytree`` / ``move`` も足した。印ごとに「その印でしか釣れない実在の
+#: 生成器」を ``tests/test_regen_all.py`` が要求する(印を消せば落ちる)。
 _WRITES = re.compile(
-    r'open\([^)]*["\']w["\']|\.write_text\(|\.write_bytes\(|savefig\(|json\.dump\('
+    r'open\([^)]*,\s*(?:mode\s*=\s*)?["\'](?:w|wb|w\+|wb\+|a|ab|x|xb)["\']|\.write_text\(|\.write_bytes\(|savefig\(|json\.dump\('
     r'|\.save\(|mimwrite\(|mimsave\(|imwrite\(|\.to_csv\(|\bnp\.save(?:z|z_compressed)?\('
-    r'|\b(?:write|save)_(?:video|gif|png|image|animation|flipbook|exhibit|mesh|points|volume|wav|ply)\w*\(')
+    r'|\b(?:write|save)_(?:video|gif|png|image|animation|flipbook|exhibit|mesh|points|volume|wav|ply)\w*\('
+    r'|\bwrite_viewer\(|\bshutil\.(?:copy|copy2|copyfile|copytree|move)\(')
 #: 単体で走るスクリプトの印。repo 直下の 470 本の大半はライブラリで、``.save(`` や
 #: ``write_text`` を**呼び手がパスを渡す関数**として持つだけ —— ``__main__`` の無い
 #: モジュールは単体で走らないので生成器になれない。
