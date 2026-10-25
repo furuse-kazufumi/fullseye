@@ -198,7 +198,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 **呈現**
 
 - 把結果做成人能讀懂的圖: [說明](../../capabilities/figures-and-annotation.md) _(ja)_ · 範例 [poc_colormap_readability](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_colormap_readability.py) · [poc_dem_terrain](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dem_terrain.py)
-- 把結果做成可以動手操作的單頁 HTML(分頁、徽章、3-D、影片、多語言): [說明](../../capabilities/interactive-poc-viewer.md) _(ja)_ · 範例 [interactive_poc_viewer](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_poc_viewer.py)
+- 把結果做成可以動手操作的單頁 HTML(分頁、徽章、3-D、影片、多語言): [說明](../../capabilities/interactive-poc-viewer.md) _(ja)_ · 範例 [interactive_poc_viewer](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_poc_viewer.py) · [interactive_anim3d_viewer](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
 - 不知道底色也能畫線與區域(反色): [說明](../../capabilities/inverted-colour-overlays.md) _(ja)_ · 範例 [annotate_paper_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/annotate_paper_tour.py)
 - 把點雲原樣畫成彩色影像(次像素足跡、依深度合成、保持光總量的疊加): [說明](../../capabilities/point-cloud-to-picture.md) _(ja)_ · 範例 [points_render_basics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples_3d/points_render_basics.py) · [poc_flybrain_pointcloud](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_flybrain_pointcloud.py)
 - 把文字與表格放到影像上想要的位置: [說明](../../capabilities/text-and-tables-on-images.md) _(ja)_ · 範例 [annotate_paper_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/annotate_paper_tour.py)
@@ -214,7 +214,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 </div>
 
-[其他 164 個使用範例(非 PoC)的列表](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[其他 165 個使用範例(非 PoC)的列表](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## 全部看
 
