@@ -489,12 +489,18 @@ def sag(r, R, k=0.0):
     return c * r * r / (1 + np.sqrt(np.maximum(0.0, 1 - (1 + k) * c * c * r * r)))
 
 
-def half_lens_mesh(z0, R0, k0, z1, R1, k1, ap, n_r=10, n_p=18, cut=0.5):
-    """レンズの半分(x ≥ cut、手前 = −x の側から断面と中の光線が見える)。表面の形は面の式(sag)から。系の座標で返す。"""
-    phi = np.linspace(-np.pi / 2, np.pi / 2, n_p)
+# レンズの不透明度(pocviewer の bodies[*]["alpha"])。半透明にして、ガラスの中と後ろを通る光線を透かして見せる。
+# 以前はレンズの手前半分(系の −x の側)を切り取って断面と中の光線を見せていた(半透明で要らなくなった)。
+# 絞り・スクリーン・拡大スポットの板は光を通さないので不透明のまま。
+LENS_ALPHA = 0.3
+
+
+def lens_mesh(z0, R0, k0, z1, R1, k1, ap, n_r=10, n_p=37):
+    """レンズ 1 枚(全周の回転体: 前後の面と縁)。表面の形は面の式(sag)から。系の座標で返す。"""
+    phi = np.linspace(-np.pi, np.pi, n_p)                    # 端は同じ角(継ぎ目の頂点が重なるだけ)
     r = np.linspace(0, ap, n_r)
     Rg, Pg = np.meshgrid(r, phi, indexing="ij")
-    X, Y = Rg * np.cos(Pg) + cut, Rg * np.sin(Pg)
+    X, Y = Rg * np.cos(Pg), Rg * np.sin(Pg)
     pos, tri = [], []
 
     def grid(Z, flip):
@@ -507,29 +513,19 @@ def half_lens_mesh(z0, R0, k0, z1, R1, k1, ap, n_r=10, n_p=18, cut=0.5):
                 tri.extend([[a, c, b], [a, d, c]] if flip else [[a, b, c], [a, c, d]])
     grid(z0 + sag(Rg, R0, k0), False)
     grid(z1 + sag(Rg, R1, k1), True)
-    # 縁(r = ap)と断面(x = −cut の面)
-    for ring_pts in ([(X[-1, j], Y[-1, j]) for j in range(n_p)],):
-        kk = len(pos)
-        for x, y in ring_pts:
-            rr = ap
-            pos.append([x, y, z0 + sag(np.array(rr), R0, k0)])
-            pos.append([x, y, z1 + sag(np.array(rr), R1, k1)])
-        for j in range(n_p - 1):
-            a, b, c, d = kk + 2 * j, kk + 2 * j + 1, kk + 2 * j + 3, kk + 2 * j + 2
-            tri.extend([[a, b, c], [a, c, d]])
-    ys = np.linspace(-ap, ap, 2 * n_r - 1)
-    kk = len(pos)
-    for y in ys:
-        pos.append([cut, y, z0 + sag(np.array(abs(y)), R0, k0)])
-        pos.append([cut, y, z1 + sag(np.array(abs(y)), R1, k1)])
-    for j in range(len(ys) - 1):
+    kk = len(pos)                                            # 縁(r = ap)
+    for j in range(n_p):
+        x, y = X[-1, j], Y[-1, j]
+        pos.append([x, y, z0 + sag(np.array(ap), R0, k0)])
+        pos.append([x, y, z1 + sag(np.array(ap), R1, k1)])
+    for j in range(n_p - 1):
         a, b, c, d = kk + 2 * j, kk + 2 * j + 1, kk + 2 * j + 3, kk + 2 * j + 2
-        tri.extend([[a, c, b], [a, d, c]])
+        tri.extend([[a, b, c], [a, c, d]])
     return np.array(pos, float), np.array(tri)
 
 
 def lens_bodies(system, ap, name, rgb=(150, 200, 230), z_off=0.0, lift=0.0):
-    """処方の面から、ガラスの区間ごとの半分のレンズ(世界座標の静止物体)。"""
+    """処方の面から、ガラスの区間ごとのレンズ(世界座標の静止物体、半透明 alpha = LENS_ALPHA)。"""
     out = []
     z = 0.0
     nglass = 0
@@ -540,11 +536,11 @@ def lens_bodies(system, ap, name, rgb=(150, 200, 230), z_off=0.0, lift=0.0):
             break
         glass = abs(float(s["n_value"]) - 1.0) > 1e-12
         if glass:
-            P, F = half_lens_mesh(z, s["R"], s.get("k", 0.0), z + s["t"], nxt["R"], nxt.get("k", 0.0), ap)
+            P, F = lens_mesh(z, s["R"], s.get("k", 0.0), z + s["t"], nxt["R"], nxt.get("k", 0.0), ap)
             Pw = s2w(P) + [z_off, 0, lift]
             col = rgb if nglass == 0 else (110, 150, 200)            # 2 枚目のガラス(フリント)は濃い色
             nglass += 1
-            out.append({"name": "%s_%d" % (name, i), "pos": Pw, "faces": F, "rgb": list(col)})
+            out.append({"name": "%s_%d" % (name, i), "pos": Pw, "faces": F, "rgb": list(col), "alpha": LENS_ALPHA})
         z += s["t"]
     return out
 
@@ -1426,8 +1422,10 @@ def main(argv=None) -> int:
                           _t("絞り・画角・波長をゆっくり振り、fullseye の光線追跡で追った光線と、スポット・PSF・波面を同じ時間軸で。",
                              "Sweep the stop, the field and the wavelength; rays traced by Fullseye with spot, PSF and "
                              "wavefront on the same time axis."),
-                          _t("ドラッグで回転、ホイールで拡大。空白で再生/停止、← → でコマ送り。段のボタンで跳ぶ。",
-                             "Drag to rotate, wheel to zoom. Space plays/pauses, arrow keys step. Stage buttons jump."),
+                          _t("ドラッグで回転、ホイールで拡大。空白で再生/停止、← → でコマ送り。段のボタンで跳ぶ。"
+                             "レンズは半透明で、ガラスの中を通る光線が透けて見える。",
+                             "Drag to rotate, wheel to zoom. Space plays/pauses, arrow keys step. Stage buttons jump. "
+                             "The lenses are translucent, so the rays inside the glass show through."),
                           [b[0] for b in built])
     with tempfile.TemporaryDirectory() as d:
         path = fs.write_viewer(spec, a.out or os.path.join(d, "ab.html"), ["ja", "en"])

@@ -11,6 +11,7 @@
 * アクロマートの R3 で F 線と C 線の近軸の焦点がそろい、単レンズの焦点が厚肉レンズの閉形式と一致する。
 * 収差が大きすぎる瞳では回折の PSF を作らず(``psf_safe`` が None)、幾何の PSF(光線の密度 ⊗ Airy)に切り替える。
   幾何の PSF は、回折の PSF も作れる重なりの領域で集中半径が 12 % 以内。
+* レンズは半透明(alpha 0.25〜0.4)の全周の形(手前半分を切り取らない)で、中を通る光線が透ける。
 """
 from __future__ import annotations
 
@@ -150,3 +151,20 @@ def test_the_example_passes_its_own_gates_quick(capsys):
     assert A.main(["--quick"]) == 0
     out = capsys.readouterr().out
     assert "PASS" in out and "限界" in out
+
+
+def test_lenses_are_translucent_full_bodies():
+    """レンズ(単レンズ・非球面・アクロマートの 2 枚)は alpha 付きの全周の形。y の両側に面がある(切り取らない)。"""
+    assert 0.25 <= A.LENS_ALPHA <= 0.4
+    for system, ap in ((A.singlet(20.0), 20.5), (A.descartes(), 12.8), (A.achromat(10.0), 12.8)):
+        bodies = A.lens_bodies(system, ap, "lens")
+        assert bodies
+        for b in bodies:
+            assert b["alpha"] == A.LENS_ALPHA
+            y = np.asarray(b["pos"], float)[:, 1]                  # 世界の Y = 系の x(以前は x >= cut だけ)
+            assert y.min() < -0.9 * ap and y.max() > 0.9 * ap
+    ok = fs.pocviewer.viewer_anim3d_tab("t", A._t("a", "a"), "passed", A._t("b", "b"), np.arange(2.0),
+                                        A.lens_bodies(A.singlet(20.0), 20.5, "lens"),
+                                        np.zeros((2, 1, 3)), np.tile([1.0, 0, 0, 0], (2, 1, 1)))
+    html = fs.pocviewer._build_html(fs.viewer_spec("t", A._t("a", "a"), A._t("b", "b"), A._t("c", "c"), [ok]), "ja")
+    assert "drawTranslucent" in html and '"alpha":' in html.replace(" ", "")
