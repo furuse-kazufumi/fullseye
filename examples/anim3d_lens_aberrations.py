@@ -40,8 +40,15 @@ Fullseye の処理の帯(タブごと 4 段、いま効いている段を光ら�
 限界(正直に): 3 次の式は近軸の次の近似にすぎない。絞りを開く・画角を広げると、実光線との差が開く。
 実光線 / 3 次の式 は、球面収差が f/4 で 1.046・f/2.5 で 1.129、コマが 10° で 1.059、メリディオナル(T)の
 像面が 20° で 0.799(実光線の焦点は 2 本の近い光線の交点、主光線の上。3 次の式より像面に近い。9.7° で 5 % を越える)
-(タブの中の段「限界: 3 次の式から N % 外れる」)。PSF は瞳の波面の傾きが標本化できないほど大きい(収差が数十波長)と
-計算せず「null」と出す(幾何のスポットだけが意味を持つ領域)。
+(タブの中の段「限界: 3 次の式から N % 外れる」)。
+
+**幾何光学の領域**: 瞳の波面が数十波長を越えると、``psf_field_grid`` は回折の PSF を作れない。瞳の格子は最大
+512 点で、隣どうしの位相差が 0.5 波を越える(コマ 10° なら 1,746 点が要る)と、折り返しを避けるために op が
+計算を断る。これは op の正しい振る舞いで、物理の上でもこの領域の PSF は光線の密度(スポット図)で決まる
+(回折は Airy の芯ほどの幅しかぼかさない)。帯の③は、そのコマで「幾何の PSF」に切り替える。dense な ``ray_bundle``
+(40 輪 4,921 本、輪ごとに瞳の面積で重みづけ)の像面の密度に、無収差の ``airy_pattern`` を畳み込んだもの。
+③の左上に「geometric / PV N wv >> 1」と書く。回折の PSF も作れる重なりの領域(球面 f/3.6、コマ 4°、
+PV 18〜60 波)で、両者の 50 %・80 % の集中半径が 12 % 以内で一致することを門にした。
 
 出典(一般的な式): W. T. Welford, *Aberrations of Optical Systems* (1986) — ザイデル和と波面係数の
 規格化、横収差と波面の関係。M. Born & E. Wolf, *Principles of Optics* — コマの円(瞳の輪が像で 2 周する)。
@@ -57,6 +64,7 @@ Fullseye の処理の帯(タブごと 4 段、いま効いている段を光ら�
 * 色: 単レンズの近軸の焦点が、厚肉レンズの閉形式 bfl = R1/(n(λ)−1) − t/n(λ) と 1e-9 mm で一致。
   F−C の焦点差が ザイデルの C_L/u′² と 1.5 % 以内。アクロマートの F−C の差 < 1e-6 mm、
   F..C の範囲の焦点のゆれが単レンズの 1/20 未満。
+* 幾何の PSF: 回折の PSF と両方作れる所(球面 a = 14 mm、コマ 4°)で、エネルギーの 50 %・80 % が入る半径が 12 % 以内。
 * HTML: 外部 URL が無い、帯の PNG が描いた画像と画素ごとに一致、物体の姿勢の復元が量子化の刻みの半分以内。
   光線の棒が op の点を結ぶ線分にちょうど重なること(はみ出さない・隙間が無い)は tests/ の門で確かめる。
 
@@ -131,6 +139,14 @@ def achromat(R3, image_mm=None):
 
 def bfl_at(system, wl):
     return fs.paraxial_trace(fs.with_wavelength(system, wl))["bfl"]
+
+
+def fmt_fc(d_mm, lang="ja"):
+    """F−C の焦点差の表示。二分法で詰めたアクロマートは浮動小数の丸めの所で 0 になるので、0 と書かず上限で書く。"""
+    if abs(d_mm) < 1e-13:
+        return ("< 1e-13 mm(二分法が浮動小数の精度まで詰めた)" if lang == "ja"
+                else "< 1e-13 mm (bisection to floating-point precision)")
+    return "%.1e mm" % d_mm
 
 
 def achromat_r3():
@@ -251,6 +267,41 @@ def psf_safe(system, field, wl=None):
     return {"psf": g["psfs"][0], "dx": g["sample_um"][0], "strehl": g["strehl"][0]}
 
 
+GEO_RINGS = 40                  # 幾何の PSF の光線(六角の輪 40 = 4,921 本)
+
+
+def geo_rays(system, field, wl=None, image_mm=None):
+    """幾何の PSF の材料: ``ray_bundle``(40 輪)の像面の点(主光線から、µm)と、その光線が代表する瞳の面積の重み。
+
+    六角の輪 i(半径 i/40、6i 本)が受け持つのは半径 (i±0.5)/40 の輪帯(外側は瞳の縁 1 で切る)。
+    重み = 輪帯の面積 / その輪の本数。一様に明るい瞳なら、像面の密度 = 光の強さ(幾何光学)。"""
+    b = fs.ray_bundle(system, field=field, rings=GEO_RINGS, wavelength_um=wl, image_mm=image_mm)
+    v = b["valid"]
+    xy = (b["image_xy"][v] - b["chief_xy"]) * 1000.0
+    ri = np.rint(np.hypot(b["pupil"][v, 0], b["pupil"][v, 1]) * GEO_RINGS).astype(int)
+    lo = np.clip((ri - 0.5) / GEO_RINGS, 0.0, 1.0)
+    hi = np.clip((ri + 0.5) / GEO_RINGS, 0.0, 1.0)
+    w = (hi ** 2 - lo ** 2) / np.bincount(ri, minlength=GEO_RINGS + 1)[ri]
+    para = fs.paraxial_trace(system if wl is None else fs.with_wavelength(system, wl))
+    return {"xy": xy, "w": w, "fno": float(para["fno"]), "wl": WL_D if wl is None else float(wl)}
+
+
+def geo_psf(g, rows, cols, pitch_um, cx_um=0.0):
+    """幾何の PSF を rows×cols(画素 pitch_um、中心 = 主光線 + (cx_um, 0))の格子に: 光線の密度 ⊗ ``airy_pattern``。
+
+    回折は Airy の芯の幅(1.22 λF#)だけぼかす。PSF の形を決めるのは光線の密度で、これは収差が波長より
+    ずっと大きい所での近似(``tests`` で回折の PSF と照合)。和 = 1 に正規化。"""
+    ex = (np.arange(cols + 1) - cols / 2) * pitch_um + cx_um
+    ey = (np.arange(rows + 1) - rows / 2) * pitch_um
+    H = np.histogram2d(g["xy"][:, 1], g["xy"][:, 0], bins=[ey, ex], weights=g["w"])[0][::-1]   # 行 = −y
+    k = fs.airy_pattern(size=31, wavelength_um=g["wl"], f_number=g["fno"], pixel_pitch_um=pitch_um)
+    k = k / k.sum()
+    n0, n1 = rows + 31, cols + 31
+    F = np.fft.irfft2(np.fft.rfft2(H, (n0, n1)) * np.fft.rfft2(k, (n0, n1)), (n0, n1))[15:15 + rows, 15:15 + cols]
+    F = np.clip(F, 0.0, None)
+    return F / max(F.sum(), 1e-300)
+
+
 def wavefront(system, field, wl=None, size=40):
     """``opd_samples`` の地図(表示用)と ``wavefront_from_opd`` のゼルニケ係数。"""
     px, py, w, ok = fs.opd_samples(system, field=field, size=size, wavelength_um=wl)
@@ -270,9 +321,10 @@ def spot_of(system, field, wl=None, image_mm=None, rings=5):
 def frame_common(system, field, wl=None):
     sp = spot_of(system, field, wl)
     psf = psf_safe(system, field, wl)
+    geo = geo_rays(system, field, wl) if psf is None else None
     wmap, wst = wavefront(system, field, wl)
     st = fs.spot_stats(system, field=field, wavelength_um=wl)
-    return {"spot": sp, "psf": psf, "wmap": wmap, "zern": wst["zernike"], "rms_w": wst["rms_waves"],
+    return {"spot": sp, "psf": psf, "geo": geo, "wmap": wmap, "zern": wst["zernike"], "rms_w": wst["rms_waves"],
             "pv": float(np.nanmax(wmap) - np.nanmin(wmap)),
             "rms_um": st["rms_radius"] * 1000.0}
 
@@ -636,15 +688,31 @@ def cell_spot(spots, half_um, cols=None):
     return c
 
 
-def cell_psf(psfs, half_um, pvs):
-    """③: 回折の PSF(対数の明るさ)。②と同じ µm の窓。計算しなかった(null)ときは、その理由の波面の PV を出す。"""
+def _log_inferno(v):
+    v = np.log10(1.0 + 999.0 * np.clip(v / max(float(v.max()), 1e-300), 0, 1)) / 3.0     # 対数(暈も見える)
+    return fs.apply_cmap(v, "inferno", vmin=0.0, vmax=1.0, levels=6)
+
+
+def cell_psf(psfs, half_um, pvs, geos=None):
+    """③: 回折の PSF(対数の明るさ)。②と同じ µm の窓。
+
+    回折の PSF を作れない(瞳の波面が数十波長で、op の 512 点の瞳の格子では折り返す)コマでは、幾何の PSF
+    (``geo_psf``: 光線の密度 ⊗ Airy)を同じ窓に描き、左上に「geometric」と波面の PV を書く。"""
     c = np.full((CW, CW, 3), 0.08)
     n = len(psfs)
     w = CW // n
+    geos = geos or [None] * n
     for k, ps in enumerate(psfs):
         if ps is None:
-            c = _text(c, "null", (w * k + w // 2, CW // 2 - 6), (0.9, 0.5, 0.5), 9, "cm")
-            c = _text(c, "PV %.0f wv" % pvs[k], (w * k + w // 2, CW // 2 + 6), (0.7, 0.5, 0.5), 7, "cm")
+            if geos[k] is None:
+                raise ValueError("cell_psf: 回折の PSF も幾何の PSF も無い")
+            pitch = 2 * half_um / w
+            c[:, w * k:w * (k + 1)] = _log_inferno(geo_psf(geos[k], CW, w, pitch))
+            c[:24, w * k:w * (k + 1)] *= 0.35                         # 字の下地を暗く(PSF の上でも読める)
+            c = _text(c, "geometric", (w * k + 2, 7), (0.55, 0.85, 1.0), 8)
+            c = _text(c, "PV %.0fwv>>1" % pvs[k], (w * k + 2, 18), (0.55, 0.85, 1.0), 8)
+            if k:
+                c[:, w * k] = 0.3
             continue
         P, dx = ps["psf"], ps["dx"]
         M = P.shape[0]
@@ -660,9 +728,7 @@ def cell_psf(psfs, half_um, pvs):
             return np.where(ok, P[np.clip(i, 0, M - 1), np.clip(j, 0, M - 1)], 0.0)
         v = ((1 - fi) * (1 - fj) * at(i0, j0) + (1 - fi) * fj * at(i0, j0 + 1)
              + fi * (1 - fj) * at(i0 + 1, j0) + fi * fj * at(i0 + 1, j0 + 1))
-        v = np.log10(1.0 + 999.0 * np.clip(v / max(P.max(), 1e-300), 0, 1)) / 3.0     # 対数(暈も見える)
-        rgb = fs.apply_cmap(v, "inferno", vmin=0.0, vmax=1.0, levels=6)
-        c[:, w * k:w * (k + 1)] = rgb
+        c[:, w * k:w * (k + 1)] = _log_inferno(v)
         c = _text(c, "S=%.2f" % ps["strehl"], (w * k + 2, 9), (0.85, 0.85, 0.85), 7)
         if k:
             c[:, w * k] = 0.3
@@ -806,10 +872,14 @@ def tab_from(frames, t, tab_id, label, badge, text, rays_list, statics, extra_bo
     tab = fs.viewer_anim3d_tab(
         tab_id, label, badge, text, t, bodies, xyz, quat, trails=trails, clouds=clouds, events=events, series=series,
         panes=[{"label": _t("Fullseye の処理の帯(いま効いている段を色で強調。② の点の色 = 3-D の拡大スポットの色。"
+                            "③ に「geometric」とあるコマは幾何光学の領域: 瞳の波面が PV で数十波長(≫ 1 波長)あり、回折の PSF は"
+                            "op の瞳の格子では折り返すので作らず、光線の密度に Airy を畳み込んだ幾何の PSF(② のスポット図と同じ形)を描く。"
                             "④ 左 = 瞳の波面の全体、右の 4 枚と下の棒 = ゼルニケの種類別: 緑 Z20 ピント・紫 Z22 非点・"
                             "水色 Z31 コマ・橙 Z40 球面・赤 5 次より上)",
                             "Fullseye processing band (active stage highlighted; the colours in 2 are those of the "
-                            "magnified spot in 3-D; 4: left = whole pupil wavefront, right maps and bars = Zernike by "
+                            "magnified spot in 3-D; 3 marked 'geometric' = geometric-optics regime: the pupil wavefront is tens of waves PV, "
+                            "so the diffraction PSF would alias on the op's pupil grid; the ray density convolved with an Airy "
+                            "disc is drawn instead, the same shape as the spot in 2; 4: left = whole pupil wavefront, right maps and bars = Zernike by "
                             "kind: green Z20 defocus, purple Z22 astigmatism, cyan Z31 coma, orange Z40 spherical, "
                             "red higher)"), "frames": band, "png": True}],
         numbers=numbers, view=view)
@@ -897,7 +967,7 @@ def tab_spherical(fr, t):
     def cells(k, f):
         hw = half_window([f["spot"]], [f["psf"]], f["fno"])
         return [cell_fan(f["fan"], f["fan_th"], fan_lim(f), fan_cols), cell_spot([f["spot"]], hw),
-                cell_psf([f["psf"]], hw, [f["pv"]]), cell_wave(f["wmap"], f["zern"])]
+                cell_psf([f["psf"]], hw, [f["pv"]], [f["geo"]]), cell_wave(f["wmap"], f["zern"])]
 
     def formula(f):
         wl = WL_D * 1e-3
@@ -910,7 +980,7 @@ def tab_spherical(fr, t):
                "decimals": 3, "color": "#ffb74d"},
               {"label": _t("横収差 実光線 / 3 次の式", "Transverse aberration real / third order"), "values": ratio,
                "lo": 0.98, "hi": 1.16, "unit": "", "decimals": 3, "color": "#e0e0e0"},
-              {"label": _t("Strehl 比(PSF の頂 / 無収差の頂)", "Strehl ratio"), "values": strehl,
+              {"label": _t("Strehl 比(PSF の頂 / 無収差の頂。幾何光学の領域は —)", "Strehl ratio (— in the geometric regime)"), "values": strehl,
                "lo": 0.0, "hi": 1.0, "unit": "", "decimals": 3, "color": "#ff8a65"}]
     nums = [fs.viewer_number(_t("レンズ", "Lens"), "N-BK7 plano-convex, f = %.1f mm" % fs.paraxial_trace(singlet())["efl"]),
             fs.viewer_number(_t("つまみ", "Knob"), _t("絞りの半径 1.5 → 20 mm(f/33 → f/2.5)", "stop radius 1.5 → 20 mm")),
@@ -977,7 +1047,7 @@ def tab_coma(fr, t):
     def cells(k, f):
         hw = half_window([f["spot"]], [f["psf"]], f["fno"])
         return [cell_fan(f["fan"], f["fan_th"], fan_lim(f), fan_cols), cell_spot([f["spot"]], hw),
-                cell_psf([f["psf"]], hw, [f["pv"]]), cell_wave(f["wmap"], f["zern"])]
+                cell_psf([f["psf"]], hw, [f["pv"]], [f["geo"]]), cell_wave(f["wmap"], f["zern"])]
 
     def formula(f):
         wl = WL_D * 1e-3
@@ -1067,7 +1137,7 @@ def tab_astig(fr, t):
     def cells(k, f):
         hw = max(half_window(f["spot2"], [f["psf"]], f["fno"]), half_window([f["spot"]], [], f["fno"]) * 0)
         return [cell_fan(f["fan"], f["fan_th"], fan_lim(f), fan_cols), cell_spot(f["spot2"], hw),
-                cell_psf([f["psf"]], half_window([f["spot"]], [f["psf"]], f["fno"]), [f["pv"]]),
+                cell_psf([f["psf"]], half_window([f["spot"]], [f["psf"]], f["fno"]), [f["pv"]], [f["geo"]]),
                 cell_wave(f["wmap"], f["zern"])]
 
     def formula(f):
@@ -1167,7 +1237,8 @@ def tab_chroma(fr, t, R3):
         sp = [f["lens"][0]["spot"], f["lens"][1]["spot"]]
         col = wl_rgb(f["knob"])
         hw = max(half_window(sp, [], 4.0, f["knob"]), 8.0)
-        return [c1, cell_spot(sp, hw, cols=[col, col]), cell_psf([f["lens"][0]["psf"], f["lens"][1]["psf"]], hw, [f["lens"][0]["pv"], f["lens"][1]["pv"]]),
+        return [c1, cell_spot(sp, hw, cols=[col, col]), cell_psf([f["lens"][0]["psf"], f["lens"][1]["psf"]], hw, [f["lens"][0]["pv"], f["lens"][1]["pv"]],
+                         [f["lens"][0]["geo"], f["lens"][1]["geo"]]),
                 cell_wave(f["lens"][0]["wmap"], f["lens"][0]["zern"])]
 
     def formula(f):
@@ -1182,11 +1253,12 @@ def tab_chroma(fr, t, R3):
                "unit": "mm", "decimals": 3, "color": "#a5d6a7"},
               {"label": _t("波長", "Wavelength"), "values": np.array([f["knob"] * 1000 for f in fr]), "lo": 430.0,
                "hi": 700.0, "unit": "nm", "decimals": 0, "color": "#ce93d8"}]
+    fc_s = bfl_at(singlet(12.5), WL_F) - bfl_at(singlet(12.5), WL_C)
+    fc_a = bfl_at(achromat(R3), WL_F) - bfl_at(achromat(R3), WL_C)
     nums = [fs.viewer_number(_t("上", "Top"), "N-BK7 singlet, f/4"),
             fs.viewer_number(_t("下", "Bottom"), "N-BK7 + N-SF2 achromat, R3 = %.2f mm" % R3),
             fs.viewer_number(_t("F−C の焦点差 単 / アクロ", "F−C focus difference singlet / achromat"),
-                             "%.3f / %.1e mm" % (bfl_at(singlet(12.5), WL_F) - bfl_at(singlet(12.5), WL_C),
-                                                 bfl_at(achromat(R3), WL_F) - bfl_at(achromat(R3), WL_C)))]
+                             _t("%.3f mm / %s" % (fc_s, fmt_fc(fc_a, "ja")), "%.3f mm / %s" % (fc_s, fmt_fc(fc_a, "en"))))]
     text = _t("色収差: ガラスの屈折率は色(波長)で違う(青ほど大きい)ので、単レンズ(上)は青い光ほど手前で焦点を結ぶ。"
               "下のアクロマートは、凸の BK7 と凹の SF2(色による屈折率の変わり方が違うガラス)を貼り合わせ、"
               "青(F 線)と赤(C 線)の焦点をそろえた。3-D の中の黄・緑の線は「焦点の位置(横、4 倍に拡大)対 波長(下へ行くほど長い)」のグラフ。"
@@ -1295,7 +1367,49 @@ def gates(rec):
     sp2 = np.ptp([bfl_at(s2, w) for w in wls])
     assert sp2 < sp1 / 20, ("色: 二次スペクトルが大きい", sp1, sp2)
     out.update({"fc1": fc1, "fc2": fc2, "sec1": sp1, "sec2": sp2})
+    # ---- 幾何の PSF: 回折の PSF も作れる重なりの領域で、集中半径が 12 % 以内
+    out["geo_vs_diff"] = []
+    for name, sys_, fd in (("sph f/3.6", singlet(14.0), 0.0), ("coma 4deg", descartes(), 4.0)):
+        r50, r80 = geo_vs_diffraction(sys_, fd)
+        assert abs(r50 - 1) < 0.12 and abs(r80 - 1) < 0.12, ("幾何の PSF が回折の PSF と合わない", name, r50, r80)
+        out["geo_vs_diff"].append((name, r50, r80))
     return out
+
+
+def encircled_radius(img, pitch_um, frac):
+    """重心のまわりで、エネルギーの frac が入る半径 [µm]。"""
+    n0, n1 = img.shape
+    y = (np.arange(n0) - (n0 - 1) / 2) * pitch_um
+    x = (np.arange(n1) - (n1 - 1) / 2) * pitch_um
+    X, Y = np.meshgrid(x, y)
+    tot = img.sum()
+    cx, cy = (img * X).sum() / tot, (img * Y).sum() / tot
+    r = np.hypot(X - cx, Y - cy).ravel()
+    o = np.argsort(r)
+    c = np.cumsum(img.ravel()[o])
+    return float(r[o][np.searchsorted(c, frac * c[-1])])
+
+
+def geo_vs_diffraction(system, field, n=200):
+    """同じ視野で、幾何の PSF と ``psf_field_grid`` の回折の PSF を同じ格子に置き、50 %・80 % の集中半径の比を返す。"""
+    g = geo_rays(system, field)
+    pitch = 2.6 * float(np.abs(g["xy"]).max()) / n
+    G = geo_psf(g, n, n, pitch)
+    d = fs.psf_field_grid(system, fields=(field,), oversample=3)
+    P, dx = d["psfs"][0], d["sample_um"][0]
+    M = P.shape[0]
+    gg = (np.arange(n) - (n - 1) / 2) * pitch
+    jj = gg / dx + M // 2                                   # 列 = x
+    ii = -gg / dx + M // 2                                  # 行 = −y(geo_psf と同じ向き)
+    i0, j0 = np.floor(ii).astype(int), np.floor(jj).astype(int)
+    fi, fj = (ii - i0)[:, None], (jj - j0)[None, :]
+
+    def at(i, j):
+        ok = (i[:, None] >= 0) & (i[:, None] < M) & (j[None, :] >= 0) & (j[None, :] < M)
+        return np.where(ok, P[np.clip(i, 0, M - 1)[:, None], np.clip(j, 0, M - 1)[None, :]], 0.0)
+    D = ((1 - fi) * (1 - fj) * at(i0, j0) + (1 - fi) * fj * at(i0, j0 + 1)
+         + fi * (1 - fj) * at(i0 + 1, j0) + fi * fj * at(i0 + 1, j0 + 1))
+    return tuple(encircled_radius(G, pitch, q) / encircled_radius(D, pitch, q) for q in (0.5, 0.8))
 
 
 def main(argv=None) -> int:
@@ -1335,14 +1449,18 @@ def main(argv=None) -> int:
     print("書いた: %s(%.0f KB、ja+en、4 タブ・各 %d コマ)" % (path if a.out else "一時フォルダ", size / 1e3, len(t)))
     print("球面: 実光線 / 3 次の式 = " + "  ".join("a=%g:%.3f" % (a_, r) for a_, r in g["sph"]))
     print("コマ: 軸上のスポット半径 %.2g µm(非球面の無収差)" % g["coma_axis_um"])
-    print("色: F−C の焦点差 単レンズ %.3f mm / アクロマート %.1e mm、F..C の焦点のゆれ %.3f / %.4f mm"
-          % (g["fc1"], g["fc2"], g["sec1"], g["sec2"]))
+    print("色: F−C の焦点差 単レンズ %.3f mm / アクロマート %s、F..C の焦点のゆれ %.3f / %.4f mm"
+          % (g["fc1"], fmt_fc(g["fc2"]), g["sec1"], g["sec2"]))
     print("限界(実光線 / 3 次の式): 球面 f/%.1f で %.3f、コマ %.0f° で %.3f、T 像面 %.0f° で %.3f"
           % (rec["sph"][-1]["fno"], rec["sph"][-1]["ta_real"] / rec["sph"][-1]["ta_th"], rec["coma"][-1]["knob"],
              rec["coma"][-1]["tc_real"] / rec["coma"][-1]["tc_th"], rec["astig"][-1]["knob"],
              rec["astig"][-1]["dzT"] / rec["astig"][-1]["dzT_th"]))
-    nn = sum(f["psf"] is None for f in rec["sph"])
-    print("PSF を null にしたコマ(球面のタブ): %d / %d(瞳の波面が標本化できないほど収差が大きい)" % (nn, len(rec["sph"])))
+    for key, nm in (("sph", "球面"), ("coma", "コマ"), ("astig", "非点")):
+        nn = sum(f["psf"] is None for f in rec[key])
+        print("幾何の PSF に切り替えたコマ(%sのタブ): %d / %d(瞳の波面が数十波長で、回折の PSF は op の格子で折り返す)"
+              % (nm, nn, len(rec[key])))
+    print("幾何の PSF / 回折の PSF の集中半径(50 %・80 %): " + "  ".join(
+        "%s %.3f・%.3f" % (k, r50, r80) for k, r50, r80 in g["geo_vs_diff"]))
     print("姿勢の復元は量子化の刻みの半分の %.2f 倍以内、帯の PNG は画素ごとに一致" % worst)
     print("\nPASS")
     return 0

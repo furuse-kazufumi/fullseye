@@ -633,7 +633,8 @@ EXAMPLES = [
                 "(回折の PSF)→ opd_samples / wavefront_from_opd(波面とゼルニケの種類別の地図)。"
                 "門: 小さい絞り・画角で実光線と 3 次の式が 1 % 以内、サジタルのコマ = 1/3、T−P = 3(S−P)、"
                 "単レンズの焦点 = 厚肉の閉形式、アクロマートの F−C = 0。限界の回: f/2.5 で 13 %、"
-                "20° の T 像面で 20 % 外れる。収差が大きすぎる瞳の PSF は null。"},
+                "20° の T 像面で 20 % 外れる。波面が数十波長の瞳は回折の PSF を作らず幾何の PSF(光線の密度 ⊗ Airy、"
+                "重なりの領域で回折の PSF と集中半径 4 % 以内)に切り替える。"},
     {"id": "camera_intrinsics_calibration", "task": "calibration", "data": "synthetic",
      "name": "平面ターゲットの多視点から内部行列 K を推定する(Zhang 法)",
      "summary": "fs.camera_calibration を facade から呼ぶ最小例。傾けた 6 視点で K を厳密回収し"

@@ -9,7 +9,8 @@
 * 2 本の直線の最接近点(``crossing``)が、交わる 2 直線の交点を厳密に返す。
 * 帯の④の種類別の地図(``zmap``)が、``wavefront_from_opd`` の係数の規約(match3d の基底)と同じ。
 * アクロマートの R3 で F 線と C 線の近軸の焦点がそろい、単レンズの焦点が厚肉レンズの閉形式と一致する。
-* 収差が大きすぎる瞳では PSF を作らず null(``psf_safe`` が None)にする。
+* 収差が大きすぎる瞳では回折の PSF を作らず(``psf_safe`` が None)、幾何の PSF(光線の密度 ⊗ Airy)に切り替える。
+  幾何の PSF は、回折の PSF も作れる重なりの領域で集中半径が 12 % 以内。
 """
 from __future__ import annotations
 
@@ -114,6 +115,34 @@ def test_a_wavefront_too_steep_to_sample_gives_null_not_a_psf():
     assert A.psf_safe(A.singlet(20.0), 0.0) is None              # f/2.5: W040 ≈ 73 波長
     ok = A.psf_safe(A.singlet(3.0), 0.0)
     assert ok is not None and 0.9 < ok["strehl"] <= 1.0 + 1e-9
+
+
+def test_geometric_psf_matches_the_diffraction_psf_where_both_exist():
+    """幾何の PSF(光線の密度 ⊗ Airy)は、回折の PSF も作れる重なりの領域で集中半径が 12 % 以内。"""
+    for system, field in ((A.singlet(14.0), 0.0), (A.descartes(), 4.0)):
+        assert A.psf_safe(system, field) is not None              # 重なりの領域(回折の PSF がまだ作れる)
+        r50, r80 = A.geo_vs_diffraction(system, field)
+        assert abs(r50 - 1) < 0.12 and abs(r80 - 1) < 0.12, (field, r50, r80)
+
+
+def test_geometric_psf_conserves_energy_and_tracks_the_spot():
+    """和 = 1、重心が光線の重みつき重心に一致(画素の半分以内)、輪の重みの和 = 瞳の面積(1)。"""
+    g = A.geo_rays(A.descartes(), 10.0)
+    assert abs(g["w"].sum() - 1.0) < 1e-12
+    pitch = 2.6 * float(np.abs(g["xy"]).max()) / 120
+    G = A.geo_psf(g, 120, 120, pitch)
+    assert abs(G.sum() - 1.0) < 1e-12 and np.all(G >= 0)
+    y = -(np.arange(120) - 59.5) * pitch                           # 行 = −y
+    cy = float((G.sum(1) * y).sum())
+    ty = float((g["w"] * g["xy"][:, 1]).sum() / g["w"].sum())
+    assert abs(cy - ty) < 0.5 * pitch, (cy, ty, pitch)
+
+
+def test_the_regime_switch_is_a_real_op_refusal_not_a_bug():
+    """コマ 10° で回折の PSF が無いのは、op が 512 点の瞳の格子で折り返しを断るから(理由の文に格子の数が出る)。"""
+    with pytest.raises(ValueError, match="aliased"):
+        fs.psf_field_grid(A.descartes(), fields=(10.0,), oversample=3)
+    assert A.fmt_fc(0.0).startswith("< 1e-13 mm") and A.fmt_fc(2e-6) == "2.0e-06 mm"
 
 
 @pytest.mark.timeout(600)
