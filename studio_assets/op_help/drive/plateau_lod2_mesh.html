@@ -1,0 +1,43 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">plateau_lod2_mesh — DRIVE <code style="color:#22d3bf">japan</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plateau_lod2_mesh(source: &#x27;str | Path | bytes&#x27;, *, origin: &#x27;tuple[float, float, float] | None&#x27; = None, ids: &#x27;Iterable[str] | None&#x27; = None, bbox_latlon: &#x27;tuple[float, float, float, float] | None&#x27; = None, on_bad_polygon: &#x27;str&#x27; = &#x27;raise&#x27;) -&gt; &#x27;dict[str, Any]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import driveplateau; driveplateau.plateau_lod2_mesh(source: &#x27;str | Path | bytes&#x27;, *, origin: &#x27;tuple[float, float, float] | None&#x27; = None, ids: &#x27;Iterable[str] | None&#x27; = None, bbox_latlon: &#x27;tuple[float, float, float, float] | None&#x27; = None, on_bad_polygon: &#x27;str&#x27; = &#x27;raise&#x27;) -&gt; &#x27;dict[str, Any]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;plateau_lod2_mesh&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>PLATEAU の CityGML から LOD2 の建物を読み、局所メートル座標の三角形メッシュ (V, F) と建物ごとの属性を返す。</p>
+<p><code style="color:#22d3bf">bldg:Building</code> を <code style="color:#22d3bf">iterparse</code> でストリーム読みし、本体と <code style="color:#22d3bf">bldg:BuildingPart</code> を 1 つずつ <b>部位</b> (unit)として扱う。面は主題面(<code style="color:#22d3bf">GroundSurface</code> / <code style="color:#22d3bf">WallSurface</code> / <code style="color:#22d3bf">RoofSurface</code> / <code style="color:#22d3bf">OuterCeilingSurface</code> / <code style="color:#22d3bf">OuterFloorSurface</code> / <code style="color:#22d3bf">ClosureSurface</code>)の <code style="color:#22d3bf">lod2MultiSurface</code> から取り、面種を <code style="color:#22d3bf">face_kind</code> に残す。<code style="color:#22d3bf">lod2Solid</code> が <code style="color:#22d3bf">xlink:href</code> で参照する面はすべて見つかることを確かめる。穴(<code style="color:#22d3bf">gml:interior</code>)は外周へ橋を架けて耳切りで三角形にし、三角形の向きは元の環の向き(外向き法線)を保つ。</p>
+<p>座標は EPSG:6697(JGD2011 の緯度・経度・標高)を GRS80 の地心直交座標経由で原点の接平面の ENU(x 東, y 北, z 上, メートル)へ厳密に移す。既定の原点は <b>地面の重心</b>: <code style="color:#22d3bf">GroundSurface</code> の頂点の緯度経度の平均と、その最低標高(地面が無ければ全頂点)。</p>
+<p><b>fail-closed</b>: 6697 以外の <code style="color:#22d3bf">srsName</code>、<code style="color:#22d3bf">srsDimension</code> が 3 以外、LOD2 の幾何に未知の gml 要素(<code style="color:#22d3bf">Triangle</code>・<code style="color:#22d3bf">OrientableSurface</code>・<code style="color:#22d3bf">pos</code> の点列など)、表に無い主題面、見つからない xlink、m 以外の <code style="color:#22d3bf">measuredHeight</code> の単位は、読み飛ばさず <code style="color:#22d3bf">ValueError</code> にする。</p>
+<p>Args:</p>
+<p>source: CityGML の文字列(<code style="color:#22d3bf">&lt;</code> で始まる)、bytes、またはファイルパス(str/Path)。</p>
+<p>origin: 局所座標の原点 <code style="color:#22d3bf">(lat0 [deg], lon0 [deg], h0 [m])</code>。None なら地面の重心。</p>
+<p>ids: 読む建物の <code style="color:#22d3bf">gml:id</code>(<code style="color:#22d3bf">bldg:Building</code> の id)。None なら全部。</p>
+<p>bbox_latlon: <code style="color:#22d3bf">(lat_min, lon_min, lat_max, lon_max)</code>。部位の頂点の平均がこの箱に入る部位だけ残す。</p>
+<p>on_bad_polygon: 三角形にできない Polygon(面積 0・自己交差)の扱い。<code style="color:#22d3bf">&quot;raise&quot;</code>(既定)か</p>
+<p><code style="color:#22d3bf">&quot;skip&quot;</code>(数えて <code style="color:#22d3bf">n_bad_polygons</code> に残す)。</p>
+<p>Returns:</p>
+<p><code style="color:#22d3bf">{&quot;V&quot;: (n,3) float64 [m], &quot;F&quot;: (m,3) int64, &quot;face_unit&quot;: (m,) int64, &quot;face_kind&quot;: (m,) int8, &quot;kinds&quot;: LOD2_KINDS, &quot;units&quot;: [...], &quot;origin&quot;: (lat0, lon0, h0), &quot;crs&quot;: str, &quot;n_buildings&quot;: int, &quot;n_no_lod2&quot;: int, &quot;n_bad_polygons&quot;: int, &quot;max_nonplanarity_m&quot;: float}</code>。</p>
+<p><code style="color:#22d3bf">units[i]</code> は <code style="color:#22d3bf">{&quot;building_id&quot;, &quot;part&quot;, &quot;gml_id&quot;, &quot;measured_height&quot;, &quot;attrs&quot;, &quot;z_min&quot;, &quot;z_max&quot;, &quot;ground_z&quot;, &quot;height_mesh&quot;, &quot;extent_xy&quot;, &quot;lat&quot;, &quot;lon&quot;, &quot;n_faces&quot;}</code>。<code style="color:#22d3bf">height_mesh</code> は</p>
+<p><code style="color:#22d3bf">z_max − ground_z</code>(<code style="color:#22d3bf">measuredHeight</code> と比べる値)、<code style="color:#22d3bf">extent_xy</code> は ENU の (x 幅, y 幅) [m]。</p>
+<p>Raises:</p>
+<p>ValueError: 上の fail-closed の条件、source が空・不正、XML が壊れている、該当する部位が 0 件、</p>
+<p><code style="color:#22d3bf">on_bad_polygon</code> が未知、<code style="color:#22d3bf">origin</code> / <code style="color:#22d3bf">bbox_latlon</code> が不正。</p>
+<p>Examples:</p>
+<p>&gt;&gt;&gt; import driveplateau as PL</p>
+<p>&gt;&gt;&gt; m = PL.plateau_lod2_mesh(PL._citygml_lod2_example())</p>
+<p>&gt;&gt;&gt; [round(u[&quot;height_mesh&quot;], 3) for u in m[&quot;units&quot;]]</p>
+<p>[12.0, 4.0]</p>
+<p>&gt;&gt;&gt; m[&quot;V&quot;].shape[1], m[&quot;F&quot;].shape[1], sorted(set(m[&quot;face_kind&quot;].tolist()))</p>
+<p>(3, 3, [0, 1, 2])</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_plateau_venue_lod2">poc_plateau_venue_lod2</a> — <code style="color:#22d3bf">py -3.11 examples/poc_plateau_venue_lod2.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">japan</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:osm_synthetic">osm_synthetic</a> · <a style="color:#22d3bf" href="opdrive:osm_parse">osm_parse</a> · <a style="color:#22d3bf" href="opdrive:osm_road_graph">osm_road_graph</a> · <a style="color:#22d3bf" href="opdrive:osm_road_mask">osm_road_mask</a> · <a style="color:#22d3bf" href="opdrive:osm_road_loops">osm_road_loops</a> · <a style="color:#22d3bf" href="opdrive:osm_route">osm_route</a> · <a style="color:#22d3bf" href="opdrive:japan_world">japan_world</a> · <a style="color:#22d3bf" href="opdrive:japan_stats">japan_stats</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: driveplateau.py — DRIVE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

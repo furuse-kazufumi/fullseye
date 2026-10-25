@@ -776,9 +776,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3571 ops / 54 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3572 ops / 54 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 959 · **3d** 373 · **math** 114 · **optics** 465 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 39 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 700 · **tomography** 31 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 3 · **calib** 21 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族の一覧: **2d** 959 · **3d** 373 · **math** 114 · **optics** 465 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 39 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 701 · **tomography** 31 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 3 · **calib** 21 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d(959 ops / 49 categories)
 
@@ -3496,7 +3496,7 @@ _計 3571 ops / 54 families。並びとノートの在り処は `docs/ops/INDEX.
 #### vx / suppress(1)
 - `vx_nonmax_suppression` `image2d → image2d` — 非極大の抑制(3.39 節)。画素 (x, y) は、窓の中で**自分より前(上の行と、同じ行の左)の隣には ≥、後ろの隣には >** の ときだけ残る(REQ-0337)。平らな頂上が 1 画素だけ残るのはこの非対称のため。*mask* の非ゼロ画素は比べず、そのまま残す (他の画素の比較にも使わない、REQ-0336)。抑制した画素は U8 なら 0、S16 なら INT16_MIN(REQ-0335)。窓の外にはみ出す隣は比べない。 · 例: `gallery_openvx_spec_values`
 
-### drive(700 ops / 51 categories)
+### drive(701 ops / 51 categories)
 
 名前は運転だが、中身は**物理シミュレーションとロボットの PoC の台帳**: 運転(コース・交通・判断・CARLA / CommonRoad)に加え、触覚(tac*)・peg-in-hole(peg*)・研磨(polish)・研削(grind)・切削(cutting)・粉体(granular / scoop)・粉末 X 線回折(pxrd)・球技(ball / puck)などがカテゴリとして同居している。カテゴリ名で引くこと。
 
@@ -3796,7 +3796,7 @@ _計 3571 ops / 54 families。並びとノートの在り処は `docs/ops/INDEX.
 - `tile_stream` `table × table → table` — 車のいる区画 (i, j) の周り (2·radius + 1)² 区画を持ち、外れた区画を捨てる(``cache`` をその場で書き換える)。 返り値 ``{"loaded": [(i, j)], "evicted": [(i, j)], "n": 持っている区画の数}``。 · 例: `poc_driving_endless_map`
 - `tile_uniform` `入力なし → scalar` — :func:`tile_hash` の上位 53 ビットを [0, 1) の一様な実数に(倍精度で厳密に表せる)。 · 例: `gallery_drive_world_io`
 
-#### drive / japan(22)
+#### drive / japan(23)
 - `building_prisms` `any → any` — 建物の足跡(footprint)を高さまで押し出し、1 つの三角形メッシュにまとめる。 · 例: `gallery_drive_city_terrain`
 - `buildings_in_box` `table → any` — 重心(足元頂点の平均)が箱 [xmin,xmax]×[ymin,ymax] に入る建物だけを返す。 · 例: `gallery_drive_city_terrain`
 - `citygml_synthetic` `入力なし → any` — 本物と同じ構造の最小 CityGML 2.0 文字列を作る(テスト・デモ用)。 · 例: `gallery_drive_city_terrain`, `poc_driving_japan_town`
@@ -3815,6 +3815,7 @@ _計 3571 ops / 54 families。並びとノートの在り処は `docs/ops/INDEX.
 - `osm_road_mask` `table → table` — 辺を幅つきの線分(端は丸)として描いた **道路の和集合** の 2 値画像。 · 例: `poc_driving_japan_town`
 - `osm_route` `table → table` — 2 節点間の最短路(Dijkstra、一方通行を守る)を車線中心の折線にし、停止線を弧長で並べる。 · 例: `poc_driving_japan_town`
 - `osm_synthetic` `入力なし → any` — テストと fuzz 用の最小の OSM XML(本物と同じ要素: bounds / node / way / tag)。 · 例: `poc_driving_japan_town`
+- `plateau_lod2_mesh` `any → table` — PLATEAU の CityGML から LOD2 の建物を読み、局所メートル座標の三角形メッシュ (V, F) と建物ごとの属性を返す。 · 例: `poc_plateau_venue_lod2`
 - `plateau_parse` `any → table` — PLATEAU CityGML から建物の足元多角形・高さ・底面標高をストリーム読みする。 · 例: `gallery_drive_city_terrain`, `poc_driving_japan_town`
 - `polygon_area` `any → scalar` — 単純多角形の符号つき面積(靴紐公式)。反時計回りで正。 · 例: `poc_driving_school`, `poc_thermal_drift_metrology`
 - `prism_mesh` `any → any` — 足元多角形を高さ ``height`` の柱に押し出す(底面なし)。 · 例: `poc_print_layer_inspection`
