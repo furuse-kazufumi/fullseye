@@ -43,6 +43,8 @@
         "numbers": [{"label": {...}, "value": "81.7 µm" | {"ja":..., "en":...}}, ...],
         "checks": [{"what": {...}, "criterion": "< 1e-9" | {...}, "result": "3.2e-12" | {...},
                     "ok": True}, ...],     # 任意。バッジを押すと開く「確かめた項目 / 基準 / 結果」の表
+        "lesson": {"question": {...}, "choices": [{...}, {...}], "answer": 1, "explain": {...},
+                   "formula": {...}, "limit": {...}},   # 任意。学習用の型(問い → 予想 → 再生 → 式 → 限界)
         "kind": "mesh" | "points" | "frames" | "split" | "anim3d",
         ...ペイロード(下)...
       }]
@@ -70,7 +72,8 @@
     ``clouds`` ``[{k コマ, pos (N,3), rgb (N,3) | color, point_size}]``(k から次の雲まで出す)/
     ``events`` ``[{t, label}]``(段の区切り。ジャンプのボタンになる)/ ``series``(frames と同じ形、長さ T)/
     ``panes`` ``[{label, frames (T,H,W[,3]), boxes, png=True}]``(同じ時間軸で並べる 2-D)/
-    ``follow``(追従する物体の name。無ければ全物体の重心)/ ``cbar``
+    ``follow``(追従する物体の name。無ければ全物体の重心)/ ``cbar`` /
+    ``axis`` ``{values (T,), segments [{k, label, unit, decimals}]}``(時間つまみの読みを物理量に)
 
 共通の任意項目: ``view`` ``{az, el, dist}``(3-D の初期視点。dist は既定距離の倍率)。
 
@@ -205,6 +208,23 @@ _CHECK_UI: dict[str, dict[str, str]] = {
     "result": _t("結果", "Result", "结果", "結果", "결과", "Ergebnis", "परिणाम", "Résultat"),
     "ok": _t("通った", "pass", "通过", "通過", "통과", "bestanden", "पास", "réussi"),
     "ng": _t("外れた", "outside", "超出", "超出", "벗어남", "außerhalb", "सीमा से बाहर", "hors critère"),
+}
+
+#: 学習用の型(タブの ``lesson``)の見出し(8 言語)。① 問い → ② 予想 → ③ 再生 → ④ 式 → ⑤ 限界 の順に出す。
+_LESSON_UI: dict[str, dict[str, str]] = {
+    "q": _t("問い", "Question", "问题", "問題", "질문", "Frage", "प्रश्न", "Question"),
+    "p": _t("予想: どうなると思う?", "Predict: what do you think will happen?", "预测:你觉得会怎样?",
+            "預測:你覺得會怎樣?", "예상: 어떻게 될까요?", "Vorhersage: Was glaubst du, passiert?",
+            "अनुमान: आपके हिसाब से क्या होगा?", "Prédiction : que va-t-il se passer, selon vous ?"),
+    "play": _t("再生: ▶ で確かめる", "Play: press ▶ to check", "播放:按 ▶ 验证", "播放:按 ▶ 驗證",
+               "재생: ▶ 를 눌러 확인", "Abspielen: mit ▶ überprüfen", "चलाएँ: ▶ दबाकर जाँचें",
+               "Lecture : appuyez sur ▶ pour vérifier"),
+    "f": _t("式", "Equation", "公式", "公式", "식", "Gleichung", "सूत्र", "Équation"),
+    "why": _t("説明", "Explanation", "说明", "說明", "설명", "Erklärung", "व्याख्या", "Explication"),
+    "lim": _t("限界", "Limit", "局限", "局限", "한계", "Grenze", "सीमा", "Limite"),
+    "right": _t("正解。", "Correct.", "答对了。", "答對了。", "정답.", "Richtig.", "सही।", "Exact."),
+    "wrong": _t("はずれ。正解は", "Not quite. The answer is", "不对。正确答案是", "不對。正確答案是", "아쉽네요. 정답은",
+                "Nicht ganz. Richtig ist", "सही नहीं। उत्तर है", "Pas tout à fait. La réponse est"),
 }
 
 #: ページの固定文字列(8 言語)。仕様のものではなく、ビューアの操作系。
@@ -857,6 +877,72 @@ def _pack_checks(raw: Any, badge: str, where: str, ctx: _Ctx) -> list:
     return rows
 
 
+_LESSON_KEYS = frozenset({"question", "choices", "answer", "explain", "formula", "limit"})
+_AXIS_KEYS = frozenset({"values", "segments"})
+_AXIS_SEG_KEYS = frozenset({"k", "label", "unit", "decimals"})
+
+
+def _pack_lesson(raw: Any, where: str, ctx: _Ctx) -> dict:
+    """タブの ``lesson``(学習用の型)を検査して詰める。
+
+    ``{"question": 問い, "choices": [選択肢 2〜3 個], "answer": 正解の番号(0 始まり), "explain": 答えの説明,
+    "formula": 式, "limit": 限界}``。文字列はすべて文字列の辞書(全言語)。鍵の欠け・未知の鍵・選択肢が 2〜3 個で
+    ない・answer が範囲外か int でない(bool も不可)は ``ValueError``。
+    """
+    wl = where + ".lesson"
+    _keys(raw, _LESSON_KEYS, wl)
+    lack = sorted(_LESSON_KEYS - set(raw))
+    if lack:
+        raise ValueError("%s: 鍵 %s が要る(問い → 予想 → 再生 → 式 → 限界 の型を崩さない)" % (wl, lack))
+    ch = raw["choices"]
+    if not isinstance(ch, (list, tuple)) or not 2 <= len(ch) <= 3:
+        raise ValueError("%s: choices は 2〜3 個の list" % wl)
+    a = raw["answer"]
+    if isinstance(a, bool) or not isinstance(a, (int, np.integer)) or not 0 <= int(a) < len(ch):
+        raise ValueError("%s: answer は choices の番号(0..%d の int): %r" % (wl, len(ch) - 1, a))
+    return {"question": _bi(raw["question"], wl + ".question", ctx),
+            "choices": [_bi(c, "%s.choices[%d]" % (wl, j), ctx) for j, c in enumerate(ch)],
+            "answer": int(a),
+            "explain": _bi(raw["explain"], wl + ".explain", ctx),
+            "formula": _bi(raw["formula"], wl + ".formula", ctx),
+            "limit": _bi(raw["limit"], wl + ".limit", ctx)}
+
+
+def _pack_axis(raw: Any, T: int, where: str, ctx: _Ctx) -> dict:
+    """anim3d の ``axis``(時間つまみの読みを物理量にする)を検査して詰める。
+
+    ``{"values": (T,) コマごとの値, "segments": [{"k": 始まりのコマ, "label": 量の名前, "unit": "°",
+    "decimals": 1}, ...]}``。段ごとに振る量が違ってよい(入射角 → ファイバへの入射角 など)。k は 0 から始まり
+    狭義の増加で T 未満。values の長さが T と違う・NaN・未知の鍵は ``ValueError``。
+    """
+    wa = where + ".axis"
+    _keys(raw, _AXIS_KEYS, wa)
+    v = _finite(raw.get("values"), wa + ".values")
+    if v.shape != (T,):
+        raise ValueError("%s: values は (T,) = (%d,): %s —— T の不一致" % (wa, T, v.shape))
+    segs = raw.get("segments")
+    if not isinstance(segs, (list, tuple)) or not segs:
+        raise ValueError("%s: segments が要る(1 個以上)" % wa)
+    out, last = [], -1
+    for j, g in enumerate(segs):
+        wg = "%s.segments[%d]" % (wa, j)
+        _keys(g, _AXIS_SEG_KEYS, wg)
+        k = g.get("k")
+        if isinstance(k, bool) or not isinstance(k, (int, np.integer)) or not last < int(k) < T:
+            raise ValueError("%s: k は狭義の増加で 0..%d の int: %r" % (wg, T - 1, k))
+        if j == 0 and int(k) != 0:
+            raise ValueError("%s: 最初の段は k = 0 から" % wg)
+        dec = g.get("decimals", 1)
+        if isinstance(dec, bool) or not isinstance(dec, (int, np.integer)) or not 0 <= int(dec) <= 6:
+            raise ValueError("%s: decimals は 0..6 の int: %r" % (wg, dec))
+        unit = g.get("unit", "")
+        if not isinstance(unit, str):
+            raise ValueError("%s: unit は文字列: %r" % (wg, unit))
+        last = int(k)
+        out.append({"k": last, "label": _bi(g.get("label"), wg + ".label", ctx), "unit": unit, "dec": int(dec)})
+    return {"v": _clean_list(v, 6), "seg": out}
+
+
 def _pack_tab(tab: dict, store: _Store, idx: int, ctx: _Ctx) -> dict:
     where = "tabs[%d]" % idx
     tid = str(tab.get("id", ""))
@@ -878,6 +964,10 @@ def _pack_tab(tab: dict, store: _Store, idx: int, ctx: _Ctx) -> dict:
     }
     if tab.get("checks") is not None:                     # 任意。無いタブの JSON は前と同じ
         out["checks"] = _pack_checks(tab["checks"], tab["badge"], where, ctx)
+    if tab.get("lesson") is not None:                     # 任意。学習用の型
+        out["lesson"] = _pack_lesson(tab["lesson"], where, ctx)
+    if tab.get("axis") is not None and kind != "anim3d":
+        raise ValueError("%s: axis は kind \"anim3d\" だけ(%s には時間つまみが無い)" % (where, kind))
     if tab.get("view"):
         out["view"] = {k: float(v) for k, v in tab["view"].items() if k in ("az", "el", "dist")}
 
@@ -928,6 +1018,8 @@ def _pack_tab(tab: dict, store: _Store, idx: int, ctx: _Ctx) -> dict:
         out["series"] = _pack_series(tab.get("series", []), T, where, ctx)
     elif kind == "anim3d":
         _pack_anim3d(tab, out, store, where, ctx)
+        if tab.get("axis") is not None:                   # 任意。時間つまみの読みを物理量に
+            out["axis"] = _pack_axis(tab["axis"], len(out["t"]), where, ctx)
     else:  # split
         b, a = _as_u8(tab.get("before"), where + ".before"), _as_u8(tab.get("after"), where + ".after")
         if b.shape != a.shape or b.ndim not in (2, 3) or (b.ndim == 3 and b.shape[2] != 3):
@@ -972,6 +1064,8 @@ def _pack_spec(spec: dict, lang="ja") -> dict:
         data["bh"] = {"def": {k: {l: v["def"][l] for l in langs} for k, v in _BADGE_HELP.items()},
                       "legend": {l: _BADGE_LEGEND[l] for l in langs},
                       "ui": {k: {l: v[l] for l in langs} for k, v in _CHECK_UI.items()}}
+    if any("lesson" in t for t in data["tabs"]):        # 学習用の型のページ(無ければ DATA は前と同じ)
+        data["lu"] = {k: {l: v[l] for l in langs} for k, v in _LESSON_UI.items()}
     data["ui"] = {k: {l: v[l] for l in langs} for k, v in UI.items()}
     data["arrays"] = store.arrays
     return data
@@ -1879,6 +1973,73 @@ _JS_BH_SUBS = (
 )
 
 
+#: 時間つまみの読みを物理量にする塊(どれかの anim3d タブが ``axis`` を持つ場面だけ)。
+_JS_AXIS_ANCHOR = _JS_BH_ANCHOR
+_JS_AXIS = r"""/* ---------- 時間つまみの読みを物理量に(入射角 θ = 42.3° など)。axis を持つ場面だけページに入る ---------- */
+function axisText(tab, f){
+  const A = tab.axis; let g = A.seg[0];
+  for (const s of A.seg) if (s.k <= f) g = s;
+  const v = A.v[f];
+  return T(g.label) + ' = ' + (v == null ? '\u2014' : v.toFixed(g.dec)) + (g.unit ? (/^[\u00b0%]/.test(g.unit) ? '' : ' ') + g.unit : '');
+}
+"""
+_JS_AXIS_SUBS = (
+    ("""  let hud = U('frame') + ' ' + f + ' / ' + (T_-1) + '  (' + (tab.t[f] - tab.t[0]).toFixed(2) + ' s)';\n""",
+     """  let hud = tab.axis ? '<b>' + esc(axisText(tab, f)) + '</b>  <span style="opacity:.7">(' + U('frame') + ' ' + f + ' / ' + (T_-1) + ')</span>'
+    : U('frame') + ' ' + f + ' / ' + (T_-1) + '  (' + (tab.t[f] - tab.t[0]).toFixed(2) + ' s)';\n"""),
+    ("""  $('tlabel').textContent = (tab.t[f] - tab.t[0]).toFixed(2) + ' s';\n""",
+     """  $('tlabel').textContent = tab.axis ? axisText(tab, f) : (tab.t[f] - tab.t[0]).toFixed(2) + ' s';\n"""),
+)
+
+#: 学習用の型(① 問い ② 予想 ③ 再生 を上のカードに、④ 式 ⑤ 限界 を再生の下のカードに)。lesson を持つ場面だけ。
+_CSS_LESSON = """
+  .lsh { margin-top:8px; color:#9fc6ec; font-weight:600; font-size:12.5px; }
+  .lsq { font-size:14.5px; }
+  .lsc { display:flex; flex-wrap:wrap; gap:6px; margin-top:4px; }
+  .lsb { padding:6px 11px; font-size:13.5px; text-align:left; }
+  .lsb.right { background:#1d4e7a; border-color:#5aa9f0; color:#fff; }
+  .lsb.wrong { background:#5a3a22; border-color:#f0a45a; color:#fff; }
+  .lsa { margin-top:6px; padding:6px 10px; border-left:3px solid #5aa9f0; background:#121a22; border-radius:4px; }
+  .lsa[hidden] { display:none; }
+  .lsf { font-family:"Cambria Math","STIX Two Math","Times New Roman",serif; font-size:15px; line-height:1.9;
+         padding:4px 0; overflow-x:auto; }
+  .lsl { padding:2px 0; }
+"""
+_BODY_LESSON_ANCHOR = '<div class="hint" id="hint"></div>\n'
+_BODY_LESSON = '<div class="card" id="lesson2" style="display:none"></div>\n'
+_JS_LESSON = r"""/* ---------- 学習用の型(問い → 予想 → 再生 → 式 → 限界)。lesson を持つ場面だけページに入る ----------
+   選択肢を押すと答えが開く(静的。どの選択肢を押したかはタブごとに覚え、言語を変えても残る)。 */
+const lsPick = {};
+const LU = k => T(D.lu[k]);
+const ABC = 'ABC';
+function lessonTop(t){
+  const ls = t.lesson, p = lsPick[t.id];
+  return '<div class="lsh">\u2460 ' + esc(LU('q')) + '</div><div class="lsq">' + esc(T(ls.question)) + '</div>' +
+    '<div class="lsh">\u2461 ' + esc(LU('p')) + '</div><div class="lsc">' +
+    ls.choices.map((c, i) => '<button class="lsb' + (p == null ? '' : (i === ls.answer ? ' right' : (i === p ? ' wrong' : ''))) +
+      '" data-ch="' + i + '" aria-pressed="' + (p === i) + '">' + ABC[i] + '. ' + esc(T(c)) + '</button>').join('') + '</div>' +
+    '<div class="lsa" aria-live="polite"' + (p == null ? ' hidden>' : '>') +
+      (p == null ? '' : '<b>' + esc(p === ls.answer ? LU('right') : LU('wrong') + ' ' + ABC[ls.answer] + '.') + '</b> ' + esc(T(ls.explain))) + '</div>' +
+    '<div class="lsh">\u2462 ' + esc(LU('play')) + '</div>';
+}
+function lessonBottom(){
+  const t = get(), box = $('lesson2'), ls = t.lesson;
+  if (!ls) { box.style.display = 'none'; box.innerHTML = ''; return; }
+  const br = s => esc(s).replace(/\n/g, '<br>');
+  box.style.display = '';
+  box.innerHTML = '<div class="lsh">\u2463 ' + esc(LU('f')) + '</div><div class="lsf">' + br(T(ls.formula)) + '</div>' +
+    '<div class="lsh">' + esc(LU('why')) + '</div><div>' + br(T(t.text)) + '</div>' +
+    '<div class="lsh">\u2464 ' + esc(LU('lim')) + '</div><div class="lsl">' + br(T(ls.limit)) + '</div>';
+}
+$('meta').addEventListener('click', e => { const b = e.target.closest('.lsb'); if (!b) return; lsPick[get().id] = +b.dataset.ch; renderMeta(); });
+"""
+_JS_LESSON_SUBS = (
+    ("function renderMeta(){\n  const t = get();\n", "function renderMeta(){\n  const t = get(); lessonBottom();\n"),
+    ("""<b>' + esc(T(t.label)) + '</b><br>' + esc(T(t.text)) +""",
+     """<b>' + esc(T(t.label)) + '</b>' + (t.lesson ? lessonTop(t) : '<br>' + esc(T(t.text))) +"""),
+)
+
+
 def _has_translucent(data: dict) -> bool:
     """詰めた仕様に alpha < 1 の物体があるか(あれば _JS_ALPHA を差し込む)。"""
     return any(t.get("kind") == "anim3d" and any("alpha" in b for b in t.get("bodies", ()))
@@ -1911,7 +2072,21 @@ def _build_html(spec: dict, lang="ja", detect_lang: bool = False) -> str:
         if body.count(_BODY_BH_ANCHOR) != 1:
             raise AssertionError("凡例の差し込み位置が 1 回でない")
         body = body.replace(_BODY_BH_ANCHOR, _BODY_BH + _BODY_BH_ANCHOR)
-        css = _CSS + _CSS_BH
+        css = css + _CSS_BH
+    if any("axis" in t for t in data["tabs"]):           # axis を持つ場面だけ
+        for old, new in ((_JS_AXIS_ANCHOR, _JS_AXIS + _JS_AXIS_ANCHOR),) + _JS_AXIS_SUBS:
+            if js.count(old) != 1:
+                raise AssertionError("物理量の読みの差し込み位置が 1 回でない: %r" % old[:60])
+            js = js.replace(old, new)
+    if "lu" in data:                                     # lesson を持つ場面だけ
+        for old, new in ((_JS_BH_ANCHOR, _JS_LESSON + _JS_BH_ANCHOR),) + _JS_LESSON_SUBS:
+            if js.count(old) != 1:
+                raise AssertionError("学習用の型の差し込み位置が 1 回でない: %r" % old[:60])
+            js = js.replace(old, new)
+        if body.count(_BODY_LESSON_ANCHOR) != 1:
+            raise AssertionError("学習用の型のカードの差し込み位置が 1 回でない")
+        body = body.replace(_BODY_LESSON_ANCHOR, _BODY_LESSON + _BODY_LESSON_ANCHOR)
+        css = css + _CSS_LESSON
     js = js.replace("__DATA__", blob)
     if js.count(blob) != 1:
         raise AssertionError("DATA の差し込みが 1 回でない")
@@ -2000,7 +2175,7 @@ def viewer_split_tab(tab_id, label, badge, text, before, after, label_before, la
 
 def viewer_anim3d_tab(tab_id, label, badge, text, t, bodies, xyz, quat, trails=None, clouds=None,
                       events=None, series=None, panes=None, cbar=None, follow=None, numbers=None,
-                      view=None, checks=None) -> dict:
+                      view=None, checks=None, axis=None, lesson=None) -> dict:
     """動く 3-D のタブ: 物体ごとの剛体姿勢をコマごとに再生する(2-D の画像列・時系列も同じ時間軸で)。
 
     物体のメッシュは **1 回だけ** 持ち、コマごとには姿勢(位置 + 四元数)だけを持つ。ページでは
@@ -2049,6 +2224,14 @@ def viewer_anim3d_tab(tab_id, label, badge, text, t, bodies, xyz, quat, trails=N
         定義の一言(ホバー・タップ)と 3 種のバッジの凡例が付き、en の表記は "Checked" になる
         (checks の無いタブは定義の一言だけ)。どのタブも持たないページは前と同じ。
         ``ok`` が False の行があるのに badge が ``"passed"`` なら ``ValueError``(fail-closed)。
+    axis : dict, optional
+        時間つまみの読みを物理量にする。``{"values": (T,), "segments": [{"k": 0, "label": 文字列の辞書,
+        "unit": "°", "decimals": 1}, ...]}``。段(k から次の段の手前まで)ごとに量の名前・単位を変えられる。
+        読みは「入射角 θ1 = 42.3°」の形になり、コマ番号は括弧で添えるだけ。無ければ従来どおり秒。
+    lesson : dict, optional
+        学習用の型。``{"question", "choices"(2〜3 個), "answer"(0 始まり), "explain", "formula", "limit"}``
+        (文字列はすべて文字列の辞書)。カードは ① 問い → ② 予想(選択肢を押すと答えが開く)→ ③ 再生 の順、
+        再生の下のカードに ④ 式 → 説明(``text``)→ ⑤ 限界 が並ぶ。他の kind のタブでも辞書の鍵として使える。
 
     容量: 位置は軸ごとの uint16(刻み = 範囲/65535)、四元数は int16(刻み 1/32767)、メッシュは 1 回だけ。
     コマ数 T が合わない(xyz / quat / series / panes / 軌跡)、NaN / inf、範囲外の索引、未知の色指定は
@@ -2076,7 +2259,8 @@ def viewer_anim3d_tab(tab_id, label, badge, text, t, bodies, xyz, quat, trails=N
     return _tab("anim3d", tab_id, label, badge, text, numbers,
                 {"t": t, "bodies": list(bodies), "xyz": xyz, "quat": quat, "trails": list(trails or []),
                  "clouds": list(clouds or []), "events": list(events or []), "series": list(series or []),
-                 "panes": list(panes or []), "cbar": cbar, "follow": follow, "view": view, "checks": checks})
+                 "panes": list(panes or []), "cbar": cbar, "follow": follow, "view": view, "checks": checks,
+                 "axis": axis, "lesson": lesson})
 
 
 def viewer_spec(viewer_id: str, title: dict, subtitle: dict, hint: dict, tabs, credit=None) -> dict:
