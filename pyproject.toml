@@ -249,7 +249,7 @@ py-modules = [
   # calib / caltab / fit_transform は前から同梱されていたが、台帳が無いため op ノートも
   # OP_INDEX.json の行も無く、fs.op_find("caltab") が 0 件だった。
   "opscalib",
-  "recipes", "measure", "studio", "studio_search", "studio_errors", "studio_roundtrip", "studio_batch", "studio_display", "studio_layout", "sample_images", "sample_data", "accuracy_bench",
+  "recipes", "measure", "studio", "studio_search", "studio_errors", "studio_roundtrip", "studio_batch", "studio_display", "studio_layout", "studio_result", "sample_images", "sample_data", "accuracy_bench",
   "evolve", "problems", "baseline", "robust",
   "verify_auto", "honest_summary", "dispositions", "catalog", "report",
   "samples", "references", "codegen", "difftest", "parity", "accel", "accel_bridge", "accel_match", "accel_vol", "bench",

@@ -73,6 +73,7 @@ def test_run_cached_budget_bounds_memory():
 def test_stepwise_states_clean_is_not_judged_green():
     st = engine.FullseyeEngine.from_ops("gaussian,sobel_amp").stepwise_states(IMG)
     assert [s["op"] for s in st] == ["gaussian", "sobel_amp"]
+    assert len(st) == 2                                      # counted first: an empty list passes all() vacuously
     assert all(s["ran"] is True for s in st)
     assert all(s["valid"] is None and s["reasons"] == [] for s in st)   # no success info -> not judged
     assert all("error" not in s for s in st)
@@ -104,6 +105,7 @@ def test_stepwise_states_explicit_validity_keys_are_honored():
 
 def test_stepwise_states_refused_chain_reports_error_without_false_green():
     st = engine.FullseyeEngine.from_ops("otsu,invert").stepwise_states(IMG)   # region -> image mismatch
+    assert len(st) == 2                                      # both stages reported, none silently dropped
     assert all(s["ran"] is False for s in st)
     assert all(s["valid"] is None for s in st)               # never green on a refused chain
     assert any(s.get("error") for s in st)
@@ -111,6 +113,7 @@ def test_stepwise_states_refused_chain_reports_error_without_false_green():
 
 def test_stepwise_states_offers_no_automatic_fix():
     st = engine.FullseyeEngine.from_ops("gaussian,invert").stepwise_states(IMG)
+    assert len(st) == 2
     for s in st:
         assert set(s) <= {"index", "op", "a", "b", "ran", "valid", "reasons", "error"}
         for key in s:
