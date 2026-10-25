@@ -296,8 +296,10 @@ _SPIKE_REASON = ("スパイク(実験)の記録。spikes/out_gallery/ の図は�
 EXCLUDED = {
     "tools/build_itokawa_anim3d.py": ("小惑星イトカワの重力の動く 3-D の教材(docs/anim3d/itokawa_gravity.html)。"
                                       "pocviewer.write_viewer で書く手回しの生成物で、polyhedron_gravity を頂点 2.5 万個 × 面 4.9 万枚で"
-                                      "回すので数分かかる(結果は out/ に入力のハッシュで保存)。出力を変えたら手で回して commit する。"
-                                      "門は tests/test_itokawa_anim3d.py。"),
+                                      "回すので数分かかる(結果は out/ に入力のハッシュで保存)。commit するページは 8 言語版で、"
+                                      "`py -3.11 tools/anim3d_i18n.py --build build_itokawa_anim3d --out docs/anim3d/itokawa_gravity.html` で書く"
+                                      "(翻訳表 tools/anim3d_i18n_tables/build_itokawa_anim3d.json)。門は tests/test_itokawa_anim3d.py と "
+                                      "tests/test_anim3d_i18n_itokawa_2026_10_25.py。"),
     "tools/import_itokawa_shape.py": ("イトカワの形状モデル(NASA PDS SBN の Gaskell Q = 64、CC0 1.0)の取り込み。入力の原本 ver64q.tab は"
                                       "repo の外で手で取得する(取得物は untrusted として専用の空ディレクトリに置く)ので CI では作れない —— "
                                       "SHA-256 を照合して data/itokawa_shape/gaskell_q64.npz を書き、出典と改変は同じ場所の README.md に書く。"),

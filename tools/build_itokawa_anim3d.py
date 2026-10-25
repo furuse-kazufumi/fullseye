@@ -4,6 +4,7 @@
 
     py -3.11 tools/build_itokawa_anim3d.py            # docs/anim3d/itokawa_gravity.html を書く(初回は重力の計算に数分)
     py -3.11 tools/build_itokawa_anim3d.py --check    # 書かずに、門の値の印字と HTML の生成だけ
+    py -3.11 tools/anim3d_i18n.py --build build_itokawa_anim3d --out docs/anim3d/itokawa_gravity.html   # commit する 8 言語版
 
 形は公開データ(NASA PDS Small Bodies Node の Gaskell Itokawa Shape Model V1.1、Q = 64 の 49,152 面、CC0 1.0。
 repo では data/itokawa_shape/gaskell_q64.npz、出典と改変は同じ場所の README.md)。重力は一様密度の多面体の
@@ -582,7 +583,7 @@ def tab_gravity(R, g):
     walker_V, walker_F = ball_mesh(5.0)
     aV, aF = arrow_mesh(45.0, 2.0)
     bodies = [{"name": "itokawa", "pos": V - com, "faces": F, "val": ge * 1e6,
-               "label": T("実効重力の大きさ |g_eff|", "effective gravity |g_eff|")},
+               "label": T("実効重力の大きさ |g_eff|", "magnitude of effective gravity |g_eff|")},
               {"name": "walker", "pos": walker_V, "faces": walker_F, "rgb": (1.0, 1.0, 1.0),
                "label": T("歩く人", "walker")},
               {"name": "arrow", "pos": aV, "faces": aF, "rgb": (1.0, 0.84, 0.31),
@@ -627,10 +628,10 @@ def tab_muses(R, g):
     nT = per * len(iters) + per
     t = np.arange(nT) / 12.0
     # ポテンシャルの高さの地形: 重心から放射方向に高さを誇張して並べる(右に置く)
-    scale = 60.0 / max(float(hgt.max()), 1e-9)
+    scale = 2.0                                                    # ポテンシャルの高さを 2 倍に誇張して放射方向に足す
     radial = (V - com) / np.linalg.norm(V - com, axis=1)[:, None]
     relief = (V - com) + radial * (hgt * scale)[:, None]
-    shift = np.array([0.0, 420.0, 0.0])
+    shift = np.array([0.0, 560.0, 0.0])
     bodies = [{"name": "itokawa", "pos": V - com, "faces": F, "val": hgt,
                "label": T("ジオポテンシャル高度(実効ポテンシャル ÷ 平均の重力)", "geopotential height (effective potential ÷ mean gravity)")},
               {"name": "relief", "pos": relief, "faces": F, "val": hgt,
@@ -860,8 +861,8 @@ def all_lessons(R, g):
                             60.0 * g["geff_min_um"] * 1e-6 / 9.80665 * 1000, 60.0 * g["geff_max_um"] * 1e-6 / 9.80665 * 1000),
                          "Surface effective gravity is %.1f–%.1f µm/s² (about 1/100,000 of Earth's) and varies %.1f× over the "
                          "surface. The ends are farthest from the centre of mass, so the pull is weakest there, and the "
-                         "centrifugal term (up to %.1f %% of the pull) points outwards too. A 60 kg person weighs about %.2f g-force "
-                         "at the ends and %.2f g-force at the heaviest spot."
+                         "centrifugal term (up to %.1f %% of the pull) points outwards too. A 60 kg person weighs about %.2f grams-force "
+                         "at the ends and %.2f grams-force at the heaviest spot."
                          % (g["geff_min_um"], g["geff_max_um"], gr_ratio, g["centrifugal_frac_max"] * 100,
                             60.0 * g["geff_min_um"] * 1e-6 / 9.80665 * 1000, 60.0 * g["geff_max_um"] * 1e-6 / 9.80665 * 1000)),
             "formula": T("Φ = −(Gρ/2) Σ_f ( h_f S_f − h_f² ω_f )(Werner & Scheeres 1997)\ng = −∇Φ、 g_eff = g + ω² ρ⊥\n"
