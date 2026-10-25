@@ -62,7 +62,7 @@ The 95 capabilities, split by how they are verified (`docs/maturity.json`, rebui
 | `validated-public-real-data` | an example on public measured data runs in a gate | 18 |
 | `validated-hardware` | validated on hardware (only from accepted external reports) | 0 |
 
-Of 434 examples, 434 are actually run by a gate.
+Of 435 examples, 435 are actually run by a gate.
 
 ### Operator counts by version
 
@@ -137,16 +137,16 @@ Every one carries a closed-form or synthetic ground truth and a null model. Fail
 
 ## Find an operator
 
-**3,571 per-operator notes** (call form, type contract, HALCON counterpart, references, provenance) and **69 family guides**. Entry points by dimension:
+**3,573 per-operator notes** (call form, type contract, HALCON counterpart, references, provenance) and **69 family guides**. Entry points by dimension:
 
-**Measured coverage**: evolvable ops 942/942, typed ledger 2608/2620, one-line facade `fullseye.<name>` 706/1484 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
+**Measured coverage**: evolvable ops 942/942, typed ledger 2610/2622, one-line facade `fullseye.<name>` 706/1484 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
 
-**Measured substance**: of 3571 notes, **3544** link at least one runnable example (27 have none) and **3373** have a usage section of 120+ characters (198 are a one-line summary). The structure (call form, types, ops that chain next) is present in all 3571.
+**Measured substance**: of 3573 notes, **3546** link at least one runnable example (27 have none) and **3375** have a usage section of 120+ characters (198 are a one-line summary). The structure (call form, types, ops that chain next) is present in all 3573.
 
 | dimension | ops | entry |
 |---|---:|---|
 | `2d` | 959 | [INDEX](ops/2d/INDEX.md) |
-| `drive` | 700 | [INDEX](ops/drive/INDEX.md) |
+| `drive` | 702 | [INDEX](ops/drive/INDEX.md) |
 | `optics` | 465 | [INDEX](ops/optics/INDEX.md) · [guide](ops/optics/guides/optics_imaging.md) |
 | `3d` | 373 | [INDEX](ops/3d/INDEX.md) |
 | `math` | 114 | [INDEX](ops/math/INDEX.md) · [guide](ops/math/guides/math_metrology.md) |
@@ -298,7 +298,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## Document map — all 288
 
-The complete map, so that **no document is unreachable from this index** (the 3,571 per-op notes and 69 family guides under `docs/ops/` are reached from the operator section above; articles from [articles/](articles/README.md)). One unreachable file fails `tests/test_docs_index_reachable.py`. **Most bodies are in Japanese.**
+The complete map, so that **no document is unreachable from this index** (the 3,573 per-op notes and 69 family guides under `docs/ops/` are reached from the operator section above; articles from [articles/](articles/README.md)). One unreachable file fails `tests/test_docs_index_reachable.py`. **Most bodies are in Japanese.**
 
 **Getting started**(12)
 
