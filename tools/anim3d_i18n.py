@@ -8,12 +8,22 @@
     py -3.11 tools/anim3d_i18n.py --build interactive_anim3d_viewer \\
         --out docs/view2026/anim3d/interactive_anim3d_viewer.html          # 8 言語の HTML を書く
     py -3.11 tools/anim3d_i18n.py --demo                                  # 走るサンプル(一時フォルダ)
+    py -3.11 tools/anim3d_i18n.py --missing build_waves_anim3d --viewer-id interference   # tools/build_* も同じ
+    py -3.11 tools/anim3d_i18n.py --check build_x_anim3d --script-arg=--seed --script-arg=3 # main(argv) に渡す
+
+作例の名前は ``examples/<名前>.py`` → ``examples_3d/<名前>.py`` → ``tools/<名前>.py``(名前が ``build_`` で
+始まるものだけ。``tools/build_*_anim3d.py`` のような題材の生成器)の順に探す。
 
 作例の build スクリプトは **書き換えない**。作例は文字列を ``fs.viewer_text(ja, en)`` の 2 言語で書くので、
 その ``main()`` を走らせ、``fs.write_viewer`` に渡った仕様(spec)を横取りする(作例自身の検査はそのまま走る)。
 仕様の中の ja/en だけの文字列の辞書をすべて見つけ、翻訳表から zh / tw / ko / de / hi / fr を埋めて
 8 言語の仕様にし、``write_viewer(..., lang=LANGS, detect_lang=True)`` で書く
 (``?lang=xx`` が最優先、無ければブラウザの言語)。
+
+横取りの間、``write_viewer`` は **要求されたパスに書かない**(一時フォルダに同じ名前で書いてそのパスを返す)。
+``tools/build_*`` は既定で ``docs/anim3d/*.html`` を書くので、そのまま走らせると翻訳の確認だけで木が変わる。
+それ以外の書き込みも塞ぐため、走らせる前後で ``git status`` の対象ファイルの中身を比べ、変わっていれば
+止める(fail-closed。git の無い場所では比べない)。
 
 翻訳表は作例ごとに 1 つ: ``tools/anim3d_i18n_tables/<作例名>.json``::
 
@@ -60,6 +70,8 @@ LANGS = pv.LANGS
 NEW_LANGS = tuple(l for l in LANGS if l not in ("ja", "en"))       # 表で埋める 6 言語
 TABLES = ROOT / "tools" / "anim3d_i18n_tables"
 EXAMPLE_DIRS = ("examples", "examples_3d")
+#: 作例の外で探す生成器: ``tools/build_*.py``(題材の動く 3-D、``main(argv)`` を持ち write_viewer で書く)。
+BUILDER_DIR, BUILDER_PREFIX = "tools", "build_"
 
 #: 数値トークン: 整数・小数・指数 + 直後(空白 0〜1 個)の単位。符号は付けない(「2-10 cm」の - は範囲)。
 #: 英字・_ に続く数字(``anim3d``・``uint16`` のような名前の一部)は数えない(コード片の門が見る)。
@@ -211,26 +223,66 @@ def missing_json(example: str, spec: dict, table: dict) -> dict:
 
 # --------------------------------------------------------------------------- 作例を走らせて仕様を横取り
 def example_script(example: str) -> Path:
+    """作例の名前からスクリプトを探す(examples → examples_3d → tools/build_*)。"""
+    if not re.fullmatch(r"[A-Za-z0-9_]+", example or ""):
+        raise ValueError("作例の名前は英数字と _ だけ(パスや拡張子は付けない): %r" % (example,))
     for sub in EXAMPLE_DIRS:
         p = ROOT / sub / (example + ".py")
         if p.is_file():
             return p
-    raise FileNotFoundError("作例 %s が %s に無い" % (example, " / ".join(EXAMPLE_DIRS)))
+    if example.startswith(BUILDER_PREFIX):
+        p = ROOT / BUILDER_DIR / (example + ".py")
+        if p.is_file():
+            return p
+    raise FileNotFoundError("作例 %s が %s / %s/%s*.py に無い"
+                            % (example, " / ".join(EXAMPLE_DIRS), BUILDER_DIR, BUILDER_PREFIX))
+
+
+def _tree_state(root: Path) -> dict | None:
+    """``git status`` に出るファイルの中身の指紋(git が無い・repo でなければ None = 比べない)。"""
+    import hashlib
+    import subprocess
+    try:
+        r = subprocess.run(["git", "-C", str(root), "status", "--porcelain", "-z"], capture_output=True,
+                           stdin=subprocess.DEVNULL, timeout=60)
+    except (OSError, subprocess.SubprocessError):
+        return None
+    if r.returncode != 0:
+        return None
+    state = {}
+    for rec in r.stdout.decode("utf-8", "replace").split("\0"):
+        if len(rec) < 4:
+            continue
+        rel = rec[3:]
+        if "__pycache__" in rel.split("/"):                          # import が書くバイトコードは生成物でない
+            continue
+        f = root / rel
+        if f.is_file():
+            state[rel] = hashlib.sha256(f.read_bytes()).hexdigest()
+        else:
+            state[rel] = rec[:2]                                      # 消えた・ディレクトリ
+    return state
 
 
 def capture_specs(script: Path, argv: list[str] | None = None, quiet: bool = True) -> list[dict]:
     """作例の ``main(argv)`` を走らせ、``write_viewer`` に渡った仕様を全部返す(作例の検査もそのまま走る)。
 
-    作例の出力は一時フォルダへ(``--out`` を渡さない限り作例自身がそうする)。``main`` が 0 以外を返すか
-    例外なら止める(壊れた作例から ViEW 版を作らない)。
+    ``write_viewer`` は要求されたパスでなく一時フォルダに同じ名前で書き、そのパスを返す
+    (``tools/build_*`` は既定で ``docs/anim3d`` に書くため)。走らせる前後で木(``git status`` の対象)が
+    変われば止める。``main`` が 0 以外を返すか例外なら止める(壊れた作例から ViEW 版を作らない)。
     """
+    import shutil
+
     import fullseye as fs
     got: list[dict] = []
     orig_pv, orig_fs = pv.write_viewer, fs.write_viewer
+    scratch = tempfile.mkdtemp(prefix="anim3d_i18n_")
+    before = _tree_state(ROOT)
 
     def spy(spec, path, lang="ja", *a, **k):
         got.append(spec)
-        return orig_pv(spec, path, lang, *a, **k)
+        to = os.path.join(scratch, "%02d_%s" % (len(got), os.path.basename(os.fspath(path)) or "viewer.html"))
+        return orig_pv(spec, to, lang, *a, **k)
 
     name = "_anim3d_i18n_" + script.stem
     mspec = importlib.util.spec_from_file_location(name, script)
@@ -250,6 +302,12 @@ def capture_specs(script: Path, argv: list[str] | None = None, quiet: bool = Tru
         raise
     finally:
         pv.write_viewer, fs.write_viewer = orig_pv, orig_fs
+        shutil.rmtree(scratch, ignore_errors=True)
+    after = _tree_state(ROOT) if before is not None else None
+    if before is not None and after != before:
+        changed = sorted(k for k in set(before) | set(after) if before.get(k) != after.get(k))
+        raise RuntimeError("%s を走らせたら木が変わった(翻訳の確認で repo に書かない): %s"
+                           % (script.name, changed))
     if rc not in (0, None):
         sys.stderr.write(buf.getvalue())
         raise RuntimeError("%s の main() が %r を返した(作例の検査に落ちた)" % (script.name, rc))
@@ -322,7 +380,9 @@ def main(argv: list[str] | None = None) -> int:
                                  epilog="例: py -3.11 tools/anim3d_i18n.py --build interactive_anim3d_viewer "
                                         "--out docs/view2026/anim3d/interactive_anim3d_viewer.html")
     g = ap.add_mutually_exclusive_group(required=True)
-    g.add_argument("--build", metavar="EXAMPLE", help="8 言語の HTML を --out に書く(門に落ちれば書かない)")
+    g.add_argument("--build", metavar="EXAMPLE",
+                   help="8 言語の HTML を --out に書く(門に落ちれば書かない)。EXAMPLE は examples / examples_3d"
+                        " の作例名か tools/build_* の名前")
     g.add_argument("--check", metavar="EXAMPLE", help="門だけ(書かない)。落ちれば exit 1")
     g.add_argument("--missing", metavar="EXAMPLE", help="未訳・古い訳・門に落ちた訳を JSON で書き出す(訳す作業用)")
     g.add_argument("--demo", action="store_true", help="走るサンプル: 見本を 8 言語にし、壊した表が止まるのを見せる")
@@ -330,6 +390,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--json-out", help="--missing の書き出し先(省略は標準出力)")
     ap.add_argument("--table", help="翻訳表(省略は tools/anim3d_i18n_tables/<EXAMPLE>.json)")
     ap.add_argument("--viewer-id", help="作例が複数の仕様を書くとき、使う仕様の id")
+    ap.add_argument("--script-arg", action="append", default=[], metavar="ARG",
+                    help="作例の main(argv) に渡す引数(繰り返せる。- で始まる値は --script-arg=--seed の形で)")
     a = ap.parse_args(argv)
     if a.demo:
         return demo()
@@ -338,7 +400,7 @@ def main(argv: list[str] | None = None) -> int:
     if a.build and not a.out:
         ap.error("--build には --out が要る")
     try:
-        spec = pick_spec(capture_specs(example_script(ex)), a.viewer_id)
+        spec = pick_spec(capture_specs(example_script(ex), a.script_arg), a.viewer_id)
         if a.missing:
             js = json.dumps(missing_json(ex, spec, table), ensure_ascii=False, indent=1)
             if a.json_out:
