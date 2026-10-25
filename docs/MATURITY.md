@@ -56,7 +56,7 @@
 | [円形部品の内径を mm まで測る](capabilities/inner-diameter-in-mm.md) | Inner diameter of a round part, all the way to millimetres | 測る | `validated-public-real-data` | 4/4 | `example_inner_diameter_mm` synthetic → tests/test_example_scripts_run.py<br>`poc_dimensional_inspection` synthetic → tests/test_poc_scripts_run.py<br>`poc_real_coin_metrology` real → tests/test_poc_scripts_run.py |
 | [既知の良品/不良品セットで検査レシピと仕様を配備前に検定し、余裕を測る](capabilities/inspection-fixture.md) | Validate a recipe and spec on known good/bad sets before deployment, and measure the margins | 組み立てる | `verified-synthetic` | 4/4 | `inspection_fixture` synthetic → tests/test_example_scripts_run.py |
 | [フォルダを一括検査し、仕様で判定し、集計・SPC・レポート・監査ログまで出す](capabilities/inspection-workflow.md) | Inspect a folder in one call — batch, judge against a spec, aggregate, SPC, report, audit log | 組み立てる | `verified-synthetic` | 8/8 | `inspection_workflow` synthetic → tests/test_example_scripts_run.py |
-| [結果を、触って見られる 1 枚の HTML にする(タブ・バッジ・3-D・動画・多言語)](capabilities/interactive-poc-viewer.md) | Turn results into one self-contained page you can touch (tabs, badges, 3-D, video, languages) | 見せる | `verified-synthetic` | 6/6 | `interactive_poc_viewer` synthetic → tests/test_example_scripts_run.py |
+| [結果を、触って見られる 1 枚の HTML にする(タブ・バッジ・3-D・動画・多言語)](capabilities/interactive-poc-viewer.md) | Turn results into one self-contained page you can touch (tabs, badges, 3-D, video, languages) | 見せる | `verified-synthetic` | 7/7 | `interactive_poc_viewer` synthetic → tests/test_example_scripts_run.py<br>`interactive_anim3d_viewer` synthetic → tests/test_example_scripts_run.py |
 | [凹んだ部品の相互反射を、測光の真値を保ったまま収束まで数える(3-D の形態係数・漸進ラジオシティ・検査用の多重反射描画)](capabilities/interreflection-to-convergence.md) | Count interreflection in concave parts to convergence without losing the photometric truth (3-D view factors, progressive radiosity, an inspection render with bounces) | 光と色 | `verified-synthetic` | 7/7 | `poc_pocket_interreflection` synthetic → tests/test_poc_scripts_run.py |
 | [地の色を知らずに線と領域を描く(反転色)](capabilities/inverted-colour-overlays.md) | Draw lines and regions without knowing the background colour | 見せる | `verified-synthetic` | 3/3 | `annotate_paper_tour` synthetic → tests/test_example_scripts_run.py |
 | [間接 ToF(位相方式)の多周波アンラップと壊れ方(折り返し・多重反射・縁の混合・高調波・背景光)](capabilities/itof-multifreq.md) | Indirect time-of-flight (phase-based): multi-frequency unwrapping and how it breaks (wrapping, multipath, flying pixels, harmonics, ambient light) | 測る | `verified-synthetic` | 8/8 | `poc_itof_multifreq` synthetic → tests/test_poc_scripts_run.py |
@@ -133,9 +133,9 @@
 
 | | 件数 |
 |---|---|
-| 2-D 台帳の例 | 433 |
+| 2-D 台帳の例 | 435 |
 | `tests/test_poc_scripts_run.py` が走らせる | 276 |
-| `tests/test_example_scripts_run.py` が走らせる | 157 |
+| `tests/test_example_scripts_run.py` が走らせる | 159 |
 | **どの門も走らせていない** | **0** |
 
 走らせない門は、実行時の壊れに盲目です。2026-09-06 に PoC 側で穴が見つかり
