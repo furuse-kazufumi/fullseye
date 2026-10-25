@@ -11,7 +11,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/bin_threshold.inputs.jpg">bin_threshold: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>使用大津判别分析法（Otsu&#x27;s method）的自动阈值二值化。与 <code style="color:#22d3bf">binary_threshold</code>/<code style="color:#22d3bf">auto_threshold</code> 共享 <code style="color:#22d3bf">_sh_threshold</code> 中的 <code style="color:#22d3bf">otsu</code> 分支，a、b 未使用。比阈值更亮的像素作为前景(1)。在没有 skimage 的环境中，会回退为以图像均值作为阈值。</p>
+<p>使用大津判别分析法（Otsu&#x27;s method）的自动阈值二值化。与 <code style="color:#22d3bf">binary_threshold</code>/<code style="color:#22d3bf">auto_threshold</code> 共享 <code style="color:#22d3bf">_sh_threshold</code> 中的 <code style="color:#22d3bf">otsu</code> 分支，a、b 未使用。比阈值更亮的像素作为前景(1)。没有 scikit-image 时由 numpy 的孪生实现（<code style="color:#22d3bf">numpy_twins.threshold_otsu</code>）计算同样的 256 bin Otsu，逐位一致（2026-10-25 之前会悄悄退化为以图像均值作阈值的另一种答案）。</p>
 <p>相当于 HALCON 的 <code style="color:#22d3bf">bin_threshold</code>(从多种自动阈值决定算法中选择一种进行二值化的运算，默认为最大分离度=相当于大津法(Otsu))的近似，只支持大津法，没有其他算法可选。</p>
 <p><b>空帧（实测）</b>：输入亮度均匀的图像时，<b>无论亮度如何，结果都为空（全部像素为背景 0）</b>。纯白与纯黑表现相同；仅凭亮度检测不到任何东西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

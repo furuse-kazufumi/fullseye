@@ -13,7 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/thinning.inputs.jpg">thinning: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p><code style="color:#22d3bf">skimage.morphology.thin</code>(Zhang-Suen 系の細線化アルゴリズム)による 1 画素幅化。<code style="color:#22d3bf">skeleton</code> と目的は似ているが内部アルゴリズムが異なるため、分岐点周辺などで結果がわずかに違うことがある。HALCON の <code style="color:#22d3bf">thinning</code> （Remove the result of a hit-or-miss operation from a region.）の代役。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。skimage が無い環境ではこの分岐は呼べない。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。scikit-image が無い環境では同じ答えを返す numpy の双子(<code style="color:#22d3bf">numpy_twins</code>)で計算する(bit 一致を門で確かめている)。</p>
 <p><b>端の扱い</b>: 画像の外側は背景(0)とみなす(実測。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region ファミリ ガイド</a></p>

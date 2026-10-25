@@ -40,8 +40,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 サブピクセル精度で輪郭として返す。HALCON の ``threshold_sub_pix``
 （Extract level crossings from an image with subpixel accuracy.）に相当。
 
-``a`` がクロッシングを取るレベルを振る。``b`` は未使用。skimage が無い
-環境ではこの分岐は呼べない。
+``a`` がクロッシングを取るレベルを振る。``b`` は未使用。scikit-image が無い環境では ``MissingDependencyError``(何を入れればよいかを言う)で止まる —— 別の答えは返さない。
 
 ## 詳しい使い方ガイド
 
