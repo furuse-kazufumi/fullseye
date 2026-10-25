@@ -17,7 +17,7 @@
   瞳の 1 つの輪は像面で「2 周する円」になる(色が 2 回巡る)。
 * **非点収差と像面湾曲**(画角を振る): 絞りを前に出した単レンズ。メリディオナル(縦の面)と
   サジタル(横の面)の焦点が別々に手前へずれ、その軌跡が 2 本の曲がった像面になる。
-* **色収差**(波長を振る): 単レンズは青ほど手前で焦点を結ぶ。BK7 と SF2 の貼り合わせ(アクロマート)は
+* **色収差**(波長を振る): 単レンズは青ほど手前で焦点を結ぶ。クラウンとフリントの貼り合わせ(アクロマート)は
   F 線と C 線の焦点がそろう。残り(二次スペクトル)も見せる。
 
 Fullseye の処理の帯(タブごと 4 段、いま効いている段を光らせる):
@@ -86,6 +86,7 @@ import numpy as np
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import fullseye as fs  # noqa: E402
+import materials  # noqa: E402
 
 pv = fs.pocviewer
 INF = float("inf")
@@ -95,6 +96,23 @@ T_QUICK = 10
 WL_F, WL_D, WL_C = 0.4861327, 0.5875618, 0.6562725
 RAY_W = 0.32                    # 3-D の光線の太さ [mm]
 LIN = 22.0                      # 入射光線をレンズの手前どれだけから描くか [mm]
+#: 材料表のキー(コードの中だけ) → 画面に出す一般名。値(n_d, V_d)は materials.abbe_number のカタログ値。
+#: 硝材のカタログ名(製品の型番)は公開物の画面に出さない(tests/test_no_company_names_in_public_pocs.py)。
+GLASS_NAMES = {"N-BK7": ("クラウンガラス", "crown glass"), "N-SF2": ("フリントガラス", "flint glass")}
+
+
+def glass_label(key, lang="ja", short=False):
+    """材料表のキーの一般名。ja「クラウンガラス(n_d = 1.5168, V_d = 64.17)」/ en。short=True は名前だけ。"""
+    ja, en = GLASS_NAMES[key]
+    name = ja if lang == "ja" else en
+    if short:
+        return name
+    ab = materials.abbe_number(key)
+    nd = ab["nd_catalog"] if ab.get("nd_catalog") is not None else ab["nd"]
+    vd = ab["vd_catalog"] if ab.get("vd_catalog") is not None else ab["vd"]
+    return ("%s(n_d = %.4f, V_d = %.2f)" if lang == "ja" else "%s (n_d = %.4f, V_d = %.2f)") % (name, nd, vd)
+
+
 STAGE_PERIOD = 9                # 帯の段の強調が次へ移るコマ数(0.5 s)
 
 
@@ -978,7 +996,9 @@ def tab_spherical(fr, t):
                "lo": 0.98, "hi": 1.16, "unit": "", "decimals": 3, "color": "#e0e0e0"},
               {"label": _t("Strehl 比(PSF の頂 / 無収差の頂。幾何光学の領域は —)", "Strehl ratio (— in the geometric regime)"), "values": strehl,
                "lo": 0.0, "hi": 1.0, "unit": "", "decimals": 3, "color": "#ff8a65"}]
-    nums = [fs.viewer_number(_t("レンズ", "Lens"), "N-BK7 plano-convex, f = %.1f mm" % fs.paraxial_trace(singlet())["efl"]),
+    f_s = fs.paraxial_trace(singlet())["efl"]
+    nums = [fs.viewer_number(_t("レンズ", "Lens"), _t("平凸、%s、f = %.1f mm" % (glass_label("N-BK7"), f_s),
+                                                    "plano-convex, %s, f = %.1f mm" % (glass_label("N-BK7", "en"), f_s))),
             fs.viewer_number(_t("つまみ", "Knob"), _t("絞りの半径 1.5 → 20 mm(f/33 → f/2.5)", "stop radius 1.5 → 20 mm")),
             fs.viewer_number(_t("実光線 / 3 次(f/33 → f/4 → f/2.5)", "Real / third order"),
                              "%.3f → %.3f → %.3f" % (ratio[0], ratio[np.argmin(np.abs([f["fno"] - 4 for f in fr]))],
@@ -1251,16 +1271,20 @@ def tab_chroma(fr, t, R3):
                "hi": 700.0, "unit": "nm", "decimals": 0, "color": "#ce93d8"}]
     fc_s = bfl_at(singlet(12.5), WL_F) - bfl_at(singlet(12.5), WL_C)
     fc_a = bfl_at(achromat(R3), WL_F) - bfl_at(achromat(R3), WL_C)
-    nums = [fs.viewer_number(_t("上", "Top"), "N-BK7 singlet, f/4"),
-            fs.viewer_number(_t("下", "Bottom"), "N-BK7 + N-SF2 achromat, R3 = %.2f mm" % R3),
+    nums = [fs.viewer_number(_t("上", "Top"), _t("単レンズ、%s、f/4" % glass_label("N-BK7"),
+                                                "singlet, %s, f/4" % glass_label("N-BK7", "en"))),
+            fs.viewer_number(_t("下", "Bottom"), _t("アクロマート: %s + %s、R3 = %.2f mm"
+                                                   % (glass_label("N-BK7"), glass_label("N-SF2"), R3),
+                                                   "achromat: %s + %s, R3 = %.2f mm"
+                                                   % (glass_label("N-BK7", "en"), glass_label("N-SF2", "en"), R3))),
             fs.viewer_number(_t("F−C の焦点差 単 / アクロ", "F−C focus difference singlet / achromat"),
                              _t("%.3f mm / %s" % (fc_s, fmt_fc(fc_a, "ja")), "%.3f mm / %s" % (fc_s, fmt_fc(fc_a, "en"))))]
     text = _t("色収差: ガラスの屈折率は色(波長)で違う(青ほど大きい)ので、単レンズ(上)は青い光ほど手前で焦点を結ぶ。"
-              "下のアクロマートは、凸の BK7 と凹の SF2(色による屈折率の変わり方が違うガラス)を貼り合わせ、"
+              "下のアクロマートは、凸のクラウンガラスと凹のフリントガラス(色による屈折率の変わり方が違うガラス)を貼り合わせ、"
               "青(F 線)と赤(C 線)の焦点をそろえた。3-D の中の黄・緑の線は「焦点の位置(横、4 倍に拡大)対 波長(下へ行くほど長い)」のグラフ。"
               "アクロマートでも端の色は少しずれる(二次スペクトル)。",
               "Chromatic aberration: glass bends blue more than red, so the singlet (top) focuses blue closer. The "
-              "achromat (bottom) cements a convex BK7 to a concave SF2 so the F (blue) and C (red) foci coincide. The "
+              "achromat (bottom) cements a convex crown glass to a concave flint glass so the F (blue) and C (red) foci coincide. The "
               "yellow / green lines in 3-D plot focus position (across, magnified x4) against wavelength (longer downwards). Even the "
               "achromat drifts at the ends (secondary spectrum).")
     return tab_from(fr, t, "chroma", _t("色収差(波長)", "Chromatic (wavelength)"), "passed", text, rays_list, statics,
