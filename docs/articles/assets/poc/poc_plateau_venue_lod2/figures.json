@@ -1,0 +1,22 @@
+[
+ {
+  "file": "01_venue_itokawa_top.png",
+  "name": "venue_itokawa_top",
+  "caption": "上から見た会場の建物(左)とイトカワ(右、長さ 535 m)。色 = 高さ、1 マス 2 m",
+  "shape": [
+   332,
+   565
+  ],
+  "source": "「3D都市モデル(Project PLATEAU)横浜市(2020年度)」(国土交通省)(https://www.geospatial.jp/ckan/dataset/plateau-14100-yokohama-city-2020)を加工して作成。7 部位の抜き出し・局所座標への変換・三角形分割は Fullseye 側の加工で、国土交通省の成果物ではない。 イトカワ: Gaskell の形状モデル(PDS 小天体ノード)から間引いた点群。"
+ },
+ {
+  "file": "02_venue_itokawa_side.png",
+  "name": "venue_itokawa_side",
+  "caption": "南から見た影絵。ホテル棟 142 m とイトカワの厚み(約 209〜244 m)を同じ縮尺で",
+  "shape": [
+   134,
+   565
+  ],
+  "source": "「3D都市モデル(Project PLATEAU)横浜市(2020年度)」(国土交通省)(https://www.geospatial.jp/ckan/dataset/plateau-14100-yokohama-city-2020)を加工して作成。7 部位の抜き出し・局所座標への変換・三角形分割は Fullseye 側の加工で、国土交通省の成果物ではない。 イトカワ: Gaskell の形状モデル(PDS 小天体ノード)から間引いた点群。"
+ }
+]
