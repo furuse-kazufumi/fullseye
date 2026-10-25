@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.material_acoustic(material=&#x27;WATER&#x27;) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import materials; materials.material_acoustic(material=&#x27;WATER&#x27;) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;material_acoustic&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>재료 레코드에 저장된 음향 물성과 출처를 반환한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>material : str or dict</p>
-<p>材料名、別名、または材料レコード。</p>
+<p>재료명, 별칭 또는 재료 레코드.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p>密度、縦波音速、音響インピーダンス、減衰係数と周波数指数、検証状態、出典、不確かさ。</p>
+<p>밀도, 종파 음속, 음향 임피던스, 감쇠 계수와 주파수 지수, 검증 상태, 출처 및 불확도.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>材料が未知、または音響物性を持たない場合。</p>
+<p>재료가 알려지지 않았거나 음향 물성이 없을 때.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

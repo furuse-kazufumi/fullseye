@@ -1,5 +1,6 @@
 [build-system]
-requires = ["setuptools>=61"]
+# 2026-10-24: 61 には OSV で 9 件(PYSEC-2025-49 ほか)。0 件の最も古い版は 84.1.0(GHSA-xmj3-9gf7-h52w の修正)。
+requires = ["setuptools>=84.1"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -7,7 +8,7 @@ name = "fullseye"
 version = "0.8.1"
 description = "Numpy-native operator library for vision, 3-D and measurement (3,566 typed ops in the machine-readable index: imaging, point clouds, optics, tomography, metrology) with an evolutionary pipeline designer and honest holdout gating"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 license = { text = "Apache-2.0" }
 authors = [{ name = "Kazufumi Furuse", email = "kazufumi@furuse.work" }]
 keywords = ["image-processing", "computer-vision", "evolutionary-algorithm", "pipeline", "operators"]
@@ -20,6 +21,7 @@ classifiers = [
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.14",
   "Topic :: Scientific/Engineering :: Image Processing",
   "Topic :: Scientific/Engineering :: Artificial Intelligence",
   "Topic :: Scientific/Engineering :: Visualization",
@@ -36,7 +38,13 @@ classifiers = [
 # on 24 threads than on 1, and dc_rpca_* measured 4.0x slower end to end.
 # Probing the loaded OpenBLAS handle by hand is exactly the fragile thing this
 # library exists to solve, so we depend on it rather than reimplement it.
-dependencies = ["numpy>=1.23", "scipy>=1.9", "threadpoolctl>=3.1"]
+#
+# 依存の下限の決め方(2026-10-24): OSV(api.osv.dev)で「既知の脆弱性が 0 件の最も古い版」。
+# 下限が古いと、その版が入った環境で脆弱な版を使い続けられてしまう。逆に必要以上に新しい版を
+# 求めると入れられる人が減るので、0 件のうち最も古い版にとどめる。修正版の無い脆弱性は
+# docs/security/pip_audit_allowlist.json に理由と期限つきで書く。
+# scipy 1.9 → 1.10: PYSEC-2023-102(CVE-2023-25399)。numpy 1.23 と threadpoolctl 3.1 は 0 件のまま。
+dependencies = ["numpy>=1.23", "scipy>=1.10", "threadpoolctl>=3.1"]
 
 # PyPI ⇄ GitHub の相互リンク(PyPI プロジェクトページのサイドバーに出る)。
 # 公開リポジトリ名は公開名 fullseye(リネーム時はここを追従させる)。
@@ -52,11 +60,16 @@ Documentation = "https://furuse.work/"
 "Validation reports" = "https://github.com/furuse-kazufumi/fullseye/issues/new?template=real_validation_report.yml"
 
 [project.optional-dependencies]
-opencv = ["opencv-python>=4.6"]
+# 下限を上げた extras(2026-10-24、OSV の件数は旧い下限の版で数えた):
+#   opencv-python 4.6 → 4.8.1.78: GHSA-qr4w-53vh-m672 / PYSEC-2023-183(同梱 libwebp)の 2 件
+#   Pillow 9 → 13.0: 72 件。13.0.0 は Python 3.11 以上 —— 3.10 を外した理由
+#   torch 2.0 → 2.13: 28 件(GHSA-53q9-r3pm-6pq6 = CVE-2025-32434 ほか)。最後の修正は
+#     GHSA-rrmf-rvhw-rf47(CVE-2025-3000、2.13.0)
+opencv = ["opencv-python>=4.8.1.78"]
 skimage = ["scikit-image>=0.20"]
-pil = ["Pillow>=9"]
+pil = ["Pillow>=13.0"]
 wavelets = ["PyWavelets>=1.4"]
-gpu = ["torch>=2.0", "kornia>=0.7"]
+gpu = ["torch>=2.13", "kornia>=0.7"]
 # 大域照明つきレンダリング(gi_render)。Mitsuba 3 は BSD-3-Clause、公式 wheel が
 # あるのでビルド不要。**必須にはしない** —— 内蔵ラスタライザだけでも動く設計を保つ。
 gi = ["mitsuba>=3.5"]
@@ -79,7 +92,7 @@ xlsx = ["openpyxl>=3.1"]                           # Excel (.xlsx) レポート�
 # より良い直しは自前の `point_in_polygon`(厳密述語、既に公開 API にある)へ
 # 置き換えること —— 境界の扱いが変わりうるので 0.1.9 で検証してから。
 polygon = ["matplotlib>=3.5"]                     # 多角形の塗りつぶし(点の内外判定)
-threed = ["torch>=2.0", "scikit-image>=0.20", "SimpleITK>=2.2"]   # 3-D toolkit: GPU descriptors (feat_*), marching cubes, DICOM/volume I/O
+threed = ["torch>=2.13", "scikit-image>=0.20", "SimpleITK>=2.2"]   # 3-D toolkit: GPU descriptors (feat_*), marching cubes, DICOM/volume I/O
 # --- connectivity (device control / industrial + Physical-AI comms) ---
 # The native transports (TCP/UDP/Modbus-TCP/HTTP) need nothing beyond stdlib;
 # these extras add optional protocol/device adapters.
@@ -90,7 +103,8 @@ opcua = ["asyncua>=1.0"]
 # contributor toolchain (CI mirror)。道具は「今日踏んだ失敗の型」で選んでいる ——
 # timeout=ハング、hypothesis=退化入力の性質検査、randomly=状態漏れ、
 # pip-audit=依存の既知脆弱性、ruff=黙って消える定義(F601 で実害を 1 件検出)。
-dev = ["pytest>=7", "pytest-cov>=4", "ruff>=0.4", "pytest-timeout>=2.3",
+# pytest 7 → 9.0.3: GHSA-6w46-j5rx-g56g / PYSEC-2026-1845(dev のみ)。
+dev = ["pytest>=9.0.3", "pytest-cov>=4", "ruff>=0.4", "pytest-timeout>=2.3",
        "hypothesis>=6.100", "pytest-randomly>=3.15", "pytest-xdist>=3.5",
        "pip-audit>=2.7"]
 # pytest-xdist は速さのためではなく**順序依存を出すため**に入れている ——
@@ -101,8 +115,8 @@ dev = ["pytest>=7", "pytest-cov>=4", "ruff>=0.4", "pytest-timeout>=2.3",
 # `all` = the full desktop app (image libs + GPU + GUI + video). Industrial/robotics
 # adapters stay opt-in (a desktop user does not need pymodbus/asyncua by default).
 all = [
-  "opencv-python>=4.6", "scikit-image>=0.20", "Pillow>=9", "PyWavelets>=1.4",
-  "torch>=2.0", "kornia>=0.7", "mahotas>=1.4", "SimpleITK>=2.2",
+  "opencv-python>=4.8.1.78", "scikit-image>=0.20", "Pillow>=13.0", "PyWavelets>=1.4",
+  "torch>=2.13", "kornia>=0.7", "mahotas>=1.4", "SimpleITK>=2.2",
   "PySide6>=6.5", "imageio>=2.28", "imageio-ffmpeg>=0.4", "tifffile>=2023.1",
 ]
 
@@ -398,7 +412,7 @@ addopts = "-p no:randomly"
 # 「物理条件を満たす絵が一度も来ない」ため永久に拒否され、「死んだ op」として
 # 台帳に載っていた。同じ重複があと 3 組(radius / leader_line / sphere_sdf.R)。
 line-length = 100
-target-version = "py310"
+target-version = "py311"
 extend-exclude = ["experiments", "out", ".out", "docs"]
 
 [tool.ruff.lint]

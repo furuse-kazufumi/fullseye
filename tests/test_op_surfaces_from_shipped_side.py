@@ -32,10 +32,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
-try:
-    import tomllib
-except ModuleNotFoundError:  # py3.10
-    tomllib = None
+import tomllib
 
 #: op_knob の範囲(knob_probe の --all-image / --all-region-out / --all-region と同じ)
 KNOB_SCOPE = {("image", "image"), ("image", "region"), ("region", "region")}
@@ -43,15 +40,8 @@ KNOB_SCOPE = {("image", "image"), ("image", "region"), ("region", "region")}
 
 def _py_modules() -> list[str]:
     path = os.path.join(ROOT, "pyproject.toml")
-    if tomllib is not None:
-        with open(path, "rb") as f:
-            return list(tomllib.load(f)["tool"]["setuptools"]["py-modules"])
-    import re
-    text = open(path, encoding="utf-8").read()
-    # 閉じ括弧は行頭の "]" だけ。コメント中の "[[...]]" で止まると py3.10 だけ表が 16 に縮んだ(CI 2026-10-18)
-    block = re.split(r"(?m)^\]", text.split("py-modules = [", 1)[1], maxsplit=1)[0]
-    block = "\n".join(line.split("#", 1)[0] for line in block.splitlines())
-    return re.findall(r'"([A-Za-z0-9_]+)"', block)
+    with open(path, "rb") as f:
+        return list(tomllib.load(f)["tool"]["setuptools"]["py-modules"])
 
 
 def _is_ledger_table(name: str, value) -> bool:
