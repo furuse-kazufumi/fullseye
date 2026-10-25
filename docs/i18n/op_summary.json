@@ -20511,6 +20511,24 @@
    "de": "Liest eine 3D-Gaussian-Splatting-Datei und gibt Mittelpunkte, Farben, Deckkraft, Größen und Ausrichtungen der Gaußschen zurück.",
    "hi": "3D Gaussian Splatting file पढ़ता है और Gaussians के केंद्र, रंग, opacity, scale और दिशाएँ लौटाता है।"
   },
+  "drive/gs_viewer_html": {
+   "fp": "4d3aa72a9481",
+   "en": "Turns a 3DGS into a single self-contained HTML page that can be rotated in the browser (no external URLs, no CDN, works offline).",
+   "zh": "把 3DGS 做成可在浏览器中旋转查看的单个自包含 HTML(无外部 URL、无 CDN、可离线运行)。",
+   "tw": "把 3DGS 做成可在瀏覽器中旋轉檢視的單一自足 HTML(無外部 URL、無 CDN、可離線執行)。",
+   "ko": "3DGS를 브라우저에서 돌려 볼 수 있는 자체 완결형 HTML 한 장으로 만듭니다(외부 URL·CDN 없음, 오프라인 동작).",
+   "de": "Macht aus einem 3DGS eine einzelne, eigenständige HTML-Seite, die im Browser gedreht werden kann (keine externen URLs, kein CDN, offline lauffähig).",
+   "hi": "3DGS को एक स्व-निहित HTML पेज बनाता है जिसे browser में घुमाकर देखा जा सके (कोई external URL या CDN नहीं, offline चलता है)।"
+  },
+  "drive/gs_catalog_html": {
+   "fp": "fe2c8b86b26b",
+   "en": "Writes a single self-contained catalogue HTML page where several 3DGS models are chosen from a list of thumbnails and viewed.",
+   "zh": "写出单个自包含的目录 HTML:从缩略图列表中选择多个 3DGS 并查看。",
+   "tw": "寫出單一自足的目錄 HTML:從縮圖列表中選擇多個 3DGS 並檢視。",
+   "ko": "여러 3DGS를 썸네일 목록에서 골라 보는 자체 완결형 카탈로그 HTML 한 장을 씁니다.",
+   "de": "Schreibt eine einzelne, eigenständige Katalog-HTML-Seite, auf der mehrere 3DGS aus einer Liste von Vorschaubildern gewählt und betrachtet werden.",
+   "hi": "एक स्व-निहित catalogue HTML पेज लिखता है जिसमें कई 3DGS को thumbnails की सूची से चुनकर देखा जाता है।"
+  },
   "drive/read_bvh": {
    "fp": "27dfdb4221ba",
    "en": "Reads a BVH file and returns the skeleton and the world coordinates of the joints for all frames.",
