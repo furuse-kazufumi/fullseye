@@ -134,7 +134,9 @@ def test_embedded_colours_are_the_op_values(mesh, page):
     back = pv._decode_array(rec)[idx]
     cb = tabs["gravity"]["cbar"]
     step = pv._quant_step(rec)
-    assert np.all(np.abs(back - np.clip(ge_um, cb["lo"], cb["hi"])) <= step / 2 + 1e-9)
+    # 許容の +1e-6: pocviewer はページに埋める前に値を有効 9 桁に丸める(STABLE_DIGITS、環境で変わらないページ)ので、
+    # 刻みの境目の値が丸めの分(相対 5e-10 × 数百 µm/s² ≈ 1e-7)だけ隣へ落ちることがある
+    assert np.all(np.abs(back - np.clip(ge_um, cb["lo"], cb["hi"])) <= step / 2 + 1e-6)
     assert float(np.ptp(pv._decode_array(rec))) > 10.0                    # 定数の色ではない
     # 限界の回: 2 密度 ÷ 一様 − 1 の色
     head = m.pg.polyhedron_clip_halfspace((V, F), [m.LOWRY_X_CUT, 0.0, 0.0], [1.0, 0.0, 0.0])
@@ -153,7 +155,7 @@ def test_embedded_colours_are_the_op_values(mesh, page):
     dg = (geff(rb * accW + (m.LOWRY_RHO_HEAD - rb) * h["acceleration"], c2) / geff(m.LOWRY_RHO_MEAN * accW, cw) - 1.0) * 100.0
     rec = A[tabs["limit"]["bodies"][0]["val"]]
     cb = tabs["limit"]["cbar"]
-    assert np.all(np.abs(pv._decode_array(rec)[idx] - np.clip(dg, cb["lo"], cb["hi"])) <= pv._quant_step(rec) / 2 + 1e-9)
+    assert np.all(np.abs(pv._decode_array(rec)[idx] - np.clip(dg, cb["lo"], cb["hi"])) <= pv._quant_step(rec) / 2 + 1e-6)
 
 
 def test_ops_named_on_screen_exist_and_are_registered():

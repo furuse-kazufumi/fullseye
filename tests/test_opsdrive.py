@@ -48,13 +48,15 @@ def test_the_ledger_lists_every_op_and_nothing_is_missing():
     # 676 → 679: 包丁を指先の視触覚で持って切る 3(cuttouch: 部分滑りのねじりの数値解・2 パッドの読みから V・H・M_x と当たり位置・靱性、2026-10-06。numpy + scipy)
     # 679 → 694: 惑星ローバーの車輪の滑り 15(roverslip: Bekker の圧力・沈下の近似 2・Wong–Reece の力・沈下・牽引–滑り 3・斜面の滑り・視覚オドメトリ 2・ガウス過程・分位点回帰・予測・CVaR 4・コスト地図・経路・経路の評価 3、2026-10-06。numpy)
     # 694 → 700: 映像の物理整合性 6(ballistics: 推力つき RK4・推力あり/なしの当てはめ・AIC・弾道 vs 推力・g からの時間引き延ばし、2026-10-23)
-    # 700 → 702: 小惑星の表面の重力 2(polygrav: 多面体の重力・平面で切った閉じた立体、2026-10-25。numpy)
-    assert len(opsdrive.OPSDRIVE) == 702
+    # 700 → 702: 3DGS をブラウザで見せる 2(gsviewer: 1 品のビューア・サムネイルから選ぶカタログ。量子化 + gzip の埋め込み、WebGL2 の EWA、寸法は smallest_box3、2026-10-25。numpy + scipy)
+    # 702 → 704: 小惑星の表面の重力 2(polygrav: 多面体の重力・平面で切った閉じた立体、2026-10-25。numpy)
+    assert len(opsdrive.OPSDRIVE) == 704
     # 台帳の op は実装モジュールの __all__ に在る(逆は要らない: 補助関数は台帳に載せない)
     import drivecourse, driveworld, lidarsim, drivettc, rsssafety, driveterrain, ballistics, balltrack, ballworld, racket
     import roadjp
     import kendama, kendamaworld
     import gsplatnp
+    import gsviewer
     import drivelong
     import driveenv
     import driveinf
@@ -97,7 +99,7 @@ def test_the_ledger_lists_every_op_and_nothing_is_missing():
     pub = (set(drivecourse.__all__) | set(driveworld.__all__) | set(lidarsim.__all__) | set(drivettc.__all__)
            | set(rsssafety.__all__) | set(driveterrain.__all__) | set(ballistics.__all__) | set(balltrack.__all__)
            | set(ballworld.__all__) | set(racket.__all__) | set(roadjp.__all__)
-           | set(kendama.__all__) | set(kendamaworld.__all__) | set(gsplatnp.__all__) | set(drivelong.__all__)
+           | set(kendama.__all__) | set(kendamaworld.__all__) | set(gsplatnp.__all__) | set(gsviewer.__all__) | set(drivelong.__all__)
            | set(driveenv.__all__) | set(driveinf.__all__) | set(drivetraffic.__all__)
            | set(drivedecide.__all__) | set(drivelateral.__all__)
            | set(drivecrossing.__all__) | set(drivepass.__all__) | set(motionio.__all__)
@@ -118,7 +120,7 @@ def test_the_typed_catalog_declares_the_family():
     import typed_catalog as tc
 
     rows = [r for r in tc.catalog() if r[1] == "drive"]
-    assert len(rows) == 702
+    assert len(rows) == 704
     assert {r[3] for r in rows} == {"table", "image2d", "signal", "matrix", "scalar", "any", "points", "rgba", "rgb", "voxel", "normalmap"}
 
 

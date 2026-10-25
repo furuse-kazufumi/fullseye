@@ -47,7 +47,7 @@ Returns:
 
 ## 同カテゴリ(`gsplat`)
 
-[gs_from_world](gs_from_world.md) · [gs_update](gs_update.md) · [gs_render](gs_render.md) · [gs_render_fn](gs_render_fn.md)
+[gs_from_world](gs_from_world.md) · [gs_update](gs_update.md) · [gs_render](gs_render.md) · [gs_render_fn](gs_render_fn.md) · [gs_viewer_html](gs_viewer_html.md) · [gs_catalog_html](gs_catalog_html.md)
 
 ---
 *Provenance: gsplatnp.py — DRIVE operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

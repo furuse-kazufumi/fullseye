@@ -306,6 +306,9 @@ EXCLUDED = {
     "tools/import_itokawa_shape.py": ("イトカワの形状モデル(NASA PDS SBN の Gaskell Q = 64、CC0 1.0)の取り込み。入力の原本 ver64q.tab は"
                                       "repo の外で手で取得する(取得物は untrusted として専用の空ディレクトリに置く)ので CI では作れない —— "
                                       "SHA-256 を照合して data/itokawa_shape/gaskell_q64.npz を書き、出典と改変は同じ場所の README.md に書く。"),
+    "tools/build_gsplat_pages.py": ("docs/gsplat/ の 3DGS の商品ビューアとカタログ(examples/gsplat_product_viewer.py の build)。"
+                                    "marching cubes に scikit-image(任意の依存)が要り、5 品の 3DGS 化とサムネイルの numpy 描画で"
+                                    "1 分ほどかかり、出力は 1 本数 MB —— 鎖に入れず、ページを変える回は手で回して commit する。"),
     "tools/anim3d_i18n.py": ("動く 3-D の作例を 8 言語にする翻訳の層。作例の main() を走らせて仕様を横取りするので"
                              "1 本 10 秒前後かかり、作例(枝ごとに 15 本ほど)が増えるほど長くなる —— 鎖に入れず、"
                              "docs/view2026/anim3d/*.html は `--build <作例> --out ...` を手で回して commit する。"
@@ -454,6 +457,7 @@ EXCLUDED = {
 _OUT_REASON = "出力は out/(gitignore)で、コミット物を書かない。"
 NOT_A_GENERATOR = {
     "tools/algo_gate.py": "門(algo 層の合否を出す)。出力は out/ へ。", "tools/mutation_probe.py": "門の実測。出力は指定先、一時変更は復元。",
+    "gsviewer.py": "ライブラリ + CLI(fs.gs_viewer_html / gs_catalog_html)。呼び出し側が指定した出力先へ 1 つの HTML を書く道具で、repo の生成物ではない(公開ページの生成器は tools/build_gsplat_pages.py)。",
     "pocviewer.py": "ライブラリ(fs.write_viewer)。呼び出し側が指定した出力先へ 1 つの HTML を書く道具で、repo の生成物ではない(ビューアの生成器は tools/build_view2026_viewers.py)。",
     "tools/bench_ops.py": "ベンチ。実測値なので回すたびに変わる。",
     "tools/update_fullseye.py": ("安全アップデータ(git pull --ff-only と、導入済みの RAG スキルの更新)。"

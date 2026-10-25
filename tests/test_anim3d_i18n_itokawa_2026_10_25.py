@@ -6,6 +6,11 @@
 ここでは (1) commit 済みの翻訳表が今の生成器の文字列と合う(未訳・古い訳・数値/op 名の不一致 0、使われない訳 0)、
 (2) commit 済みのページがその表で作った 8 言語版とバイト一致する(生成器か表を変えて作り直し忘れたら落ちる)、
 (3) 訳に ``**`` と外部 URL が無い —— を確かめる。
+
+(2) の比べ方: ページは 2.5 MB なので ``assert html == want`` にしない(pytest の assertion rewriting が 2 本の
+文字列を difflib に通し、CI で 10 分の timeout に当たった —— 2026-10-25 の run 40215975176)。共通の門
+``anim3d_i18n.check_same_page`` が SHA-256 を先に比べ、違えば最初に違うバイトの位置・両側の前後 200 文字・
+違う行の数を短い文にして、作り直したページを一時フォルダに書いてそのパスも出す。
 """
 from __future__ import annotations
 
@@ -67,6 +72,4 @@ def test_committed_page_is_the_eight_language_build(spec_and_table):
     assert data["langs"] == list(I18N.LANGS)
     assert "function pickLang" in html, "ブラウザの言語で開く(detect_lang)になっていない"
     want = I18N.pv._build_html(I18N.translate(spec, table), list(I18N.LANGS), detect_lang=True)
-    assert html == want, ("commit 済みの %s が今の生成器 + 翻訳表の 8 言語版と違う —— "
-                          "py -3.11 tools/anim3d_i18n.py --build %s --out docs/anim3d/%s で作り直す"
-                          % (os.path.basename(PAGE), BUILDER, os.path.basename(PAGE)))
+    I18N.check_same_page(html, want, PAGE, BUILDER)

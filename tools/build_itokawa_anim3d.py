@@ -897,9 +897,11 @@ def tab_shape(R, g):
     t = np.linspace(0.0, 12.0, nT)
     ang = OMEGA * hours * 3600.0
     box = R["box"]
-    axes = np.asarray(box["axes"])
+    axes = np.asarray(box["axes"]).copy()
+    for j in range(3):                       # SVD の符号の任意性(LAPACK の実装で変わる)を消す: 各列の最大成分を正に
+        if axes[int(np.argmax(np.abs(axes[:, j]))), j] < 0:
+            axes[:, j] *= -1
     if np.linalg.det(axes) < 0:
-        axes = axes.copy()
         axes[:, 2] *= -1
     bV, bF = box_mesh_centered(np.asarray(box["extents"]))
     bV = bV @ axes.T + (np.asarray(box["center"]) - com)
@@ -1540,7 +1542,9 @@ def verify_html(path, R):
         ref = np.clip(val, cb["lo"], cb["hi"])
         step = pv._quant_step(rec)
         worst = max(worst, float(np.max(np.abs(back - ref) / (step / 2 + 1e-15))))
-    assert worst <= 1.0 + 1e-9, worst
+    # 刻みの半分 + 丸めの分: pocviewer は値と lo / hi を有効 9 桁に丸めてから量子化する(STABLE_DIGITS)ので、刻みの境目の
+    # 値は半刻みを相対 ~1e-4 だけ越えうる(実測 1.00015)。1e-3 を越えたら量子化か色の対応が壊れている
+    assert worst <= 1.0 + 1e-3, worst
     assert "http://" not in html and html.count("https://") == html.count(PLATEAU_URL) >= 1, "PLATEAU の出典以外の外部 URL がある"
     assert "C:\\" not in html and "C:/" not in html, "ローカルパスがある"
     assert "**" not in html, "強調の ** が残っている"
@@ -1556,7 +1560,7 @@ def main(argv=None) -> int:
     g = gates(R)
     for k, v in g.items():
         print("%-32s %s" % (k, v))
-    spec = build_spec(R, g)
+    spec = build_spec(R, g)                      # 埋める浮動小数は pocviewer が有効 STABLE_DIGITS 桁に丸める(環境で変わらないページ)
     if a.check:
         n = len(pv._build_html(spec, list(LANGS)).encode("utf-8"))
         print("ok: %d bytes (not written)" % n)

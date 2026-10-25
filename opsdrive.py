@@ -70,6 +70,7 @@ import drivepass
 import drivelong
 import drivettc
 import gsplatnp
+import gsviewer
 import motionio
 import drivehumanoid
 import agvfleet
@@ -113,7 +114,7 @@ _MOD = {"drivecourse": drivecourse, "driveworld": driveworld, "lidarsim": lidars
         "rsssafety": rsssafety, "driveterrain": driveterrain,
         "ballistics": ballistics, "balltrack": balltrack, "ballworld": ballworld, "racket": racket,
         "roadjp": roadjp,
-        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivecommonroad": drivecommonroad, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass, "pegsim": pegsim, "tacsim": tacsim, "tacslip": tacslip, "tactorque": tactorque, "puck": puck, "pegfail": pegfail, "granular": granular, "tacscalib": tacscalib, "pegtactile": pegtactile, "cutting": cutting, "diabolo": diabolo, "tacdome": tacdome, "pegsym": pegsym, "polish": polish, "scoop": scoop, "grind": grind, "ozakimm": ozakimm, "swarmflow": swarmflow, "pxrd": pxrd, "doseunif": doseunif, "cuttouch": cuttouch, "roverslip": roverslip, "polygrav": polygrav}
+        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "gsviewer": gsviewer, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivecommonroad": drivecommonroad, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass, "pegsim": pegsim, "tacsim": tacsim, "tacslip": tacslip, "tactorque": tactorque, "puck": puck, "pegfail": pegfail, "granular": granular, "tacscalib": tacscalib, "pegtactile": pegtactile, "cutting": cutting, "diabolo": diabolo, "tacdome": tacdome, "pegsym": pegsym, "polish": polish, "scoop": scoop, "grind": grind, "ozakimm": ozakimm, "swarmflow": swarmflow, "pxrd": pxrd, "doseunif": doseunif, "cuttouch": cuttouch, "roverslip": roverslip, "polygrav": polygrav}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -341,6 +342,10 @@ _CATALOG = {
         ("gs_render_fn", "gsplatnp", ["table"], "any"),
         # 3DGS のファイル(.ply = INRIA 形式 / .splat)を読む入口(2026-10-03、Studio の D&D から)
         ("gs_read_file", "gsplatnp", [], "table"),
+        # 3DGS をブラウザで見せる 1 枚の HTML(2026-10-25、商品の閲覧・オフラインの展示向け): 量子化 + gzip で埋め、WebGL2 で
+        # gs_render と同じ EWA の式で描く。寸法は smallest_box3。複数の品はサムネイル(gs_render)から選ぶカタログ。
+        ("gs_viewer_html", "gsviewer", ["table"], "table"),
+        ("gs_catalog_html", "gsviewer", ["table"], "table"),
     ],
     # 動きのデータの入口(2026-10-03、Studio の D&D から): BVH のモーションキャプチャ(順運動学まで)と、イベントカメラの
     # (x, y, t, p)(列の順は見出しか中身で決める)→ 極性つきのコマ。真値 = 手で計算できる骨格・全極性の和の保存。

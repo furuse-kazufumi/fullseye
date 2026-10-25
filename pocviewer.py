@@ -282,6 +282,53 @@ _MAXV = {"q8": 255, "q16": 65535}
 # --------------------------------------------------------------------------- #
 # 配列の詰め方                                                                  #
 # --------------------------------------------------------------------------- #
+#: ページに埋める浮動小数の有効桁。numpy の線形代数(eigh / lstsq / SVD)や和は BLAS・OS で末尾の桁(相対 1e-16 前後)
+#: が変わり、そのまま JSON にすると repr が変わる(量子化の lo / hi・量子化の境目の値・カメラ・時刻 …)—— Linux の CI で
+#: commit 済みのページとバイトが合わなくなった(2026-10-25、イトカワ・レンズ系の 8 言語版の門が 10 分 timeout)。
+#: 埋める直前(:func:`_encode_array` の入力と lo / hi、:func:`_build_html` の DATA 全体)で全部を 9 桁へ丸める。
+#: 相対 5e-10 は q16 の刻み 1/65535 より 4 桁小さく、見える絵は変わらない(丸めの境目に乗る値だけ 1 値あたり ~1e-7 で
+#: 隣へ落ちうる)。整数・bool・文字列は触らない。
+STABLE_DIGITS = 9
+
+
+def _round_sig(a, digits: int = STABLE_DIGITS) -> np.ndarray:
+    """float64 の配列を有効桁 ``digits`` に丸める(0・非有限・非正規数の近くはそのまま)。
+
+    10 の冪は整数の冪で作り、掛ける / 割るを桁の符号で分けるので、丸めた値は 10 進 ``digits`` 桁の最も近い double
+    (repr が短く、環境で変わらない)。
+    """
+    a = np.asarray(a, dtype=np.float64)
+    out = a.copy()
+    m = np.isfinite(a) & (np.abs(a) > 1e-290)
+    if not m.any():
+        return out
+    v = a[m]
+    k = digits - 1 - np.floor(np.log10(np.abs(v))).astype(np.int64)      # 小数点以下に残す桁(負なら整数部を落とす)
+    r = np.empty_like(v)
+    up = k >= 0
+    if up.any():
+        sc = np.power(10.0, k[up])                                        # 10^k(k ≤ 22 なら double で厳密)
+        r[up] = np.rint(v[up] * sc) / sc
+    if (~up).any():
+        sc = np.power(10.0, -k[~up])
+        r[~up] = np.rint(v[~up] / sc) * sc
+    out[m] = r
+    return out
+
+
+def _stable_json(obj, digits: int = STABLE_DIGITS):
+    """JSON にする直前の DATA の浮動小数(float / np.floating、入れ子の dict / list / tuple の中も)を有効桁 ``digits`` に丸める。"""
+    if isinstance(obj, (bool, np.bool_)):
+        return obj
+    if isinstance(obj, (float, np.floating)):
+        return float(_round_sig(np.array([obj]), digits)[0])
+    if isinstance(obj, dict):
+        return {k: _stable_json(v, digits) for k, v in obj.items()}
+    if isinstance(obj, (list, tuple)):
+        return [_stable_json(v, digits) for v in obj]
+    return obj
+
+
 def _finite(a: np.ndarray, what: str) -> np.ndarray:
     a = np.asarray(a, dtype=np.float64)
     if not np.isfinite(a).all():
@@ -304,7 +351,7 @@ def _encode_array(a, t: str = "q16", lo=None, hi=None, per_axis: bool = False) -
     a = np.asarray(a)
     shape = list(a.shape)
     if t in _MAXV:
-        x = _finite(a, "量子化する配列")
+        x = _round_sig(_finite(a, "量子化する配列"))              # 埋める値は有効 9 桁(STABLE_DIGITS)
         maxv = _MAXV[t]
         if per_axis:
             if x.ndim < 1:
@@ -315,6 +362,7 @@ def _encode_array(a, t: str = "q16", lo=None, hi=None, per_axis: bool = False) -
         else:
             los = np.array([x.min() if lo is None else float(lo)])
             his = np.array([x.max() if hi is None else float(hi)])
+        los, his = _round_sig(los), _round_sig(his)
         span = np.where(his > los, his - los, 1.0)
         his = np.where(his > los, his, los + 1.0)         # 幅 0 の軸は幅 1 の箱にする(割り算を避ける)
         nax = len(los)
@@ -334,10 +382,10 @@ def _encode_array(a, t: str = "q16", lo=None, hi=None, per_axis: bool = False) -
         raw = np.ascontiguousarray(a.astype(dt)).tobytes()
         rec = {"t": t, "shape": shape}
     elif t == "f32":
-        raw = np.ascontiguousarray(_finite(a, "float32 の配列").astype(np.float32)).tobytes()
+        raw = np.ascontiguousarray(_round_sig(_finite(a, "float32 の配列")).astype(np.float32)).tobytes()
         rec = {"t": t, "shape": shape}
     elif t == "s16":
-        x = _finite(a, "s16 で詰める配列")
+        x = _round_sig(_finite(a, "s16 で詰める配列"))
         if x.size and np.abs(x).max() > 1.0 + 1e-9:
             raise ValueError("s16 で詰めるのは -1..1 の値だけ(最大 %r)" % float(np.abs(x).max()))
         raw = np.rint(np.clip(x, -1.0, 1.0) * 32767.0).astype("<i2").tobytes()
@@ -2229,7 +2277,7 @@ def _build_html(spec: dict, lang="ja", detect_lang: bool = False) -> str:
     ``detect_lang=True`` なら、``?lang`` が無いときにブラウザの言語(``navigator.language``)で開く
     (:data:`_JS_PICK_LANG`)。既定の False は従来どおり ``?lang`` か先頭の言語(生成物は変わらない)。
     """
-    data = _pack_spec(spec, lang)
+    data = _stable_json(_pack_spec(spec, lang))              # 埋める浮動小数は全部 STABLE_DIGITS 桁(環境で変わらないページ)
     blob = json.dumps(data, ensure_ascii=True, separators=(",", ":")).replace("</", "<\\/")
     js = _JS
     if detect_lang:
