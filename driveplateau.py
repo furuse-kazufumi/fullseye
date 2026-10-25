@@ -43,6 +43,7 @@ __all__ = [
     "polygon_area",
     "triangulate_polygon",
     "citygml_synthetic",
+    "plateau_lod2_mesh",
 ]
 
 #: 等距円筒近似に使う地球半径 [m](WGS84 / GRS80 の長半径)。
@@ -821,5 +822,630 @@ def citygml_synthetic(
         "    </gml:Envelope>\n"
         "  </gml:boundedBy>\n"
         f"{body}\n"
+        "</core:CityModel>\n"
+    )
+
+
+# --------------------------------------------------------------------------
+# 6. LOD2 の建物 → 三角形メッシュ(屋根・壁・地面の面種つき、BuildingPart ごと)
+# --------------------------------------------------------------------------
+#: GRS80 楕円体(JGD2011 の基準楕円体)の長半径 [m] と扁平率。
+_GRS80_A: float = 6378137.0
+_GRS80_F: float = 1.0 / 298.257222101
+
+#: 面種の番号 → 名前。``face_kind`` はこの番号で持つ。
+LOD2_KINDS: tuple[str, ...] = ("ground", "wall", "roof", "other")
+
+#: ``bldg:boundedBy`` の子(主題面)のローカル名 → 面種番号。表に無い名前は fail-closed で拒否する。
+_LOD2_SURFACE_KIND: dict[str, int] = {
+    "GroundSurface": 0,
+    "WallSurface": 1,
+    "RoofSurface": 2,
+    "OuterCeilingSurface": 3,
+    "OuterFloorSurface": 3,
+    "ClosureSurface": 3,
+}
+
+#: LOD2 の幾何の部分木に現れてよい gml 要素のローカル名。これ以外(``Triangle``・``OrientableSurface``・
+#: ``pos`` の点列・曲線など)は読み方を決めていないので **黙って捨てずに拒否する**。
+_LOD2_GML_ALLOWED: frozenset[str] = frozenset(
+    {"MultiSurface", "CompositeSurface", "Solid", "surfaceMember", "Polygon", "exterior", "interior",
+     "LinearRing", "posList"}
+)
+
+#: 建物・部位の直下から拾う単純属性(ローカル名)。
+_LOD2_SIMPLE_ATTRS: tuple[str, ...] = (
+    "name", "class", "usage", "function", "yearOfConstruction", "storeysAboveGround", "storeysBelowGround",
+)
+
+
+def _geodetic_to_enu(llh: np.ndarray, origin: tuple[float, float, float]) -> np.ndarray:
+    """(n,3) の [緯度 deg, 経度 deg, 高さ m] を、原点の接平面の局所 ENU [m](x 東, y 北, z 上)へ厳密に移す。
+
+    GRS80 楕円体で地心直交座標(ECEF)へ上げてから原点の回転で ENU に落とす(近似なし)。PLATEAU の高さは
+    標高(東京湾平均海面)なので楕円体高との差(ジオイド高、横浜で約 37 m)を無視している —— その影響は
+    ECEF の半径が 37 m ずれるだけで、数百 m の範囲の水平距離に 6e-6 の相対誤差しか生まない。
+    """
+    a, f = _GRS80_A, _GRS80_F
+    e2 = f * (2.0 - f)
+
+    def ecef(lat_d: np.ndarray, lon_d: np.ndarray, h: np.ndarray) -> np.ndarray:
+        lat = np.radians(lat_d)
+        lon = np.radians(lon_d)
+        n = a / np.sqrt(1.0 - e2 * np.sin(lat) ** 2)
+        return np.stack([(n + h) * np.cos(lat) * np.cos(lon),
+                         (n + h) * np.cos(lat) * np.sin(lon),
+                         (n * (1.0 - e2) + h) * np.sin(lat)], axis=-1)
+
+    p = ecef(llh[:, 0], llh[:, 1], llh[:, 2])
+    o = ecef(np.array([origin[0]]), np.array([origin[1]]), np.array([origin[2]]))[0]
+    lat0, lon0 = math.radians(origin[0]), math.radians(origin[1])
+    sl, cl = math.sin(lat0), math.cos(lat0)
+    so, co = math.sin(lon0), math.cos(lon0)
+    rot = np.array([[-so, co, 0.0],
+                    [-sl * co, -sl * so, cl],
+                    [cl * co, cl * so, sl]])
+    return (p - o) @ rot.T
+
+
+def _enu_to_geodetic(enu: np.ndarray, origin: tuple[float, float, float]) -> np.ndarray:
+    """:func:`_geodetic_to_enu` の逆(ENU [m] → [緯度 deg, 経度 deg, 高さ m])。合成データと検算に使う。
+
+    ECEF から緯度は固定点反復(10 回で 1e-12 deg 未満に収束、数百 km 以内の点で)で戻す。
+    """
+    a, f = _GRS80_A, _GRS80_F
+    e2 = f * (2.0 - f)
+    lat0, lon0 = math.radians(origin[0]), math.radians(origin[1])
+    sl, cl = math.sin(lat0), math.cos(lat0)
+    so, co = math.sin(lon0), math.cos(lon0)
+    rot = np.array([[-so, co, 0.0],
+                    [-sl * co, -sl * so, cl],
+                    [cl * co, cl * so, sl]])
+    n0 = a / math.sqrt(1.0 - e2 * sl * sl)
+    o = np.array([(n0 + origin[2]) * cl * co, (n0 + origin[2]) * cl * so, (n0 * (1.0 - e2) + origin[2]) * sl])
+    p = np.asarray(enu, dtype=float) @ rot + o
+    lon = np.arctan2(p[:, 1], p[:, 0])
+    r = np.hypot(p[:, 0], p[:, 1])
+    lat = np.arctan2(p[:, 2], r * (1.0 - e2))
+    for _ in range(10):
+        n = a / np.sqrt(1.0 - e2 * np.sin(lat) ** 2)
+        h = r / np.cos(lat) - n
+        lat = np.arctan2(p[:, 2], r * (1.0 - e2 * n / (n + h)))
+    n = a / np.sqrt(1.0 - e2 * np.sin(lat) ** 2)
+    h = r / np.cos(lat) - n
+    return np.column_stack([np.degrees(lat), np.degrees(lon), h])
+
+
+def _srs_is_6697(srs: str) -> bool:
+    """srsName が EPSG:6697(JGD2011 地理 3 次元)を指すか。URI・URN・短縮形のどれでも受ける。"""
+    s = srs.strip()
+    return s.endswith("/6697") or s.endswith(":6697") or s.upper() == "EPSG:6697"
+
+
+def _gml_id(elem: ET.Element) -> str | None:
+    for key, val in elem.attrib.items():
+        if _local_name(key) == "id":
+            return val
+    return None
+
+
+def _check_lod2_geometry(root: ET.Element, where: str) -> None:
+    """LOD2 幾何の部分木に未知の gml 要素や 6697 以外の srsName が無いことを確かめる(fail-closed)。"""
+    for sub in root.iter():
+        if sub is root:
+            continue
+        name = _local_name(sub.tag)
+        if name not in _LOD2_GML_ALLOWED:
+            raise ValueError(f"{where}: LOD2 の幾何に未対応の要素 <{name}> があります(読み方を決めていないので拒否)")
+        for key, val in sub.attrib.items():
+            k = _local_name(key)
+            if k == "srsName" and not _srs_is_6697(val):
+                raise ValueError(f"{where}: srsName={val!r} は未対応(EPSG:6697 のみ)")
+            if k == "srsDimension" and val.strip() != "3":
+                raise ValueError(f"{where}: srsDimension={val!r} は未対応(3 のみ)")
+
+
+def _polygons_of(geom_root: ET.Element, where: str) -> tuple[list[tuple[str | None, np.ndarray, list[np.ndarray]]], list[str]]:
+    """幾何の部分木から ``(polygon_id, exterior (k,3), [interior (k,3), ...])`` と xlink 参照の一覧を返す。"""
+    _check_lod2_geometry(geom_root, where)
+    polys: list[tuple[str | None, np.ndarray, list[np.ndarray]]] = []
+    hrefs: list[str] = []
+    for sub in geom_root.iter():
+        name = _local_name(sub.tag)
+        if name == "surfaceMember":
+            for key, val in sub.attrib.items():
+                if _local_name(key) == "href":
+                    if not val.startswith("#"):
+                        raise ValueError(f"{where}: 外部ファイルへの xlink:href={val!r} は未対応")
+                    hrefs.append(val[1:])
+        elif name == "Polygon":
+            ext: np.ndarray | None = None
+            holes: list[np.ndarray] = []
+            for ch in sub:
+                cname = _local_name(ch.tag)
+                rings = [r for r in ch.iter() if _local_name(r.tag) == "posList"]
+                if len(rings) != 1:
+                    raise ValueError(f"{where}: Polygon の {cname} に posList が {len(rings)} 本あります(1 本のはず)")
+                ring = _parse_poslist(rings[0].text, rings[0].get("srsDimension"))
+                if cname == "exterior":
+                    if ext is not None:
+                        raise ValueError(f"{where}: Polygon に exterior が 2 つあります")
+                    ext = ring
+                elif cname == "interior":
+                    holes.append(ring)
+                else:
+                    raise ValueError(f"{where}: Polygon の子 <{cname}> は未対応")
+            if ext is None:
+                raise ValueError(f"{where}: exterior の無い Polygon があります")
+            polys.append((_gml_id(sub), ext, holes))
+    return polys, hrefs
+
+
+def _plane_basis(ring: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray, float]:
+    """3-D 多角形の Newell 法線と、それに直交する 2 軸 (u, v)、面積(Newell ノルム / 2)。
+
+    (u, v, n) は右手系なので、(u, v) に射影した環は元の向き(n から見て反時計回り)を保つ。
+    """
+    c = ring.mean(axis=0)
+    q = ring - c
+    nxt = np.roll(q, -1, axis=0)
+    n = np.array([np.sum((q[:, 1] - nxt[:, 1]) * (q[:, 2] + nxt[:, 2])),
+                  np.sum((q[:, 2] - nxt[:, 2]) * (q[:, 0] + nxt[:, 0])),
+                  np.sum((q[:, 0] - nxt[:, 0]) * (q[:, 1] + nxt[:, 1]))])
+    norm = float(np.linalg.norm(n))
+    if norm == 0.0:
+        return n, n, n, 0.0
+    n = n / norm
+    helper = np.array([1.0, 0.0, 0.0]) if abs(n[0]) < 0.9 else np.array([0.0, 1.0, 0.0])
+    u = np.cross(helper, n)
+    u /= np.linalg.norm(u)
+    v = np.cross(n, u)
+    return n, u, v, 0.5 * norm
+
+
+def _segments_cross(p1: np.ndarray, p2: np.ndarray, q1: np.ndarray, q2: np.ndarray) -> bool:
+    """線分 p1p2 と q1q2 が端点以外で交わるか(端点の共有は交差としない)。"""
+    d1 = _cross2(q1, q2, p1)
+    d2 = _cross2(q1, q2, p2)
+    d3 = _cross2(p1, p2, q1)
+    d4 = _cross2(p1, p2, q2)
+    return (d1 * d2 < 0.0) and (d3 * d4 < 0.0)
+
+
+def _bridge_holes(outer: np.ndarray, holes: list[np.ndarray]) -> tuple[np.ndarray, list[int]]:
+    """穴を外周へ橋渡しして 1 本の(弱単純な)環にする。``(全頂点 (N,2), 環の添字列)``。
+
+    穴は x 最大の頂点から始め、交差しない最も近い外周頂点へ往復の橋を架ける(古典的な Eberly の手順の
+    簡略版)。外周は反時計回り、穴は時計回りに揃えてから繋ぐ。
+    """
+    pts = [outer if polygon_area(outer) > 0.0 else outer[::-1]]
+    ring = list(range(pts[0].shape[0]))
+    base = pts[0].shape[0]
+    hole_sets = []
+    for h in holes:
+        hh = h if polygon_area(h) < 0.0 else h[::-1]
+        hole_sets.append((base, hh))
+        pts.append(hh)
+        base += hh.shape[0]
+    allp = np.vstack(pts)
+    for start, hh in sorted(hole_sets, key=lambda t: -float(t[1][:, 0].max())):
+        k = hh.shape[0]
+        mi = int(np.argmax(hh[:, 0]))
+        m = allp[start + mi]
+        order = sorted(range(len(ring)), key=lambda i: float(np.sum((allp[ring[i]] - m) ** 2)))
+        edges = [(allp[ring[i]], allp[ring[(i + 1) % len(ring)]]) for i in range(len(ring))]
+        for s2, h2 in hole_sets:
+            for j in range(h2.shape[0]):
+                edges.append((allp[s2 + j], allp[s2 + (j + 1) % h2.shape[0]]))
+        chosen = None
+        for i in order:
+            p = allp[ring[i]]
+            if not any(_segments_cross(m, p, a, b) for a, b in edges):
+                chosen = i
+                break
+        if chosen is None:
+            raise ValueError("穴を外周へ繋ぐ橋が見つかりません(自己交差の疑い)")
+        hole_loop = [start + (mi + t) % k for t in range(k)] + [start + mi]
+        ring = ring[: chosen + 1] + hole_loop + ring[chosen:]
+    return allp, ring
+
+
+def _triangulate_3d(ext: np.ndarray, holes: list[np.ndarray]) -> tuple[np.ndarray, np.ndarray, float]:
+    """3-D の平面多角形(穴あり可)を三角形にする。``(頂点 (k,3), 三角形 (t,3), 非平面性 [m])``。
+
+    三角形の向きは元の環の向き(CityGML では外向き法線)を保つ。入力は [緯度, 経度, 高さ] なので、まず環の
+    重心まわりで子午線・卯酉線の曲率半径を掛けてメートルの局所直交座標に直してから平面を求める(度とメートルの
+    混ざった空間で法線を取ると条件が悪く、非平面性も意味を持たない)。この写像は線形なので三角形の添字は
+    最終の ENU でもそのまま有効。
+    """
+    a, f = _GRS80_A, _GRS80_F
+    e2 = f * (2.0 - f)
+    lat_c = math.radians(float(ext[:, 0].mean()))
+    w = math.sqrt(1.0 - e2 * math.sin(lat_c) ** 2)
+    k_lat = math.radians(1.0) * a * (1.0 - e2) / w ** 3       # 子午線曲率半径 M × 1 deg
+    k_lon = math.radians(1.0) * a / w * math.cos(lat_c)        # 卯酉線曲率半径 N cos φ × 1 deg
+    c0 = ext.mean(axis=0)
+    scale = np.array([k_lat, k_lon, 1.0])
+    ext0, holes0 = ext, list(holes)                            # 返す頂点は元の値そのもの(丸めない)
+    ext = (ext - c0) * scale
+    holes = [(h - c0) * scale for h in holes]
+    allring = np.vstack([ext] + holes)
+    n, u, v, area = _plane_basis(ext)
+    if area <= 0.0:
+        raise ValueError("面積 0 の Polygon")
+    c = ext.mean(axis=0)
+    nonplanar = float(np.max(np.abs((allring - c) @ n)))
+    to2 = lambda r: np.column_stack([(r - c) @ u, (r - c) @ v])  # noqa: E731
+    if holes:
+        flat, ring = _bridge_holes(to2(ext), [to2(h) for h in holes])
+        # _bridge_holes は外周を反時計回り・穴を時計回りに揃えて並べるので、元の頂点も同じ判定で並べ直す
+        src = ext0 if polygon_area(to2(ext)) > 0.0 else ext0[::-1]
+        V3 = np.vstack([src] + [h0 if polygon_area(to2(h)) < 0.0 else h0[::-1] for h, h0 in zip(holes, holes0)])
+        tri = triangulate_polygon(flat[ring])
+        T = np.asarray(ring, dtype=np.int64)[tri]
+        return V3, T, nonplanar
+    tri = triangulate_polygon(to2(ext))
+    return ext0, tri, nonplanar
+
+
+def _unit_record(elem: ET.Element, where: str, on_bad_polygon: str) -> dict[str, Any] | None:
+    """Building 本体か BuildingPart 1 つ分(部位は再帰しない)の LOD2 面と属性を集める。"""
+    attrs: dict[str, Any] = {}
+    measured: float | None = None
+    thematic: list[tuple[int, ET.Element]] = []
+    direct: list[ET.Element] = []
+    solid: ET.Element | None = None
+    for ch in elem:
+        name = _local_name(ch.tag)
+        if name == "consistsOfBuildingPart":
+            continue
+        if name == "measuredHeight":
+            uom = ch.get("uom")
+            if uom is not None and uom.strip() not in ("m", "urn:adv:uom:m"):
+                raise ValueError(f"{where}: measuredHeight の単位 {uom!r} は未対応(m のみ)")
+            try:
+                measured = float((ch.text or "").strip())
+            except ValueError as exc:
+                raise ValueError(f"{where}: measuredHeight が数値ではありません: {ch.text!r}") from exc
+            if not math.isfinite(measured):
+                raise ValueError(f"{where}: measuredHeight が非有限値です")
+        elif name in _LOD2_SIMPLE_ATTRS and (ch.text or "").strip():
+            attrs[name] = ch.text.strip()
+        elif name in ("stringAttribute", "intAttribute", "doubleAttribute"):
+            key = ch.get("name")
+            val = next((g.text for g in ch if _local_name(g.tag) == "value"), None)
+            if key and val is not None:
+                attrs[key] = val.strip()
+        elif name == "boundedBy":
+            for surf in ch:
+                kind = _LOD2_SURFACE_KIND.get(_local_name(surf.tag))
+                if kind is None:
+                    raise ValueError(f"{where}: 未対応の主題面 <{_local_name(surf.tag)}>(読み方を決めていないので拒否)")
+                for g in surf:
+                    if _local_name(g.tag) == "lod2MultiSurface":
+                        thematic.append((kind, g))
+        elif name == "lod2MultiSurface":
+            direct.append(ch)
+        elif name == "lod2Solid":
+            solid = ch
+
+    polys: list[tuple[int, str | None, np.ndarray, list[np.ndarray]]] = []
+    for kind, g in thematic:
+        got, _ = _polygons_of(g, where)
+        polys += [(kind, pid, e, h) for pid, e, h in got]
+    for g in direct:
+        got, _ = _polygons_of(g, where)
+        polys += [(3, pid, e, h) for pid, e, h in got]
+    if solid is not None:
+        got, hrefs = _polygons_of(solid, where)
+        if got and polys:
+            raise ValueError(f"{where}: lod2Solid の中の面と主題面の両方があり、重複の扱いを決めていないので拒否")
+        polys += [(3, pid, e, h) for pid, e, h in got]
+        known = {pid for _k, pid, _e, _h in polys if pid}
+        missing = [h for h in hrefs if h not in known]
+        if missing:
+            raise ValueError(f"{where}: lod2Solid が参照する面 {len(missing)} 枚が見つかりません(例 {missing[0]})")
+    if not polys:
+        return None
+
+    verts: list[np.ndarray] = []
+    tris: list[np.ndarray] = []
+    kinds: list[np.ndarray] = []
+    offset = 0
+    n_bad = 0
+    nonplanar = 0.0
+    for kind, pid, ext, holes in polys:
+        try:
+            V3, T, npl = _triangulate_3d(ext, holes)
+        except ValueError as exc:
+            if on_bad_polygon == "raise":
+                raise ValueError(f"{where}: Polygon {pid} を三角形にできません: {exc}") from exc
+            n_bad += 1
+            continue
+        nonplanar = max(nonplanar, npl)
+        verts.append(V3)
+        tris.append(T + offset)
+        kinds.append(np.full(T.shape[0], kind, dtype=np.int8))
+        offset += V3.shape[0]
+    if not verts:
+        return None
+    llh = np.vstack(verts)
+    T = np.vstack(tris)
+    # 同じ点(緯度・経度・高さが完全一致)を 1 頂点にまとめる。丸めはしない(可逆)。
+    uniq, inv = np.unique(llh, axis=0, return_inverse=True)
+    return {
+        "gml_id": _gml_id(elem),
+        "measured_height": measured,
+        "attrs": attrs,
+        "llh": uniq,
+        "F": inv.reshape(-1)[T],
+        "kind": np.concatenate(kinds),
+        "n_polygons": len(polys),
+        "n_bad_polygons": n_bad,
+        "max_nonplanarity_m": nonplanar,
+    }
+
+
+def plateau_lod2_mesh(
+    source: str | Path | bytes,
+    *,
+    origin: tuple[float, float, float] | None = None,
+    ids: Iterable[str] | None = None,
+    bbox_latlon: tuple[float, float, float, float] | None = None,
+    on_bad_polygon: str = "raise",
+) -> dict[str, Any]:
+    """PLATEAU の CityGML から LOD2 の建物を読み、局所メートル座標の三角形メッシュ (V, F) と建物ごとの属性を返す。
+
+    ``bldg:Building`` を ``iterparse`` でストリーム読みし、本体と ``bldg:BuildingPart`` を 1 つずつ **部位**
+    (unit)として扱う。面は主題面(``GroundSurface`` / ``WallSurface`` / ``RoofSurface`` / ``OuterCeilingSurface``
+    / ``OuterFloorSurface`` / ``ClosureSurface``)の ``lod2MultiSurface`` から取り、面種を ``face_kind`` に残す。
+    ``lod2Solid`` が ``xlink:href`` で参照する面はすべて見つかることを確かめる。穴(``gml:interior``)は外周へ
+    橋を架けて耳切りで三角形にし、三角形の向きは元の環の向き(外向き法線)を保つ。
+
+    座標は EPSG:6697(JGD2011 の緯度・経度・標高)を GRS80 の地心直交座標経由で原点の接平面の
+    ENU(x 東, y 北, z 上, メートル)へ厳密に移す。既定の原点は **地面の重心**: ``GroundSurface`` の頂点の
+    緯度経度の平均と、その最低標高(地面が無ければ全頂点)。
+
+    **fail-closed**: 6697 以外の ``srsName``、``srsDimension`` が 3 以外、LOD2 の幾何に未知の gml 要素
+    (``Triangle``・``OrientableSurface``・``pos`` の点列など)、表に無い主題面、見つからない xlink、
+    m 以外の ``measuredHeight`` の単位は、読み飛ばさず ``ValueError`` にする。
+
+    Args:
+        source: CityGML の文字列(``<`` で始まる)、bytes、またはファイルパス(str/Path)。
+        origin: 局所座標の原点 ``(lat0 [deg], lon0 [deg], h0 [m])``。None なら地面の重心。
+        ids: 読む建物の ``gml:id``(``bldg:Building`` の id)。None なら全部。
+        bbox_latlon: ``(lat_min, lon_min, lat_max, lon_max)``。部位の頂点の平均がこの箱に入る部位だけ残す。
+        on_bad_polygon: 三角形にできない Polygon(面積 0・自己交差)の扱い。``"raise"``(既定)か
+            ``"skip"``(数えて ``n_bad_polygons`` に残す)。
+
+    Returns:
+        ``{"V": (n,3) float64 [m], "F": (m,3) int64, "face_unit": (m,) int64, "face_kind": (m,) int8,
+        "kinds": LOD2_KINDS, "units": [...], "origin": (lat0, lon0, h0), "crs": str,
+        "n_buildings": int, "n_no_lod2": int, "n_bad_polygons": int, "max_nonplanarity_m": float}``。
+        ``units[i]`` は ``{"building_id", "part", "gml_id", "measured_height", "attrs", "z_min", "z_max",
+        "ground_z", "height_mesh", "extent_xy", "lat", "lon", "n_faces"}``。``height_mesh`` は
+        ``z_max − ground_z``(``measuredHeight`` と比べる値)、``extent_xy`` は ENU の (x 幅, y 幅) [m]。
+
+    Raises:
+        ValueError: 上の fail-closed の条件、source が空・不正、XML が壊れている、該当する部位が 0 件、
+            ``on_bad_polygon`` が未知、``origin`` / ``bbox_latlon`` が不正。
+
+    Examples:
+        >>> import driveplateau as PL
+        >>> m = PL.plateau_lod2_mesh(PL._citygml_lod2_example())
+        >>> [round(u["height_mesh"], 3) for u in m["units"]]
+        [12.0, 4.0]
+        >>> m["V"].shape[1], m["F"].shape[1], sorted(set(m["face_kind"].tolist()))
+        (3, 3, [0, 1, 2])
+    """
+    if on_bad_polygon not in ("raise", "skip"):
+        raise ValueError(f"on_bad_polygon は 'raise' か 'skip': {on_bad_polygon!r}")
+    want = None if ids is None else {str(i) for i in ids}
+    if want is not None and not want:
+        raise ValueError("ids が空です(None なら全部)")
+    if bbox_latlon is not None:
+        try:
+            la0, lo0, la1, lo1 = (float(t) for t in bbox_latlon)
+        except (TypeError, ValueError) as exc:
+            raise ValueError(f"bbox_latlon は (lat_min, lon_min, lat_max, lon_max): {bbox_latlon!r}") from exc
+        if not (la0 <= la1 and lo0 <= lo1) or not all(math.isfinite(t) for t in (la0, lo0, la1, lo1)):
+            raise ValueError(f"bbox_latlon が反転しているか非有限です: {bbox_latlon!r}")
+    if origin is not None:
+        try:
+            o_lat, o_lon, o_h = (float(t) for t in origin)
+        except (TypeError, ValueError) as exc:
+            raise ValueError(f"origin は (lat0, lon0, h0): {origin!r}") from exc
+        if not all(math.isfinite(t) for t in (o_lat, o_lon, o_h)) or abs(o_lat) >= 90.0:
+            raise ValueError(f"origin が不正です: {origin!r}")
+
+    stream = _open_source(source)
+    units: list[dict[str, Any]] = []
+    n_buildings = 0
+    n_no_lod2 = 0
+    srs_seen: str | None = None
+    try:
+        try:
+            for _event, elem in ET.iterparse(stream, events=("end",)):
+                name = _local_name(elem.tag)
+                if name == "Envelope" and srs_seen is None:
+                    srs = elem.get("srsName")
+                    if srs is not None:
+                        if not _srs_is_6697(srs):
+                            raise ValueError(f"srsName={srs!r} は未対応(EPSG:6697 のみ)")
+                        srs_seen = srs
+                elif name == "Building":
+                    try:
+                        bid = _gml_id(elem)
+                        if want is not None and bid not in want:
+                            continue
+                        n_buildings += 1
+                        if srs_seen is None:
+                            srs = next((s.get("srsName") for s in elem.iter() if s.get("srsName")), None)
+                            if srs is None:
+                                raise ValueError("座標参照系(srsName)が見つかりません(fail-closed)")
+                            if not _srs_is_6697(srs):
+                                raise ValueError(f"srsName={srs!r} は未対応(EPSG:6697 のみ)")
+                            srs_seen = srs
+                        bodies = [(0, elem)] + [
+                            (k + 1, p) for k, p in enumerate(
+                                q for c in elem if _local_name(c.tag) == "consistsOfBuildingPart"
+                                for q in c if _local_name(q.tag) == "BuildingPart")
+                        ]
+                        got_any = False
+                        for part, body in bodies:
+                            rec = _unit_record(body, f"Building {bid} part {part}", on_bad_polygon)
+                            if rec is None:
+                                continue
+                            got_any = True
+                            rec["building_id"] = bid
+                            rec["part"] = part
+                            units.append(rec)
+                        if not got_any:
+                            n_no_lod2 += 1
+                    finally:
+                        elem.clear()
+                elif name == "cityObjectMember":
+                    elem.clear()
+        except ET.ParseError as exc:
+            raise ValueError(f"CityGML の XML 解析に失敗: {exc}") from exc
+    finally:
+        stream.close()
+
+    if bbox_latlon is not None:
+        units = [u for u in units
+                 if la0 <= float(u["llh"][:, 0].mean()) <= la1 and lo0 <= float(u["llh"][:, 1].mean()) <= lo1]
+    if not units:
+        raise ValueError("LOD2 の面を持つ部位が 1 つもありません(ids / bbox_latlon / ファイルを確かめてください)")
+
+    if origin is None:
+        ground = [u["llh"][np.unique(u["F"][u["kind"] == 0])] for u in units if np.any(u["kind"] == 0)]
+        pool = np.vstack(ground) if ground else np.vstack([u["llh"] for u in units])
+        o_lat, o_lon, o_h = float(pool[:, 0].mean()), float(pool[:, 1].mean()), float(pool[:, 2].min())
+    org = (o_lat, o_lon, o_h)
+
+    Vs: list[np.ndarray] = []
+    Fs: list[np.ndarray] = []
+    Us: list[np.ndarray] = []
+    Ks: list[np.ndarray] = []
+    out_units: list[dict[str, Any]] = []
+    offset = 0
+    for i, u in enumerate(units):
+        V = _geodetic_to_enu(u["llh"], org)
+        gidx = np.unique(u["F"][u["kind"] == 0])
+        ground_z = float(V[gidx, 2].min()) if gidx.size else float(V[:, 2].min())
+        z_max = float(V[:, 2].max())
+        out_units.append({
+            "building_id": u["building_id"],
+            "part": u["part"],
+            "gml_id": u["gml_id"],
+            "measured_height": u["measured_height"],
+            "attrs": u["attrs"],
+            "z_min": float(V[:, 2].min()),
+            "z_max": z_max,
+            "ground_z": ground_z,
+            "height_mesh": z_max - ground_z,
+            "extent_xy": (float(np.ptp(V[:, 0])), float(np.ptp(V[:, 1]))),
+            "lat": float(u["llh"][:, 0].mean()),
+            "lon": float(u["llh"][:, 1].mean()),
+            "n_faces": int(u["F"].shape[0]),
+        })
+        Vs.append(V)
+        Fs.append(u["F"] + offset)
+        Us.append(np.full(u["F"].shape[0], i, dtype=np.int64))
+        Ks.append(u["kind"])
+        offset += V.shape[0]
+    return {
+        "V": np.vstack(Vs),
+        "F": np.vstack(Fs).astype(np.int64),
+        "face_unit": np.concatenate(Us),
+        "face_kind": np.concatenate(Ks).astype(np.int8),
+        "kinds": LOD2_KINDS,
+        "units": out_units,
+        "origin": org,
+        "crs": "EPSG:6697 (lat, lon, alt) -> local ENU [m] (GRS80, exact)",
+        "n_buildings": n_buildings,
+        "n_no_lod2": n_no_lod2,
+        "n_bad_polygons": int(sum(u["n_bad_polygons"] for u in units)),
+        "max_nonplanarity_m": float(max(u["max_nonplanarity_m"] for u in units)),
+    }
+
+
+def _citygml_lod2_example(
+    *,
+    origin: tuple[float, float] = (35.4575, 139.6375),
+    ground_z: float = 3.0,
+    with_hole: bool = True,
+) -> str:
+    """LOD2 の最小 CityGML(テスト・作例・説明のコード例用)。
+
+    座標は原点 ``(origin, ground_z)`` の接平面 ENU で書いた点を楕円体の厳密な逆変換で緯度経度へ戻して置く。
+    建物 1 棟 = 本体(20 m × 10 m、軒 8 m・棟 12 m の切妻、x 方向の棟)+ BuildingPart(6 m × 6 m × 4 m の
+    箱、本体の東に接する)。面は主題面(地面・壁・屋根)の ``lod2MultiSurface`` に書き、本体の
+    ``lod2Solid`` は ``xlink:href`` で参照する(PLATEAU と同じ形)。``with_hole`` なら部位の屋根に
+    2 m 角の穴(``gml:interior``)を開け、穴の中は面を持たない(穴の扱いの試験用)。
+
+    閉形式: 本体の体積 = 20·10·8 + 20·(10·4/2) = 2000 m³、部位の体積 = 144 m³(穴が無いとき)。
+    """
+    lat0, lon0 = _check_origin(origin)
+
+    def ll(x: float, y: float, z: float) -> tuple[float, float, float]:
+        # 読み手と同じ厳密な楕円体の逆変換で置く(閉形式の寸法が読み戻しで 1e-6 m 以内に戻る)
+        la, lo, h = _enu_to_geodetic(np.array([[x, y, z]]), (lat0, lon0, ground_z))[0]
+        return (float(la), float(lo), float(h))
+
+    def poly(pid: str, ring: list[tuple[float, float, float]], holes: Sequence[list[tuple[float, float, float]]] = ()) -> str:
+        inner = "".join(
+            f"<gml:interior><gml:LinearRing><gml:posList>{_ring_text(h)}</gml:posList></gml:LinearRing></gml:interior>"
+            for h in holes)
+        return (f"<gml:surfaceMember><gml:Polygon gml:id=\"{pid}\"><gml:exterior><gml:LinearRing>"
+                f"<gml:posList>{_ring_text(ring)}</gml:posList></gml:LinearRing></gml:exterior>{inner}"
+                "</gml:Polygon></gml:surfaceMember>")
+
+    def surf(kind: str, members: list[str]) -> str:
+        return (f"<bldg:boundedBy><bldg:{kind}><bldg:lod2MultiSurface><gml:MultiSurface>{''.join(members)}"
+                f"</gml:MultiSurface></bldg:lod2MultiSurface></bldg:{kind}></bldg:boundedBy>")
+
+    # 本体: 足元 (0,0)-(20,10)、軒 8、棟 12(y=5)。外向き法線になる向きで環を書く。
+    a = [ll(0, 0, 0), ll(20, 0, 0), ll(20, 10, 0), ll(0, 10, 0)]
+    e = [ll(0, 0, 8), ll(20, 0, 8), ll(20, 10, 8), ll(0, 10, 8)]
+    r0, r1 = ll(0, 5, 12), ll(20, 5, 12)
+    body_polys = {
+        "GroundSurface": [poly("b_g", a[::-1])],
+        "WallSurface": [poly("b_w0", [a[0], a[1], e[1], e[0]]),
+                        poly("b_w1", [a[1], a[2], e[2], r1, e[1]]),
+                        poly("b_w2", [a[2], a[3], e[3], e[2]]),
+                        poly("b_w3", [a[3], a[0], e[0], r0, e[3]])],
+        "RoofSurface": [poly("b_r0", [e[0], e[1], r1, r0]), poly("b_r1", [e[2], e[3], r0, r1])],
+    }
+    ids = [pid for k in body_polys for m in body_polys[k] for pid in [m.split('gml:id="')[1].split('"')[0]]]
+    solid = ("<bldg:lod2Solid><gml:Solid><gml:exterior><gml:CompositeSurface>"
+             + "".join(f"<gml:surfaceMember xlink:href=\"#{i}\"/>" for i in ids)
+             + "</gml:CompositeSurface></gml:exterior></gml:Solid></bldg:lod2Solid>")
+    body = ("<bldg:measuredHeight uom=\"m\">12.0</bldg:measuredHeight>" + solid
+            + "".join(surf(k, v) for k, v in body_polys.items()))
+
+    # 部位: 足元 (20,2)-(26,8)、高さ 4。屋根に (22,4)-(24,6) の穴(穴の環は外周と逆向き)。
+    b = [ll(20, 2, 0), ll(26, 2, 0), ll(26, 8, 0), ll(20, 8, 0)]
+    t = [ll(20, 2, 4), ll(26, 2, 4), ll(26, 8, 4), ll(20, 8, 4)]
+    hole = [ll(22, 4, 4), ll(22, 6, 4), ll(24, 6, 4), ll(24, 4, 4)] if with_hole else None
+    part_polys = {
+        "GroundSurface": [poly("p_g", b[::-1])],
+        "WallSurface": [poly(f"p_w{k}", [b[k], b[(k + 1) % 4], t[(k + 1) % 4], t[k]]) for k in range(4)],
+        "RoofSurface": [poly("p_r", t, [hole] if hole else [])],
+    }
+    part = ("<bldg:measuredHeight uom=\"m\">4.0</bldg:measuredHeight>"
+            + "".join(surf(k, v) for k, v in part_polys.items()))
+    return (
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+        f"<core:CityModel xmlns:core=\"{_NS_CORE}\" xmlns:bldg=\"{_NS_BLDG}\" xmlns:gml=\"{_NS_GML}\""
+        f" xmlns:gen=\"{_NS_GEN}\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">"
+        "<gml:boundedBy><gml:Envelope srsName=\"http://www.opengis.net/def/crs/EPSG/0/6697\" srsDimension=\"3\">"
+        f"<gml:lowerCorner>{_fmt(lat0)} {_fmt(lon0)} {_fmt(ground_z)}</gml:lowerCorner>"
+        f"<gml:upperCorner>{_fmt(lat0 + 0.001)} {_fmt(lon0 + 0.001)} {_fmt(ground_z + 12)}</gml:upperCorner>"
+        "</gml:Envelope></gml:boundedBy>"
+        "<core:cityObjectMember><bldg:Building gml:id=\"lod2_example_0001\">"
+        "<gen:stringAttribute name=\"note\"><gen:value>synthetic</gen:value></gen:stringAttribute>"
+        f"{body}<bldg:consistsOfBuildingPart><bldg:BuildingPart gml:id=\"lod2_example_0001_p1\">{part}"
+        "</bldg:BuildingPart></bldg:consistsOfBuildingPart></bldg:Building></core:cityObjectMember>"
         "</core:CityModel>\n"
     )
