@@ -707,11 +707,11 @@ def scale_objects(R):
     side = float(np.max(np.abs((V - site) @ t1))) + 60.0       # イトカワの外まで
     objs = [("person", person_mesh(), site, (1.0, 0.85, 0.55)),
             ("hayabusa", hayabusa_mesh(), site + t1 * 6.0, (0.85, 0.80, 0.35)),
-            ("pitch", pitch_mesh(), site - t1 * (side + PITCH[0] / 2), (0.30, 0.65, 0.30)),
-            ("tower", tower_mesh(), site + t1 * (side + TOWER_BASE / 2), (0.85, 0.40, 0.30))]
+            ("tower", tower_mesh(), site + t1 * (side + TOWER_BASE / 2), (0.85, 0.40, 0.30)),
+            ("pitch", pitch_mesh(), site + t1 * (side + TOWER_BASE + 30.0 + PITCH[0] / 2), (0.30, 0.65, 0.30))]
     vn = sz["venue"]
     vhalf = float(np.max(np.abs(vn["V"][:, 0])))
-    objs.append(("venue", (vn["V"], vn["F"]), site - t1 * (side + PITCH[0] + 40.0 + vhalf), (0.75, 0.78, 0.86)))
+    objs.append(("venue", (vn["V"], vn["F"]), site - t1 * (side + vhalf), (0.75, 0.78, 0.86)))
     return [(name, mV, mF, pos, q, rgb) for name, (mV, mF), pos, rgb in objs]
 
 
@@ -795,10 +795,25 @@ def tab_size(R, g):
     objs = [(name, mV, mF, Rg @ pos, qmul(qg, q), rgb) for name, mV, mF, pos, q, rgb in scale_objects(R)]
     nT = 161
     t = np.arange(nT) / 12.0
-    W = np.geomspace(1000.0, 3.0, nT)
-    dd = W / (2.0 * math.tan(FOV_Y / 2.0))
+    # 0 コマ目: イトカワを中心に、全部の物が画面に入る距離(縦の画角と、横は縦横比 1.6 の画面を仮定)
+    dirv = Rg @ (sz["up"] * 0.45 + sz["t2"] * 0.89)
+    dirv /= np.linalg.norm(dirv)
+    upv = np.array([0.0, 0.0, 1.0]) - dirv * dirv[2]
+    upv /= np.linalg.norm(upv)
+    rightv = np.cross(dirv, upv)
+    pts = [Rg @ V[i] for i in range(0, len(V), 7)]
+    for name, mV, mF, pos, q, rgb in objs:
+        Rm = np.asarray(pv._quat_matrix(np.asarray(q)[None, :]))[0]
+        pts.extend(list(mV @ Rm.T + pos))
+    rel = np.asarray(pts) - com
+    th = math.tan(FOV_Y / 2.0)
+    d0 = 1.12 * max(float(np.max(np.abs(rel @ rightv))) / (th * 1.6), float(np.max(np.abs(rel @ upv))) / th) \
+        + float(np.max(rel @ dirv))
+    W0 = 2.0 * d0 * th
+    W = np.geomspace(W0, 3.0, nT)
+    dd = W / (2.0 * th)
     person_c = Rg @ (V[sz["k"]] + sz["up"] * (PERSON_H / 2))
-    s = np.clip(np.log(1000.0 / W) / np.log(1000.0 / 30.0), 0.0, 1.0)
+    s = np.clip(np.log(W0 / W) / np.log(W0 / 30.0), 0.0, 1.0)
     s = s * s * (3 - 2 * s)
     target = com[None, :] + (person_c - com)[None, :] * s[:, None]
     labels = {"person": T("人(1.7 m)", "a person (1.7 m)"),
@@ -814,15 +829,24 @@ def tab_size(R, g):
         xyzs.append(pos)
         quats.append(q)
     xyz, quat = static(nT, len(bodies), xyzs, quats)
+    # 物に付いたラベル(大きさつき)。点は各物体のてっぺんの少し上(ローカル座標)
+    vn = sz["venue"]
+    zmax_it = float(np.max((Rg @ (V - com0).T)[2]))
+    lab = [("itokawa", Rg.T @ np.array([0.0, 0.0, zmax_it + 25.0]), T("イトカワ 535 m", "Itokawa 535 m")),
+           ("venue", np.array([0.0, 0.0, float(vn["V"][:, 2].max()) + 15.0]),
+            T("会場(パシフィコ横浜) %.0f m" % vn["length"], "the venue (Pacifico Yokohama) %.0f m" % vn["length"])),
+           ("tower", np.array([0.0, 0.0, TOWER_H + 12.0]), T("塔 333 m", "tower 333 m")),
+           ("pitch", np.array([0.0, 0.0, 6.0]), T("サッカー場 105 m", "football pitch 105 m")),
+           ("person", np.array([0.0, 0.0, PERSON_H + 0.25]), T("人 1.7 m", "person 1.7 m")),
+           ("hayabusa", np.array([0.0, 0.0, HAYABUSA_CORE[2] + 0.6]), T("はやぶさ 5.7 m", "Hayabusa 5.7 m"))]   # 重なったら人を優先
+    labels_ = [{"body": b, "offset": o, "text": tx} for b, o, tx in lab]
     marks = []
-    for w, ja, en in ((1000.0, "全体", "the whole asteroid"), (150.0, "サッカー場くらい", "about a football pitch"),
+    for w, ja, en in ((W0, "全体", "the whole asteroid"), (150.0, "サッカー場くらい", "about a football pitch"),
                       (10.0, "はやぶさ", "Hayabusa"), (3.0, "人", "the person")):
         kk = int(np.argmin(np.abs(W - w)))
         marks.append({"t": float(t[kk]), "label": T(ja, en)})
-    dirv = Rg @ (sz["up"] * 0.45 + sz["t2"] * 0.89)
-    dirv /= np.linalg.norm(dirv)
     view = {"az": float(math.atan2(dirv[1], dirv[0])), "el": float(math.asin(dirv[2]))}
-    return {"t": t, "bodies": bodies, "xyz": xyz, "quat": quat, "events": marks, "view": view,
+    return {"t": t, "bodies": bodies, "xyz": xyz, "quat": quat, "events": marks, "view": view, "labels": labels_,
             "camera": {"dist": dd, "target": target},
             "axis": {"values": W, "segments": [{"k": 0, "label": T("視野の縦の幅", "field of view (height)"), "unit": " m", "decimals": 1}]}}
 
@@ -1302,6 +1326,7 @@ def all_lessons(R, g):
 def build_spec(R, g):
     N = pv.viewer_number
     d0 = tab_size(R, g)
+    g["size_W0"] = float(d0["axis"]["values"][0])          # 0 コマ目の視野の縦の幅(全部の物が入る距離から)
     d1, d2, d3, d4, d5 = tab_shape(R, g), tab_gravity(R, g), tab_muses(R, g), tab_limit(R, g), tab_math(R, g)
     checks, lessons = all_checks(R, g), all_lessons(R, g)
 
@@ -1309,19 +1334,20 @@ def build_spec(R, g):
         tb = pv.viewer_anim3d_tab(tid, label, badge, text, d["t"], d["bodies"], d["xyz"], d["quat"],
                                   trails=d.get("trails"), clouds=d.get("clouds"), events=d.get("events"),
                                   series=d.get("series"), cbar=d.get("cbar"), numbers=numbers, view=view,
-                                  checks=checks[tid], axis=d["axis"], lesson=lessons[tid], camera=d.get("camera"))
+                                  checks=checks[tid], axis=d["axis"], lesson=lessons[tid], camera=d.get("camera"),
+                                  labels=d.get("labels"))
         return tb
 
     dims = g["dims"]
     s1, s2 = g["sites"]["TD1"], g["sites"]["TD2"]
     tab0 = mk("size", T("大きさを比べる", "Compare the sizes"), "passed",
-              T("イトカワ(長さ 535 m)の横に、実寸の物差しを置いた: いまいる会場(パシフィコ横浜)、高さ 333 m の塔、サッカー場、はやぶさ、そして人。人は長さの 0.3 % しかないので、"
-                "再生すると全体(視野の縦の幅 1,000 m)から、はやぶさが降りた所(TD1 の推定位置)に立つ人(3 m)まで、対数の等間隔で寄っていく。"
-                "人は実効重力の逆向き(その場所の「上」)に立っている。",
+              T("イトカワ(長さ 535 m)の横に、実寸の物差しを置いた: いまいる会場(パシフィコ横浜)、高さ 333 m の塔、サッカー場、はやぶさ、そして人。人は長さの 0.3 %% しかないので、"
+                "再生すると全体(視野の縦の幅 %.0f m)から、はやぶさが降りた所(TD1 の推定位置)に立つ人(3 m)まで、対数の等間隔で寄っていく。"
+                "人は実効重力の逆向き(その場所の「上」)に立っている。物にはそれぞれ名前と大きさのラベルが付いている。" % g["size_W0"],
                 "Next to Itokawa (535 m long) stand true-scale yardsticks: this venue (Pacifico Yokohama), a 333 m tower, a football pitch, Hayabusa and a "
-                "person. A person is only 0.3 % of the length, so playback zooms on a log scale from the whole asteroid "
-                "(field of view 1,000 m high) down to the person (3 m) standing where Hayabusa touched down (estimated site "
-                "TD1). The person stands against the effective gravity (the local 'up')."),
+                "person. A person is only 0.3 %% of the length, so playback zooms on a log scale from the whole asteroid "
+                "(field of view %.0f m high) down to the person (3 m) standing where Hayabusa touched down (estimated site "
+                "TD1). The person stands against the effective gravity (the local 'up'). Each object carries a label with its name and size." % g["size_W0"]),
               d0,
               [N(T("イトカワの長さ ÷ 人の背丈", "Itokawa's length ÷ a person's height"), "%.0f×" % g["length_ratio"]),
                N(T("地平線までの距離(目の高さ 1.7 m)", "distance to the horizon (eye at 1.7 m)"), "%.0f m" % g["horizon_m"]),

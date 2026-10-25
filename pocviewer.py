@@ -74,7 +74,8 @@
     ``panes`` ``[{label, frames (T,H,W[,3]), boxes, png=True}]``(同じ時間軸で並べる 2-D)/
     ``follow``(追従する物体の name。無ければ全物体の重心)/ ``cbar`` /
     ``axis`` ``{values (T,), segments [{k, label, unit, decimals}]}``(時間つまみの読みを物理量に)/
-    ``camera`` ``{dist (T,), target (T,3)}``(コマごとのカメラ。桁の違う物を並べて寄る場面に)
+    ``camera`` ``{dist (T,), target (T,3)}``(コマごとのカメラ。桁の違う物を並べて寄る場面に)/
+    ``labels`` ``[{body, offset (3,), text}]``(物体に付いて動く文字のラベル)
 
 共通の任意項目: ``view`` ``{az, el, dist}``(3-D の初期視点。dist は既定距離の倍率)。
 
@@ -722,6 +723,32 @@ def _pack_camera(raw: Any, T: int, where: str) -> dict:
     return {"d": [float("%.6g" % v) for v in d], "t": [[float("%.6g" % v) for v in row] for row in tg]}
 
 
+_LABEL_KEYS = frozenset({"body", "offset", "text"})
+
+
+def _pack_labels(raw: Any, names: list, where: str, ctx: _Ctx) -> list:
+    """anim3d の ``labels``(物体に付いて動く文字のラベル)を検査して詰める。
+
+    ``[{"body": 物体の name, "offset": (3,) 物体のローカル座標の点(既定は原点), "text": 文字列の辞書}, ...]``。
+    ページでは、その点を毎コマ画面へ射影した位置に HTML の文字を重ねる(拡大しても文字の大きさは変わらない)。
+    画面の外・カメラの後ろに来たときは隠す。重なったときは list の後の方を隠す(並べる順 = 優先順)。未知の鍵・無い物体・形の違う offset・言語の欠けは ``ValueError``。
+    """
+    if not isinstance(raw, (list, tuple)):
+        raise ValueError("%s: labels は list" % where)
+    out = []
+    for j, lb in enumerate(raw):
+        wl = "%s.labels[%d]" % (where, j)
+        _keys(lb, _LABEL_KEYS, wl)
+        if lb.get("body") not in names:
+            raise ValueError("%s: 物体 %r が bodies に無い" % (wl, lb.get("body")))
+        off = _finite(lb.get("offset", (0.0, 0.0, 0.0)), wl + ".offset")
+        if off.shape != (3,):
+            raise ValueError("%s: offset は (3,)" % wl)
+        out.append({"b": names.index(lb["body"]), "o": [float("%.6g" % v) for v in off],
+                    "x": _bi(lb.get("text"), wl + ".text", ctx)})
+    return out
+
+
 def _pack_anim3d(tab: dict, out: dict, store: _Store, where: str, ctx: _Ctx) -> None:
     """kind "anim3d" を検査して詰める(物体のメッシュは 1 回、コマごとは姿勢だけ)。"""
     t = _finite(tab.get("t"), where + ".t")
@@ -801,6 +828,8 @@ def _pack_anim3d(tab: dict, out: dict, store: _Store, where: str, ctx: _Ctx) -> 
         out["follow"] = names.index(tab["follow"])
     if tab.get("camera") is not None:
         out["camera"] = _pack_camera(tab["camera"], T, where)
+    if tab.get("labels"):
+        out["labels"] = _pack_labels(tab["labels"], names, where, ctx)
     trails, R = [], None
     for j, tr in enumerate(tab.get("trails") or []):
         wt = "%s.trails[%d]" % (where, j)
@@ -2130,6 +2159,59 @@ function camNow(tab, S, f){
 """
 
 
+# 物体に付いて動く文字のラベル(anim3d の labels)を持つ場面だけ差し込む塊と、drawAnim の呼び出し。
+_JS_LABELS_OLD = """  gl.enable(gl.DEPTH_TEST); gl.disable(gl.BLEND); gl.clearColor(0.051, 0.067, 0.086, 1); gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+"""
+_JS_LABELS_NEW = """  drawLabels(tab, S, f, vp);
+""" + _JS_LABELS_OLD
+_JS_LABELS = r"""/* ---------- 物体に付いて動く文字のラベル(labels)。この塊は labels を持つ場面だけページに入る ----------
+   3-D の点(物体のローカル座標)を毎コマ画面へ射影し、canvas の上に HTML の文字を重ねる */
+let labelBox = null;
+function drawLabels(tab, S, f, vp){
+  if (!labelBox) {
+    labelBox = document.createElement('div');
+    labelBox.style.cssText = 'position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;overflow:hidden';
+    cv.parentElement.appendChild(labelBox);
+  }
+  const L_ = tab.labels || [];
+  while (labelBox.children.length < L_.length) {
+    const d = document.createElement('div');
+    d.style.cssText = 'position:absolute;transform:translate(-50%,-100%);padding:1px 6px;border-radius:4px;' +
+      'background:rgba(13,17,22,0.78);color:#e8eef4;font-size:12px;white-space:nowrap;border:1px solid rgba(255,255,255,0.25)';
+    labelBox.appendChild(d);
+  }
+  const W_ = cv.clientWidth, H_ = cv.clientHeight;
+  for (let i = 0; i < labelBox.children.length; i++) {
+    const d = labelBox.children[i];
+    if (i >= L_.length) { d.style.display = 'none'; continue; }
+    const lb = L_[i], o = f*S.B + lb.b;
+    const m = quatMat(S.Q[o*4], S.Q[o*4+1], S.Q[o*4+2], S.Q[o*4+3], S.X[o*3], S.X[o*3+1], S.X[o*3+2]), c = lb.o;
+    const w = [m[0]*c[0]+m[4]*c[1]+m[8]*c[2]+m[12], m[1]*c[0]+m[5]*c[1]+m[9]*c[2]+m[13], m[2]*c[0]+m[6]*c[1]+m[10]*c[2]+m[14], 1];
+    const q = [0, 0, 0, 0];
+    for (let r = 0; r < 4; r++) q[r] = vp[r]*w[0] + vp[4+r]*w[1] + vp[8+r]*w[2] + vp[12+r]*w[3];
+    if (q[3] <= 1e-9) { d.style.display = 'none'; continue; }
+    const x = (q[0]/q[3]*0.5 + 0.5) * W_, y = (1 - (q[1]/q[3]*0.5 + 0.5)) * H_;
+    if (x < -40 || x > W_ + 40 || y < 0 || y > H_ + 20) { d.style.display = 'none'; continue; }
+    d.style.display = ''; d.style.left = x.toFixed(1) + 'px'; d.style.top = y.toFixed(1) + 'px';
+    const tx = T(lb.x); if (d.textContent !== tx) d.textContent = tx;
+  }
+  /* 重なったら後のラベルを隠す(並べた順 = 優先順。寄ると離れて両方出る) */
+  const shown = [];
+  for (let i = 0; i < Math.min(L_.length, labelBox.children.length); i++) {
+    const d = labelBox.children[i]; if (d.style.display === 'none') continue;
+    const r = d.getBoundingClientRect();
+    if (shown.some(q => r.left < q.right && r.right > q.left && r.top < q.bottom && r.bottom > q.top)) { d.style.display = 'none'; continue; }
+    shown.push(r);
+  }
+}
+"""
+
+
+def _has_labels(data: dict) -> bool:
+    """詰めた仕様に labels を持つ anim3d のタブがあるか(あれば _JS_LABELS を差し込む)。"""
+    return any(t.get("kind") == "anim3d" and t.get("labels") for t in data.get("tabs", ()))
+
+
 def _has_camera(data: dict) -> bool:
     """詰めた仕様に camera を持つ anim3d のタブがあるか(あれば _JS_CAM を差し込む)。"""
     return any(t.get("kind") == "anim3d" and "camera" in t for t in data.get("tabs", ()))
@@ -2166,6 +2248,13 @@ def _build_html(spec: dict, lang="ja", detect_lang: bool = False) -> str:
         if js.count(_JS_ALPHA_ANCHOR) != 1:
             raise AssertionError("カメラの塊の差し込み位置が 1 回でない")
         js = js.replace(_JS_ALPHA_ANCHOR, _JS_CAM + _JS_ALPHA_ANCHOR)
+    if _has_labels(data):                                # ラベルを持つ場面だけ(無ければ今と同じページ)
+        if js.count(_JS_LABELS_OLD) != 1:
+            raise AssertionError("ラベルの呼び出し位置が 1 回でない")
+        js = js.replace(_JS_LABELS_OLD, _JS_LABELS_NEW)
+        if js.count(_JS_ALPHA_ANCHOR) != 1:
+            raise AssertionError("ラベルの塊の差し込み位置が 1 回でない")
+        js = js.replace(_JS_ALPHA_ANCHOR, _JS_LABELS + _JS_ALPHA_ANCHOR)
     css, body = _CSS, _BODY
     if "bh" in data:                                     # checks を持つ場面だけ(無ければ今と同じページ)
         for old, new in ((_JS_BH_ANCHOR, _JS_BH + _JS_BH_ANCHOR),) + _JS_BH_SUBS:
@@ -2278,7 +2367,7 @@ def viewer_split_tab(tab_id, label, badge, text, before, after, label_before, la
 
 def viewer_anim3d_tab(tab_id, label, badge, text, t, bodies, xyz, quat, trails=None, clouds=None,
                       events=None, series=None, panes=None, cbar=None, follow=None, numbers=None,
-                      view=None, checks=None, axis=None, lesson=None, camera=None) -> dict:
+                      view=None, checks=None, axis=None, lesson=None, camera=None, labels=None) -> dict:
     """動く 3-D のタブ: 物体ごとの剛体姿勢をコマごとに再生する(2-D の画像列・時系列も同じ時間軸で)。
 
     物体のメッシュは **1 回だけ** 持ち、コマごとには姿勢(位置 + 四元数)だけを持つ。ページでは
@@ -2338,6 +2427,10 @@ def viewer_anim3d_tab(tab_id, label, badge, text, t, bodies, xyz, quat, trails=N
         コマごとのカメラ ``{"dist": (T,) 距離(世界単位、正), "target": (T,3) 注視点}``。全体(1 km)から人(数 m)へ
         桁を何桁も変えて寄る場面を再生で見せる。向きはドラッグのまま、ホイールは距離の倍率。近い・遠いの切り取り面も
         距離に合わせる。この鍵を持つ場面だけ :data:`_JS_CAM` がページに入る(無いページは前と同じバイト列)。
+    labels : list of dict, optional
+        物体に付いて動く文字のラベル ``[{"body": name, "offset": (3,) ローカルの点, "text": 文字列の辞書}]``。
+        3-D の点を毎コマ画面へ射影した位置に HTML の文字を重ねる(拡大・寄りでも読める大きさのまま)。この鍵を持つ場面だけ
+        :data:`_JS_LABELS` がページに入る(無いページは前と同じバイト列)。
     lesson : dict, optional
         学習用の型。``{"question", "choices"(2〜3 個), "answer"(0 始まり), "explain", "formula", "limit"}``
         (文字列はすべて文字列の辞書)。カードは ① 問い → ② 予想(選択肢を押すと答えが開く)→ ③ 再生 の順、
@@ -2373,7 +2466,7 @@ def viewer_anim3d_tab(tab_id, label, badge, text, t, bodies, xyz, quat, trails=N
                 {"t": t, "bodies": list(bodies), "xyz": xyz, "quat": quat, "trails": list(trails or []),
                  "clouds": list(clouds or []), "events": list(events or []), "series": list(series or []),
                  "panes": list(panes or []), "cbar": cbar, "follow": follow, "view": view, "checks": checks,
-                 "axis": axis, "lesson": lesson, "camera": camera})
+                 "axis": axis, "lesson": lesson, "camera": camera, "labels": labels})
 
 
 def viewer_spec(viewer_id: str, title: dict, subtitle: dict, hint: dict, tabs, credit=None) -> dict:

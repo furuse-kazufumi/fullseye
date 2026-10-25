@@ -1442,15 +1442,6 @@
    "hi": "पारभासी खोल: वही ऊँचाइयाँ ×2 करके सतह के बाहर जोड़ी गईं",
    "fr": "coque translucide : les mêmes hauteurs ×2 ajoutées à l'extérieur de la surface"
   },
-  "Next to Itokawa (535 m long) stand true-scale yardsticks: this venue (Pacifico Yokohama), a 333 m tower, a football pitch, Hayabusa and a person. A person is only 0.3 % of the length, so playback zooms on a log scale from the whole asteroid (field of view 1,000 m high) down to the person (3 m) standing where Hayabusa touched down (estimated site TD1). The person stands against the effective gravity (the local 'up').": {
-   "ja": "イトカワ(長さ 535 m)の横に、実寸の物差しを置いた: いまいる会場(パシフィコ横浜)、高さ 333 m の塔、サッカー場、はやぶさ、そして人。人は長さの 0.3 % しかないので、再生すると全体(視野の縦の幅 1,000 m)から、はやぶさが降りた所(TD1 の推定位置)に立つ人(3 m)まで、対数の等間隔で寄っていく。人は実効重力の逆向き(その場所の「上」)に立っている。",
-   "zh": "在糸川（长 535 m）旁边放上了实际尺寸的标尺：现在所在的会场（Pacifico 横滨）、高 333 m 的塔、足球场、隼鸟号，以及一个人。人只有长度的 0.3 %，所以播放时会以对数等间隔，从整体（视野纵向宽度 1,000 m）一直拉近到站在隼鸟号着陆处（推定位置 TD1）的人（3 m）。人沿有效重力的反方向（当地的“上”）站立。",
-   "tw": "在糸川（長 535 m）旁邊放上了實際尺寸的標尺：現在所在的會場（Pacifico 橫濱）、高 333 m 的塔、足球場、隼鳥號，以及一個人。人只有長度的 0.3 %，所以播放時會以對數等間隔，從整體（視野縱向寬度 1,000 m）一直拉近到站在隼鳥號著陸處（推定位置 TD1）的人（3 m）。人沿有效重力的反方向（當地的「上」）站立。",
-   "ko": "이토카와(길이 535 m) 옆에 실제 크기의 잣대를 두었습니다: 지금 있는 회장(퍼시피코 요코하마), 높이 333 m의 탑, 축구장, 하야부사, 그리고 사람. 사람은 길이의 0.3 %에 불과하므로, 재생하면 전체(시야의 세로 폭 1,000 m)에서 하야부사가 내려앉은 곳(추정 위치 TD1)에 선 사람(3 m)까지 로그 등간격으로 다가갑니다. 사람은 유효 중력의 반대 방향(그곳의 '위')으로 서 있습니다.",
-   "de": "Neben Itokawa (535 m lang) stehen maßstabsgetreue Vergleichsobjekte: dieser Veranstaltungsort (Pacifico Yokohama), ein 333 m hoher Turm, ein Fußballfeld, Hayabusa und ein Mensch. Ein Mensch ist nur 0.3 % der Länge, daher zoomt die Wiedergabe logarithmisch vom ganzen Asteroiden (Sichtfeld 1,000 m hoch) bis zum Menschen (3 m), der dort steht, wo Hayabusa aufsetzte (geschätzter Punkt TD1). Der Mensch steht entgegen der effektiven Schwerkraft (dem örtlichen „Oben“).",
-   "hi": "इटोकावा (535 m लंबा) के पास असली माप के पैमाने रखे गए हैं: यह आयोजन-स्थल (पैसिफ़िको योकोहामा), 333 m ऊँचा एक मीनार, एक फ़ुटबॉल मैदान, हायाबुसा और एक व्यक्ति। व्यक्ति लंबाई का केवल 0.3 % है, इसलिए चलाने पर दृश्य पूरे क्षुद्रग्रह (दृश्य-क्षेत्र 1,000 m ऊँचा) से लघुगणकीय समान अंतराल में उस व्यक्ति (3 m) तक पास आता है जो हायाबुसा के उतरने की जगह (अनुमानित स्थल TD1) पर खड़ा है। व्यक्ति प्रभावी गुरुत्व के विपरीत (वहाँ के 'ऊपर') खड़ा है।",
-   "fr": "À côté d'Itokawa (535 m de long) se dressent des étalons à l'échelle réelle : ce lieu d'exposition (Pacifico Yokohama), une tour de 333 m, un terrain de football, Hayabusa et une personne. Une personne ne fait que 0.3 % de la longueur ; la lecture zoome donc sur une échelle logarithmique de l'astéroïde entier (champ de vision de 1,000 m de haut) jusqu'à la personne (3 m) debout là où Hayabusa s'est posé (site estimé TD1). La personne se tient à l'opposé de la pesanteur effective (le « haut » local)."
-  },
   "Itokawa's length ÷ the venue's length (obb)": {
    "ja": "イトカワの長さ ÷ 会場の長さ(obb)",
    "zh": "糸川的长度 ÷ 会场的长度（obb）",
@@ -1522,6 +1513,69 @@
    "de": "Form: Gaskell Itokawa Shape Model V1.1 (R. Gaskell et al., aus AMICA-Bildern von Hayabusa [JAXA]), NASA PDS Small Bodies Node, CC0 1.0 (Widmung an die Gemeinfreiheit). Die Version Q = 64 (25,350 Eckpunkte, 49,152 Flächen, Einheit km, z = Rotationspol, x = Länge 0), Eckpunktnummern ab 0 und ungenutzte doppelte Eckpunkte entfernt. Zahlen: Fujiwara et al. 2006, Abe et al. 2006, Demura et al. 2006 (alle Science 312), Lowry et al. 2014 (A&A 562), Yano & Aida 2013. Schwerkraftformel: Werner & Scheeres 1997. Form des Veranstaltungsorts: erstellt durch Bearbeitung von „3D City Model (Project PLATEAU) Yokohama City (FY2020)“ (MLIT) (Public Data License 1.0; Urheberrecht Stadt Yokohama; 7 Teile des CityGML LOD2 als Dreiecksnetz in lokalen Koordinaten).",
    "hi": "आकार: Gaskell Itokawa Shape Model V1.1 (R. Gaskell et al., हायाबुसा [JAXA] की AMICA तस्वीरों से), NASA PDS Small Bodies Node, CC0 1.0 (सार्वजनिक डोमेन को समर्पण)। Q = 64 संस्करण (25,350 शीर्ष, 49,152 फलक, इकाई km, z = घूर्णन ध्रुव, x = देशांतर 0), शीर्ष संख्याएँ 0 से शुरू की गईं और अप्रयुक्त दोहरे शीर्ष हटाए गए। संख्याएँ: Fujiwara et al. 2006, Abe et al. 2006, Demura et al. 2006 (सभी Science 312), Lowry et al. 2014 (A&A 562), Yano & Aida 2013। गुरुत्व सूत्र: Werner & Scheeres 1997। आयोजन-स्थल का आकार: '3D City Model (Project PLATEAU) Yokohama City (FY2020)' (MLIT) को संसाधित करके बनाया गया (Public Data License 1.0; कॉपीराइट योकोहामा शहर; CityGML LOD2 के 7 भागों को स्थानीय निर्देशांकों में त्रिभुज mesh बनाया गया)।",
    "fr": "Forme : Gaskell Itokawa Shape Model V1.1 (R. Gaskell et al., à partir des images AMICA de Hayabusa [JAXA]), NASA PDS Small Bodies Node, CC0 1.0 (dédicace au domaine public). La version Q = 64 (25,350 sommets, 49,152 faces, unité km, z = pôle de rotation, x = longitude 0), numéros de sommets à partir de 0 et sommets dupliqués inutilisés supprimés. Chiffres : Fujiwara et al. 2006, Abe et al. 2006, Demura et al. 2006 (tous Science 312), Lowry et al. 2014 (A&A 562), Yano & Aida 2013. Formule de gravité : Werner & Scheeres 1997. Forme du lieu : créée en traitant « 3D City Model (Project PLATEAU) Yokohama City (FY2020) » (MLIT) (Public Data License 1.0 ; droits d'auteur Ville de Yokohama ; 7 parties du CityGML LOD2 converties en maillage triangulaire en coordonnées locales)."
+  },
+  "Next to Itokawa (535 m long) stand true-scale yardsticks: this venue (Pacifico Yokohama), a 333 m tower, a football pitch, Hayabusa and a person. A person is only 0.3 % of the length, so playback zooms on a log scale from the whole asteroid (field of view 1231 m high) down to the person (3 m) standing where Hayabusa touched down (estimated site TD1). The person stands against the effective gravity (the local 'up'). Each object carries a label with its name and size.": {
+   "ja": "イトカワ(長さ 535 m)の横に、実寸の物差しを置いた: いまいる会場(パシフィコ横浜)、高さ 333 m の塔、サッカー場、はやぶさ、そして人。人は長さの 0.3 % しかないので、再生すると全体(視野の縦の幅 1231 m)から、はやぶさが降りた所(TD1 の推定位置)に立つ人(3 m)まで、対数の等間隔で寄っていく。人は実効重力の逆向き(その場所の「上」)に立っている。物にはそれぞれ名前と大きさのラベルが付いている。",
+   "zh": "在糸川（长 535 m）旁边放上了实际尺寸的标尺：现在所在的会场（Pacifico 横滨）、高 333 m 的塔、足球场、隼鸟号，以及一个人。人只有长度的 0.3 %，所以播放时会以对数等间隔，从整体（视野纵向宽度 1231 m）一直拉近到站在隼鸟号着陆处（推定位置 TD1）的人（3 m）。人沿有效重力的反方向（当地的“上”）站立。每个物体都带有名称和大小的标签。",
+   "tw": "在糸川（長 535 m）旁邊放上了實際尺寸的標尺：現在所在的會場（Pacifico 橫濱）、高 333 m 的塔、足球場、隼鳥號，以及一個人。人只有長度的 0.3 %，所以播放時會以對數等間隔，從整體（視野縱向寬度 1231 m）一直拉近到站在隼鳥號著陸處（推定位置 TD1）的人（3 m）。人沿有效重力的反方向（當地的「上」）站立。每個物體都帶有名稱與大小的標籤。",
+   "ko": "이토카와(길이 535 m) 옆에 실제 크기의 잣대를 두었습니다: 지금 있는 회장(퍼시피코 요코하마), 높이 333 m의 탑, 축구장, 하야부사, 그리고 사람. 사람은 길이의 0.3 %에 불과하므로, 재생하면 전체(시야의 세로 폭 1231 m)에서 하야부사가 내려앉은 곳(추정 위치 TD1)에 선 사람(3 m)까지 로그 등간격으로 다가갑니다. 사람은 유효 중력의 반대 방향(그곳의 '위')으로 서 있습니다. 물체마다 이름과 크기의 라벨이 붙어 있습니다.",
+   "de": "Neben Itokawa (535 m lang) stehen maßstabsgetreue Vergleichsobjekte: dieser Veranstaltungsort (Pacifico Yokohama), ein 333 m hoher Turm, ein Fußballfeld, Hayabusa und ein Mensch. Ein Mensch ist nur 0.3 % der Länge, daher zoomt die Wiedergabe logarithmisch vom ganzen Asteroiden (Sichtfeld 1231 m hoch) bis zum Menschen (3 m), der dort steht, wo Hayabusa aufsetzte (geschätzter Punkt TD1). Der Mensch steht entgegen der effektiven Schwerkraft (dem örtlichen „Oben“). Jedes Objekt trägt ein Etikett mit Namen und Größe.",
+   "hi": "इटोकावा (535 m लंबा) के पास असली माप के पैमाने रखे गए हैं: यह आयोजन-स्थल (पैसिफ़िको योकोहामा), 333 m ऊँचा एक मीनार, एक फ़ुटबॉल मैदान, हायाबुसा और एक व्यक्ति। व्यक्ति लंबाई का केवल 0.3 % है, इसलिए चलाने पर दृश्य पूरे क्षुद्रग्रह (दृश्य-क्षेत्र 1231 m ऊँचा) से लघुगणकीय समान अंतराल में उस व्यक्ति (3 m) तक पास आता है जो हायाबुसा के उतरने की जगह (अनुमानित स्थल TD1) पर खड़ा है। व्यक्ति प्रभावी गुरुत्व के विपरीत (वहाँ के 'ऊपर') खड़ा है। हर वस्तु पर उसके नाम और माप का लेबल है।",
+   "fr": "À côté d'Itokawa (535 m de long) se dressent des étalons à l'échelle réelle : ce lieu d'exposition (Pacifico Yokohama), une tour de 333 m, un terrain de football, Hayabusa et une personne. Une personne ne fait que 0.3 % de la longueur ; la lecture zoome donc sur une échelle logarithmique de l'astéroïde entier (champ de vision de 1231 m de haut) jusqu'à la personne (3 m) debout là où Hayabusa s'est posé (site estimé TD1). La personne se tient à l'opposé de la pesanteur effective (le « haut » local). Chaque objet porte une étiquette avec son nom et sa taille."
+  },
+  "Itokawa 535 m": {
+   "ja": "イトカワ 535 m",
+   "zh": "糸川 535 m",
+   "tw": "糸川 535 m",
+   "ko": "이토카와 535 m",
+   "de": "Itokawa 535 m",
+   "hi": "इटोकावा 535 m",
+   "fr": "Itokawa 535 m"
+  },
+  "the venue (Pacifico Yokohama) 694 m": {
+   "ja": "会場(パシフィコ横浜) 694 m",
+   "zh": "会场（Pacifico 横滨）694 m",
+   "tw": "會場（Pacifico 橫濱）694 m",
+   "ko": "회장(퍼시피코 요코하마) 694 m",
+   "de": "Veranstaltungsort (Pacifico Yokohama) 694 m",
+   "hi": "आयोजन-स्थल (पैसिफ़िको योकोहामा) 694 m",
+   "fr": "le lieu (Pacifico Yokohama) 694 m"
+  },
+  "tower 333 m": {
+   "ja": "塔 333 m",
+   "zh": "塔 333 m",
+   "tw": "塔 333 m",
+   "ko": "탑 333 m",
+   "de": "Turm 333 m",
+   "hi": "मीनार 333 m",
+   "fr": "tour 333 m"
+  },
+  "football pitch 105 m": {
+   "ja": "サッカー場 105 m",
+   "zh": "足球场 105 m",
+   "tw": "足球場 105 m",
+   "ko": "축구장 105 m",
+   "de": "Fußballfeld 105 m",
+   "hi": "फ़ुटबॉल मैदान 105 m",
+   "fr": "terrain de football 105 m"
+  },
+  "Hayabusa 5.7 m": {
+   "ja": "はやぶさ 5.7 m",
+   "zh": "隼鸟号 5.7 m",
+   "tw": "隼鳥號 5.7 m",
+   "ko": "하야부사 5.7 m",
+   "de": "Hayabusa 5.7 m",
+   "hi": "हायाबुसा 5.7 m",
+   "fr": "Hayabusa 5.7 m"
+  },
+  "person 1.7 m": {
+   "ja": "人 1.7 m",
+   "zh": "人 1.7 m",
+   "tw": "人 1.7 m",
+   "ko": "사람 1.7 m",
+   "de": "Mensch 1.7 m",
+   "hi": "व्यक्ति 1.7 m",
+   "fr": "personne 1.7 m"
   }
  }
 }

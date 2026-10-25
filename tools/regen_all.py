@@ -294,6 +294,9 @@ _IMAGE_REASON = ("画像・動画の書き手。PNG/GIF のバイトは Pillow �
 _SPIKE_REASON = ("スパイク(実験)の記録。spikes/out_gallery/ の図は当時の証跡として凍結してあり、"
                  "再描画(matplotlib / GUI)はバイトが変わる。")
 EXCLUDED = {
+    "tools/check_page_overflow.py": ("門(生成器ではない): pocviewer のページを幅 390 px の iframe に入れて headless Chrome で開き、全タブ × 全言語の"
+                                     "横はみ出しを測る。書くのは一時フォルダの計測用の写しだけで、repo には何も書かない。Chrome が要るので手で回す"
+                                     "(tests/test_itokawa_page_overflow_2026_10_25.py、Chrome が無ければ skip)。"),
     "tools/build_itokawa_anim3d.py": ("小惑星イトカワの重力の動く 3-D の教材(docs/anim3d/itokawa_gravity.html)。"
                                       "pocviewer.write_viewer で書く手回しの生成物で、polyhedron_gravity を頂点 2.5 万個 × 面 4.9 万枚で"
                                       "回すので数分かかる(結果は out/ に入力のハッシュで保存)。commit するページは 8 言語版で、"
