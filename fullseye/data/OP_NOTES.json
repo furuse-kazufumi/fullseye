@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3567,
- "n_notes": 3573,
+ "n_ops": 3568,
+ "n_notes": 3574,
  "notes": {
   "vol_dilate": [
    {
@@ -18629,6 +18629,16 @@
     "category": "japan",
     "out": "any",
     "path": "docs/ops/drive/japan/osm_synthetic.md"
+   }
+  ],
+  "plateau_lod2_mesh": [
+   {
+    "op": "plateau_lod2_mesh",
+    "dim": "drive",
+    "category": "japan",
+    "in": "any",
+    "out": "table",
+    "path": "docs/ops/drive/japan/plateau_lod2_mesh.md"
    }
   ],
   "plateau_parse": [

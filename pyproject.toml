@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "fullseye"
 version = "0.8.1"
-description = "Numpy-native operator library for vision, 3-D and measurement (3,567 typed ops in the machine-readable index: imaging, point clouds, optics, tomography, metrology) with an evolutionary pipeline designer and honest holdout gating"
+description = "Numpy-native operator library for vision, 3-D and measurement (3,568 typed ops in the machine-readable index: imaging, point clouds, optics, tomography, metrology) with an evolutionary pipeline designer and honest holdout gating"
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "Apache-2.0" }
@@ -141,6 +141,9 @@ py-modules = [
   # accel_match / match3d / feat_* — it MUST ship or those modules ImportError
   # on a pip install (it keeps `import torch`, ~700 ms, off every start-up).
   "api", "param_specs", "ops", "backend_safe", "torch_lazy",
+  # ★2026-10-25: numpy_twins は backends_auto / backends_filters2 / backends_regions2 が import する
+  #   (scikit-image の無い環境の双子)。py-modules に無いと wheel から落ちて 3 backend ごと消える。
+  "numpy_twins",
   # opnames: canonical op-name aliases (phase 1 of the naming cleanup, 2026-10-07). api / opassist /
   # imgevolve / the fullseye facade import it, so it must ship.
   "opnames",

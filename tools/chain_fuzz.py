@@ -3589,6 +3589,12 @@ def _b_polygon_arg(pool, rng):
     return (_fuzz_japan()["square"],), {}
 
 
+def _b_plateau_lod2_mesh(pool, rng):
+    """LOD2 の最小 CityGML(切妻屋根の本体 + 穴あき屋根の部位)。"""
+    import driveplateau as PL
+    return (PL._citygml_lod2_example(with_hole=bool(rng.integers(0, 2))),), {}
+
+
 _FUZZ_CR = {}
 
 
@@ -7455,7 +7461,7 @@ OP_ARG_BUILDERS = {
     "latlon_to_local": _b_latlon_to_local, "jp_sign_stop_mesh": _b_jp_mesh, "jp_crossbuck_mesh": _b_jp_mesh, "jp_pole_mesh": _b_jp_mesh,
     "jp_mirror_mesh": _b_jp_mesh, "jp_stop_marking_mesh": _b_jp_mesh, "jp_stop_marking_length": _b_jp_mesh,
     "citygml_synthetic": _b_citygml_synthetic, "plateau_parse": _b_plateau_parse, "buildings_in_box": _b_buildings_in_box,
-    "building_prisms": _b_building_prisms, "prism_mesh": _b_prism_mesh, "triangulate_polygon": _b_polygon_arg, "polygon_area": _b_polygon_arg,
+    "building_prisms": _b_building_prisms, "prism_mesh": _b_prism_mesh, "triangulate_polygon": _b_polygon_arg, "polygon_area": _b_polygon_arg, "plateau_lod2_mesh": _b_plateau_lod2_mesh,
     "cr_synthetic": _b_cr_synthetic, "cr_read": _b_cr_read, "cr_route": _b_cr_route, "ks_step": _b_ks_step, "cr_drive": _b_cr_drive,
     "cr_drive_sweep": _b_cr_scene_arg, "cr_feasible": _b_cr_feasible, "cr_collision": _b_cr_scene_run, "cr_solution_xml": _b_cr_scene_run,
     "cr_checker_result": _b_cr_checker_result,

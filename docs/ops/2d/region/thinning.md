@@ -40,7 +40,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 分岐点周辺などで結果がわずかに違うことがある。HALCON の ``thinning``
 （Remove the result of a hit-or-miss operation from a region.）の代役。
 
-``a``, ``b`` は未使用。skimage が無い環境ではこの分岐は呼べない。
+``a``, ``b`` は未使用。scikit-image が無い環境では同じ答えを返す numpy の双子(``numpy_twins``)で計算する(bit 一致を門で確かめている)。
 
 **端の扱い**: 画像の外側は背景(0)とみなす(実測。`tools/impl2/border_probe.py`)。
 
