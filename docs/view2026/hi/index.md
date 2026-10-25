@@ -75,7 +75,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_microns_brain_wave/04_wave_on_wiring.gif"><img src="../thumbs/poc_microns_brain_wave.jpg" alt="Mouse cortex wave" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Mouse cortex wave</span></a>
 <a href="../../articles/assets/media/evis_stereo_fullseye.mp4"><img src="../thumbs/evis_stereo_depth.jpg" alt="Humanoid stereo eyes" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Humanoid stereo eyes</span></a>
 <a href="../../articles/assets/media/evis_bean_track_fullseye.mp4"><img src="../thumbs/evis_bean_track.jpg" alt="Chopstick-cam tracking" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Chopstick-cam tracking</span></a>
-<a href="../../view2026/anim3d/interactive_anim3d_viewer.html?lang=hi"><img src="../thumbs/interactive_anim3d_viewer.jpg" alt="Arm और अर्ध-पारदर्शी lens" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Arm और अर्ध-पारदर्शी lens · 0.4 MB</span></a>
+<a href="../../view2026/anim3d/interactive_anim3d_viewer.html?lang=hi"><img src="../thumbs/interactive_anim3d_viewer.jpg" alt="Arm और अर्ध-पारदर्शी lens" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Arm और अर्ध-पारदर्शी lens · 0.3 MB</span></a>
 </div>
 
 ## Article series (Qiita पर English articles)
@@ -657,7 +657,7 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 
 **घुमाकर देखें: चलता 3-D**
 
-- [Arm और अर्ध-पारदर्शी lens](../../view2026/anim3d/interactive_anim3d_viewer.html?lang=hi) (चलता 3-D, drag से घुमाएँ, 0.4 MB): उंगली से घुमाकर किसी भी कोण से देखें कि arm box कैसे ले जाता है। किरणें अर्ध-पारदर्शी lens से होकर focus पर मिलती हैं, और नीचे ऊपर से ली गई height image और उसका binarisation उसी timeline पर चलते हैं। [source](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
+- [Arm और अर्ध-पारदर्शी lens](../../view2026/anim3d/interactive_anim3d_viewer.html?lang=hi) (चलता 3-D, drag से घुमाएँ, 0.3 MB): उंगली से घुमाकर किसी भी कोण से देखें कि arm box कैसे ले जाता है। किरणें अर्ध-पारदर्शी lens से होकर focus पर मिलती हैं, और नीचे ऊपर से ली गई height image और उसका binarisation उसी timeline पर चलते हैं। [source](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
 
 </div>
 

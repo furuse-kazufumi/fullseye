@@ -75,7 +75,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_microns_brain_wave/04_wave_on_wiring.gif"><img src="../thumbs/poc_microns_brain_wave.jpg" alt="마우스 시각피질 파동" loading="lazy" width="320" height="320"><b>&#9654;</b><span>마우스 시각피질 파동</span></a>
 <a href="../../articles/assets/media/evis_stereo_fullseye.mp4"><img src="../thumbs/evis_stereo_depth.jpg" alt="휴머노이드 두 눈" loading="lazy" width="320" height="320"><b>&#9654;</b><span>휴머노이드 두 눈</span></a>
 <a href="../../articles/assets/media/evis_bean_track_fullseye.mp4"><img src="../thumbs/evis_bean_track.jpg" alt="젓가락 끝 카메라 추적" loading="lazy" width="320" height="320"><b>&#9654;</b><span>젓가락 끝 카메라 추적</span></a>
-<a href="../../view2026/anim3d/interactive_anim3d_viewer.html?lang=ko"><img src="../thumbs/interactive_anim3d_viewer.jpg" alt="로봇 팔과 반투명 렌즈" loading="lazy" width="320" height="320"><b>&#9654;</b><span>로봇 팔과 반투명 렌즈 · 0.4 MB</span></a>
+<a href="../../view2026/anim3d/interactive_anim3d_viewer.html?lang=ko"><img src="../thumbs/interactive_anim3d_viewer.jpg" alt="로봇 팔과 반투명 렌즈" loading="lazy" width="320" height="320"><b>&#9654;</b><span>로봇 팔과 반투명 렌즈 · 0.3 MB</span></a>
 </div>
 
 ## 시리즈 기사 (Qiita의 영어 기사)
@@ -657,7 +657,7 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 
 **돌려 볼 수 있는 움직이는 3-D**
 
-- [로봇 팔과 반투명 렌즈](../../view2026/anim3d/interactive_anim3d_viewer.html?lang=ko) (움직이는 3-D, 드래그로 회전, 0.4 MB): 손가락으로 돌려 로봇 팔이 상자를 옮기는 모습을 원하는 방향에서 본다. 광선이 반투명 렌즈를 지나 초점에 모이고, 아래에서는 위에서 본 높이 영상과 그 이진화가 같은 시간축으로 진행된다. [소스](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
+- [로봇 팔과 반투명 렌즈](../../view2026/anim3d/interactive_anim3d_viewer.html?lang=ko) (움직이는 3-D, 드래그로 회전, 0.3 MB): 손가락으로 돌려 로봇 팔이 상자를 옮기는 모습을 원하는 방향에서 본다. 광선이 반투명 렌즈를 지나 초점에 모이고, 아래에서는 위에서 본 높이 영상과 그 이진화가 같은 시간축으로 진행된다. [소스](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
 
 </div>
 

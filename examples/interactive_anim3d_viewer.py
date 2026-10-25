@@ -381,7 +381,13 @@ def main(argv=None) -> int:
         bound = float(np.linalg.norm(stepx / 2) + ang * LG)
         raw = sum(np.asarray(x).nbytes for x in (depth, mask))
         png = sum(len(s) * 3 // 4 for k in (tb["panes"][0]["frames"], tb["panes"][1]["frames"]) for s in A_[k]["png"])
-        same = all(np.array_equal(pv._decode_array(A_[p["frames"]]), src) for p, src in zip(tb["panes"], (depth, mask)))
+        # 同じコマは 1 回だけ持つ(dedupe、既定): 索引 index があればコマごとに引き直して T コマに戻す
+        def restore(p):
+            fr = pv._decode_array(A_[p["frames"]])
+            return fr[np.asarray(p["index"])] if "index" in p else fr
+
+        same = all(np.array_equal(restore(p), src) for p, src in zip(tb["panes"], (depth, mask)))
+        stored = [len(pv._decode_array(A_[p["frames"]])) for p in tb["panes"]]
         pose_b = (len(bx.ravel()) * 2 + len(bq.ravel()) * 2)
         print("書いた: %s(%.0f KB、ja+en、物体 %d・コマ %d)" % (path if a.out else "一時フォルダ", os.path.getsize(path) / 1e3,
                                                          len(bodies), T))
@@ -389,7 +395,8 @@ def main(argv=None) -> int:
               "四元数の角度の誤差は最大 %.1e rad" % (pose_b, wx, ang))
         print("手先の点のずれ: 最大 %.1f µm(刻みから見積もった上限 %.1f µm)" % (tip_err * 1e6, bound * 1e6))
         print("2-D: 生の u8 なら %.0f KB → 無損失 PNG で %.0f KB(%.1f 分の 1)、画素ごとに一致: %s"
-              % (raw / 1e3, png / 1e3, raw / max(png, 1), same))
+              "(持ったコマ: %s / %d、同じ絵は 1 回だけ)"
+              % (raw / 1e3, png / 1e3, raw / max(png, 1), same, " + ".join(map(str, stored)), T))
         assert wx <= 1.0 + 1e-9, wx
         assert ang < 1e-4, ang
         assert tip_err <= bound + 1e-12, (tip_err, bound)
