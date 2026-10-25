@@ -55,7 +55,9 @@ def test_subset_ledger_is_measured_and_in_registry(subset):
     assert not missing, "台帳にあって registry に無い op: %s" % missing[:10]
     assert all(r["verdict"] in ("bit_identical", "nonarray_equal") or r["verdict"].startswith("within_") for r in subset["ops"])
     loose = [r for r in subset["ops"] if r["verdict"].startswith("within_") and r["verdict"] != "within_1ulp"]
-    assert all(r["max_ulp"] <= 4 and r["max_abs"] <= 1e-12 for r in loose), "台帳の緩い側は 4 ULP / 1e-12 まで"
+    # loose は 0 件でもよい(within_1ulp より緩い op が無いのは良いこと)ので、違反の側を数える
+    bad = [r["name"] for r in loose if not (r["max_ulp"] <= 4 and r["max_abs"] <= 1e-12)]
+    assert not bad, "台帳の緩い側は 4 ULP / 1e-12 まで: %s" % bad[:10]
 
 
 def test_gate_recipes_are_all_in_subset(subset):
@@ -125,6 +127,7 @@ def test_run_chain_cards_and_errors(subset, img):
     r = core.run_chain(img, json.dumps([["gaussian", 0.4, 0.5], ["otsu", 0.4, 0.5], ["count_obj", 0.5, 0.5]]), "region overlay")
     assert [c["op"] for c in r["cards"]] == [None, "gaussian", "otsu", "count_obj"]
     assert r["cards"][1]["kind"] == "image" and r["cards"][3]["kind"] == "text" and r["error"] is None
+    assert len(r["cards"]) == 4, "4 枚(入力 + 3 段)でなければ下の全数表明は空振りする"
     assert all(isinstance(c["ms"], float) for c in r["cards"][1:])
     probs = json.loads(core.diagnose(json.dumps([["otsu", 0.4, 0.5], ["gaussian", 0.4, 0.5]])))
     assert probs and "sort_mismatch" in probs[0]
@@ -134,6 +137,7 @@ def test_i18n_has_all_pocviewer_langs():
     with open(os.path.join(LITE, "i18n.json"), encoding="utf-8") as f:
         d = json.load(f)
     assert tuple(d["langs"]) == tuple(pocviewer.LANGS)
+    assert len(d["strings"]) >= 35, "文字列の鍵が減った(空の strings は下の表明を素通りさせる)"
     for k, v in d["strings"].items():
         missing = [lang for lang in pocviewer.LANGS if not v.get(lang)]
         assert not missing, "%s に無い言語 %s" % (k, missing)
