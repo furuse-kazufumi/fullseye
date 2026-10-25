@@ -93,16 +93,16 @@ def test_two_density_model_reproduces_lowry_2014(mesh):
 def test_page_structure_badges_checks_lessons(page):
     html, data = page
     tabs = data["tabs"]
-    assert [t["id"] for t in tabs] == ["shape", "gravity", "muses", "limit", "math"]
+    assert [t["id"] for t in tabs] == ["size", "shape", "gravity", "muses", "limit", "math"]
     assert tabs[0]["badge"] != "limit"
     badges = {t["id"]: t["badge"] for t in tabs}
     assert badges["limit"] == "limit" and all(b == "passed" for k, b in badges.items() if k != "limit")
-    assert len(tabs) == 5
+    assert len(tabs) == 6
     for t in tabs:
         assert t["checks"] and t["lesson"] and t["axis"], t["id"]
         if t["badge"] == "passed":
             assert all(r["ok"] for r in t["checks"]), t["id"]
-    assert any(not r["ok"] for r in tabs[3]["checks"])          # 限界の回は落ちる行を正直に出す
+    assert any(not r["ok"] for r in tabs[4]["checks"])          # 限界の回は落ちる行を正直に出す
     credit = json.dumps(data.get("credit"), ensure_ascii=False)
     assert "CC0 1.0" in credit and "Gaskell" in credit and "NASA PDS" in credit
 
@@ -157,7 +157,7 @@ def test_ops_named_on_screen_exist_and_are_registered():
     m = _tool()
     import fullseye as fs
     import opsdrive
-    assert len(m.OPS_USED) == 10
+    assert len(m.OPS_USED) == 12
     for full in m.OPS_USED:
         mod, name = full.split(".")
         assert callable(getattr(importlib.import_module(mod), name)), full

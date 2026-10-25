@@ -93,9 +93,25 @@ TD_SITES = {                                  # Yano & Aida 2013 の推定(緯�
     "TD2": ((-10.0, -1.0), (331.0, 333.0)),
 }
 
+# ---- 大きさの比較(2026-10-25、ユーザーの案「イトカワと人のサイズの比較」) ---------------------------- #
+PERSON_H = 1.7                                # 人の背丈 [m](目の高さもこの値で地平線を出す)
+HAYABUSA_CORE = (1.0, 1.1, 1.6)               # はやぶさの本体 [m](JAXA ISAS の探査機の頁: "Core 1.0m x 1.1m x 1.6m")
+HAYABUSA_SPAN = 5.7                           # 太陽電池パドルを開いた全幅 [m](同じ頁: "5.7m full width")
+HAYABUSA_PANEL_CHORD = 1.0                    # パドルの幅 [m](頁に値が無いので模式。門は本体と全幅だけを見る)
+PITCH = (105.0, 68.0)                         # サッカー場 [m]
+TOWER_H, TOWER_BASE, TOWER_TOP = 333.0, 40.0, 6.0   # 高さ 333 m の塔(一般の塔の模式。実在の建物の形は写さない)
+EARTH_R = 6371008.8                           # 地球の平均半径 [m](IUGG)。同じ目の高さで地球なら地平線は √(2Rh)
+CURV_SMOOTH_ITERS = 30                        # 曲率半径を出す前の Taubin 平滑化の回数(岩の凹凸を落とし、形の曲がりだけ残す)
+QUAD_RADIUS = 20.0                            # 独立な曲率半径(2 次曲面の当てはめ)に使う近傍の半径 [m]
+FOV_Y = 0.9                                   # pocviewer の縦の画角 [rad](視野の縦の幅 = 2 d tan(FOV_Y/2))
+#: 会場(パシフィコ横浜)の実寸の形(MLIT PLATEAU、別の枝 feat/plateau-citygml-2026-10-25 が data/plateau_yokohama/ に用意中)。
+#: ★ここは空けてある: 資産がまだ無いので、作った箱で代用しない(届いたらこの枠に読み込みと門を足す)。
+VENUE_SLOT = "data/plateau_yokohama/"
+
 OPS_USED = ("polygrav.polyhedron_gravity", "polygrav.polyhedron_clip_halfspace", "mesh_props.mesh_volume",
             "mesh_props.mesh_area", "mesh_props.vertex_normals", "mesh_props.face_areas", "pcseg.obb",
-            "meshres.mesh_edge_stats", "printpath.mesh_slice_contours", "render3d.geodesic_dome")
+            "meshres.mesh_edge_stats", "printpath.mesh_slice_contours", "render3d.geodesic_dome",
+            "mesh_smooth.taubin_smooth", "mesh_props.vertex_curvature")
 
 ROCK_RGB = (0.64, 0.60, 0.53)
 N_CHUNK = 24                                  # 数学のタブの塊の数
@@ -223,7 +239,68 @@ def compute(verbose=True):
     R["grains"] = grains(V, F, phi, VN)
     R["limit"] = two_density(R)
     R["chunks"] = tetra_chunks(V, F, com)
+    R["size"] = size_compare(R)
     return R
+
+
+def _tangent_frame(up):
+    t1 = np.cross(up, [0.0, 0.0, 1.0])
+    if np.linalg.norm(t1) < 1e-6:
+        t1 = np.cross(up, [1.0, 0.0, 0.0])
+    t1 /= np.linalg.norm(t1)
+    return t1, np.cross(up, t1)
+
+
+def size_compare(R):
+    """はやぶさが降りた所(TD1 の推定位置)に人が立つ: 地平線までの距離と、落とした球が足元に届く時間。
+
+    * 曲率半径 R1: Taubin 平滑化(taubin_smooth)で数 m の岩の凹凸を落とした形の平均曲率(vertex_curvature)の逆数。
+    * 独立な R2: その場所の 20 m 以内の頂点に 2 次曲面 z = a x² + b xy + c y² + … を当てはめた平均曲率の逆数。
+    * 地平線 d = √((R+h)² − R²) = √(2Rh + h²)(球の上の目の高さ h)。
+    * 落ちる時間: 足元の実効重力 g(polyhedron_gravity)で t = √(2h/g)。門は、目の高さまでの 9 点で op を回した
+      重力の列を、4 次 Runge–Kutta で積分した時間(重力が高さで変わる分も入る、式とは別の経路)。
+    """
+    V, F, VN, hf = R["V"], R["F"], R["VN"], R["hf"]
+    k = R["sites"]["TD1"]["k"]
+    up = -hf["eff_acceleration"][k] / np.linalg.norm(hf["eff_acceleration"][k])     # 立つ向き = 実効重力の逆
+    t1, t2 = _tangent_frame(up)
+    Vs, _ = L.taubin_smooth((V, F), iters=CURV_SMOOTH_ITERS)
+    H = L.vertex_curvature((np.asarray(Vs), F))
+    R1 = float(1.0 / H[k])
+    n = VN[k]
+    a1, a2 = _tangent_frame(n)
+    d = V - V[k]
+    nb = np.flatnonzero(np.linalg.norm(d, axis=1) < QUAD_RADIUS)
+    x, y, z = d[nb] @ a1, d[nb] @ a2, d[nb] @ n
+    co = np.linalg.lstsq(np.c_[x * x, x * y, y * y, x, y, np.ones_like(x)], z, rcond=None)[0]
+    R2 = float(-1.0 / (co[0] + co[2]))                           # 外向きの法線で凸なら z は下がる(係数が負)
+    h = PERSON_H
+    hor = math.sqrt(2.0 * R1 * h + h * h)
+    hor2 = math.sqrt(2.0 * R2 * h)
+    g_site = float(np.linalg.norm(hf["eff_acceleration"][k]))
+    t_fall = math.sqrt(2.0 * h / g_site)
+    hs = np.linspace(0.0, h, 9)
+    gl = pg.polyhedron_gravity((V, F), V[k][None, :] + hs[:, None] * up[None, :], density=RHO, omega=OMEGA)
+    gz = -(gl["effective_acceleration"] @ up)                    # 下向き(−up)の成分
+    gfun = lambda zz: float(np.interp(zz, hs, gz))
+    zz, vv, tt, dt = h, 0.0, 0.0, t_fall / 4000.0
+    while zz > 0.0:
+        def acc(z_):
+            return -gfun(z_)
+        k1z, k1v = vv, acc(zz)
+        k2z, k2v = vv + 0.5 * dt * k1v, acc(zz + 0.5 * dt * k1z)
+        k3z, k3v = vv + 0.5 * dt * k2v, acc(zz + 0.5 * dt * k2z)
+        k4z, k4v = vv + dt * k3v, acc(zz + dt * k3z)
+        nz = zz + dt / 6.0 * (k1z + 2 * k2z + 2 * k3z + k4z)
+        nv = vv + dt / 6.0 * (k1v + 2 * k2v + 2 * k3v + k4v)
+        if nz <= 0.0:
+            tt += dt * zz / (zz - nz)
+            zz = 0.0
+            break
+        zz, vv, tt = nz, nv, tt + dt
+    return {"k": k, "up": up, "t1": t1, "t2": t2, "R1": R1, "R2": R2, "horizon": hor, "horizon_check": hor2,
+            "horizon_earth": math.sqrt(2.0 * EARTH_R * h), "g_site": g_site, "t_fall": t_fall, "t_fall_num": tt,
+            "g_var": float(np.ptp(gz) / np.mean(gz)), "length_ratio": float(R["dims"][0] / PERSON_H)}
 
 
 def walk_path(V, F):
@@ -447,6 +524,17 @@ def gates(R) -> dict:
     g["tetra_apex_outside_rel"] = float(abs(np.einsum("ij,ij->i", a, np.cross(b, d)).sum() / 6.0 - R["vol_op"]) / R["vol_op"])
     g["tetra_neg_faces"] = ch["neg_faces"]
     g["tetra_neg_frac"] = float(-ch["vols"][ch["vols"] < 0].sum() / R["vol_op"])
+    sz = R["size"]
+    g["size_R1"], g["size_R2"] = sz["R1"], sz["R2"]
+    g["horizon_m"], g["horizon_check_m"] = sz["horizon"], sz["horizon_check"]
+    g["horizon_rel"] = abs(sz["horizon"] / sz["horizon_check"] - 1.0)
+    g["horizon_earth_m"] = sz["horizon_earth"]
+    g["fall_s"], g["fall_num_s"] = sz["t_fall"], sz["t_fall_num"]
+    g["fall_rel"] = abs(sz["t_fall_num"] / sz["t_fall"] - 1.0)
+    g["g_site_um"] = sz["g_site"] * 1e6
+    g["g_var"] = sz["g_var"]
+    g["length_ratio"] = sz["length_ratio"]
+    g["scale_err_m"] = scale_object_error(R)
     return g
 
 
@@ -512,6 +600,110 @@ def ball_mesh(r):
     return np.asarray(Vs), np.asarray(Fs)
 
 
+def box_mesh_at(lo, hi):
+    """軸に沿った直方体 [lo, hi](ローカル座標)。"""
+    V = np.array([[x, y, z] for x in (lo[0], hi[0]) for y in (lo[1], hi[1]) for z in (lo[2], hi[2])], float)
+    quads = [(0, 1, 3, 2), (4, 6, 7, 5), (0, 4, 5, 1), (2, 3, 7, 6), (0, 2, 6, 4), (1, 5, 7, 3)]
+    F = []
+    for q in quads:
+        F += [[q[0], q[1], q[2]], [q[0], q[2], q[3]]]
+    return V, np.array(F)
+
+
+def person_mesh(h=PERSON_H):
+    """背丈 h の人の模式(脚・胴・頭の箱。足の裏が z = 0、頭のてっぺんが z = h)。"""
+    parts = [box_mesh_at((-0.17, -0.10, 0.0), (-0.03, 0.10, 0.80)), box_mesh_at((0.03, -0.10, 0.0), (0.17, 0.10, 0.80)),
+             box_mesh_at((-0.22, -0.12, 0.80), (0.22, 0.12, 1.45)), box_mesh_at((-0.11, -0.11, 1.48), (0.11, 0.11, h))]
+    return merge_meshes(parts)
+
+
+def hayabusa_mesh():
+    """はやぶさの模式: 本体 1.0 × 1.1 × 1.6 m(z が 1.6 m)と、x 方向に開いた 2 枚のパドル(全幅 5.7 m)。底が z = 0。"""
+    a, b, c = HAYABUSA_CORE
+    half = HAYABUSA_SPAN / 2.0
+    ch = HAYABUSA_PANEL_CHORD / 2.0
+    zc = c * 0.55
+    return merge_meshes([box_mesh_at((-a / 2, -b / 2, 0.0), (a / 2, b / 2, c)),
+                         box_mesh_at((a / 2, -ch, zc - 0.02), (half, ch, zc + 0.02)),
+                         box_mesh_at((-half, -ch, zc - 0.02), (-a / 2, ch, zc + 0.02))])
+
+
+def pitch_mesh():
+    return box_mesh_at((-PITCH[0] / 2, -PITCH[1] / 2, 0.0), (PITCH[0] / 2, PITCH[1] / 2, 0.3))
+
+
+def tower_mesh():
+    """高さ 333 m の塔の模式(底 40 m・てっぺん 6 m の四角錐台)。"""
+    b, t, hgt = TOWER_BASE / 2, TOWER_TOP / 2, TOWER_H
+    V = np.array([[-b, -b, 0], [b, -b, 0], [b, b, 0], [-b, b, 0], [-t, -t, hgt], [t, -t, hgt], [t, t, hgt], [-t, t, hgt]], float)
+    F = np.array([[0, 2, 1], [0, 3, 2], [4, 5, 6], [4, 6, 7], [0, 1, 5], [0, 5, 4], [1, 2, 6], [1, 6, 5],
+                  [2, 3, 7], [2, 7, 6], [3, 0, 4], [3, 4, 7]])
+    return V, F
+
+
+def merge_meshes(parts):
+    Vs, Fs, off = [], [], 0
+    for V, F in parts:
+        Vs.append(V)
+        Fs.append(F + off)
+        off += len(V)
+    return np.concatenate(Vs), np.concatenate(Fs)
+
+
+def frame_quat(t1, t2, up):
+    """ローカルの x, y, z を世界の t1, t2, up に写す四元数 (w, x, y, z)。"""
+    M = np.stack([t1, t2, up], axis=1)
+    tr = np.trace(M)
+    if tr > 0:
+        w = math.sqrt(1.0 + tr) / 2.0
+        return np.array([w, (M[2, 1] - M[1, 2]) / (4 * w), (M[0, 2] - M[2, 0]) / (4 * w), (M[1, 0] - M[0, 1]) / (4 * w)])
+    i = int(np.argmax(np.diag(M)))
+    j, kk = (i + 1) % 3, (i + 2) % 3
+    r = math.sqrt(1.0 + M[i, i] - M[j, j] - M[kk, kk])
+    q = np.zeros(4)
+    q[0] = (M[kk, j] - M[j, kk]) / (2 * r)
+    q[1 + i] = r / 2
+    q[1 + j] = (M[j, i] + M[i, j]) / (2 * r)
+    q[1 + kk] = (M[kk, i] + M[i, kk]) / (2 * r)
+    return q
+
+
+def scale_objects(R):
+    """物差しの物体(ローカルのメッシュと、世界での位置・姿勢)。人とはやぶさは TD1 の推定位置に立ち、
+    サッカー場と塔は同じ地面の平面の上で、イトカワの外(両脇)に置く。"""
+    sz = R["size"]
+    V, k = R["V"], sz["k"]
+    up, t1, t2 = sz["up"], sz["t1"], sz["t2"]
+    q = frame_quat(t1, t2, up)
+    site = V[k]
+    side = float(np.max(np.abs((V - site) @ t1))) + 60.0       # イトカワの外まで
+    objs = [("person", person_mesh(), site, (1.0, 0.85, 0.55)),
+            ("hayabusa", hayabusa_mesh(), site + t1 * 6.0, (0.85, 0.80, 0.35)),
+            ("pitch", pitch_mesh(), site - t1 * (side + PITCH[0] / 2), (0.30, 0.65, 0.30)),
+            ("tower", tower_mesh(), site + t1 * (side + TOWER_BASE / 2), (0.85, 0.40, 0.30))]
+    return [(name, mV, mF, pos, q, rgb) for name, (mV, mF), pos, rgb in objs]
+
+
+def scale_object_error(R):
+    """描いた物差しの大きさ(世界に置いたメッシュを地面の向き t1, t2, up に沿って測った長さ)と数値の差の最大 [m]。"""
+    sz = R["size"]
+    axes = np.stack([sz["t1"], sz["t2"], sz["up"]])
+    want = {"person": (None, None, PERSON_H), "hayabusa": (HAYABUSA_SPAN, HAYABUSA_CORE[1], HAYABUSA_CORE[2]),
+            "pitch": (PITCH[0], PITCH[1], None), "tower": (TOWER_BASE, TOWER_BASE, TOWER_H)}
+    err = 0.0
+    for name, mV, mF, pos, q, _ in scale_objects(R):
+        Rm = np.asarray(pv._quat_matrix(np.asarray(q)[None, :]))[0]
+        world = mV @ Rm.T + pos
+        ext = np.ptp(world @ axes.T, axis=0)
+        for e, w in zip(ext, want[name]):
+            if w is not None:
+                err = max(err, abs(e - w))
+        if name == "hayabusa":                                   # 本体だけの x 幅 = 1.0 m
+            core = mV[:8] @ Rm.T + pos
+            err = max(err, abs(np.ptp(core @ axes[0]) - HAYABUSA_CORE[0]))
+    return float(err)
+
+
 def static(T, B, xyz_list, quat_list=None):
     xyz = np.zeros((T, B, 3))
     quat = np.zeros((T, B, 4))
@@ -536,6 +728,59 @@ def _row(what_ja, what_en, criterion, result, ok):
 # --------------------------------------------------------------------------- #
 # タブ                                                                        #
 # --------------------------------------------------------------------------- #
+def qmul(a, b):
+    w1, x1, y1, z1 = a
+    w2, x2, y2, z2 = b
+    return np.array([w1 * w2 - x1 * x2 - y1 * y2 - z1 * z2, w1 * x2 + x1 * w2 + y1 * z2 - z1 * y2,
+                     w1 * y2 - x1 * z2 + y1 * w2 + z1 * x2, w1 * z2 + x1 * y2 - y1 * x2 + z1 * w2])
+
+
+def tab_size(R, g):
+    """全体(視野の縦の幅 1,000 m)から、TD1 に立つ人(3 m)まで、対数の等間隔で寄る。
+
+    TD1 は南極寄りで、人の「上」は世界の −z に近い。画面の上は世界の +z なので、そのままでは人が逆さに見える。
+    そこでこのタブだけ、場面全体を剛体回転 Rg(人の「上」→ +z)で回して置く(形も大きさも変わらない)。
+    """
+    V, F, com0 = R["V"], R["F"], R["com"]
+    sz = R["size"]
+    qg = quat_from_z(sz["up"])
+    qg = np.array([qg[0], -qg[1], -qg[2], -qg[3]])                # +z → up の逆 = up → +z
+    Rg = np.asarray(pv._quat_matrix(qg[None, :]))[0]
+    com = Rg @ com0
+    objs = [(name, mV, mF, Rg @ pos, qmul(qg, q), rgb) for name, mV, mF, pos, q, rgb in scale_objects(R)]
+    nT = 161
+    t = np.arange(nT) / 12.0
+    W = np.geomspace(1000.0, 3.0, nT)
+    dd = W / (2.0 * math.tan(FOV_Y / 2.0))
+    person_c = Rg @ (V[sz["k"]] + sz["up"] * (PERSON_H / 2))
+    s = np.clip(np.log(1000.0 / W) / np.log(1000.0 / 30.0), 0.0, 1.0)
+    s = s * s * (3 - 2 * s)
+    target = com[None, :] + (person_c - com)[None, :] * s[:, None]
+    labels = {"person": T("人(1.7 m)", "a person (1.7 m)"),
+              "hayabusa": T("はやぶさ(本体 1.0 × 1.1 × 1.6 m、パドルを開いて 5.7 m)", "Hayabusa (body 1.0 × 1.1 × 1.6 m, 5.7 m with panels open)"),
+              "pitch": T("サッカー場(105 × 68 m)", "a football pitch (105 × 68 m)"),
+              "tower": T("高さ 333 m の塔", "a 333 m tower")}
+    bodies = [{"name": "itokawa", "pos": V - com, "faces": F, "rgb": ROCK_RGB,
+               "label": T("イトカワ(長さ 535 m)", "Itokawa (535 m long)")}]
+    xyzs, quats = [com], [qg]
+    for name, mV, mF, pos, q, rgb in objs:
+        bodies.append({"name": name, "pos": mV, "faces": mF, "rgb": rgb, "label": labels[name]})
+        xyzs.append(pos)
+        quats.append(q)
+    xyz, quat = static(nT, len(bodies), xyzs, quats)
+    marks = []
+    for w, ja, en in ((1000.0, "全体", "the whole asteroid"), (150.0, "サッカー場くらい", "about a football pitch"),
+                      (10.0, "はやぶさ", "Hayabusa"), (3.0, "人", "the person")):
+        kk = int(np.argmin(np.abs(W - w)))
+        marks.append({"t": float(t[kk]), "label": T(ja, en)})
+    dirv = Rg @ (sz["up"] * 0.45 + sz["t2"] * 0.89)
+    dirv /= np.linalg.norm(dirv)
+    view = {"az": float(math.atan2(dirv[1], dirv[0])), "el": float(math.asin(dirv[2]))}
+    return {"t": t, "bodies": bodies, "xyz": xyz, "quat": quat, "events": marks, "view": view,
+            "camera": {"dist": dd, "target": target},
+            "axis": {"values": W, "segments": [{"k": 0, "label": T("視野の縦の幅", "field of view (height)"), "unit": " m", "decimals": 1}]}}
+
+
 def tab_shape(R, g):
     V, F, com = R["V"], R["F"], R["com"]
     pos = V - com
@@ -613,7 +858,9 @@ def tab_gravity(R, g):
                      (t[k_far2], T("胴の端(−x の端)", "end of the body (−x end)"))], key=lambda e: e[0])
     cbar = {"lo": lo_g, "hi": hi_g, "unit": "µm/s²", "cmap": "seq", "label": T("実効重力 |g_eff|", "effective gravity |g_eff|")}
     trails = [{"body": "walker", "color": "#ffffff", "tail": 0.0, "label": T("歩いた道(y = 0 の断面)", "path walked (section y = 0)")}]
-    return {"t": t, "bodies": bodies, "xyz": xyz, "quat": quat, "series": series, "cbar": cbar, "trails": trails,
+    # カメラは歩く人を追う(注視点 = 人、距離 170 m)。人は y = 0 の断面の上なので、−y 側から見ると輪郭の上を歩く
+    camera = {"dist": np.full(nT, 170.0), "target": xyz[:, 1].copy()}
+    return {"t": t, "bodies": bodies, "xyz": xyz, "quat": quat, "series": series, "cbar": cbar, "trails": trails, "camera": camera,
             "events": [{"t": float(a), "label": b} for a, b in events],
             "axis": {"values": s, "segments": [{"k": 0, "label": T("歩いた距離", "distance walked"), "unit": " m", "decimals": 0}]}}
 
@@ -631,11 +878,11 @@ def tab_muses(R, g):
     scale = 2.0                                                    # ポテンシャルの高さを 2 倍に誇張して放射方向に足す
     radial = (V - com) / np.linalg.norm(V - com, axis=1)[:, None]
     relief = (V - com) + radial * (hgt * scale)[:, None]
-    shift = np.array([0.0, 560.0, 0.0])
     bodies = [{"name": "itokawa", "pos": V - com, "faces": F, "val": hgt,
                "label": T("ジオポテンシャル高度(実効ポテンシャル ÷ 平均の重力)", "geopotential height (effective potential ÷ mean gravity)")},
-              {"name": "relief", "pos": relief, "faces": F, "val": hgt,
-               "label": T("高さを %.0f 倍にした地形(右)" % scale, "the same heights exaggerated %.0f× (right)" % scale)}]
+              {"name": "relief", "pos": relief, "faces": F, "val": hgt, "alpha": 0.28,
+               "label": T("同じ高さを %.0f 倍にして表面の外に足した半透明の殻" % scale,
+                          "translucent shell: the same heights ×%.0f added outside the surface" % scale)}]
     marks = []
     for name in ("TD1", "TD2"):
         k = R["sites"][name]["k"]
@@ -643,7 +890,7 @@ def tab_muses(R, g):
         bodies.append({"name": name, "pos": mV, "faces": mF, "rgb": (1.0, 0.35, 0.35),
                        "label": T("着陸点の推定(%s、Yano & Aida 2013)" % name, "estimated touchdown site (%s, Yano & Aida 2013)" % name)})
         marks.append(V[k] + VN[k] * 7.0)
-    xyz, quat = static(nT, len(bodies), [com, com + shift] + marks)
+    xyz, quat = static(nT, len(bodies), [com, com] + marks)
     clouds = []
     for j, it in enumerate(iters):
         vv = gr["frames"][it]
@@ -754,6 +1001,19 @@ def all_checks(R, g):
     rb = g["lowry_rho_body_ours"]
     cx = g["com_offset_x_two_density_m"]
     return {
+        "size": [
+            _row("落ちる時間: 目の高さまで 9 点で op を回した重力の列を 4 次 Runge–Kutta で積分 / √(2h/g)(差は重力が高さで"
+                 "%.1f %% 変わる分)" % (g["g_var"] * 100),
+                 "fall time: RK4 through the op's gravity at 9 heights up to eye level / √(2h/g) (the gap is gravity changing "
+                 "%.1f %% over that height)" % (g["g_var"] * 100),
+                 "< 1 %", "%.2f %%" % (g["fall_rel"] * 100), g["fall_rel"] < 0.01),
+            _row("地平線: 平滑化した形の曲率半径 R1(vertex_curvature)で √(2R1h + h²)/ 独立な R2(20 m の 2 次曲面)で √(2R2h)",
+                 "horizon: √(2R1h + h²) with R1 from the smoothed shape (vertex_curvature) / √(2R2h) with an independent R2 (20 m quadric fit)",
+                 "|差| < 15 %", "%.1f / %.1f m(R1 %.0f / R2 %.0f m)" % (g["horizon_m"], g["horizon_check_m"], g["size_R1"], g["size_R2"]),
+                 g["horizon_rel"] < 0.15),
+            _row("描いた物差しの大きさ(人 1.7・はやぶさ 1.0 / 1.1 / 1.6 / 5.7・サッカー場 105 × 68・塔 333 m)と数値",
+                 "drawn yardstick sizes (person 1.7, Hayabusa 1.0 / 1.1 / 1.6 / 5.7, pitch 105 × 68, tower 333 m) vs the numbers",
+                 "< 1e-9 m", _e(g["scale_err_m"]) + " m", g["scale_err_m"] < 1e-9)],
         "shape": [
             _row("閉じた曲面(mesh_edge_stats: 境界の辺・3 面以上が接する辺)", "closed surface (mesh_edge_stats: boundary / non-manifold edges)",
                  "0 / 0", "%d / %d" % (g["boundary_edges"], g["non_manifold_edges"]),
@@ -823,6 +1083,33 @@ def all_lessons(R, g):
     s1, s2 = g["sites"]["TD1"], g["sites"]["TD2"]
     gr_ratio = g["geff_ratio"]
     return {
+        "size": {
+            "question": T("イトカワの上(はやぶさが降りた所)に立つと、地平線までどれくらい?(目の高さ 1.7 m)",
+                          "Standing on Itokawa (where Hayabusa touched down), how far away is the horizon? (eye at 1.7 m)"),
+            "choices": [T("約 %.1f m" % (g["horizon_m"] / 10), "about %.1f m" % (g["horizon_m"] / 10)),
+                        T("約 %.0f m" % g["horizon_m"], "about %.0f m" % g["horizon_m"]),
+                        T("約 %.1f km(地球と同じ)" % (g["horizon_earth_m"] / 1000), "about %.1f km (the same as on Earth)" % (g["horizon_earth_m"] / 1000))],
+            "answer": 1,
+            "explain": T("足元の形の曲率半径は約 %.0f m(岩の凹凸を平滑化した形)。地平線は √(2Rh + h²) = %.0f m で、地球(%.1f km)の %.0f 分の 1。"
+                         "サッカー場の端まで見えない。足元の実効重力は %.1f µm/s² しかないので、1.7 m の高さから落とした球が足元に届くまで %.0f 秒"
+                         "(%.1f 分)かかる。" % (g["size_R1"], g["horizon_m"], g["horizon_earth_m"] / 1000, g["horizon_earth_m"] / g["horizon_m"], g["g_site_um"], g["fall_s"], g["fall_s"] / 60),
+                         "The local radius of curvature is about %.0f m (the shape with boulders smoothed out). The horizon is "
+                         "√(2Rh + h²) = %.0f m, 1/%.0f of Earth's (%.1f km) — not even the far end of a football pitch. "
+                         "Effective gravity underfoot is only %.1f µm/s², so a ball dropped from 1.7 m takes %.0f s (%.1f min) to "
+                         "reach the ground." % (g["size_R1"], g["horizon_m"], g["horizon_earth_m"] / g["horizon_m"], g["horizon_earth_m"] / 1000, g["g_site_um"], g["fall_s"], g["fall_s"] / 60)),
+            "formula": T("地平線 d = √((R + h)² − R²) = √(2Rh + h²) ≈ √(2Rh)\n落ちる時間 t = √(2h / g)\n視野の縦の幅 W = 2 D tan(画角 / 2)",
+                         "horizon d = √((R + h)² − R²) = √(2Rh + h²) ≈ √(2Rh)\nfall time t = √(2h / g)\nfield of view W = 2 D tan(angle / 2)"),
+            "limit": T("イトカワの曲率半径は測る広さで変わる(岩の多い瓦礫の山なので、数 m では凹凸、数十 m で形の曲がり)。2 つの推定 R1・R2 は %.0f m と"
+                       " %.0f m で、地平線は %.0f m と %.0f m。実際の見通しは近くの岩でさえぎられる。物差しの物体は模式の形で、はやぶさのパドルの幅は"
+                       "模式(全幅 5.7 m と本体の寸法だけが一次情報の値)。会場との比較は形のデータが届いてから足す。"
+                       % (g["size_R1"], g["size_R2"], g["horizon_m"], g["horizon_check_m"]),
+                       "Itokawa's radius of curvature depends on the scale you measure over (a boulder-strewn rubble pile: bumps "
+                       "at a few metres, the body's bend at tens of metres). The two estimates R1, R2 are %.0f m and %.0f m, "
+                       "giving horizons of %.0f m and %.0f m; the real line of sight is blocked by nearby boulders. The "
+                       "yardsticks are schematic shapes; Hayabusa's panel chord is schematic (only the 5.7 m span and the body "
+                       "size are primary-source values). The comparison with the venue will be added when its shape data "
+                       "arrives." % (g["size_R1"], g["size_R2"], g["horizon_m"], g["horizon_check_m"])),
+        },
         "shape": {
             "question": T("イトカワの体積(この形から計算)と密度 1.9 g/cm³ から、質量はどれくらい?",
                           "From Itokawa's volume (computed from this shape) and a density of 1.9 g/cm³, how heavy is it?"),
@@ -960,6 +1247,7 @@ def all_lessons(R, g):
 
 def build_spec(R, g):
     N = pv.viewer_number
+    d0 = tab_size(R, g)
     d1, d2, d3, d4, d5 = tab_shape(R, g), tab_gravity(R, g), tab_muses(R, g), tab_limit(R, g), tab_math(R, g)
     checks, lessons = all_checks(R, g), all_lessons(R, g)
 
@@ -967,11 +1255,26 @@ def build_spec(R, g):
         tb = pv.viewer_anim3d_tab(tid, label, badge, text, d["t"], d["bodies"], d["xyz"], d["quat"],
                                   trails=d.get("trails"), clouds=d.get("clouds"), events=d.get("events"),
                                   series=d.get("series"), cbar=d.get("cbar"), numbers=numbers, view=view,
-                                  checks=checks[tid], axis=d["axis"], lesson=lessons[tid])
+                                  checks=checks[tid], axis=d["axis"], lesson=lessons[tid], camera=d.get("camera"))
         return tb
 
     dims = g["dims"]
     s1, s2 = g["sites"]["TD1"], g["sites"]["TD2"]
+    tab0 = mk("size", T("大きさを比べる", "Compare the sizes"), "passed",
+              T("イトカワ(長さ 535 m)の横に、実寸の物差しを置いた: 高さ 333 m の塔、サッカー場、はやぶさ、そして人。人は長さの 0.3 % しかないので、"
+                "再生すると全体(視野の縦の幅 1,000 m)から、はやぶさが降りた所(TD1 の推定位置)に立つ人(3 m)まで、対数の等間隔で寄っていく。"
+                "人は実効重力の逆向き(その場所の「上」)に立っている。",
+                "Next to Itokawa (535 m long) stand true-scale yardsticks: a 333 m tower, a football pitch, Hayabusa and a "
+                "person. A person is only 0.3 % of the length, so playback zooms on a log scale from the whole asteroid "
+                "(field of view 1,000 m high) down to the person (3 m) standing where Hayabusa touched down (estimated site "
+                "TD1). The person stands against the effective gravity (the local 'up')."),
+              d0,
+              [N(T("イトカワの長さ ÷ 人の背丈", "Itokawa's length ÷ a person's height"), "%.0f×" % g["length_ratio"]),
+               N(T("地平線までの距離(目の高さ 1.7 m)", "distance to the horizon (eye at 1.7 m)"), "%.0f m" % g["horizon_m"]),
+               N(T("1.7 m から落とした球が足元に届くまで", "a ball dropped from 1.7 m reaches the ground in"),
+                 T("%.0f 秒(%.1f 分)" % (g["fall_s"], g["fall_s"] / 60), "%.0f s (%.1f min)" % (g["fall_s"], g["fall_s"] / 60))),
+               N(T("足元の実効重力 |g_eff|", "effective gravity underfoot |g_eff|"), "%.1f µm/s²" % g["g_site_um"])],
+              d0["view"])
     tab1 = mk("shape", T("形と大きさ", "Shape and size"), "passed",
               T("はやぶさ(JAXA)のカメラの画像 775 枚から作られた形(Gaskell、49,152 面)を、自転軸 z のまわりに 1 周(%.2f 時間)回す。"
                 "体積は面だけから出す mesh_volume、大きさは主軸の向きの外接箱 obb(水色)。黄色の棒が重心を通る自転軸。"
@@ -989,11 +1292,13 @@ def build_spec(R, g):
     tab2 = mk("gravity", T("表面の重力", "Surface gravity"), "passed",
               T("表面の色 = 実効重力の大きさ(重力 + 自転の遠心力)。一様密度 1.9 g/cm³ の多面体の重力を、Werner & Scheeres の厳密な式"
                 "(op polyhedron_gravity)で頂点 25,350 個すべてで計算した。白い人が長軸の断面(mesh_slice_contours)を一周し、"
-                "黄色の矢印がその場所の実効重力の向き。矢印が地面に垂直でないところは坂(斜面の角)。",
+                "黄色の矢印がその場所の実効重力の向き。矢印が地面に垂直でないところは坂(斜面の角)。カメラは歩く人を追い、左上の読みに"
+                "足元の |g_eff| と斜面の角が出る。",
                 "Colour = magnitude of effective gravity (gravity plus spin centrifugal). The gravity of a uniform 1.9 g/cm³ "
                 "polyhedron is computed with Werner & Scheeres' exact formula (op polyhedron_gravity) at all 25,350 vertices. "
                 "The white walker goes round the long-axis section (mesh_slice_contours); the yellow arrow shows the "
-                "direction of effective gravity there. Where it is not perpendicular to the ground, the ground is a slope."),
+                "direction of effective gravity there. Where it is not perpendicular to the ground, the ground is a slope. The "
+                "camera follows the walker; the readout at the top left shows |g_eff| and the slope underfoot."),
               d2,
               [N(T("表面の |g_eff|(最小〜最大)", "surface |g_eff| (min–max)"), T("%.1f〜%.1f µm/s²" % (g["geff_min_um"], g["geff_max_um"]), "%.1f to %.1f µm/s²" % (g["geff_min_um"], g["geff_max_um"]))),
                N(T("遠心力 ÷ 引力(最大)", "centrifugal ÷ gravity (max)"), "%.1f %%" % (g["centrifugal_frac_max"] * 100)),
@@ -1001,11 +1306,13 @@ def build_spec(R, g):
                N(T("ガウスの法則: 中の ∇·g と −4πGρ の差", "Gauss's law: ∇·g inside vs −4πGρ"), _e(g["div_inside_rel"]))],
               {"az": -1.5708, "el": 0.15, "dist": 0.9})
     tab3 = mk("muses", T("ミューゼスの海はなぜ平らで低い", "Why the Muses Sea is flat and low"), "passed",
-              T("色 = ジオポテンシャル高度(実効ポテンシャルを平均の重力 %.1f µm/s² で割った「高さ」)。右は同じ高さを放射方向に誇張した地形。"
+              T("色 = ジオポテンシャル高度(実効ポテンシャルを平均の重力 %.1f µm/s² で割った「高さ」)。外側の半透明の殻は、同じ高さを 2 倍にして"
+                "表面の外へ足したもの: 殻が表面に近い所ほど低い。"
                 "白い点は表面に撒いた粒で、1 歩ごとに隣の頂点のうち実効ポテンシャル(op の値)が一番低い所へ移る。粒は低い所へ集まる。"
                 "赤い玉が着陸点の推定位置(TD1・TD2)。" % g["g_ref_um"],
-                "Colour = geopotential height (the effective potential divided by the mean gravity %.1f µm/s²). On the right, "
-                "the same heights exaggerated radially. White dots are grains scattered over the surface; each step moves "
+                "Colour = geopotential height (the effective potential divided by the mean gravity %.1f µm/s²). The translucent shell "
+                "adds the same heights ×2 outside the surface: where the shell hugs the surface, the place is low. "
+                "White dots are grains scattered over the surface; each step moves "
                 "a grain to the neighbouring vertex with the lowest effective potential (op values). The grains gather in "
                 "the low places. Red balls: estimated touchdown sites (TD1, TD2)." % g["g_ref_um"]),
               d3,
@@ -1043,7 +1350,7 @@ def build_spec(R, g):
               [N(T("和と mesh_volume の差", "sum vs mesh_volume"), _e(g["tetra_sum_vs_mesh_volume"])),
                N(T("負の四面体", "negative tetrahedra"), "%d 面 / %.2f %%" % (g["tetra_neg_faces"], g["tetra_neg_frac"] * 100))],
               {"az": -1.2, "el": 0.6, "dist": 1.2})
-    tabs = [tab1, tab2, tab3, tab4, tab5]
+    tabs = [tab0, tab1, tab2, tab3, tab4, tab5]
     if tabs[0]["badge"] == "limit":
         raise AssertionError("限界の回を最初のタブにしない")
     credit = T("形: Gaskell Itokawa Shape Model V1.1(R. Gaskell ほか。はやぶさ〔JAXA〕の AMICA の画像から作成)、NASA PDS Small Bodies Node、"

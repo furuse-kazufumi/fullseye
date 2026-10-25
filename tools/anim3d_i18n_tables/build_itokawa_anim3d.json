@@ -254,15 +254,6 @@
    "hi": "सतह पर गुरुत्व",
    "fr": "Gravité à la surface"
   },
-  "Colour = magnitude of effective gravity (gravity plus spin centrifugal). The gravity of a uniform 1.9 g/cm³ polyhedron is computed with Werner & Scheeres' exact formula (op polyhedron_gravity) at all 25,350 vertices. The white walker goes round the long-axis section (mesh_slice_contours); the yellow arrow shows the direction of effective gravity there. Where it is not perpendicular to the ground, the ground is a slope.": {
-   "ja": "表面の色 = 実効重力の大きさ(重力 + 自転の遠心力)。一様密度 1.9 g/cm³ の多面体の重力を、Werner & Scheeres の厳密な式(op polyhedron_gravity)で頂点 25,350 個すべてで計算した。白い人が長軸の断面(mesh_slice_contours)を一周し、黄色の矢印がその場所の実効重力の向き。矢印が地面に垂直でないところは坂(斜面の角)。",
-   "zh": "颜色 = 有效重力的大小（引力加上自转的离心力）。用 Werner & Scheeres 的精确公式（op polyhedron_gravity）在全部 25,350 个顶点上计算密度均匀为 1.9 g/cm³ 的多面体的引力。白色的人沿长轴截面（mesh_slice_contours）走一圈；黄色箭头表示该处有效重力的方向。箭头不垂直于地面的地方就是斜坡。",
-   "tw": "顏色 = 有效重力的大小（重力加上自轉的離心力）。用 Werner & Scheeres 的精確公式（op polyhedron_gravity）在全部 25,350 個頂點上計算密度均勻為 1.9 g/cm³ 的多面體的重力。白色的人沿長軸截面（mesh_slice_contours）走一圈；黃色箭頭表示該處有效重力的方向。箭頭不垂直於地面的地方就是斜坡。",
-   "ko": "색 = 유효 중력의 크기(중력 + 자전의 원심력). 밀도가 균일한 1.9 g/cm³ 다면체의 중력을 Werner & Scheeres의 정확한 식(op polyhedron_gravity)으로 꼭짓점 25,350개 모두에서 계산했습니다. 흰 사람이 장축 단면(mesh_slice_contours)을 한 바퀴 돌고, 노란 화살표가 그곳의 유효 중력 방향입니다. 화살표가 지면에 수직이 아닌 곳은 경사입니다.",
-   "de": "Farbe = Betrag der effektiven Schwerkraft (Schwerkraft plus Fliehkraft der Rotation). Die Schwerkraft eines homogenen Polyeders mit 1.9 g/cm³ wird mit der exakten Formel von Werner & Scheeres (Op polyhedron_gravity) an allen 25,350 Eckpunkten berechnet. Die weiße Figur läuft den Schnitt entlang der Längsachse ab (mesh_slice_contours); der gelbe Pfeil zeigt dort die Richtung der effektiven Schwerkraft. Wo er nicht senkrecht zum Boden steht, ist der Boden geneigt.",
-   "hi": "रंग = प्रभावी गुरुत्व का परिमाण (गुरुत्व और घूर्णन का अपकेंद्री बल)। 1.9 g/cm³ के एकसमान बहुफलक का गुरुत्व Werner & Scheeres के सटीक सूत्र (op polyhedron_gravity) से सभी 25,350 शीर्षों पर गिना गया है। सफ़ेद चलने वाला लंबी धुरी के खंड (mesh_slice_contours) का चक्कर लगाता है; पीला तीर वहाँ प्रभावी गुरुत्व की दिशा दिखाता है। जहाँ यह ज़मीन के लंबवत नहीं है, वहाँ ढलान है।",
-   "fr": "Couleur = intensité de la pesanteur effective (gravité plus force centrifuge de la rotation). La gravité d'un polyèdre homogène de 1.9 g/cm³ est calculée avec la formule exacte de Werner & Scheeres (op polyhedron_gravity) aux 25,350 sommets. Le marcheur blanc fait le tour de la section selon le grand axe (mesh_slice_contours) ; la flèche jaune montre la direction de la pesanteur effective. Là où elle n'est pas perpendiculaire au sol, le sol est en pente."
-  },
   "surface |g_eff| (min–max)": {
    "ja": "表面の |g_eff|(最小〜最大)",
    "zh": "表面的 |g_eff|（最小–最大）",
@@ -533,15 +524,6 @@
    "hi": "म्यूज़ सागर समतल और नीचा क्यों है",
    "fr": "Pourquoi la mer des Muses est plate et basse"
   },
-  "Colour = geopotential height (the effective potential divided by the mean gravity 72.4 µm/s²). On the right, the same heights exaggerated radially. White dots are grains scattered over the surface; each step moves a grain to the neighbouring vertex with the lowest effective potential (op values). The grains gather in the low places. Red balls: estimated touchdown sites (TD1, TD2).": {
-   "ja": "色 = ジオポテンシャル高度(実効ポテンシャルを平均の重力 72.4 µm/s² で割った「高さ」)。右は同じ高さを放射方向に誇張した地形。白い点は表面に撒いた粒で、1 歩ごとに隣の頂点のうち実効ポテンシャル(op の値)が一番低い所へ移る。粒は低い所へ集まる。赤い玉が着陸点の推定位置(TD1・TD2)。",
-   "zh": "颜色 = 位势高度（有效势除以平均重力 72.4 µm/s²）。右边是把同样的高度沿径向放大后的地形。白点是撒在表面的颗粒；每一步把颗粒移到相邻顶点中有效势最低的那个（op 的值）。颗粒聚集在低处。红球：着陆点的推定位置（TD1、TD2）。",
-   "tw": "顏色 = 重力位高度（有效位勢除以平均重力 72.4 µm/s²）。右邊是把同樣的高度沿徑向放大後的地形。白點是撒在表面的顆粒；每一步把顆粒移到相鄰頂點中有效位勢最低的那個（op 的值）。顆粒聚集在低處。紅球：著陸點的推定位置（TD1、TD2）。",
-   "ko": "색 = 지오퍼텐셜 고도(유효 퍼텐셜을 평균 중력 72.4 µm/s²로 나눈 값). 오른쪽은 같은 높이를 방사 방향으로 과장한 지형입니다. 흰 점은 표면에 뿌린 입자로, 한 걸음마다 이웃 꼭짓점 중 유효 퍼텐셜(op 값)이 가장 낮은 곳으로 옮겨 갑니다. 입자는 낮은 곳에 모입니다. 빨간 공: 착륙 지점의 추정 위치(TD1, TD2).",
-   "de": "Farbe = geopotentielle Höhe (das effektive Potential geteilt durch die mittlere Schwerkraft 72.4 µm/s²). Rechts dieselben Höhen radial überhöht. Weiße Punkte sind über die Oberfläche verteilte Körner; jeder Schritt bringt ein Korn zum benachbarten Eckpunkt mit dem niedrigsten effektiven Potential (Werte des Ops). Die Körner sammeln sich an den tiefen Stellen. Rote Kugeln: geschätzte Aufsetzpunkte (TD1, TD2).",
-   "hi": "रंग = भू-विभव ऊँचाई (प्रभावी विभव को औसत गुरुत्व 72.4 µm/s² से भाग)। दाईं ओर वही ऊँचाइयाँ त्रिज्य दिशा में बढ़ा-चढ़ाकर। सफ़ेद बिंदु सतह पर बिखेरे गए कण हैं; हर कदम कण को उस पड़ोसी शीर्ष पर ले जाता है जिसका प्रभावी विभव (op के मान) सबसे कम है। कण निचली जगहों में जमा होते हैं। लाल गोले: अनुमानित अवतरण स्थल (TD1, TD2)।",
-   "fr": "Couleur = hauteur géopotentielle (le potentiel effectif divisé par la pesanteur moyenne 72.4 µm/s²). À droite, les mêmes hauteurs exagérées radialement. Les points blancs sont des grains répartis sur la surface ; à chaque pas, un grain passe au sommet voisin de potentiel effectif le plus bas (valeurs de l'op). Les grains se rassemblent dans les creux. Boules rouges : sites d'atterrissage estimés (TD1, TD2)."
-  },
   "height range (max)": {
    "ja": "高さの範囲(最大)",
    "zh": "高度范围（最大）",
@@ -586,15 +568,6 @@
    "de": "geopotentielle Höhe (effektives Potential ÷ mittlere Schwerkraft)",
    "hi": "भू-विभव ऊँचाई (प्रभावी विभव ÷ औसत गुरुत्व)",
    "fr": "hauteur géopotentielle (potentiel effectif ÷ pesanteur moyenne)"
-  },
-  "the same heights exaggerated 2× (right)": {
-   "ja": "高さを 2 倍にした地形(右)",
-   "zh": "同样的高度放大 2× 倍（右）",
-   "tw": "同樣的高度放大 2× 倍（右）",
-   "ko": "같은 높이를 2×배 과장(오른쪽)",
-   "de": "dieselben Höhen 2×-fach überhöht (rechts)",
-   "hi": "वही ऊँचाइयाँ 2× बढ़ाकर (दाएँ)",
-   "fr": "les mêmes hauteurs exagérées 2× (à droite)"
   },
   "estimated touchdown site (TD1, Yano & Aida 2013)": {
    "ja": "着陸点の推定(TD1、Yano & Aida 2013)",
@@ -1234,6 +1207,276 @@
    "de": "Betrag der effektiven Schwerkraft |g_eff|",
    "hi": "प्रभावी गुरुत्व का परिमाण |g_eff|",
    "fr": "intensité de la pesanteur effective |g_eff|"
+  },
+  "Compare the sizes": {
+   "ja": "大きさを比べる",
+   "zh": "比较大小",
+   "tw": "比較大小",
+   "ko": "크기 비교",
+   "de": "Größen vergleichen",
+   "hi": "आकार की तुलना",
+   "fr": "Comparer les tailles"
+  },
+  "Next to Itokawa (535 m long) stand true-scale yardsticks: a 333 m tower, a football pitch, Hayabusa and a person. A person is only 0.3 % of the length, so playback zooms on a log scale from the whole asteroid (field of view 1,000 m high) down to the person (3 m) standing where Hayabusa touched down (estimated site TD1). The person stands against the effective gravity (the local 'up').": {
+   "ja": "イトカワ(長さ 535 m)の横に、実寸の物差しを置いた: 高さ 333 m の塔、サッカー場、はやぶさ、そして人。人は長さの 0.3 % しかないので、再生すると全体(視野の縦の幅 1,000 m)から、はやぶさが降りた所(TD1 の推定位置)に立つ人(3 m)まで、対数の等間隔で寄っていく。人は実効重力の逆向き(その場所の「上」)に立っている。",
+   "zh": "在糸川（长 535 m）旁边放上了实际尺寸的标尺：高 333 m 的塔、足球场、隼鸟号，以及一个人。人只有长度的 0.3 %，所以播放时会以对数等间隔，从整体（视野纵向宽度 1,000 m）一直拉近到站在隼鸟号着陆处（推定位置 TD1）的人（3 m）。人沿有效重力的反方向（当地的“上”）站立。",
+   "tw": "在糸川（長 535 m）旁邊放上了實際尺寸的標尺：高 333 m 的塔、足球場、隼鳥號，以及一個人。人只有長度的 0.3 %，所以播放時會以對數等間隔，從整體（視野縱向寬度 1,000 m）一直拉近到站在隼鳥號著陸處（推定位置 TD1）的人（3 m）。人沿有效重力的反方向（當地的「上」）站立。",
+   "ko": "이토카와(길이 535 m) 옆에 실제 크기의 잣대를 두었습니다: 높이 333 m의 탑, 축구장, 하야부사, 그리고 사람. 사람은 길이의 0.3 %에 불과하므로, 재생하면 전체(시야의 세로 폭 1,000 m)에서 하야부사가 내려앉은 곳(추정 위치 TD1)에 선 사람(3 m)까지 로그 등간격으로 다가갑니다. 사람은 유효 중력의 반대 방향(그곳의 '위')으로 서 있습니다.",
+   "de": "Neben Itokawa (535 m lang) stehen maßstabsgetreue Vergleichsobjekte: ein 333 m hoher Turm, ein Fußballfeld, Hayabusa und ein Mensch. Ein Mensch ist nur 0.3 % der Länge, daher zoomt die Wiedergabe logarithmisch vom ganzen Asteroiden (Sichtfeld 1,000 m hoch) bis zum Menschen (3 m), der dort steht, wo Hayabusa aufsetzte (geschätzter Punkt TD1). Der Mensch steht entgegen der effektiven Schwerkraft (dem örtlichen „Oben“).",
+   "hi": "इटोकावा (535 m लंबा) के पास असली माप के पैमाने रखे गए हैं: 333 m ऊँचा एक मीनार, एक फ़ुटबॉल मैदान, हायाबुसा और एक व्यक्ति। व्यक्ति लंबाई का केवल 0.3 % है, इसलिए चलाने पर दृश्य पूरे क्षुद्रग्रह (दृश्य-क्षेत्र 1,000 m ऊँचा) से लघुगणकीय समान अंतराल में उस व्यक्ति (3 m) तक पास आता है जो हायाबुसा के उतरने की जगह (अनुमानित स्थल TD1) पर खड़ा है। व्यक्ति प्रभावी गुरुत्व के विपरीत (वहाँ के 'ऊपर') खड़ा है।",
+   "fr": "À côté d'Itokawa (535 m de long) se dressent des étalons à l'échelle réelle : une tour de 333 m, un terrain de football, Hayabusa et une personne. Une personne ne fait que 0.3 % de la longueur ; la lecture zoome donc sur une échelle logarithmique de l'astéroïde entier (champ de vision de 1,000 m de haut) jusqu'à la personne (3 m) debout là où Hayabusa s'est posé (site estimé TD1). La personne se tient à l'opposé de la pesanteur effective (le « haut » local)."
+  },
+  "Itokawa's length ÷ a person's height": {
+   "ja": "イトカワの長さ ÷ 人の背丈",
+   "zh": "糸川的长度 ÷ 人的身高",
+   "tw": "糸川的長度 ÷ 人的身高",
+   "ko": "이토카와의 길이 ÷ 사람의 키",
+   "de": "Länge von Itokawa ÷ Körpergröße eines Menschen",
+   "hi": "इटोकावा की लंबाई ÷ व्यक्ति की ऊँचाई",
+   "fr": "longueur d'Itokawa ÷ taille d'une personne"
+  },
+  "distance to the horizon (eye at 1.7 m)": {
+   "ja": "地平線までの距離(目の高さ 1.7 m)",
+   "zh": "到地平线的距离（眼睛高 1.7 m）",
+   "tw": "到地平線的距離（眼睛高 1.7 m）",
+   "ko": "지평선까지의 거리(눈높이 1.7 m)",
+   "de": "Entfernung zum Horizont (Augenhöhe 1.7 m)",
+   "hi": "क्षितिज तक की दूरी (आँख 1.7 m पर)",
+   "fr": "distance à l'horizon (yeux à 1.7 m)"
+  },
+  "a ball dropped from 1.7 m reaches the ground in": {
+   "ja": "1.7 m から落とした球が足元に届くまで",
+   "zh": "从 1.7 m 落下的球到达地面需要",
+   "tw": "從 1.7 m 落下的球到達地面需要",
+   "ko": "1.7 m에서 떨어뜨린 공이 발밑에 닿기까지",
+   "de": "ein aus 1.7 m fallender Ball erreicht den Boden nach",
+   "hi": "1.7 m से गिराई गेंद ज़मीन तक पहुँचती है",
+   "fr": "une balle lâchée de 1.7 m touche le sol en"
+  },
+  "207 s (3.4 min)": {
+   "ja": "207 秒(3.4 分)",
+   "zh": "207 s（3.4 分钟）",
+   "tw": "207 s（3.4 分鐘）",
+   "ko": "207 s(3.4분)",
+   "de": "207 s (3.4 min)",
+   "hi": "207 s (3.4 मिनट)",
+   "fr": "207 s (3.4 min)"
+  },
+  "effective gravity underfoot |g_eff|": {
+   "ja": "足元の実効重力 |g_eff|",
+   "zh": "脚下的有效重力 |g_eff|",
+   "tw": "腳下的有效重力 |g_eff|",
+   "ko": "발밑의 유효 중력 |g_eff|",
+   "de": "effektive Schwerkraft unter den Füßen |g_eff|",
+   "hi": "पैरों के नीचे प्रभावी गुरुत्व |g_eff|",
+   "fr": "pesanteur effective sous les pieds |g_eff|"
+  },
+  "Itokawa (535 m long)": {
+   "ja": "イトカワ(長さ 535 m)",
+   "zh": "糸川（长 535 m）",
+   "tw": "糸川（長 535 m）",
+   "ko": "이토카와(길이 535 m)",
+   "de": "Itokawa (535 m lang)",
+   "hi": "इटोकावा (535 m लंबा)",
+   "fr": "Itokawa (535 m de long)"
+  },
+  "a person (1.7 m)": {
+   "ja": "人(1.7 m)",
+   "zh": "人（1.7 m）",
+   "tw": "人（1.7 m）",
+   "ko": "사람(1.7 m)",
+   "de": "ein Mensch (1.7 m)",
+   "hi": "एक व्यक्ति (1.7 m)",
+   "fr": "une personne (1.7 m)"
+  },
+  "Hayabusa (body 1.0 × 1.1 × 1.6 m, 5.7 m with panels open)": {
+   "ja": "はやぶさ(本体 1.0 × 1.1 × 1.6 m、パドルを開いて 5.7 m)",
+   "zh": "隼鸟号（本体 1.0 × 1.1 × 1.6 m，展开太阳能板后 5.7 m）",
+   "tw": "隼鳥號（本體 1.0 × 1.1 × 1.6 m，展開太陽能板後 5.7 m）",
+   "ko": "하야부사(본체 1.0 × 1.1 × 1.6 m, 패들을 펴면 5.7 m)",
+   "de": "Hayabusa (Körper 1.0 × 1.1 × 1.6 m, mit offenen Paneelen 5.7 m)",
+   "hi": "हायाबुसा (ढाँचा 1.0 × 1.1 × 1.6 m, पैनल खुलने पर 5.7 m)",
+   "fr": "Hayabusa (corps 1.0 × 1.1 × 1.6 m, 5.7 m panneaux déployés)"
+  },
+  "a football pitch (105 × 68 m)": {
+   "ja": "サッカー場(105 × 68 m)",
+   "zh": "足球场（105 × 68 m）",
+   "tw": "足球場（105 × 68 m）",
+   "ko": "축구장(105 × 68 m)",
+   "de": "ein Fußballfeld (105 × 68 m)",
+   "hi": "एक फ़ुटबॉल मैदान (105 × 68 m)",
+   "fr": "un terrain de football (105 × 68 m)"
+  },
+  "a 333 m tower": {
+   "ja": "高さ 333 m の塔",
+   "zh": "高 333 m 的塔",
+   "tw": "高 333 m 的塔",
+   "ko": "높이 333 m의 탑",
+   "de": "ein 333 m hoher Turm",
+   "hi": "333 m ऊँचा मीनार",
+   "fr": "une tour de 333 m"
+  },
+  "the whole asteroid": {
+   "ja": "全体",
+   "zh": "整个小行星",
+   "tw": "整個小行星",
+   "ko": "소행성 전체",
+   "de": "der ganze Asteroid",
+   "hi": "पूरा क्षुद्रग्रह",
+   "fr": "l'astéroïde entier"
+  },
+  "about a football pitch": {
+   "ja": "サッカー場くらい",
+   "zh": "约一个足球场",
+   "tw": "約一個足球場",
+   "ko": "축구장 정도",
+   "de": "etwa ein Fußballfeld",
+   "hi": "लगभग एक फ़ुटबॉल मैदान",
+   "fr": "environ un terrain de football"
+  },
+  "Hayabusa": {
+   "ja": "はやぶさ",
+   "zh": "隼鸟号",
+   "tw": "隼鳥號",
+   "ko": "하야부사",
+   "de": "Hayabusa",
+   "hi": "हायाबुसा",
+   "fr": "Hayabusa"
+  },
+  "the person": {
+   "ja": "人",
+   "zh": "人",
+   "tw": "人",
+   "ko": "사람",
+   "de": "der Mensch",
+   "hi": "व्यक्ति",
+   "fr": "la personne"
+  },
+  "fall time: RK4 through the op's gravity at 9 heights up to eye level / √(2h/g) (the gap is gravity changing 1.7 % over that height)": {
+   "ja": "落ちる時間: 目の高さまで 9 点で op を回した重力の列を 4 次 Runge–Kutta で積分 / √(2h/g)(差は重力が高さで1.7 % 変わる分)",
+   "zh": "下落时间：沿着到眼睛高度的 9 个点用 op 计算的重力，以四阶 Runge–Kutta 积分 / √(2h/g)（差异来自重力在这段高度内变化 1.7 %）",
+   "tw": "下落時間：沿著到眼睛高度的 9 個點用 op 計算的重力，以四階 Runge–Kutta 積分 / √(2h/g)（差異來自重力在這段高度內變化 1.7 %）",
+   "ko": "낙하 시간: 눈높이까지 9개 점에서 op로 구한 중력을 RK4(Runge–Kutta)로 적분 / √(2h/g)(차이는 그 높이에서 중력이 1.7 % 변하는 몫)",
+   "de": "Fallzeit: RK4 durch die Schwerkraft des Ops an 9 Höhen bis zur Augenhöhe / √(2h/g) (die Abweichung ist die Änderung der Schwerkraft um 1.7 % über diese Höhe)",
+   "hi": "गिरने का समय: आँख की ऊँचाई तक 9 ऊँचाइयों पर op के गुरुत्व से RK4 / √(2h/g) (अंतर इस ऊँचाई में गुरुत्व के 1.7 % बदलने से है)",
+   "fr": "temps de chute : RK4 à travers la gravité de l'op en 9 hauteurs jusqu'aux yeux / √(2h/g) (l'écart vient de la variation de 1.7 % de la gravité sur cette hauteur)"
+  },
+  "horizon: √(2R1h + h²) with R1 from the smoothed shape (vertex_curvature) / √(2R2h) with an independent R2 (20 m quadric fit)": {
+   "ja": "地平線: 平滑化した形の曲率半径 R1(vertex_curvature)で √(2R1h + h²)/ 独立な R2(20 m の 2 次曲面)で √(2R2h)",
+   "zh": "地平线：用平滑后形状的曲率半径 R1（vertex_curvature）求 √(2R1h + h²) / 用独立的 R2（20 m 二次曲面拟合）求 √(2R2h)",
+   "tw": "地平線：用平滑後形狀的曲率半徑 R1（vertex_curvature）求 √(2R1h + h²) / 用獨立的 R2（20 m 二次曲面擬合）求 √(2R2h)",
+   "ko": "지평선: 평활화한 모양의 곡률 반지름 R1(vertex_curvature)로 √(2R1h + h²) / 독립적인 R2(20 m 이차 곡면 맞춤)로 √(2R2h)",
+   "de": "Horizont: √(2R1h + h²) mit R1 aus der geglätteten Form (vertex_curvature) / √(2R2h) mit einem unabhängigen R2 (Quadrik-Anpassung über 20 m)",
+   "hi": "क्षितिज: चिकने आकार की वक्रता-त्रिज्या R1 (vertex_curvature) से √(2R1h + h²) / स्वतंत्र R2 (20 m द्विघात सतह फ़िट) से √(2R2h)",
+   "fr": "horizon : √(2R1h + h²) avec R1 de la forme lissée (vertex_curvature) / √(2R2h) avec un R2 indépendant (ajustement quadrique sur 20 m)"
+  },
+  "drawn yardstick sizes (person 1.7, Hayabusa 1.0 / 1.1 / 1.6 / 5.7, pitch 105 × 68, tower 333 m) vs the numbers": {
+   "ja": "描いた物差しの大きさ(人 1.7・はやぶさ 1.0 / 1.1 / 1.6 / 5.7・サッカー場 105 × 68・塔 333 m)と数値",
+   "zh": "绘制的标尺大小（人 1.7、隼鸟号 1.0 / 1.1 / 1.6 / 5.7、足球场 105 × 68、塔 333 m）与数值",
+   "tw": "繪製的標尺大小（人 1.7、隼鳥號 1.0 / 1.1 / 1.6 / 5.7、足球場 105 × 68、塔 333 m）與數值",
+   "ko": "그린 잣대의 크기(사람 1.7, 하야부사 1.0 / 1.1 / 1.6 / 5.7, 축구장 105 × 68, 탑 333 m) 대 수치",
+   "de": "gezeichnete Größen der Vergleichsobjekte (Mensch 1.7, Hayabusa 1.0 / 1.1 / 1.6 / 5.7, Feld 105 × 68, Turm 333 m) gegen die Zahlen",
+   "hi": "बनाए गए पैमानों के माप (व्यक्ति 1.7, हायाबुसा 1.0 / 1.1 / 1.6 / 5.7, मैदान 105 × 68, मीनार 333 m) बनाम संख्याएँ",
+   "fr": "tailles dessinées des étalons (personne 1.7, Hayabusa 1.0 / 1.1 / 1.6 / 5.7, terrain 105 × 68, tour 333 m) contre les valeurs"
+  },
+  "field of view (height)": {
+   "ja": "視野の縦の幅",
+   "zh": "视野的纵向宽度",
+   "tw": "視野的縱向寬度",
+   "ko": "시야의 세로 폭",
+   "de": "Sichtfeld (Höhe)",
+   "hi": "दृश्य-क्षेत्र (ऊँचाई)",
+   "fr": "champ de vision (hauteur)"
+  },
+  "Standing on Itokawa (where Hayabusa touched down), how far away is the horizon? (eye at 1.7 m)": {
+   "ja": "イトカワの上(はやぶさが降りた所)に立つと、地平線までどれくらい?(目の高さ 1.7 m)",
+   "zh": "站在糸川上（隼鸟号着陆的地方），到地平线有多远？（眼睛高 1.7 m）",
+   "tw": "站在糸川上（隼鳥號著陸的地方），到地平線有多遠？（眼睛高 1.7 m）",
+   "ko": "이토카와 위(하야부사가 내려앉은 곳)에 서면 지평선까지 얼마나 될까? (눈높이 1.7 m)",
+   "de": "Wenn du auf Itokawa stehst (wo Hayabusa aufsetzte), wie weit ist der Horizont entfernt? (Augenhöhe 1.7 m)",
+   "hi": "इटोकावा पर (जहाँ हायाबुसा उतरा) खड़े होने पर क्षितिज कितनी दूर है? (आँख 1.7 m पर)",
+   "fr": "Debout sur Itokawa (là où Hayabusa s'est posé), à quelle distance est l'horizon ? (yeux à 1.7 m)"
+  },
+  "about 2.5 m": {
+   "ja": "約 2.5 m",
+   "zh": "约 2.5 m",
+   "tw": "約 2.5 m",
+   "ko": "약 2.5 m",
+   "de": "etwa 2.5 m",
+   "hi": "लगभग 2.5 m",
+   "fr": "environ 2.5 m"
+  },
+  "about 25 m": {
+   "ja": "約 25 m",
+   "zh": "约 25 m",
+   "tw": "約 25 m",
+   "ko": "약 25 m",
+   "de": "etwa 25 m",
+   "hi": "लगभग 25 m",
+   "fr": "environ 25 m"
+  },
+  "about 4.7 km (the same as on Earth)": {
+   "ja": "約 4.7 km(地球と同じ)",
+   "zh": "约 4.7 km（和地球一样）",
+   "tw": "約 4.7 km（和地球一樣）",
+   "ko": "약 4.7 km(지구와 같다)",
+   "de": "etwa 4.7 km (wie auf der Erde)",
+   "hi": "लगभग 4.7 km (पृथ्वी जैसा)",
+   "fr": "environ 4.7 km (comme sur Terre)"
+  },
+  "The local radius of curvature is about 176 m (the shape with boulders smoothed out). The horizon is √(2Rh + h²) = 25 m, 1/190 of Earth's (4.7 km) — not even the far end of a football pitch. Effective gravity underfoot is only 79.4 µm/s², so a ball dropped from 1.7 m takes 207 s (3.4 min) to reach the ground.": {
+   "ja": "足元の形の曲率半径は約 176 m(岩の凹凸を平滑化した形)。地平線は √(2Rh + h²) = 25 m で、地球(4.7 km)の 190 分の 1。サッカー場の端まで見えない。足元の実効重力は 79.4 µm/s² しかないので、1.7 m の高さから落とした球が足元に届くまで 207 秒(3.4 分)かかる。",
+   "zh": "脚下形状的曲率半径约为 176 m（把岩石的凹凸平滑掉后的形状）。地平线为 √(2Rh + h²) = 25 m，是地球（4.7 km）的 1/190 —— 连足球场的另一端都看不到。脚下的有效重力只有 79.4 µm/s²，所以从 1.7 m 落下的球要 207 s（3.4 分钟）才落到地面。",
+   "tw": "腳下形狀的曲率半徑約為 176 m（把岩石的凹凸平滑掉後的形狀）。地平線為 √(2Rh + h²) = 25 m，是地球（4.7 km）的 1/190 —— 連足球場的另一端都看不到。腳下的有效重力只有 79.4 µm/s²，所以從 1.7 m 落下的球要 207 s（3.4 分鐘）才落到地面。",
+   "ko": "발밑 모양의 곡률 반지름은 약 176 m(바위의 요철을 평활화한 모양)입니다. 지평선은 √(2Rh + h²) = 25 m로, 지구(4.7 km)의 1/190 —— 축구장 반대편 끝도 보이지 않습니다. 발밑의 유효 중력은 79.4 µm/s²뿐이라, 1.7 m에서 떨어뜨린 공이 발밑에 닿기까지 207 s(3.4분) 걸립니다.",
+   "de": "Der örtliche Krümmungsradius beträgt etwa 176 m (die Form mit geglätteten Felsbrocken). Der Horizont liegt bei √(2Rh + h²) = 25 m, 1/190 des Erdhorizonts (4.7 km) — nicht einmal das andere Ende eines Fußballfelds. Die effektive Schwerkraft unter den Füßen beträgt nur 79.4 µm/s², daher braucht ein aus 1.7 m fallender Ball 207 s (3.4 min) bis zum Boden.",
+   "hi": "स्थानीय वक्रता-त्रिज्या लगभग 176 m है (चट्टानों के उभार चिकने करने के बाद का आकार)। क्षितिज √(2Rh + h²) = 25 m पर है, पृथ्वी (4.7 km) का 1/190 — फ़ुटबॉल मैदान का दूसरा छोर भी नहीं दिखता। पैरों के नीचे प्रभावी गुरुत्व केवल 79.4 µm/s² है, इसलिए 1.7 m से गिराई गेंद को ज़मीन तक पहुँचने में 207 s (3.4 मिनट) लगते हैं।",
+   "fr": "Le rayon de courbure local vaut environ 176 m (la forme avec les rochers lissés). L'horizon est à √(2Rh + h²) = 25 m, 1/190 de celui de la Terre (4.7 km) — pas même l'autre bout d'un terrain de football. La pesanteur effective sous les pieds n'est que de 79.4 µm/s², si bien qu'une balle lâchée de 1.7 m met 207 s (3.4 min) à toucher le sol."
+  },
+  "horizon d = √((R + h)² − R²) = √(2Rh + h²) ≈ √(2Rh)\nfall time t = √(2h / g)\nfield of view W = 2 D tan(angle / 2)": {
+   "ja": "地平線 d = √((R + h)² − R²) = √(2Rh + h²) ≈ √(2Rh)\n落ちる時間 t = √(2h / g)\n視野の縦の幅 W = 2 D tan(画角 / 2)",
+   "zh": "地平线 d = √((R + h)² − R²) = √(2Rh + h²) ≈ √(2Rh)\n下落时间 t = √(2h / g)\n视野的纵向宽度 W = 2 D tan(视角 / 2)",
+   "tw": "地平線 d = √((R + h)² − R²) = √(2Rh + h²) ≈ √(2Rh)\n下落時間 t = √(2h / g)\n視野的縱向寬度 W = 2 D tan(視角 / 2)",
+   "ko": "지평선 d = √((R + h)² − R²) = √(2Rh + h²) ≈ √(2Rh)\n낙하 시간 t = √(2h / g)\n시야의 세로 폭 W = 2 D tan(화각 / 2)",
+   "de": "Horizont d = √((R + h)² − R²) = √(2Rh + h²) ≈ √(2Rh)\nFallzeit t = √(2h / g)\nSichtfeld W = 2 D tan(Bildwinkel / 2)",
+   "hi": "क्षितिज d = √((R + h)² − R²) = √(2Rh + h²) ≈ √(2Rh)\nगिरने का समय t = √(2h / g)\nदृश्य-क्षेत्र W = 2 D tan(कोण / 2)",
+   "fr": "horizon d = √((R + h)² − R²) = √(2Rh + h²) ≈ √(2Rh)\ntemps de chute t = √(2h / g)\nchamp de vision W = 2 D tan(angle / 2)"
+  },
+  "Itokawa's radius of curvature depends on the scale you measure over (a boulder-strewn rubble pile: bumps at a few metres, the body's bend at tens of metres). The two estimates R1, R2 are 176 m and 198 m, giving horizons of 25 m and 26 m; the real line of sight is blocked by nearby boulders. The yardsticks are schematic shapes; Hayabusa's panel chord is schematic (only the 5.7 m span and the body size are primary-source values). The comparison with the venue will be added when its shape data arrives.": {
+   "ja": "イトカワの曲率半径は測る広さで変わる(岩の多い瓦礫の山なので、数 m では凹凸、数十 m で形の曲がり)。2 つの推定 R1・R2 は 176 m と 198 m で、地平線は 25 m と 26 m。実際の見通しは近くの岩でさえぎられる。物差しの物体は模式の形で、はやぶさのパドルの幅は模式(全幅 5.7 m と本体の寸法だけが一次情報の値)。会場との比較は形のデータが届いてから足す。",
+   "zh": "糸川的曲率半径随测量范围而变（它是布满岩石的碎石堆：几米尺度是凹凸，几十米尺度才是形体的弯曲）。两个估计 R1、R2 分别为 176 m 和 198 m，对应的地平线为 25 m 和 26 m；实际的视线会被附近的岩石挡住。标尺物体是示意形状；隼鸟号太阳能板的宽度是示意（只有全宽 5.7 m 和本体尺寸是一手资料的数值）。与会场的比较等形状数据到了再加上。",
+   "tw": "糸川的曲率半徑隨量測範圍而變（它是布滿岩石的碎石堆：幾公尺尺度是凹凸，幾十公尺尺度才是形體的彎曲）。兩個估計 R1、R2 分別為 176 m 和 198 m，對應的地平線為 25 m 和 26 m；實際的視線會被附近的岩石擋住。標尺物體是示意形狀；隼鳥號太陽能板的寬度是示意（只有全寬 5.7 m 和本體尺寸是一手資料的數值）。與會場的比較等形狀資料到了再加上。",
+   "ko": "이토카와의 곡률 반지름은 재는 범위에 따라 달라집니다(바위가 많은 잔해 더미라서, 수 m에서는 요철, 수십 m에서 형체의 휨). 두 추정 R1, R2는 176 m와 198 m이고, 지평선은 25 m와 26 m입니다. 실제 시야는 가까운 바위에 가립니다. 잣대 물체는 모식적인 모양이고, 하야부사 패들의 폭은 모식입니다(전체 폭 5.7 m와 본체 치수만 일차 정보의 값). 회장과의 비교는 모양 데이터가 도착하면 더합니다.",
+   "de": "Der Krümmungsradius von Itokawa hängt vom Maßstab ab, über den man misst (ein mit Felsbrocken übersäter Schutthaufen: Unebenheiten auf einigen Metern, die Krümmung des Körpers auf Dutzenden Metern). Die beiden Schätzungen R1, R2 sind 176 m und 198 m, mit Horizonten von 25 m und 26 m; die echte Sichtlinie wird von nahen Felsbrocken verdeckt. Die Vergleichsobjekte sind schematisch; die Paneelbreite von Hayabusa ist schematisch (nur die Spannweite 5.7 m und die Körpermaße sind Werte aus Primärquellen). Der Vergleich mit dem Veranstaltungsort kommt dazu, sobald seine Formdaten vorliegen.",
+   "hi": "इटोकावा की वक्रता-त्रिज्या इस पर निर्भर करती है कि आप कितने क्षेत्र पर मापते हैं (चट्टानों से भरा मलबे का ढेर: कुछ मीटर पर उभार, दसियों मीटर पर पिंड का मोड़)। दोनों अनुमान R1, R2 176 m और 198 m हैं, जिनसे क्षितिज 25 m और 26 m मिलते हैं; असली दृष्टि-रेखा पास की चट्टानों से रुक जाती है। पैमाने की वस्तुएँ सांकेतिक आकार हैं; हायाबुसा के पैनल की चौड़ाई सांकेतिक है (केवल 5.7 m का फैलाव और ढाँचे का माप प्राथमिक स्रोत के मान हैं)। आयोजन-स्थल से तुलना उसका आकार-डेटा आने पर जोड़ी जाएगी।",
+   "fr": "Le rayon de courbure d'Itokawa dépend de l'échelle sur laquelle on mesure (un tas de gravats parsemé de rochers : des bosses à quelques mètres, la courbure du corps à des dizaines de mètres). Les deux estimations R1, R2 valent 176 m et 198 m, soit des horizons de 25 m et 26 m ; la vraie ligne de visée est masquée par les rochers proches. Les étalons sont des formes schématiques ; la largeur des panneaux de Hayabusa est schématique (seuls l'envergure de 5.7 m et les dimensions du corps sont des valeurs de source primaire). La comparaison avec le lieu de l'exposition sera ajoutée quand ses données de forme arriveront."
+  },
+  "Colour = magnitude of effective gravity (gravity plus spin centrifugal). The gravity of a uniform 1.9 g/cm³ polyhedron is computed with Werner & Scheeres' exact formula (op polyhedron_gravity) at all 25,350 vertices. The white walker goes round the long-axis section (mesh_slice_contours); the yellow arrow shows the direction of effective gravity there. Where it is not perpendicular to the ground, the ground is a slope. The camera follows the walker; the readout at the top left shows |g_eff| and the slope underfoot.": {
+   "ja": "表面の色 = 実効重力の大きさ(重力 + 自転の遠心力)。一様密度 1.9 g/cm³ の多面体の重力を、Werner & Scheeres の厳密な式(op polyhedron_gravity)で頂点 25,350 個すべてで計算した。白い人が長軸の断面(mesh_slice_contours)を一周し、黄色の矢印がその場所の実効重力の向き。矢印が地面に垂直でないところは坂(斜面の角)。カメラは歩く人を追い、左上の読みに足元の |g_eff| と斜面の角が出る。",
+   "zh": "颜色 = 有效重力的大小（引力加上自转的离心力）。用 Werner & Scheeres 的精确公式（op polyhedron_gravity）在全部 25,350 个顶点上计算密度均匀为 1.9 g/cm³ 的多面体的引力。白色的人沿长轴截面（mesh_slice_contours）走一圈；黄色箭头表示该处有效重力的方向。箭头不垂直于地面的地方就是斜坡。相机跟随行走的人，左上角的读数显示脚下的 |g_eff| 和坡度。",
+   "tw": "顏色 = 有效重力的大小（重力加上自轉的離心力）。用 Werner & Scheeres 的精確公式（op polyhedron_gravity）在全部 25,350 個頂點上計算密度均勻為 1.9 g/cm³ 的多面體的重力。白色的人沿長軸截面（mesh_slice_contours）走一圈；黃色箭頭表示該處有效重力的方向。箭頭不垂直於地面的地方就是斜坡。相機跟隨行走的人，左上角的讀數顯示腳下的 |g_eff| 與坡度。",
+   "ko": "색 = 유효 중력의 크기(중력 + 자전의 원심력). 밀도가 균일한 1.9 g/cm³ 다면체의 중력을 Werner & Scheeres의 정확한 식(op polyhedron_gravity)으로 꼭짓점 25,350개 모두에서 계산했습니다. 흰 사람이 장축 단면(mesh_slice_contours)을 한 바퀴 돌고, 노란 화살표가 그곳의 유효 중력 방향입니다. 화살표가 지면에 수직이 아닌 곳은 경사입니다. 카메라가 걷는 사람을 따라가며, 왼쪽 위의 표시에 발밑의 |g_eff|와 경사각이 나옵니다.",
+   "de": "Farbe = Betrag der effektiven Schwerkraft (Schwerkraft plus Fliehkraft der Rotation). Die Schwerkraft eines homogenen Polyeders mit 1.9 g/cm³ wird mit der exakten Formel von Werner & Scheeres (Op polyhedron_gravity) an allen 25,350 Eckpunkten berechnet. Die weiße Figur läuft den Schnitt entlang der Längsachse ab (mesh_slice_contours); der gelbe Pfeil zeigt dort die Richtung der effektiven Schwerkraft. Wo er nicht senkrecht zum Boden steht, ist der Boden geneigt. Die Kamera folgt dem Wanderer; die Anzeige oben links zeigt |g_eff| und die Hangneigung unter den Füßen.",
+   "hi": "रंग = प्रभावी गुरुत्व का परिमाण (गुरुत्व और घूर्णन का अपकेंद्री बल)। 1.9 g/cm³ के एकसमान बहुफलक का गुरुत्व Werner & Scheeres के सटीक सूत्र (op polyhedron_gravity) से सभी 25,350 शीर्षों पर गिना गया है। सफ़ेद चलने वाला लंबी धुरी के खंड (mesh_slice_contours) का चक्कर लगाता है; पीला तीर वहाँ प्रभावी गुरुत्व की दिशा दिखाता है। जहाँ यह ज़मीन के लंबवत नहीं है, वहाँ ढलान है। कैमरा चलने वाले के साथ चलता है; ऊपर बाईं ओर का पाठ पैरों के नीचे |g_eff| और ढलान दिखाता है।",
+   "fr": "Couleur = intensité de la pesanteur effective (gravité plus force centrifuge de la rotation). La gravité d'un polyèdre homogène de 1.9 g/cm³ est calculée avec la formule exacte de Werner & Scheeres (op polyhedron_gravity) aux 25,350 sommets. Le marcheur blanc fait le tour de la section selon le grand axe (mesh_slice_contours) ; la flèche jaune montre la direction de la pesanteur effective. Là où elle n'est pas perpendiculaire au sol, le sol est en pente. La caméra suit le marcheur ; l'affichage en haut à gauche montre |g_eff| et la pente sous les pieds."
+  },
+  "Colour = geopotential height (the effective potential divided by the mean gravity 72.4 µm/s²). The translucent shell adds the same heights ×2 outside the surface: where the shell hugs the surface, the place is low. White dots are grains scattered over the surface; each step moves a grain to the neighbouring vertex with the lowest effective potential (op values). The grains gather in the low places. Red balls: estimated touchdown sites (TD1, TD2).": {
+   "ja": "色 = ジオポテンシャル高度(実効ポテンシャルを平均の重力 72.4 µm/s² で割った「高さ」)。外側の半透明の殻は、同じ高さを 2 倍にして表面の外へ足したもの: 殻が表面に近い所ほど低い。白い点は表面に撒いた粒で、1 歩ごとに隣の頂点のうち実効ポテンシャル(op の値)が一番低い所へ移る。粒は低い所へ集まる。赤い玉が着陸点の推定位置(TD1・TD2)。",
+   "zh": "颜色 = 位势高度（有效势除以平均重力 72.4 µm/s²）。外侧的半透明壳是把同样的高度放大 2 倍后加到表面外侧：壳越贴近表面的地方越低。白点是撒在表面的颗粒；每一步把颗粒移到相邻顶点中有效势最低的那个（op 的值）。颗粒聚集在低处。红球：着陆点的推定位置（TD1、TD2）。",
+   "tw": "顏色 = 重力位高度（有效位勢除以平均重力 72.4 µm/s²）。外側的半透明殼是把同樣的高度放大 2 倍後加到表面外側：殼越貼近表面的地方越低。白點是撒在表面的顆粒；每一步把顆粒移到相鄰頂點中有效位勢最低的那個（op 的值）。顆粒聚集在低處。紅球：著陸點的推定位置（TD1、TD2）。",
+   "ko": "색 = 지오퍼텐셜 고도(유효 퍼텐셜을 평균 중력 72.4 µm/s²로 나눈 값). 바깥쪽의 반투명 껍질은 같은 높이를 2배 해서 표면 바깥에 더한 것으로, 껍질이 표면에 가까운 곳일수록 낮습니다. 흰 점은 표면에 뿌린 입자로, 한 걸음마다 이웃 꼭짓점 중 유효 퍼텐셜(op 값)이 가장 낮은 곳으로 옮겨 갑니다. 입자는 낮은 곳에 모입니다. 빨간 공: 착륙 지점의 추정 위치(TD1, TD2).",
+   "de": "Farbe = geopotentielle Höhe (das effektive Potential geteilt durch die mittlere Schwerkraft 72.4 µm/s²). Die durchscheinende Hülle setzt dieselben Höhen ×2 außen auf die Oberfläche: Wo die Hülle eng anliegt, ist die Stelle tief. Weiße Punkte sind über die Oberfläche verteilte Körner; jeder Schritt bringt ein Korn zum benachbarten Eckpunkt mit dem niedrigsten effektiven Potential (Werte des Ops). Die Körner sammeln sich an den tiefen Stellen. Rote Kugeln: geschätzte Aufsetzpunkte (TD1, TD2).",
+   "hi": "रंग = भू-विभव ऊँचाई (प्रभावी विभव को औसत गुरुत्व 72.4 µm/s² से भाग)। पारभासी खोल वही ऊँचाइयाँ ×2 करके सतह के बाहर जोड़ता है: जहाँ खोल सतह से सटा है, वह जगह नीची है। सफ़ेद बिंदु सतह पर बिखेरे गए कण हैं; हर कदम कण को उस पड़ोसी शीर्ष पर ले जाता है जिसका प्रभावी विभव (op के मान) सबसे कम है। कण निचली जगहों में जमा होते हैं। लाल गोले: अनुमानित अवतरण स्थल (TD1, TD2)।",
+   "fr": "Couleur = hauteur géopotentielle (le potentiel effectif divisé par la pesanteur moyenne 72.4 µm/s²). La coque translucide ajoute les mêmes hauteurs ×2 à l'extérieur de la surface : là où elle épouse la surface, l'endroit est bas. Les points blancs sont des grains répartis sur la surface ; à chaque pas, un grain passe au sommet voisin de potentiel effectif le plus bas (valeurs de l'op). Les grains se rassemblent dans les creux. Boules rouges : sites d'atterrissage estimés (TD1, TD2)."
+  },
+  "translucent shell: the same heights ×2 added outside the surface": {
+   "ja": "同じ高さを 2 倍にして表面の外に足した半透明の殻",
+   "zh": "半透明的壳：把同样的高度放大 2 倍加到表面外侧",
+   "tw": "半透明的殼：把同樣的高度放大 2 倍加到表面外側",
+   "ko": "반투명 껍질: 같은 높이를 2배 해서 표면 바깥에 더한 것",
+   "de": "durchscheinende Hülle: dieselben Höhen ×2 außen auf die Oberfläche gesetzt",
+   "hi": "पारभासी खोल: वही ऊँचाइयाँ ×2 करके सतह के बाहर जोड़ी गईं",
+   "fr": "coque translucide : les mêmes hauteurs ×2 ajoutées à l'extérieur de la surface"
   }
  }
 }

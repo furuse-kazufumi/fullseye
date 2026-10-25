@@ -73,7 +73,8 @@
     ``events`` ``[{t, label}]``(段の区切り。ジャンプのボタンになる)/ ``series``(frames と同じ形、長さ T)/
     ``panes`` ``[{label, frames (T,H,W[,3]), boxes, png=True}]``(同じ時間軸で並べる 2-D)/
     ``follow``(追従する物体の name。無ければ全物体の重心)/ ``cbar`` /
-    ``axis`` ``{values (T,), segments [{k, label, unit, decimals}]}``(時間つまみの読みを物理量に)
+    ``axis`` ``{values (T,), segments [{k, label, unit, decimals}]}``(時間つまみの読みを物理量に)/
+    ``camera`` ``{dist (T,), target (T,3)}``(コマごとのカメラ。桁の違う物を並べて寄る場面に)
 
 共通の任意項目: ``view`` ``{az, el, dist}``(3-D の初期視点。dist は既定距離の倍率)。
 
@@ -696,6 +697,31 @@ def _dedupe_frames(fr: np.ndarray):
     return np.asarray(rows, int), np.asarray(index, int)
 
 
+_CAMERA_KEYS = frozenset({"dist", "target"})
+
+
+def _pack_camera(raw: Any, T: int, where: str) -> dict:
+    """anim3d の ``camera``(コマごとのカメラの注視点と距離)を検査して詰める。
+
+    ``{"dist": (T,) 正の有限な距離(世界単位), "target": (T,3) 注視点}``。桁が何桁も変わる寄り(全体 1 km → 人 3 m)を
+    再生で見せるためのもので、量子化せずに JSON の数で持つ(1 m を切る距離でも揺れない)。視点の向き(az / el)は
+    利用者のドラッグのまま、ホイールは距離の倍率として効く。鍵の欠け・未知の鍵・T の不一致・0 以下・NaN は ``ValueError``。
+    """
+    wc = where + ".camera"
+    _keys(raw, _CAMERA_KEYS, wc)
+    if set(raw) != _CAMERA_KEYS:
+        raise ValueError("%s: dist と target の 2 つが要る" % wc)
+    d = _finite(raw["dist"], wc + ".dist")
+    if d.shape != (T,):
+        raise ValueError("%s: dist は (T,) = (%d,): %s —— T の不一致" % (wc, T, d.shape))
+    if not np.all(d > 0):
+        raise ValueError("%s: dist は正" % wc)
+    tg = _finite(raw["target"], wc + ".target")
+    if tg.shape != (T, 3):
+        raise ValueError("%s: target は (T,3) = (%d,3): %s —— T の不一致" % (wc, T, tg.shape))
+    return {"d": [float("%.6g" % v) for v in d], "t": [[float("%.6g" % v) for v in row] for row in tg]}
+
+
 def _pack_anim3d(tab: dict, out: dict, store: _Store, where: str, ctx: _Ctx) -> None:
     """kind "anim3d" を検査して詰める(物体のメッシュは 1 回、コマごとは姿勢だけ)。"""
     t = _finite(tab.get("t"), where + ".t")
@@ -773,6 +799,8 @@ def _pack_anim3d(tab: dict, out: dict, store: _Store, where: str, ctx: _Ctx) -> 
         if tab["follow"] not in names:
             raise ValueError("%s: follow の物体 %r が bodies に無い" % (where, tab["follow"]))
         out["follow"] = names.index(tab["follow"])
+    if tab.get("camera") is not None:
+        out["camera"] = _pack_camera(tab["camera"], T, where)
     trails, R = [], None
     for j, tr in enumerate(tab.get("trails") or []):
         wt = "%s.trails[%d]" % (where, j)
@@ -2081,6 +2109,32 @@ _JS_LESSON_SUBS = (
 )
 
 
+# コマごとのカメラ(anim3d の camera)を持つ場面だけ差し込む塊と、カメラの式の置き換え。
+_JS_CAM_OLD = """  const tg = $('follow').checked ? S.tgt : S.ctr;
+  const cd = Math.cos(el), sd = Math.sin(el), ca = Math.cos(az), sa = Math.sin(az);
+  const eye = [tg[0] + dist*cd*ca, tg[1] + dist*cd*sa, tg[2] + dist*sd];
+  const fy = 0.9, vp = mul(persp(fy, cv.width/cv.height, S.rad*0.02, S.rad*40), look(eye, tg, [0,0,1]));
+"""
+_JS_CAM_NEW = """  const C = camNow(tab, S, f);
+  const tg = C ? C.t : ($('follow').checked ? S.tgt : S.ctr), dd = C ? C.d : dist;
+  const cd = Math.cos(el), sd = Math.sin(el), ca = Math.cos(az), sa = Math.sin(az);
+  const eye = [tg[0] + dd*cd*ca, tg[1] + dd*cd*sa, tg[2] + dd*sd];
+  const fy = 0.9, vp = mul(persp(fy, cv.width/cv.height, C ? Math.min(S.rad*0.02, dd*0.02) : S.rad*0.02, C ? Math.max(S.rad*40, dd*4 + S.rad*8) : S.rad*40), look(eye, tg, [0,0,1]));
+"""
+_JS_CAM = r"""/* ---------- コマごとのカメラ(camera)。この塊は camera を持つ場面だけページに入る ----------
+   注視点と距離はコマの値、ホイールの倍率(dist / dist0)だけ利用者の操作を残す */
+function camNow(tab, S, f){
+  const c = tab.camera; if (!c) return null;
+  return {t: c.t[f], d: c.d[f] * (dist / dist0(S))};
+}
+"""
+
+
+def _has_camera(data: dict) -> bool:
+    """詰めた仕様に camera を持つ anim3d のタブがあるか(あれば _JS_CAM を差し込む)。"""
+    return any(t.get("kind") == "anim3d" and "camera" in t for t in data.get("tabs", ()))
+
+
 def _has_translucent(data: dict) -> bool:
     """詰めた仕様に alpha < 1 の物体があるか(あれば _JS_ALPHA を差し込む)。"""
     return any(t.get("kind") == "anim3d" and any("alpha" in b for b in t.get("bodies", ()))
@@ -2104,6 +2158,14 @@ def _build_html(spec: dict, lang="ja", detect_lang: bool = False) -> str:
         if js.count(_JS_ALPHA_ANCHOR) != 1:
             raise AssertionError("半透明の塊の差し込み位置が 1 回でない")
         js = js.replace(_JS_ALPHA_ANCHOR, _JS_ALPHA + _JS_ALPHA_ANCHOR)
+    if _has_camera(data):                                # コマごとのカメラがある場面だけ(無ければ今と同じページ)
+        n_cam = js.count(_JS_CAM_OLD)
+        if n_cam != (2 if _has_translucent(data) else 1):    # drawAnim と(半透明があれば)drawTranslucent の 2 か所
+            raise AssertionError("カメラの式の置き換え位置の数が合わない: %d" % n_cam)
+        js = js.replace(_JS_CAM_OLD, _JS_CAM_NEW)
+        if js.count(_JS_ALPHA_ANCHOR) != 1:
+            raise AssertionError("カメラの塊の差し込み位置が 1 回でない")
+        js = js.replace(_JS_ALPHA_ANCHOR, _JS_CAM + _JS_ALPHA_ANCHOR)
     css, body = _CSS, _BODY
     if "bh" in data:                                     # checks を持つ場面だけ(無ければ今と同じページ)
         for old, new in ((_JS_BH_ANCHOR, _JS_BH + _JS_BH_ANCHOR),) + _JS_BH_SUBS:
@@ -2216,7 +2278,7 @@ def viewer_split_tab(tab_id, label, badge, text, before, after, label_before, la
 
 def viewer_anim3d_tab(tab_id, label, badge, text, t, bodies, xyz, quat, trails=None, clouds=None,
                       events=None, series=None, panes=None, cbar=None, follow=None, numbers=None,
-                      view=None, checks=None, axis=None, lesson=None) -> dict:
+                      view=None, checks=None, axis=None, lesson=None, camera=None) -> dict:
     """動く 3-D のタブ: 物体ごとの剛体姿勢をコマごとに再生する(2-D の画像列・時系列も同じ時間軸で)。
 
     物体のメッシュは **1 回だけ** 持ち、コマごとには姿勢(位置 + 四元数)だけを持つ。ページでは
@@ -2272,6 +2334,10 @@ def viewer_anim3d_tab(tab_id, label, badge, text, t, bodies, xyz, quat, trails=N
         時間つまみの読みを物理量にする。``{"values": (T,), "segments": [{"k": 0, "label": 文字列の辞書,
         "unit": "°", "decimals": 1}, ...]}``。段(k から次の段の手前まで)ごとに量の名前・単位を変えられる。
         読みは「入射角 θ1 = 42.3°」の形になり、コマ番号は括弧で添えるだけ。無ければ従来どおり秒。
+    camera : dict, optional
+        コマごとのカメラ ``{"dist": (T,) 距離(世界単位、正), "target": (T,3) 注視点}``。全体(1 km)から人(数 m)へ
+        桁を何桁も変えて寄る場面を再生で見せる。向きはドラッグのまま、ホイールは距離の倍率。近い・遠いの切り取り面も
+        距離に合わせる。この鍵を持つ場面だけ :data:`_JS_CAM` がページに入る(無いページは前と同じバイト列)。
     lesson : dict, optional
         学習用の型。``{"question", "choices"(2〜3 個), "answer"(0 始まり), "explain", "formula", "limit"}``
         (文字列はすべて文字列の辞書)。カードは ① 問い → ② 予想(選択肢を押すと答えが開く)→ ③ 再生 の順、
@@ -2307,7 +2373,7 @@ def viewer_anim3d_tab(tab_id, label, badge, text, t, bodies, xyz, quat, trails=N
                 {"t": t, "bodies": list(bodies), "xyz": xyz, "quat": quat, "trails": list(trails or []),
                  "clouds": list(clouds or []), "events": list(events or []), "series": list(series or []),
                  "panes": list(panes or []), "cbar": cbar, "follow": follow, "view": view, "checks": checks,
-                 "axis": axis, "lesson": lesson})
+                 "axis": axis, "lesson": lesson, "camera": camera})
 
 
 def viewer_spec(viewer_id: str, title: dict, subtitle: dict, hint: dict, tabs, credit=None) -> dict:
