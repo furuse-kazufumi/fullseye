@@ -90,6 +90,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../articles/assets/poc/poc_microns_brain_wave/04_wave_on_wiring.gif"><img src="thumbs/poc_microns_brain_wave.jpg" alt="マウス視覚野の波" loading="lazy" width="320" height="320"><b>&#9654;</b><span>マウス視覚野の波</span></a>
 <a href="../articles/assets/media/evis_stereo_fullseye.mp4"><img src="thumbs/evis_stereo_depth.jpg" alt="ヒューマノイドの両眼" loading="lazy" width="320" height="320"><b>&#9654;</b><span>ヒューマノイドの両眼</span></a>
 <a href="../articles/assets/media/evis_bean_track_fullseye.mp4"><img src="thumbs/evis_bean_track.jpg" alt="箸先カメラの豆追跡" loading="lazy" width="320" height="320"><b>&#9654;</b><span>箸先カメラの豆追跡</span></a>
+<a href="../view2026/anim3d/interactive_anim3d_viewer.html?lang=ja"><img src="thumbs/interactive_anim3d_viewer.jpg" alt="アームと半透明のレンズ" loading="lazy" width="320" height="320"><b>&#9654;</b><span>アームと半透明のレンズ · 0.4 MB</span></a>
 </div>
 
 ## シリーズ記事
@@ -213,7 +214,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 **見せる**
 
 - 結果を人が読める図にする: [説明](../capabilities/figures-and-annotation.md) · 例 [poc_colormap_readability](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_colormap_readability.py) · [poc_dem_terrain](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dem_terrain.py)
-- 結果を、触って見られる 1 枚の HTML にする(タブ・バッジ・3-D・動画・多言語): [説明](../capabilities/interactive-poc-viewer.md) · 例 [interactive_poc_viewer](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_poc_viewer.py)
+- 結果を、触って見られる 1 枚の HTML にする(タブ・バッジ・3-D・動画・多言語): [説明](../capabilities/interactive-poc-viewer.md) · 例 [interactive_poc_viewer](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_poc_viewer.py) · [interactive_anim3d_viewer](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
 - 地の色を知らずに線と領域を描く(反転色): [説明](../capabilities/inverted-colour-overlays.md) · 例 [annotate_paper_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/annotate_paper_tour.py)
 - 点群をそのまま色の絵にする: [説明](../capabilities/point-cloud-to-picture.md) · 例 [points_render_basics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples_3d/points_render_basics.py) · [poc_flybrain_pointcloud](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_flybrain_pointcloud.py)
 - 画像の上に、文字と表を置きたい場所へ置く: [説明](../capabilities/text-and-tables-on-images.md) · 例 [annotate_paper_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/annotate_paper_tour.py)
@@ -229,7 +230,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 </div>
 
-[PoC 以外の使用例 164 本の一覧](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[PoC 以外の使用例 165 本の一覧](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## ぜんぶ見る
 
@@ -668,6 +669,10 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 
 - [ヒューマノイドの両眼](../articles/assets/media/evis_stereo_fullseye.mp4) (動画): 筋骨格ヒューマノイドが箸で豆を打つ場面を、自分の両眼(瞳孔間距離 64 mm)で撮り、Fullseye がステレオ視差 → 深度を毎コマ計算する。 **豆までの距離の誤差は中央値 0.66 %・最大 1.91 %(読める 229 / 241 コマ)。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/gen_evis_media.py)
 - [箸先カメラの豆追跡](../articles/assets/media/evis_bean_track_fullseye.mp4) (動画): 同じ場面の箸先カメラの映像で、Fullseye が豆を検出して追う。 **見えている 163 コマすべてで検出(163 / 163)、重心の誤差は真値比で中央値 0.10 px。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/gen_evis_media.py)
+
+**動く 3-D(触って回せる)**
+
+- [アームと半透明のレンズ](../view2026/anim3d/interactive_anim3d_viewer.html?lang=ja) (動く 3-D・触って回せる, 0.4 MB): アームが箱を運ぶ様子を、指で回して好きな向きから見る。光線が半透明のレンズを貫いて焦点へ集まり、右下では真上からの高さ画像とその二値化が同じ時間軸で進む。 [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
 
 </div>
 

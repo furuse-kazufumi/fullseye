@@ -489,7 +489,7 @@ def _pack_series(raw, T: int, where: str, ctx: _Ctx) -> list:
 
 
 _HEX = re.compile(r"#[0-9a-fA-F]{6}\Z")
-_BODY_KEYS = frozenset({"name", "label", "pos", "faces", "rgb", "val"})
+_BODY_KEYS = frozenset({"name", "label", "pos", "faces", "rgb", "val", "alpha"})
 _TRAIL_KEYS = frozenset({"body", "offset", "xyz", "color", "tail", "label"})
 _CLOUD_KEYS = frozenset({"k", "pos", "rgb", "color", "point_size"})
 _PANE_KEYS = frozenset({"label", "frames", "boxes", "png"})
@@ -515,6 +515,16 @@ def _real(x, where: str) -> float:
     if isinstance(x, bool) or not isinstance(x, (int, float, np.integer, np.floating)) or not np.isfinite(x):
         raise ValueError("%s: 有限の数でなければならない: %r" % (where, x))
     return float(x)
+
+
+def _alpha(x, where: str) -> float:
+    """物体の不透明度。0 < alpha <= 1 の有限の実数だけを通す(bool・文字列・NaN・範囲外は ValueError)。"""
+    if isinstance(x, bool) or not isinstance(x, (int, float, np.integer, np.floating)):
+        raise ValueError("%s: alpha は 0 < alpha <= 1 の数(%s は通さない): %r" % (where, type(x).__name__, x))
+    a = float(x)
+    if not np.isfinite(a) or not (0.0 < a <= 1.0):
+        raise ValueError("%s: alpha は 0 < alpha <= 1(0 は見えない物体、1 が不透明): %r" % (where, x))
+    return a
 
 
 def _faces(raw, n: int, where: str) -> np.ndarray:
@@ -592,6 +602,10 @@ def _pack_anim3d(tab: dict, out: dict, store: _Store, where: str, ctx: _Ctx) -> 
                               "faces": store.put(faces, "u32" if len(pos) > 65535 else "u16")}
         if b.get("label") is not None:
             pb["label"] = _bi(b["label"], wb + ".label", ctx)
+        if "alpha" in b:
+            alpha = _alpha(b["alpha"], wb + ".alpha")
+            if alpha < 1.0:                              # 1 は既定(不透明)。載せないので出力は今と同じ
+                pb["alpha"] = alpha
         has_rgb, has_val = b.get("rgb") is not None, b.get("val") is not None
         if has_rgb == has_val:
             raise ValueError("%s: 色は rgb か val(+タブの cbar)のどちらか 1 つ" % wb)
@@ -1567,11 +1581,137 @@ renderText(); select(cur); requestAnimationFrame(tick);
 """
 
 
-def _build_html(spec: dict, lang="ja") -> str:
-    """仕様から HTML 文字列を作る(検査はここで行う)。``lang`` は :func:`_pack_spec` と同じ。"""
+# 半透明の物体(bodies[*]["alpha"] < 1)がある場面だけ、_JS の _JS_ALPHA_ANCHOR の直前に差し込む塊。
+# 半透明の物体の無い場面では差し込まないので、ページは alpha を足す前とバイト単位で同じになる
+# (公開済みのビューア docs/view2026/viewers/*.html に drift を出さない)。
+_JS_ALPHA_ANCHOR = "/* 同じ時間軸の 2-D(センサー画像・op の結果)。PNG はブラウザが無損失で復号する */\n"
+_JS_ALPHA = r"""/* ---------- 半透明の物体(alpha < 1)。この塊は半透明の物体がある場面だけページに入る ----------
+   描く順: 不透明の物体 → 軌跡 → 点群(ここまで drawAnimOpaque)→ 半透明の物体。軌跡と点群が深度を書いた後に、
+   半透明の物体を BLEND・depthMask(false)・深度テスト有効のまま重ねるので、レンズの中や後ろの光線が透けて見え、
+   不透明の物の後ろにある部分は隠れる。半透明どうしは毎コマ、カメラから遠い順(物体の世界 AABB の中心)に並べ、
+   1 物体の中は CULL_FACE で 裏面 → 表面 の 2 パス(凸形状の裏面が表面に被らない)。巻き順は物体ごとに符号付き体積で
+   確かめ、内向き(体積 < 0)なら 2 パスの順を入れ替える。陰影は不透明と同じ |n·l|(両面ライティング = 法線の向きに依らない)。
+   縁はフレネル風に濃く・明るく(視線と面が寝るほど alpha を 1 へ寄せる)して、薄い alpha でも輪郭が見えるようにする。 */
+let TP = null;
+if (gl) {
+  TP = prog('attribute vec3 a_p;attribute vec3 a_n;attribute vec3 a_c;uniform mat4 u_vp;uniform mat4 u_m;varying vec3 v_n;varying vec3 v_c;varying vec3 v_w;'+
+    'void main(){vec4 w=u_m*vec4(a_p,1.0);gl_Position=u_vp*w;v_w=w.xyz;v_n=(u_m*vec4(a_n,0.0)).xyz;v_c=a_c;}',
+    'precision mediump float;varying vec3 v_n;varying vec3 v_c;varying vec3 v_w;uniform vec3 u_l;uniform vec3 u_eye;uniform float u_a;'+
+    'void main(){vec3 n=normalize(v_n);float c=abs(dot(n,normalize(u_eye-v_w)));float r=pow(1.0-c,3.0);'+
+    'float d=abs(dot(n,u_l))*0.65+0.38;float a=clamp(u_a+(1.0-u_a)*0.75*r,0.0,1.0);'+
+    'gl_FragColor=vec4(min(v_c*d+0.3*r,vec3(1.0)),a);}');
+}
+const transl = {};
+/* 半透明の物体の一覧(場面ごとに 1 回): 番号・alpha・局所 AABB の中心・巻き順が内向きか */
+function translOf(tab){
+  if (transl[tab.id]) return transl[tab.id];
+  const L = [];
+  tab.bodies.forEach((b, j) => {
+    if (b.alpha == null || !(b.alpha < 1)) return;
+    const P = arr(b.pos).a, F = arr(b.faces).a, lo = [Infinity,Infinity,Infinity], hi = [-Infinity,-Infinity,-Infinity];
+    for (let i = 0; i < P.length; i += 3) for (let k = 0; k < 3; k++) { lo[k] = Math.min(lo[k], P[i+k]); hi[k] = Math.max(hi[k], P[i+k]); }
+    const c = [0,1,2].map(k => (lo[k] + hi[k]) / 2);
+    let vol = 0;                                    /* 6 × 符号付き体積(中心からの四面体の和)。外向き = 正 */
+    for (let f = 0; f < F.length; f += 3) {
+      const a = F[f]*3, q = F[f+1]*3, r = F[f+2]*3;
+      const ax = P[a]-c[0], ay = P[a+1]-c[1], az_ = P[a+2]-c[2], bx = P[q]-c[0], by = P[q+1]-c[1], bz = P[q+2]-c[2];
+      const cx = P[r]-c[0], cy = P[r+1]-c[1], cz = P[r+2]-c[2];
+      vol += ax*(by*cz-bz*cy) + ay*(bz*cx-bx*cz) + az_*(bx*cy-by*cx);
+    }
+    L.push({j, a: b.alpha, c, inward: vol < 0});
+  });
+  return transl[tab.id] = L;
+}
+const drawAnimOpaque = drawAnim;
+drawAnim = function(tab){
+  const S = sceneAnim(tab), L = S.fail || !TP ? [] : translOf(tab);
+  if (!L.length) { drawAnimOpaque(tab); return; }
+  const keep = L.map(e => S.bodies[e.j].count);
+  L.forEach(e => { S.bodies[e.j].count = 0; });   /* 不透明のパスでは描かない(drawElements の 0 個は何も描かない) */
+  try { drawAnimOpaque(tab); } finally { L.forEach((e, i) => { S.bodies[e.j].count = keep[i]; }); }
+  if (AP && LP && PP) drawTranslucent(tab, S, L);
+};
+function drawTranslucent(tab, S, L){
+  const f = Math.max(0, Math.min(tab.t.length - 1, Math.floor(frame)));
+  /* カメラは drawAnim と同じ式(テストが両方の式の一致を見ている) */
+  const tg = $('follow').checked ? S.tgt : S.ctr;
+  const cd = Math.cos(el), sd = Math.sin(el), ca = Math.cos(az), sa = Math.sin(az);
+  const eye = [tg[0] + dist*cd*ca, tg[1] + dist*cd*sa, tg[2] + dist*sd];
+  const fy = 0.9, vp = mul(persp(fy, cv.width/cv.height, S.rad*0.02, S.rad*40), look(eye, tg, [0,0,1]));
+  let l = [ca*cd*0.5, sa*cd*0.5, sd*0.5 + 0.5]; const ll = Math.hypot(l[0], l[1], l[2]); l = l.map(v => v/ll);
+  const order = L.map(e => {
+    const o = f*S.B + e.j, m = quatMat(S.Q[o*4], S.Q[o*4+1], S.Q[o*4+2], S.Q[o*4+3], S.X[o*3], S.X[o*3+1], S.X[o*3+2]), c = e.c;
+    const w = [m[0]*c[0]+m[4]*c[1]+m[8]*c[2]+m[12], m[1]*c[0]+m[5]*c[1]+m[9]*c[2]+m[13], m[2]*c[0]+m[6]*c[1]+m[10]*c[2]+m[14]];
+    return {e, m, d: Math.hypot(w[0]-eye[0], w[1]-eye[1], w[2]-eye[2])};
+  }).sort((p, q) => q.d - p.d);                   /* 遠い順 */
+  gl.useProgram(TP);
+  const lp = gl.getAttribLocation(TP, 'a_p'), ln = gl.getAttribLocation(TP, 'a_n'), lc = gl.getAttribLocation(TP, 'a_c');
+  const um = gl.getUniformLocation(TP, 'u_m'), ua = gl.getUniformLocation(TP, 'u_a');
+  gl.uniform3f(gl.getUniformLocation(TP, 'u_l'), l[0], l[1], l[2]);
+  gl.uniform3f(gl.getUniformLocation(TP, 'u_eye'), eye[0], eye[1], eye[2]);
+  gl.uniformMatrix4fv(gl.getUniformLocation(TP, 'u_vp'), false, vp);
+  gl.enableVertexAttribArray(lp); gl.enableVertexAttribArray(ln); gl.enableVertexAttribArray(lc);
+  gl.enable(gl.DEPTH_TEST); gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+  gl.depthMask(false); gl.enable(gl.CULL_FACE);
+  for (const it of order) {
+    const b = S.bodies[it.e.j];
+    gl.bindBuffer(gl.ARRAY_BUFFER, b.pos); gl.vertexAttribPointer(lp, 3, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ARRAY_BUFFER, b.nrm); gl.vertexAttribPointer(ln, 3, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ARRAY_BUFFER, b.col); gl.vertexAttribPointer(lc, 3, gl.UNSIGNED_BYTE, true, 0, 0);
+    gl.uniformMatrix4fv(um, false, it.m);
+    gl.uniform1f(ua, it.e.a);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, b.idx);
+    /* cullFace(FRONT) = 裏面だけ描く → cullFace(BACK) = 表面だけ描く。内向きの巻きなら逆 */
+    for (const side of it.e.inward ? [gl.BACK, gl.FRONT] : [gl.FRONT, gl.BACK]) {
+      gl.cullFace(side); gl.drawElements(gl.TRIANGLES, b.count, b.itype, 0);
+    }
+  }
+  gl.disable(gl.CULL_FACE); gl.cullFace(gl.BACK); gl.depthMask(true); gl.disable(gl.BLEND);
+  attrsOff();
+}
+"""
+
+
+#: ``detect_lang=True`` のとき ``let L = ...`` の行と差し替える。URL の ``?lang=xx`` が最優先、
+#: 無ければ ``navigator.language`` を写す(zh-TW / zh-HK / zh-MO / zh-Hant → tw、他の zh → zh、
+#: ko / de / hi / fr / ja はそのまま、それ以外は en)。写した先がページに無ければ en、en も無ければ先頭。
+_JS_LANG_LINE = "let L = D.langs.indexOf(qs.get('lang')) >= 0 ? qs.get('lang') : D.langs[0];\n"
+_JS_PICK_LANG = r"""function pickLang(q, nav, langs){
+  if (q && langs.indexOf(q) >= 0) return q;
+  const n = String(nav || '').toLowerCase().replace(/_/g, '-');
+  let t = 'en';
+  if (n.indexOf('zh') === 0) t = /^zh-(tw|hk|mo)\b|hant/.test(n) ? 'tw' : 'zh';
+  else { const p = n.slice(0, 2); if (['ko', 'de', 'hi', 'fr', 'ja'].indexOf(p) >= 0 && (n.length === 2 || n[2] === '-')) t = p; }
+  return langs.indexOf(t) >= 0 ? t : (langs.indexOf('en') >= 0 ? 'en' : langs[0]);
+}
+let L = pickLang(qs.get('lang'), (typeof navigator !== 'undefined' && navigator.language) || '', D.langs);
+"""
+
+
+def _has_translucent(data: dict) -> bool:
+    """詰めた仕様に alpha < 1 の物体があるか(あれば _JS_ALPHA を差し込む)。"""
+    return any(t.get("kind") == "anim3d" and any("alpha" in b for b in t.get("bodies", ()))
+               for t in data.get("tabs", ()))
+
+
+def _build_html(spec: dict, lang="ja", detect_lang: bool = False) -> str:
+    """仕様から HTML 文字列を作る(検査はここで行う)。``lang`` は :func:`_pack_spec` と同じ。
+
+    ``detect_lang=True`` なら、``?lang`` が無いときにブラウザの言語(``navigator.language``)で開く
+    (:data:`_JS_PICK_LANG`)。既定の False は従来どおり ``?lang`` か先頭の言語(生成物は変わらない)。
+    """
     data = _pack_spec(spec, lang)
     blob = json.dumps(data, ensure_ascii=True, separators=(",", ":")).replace("</", "<\\/")
-    js = _JS.replace("__DATA__", blob)
+    js = _JS
+    if detect_lang:
+        if js.count(_JS_LANG_LINE) != 1:
+            raise AssertionError("言語を選ぶ行が 1 回でない")
+        js = js.replace(_JS_LANG_LINE, _JS_PICK_LANG)
+    if _has_translucent(data):                           # 半透明の物体がある場面だけ(無ければ今と同じページ)
+        if js.count(_JS_ALPHA_ANCHOR) != 1:
+            raise AssertionError("半透明の塊の差し込み位置が 1 回でない")
+        js = js.replace(_JS_ALPHA_ANCHOR, _JS_ALPHA + _JS_ALPHA_ANCHOR)
+    js = js.replace("__DATA__", blob)
     if js.count(blob) != 1:
         raise AssertionError("DATA の差し込みが 1 回でない")
     title = html.escape(data["title"][data["langs"][0]])
@@ -1580,13 +1720,16 @@ def _build_html(spec: dict, lang="ja") -> str:
             "<title>%s</title>\n<style>%s</style>\n%s\n<script>%s</script>\n</html>\n" % (data["langs"][0], title, _CSS, _BODY, js))
 
 
-def write_viewer(spec: dict, path, lang="ja") -> str:
+def write_viewer(spec: dict, path, lang="ja", detect_lang: bool = False) -> str:
     """HTML を書いて、書いたパス(文字列)を返す。仕様が不正なら何も書かず ``ValueError``。
 
     ``lang="ja"`` は単言語のページ。``lang=["ja", "en", ...]`` は言語の切り替えつきで、先頭が既定。
     対応は ja / en / zh / tw / ko / de / hi / fr。URL の ``?lang=xx`` で開く言語を選べる。
+    ``detect_lang=True`` なら ``?lang`` が無いときにブラウザの言語で開く(zh-TW / zh-HK → tw、
+    zh → zh、ko / de / hi / fr / ja、それ以外は en)。展示会の入口のように、外国の来場者が
+    URL を直接開く場面向け。既定の False は従来どおり(先頭の言語)。
     """
-    text = _build_html(spec, lang)                      # 検査はここで終わる(書く前に落とす)
+    text = _build_html(spec, lang, detect_lang)         # 検査はここで終わる(書く前に落とす)
     p = Path(path)
     p.parent.mkdir(parents=True, exist_ok=True)
     p.write_bytes(text.encode("utf-8"))
@@ -1671,6 +1814,10 @@ def viewer_anim3d_tab(tab_id, label, badge, text, t, bodies, xyz, quat, trails=N
         ``{"name": str, "pos": (N,3) 物体のローカル座標, "faces": (M,3) int,
         "rgb": (3,) か (N,3)(uint8 か 0..1)| "val": (N,)(+ ``cbar``), "label": 文字列の辞書(任意)}``。
         色は rgb か val のどちらか 1 つ。未知の鍵(``"color": "red"`` など)は ``ValueError``。
+        ``"alpha": float``(任意、0 < alpha <= 1、既定 1 = 不透明)で半透明にする(レンズ・ガラス板・
+        ビームスプリッタなど)。半透明の物体は不透明の物体・軌跡・点群の **後に**、カメラから遠い順に重ねて
+        描くので、中や後ろを通る軌跡(光線)が透けて見える。縁は少し濃く出る。目安は 0.25〜0.35。
+        範囲外・NaN・bool・文字列は ``ValueError``。alpha が 1 だけの場面のページは alpha を使わない場面と同じ。
     xyz : (T,B,3)
         各コマの物体の位置(ローカル原点の世界座標)。B = ``len(bodies)``。
     quat : (T,B,4)

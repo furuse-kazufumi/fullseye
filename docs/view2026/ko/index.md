@@ -75,6 +75,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_microns_brain_wave/04_wave_on_wiring.gif"><img src="../thumbs/poc_microns_brain_wave.jpg" alt="마우스 시각피질 파동" loading="lazy" width="320" height="320"><b>&#9654;</b><span>마우스 시각피질 파동</span></a>
 <a href="../../articles/assets/media/evis_stereo_fullseye.mp4"><img src="../thumbs/evis_stereo_depth.jpg" alt="휴머노이드 두 눈" loading="lazy" width="320" height="320"><b>&#9654;</b><span>휴머노이드 두 눈</span></a>
 <a href="../../articles/assets/media/evis_bean_track_fullseye.mp4"><img src="../thumbs/evis_bean_track.jpg" alt="젓가락 끝 카메라 추적" loading="lazy" width="320" height="320"><b>&#9654;</b><span>젓가락 끝 카메라 추적</span></a>
+<a href="../../view2026/anim3d/interactive_anim3d_viewer.html?lang=ko"><img src="../thumbs/interactive_anim3d_viewer.jpg" alt="로봇 팔과 반투명 렌즈" loading="lazy" width="320" height="320"><b>&#9654;</b><span>로봇 팔과 반투명 렌즈 · 0.4 MB</span></a>
 </div>
 
 ## 시리즈 기사 (Qiita의 영어 기사)
@@ -198,7 +199,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 **보여주기**
 
 - 결과를 사람이 읽을 수 있는 그림으로: [설명](../../capabilities/figures-and-annotation.md) _(ja)_ · 예제 [poc_colormap_readability](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_colormap_readability.py) · [poc_dem_terrain](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dem_terrain.py)
-- 결과를 직접 만져 볼 수 있는 한 장짜리 HTML로 만들기(탭·배지·3-D·동영상·다국어): [설명](../../capabilities/interactive-poc-viewer.md) _(ja)_ · 예제 [interactive_poc_viewer](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_poc_viewer.py)
+- 결과를 직접 만져 볼 수 있는 한 장짜리 HTML로 만들기(탭·배지·3-D·동영상·다국어): [설명](../../capabilities/interactive-poc-viewer.md) _(ja)_ · 예제 [interactive_poc_viewer](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_poc_viewer.py) · [interactive_anim3d_viewer](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
 - 바탕색을 몰라도 선과 영역 그리기(반전색): [설명](../../capabilities/inverted-colour-overlays.md) _(ja)_ · 예제 [annotate_paper_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/annotate_paper_tour.py)
 - 점군을 그대로 컬러 그림으로 그린다(서브픽셀 발자국, 깊이 순 합성, 빛의 총량을 보존하는 덧셈): [설명](../../capabilities/point-cloud-to-picture.md) _(ja)_ · 예제 [points_render_basics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples_3d/points_render_basics.py) · [poc_flybrain_pointcloud](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_flybrain_pointcloud.py)
 - 이미지 위 원하는 곳에 글자와 표 놓기: [설명](../../capabilities/text-and-tables-on-images.md) _(ja)_ · 예제 [annotate_paper_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/annotate_paper_tour.py)
@@ -214,7 +215,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 </div>
 
-[PoC가 아닌 사용 예 164개 목록](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[PoC가 아닌 사용 예 165개 목록](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## 전부 보기
 
@@ -653,6 +654,10 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 
 - [휴머노이드 두 눈](../../articles/assets/media/evis_stereo_fullseye.mp4) (동영상): 근골격 휴머노이드가 젓가락으로 콩을 치는 장면을 자기 두 눈(동공 간 거리 64 mm)으로 찍고, Fullseye가 매 프레임 스테레오 시차 → 깊이를 계산한다. **콩까지 거리 오차: 중앙값 0.66 %, 최대 1.91 %(판독 가능 229 / 241 프레임).** [소스](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/gen_evis_media.py)
 - [젓가락 끝 카메라 추적](../../articles/assets/media/evis_bean_track_fullseye.mp4) (동영상): 같은 장면의 젓가락 끝 카메라 영상에서 Fullseye가 콩을 검출해 추적한다. **보이는 163 프레임 모두 검출(163 / 163), 중심 오차는 참값 대비 중앙값 0.10 px.** [소스](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/gen_evis_media.py)
+
+**돌려 볼 수 있는 움직이는 3-D**
+
+- [로봇 팔과 반투명 렌즈](../../view2026/anim3d/interactive_anim3d_viewer.html?lang=ko) (움직이는 3-D, 드래그로 회전, 0.4 MB): 손가락으로 돌려 로봇 팔이 상자를 옮기는 모습을 원하는 방향에서 본다. 광선이 반투명 렌즈를 지나 초점에 모이고, 아래에서는 위에서 본 높이 영상과 그 이진화가 같은 시간축으로 진행된다. [소스](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
 
 </div>
 

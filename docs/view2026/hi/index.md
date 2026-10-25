@@ -75,6 +75,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_microns_brain_wave/04_wave_on_wiring.gif"><img src="../thumbs/poc_microns_brain_wave.jpg" alt="Mouse cortex wave" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Mouse cortex wave</span></a>
 <a href="../../articles/assets/media/evis_stereo_fullseye.mp4"><img src="../thumbs/evis_stereo_depth.jpg" alt="Humanoid stereo eyes" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Humanoid stereo eyes</span></a>
 <a href="../../articles/assets/media/evis_bean_track_fullseye.mp4"><img src="../thumbs/evis_bean_track.jpg" alt="Chopstick-cam tracking" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Chopstick-cam tracking</span></a>
+<a href="../../view2026/anim3d/interactive_anim3d_viewer.html?lang=hi"><img src="../thumbs/interactive_anim3d_viewer.jpg" alt="Arm और अर्ध-पारदर्शी lens" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Arm और अर्ध-पारदर्शी lens · 0.4 MB</span></a>
 </div>
 
 ## Article series (Qiita पर English articles)
@@ -198,7 +199,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 **दिखाना**
 
 - नतीजों को पढ़ने लायक figures में बदलना: [explanation](../../capabilities/figures-and-annotation.md) _(ja)_ · examples [poc_colormap_readability](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_colormap_readability.py) · [poc_dem_terrain](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dem_terrain.py)
-- नतीजों को एक ही स्वयं-निहित HTML पेज में बदलें (tab, badge, 3-D, video, कई भाषाएँ): [explanation](../../capabilities/interactive-poc-viewer.md) _(ja)_ · examples [interactive_poc_viewer](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_poc_viewer.py)
+- नतीजों को एक ही स्वयं-निहित HTML पेज में बदलें (tab, badge, 3-D, video, कई भाषाएँ): [explanation](../../capabilities/interactive-poc-viewer.md) _(ja)_ · examples [interactive_poc_viewer](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_poc_viewer.py) · [interactive_anim3d_viewer](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
 - Background का रंग जाने बिना lines और regions बनाना (inverted colour): [explanation](../../capabilities/inverted-colour-overlays.md) _(ja)_ · examples [annotate_paper_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/annotate_paper_tour.py)
 - point cloud को सीधे रंगीन चित्र में बनाना (sub-pixel footprints, depth क्रम में compositing, कुल प्रकाश बनाए रखने वाला जोड़): [explanation](../../capabilities/point-cloud-to-picture.md) _(ja)_ · examples [points_render_basics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples_3d/points_render_basics.py) · [poc_flybrain_pointcloud](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_flybrain_pointcloud.py)
 - Image पर text और tables ठीक मनचाही जगह रखना: [explanation](../../capabilities/text-and-tables-on-images.md) _(ja)_ · examples [annotate_paper_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/annotate_paper_tour.py)
@@ -214,7 +215,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 </div>
 
-[PoC के अलावा 164 usage examples की सूची](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[PoC के अलावा 165 usage examples की सूची](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## सब कुछ देखें
 
@@ -653,6 +654,10 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 
 - [Humanoid stereo eyes](../../articles/assets/media/evis_stereo_fullseye.mp4) (video): musculoskeletal humanoid chopsticks से bean मारता है, अपनी दोनों आँखों (64 mm दूरी) से filmed; Fullseye हर frame में stereo disparity -> depth निकालता है। **bean तक दूरी का error: median 0.66 %, max 1.91 % (229 / 241 frames पढ़ने योग्य)।** [source](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/gen_evis_media.py)
 - [Chopstick-cam tracking](../../articles/assets/media/evis_bean_track_fullseye.mp4) (video): उसी scene के chopstick-tip camera में Fullseye bean को detect और track करता है। **दिखने वाले सभी 163 frames में detect (163 / 163); centroid error ground truth से median 0.10 px।** [source](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/gen_evis_media.py)
+
+**घुमाकर देखें: चलता 3-D**
+
+- [Arm और अर्ध-पारदर्शी lens](../../view2026/anim3d/interactive_anim3d_viewer.html?lang=hi) (चलता 3-D, drag से घुमाएँ, 0.4 MB): उंगली से घुमाकर किसी भी कोण से देखें कि arm box कैसे ले जाता है। किरणें अर्ध-पारदर्शी lens से होकर focus पर मिलती हैं, और नीचे ऊपर से ली गई height image और उसका binarisation उसी timeline पर चलते हैं। [source](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
 
 </div>
 
