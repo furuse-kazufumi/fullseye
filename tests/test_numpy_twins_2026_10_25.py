@@ -52,6 +52,11 @@ def _blobs(rng, n=64, k=5):
 
 
 def _masks(seed, count):
+    """``count`` 枚の bool マスクの **list**(空になりえない —— 呼び手が ``len`` で数える)。"""
+    return list(_mask_iter(seed, count))
+
+
+def _mask_iter(seed, count):
     rng = np.random.default_rng(seed)
     for i in range(count):
         m = _blobs(rng)
@@ -91,7 +96,9 @@ def test_threshold_otsu_and_hysteresis_match_bit_for_bit():
 
 
 def test_skeletonize_and_thin_match_bit_for_bit():
-    for m in _masks(2, 60):
+    masks = _masks(2, 60)
+    assert len(masks) == 60
+    for m in masks:
         assert np.array_equal(nt.skeletonize(m), skm.skeletonize(m))
         assert np.array_equal(nt.thin(m), skm.thin(m))
     sq = np.zeros((7, 7), bool)
@@ -100,7 +107,9 @@ def test_skeletonize_and_thin_match_bit_for_bit():
 
 
 def test_remove_small_holes_perimeter_euler_match():
-    for i, m in enumerate(_masks(3, 50)):
+    masks = _masks(3, 50)
+    assert len(masks) == 50
+    for i, m in enumerate(masks):
         thr = (16, 40, 100, 216)[i % 4]
         assert np.array_equal(nt.remove_small_holes(m, thr), skm.remove_small_holes(m, area_threshold=thr))
         _close(nt.perimeter(m, 4), skme.perimeter(m, 4))
@@ -109,7 +118,9 @@ def test_remove_small_holes_perimeter_euler_match():
 
 
 def test_region_twin_matches_regionprops_on_every_attribute_the_ops_read():
-    for m in _masks(4, 60):
+    masks = _masks(4, 60)
+    assert len(masks) == 60
+    for m in masks:
         big = _largest(m)
         pr = skme.regionprops(big.astype(int))[0]
         tw = nt.RegionTwin(big)
@@ -123,7 +134,9 @@ def test_region_twin_matches_regionprops_on_every_attribute_the_ops_read():
 
 
 def test_moments_path_used_by_the_moment_ops_matches():
-    for m in _masks(5, 40):
+    masks = _masks(5, 40)
+    assert len(masks) == 40
+    for m in masks:
         big = _largest(m).astype(float)
         nu1 = nt.moments_normalized(nt.moments_central(big))
         nu2 = skme.moments_normalized(skme.moments_central(big))

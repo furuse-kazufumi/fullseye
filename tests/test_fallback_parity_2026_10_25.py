@@ -119,6 +119,7 @@ def test_twin_gives_the_same_answer_without_skimage_or_cv2(parity, op):
 @pytest.mark.parametrize("op", FAIL_CLOSED)
 def test_op_without_a_twin_refuses_with_a_clear_dependency_error(parity, op):
     rows = _verdicts(parity, op)
+    assert len(rows) == len(KNOBS) * 2, sorted(rows)      # 空の列への表明にしない(件数を数える)
     bad = {k: v for k, v in rows.items() if v["verdict"] != "missing_dependency"}
     assert not bad, "min 構成で MissingDependencyError 以外(= 別の答えを返している): %s" % bad
     for v in rows.values():

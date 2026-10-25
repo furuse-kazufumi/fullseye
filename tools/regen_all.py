@@ -294,6 +294,9 @@ _IMAGE_REASON = ("画像・動画の書き手。PNG/GIF のバイトは Pillow �
 _SPIKE_REASON = ("スパイク(実験)の記録。spikes/out_gallery/ の図は当時の証跡として凍結してあり、"
                  "再描画(matplotlib / GUI)はバイトが変わる。")
 EXCLUDED = {
+    "tools/build_gsplat_pages.py": ("docs/gsplat/ の 3DGS の商品ビューアとカタログ(examples/gsplat_product_viewer.py の build)。"
+                                    "marching cubes に scikit-image(任意の依存)が要り、5 品の 3DGS 化とサムネイルの numpy 描画で"
+                                    "1 分ほどかかり、出力は 1 本数 MB —— 鎖に入れず、ページを変える回は手で回して commit する。"),
     "tools/anim3d_i18n.py": ("動く 3-D の作例を 8 言語にする翻訳の層。作例の main() を走らせて仕様を横取りするので"
                              "1 本 10 秒前後かかり、作例(枝ごとに 15 本ほど)が増えるほど長くなる —— 鎖に入れず、"
                              "docs/view2026/anim3d/*.html は `--build <作例> --out ...` を手で回して commit する。"
@@ -443,6 +446,7 @@ _OUT_REASON = "出力は out/(gitignore)で、コミット物を書かない。"
 NOT_A_GENERATOR = {
     "tools/algo_gate.py": "門(algo 層の合否を出す)。出力は out/ へ。", "tools/mutation_probe.py": "門の実測。出力は指定先、一時変更は復元。",
     "tools/check_fallback_parity.py": "門の実測(min 構成 = cv2/skimage/PIL なしで op が別の答えを返さないか、full と ULP 照合)。出力は一時 dir か --out の指定先で、repo の生成物は無い。",
+    "gsviewer.py": "ライブラリ + CLI(fs.gs_viewer_html / gs_catalog_html)。呼び出し側が指定した出力先へ 1 つの HTML を書く道具で、repo の生成物ではない(公開ページの生成器は tools/build_gsplat_pages.py)。",
     "pocviewer.py": "ライブラリ(fs.write_viewer)。呼び出し側が指定した出力先へ 1 つの HTML を書く道具で、repo の生成物ではない(ビューアの生成器は tools/build_view2026_viewers.py)。",
     "tools/bench_ops.py": "ベンチ。実測値なので回すたびに変わる。",
     "tools/update_fullseye.py": ("安全アップデータ(git pull --ff-only と、導入済みの RAG スキルの更新)。"

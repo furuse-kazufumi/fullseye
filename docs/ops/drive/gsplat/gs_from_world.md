@@ -4,7 +4,7 @@ dim: drive
 category: gsplat
 in: table
 out: table
-examples: [poc_kendama]
+examples: [gsplat_product_viewer, poc_kendama]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.8.1  # fullseye lib version this note was generated for
@@ -43,6 +43,7 @@ fail-closed: spacing ≤ 0、max_per_object < 1、雑音 < 0、sigma_ratio ≤ 0
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [gsplat_product_viewer](../../../../examples/gsplat_product_viewer.py) — `py -3.11 examples/gsplat_product_viewer.py`
 - [poc_kendama](../../../../examples/poc_kendama.py) — `py -3.11 examples/poc_kendama.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
@@ -51,7 +52,7 @@ fail-closed: spacing ≤ 0、max_per_object < 1、雑音 < 0、sigma_ratio ≤ 0
 
 ## 同カテゴリ(`gsplat`)
 
-[gs_update](gs_update.md) · [gs_render](gs_render.md) · [gs_render_fn](gs_render_fn.md) · [gs_read_file](gs_read_file.md)
+[gs_update](gs_update.md) · [gs_render](gs_render.md) · [gs_render_fn](gs_render_fn.md) · [gs_read_file](gs_read_file.md) · [gs_viewer_html](gs_viewer_html.md) · [gs_catalog_html](gs_catalog_html.md)
 
 ---
 *Provenance: gsplatnp.py — DRIVE operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
