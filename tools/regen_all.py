@@ -441,6 +441,13 @@ EXCLUDED = {
 #: だから**釣れたものは全部ここに名前と理由を書いて外す**(印は緩めない)。
 _OUT_REASON = "出力は out/(gitignore)で、コミット物を書かない。"
 NOT_A_GENERATOR = {
+    # ---- 2026-10-25: Studio をブラウザで動かす可否の探針(tools/probe_studio_web/、製品ではない) ----
+    "tools/probe_studio_web/op_inventory.py": "探針。全 op を実装モジュールの import で分類し、結果 JSON は --out(repo の外)へ書く。",
+    "tools/probe_studio_web/bench_body.py": "探針のベンチ本体(CPython と Pyodide で同じファイルを読む)。実測値なので回すたびに変わる。",
+    "tools/probe_studio_web/verify_ops_body.py": "探針。image / region 入力の全 op を実際に走らせ、結果の npz と JSON を引数の出力先(repo の外)へ書く。",
+    "tools/probe_studio_web/compare_outputs.py": "探針の照合。2 つの実行の出力を ULP で比べ、結果は引数の出力先へ。--ops-json で studio_lite/ops_subset.json(実測の台帳)を書くが、それは手で回して commit する(node + Pyodide が要り CI では作れない)。",
+    "tools/probe_studio_web/build_proof.py": ("探針の証明ページを --out(repo の外)に組む(Pyodide 本体の複製 + repo 内モジュールの zip)。"
+                                              "dist は repo に入れない。"),
     "tools/algo_gate.py": "門(algo 層の合否を出す)。出力は out/ へ。", "tools/mutation_probe.py": "門の実測。出力は指定先、一時変更は復元。",
     "pocviewer.py": "ライブラリ(fs.write_viewer)。呼び出し側が指定した出力先へ 1 つの HTML を書く道具で、repo の生成物ではない(ビューアの生成器は tools/build_view2026_viewers.py)。",
     "tools/bench_ops.py": "ベンチ。実測値なので回すたびに変わる。",
