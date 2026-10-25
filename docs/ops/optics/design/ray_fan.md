@@ -4,7 +4,7 @@ dim: optics
 category: design
 in: table
 out: pairs
-examples: [lens_design_demo]
+examples: [anim3d_lens_aberrations, lens_design_demo]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.8.1  # fullseye lib version this note was generated for
@@ -50,6 +50,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [anim3d_lens_aberrations](../../../../examples/anim3d_lens_aberrations.py) — `py -3.11 examples/anim3d_lens_aberrations.py`
 - [lens_design_demo](../../../../examples/lens_design_demo.py) — `py -3.11 examples/lens_design_demo.py`
 
 ## 型が繋がる次の op(`pairs` を入力に取れる)

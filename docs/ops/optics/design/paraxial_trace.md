@@ -4,7 +4,7 @@ dim: optics
 category: design
 in: table
 out: table
-examples: [lens_defect_dataset_demo, lens_design_demo, optical_design_metrics, poc_chromatic_confocal, poc_lens_file_roundtrip, poc_lens_global_search, poc_lens_merit_operands, poc_lens_solves_afocal, poc_material_optical_library, poc_noncoaxial_optics, poc_optics_drawings, poc_photograph_through_prescription, poc_plenoptic_camera, poc_tdi_linescan, poc_telecentric_metrology, poc_zmx_public_verify, poc_zoom_configurations]
+examples: [anim3d_lens_aberrations, lens_defect_dataset_demo, lens_design_demo, optical_design_metrics, poc_chromatic_confocal, poc_lens_file_roundtrip, poc_lens_global_search, poc_lens_merit_operands, poc_lens_solves_afocal, poc_material_optical_library, poc_noncoaxial_optics, poc_optics_drawings, poc_photograph_through_prescription, poc_plenoptic_camera, poc_tdi_linescan, poc_telecentric_metrology, poc_zmx_public_verify, poc_zoom_configurations]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.8.1  # fullseye lib version this note was generated for
@@ -59,6 +59,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [anim3d_lens_aberrations](../../../../examples/anim3d_lens_aberrations.py) — `py -3.11 examples/anim3d_lens_aberrations.py`
 - [lens_defect_dataset_demo](../../../../examples/lens_defect_dataset_demo.py) — `py -3.11 examples/lens_defect_dataset_demo.py`
 - [lens_design_demo](../../../../examples/lens_design_demo.py) — `py -3.11 examples/lens_design_demo.py`
 - [optical_design_metrics](../../../../examples/optical_design_metrics.py) — `py -3.11 examples/optical_design_metrics.py`
