@@ -32,7 +32,6 @@ if HERE not in sys.path:
 #: 使いたいときは ``pytest.importorskip`` か ``try/except ImportError`` で包む。
 #: 直ったら**この台帳から消す**(両方向の規律)。
 NEEDS_GUARD = {
-    "tomllib": "Python 3.11 から。3.10 では ModuleNotFoundError で収集が止まる",
     "hypothesis": "dev extra。CI の test ジョブの install 行に入るまで素で import しない",
     "torch": "optional backend(gpu extra)。conftest の requires_backend を使う",
     "kornia": "optional backend(gpu extra)",
@@ -120,15 +119,19 @@ def test_no_test_module_imports_a_guarded_dependency_at_top_level():
 def test_the_guard_ledger_only_names_things_that_are_actually_risky():
     """台帳の陳腐化。**標準ライブラリに昇格した**ものが残っていないか。
 
-    `tomllib` は 3.11 から標準。プロジェクトが 3.11 を最小にしたら、
-    この台帳から外して素の import に戻してよい —— そのとき気づけるように。
+    例: `tomllib` は 3.11 から標準。最小版を 3.11 にした 2026-10-24 に台帳から外した。
+    最小版は pyproject の requires-python から読む(手で写すと上げたときに古びる)。
+    最小版の上でしか判定しない —— 新しい版で増えた標準モジュールを「古い」と誤認しないため。
     """
-    import importlib.util
+    import re
+    import tomllib
+    with open(os.path.join(os.path.dirname(HERE), "pyproject.toml"), "rb") as f:
+        req = tomllib.load(f)["project"]["requires-python"]
+    m = re.fullmatch(r">=\s*3\.(\d+)", req.strip())
+    assert m, "requires-python の形が想定外: %r" % req
+    min_py = (3, int(m.group(1)))
     stale = []
-    min_py = (3, 10)                                          # pyproject の requires-python
     if sys.version_info[:2] == min_py:
-        for mod in ("tomllib",):
-            if importlib.util.find_spec(mod) is not None:
-                stale.append(mod)
+        stale = sorted(mod for mod in NEEDS_GUARD if mod in sys.stdlib_module_names)
     assert not stale, (
         "最小サポート版に標準で入るようになったので台帳から外せる: %s" % stale)

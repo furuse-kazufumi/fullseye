@@ -1,0 +1,71 @@
+{
+  "_about": "Exceptions to the pip-audit gate (tools/pip_audit_gate.py). Each entry is a known vulnerability that cannot be avoided by choosing a version, with the reason and the date by which the decision must be re-examined. Every id and alias becomes --ignore-vuln. An expired entry fails CI (tests/test_pip_audit_allowlist.py). Checked against OSV on 2026-10-24.",
+  "entries": [
+    {
+      "id": "GHSA-c678-jfcj-6jmf",
+      "aliases": [
+        "PYSEC-2025-189",
+        "CVE-2025-2148"
+      ],
+      "package": "torch",
+      "reason": "OSV に修正版の記録が無い(last_affected 2.6.0 のみ)。下限 2.13 は記録上は範囲外だが、修正を確かめた版は無い。内容: torch.ops.profiler._call_end_callbacks_on_jit_fut に None を渡すとメモリ破壊。fullseye は profiler を使わない。",
+      "expires": "2027-04-24"
+    },
+    {
+      "id": "GHSA-x3gm-94wq-g975",
+      "aliases": [
+        "PYSEC-2025-190",
+        "CVE-2025-2149"
+      ],
+      "package": "torch",
+      "reason": "OSV に修正版の記録が無い(last_affected 2.6.0 のみ)。内容: 量子化 Sigmoid(nnq_Sigmoid)の scale/zero_point の初期化不備、局所攻撃。fullseye は量子化モジュールを使わない。",
+      "expires": "2027-04-24"
+    },
+    {
+      "id": "GHSA-f4hp-rmr7-r7v8",
+      "aliases": [
+        "PYSEC-2025-192",
+        "CVE-2025-2998"
+      ],
+      "package": "torch",
+      "reason": "OSV に修正版の記録が無い(last_affected 2.6.0 のみ)。内容: torch.nn.utils.rnn.pad_packed_sequence のメモリ破壊、局所攻撃。fullseye は RNN を使わない。",
+      "expires": "2027-04-24"
+    },
+    {
+      "id": "PYSEC-2025-196",
+      "aliases": [
+        "CVE-2025-3121"
+      ],
+      "package": "torch",
+      "reason": "OSV に修正版の記録が無い(last_affected 2.6.0 のみ、GHSA 側の記録なし)。内容: torch.jit.jit_module_from_flatbuffer のメモリ破壊、局所攻撃。fullseye は flatbuffer 形式を読まない(dl_* が読むのは利用者が IMGEVOLVE_MODEL_DIR に置いた TorchScript の *.pt だけ)。",
+      "expires": "2027-04-24"
+    },
+    {
+      "id": "PYSEC-2025-197",
+      "aliases": [
+        "CVE-2025-3136"
+      ],
+      "package": "torch",
+      "reason": "OSV に修正版の記録が無い(last_affected 2.6.0 のみ、GHSA 側の記録なし)。内容: torch.cuda.memory.caching_allocator_delete のメモリ破壊、局所攻撃。fullseye はこの関数を呼ばない。",
+      "expires": "2027-04-24"
+    },
+    {
+      "id": "PYSEC-2025-210",
+      "aliases": [
+        "CVE-2025-63396"
+      ],
+      "package": "torch",
+      "reason": "OSV に修正版の記録が無い(last_affected 2.5.0 / 2.7.1 のみ)。内容: profiler.stop() を呼ばないと torch.profiler.profile が終了時に落ちるか止まる(DoS)。fullseye は profiler を使わない。",
+      "expires": "2027-04-24"
+    },
+    {
+      "id": "PYSEC-2026-139",
+      "aliases": [
+        "CVE-2026-4538"
+      ],
+      "package": "torch",
+      "reason": "OSV に修正版の記録が無い(last_affected 2.10.0 のみ)。下限 2.13 は記録上は範囲外だが、修正を確かめた版は無い。内容: pt2 の読み込みでの逆シリアル化、局所攻撃。fullseye は pt2 を読まない。dl_* は利用者が置いた TorchScript を torch.jit.load するので、信頼できるモデルファイルだけを置くこと。",
+      "expires": "2027-04-24"
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: b5eeee92dc95 -->
+<!-- i18n-source-sha: 07a040311789 -->
 # Installations- und Einrichtungshandbuch
 
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · [简体中文](./INSTALL.zh.md) · [繁體中文](./INSTALL.tw.md) · [한국어](./INSTALL.ko.md) · **Deutsch** · [हिन्दी](./INSTALL.hi.md)
@@ -13,9 +13,9 @@ Das Designprinzip von Fullseye lautet: **"ein Kern, der allein mit numpy + scipy
 
 | Punkt | Anforderung |
 |---|---|
-| Python | **3.11** (`requires-python = ">=3.10"` in `pyproject.toml`; Entwicklung und Verifikation erfolgen mit 3.11) |
+| Python | **3.11** (`requires-python = ">=3.11"` in `pyproject.toml`; Entwicklung und Verifikation erfolgen mit 3.11) |
 | Ausführungsbefehl | Windows: `py -3.11` / Linux: `python3.11` |
-| Kernabhängigkeiten | `numpy>=1.23`, `scipy>=1.9` (werden durch `pip install -e .` automatisch installiert) |
+| Kernabhängigkeiten | `numpy>=1.23`, `scipy>=1.10` (werden durch `pip install -e .` automatisch installiert) |
 | Betriebssystem | Windows 10/11, Linux (auch eingebettet). Auch macOS funktioniert, solange Python läuft |
 
 ---
@@ -33,11 +33,11 @@ Zusätzliche Backends werden über **Extras** ausgewählt (definiert unter `[pro
 
 | Extra | zusätzliche Abhängigkeit | was dadurch aktiviert wird |
 |---|---|---|
-| `opencv` | `opencv-python>=4.6` | Datei-I/O für Bilder (von der CLI `apply`/`pipeline` vorausgesetzt), `cv_*`-Operatoren |
+| `opencv` | `opencv-python>=4.8.1.78` | Datei-I/O für Bilder (von der CLI `apply`/`pipeline` vorausgesetzt), `cv_*`-Operatoren |
 | `skimage` | `scikit-image>=0.20` | `sk_*` / `xsk_*`-Reihen (Grundlage vieler automatisch generierter Operatoren) |
-| `pil` | `Pillow>=9` | Fallback für Bild-I/O, `xpil_*`-Reihe (emboss/posterize/solarize usw.) |
+| `pil` | `Pillow>=13.0` | Fallback für Bild-I/O, `xpil_*`-Reihe (emboss/posterize/solarize usw.) |
 | `wavelets` | `PyWavelets>=1.4` | Wavelet-Verfahren (VisuShrink/Subband/Packet usw.) |
-| `gpu` | `torch>=2.0`, `kornia>=0.7` | GPU-Batch-Backend (`accel.py`/`bench.py`), `xkor_*`(kornia)-Reihe |
+| `gpu` | `torch>=2.13`, `kornia>=0.7` | GPU-Batch-Backend (`accel.py`/`bench.py`), `xkor_*`(kornia)-Reihe |
 | `extra` | `mahotas>=1.4`, `SimpleITK>=2.2` | `xsitk_*` (curvature flow usw.), von mahotas abgeleitet (Zernike/pftas usw.) |
 | `gui` | `PySide6>=6.5` | **Fullseye Studio** (`studio.py` / `fullseye-studio`) |
 | `all` | alles Obige außer GUI (opencv, skimage, pil, wavelets, gpu, extra) | alle Operatoren und Backends |

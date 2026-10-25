@@ -21,6 +21,7 @@ import fnmatch
 import glob
 import os
 import re
+import tomllib
 
 import pytest
 import sys
@@ -52,26 +53,13 @@ def _py_modules() -> set[str]:
     wheel を実際に開いたら root .py は 347 本入っていた。門を壊したのが「門は事故の
     起きる場所に立てる」を引用したコメントだったのは皮肉だが、教訓は単純で、
     **宣言を読む門は TOML として読むか、少なくともコメントを先に落とす**。
-    tomllib は 3.11+ で CI は 3.10 も回すので、ここではコメント除去 + 正規表現。
+    2026-10-24 に 3.10 を外したので、正規表現の代用をやめて tomllib で読む。
     """
-    src = re.sub(r"#[^\n]*", "", _read("pyproject.toml"))
-    m = re.search(r"py-modules\s*=\s*\[(.*?)\]", src, re.DOTALL)
-    assert m, "py-modules list not found in pyproject.toml"
-    mods = set(re.findall(r'"([^"]+)"', m.group(1)))
-    assert len(mods) > 300, (
-        "py-modules を %d 本しか読めていない —— 切り出しが壊れている(コメント内の ] 等)" % len(mods))
-    return mods
-
-
-def test_the_py_modules_reader_agrees_with_a_real_toml_parser():
-    """門の読み方そのものを検算する。tomllib(3.11+)があるときだけ厳密に。"""
-    try:
-        import tomllib
-    except ImportError:                                       # 3.10
-        pytest.skip("tomllib が無い(3.10)—— 本数の下限だけ _py_modules が見ている")
     with open(os.path.join(ROOT, "pyproject.toml"), "rb") as f:
-        truth = set(tomllib.load(f)["tool"]["setuptools"]["py-modules"])
-    assert _py_modules() == truth, "正規表現の読みと TOML の読みが違う: %s" % sorted(_py_modules() ^ truth)[:10]
+        mods = set(tomllib.load(f)["tool"]["setuptools"]["py-modules"])
+    assert len(mods) > 300, (
+        "py-modules を %d 本しか読めていない —— 宣言が壊れている" % len(mods))
+    return mods
 
 
 def _all_of(relpath: str) -> set[str]:
@@ -161,16 +149,10 @@ def test_article_source_images_do_not_ship():
     読まないものを配らない。Studio が実際に使うサンプルは `sample_images/` と
     `sample_thumbs/` で、そちらは同梱を続ける。
     """
-    # tomllib は 3.11+ なので(CI は 3.10 も回す)節を文字列で切り出す
-    def _section(name):
-        m = re.search(r"^\[%s\]\n(.*?)(?=^\[|\Z)" % re.escape(name), _read("pyproject.toml"),
-                      re.M | re.S)
-        return m.group(1) if m else ""
-
-    def _nocomment(text):
-        return re.sub(r"#[^\n]*", "", text)
-    pkg_data = _section("tool.setuptools.package-data")
-    assert "sample_sources_ai" not in _nocomment(pkg_data), (
+    with open(os.path.join(ROOT, "pyproject.toml"), "rb") as f:
+        st = tomllib.load(f)["tool"]["setuptools"]
+    pkg_data = repr(st.get("package-data", {}))
+    assert "sample_sources_ai" not in pkg_data, (
         "sample_sources_ai が package-data に戻っている —— 出荷コードは読まないのに "
         "wheel を 42 MB 太らせる")
     # ★2026-09-07: 手元の wheel に sample_sources_ai が 42 MB 乗っていた(96 MB)。
@@ -178,7 +160,7 @@ def test_article_source_images_do_not_ship():
     # 設定を読む検査では捕まらない事故なので、wheel 実物の側を tools/ci_wheel_check.py
     # (unshipped_present)と ci.yml のサイズ上限が見る。ディレクトリも package の外へ
     # 移した(tools/fops_article/)。ここでは除外の明示を要求する(保険)。
-    excl = re.findall(r'"([^"]+)"', _nocomment(_section("tool.setuptools.exclude-package-data")))
+    excl = [g for globs in st.get("exclude-package-data", {}).values() for g in globs]
     assert any("sample_sources_ai" in g for g in excl), (
         "exclude-package-data に sample_sources_ai が無い(保険の除外を明示する): %s" % excl)
     # 読み手がいないことを実際に確かめる(コメントの主張と実装をずらさない)
@@ -312,3 +294,27 @@ def test_every_module_the_registry_actually_loads_is_shipped():
     assert not missing, (
         "レジストリが読み込むのに py-modules に無い root モジュール "
         "(非 editable な wheel から丸ごと消える): %s" % missing)
+
+
+def test_python_classifiers_match_requires_python_and_the_ci_matrix():
+    """PyPI に「対応」と書く版は、CI の行列で実際に回っている版だけ(2026-10-24)。
+
+    3.10 を外したとき、requires-python・classifier・CI の行列の 3 か所を手で揃えた。
+    どれか 1 か所だけ直すと「書いてあるが試していない版」ができるので、ここで突き合わせる。
+    """
+    with open(os.path.join(ROOT, "pyproject.toml"), "rb") as f:
+        project = tomllib.load(f)["project"]
+    m = re.fullmatch(r">=\s*3\.(\d+)", project["requires-python"].strip())
+    assert m, project["requires-python"]
+    minimum = int(m.group(1))
+    minors = sorted(int(c.rsplit(".", 1)[1]) for c in project["classifiers"]
+                    if re.fullmatch(r"Programming Language :: Python :: 3\.\d+", c))
+    assert minors and minors[0] == minimum, (
+        "classifier の最小版 %s と requires-python >=3.%d が食い違う" % (minors, minimum))
+    ci = _read(os.path.join(".github", "workflows", "ci.yml"))
+    line = next(ln for ln in ci.splitlines() if "python-version: ${{ fromJSON(" in ln)
+    in_ci = {int(v) for v in re.findall(r'"3\.(\d+)"', line)}
+    untested = [v for v in minors if v not in in_ci]
+    assert not untested, "classifier にあるが CI の行列で回っていない版: %s" % untested
+    assert minimum in in_ci and (minimum - 1) not in in_ci, (
+        "CI の行列が requires-python と食い違う: %s" % sorted(in_ci))
