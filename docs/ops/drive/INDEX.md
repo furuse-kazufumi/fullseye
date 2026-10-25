@@ -1,4 +1,4 @@
-# DRIVE operator help — 700 ops in 51 categories
+# DRIVE operator help — 703 ops in 51 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/drive/<category>/<op>.md` を走査。
 
@@ -68,9 +68,9 @@
 
 [ae_band_power](grind/ae_band_power.md) · [ae_read_csv](grind/ae_read_csv.md) · [ae_size_correspondence](grind/ae_size_correspondence.md) · [breakage_first_order_fit](grind/breakage_first_order_fit.md) · [comminution_energy](grind/comminution_energy.md) · [comminution_law_fit](grind/comminution_law_fit.md) · [particle_image_d50](grind/particle_image_d50.md) · [particle_image_synth](grind/particle_image_synth.md) · [particle_size_dx](grind/particle_size_dx.md) · [particle_size_oversize](grind/particle_size_oversize.md) · [particle_size_read](grind/particle_size_read.md) · [particle_size_synth](grind/particle_size_synth.md) · [replicate_compare](grind/replicate_compare.md)
 
-### gsplat (5)
+### gsplat (7)
 
-[gs_from_world](gsplat/gs_from_world.md) · [gs_read_file](gsplat/gs_read_file.md) · [gs_render](gsplat/gs_render.md) · [gs_render_fn](gsplat/gs_render_fn.md) · [gs_update](gsplat/gs_update.md)
+[gs_catalog_html](gsplat/gs_catalog_html.md) · [gs_from_world](gsplat/gs_from_world.md) · [gs_read_file](gsplat/gs_read_file.md) · [gs_render](gsplat/gs_render.md) · [gs_render_fn](gsplat/gs_render_fn.md) · [gs_update](gsplat/gs_update.md) · [gs_viewer_html](gsplat/gs_viewer_html.md)
 
 ### humanoid (4)
 
@@ -80,9 +80,9 @@
 
 [global_to_tile](inf/global_to_tile.md) · [pose_normalize](inf/pose_normalize.md) · [tile_digest](inf/tile_digest.md) · [tile_edge_crossing](inf/tile_edge_crossing.md) · [tile_hash](inf/tile_hash.md) · [tile_height](inf/tile_height.md) · [tile_mesh](inf/tile_mesh.md) · [tile_params](inf/tile_params.md) · [tile_road_distance](inf/tile_road_distance.md) · [tile_roads](inf/tile_roads.md) · [tile_stream](inf/tile_stream.md) · [tile_uniform](inf/tile_uniform.md)
 
-### japan (22)
+### japan (23)
 
-[building_prisms](japan/building_prisms.md) · [buildings_in_box](japan/buildings_in_box.md) · [citygml_synthetic](japan/citygml_synthetic.md) · [japan_stats](japan/japan_stats.md) · [japan_world](japan/japan_world.md) · [jp_crossbuck_mesh](japan/jp_crossbuck_mesh.md) · [jp_mirror_mesh](japan/jp_mirror_mesh.md) · [jp_pole_mesh](japan/jp_pole_mesh.md) · [jp_sign_stop_mesh](japan/jp_sign_stop_mesh.md) · [jp_stop_marking_length](japan/jp_stop_marking_length.md) · [jp_stop_marking_mesh](japan/jp_stop_marking_mesh.md) · [latlon_to_local](japan/latlon_to_local.md) · [osm_parse](japan/osm_parse.md) · [osm_road_graph](japan/osm_road_graph.md) · [osm_road_loops](japan/osm_road_loops.md) · [osm_road_mask](japan/osm_road_mask.md) · [osm_route](japan/osm_route.md) · [osm_synthetic](japan/osm_synthetic.md) · [plateau_parse](japan/plateau_parse.md) · [polygon_area](japan/polygon_area.md) · [prism_mesh](japan/prism_mesh.md) · [triangulate_polygon](japan/triangulate_polygon.md)
+[building_prisms](japan/building_prisms.md) · [buildings_in_box](japan/buildings_in_box.md) · [citygml_synthetic](japan/citygml_synthetic.md) · [japan_stats](japan/japan_stats.md) · [japan_world](japan/japan_world.md) · [jp_crossbuck_mesh](japan/jp_crossbuck_mesh.md) · [jp_mirror_mesh](japan/jp_mirror_mesh.md) · [jp_pole_mesh](japan/jp_pole_mesh.md) · [jp_sign_stop_mesh](japan/jp_sign_stop_mesh.md) · [jp_stop_marking_length](japan/jp_stop_marking_length.md) · [jp_stop_marking_mesh](japan/jp_stop_marking_mesh.md) · [latlon_to_local](japan/latlon_to_local.md) · [osm_parse](japan/osm_parse.md) · [osm_road_graph](japan/osm_road_graph.md) · [osm_road_loops](japan/osm_road_loops.md) · [osm_road_mask](japan/osm_road_mask.md) · [osm_route](japan/osm_route.md) · [osm_synthetic](japan/osm_synthetic.md) · [plateau_lod2_mesh](japan/plateau_lod2_mesh.md) · [plateau_parse](japan/plateau_parse.md) · [polygon_area](japan/polygon_area.md) · [prism_mesh](japan/prism_mesh.md) · [triangulate_polygon](japan/triangulate_polygon.md)
 
 ### kendama (19)
 

@@ -35,7 +35,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 ## 使い方
 
-region（画素マスク）の外周を、トレース順（輪郭に沿った順序）を保った XLD 輪郭として抽出する。skimage があれば ``find_contours``（marching squares によるサブピクセル輪郭）、無ければ自前の Moore 近傍追跡（8 近傍、Jacob の停止条件）にフォールバックする。a, b は未使用。
+region（画素マスク）の外周を、トレース順（輪郭に沿った順序）を保った XLD 輪郭として抽出する。``find_contours``（marching squares によるサブピクセル輪郭）で取る。scikit-image が無い環境では ``MissingDependencyError`` で止まる（2026-10-25 までは自前の Moore 近傍追跡——画素解像度で点数も座標も違う別の輪郭——に黙って落ちていた。追跡は ``backends_auto._moore_boundaries`` を名指しで呼べば使える）。a, b は未使用。
 
 2026-08-30 の修正で、以前使っていた汎用の ``edges_sub_pix`` 経路をやめ、上のトレース順の抽出に置き換えた。旧経路は ``np.where`` のラスタ順で点を返しており、順序に依存する後段処理（楕円フーリエ記述子など）を壊していた。HALCON の ``gen_contour_region_xld``（region から XLD 輪郭を生成する演算）に相当する。
 

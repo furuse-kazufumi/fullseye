@@ -4,7 +4,7 @@ dim: drive
 category: world
 in: table × matrix × matrix
 out: table
-examples: [poc_ball_bounce, poc_driving_crossing, poc_driving_decisions, poc_driving_endless_map, poc_driving_humanoids, poc_driving_japan_town, poc_driving_lateral, poc_driving_longitudinal, poc_driving_pass, poc_driving_school, poc_driving_town, poc_driving_traffic, poc_kendama, poc_table_tennis_bounce, poc_table_tennis_spin, poc_ttc_rss, poc_world_terrain]
+examples: [gsplat_trained_product, poc_ball_bounce, poc_driving_crossing, poc_driving_decisions, poc_driving_endless_map, poc_driving_humanoids, poc_driving_japan_town, poc_driving_lateral, poc_driving_longitudinal, poc_driving_pass, poc_driving_school, poc_driving_town, poc_driving_traffic, poc_kendama, poc_table_tennis_bounce, poc_table_tennis_spin, poc_ttc_rss, poc_world_terrain]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.8.1  # fullseye lib version this note was generated for
@@ -33,6 +33,7 @@ render3d.render_mesh(attributes=True) の三角形 id から面の色・ラベ�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [gsplat_trained_product](../../../../examples/gsplat_trained_product.py) — `py -3.11 examples/gsplat_trained_product.py`
 - [poc_ball_bounce](../../../../examples/poc_ball_bounce.py) — `py -3.11 examples/poc_ball_bounce.py`
 - [poc_driving_crossing](../../../../examples/poc_driving_crossing.py) — `py -3.11 examples/poc_driving_crossing.py`
 - [poc_driving_decisions](../../../../examples/poc_driving_decisions.py) — `py -3.11 examples/poc_driving_decisions.py`

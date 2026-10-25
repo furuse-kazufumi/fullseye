@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3565,
- "n_notes": 3571,
+ "n_ops": 3568,
+ "n_notes": 3574,
  "notes": {
   "vol_dilate": [
    {
@@ -18235,6 +18235,16 @@
     "path": "docs/ops/drive/grind/replicate_compare.md"
    }
   ],
+  "gs_catalog_html": [
+   {
+    "op": "gs_catalog_html",
+    "dim": "drive",
+    "category": "gsplat",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/gsplat/gs_catalog_html.md"
+   }
+  ],
   "gs_from_world": [
    {
     "op": "gs_from_world",
@@ -18282,6 +18292,16 @@
     "in": "table × table",
     "out": "table",
     "path": "docs/ops/drive/gsplat/gs_update.md"
+   }
+  ],
+  "gs_viewer_html": [
+   {
+    "op": "gs_viewer_html",
+    "dim": "drive",
+    "category": "gsplat",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/gsplat/gs_viewer_html.md"
    }
   ],
   "humanoid_clip_mesh": [
@@ -18609,6 +18629,16 @@
     "category": "japan",
     "out": "any",
     "path": "docs/ops/drive/japan/osm_synthetic.md"
+   }
+  ],
+  "plateau_lod2_mesh": [
+   {
+    "op": "plateau_lod2_mesh",
+    "dim": "drive",
+    "category": "japan",
+    "in": "any",
+    "out": "table",
+    "path": "docs/ops/drive/japan/plateau_lod2_mesh.md"
    }
   ],
   "plateau_parse": [
