@@ -110,7 +110,10 @@ def test_page_structure_badges_checks_lessons(page):
 def test_page_is_small_and_has_no_urls_paths_or_bold(page):
     html, _ = page
     assert len(html.encode("utf-8")) < 3.0e6
-    assert "http://" not in html and "https://" not in html
+    # PLATEAU のサイトポリシーの出典表示の例がデータセットの URL を含むので、その 1 本だけは credit に出す(ライセンスの表示が優先)。
+    # それ以外の URL は引き続き禁止: https:// の出現回数がこの URL の出現回数(credit は言語ごと = 8)と等しいこと。
+    assert "http://" not in html
+    assert html.count("https://") == html.count(_tool().PLATEAU_URL) == 8
     assert "C:\\" not in html and "C:/" not in html
     assert "**" not in html
 

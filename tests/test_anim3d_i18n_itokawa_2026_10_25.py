@@ -29,6 +29,7 @@ def _load(name):
 
 
 I18N = _load("anim3d_i18n")
+PLATEAU_URL = "https://www.geospatial.jp/ckan/dataset/plateau-14100-yokohama-city-2020"
 
 
 @pytest.fixture(scope="module")
@@ -53,7 +54,9 @@ def test_translations_have_no_bold_marks_or_urls(spec_and_table):
         for lang in I18N.NEW_LANGS:
             v = tr[lang]
             assert "**" not in v, (en, lang)
-            assert not re.search(r"https?://|www\.", v), (en, lang)
+            # PLATEAU の出典表示の例に含まれる データセットの URL だけは許す(ライセンスの表示が優先)。他は禁止。
+            v2 = v.replace(PLATEAU_URL, "")
+            assert not re.search(r"https?://|www\.", v2), (en, lang)
 
 
 def test_committed_page_is_the_eight_language_build(spec_and_table):

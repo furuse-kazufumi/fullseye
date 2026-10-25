@@ -111,6 +111,9 @@ FOV_Y = 0.9                                   # pocviewer の縦の画角 [rad](
 #: CC BY 4.0 互換)・加工は data/plateau_yokohama/README.md)。局所座標 x 東・y 北・z 上 [m]。
 VENUE_NPZ = ROOT / "data" / "plateau_yokohama" / "venue_lod2.npz"
 VENUE_SHA256 = "378af50f3172ce8da1a0ddff419ec29122a90b7e1a49ce8261389c71d969079a"
+#: PLATEAU のサイトポリシーの出典表示の例はデータセットの URL を含むので、この 1 本だけは画面の credit に URL を出す
+#: (ライセンスの表示を「外部 URL を出さない」流儀より優先)。他の URL は引き続き出さない(門が止める)。
+PLATEAU_URL = "https://www.geospatial.jp/ckan/dataset/plateau-14100-yokohama-city-2020"
 
 OPS_USED = ("polygrav.polyhedron_gravity", "polygrav.polyhedron_clip_halfspace", "mesh_props.mesh_volume",
             "mesh_props.mesh_area", "mesh_props.vertex_normals", "mesh_props.face_areas", "pcseg.obb",
@@ -1501,14 +1504,14 @@ def build_spec(R, g):
                "CC0 1.0(パブリックドメインへの献呈)。Q = 64 の版(25,350 頂点・49,152 面、単位 km、z 軸 = 自転の極、x 軸 = 経度 0)を"
                "使い、頂点番号を 0 始まりにし、面から使われない重複頂点を落とした。数値: Fujiwara ほか 2006・Abe ほか 2006・"
                "Demura ほか 2006(いずれも Science 312)、Lowry ほか 2014(A&A 562)、Yano & Aida 2013。重力の式: Werner & Scheeres 1997。"
-               "会場の形: 「3D都市モデル(Project PLATEAU)横浜市(2020年度)」(国土交通省)を加工して作成(公共データ利用規約 第1.0版、"
+               "会場の形: 「3D都市モデル(Project PLATEAU)横浜市(2020年度)」(国土交通省)(" + PLATEAU_URL + ")を加工して作成(公共データ利用規約 第1.0版、"
                "著作権は横浜市。CityGML LOD2 の 7 部位を三角形メッシュにし、局所座標へ移した)。",
                "Shape: Gaskell Itokawa Shape Model V1.1 (R. Gaskell et al., from Hayabusa [JAXA] AMICA images), NASA PDS Small "
                "Bodies Node, CC0 1.0 (public-domain dedication). The Q = 64 version (25,350 vertices, 49,152 faces, units km, "
                "z = spin pole, x = longitude 0) with vertex numbers made 0-based and unused duplicate vertices dropped. "
                "Numbers: Fujiwara et al. 2006, Abe et al. 2006, Demura et al. 2006 (all Science 312), Lowry et al. 2014 "
                "(A&A 562), Yano & Aida 2013. Gravity formula: Werner & Scheeres 1997. "
-               "Venue shape: created by processing '3D City Model (Project PLATEAU) Yokohama City (FY2020)' (MLIT) (Public Data "
+               "Venue shape: created by processing '3D City Model (Project PLATEAU) Yokohama City (FY2020)' (MLIT) (" + PLATEAU_URL + ") (Public Data "
                "License 1.0; copyright Yokohama City; 7 parts of the CityGML LOD2 turned into a triangle mesh in local coordinates).")
     spec = pv.viewer_spec(
         "itokawa_gravity",
@@ -1538,7 +1541,7 @@ def verify_html(path, R):
         step = pv._quant_step(rec)
         worst = max(worst, float(np.max(np.abs(back - ref) / (step / 2 + 1e-15))))
     assert worst <= 1.0 + 1e-9, worst
-    assert "http://" not in html and "https://" not in html, "外部 URL がある"
+    assert "http://" not in html and html.count("https://") == html.count(PLATEAU_URL) >= 1, "PLATEAU の出典以外の外部 URL がある"
     assert "C:\\" not in html and "C:/" not in html, "ローカルパスがある"
     assert "**" not in html, "強調の ** が残っている"
     return {"bytes": len(html.encode("utf-8")), "val_step_ratio": worst}
