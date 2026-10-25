@@ -20,6 +20,8 @@ data/*
 !data/oct_real/
 # Public deflectometry grid images and the full-run record for the PMD PoC (CC0 1.0, a small extract; source and changes in its README.md).
 !data/pmd_real/
+# Public asteroid shape model for the Itokawa gravity lesson (CC0 1.0, format conversion only; source and changes in its README.md).
+!data/itokawa_shape/
 
 # packaging build artifacts
 *.egg-info/

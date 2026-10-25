@@ -1,0 +1,167 @@
+# Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
+"""tools/build_itokawa_anim3d.py(小惑星イトカワの重力、動く 3-D の 5 タブ)と、その出力 docs/anim3d/itokawa_gravity.html を守る。
+
+全頂点の重力の計算は数分かかるので、ここでは回さない。代わりに
+* 形状データ(data/itokawa_shape/gaskell_q64.npz)の出どころの SHA-256・件数・閉じていること・公表値との差、
+* commit した HTML に埋めた色(頂点ごとの op の値)を、抜き出した頂点で op を回し直した値と比べる
+  (量子化の刻みの半分以内。手で描いた色ではないこと)、
+* 頭と胴の 2 密度の模型が Lowry et al. 2014 の値(胴 1,750 ± 110 kg/m³、重心のずれ 21 ± 12 m)を再現すること、
+* バッジの表(checks)・学習用の型(lesson)・時間つまみ(axis)が全タブにあり、限界の回が最初でないこと、
+* 画面に出す op の名前が実在し台帳に登録されていること、容量 3 MB 以内・外部 URL / ローカルパス / ** が無いこと
+を確かめる。
+"""
+from __future__ import annotations
+
+import importlib
+import importlib.util
+import json
+import math
+import re
+import sys
+from pathlib import Path
+
+import numpy as np
+import pytest
+
+ROOT = Path(__file__).resolve().parents[1]
+HTML = ROOT / "docs" / "anim3d" / "itokawa_gravity.html"
+
+
+def _tool():
+    name = "build_itokawa_anim3d"
+    if name in sys.modules:
+        return sys.modules[name]
+    spec = importlib.util.spec_from_file_location(name, ROOT / "tools" / (name + ".py"))
+    mod = importlib.util.module_from_spec(spec)
+    sys.modules[name] = mod
+    spec.loader.exec_module(mod)
+    return mod
+
+
+@pytest.fixture(scope="module")
+def mesh():
+    m = _tool()
+    V, F, n_dup = m.load_mesh()
+    return m, V, F, n_dup
+
+
+@pytest.fixture(scope="module")
+def page():
+    html = HTML.read_text(encoding="utf-8")
+    data = json.loads(re.search(r"const D = (\{.*?\});\nconst \$ = ", html, re.S).group(1))
+    return html, data
+
+
+def test_shape_data_is_the_recorded_public_model(mesh):
+    m, V, F, n_dup = mesh
+    import hashlib
+    z = np.load(m.DATA, allow_pickle=False)
+    assert str(z["source_sha256"]) == m.SHA256_TAB
+    assert z["vertices_cm"].shape == (25350, 3) and z["faces"].shape == (49152, 3)
+    assert len(F) == 49152 and len(V) + n_dup == 25350 and n_dup > 0      # 面から使われない重複頂点(原本の注意書き)
+    st = m.L.mesh_edge_stats(V, F)
+    assert st["boundary_edges"] == 0 and st["non_manifold_edges"] == 0
+    vol = m.L.mesh_volume((V, F))
+    assert abs(vol / m.PUB_VOLUME - 1.0) < m.PUB_VOLUME_REL                 # Demura 2006 の ± 5 %
+    assert abs(vol * m.RHO / m.PUB_MASS_F - 1.0) < m.RHO_SIGMA / m.RHO       # Fujiwara 2006 の密度の幅
+    readme = (m.DATA.parent / "README.md").read_text(encoding="utf-8")
+    assert m.SHA256_TAB in readme and "CC0 1.0" in readme
+    assert hashlib.sha256((ROOT / "tools" / "import_itokawa_shape.py").read_bytes()).hexdigest()   # 取り込みの道具がある
+
+
+def test_spin_period_from_the_pds_rotation_rate(mesh):
+    m = mesh[0]
+    assert m.PERIOD_H == pytest.approx(12.1324, abs=1e-4)
+    assert m.OMEGA == pytest.approx(2 * math.pi / (m.PERIOD_H * 3600.0), rel=1e-12)
+
+
+def test_two_density_model_reproduces_lowry_2014(mesh):
+    m, V, F, _ = mesh
+    pg = m.pg
+    probe = np.array([[0.0, 0.0, 1.0e4]])
+    w = pg.polyhedron_gravity((V, F), probe, density=1.0)
+    head = pg.polyhedron_clip_halfspace((V, F), [m.LOWRY_X_CUT, 0.0, 0.0], [1.0, 0.0, 0.0])
+    h = pg.polyhedron_gravity(head, probe, density=1.0)
+    vol, vh = w["volume"], h["volume"]
+    rho_b = (m.LOWRY_RHO_MEAN * vol - m.LOWRY_RHO_HEAD * vh) / (vol - vh)
+    com = (rho_b * vol * w["center_of_mass"] + (m.LOWRY_RHO_HEAD - rho_b) * vh * h["center_of_mass"]) / (m.LOWRY_RHO_MEAN * vol)
+    assert abs(rho_b - m.LOWRY_RHO_BODY) <= m.LOWRY_RHO_BODY_SIGMA
+    assert abs((com - w["center_of_mass"])[0] - m.LOWRY_COM_X) <= m.LOWRY_COM_X_SIGMA
+    assert 0.1 < vh / vol < 0.3
+
+
+def test_page_structure_badges_checks_lessons(page):
+    html, data = page
+    tabs = data["tabs"]
+    assert [t["id"] for t in tabs] == ["shape", "gravity", "muses", "limit", "math"]
+    assert tabs[0]["badge"] != "limit"
+    badges = {t["id"]: t["badge"] for t in tabs}
+    assert badges["limit"] == "limit" and all(b == "passed" for k, b in badges.items() if k != "limit")
+    assert len(tabs) == 5
+    for t in tabs:
+        assert t["checks"] and t["lesson"] and t["axis"], t["id"]
+        if t["badge"] == "passed":
+            assert all(r["ok"] for r in t["checks"]), t["id"]
+    assert any(not r["ok"] for r in tabs[3]["checks"])          # 限界の回は落ちる行を正直に出す
+    credit = json.dumps(data.get("credit"), ensure_ascii=False)
+    assert "CC0 1.0" in credit and "Gaskell" in credit and "NASA PDS" in credit
+
+
+def test_page_is_small_and_has_no_urls_paths_or_bold(page):
+    html, _ = page
+    assert len(html.encode("utf-8")) < 3.0e6
+    assert "http://" not in html and "https://" not in html
+    assert "C:\\" not in html and "C:/" not in html
+    assert "**" not in html
+
+
+def test_embedded_colours_are_the_op_values(mesh, page):
+    """色は op の値: 抜き出した頂点で polyhedron_gravity を回し直し、埋めた値と量子化の刻みの半分以内で比べる。"""
+    m, V, F, _ = mesh
+    html, data = page
+    pv = m.pv
+    A = data["arrays"]
+    tabs = {t["id"]: t for t in data["tabs"]}
+    rng = np.random.default_rng(3)
+    idx = rng.choice(len(V), size=48, replace=False)
+    VN = m.L.vertex_normals((V, F))
+    g = m.pg.polyhedron_gravity((V, F), V[idx], density=m.RHO, omega=m.OMEGA, normals=VN[idx])
+    ge_um = np.linalg.norm(g["effective_acceleration"], axis=1) * 1e6
+    rec = A[tabs["gravity"]["bodies"][0]["val"]]
+    back = pv._decode_array(rec)[idx]
+    cb = tabs["gravity"]["cbar"]
+    step = pv._quant_step(rec)
+    assert np.all(np.abs(back - np.clip(ge_um, cb["lo"], cb["hi"])) <= step / 2 + 1e-9)
+    assert float(np.ptp(pv._decode_array(rec))) > 10.0                    # 定数の色ではない
+    # 限界の回: 2 密度 ÷ 一様 − 1 の色
+    head = m.pg.polyhedron_clip_halfspace((V, F), [m.LOWRY_X_CUT, 0.0, 0.0], [1.0, 0.0, 0.0])
+    h = m.pg.polyhedron_gravity(head, V[idx], density=1.0)
+    vol, vh = g["volume"], h["volume"]
+    rb = (m.LOWRY_RHO_MEAN * vol - m.LOWRY_RHO_HEAD * vh) / (vol - vh)
+    cw = g["center_of_mass"]
+    c2 = (rb * vol * cw + (m.LOWRY_RHO_HEAD - rb) * vh * h["center_of_mass"]) / (m.LOWRY_RHO_MEAN * vol)
+    accW = g["acceleration"] / m.RHO
+
+    def geff(acc, c):
+        d = V[idx] - c
+        d[:, 2] = 0.0
+        return np.linalg.norm(acc + m.OMEGA ** 2 * d, axis=1)
+
+    dg = (geff(rb * accW + (m.LOWRY_RHO_HEAD - rb) * h["acceleration"], c2) / geff(m.LOWRY_RHO_MEAN * accW, cw) - 1.0) * 100.0
+    rec = A[tabs["limit"]["bodies"][0]["val"]]
+    cb = tabs["limit"]["cbar"]
+    assert np.all(np.abs(pv._decode_array(rec)[idx] - np.clip(dg, cb["lo"], cb["hi"])) <= pv._quant_step(rec) / 2 + 1e-9)
+
+
+def test_ops_named_on_screen_exist_and_are_registered():
+    m = _tool()
+    import fullseye as fs
+    import opsdrive
+    assert len(m.OPS_USED) == 10
+    for full in m.OPS_USED:
+        mod, name = full.split(".")
+        assert callable(getattr(importlib.import_module(mod), name)), full
+        if mod == "polygrav":
+            assert name in opsdrive.list_ops(), full
+        else:
+            assert callable(getattr(fs.ledger, name)), full

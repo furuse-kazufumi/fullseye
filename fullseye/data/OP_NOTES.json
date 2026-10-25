@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3565,
- "n_notes": 3571,
+ "n_ops": 3567,
+ "n_notes": 3573,
  "notes": {
   "vol_dilate": [
    {
@@ -20367,6 +20367,26 @@
     "in": "image2d × scalar",
     "out": "table",
     "path": "docs/ops/drive/polish/wipe_coverage.md"
+   }
+  ],
+  "polyhedron_clip_halfspace": [
+   {
+    "op": "polyhedron_clip_halfspace",
+    "dim": "drive",
+    "category": "polygrav",
+    "in": "any × any × any",
+    "out": "any",
+    "path": "docs/ops/drive/polygrav/polyhedron_clip_halfspace.md"
+   }
+  ],
+  "polyhedron_gravity": [
+   {
+    "op": "polyhedron_gravity",
+    "dim": "drive",
+    "category": "polygrav",
+    "in": "any × points",
+    "out": "table",
+    "path": "docs/ops/drive/polygrav/polyhedron_gravity.md"
    }
   ],
   "fivebar_fk": [

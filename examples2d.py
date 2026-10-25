@@ -529,6 +529,13 @@ EXAMPLES = [
                 "等間隔の補間は 41 点で誤差 1e5、Chebyshev 点は 3e-4 / Euler はエネルギーが 300 歩で 20 倍、Verlet は有界、"
                 "RK4 は短時間は正確だが誤差が時間に比例して増え t≈2300 で Verlet に抜かれる / 積分誤差の傾き 乱数 −0.5・Sobol −1 / "
                 "Gauss は n 点で 2n−1 次まで厳密 / ガウスでぼけた段差は ½(1+erf)。"},
+    {"id": "itokawa_gravity_tour", "task": "measurement", "data": "real",
+     "name": "小惑星イトカワの実際の形の上で、立つ場所の重さと坂を測る —— 一様密度の多面体の厳密な重力(polygrav 2 op)",
+     "summary": "公開データの形(NASA PDS Small Bodies Node の Gaskell Itokawa Shape Model、Q = 64 の 49,152 面、CC0 1.0、"
+                "data/itokawa_shape/)で、polyhedron_gravity(Werner & Scheeres 1997 の面と辺の和)を長軸の断面に沿って計算: "
+                "自転の遠心力を足した実効重力は 56.8〜82.0 µm/s²、両端で軽い。重心でガウスの法則 ∇·g = −4πGρ が 2e-16。"
+                "polyhedron_clip_halfspace で x ≥ 150 m を頭として切り、頭 2,850 kg/m³・全体の質量を保つと胴 1,754 kg/m³・"
+                "重心 +21.5 m(Lowry 2014: 1,750 ± 110・21 ± 12 m)。動く 3-D 版は tools/build_itokawa_anim3d.py。"},
     {"id": "transforms_tour", "task": "math", "data": "synthetic",
      "name": "フーリエ以外の積分変換を一巡する —— 炎の Abel 断層化・円い穴の Airy(Hankel)・2 次系の応答・数値逆ラプラス",
      "summary": "棚卸し(2026-10-03)で 0 本だった Laplace 系統と Abel・Hankel を足した 10 本を、閉じた式と重ねて確かめる: "
