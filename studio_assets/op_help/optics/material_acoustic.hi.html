@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.material_acoustic(material=&#x27;WATER&#x27;) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import materials; materials.material_acoustic(material=&#x27;WATER&#x27;) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;material_acoustic&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>material record में संग्रहीत acoustic properties और provenance लौटाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>material : str or dict</p>
-<p>材料名、別名、または材料レコード。</p>
+<p>Material name, alias या material record।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p>密度、縦波音速、音響インピーダンス、減衰係数と周波数指数、検証状態、出典、不確かさ。</p>
+<p>Density, longitudinal sound speed, acoustic impedance, attenuation coefficient और frequency exponent, verification state, provenance तथा uncertainty।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>材料が未知、または音響物性を持たない場合。</p>
+<p>Material अज्ञात हो या उसमें acoustic properties न हों।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>optics के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
 <p style="margin:2px 0 2px 12px">• <b>Unit argument के नाम में ही लिखी होती है</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>। mm और µm की गड़बड़ी crash नहीं करती, बल्कि &quot;सही दिखने वाला पर गलत उत्तर&quot; देती है, इसलिए नाम से इसे रोका जाता है। मान के आकार से unit का अनुमान बिल्कुल नहीं लगाया जाता।</p>

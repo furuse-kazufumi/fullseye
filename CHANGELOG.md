@@ -7,6 +7,36 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### 変更(破壊的) — Python 3.10 のサポートを終了(requires-python >= 3.11)
+
+- Python 3.10 は 2026-10-01 に寿命が切れた(上流のセキュリティ修正が止まった)。**3.10 の利用者は 0.8.x に留まる**
+  (pip は requires-python を見て 0.8.x を選ぶので、何もしなくても壊れた版は入らない)。
+- 理由: 既知の脆弱性が 0 件の Pillow(13.0.0)は Python 3.11 以上でしか入らない。下限を 9 のままにすると
+  OSV で 72 件の脆弱性を持つ版が入りうる。3.10 を残すと安全な画像入出力を用意できない。
+- 3.10 向けの互換コード(tomllib の fallback・pyproject を正規表現で読む代用)を消した。ruff の target-version は py311。
+
+### 変更 — 依存の下限を「既知の脆弱性 0 件の最も古い版」へ上げた(OSV、2026-10-24 照会)
+
+- 必要以上に新しい版は求めない(入れられる人を減らさない)。件数は旧い下限の版で数えた。
+  - scipy 1.9 → 1.10(PYSEC-2023-102 = CVE-2023-25399)
+  - opencv-python 4.6 → 4.8.1.78(GHSA-qr4w-53vh-m672 / PYSEC-2023-183)
+  - Pillow 9 → 13.0(72 件)
+  - torch 2.0 → 2.13(28 件。CVE-2025-32434 は 2.6.0、最後の CVE-2025-3000 は 2.13.0 で修正)
+  - pytest 7 → 9.0.3(dev のみ。GHSA-6w46-j5rx-g56g)
+  - setuptools 61 → 84.1(ビルド時のみ。9 件)
+- numpy 1.23 / threadpoolctl 3.1 と、その他の extras は旧い下限の版でも 0 件だったので据え置き。
+
+### 追加 — 依存の既知脆弱性の門(pip-audit を効かせた)
+
+- これまで CI は lint ジョブの環境(ruff と pip-audit だけ)を `pip-audit ... || true` で検査していて、
+  利用者に入る依存を一度も見ておらず、落ちることも無かった。
+- `tools/pip_audit_gate.py`: pyproject の全依存(core + 全 extras + CI のテスト用)を Linux / py3.11 向けに
+  pip で解決し(--dry-run、入れない)、その版を OSV で `pip-audit --strict` する。見つかれば CI を落とす
+  (2026-10-24 時点で 112 パッケージ、0 件)。CI の道具(pip / setuptools / wheel / build)は別の段で警告だけ。
+- 例外の台帳 `docs/security/pip_audit_allowlist.json`(`{id, aliases, package, reason, expires}`)。
+  いまは torch の修正版の記録が無い 7 件(CVE-2025-2148 / 2149 / 2998 / 3121 / 3136 / 63396、CVE-2026-4538)。
+  期限切れ・理由なし・1 年を超える期限は `tests/test_pip_audit_allowlist.py` が落とす。
+
 ### 追加 — 偏光を画素ごとに(Stokes / DoLP / AoLP の地図、素子の場、有限の消光比、角度と左右の規約)
 
 非公開 PoC(Si の光弾性・SWIR 偏光)を走らせて見つかった 4 つの穴を埋めた。真値はすべて閉形式(Malus の法則・Mueller 計算・ダイアテニュエータの行列・独立に書いた Jones → Mueller 変換)。門は `tests/test_polarization_per_pixel_2026_10_23.py`(85 件)。

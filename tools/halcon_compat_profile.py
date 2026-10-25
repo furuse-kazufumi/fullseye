@@ -15,13 +15,7 @@ from pathlib import Path
 import re
 import subprocess
 import sys
-try:
-    import tomllib                                  # Python 3.11+
-except ModuleNotFoundError:                         # 3.10 の CI: tomli があればそれ、無ければ version 行だけ読む
-    try:
-        import tomli as tomllib
-    except ModuleNotFoundError:
-        tomllib = None
+import tomllib
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
@@ -42,14 +36,8 @@ TEST_FILES = [
 
 
 def _project_version(pyproject_text: str) -> str:
-    """pyproject の [project].version。tomllib / tomli が無い環境(3.10)では version 行だけを読む。"""
-    if tomllib is not None:
-        return str(tomllib.loads(pyproject_text)["project"]["version"])
-    import re
-    m = re.search(r'^version\s*=\s*"([^"]+)"', pyproject_text, re.M)
-    if not m:
-        raise RuntimeError("pyproject.toml に version 行が無い")
-    return m.group(1)
+    """pyproject の [project].version。"""
+    return str(tomllib.loads(pyproject_text)["project"]["version"])
 
 def registry_rows() -> list[dict]:
     """Rows of the committed machine-readable index that carry a reference mapping.

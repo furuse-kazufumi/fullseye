@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: b5eeee92dc95 -->
+<!-- i18n-source-sha: 07a040311789 -->
 # 安装 / 环境搭建完全指南
 
 [日本語](./INSTALL.md) · [English](./INSTALL.en.md) · **简体中文** · [繁體中文](./INSTALL.tw.md) · [한국어](./INSTALL.ko.md) · [Deutsch](./INSTALL.de.md) · [हिन्दी](./INSTALL.hi.md)
@@ -13,9 +13,9 @@ Fullseye 的设计方针是 **「仅靠 numpy + scipy 就能运行的核心」+�
 
 | 项目 | 要求 |
 |---|---|
-| Python | **3.11**(`pyproject.toml` 中 `requires-python = ">=3.10"`；开发与验证使用 3.11) |
+| Python | **3.11**(`pyproject.toml` 中 `requires-python = ">=3.11"`；开发与验证使用 3.11) |
 | 执行命令 | Windows: `py -3.11` / Linux: `python3.11` |
-| 核心依赖 | `numpy>=1.23`, `scipy>=1.9`(`pip install -e .` 会自动安装) |
+| 核心依赖 | `numpy>=1.23`, `scipy>=1.10`(`pip install -e .` 会自动安装) |
 | 操作系统 | Windows 10/11、Linux(含嵌入式)。只要 Python 能运行，macOS 也可以 |
 
 ---
@@ -33,11 +33,11 @@ py -3.11 -m pip install -e .            # 仅核心（numpy + scipy。所有 op 
 
 | extras | 追加的依赖 | 启用的内容 |
 |---|---|---|
-| `opencv` | `opencv-python>=4.6` | 图像文件 I/O(`apply`/`pipeline` CLI 必需)、`cv_*` 系列算子 |
+| `opencv` | `opencv-python>=4.8.1.78` | 图像文件 I/O(`apply`/`pipeline` CLI 必需)、`cv_*` 系列算子 |
 | `skimage` | `scikit-image>=0.20` | `sk_*` / `xsk_*` 系列(众多自动生成算子的基础) |
-| `pil` | `Pillow>=9` | 图像 I/O 的备用方案、`xpil_*` 系列(emboss/posterize/solarize 等) |
+| `pil` | `Pillow>=13.0` | 图像 I/O 的备用方案、`xpil_*` 系列(emboss/posterize/solarize 等) |
 | `wavelets` | `PyWavelets>=1.4` | 小波系列(VisuShrink/子带/小波包等) |
-| `gpu` | `torch>=2.0`, `kornia>=0.7` | GPU 批处理后端(`accel.py`/`bench.py`)、`xkor_*`(kornia)系列 |
+| `gpu` | `torch>=2.13`, `kornia>=0.7` | GPU 批处理后端(`accel.py`/`bench.py`)、`xkor_*`(kornia)系列 |
 | `extra` | `mahotas>=1.4`, `SimpleITK>=2.2` | `xsitk_*`(curvature flow 等)、源自 mahotas(Zernike/pftas 等) |
 | `gui` | `PySide6>=6.5` | **Fullseye Studio**(`studio.py` / `fullseye-studio`) |
 | `all` | 以上除 GUI 外的全部(opencv, skimage, pil, wavelets, gpu, extra) | 全部算子与后端 |

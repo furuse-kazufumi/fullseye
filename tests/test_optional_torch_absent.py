@@ -5,6 +5,12 @@ top level, so a torch-less install lost ops3d / pipeline_evolve entirely
 
 torch がローカルに入っていても検証できるよう、meta_path で torch を遮断した
 サブプロセスで import を実測する(環境依存にしない)。
+
+2026-10-24: 遮断器を ``find_module`` / ``load_module`` から ``find_spec`` に替えた。
+旧い 2 つは Python 3.12 で import 機構から外れた(meta_path の finder に
+``find_spec`` が無いと素通りされる)。3.12 以降では遮断が効かず、torch が入った
+環境では「torch 無しで動く」を一度も確かめていなかった。遮断が効いたことは
+ハーネス自身が先頭で確かめる(``(blocked)`` の文言つきで落ちること)。
 """
 import subprocess
 import sys
@@ -17,17 +23,26 @@ import sys
 # torch だけでなく、素の pip install(numpy+scipy のみ)に無い optional を全部遮断。
 # v0.1.0 の実 PyPI 検証で recon3d の skimage ハード import が ops3d を殺していた
 # (feat_* の torch と同クラス)— この網羅遮断がそのクラス全体の恒久ガード。
+import importlib.abc
 _BLOCKED = ("torch", "kornia", "skimage", "cv2", "PIL", "pywt", "mahotas")
-class _Block:
-    def find_module(self, name, path=None):
+class _Block(importlib.abc.MetaPathFinder):
+    def find_spec(self, name, path=None, target=None):
         if name.split(".")[0] in _BLOCKED:
-            return self
-    def load_module(self, name):
-        raise ModuleNotFoundError("No module named %r (blocked)" % name)
+            raise ModuleNotFoundError("No module named %r (blocked)" % name, name=name)
+        return None
 sys.meta_path.insert(0, _Block())
 for _m in list(sys.modules):
     if _m.split(".")[0] in _BLOCKED:
         sys.modules.pop(_m, None)
+
+# 遮断が実際に効いていること。入っていないだけ(文言に (blocked) が無い)では通さない。
+for _name in _BLOCKED:
+    try:
+        __import__(_name)
+    except ModuleNotFoundError as _e:
+        assert "(blocked)" in str(_e), "blocker bypassed for %s: %s" % (_name, _e)
+    else:
+        raise SystemExit("blocker did not stop 'import %s'" % _name)
 
 import ops3d                      # ← 以前は feat_harris.py:3 / recon3d.py:24 で即死していた
 import pipeline_evolve            # ops3d 経由の消費側も生きる

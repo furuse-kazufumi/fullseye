@@ -452,6 +452,7 @@ NOT_A_GENERATOR = {
     "tools/check_solution_json.py": "外部の採点器(TUM drivability-checker、WSL)を呼んで合否を JSON に書く。生成物は repo の外(FULLSEYE_COMMONROAD_DATA)。",
     "tools/chain_mine.py": "連鎖の探索(実験)。",
     "tools/ci_wheel_check.py": "門(wheel の完全性を配布物の側から数える)。",
+    "tools/pip_audit_gate.py": "門(利用者に入る依存の既知脆弱性を OSV で監査し、見つかれば落とす)。解決の report は一時ディレクトリへ書いて捨て、repo の生成物は無い。ネットワークが要るので CI の lint 行で回す。",
     "tools/ledger_gaps.py": "門(説明・空入力・効かないノブの探針)。--write は直して台帳を縮めるときだけ手で回す(新しい欠けは門が拒む)。",
     "tools/ledger_contracts.py": "門(型付き台帳の全 op の契約探針)。--write は直して台帳を縮めるときだけ手で回す(新しい違反は門が拒む)。",
     "tools/evolve_loop.py": "進化ループ(実験)。",
