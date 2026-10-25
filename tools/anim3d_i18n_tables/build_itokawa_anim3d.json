@@ -56,15 +56,6 @@
    "hi": "आयतन (mesh_volume) / प्रकाशित",
    "fr": "volume (mesh_volume) / publié"
   },
-  "size (obb) / published": {
-   "ja": "大きさ(obb)/ 公表値",
-   "zh": "大小（obb）/ 公布值",
-   "tw": "大小（obb）/ 公布值",
-   "ko": "크기(obb) / 공표값",
-   "de": "Größe (obb) / veröffentlicht",
-   "hi": "माप (obb) / प्रकाशित",
-   "fr": "taille (obb) / publiée"
-  },
   "mass (× 1.9 g/cm³) / published": {
    "ja": "質量(× 1.9 g/cm³)/ 公表値",
    "zh": "质量（× 1.9 g/cm³）/ 公布值",
@@ -235,15 +226,6 @@
    "de": "Volumen V = (1/6) Σ_faces v0 · (v1 × v2) (gaußscher Integralsatz)\nMasse M = ρ V\nPorosität = 1 − ρ / ρ_grain (etwa 40 % mit der Korndichte von LL-Chondriten, Abe 2006)",
    "hi": "आयतन V = (1/6) Σ_faces v0 · (v1 × v2) (अपसरण प्रमेय)\nद्रव्यमान M = ρ V\nसरंध्रता = 1 − ρ / ρ_grain (LL-कॉन्ड्राइट के कण घनत्व से लगभग 40 %, Abe 2006)",
    "fr": "volume V = (1/6) Σ_faces v0 · (v1 × v2) (théorème de flux-divergence)\nmasse M = ρ V\nporosité = 1 − ρ / ρ_grain (environ 40 % avec la densité des grains des chondrites LL, Abe 2006)"
-  },
-  "The shape is the coarse Q = 64 version (49,152 faces, edges a few metres), so rocks smaller than a few metres are absent. The paper's 535 × 294 × 209 m axes need not match obb (a box on the principal axes of the vertices). The mass scales with the assumed density; the 40 % porosity assumes the grain density of LL-chondrite meteorites (Abe 2006).": {
-   "ja": "形は Q = 64(49,152 面、辺の長さ 数 m)の粗い版で、数 m より細かい岩は入っていない。大きさの 535 × 294 × 209 m は論文の 3 軸の定義と obb(頂点の主成分の向きの外接箱)が同じとは限らない。質量は密度の推定に比例し、空隙率 40 % は隕石(LL コンドライト)の粒の密度を仮定した値(Abe 2006)。",
-   "zh": "形状是较粗的 Q = 64 版本（49,152 个面，边长数米），所以没有小于数米的岩石。论文中 535 × 294 × 209 m 的轴不一定与 obb（顶点主轴方向的外接盒）相同。质量与假设的密度成正比；40 % 的孔隙率假设了 LL 球粒陨石的颗粒密度（Abe 2006）。",
-   "tw": "形狀是較粗的 Q = 64 版本（49,152 個面，邊長數公尺），所以沒有小於數公尺的岩石。論文中 535 × 294 × 209 m 的軸不一定與 obb（頂點主軸方向的外接盒）相同。質量與假設的密度成正比；40 % 的孔隙率假設了 LL 球粒隕石的顆粒密度（Abe 2006）。",
-   "ko": "모양은 거친 Q = 64 판(49,152개 면, 모서리 길이 수 m)이라 수 m보다 작은 바위는 없습니다. 논문의 535 × 294 × 209 m 축은 obb(꼭짓점의 주축 방향 외접 상자)와 같다고 할 수 없습니다. 질량은 가정한 밀도에 비례하며, 공극률 40 %는 LL 콘드라이트 운석의 입자 밀도를 가정한 값입니다(Abe 2006).",
-   "de": "Die Form ist die grobe Version Q = 64 (49,152 Flächen, Kanten von einigen Metern), daher fehlen Felsen unter einigen Metern. Die Achsen 535 × 294 × 209 m der Veröffentlichung müssen nicht zu obb passen (ein Quader auf den Hauptachsen der Eckpunkte). Die Masse skaliert mit der angenommenen Dichte; die Porosität von 40 % setzt die Korndichte von LL-Chondriten voraus (Abe 2006).",
-   "hi": "आकार मोटा Q = 64 संस्करण है (49,152 फलक, किनारे कुछ मीटर के), इसलिए कुछ मीटर से छोटी चट्टानें इसमें नहीं हैं। शोध-पत्र के 535 × 294 × 209 m अक्ष obb (शीर्षों के मुख्य अक्षों पर बना बॉक्स) से मेल खाएँ, यह ज़रूरी नहीं। द्रव्यमान माने गए घनत्व के अनुपात में है; 40 % सरंध्रता LL-कॉन्ड्राइट उल्कापिंडों के कण घनत्व को मानकर है (Abe 2006)।",
-   "fr": "La forme est la version grossière Q = 64 (49,152 faces, arêtes de quelques mètres) : les rochers de moins de quelques mètres en sont absents. Les axes de 535 × 294 × 209 m de l'article ne correspondent pas forcément à obb (une boîte sur les axes principaux des sommets). La masse est proportionnelle à la densité supposée ; la porosité de 40 % suppose la densité des grains des météorites chondrites LL (Abe 2006)."
   },
   "Surface gravity": {
    "ja": "表面の重力",
@@ -767,15 +749,6 @@
    "hi": "सीमा: एकसमान घनत्व की मान्यता",
    "fr": "Limite : l'hypothèse de densité uniforme"
   },
-  "So far the interior was assumed uniform. Lowry 2014 found that the slowly increasing spin rate (YORP) needs the centre of mass about 21 m from the centre of figure towards the head, and concluded that the head (x ≥ 150 m) is denser than the body. The slider raises the head's density (total mass kept). Orange ball = centre of mass, white ball = centre of figure, colour = how surface gravity changes. The last two rows of the table fail: a uniform density cannot shift the centre of mass (so it cannot explain the observation), and the shape's three obb edges differ from the published three axes by +21 % on the third (different axis definitions and shape versions).": {
-   "ja": "ここまでは中身の密度が一様と仮定した。Lowry 2014 は、自転がわずかに速くなっていく観測(YORP)を説明するには重心が形の中心から頭の側へ約 21 m ずれている必要があり、頭(x ≥ 150 m)が胴より重いと考えた。時間つまみで頭の密度を上げていく(全体の質量は保つ)。橙の玉 = 重心、白い玉 = 形の中心、色 = 表面の重力の変わり方。表の最後の 2 行は落ちる項目:一様密度では重心がずれない(観測を説明できない)こと、形の大きさの 3 辺(obb)が公表の 3 軸と 3 本目で +21 % 違う(3 軸の定義と形の版が違う)こと。",
-   "zh": "到这里为止都假设内部密度均匀。Lowry 2014 发现，要解释自转速度慢慢加快的观测（YORP），质心需要从形心向头部偏约 21 m，并得出头部（x ≥ 150 m）比身体密度更高的结论。滑块逐渐提高头部的密度（保持总质量）。橙色球 = 质心，白色球 = 形心，颜色 = 表面引力的变化。表的最后两行不通过：均匀密度无法使质心偏移（因此无法解释观测），以及形状 obb 的三条边与公布的三轴在第三条上相差 +21 %（轴的定义和形状版本不同）。",
-   "tw": "到這裡為止都假設內部密度均勻。Lowry 2014 發現，要解釋自轉速度慢慢加快的觀測（YORP），質心需要從形心向頭部偏約 21 m，並得出頭部（x ≥ 150 m）比身體密度更高的結論。滑桿逐漸提高頭部的密度（保持總質量）。橙色球 = 質心，白色球 = 形心，顏色 = 表面重力的變化。表的最後兩列不通過：均勻密度無法使質心偏移（因此無法解釋觀測），以及形狀 obb 的三條邊與公布的三軸在第三條上相差 +21 %（軸的定義與形狀版本不同）。",
-   "ko": "지금까지는 내부 밀도가 균일하다고 가정했습니다. Lowry 2014는 자전이 조금씩 빨라지는 관측(YORP)을 설명하려면 질량중심이 도형 중심에서 머리 쪽으로 약 21 m 어긋나 있어야 한다는 것을 발견하고, 머리(x ≥ 150 m)가 몸통보다 밀도가 높다고 결론지었습니다. 슬라이더로 머리의 밀도를 올립니다(전체 질량은 유지). 주황 공 = 질량중심, 흰 공 = 도형 중심, 색 = 표면 중력의 변화. 표의 마지막 두 행은 통과하지 못합니다: 균일 밀도로는 질량중심이 어긋나지 않는다는 것(관측을 설명할 수 없음), 그리고 모양의 obb 세 변이 공표된 세 축과 세 번째에서 +21 % 다르다는 것(축의 정의와 모양의 판이 다름).",
-   "de": "Bisher wurde das Innere als homogen angenommen. Lowry 2014 fand, dass die langsam zunehmende Rotationsgeschwindigkeit (YORP) einen um etwa 21 m vom Formmittelpunkt zum Kopf hin verschobenen Schwerpunkt verlangt, und folgerte, dass der Kopf (x ≥ 150 m) dichter ist als der Rumpf. Der Regler erhöht die Dichte des Kopfes (Gesamtmasse bleibt). Orange Kugel = Schwerpunkt, weiße Kugel = Formmittelpunkt, Farbe = Änderung der Schwerkraft an der Oberfläche. Die letzten beiden Zeilen der Tabelle scheitern: Eine homogene Dichte kann den Schwerpunkt nicht verschieben (und die Beobachtung nicht erklären), und die drei obb-Kanten der Form weichen bei der dritten um +21 % von den veröffentlichten drei Achsen ab (andere Achsdefinition und Formversion).",
-   "hi": "अब तक भीतरी भाग को एकसमान माना गया। Lowry 2014 ने पाया कि धीरे-धीरे बढ़ती घूर्णन गति (YORP) के लिए द्रव्यमान केंद्र को आकृति केंद्र से सिर की ओर लगभग 21 m खिसका होना चाहिए, और निष्कर्ष निकाला कि सिर (x ≥ 150 m) धड़ से अधिक घना है। स्लाइडर सिर का घनत्व बढ़ाता है (कुल द्रव्यमान वही रहता है)। नारंगी गोला = द्रव्यमान केंद्र, सफ़ेद गोला = आकृति केंद्र, रंग = सतह पर गुरुत्व का बदलाव। तालिका की अंतिम दो पंक्तियाँ असफल हैं: एकसमान घनत्व द्रव्यमान केंद्र को नहीं खिसका सकता (इसलिए प्रेक्षण की व्याख्या नहीं कर सकता), और आकार के तीन obb किनारे प्रकाशित तीन अक्षों से तीसरे पर +21 % अलग हैं (अक्षों की परिभाषा और आकार के संस्करण अलग हैं)।",
-   "fr": "Jusqu'ici, l'intérieur était supposé uniforme. Lowry 2014 a trouvé que l'accélération lente de la rotation (YORP) exige un centre de masse décalé d'environ 21 m du centre de figure vers la tête, et en a conclu que la tête (x ≥ 150 m) est plus dense que le corps. Le curseur augmente la densité de la tête (masse totale conservée). Boule orange = centre de masse, boule blanche = centre de figure, couleur = variation de la gravité en surface. Les deux dernières lignes du tableau échouent : une densité uniforme ne peut pas décaler le centre de masse (elle ne peut donc pas expliquer l'observation), et les trois arêtes obb de la forme diffèrent des trois axes publiés de +21 % sur la troisième (définitions d'axes et versions de forme différentes)."
-  },
   "head share of the volume": {
    "ja": "頭の体積の割合",
    "zh": "头部占体积的比例",
@@ -937,15 +910,6 @@
    "de": "Verschiebung des Schwerpunkts (x) dabei gegen Lowry 2014: 21 ± 12 m",
    "hi": "तब द्रव्यमान केंद्र का खिसकाव (x) बनाम Lowry 2014: 21 ± 12 m",
    "fr": "décalage du centre de masse (x) alors contre Lowry 2014 : 21 ± 12 m"
-  },
-  "limit (shape): size (3 obb edges) vs 535 × 294 × 209 m (Fujiwara 2006) — the axes are defined differently": {
-   "ja": "限界(形): 大きさ(obb の 3 辺)と 535 × 294 × 209 m(Fujiwara 2006)—— 3 軸の定義の違い",
-   "zh": "局限（形状）：大小（obb 的 3 条边）与 535 × 294 × 209 m（Fujiwara 2006）—— 轴的定义不同",
-   "tw": "限制（形狀）：大小（obb 的 3 條邊）與 535 × 294 × 209 m（Fujiwara 2006）—— 軸的定義不同",
-   "ko": "한계(모양): 크기(obb의 3변) 대 535 × 294 × 209 m(Fujiwara 2006) —— 축의 정의가 다르다",
-   "de": "Grenze (Form): Größe (3 obb-Kanten) gegen 535 × 294 × 209 m (Fujiwara 2006) — die Achsen sind anders definiert",
-   "hi": "सीमा (आकार): माप (3 obb किनारे) बनाम 535 × 294 × 209 m (Fujiwara 2006) — अक्षों की परिभाषा अलग है",
-   "fr": "limite (forme) : taille (3 arêtes obb) contre 535 × 294 × 209 m (Fujiwara 2006) — les axes sont définis autrement"
   },
   "can the uniform-density assumption give the centre-of-mass shift the YORP observation needs (≥ 14 m)?": {
    "ja": "一様密度の仮定は、YORP の観測が求める重心のずれ(14 m 以上)を出せるか",
@@ -1253,15 +1217,6 @@
    "hi": "पैरों के नीचे प्रभावी गुरुत्व |g_eff|",
    "fr": "pesanteur effective sous les pieds |g_eff|"
   },
-  "Itokawa (535 m long)": {
-   "ja": "イトカワ(長さ 535 m)",
-   "zh": "糸川（长 535 m）",
-   "tw": "糸川（長 535 m）",
-   "ko": "이토카와(길이 535 m)",
-   "de": "Itokawa (535 m lang)",
-   "hi": "इटोकावा (535 m लंबा)",
-   "fr": "Itokawa (535 m de long)"
-  },
   "a person (1.7 m)": {
    "ja": "人(1.7 m)",
    "zh": "人（1.7 m）",
@@ -1514,24 +1469,6 @@
    "hi": "आकार: Gaskell Itokawa Shape Model V1.1 (R. Gaskell et al., हायाबुसा [JAXA] की AMICA तस्वीरों से), NASA PDS Small Bodies Node, CC0 1.0 (सार्वजनिक डोमेन को समर्पण)। Q = 64 संस्करण (25,350 शीर्ष, 49,152 फलक, इकाई km, z = घूर्णन ध्रुव, x = देशांतर 0), शीर्ष संख्याएँ 0 से शुरू की गईं और अप्रयुक्त दोहरे शीर्ष हटाए गए। संख्याएँ: Fujiwara et al. 2006, Abe et al. 2006, Demura et al. 2006 (सभी Science 312), Lowry et al. 2014 (A&A 562), Yano & Aida 2013। गुरुत्व सूत्र: Werner & Scheeres 1997। आयोजन-स्थल का आकार: '3D City Model (Project PLATEAU) Yokohama City (FY2020)' (MLIT) को संसाधित करके बनाया गया (Public Data License 1.0; कॉपीराइट योकोहामा शहर; CityGML LOD2 के 7 भागों को स्थानीय निर्देशांकों में त्रिभुज mesh बनाया गया)।",
    "fr": "Forme : Gaskell Itokawa Shape Model V1.1 (R. Gaskell et al., à partir des images AMICA de Hayabusa [JAXA]), NASA PDS Small Bodies Node, CC0 1.0 (dédicace au domaine public). La version Q = 64 (25,350 sommets, 49,152 faces, unité km, z = pôle de rotation, x = longitude 0), numéros de sommets à partir de 0 et sommets dupliqués inutilisés supprimés. Chiffres : Fujiwara et al. 2006, Abe et al. 2006, Demura et al. 2006 (tous Science 312), Lowry et al. 2014 (A&A 562), Yano & Aida 2013. Formule de gravité : Werner & Scheeres 1997. Forme du lieu : créée en traitant « 3D City Model (Project PLATEAU) Yokohama City (FY2020) » (MLIT) (Public Data License 1.0 ; droits d'auteur Ville de Yokohama ; 7 parties du CityGML LOD2 converties en maillage triangulaire en coordonnées locales)."
   },
-  "Next to Itokawa (535 m long) stand true-scale yardsticks: this venue (Pacifico Yokohama), a 333 m tower, a football pitch, Hayabusa and a person. A person is only 0.3 % of the length, so playback zooms on a log scale from the whole asteroid (field of view 1231 m high) down to the person (3 m) standing where Hayabusa touched down (estimated site TD1). The person stands against the effective gravity (the local 'up'). Each object carries a label with its name and size.": {
-   "ja": "イトカワ(長さ 535 m)の横に、実寸の物差しを置いた: いまいる会場(パシフィコ横浜)、高さ 333 m の塔、サッカー場、はやぶさ、そして人。人は長さの 0.3 % しかないので、再生すると全体(視野の縦の幅 1231 m)から、はやぶさが降りた所(TD1 の推定位置)に立つ人(3 m)まで、対数の等間隔で寄っていく。人は実効重力の逆向き(その場所の「上」)に立っている。物にはそれぞれ名前と大きさのラベルが付いている。",
-   "zh": "在糸川（长 535 m）旁边放上了实际尺寸的标尺：现在所在的会场（Pacifico 横滨）、高 333 m 的塔、足球场、隼鸟号，以及一个人。人只有长度的 0.3 %，所以播放时会以对数等间隔，从整体（视野纵向宽度 1231 m）一直拉近到站在隼鸟号着陆处（推定位置 TD1）的人（3 m）。人沿有效重力的反方向（当地的“上”）站立。每个物体都带有名称和大小的标签。",
-   "tw": "在糸川（長 535 m）旁邊放上了實際尺寸的標尺：現在所在的會場（Pacifico 橫濱）、高 333 m 的塔、足球場、隼鳥號，以及一個人。人只有長度的 0.3 %，所以播放時會以對數等間隔，從整體（視野縱向寬度 1231 m）一直拉近到站在隼鳥號著陸處（推定位置 TD1）的人（3 m）。人沿有效重力的反方向（當地的「上」）站立。每個物體都帶有名稱與大小的標籤。",
-   "ko": "이토카와(길이 535 m) 옆에 실제 크기의 잣대를 두었습니다: 지금 있는 회장(퍼시피코 요코하마), 높이 333 m의 탑, 축구장, 하야부사, 그리고 사람. 사람은 길이의 0.3 %에 불과하므로, 재생하면 전체(시야의 세로 폭 1231 m)에서 하야부사가 내려앉은 곳(추정 위치 TD1)에 선 사람(3 m)까지 로그 등간격으로 다가갑니다. 사람은 유효 중력의 반대 방향(그곳의 '위')으로 서 있습니다. 물체마다 이름과 크기의 라벨이 붙어 있습니다.",
-   "de": "Neben Itokawa (535 m lang) stehen maßstabsgetreue Vergleichsobjekte: dieser Veranstaltungsort (Pacifico Yokohama), ein 333 m hoher Turm, ein Fußballfeld, Hayabusa und ein Mensch. Ein Mensch ist nur 0.3 % der Länge, daher zoomt die Wiedergabe logarithmisch vom ganzen Asteroiden (Sichtfeld 1231 m hoch) bis zum Menschen (3 m), der dort steht, wo Hayabusa aufsetzte (geschätzter Punkt TD1). Der Mensch steht entgegen der effektiven Schwerkraft (dem örtlichen „Oben“). Jedes Objekt trägt ein Etikett mit Namen und Größe.",
-   "hi": "इटोकावा (535 m लंबा) के पास असली माप के पैमाने रखे गए हैं: यह आयोजन-स्थल (पैसिफ़िको योकोहामा), 333 m ऊँचा एक मीनार, एक फ़ुटबॉल मैदान, हायाबुसा और एक व्यक्ति। व्यक्ति लंबाई का केवल 0.3 % है, इसलिए चलाने पर दृश्य पूरे क्षुद्रग्रह (दृश्य-क्षेत्र 1231 m ऊँचा) से लघुगणकीय समान अंतराल में उस व्यक्ति (3 m) तक पास आता है जो हायाबुसा के उतरने की जगह (अनुमानित स्थल TD1) पर खड़ा है। व्यक्ति प्रभावी गुरुत्व के विपरीत (वहाँ के 'ऊपर') खड़ा है। हर वस्तु पर उसके नाम और माप का लेबल है।",
-   "fr": "À côté d'Itokawa (535 m de long) se dressent des étalons à l'échelle réelle : ce lieu d'exposition (Pacifico Yokohama), une tour de 333 m, un terrain de football, Hayabusa et une personne. Une personne ne fait que 0.3 % de la longueur ; la lecture zoome donc sur une échelle logarithmique de l'astéroïde entier (champ de vision de 1231 m de haut) jusqu'à la personne (3 m) debout là où Hayabusa s'est posé (site estimé TD1). La personne se tient à l'opposé de la pesanteur effective (le « haut » local). Chaque objet porte une étiquette avec son nom et sa taille."
-  },
-  "Itokawa 535 m": {
-   "ja": "イトカワ 535 m",
-   "zh": "糸川 535 m",
-   "tw": "糸川 535 m",
-   "ko": "이토카와 535 m",
-   "de": "Itokawa 535 m",
-   "hi": "इटोकावा 535 m",
-   "fr": "Itokawa 535 m"
-  },
   "the venue (Pacifico Yokohama) 694 m": {
    "ja": "会場(パシフィコ横浜) 694 m",
    "zh": "会场（Pacifico 横滨）694 m",
@@ -1576,15 +1513,6 @@
    "de": "Mensch 1.7 m",
    "hi": "व्यक्ति 1.7 m",
    "fr": "personne 1.7 m"
-  },
-  "Itokawa's length (longest obb side)": {
-   "ja": "イトカワの長さ(obb の長い辺)",
-   "zh": "糸川的长度（obb 的最长边）",
-   "tw": "糸川的長度（obb 的最長邊）",
-   "ko": "이토카와의 길이(obb의 가장 긴 변)",
-   "de": "Länge von Itokawa (längste obb-Seite)",
-   "hi": "इटोकावा की लंबाई (obb की सबसे लंबी भुजा)",
-   "fr": "longueur d'Itokawa (plus long côté obb)"
   },
   "Itokawa's surface area (mesh_area)": {
    "ja": "イトカワの表面積(mesh_area)",
@@ -1648,6 +1576,96 @@
    "de": "Oberfläche gegen veröffentlichte 0.393 km² (Demura 2006)",
    "hi": "पृष्ठीय क्षेत्रफल बनाम प्रकाशित 0.393 km² (Demura 2006)",
    "fr": "surface contre la valeur publiée 0.393 km² (Demura 2006)"
+  },
+  "Next to Itokawa (564 m along its principal axis; published 535 m) stand true-scale yardsticks: this venue (Pacifico Yokohama), a 333 m tower, a football pitch, Hayabusa and a person. A person is only 0.3 % of the length, so playback zooms on a log scale from the whole asteroid (field of view 1231 m high) down to the person (3 m) standing where Hayabusa touched down (estimated site TD1). The person stands against the effective gravity (the local 'up'). Each object carries a label with its name and size.": {
+   "ja": "イトカワ(主軸に沿った長さ 564 m、公表 535 m)の横に、実寸の物差しを置いた: いまいる会場(パシフィコ横浜)、高さ 333 m の塔、サッカー場、はやぶさ、そして人。人は長さの 0.3 % しかないので、再生すると全体(視野の縦の幅 1231 m)から、はやぶさが降りた所(TD1 の推定位置)に立つ人(3 m)まで、対数の等間隔で寄っていく。人は実効重力の逆向き(その場所の「上」)に立っている。物にはそれぞれ名前と大きさのラベルが付いている。",
+   "zh": "在糸川（沿主轴的长度 564 m，公布值 535 m）旁边放上了实际尺寸的标尺：现在所在的会场（Pacifico 横滨）、高 333 m 的塔、足球场、隼鸟号，以及一个人。人只有长度的 0.3 %，所以播放时会以对数等间隔，从整体（视野纵向宽度 1231 m）一直拉近到站在隼鸟号着陆处（推定位置 TD1）的人（3 m）。人沿有效重力的反方向（当地的“上”）站立。每个物体都带有名称和大小的标签。",
+   "tw": "在糸川（沿主軸的長度 564 m，公布值 535 m）旁邊放上了實際尺寸的標尺：現在所在的會場（Pacifico 橫濱）、高 333 m 的塔、足球場、隼鳥號，以及一個人。人只有長度的 0.3 %，所以播放時會以對數等間隔，從整體（視野縱向寬度 1231 m）一直拉近到站在隼鳥號著陸處（推定位置 TD1）的人（3 m）。人沿有效重力的反方向（當地的「上」）站立。每個物體都帶有名稱與大小的標籤。",
+   "ko": "이토카와(주축을 따른 길이 564 m, 공표 535 m) 옆에 실제 크기의 잣대를 두었습니다: 지금 있는 회장(퍼시피코 요코하마), 높이 333 m의 탑, 축구장, 하야부사, 그리고 사람. 사람은 길이의 0.3 %에 불과하므로, 재생하면 전체(시야의 세로 폭 1231 m)에서 하야부사가 내려앉은 곳(추정 위치 TD1)에 선 사람(3 m)까지 로그 등간격으로 다가갑니다. 사람은 유효 중력의 반대 방향(그곳의 '위')으로 서 있습니다. 물체마다 이름과 크기의 라벨이 붙어 있습니다.",
+   "de": "Neben Itokawa (564 m entlang der Hauptachse; veröffentlicht 535 m) stehen maßstabsgetreue Vergleichsobjekte: dieser Veranstaltungsort (Pacifico Yokohama), ein 333 m hoher Turm, ein Fußballfeld, Hayabusa und ein Mensch. Ein Mensch ist nur 0.3 % der Länge, daher zoomt die Wiedergabe logarithmisch vom ganzen Asteroiden (Sichtfeld 1231 m hoch) bis zum Menschen (3 m), der dort steht, wo Hayabusa aufsetzte (geschätzter Punkt TD1). Der Mensch steht entgegen der effektiven Schwerkraft (dem örtlichen „Oben“). Jedes Objekt trägt ein Etikett mit Namen und Größe.",
+   "hi": "इटोकावा (मुख्य अक्ष के साथ 564 m; प्रकाशित 535 m) के पास असली माप के पैमाने रखे गए हैं: यह आयोजन-स्थल (पैसिफ़िको योकोहामा), 333 m ऊँचा एक मीनार, एक फ़ुटबॉल मैदान, हायाबुसा और एक व्यक्ति। व्यक्ति लंबाई का केवल 0.3 % है, इसलिए चलाने पर दृश्य पूरे क्षुद्रग्रह (दृश्य-क्षेत्र 1231 m ऊँचा) से लघुगणकीय समान अंतराल में उस व्यक्ति (3 m) तक पास आता है जो हायाबुसा के उतरने की जगह (अनुमानित स्थल TD1) पर खड़ा है। व्यक्ति प्रभावी गुरुत्व के विपरीत (वहाँ के 'ऊपर') खड़ा है। हर वस्तु पर उसके नाम और माप का लेबल है।",
+   "fr": "À côté d'Itokawa (564 m le long de son axe principal ; publié 535 m) se dressent des étalons à l'échelle réelle : ce lieu d'exposition (Pacifico Yokohama), une tour de 333 m, un terrain de football, Hayabusa et une personne. Une personne ne fait que 0.3 % de la longueur ; la lecture zoome donc sur une échelle logarithmique de l'astéroïde entier (champ de vision de 1231 m de haut) jusqu'à la personne (3 m) debout là où Hayabusa s'est posé (site estimé TD1). La personne se tient à l'opposé de la pesanteur effective (le « haut » local). Chaque objet porte une étiquette avec son nom et sa taille."
+  },
+  "extents along the principal axes (this shape model, uniform-density inertia)": {
+   "ja": "主軸に沿った長さ(この形状モデル、一様密度の慣性主軸)",
+   "zh": "沿主轴的长度（此形状模型，均匀密度的惯性主轴）",
+   "tw": "沿主軸的長度（此形狀模型，均勻密度的慣性主軸）",
+   "ko": "주축을 따른 길이(이 모양 모델, 균일 밀도의 관성 주축)",
+   "de": "Ausdehnung entlang der Hauptachsen (dieses Formmodell, Trägheit bei homogener Dichte)",
+   "hi": "मुख्य अक्षों के साथ विस्तार (यह आकार मॉडल, एकसमान घनत्व का जड़त्व)",
+   "fr": "étendues le long des axes principaux (ce modèle de forme, inertie à densité uniforme)"
+  },
+  "564 × 300 × 244 m (published 535 × 294 × 209 m)": {
+   "ja": "564 × 300 × 244 m(公表 535 × 294 × 209 m)",
+   "zh": "564 × 300 × 244 m（公布值 535 × 294 × 209 m）",
+   "tw": "564 × 300 × 244 m（公布值 535 × 294 × 209 m）",
+   "ko": "564 × 300 × 244 m(공표 535 × 294 × 209 m)",
+   "de": "564 × 300 × 244 m (veröffentlicht 535 × 294 × 209 m)",
+   "hi": "564 × 300 × 244 m (प्रकाशित 535 × 294 × 209 m)",
+   "fr": "564 × 300 × 244 m (publié 535 × 294 × 209 m)"
+  },
+  "Itokawa (564 m along its principal axis; published 535 m)": {
+   "ja": "イトカワ(主軸に沿った長さ 564 m、公表 535 m)",
+   "zh": "糸川（沿主轴的长度 564 m，公布值 535 m）",
+   "tw": "糸川（沿主軸的長度 564 m，公布值 535 m）",
+   "ko": "이토카와(주축을 따른 길이 564 m, 공표 535 m)",
+   "de": "Itokawa (564 m entlang der Hauptachse; veröffentlicht 535 m)",
+   "hi": "इटोकावा (मुख्य अक्ष के साथ 564 m; प्रकाशित 535 m)",
+   "fr": "Itokawa (564 m le long de son axe principal ; publié 535 m)"
+  },
+  "Itokawa 564 m (published 535 m)": {
+   "ja": "イトカワ 564 m(公表 535 m)",
+   "zh": "糸川 564 m（公布值 535 m）",
+   "tw": "糸川 564 m（公布值 535 m）",
+   "ko": "이토카와 564 m(공표 535 m)",
+   "de": "Itokawa 564 m (veröffentlicht 535 m)",
+   "hi": "इटोकावा 564 m (प्रकाशित 535 m)",
+   "fr": "Itokawa 564 m (publié 535 m)"
+  },
+  "extents along the principal axes (inertia) / published": {
+   "ja": "主軸に沿った長さ(慣性主軸)/ 公表値",
+   "zh": "沿主轴的长度（惯性主轴）/ 公布值",
+   "tw": "沿主軸的長度（慣性主軸）/ 公布值",
+   "ko": "주축을 따른 길이(관성 주축) / 공표값",
+   "de": "Ausdehnung entlang der Hauptachsen (Trägheit) / veröffentlicht",
+   "hi": "मुख्य अक्षों के साथ विस्तार (जड़त्व) / प्रकाशित",
+   "fr": "étendues le long des axes principaux (inertie) / publiées"
+  },
+  "bounding box on the principal components of the vertices (obb, light-blue box)": {
+   "ja": "頂点の分布の主成分に沿った外接箱(obb、水色の箱)",
+   "zh": "沿顶点分布主成分的外接盒（obb，浅蓝色的盒）",
+   "tw": "沿頂點分布主成分的外接盒（obb，淺藍色的盒）",
+   "ko": "꼭짓점 분포의 주성분을 따른 외접 상자(obb, 하늘색 상자)",
+   "de": "umschreibender Quader auf den Hauptkomponenten der Eckpunkte (obb, hellblauer Quader)",
+   "hi": "शीर्षों के मुख्य घटकों पर घेरने वाला बॉक्स (obb, हल्का नीला बॉक्स)",
+   "fr": "boîte englobante sur les composantes principales des sommets (obb, boîte bleu clair)"
+  },
+  "The shape is the coarse Q = 64 version (49,152 faces, edges a few metres), so rocks smaller than a few metres are absent. Along this shape's principal axes of inertia (uniform density) the extents are 564 × 300 × 244 m, longer than the published values (+17 % on the third). The published values come from another version of the shape and do not match this coarse one. The light-blue obb is a box on the principal components of the vertices, so it also differs slightly from the principal-axis box (561 × 303 × 253 m). The mass scales with the assumed density; the 40 % porosity assumes the grain density of LL-chondrite meteorites (Abe 2006).": {
+   "ja": "形は Q = 64(49,152 面、辺の長さ 数 m)の粗い版で、数 m より細かい岩は入っていない。大きさの 535 × 294 × 209 m はこの形の慣性主軸(一様密度)に沿った長さは 564 × 300 × 244 m で、公表値より長い(3 本目は +17 %)。公表値は別の版の形から出した値で、この粗い版の形とは一致しない。水色の obb は頂点の分布の主成分に沿った箱なので、主軸の箱とも少し違う(561 × 303 × 253 m)。質量は密度の推定に比例し、空隙率 40 % は隕石(LL コンドライト)の粒の密度を仮定した値(Abe 2006)。",
+   "zh": "形状是较粗的 Q = 64 版本（49,152 个面，边长数米），所以没有小于数米的岩石。沿此形状惯性主轴（均匀密度）的长度为 564 × 300 × 244 m，比公布值长（第三条 +17 %）。公布值来自另一版本的形状，与这个较粗的版本不一致。浅蓝色的 obb 是沿顶点分布主成分的盒，所以与主轴的盒也略有不同（561 × 303 × 253 m）。质量与假设的密度成正比；40 % 的孔隙率假设了 LL 球粒陨石的颗粒密度（Abe 2006）。",
+   "tw": "形狀是較粗的 Q = 64 版本（49,152 個面，邊長數公尺），所以沒有小於數公尺的岩石。沿此形狀慣性主軸（均勻密度）的長度為 564 × 300 × 244 m，比公布值長（第三條 +17 %）。公布值來自另一版本的形狀，與這個較粗的版本不一致。淺藍色的 obb 是沿頂點分布主成分的盒，所以與主軸的盒也略有不同（561 × 303 × 253 m）。質量與假設的密度成正比；40 % 的孔隙率假設了 LL 球粒隕石的顆粒密度（Abe 2006）。",
+   "ko": "모양은 거친 Q = 64 판(49,152개 면, 모서리 길이 수 m)이라 수 m보다 작은 바위는 없습니다. 이 모양의 관성 주축(균일 밀도)을 따른 길이는 564 × 300 × 244 m로, 공표값보다 깁니다(세 번째 +17 %). 공표값은 다른 판의 모양에서 낸 값이라 이 거친 판과 일치하지 않습니다. 하늘색 obb는 꼭짓점 분포의 주성분을 따른 상자라서 주축의 상자와도 조금 다릅니다(561 × 303 × 253 m). 질량은 가정한 밀도에 비례하며, 공극률 40 %는 LL 콘드라이트 운석의 입자 밀도를 가정한 값입니다(Abe 2006).",
+   "de": "Die Form ist die grobe Version Q = 64 (49,152 Flächen, Kanten von einigen Metern), daher fehlen Felsen unter einigen Metern. Entlang der Trägheitshauptachsen dieser Form (homogene Dichte) betragen die Ausdehnungen 564 × 300 × 244 m, länger als die veröffentlichten Werte (+17 % bei der dritten). Die veröffentlichten Werte stammen von einer anderen Version der Form und passen nicht zu dieser groben. Der hellblaue obb ist ein Quader auf den Hauptkomponenten der Eckpunkte und weicht daher auch etwas vom Hauptachsen-Quader ab (561 × 303 × 253 m). Die Masse skaliert mit der angenommenen Dichte; die Porosität von 40 % setzt die Korndichte von LL-Chondriten voraus (Abe 2006).",
+   "hi": "आकार मोटा Q = 64 संस्करण है (49,152 फलक, किनारे कुछ मीटर के), इसलिए कुछ मीटर से छोटी चट्टानें इसमें नहीं हैं। इस आकार के जड़त्व के मुख्य अक्षों (एकसमान घनत्व) के साथ विस्तार 564 × 300 × 244 m है, जो प्रकाशित मानों से लंबा है (तीसरे पर +17 %)। प्रकाशित मान आकार के किसी दूसरे संस्करण से हैं और इस मोटे संस्करण से मेल नहीं खाते। हल्का नीला obb शीर्षों के मुख्य घटकों पर बना बॉक्स है, इसलिए यह मुख्य-अक्ष बॉक्स से भी थोड़ा अलग है (561 × 303 × 253 m)। द्रव्यमान माने गए घनत्व के अनुपात में है; 40 % सरंध्रता LL-कॉन्ड्राइट उल्कापिंडों के कण घनत्व को मानकर है (Abe 2006)।",
+   "fr": "La forme est la version grossière Q = 64 (49,152 faces, arêtes de quelques mètres) : les rochers de moins de quelques mètres en sont absents. Le long des axes principaux d'inertie de cette forme (densité uniforme), les étendues valent 564 × 300 × 244 m, plus longues que les valeurs publiées (+17 % sur la troisième). Les valeurs publiées viennent d'une autre version de la forme et ne correspondent pas à cette version grossière. La boîte obb bleu clair est construite sur les composantes principales des sommets, elle diffère donc aussi un peu de la boîte des axes principaux (561 × 303 × 253 m). La masse est proportionnelle à la densité supposée ; la porosité de 40 % suppose la densité des grains des météorites chondrites LL (Abe 2006)."
+  },
+  "So far the interior was assumed uniform. Lowry 2014 found that the slowly increasing spin rate (YORP) needs the centre of mass about 21 m from the centre of figure towards the head, and concluded that the head (x ≥ 150 m) is denser than the body. The slider raises the head's density (total mass kept). Orange ball = centre of mass, white ball = centre of figure, colour = how surface gravity changes. The last two rows of the table fail: a uniform density cannot shift the centre of mass (so it cannot explain the observation), and this shape's extents along its principal axes differ from the published three axes by +17 % on the third (different shape versions).": {
+   "ja": "ここまでは中身の密度が一様と仮定した。Lowry 2014 は、自転がわずかに速くなっていく観測(YORP)を説明するには重心が形の中心から頭の側へ約 21 m ずれている必要があり、頭(x ≥ 150 m)が胴より重いと考えた。時間つまみで頭の密度を上げていく(全体の質量は保つ)。橙の玉 = 重心、白い玉 = 形の中心、色 = 表面の重力の変わり方。表の最後の 2 行は落ちる項目:一様密度では重心がずれない(観測を説明できない)こと、この形の慣性主軸に沿った長さが公表の 3 軸と 3 本目で +17 % 違う(形の版の違い)こと。",
+   "zh": "到这里为止都假设内部密度均匀。Lowry 2014 发现，要解释自转速度慢慢加快的观测（YORP），质心需要从形心向头部偏约 21 m，并得出头部（x ≥ 150 m）比身体密度更高的结论。滑块逐渐提高头部的密度（保持总质量）。橙色球 = 质心，白色球 = 形心，颜色 = 表面引力的变化。表的最后两行不通过：均匀密度无法使质心偏移（因此无法解释观测），以及此形状沿主轴的长度与公布的三轴在第三条上相差 +17 %（形状版本不同）。",
+   "tw": "到這裡為止都假設內部密度均勻。Lowry 2014 發現，要解釋自轉速度慢慢加快的觀測（YORP），質心需要從形心向頭部偏約 21 m，並得出頭部（x ≥ 150 m）比身體密度更高的結論。滑桿逐漸提高頭部的密度（保持總質量）。橙色球 = 質心，白色球 = 形心，顏色 = 表面重力的變化。表的最後兩列不通過：均勻密度無法使質心偏移（因此無法解釋觀測），以及此形狀沿主軸的長度與公布的三軸在第三條上相差 +17 %（形狀版本不同）。",
+   "ko": "지금까지는 내부 밀도가 균일하다고 가정했습니다. Lowry 2014는 자전이 조금씩 빨라지는 관측(YORP)을 설명하려면 질량중심이 도형 중심에서 머리 쪽으로 약 21 m 어긋나 있어야 한다는 것을 발견하고, 머리(x ≥ 150 m)가 몸통보다 밀도가 높다고 결론지었습니다. 슬라이더로 머리의 밀도를 올립니다(전체 질량은 유지). 주황 공 = 질량중심, 흰 공 = 도형 중심, 색 = 표면 중력의 변화. 표의 마지막 두 행은 통과하지 못합니다: 균일 밀도로는 질량중심이 어긋나지 않는다는 것(관측을 설명할 수 없음), 그리고 이 모양의 주축을 따른 길이가 공표된 세 축과 세 번째에서 +17 % 다르다는 것(모양의 판이 다름).",
+   "de": "Bisher wurde das Innere als homogen angenommen. Lowry 2014 fand, dass die langsam zunehmende Rotationsgeschwindigkeit (YORP) einen um etwa 21 m vom Formmittelpunkt zum Kopf hin verschobenen Schwerpunkt verlangt, und folgerte, dass der Kopf (x ≥ 150 m) dichter ist als der Rumpf. Der Regler erhöht die Dichte des Kopfes (Gesamtmasse bleibt). Orange Kugel = Schwerpunkt, weiße Kugel = Formmittelpunkt, Farbe = Änderung der Schwerkraft an der Oberfläche. Die letzten beiden Zeilen der Tabelle scheitern: Eine homogene Dichte kann den Schwerpunkt nicht verschieben (und die Beobachtung nicht erklären), und die Ausdehnungen dieser Form entlang ihrer Hauptachsen weichen bei der dritten um +17 % von den veröffentlichten drei Achsen ab (andere Formversion).",
+   "hi": "अब तक भीतरी भाग को एकसमान माना गया। Lowry 2014 ने पाया कि धीरे-धीरे बढ़ती घूर्णन गति (YORP) के लिए द्रव्यमान केंद्र को आकृति केंद्र से सिर की ओर लगभग 21 m खिसका होना चाहिए, और निष्कर्ष निकाला कि सिर (x ≥ 150 m) धड़ से अधिक घना है। स्लाइडर सिर का घनत्व बढ़ाता है (कुल द्रव्यमान वही रहता है)। नारंगी गोला = द्रव्यमान केंद्र, सफ़ेद गोला = आकृति केंद्र, रंग = सतह पर गुरुत्व का बदलाव। तालिका की अंतिम दो पंक्तियाँ असफल हैं: एकसमान घनत्व द्रव्यमान केंद्र को नहीं खिसका सकता (इसलिए प्रेक्षण की व्याख्या नहीं कर सकता), और इस आकार के मुख्य अक्षों के साथ विस्तार प्रकाशित तीन अक्षों से तीसरे पर +17 % अलग हैं (आकार के संस्करण अलग हैं)।",
+   "fr": "Jusqu'ici, l'intérieur était supposé uniforme. Lowry 2014 a trouvé que l'accélération lente de la rotation (YORP) exige un centre de masse décalé d'environ 21 m du centre de figure vers la tête, et en a conclu que la tête (x ≥ 150 m) est plus dense que le corps. Le curseur augmente la densité de la tête (masse totale conservée). Boule orange = centre de masse, boule blanche = centre de figure, couleur = variation de la gravité en surface. Les deux dernières lignes du tableau échouent : une densité uniforme ne peut pas décaler le centre de masse (elle ne peut donc pas expliquer l'observation), et les étendues de cette forme le long de ses axes principaux diffèrent des trois axes publiés de +17 % sur la troisième (versions de forme différentes)."
+  },
+  "limit (shape): extents along the principal axes of inertia (this shape model) vs the published 535 × 294 × 209 m (Fujiwara 2006) — different shape versions": {
+   "ja": "限界(形): 慣性主軸に沿った長さ(この形状モデル)と公表の 535 × 294 × 209 m(Fujiwara 2006)—— 形の版の違い",
+   "zh": "局限（形状）：沿惯性主轴的长度（此形状模型）与公布的 535 × 294 × 209 m（Fujiwara 2006）—— 形状版本不同",
+   "tw": "限制（形狀）：沿慣性主軸的長度（此形狀模型）與公布的 535 × 294 × 209 m（Fujiwara 2006）—— 形狀版本不同",
+   "ko": "한계(모양): 관성 주축을 따른 길이(이 모양 모델) 대 공표된 535 × 294 × 209 m(Fujiwara 2006) —— 모양의 판이 다름",
+   "de": "Grenze (Form): Ausdehnung entlang der Trägheitshauptachsen (dieses Formmodell) gegen die veröffentlichten 535 × 294 × 209 m (Fujiwara 2006) — andere Formversion",
+   "hi": "सीमा (आकार): जड़त्व के मुख्य अक्षों के साथ विस्तार (यह आकार मॉडल) बनाम प्रकाशित 535 × 294 × 209 m (Fujiwara 2006) — आकार के संस्करण अलग",
+   "fr": "limite (forme) : étendues le long des axes principaux d'inertie (ce modèle de forme) contre les 535 × 294 × 209 m publiés (Fujiwara 2006) — versions de forme différentes"
   }
  }
 }

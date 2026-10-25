@@ -152,6 +152,25 @@ def site_vertex(V, lat, lon, cone_deg=3.0):
     return int(near[np.argmax(np.linalg.norm(V[near], axis=1))])
 
 
+def principal_extents(V, F, c):
+    """一様密度の立体の慣性主軸(体積の 2 次モーメントの固有ベクトル)に沿った長さ (3,) と主軸 (3,3 列)。
+
+    2 次モーメントは符号付き四面体(頂点 = 重心 c)の和で厳密に出す: 四面体 (0, a, b, d) について
+    ∫ x xᵀ dV = (6V/120) (a aᵀ + b bᵀ + d dᵀ + (a+b+d)(a+b+d)ᵀ)。obb(頂点の分布の主成分)とは別の主軸。
+    """
+    a, b, d = V[F[:, 0]] - c, V[F[:, 1]] - c, V[F[:, 2]] - c
+    v6 = np.einsum("ij,ij->i", a, np.cross(b, d))
+    ssum = a + b + d
+    C = np.zeros((3, 3))
+    for P in (a, b, d, ssum):
+        C += np.einsum("i,ij,ik->jk", v6, P, P)
+    C /= 120.0
+    w, U = np.linalg.eigh(C)
+    U = U[:, ::-1]                                               # 2 次モーメントの大きい順 = 長い軸から
+    ext = np.ptp((V - c) @ U, axis=0)
+    return ext, U
+
+
 def vertex_areas(V, F):
     """頂点の面積(接する面の面積の 1/3 ずつ)。face_areas(op)を頂点へ配る。"""
     fa = L.face_areas((V, F))
@@ -221,6 +240,8 @@ def compute(verbose=True):
     R = {"V": V, "F": F, "n_dup": n_dup, "stats": stats, "vol_op": vol_op, "vol": vol, "area": area, "VN": VN,
          "box": box, "dims": dims, "com": com, "hf": hf, "va": va}
     R["mass"] = RHO * vol
+    R["pdims"], R["paxes"] = principal_extents(V, F, com)
+    R["model_dims"] = np.ptp(V, axis=0)
     # 実効重力の大きさ・ジオポテンシャル高度
     ge = np.linalg.norm(hf["eff_acceleration"], axis=1)
     g0 = np.linalg.norm(hf["acceleration"], axis=1)
@@ -326,7 +347,7 @@ def size_compare(R):
     return {"venue": venue,
             "k": k, "up": up, "t1": t1, "t2": t2, "R1": R1, "R2": R2, "horizon": hor, "horizon_check": hor2,
             "horizon_earth": math.sqrt(2.0 * EARTH_R * h), "g_site": g_site, "t_fall": t_fall, "t_fall_num": tt,
-            "g_var": float(np.ptp(gz) / np.mean(gz)), "length_ratio": float(R["dims"][0] / PERSON_H)}
+            "g_var": float(np.ptp(gz) / np.mean(gz)), "length_ratio": float(R["pdims"][0] / PERSON_H)}
 
 
 def walk_path(V, F):
@@ -448,6 +469,9 @@ def gates(R) -> dict:
     g["volume_vs_published"] = R["vol"] / PUB_VOLUME - 1.0
     g["dims"] = [float(x) for x in R["dims"]]
     g["dims_vs_published"] = [float(R["dims"][k] / PUB_DIMS[k] - 1.0) for k in range(3)]
+    g["pdims"] = [float(x) for x in R["pdims"]]
+    g["pdims_vs_published"] = [float(R["pdims"][k] / PUB_DIMS[k] - 1.0) for k in range(3)]
+    g["model_dims"] = [float(x) for x in R["model_dims"]]
     g["mass"] = R["mass"]
     g["mass_vs_fujiwara"] = R["mass"] / PUB_MASS_F - 1.0
     g["bulk_density_from_abe_mass"] = PUB_MASS_A / R["vol"]
@@ -832,7 +856,8 @@ def tab_size(R, g):
               "tower": T("高さ 333 m の塔", "a 333 m tower"),
               "venue": T("会場(パシフィコ横浜)", "the venue (Pacifico Yokohama)")}
     bodies = [{"name": "itokawa", "pos": V - com, "faces": F, "rgb": ROCK_RGB,
-               "label": T("イトカワ(長さ 535 m)", "Itokawa (535 m long)")}]
+               "label": T("イトカワ(主軸に沿った長さ %.0f m、公表 535 m)" % R["pdims"][0],
+                          "Itokawa (%.0f m along its principal axis; published 535 m)" % R["pdims"][0])}]
     xyzs, quats = [com], [qg]
     for name, mV, mF, pos, q, rgb in objs:
         bodies.append({"name": name, "pos": mV, "faces": mF, "rgb": rgb, "label": labels[name]})
@@ -842,7 +867,7 @@ def tab_size(R, g):
     # 物に付いたラベル(大きさつき)。点は各物体のてっぺんの少し上(ローカル座標)
     vn = sz["venue"]
     zmax_it = float(np.max((Rg @ (V - com0).T)[2]))
-    lab = [("itokawa", Rg.T @ np.array([0.0, 0.0, zmax_it + 25.0]), T("イトカワ 535 m", "Itokawa 535 m")),
+    lab = [("itokawa", Rg.T @ np.array([0.0, 0.0, zmax_it + 25.0]), T("イトカワ %.0f m(公表 535 m)" % R["pdims"][0], "Itokawa %.0f m (published 535 m)" % R["pdims"][0])),
            ("venue", np.array([0.0, 0.0, float(vn["V"][:, 2].max()) + 15.0]),
             T("会場(パシフィコ横浜) %.0f m" % vn["length"], "the venue (Pacifico Yokohama) %.0f m" % vn["length"])),
            ("tower", np.array([0.0, 0.0, TOWER_H + 12.0]), T("塔 333 m", "tower 333 m")),
@@ -1077,7 +1102,7 @@ def all_checks(R, g):
     s1, s2 = g["sites"]["TD1"], g["sites"]["TD2"]
     dv = g["volume_vs_published"]
     dm = g["mass_vs_fujiwara"]
-    dd = g["dims_vs_published"]
+    dd = g["pdims_vs_published"]
     rb = g["lowry_rho_body_ours"]
     cx = g["com_offset_x_two_density_m"]
     return {
@@ -1151,8 +1176,8 @@ def all_checks(R, g):
                  "± 110 kg/m³", "%.0f kg/m³" % rb, abs(rb - LOWRY_RHO_BODY) <= LOWRY_RHO_BODY_SIGMA),
             _row("そのときの重心のずれ(x)と Lowry 2014 の 21 ± 12 m", "centre-of-mass shift (x) then vs Lowry 2014: 21 ± 12 m",
                  "± 12 m", "%.1f m" % cx, abs(cx - LOWRY_COM_X) <= LOWRY_COM_X_SIGMA),
-            _row("限界(形): 大きさ(obb の 3 辺)と 535 × 294 × 209 m(Fujiwara 2006)—— 3 軸の定義の違い",
-                 "limit (shape): size (3 obb edges) vs 535 × 294 × 209 m (Fujiwara 2006) — the axes are defined differently",
+            _row("限界(形): 慣性主軸に沿った長さ(この形状モデル)と公表の 535 × 294 × 209 m(Fujiwara 2006)—— 形の版の違い",
+                 "limit (shape): extents along the principal axes of inertia (this shape model) vs the published 535 × 294 × 209 m (Fujiwara 2006) — different shape versions",
                  "|差| < 10 %", "%+.1f / %+.1f / %+.1f %%" % tuple(x * 100 for x in dd), max(abs(x) for x in dd) < 0.10),
             _row("一様密度の仮定は、YORP の観測が求める重心のずれ(14 m 以上)を出せるか", "can the uniform-density assumption give the centre-of-mass shift the YORP observation needs (≥ 14 m)?",
                  "≥ 14 m", "%.0f m" % g["com_offset_uniform_m"], g["com_offset_uniform_m"] >= 14.0)],
@@ -1221,12 +1246,18 @@ def all_lessons(R, g):
                          "volume V = (1/6) Σ_faces v0 · (v1 × v2) (divergence theorem)\nmass M = ρ V\n"
                          "porosity = 1 − ρ / ρ_grain (about 40 % with the LL-chondrite grain density, Abe 2006)"),
             "limit": T("形は Q = 64(49,152 面、辺の長さ 数 m)の粗い版で、数 m より細かい岩は入っていない。大きさの 535 × 294 × 209 m は"
-                       "論文の 3 軸の定義と obb(頂点の主成分の向きの外接箱)が同じとは限らない。質量は密度の推定に比例し、"
-                       "空隙率 40 % は隕石(LL コンドライト)の粒の密度を仮定した値(Abe 2006)。",
+                       "この形の慣性主軸(一様密度)に沿った長さは %.0f × %.0f × %.0f m で、公表値より長い(3 本目は %+.0f %%)。公表値は別の版の形から"
+                       "出した値で、この粗い版の形とは一致しない。水色の obb は頂点の分布の主成分に沿った箱なので、主軸の箱とも少し違う"
+                       "(%.0f × %.0f × %.0f m)。質量は密度の推定に比例し、"
+                       "空隙率 40 %% は隕石(LL コンドライト)の粒の密度を仮定した値(Abe 2006)。"
+                       % (tuple(g["pdims"]) + (g["pdims_vs_published"][2] * 100,) + tuple(g["dims"])),
                        "The shape is the coarse Q = 64 version (49,152 faces, edges a few metres), so rocks smaller than a few "
-                       "metres are absent. The paper's 535 × 294 × 209 m axes need not match obb (a box on the principal axes of "
-                       "the vertices). The mass scales with the assumed density; the 40 % porosity assumes the grain density of "
-                       "LL-chondrite meteorites (Abe 2006)."),
+                       "metres are absent. Along this shape's principal axes of inertia (uniform density) the extents are "
+                       "%.0f × %.0f × %.0f m, longer than the published values (%+.0f %% on the third). The published values come "
+                       "from another version of the shape and do not match this coarse one. The light-blue obb is a box on the "
+                       "principal components of the vertices, so it also differs slightly from the principal-axis box "
+                       "(%.0f × %.0f × %.0f m). The mass scales with the assumed density; the 40 %% porosity assumes the grain "
+                       "density of LL-chondrite meteorites (Abe 2006)." % (tuple(g["pdims"]) + (g["pdims_vs_published"][2] * 100,) + tuple(g["dims"]))),
         },
         "gravity": {
             "question": T("イトカワの上を、頭の先から首を通って胴の端まで歩く。「重さ」(実効重力)はどこで一番軽い?",
@@ -1357,15 +1388,17 @@ def build_spec(R, g):
     dims = g["dims"]
     s1, s2 = g["sites"]["TD1"], g["sites"]["TD2"]
     tab0 = mk("size", T("大きさを比べる", "Compare the sizes"), "passed",
-              T("イトカワ(長さ 535 m)の横に、実寸の物差しを置いた: いまいる会場(パシフィコ横浜)、高さ 333 m の塔、サッカー場、はやぶさ、そして人。人は長さの 0.3 %% しかないので、"
+              T("イトカワ(主軸に沿った長さ %.0f m、公表 535 m)の横に、実寸の物差しを置いた: いまいる会場(パシフィコ横浜)、高さ 333 m の塔、サッカー場、はやぶさ、そして人。人は長さの 0.3 %% しかないので、"
                 "再生すると全体(視野の縦の幅 %.0f m)から、はやぶさが降りた所(TD1 の推定位置)に立つ人(3 m)まで、対数の等間隔で寄っていく。"
-                "人は実効重力の逆向き(その場所の「上」)に立っている。物にはそれぞれ名前と大きさのラベルが付いている。" % g["size_W0"],
-                "Next to Itokawa (535 m long) stand true-scale yardsticks: this venue (Pacifico Yokohama), a 333 m tower, a football pitch, Hayabusa and a "
+                "人は実効重力の逆向き(その場所の「上」)に立っている。物にはそれぞれ名前と大きさのラベルが付いている。" % (g["pdims"][0], g["size_W0"]),
+                "Next to Itokawa (%.0f m along its principal axis; published 535 m) stand true-scale yardsticks: this venue (Pacifico Yokohama), a 333 m tower, a football pitch, Hayabusa and a "
                 "person. A person is only 0.3 %% of the length, so playback zooms on a log scale from the whole asteroid "
                 "(field of view %.0f m high) down to the person (3 m) standing where Hayabusa touched down (estimated site "
-                "TD1). The person stands against the effective gravity (the local 'up'). Each object carries a label with its name and size." % g["size_W0"]),
+                "TD1). The person stands against the effective gravity (the local 'up'). Each object carries a label with its name and size." % (g["pdims"][0], g["size_W0"])),
               d0,
-              [N(T("イトカワの長さ(obb の長い辺)", "Itokawa's length (longest obb side)"), "%.0f m" % g["dims"][0]),
+              [N(T("主軸に沿った長さ(この形状モデル、一様密度の慣性主軸)", "extents along the principal axes (this shape model, uniform-density inertia)"),
+                 T("%.0f × %.0f × %.0f m(公表 535 × 294 × 209 m)" % tuple(g["pdims"]),
+                   "%.0f × %.0f × %.0f m (published 535 × 294 × 209 m)" % tuple(g["pdims"]))),
                N(T("イトカワの表面積(mesh_area)", "Itokawa's surface area (mesh_area)"),
                  T("{:,.0f} m² = %.3f km²(サッカー場 約 %.0f 面分)".format(g["area_m2"]) % (g["area_m2"] / 1e6, g["area_pitches"]),
                    "{:,.0f} m² = %.3f km² (about %.0f football pitches)".format(g["area_m2"]) % (g["area_m2"] / 1e6, g["area_pitches"]))),
@@ -1393,7 +1426,10 @@ def build_spec(R, g):
                 "density gives the mass." % PERIOD_H),
               d1,
               [N(T("体積(mesh_volume)/ 公表値", "volume (mesh_volume) / published"), "%.3f / 1.838 × 10^7 m³" % (R["vol"] / 1e7)),
-               N(T("大きさ(obb)/ 公表値", "size (obb) / published"), "%.0f × %.0f × %.0f / 535 × 294 × 209 m" % tuple(dims)),
+               N(T("主軸に沿った長さ(慣性主軸)/ 公表値", "extents along the principal axes (inertia) / published"),
+                 "%.0f × %.0f × %.0f / 535 × 294 × 209 m" % tuple(g["pdims"])),
+               N(T("頂点の分布の主成分に沿った外接箱(obb、水色の箱)", "bounding box on the principal components of the vertices (obb, light-blue box)"),
+                 "%.0f × %.0f × %.0f m" % tuple(dims)),
                N(T("質量(× 1.9 g/cm³)/ 公表値", "mass (× 1.9 g/cm³) / published"), "%.2f / 3.51 × 10^10 kg" % (R["mass"] / 1e10)),
                N(T("自転の周期(PDS の極と自転の値)", "spin period (PDS pole and rotation)"), "%.4f h" % PERIOD_H)],
               {"az": -1.2, "el": 0.35, "dist": 0.9})
@@ -1433,15 +1469,15 @@ def build_spec(R, g):
               T("ここまでは中身の密度が一様と仮定した。Lowry 2014 は、自転がわずかに速くなっていく観測(YORP)を説明するには重心が形の"
                 "中心から頭の側へ約 21 m ずれている必要があり、頭(x ≥ 150 m)が胴より重いと考えた。時間つまみで頭の密度を上げていく"
                 "(全体の質量は保つ)。橙の玉 = 重心、白い玉 = 形の中心、色 = 表面の重力の変わり方。表の最後の 2 行は落ちる項目:"
-                "一様密度では重心がずれない(観測を説明できない)こと、形の大きさの 3 辺(obb)が公表の 3 軸と 3 本目で %+.0f %% 違う"
-                "(3 軸の定義と形の版が違う)こと。" % (g["dims_vs_published"][2] * 100),
+                "一様密度では重心がずれない(観測を説明できない)こと、この形の慣性主軸に沿った長さが公表の 3 軸と 3 本目で %+.0f %% 違う"
+                "(形の版の違い)こと。" % (g["pdims_vs_published"][2] * 100),
                 "So far the interior was assumed uniform. Lowry 2014 found that the slowly increasing spin rate (YORP) "
                 "needs the centre of mass about 21 m from the centre of figure towards the head, and concluded that the head "
                 "(x ≥ 150 m) is denser than the body. The slider raises the head's density (total mass kept). Orange ball = "
                 "centre of mass, white ball = centre of figure, colour = how surface gravity changes. The last two rows "
                 "of the table fail: a uniform density cannot shift the centre of mass (so it cannot explain the "
-                "observation), and the shape's three obb edges differ from the published three axes by %+.0f %% on the "
-                "third (different axis definitions and shape versions)." % (g["dims_vs_published"][2] * 100)),
+                "observation), and this shape's extents along its principal axes differ from the published three axes by "
+                "%+.0f %% on the third (different shape versions)." % (g["pdims_vs_published"][2] * 100)),
               d4,
               [N(T("頭の体積の割合", "head share of the volume"), "%.1f %%" % (g["head_frac"] * 100)),
                N(T("胴の密度(頭 2,850 のとき)/ Lowry 2014", "body density (head 2,850) / Lowry 2014"), "%.0f / 1,750 ± 110 kg/m³" % g["lowry_rho_body_ours"]),

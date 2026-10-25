@@ -183,3 +183,17 @@ def test_venue_asset_is_recorded_and_drawn_at_its_bbox():
     R = {"V": Vi, "size": {"k": 0, "up": up, "t1": t1, "t2": t2,
                            "venue": {"V": V, "F": F, "ext": ext}}}
     assert m.venue_extent_error(R) < 1e-9
+
+
+def test_principal_extents_of_a_rotated_box_are_its_sides():
+    """慣性主軸に沿った長さ(符号付き四面体の 2 次モーメント)は、回した直方体で辺の長さそのもの。"""
+    m = _tool()
+    V = np.array([[x, y, z] for x in (0, 4.0) for y in (0, 2.0) for z in (0, 1.0)], float)
+    quads = [(0, 1, 3, 2), (4, 6, 7, 5), (0, 4, 5, 1), (2, 3, 7, 6), (0, 2, 6, 4), (1, 5, 7, 3)]
+    F = np.array([f for q in quads for f in ([q[0], q[1], q[2]], [q[0], q[2], q[3]])])
+    a = 0.7
+    Rz = np.array([[np.cos(a), -np.sin(a), 0], [np.sin(a), np.cos(a), 0], [0, 0, 1.0]])
+    Vr = V @ Rz.T + [5.0, -3.0, 2.0]
+    ext, U = m.principal_extents(Vr, F, Vr.mean(axis=0))
+    assert np.allclose(ext, [4.0, 2.0, 1.0], atol=1e-9)
+    assert abs(abs(U[:, 0] @ Rz[:, 0]) - 1.0) < 1e-9
