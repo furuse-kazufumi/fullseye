@@ -76,6 +76,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/media/evis_stereo_fullseye.mp4"><img src="../thumbs/evis_stereo_depth.jpg" alt="휴머노이드 두 눈" loading="lazy" width="320" height="320"><b>&#9654;</b><span>휴머노이드 두 눈</span></a>
 <a href="../../articles/assets/media/evis_bean_track_fullseye.mp4"><img src="../thumbs/evis_bean_track.jpg" alt="젓가락 끝 카메라 추적" loading="lazy" width="320" height="320"><b>&#9654;</b><span>젓가락 끝 카메라 추적</span></a>
 <a href="../../view2026/anim3d/interactive_anim3d_viewer.html?lang=ko"><img src="../thumbs/interactive_anim3d_viewer.jpg" alt="로봇 팔과 반투명 렌즈" loading="lazy" width="320" height="320"><b>&#9654;</b><span>로봇 팔과 반투명 렌즈 · 0.3 MB</span></a>
+<a href="../../anim3d/gauss_bonnet.html?lang=ko"><img src="../thumbs/gauss_bonnet.jpg" alt="굽은 정도를 전부 더하면 같은 수" loading="lazy" width="320" height="320"><b>&#9654;</b><span>굽은 정도를 전부 더하면 같은 수 · 3.1 MB</span></a>
 </div>
 
 ## 시리즈 기사 (Qiita의 영어 기사)
@@ -658,6 +659,7 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 **돌려 볼 수 있는 움직이는 3-D**
 
 - [로봇 팔과 반투명 렌즈](../../view2026/anim3d/interactive_anim3d_viewer.html?lang=ko) (움직이는 3-D, 드래그로 회전, 0.3 MB): 손가락으로 돌려 로봇 팔이 상자를 옮기는 모습을 원하는 방향에서 본다. 광선이 반투명 렌즈를 지나 초점에 모이고, 아래에서는 위에서 본 높이 영상과 그 이진화가 같은 시간축으로 진행된다. [소스](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
+- [굽은 정도를 전부 더하면 같은 수](../../anim3d/gauss_bonnet.html?lang=ko) (움직이는 3-D, 드래그로 회전, 3.1 MB): 구를 정육면체로 각지게 하든, 토러스든, 구멍을 늘리든, 실측한 소행성이든, 꼭짓점마다의 각 결손 K를 더한 Σ K / 2π는 χ = V − E + F와 일치한다. 반투명 평면이 지나간 꼭짓점을 더해 가는 움직임을 손가락으로 돌려 본다. 경계가 있는 그릇에서는 빗나간다(한계 탭). **17행의 표에서 Σ K / 2π와 χ의 차는 1e-12 미만. 경계가 있는 그릇만 24.0 × 2π 빗나가며, 경계 항을 넣으면 일치한다.** [소스](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_gaussbonnet_anim3d.py)
 
 </div>
 

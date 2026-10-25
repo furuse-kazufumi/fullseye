@@ -1652,6 +1652,44 @@
     "hi": "",
     "fr": ""
    }
+  },
+  {
+   "id": "gauss_bonnet",
+   "category": "anim3d",
+   "media": "gauss_bonnet.html",
+   "media_path": "anim3d/gauss_bonnet.html",
+   "motion": true,
+   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_gaussbonnet_anim3d.py",
+   "label": {
+    "ja": "曲がり方を全部足すと同じ数",
+    "en": "Add up all the curvature",
+    "zh": "弯曲全部相加都是同一个数",
+    "tw": "彎曲全部相加都是同一個數",
+    "ko": "굽은 정도를 전부 더하면 같은 수",
+    "de": "Krümmung aufsummiert, gleiche Zahl",
+    "hi": "सारी वक्रता जोड़ो, वही संख्या",
+    "fr": "Toute la courbure additionnée"
+   },
+   "see": {
+    "ja": "球を立方体に角ばらせても、トーラスでも、穴を増やしても、実測の小惑星でも、頂点ごとの角欠損 K を足した Σ K / 2π は χ = V − E + F に一致する。半透明の面が通り過ぎた頂点を足し上げる動きを指で回して見る。境界のある皿では外れる(限界の回)。",
+    "en": "Sharpen a sphere into a cube, take a torus, add holes, or use the measured asteroid: the angle defects K added over the vertices give Σ K / 2π = χ = V − E + F. Rotate with a finger and watch the translucent plane sweep the vertices into the sum. A bowl with a boundary breaks it (the limit tab).",
+    "zh": "把球削成立方体、换成环面、增加孔洞，或用实测的小行星: 把各顶点的角亏损 K 加起来，Σ K / 2π 都等于 χ = V − E + F。用手指旋转，看半透明平面把顶点扫进总和。有边界的碗则不成立(局限标签页)。",
+    "tw": "把球削成立方體、換成環面、增加孔洞，或用實測的小行星: 把各頂點的角虧損 K 加起來，Σ K / 2π 都等於 χ = V − E + F。用手指旋轉，看半透明平面把頂點掃進總和。有邊界的碗則不成立(限制分頁)。",
+    "ko": "구를 정육면체로 각지게 하든, 토러스든, 구멍을 늘리든, 실측한 소행성이든, 꼭짓점마다의 각 결손 K를 더한 Σ K / 2π는 χ = V − E + F와 일치한다. 반투명 평면이 지나간 꼭짓점을 더해 가는 움직임을 손가락으로 돌려 본다. 경계가 있는 그릇에서는 빗나간다(한계 탭).",
+    "de": "Kugel zum Würfel geschärft, Torus, mehr Löcher oder der gemessene Asteroid: Die über die Ecken aufsummierten Winkeldefekte K ergeben Σ K / 2π = χ = V − E + F. Mit dem Finger drehen und zusehen, wie die halbtransparente Ebene die Ecken in die Summe fegt. Eine Schale mit Rand bricht es (der Grenze-Tab).",
+    "hi": "गोले को घन में नुकीला करो, टोरस लो, छेद जोड़ो, या मापा हुआ क्षुद्रग्रह लो: शीर्षों पर जोड़े गए कोण-अभाव K से Σ K / 2π = χ = V − E + F मिलता है। उंगली से घुमाएँ और देखें कि पारभासी समतल शीर्षों को योग में समेटता है। सीमा वाला कटोरा इसे तोड़ देता है (सीमा टैब)।",
+    "fr": "Aiguisez une sphère en cube, prenez un tore, ajoutez des trous ou l'astéroïde mesuré : les défauts angulaires K additionnés sur les sommets donnent Σ K / 2π = χ = V − E + F. Faites pivoter du doigt et regardez le plan translucide balayer les sommets dans la somme. Un bol à bord fait échouer la formule (l'onglet limite)."
+   },
+   "num": {
+    "ja": "17 行の表で Σ K / 2π と χ の差は 1e-12 未満。境界のある皿だけ 24.0 × 2π 外れ、境界の項を入れると一致する。",
+    "en": "In 17 checked rows Σ K / 2π and χ differ by less than 1e-12; only the bowl with a boundary misses by 24.0 × 2π, and matches once the boundary term is added.",
+    "zh": "17 行检验中 Σ K / 2π 与 χ 的差小于 1e-12；只有带边界的碗偏离 24.0 × 2π，加上边界项后即一致。",
+    "tw": "17 列檢驗中 Σ K / 2π 與 χ 的差小於 1e-12；只有帶邊界的碗偏離 24.0 × 2π，加上邊界項後即一致。",
+    "ko": "17행의 표에서 Σ K / 2π와 χ의 차는 1e-12 미만. 경계가 있는 그릇만 24.0 × 2π 빗나가며, 경계 항을 넣으면 일치한다.",
+    "de": "In 17 geprüften Zeilen unterscheiden sich Σ K / 2π und χ um weniger als 1e-12; nur die Schale mit Rand liegt um 24.0 × 2π daneben und stimmt, sobald der Randterm hinzukommt.",
+    "hi": "17 जाँची गई पंक्तियों में Σ K / 2π और χ का अंतर 1e-12 से कम; केवल सीमा वाला कटोरा 24.0 × 2π से चूकता है, और सीमा-पद जोड़ते ही मेल खाता है।",
+    "fr": "Sur 17 lignes vérifiées, Σ K / 2π et χ diffèrent de moins de 1e-12 ; seul le bol à bord manque de 24.0 × 2π, et coïncide dès qu'on ajoute le terme de bord."
+   }
   }
  ],
  "series": [

@@ -294,6 +294,13 @@ _IMAGE_REASON = ("画像・動画の書き手。PNG/GIF のバイトは Pillow �
 _SPIKE_REASON = ("スパイク(実験)の記録。spikes/out_gallery/ の図は当時の証跡として凍結してあり、"
                  "再描画(matplotlib / GUI)はバイトが変わる。")
 EXCLUDED = {
+    "tools/build_gaussbonnet_anim3d.py": ("離散 Gauss–Bonnet の動く 3-D の教材(docs/anim3d/gauss_bonnet.html)。pocviewer.write_viewer で書く手回しの"
+                                          "生成物(3 MB)。commit するページは 8 言語版で、`py -3.11 tools/anim3d_i18n.py --build build_gaussbonnet_anim3d"
+                                          " --out docs/anim3d/gauss_bonnet.html` で書く(翻訳表 tools/anim3d_i18n_tables/build_gaussbonnet_anim3d.json)。"
+                                          "門は tests/test_anim3d_gaussbonnet_2026_10_26.py と tests/test_anim3d_i18n_gaussbonnet_2026_10_26.py。"),
+    "tools/import_gaussbonnet_meshes.py": ("離散 Gauss–Bonnet の教材が読むメッシュの取り込み(data/gaussbonnet/*.npz)。穴 2 つ・3 つの合成は marching cubes"
+                                           "(scikit-image、任意の依存)、恐竜の骨格の走査(CC0)の原本 GLB は repo の外で手で取得する(SHA-256 を照合)"
+                                           "ので CI では作れない。出典と改変は data/gaussbonnet/README.md。"),
     "tools/build_gsplat_pages.py": ("docs/gsplat/ の 3DGS の商品ビューアとカタログ(examples/gsplat_product_viewer.py の build)。"
                                     "marching cubes に scikit-image(任意の依存)が要り、5 品の 3DGS 化とサムネイルの numpy 描画で"
                                     "1 分ほどかかり、出力は 1 本数 MB —— 鎖に入れず、ページを変える回は手で回して commit する。"),

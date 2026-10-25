@@ -76,6 +76,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/media/evis_stereo_fullseye.mp4"><img src="../thumbs/evis_stereo_depth.jpg" alt="人形機器人雙眼" loading="lazy" width="320" height="320"><b>&#9654;</b><span>人形機器人雙眼</span></a>
 <a href="../../articles/assets/media/evis_bean_track_fullseye.mp4"><img src="../thumbs/evis_bean_track.jpg" alt="筷尖相機追蹤豆子" loading="lazy" width="320" height="320"><b>&#9654;</b><span>筷尖相機追蹤豆子</span></a>
 <a href="../../view2026/anim3d/interactive_anim3d_viewer.html?lang=tw"><img src="../thumbs/interactive_anim3d_viewer.jpg" alt="機械臂與半透明透鏡" loading="lazy" width="320" height="320"><b>&#9654;</b><span>機械臂與半透明透鏡 · 0.3 MB</span></a>
+<a href="../../anim3d/gauss_bonnet.html?lang=tw"><img src="../thumbs/gauss_bonnet.jpg" alt="彎曲全部相加都是同一個數" loading="lazy" width="320" height="320"><b>&#9654;</b><span>彎曲全部相加都是同一個數 · 3.1 MB</span></a>
 </div>
 
 ## 系列文章 (Qiita 上的英文文章)
@@ -658,6 +659,7 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 **可旋轉的動態 3-D**
 
 - [機械臂與半透明透鏡](../../view2026/anim3d/interactive_anim3d_viewer.html?lang=tw) (動態 3-D,可拖曳旋轉, 0.3 MB): 用手指旋轉,從任意角度觀看機械臂搬運箱子。光線穿過半透明透鏡匯聚到焦點,下方的俯視高度影像及其二值化結果在同一時間軸上同步播放。 [原始碼](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
+- [彎曲全部相加都是同一個數](../../anim3d/gauss_bonnet.html?lang=tw) (動態 3-D,可拖曳旋轉, 3.1 MB): 把球削成立方體、換成環面、增加孔洞，或用實測的小行星: 把各頂點的角虧損 K 加起來，Σ K / 2π 都等於 χ = V − E + F。用手指旋轉，看半透明平面把頂點掃進總和。有邊界的碗則不成立(限制分頁)。 **17 列檢驗中 Σ K / 2π 與 χ 的差小於 1e-12；只有帶邊界的碗偏離 24.0 × 2π，加上邊界項後即一致。** [原始碼](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_gaussbonnet_anim3d.py)
 
 </div>
 

@@ -1,0 +1,1086 @@
+{
+ "_": "離散 Gauss–Bonnet の動く 3-D(docs/anim3d/gauss_bonnet.html)の翻訳表。キー = en の文字列、ja = 訳した時点の日本語の控え。ViEW2026 の来場者向けに zh / tw(台湾の用語)/ ko / de / hi / fr。数値・単位・op 名・式は en のまま。イトカワ・恐竜の出典(館名・機関名・CC0)は訳さない。",
+ "example": "build_gaussbonnet_anim3d",
+ "strings": {
+  "Add up the curvature of any shape and you get the same number (discrete Gauss–Bonnet)": {
+   "ja": "どんな形でも、曲がり方を全部足すと同じ数になる(離散 Gauss–Bonnet)",
+   "zh": "无论什么形状，把弯曲全部加起来都是同一个数(离散 Gauss–Bonnet)",
+   "tw": "無論什麼形狀，把彎曲全部加起來都是同一個數(離散 Gauss–Bonnet)",
+   "ko": "어떤 모양이든 굽은 정도를 전부 더하면 같은 수가 된다(이산 Gauss–Bonnet)",
+   "de": "Summiert man die Krümmung einer beliebigen Form, kommt immer dieselbe Zahl heraus (diskreter Gauss–Bonnet)",
+   "hi": "किसी भी आकार की वक्रता जोड़ो, उत्तर वही संख्या आती है (discrete Gauss–Bonnet)",
+   "fr": "Additionnez la courbure de n'importe quelle forme et vous obtenez le même nombre (Gauss–Bonnet discret)"
+  },
+  "Adding up the angle defect K vertex by vertex — computed by fullseye's angle_defect and mesh_euler_characteristic": {
+   "ja": "頂点ごとの角欠損 K を足し上げる —— 計算は fullseye の angle_defect と mesh_euler_characteristic",
+   "zh": "逐个顶点累加角亏损 K —— 由 fullseye 的 angle_defect 与 mesh_euler_characteristic 计算",
+   "tw": "逐個頂點累加角虧損 K —— 由 fullseye 的 angle_defect 與 mesh_euler_characteristic 計算",
+   "ko": "꼭짓점마다 각 결손 K를 더해 간다 —— 계산은 fullseye의 angle_defect와 mesh_euler_characteristic",
+   "de": "Der Winkeldefekt K wird Ecke für Ecke aufsummiert — berechnet mit angle_defect und mesh_euler_characteristic von fullseye",
+   "hi": "कोण-अभाव K को शीर्ष दर शीर्ष जोड़ना — गणना fullseye के angle_defect और mesh_euler_characteristic से",
+   "fr": "On additionne le défaut angulaire K sommet par sommet — calculé par angle_defect et mesh_euler_characteristic de fullseye"
+  },
+  "Each tab runs ① question → ② predict (tap a choice to reveal the answer) → ③ play (▶) → ④ equation → ⑤ limit. The time slider reads a quantity such as the sweep plane height. The four band stages light up in turn (sweep → angle_defect → V − E + F → theorem vs op). Tap a badge to open what was checked, the criterion and the result. Drag to orbit.": {
+   "ja": "各タブは ① 問い → ② 予想(選択肢を押すと答えが開く)→ ③ 再生(▶)→ ④ 式 → ⑤ 限界 の順。時間つまみの読みは掃引面の高さなどの量。下の帯の 4 段は順に光る(掃引 → angle_defect → V − E + F → 定理との差)。バッジを押すと、確かめた項目・基準・結果の表が開く。ドラッグで視点を回す。",
+   "zh": "每个标签页依次为 ① 问题 → ② 预测(点选项即可显示答案)→ ③ 播放(▶)→ ④ 公式 → ⑤ 局限。时间滑块的读数是扫描面高度等量。下方条带的四个阶段依次点亮(扫描 → angle_defect → V − E + F → 定理与 op 之差)。点按徽章可打开检验项目、判据和结果。拖动可旋转视角。",
+   "tw": "每個分頁依序為 ① 問題 → ② 預測(點選項即可顯示答案)→ ③ 播放(▶)→ ④ 公式 → ⑤ 限制。時間滑桿的讀數是掃描面高度等量。下方條帶的四個階段依序亮起(掃描 → angle_defect → V − E + F → 定理與 op 之差)。點按徽章可開啟檢驗項目、判準與結果。拖曳可旋轉視角。",
+   "ko": "각 탭은 ① 질문 → ② 예상(선택지를 누르면 답이 열림) → ③ 재생(▶) → ④ 식 → ⑤ 한계 순서다. 시간 슬라이더의 값은 쓸기 평면의 높이 같은 양이다. 아래 띠의 네 단계가 차례로 켜진다(쓸기 → angle_defect → V − E + F → 정리와 op의 차이). 배지를 누르면 확인한 항목, 기준, 결과가 열린다. 드래그하면 시점이 회전한다.",
+   "de": "Jeder Tab läuft ab: ① Frage → ② Vorhersage (Antwort antippen, um die Lösung aufzudecken) → ③ Abspielen (▶) → ④ Gleichung → ⑤ Grenze. Der Zeitregler zeigt eine Größe wie die Höhe der Schnittebene. Die vier Stufen des Bands leuchten nacheinander auf (Ebene → angle_defect → V − E + F → Satz vs. op). Tippe auf ein Badge, um Prüfgegenstand, Kriterium und Ergebnis zu öffnen. Ziehen dreht die Ansicht.",
+   "hi": "हर टैब इस क्रम में चलता है: ① प्रश्न → ② अनुमान (उत्तर देखने के लिए कोई विकल्प दबाएँ) → ③ चलाएँ (▶) → ④ समीकरण → ⑤ सीमा। समय-स्लाइडर sweep plane की ऊँचाई जैसी राशि दिखाता है। पट्टी के चार चरण बारी-बारी से चमकते हैं (sweep → angle_defect → V − E + F → प्रमेय बनाम op)। क्या जाँचा गया, कसौटी और परिणाम देखने के लिए बैज दबाएँ। दृश्य घुमाने के लिए खींचें।",
+   "fr": "Chaque onglet suit : ① question → ② prédiction (touchez un choix pour révéler la réponse) → ③ lecture (▶) → ④ équation → ⑤ limite. Le curseur de temps indique une grandeur telle que la hauteur du plan de balayage. Les quatre étapes du bandeau s'allument tour à tour (balayage → angle_defect → V − E + F → théorème vs op). Touchez un badge pour afficher ce qui a été vérifié, le critère et le résultat. Faites glisser pour tourner la vue."
+  },
+  "Sphere → cube: K gathers at the corners, the total stays": {
+   "ja": "球 → 立方体: K は角に集まる、和は変わらない",
+   "zh": "球 → 立方体: K 聚集到角上，总和不变",
+   "tw": "球 → 立方體: K 聚集到角上，總和不變",
+   "ko": "구 → 정육면체: K는 모서리로 모이고, 합은 그대로",
+   "de": "Kugel → Würfel: K sammelt sich in den Ecken, die Summe bleibt",
+   "hi": "गोला → घन: K कोनों पर सिमटता है, कुल वही रहता है",
+   "fr": "Sphère → cube : K se concentre aux coins, le total ne change pas"
+  },
+  "Five shapes from the same grid (14 × 14 per face) mapped to q-norm spheres: q = 2 is the sphere, larger q sharpens the corners, the right end is the cube. Vertex colour is the angle defect K (output of angle_defect): thin and uniform on the sphere, π/2 at the 8 corners of the cube and nothing elsewhere. As the translucent plane sweeps down, the K of the vertices it has passed is added up; the running totals differ, yet all five end at Σ K / 2π = 2 = χ (counted from vertices, edges and faces by mesh_euler_characteristic). The line in each graph is χ, the ground truth = the gate's value.": {
+   "ja": "同じ格子(各面 14 × 14)を q ノルムの球面に写した 5 つの形。q = 2 が球、q を大きくすると角ばり、右端は立方体。頂点の色は角欠損 K (angle_defect の出力)で、球では薄く一様、立方体では 8 つの角だけ π/2。半透明の面が上から下へ通り過ぎた頂点の K を足していくと、途中の値は形で違うのに、終わりは 5 つとも Σ K / 2π = 2 = χ(mesh_euler_characteristic が頂点・辺・面の数から数えた値)。下のグラフの線が χ(真値 = 門の値)。",
+   "zh": "同一个网格(每面 14 × 14)映射到 q 范数球面得到的五个形状: q = 2 是球，q 越大棱角越分明，最右端是立方体。顶点颜色是角亏损 K(angle_defect 的输出): 球上稀薄而均匀，立方体只有 8 个角为 π/2，其余则没有。半透明平面向下扫过时，把它经过的顶点的 K 累加起来；中途的值因形状而异，但五个形状最后都到达 Σ K / 2π = 2 = χ(由 mesh_euler_characteristic 从顶点、边、面的数目算出)。每张图中的线是 χ，真值 = 门的值。",
+   "tw": "同一個網格(每面 14 × 14)映射到 q 範數球面得到的五個形狀: q = 2 是球，q 越大稜角越分明，最右端是立方體。頂點顏色是角虧損 K(angle_defect 的輸出): 球上稀薄而均勻，立方體只有 8 個角為 π/2，其餘則沒有。半透明平面向下掃過時，把它經過的頂點的 K 累加起來；中途的值因形狀而異，但五個形狀最後都到達 Σ K / 2π = 2 = χ(由 mesh_euler_characteristic 從頂點、邊、面的數目算出)。每張圖中的線是 χ，真值 = 門的值。",
+   "ko": "같은 격자(면마다 14 × 14)를 q-노름 구면으로 옮긴 다섯 모양: q = 2가 구, q가 커질수록 각이 서고, 오른쪽 끝은 정육면체. 꼭짓점의 색은 각 결손 K(angle_defect의 출력)로, 구에서는 얇고 고르며, 정육면체에서는 8개의 모서리만 π/2이고 나머지에는 없다. 반투명 평면이 위에서 아래로 쓸고 지나간 꼭짓점의 K를 더해 가면, 도중의 값은 모양마다 다르지만 끝에서는 다섯 모두 Σ K / 2π = 2 = χ(mesh_euler_characteristic가 꼭짓점·변·면의 수로 센 값). 그래프의 선이 χ, 참값 = 관문의 값.",
+   "de": "Fünf Formen aus demselben Gitter (14 × 14 pro Seite), auf q-Norm-Sphären abgebildet: q = 2 ist die Kugel, größeres q schärft die Ecken, ganz rechts steht der Würfel. Die Eckenfarbe ist der Winkeldefekt K (Ausgabe von angle_defect): dünn und gleichmäßig auf der Kugel, π/2 an den 8 Ecken des Würfels und sonst nichts. Während die halbtransparente Ebene nach unten fährt, wird das K der überstrichenen Ecken aufsummiert; die Zwischensummen unterscheiden sich, doch alle fünf enden bei Σ K / 2π = 2 = χ (von mesh_euler_characteristic aus Ecken, Kanten und Flächen gezählt). Die Linie in jedem Graphen ist χ, der wahre Wert = der Wert des Gates.",
+   "hi": "एक ही ग्रिड (हर फलक पर 14 × 14) को q-norm गोलों पर प्रतिचित्रित पाँच आकार: q = 2 गोला है, बड़ा q कोनों को नुकीला करता है, दाहिना सिरा घन है। शीर्ष का रंग कोण-अभाव K है (angle_defect का आउटपुट): गोले पर पतला और एकसमान, घन के 8 कोनों पर π/2 और बाकी कहीं कुछ नहीं। पारभासी समतल नीचे की ओर बढ़ता है और जिन शीर्षों को पार कर चुका है उनका K जुड़ता जाता है; बीच के योग अलग-अलग हैं, फिर भी पाँचों का अंत Σ K / 2π = 2 = χ पर होता है (mesh_euler_characteristic द्वारा शीर्ष, किनारे और फलक गिनकर)। हर ग्राफ़ की रेखा χ है, सत्य मान = गेट का मान।",
+   "fr": "Cinq formes issues de la même grille (14 × 14 par face) projetées sur des sphères de norme q : q = 2 est la sphère, un q plus grand aiguise les coins, l'extrémité droite est le cube. La couleur des sommets est le défaut angulaire K (sortie de angle_defect) : fin et uniforme sur la sphère, π/2 aux 8 coins du cube et rien ailleurs. Quand le plan translucide descend, on additionne le K des sommets qu'il a dépassés ; les totaux partiels diffèrent, pourtant les cinq finissent à Σ K / 2π = 2 = χ (compté à partir des sommets, arêtes et faces par mesh_euler_characteristic). La ligne de chaque graphe est χ, la vérité terrain = la valeur de la barrière."
+  },
+  "Σ K / 2π vs χ (largest of 5)": {
+   "ja": "Σ K / 2π と χ の差(5 つの形の最大)",
+   "zh": "Σ K / 2π 与 χ 之差(5 个中最大)",
+   "tw": "Σ K / 2π 與 χ 之差(5 個中最大)",
+   "ko": "Σ K / 2π와 χ의 차(5개 중 최대)",
+   "de": "Σ K / 2π vs. χ (größte von 5)",
+   "hi": "Σ K / 2π बनाम χ (5 में सबसे बड़ा)",
+   "fr": "Σ K / 2π vs χ (le plus grand des 5)"
+  },
+  "largest K: sphere / cube": {
+   "ja": "最大の K: 球 / 立方体",
+   "zh": "最大的 K: 球 / 立方体",
+   "tw": "最大的 K: 球 / 立方體",
+   "ko": "가장 큰 K: 구 / 정육면체",
+   "de": "größtes K: Kugel / Würfel",
+   "hi": "सबसे बड़ा K: गोला / घन",
+   "fr": "K maximal : sphère / cube"
+  },
+  "vertices per shape": {
+   "ja": "頂点の数(1 つの形)",
+   "zh": "每个形状的顶点数",
+   "tw": "每個形狀的頂點數",
+   "ko": "모양마다의 꼭짓점 수",
+   "de": "Ecken je Form",
+   "hi": "प्रति आकार शीर्ष",
+   "fr": "sommets par forme"
+  },
+  "sphere (q = 2)": {
+   "ja": "球(q = 2)",
+   "zh": "球(q = 2)",
+   "tw": "球(q = 2)",
+   "ko": "구(q = 2)",
+   "de": "Kugel (q = 2)",
+   "hi": "गोला (q = 2)",
+   "fr": "sphère (q = 2)"
+  },
+  "q = 3": {
+   "ja": "q = 3",
+   "zh": "q = 3",
+   "tw": "q = 3",
+   "ko": "q = 3",
+   "de": "q = 3",
+   "hi": "q = 3",
+   "fr": "q = 3"
+  },
+  "q = 5": {
+   "ja": "q = 5",
+   "zh": "q = 5",
+   "tw": "q = 5",
+   "ko": "q = 5",
+   "de": "q = 5",
+   "hi": "q = 5",
+   "fr": "q = 5"
+  },
+  "q = 10": {
+   "ja": "q = 10",
+   "zh": "q = 10",
+   "tw": "q = 10",
+   "ko": "q = 10",
+   "de": "q = 10",
+   "hi": "q = 10",
+   "fr": "q = 10"
+  },
+  "cube": {
+   "ja": "立方体",
+   "zh": "立方体",
+   "tw": "立方體",
+   "ko": "정육면체",
+   "de": "Würfel",
+   "hi": "घन",
+   "fr": "cube"
+  },
+  "start sweeping from the top": {
+   "ja": "上から掃引を始める",
+   "zh": "从顶部开始扫描",
+   "tw": "從頂部開始掃描",
+   "ko": "위에서부터 쓸기 시작",
+   "de": "oben mit dem Überstreichen beginnen",
+   "hi": "ऊपर से sweep शुरू",
+   "fr": "commencer le balayage par le haut"
+  },
+  "halfway: sphere 1, cube 1 from 4 corners": {
+   "ja": "半分: 球は 1、立方体は 4 つの角で 1",
+   "zh": "一半: 球为 1，立方体靠 4 个角也为 1",
+   "tw": "一半: 球為 1，立方體靠 4 個角也為 1",
+   "ko": "절반: 구는 1, 정육면체는 4개 모서리로 1",
+   "de": "halb: Kugel 1, Würfel 1 aus 4 Ecken",
+   "hi": "आधा: गोला 1, घन 4 कोनों से 1",
+   "fr": "à mi-course : sphère 1, cube 1 grâce à 4 coins"
+  },
+  "end: all five reach 2 = χ": {
+   "ja": "終わり: 5 つとも 2 = χ",
+   "zh": "结束: 五个都到达 2 = χ",
+   "tw": "結束: 五個都到達 2 = χ",
+   "ko": "끝: 다섯 모두 2 = χ",
+   "de": "Ende: alle fünf erreichen 2 = χ",
+   "hi": "अंत: पाँचों 2 = χ पर",
+   "fr": "fin : les cinq atteignent 2 = χ"
+  },
+  "sphere Σ K / 2π": {
+   "ja": "球 Σ K / 2π",
+   "zh": "球 Σ K / 2π",
+   "tw": "球 Σ K / 2π",
+   "ko": "구 Σ K / 2π",
+   "de": "Kugel Σ K / 2π",
+   "hi": "गोला Σ K / 2π",
+   "fr": "sphère Σ K / 2π"
+  },
+  "cube Σ K / 2π": {
+   "ja": "立方体 Σ K / 2π",
+   "zh": "立方体 Σ K / 2π",
+   "tw": "立方體 Σ K / 2π",
+   "ko": "정육면체 Σ K / 2π",
+   "de": "Würfel Σ K / 2π",
+   "hi": "घन Σ K / 2π",
+   "fr": "cube Σ K / 2π"
+  },
+  "Fullseye processing band (sweep → angle_defect → V − E + F → theorem vs op; the active stage is highlighted)": {
+   "ja": "Fullseye の処理の帯(掃引 → angle_defect → V − E + F → 定理との差。いま効いている段を色で強調)",
+   "zh": "Fullseye 处理条带(扫描 → angle_defect → V − E + F → 定理与 op 之差；当前阶段高亮)",
+   "tw": "Fullseye 處理條帶(掃描 → angle_defect → V − E + F → 定理與 op 之差；目前階段高亮)",
+   "ko": "Fullseye 처리 띠(쓸기 → angle_defect → V − E + F → 정리와 op의 차이. 현재 단계를 강조)",
+   "de": "Fullseye-Verarbeitungsband (Ebene → angle_defect → V − E + F → Satz vs. op; die aktive Stufe ist hervorgehoben)",
+   "hi": "Fullseye प्रोसेसिंग पट्टी (sweep → angle_defect → V − E + F → प्रमेय बनाम op; सक्रिय चरण हाइलाइट)",
+   "fr": "Bandeau de traitement Fullseye (balayage → angle_defect → V − E + F → théorème vs op ; l'étape active est surlignée)"
+  },
+  "angle defect K_v": {
+   "ja": "角欠損 K_v",
+   "zh": "角亏损 K_v",
+   "tw": "角虧損 K_v",
+   "ko": "각 결손 K_v",
+   "de": "Winkeldefekt K_v",
+   "hi": "कोण-अभाव K_v",
+   "fr": "défaut angulaire K_v"
+  },
+  "sweep plane height z": {
+   "ja": "掃引面の高さ z",
+   "zh": "扫描面高度 z",
+   "tw": "掃描面高度 z",
+   "ko": "쓸기 평면의 높이 z",
+   "de": "Höhe der Schnittebene z",
+   "hi": "sweep plane की ऊँचाई z",
+   "fr": "hauteur du plan de balayage z"
+  },
+  "Σ K / 2π (angle_defect) vs χ = V − E + F (mesh_euler_characteristic), all 5 shapes": {
+   "ja": "Σ K / 2π(angle_defect)と χ = V − E + F(mesh_euler_characteristic)の一致(5 つの形)",
+   "zh": "Σ K / 2π(angle_defect)与 χ = V − E + F(mesh_euler_characteristic)的一致，5 个形状全部",
+   "tw": "Σ K / 2π(angle_defect)與 χ = V − E + F(mesh_euler_characteristic)的一致，5 個形狀全部",
+   "ko": "Σ K / 2π(angle_defect)와 χ = V − E + F(mesh_euler_characteristic)의 일치, 5개 모양 모두",
+   "de": "Σ K / 2π (angle_defect) vs. χ = V − E + F (mesh_euler_characteristic), alle 5 Formen",
+   "hi": "Σ K / 2π (angle_defect) बनाम χ = V − E + F (mesh_euler_characteristic), सभी 5 आकार",
+   "fr": "Σ K / 2π (angle_defect) vs χ = V − E + F (mesh_euler_characteristic), les 5 formes"
+  },
+  "sphere: Σ K vs 4π": {
+   "ja": "球の Σ K と 4π の差",
+   "zh": "球: Σ K 与 4π",
+   "tw": "球: Σ K 與 4π",
+   "ko": "구: Σ K와 4π",
+   "de": "Kugel: Σ K vs. 4π",
+   "hi": "गोला: Σ K बनाम 4π",
+   "fr": "sphère : Σ K vs 4π"
+  },
+  "cube: exactly 8 vertices with K = π/2 (all others 0)": {
+   "ja": "立方体: K = π/2 の頂点がちょうど 8 つ(他は 0)",
+   "zh": "立方体: K = π/2 的顶点恰好 8 个(其余为 0)",
+   "tw": "立方體: K = π/2 的頂點恰好 8 個(其餘為 0)",
+   "ko": "정육면체: K = π/2인 꼭짓점이 정확히 8개(나머지는 0)",
+   "de": "Würfel: genau 8 Ecken mit K = π/2 (alle anderen 0)",
+   "hi": "घन: ठीक 8 शीर्ष जहाँ K = π/2 (बाकी सब 0)",
+   "fr": "cube : exactement 8 sommets avec K = π/2 (tous les autres 0)"
+  },
+  "the largest K grows monotonically from sphere to cube": {
+   "ja": "最大の K は球 → 立方体で単調に増える",
+   "zh": "最大的 K 从球到立方体单调增加",
+   "tw": "最大的 K 從球到立方體單調增加",
+   "ko": "가장 큰 K는 구에서 정육면체로 단조 증가",
+   "de": "das größte K wächst von der Kugel zum Würfel monoton",
+   "hi": "सबसे बड़ा K गोले से घन तक एकदिष्ट बढ़ता है",
+   "fr": "le K maximal croît de façon monotone de la sphère au cube"
+  },
+  "monotone": {
+   "ja": "単調増加",
+   "zh": "单调",
+   "tw": "單調",
+   "ko": "단조",
+   "de": "monoton",
+   "hi": "एकदिष्ट",
+   "fr": "monotone"
+  },
+  "A sphere is sharpened step by step into a cube. What happens to the total of the curvature (angle defect K) over all vertices?": {
+   "ja": "球をだんだん角ばらせて立方体にする。頂点ごとの曲がり(角欠損 K)を全部足した値はどうなる?",
+   "zh": "把球一步步削出棱角变成立方体。所有顶点的弯曲(角亏损 K)的总和会怎样?",
+   "tw": "把球一步步削出稜角變成立方體。所有頂點的彎曲(角虧損 K)的總和會怎樣?",
+   "ko": "구를 조금씩 각지게 해서 정육면체로 만든다. 모든 꼭짓점의 굽음(각 결손 K)의 합은 어떻게 될까?",
+   "de": "Eine Kugel wird Schritt für Schritt zu einem Würfel geschärft. Was passiert mit der Summe der Krümmung (Winkeldefekt K) über alle Ecken?",
+   "hi": "एक गोले को धीरे-धीरे नुकीला करके घन बनाया जाता है। सभी शीर्षों पर वक्रता (कोण-अभाव K) के कुल योग का क्या होता है?",
+   "fr": "Une sphère est aiguisée pas à pas en un cube. Que devient le total de la courbure (défaut angulaire K) sur tous les sommets ?"
+  },
+  "It grows, because corners appear": {
+   "ja": "角が立つので増える",
+   "zh": "增加，因为出现了角",
+   "tw": "增加，因為出現了角",
+   "ko": "모서리가 생기므로 늘어난다",
+   "de": "Sie wächst, weil Ecken entstehen",
+   "hi": "बढ़ता है, क्योंकि कोने बनते हैं",
+   "fr": "Il augmente, parce que des coins apparaissent"
+  },
+  "It shrinks, because flat faces appear": {
+   "ja": "平らな面が増えるので減る",
+   "zh": "减少，因为出现了平面",
+   "tw": "減少，因為出現了平面",
+   "ko": "평평한 면이 생기므로 줄어든다",
+   "de": "Sie schrumpft, weil ebene Flächen entstehen",
+   "hi": "घटता है, क्योंकि सपाट फलक बनते हैं",
+   "fr": "Il diminue, parce que des faces planes apparaissent"
+  },
+  "It stays the same (4π)": {
+   "ja": "変わらない(4π のまま)",
+   "zh": "不变(仍为 4π)",
+   "tw": "不變(仍為 4π)",
+   "ko": "변하지 않는다(4π 그대로)",
+   "de": "Sie bleibt gleich (4π)",
+   "hi": "वही रहता है (4π)",
+   "fr": "Il reste le même (4π)"
+  },
+  "K gathers at the corners, but the total does not change: Σ K = 2πχ with χ = V − E + F = 2 for every shape. On the cube only the 8 corners carry K = π/2 (8 × π/2 = 4π); vertices on edges and faces have K = 0. On the sphere K is spread thinly over all vertices (at most 0.020); on the cube it is 1.571 at a corner.": {
+   "ja": "K は角に集まるが、和は変わらない。Σ K = 2πχ で χ = V − E + F = 2 は形を変えても同じ。立方体では 8 つの角だけ K = π/2 (8 × π/2 = 4π)で、辺や面の上の頂点は K = 0。球では K が全頂点に薄く広がり(最大 0.020)、立方体では角に 1.571。",
+   "zh": "K 聚集到角上，但总和不变: 对每个形状 Σ K = 2πχ，χ = V − E + F = 2。立方体只有 8 个角带有 K = π/2(8 × π/2 = 4π)；棱上和面上的顶点 K = 0。球上 K 稀薄地分布在全部顶点上(最大 0.020)；立方体的角上则是 1.571。",
+   "tw": "K 聚集到角上，但總和不變: 對每個形狀 Σ K = 2πχ，χ = V − E + F = 2。立方體只有 8 個角帶有 K = π/2(8 × π/2 = 4π)；稜上和面上的頂點 K = 0。球上 K 稀薄地分布在全部頂點上(最大 0.020)；立方體的角上則是 1.571。",
+   "ko": "K는 모서리로 모이지만 합은 변하지 않는다: 어떤 모양이든 Σ K = 2πχ, χ = V − E + F = 2. 정육면체에서는 8개 모서리만 K = π/2(8 × π/2 = 4π)이고, 변과 면 위의 꼭짓점은 K = 0. 구에서는 K가 모든 꼭짓점에 얇게 퍼지고(최대 0.020), 정육면체에서는 모서리에서 1.571.",
+   "de": "K sammelt sich in den Ecken, aber die Summe ändert sich nicht: Σ K = 2πχ mit χ = V − E + F = 2 für jede Form. Beim Würfel tragen nur die 8 Ecken K = π/2 (8 × π/2 = 4π); Ecken auf Kanten und Flächen haben K = 0. Auf der Kugel ist K dünn über alle Ecken verteilt (höchstens 0.020); beim Würfel beträgt es 1.571 an einer Ecke.",
+   "hi": "K कोनों पर सिमटता है, पर कुल योग नहीं बदलता: हर आकार के लिए Σ K = 2πχ, जहाँ χ = V − E + F = 2। घन में केवल 8 कोने K = π/2 रखते हैं (8 × π/2 = 4π); किनारों और फलकों पर के शीर्षों का K = 0। गोले पर K सभी शीर्षों पर पतला फैला है (अधिकतम 0.020); घन के कोने पर यह 1.571 है।",
+   "fr": "K se concentre aux coins, mais le total ne change pas : Σ K = 2πχ avec χ = V − E + F = 2 pour chaque forme. Sur le cube, seuls les 8 coins portent K = π/2 (8 × π/2 = 4π) ; les sommets sur les arêtes et les faces ont K = 0. Sur la sphère, K est réparti finement sur tous les sommets (au plus 0.020) ; sur le cube il vaut 1.571 à un coin."
+  },
+  "K_v = 2π − Σ θ (angles of the triangles around vertex v)\nΣ_v K_v = 2π χ\nχ = V − E + F (2 for anything shaped like a sphere)": {
+   "ja": "K_v = 2π − Σ θ(頂点 v のまわりの三角形の角)\nΣ_v K_v = 2π χ\nχ = V − E + F(球と同じ形なら 2)",
+   "zh": "K_v = 2π − Σ θ(顶点 v 周围三角形的角)\nΣ_v K_v = 2π χ\nχ = V − E + F(凡与球同形者为 2)",
+   "tw": "K_v = 2π − Σ θ(頂點 v 周圍三角形的角)\nΣ_v K_v = 2π χ\nχ = V − E + F(凡與球同形者為 2)",
+   "ko": "K_v = 2π − Σ θ(꼭짓점 v 둘레 삼각형의 각)\nΣ_v K_v = 2π χ\nχ = V − E + F(구와 같은 모양이면 2)",
+   "de": "K_v = 2π − Σ θ (Winkel der Dreiecke um die Ecke v)\nΣ_v K_v = 2π χ\nχ = V − E + F (2 für alles, was wie eine Kugel geformt ist)",
+   "hi": "K_v = 2π − Σ θ (शीर्ष v के चारों ओर के त्रिभुजों के कोण)\nΣ_v K_v = 2π χ\nχ = V − E + F (गोले जैसी किसी भी आकृति के लिए 2)",
+   "fr": "K_v = 2π − Σ θ (angles des triangles autour du sommet v)\nΣ_v K_v = 2π χ\nχ = V − E + F (2 pour tout ce qui a la forme d'une sphère)"
+  },
+  "K at one vertex depends on the triangulation (a finer mesh makes each K smaller). Only the total is independent of it. The angle defect is not curvature itself but curvature × the area the vertex accounts for; the density per area changes with the mesh.": {
+   "ja": "1 点の K は三角形の分割に依る(細かく割れば 1 点の K は小さくなる)。分割に依らないのは和だけ。角欠損は曲率そのものではなく「曲率 × その頂点が受け持つ面積」で、面積で割った曲率密度は分割で変わる。",
+   "zh": "单个顶点的 K 取决于三角剖分(网格越细，每个 K 越小)。只有总和与剖分无关。角亏损不是曲率本身，而是曲率 × 该顶点分担的面积；按面积计的密度会随网格而变。",
+   "tw": "單個頂點的 K 取決於三角剖分(網格越細，每個 K 越小)。只有總和與剖分無關。角虧損不是曲率本身，而是曲率 × 該頂點分擔的面積；按面積計的密度會隨網格而變。",
+   "ko": "한 꼭짓점의 K는 삼각분할에 따라 다르다(격자가 촘촘할수록 각 K는 작아진다). 분할과 무관한 것은 합뿐이다. 각 결손은 곡률 그 자체가 아니라 곡률 × 그 꼭짓점이 맡은 넓이이며, 넓이당 밀도는 격자에 따라 변한다.",
+   "de": "K an einer Ecke hängt von der Triangulierung ab (ein feineres Netz macht jedes K kleiner). Nur die Summe ist davon unabhängig. Der Winkeldefekt ist nicht die Krümmung selbst, sondern Krümmung × die Fläche, die die Ecke vertritt; die Dichte je Fläche ändert sich mit dem Netz.",
+   "hi": "एक शीर्ष का K त्रिभुजन पर निर्भर है (महीन जाल से हर K छोटा हो जाता है)। केवल कुल योग इससे स्वतंत्र है। कोण-अभाव स्वयं वक्रता नहीं बल्कि वक्रता × वह क्षेत्रफल है जिसका शीर्ष प्रतिनिधि है; प्रति क्षेत्रफल घनत्व जाल के साथ बदलता है।",
+   "fr": "K en un sommet dépend de la triangulation (un maillage plus fin rend chaque K plus petit). Seul le total en est indépendant. Le défaut angulaire n'est pas la courbure elle-même mais la courbure × l'aire que représente le sommet ; la densité par aire change avec le maillage."
+  },
+  "Torus: outside positive, inside negative, total 0": {
+   "ja": "トーラス: 外の正と内の負が打ち消して 0",
+   "zh": "环面: 外侧为正，内侧为负，总和为 0",
+   "tw": "環面: 外側為正，內側為負，總和為 0",
+   "ko": "토러스: 바깥은 양, 안쪽은 음, 합은 0",
+   "de": "Torus: außen positiv, innen negativ, Summe 0",
+   "hi": "टोरस: बाहर धनात्मक, भीतर ऋणात्मक, कुल 0",
+   "fr": "Tore : positif dehors, négatif dedans, total 0"
+  },
+  "A torus with R = 2 and r = 0.8 (72 × 36 grid, mesh_torus). Colour is K: orange = positive (outside), blue = negative (the saddle inside). It is translucent, so the blue inside the hole shows. The white ring marks the tube angle v; as v runs 0° (outer equator) → 90° (top) → 180° (inner equator) → 360°, the K of each ring is added. The running sum peaks at 90°, returns to 0 at 180°, bottoms at 270° and is 0 again at 360°. The outer sum 1.9924 × 2π and the inner sum -1.9924 × 2π cancel.": {
+   "ja": "R = 2、r = 0.8 のトーラス(72 × 36 の格子、mesh_torus)。色は K で、橙 = 正(外側)、青 = 負(内側の鞍)。半透明なので穴の内側の青も見える。白い輪は管まわりの角 v の位置で、v を 0°(外の赤道)→ 90°(上)→ 180°(内の赤道)→ 360° と回しながら輪ごとの K を足す。途中の和は 90° で最大になり、180° で 0 に戻り、270° で最小、360° でまた 0。外側の和 1.9924 × 2π と内側の和 -1.9924 × 2π が打ち消す。",
+   "zh": "R = 2、r = 0.8 的环面(72 × 36 网格，mesh_torus)。颜色是 K: 橙 = 正(外侧)，蓝 = 负(内侧的鞍形)。它是半透明的，所以孔内侧的蓝色也看得见。白色圆环标出管周角 v；v 从 0°(外赤道)→ 90°(顶)→ 180°(内赤道)→ 360° 转动时，逐环累加 K。累加值在 90° 达到最大，180° 回到 0，270° 最小，360° 再次为 0。外侧之和 1.9924 × 2π 与内侧之和 -1.9924 × 2π 相互抵消。",
+   "tw": "R = 2、r = 0.8 的環面(72 × 36 網格，mesh_torus)。顏色是 K: 橙 = 正(外側)，藍 = 負(內側的鞍形)。它是半透明的，所以孔內側的藍色也看得見。白色圓環標出管周角 v；v 從 0°(外赤道)→ 90°(頂)→ 180°(內赤道)→ 360° 轉動時，逐環累加 K。累加值在 90° 達到最大，180° 回到 0，270° 最小，360° 再次為 0。外側之和 1.9924 × 2π 與內側之和 -1.9924 × 2π 相互抵消。",
+   "ko": "R = 2, r = 0.8인 토러스(72 × 36 격자, mesh_torus). 색은 K: 주황 = 양(바깥), 파랑 = 음(안쪽의 안장). 반투명이라 구멍 안쪽의 파랑도 보인다. 흰 고리는 관 둘레 각 v의 위치이며, v가 0°(바깥 적도) → 90°(위) → 180°(안쪽 적도) → 360°로 돌면서 고리마다의 K를 더한다. 누적 합은 90°에서 최대, 180°에서 0으로 돌아오고, 270°에서 최소, 360°에서 다시 0. 바깥 합 1.9924 × 2π와 안쪽 합 -1.9924 × 2π가 상쇄된다.",
+   "de": "Ein Torus mit R = 2 und r = 0.8 (72 × 36-Gitter, mesh_torus). Die Farbe ist K: orange = positiv (außen), blau = negativ (der Sattel innen). Er ist halbtransparent, sodass das Blau im Loch sichtbar ist. Der weiße Ring markiert den Röhrenwinkel v; während v von 0° (äußerer Äquator) → 90° (oben) → 180° (innerer Äquator) → 360° läuft, wird das K jedes Rings addiert. Die laufende Summe ist bei 90° maximal, kehrt bei 180° auf 0 zurück, ist bei 270° minimal und bei 360° wieder 0. Die äußere Summe 1.9924 × 2π und die innere Summe -1.9924 × 2π heben sich auf.",
+   "hi": "R = 2 और r = 0.8 वाला टोरस (72 × 36 ग्रिड, mesh_torus)। रंग K है: नारंगी = धनात्मक (बाहर), नीला = ऋणात्मक (भीतर की काठी)। यह पारभासी है, इसलिए छेद के भीतर का नीला दिखता है। सफ़ेद वलय नली-कोण v को दिखाता है; v के 0° (बाहरी भूमध्य) → 90° (ऊपर) → 180° (भीतरी भूमध्य) → 360° चलने पर हर वलय का K जुड़ता है। संचयी योग 90° पर शिखर, 180° पर वापस 0, 270° पर न्यूनतम और 360° पर फिर 0। बाहरी योग 1.9924 × 2π और भीतरी योग -1.9924 × 2π एक-दूसरे को रद्द करते हैं।",
+   "fr": "Un tore avec R = 2 et r = 0.8 (grille 72 × 36, mesh_torus). La couleur est K : orange = positif (dehors), bleu = négatif (la selle à l'intérieur). Il est translucide, donc le bleu à l'intérieur du trou est visible. L'anneau blanc marque l'angle de tube v ; quand v parcourt 0° (équateur extérieur) → 90° (sommet) → 180° (équateur intérieur) → 360°, le K de chaque anneau s'ajoute. La somme courante culmine à 90°, revient à 0 à 180°, touche son minimum à 270° et vaut de nouveau 0 à 360°. La somme extérieure 1.9924 × 2π et la somme intérieure -1.9924 × 2π s'annulent."
+  },
+  "Σ K (angle_defect)": {
+   "ja": "Σ K(angle_defect)",
+   "zh": "Σ K(angle_defect)",
+   "tw": "Σ K(angle_defect)",
+   "ko": "Σ K(angle_defect)",
+   "de": "Σ K (angle_defect)",
+   "hi": "Σ K (angle_defect)",
+   "fr": "Σ K (angle_defect)"
+  },
+  "χ = V − E + F, genus": {
+   "ja": "χ = V − E + F、種数",
+   "zh": "χ = V − E + F、亏格",
+   "tw": "χ = V − E + F、虧格",
+   "ko": "χ = V − E + F, 종수",
+   "de": "χ = V − E + F, Geschlecht",
+   "hi": "χ = V − E + F, genus",
+   "fr": "χ = V − E + F, genre"
+  },
+  "range of K (min / max)": {
+   "ja": "K の範囲(最小 / 最大)",
+   "zh": "K 的范围(最小 / 最大)",
+   "tw": "K 的範圍(最小 / 最大)",
+   "ko": "K의 범위(최소 / 최대)",
+   "de": "Bereich von K (min / max)",
+   "hi": "K की परास (न्यूनतम / अधिकतम)",
+   "fr": "plage de K (min / max)"
+  },
+  "torus (R = 2, r = 0.8, translucent)": {
+   "ja": "トーラス(R = 2, r = 0.8、半透明)",
+   "zh": "环面(R = 2，r = 0.8，半透明)",
+   "tw": "環面(R = 2，r = 0.8，半透明)",
+   "ko": "토러스(R = 2, r = 0.8, 반투명)",
+   "de": "Torus (R = 2, r = 0.8, halbtransparent)",
+   "hi": "टोरस (R = 2, r = 0.8, पारभासी)",
+   "fr": "tore (R = 2, r = 0.8, translucide)"
+  },
+  "from the outer equator (v = 0°)": {
+   "ja": "外の赤道(v = 0°)から",
+   "zh": "从外赤道(v = 0°)出发",
+   "tw": "從外赤道(v = 0°)出發",
+   "ko": "바깥 적도(v = 0°)에서",
+   "de": "vom äußeren Äquator (v = 0°)",
+   "hi": "बाहरी भूमध्य (v = 0°) से",
+   "fr": "depuis l'équateur extérieur (v = 0°)"
+  },
+  "inner equator (v = 180°): the sum is back to 0": {
+   "ja": "内の赤道(v = 180°): 和が 0 に戻る",
+   "zh": "内赤道(v = 180°): 累加值回到 0",
+   "tw": "內赤道(v = 180°): 累加值回到 0",
+   "ko": "안쪽 적도(v = 180°): 합이 0으로 돌아온다",
+   "de": "innerer Äquator (v = 180°): die Summe ist wieder 0",
+   "hi": "भीतरी भूमध्य (v = 180°): योग वापस 0",
+   "fr": "équateur intérieur (v = 180°) : la somme est revenue à 0"
+  },
+  "full turn: Σ K = 0": {
+   "ja": "一周: Σ K = 0",
+   "zh": "一整圈: Σ K = 0",
+   "tw": "一整圈: Σ K = 0",
+   "ko": "한 바퀴: Σ K = 0",
+   "de": "volle Umdrehung: Σ K = 0",
+   "hi": "पूरा चक्कर: Σ K = 0",
+   "fr": "tour complet : Σ K = 0"
+  },
+  "Σ K / 2π up to this ring": {
+   "ja": "輪までの Σ K / 2π",
+   "zh": "到此环为止的 Σ K / 2π",
+   "tw": "到此環為止的 Σ K / 2π",
+   "ko": "이 고리까지의 Σ K / 2π",
+   "de": "Σ K / 2π bis zu diesem Ring",
+   "hi": "इस वलय तक Σ K / 2π",
+   "fr": "Σ K / 2π jusqu'à cet anneau"
+  },
+  "K of this ring / 2π": {
+   "ja": "この輪の K の和 / 2π",
+   "zh": "此环的 K / 2π",
+   "tw": "此環的 K / 2π",
+   "ko": "이 고리의 K / 2π",
+   "de": "K dieses Rings / 2π",
+   "hi": "इस वलय का K / 2π",
+   "fr": "K de cet anneau / 2π"
+  },
+  "tube angle v": {
+   "ja": "管まわりの角 v",
+   "zh": "管周角 v",
+   "tw": "管周角 v",
+   "ko": "관 둘레 각 v",
+   "de": "Röhrenwinkel v",
+   "hi": "नली-कोण v",
+   "fr": "angle de tube v"
+  },
+  "Σ K (angle_defect) vs 2πχ = 0": {
+   "ja": "Σ K(angle_defect)と 2πχ = 0 の差",
+   "zh": "Σ K(angle_defect)与 2πχ = 0 之差",
+   "tw": "Σ K(angle_defect)與 2πχ = 0 之差",
+   "ko": "Σ K(angle_defect)와 2πχ = 0의 차",
+   "de": "Σ K (angle_defect) vs. 2πχ = 0",
+   "hi": "Σ K (angle_defect) बनाम 2πχ = 0",
+   "fr": "Σ K (angle_defect) vs 2πχ = 0"
+  },
+  "χ = V − E + F = 0, genus 1 (mesh_euler_characteristic)": {
+   "ja": "χ = V − E + F = 0、種数 1(mesh_euler_characteristic)",
+   "zh": "χ = V − E + F = 0，亏格 1(mesh_euler_characteristic)",
+   "tw": "χ = V − E + F = 0，虧格 1(mesh_euler_characteristic)",
+   "ko": "χ = V − E + F = 0, 종수 1(mesh_euler_characteristic)",
+   "de": "χ = V − E + F = 0, Geschlecht 1 (mesh_euler_characteristic)",
+   "hi": "χ = V − E + F = 0, genus 1 (mesh_euler_characteristic)",
+   "fr": "χ = V − E + F = 0, genre 1 (mesh_euler_characteristic)"
+  },
+  "outer sum (K > 0) + inner sum (K < 0)": {
+   "ja": "外側(K > 0)の和 + 内側(K < 0)の和",
+   "zh": "外侧之和(K > 0)+ 内侧之和(K < 0)",
+   "tw": "外側之和(K > 0)+ 內側之和(K < 0)",
+   "ko": "바깥 합(K > 0) + 안쪽 합(K < 0)",
+   "de": "äußere Summe (K > 0) + innere Summe (K < 0)",
+   "hi": "बाहरी योग (K > 0) + भीतरी योग (K < 0)",
+   "fr": "somme extérieure (K > 0) + somme intérieure (K < 0)"
+  },
+  "Add up K over every vertex of a doughnut (torus). What is the total?": {
+   "ja": "ドーナツ(トーラス)の頂点ごとの K を全部足すと?",
+   "zh": "把甜甜圈(环面)每个顶点的 K 加起来，总和是多少?",
+   "tw": "把甜甜圈(環面)每個頂點的 K 加起來，總和是多少?",
+   "ko": "도넛(토러스)의 모든 꼭짓점의 K를 더하면 합은?",
+   "de": "Addiere K über jede Ecke eines Doughnuts (Torus). Wie groß ist die Summe?",
+   "hi": "एक डोनट (टोरस) के हर शीर्ष का K जोड़ो। कुल कितना?",
+   "fr": "Additionnez K sur chaque sommet d'un beignet (tore). Quel est le total ?"
+  },
+  "4π, like a sphere": {
+   "ja": "球と同じ 4π",
+   "zh": "和球一样是 4π",
+   "tw": "和球一樣是 4π",
+   "ko": "구와 같은 4π",
+   "de": "4π, wie bei einer Kugel",
+   "hi": "4π, गोले की तरह",
+   "fr": "4π, comme une sphère"
+  },
+  "0": {
+   "ja": "0",
+   "zh": "0",
+   "tw": "0",
+   "ko": "0",
+   "de": "0",
+   "hi": "0",
+   "fr": "0"
+  },
+  "A negative number": {
+   "ja": "負の数",
+   "zh": "一个负数",
+   "tw": "一個負數",
+   "ko": "음수",
+   "de": "Eine negative Zahl",
+   "hi": "एक ऋणात्मक संख्या",
+   "fr": "Un nombre négatif"
+  },
+  "The outside of the tube bulges like a sphere (K > 0); near the hole the surface is saddle-shaped (K < 0). The outer sum 1.9924 × 2π and the inner sum -1.9924 × 2π cancel exactly, so Σ K = 0. And χ = V − E + F = 2592 − 7776 + 5184 = 0, as the theorem says.": {
+   "ja": "外側(管の外周)は球のように膨らみ K > 0、内側(穴の近く)は鞍の形で K < 0。外側の和 1.9924 × 2π と内側の和 -1.9924 × 2π がちょうど打ち消し、Σ K = 0。χ = V − E + F = 2592 − 7776 + 5184 = 0 なので定理どおり。",
+   "zh": "管的外侧像球一样鼓起(K > 0)；靠近孔的地方是鞍形(K < 0)。外侧之和 1.9924 × 2π 与内侧之和 -1.9924 × 2π 恰好抵消，所以 Σ K = 0。而 χ = V − E + F = 2592 − 7776 + 5184 = 0，与定理一致。",
+   "tw": "管的外側像球一樣鼓起(K > 0)；靠近孔的地方是鞍形(K < 0)。外側之和 1.9924 × 2π 與內側之和 -1.9924 × 2π 恰好抵消，所以 Σ K = 0。而 χ = V − E + F = 2592 − 7776 + 5184 = 0，與定理一致。",
+   "ko": "관의 바깥쪽은 구처럼 불룩하고(K > 0), 구멍 근처는 안장 모양이다(K < 0). 바깥 합 1.9924 × 2π와 안쪽 합 -1.9924 × 2π가 정확히 상쇄되어 Σ K = 0. 그리고 χ = V − E + F = 2592 − 7776 + 5184 = 0, 정리 그대로.",
+   "de": "Die Außenseite der Röhre wölbt sich wie eine Kugel (K > 0); nahe dem Loch ist die Fläche sattelförmig (K < 0). Die äußere Summe 1.9924 × 2π und die innere Summe -1.9924 × 2π heben sich genau auf, also Σ K = 0. Und χ = V − E + F = 2592 − 7776 + 5184 = 0, wie der Satz sagt.",
+   "hi": "नली का बाहरी भाग गोले की तरह उभरा है (K > 0); छेद के पास सतह काठी जैसी है (K < 0)। बाहरी योग 1.9924 × 2π और भीतरी योग -1.9924 × 2π ठीक-ठीक रद्द होते हैं, इसलिए Σ K = 0। और χ = V − E + F = 2592 − 7776 + 5184 = 0, जैसा प्रमेय कहता है।",
+   "fr": "L'extérieur du tube bombe comme une sphère (K > 0) ; près du trou la surface est en selle (K < 0). La somme extérieure 1.9924 × 2π et la somme intérieure -1.9924 × 2π s'annulent exactement, donc Σ K = 0. Et χ = V − E + F = 2592 − 7776 + 5184 = 0, comme le dit le théorème."
+  },
+  "Σ_v K_v = 2π χ = 0 (a torus has χ = 0)\nsum over the ring at tube angle v ∝ cos v (+ outside, − inside)": {
+   "ja": "Σ_v K_v = 2π χ = 0(トーラスは χ = 0)\n管まわりの角 v の輪ごとの和 ∝ cos v(外側 + / 内側 −)",
+   "zh": "Σ_v K_v = 2π χ = 0(环面的 χ = 0)\n管周角 v 处一环的和 ∝ cos v(外侧 +，内侧 −)",
+   "tw": "Σ_v K_v = 2π χ = 0(環面的 χ = 0)\n管周角 v 處一環的和 ∝ cos v(外側 +，內側 −)",
+   "ko": "Σ_v K_v = 2π χ = 0(토러스는 χ = 0)\n관 둘레 각 v의 고리 합 ∝ cos v(바깥 +, 안쪽 −)",
+   "de": "Σ_v K_v = 2π χ = 0 (ein Torus hat χ = 0)\nSumme über den Ring beim Röhrenwinkel v ∝ cos v (+ außen, − innen)",
+   "hi": "Σ_v K_v = 2π χ = 0 (टोरस का χ = 0)\nनली-कोण v पर वलय का योग ∝ cos v (+ बाहर, − भीतर)",
+   "fr": "Σ_v K_v = 2π χ = 0 (un tore a χ = 0)\nsomme sur l'anneau à l'angle de tube v ∝ cos v (+ dehors, − dedans)"
+  },
+  "The sum over one ring depends on the grid (n_u × n_v). The total is 0 because the torus is closed; cutting the tube open creates a boundary and boundary terms are needed (see the limit tab).": {
+   "ja": "1 つの輪の和は格子の取り方(n_u × n_v)で変わる。和が 0 になるのは閉じたトーラスのとき。管を切って開くと境界ができ、境界の項が要る(限界の回)。",
+   "zh": "单个环的和取决于网格(n_u × n_v)。总和为 0 是因为环面是闭合的；把管切开会产生边界，就需要边界项(见局限标签页)。",
+   "tw": "單個環的和取決於網格(n_u × n_v)。總和為 0 是因為環面是閉合的；把管切開會產生邊界，就需要邊界項(見限制分頁)。",
+   "ko": "고리 하나의 합은 격자(n_u × n_v)에 따라 다르다. 합이 0인 것은 토러스가 닫혀 있기 때문이며, 관을 잘라 열면 경계가 생겨 경계 항이 필요하다(한계 탭).",
+   "de": "Die Summe über einen Ring hängt vom Gitter (n_u × n_v) ab. Die Gesamtsumme ist 0, weil der Torus geschlossen ist; schneidet man die Röhre auf, entsteht ein Rand und Randterme werden nötig (siehe Grenze-Tab).",
+   "hi": "एक वलय का योग ग्रिड (n_u × n_v) पर निर्भर है। कुल 0 इसलिए है क्योंकि टोरस बंद है; नली को काटकर खोलने से सीमा बनती है और सीमा-पद चाहिए (सीमा टैब देखें)।",
+   "fr": "La somme sur un anneau dépend de la grille (n_u × n_v). Le total vaut 0 parce que le tore est fermé ; ouvrir le tube crée un bord et des termes de bord deviennent nécessaires (voir l'onglet limite)."
+  },
+  "Number of holes: χ = 2 − 2g, Σ K = 4π, 0, −4π, −8π": {
+   "ja": "穴の数: χ = 2 − 2g、Σ K = 4π, 0, −4π, −8π",
+   "zh": "孔的个数: χ = 2 − 2g，Σ K = 4π, 0, −4π, −8π",
+   "tw": "孔的個數: χ = 2 − 2g，Σ K = 4π, 0, −4π, −8π",
+   "ko": "구멍의 수: χ = 2 − 2g, Σ K = 4π, 0, −4π, −8π",
+   "de": "Zahl der Löcher: χ = 2 − 2g, Σ K = 4π, 0, −4π, −8π",
+   "hi": "छेदों की संख्या: χ = 2 − 2g, Σ K = 4π, 0, −4π, −8π",
+   "fr": "Nombre de trous : χ = 2 − 2g, Σ K = 4π, 0, −4π, −8π"
+  },
+  "Sphere (geodesic_dome), torus (mesh_torus), two holes, three holes (iso-surfaces of a ladder-shaped graph thickened into tubes). More holes, more blue saddles (K < 0). Adding K over the vertices the plane has passed ends at Σ K / 2π = 2, 0, −2, −4 = χ = 2 − 2g: the number of holes can be read just by adding up the curvature.": {
+   "ja": "球(geodesic_dome)、トーラス(mesh_torus)、穴 2 つ、穴 3 つ(梯子の形のグラフを管で太らせた陰関数の等値面)。穴が増えるほど青(K < 0)の鞍が増える。掃引面が通り過ぎた頂点の K を足すと、終わりの Σ K / 2π は 2, 0, −2, −4 = χ = 2 − 2g。穴の数は「曲がり方を全部足す」だけで読める。",
+   "zh": "球(geodesic_dome)、环面(mesh_torus)、两个孔、三个孔(把梯子形的图加粗成管的等值面)。孔越多，蓝色的鞍(K < 0)越多。把平面经过的顶点的 K 加起来，最后是 Σ K / 2π = 2, 0, −2, −4 = χ = 2 − 2g: 只要把弯曲全部加起来，就能读出孔的个数。",
+   "tw": "球(geodesic_dome)、環面(mesh_torus)、兩個孔、三個孔(把梯子形的圖加粗成管的等值面)。孔越多，藍色的鞍(K < 0)越多。把平面經過的頂點的 K 加起來，最後是 Σ K / 2π = 2, 0, −2, −4 = χ = 2 − 2g: 只要把彎曲全部加起來，就能讀出孔的個數。",
+   "ko": "구(geodesic_dome), 토러스(mesh_torus), 구멍 둘, 구멍 셋(사다리 모양 그래프를 관으로 두껍게 한 등위면). 구멍이 많을수록 파란 안장(K < 0)이 늘어난다. 평면이 지나간 꼭짓점의 K를 더하면 끝에서 Σ K / 2π = 2, 0, −2, −4 = χ = 2 − 2g: 굽은 정도를 전부 더하기만 해도 구멍의 수를 읽을 수 있다.",
+   "de": "Kugel (geodesic_dome), Torus (mesh_torus), zwei Löcher, drei Löcher (Isoflächen eines leiterförmigen Graphen, zu Röhren verdickt). Mehr Löcher, mehr blaue Sättel (K < 0). Das Aufsummieren von K über die überstrichenen Ecken endet bei Σ K / 2π = 2, 0, −2, −4 = χ = 2 − 2g: Die Zahl der Löcher lässt sich allein durch Aufsummieren der Krümmung ablesen.",
+   "hi": "गोला (geodesic_dome), टोरस (mesh_torus), दो छेद, तीन छेद (सीढ़ी-आकार के ग्राफ़ को नलियों में मोटा करके बनी iso-surface)। जितने ज़्यादा छेद, उतनी ज़्यादा नीली काठियाँ (K < 0)। समतल द्वारा पार किए शीर्षों पर K जोड़ने पर अंत Σ K / 2π = 2, 0, −2, −4 = χ = 2 − 2g: वक्रता जोड़ भर देने से छेदों की संख्या पढ़ी जा सकती है।",
+   "fr": "Sphère (geodesic_dome), tore (mesh_torus), deux trous, trois trous (iso-surfaces d'un graphe en échelle épaissi en tubes). Plus de trous, plus de selles bleues (K < 0). Additionner K sur les sommets dépassés par le plan aboutit à Σ K / 2π = 2, 0, −2, −4 = χ = 2 − 2g : le nombre de trous se lit rien qu'en additionnant la courbure."
+  },
+  "Σ K / 2π vs χ (largest of 4)": {
+   "ja": "Σ K / 2π と χ の差(4 つの最大)",
+   "zh": "Σ K / 2π 与 χ 之差(4 个中最大)",
+   "tw": "Σ K / 2π 與 χ 之差(4 個中最大)",
+   "ko": "Σ K / 2π와 χ의 차(4개 중 최대)",
+   "de": "Σ K / 2π vs. χ (größte von 4)",
+   "hi": "Σ K / 2π बनाम χ (4 में सबसे बड़ा)",
+   "fr": "Σ K / 2π vs χ (le plus grand des 4)"
+  },
+  "χ (counted): sphere / torus / 2 holes / 3 holes": {
+   "ja": "χ(組合せ): 球 / トーラス / 穴 2 / 穴 3",
+   "zh": "χ(计数): 球 / 环面 / 2 孔 / 3 孔",
+   "tw": "χ(計數): 球 / 環面 / 2 孔 / 3 孔",
+   "ko": "χ(센 값): 구 / 토러스 / 구멍 2 / 구멍 3",
+   "de": "χ (gezählt): Kugel / Torus / 2 Löcher / 3 Löcher",
+   "hi": "χ (गिना हुआ): गोला / टोरस / 2 छेद / 3 छेद",
+   "fr": "χ (compté) : sphère / tore / 2 trous / 3 trous"
+  },
+  "sphere (0 holes)": {
+   "ja": "球(穴 0)",
+   "zh": "球(0 个孔)",
+   "tw": "球(0 個孔)",
+   "ko": "구(구멍 0)",
+   "de": "Kugel (0 Löcher)",
+   "hi": "गोला (0 छेद)",
+   "fr": "sphère (0 trou)"
+  },
+  "torus (1 hole)": {
+   "ja": "トーラス(穴 1)",
+   "zh": "环面(1 个孔)",
+   "tw": "環面(1 個孔)",
+   "ko": "토러스(구멍 1)",
+   "de": "Torus (1 Loch)",
+   "hi": "टोरस (1 छेद)",
+   "fr": "tore (1 trou)"
+  },
+  "2 holes": {
+   "ja": "穴 2 つ",
+   "zh": "2 个孔",
+   "tw": "2 個孔",
+   "ko": "구멍 2개",
+   "de": "2 Löcher",
+   "hi": "2 छेद",
+   "fr": "2 trous"
+  },
+  "3 holes": {
+   "ja": "穴 3 つ",
+   "zh": "3 个孔",
+   "tw": "3 個孔",
+   "ko": "구멍 3개",
+   "de": "3 Löcher",
+   "hi": "3 छेद",
+   "fr": "3 trous"
+  },
+  "halfway: the saddles pull the sums down": {
+   "ja": "半分: 穴の鞍で和が下がる",
+   "zh": "一半: 鞍把累加值拉低",
+   "tw": "一半: 鞍把累加值拉低",
+   "ko": "절반: 안장이 합을 끌어내린다",
+   "de": "halb: die Sättel ziehen die Summen nach unten",
+   "hi": "आधा: काठियाँ योग को नीचे खींचती हैं",
+   "fr": "à mi-course : les selles tirent les sommes vers le bas"
+  },
+  "end: 2, 0, −2, −4": {
+   "ja": "終わり: 2, 0, −2, −4",
+   "zh": "结束: 2, 0, −2, −4",
+   "tw": "結束: 2, 0, −2, −4",
+   "ko": "끝: 2, 0, −2, −4",
+   "de": "Ende: 2, 0, −2, −4",
+   "hi": "अंत: 2, 0, −2, −4",
+   "fr": "fin : 2, 0, −2, −4"
+  },
+  "sphere": {
+   "ja": "球",
+   "zh": "球",
+   "tw": "球",
+   "ko": "구",
+   "de": "Kugel",
+   "hi": "गोला",
+   "fr": "sphère"
+  },
+  "torus": {
+   "ja": "トーラス",
+   "zh": "环面",
+   "tw": "環面",
+   "ko": "토러스",
+   "de": "Torus",
+   "hi": "टोरस",
+   "fr": "tore"
+  },
+  "Σ K / 2π vs χ for sphere, torus, 2 holes, 3 holes": {
+   "ja": "Σ K / 2π と χ の一致(球・トーラス・穴 2 つ・穴 3 つ)",
+   "zh": "球、环面、2 孔、3 孔的 Σ K / 2π 与 χ",
+   "tw": "球、環面、2 孔、3 孔的 Σ K / 2π 與 χ",
+   "ko": "구, 토러스, 구멍 2, 구멍 3의 Σ K / 2π와 χ",
+   "de": "Σ K / 2π vs. χ für Kugel, Torus, 2 Löcher, 3 Löcher",
+   "hi": "गोला, टोरस, 2 छेद, 3 छेद के लिए Σ K / 2π बनाम χ",
+   "fr": "Σ K / 2π vs χ pour sphère, tore, 2 trous, 3 trous"
+  },
+  "χ = 2 − 2g = 2, 0, −2, −4 (counted combinatorially)": {
+   "ja": "χ = 2 − 2g = 2, 0, −2, −4(組合せで数えた値)",
+   "zh": "χ = 2 − 2g = 2, 0, −2, −4(由组合计数)",
+   "tw": "χ = 2 − 2g = 2, 0, −2, −4(由組合計數)",
+   "ko": "χ = 2 − 2g = 2, 0, −2, −4(조합으로 센 값)",
+   "de": "χ = 2 − 2g = 2, 0, −2, −4 (kombinatorisch gezählt)",
+   "hi": "χ = 2 − 2g = 2, 0, −2, −4 (संयोजनात्मक गिनती)",
+   "fr": "χ = 2 − 2g = 2, 0, −2, −4 (compté combinatoirement)"
+  },
+  "all 4 are closed surfaces (0 boundary edges, 0 non-manifold edges)": {
+   "ja": "4 つとも閉じた曲面(境界辺 0・非多様体辺 0)",
+   "zh": "4 个都是闭曲面(0 条边界边，0 条非流形边)",
+   "tw": "4 個都是閉曲面(0 條邊界邊，0 條非流形邊)",
+   "ko": "4개 모두 닫힌 곡면(경계 변 0, 비다양체 변 0)",
+   "de": "alle 4 sind geschlossene Flächen (0 Randkanten, 0 nicht-mannigfaltige Kanten)",
+   "hi": "सभी 4 बंद सतहें हैं (0 सीमा किनारे, 0 non-manifold किनारे)",
+   "fr": "les 4 sont des surfaces fermées (0 arête de bord, 0 arête non-variété)"
+  },
+  "all closed": {
+   "ja": "すべて閉",
+   "zh": "全部闭合",
+   "tw": "全部閉合",
+   "ko": "모두 닫힘",
+   "de": "alle geschlossen",
+   "hi": "सभी बंद",
+   "fr": "toutes fermées"
+  },
+  "Each extra hole changes Σ K by how much?": {
+   "ja": "穴を 1 つ増やすごとに、Σ K はどう変わる?",
+   "zh": "每多一个孔，Σ K 变化多少?",
+   "tw": "每多一個孔，Σ K 變化多少?",
+   "ko": "구멍이 하나 늘 때마다 Σ K는 얼마나 변할까?",
+   "de": "Um wie viel ändert jedes weitere Loch Σ K?",
+   "hi": "हर अतिरिक्त छेद Σ K को कितना बदलता है?",
+   "fr": "Chaque trou supplémentaire change Σ K de combien ?"
+  },
+  "Not at all": {
+   "ja": "変わらない",
+   "zh": "不变",
+   "tw": "不變",
+   "ko": "변하지 않는다",
+   "de": "Gar nicht",
+   "hi": "बिल्कुल नहीं",
+   "fr": "Pas du tout"
+  },
+  "It drops by 4π per hole": {
+   "ja": "4π ずつ減る",
+   "zh": "每个孔减少 4π",
+   "tw": "每個孔減少 4π",
+   "ko": "구멍마다 4π씩 줄어든다",
+   "de": "Sie sinkt um 4π je Loch",
+   "hi": "हर छेद पर 4π घटता है",
+   "fr": "Il baisse de 4π par trou"
+  },
+  "It drops by 2π per hole": {
+   "ja": "2π ずつ減る",
+   "zh": "每个孔减少 2π",
+   "tw": "每個孔減少 2π",
+   "ko": "구멍마다 2π씩 줄어든다",
+   "de": "Sie sinkt um 2π je Loch",
+   "hi": "हर छेद पर 2π घटता है",
+   "fr": "Il baisse de 2π par trou"
+  },
+  "A closed surface with g holes (genus g) has χ = 2 − 2g: sphere 2, torus 0, two holes −2, three holes −4, so Σ K = 2πχ is 4π, 0, −4π, −8π. More holes mean more saddle regions (K < 0). Over the four shapes the largest gap between Σ K / 2π and χ is 1.4e-13.": {
+   "ja": "穴(種数)g の閉曲面は χ = 2 − 2g。球 2、トーラス 0、穴 2 つ −2、穴 3 つ −4 で、Σ K = 2πχ は 4π, 0, −4π, −8π。穴が増えるほど鞍の部分(K < 0)が増える。4 つの形で Σ K / 2π と χ の差は最大 1.4e-13。",
+   "zh": "有 g 个孔(亏格 g)的闭曲面 χ = 2 − 2g: 球 2，环面 0，两个孔 −2，三个孔 −4，所以 Σ K = 2πχ 为 4π, 0, −4π, −8π。孔越多，鞍形区域(K < 0)越多。四个形状中 Σ K / 2π 与 χ 的最大差距是 1.4e-13。",
+   "tw": "有 g 個孔(虧格 g)的閉曲面 χ = 2 − 2g: 球 2，環面 0，兩個孔 −2，三個孔 −4，所以 Σ K = 2πχ 為 4π, 0, −4π, −8π。孔越多，鞍形區域(K < 0)越多。四個形狀中 Σ K / 2π 與 χ 的最大差距是 1.4e-13。",
+   "ko": "구멍 g개(종수 g)인 닫힌 곡면은 χ = 2 − 2g: 구 2, 토러스 0, 구멍 둘 −2, 구멍 셋 −4이므로 Σ K = 2πχ는 4π, 0, −4π, −8π. 구멍이 많을수록 안장 영역(K < 0)이 늘어난다. 네 모양에서 Σ K / 2π와 χ의 가장 큰 차는 1.4e-13.",
+   "de": "Eine geschlossene Fläche mit g Löchern (Geschlecht g) hat χ = 2 − 2g: Kugel 2, Torus 0, zwei Löcher −2, drei Löcher −4, also ist Σ K = 2πχ gleich 4π, 0, −4π, −8π. Mehr Löcher bedeuten mehr Sattelbereiche (K < 0). Über die vier Formen ist der größte Abstand zwischen Σ K / 2π und χ 1.4e-13.",
+   "hi": "g छेदों (genus g) वाली बंद सतह का χ = 2 − 2g: गोला 2, टोरस 0, दो छेद −2, तीन छेद −4, इसलिए Σ K = 2πχ है 4π, 0, −4π, −8π। ज़्यादा छेद का मतलब ज़्यादा काठी-क्षेत्र (K < 0)। चारों आकारों में Σ K / 2π और χ का सबसे बड़ा अंतर 1.4e-13 है।",
+   "fr": "Une surface fermée à g trous (genre g) a χ = 2 − 2g : sphère 2, tore 0, deux trous −2, trois trous −4, donc Σ K = 2πχ vaut 4π, 0, −4π, −8π. Plus de trous signifie plus de régions en selle (K < 0). Sur les quatre formes, le plus grand écart entre Σ K / 2π et χ est 1.4e-13."
+  },
+  "χ = 2 − 2g (g = number of holes)\nΣ_v K_v = 2π(2 − 2g) = 4π − 4πg": {
+   "ja": "χ = 2 − 2g(g = 穴の数)\nΣ_v K_v = 2π(2 − 2g) = 4π − 4πg",
+   "zh": "χ = 2 − 2g(g = 孔的个数)\nΣ_v K_v = 2π(2 − 2g) = 4π − 4πg",
+   "tw": "χ = 2 − 2g(g = 孔的個數)\nΣ_v K_v = 2π(2 − 2g) = 4π − 4πg",
+   "ko": "χ = 2 − 2g(g = 구멍의 수)\nΣ_v K_v = 2π(2 − 2g) = 4π − 4πg",
+   "de": "χ = 2 − 2g (g = Zahl der Löcher)\nΣ_v K_v = 2π(2 − 2g) = 4π − 4πg",
+   "hi": "χ = 2 − 2g (g = छेदों की संख्या)\nΣ_v K_v = 2π(2 − 2g) = 4π − 4πg",
+   "fr": "χ = 2 − 2g (g = nombre de trous)\nΣ_v K_v = 2π(2 − 2g) = 4π − 4πg"
+  },
+  "Holes can be counted this way only on a closed orientable surface. With boundaries or non-manifold edges (an edge shared by 3 or more faces) χ still exists but the genus is undefined.": {
+   "ja": "穴の数を読めるのは閉じた向き付け可能な曲面だけ。境界や非多様体の辺(3 枚以上の面が集まる辺)があると、χ はあっても種数は決まらない。",
+   "zh": "只有在闭合的可定向曲面上才能这样数孔。有边界或非流形边(被 3 个或更多面共享的边)时，χ 仍然存在，但亏格没有定义。",
+   "tw": "只有在閉合的可定向曲面上才能這樣數孔。有邊界或非流形邊(被 3 個或更多面共享的邊)時，χ 仍然存在，但虧格沒有定義。",
+   "ko": "이렇게 구멍을 셀 수 있는 것은 닫힌 향 붙일 수 있는 곡면뿐이다. 경계나 비다양체 변(3개 이상의 면이 공유하는 변)이 있으면 χ는 있어도 종수는 정의되지 않는다.",
+   "de": "Löcher lassen sich so nur auf einer geschlossenen orientierbaren Fläche zählen. Mit Rändern oder nicht-mannigfaltigen Kanten (eine Kante, die 3 oder mehr Flächen teilen) existiert χ zwar noch, aber das Geschlecht ist undefiniert.",
+   "hi": "इस तरह छेद केवल बंद दिग्विन्यास-योग्य सतह पर गिने जा सकते हैं। सीमाओं या non-manifold किनारों (3 या अधिक फलकों द्वारा साझा किनारा) के साथ χ तो रहता है पर genus अपरिभाषित है।",
+   "fr": "On ne peut compter les trous ainsi que sur une surface fermée orientable. Avec des bords ou des arêtes non-variété (une arête partagée par 3 faces ou plus), χ existe encore mais le genre n'est pas défini."
+  },
+  "A real object: asteroid Itokawa also gives 4π": {
+   "ja": "実物: 小惑星イトカワでも 4π",
+   "zh": "实物: 小行星系川也是 4π",
+   "tw": "實物: 小行星糸川也是 4π",
+   "ko": "실물: 소행성 이토카와도 4π",
+   "de": "Ein reales Objekt: auch der Asteroid Itokawa ergibt 4π",
+   "hi": "एक वास्तविक वस्तु: क्षुद्रग्रह Itokawa भी 4π देता है",
+   "fr": "Un objet réel : l'astéroïde Itokawa donne aussi 4π"
+  },
+  "The shape of asteroid Itokawa built from spacecraft images (24578 vertices, 49152 faces, 562 m along x). Colour is K; the saddles at the neck and in hollows are blue (negative). 59% of the vertices have K < 0, yet adding every vertex the plane has passed gives Σ K / 2π = 2.000000 = χ = 2. That the surface is closed with no hole is checked by mesh_euler_characteristic: 0 boundary edges, 0 non-manifold edges.": {
+   "ja": "探査機の画像から作られた小惑星イトカワの形(頂点 24578・面 49152、x 方向の長さ 562 m)。色は K で、くびれや窪みの鞍では青(負)。頂点の 59% がK < 0 なのに、掃引面が通り過ぎた頂点を全部足すと Σ K / 2π = 2.000000 = χ = 2。閉じていて穴が無いことは mesh_euler_characteristic が境界辺 0・非多様体辺 0 で確かめる。",
+   "zh": "由探测器图像构建的小行星系川的形状(24578 个顶点，49152 个面，x 方向长 562 m)。颜色是 K；颈部和凹陷处的鞍形为蓝色(负)。59% 的顶点 K < 0，但把平面经过的所有顶点加起来，得到 Σ K / 2π = 2.000000 = χ = 2。曲面闭合且没有孔，由 mesh_euler_characteristic 检验: 0 条边界边，0 条非流形边。",
+   "tw": "由探測器影像建構的小行星糸川的形狀(24578 個頂點，49152 個面，x 方向長 562 m)。顏色是 K；頸部和凹陷處的鞍形為藍色(負)。59% 的頂點 K < 0，但把平面經過的所有頂點加起來，得到 Σ K / 2π = 2.000000 = χ = 2。曲面閉合且沒有孔，由 mesh_euler_characteristic 檢驗: 0 條邊界邊，0 條非流形邊。",
+   "ko": "탐사선의 영상으로 만든 소행성 이토카와의 모양(꼭짓점 24578, 면 49152, x 방향 길이 562 m). 색은 K이며, 잘록한 부분과 움푹한 곳의 안장은 파랑(음). 꼭짓점의 59%가 K < 0인데도 평면이 지나간 모든 꼭짓점을 더하면 Σ K / 2π = 2.000000 = χ = 2. 구멍 없이 닫혀 있음은 mesh_euler_characteristic가 확인한다: 경계 변 0, 비다양체 변 0.",
+   "de": "Die Form des Asteroiden Itokawa aus Raumsondenbildern (24578 Ecken, 49152 Flächen, 562 m entlang x). Die Farbe ist K; die Sättel am Hals und in Mulden sind blau (negativ). 59% der Ecken haben K < 0, doch das Aufsummieren aller überstrichenen Ecken ergibt Σ K / 2π = 2.000000 = χ = 2. Dass die Fläche ohne Loch geschlossen ist, prüft mesh_euler_characteristic: 0 Randkanten, 0 nicht-mannigfaltige Kanten.",
+   "hi": "अंतरिक्ष यान की छवियों से बना क्षुद्रग्रह Itokawa का आकार (24578 शीर्ष, 49152 फलक, x के साथ 562 m)। रंग K है; गर्दन और गड्ढों की काठियाँ नीली (ऋणात्मक) हैं। 59% शीर्षों का K < 0 है, फिर भी समतल द्वारा पार किए हर शीर्ष को जोड़ने पर Σ K / 2π = 2.000000 = χ = 2 मिलता है। सतह बिना छेद के बंद है, यह mesh_euler_characteristic जाँचता है: 0 सीमा किनारे, 0 non-manifold किनारे।",
+   "fr": "La forme de l'astéroïde Itokawa construite à partir d'images de sonde (24578 sommets, 49152 faces, 562 m selon x). La couleur est K ; les selles au niveau du cou et des creux sont bleues (négatives). 59% des sommets ont K < 0, pourtant additionner chaque sommet dépassé par le plan donne Σ K / 2π = 2.000000 = χ = 2. Que la surface soit fermée sans trou est vérifié par mesh_euler_characteristic : 0 arête de bord, 0 arête non-variété."
+  },
+  "Σ K / 2π vs χ = 2": {
+   "ja": "Σ K / 2π と χ = 2 の差",
+   "zh": "Σ K / 2π 与 χ = 2 之差",
+   "tw": "Σ K / 2π 與 χ = 2 之差",
+   "ko": "Σ K / 2π와 χ = 2의 차",
+   "de": "Σ K / 2π vs. χ = 2",
+   "hi": "Σ K / 2π बनाम χ = 2",
+   "fr": "Σ K / 2π vs χ = 2"
+  },
+  "boundary edges, non-manifold edges": {
+   "ja": "境界辺・非多様体辺",
+   "zh": "边界边、非流形边",
+   "tw": "邊界邊、非流形邊",
+   "ko": "경계 변, 비다양체 변",
+   "de": "Randkanten, nicht-mannigfaltige Kanten",
+   "hi": "सीमा किनारे, non-manifold किनारे",
+   "fr": "arêtes de bord, arêtes non-variété"
+  },
+  "Itokawa (measured shape, 24578 vertices)": {
+   "ja": "イトカワ(実測の形、頂点 24578)",
+   "zh": "系川(实测形状，24578 个顶点)",
+   "tw": "糸川(實測形狀，24578 個頂點)",
+   "ko": "이토카와(실측 모양, 꼭짓점 24578)",
+   "de": "Itokawa (gemessene Form, 24578 Ecken)",
+   "hi": "Itokawa (मापा हुआ आकार, 24578 शीर्ष)",
+   "fr": "Itokawa (forme mesurée, 24578 sommets)"
+  },
+  "halfway: the neck's negative K pulls down": {
+   "ja": "半分: くびれの負の K が効く",
+   "zh": "一半: 颈部的负 K 往下拉",
+   "tw": "一半: 頸部的負 K 往下拉",
+   "ko": "절반: 잘록한 곳의 음의 K가 끌어내린다",
+   "de": "halb: das negative K des Halses zieht nach unten",
+   "hi": "आधा: गर्दन का ऋणात्मक K नीचे खींचता है",
+   "fr": "à mi-course : le K négatif du cou tire vers le bas"
+  },
+  "end: 2 = χ": {
+   "ja": "終わり: 2 = χ",
+   "zh": "结束: 2 = χ",
+   "tw": "結束: 2 = χ",
+   "ko": "끝: 2 = χ",
+   "de": "Ende: 2 = χ",
+   "hi": "अंत: 2 = χ",
+   "fr": "fin : 2 = χ"
+  },
+  "Itokawa Σ K / 2π": {
+   "ja": "イトカワ Σ K / 2π",
+   "zh": "系川 Σ K / 2π",
+   "tw": "糸川 Σ K / 2π",
+   "ko": "이토카와 Σ K / 2π",
+   "de": "Itokawa Σ K / 2π",
+   "hi": "Itokawa Σ K / 2π",
+   "fr": "Itokawa Σ K / 2π"
+  },
+  "closed surface? (boundary edges, non-manifold edges)": {
+   "ja": "閉じているか(境界辺・非多様体辺)",
+   "zh": "是否闭合?(边界边、非流形边)",
+   "tw": "是否閉合?(邊界邊、非流形邊)",
+   "ko": "닫힌 곡면인가?(경계 변, 비다양체 변)",
+   "de": "geschlossene Fläche? (Randkanten, nicht-mannigfaltige Kanten)",
+   "hi": "बंद सतह? (सीमा किनारे, non-manifold किनारे)",
+   "fr": "surface fermée ? (arêtes de bord, arêtes non-variété)"
+  },
+  "Σ K / 2π (24578 vertices, 49152 faces) vs χ = 2": {
+   "ja": "Σ K / 2π(頂点 24578・面 49152)と χ = 2",
+   "zh": "Σ K / 2π(24578 个顶点，49152 个面)与 χ = 2",
+   "tw": "Σ K / 2π(24578 個頂點，49152 個面)與 χ = 2",
+   "ko": "Σ K / 2π(꼭짓점 24578, 면 49152)와 χ = 2",
+   "de": "Σ K / 2π (24578 Ecken, 49152 Flächen) vs. χ = 2",
+   "hi": "Σ K / 2π (24578 शीर्ष, 49152 फलक) बनाम χ = 2",
+   "fr": "Σ K / 2π (24578 sommets, 49152 faces) vs χ = 2"
+  },
+  "vertices with negative K (saddles) exist, yet the sum is 4π": {
+   "ja": "負の K(鞍の形)の頂点があるのに、和は 4π",
+   "zh": "存在 K 为负的顶点(鞍形)，但总和仍是 4π",
+   "tw": "存在 K 為負的頂點(鞍形)，但總和仍是 4π",
+   "ko": "K가 음인 꼭짓점(안장)이 있어도 합은 4π",
+   "de": "Ecken mit negativem K (Sättel) existieren, doch die Summe ist 4π",
+   "hi": "ऋणात्मक K वाले शीर्ष (काठियाँ) हैं, फिर भी योग 4π है",
+   "fr": "des sommets à K négatif (selles) existent, pourtant la somme vaut 4π"
+  },
+  "The measured shape of asteroid Itokawa (24578 vertices): lumpy, with a neck. What is Σ K?": {
+   "ja": "小惑星イトカワの実測の形(頂点 24578)。でこぼこで、くびれもある。Σ K はいくら?",
+   "zh": "小行星系川的实测形状(24578 个顶点): 凹凸不平，还有颈部。Σ K 是多少?",
+   "tw": "小行星糸川的實測形狀(24578 個頂點): 凹凸不平，還有頸部。Σ K 是多少?",
+   "ko": "소행성 이토카와의 실측 모양(꼭짓점 24578): 울퉁불퉁하고 잘록한 곳도 있다. Σ K는?",
+   "de": "Die gemessene Form des Asteroiden Itokawa (24578 Ecken): klumpig, mit einem Hals. Wie groß ist Σ K?",
+   "hi": "क्षुद्रग्रह Itokawa का मापा हुआ आकार (24578 शीर्ष): ऊबड़-खाबड़, एक गर्दन के साथ। Σ K कितना है?",
+   "fr": "La forme mesurée de l'astéroïde Itokawa (24578 sommets) : bosselée, avec un cou. Que vaut Σ K ?"
+  },
+  "More than 4π, because of the bumps": {
+   "ja": "でこぼこの分だけ 4π より大きい",
+   "zh": "因为凹凸，大于 4π",
+   "tw": "因為凹凸，大於 4π",
+   "ko": "울퉁불퉁한 만큼 4π보다 크다",
+   "de": "Mehr als 4π, wegen der Beulen",
+   "hi": "4π से अधिक, उभारों के कारण",
+   "fr": "Plus que 4π, à cause des bosses"
+  },
+  "Exactly 4π": {
+   "ja": "ちょうど 4π",
+   "zh": "恰好 4π",
+   "tw": "恰好 4π",
+   "ko": "정확히 4π",
+   "de": "Genau 4π",
+   "hi": "ठीक 4π",
+   "fr": "Exactement 4π"
+  },
+  "Undetermined, the shape is too complex": {
+   "ja": "形が複雑すぎて決まらない",
+   "zh": "形状太复杂，无法确定",
+   "tw": "形狀太複雜，無法確定",
+   "ko": "모양이 너무 복잡해 정해지지 않는다",
+   "de": "Unbestimmt, die Form ist zu komplex",
+   "hi": "अनिर्धारित, आकार बहुत जटिल है",
+   "fr": "Indéterminé, la forme est trop complexe"
+  },
+  "At the neck (saddle-shaped) K < 0, and 59% of the vertices are negative. Still, the surface is closed without a hole, so χ = 2 and Σ K / 2π = 1.999999999999. Bumps cancel between positive and negative; only the topology (number of holes) remains.": {
+   "ja": "くびれ(鞍の形)では K < 0 で、頂点の 59% が負。それでも穴が無い閉曲面なので χ = 2、Σ K / 2π = 1.999999999999。でこぼこは正と負で打ち消し、残るのは位相(穴の数)だけ。",
+   "zh": "颈部(鞍形)K < 0，59% 的顶点为负。但曲面闭合且没有孔，所以 χ = 2，Σ K / 2π = 1.999999999999。凹凸在正负之间相互抵消；留下的只有拓扑(孔的个数)。",
+   "tw": "頸部(鞍形)K < 0，59% 的頂點為負。但曲面閉合且沒有孔，所以 χ = 2，Σ K / 2π = 1.999999999999。凹凸在正負之間相互抵消；留下的只有拓撲(孔的個數)。",
+   "ko": "잘록한 곳(안장 모양)은 K < 0이고 꼭짓점의 59%가 음이다. 그래도 구멍 없이 닫힌 곡면이므로 χ = 2, Σ K / 2π = 1.999999999999. 울퉁불퉁함은 양과 음이 상쇄하고, 남는 것은 위상(구멍의 수)뿐.",
+   "de": "Am Hals (sattelförmig) ist K < 0, und 59% der Ecken sind negativ. Trotzdem ist die Fläche ohne Loch geschlossen, also χ = 2 und Σ K / 2π = 1.999999999999. Beulen heben sich zwischen positiv und negativ auf; nur die Topologie (Zahl der Löcher) bleibt.",
+   "hi": "गर्दन पर (काठी-आकार) K < 0 है, और 59% शीर्ष ऋणात्मक हैं। फिर भी सतह बिना छेद के बंद है, इसलिए χ = 2 और Σ K / 2π = 1.999999999999। उभार धनात्मक और ऋणात्मक के बीच रद्द होते हैं; केवल टोपोलॉजी (छेदों की संख्या) बचती है।",
+   "fr": "Au cou (en selle) K < 0, et 59% des sommets sont négatifs. Pourtant la surface est fermée sans trou, donc χ = 2 et Σ K / 2π = 1.999999999999. Les bosses s'annulent entre positif et négatif ; seule la topologie (nombre de trous) subsiste."
+  },
+  "Σ_v K_v = 2π χ = 4π (closed, no hole)\n0 boundary edges, 0 non-manifold edges → closed": {
+   "ja": "Σ_v K_v = 2π χ = 4π(閉じていて穴が無い)\n境界辺 0・非多様体辺 0 → 閉じている",
+   "zh": "Σ_v K_v = 2π χ = 4π(闭合，无孔)\n0 条边界边，0 条非流形边 → 闭合",
+   "tw": "Σ_v K_v = 2π χ = 4π(閉合，無孔)\n0 條邊界邊，0 條非流形邊 → 閉合",
+   "ko": "Σ_v K_v = 2π χ = 4π(닫힘, 구멍 없음)\n경계 변 0, 비다양체 변 0 → 닫힘",
+   "de": "Σ_v K_v = 2π χ = 4π (geschlossen, kein Loch)\n0 Randkanten, 0 nicht-mannigfaltige Kanten → geschlossen",
+   "hi": "Σ_v K_v = 2π χ = 4π (बंद, कोई छेद नहीं)\n0 सीमा किनारे, 0 non-manifold किनारे → बंद",
+   "fr": "Σ_v K_v = 2π χ = 4π (fermée, sans trou)\n0 arête de bord, 0 arête non-variété → fermée"
+  },
+  "This is a model built from images (24578 vertices); the small rocks of the real body are not in it. The total 4π speaks about the model's topology only, not about roughness or the number of boulders.": {
+   "ja": "この形は画像から作られた模型(頂点 24578)で、実物の細かい岩は入っていない。和 4π は模型の位相を言うだけで、表面の粗さや岩の数は語らない。",
+   "zh": "这是由图像构建的模型(24578 个顶点)；实物上的小岩石不在其中。总和 4π 只说明模型的拓扑，不说明粗糙度或巨石的数量。",
+   "tw": "這是由影像建構的模型(24578 個頂點)；實物上的小岩石不在其中。總和 4π 只說明模型的拓撲，不說明粗糙度或巨石的數量。",
+   "ko": "이것은 영상으로 만든 모형(꼭짓점 24578)이며 실제 천체의 작은 바위는 들어 있지 않다. 합 4π는 모형의 위상만 말할 뿐, 거칠기나 바위의 수는 말하지 않는다.",
+   "de": "Dies ist ein aus Bildern gebautes Modell (24578 Ecken); die kleinen Felsen des realen Körpers sind nicht enthalten. Die Summe 4π spricht nur über die Topologie des Modells, nicht über Rauheit oder die Zahl der Felsbrocken.",
+   "hi": "यह छवियों से बना मॉडल है (24578 शीर्ष); वास्तविक पिंड की छोटी चट्टानें इसमें नहीं हैं। कुल 4π केवल मॉडल की टोपोलॉजी बताता है, खुरदरापन या शिलाखंडों की संख्या नहीं।",
+   "fr": "C'est un modèle construit à partir d'images (24578 sommets) ; les petits rochers du corps réel n'y figurent pas. Le total 4π ne parle que de la topologie du modèle, pas de la rugosité ni du nombre de blocs."
+  },
+  "Surfaces with a boundary (the limit tab): a bowl and a skeleton scan": {
+   "ja": "境界のある面(限界の回): 皿と、骨格の走査",
+   "zh": "有边界的曲面(局限标签页): 一个碗和一个骨架扫描",
+   "tw": "有邊界的曲面(限制分頁): 一個碗和一個骨架掃描",
+   "ko": "경계가 있는 면(한계 탭): 그릇과 골격 스캔",
+   "de": "Flächen mit Rand (der Grenze-Tab): eine Schale und ein Skelett-Scan",
+   "hi": "सीमा वाली सतहें (सीमा टैब): एक कटोरा और एक कंकाल का स्कैन",
+   "fr": "Surfaces à bord (l'onglet limite) : un bol et un scan de squelette"
+  },
+  "Left: a hemisphere bowl (geodesic_dome hemisphere, 48 rim vertices). It has a boundary, so χ = V − E + F = 1. Adding 2π − Σθ at the rim vertices too gives 25.0 × 2π, not 2πχ = 2π (the failed row in the badge's table). Discrete Gauss–Bonnet uses π − Σθ (the geodesic-curvature term) on the rim, and angle_defect does so (interior 0.9026 + rim 0.0974 = 1). Right: a 3-D scan of a dinosaur skeleton (a museum's open data, decimated). It looks like one surface but is 1919 open patches cut at texture seams, with 27074 boundary edges. The theorem holds patch by patch (Σ K / 2π = χ = 1919), but this χ counts patches and says nothing about the dinosaur's shape.": {
+   "ja": "左は半球の皿(geodesic_dome の半球、縁の頂点 48)。境界があるので χ = V − E + F = 1。縁の頂点にも 2π − Σθ を使って足すと 25.0 × 2π になり、2πχ = 2π にならない(バッジの表の落ちた行)。縁では π − Σθ(境界の測地曲率の項)を使うのが離散 Gauss–Bonnet で、angle_defect はそうしている(内側 0.9026 + 縁 0.0974 = 1)。右は恐竜の骨格の 3-D 走査(館の公開データ、面を間引いた)。1 枚の面に見えるが、テクスチャの継ぎ目で頂点が切れた 1919 枚の開いた面片で、境界辺 27074 本。面片ごとに定理は成り立つ(Σ K / 2π = χ = 1919)が、この χ は面片の数で、恐竜の形は語らない。",
+   "zh": "左: 半球形的碗(geodesic_dome 的半球，边缘顶点 48 个)。它有边界，所以 χ = V − E + F = 1。若在边缘顶点也用 2π − Σθ 相加，得到 25.0 × 2π，而不是 2πχ = 2π(徽章表中失败的那一行)。离散 Gauss–Bonnet 在边缘使用 π − Σθ(测地曲率项)，angle_defect 正是这样做的(内部 0.9026 + 边缘 0.0974 = 1)。右: 恐龙骨架的 3-D 扫描(博物馆的开放数据，已简化)。看起来像一个曲面，其实是在纹理接缝处被切开的 1919 个开放面片，有 27074 条边界边。定理对每个面片都成立(Σ K / 2π = χ = 1919)，但这个 χ 数的是面片，和恐龙的形状无关。",
+   "tw": "左: 半球形的碗(geodesic_dome 的半球，邊緣頂點 48 個)。它有邊界，所以 χ = V − E + F = 1。若在邊緣頂點也用 2π − Σθ 相加，得到 25.0 × 2π，而不是 2πχ = 2π(徽章表中失敗的那一列)。離散 Gauss–Bonnet 在邊緣使用 π − Σθ(測地曲率項)，angle_defect 正是這樣做的(內部 0.9026 + 邊緣 0.0974 = 1)。右: 恐龍骨架的 3-D 掃描(博物館的開放資料，已簡化)。看起來像一個曲面，其實是在紋理接縫處被切開的 1919 個開放面片，有 27074 條邊界邊。定理對每個面片都成立(Σ K / 2π = χ = 1919)，但這個 χ 數的是面片，和恐龍的形狀無關。",
+   "ko": "왼쪽: 반구 그릇(geodesic_dome의 반구, 테두리 꼭짓점 48). 경계가 있으므로 χ = V − E + F = 1. 테두리 꼭짓점에도 2π − Σθ를 써서 더하면 25.0 × 2π가 되어 2πχ = 2π가 아니다(배지 표의 떨어진 행). 이산 Gauss–Bonnet은 테두리에서 π − Σθ(측지 곡률 항)를 쓰며 angle_defect도 그렇게 한다(안쪽 0.9026 + 테두리 0.0974 = 1). 오른쪽: 공룡 골격의 3-D 스캔(박물관의 공개 데이터, 면을 줄임). 하나의 면처럼 보이지만 텍스처 이음매에서 잘린 1919개의 열린 조각이며 경계 변 27074개. 정리는 조각마다 성립하지만(Σ K / 2π = χ = 1919), 이 χ는 조각의 수일 뿐 공룡의 모양은 말하지 않는다.",
+   "de": "Links: eine Halbkugelschale (geodesic_dome-Halbkugel, 48 Randecken). Sie hat einen Rand, also χ = V − E + F = 1. Addiert man 2π − Σθ auch an den Randecken, ergibt sich 25.0 × 2π, nicht 2πχ = 2π (die gescheiterte Zeile in der Badge-Tabelle). Der diskrete Gauss–Bonnet verwendet am Rand π − Σθ (den geodätischen Krümmungsterm), und angle_defect tut das (innen 0.9026 + Rand 0.0974 = 1). Rechts: ein 3-D-Scan eines Dinosaurierskeletts (offene Daten eines Museums, dezimiert). Er sieht wie eine Fläche aus, besteht aber aus 1919 offenen, an Texturnähten zerschnittenen Flicken mit 27074 Randkanten. Der Satz gilt Flicken für Flicken (Σ K / 2π = χ = 1919), doch dieses χ zählt Flicken und sagt nichts über die Form des Dinosauriers.",
+   "hi": "बाएँ: एक अर्धगोलाकार कटोरा (geodesic_dome का अर्धगोला, 48 किनारे के शीर्ष)। इसकी सीमा है, इसलिए χ = V − E + F = 1। किनारे के शीर्षों पर भी 2π − Σθ जोड़ने से 25.0 × 2π मिलता है, 2πχ = 2π नहीं (बैज तालिका की असफल पंक्ति)। असतत Gauss–Bonnet किनारे पर π − Σθ (geodesic-वक्रता पद) का उपयोग करता है, और angle_defect वही करता है (आंतरिक 0.9026 + किनारा 0.0974 = 1)। दाएँ: एक डायनासोर कंकाल का 3-D स्कैन (एक संग्रहालय का खुला डेटा, decimated)। यह एक सतह जैसा दिखता है पर texture सीवनों पर कटे 1919 खुले टुकड़े हैं, 27074 सीमा किनारों के साथ। प्रमेय हर टुकड़े पर लागू है (Σ K / 2π = χ = 1919), पर यह χ टुकड़े गिनता है और डायनासोर के आकार के बारे में कुछ नहीं कहता।",
+   "fr": "À gauche : un bol hémisphérique (hémisphère de geodesic_dome, 48 sommets de bord). Il a un bord, donc χ = V − E + F = 1. Ajouter 2π − Σθ aussi aux sommets du bord donne 25.0 × 2π, et non 2πχ = 2π (la ligne échouée du tableau du badge). Le Gauss–Bonnet discret utilise π − Σθ (le terme de courbure géodésique) sur le bord, et angle_defect le fait (intérieur 0.9026 + bord 0.0974 = 1). À droite : un scan 3-D de squelette de dinosaure (données ouvertes d'un musée, décimé). Il ressemble à une seule surface mais compte 1919 pièces ouvertes découpées aux coutures de texture, avec 27074 arêtes de bord. Le théorème tient pièce par pièce (Σ K / 2π = χ = 1919), mais ce χ compte des pièces et ne dit rien de la forme du dinosaure."
+  },
+  "bowl: Σ(2π − Σθ) / 2π (χ should be 1)": {
+   "ja": "皿: 2π − Σθ だけの和 / 2π(χ = 1 のはず)",
+   "zh": "碗: Σ(2π − Σθ) / 2π(χ 应为 1)",
+   "tw": "碗: Σ(2π − Σθ) / 2π(χ 應為 1)",
+   "ko": "그릇: Σ(2π − Σθ) / 2π(χ는 1이어야)",
+   "de": "Schale: Σ(2π − Σθ) / 2π (χ sollte 1 sein)",
+   "hi": "कटोरा: Σ(2π − Σθ) / 2π (χ 1 होना चाहिए)",
+   "fr": "bol : Σ(2π − Σθ) / 2π (χ devrait valoir 1)"
+  },
+  "bowl: with boundary terms (angle_defect) vs 2πχ": {
+   "ja": "皿: 境界の項つき(angle_defect)と 2πχ の差",
+   "zh": "碗: 含边界项(angle_defect)与 2πχ 之差",
+   "tw": "碗: 含邊界項(angle_defect)與 2πχ 之差",
+   "ko": "그릇: 경계 항 포함(angle_defect)과 2πχ의 차",
+   "de": "Schale: mit Randtermen (angle_defect) vs. 2πχ",
+   "hi": "कटोरा: सीमा-पदों सहित (angle_defect) बनाम 2πχ",
+   "fr": "bol : avec termes de bord (angle_defect) vs 2πχ"
+  },
+  "scan: patches / boundary edges / χ": {
+   "ja": "走査: 面片 / 境界辺 / χ",
+   "zh": "扫描: 面片 / 边界边 / χ",
+   "tw": "掃描: 面片 / 邊界邊 / χ",
+   "ko": "스캔: 조각 / 경계 변 / χ",
+   "de": "Scan: Flicken / Randkanten / χ",
+   "hi": "स्कैन: टुकड़े / सीमा किनारे / χ",
+   "fr": "scan : pièces / arêtes de bord / χ"
+  },
+  "hemisphere bowl (with boundary, χ = 1)": {
+   "ja": "半球の皿(境界あり、χ = 1)",
+   "zh": "半球形的碗(有边界，χ = 1)",
+   "tw": "半球形的碗(有邊界，χ = 1)",
+   "ko": "반구 그릇(경계 있음, χ = 1)",
+   "de": "Halbkugelschale (mit Rand, χ = 1)",
+   "hi": "अर्धगोलाकार कटोरा (सीमा सहित, χ = 1)",
+   "fr": "bol hémisphérique (avec bord, χ = 1)"
+  },
+  "dinosaur skeleton scan (open patches)": {
+   "ja": "恐竜の骨格の走査(開いた面片の集まり)",
+   "zh": "恐龙骨架扫描(开放面片)",
+   "tw": "恐龍骨架掃描(開放面片)",
+   "ko": "공룡 골격 스캔(열린 조각)",
+   "de": "Dinosaurierskelett-Scan (offene Flicken)",
+   "hi": "डायनासोर कंकाल स्कैन (खुले टुकड़े)",
+   "fr": "scan de squelette de dinosaure (pièces ouvertes)"
+  },
+  "halfway: the plane reaches the rim": {
+   "ja": "半分: 皿の縁に届く",
+   "zh": "一半: 平面到达碗的边缘",
+   "tw": "一半: 平面到達碗的邊緣",
+   "ko": "절반: 평면이 테두리에 닿는다",
+   "de": "halb: die Ebene erreicht den Rand",
+   "hi": "आधा: समतल किनारे तक पहुँचता है",
+   "fr": "à mi-course : le plan atteint le bord"
+  },
+  "end: bowl 1 = χ; with 2π − Σθ only it misses": {
+   "ja": "終わり: 皿は 1 = χ、2π − Σθ だけなら外れる",
+   "zh": "结束: 碗为 1 = χ；只用 2π − Σθ 则偏离",
+   "tw": "結束: 碗為 1 = χ；只用 2π − Σθ 則偏離",
+   "ko": "끝: 그릇은 1 = χ, 2π − Σθ만으로는 빗나간다",
+   "de": "Ende: Schale 1 = χ; nur mit 2π − Σθ geht es daneben",
+   "hi": "अंत: कटोरा 1 = χ; केवल 2π − Σθ से चूक जाता है",
+   "fr": "fin : bol 1 = χ ; avec 2π − Σθ seul, il rate"
+  },
+  "bowl: Σ(2π − Σθ) / 2π": {
+   "ja": "皿: 2π − Σθ だけの和 / 2π",
+   "zh": "碗: Σ(2π − Σθ) / 2π",
+   "tw": "碗: Σ(2π − Σθ) / 2π",
+   "ko": "그릇: Σ(2π − Σθ) / 2π",
+   "de": "Schale: Σ(2π − Σθ) / 2π",
+   "hi": "कटोरा: Σ(2π − Σθ) / 2π",
+   "fr": "bol : Σ(2π − Σθ) / 2π"
+  },
+  "bowl: Σ K / 2π with boundary terms": {
+   "ja": "皿: 境界の項つき Σ K / 2π",
+   "zh": "碗: 含边界项的 Σ K / 2π",
+   "tw": "碗: 含邊界項的 Σ K / 2π",
+   "ko": "그릇: 경계 항 포함 Σ K / 2π",
+   "de": "Schale: Σ K / 2π mit Randtermen",
+   "hi": "कटोरा: सीमा-पदों सहित Σ K / 2π",
+   "fr": "bol : Σ K / 2π avec termes de bord"
+  },
+  "scan: Σ K / 2π with boundary terms": {
+   "ja": "走査: 境界の項つき Σ K / 2π",
+   "zh": "扫描: 含边界项的 Σ K / 2π",
+   "tw": "掃描: 含邊界項的 Σ K / 2π",
+   "ko": "스캔: 경계 항 포함 Σ K / 2π",
+   "de": "Scan: Σ K / 2π mit Randtermen",
+   "hi": "स्कैन: सीमा-पदों सहित Σ K / 2π",
+   "fr": "scan : Σ K / 2π avec termes de bord"
+  },
+  "angle defect K_v (π − Σθ on a rim)": {
+   "ja": "角欠損 K_v(縁は π − Σθ)",
+   "zh": "角亏损 K_v(边缘为 π − Σθ)",
+   "tw": "角虧損 K_v(邊緣為 π − Σθ)",
+   "ko": "각 결손 K_v(테두리는 π − Σθ)",
+   "de": "Winkeldefekt K_v (π − Σθ am Rand)",
+   "hi": "कोण-अभाव K_v (किनारे पर π − Σθ)",
+   "fr": "défaut angulaire K_v (π − Σθ sur un bord)"
+  },
+  "bowl (with boundary, χ = 1): Σ(2π − Σθ) over all vertices vs 2πχ — the limit: it fails on a boundary": {
+   "ja": "皿(境界あり、χ = 1): 2π − Σθ を全部足した値と 2πχ の差 —— 限界: 境界では一致しない",
+   "zh": "碗(有边界，χ = 1): 所有顶点的 Σ(2π − Σθ)与 2πχ —— 局限: 在边界上不成立",
+   "tw": "碗(有邊界，χ = 1): 所有頂點的 Σ(2π − Σθ)與 2πχ —— 限制: 在邊界上不成立",
+   "ko": "그릇(경계 있음, χ = 1): 모든 꼭짓점의 Σ(2π − Σθ)와 2πχ —— 한계: 경계에서는 맞지 않는다",
+   "de": "Schale (mit Rand, χ = 1): Σ(2π − Σθ) über alle Ecken vs. 2πχ — die Grenze: am Rand versagt es",
+   "hi": "कटोरा (सीमा सहित, χ = 1): सभी शीर्षों पर Σ(2π − Σθ) बनाम 2πχ — सीमा: किनारे पर यह विफल होता है",
+   "fr": "bol (avec bord, χ = 1) : Σ(2π − Σθ) sur tous les sommets vs 2πχ — la limite : cela échoue sur un bord"
+  },
+  "bowl: angle_defect sum with π − Σθ (geodesic curvature) on the 48 boundary vertices vs 2πχ": {
+   "ja": "皿: 境界の頂点に π − Σθ(測地曲率)を使った angle_defect の和と 2πχ の差",
+   "zh": "碗: 在 48 个边界顶点上用 π − Σθ(测地曲率)的 angle_defect 之和与 2πχ",
+   "tw": "碗: 在 48 個邊界頂點上用 π − Σθ(測地曲率)的 angle_defect 之和與 2πχ",
+   "ko": "그릇: 경계 꼭짓점 48개에 π − Σθ(측지 곡률)를 쓴 angle_defect의 합과 2πχ",
+   "de": "Schale: angle_defect-Summe mit π − Σθ (geodätische Krümmung) an den 48 Randecken vs. 2πχ",
+   "hi": "कटोरा: 48 सीमा शीर्षों पर π − Σθ (geodesic वक्रता) सहित angle_defect का योग बनाम 2πχ",
+   "fr": "bol : somme angle_defect avec π − Σθ (courbure géodésique) sur les 48 sommets de bord vs 2πχ"
+  },
+  "the scan is not one closed surface (patches, boundary edges)": {
+   "ja": "走査は 1 つの閉曲面ではない(面片の数、境界辺の数)",
+   "zh": "扫描不是一个闭曲面(面片数、边界边数)",
+   "tw": "掃描不是一個閉曲面(面片數、邊界邊數)",
+   "ko": "스캔은 하나의 닫힌 곡면이 아니다(조각 수, 경계 변 수)",
+   "de": "der Scan ist keine einzelne geschlossene Fläche (Flicken, Randkanten)",
+   "hi": "स्कैन एक बंद सतह नहीं है (टुकड़े, सीमा किनारे)",
+   "fr": "le scan n'est pas une seule surface fermée (pièces, arêtes de bord)"
+  },
+  "the theorem still holds patch by patch: Σ K / 2π with boundary terms vs χ = 1919": {
+   "ja": "走査でも面片ごとの定理は成り立つ: 境界の項つきの Σ K / 2π と χ = 1919",
+   "zh": "定理对每个面片仍成立: 含边界项的 Σ K / 2π 与 χ = 1919",
+   "tw": "定理對每個面片仍成立: 含邊界項的 Σ K / 2π 與 χ = 1919",
+   "ko": "정리는 조각마다 여전히 성립: 경계 항 포함 Σ K / 2π와 χ = 1919",
+   "de": "der Satz gilt weiterhin Flicken für Flicken: Σ K / 2π mit Randtermen vs. χ = 1919",
+   "hi": "प्रमेय अब भी हर टुकड़े पर लागू: सीमा-पदों सहित Σ K / 2π बनाम χ = 1919",
+   "fr": "le théorème tient encore pièce par pièce : Σ K / 2π avec termes de bord vs χ = 1919"
+  },
+  "A hemisphere bowl (with a boundary, χ = 1). Does adding 2π − Σθ over its vertices give 2πχ = 2π?": {
+   "ja": "球を半分に切った皿(境界あり、χ = 1)。頂点ごとに 2π − Σθ を足すと 2πχ = 2π になる?",
+   "zh": "半球形的碗(有边界，χ = 1)。把各顶点的 2π − Σθ 加起来会等于 2πχ = 2π 吗?",
+   "tw": "半球形的碗(有邊界，χ = 1)。把各頂點的 2π − Σθ 加起來會等於 2πχ = 2π 嗎?",
+   "ko": "반구 그릇(경계 있음, χ = 1). 꼭짓점마다 2π − Σθ를 더하면 2πχ = 2π가 될까?",
+   "de": "Eine Halbkugelschale (mit Rand, χ = 1). Ergibt das Addieren von 2π − Σθ über ihre Ecken 2πχ = 2π?",
+   "hi": "एक अर्धगोलाकार कटोरा (सीमा सहित, χ = 1)। क्या इसके शीर्षों पर 2π − Σθ जोड़ने से 2πχ = 2π मिलता है?",
+   "fr": "Un bol hémisphérique (avec un bord, χ = 1). Additionner 2π − Σθ sur ses sommets donne-t-il 2πχ = 2π ?"
+  },
+  "Yes": {
+   "ja": "なる",
+   "zh": "会",
+   "tw": "會",
+   "ko": "된다",
+   "de": "Ja",
+   "hi": "हाँ",
+   "fr": "Oui"
+  },
+  "No, boundary terms are needed": {
+   "ja": "ならない(境界の項が要る)",
+   "zh": "不会(需要边界项)",
+   "tw": "不會(需要邊界項)",
+   "ko": "안 된다(경계 항이 필요)",
+   "de": "Nein, Randterme sind nötig",
+   "hi": "नहीं, सीमा-पद चाहिए",
+   "fr": "Non, il faut des termes de bord"
+  },
+  "A rim vertex is open and flat, so the angles around it add up to about π. Using 2π − Σθ leaves nearly π extra at every rim vertex; the total becomes 25.0 × 2π, not 2π. With π − Σθ (the geodesic-curvature term) on the rim, interior 0.9026 × 2π + rim 0.0974 × 2π = 1 × 2π, exactly 2πχ (gap 8.7e-14).": {
+   "ja": "縁の頂点は平らに開いていて、まわりの角の和は π 前後。2π − Σθ は縁で π 近く余り、全部足すと 25.0 × 2π になって 2π にならない。縁の頂点に π − Σθ(境界の測地曲率の項)を使うと、内側 0.9026 × 2π + 縁 0.0974 × 2π = 1 × 2π でちょうど 2πχ(差 8.7e-14)。",
+   "zh": "边缘顶点是敞开而平坦的，周围的角加起来约为 π。用 2π − Σθ 时每个边缘顶点都多出近 π；总和变成 25.0 × 2π，而不是 2π。在边缘使用 π − Σθ(测地曲率项)后，内部 0.9026 × 2π + 边缘 0.0974 × 2π = 1 × 2π，恰好是 2πχ(差 8.7e-14)。",
+   "tw": "邊緣頂點是敞開而平坦的，周圍的角加起來約為 π。用 2π − Σθ 時每個邊緣頂點都多出近 π；總和變成 25.0 × 2π，而不是 2π。在邊緣使用 π − Σθ(測地曲率項)後，內部 0.9026 × 2π + 邊緣 0.0974 × 2π = 1 × 2π，恰好是 2πχ(差 8.7e-14)。",
+   "ko": "테두리 꼭짓점은 열려 있고 평평해서 둘레 각의 합이 π 가까이다. 2π − Σθ를 쓰면 테두리 꼭짓점마다 π 가까이 남아 합이 25.0 × 2π가 되고 2π가 아니다. 테두리에 π − Σθ(측지 곡률 항)를 쓰면 안쪽 0.9026 × 2π + 테두리 0.0974 × 2π = 1 × 2π로 정확히 2πχ(차 8.7e-14).",
+   "de": "Eine Randecke ist offen und flach, die Winkel um sie herum summieren sich zu etwa π. Mit 2π − Σθ bleibt an jeder Randecke fast π übrig; die Summe wird 25.0 × 2π, nicht 2π. Mit π − Σθ (dem geodätischen Krümmungsterm) am Rand gilt innen 0.9026 × 2π + Rand 0.0974 × 2π = 1 × 2π, genau 2πχ (Abstand 8.7e-14).",
+   "hi": "किनारे का शीर्ष खुला और सपाट है, इसलिए उसके चारों ओर के कोणों का योग लगभग π है। 2π − Σθ के साथ हर किनारे के शीर्ष पर लगभग π अतिरिक्त बचता है; कुल 25.0 × 2π हो जाता है, 2π नहीं। किनारे पर π − Σθ (geodesic-वक्रता पद) के साथ, आंतरिक 0.9026 × 2π + किनारा 0.0974 × 2π = 1 × 2π, ठीक 2πχ (अंतर 8.7e-14)।",
+   "fr": "Un sommet du bord est ouvert et plat, donc les angles autour de lui totalisent environ π. Avec 2π − Σθ il reste près de π en trop à chaque sommet du bord ; le total devient 25.0 × 2π, et non 2π. Avec π − Σθ (le terme de courbure géodésique) sur le bord, intérieur 0.9026 × 2π + bord 0.0974 × 2π = 1 × 2π, exactement 2πχ (écart 8.7e-14)."
+  },
+  "with boundary: Σ_interior (2π − Σθ) + Σ_boundary (π − Σθ) = 2π χ\nχ = V − E + F = 1 (a disc)": {
+   "ja": "境界あり: Σ_内部 (2π − Σθ) + Σ_境界 (π − Σθ) = 2π χ\nχ = V − E + F = 1(円板)",
+   "zh": "有边界时: Σ_内部 (2π − Σθ) + Σ_边界 (π − Σθ) = 2π χ\nχ = V − E + F = 1(圆盘)",
+   "tw": "有邊界時: Σ_內部 (2π − Σθ) + Σ_邊界 (π − Σθ) = 2π χ\nχ = V − E + F = 1(圓盤)",
+   "ko": "경계 있음: Σ_안쪽 (2π − Σθ) + Σ_경계 (π − Σθ) = 2π χ\nχ = V − E + F = 1(원판)",
+   "de": "mit Rand: Σ_innen (2π − Σθ) + Σ_Rand (π − Σθ) = 2π χ\nχ = V − E + F = 1 (eine Scheibe)",
+   "hi": "सीमा सहित: Σ_आंतरिक (2π − Σθ) + Σ_सीमा (π − Σθ) = 2π χ\nχ = V − E + F = 1 (एक डिस्क)",
+   "fr": "avec bord : Σ_intérieur (2π − Σθ) + Σ_bord (π − Σθ) = 2π χ\nχ = V − E + F = 1 (un disque)"
+  },
+  "This is the limit tab. The dinosaur skeleton next to the bowl is a 3-D scan: 1919 open patches cut apart at texture seams (2107 patches and 50256 boundary edges before decimation). The theorem holds patch by patch, but χ = 1919 only counts patches; it says nothing about the dinosaur's shape (its holes). Reading that would need the scan to be repaired into one closed surface.": {
+   "ja": "これが限界の回。隣の恐竜の骨格は 3-D 走査の模型で、継ぎ目で頂点が切れた 1919 枚の開いた面片(間引き前は 2107 枚、境界辺 50256 本)。面片ごとに定理は成り立つが χ = 1919 は面片の数を語るだけで、恐竜の形(穴の数)は読めない。閉じた 1 枚の面にするには走査の修復が要る。",
+   "zh": "这是局限标签页。碗旁边的恐龙骨架是 3-D 扫描: 在纹理接缝处被切开的 1919 个开放面片(简化前为 2107 个面片、50256 条边界边)。定理对每个面片都成立，但 χ = 1919 只是面片的数目；它对恐龙的形状(孔的个数)什么也说不了。要读出那个，需要把扫描修复成一个闭曲面。",
+   "tw": "這是限制分頁。碗旁邊的恐龍骨架是 3-D 掃描: 在紋理接縫處被切開的 1919 個開放面片(簡化前為 2107 個面片、50256 條邊界邊)。定理對每個面片都成立，但 χ = 1919 只是面片的數目；它對恐龍的形狀(孔的個數)什麼也說不了。要讀出那個，需要把掃描修復成一個閉曲面。",
+   "ko": "이것이 한계 탭이다. 그릇 옆의 공룡 골격은 3-D 스캔으로, 텍스처 이음매에서 잘린 1919개의 열린 조각이다(면을 줄이기 전에는 조각 2107개, 경계 변 50256개). 정리는 조각마다 성립하지만 χ = 1919는 조각의 수일 뿐, 공룡의 모양(구멍의 수)은 말하지 않는다. 그것을 읽으려면 스캔을 하나의 닫힌 면으로 고쳐야 한다.",
+   "de": "Dies ist der Grenze-Tab. Das Dinosaurierskelett neben der Schale ist ein 3-D-Scan: 1919 offene, an Texturnähten zerschnittene Flicken (vor der Dezimierung 2107 Flicken und 50256 Randkanten). Der Satz gilt Flicken für Flicken, doch χ = 1919 zählt nur Flicken; über die Form des Dinosauriers (seine Löcher) sagt es nichts. Um das abzulesen, müsste der Scan zu einer geschlossenen Fläche repariert werden.",
+   "hi": "यह सीमा टैब है। कटोरे के बगल का डायनासोर कंकाल एक 3-D स्कैन है: texture सीवनों पर कटे 1919 खुले टुकड़े (decimation से पहले 2107 टुकड़े और 50256 सीमा किनारे)। प्रमेय हर टुकड़े पर लागू है, पर χ = 1919 केवल टुकड़े गिनता है; डायनासोर के आकार (उसके छेदों) के बारे में कुछ नहीं कहता। उसे पढ़ने के लिए स्कैन को एक बंद सतह में मरम्मत करना होगा।",
+   "fr": "C'est l'onglet limite. Le squelette de dinosaure à côté du bol est un scan 3-D : 1919 pièces ouvertes découpées aux coutures de texture (2107 pièces et 50256 arêtes de bord avant décimation). Le théorème tient pièce par pièce, mais χ = 1919 ne compte que des pièces ; il ne dit rien de la forme du dinosaure (ses trous). Pour lire cela, il faudrait réparer le scan en une seule surface fermée."
+  },
+  "Asteroid Itokawa shape: Gaskell Itokawa Shape Model V1.1 (NASA Planetary Data System, CC0 1.0, faces as in the original). Dinosaur skeleton scan: Triceratops horridus (Smithsonian Institution, CC0, decimated from 150k to 24k faces). The 2-hole and 3-hole shapes are synthetic.": {
+   "ja": "小惑星イトカワの形: Gaskell Itokawa Shape Model V1.1(NASA Planetary Data System、CC0 1.0、面は原本のまま)。恐竜の骨格の走査: Triceratops horridus(Smithsonian Institution、CC0、面を 150k → 24k に間引いた)。穴 2 つ・3 つの形は合成。",
+   "zh": "小行星系川的形状: Gaskell Itokawa Shape Model V1.1(NASA Planetary Data System，CC0 1.0，面与原本相同)。恐龙骨架扫描: Triceratops horridus(Smithsonian Institution，CC0，面从 150k 简化到 24k)。2 孔和 3 孔的形状是合成的。",
+   "tw": "小行星糸川的形狀: Gaskell Itokawa Shape Model V1.1(NASA Planetary Data System，CC0 1.0，面與原本相同)。恐龍骨架掃描: Triceratops horridus(Smithsonian Institution，CC0，面從 150k 簡化到 24k)。2 孔和 3 孔的形狀是合成的。",
+   "ko": "소행성 이토카와의 모양: Gaskell Itokawa Shape Model V1.1(NASA Planetary Data System, CC0 1.0, 면은 원본 그대로). 공룡 골격 스캔: Triceratops horridus(Smithsonian Institution, CC0, 면을 150k에서 24k로 줄임). 구멍 2개·3개의 모양은 합성.",
+   "de": "Form des Asteroiden Itokawa: Gaskell Itokawa Shape Model V1.1 (NASA Planetary Data System, CC0 1.0, Flächen wie im Original). Dinosaurierskelett-Scan: Triceratops horridus (Smithsonian Institution, CC0, von 150k auf 24k Flächen dezimiert). Die Formen mit 2 und 3 Löchern sind synthetisch.",
+   "hi": "क्षुद्रग्रह Itokawa का आकार: Gaskell Itokawa Shape Model V1.1 (NASA Planetary Data System, CC0 1.0, फलक मूल जैसे)। डायनासोर कंकाल स्कैन: Triceratops horridus (Smithsonian Institution, CC0, 150k से 24k फलकों तक decimated)। 2-छेद और 3-छेद वाले आकार संश्लिष्ट हैं।",
+   "fr": "Forme de l'astéroïde Itokawa : Gaskell Itokawa Shape Model V1.1 (NASA Planetary Data System, CC0 1.0, faces comme dans l'original). Scan du squelette de dinosaure : Triceratops horridus (Smithsonian Institution, CC0, décimé de 150k à 24k faces). Les formes à 2 et 3 trous sont synthétiques."
+  }
+ }
+}

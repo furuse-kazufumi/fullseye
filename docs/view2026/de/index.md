@@ -76,6 +76,7 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 <a href="../../articles/assets/media/evis_stereo_fullseye.mp4"><img src="../thumbs/evis_stereo_depth.jpg" alt="Stereoaugen" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Stereoaugen</span></a>
 <a href="../../articles/assets/media/evis_bean_track_fullseye.mp4"><img src="../thumbs/evis_bean_track.jpg" alt="Stäbchenkamera-Tracking" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Stäbchenkamera-Tracking</span></a>
 <a href="../../view2026/anim3d/interactive_anim3d_viewer.html?lang=de"><img src="../thumbs/interactive_anim3d_viewer.jpg" alt="Arm und halbtransparente Linse" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Arm und halbtransparente Linse · 0.3 MB</span></a>
+<a href="../../anim3d/gauss_bonnet.html?lang=de"><img src="../thumbs/gauss_bonnet.jpg" alt="Krümmung aufsummiert, gleiche Zahl" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Krümmung aufsummiert, gleiche Zahl · 3.1 MB</span></a>
 </div>
 
 ## Artikelserien (englische Artikel auf Qiita)
@@ -658,6 +659,7 @@ Jede Zahl ist gegen eine Ground Truth gemessen, die der PoC selbst eingesetzt ha
 **Bewegtes 3-D zum Drehen**
 
 - [Arm und halbtransparente Linse](../../view2026/anim3d/interactive_anim3d_viewer.html?lang=de) (bewegtes 3-D, drehbar, 0.3 MB): Mit dem Finger drehen und den Arm beim Tragen einer Kiste aus jedem Winkel ansehen. Strahlen laufen durch eine halbtransparente Linse in den Brennpunkt, darunter laufen ein Höhenbild von oben und seine Binarisierung zeitgleich mit. [Quelle](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
+- [Krümmung aufsummiert, gleiche Zahl](../../anim3d/gauss_bonnet.html?lang=de) (bewegtes 3-D, drehbar, 3.1 MB): Kugel zum Würfel geschärft, Torus, mehr Löcher oder der gemessene Asteroid: Die über die Ecken aufsummierten Winkeldefekte K ergeben Σ K / 2π = χ = V − E + F. Mit dem Finger drehen und zusehen, wie die halbtransparente Ebene die Ecken in die Summe fegt. Eine Schale mit Rand bricht es (der Grenze-Tab). **In 17 geprüften Zeilen unterscheiden sich Σ K / 2π und χ um weniger als 1e-12; nur die Schale mit Rand liegt um 24.0 × 2π daneben und stimmt, sobald der Randterm hinzukommt.** [Quelle](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_gaussbonnet_anim3d.py)
 
 </div>
 

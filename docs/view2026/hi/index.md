@@ -76,6 +76,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/media/evis_stereo_fullseye.mp4"><img src="../thumbs/evis_stereo_depth.jpg" alt="Humanoid stereo eyes" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Humanoid stereo eyes</span></a>
 <a href="../../articles/assets/media/evis_bean_track_fullseye.mp4"><img src="../thumbs/evis_bean_track.jpg" alt="Chopstick-cam tracking" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Chopstick-cam tracking</span></a>
 <a href="../../view2026/anim3d/interactive_anim3d_viewer.html?lang=hi"><img src="../thumbs/interactive_anim3d_viewer.jpg" alt="Arm और अर्ध-पारदर्शी lens" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Arm और अर्ध-पारदर्शी lens · 0.3 MB</span></a>
+<a href="../../anim3d/gauss_bonnet.html?lang=hi"><img src="../thumbs/gauss_bonnet.jpg" alt="सारी वक्रता जोड़ो, वही संख्या" loading="lazy" width="320" height="320"><b>&#9654;</b><span>सारी वक्रता जोड़ो, वही संख्या · 3.1 MB</span></a>
 </div>
 
 ## Article series (Qiita पर English articles)
@@ -658,6 +659,7 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 **घुमाकर देखें: चलता 3-D**
 
 - [Arm और अर्ध-पारदर्शी lens](../../view2026/anim3d/interactive_anim3d_viewer.html?lang=hi) (चलता 3-D, drag से घुमाएँ, 0.3 MB): उंगली से घुमाकर किसी भी कोण से देखें कि arm box कैसे ले जाता है। किरणें अर्ध-पारदर्शी lens से होकर focus पर मिलती हैं, और नीचे ऊपर से ली गई height image और उसका binarisation उसी timeline पर चलते हैं। [source](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
+- [सारी वक्रता जोड़ो, वही संख्या](../../anim3d/gauss_bonnet.html?lang=hi) (चलता 3-D, drag से घुमाएँ, 3.1 MB): गोले को घन में नुकीला करो, टोरस लो, छेद जोड़ो, या मापा हुआ क्षुद्रग्रह लो: शीर्षों पर जोड़े गए कोण-अभाव K से Σ K / 2π = χ = V − E + F मिलता है। उंगली से घुमाएँ और देखें कि पारभासी समतल शीर्षों को योग में समेटता है। सीमा वाला कटोरा इसे तोड़ देता है (सीमा टैब)। **17 जाँची गई पंक्तियों में Σ K / 2π और χ का अंतर 1e-12 से कम; केवल सीमा वाला कटोरा 24.0 × 2π से चूकता है, और सीमा-पद जोड़ते ही मेल खाता है।** [source](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_gaussbonnet_anim3d.py)
 
 </div>
 

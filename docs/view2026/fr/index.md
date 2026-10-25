@@ -76,6 +76,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 <a href="../../articles/assets/media/evis_stereo_fullseye.mp4"><img src="../thumbs/evis_stereo_depth.jpg" alt="Les deux yeux du humanoïde" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Les deux yeux du humanoïde</span></a>
 <a href="../../articles/assets/media/evis_bean_track_fullseye.mp4"><img src="../thumbs/evis_bean_track.jpg" alt="Suivi du haricot par la caméra au bout des baguettes" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Suivi du haricot par la caméra au bout des baguettes</span></a>
 <a href="../../view2026/anim3d/interactive_anim3d_viewer.html?lang=fr"><img src="../thumbs/interactive_anim3d_viewer.jpg" alt="Bras et lentille translucide" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Bras et lentille translucide · 0.3 MB</span></a>
+<a href="../../anim3d/gauss_bonnet.html?lang=fr"><img src="../thumbs/gauss_bonnet.jpg" alt="Toute la courbure additionnée" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Toute la courbure additionnée · 3.1 MB</span></a>
 </div>
 
 ## Série d'articles (articles sur Qiita)
@@ -658,6 +659,7 @@ Chaque valeur est mesurée par rapport à la vérité terrain que chaque PoC a e
 **3-D animée à faire pivoter**
 
 - [Bras et lentille translucide](../../view2026/anim3d/interactive_anim3d_viewer.html?lang=fr) (3-D animée, à faire pivoter, 0.3 MB): Faites pivoter du doigt et regardez le bras porter une boîte sous n'importe quel angle. Des rayons traversent une lentille translucide jusqu'à son foyer, tandis qu'une image de hauteur vue de dessus et sa binarisation avancent sur la même échelle de temps. [source](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
+- [Toute la courbure additionnée](../../anim3d/gauss_bonnet.html?lang=fr) (3-D animée, à faire pivoter, 3.1 MB): Aiguisez une sphère en cube, prenez un tore, ajoutez des trous ou l'astéroïde mesuré : les défauts angulaires K additionnés sur les sommets donnent Σ K / 2π = χ = V − E + F. Faites pivoter du doigt et regardez le plan translucide balayer les sommets dans la somme. Un bol à bord fait échouer la formule (l'onglet limite). **Sur 17 lignes vérifiées, Σ K / 2π et χ diffèrent de moins de 1e-12 ; seul le bol à bord manque de 24.0 × 2π, et coïncide dès qu'on ajoute le terme de bord.** [source](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_gaussbonnet_anim3d.py)
 
 </div>
 

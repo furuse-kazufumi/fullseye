@@ -76,6 +76,7 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 <a href="../../articles/assets/media/evis_stereo_fullseye.mp4"><img src="../thumbs/evis_stereo_depth.jpg" alt="Humanoid stereo eyes" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Humanoid stereo eyes</span></a>
 <a href="../../articles/assets/media/evis_bean_track_fullseye.mp4"><img src="../thumbs/evis_bean_track.jpg" alt="Chopstick-cam tracking" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Chopstick-cam tracking</span></a>
 <a href="../../view2026/anim3d/interactive_anim3d_viewer.html?lang=en"><img src="../thumbs/interactive_anim3d_viewer.jpg" alt="Arm and translucent lens" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Arm and translucent lens · 0.3 MB</span></a>
+<a href="../../anim3d/gauss_bonnet.html?lang=en"><img src="../thumbs/gauss_bonnet.jpg" alt="Add up all the curvature" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Add up all the curvature · 3.1 MB</span></a>
 </div>
 
 ## Article series (articles on Qiita)
@@ -658,6 +659,7 @@ Every number is measured against ground truth the PoC planted itself (closed for
 **Moving 3-D you can rotate**
 
 - [Arm and translucent lens](../../view2026/anim3d/interactive_anim3d_viewer.html?lang=en) (moving 3-D, drag to rotate, 0.3 MB): Rotate with a finger and watch the arm carry a box from any angle. Rays pass through a translucent lens to its focus, while a top-down height image and its binarisation advance on the same timeline. [source](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
+- [Add up all the curvature](../../anim3d/gauss_bonnet.html?lang=en) (moving 3-D, drag to rotate, 3.1 MB): Sharpen a sphere into a cube, take a torus, add holes, or use the measured asteroid: the angle defects K added over the vertices give Σ K / 2π = χ = V − E + F. Rotate with a finger and watch the translucent plane sweep the vertices into the sum. A bowl with a boundary breaks it (the limit tab). **In 17 checked rows Σ K / 2π and χ differ by less than 1e-12; only the bowl with a boundary misses by 24.0 × 2π, and matches once the boundary term is added.** [source](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_gaussbonnet_anim3d.py)
 
 </div>
 
