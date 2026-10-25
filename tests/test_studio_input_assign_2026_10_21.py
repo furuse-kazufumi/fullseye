@@ -86,6 +86,9 @@ def test_assignment_form_and_data_check_use_selected_language(tmp_path, monkeypa
     monkeypatch.setenv("FULLSEYE_STUDIO_SETTINGS", str(tmp_path / (lang + ".ini")))
     _app(); path = tmp_path / (lang + ".csv"); _write(path)
     win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(24)))
+    # ★UI 言語はプロセス全体の状態(studio._UI_LANG)。切り替えたまま返すと、同じ worker で後に走る
+    #   test_studio_result_preview の note が hi / ko になって落ちる(CI shard 5、2026-10-25)。teardown で戻す。
+    monkeypatch.setitem(studio._UI_LANG, "code", studio._UI_LANG["code"])
     win._apply_language(lang)
     dlg = win._open_ledger_runner("msa_gauge_rr")
 

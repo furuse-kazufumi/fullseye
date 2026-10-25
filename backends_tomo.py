@@ -37,12 +37,15 @@ NO coverage claim; this is a brand-new capability.
                            angles see almost the same object). a = angle-axis
                            sigma, b = a gentle detector-axis sigma.
 
-Implementation honesty: when ``scikit-image`` is importable (the normal case in
-this repo) the genuine ``skimage.transform.radon`` / ``iradon`` / ``iradon_sart``
-are used. When it is absent the module falls back to a self-contained NumPy
-``rotate-and-sum`` Radon transform and an FFT ramp/Shepp-Logan-filtered
-back-projection -- both are real algorithms, not stubs (the tests exercise the
-NumPy path directly). Either way the docstrings state which path ran.
+Implementation honesty: the registered ops use the genuine ``skimage.transform.radon``
+/ ``iradon`` / ``iradon_sart``. When scikit-image is absent they raise
+``backend_safe.MissingDependencyError`` (fail-closed) instead of silently switching
+to the self-contained NumPy ``rotate-and-sum`` Radon transform and FFT
+ramp/Shepp-Logan back-projection that live in this module -- those are real
+algorithms, not stubs, but they are **different algorithms** (measured 2026-10-25:
+``tm_radon_forward`` max abs diff 0.56, ``tm_fbp_reconstruct`` 0.76 on coins), so
+they stay callable only by name: :func:`_radon_np`, :func:`_iradon_np`,
+:func:`sart_np`. The tests exercise the NumPy path directly through those names.
 
 Contract: ``fn(v, a, b)`` maps a 2-D float64 image in [0,1] (plus knobs
 a,b in [0,1]) to a 2-D float64 image in [0,1]. Deterministic, finite, fail-soft
@@ -59,6 +62,12 @@ try:  # genuine library path (preferred)
     _HAVE_SKI = True
 except Exception:  # noqa: BLE001 - optional dependency; NumPy fallback below
     _HAVE_SKI = False
+
+
+def _require_ski(what):
+    """scikit-image が無ければ fail-closed —— 2026-10-25 まで rotate-and-sum の近似に黙って落ちていた。"""
+    from backend_safe import require_dependency
+    require_dependency(_HAVE_SKI, "skimage", what)
 
 
 # --------------------------------------------------------------------------- #
@@ -215,10 +224,8 @@ def tm_radon_forward(v, a, b):
     # are zero-padded to a centred square whose side is the diagonal, so the
     # whole rectangle lies inside the circle. Square slices are unchanged.
     x = _pad_to_diagonal_square(x)
-    if _HAVE_SKI:
-        sino = radon(x, theta=thetas, circle=True).T        # (angles, detector)
-    else:
-        sino = _radon_np(x, thetas)
+    _require_ski("skimage.transform.radon; the rotate-and-sum approximation is backends_tomo._radon_np()")
+    sino = radon(x, theta=thetas, circle=True).T        # (angles, detector)
     sino = _norm01(sino)
     return np.clip(_resize(sino, H, W), 0.0, 1.0)
 
@@ -236,10 +243,8 @@ def tm_fbp_reconstruct(v, a, b):
         return x
     kind = "ramp" if float(b) < 0.5 else "shepp-logan"
     thetas = _thetas(H, 180.0)
-    if _HAVE_SKI:
-        recon = iradon(x.T, theta=thetas, filter_name=kind, circle=True, output_size=W)
-    else:
-        recon = _iradon_np(x, thetas, kind)
+    _require_ski("skimage.transform.iradon; the FFT-filtered approximation is backends_tomo._iradon_np()")
+    recon = iradon(x.T, theta=thetas, filter_name=kind, circle=True, output_size=W)
     return np.clip(_resize(_norm01(recon), H, W), 0.0, 1.0)
 
 
@@ -257,20 +262,28 @@ def tm_sart_reconstruct(v, a, b):
     n_iter = int(np.clip(round(1 + float(np.clip(a, 0.0, 1.0)) * 4), 1, 5))
     relax = float(np.clip(0.05 + float(np.clip(b, 0.0, 1.0)) * 0.35, 0.05, 0.4))
     thetas = _thetas(H, 180.0)
-    if _HAVE_SKI:
-        est = None
-        for _ in range(n_iter):
-            est = iradon_sart(x.T, theta=thetas, image=est, relaxation=relax)
-        recon = est
-    else:
-        det = W
-        est = np.zeros((det, det), np.float64)
-        weight = _iradon_np(_radon_np(np.ones((det, det)), thetas), thetas, None) + 1e-6
-        for _ in range(n_iter):
-            resid = x - _radon_np(est, thetas)
-            est = est + relax * _iradon_np(resid, thetas, None) / weight
-        recon = est
-    return np.clip(_resize(_norm01(recon), H, W), 0.0, 1.0)
+    _require_ski("skimage.transform.iradon_sart; the NumPy SIRT approximation is backends_tomo.sart_np()")
+    est = None
+    for _ in range(n_iter):
+        est = iradon_sart(x.T, theta=thetas, image=est, relaxation=relax)
+    return np.clip(_resize(_norm01(est), H, W), 0.0, 1.0)
+
+
+def sart_np(x, thetas, n_iter, relax):
+    """Self-contained NumPy SIRT (project -> residual -> weighted back-projection).
+
+    **An approximation of** ``skimage.transform.iradon_sart``, not its twin: it reuses the
+    rotate-and-sum :func:`_radon_np` and :func:`_iradon_np`, so its answer differs from the
+    registered ``tm_sart_reconstruct`` (measured 2026-10-25: max abs diff 0.69 on coins). It
+    is exposed by name only; the registered op refuses to run without scikit-image.
+    """
+    det = x.shape[1]
+    est = np.zeros((det, det), np.float64)
+    weight = _iradon_np(_radon_np(np.ones((det, det)), thetas), thetas, None) + 1e-6
+    for _ in range(n_iter):
+        resid = x - _radon_np(est, thetas)
+        est = est + relax * _iradon_np(resid, thetas, None) / weight
+    return est
 
 
 def tm_backproject_unfiltered(v, a, b):
@@ -285,10 +298,8 @@ def tm_backproject_unfiltered(v, a, b):
     if H < 3 or W < 3:
         return x
     thetas = _thetas(H, 180.0)
-    if _HAVE_SKI:
-        recon = iradon(x.T, theta=thetas, filter_name=None, circle=True, output_size=W)
-    else:
-        recon = _iradon_np(x, thetas, None)
+    _require_ski("skimage.transform.iradon(filter_name=None); the NumPy approximation is backends_tomo._iradon_np(x, thetas, None)")
+    recon = iradon(x.T, theta=thetas, filter_name=None, circle=True, output_size=W)
     return np.clip(_resize(_norm01(recon), H, W), 0.0, 1.0)
 
 

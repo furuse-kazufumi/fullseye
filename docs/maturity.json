@@ -109,10 +109,8 @@
    "note": "docs/capabilities/blob-and-region.md",
    "status": "validated-public-real-data",
    "ops_total": 5,
-   "ops_named_in_tests": 4,
-   "ops_not_named_in_tests": [
-    "watersheds"
-   ],
+   "ops_named_in_tests": 5,
+   "ops_not_named_in_tests": [],
    "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
    "examples": [
     {
@@ -1680,10 +1678,8 @@
    "note": "docs/capabilities/scratch-detection-and-width.md",
    "status": "verified-synthetic",
    "ops_total": 4,
-   "ops_named_in_tests": 3,
-   "ops_not_named_in_tests": [
-    "lines_gauss"
-   ],
+   "ops_named_in_tests": 4,
+   "ops_not_named_in_tests": [],
    "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
    "examples": [
     {

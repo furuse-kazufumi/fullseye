@@ -225,8 +225,9 @@ AUTO_SPECS = [{'halcon': 'tan_image',
   'shape': 'threshold',
   'params': {'method': 'otsu'},
   'doc': "大津の判別分析法（Otsu's method）による自動しきい値二値化。``binary_threshold``/``auto_threshold`` と同じ "
-         '``_sh_threshold`` の ``otsu`` 分岐を共有し、a, b は未使用。しきい値より明るい画素を前景(1)とする。skimage '
-         'が無い環境では画像平均値をしきい値とするフォールバックになる。\n'
+         '``_sh_threshold`` の ``otsu`` 分岐を共有し、a, b は未使用。しきい値より明るい画素を前景(1)とする。scikit-image '
+         'が無い環境では同じ 256 ビンの Otsu を numpy の双子(``numpy_twins.threshold_otsu``)で計算する(bit '
+         '一致。2026-10-25 までは画像平均値をしきい値とする別の答えに落ちていた)。\n'
          '\n'
          'HALCON の '
          '``bin_threshold``（複数の自動しきい値決定アルゴリズムから選んで二値化する演算、既定は最大分離度=大津法相当）に相当する近似で、大津法のみをサポートし他のアルゴリズム選択肢は無い。'},
@@ -563,9 +564,10 @@ AUTO_SPECS = [{'halcon': 'tan_image',
   'out_sort': 'contour',
   'shape': 'xld',
   'params': {'kind': 'region_boundary'},
-  'doc': 'region（画素マスク）の外周を、トレース順（輪郭に沿った順序）を保った XLD 輪郭として抽出する。skimage があれば '
-         '``find_contours``（marching squares によるサブピクセル輪郭）、無ければ自前の Moore 近傍追跡（8 近傍、Jacob '
-         'の停止条件）にフォールバックする。a, b は未使用。\n'
+  'doc': 'region（画素マスク）の外周を、トレース順（輪郭に沿った順序）を保った XLD 輪郭として抽出する。``find_contours``（marching squares '
+         'によるサブピクセル輪郭）で取る。scikit-image が無い環境では ``MissingDependencyError`` で止まる（2026-10-25 までは自前の '
+         'Moore 近傍追跡——画素解像度で点数も座標も違う別の輪郭——に黙って落ちていた。追跡は ``backends_auto._moore_boundaries`` '
+         'を名指しで呼べば使える）。a, b は未使用。\n'
          '\n'
          '2026-08-30 の修正で、以前使っていた汎用の ``edges_sub_pix`` 経路をやめ、上のトレース順の抽出に置き換えた。旧経路は ``np.where`` '
          'のラスタ順で点を返しており、順序に依存する後段処理（楕円フーリエ記述子など）を壊していた。HALCON の ``gen_contour_region_xld``（region '
