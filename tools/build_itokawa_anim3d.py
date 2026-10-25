@@ -1176,8 +1176,8 @@ def all_checks(R, g):
                  "± 110 kg/m³", "%.0f kg/m³" % rb, abs(rb - LOWRY_RHO_BODY) <= LOWRY_RHO_BODY_SIGMA),
             _row("そのときの重心のずれ(x)と Lowry 2014 の 21 ± 12 m", "centre-of-mass shift (x) then vs Lowry 2014: 21 ± 12 m",
                  "± 12 m", "%.1f m" % cx, abs(cx - LOWRY_COM_X) <= LOWRY_COM_X_SIGMA),
-            _row("限界(形): 慣性主軸に沿った長さ(この形状モデル)と公表の 535 × 294 × 209 m(Fujiwara 2006)—— 形の版の違い",
-                 "limit (shape): extents along the principal axes of inertia (this shape model) vs the published 535 × 294 × 209 m (Fujiwara 2006) — different shape versions",
+            _row("限界(形): 慣性主軸に沿った長さ(この形状モデル)と公表の 535 × 294 × 209 m(Fujiwara 2006)—— 違いの理由は未確認",
+                 "limit (shape): extents along the principal axes of inertia (this shape model) vs the published 535 × 294 × 209 m (Fujiwara 2006) — reason for the difference unverified",
                  "|差| < 10 %", "%+.1f / %+.1f / %+.1f %%" % tuple(x * 100 for x in dd), max(abs(x) for x in dd) < 0.10),
             _row("一様密度の仮定は、YORP の観測が求める重心のずれ(14 m 以上)を出せるか", "can the uniform-density assumption give the centre-of-mass shift the YORP observation needs (≥ 14 m)?",
                  "≥ 14 m", "%.0f m" % g["com_offset_uniform_m"], g["com_offset_uniform_m"] >= 14.0)],
@@ -1246,15 +1246,15 @@ def all_lessons(R, g):
                          "volume V = (1/6) Σ_faces v0 · (v1 × v2) (divergence theorem)\nmass M = ρ V\n"
                          "porosity = 1 − ρ / ρ_grain (about 40 % with the LL-chondrite grain density, Abe 2006)"),
             "limit": T("形は Q = 64(49,152 面、辺の長さ 数 m)の粗い版で、数 m より細かい岩は入っていない。大きさの 535 × 294 × 209 m は"
-                       "この形の慣性主軸(一様密度)に沿った長さは %.0f × %.0f × %.0f m で、公表値より長い(3 本目は %+.0f %%)。公表値は別の版の形から"
-                       "出した値で、この粗い版の形とは一致しない。水色の obb は頂点の分布の主成分に沿った箱なので、主軸の箱とも少し違う"
+                       "この形状モデルの慣性主軸(一様密度)に沿った長さは %.0f × %.0f × %.0f m で、公表値より長い(特に短軸 %+.0f %%)。"
+                       "公表値の測り方の定義との違いかどうかは未確認。水色の obb は頂点の分布の主成分に沿った箱なので、主軸の箱とも少し違う"
                        "(%.0f × %.0f × %.0f m)。質量は密度の推定に比例し、"
                        "空隙率 40 %% は隕石(LL コンドライト)の粒の密度を仮定した値(Abe 2006)。"
                        % (tuple(g["pdims"]) + (g["pdims_vs_published"][2] * 100,) + tuple(g["dims"])),
                        "The shape is the coarse Q = 64 version (49,152 faces, edges a few metres), so rocks smaller than a few "
                        "metres are absent. Along this shape's principal axes of inertia (uniform density) the extents are "
-                       "%.0f × %.0f × %.0f m, longer than the published values (%+.0f %% on the third). The published values come "
-                       "from another version of the shape and do not match this coarse one. The light-blue obb is a box on the "
+                       "%.0f × %.0f × %.0f m, longer than the published values (especially the short axis, %+.0f %%). Whether this "
+                       "comes from a different measuring definition for the published values is unverified. The light-blue obb is a box on the "
                        "principal components of the vertices, so it also differs slightly from the principal-axis box "
                        "(%.0f × %.0f × %.0f m). The mass scales with the assumed density; the 40 %% porosity assumes the grain "
                        "density of LL-chondrite meteorites (Abe 2006)." % (tuple(g["pdims"]) + (g["pdims_vs_published"][2] * 100,) + tuple(g["dims"]))),
@@ -1469,15 +1469,15 @@ def build_spec(R, g):
               T("ここまでは中身の密度が一様と仮定した。Lowry 2014 は、自転がわずかに速くなっていく観測(YORP)を説明するには重心が形の"
                 "中心から頭の側へ約 21 m ずれている必要があり、頭(x ≥ 150 m)が胴より重いと考えた。時間つまみで頭の密度を上げていく"
                 "(全体の質量は保つ)。橙の玉 = 重心、白い玉 = 形の中心、色 = 表面の重力の変わり方。表の最後の 2 行は落ちる項目:"
-                "一様密度では重心がずれない(観測を説明できない)こと、この形の慣性主軸に沿った長さが公表の 3 軸と 3 本目で %+.0f %% 違う"
-                "(形の版の違い)こと。" % (g["pdims_vs_published"][2] * 100),
+                "一様密度では重心がずれない(観測を説明できない)こと、この形状モデルの慣性主軸に沿った長さが公表値より長い(特に短軸 %+.0f %%。"
+                "公表値の測り方の定義との違いかどうかは未確認)こと。" % (g["pdims_vs_published"][2] * 100),
                 "So far the interior was assumed uniform. Lowry 2014 found that the slowly increasing spin rate (YORP) "
                 "needs the centre of mass about 21 m from the centre of figure towards the head, and concluded that the head "
                 "(x ≥ 150 m) is denser than the body. The slider raises the head's density (total mass kept). Orange ball = "
                 "centre of mass, white ball = centre of figure, colour = how surface gravity changes. The last two rows "
                 "of the table fail: a uniform density cannot shift the centre of mass (so it cannot explain the "
-                "observation), and this shape's extents along its principal axes differ from the published three axes by "
-                "%+.0f %% on the third (different shape versions)." % (g["pdims_vs_published"][2] * 100)),
+                "observation), and this shape model's extents along its principal axes are longer than the published values "
+                "(especially the short axis, %+.0f %%; whether the published measuring definition differs is unverified)." % (g["pdims_vs_published"][2] * 100)),
               d4,
               [N(T("頭の体積の割合", "head share of the volume"), "%.1f %%" % (g["head_frac"] * 100)),
                N(T("胴の密度(頭 2,850 のとき)/ Lowry 2014", "body density (head 2,850) / Lowry 2014"), "%.0f / 1,750 ± 110 kg/m³" % g["lowry_rho_body_ours"]),
