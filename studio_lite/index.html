@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fullseye Studio-lite</title>
+<style>
+  :root { --bg:#0d1116; --panel:#121a22; --line:#1b2733; --line2:#1d4e7a; --accent:#2c6fb5; --accent2:#5aa9f0;
+          --text:#c8d4df; --muted:#93a2b1; --warn:#ffd54f; --amber:#f0a45a; }
+  html, body { margin:0; background:var(--bg); color:var(--text);
+    font-family:"Segoe UI","Hiragino Sans",Meiryo,sans-serif; -webkit-text-size-adjust:100%; font-size:13px; }
+  header { padding:12px 16px 6px; display:flex; flex-wrap:wrap; gap:8px 16px; align-items:baseline; }
+  h1 { font-size:18px; margin:0; }
+  .sub { color:var(--muted); font-size:12px; flex-basis:100%; }
+  .langs { margin-left:auto; display:flex; gap:4px; flex-wrap:wrap; }
+  .langs button { background:transparent; border:1px solid var(--line2); color:var(--muted); padding:1px 7px; font-size:11px; border-radius:10px; }
+  .langs button.on { background:var(--accent); color:#fff; border-color:var(--accent); }
+  .status { padding:0 16px 6px; color:var(--muted); }
+  .status b { color:var(--text); }
+  .grid { display:grid; grid-template-columns: 300px 1fr; gap:10px; padding:0 16px; }
+  @media (max-width: 760px) { .grid { grid-template-columns: 1fr; } }
+  .panel { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:10px; }
+  .panel h2 { font-size:12px; color:var(--accent2); margin:0 0 6px; text-transform:none; letter-spacing:.02em; }
+  button { background:var(--accent); color:#fff; border:0; border-radius:6px; padding:5px 11px; font-size:12px; cursor:pointer; }
+  button.ghost { background:transparent; border:1px solid var(--line2); color:var(--accent2); }
+  button:disabled { background:#243445; color:var(--muted); cursor:default; }
+  input[type=text], select { background:#0a0e12; color:var(--text); border:1px solid var(--line2); border-radius:6px; padding:4px 6px; font-size:12px; }
+  input[type=file] { color:var(--muted); font-size:11px; max-width:100%; }
+  .row { display:flex; gap:6px; align-items:center; flex-wrap:wrap; margin:4px 0; }
+  .oplist { max-height:300px; overflow:auto; border:1px solid var(--line); border-radius:6px; margin-top:6px; }
+  .oplist div { display:flex; justify-content:space-between; gap:6px; padding:3px 6px; border-bottom:1px solid #0f161d; cursor:pointer; }
+  .oplist div:hover { background:#18242f; }
+  .oplist .cat { color:var(--muted); font-size:11px; }
+  .oplist .sort { color:var(--accent2); font-size:10px; }
+  .stage { border:1px solid var(--line2); border-radius:8px; padding:6px 8px; margin:6px 0; background:#0f161d; }
+  .stage .head { display:flex; gap:6px; align-items:center; }
+  .stage .head b { color:var(--accent2); font-family:Consolas,monospace; }
+  .stage .head .io { color:var(--muted); font-size:11px; }
+  .stage .head .x { margin-left:auto; }
+  .knob { display:grid; grid-template-columns: 110px 1fr 90px; gap:6px; align-items:center; margin-top:4px; font-size:12px; }
+  .knob .lbl { color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .knob .val { color:var(--text); text-align:right; font-family:Consolas,monospace; }
+  .knob input[type=range] { width:100%; accent-color:var(--accent2); }
+  .band { display:flex; gap:10px; overflow-x:auto; padding:8px 16px 12px; align-items:stretch; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:8px; min-width:176px; flex:0 0 auto; }
+  .card h3 { margin:0 0 6px; font-size:12px; color:var(--accent2); display:flex; justify-content:space-between; gap:8px; font-family:Consolas,monospace; }
+  .card h3 .t { color:var(--muted); font-weight:normal; font-family:"Segoe UI",sans-serif; }
+  .card canvas { width:160px; height:160px; background:#000; border-radius:6px; display:block; image-rendering:auto; }
+  .card .txt { width:160px; height:160px; display:flex; align-items:center; justify-content:center; background:#0a0e12; border-radius:6px; color:var(--amber); font-family:Consolas,monospace; text-align:center; padding:4px; box-sizing:border-box; word-break:break-all; }
+  .card .nums { font-size:11px; color:var(--muted); margin-top:5px; line-height:1.45; }
+  .arrow { align-self:center; color:var(--muted); font-size:20px; flex:0 0 auto; }
+  .warn { color:var(--warn); }
+  .err { color:var(--amber); }
+  .foot { padding:0 16px 16px; font-size:11px; color:var(--muted); line-height:1.6; }
+  .probs { font-size:11px; margin-top:4px; }
+  .probs .p { color:var(--warn); }
+</style>
+</head>
+<body>
+<header>
+  <h1 data-i18n="title">Fullseye Studio-lite</h1>
+  <div class="langs" id="langs"></div>
+  <div class="sub" data-i18n="subtitle"></div>
+</header>
+<div class="status" id="status">…</div>
+<div class="grid">
+  <div>
+    <div class="panel">
+      <h2 data-i18n="load_image"></h2>
+      <div class="row"><input type="file" id="file" accept="image/*"></div>
+      <div class="row"><span data-i18n="samples" class="lbl"></span>
+        <button class="ghost" data-sample="coins">coins</button>
+        <button class="ghost" data-sample="blobs">blobs</button></div>
+    </div>
+    <div class="panel" style="margin-top:10px">
+      <h2><span data-i18n="ops"></span> <span id="nops" class="sort"></span></h2>
+      <input type="text" id="filter" style="width:100%; box-sizing:border-box" data-i18n-ph="filter">
+      <div class="oplist" id="oplist"></div>
+    </div>
+  </div>
+  <div>
+    <div class="panel">
+      <h2 data-i18n="chain"></h2>
+      <div id="chain"></div>
+      <div class="row">
+        <button id="run" data-i18n="run"></button>
+        <label><input type="checkbox" id="auto" checked> <span data-i18n="auto_run"></span></label>
+        <span data-i18n="display"></span> <select id="mode"></select>
+      </div>
+      <div class="probs" id="probs"></div>
+    </div>
+    <div class="panel" style="margin-top:10px">
+      <h2 data-i18n="recipe"></h2>
+      <div class="row">
+        <span data-i18n="recipe_name"></span> <input type="text" id="rname" value="pipeline" style="width:180px">
+        <button id="save" class="ghost" data-i18n="save_recipe"></button>
+        <input type="file" id="rfile" accept="application/json,.json" style="display:none">
+        <button id="load" class="ghost" data-i18n="load_recipe"></button>
+        <span data-i18n="builtin"></span> <select id="builtin"></select>
+      </div>
+      <div id="rmsg" class="probs"></div>
+    </div>
+  </div>
+</div>
+<div class="status" style="padding-top:8px"><span data-i18n="band"></span></div>
+<div class="band" id="band"></div>
+<div class="foot"><span data-i18n="offline_note"></span><br><span data-i18n="later"></span><br><span id="timings"></span></div>
+<script type="module">
+import { loadPyodide } from "./pyodide/pyodide.mjs";
+const $ = (id) => document.getElementById(id);
+const T0 = performance.now();
+const S = window.__state = { ready: false, timings: {}, lang: "ja", image: null, chain: [], mode: "gray", last: null, error: null };
+
+// ---- 言語(pocviewer と同じ作法: ?lang=xx が最優先、無ければ navigator.language) ----
+const I18N = await (await fetch("./i18n.json")).json();
+function pickLang(q, nav, langs) {
+  if (q && langs.indexOf(q) >= 0) return q;
+  const n = String(nav || "").toLowerCase().replace(/_/g, "-");
+  let t = "en";
+  if (n.indexOf("zh") === 0) t = /^zh-(tw|hk|mo)\b|hant/.test(n) ? "tw" : "zh";
+  else { const p = n.slice(0, 2); if (["ko", "de", "hi", "fr", "ja"].indexOf(p) >= 0 && (n.length === 2 || n[2] === "-")) t = p; }
+  return langs.indexOf(t) >= 0 ? t : "en";
+}
+const qs = new URLSearchParams(location.search);
+S.lang = pickLang(qs.get("lang"), navigator.language, I18N.langs);
+const t = (k) => (I18N.strings[k] && (I18N.strings[k][S.lang] || I18N.strings[k].en)) || k;
+function applyLang() {
+  document.documentElement.lang = S.lang;
+  document.querySelectorAll("[data-i18n]").forEach(e => { e.textContent = t(e.dataset.i18n); });
+  document.querySelectorAll("[data-i18n-ph]").forEach(e => { e.placeholder = t(e.dataset.i18nPh); });
+  const lb = $("langs"); lb.innerHTML = "";
+  for (const l of I18N.langs) { const b = document.createElement("button"); b.textContent = I18N.lang_names[l]; b.className = l === S.lang ? "on" : "";
+    b.onclick = () => { S.lang = l; const u = new URL(location.href); u.searchParams.set("lang", l); history.replaceState(null, "", u); applyLang(); renderChain(); if (S.last) paintBand(S.last); }; lb.appendChild(b); }
+}
+applyLang();
+
+// ---- Pyodide ----
+let py, core;
+const status = (html) => { $("status").innerHTML = html; };
+try {
+  status(t("status_loading"));
+  let tt = performance.now();
+  py = await loadPyodide({ indexURL: "./pyodide/" });
+  S.timings.boot_ms = Math.round(performance.now() - tt); tt = performance.now();
+  await py.loadPackage(["numpy", "scipy", "threadpoolctl"], { messageCallback: () => {} });
+  S.timings.packages_ms = Math.round(performance.now() - tt); tt = performance.now();
+  const zip = await (await fetch("./fullseye_bundle.zip")).arrayBuffer();
+  py.FS.mkdir("/fullseye"); py.unpackArchive(zip, "zip", { extractDir: "/fullseye" });
+  S.timings.bundle_bytes = zip.byteLength; S.timings.unzip_ms = Math.round(performance.now() - tt); tt = performance.now();
+  py.runPython(`import sys; sys.path.insert(0, "/fullseye"); sys.path.insert(0, "/fullseye/studio_lite")`);
+  core = py.pyimport("core");
+  S.timings.import_ms = Math.round(performance.now() - tt);
+  const subset = await (await fetch("./ops_subset.json")).text();
+  S.nops = core.set_subset(subset);
+  S.ops = JSON.parse(core.op_list());
+  S.modes = core.display_modes().toJs();
+  S.builtin = JSON.parse(core.builtin_recipes());
+  S.timings.first_load_ms = Math.round(performance.now() - T0);
+  S.ready = true;
+  status(`<b>${t("status_ready")}</b> — ${t("first_load")} <b>${(S.timings.first_load_ms/1000).toFixed(1)} s</b> (boot ${S.timings.boot_ms} / numpy+scipy ${S.timings.packages_ms} / unzip ${S.timings.unzip_ms} / import ${S.timings.import_ms} ms) · ${S.nops} ops`);
+  $("timings").textContent = JSON.stringify(S.timings);
+} catch (e) { S.error = String(e); status(`<span class="err">${t("error")}: ${String(e).slice(0, 300)}</span>`); throw e; }
+
+// ---- op 一覧 ----
+$("nops").textContent = `${S.ops.length}`;
+function renderOps() {
+  const q = $("filter").value.trim().toLowerCase(); const box = $("oplist"); box.innerHTML = "";
+  for (const o of S.ops) {
+    if (q && !(o.name.includes(q) || (o.halcon || "").includes(q) || o.category.includes(q))) continue;
+    const d = document.createElement("div"); d.title = o.doc;
+    d.innerHTML = `<span><b>${o.name}</b> <span class="cat">${o.category}</span></span><span class="sort">${o.in}→${o.out}</span>`;
+    d.onclick = () => addStage(o.name); box.appendChild(d);
+  }
+}
+$("filter").oninput = renderOps; renderOps();
+for (const m of S.modes) { const o = document.createElement("option"); o.value = o.textContent = m; $("mode").appendChild(o); }
+$("mode").onchange = () => { S.mode = $("mode").value; if (S.last && S.image) run(); };
+{ const sel = $("builtin"); const o0 = document.createElement("option"); o0.value = ""; o0.textContent = "—"; sel.appendChild(o0);
+  S.builtin.forEach((r, i) => { const o = document.createElement("option"); o.value = i; o.textContent = r.name; sel.appendChild(o); });
+  sel.onchange = () => { const r = S.builtin[Number(sel.value)]; if (!r) return; S.chain = r.stages.map(s => ({ op: s[0], a: s[1], b: s[2] })); $("rname").value = r.name; $("rmsg").textContent = r.note || ""; renderChain(); if (S.image) run(); }; }
+
+// ---- op 列 ----
+const specCache = {};
+const spec = (n) => specCache[n] || (specCache[n] = JSON.parse(core.spec(n)));
+function addStage(name) { S.chain.push({ op: name, a: 0.5, b: 0.5 }); renderChain(); if (S.image && $("auto").checked) run(); }
+function knobRow(st, letter) {
+  const sp = spec(st.op)[letter]; const row = document.createElement("div"); row.className = "knob";
+  const lbl = document.createElement("span"); lbl.className = "lbl"; lbl.textContent = `${letter}: ${sp.label || ""}`; lbl.title = sp.doc || "";
+  const val = document.createElement("span"); val.className = "val";
+  row.appendChild(lbl);
+  if (sp.kind === "unused") { const u = document.createElement("span"); u.className = "lbl"; u.textContent = t("knob_unused"); row.appendChild(u); row.appendChild(val); return row; }
+  if (sp.kind === "choice" && sp.choices) {
+    const sel = document.createElement("select"); const n = sp.choices.length;
+    sp.choices.forEach((c, i) => { const o = document.createElement("option"); o.value = i; o.textContent = c + (sp.unit ? " " + sp.unit : ""); sel.appendChild(o); });
+    sel.value = Math.min(n - 1, Math.floor(st[letter] * n));
+    sel.onchange = () => { st[letter] = (Number(sel.value) + 0.5) / n; val.textContent = core.format_knob(st.op, letter, st[letter]); if ($("auto").checked) run(); };
+    row.appendChild(sel);
+  } else {
+    const r = document.createElement("input"); r.type = "range"; r.min = 0; r.max = 1; r.step = 0.001; r.value = st[letter];
+    r.oninput = () => { st[letter] = Number(r.value); val.textContent = core.format_knob(st.op, letter, st[letter]); };
+    r.onchange = () => { if ($("auto").checked) run(); };
+    row.appendChild(r);
+  }
+  val.textContent = core.format_knob(st.op, letter, st[letter]);
+  row.appendChild(val); return row;
+}
+function renderChain() {
+  const box = $("chain"); box.innerHTML = "";
+  if (!S.chain.length) { box.innerHTML = `<div class="lbl" style="color:var(--muted)">${t("empty_chain")}</div>`; $("probs").textContent = ""; return; }
+  const avail = new Set(S.ops.map(o => o.name));
+  S.chain.forEach((st, i) => {
+    const d = document.createElement("div"); d.className = "stage";
+    const h = document.createElement("div"); h.className = "head";
+    const o = S.ops.find(x => x.name === st.op);
+    h.innerHTML = `<span>${i + 1}.</span><b>${st.op}</b><span class="io">${o ? o.in + "→" + o.out : ""}</span>` + (avail.has(st.op) ? "" : `<span class="warn">✗</span>`);
+    const up = document.createElement("button"); up.className = "ghost x"; up.textContent = "↑"; up.disabled = i === 0; up.onclick = () => { [S.chain[i-1], S.chain[i]] = [S.chain[i], S.chain[i-1]]; renderChain(); if ($("auto").checked) run(); };
+    const dn = document.createElement("button"); dn.className = "ghost"; dn.textContent = "↓"; dn.disabled = i === S.chain.length - 1; dn.onclick = () => { [S.chain[i+1], S.chain[i]] = [S.chain[i], S.chain[i+1]]; renderChain(); if ($("auto").checked) run(); };
+    const rm = document.createElement("button"); rm.className = "ghost"; rm.textContent = "×"; rm.title = t("remove"); rm.onclick = () => { S.chain.splice(i, 1); renderChain(); if ($("auto").checked) run(); };
+    h.appendChild(up); h.appendChild(dn); h.appendChild(rm); d.appendChild(h);
+    if (avail.has(st.op)) { d.appendChild(knobRow(st, "a")); d.appendChild(knobRow(st, "b")); }
+    box.appendChild(d);
+  });
+  const probs = JSON.parse(core.diagnose(JSON.stringify(S.chain.map(s => [s.op, s.a, s.b]))));
+  $("probs").innerHTML = probs.length ? `<b>${t("problems")}</b>: ` + probs.map(p => `<span class="p">${p}</span>`).join("<br>") : `<span style="color:var(--muted)">${t("no_problems")}</span>`;
+}
+renderChain();
+
+// ---- 画像 ----
+async function setImageFromBitmap(bmp, name) {
+  const c = document.createElement("canvas"); c.width = bmp.width; c.height = bmp.height;
+  const g = c.getContext("2d"); g.drawImage(bmp, 0, 0);
+  const d = g.getImageData(0, 0, c.width, c.height).data; const flat = new Float32Array(c.width * c.height);
+  for (let i = 0; i < flat.length; i++) flat[i] = (0.299 * d[4*i] + 0.587 * d[4*i+1] + 0.114 * d[4*i+2]) / 255;
+  S.image = { name, h: c.height, w: c.width };
+  py.globals.set("FLAT", py.toPy(flat));
+  py.runPython(`import core; IMG = core.image_from_flat(FLAT, ${c.height}, ${c.width})`);
+  if ($("auto").checked || !S.chain.length) run();
+}
+async function loadSample(n) { setImageFromBitmap(await createImageBitmap(await (await fetch(`./samples/${n}.png`)).blob()), n); }
+document.querySelectorAll("[data-sample]").forEach(b => b.onclick = () => loadSample(b.dataset.sample));
+$("file").onchange = async (ev) => { const f = ev.target.files[0]; if (f) setImageFromBitmap(await createImageBitmap(f), f.name); };
+
+// ---- 走らせる + 処理の帯 ----
+function paint(rgba, h, w) { const c = document.createElement("canvas"); c.width = w; c.height = h;
+  c.getContext("2d").putImageData(new ImageData(new Uint8ClampedArray(rgba.buffer, rgba.byteOffset, rgba.byteLength), w, h), 0, 0); return c; }
+function card(title, tt, body, nums) { const d = document.createElement("div"); d.className = "card";
+  d.innerHTML = `<h3><span>${title}</span><span class="t">${tt}</span></h3>`; d.appendChild(body);
+  const n = document.createElement("div"); n.className = "nums"; n.innerHTML = nums; d.appendChild(n); return d; }
+function paintBand(r) {
+  const band = $("band"); band.innerHTML = "";
+  r.cards.forEach((c, i) => {
+    if (i) { const a = document.createElement("div"); a.className = "arrow"; a.textContent = "→"; band.appendChild(a); }
+    const st = i ? S.chain[i - 1] : null; const o = st && S.ops.find(x => x.name === st.op);
+    const body = c.kind === "image" ? paint(c.rgba, c.h, c.w) : Object.assign(document.createElement("div"), { className: "txt", textContent: c.text });
+    const title = i ? c.op : t("input"); const tt = i ? `${c.ms} ${t("ms")}` : `${S.image.w}×${S.image.h}`;
+    let nums = `${c.dtype} ${JSON.stringify(c.shape)}`;
+    if (st) nums += `<br>a=${st.a.toFixed(3)} b=${st.b.toFixed(3)}` + (o && o.ms_native != null ? `<br>${t("native_ref")} ${o.ms_native} ${t("ms")}` : "");
+    if (i === r.cards.length - 1 && i) nums += `<br><b style="color:var(--accent2)">${t("output")}</b>`;
+    band.appendChild(card(title, tt, body, nums));
+  });
+  if (r.error) { const d = document.createElement("div"); d.className = "card"; d.innerHTML = `<h3><span class="err">${r.error.op}</span></h3><div class="nums err">${r.error.error}</div>`; band.appendChild(d); }
+}
+let running = false, queued = false;
+async function run() {
+  if (!S.image || !S.ready) return;
+  if (running) { queued = true; return; }
+  running = true; $("run").disabled = true; status(t("status_running"));
+  await new Promise(r => setTimeout(r, 0));
+  const stages = S.chain.filter(s => S.ops.some(o => o.name === s.op)).map(s => [s.op, s.a, s.b]);
+  const tt = performance.now();
+  const r = py.runPython(`core.run_chain(IMG, ${JSON.stringify(JSON.stringify(stages))}, ${JSON.stringify(S.mode)})`).toJs({ dict_converter: Object.fromEntries });
+  const wall = Math.round(performance.now() - tt);
+  S.last = r; S.last_run = { wall_ms: wall, ms: r.cards.slice(1).map(c => c.ms), error: r.error, stages };
+  paintBand(r);
+  const total = r.cards.slice(1).reduce((a, c) => a + (c.ms || 0), 0);
+  status(`<b>${t("status_done")}</b>: ${stages.length} op <b>${total.toFixed(1)} ${t("ms")}</b> (${wall} ${t("ms")} incl. render)` + (r.error ? ` <span class="err">${t("error")}: ${r.error.op}</span>` : ""));
+  running = false; $("run").disabled = false;
+  if (queued) { queued = false; run(); }
+}
+$("run").onclick = run;
+
+// ---- レシピ ----
+$("save").onclick = () => {
+  const text = core.recipe_json($("rname").value || "pipeline", JSON.stringify(S.chain.map(s => [s.op, s.a, s.b])));
+  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([text], { type: "application/json" }));
+  a.download = ($("rname").value || "pipeline").replace(/[^\w.-]+/g, "_") + ".json"; a.click();
+};
+function loadRecipeText(text) {
+  try { const r = JSON.parse(core.load_recipe(text)); S.chain = r.stages.map(s => ({ op: s[0], a: s[1], b: s[2] })); $("rname").value = r.name;
+    $("rmsg").innerHTML = (r.unavailable.length ? `<span class="warn">${t("unavailable")}: ${r.unavailable.join(", ")}</span><br>` : "") +
+      (r.bypassed && r.bypassed.length ? `<span style="color:var(--muted)">bypass: ${r.bypassed.join(", ")}</span>` : ""); renderChain(); if (S.image) run(); return r; }
+  catch (e) { $("rmsg").innerHTML = `<span class="err">${t("error")}: ${String(e).split("\n").filter(l => l.includes("Error")).pop() || e}</span>`; return null; }
+}
+$("load").onclick = () => $("rfile").click();
+$("rfile").onchange = async (ev) => { const f = ev.target.files[0]; if (f) loadRecipeText(await f.text()); };
+
+// ---- 撮影と門のための小さな入口(ページの中の状態を外から動かす) ----
+window.lite = { loadSample, setChain: (c) => { S.chain = c.map(s => ({ op: s[0], a: s[1], b: s[2] })); renderChain(); return run(); }, run, loadRecipeText,
+  recipeText: () => core.recipe_json($("rname").value || "pipeline", JSON.stringify(S.chain.map(s => [s.op, s.a, s.b]))),
+  finalArray: () => { const r = py.runPython(`import json, numpy as np; _o = core.run_chain_raw(IMG, json.dumps(${JSON.stringify(S.chain.map(s => [s.op, s.a, s.b]))})); json.dumps({"dtype": str(np.asarray(_o).dtype), "shape": list(np.shape(_o)), "data": np.asarray(_o).ravel().tolist() if isinstance(_o, np.ndarray) else repr(_o)})`); return JSON.parse(r); } };
+if (qs.get("sample")) await loadSample(qs.get("sample"));
+</script>
+</body>
+</html>
