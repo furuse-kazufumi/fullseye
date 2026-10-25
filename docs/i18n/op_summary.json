@@ -32165,6 +32165,15 @@
    "ko": "너비와 높이를 독립적으로 고르는 평균(box) 필터. HALCON의 ``mean_image``(Smooth by averaging.)에 해당한다.",
    "de": "Mittelwert-(Box-)Filter mit unabhängig gewählter Breite und Höhe. Entspricht HALCONs ``mean_image`` (Smooth by averaging.).",
    "hi": "स्वतंत्र रूप से चुनी गई चौड़ाई और ऊँचाई वाला औसत (box) filter। HALCON के ``mean_image`` (Smooth by averaging.) के समकक्ष है।"
+  },
+  "drive/plateau_lod2_mesh": {
+   "fp": "7e7ad4da9dfe",
+   "en": "Reads LOD2 buildings from PLATEAU CityGML and returns a triangle mesh (V, F) in local metric coordinates together with per-building attributes.",
+   "zh": "从 PLATEAU 的 CityGML 读取 LOD2 建筑,返回局部米制坐标的三角网格 (V, F) 以及每栋建筑的属性。",
+   "tw": "從 PLATEAU 的 CityGML 讀取 LOD2 建物,回傳局部公尺座標的三角網格 (V, F) 以及每棟建物的屬性。",
+   "ko": "PLATEAU 의 CityGML 에서 LOD2 건물을 읽어, 국소 미터 좌표의 삼각형 메시 (V, F) 와 건물별 속성을 반환한다.",
+   "de": "Liest LOD2-Gebäude aus PLATEAU-CityGML und gibt ein Dreiecksnetz (V, F) in lokalen metrischen Koordinaten samt Attributen je Gebäude zurück.",
+   "hi": "PLATEAU के CityGML से LOD2 इमारतें पढ़कर स्थानीय मीट्रिक निर्देशांकों में triangle mesh (V, F) और हर इमारत के attributes लौटाता है।"
   }
  }
 }
