@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(434 例)
+### 2-D 画像/信号/幾何(435 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -302,6 +302,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 **visualization**
 - **結果を、触って見られる 1 枚の HTML にする(タブ・バッジ・3-D・動画・多言語)** — fs.write_viewer の最小例。点群・メッシュ・動画(真値と推定の枠 + しきい値つきの時系列)・前後の分割の 4 種を、正直なバッジ(門を通った / 限界を見せる / 何もしない場合)つきのタブで 1 本の自己完結 HTML にする。言語は lang で選ぶ(ja / en / zh / tw / ko / de / hi / fr、先頭が既定)。位置は間引かず量子化(戻りが刻みの半分以内)、外部 URL 無し、欠けた訳は黙って補わず ValueError。 `py -3.11 examples/interactive_poc_viewer.py`
 - **動く 3-D を 1 枚の HTML で再生する(姿勢の時系列 + 同じ時間軸の 2-D)** — fs.viewer_anim3d_tab の最小例。3 関節のアームが箱を運ぶ運動学(外部の物理エンジン無し)を、物体ごとのメッシュ 1 回 + コマごとの姿勢(位置 uint16・四元数 int16)で 1 本の自己完結 HTML にする。残像の軌跡・点群の時系列・段の区切り・時系列グラフ・上から見たカメラ画像と二値化(無損失 PNG)を同じ時間軸で再生。半透明のレンズ(alpha 0.3)を貫いて焦点へ集まる光線が透けて見える。姿勢の復元が量子化の刻みの半分以内、PNG が画素ごとに一致。 `py -3.11 examples/interactive_anim3d_viewer.py`
+- **商品を 3D Gaussian Splatting にしてブラウザで回して見る(1 品のビューア + 5 品のカタログ)** — fs.gs_viewer_html / fs.gs_catalog_html の最小例。符号付き距離場の op と marching cubes で作ったマグ・ヘッドホン・腕時計・スニーカー・ランプを gs_from_world で 3DGS にし(メッシュから初期化、学習ではない)、外部読み込み無しの 1 枚の HTML に書く。WebGL2 で gs_render と同じ EWA の式、並べ替えは Web Worker、寸法は smallest_box3。注記点・回転台・背景・品質つまみ、8 言語。書いた HTML を読み戻し、量子化の刻みの半分以内で戻ること・外部 URL 0 を確かめる。 `py -3.11 examples/gsplat_product_viewer.py`
 - **ハエ(雄)の脳を、細胞体 12 万 6 千個の点のまま描く(点群を描く op points_render)** — MaleCNS v1.0(CC BY 4.0)の注釈から脳の細胞体 126,104 個を上位クラスで色分けし、新 op points_render で正面・側面・背面と回転の GIF に。門は絵の外の値: 注釈の左右ラベルで L の 99.5 % が正面図の右半分、Kenyon 細胞 4,050 個が触角葉ニューロン 437 個より背側・後ろ、正面図と背面図(別のカメラ)の列の和が左右反転で 1.8e-15、加算の像の総和 = 点の数(1.2e-16)、クラスごとの像の重心 = 閉じた式の射影(1.4e-5 画素)。生データは repo に入れず、無い環境では合成の脳で同じ門を回し記録値を印字する。 `py -3.11 examples/poc_flybrain_pointcloud.py`
 - **ハエの脳の立体の上で刺激の波が配線を伝わるのを見る(コネクトーム vs 次数保存 shuffle)** — MaleCNS で soma の座標を持つニューロンのうちシナプス総数上位 3,000 体の部分グラフ(344,719 辺)に右の視葉だけへ刺激を入れ、活動が伝わる様子を脳と VNC の立体(灰 = 全 141,781 soma、橙 = 右、青 = 左)を回しながら GIF に。隣は次数保存 shuffle に**同じ刺激・同じ入力行列**。実測: コネクトームは刺激からの平均距離 88 → 230 µm を 17 步かけて伸び、視葉 → 中枢 → 下行の順に点いて 36 步では VNC に届かない。shuffle は 3 步で 300 µm に散り遠い 1/4 の 93 % が点く(コネクトーム 0 %)。精度で見えなかった配線の空間構造が動きで見える。新 op: reservoir_states(W_in=)、graph_activation_latency、graph_activity_spread、points_activity_video(尺度は全コマで 1 つ、views= で背側・側面・体軸方向の 3 方向を同時に)。生データは commit しない。 `py -3.11 examples/poc_malecns_activity_wave.py`
 - **生きている組織の 3D+t を古典手法だけで短い 3D 動画像に(増幅・流れ・補間・高さ場、全部に真値)** — 新族 live4d(14 op、numpy + scipy、新語は volseq = 体積の時系列だけ)。目に見えない 0.1 voxel の拍動を Eulerian の線形拡大で 8 倍に(読み取り 7.89 倍)、分かれる塊の 3 次元 Lucas–Kanade の流れは真値 ±0.75 に対し +0.776 / −0.776、粒子の軌跡は時刻の色で 1 枚の立体に、2 倍レートから間引いた系列の流れ補間は動きが大きい領域で線形ブレンドに圧勝し小さい領域では負ける(正直に図示)、焦点掃引の時系列から高さ場の動画。Cell Tracking Challenge の生細胞も同じ経路。 `py -3.11 examples/poc_live4d.py`
@@ -776,9 +777,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3571 ops / 54 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3573 ops / 54 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 959 · **3d** 373 · **math** 114 · **optics** 465 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 39 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 700 · **tomography** 31 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 3 · **calib** 21 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族の一覧: **2d** 959 · **3d** 373 · **math** 114 · **optics** 465 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 39 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 702 · **tomography** 31 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 3 · **calib** 21 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d(959 ops / 49 categories)
 
@@ -3496,7 +3497,7 @@ _計 3571 ops / 54 families。並びとノートの在り処は `docs/ops/INDEX.
 #### vx / suppress(1)
 - `vx_nonmax_suppression` `image2d → image2d` — 非極大の抑制(3.39 節)。画素 (x, y) は、窓の中で**自分より前(上の行と、同じ行の左)の隣には ≥、後ろの隣には >** の ときだけ残る(REQ-0337)。平らな頂上が 1 画素だけ残るのはこの非対称のため。*mask* の非ゼロ画素は比べず、そのまま残す (他の画素の比較にも使わない、REQ-0336)。抑制した画素は U8 なら 0、S16 なら INT16_MIN(REQ-0335)。窓の外にはみ出す隣は比べない。 · 例: `gallery_openvx_spec_values`
 
-### drive(700 ops / 51 categories)
+### drive(702 ops / 51 categories)
 
 名前は運転だが、中身は**物理シミュレーションとロボットの PoC の台帳**: 運転(コース・交通・判断・CARLA / CommonRoad)に加え、触覚(tac*)・peg-in-hole(peg*)・研磨(polish)・研削(grind)・切削(cutting)・粉体(granular / scoop)・粉末 X 線回折(pxrd)・球技(ball / puck)などがカテゴリとして同居している。カテゴリ名で引くこと。
 
@@ -3769,12 +3770,14 @@ _計 3571 ops / 54 families。並びとノートの在り処は `docs/ops/INDEX.
 - `particle_size_synth` `scalar × scalar → table` — 対数正規の **体積** 分布を装置と同じ区間に割り付けた粒度分布(真値つき)。 · 例: `poc_dose_uniformity_from_grinding`, `poc_powder_grinding_ae`
 - `replicate_compare` `any → table` — 独立試行のばらつきと、群(材料)どうしの差を同じ物差しで並べる。 · 例: `poc_powder_grinding_ae`
 
-#### drive / gsplat(5)
-- `gs_from_world` `table → table` — 世界の面にガウシアンを貼った 3DGS を返す(``world`` = driveworld の世界 dict: V, F, face_color, objects)。 · 例: `poc_kendama`
+#### drive / gsplat(7)
+- `gs_catalog_html` `table → table` — 複数の 3DGS をサムネイルの一覧から選んで見る、1 枚で完結するカタログの HTML を書く。 · 例: `gsplat_product_viewer`
+- `gs_from_world` `table → table` — 世界の面にガウシアンを貼った 3DGS を返す(``world`` = driveworld の世界 dict: V, F, face_color, objects)。 · 例: `gsplat_product_viewer`, `poc_kendama`
 - `gs_read_file` `入力なし → table` — 3D Gaussian Splatting のファイルを読み、ガウスの中心・色・不透明度・大きさ・向きを返す。 · 例: `gallery_drive_world_io`
 - `gs_render` `table × matrix → table` — 3DGS をカメラ(``pose`` = world→camera 4×4、``K`` 3×3、driveworld.world_camera と同じ規約: −Z を見る、行は上が小さい)で描く。 · 例: `poc_kendama`
 - `gs_render_fn` `table → any` — ``render_fn(world, cam) → (H, W, 3)``(:func:`kendamaworld.camera_perceiver` の描画の差し替え口)を返す: 呼ばれるたびに :func:`gs_update` で世界のいまの頂点へガウシアンを付け直し、``cam``(dict: pose, K, width, height)で :func:`gs_render` する。 ``render_kw`` は gs_render へそのまま渡す。属性 ``n_calls``・``n_pairs``(累計)を持つ。 · 例: `poc_kendama`
 - `gs_update` `table × table → table` — 世界の**いまの**頂点からガウシアンの中心・向きを計算し直す(その場で書き換えて同じ dict を返す)。 · 例: `poc_kendama`
+- `gs_viewer_html` `table → table` — 3DGS を、ブラウザで回して見られる1 枚で完結する HTML にする(外部 URL 0・CDN 無し・オフラインで動く)。 · 例: `gsplat_product_viewer`, `gsplat_trained_product`
 
 #### drive / humanoid(4)
 - `humanoid_clip_mesh` `table → table` — 歩いた距離 ``distance`` [m] でのメッシュ(``{"V","F","color","label","dims"}``、原点 = 腰の真下、+x = 前)。 · 例: `gallery_drive_world_objects`, `poc_driving_humanoids`
@@ -4299,7 +4302,7 @@ _計 3571 ops / 54 families。並びとノートの在り処は `docs/ops/INDEX.
 #### drive / world(4)
 - `load_asset` `入力なし → table` — 同梱資産をメッシュ dict に: ``{"V", "F", "color", "label", "name", "dims"}``。 · 例: `poc_driving_longitudinal`, `poc_driving_pass`, `poc_driving_school`, `poc_driving_weather`, `poc_ttc_rss`
 - `world_build` `table → table` — コース(要素か layout)から世界を組む。 · 例: `gallery_drive_japan_roads`, `gallery_drive_world_objects`, `poc_driving_longitudinal`, `poc_driving_school`, `poc_driving_weather`, `poc_ttc_rss`, `poc_world_terrain`
-- `world_camera` `table × matrix × matrix → table` — 世界をカメラで撮る: ``{"color" (H,W,3), "label" (H,W) int(−1 = 空), "depth" (H,W), "face" (H,W), "shade" (H,W)}``。 · 例: `poc_ball_bounce`, `poc_driving_crossing`, `poc_driving_decisions`, `poc_driving_endless_map`, `poc_driving_humanoids`, `poc_driving_japan_town`, `poc_driving_lateral`, `poc_driving_longitudinal`, `poc_driving_pass`, `poc_driving_school`, `poc_driving_town`, `poc_driving_traffic`, `poc_kendama`, `poc_table_tennis_bounce`, `poc_table_tennis_spin`, `poc_ttc_rss`, `poc_world_terrain`
+- `world_camera` `table × matrix × matrix → table` — 世界をカメラで撮る: ``{"color" (H,W,3), "label" (H,W) int(−1 = 空), "depth" (H,W), "face" (H,W), "shade" (H,W)}``。 · 例: `gsplat_trained_product`, `poc_ball_bounce`, `poc_driving_crossing`, `poc_driving_decisions`, `poc_driving_endless_map`, `poc_driving_humanoids`, `poc_driving_japan_town`, `poc_driving_lateral`, `poc_driving_longitudinal`, `poc_driving_pass`, `poc_driving_school`, `poc_driving_town`, `poc_driving_traffic`, `poc_kendama`, `poc_table_tennis_bounce`, `poc_table_tennis_spin`, `poc_ttc_rss`, `poc_world_terrain`
 - `world_move` `table → any` — 物体 i(資産で置いたもの)を新しい姿勢 (x, y, yaw) へ動かす(頂点だけ書き換える。面・ラベル・色は不変)。 · 例: `poc_driving_crossing`, `poc_driving_decisions`, `poc_driving_lateral`, `poc_ttc_rss`, `poc_world_terrain`
 
 ### tomography(31 ops / 7 categories)

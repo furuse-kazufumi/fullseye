@@ -689,6 +689,7 @@ from drivelong import (  # noqa: E402,F401
 )
 import gsplatnp  # noqa: E402  (世界 → 3D Gaussian Splatting: 面に貼ったガウシアンと EWA 描画、密度と誤差のつまみ)
 from gsplatnp import gs_from_world, gs_update, gs_render, gs_render_fn, gs_read_file  # noqa: E402,F401
+from gsviewer import gs_viewer_html, gs_catalog_html  # noqa: E402,F401
 import motionio  # noqa: E402  (動きのデータ: BVH モーションキャプチャ・イベントカメラの x y t p、2026-10-03)
 from motionio import read_bvh, read_events, events_to_frames  # noqa: E402,F401
 import drivehumanoid  # noqa: E402  (運転の世界を歩くヒューマノイド: 間引いたメッシュ + マスク付きの事前描画、2026-10-03)
