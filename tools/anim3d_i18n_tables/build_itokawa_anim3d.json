@@ -1190,15 +1190,6 @@
    "hi": "केवल बंद और एकसमान अभिविन्यास वाली सतह के लिए सही (छेद होने पर p की ओर बंद किया गया ठोस मिलता है)। स्व-प्रतिच्छेदन दो बार गिने जाते हैं। यहाँ 49,152 फलक दिगंश के अनुसार 24 टुकड़ों में दिखाए गए हैं।",
    "fr": "Correct seulement pour une surface fermée et orientée de façon cohérente (avec un trou, on obtient le solide fermé vers p). Les auto-intersections comptent deux fois. Ici, les 49,152 faces sont montrées en 24 morceaux selon l'azimut."
   },
-  "Shape: Gaskell Itokawa Shape Model V1.1 (R. Gaskell et al., from Hayabusa [JAXA] AMICA images), NASA PDS Small Bodies Node, CC0 1.0 (public-domain dedication). The Q = 64 version (25,350 vertices, 49,152 faces, units km, z = spin pole, x = longitude 0) with vertex numbers made 0-based and unused duplicate vertices dropped. Numbers: Fujiwara et al. 2006, Abe et al. 2006, Demura et al. 2006 (all Science 312), Lowry et al. 2014 (A&A 562), Yano & Aida 2013. Gravity formula: Werner & Scheeres 1997.": {
-   "ja": "形: Gaskell Itokawa Shape Model V1.1(R. Gaskell ほか。はやぶさ〔JAXA〕の AMICA の画像から作成)、NASA PDS Small Bodies Node、CC0 1.0(パブリックドメインへの献呈)。Q = 64 の版(25,350 頂点・49,152 面、単位 km、z 軸 = 自転の極、x 軸 = 経度 0)を使い、頂点番号を 0 始まりにし、面から使われない重複頂点を落とした。数値: Fujiwara ほか 2006・Abe ほか 2006・Demura ほか 2006(いずれも Science 312)、Lowry ほか 2014(A&A 562)、Yano & Aida 2013。重力の式: Werner & Scheeres 1997。",
-   "zh": "形状：Gaskell Itokawa Shape Model V1.1（R. Gaskell 等，由隼鸟号〔JAXA〕AMICA 图像制作），NASA PDS Small Bodies Node，CC0 1.0（献给公有领域）。使用 Q = 64 版本（25,350 个顶点、49,152 个面，单位 km，z = 自转极，x = 经度 0），顶点编号改为从 0 开始，并删除未使用的重复顶点。数值：Fujiwara et al. 2006、Abe et al. 2006、Demura et al. 2006（均为 Science 312），Lowry et al. 2014（A&A 562），Yano & Aida 2013。引力公式：Werner & Scheeres 1997。",
-   "tw": "形狀：Gaskell Itokawa Shape Model V1.1（R. Gaskell 等，由隼鳥號〔JAXA〕AMICA 影像製作），NASA PDS Small Bodies Node，CC0 1.0（貢獻至公有領域）。使用 Q = 64 版本（25,350 個頂點、49,152 個面，單位 km，z = 自轉極，x = 經度 0），頂點編號改為從 0 開始，並刪除未使用的重複頂點。數值：Fujiwara et al. 2006、Abe et al. 2006、Demura et al. 2006（皆為 Science 312），Lowry et al. 2014（A&A 562），Yano & Aida 2013。重力公式：Werner & Scheeres 1997。",
-   "ko": "모양: Gaskell Itokawa Shape Model V1.1(R. Gaskell 외, 하야부사〔JAXA〕 AMICA 영상으로 제작), NASA PDS Small Bodies Node, CC0 1.0(퍼블릭 도메인 헌정). Q = 64 판(25,350 꼭짓점, 49,152 면, 단위 km, z = 자전극, x = 경도 0)을 쓰고, 꼭짓점 번호를 0부터로 바꾸고 쓰이지 않는 중복 꼭짓점을 뺐습니다. 수치: Fujiwara et al. 2006, Abe et al. 2006, Demura et al. 2006(모두 Science 312), Lowry et al. 2014(A&A 562), Yano & Aida 2013. 중력 식: Werner & Scheeres 1997.",
-   "de": "Form: Gaskell Itokawa Shape Model V1.1 (R. Gaskell et al., aus AMICA-Bildern von Hayabusa [JAXA]), NASA PDS Small Bodies Node, CC0 1.0 (Widmung an die Gemeinfreiheit). Die Version Q = 64 (25,350 Eckpunkte, 49,152 Flächen, Einheit km, z = Rotationspol, x = Länge 0), Eckpunktnummern ab 0 und ungenutzte doppelte Eckpunkte entfernt. Zahlen: Fujiwara et al. 2006, Abe et al. 2006, Demura et al. 2006 (alle Science 312), Lowry et al. 2014 (A&A 562), Yano & Aida 2013. Schwerkraftformel: Werner & Scheeres 1997.",
-   "hi": "आकार: Gaskell Itokawa Shape Model V1.1 (R. Gaskell et al., हायाबुसा [JAXA] की AMICA तस्वीरों से), NASA PDS Small Bodies Node, CC0 1.0 (सार्वजनिक डोमेन को समर्पण)। Q = 64 संस्करण (25,350 शीर्ष, 49,152 फलक, इकाई km, z = घूर्णन ध्रुव, x = देशांतर 0), शीर्ष संख्याएँ 0 से शुरू की गईं और अप्रयुक्त दोहरे शीर्ष हटाए गए। संख्याएँ: Fujiwara et al. 2006, Abe et al. 2006, Demura et al. 2006 (सभी Science 312), Lowry et al. 2014 (A&A 562), Yano & Aida 2013। गुरुत्व सूत्र: Werner & Scheeres 1997।",
-   "fr": "Forme : Gaskell Itokawa Shape Model V1.1 (R. Gaskell et al., à partir des images AMICA de Hayabusa [JAXA]), NASA PDS Small Bodies Node, CC0 1.0 (dédicace au domaine public). La version Q = 64 (25,350 sommets, 49,152 faces, unité km, z = pôle de rotation, x = longitude 0), numéros de sommets à partir de 0 et sommets dupliqués inutilisés supprimés. Chiffres : Fujiwara et al. 2006, Abe et al. 2006, Demura et al. 2006 (tous Science 312), Lowry et al. 2014 (A&A 562), Yano & Aida 2013. Formule de gravité : Werner & Scheeres 1997."
-  },
   "magnitude of effective gravity |g_eff|": {
    "ja": "実効重力の大きさ |g_eff|",
    "zh": "有效重力的大小 |g_eff|",
@@ -1216,15 +1207,6 @@
    "de": "Größen vergleichen",
    "hi": "आकार की तुलना",
    "fr": "Comparer les tailles"
-  },
-  "Next to Itokawa (535 m long) stand true-scale yardsticks: a 333 m tower, a football pitch, Hayabusa and a person. A person is only 0.3 % of the length, so playback zooms on a log scale from the whole asteroid (field of view 1,000 m high) down to the person (3 m) standing where Hayabusa touched down (estimated site TD1). The person stands against the effective gravity (the local 'up').": {
-   "ja": "イトカワ(長さ 535 m)の横に、実寸の物差しを置いた: 高さ 333 m の塔、サッカー場、はやぶさ、そして人。人は長さの 0.3 % しかないので、再生すると全体(視野の縦の幅 1,000 m)から、はやぶさが降りた所(TD1 の推定位置)に立つ人(3 m)まで、対数の等間隔で寄っていく。人は実効重力の逆向き(その場所の「上」)に立っている。",
-   "zh": "在糸川（长 535 m）旁边放上了实际尺寸的标尺：高 333 m 的塔、足球场、隼鸟号，以及一个人。人只有长度的 0.3 %，所以播放时会以对数等间隔，从整体（视野纵向宽度 1,000 m）一直拉近到站在隼鸟号着陆处（推定位置 TD1）的人（3 m）。人沿有效重力的反方向（当地的“上”）站立。",
-   "tw": "在糸川（長 535 m）旁邊放上了實際尺寸的標尺：高 333 m 的塔、足球場、隼鳥號，以及一個人。人只有長度的 0.3 %，所以播放時會以對數等間隔，從整體（視野縱向寬度 1,000 m）一直拉近到站在隼鳥號著陸處（推定位置 TD1）的人（3 m）。人沿有效重力的反方向（當地的「上」）站立。",
-   "ko": "이토카와(길이 535 m) 옆에 실제 크기의 잣대를 두었습니다: 높이 333 m의 탑, 축구장, 하야부사, 그리고 사람. 사람은 길이의 0.3 %에 불과하므로, 재생하면 전체(시야의 세로 폭 1,000 m)에서 하야부사가 내려앉은 곳(추정 위치 TD1)에 선 사람(3 m)까지 로그 등간격으로 다가갑니다. 사람은 유효 중력의 반대 방향(그곳의 '위')으로 서 있습니다.",
-   "de": "Neben Itokawa (535 m lang) stehen maßstabsgetreue Vergleichsobjekte: ein 333 m hoher Turm, ein Fußballfeld, Hayabusa und ein Mensch. Ein Mensch ist nur 0.3 % der Länge, daher zoomt die Wiedergabe logarithmisch vom ganzen Asteroiden (Sichtfeld 1,000 m hoch) bis zum Menschen (3 m), der dort steht, wo Hayabusa aufsetzte (geschätzter Punkt TD1). Der Mensch steht entgegen der effektiven Schwerkraft (dem örtlichen „Oben“).",
-   "hi": "इटोकावा (535 m लंबा) के पास असली माप के पैमाने रखे गए हैं: 333 m ऊँचा एक मीनार, एक फ़ुटबॉल मैदान, हायाबुसा और एक व्यक्ति। व्यक्ति लंबाई का केवल 0.3 % है, इसलिए चलाने पर दृश्य पूरे क्षुद्रग्रह (दृश्य-क्षेत्र 1,000 m ऊँचा) से लघुगणकीय समान अंतराल में उस व्यक्ति (3 m) तक पास आता है जो हायाबुसा के उतरने की जगह (अनुमानित स्थल TD1) पर खड़ा है। व्यक्ति प्रभावी गुरुत्व के विपरीत (वहाँ के 'ऊपर') खड़ा है।",
-   "fr": "À côté d'Itokawa (535 m de long) se dressent des étalons à l'échelle réelle : une tour de 333 m, un terrain de football, Hayabusa et une personne. Une personne ne fait que 0.3 % de la longueur ; la lecture zoome donc sur une échelle logarithmique de l'astéroïde entier (champ de vision de 1,000 m de haut) jusqu'à la personne (3 m) debout là où Hayabusa s'est posé (site estimé TD1). La personne se tient à l'opposé de la pesanteur effective (le « haut » local)."
   },
   "Itokawa's length ÷ a person's height": {
    "ja": "イトカワの長さ ÷ 人の背丈",
@@ -1424,15 +1406,6 @@
    "hi": "लगभग 4.7 km (पृथ्वी जैसा)",
    "fr": "environ 4.7 km (comme sur Terre)"
   },
-  "The local radius of curvature is about 176 m (the shape with boulders smoothed out). The horizon is √(2Rh + h²) = 25 m, 1/190 of Earth's (4.7 km) — not even the far end of a football pitch. Effective gravity underfoot is only 79.4 µm/s², so a ball dropped from 1.7 m takes 207 s (3.4 min) to reach the ground.": {
-   "ja": "足元の形の曲率半径は約 176 m(岩の凹凸を平滑化した形)。地平線は √(2Rh + h²) = 25 m で、地球(4.7 km)の 190 分の 1。サッカー場の端まで見えない。足元の実効重力は 79.4 µm/s² しかないので、1.7 m の高さから落とした球が足元に届くまで 207 秒(3.4 分)かかる。",
-   "zh": "脚下形状的曲率半径约为 176 m（把岩石的凹凸平滑掉后的形状）。地平线为 √(2Rh + h²) = 25 m，是地球（4.7 km）的 1/190 —— 连足球场的另一端都看不到。脚下的有效重力只有 79.4 µm/s²，所以从 1.7 m 落下的球要 207 s（3.4 分钟）才落到地面。",
-   "tw": "腳下形狀的曲率半徑約為 176 m（把岩石的凹凸平滑掉後的形狀）。地平線為 √(2Rh + h²) = 25 m，是地球（4.7 km）的 1/190 —— 連足球場的另一端都看不到。腳下的有效重力只有 79.4 µm/s²，所以從 1.7 m 落下的球要 207 s（3.4 分鐘）才落到地面。",
-   "ko": "발밑 모양의 곡률 반지름은 약 176 m(바위의 요철을 평활화한 모양)입니다. 지평선은 √(2Rh + h²) = 25 m로, 지구(4.7 km)의 1/190 —— 축구장 반대편 끝도 보이지 않습니다. 발밑의 유효 중력은 79.4 µm/s²뿐이라, 1.7 m에서 떨어뜨린 공이 발밑에 닿기까지 207 s(3.4분) 걸립니다.",
-   "de": "Der örtliche Krümmungsradius beträgt etwa 176 m (die Form mit geglätteten Felsbrocken). Der Horizont liegt bei √(2Rh + h²) = 25 m, 1/190 des Erdhorizonts (4.7 km) — nicht einmal das andere Ende eines Fußballfelds. Die effektive Schwerkraft unter den Füßen beträgt nur 79.4 µm/s², daher braucht ein aus 1.7 m fallender Ball 207 s (3.4 min) bis zum Boden.",
-   "hi": "स्थानीय वक्रता-त्रिज्या लगभग 176 m है (चट्टानों के उभार चिकने करने के बाद का आकार)। क्षितिज √(2Rh + h²) = 25 m पर है, पृथ्वी (4.7 km) का 1/190 — फ़ुटबॉल मैदान का दूसरा छोर भी नहीं दिखता। पैरों के नीचे प्रभावी गुरुत्व केवल 79.4 µm/s² है, इसलिए 1.7 m से गिराई गेंद को ज़मीन तक पहुँचने में 207 s (3.4 मिनट) लगते हैं।",
-   "fr": "Le rayon de courbure local vaut environ 176 m (la forme avec les rochers lissés). L'horizon est à √(2Rh + h²) = 25 m, 1/190 de celui de la Terre (4.7 km) — pas même l'autre bout d'un terrain de football. La pesanteur effective sous les pieds n'est que de 79.4 µm/s², si bien qu'une balle lâchée de 1.7 m met 207 s (3.4 min) à toucher le sol."
-  },
   "horizon d = √((R + h)² − R²) = √(2Rh + h²) ≈ √(2Rh)\nfall time t = √(2h / g)\nfield of view W = 2 D tan(angle / 2)": {
    "ja": "地平線 d = √((R + h)² − R²) = √(2Rh + h²) ≈ √(2Rh)\n落ちる時間 t = √(2h / g)\n視野の縦の幅 W = 2 D tan(画角 / 2)",
    "zh": "地平线 d = √((R + h)² − R²) = √(2Rh + h²) ≈ √(2Rh)\n下落时间 t = √(2h / g)\n视野的纵向宽度 W = 2 D tan(视角 / 2)",
@@ -1441,15 +1414,6 @@
    "de": "Horizont d = √((R + h)² − R²) = √(2Rh + h²) ≈ √(2Rh)\nFallzeit t = √(2h / g)\nSichtfeld W = 2 D tan(Bildwinkel / 2)",
    "hi": "क्षितिज d = √((R + h)² − R²) = √(2Rh + h²) ≈ √(2Rh)\nगिरने का समय t = √(2h / g)\nदृश्य-क्षेत्र W = 2 D tan(कोण / 2)",
    "fr": "horizon d = √((R + h)² − R²) = √(2Rh + h²) ≈ √(2Rh)\ntemps de chute t = √(2h / g)\nchamp de vision W = 2 D tan(angle / 2)"
-  },
-  "Itokawa's radius of curvature depends on the scale you measure over (a boulder-strewn rubble pile: bumps at a few metres, the body's bend at tens of metres). The two estimates R1, R2 are 176 m and 198 m, giving horizons of 25 m and 26 m; the real line of sight is blocked by nearby boulders. The yardsticks are schematic shapes; Hayabusa's panel chord is schematic (only the 5.7 m span and the body size are primary-source values). The comparison with the venue will be added when its shape data arrives.": {
-   "ja": "イトカワの曲率半径は測る広さで変わる(岩の多い瓦礫の山なので、数 m では凹凸、数十 m で形の曲がり)。2 つの推定 R1・R2 は 176 m と 198 m で、地平線は 25 m と 26 m。実際の見通しは近くの岩でさえぎられる。物差しの物体は模式の形で、はやぶさのパドルの幅は模式(全幅 5.7 m と本体の寸法だけが一次情報の値)。会場との比較は形のデータが届いてから足す。",
-   "zh": "糸川的曲率半径随测量范围而变（它是布满岩石的碎石堆：几米尺度是凹凸，几十米尺度才是形体的弯曲）。两个估计 R1、R2 分别为 176 m 和 198 m，对应的地平线为 25 m 和 26 m；实际的视线会被附近的岩石挡住。标尺物体是示意形状；隼鸟号太阳能板的宽度是示意（只有全宽 5.7 m 和本体尺寸是一手资料的数值）。与会场的比较等形状数据到了再加上。",
-   "tw": "糸川的曲率半徑隨量測範圍而變（它是布滿岩石的碎石堆：幾公尺尺度是凹凸，幾十公尺尺度才是形體的彎曲）。兩個估計 R1、R2 分別為 176 m 和 198 m，對應的地平線為 25 m 和 26 m；實際的視線會被附近的岩石擋住。標尺物體是示意形狀；隼鳥號太陽能板的寬度是示意（只有全寬 5.7 m 和本體尺寸是一手資料的數值）。與會場的比較等形狀資料到了再加上。",
-   "ko": "이토카와의 곡률 반지름은 재는 범위에 따라 달라집니다(바위가 많은 잔해 더미라서, 수 m에서는 요철, 수십 m에서 형체의 휨). 두 추정 R1, R2는 176 m와 198 m이고, 지평선은 25 m와 26 m입니다. 실제 시야는 가까운 바위에 가립니다. 잣대 물체는 모식적인 모양이고, 하야부사 패들의 폭은 모식입니다(전체 폭 5.7 m와 본체 치수만 일차 정보의 값). 회장과의 비교는 모양 데이터가 도착하면 더합니다.",
-   "de": "Der Krümmungsradius von Itokawa hängt vom Maßstab ab, über den man misst (ein mit Felsbrocken übersäter Schutthaufen: Unebenheiten auf einigen Metern, die Krümmung des Körpers auf Dutzenden Metern). Die beiden Schätzungen R1, R2 sind 176 m und 198 m, mit Horizonten von 25 m und 26 m; die echte Sichtlinie wird von nahen Felsbrocken verdeckt. Die Vergleichsobjekte sind schematisch; die Paneelbreite von Hayabusa ist schematisch (nur die Spannweite 5.7 m und die Körpermaße sind Werte aus Primärquellen). Der Vergleich mit dem Veranstaltungsort kommt dazu, sobald seine Formdaten vorliegen.",
-   "hi": "इटोकावा की वक्रता-त्रिज्या इस पर निर्भर करती है कि आप कितने क्षेत्र पर मापते हैं (चट्टानों से भरा मलबे का ढेर: कुछ मीटर पर उभार, दसियों मीटर पर पिंड का मोड़)। दोनों अनुमान R1, R2 176 m और 198 m हैं, जिनसे क्षितिज 25 m और 26 m मिलते हैं; असली दृष्टि-रेखा पास की चट्टानों से रुक जाती है। पैमाने की वस्तुएँ सांकेतिक आकार हैं; हायाबुसा के पैनल की चौड़ाई सांकेतिक है (केवल 5.7 m का फैलाव और ढाँचे का माप प्राथमिक स्रोत के मान हैं)। आयोजन-स्थल से तुलना उसका आकार-डेटा आने पर जोड़ी जाएगी।",
-   "fr": "Le rayon de courbure d'Itokawa dépend de l'échelle sur laquelle on mesure (un tas de gravats parsemé de rochers : des bosses à quelques mètres, la courbure du corps à des dizaines de mètres). Les deux estimations R1, R2 valent 176 m et 198 m, soit des horizons de 25 m et 26 m ; la vraie ligne de visée est masquée par les rochers proches. Les étalons sont des formes schématiques ; la largeur des panneaux de Hayabusa est schématique (seuls l'envergure de 5.7 m et les dimensions du corps sont des valeurs de source primaire). La comparaison avec le lieu de l'exposition sera ajoutée quand ses données de forme arriveront."
   },
   "Colour = magnitude of effective gravity (gravity plus spin centrifugal). The gravity of a uniform 1.9 g/cm³ polyhedron is computed with Werner & Scheeres' exact formula (op polyhedron_gravity) at all 25,350 vertices. The white walker goes round the long-axis section (mesh_slice_contours); the yellow arrow shows the direction of effective gravity there. Where it is not perpendicular to the ground, the ground is a slope. The camera follows the walker; the readout at the top left shows |g_eff| and the slope underfoot.": {
    "ja": "表面の色 = 実効重力の大きさ(重力 + 自転の遠心力)。一様密度 1.9 g/cm³ の多面体の重力を、Werner & Scheeres の厳密な式(op polyhedron_gravity)で頂点 25,350 個すべてで計算した。白い人が長軸の断面(mesh_slice_contours)を一周し、黄色の矢印がその場所の実効重力の向き。矢印が地面に垂直でないところは坂(斜面の角)。カメラは歩く人を追い、左上の読みに足元の |g_eff| と斜面の角が出る。",
@@ -1477,6 +1441,87 @@
    "de": "durchscheinende Hülle: dieselben Höhen ×2 außen auf die Oberfläche gesetzt",
    "hi": "पारभासी खोल: वही ऊँचाइयाँ ×2 करके सतह के बाहर जोड़ी गईं",
    "fr": "coque translucide : les mêmes hauteurs ×2 ajoutées à l'extérieur de la surface"
+  },
+  "Next to Itokawa (535 m long) stand true-scale yardsticks: this venue (Pacifico Yokohama), a 333 m tower, a football pitch, Hayabusa and a person. A person is only 0.3 % of the length, so playback zooms on a log scale from the whole asteroid (field of view 1,000 m high) down to the person (3 m) standing where Hayabusa touched down (estimated site TD1). The person stands against the effective gravity (the local 'up').": {
+   "ja": "イトカワ(長さ 535 m)の横に、実寸の物差しを置いた: いまいる会場(パシフィコ横浜)、高さ 333 m の塔、サッカー場、はやぶさ、そして人。人は長さの 0.3 % しかないので、再生すると全体(視野の縦の幅 1,000 m)から、はやぶさが降りた所(TD1 の推定位置)に立つ人(3 m)まで、対数の等間隔で寄っていく。人は実効重力の逆向き(その場所の「上」)に立っている。",
+   "zh": "在糸川（长 535 m）旁边放上了实际尺寸的标尺：现在所在的会场（Pacifico 横滨）、高 333 m 的塔、足球场、隼鸟号，以及一个人。人只有长度的 0.3 %，所以播放时会以对数等间隔，从整体（视野纵向宽度 1,000 m）一直拉近到站在隼鸟号着陆处（推定位置 TD1）的人（3 m）。人沿有效重力的反方向（当地的“上”）站立。",
+   "tw": "在糸川（長 535 m）旁邊放上了實際尺寸的標尺：現在所在的會場（Pacifico 橫濱）、高 333 m 的塔、足球場、隼鳥號，以及一個人。人只有長度的 0.3 %，所以播放時會以對數等間隔，從整體（視野縱向寬度 1,000 m）一直拉近到站在隼鳥號著陸處（推定位置 TD1）的人（3 m）。人沿有效重力的反方向（當地的「上」）站立。",
+   "ko": "이토카와(길이 535 m) 옆에 실제 크기의 잣대를 두었습니다: 지금 있는 회장(퍼시피코 요코하마), 높이 333 m의 탑, 축구장, 하야부사, 그리고 사람. 사람은 길이의 0.3 %에 불과하므로, 재생하면 전체(시야의 세로 폭 1,000 m)에서 하야부사가 내려앉은 곳(추정 위치 TD1)에 선 사람(3 m)까지 로그 등간격으로 다가갑니다. 사람은 유효 중력의 반대 방향(그곳의 '위')으로 서 있습니다.",
+   "de": "Neben Itokawa (535 m lang) stehen maßstabsgetreue Vergleichsobjekte: dieser Veranstaltungsort (Pacifico Yokohama), ein 333 m hoher Turm, ein Fußballfeld, Hayabusa und ein Mensch. Ein Mensch ist nur 0.3 % der Länge, daher zoomt die Wiedergabe logarithmisch vom ganzen Asteroiden (Sichtfeld 1,000 m hoch) bis zum Menschen (3 m), der dort steht, wo Hayabusa aufsetzte (geschätzter Punkt TD1). Der Mensch steht entgegen der effektiven Schwerkraft (dem örtlichen „Oben“).",
+   "hi": "इटोकावा (535 m लंबा) के पास असली माप के पैमाने रखे गए हैं: यह आयोजन-स्थल (पैसिफ़िको योकोहामा), 333 m ऊँचा एक मीनार, एक फ़ुटबॉल मैदान, हायाबुसा और एक व्यक्ति। व्यक्ति लंबाई का केवल 0.3 % है, इसलिए चलाने पर दृश्य पूरे क्षुद्रग्रह (दृश्य-क्षेत्र 1,000 m ऊँचा) से लघुगणकीय समान अंतराल में उस व्यक्ति (3 m) तक पास आता है जो हायाबुसा के उतरने की जगह (अनुमानित स्थल TD1) पर खड़ा है। व्यक्ति प्रभावी गुरुत्व के विपरीत (वहाँ के 'ऊपर') खड़ा है।",
+   "fr": "À côté d'Itokawa (535 m de long) se dressent des étalons à l'échelle réelle : ce lieu d'exposition (Pacifico Yokohama), une tour de 333 m, un terrain de football, Hayabusa et une personne. Une personne ne fait que 0.3 % de la longueur ; la lecture zoome donc sur une échelle logarithmique de l'astéroïde entier (champ de vision de 1,000 m de haut) jusqu'à la personne (3 m) debout là où Hayabusa s'est posé (site estimé TD1). La personne se tient à l'opposé de la pesanteur effective (le « haut » local)."
+  },
+  "Itokawa's length ÷ the venue's length (obb)": {
+   "ja": "イトカワの長さ ÷ 会場の長さ(obb)",
+   "zh": "糸川的长度 ÷ 会场的长度（obb）",
+   "tw": "糸川的長度 ÷ 會場的長度（obb）",
+   "ko": "이토카와의 길이 ÷ 회장의 길이(obb)",
+   "de": "Länge von Itokawa ÷ Länge des Veranstaltungsorts (obb)",
+   "hi": "इटोकावा की लंबाई ÷ आयोजन-स्थल की लंबाई (obb)",
+   "fr": "longueur d'Itokawa ÷ longueur du lieu (obb)"
+  },
+  "Itokawa's volume ÷ the venue's volume (approximate: the venue mesh has 33 open edges)": {
+   "ja": "イトカワの体積 ÷ 会場の体積(会場のメッシュは 33 辺が開いているので近似)",
+   "zh": "糸川的体积 ÷ 会场的体积（近似：会场的网格有 33 条开放的边）",
+   "tw": "糸川的體積 ÷ 會場的體積（近似：會場的網格有 33 條開放的邊）",
+   "ko": "이토카와의 부피 ÷ 회장의 부피(근사: 회장 메시에 열린 모서리가 33개)",
+   "de": "Volumen von Itokawa ÷ Volumen des Veranstaltungsorts (näherungsweise: das Netz des Orts hat 33 offene Kanten)",
+   "hi": "इटोकावा का आयतन ÷ आयोजन-स्थल का आयतन (लगभग: स्थल के mesh में 33 खुले किनारे हैं)",
+   "fr": "volume d'Itokawa ÷ volume du lieu (approché : le maillage du lieu a 33 arêtes ouvertes)"
+  },
+  "9.4 venues": {
+   "ja": "9.4 個分",
+   "zh": "9.4 个会场",
+   "tw": "9.4 個會場",
+   "ko": "회장 9.4개분",
+   "de": "9.4 Veranstaltungsorte",
+   "hi": "9.4 आयोजन-स्थल",
+   "fr": "9.4 lieux"
+  },
+  "the venue (Pacifico Yokohama)": {
+   "ja": "会場(パシフィコ横浜)",
+   "zh": "会场（Pacifico 横滨）",
+   "tw": "會場（Pacifico 橫濱）",
+   "ko": "회장(퍼시피코 요코하마)",
+   "de": "der Veranstaltungsort (Pacifico Yokohama)",
+   "hi": "आयोजन-स्थल (पैसिफ़िको योकोहामा)",
+   "fr": "le lieu d'exposition (Pacifico Yokohama)"
+  },
+  "drawn venue extents (east-west, north-south, height) vs the bbox of the PLATEAU asset": {
+   "ja": "描いた会場の幅(東西・南北・高さ)と、PLATEAU の資産の外接箱",
+   "zh": "绘制的会场宽度（东西、南北、高度）与 PLATEAU 资产的外接盒",
+   "tw": "繪製的會場寬度（東西、南北、高度）與 PLATEAU 資產的外接盒",
+   "ko": "그린 회장의 폭(동서, 남북, 높이) 대 PLATEAU 자산의 외접 상자",
+   "de": "gezeichnete Ausdehnung des Orts (Ost-West, Nord-Süd, Höhe) gegen den umschreibenden Quader des PLATEAU-Datensatzes",
+   "hi": "बनाए गए स्थल का विस्तार (पूर्व-पश्चिम, उत्तर-दक्षिण, ऊँचाई) बनाम PLATEAU संपत्ति का घेरने वाला बॉक्स",
+   "fr": "étendue dessinée du lieu (est-ouest, nord-sud, hauteur) contre la boîte englobante de l'actif PLATEAU"
+  },
+  "The local radius of curvature is about 176 m (the shape with boulders smoothed out). The horizon is √(2Rh + h²) = 25 m, 1/190 of Earth's (4.7 km) — not even the far end of a football pitch. Effective gravity underfoot is only 79.4 µm/s², so a ball dropped from 1.7 m takes 207 s (3.4 min) to reach the ground. Compared with this venue (Pacifico Yokohama), Itokawa is 0.81 times its length and holds about 9 venues by volume.": {
+   "ja": "足元の形の曲率半径は約 176 m(岩の凹凸を平滑化した形)。地平線は √(2Rh + h²) = 25 m で、地球(4.7 km)の 190 分の 1。サッカー場の端まで見えない。足元の実効重力は 79.4 µm/s² しかないので、1.7 m の高さから落とした球が足元に届くまで 207 秒(3.4 分)かかる。いまいる会場(パシフィコ横浜)と比べると、長さは会場の 0.81 倍、体積は会場 9 個分。",
+   "zh": "脚下形状的曲率半径约为 176 m（把岩石的凹凸平滑掉后的形状）。地平线为 √(2Rh + h²) = 25 m，是地球（4.7 km）的 1/190 —— 连足球场的另一端都看不到。脚下的有效重力只有 79.4 µm/s²，所以从 1.7 m 落下的球要 207 s（3.4 分钟）才落到地面。和现在所在的会场（Pacifico 横滨）相比，糸川的长度是会场的 0.81 倍，体积约为 9 个会场。",
+   "tw": "腳下形狀的曲率半徑約為 176 m（把岩石的凹凸平滑掉後的形狀）。地平線為 √(2Rh + h²) = 25 m，是地球（4.7 km）的 1/190 —— 連足球場的另一端都看不到。腳下的有效重力只有 79.4 µm/s²，所以從 1.7 m 落下的球要 207 s（3.4 分鐘）才落到地面。和現在所在的會場（Pacifico 橫濱）相比，糸川的長度是會場的 0.81 倍，體積約為 9 個會場。",
+   "ko": "발밑 모양의 곡률 반지름은 약 176 m(바위의 요철을 평활화한 모양)입니다. 지평선은 √(2Rh + h²) = 25 m로, 지구(4.7 km)의 1/190 —— 축구장 반대편 끝도 보이지 않습니다. 발밑의 유효 중력은 79.4 µm/s²뿐이라, 1.7 m에서 떨어뜨린 공이 발밑에 닿기까지 207 s(3.4분) 걸립니다. 지금 있는 회장(퍼시피코 요코하마)과 비교하면, 이토카와의 길이는 회장의 0.81배, 부피는 회장 약 9개분입니다.",
+   "de": "Der örtliche Krümmungsradius beträgt etwa 176 m (die Form mit geglätteten Felsbrocken). Der Horizont liegt bei √(2Rh + h²) = 25 m, 1/190 des Erdhorizonts (4.7 km) — nicht einmal das andere Ende eines Fußballfelds. Die effektive Schwerkraft unter den Füßen beträgt nur 79.4 µm/s², daher braucht ein aus 1.7 m fallender Ball 207 s (3.4 min) bis zum Boden. Verglichen mit diesem Veranstaltungsort (Pacifico Yokohama) ist Itokawa 0.81-mal so lang und fasst etwa 9 Veranstaltungsorte an Volumen.",
+   "hi": "स्थानीय वक्रता-त्रिज्या लगभग 176 m है (चट्टानों के उभार चिकने करने के बाद का आकार)। क्षितिज √(2Rh + h²) = 25 m पर है, पृथ्वी (4.7 km) का 1/190 — फ़ुटबॉल मैदान का दूसरा छोर भी नहीं दिखता। पैरों के नीचे प्रभावी गुरुत्व केवल 79.4 µm/s² है, इसलिए 1.7 m से गिराई गेंद को ज़मीन तक पहुँचने में 207 s (3.4 मिनट) लगते हैं। इस आयोजन-स्थल (पैसिफ़िको योकोहामा) से तुलना करें तो इटोकावा उसकी लंबाई का 0.81 गुना है और आयतन में लगभग 9 स्थल समा जाएँ।",
+   "fr": "Le rayon de courbure local vaut environ 176 m (la forme avec les rochers lissés). L'horizon est à √(2Rh + h²) = 25 m, 1/190 de celui de la Terre (4.7 km) — pas même l'autre bout d'un terrain de football. La pesanteur effective sous les pieds n'est que de 79.4 µm/s², si bien qu'une balle lâchée de 1.7 m met 207 s (3.4 min) à toucher le sol. Comparé à ce lieu (Pacifico Yokohama), Itokawa mesure 0.81 fois sa longueur et contient environ 9 lieux en volume."
+  },
+  "Itokawa's radius of curvature depends on the scale you measure over (a boulder-strewn rubble pile: bumps at a few metres, the body's bend at tens of metres). The two estimates R1, R2 are 176 m and 198 m, giving horizons of 25 m and 26 m; the real line of sight is blocked by nearby boulders. The yardsticks are schematic shapes; Hayabusa's panel chord is schematic (only the 5.7 m span and the body size are primary-source values). The venue is PLATEAU LOD2 (buildings simplified up to roof shape), and its mesh has 33 open edges, so its volume is approximate.": {
+   "ja": "イトカワの曲率半径は測る広さで変わる(岩の多い瓦礫の山なので、数 m では凹凸、数十 m で形の曲がり)。2 つの推定 R1・R2 は 176 m と 198 m で、地平線は 25 m と 26 m。実際の見通しは近くの岩でさえぎられる。物差しの物体は模式の形で、はやぶさのパドルの幅は模式(全幅 5.7 m と本体の寸法だけが一次情報の値)。会場の形は PLATEAU の LOD2(屋根の形までの簡略な建物)で、メッシュに 33 辺のすき間があるので体積は近似。",
+   "zh": "糸川的曲率半径随测量范围而变（它是布满岩石的碎石堆：几米尺度是凹凸，几十米尺度才是形体的弯曲）。两个估计 R1、R2 分别为 176 m 和 198 m，对应的地平线为 25 m 和 26 m；实际的视线会被附近的岩石挡住。标尺物体是示意形状；隼鸟号太阳能板的宽度是示意（只有全宽 5.7 m 和本体尺寸是一手资料的数值）。会场的形状是 PLATEAU 的 LOD2（简化到屋顶形状的建筑），网格有 33 条边的缝隙，所以体积是近似值。",
+   "tw": "糸川的曲率半徑隨量測範圍而變（它是布滿岩石的碎石堆：幾公尺尺度是凹凸，幾十公尺尺度才是形體的彎曲）。兩個估計 R1、R2 分別為 176 m 和 198 m，對應的地平線為 25 m 和 26 m；實際的視線會被附近的岩石擋住。標尺物體是示意形狀；隼鳥號太陽能板的寬度是示意（只有全寬 5.7 m 和本體尺寸是一手資料的數值）。會場的形狀是 PLATEAU 的 LOD2（簡化到屋頂形狀的建築），網格有 33 條邊的縫隙，所以體積是近似值。",
+   "ko": "이토카와의 곡률 반지름은 재는 범위에 따라 달라집니다(바위가 많은 잔해 더미라서, 수 m에서는 요철, 수십 m에서 형체의 휨). 두 추정 R1, R2는 176 m와 198 m이고, 지평선은 25 m와 26 m입니다. 실제 시야는 가까운 바위에 가립니다. 잣대 물체는 모식적인 모양이고, 하야부사 패들의 폭은 모식입니다(전체 폭 5.7 m와 본체 치수만 일차 정보의 값). 회장의 모양은 PLATEAU의 LOD2(지붕 모양까지 단순화한 건물)이고, 메시에 33개 모서리의 틈이 있어 부피는 근사입니다.",
+   "de": "Der Krümmungsradius von Itokawa hängt vom Maßstab ab, über den man misst (ein mit Felsbrocken übersäter Schutthaufen: Unebenheiten auf einigen Metern, die Krümmung des Körpers auf Dutzenden Metern). Die beiden Schätzungen R1, R2 sind 176 m und 198 m, mit Horizonten von 25 m und 26 m; die echte Sichtlinie wird von nahen Felsbrocken verdeckt. Die Vergleichsobjekte sind schematisch; die Paneelbreite von Hayabusa ist schematisch (nur die Spannweite 5.7 m und die Körpermaße sind Werte aus Primärquellen). Der Veranstaltungsort ist PLATEAU LOD2 (Gebäude bis zur Dachform vereinfacht), und sein Netz hat 33 offene Kanten, daher ist sein Volumen genähert.",
+   "hi": "इटोकावा की वक्रता-त्रिज्या इस पर निर्भर करती है कि आप कितने क्षेत्र पर मापते हैं (चट्टानों से भरा मलबे का ढेर: कुछ मीटर पर उभार, दसियों मीटर पर पिंड का मोड़)। दोनों अनुमान R1, R2 176 m और 198 m हैं, जिनसे क्षितिज 25 m और 26 m मिलते हैं; असली दृष्टि-रेखा पास की चट्टानों से रुक जाती है। पैमाने की वस्तुएँ सांकेतिक आकार हैं; हायाबुसा के पैनल की चौड़ाई सांकेतिक है (केवल 5.7 m का फैलाव और ढाँचे का माप प्राथमिक स्रोत के मान हैं)। आयोजन-स्थल PLATEAU LOD2 है (छत के आकार तक सरल की गई इमारतें), और उसके mesh में 33 खुले किनारे हैं, इसलिए उसका आयतन लगभग है।",
+   "fr": "Le rayon de courbure d'Itokawa dépend de l'échelle sur laquelle on mesure (un tas de gravats parsemé de rochers : des bosses à quelques mètres, la courbure du corps à des dizaines de mètres). Les deux estimations R1, R2 valent 176 m et 198 m, soit des horizons de 25 m et 26 m ; la vraie ligne de visée est masquée par les rochers proches. Les étalons sont des formes schématiques ; la largeur des panneaux de Hayabusa est schématique (seuls l'envergure de 5.7 m et les dimensions du corps sont des valeurs de source primaire). Le lieu est en PLATEAU LOD2 (bâtiments simplifiés jusqu'à la forme du toit) et son maillage a 33 arêtes ouvertes, son volume est donc approché."
+  },
+  "Shape: Gaskell Itokawa Shape Model V1.1 (R. Gaskell et al., from Hayabusa [JAXA] AMICA images), NASA PDS Small Bodies Node, CC0 1.0 (public-domain dedication). The Q = 64 version (25,350 vertices, 49,152 faces, units km, z = spin pole, x = longitude 0) with vertex numbers made 0-based and unused duplicate vertices dropped. Numbers: Fujiwara et al. 2006, Abe et al. 2006, Demura et al. 2006 (all Science 312), Lowry et al. 2014 (A&A 562), Yano & Aida 2013. Gravity formula: Werner & Scheeres 1997. Venue shape: created by processing '3D City Model (Project PLATEAU) Yokohama City (FY2020)' (MLIT) (Public Data License 1.0; copyright Yokohama City; 7 parts of the CityGML LOD2 turned into a triangle mesh in local coordinates).": {
+   "ja": "形: Gaskell Itokawa Shape Model V1.1(R. Gaskell ほか。はやぶさ〔JAXA〕の AMICA の画像から作成)、NASA PDS Small Bodies Node、CC0 1.0(パブリックドメインへの献呈)。Q = 64 の版(25,350 頂点・49,152 面、単位 km、z 軸 = 自転の極、x 軸 = 経度 0)を使い、頂点番号を 0 始まりにし、面から使われない重複頂点を落とした。数値: Fujiwara ほか 2006・Abe ほか 2006・Demura ほか 2006(いずれも Science 312)、Lowry ほか 2014(A&A 562)、Yano & Aida 2013。重力の式: Werner & Scheeres 1997。会場の形: 「3D都市モデル(Project PLATEAU)横浜市(2020年度)」(国土交通省)を加工して作成(公共データ利用規約 第1.0版、著作権は横浜市。CityGML LOD2 の 7 部位を三角形メッシュにし、局所座標へ移した)。",
+   "zh": "形状：Gaskell Itokawa Shape Model V1.1（R. Gaskell 等，由隼鸟号〔JAXA〕AMICA 图像制作），NASA PDS Small Bodies Node，CC0 1.0（献给公有领域）。使用 Q = 64 版本（25,350 个顶点、49,152 个面，单位 km，z = 自转极，x = 经度 0），顶点编号改为从 0 开始，并删除未使用的重复顶点。数值：Fujiwara et al. 2006、Abe et al. 2006、Demura et al. 2006（均为 Science 312），Lowry et al. 2014（A&A 562），Yano & Aida 2013。引力公式：Werner & Scheeres 1997。会场形状：加工「3D City Model (Project PLATEAU) Yokohama City (FY2020)」（国土交通省）制作（公共数据利用规约 第1.0版，著作权属横滨市；把 CityGML LOD2 的 7 个部分转为三角网格并移到局部坐标）。",
+   "tw": "形狀：Gaskell Itokawa Shape Model V1.1（R. Gaskell 等，由隼鳥號〔JAXA〕AMICA 影像製作），NASA PDS Small Bodies Node，CC0 1.0（貢獻至公有領域）。使用 Q = 64 版本（25,350 個頂點、49,152 個面，單位 km，z = 自轉極，x = 經度 0），頂點編號改為從 0 開始，並刪除未使用的重複頂點。數值：Fujiwara et al. 2006、Abe et al. 2006、Demura et al. 2006（皆為 Science 312），Lowry et al. 2014（A&A 562），Yano & Aida 2013。重力公式：Werner & Scheeres 1997。會場形狀：加工「3D City Model (Project PLATEAU) Yokohama City (FY2020)」（國土交通省）製作（公共資料利用規約 第1.0版，著作權屬橫濱市；把 CityGML LOD2 的 7 個部分轉為三角網格並移到局部座標）。",
+   "ko": "모양: Gaskell Itokawa Shape Model V1.1(R. Gaskell 외, 하야부사〔JAXA〕 AMICA 영상으로 제작), NASA PDS Small Bodies Node, CC0 1.0(퍼블릭 도메인 헌정). Q = 64 판(25,350 꼭짓점, 49,152 면, 단위 km, z = 자전극, x = 경도 0)을 쓰고, 꼭짓점 번호를 0부터로 바꾸고 쓰이지 않는 중복 꼭짓점을 뺐습니다. 수치: Fujiwara et al. 2006, Abe et al. 2006, Demura et al. 2006(모두 Science 312), Lowry et al. 2014(A&A 562), Yano & Aida 2013. 중력 식: Werner & Scheeres 1997. 회장 모양: 「3D City Model (Project PLATEAU) Yokohama City (FY2020)」(국토교통성)를 가공하여 작성(공공데이터 이용규약 제1.0판, 저작권은 요코하마시. CityGML LOD2의 7개 부위를 삼각형 메시로 만들어 국소 좌표로 옮김).",
+   "de": "Form: Gaskell Itokawa Shape Model V1.1 (R. Gaskell et al., aus AMICA-Bildern von Hayabusa [JAXA]), NASA PDS Small Bodies Node, CC0 1.0 (Widmung an die Gemeinfreiheit). Die Version Q = 64 (25,350 Eckpunkte, 49,152 Flächen, Einheit km, z = Rotationspol, x = Länge 0), Eckpunktnummern ab 0 und ungenutzte doppelte Eckpunkte entfernt. Zahlen: Fujiwara et al. 2006, Abe et al. 2006, Demura et al. 2006 (alle Science 312), Lowry et al. 2014 (A&A 562), Yano & Aida 2013. Schwerkraftformel: Werner & Scheeres 1997. Form des Veranstaltungsorts: erstellt durch Bearbeitung von „3D City Model (Project PLATEAU) Yokohama City (FY2020)“ (MLIT) (Public Data License 1.0; Urheberrecht Stadt Yokohama; 7 Teile des CityGML LOD2 als Dreiecksnetz in lokalen Koordinaten).",
+   "hi": "आकार: Gaskell Itokawa Shape Model V1.1 (R. Gaskell et al., हायाबुसा [JAXA] की AMICA तस्वीरों से), NASA PDS Small Bodies Node, CC0 1.0 (सार्वजनिक डोमेन को समर्पण)। Q = 64 संस्करण (25,350 शीर्ष, 49,152 फलक, इकाई km, z = घूर्णन ध्रुव, x = देशांतर 0), शीर्ष संख्याएँ 0 से शुरू की गईं और अप्रयुक्त दोहरे शीर्ष हटाए गए। संख्याएँ: Fujiwara et al. 2006, Abe et al. 2006, Demura et al. 2006 (सभी Science 312), Lowry et al. 2014 (A&A 562), Yano & Aida 2013। गुरुत्व सूत्र: Werner & Scheeres 1997। आयोजन-स्थल का आकार: '3D City Model (Project PLATEAU) Yokohama City (FY2020)' (MLIT) को संसाधित करके बनाया गया (Public Data License 1.0; कॉपीराइट योकोहामा शहर; CityGML LOD2 के 7 भागों को स्थानीय निर्देशांकों में त्रिभुज mesh बनाया गया)।",
+   "fr": "Forme : Gaskell Itokawa Shape Model V1.1 (R. Gaskell et al., à partir des images AMICA de Hayabusa [JAXA]), NASA PDS Small Bodies Node, CC0 1.0 (dédicace au domaine public). La version Q = 64 (25,350 sommets, 49,152 faces, unité km, z = pôle de rotation, x = longitude 0), numéros de sommets à partir de 0 et sommets dupliqués inutilisés supprimés. Chiffres : Fujiwara et al. 2006, Abe et al. 2006, Demura et al. 2006 (tous Science 312), Lowry et al. 2014 (A&A 562), Yano & Aida 2013. Formule de gravité : Werner & Scheeres 1997. Forme du lieu : créée en traitant « 3D City Model (Project PLATEAU) Yokohama City (FY2020) » (MLIT) (Public Data License 1.0 ; droits d'auteur Ville de Yokohama ; 7 parties du CityGML LOD2 converties en maillage triangulaire en coordonnées locales)."
   }
  }
 }

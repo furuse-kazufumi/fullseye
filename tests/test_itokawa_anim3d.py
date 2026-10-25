@@ -165,3 +165,21 @@ def test_ops_named_on_screen_exist_and_are_registered():
             assert name in opsdrive.list_ops(), full
         else:
             assert callable(getattr(fs.ledger, name)), full
+
+
+def test_venue_asset_is_recorded_and_drawn_at_its_bbox():
+    """会場(PLATEAU)の資産: 出どころの SHA-256・README のライセンス表示、描いた幅 = 資産の外接箱。"""
+    m = _tool()
+    V, F, ext = m.load_venue()
+    assert V.shape[1] == 3 and len(F) > 1000
+    assert np.allclose(np.ptp(V, axis=0), ext, atol=1e-9)
+    readme = (m.VENUE_NPZ.parent / "README.md").read_text(encoding="utf-8")
+    assert "PLATEAU" in readme and "PDL1.0" in readme
+    R = {"V": None}
+    # 物差しの配置だけ組み立てて、会場の幅を外接箱と比べる(全頂点の重力は要らない)
+    Vi, Fi, _ = m.load_mesh()
+    up = np.array([0.0, 0.0, 1.0])
+    t1, t2 = m._tangent_frame(up)
+    R = {"V": Vi, "size": {"k": 0, "up": up, "t1": t1, "t2": t2,
+                           "venue": {"V": V, "F": F, "ext": ext}}}
+    assert m.venue_extent_error(R) < 1e-9

@@ -22,6 +22,8 @@ data/*
 !data/pmd_real/
 # Public asteroid shape model for the Itokawa gravity lesson (CC0 1.0, format conversion only; source and changes in its README.md).
 !data/itokawa_shape/
+# MLIT PLATEAU Yokohama venue buildings (PDL1.0, CC BY 4.0 compatible; source, licence and changes in its README.md).
+!data/plateau_yokohama/
 
 # packaging build artifacts
 *.egg-info/

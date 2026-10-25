@@ -104,9 +104,11 @@ EARTH_R = 6371008.8                           # 地球の平均半径 [m](IUGG)�
 CURV_SMOOTH_ITERS = 30                        # 曲率半径を出す前の Taubin 平滑化の回数(岩の凹凸を落とし、形の曲がりだけ残す)
 QUAD_RADIUS = 20.0                            # 独立な曲率半径(2 次曲面の当てはめ)に使う近傍の半径 [m]
 FOV_Y = 0.9                                   # pocviewer の縦の画角 [rad](視野の縦の幅 = 2 d tan(FOV_Y/2))
-#: 会場(パシフィコ横浜)の実寸の形(MLIT PLATEAU、別の枝 feat/plateau-citygml-2026-10-25 が data/plateau_yokohama/ に用意中)。
-#: ★ここは空けてある: 資産がまだ無いので、作った箱で代用しない(届いたらこの枠に読み込みと門を足す)。
-VENUE_SLOT = "data/plateau_yokohama/"
+#: 会場(パシフィコ横浜)の実寸の形: 国土交通省 Project PLATEAU の横浜市(2020 年度)CityGML LOD2 の 7 部位
+#: (枝 feat/plateau-citygml-2026-10-25 の tools/gen_plateau_venue.py が作った npz を写した。出典・ライセンス(PDL1.0、
+#: CC BY 4.0 互換)・加工は data/plateau_yokohama/README.md)。局所座標 x 東・y 北・z 上 [m]。
+VENUE_NPZ = ROOT / "data" / "plateau_yokohama" / "venue_lod2.npz"
+VENUE_SHA256 = "378af50f3172ce8da1a0ddff419ec29122a90b7e1a49ce8261389c71d969079a"
 
 OPS_USED = ("polygrav.polyhedron_gravity", "polygrav.polyhedron_clip_halfspace", "mesh_props.mesh_volume",
             "mesh_props.mesh_area", "mesh_props.vertex_normals", "mesh_props.face_areas", "pcseg.obb",
@@ -251,6 +253,21 @@ def _tangent_frame(up):
     return t1, np.cross(up, t1)
 
 
+def load_venue():
+    """会場の三角形メッシュ → (V [m]、外接箱の水平の中心を原点・地面の最低点を z = 0 に移したもの, F, 元の外接箱の幅 (3,))。"""
+    import hashlib
+    raw = VENUE_NPZ.read_bytes()
+    if hashlib.sha256(raw).hexdigest() != VENUE_SHA256:
+        raise ValueError("会場の形のデータの SHA-256 が記録と違う")
+    z = np.load(VENUE_NPZ, allow_pickle=False)
+    V = np.asarray(z["V"], dtype=float)
+    F = np.asarray(z["F"], dtype=np.int64)
+    ext = np.ptp(V, axis=0)
+    c = 0.5 * (V.min(axis=0) + V.max(axis=0))
+    V = V - np.array([c[0], c[1], V[:, 2].min()])
+    return V, F, ext
+
+
 def size_compare(R):
     """はやぶさが降りた所(TD1 の推定位置)に人が立つ: 地平線までの距離と、落とした球が足元に届く時間。
 
@@ -298,7 +315,14 @@ def size_compare(R):
             zz = 0.0
             break
         zz, vv, tt = nz, nv, tt + dt
-    return {"k": k, "up": up, "t1": t1, "t2": t2, "R1": R1, "R2": R2, "horizon": hor, "horizon_check": hor2,
+    Vv, Fv, vext = load_venue()
+    vst = L.mesh_edge_stats(Vv, Fv)
+    v_vol = abs(float(L.mesh_volume((Vv, Fv))))
+    v_len = float(np.max(2.0 * np.asarray(L.obb(Vv)["extents"])))
+    venue = {"V": Vv, "F": Fv, "ext": vext, "open_edges": int(vst["boundary_edges"]), "volume": v_vol, "length": v_len,
+             "length_ratio": float(R["dims"][0] / v_len), "volume_ratio": float(R["vol"] / v_vol)}
+    return {"venue": venue,
+            "k": k, "up": up, "t1": t1, "t2": t2, "R1": R1, "R2": R2, "horizon": hor, "horizon_check": hor2,
             "horizon_earth": math.sqrt(2.0 * EARTH_R * h), "g_site": g_site, "t_fall": t_fall, "t_fall_num": tt,
             "g_var": float(np.ptp(gz) / np.mean(gz)), "length_ratio": float(R["dims"][0] / PERSON_H)}
 
@@ -535,6 +559,10 @@ def gates(R) -> dict:
     g["g_var"] = sz["g_var"]
     g["length_ratio"] = sz["length_ratio"]
     g["scale_err_m"] = scale_object_error(R)
+    vn = sz["venue"]
+    g["venue_err_m"] = venue_extent_error(R)
+    g["venue_length_ratio"], g["venue_volume_ratio"] = vn["length_ratio"], vn["volume_ratio"]
+    g["venue_length_m"], g["venue_volume_m3"], g["venue_open_edges"] = vn["length"], vn["volume"], vn["open_edges"]
     return g
 
 
@@ -681,7 +709,22 @@ def scale_objects(R):
             ("hayabusa", hayabusa_mesh(), site + t1 * 6.0, (0.85, 0.80, 0.35)),
             ("pitch", pitch_mesh(), site - t1 * (side + PITCH[0] / 2), (0.30, 0.65, 0.30)),
             ("tower", tower_mesh(), site + t1 * (side + TOWER_BASE / 2), (0.85, 0.40, 0.30))]
+    vn = sz["venue"]
+    vhalf = float(np.max(np.abs(vn["V"][:, 0])))
+    objs.append(("venue", (vn["V"], vn["F"]), site - t1 * (side + PITCH[0] + 40.0 + vhalf), (0.75, 0.78, 0.86)))
     return [(name, mV, mF, pos, q, rgb) for name, (mV, mF), pos, rgb in objs]
+
+
+def venue_extent_error(R):
+    """描いた会場(世界に置いたメッシュを t1, t2, up に沿って測った幅)と、資産の外接箱の幅の差の最大 [m]。"""
+    sz = R["size"]
+    axes = np.stack([sz["t1"], sz["t2"], sz["up"]])
+    for name, mV, mF, pos, q, _ in scale_objects(R):
+        if name == "venue":
+            Rm = np.asarray(pv._quat_matrix(np.asarray(q)[None, :]))[0]
+            ext = np.ptp((mV @ Rm.T + pos) @ axes.T, axis=0)
+            return float(np.max(np.abs(ext - sz["venue"]["ext"])))
+    raise AssertionError("会場が物差しに無い")
 
 
 def scale_object_error(R):
@@ -692,6 +735,8 @@ def scale_object_error(R):
             "pitch": (PITCH[0], PITCH[1], None), "tower": (TOWER_BASE, TOWER_BASE, TOWER_H)}
     err = 0.0
     for name, mV, mF, pos, q, _ in scale_objects(R):
+        if name == "venue":
+            continue                                             # 会場は venue_extent_error が外接箱で見る
         Rm = np.asarray(pv._quat_matrix(np.asarray(q)[None, :]))[0]
         world = mV @ Rm.T + pos
         ext = np.ptp(world @ axes.T, axis=0)
@@ -759,7 +804,8 @@ def tab_size(R, g):
     labels = {"person": T("人(1.7 m)", "a person (1.7 m)"),
               "hayabusa": T("はやぶさ(本体 1.0 × 1.1 × 1.6 m、パドルを開いて 5.7 m)", "Hayabusa (body 1.0 × 1.1 × 1.6 m, 5.7 m with panels open)"),
               "pitch": T("サッカー場(105 × 68 m)", "a football pitch (105 × 68 m)"),
-              "tower": T("高さ 333 m の塔", "a 333 m tower")}
+              "tower": T("高さ 333 m の塔", "a 333 m tower"),
+              "venue": T("会場(パシフィコ横浜)", "the venue (Pacifico Yokohama)")}
     bodies = [{"name": "itokawa", "pos": V - com, "faces": F, "rgb": ROCK_RGB,
                "label": T("イトカワ(長さ 535 m)", "Itokawa (535 m long)")}]
     xyzs, quats = [com], [qg]
@@ -1013,7 +1059,9 @@ def all_checks(R, g):
                  g["horizon_rel"] < 0.15),
             _row("描いた物差しの大きさ(人 1.7・はやぶさ 1.0 / 1.1 / 1.6 / 5.7・サッカー場 105 × 68・塔 333 m)と数値",
                  "drawn yardstick sizes (person 1.7, Hayabusa 1.0 / 1.1 / 1.6 / 5.7, pitch 105 × 68, tower 333 m) vs the numbers",
-                 "< 1e-9 m", _e(g["scale_err_m"]) + " m", g["scale_err_m"] < 1e-9)],
+                 "< 1e-9 m", _e(g["scale_err_m"]) + " m", g["scale_err_m"] < 1e-9),
+            _row("描いた会場の幅(東西・南北・高さ)と、PLATEAU の資産の外接箱", "drawn venue extents (east-west, north-south, height) vs the bbox of the PLATEAU asset",
+                 "< 1e-9 m", _e(g["venue_err_m"]) + " m", g["venue_err_m"] < 1e-9)],
         "shape": [
             _row("閉じた曲面(mesh_edge_stats: 境界の辺・3 面以上が接する辺)", "closed surface (mesh_edge_stats: boundary / non-manifold edges)",
                  "0 / 0", "%d / %d" % (g["boundary_edges"], g["non_manifold_edges"]),
@@ -1092,23 +1140,29 @@ def all_lessons(R, g):
             "answer": 1,
             "explain": T("足元の形の曲率半径は約 %.0f m(岩の凹凸を平滑化した形)。地平線は √(2Rh + h²) = %.0f m で、地球(%.1f km)の %.0f 分の 1。"
                          "サッカー場の端まで見えない。足元の実効重力は %.1f µm/s² しかないので、1.7 m の高さから落とした球が足元に届くまで %.0f 秒"
-                         "(%.1f 分)かかる。" % (g["size_R1"], g["horizon_m"], g["horizon_earth_m"] / 1000, g["horizon_earth_m"] / g["horizon_m"], g["g_site_um"], g["fall_s"], g["fall_s"] / 60),
+                         "(%.1f 分)かかる。いまいる会場(パシフィコ横浜)と比べると、長さは会場の %.2f 倍、体積は会場 %.0f 個分。"
+                         % (g["size_R1"], g["horizon_m"], g["horizon_earth_m"] / 1000, g["horizon_earth_m"] / g["horizon_m"], g["g_site_um"], g["fall_s"], g["fall_s"] / 60,
+                            g["venue_length_ratio"], g["venue_volume_ratio"]),
                          "The local radius of curvature is about %.0f m (the shape with boulders smoothed out). The horizon is "
                          "√(2Rh + h²) = %.0f m, 1/%.0f of Earth's (%.1f km) — not even the far end of a football pitch. "
                          "Effective gravity underfoot is only %.1f µm/s², so a ball dropped from 1.7 m takes %.0f s (%.1f min) to "
-                         "reach the ground." % (g["size_R1"], g["horizon_m"], g["horizon_earth_m"] / g["horizon_m"], g["horizon_earth_m"] / 1000, g["g_site_um"], g["fall_s"], g["fall_s"] / 60)),
+                         "reach the ground. Compared with this venue (Pacifico Yokohama), Itokawa is %.2f times its length and holds about "
+                         "%.0f venues by volume." % (g["size_R1"], g["horizon_m"], g["horizon_earth_m"] / g["horizon_m"], g["horizon_earth_m"] / 1000,
+                                                     g["g_site_um"], g["fall_s"], g["fall_s"] / 60, g["venue_length_ratio"], g["venue_volume_ratio"])),
             "formula": T("地平線 d = √((R + h)² − R²) = √(2Rh + h²) ≈ √(2Rh)\n落ちる時間 t = √(2h / g)\n視野の縦の幅 W = 2 D tan(画角 / 2)",
                          "horizon d = √((R + h)² − R²) = √(2Rh + h²) ≈ √(2Rh)\nfall time t = √(2h / g)\nfield of view W = 2 D tan(angle / 2)"),
             "limit": T("イトカワの曲率半径は測る広さで変わる(岩の多い瓦礫の山なので、数 m では凹凸、数十 m で形の曲がり)。2 つの推定 R1・R2 は %.0f m と"
                        " %.0f m で、地平線は %.0f m と %.0f m。実際の見通しは近くの岩でさえぎられる。物差しの物体は模式の形で、はやぶさのパドルの幅は"
-                       "模式(全幅 5.7 m と本体の寸法だけが一次情報の値)。会場との比較は形のデータが届いてから足す。"
-                       % (g["size_R1"], g["size_R2"], g["horizon_m"], g["horizon_check_m"]),
+                       "模式(全幅 5.7 m と本体の寸法だけが一次情報の値)。会場の形は PLATEAU の LOD2(屋根の形までの簡略な建物)で、メッシュに %d 辺の"
+                       "すき間があるので体積は近似。"
+                       % (g["size_R1"], g["size_R2"], g["horizon_m"], g["horizon_check_m"], g["venue_open_edges"]),
                        "Itokawa's radius of curvature depends on the scale you measure over (a boulder-strewn rubble pile: bumps "
                        "at a few metres, the body's bend at tens of metres). The two estimates R1, R2 are %.0f m and %.0f m, "
                        "giving horizons of %.0f m and %.0f m; the real line of sight is blocked by nearby boulders. The "
                        "yardsticks are schematic shapes; Hayabusa's panel chord is schematic (only the 5.7 m span and the body "
-                       "size are primary-source values). The comparison with the venue will be added when its shape data "
-                       "arrives." % (g["size_R1"], g["size_R2"], g["horizon_m"], g["horizon_check_m"])),
+                       "size are primary-source values). The venue is PLATEAU LOD2 (buildings simplified up to roof shape), and its "
+                       "mesh has %d open edges, so its volume is approximate." % (g["size_R1"], g["size_R2"], g["horizon_m"], g["horizon_check_m"],
+                                                                                  g["venue_open_edges"])),
         },
         "shape": {
             "question": T("イトカワの体積(この形から計算)と密度 1.9 g/cm³ から、質量はどれくらい?",
@@ -1261,10 +1315,10 @@ def build_spec(R, g):
     dims = g["dims"]
     s1, s2 = g["sites"]["TD1"], g["sites"]["TD2"]
     tab0 = mk("size", T("大きさを比べる", "Compare the sizes"), "passed",
-              T("イトカワ(長さ 535 m)の横に、実寸の物差しを置いた: 高さ 333 m の塔、サッカー場、はやぶさ、そして人。人は長さの 0.3 % しかないので、"
+              T("イトカワ(長さ 535 m)の横に、実寸の物差しを置いた: いまいる会場(パシフィコ横浜)、高さ 333 m の塔、サッカー場、はやぶさ、そして人。人は長さの 0.3 % しかないので、"
                 "再生すると全体(視野の縦の幅 1,000 m)から、はやぶさが降りた所(TD1 の推定位置)に立つ人(3 m)まで、対数の等間隔で寄っていく。"
                 "人は実効重力の逆向き(その場所の「上」)に立っている。",
-                "Next to Itokawa (535 m long) stand true-scale yardsticks: a 333 m tower, a football pitch, Hayabusa and a "
+                "Next to Itokawa (535 m long) stand true-scale yardsticks: this venue (Pacifico Yokohama), a 333 m tower, a football pitch, Hayabusa and a "
                 "person. A person is only 0.3 % of the length, so playback zooms on a log scale from the whole asteroid "
                 "(field of view 1,000 m high) down to the person (3 m) standing where Hayabusa touched down (estimated site "
                 "TD1). The person stands against the effective gravity (the local 'up')."),
@@ -1273,7 +1327,12 @@ def build_spec(R, g):
                N(T("地平線までの距離(目の高さ 1.7 m)", "distance to the horizon (eye at 1.7 m)"), "%.0f m" % g["horizon_m"]),
                N(T("1.7 m から落とした球が足元に届くまで", "a ball dropped from 1.7 m reaches the ground in"),
                  T("%.0f 秒(%.1f 分)" % (g["fall_s"], g["fall_s"] / 60), "%.0f s (%.1f min)" % (g["fall_s"], g["fall_s"] / 60))),
-               N(T("足元の実効重力 |g_eff|", "effective gravity underfoot |g_eff|"), "%.1f µm/s²" % g["g_site_um"])],
+               N(T("足元の実効重力 |g_eff|", "effective gravity underfoot |g_eff|"), "%.1f µm/s²" % g["g_site_um"]),
+               N(T("イトカワの長さ ÷ 会場の長さ(obb)", "Itokawa's length ÷ the venue's length (obb)"),
+                 "%.0f / %.0f m = %.2f" % (g["dims"][0], g["venue_length_m"], g["venue_length_ratio"])),
+               N(T("イトカワの体積 ÷ 会場の体積(会場のメッシュは %d 辺が開いているので近似)" % g["venue_open_edges"],
+                   "Itokawa's volume ÷ the venue's volume (approximate: the venue mesh has %d open edges)" % g["venue_open_edges"]),
+                 T("%.1f 個分" % g["venue_volume_ratio"], "%.1f venues" % g["venue_volume_ratio"]))],
               d0["view"])
     tab1 = mk("shape", T("形と大きさ", "Shape and size"), "passed",
               T("はやぶさ(JAXA)のカメラの画像 775 枚から作られた形(Gaskell、49,152 面)を、自転軸 z のまわりに 1 周(%.2f 時間)回す。"
@@ -1356,12 +1415,16 @@ def build_spec(R, g):
     credit = T("形: Gaskell Itokawa Shape Model V1.1(R. Gaskell ほか。はやぶさ〔JAXA〕の AMICA の画像から作成)、NASA PDS Small Bodies Node、"
                "CC0 1.0(パブリックドメインへの献呈)。Q = 64 の版(25,350 頂点・49,152 面、単位 km、z 軸 = 自転の極、x 軸 = 経度 0)を"
                "使い、頂点番号を 0 始まりにし、面から使われない重複頂点を落とした。数値: Fujiwara ほか 2006・Abe ほか 2006・"
-               "Demura ほか 2006(いずれも Science 312)、Lowry ほか 2014(A&A 562)、Yano & Aida 2013。重力の式: Werner & Scheeres 1997。",
+               "Demura ほか 2006(いずれも Science 312)、Lowry ほか 2014(A&A 562)、Yano & Aida 2013。重力の式: Werner & Scheeres 1997。"
+               "会場の形: 「3D都市モデル(Project PLATEAU)横浜市(2020年度)」(国土交通省)を加工して作成(公共データ利用規約 第1.0版、"
+               "著作権は横浜市。CityGML LOD2 の 7 部位を三角形メッシュにし、局所座標へ移した)。",
                "Shape: Gaskell Itokawa Shape Model V1.1 (R. Gaskell et al., from Hayabusa [JAXA] AMICA images), NASA PDS Small "
                "Bodies Node, CC0 1.0 (public-domain dedication). The Q = 64 version (25,350 vertices, 49,152 faces, units km, "
                "z = spin pole, x = longitude 0) with vertex numbers made 0-based and unused duplicate vertices dropped. "
                "Numbers: Fujiwara et al. 2006, Abe et al. 2006, Demura et al. 2006 (all Science 312), Lowry et al. 2014 "
-               "(A&A 562), Yano & Aida 2013. Gravity formula: Werner & Scheeres 1997.")
+               "(A&A 562), Yano & Aida 2013. Gravity formula: Werner & Scheeres 1997. "
+               "Venue shape: created by processing '3D City Model (Project PLATEAU) Yokohama City (FY2020)' (MLIT) (Public Data "
+               "License 1.0; copyright Yokohama City; 7 parts of the CityGML LOD2 turned into a triangle mesh in local coordinates).")
     spec = pv.viewer_spec(
         "itokawa_gravity",
         T("小惑星イトカワの重力", "Gravity on asteroid Itokawa"),

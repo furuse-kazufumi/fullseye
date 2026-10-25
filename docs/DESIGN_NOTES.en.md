@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 635 of 1555. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 635 of 1554. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -2683,10 +2683,6 @@ This repository records *why* things are the way they are in **comments in the s
 ## `textregion.py`
 
 - **L92** _(ja)_ — ★幅 1 のストローク(2026-09-27 実測: size 16 のフォントは縦の連が 1 px で、行の再現率が 雑音に依らず 0 % だった)。境界画素の 1 歩先が既に地なら、その画素だけの幅 1。 勾配は 1 px の棒では消えて向きが定まらないので、勾配を使わず 4 近傍で決める: 上下がともに地、または左右がともに地なら、その画素の幅は 1。
-
-## `tools/build_itokawa_anim3d.py`
-
-- **L108** _(ja)_ — ★ここは空けてある: 資産がまだ無いので、作った箱で代用しない(届いたらこの枠に読み込みと門を足す)。
 
 ## `tools/chain_fuzz.py`
 
