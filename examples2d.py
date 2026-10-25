@@ -630,6 +630,13 @@ EXAMPLES = [
                 "する。残像の軌跡・点群の時系列・段の区切り・時系列グラフ・上から見たカメラ画像と二値化"
                 "(無損失 PNG)を同じ時間軸で再生。半透明のレンズ(alpha 0.3)を貫いて焦点へ集まる光線が透けて見える。"
                 "姿勢の復元が量子化の刻みの半分以内、PNG が画素ごとに一致。"},
+    {"id": "gsplat_product_viewer", "task": "visualization", "data": "synthetic",
+     "name": "商品を 3D Gaussian Splatting にしてブラウザで回して見る(1 品のビューア + 5 品のカタログ)",
+     "summary": "fs.gs_viewer_html / fs.gs_catalog_html の最小例。符号付き距離場の op と marching cubes で作った"
+                "マグ・ヘッドホン・腕時計・スニーカー・ランプを gs_from_world で 3DGS にし(メッシュから初期化、"
+                "学習ではない)、外部読み込み無しの 1 枚の HTML に書く。WebGL2 で gs_render と同じ EWA の式、"
+                "並べ替えは Web Worker、寸法は smallest_box3。注記点・回転台・背景・品質つまみ、8 言語。"
+                "書いた HTML を読み戻し、量子化の刻みの半分以内で戻ること・外部 URL 0 を確かめる。"},
     {"id": "camera_intrinsics_calibration", "task": "calibration", "data": "synthetic",
      "name": "平面ターゲットの多視点から内部行列 K を推定する(Zhang 法)",
      "summary": "fs.camera_calibration を facade から呼ぶ最小例。傾けた 6 視点で K を厳密回収し"
@@ -1993,6 +2000,8 @@ EXCLUDED = {
                          "external MuJoCo Menagerie assets (not shipped)",
     "tof_camera_physical": "support module required by poc_tof_camera; it cannot run as a "
                            "standalone gallery example",
+    "gsplat_trained_product": "needs a Python with CUDA torch (FULLSEYE_TORCH_PYTHON) to train the 3DGS on the GPU; "
+                              "without one it prints SKIP, so it cannot self-run as a gallery example",
     "tof_realdata": "support module required by poc_tof_camera; it needs optional external "
                     "validation data and cannot run as a standalone gallery example",
 }

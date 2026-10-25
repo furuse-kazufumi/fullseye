@@ -17,7 +17,7 @@
 
 ■ 構造的に到達不能 (0) ― 不動点で閉じても届かない
 
-■ 専用ビルダで到達している op (362) ― 型プールだけでは届かない
+■ 専用ビルダで到達している op (364) ― 型プールだけでは届かない
    acoustic_interface_coefficients
    adg_build
    adg_execute
@@ -113,9 +113,11 @@
    graph_edge_consensus
    grid_distances
    grid_lines
+   gs_catalog_html
    gs_from_world
    gs_render
    gs_update
+   gs_viewer_html
    gum_expanded
    gum_monte_carlo
    gum_propagate

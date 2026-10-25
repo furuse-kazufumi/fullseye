@@ -3200,6 +3200,28 @@ def _b_gs_render_fn(pool, rng):
     return (GS.gs_from_world(_gs_quad_world(), spacing=0.01),), {}
 
 
+def _gs_box_world():
+    """厚みのある箱(寸法の箱が立つ = unit_mm が効く。平たい四角では凸包が作れず寸法は出ない)。"""
+    import driveworld as DW
+    w = DW._empty_world()
+    V = np.array([[x, y, z] for x in (-0.05, 0.05) for y in (-0.03, 0.03) for z in (0.0, 0.04)])
+    F = np.array([[0, 1, 3], [0, 3, 2], [4, 6, 7], [4, 7, 5], [0, 4, 5], [0, 5, 1],
+                  [2, 3, 7], [2, 7, 6], [0, 2, 6], [0, 6, 4], [1, 5, 7], [1, 7, 3]])
+    DW.world_add(w, V, F, 5, (0.8, 0.5, 0.2), name="box")
+    return w
+
+
+def _b_gs_viewer_html(pool, rng):
+    import gsplatnp as GS
+    return (GS.gs_from_world(_gs_box_world(), spacing=0.01), None), {"lang": "en"}   # out_path=None: 書かずに html を返す
+
+
+def _b_gs_catalog_html(pool, rng):
+    import gsplatnp as GS
+    g = GS.gs_from_world(_gs_box_world(), spacing=0.01)
+    return ([{"gs": g, "name": "quad"}], None), {"lang": "en", "thumb_px": 32}
+
+
 def _fuzz_file(name, data: bytes) -> str:
     """読み手の op 用の小さなファイルを一時ディレクトリに書く(builder は値でなくパスを渡す)。"""
     d = tempfile.mkdtemp(prefix="fuzz_io_")
@@ -7412,7 +7434,7 @@ OP_ARG_BUILDERS = {
     "veiling_luminance": _b_veiling_luminance, "veil_chroma_limit": _b_veil_chroma_limit, "sight_stop_speed": _b_sight_stop_speed,
     "env_params": _b_env_params, "tone_map": _b_tone_map, "env_render": _b_env_render,
     "gs_from_world": _b_gs_from_world, "gs_update": _b_gs_update, "gs_render": _b_gs_render, "gs_render_fn": _b_gs_render_fn,
-    "gs_read_file": _b_gs_read_file, "read_bvh": _b_read_bvh, "read_events": _b_read_events,
+    "gs_read_file": _b_gs_read_file, "gs_viewer_html": _b_gs_viewer_html, "gs_catalog_html": _b_gs_catalog_html, "read_bvh": _b_read_bvh, "read_events": _b_read_events,
     "events_to_frames": _b_events_to_frames,
     "humanoid_clip_mesh": _b_humanoid_clip_mesh, "world_pose_humanoid": _b_world_pose_humanoid,
     "humanoid_impostors": _b_humanoid_impostors, "world_camera_impostors": _b_world_camera_impostors,
