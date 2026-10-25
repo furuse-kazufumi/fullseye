@@ -1,0 +1,222 @@
+{
+ "_": "examples/interactive_anim3d_viewer.py の 8 言語化の翻訳表(tools/anim3d_i18n.py が読む)。キー = 作例の en の文字列そのもの、ja = 訳した時点の日本語の控え。訳は技術者向けに自然に、数値と単位は en と同じ綴り、hi は技術用語を英語のまま混ぜる(docs/view2026/exhibits.json の流儀)。未訳は py -3.11 tools/anim3d_i18n.py --missing interactive_anim3d_viewer で出る。",
+ "example": "interactive_anim3d_viewer",
+ "strings": {
+  "Moving 3-D sample": {
+   "ja": "動く 3-D の見本",
+   "zh": "动态 3-D 示例",
+   "tw": "動態 3-D 範例",
+   "ko": "움직이는 3-D 예제",
+   "de": "Bewegtes 3-D-Beispiel",
+   "hi": "चलता हुआ 3-D उदाहरण",
+   "fr": "Exemple 3-D animé"
+  },
+  "Pose time series and synchronised 2-D in one page.": {
+   "ja": "姿勢の時系列と、同じ時間軸の 2-D を 1 枚に。",
+   "zh": "姿态的时间序列与同一时间轴上的 2-D 图像,集中在一页里。",
+   "tw": "姿態的時間序列與同一時間軸上的 2-D 影像,集中在一頁裡。",
+   "ko": "자세의 시계열과 같은 시간축의 2-D 영상을 한 페이지에.",
+   "de": "Posen-Zeitreihe und zeitgleiche 2-D-Bilder auf einer Seite.",
+   "hi": "pose की time series और उसी समय-अक्ष पर 2-D images, एक ही पेज पर।",
+   "fr": "Série temporelle des poses et images 2-D synchronisées sur une seule page."
+  },
+  "Drag to rotate, wheel to zoom. Space plays/pauses, arrow keys step. Stage buttons jump.": {
+   "ja": "ドラッグで回転、ホイールで拡大。空白で再生/停止、← → でコマ送り。段のボタンで跳ぶ。",
+   "zh": "拖动旋转,滚轮缩放。空格键播放/暂停,← → 键逐帧前后移动。点阶段按钮可直接跳转。",
+   "tw": "拖曳旋轉,滾輪縮放。空白鍵播放/暫停,← → 鍵逐格前後移動。按階段按鈕可直接跳轉。",
+   "ko": "드래그로 회전, 휠로 확대. 스페이스 키로 재생/정지, ← → 키로 프레임 이동. 단계 버튼으로 바로 이동.",
+   "de": "Ziehen dreht, Mausrad zoomt. Leertaste startet/stoppt, Pfeiltasten schalten bildweise. Die Phasen-Schaltflächen springen direkt.",
+   "hi": "drag करके घुमाएँ, wheel से zoom करें। Space से play/pause, ← → keys से एक-एक frame। stage buttons से सीधे उस चरण पर जाएँ।",
+   "fr": "Glisser pour tourner, molette pour zoomer. Espace lance ou arrête la lecture, les flèches avancent image par image. Les boutons d'étape font sauter directement."
+  },
+  "An arm carries a box": {
+   "ja": "アームが箱を運ぶ",
+   "zh": "机械臂搬运箱子",
+   "tw": "機械臂搬運箱子",
+   "ko": "로봇 팔이 상자를 옮긴다",
+   "de": "Ein Roboterarm trägt eine Kiste",
+   "hi": "robot arm एक box ले जाता है",
+   "fr": "Un bras transporte une boîte"
+  },
+  "A three-joint arm (yaw, shoulder, elbow) grasps a box and carries it to a stand. Pure inverse kinematics (no physics). Below: a top-down height image and its binarisation (only resting objects remain). Beside the stand, three rays pass through a translucent lens (alpha 0.3) and meet at its focus.": {
+   "ja": "3 関節のアーム(旋回・肩・肘)が箱をつかみ、台へ運ぶ。逆運動学だけの合成(物理なし)。右下は真上からの高さ画像と、その二値化(置かれた物だけが残る)。台の脇の半透明のレンズ(alpha 0.3)を 3 本の光線が貫き、焦点へ集まる。",
+   "zh": "三关节机械臂(回转、肩、肘)抓起箱子并搬到台上。只用逆运动学合成(不含物理仿真)。下方是从正上方看的高度图像及其二值化结果(只留下静置的物体)。台旁有一块半透明透镜(alpha 0.3),三条光线穿过它会聚到焦点。",
+   "tw": "三關節機械臂(迴轉、肩、肘)抓起箱子並搬到台上。只用逆運動學合成(不含物理模擬)。下方是從正上方看的高度影像及其二值化結果(只留下靜置的物體)。台旁有一片半透明透鏡(alpha 0.3),三道光線穿過它匯聚到焦點。",
+   "ko": "세 관절 로봇 팔(선회·어깨·팔꿈치)이 상자를 집어 받침대로 옮긴다. 역기구학만으로 만든 합성(물리 시뮬레이션 없음). 아래는 바로 위에서 본 높이 영상과 그 이진화(놓여 있는 물체만 남는다). 받침대 옆의 반투명 렌즈(alpha 0.3)를 세 줄기 광선이 통과해 초점에 모인다.",
+   "de": "Ein dreigelenkiger Arm (Drehung, Schulter, Ellbogen) greift eine Kiste und trägt sie zu einem Podest. Reine inverse Kinematik (keine Physik). Unten: ein Höhenbild von oben und seine Binarisierung (nur abgestellte Objekte bleiben übrig). Neben dem Podest durchqueren drei Strahlen eine halbtransparente Linse (alpha 0.3) und treffen sich im Brennpunkt.",
+   "hi": "तीन joints वाला arm (yaw, shoulder, elbow) एक box पकड़कर stand तक ले जाता है। सिर्फ़ inverse kinematics से बना (physics नहीं)। नीचे: ऊपर से देखी गई height image और उसका binarisation (सिर्फ़ रखी हुई वस्तुएँ बचती हैं)। stand के पास तीन किरणें एक अर्ध-पारदर्शी lens (alpha 0.3) से गुज़रकर focus पर मिलती हैं।",
+   "fr": "Un bras à trois articulations (lacet, épaule, coude) saisit une boîte et la porte sur un support. Cinématique inverse pure (sans physique). En dessous : une image de hauteur vue de dessus et sa binarisation (seuls les objets posés restent). À côté du support, trois rayons traversent une lentille translucide (alpha 0.3) et convergent en son foyer."
+  },
+  "Frames": {
+   "ja": "コマ",
+   "zh": "帧数",
+   "tw": "影格數",
+   "ko": "프레임",
+   "de": "Bilder",
+   "hi": "frames",
+   "fr": "Images"
+  },
+  "Bodies": {
+   "ja": "物体",
+   "zh": "物体数",
+   "tw": "物體數",
+   "ko": "물체 수",
+   "de": "Körper",
+   "hi": "वस्तुएँ",
+   "fr": "Objets"
+  },
+  "Fingertip (1.2 s trail)": {
+   "ja": "手先(残像 1.2 s)",
+   "zh": "指尖(残影 1.2 s)",
+   "tw": "指尖(殘影 1.2 s)",
+   "ko": "손끝(잔상 1.2 s)",
+   "de": "Fingerspitze (Spur 1.2 s)",
+   "hi": "उंगली का सिरा (1.2 s trail)",
+   "fr": "Bout des doigts (traînée 1.2 s)"
+  },
+  "Box centre": {
+   "ja": "箱の中心",
+   "zh": "箱子中心",
+   "tw": "箱子中心",
+   "ko": "상자 중심",
+   "de": "Kistenmitte",
+   "hi": "box का केंद्र",
+   "fr": "Centre de la boîte"
+  },
+  "Ray 1": {
+   "ja": "光線 1",
+   "zh": "光线 1",
+   "tw": "光線 1",
+   "ko": "광선 1",
+   "de": "Strahl 1",
+   "hi": "किरण 1",
+   "fr": "Rayon 1"
+  },
+  "Ray 2": {
+   "ja": "光線 2",
+   "zh": "光线 2",
+   "tw": "光線 2",
+   "ko": "광선 2",
+   "de": "Strahl 2",
+   "hi": "किरण 2",
+   "fr": "Rayon 2"
+  },
+  "Ray 3": {
+   "ja": "光線 3",
+   "zh": "光线 3",
+   "tw": "光線 3",
+   "ko": "광선 3",
+   "de": "Strahl 3",
+   "hi": "किरण 3",
+   "fr": "Rayon 3"
+  },
+  "Approach": {
+   "ja": "近づく",
+   "zh": "接近",
+   "tw": "接近",
+   "ko": "접근",
+   "de": "Anfahren",
+   "hi": "पास जाना",
+   "fr": "Approche"
+  },
+  "Grasp": {
+   "ja": "つかむ",
+   "zh": "抓取",
+   "tw": "抓取",
+   "ko": "파지",
+   "de": "Greifen",
+   "hi": "पकड़ना",
+   "fr": "Saisie"
+  },
+  "Transport": {
+   "ja": "運ぶ",
+   "zh": "搬运",
+   "tw": "搬運",
+   "ko": "운반",
+   "de": "Transport",
+   "hi": "ले जाना",
+   "fr": "Transport"
+  },
+  "Place": {
+   "ja": "置く",
+   "zh": "放置",
+   "tw": "放置",
+   "ko": "내려놓기",
+   "de": "Absetzen",
+   "hi": "रखना",
+   "fr": "Dépose"
+  },
+  "Release": {
+   "ja": "離す",
+   "zh": "松开",
+   "tw": "鬆開",
+   "ko": "놓기",
+   "de": "Loslassen",
+   "hi": "छोड़ना",
+   "fr": "Lâcher"
+  },
+  "Return": {
+   "ja": "戻る",
+   "zh": "返回",
+   "tw": "返回",
+   "ko": "복귀",
+   "de": "Rückkehr",
+   "hi": "वापसी",
+   "fr": "Retour"
+  },
+  "Fingertip height": {
+   "ja": "手先の高さ",
+   "zh": "指尖高度",
+   "tw": "指尖高度",
+   "ko": "손끝 높이",
+   "de": "Höhe der Fingerspitze",
+   "hi": "उंगली के सिरे की ऊँचाई",
+   "fr": "Hauteur du bout des doigts"
+  },
+  "Finger opening": {
+   "ja": "指の開き",
+   "zh": "手指张开度",
+   "tw": "手指張開度",
+   "ko": "손가락 벌림",
+   "de": "Fingeröffnung",
+   "hi": "उंगलियों का खुलना",
+   "fr": "Ouverture des doigts"
+  },
+  "Top-down height image (0-0.6 m)": {
+   "ja": "真上からの高さ画像(0〜0.6 m)",
+   "zh": "俯视高度图像(0-0.6 m)",
+   "tw": "俯視高度影像(0-0.6 m)",
+   "ko": "위에서 본 높이 영상(0-0.6 m)",
+   "de": "Höhenbild von oben (0-0.6 m)",
+   "hi": "ऊपर से height image (0-0.6 m)",
+   "fr": "Image de hauteur vue de dessus (0-0.6 m)"
+  },
+  "Box (truth)": {
+   "ja": "箱(真値)",
+   "zh": "箱子(真值)",
+   "tw": "箱子(真值)",
+   "ko": "상자(참값)",
+   "de": "Kiste (Soll)",
+   "hi": "box (सही)",
+   "fr": "Boîte (vraie)"
+  },
+  "held": {
+   "ja": "把持中",
+   "zh": "抓持中",
+   "tw": "抓持中",
+   "ko": "파지 중",
+   "de": "gegriffen",
+   "hi": "पकड़ में",
+   "fr": "saisie"
+  },
+  "Binarised: height 2-10 cm": {
+   "ja": "二値化: 高さ 2〜10 cm",
+   "zh": "二值化: 高度 2-10 cm",
+   "tw": "二值化: 高度 2-10 cm",
+   "ko": "이진화: 높이 2-10 cm",
+   "de": "Binarisiert: Höhe 2-10 cm",
+   "hi": "binarised: ऊँचाई 2-10 cm",
+   "fr": "Binarisé : hauteur 2-10 cm"
+  }
+ }
+}

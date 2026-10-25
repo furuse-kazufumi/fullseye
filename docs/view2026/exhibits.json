@@ -122,6 +122,17 @@
    "de": "Roboteraugen (Fullseye übernimmt die Wahrnehmung)",
    "hi": "Robot की आँखें (perception Fullseye करता है)",
    "fr": "Les yeux du robot (Fullseye se charge de la perception)"
+  },
+  {
+   "id": "anim3d",
+   "ja": "動く 3-D(触って回せる)",
+   "en": "Moving 3-D you can rotate",
+   "zh": "可旋转的动态 3-D",
+   "tw": "可旋轉的動態 3-D",
+   "ko": "돌려 볼 수 있는 움직이는 3-D",
+   "de": "Bewegtes 3-D zum Drehen",
+   "hi": "घुमाकर देखें: चलता 3-D",
+   "fr": "3-D animée à faire pivoter"
   }
  ],
  "ui": {
@@ -524,6 +535,16 @@
    "de": "Alle {n} Anwendungsbeispiele, die keine PoCs sind",
    "hi": "PoC के अलावा {n} usage examples की सूची",
    "fr": "Liste des {n} exemples d'utilisation qui ne sont pas des PoC"
+  },
+  "kind_anim3d": {
+   "ja": "動く 3-D・触って回せる",
+   "en": "moving 3-D, drag to rotate",
+   "zh": "动态 3-D,可拖动旋转",
+   "tw": "動態 3-D,可拖曳旋轉",
+   "ko": "움직이는 3-D, 드래그로 회전",
+   "de": "bewegtes 3-D, drehbar",
+   "hi": "चलता 3-D, drag से घुमाएँ",
+   "fr": "3-D animée, à faire pivoter"
   }
  },
  "paper": {
@@ -1593,6 +1614,43 @@
     "de": "In allen 163 sichtbaren Frames erkannt (163 / 163); Schwerpunktfehler gegenüber der Wahrheit im Median 0.10 px.",
     "hi": "दिखने वाले सभी 163 frames में detect (163 / 163); centroid error ground truth से median 0.10 px।",
     "fr": "Détection sur la totalité des 163 images où il est visible (163 / 163) ; erreur du centroïde, médiane de 0.10 px par rapport à la vérité terrain."
+   }
+  },
+  {
+   "id": "interactive_anim3d_viewer",
+   "category": "anim3d",
+   "media": "interactive_anim3d_viewer.html",
+   "media_path": "view2026/anim3d/interactive_anim3d_viewer.html",
+   "motion": true,
+   "label": {
+    "ja": "アームと半透明のレンズ",
+    "en": "Arm and translucent lens",
+    "zh": "机械臂与半透明透镜",
+    "tw": "機械臂與半透明透鏡",
+    "ko": "로봇 팔과 반투명 렌즈",
+    "de": "Arm und halbtransparente Linse",
+    "hi": "Arm और अर्ध-पारदर्शी lens",
+    "fr": "Bras et lentille translucide"
+   },
+   "see": {
+    "ja": "アームが箱を運ぶ様子を、指で回して好きな向きから見る。光線が半透明のレンズを貫いて焦点へ集まり、右下では真上からの高さ画像とその二値化が同じ時間軸で進む。",
+    "en": "Rotate with a finger and watch the arm carry a box from any angle. Rays pass through a translucent lens to its focus, while a top-down height image and its binarisation advance on the same timeline.",
+    "zh": "用手指旋转,从任意角度观看机械臂搬运箱子。光线穿过半透明透镜会聚到焦点,下方的俯视高度图像及其二值化结果在同一时间轴上同步播放。",
+    "tw": "用手指旋轉,從任意角度觀看機械臂搬運箱子。光線穿過半透明透鏡匯聚到焦點,下方的俯視高度影像及其二值化結果在同一時間軸上同步播放。",
+    "ko": "손가락으로 돌려 로봇 팔이 상자를 옮기는 모습을 원하는 방향에서 본다. 광선이 반투명 렌즈를 지나 초점에 모이고, 아래에서는 위에서 본 높이 영상과 그 이진화가 같은 시간축으로 진행된다.",
+    "de": "Mit dem Finger drehen und den Arm beim Tragen einer Kiste aus jedem Winkel ansehen. Strahlen laufen durch eine halbtransparente Linse in den Brennpunkt, darunter laufen ein Höhenbild von oben und seine Binarisierung zeitgleich mit.",
+    "hi": "उंगली से घुमाकर किसी भी कोण से देखें कि arm box कैसे ले जाता है। किरणें अर्ध-पारदर्शी lens से होकर focus पर मिलती हैं, और नीचे ऊपर से ली गई height image और उसका binarisation उसी timeline पर चलते हैं।",
+    "fr": "Faites pivoter du doigt et regardez le bras porter une boîte sous n'importe quel angle. Des rayons traversent une lentille translucide jusqu'à son foyer, tandis qu'une image de hauteur vue de dessus et sa binarisation avancent sur la même échelle de temps."
+   },
+   "num": {
+    "ja": "",
+    "en": "",
+    "zh": "",
+    "tw": "",
+    "ko": "",
+    "de": "",
+    "hi": "",
+    "fr": ""
    }
   }
  ],
