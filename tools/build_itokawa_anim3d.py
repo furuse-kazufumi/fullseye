@@ -79,7 +79,9 @@ PUB_VOLUME = 0.018378e9                       # 体積 [m³](Demura 2006、± 5 
 PUB_VOLUME_REL = 0.05
 PUB_MASS_F = 3.51e10                          # 質量 [kg](Fujiwara 2006)
 PUB_MASS_A, PUB_MASS_A_SIGMA = 3.58e10, 0.18e10   # 質量 [kg](Abe 2006)
-PUB_POROSITY = 0.40                           # 空隙率(Abe 2006、LL コンドライトを仮定して約 40 %)
+PUB_POROSITY = 0.40
+PUB_AREA = 0.393e6                            # 表面積 [m²](Demura 2006: 0.393 km²)
+POOL = (25.0, 10.0, 1.5)                      # 身近な体積の物差し: 長さ 25 m・幅 10 m・深さ 1.5 m のプール(この寸法と仮定して画面に書く)                           # 空隙率(Abe 2006、LL コンドライトを仮定して約 40 %)
 PM_DEG_PER_DAY = 712.14376110                 # 自転(PDS の bundle の説明: W = 129.73 + 712.14376110 d)
 OMEGA = math.radians(PM_DEG_PER_DAY) / 86400.0
 PERIOD_H = 360.0 / PM_DEG_PER_DAY * 24.0
@@ -559,6 +561,14 @@ def gates(R) -> dict:
     g["g_var"] = sz["g_var"]
     g["length_ratio"] = sz["length_ratio"]
     g["scale_err_m"] = scale_object_error(R)
+    # 表面積と体積をそれぞれ 2 通りで(op と、三角形ごとの和を自分で足した値)
+    a_tri = 0.5 * np.linalg.norm(np.cross(V[F[:, 1]] - V[F[:, 0]], V[F[:, 2]] - V[F[:, 0]]), axis=1)
+    g["area_m2"] = R["area"]
+    g["area_sum_rel"] = float(abs(math.fsum(a_tri) - R["area"]) / R["area"])
+    g["area_vs_published"] = R["area"] / PUB_AREA - 1.0
+    g["volume_m3"] = R["vol_op"]
+    g["area_pitches"] = R["area"] / (PITCH[0] * PITCH[1])
+    g["volume_pools"] = R["vol_op"] / (POOL[0] * POOL[1] * POOL[2])
     vn = sz["venue"]
     g["venue_err_m"] = venue_extent_error(R)
     g["venue_length_ratio"], g["venue_volume_ratio"] = vn["length_ratio"], vn["volume_ratio"]
@@ -1072,6 +1082,12 @@ def all_checks(R, g):
     cx = g["com_offset_x_two_density_m"]
     return {
         "size": [
+            _row("表面積: mesh_area と、三角形ごとの面積 ½|(v1 − v0) × (v2 − v0)| を自分で足した値", "surface area: mesh_area vs our own sum of triangle areas ½|(v1 − v0) × (v2 − v0)|",
+                 "< 1e-12", _e(g["area_sum_rel"]), g["area_sum_rel"] < 1e-12),
+            _row("体積: mesh_volume と、符号付き四面体の和(数学のタブと同じ)", "volume: mesh_volume vs the sum of signed tetrahedra (as in the maths tab)",
+                 "< 1e-12", _e(g["tetra_sum_vs_mesh_volume"]), g["tetra_sum_vs_mesh_volume"] < 1e-12),
+            _row("表面積と公表値 0.393 km²(Demura 2006)", "surface area vs published 0.393 km² (Demura 2006)",
+                 "|差| < 5 %", "%+.1f %%" % (g["area_vs_published"] * 100), abs(g["area_vs_published"]) < 0.05),
             _row("落ちる時間: 目の高さまで 9 点で op を回した重力の列を 4 次 Runge–Kutta で積分 / √(2h/g)(差は重力が高さで"
                  "%.1f %% 変わる分)" % (g["g_var"] * 100),
                  "fall time: RK4 through the op's gravity at 9 heights up to eye level / √(2h/g) (the gap is gravity changing "
@@ -1349,7 +1365,14 @@ def build_spec(R, g):
                 "(field of view %.0f m high) down to the person (3 m) standing where Hayabusa touched down (estimated site "
                 "TD1). The person stands against the effective gravity (the local 'up'). Each object carries a label with its name and size." % g["size_W0"]),
               d0,
-              [N(T("イトカワの長さ ÷ 人の背丈", "Itokawa's length ÷ a person's height"), "%.0f×" % g["length_ratio"]),
+              [N(T("イトカワの長さ(obb の長い辺)", "Itokawa's length (longest obb side)"), "%.0f m" % g["dims"][0]),
+               N(T("イトカワの表面積(mesh_area)", "Itokawa's surface area (mesh_area)"),
+                 T("{:,.0f} m² = %.3f km²(サッカー場 約 %.0f 面分)".format(g["area_m2"]) % (g["area_m2"] / 1e6, g["area_pitches"]),
+                   "{:,.0f} m² = %.3f km² (about %.0f football pitches)".format(g["area_m2"]) % (g["area_m2"] / 1e6, g["area_pitches"]))),
+               N(T("イトカワの体積(mesh_volume)", "Itokawa's volume (mesh_volume)"),
+                 T("{:,.0f} m³(25 × 10 × 1.5 m のプール 約 {:,.0f} 杯分)".format(g["volume_m3"], g["volume_pools"]),
+                   "{:,.0f} m³ (about {:,.0f} pools of 25 × 10 × 1.5 m)".format(g["volume_m3"], g["volume_pools"]))),
+               N(T("イトカワの長さ ÷ 人の背丈", "Itokawa's length ÷ a person's height"), "%.0f×" % g["length_ratio"]),
                N(T("地平線までの距離(目の高さ 1.7 m)", "distance to the horizon (eye at 1.7 m)"), "%.0f m" % g["horizon_m"]),
                N(T("1.7 m から落とした球が足元に届くまで", "a ball dropped from 1.7 m reaches the ground in"),
                  T("%.0f 秒(%.1f 分)" % (g["fall_s"], g["fall_s"] / 60), "%.0f s (%.1f min)" % (g["fall_s"], g["fall_s"] / 60))),

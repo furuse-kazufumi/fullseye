@@ -1576,6 +1576,78 @@
    "de": "Mensch 1.7 m",
    "hi": "व्यक्ति 1.7 m",
    "fr": "personne 1.7 m"
+  },
+  "Itokawa's length (longest obb side)": {
+   "ja": "イトカワの長さ(obb の長い辺)",
+   "zh": "糸川的长度（obb 的最长边）",
+   "tw": "糸川的長度（obb 的最長邊）",
+   "ko": "이토카와의 길이(obb의 가장 긴 변)",
+   "de": "Länge von Itokawa (längste obb-Seite)",
+   "hi": "इटोकावा की लंबाई (obb की सबसे लंबी भुजा)",
+   "fr": "longueur d'Itokawa (plus long côté obb)"
+  },
+  "Itokawa's surface area (mesh_area)": {
+   "ja": "イトカワの表面積(mesh_area)",
+   "zh": "糸川的表面积（mesh_area）",
+   "tw": "糸川的表面積（mesh_area）",
+   "ko": "이토카와의 표면적(mesh_area)",
+   "de": "Oberfläche von Itokawa (mesh_area)",
+   "hi": "इटोकावा का पृष्ठीय क्षेत्रफल (mesh_area)",
+   "fr": "surface d'Itokawa (mesh_area)"
+  },
+  "398,551 m² = 0.399 km² (about 56 football pitches)": {
+   "ja": "398,551 m² = 0.399 km²(サッカー場 約 56 面分)",
+   "zh": "398,551 m² = 0.399 km²（约 56 个足球场）",
+   "tw": "398,551 m² = 0.399 km²（約 56 個足球場）",
+   "ko": "398,551 m² = 0.399 km²(축구장 약 56면)",
+   "de": "398,551 m² = 0.399 km² (etwa 56 Fußballfelder)",
+   "hi": "398,551 m² = 0.399 km² (लगभग 56 फ़ुटबॉल मैदान)",
+   "fr": "398,551 m² = 0.399 km² (environ 56 terrains de football)"
+  },
+  "Itokawa's volume (mesh_volume)": {
+   "ja": "イトカワの体積(mesh_volume)",
+   "zh": "糸川的体积（mesh_volume）",
+   "tw": "糸川的體積（mesh_volume）",
+   "ko": "이토카와의 부피(mesh_volume)",
+   "de": "Volumen von Itokawa (mesh_volume)",
+   "hi": "इटोकावा का आयतन (mesh_volume)",
+   "fr": "volume d'Itokawa (mesh_volume)"
+  },
+  "17,785,601 m³ (about 47,428 pools of 25 × 10 × 1.5 m)": {
+   "ja": "17,785,601 m³(25 × 10 × 1.5 m のプール 約 47,428 杯分)",
+   "zh": "17,785,601 m³（约 47,428 个 25 × 10 × 1.5 m 的泳池）",
+   "tw": "17,785,601 m³（約 47,428 個 25 × 10 × 1.5 m 的泳池）",
+   "ko": "17,785,601 m³(25 × 10 × 1.5 m 수영장 약 47,428개분)",
+   "de": "17,785,601 m³ (etwa 47,428 Becken von 25 × 10 × 1.5 m)",
+   "hi": "17,785,601 m³ (25 × 10 × 1.5 m के लगभग 47,428 तालाब)",
+   "fr": "17,785,601 m³ (environ 47,428 piscines de 25 × 10 × 1.5 m)"
+  },
+  "surface area: mesh_area vs our own sum of triangle areas ½|(v1 − v0) × (v2 − v0)|": {
+   "ja": "表面積: mesh_area と、三角形ごとの面積 ½|(v1 − v0) × (v2 − v0)| を自分で足した値",
+   "zh": "表面积：mesh_area 与自己累加的三角形面积 ½|(v1 − v0) × (v2 − v0)|",
+   "tw": "表面積：mesh_area 與自己累加的三角形面積 ½|(v1 − v0) × (v2 − v0)|",
+   "ko": "표면적: mesh_area 대 직접 더한 삼각형 넓이 ½|(v1 − v0) × (v2 − v0)|",
+   "de": "Oberfläche: mesh_area gegen die selbst addierten Dreiecksflächen ½|(v1 − v0) × (v2 − v0)|",
+   "hi": "पृष्ठीय क्षेत्रफल: mesh_area बनाम स्वयं जोड़े गए त्रिभुज-क्षेत्रफल ½|(v1 − v0) × (v2 − v0)|",
+   "fr": "surface : mesh_area contre notre propre somme des aires des triangles ½|(v1 − v0) × (v2 − v0)|"
+  },
+  "volume: mesh_volume vs the sum of signed tetrahedra (as in the maths tab)": {
+   "ja": "体積: mesh_volume と、符号付き四面体の和(数学のタブと同じ)",
+   "zh": "体积：mesh_volume 与有向四面体之和（同数学标签页）",
+   "tw": "體積：mesh_volume 與帶號四面體之和（同數學分頁）",
+   "ko": "부피: mesh_volume 대 부호 있는 사면체의 합(수학 탭과 같음)",
+   "de": "Volumen: mesh_volume gegen die Summe vorzeichenbehafteter Tetraeder (wie im Mathematik-Reiter)",
+   "hi": "आयतन: mesh_volume बनाम चिह्नित चतुष्फलकों का योग (गणित टैब जैसा)",
+   "fr": "volume : mesh_volume contre la somme des tétraèdres signés (comme dans l'onglet maths)"
+  },
+  "surface area vs published 0.393 km² (Demura 2006)": {
+   "ja": "表面積と公表値 0.393 km²(Demura 2006)",
+   "zh": "表面积与公布值 0.393 km²（Demura 2006）",
+   "tw": "表面積與公布值 0.393 km²（Demura 2006）",
+   "ko": "표면적 대 공표값 0.393 km²(Demura 2006)",
+   "de": "Oberfläche gegen veröffentlichte 0.393 km² (Demura 2006)",
+   "hi": "पृष्ठीय क्षेत्रफल बनाम प्रकाशित 0.393 km² (Demura 2006)",
+   "fr": "surface contre la valeur publiée 0.393 km² (Demura 2006)"
   }
  }
 }
