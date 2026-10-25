@@ -75,6 +75,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 <a href="../../articles/assets/poc/poc_microns_brain_wave/04_wave_on_wiring.gif"><img src="../thumbs/poc_microns_brain_wave.jpg" alt="Onde dans le cortex visuel de la souris" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Onde dans le cortex visuel de la souris</span></a>
 <a href="../../articles/assets/media/evis_stereo_fullseye.mp4"><img src="../thumbs/evis_stereo_depth.jpg" alt="Les deux yeux du humanoïde" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Les deux yeux du humanoïde</span></a>
 <a href="../../articles/assets/media/evis_bean_track_fullseye.mp4"><img src="../thumbs/evis_bean_track.jpg" alt="Suivi du haricot par la caméra au bout des baguettes" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Suivi du haricot par la caméra au bout des baguettes</span></a>
+<a href="../../view2026/anim3d/interactive_anim3d_viewer.html?lang=fr"><img src="../thumbs/interactive_anim3d_viewer.jpg" alt="Bras et lentille translucide" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Bras et lentille translucide · 0.4 MB</span></a>
 </div>
 
 ## Série d'articles (articles sur Qiita)
@@ -653,6 +654,10 @@ Chaque valeur est mesurée par rapport à la vérité terrain que chaque PoC a e
 
 - [Les deux yeux du humanoïde](../../articles/assets/media/evis_stereo_fullseye.mp4) (vidéo): Un humanoïde musculo-squelettique frappe un haricot avec des baguettes, filmé par ses propres deux yeux (distance interpupillaire de 64 mm) ; Fullseye calcule à chaque image la disparité stéréo → profondeur. **Erreur sur la distance au haricot : médiane 0.66 %, maximum 1.91 % (229 / 241 images lisibles).** [source](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/gen_evis_media.py)
 - [Suivi du haricot par la caméra au bout des baguettes](../../articles/assets/media/evis_bean_track_fullseye.mp4) (vidéo): Dans la vidéo de la caméra placée au bout des baguettes pour la même scène, Fullseye détecte le haricot et le suit. **Détection sur la totalité des 163 images où il est visible (163 / 163) ; erreur du centroïde, médiane de 0.10 px par rapport à la vérité terrain.** [source](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/gen_evis_media.py)
+
+**3-D animée à faire pivoter**
+
+- [Bras et lentille translucide](../../view2026/anim3d/interactive_anim3d_viewer.html?lang=fr) (3-D animée, à faire pivoter, 0.4 MB): Faites pivoter du doigt et regardez le bras porter une boîte sous n'importe quel angle. Des rayons traversent une lentille translucide jusqu'à son foyer, tandis qu'une image de hauteur vue de dessus et sa binarisation avancent sur la même échelle de temps. [source](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
 
 </div>
 

@@ -1672,17 +1672,41 @@ function drawTranslucent(tab, S, L){
 """
 
 
+#: ``detect_lang=True`` のとき ``let L = ...`` の行と差し替える。URL の ``?lang=xx`` が最優先、
+#: 無ければ ``navigator.language`` を写す(zh-TW / zh-HK / zh-MO / zh-Hant → tw、他の zh → zh、
+#: ko / de / hi / fr / ja はそのまま、それ以外は en)。写した先がページに無ければ en、en も無ければ先頭。
+_JS_LANG_LINE = "let L = D.langs.indexOf(qs.get('lang')) >= 0 ? qs.get('lang') : D.langs[0];\n"
+_JS_PICK_LANG = r"""function pickLang(q, nav, langs){
+  if (q && langs.indexOf(q) >= 0) return q;
+  const n = String(nav || '').toLowerCase().replace(/_/g, '-');
+  let t = 'en';
+  if (n.indexOf('zh') === 0) t = /^zh-(tw|hk|mo)\b|hant/.test(n) ? 'tw' : 'zh';
+  else { const p = n.slice(0, 2); if (['ko', 'de', 'hi', 'fr', 'ja'].indexOf(p) >= 0 && (n.length === 2 || n[2] === '-')) t = p; }
+  return langs.indexOf(t) >= 0 ? t : (langs.indexOf('en') >= 0 ? 'en' : langs[0]);
+}
+let L = pickLang(qs.get('lang'), (typeof navigator !== 'undefined' && navigator.language) || '', D.langs);
+"""
+
+
 def _has_translucent(data: dict) -> bool:
     """詰めた仕様に alpha < 1 の物体があるか(あれば _JS_ALPHA を差し込む)。"""
     return any(t.get("kind") == "anim3d" and any("alpha" in b for b in t.get("bodies", ()))
                for t in data.get("tabs", ()))
 
 
-def _build_html(spec: dict, lang="ja") -> str:
-    """仕様から HTML 文字列を作る(検査はここで行う)。``lang`` は :func:`_pack_spec` と同じ。"""
+def _build_html(spec: dict, lang="ja", detect_lang: bool = False) -> str:
+    """仕様から HTML 文字列を作る(検査はここで行う)。``lang`` は :func:`_pack_spec` と同じ。
+
+    ``detect_lang=True`` なら、``?lang`` が無いときにブラウザの言語(``navigator.language``)で開く
+    (:data:`_JS_PICK_LANG`)。既定の False は従来どおり ``?lang`` か先頭の言語(生成物は変わらない)。
+    """
     data = _pack_spec(spec, lang)
     blob = json.dumps(data, ensure_ascii=True, separators=(",", ":")).replace("</", "<\\/")
     js = _JS
+    if detect_lang:
+        if js.count(_JS_LANG_LINE) != 1:
+            raise AssertionError("言語を選ぶ行が 1 回でない")
+        js = js.replace(_JS_LANG_LINE, _JS_PICK_LANG)
     if _has_translucent(data):                           # 半透明の物体がある場面だけ(無ければ今と同じページ)
         if js.count(_JS_ALPHA_ANCHOR) != 1:
             raise AssertionError("半透明の塊の差し込み位置が 1 回でない")
@@ -1696,13 +1720,16 @@ def _build_html(spec: dict, lang="ja") -> str:
             "<title>%s</title>\n<style>%s</style>\n%s\n<script>%s</script>\n</html>\n" % (data["langs"][0], title, _CSS, _BODY, js))
 
 
-def write_viewer(spec: dict, path, lang="ja") -> str:
+def write_viewer(spec: dict, path, lang="ja", detect_lang: bool = False) -> str:
     """HTML を書いて、書いたパス(文字列)を返す。仕様が不正なら何も書かず ``ValueError``。
 
     ``lang="ja"`` は単言語のページ。``lang=["ja", "en", ...]`` は言語の切り替えつきで、先頭が既定。
     対応は ja / en / zh / tw / ko / de / hi / fr。URL の ``?lang=xx`` で開く言語を選べる。
+    ``detect_lang=True`` なら ``?lang`` が無いときにブラウザの言語で開く(zh-TW / zh-HK → tw、
+    zh → zh、ko / de / hi / fr / ja、それ以外は en)。展示会の入口のように、外国の来場者が
+    URL を直接開く場面向け。既定の False は従来どおり(先頭の言語)。
     """
-    text = _build_html(spec, lang)                      # 検査はここで終わる(書く前に落とす)
+    text = _build_html(spec, lang, detect_lang)         # 検査はここで終わる(書く前に落とす)
     p = Path(path)
     p.parent.mkdir(parents=True, exist_ok=True)
     p.write_bytes(text.encode("utf-8"))

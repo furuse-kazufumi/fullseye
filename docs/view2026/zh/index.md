@@ -75,6 +75,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_microns_brain_wave/04_wave_on_wiring.gif"><img src="../thumbs/poc_microns_brain_wave.jpg" alt="小鼠视皮层波" loading="lazy" width="320" height="320"><b>&#9654;</b><span>小鼠视皮层波</span></a>
 <a href="../../articles/assets/media/evis_stereo_fullseye.mp4"><img src="../thumbs/evis_stereo_depth.jpg" alt="人形机器人双眼" loading="lazy" width="320" height="320"><b>&#9654;</b><span>人形机器人双眼</span></a>
 <a href="../../articles/assets/media/evis_bean_track_fullseye.mp4"><img src="../thumbs/evis_bean_track.jpg" alt="筷尖相机追踪豆子" loading="lazy" width="320" height="320"><b>&#9654;</b><span>筷尖相机追踪豆子</span></a>
+<a href="../../view2026/anim3d/interactive_anim3d_viewer.html?lang=zh"><img src="../thumbs/interactive_anim3d_viewer.jpg" alt="机械臂与半透明透镜" loading="lazy" width="320" height="320"><b>&#9654;</b><span>机械臂与半透明透镜 · 0.4 MB</span></a>
 </div>
 
 ## 系列文章 (Qiita 上的英文文章)
@@ -653,6 +654,10 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 
 - [人形机器人双眼](../../articles/assets/media/evis_stereo_fullseye.mp4) (视频): 肌肉骨骼人形机器人用筷子击豆,以自己的双眼(瞳距 64 mm)拍摄,Fullseye 每帧计算立体视差 → 深度。 **到豆距离误差:中位数 0.66 %,最大 1.91 %(可读 229 / 241 帧)。** [源码](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/gen_evis_media.py)
 - [筷尖相机追踪豆子](../../articles/assets/media/evis_bean_track_fullseye.mp4) (视频): 在同一场景的筷尖相机画面中,Fullseye 检测并追踪豆子。 **可见的 163 帧全部检出(163 / 163),重心误差相对真值中位数 0.10 px。** [源码](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/gen_evis_media.py)
+
+**可旋转的动态 3-D**
+
+- [机械臂与半透明透镜](../../view2026/anim3d/interactive_anim3d_viewer.html?lang=zh) (动态 3-D,可拖动旋转, 0.4 MB): 用手指旋转,从任意角度观看机械臂搬运箱子。光线穿过半透明透镜会聚到焦点,下方的俯视高度图像及其二值化结果在同一时间轴上同步播放。 [源码](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
 
 </div>
 

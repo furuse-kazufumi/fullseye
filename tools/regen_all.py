@@ -294,6 +294,11 @@ _IMAGE_REASON = ("画像・動画の書き手。PNG/GIF のバイトは Pillow �
 _SPIKE_REASON = ("スパイク(実験)の記録。spikes/out_gallery/ の図は当時の証跡として凍結してあり、"
                  "再描画(matplotlib / GUI)はバイトが変わる。")
 EXCLUDED = {
+    "tools/anim3d_i18n.py": ("動く 3-D の作例を 8 言語にする翻訳の層。作例の main() を走らせて仕様を横取りするので"
+                             "1 本 10 秒前後かかり、作例(枝ごとに 15 本ほど)が増えるほど長くなる —— 鎖に入れず、"
+                             "docs/view2026/anim3d/*.html は `--build <作例> --out ...` を手で回して commit する。"
+                             "8 言語そろうことは gen_view2026_pages の検査、翻訳表が今の作例の文字列と合うことは"
+                             " tests/test_anim3d_i18n_2026_10_25.py が見る。--missing の JSON は訳す作業用で repo の外へ。"),
     "tools/audit_nan_inputs.py": ("全登録 op を別プロセスで基準、NaN、+inf の順に実測し、"
                                   "3 分を大きく超えるため通常の再生成鎖には入れない。"
                                   "docs/nan_input_audit.json と docs/NAN_INPUT_AUDIT.md は手動で更新する。"),
