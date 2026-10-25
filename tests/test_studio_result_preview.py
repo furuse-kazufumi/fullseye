@@ -12,6 +12,12 @@ import pytest
 
 import studio
 
+
+@pytest.fixture(autouse=True)
+def _english_ui(monkeypatch):
+    """note の文言を見る試験なので UI 言語を en に固定する(他の試験が切り替えたまま返しても影響を受けない)。"""
+    monkeypatch.setitem(studio._UI_LANG, "code", "en")
+
 _R, _C = np.mgrid[0:24, 0:24].astype(np.float64)
 FLOW = np.stack([_C - 11.5, -(_R - 11.5)])           # 画面上で時計回り
 

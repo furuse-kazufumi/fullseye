@@ -32,8 +32,10 @@ import warnings
 import numpy as np
 from scipy import ndimage
 
-try:  # heavy but standard deps; fail-soft to zeros if somehow unavailable
-    import scipy.linalg as _sla
+import scipy.linalg as _sla      # scipy は必須依存 —— skimage と同じ try に入れていたせいで、skimage が無いだけで
+#                                  ``sg_normalized_cut_2``(skimage を使わない)まで全零に落ちていた(2026-10-25)
+
+try:  # optional: scikit-image. 無ければ、それを使う 3 op は MissingDependencyError で止まる(全零は返さない)
     from skimage.filters import sobel as _sobel
     from skimage.morphology import h_minima as _h_minima
     from skimage.segmentation import (
@@ -54,6 +56,12 @@ except Exception:  # pragma: no cover - deps present in this project
 
 # HALCON operators intentionally NOT implemented in this tier (with honest reason).
 SKIPPED: dict[str, str] = {}
+
+
+def _require_ski(what):
+    """scikit-image が無ければ fail-closed(全零マスクという「別の答え」は返さない)。"""
+    from backend_safe import require_dependency
+    require_dependency(_HAVE_SKI, "skimage", what)
 
 
 # --------------------------------------------------------------------------- #
@@ -99,7 +107,8 @@ def sg_slic_superpixels(v, a, b):
     the objects present).
     """
     g = _as_gray(v)
-    if not _HAVE_SKI or g.shape[0] < 4 or g.shape[1] < 4:
+    _require_ski("skimage.segmentation.slic")
+    if g.shape[0] < 4 or g.shape[1] < 4:
         return np.zeros(g.shape, np.float64)
     ka = _knob(a)
     n_seg = max(2, int(round(6 + (1.0 - ka) * 40)))
@@ -120,7 +129,8 @@ def sg_felzenszwalb(v, a, b):
     resulting label image, which follows the true object contours.
     """
     g = _as_gray(v)
-    if not _HAVE_SKI or g.shape[0] < 4 or g.shape[1] < 4:
+    _require_ski("skimage.segmentation.felzenszwalb")
+    if g.shape[0] < 4 or g.shape[1] < 4:
         return np.zeros(g.shape, np.float64)
     scale = 40.0 + _knob(a) * 500.0
     min_size = int(round(15 + _knob(b) * 85))
@@ -251,7 +261,7 @@ def sg_normalized_cut_2(v, a, b):
     """
     g = _as_gray(v)
     H, W = g.shape
-    if not _HAVE_SKI or H < 2 or W < 2:
+    if H < 2 or W < 2:                      # skimage は使わない(scipy.linalg だけ)—— 2026-10-25 に門から外した
         return np.zeros(g.shape, np.float64)
     sdim = int(round(10 + _knob(b) * 14))
     zy = max(1, int(np.ceil(H / sdim)))
@@ -298,7 +308,8 @@ def sg_watershed_gradient(v, a, b):
     (the dam lines separating catchment basins / objects) is returned as the region.
     """
     g = _as_gray(v)
-    if not _HAVE_SKI or g.shape[0] < 4 or g.shape[1] < 4:
+    _require_ski("skimage.segmentation.watershed + h_minima")
+    if g.shape[0] < 4 or g.shape[1] < 4:
         return np.zeros(g.shape, np.float64)
     grad = _sobel(g)
     gmax = float(grad.max())
@@ -413,6 +424,8 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
             shape = _as_gray(v).shape
             try:
                 out = fn(v, a, b)
+            except __import__("backend_safe").MissingDependencyError:   # fail-closed: no stand-in value
+                raise
             except Exception as _e:  # noqa: BLE001 - recorded, strict mode re-raises
                 from backend_safe import is_strict as _bs_strict, record as _bs_record
                 if _bs_strict():

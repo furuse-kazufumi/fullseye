@@ -11,7 +11,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/bin_threshold.inputs.jpg">bin_threshold: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p>*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>大津の判別分析法（Otsu&#x27;s method）による自動しきい値二値化。<code style="color:#22d3bf">binary_threshold</code>/<code style="color:#22d3bf">auto_threshold</code> と同じ <code style="color:#22d3bf">_sh_threshold</code> の <code style="color:#22d3bf">otsu</code> 分岐を共有し、a, b は未使用。しきい値より明るい画素を前景(1)とする。skimage が無い環境では画像平均値をしきい値とするフォールバックになる。</p>
+<p>大津の判別分析法（Otsu&#x27;s method）による自動しきい値二値化。<code style="color:#22d3bf">binary_threshold</code>/<code style="color:#22d3bf">auto_threshold</code> と同じ <code style="color:#22d3bf">_sh_threshold</code> の <code style="color:#22d3bf">otsu</code> 分岐を共有し、a, b は未使用。しきい値より明るい画素を前景(1)とする。scikit-image が無い環境では同じ 256 ビンの Otsu を numpy の双子(<code style="color:#22d3bf">numpy_twins.threshold_otsu</code>)で計算する(bit 一致。2026-10-25 までは画像平均値をしきい値とする別の答えに落ちていた)。</p>
 <p>HALCON の <code style="color:#22d3bf">bin_threshold</code>（複数の自動しきい値決定アルゴリズムから選んで二値化する演算、既定は最大分離度=大津法相当）に相当する近似で、大津法のみをサポートし他のアルゴリズム選択肢は無い。</p>
 <p><b>何も写っていないフレーム(実測)</b>: 明るさが一様な画像を入れると、<b>明るさに関係なく空(全画素が背景 0)</b>になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>

@@ -3200,6 +3200,28 @@ def _b_gs_render_fn(pool, rng):
     return (GS.gs_from_world(_gs_quad_world(), spacing=0.01),), {}
 
 
+def _gs_box_world():
+    """厚みのある箱(寸法の箱が立つ = unit_mm が効く。平たい四角では凸包が作れず寸法は出ない)。"""
+    import driveworld as DW
+    w = DW._empty_world()
+    V = np.array([[x, y, z] for x in (-0.05, 0.05) for y in (-0.03, 0.03) for z in (0.0, 0.04)])
+    F = np.array([[0, 1, 3], [0, 3, 2], [4, 6, 7], [4, 7, 5], [0, 4, 5], [0, 5, 1],
+                  [2, 3, 7], [2, 7, 6], [0, 2, 6], [0, 6, 4], [1, 5, 7], [1, 7, 3]])
+    DW.world_add(w, V, F, 5, (0.8, 0.5, 0.2), name="box")
+    return w
+
+
+def _b_gs_viewer_html(pool, rng):
+    import gsplatnp as GS
+    return (GS.gs_from_world(_gs_box_world(), spacing=0.01), None), {"lang": "en"}   # out_path=None: 書かずに html を返す
+
+
+def _b_gs_catalog_html(pool, rng):
+    import gsplatnp as GS
+    g = GS.gs_from_world(_gs_box_world(), spacing=0.01)
+    return ([{"gs": g, "name": "quad"}], None), {"lang": "en", "thumb_px": 32}
+
+
 def _fuzz_file(name, data: bytes) -> str:
     """読み手の op 用の小さなファイルを一時ディレクトリに書く(builder は値でなくパスを渡す)。"""
     d = tempfile.mkdtemp(prefix="fuzz_io_")
@@ -3565,6 +3587,12 @@ def _b_prism_mesh(pool, rng):
 
 def _b_polygon_arg(pool, rng):
     return (_fuzz_japan()["square"],), {}
+
+
+def _b_plateau_lod2_mesh(pool, rng):
+    """LOD2 の最小 CityGML(切妻屋根の本体 + 穴あき屋根の部位)。"""
+    import driveplateau as PL
+    return (PL._citygml_lod2_example(with_hole=bool(rng.integers(0, 2))),), {}
 
 
 _FUZZ_CR = {}
@@ -7406,7 +7434,7 @@ OP_ARG_BUILDERS = {
     "veiling_luminance": _b_veiling_luminance, "veil_chroma_limit": _b_veil_chroma_limit, "sight_stop_speed": _b_sight_stop_speed,
     "env_params": _b_env_params, "tone_map": _b_tone_map, "env_render": _b_env_render,
     "gs_from_world": _b_gs_from_world, "gs_update": _b_gs_update, "gs_render": _b_gs_render, "gs_render_fn": _b_gs_render_fn,
-    "gs_read_file": _b_gs_read_file, "read_bvh": _b_read_bvh, "read_events": _b_read_events,
+    "gs_read_file": _b_gs_read_file, "gs_viewer_html": _b_gs_viewer_html, "gs_catalog_html": _b_gs_catalog_html, "read_bvh": _b_read_bvh, "read_events": _b_read_events,
     "events_to_frames": _b_events_to_frames,
     "humanoid_clip_mesh": _b_humanoid_clip_mesh, "world_pose_humanoid": _b_world_pose_humanoid,
     "humanoid_impostors": _b_humanoid_impostors, "world_camera_impostors": _b_world_camera_impostors,
@@ -7433,7 +7461,7 @@ OP_ARG_BUILDERS = {
     "latlon_to_local": _b_latlon_to_local, "jp_sign_stop_mesh": _b_jp_mesh, "jp_crossbuck_mesh": _b_jp_mesh, "jp_pole_mesh": _b_jp_mesh,
     "jp_mirror_mesh": _b_jp_mesh, "jp_stop_marking_mesh": _b_jp_mesh, "jp_stop_marking_length": _b_jp_mesh,
     "citygml_synthetic": _b_citygml_synthetic, "plateau_parse": _b_plateau_parse, "buildings_in_box": _b_buildings_in_box,
-    "building_prisms": _b_building_prisms, "prism_mesh": _b_prism_mesh, "triangulate_polygon": _b_polygon_arg, "polygon_area": _b_polygon_arg,
+    "building_prisms": _b_building_prisms, "prism_mesh": _b_prism_mesh, "triangulate_polygon": _b_polygon_arg, "polygon_area": _b_polygon_arg, "plateau_lod2_mesh": _b_plateau_lod2_mesh,
     "cr_synthetic": _b_cr_synthetic, "cr_read": _b_cr_read, "cr_route": _b_cr_route, "ks_step": _b_ks_step, "cr_drive": _b_cr_drive,
     "cr_drive_sweep": _b_cr_scene_arg, "cr_feasible": _b_cr_feasible, "cr_collision": _b_cr_scene_run, "cr_solution_xml": _b_cr_scene_run,
     "cr_checker_result": _b_cr_checker_result,

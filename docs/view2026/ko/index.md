@@ -215,11 +215,11 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 </div>
 
-[PoC가 아닌 사용 예 165개 목록](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[PoC가 아닌 사용 예 167개 목록](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## 전부 보기
 
-PoC 276개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
+PoC 277개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript가 없으면 갤러리 페이지에서 모든 그림을 볼 수 있습니다.)</a></p></noscript>
 
@@ -348,7 +348,7 @@ PoC 276개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 </div>
 </details>
 
-<details class="vall"><summary><b>3-D 형상</b> (18)</summary>
+<details class="vall"><summary><b>3-D 형상</b> (19)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_battery_ct_degradation/01_xray_projection.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_battery_ct_degradation.jpg" alt="배터리 CT 열화" width="200" height="200"><span>배터리 CT 열화</span></a>
 <a href="../../articles/assets/poc/poc_bev_sensor_fusion/01_scene_bev.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_bev_sensor_fusion.jpg" alt="BEV 센서 융합" width="200" height="200"><span>BEV 센서 융합</span></a>
@@ -368,6 +368,7 @@ PoC 276개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 <a href="../../articles/assets/poc/poc_symmetry_restoration/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_symmetry_restoration.jpg" alt="대칭으로 보완" width="200" height="200"><span>대칭으로 보완</span></a>
 <a href="../../articles/assets/poc/poc_endless_zoom_and_turning_solids/03_zoom_loop.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_endless_zoom_and_turning_solids.jpg" alt="무한 줌" width="200" height="200"><b>&#9654;</b><span>무한 줌</span></a>
 <a href="../../articles/assets/poc/poc_four_dimensions_by_three_d_tools/03_hopf_turn.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_four_dimensions_by_three_d_tools.jpg" alt="3-D로 4차원" width="200" height="200"><b>&#9654;</b><span>3-D로 4차원</span></a>
+<a href="../../articles/assets/poc/poc_plateau_venue_lod2/01_venue_itokawa_top.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_plateau_venue_lod2.jpg" alt="회의장 건물과 소행성 이토카와를 같은 자로: PLATEAU CityGML LOD2 를 메시로" width="200" height="200"><span>회의장 건물과 소행성 이토카와를 같은 자로: PLATEAU CityGML LOD2 를 메시로</span></a>
 </div>
 </details>
 

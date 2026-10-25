@@ -13,7 +13,7 @@
 <p>*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>LoG(ガウス平滑化込みラプラシアン、シグマ <code style="color:#22d3bf">0.5+2*a</code>)のゼロ交差を <code style="color:#22d3bf">find_contours</code> でサブピクセル精度の輪郭として抽出する。領域版の <code style="color:#22d3bf">zero_crossing</code>(画素解像度)に対するサブピクセル精度版。HALCON の <code style="color:#22d3bf">zero_crossing_sub_pix</code>（Extract zero crossings from an image with subpixel accuracy.）に相当。</p>
-<p><code style="color:#22d3bf">a</code> がガウス平滑化のシグマを振る。<code style="color:#22d3bf">b</code> は未使用。skimage が無い環境ではこの分岐は呼べない。</p>
+<p><code style="color:#22d3bf">a</code> がガウス平滑化のシグマを振る。<code style="color:#22d3bf">b</code> は未使用。scikit-image が無い環境では <code style="color:#22d3bf">MissingDependencyError</code>(何を入れればよいかを言う)で止まる —— 別の答えは返さない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
