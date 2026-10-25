@@ -44,6 +44,14 @@ VENUE = ROOT / "data" / "plateau_yokohama" / "venue_lod2.npz"
 ITOKAWA = ROOT / "studio_assets" / "sample_3d" / "itokawa_points.npy"
 #: 文献値(Fujiwara et al. 2006, Science 312, 1330)。主軸方向の長さ [m]。
 ITOKAWA_AXES_M = (535.0, 294.0, 209.0)
+#: PLATEAU のサイトポリシー(3. コンテンツの利用、PDL1.0 / CC BY 4.0 互換)が求める出典表記。URL は規約の例
+#: 「出典:「○○調査」(国土交通省)(当該ページのURL)を加工して作成」に従って入れる。公開ページに外部 URL を置かない
+#: 自分たちの規則より、ライセンスの要求を優先する(2026-10-25)。加工した旨と国交省の成果物でない旨も併記する。
+PLATEAU_DATASET_URL = "https://www.geospatial.jp/ckan/dataset/plateau-14100-yokohama-city-2020"
+ATTRIBUTION_JA = ("「3D都市モデル(Project PLATEAU)横浜市(2020年度)」(国土交通省)(" + PLATEAU_DATASET_URL
+                  + ")を加工して作成。7 部位の抜き出し・局所座標への変換・三角形分割は Fullseye 側の加工で、国土交通省の成果物ではない。")
+ATTRIBUTION_EN = ("Processed from the 3D City Model (Project PLATEAU), Yokohama City (FY2020), MLIT Japan (" + PLATEAU_DATASET_URL
+                  + "). The extraction of 7 parts, the local-frame conversion and the triangulation are Fullseye's own processing, not an MLIT product.")
 
 _ROWS: list[tuple[str, bool]] = []
 
@@ -183,10 +191,11 @@ def figures(venue: dict, ito: np.ndarray) -> None:
                      _grow(_height_map(pi, (0, 1), 2, lo[[0, 1]], hi[[0, 1]], 2.0), 5))
     side = np.maximum(_grow(_height_map(pv, (0, 2), -1, lo[[0, 2]], hi[[0, 2]], 2.0), 1),
                       _grow(_height_map(pi, (0, 2), -1, lo[[0, 2]], hi[[0, 2]], 2.0), 5))
+    src = ATTRIBUTION_JA + " イトカワ: Gaskell の形状モデル(PDS 小天体ノード)から間引いた点群。"
     figs.save("venue_itokawa_top", top, "上から見た会場の建物(左)とイトカワ(右、長さ 535 m)。色 = 高さ、1 マス 2 m",
-              colorbar=True, unit="m")
+              colorbar=True, unit="m", source=src)
     figs.save("venue_itokawa_side", side, "南から見た影絵。ホテル棟 142 m とイトカワの厚み(約 209〜244 m)を同じ縮尺で",
-              gray=True)
+              gray=True, source=src)
 
 
 def write_html(path: Path, venue: dict, ito: np.ndarray) -> None:
@@ -223,15 +232,17 @@ def write_html(path: Path, venue: dict, ito: np.ndarray) -> None:
           "The ViEW2026 venue buildings (Pacifico Yokohama) and asteroid Itokawa at the same scale."),
         t("ドラッグで回転、ホイールで拡大。", "Drag to rotate, wheel to zoom."),
         [t_mesh, t_cmp],
-        credit=t("建物: 「3D都市モデル(Project PLATEAU)横浜市(2020年度)」(国土交通省)を加工して作成。"
-                 "イトカワ: Gaskell の形状モデル(PDS 小天体ノード)から間引いた点群。",
-                 "Buildings: processed from the 3D city model (Project PLATEAU) Yokohama City 2020 (MLIT). "
-                 "Itokawa: points decimated from the Gaskell shape model (PDS Small Bodies Node)."))
+        credit=t("建物: " + ATTRIBUTION_JA + " イトカワ: Gaskell の形状モデル(PDS 小天体ノード)から間引いた点群。",
+                 "Buildings: " + ATTRIBUTION_EN + " Itokawa: points decimated from the Gaskell shape model (PDS Small Bodies Node)."))
     path.parent.mkdir(parents=True, exist_ok=True)
     out = fs.write_viewer(spec, str(path), ["ja", "en"])
     html = Path(out).read_text(encoding="utf-8")
-    check("ビューアに外部 URL が無い", "http(s):// 0 件", "%d 件" % (html.count("http://") + html.count("https://")),
-          "http://" not in html and "https://" not in html)
+    # 外部 URL の門: 自己完結のページに URL は置かない —— ただし PLATEAU のサイトポリシーが出典表記に
+    # 「当該ページのURL」を求めるので、この 1 本だけを**文字列の完全一致**で許す(ドメインの型では許さない)。
+    n_url = html.count("http://") + html.count("https://")
+    n_allowed = html.count(PLATEAU_DATASET_URL)
+    check("ビューアの外部 URL は出典の 1 本だけ", "許した出典 URL 以外 0 件", "%d 件中 出典 %d 件" % (n_url, n_allowed),
+          n_url == n_allowed and n_allowed >= 1)
     print("    書いた: %s(%.0f KB)" % (out, Path(out).stat().st_size / 1e3))
 
 
