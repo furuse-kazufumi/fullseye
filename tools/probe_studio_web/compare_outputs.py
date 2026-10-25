@@ -50,6 +50,9 @@ def main(argv=None) -> int:
     ap.add_argument("tag_a")
     ap.add_argument("tag_b")
     ap.add_argument("--ops-json")
+    ap.add_argument("--ledger-ulp", type=int, default=4,
+                    help="台帳に入れる上限 ULP(既定 4: wasm の sqrt / hypot の丸めが 2 ULP まで出る。1 ULP 超は verdict に within_<N>ulp と明記)")
+    ap.add_argument("--ledger-abs", type=float, default=1e-12, help="台帳に入れる上限の絶対差(既定 1e-12)")
     a = ap.parse_args(argv)
     A = json.load(open(os.path.join(a.out_dir, a.tag_a + "_verify.json"), encoding="utf-8"))
     B = json.load(open(os.path.join(a.out_dir, a.tag_b + "_verify.json"), encoding="utf-8"))
@@ -112,16 +115,27 @@ def main(argv=None) -> int:
     print("beyond_1ulp (worst 25):", beyond[:25])
     print("only_a_ok:", [(n, per[n].get("err_b")) for n in per if per[n]["verdict"] == "only_a_ok"][:40])
     if a.ops_json:
-        good = sorted(n for n in per if per[n]["verdict"] in ("bit_identical", "within_1ulp", "nonarray_equal"))
+        def ledger_verdict(n):
+            v = per[n]
+            if v["verdict"] in ("bit_identical", "within_1ulp", "nonarray_equal"):
+                return v["verdict"]
+            if v["verdict"] == "beyond_1ulp" and v["max_ulp"] is not None and v["max_ulp"] <= a.ledger_ulp \
+                    and v["max_abs"] <= a.ledger_abs:
+                return "within_%dulp" % a.ledger_ulp           # 1 ULP 超だが上限内 —— 台帳にその旨を明記
+            return None
+        good = sorted(n for n in per if ledger_verdict(n))
         rows_b = B["rows"]
         with open(a.ops_json, "w", encoding="utf-8") as f:
             json.dump({"source": "tools/probe_studio_web/compare_outputs.py %s vs %s" % (a.tag_a, a.tag_b),
-                       "criterion": "both ran; output bit-identical or within 1 ULP of CPython (non-array results: repr equal)",
+                       "criterion": "both ran; output bit-identical, within 1 ULP, or within %d ULP and %g abs of CPython "
+                                    "(non-array results: repr equal)" % (a.ledger_ulp, a.ledger_abs),
                        "n": len(good),
                        "ops": [{"name": n, "in": rows_b[n]["in"], "out": rows_b[n]["out"], "ms_browser": rows_b[n]["ms"],
-                                "ms_native": A["rows"][n]["ms"], "verdict": per[n]["verdict"]} for n in good]},
+                                "ms_native": A["rows"][n]["ms"], "verdict": ledger_verdict(n),
+                                "max_ulp": per[n].get("max_ulp"), "max_abs": per[n].get("max_abs")} for n in good]},
                       f, ensure_ascii=False, indent=1)
-        print("wrote", a.ops_json, len(good))
+        print("wrote", a.ops_json, len(good), "(%d beyond 1 ULP but within %d ULP / %g abs)"
+              % (sum(1 for n in good if ledger_verdict(n).startswith("within_%d" % a.ledger_ulp)), a.ledger_ulp, a.ledger_abs))
     return 0
 
 

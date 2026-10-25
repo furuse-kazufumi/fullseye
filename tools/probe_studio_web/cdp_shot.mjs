@@ -55,7 +55,7 @@ try {
   if (script) { scriptResult = await evalJs(script); await sleep(300); }
   const shot = await send("Page.captureScreenshot", { format: "png" });
   writeFileSync(out, Buffer.from(shot.result.data, "base64"));
-  const info = await evalJs("JSON.stringify(window.__probe || window.__state || null)");
+  const info = await evalJs("JSON.stringify(window.__probe || (window.__state && {ready: window.__state.ready, timings: window.__state.timings, nops: window.__state.nops, image: window.__state.image, last_run: window.__state.last_run, error: window.__state.error}) || null)");
   console.log(JSON.stringify({ out, waited_ms: waited, script_result: scriptResult, page_state: info ? JSON.parse(info) : null }));
   ws.close();
   rc = 0;
