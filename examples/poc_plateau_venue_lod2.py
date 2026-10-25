@@ -38,6 +38,7 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 import driveplateau as PL  # noqa: E402
+import examplefig as figs  # noqa: E402
 
 VENUE = ROOT / "data" / "plateau_yokohama" / "venue_lod2.npz"
 ITOKAWA = ROOT / "studio_assets" / "sample_3d" / "itokawa_points.npy"
@@ -131,6 +132,63 @@ def part_itokawa(venue: dict) -> np.ndarray:
     return Q @ vt.T
 
 
+def _surface_points(V: np.ndarray, F: np.ndarray, n: int, rng) -> np.ndarray:
+    """三角形の面積に比例して面の上に点を撒く(図とビューアの両方で使う)。"""
+    a = 0.5 * np.linalg.norm(np.cross(V[F[:, 1]] - V[F[:, 0]], V[F[:, 2]] - V[F[:, 0]]), axis=1)
+    pick = rng.choice(len(F), size=n, p=a / a.sum())
+    r1, r2 = rng.random((2, n))
+    s = np.sqrt(r1)
+    return ((1 - s)[:, None] * V[F[pick, 0]] + (s * (1 - r2))[:, None] * V[F[pick, 1]]
+            + (s * r2)[:, None] * V[F[pick, 2]])
+
+
+def _height_map(P: np.ndarray, axes: tuple[int, int], val: int, lo: np.ndarray, hi: np.ndarray,
+                step: float) -> np.ndarray:
+    """点群を格子(1 マス = step m)に落とし、マスごとの最大値の図にする(空のマスは 0)。"""
+    w = int(np.ceil((hi[0] - lo[0]) / step)) + 1
+    h = int(np.ceil((hi[1] - lo[1]) / step)) + 1
+    img = np.zeros((h, w))
+    c = np.clip(((P[:, axes[0]] - lo[0]) / step).astype(int), 0, w - 1)
+    r = np.clip(((hi[1] - P[:, axes[1]]) / step).astype(int), 0, h - 1)   # 上が北(上)
+    if val < 0:                                                             # 値なし: 点のあるマス = 1(影絵)
+        img[r, c] = 1.0
+    else:
+        np.maximum.at(img, (r, c), P[:, val] + 1.0)                         # 地面の高さ 0 も塗る
+    return img
+
+
+def _grow(img: np.ndarray, k: int) -> np.ndarray:
+    """最大値フィルタ(半径 k マスの正方形)。間引いた点群の隙間を埋めて面に見せる。"""
+    out = img.copy()
+    for dr in range(-k, k + 1):
+        for dc in range(-k, k + 1):
+            out = np.maximum(out, np.roll(np.roll(img, dr, axis=0), dc, axis=1))
+    return out
+
+
+def figures(venue: dict, ito: np.ndarray) -> None:
+    """上から見た図と横から見た図(会場とイトカワを同じ 2 m の格子で)。FULLSEYE_FIGURE_DIR が無ければ何もしない。"""
+    if not figs.enabled():
+        return
+    d = venue["d"]
+    rng = np.random.default_rng(1)
+    pv = _surface_points(d["V"], d["F"], 60000, rng)
+    pi = ito.copy()
+    pi[:, 2] -= pi[:, 2].min()
+    pi[:, 0] += float(pv[:, 0].max()) - float(pi[:, 0].min()) + 120.0
+    P = np.vstack([pv, pi])
+    lo, hi = P.min(axis=0) - 10.0, P.max(axis=0) + 10.0
+    # イトカワは 3000 点しかないので 5 マス(10 m)広げて面にする。建物は 6 万点で密なので 1 マス
+    top = np.maximum(_height_map(pv, (0, 1), 2, lo[[0, 1]], hi[[0, 1]], 2.0),
+                     _grow(_height_map(pi, (0, 1), 2, lo[[0, 1]], hi[[0, 1]], 2.0), 5))
+    side = np.maximum(_grow(_height_map(pv, (0, 2), -1, lo[[0, 2]], hi[[0, 2]], 2.0), 1),
+                      _grow(_height_map(pi, (0, 2), -1, lo[[0, 2]], hi[[0, 2]], 2.0), 5))
+    figs.save("venue_itokawa_top", top, "上から見た会場の建物(左)とイトカワ(右、長さ 535 m)。色 = 高さ、1 マス 2 m",
+              colorbar=True, unit="m")
+    figs.save("venue_itokawa_side", side, "南から見た影絵。ホテル棟 142 m とイトカワの厚み(約 209〜244 m)を同じ縮尺で",
+              gray=True)
+
+
 def write_html(path: Path, venue: dict, ito: np.ndarray) -> None:
     import fullseye as fs
 
@@ -147,14 +205,8 @@ def write_html(path: Path, venue: dict, ito: np.ndarray) -> None:
         V, F, V[:, 2], cb,
         numbers=[fs.viewer_number(t("頂点", "Vertices"), str(len(V))),
                  fs.viewer_number(t("三角形", "Triangles"), str(len(F)))])
-    # 比較: 会場の面を面積に比例して点で撒き、東に 700 m 離してイトカワの点群を置く
-    rng = np.random.default_rng(0)
-    a = 0.5 * np.linalg.norm(np.cross(V[F[:, 1]] - V[F[:, 0]], V[F[:, 2]] - V[F[:, 0]]), axis=1)
-    pick = rng.choice(len(F), size=12000, p=a / a.sum())
-    r1, r2 = rng.random((2, len(pick)))
-    s = np.sqrt(r1)
-    pts_v = ((1 - s)[:, None] * V[F[pick, 0]] + (s * (1 - r2))[:, None] * V[F[pick, 1]]
-             + (s * r2)[:, None] * V[F[pick, 2]])
+    # 比較: 会場の面を面積に比例して点で撒き、東に 450 m 離してイトカワの点群を置く
+    pts_v = _surface_points(V, F, 12000, np.random.default_rng(0))
     ito_pts = ito.copy()
     ito_pts[:, 2] += -ito_pts[:, 2].min()                       # 地面に置く
     ito_pts[:, 0] += float(V[:, 0].max()) + 450.0
@@ -193,6 +245,10 @@ def main(argv=None) -> int:
     ito = part_itokawa(venue)
     if a.html:
         write_html(Path(a.html), venue, ito)
+    figures(venue, ito)
+    if figs.errors():
+        print("図の書き出しで失敗:", "; ".join(figs.errors()))
+        return 1
     ng = [w for w, ok in _ROWS if not ok]
     print("plateau venue: %d 検査 / NG %d / %.2f s" % (len(_ROWS), len(ng), time.perf_counter() - t0))
     if ng:

@@ -189,6 +189,7 @@ def test_venue_asset_matches_measured_heights_and_is_small():
     assert abs(d["unit_measured_height"].max() - 142.1) < 1e-9     # ホテル棟
     meta = json.loads(str(d["meta_json"]))
     assert "PDL1.0" in meta["licence"] and len(meta["files"]) == 2
+    assert len(meta["units"]) == 7
     assert all(all(u["gates"]) for u in meta["units"])
 
 
