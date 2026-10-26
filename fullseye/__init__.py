@@ -477,7 +477,11 @@ with warnings.catch_warnings():
     # 3-D 合成パイプライン(pipeline3d が import できない環境では api 側の代役 = 呼ぶと ImportError)
     from api import (  # noqa: E402,F401
         register_pointclouds, align_cad_to_scan, measure_plane, inspect_roundness, match_sdf, register_auto)
-    from engine import FullseyeEngine, diagnose_stages  # noqa: E402,F401  (pipeline runtime)
+    from engine import FullseyeEngine, diagnose_stages, pipeline_states  # noqa: E402,F401  (pipeline runtime)
+    # engine-layer result state + memory-bounded stage cache (Qt-free; the browser Studio consumes these)
+    from studio_result import (  # noqa: E402,F401
+        StageCache, assess_validity, input_reference, resolve_input_ref, file_sha256,
+    )
     import graphengine  # noqa: E402,F401  (DAG pipeline runtime)
     from graphengine import FullseyeGraph  # noqa: E402,F401
     from acquire import (  # noqa: E402,F401  (image acquisition: cameras / framegrabbers)
@@ -956,6 +960,7 @@ __all__ = [
     "smallest_box3", "smallest_box3_axis", "fit_box3", "smallest_sphere3", "inner_box3",
     "measure3d", "regionprops3d", "ops3d", "pipeline3d",
     "FullseyeEngine", "diagnose_stages", "graphengine", "FullseyeGraph",
+    "pipeline_states", "StageCache", "assess_validity", "input_reference", "resolve_input_ref", "file_sha256",
     "Camera", "list_cameras", "open_framegrabber", "grab_image", "close_framegrabber",
     "open_channel", "protocols", "capabilities", "Channel",
     "TcpChannel", "UdpChannel", "HttpChannel", "ModbusTcpChannel", "ModbusTcpServer",

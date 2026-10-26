@@ -27,8 +27,69 @@ from typing import Iterable
 import numpy as np
 
 import api
+from studio_result import StageCache, assess_validity
 
-__all__ = ["FullseyeEngine", "diagnose_stages", "stage_name"]
+__all__ = ["FullseyeEngine", "diagnose_stages", "stage_name", "StageCache", "pipeline_states"]
+
+
+def _input_hash(image):
+    """A content signature for the input array, used as the first part of a stage cache key.
+
+    Different pixels -> different key -> the cache does not serve a stale result. Hashes the raw
+    bytes (the caller passes the same image across knob edits, so this is paid once per run, not
+    per stage)."""
+    import hashlib
+    arr = np.ascontiguousarray(image)
+    h = hashlib.sha1()
+    h.update(str((arr.shape, arr.dtype.str)).encode())
+    h.update(arr.view(np.uint8).reshape(-1)[: 1 << 20].tobytes())   # up to 1 MiB is plenty to separate inputs
+    h.update(arr.view(np.uint8).reshape(-1)[-(1 << 20):].tobytes())
+    return h.hexdigest()
+
+
+def pipeline_states(stages, image, coerce=True):
+    """Per-stage ``{index, op, a, b, ran, valid, reasons}`` for a list of ``(op, a, b)`` stages.
+
+    The browser-consumable result state (ideas 129 / 130), Qt-free. ``ran`` is True when the stage
+    produced a value without raising; ``valid`` is True / False / None (not judged, from
+    :func:`studio_result.assess_validity`) — an op with no success information is never reported
+    valid just because it ran, and non-finite counts appear in ``reasons`` rather than being blanked.
+    A stage that raises (and every stage after it) gets ``ran=False`` and an ``error`` message. No
+    automatic "fix and rerun" is offered — the state only reports."""
+    norm = [(stage_name(st), *(float(x) for x in (tuple(st)[1:3] + (0.5, 0.5))[:2]))
+            if not isinstance(st, str) else (st, 0.5, 0.5) for st in stages]
+    out = []
+    if not norm or image is None:
+        return [{"index": i, "op": n, "a": a, "b": b, "ran": False, "valid": None, "reasons": []}
+                for i, (n, a, b) in enumerate(norm)]
+    policy = api._policy(None)
+    try:
+        img, prep, ops_ = api._prepare_pipeline(image, [(n, a, b) for (n, a, b) in norm], 0.5, 0.5, policy)
+        steps = iter(api._pipeline_steps(img, prep, ops_, coerce, policy, api._fast_on(None)))
+    except Exception as e:                           # refused before any stage ran (e.g. sort mismatch)
+        return [{"index": i, "op": n, "a": a, "b": b, "ran": False, "valid": None,
+                 "reasons": [], "error": str(e)} for i, (n, a, b) in enumerate(norm)]
+    err = None
+    for i, (n, a, b) in enumerate(norm):
+        if err is not None:
+            out.append({"index": i, "op": n, "a": a, "b": b, "ran": False, "valid": None,
+                        "reasons": [], "error": err})
+            continue
+        try:
+            val = next(steps)
+        except StopIteration:
+            err = "pipeline produced no value for this stage"
+            out.append({"index": i, "op": n, "a": a, "b": b, "ran": False, "valid": None,
+                        "reasons": [], "error": err})
+            continue
+        except Exception as e:                       # this op failed on its input
+            err = str(e)
+            out.append({"index": i, "op": n, "a": a, "b": b, "ran": False, "valid": None,
+                        "reasons": [], "error": err})
+            continue
+        valid, reasons = assess_validity(val)
+        out.append({"index": i, "op": n, "a": a, "b": b, "ran": True, "valid": valid, "reasons": reasons})
+    return out
 
 # Sorts that thread cleanly into one another; "any" pairs with everything.
 _ANY = "any"
@@ -346,6 +407,38 @@ class FullseyeEngine:
         policy = api._policy(None)
         img, norm, ops_ = api._prepare_pipeline(image, stages, 0.5, 0.5, policy)
         return list(api._pipeline_steps(img, norm, ops_, coerce, policy, api._fast_on(None)))
+
+    def run_cached(self, image, cache: "StageCache | None" = None):
+        """Run the pipeline through a :class:`studio_result.StageCache`, recomputing only the stages a
+        knob/edit changed since the last call with the SAME cache. Returns the final value.
+
+        The engine-layer twin of the Studio stage cache, for use outside the Qt UI (the browser
+        version). Pass a cache in and reuse it across calls to keep stage outputs hot; its byte
+        budget bounds memory (LRU eviction). Editing stage k reuses stages 0..k-1 and recomputes
+        k..n. Equivalent to :meth:`run` (per-stage threading, ``coerce`` on the first stage)."""
+        if cache is None:
+            cache = StageCache()
+        stages = self._stage_tuples()
+        if not stages or image is None:
+            return image
+        prefix = (_input_hash(image),)
+        prev = image
+        for i, st in enumerate(stages):
+            prefix = prefix + (tuple(st),)
+            hit = cache.get(prefix)
+            if hit is not None:
+                prev = hit
+                continue
+            prev = cache.put(prefix, api.run_pipeline(prev, [st], coerce=(i == 0)), protect=[prefix])
+        return prev
+
+    def stepwise_states(self, image, coerce: bool = True) -> list:
+        """Per-stage ``ran`` / ``valid`` / ``reasons`` for this pipeline on *image*.
+
+        Thin wrapper over :func:`pipeline_states` — the browser-consumable result state. A completed
+        run is not reported valid merely for not raising; an op with no success information is left
+        ``valid=None`` (not judged), and non-finite counts are named in ``reasons``."""
+        return pipeline_states(self.stages, image, coerce=coerce)
 
     def run_file(self, in_path: str, out_path: str | None = None,
                  upto: int | None = None):
