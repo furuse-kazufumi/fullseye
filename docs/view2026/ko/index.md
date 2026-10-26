@@ -79,6 +79,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../view2026/anim3d/interactive_anim3d_viewer.html?lang=ko"><img src="../thumbs/interactive_anim3d_viewer.jpg" alt="로봇 팔과 반투명 렌즈" loading="lazy" width="320" height="320"><b>&#9654;</b><span>로봇 팔과 반투명 렌즈 · 0.3 MB</span></a>
 <a href="../../view2026/anim3d/tablet_inspection_anim3d.html?lang=ko"><img src="../thumbs/tablet_inspection.jpg" alt="Tablet appearance and colour inspection" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Tablet appearance and colour inspection · 0.5 MB</span></a>
 <a href="../../view2026/anim3d/satellite_gsd_anim3d.html?lang=ko"><img src="../thumbs/satellite_gsd.jpg" alt="궤도에서 작은 글씨가 사라지는 이유" loading="lazy" width="320" height="320"><b>&#9654;</b><span>궤도에서 작은 글씨가 사라지는 이유 · 0.2 MB</span></a>
+<a href="../../view2026/anim3d/pulseox_anim3d.html?lang=ko"><img src="../thumbs/pulseox.jpg" alt="맥박 산소 측정의 두 파장 흡수" loading="lazy" width="320" height="320"><b>&#9654;</b><span>맥박 산소 측정의 두 파장 흡수 · 0.2 MB</span></a>
 </div>
 
 ## 시리즈 기사 (Qiita의 영어 기사)
@@ -665,6 +666,7 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 - [로봇 팔과 반투명 렌즈](../../view2026/anim3d/interactive_anim3d_viewer.html?lang=ko) (움직이는 3-D, 드래그로 회전, 0.3 MB): 손가락으로 돌려 로봇 팔이 상자를 옮기는 모습을 원하는 방향에서 본다. 광선이 반투명 렌즈를 지나 초점에 모이고, 아래에서는 위에서 본 높이 영상과 그 이진화가 같은 시간축으로 진행된다. [소스](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
 - [Tablet appearance and colour inspection](../../view2026/anim3d/tablet_inspection_anim3d.html?lang=ko) (움직이는 3-D, 드래그로 회전, 0.5 MB): Rotate synthetic tablets defined only by shape and colour. At each area, synthesize 800 chip-free and 800 chipped images and measure the detection-rate curve; fade a colour patch from ΔE00 = 8 to 0. Measure foreign-particle position and blob count, then expose the limit where a shallow crack parallel to the light vanishes. **Foreign-particle position error 0.292 px; measured and normal-approximation 90% detection areas are both 3 px² = 0.0192 mm²; CIEDE2000 direct-formula difference < 1e-12; 5 separated blobs.** [소스](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_tablet_anim3d.py)
 - [궤도에서 작은 글씨가 사라지는 이유](../../view2026/anim3d/satellite_gsd_anim3d.html?lang=ko) (움직이는 3-D, 드래그로 회전, 0.2 MB): 고도가 높아지면 1 픽셀이 덮는 지상 폭이 넓어지고, 구경이 작아지면 반투명 빛 원뿔 바닥의 Airy 원반이 퍼진다. 파란 GSD와 주황 회절 폭의 교점을 지나면 픽셀만 줄여도 10 cm 선은 돌아오지 않는다. **고도 400 km, 5 µm 픽셀, 초점거리 8 m이면 GSD는 0.250 m이다. 파장 550 nm, 구경 2.4 m의 Rayleigh 지상 반경은 0.112 m이며 대기는 한계 행에서 미계산으로 명시한다.** [소스](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_satgsd_anim3d.py)
+- [맥박 산소 측정의 두 파장 흡수](../../view2026/anim3d/pulseox_anim3d.html?lang=ko) (움직이는 3-D, 드래그로 회전, 0.2 MB): 박동하는 동맥을 지나는 적색광과 근적외선을 따라가며 AC/DC 비 R로 산소포화도를 읽는다. 잡음 시계열과 닫힌식을 비교하고 COHb를 구별하지 못하는 한계도 보인다. **R 최대 차이 0.00068, SpO₂ 최대 오차 0.034%. COHb 10% 모형에서는 실제 90.0%를 91.0%로 읽는다.** [소스](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_pulseox_anim3d.py)
 
 </div>
 

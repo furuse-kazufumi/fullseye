@@ -79,6 +79,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../view2026/anim3d/interactive_anim3d_viewer.html?lang=zh"><img src="../thumbs/interactive_anim3d_viewer.jpg" alt="机械臂与半透明透镜" loading="lazy" width="320" height="320"><b>&#9654;</b><span>机械臂与半透明透镜 · 0.3 MB</span></a>
 <a href="../../view2026/anim3d/tablet_inspection_anim3d.html?lang=zh"><img src="../thumbs/tablet_inspection.jpg" alt="Tablet appearance and colour inspection" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Tablet appearance and colour inspection · 0.5 MB</span></a>
 <a href="../../view2026/anim3d/satellite_gsd_anim3d.html?lang=zh"><img src="../thumbs/satellite_gsd.jpg" alt="为什么从轨道上看不清小字" loading="lazy" width="320" height="320"><b>&#9654;</b><span>为什么从轨道上看不清小字 · 0.2 MB</span></a>
+<a href="../../view2026/anim3d/pulseox_anim3d.html?lang=zh"><img src="../thumbs/pulseox.jpg" alt="脉搏血氧仪的双波长吸收" loading="lazy" width="320" height="320"><b>&#9654;</b><span>脉搏血氧仪的双波长吸收 · 0.2 MB</span></a>
 </div>
 
 ## 系列文章 (Qiita 上的英文文章)
@@ -665,6 +666,7 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 - [机械臂与半透明透镜](../../view2026/anim3d/interactive_anim3d_viewer.html?lang=zh) (动态 3-D,可拖动旋转, 0.3 MB): 用手指旋转,从任意角度观看机械臂搬运箱子。光线穿过半透明透镜会聚到焦点,下方的俯视高度图像及其二值化结果在同一时间轴上同步播放。 [源码](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
 - [Tablet appearance and colour inspection](../../view2026/anim3d/tablet_inspection_anim3d.html?lang=zh) (动态 3-D,可拖动旋转, 0.5 MB): Rotate synthetic tablets defined only by shape and colour. At each area, synthesize 800 chip-free and 800 chipped images and measure the detection-rate curve; fade a colour patch from ΔE00 = 8 to 0. Measure foreign-particle position and blob count, then expose the limit where a shallow crack parallel to the light vanishes. **Foreign-particle position error 0.292 px; measured and normal-approximation 90% detection areas are both 3 px² = 0.0192 mm²; CIEDE2000 direct-formula difference < 1e-12; 5 separated blobs.** [源码](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_tablet_anim3d.py)
 - [为什么从轨道上看不清小字](../../view2026/anim3d/satellite_gsd_anim3d.html?lang=zh) (动态 3-D,可拖动旋转, 0.2 MB): 高度越高,1 个像素覆盖的地面越宽;口径越小,半透明光锥底部的艾里斑越大。越过蓝色 GSD 与橙色衍射宽度的交点后,仅缩小像素也无法恢复 10 cm 线条。 **高度 400 km、像素 5 µm、焦距 8 m 时,GSD 为 0.250 m。波长 550 nm、口径 2.4 m 时,Rayleigh 地面半径为 0.112 m。大气影响在局限行中明确标为未计算。** [源码](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_satgsd_anim3d.py)
+- [脉搏血氧仪的双波长吸收](../../view2026/anim3d/pulseox_anim3d.html?lang=zh) (动态 3-D,可拖动旋转, 0.2 MB): 跟随红光和近红外光穿过搏动的动脉，用 AC/DC 比值 R 读取血氧饱和度；比较带噪时序与闭式解，并显示无法区分 COHb 的局限。 **R 最大差 0.00068；SpO₂ 最大误差 0.034%。在 10% COHb 模型中，真值 90.0% 被读为 91.0%。** [源码](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_pulseox_anim3d.py)
 
 </div>
 
