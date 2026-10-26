@@ -319,7 +319,9 @@ class Scene:
             avail = dict(pool)
             used = {}
             plan = []
-            for key, p, q in sorted(self.segs[k], key=lambda x: -float(np.linalg.norm(x[2] - x[1]))):
+            # 長さは 6 桁に丸めて並べる: 左右対称な光線の長さは丸め屑しか違わず、その屑が OS で変わると
+            # 並びが入れ替わり Linux の CI でページが一致しなかった(#165)。同じ長さは sorted の安定性で元の順。
+            for key, p, q in sorted(self.segs[k], key=lambda x: -round(float(np.linalg.norm(x[2] - x[1])), 6)):
                 d = q - p
                 D = float(np.linalg.norm(d))
                 u = d / D

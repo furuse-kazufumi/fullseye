@@ -1,0 +1,519 @@
+{
+ "_": "English fallback translations for the low-cost prototype; formulas, values and op names are preserved.",
+ "example": "build_rail_anim3d",
+ "strings": {
+  "How one laser line reveals a rail section": {
+   "ja": "\u7dda\u72b6\u306e\u5149 1 \u672c\u3067\u3001\u306a\u305c\u30ec\u30fc\u30eb\u65ad\u9762\u304c\u5206\u304b\u308b\u306e\u304b",
+   "zh": "How one laser line reveals a rail section",
+   "tw": "How one laser line reveals a rail section",
+   "ko": "How one laser line reveals a rail section",
+   "de": "How one laser line reveals a rail section",
+   "hi": "How one laser line reveals a rail section",
+   "fr": "How one laser line reveals a rail section"
+  },
+  "Measure head wear and gauge from a noisy light-section image": {
+   "ja": "\u982d\u9802\u6469\u8017\u3068\u8ecc\u9593\u3092\u3001\u96d1\u97f3\u306e\u3042\u308b\u5149\u5207\u65ad\u50cf\u304b\u3089\u6e2c\u308b",
+   "zh": "Measure head wear and gauge from a noisy light-section image",
+   "tw": "Measure head wear and gauge from a noisy light-section image",
+   "ko": "Measure head wear and gauge from a noisy light-section image",
+   "de": "Measure head wear and gauge from a noisy light-section image",
+   "hi": "Measure head wear and gauge from a noisy light-section image",
+   "fr": "Measure head wear and gauge from a noisy light-section image"
+  },
+  "Follow \u2460 question \u2192 \u2461 prediction \u2192 \u2462 play \u2192 \u2463 formula \u2192 \u2464 limit. Badges show computed values only.": {
+   "ja": "\u2460\u554f\u3044 \u2192 \u2461\u4e88\u60f3 \u2192 \u2462\u518d\u751f \u2192 \u2463\u5f0f \u2192 \u2464\u9650\u754c\u3002\u30d0\u30c3\u30b8\u306f\u8a08\u7b97\u3057\u305f\u5024\u3060\u3051\u3092\u8868\u793a\u3059\u308b\u3002",
+   "zh": "Follow \u2460 question \u2192 \u2461 prediction \u2192 \u2462 play \u2192 \u2463 formula \u2192 \u2464 limit. Badges show computed values only.",
+   "tw": "Follow \u2460 question \u2192 \u2461 prediction \u2192 \u2462 play \u2192 \u2463 formula \u2192 \u2464 limit. Badges show computed values only.",
+   "ko": "Follow \u2460 question \u2192 \u2461 prediction \u2192 \u2462 play \u2192 \u2463 formula \u2192 \u2464 limit. Badges show computed values only.",
+   "de": "Follow \u2460 question \u2192 \u2461 prediction \u2192 \u2462 play \u2192 \u2463 formula \u2192 \u2464 limit. Badges show computed values only.",
+   "hi": "Follow \u2460 question \u2192 \u2461 prediction \u2192 \u2462 play \u2192 \u2463 formula \u2192 \u2464 limit. Badges show computed values only.",
+   "fr": "Follow \u2460 question \u2192 \u2461 prediction \u2192 \u2462 play \u2192 \u2463 formula \u2192 \u2464 limit. Badges show computed values only."
+  },
+  "The light line bends with the section": {
+   "ja": "\u5149\u306e\u7dda\u304c\u65ad\u9762\u306e\u5f62\u306b\u66f2\u304c\u308b",
+   "zh": "The light line bends with the section",
+   "tw": "The light line bends with the section",
+   "ko": "The light line bends with the section",
+   "de": "The light line bends with the section",
+   "hi": "The light line bends with the section",
+   "fr": "The light line bends with the section"
+  },
+  "Only the intersection of a flat light sheet and the rail surface glows. Its image curve is the sequence of heights across head, web and foot.": {
+   "ja": "\u5e73\u3089\u306a\u5149\u306e\u9762\u3068\u30ec\u30fc\u30eb\u8868\u9762\u306e\u4ea4\u7dda\u3060\u3051\u304c\u5149\u308b\u3002\u30ab\u30e1\u30e9\u50cf\u306e\u66f2\u7dda\u306f\u3001\u982d\u9802\u30fb\u30a6\u30a7\u30d6\u30fb\u5e95\u90e8\u3092\u6a2a\u5207\u3063\u305f\u9ad8\u3055\u306e\u4e26\u3073\u3067\u3042\u308b\u3002",
+   "zh": "Only the intersection of a flat light sheet and the rail surface glows. Its image curve is the sequence of heights across head, web and foot.",
+   "tw": "Only the intersection of a flat light sheet and the rail surface glows. Its image curve is the sequence of heights across head, web and foot.",
+   "ko": "Only the intersection of a flat light sheet and the rail surface glows. Its image curve is the sequence of heights across head, web and foot.",
+   "de": "Only the intersection of a flat light sheet and the rail surface glows. Its image curve is the sequence of heights across head, web and foot.",
+   "hi": "Only the intersection of a flat light sheet and the rail surface glows. Its image curve is the sequence of heights across head, web and foot.",
+   "fr": "Only the intersection of a flat light sheet and the rail surface glows. Its image curve is the sequence of heights across head, web and foot."
+  },
+  "section RMS": {
+   "ja": "\u65ad\u9762 RMS",
+   "zh": "section RMS",
+   "tw": "section RMS",
+   "ko": "section RMS",
+   "de": "section RMS",
+   "hi": "section RMS",
+   "fr": "section RMS"
+  },
+  "noisy laser-line image": {
+   "ja": "\u96d1\u97f3\u3092\u52a0\u3048\u305f\u5149\u7dda\u50cf",
+   "zh": "noisy laser-line image",
+   "tw": "noisy laser-line image",
+   "ko": "noisy laser-line image",
+   "de": "noisy laser-line image",
+   "hi": "noisy laser-line image",
+   "fr": "noisy laser-line image"
+  },
+  "section RMS from detected laser centre": {
+   "ja": "\u5149\u7dda\u4e2d\u5fc3\u304b\u3089\u623b\u3057\u305f\u65ad\u9762 RMS",
+   "zh": "section RMS from detected laser centre",
+   "tw": "section RMS from detected laser centre",
+   "ko": "section RMS from detected laser centre",
+   "de": "section RMS from detected laser centre",
+   "hi": "section RMS from detected laser centre",
+   "fr": "section RMS from detected laser centre"
+  },
+  "head-wear estimation error": {
+   "ja": "\u982d\u9802\u6469\u8017\u306e\u63a8\u5b9a\u8aa4\u5dee",
+   "zh": "head-wear estimation error",
+   "tw": "head-wear estimation error",
+   "ko": "head-wear estimation error",
+   "de": "head-wear estimation error",
+   "hi": "head-wear estimation error",
+   "fr": "head-wear estimation error"
+  },
+  "gauge-widening estimation error": {
+   "ja": "\u8ecc\u9593\u306e\u5e83\u304c\u308a\u306e\u63a8\u5b9a\u8aa4\u5dee",
+   "zh": "gauge-widening estimation error",
+   "tw": "gauge-widening estimation error",
+   "ko": "gauge-widening estimation error",
+   "de": "gauge-widening estimation error",
+   "hi": "gauge-widening estimation error",
+   "fr": "gauge-widening estimation error"
+  },
+  "triangulation: op vs independent closed form": {
+   "ja": "\u4e09\u89d2\u6e2c\u91cf: op \u3068\u72ec\u7acb\u9589\u5f62\u5f0f",
+   "zh": "triangulation: op vs independent closed form",
+   "tw": "triangulation: op vs independent closed form",
+   "ko": "triangulation: op vs independent closed form",
+   "de": "triangulation: op vs independent closed form",
+   "hi": "triangulation: op vs independent closed form",
+   "fr": "triangulation: op vs independent closed form"
+  },
+  "travel position": {
+   "ja": "\u8d70\u884c\u4f4d\u7f6e",
+   "zh": "travel position",
+   "tw": "travel position",
+   "ko": "travel position",
+   "de": "travel position",
+   "hi": "travel position",
+   "fr": "travel position"
+  },
+  "Why does the image line bend although the projected light is straight?": {
+   "ja": "\u771f\u3063\u3059\u3050\u306a\u5149\u3092\u5f53\u3066\u305f\u306e\u306b\u3001\u50cf\u306e\u7dda\u306f\u306a\u305c\u66f2\u304c\u308b?",
+   "zh": "Why does the image line bend although the projected light is straight?",
+   "tw": "Why does the image line bend although the projected light is straight?",
+   "ko": "Why does the image line bend although the projected light is straight?",
+   "de": "Why does the image line bend although the projected light is straight?",
+   "hi": "Why does the image line bend although the projected light is straight?",
+   "fr": "Why does the image line bend although the projected light is straight?"
+  },
+  "because it is the surface intersection": {
+   "ja": "\u8868\u9762\u3068\u306e\u4ea4\u7dda\u3060\u304b\u3089",
+   "zh": "because it is the surface intersection",
+   "tw": "because it is the surface intersection",
+   "ko": "because it is the surface intersection",
+   "de": "because it is the surface intersection",
+   "hi": "because it is the surface intersection",
+   "fr": "because it is the surface intersection"
+  },
+  "because light bends in air": {
+   "ja": "\u5149\u304c\u7a7a\u6c17\u4e2d\u3067\u66f2\u304c\u308b\u304b\u3089",
+   "zh": "because light bends in air",
+   "tw": "because light bends in air",
+   "ko": "because light bends in air",
+   "de": "because light bends in air",
+   "hi": "because light bends in air",
+   "fr": "because light bends in air"
+  },
+  "The section clips the light plane and camera parallax converts height into pixel position.": {
+   "ja": "\u5149\u306e\u9762\u3092\u65ad\u9762\u5f62\u72b6\u304c\u5207\u308a\u53d6\u308a\u3001\u30ab\u30e1\u30e9\u306e\u8996\u5dee\u304c\u9ad8\u3055\u3092\u753b\u7d20\u4f4d\u7f6e\u3078\u5909\u3048\u308b\u3002",
+   "zh": "The section clips the light plane and camera parallax converts height into pixel position.",
+   "tw": "The section clips the light plane and camera parallax converts height into pixel position.",
+   "ko": "The section clips the light plane and camera parallax converts height into pixel position.",
+   "de": "The section clips the light plane and camera parallax converts height into pixel position.",
+   "hi": "The section clips the light plane and camera parallax converts height into pixel position.",
+   "fr": "The section clips the light plane and camera parallax converts height into pixel position."
+  },
+  "light plane \u2229 surface = bright line": {
+   "ja": "\u5149\u306e\u9762 \u2229 \u8868\u9762 = \u5149\u308b\u7dda",
+   "zh": "light plane \u2229 surface = bright line",
+   "tw": "light plane \u2229 surface = bright line",
+   "ko": "light plane \u2229 surface = bright line",
+   "de": "light plane \u2229 surface = bright line",
+   "hi": "light plane \u2229 surface = bright line",
+   "fr": "light plane \u2229 surface = bright line"
+  },
+  "Synthetic rail section using assumed representative dimensions.": {
+   "ja": "\u4ee3\u8868\u5bf8\u6cd5\u3060\u3051\u3092\u4f7f\u3063\u305f\u5408\u6210\u30ec\u30fc\u30eb\u65ad\u9762\u3002",
+   "zh": "Synthetic rail section using assumed representative dimensions.",
+   "tw": "Synthetic rail section using assumed representative dimensions.",
+   "ko": "Synthetic rail section using assumed representative dimensions.",
+   "de": "Synthetic rail section using assumed representative dimensions.",
+   "hi": "Synthetic rail section using assumed representative dimensions.",
+   "fr": "Synthetic rail section using assumed representative dimensions."
+  },
+  "Triangulate back to a section": {
+   "ja": "\u4e09\u89d2\u6e2c\u91cf\u3067\u65ad\u9762\u3078\u623b\u3059",
+   "zh": "Triangulate back to a section",
+   "tw": "Triangulate back to a section",
+   "ko": "Triangulate back to a section",
+   "de": "Triangulate back to a section",
+   "hi": "Triangulate back to a section",
+   "fr": "Triangulate back to a section"
+  },
+  "The line is rendered off pixel centres with noise and detected by a nine-pixel centroid. triangulate_column intersects each camera ray with the projected plane.": {
+   "ja": "\u753b\u7d20\u4e2d\u5fc3\u304b\u3089\u5916\u308c\u305f\u5149\u7dda\u3092\u96d1\u97f3\u4ed8\u304d\u3067\u63cf\u304d\u30019 \u753b\u7d20\u306e\u91cd\u5fc3\u3067\u4e2d\u5fc3\u3092\u691c\u51fa\u3057\u305f\u3002triangulate_column \u304c\u30ab\u30e1\u30e9\u8996\u7dda\u3068\u6295\u5f71\u9762\u306e\u4ea4\u70b9\u3092\u6df1\u5ea6\u3078\u623b\u3059\u3002",
+   "zh": "The line is rendered off pixel centres with noise and detected by a nine-pixel centroid. triangulate_column intersects each camera ray with the projected plane.",
+   "tw": "The line is rendered off pixel centres with noise and detected by a nine-pixel centroid. triangulate_column intersects each camera ray with the projected plane.",
+   "ko": "The line is rendered off pixel centres with noise and detected by a nine-pixel centroid. triangulate_column intersects each camera ray with the projected plane.",
+   "de": "The line is rendered off pixel centres with noise and detected by a nine-pixel centroid. triangulate_column intersects each camera ray with the projected plane.",
+   "hi": "The line is rendered off pixel centres with noise and detected by a nine-pixel centroid. triangulate_column intersects each camera ray with the projected plane.",
+   "fr": "The line is rendered off pixel centres with noise and detected by a nine-pixel centroid. triangulate_column intersects each camera ray with the projected plane."
+  },
+  "reconstruction RMS": {
+   "ja": "\u5fa9\u5143\u8aa4\u5dee RMS",
+   "zh": "reconstruction RMS",
+   "tw": "reconstruction RMS",
+   "ko": "reconstruction RMS",
+   "de": "reconstruction RMS",
+   "hi": "reconstruction RMS",
+   "fr": "reconstruction RMS"
+  },
+  "section recovered from detected centres": {
+   "ja": "\u691c\u51fa\u3057\u305f\u4e2d\u5fc3\u304b\u3089\u5fa9\u5143\u3057\u305f\u65ad\u9762",
+   "zh": "section recovered from detected centres",
+   "tw": "section recovered from detected centres",
+   "ko": "section recovered from detected centres",
+   "de": "section recovered from detected centres",
+   "hi": "section recovered from detected centres",
+   "fr": "section recovered from detected centres"
+  },
+  "What makes depth solvable from one image line?": {
+   "ja": "1 \u672c\u306e\u50cf\u306e\u7dda\u3060\u3051\u3067\u5965\u884c\u304d\u3092\u6c7a\u3081\u3089\u308c\u308b\u6761\u4ef6\u306f?",
+   "zh": "What makes depth solvable from one image line?",
+   "tw": "What makes depth solvable from one image line?",
+   "ko": "What makes depth solvable from one image line?",
+   "de": "What makes depth solvable from one image line?",
+   "hi": "What makes depth solvable from one image line?",
+   "fr": "What makes depth solvable from one image line?"
+  },
+  "known light plane and camera calibration": {
+   "ja": "\u5149\u306e\u9762\u306e\u4f4d\u7f6e\u3068\u30ab\u30e1\u30e9\u6821\u6b63\u304c\u65e2\u77e5",
+   "zh": "known light plane and camera calibration",
+   "tw": "known light plane and camera calibration",
+   "ko": "known light plane and camera calibration",
+   "de": "known light plane and camera calibration",
+   "hi": "known light plane and camera calibration",
+   "fr": "known light plane and camera calibration"
+  },
+  "only the line colour is known": {
+   "ja": "\u7dda\u306e\u8272\u3060\u3051\u304c\u65e2\u77e5",
+   "zh": "only the line colour is known",
+   "tw": "only the line colour is known",
+   "ko": "only the line colour is known",
+   "de": "only the line colour is known",
+   "hi": "only the line colour is known",
+   "fr": "only the line colour is known"
+  },
+  "A known baseline makes the ray-plane intersection unique.": {
+   "ja": "\u65e2\u77e5\u306e\u57fa\u7dda\u304c\u3001\u5404\u753b\u7d20\u306e\u8996\u7dda\u3068\u5149\u306e\u9762\u306e\u4ea4\u70b9\u3092\u4e00\u610f\u306b\u3059\u308b\u3002",
+   "zh": "A known baseline makes the ray-plane intersection unique.",
+   "tw": "A known baseline makes the ray-plane intersection unique.",
+   "ko": "A known baseline makes the ray-plane intersection unique.",
+   "de": "A known baseline makes the ray-plane intersection unique.",
+   "hi": "A known baseline makes the ray-plane intersection unique.",
+   "fr": "A known baseline makes the ray-plane intersection unique."
+  },
+  "Z = f B / (u \u2212 u_p)": {
+   "ja": "Z = f B / (u \u2212 u_p)",
+   "zh": "Z = f B / (u \u2212 u_p)",
+   "tw": "Z = f B / (u \u2212 u_p)",
+   "ko": "Z = f B / (u \u2212 u_p)",
+   "de": "Z = f B / (u \u2212 u_p)",
+   "hi": "Z = f B / (u \u2212 u_p)",
+   "fr": "Z = f B / (u \u2212 u_p)"
+  },
+  "The 120 mm baseline, focal length and pixel pitch are assumed representative values.": {
+   "ja": "\u57fa\u7dda 120 mm\u3001\u7126\u70b9\u8ddd\u96e2\u3068\u753b\u7d20\u30d4\u30c3\u30c1\u306f\u8aac\u660e\u7528\u306e\u4ee3\u8868\u5024\u3002",
+   "zh": "The 120 mm baseline, focal length and pixel pitch are assumed representative values.",
+   "tw": "The 120 mm baseline, focal length and pixel pitch are assumed representative values.",
+   "ko": "The 120 mm baseline, focal length and pixel pitch are assumed representative values.",
+   "de": "The 120 mm baseline, focal length and pixel pitch are assumed representative values.",
+   "hi": "The 120 mm baseline, focal length and pixel pitch are assumed representative values.",
+   "fr": "The 120 mm baseline, focal length and pixel pitch are assumed representative values."
+  },
+  "Pass through a worn section": {
+   "ja": "\u6469\u8017\u533a\u9593\u3092\u901a\u904e\u3059\u308b",
+   "zh": "Pass through a worn section",
+   "tw": "Pass through a worn section",
+   "ko": "Pass through a worn section",
+   "de": "Pass through a worn section",
+   "hi": "Pass through a worn section",
+   "fr": "Pass through a worn section"
+  },
+  "planted truth": {
+   "ja": "\u57cb\u3081\u305f\u771f\u5024",
+   "zh": "planted truth",
+   "tw": "planted truth",
+   "ko": "planted truth",
+   "de": "planted truth",
+   "hi": "planted truth",
+   "fr": "planted truth"
+  },
+  "true wear depth": {
+   "ja": "\u771f\u306e\u6469\u8017\u6df1\u3055",
+   "zh": "true wear depth",
+   "tw": "true wear depth",
+   "ko": "true wear depth",
+   "de": "true wear depth",
+   "hi": "true wear depth",
+   "fr": "true wear depth"
+  },
+  "What happens to the reference difference in the worn zone?": {
+   "ja": "\u6469\u8017\u533a\u9593\u3078\u5165\u308b\u3068\u57fa\u6e96\u65ad\u9762\u3068\u306e\u5dee\u306f?",
+   "zh": "What happens to the reference difference in the worn zone?",
+   "tw": "What happens to the reference difference in the worn zone?",
+   "ko": "What happens to the reference difference in the worn zone?",
+   "de": "What happens to the reference difference in the worn zone?",
+   "hi": "What happens to the reference difference in the worn zone?",
+   "fr": "What happens to the reference difference in the worn zone?"
+  },
+  "it rises": {
+   "ja": "\u7acb\u3061\u4e0a\u304c\u308b",
+   "zh": "it rises",
+   "tw": "it rises",
+   "ko": "it rises",
+   "de": "it rises",
+   "hi": "it rises",
+   "fr": "it rises"
+  },
+  "it stays zero": {
+   "ja": "\u5e38\u306b\u30bc\u30ed",
+   "zh": "it stays zero",
+   "tw": "it stays zero",
+   "ko": "it stays zero",
+   "de": "it stays zero",
+   "hi": "it stays zero",
+   "fr": "it stays zero"
+  },
+  "Gauge and unmeasurable conditions": {
+   "ja": "\u8ecc\u9593\u3068\u6e2c\u308c\u306a\u3044\u6761\u4ef6",
+   "zh": "Gauge and unmeasurable conditions",
+   "tw": "Gauge and unmeasurable conditions",
+   "ko": "Gauge and unmeasurable conditions",
+   "de": "Gauge and unmeasurable conditions",
+   "hi": "Gauge and unmeasurable conditions",
+   "fr": "Gauge and unmeasurable conditions"
+  },
+  "planted widening": {
+   "ja": "\u57cb\u3081\u305f\u5e83\u304c\u308a",
+   "zh": "planted widening",
+   "tw": "planted widening",
+   "ko": "planted widening",
+   "de": "planted widening",
+   "hi": "planted widening",
+   "fr": "planted widening"
+  },
+  "every point remains measurable with glare, grazing occlusion and vibration": {
+   "ja": "\u5149\u6ca2\u30fb\u6d45\u3044\u89d2\u5ea6\u30fb\u632f\u52d5\u304c\u3042\u3063\u3066\u3082\u5168\u70b9\u3092\u6e2c\u308c\u308b",
+   "zh": "every point remains measurable with glare, grazing occlusion and vibration",
+   "tw": "every point remains measurable with glare, grazing occlusion and vibration",
+   "ko": "every point remains measurable with glare, grazing occlusion and vibration",
+   "de": "every point remains measurable with glare, grazing occlusion and vibration",
+   "hi": "every point remains measurable with glare, grazing occlusion and vibration",
+   "fr": "every point remains measurable with glare, grazing occlusion and vibration"
+  },
+  "include missing and biased samples": {
+   "ja": "\u6b20\u6e2c\u3068\u504f\u308a\u3092\u542b\u3080",
+   "zh": "include missing and biased samples",
+   "tw": "include missing and biased samples",
+   "ko": "include missing and biased samples",
+   "de": "include missing and biased samples",
+   "hi": "include missing and biased samples",
+   "fr": "include missing and biased samples"
+  },
+  "not computed: field data require rescanning": {
+   "ja": "\u672a\u8a08\u7b97: \u73fe\u5834\u3067\u306f\u518d\u8d70\u67fb\u304c\u5fc5\u8981",
+   "zh": "not computed: field data require rescanning",
+   "tw": "not computed: field data require rescanning",
+   "ko": "not computed: field data require rescanning",
+   "de": "not computed: field data require rescanning",
+   "hi": "not computed: field data require rescanning",
+   "fr": "not computed: field data require rescanning"
+  },
+  "May a missing laser line be recorded as 0 mm?": {
+   "ja": "\u5149\u306e\u7dda\u304c\u9014\u5207\u308c\u305f\u5834\u6240\u3092 0 mm \u3068\u3057\u3066\u3088\u3044?",
+   "zh": "May a missing laser line be recorded as 0 mm?",
+   "tw": "May a missing laser line be recorded as 0 mm?",
+   "ko": "May a missing laser line be recorded as 0 mm?",
+   "de": "May a missing laser line be recorded as 0 mm?",
+   "hi": "May a missing laser line be recorded as 0 mm?",
+   "fr": "May a missing laser line be recorded as 0 mm?"
+  },
+  "yes": {
+   "ja": "\u3088\u3044",
+   "zh": "yes",
+   "tw": "yes",
+   "ko": "yes",
+   "de": "yes",
+   "hi": "yes",
+   "fr": "yes"
+  },
+  "mark missing and rescan": {
+   "ja": "\u6b20\u6e2c\u3068\u3057\u3066\u518d\u8d70\u67fb\u3059\u308b",
+   "zh": "mark missing and rescan",
+   "tw": "mark missing and rescan",
+   "ko": "mark missing and rescan",
+   "de": "mark missing and rescan",
+   "hi": "mark missing and rescan",
+   "fr": "mark missing and rescan"
+  },
+  "Zero would be a false shape observation. Detect glare, occlusion and vibration and keep the sample missing.": {
+   "ja": "0 \u306f\u5f62\u72b6\u3068\u3044\u3046\u8aa4\u3063\u305f\u89b3\u6e2c\u306b\u306a\u308b\u3002\u5149\u6ca2\u30fb\u906e\u853d\u30fb\u632f\u52d5\u3092\u8b58\u5225\u3057\u3066\u6b20\u6e2c\u3068\u3057\u3066\u6271\u3046\u3002",
+   "zh": "Zero would be a false shape observation. Detect glare, occlusion and vibration and keep the sample missing.",
+   "tw": "Zero would be a false shape observation. Detect glare, occlusion and vibration and keep the sample missing.",
+   "ko": "Zero would be a false shape observation. Detect glare, occlusion and vibration and keep the sample missing.",
+   "de": "Zero would be a false shape observation. Detect glare, occlusion and vibration and keep the sample missing.",
+   "hi": "Zero would be a false shape observation. Detect glare, occlusion and vibration and keep the sample missing.",
+   "fr": "Zero would be a false shape observation. Detect glare, occlusion and vibration and keep the sample missing."
+  },
+  "Entirely synthetic. Section shape, dimensions, baseline, pixel pitch, wear and gauge are assumed representative values, not a specific operator, vehicle, product or standard.": {
+   "ja": "\u3059\u3079\u3066\u5408\u6210\u3002\u65ad\u9762\u5f62\u72b6\u3001\u5bf8\u6cd5\u3001\u57fa\u7dda\u3001\u753b\u7d20\u30d4\u30c3\u30c1\u3001\u6469\u8017\u3001\u8ecc\u9593\u306f\u4e00\u822c\u7684\u306a\u4ee3\u8868\u5024\u3068\u3057\u3066\u7f6e\u3044\u305f\u4eee\u5b9a\u3067\u3001\u7279\u5b9a\u306e\u4e8b\u696d\u8005\u30fb\u8eca\u4e21\u30fb\u88fd\u54c1\u30fb\u898f\u683c\u3092\u8868\u3055\u306a\u3044\u3002",
+   "zh": "Entirely synthetic. Section shape, dimensions, baseline, pixel pitch, wear and gauge are assumed representative values, not a specific operator, vehicle, product or standard.",
+   "tw": "Entirely synthetic. Section shape, dimensions, baseline, pixel pitch, wear and gauge are assumed representative values, not a specific operator, vehicle, product or standard.",
+   "ko": "Entirely synthetic. Section shape, dimensions, baseline, pixel pitch, wear and gauge are assumed representative values, not a specific operator, vehicle, product or standard.",
+   "de": "Entirely synthetic. Section shape, dimensions, baseline, pixel pitch, wear and gauge are assumed representative values, not a specific operator, vehicle, product or standard.",
+   "hi": "Entirely synthetic. Section shape, dimensions, baseline, pixel pitch, wear and gauge are assumed representative values, not a specific operator, vehicle, product or standard.",
+   "fr": "Entirely synthetic. Section shape, dimensions, baseline, pixel pitch, wear and gauge are assumed representative values, not a specific operator, vehicle, product or standard."
+  },
+  "The reference difference is smoothed over three points and its maximum measures left-head wear without assuming its shape. A comparison least-squares estimate assumes the known wear footprint, so their difference remains visible.": {
+   "ja": "\u57fa\u6e96\u8d70\u67fb\u3068\u306e\u5dee\u3092 3 \u70b9\u3067\u5e73\u6ed1\u5316\u3057\u3001\u305d\u306e\u6700\u5927\u5024\u304b\u3089\u5f62\u3092\u4eee\u5b9a\u305b\u305a\u5de6\u982d\u9802\u306e\u6469\u8017\u3092\u6e2c\u308b\u3002\u65e2\u77e5\u306e\u6469\u8017\u5f62\u72b6\u3078\u6700\u5c0f\u4e8c\u4e57\u3057\u305f\u6bd4\u8f03\u5024\u3082\u4e26\u3079\u3001\u4eee\u5b9a\u306b\u3088\u308b\u5dee\u3092\u96a0\u3055\u306a\u3044\u3002",
+   "zh": "The reference difference is smoothed over three points and its maximum measures left-head wear without assuming its shape. A comparison least-squares estimate assumes the known wear footprint, so their difference remains visible.",
+   "tw": "The reference difference is smoothed over three points and its maximum measures left-head wear without assuming its shape. A comparison least-squares estimate assumes the known wear footprint, so their difference remains visible.",
+   "ko": "The reference difference is smoothed over three points and its maximum measures left-head wear without assuming its shape. A comparison least-squares estimate assumes the known wear footprint, so their difference remains visible.",
+   "de": "The reference difference is smoothed over three points and its maximum measures left-head wear without assuming its shape. A comparison least-squares estimate assumes the known wear footprint, so their difference remains visible.",
+   "hi": "The reference difference is smoothed over three points and its maximum measures left-head wear without assuming its shape. A comparison least-squares estimate assumes the known wear footprint, so their difference remains visible.",
+   "fr": "The reference difference is smoothed over three points and its maximum measures left-head wear without assuming its shape. A comparison least-squares estimate assumes the known wear footprint, so their difference remains visible."
+  },
+  "difference between estimators": {
+   "ja": "\u4e8c\u63a8\u5b9a\u306e\u5dee",
+   "zh": "difference between estimators",
+   "tw": "difference between estimators",
+   "ko": "difference between estimators",
+   "de": "difference between estimators",
+   "hi": "difference between estimators",
+   "fr": "difference between estimators"
+  },
+  "shape-free estimate": {
+   "ja": "\u5f62\u3092\u4eee\u5b9a\u3057\u306a\u3044\u63a8\u5b9a",
+   "zh": "shape-free estimate",
+   "tw": "shape-free estimate",
+   "ko": "shape-free estimate",
+   "de": "shape-free estimate",
+   "hi": "shape-free estimate",
+   "fr": "shape-free estimate"
+  },
+  "known-shape least squares": {
+   "ja": "\u65e2\u77e5\u5f62\u72b6\u306e\u6700\u5c0f\u4e8c\u4e57",
+   "zh": "known-shape least squares",
+   "tw": "known-shape least squares",
+   "ko": "known-shape least squares",
+   "de": "known-shape least squares",
+   "hi": "known-shape least squares",
+   "fr": "known-shape least squares"
+  },
+  "The main estimate is the maximum smoothed difference and does not use the wear shape. Only the purple line is a known-shape least-squares fit.": {
+   "ja": "\u4e3b\u63a8\u5b9a\u306f\u5e73\u6ed1\u5316\u3057\u305f\u5dee\u306e\u6700\u5927\u5024\u3067\u3001\u6469\u8017\u5f62\u72b6\u3092\u4f7f\u308f\u306a\u3044\u3002\u7d2b\u7dda\u3060\u3051\u306f\u5f62\u3092\u65e2\u77e5\u3068\u3057\u305f\u6700\u5c0f\u4e8c\u4e57\u3002",
+   "zh": "The main estimate is the maximum smoothed difference and does not use the wear shape. Only the purple line is a known-shape least-squares fit.",
+   "tw": "The main estimate is the maximum smoothed difference and does not use the wear shape. Only the purple line is a known-shape least-squares fit.",
+   "ko": "The main estimate is the maximum smoothed difference and does not use the wear shape. Only the purple line is a known-shape least-squares fit.",
+   "de": "The main estimate is the maximum smoothed difference and does not use the wear shape. Only the purple line is a known-shape least-squares fit.",
+   "hi": "The main estimate is the maximum smoothed difference and does not use the wear shape. Only the purple line is a known-shape least-squares fit.",
+   "fr": "The main estimate is the maximum smoothed difference and does not use the wear shape. Only the purple line is a known-shape least-squares fit."
+  },
+  "wear = max smooth(z_measured \u2212 z_reference)": {
+   "ja": "\u6469\u8017 = max smooth(z_measured \u2212 z_reference)",
+   "zh": "wear = max smooth(z_measured \u2212 z_reference)",
+   "tw": "wear = max smooth(z_measured \u2212 z_reference)",
+   "ko": "wear = max smooth(z_measured \u2212 z_reference)",
+   "de": "wear = max smooth(z_measured \u2212 z_reference)",
+   "hi": "wear = max smooth(z_measured \u2212 z_reference)",
+   "fr": "wear = max smooth(z_measured \u2212 z_reference)"
+  },
+  "The least-squares comparison makes the strong assumption that wear shape is known. Temperature, flexure and reference-section variation are also omitted.": {
+   "ja": "\u6700\u5c0f\u4e8c\u4e57\u306e\u6bd4\u8f03\u5024\u306f\u6469\u8017\u5f62\u72b6\u304c\u65e2\u77e5\u3068\u3044\u3046\u5f37\u3044\u4eee\u5b9a\u3092\u7f6e\u304f\u3002\u6e29\u5ea6\u3001\u305f\u308f\u307f\u3001\u57fa\u6e96\u65ad\u9762\u306e\u500b\u4f53\u5dee\u3082\u542b\u3081\u306a\u3044\u3002",
+   "zh": "The least-squares comparison makes the strong assumption that wear shape is known. Temperature, flexure and reference-section variation are also omitted.",
+   "tw": "The least-squares comparison makes the strong assumption that wear shape is known. Temperature, flexure and reference-section variation are also omitted.",
+   "ko": "The least-squares comparison makes the strong assumption that wear shape is known. Temperature, flexure and reference-section variation are also omitted.",
+   "de": "The least-squares comparison makes the strong assumption that wear shape is known. Temperature, flexure and reference-section variation are also omitted.",
+   "hi": "The least-squares comparison makes the strong assumption that wear shape is known. Temperature, flexure and reference-section variation are also omitted.",
+   "fr": "The least-squares comparison makes the strong assumption that wear shape is known. Temperature, flexure and reference-section variation are also omitted."
+  },
+  "Each recovered profile is interpolated at the inner crossing 8 mm below its measured head top. Change in the distance between those two points from the first scan measures a planted 4.63 mm widening; truth is not passed to the estimator.": {
+   "ja": "\u5de6\u53f3\u306e\u5fa9\u5143\u70b9\u5217\u3067\u3001\u305d\u308c\u305e\u308c\u982d\u9802\u304b\u3089 8 mm \u4e0b\u306e\u5185\u5074\u4ea4\u70b9\u3092\u88dc\u9593\u3057\u3001\u4e8c\u70b9\u9593\u8ddd\u96e2\u306e\u521d\u56de\u8d70\u67fb\u304b\u3089\u306e\u5909\u5316\u3068\u3057\u3066 4.63 mm \u306e\u5e83\u304c\u308a\u3092\u6e2c\u308b\u3002\u771f\u5024\u306f\u63a8\u5b9a\u5f0f\u3078\u6e21\u3055\u306a\u3044\u3002",
+   "zh": "Each recovered profile is interpolated at the inner crossing 8 mm below its measured head top. Change in the distance between those two points from the first scan measures a planted 4.63 mm widening; truth is not passed to the estimator.",
+   "tw": "Each recovered profile is interpolated at the inner crossing 8 mm below its measured head top. Change in the distance between those two points from the first scan measures a planted 4.63 mm widening; truth is not passed to the estimator.",
+   "ko": "Each recovered profile is interpolated at the inner crossing 8 mm below its measured head top. Change in the distance between those two points from the first scan measures a planted 4.63 mm widening; truth is not passed to the estimator.",
+   "de": "Each recovered profile is interpolated at the inner crossing 8 mm below its measured head top. Change in the distance between those two points from the first scan measures a planted 4.63 mm widening; truth is not passed to the estimator.",
+   "hi": "Each recovered profile is interpolated at the inner crossing 8 mm below its measured head top. Change in the distance between those two points from the first scan measures a planted 4.63 mm widening; truth is not passed to the estimator.",
+   "fr": "Each recovered profile is interpolated at the inner crossing 8 mm below its measured head top. Change in the distance between those two points from the first scan measures a planted 4.63 mm widening; truth is not passed to the estimator."
+  },
+  "criterion from pixels and noise": {
+   "ja": "\u753b\u7d20\u3068\u96d1\u97f3\u304b\u3089\u306e\u57fa\u6e96",
+   "zh": "criterion from pixels and noise",
+   "tw": "criterion from pixels and noise",
+   "ko": "criterion from pixels and noise",
+   "de": "criterion from pixels and noise",
+   "hi": "criterion from pixels and noise",
+   "fr": "criterion from pixels and noise"
+  },
+  "gauge measured from point profiles": {
+   "ja": "\u70b9\u5217\u304b\u3089\u6e2c\u3063\u305f\u8ecc\u9593",
+   "zh": "gauge measured from point profiles",
+   "tw": "gauge measured from point profiles",
+   "ko": "gauge measured from point profiles",
+   "de": "gauge measured from point profiles",
+   "hi": "gauge measured from point profiles",
+   "fr": "gauge measured from point profiles"
+  },
+  "synthetic truth": {
+   "ja": "\u5408\u6210\u3057\u305f\u771f\u5024",
+   "zh": "synthetic truth",
+   "tw": "synthetic truth",
+   "ko": "synthetic truth",
+   "de": "synthetic truth",
+   "hi": "synthetic truth",
+   "fr": "synthetic truth"
+  },
+  "gauge = x_right(head\u22128 mm) \u2212 x_left(head\u22128 mm)": {
+   "ja": "\u8ecc\u9593 = x_right(\u982d\u9802\u22128 mm) \u2212 x_left(\u982d\u9802\u22128 mm)",
+   "zh": "gauge = x_right(head\u22128 mm) \u2212 x_left(head\u22128 mm)",
+   "tw": "gauge = x_right(head\u22128 mm) \u2212 x_left(head\u22128 mm)",
+   "ko": "gauge = x_right(head\u22128 mm) \u2212 x_left(head\u22128 mm)",
+   "de": "gauge = x_right(head\u22128 mm) \u2212 x_left(head\u22128 mm)",
+   "hi": "gauge = x_right(head\u22128 mm) \u2212 x_left(head\u22128 mm)",
+   "fr": "gauge = x_right(head\u22128 mm) \u2212 x_left(head\u22128 mm)"
+  },
+  "The first scan calibrates nominal gauge. This synthetic model is not for maintenance decisions or safety diagnosis.": {
+   "ja": "\u521d\u56de\u8d70\u67fb\u3092\u516c\u79f0\u8ecc\u9593\u306e\u57fa\u6e96\u306b\u3059\u308b\u3002\u5408\u6210\u6a21\u578b\u3067\u3042\u308a\u3001\u4fdd\u5b88\u5224\u5b9a\u3084\u5b89\u5168\u8a3a\u65ad\u306b\u306f\u4f7f\u308f\u306a\u3044\u3002",
+   "zh": "The first scan calibrates nominal gauge. This synthetic model is not for maintenance decisions or safety diagnosis.",
+   "tw": "The first scan calibrates nominal gauge. This synthetic model is not for maintenance decisions or safety diagnosis.",
+   "ko": "The first scan calibrates nominal gauge. This synthetic model is not for maintenance decisions or safety diagnosis.",
+   "de": "The first scan calibrates nominal gauge. This synthetic model is not for maintenance decisions or safety diagnosis.",
+   "hi": "The first scan calibrates nominal gauge. This synthetic model is not for maintenance decisions or safety diagnosis.",
+   "fr": "The first scan calibrates nominal gauge. This synthetic model is not for maintenance decisions or safety diagnosis."
+  }
+ }
+}

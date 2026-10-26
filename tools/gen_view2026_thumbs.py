@@ -78,6 +78,7 @@ SPEC = [
     ("gauss_bonnet", "anim3d/gauss_bonnet_poster.jpg", None, None),
     ("organ_volume", "anim3d/organ_volume_poster.jpg", None, None),
     ("satellite_gsd", "view2026/anim3d/satellite_gsd_anim3d_poster.png", None, None),
+    ("rail_light_section", "view2026/anim3d/rail_light_section_anim3d_poster.png", None, None),
     ("tablet_inspection", "view2026/anim3d/tablet_inspection_anim3d_poster.png", None, None),
     ("pulseox", "view2026/anim3d/pulseox_anim3d_poster.png", None, None),
 ]
