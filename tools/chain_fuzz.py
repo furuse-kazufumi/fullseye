@@ -3589,6 +3589,12 @@ def _b_polygon_arg(pool, rng):
     return (_fuzz_japan()["square"],), {}
 
 
+def _b_plateau_lod2_mesh(pool, rng):
+    """LOD2 の最小 CityGML(切妻屋根の本体 + 穴あき屋根の部位)。"""
+    import driveplateau as PL
+    return (PL._citygml_lod2_example(with_hole=bool(rng.integers(0, 2))),), {}
+
+
 _FUZZ_CR = {}
 
 
@@ -6803,6 +6809,25 @@ def _b_rs_risk(pool, rng):
     return (f["path"], f["Z"], 1.0, f["qr"]), {"alpha": float(rng.uniform(0, 0.95))}
 
 
+# --- 小惑星の表面の重力(polygrav、2026-10-25): 閉じた楕円体の多面体を軸ごとに伸ばし、観測点と切る平面を振る --- #
+def _pg_body(rng):
+    import ops3d
+    V, F = ops3d.get("geodesic_dome")(int(rng.integers(1, 4)), radius=float(rng.uniform(20.0, 200.0)))
+    return np.asarray(V, float) * rng.uniform(0.5, 2.0, 3), np.asarray(F)
+
+
+def _b_pg_gravity(pool, rng):
+    V, F = _pg_body(rng)
+    P = rng.normal(0.0, 1.0, (int(rng.integers(1, 12)), 3)) * float(np.abs(V).max()) * rng.uniform(0.2, 3.0)
+    return ((V, F), P), {"density": float(rng.uniform(500.0, 8000.0)), "omega": float(rng.choice([0.0, 1.4e-4]))}
+
+
+def _b_pg_clip(pool, rng):
+    V, F = _pg_body(rng)
+    n = rng.normal(0.0, 1.0, 3)
+    return ((V, F), V.mean(axis=0) + rng.uniform(-0.3, 0.3, 3) * np.abs(V).max(axis=0), n), {}
+
+
 # --- EMVA 1288(2026-10-13): 規格の残りの式・General・前処理の閉形式。露光段の列は線形なカメラから作る --- #
 def _emva_linear_series():
     mp = np.concatenate([np.geomspace(1.0, 200.0, 12), np.linspace(0.0, 4.0e4, 31)[1:]])
@@ -7455,7 +7480,7 @@ OP_ARG_BUILDERS = {
     "latlon_to_local": _b_latlon_to_local, "jp_sign_stop_mesh": _b_jp_mesh, "jp_crossbuck_mesh": _b_jp_mesh, "jp_pole_mesh": _b_jp_mesh,
     "jp_mirror_mesh": _b_jp_mesh, "jp_stop_marking_mesh": _b_jp_mesh, "jp_stop_marking_length": _b_jp_mesh,
     "citygml_synthetic": _b_citygml_synthetic, "plateau_parse": _b_plateau_parse, "buildings_in_box": _b_buildings_in_box,
-    "building_prisms": _b_building_prisms, "prism_mesh": _b_prism_mesh, "triangulate_polygon": _b_polygon_arg, "polygon_area": _b_polygon_arg,
+    "building_prisms": _b_building_prisms, "prism_mesh": _b_prism_mesh, "triangulate_polygon": _b_polygon_arg, "polygon_area": _b_polygon_arg, "plateau_lod2_mesh": _b_plateau_lod2_mesh,
     "cr_synthetic": _b_cr_synthetic, "cr_read": _b_cr_read, "cr_route": _b_cr_route, "ks_step": _b_ks_step, "cr_drive": _b_cr_drive,
     "cr_drive_sweep": _b_cr_scene_arg, "cr_feasible": _b_cr_feasible, "cr_collision": _b_cr_scene_run, "cr_solution_xml": _b_cr_scene_run,
     "cr_checker_result": _b_cr_checker_result,
@@ -7566,6 +7591,7 @@ OP_ARG_BUILDERS = {
     "ground_shift_track": _b_rs_track, "odometry_slip": _b_rs_odo, "slip_gp_fit": _b_rs_gp,
     "slip_quantile_fit": _b_rs_qr, "slip_predict": _b_rs_pred, "slip_cvar": _b_rs_cvar,
     "cvar_cost_map": _b_rs_costmap, "risk_aware_path": _b_rs_path, "path_slip_risk": _b_rs_risk,
+    "polyhedron_gravity": _b_pg_gravity, "polyhedron_clip_halfspace": _b_pg_clip,
     "luma_limited_u8": _b_luma_limited_u8, "rank_data": _b_rank_data, "rank_spearman": _b_rank_pair, "rank_kendall_b": _b_rank_pair,
     "tid2013_published": _b_noargs, "tid2013_root": _b_noargs, "tid2013_index": _b_tid_root, "tid2013_metric_values": _b_tid_metric_values,
     "tid2013_evaluate": _b_tid_evaluate, "tid2013_compare": _b_tid_compare, "tid2013_by_distortion": _b_tid_by_distortion,

@@ -507,7 +507,6 @@ def _run_worker_class(QtCore):
     return RunWorker
 
 
-
 # --------------------------------------------------------------------------- #
 # 設定ストアの**唯一の入口**(2026-09-05)。
 #
@@ -531,6 +530,10 @@ def _settings():
     return QtCore.QSettings("Fullseye", "Studio")
 
 
+#: a cache entry whose value was dropped to stay under the memory budget (key/timing kept).
+_EVICTED = object()
+
+
 def _stage_key(s):
     """The cache key of one stage: (op, a, b) as plain values; a bypassed stage adds a 4th part,
     so toggling bypass changes the key and drops the cache from that stage on."""
@@ -542,150 +545,13 @@ def _stage_key(s):
 # 結果の妥当性(ran / valid / reasons を分けて持つ)と、入力画像の参照(project 保存)。
 # どちらも Qt を使わない。Studio は**報告するだけ**で、op の数値の問題を直したり隠したりしない。
 # --------------------------------------------------------------------------- #
-#: 結果の dict が持つ「妥当/非妥当」の明示欄(opsmultivar / lensopt / spc / drive* などの実在の名前)。
-_VALIDITY_KEYS = ("converged", "valid", "guf_valid", "ok", "success")
-#: ``status`` 欄の文字列のうち、失敗を意味するもの / 成功を意味するもの(出典タグの "primary" などは判定しない)。
-_STATUS_BAD = frozenset({"failed", "failure", "error", "diverged", "not_converged", "nonconverged",
-                         "max_iter", "maxiter", "max_iterations", "singular", "invalid", "degenerate"})
-_STATUS_GOOD = frozenset({"converged", "ok", "success", "succeeded"})
-
-
-def _bool_verdict(x):
-    """明示欄 1 つの判定: True / False / None(読めない)。大きい bool 配列は「有効が 1 つも無い」時だけ False。"""
-    if isinstance(x, (bool, np.bool_)):
-        return bool(x)
-    if isinstance(x, np.ndarray) and x.dtype == bool and x.size:
-        if x.size == 1:
-            return bool(x.reshape(-1)[0])
-        return None if x.any() else False
-    return None
-
-
-def assess_validity(val):
-    """結果の妥当性を ``(valid, reasons)`` で返す。valid は True / False / None(未判定)。
-
-    * 結果が dict で明示欄(``converged`` / ``valid`` / ``guf_valid`` / ``ok`` / ``success`` /
-      ``status`` / ``n_iter`` と ``max_iter``)を持てば、それを写す。どれかが偽なら False。
-    * 配列は、非有限値・空・(実数画像で)一定値のときだけ False。それ以外は**判定しない(None)**
-      —— 妥当性の情報が無い結果に「OK」を出さない。
-    報告するだけで、値は一切変えない。"""
-    why = []
-    if isinstance(val, dict):
-        good = False
-        for k in _VALIDITY_KEYS:
-            if k not in val:
-                continue
-            r = _bool_verdict(val[k])
-            if r is False:
-                big = isinstance(val[k], np.ndarray) and val[k].size > 1
-                why.append("%s is False%s" % (k, " (no valid entries)" if big else ""))
-            elif r is True:
-                good = True
-        st = val.get("status")
-        if isinstance(st, str):
-            sl = st.strip().lower()
-            if sl in _STATUS_BAD:
-                why.append("status=%s" % st)
-            elif sl in _STATUS_GOOD:
-                good = True
-        for ik in ("n_iter", "iterations"):
-            mi = val.get("max_iter", val.get("max_iterations"))
-            n = val.get(ik)
-            if (isinstance(n, (int, np.integer)) and isinstance(mi, (int, np.integer))
-                    and not isinstance(n, bool) and mi > 0 and n >= mi):
-                why.append("reached max_iter (%d)" % int(mi))
-                break
-        if why:
-            ir = val.get("invalid_reasons")
-            if isinstance(ir, (list, tuple)):
-                why.extend(str(x) for x in ir[:8])
-            return False, why
-        return (True, []) if good else (None, [])
-    if isinstance(val, (float, complex, np.floating, np.complexfloating)):
-        val = np.asarray(val)
-    if not isinstance(val, np.ndarray):
-        return None, []
-    if val.size == 0:
-        return False, ["empty result"]
-    if val.dtype.kind in "fc":
-        fin = np.isfinite(val)
-        k = int(val.size - np.count_nonzero(fin))
-        if k:
-            why.append("%d non-finite values" % k)
-        if val.ndim in (2, 3) and fin.any():
-            num = np.abs(val[fin]) if val.dtype.kind == "c" else val[fin]
-            if float(np.ptp(num)) == 0.0 and not _is_binary(val):
-                why.append("constant image (all pixels equal)")
-    return (False, why) if why else (None, [])
-
-
-def file_sha256(path):
-    """ファイルのバイト列の sha256(16 進)。読めなければ OSError。"""
-    import hashlib
-    h = hashlib.sha256()
-    with open(path, "rb") as fh:
-        for chunk in iter(lambda: fh.read(1 << 20), b""):
-            h.update(chunk)
-    return h.hexdigest()
-
-
-def input_reference(path, image=None):
-    """project 保存に入れる入力画像の参照: path(与えられたまま)・sha256・shape・dtype。"""
-    ref = {"path": str(path), "sha256": file_sha256(path)}
-    if image is not None:
-        arr = np.asarray(image)
-        ref["shape"] = [int(v) for v in arr.shape]
-        ref["dtype"] = str(arr.dtype)
-    return ref
-
-
-def _valid_input_ref(d):
-    """保存ファイルの ``input`` 欄を読む。壊れていたら None(古い形と同じ扱い。読み込みは落とさない)。"""
-    if not isinstance(d, dict) or not isinstance(d.get("path"), str) or not d["path"]:
-        return None
-    if not isinstance(d.get("sha256"), str):
-        return None
-    ref = {"path": d["path"], "sha256": d["sha256"]}
-    if isinstance(d.get("shape"), list) and all(isinstance(v, int) and not isinstance(v, bool) for v in d["shape"]):
-        ref["shape"] = list(d["shape"])
-    if isinstance(d.get("dtype"), str):
-        ref["dtype"] = d["dtype"]
-    return ref
-
-
-def resolve_input_ref(ref, base_dir):
-    """保存された入力参照を今の環境へ当てる。``{"status", "path", "message"}`` を返す。
-
-    status: ``ok``(ある・sha256 一致 = 黙って読む)/ ``changed``(ある・不一致 = 読むが警告)/
-    ``relinked``(元の場所に無く、.json の隣の同じ名前で見つかった・一致)/ ``missing``(見つからない =
-    今の画像を保つ)。相対 path は .json のあるフォルダ基準。"""
-    given = str(ref["path"])
-    cand = given if os.path.isabs(given) else os.path.join(base_dir, given)
-    name = re.split(r"[\\/]", given)[-1]
-
-    def _same(p):
-        try:
-            return file_sha256(p) == ref.get("sha256")
-        except OSError:
-            return None
-
-    if os.path.isfile(cand):
-        same = _same(cand)
-        if same:
-            return {"status": "ok", "path": cand, "message": ""}
-        if same is not None:
-            return {"status": "changed", "path": cand,
-                    "message": "input file changed since save: %s" % given}
-    alt = os.path.join(base_dir, name) if name else ""
-    if alt and os.path.isfile(alt) and os.path.abspath(alt) != os.path.abspath(cand):
-        same = _same(alt)
-        if same:
-            return {"status": "relinked", "path": alt,
-                    "message": "input relinked by file name: %s -> %s" % (given, alt)}
-        if same is not None:
-            return {"status": "changed", "path": alt,
-                    "message": "input file changed since save: %s (found next to the project file)" % given}
-    return {"status": "missing", "path": None, "message": "input not found: %s" % given}
+# これらの純関数(妥当性判定・入力参照・段キャッシュ)は engine 層 studio_result.py が正本。
+# Qt の外(ブラウザ版)と共有し、ここでは再エクスポートして studio.X の呼び口を保つ。
+from studio_result import (  # noqa: E402
+    assess_validity, file_sha256, input_reference, resolve_input_ref,
+    _valid_input_ref, _is_binary, StageCache, array_nbytes,
+    CACHE_BUDGET_BYTES, over_budget, cache_summary_text,
+)
 
 
 #: stage-list thumbnail size (width, height) in pixels
@@ -926,6 +792,9 @@ class PipelineModel:
         self._change_callback = None
         self._img_ver = 0
         self._cache: list = []                # [(stage_key, value, ms), ...] one entry per stage, prefix-valid
+        self._cache_bytes = 0                 # bytes of retained stage-output arrays (evicted entries excluded)
+        self._lru: list = []                  # stage indices holding a live value, least-recently-used first
+        self._cache_budget = CACHE_BUDGET_BYTES   # memory bound; LRU-evict stage values past it (set_cache_budget)
         self._ctx = None                      # (image version, error policy, fast flag) the cache was built under
         self._fresh: set = set()              # stage indices computed since acknowledge() (UI marker)
         self._last = (0, -1)                  # (stages served from cache, last index reached) of the last call
@@ -961,12 +830,12 @@ class PipelineModel:
         if snapshot["token"] != current:
             return False
         if stage_index == 0:
-            self._cache.clear()
+            self._cache_clear()
         if stage_index == len(self._cache):
-            key = _stage_key(self.stages[stage_index])
-            self._cache.append((key, value, round(float(ms), 1)))
+            self._cache_set(stage_index, _stage_key(self.stages[stage_index]), value, ms)
             self._fresh.add(stage_index)
             self._ctx = self._context()
+            self._cache_evict(protect=stage_index)
         return True
 
     @property
@@ -977,7 +846,7 @@ class PipelineModel:
     def image(self, value):
         self._image = None if value is None else np.asarray(value, np.float64)
         self._img_ver += 1                    # any new base image drops every cached stage
-        self._cache.clear(); self._fresh.clear()
+        self._cache_clear()
         self._notify_changed()
 
     @property
@@ -1006,8 +875,83 @@ class PipelineModel:
     def _invalidate(self, i):
         """Drop the cached results of stage *i* and everything after it (earlier ones stay)."""
         i = max(0, int(i))
-        del self._cache[i:]
+        self._cache_truncate(i)
         self._fresh = {k for k in self._fresh if k < i}
+
+    # -- memory-bounded storage (shared policy with studio_result.StageCache) --- #
+    def _cache_clear(self):
+        self._cache.clear(); self._lru.clear(); self._fresh.clear(); self._cache_bytes = 0
+
+    def _cache_truncate(self, i):
+        """Drop entries i.. (keys and values), keeping byte/LRU bookkeeping exact."""
+        i = max(0, int(i))
+        for k in range(i, len(self._cache)):
+            if self._cache[k][1] is not _EVICTED:
+                self._cache_bytes -= array_nbytes(self._cache[k][1])
+        del self._cache[i:]
+        self._lru = [k for k in self._lru if k < i]
+
+    def _cache_set(self, i, key, value, ms):
+        """Store stage *i*'s (key, value, ms); extend by one when i == len. Tracks bytes + LRU."""
+        if i < len(self._cache):
+            old = self._cache[i][1]
+            if old is not _EVICTED:
+                self._cache_bytes -= array_nbytes(old)
+            self._cache[i] = (key, value, round(float(ms), 1))
+        else:
+            self._cache.append((key, value, round(float(ms), 1)))
+        self._cache_bytes += array_nbytes(value)
+        if i in self._lru:
+            self._lru.remove(i)
+        self._lru.append(i)
+
+    def _touch(self, i):
+        """Mark stage *i* most-recently-used (it was just served from the cache)."""
+        if i in self._lru:
+            self._lru.remove(i)
+            self._lru.append(i)
+
+    def _cache_evict(self, protect):
+        """Evict least-recently-used stage VALUES (key/timing kept) until within the byte budget.
+        *protect* (a stage index, or -1) is never evicted; one live value is always kept."""
+        i = 0
+        while over_budget(self._cache_bytes, self._cache_budget, len(self._lru)):
+            if i >= len(self._lru):
+                break
+            k = self._lru[i]
+            if k == protect:
+                i += 1
+                continue
+            key, val, ms = self._cache[k]
+            if val is _EVICTED:
+                self._lru.pop(i)
+                continue
+            # keep the small picture before dropping the big array: the stage list can still show a
+            # CURRENT thumbnail for an evicted stage (only the full result is recomputed on demand)
+            rec = self._thumbs.get(k)
+            if rec is None or rec[0] != self._img_ver or rec[1] != key:
+                try:
+                    th, kind = _result_thumbnail(val)
+                    self._thumbs[k] = (self._img_ver, key, th, kind)
+                except Exception:
+                    pass                                        # a picture that cannot be made is not an error
+            self._cache_bytes -= array_nbytes(val)
+            self._cache[k] = (key, _EVICTED, ms)
+            self._lru.pop(i)
+
+    def set_cache_budget(self, nbytes):
+        """Bound retained stage-output memory to *nbytes* (LRU eviction). idea 116: adjustable cache size.
+        The invalidation rule is unchanged — a smaller budget only keeps fewer stage values hot."""
+        self._cache_budget = int(nbytes)
+        self._cache_evict(protect=-1)
+        return self._cache_budget
+
+    def cache_bytes(self):
+        """Bytes of stage-output arrays currently retained (<= budget, except a single over-budget stage)."""
+        return self._cache_bytes
+
+    def cache_budget(self):
+        return self._cache_budget
 
     def cache_len(self):
         """How many stage results are cached (never more than the number of stages)."""
@@ -1045,13 +989,19 @@ class PipelineModel:
         return (self._img_ver, api._policy(None), api._fast_on(None))
 
     def _ensure(self, idx):
-        """Make ``self._cache[idx]`` valid, running only the stages the cache cannot serve."""
+        """Make ``self._cache[idx]`` valid, running only the stages the cache cannot serve.
+
+        A byte budget (:meth:`set_cache_budget`) bounds retained stage-output memory; past it the
+        least-recently-used stage *values* are evicted (their key/timing stay). Editing stage k still
+        invalidates k..n only — eviction changes only HOW MUCH is kept hot, never the result. When a
+        needed predecessor's value was evicted, the recompute restarts from the nearest live value (or
+        the base image); the requested stage is protected from eviction so the call can return it."""
         stages = self._stages
         idx = min(idx, len(stages) - 1)
         n = idx + 1
         ctx = self._context()
         if ctx != self._ctx:
-            self._cache.clear(); self._fresh.clear(); self._ctx = ctx
+            self._cache_clear(); self._ctx = ctx
         # the longest cached prefix whose keys still equal the current stages (also catches
         # edits that bypassed set_knobs, e.g. ``model.stages[i][1] = x``)
         v = 0
@@ -1061,7 +1011,9 @@ class PipelineModel:
         self._invalidate(v)
         hit = min(v, n)
         self._last = (hit, idx)
-        if v >= n:
+        # the requested stage is cached AND still holds its value -> serve it (mark it used)
+        if v >= n and self._cache[n - 1][1] is not _EVICTED:
+            self._touch(n - 1)
             return
         policy = ctx[1]
         fast = api._fast_on(None)
@@ -1078,11 +1030,15 @@ class PipelineModel:
         else:
             base = self._image
         pos = {k: j for j, k in enumerate(active)}
-        prev = base if v == 0 else self._cache[v - 1][1]
+        # restart point: back up over any EVICTED values so ``prev`` is a live array (or the base)
+        r = min(v, n)
+        while r > 0 and self._cache[r - 1][1] is _EVICTED:
+            r -= 1
+        prev = base if r == 0 else self._cache[r - 1][1]
         import time
-        for k in range(v, n):
+        for k in range(r, n):
             if k not in pos:                                   # bypassed: same object, no copy, no time
-                self._cache.append((_stage_key(stages[k]), prev, 0.0))
+                self._cache_set(k, _stage_key(stages[k]), prev, 0.0)
                 self._fresh.add(k)
                 continue
             j = pos[k]
@@ -1096,9 +1052,10 @@ class PipelineModel:
                 self._note_failure(k, e)
                 raise
             ms = round((time.perf_counter() - t0) * 1000.0, 1)
-            self._cache.append((_stage_key(stages[k]), val, ms))
+            self._cache_set(k, _stage_key(stages[k]), val, ms)
             self._fresh.add(k)
             prev = val
+        self._cache_evict(protect=idx)
 
     def _first_bad_prefix(self, active, policy, v):
         """Index of the first stage whose prefix the pre-run checks refuse (error path only; runs nothing)."""
@@ -1124,11 +1081,34 @@ class PipelineModel:
             return None
         return k, exc
 
-    def _is_fresh(self, i):
-        """True if stage *i* has a cached result that is valid for the current stages (reads only)."""
+    def _key_valid(self, i):
+        """True if the cached prefix 0..i still matches the current stages / image / policy (reads only).
+        Says nothing about whether stage *i*'s VALUE is still held (see :meth:`_is_fresh`)."""
         stages = self._stages
         return (0 <= i < len(stages) and self._ctx == self._context() and i < len(self._cache)
                 and all(self._cache[j][0] == _stage_key(stages[j]) for j in range(i + 1)))
+
+    def _is_fresh(self, i):
+        """True if stage *i* has a cached result that is valid for the current stages AND still holds its
+        value (not evicted under the memory budget). Reads only."""
+        return self._key_valid(i) and self._cache[i][1] is not _EVICTED
+
+    def stage_memory(self):
+        """Per stage, bytes of the stage-output array currently held in the cache; None when nothing
+        live is held (never computed, stale, or evicted under the budget). Sums to :meth:`cache_bytes`.
+        idea 114 (per-stage time and memory). Runs nothing."""
+        return [array_nbytes(self._cache[i][1]) if self._is_fresh(i) else None
+                for i in range(len(self._stages))]
+
+    def cache_summary(self):
+        """One dict for the cache line (idea 113 "show the cache range" / 114 / 116): ``bytes`` held,
+        ``budget_bytes``, ``live`` stages holding a value, ``evicted`` stages whose key is current but
+        whose value was dropped for the budget, ``stages`` total. Plain Python, runs nothing."""
+        n = len(self._stages)
+        live = sum(1 for i in range(n) if self._is_fresh(i))
+        evicted = sum(1 for i in range(n) if self._key_valid(i) and self._cache[i][1] is _EVICTED)
+        return {"bytes": self._cache_bytes, "budget_bytes": self._cache_budget,
+                "live": live, "evicted": evicted, "stages": n}
 
     def cached_result(self, i):
         """The cached value after stage *i* (``-1`` = the base image), or None when it is not cached
@@ -1284,7 +1264,9 @@ class PipelineModel:
         exists: *thumb* is its small uint8 RGB picture, or None for a table / scalar; *kind* says
         what it is), ``"stale"`` (it was computed before, but with other knobs / another image /
         another bypass: no picture is given, so an old one is never shown as if it were current) or
-        ``"uncomputed"`` (never computed). Only the small thumbnail is kept, never a copy of the array."""
+        ``"uncomputed"`` (never computed), or ``"evicted"`` (the knobs did not change but the full array was
+        dropped to stay under the memory budget: the small thumbnail is STILL current and is given, the
+        array is recomputed on demand). Only the small thumbnail is kept, never a copy of the array."""
         stages = self._stages
         if not 0 <= i < len(stages):
             raise IndexError(i)
@@ -1298,6 +1280,11 @@ class PipelineModel:
                 th, kind = _result_thumbnail(self._cache[i][1])
                 rec = self._thumbs[i] = (self._img_ver, key, th, kind)
             return {"status": "ready", "thumb": rec[2], "kind": rec[3], "bypass": byp}
+        if self._key_valid(i):                                  # value evicted for the budget, key current
+            rec = self._thumbs.get(i)
+            cur = rec is not None and rec[0] == self._img_ver and rec[1] == key
+            return {"status": "evicted", "thumb": rec[2] if cur else None,
+                    "kind": rec[3] if rec is not None else None, "bypass": byp}
         rec = self._thumbs.get(i)
         if rec is not None and rec[1][0] == key[0]:
             return {"status": "stale", "thumb": None, "kind": rec[3], "bypass": byp}
@@ -1552,20 +1539,6 @@ def histogram_image(arr, bins=64, w=256, h=64):
         top = int((1 - hist[i]) * (h - 1))
         out[top:h, col0:max(col1, col0 + 1)] = 1.0
     return out
-
-
-def _is_binary(a):
-    # ★2026-10-04: bool の配列(占有格子など、台帳の op が返す)は np.round が bool へ書き戻せず落ちた —— bool はそのまま二値
-    if a.dtype == bool:
-        return True
-    a = np.asarray(a, dtype=np.float64) if a.dtype.kind in "iu" else a
-    if a.size > 4096:
-        sample = a.reshape(-1)[:4096]
-        finite = sample[np.isfinite(sample)]
-        if np.unique(finite).size > 2:
-            return False
-    u = np.unique(a[np.isfinite(a)]) if a.size else a
-    return u.size <= 2 and set(np.round(u, 6).tolist()).issubset({0.0, 1.0})
 
 
 def inspect_result(val):
@@ -7832,6 +7805,11 @@ def build_window(model=None):
             elif pv["status"] == "stale":
                 it.setIcon(_glyph_icon("\u21bb", AMBER))
                 it.setToolTip("\u518d\u8a08\u7b97\u304c\u5fc5\u8981 / recompute needed\n\n" + base)
+            elif pv["status"] == "evicted":
+                th = pv["thumb"]                       # still current: only the full array was dropped
+                it.setIcon(_thumb_icon(th) if th is not None else _glyph_icon("\u25cc", MUTED))
+                it.setToolTip("\u5024\u306f\u4e88\u7b97\u3067\u89e3\u653e / evicted (budget): "
+                              "the picture is current, the array is recomputed on demand\n\n" + base)
             else:
                 it.setIcon(_glyph_icon("\u2026", MUTED))
                 it.setToolTip("\u672a\u8a08\u7b97 / not computed\n\n" + base)
@@ -7858,6 +7836,7 @@ def build_window(model=None):
             state["errors"].append(("step summaries unavailable", str(e)))
             flash("step summaries unavailable: %s" % truncate(e, 100))
         times = model.cached_times()
+        mems = model.stage_memory()                   # idea 114: bytes held per stage (None = not held)
         marks = model.stage_marks()                   # which stages were recomputed since the last refresh
         model.acknowledge()
         validity_rows = []
@@ -7869,10 +7848,14 @@ def build_window(model=None):
                 summ = step_summary(st)
             elif pstatus == "stale":
                 summ = "再計算が必要 / recompute needed"
+            elif pstatus == "evicted":
+                summ = "値は予算で解放 / evicted (budget): recomputed on demand"
             else:
                 summ = "未計算 / not computed"
             ms = times[i] if (i < len(times) and st) else None
             tstr = ("  ·  %.1f ms" % ms) if isinstance(ms, (int, float)) else ""
+            mem = mems[i] if (i < len(mems) and st) else None
+            tstr += ("  ·  %.1f MB" % (mem / (1024.0 * 1024.0))) if isinstance(mem, int) else ""
             mk = marks[i] if (i < len(marks) and st) else "pending"
             cstr = {"computed": "  ·  ⟳ calc", "cached": "  ·  ↺ cache"}.get(mk, "")
             warn = st.get("valid") is False
@@ -11405,12 +11388,13 @@ def build_window(model=None):
         except Exception:
             return                                    # a stage raised: the Problems list says which
         v, why = assess_validity(val)
+        cache_line = "  \u00b7  " + cache_summary_text(model.cache_summary())   # idea 113/114: cache range
         if v is False:
-            flash(tr("Run: done / Result: needs review (%s)") % "; ".join(why))
+            flash(tr("Run: done / Result: needs review (%s)") % "; ".join(why) + cache_line)
         elif v is None:
-            flash(tr("Run: done / Result: validity not judged"))
+            flash(tr("Run: done / Result: validity not judged") + cache_line)
         else:
-            flash(tr("Run: done / Result: valid (as reported by the op)"))
+            flash(tr("Run: done / Result: valid (as reported by the op)") + cache_line)
     win._do_step = _do_step; win._do_run_all = _do_run_all; win._do_reset = reset_to_raw
     b_reset.clicked.connect(reset_to_raw)
     b_step.clicked.connect(_do_step)

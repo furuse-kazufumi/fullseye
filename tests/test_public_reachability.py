@@ -246,7 +246,11 @@ def test_pending_exposure_shrinks_when_fixed():
 #   のうち公開経路に出ない分)で実測 912 → 916。op 自身は fs.ledger と typed_catalog から引ける。
 # 2026-10-23 opscalib 台帳(カメラ校正 21 op): 台帳の内部 API 4 本で実測 916 → 920。21 op 自身は
 #   fs.ledger から引けるようになった(以前は fs.<名前> の camera_calibration 1 本だけ)。
-_HIDDEN_FUNCTIONS_TODAY = 920
+# 2026-10-25 fail-soft 監査: backend_safe.missing_dependency / require_dependency(各 backend が使う fail-closed の
+#   入口 2 本)、backends_tomo.sart_np(skimage 無しの近似を**別名で**残したもの、登録 op の答えにはしない)、
+#   numpy_twins の 19 本(scikit-image と bit 一致する双子。利用者は op 経由で使う —— 双子そのものは公開経路に
+#   載せない。正本は scikit-image で、同名で出すと「fullseye の API」に見える)。実測 920 → 942。
+_HIDDEN_FUNCTIONS_TODAY = 942
 
 
 def _hidden_total():

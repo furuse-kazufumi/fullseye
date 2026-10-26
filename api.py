@@ -1753,6 +1753,11 @@ def _resolve(name: str):
     return op
 
 
+#: 登録はされているが、その環境に無い optional 依存を要する op が投げる(fail-closed)。本体は backend_safe。
+#: ``MissingBackendError``(登録そのものが無い)と対にして facade から公開する。
+MissingDependencyError = _bs.MissingDependencyError
+
+
 class MissingBackendError(KeyError):
     """The operator exists in the shipped index, but is not registered in this environment.
 
@@ -2438,6 +2443,8 @@ def _run_guarded(name, fn, policy, out_sort=None, v=None):
                     out = fn()
             else:
                 out = fn()
+        except _bs.MissingDependencyError:   # fail-closed under every policy (see backend_safe)
+            raise
         except Exception as e:           # noqa: BLE001 - recorded, sort-valid fallback
             if policy == "warn":
                 with _bs.quiet_warnings():

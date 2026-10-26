@@ -363,8 +363,8 @@ def active_stage(k):
 
 
 def _e(x):
-    """門の値の印字(0 はそのまま 0、他は指数 1 桁)。"""
-    return "0" if x == 0 else "%.1e" % x
+    """門の値の印字(丸め屑はプラットフォームに依らない上限表記)。"""
+    return "< 1e-12" if abs(x) < 1e-12 else "%.1e" % x
 
 
 def _hex_rgb(h):

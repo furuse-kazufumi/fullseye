@@ -13,7 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/shape_trans.inputs.jpg">shape_trans: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>領域の凸包(<code style="color:#22d3bf">skimage.morphology.convex_hull_image</code>)を返す。HALCON の <code style="color:#22d3bf">shape_trans</code>（Transform the shape of a region.）は本来 convex/ rectangle1/ellipse など複数の変形モードを <code style="color:#22d3bf">Type</code> 引数で選べる演算子だが、この代役では凸包 1 種類に固定している(近似の限界)。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。skimage が無い環境ではこの分岐は呼べない。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。scikit-image が無い環境では <code style="color:#22d3bf">MissingDependencyError</code>(何を入れればよいかを言う)で止まる —— 別の答えは返さない。</p>
 <p><b>端の扱い</b>: 画像の外側は背景(0)とみなす(実測。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region ファミリ ガイド</a></p>

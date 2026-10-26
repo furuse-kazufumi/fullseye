@@ -40,7 +40,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 shape of contours or polygons.）が持つ複数の変形モードのうち、凸包 1 種類
 のみを実装している(近似)。
 
-``a``, ``b`` は未使用。cv2 が無い環境ではこの分岐は呼べない。
+``a``, ``b`` は未使用。cv2 が無い環境では ``MissingDependencyError``(何を入れればよいかを言う)で止まる —— 別の答えは返さない。
 
 ## 詳しい使い方ガイド
 

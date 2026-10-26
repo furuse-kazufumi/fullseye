@@ -33,7 +33,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 ## 使い方
 
-大津の判別分析法（Otsu's method）による自動しきい値二値化。``binary_threshold``/``auto_threshold`` と同じ ``_sh_threshold`` の ``otsu`` 分岐を共有し、a, b は未使用。しきい値より明るい画素を前景(1)とする。skimage が無い環境では画像平均値をしきい値とするフォールバックになる。
+大津の判別分析法（Otsu's method）による自動しきい値二値化。``binary_threshold``/``auto_threshold`` と同じ ``_sh_threshold`` の ``otsu`` 分岐を共有し、a, b は未使用。しきい値より明るい画素を前景(1)とする。scikit-image が無い環境では同じ 256 ビンの Otsu を numpy の双子(``numpy_twins.threshold_otsu``)で計算する(bit 一致。2026-10-25 までは画像平均値をしきい値とする別の答えに落ちていた)。
 
 HALCON の ``bin_threshold``（複数の自動しきい値決定アルゴリズムから選んで二値化する演算、既定は最大分離度=大津法相当）に相当する近似で、大津法のみをサポートし他のアルゴリズム選択肢は無い。
 

@@ -677,14 +677,14 @@
    "hi": "हर छेद पर 2π घटता है",
    "fr": "Il baisse de 2π par trou"
   },
-  "A closed surface with g holes (genus g) has χ = 2 − 2g: sphere 2, torus 0, two holes −2, three holes −4, so Σ K = 2πχ is 4π, 0, −4π, −8π. More holes mean more saddle regions (K < 0). Over the four shapes the largest gap between Σ K / 2π and χ is 1.4e-13.": {
-   "ja": "穴(種数)g の閉曲面は χ = 2 − 2g。球 2、トーラス 0、穴 2 つ −2、穴 3 つ −4 で、Σ K = 2πχ は 4π, 0, −4π, −8π。穴が増えるほど鞍の部分(K < 0)が増える。4 つの形で Σ K / 2π と χ の差は最大 1.4e-13。",
-   "zh": "有 g 个孔(亏格 g)的闭曲面 χ = 2 − 2g: 球 2，环面 0，两个孔 −2，三个孔 −4，所以 Σ K = 2πχ 为 4π, 0, −4π, −8π。孔越多，鞍形区域(K < 0)越多。四个形状中 Σ K / 2π 与 χ 的最大差距是 1.4e-13。",
-   "tw": "有 g 個孔(虧格 g)的閉曲面 χ = 2 − 2g: 球 2，環面 0，兩個孔 −2，三個孔 −4，所以 Σ K = 2πχ 為 4π, 0, −4π, −8π。孔越多，鞍形區域(K < 0)越多。四個形狀中 Σ K / 2π 與 χ 的最大差距是 1.4e-13。",
-   "ko": "구멍 g개(종수 g)인 닫힌 곡면은 χ = 2 − 2g: 구 2, 토러스 0, 구멍 둘 −2, 구멍 셋 −4이므로 Σ K = 2πχ는 4π, 0, −4π, −8π. 구멍이 많을수록 안장 영역(K < 0)이 늘어난다. 네 모양에서 Σ K / 2π와 χ의 가장 큰 차는 1.4e-13.",
-   "de": "Eine geschlossene Fläche mit g Löchern (Geschlecht g) hat χ = 2 − 2g: Kugel 2, Torus 0, zwei Löcher −2, drei Löcher −4, also ist Σ K = 2πχ gleich 4π, 0, −4π, −8π. Mehr Löcher bedeuten mehr Sattelbereiche (K < 0). Über die vier Formen ist der größte Abstand zwischen Σ K / 2π und χ 1.4e-13.",
-   "hi": "g छेदों (genus g) वाली बंद सतह का χ = 2 − 2g: गोला 2, टोरस 0, दो छेद −2, तीन छेद −4, इसलिए Σ K = 2πχ है 4π, 0, −4π, −8π। ज़्यादा छेद का मतलब ज़्यादा काठी-क्षेत्र (K < 0)। चारों आकारों में Σ K / 2π और χ का सबसे बड़ा अंतर 1.4e-13 है।",
-   "fr": "Une surface fermée à g trous (genre g) a χ = 2 − 2g : sphère 2, tore 0, deux trous −2, trois trous −4, donc Σ K = 2πχ vaut 4π, 0, −4π, −8π. Plus de trous signifie plus de régions en selle (K < 0). Sur les quatre formes, le plus grand écart entre Σ K / 2π et χ est 1.4e-13."
+  "A closed surface with g holes (genus g) has χ = 2 − 2g: sphere 2, torus 0, two holes −2, three holes −4, so Σ K = 2πχ is 4π, 0, −4π, −8π. More holes mean more saddle regions (K < 0). Over the four shapes the largest gap between Σ K / 2π and χ is < 1e-12.": {
+   "ja": "穴(種数)g の閉曲面は χ = 2 − 2g。球 2、トーラス 0、穴 2 つ −2、穴 3 つ −4 で、Σ K = 2πχ は 4π, 0, −4π, −8π。穴が増えるほど鞍の部分(K < 0)が増える。4 つの形で Σ K / 2π と χ の差は最大 < 1e-12。",
+   "zh": "有 g 个孔(亏格 g)的闭曲面 χ = 2 − 2g: 球 2，环面 0，两个孔 −2，三个孔 −4，所以 Σ K = 2πχ 为 4π, 0, −4π, −8π。孔越多，鞍形区域(K < 0)越多。四个形状中 Σ K / 2π 与 χ 的最大差距是 < 1e-12。",
+   "tw": "有 g 個孔(虧格 g)的閉曲面 χ = 2 − 2g: 球 2，環面 0，兩個孔 −2，三個孔 −4，所以 Σ K = 2πχ 為 4π, 0, −4π, −8π。孔越多，鞍形區域(K < 0)越多。四個形狀中 Σ K / 2π 與 χ 的最大差距是 < 1e-12。",
+   "ko": "구멍 g개(종수 g)인 닫힌 곡면은 χ = 2 − 2g: 구 2, 토러스 0, 구멍 둘 −2, 구멍 셋 −4이므로 Σ K = 2πχ는 4π, 0, −4π, −8π. 구멍이 많을수록 안장 영역(K < 0)이 늘어난다. 네 모양에서 Σ K / 2π와 χ의 가장 큰 차는 < 1e-12.",
+   "de": "Eine geschlossene Fläche mit g Löchern (Geschlecht g) hat χ = 2 − 2g: Kugel 2, Torus 0, zwei Löcher −2, drei Löcher −4, also ist Σ K = 2πχ gleich 4π, 0, −4π, −8π. Mehr Löcher bedeuten mehr Sattelbereiche (K < 0). Über die vier Formen ist der größte Abstand zwischen Σ K / 2π und χ < 1e-12.",
+   "hi": "g छेदों (genus g) वाली बंद सतह का χ = 2 − 2g: गोला 2, टोरस 0, दो छेद −2, तीन छेद −4, इसलिए Σ K = 2πχ है 4π, 0, −4π, −8π। ज़्यादा छेद का मतलब ज़्यादा काठी-क्षेत्र (K < 0)। चारों आकारों में Σ K / 2π और χ का सबसे बड़ा अंतर < 1e-12 है।",
+   "fr": "Une surface fermée à g trous (genre g) a χ = 2 − 2g : sphère 2, tore 0, deux trous −2, trois trous −4, donc Σ K = 2πχ vaut 4π, 0, −4π, −8π. Plus de trous signifie plus de régions en selle (K < 0). Sur les quatre formes, le plus grand écart entre Σ K / 2π et χ est < 1e-12."
   },
   "χ = 2 − 2g (g = number of holes)\nΣ_v K_v = 2π(2 − 2g) = 4π − 4πg": {
    "ja": "χ = 2 − 2g(g = 穴の数)\nΣ_v K_v = 2π(2 − 2g) = 4π − 4πg",
@@ -1046,14 +1046,14 @@
    "hi": "नहीं, सीमा-पद चाहिए",
    "fr": "Non, il faut des termes de bord"
   },
-  "A rim vertex is open and flat, so the angles around it add up to about π. Using 2π − Σθ leaves nearly π extra at every rim vertex; the total becomes 25.0 × 2π, not 2π. With π − Σθ (the geodesic-curvature term) on the rim, interior 0.9026 × 2π + rim 0.0974 × 2π = 1 × 2π, exactly 2πχ (gap 8.7e-14).": {
-   "ja": "縁の頂点は平らに開いていて、まわりの角の和は π 前後。2π − Σθ は縁で π 近く余り、全部足すと 25.0 × 2π になって 2π にならない。縁の頂点に π − Σθ(境界の測地曲率の項)を使うと、内側 0.9026 × 2π + 縁 0.0974 × 2π = 1 × 2π でちょうど 2πχ(差 8.7e-14)。",
-   "zh": "边缘顶点是敞开而平坦的，周围的角加起来约为 π。用 2π − Σθ 时每个边缘顶点都多出近 π；总和变成 25.0 × 2π，而不是 2π。在边缘使用 π − Σθ(测地曲率项)后，内部 0.9026 × 2π + 边缘 0.0974 × 2π = 1 × 2π，恰好是 2πχ(差 8.7e-14)。",
-   "tw": "邊緣頂點是敞開而平坦的，周圍的角加起來約為 π。用 2π − Σθ 時每個邊緣頂點都多出近 π；總和變成 25.0 × 2π，而不是 2π。在邊緣使用 π − Σθ(測地曲率項)後，內部 0.9026 × 2π + 邊緣 0.0974 × 2π = 1 × 2π，恰好是 2πχ(差 8.7e-14)。",
-   "ko": "테두리 꼭짓점은 열려 있고 평평해서 둘레 각의 합이 π 가까이다. 2π − Σθ를 쓰면 테두리 꼭짓점마다 π 가까이 남아 합이 25.0 × 2π가 되고 2π가 아니다. 테두리에 π − Σθ(측지 곡률 항)를 쓰면 안쪽 0.9026 × 2π + 테두리 0.0974 × 2π = 1 × 2π로 정확히 2πχ(차 8.7e-14).",
-   "de": "Eine Randecke ist offen und flach, die Winkel um sie herum summieren sich zu etwa π. Mit 2π − Σθ bleibt an jeder Randecke fast π übrig; die Summe wird 25.0 × 2π, nicht 2π. Mit π − Σθ (dem geodätischen Krümmungsterm) am Rand gilt innen 0.9026 × 2π + Rand 0.0974 × 2π = 1 × 2π, genau 2πχ (Abstand 8.7e-14).",
-   "hi": "किनारे का शीर्ष खुला और सपाट है, इसलिए उसके चारों ओर के कोणों का योग लगभग π है। 2π − Σθ के साथ हर किनारे के शीर्ष पर लगभग π अतिरिक्त बचता है; कुल 25.0 × 2π हो जाता है, 2π नहीं। किनारे पर π − Σθ (geodesic-वक्रता पद) के साथ, आंतरिक 0.9026 × 2π + किनारा 0.0974 × 2π = 1 × 2π, ठीक 2πχ (अंतर 8.7e-14)।",
-   "fr": "Un sommet du bord est ouvert et plat, donc les angles autour de lui totalisent environ π. Avec 2π − Σθ il reste près de π en trop à chaque sommet du bord ; le total devient 25.0 × 2π, et non 2π. Avec π − Σθ (le terme de courbure géodésique) sur le bord, intérieur 0.9026 × 2π + bord 0.0974 × 2π = 1 × 2π, exactement 2πχ (écart 8.7e-14)."
+  "A rim vertex is open and flat, so the angles around it add up to about π. Using 2π − Σθ leaves nearly π extra at every rim vertex; the total becomes 25.0 × 2π, not 2π. With π − Σθ (the geodesic-curvature term) on the rim, interior 0.9026 × 2π + rim 0.0974 × 2π = 1 × 2π, exactly 2πχ (gap < 1e-12).": {
+   "ja": "縁の頂点は平らに開いていて、まわりの角の和は π 前後。2π − Σθ は縁で π 近く余り、全部足すと 25.0 × 2π になって 2π にならない。縁の頂点に π − Σθ(境界の測地曲率の項)を使うと、内側 0.9026 × 2π + 縁 0.0974 × 2π = 1 × 2π でちょうど 2πχ(差 < 1e-12)。",
+   "zh": "边缘顶点是敞开而平坦的，周围的角加起来约为 π。用 2π − Σθ 时每个边缘顶点都多出近 π；总和变成 25.0 × 2π，而不是 2π。在边缘使用 π − Σθ(测地曲率项)后，内部 0.9026 × 2π + 边缘 0.0974 × 2π = 1 × 2π，恰好是 2πχ(差 < 1e-12)。",
+   "tw": "邊緣頂點是敞開而平坦的，周圍的角加起來約為 π。用 2π − Σθ 時每個邊緣頂點都多出近 π；總和變成 25.0 × 2π，而不是 2π。在邊緣使用 π − Σθ(測地曲率項)後，內部 0.9026 × 2π + 邊緣 0.0974 × 2π = 1 × 2π，恰好是 2πχ(差 < 1e-12)。",
+   "ko": "테두리 꼭짓점은 열려 있고 평평해서 둘레 각의 합이 π 가까이다. 2π − Σθ를 쓰면 테두리 꼭짓점마다 π 가까이 남아 합이 25.0 × 2π가 되고 2π가 아니다. 테두리에 π − Σθ(측지 곡률 항)를 쓰면 안쪽 0.9026 × 2π + 테두리 0.0974 × 2π = 1 × 2π로 정확히 2πχ(차 < 1e-12).",
+   "de": "Eine Randecke ist offen und flach, die Winkel um sie herum summieren sich zu etwa π. Mit 2π − Σθ bleibt an jeder Randecke fast π übrig; die Summe wird 25.0 × 2π, nicht 2π. Mit π − Σθ (dem geodätischen Krümmungsterm) am Rand gilt innen 0.9026 × 2π + Rand 0.0974 × 2π = 1 × 2π, genau 2πχ (Abstand < 1e-12).",
+   "hi": "किनारे का शीर्ष खुला और सपाट है, इसलिए उसके चारों ओर के कोणों का योग लगभग π है। 2π − Σθ के साथ हर किनारे के शीर्ष पर लगभग π अतिरिक्त बचता है; कुल 25.0 × 2π हो जाता है, 2π नहीं। किनारे पर π − Σθ (geodesic-वक्रता पद) के साथ, आंतरिक 0.9026 × 2π + किनारा 0.0974 × 2π = 1 × 2π, ठीक 2πχ (अंतर < 1e-12)।",
+   "fr": "Un sommet du bord est ouvert et plat, donc les angles autour de lui totalisent environ π. Avec 2π − Σθ il reste près de π en trop à chaque sommet du bord ; le total devient 25.0 × 2π, et non 2π. Avec π − Σθ (le terme de courbure géodésique) sur le bord, intérieur 0.9026 × 2π + bord 0.0974 × 2π = 1 × 2π, exactement 2πχ (écart < 1e-12)."
   },
   "with boundary: Σ_interior (2π − Σθ) + Σ_boundary (π − Σθ) = 2π χ\nχ = V − E + F = 1 (a disc)": {
    "ja": "境界あり: Σ_内部 (2π − Σθ) + Σ_境界 (π − Σθ) = 2π χ\nχ = V − E + F = 1(円板)",
