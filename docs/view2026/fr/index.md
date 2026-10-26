@@ -75,6 +75,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 <a href="../../articles/assets/poc/poc_microns_brain_wave/04_wave_on_wiring.gif"><img src="../thumbs/poc_microns_brain_wave.jpg" alt="Onde dans le cortex visuel de la souris" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Onde dans le cortex visuel de la souris</span></a>
 <a href="../../articles/assets/media/evis_stereo_fullseye.mp4"><img src="../thumbs/evis_stereo_depth.jpg" alt="Les deux yeux du humanoïde" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Les deux yeux du humanoïde</span></a>
 <a href="../../articles/assets/media/evis_bean_track_fullseye.mp4"><img src="../thumbs/evis_bean_track.jpg" alt="Suivi du haricot par la caméra au bout des baguettes" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Suivi du haricot par la caméra au bout des baguettes</span></a>
+<a href="../../anim3d/organ_volume.html?lang=fr"><img src="../thumbs/organ_volume.jpg" alt="Volume et sphéricité des organes" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Volume et sphéricité des organes · 0.5 MB</span></a>
 <a href="../../view2026/anim3d/interactive_anim3d_viewer.html?lang=fr"><img src="../thumbs/interactive_anim3d_viewer.jpg" alt="Bras et lentille translucide" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Bras et lentille translucide · 0.3 MB</span></a>
 </div>
 
@@ -658,6 +659,7 @@ Chaque valeur est mesurée par rapport à la vérité terrain que chaque PoC a e
 
 **3-D animée à faire pivoter**
 
+- [Volume et sphéricité des organes](../../anim3d/organ_volume.html?lang=fr) (3-D animée, à faire pivoter, 0.5 MB): 6 organes sont classés par volume, superposés à des sphères translucides de même volume, puis reconstruits par sections. Les volumes par divergence et voxels solides diffèrent d’au plus 0.191 %; les surfaces fermées ont χ = 2. La limite montre les structures fines perdues par la réduction de 99 %. **6 organes ; écart de volume ≤ 0.191 % ; χ = 2 et 0 arête de bord.** [source](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_organvol_anim3d.py)
 - [Bras et lentille translucide](../../view2026/anim3d/interactive_anim3d_viewer.html?lang=fr) (3-D animée, à faire pivoter, 0.3 MB): Faites pivoter du doigt et regardez le bras porter une boîte sous n'importe quel angle. Des rayons traversent une lentille translucide jusqu'à son foyer, tandis qu'une image de hauteur vue de dessus et sa binarisation avancent sur la même échelle de temps. [source](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
 
 </div>

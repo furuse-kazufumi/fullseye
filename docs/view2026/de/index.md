@@ -75,6 +75,7 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 <a href="../../articles/assets/poc/poc_microns_brain_wave/04_wave_on_wiring.gif"><img src="../thumbs/poc_microns_brain_wave.jpg" alt="Mauskortex-Welle" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Mauskortex-Welle</span></a>
 <a href="../../articles/assets/media/evis_stereo_fullseye.mp4"><img src="../thumbs/evis_stereo_depth.jpg" alt="Stereoaugen" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Stereoaugen</span></a>
 <a href="../../articles/assets/media/evis_bean_track_fullseye.mp4"><img src="../thumbs/evis_bean_track.jpg" alt="Stäbchenkamera-Tracking" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Stäbchenkamera-Tracking</span></a>
+<a href="../../anim3d/organ_volume.html?lang=de"><img src="../thumbs/organ_volume.jpg" alt="Organvolumen und Sphärizität" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Organvolumen und Sphärizität · 0.5 MB</span></a>
 <a href="../../view2026/anim3d/interactive_anim3d_viewer.html?lang=de"><img src="../thumbs/interactive_anim3d_viewer.jpg" alt="Arm und halbtransparente Linse" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Arm und halbtransparente Linse · 0.3 MB</span></a>
 </div>
 
@@ -658,6 +659,7 @@ Jede Zahl ist gegen eine Ground Truth gemessen, die der PoC selbst eingesetzt ha
 
 **Bewegtes 3-D zum Drehen**
 
+- [Organvolumen und Sphärizität](../../anim3d/organ_volume.html?lang=de) (bewegtes 3-D, drehbar, 0.5 MB): 6 Organe werden nach Volumen geordnet, mit gleichvolumigen transparenten Kugeln überlagert und aus Schnitten aufgebaut. Divergenzsatz und Festkörpervoxel unterscheiden sich höchstens um 0.191 %; geschlossene Flächen haben χ = 2. Der Grenzfall zeigt dünne Strukturen, die bei 99 % Reduktion verloren gehen. **6 Organe; Volumendifferenz ≤ 0.191 %; χ = 2 und 0 Randkanten.** [Quelle](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_organvol_anim3d.py)
 - [Arm und halbtransparente Linse](../../view2026/anim3d/interactive_anim3d_viewer.html?lang=de) (bewegtes 3-D, drehbar, 0.3 MB): Mit dem Finger drehen und den Arm beim Tragen einer Kiste aus jedem Winkel ansehen. Strahlen laufen durch eine halbtransparente Linse in den Brennpunkt, darunter laufen ein Höhenbild von oben und seine Binarisierung zeitgleich mit. [Quelle](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
 
 </div>
