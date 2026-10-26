@@ -120,7 +120,9 @@ def test_poses_round_trip_within_half_a_step():
     assert (np.abs(bq - want) <= pv._quant_step(rq)[0] / 2 + 1e-12).all()
     assert _angle(bq, want).max() < 1e-4
     assert (bq[..., 0] >= 0).all()                                   # 符号を揃えた(w >= 0)
-    assert tb["t"] == [float(v) for v in tab["t"]]                   # 時刻は丸めない
+    # 時刻は量子化しない(q16 にしない)。埋めるのは有効 STABLE_DIGITS 桁(BLAS・OS で変わる末尾の桁を落とす)
+    assert tb["t"] == [float(v) for v in pv._round_sig(np.asarray(tab["t"], float))]
+    assert np.allclose(tb["t"], tab["t"], rtol=5e-9, atol=0.0)     # 9 桁の丸めの誤差の上限 0.5e-8(先頭の桁が 1 のとき)
 
 
 def test_quaternion_sign_and_scale_do_not_change_the_encoding():

@@ -1,0 +1,565 @@
+{
+ "_": "English fallback translations for the low-cost prototype; formulas, values and op names are preserved.",
+ "example": "build_satgsd_anim3d",
+ "strings": {
+  "Why an orbital camera cannot read tiny lettering": {
+   "ja": "なぜ軌道上のカメラは小さな文字を読めないか",
+   "zh": "Why an orbital camera cannot read tiny lettering",
+   "tw": "Why an orbital camera cannot read tiny lettering",
+   "ko": "Why an orbital camera cannot read tiny lettering",
+   "de": "Why an orbital camera cannot read tiny lettering",
+   "hi": "Why an orbital camera cannot read tiny lettering",
+   "fr": "Why an orbital camera cannot read tiny lettering"
+  },
+  "Compare ground sampling distance and diffraction in the same ground units": {
+   "ja": "地上分解能 GSD と回折限界を、同じ地上幅で比べる",
+   "zh": "Compare ground sampling distance and diffraction in the same ground units",
+   "tw": "Compare ground sampling distance and diffraction in the same ground units",
+   "ko": "Compare ground sampling distance and diffraction in the same ground units",
+   "de": "Compare ground sampling distance and diffraction in the same ground units",
+   "hi": "Compare ground sampling distance and diffraction in the same ground units",
+   "fr": "Compare ground sampling distance and diffraction in the same ground units"
+  },
+  "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Drag to orbit; tap a badge for computed gates.": {
+   "ja": "①問い → ②予想 → ③再生 → ④式 → ⑤限界。ドラッグで回転し、バッジで計算の門を見る。",
+   "zh": "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Drag to orbit; tap a badge for computed gates.",
+   "tw": "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Drag to orbit; tap a badge for computed gates.",
+   "ko": "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Drag to orbit; tap a badge for computed gates.",
+   "de": "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Drag to orbit; tap a badge for computed gates.",
+   "hi": "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Drag to orbit; tap a badge for computed gates.",
+   "fr": "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Drag to orbit; tap a badge for computed gates."
+  },
+  "Raise the altitude": {
+   "ja": "高度を上げる",
+   "zh": "Raise the altitude",
+   "tw": "Raise the altitude",
+   "ko": "Raise the altitude",
+   "de": "Raise the altitude",
+   "hi": "Raise the altitude",
+   "fr": "Raise the altitude"
+  },
+  "With the same camera, moving from 400 km to 36,000 km widens one ground pixel from 0.25 m to 22.5 m. Ground-grid cells collapse into one pixel.": {
+   "ja": "同じカメラでも高度 400 km から 36,000 km へ離れると、1 画素が覆う地上幅は 0.25 m から 22.5 mへ広がる。地上板の格子が一つの画素へ畳み込まれる。",
+   "zh": "With the same camera, moving from 400 km to 36,000 km widens one ground pixel from 0.25 m to 22.5 m. Ground-grid cells collapse into one pixel.",
+   "tw": "With the same camera, moving from 400 km to 36,000 km widens one ground pixel from 0.25 m to 22.5 m. Ground-grid cells collapse into one pixel.",
+   "ko": "With the same camera, moving from 400 km to 36,000 km widens one ground pixel from 0.25 m to 22.5 m. Ground-grid cells collapse into one pixel.",
+   "de": "With the same camera, moving from 400 km to 36,000 km widens one ground pixel from 0.25 m to 22.5 m. Ground-grid cells collapse into one pixel.",
+   "hi": "With the same camera, moving from 400 km to 36,000 km widens one ground pixel from 0.25 m to 22.5 m. Ground-grid cells collapse into one pixel.",
+   "fr": "With the same camera, moving from 400 km to 36,000 km widens one ground pixel from 0.25 m to 22.5 m. Ground-grid cells collapse into one pixel."
+  },
+  "GSD at 400 km": {
+   "ja": "400 km の GSD",
+   "zh": "GSD at 400 km",
+   "tw": "GSD at 400 km",
+   "ko": "GSD at 400 km",
+   "de": "GSD at 400 km",
+   "hi": "GSD at 400 km",
+   "fr": "GSD at 400 km"
+  },
+  "GSD at 36,000 km": {
+   "ja": "36,000 km の GSD",
+   "zh": "GSD at 36,000 km",
+   "tw": "GSD at 36,000 km",
+   "ko": "GSD at 36,000 km",
+   "de": "GSD at 36,000 km",
+   "hi": "GSD at 36,000 km",
+   "fr": "GSD at 36,000 km"
+  },
+  "GSD": {
+   "ja": "GSD",
+   "zh": "GSD",
+   "tw": "GSD",
+   "ko": "GSD",
+   "de": "GSD",
+   "hi": "GSD",
+   "fr": "GSD"
+  },
+  "calculation band: pixel → focal length → altitude → GSD": {
+   "ja": "計算の帯: 画素 → 焦点距離 → 高度 → GSD",
+   "zh": "calculation band: pixel → focal length → altitude → GSD",
+   "tw": "calculation band: pixel → focal length → altitude → GSD",
+   "ko": "calculation band: pixel → focal length → altitude → GSD",
+   "de": "calculation band: pixel → focal length → altitude → GSD",
+   "hi": "calculation band: pixel → focal length → altitude → GSD",
+   "fr": "calculation band: pixel → focal length → altitude → GSD"
+  },
+  "GSD closed form vs one image pixel": {
+   "ja": "GSD 閉形式と像の 1 画素幅",
+   "zh": "GSD closed form vs one image pixel",
+   "tw": "GSD closed form vs one image pixel",
+   "ko": "GSD closed form vs one image pixel",
+   "de": "GSD closed form vs one image pixel",
+   "hi": "GSD closed form vs one image pixel",
+   "fr": "GSD closed form vs one image pixel"
+  },
+  "Rayleigh radius: op vs 1.22 λf/D": {
+   "ja": "Rayleigh 半径: op と 1.22 λf/D",
+   "zh": "Rayleigh radius: op vs 1.22 λf/D",
+   "tw": "Rayleigh radius: op vs 1.22 λf/D",
+   "ko": "Rayleigh radius: op vs 1.22 λf/D",
+   "de": "Rayleigh radius: op vs 1.22 λf/D",
+   "hi": "Rayleigh radius: op vs 1.22 λf/D",
+   "fr": "Rayleigh radius: op vs 1.22 λf/D"
+  },
+  "ground MTF50 width as aperture grows": {
+   "ja": "口径を広げたときの MTF50 地上幅",
+   "zh": "ground MTF50 width as aperture grows",
+   "tw": "ground MTF50 width as aperture grows",
+   "ko": "ground MTF50 width as aperture grows",
+   "de": "ground MTF50 width as aperture grows",
+   "hi": "ground MTF50 width as aperture grows",
+   "fr": "ground MTF50 width as aperture grows"
+  },
+  "decreases monotonically": {
+   "ja": "単調に小さくなる",
+   "zh": "decreases monotonically",
+   "tw": "decreases monotonically",
+   "ko": "decreases monotonically",
+   "de": "decreases monotonically",
+   "hi": "decreases monotonically",
+   "fr": "decreases monotonically"
+  },
+  "altitude H": {
+   "ja": "高度 H",
+   "zh": "altitude H",
+   "tw": "altitude H",
+   "ko": "altitude H",
+   "de": "altitude H",
+   "hi": "altitude H",
+   "fr": "altitude H"
+  },
+  "If altitude alone grows 90-fold, what happens to one ground pixel?": {
+   "ja": "高度だけを 90 倍にすると、1 画素の地上幅は?",
+   "zh": "If altitude alone grows 90-fold, what happens to one ground pixel?",
+   "tw": "If altitude alone grows 90-fold, what happens to one ground pixel?",
+   "ko": "If altitude alone grows 90-fold, what happens to one ground pixel?",
+   "de": "If altitude alone grows 90-fold, what happens to one ground pixel?",
+   "hi": "If altitude alone grows 90-fold, what happens to one ground pixel?",
+   "fr": "If altitude alone grows 90-fold, what happens to one ground pixel?"
+  },
+  "unchanged": {
+   "ja": "変わらない",
+   "zh": "unchanged",
+   "tw": "unchanged",
+   "ko": "unchanged",
+   "de": "unchanged",
+   "hi": "unchanged",
+   "fr": "unchanged"
+  },
+  "90 times wider": {
+   "ja": "90 倍",
+   "zh": "90 times wider",
+   "tw": "90 times wider",
+   "ko": "90 times wider",
+   "de": "90 times wider",
+   "hi": "90 times wider",
+   "fr": "90 times wider"
+  },
+  "9,000 times wider": {
+   "ja": "9,000 倍",
+   "zh": "9,000 times wider",
+   "tw": "9,000 times wider",
+   "ko": "9,000 times wider",
+   "de": "9,000 times wider",
+   "hi": "9,000 times wider",
+   "fr": "9,000 times wider"
+  },
+  "GSD is proportional to altitude H.": {
+   "ja": "GSD は高度 H に比例する。",
+   "zh": "GSD is proportional to altitude H.",
+   "tw": "GSD is proportional to altitude H.",
+   "ko": "GSD is proportional to altitude H.",
+   "de": "GSD is proportional to altitude H.",
+   "hi": "GSD is proportional to altitude H.",
+   "fr": "GSD is proportional to altitude H."
+  },
+  "GSD = p H / f": {
+   "ja": "GSD = p H / f",
+   "zh": "GSD = p H / f",
+   "tw": "GSD = p H / f",
+   "ko": "GSD = p H / f",
+   "de": "GSD = p H / f",
+   "hi": "GSD = p H / f",
+   "fr": "GSD = p H / f"
+  },
+  "Nadir-view model; Earth curvature and oblique viewing are omitted.": {
+   "ja": "地球の曲率と斜め視線は省いた直下視の模型。",
+   "zh": "Nadir-view model; Earth curvature and oblique viewing are omitted.",
+   "tw": "Nadir-view model; Earth curvature and oblique viewing are omitted.",
+   "ko": "Nadir-view model; Earth curvature and oblique viewing are omitted.",
+   "de": "Nadir-view model; Earth curvature and oblique viewing are omitted.",
+   "hi": "Nadir-view model; Earth curvature and oblique viewing are omitted.",
+   "fr": "Nadir-view model; Earth curvature and oblique viewing are omitted."
+  },
+  "Aperture and Airy disc": {
+   "ja": "口径と Airy 円板",
+   "zh": "Aperture and Airy disc",
+   "tw": "Aperture and Airy disc",
+   "ko": "Aperture and Airy disc",
+   "de": "Aperture and Airy disc",
+   "hi": "Aperture and Airy disc",
+   "fr": "Aperture and Airy disc"
+  },
+  "At 400 km and 550 nm, Rayleigh radius is 2.68 m for a 0.1 m aperture and 0.112 m for 2.4 m. The base of the translucent cone represents diffraction width on ground.": {
+   "ja": "高度 400 km、波長 550 nm では口径 0.1 m の Rayleigh 半径は 2.68 m、2.4 m なら 0.112 m。半透明の光円錐の底が地上の回折幅を表す。",
+   "zh": "At 400 km and 550 nm, Rayleigh radius is 2.68 m for a 0.1 m aperture and 0.112 m for 2.4 m. The base of the translucent cone represents diffraction width on ground.",
+   "tw": "At 400 km and 550 nm, Rayleigh radius is 2.68 m for a 0.1 m aperture and 0.112 m for 2.4 m. The base of the translucent cone represents diffraction width on ground.",
+   "ko": "At 400 km and 550 nm, Rayleigh radius is 2.68 m for a 0.1 m aperture and 0.112 m for 2.4 m. The base of the translucent cone represents diffraction width on ground.",
+   "de": "At 400 km and 550 nm, Rayleigh radius is 2.68 m for a 0.1 m aperture and 0.112 m for 2.4 m. The base of the translucent cone represents diffraction width on ground.",
+   "hi": "At 400 km and 550 nm, Rayleigh radius is 2.68 m for a 0.1 m aperture and 0.112 m for 2.4 m. The base of the translucent cone represents diffraction width on ground.",
+   "fr": "At 400 km and 550 nm, Rayleigh radius is 2.68 m for a 0.1 m aperture and 0.112 m for 2.4 m. The base of the translucent cone represents diffraction width on ground."
+  },
+  "0.1 m aperture": {
+   "ja": "0.1 m 口径",
+   "zh": "0.1 m aperture",
+   "tw": "0.1 m aperture",
+   "ko": "0.1 m aperture",
+   "de": "0.1 m aperture",
+   "hi": "0.1 m aperture",
+   "fr": "0.1 m aperture"
+  },
+  "2.4 m aperture": {
+   "ja": "2.4 m 口径",
+   "zh": "2.4 m aperture",
+   "tw": "2.4 m aperture",
+   "ko": "2.4 m aperture",
+   "de": "2.4 m aperture",
+   "hi": "2.4 m aperture",
+   "fr": "2.4 m aperture"
+  },
+  "Rayleigh ground radius": {
+   "ja": "Rayleigh 地上半径",
+   "zh": "Rayleigh ground radius",
+   "tw": "Rayleigh ground radius",
+   "ko": "Rayleigh ground radius",
+   "de": "Rayleigh ground radius",
+   "hi": "Rayleigh ground radius",
+   "fr": "Rayleigh ground radius"
+  },
+  "MTF50 ground width": {
+   "ja": "MTF50 地上幅",
+   "zh": "MTF50 ground width",
+   "tw": "MTF50 ground width",
+   "ko": "MTF50 ground width",
+   "de": "MTF50 ground width",
+   "hi": "MTF50 ground width",
+   "fr": "MTF50 ground width"
+  },
+  "calculation band: λ → f/D → airy_radius_um → ground width": {
+   "ja": "計算の帯: λ → f/D → airy_radius_um → 地上幅",
+   "zh": "calculation band: λ → f/D → airy_radius_um → ground width",
+   "tw": "calculation band: λ → f/D → airy_radius_um → ground width",
+   "ko": "calculation band: λ → f/D → airy_radius_um → ground width",
+   "de": "calculation band: λ → f/D → airy_radius_um → ground width",
+   "hi": "calculation band: λ → f/D → airy_radius_um → ground width",
+   "fr": "calculation band: λ → f/D → airy_radius_um → ground width"
+  },
+  "aperture D": {
+   "ja": "口径 D",
+   "zh": "aperture D",
+   "tw": "aperture D",
+   "ko": "aperture D",
+   "de": "aperture D",
+   "hi": "aperture D",
+   "fr": "aperture D"
+  },
+  "What happens to the Airy disc when aperture grows?": {
+   "ja": "口径を大きくすると Airy 円板は?",
+   "zh": "What happens to the Airy disc when aperture grows?",
+   "tw": "What happens to the Airy disc when aperture grows?",
+   "ko": "What happens to the Airy disc when aperture grows?",
+   "de": "What happens to the Airy disc when aperture grows?",
+   "hi": "What happens to the Airy disc when aperture grows?",
+   "fr": "What happens to the Airy disc when aperture grows?"
+  },
+  "shrinks": {
+   "ja": "小さくなる",
+   "zh": "shrinks",
+   "tw": "shrinks",
+   "ko": "shrinks",
+   "de": "shrinks",
+   "hi": "shrinks",
+   "fr": "shrinks"
+  },
+  "grows": {
+   "ja": "大きくなる",
+   "zh": "grows",
+   "tw": "grows",
+   "ko": "grows",
+   "de": "grows",
+   "hi": "grows",
+   "fr": "grows"
+  },
+  "Angular radius is inversely proportional to D.": {
+   "ja": "角半径は D に反比例する。",
+   "zh": "Angular radius is inversely proportional to D.",
+   "tw": "Angular radius is inversely proportional to D.",
+   "ko": "Angular radius is inversely proportional to D.",
+   "de": "Angular radius is inversely proportional to D.",
+   "hi": "Angular radius is inversely proportional to D.",
+   "fr": "Angular radius is inversely proportional to D."
+  },
+  "r = 1.22 λ H / D": {
+   "ja": "r = 1.22 λ H / D",
+   "zh": "r = 1.22 λ H / D",
+   "tw": "r = 1.22 λ H / D",
+   "ko": "r = 1.22 λ H / D",
+   "de": "r = 1.22 λ H / D",
+   "hi": "r = 1.22 λ H / D",
+   "fr": "r = 1.22 λ H / D"
+  },
+  "Assumes an ideal unobstructed circular pupil and monochromatic light.": {
+   "ja": "円形で遮蔽のない理想瞳、単色光を仮定。",
+   "zh": "Assumes an ideal unobstructed circular pupil and monochromatic light.",
+   "tw": "Assumes an ideal unobstructed circular pupil and monochromatic light.",
+   "ko": "Assumes an ideal unobstructed circular pupil and monochromatic light.",
+   "de": "Assumes an ideal unobstructed circular pupil and monochromatic light.",
+   "hi": "Assumes an ideal unobstructed circular pupil and monochromatic light.",
+   "fr": "Assumes an ideal unobstructed circular pupil and monochromatic light."
+  },
+  "Pixels or diffraction: which limits first?": {
+   "ja": "画素と回折、先に効くのは?",
+   "zh": "Pixels or diffraction: which limits first?",
+   "tw": "Pixels or diffraction: which limits first?",
+   "ko": "Pixels or diffraction: which limits first?",
+   "de": "Pixels or diffraction: which limits first?",
+   "hi": "Pixels or diffraction: which limits first?",
+   "fr": "Pixels or diffraction: which limits first?"
+  },
+  "Longer focal length improves GSD, but ground diffraction stays fixed if aperture is unchanged. Beyond the crossing, finer pixels cannot undo diffraction mixing.": {
+   "ja": "焦点距離を伸ばすと GSD は改善するが、口径を変えなければ回折幅は地上で一定。交点より先では画素を細かくしても回折が先に線を混ぜる。",
+   "zh": "Longer focal length improves GSD, but ground diffraction stays fixed if aperture is unchanged. Beyond the crossing, finer pixels cannot undo diffraction mixing.",
+   "tw": "Longer focal length improves GSD, but ground diffraction stays fixed if aperture is unchanged. Beyond the crossing, finer pixels cannot undo diffraction mixing.",
+   "ko": "Longer focal length improves GSD, but ground diffraction stays fixed if aperture is unchanged. Beyond the crossing, finer pixels cannot undo diffraction mixing.",
+   "de": "Longer focal length improves GSD, but ground diffraction stays fixed if aperture is unchanged. Beyond the crossing, finer pixels cannot undo diffraction mixing.",
+   "hi": "Longer focal length improves GSD, but ground diffraction stays fixed if aperture is unchanged. Beyond the crossing, finer pixels cannot undo diffraction mixing.",
+   "fr": "Longer focal length improves GSD, but ground diffraction stays fixed if aperture is unchanged. Beyond the crossing, finer pixels cannot undo diffraction mixing."
+  },
+  "focal length at crossing": {
+   "ja": "交点の焦点距離",
+   "zh": "focal length at crossing",
+   "tw": "focal length at crossing",
+   "ko": "focal length at crossing",
+   "de": "focal length at crossing",
+   "hi": "focal length at crossing",
+   "fr": "focal length at crossing"
+  },
+  "diffraction radius": {
+   "ja": "回折半径",
+   "zh": "diffraction radius",
+   "tw": "diffraction radius",
+   "ko": "diffraction radius",
+   "de": "diffraction radius",
+   "hi": "diffraction radius",
+   "fr": "diffraction radius"
+  },
+  "blue = pixels, orange = diffraction; improving only the lower one leaves the higher limit": {
+   "ja": "青 = 画素、橙 = 回折。低い方だけ改善しても高い方が限界",
+   "zh": "blue = pixels, orange = diffraction; improving only the lower one leaves the higher limit",
+   "tw": "blue = pixels, orange = diffraction; improving only the lower one leaves the higher limit",
+   "ko": "blue = pixels, orange = diffraction; improving only the lower one leaves the higher limit",
+   "de": "blue = pixels, orange = diffraction; improving only the lower one leaves the higher limit",
+   "hi": "blue = pixels, orange = diffraction; improving only the lower one leaves the higher limit",
+   "fr": "blue = pixels, orange = diffraction; improving only the lower one leaves the higher limit"
+  },
+  "focal length f": {
+   "ja": "焦点距離 f",
+   "zh": "focal length f",
+   "tw": "focal length f",
+   "ko": "focal length f",
+   "de": "focal length f",
+   "hi": "focal length f",
+   "fr": "focal length f"
+  },
+  "Can resolution improve without limit by increasing focal length alone?": {
+   "ja": "焦点距離だけを伸ばし続ければ、分解能は無限に良くなる?",
+   "zh": "Can resolution improve without limit by increasing focal length alone?",
+   "tw": "Can resolution improve without limit by increasing focal length alone?",
+   "ko": "Can resolution improve without limit by increasing focal length alone?",
+   "de": "Can resolution improve without limit by increasing focal length alone?",
+   "hi": "Can resolution improve without limit by increasing focal length alone?",
+   "fr": "Can resolution improve without limit by increasing focal length alone?"
+  },
+  "yes": {
+   "ja": "なる",
+   "zh": "yes",
+   "tw": "yes",
+   "ko": "yes",
+   "de": "yes",
+   "hi": "yes",
+   "fr": "yes"
+  },
+  "it stops at diffraction": {
+   "ja": "回折幅で止まる",
+   "zh": "it stops at diffraction",
+   "tw": "it stops at diffraction",
+   "ko": "it stops at diffraction",
+   "de": "it stops at diffraction",
+   "hi": "it stops at diffraction",
+   "fr": "it stops at diffraction"
+  },
+  "Once GSD falls below the diffraction radius, aperture is the bottleneck.": {
+   "ja": "GSD が回折半径を下回ると口径が律速する。",
+   "zh": "Once GSD falls below the diffraction radius, aperture is the bottleneck.",
+   "tw": "Once GSD falls below the diffraction radius, aperture is the bottleneck.",
+   "ko": "Once GSD falls below the diffraction radius, aperture is the bottleneck.",
+   "de": "Once GSD falls below the diffraction radius, aperture is the bottleneck.",
+   "hi": "Once GSD falls below the diffraction radius, aperture is the bottleneck.",
+   "fr": "Once GSD falls below the diffraction radius, aperture is the bottleneck."
+  },
+  "effective width ≳ max(pH/f, 1.22λH/D)": {
+   "ja": "有効幅 ≳ max(pH/f, 1.22λH/D)",
+   "zh": "effective width ≳ max(pH/f, 1.22λH/D)",
+   "tw": "effective width ≳ max(pH/f, 1.22λH/D)",
+   "ko": "effective width ≳ max(pH/f, 1.22λH/D)",
+   "de": "effective width ≳ max(pH/f, 1.22λH/D)",
+   "hi": "effective width ≳ max(pH/f, 1.22λH/D)",
+   "fr": "effective width ≳ max(pH/f, 1.22λH/D)"
+  },
+  "Pixel aperture, aberrations, jitter and compression are omitted.": {
+   "ja": "画素開口、収差、揺れ、圧縮は含めない。",
+   "zh": "Pixel aperture, aberrations, jitter and compression are omitted.",
+   "tw": "Pixel aperture, aberrations, jitter and compression are omitted.",
+   "ko": "Pixel aperture, aberrations, jitter and compression are omitted.",
+   "de": "Pixel aperture, aberrations, jitter and compression are omitted.",
+   "hi": "Pixel aperture, aberrations, jitter and compression are omitted.",
+   "fr": "Pixel aperture, aberrations, jitter and compression are omitted."
+  },
+  "Does a 10 cm line survive?": {
+   "ja": "10 cm の線は像に残る?",
+   "zh": "Does a 10 cm line survive?",
+   "tw": "Does a 10 cm line survive?",
+   "ko": "Does a 10 cm line survive?",
+   "de": "Does a 10 cm line survive?",
+   "hi": "Does a 10 cm line survive?",
+   "fr": "Does a 10 cm line survive?"
+  },
+  "Synthetic 10 cm lines sampled at 5 cm/px are shown directly after diffraction_blur. Small apertures merge adjacent lines; contrast returns with a larger aperture. Atmosphere is not computed.": {
+   "ja": "10 cm 幅の線を 5 cm/px で合成し、diffraction_blur の出力をそのまま表示する。小口径では隣の線と混ざり、大口径でコントラストが戻る。ただし大気は未計算。",
+   "zh": "Synthetic 10 cm lines sampled at 5 cm/px are shown directly after diffraction_blur. Small apertures merge adjacent lines; contrast returns with a larger aperture. Atmosphere is not computed.",
+   "tw": "Synthetic 10 cm lines sampled at 5 cm/px are shown directly after diffraction_blur. Small apertures merge adjacent lines; contrast returns with a larger aperture. Atmosphere is not computed.",
+   "ko": "Synthetic 10 cm lines sampled at 5 cm/px are shown directly after diffraction_blur. Small apertures merge adjacent lines; contrast returns with a larger aperture. Atmosphere is not computed.",
+   "de": "Synthetic 10 cm lines sampled at 5 cm/px are shown directly after diffraction_blur. Small apertures merge adjacent lines; contrast returns with a larger aperture. Atmosphere is not computed.",
+   "hi": "Synthetic 10 cm lines sampled at 5 cm/px are shown directly after diffraction_blur. Small apertures merge adjacent lines; contrast returns with a larger aperture. Atmosphere is not computed.",
+   "fr": "Synthetic 10 cm lines sampled at 5 cm/px are shown directly after diffraction_blur. Small apertures merge adjacent lines; contrast returns with a larger aperture. Atmosphere is not computed."
+  },
+  "assumed seeing floor": {
+   "ja": "仮定したシーイング床",
+   "zh": "assumed seeing floor",
+   "tw": "assumed seeing floor",
+   "ko": "assumed seeing floor",
+   "de": "assumed seeing floor",
+   "hi": "assumed seeing floor",
+   "fr": "assumed seeing floor"
+  },
+  "line width": {
+   "ja": "線幅",
+   "zh": "line width",
+   "tw": "line width",
+   "ko": "line width",
+   "de": "line width",
+   "hi": "line width",
+   "fr": "line width"
+  },
+  "diffraction_blur output (10 cm lines)": {
+   "ja": "diffraction_blur の出力(10 cm 線)",
+   "zh": "diffraction_blur output (10 cm lines)",
+   "tw": "diffraction_blur output (10 cm lines)",
+   "ko": "diffraction_blur output (10 cm lines)",
+   "de": "diffraction_blur output (10 cm lines)",
+   "hi": "diffraction_blur output (10 cm lines)",
+   "fr": "diffraction_blur output (10 cm lines)"
+  },
+  "diffraction limit still holds through the atmosphere": {
+   "ja": "大気を通っても回折限界どおり",
+   "zh": "diffraction limit still holds through the atmosphere",
+   "tw": "diffraction limit still holds through the atmosphere",
+   "ko": "diffraction limit still holds through the atmosphere",
+   "de": "diffraction limit still holds through the atmosphere",
+   "hi": "diffraction limit still holds through the atmosphere",
+   "fr": "diffraction limit still holds through the atmosphere"
+  },
+  "includes seeing": {
+   "ja": "シーイングを含む",
+   "zh": "includes seeing",
+   "tw": "includes seeing",
+   "ko": "includes seeing",
+   "de": "includes seeing",
+   "hi": "includes seeing",
+   "fr": "includes seeing"
+  },
+  "not computed (assumed 5 µrad gives 2.00 m on ground)": {
+   "ja": "未計算(仮定 5 µrad なら地上 2.00 m)",
+   "zh": "not computed (assumed 5 µrad gives 2.00 m on ground)",
+   "tw": "not computed (assumed 5 µrad gives 2.00 m on ground)",
+   "ko": "not computed (assumed 5 µrad gives 2.00 m on ground)",
+   "de": "not computed (assumed 5 µrad gives 2.00 m on ground)",
+   "hi": "not computed (assumed 5 µrad gives 2.00 m on ground)",
+   "fr": "not computed (assumed 5 µrad gives 2.00 m on ground)"
+  },
+  "If ideal diffraction resolves a line, will the atmosphere preserve it?": {
+   "ja": "理想回折で線が見えても、実際の大気越しでも同じ?",
+   "zh": "If ideal diffraction resolves a line, will the atmosphere preserve it?",
+   "tw": "If ideal diffraction resolves a line, will the atmosphere preserve it?",
+   "ko": "If ideal diffraction resolves a line, will the atmosphere preserve it?",
+   "de": "If ideal diffraction resolves a line, will the atmosphere preserve it?",
+   "hi": "If ideal diffraction resolves a line, will the atmosphere preserve it?",
+   "fr": "If ideal diffraction resolves a line, will the atmosphere preserve it?"
+  },
+  "always": {
+   "ja": "必ず同じ",
+   "zh": "always",
+   "tw": "always",
+   "ko": "always",
+   "de": "always",
+   "hi": "always",
+   "fr": "always"
+  },
+  "the atmosphere adds blur": {
+   "ja": "大気でさらにぼける",
+   "zh": "the atmosphere adds blur",
+   "tw": "the atmosphere adds blur",
+   "ko": "the atmosphere adds blur",
+   "de": "the atmosphere adds blur",
+   "hi": "the atmosphere adds blur",
+   "fr": "the atmosphere adds blur"
+  },
+  "This image includes diffraction only. Assumed 5 µrad seeing spans 2.00 m at 400 km, far wider than a 10 cm line.": {
+   "ja": "この像は回折だけ。仮に 5 µrad のシーイングなら 400 km で 2.00 mとなり、10 cm線よりはるかに太い。",
+   "zh": "This image includes diffraction only. Assumed 5 µrad seeing spans 2.00 m at 400 km, far wider than a 10 cm line.",
+   "tw": "This image includes diffraction only. Assumed 5 µrad seeing spans 2.00 m at 400 km, far wider than a 10 cm line.",
+   "ko": "This image includes diffraction only. Assumed 5 µrad seeing spans 2.00 m at 400 km, far wider than a 10 cm line.",
+   "de": "This image includes diffraction only. Assumed 5 µrad seeing spans 2.00 m at 400 km, far wider than a 10 cm line.",
+   "hi": "This image includes diffraction only. Assumed 5 µrad seeing spans 2.00 m at 400 km, far wider than a 10 cm line.",
+   "fr": "This image includes diffraction only. Assumed 5 µrad seeing spans 2.00 m at 400 km, far wider than a 10 cm line."
+  },
+  "atmospheric width ≈ α H (α = 5 µrad assumed here)": {
+   "ja": "大気幅 ≈ α H(ここでは α = 5 µrad と仮定)",
+   "zh": "atmospheric width ≈ α H (α = 5 µrad assumed here)",
+   "tw": "atmospheric width ≈ α H (α = 5 µrad assumed here)",
+   "ko": "atmospheric width ≈ α H (α = 5 µrad assumed here)",
+   "de": "atmospheric width ≈ α H (α = 5 µrad assumed here)",
+   "hi": "atmospheric width ≈ α H (α = 5 µrad assumed here)",
+   "fr": "atmospheric width ≈ α H (α = 5 µrad assumed here)"
+  },
+  "This is the limit tab. Seeing is an explanatory assumption, not a measurement; real images need not reach the diffraction limit.": {
+   "ja": "これが限界の回。シーイング値は測定値でなく説明用の仮定で、回折限界どおりには見えない。",
+   "zh": "This is the limit tab. Seeing is an explanatory assumption, not a measurement; real images need not reach the diffraction limit.",
+   "tw": "This is the limit tab. Seeing is an explanatory assumption, not a measurement; real images need not reach the diffraction limit.",
+   "ko": "This is the limit tab. Seeing is an explanatory assumption, not a measurement; real images need not reach the diffraction limit.",
+   "de": "This is the limit tab. Seeing is an explanatory assumption, not a measurement; real images need not reach the diffraction limit.",
+   "hi": "This is the limit tab. Seeing is an explanatory assumption, not a measurement; real images need not reach the diffraction limit.",
+   "fr": "This is the limit tab. Seeing is an explanatory assumption, not a measurement; real images need not reach the diffraction limit."
+  },
+  "Entirely synthetic. Altitude, aperture, wavelength, pixel pitch, focal length and seeing are assumed representative values, not any specific vehicle, product or operator.": {
+   "ja": "すべて合成。高度、口径、波長、画素ピッチ、焦点距離、シーイングは一般的な代表値として置いた仮定で、特定の機体・製品・運用者を表さない。",
+   "zh": "Entirely synthetic. Altitude, aperture, wavelength, pixel pitch, focal length and seeing are assumed representative values, not any specific vehicle, product or operator.",
+   "tw": "Entirely synthetic. Altitude, aperture, wavelength, pixel pitch, focal length and seeing are assumed representative values, not any specific vehicle, product or operator.",
+   "ko": "Entirely synthetic. Altitude, aperture, wavelength, pixel pitch, focal length and seeing are assumed representative values, not any specific vehicle, product or operator.",
+   "de": "Entirely synthetic. Altitude, aperture, wavelength, pixel pitch, focal length and seeing are assumed representative values, not any specific vehicle, product or operator.",
+   "hi": "Entirely synthetic. Altitude, aperture, wavelength, pixel pitch, focal length and seeing are assumed representative values, not any specific vehicle, product or operator.",
+   "fr": "Entirely synthetic. Altitude, aperture, wavelength, pixel pitch, focal length and seeing are assumed representative values, not any specific vehicle, product or operator."
+  }
+ }
+}
+

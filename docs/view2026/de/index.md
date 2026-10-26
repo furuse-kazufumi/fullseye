@@ -76,6 +76,7 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 <a href="../../articles/assets/media/evis_stereo_fullseye.mp4"><img src="../thumbs/evis_stereo_depth.jpg" alt="Stereoaugen" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Stereoaugen</span></a>
 <a href="../../articles/assets/media/evis_bean_track_fullseye.mp4"><img src="../thumbs/evis_bean_track.jpg" alt="Stäbchenkamera-Tracking" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Stäbchenkamera-Tracking</span></a>
 <a href="../../view2026/anim3d/interactive_anim3d_viewer.html?lang=de"><img src="../thumbs/interactive_anim3d_viewer.jpg" alt="Arm und halbtransparente Linse" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Arm und halbtransparente Linse · 0.3 MB</span></a>
+<a href="../../view2026/anim3d/satellite_gsd_anim3d.html?lang=de"><img src="../thumbs/satellite_gsd.jpg" alt="Warum kleine Schrift aus dem Orbit verschwindet" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Warum kleine Schrift aus dem Orbit verschwindet · 0.2 MB</span></a>
 </div>
 
 ## Artikelserien (englische Artikel auf Qiita)
@@ -659,6 +660,7 @@ Jede Zahl ist gegen eine Ground Truth gemessen, die der PoC selbst eingesetzt ha
 **Bewegtes 3-D zum Drehen**
 
 - [Arm und halbtransparente Linse](../../view2026/anim3d/interactive_anim3d_viewer.html?lang=de) (bewegtes 3-D, drehbar, 0.3 MB): Mit dem Finger drehen und den Arm beim Tragen einer Kiste aus jedem Winkel ansehen. Strahlen laufen durch eine halbtransparente Linse in den Brennpunkt, darunter laufen ein Höhenbild von oben und seine Binarisierung zeitgleich mit. [Quelle](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
+- [Warum kleine Schrift aus dem Orbit verschwindet](../../view2026/anim3d/satellite_gsd_anim3d.html?lang=de) (bewegtes 3-D, drehbar, 0.2 MB): Mit der Höhe wächst die Bodenbreite von 1 Pixel; mit kleinerer Öffnung wächst die Airy-Scheibe am Fuß des transparenten Lichtkegels. Jenseits des Schnittpunkts von blauer GSD und orangefarbener Beugungsbreite bringen feinere Pixel allein eine 10-cm-Linie nicht zurück. **Bei 400 km, 5-µm-Pixeln und 8 m Brennweite beträgt die GSD 0.250 m. Bei 550 nm und 2.4 m Öffnung beträgt der Rayleigh-Bodenradius 0.112 m. Die Atmosphäre bleibt in der Grenzzeile ausdrücklich unberechnet.** [Quelle](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_satgsd_anim3d.py)
 
 </div>
 

@@ -76,6 +76,7 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 <a href="../../articles/assets/media/evis_stereo_fullseye.mp4"><img src="../thumbs/evis_stereo_depth.jpg" alt="Humanoid stereo eyes" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Humanoid stereo eyes</span></a>
 <a href="../../articles/assets/media/evis_bean_track_fullseye.mp4"><img src="../thumbs/evis_bean_track.jpg" alt="Chopstick-cam tracking" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Chopstick-cam tracking</span></a>
 <a href="../../view2026/anim3d/interactive_anim3d_viewer.html?lang=en"><img src="../thumbs/interactive_anim3d_viewer.jpg" alt="Arm and translucent lens" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Arm and translucent lens · 0.3 MB</span></a>
+<a href="../../view2026/anim3d/satellite_gsd_anim3d.html?lang=en"><img src="../thumbs/satellite_gsd.jpg" alt="Why tiny lettering disappears from orbit" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Why tiny lettering disappears from orbit · 0.2 MB</span></a>
 </div>
 
 ## Article series (articles on Qiita)
@@ -659,6 +660,7 @@ Every number is measured against ground truth the PoC planted itself (closed for
 **Moving 3-D you can rotate**
 
 - [Arm and translucent lens](../../view2026/anim3d/interactive_anim3d_viewer.html?lang=en) (moving 3-D, drag to rotate, 0.3 MB): Rotate with a finger and watch the arm carry a box from any angle. Rays pass through a translucent lens to its focus, while a top-down height image and its binarisation advance on the same timeline. [source](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
+- [Why tiny lettering disappears from orbit](../../view2026/anim3d/satellite_gsd_anim3d.html?lang=en) (moving 3-D, drag to rotate, 0.2 MB): Raise the altitude and 1 pixel covers more ground; shrink the aperture and the Airy disc at the foot of the translucent light cone spreads. Beyond the crossing of blue GSD and orange diffraction width, finer pixels alone cannot restore a 10 cm line. **At 400 km with 5 µm pixels and an 8 m focal length, GSD is 0.250 m. At 550 nm with a 2.4 m aperture, Rayleigh ground radius is 0.112 m. Atmosphere is explicitly left uncomputed in the limit row.** [source](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_satgsd_anim3d.py)
 
 </div>
 
