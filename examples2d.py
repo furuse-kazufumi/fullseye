@@ -637,7 +637,16 @@ EXAMPLES = [
                 "する。残像の軌跡・点群の時系列・段の区切り・時系列グラフ・上から見たカメラ画像と二値化"
                 "(無損失 PNG)を同じ時間軸で再生。半透明のレンズ(alpha 0.3)を貫いて焦点へ集まる光線が透けて見える。"
                 "姿勢の復元が量子化の刻みの半分以内、PNG が画素ごとに一致。"},
-    {"id": "gsplat_product_viewer", "task": "visualization", "data": "synthetic",
+    {"id": "anim3d_lens_aberrations", "task": "visualization", "data": "synthetic",
+     "name": "レンズの収差を光線で見る(絞り・画角・波長を振る動く 3-D + op の処理の帯)",
+     "summary": "球面・コマ・非点と像面湾曲・色の 4 収差を、fs.trace_rays で実際に追った光線の動く 3-D に。"
+                "帯は ray_fan(点 = 実光線、白線 = ザイデルの 3 次の式)→ ray_bundle(スポット)→ psf_field_grid"
+                "(回折の PSF)→ opd_samples / wavefront_from_opd(波面とゼルニケの種類別の地図)。"
+                "門: 小さい絞り・画角で実光線と 3 次の式が 1 % 以内、サジタルのコマ = 1/3、T−P = 3(S−P)、"
+                "単レンズの焦点 = 厚肉の閉形式、アクロマートの F−C = 0。限界の回: f/2.5 で 13 %、"
+                "20° の T 像面で 20 % 外れる。波面が数十波長の瞳は回折の PSF を作らず幾何の PSF(光線の密度 ⊗ Airy、"
+                "重なりの領域で回折の PSF と集中半径 4 % 以内)に切り替える。"},
+     {"id": "gsplat_product_viewer", "task": "visualization", "data": "synthetic",
      "name": "商品を 3D Gaussian Splatting にしてブラウザで回して見る(1 品のビューア + 5 品のカタログ)",
      "summary": "fs.gs_viewer_html / fs.gs_catalog_html の最小例。符号付き距離場の op と marching cubes で作った"
                 "マグ・ヘッドホン・腕時計・スニーカー・ランプを gs_from_world で 3DGS にし(メッシュから初期化、"

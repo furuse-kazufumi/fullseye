@@ -1,0 +1,1077 @@
+{
+ "_": "レンズの収差の動く 3-D(docs/anim3d/poc_lens_aberrations.html、examples/anim3d_lens_aberrations.py)の翻訳表。キー = en の文字列、ja = 訳した時点の日本語の控え。ViEW2026 の来場者(理系の学生)向けに各言語の教科書の用語で。数値・単位・op 名・式(W040・Z40 など)は en のまま。",
+ "example": "anim3d_lens_aberrations",
+ "strings": {
+  "Lens aberrations, ray by ray": {
+   "ja": "レンズの収差を光線で見る",
+   "zh": "逐条光线看透镜像差",
+   "tw": "逐條光線看透鏡像差",
+   "ko": "렌즈의 수차를 광선 하나하나로 본다",
+   "de": "Abbildungsfehler von Linsen, Strahl für Strahl",
+   "hi": "लेंस के विपथन, किरण-दर-किरण",
+   "fr": "Les aberrations des lentilles, rayon par rayon"
+  },
+  "Sweep the stop, the field and the wavelength; rays traced by Fullseye with spot, PSF and wavefront on the same time axis.": {
+   "ja": "絞り・画角・波長をゆっくり振り、fullseye の光線追跡で追った光線と、スポット・PSF・波面を同じ時間軸で。",
+   "zh": "扫描光阑、视场与波长；由 Fullseye 追迹的光线，与光斑、PSF 和波前置于同一时间轴上。",
+   "tw": "掃描光欄、視場與波長；由 Fullseye 追跡的光線，與光斑、PSF 和波前置於同一時間軸上。",
+   "ko": "조리개·화각·파장을 훑는다. Fullseye가 추적한 광선과 스폿·PSF·파면을 같은 시간축 위에 놓는다.",
+   "de": "Blende, Feld und Wellenlänge werden durchlaufen; von Fullseye verfolgte Strahlen mit Spot, PSF und Wellenfront auf derselben Zeitachse.",
+   "hi": "द्वारक, क्षेत्र कोण और तरंगदैर्घ्य को धीरे-धीरे बदलिए; Fullseye द्वारा अनुरेखित किरणें, और स्पॉट, PSF तथा तरंगाग्र एक ही समय-अक्ष पर।",
+   "fr": "Faites varier le diaphragme, le champ et la longueur d'onde ; les rayons tracés par Fullseye, avec la tache image, la PSF et le front d'onde sur le même axe du temps."
+  },
+  "Each tab runs ① question → ② predict (tap a choice to reveal the answer) → ③ play → ④ equation → ⑤ limit. The time slider reads the stop radius, field angle or wavelength. Tap a badge to open what was checked, the criterion and the result. Drag to rotate, wheel to zoom. Space plays/pauses, arrow keys step. Stage buttons jump. The lenses are translucent, so the rays inside the glass show through.": {
+   "ja": "各タブは ① 問い → ② 予想(選択肢を押すと答えが開く)→ ③ 再生 → ④ 式 → ⑤ 限界 の順。時間つまみの読みは絞りの半径・画角・波長。バッジを押すと、確かめた項目・基準・結果の表が開く。ドラッグで回転、ホイールで拡大。空白で再生/停止、← → でコマ送り。段のボタンで跳ぶ。レンズは半透明で、ガラスの中を通る光線が透けて見える。",
+   "zh": "每个标签页依次为 ① 问题 → ② 预测(点选项即可显示答案)→ ③ 播放 → ④ 公式 → ⑤ 局限。时间滑块的读数是光阑半径、视场角或波长。点按徽章可打开检验项目、判据和结果。拖动可旋转，滚轮可缩放。空格键播放/暂停，方向键逐帧步进。阶段按钮可跳转。透镜为半透明，玻璃内部的光线可以透视看到。",
+   "tw": "每個分頁依序為 ① 問題 → ② 預測(點選項即可顯示答案)→ ③ 播放 → ④ 公式 → ⑤ 限制。時間滑桿的讀數是光欄半徑、視場角或波長。點按徽章可開啟檢驗項目、判準與結果。拖曳可旋轉，滾輪可縮放。空白鍵播放/暫停，方向鍵逐格步進。階段按鈕可跳轉。透鏡為半透明，玻璃內部的光線可以透視看到。",
+   "ko": "각 탭은 ① 질문 → ② 예상(선택지를 누르면 답이 열림) → ③ 재생 → ④ 식 → ⑤ 한계 순서로 진행된다. 시간 슬라이더의 값은 조리개 반지름, 화각 또는 파장이다. 배지를 누르면 확인한 항목, 기준, 결과가 열린다. 드래그하면 회전, 휠로 확대·축소. 스페이스로 재생/정지, 화살표 키로 한 프레임씩 이동. 단계 버튼으로 건너뛴다. 렌즈는 반투명이어서 유리 속을 지나는 광선이 비쳐 보인다.",
+   "de": "Jeder Tab läuft ab: ① Frage → ② Vorhersage (Antwort antippen, um die Lösung aufzudecken) → ③ Abspielen → ④ Gleichung → ⑤ Grenze. Der Zeitregler zeigt den Blendenradius, den Feldwinkel oder die Wellenlänge. Ein Badge antippen öffnet, was geprüft wurde, das Kriterium und das Ergebnis. Ziehen dreht, das Mausrad zoomt. Leertaste spielt ab/pausiert, Pfeiltasten gehen schrittweise weiter. Stufenknöpfe springen. Die Linsen sind durchscheinend, sodass die Strahlen im Glas sichtbar bleiben.",
+   "hi": "हर टैब का क्रम ① प्रश्न → ② पूर्वानुमान (उत्तर देखने के लिए किसी विकल्प को छुएँ) → ③ चलाएँ → ④ समीकरण → ⑤ सीमा। समय-स्लाइडर का मान द्वारक की त्रिज्या, क्षेत्र कोण या तरंगदैर्घ्य है। किसी बैज को छूने पर पता चलता है कि क्या जाँचा गया, कसौटी क्या थी और परिणाम क्या रहा। घुमाने के लिए खींचें, ज़ूम के लिए व्हील। Space से चलाएँ/रोकें, तीर कुंजियों से एक-एक फ़्रेम। चरण-बटन से सीधे उस चरण पर जाएँ। लेंस पारभासी हैं, इसलिए काँच के भीतर की किरणें दिखती हैं।",
+   "fr": "Chaque onglet suit ① question → ② prédiction (touchez un choix pour révéler la réponse) → ③ lecture → ④ équation → ⑤ limite. Le curseur temporel indique le rayon du diaphragme, l'angle de champ ou la longueur d'onde. Touchez un badge pour voir ce qui a été vérifié, le critère et le résultat. Glissez pour tourner, molette pour zoomer. Espace lance/arrête la lecture, les flèches avancent image par image. Les boutons d'étape sautent directement. Les lentilles sont translucides, les rayons dans le verre restent visibles."
+  },
+  "Spherical (aperture)": {
+   "ja": "球面収差(絞り)",
+   "zh": "球差(孔径)",
+   "tw": "球面像差(孔徑)",
+   "ko": "구면수차(조리개)",
+   "de": "Sphärische Aberration (Öffnung)",
+   "hi": "गोलीय (द्वारक)",
+   "fr": "Sphérique (ouverture)"
+  },
+  "Spherical aberration: opening the stop makes rays through the rim cross the axis earlier (orange box = marginal focus, white plate = paraxial image). The panel above shows the image-plane spot magnified and turned to face you (colour = where the ray crossed the pupil). Band 1: dots are real rays, the white curve is the third-order (Seidel) formula; they agree at small apertures and part as the stop opens.": {
+   "ja": "球面収差: 絞りを開くと、レンズの縁を通る光ほど手前で軸を横切る(橙の箱 = 周辺の光の焦点、白い板 = 近軸の像面)。上の板は像面のスポットを拡大してこちらへ向けたもの(色 = 瞳のどこを通ったか)。帯の①は横収差の扇: 点が実光線、白い線が 3 次(ザイデル)の式。暗い絞りでは重なり、開くほど離れる(近軸の近似の限界)。",
+   "zh": "球差：开大光阑后，经过透镜边缘的光线会更早穿过光轴(橙色框 = 边缘焦点，白板 = 近轴像面)。上方面板把像面上的光斑放大并转向观察者(颜色 = 光线穿过光瞳的位置)。条带 1：圆点为实光线，白色曲线为三级(赛德尔)公式；小孔径时两者吻合，光阑开大后逐渐分离。",
+   "tw": "球面像差：開大光欄後，通過透鏡邊緣的光線會更早穿過光軸(橙色框 = 邊緣焦點，白板 = 近軸像面)。上方面板把像面上的光斑放大並轉向觀察者(顏色 = 光線穿過光瞳的位置)。條帶 1：圓點為實光線，白色曲線為三階(賽德爾)公式；小孔徑時兩者吻合，光欄開大後逐漸分離。",
+   "ko": "구면수차: 조리개를 열면 렌즈 가장자리를 지나는 광선이 축을 더 앞에서 가로지른다(주황 상자 = 주변 광선 초점, 흰 판 = 근축 상면). 위 패널은 상면의 스폿을 확대해 정면으로 돌려 놓은 것이다(색 = 광선이 동공의 어디를 지났는가). 띠 1: 점은 실광선, 흰 곡선은 삼차(자이델) 공식. 조리개가 작을 때는 일치하고, 열수록 벌어진다.",
+   "de": "Sphärische Aberration: Beim Öffnen der Blende schneiden die Randstrahlen die Achse früher (oranger Kasten = Randstrahlfokus, weiße Platte = paraxiales Bild). Die Tafel oben zeigt den Spot in der Bildebene vergrößert und dem Betrachter zugewandt (Farbe = Durchstoßort des Strahls in der Pupille). Band 1: Punkte sind reale Strahlen, die weiße Kurve ist die Formel dritter Ordnung (Seidel); bei kleinen Öffnungen stimmen sie überein und trennen sich, wenn die Blende öffnet.",
+   "hi": "गोलीय विपथन: द्वारक खोलने पर किनारे से गुज़रने वाली किरणें अक्ष को पहले ही काट देती हैं (नारंगी बॉक्स = सीमांत फ़ोकस, सफ़ेद पट्टिका = उपाक्षीय प्रतिबिंब)। ऊपर का पैनल प्रतिबिंब तल के स्पॉट को बड़ा करके आपकी ओर घुमाकर दिखाता है (रंग = किरण पुतली में कहाँ से गुज़री)। बैंड 1: बिंदु वास्तविक किरणें हैं, सफ़ेद वक्र तृतीय-कोटि (ज़ाइडल) सूत्र है; छोटे द्वारक पर दोनों मिलते हैं और द्वारक खुलने पर अलग हो जाते हैं।",
+   "fr": "Aberration sphérique : en ouvrant le diaphragme, les rayons passant par le bord croisent l'axe plus tôt (boîte orange = foyer marginal, plaque blanche = image paraxiale). Le panneau du haut montre la tache dans le plan image, agrandie et tournée vers vous (couleur = position du rayon dans la pupille). Bande 1 : les points sont des rayons réels, la courbe blanche est la formule du troisième ordre (Seidel) ; elles coïncident aux petites ouvertures et se séparent quand le diaphragme s'ouvre."
+  },
+  "Lens": {
+   "ja": "レンズ",
+   "zh": "透镜",
+   "tw": "透鏡",
+   "ko": "렌즈",
+   "de": "Linse",
+   "hi": "लेंस",
+   "fr": "Lentille"
+  },
+  "plano-convex, crown glass (n_d = 1.5168, V_d = 64.17), f = 100.0 mm": {
+   "ja": "平凸、クラウンガラス(n_d = 1.5168, V_d = 64.17)、f = 100.0 mm",
+   "zh": "平凸透镜，冕牌玻璃(n_d = 1.5168, V_d = 64.17)，f = 100.0 mm",
+   "tw": "平凸透鏡，冕牌玻璃(n_d = 1.5168, V_d = 64.17)，f = 100.0 mm",
+   "ko": "평볼록, 크라운 유리(n_d = 1.5168, V_d = 64.17), f = 100.0 mm",
+   "de": "plankonvex, Kronglas (n_d = 1.5168, V_d = 64.17), f = 100.0 mm",
+   "hi": "समतलोत्तल, क्राउन काँच (n_d = 1.5168, V_d = 64.17), f = 100.0 mm",
+   "fr": "plan-convexe, verre crown (n_d = 1.5168, V_d = 64.17), f = 100.0 mm"
+  },
+  "Knob": {
+   "ja": "つまみ",
+   "zh": "旋钮",
+   "tw": "旋鈕",
+   "ko": "조절 변수",
+   "de": "Regler",
+   "hi": "नॉब",
+   "fr": "Curseur"
+  },
+  "stop radius 1.5 → 20 mm": {
+   "ja": "絞りの半径 1.5 → 20 mm(f/33 → f/2.5)",
+   "zh": "光阑半径 1.5 → 20 mm",
+   "tw": "光欄半徑 1.5 → 20 mm",
+   "ko": "조리개 반지름 1.5 → 20 mm",
+   "de": "Blendenradius 1.5 → 20 mm",
+   "hi": "द्वारक त्रिज्या 1.5 → 20 mm",
+   "fr": "rayon du diaphragme 1.5 → 20 mm"
+  },
+  "Real / third order": {
+   "ja": "実光線 / 3 次の式",
+   "zh": "实光线 / 三级",
+   "tw": "實光線 / 三階",
+   "ko": "실광선 / 삼차 공식",
+   "de": "Real / dritte Ordnung",
+   "hi": "वास्तविक / तृतीय कोटि",
+   "fr": "Réel / troisième ordre"
+  },
+  "Marginal focus (real rays)": {
+   "ja": "周辺光線の焦点(実光線)",
+   "zh": "边缘焦点(实光线)",
+   "tw": "邊緣焦點(實光線)",
+   "ko": "주변 광선 초점(실광선)",
+   "de": "Randstrahlfokus (reale Strahlen)",
+   "hi": "सीमांत फ़ोकस (वास्तविक किरणें)",
+   "fr": "Foyer marginal (rayons réels)"
+  },
+  "Third-order prediction (drawn 1.2 mm lower)": {
+   "ja": "3 次の式の予測(1.2 mm 下にずらして描く)",
+   "zh": "三级公式的预测(下移 1.2 mm 绘制)",
+   "tw": "三階公式的預測(下移 1.2 mm 繪製)",
+   "ko": "삼차 공식의 예측(1.2 mm 아래에 그림)",
+   "de": "Vorhersage dritter Ordnung (1.2 mm tiefer gezeichnet)",
+   "hi": "तृतीय-कोटि पूर्वानुमान (1.2 mm नीचे खींचा गया)",
+   "fr": "Prédiction du troisième ordre (tracée 1.2 mm plus bas)"
+  },
+  "f/33: nearly a point": {
+   "ja": "f/33: ほぼ 1 点に集まる",
+   "zh": "f/33：几乎是一个点",
+   "tw": "f/33：幾乎是一個點",
+   "ko": "f/33: 거의 한 점",
+   "de": "f/33: fast ein Punkt",
+   "hi": "f/33: लगभग एक बिंदु",
+   "fr": "f/33 : presque un point"
+  },
+  "Beyond the diffraction limit (Strehl < 0.8, f/10)": {
+   "ja": "回折の限界を越える(Strehl < 0.8、f/10)",
+   "zh": "超出衍射极限(Strehl < 0.8，f/10)",
+   "tw": "超出繞射極限(Strehl < 0.8，f/10)",
+   "ko": "회절 한계를 넘는다(Strehl < 0.8, f/10)",
+   "de": "Jenseits der Beugungsgrenze (Strehl < 0.8, f/10)",
+   "hi": "विवर्तन सीमा के पार (Strehl < 0.8, f/10)",
+   "fr": "Au-delà de la limite de diffraction (Strehl < 0.8, f/10)"
+  },
+  "Limit: third order off by 5 % (f/3.8)": {
+   "ja": "限界: 3 次の式から 5 % 外れる(f/3.8)",
+   "zh": "局限：三级公式偏差 5 %(f/3.8)",
+   "tw": "限制：三階公式偏差 5 %(f/3.8)",
+   "ko": "한계: 삼차 공식에서 5 % 벗어남(f/3.8)",
+   "de": "Grenze: dritte Ordnung um 5 % daneben (f/3.8)",
+   "hi": "सीमा: तृतीय कोटि 5 % से चूकती है (f/3.8)",
+   "fr": "Limite : le troisième ordre s'écarte de 5 % (f/3.8)"
+  },
+  "Limit: off by 10 % (f/2.8)": {
+   "ja": "限界: 10 % 外れる(f/2.8)",
+   "zh": "局限：偏差 10 %(f/2.8)",
+   "tw": "限制：偏差 10 %(f/2.8)",
+   "ko": "한계: 10 % 벗어남(f/2.8)",
+   "de": "Grenze: um 10 % daneben (f/2.8)",
+   "hi": "सीमा: 10 % की चूक (f/2.8)",
+   "fr": "Limite : écart de 10 % (f/2.8)"
+  },
+  "Marginal focus shift (negative = towards the lens)": {
+   "ja": "周辺光線の焦点のずれ(手前が負)",
+   "zh": "边缘焦点偏移(负 = 靠向透镜)",
+   "tw": "邊緣焦點偏移(負 = 靠向透鏡)",
+   "ko": "주변 광선 초점의 이동(음수 = 렌즈 쪽)",
+   "de": "Verschiebung des Randstrahlfokus (negativ = zur Linse hin)",
+   "hi": "सीमांत फ़ोकस का विस्थापन (ऋणात्मक = लेंस की ओर)",
+   "fr": "Décalage du foyer marginal (négatif = vers la lentille)"
+  },
+  "Transverse aberration real / third order": {
+   "ja": "横収差 実光線 / 3 次の式",
+   "zh": "垂轴像差 实光线 / 三级",
+   "tw": "橫向像差 實光線 / 三階",
+   "ko": "횡수차 실광선 / 삼차 공식",
+   "de": "Queraberration real / dritte Ordnung",
+   "hi": "अनुप्रस्थ विपथन वास्तविक / तृतीय कोटि",
+   "fr": "Aberration transversale réel / troisième ordre"
+  },
+  "Strehl ratio (— in the geometric regime)": {
+   "ja": "Strehl 比(PSF の頂 / 無収差の頂。幾何光学の領域は —)",
+   "zh": "Strehl 比(几何光学区为 —)",
+   "tw": "Strehl 比(幾何光學區為 —)",
+   "ko": "슈트렐 비(기하광학 영역에서는 —)",
+   "de": "Strehl-Verhältnis (— im geometrischen Bereich)",
+   "hi": "Strehl अनुपात (ज्यामितीय क्षेत्र में —)",
+   "fr": "Rapport de Strehl (— dans le régime géométrique)"
+  },
+  "Fullseye processing band (active stage highlighted; the colours in 2 are those of the magnified spot in 3-D; 3 marked 'geometric' = geometric-optics regime: the pupil wavefront is tens of waves PV, so the diffraction PSF would alias on the op's pupil grid; the ray density convolved with an Airy disc is drawn instead, the same shape as the spot in 2; 4: left = whole pupil wavefront, right maps and bars = Zernike by kind: green Z20 defocus, purple Z22 astigmatism, cyan Z31 coma, orange Z40 spherical, red higher)": {
+   "ja": "Fullseye の処理の帯(いま効いている段を色で強調。② の点の色 = 3-D の拡大スポットの色。③ に「geometric」とあるコマは幾何光学の領域: 瞳の波面が PV で数十波長(≫ 1 波長)あり、回折の PSF はop の瞳の格子では折り返すので作らず、光線の密度に Airy を畳み込んだ幾何の PSF(② のスポット図と同じ形)を描く。④ 左 = 瞳の波面の全体、右の 4 枚と下の棒 = ゼルニケの種類別: 緑 Z20 ピント・紫 Z22 非点・水色 Z31 コマ・橙 Z40 球面・赤 5 次より上)",
+   "zh": "Fullseye 处理条带(当前阶段高亮；2 中的颜色与 3-D 中放大光斑的颜色相同；3 中标有“geometric”的帧 = 几何光学区：光瞳波前的 PV 达数十个波长，衍射 PSF 在 op 的光瞳网格上会发生混叠，因此改画光线密度与艾里斑的卷积，其形状与 2 中的光斑相同；4：左 = 整个光瞳波前，右侧的图与柱 = 按种类分的泽尼克项：绿 Z20 离焦、紫 Z22 像散、青 Z31 彗差、橙 Z40 球差、红为更高阶)",
+   "tw": "Fullseye 處理條帶(目前階段以顏色標示；2 中的顏色與 3-D 中放大光斑的顏色相同；3 中標有「geometric」的影格 = 幾何光學區：光瞳波前的 PV 達數十個波長，繞射 PSF 在 op 的光瞳網格上會發生混疊，因此改畫光線密度與艾里斑的摺積，其形狀與 2 中的光斑相同；4：左 = 整個光瞳波前，右側的圖與長條 = 依種類區分的澤尼克項：綠 Z20 離焦、紫 Z22 像散、青 Z31 彗星像差、橙 Z40 球面像差、紅為更高階)",
+   "ko": "Fullseye 처리 띠(현재 단계를 강조. 2의 색은 3-D 확대 스폿의 색과 같다. 3에 'geometric'이 표시된 프레임은 기하광학 영역: 동공 파면이 PV로 수십 파장이어서 회절 PSF는 op의 동공 격자에서 에일리어싱이 일어나므로, 대신 광선 밀도에 에어리 원반을 합성곱한 것을 그린다. 2의 스폿과 같은 모양이다. 4: 왼쪽 = 동공 파면 전체, 오른쪽 지도와 막대 = 종류별 제르니케: 초록 Z20 초점 흐림, 보라 Z22 비점수차, 청록 Z31 코마, 주황 Z40 구면수차, 빨강 고차)",
+   "de": "Fullseye-Verarbeitungsband (aktive Stufe hervorgehoben; die Farben in 2 sind die des vergrößerten Spots in 3-D; 3 mit der Marke 'geometric' = Bereich der geometrischen Optik: Die Pupillenwellenfront beträgt einige zehn Wellenlängen PV, die Beugungs-PSF würde auf dem Pupillengitter des op Aliasing zeigen; stattdessen wird die mit einem Airy-Scheibchen gefaltete Strahldichte gezeichnet, von derselben Form wie der Spot in 2; 4: links = gesamte Pupillenwellenfront, rechte Karten und Balken = Zernike nach Art: grün Z20 Defokus, violett Z22 Astigmatismus, cyan Z31 Koma, orange Z40 sphärisch, rot höhere Ordnungen)",
+   "hi": "Fullseye की प्रसंस्करण पट्टी (सक्रिय चरण उभारा गया; 2 के रंग 3-D में बड़े किए गए स्पॉट के रंग हैं; 3 पर 'geometric' का अर्थ = ज्यामितीय-प्रकाशिकी क्षेत्र: पुतली का तरंगाग्र PV में दसियों तरंगदैर्घ्य है, इसलिए विवर्तन PSF op की पुतली-ग्रिड पर एलियास हो जाती; इसके बदले किरण-घनत्व को एयरी डिस्क से संवलित करके खींचा गया है, जिसका आकार 2 के स्पॉट जैसा है; 4: बाएँ = पूरी पुतली का तरंगाग्र, दाएँ के मानचित्र और छड़ें = प्रकार के अनुसार ज़र्निके: हरा Z20 डीफ़ोकस, बैंगनी Z22 अबिंदुकता, सियान Z31 कोमा, नारंगी Z40 गोलीय, लाल उच्चतर)",
+   "fr": "Bande de traitement Fullseye (étape active en surbrillance ; les couleurs en 2 sont celles de la tache agrandie en 3-D ; 3 marqué « geometric » = régime de l'optique géométrique : le front d'onde dans la pupille fait des dizaines de longueurs d'onde PV, la PSF de diffraction se replierait donc sur la grille de pupille de l'op ; on trace à la place la densité de rayons convoluée par une tache d'Airy, de même forme que la tache en 2 ; 4 : gauche = front d'onde de toute la pupille, cartes et barres de droite = Zernike par type : vert Z20 défocalisation, violet Z22 astigmatisme, cyan Z31 coma, orange Z40 sphérique, rouge ordres supérieurs)"
+  },
+  "transverse aberration: real rays (ray_fan) / third order 4·W040/(n′u′) (seidel_coefficients), stop radius up to 4 mm": {
+   "ja": "横収差: 実光線(ray_fan)/ 3 次の式 4·W040/(n′u′)(seidel_coefficients)、絞りの半径 4 mm 以下",
+   "zh": "垂轴像差：实光线(ray_fan)/ 三级公式 4·W040/(n′u′)(seidel_coefficients)，光阑半径不超过 4 mm",
+   "tw": "橫向像差：實光線(ray_fan)/ 三階公式 4·W040/(n′u′)(seidel_coefficients)，光欄半徑不超過 4 mm",
+   "ko": "횡수차: 실광선(ray_fan) / 삼차 공식 4·W040/(n′u′)(seidel_coefficients), 조리개 반지름 4 mm 이하",
+   "de": "Queraberration: reale Strahlen (ray_fan) / dritte Ordnung 4·W040/(n′u′) (seidel_coefficients), Blendenradius bis 4 mm",
+   "hi": "अनुप्रस्थ विपथन: वास्तविक किरणें (ray_fan) / तृतीय कोटि 4·W040/(n′u′) (seidel_coefficients), द्वारक त्रिज्या 4 mm तक",
+   "fr": "aberration transversale : rayons réels (ray_fan) / troisième ordre 4·W040/(n′u′) (seidel_coefficients), rayon du diaphragme jusqu'à 4 mm"
+  },
+  "pupil wavefront Zernike Z40 × 6 (wavefront_from_opd) vs W040, stop radius up to 6 mm": {
+   "ja": "瞳の波面のゼルニケ Z40 × 6(wavefront_from_opd)と W040、絞りの半径 6 mm 以下",
+   "zh": "光瞳波前的泽尼克 Z40 × 6(wavefront_from_opd)与 W040，光阑半径不超过 6 mm",
+   "tw": "光瞳波前的澤尼克 Z40 × 6(wavefront_from_opd)與 W040，光欄半徑不超過 6 mm",
+   "ko": "동공 파면의 제르니케 Z40 × 6(wavefront_from_opd) 대 W040, 조리개 반지름 6 mm 이하",
+   "de": "Pupillenwellenfront Zernike Z40 × 6 (wavefront_from_opd) vs. W040, Blendenradius bis 6 mm",
+   "hi": "पुतली तरंगाग्र का ज़र्निके Z40 × 6 (wavefront_from_opd) बनाम W040, द्वारक त्रिज्या 6 mm तक",
+   "fr": "Zernike Z40 × 6 du front d'onde dans la pupille (wavefront_from_opd) vs W040, rayon du diaphragme jusqu'à 6 mm"
+  },
+  "ratio real / third order grows monotonically with the stop (radius 1.5 / 3 / 4 / 6 / 9 / 12.5 / 16 / 20 mm)": {
+   "ja": "比 実光線 / 3 次の式 が絞りとともに単調に開く(半径 1.5 / 3 / 4 / 6 / 9 / 12.5 / 16 / 20 mm)",
+   "zh": "比值 实光线 / 三级 随光阑单调增大(半径 1.5 / 3 / 4 / 6 / 9 / 12.5 / 16 / 20 mm)",
+   "tw": "比值 實光線 / 三階 隨光欄單調增大(半徑 1.5 / 3 / 4 / 6 / 9 / 12.5 / 16 / 20 mm)",
+   "ko": "비 실광선 / 삼차 공식 이 조리개와 함께 단조 증가한다(반지름 1.5 / 3 / 4 / 6 / 9 / 12.5 / 16 / 20 mm)",
+   "de": "Verhältnis real / dritte Ordnung wächst monoton mit der Blende (Radius 1.5 / 3 / 4 / 6 / 9 / 12.5 / 16 / 20 mm)",
+   "hi": "अनुपात वास्तविक / तृतीय कोटि द्वारक के साथ एकदिष्ट रूप से बढ़ता है (त्रिज्या 1.5 / 3 / 4 / 6 / 9 / 12.5 / 16 / 20 mm)",
+   "fr": "le rapport réel / troisième ordre croît de façon monotone avec le diaphragme (rayon 1.5 / 3 / 4 / 6 / 9 / 12.5 / 16 / 20 mm)"
+  },
+  "increases monotonically": {
+   "ja": "単調に増える",
+   "zh": "单调增加",
+   "tw": "單調遞增",
+   "ko": "단조 증가",
+   "de": "wächst monoton",
+   "hi": "एकदिष्ट रूप से बढ़ता है",
+   "fr": "croît de façon monotone"
+  },
+  "holds": {
+   "ja": "成立",
+   "zh": "成立",
+   "tw": "成立",
+   "ko": "성립",
+   "de": "gilt",
+   "hi": "सत्य",
+   "fr": "vérifié"
+  },
+  "departure from third order at f/2.5 (the limit must show)": {
+   "ja": "f/2.5 で 3 次の式から外れる(限界が見えること)",
+   "zh": "f/2.5 处偏离三级公式(局限必须显现)",
+   "tw": "f/2.5 處偏離三階公式(限制必須顯現)",
+   "ko": "f/2.5에서 삼차 공식으로부터의 벗어남(한계가 보여야 함)",
+   "de": "Abweichung von der dritten Ordnung bei f/2.5 (die Grenze muss sichtbar sein)",
+   "hi": "f/2.5 पर तृतीय कोटि से विचलन (सीमा दिखनी चाहिए)",
+   "fr": "écart au troisième ordre à f/2.5 (la limite doit apparaître)"
+  },
+  "Open the stop of a plano-convex lens from f/33 to f/2.5. Do the rays through the rim meet at the same place as the rays near the centre?": {
+   "ja": "平凸レンズの絞りを f/33 から f/2.5 まで開いていく。レンズの縁を通る光は、中心の近くを通る光と同じ所に集まる?",
+   "zh": "把平凸透镜的光阑从 f/33 开大到 f/2.5。经过透镜边缘的光线，会与靠近中心的光线会聚在同一处吗？",
+   "tw": "把平凸透鏡的光欄從 f/33 開大到 f/2.5。通過透鏡邊緣的光線，會與靠近中心的光線會聚在同一處嗎？",
+   "ko": "평볼록 렌즈의 조리개를 f/33에서 f/2.5까지 연다. 가장자리를 지나는 광선은 중심 근처를 지나는 광선과 같은 곳에서 만나는가?",
+   "de": "Die Blende einer plankonvexen Linse wird von f/33 auf f/2.5 geöffnet. Treffen sich die Randstrahlen am selben Ort wie die achsnahen Strahlen?",
+   "hi": "समतलोत्तल लेंस का द्वारक f/33 से f/2.5 तक खोलिए। क्या किनारे से गुज़रने वाली किरणें उसी जगह मिलती हैं जहाँ केंद्र के पास की किरणें?",
+   "fr": "Ouvrez le diaphragme d'une lentille plan-convexe de f/33 à f/2.5. Les rayons passant par le bord se rencontrent-ils au même endroit que les rayons proches du centre ?"
+  },
+  "Yes, at the same place": {
+   "ja": "同じ所に集まる",
+   "zh": "是，会聚在同一处",
+   "tw": "是，會聚在同一處",
+   "ko": "예, 같은 곳에서",
+   "de": "Ja, am selben Ort",
+   "hi": "हाँ, उसी जगह",
+   "fr": "Oui, au même endroit"
+  },
+  "Rim rays cross the axis earlier (closer to the lens)": {
+   "ja": "縁を通る光ほど手前(レンズ寄り)で軸を横切る",
+   "zh": "边缘光线更早穿过光轴(更靠近透镜)",
+   "tw": "邊緣光線更早穿過光軸(更靠近透鏡)",
+   "ko": "가장자리 광선은 축을 더 앞에서(렌즈에 더 가까이) 가로지른다",
+   "de": "Randstrahlen schneiden die Achse früher (näher an der Linse)",
+   "hi": "किनारे की किरणें अक्ष को पहले काटती हैं (लेंस के पास)",
+   "fr": "Les rayons du bord croisent l'axe plus tôt (plus près de la lentille)"
+  },
+  "Rim rays cross the axis further away": {
+   "ja": "縁を通る光ほど奥で軸を横切る",
+   "zh": "边缘光线在更远处穿过光轴",
+   "tw": "邊緣光線在更遠處穿過光軸",
+   "ko": "가장자리 광선은 축을 더 멀리서 가로지른다",
+   "de": "Randstrahlen schneiden die Achse weiter hinten",
+   "hi": "किनारे की किरणें अक्ष को और दूर काटती हैं",
+   "fr": "Les rayons du bord croisent l'axe plus loin"
+  },
+  "A spherical lens over-bends the rim rays. At f/2.5 the marginal focus lies 4.52 mm before the paraxial image. The third-order formula ε = 4·W040·ρ³/u′ matches real rays with ratio 1.001 at f/33 and 1.129 at f/2.5: right for small stops, off as the stop opens.": {
+   "ja": "球面のレンズは縁で光を曲げすぎる。f/2.5 では周辺光線の焦点が近軸の像面より 4.52 mm 手前になる。3 次の式 ε = 4·W040·ρ³/u′ は f/33 で実光線と比 1.001、f/2.5 で 1.129 —— 暗い絞りでは当たり、開くほど外れる。",
+   "zh": "球面透镜对边缘光线的偏折过大。在 f/2.5 时边缘焦点位于近轴像面之前 4.52 mm。三级公式 ε = 4·W040·ρ³/u′ 与实光线之比在 f/33 为 1.001，在 f/2.5 为 1.129：小光阑时正确，光阑开大后偏离。",
+   "tw": "球面透鏡對邊緣光線的偏折過大。在 f/2.5 時邊緣焦點位於近軸像面之前 4.52 mm。三階公式 ε = 4·W040·ρ³/u′ 與實光線之比在 f/33 為 1.001，在 f/2.5 為 1.129：小光欄時正確，光欄開大後偏離。",
+   "ko": "구면 렌즈는 가장자리 광선을 너무 많이 꺾는다. f/2.5에서 주변 광선 초점은 근축 상보다 4.52 mm 앞에 놓인다. 삼차 공식 ε = 4·W040·ρ³/u′는 실광선과 f/33에서 비 1.001, f/2.5에서 1.129로 맞는다: 조리개가 작을 때는 옳고, 열수록 벗어난다.",
+   "de": "Eine sphärische Linse bricht die Randstrahlen zu stark. Bei f/2.5 liegt der Randstrahlfokus 4.52 mm vor dem paraxialen Bild. Die Formel dritter Ordnung ε = 4·W040·ρ³/u′ trifft die realen Strahlen mit dem Verhältnis 1.001 bei f/33 und 1.129 bei f/2.5: richtig bei kleinen Blenden, daneben, wenn die Blende öffnet.",
+   "hi": "गोलीय लेंस किनारे की किरणों को ज़्यादा मोड़ देता है। f/2.5 पर सीमांत फ़ोकस उपाक्षीय प्रतिबिंब से 4.52 mm पहले पड़ता है। तृतीय-कोटि सूत्र ε = 4·W040·ρ³/u′ वास्तविक किरणों से f/33 पर 1.001 और f/2.5 पर 1.129 के अनुपात में मिलता है: छोटे द्वारक पर सही, द्वारक खुलने पर चूकता हुआ।",
+   "fr": "Une lentille sphérique courbe trop les rayons du bord. À f/2.5 le foyer marginal se trouve 4.52 mm avant l'image paraxiale. La formule du troisième ordre ε = 4·W040·ρ³/u′ suit les rayons réels avec un rapport 1.001 à f/33 et 1.129 à f/2.5 : juste aux petits diaphragmes, fausse quand il s'ouvre."
+  },
+  "wavefront error: W = W040 ρ⁴\ntransverse aberration: ε = (1/(n′u′)) ∂W/∂ρ = 4 W040 ρ³ / (n′u′)\nW040 grows as the 4th power of the stop radius a (ε as a³)": {
+   "ja": "波面のずれ: W = W040 ρ⁴\n横収差: ε = (1/(n′u′)) ∂W/∂ρ = 4 W040 ρ³ / (n′u′)\nW040 は絞りの半径 a の 4 乗に比例(ε は a³ に比例)",
+   "zh": "波前误差：W = W040 ρ⁴\n垂轴像差：ε = (1/(n′u′)) ∂W/∂ρ = 4 W040 ρ³ / (n′u′)\nW040 随光阑半径 a 的 4 次方增长(ε 随 a³)",
+   "tw": "波前誤差：W = W040 ρ⁴\n橫向像差：ε = (1/(n′u′)) ∂W/∂ρ = 4 W040 ρ³ / (n′u′)\nW040 隨光欄半徑 a 的 4 次方增長(ε 隨 a³)",
+   "ko": "파면 오차: W = W040 ρ⁴\n횡수차: ε = (1/(n′u′)) ∂W/∂ρ = 4 W040 ρ³ / (n′u′)\nW040은 조리개 반지름 a의 4제곱에 비례해 커진다(ε는 a³)",
+   "de": "Wellenfrontfehler: W = W040 ρ⁴\nQueraberration: ε = (1/(n′u′)) ∂W/∂ρ = 4 W040 ρ³ / (n′u′)\nW040 wächst mit der 4. Potenz des Blendenradius a (ε wie a³)",
+   "hi": "तरंगाग्र त्रुटि: W = W040 ρ⁴\nअनुप्रस्थ विपथन: ε = (1/(n′u′)) ∂W/∂ρ = 4 W040 ρ³ / (n′u′)\nW040 द्वारक त्रिज्या a की 4वीं घात के साथ बढ़ता है (ε, a³ के साथ)",
+   "fr": "erreur de front d'onde : W = W040 ρ⁴\naberration transversale : ε = (1/(n′u′)) ∂W/∂ρ = 4 W040 ρ³ / (n′u′)\nW040 croît comme la puissance 4 du rayon du diaphragme a (ε comme a³)"
+  },
+  "The third-order formula is only the next step beyond paraxial (ratio 1.129 at f/2.5). Once the pupil wavefront is tens of waves, no diffraction PSF can be made and band 3 switches to the geometric PSF (ray density ⊗ Airy). Only one colour (the d line) is traced.": {
+   "ja": "3 次の式は近軸の次の近似にすぎない(f/2.5 で比 1.129)。瞳の波面が数十波長を越えると回折の PSF は作れず、帯の③は幾何の PSF(光線の密度 ⊗ Airy)に切り替える。単色(d 線)だけを追っている。",
+   "zh": "三级公式只是近轴近似之后的下一级近似(f/2.5 时比值 1.129)。一旦光瞳波前达到数十个波长，就无法计算衍射 PSF，条带 3 便切换为几何 PSF(光线密度 ⊗ Airy)。只追迹了一种颜色(d 线)。",
+   "tw": "三階公式只是近軸近似之後的下一階近似(f/2.5 時比值 1.129)。一旦光瞳波前達到數十個波長，就無法計算繞射 PSF，條帶 3 便切換為幾何 PSF(光線密度 ⊗ Airy)。只追跡了一種顏色(d 線)。",
+   "ko": "삼차 공식은 근축 다음 단계의 근사일 뿐이다(f/2.5에서 비 1.129). 동공 파면이 수십 파장이 되면 회절 PSF를 만들 수 없어 띠 3은 기하 PSF(광선 밀도 ⊗ Airy)로 바뀐다. 한 가지 색(d 선)만 추적한다.",
+   "de": "Die Formel dritter Ordnung ist nur der nächste Schritt über paraxial hinaus (Verhältnis 1.129 bei f/2.5). Sobald die Pupillenwellenfront einige zehn Wellenlängen beträgt, lässt sich keine Beugungs-PSF mehr bilden, und Band 3 wechselt zur geometrischen PSF (Strahldichte ⊗ Airy). Nur eine Farbe (die d-Linie) wird verfolgt.",
+   "hi": "तृतीय-कोटि सूत्र उपाक्षीय से बस एक कदम आगे है (f/2.5 पर अनुपात 1.129)। जब पुतली का तरंगाग्र दसियों तरंगदैर्घ्य हो जाता है तो कोई विवर्तन PSF नहीं बनाई जा सकती और बैंड 3 ज्यामितीय PSF (किरण-घनत्व ⊗ एयरी) पर चला जाता है। केवल एक रंग (d रेखा) अनुरेखित है।",
+   "fr": "La formule du troisième ordre n'est que le pas suivant après le paraxial (rapport 1.129 à f/2.5). Dès que le front d'onde dans la pupille atteint des dizaines de longueurs d'onde, aucune PSF de diffraction n'est calculable et la bande 3 passe à la PSF géométrique (densité de rayons ⊗ Airy). Une seule couleur (la raie d) est tracée."
+  },
+  "stop radius a": {
+   "ja": "絞りの半径 a",
+   "zh": "光阑半径 a",
+   "tw": "光欄半徑 a",
+   "ko": "조리개 반지름 a",
+   "de": "Blendenradius a",
+   "hi": "द्वारक त्रिज्या a",
+   "fr": "rayon du diaphragme a"
+  },
+  "Coma (field)": {
+   "ja": "コマ収差(画角)",
+   "zh": "彗差(视场)",
+   "tw": "彗星像差(視場)",
+   "ko": "코마(화각)",
+   "de": "Koma (Feld)",
+   "hi": "कोमा (क्षेत्र)",
+   "fr": "Coma (champ)"
+  },
+  "Coma: even a lens built to focus perfectly on axis spreads oblique light into a comet. One pupil ring (one run of colours) becomes a circle on the image plane, traced twice (the colours repeat twice). Bigger rings give bigger circles further from the chief ray: the tail. Band 1: white = tangential third order 3·W131·ρ², grey = sagittal W131·ρ² (one third).": {
+   "ja": "コマ収差: 軸上では 1 点に集まるよう作った非球面レンズでも、斜めから来た光は彗星の形に広がる。瞳の 1 つの輪(同じ色の並び)は像面で円になり、その円を 2 周する(色が 2 回巡る)。輪が大きいほど円も大きく、主光線から遠くへずれる —— それが尾。帯の①: 白い線 = メリディオナル(縦)の扇の 3 次の式 3·W131·ρ²、灰の線 = サジタル(横)の W131·ρ²(1/3)。",
+   "zh": "彗差：即使是设计成在轴上完善成像的透镜，也会把斜入射光展成彗星状。光瞳上的一个环(一轮颜色)在像面上成为一个圆，且绕行两周(颜色重复两次)。环越大，圆越大，离主光线也越远：这就是彗尾。条带 1：白 = 子午方向的三级公式 3·W131·ρ²，灰 = 弧矢方向的 W131·ρ²(三分之一)。",
+   "tw": "彗星像差：即使是設計成在軸上完美成像的透鏡，也會把斜射光展成彗星狀。光瞳上的一個環(一輪顏色)在像面上成為一個圓，且繞行兩圈(顏色重複兩次)。環越大，圓越大，離主光線也越遠：這就是彗尾。條帶 1：白 = 子午方向的三階公式 3·W131·ρ²，灰 = 弧矢方向的 W131·ρ²(三分之一)。",
+   "ko": "코마: 축 위에서 완벽하게 초점을 맺도록 만든 렌즈라도 비스듬히 들어온 빛은 혜성 모양으로 퍼진다. 동공의 고리 하나(색의 한 줄)는 상면에서 원이 되고, 그 원을 두 번 돈다(색이 두 번 반복된다). 고리가 클수록 원도 크고 주광선에서 더 멀어진다: 그것이 꼬리다. 띠 1: 흰색 = 자오(T) 방향 삼차 공식 3·W131·ρ², 회색 = 구결(S) 방향 W131·ρ²(삼분의 일).",
+   "de": "Koma: Selbst eine Linse, die auf der Achse perfekt fokussiert, zieht schräg einfallendes Licht zu einem Kometen auseinander. Ein Pupillenring (eine Farbfolge) wird in der Bildebene zu einem Kreis, der zweimal durchlaufen wird (die Farben wiederholen sich zweimal). Größere Ringe geben größere Kreise weiter vom Hauptstrahl entfernt: der Schweif. Band 1: weiß = tangentiale dritte Ordnung 3·W131·ρ², grau = sagittal W131·ρ² (ein Drittel).",
+   "hi": "कोमा: अक्ष पर पूर्ण फ़ोकस के लिए बनाया गया लेंस भी तिरछे प्रकाश को धूमकेतु की तरह फैला देता है। पुतली का एक वलय (रंगों का एक क्रम) प्रतिबिंब तल पर एक वृत्त बनता है, जो दो बार घूमा जाता है (रंग दो बार दोहराते हैं)। बड़े वलय मुख्य किरण से और दूर बड़े वृत्त देते हैं: यही पूँछ है। बैंड 1: सफ़ेद = स्पर्शरेखीय तृतीय कोटि 3·W131·ρ², धूसर = धनुकीय W131·ρ² (एक-तिहाई)।",
+   "fr": "Coma : même une lentille conçue pour focaliser parfaitement sur l'axe étale la lumière oblique en comète. Un anneau de la pupille (une suite de couleurs) devient un cercle dans le plan image, parcouru deux fois (les couleurs se répètent deux fois). Les anneaux plus grands donnent des cercles plus grands, plus loin du rayon principal : la queue. Bande 1 : blanc = coma tangentielle du troisième ordre 3·W131·ρ², gris = sagittale W131·ρ² (un tiers)."
+  },
+  "plano-aspheric (exit k = −n²), f/4": {
+   "ja": "平凸の非球面(出口 k = −n²)、f/4",
+   "zh": "平面-非球面透镜(出射面 k = −n²)，f/4",
+   "tw": "平面-非球面透鏡(出射面 k = −n²)，f/4",
+   "ko": "평면-비구면(출사면 k = −n²), f/4",
+   "de": "plan-asphärisch (Austrittsfläche k = −n²), f/4",
+   "hi": "समतल-अगोलीय (निर्गम k = −n²), f/4",
+   "fr": "plan-asphérique (sortie k = −n²), f/4"
+  },
+  "field 0 → 10°": {
+   "ja": "画角 0 → 10°",
+   "zh": "视场 0 → 10°",
+   "tw": "視場 0 → 10°",
+   "ko": "화각 0 → 10°",
+   "de": "Feld 0 → 10°",
+   "hi": "क्षेत्र 0 → 10°",
+   "fr": "champ 0 → 10°"
+  },
+  "Real / third order (2° → 10°)": {
+   "ja": "実光線 / 3 次(2° → 10°)",
+   "zh": "实光线 / 三级(2° → 10°)",
+   "tw": "實光線 / 三階(2° → 10°)",
+   "ko": "실광선 / 삼차 공식(2° → 10°)",
+   "de": "Real / dritte Ordnung (2° → 10°)",
+   "hi": "वास्तविक / तृतीय कोटि (2° → 10°)",
+   "fr": "Réel / troisième ordre (2° → 10°)"
+  },
+  "Chief ray on the image plane": {
+   "ja": "主光線が像面に当たる点",
+   "zh": "主光线在像面上的落点",
+   "tw": "主光線在像面上的落點",
+   "ko": "상면 위의 주광선",
+   "de": "Hauptstrahl auf der Bildebene",
+   "hi": "प्रतिबिंब तल पर मुख्य किरण",
+   "fr": "Rayon principal sur le plan image"
+  },
+  "0°: a point (stigmatic on axis)": {
+   "ja": "0°: 1 点(このレンズは軸上で無収差)",
+   "zh": "0°：一个点(轴上无像差)",
+   "tw": "0°：一個點(軸上無像差)",
+   "ko": "0°: 한 점(축 위에서 무수차)",
+   "de": "0°: ein Punkt (stigmatisch auf der Achse)",
+   "hi": "0°: एक बिंदु (अक्ष पर स्टिग्मैटिक)",
+   "fr": "0° : un point (stigmatique sur l'axe)"
+  },
+  "2°: a comet tail appears": {
+   "ja": "2°: 彗星の尾が出る",
+   "zh": "2°：出现彗尾",
+   "tw": "2°：出現彗尾",
+   "ko": "2°: 혜성 꼬리가 나타난다",
+   "de": "2°: ein Kometenschweif erscheint",
+   "hi": "2°: धूमकेतु की पूँछ दिखती है",
+   "fr": "2° : une queue de comète apparaît"
+  },
+  "6°: the tail is circles traced twice": {
+   "ja": "6°: 尾 = 瞳の輪が 2 周する円の重なり",
+   "zh": "6°：彗尾是绕行两周的圆",
+   "tw": "6°：彗尾是繞行兩圈的圓",
+   "ko": "6°: 꼬리는 두 번 도는 원들이다",
+   "de": "6°: der Schweif besteht aus zweimal durchlaufenen Kreisen",
+   "hi": "6°: पूँछ दो बार घूमे गए वृत्त हैं",
+   "fr": "6° : la queue est faite de cercles parcourus deux fois"
+  },
+  "Tangential coma (real rays)": {
+   "ja": "メリディオナルのコマ(実光線)",
+   "zh": "子午彗差(实光线)",
+   "tw": "子午彗星像差(實光線)",
+   "ko": "자오(T) 코마(실광선)",
+   "de": "Tangentiale Koma (reale Strahlen)",
+   "hi": "स्पर्शरेखीय कोमा (वास्तविक किरणें)",
+   "fr": "Coma tangentielle (rayons réels)"
+  },
+  "RMS spot radius": {
+   "ja": "RMS スポット半径",
+   "zh": "RMS 光斑半径",
+   "tw": "RMS 光斑半徑",
+   "ko": "RMS 스폿 반지름",
+   "de": "RMS-Spotradius",
+   "hi": "RMS स्पॉट त्रिज्या",
+   "fr": "Rayon RMS de la tache"
+  },
+  "on-axis spot radius (spot_stats; stigmatic asphere)": {
+   "ja": "軸上のスポット半径(spot_stats、非球面の無収差)",
+   "zh": "轴上光斑半径(spot_stats；无像差非球面)",
+   "tw": "軸上光斑半徑(spot_stats；無像差非球面)",
+   "ko": "축 위 스폿 반지름(spot_stats; 무수차 비구면)",
+   "de": "Spotradius auf der Achse (spot_stats; stigmatische Asphäre)",
+   "hi": "अक्ष पर स्पॉट त्रिज्या (spot_stats; स्टिग्मैटिक अगोलीय)",
+   "fr": "rayon de la tache sur l'axe (spot_stats ; asphère stigmatique)"
+  },
+  "tangential coma: real rays (ray_fan) / 3·W131/(n′u′) (field 0.5 / 1 / 2°)": {
+   "ja": "メリディオナルのコマ: 実光線(ray_fan)/ 3·W131/(n′u′)(画角 0.5 / 1 / 2°)",
+   "zh": "子午彗差：实光线(ray_fan)/ 3·W131/(n′u′)(视场 0.5 / 1 / 2°)",
+   "tw": "子午彗星像差：實光線(ray_fan)/ 3·W131/(n′u′)(視場 0.5 / 1 / 2°)",
+   "ko": "자오(T) 코마: 실광선(ray_fan) / 3·W131/(n′u′)(화각 0.5 / 1 / 2°)",
+   "de": "tangentiale Koma: reale Strahlen (ray_fan) / 3·W131/(n′u′) (Feld 0.5 / 1 / 2°)",
+   "hi": "स्पर्शरेखीय कोमा: वास्तविक किरणें (ray_fan) / 3·W131/(n′u′) (क्षेत्र 0.5 / 1 / 2°)",
+   "fr": "coma tangentielle : rayons réels (ray_fan) / 3·W131/(n′u′) (champ 0.5 / 1 / 2°)"
+  },
+  "sagittal coma = one third of tangential (real rays only, field up to 1°)": {
+   "ja": "サジタルのコマ = メリディオナルの 1/3(実光線どうし、画角 1° 以下)",
+   "zh": "弧矢彗差 = 子午彗差的三分之一(仅用实光线，视场不超过 1°)",
+   "tw": "弧矢彗星像差 = 子午彗星像差的三分之一(僅用實光線，視場不超過 1°)",
+   "ko": "구결(S) 코마 = 자오(T) 코마의 삼분의 일(실광선끼리, 화각 1° 이하)",
+   "de": "sagittale Koma = ein Drittel der tangentialen (nur reale Strahlen, Feld bis 1°)",
+   "hi": "धनुकीय कोमा = स्पर्शरेखीय का एक-तिहाई (केवल वास्तविक किरणें, क्षेत्र 1° तक)",
+   "fr": "coma sagittale = un tiers de la tangentielle (rayons réels seulement, champ jusqu'à 1°)"
+  },
+  "geometric PSF (ray density ⊗ airy_pattern) vs diffraction PSF (psf_field_grid): 50 % / 80 % encircled radius ratio": {
+   "ja": "幾何の PSF(光線の密度 ⊗ airy_pattern)と回折の PSF(psf_field_grid)の 50 % / 80 % 集中半径の比",
+   "zh": "几何 PSF(光线密度 ⊗ airy_pattern)与衍射 PSF(psf_field_grid)：50 % / 80 % 环围能量半径之比",
+   "tw": "幾何 PSF(光線密度 ⊗ airy_pattern)與繞射 PSF(psf_field_grid)：50 % / 80 % 包圍能量半徑之比",
+   "ko": "기하 PSF(광선 밀도 ⊗ airy_pattern) 대 회절 PSF(psf_field_grid): 50 % / 80 % 포함 에너지 반지름의 비",
+   "de": "geometrische PSF (Strahldichte ⊗ airy_pattern) vs. Beugungs-PSF (psf_field_grid): Verhältnis der 50 % / 80 % Einschlussradien",
+   "hi": "ज्यामितीय PSF (किरण-घनत्व ⊗ airy_pattern) बनाम विवर्तन PSF (psf_field_grid): 50 % / 80 % परिबद्ध-ऊर्जा त्रिज्या का अनुपात",
+   "fr": "PSF géométrique (densité de rayons ⊗ airy_pattern) vs PSF de diffraction (psf_field_grid) : rapport des rayons d'énergie encerclée à 50 % / 80 %"
+  },
+  "departure from third order at 10° (real / third order)": {
+   "ja": "10° で 3 次の式から外れる量(実光線 / 3 次の式)",
+   "zh": "10° 处偏离三级公式的量(实光线 / 三级)",
+   "tw": "10° 處偏離三階公式的量(實光線 / 三階)",
+   "ko": "10°에서 삼차 공식으로부터의 벗어남(실광선 / 삼차 공식)",
+   "de": "Abweichung von der dritten Ordnung bei 10° (real / dritte Ordnung)",
+   "hi": "10° पर तृतीय कोटि से विचलन (वास्तविक / तृतीय कोटि)",
+   "fr": "écart au troisième ordre à 10° (réel / troisième ordre)"
+  },
+  "A lens shaped to focus perfectly on axis gets parallel light at a slant (field 0 → 10°). What does the image look like?": {
+   "ja": "軸上では 1 点に集まるよう作った非球面レンズに、斜め(画角 0 → 10°)から平行光を入れる。像面の像はどうなる?",
+   "zh": "一片设计成在轴上完善成像的透镜，接收斜入射的平行光(视场 0 → 10°)。像会是什么样？",
+   "tw": "一片設計成在軸上完美成像的透鏡，接收斜射的平行光(視場 0 → 10°)。像會是什麼樣？",
+   "ko": "축 위에서 완벽하게 초점을 맺도록 만든 렌즈에 평행광이 비스듬히(화각 0 → 10°) 들어온다. 상은 어떤 모양일까?",
+   "de": "Eine Linse, die auf der Achse perfekt fokussiert, erhält schräg einfallendes Parallellicht (Feld 0 → 10°). Wie sieht das Bild aus?",
+   "hi": "अक्ष पर पूर्ण फ़ोकस के लिए बना लेंस तिरछा समांतर प्रकाश पाता है (क्षेत्र 0 → 10°)। प्रतिबिंब कैसा दिखता है?",
+   "fr": "Une lentille taillée pour focaliser parfaitement sur l'axe reçoit de la lumière parallèle inclinée (champ 0 → 10°). À quoi ressemble l'image ?"
+  },
+  "Still a point": {
+   "ja": "1 点のまま",
+   "zh": "仍是一个点",
+   "tw": "仍是一個點",
+   "ko": "여전히 한 점",
+   "de": "Immer noch ein Punkt",
+   "hi": "अभी भी एक बिंदु",
+   "fr": "Toujours un point"
+  },
+  "A round blur of the same size everywhere": {
+   "ja": "同じ大きさの丸にぼける",
+   "zh": "处处大小相同的圆形模糊斑",
+   "tw": "處處大小相同的圓形模糊斑",
+   "ko": "어디서나 같은 크기의 둥근 흐림",
+   "de": "Ein runder Unschärfefleck gleicher Größe überall",
+   "hi": "हर जगह एक ही आकार का गोल धब्बा",
+   "fr": "Un flou rond de même taille partout"
+  },
+  "A comet shape (one pupil ring becomes a circle traced twice)": {
+   "ja": "彗星の形に広がる(瞳の 1 つの輪が像で 2 周する円になる)",
+   "zh": "彗星状(光瞳上的一个环成为绕行两周的圆)",
+   "tw": "彗星狀(光瞳上的一個環成為繞行兩圈的圓)",
+   "ko": "혜성 모양(동공의 고리 하나가 두 번 도는 원이 된다)",
+   "de": "Eine Kometenform (ein Pupillenring wird zu einem zweimal durchlaufenen Kreis)",
+   "hi": "धूमकेतु का आकार (पुतली का एक वलय दो बार घूमा गया वृत्त बनता है)",
+   "fr": "Une forme de comète (un anneau de la pupille devient un cercle parcouru deux fois)"
+  },
+  "The on-axis spot radius is 9.2e-12 µm (stigmatic), but for oblique light each pupil ring makes a circle of a different size, shifted, and they pile up into a comet. Tangential coma is 3·W131/u′, sagittal one third of that. At 10° the tangential coma is 1284.4 µm (real rays), ratio 1.059 to third order.": {
+   "ja": "軸上のスポット半径は 9.2e-12 µm(無収差)だが、斜めの光では瞳の輪ごとに大きさの違う円がずれて重なり、彗星の形になる。メリディオナルのコマは 3·W131/u′、サジタルはその 1/3。10° でのメリディオナルのコマは 1284.4 µm(実光線)、3 次の式との比 1.059。",
+   "zh": "轴上光斑半径为 9.2e-12 µm(无像差)，但对斜入射光，每个光瞳环各成一个大小不同、位置错开的圆，叠成彗星状。子午彗差为 3·W131/u′，弧矢彗差为其三分之一。10° 时子午彗差为 1284.4 µm(实光线)，与三级公式之比为 1.059。",
+   "tw": "軸上光斑半徑為 9.2e-12 µm(無像差)，但對斜射光，每個光瞳環各成一個大小不同、位置錯開的圓，疊成彗星狀。子午彗星像差為 3·W131/u′，弧矢彗星像差為其三分之一。10° 時子午彗星像差為 1284.4 µm(實光線)，與三階公式之比為 1.059。",
+   "ko": "축 위 스폿 반지름은 9.2e-12 µm(무수차)이지만, 비스듬한 빛에서는 동공의 고리마다 크기가 다른 원이 어긋나게 생겨 혜성 모양으로 쌓인다. 자오(T) 코마는 3·W131/u′, 구결(S) 코마는 그 삼분의 일. 10°에서 자오(T) 코마는 1284.4 µm(실광선), 삼차 공식과의 비 1.059.",
+   "de": "Der Spotradius auf der Achse beträgt 9.2e-12 µm (stigmatisch), doch bei schrägem Licht erzeugt jeder Pupillenring einen Kreis anderer Größe, versetzt, und sie häufen sich zu einem Kometen. Die tangentiale Koma ist 3·W131/u′, die sagittale ein Drittel davon. Bei 10° beträgt die tangentiale Koma 1284.4 µm (reale Strahlen), Verhältnis 1.059 zur dritten Ordnung.",
+   "hi": "अक्ष पर स्पॉट त्रिज्या 9.2e-12 µm है (स्टिग्मैटिक), पर तिरछे प्रकाश में पुतली का हर वलय अलग आकार का, खिसका हुआ वृत्त बनाता है और वे मिलकर धूमकेतु बन जाते हैं। स्पर्शरेखीय कोमा 3·W131/u′ है, धनुकीय उसका एक-तिहाई। 10° पर स्पर्शरेखीय कोमा 1284.4 µm है (वास्तविक किरणें), तृतीय कोटि से अनुपात 1.059।",
+   "fr": "Le rayon de la tache sur l'axe est 9.2e-12 µm (stigmatique), mais en lumière oblique chaque anneau de la pupille forme un cercle de taille différente, décalé, et ils s'empilent en comète. La coma tangentielle vaut 3·W131/u′, la sagittale un tiers de cela. À 10° la coma tangentielle est de 1284.4 µm (rayons réels), rapport 1.059 au troisième ordre."
+  },
+  "W = W131 H ρ³ cos φ (H proportional to the field)\ntangential coma: 3 W131 / (n′u′)\nsagittal coma: W131 / (n′u′) (one third)": {
+   "ja": "W = W131 H ρ³ cos φ(H = 画角に比例)\nメリディオナルのコマ: 3 W131 / (n′u′)\nサジタルのコマ: W131 / (n′u′)(1/3)",
+   "zh": "W = W131 H ρ³ cos φ(H 与视场成正比)\n子午彗差：3 W131 / (n′u′)\n弧矢彗差：W131 / (n′u′)(三分之一)",
+   "tw": "W = W131 H ρ³ cos φ(H 與視場成正比)\n子午彗星像差：3 W131 / (n′u′)\n弧矢彗星像差：W131 / (n′u′)(三分之一)",
+   "ko": "W = W131 H ρ³ cos φ(H는 화각에 비례)\n자오(T) 코마: 3 W131 / (n′u′)\n구결(S) 코마: W131 / (n′u′)(삼분의 일)",
+   "de": "W = W131 H ρ³ cos φ (H proportional zum Feld)\ntangentiale Koma: 3 W131 / (n′u′)\nsagittale Koma: W131 / (n′u′) (ein Drittel)",
+   "hi": "W = W131 H ρ³ cos φ (H क्षेत्र के समानुपाती)\nस्पर्शरेखीय कोमा: 3 W131 / (n′u′)\nधनुकीय कोमा: W131 / (n′u′) (एक-तिहाई)",
+   "fr": "W = W131 H ρ³ cos φ (H proportionnel au champ)\ncoma tangentielle : 3 W131 / (n′u′)\ncoma sagittale : W131 / (n′u′) (un tiers)"
+  },
+  "Third order is a small-field approximation (ratio 1.059 at 10°). Below 0.5° the ratio is near 0/0 and shown as '—'. The asphere only corrects the single on-axis point, not oblique light.": {
+   "ja": "3 次の式は画角が小さいときの近似(10° で比 1.059)。画角 0.5° より小さいと比は 0/0 に近く意味が無いので「—」で出す。非球面は軸上の 1 点だけを無収差にしていて、斜めの光には効かない。",
+   "zh": "三级公式是小视场近似(10° 时比值 1.059)。低于 0.5° 时比值接近 0/0，显示为“—”。非球面只校正轴上的一个点，不校正斜入射光。",
+   "tw": "三階公式是小視場近似(10° 時比值 1.059)。低於 0.5° 時比值接近 0/0，顯示為「—」。非球面只校正軸上的一個點，不校正斜射光。",
+   "ko": "삼차 공식은 화각이 작을 때의 근사다(10°에서 비 1.059). 0.5° 아래에서는 비가 0/0에 가까워 '—'로 표시한다. 비구면은 축 위의 한 점만 보정하고 비스듬한 빛은 보정하지 않는다.",
+   "de": "Die dritte Ordnung ist eine Näherung für kleine Felder (Verhältnis 1.059 bei 10°). Unter 0.5° liegt das Verhältnis nahe 0/0 und wird als '—' gezeigt. Die Asphäre korrigiert nur den einen Punkt auf der Achse, nicht das schräge Licht.",
+   "hi": "तृतीय कोटि छोटे क्षेत्र का सन्निकटन है (10° पर अनुपात 1.059)। 0.5° से नीचे अनुपात 0/0 के पास है और '—' दिखाया जाता है। अगोलीय पृष्ठ केवल अक्ष के एक बिंदु को सुधारता है, तिरछे प्रकाश को नहीं।",
+   "fr": "Le troisième ordre est une approximation aux petits champs (rapport 1.059 à 10°). Sous 0.5° le rapport est proche de 0/0 et affiché « — ». L'asphère ne corrige que le seul point sur l'axe, pas la lumière oblique."
+  },
+  "field angle θ": {
+   "ja": "画角 θ",
+   "zh": "视场角 θ",
+   "tw": "視場角 θ",
+   "ko": "화각 θ",
+   "de": "Feldwinkel θ",
+   "hi": "क्षेत्र कोण θ",
+   "fr": "angle de champ θ"
+  },
+  "Astigmatism & field curvature (field)": {
+   "ja": "非点収差・像面湾曲(画角)",
+   "zh": "像散与场曲(视场)",
+   "tw": "像散與場曲(視場)",
+   "ko": "비점수차와 상면 만곡(화각)",
+   "de": "Astigmatismus & Bildfeldwölbung (Feld)",
+   "hi": "अबिंदुकता और क्षेत्र वक्रता (क्षेत्र)",
+   "fr": "Astigmatisme et courbure de champ (champ)"
+  },
+  "Astigmatism and field curvature: for oblique light the tangential (red) and sagittal (blue) fans focus at different places. Widening the field traces two inward-curving image surfaces (pale = third-order prediction, green = Petzval surface). Panel: at the red focus the image is a horizontal line, at the blue focus a vertical one (focal lines).": {
+   "ja": "非点収差と像面湾曲: 斜めの光では、縦の面(メリディオナル、赤)と横の面(サジタル、青)の光が別々の所で焦点を結ぶ。画角を広げると 2 つの焦点の軌跡が手前へ曲がった 2 本の像面になる(淡い線 = 3 次の式の予測、緑 = ペッツバール面)。下の板(拡大): 赤の焦点に置いた像は横に伸びた線、青の焦点では縦の線(焦線)。",
+   "zh": "像散与场曲：对斜入射光，子午(红)光线扇与弧矢(蓝)光线扇在不同位置聚焦。扩大视场时，两条焦点轨迹描出两个向内弯曲的像面(淡色 = 三级公式的预测，绿 = 匹兹伐面)。面板：在红色焦点处像是一条水平线，在蓝色焦点处是一条竖直线(焦线)。",
+   "tw": "像散與場曲：對斜射光，子午(紅)光線扇與弧矢(藍)光線扇在不同位置聚焦。擴大視場時，兩條焦點軌跡描出兩個向內彎曲的像面(淡色 = 三階公式的預測，綠 = Petzval 面)。面板：在紅色焦點處像是一條水平線，在藍色焦點處是一條鉛直線(焦線)。",
+   "ko": "비점수차와 상면 만곡: 비스듬한 빛에서는 자오(빨강) 광선다발과 구결(파랑) 광선다발이 서로 다른 곳에 초점을 맺는다. 화각을 넓히면 안쪽으로 굽은 두 상면이 그려진다(연한 색 = 삼차 공식의 예측, 초록 = 페츠발 면). 패널: 빨간 초점에서 상은 가로선, 파란 초점에서는 세로선이다(초선).",
+   "de": "Astigmatismus und Bildfeldwölbung: Bei schrägem Licht fokussieren das tangentiale (rot) und das sagittale (blau) Strahlenbüschel an verschiedenen Orten. Mit wachsendem Feld zeichnen sich zwei nach innen gewölbte Bildflächen ab (blass = Vorhersage dritter Ordnung, grün = Petzval-Fläche). Tafel: Im roten Fokus ist das Bild eine waagerechte Linie, im blauen eine senkrechte (Brennlinien).",
+   "hi": "अबिंदुकता और क्षेत्र वक्रता: तिरछे प्रकाश में स्पर्शरेखीय (लाल) और धनुकीय (नीला) किरण-पंखे अलग-अलग जगह फ़ोकस होते हैं। क्षेत्र चौड़ा करने पर भीतर की ओर मुड़े दो प्रतिबिंब पृष्ठ बनते हैं (हल्का = तृतीय-कोटि पूर्वानुमान, हरा = पेट्ज़वाल पृष्ठ)। पैनल: लाल फ़ोकस पर प्रतिबिंब क्षैतिज रेखा है, नीले फ़ोकस पर ऊर्ध्वाधर रेखा (फ़ोकल रेखाएँ)।",
+   "fr": "Astigmatisme et courbure de champ : en lumière oblique, les faisceaux tangentiel (rouge) et sagittal (bleu) focalisent à des endroits différents. En élargissant le champ, on trace deux surfaces image courbées vers l'intérieur (pâle = prédiction du troisième ordre, vert = surface de Petzval). Panneau : au foyer rouge l'image est une ligne horizontale, au foyer bleu une ligne verticale (focales)."
+  },
+  "singlet + stop 20 mm ahead (f/12.5)": {
+   "ja": "単レンズ + 20 mm 前の絞り(f/12.5)",
+   "zh": "单透镜 + 前方 20 mm 处的光阑(f/12.5)",
+   "tw": "單透鏡 + 前方 20 mm 處的光欄(f/12.5)",
+   "ko": "단렌즈 + 20 mm 앞의 조리개(f/12.5)",
+   "de": "Einzellinse + Blende 20 mm davor (f/12.5)",
+   "hi": "एकल लेंस + 20 mm आगे द्वारक (f/12.5)",
+   "fr": "lentille simple + diaphragme 20 mm en avant (f/12.5)"
+  },
+  "field 0 → 20°": {
+   "ja": "画角 0 → 20°",
+   "zh": "视场 0 → 20°",
+   "tw": "視場 0 → 20°",
+   "ko": "화각 0 → 20°",
+   "de": "Feld 0 → 20°",
+   "hi": "क्षेत्र 0 → 20°",
+   "fr": "champ 0 → 20°"
+  },
+  "T: real / third order (20°)": {
+   "ja": "T: 実光線 / 3 次(20°)",
+   "zh": "T：实光线 / 三级(20°)",
+   "tw": "T：實光線 / 三階(20°)",
+   "ko": "T: 실광선 / 삼차 공식(20°)",
+   "de": "T: real / dritte Ordnung (20°)",
+   "hi": "T: वास्तविक / तृतीय कोटि (20°)",
+   "fr": "T : réel / troisième ordre (20°)"
+  },
+  "T image surface (real rays)": {
+   "ja": "T 像面(実光線)",
+   "zh": "T 像面(实光线)",
+   "tw": "T 像面(實光線)",
+   "ko": "T 상면(실광선)",
+   "de": "T-Bildfläche (reale Strahlen)",
+   "hi": "T प्रतिबिंब पृष्ठ (वास्तविक किरणें)",
+   "fr": "Surface image T (rayons réels)"
+  },
+  "S image surface (real rays)": {
+   "ja": "S 像面(実光線)",
+   "zh": "S 像面(实光线)",
+   "tw": "S 像面(實光線)",
+   "ko": "S 상면(실광선)",
+   "de": "S-Bildfläche (reale Strahlen)",
+   "hi": "S प्रतिबिंब पृष्ठ (वास्तविक किरणें)",
+   "fr": "Surface image S (rayons réels)"
+  },
+  "T, third order": {
+   "ja": "T の 3 次の式",
+   "zh": "T，三级",
+   "tw": "T，三階",
+   "ko": "T, 삼차 공식",
+   "de": "T, dritte Ordnung",
+   "hi": "T, तृतीय कोटि",
+   "fr": "T, troisième ordre"
+  },
+  "S, third order": {
+   "ja": "S の 3 次の式",
+   "zh": "S，三级",
+   "tw": "S，三階",
+   "ko": "S, 삼차 공식",
+   "de": "S, dritte Ordnung",
+   "hi": "S, तृतीय कोटि",
+   "fr": "S, troisième ordre"
+  },
+  "Petzval surface (third order)": {
+   "ja": "ペッツバール面(3 次の式)",
+   "zh": "匹兹伐面(三级)",
+   "tw": "Petzval 面(三階)",
+   "ko": "페츠발 면(삼차 공식)",
+   "de": "Petzval-Fläche (dritte Ordnung)",
+   "hi": "पेट्ज़वाल पृष्ठ (तृतीय कोटि)",
+   "fr": "Surface de Petzval (troisième ordre)"
+  },
+  "0°: T and S coincide": {
+   "ja": "0°: T と S が一致",
+   "zh": "0°：T 与 S 重合",
+   "tw": "0°：T 與 S 重合",
+   "ko": "0°: T와 S가 일치",
+   "de": "0°: T und S fallen zusammen",
+   "hi": "0°: T और S संपाती",
+   "fr": "0° : T et S coïncident"
+  },
+  "8°: T and S foci separate": {
+   "ja": "8°: T と S の焦点が離れる",
+   "zh": "8°：T 与 S 的焦点分开",
+   "tw": "8°：T 與 S 的焦點分開",
+   "ko": "8°: T와 S의 초점이 갈라진다",
+   "de": "8°: T- und S-Fokus trennen sich",
+   "hi": "8°: T और S के फ़ोकस अलग होते हैं",
+   "fr": "8° : les foyers T et S se séparent"
+  },
+  "14°: both image surfaces curve inward": {
+   "ja": "14°: 2 本の像面が手前へ曲がる",
+   "zh": "14°：两个像面都向内弯曲",
+   "tw": "14°：兩個像面都向內彎曲",
+   "ko": "14°: 두 상면이 모두 안쪽으로 굽는다",
+   "de": "14°: beide Bildflächen wölben sich nach innen",
+   "hi": "14°: दोनों प्रतिबिंब पृष्ठ भीतर की ओर मुड़ते हैं",
+   "fr": "14° : les deux surfaces image se courbent vers l'intérieur"
+  },
+  "Limit: T surface off third order by 5 % (9.7°)": {
+   "ja": "限界: T 像面が 3 次の式から 5 % 外れる(9.7°)",
+   "zh": "局限：T 像面偏离三级公式 5 %(9.7°)",
+   "tw": "限制：T 像面偏離三階公式 5 %(9.7°)",
+   "ko": "한계: T 상면이 삼차 공식에서 5 % 벗어남(9.7°)",
+   "de": "Grenze: T-Fläche um 5 % neben der dritten Ordnung (9.7°)",
+   "hi": "सीमा: T पृष्ठ तृतीय कोटि से 5 % चूकता है (9.7°)",
+   "fr": "Limite : la surface T s'écarte du troisième ordre de 5 % (9.7°)"
+  },
+  "T focus shift (real rays)": {
+   "ja": "T の焦点のずれ(実光線)",
+   "zh": "T 焦点偏移(实光线)",
+   "tw": "T 焦點偏移(實光線)",
+   "ko": "T 초점의 이동(실광선)",
+   "de": "T-Fokusverschiebung (reale Strahlen)",
+   "hi": "T फ़ोकस विस्थापन (वास्तविक किरणें)",
+   "fr": "Décalage du foyer T (rayons réels)"
+  },
+  "S focus shift (real rays)": {
+   "ja": "S の焦点のずれ(実光線)",
+   "zh": "S 焦点偏移(实光线)",
+   "tw": "S 焦點偏移(實光線)",
+   "ko": "S 초점의 이동(실광선)",
+   "de": "S-Fokusverschiebung (reale Strahlen)",
+   "hi": "S फ़ोकस विस्थापन (वास्तविक किरणें)",
+   "fr": "Décalage du foyer S (rayons réels)"
+  },
+  "T: real / third order": {
+   "ja": "T: 実光線 / 3 次の式",
+   "zh": "T：实光线 / 三级",
+   "tw": "T：實光線 / 三階",
+   "ko": "T: 실광선 / 삼차 공식",
+   "de": "T: real / dritte Ordnung",
+   "hi": "T: वास्तविक / तृतीय कोटि",
+   "fr": "T : réel / troisième ordre"
+  },
+  "T and S foci: crossing of two close real rays (trace_rays) vs −2(W220+W222)/u′² and −2·W220/u′² (field 1 / 2°)": {
+   "ja": "T・S の焦点: 2 本の近い実光線の交点(trace_rays)と −2(W220+W222)/u′²・−2·W220/u′²(画角 1 / 2°)",
+   "zh": "T 与 S 的焦点：两条邻近实光线的交点(trace_rays)与 −2(W220+W222)/u′² 及 −2·W220/u′²(视场 1 / 2°)",
+   "tw": "T 與 S 的焦點：兩條鄰近實光線的交點(trace_rays)與 −2(W220+W222)/u′² 及 −2·W220/u′²(視場 1 / 2°)",
+   "ko": "T·S 초점: 가까운 두 실광선의 교점(trace_rays) 대 −2(W220+W222)/u′² 및 −2·W220/u′²(화각 1 / 2°)",
+   "de": "T- und S-Fokus: Schnittpunkt zweier benachbarter realer Strahlen (trace_rays) vs. −2(W220+W222)/u′² und −2·W220/u′² (Feld 1 / 2°)",
+   "hi": "T और S के फ़ोकस: दो निकट वास्तविक किरणों का प्रतिच्छेदन (trace_rays) बनाम −2(W220+W222)/u′² और −2·W220/u′² (क्षेत्र 1 / 2°)",
+   "fr": "foyers T et S : intersection de deux rayons réels voisins (trace_rays) vs −2(W220+W222)/u′² et −2·W220/u′² (champ 1 / 2°)"
+  },
+  "3-to-1 rule: (T − P) / (S − P) = 3 (real-ray foci; P = third-order Petzval surface)": {
+   "ja": "3 対 1 の規則: (T − P) / (S − P) = 3(実光線の焦点、P = 3 次の式のペッツバール面)",
+   "zh": "3 比 1 法则：(T − P) / (S − P) = 3(实光线焦点；P = 三级公式的匹兹伐面)",
+   "tw": "3 比 1 法則：(T − P) / (S − P) = 3(實光線焦點；P = 三階公式的 Petzval 面)",
+   "ko": "3 대 1 규칙: (T − P) / (S − P) = 3(실광선 초점; P = 삼차 공식의 페츠발 면)",
+   "de": "3-zu-1-Regel: (T − P) / (S − P) = 3 (Fokus realer Strahlen; P = Petzval-Fläche dritter Ordnung)",
+   "hi": "3-से-1 नियम: (T − P) / (S − P) = 3 (वास्तविक-किरण फ़ोकस; P = तृतीय-कोटि पेट्ज़वाल पृष्ठ)",
+   "fr": "règle 3-pour-1 : (T − P) / (S − P) = 3 (foyers de rayons réels ; P = surface de Petzval du troisième ordre)"
+  },
+  "S surface: real / third order (20°)": {
+   "ja": "S 像面: 実光線 / 3 次の式(20°)",
+   "zh": "S 像面：实光线 / 三级(20°)",
+   "tw": "S 像面：實光線 / 三階(20°)",
+   "ko": "S 상면: 실광선 / 삼차 공식(20°)",
+   "de": "S-Fläche: real / dritte Ordnung (20°)",
+   "hi": "S पृष्ठ: वास्तविक / तृतीय कोटि (20°)",
+   "fr": "Surface S : réel / troisième ordre (20°)"
+  },
+  "limit: is the T surface real / third order within 10% of 1 at 20°?": {
+   "ja": "限界: T 像面の実光線 / 3 次の式が 20° で 1 の 10% 以内か",
+   "zh": "局限：20° 时 T 像面的 实光线 / 三级 是否在 1 的 10% 以内？",
+   "tw": "限制：20° 時 T 像面的 實光線 / 三階 是否在 1 的 10% 以內？",
+   "ko": "한계: 20°에서 T 상면의 실광선 / 삼차 공식 비가 1의 10% 이내인가?",
+   "de": "Grenze: Liegt bei 20° das Verhältnis real / dritte Ordnung der T-Fläche innerhalb von 10% um 1?",
+   "hi": "सीमा: क्या T पृष्ठ का वास्तविक / तृतीय कोटि 20° पर 1 के 10% के भीतर है?",
+   "fr": "limite : le rapport réel / troisième ordre de la surface T est-il à 10% de 1 à 20° ?"
+  },
+  "A singlet with the stop moved ahead; the field goes 0 → 20°. What happens to the foci of the tangential (T) and sagittal (S) fans?": {
+   "ja": "絞りを前に出した単レンズで、画角を 0 → 20° と広げる。縦の面(T)と横の面(S)の光の焦点はどうなる?",
+   "zh": "一片光阑前移的单透镜，视场从 0 → 20°。子午(T)与弧矢(S)光线扇的焦点会怎样？",
+   "tw": "一片光欄前移的單透鏡，視場從 0 → 20°。子午(T)與弧矢(S)光線扇的焦點會怎樣？",
+   "ko": "조리개를 앞으로 옮긴 단렌즈에서 화각을 0 → 20°로 넓힌다. 자오(T) 광선다발과 구결(S) 광선다발의 초점은 어떻게 되는가?",
+   "de": "Eine Einzellinse mit vorgesetzter Blende; das Feld geht 0 → 20°. Was geschieht mit den Foki des tangentialen (T) und des sagittalen (S) Strahlenbüschels?",
+   "hi": "द्वारक आगे खिसकाया हुआ एकल लेंस; क्षेत्र 0 → 20° जाता है। स्पर्शरेखीय (T) और धनुकीय (S) किरण-पंखों के फ़ोकस का क्या होता है?",
+   "fr": "Une lentille simple avec le diaphragme avancé ; le champ va de 0 → 20°. Qu'arrive-t-il aux foyers des faisceaux tangentiel (T) et sagittal (S) ?"
+  },
+  "Both stay on one flat image plane": {
+   "ja": "どちらも同じ平らな像面に集まる",
+   "zh": "两者都留在同一个平的像面上",
+   "tw": "兩者都留在同一個平的像面上",
+   "ko": "둘 다 하나의 평평한 상면에 머문다",
+   "de": "Beide bleiben auf einer ebenen Bildebene",
+   "hi": "दोनों एक ही समतल प्रतिबिंब तल पर रहते हैं",
+   "fr": "Les deux restent sur un même plan image plat"
+  },
+  "They curve inwards separately (T moves more than S)": {
+   "ja": "別々に手前へ曲がる(T の方が S より大きくずれる)",
+   "zh": "各自向内弯曲(T 比 S 移动得更多)",
+   "tw": "各自向內彎曲(T 比 S 移動得更多)",
+   "ko": "따로따로 안쪽으로 굽는다(T가 S보다 더 많이 움직인다)",
+   "de": "Sie wölben sich getrennt nach innen (T wandert stärker als S)",
+   "hi": "वे अलग-अलग भीतर की ओर मुड़ते हैं (T, S से ज़्यादा खिसकता है)",
+   "fr": "Ils se courbent vers l'intérieur séparément (T bouge plus que S)"
+  },
+  "Both curve away from the lens": {
+   "ja": "どちらも奥へ曲がる",
+   "zh": "两者都向远离透镜的方向弯曲",
+   "tw": "兩者都向遠離透鏡的方向彎曲",
+   "ko": "둘 다 렌즈에서 멀어지는 쪽으로 굽는다",
+   "de": "Beide wölben sich von der Linse weg",
+   "hi": "दोनों लेंस से दूर मुड़ते हैं",
+   "fr": "Les deux se courbent en s'éloignant de la lentille"
+  },
+  "At 20° the T focus moves 22.18 mm and the S focus 10.50 mm towards the lens (real rays). Measured from the Petzval surface P, T − P = 3(S − P) (3-to-1 rule, within 0.6% up to 2°). Between T and S the image is a line (focal line).": {
+   "ja": "20° で T の焦点は 22.18 mm、S は 10.50 mm 手前へずれる(実光線)。ペッツバール面 P から測ると T − P = 3(S − P)(3 対 1 の規則、2° 以下で 0.6% 以内)。T と S の間では像が線(焦線)になる。",
+   "zh": "20° 时 T 焦点向透镜移动 22.18 mm，S 焦点移动 10.50 mm(实光线)。从匹兹伐面 P 量起，T − P = 3(S − P)(3 比 1 法则，2° 以内误差在 0.6% 之内)。在 T 与 S 之间像是一条线(焦线)。",
+   "tw": "20° 時 T 焦點向透鏡移動 22.18 mm，S 焦點移動 10.50 mm(實光線)。從 Petzval 面 P 量起，T − P = 3(S − P)(3 比 1 法則，2° 以內誤差在 0.6% 之內)。在 T 與 S 之間像是一條線(焦線)。",
+   "ko": "20°에서 T 초점은 22.18 mm, S 초점은 10.50 mm 렌즈 쪽으로 움직인다(실광선). 페츠발 면 P에서 재면 T − P = 3(S − P)(3 대 1 규칙, 2°까지 0.6% 이내). T와 S 사이에서 상은 선이다(초선).",
+   "de": "Bei 20° wandert der T-Fokus 22.18 mm und der S-Fokus 10.50 mm zur Linse hin (reale Strahlen). Von der Petzval-Fläche P aus gemessen gilt T − P = 3(S − P) (3-zu-1-Regel, innerhalb 0.6% bis 2°). Zwischen T und S ist das Bild eine Linie (Brennlinie).",
+   "hi": "20° पर T फ़ोकस 22.18 mm और S फ़ोकस 10.50 mm लेंस की ओर खिसकता है (वास्तविक किरणें)। पेट्ज़वाल पृष्ठ P से मापने पर T − P = 3(S − P) (3-से-1 नियम, 2° तक 0.6% के भीतर)। T और S के बीच प्रतिबिंब एक रेखा है (फ़ोकल रेखा)।",
+   "fr": "À 20° le foyer T se déplace de 22.18 mm et le foyer S de 10.50 mm vers la lentille (rayons réels). Mesuré depuis la surface de Petzval P, T − P = 3(S − P) (règle 3-pour-1, à 0.6% près jusqu'à 2°). Entre T et S l'image est une ligne (focale)."
+  },
+  "Δz_T = −2 (W220 + W222) / u′²\nΔz_S = −2 W220 / u′²\nT − P = 3 (S − P) (P = Petzval surface)": {
+   "ja": "Δz_T = −2 (W220 + W222) / u′²\nΔz_S = −2 W220 / u′²\nT − P = 3 (S − P)(P = ペッツバール面)",
+   "zh": "Δz_T = −2 (W220 + W222) / u′²\nΔz_S = −2 W220 / u′²\nT − P = 3 (S − P)(P = 匹兹伐面)",
+   "tw": "Δz_T = −2 (W220 + W222) / u′²\nΔz_S = −2 W220 / u′²\nT − P = 3 (S − P)(P = Petzval 面)",
+   "ko": "Δz_T = −2 (W220 + W222) / u′²\nΔz_S = −2 W220 / u′²\nT − P = 3 (S − P)(P = 페츠발 면)",
+   "de": "Δz_T = −2 (W220 + W222) / u′²\nΔz_S = −2 W220 / u′²\nT − P = 3 (S − P) (P = Petzval-Fläche)",
+   "hi": "Δz_T = −2 (W220 + W222) / u′²\nΔz_S = −2 W220 / u′²\nT − P = 3 (S − P) (P = पेट्ज़वाल पृष्ठ)",
+   "fr": "Δz_T = −2 (W220 + W222) / u′²\nΔz_S = −2 W220 / u′²\nT − P = 3 (S − P) (P = surface de Petzval)"
+  },
+  "This is the limit tab: at 20° the T surface real / third order is 0.799, so third order is off by 20% (the failed row in the badge's table). Real-ray foci are found as the crossing of two close rays on the chief ray, nearer the image than third order predicts.": {
+   "ja": "これが限界の回: 20° では T 像面の実光線 / 3 次の式が 0.799 で、3 次の式は 20% ずれる(バッジの表の外れた行)。実光線の焦点は主光線の上で 2 本の近い光線の交点として求めていて、3 次の式より像面に近い。",
+   "zh": "这是讲局限的一页：20° 时 T 像面的 实光线 / 三级 为 0.799，即三级公式偏差 20%(徽章表格中未通过的那一行)。实光线焦点由主光线上两条邻近光线的交点求得，比三级公式预测的更靠近像面。",
+   "tw": "這是講限制的一頁：20° 時 T 像面的 實光線 / 三階 為 0.799，即三階公式偏差 20%(徽章表格中未通過的那一列)。實光線焦點由主光線上兩條鄰近光線的交點求得，比三階公式預測的更靠近像面。",
+   "ko": "이것이 한계 탭이다: 20°에서 T 상면의 실광선 / 삼차 공식 비는 0.799로, 삼차 공식이 20% 벗어난다(배지 표의 실패한 행). 실광선 초점은 주광선 위에서 가까운 두 광선의 교점으로 구하며, 삼차 공식의 예측보다 상에 더 가깝다.",
+   "de": "Dies ist der Grenzen-Tab: Bei 20° ist das Verhältnis real / dritte Ordnung der T-Fläche 0.799, die dritte Ordnung liegt also um 20% daneben (die fehlgeschlagene Zeile in der Badge-Tabelle). Die Foki realer Strahlen werden als Schnittpunkt zweier benachbarter Strahlen auf dem Hauptstrahl bestimmt, näher am Bild, als die dritte Ordnung vorhersagt.",
+   "hi": "यह सीमा वाला टैब है: 20° पर T पृष्ठ का वास्तविक / तृतीय कोटि 0.799 है, यानी तृतीय कोटि 20% चूकती है (बैज की तालिका में असफल पंक्ति)। वास्तविक-किरण फ़ोकस मुख्य किरण पर दो निकट किरणों के प्रतिच्छेदन से मिलते हैं, तृतीय कोटि के पूर्वानुमान से प्रतिबिंब के अधिक पास।",
+   "fr": "C'est l'onglet de la limite : à 20° le rapport réel / troisième ordre de la surface T vaut 0.799, le troisième ordre s'écarte donc de 20% (la ligne en échec dans le tableau du badge). Les foyers de rayons réels sont pris à l'intersection de deux rayons voisins sur le rayon principal, plus près de l'image que ne le prédit le troisième ordre."
+  },
+  "field angle θ (singlet, stop ahead)": {
+   "ja": "画角 θ(絞りを前に出した単レンズ)",
+   "zh": "视场角 θ(单透镜，光阑前移)",
+   "tw": "視場角 θ(單透鏡，光欄前移)",
+   "ko": "화각 θ(단렌즈, 앞에 조리개)",
+   "de": "Feldwinkel θ (Einzellinse, Blende davor)",
+   "hi": "क्षेत्र कोण θ (एकल लेंस, द्वारक आगे)",
+   "fr": "angle de champ θ (lentille simple, diaphragme en avant)"
+  },
+  "Chromatic (wavelength)": {
+   "ja": "色収差(波長)",
+   "zh": "色差(波长)",
+   "tw": "色像差(波長)",
+   "ko": "색수차(파장)",
+   "de": "Farbfehler (Wellenlänge)",
+   "hi": "वर्ण (तरंगदैर्घ्य)",
+   "fr": "Chromatique (longueur d'onde)"
+  },
+  "Chromatic aberration: glass bends blue more than red, so the singlet (top) focuses blue closer. The achromat (bottom) cements a convex crown glass to a concave flint glass so the F (blue) and C (red) foci coincide. The yellow / green lines in 3-D plot focus position (across, magnified x4) against wavelength (longer downwards). Even the achromat drifts at the ends (secondary spectrum).": {
+   "ja": "色収差: ガラスの屈折率は色(波長)で違う(青ほど大きい)ので、単レンズ(上)は青い光ほど手前で焦点を結ぶ。下のアクロマートは、凸のクラウンガラスと凹のフリントガラス(色による屈折率の変わり方が違うガラス)を貼り合わせ、青(F 線)と赤(C 線)の焦点をそろえた。3-D の中の黄・緑の線は「焦点の位置(横、4 倍に拡大)対 波長(下へ行くほど長い)」のグラフ。アクロマートでも端の色は少しずれる(二次スペクトル)。",
+   "zh": "色差：玻璃对蓝光的偏折比红光大，所以单透镜(上)把蓝光聚焦得更近。消色差透镜(下)把一片凸的冕牌玻璃与一片凹的火石玻璃胶合，使 F(蓝)与 C(红)的焦点重合。3-D 中的黄线 / 绿线是焦点位置(横向，放大 x4)随波长(向下越长)的曲线。即使是消色差透镜，两端仍有偏移(二级光谱)。",
+   "tw": "色像差：玻璃對藍光的偏折比紅光大，所以單透鏡(上)把藍光聚焦得更近。消色差透鏡(下)把一片凸的冕牌玻璃與一片凹的火石玻璃膠合，使 F(藍)與 C(紅)的焦點重合。3-D 中的黃線 / 綠線是焦點位置(橫向，放大 x4)隨波長(向下越長)的曲線。即使是消色差透鏡，兩端仍有偏移(二次光譜)。",
+   "ko": "색수차: 유리는 파란빛을 빨간빛보다 더 많이 꺾으므로 단렌즈(위)는 파란빛의 초점을 더 가까이 맺는다. 아크로매트(아래)는 볼록 크라운 유리와 오목 플린트 유리를 접합해 F(파랑)와 C(빨강)의 초점을 일치시킨다. 3-D 속의 노란 / 초록 선은 초점 위치(가로, x4 확대) 대 파장(아래로 갈수록 길다)의 그래프다. 아크로매트도 양끝에서는 어긋난다(이차 스펙트럼).",
+   "de": "Farbfehler: Glas bricht Blau stärker als Rot, daher fokussiert die Einzellinse (oben) Blau näher. Der Achromat (unten) verkittet eine konvexe Kronglaslinse mit einer konkaven Flintglaslinse, sodass die Foki für F (blau) und C (rot) zusammenfallen. Die gelben / grünen Linien in 3-D tragen die Fokuslage (quer, x4 vergrößert) gegen die Wellenlänge auf (länger nach unten). Selbst der Achromat driftet an den Enden (sekundäres Spektrum).",
+   "hi": "वर्ण विपथन: काँच नीले को लाल से ज़्यादा मोड़ता है, इसलिए एकल लेंस (ऊपर) नीले को पास फ़ोकस करता है। अवर्णक (नीचे) उत्तल क्राउन काँच को अवतल फ्लिंट काँच से जोड़ता है ताकि F (नीला) और C (लाल) फ़ोकस संपाती हों। 3-D में पीली / हरी रेखाएँ फ़ोकस की स्थिति (आड़ी, x4 बड़ी) को तरंगदैर्घ्य (नीचे की ओर लंबी) के सापेक्ष दिखाती हैं। अवर्णक भी सिरों पर खिसकता है (द्वितीयक स्पेक्ट्रम)।",
+   "fr": "Aberration chromatique : le verre dévie plus le bleu que le rouge, la lentille simple (haut) focalise donc le bleu plus près. L'achromat (bas) colle un verre crown convexe à un verre flint concave pour que les foyers F (bleu) et C (rouge) coïncident. Les lignes jaune / verte en 3-D tracent la position du foyer (en travers, agrandie x4) en fonction de la longueur d'onde (plus longue vers le bas). Même l'achromat dérive aux extrémités (spectre secondaire)."
+  },
+  "Top": {
+   "ja": "上",
+   "zh": "上",
+   "tw": "上",
+   "ko": "위",
+   "de": "Oben",
+   "hi": "ऊपर",
+   "fr": "Haut"
+  },
+  "singlet, crown glass (n_d = 1.5168, V_d = 64.17), f/4": {
+   "ja": "単レンズ、クラウンガラス(n_d = 1.5168, V_d = 64.17)、f/4",
+   "zh": "单透镜，冕牌玻璃(n_d = 1.5168, V_d = 64.17)，f/4",
+   "tw": "單透鏡，冕牌玻璃(n_d = 1.5168, V_d = 64.17)，f/4",
+   "ko": "단렌즈, 크라운 유리(n_d = 1.5168, V_d = 64.17), f/4",
+   "de": "Einzellinse, Kronglas (n_d = 1.5168, V_d = 64.17), f/4",
+   "hi": "एकल लेंस, क्राउन काँच (n_d = 1.5168, V_d = 64.17), f/4",
+   "fr": "lentille simple, verre crown (n_d = 1.5168, V_d = 64.17), f/4"
+  },
+  "Bottom": {
+   "ja": "下",
+   "zh": "下",
+   "tw": "下",
+   "ko": "아래",
+   "de": "Unten",
+   "hi": "नीचे",
+   "fr": "Bas"
+  },
+  "achromat: crown glass (n_d = 1.5168, V_d = 64.17) + flint glass (n_d = 1.6477, V_d = 33.82), R3 = -363.59 mm": {
+   "ja": "アクロマート: クラウンガラス(n_d = 1.5168, V_d = 64.17) + フリントガラス(n_d = 1.6477, V_d = 33.82)、R3 = -363.59 mm",
+   "zh": "消色差透镜：冕牌玻璃(n_d = 1.5168, V_d = 64.17) + 火石玻璃(n_d = 1.6477, V_d = 33.82)，R3 = -363.59 mm",
+   "tw": "消色差透鏡：冕牌玻璃(n_d = 1.5168, V_d = 64.17) + 火石玻璃(n_d = 1.6477, V_d = 33.82)，R3 = -363.59 mm",
+   "ko": "아크로매트: 크라운 유리(n_d = 1.5168, V_d = 64.17) + 플린트 유리(n_d = 1.6477, V_d = 33.82), R3 = -363.59 mm",
+   "de": "Achromat: Kronglas (n_d = 1.5168, V_d = 64.17) + Flintglas (n_d = 1.6477, V_d = 33.82), R3 = -363.59 mm",
+   "hi": "अवर्णक: क्राउन काँच (n_d = 1.5168, V_d = 64.17) + फ्लिंट काँच (n_d = 1.6477, V_d = 33.82), R3 = -363.59 mm",
+   "fr": "achromat : verre crown (n_d = 1.5168, V_d = 64.17) + verre flint (n_d = 1.6477, V_d = 33.82), R3 = -363.59 mm"
+  },
+  "F−C focus difference singlet / achromat": {
+   "ja": "F−C の焦点差 単 / アクロ",
+   "zh": "F−C 焦点差 单透镜 / 消色差透镜",
+   "tw": "F−C 焦點差 單透鏡 / 消色差透鏡",
+   "ko": "F−C 초점 차 단렌즈 / 아크로매트",
+   "de": "F−C-Fokusdifferenz Einzellinse / Achromat",
+   "hi": "F−C फ़ोकस अंतर एकल / अवर्णक",
+   "fr": "Différence de foyer F−C simple / achromat"
+  },
+  "-1.518 mm / < 1e-13 mm (bisection to floating-point precision)": {
+   "ja": "-1.518 mm / < 1e-13 mm(二分法が浮動小数の精度まで詰めた)",
+   "zh": "-1.518 mm / < 1e-13 mm(二分法求至浮点精度)",
+   "tw": "-1.518 mm / < 1e-13 mm(二分法求至浮點精度)",
+   "ko": "-1.518 mm / < 1e-13 mm(이분법으로 부동소수점 정밀도까지)",
+   "de": "-1.518 mm / < 1e-13 mm (Bisektion bis zur Gleitkommagenauigkeit)",
+   "hi": "-1.518 mm / < 1e-13 mm (द्विभाजन, फ़्लोटिंग-पॉइंट परिशुद्धता तक)",
+   "fr": "-1.518 mm / < 1e-13 mm (dichotomie jusqu'à la précision flottante)"
+  },
+  "Singlet focus vs wavelength (down = longer)": {
+   "ja": "単レンズの焦点 vs 波長(下へ行くほど長い波長)",
+   "zh": "单透镜焦点 vs 波长(向下 = 更长)",
+   "tw": "單透鏡焦點 vs 波長(向下 = 更長)",
+   "ko": "단렌즈 초점 대 파장(아래 = 긴 파장)",
+   "de": "Fokus der Einzellinse vs. Wellenlänge (unten = länger)",
+   "hi": "एकल लेंस का फ़ोकस बनाम तरंगदैर्घ्य (नीचे = लंबी)",
+   "fr": "Foyer de la lentille simple vs longueur d'onde (vers le bas = plus longue)"
+  },
+  "Achromat focus vs wavelength": {
+   "ja": "アクロマートの焦点 vs 波長",
+   "zh": "消色差透镜焦点 vs 波长",
+   "tw": "消色差透鏡焦點 vs 波長",
+   "ko": "아크로매트 초점 대 파장",
+   "de": "Fokus des Achromaten vs. Wellenlänge",
+   "hi": "अवर्णक का फ़ोकस बनाम तरंगदैर्घ्य",
+   "fr": "Foyer de l'achromat vs longueur d'onde"
+  },
+  "430 nm (violet)": {
+   "ja": "430 nm(紫)",
+   "zh": "430 nm(紫)",
+   "tw": "430 nm(紫)",
+   "ko": "430 nm(보라)",
+   "de": "430 nm (violett)",
+   "hi": "430 nm (बैंगनी)",
+   "fr": "430 nm (violet)"
+  },
+  "F line 486 nm (blue)": {
+   "ja": "F 線 486 nm(青)",
+   "zh": "F 线 486 nm(蓝)",
+   "tw": "F 線 486 nm(藍)",
+   "ko": "F 선 486 nm(파랑)",
+   "de": "F-Linie 486 nm (blau)",
+   "hi": "F रेखा 486 nm (नीला)",
+   "fr": "Raie F 486 nm (bleu)"
+  },
+  "d line 588 nm (design; the sensor is here)": {
+   "ja": "d 線 588 nm(設計の波長、像面はここ)",
+   "zh": "d 线 588 nm(设计波长；传感器在此)",
+   "tw": "d 線 588 nm(設計波長；感測器在此)",
+   "ko": "d 선 588 nm(설계 파장; 센서는 여기)",
+   "de": "d-Linie 588 nm (Auslegung; hier sitzt der Sensor)",
+   "hi": "d रेखा 588 nm (डिज़ाइन; संवेदक यहाँ है)",
+   "fr": "Raie d 588 nm (conception ; le capteur est ici)"
+  },
+  "C line 656 nm: the achromat matches F": {
+   "ja": "C 線 656 nm(赤): アクロマートは F と同じ焦点",
+   "zh": "C 线 656 nm：消色差透镜与 F 重合",
+   "tw": "C 線 656 nm：消色差透鏡與 F 重合",
+   "ko": "C 선 656 nm: 아크로매트는 F와 초점이 같다",
+   "de": "C-Linie 656 nm: der Achromat stimmt mit F überein",
+   "hi": "C रेखा 656 nm: अवर्णक F से मेल खाता है",
+   "fr": "Raie C 656 nm : l'achromat rejoint F"
+  },
+  "Limit: secondary spectrum (the ends still drift)": {
+   "ja": "限界: 二次スペクトル(アクロマートでも端の色はずれる)",
+   "zh": "局限：二级光谱(两端仍有偏移)",
+   "tw": "限制：二次光譜(兩端仍有偏移)",
+   "ko": "한계: 이차 스펙트럼(양끝은 여전히 어긋난다)",
+   "de": "Grenze: sekundäres Spektrum (die Enden driften weiterhin)",
+   "hi": "सीमा: द्वितीयक स्पेक्ट्रम (सिरे अभी भी खिसकते हैं)",
+   "fr": "Limite : spectre secondaire (les extrémités dérivent encore)"
+  },
+  "Singlet focus shift (from d)": {
+   "ja": "単レンズの焦点のずれ(d 線から)",
+   "zh": "单透镜焦点偏移(相对 d 线)",
+   "tw": "單透鏡焦點偏移(相對 d 線)",
+   "ko": "단렌즈 초점의 이동(d 선 기준)",
+   "de": "Fokusverschiebung der Einzellinse (ab d)",
+   "hi": "एकल लेंस का फ़ोकस विस्थापन (d से)",
+   "fr": "Décalage du foyer de la lentille simple (depuis d)"
+  },
+  "Achromat focus shift": {
+   "ja": "アクロマートの焦点のずれ",
+   "zh": "消色差透镜焦点偏移",
+   "tw": "消色差透鏡焦點偏移",
+   "ko": "아크로매트 초점의 이동",
+   "de": "Fokusverschiebung des Achromaten",
+   "hi": "अवर्णक का फ़ोकस विस्थापन",
+   "fr": "Décalage du foyer de l'achromat"
+  },
+  "Wavelength": {
+   "ja": "波長",
+   "zh": "波长",
+   "tw": "波長",
+   "ko": "파장",
+   "de": "Wellenlänge",
+   "hi": "तरंगदैर्घ्य",
+   "fr": "Longueur d'onde"
+  },
+  "singlet focus: paraxial_trace vs thick-lens closed form R1/(n(λ)−1) − t/n(λ) (5 wavelengths)": {
+   "ja": "単レンズの焦点: paraxial_trace と厚肉の閉形式 R1/(n(λ)−1) − t/n(λ)(5 波長)",
+   "zh": "单透镜焦点：paraxial_trace 与厚透镜解析式 R1/(n(λ)−1) − t/n(λ)(5 个波长)",
+   "tw": "單透鏡焦點：paraxial_trace 與厚透鏡解析式 R1/(n(λ)−1) − t/n(λ)(5 個波長)",
+   "ko": "단렌즈 초점: paraxial_trace 대 두꺼운 렌즈의 닫힌 식 R1/(n(λ)−1) − t/n(λ)(5 파장)",
+   "de": "Fokus der Einzellinse: paraxial_trace vs. geschlossene Form der dicken Linse R1/(n(λ)−1) − t/n(λ) (5 Wellenlängen)",
+   "hi": "एकल लेंस का फ़ोकस: paraxial_trace बनाम मोटे लेंस का बंद रूप सूत्र R1/(n(λ)−1) − t/n(λ) (5 तरंगदैर्घ्य)",
+   "fr": "foyer de la lentille simple : paraxial_trace vs formule analytique de la lentille épaisse R1/(n(λ)−1) − t/n(λ) (5 longueurs d'onde)"
+  },
+  "F − C focus difference: paraxial_trace vs Seidel C_L/u′²": {
+   "ja": "F − C の焦点差: paraxial_trace と ザイデルの C_L/u′²",
+   "zh": "F − C 焦点差：paraxial_trace 与赛德尔的 C_L/u′²",
+   "tw": "F − C 焦點差：paraxial_trace 與賽德爾的 C_L/u′²",
+   "ko": "F − C 초점 차: paraxial_trace 대 자이델 C_L/u′²",
+   "de": "F − C-Fokusdifferenz: paraxial_trace vs. Seidel C_L/u′²",
+   "hi": "F − C फ़ोकस अंतर: paraxial_trace बनाम ज़ाइडल C_L/u′²",
+   "fr": "différence de foyer F − C : paraxial_trace vs Seidel C_L/u′²"
+  },
+  "achromat F − C focus difference": {
+   "ja": "アクロマートの F − C の焦点差",
+   "zh": "消色差透镜的 F − C 焦点差",
+   "tw": "消色差透鏡的 F − C 焦點差",
+   "ko": "아크로매트의 F − C 초점 차",
+   "de": "F − C-Fokusdifferenz des Achromaten",
+   "hi": "अवर्णक का F − C फ़ोकस अंतर",
+   "fr": "différence de foyer F − C de l'achromat"
+  },
+  "focus wander over F..C (secondary spectrum): achromat / singlet": {
+   "ja": "F..C の焦点のゆれ(二次スペクトル): アクロマート / 単レンズ",
+   "zh": "F..C 范围内的焦点漂移(二级光谱)：消色差透镜 / 单透镜",
+   "tw": "F..C 範圍內的焦點漂移(二次光譜)：消色差透鏡 / 單透鏡",
+   "ko": "F..C 사이의 초점 흔들림(이차 스펙트럼): 아크로매트 / 단렌즈",
+   "de": "Fokuswanderung über F..C (sekundäres Spektrum): Achromat / Einzellinse",
+   "hi": "F..C पर फ़ोकस का भटकाव (द्वितीयक स्पेक्ट्रम): अवर्णक / एकल",
+   "fr": "dérive du foyer sur F..C (spectre secondaire) : achromat / simple"
+  },
+  "Sweep the wavelength from 430 to 700 nm through a singlet. How does the focus move? And for a cemented crown + flint achromat?": {
+   "ja": "単レンズに当てる光の波長を 430 → 700 nm と変える。焦点はどう動く? クラウンとフリントの貼り合わせ(アクロマート)ではどうなる?",
+   "zh": "让通过单透镜的光的波长从 430 扫到 700 nm。焦点如何移动？对冕牌 + 火石胶合的消色差透镜又如何？",
+   "tw": "讓通過單透鏡的光的波長從 430 掃到 700 nm。焦點如何移動？對冕牌 + 火石膠合的消色差透鏡又如何？",
+   "ko": "단렌즈에 들어가는 빛의 파장을 430에서 700 nm까지 훑는다. 초점은 어떻게 움직이는가? 크라운 + 플린트 접합 아크로매트에서는?",
+   "de": "Die Wellenlänge wird von 430 bis 700 nm durch eine Einzellinse durchlaufen. Wie bewegt sich der Fokus? Und bei einem verkitteten Kron + Flint-Achromaten?",
+   "hi": "एकल लेंस में तरंगदैर्घ्य 430 से 700 nm तक बदलिए। फ़ोकस कैसे चलता है? और जुड़े हुए क्राउन + फ्लिंट अवर्णक के लिए?",
+   "fr": "Faites varier la longueur d'onde de 430 à 700 nm à travers une lentille simple. Comment le foyer se déplace-t-il ? Et pour un achromat collé crown + flint ?"
+  },
+  "Neither focus moves": {
+   "ja": "どちらも焦点は動かない",
+   "zh": "两者的焦点都不动",
+   "tw": "兩者的焦點都不動",
+   "ko": "어느 초점도 움직이지 않는다",
+   "de": "Keiner der beiden Foki bewegt sich",
+   "hi": "कोई भी फ़ोकस नहीं चलता",
+   "fr": "Aucun des foyers ne bouge"
+  },
+  "The singlet focuses blue closer; the achromat brings the F and C foci together (the ends still drift a little)": {
+   "ja": "単レンズは青ほど手前で焦点を結び、アクロマートは F 線と C 線の焦点がそろう(端はまだ少しずれる)",
+   "zh": "单透镜把蓝光聚焦得更近；消色差透镜使 F 与 C 的焦点重合(两端仍略有偏移)",
+   "tw": "單透鏡把藍光聚焦得更近；消色差透鏡使 F 與 C 的焦點重合(兩端仍略有偏移)",
+   "ko": "단렌즈는 파란빛의 초점을 더 가까이 맺고, 아크로매트는 F와 C의 초점을 일치시킨다(양끝은 여전히 조금 어긋난다)",
+   "de": "Die Einzellinse fokussiert Blau näher; der Achromat bringt die Foki F und C zusammen (die Enden driften noch etwas)",
+   "hi": "एकल लेंस नीले को पास फ़ोकस करता है; अवर्णक F और C फ़ोकस को मिला देता है (सिरे अभी भी थोड़ा खिसकते हैं)",
+   "fr": "La lentille simple focalise le bleu plus près ; l'achromat réunit les foyers F et C (les extrémités dérivent encore un peu)"
+  },
+  "The singlet focuses red closer": {
+   "ja": "単レンズは赤ほど手前で焦点を結ぶ",
+   "zh": "单透镜把红光聚焦得更近",
+   "tw": "單透鏡把紅光聚焦得更近",
+   "ko": "단렌즈는 빨간빛의 초점을 더 가까이 맺는다",
+   "de": "Die Einzellinse fokussiert Rot näher",
+   "hi": "एकल लेंस लाल को पास फ़ोकस करता है",
+   "fr": "La lentille simple focalise le rouge plus près"
+  },
+  "The index is higher for blue, so the singlet's F − C focus difference is -1.518 mm (blue closer). The achromat has F − C = < 1e-13 mm (bisection to floating-point precision), and its focus wanders 0.0607 mm over F..C against 1.518 mm for the singlet (secondary spectrum).": {
+   "ja": "屈折率は青ほど大きいので、単レンズの F − C の焦点差は -1.518 mm(青が手前)。アクロマートは F − C の差が < 1e-13 mm(二分法が浮動小数の精度まで詰めた) で、F..C の範囲の焦点のゆれは単レンズの 1.518 mm に対して 0.0607 mm(二次スペクトル)。",
+   "zh": "蓝光的折射率更高，所以单透镜的 F − C 焦点差为 -1.518 mm(蓝光更近)。消色差透镜的 F − C = < 1e-13 mm(二分法求至浮点精度)，其焦点在 F..C 范围内漂移 0.0607 mm，而单透镜为 1.518 mm(二级光谱)。",
+   "tw": "藍光的折射率更高，所以單透鏡的 F − C 焦點差為 -1.518 mm(藍光更近)。消色差透鏡的 F − C = < 1e-13 mm(二分法求至浮點精度)，其焦點在 F..C 範圍內漂移 0.0607 mm，而單透鏡為 1.518 mm(二次光譜)。",
+   "ko": "굴절률은 파란빛에서 더 크므로 단렌즈의 F − C 초점 차는 -1.518 mm(파랑이 더 가깝다). 아크로매트는 F − C = < 1e-13 mm(이분법으로 부동소수점 정밀도까지)이고, F..C 사이의 초점 흔들림은 단렌즈의 1.518 mm에 비해 0.0607 mm다(이차 스펙트럼).",
+   "de": "Die Brechzahl ist für Blau höher, daher beträgt die F − C-Fokusdifferenz der Einzellinse -1.518 mm (Blau näher). Der Achromat hat F − C = < 1e-13 mm (Bisektion bis zur Gleitkommagenauigkeit), und sein Fokus wandert über F..C um 0.0607 mm gegenüber 1.518 mm bei der Einzellinse (sekundäres Spektrum).",
+   "hi": "अपवर्तनांक नीले के लिए अधिक है, इसलिए एकल लेंस का F − C फ़ोकस अंतर -1.518 mm है (नीला पास)। अवर्णक का F − C = < 1e-13 mm है (द्विभाजन, फ़्लोटिंग-पॉइंट परिशुद्धता तक), और F..C पर उसका फ़ोकस 0.0607 mm भटकता है, जबकि एकल लेंस का 1.518 mm (द्वितीयक स्पेक्ट्रम)।",
+   "fr": "L'indice est plus élevé pour le bleu, la différence de foyer F − C de la lentille simple vaut donc -1.518 mm (bleu plus près). L'achromat a F − C = < 1e-13 mm (dichotomie jusqu'à la précision flottante), et son foyer dérive de 0.0607 mm sur F..C contre 1.518 mm pour la lentille simple (spectre secondaire)."
+  },
+  "1/f = (n(λ) − 1)(1/R1 − 1/R2)\nAbbe number: V_d = (n_d − 1) / (n_F − n_C)\nachromat condition: φ1/V1 + φ2/V2 = 0 (φ = 1/f)": {
+   "ja": "1/f = (n(λ) − 1)(1/R1 − 1/R2)\nアッベ数: V_d = (n_d − 1) / (n_F − n_C)\nアクロマートの条件: φ1/V1 + φ2/V2 = 0(φ = 1/f)",
+   "zh": "1/f = (n(λ) − 1)(1/R1 − 1/R2)\n阿贝数：V_d = (n_d − 1) / (n_F − n_C)\n消色差条件：φ1/V1 + φ2/V2 = 0(φ = 1/f)",
+   "tw": "1/f = (n(λ) − 1)(1/R1 − 1/R2)\n阿貝數：V_d = (n_d − 1) / (n_F − n_C)\n消色差條件：φ1/V1 + φ2/V2 = 0(φ = 1/f)",
+   "ko": "1/f = (n(λ) − 1)(1/R1 − 1/R2)\n아베 수: V_d = (n_d − 1) / (n_F − n_C)\n아크로매트 조건: φ1/V1 + φ2/V2 = 0(φ = 1/f)",
+   "de": "1/f = (n(λ) − 1)(1/R1 − 1/R2)\nAbbe-Zahl: V_d = (n_d − 1) / (n_F − n_C)\nAchromat-Bedingung: φ1/V1 + φ2/V2 = 0 (φ = 1/f)",
+   "hi": "1/f = (n(λ) − 1)(1/R1 − 1/R2)\nआबे संख्या: V_d = (n_d − 1) / (n_F − n_C)\nअवर्णक की शर्त: φ1/V1 + φ2/V2 = 0 (φ = 1/f)",
+   "fr": "1/f = (n(λ) − 1)(1/R1 − 1/R2)\nnombre d'Abbe : V_d = (n_d − 1) / (n_F − n_C)\ncondition d'achromatisme : φ1/V1 + φ2/V2 = 0 (φ = 1/f)"
+  },
+  "An achromat matches only two wavelengths (F and C); between and beyond them the focus still drifts (secondary spectrum). Only paraxial foci are compared; the colour dependence of spherical aberration (spherochromatism) is left out.": {
+   "ja": "アクロマートがそろえるのは 2 つの波長(F 線と C 線)だけで、その間と外では焦点が少しずれる(二次スペクトル)。近軸の焦点だけを比べていて、色ごとの球面収差(色の球面収差)は入れていない。",
+   "zh": "消色差透镜只能使两个波长(F 与 C)的焦点重合；在它们之间及之外焦点仍有偏移(二级光谱)。这里只比较近轴焦点；未考虑球差随颜色的变化(色球差)。",
+   "tw": "消色差透鏡只能使兩個波長(F 與 C)的焦點重合；在它們之間及之外焦點仍有偏移(二次光譜)。這裡只比較近軸焦點；未考慮球面像差隨顏色的變化(色球差)。",
+   "ko": "아크로매트는 두 파장(F와 C)만 일치시킨다. 그 사이와 바깥에서는 초점이 여전히 어긋난다(이차 스펙트럼). 근축 초점만 비교하며, 구면수차의 색 의존성(색 구면수차)은 넣지 않았다.",
+   "de": "Ein Achromat gleicht nur zwei Wellenlängen ab (F und C); dazwischen und außerhalb driftet der Fokus weiterhin (sekundäres Spektrum). Verglichen werden nur paraxiale Foki; die Farbabhängigkeit der sphärischen Aberration (Gaußfehler) bleibt außen vor.",
+   "hi": "अवर्णक केवल दो तरंगदैर्घ्यों (F और C) को मिलाता है; उनके बीच और बाहर फ़ोकस अभी भी खिसकता है (द्वितीयक स्पेक्ट्रम)। केवल उपाक्षीय फ़ोकस की तुलना की गई है; गोलीय विपथन की रंग-निर्भरता (स्फ़ेरोक्रोमैटिज़्म) छोड़ दी गई है।",
+   "fr": "Un achromat ne fait coïncider que deux longueurs d'onde (F et C) ; entre elles et au-delà le foyer dérive encore (spectre secondaire). Seuls les foyers paraxiaux sont comparés ; la dépendance en couleur de l'aberration sphérique (sphérochromatisme) est laissée de côté."
+  },
+  "wavelength λ": {
+   "ja": "波長 λ",
+   "zh": "波长 λ",
+   "tw": "波長 λ",
+   "ko": "파장 λ",
+   "de": "Wellenlänge λ",
+   "hi": "तरंगदैर्घ्य λ",
+   "fr": "longueur d'onde λ"
+  },
+  "Real / third order (f/33 → f/4 → f/2.5)": {
+   "ja": "実光線 / 3 次(f/33 → f/4 → f/2.5)",
+   "zh": "实光线 / 三级(f/33 → f/4 → f/2.5)",
+   "tw": "實光線 / 三階(f/33 → f/4 → f/2.5)",
+   "ko": "실광선 / 삼차 공식(f/33 → f/4 → f/2.5)",
+   "de": "Real / dritte Ordnung (f/33 → f/4 → f/2.5)",
+   "hi": "वास्तविक / तृतीय कोटि (f/33 → f/4 → f/2.5)",
+   "fr": "Réel / troisième ordre (f/33 → f/4 → f/2.5)"
+  },
+  "Limit: third order off by 5 % (9.4°)": {
+   "ja": "限界: 3 次の式から 5 % 外れる(9.4°)",
+   "zh": "局限：三级公式偏差 5 %(9.4°)",
+   "tw": "限制：三階公式偏差 5 %(9.4°)",
+   "ko": "한계: 삼차 공식에서 5 % 벗어남(9.4°)",
+   "de": "Grenze: dritte Ordnung um 5 % daneben (9.4°)",
+   "hi": "सीमा: तृतीय कोटि 5 % से चूकती है (9.4°)",
+   "fr": "Limite : le troisième ordre s'écarte de 5 % (9.4°)"
+  }
+ }
+}

@@ -1624,9 +1624,14 @@
    "motion": true,
    "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_organvol_anim3d.py",
    "label": {
-    "ja": "臓器の体積と球形度", "en": "Organ volume and sphericity",
-    "zh": "器官体积和球形度", "tw": "器官體積和球形度", "ko": "장기 부피와 구형도",
-    "de": "Organvolumen und Sphärizität", "hi": "अंग का आयतन और गोलाकारता", "fr": "Volume et sphéricité des organes"
+    "ja": "臓器の体積と球形度",
+    "en": "Organ volume and sphericity",
+    "zh": "器官体积和球形度",
+    "tw": "器官體積和球形度",
+    "ko": "장기 부피와 구형도",
+    "de": "Organvolumen und Sphärizität",
+    "hi": "अंग का आयतन और गोलाकारता",
+    "fr": "Volume et sphéricité des organes"
    },
    "see": {
     "ja": "6 臓器を体積順に並べ、同体積の半透明球を重ね、断面を積む。発散定理と固体ボクセルの体積は最大 0.191 % 差で、閉曲面は χ = 2。99 % 削減版が細い構造を失う限界も示す。",
@@ -1639,10 +1644,14 @@
     "fr": "6 organes sont classés par volume, superposés à des sphères translucides de même volume, puis reconstruits par sections. Les volumes par divergence et voxels solides diffèrent d’au plus 0.191 %; les surfaces fermées ont χ = 2. La limite montre les structures fines perdues par la réduction de 99 %."
    },
    "num": {
-    "ja": "6 臓器、体積差 ≤ 0.191 %、χ = 2・境界辺 0。", "en": "6 organs; volume difference ≤ 0.191%; χ = 2 and 0 boundary edges.",
-    "zh": "6 个器官；体积差 ≤ 0.191%；χ = 2，边界边为 0。", "tw": "6 個器官；體積差 ≤ 0.191%；χ = 2，邊界邊為 0。",
-    "ko": "장기 6개, 부피 차이 ≤ 0.191%, χ = 2, 경계 모서리 0개.", "de": "6 Organe; Volumendifferenz ≤ 0.191 %; χ = 2 und 0 Randkanten.",
-    "hi": "6 अंग; आयतन अंतर ≤ 0.191%; χ = 2 और सीमा किनारे 0।", "fr": "6 organes ; écart de volume ≤ 0.191 % ; χ = 2 et 0 arête de bord."
+    "ja": "6 臓器、体積差 ≤ 0.191 %、χ = 2・境界辺 0。",
+    "en": "6 organs; volume difference ≤ 0.191%; χ = 2 and 0 boundary edges.",
+    "zh": "6 个器官；体积差 ≤ 0.191%；χ = 2，边界边为 0。",
+    "tw": "6 個器官；體積差 ≤ 0.191%；χ = 2，邊界邊為 0。",
+    "ko": "장기 6개, 부피 차이 ≤ 0.191%, χ = 2, 경계 모서리 0개.",
+    "de": "6 Organe; Volumendifferenz ≤ 0.191 %; χ = 2 und 0 Randkanten.",
+    "hi": "6 अंग; आयतन अंतर ≤ 0.191%; χ = 2 और सीमा किनारे 0।",
+    "fr": "6 organes ; écart de volume ≤ 0.191 % ; χ = 2 et 0 arête de bord."
    }
   },
   {
@@ -1690,10 +1699,14 @@
    "motion": true,
    "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_tablet_anim3d.py",
    "label": {
-    "ja": "錠剤の外観と色の検査", "en": "Tablet appearance and colour inspection",
-    "zh": "Tablet appearance and colour inspection", "tw": "Tablet appearance and colour inspection",
-    "ko": "Tablet appearance and colour inspection", "de": "Tablet appearance and colour inspection",
-    "hi": "Tablet appearance and colour inspection", "fr": "Tablet appearance and colour inspection"
+    "ja": "錠剤の外観と色の検査",
+    "en": "Tablet appearance and colour inspection",
+    "zh": "Tablet appearance and colour inspection",
+    "tw": "Tablet appearance and colour inspection",
+    "ko": "Tablet appearance and colour inspection",
+    "de": "Tablet appearance and colour inspection",
+    "hi": "Tablet appearance and colour inspection",
+    "fr": "Tablet appearance and colour inspection"
    },
    "see": {
     "ja": "形と色だけの合成錠剤を回す。面積ごとに欠けなし 800 像と欠けあり 800 像を合成して検出率曲線を測り、色むらを ΔE00 = 8 から 0 へ下げる。異物位置と blob 数を測り、照明と平行な浅い割れが消える限界まで見る。",
@@ -1754,44 +1767,158 @@
     "fr": "À 400 km, avec des pixels de 5 µm et une focale de 8 m, la GSD vaut 0.250 m. À 550 nm avec une ouverture de 2.4 m, le rayon de Rayleigh au sol vaut 0.112 m. L'atmosphère reste explicitement non calculée dans la ligne de limite."
    }
   },
- {
-  "id": "rail_light_section",
-  "category": "anim3d",
-  "media": "rail_light_section_anim3d.html",
-  "media_path": "view2026/anim3d/rail_light_section_anim3d.html",
-  "motion": true,
-  "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_rail_anim3d.py",
-  "label": {
-   "ja": "光切断でレールの摩耗と軌間を測る",
-   "en": "Measure rail wear and gauge with light-section scanning",
-   "zh": "Measure rail wear and gauge with light-section scanning",
-   "tw": "Measure rail wear and gauge with light-section scanning",
-   "ko": "Measure rail wear and gauge with light-section scanning",
-   "de": "Measure rail wear and gauge with light-section scanning",
-   "hi": "Measure rail wear and gauge with light-section scanning",
-   "fr": "Measure rail wear and gauge with light-section scanning"
+  {
+   "id": "salt_xrd_anim3d",
+   "category": "anim3d",
+   "media": "salt_xrd_anim3d.html",
+   "media_path": "view2026/anim3d/salt_xrd_anim3d.html",
+   "motion": true,
+   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_saltxrd_anim3d.py",
+   "label": {
+    "ja": "塩の結晶の粉末 X 線回折",
+    "en": "Powder X-ray diffraction of salt",
+    "zh": "食盐晶体的粉末 X 射线衍射",
+    "tw": "食鹽晶體的粉末 X 光繞射",
+    "ko": "소금 결정의 분말 X선 회절",
+    "de": "Pulver-Röntgenbeugung an Salz",
+    "hi": "नमक के क्रिस्टल का powder X-ray diffraction",
+    "fr": "Diffraction des rayons X sur poudre de sel"
+   },
+   "see": {
+    "ja": "塩の単位胞に格子面の板を重ね、Bragg の角度を振ると行路差が λ の整数倍の所だけ受光面が光る。粒の向きをばらばらにすると点が環に育ち、波長を長くすると環は広がって消える。消滅則は 8 原子の波を足して見せる。",
+    "en": "Lattice planes are laid over the unit cell of salt; sweep the Bragg angle and the detector lights up only where the path difference is a whole number of λ. Scatter the grain orientations and spots grow into rings; lengthen the wavelength and the rings expand and vanish. The extinction rule is shown by adding the waves of the 8 atoms.",
+    "zh": "在食盐晶胞上叠加晶格面的薄板;扫过 Bragg 角时,只有光程差为 λ 整数倍处探测器才会亮。把晶粒取向打乱,点就长成环;把波长拉长,环扩大并消失。消光规则通过把 8 个原子的波相加来展示。",
+    "tw": "在食鹽晶胞上疊加晶格面的薄板;掃過 Bragg 角時,只有光程差為 λ 整數倍處探測器才會亮。把晶粒取向打亂,點就長成環;把波長拉長,環擴大並消失。消光規則透過把 8 個原子的波相加來展示。",
+    "ko": "소금의 단위세포에 격자면의 판을 겹치고 Bragg 각을 훑으면, 행로차가 λ의 정수배인 곳에서만 검출기가 빛난다. 알갱이의 방향을 흩뜨리면 점이 환으로 자라고, 파장을 길게 하면 환은 넓어져 사라진다. 소멸 규칙은 원자 8개의 파동을 더해 보인다.",
+    "de": "Gitterebenen liegen über der Elementarzelle des Salzes; beim Durchfahren des Bragg-Winkels leuchtet der Detektor nur dort, wo der Gangunterschied ein ganzes Vielfaches von λ ist. Werden die Körner zufällig gedreht, wachsen Punkte zu Ringen; wird die Wellenlänge länger, dehnen sich die Ringe aus und verschwinden. Die Auslöschungsregel zeigt sich beim Addieren der Wellen der 8 Atome.",
+    "hi": "नमक की unit cell पर lattice plane की चादरें रखी हैं; Bragg कोण घुमाइए तो detector केवल वहाँ जलता है जहाँ path difference λ का पूर्ण गुणज है। दानों के orientation बिखेरिए तो बिंदु ring बन जाते हैं; तरंगदैर्घ्य लंबी कीजिए तो ring फैलकर गायब हो जाते हैं। extinction नियम 8 परमाणुओं की तरंगें जोड़कर दिखाया गया है।",
+    "fr": "Des plans réticulaires sont posés sur la maille du sel ; balayez l'angle de Bragg et le détecteur ne s'allume que là où la différence de marche est un multiple entier de λ. Dispersez les orientations des grains et les points deviennent des anneaux ; allongez la longueur d'onde et les anneaux s'élargissent puis disparaissent. La règle d'extinction est montrée en additionnant les ondes des 8 atomes."
+   },
+   "num": {
+    "ja": "",
+    "en": "",
+    "zh": "",
+    "tw": "",
+    "ko": "",
+    "de": "",
+    "hi": "",
+    "fr": ""
+   }
   },
-  "see": {
-   "ja": "斜めの光の面とレール表面の交線が、頭頂・ウェブ・底部に沿って曲がる。走行すると左頭頂の摩耗が立ち上がり、二本の内側距離から軌間の広がりが見える。",
-   "en": "The intersection of an oblique light sheet and rail surface bends over head, web and foot. During travel, left-head wear rises and the inner distance between two rails reveals gauge widening.",
-   "zh": "The intersection of an oblique light sheet and rail surface bends over head, web and foot. During travel, left-head wear rises and the inner distance between two rails reveals gauge widening.",
-   "tw": "The intersection of an oblique light sheet and rail surface bends over head, web and foot. During travel, left-head wear rises and the inner distance between two rails reveals gauge widening.",
-   "ko": "The intersection of an oblique light sheet and rail surface bends over head, web and foot. During travel, left-head wear rises and the inner distance between two rails reveals gauge widening.",
-   "de": "The intersection of an oblique light sheet and rail surface bends over head, web and foot. During travel, left-head wear rises and the inner distance between two rails reveals gauge widening.",
-   "hi": "The intersection of an oblique light sheet and rail surface bends over head, web and foot. During travel, left-head wear rises and the inner distance between two rails reveals gauge widening.",
-   "fr": "The intersection of an oblique light sheet and rail surface bends over head, web and foot. During travel, left-head wear rises and the inner distance between two rails reveals gauge widening."
+  {
+   "id": "gauss_bonnet",
+   "category": "anim3d",
+   "media": "gauss_bonnet.html",
+   "media_path": "anim3d/gauss_bonnet.html",
+   "motion": true,
+   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_gaussbonnet_anim3d.py",
+   "label": {
+    "ja": "曲がり方を全部足すと同じ数",
+    "en": "Add up all the curvature",
+    "zh": "弯曲全部相加都是同一个数",
+    "tw": "彎曲全部相加都是同一個數",
+    "ko": "굽은 정도를 전부 더하면 같은 수",
+    "de": "Krümmung aufsummiert, gleiche Zahl",
+    "hi": "सारी वक्रता जोड़ो, वही संख्या",
+    "fr": "Toute la courbure additionnée"
+   },
+   "see": {
+    "ja": "球を立方体に角ばらせても、トーラスでも、穴を増やしても、実測の小惑星でも、頂点ごとの角欠損 K を足した Σ K / 2π は χ = V − E + F に一致する。半透明の面が通り過ぎた頂点を足し上げる動きを指で回して見る。境界のある皿では外れる(限界の回)。",
+    "en": "Sharpen a sphere into a cube, take a torus, add holes, or use the measured asteroid: the angle defects K added over the vertices give Σ K / 2π = χ = V − E + F. Rotate with a finger and watch the translucent plane sweep the vertices into the sum. A bowl with a boundary breaks it (the limit tab).",
+    "zh": "把球削成立方体、换成环面、增加孔洞，或用实测的小行星: 把各顶点的角亏损 K 加起来，Σ K / 2π 都等于 χ = V − E + F。用手指旋转，看半透明平面把顶点扫进总和。有边界的碗则不成立(局限标签页)。",
+    "tw": "把球削成立方體、換成環面、增加孔洞，或用實測的小行星: 把各頂點的角虧損 K 加起來，Σ K / 2π 都等於 χ = V − E + F。用手指旋轉，看半透明平面把頂點掃進總和。有邊界的碗則不成立(限制分頁)。",
+    "ko": "구를 정육면체로 각지게 하든, 토러스든, 구멍을 늘리든, 실측한 소행성이든, 꼭짓점마다의 각 결손 K를 더한 Σ K / 2π는 χ = V − E + F와 일치한다. 반투명 평면이 지나간 꼭짓점을 더해 가는 움직임을 손가락으로 돌려 본다. 경계가 있는 그릇에서는 빗나간다(한계 탭).",
+    "de": "Kugel zum Würfel geschärft, Torus, mehr Löcher oder der gemessene Asteroid: Die über die Ecken aufsummierten Winkeldefekte K ergeben Σ K / 2π = χ = V − E + F. Mit dem Finger drehen und zusehen, wie die halbtransparente Ebene die Ecken in die Summe fegt. Eine Schale mit Rand bricht es (der Grenze-Tab).",
+    "hi": "गोले को घन में नुकीला करो, टोरस लो, छेद जोड़ो, या मापा हुआ क्षुद्रग्रह लो: शीर्षों पर जोड़े गए कोण-अभाव K से Σ K / 2π = χ = V − E + F मिलता है। उंगली से घुमाएँ और देखें कि पारभासी समतल शीर्षों को योग में समेटता है। सीमा वाला कटोरा इसे तोड़ देता है (सीमा टैब)।",
+    "fr": "Aiguisez une sphère en cube, prenez un tore, ajoutez des trous ou l'astéroïde mesuré : les défauts angulaires K additionnés sur les sommets donnent Σ K / 2π = χ = V − E + F. Faites pivoter du doigt et regardez le plan translucide balayer les sommets dans la somme. Un bol à bord fait échouer la formule (l'onglet limite)."
+   },
+   "num": {
+    "ja": "17 行の表で Σ K / 2π と χ の差は 1e-12 未満。境界のある皿だけ 24.0 × 2π 外れ、境界の項を入れると一致する。",
+    "en": "In 17 checked rows Σ K / 2π and χ differ by less than 1e-12; only the bowl with a boundary misses by 24.0 × 2π, and matches once the boundary term is added.",
+    "zh": "17 行检验中 Σ K / 2π 与 χ 的差小于 1e-12；只有带边界的碗偏离 24.0 × 2π，加上边界项后即一致。",
+    "tw": "17 列檢驗中 Σ K / 2π 與 χ 的差小於 1e-12；只有帶邊界的碗偏離 24.0 × 2π，加上邊界項後即一致。",
+    "ko": "17행의 표에서 Σ K / 2π와 χ의 차는 1e-12 미만. 경계가 있는 그릇만 24.0 × 2π 빗나가며, 경계 항을 넣으면 일치한다.",
+    "de": "In 17 geprüften Zeilen unterscheiden sich Σ K / 2π und χ um weniger als 1e-12; nur die Schale mit Rand liegt um 24.0 × 2π daneben und stimmt, sobald der Randterm hinzukommt.",
+    "hi": "17 जाँची गई पंक्तियों में Σ K / 2π और χ का अंतर 1e-12 से कम; केवल सीमा वाला कटोरा 24.0 × 2π से चूकता है, और सीमा-पद जोड़ते ही मेल खाता है।",
+    "fr": "Sur 17 lignes vérifiées, Σ K / 2π et χ diffèrent de moins de 1e-12 ; seul le bol à bord manque de 24.0 × 2π, et coïncide dès qu'on ajoute le terme de bord."
+   }
   },
-  "num": {
-   "ja": "雑音付きのサブピクセル光線から断面 RMS 0.699 mm、形を仮定しない摩耗誤差 0.0577 mm、点列から測った軌間誤差 0.346 mm。三角測量 op と独立閉形式は < 1e-12 mm。",
-   "en": "From a noisy subpixel laser line: section RMS 0.699 mm, shape-free wear error 0.0577 mm and profile-measured gauge error 0.346 mm. The triangulation op and independent closed form agree to < 1e-12 mm.",
-   "zh": "From a noisy subpixel laser line: section RMS 0.699 mm, shape-free wear error 0.0577 mm and profile-measured gauge error 0.346 mm. The triangulation op and independent closed form agree to < 1e-12 mm.",
-   "tw": "From a noisy subpixel laser line: section RMS 0.699 mm, shape-free wear error 0.0577 mm and profile-measured gauge error 0.346 mm. The triangulation op and independent closed form agree to < 1e-12 mm.",
-   "ko": "From a noisy subpixel laser line: section RMS 0.699 mm, shape-free wear error 0.0577 mm and profile-measured gauge error 0.346 mm. The triangulation op and independent closed form agree to < 1e-12 mm.",
-   "de": "From a noisy subpixel laser line: section RMS 0.699 mm, shape-free wear error 0.0577 mm and profile-measured gauge error 0.346 mm. The triangulation op and independent closed form agree to < 1e-12 mm.",
-   "hi": "From a noisy subpixel laser line: section RMS 0.699 mm, shape-free wear error 0.0577 mm and profile-measured gauge error 0.346 mm. The triangulation op and independent closed form agree to < 1e-12 mm.",
-   "fr": "From a noisy subpixel laser line: section RMS 0.699 mm, shape-free wear error 0.0577 mm and profile-measured gauge error 0.346 mm. The triangulation op and independent closed form agree to < 1e-12 mm."
+  {
+   "id": "pulseox",
+   "category": "anim3d",
+   "media": "pulseox_anim3d.html",
+   "media_path": "view2026/anim3d/pulseox_anim3d.html",
+   "motion": true,
+   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_pulseox_anim3d.py",
+   "label": {
+    "ja": "パルスオキシメータの二波長吸収",
+    "en": "Dual-wavelength pulse oximetry",
+    "zh": "脉搏血氧仪的双波长吸收",
+    "tw": "脈搏血氧儀的雙波長吸收",
+    "ko": "맥박 산소 측정의 두 파장 흡수",
+    "de": "Doppelwellenlängen-Pulsoximetrie",
+    "hi": "दोहरी तरंगदैर्घ्य वाली पल्स ऑक्सीमेट्री",
+    "fr": "Oxymétrie de pouls à double longueur d’onde"
+   },
+   "see": {
+    "ja": "拍動する動脈を通る赤と近赤外の光を追い、AC/DC の比 R から酸素飽和度を読む。雑音入り時系列と閉形式を比べ、COHb を見分けられない限界も示す。",
+    "en": "Follow red and near-infrared light through a pulsating artery and read oxygen saturation from the AC/DC ratio R. Noisy time series are compared with the closed form, and the COHb ambiguity is shown as a limit of dual-wavelength measurement.",
+    "zh": "跟随红光和近红外光穿过搏动的动脉，用 AC/DC 比值 R 读取血氧饱和度；比较带噪时序与闭式解，并显示无法区分 COHb 的局限。",
+    "tw": "跟隨紅光和近紅外光穿過搏動的動脈，用 AC/DC 比值 R 讀取血氧飽和度；比較帶雜訊時序與閉式解，並顯示無法區分 COHb 的限制。",
+    "ko": "박동하는 동맥을 지나는 적색광과 근적외선을 따라가며 AC/DC 비 R로 산소포화도를 읽는다. 잡음 시계열과 닫힌식을 비교하고 COHb를 구별하지 못하는 한계도 보인다.",
+    "de": "Rotes und nahinfrarotes Licht durch eine pulsierende Arterie verfolgen und aus dem AC/DC-Verhältnis R die Sauerstoffsättigung ablesen. Verrauschte Zeitreihen werden mit der geschlossenen Form verglichen; die COHb-Mehrdeutigkeit erscheint als Grenze.",
+    "hi": "धड़कती धमनी से गुजरती लाल और निकट-अवरक्त रोशनी देखें और AC/DC अनुपात R से ऑक्सीजन संतृप्ति पढ़ें। शोरयुक्त समय-श्रृंखला की बंद रूप से तुलना होती है और COHb की अस्पष्टता सीमा के रूप में दिखाई जाती है।",
+    "fr": "Suivre la lumière rouge et proche infrarouge dans une artère pulsatile, puis lire la saturation en oxygène avec le rapport AC/DC R. La série bruitée est comparée à la forme fermée et l’ambiguïté du COHb montre la limite."
+   },
+   "num": {
+    "ja": "R の最大差 0.00068、SpO₂ の最大誤差 0.034 %。COHb 10 % の模型では 90.0 % を 91.0 % と読む。",
+    "en": "Maximum R difference 0.00068; maximum oxygen-saturation error 0.034%. With 10% COHb, the model reads true 90.0% as 91.0%.",
+    "zh": "R 最大差 0.00068；SpO₂ 最大误差 0.034%。在 10% COHb 模型中，真值 90.0% 被读为 91.0%。",
+    "tw": "R 最大差 0.00068；SpO₂ 最大誤差 0.034%。在 10% COHb 模型中，真值 90.0% 被讀為 91.0%。",
+    "ko": "R 최대 차이 0.00068, SpO₂ 최대 오차 0.034%. COHb 10% 모형에서는 실제 90.0%를 91.0%로 읽는다.",
+    "de": "Maximale R-Abweichung 0.00068; maximaler SpO₂-Fehler 0.034 %. Bei 10 % COHb liest das Modell wahre 90.0 % als 91.0 %.",
+    "hi": "R का अधिकतम अंतर 0.00068 और SpO₂ की अधिकतम त्रुटि 0.034%। 10% COHb पर मॉडल सही 90.0% को 91.0% पढ़ता है।",
+    "fr": "Écart maximal de R : 0.00068 ; erreur maximale de SpO₂ : 0.034 %. Avec 10 % de COHb, le modèle lit 91.0 % au lieu de 90.0 %."
+   }
+  },
+  {
+   "id": "rail_light_section",
+   "category": "anim3d",
+   "media": "rail_light_section_anim3d.html",
+   "media_path": "view2026/anim3d/rail_light_section_anim3d.html",
+   "motion": true,
+   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_rail_anim3d.py",
+   "label": {
+    "ja": "光切断でレールの摩耗と軌間を測る",
+    "en": "Measure rail wear and gauge with light-section scanning",
+    "zh": "Measure rail wear and gauge with light-section scanning",
+    "tw": "Measure rail wear and gauge with light-section scanning",
+    "ko": "Measure rail wear and gauge with light-section scanning",
+    "de": "Measure rail wear and gauge with light-section scanning",
+    "hi": "Measure rail wear and gauge with light-section scanning",
+    "fr": "Measure rail wear and gauge with light-section scanning"
+   },
+   "see": {
+    "ja": "斜めの光の面とレール表面の交線が、頭頂・ウェブ・底部に沿って曲がる。走行すると左頭頂の摩耗が立ち上がり、二本の内側距離から軌間の広がりが見える。",
+    "en": "The intersection of an oblique light sheet and rail surface bends over head, web and foot. During travel, left-head wear rises and the inner distance between two rails reveals gauge widening.",
+    "zh": "The intersection of an oblique light sheet and rail surface bends over head, web and foot. During travel, left-head wear rises and the inner distance between two rails reveals gauge widening.",
+    "tw": "The intersection of an oblique light sheet and rail surface bends over head, web and foot. During travel, left-head wear rises and the inner distance between two rails reveals gauge widening.",
+    "ko": "The intersection of an oblique light sheet and rail surface bends over head, web and foot. During travel, left-head wear rises and the inner distance between two rails reveals gauge widening.",
+    "de": "The intersection of an oblique light sheet and rail surface bends over head, web and foot. During travel, left-head wear rises and the inner distance between two rails reveals gauge widening.",
+    "hi": "The intersection of an oblique light sheet and rail surface bends over head, web and foot. During travel, left-head wear rises and the inner distance between two rails reveals gauge widening.",
+    "fr": "The intersection of an oblique light sheet and rail surface bends over head, web and foot. During travel, left-head wear rises and the inner distance between two rails reveals gauge widening."
+   },
+   "num": {
+    "ja": "雑音付きのサブピクセル光線から断面 RMS 0.699 mm、形を仮定しない摩耗誤差 0.0577 mm、点列から測った軌間誤差 0.346 mm。三角測量 op と独立閉形式は < 1e-12 mm。",
+    "en": "From a noisy subpixel laser line: section RMS 0.699 mm, shape-free wear error 0.0577 mm and profile-measured gauge error 0.346 mm. The triangulation op and independent closed form agree to < 1e-12 mm.",
+    "zh": "From a noisy subpixel laser line: section RMS 0.699 mm, shape-free wear error 0.0577 mm and profile-measured gauge error 0.346 mm. The triangulation op and independent closed form agree to < 1e-12 mm.",
+    "tw": "From a noisy subpixel laser line: section RMS 0.699 mm, shape-free wear error 0.0577 mm and profile-measured gauge error 0.346 mm. The triangulation op and independent closed form agree to < 1e-12 mm.",
+    "ko": "From a noisy subpixel laser line: section RMS 0.699 mm, shape-free wear error 0.0577 mm and profile-measured gauge error 0.346 mm. The triangulation op and independent closed form agree to < 1e-12 mm.",
+    "de": "From a noisy subpixel laser line: section RMS 0.699 mm, shape-free wear error 0.0577 mm and profile-measured gauge error 0.346 mm. The triangulation op and independent closed form agree to < 1e-12 mm.",
+    "hi": "From a noisy subpixel laser line: section RMS 0.699 mm, shape-free wear error 0.0577 mm and profile-measured gauge error 0.346 mm. The triangulation op and independent closed form agree to < 1e-12 mm.",
+    "fr": "From a noisy subpixel laser line: section RMS 0.699 mm, shape-free wear error 0.0577 mm and profile-measured gauge error 0.346 mm. The triangulation op and independent closed form agree to < 1e-12 mm."
+   }
   }
- }
  ],
  "series": [
   {

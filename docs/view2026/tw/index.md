@@ -79,6 +79,9 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../view2026/anim3d/interactive_anim3d_viewer.html?lang=tw"><img src="../thumbs/interactive_anim3d_viewer.jpg" alt="機械臂與半透明透鏡" loading="lazy" width="320" height="320"><b>&#9654;</b><span>機械臂與半透明透鏡 · 0.3 MB</span></a>
 <a href="../../view2026/anim3d/tablet_inspection_anim3d.html?lang=tw"><img src="../thumbs/tablet_inspection.jpg" alt="Tablet appearance and colour inspection" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Tablet appearance and colour inspection · 0.5 MB</span></a>
 <a href="../../view2026/anim3d/satellite_gsd_anim3d.html?lang=tw"><img src="../thumbs/satellite_gsd.jpg" alt="為什麼從軌道上看不清小字" loading="lazy" width="320" height="320"><b>&#9654;</b><span>為什麼從軌道上看不清小字 · 0.2 MB</span></a>
+<a href="../../view2026/anim3d/salt_xrd_anim3d.html?lang=tw"><img src="../thumbs/salt_xrd_anim3d.jpg" alt="食鹽晶體的粉末 X 光繞射" loading="lazy" width="320" height="320"><b>&#9654;</b><span>食鹽晶體的粉末 X 光繞射 · 2.5 MB</span></a>
+<a href="../../anim3d/gauss_bonnet.html?lang=tw"><img src="../thumbs/gauss_bonnet.jpg" alt="彎曲全部相加都是同一個數" loading="lazy" width="320" height="320"><b>&#9654;</b><span>彎曲全部相加都是同一個數 · 3.1 MB</span></a>
+<a href="../../view2026/anim3d/pulseox_anim3d.html?lang=tw"><img src="../thumbs/pulseox.jpg" alt="脈搏血氧儀的雙波長吸收" loading="lazy" width="320" height="320"><b>&#9654;</b><span>脈搏血氧儀的雙波長吸收 · 0.2 MB</span></a>
 <a href="../../view2026/anim3d/rail_light_section_anim3d.html?lang=tw"><img src="../thumbs/rail_light_section.jpg" alt="Measure rail wear and gauge with light-section scanning" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Measure rail wear and gauge with light-section scanning · 0.1 MB</span></a>
 </div>
 
@@ -219,7 +222,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 </div>
 
-[其他 168 個使用範例(非 PoC)的列表](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[其他 169 個使用範例(非 PoC)的列表](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## 全部看
 
@@ -666,6 +669,9 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 - [機械臂與半透明透鏡](../../view2026/anim3d/interactive_anim3d_viewer.html?lang=tw) (動態 3-D,可拖曳旋轉, 0.3 MB): 用手指旋轉,從任意角度觀看機械臂搬運箱子。光線穿過半透明透鏡匯聚到焦點,下方的俯視高度影像及其二值化結果在同一時間軸上同步播放。 [原始碼](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
 - [Tablet appearance and colour inspection](../../view2026/anim3d/tablet_inspection_anim3d.html?lang=tw) (動態 3-D,可拖曳旋轉, 0.5 MB): Rotate synthetic tablets defined only by shape and colour. At each area, synthesize 800 chip-free and 800 chipped images and measure the detection-rate curve; fade a colour patch from ΔE00 = 8 to 0. Measure foreign-particle position and blob count, then expose the limit where a shallow crack parallel to the light vanishes. **Foreign-particle position error 0.292 px; measured and normal-approximation 90% detection areas are both 3 px² = 0.0192 mm²; CIEDE2000 direct-formula difference < 1e-12; 5 separated blobs.** [原始碼](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_tablet_anim3d.py)
 - [為什麼從軌道上看不清小字](../../view2026/anim3d/satellite_gsd_anim3d.html?lang=tw) (動態 3-D,可拖曳旋轉, 0.2 MB): 高度越高,1 個像素覆蓋的地面越寬;口徑越小,半透明光錐底部的艾里斑越大。越過藍色 GSD 與橙色繞射寬度的交點後,僅縮小像素也無法恢復 10 cm 線條。 **高度 400 km、像素 5 µm、焦距 8 m 時,GSD 為 0.250 m。波長 550 nm、口徑 2.4 m 時,Rayleigh 地面半徑為 0.112 m。大氣影響在限制列中明確標為未計算。** [原始碼](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_satgsd_anim3d.py)
+- [食鹽晶體的粉末 X 光繞射](../../view2026/anim3d/salt_xrd_anim3d.html?lang=tw) (動態 3-D,可拖曳旋轉, 2.5 MB): 在食鹽晶胞上疊加晶格面的薄板;掃過 Bragg 角時,只有光程差為 λ 整數倍處探測器才會亮。把晶粒取向打亂,點就長成環;把波長拉長,環擴大並消失。消光規則透過把 8 個原子的波相加來展示。 [原始碼](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_saltxrd_anim3d.py)
+- [彎曲全部相加都是同一個數](../../anim3d/gauss_bonnet.html?lang=tw) (動態 3-D,可拖曳旋轉, 3.1 MB): 把球削成立方體、換成環面、增加孔洞，或用實測的小行星: 把各頂點的角虧損 K 加起來，Σ K / 2π 都等於 χ = V − E + F。用手指旋轉，看半透明平面把頂點掃進總和。有邊界的碗則不成立(限制分頁)。 **17 列檢驗中 Σ K / 2π 與 χ 的差小於 1e-12；只有帶邊界的碗偏離 24.0 × 2π，加上邊界項後即一致。** [原始碼](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_gaussbonnet_anim3d.py)
+- [脈搏血氧儀的雙波長吸收](../../view2026/anim3d/pulseox_anim3d.html?lang=tw) (動態 3-D,可拖曳旋轉, 0.2 MB): 跟隨紅光和近紅外光穿過搏動的動脈，用 AC/DC 比值 R 讀取血氧飽和度；比較帶雜訊時序與閉式解，並顯示無法區分 COHb 的限制。 **R 最大差 0.00068；SpO₂ 最大誤差 0.034%。在 10% COHb 模型中，真值 90.0% 被讀為 91.0%。** [原始碼](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_pulseox_anim3d.py)
 - [Measure rail wear and gauge with light-section scanning](../../view2026/anim3d/rail_light_section_anim3d.html?lang=tw) (動態 3-D,可拖曳旋轉, 0.1 MB): The intersection of an oblique light sheet and rail surface bends over head, web and foot. During travel, left-head wear rises and the inner distance between two rails reveals gauge widening. **From a noisy subpixel laser line: section RMS 0.699 mm, shape-free wear error 0.0577 mm and profile-measured gauge error 0.346 mm. The triangulation op and independent closed form agree to < 1e-12 mm.** [原始碼](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_rail_anim3d.py)
 
 </div>

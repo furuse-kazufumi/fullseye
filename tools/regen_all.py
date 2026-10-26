@@ -294,6 +294,9 @@ _IMAGE_REASON = ("画像・動画の書き手。PNG/GIF のバイトは Pillow �
 _SPIKE_REASON = ("スパイク(実験)の記録。spikes/out_gallery/ の図は当時の証跡として凍結してあり、"
                  "再描画(matplotlib / GUI)はバイトが変わる。")
 EXCLUDED = {
+    "tools/build_pulseox_anim3d.py": ("パルスオキシメータの二波長吸収の動く 3-D 教材(docs/view2026/anim3d/pulseox_anim3d.html)。"
+                                       "`py -3.11 tools/anim3d_i18n.py --build build_pulseox_anim3d --out docs/view2026/anim3d/pulseox_anim3d.html` で書く"
+                                       "(翻訳表 tools/anim3d_i18n_tables/build_pulseox_anim3d.json)。門は tests/test_anim3d_pulseox_2026_10_26.py。"),
     "tools/check_page_overflow.py": ("門(生成器ではない): pocviewer のページを幅 390 px の iframe に入れて headless Chrome で開き、全タブ × 全言語の"
                                      "横はみ出しを測る。書くのは一時フォルダの計測用の写しだけで、repo には何も書かない。Chrome が要るので手で回す"
                                      "(tests/test_itokawa_page_overflow_2026_10_25.py、Chrome が無ければ skip)。"),
@@ -306,6 +309,14 @@ EXCLUDED = {
     "tools/import_itokawa_shape.py": ("イトカワの形状モデル(NASA PDS SBN の Gaskell Q = 64、CC0 1.0)の取り込み。入力の原本 ver64q.tab は"
                                       "repo の外で手で取得する(取得物は untrusted として専用の空ディレクトリに置く)ので CI では作れない —— "
                                       "SHA-256 を照合して data/itokawa_shape/gaskell_q64.npz を書き、出典と改変は同じ場所の README.md に書く。"),
+    "tools/gen_plateau_venue.py": "ViEW2026 会場の建物の npz(国土交通省 PLATEAU 横浜市 2020 の CityGML LOD2、PDL1.0 / CC BY 4.0 互換)。入力の原本(タイル 2 枚、計 46 MB)は repo の外で手で取得し、信頼しないデータとして -I で読むので CI では作れない —— 小さな npz を data/plateau_yokohama/ に commit し、出典・加工の内容は同じ場所の README.md に書く。門(measuredHeight と生の座標の箱)は道具の中で回り、外れたら書かない。",
+    "tools/build_gaussbonnet_anim3d.py": ("離散 Gauss–Bonnet の動く 3-D の教材(docs/anim3d/gauss_bonnet.html)。pocviewer.write_viewer で書く手回しの"
+                                          "生成物(3 MB)。commit するページは 8 言語版で、`py -3.11 tools/anim3d_i18n.py --build build_gaussbonnet_anim3d"
+                                          " --out docs/anim3d/gauss_bonnet.html` で書く(翻訳表 tools/anim3d_i18n_tables/build_gaussbonnet_anim3d.json)。"
+                                          "門は tests/test_anim3d_gaussbonnet_2026_10_26.py と tests/test_anim3d_i18n_gaussbonnet_2026_10_26.py。"),
+    "tools/import_gaussbonnet_meshes.py": ("離散 Gauss–Bonnet の教材が読むメッシュの取り込み(data/gaussbonnet/*.npz)。穴 2 つ・3 つの合成は marching cubes"
+                                           "(scikit-image、任意の依存)、恐竜の骨格の走査(CC0)の原本 GLB は repo の外で手で取得する(SHA-256 を照合)"
+                                           "ので CI では作れない。出典と改変は data/gaussbonnet/README.md。"),
     "tools/build_organvol_anim3d.py": ("臓器の体積と球形度の動く 3-D の教材(docs/anim3d/organ_volume.html)。"
                                        "`py -3.11 tools/anim3d_i18n.py --build build_organvol_anim3d --out docs/anim3d/organ_volume.html` で書く"
                                        "(翻訳表 tools/anim3d_i18n_tables/build_organvol_anim3d.json)。門は tests/test_anim3d_organvol_2026_10_26.py と "
@@ -324,6 +335,12 @@ EXCLUDED = {
     "tools/build_gsplat_pages.py": ("docs/gsplat/ の 3DGS の商品ビューアとカタログ(examples/gsplat_product_viewer.py の build)。"
                                     "marching cubes に scikit-image(任意の依存)が要り、5 品の 3DGS 化とサムネイルの numpy 描画で"
                                     "1 分ほどかかり、出力は 1 本数 MB —— 鎖に入れず、ページを変える回は手で回して commit する。"),
+    "tools/build_saltxrd_anim3d.py": ("塩の結晶の粉末 X 線回折の動く 3-D の教科書(docs/view2026/anim3d/salt_xrd_anim3d.html)。"
+                                        "pocviewer.write_viewer で書く手回しの生成物(2.5 MB、pxrd の op を 4 題材ぶん回す)。"
+                                        "出力を変えたら手で回して commit する。門は tests/test_anim3d_saltxrd_2026_10_26.py。"
+                                        "ページは 8 言語版で、`py -3.11 tools/anim3d_i18n.py --build build_saltxrd_anim3d"
+                                        " --out docs/view2026/anim3d/salt_xrd_anim3d.html` で書く(生成器を直接回すと ja/en だけに戻る)。"
+                                        "表は tools/anim3d_i18n_tables/、一致は同じテストが見る。"),
     "tools/anim3d_i18n.py": ("動く 3-D の作例を 8 言語にする翻訳の層。作例の main() を走らせて仕様を横取りするので"
                              "1 本 10 秒前後かかり、作例(枝ごとに 15 本ほど)が増えるほど長くなる —— 鎖に入れず、"
                              "docs/view2026/anim3d/*.html は `--build <作例> --out ...` を手で回して commit する。"
@@ -341,12 +358,18 @@ EXCLUDED = {
                                   "docs/nan_input_audit.json と docs/NAN_INPUT_AUDIT.md は手動で更新する。"),
     "tools/merge_test_durations.py": "CI の片割りの重み(.test_durations)。入力は CI の run が残す所要時間の artifact(repo の外)なので手元では作れない —— 取ってきた artifact を合流して commit する。中身は実測値で、回すたびに変わる。",
     "tools/seed_test_durations.py": "同じ .test_durations の初回の穴埋め(未計測の試験を平均値で仮置き)。最初の 1 回だけの道具で、以後は merge_test_durations.py の実測が置き換える。",
-    "tools/gen_plateau_venue.py": "ViEW2026 会場の建物の npz(国土交通省 PLATEAU 横浜市 2020 の CityGML LOD2、PDL1.0 / CC BY 4.0 互換)。入力の原本(タイル 2 枚、計 46 MB)は repo の外で手で取得し、信頼しないデータとして -I で読むので CI では作れない —— 小さな npz を data/plateau_yokohama/ に commit し、出典・加工の内容は同じ場所の README.md に書く。門(measuredHeight と生の座標の箱)は道具の中で回り、外れたら書かない。",
     "tools/gen_thin_film_real.py": "薄膜 PoC の実測データ(Zenodo 13753754・figshare 23285603、どちらも CC BY 4.0)の抜き出し。入力の原本(xlsx・写真、計 60 MB)は repo の外で手で取得するので CI では作れない —— 抜き出した小さな表と縮小写真を data/thin_film_real/ に commit し、出典と改変は同じ場所の README.md に書く。",
     "tools/gen_oct_real.py": "工業用 OCT の PoC の実測データ(Liverpool Research Data Catalogue 126、CC BY 4.0)の抜き出し。入力の原本(.mat の zip、61 MB)は repo の外で手で取得するので CI では作れない —— A ラインを等間隔に 100 本ずつ抜いた小さな npz を data/oct_real/ に commit し、出典と改変は同じ場所の README.md に書く。",
     "tools/gen_xray_tables.py": "材料表の X 線の列(materials_xray_data.py)。入力は NIST SRD 126(Hubbell & Seltzer)の公開ページを手で保存したもの(repo の外、著作権の表示があるので部分集合だけを同梱)で CI では作れない —— 生成物を commit し、手元では `--nist <dir> --check` が drift を見る。tests/test_dualxray.py が NIST の公表値と化合物の表で中身を守る。",
     "tools/gen_pmd_real.py": "デフレクトメトリの PoC の実データ(DataverseNO doi:10.18710/TKS7SI、CC0 1.0)の抜き出しと全解析の記録。入力の原本(16 bit TIFF 280 枚、110 MB)は repo の外で手で取得するので CI では作れない —— 3 枚の切り出しと解析の記録の小さな npz を data/pmd_real/ に commit し、出典と改変は同じ場所の README.md に書く。PoC は FULLSEYE_PMD_HAMMER_DATA があるとき原本から解析し直して記録との差を門で見る。",
     "tools/gen_material_tables.py": "材料表(materials_data.py)。入力の refractiveindex.info database(CC0、71 MB)は repo の外にあるので CI では作れない —— 生成物を commit し、手元では `--rii <database dir> --check` が drift を見る。tests/test_materials.py がカタログ公表値(n_d / V_d)と一次文献の点で中身を守る。",
+    "tools/build_lens_system_anim3d.py": ("教科書の光学「レンズ 1 枚から光学系へ」の動く 3-D(docs/anim3d/textbook_lens_system.html、"
+                                         "約 3 MB)。pocviewer の kind anim3d(枝 feat/pocviewer-anim3d)が固まるまでは形が動くので、"
+                                         "手で回して commit する(build_view2026_viewers と同じ扱い)。中身は "
+                                         "tests/test_lens_system_anim3d.py が理論の式と独立経路で守る。8 言語版は "
+                                         "`py -3.11 tools/anim3d_i18n.py --build build_lens_system_anim3d --out "
+                                         "docs/anim3d/textbook_lens_system.html` で書く(生成器を直接回すと ja/en に戻る。"
+                                         "門は tests/test_anim3d_i18n_lens_system_2026_10_25.py)。"),
     "tools/gen_wing1d_gallery.py": _ARTICLE_REASON,
     "tools/gen_wing2d_gallery.py": _ARTICLE_REASON,
     "tools/gen_wing3d_gallery.py": _ARTICLE_REASON,
@@ -478,9 +501,9 @@ NOT_A_GENERATOR = {
     "tools/probe_studio_web/verify_ops_body.py": "探針。image / region 入力の全 op を実際に走らせ、結果の npz と JSON を引数の出力先(repo の外)へ書く。",
     "tools/probe_studio_web/compare_outputs.py": "探針の照合。2 つの実行の出力を ULP で比べ、結果は引数の出力先へ。--ops-json で studio_lite/ops_subset.json(実測の台帳)を書くが、それは手で回して commit する(node + Pyodide が要り CI では作れない)。",
     "tools/probe_studio_web/build_proof.py": ("探針の証明ページを --out(repo の外)に組む(Pyodide 本体の複製 + repo 内モジュールの zip)。"
-                                              "dist は repo に入れない。"),
-    "tools/algo_gate.py": "門(algo 層の合否を出す)。出力は out/ へ。", "tools/mutation_probe.py": "門の実測。出力は指定先、一時変更は復元。",
+                                               "dist は repo に入れない。"),
     "tools/check_fallback_parity.py": "門の実測(min 構成 = cv2/skimage/PIL なしで op が別の答えを返さないか、full と ULP 照合)。出力は一時 dir か --out の指定先で、repo の生成物は無い。",
+    "tools/algo_gate.py": "門(algo 層の合否を出す)。出力は out/ へ。", "tools/mutation_probe.py": "門の実測。出力は指定先、一時変更は復元。",
     "gsviewer.py": "ライブラリ + CLI(fs.gs_viewer_html / gs_catalog_html)。呼び出し側が指定した出力先へ 1 つの HTML を書く道具で、repo の生成物ではない(公開ページの生成器は tools/build_gsplat_pages.py)。",
     "pocviewer.py": "ライブラリ(fs.write_viewer)。呼び出し側が指定した出力先へ 1 つの HTML を書く道具で、repo の生成物ではない(ビューアの生成器は tools/build_view2026_viewers.py)。",
     "tools/bench_ops.py": "ベンチ。実測値なので回すたびに変わる。",

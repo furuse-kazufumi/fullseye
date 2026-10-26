@@ -1,0 +1,528 @@
+{
+ "_": "Translations for the pulse oximetry animated lesson.",
+ "example": "build_pulseox_anim3d",
+ "strings": {
+  "Reading blood oxygen fraction with red and near-infrared light": {
+   "ja": "赤と近赤外から血液の酸素割合を読む",
+   "zh": "用红光和近红外光读取血氧分数",
+   "tw": "使用紅光和近紅外線讀取血氧分數",
+   "ko": "적색 및 근적외선으로 혈액 산소 분획 판독",
+   "de": "Blutsauerstoff aus Rot- und Infrarotlicht",
+   "hi": "लाल और निकट अवरक्त प्रकाश के साथ रक्त ऑक्सीजन अंश पढ़ना",
+   "fr": "Lecture de la fraction d'oxygène dans le sang avec une lumière rouge et proche infrarouge"
+  },
+  "Follow the two-wavelength pulsatile ratio through a finger cross-section and calibration curve": {
+   "ja": "拍動成分の二波長比を、指の断面と較正曲線で追う",
+   "zh": "通过手指横截面和校准曲线遵循双波长脉动比",
+   "tw": "透過手指截面和校準曲線遵循雙波長脈動比",
+   "ko": "Follow the two-wavelength pulsatile ratio through a finger cross-section and calibration curve",
+   "de": "Pulsverhältnis im Finger und Kalibrierkurve",
+   "hi": "एक उंगली क्रॉस - सेक्शन और अंशांकन वक्र के माध्यम से दो - तरंग दैर्ध्य स्पंदनात्मक अनुपात का पालन करें",
+   "fr": "Suivre le rapport pulsatile à deux longueurs d'onde à travers une section transversale de doigt et une courbe d'étalonnage"
+  },
+  "Follow question, prediction, playback, formula and limit. All values are synthetic.": {
+   "ja": "①問い → ②予想 → ③再生 → ④式 → ⑤限界。値はすべて合成。",
+   "zh": "遵循问题、预测、播放、公式和限制。所有值都是合成的。",
+   "tw": "遵循問題、預測、播放、公式和限制。所有值都是合成的。",
+   "ko": "질문, 예측, 재생, 공식 및 제한을 따릅니다. 모든 값은 합성입니다.",
+   "de": "Befolgen Sie Frage, Vorhersage, Wiedergabe, Formel und Limit. Alle Werte sind synthetisch.",
+   "hi": "प्रश्न, भविष्यवाणी, प्लेबैक, सूत्र और सीमा का पालन करें। सभी मान सिंथेटिक हैं।",
+   "fr": "Suivez la question, la prédiction, la lecture, la formule et la limite. Toutes les valeurs sont synthétiques."
+  },
+  "Two lights through a finger": {
+   "ja": "指を通る二つの光",
+   "zh": "一根手指照亮两盏灯",
+   "tw": "一根手指照亮兩盞燈",
+   "ko": "손가락으로 비추는 두 개의 빛",
+   "de": "Zwei Lichter durch einen Finger",
+   "hi": "एक उंगली के माध्यम से दो रोशनी",
+   "fr": "Deux lumières à travers un doigt"
+  },
+  "Red 660 nm and near-infrared 940 nm cross the artery through skin and tissue. Oxygenation changes their transmission ratio, not merely their colour.": {
+   "ja": "皮膚と組織を挟んで、660 nm の赤と 940 nm の近赤外が動脈を通る。色ではなく透過量の比が酸素化で変わる。",
+   "zh": "红色660 nm和近红外940 nm通过皮肤和组织穿过动脉。氧合改变了它们的传输比，而不仅仅是它们的颜色。",
+   "tw": "紅色660 nm和近紅外線940 nm通過皮膚和組織穿過動脈。氧合改變了它們的傳輸比率，而不僅僅是它們的顏色。",
+   "ko": "적색 660nm와 근적외선 940nm는 피부와 조직을 통해 동맥을 가로지릅니다. 산소는 단순히 색깔이 아니라 투과율을 변화시킵니다.",
+   "de": "Rot 660 nm und nahes Infrarot 940 nm durchqueren die Arterie durch Haut und Gewebe. Die Oxygenierung verändert ihr Übersetzungsverhältnis, nicht nur ihre Farbe.",
+   "hi": "Red 660 nm and near-infrared 940 nm cross the artery through skin and tissue. Oxygenation changes their transmission ratio, not merely their colour.",
+   "fr": "Le rouge 660 nm et le proche infrarouge 940 nm traversent l'artère à travers la peau et les tissus. L'oxygénation modifie leur rapport de transmission, pas seulement leur couleur."
+  },
+  "wavelengths": {
+   "ja": "波長",
+   "zh": "波长",
+   "tw": "波長",
+   "ko": "파장",
+   "de": "Wellenlängen",
+   "hi": "तरंगदैर्ध्य",
+   "fr": "Longueur d'onde"
+  },
+  "red transmission": {
+   "ja": "赤の透過",
+   "zh": "红色传输",
+   "tw": "紅色傳輸",
+   "ko": "빨간색 전송",
+   "de": "rotes Getriebe",
+   "hi": "रेड ट्रांसमिशन",
+   "fr": "transmission rouge"
+  },
+  "near-infrared transmission": {
+   "ja": "近赤外の透過",
+   "zh": "近红外透射",
+   "tw": "近紅外線傳輸",
+   "ko": "근적외선 전파",
+   "de": "nahinfrarotübertragung",
+   "hi": "नज़दीक - अवरक्त संचरण",
+   "fr": "transmission dans le proche infrarouge"
+  },
+  "top: red; bottom: near-infrared transmission": {
+   "ja": "上: 赤、下: 近赤外の透過光",
+   "zh": "top:红色; bottom:近红外透射",
+   "tw": "上：紅色；下：近紅外線傳輸",
+   "ko": "top: red; bottom: 근적외선 전파",
+   "de": "oben: rot; unten: Nahinfrarotübertragung",
+   "hi": "ऊपर: लाल; नीचे: नज़दीक - अवरक्त संचरण",
+   "fr": "haut : rouge ; bas : transmission proche infrarouge"
+  },
+  "R extracted from noisy time series vs closed form": {
+   "ja": "雑音入り時系列から抽出した R と閉形式",
+   "zh": "从嘈杂时间序列与封闭形式中提取的R",
+   "tw": "從雜訊時間序列與封閉形式中提取的R",
+   "ko": "시끄러운 시계열 대 닫힌 양식에서 추출된 R",
+   "de": "R extrahiert aus verrauschten Zeitreihen vs. geschlossene Form",
+   "hi": "शोर समय श्रृंखला बनाम बंद रूप से निकाले गए R",
+   "fr": "R extrait de séries temporelles bruyantes vs forme fermée"
+  },
+  "SpO2 read from calibration vs synthetic truth": {
+   "ja": "較正曲線から読んだ SpO₂ と合成真値",
+   "zh": "从校准中读取的SpO2与合成真值",
+   "tw": "從校準中讀取的SpO2與合成真相",
+   "ko": "보정 대 합성 진실에서 읽은 SpO2",
+   "de": "SpO2 aus Kalibrierung gelesen vs. synthetische Wahrheit",
+   "hi": "कैलिब्रेशन बनाम सिंथेटिक सच्चाई से पढ़ा गया SpO2",
+   "fr": "SpO2 lu à partir de l'étalonnage vs vérité synthétique"
+  },
+  "closed-form inverse vs numerical SpO2 solution": {
+   "ja": "SpO₂ の閉形式逆関数と数値解",
+   "zh": "闭式反比vs数值SpO2溶液",
+   "tw": "閉式反相vs數值SpO2溶液",
+   "ko": "폐쇄형 역수 대 수치적 SpO2 용액",
+   "de": "inverse vs. numerische SpO2-Lösung in geschlossener Form",
+   "hi": "क्लोज्ड - फॉर्म इन्वर्स बनाम न्यूमेरिकल SpO2 सॉल्यूशन",
+   "fr": "solution de SpO2 inverse par rapport à une solution de SpO2 numérique de forme fermée"
+  },
+  "arterial pulse": {
+   "ja": "動脈の拍動",
+   "zh": "动脉脉搏",
+   "tw": "動脈脈搏",
+   "ko": "동맥 맥박",
+   "de": "PULS WEICH",
+   "hi": "धमनी नाड़ी",
+   "fr": "pouls artériel"
+  },
+  "Does oxygenation attenuate both lights by the same fraction?": {
+   "ja": "酸素化が変わると二つの光は同じ割合で弱くなる?",
+   "zh": "氧合是否会使两盏灯衰减相同的部分？",
+   "tw": "氧合會使兩盞燈衰減相同的比例嗎？",
+   "ko": "산소가 두 빛을 같은 비율로 감쇠시키나요?",
+   "de": "Dämpft die Sauerstoffanreicherung beide Lichter um den gleichen Bruchteil?",
+   "hi": "क्या ऑक्सीजनकरण दोनों रोशनी को एक ही भिन्न से कम करता है?",
+   "fr": "L'oxygénation atténue-t-elle les deux lumières de la même fraction ?"
+  },
+  "the same": {
+   "ja": "同じ",
+   "zh": "相同",
+   "tw": "相同",
+   "ko": "똑같은 날이 없습니다.",
+   "de": "derselben.",
+   "hi": "वही",
+   "fr": "pareillement"
+  },
+  "differently": {
+   "ja": "異なる",
+   "zh": "都不一样。",
+   "tw": "不同",
+   "ko": "생각해요 ",
+   "de": "wurde. ",
+   "hi": "विकलांग",
+   "fr": "différemment"
+  },
+  "Oxy- and deoxyhaemoglobin have different absorption at the two wavelengths.": {
+   "ja": "酸化・還元ヘモグロビンの吸光係数は二波長で異なる。",
+   "zh": "氧血红蛋白和脱氧血红蛋白在两个波长的吸收不同。",
+   "tw": "氧血紅蛋白和脫氧血紅蛋白在兩種波長下的吸收不同。",
+   "ko": "옥시- 및 데옥시헤모글로빈은 두 파장에서 서로 다른 흡수를 갖는다.",
+   "de": "Oxy- und Desoxyhämoglobin haben unterschiedliche Absorption bei den beiden Wellenlängen.",
+   "hi": "ऑक्सी - और डीऑक्सीहाइमोग्लोबिन का दो तरंग दैर्ध्य पर अलग - अलग अवशोषण होता है।",
+   "fr": "L'oxy- et la désoxyhémoglobine ont une absorption différente aux deux longueurs d'onde."
+  },
+  "A = Σ εᵢ cᵢ l": {
+   "ja": "A = Σ εᵢ cᵢ l",
+   "zh": "A = Σ εᵢ cᵢ l",
+   "tw": "A = Σ εᵢ cᵢ l",
+   "ko": "A = Σ εᵢ cᵢ l",
+   "de": "A = Σ εᵢ cᵢ l",
+   "hi": "A = Σ εᵢ cᵢ l",
+   "fr": "A = Σ εᵢ cᵢ l"
+  },
+  "Beer-Lambert model without scattering; coefficients and thickness are explanatory assumptions.": {
+   "ja": "散乱を無視した Beer–Lambert 模型。係数と厚さは説明用の仮定。",
+   "zh": "Beer-Lambert模型无散射；系数和厚度是解释性假设。",
+   "tw": "Beer-Lambert模型沒有散射；系數和厚度是解釋性假設。",
+   "ko": "흩어짐이 없는 맥주-램버트 모델; 계수와 두께는 설명 가정입니다.",
+   "de": "Bier-Lambert-Modell ohne Streuung; Koeffizienten und Dicke sind erklärende Annahmen.",
+   "hi": "बिखरने के बिना बीयर - लैम्बर्ट मॉडल; गुणांक और मोटाई व्याख्यात्मक धारणाएं हैं।",
+   "fr": "Modèle de Beer-Lambert sans diffusion ; les coefficients et l'épaisseur sont des hypothèses explicatives."
+  },
+  "Extract AC/DC from the pulse": {
+   "ja": "拍動から AC/DC を取り出す",
+   "zh": "从脉搏中提取AC/DC",
+   "tw": "從脈搏中提取AC/DC",
+   "ko": "펄스에서 AC/DC 추출",
+   "de": "AC/DC aus dem Puls extrahieren",
+   "hi": "नाड़ी से AC/DC निकालें",
+   "fr": "Extraire le CA/CC de l'impulsion"
+  },
+  "Only the pulsating artery creates AC; steady tissue absorption remains in DC. The two AC/DC values are compared.": {
+   "ja": "拍動で変わる動脈だけが AC を作り、組織などの定常吸収は DC に残る。二波長それぞれの AC/DC を比べる。",
+   "zh": "只有搏动动脉产生AC ；稳定的组织吸收留在DC中。比较了两个AC/DC值。",
+   "tw": "只有脈動動脈會產生AC ；穩定的組織吸收保留在DC中。比較兩個AC/DC值。",
+   "ko": "맥동 동맥만이 AC를 생성하고, 정상 조직 흡수는 DC에 남아 있습니다. 두 AC/DC 값을 비교합니다.",
+   "de": "Nur die pulsierende Arterie erzeugt AC; die stetige Gewebeabsorption verbleibt in DC. Die beiden AC/DC-Werte werden verglichen.",
+   "hi": "केवल स्पंदित धमनी एसी बनाती है; डीसी में स्थिर ऊतक अवशोषण बना रहता है। दो AC/DC मानों की तुलना की जाती है।",
+   "fr": "Seule l'artère pulsatoire crée la CA ; l'absorption tissulaire régulière reste en CC. Les deux valeurs AC/DC sont comparées."
+  },
+  "ratio R": {
+   "ja": "比 R",
+   "zh": "比率R",
+   "tw": "比率R",
+   "ko": "비율 R",
+   "de": "ratio R",
+   "hi": "अनुपात R",
+   "fr": "ratio R"
+  },
+  "red-to-infrared AC/DC ratio": {
+   "ja": "AC/DC の赤・近赤外比",
+   "zh": "红红外交流/直流比",
+   "tw": "紅紅外線交直流比",
+   "ko": "적외선 대 적외선 AC/DC 비율",
+   "de": "rot-Infrarot AC/DC-Verhältnis",
+   "hi": "लाल से अवरक्त एसी/डीसी अनुपात",
+   "fr": "rapport AC/DC rouge/infrarouge"
+  },
+  "pulse": {
+   "ja": "拍動",
+   "zh": "脉冲",
+   "tw": "脈衝",
+   "ko": "펄스",
+   "de": "pulse",
+   "hi": "नाड़ी",
+   "fr": "Pulsation"
+  },
+  "If thicker tissue lowers DC, how should the pulse be read?": {
+   "ja": "組織の厚さが増えて DC が下がったら、拍動の読みはどうする?",
+   "zh": "如果较厚的组织降低DC ，应如何读取脉搏？",
+   "tw": "如果較厚的組織降低DC ，應該如何讀取脈搏？",
+   "ko": "두꺼운 조직이 DC를 낮추면 펄스를 어떻게 읽어야 합니까?",
+   "de": "Wenn dickeres Gewebe DC senkt, wie sollte der Puls abgelesen werden?",
+   "hi": "यदि मोटा ऊतक DC को कम करता है, तो नाड़ी को कैसे पढ़ा जाना चाहिए?",
+   "fr": "Si les tissus plus épais abaissent le courant continu, comment doit-on lire le pouls ?"
+  },
+  "use AC alone": {
+   "ja": "AC だけ使う",
+   "zh": "单独使用空调",
+   "tw": "單獨使用空調",
+   "ko": "에어컨 단독 사용",
+   "de": "verwenden Sie die Klimaanlage allein",
+   "hi": "अकेले AC का उपयोग करें",
+   "fr": "utiliser la climatisation seule"
+  },
+  "use AC/DC": {
+   "ja": "AC/DC にする",
+   "zh": "使用AC/DC",
+   "tw": "使用AC/DC",
+   "ko": "aC/DC 사용",
+   "de": "aC/DC verwenden",
+   "hi": "aC/DC का उपयोग करें",
+   "fr": "utiliser AC/DC"
+  },
+  "Divide AC by DC at each wavelength to reduce steady attenuation.": {
+   "ja": "各波長で AC を DC で割り、定常減衰の影響を減らす。",
+   "zh": "在每个波长处将交流电除以直流电，以减少稳定的衰减。",
+   "tw": "在每個波長上將交流電除以直流電，以減少穩定衰減。",
+   "ko": "안정적인 감쇠를 줄이기 위해 각 파장에서 AC를 DC로 나눕니다.",
+   "de": "Dividieren Sie AC durch DC bei jeder Wellenlänge, um die gleichmäßige Dämpfung zu reduzieren.",
+   "hi": "स्थिर क्षीणन को कम करने के लिए प्रत्येक तरंग दैर्ध्य पर डीसी द्वारा एसी को विभाजित करें।",
+   "fr": "Divisez le courant alternatif par le courant continu à chaque longueur d'onde pour réduire l'atténuation constante."
+  },
+  "R=(ACred/DCred)/(ACir/DCir)": {
+   "ja": "R=(ACred/DCred)/(ACir/DCir)",
+   "zh": "R=(ACred/DCred)/(ACir/DCir)",
+   "tw": "R=(ACred/DCred)/(ACir/DCir)",
+   "ko": "R=(ACred/DCred)/(ACir/DCir)",
+   "de": "R=(ACred/DCred)/(ACir/DCir)",
+   "hi": "R=(ACred/DCred)/(ACir/DCir)",
+   "fr": "R=(ACred/DCred)/(ACir/DCir)"
+  },
+  "Instrument filtering, quantisation and perfusion variation are omitted.": {
+   "ja": "実機のフィルタ、量子化、灌流の違いは含めない。",
+   "zh": "仪器过滤、量化和灌注变化被省略。",
+   "tw": "省略了儀器濾波、量化和灌注變化。",
+   "ko": "기기 필터링, 양자화 및 관류 변형은 생략됩니다.",
+   "de": "Instrumentenfilterung, Quantisierung und Perfusionsvariation entfallen.",
+   "hi": "इंस्ट्रूमेंट फ़िल्टरिंग, क्वांटाइजेशन और परफ्यूजन वैरिएशन को छोड़ दिया जाता है।",
+   "fr": "Le filtrage des instruments, la quantification et la variation de perfusion sont omis."
+  },
+  "Read oxygen saturation from R": {
+   "ja": "R から酸素飽和度を読む",
+   "zh": "从R读取氧饱和度",
+   "tw": "從R讀取氧飽和度",
+   "ko": "R에서 산소 포화도 읽기",
+   "de": "Sauerstoffsättigung von R ablesen",
+   "hi": "R से ऑक्सीजन संतृप्ति पढ़ें",
+   "fr": "Lire la saturation en oxygène de R"
+  },
+  "As SpO2 moves from 100% to 70%, R rises. Yellow values come from noisy time series; the line is the Beer-Lambert closed form.": {
+   "ja": "SpO₂ を 100 % から 70 % へ動かすと R が増える。黄色の抽出値は雑音入り時系列、線は Beer–Lambert の閉形式。",
+   "zh": "随着SpO2从100%上升到70% ， R上升。黄色值来自嘈杂的时间序列；线是Beer-Lambert闭合形式。",
+   "tw": "隨著SpO2從100%移動到70% ， R上升。黃色值來自嘈雜的時間序列；線是Beer-Lambert閉合形式。",
+   "ko": "SpO2가 100% 에서 70% 로 이동하면 R이 상승합니다. 노란색 값은 시끄러운 시계열에서 나옵니다. 이 라인은 Beer-Lambert 폐쇄형입니다.",
+   "de": "Wenn sich SpO2 von 100 % auf 70 % bewegt, steigt R an. Gelbe Werte stammen aus verrauschten Zeitreihen; die Linie ist die geschlossene Form von Beer-Lambert.",
+   "hi": "जैसे ही SpO2 100% से 70% तक बढ़ता है, R बढ़ जाता है। पीले मूल्य शोर समय श्रृंखला से आते हैं; लाइन बीयर - लैम्बर्ट बंद रूप है।",
+   "fr": "Au fur et à mesure que la SpO2 passe de 100 % à 70 %, la R augmente. Les valeurs jaunes proviennent de séries temporelles bruyantes ; la ligne est la forme fermée de Beer-Lambert."
+  },
+  "maximum SpO2 error": {
+   "ja": "最大 SpO₂ 誤差",
+   "zh": "最大SpO2误差",
+   "tw": "最大SpO2錯誤",
+   "ko": "최대 SpO2 오류",
+   "de": "maximaler SpO2-Fehler",
+   "hi": "अधिकतम SpO2 गड़बड़ी",
+   "fr": "erreur SpO2 maximale"
+  },
+  "closed-form R": {
+   "ja": "閉形式 R",
+   "zh": "闭式R",
+   "tw": "封閉式R",
+   "ko": "closed-form R",
+   "de": "geschlossene Form R",
+   "hi": "क्लोज्ड - फॉर्म R",
+   "fr": "forme fermée R"
+  },
+  "extracted R": {
+   "ja": "抽出 R",
+   "zh": "提取R",
+   "tw": "提取R",
+   "ko": "추출된 R",
+   "de": "extrahiertes R",
+   "hi": "निकाले गए R",
+   "fr": "extrait R"
+  },
+  "oxygen saturation": {
+   "ja": "酸素飽和度",
+   "zh": "血氧飽和度Oxygen saturation",
+   "tw": "血氧濃度",
+   "ko": "산소포화도",
+   "de": "Sauerstoffsättigung",
+   "hi": "ऑक्सीजन संतृप्ति",
+   "fr": "saturation en oxygène"
+  },
+  "As SpO2 falls, what happens to R in this model?": {
+   "ja": "SpO₂ が下がると、この模型の R は?",
+   "zh": "当SpO2下降时，此模型中的R会发生什么？",
+   "tw": "當SpO2下降時，此模型中的R會發生什麼變化？",
+   "ko": "SpO2가 떨어지면 이 모델에서 R은 어떻게 됩니까?",
+   "de": "Wenn SpO2 fällt, was passiert mit R in diesem Modell?",
+   "hi": "जैसे ही SpO2 गिरता है, इस मॉडल में R का क्या होता है?",
+   "fr": "À mesure que la SpO2 diminue, qu'arrive-t-il à R dans ce modèle ?"
+  },
+  "falls": {
+   "ja": "下がる",
+   "zh": "陨落",
+   "tw": "瀑布城",
+   "ko": "상세불명의 추락",
+   "de": "fällt",
+   "hi": "गिरता है",
+   "fr": "des chutes"
+  },
+  "rises": {
+   "ja": "上がる",
+   "zh": "大盛",
+   "tw": "上升",
+   "ko": "상승",
+   "de": "Rises",
+   "hi": "अंधेरे शूरवीर उगते हैं",
+   "fr": "augmente"
+  },
+  "R rises because deoxyhaemoglobin absorbs red light relatively strongly.": {
+   "ja": "赤の還元 Hb 吸収が相対的に強いため R が上がる。",
+   "zh": "R升高是因为脱氧血红蛋白对红光的吸收相对较强。",
+   "tw": "R升高是因為脫氧血紅蛋白吸收紅光相對較強。",
+   "ko": "데옥시헤모글로빈이 적색광을 비교적 강하게 흡수하기 때문에 상승합니다.",
+   "de": "R steigt, weil Deoxyhämoglobin rotes Licht relativ stark absorbiert.",
+   "hi": "R बढ़ता है क्योंकि डीऑक्सीहाइमोग्लोबिन लाल बत्ती को अपेक्षाकृत मजबूती से अवशोषित करता है।",
+   "fr": "La hausse est due au fait que la désoxyhémoglobine absorbe relativement fortement la lumière rouge."
+  },
+  "R=(εr,o S+εr,d(1-S))/(εi,o S+εi,d(1-S))": {
+   "ja": "R=(εr,o S+εr,d(1-S))/(εi,o S+εi,d(1-S))",
+   "zh": "R=(εr,o S+εr,d(1-S))/(εi,o S+εi,d(1-S))",
+   "tw": "R=(εr,o S+εr,d(1-S))/(εi,o S+εi,d(1-S))",
+   "ko": "R=(εr,o S+εr,d(1-S))/(εi,o S+εi,d(1-S))",
+   "de": "R=(εr,o S+εr,d(1-S))/(εi,o S+εi,d(1-S))",
+   "hi": "R=(εr,o S+εr,d(1-S))/(εi,o S+εi,d(1-S))",
+   "fr": "R=(εr,o S+εr,d(1-S))/(εi,o S+εi,d(1-S))"
+  },
+  "Real instruments use empirical calibration; this is a scattering-free teaching model.": {
+   "ja": "実機は経験的較正を使う。この曲線は散乱なしの教育模型。",
+   "zh": "真正的仪器使用经验校准；这是一种无散射的教学模型。",
+   "tw": "真正的儀器使用經驗校準；這是一種無散射的教學模型。",
+   "ko": "실제 기기는 경험적 교정을 사용합니다. 이것은 비산 없는 교수 모델입니다.",
+   "de": "Reale Instrumente verwenden eine empirische Kalibrierung; dies ist ein streufreies Lehrmodell.",
+   "hi": "वास्तविक उपकरण अनुभवजन्य अंशांकन का उपयोग करते हैं; यह एक बिखराव मुक्त शिक्षण मॉडल है।",
+   "fr": "Les instruments réels utilisent un étalonnage empirique ; il s'agit d'un modèle d'enseignement sans dispersion."
+  },
+  "What two wavelengths cannot distinguish": {
+   "ja": "二波長では見分けられないもの",
+   "zh": "哪两种波长无法区分",
+   "tw": "哪兩種波長無法區分",
+   "ko": "두 파장이 구별할 수 없는 것",
+   "de": "Messgrenzen",
+   "hi": "किन दो तरंग दैर्ध्यों में अंतर नहीं किया जा सकता है",
+   "fr": "Ce que deux longueurs d'onde ne peuvent pas distinguer"
+  },
+  "In a model that confuses 10% COHb with oxyhaemoglobin, a true 90.0% reads 91.0%. Motion, scattering and nail coating also alter the two-wavelength ratio.": {
+   "ja": "COHb 10 % を酸化 Hb と取り違える模型では、真の 90.0 % を 91.0 % と読む。体動、散乱、マニキュアも二波長の比を変える。",
+   "zh": "在一个将10% COHb与氧血红蛋白混淆的模型中，真实的90.0%读数为91.0%。运动、散射和指甲涂层也会改变双波长比。",
+   "tw": "在將10% COHb與氧合血紅蛋白混淆的模型中，真實的90.0%讀數為91.0%。運動、散射和指甲塗層也會改變雙波長比率。",
+   "ko": "In a model that confuses 10% COHb with oxyhaemoglobin, a true 90.0% reads 91.0%. Motion, scattering and nail coating also alter the two-wavelength ratio.",
+   "de": "In a model that confuses 10% COHb with oxyhaemoglobin, a true 90.0% reads 91.0%. Motion, scattering and nail coating also alter the two-wavelength ratio.",
+   "hi": "एक मॉडल में जो ऑक्सीहाइमोग्लोबिन के साथ 10% COHb को भ्रमित करता है, एक सच्चा 90.0% 91.0% पढ़ता है। मोशन, स्कैटरिंग और नेल कोटिंग भी दो - तरंग दैर्ध्य अनुपात को बदलते हैं।",
+   "fr": "In a model that confuses 10% COHb with oxyhaemoglobin, a true 90.0% reads 91.0%. Motion, scattering and nail coating also alter the two-wavelength ratio."
+  },
+  "bias from COHb": {
+   "ja": "COHb による偏り",
+   "zh": "cOH偏倚b",
+   "tw": "來自COHb的偏見",
+   "ko": "cOHb의 편향",
+   "de": "voreingenommenheit von COHb",
+   "hi": "cOHb से पूर्वाग्रह",
+   "fr": "biais de COHb"
+  },
+  "truth": {
+   "ja": "真値",
+   "zh": "truth",
+   "tw": "真理",
+   "ko": "진리",
+   "de": "Wahrheit",
+   "hi": "सच ",
+   "fr": "vérité / la vérité /vrai/la véracité"
+  },
+  "two-wavelength reading": {
+   "ja": "二波長の読み",
+   "zh": "双波长读数",
+   "tw": "雙波長讀取",
+   "ko": "two-wavelength reading",
+   "de": "zwei-Wellenlängen-Messung",
+   "hi": "दो तरंग दैर्ध्य पढ़ना",
+   "fr": "lecture à deux longueurs d'onde"
+  },
+  "true SpO2 despite 10% COHb": {
+   "ja": "COHb 10 % があっても真の SpO₂ を読む",
+   "zh": "真正的SpO2 ，尽管10%的COHb",
+   "tw": "真正的SpO2 ，儘管10%的COHb",
+   "ko": "10% COHb에도 불구하고 실제 SpO2",
+   "de": "echtes SpO2 trotz 10% COHb",
+   "hi": "10% COHb के बावजूद सही SpO2",
+   "fr": "vraie SpO2 malgré 10% COHb"
+  },
+  "bias below 1%": {
+   "ja": "偏り 1 % 未満",
+   "zh": "偏倚低于1%",
+   "tw": "偏差低於1%",
+   "ko": "1% 미만의 편향",
+   "de": "verzerrung unter 1 %",
+   "hi": "1% से कम पूर्वाग्रह",
+   "fr": "bias below 1%"
+  },
+  "true 90.0% → read 91.0%": {
+   "ja": "真値 90.0 % → 読み 91.0 %",
+   "zh": "true 90.0% → read 91.0%",
+   "tw": "true 90.0% → read 91.0%",
+   "ko": "true 90.0% → 읽기 91.0%",
+   "de": "wahr 90.0% → Messwert 91.0%",
+   "hi": "सही 90.0% → पढ़ा 91.0%",
+   "fr": "true 90.0% → read 91.0%"
+  },
+  "carboxyhaemoglobin": {
+   "ja": "一酸化炭素ヘモグロビン",
+   "zh": "碳氧血红蛋白",
+   "tw": "碳氧血紅蛋白",
+   "ko": "카복시헤모글로빈",
+   "de": "Carbomonoxyhämoglobin",
+   "hi": "कार्बोक्सीहाइमोग्लोबिन",
+   "fr": "Carbonylhémoglobine"
+  },
+  "Can two wavelengths distinguish COHb from oxyhaemoglobin?": {
+   "ja": "二波長だけで COHb と酸化 Hb を区別できる?",
+   "zh": "两个波长可以区分COHb和氧血红蛋白吗？",
+   "tw": "兩種波長能夠區分COHb和氧血紅蛋白嗎？",
+   "ko": "두 파장이 COHb를 옥시헤모글로빈과 구별할 수 있습니까?",
+   "de": "Lassen sich COHb und Oxyhämoglobin unterscheiden?",
+   "hi": "क्या दो तरंगदैर्ध्य COHb को ऑक्सीहाइमोग्लोबिन से अलग कर सकते हैं?",
+   "fr": "Deux longueurs d'onde peuvent-elles distinguer COHb de l'oxyhémoglobine ?"
+  },
+  "yes": {
+   "ja": "できる",
+   "zh": "是",
+   "tw": "讚啦",
+   "ko": "예",
+   "de": "ja",
+   "hi": "हाँ",
+   "fr": "oui"
+  },
+  "no": {
+   "ja": "できない",
+   "zh": "否",
+   "tw": "不用",
+   "ko": "아니오",
+   "de": "nicht",
+   "hi": "नहीं",
+   "fr": "non="
+  },
+  "With another unknown species, two measurements no longer provide enough equations.": {
+   "ja": "未知成分が増えると二つの測定だけでは方程式が足りない。",
+   "zh": "对于另一个未知物种，两次测量不再提供足够的方程式。",
+   "tw": "對於另一個未知物種，兩次測量不再提供足夠的方程式。",
+   "ko": "또 다른 알려지지 않은 종의 경우, 두 개의 측정이 더 이상 충분한 방정식을 제공하지 않습니다.",
+   "de": "Bei einer anderen unbekannten Spezies liefern zwei Messungen nicht mehr genügend Gleichungen.",
+   "hi": "एक और अज्ञात प्रजाति के साथ, दो माप अब पर्याप्त समीकरण प्रदान नहीं करते हैं।",
+   "fr": "Avec une autre espèce inconnue, deux mesures ne fournissent plus assez d'équations."
+  },
+  "3 unknown concentrations > 2 wavelengths": {
+   "ja": "未知濃度 3 種 > 波長 2 本",
+   "zh": "3 unknown concentrations > 2 wavelengths",
+   "tw": "3 unknown concentrations > 2 wavelengths",
+   "ko": "3 unknown concentrations > 2 wavelengths",
+   "de": "3 unknown concentrations > 2 wavelengths",
+   "hi": "3 unknown concentrations > 2 wavelengths",
+   "fr": "3 unknown concentrations > 2 wavelengths"
+  },
+  "Not for diagnosis. The model omits scattering, motion, low perfusion, nail coating and COHb.": {
+   "ja": "診断用ではない。散乱、体動、低灌流、マニキュア、COHb を扱わない模型。",
+   "zh": "不适用于诊断。该模型省略了散射、运动、低灌注、指甲涂层和COHb。",
+   "tw": "不適用於診斷。該模型省略了散射、運動、低灌注、指甲塗層和COHb。",
+   "ko": "진단용이 아닙니다. 이 모델은 산란, 운동, 낮은 관류, 네일 코팅 및 COHb를 생략합니다.",
+   "de": "Nicht für die Diagnose. Das Modell verzichtet auf Streuung, Bewegung, geringe Durchblutung, Nagelbeschichtung und COHb.",
+   "hi": "निदान के लिए नहीं। मॉडल बिखरने, गति, कम परफ्यूजन, नाखून कोटिंग और सीओएचबी को छोड़ देता है।",
+   "fr": "Pas pour le diagnostic. Le modèle omet la diffusion, le mouvement, la faible perfusion, le revêtement des ongles et le COHb."
+  },
+  "Entirely synthetic. Absorption coefficients, finger thickness, pulse amplitude and noise are explanatory assumptions for commonly reported relations, not patient data or product calibration. Not for diagnosis.": {
+   "ja": "すべて合成。吸光係数、指の厚さ、拍動振幅、雑音は文献で一般的な関係を説明するための仮定であり、患者データや製品の較正値ではない。診断には使わない。",
+   "zh": "完全合成。吸收系数、手指厚度、脉冲幅度和噪声是常见报告的关系的解释性假设，而不是患者数据或产品校准。不是为了诊断。",
+   "tw": "完全合成。吸收系數、手指厚度、脈搏幅度和噪音是常見報告關係的解釋性假設，而不是患者數據或產品校準。不是為了診斷。",
+   "ko": "완전 합성. 흡수 계수, 손가락 두께, 펄스 진폭 및 소음은 일반적으로 보고된 관계에 대한 설명 가정이며 환자 데이터 또는 제품 보정이 아닙니다. 진단용이 아닙니다.",
+   "de": "Vollständig synthetisch. Absorptionskoeffizienten, Fingerdicke, Pulsamplitude und Rauschen sind erklärende Annahmen für häufig gemeldete Beziehungen, nicht Patientendaten oder Produktkalibrierung. Nicht für die Diagnose.",
+   "hi": "पूरी तरह से सिंथेटिक। अवशोषण गुणांक, उंगली की मोटाई, नाड़ी आयाम और शोर आमतौर पर रिपोर्ट किए गए संबंधों के लिए व्याख्यात्मक धारणाएं हैं, न कि रोगी डेटा या उत्पाद अंशांकन। निदान के लिए नहीं।",
+   "fr": "Entièrement synthétique. Les coefficients d'absorption, l'épaisseur du doigt, l'amplitude du pouls et le bruit sont des hypothèses explicatives pour les relations couramment rapportées, et non pour les données du patient ou l'étalonnage du produit. Pas pour le diagnostic."
+  }
+ }
+}
