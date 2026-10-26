@@ -550,7 +550,7 @@ def _stage_key(s):
 from studio_result import (  # noqa: E402
     assess_validity, file_sha256, input_reference, resolve_input_ref,
     _valid_input_ref, _is_binary, StageCache, array_nbytes,
-    CACHE_BUDGET_BYTES, over_budget,
+    CACHE_BUDGET_BYTES, over_budget, cache_summary_text,
 )
 
 
@@ -926,6 +926,15 @@ class PipelineModel:
             if val is _EVICTED:
                 self._lru.pop(i)
                 continue
+            # keep the small picture before dropping the big array: the stage list can still show a
+            # CURRENT thumbnail for an evicted stage (only the full result is recomputed on demand)
+            rec = self._thumbs.get(k)
+            if rec is None or rec[0] != self._img_ver or rec[1] != key:
+                try:
+                    th, kind = _result_thumbnail(val)
+                    self._thumbs[k] = (self._img_ver, key, th, kind)
+                except Exception:
+                    pass                                        # a picture that cannot be made is not an error
             self._cache_bytes -= array_nbytes(val)
             self._cache[k] = (key, _EVICTED, ms)
             self._lru.pop(i)
@@ -1072,12 +1081,34 @@ class PipelineModel:
             return None
         return k, exc
 
-    def _is_fresh(self, i):
-        """True if stage *i* has a cached result that is valid for the current stages (reads only)."""
+    def _key_valid(self, i):
+        """True if the cached prefix 0..i still matches the current stages / image / policy (reads only).
+        Says nothing about whether stage *i*'s VALUE is still held (see :meth:`_is_fresh`)."""
         stages = self._stages
         return (0 <= i < len(stages) and self._ctx == self._context() and i < len(self._cache)
-                and self._cache[i][1] is not _EVICTED
                 and all(self._cache[j][0] == _stage_key(stages[j]) for j in range(i + 1)))
+
+    def _is_fresh(self, i):
+        """True if stage *i* has a cached result that is valid for the current stages AND still holds its
+        value (not evicted under the memory budget). Reads only."""
+        return self._key_valid(i) and self._cache[i][1] is not _EVICTED
+
+    def stage_memory(self):
+        """Per stage, bytes of the stage-output array currently held in the cache; None when nothing
+        live is held (never computed, stale, or evicted under the budget). Sums to :meth:`cache_bytes`.
+        idea 114 (per-stage time and memory). Runs nothing."""
+        return [array_nbytes(self._cache[i][1]) if self._is_fresh(i) else None
+                for i in range(len(self._stages))]
+
+    def cache_summary(self):
+        """One dict for the cache line (idea 113 "show the cache range" / 114 / 116): ``bytes`` held,
+        ``budget_bytes``, ``live`` stages holding a value, ``evicted`` stages whose key is current but
+        whose value was dropped for the budget, ``stages`` total. Plain Python, runs nothing."""
+        n = len(self._stages)
+        live = sum(1 for i in range(n) if self._is_fresh(i))
+        evicted = sum(1 for i in range(n) if self._key_valid(i) and self._cache[i][1] is _EVICTED)
+        return {"bytes": self._cache_bytes, "budget_bytes": self._cache_budget,
+                "live": live, "evicted": evicted, "stages": n}
 
     def cached_result(self, i):
         """The cached value after stage *i* (``-1`` = the base image), or None when it is not cached
@@ -1233,7 +1264,9 @@ class PipelineModel:
         exists: *thumb* is its small uint8 RGB picture, or None for a table / scalar; *kind* says
         what it is), ``"stale"`` (it was computed before, but with other knobs / another image /
         another bypass: no picture is given, so an old one is never shown as if it were current) or
-        ``"uncomputed"`` (never computed). Only the small thumbnail is kept, never a copy of the array."""
+        ``"uncomputed"`` (never computed), or ``"evicted"`` (the knobs did not change but the full array was
+        dropped to stay under the memory budget: the small thumbnail is STILL current and is given, the
+        array is recomputed on demand). Only the small thumbnail is kept, never a copy of the array."""
         stages = self._stages
         if not 0 <= i < len(stages):
             raise IndexError(i)
@@ -1247,6 +1280,11 @@ class PipelineModel:
                 th, kind = _result_thumbnail(self._cache[i][1])
                 rec = self._thumbs[i] = (self._img_ver, key, th, kind)
             return {"status": "ready", "thumb": rec[2], "kind": rec[3], "bypass": byp}
+        if self._key_valid(i):                                  # value evicted for the budget, key current
+            rec = self._thumbs.get(i)
+            cur = rec is not None and rec[0] == self._img_ver and rec[1] == key
+            return {"status": "evicted", "thumb": rec[2] if cur else None,
+                    "kind": rec[3] if rec is not None else None, "bypass": byp}
         rec = self._thumbs.get(i)
         if rec is not None and rec[1][0] == key[0]:
             return {"status": "stale", "thumb": None, "kind": rec[3], "bypass": byp}
@@ -7767,6 +7805,11 @@ def build_window(model=None):
             elif pv["status"] == "stale":
                 it.setIcon(_glyph_icon("\u21bb", AMBER))
                 it.setToolTip("\u518d\u8a08\u7b97\u304c\u5fc5\u8981 / recompute needed\n\n" + base)
+            elif pv["status"] == "evicted":
+                th = pv["thumb"]                       # still current: only the full array was dropped
+                it.setIcon(_thumb_icon(th) if th is not None else _glyph_icon("\u25cc", MUTED))
+                it.setToolTip("\u5024\u306f\u4e88\u7b97\u3067\u89e3\u653e / evicted (budget): "
+                              "the picture is current, the array is recomputed on demand\n\n" + base)
             else:
                 it.setIcon(_glyph_icon("\u2026", MUTED))
                 it.setToolTip("\u672a\u8a08\u7b97 / not computed\n\n" + base)
@@ -7793,6 +7836,7 @@ def build_window(model=None):
             state["errors"].append(("step summaries unavailable", str(e)))
             flash("step summaries unavailable: %s" % truncate(e, 100))
         times = model.cached_times()
+        mems = model.stage_memory()                   # idea 114: bytes held per stage (None = not held)
         marks = model.stage_marks()                   # which stages were recomputed since the last refresh
         model.acknowledge()
         validity_rows = []
@@ -7804,10 +7848,14 @@ def build_window(model=None):
                 summ = step_summary(st)
             elif pstatus == "stale":
                 summ = "再計算が必要 / recompute needed"
+            elif pstatus == "evicted":
+                summ = "値は予算で解放 / evicted (budget): recomputed on demand"
             else:
                 summ = "未計算 / not computed"
             ms = times[i] if (i < len(times) and st) else None
             tstr = ("  ·  %.1f ms" % ms) if isinstance(ms, (int, float)) else ""
+            mem = mems[i] if (i < len(mems) and st) else None
+            tstr += ("  ·  %.1f MB" % (mem / (1024.0 * 1024.0))) if isinstance(mem, int) else ""
             mk = marks[i] if (i < len(marks) and st) else "pending"
             cstr = {"computed": "  ·  ⟳ calc", "cached": "  ·  ↺ cache"}.get(mk, "")
             warn = st.get("valid") is False
@@ -11340,12 +11388,13 @@ def build_window(model=None):
         except Exception:
             return                                    # a stage raised: the Problems list says which
         v, why = assess_validity(val)
+        cache_line = "  \u00b7  " + cache_summary_text(model.cache_summary())   # idea 113/114: cache range
         if v is False:
-            flash(tr("Run: done / Result: needs review (%s)") % "; ".join(why))
+            flash(tr("Run: done / Result: needs review (%s)") % "; ".join(why) + cache_line)
         elif v is None:
-            flash(tr("Run: done / Result: validity not judged"))
+            flash(tr("Run: done / Result: validity not judged") + cache_line)
         else:
-            flash(tr("Run: done / Result: valid (as reported by the op)"))
+            flash(tr("Run: done / Result: valid (as reported by the op)") + cache_line)
     win._do_step = _do_step; win._do_run_all = _do_run_all; win._do_reset = reset_to_raw
     b_reset.clicked.connect(reset_to_raw)
     b_step.clicked.connect(_do_step)

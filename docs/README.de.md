@@ -139,7 +139,7 @@ Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. F
 
 **3,576 Operator-Notizen** (Aufrufform, Typvertrag, HALCON-Pendant, Literatur, Provenienz) und **69 Familien-Leitfäden**. Einstiegspunkte nach Dimension:
 
-**Gemessene Abdeckung**: evolvierbare Ops 942/942, typisiertes Ledger 2613/2625, Fassade `fullseye.<name>` 706/1490 — **die Fassade ist erst zur Hälfte abgedeckt**.
+**Gemessene Abdeckung**: evolvierbare Ops 942/942, typisiertes Ledger 2613/2625, Fassade `fullseye.<name>` 706/1491 — **die Fassade ist erst zur Hälfte abgedeckt**.
 
 **Gemessener Inhalt**: von 3576 Notizen verweisen **3549** auf mindestens ein lauffähiges Beispiel (27 ohne), **3378** haben einen Nutzungsabschnitt ab 120 Zeichen (198 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 3576.
 

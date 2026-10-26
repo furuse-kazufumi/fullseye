@@ -799,8 +799,13 @@ def static(T, B, xyz_list, quat_list=None):
     return xyz, quat
 
 
+# 1e-12 を下回る残差は丸め屑で、末尾の桁は OS / BLAS ごとに変わる(Linux の CI で 1.1e-13 m が
+# 別の値になりページの byte 一致が落ちた)。屑の水準は「< 1e-12」とだけ書き、0 もそこへ含める。
+DUST = 1e-12
+
+
 def _e(x):
-    return "0" if x == 0 else "%.1e" % x
+    return "< 1e-12" if abs(x) < DUST else "%.1e" % x
 
 
 def _row(what_ja, what_en, criterion, result, ok):
