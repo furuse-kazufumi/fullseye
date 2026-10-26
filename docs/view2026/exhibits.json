@@ -1617,6 +1617,35 @@
    }
   },
   {
+   "id": "organ_volume",
+   "category": "anim3d",
+   "media": "organ_volume.html",
+   "media_path": "anim3d/organ_volume.html",
+   "motion": true,
+   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_organvol_anim3d.py",
+   "label": {
+    "ja": "臓器の体積と球形度", "en": "Organ volume and sphericity",
+    "zh": "器官体积和球形度", "tw": "器官體積和球形度", "ko": "장기 부피와 구형도",
+    "de": "Organvolumen und Sphärizität", "hi": "अंग का आयतन और गोलाकारता", "fr": "Volume et sphéricité des organes"
+   },
+   "see": {
+    "ja": "6 臓器を体積順に並べ、同体積の半透明球を重ね、断面を積む。発散定理と固体ボクセルの体積は最大 0.191 % 差で、閉曲面は χ = 2。99 % 削減版が細い構造を失う限界も示す。",
+    "en": "Rank 6 organs by volume, overlay equal-volume translucent spheres, and stack sections. Divergence-theorem and solid-voxel volumes differ by at most 0.191%; closed surfaces have χ = 2. The limit tab shows thin structures lost by the 99% reduction.",
+    "zh": "将 6 个器官按体积排序，叠加等体积半透明球，并累积截面。散度定理与实体体素的体积最多相差 0.191%，闭合曲面的 χ = 2；限制页显示 99% 简化所丢失的细结构。",
+    "tw": "將 6 個器官按體積排序，疊加等體積半透明球，並累積截面。散度定理與實體體素的體積最多相差 0.191%，閉合曲面的 χ = 2；限制頁顯示 99% 簡化所遺失的細結構。",
+    "ko": "장기 6개를 부피순으로 놓고 같은 부피의 반투명 구를 겹치며 단면을 쌓는다. 발산 정리와 고체 복셀 부피의 최대 차이는 0.191%이고 닫힌 표면은 χ = 2다. 99% 축소판이 잃는 가는 구조도 보여 준다.",
+    "de": "6 Organe werden nach Volumen geordnet, mit gleichvolumigen transparenten Kugeln überlagert und aus Schnitten aufgebaut. Divergenzsatz und Festkörpervoxel unterscheiden sich höchstens um 0.191 %; geschlossene Flächen haben χ = 2. Der Grenzfall zeigt dünne Strukturen, die bei 99 % Reduktion verloren gehen.",
+    "hi": "6 अंगों को आयतन के क्रम में रखें, समान आयतन वाले पारदर्शी गोले चढ़ाएँ और खंड जोड़ें। अपसरण प्रमेय और ठोस voxel आयतन में अधिकतम 0.191% अंतर है; बंद सतहों के लिए χ = 2 है। 99% reduction में खोई पतली संरचनाएँ भी दिखाई गई हैं।",
+    "fr": "6 organes sont classés par volume, superposés à des sphères translucides de même volume, puis reconstruits par sections. Les volumes par divergence et voxels solides diffèrent d’au plus 0.191 %; les surfaces fermées ont χ = 2. La limite montre les structures fines perdues par la réduction de 99 %."
+   },
+   "num": {
+    "ja": "6 臓器、体積差 ≤ 0.191 %、χ = 2・境界辺 0。", "en": "6 organs; volume difference ≤ 0.191%; χ = 2 and 0 boundary edges.",
+    "zh": "6 个器官；体积差 ≤ 0.191%；χ = 2，边界边为 0。", "tw": "6 個器官；體積差 ≤ 0.191%；χ = 2，邊界邊為 0。",
+    "ko": "장기 6개, 부피 차이 ≤ 0.191%, χ = 2, 경계 모서리 0개.", "de": "6 Organe; Volumendifferenz ≤ 0.191 %; χ = 2 und 0 Randkanten.",
+    "hi": "6 अंग; आयतन अंतर ≤ 0.191%; χ = 2 और सीमा किनारे 0।", "fr": "6 organes ; écart de volume ≤ 0.191 % ; χ = 2 et 0 arête de bord."
+   }
+  },
+  {
    "id": "interactive_anim3d_viewer",
    "category": "anim3d",
    "media": "interactive_anim3d_viewer.html",

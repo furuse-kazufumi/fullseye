@@ -74,6 +74,7 @@ SPEC = [
     ("evis_bean_track", "articles/assets/evis_bean_track_fullseye_still.png", None, (0.5, 0.0, 1.0)),
     # 動く 3-D: 元はビューアをスマホ幅(375 px、WebGL)で開いた画面から 3-D の部分だけを切った静止画
     ("interactive_anim3d_viewer", "view2026/anim3d/interactive_anim3d_viewer_poster.jpg", None, None),
+    ("organ_volume", "anim3d/organ_volume_poster.jpg", None, None),
     ("satellite_gsd", "view2026/anim3d/satellite_gsd_anim3d_poster.png", None, None),
 ]
 
