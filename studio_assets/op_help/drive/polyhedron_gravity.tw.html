@@ -1,0 +1,47 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">polyhedron_gravity — DRIVE <code style="color:#22d3bf">polygrav</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any × points</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.polyhedron_gravity(mesh, points, density: &#x27;float&#x27; = 1.0, G: &#x27;float&#x27; = 6.6743e-11, omega: &#x27;float&#x27; = 0.0, spin_axis=(0.0, 0.0, 1.0), spin_center=None, normals=None) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import polygrav; polygrav.polyhedron_gravity(mesh, points, density: &#x27;float&#x27; = 1.0, G: &#x27;float&#x27; = 6.6743e-11, omega: &#x27;float&#x27; = 0.0, spin_axis=(0.0, 0.0, 1.0), spin_center=None, normals=None) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;polyhedron_gravity&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>均勻密度的封閉多面體在觀測點產生的重力(Werner &amp; Scheeres 1997 的精確公式)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>mesh : (vertices (N,3), faces (M,3))</p>
+<p>閉じた三角形メッシュ。面は外向き(右手系)に巻く。長さの単位は m として扱う(km のデータは 1000 倍)。</p>
+<p>points : (K,3)</p>
+<p>観測点 [m]。外・中・表面の上(頂点・辺の上も)のどこでもよい。</p>
+<p>density : float</p>
+<p>密度 [kg/m³] (正)。</p>
+<p>G : float</p>
+<p>重力定数(既定 6.67430e-11、CODATA 2018)。</p>
+<p>omega : float</p>
+<p>自転の角速度 [rad/s] (0 以上)。正なら回る座標の実効ポテンシャルと実効重力も返す。</p>
+<p>spin_axis : (3,)</p>
+<p>自転軸の向き(正規化する)。既定は +z。</p>
+<p>spin_center : (3,), optional</p>
+<p>自転軸が通る点。既定は立体の重心(自由に回る天体は重心のまわりに回る)。</p>
+<p>normals : (K,3), optional</p>
+<p>観測点での外向きの法線。渡すと斜面の角 <code style="color:#22d3bf">slope_deg</code> を返す(実効重力と −法線 のなす角、</p>
+<p>omega = 0 なら重力そのもの)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict</p>
+<p><code style="color:#22d3bf">potential</code> (K,) Φ [J/kg] (負。無限遠で 0)、<code style="color:#22d3bf">acceleration</code> (K,3) g = −∇Φ [m/s²] (天体へ向く)、</p>
+<p><code style="color:#22d3bf">div_g</code> (K,) ∇·g [1/s²] (中で −4πGρ、外で 0、面の上で −2πGρ —— ガウスの法則)、</p>
+<p><code style="color:#22d3bf">solid_angle</code> (K,) Σ ω_f(中で 4π、外で 0)、<code style="color:#22d3bf">mass</code> [kg]、<code style="color:#22d3bf">volume</code> [m³]、<code style="color:#22d3bf">center_of_mass</code> (3,)。</p>
+<p>omega &gt; 0 のとき <code style="color:#22d3bf">effective_potential</code> (K,) = Φ − ½ω²ρ⊥²、<code style="color:#22d3bf">effective_acceleration</code> (K,3) = g + ω²ρ⊥</p>
+<p>(ρ⊥ は自転軸からの垂直な距離のベクトル)、<code style="color:#22d3bf">spin_center</code> (3,)。normals があれば <code style="color:#22d3bf">slope_deg</code> (K,)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
+<p>辺の上・頂点の上の点では、その辺の対数 L_e が発散するが掛かる係数 n_fe·r_i が 0 なので、その項を 0 とする(極限値)。メッシュが閉じていない(有向辺が逆向きの辺と打ち消さない)、体積が正でない(内向きの巻き)、非有限、範囲外の索引は <code style="color:#22d3bf">ValueError</code>。空の入力(<code style="color:#22d3bf">points</code> が 0 要素)は ValueError で拒否する。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:itokawa_gravity_tour">itokawa_gravity_tour</a> — <code style="color:#22d3bf">py -3.11 examples/itokawa_gravity_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">polygrav</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:polyhedron_clip_halfspace">polyhedron_clip_halfspace</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: polygrav.py — DRIVE 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

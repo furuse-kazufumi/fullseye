@@ -294,6 +294,18 @@ _IMAGE_REASON = ("画像・動画の書き手。PNG/GIF のバイトは Pillow �
 _SPIKE_REASON = ("スパイク(実験)の記録。spikes/out_gallery/ の図は当時の証跡として凍結してあり、"
                  "再描画(matplotlib / GUI)はバイトが変わる。")
 EXCLUDED = {
+    "tools/check_page_overflow.py": ("門(生成器ではない): pocviewer のページを幅 390 px の iframe に入れて headless Chrome で開き、全タブ × 全言語の"
+                                     "横はみ出しを測る。書くのは一時フォルダの計測用の写しだけで、repo には何も書かない。Chrome が要るので手で回す"
+                                     "(tests/test_itokawa_page_overflow_2026_10_25.py、Chrome が無ければ skip)。"),
+    "tools/build_itokawa_anim3d.py": ("小惑星イトカワの重力の動く 3-D の教材(docs/anim3d/itokawa_gravity.html)。"
+                                      "pocviewer.write_viewer で書く手回しの生成物で、polyhedron_gravity を頂点 2.5 万個 × 面 4.9 万枚で"
+                                      "回すので数分かかる(結果は out/ に入力のハッシュで保存)。commit するページは 8 言語版で、"
+                                      "`py -3.11 tools/anim3d_i18n.py --build build_itokawa_anim3d --out docs/anim3d/itokawa_gravity.html` で書く"
+                                      "(翻訳表 tools/anim3d_i18n_tables/build_itokawa_anim3d.json)。門は tests/test_itokawa_anim3d.py と "
+                                      "tests/test_anim3d_i18n_itokawa_2026_10_25.py。"),
+    "tools/import_itokawa_shape.py": ("イトカワの形状モデル(NASA PDS SBN の Gaskell Q = 64、CC0 1.0)の取り込み。入力の原本 ver64q.tab は"
+                                      "repo の外で手で取得する(取得物は untrusted として専用の空ディレクトリに置く)ので CI では作れない —— "
+                                      "SHA-256 を照合して data/itokawa_shape/gaskell_q64.npz を書き、出典と改変は同じ場所の README.md に書く。"),
     "tools/build_gsplat_pages.py": ("docs/gsplat/ の 3DGS の商品ビューアとカタログ(examples/gsplat_product_viewer.py の build)。"
                                     "marching cubes に scikit-image(任意の依存)が要り、5 品の 3DGS 化とサムネイルの numpy 描画で"
                                     "1 分ほどかかり、出力は 1 本数 MB —— 鎖に入れず、ページを変える回は手で回して commit する。"),
@@ -320,6 +332,7 @@ EXCLUDED = {
                                   "docs/nan_input_audit.json と docs/NAN_INPUT_AUDIT.md は手動で更新する。"),
     "tools/merge_test_durations.py": "CI の片割りの重み(.test_durations)。入力は CI の run が残す所要時間の artifact(repo の外)なので手元では作れない —— 取ってきた artifact を合流して commit する。中身は実測値で、回すたびに変わる。",
     "tools/seed_test_durations.py": "同じ .test_durations の初回の穴埋め(未計測の試験を平均値で仮置き)。最初の 1 回だけの道具で、以後は merge_test_durations.py の実測が置き換える。",
+    "tools/gen_plateau_venue.py": "ViEW2026 会場の建物の npz(国土交通省 PLATEAU 横浜市 2020 の CityGML LOD2、PDL1.0 / CC BY 4.0 互換)。入力の原本(タイル 2 枚、計 46 MB)は repo の外で手で取得し、信頼しないデータとして -I で読むので CI では作れない —— 小さな npz を data/plateau_yokohama/ に commit し、出典・加工の内容は同じ場所の README.md に書く。門(measuredHeight と生の座標の箱)は道具の中で回り、外れたら書かない。",
     "tools/gen_thin_film_real.py": "薄膜 PoC の実測データ(Zenodo 13753754・figshare 23285603、どちらも CC BY 4.0)の抜き出し。入力の原本(xlsx・写真、計 60 MB)は repo の外で手で取得するので CI では作れない —— 抜き出した小さな表と縮小写真を data/thin_film_real/ に commit し、出典と改変は同じ場所の README.md に書く。",
     "tools/gen_oct_real.py": "工業用 OCT の PoC の実測データ(Liverpool Research Data Catalogue 126、CC BY 4.0)の抜き出し。入力の原本(.mat の zip、61 MB)は repo の外で手で取得するので CI では作れない —— A ラインを等間隔に 100 本ずつ抜いた小さな npz を data/oct_real/ に commit し、出典と改変は同じ場所の README.md に書く。",
     "tools/gen_xray_tables.py": "材料表の X 線の列(materials_xray_data.py)。入力は NIST SRD 126(Hubbell & Seltzer)の公開ページを手で保存したもの(repo の外、著作権の表示があるので部分集合だけを同梱)で CI では作れない —— 生成物を commit し、手元では `--nist <dir> --check` が drift を見る。tests/test_dualxray.py が NIST の公表値と化合物の表で中身を守る。",
@@ -450,7 +463,15 @@ EXCLUDED = {
 #: だから**釣れたものは全部ここに名前と理由を書いて外す**(印は緩めない)。
 _OUT_REASON = "出力は out/(gitignore)で、コミット物を書かない。"
 NOT_A_GENERATOR = {
+    # ---- 2026-10-25: Studio をブラウザで動かす可否の探針(tools/probe_studio_web/、製品ではない) ----
+    "tools/probe_studio_web/op_inventory.py": "探針。全 op を実装モジュールの import で分類し、結果 JSON は --out(repo の外)へ書く。",
+    "tools/probe_studio_web/bench_body.py": "探針のベンチ本体(CPython と Pyodide で同じファイルを読む)。実測値なので回すたびに変わる。",
+    "tools/probe_studio_web/verify_ops_body.py": "探針。image / region 入力の全 op を実際に走らせ、結果の npz と JSON を引数の出力先(repo の外)へ書く。",
+    "tools/probe_studio_web/compare_outputs.py": "探針の照合。2 つの実行の出力を ULP で比べ、結果は引数の出力先へ。--ops-json で studio_lite/ops_subset.json(実測の台帳)を書くが、それは手で回して commit する(node + Pyodide が要り CI では作れない)。",
+    "tools/probe_studio_web/build_proof.py": ("探針の証明ページを --out(repo の外)に組む(Pyodide 本体の複製 + repo 内モジュールの zip)。"
+                                              "dist は repo に入れない。"),
     "tools/algo_gate.py": "門(algo 層の合否を出す)。出力は out/ へ。", "tools/mutation_probe.py": "門の実測。出力は指定先、一時変更は復元。",
+    "tools/check_fallback_parity.py": "門の実測(min 構成 = cv2/skimage/PIL なしで op が別の答えを返さないか、full と ULP 照合)。出力は一時 dir か --out の指定先で、repo の生成物は無い。",
     "gsviewer.py": "ライブラリ + CLI(fs.gs_viewer_html / gs_catalog_html)。呼び出し側が指定した出力先へ 1 つの HTML を書く道具で、repo の生成物ではない(公開ページの生成器は tools/build_gsplat_pages.py)。",
     "pocviewer.py": "ライブラリ(fs.write_viewer)。呼び出し側が指定した出力先へ 1 つの HTML を書く道具で、repo の生成物ではない(ビューアの生成器は tools/build_view2026_viewers.py)。",
     "tools/bench_ops.py": "ベンチ。実測値なので回すたびに変わる。",

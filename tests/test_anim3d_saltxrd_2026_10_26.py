@@ -258,7 +258,5 @@ def test_committed_page_is_the_eight_language_build(spec_and_table):
     assert data["langs"] == list(I18N.LANGS)
     assert "function pickLang" in html, "ブラウザの言語で開く(detect_lang)になっていない"
     want = I18N.pv._build_html(I18N.translate(spec, table), list(I18N.LANGS), detect_lang=True)
-    assert html == want, ("commit 済みの %s が今の生成器 + 翻訳表の 8 言語版と違う —— "
-                          "py -3.11 tools/anim3d_i18n.py --build %s --out docs/view2026/anim3d/%s で作り直す"
-                          % (os.path.basename(PAGE), BUILDER, os.path.basename(PAGE)))
+    I18N.check_same_page(html, want, PAGE, BUILDER)
     assert os.path.getsize(PAGE) < 3.3e6

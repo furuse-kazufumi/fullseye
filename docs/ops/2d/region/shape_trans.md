@@ -40,7 +40,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 rectangle1/ellipse など複数の変形モードを ``Type`` 引数で選べる演算子
 だが、この代役では凸包 1 種類に固定している(近似の限界)。
 
-``a``, ``b`` は未使用。skimage が無い環境ではこの分岐は呼べない。
+``a``, ``b`` は未使用。scikit-image が無い環境では ``MissingDependencyError``(何を入れればよいかを言う)で止まる —— 別の答えは返さない。
 
 **端の扱い**: 画像の外側は背景(0)とみなす(実測。`tools/impl2/border_probe.py`)。
 

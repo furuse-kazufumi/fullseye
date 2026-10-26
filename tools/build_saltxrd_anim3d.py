@@ -444,8 +444,13 @@ def active_stage(k):
     return (k // STAGE_FRAMES) % 4
 
 
+# 線形代数の丸め屑は OS / BLAS によって末尾が変わる。教材に意味があるのは
+# 1e-12 未満であることなので、0 も含めて安定した上限だけを表示する。
+DUST = 1e-12
+
+
 def _e(x):
-    return "0" if x == 0 else "%.1e" % x
+    return "< 1e-12" if abs(x) < DUST else "%.1e" % x
 
 
 def hkl_s(hkl):

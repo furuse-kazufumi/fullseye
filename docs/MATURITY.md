@@ -31,7 +31,7 @@
 | [位置を合わせて重ねる](capabilities/align-and-stack.md) | Align and stack | 組み立てる | `verified-synthetic` | 4/4 | `poc_astro_photometry` synthetic → tests/test_poc_scripts_run.py<br>`poc_registration_basin` synthetic → tests/test_poc_scripts_run.py |
 | [配列で方向を測り、距離と速度を分ける](capabilities/beamforming-and-range-doppler.md) | Beamform for direction, separate range from velocity | 波と信号 | `verified-synthetic` | 4/4 | `poc_multibeam_bathymetry` synthetic → tests/test_poc_scripts_run.py<br>`poc_bev_sensor_fusion` synthetic → tests/test_poc_scripts_run.py |
 | [うなりは一つ(膜のモード・干渉縞・回折次数・印刷のモアレ・墨に落とす)](capabilities/beats-fringes-and-screens.md) | One beat (membrane modes, fringes, diffraction orders, print moire, and turning tone into ink) | 波と信号 | `verified-synthetic` | 12/12 | `poc_beats_fringes_and_screens` synthetic → tests/test_poc_scripts_run.py |
-| [領域を切り出して、選んで、数える](capabilities/blob-and-region.md) | Segment regions, select them, and count | 見つける | `validated-public-real-data` | 4/5 | `poc_cell_counting` synthetic → tests/test_poc_scripts_run.py<br>`poc_particle_sizing` synthetic → tests/test_poc_scripts_run.py<br>`poc_real_coin_metrology` real → tests/test_poc_scripts_run.py<br>`poc_dense_bubble_count` real → tests/test_poc_scripts_run.py |
+| [領域を切り出して、選んで、数える](capabilities/blob-and-region.md) | Segment regions, select them, and count | 見つける | `validated-public-real-data` | 5/5 | `poc_cell_counting` synthetic → tests/test_poc_scripts_run.py<br>`poc_particle_sizing` synthetic → tests/test_poc_scripts_run.py<br>`poc_real_coin_metrology` real → tests/test_poc_scripts_run.py<br>`poc_dense_bubble_count` real → tests/test_poc_scripts_run.py |
 | [平面ターゲットの多視点から内部行列 K を推定する(Zhang 法)](capabilities/camera-intrinsics-calibration.md) | Estimate the camera intrinsic matrix K from multiple planar views (Zhang) | 測る | `verified-synthetic` | 4/4 | `camera_intrinsics_calibration` synthetic → tests/test_example_scripts_run.py |
 | [クロマティック共焦点変位センサ(硝材の分散 → 較正表 → 戻りスペクトル → 高さ・厚さ)](capabilities/chromatic-confocal-sensor.md) | Chromatic confocal displacement sensor (glass dispersion, calibration table, return spectrum, height and thickness) | 光と色 | `verified-synthetic` | 6/6 | `poc_chromatic_confocal` synthetic → tests/test_poc_scripts_run.py |
 | [色を測る(XYZ / Lab / 色差)](capabilities/colour-and-delta-e.md) | Measure colour (XYZ / Lab / colour difference) | 光と色 | `verified-synthetic` | 4/4 | `poc_white_balance` synthetic → tests/test_poc_scripts_run.py<br>`poc_pigment_unmixing` synthetic → tests/test_poc_scripts_run.py |
@@ -94,7 +94,7 @@
 | [照明むら・ハイライト・遮蔽に強いテンプレート照合(明るさの変化の向きを符号にして比べ、決まらないテンプレートは拒否する)](capabilities/robust-code-matching.md) | Template matching that survives uneven light, highlights and occlusion (compare the direction of brightness change as codes, and refuse templates that cannot fix a position) | 見つける | `validated-public-real-data` | 5/6 | `poc_code_matching_breakdown` real → tests/test_poc_scripts_run.py |
 | [傷や突起に引きずられない平均線を引く(ロバストなガウス回帰・スプラインフィルタ、断面と面)](capabilities/robust-gaussian-spline-profile-filter.md) | A mean line that deep scratches and spikes cannot drag (robust Gaussian-regression and spline filters, for profiles and surfaces) | 測る | `verified-synthetic` | 4/4 | `poc_robust_profile_filter` synthetic → tests/test_poc_scripts_run.py<br>`example_robust_profile_filter` synthetic → tests/test_example_scripts_run.py |
 | [ハイブリッド接合のボイドを、超音波のエコーの明るさでなく位相で見つける(走査型音響顕微鏡の C スキャン・周波数の取引・POD)](capabilities/sam-bond-voids.md) | Find hybrid-bond voids by the phase of the ultrasonic echo, not its brightness (scanning acoustic microscope C-scans, the frequency trade-off, POD) | 見つける | `verified-synthetic` | 7/7 | `poc_sam_hybrid_bonding_voids` synthetic → tests/test_poc_scripts_run.py |
-| [微細スクラッチを見つけて、幅を測る](capabilities/scratch-detection-and-width.md) | Detect fine scratches and measure their width | 測る | `verified-synthetic` | 3/4 | `example_scratch_width` synthetic → tests/test_example_scripts_run.py<br>`poc_crack_width` synthetic → tests/test_poc_scripts_run.py<br>`poc_solar_el_inspection` synthetic → tests/test_poc_scripts_run.py |
+| [微細スクラッチを見つけて、幅を測る](capabilities/scratch-detection-and-width.md) | Detect fine scratches and measure their width | 測る | `verified-synthetic` | 4/4 | `example_scratch_width` synthetic → tests/test_example_scripts_run.py<br>`poc_crack_width` synthetic → tests/test_poc_scripts_run.py<br>`poc_solar_el_inspection` synthetic → tests/test_poc_scripts_run.py |
 | [SEM の明るい縁が寸法をどれだけ太らせるかを、真値つきで測る](capabilities/sem-edge-effect-metrology.md) | Measure how much the bright SEM edge inflates a dimension, with ground truth | 測る | `validated-public-real-data` | 6/6 | `poc_sem_wafer_defect_edge_bias` real → tests/test_poc_scripts_run.py |
 | [同じ粒子を走査像と透過像で測り、二つの寸法偏りを比べる](capabilities/sem-tem-same-particle.md) | Measure the same particles in scanning and transmission images and compare both size biases | 測る | `verified-synthetic` | 9/9 | `poc_sem_tem_same_particle` synthetic → tests/test_poc_scripts_run.py |
 | [逐次光学設計の指標(理想レンズ面 → 囲みエネルギー → 子午/球欠 MTF → スルーフォーカス MTF)](capabilities/sequential-lens-design-metrics.md) | Sequential lens-design metrics (ideal lens surface, encircled energy, tangential / sagittal MTF, through-focus MTF) | 測る | `verified-synthetic` | 32/32 | `optical_design_metrics` synthetic → tests/test_example_scripts_run.py<br>`poc_zoom_configurations` synthetic → tests/test_poc_scripts_run.py<br>`poc_lens_global_search` synthetic → tests/test_poc_scripts_run.py<br>`poc_lens_merit_operands` synthetic → tests/test_poc_scripts_run.py<br>`poc_lens_solves_afocal` synthetic → tests/test_poc_scripts_run.py |
@@ -133,9 +133,9 @@
 
 | | 件数 |
 |---|---|
-| 2-D 台帳の例 | 435 |
-| `tests/test_poc_scripts_run.py` が走らせる | 276 |
-| `tests/test_example_scripts_run.py` が走らせる | 159 |
+| 2-D 台帳の例 | 437 |
+| `tests/test_poc_scripts_run.py` が走らせる | 277 |
+| `tests/test_example_scripts_run.py` が走らせる | 160 |
 | **どの門も走らせていない** | **0** |
 
 走らせない門は、実行時の壊れに盲目です。2026-09-06 に PoC 側で穴が見つかり

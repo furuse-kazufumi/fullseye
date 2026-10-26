@@ -6826,6 +6826,23 @@
     "hi": "फ़ुटेज की भौतिक संगति: ballistic या thrust, समय-खिंचाव",
     "fr": "Cohérence physique d'une vidéo : balistique ou propulsé, dilatation du temps"
    }
+  },
+  {
+   "id": "poc_plateau_venue_lod2",
+   "group": "wing_threed",
+   "media": "01_venue_itokawa_top.png",
+   "motion": false,
+   "thumb_src": "01_venue_itokawa_top.png",
+   "label": {
+    "ja": "会場の建物と小惑星イトカワを同じ物差しで ―― PLATEAU の CityGML LOD2 をメッシュに",
+    "en": "The venue buildings and asteroid Itokawa on one ruler: PLATEAU CityGML LOD2 as a mesh",
+    "zh": "会场建筑与小行星丝川同一把尺:把 PLATEAU 的 CityGML LOD2 变成网格",
+    "tw": "會場建築與小行星糸川同一把尺:把 PLATEAU 的 CityGML LOD2 變成網格",
+    "ko": "회의장 건물과 소행성 이토카와를 같은 자로: PLATEAU CityGML LOD2 를 메시로",
+    "de": "Die Gebäude des Veranstaltungsorts und der Asteroid Itokawa auf einem Maßstab: PLATEAU-CityGML LOD2 als Netz",
+    "hi": "आयोजन-स्थल की इमारतें और क्षुद्रग्रह Itokawa एक ही पैमाने पर: PLATEAU CityGML LOD2 को mesh में",
+    "fr": "Les bâtiments du site et l'astéroïde Itokawa à la même échelle : le CityGML LOD2 de PLATEAU en maillage"
+   }
   }
  ],
  "all_source": "docs/articles/exhibits/poc_captions.json",

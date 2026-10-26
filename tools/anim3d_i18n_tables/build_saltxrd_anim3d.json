@@ -56,14 +56,14 @@
    "hi": "(220): सब even → प्रबल",
    "fr": "(220) : tous pairs → forte"
   },
-  "0 rings (the 1 row left in the op's list has |F|² = 3.9e-29, numerically zero)": {
-   "ja": "0 本(op の一覧に残る 1 行は |F|² = 3.9e-29 の数値ゼロ)",
-   "zh": "0 个环(op 列表中剩下的 1 行 |F|² = 3.9e-29,数值上为零)",
-   "tw": "0 個環(op 列表中剩下的 1 行 |F|² = 3.9e-29,數值上為零)",
-   "ko": "0개의 환(op 목록에 남은 1행은 |F|² = 3.9e-29, 수치상 영)",
-   "de": "0 Ringe (die 1 verbleibende Zeile in der Liste des op hat |F|² = 3.9e-29, numerisch null)",
-   "hi": "0 ring (op की सूची में बची 1 पंक्ति का |F|² = 3.9e-29, संख्यात्मक रूप से शून्य)",
-   "fr": "0 anneau (la 1 ligne restante dans la liste de l'op a |F|² = 3.9e-29, numériquement nulle)"
+  "0 rings (the 1 row left in the op's list has |F|² = < 1e-12, numerically zero)": {
+   "ja": "0 本(op の一覧に残る 1 行は |F|² = < 1e-12 の数値ゼロ)",
+   "zh": "0 个环(op 列表中剩下的 1 行 |F|² = < 1e-12,数值上为零)",
+   "tw": "0 個環(op 列表中剩下的 1 行 |F|² = < 1e-12,數值上為零)",
+   "ko": "0개의 환(op 목록에 남은 1행은 |F|² = < 1e-12, 수치상 영)",
+   "de": "0 Ringe (die 1 verbleibende Zeile in der Liste des op hat |F|² = < 1e-12, numerisch null)",
+   "hi": "0 ring (op की सूची में बची 1 पंक्ति का |F|² = < 1e-12, संख्यात्मक रूप से शून्य)",
+   "fr": "0 anneau (la 1 ligne restante dans la liste de l'op a |F|² = < 1e-12, numériquement nulle)"
   },
   "1 ring or more": {
    "ja": "環 1 本以上",
@@ -902,14 +902,14 @@
    "hi": "Cu Kα पर detector पर ring",
    "fr": "anneaux sur le détecteur à Cu Kα"
   },
-  "sin θ = λ / 2d, so a longer λ makes larger rings. Once λ exceeds 2d for a plane, sin θ > 1 and that plane cannot diffract at any angle. At λ = 7.0 Å > 2d(111) = 6.49 Å no plane is left (the limit tab; the op's list still holds one row, the forbidden (100) with |F|² = 3.9e-29, numerically zero — its extinction test is relative to what remains).": {
-   "ja": "sin θ = λ / 2d なので λ が長いほど環は大きい。λ が 2d を越えた面は sin θ > 1 になり、どの角度にも環を作れない。λ = 7.0 Å > 2d(111) = 6.49 Å では残る面が 1 つも無い(限界の回。op の一覧には禁制の (100) が |F|² = 3.9e-29 の数値ゼロで 1 行残る —— 消滅の判定が残った中での相対値だから)。",
-   "zh": "sin θ = λ / 2d,所以 λ 越长环越大。一旦 λ 超过某晶面的 2d,就有 sin θ > 1,该晶面在任何角度都无法衍射。当 λ = 7.0 Å > 2d(111) = 6.49 Å 时没有任何晶面剩下(极限标签页;op 的列表里仍留着一行,即禁止的 (100),|F|² = 3.9e-29,数值上为零 —— 它的消光判定是相对于剩余项的)。",
-   "tw": "sin θ = λ / 2d,所以 λ 越長環越大。一旦 λ 超過某晶面的 2d,就有 sin θ > 1,該晶面在任何角度都無法繞射。當 λ = 7.0 Å > 2d(111) = 6.49 Å 時沒有任何晶面剩下(極限分頁;op 的列表裡仍留著一行,即禁止的 (100),|F|² = 3.9e-29,數值上為零 —— 它的消光判定是相對於剩餘項的)。",
-   "ko": "sin θ = λ / 2d이므로 λ가 길수록 환은 크다. λ가 어떤 면의 2d를 넘으면 sin θ > 1이 되어 그 면은 어느 각도에서도 회절할 수 없다. λ = 7.0 Å > 2d(111) = 6.49 Å에서는 남는 면이 하나도 없다(한계의 탭. op의 목록에는 금제인 (100)이 |F|² = 3.9e-29의 수치상 영으로 한 행 남는다 —— 소멸 판정이 남은 것 안에서의 상대값이기 때문).",
-   "de": "sin θ = λ / 2d, also macht ein längeres λ größere Ringe. Übersteigt λ das 2d einer Ebene, wird sin θ > 1 und diese Ebene kann unter keinem Winkel beugen. Bei λ = 7.0 Å > 2d(111) = 6.49 Å bleibt keine Ebene übrig (der Grenz-Tab; die Liste des op enthält noch eine Zeile, die verbotene (100) mit |F|² = 3.9e-29, numerisch null — ihr Auslöschungstest ist relativ zum Verbleibenden).",
-   "hi": "sin θ = λ / 2d, इसलिए लंबी λ बड़े ring बनाती है। जैसे ही किसी तल के लिए λ 2d से अधिक होती है, sin θ > 1 और वह तल किसी भी कोण पर विवर्तन नहीं कर सकता। λ = 7.0 Å > 2d(111) = 6.49 Å पर कोई तल नहीं बचता (सीमा tab; op की सूची में अभी भी एक पंक्ति है, निषिद्ध (100) जिसका |F|² = 3.9e-29, संख्यात्मक रूप से शून्य — उसकी extinction जाँच शेष के सापेक्ष है)।",
-   "fr": "sin θ = λ / 2d, donc un λ plus long donne des anneaux plus grands. Dès que λ dépasse 2d pour un plan, sin θ > 1 et ce plan ne peut diffracter à aucun angle. À λ = 7.0 Å > 2d(111) = 6.49 Å il ne reste aucun plan (l'onglet limite ; la liste de l'op garde encore une ligne, le (100) interdit avec |F|² = 3.9e-29, numériquement nul — son test d'extinction est relatif à ce qui reste)."
+  "sin θ = λ / 2d, so a longer λ makes larger rings. Once λ exceeds 2d for a plane, sin θ > 1 and that plane cannot diffract at any angle. At λ = 7.0 Å > 2d(111) = 6.49 Å no plane is left (the limit tab; the op's list still holds one row, the forbidden (100) with |F|² = < 1e-12, numerically zero — its extinction test is relative to what remains).": {
+   "ja": "sin θ = λ / 2d なので λ が長いほど環は大きい。λ が 2d を越えた面は sin θ > 1 になり、どの角度にも環を作れない。λ = 7.0 Å > 2d(111) = 6.49 Å では残る面が 1 つも無い(限界の回。op の一覧には禁制の (100) が |F|² = < 1e-12 の数値ゼロで 1 行残る —— 消滅の判定が残った中での相対値だから)。",
+   "zh": "sin θ = λ / 2d,所以 λ 越长环越大。一旦 λ 超过某晶面的 2d,就有 sin θ > 1,该晶面在任何角度都无法衍射。当 λ = 7.0 Å > 2d(111) = 6.49 Å 时没有任何晶面剩下(极限标签页;op 的列表里仍留着一行,即禁止的 (100),|F|² = < 1e-12,数值上为零 —— 它的消光判定是相对于剩余项的)。",
+   "tw": "sin θ = λ / 2d,所以 λ 越長環越大。一旦 λ 超過某晶面的 2d,就有 sin θ > 1,該晶面在任何角度都無法繞射。當 λ = 7.0 Å > 2d(111) = 6.49 Å 時沒有任何晶面剩下(極限分頁;op 的列表裡仍留著一行,即禁止的 (100),|F|² = < 1e-12,數值上為零 —— 它的消光判定是相對於剩餘項的)。",
+   "ko": "sin θ = λ / 2d이므로 λ가 길수록 환은 크다. λ가 어떤 면의 2d를 넘으면 sin θ > 1이 되어 그 면은 어느 각도에서도 회절할 수 없다. λ = 7.0 Å > 2d(111) = 6.49 Å에서는 남는 면이 하나도 없다(한계의 탭. op의 목록에는 금제인 (100)이 |F|² = < 1e-12의 수치상 영으로 한 행 남는다 —— 소멸 판정이 남은 것 안에서의 상대값이기 때문).",
+   "de": "sin θ = λ / 2d, also macht ein längeres λ größere Ringe. Übersteigt λ das 2d einer Ebene, wird sin θ > 1 und diese Ebene kann unter keinem Winkel beugen. Bei λ = 7.0 Å > 2d(111) = 6.49 Å bleibt keine Ebene übrig (der Grenz-Tab; die Liste des op enthält noch eine Zeile, die verbotene (100) mit |F|² = < 1e-12, numerisch null — ihr Auslöschungstest ist relativ zum Verbleibenden).",
+   "hi": "sin θ = λ / 2d, इसलिए लंबी λ बड़े ring बनाती है। जैसे ही किसी तल के लिए λ 2d से अधिक होती है, sin θ > 1 और वह तल किसी भी कोण पर विवर्तन नहीं कर सकता। λ = 7.0 Å > 2d(111) = 6.49 Å पर कोई तल नहीं बचता (सीमा tab; op की सूची में अभी भी एक पंक्ति है, निषिद्ध (100) जिसका |F|² = < 1e-12, संख्यात्मक रूप से शून्य — उसकी extinction जाँच शेष के सापेक्ष है)।",
+   "fr": "sin θ = λ / 2d, donc un λ plus long donne des anneaux plus grands. Dès que λ dépasse 2d pour un plan, sin θ > 1 et ce plan ne peut diffracter à aucun angle. À λ = 7.0 Å > 2d(111) = 6.49 Å il ne reste aucun plan (l'onglet limite ; la liste de l'op garde encore une ligne, le (100) interdit avec |F|² = < 1e-12, numériquement nul — son test d'extinction est relatif à ce qui reste)."
   },
   "sin θ = λ / 2d, so a smaller d gives a larger θ: (111) has d = 3.245 Å and 2θ = 27.47°, (400) has d = 1.405 Å and 2θ = 66.49° (Cu Kα, op values).": {
    "ja": "sin θ = λ / 2d なので d が小さいほど θ が大きい。(111) は d = 3.245 Å で 2θ = 27.47°、(400) は d = 1.405 Å で 2θ = 66.49°(Cu Kα、op の値)。",

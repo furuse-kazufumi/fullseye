@@ -57,6 +57,59 @@ class FullseyeFallbackWarning(RuntimeWarning):
     """
 
 
+class MissingDependencyError(ImportError):
+    """An op needs an optional library (scikit-image / OpenCV / …) that is not installed here.
+
+    **Fail-closed, whatever the policy.** :func:`guard`, the per-backend wrapper families and
+    ``api.apply`` (``on_error="fallback"`` / ``"warn"``) all let this exception propagate instead
+    of degrading to a sort-valid fallback, because the alternative was worse than a crash: on
+    2026-10-25 a probe ran every image/region op in a numpy+scipy-only build and **89 ops ran
+    without any exception and returned a different answer** (23 region features all returned
+    the area ratio, ``*_circle`` morphology used a square, ``skeleton`` was the identity, …).
+    The message names the op, the missing import, the pip package and the ``fullseye[<extra>]``
+    line, so ``studio_errors`` can show the user what to install.
+
+    Where a numpy-only path with the *same* answer exists it is used instead
+    (``numpy_twins``); this error is for the ops that have no such twin.
+    """
+
+    def __init__(self, op, module, why="", pip=None, extra=None):
+        self.op, self.module, self.why, self.pip, self.extra = op, module, why, pip, extra
+        want = []
+        if extra:
+            want.append('pip install "fullseye[%s]"' % extra)
+        want.append("pip install %s" % (pip or module))
+        msg = ("%s: needs the optional dependency %r (%s) which is not installed — %s. "
+               "There is no numpy-only path that gives the same answer%s, so this op refuses "
+               "rather than return a different value (fail-closed)."
+               % (op, module, pip or module, " / ".join(want), (" (%s)" % why) if why else ""))
+        super().__init__(msg)
+
+
+def missing_dependency(module, why="", op=None):
+    """Build a :class:`MissingDependencyError` for the op the facade is currently running.
+
+    *module* is the import name (``"skimage"``, ``"cv2"``, …); the pip name and the
+    ``fullseye[<extra>]`` extra come from ``ops.OPTIONAL_DEPS`` (the one table the usability
+    tests check against ``pyproject.toml``) when it is importable, else the import name is
+    used as the pip name.  *op* defaults to the op recorded by :func:`current_op`.
+    """
+    name = op or getattr(_TL, "op", None) or "op"
+    pip, extra = None, None
+    try:
+        from ops import OPTIONAL_DEPS
+        pip, extra = OPTIONAL_DEPS.get(module, (None, None))
+    except Exception:                        # noqa: BLE001 - ops not importable (unit test of this module alone)
+        pass
+    return MissingDependencyError(name, module, why, pip, extra)
+
+
+def require_dependency(have, module, why="", op=None):
+    """``if not have: raise missing_dependency(...)`` — the one-liner the backends use at a guarded branch."""
+    if not have:
+        raise missing_dependency(module, why, op)
+
+
 _LEDGER_LOCK = threading.Lock()
 _EVENT_MAX = 256
 _EVENTS = deque(maxlen=_EVENT_MAX)  # bounded ring, oldest first (O(1) append, drops the oldest)
@@ -251,6 +304,8 @@ def guard(fn, out_sort=None, *, name=None, on_fail=None, finish=None):
     def w(v, a, b):
         try:
             out = fn(v, a, b)
+        except MissingDependencyError:   # fail-closed: no sort-valid stand-in for a missing library
+            raise
         except Exception as e:           # noqa: BLE001 - the whole point is to record it
             if is_strict():
                 raise

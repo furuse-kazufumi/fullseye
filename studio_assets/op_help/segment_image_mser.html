@@ -13,7 +13,7 @@
 <p>*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>MSER(Maximally Stable Extremal Regions、最大安定極値領域)検出(<code style="color:#22d3bf">cv2.MSER_create</code>)。しきい値を連続的に変化させても形が安定して残る領域を検出し、その境界線を返す(文字・ロゴなど照明変化に頑健な領域検出に使われる)。HALCON の <code style="color:#22d3bf">segment_image_mser</code>（Segment image using Maximally Stable Extremal Regions (MSER).）に相当。</p>
-<p><code style="color:#22d3bf">a</code> が MSER の安定性パラメータ(delta、3〜11)を振る。<code style="color:#22d3bf">b</code> は未使用。<code style="color:#22d3bf">cv2</code> が無い環境ではこの分岐は呼べない。</p>
+<p><code style="color:#22d3bf">a</code> が MSER の安定性パラメータ(delta、3〜11)を振る。<code style="color:#22d3bf">b</code> は未使用。cv2 が無い環境では <code style="color:#22d3bf">MissingDependencyError</code>(何を入れればよいかを言う)で止まる —— 別の答えは返さない。</p>
 <p><b>何も写っていないフレーム(実測)</b>: 明るさが一様な画像を入れると、<b>明るさに関係なく空(全画素が背景 0)</b>になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation ファミリ ガイド</a></p>
