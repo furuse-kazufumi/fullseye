@@ -1,0 +1,510 @@
+{
+ "_": "BodyParts3D organ volume lesson, 2026-10-26",
+ "example": "build_organvol_anim3d",
+ "strings": {
+  "Organ volume and sphericity": {
+   "ja": "臓器の体積と球形度",
+   "zh": "器官体积和球形度",
+   "tw": "器官體積和球形度",
+   "ko": "장기 부피 및 구형도",
+   "de": "Organvolumen und Sphärizität",
+   "hi": "अंग की मात्रा और गोलाकारता",
+   "fr": "Volume et sphéricité des organes"
+  },
+  "Similar apparent size can hide different enclosed volume and surface complexity": {
+   "ja": "同じ大きさに見えても、包む量と表面の複雑さは違う",
+   "zh": "相似的表观尺寸可以隐藏不同的封闭体积和表面复杂性",
+   "tw": "相似的表觀尺寸可以隱藏不同的封閉體積和表面複雜性",
+   "ko": "겉보기 크기가 비슷하면 닫힌 부피와 표면의 복잡성이 다를 수 있습니다.",
+   "de": "Eine ähnliche scheinbare Größe kann ein unterschiedliches eingeschlossenes Volumen und eine unterschiedliche Oberflächenkomplexität verbergen",
+   "hi": "समान स्पष्ट आकार अलग-अलग संलग्न आयतन और सतह की जटिलता को छिपा सकता है",
+   "fr": "Une taille apparente similaire peut masquer différents volumes fermés et complexités de surface"
+  },
+  "Drag to rotate and move the slider": {
+   "ja": "ドラッグで回し、つまみを動かす",
+   "zh": "拖动以旋转和移动滑块",
+   "tw": "拖曳以旋轉和移動滑桿",
+   "ko": "드래그하여 슬라이더를 회전하고 이동하세요.",
+   "de": "Ziehen Sie, um den Schieberegler zu drehen und zu verschieben",
+   "hi": "स्लाइडर को घुमाने और हिलाने के लिए खींचें",
+   "fr": "Faites glisser pour faire pivoter et déplacer le curseur"
+  },
+  "Rank by volume": {
+   "ja": "体積を並べる",
+   "zh": "按数量排名",
+   "tw": "按數量排名",
+   "ko": "볼륨별 순위",
+   "de": "Nach Volumen ordnen",
+   "hi": "मात्रा के अनुसार रैंक",
+   "fr": "Classement par volume"
+  },
+  "Compare the three-dimensional amount enclosed, not one width or height.": {
+   "ja": "幅や高さだけではなく、閉曲面が包む三次元の量を比べる。",
+   "zh": "比较封闭的三维量，而不是单一宽度或高度。",
+   "tw": "比較封閉的三維量，而不是單一寬度或高度。",
+   "ko": "너비나 높이가 하나가 아닌 입체적으로 담겨진 양을 비교해 보세요.",
+   "de": "Vergleichen Sie die eingeschlossene dreidimensionale Menge, nicht eine Breite oder Höhe.",
+   "hi": "संलग्न त्रि-आयामी राशि की तुलना करें, न कि एक चौड़ाई या ऊँचाई की।",
+   "fr": "Comparez la quantité tridimensionnelle incluse, pas une largeur ou une hauteur."
+  },
+  "Left lung": {
+   "ja": "左肺",
+   "zh": "左肺",
+   "tw": "左肺",
+   "ko": "왼쪽 폐",
+   "de": "Linke Lunge",
+   "hi": "बायां फेफड़ा",
+   "fr": "Poumon gauche"
+  },
+  "Right lung": {
+   "ja": "右肺",
+   "zh": "右肺",
+   "tw": "右肺",
+   "ko": "오른쪽 폐",
+   "de": "Rechte Lunge",
+   "hi": "दाहिना फेफड़ा",
+   "fr": "Poumon droit"
+  },
+  "Left kidney": {
+   "ja": "左腎",
+   "zh": "左肾",
+   "tw": "左腎",
+   "ko": "왼쪽 신장",
+   "de": "Linke Niere",
+   "hi": "बायीं किडनी",
+   "fr": "Rein gauche"
+  },
+  "Right kidney": {
+   "ja": "右腎",
+   "zh": "右肾",
+   "tw": "右腎",
+   "ko": "오른쪽 신장",
+   "de": "Rechte Niere",
+   "hi": "दक्षिण पक्ष किडनी",
+   "fr": "Rein droit"
+  },
+  "Heart": {
+   "ja": "心臓",
+   "zh": "心",
+   "tw": "心",
+   "ko": "마음",
+   "de": "Herz",
+   "hi": "दिल",
+   "fr": "Cœur"
+  },
+  "Liver": {
+   "ja": "肝臓",
+   "zh": "肝",
+   "tw": "肝",
+   "ko": "간",
+   "de": "Leber",
+   "hi": "जिगर",
+   "fr": "Foie"
+  },
+  "Divergence theorem vs solid voxels": {
+   "ja": "発散定理と固体ボクセル",
+   "zh": "散度定理与固体体素",
+   "tw": "散度定理與固體體素",
+   "ko": "발산 정리와 고체 복셀",
+   "de": "Divergenzsatz vs. feste Voxel",
+   "hi": "विचलन प्रमेय बनाम ठोस स्वर",
+   "fr": "Théorème de divergence vs voxels solides"
+  },
+  "relative difference < 1%": {
+   "ja": "相対差 < 1 %",
+   "zh": "相对差异<1%",
+   "tw": "相對差異<1%",
+   "ko": "상대적 차이 < 1%",
+   "de": "relativer Unterschied < 1 %",
+   "hi": "सापेक्ष अंतर <1%",
+   "fr": "différence relative < 1 %"
+  },
+  "Ranking step": {
+   "ja": "並べる段階",
+   "zh": "排名步骤",
+   "tw": "排名步驟",
+   "ko": "순위 단계",
+   "de": "Ranking-Schritt",
+   "hi": "रैंकिंग चरण",
+   "fr": "Étape de classement"
+  },
+  "Does a similar width imply a similar volume?": {
+   "ja": "見た目の幅が近ければ体積も近い？",
+   "zh": "Does a similar width imply a similar volume?",
+   "tw": "Does a similar width imply a similar volume?",
+   "ko": "Does a similar width imply a similar volume?",
+   "de": "Does a similar width imply a similar volume?",
+   "hi": "Does a similar width imply a similar volume?",
+   "fr": "Does a similar width imply a similar volume?"
+  },
+  "Yes": {
+   "ja": "はい",
+   "zh": "是的",
+   "tw": "是的",
+   "ko": "예",
+   "de": "Ja",
+   "hi": "हाँ",
+   "fr": "Oui"
+  },
+  "No": {
+   "ja": "いいえ",
+   "zh": "不",
+   "tw": "不",
+   "ko": "아니요",
+   "de": "NEIN",
+   "hi": "नहीं",
+   "fr": "Non"
+  },
+  "Two independent routes verify each volume.": {
+   "ja": "二つの独立な経路で体積を確かめる。",
+   "zh": "两条独立的路线验证每个卷。",
+   "tw": "兩條獨立的路線驗證每個卷。",
+   "ko": "두 개의 독립적인 경로가 각 볼륨을 확인합니다.",
+   "de": "Zwei unabhängige Routen überprüfen jedes Volume.",
+   "hi": "दो स्वतंत्र मार्ग प्रत्येक वॉल्यूम को सत्यापित करते हैं।",
+   "fr": "Deux routes indépendantes vérifient chaque volume."
+  },
+  "V = Σ v0·(v1×v2) / 6": {
+   "ja": "V = Σ v0·(v1×v2) / 6",
+   "zh": "V = Σ v0·(v1×v2) / 6",
+   "tw": "V = Σ v0·(v1×v2) / 6",
+   "ko": "V = Σ v0·(v1×v2) / 6",
+   "de": "V = Σ v0·(v1×v2) / 6",
+   "hi": "V = Σ v0·(v1×v2) / 6",
+   "fr": "V = Σ v0·(v1×v2) / 6"
+  },
+  "This is an adult male reference model, not a patient measurement.": {
+   "ja": "これは成人男性の参照モデルで、患者の計測ではない。",
+   "zh": "这是成年男性参考模型，而不是患者测量值。",
+   "tw": "這是成年男性參考模型，而不是患者測量值。",
+   "ko": "이는 환자 측정이 아닌 성인 남성 참조 모델입니다.",
+   "de": "Hierbei handelt es sich um ein Referenzmodell für einen erwachsenen Mann, nicht um eine Patientenmessung.",
+   "hi": "यह एक वयस्क पुरुष संदर्भ मॉडल है, रोगी माप नहीं।",
+   "fr": "Il s'agit d'un modèle de référence masculin adulte et non d'une mesure de patient."
+  },
+  "Sphericity": {
+   "ja": "球形度",
+   "zh": "球形度",
+   "tw": "球形度",
+   "ko": "구형",
+   "de": "Sphärizität",
+   "hi": "गोलाई",
+   "fr": "Sphéricité"
+  },
+  "Each translucent yellow sphere has the same volume as its organ; a less compact surface lowers sphericity.": {
+   "ja": "黄色い半透明球は各臓器と同じ体積。表面が入り組むほど球形度は下がる。",
+   "zh": "每个半透明的黄色球体与其器官的体积相同；不太致密的表面会降低球形度。",
+   "tw": "每個半透明的黃色球體與其器官的體積相同；不太緻密的表面會降低球形度。",
+   "ko": "각각의 반투명 노란색 구체는 기관과 동일한 부피를 갖습니다. 덜 컴팩트한 표면은 구형도를 낮춥니다.",
+   "de": "Jede durchscheinende gelbe Kugel hat das gleiche Volumen wie ihr Organ; Eine weniger kompakte Oberfläche verringert die Sphärizität.",
+   "hi": "प्रत्येक पारभासी पीले गोले का आयतन उसके अंग के समान होता है; कम सघन सतह गोलाकारता को कम करती है।",
+   "fr": "Chaque sphère jaune translucide a le même volume que son organe ; une surface moins compacte diminue la sphéricité."
+  },
+  "Sphericity of the drawn polyhedral sphere": {
+   "ja": "描画した多面体球の球形度",
+   "zh": "绘制的多面体球的球形度",
+   "tw": "繪製的多面體球的球形度",
+   "ko": "그려진 다면체 구의 구형도",
+   "de": "Sphärizität der gezeichneten Polyederkugel",
+   "hi": "खींचे गए बहुफलकीय गोले की गोलाकारता",
+   "fr": "Sphéricité de la sphère polyédrique dessinée"
+  },
+  "monotonic convergence to 1 at subdivisions 12 → 24 → 48": {
+   "ja": "細分 12 → 24 → 48 で 1 へ単調収束",
+   "zh": "在细分 12 → 24 → 48 时单调收敛到 1",
+   "tw": "在細分 12 → 24 → 48 時單調收旂到 1",
+   "ko": "분할 12 → 24 → 48에서 1로 단조 수렴",
+   "de": "monotone Konvergenz gegen 1 bei Unterteilungen 12 → 24 → 48",
+   "hi": "उपविभाजन 12 → 24 → 48 पर 1 की ओर एकदिष अभिसरण",
+   "fr": "convergence monotone vers 1 aux subdivisions 12 → 24 → 48"
+  },
+  "Comparison": {
+   "ja": "比較",
+   "zh": "比较",
+   "tw": "比較",
+   "ko": "비교",
+   "de": "Vergleich",
+   "hi": "तुलना",
+   "fr": "Comparaison"
+  },
+  "Does equal volume mean equal surface area?": {
+   "ja": "同じ体積なら表面積も同じ？",
+   "zh": "Does equal volume mean equal surface area?",
+   "tw": "Does equal volume mean equal surface area?",
+   "ko": "Does equal volume mean equal surface area?",
+   "de": "Does equal volume mean equal surface area?",
+   "hi": "Does equal volume mean equal surface area?",
+   "fr": "Does equal volume mean equal surface area?"
+  },
+  "Same": {
+   "ja": "同じ",
+   "zh": "相同的",
+   "tw": "相同的",
+   "ko": "같은",
+   "de": "Dasselbe",
+   "hi": "वही",
+   "fr": "Même"
+  },
+  "It depends on shape": {
+   "ja": "形で変わる",
+   "zh": "这取决于形状",
+   "tw": "這取決於形狀",
+   "ko": "모양에 따라 다릅니다",
+   "de": "Es kommt auf die Form an",
+   "hi": "यह आकार पर निर्भर करता है",
+   "fr": "Cela dépend de la forme"
+  },
+  "A sphere has minimum area and sphericity 1.": {
+   "ja": "球が最小の表面積を持ち、球形度は 1。",
+   "zh": "球体的最小面积和球度为 1。",
+   "tw": "球體的最小面積和球度為 1。",
+   "ko": "구는 최소 면적과 구형도 1을 갖습니다.",
+   "de": "Eine Kugel hat die Mindestfläche und die Sphärizität 1.",
+   "hi": "एक गोले का न्यूनतम क्षेत्रफल और गोलाकारता 1 होती है।",
+   "fr": "Une sphère a une aire et une sphéricité minimales de 1."
+  },
+  "Ψ = π^(1/3)(6V)^(2/3) / A": {
+   "ja": "Ψ = π^(1/3)(6V)^(2/3) / A",
+   "zh": "Ψ = π^(1/3)(6V)^(2/3) / A",
+   "tw": "Ψ = π^(1/3)(6V)^(2/3) / A",
+   "ko": "Ψ = π^(1/3)(6V)^(2/3) / A",
+   "de": "Ψ = π^(1/3)(6V)^(2/3) / A",
+   "hi": "Ψ = π^(1/3)(6V)^(2/3) / ए",
+   "fr": "Ψ = π^(1/3)(6V)^(2/3) / UNE"
+  },
+  "Vertex seams are welded, but the 99% reduction loses thin structures.": {
+   "ja": "頂点の継ぎ目は溶接したが、99 % 削減版は細い構造を失う。",
+   "zh": "顶点接缝已焊接，但 99% 简化版会丢失细小结构。",
+   "tw": "頂點接縫已焊接，但 99% 簡化版會遺失細小結構。",
+   "ko": "꼭지점 이음새는 용접했지만 99% 축소판은 가는 구조를 잃는다.",
+   "de": "Die Scheitelnaht wurde verschweißt, doch die Reduktion um 99% verliert dünne Strukturen.",
+   "hi": "शीर्ष सीवनों को जोड़ा गया है, लेकिन 99% कटौती पतली संरचनाएं खो देती है।",
+   "fr": "Les jointures de sommets sont soudées, mais la réduction de 99% perd les structures fines."
+  },
+  "Stack cross-sections": {
+   "ja": "断面を積む",
+   "zh": "堆栈横截面",
+   "tw": "堆疊橫斷面",
+   "ko": "스택 단면",
+   "de": "Stapelquerschnitte",
+   "hi": "स्टैक क्रॉस-सेक्शन",
+   "fr": "Sections de pile"
+  },
+  "Lower the cyan plane; accumulating cross-sectional area converges to enclosed volume.": {
+   "ja": "水色の面を下げ、断面積を積むと閉曲面の体積へ収束する。",
+   "zh": "降低青色平面；累积的横截面积收敛于封闭的体积。",
+   "tw": "降低青色平面；累積的橫截面積收斂於封閉的體積。",
+   "ko": "청록색 평면을 낮추십시오. 누적 단면적은 닫힌 부피로 수렴됩니다.",
+   "de": "Senken Sie die Cyan-Ebene; Die sich ansammelnde Querschnittsfläche konvergiert zum umschlossenen Volumen.",
+   "hi": "सियान विमान को नीचे करें; संचित क्रॉस-सेक्शनल क्षेत्र संलग्न आयतन में परिवर्तित हो जाता है।",
+   "fr": "Abaissez le plan cyan ; la surface transversale accumulée converge vers le volume clos."
+  },
+  "Slice height": {
+   "ja": "断面の高さ",
+   "zh": "切片高度",
+   "tw": "切片高度",
+   "ko": "슬라이스 높이",
+   "de": "Scheibenhöhe",
+   "hi": "स्लाइस की ऊंचाई",
+   "fr": "Hauteur de tranche"
+  },
+  "What does summing all thin sections give?": {
+   "ja": "薄い断面を全部足すと何になる？",
+   "zh": "What does summing all thin sections give?",
+   "tw": "What does summing all thin sections give?",
+   "ko": "What does summing all thin sections give?",
+   "de": "What does summing all thin sections give?",
+   "hi": "What does summing all thin sections give?",
+   "fr": "What does summing all thin sections give?"
+  },
+  "Surface area": {
+   "ja": "表面積",
+   "zh": "表面积",
+   "tw": "表面積",
+   "ko": "표면적",
+   "de": "Oberfläche",
+   "hi": "सतह क्षेत्रफल",
+   "fr": "Superficie"
+  },
+  "Volume": {
+   "ja": "体積",
+   "zh": "体积",
+   "tw": "體積",
+   "ko": "용량",
+   "de": "Volumen",
+   "hi": "आयतन",
+   "fr": "Volume"
+  },
+  "Integrating cross-sectional area over height gives volume.": {
+   "ja": "断面積を高さで積分すると体積になる。",
+   "zh": "将横截面积与高度积分即可得出体积。",
+   "tw": "將橫截面積與高度積分即可得出體積。",
+   "ko": "높이에 단면적을 통합하면 볼륨이 제공됩니다.",
+   "de": "Die Integration der Querschnittsfläche über die Höhe ergibt das Volumen.",
+   "hi": "ऊंचाई पर क्रॉस-सेक्शनल क्षेत्र को एकीकृत करने से वॉल्यूम मिलता है।",
+   "fr": "L’intégration de la section transversale sur la hauteur donne du volume."
+  },
+  "V = ∫ A(z) dz": {
+   "ja": "V = ∫ A(z) dz",
+   "zh": "V = ∫ A(z) dz",
+   "tw": "V = ∫ A(z) dz",
+   "ko": "V = ∫ A(z) dz",
+   "de": "V = ∫ A(z) dz",
+   "hi": "V = ∫ A(z) dz",
+   "fr": "V = ∫ A(z) dz"
+  },
+  "A coarse step skips thin tips.": {
+   "ja": "刻みが粗いと細い端部を飛ばす。",
+   "zh": "粗略的步骤会跳过细小的尖端。",
+   "tw": "粗略的步驟會跳過細小的尖端。",
+   "ko": "거친 단계에서는 얇은 팁을 건너뜁니다.",
+   "de": "Bei einer groben Stufe werden dünne Spitzen übersprungen.",
+   "hi": "एक मोटा कदम पतली युक्तियों को छोड़ देता है।",
+   "fr": "Un pas grossier saute les pointes fines."
+  },
+  "Closed surfaces and topology": {
+   "ja": "閉曲面と位相",
+   "zh": "封闭曲面和拓扑",
+   "tw": "封閉曲面和拓撲",
+   "ko": "닫힌 표면 및 토폴로지",
+   "de": "Geschlossene Oberflächen und Topologie",
+   "hi": "बंद सतहें और टोपोलॉजी",
+   "fr": "Surfaces fermées et topologie"
+  },
+  "A closed shell has χ = 2; this reduced model cannot measure the topology of omitted bronchi.": {
+   "ja": "閉じた外皮は χ = 2。細い気管支を落としたモデルでは枝の位相を測れない。",
+   "zh": "闭壳的 χ = 2；这种简化模型无法测量省略的支气管的拓扑结构。",
+   "tw": "閉殼的 χ = 2；這種簡化模型無法測量省略的支氣管的拓樸結構。",
+   "ko": "닫힌 껍질은 χ = 2입니다. 이 축소 모델은 생략된 기관지의 위상을 측정할 수 없습니다.",
+   "de": "Eine geschlossene Schale hat χ = ​​2; Dieses reduzierte Modell kann die Topologie ausgelassener Bronchien nicht messen.",
+   "hi": "एक बंद कोश में χ = 2 है; यह घटा हुआ मॉडल छोड़ी गई ब्रांकाई की टोपोलॉजी को माप नहीं सकता है।",
+   "fr": "Une coque fermée a χ = 2 ; ce modèle réduit ne peut pas mesurer la topologie des bronches omises."
+  },
+  "Six surfaces closed by vertex welding": {
+   "ja": "頂点溶接で閉じた 6 曲面",
+   "zh": "通过顶点焊接封闭的六个曲面",
+   "tw": "透過頂點焊接封閉的六個曲面",
+   "ko": "꼭지점 용접으로 닫은 여섯 표면",
+   "de": "Sechs durch Scheitelverschweißung geschlossene Flächen",
+   "hi": "शीर्ष वेल्डिंग से बंद छह सतहें",
+   "fr": "Six surfaces fermées par soudure des sommets"
+  },
+  "after repair: χ = 2, boundary edges 0": {
+   "ja": "修復後 χ = 2、境界辺 0",
+   "zh": "修复后：χ = 2，边界边 0",
+   "tw": "修復後：χ = 2，邊界邊 0",
+   "ko": "복구 후: χ = 2, 경계 모서리 0",
+   "de": "nach Reparatur: χ = 2, Randkanten 0",
+   "hi": "मरम्मत के बाद: χ = 2, सीमा किनारे 0",
+   "fr": "après réparation : χ = 2, arêtes de bord 0"
+  },
+  "1,604 edges before repair → 0 after; χ = 2 for all 6": {
+   "ja": "修復前 1,604 辺 → 修復後 0 辺、6 件すべて χ = 2",
+   "zh": "修复前 1,604 条边 → 修复后 0 条；6 个全部 χ = 2",
+   "tw": "修復前 1,604 條邊 → 修復後 0 條；6 個全部 χ = 2",
+   "ko": "복구 전 모서리 1,604개 → 복구 후 0개; 6개 모두 χ = 2",
+   "de": "1,604 Kanten vor Reparatur → 0 danach; χ = 2 für alle 6",
+   "hi": "मरम्मत से पहले 1,604 किनारे → बाद में 0; सभी 6 के लिए χ = 2",
+   "fr": "1,604 arêtes avant réparation → 0 après ; χ = 2 pour les 6"
+  },
+  "Thin structures in the 99% reduction": {
+   "ja": "99 % 削減版の細い構造",
+   "zh": "薄结构减少 99%",
+   "tw": "薄結構減少 99%",
+   "ko": "99% 감소의 얇은 구조",
+   "de": "Dünne Strukturen in der 99%-Reduktion",
+   "hi": "99% कमी में पतली संरचनाएँ",
+   "fr": "Structures fines en réduction de 99%"
+  },
+  "preserve source branches and area": {
+   "ja": "元形状の枝と面積を保存",
+   "zh": "保留源分支和区域",
+   "tw": "保留源分支和區域",
+   "ko": "소스 가지 및 영역 보존",
+   "de": "Bewahren Sie Quellzweige und -gebiete",
+   "hi": "स्रोत शाखाओं और क्षेत्र को सुरक्षित रखें",
+   "fr": "préserver les branches et la zone source"
+  },
+  "trachea and vessels are lost": {
+   "ja": "気管・血管を失う",
+   "zh": "气管和血管丢失",
+   "tw": "氣管和血管流失",
+   "ko": "기관과 혈관이 손실됨",
+   "de": "Luftröhre und Gefäße gehen verloren",
+   "hi": "श्वासनली और वाहिकाएँ नष्ट हो जाती हैं",
+   "fr": "la trachée et les vaisseaux sont perdus"
+  },
+  "Topology check": {
+   "ja": "位相の確認",
+   "zh": "拓扑检查",
+   "tw": "拓撲檢查",
+   "ko": "토폴로지 확인",
+   "de": "Topologieprüfung",
+   "hi": "टोपोलॉजी जांच",
+   "fr": "Vérification de la topologie"
+  },
+  "What is χ for one closed shell?": {
+   "ja": "閉じた一枚の外皮の χ は？",
+   "zh": "What is χ for one closed shell?",
+   "tw": "What is χ for one closed shell?",
+   "ko": "What is χ for one closed shell?",
+   "de": "What is χ for one closed shell?",
+   "hi": "What is χ for one closed shell?",
+   "fr": "What is χ for one closed shell?"
+  },
+  "0": {
+   "ja": "0",
+   "zh": "0",
+   "tw": "0",
+   "ko": "0",
+   "de": "0",
+   "hi": "0",
+   "fr": "0"
+  },
+  "2": {
+   "ja": "2",
+   "zh": "2",
+   "tw": "2",
+   "ko": "2",
+   "de": "2",
+   "hi": "2",
+   "fr": "2"
+  },
+  "Count vertices, edges and faces independently to obtain χ.": {
+   "ja": "頂点・辺・面を別々に数えて χ を得る。",
+   "zh": "独立计算顶点、边和面以获得 χ。",
+   "tw": "獨立計算頂點、邊和麵以獲得 χ。",
+   "ko": "꼭지점, 모서리 및 면을 독립적으로 계산하여 χ를 얻습니다.",
+   "de": "Zählen Sie Scheitelpunkte, Kanten und Flächen unabhängig voneinander, um χ zu erhalten.",
+   "hi": "χ प्राप्त करने के लिए शीर्षों, किनारों और फलकों को स्वतंत्र रूप से गिनें।",
+   "fr": "Comptez les sommets, les arêtes et les faces indépendamment pour obtenir χ."
+  },
+  "χ = V − E + F = 2": {
+   "ja": "χ = V − E + F = 2",
+   "zh": "χ = V − E + F = 2",
+   "tw": "χ = V − E + F = 2",
+   "ko": "χ = V − E + F = 2",
+   "de": "χ = V − E + F = 2",
+   "hi": "χ = वी - ई + एफ = 2",
+   "fr": "χ = V − E + F = 2"
+  },
+  "The 99% reduction loses thin structures. Do not use it for diagnosis.": {
+   "ja": "99 % 削減版は細い構造を失う。医療診断には使わない。",
+   "zh": "99% 的减少会失去薄结构。请勿将其用于诊断。",
+   "tw": "99% 的減少會失去薄結構。請勿將其用於診斷。",
+   "ko": "99% 감소로 얇은 구조가 손실됩니다. 진단용으로 사용하지 마십시오.",
+   "de": "Durch die Reduzierung um 99 % gehen dünne Strukturen verloren. Verwenden Sie es nicht zur Diagnose.",
+   "hi": "99% कमी से पतली संरचनाएं खो जाती हैं। निदान के लिए इसका प्रयोग न करें.",
+   "fr": "La réduction de 99 % fait perdre les structures fines. Ne l'utilisez pas pour le diagnostic."
+  },
+  "BodyParts3D, © The Database Center for Life Science licensed under CC Attribution 4.0 International": {
+   "ja": "BodyParts3D, © The Database Center for Life Science licensed under CC Attribution 4.0 International",
+   "zh": "BodyParts3D, © The Database Center for Life Science licensed under CC Attribution 4.0 International",
+   "tw": "BodyParts3D, © The Database Center for Life Science licensed under CC Attribution 4.0 International",
+   "ko": "BodyParts3D, © The Database Center for Life Science licensed under CC Attribution 4.0 International",
+   "de": "BodyParts3D, © The Database Center for Life Science licensed under CC Attribution 4.0 International",
+   "hi": "BodyParts3D, © The Database Center for Life Science licensed under CC Attribution 4.0 International",
+   "fr": "BodyParts3D, © The Database Center for Life Science licensed under CC Attribution 4.0 International"
+  }
+ }
+}

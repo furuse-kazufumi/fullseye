@@ -90,7 +90,9 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../articles/assets/poc/poc_microns_brain_wave/04_wave_on_wiring.gif"><img src="thumbs/poc_microns_brain_wave.jpg" alt="マウス視覚野の波" loading="lazy" width="320" height="320"><b>&#9654;</b><span>マウス視覚野の波</span></a>
 <a href="../articles/assets/media/evis_stereo_fullseye.mp4"><img src="thumbs/evis_stereo_depth.jpg" alt="ヒューマノイドの両眼" loading="lazy" width="320" height="320"><b>&#9654;</b><span>ヒューマノイドの両眼</span></a>
 <a href="../articles/assets/media/evis_bean_track_fullseye.mp4"><img src="thumbs/evis_bean_track.jpg" alt="箸先カメラの豆追跡" loading="lazy" width="320" height="320"><b>&#9654;</b><span>箸先カメラの豆追跡</span></a>
+<a href="../anim3d/organ_volume.html?lang=ja"><img src="thumbs/organ_volume.jpg" alt="臓器の体積と球形度" loading="lazy" width="320" height="320"><b>&#9654;</b><span>臓器の体積と球形度 · 0.5 MB</span></a>
 <a href="../view2026/anim3d/interactive_anim3d_viewer.html?lang=ja"><img src="thumbs/interactive_anim3d_viewer.jpg" alt="アームと半透明のレンズ" loading="lazy" width="320" height="320"><b>&#9654;</b><span>アームと半透明のレンズ · 0.3 MB</span></a>
+<a href="../view2026/anim3d/satellite_gsd_anim3d.html?lang=ja"><img src="thumbs/satellite_gsd.jpg" alt="軌道上から小さな文字が読めない理由" loading="lazy" width="320" height="320"><b>&#9654;</b><span>軌道上から小さな文字が読めない理由 · 0.2 MB</span></a>
 </div>
 
 ## シリーズ記事
@@ -673,7 +675,9 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 
 **動く 3-D(触って回せる)**
 
+- [臓器の体積と球形度](../anim3d/organ_volume.html?lang=ja) (動く 3-D・触って回せる, 0.5 MB): 6 臓器を体積順に並べ、同体積の半透明球を重ね、断面を積む。発散定理と固体ボクセルの体積は最大 0.191 % 差で、閉曲面は χ = 2。99 % 削減版が細い構造を失う限界も示す。 **6 臓器、体積差 ≤ 0.191 %、χ = 2・境界辺 0。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_organvol_anim3d.py)
 - [アームと半透明のレンズ](../view2026/anim3d/interactive_anim3d_viewer.html?lang=ja) (動く 3-D・触って回せる, 0.3 MB): アームが箱を運ぶ様子を、指で回して好きな向きから見る。光線が半透明のレンズを貫いて焦点へ集まり、右下では真上からの高さ画像とその二値化が同じ時間軸で進む。 [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
+- [軌道上から小さな文字が読めない理由](../view2026/anim3d/satellite_gsd_anim3d.html?lang=ja) (動く 3-D・触って回せる, 0.2 MB): 高度を上げると 1 画素が覆う地上幅が広がり、口径を小さくすると半透明の光円錐の底にある Airy 円板が広がる。青い GSD と橙の回折幅の交点を越えると、画素だけ細かくしても 10 cm の線は戻らない。 **高度 400 km、5 µm 画素、焦点距離 8 m なら GSD は 0.250 m。波長 550 nm、口径 2.4 m の Rayleigh 地上半径は 0.112 m。大気は限界の行として未計算。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_satgsd_anim3d.py)
 
 </div>
 
