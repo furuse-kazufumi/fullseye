@@ -79,6 +79,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../view2026/anim3d/interactive_anim3d_viewer.html?lang=tw"><img src="../thumbs/interactive_anim3d_viewer.jpg" alt="機械臂與半透明透鏡" loading="lazy" width="320" height="320"><b>&#9654;</b><span>機械臂與半透明透鏡 · 0.3 MB</span></a>
 <a href="../../view2026/anim3d/tablet_inspection_anim3d.html?lang=tw"><img src="../thumbs/tablet_inspection.jpg" alt="Tablet appearance and colour inspection" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Tablet appearance and colour inspection · 0.5 MB</span></a>
 <a href="../../view2026/anim3d/satellite_gsd_anim3d.html?lang=tw"><img src="../thumbs/satellite_gsd.jpg" alt="為什麼從軌道上看不清小字" loading="lazy" width="320" height="320"><b>&#9654;</b><span>為什麼從軌道上看不清小字 · 0.2 MB</span></a>
+<a href="../../view2026/anim3d/ship_stability_anim3d.html?lang=tw"><img src="../thumbs/ship_stability.jpg" alt="船為何能浮起並在傾斜後復原" loading="lazy" width="320" height="320"><b>&#9654;</b><span>船為何能浮起並在傾斜後復原 · 0.2 MB</span></a>
 </div>
 
 ## 系列文章 (Qiita 上的英文文章)
@@ -665,6 +666,7 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 - [機械臂與半透明透鏡](../../view2026/anim3d/interactive_anim3d_viewer.html?lang=tw) (動態 3-D,可拖曳旋轉, 0.3 MB): 用手指旋轉,從任意角度觀看機械臂搬運箱子。光線穿過半透明透鏡匯聚到焦點,下方的俯視高度影像及其二值化結果在同一時間軸上同步播放。 [原始碼](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
 - [Tablet appearance and colour inspection](../../view2026/anim3d/tablet_inspection_anim3d.html?lang=tw) (動態 3-D,可拖曳旋轉, 0.5 MB): Rotate synthetic tablets defined only by shape and colour. At each area, synthesize 800 chip-free and 800 chipped images and measure the detection-rate curve; fade a colour patch from ΔE00 = 8 to 0. Measure foreign-particle position and blob count, then expose the limit where a shallow crack parallel to the light vanishes. **Foreign-particle position error 0.292 px; measured and normal-approximation 90% detection areas are both 3 px² = 0.0192 mm²; CIEDE2000 direct-formula difference < 1e-12; 5 separated blobs.** [原始碼](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_tablet_anim3d.py)
 - [為什麼從軌道上看不清小字](../../view2026/anim3d/satellite_gsd_anim3d.html?lang=tw) (動態 3-D,可拖曳旋轉, 0.2 MB): 高度越高,1 個像素覆蓋的地面越寬;口徑越小,半透明光錐底部的艾里斑越大。越過藍色 GSD 與橙色繞射寬度的交點後,僅縮小像素也無法恢復 10 cm 線條。 **高度 400 km、像素 5 µm、焦距 8 m 時,GSD 為 0.250 m。波長 550 nm、口徑 2.4 m 時,Rayleigh 地面半徑為 0.112 m。大氣影響在限制列中明確標為未計算。** [原始碼](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_satgsd_anim3d.py)
+- [船為何能浮起並在傾斜後復原](../../view2026/anim3d/ship_stability_anim3d.html?lang=tw) (動態 3-D,可拖曳旋轉, 0.2 MB): 船體傾斜時 B 向浸水側移動，與 G 形成力臂 GZ；抬高 G 後力臂反向。 **箱形閉式誤差 2.26e-16；重量誤差 9.17e-15；GZ 斜率與 GM 相差 0.122%。高重心時 GM = -0.350 m。** [原始碼](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_ship_anim3d.py)
 
 </div>
 

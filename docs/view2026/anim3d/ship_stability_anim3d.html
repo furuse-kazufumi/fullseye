@@ -1,0 +1,922 @@
+<!doctype html>
+<html lang="ja">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>船はなぜ浮き、傾いても戻るのか</title>
+<style>
+  :root { --bg:#11161c; --panel:#182029; --line:#2a3540; --fg:#e8edf2; --dim:#93a2b1; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg);
+         font-family:"Segoe UI","Hiragino Sans",Meiryo,sans-serif; -webkit-text-size-adjust:100%; }
+  header { padding:16px 18px 8px; display:flex; gap:12px; align-items:flex-start; justify-content:space-between; }
+  h1 { font-size:18px; margin:0 0 4px; }
+  .sub { font-size:13px; color:var(--dim); line-height:1.6; }
+  #lang { flex:none; padding:5px 8px; font-size:13px; background:var(--panel); color:var(--fg); border:1px solid var(--line); border-radius:8px; }
+  .tabs { display:flex; flex-wrap:wrap; gap:8px; padding:10px 18px 4px; }
+  .tab { padding:8px 13px; border-radius:8px; border:1px solid var(--line);
+         background:var(--panel); color:#c8d4df; cursor:pointer; font-size:14px; text-align:left; }
+  .tab.on { background:#2c6fb5; border-color:#2c6fb5; color:#fff; font-weight:600; }
+  .tab i { display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:7px; vertical-align:baseline; }
+  .card { margin:8px 18px; padding:10px 14px; background:var(--panel);
+          border:1px solid var(--line); border-radius:8px; font-size:13.5px; line-height:1.75; }
+  .badge { display:inline-block; padding:2px 9px; border-radius:999px; font-size:12px;
+           margin-right:8px; font-weight:600; }
+  .passed { background:#1d4e7a; color:#dbeafe; } .passed-dot { background:#5aa9f0; }
+  .limit { background:#7a4a1d; color:#fde9d0; } .limit-dot { background:#f0a45a; }
+  .null { background:#444c55; color:#e3e8ed; } .null-dot { background:#9aa6b2; }
+  .nums { display:flex; flex-wrap:wrap; gap:6px 16px; margin-top:6px; }
+  .num { font-variant-numeric:tabular-nums; } .num i { font-style:normal; color:var(--dim); margin-right:6px; }
+  #wrap { position:relative; margin:6px 18px; height:min(64vh,560px); }
+  #wrap.two { height:auto; }
+  canvas { display:block; background:#0d1116; border:1px solid var(--line); border-radius:8px; touch-action:none; }
+  #gl { width:100%; height:100%; cursor:grab; }
+  #c2d { width:100%; height:auto; image-rendering:pixelated; max-height:56vh; object-fit:contain; margin:0 auto; }
+  #err { display:none; position:absolute; inset:0; align-items:center; justify-content:center;
+         padding:20px; text-align:center; color:#f6dede; background:#5c2f2f; border-radius:8px; }
+  #hud { position:absolute; left:12px; top:10px; font-size:13px; color:#c3ced9; line-height:1.55;
+         font-variant-numeric:tabular-nums; pointer-events:none; text-shadow:0 1px 3px #000; }
+  #hud b.flag { color:#ff8a80; }
+  .cb { display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:2px 18px 4px; font-size:12.5px; color:var(--dim); }
+  .cb .bar { width:min(260px,60vw); height:12px; border-radius:3px; border:1px solid var(--line); }
+  .cb .ticks { display:flex; justify-content:space-between; width:min(260px,60vw); font-size:11.5px; margin-top:2px; }
+  .ctl { display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:10px 18px 6px; }
+  button { padding:7px 13px; border-radius:8px; border:1px solid var(--line);
+           background:var(--panel); color:var(--fg); cursor:pointer; font-size:14px; }
+  button.pri { background:#2c6fb5; border-color:#2c6fb5; color:#fff; }
+  input[type=range] { flex:1; min-width:160px; }
+  .read { color:var(--dim); font-size:13px; font-variant-numeric:tabular-nums; }
+  .views { padding:0 18px 8px; display:flex; gap:8px; flex-wrap:wrap; }
+  #plot { width:calc(100% - 36px); margin:4px 18px; height:150px; }
+  .hint { padding:2px 18px 10px; color:#7d8b99; font-size:12.5px; line-height:1.8; }
+  .credit { padding:0 18px 26px; color:#6b7886; font-size:12px; line-height:1.7; }
+  #wrap.a3w { height:min(52vh,480px); }
+  #rate { padding:3px 6px; font-size:13px; background:var(--panel); color:var(--fg); border:1px solid var(--line); border-radius:6px; }
+  .evs { display:flex; flex-wrap:wrap; gap:6px; padding:0 18px 6px; }
+  .evs button { padding:4px 10px; font-size:12.5px; }
+  .evs button.on { background:#2c6fb5; border-color:#2c6fb5; color:#fff; }
+  .panes { display:flex; flex-wrap:wrap; gap:10px; margin:6px 18px; }
+  .pane { flex:1 1 220px; min-width:0; }
+  .pane.wide { flex:1 1 100%; }
+  .pane .pl { font-size:12.5px; color:var(--dim); margin-bottom:3px; }
+  .pane canvas { width:100%; height:auto; max-height:36vh; object-fit:contain; image-rendering:pixelated; }
+
+  .legend { display:flex; flex-wrap:wrap; align-items:center; gap:4px 6px; padding:2px 18px 0; font-size:12.5px;
+            color:var(--dim); line-height:1.7; }
+  .legend .badge { margin-right:0; }
+  .legend .lgt { flex:1 1 260px; min-width:0; }
+  .bh { cursor:pointer; user-select:none; }
+  .bh:focus-visible { outline:2px solid #8ec5ff; outline-offset:2px; }
+  .bhq { font-weight:400; opacity:.85; margin-left:2px; }
+  .bhbox { margin:6px 0 4px; padding:8px 10px; border:1px solid var(--line); border-radius:6px; background:#121a22; }
+  .bhbox[hidden] { display:none; }
+  .bhdef { color:#c8d4df; }
+  .bhscroll { overflow-x:auto; }
+  .bht { border-collapse:collapse; margin-top:6px; width:100%; font-size:12.5px; font-variant-numeric:tabular-nums; }
+  .bht th, .bht td { border-top:1px solid var(--line); padding:3px 8px 3px 0; text-align:left; vertical-align:top; }
+  .bht th { color:var(--dim); font-weight:600; }
+  .bht td.v { white-space:nowrap; }
+  .bht tr.ok td.v { color:#9fd3ff; } .bht tr.ng td.v { color:#ffb37a; }
+
+  .lsh { margin-top:8px; color:#9fc6ec; font-weight:600; font-size:12.5px; }
+  .lsq { font-size:14.5px; }
+  .lsc { display:flex; flex-wrap:wrap; gap:6px; margin-top:4px; }
+  .lsb { padding:6px 11px; font-size:13.5px; text-align:left; }
+  .lsb.right { background:#1d4e7a; border-color:#5aa9f0; color:#fff; }
+  .lsb.wrong { background:#5a3a22; border-color:#f0a45a; color:#fff; }
+  .lsa { margin-top:6px; padding:6px 10px; border-left:3px solid #5aa9f0; background:#121a22; border-radius:4px; }
+  .lsa[hidden] { display:none; }
+  .lsf { font-family:"Cambria Math","STIX Two Math","Times New Roman",serif; font-size:15px; line-height:1.9;
+         padding:4px 0; overflow-x:auto; }
+  .lsl { padding:2px 0; }
+</style>
+
+<header>
+  <div><h1 id="h1"></h1><div class="sub" id="sub"></div></div>
+  <select id="lang"></select>
+</header>
+<div class="legend" id="legend"></div>
+<div class="tabs" id="tabs"></div>
+<div class="card" id="meta"></div>
+<div id="wrap"><canvas id="gl"></canvas><canvas id="c2d" style="display:none"></canvas><div id="hud"></div>
+  <div id="err"></div></div>
+<div class="cb" id="cb" style="display:none"></div>
+<div class="views" id="views">
+  <button data-v="front"></button><button data-v="side"></button>
+  <button data-v="iso"></button><button data-v="top"></button>
+</div>
+<div class="ctl" id="ctl">
+  <button id="play" class="pri"></button>
+  <button id="b1" class="a3" style="display:none"></button><button id="f1" class="a3" style="display:none"></button>
+  <button id="evp" class="a3" style="display:none"></button><button id="evn" class="a3" style="display:none"></button>
+  <input type="range" id="scrub" min="0" max="1000" value="0">
+  <span class="read" id="tlabel"></span>
+  <label class="read" id="spl"><span id="spd"></span> <input type="range" id="speed" min="10" max="300" value="100" style="width:80px;vertical-align:middle"></label>
+  <label class="read a3" id="rtl" style="display:none"><span id="rtt"></span> <select id="rate"><option value="0.25">&times;0.25</option><option value="0.5">&times;0.5</option><option value="1" selected>&times;1</option><option value="2">&times;2</option><option value="4">&times;4</option></select></label>
+  <label class="read" id="lpl"><input type="checkbox" id="loop" checked> <span id="lpt"></span></label>
+  <label class="read a3" id="fwl" style="display:none"><input type="checkbox" id="follow"> <span id="fwt"></span></label>
+</div>
+<div class="evs" id="evs" style="display:none"></div>
+<div class="panes" id="panes" style="display:none"></div>
+<canvas id="plot" style="display:none"></canvas>
+<div class="card" id="lesson2" style="display:none"></div>
+<div class="hint" id="hint"></div>
+<div class="credit" id="credit"></div>
+
+<script>
+(function(){
+'use strict';
+const D = {"id":"ship_stability","langs":["ja","en","zh","tw","ko","de","hi","fr"],"langnames":{"ja":"\u65e5\u672c\u8a9e","en":"English","zh":"\u7b80\u4f53\u4e2d\u6587","tw":"\u7e41\u9ad4\u4e2d\u6587","ko":"\ud55c\uad6d\uc5b4","de":"Deutsch","hi":"\u0939\u093f\u0928\u094d\u0926\u0940","fr":"Fran\u00e7ais"},"title":{"ja":"\u8239\u306f\u306a\u305c\u6d6e\u304d\u3001\u50be\u3044\u3066\u3082\u623b\u308b\u306e\u304b","en":"Why a ship floats and returns after heeling","zh":"\u4e3a\u4ec0\u4e48\u8239\u4f1a\u6f02\u6d6e\u5e76\u5728\u6a2a\u503e\u540e\u8fd4\u56de","tw":"\u70ba\u4ec0\u9ebc\u8239\u6703\u6f02\u6d6e\u4e26\u5728\u6a6b\u50be\u5f8c\u8fd4\u56de","ko":"\ubc30\uac00 \ub5a0\uc11c \uae30\uc6b8\uc5c8\ub2e4\uac00 \ub3cc\uc544\uc624\ub294 \uc774\uc720","de":"Warum ein Schiff schwimmt und nach einer Kr\u00e4ngung zur\u00fcckkehrt","hi":"\u0915\u094d\u092f\u094b\u0902 \u090f\u0915 \u091c\u0939\u093e\u091c \u0924\u0948\u0930\u0924\u093e \u0939\u0948 \u0914\u0930 \u0939\u093f\u0932\u0928\u0947 \u0915\u0947 \u092c\u093e\u0926 \u0935\u093e\u092a\u0938 \u0932\u094c\u091f \u0906\u0924\u093e \u0939\u0948?","fr":"Pourquoi un navire flotte et revient apr\u00e8s une g\u00eete"},"subtitle":{"ja":"\u6392\u6c34\u91cf\u30fb\u6d6e\u5fc3 B\u30fb\u30e1\u30bf\u30bb\u30f3\u30bf M\u30fb\u91cd\u5fc3 G \u3092\u540c\u3058\u5408\u6210\u8239\u578b\u3067\u8ffd\u3046","en":"Track displacement, buoyancy centre B, metacentre M and centre of gravity G on one synthetic hull","zh":"\u4e00\u4e2a\u5408\u6210\u8239\u4f53\u4e0a\u7684\u8f68\u8ff9\u4f4d\u79fb\u3001\u6d6e\u529b\u4e2d\u5fc3 B\u3001\u8d85\u4e2d\u5fc3 M \u548c\u91cd\u5fc3 G","tw":"\u4e00\u500b\u5408\u6210\u8239\u9ad4\u4e0a\u7684\u8ecc\u8de1\u4f4d\u79fb\u3001\u6d6e\u529b\u4e2d\u5fc3 B\u3001\u8d85\u4e2d\u5fc3 M \u548c\u91cd\u5fc3 G","ko":"\ud558\ub098\uc758 \ud569\uc131 \uc120\uccb4\uc5d0 \ub300\ud55c \ud2b8\ub799 \ubcc0\uc704, \ubd80\ub825 \uc911\uc2ec B, \uba54\ud0c0\uc911\uc2ec M \ubc0f \ubb34\uac8c \uc911\uc2ec G","de":"Gleisverdr\u00e4ngung, Auftriebszentrum B, Metazentrum M und Schwerpunkt G auf einem Kunststoffrumpf","hi":"\u090f\u0915 \u0938\u093f\u0902\u0925\u0947\u091f\u093f\u0915 \u092a\u0924\u0935\u093e\u0930 \u092a\u0930 \u091f\u094d\u0930\u0948\u0915 \u0935\u093f\u0938\u094d\u0925\u093e\u092a\u0928, \u0909\u0924\u094d\u092a\u094d\u0932\u093e\u0935\u0928 \u0915\u0947\u0902\u0926\u094d\u0930 \u092c\u0940, \u092e\u0947\u091f\u093e\u0938\u0947\u0902\u091f\u0930 \u090f\u092e \u0914\u0930 \u0917\u0941\u0930\u0941\u0924\u094d\u0935\u093e\u0915\u0930\u094d\u0937\u0923 \u0915\u0947\u0902\u0926\u094d\u0930 \u091c\u0940","fr":"D\u00e9placement de la chenille, centre de flottabilit\u00e9 B, m\u00e9tacentre M et centre de gravit\u00e9 G sur une coque synth\u00e9tique"},"hint":{"ja":"\u2460\u554f\u3044 \u2192 \u2461\u4e88\u60f3 \u2192 \u2462\u518d\u751f \u2192 \u2463\u5f0f \u2192 \u2464\u9650\u754c\u3002\u30c9\u30e9\u30c3\u30b0\u3067\u56de\u8ee2\u3057\u3001\u30d0\u30c3\u30b8\u3067\u8a08\u7b97\u306e\u9580\u3092\u898b\u308b\u3002","en":"Follow \u2460 question \u2192 \u2461 prediction \u2192 \u2462 play \u2192 \u2463 formula \u2192 \u2464 limit. Drag to orbit and open badges for computed gates.","zh":"\u6309\u7167\u2460\u9898\u2192\u2461\u9884\u6d4b\u2192\u2462\u73a9\u6cd5\u2192\u2463\u516c\u5f0f\u2192\u2464\u9650\u5236\u3002\u62d6\u52a8\u5230\u8f68\u9053\u5e76\u6253\u5f00\u8ba1\u7b97\u95e8\u7684\u5fbd\u7ae0\u3002","tw":"\u4f9d\u7167\u2460\u984c\u2192\u2461\u9810\u6e2c\u2192\u2462\u73a9\u6cd5\u2192\u2463\u516c\u5f0f\u2192\u2464\u9650\u5236\u3002\u62d6\u66f3\u5230\u8ecc\u9053\u4e26\u6253\u958b\u8a08\u7b97\u9580\u7684\u5fbd\u7ae0\u3002","ko":"\u2460\uc9c8\ubb38 \u2192 \u2461\uc608\uce21 \u2192 \u2462\ub180\uc774 \u2192 \u2463\uacf5\uc2dd \u2192 \u2464\uc81c\ud55c \uc21c\uc73c\ub85c \uc9c4\ud589\ud558\uc138\uc694. \uada4\ub3c4\ub85c \ub4dc\ub798\uadf8\ud558\uc5ec \uacc4\uc0b0\ub41c \uac8c\uc774\ud2b8\uc758 \ubc30\uc9c0\ub97c \uc5fd\ub2c8\ub2e4.","de":"Folgen Sie \u2460 Frage \u2192 \u2461 Vorhersage \u2192 \u2462 Spielen \u2192 \u2463 Formel \u2192 \u2464 Grenze. Ziehen Sie in den Orbit und \u00f6ffnen Sie Abzeichen f\u00fcr berechnete Tore.","hi":"\u2460 \u092a\u094d\u0930\u0936\u094d\u0928 \u2192 \u2461 \u092d\u0935\u093f\u0937\u094d\u092f\u0935\u093e\u0923\u0940 \u2192 \u2462 \u0916\u0947\u0932 \u2192 \u2463 \u0938\u0942\u0924\u094d\u0930 \u2192 \u2464 \u0938\u0940\u092e\u093e \u0915\u093e \u092a\u093e\u0932\u0928 \u0915\u0930\u0947\u0902\u0964 \u0915\u0915\u094d\u0937\u093e \u092e\u0947\u0902 \u0916\u0940\u0902\u091a\u0947\u0902 \u0914\u0930 \u092a\u0930\u093f\u0915\u0932\u093f\u0924 \u0917\u0947\u091f\u094b\u0902 \u0915\u0947 \u0932\u093f\u090f \u092c\u0948\u091c \u0916\u094b\u0932\u0947\u0902\u0964","fr":"Suivez \u2460 question \u2192 \u2461 pr\u00e9diction \u2192 \u2462 jeu \u2192 \u2463 formule \u2192 \u2464 limite. Faites glisser vers l'orbite et ouvrez les badges pour les portes calcul\u00e9es."},"tabs":[{"id":"float","kind":"anim3d","badge":"passed","label":{"ja":"\u306a\u305c\u6d6e\u304f\u304b","en":"Why it floats","zh":"\u4e3a\u4ec0\u4e48\u4f1a\u6f02\u6d6e","tw":"\u70ba\u4ec0\u9ebc\u6703\u6f02\u6d6e","ko":"\uc65c \ub728\ub294\uac00?","de":"Warum es schwimmt","hi":"\u092f\u0939 \u0915\u094d\u092f\u094b\u0902 \u0924\u0948\u0930\u0924\u093e \u0939\u0948","fr":"Pourquoi \u00e7a flotte"},"text":{"ja":"\u55ab\u6c34\u3092\u4e8c\u5206\u63a2\u7d22\u3057\u3001\u6c34\u9762\u4e0b\u30e1\u30c3\u30b7\u30e5\u306e\u4f53\u7a4d\u00d7\u6c34\u306e\u5bc6\u5ea6\u304c\u6307\u5b9a\u91cd\u91cf\u306b\u5408\u3046\u4f4d\u7f6e\u3067\u6b62\u3081\u308b\u3002\u9752\u3044\u5e2f\u304c\u6392\u6c34\u91cf\u3001\u9ec4\u304c\u91cd\u91cf\u3067\u3001\u91cd\u306a\u308b\u6240\u304c\u91e3\u308a\u5408\u3044\u3002","en":"Draft is found by bisection until submerged mesh volume times water density matches the specified weight. Blue displacement and yellow weight meet at equilibrium.","zh":"\u901a\u8fc7\u5e73\u5206\u627e\u5230\u5403\u6c34\uff0c\u76f4\u5230\u6d78\u6ca1\u7684\u7f51\u683c\u4f53\u79ef\u4e58\u4ee5\u6c34\u5bc6\u5ea6\u4e0e\u6307\u5b9a\u7684\u91cd\u91cf\u76f8\u5339\u914d\u3002\u84dd\u8272\u4f4d\u79fb\u548c\u9ec4\u8272\u91cd\u91cf\u8fbe\u5230\u5e73\u8861\u3002","tw":"\u900f\u904e\u5e73\u5206\u627e\u5230\u5403\u6c34\uff0c\u76f4\u5230\u6d78\u6c92\u7684\u7db2\u683c\u9ad4\u7a4d\u4e58\u4ee5\u6c34\u5bc6\u5ea6\u8207\u6307\u5b9a\u7684\u91cd\u91cf\u76f8\u7b26\u3002\u85cd\u8272\u4f4d\u79fb\u548c\u9ec3\u8272\u91cd\u91cf\u9054\u5230\u5e73\u8861\u3002","ko":"\ucd08\uc548\uc740 \ubb3c\uc5d0 \uc7a0\uae34 \uba54\uc2dc \ubd80\ud53c\uc640 \ubb3c \ubc00\ub3c4\ub97c \uacf1\ud558\uc5ec \uc9c0\uc815\ub41c \uc911\ub7c9\uacfc \uc77c\uce58\ud560 \ub54c\uae4c\uc9c0 \uc774\ub4f1\ubd84\ud558\uc5ec \uad6c\ud569\ub2c8\ub2e4. \ud30c\ub780\uc0c9 \ubcc0\uc704\uc640 \ub178\ub780\uc0c9 \ubb34\uac8c\uac00 \ud3c9\ud615 \uc0c1\ud0dc\uc5d0\uc11c \ub9cc\ub0a9\ub2c8\ub2e4.","de":"Der Tiefgang wird durch Halbierung ermittelt, bis das eingetauchte Maschenvolumen mal die Wasserdichte dem angegebenen Gewicht entspricht. Blaue Verschiebung und gelbes Gewicht treffen im Gleichgewicht aufeinander.","hi":"\u0921\u094d\u0930\u093e\u092b\u094d\u091f \u0915\u094b \u0926\u094d\u0935\u093f\u092d\u093e\u091c\u0928 \u0926\u094d\u0935\u093e\u0930\u093e \u0924\u092c \u0924\u0915 \u092a\u093e\u092f\u093e \u091c\u093e\u0924\u093e \u0939\u0948 \u091c\u092c \u0924\u0915 \u091c\u0932\u092e\u0917\u094d\u0928 \u091c\u093e\u0932 \u0915\u0940 \u092e\u093e\u0924\u094d\u0930\u093e \u0917\u0941\u0923\u093e \u092a\u093e\u0928\u0940 \u0915\u093e \u0918\u0928\u0924\u094d\u0935 \u0928\u093f\u0930\u094d\u0926\u093f\u0937\u094d\u091f \u0935\u091c\u0928 \u0938\u0947 \u092e\u0947\u0932 \u0928\u0939\u0940\u0902 \u0916\u093e\u0924\u093e\u0964 \u0928\u0940\u0932\u093e \u0935\u093f\u0938\u094d\u0925\u093e\u092a\u0928 \u0914\u0930 \u092a\u0940\u0932\u093e \u092d\u093e\u0930 \u0938\u0902\u0924\u0941\u0932\u0928 \u092a\u0930 \u092e\u093f\u0932\u0924\u0947 \u0939\u0948\u0902\u0964","fr":"Le tirant d'eau est trouv\u00e9 par bissection jusqu'\u00e0 ce que le volume du maillage immerg\u00e9 multipli\u00e9 par la densit\u00e9 de l'eau corresponde au poids sp\u00e9cifi\u00e9. Le d\u00e9placement bleu et le poids jaune se rencontrent \u00e0 l\u2019\u00e9quilibre."},"numbers":[{"label":{"ja":"\u6307\u5b9a\u3057\u305f\u6392\u6c34\u4f53\u7a4d","en":"specified displaced volume","zh":"\u6307\u5b9a\u6392\u91cf","tw":"\u6307\u5b9a\u6392\u6c23\u91cf","ko":"\uc9c0\uc815\ub41c \ubcc0\uc704\ub7c9","de":"spezifiziertes verdr\u00e4ngtes Volumen","hi":"\u0928\u093f\u0930\u094d\u0926\u093f\u0937\u094d\u091f \u0935\u093f\u0938\u094d\u0925\u093e\u092a\u093f\u0924 \u092e\u093e\u0924\u094d\u0930\u093e","fr":"volume d\u00e9plac\u00e9 sp\u00e9cifi\u00e9"},"value":"1910.0 m\u00b3"},{"label":{"ja":"\u5408\u6210\u8239\u578b\u306e\u5bf8\u6cd5","en":"synthetic hull dimensions","zh":"\u5408\u6210\u8239\u4f53\u5c3a\u5bf8","tw":"\u5408\u6210\u8239\u9ad4\u5c3a\u5bf8","ko":"\ud569\uc131 \uc120\uccb4 \uce58\uc218","de":"Abmessungen des Kunststoffrumpfes","hi":"\u0938\u093f\u0902\u0925\u0947\u091f\u093f\u0915 \u092a\u0924\u0935\u093e\u0930 \u0906\u092f\u093e\u092e","fr":"dimensions de la coque synth\u00e9tique"},"value":"72 \u00d7 14 \u00d7 8 m"}],"checks":[{"what":{"ja":"\u7bb1\u5f62\u8239: \u6392\u6c34\u91cf\u30fb\u6d6e\u5fc3\u30fbGM","en":"box hull: displacement, B and GM","zh":"\u7bb1\u5f62\u8239\u4f53\uff1a\u6392\u6c34\u91cf\u3001B \u548c GM","tw":"\u7bb1\u5f62\u8239\u9ad4\uff1a\u6392\u6c34\u91cf\u3001B \u548c GM","ko":"\uc0c1\uc790 \uc120\uccb4: \ubcc0\uc704, B \ubc0f GM","de":"Kastenrumpf: Verdr\u00e4ngung, B und GM","hi":"\u092c\u0949\u0915\u094d\u0938 \u092a\u0924\u0935\u093e\u0930: \u0935\u093f\u0938\u094d\u0925\u093e\u092a\u0928, \u092c\u0940 \u0914\u0930 \u091c\u0940\u090f\u092e","fr":"coque caisson : d\u00e9placement, B et GM"},"criterion":"relative < 1e-9","result":"< 1e-12","ok":true},{"what":{"ja":"\u55ab\u6c34\u63a2\u7d22\u5f8c\u306e\u6392\u6c34\u91cf\u3068\u6307\u5b9a\u91cd\u91cf","en":"searched displacement vs specified weight","zh":"\u641c\u7d22\u4f4d\u79fb\u4e0e\u6307\u5b9a\u91cd\u91cf","tw":"\u641c\u5c0b\u4f4d\u79fb\u8207\u6307\u5b9a\u91cd\u91cf","ko":"\uac80\uc0c9\ub41c \ubcc0\uc704 \ub300 \ud2b9\uc815 \uc911\ub7c9","de":"Gesuchter Hubraum im Vergleich zum angegebenen Gewicht","hi":"\u0916\u094b\u091c\u093e \u0917\u092f\u093e \u0935\u093f\u0938\u094d\u0925\u093e\u092a\u0928 \u092c\u0928\u093e\u092e \u0928\u093f\u0930\u094d\u0926\u093f\u0937\u094d\u091f \u0935\u091c\u0928","fr":"d\u00e9placement recherch\u00e9 par rapport au poids sp\u00e9cifi\u00e9"},"criterion":"relative < 1e-6","result":"< 1e-12","ok":true},{"what":{"ja":"\u5c0f\u50be\u659c GZ \u306e\u50be\u304d\u3068\u30e1\u30c3\u30b7\u30e5 GM","en":"small-angle GZ slope vs mesh GM","zh":"\u5c0f\u89d2\u5ea6 GZ \u5761\u5ea6\u4e0e\u7f51\u683c GM","tw":"\u5c0f\u89d2\u5ea6 GZ \u5761\u5ea6\u8207\u7db2\u683c GM","ko":"\uc791\uc740 \uac01\ub3c4 GZ \uacbd\uc0ac \ub300 \uba54\uc26c GM","de":"Kleinwinkel-GZ-Steigung vs. Netz-GM","hi":"\u091b\u094b\u091f\u0947-\u0915\u094b\u0923 \u091c\u0940\u091c\u0947\u0921 \u0922\u0932\u093e\u0928 \u092c\u0928\u093e\u092e \u091c\u093e\u0932 \u091c\u0940\u090f\u092e","fr":"Pente GZ aux petits angles vs maillage GM"},"criterion":"relative < 2 %","result":"0.122 %","ok":true}],"lesson":{"question":{"ja":"\u91cd\u3055\u3092\u5897\u3084\u3059\u3068\u55ab\u6c34\u306f?","en":"What happens to draft when weight increases?","zh":"\u5f53\u91cd\u91cf\u589e\u52a0\u65f6\u7275\u4f38\u4f1a\u53d1\u751f\u4ec0\u4e48\uff1f","tw":"\u7576\u91cd\u91cf\u589e\u52a0\u6642\u727d\u4f38\u6703\u767c\u751f\u4ec0\u9ebc\u4e8b\uff1f","ko":"\ubb34\uac8c\uac00 \uc99d\uac00\ud558\uba74 \ub4dc\ub798\ud504\ud2b8\ub294 \uc5b4\ub5bb\uac8c \ub418\ub098\uc694?","de":"Was passiert mit der Zugluft, wenn das Gewicht zunimmt?","hi":"\u0935\u091c\u0928 \u092c\u0922\u093c\u0928\u0947 \u092a\u0930 \u0921\u094d\u0930\u093e\u092b\u094d\u091f \u0915\u093e \u0915\u094d\u092f\u093e \u0939\u094b\u0924\u093e \u0939\u0948?","fr":"Qu\u2019arrive-t-il au tirant d\u2019eau lorsque le poids augmente ?"},"choices":[{"ja":"\u6d45\u304f\u306a\u308b","en":"becomes shallower","zh":"\u53d8\u5f97\u66f4\u6d45","tw":"\u8b8a\u5f97\u66f4\u6dfa","ko":"\uc595\uc544\uc9c4\ub2e4","de":"wird flacher","hi":"\u0909\u0925\u0932\u093e \u0939\u094b \u091c\u093e\u0924\u093e \u0939\u0948","fr":"devient moins profond"},{"ja":"\u6df1\u304f\u306a\u308b","en":"becomes deeper","zh":"\u53d8\u5f97\u66f4\u6df1","tw":"\u8b8a\u5f97\u66f4\u6df1","ko":"\uae4a\uc5b4\uc9c4\ub2e4","de":"wird tiefer","hi":"\u0917\u0939\u0930\u093e \u0939\u094b \u091c\u093e\u0924\u093e \u0939\u0948","fr":"devient plus profond"}],"answer":1,"explain":{"ja":"\u62bc\u3057\u306e\u3051\u305f\u6c34\u306e\u91cd\u3055\u304c\u8239\u306e\u91cd\u3055\u306b\u7b49\u3057\u304f\u306a\u308b\u307e\u3067\u6c88\u3080\u3002","en":"The hull sinks until the displaced water weighs as much as the ship.","zh":"\u8239\u4f53\u4e0b\u6c89\uff0c\u76f4\u5230\u6392\u51fa\u7684\u6c34\u4e0e\u8239\u4e00\u6837\u91cd\u3002","tw":"\u8239\u9ad4\u4e0b\u6c89\uff0c\u76f4\u5230\u6392\u51fa\u7684\u6c34\u8207\u8239\u4e00\u6a23\u91cd\u3002","ko":"\ubc00\ub824\ub09c \ubb3c\uc758 \ubb34\uac8c\uac00 \ubc30\uc758 \ubb34\uac8c\ub9cc\ud07c \ucee4\uc9c8 \ub54c\uae4c\uc9c0 \uc120\uccb4\uac00 \uac00\ub77c\uc549\uc2b5\ub2c8\ub2e4.","de":"Der Rumpf sinkt, bis das verdr\u00e4ngte Wasser so viel wiegt wie das Schiff.","hi":"\u092a\u0924\u0935\u093e\u0930 \u0924\u092c \u0924\u0915 \u0921\u0942\u092c\u0924\u0940 \u0930\u0939\u0924\u0940 \u0939\u0948 \u091c\u092c \u0924\u0915 \u0915\u093f \u0935\u093f\u0938\u094d\u0925\u093e\u092a\u093f\u0924 \u092a\u093e\u0928\u0940 \u0915\u093e \u0935\u091c\u0928 \u091c\u0939\u093e\u091c \u0915\u0947 \u092c\u0930\u093e\u092c\u0930 \u0928 \u0939\u094b \u091c\u093e\u090f\u0964","fr":"La coque coule jusqu'\u00e0 ce que l'eau d\u00e9plac\u00e9e p\u00e8se autant que le navire."},"formula":{"ja":"\u03c1\u6c34 V\u6392\u6c34 g = W","en":"\u03c1water Vdisplaced g = W","zh":"\u03c1\u6c34 V \u4f4d\u79fb g = W","tw":"\u03c1\u6c34 V \u4f4d\u79fb g = W","ko":"\u03c1\ubb3c V \ubcc0\uc704 g = W","de":"\u03c1Wasser Vverdr\u00e4ngt g = W","hi":"\u03c1\u091c\u0932 V\u0935\u093f\u0938\u094d\u0925\u093e\u092a\u093f\u0924 g = W","fr":"\u03c1eau Vd\u00e9plac\u00e9e g = W"},"limit":{"ja":"\u9759\u6c34\u4e2d\u306e\u91e3\u308a\u5408\u3044\u3002\u6ce2\u3001\u901f\u5ea6\u3001\u8239\u4f53\u306e\u5f3e\u6027\u306f\u542b\u3081\u306a\u3044\u3002","en":"Static water only; waves, forward speed and hull flexibility are omitted.","zh":"\u4ec5\u9759\u6001\u6c34\uff1b\u6ce2\u6d6a\u3001\u524d\u8fdb\u901f\u5ea6\u548c\u8239\u4f53\u7075\u6d3b\u6027\u88ab\u5ffd\u7565\u3002","tw":"\u50c5\u975c\u614b\u6c34\uff1b\u6ce2\u6d6a\u3001\u524d\u9032\u901f\u5ea6\u548c\u8239\u9ad4\u9748\u6d3b\u6027\u88ab\u5ffd\u7565\u3002","ko":"\uace0\uc815\ub41c \ubb3c\ub9cc; \ud30c\ub3c4, \uc804\uc9c4 \uc18d\ub3c4 \ubc0f \uc120\uccb4 \uc720\uc5f0\uc131\uc740 \uc0dd\ub7b5\ub429\ub2c8\ub2e4.","de":"Nur statisches Wasser; Wellen, Vorw\u00e4rtsgeschwindigkeit und Rumpfflexibilit\u00e4t werden weggelassen.","hi":"\u0915\u0947\u0935\u0932 \u0938\u094d\u0925\u0948\u0924\u093f\u0915 \u091c\u0932; \u0932\u0939\u0930\u0947\u0902, \u0906\u0917\u0947 \u0915\u0940 \u0917\u0924\u093f \u0914\u0930 \u092a\u0924\u0935\u093e\u0930 \u0915\u093e \u0932\u091a\u0940\u0932\u093e\u092a\u0928 \u091b\u094b\u0921\u093c \u0926\u093f\u092f\u093e \u0917\u092f\u093e \u0939\u0948\u0964","fr":"Eau statique uniquement\u00a0; les vagues, la vitesse d'avancement et la flexibilit\u00e9 de la coque sont omises."}},"view":{"az":-0.8,"el":0.35,"dist":1.2},"t":[0.0,0.0416666667,0.0833333333,0.125,0.166666667,0.208333333,0.25,0.291666667,0.333333333,0.375,0.416666667,0.458333333,0.5,0.541666667,0.583333333,0.625,0.666666667,0.708333333,0.75,0.791666667,0.833333333,0.875,0.916666667,0.958333333,1.0,1.04166667,1.08333333,1.125,1.16666667,1.20833333,1.25,1.29166667,1.33333333,1.375,1.41666667,1.45833333,1.5,1.54166667,1.58333333,1.625,1.66666667,1.70833333,1.75,1.79166667,1.83333333,1.875,1.91666667,1.95833333,2.0],"bodies":[{"name":"hull","n":289,"nf":574,"pos":"7d6bd993bfb2","faces":"e35606f2d655","alpha":0.82,"rgb1":[175,185,194]},{"name":"water","n":8,"nf":12,"pos":"1df69a7fa6ae","faces":"a5a43d6de7b4","alpha":0.28,"rgb1":[52,152,219]},{"name":"G","n":8,"nf":12,"pos":"c4a193e2d8f2","faces":"a5a43d6de7b4","rgb1":[255,183,77]}],"xyz":"692df9b70513","quat":"70058eaa7dd1","trails":[],"clouds":[],"events":[],"series":[{"label":{"ja":"\u6392\u6c34\u4f53\u7a4d","en":"displaced volume","zh":"\u6392\u91cf","tw":"\u6392\u6c23\u91cf","ko":"\ubcc0\uc704\ub41c \ubd80\ud53c","de":"verdr\u00e4ngtes Volumen","hi":"\u0935\u093f\u0938\u094d\u0925\u093e\u092a\u093f\u0924 \u092e\u093e\u0924\u094d\u0930\u093e","fr":"volume d\u00e9plac\u00e9"},"color":"#4fc3f7","values":[1910.0153,1910.0153,1910.0153,1910.0153,1910.0153,1910.0153,1910.0153,1910.0153,1910.0153,1910.0153,1910.0153,1910.0153,1910.0153,1910.0153,1910.0153,1910.0153,1910.0153,1910.0153,1910.0153,1910.0153,1910.0153,1910.0153,1910.0153,1910.0153,1910.0153,1910.0153,1910.0153,1910.0153,1910.0153,1910.0153,1910.0153,1910.0153,1910.0153,1910.0153,1910.0153,1910.0153,1910.0153,1910.0153,1910.0153,1910.0153,1910.0153,1910.0153,1910.0153,1910.0153,1910.0153,1910.0153,1910.0153,1910.0153,1910.0153],"lo":0.0,"hi":1.0,"unit":"m\u00b3","decimals":3}],"panes":[{"label":{"ja":"\u9752: \u6392\u6c34\u91cf\u3001\u9ec4: \u6307\u5b9a\u91cd\u91cf\u306b\u76f8\u5f53\u3059\u308b\u4f53\u7a4d","en":"blue: displacement; yellow: volume equivalent of specified weight","zh":"\u84dd\u8272\uff1a\u4f4d\u79fb\uff1b\u9ec4\u8272\uff1a\u6307\u5b9a\u91cd\u91cf\u7684\u4f53\u79ef\u5f53\u91cf","tw":"\u85cd\u8272\uff1a\u4f4d\u79fb\uff1b\u9ec3\u8272\uff1a\u6307\u5b9a\u91cd\u91cf\u7684\u9ad4\u7a4d\u7576\u91cf","ko":"\ud30c\ub780\uc0c9: \ubcc0\uc704; \ub178\ub780\uc0c9: \uc9c0\uc815\ub41c \ubb34\uac8c\uc5d0 \ud574\ub2f9\ud558\ub294 \ubd80\ud53c","de":"blau: Verschiebung; gelb: Volumen\u00e4quivalent des angegebenen Gewichts","hi":"\u0928\u0940\u0932\u093e: \u0935\u093f\u0938\u094d\u0925\u093e\u092a\u0928; \u092a\u0940\u0932\u093e: \u0928\u093f\u0930\u094d\u0926\u093f\u0937\u094d\u091f \u0935\u091c\u0928 \u0915\u0947 \u092c\u0930\u093e\u092c\u0930 \u092e\u093e\u0924\u094d\u0930\u093e","fr":"bleu : d\u00e9placement ; jaune\u00a0: volume \u00e9quivalent au poids sp\u00e9cifi\u00e9"},"frames":"3ce365b7d150","boxes":[],"index":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]}],"axis":{"v":[0.0,0.625,1.25,1.875,2.5,3.125,3.75,4.375,5.0,5.625,6.25,6.875,7.5,8.125,8.75,9.375,10.0,10.625,11.25,11.875,12.5,13.125,13.75,14.375,15.0,15.625,16.25,16.875,17.5,18.125,18.75,19.375,20.0,20.625,21.25,21.875,22.5,23.125,23.75,24.375,25.0,25.625,26.25,26.875,27.5,28.125,28.75,29.375,30.0],"seg":[{"k":0,"label":{"ja":"\u6a2a\u50be\u659c\u89d2","en":"heel angle","zh":"\u8ddf\u89d2","tw":"\u8ddf\u89d2","ko":"\ud790 \uac01\ub3c4","de":"Fersenwinkel","hi":"\u090f\u0921\u093c\u0940 \u0915\u093e \u0915\u094b\u0923","fr":"angle du talon"},"unit":"\u00b0","dec":1}]}},{"id":"buoyancy","kind":"anim3d","badge":"passed","label":{"ja":"\u50be\u3051\u308b\u3068\u6d6e\u5fc3\u306f\u3069\u3053\u3078\u52d5\u304f?","en":"Where does B move when the hull heels?","zh":"\u5f53\u8239\u4f53\u503e\u659c\u65f6 B \u4f1a\u79fb\u52a8\u5230\u54ea\u91cc\uff1f","tw":"\u7576\u8239\u9ad4\u50be\u659c\u6642 B \u6703\u79fb\u52d5\u5230\u54ea\u88e1\uff1f","ko":"\uc120\uccb4\uac00 \uad7d\ud790 \ub54c B\ub294 \uc5b4\ub514\ub85c \uc774\ub3d9\ud569\ub2c8\uae4c?","de":"Wohin bewegt sich B, wenn der Rumpf kr\u00e4ngt?","hi":"\u091c\u092c \u092a\u0924\u0935\u093e\u0930 \u0939\u093f\u0932\u0924\u0940 \u0939\u0948 \u0924\u094b B \u0915\u0939\u093e\u0901 \u091a\u0932\u0924\u093e \u0939\u0948?","fr":"O\u00f9 se d\u00e9place B lorsque la coque g\u00eete ?"},"text":{"ja":"\u50be\u304f\u305f\u3073\u306b\u6c34\u9762\u4e0b\u306e\u5f62\u3092\u5207\u308a\u76f4\u3059\u3002\u6d6e\u5fc3 B \u306f\u6c34\u9762\u4e0b\u4f53\u7a4d\u306e\u4e2d\u5fc3\u306a\u306e\u3067\u3001\u6df1\u304f\u6c88\u3093\u3060\u5074\u3078\u6a2a\u79fb\u52d5\u3057\u3001\u91cd\u5fc3 G \u3068\u306e\u6c34\u5e73\u8ddd\u96e2\u304c\u5fa9\u539f\u3066\u3053 GZ \u306b\u306a\u308b\u3002","en":"The submerged shape is cut anew at every heel. Buoyancy centre B is its volume centroid; it moves toward the deeper side, and its horizontal distance from G is the righting arm GZ.","zh":"\u6bcf\u4e2a\u978b\u8ddf\u5904\u7684\u6d78\u6ca1\u5f62\u72b6\u5747\u7ecf\u8fc7\u91cd\u65b0\u5207\u5272\u3002\u6d6e\u529b\u4e2d\u5fc3B\u4e3a\u5176\u4f53\u79ef\u8d28\u5fc3\uff1b\u5411\u6df1\u5904\u79fb\u52a8\uff0c\u5176\u4e0eG\u7684\u6c34\u5e73\u8ddd\u79bb\u4e3a\u590d\u539f\u529b\u81c2GZ\u3002","tw":"\u6bcf\u500b\u978b\u8ddf\u8655\u7684\u6d78\u6c92\u5f62\u72c0\u5747\u7d93\u904e\u91cd\u65b0\u5207\u5272\u3002\u6d6e\u529b\u4e2d\u5fc3B\u70ba\u5176\u9ad4\u7a4d\u8cea\u5fc3\uff1b\u5411\u6df1\u8655\u79fb\u52d5\uff0c\u8207G\u7684\u6c34\u5e73\u8ddd\u96e2\u70ba\u5fa9\u539f\u529b\u81c2GZ\u3002","ko":"\ubb3c\uc5d0 \uc7a0\uae34 \ubaa8\uc591\uc740 \ubaa8\ub4e0 \ud790\uc5d0\uc11c \uc0c8\ub86d\uac8c \uc7ac\ub2e8\ub418\uc5c8\uc2b5\ub2c8\ub2e4. \ubd80\ub825 \uc911\uc2ec B\ub294 \ubd80\ud53c \uc911\uc2ec\uc785\ub2c8\ub2e4. \ub354 \uae4a\uc740 \ucabd\uc73c\ub85c \uc774\ub3d9\ud558\uba70 G\ub85c\ubd80\ud130 \uc218\ud3c9 \uac70\ub9ac\uac00 \ubc14\ub85c\uc7a1\ub294 \ud314 GZ\uc785\ub2c8\ub2e4.","de":"Die untergetauchte Form wird an jedem Absatz neu geschnitten. Auftriebszentrum B ist sein Volumenschwerpunkt; es bewegt sich zur tieferen Seite und sein horizontaler Abstand von G ist der aufrichtende Arm GZ.","hi":"\u091c\u0932\u092e\u0917\u094d\u0928 \u0906\u0915\u0943\u0924\u093f \u0915\u094b \u092a\u094d\u0930\u0924\u094d\u092f\u0947\u0915 \u090f\u0921\u093c\u0940 \u092a\u0930 \u0928\u090f \u0938\u093f\u0930\u0947 \u0938\u0947 \u0915\u093e\u091f\u093e \u091c\u093e\u0924\u093e \u0939\u0948\u0964 \u0909\u0924\u094d\u092a\u094d\u0932\u093e\u0935\u0928 \u0915\u0947\u0902\u0926\u094d\u0930 B \u0907\u0938\u0915\u093e \u0906\u092f\u0924\u0928 \u0915\u0947\u0928\u094d\u0926\u094d\u0930\u0915 \u0939\u0948; \u092f\u0939 \u0917\u0939\u0930\u093e\u0908 \u0915\u0940 \u0913\u0930 \u092c\u0922\u093c\u0924\u093e \u0939\u0948, \u0914\u0930 G \u0938\u0947 \u0907\u0938\u0915\u0940 \u0915\u094d\u0937\u0948\u0924\u093f\u091c \u0926\u0942\u0930\u0940 \u0926\u093e\u0939\u093f\u0928\u0940 \u092d\u0941\u091c\u093e GZ \u0939\u0948\u0964","fr":"La forme immerg\u00e9e est recoup\u00e9e \u00e0 chaque talon. Le centre de flottabilit\u00e9 B est son centre de gravit\u00e9 volumique\u00a0; il se d\u00e9place vers le c\u00f4t\u00e9 le plus profond et sa distance horizontale par rapport \u00e0 G est le bras de redressement GZ."},"numbers":[{"label":{"ja":"GM","en":"GM","zh":"GM","tw":"GM","ko":"GM","de":"GM","hi":"GM","fr":"GM"},"value":"4.449 m"},{"label":{"ja":"BM","en":"BM","zh":"BM","tw":"BM","ko":"BM","de":"BM","hi":"BM","fr":"BM"},"value":"3.676 m"}],"checks":[{"what":{"ja":"\u7bb1\u5f62\u8239: \u6392\u6c34\u91cf\u30fb\u6d6e\u5fc3\u30fbGM","en":"box hull: displacement, B and GM","zh":"\u7bb1\u5f62\u8239\u4f53\uff1a\u6392\u6c34\u91cf\u3001B \u548c GM","tw":"\u7bb1\u5f62\u8239\u9ad4\uff1a\u6392\u6c34\u91cf\u3001B \u548c GM","ko":"\uc0c1\uc790 \uc120\uccb4: \ubcc0\uc704, B \ubc0f GM","de":"Kastenrumpf: Verdr\u00e4ngung, B und GM","hi":"\u092c\u0949\u0915\u094d\u0938 \u092a\u0924\u0935\u093e\u0930: \u0935\u093f\u0938\u094d\u0925\u093e\u092a\u0928, \u092c\u0940 \u0914\u0930 \u091c\u0940\u090f\u092e","fr":"coque caisson : d\u00e9placement, B et GM"},"criterion":"relative < 1e-9","result":"< 1e-12","ok":true},{"what":{"ja":"\u55ab\u6c34\u63a2\u7d22\u5f8c\u306e\u6392\u6c34\u91cf\u3068\u6307\u5b9a\u91cd\u91cf","en":"searched displacement vs specified weight","zh":"\u641c\u7d22\u4f4d\u79fb\u4e0e\u6307\u5b9a\u91cd\u91cf","tw":"\u641c\u5c0b\u4f4d\u79fb\u8207\u6307\u5b9a\u91cd\u91cf","ko":"\uac80\uc0c9\ub41c \ubcc0\uc704 \ub300 \ud2b9\uc815 \uc911\ub7c9","de":"Gesuchter Hubraum im Vergleich zum angegebenen Gewicht","hi":"\u0916\u094b\u091c\u093e \u0917\u092f\u093e \u0935\u093f\u0938\u094d\u0925\u093e\u092a\u0928 \u092c\u0928\u093e\u092e \u0928\u093f\u0930\u094d\u0926\u093f\u0937\u094d\u091f \u0935\u091c\u0928","fr":"d\u00e9placement recherch\u00e9 par rapport au poids sp\u00e9cifi\u00e9"},"criterion":"relative < 1e-6","result":"< 1e-12","ok":true},{"what":{"ja":"\u5c0f\u50be\u659c GZ \u306e\u50be\u304d\u3068\u30e1\u30c3\u30b7\u30e5 GM","en":"small-angle GZ slope vs mesh GM","zh":"\u5c0f\u89d2\u5ea6 GZ \u5761\u5ea6\u4e0e\u7f51\u683c GM","tw":"\u5c0f\u89d2\u5ea6 GZ \u5761\u5ea6\u8207\u7db2\u683c GM","ko":"\uc791\uc740 \uac01\ub3c4 GZ \uacbd\uc0ac \ub300 \uba54\uc26c GM","de":"Kleinwinkel-GZ-Steigung vs. Netz-GM","hi":"\u091b\u094b\u091f\u0947-\u0915\u094b\u0923 \u091c\u0940\u091c\u0947\u0921 \u0922\u0932\u093e\u0928 \u092c\u0928\u093e\u092e \u091c\u093e\u0932 \u091c\u0940\u090f\u092e","fr":"Pente GZ aux petits angles vs maillage GM"},"criterion":"relative < 2 %","result":"0.122 %","ok":true}],"lesson":{"question":{"ja":"\u53f3\u3078\u50be\u304f\u3068\u6d6e\u5fc3 B \u306f?","en":"When the hull heels right, where does B move?","zh":"\u5f53\u8239\u4f53\u53f3\u503e\u65f6\uff0cB \u5411\u54ea\u91cc\u79fb\u52a8\uff1f","tw":"\u7576\u8239\u9ad4\u53f3\u50be\u6642\uff0cB \u5f80\u54ea\u88e1\u79fb\u52d5\uff1f","ko":"\uc120\uccb4\uc758 \uad7d\uc774 \uc624\ub978\ucabd\uc77c \ub54c B\ub294 \uc5b4\ub514\ub85c \uc774\ub3d9\ud569\ub2c8\uae4c?","de":"Wohin bewegt sich B, wenn der Rumpf nach rechts kr\u00e4ngt?","hi":"\u091c\u092c \u092a\u0924\u0935\u093e\u0930 \u0926\u093e\u0939\u093f\u0928\u0940 \u0913\u0930 \u091d\u0941\u0915\u0924\u0940 \u0939\u0948, \u0924\u094b B \u0915\u0939\u093e\u0901 \u091c\u093e\u0924\u093e \u0939\u0948?","fr":"Lorsque la coque g\u00eete \u00e0 droite, o\u00f9 B se d\u00e9place-t-il ?"},"choices":[{"ja":"\u6df1\u304f\u6c88\u3080\u5074\u3078","en":"toward the deeper side","zh":"\u5411\u66f4\u6df1\u7684\u4e00\u9762","tw":"\u5411\u66f4\u6df1\u7684\u4e00\u9762","ko":"\ub354 \uae4a\uc740 \ucabd\uc73c\ub85c","de":"zur tieferen Seite hin","hi":"\u0917\u0939\u0930\u0947 \u092a\u0915\u094d\u0937 \u0915\u0940 \u0913\u0930","fr":"vers le c\u00f4t\u00e9 le plus profond"},{"ja":"\u91cd\u5fc3\u306b\u56fa\u5b9a","en":"fixed to G","zh":"\u56fa\u5b9a\u4e3aG","tw":"\u56fa\u5b9a\u70baG","ko":"G\ub85c \uace0\uc815","de":"auf G fixiert","hi":"\u091c\u0940 \u0915\u0947 \u0932\u093f\u090f \u0924\u092f","fr":"fix\u00e9 \u00e0 G"}],"answer":0,"explain":{"ja":"\u6d6e\u529b\u306f\u6c34\u9762\u4e0b\u4f53\u7a4d\u306e\u4e2d\u5fc3 B \u3092\u901a\u3063\u3066\u4e0a\u5411\u304d\u306b\u50cd\u304f\u3002","en":"Buoyancy acts upward through centroid B of the submerged volume.","zh":"\u6d6e\u529b\u901a\u8fc7\u6d78\u6ca1\u4f53\u79ef\u7684\u8d28\u5fc3 B \u5411\u4e0a\u4f5c\u7528\u3002","tw":"\u6d6e\u529b\u900f\u904e\u6d78\u6c92\u9ad4\u7a4d\u7684\u8cea\u5fc3 B \u5411\u4e0a\u4f5c\u7528\u3002","ko":"\ubd80\ub825\uc740 \ubb3c\uc5d0 \uc7a0\uae34 \uccb4\uc801\uc758 \uc911\uc2ec B\ub97c \ud1b5\ud574 \uc704\ucabd\uc73c\ub85c \uc791\uc6a9\ud569\ub2c8\ub2e4.","de":"Der Auftrieb wirkt nach oben durch den Schwerpunkt B des eingetauchten Volumens.","hi":"\u0909\u0924\u094d\u092a\u094d\u0932\u093e\u0935\u0928 \u091c\u0932\u092e\u0917\u094d\u0928 \u0906\u092f\u0924\u0928 \u0915\u0947 \u0915\u0947\u0928\u094d\u0926\u094d\u0930\u0915 \u092c\u0940 \u0915\u0947 \u092e\u093e\u0927\u094d\u092f\u092e \u0938\u0947 \u090a\u092a\u0930 \u0915\u0940 \u0913\u0930 \u0915\u093e\u0930\u094d\u092f \u0915\u0930\u0924\u093e \u0939\u0948\u0964","fr":"La flottabilit\u00e9 agit vers le haut via le centro\u00efde B du volume immerg\u00e9."},"formula":{"ja":"GZ = yG \u2212 yB","en":"GZ = yG \u2212 yB","zh":"GZ = yG \u2212 yB","tw":"GZ = yG \u2212 yB","ko":"GZ = yG \u2212 yB","de":"GZ = yG \u2212 yB","hi":"GZ = yG \u2212 yB","fr":"GZ = yG \u2212 yB"},"limit":{"ja":"\u6c34\u9762\u4e0b\u5f62\u72b6\u306f\u51f8\u591a\u9762\u4f53\u8fd1\u4f3c\u3002\u5e73\u9762\u5207\u65ad\u306f NumPy\u3001\u4f53\u7a4d\u306f mesh_volume \u3067\u6e2c\u3063\u305f\u3002","en":"The submerged shape is a convex polyhedral approximation. NumPy performs the plane cut; mesh_volume measures volume.","zh":"\u6df9\u6ca1\u5f62\u72b6\u662f\u51f8\u591a\u9762\u4f53\u8fd1\u4f3c\u3002 NumPy \u6267\u884c\u5e73\u9762\u5207\u5272\uff1b mesh_volume \u6d4b\u91cf\u4f53\u79ef\u3002","tw":"\u6df9\u6c92\u5f62\u72c0\u662f\u51f8\u591a\u9762\u9ad4\u8fd1\u4f3c\u3002 NumPy \u57f7\u884c\u5e73\u9762\u5207\u5272\uff1b mesh_volume \u6e2c\u91cf\u9ad4\u7a4d\u3002","ko":"\ubb3c\uc5d0 \uc7a0\uae34 \ubaa8\uc591\uc740 \ubcfc\ub85d\ud55c \ub2e4\uba74\uccb4 \uadfc\uc0ac\uce58\uc785\ub2c8\ub2e4. NumPy\ub294 \ud3c9\uba74 \uc808\ub2e8\uc744 \uc218\ud589\ud569\ub2c8\ub2e4. mesh_volume\uc740 \ubcfc\ub968\uc744 \uce21\uc815\ud569\ub2c8\ub2e4.","de":"Die untergetauchte Form ist eine konvexe polyedrische N\u00e4herung. NumPy f\u00fchrt den Ebenenschnitt durch; mesh_volume misst das Volumen.","hi":"\u091c\u0932\u092e\u0917\u094d\u0928 \u0906\u0915\u0943\u0924\u093f \u0909\u0924\u094d\u0924\u0932 \u092c\u0939\u0941\u092b\u0932\u0915 \u0915\u093e \u0938\u0928\u094d\u0928\u093f\u0915\u091f\u0928 \u0939\u0948\u0964 NumPy \u0938\u092e\u0924\u0932 \u0915\u093e\u091f\u0924\u093e \u0939\u0948; mesh_volume \u0906\u092f\u0924\u0928 \u092e\u093e\u092a\u0924\u093e \u0939\u0948\u0964","fr":"La forme immerg\u00e9e est une approximation poly\u00e9drique convexe. NumPy effectue la coupe plane\u00a0; mesh_volume mesure le volume."}},"view":{"az":-0.8,"el":0.35,"dist":1.2},"t":[0.0,0.0416666667,0.0833333333,0.125,0.166666667,0.208333333,0.25,0.291666667,0.333333333,0.375,0.416666667,0.458333333,0.5,0.541666667,0.583333333,0.625,0.666666667,0.708333333,0.75,0.791666667,0.833333333,0.875,0.916666667,0.958333333,1.0,1.04166667,1.08333333,1.125,1.16666667,1.20833333,1.25,1.29166667,1.33333333,1.375,1.41666667,1.45833333,1.5,1.54166667,1.58333333,1.625,1.66666667,1.70833333,1.75,1.79166667,1.83333333,1.875,1.91666667,1.95833333,2.0],"bodies":[{"name":"hull","n":289,"nf":574,"pos":"7d6bd993bfb2","faces":"e35606f2d655","alpha":0.72,"rgb1":[177,188,196]},{"name":"water","n":8,"nf":12,"pos":"1df69a7fa6ae","faces":"a5a43d6de7b4","alpha":0.25,"rgb1":[55,155,220]},{"name":"cargo","n":8,"nf":12,"pos":"c4a193e2d8f2","faces":"a5a43d6de7b4","rgb1":[255,183,77]}],"xyz":"692df9b70513","quat":"70058eaa7dd1","trails":[{"xyz":"e0dbf87114d0","color":"#40c4ff","tail":0.0},{"xyz":"57c46b1962be","color":"#ffb74d","tail":0.0}],"clouds":[],"events":[],"series":[{"label":{"ja":"GZ","en":"GZ","zh":"GZ","tw":"GZ","ko":"GZ","de":"GZ","hi":"GZ","fr":"GZ"},"color":"#66bb6a","values":[0.0,0.0485,0.097,0.1454,0.1938,0.2421,0.2903,0.3385,0.3867,0.4348,0.4829,0.531,0.579,0.6271,0.6751,0.7231,0.7711,0.8192,0.8672,0.9152,0.9633,1.0113,1.0592,1.1071,1.1548,1.2024,1.25,1.2974,1.3447,1.3919,1.4391,1.4862,1.5332,1.5801,1.627,1.6738,1.7206,1.7674,1.8141,1.8607,1.9074,1.9537,1.9994,2.0441,2.0877,2.1302,2.1715,2.2117,2.2508],"lo":0.0,"hi":1.0,"unit":"m","decimals":3}],"panes":[],"axis":{"v":[0.0,0.625,1.25,1.875,2.5,3.125,3.75,4.375,5.0,5.625,6.25,6.875,7.5,8.125,8.75,9.375,10.0,10.625,11.25,11.875,12.5,13.125,13.75,14.375,15.0,15.625,16.25,16.875,17.5,18.125,18.75,19.375,20.0,20.625,21.25,21.875,22.5,23.125,23.75,24.375,25.0,25.625,26.25,26.875,27.5,28.125,28.75,29.375,30.0],"seg":[{"k":0,"label":{"ja":"\u6a2a\u50be\u659c\u89d2","en":"heel angle","zh":"\u8ddf\u89d2","tw":"\u8ddf\u89d2","ko":"\ud790 \uac01\ub3c4","de":"Fersenwinkel","hi":"\u090f\u0921\u093c\u0940 \u0915\u093e \u0915\u094b\u0923","fr":"angle du talon"},"unit":"\u00b0","dec":1}]}},{"id":"gz","kind":"anim3d","badge":"passed","label":{"ja":"GZ \u66f2\u7dda\u3068 GM","en":"GZ curve and GM","zh":"GZ\u66f2\u7ebf\u548cGM","tw":"GZ\u66f2\u7dda\u548cGM","ko":"GZ \uace1\uc120\uacfc GM","de":"GZ-Kurve und GM","hi":"\u091c\u0940\u091c\u0947\u0921 \u0935\u0915\u094d\u0930 \u0914\u0930 \u091c\u0940\u090f\u092e","fr":"Courbe GZ et GM"},"text":{"ja":"\u7dd1\u304c\u5207\u65ad\u30e1\u30c3\u30b7\u30e5\u304b\u3089\u76f4\u63a5\u5f97\u305f GZ\u3001\u6a59\u304c\u5c0f\u50be\u659c\u5f0f GM sin\u03c6\u3002\u539f\u70b9\u8fd1\u304f\u306e\u50be\u304d\u304c GM \u3067\u300130\u00b0\u307e\u3067\u96e2\u308c\u308b\u69d8\u5b50\u304c\u5c0f\u50be\u659c\u5f0f\u306e\u7bc4\u56f2\u3082\u793a\u3059\u3002","en":"Green is GZ measured directly from clipped meshes; orange is the small-angle line GM sin\u03c6. Its slope at the origin is GM, and separation toward 30\u00b0 shows the formula's range.","zh":"\u7eff\u8272\u662f\u76f4\u63a5\u4ece\u526a\u88c1\u7684\u7f51\u683c\u6d4b\u91cf\u7684 GZ\uff1b\u6a59\u8272\u662f\u5c0f\u89d2\u5ea6\u7ebf GM sin\u03c6\u3002\u5b83\u5728\u539f\u70b9\u7684\u659c\u7387\u662f GM\uff0c\u5411 30\u00b0 \u7684\u5206\u79bb\u663e\u793a\u4e86\u516c\u5f0f\u7684\u8303\u56f4\u3002","tw":"\u7da0\u8272\u662f\u76f4\u63a5\u5f9e\u526a\u88c1\u7684\u7db2\u683c\u6e2c\u91cf\u7684 GZ\uff1b\u6a59\u8272\u662f\u5c0f\u89d2\u5ea6\u7dda GM sin\u03c6\u3002\u5b83\u5728\u539f\u9ede\u7684\u659c\u7387\u662f GM\uff0c\u5411 30\u00b0 \u7684\u5206\u96e2\u986f\u793a\u4e86\u516c\u5f0f\u7684\u7bc4\u570d\u3002","ko":"\ub179\uc0c9\uc740 \uc798\ub9b0 \uba54\uc26c\uc5d0\uc11c \uc9c1\uc811 \uce21\uc815\ub41c GZ\uc785\ub2c8\ub2e4. \uc8fc\ud669\uc0c9\uc740 \uc791\uc740 \uac01\uc120 GM sin\u03c8\uc785\ub2c8\ub2e4. \uc6d0\uc810\uc5d0\uc11c\uc758 \uae30\uc6b8\uae30\ub294 GM\uc774\uace0, 30\u00b0\ucabd\uc73c\ub85c \uba40\uc5b4\uc9c0\uba74 \uacf5\uc2dd\uc758 \ubc94\uc704\ub97c \ubcf4\uc5ec\uc90d\ub2c8\ub2e4.","de":"Gr\u00fcn ist die GZ, die direkt anhand der abgeschnittenen Netze gemessen wird; Orange ist die Kleinwinkellinie GM sin\u03c6. Seine Steigung am Ursprung betr\u00e4gt GM, und die Trennung in Richtung 30\u00b0 zeigt den Bereich der Formel an.","hi":"\u0939\u0930\u093e \u0930\u0902\u0917 GZ \u0939\u0948 \u091c\u093f\u0938\u0947 \u0938\u0940\u0927\u0947 \u0915\u091f\u0947 \u0939\u0941\u090f \u091c\u093e\u0932\u094b\u0902 \u0938\u0947 \u092e\u093e\u092a\u093e \u091c\u093e\u0924\u093e \u0939\u0948; \u0928\u093e\u0930\u0902\u0917\u0940 \u0932\u0918\u0941-\u0915\u094b\u0923 \u0930\u0947\u0916\u093e GM syn\u03c6 \u0939\u0948\u0964 \u092e\u0942\u0932 \u092a\u0930 \u0907\u0938\u0915\u093e \u0922\u0932\u093e\u0928 \u091c\u0940\u090f\u092e \u0939\u0948, \u0914\u0930 30\u00b0 \u0915\u0940 \u0913\u0930 \u092a\u0943\u0925\u0915\u094d\u0915\u0930\u0923 \u0938\u0942\u0924\u094d\u0930 \u0915\u0940 \u0938\u0940\u092e\u093e \u0915\u094b \u0926\u0930\u094d\u0936\u093e\u0924\u093e \u0939\u0948\u0964","fr":"Le vert est le GZ mesur\u00e9 directement \u00e0 partir de maillages coup\u00e9s\u00a0; l'orange est la ligne aux petits angles GM sin\u03c6. Sa pente \u00e0 l'origine est GM, et la s\u00e9paration vers 30\u00b0 montre l'\u00e9tendue de la formule."},"numbers":[{"label":{"ja":"\u30e1\u30c3\u30b7\u30e5\u304b\u3089\u6e2c\u3063\u305f GM","en":"GM measured from mesh","zh":"\u4ece\u7f51\u683c\u6d4b\u91cf GM","tw":"\u5f9e\u7db2\u683c\u6e2c\u91cf GM","ko":"\uba54\uc26c\uc5d0\uc11c \uce21\uc815\ub41c GM","de":"GM gemessen vom Netz","hi":"\u091c\u0940\u090f\u092e \u0915\u094b \u091c\u093e\u0932 \u0938\u0947 \u092e\u093e\u092a\u093e \u0917\u092f\u093e","fr":"GM mesur\u00e9 \u00e0 partir du maillage"},"value":"4.449 m"},{"label":{"ja":"\u5c0f\u50be\u659c\u306e\u50be\u304d","en":"small-angle slope","zh":"\u5c0f\u89d2\u5ea6\u5761\u5ea6","tw":"\u5c0f\u89d2\u5ea6\u5761\u5ea6","ko":"\uc791\uc740 \uac01\ub3c4\uc758 \uacbd\uc0ac","de":"Kleinwinkelneigung","hi":"\u0932\u0918\u0941-\u0915\u094b\u0923 \u0922\u0932\u093e\u0928","fr":"pente \u00e0 petit angle"},"value":"4.444 m"}],"checks":[{"what":{"ja":"\u7bb1\u5f62\u8239: \u6392\u6c34\u91cf\u30fb\u6d6e\u5fc3\u30fbGM","en":"box hull: displacement, B and GM","zh":"\u7bb1\u5f62\u8239\u4f53\uff1a\u6392\u6c34\u91cf\u3001B \u548c GM","tw":"\u7bb1\u5f62\u8239\u9ad4\uff1a\u6392\u6c34\u91cf\u3001B \u548c GM","ko":"\uc0c1\uc790 \uc120\uccb4: \ubcc0\uc704, B \ubc0f GM","de":"Kastenrumpf: Verdr\u00e4ngung, B und GM","hi":"\u092c\u0949\u0915\u094d\u0938 \u092a\u0924\u0935\u093e\u0930: \u0935\u093f\u0938\u094d\u0925\u093e\u092a\u0928, \u092c\u0940 \u0914\u0930 \u091c\u0940\u090f\u092e","fr":"coque caisson : d\u00e9placement, B et GM"},"criterion":"relative < 1e-9","result":"< 1e-12","ok":true},{"what":{"ja":"\u55ab\u6c34\u63a2\u7d22\u5f8c\u306e\u6392\u6c34\u91cf\u3068\u6307\u5b9a\u91cd\u91cf","en":"searched displacement vs specified weight","zh":"\u641c\u7d22\u4f4d\u79fb\u4e0e\u6307\u5b9a\u91cd\u91cf","tw":"\u641c\u5c0b\u4f4d\u79fb\u8207\u6307\u5b9a\u91cd\u91cf","ko":"\uac80\uc0c9\ub41c \ubcc0\uc704 \ub300 \ud2b9\uc815 \uc911\ub7c9","de":"Gesuchter Hubraum im Vergleich zum angegebenen Gewicht","hi":"\u0916\u094b\u091c\u093e \u0917\u092f\u093e \u0935\u093f\u0938\u094d\u0925\u093e\u092a\u0928 \u092c\u0928\u093e\u092e \u0928\u093f\u0930\u094d\u0926\u093f\u0937\u094d\u091f \u0935\u091c\u0928","fr":"d\u00e9placement recherch\u00e9 par rapport au poids sp\u00e9cifi\u00e9"},"criterion":"relative < 1e-6","result":"< 1e-12","ok":true},{"what":{"ja":"\u5c0f\u50be\u659c GZ \u306e\u50be\u304d\u3068\u30e1\u30c3\u30b7\u30e5 GM","en":"small-angle GZ slope vs mesh GM","zh":"\u5c0f\u89d2\u5ea6 GZ \u5761\u5ea6\u4e0e\u7f51\u683c GM","tw":"\u5c0f\u89d2\u5ea6 GZ \u5761\u5ea6\u8207\u7db2\u683c GM","ko":"\uc791\uc740 \uac01\ub3c4 GZ \uacbd\uc0ac \ub300 \uba54\uc26c GM","de":"Kleinwinkel-GZ-Steigung vs. Netz-GM","hi":"\u091b\u094b\u091f\u0947-\u0915\u094b\u0923 \u091c\u0940\u091c\u0947\u0921 \u0922\u0932\u093e\u0928 \u092c\u0928\u093e\u092e \u091c\u093e\u0932 \u091c\u0940\u090f\u092e","fr":"Pente GZ aux petits angles vs maillage GM"},"criterion":"relative < 2 %","result":"0.122 %","ok":true}],"lesson":{"question":{"ja":"GM \u306f GZ \u66f2\u7dda\u306e\u3069\u3053\u306b\u73fe\u308c\u308b?","en":"Where does GM appear on the GZ curve?","zh":"GM \u51fa\u73b0\u5728 GZ \u66f2\u7ebf\u4e0a\u7684\u4ec0\u4e48\u4f4d\u7f6e\uff1f","tw":"GM \u51fa\u73fe\u5728 GZ \u66f2\u7dda\u4e0a\u7684\u4ec0\u9ebc\u4f4d\u7f6e\uff1f","ko":"GZ \uace1\uc120\uc5d0\uc11c GM\uc740 \uc5b4\ub514\uc5d0 \ub098\ud0c0\ub0a9\ub2c8\uae4c?","de":"Wo erscheint GM auf der GZ-Kurve?","hi":"GZ \u0935\u0915\u094d\u0930 \u092a\u0930 GM \u0915\u0939\u093e\u0901 \u0926\u093f\u0916\u093e\u0908 \u0926\u0947\u0924\u093e \u0939\u0948?","fr":"O\u00f9 appara\u00eet GM sur la courbe GZ ?"},"choices":[{"ja":"\u539f\u70b9\u306e\u50be\u304d","en":"the slope at the origin","zh":"\u539f\u70b9\u5904\u7684\u659c\u7387","tw":"\u539f\u9ede\u7684\u659c\u7387","ko":"\uc6d0\uc810\uc5d0\uc11c\uc758 \uacbd\uc0ac","de":"die Steigung im Ursprung","hi":"\u092e\u0942\u0932 \u092a\u0930 \u0922\u0932\u093e\u0928","fr":"la pente \u00e0 l'origine"},{"ja":"30\u00b0\u306e\u6700\u5927\u5024\u3060\u3051","en":"only the value at 30\u00b0","zh":"\u4ec530\u00b0\u65f6\u7684\u503c","tw":"\u50c530\u00b0\u6642\u7684\u503c","ko":"30\u00b0\uc5d0\uc11c\uc758 \uac12\ub9cc","de":"nur der Wert bei 30\u00b0","hi":"\u0915\u0947\u0935\u0932 30\u00b0 \u092a\u0930 \u092e\u093e\u0928","fr":"seulement la valeur \u00e0 30\u00b0"}],"answer":0,"explain":{"ja":"\u5c0f\u50be\u659c\u3067\u306f GZ/ sin\u03c6 \u304c GM \u306b\u8fd1\u3065\u304f\u3002","en":"At small heel, GZ / sin\u03c6 approaches GM.","zh":"\u5728\u5c0f\u8ddf\u5904\uff0cGZ / sin\u03c6 \u63a5\u8fd1 GM\u3002","tw":"\u5728\u5c0f\u8ddf\u8655\uff0cGZ / sin\u03c6 \u63a5\u8fd1 GM\u3002","ko":"\uc791\uc740 \ud790\uc5d0\uc11c\ub294 GZ/sin\u03c8\uac00 GM\uc5d0 \uc811\uadfc\ud569\ub2c8\ub2e4.","de":"Bei kleinem Absatz n\u00e4hert sich GZ/sin\u03c6 GM.","hi":"\u091b\u094b\u091f\u0940 \u090f\u0921\u093c\u0940 \u092a\u0930, GZ/sin\u03c6 GM \u0915\u0947 \u092a\u093e\u0938 \u092a\u0939\u0941\u0902\u091a\u0924\u093e \u0939\u0948\u0964","fr":"Au petit talon, GZ/sin\u03c6 se rapproche de GM."},"formula":{"ja":"GZ \u2248 GM sin\u03c6","en":"GZ \u2248 GM sin\u03c6","zh":"GZ \u2248 GM sin\u03c6","tw":"GZ \u2248 GM sin\u03c6","ko":"GZ \u2252 GM \uc8c4 \u03c8","de":"GZ \u2248 GM sin\u03c6","hi":"\u091c\u0940\u091c\u0947\u0921 \u2248 \u091c\u0940\u090f\u092e \u092a\u093e\u092a\u03c6","fr":"GZ \u2248 GM sin\u03c6"},"limit":{"ja":"\u5927\u50be\u659c\u3067\u306f\u6c34\u7dda\u5f62\u72b6\u304c\u5909\u308f\u308b\u305f\u3081\u3001\u5c0f\u50be\u659c\u5f0f\u3060\u3051\u3067\u306f\u8db3\u308a\u306a\u3044\u3002","en":"At large heel the waterplane changes, so the small-angle formula is insufficient.","zh":"\u5728\u5927\u6a2a\u8ddf\u5904\uff0c\u6c34\u7ebf\u9762\u53d1\u751f\u53d8\u5316\uff0c\u56e0\u6b64\u5c0f\u89d2\u5ea6\u516c\u5f0f\u662f\u4e0d\u591f\u7684\u3002","tw":"\u5728\u5927\u6a6b\u8ddf\u8655\uff0c\u6c34\u7dda\u9762\u767c\u751f\u8b8a\u5316\uff0c\u56e0\u6b64\u5c0f\u89d2\u5ea6\u516c\u5f0f\u662f\u4e0d\u5920\u7684\u3002","ko":"\ud070 \uad7d\uc5d0\uc11c\ub294 \uc218\uc120\uba74\uc774 \ubc14\ub00c\uae30 \ub54c\ubb38\uc5d0 \uc791\uc740 \uac01\ub3c4 \uacf5\uc2dd\uc740 \ubd88\ucda9\ubd84\ud569\ub2c8\ub2e4.","de":"Bei gro\u00dfer Kr\u00e4ngung \u00e4ndert sich die Wasserebene, sodass die Kleinwinkelformel nicht ausreicht.","hi":"\u092c\u0921\u093c\u0940 \u090f\u0921\u093c\u0940 \u092a\u0930 \u0935\u0949\u091f\u0930\u092a\u094d\u0932\u0947\u0928 \u092c\u0926\u0932 \u091c\u093e\u0924\u093e \u0939\u0948, \u0907\u0938\u0932\u093f\u090f \u091b\u094b\u091f\u0947-\u0915\u094b\u0923 \u0915\u093e \u092b\u0949\u0930\u094d\u092e\u0942\u0932\u093e \u0905\u092a\u0930\u094d\u092f\u093e\u092a\u094d\u0924 \u0939\u0948\u0964","fr":"\u00c0 forte inclinaison, le plan d'eau change, la formule des petits angles est donc insuffisante."}},"view":{"az":-0.8,"el":0.4,"dist":1.2},"t":[0.0,0.0416666667,0.0833333333,0.125,0.166666667,0.208333333,0.25,0.291666667,0.333333333,0.375,0.416666667,0.458333333,0.5,0.541666667,0.583333333,0.625,0.666666667,0.708333333,0.75,0.791666667,0.833333333,0.875,0.916666667,0.958333333,1.0,1.04166667,1.08333333,1.125,1.16666667,1.20833333,1.25,1.29166667,1.33333333,1.375,1.41666667,1.45833333,1.5,1.54166667,1.58333333,1.625,1.66666667,1.70833333,1.75,1.79166667,1.83333333,1.875,1.91666667,1.95833333,2.0],"bodies":[{"name":"hull","n":289,"nf":574,"pos":"7d6bd993bfb2","faces":"e35606f2d655","alpha":0.72,"rgb1":[180,190,200]},{"name":"water","n":8,"nf":12,"pos":"1df69a7fa6ae","faces":"a5a43d6de7b4","alpha":0.24,"rgb1":[55,155,220]}],"xyz":"a1b7b74b6967","quat":"6cd3b1ea9301","trails":[],"clouds":[],"events":[],"series":[{"label":{"ja":"\u5207\u65ad\u30e1\u30c3\u30b7\u30e5\u306e GZ","en":"GZ from clipped mesh","zh":"\u6765\u81ea\u526a\u88c1\u7f51\u683c\u7684 GZ","tw":"\u4f86\u81ea\u526a\u88c1\u7db2\u683c\u7684 GZ","ko":"\uc798\ub9b0 \uba54\uc26c\uc758 GZ","de":"GZ aus geschnittenem Netz","hi":"\u0915\u094d\u0932\u093f\u092a\u094d\u0921 \u091c\u093e\u0932 \u0938\u0947 \u091c\u0940\u091c\u0947\u0921","fr":"GZ \u00e0 partir d'un maillage coup\u00e9"},"color":"#66bb6a","values":[0.0,0.0485,0.097,0.1454,0.1938,0.2421,0.2903,0.3385,0.3867,0.4348,0.4829,0.531,0.579,0.6271,0.6751,0.7231,0.7711,0.8192,0.8672,0.9152,0.9633,1.0113,1.0592,1.1071,1.1548,1.2024,1.25,1.2974,1.3447,1.3919,1.4391,1.4862,1.5332,1.5801,1.627,1.6738,1.7206,1.7674,1.8141,1.8607,1.9074,1.9537,1.9994,2.0441,2.0877,2.1302,2.1715,2.2117,2.2508],"lo":0.0,"hi":1.0,"unit":"m","decimals":3},{"label":{"ja":"GM sin\u03c6","en":"GM sin\u03c6","zh":"GM sin\u03c6","tw":"GM sin\u03c6","ko":"GM \uc8c4 \u03c8","de":"GM sin\u03c6","hi":"\u091c\u0940\u090f\u092e \u092a\u093e\u092a\u03c6","fr":"GM sin\u03c6"},"color":"#ffb74d","values":[0.0,0.0485,0.0971,0.1456,0.1941,0.2425,0.291,0.3394,0.3878,0.4361,0.4844,0.5326,0.5807,0.6288,0.6768,0.7247,0.7726,0.8203,0.868,0.9155,0.963,1.0103,1.0575,1.1046,1.1515,1.1983,1.245,1.2915,1.3379,1.3841,1.4301,1.476,1.5217,1.5672,1.6125,1.6576,1.7026,1.7473,1.7919,1.8362,1.8803,1.9241,1.9678,2.0112,2.0544,2.0973,2.14,2.1824,2.2245],"lo":0.0,"hi":1.0,"unit":"m","decimals":3}],"panes":[],"axis":{"v":[0.0,0.625,1.25,1.875,2.5,3.125,3.75,4.375,5.0,5.625,6.25,6.875,7.5,8.125,8.75,9.375,10.0,10.625,11.25,11.875,12.5,13.125,13.75,14.375,15.0,15.625,16.25,16.875,17.5,18.125,18.75,19.375,20.0,20.625,21.25,21.875,22.5,23.125,23.75,24.375,25.0,25.625,26.25,26.875,27.5,28.125,28.75,29.375,30.0],"seg":[{"k":0,"label":{"ja":"\u6a2a\u50be\u659c\u89d2","en":"heel angle","zh":"\u8ddf\u89d2","tw":"\u8ddf\u89d2","ko":"\ud790 \uac01\ub3c4","de":"Fersenwinkel","hi":"\u090f\u0921\u093c\u0940 \u0915\u093e \u0915\u094b\u0923","fr":"angle du talon"},"unit":"\u00b0","dec":1}]}},{"id":"limit","kind":"anim3d","badge":"limit","label":{"ja":"\u9650\u754c: \u91cd\u5fc3\u304c\u9ad8\u3059\u304e\u308b","en":"Limit: centre of gravity too high","zh":"\u9650\u5236\uff1a\u91cd\u5fc3\u8fc7\u9ad8","tw":"\u9650\u5236\uff1a\u91cd\u5fc3\u904e\u9ad8","ko":"\ud55c\uacc4: \ubb34\uac8c \uc911\uc2ec\uc774 \ub108\ubb34 \ub192\uc74c","de":"Grenze: Schwerpunkt zu hoch","hi":"\u0938\u0940\u092e\u093e: \u0917\u0941\u0930\u0941\u0924\u094d\u0935\u093e\u0915\u0930\u094d\u0937\u0923 \u0915\u093e \u0915\u0947\u0902\u0926\u094d\u0930 \u092c\u0939\u0941\u0924 \u090a\u0901\u091a\u093e","fr":"Limite\u00a0: centre de gravit\u00e9 trop \u00e9lev\u00e9"},"text":{"ja":"\u8377\u7269\u3092\u9ad8\u304f\u7a4d\u307f\u3001KG \u3092 KB+BM \u3088\u308a 0.35 m \u9ad8\u304f\u3059\u308b\u3068 GM \u306f\u8ca0\u306b\u306a\u308b\u3002\u6700\u521d\u306e\u50be\u304d\u3067 GZ \u3082\u8ee2\u5012\u5074\u3092\u5411\u304d\u3001\u9759\u304b\u306a\u6c34\u3067\u3082\u623b\u3089\u306a\u3044\u3002","en":"Raise the load so KG is 0.35 m above KB+BM and GM becomes negative. The first GZ points toward capsize, so the hull does not return even in calm water.","zh":"\u589e\u52a0\u8d1f\u8f7d\uff0c\u4f7f KG \u9ad8\u4e8e KB+BM 0.35 m\uff0cGM \u53d8\u4e3a\u8d1f\u503c\u3002\u7b2c\u4e00\u4e2aGZ\u6307\u5411\u503e\u8986\uff0c\u56e0\u6b64\u5373\u4f7f\u5728\u5e73\u9759\u7684\u6c34\u4e2d\u8239\u4f53\u4e5f\u4e0d\u4f1a\u8fd4\u56de\u3002","tw":"\u589e\u52a0\u8ca0\u8f09\uff0c\u4f7f KG \u9ad8\u65bc KB+BM 0.35 m\uff0cGM \u8b8a\u6210\u8ca0\u503c\u3002\u7b2c\u4e00\u500bGZ\u6307\u5411\u50be\u8986\uff0c\u56e0\u6b64\u5373\u4f7f\u5728\u5e73\u975c\u7684\u6c34\u4e2d\u8239\u9ad4\u4e5f\u4e0d\u6703\u8fd4\u56de\u3002","ko":"KG\uac00 KB+BM\ubcf4\ub2e4 0.35m \ub192\uace0 GM\uc774 \uc74c\uc218\uac00 \ub418\ub3c4\ub85d \ubd80\ud558\ub97c \ub192\uc774\uc2ed\uc2dc\uc624. \uccab \ubc88\uc9f8 GZ\ub294 \uc804\ubcf5\uc744 \ud5a5\ud558\uace0 \uc788\uc5b4 \uc794\uc794\ud55c \ubb3c \uc18d\uc5d0\uc11c\ub3c4 \uc120\uccb4\uac00 \ub3cc\uc544\uc624\uc9c0 \uc54a\uc2b5\ub2c8\ub2e4.","de":"Die Last wird so angehoben, dass KG 0.35 m \u00fcber KB+BM liegt und GM negativ wird. GZ zeigt dann zum Kentern; der Rumpf kehrt selbst in ruhigem Wasser nicht zur\u00fcck.","hi":"\u092d\u093e\u0930 \u0907\u0924\u0928\u093e \u090a\u092a\u0930 \u0930\u0916\u0947\u0902 \u0915\u093f KG, KB+BM \u0938\u0947 0.35 m \u090a\u092a\u0930 \u0939\u094b \u0914\u0930 GM \u090b\u0923\u093e\u0924\u094d\u092e\u0915 \u092c\u0928\u0947\u0964 \u092a\u0939\u0932\u093e GZ \u092a\u0932\u091f\u0928\u0947 \u0915\u0940 \u0913\u0930 \u0939\u094b\u0924\u093e \u0939\u0948, \u0907\u0938\u0932\u093f\u090f \u0936\u093e\u0902\u0924 \u092a\u093e\u0928\u0940 \u092e\u0947\u0902 \u092d\u0940 \u091c\u0939\u093e\u091c\u093c \u0935\u093e\u092a\u0938 \u0928\u0939\u0940\u0902 \u0906\u0924\u093e\u0964","fr":"Relevez la charge pour placer KG 0.35 m au-dessus de KB+BM et rendre GM n\u00e9gatif. Le premier GZ m\u00e8ne au chavirement : la coque ne revient pas, m\u00eame en eau calme."},"numbers":[{"label":{"ja":"\u9ad8\u3044\u91cd\u5fc3 KG","en":"raised KG","zh":"\u5347\u9ad8\u516c\u65a4\u6570","tw":"\u5347\u9ad8\u516c\u65a4\u6578","ko":"KG \uc778\uc0c1","de":"KG erh\u00f6ht","hi":"\u0915\u0947\u091c\u0940 \u0909\u0920\u093e\u092f\u093e","fr":"KG \u00e9lev\u00e9"},"value":"7.249 m"},{"label":{"ja":"GM","en":"GM","zh":"GM","tw":"GM","ko":"GM","de":"GM","hi":"GM","fr":"GM"},"value":"-0.350 m"}],"checks":[{"what":{"ja":"\u7bb1\u5f62\u8239: \u6392\u6c34\u91cf\u30fb\u6d6e\u5fc3\u30fbGM","en":"box hull: displacement, B and GM","zh":"\u7bb1\u5f62\u8239\u4f53\uff1a\u6392\u6c34\u91cf\u3001B \u548c GM","tw":"\u7bb1\u5f62\u8239\u9ad4\uff1a\u6392\u6c34\u91cf\u3001B \u548c GM","ko":"\uc0c1\uc790 \uc120\uccb4: \ubcc0\uc704, B \ubc0f GM","de":"Kastenrumpf: Verdr\u00e4ngung, B und GM","hi":"\u092c\u0949\u0915\u094d\u0938 \u092a\u0924\u0935\u093e\u0930: \u0935\u093f\u0938\u094d\u0925\u093e\u092a\u0928, \u092c\u0940 \u0914\u0930 \u091c\u0940\u090f\u092e","fr":"coque caisson : d\u00e9placement, B et GM"},"criterion":"relative < 1e-9","result":"< 1e-12","ok":true},{"what":{"ja":"\u55ab\u6c34\u63a2\u7d22\u5f8c\u306e\u6392\u6c34\u91cf\u3068\u6307\u5b9a\u91cd\u91cf","en":"searched displacement vs specified weight","zh":"\u641c\u7d22\u4f4d\u79fb\u4e0e\u6307\u5b9a\u91cd\u91cf","tw":"\u641c\u5c0b\u4f4d\u79fb\u8207\u6307\u5b9a\u91cd\u91cf","ko":"\uac80\uc0c9\ub41c \ubcc0\uc704 \ub300 \ud2b9\uc815 \uc911\ub7c9","de":"Gesuchter Hubraum im Vergleich zum angegebenen Gewicht","hi":"\u0916\u094b\u091c\u093e \u0917\u092f\u093e \u0935\u093f\u0938\u094d\u0925\u093e\u092a\u0928 \u092c\u0928\u093e\u092e \u0928\u093f\u0930\u094d\u0926\u093f\u0937\u094d\u091f \u0935\u091c\u0928","fr":"d\u00e9placement recherch\u00e9 par rapport au poids sp\u00e9cifi\u00e9"},"criterion":"relative < 1e-6","result":"< 1e-12","ok":true},{"what":{"ja":"\u5c0f\u50be\u659c GZ \u306e\u50be\u304d\u3068\u30e1\u30c3\u30b7\u30e5 GM","en":"small-angle GZ slope vs mesh GM","zh":"\u5c0f\u89d2\u5ea6 GZ \u5761\u5ea6\u4e0e\u7f51\u683c GM","tw":"\u5c0f\u89d2\u5ea6 GZ \u5761\u5ea6\u8207\u7db2\u683c GM","ko":"\uc791\uc740 \uac01\ub3c4 GZ \uacbd\uc0ac \ub300 \uba54\uc26c GM","de":"Kleinwinkel-GZ-Steigung vs. Netz-GM","hi":"\u091b\u094b\u091f\u0947-\u0915\u094b\u0923 \u091c\u0940\u091c\u0947\u0921 \u0922\u0932\u093e\u0928 \u092c\u0928\u093e\u092e \u091c\u093e\u0932 \u091c\u0940\u090f\u092e","fr":"Pente GZ aux petits angles vs maillage GM"},"criterion":"relative < 2 %","result":"0.122 %","ok":true},{"what":{"ja":"\u9ad8\u3044\u91cd\u5fc3\u3067\u3082\u8239\u306f\u623b\u308b","en":"the ship returns even with a high centre of gravity","zh":"\u5373\u4f7f\u91cd\u5fc3\u5f88\u9ad8\uff0c\u8239\u4e5f\u4f1a\u8fd4\u56de","tw":"\u5373\u4f7f\u91cd\u5fc3\u5f88\u9ad8\uff0c\u8239\u4e5f\u6703\u8fd4\u56de","ko":"\ubb34\uac8c\uc911\uc2ec\uc774 \ub192\uc544\ub3c4 \ubc30\ub294 \ub3cc\uc544\uc628\ub2e4","de":"Das Schiff kehrt auch bei hohem Schwerpunkt zur\u00fcck","hi":"\u0917\u0941\u0930\u0941\u0924\u094d\u0935\u093e\u0915\u0930\u094d\u0937\u0923 \u0915\u0947 \u0909\u091a\u094d\u091a \u0915\u0947\u0902\u0926\u094d\u0930 \u0915\u0947 \u0938\u093e\u0925 \u092d\u0940 \u091c\u0939\u093e\u091c \u0935\u093e\u092a\u0938 \u0932\u094c\u091f \u0906\u0924\u093e \u0939\u0948","fr":"le navire revient m\u00eame avec un centre de gravit\u00e9 \u00e9lev\u00e9"},"criterion":{"ja":"GM > 0","en":"GM > 0","zh":"GM > 0","tw":"GM > 0","ko":"GM > 0","de":"GM > 0","hi":"GM > 0","fr":"GM > 0"},"result":"GM = -0.350 m","ok":false}],"lesson":{"question":{"ja":"GM < 0 \u306e\u8239\u3092\u5c11\u3057\u50be\u3051\u308b\u3068?","en":"What happens after a small heel when GM < 0?","zh":"\u5f53 GM < 0 \u65f6\uff0c\u5c0f\u8ddf\u540e\u4f1a\u53d1\u751f\u4ec0\u4e48\uff1f","tw":"\u7576 GM < 0 \u6642\uff0c\u5c0f\u8ddf\u5f8c\u6703\u767c\u751f\u4ec0\u9ebc\u4e8b\uff1f","ko":"GM < 0\uc77c \ub54c \uc791\uc740 \uad7d \uc774\ud6c4\uc5d0\ub294 \uc5b4\ub5bb\uac8c \ub418\ub098\uc694?","de":"Was passiert nach einem kleinen Absatz, wenn GM < 0 ist?","hi":"\u091c\u0940\u090f\u092e <0 \u0939\u094b\u0928\u0947 \u092a\u0930 \u091b\u094b\u091f\u0940 \u090f\u0921\u093c\u0940 \u0915\u0947 \u092c\u093e\u0926 \u0915\u094d\u092f\u093e \u0939\u094b\u0924\u093e \u0939\u0948?","fr":"Que se passe-t-il apr\u00e8s un petit talon lorsque GM < 0\u00a0?"},"choices":[{"ja":"\u5143\u3078\u623b\u308b","en":"it returns","zh":"\u5b83\u8fd4\u56de","tw":"\u5b83\u8fd4\u56de","ko":"\uadf8\uac83\uc740 \ub3cc\uc544\uc628\ub2e4","de":"es kehrt zur\u00fcck","hi":"\u092f\u0939 \u0935\u093e\u092a\u0938 \u0906\u0924\u093e \u0939\u0948","fr":"\u00e7a revient"},{"ja":"\u3055\u3089\u306b\u50be\u304f","en":"it heels farther","zh":"\u5b83\u8ddf\u5f97\u66f4\u8fdc","tw":"\u5b83\u8ddf\u5f97\u66f4\u9060","ko":"\uad7d\uc774 \ub354 \uba40\uc5b4\uc694","de":"es geht weiter","hi":"\u092f\u0939 \u0906\u0917\u0947 \u092c\u0922\u093c\u0924\u093e \u0939\u0948","fr":"\u00e7a talonne plus loin"}],"answer":1,"explain":{"ja":"M \u304c G \u3088\u308a\u4e0b\u306a\u3089\u3001\u6d6e\u529b\u3068\u91cd\u529b\u306e\u7d44\u306f\u50be\u304d\u3092\u5897\u3084\u3059\u5411\u304d\u306b\u50cd\u304f\u3002","en":"With M below G, buoyancy and weight form a moment that increases heel.","zh":"\u5f53 M \u4f4e\u4e8e G \u65f6\uff0c\u6d6e\u529b\u548c\u91cd\u91cf\u5f62\u6210\u589e\u52a0\u540e\u8ddf\u7684\u529b\u77e9\u3002","tw":"\u7576 M \u4f4e\u65bc G \u6642\uff0c\u6d6e\u529b\u548c\u91cd\u91cf\u5f62\u6210\u589e\u52a0\u5f8c\u8ddf\u7684\u529b\u77e9\u3002","ko":"M\uc774 G \uc544\ub798\uc5d0 \uc788\uc73c\uba74 \ubd80\ub825\uacfc \ubb34\uac8c\uac00 \ud790\uc744 \uc99d\uac00\uc2dc\ud0a4\ub294 \uc21c\uac04\uc744 \ud615\uc131\ud569\ub2c8\ub2e4.","de":"Bei M unter G bilden Auftrieb und Gewicht ein Moment, das die Kr\u00e4ngung erh\u00f6ht.","hi":"\u091c\u0940 \u0915\u0947 \u0928\u0940\u091a\u0947 \u090f\u092e \u0915\u0947 \u0938\u093e\u0925, \u0909\u091b\u093e\u0932 \u0914\u0930 \u0935\u091c\u0928 \u090f\u0915 \u0915\u094d\u0937\u0923 \u092c\u0928\u093e\u0924\u0947 \u0939\u0948\u0902 \u091c\u094b \u090f\u0921\u093c\u0940 \u0915\u094b \u092c\u0922\u093c\u093e\u0924\u093e \u0939\u0948\u0964","fr":"Avec M en dessous de G, la flottabilit\u00e9 et le poids forment un moment qui augmente la g\u00eete."},"formula":{"ja":"GM = KB + BM \u2212 KG","en":"GM = KB + BM \u2212 KG","zh":"GM = KB + BM \u2212 KG","tw":"GM = KB + BM \u2212 KG","ko":"GM = KB + BM \u2212 KG","de":"GM = KB + BM \u2212 KG","hi":"\u091c\u0940\u090f\u092e = \u0915\u0947\u092c\u0940 + \u092c\u0940\u090f\u092e - \u0915\u0947\u091c\u0940","fr":"GM = KB + BM \u2212 KG"},"limit":{"ja":"\u81ea\u7531\u6c34\u5f71\u97ff\u3001\u6ce2\u3001\u8377\u5d29\u308c\u3001\u6d78\u6c34\u300130\u00b0\u8d85\u3067\u306e\u7532\u677f\u6d78\u6c34\u306f\u8a08\u7b97\u3057\u3066\u3044\u306a\u3044\u3002\u5b9f\u8239\u306e\u5b89\u5168\u5224\u5b9a\u306b\u306f\u4f7f\u308f\u306a\u3044\u3002","en":"Free-surface effect, waves, cargo shift, flooding and deck immersion beyond 30\u00b0 are not computed. Do not use this lesson for real-vessel safety decisions.","zh":"\u4e0d\u8ba1\u7b97\u81ea\u7531\u8868\u9762\u6548\u5e94\u3001\u6ce2\u6d6a\u3001\u8d27\u7269\u79fb\u4f4d\u3001\u6d2a\u6c34\u548c\u8d85\u8fc7 30\u00b0 \u7684\u7532\u677f\u6d78\u6ca1\u3002\u8bf7\u52ff\u5c06\u672c\u8bfe\u7a0b\u7528\u4e8e\u5b9e\u9645\u8239\u8236\u5b89\u5168\u51b3\u7b56\u3002","tw":"\u4e0d\u8a08\u7b97\u81ea\u7531\u8868\u9762\u6548\u61c9\u3001\u6ce2\u6d6a\u3001\u8ca8\u7269\u79fb\u4f4d\u3001\u6d2a\u6c34\u548c\u8d85\u904e 30\u00b0 \u7684\u7532\u677f\u6d78\u6c92\u3002\u8acb\u52ff\u5c07\u672c\u8ab2\u7a0b\u7528\u65bc\u5be6\u969b\u8239\u8236\u5b89\u5168\u6c7a\u7b56\u3002","ko":"\uc790\uc720 \ud45c\uba74 \ud6a8\uacfc, \ud30c\ub3c4, \ud654\ubb3c \uc774\ub3d9, \uce68\uc218 \ubc0f 30\u00b0\ub97c \ucd08\uacfc\ud558\ub294 \uac11\ud310 \uce68\uc218\ub294 \uacc4\uc0b0\ub418\uc9c0 \uc54a\uc2b5\ub2c8\ub2e4. \uc2e4\uc81c \uc120\ubc15 \uc548\uc804 \uacb0\uc815\uc744 \uc704\ud574 \uc774 \uad50\ud6c8\uc744 \uc0ac\uc6a9\ud558\uc9c0 \ub9c8\uc2ed\uc2dc\uc624.","de":"Freifl\u00e4cheneffekt, Wellen, Ladungsverschiebung, \u00dcberschwemmung und Eintauchen des Decks \u00fcber 30\u00b0 werden nicht berechnet. Verwenden Sie diese Lektion nicht f\u00fcr Entscheidungen zur Sicherheit realer Schiffe.","hi":"\u092e\u0941\u0915\u094d\u0924-\u0938\u0924\u0939 \u092a\u094d\u0930\u092d\u093e\u0935, \u0932\u0939\u0930\u0947\u0902, \u0915\u093e\u0930\u094d\u0917\u094b \u0936\u093f\u092b\u094d\u091f, \u092c\u093e\u0922\u093c \u0914\u0930 30\u00b0 \u0938\u0947 \u0905\u0927\u093f\u0915 \u0921\u0947\u0915 \u0935\u093f\u0938\u0930\u094d\u091c\u0928 \u0915\u0940 \u0917\u0923\u0928\u093e \u0928\u0939\u0940\u0902 \u0915\u0940 \u091c\u093e\u0924\u0940 \u0939\u0948\u0964 \u0935\u093e\u0938\u094d\u0924\u0935\u093f\u0915 \u091c\u0939\u093e\u091c \u0938\u0941\u0930\u0915\u094d\u0937\u093e \u0928\u093f\u0930\u094d\u0923\u092f\u094b\u0902 \u0915\u0947 \u0932\u093f\u090f \u0907\u0938 \u092a\u093e\u0920 \u0915\u093e \u0909\u092a\u092f\u094b\u0917 \u0928 \u0915\u0930\u0947\u0902\u0964","fr":"L'effet de car\u00e8ne liquide, les vagues, le d\u00e9placement de la cargaison, l'inondation et l'immersion du pont au-del\u00e0 de 30\u00b0 ne sont pas calcul\u00e9s. N'utilisez pas cette le\u00e7on pour prendre des d\u00e9cisions r\u00e9elles en mati\u00e8re de s\u00e9curit\u00e9 des navires."}},"view":{"az":-0.8,"el":0.35,"dist":1.2},"t":[0.0,0.0416666667,0.0833333333,0.125,0.166666667,0.208333333,0.25,0.291666667,0.333333333,0.375,0.416666667,0.458333333,0.5,0.541666667,0.583333333,0.625,0.666666667,0.708333333,0.75,0.791666667,0.833333333,0.875,0.916666667,0.958333333,1.0,1.04166667,1.08333333,1.125,1.16666667,1.20833333,1.25,1.29166667,1.33333333,1.375,1.41666667,1.45833333,1.5,1.54166667,1.58333333,1.625,1.66666667,1.70833333,1.75,1.79166667,1.83333333,1.875,1.91666667,1.95833333,2.0],"bodies":[{"name":"hull","n":289,"nf":574,"pos":"7d6bd993bfb2","faces":"e35606f2d655","alpha":0.72,"rgb1":[180,190,200]},{"name":"water","n":8,"nf":12,"pos":"1df69a7fa6ae","faces":"a5a43d6de7b4","alpha":0.24,"rgb1":[55,155,220]},{"name":"high cargo","n":8,"nf":12,"pos":"c4a193e2d8f2","faces":"a5a43d6de7b4","rgb1":[239,83,80]}],"xyz":"692df9b70513","quat":"70058eaa7dd1","trails":[],"clouds":[],"events":[],"series":[{"label":{"ja":"\u4e0d\u5b89\u5b9a\u306a\u5c0f\u50be\u659c GZ","en":"unstable small-angle GZ","zh":"\u4e0d\u7a33\u5b9a\u5c0f\u89d2\u5ea6GZ","tw":"\u4e0d\u7a69\u5b9a\u5c0f\u89d2\u5ea6GZ","ko":"\ubd88\uc548\uc815\ud55c \uc18c\uac01 GZ","de":"instabiler Kleinwinkel-GZ","hi":"\u0905\u0938\u094d\u0925\u093f\u0930 \u0932\u0918\u0941-\u0915\u094b\u0923 GZ","fr":"GZ instable aux petits angles"},"color":"#ef5350","values":[-0.0,-0.0038,-0.0076,-0.0115,-0.0153,-0.0191,-0.0229,-0.0267,-0.0305,-0.0343,-0.0381,-0.0419,-0.0457,-0.0495,-0.0532,-0.057,-0.0608,-0.0645,-0.0683,-0.072,-0.0758,-0.0795,-0.0832,-0.0869,-0.0906,-0.0943,-0.0979,-0.1016,-0.1052,-0.1089,-0.1125,-0.1161,-0.1197,-0.1233,-0.1269,-0.1304,-0.1339,-0.1375,-0.141,-0.1444,-0.1479,-0.1514,-0.1548,-0.1582,-0.1616,-0.165,-0.1683,-0.1717,-0.175],"lo":0.0,"hi":1.0,"unit":"m","decimals":3}],"panes":[],"axis":{"v":[0.0,0.625,1.25,1.875,2.5,3.125,3.75,4.375,5.0,5.625,6.25,6.875,7.5,8.125,8.75,9.375,10.0,10.625,11.25,11.875,12.5,13.125,13.75,14.375,15.0,15.625,16.25,16.875,17.5,18.125,18.75,19.375,20.0,20.625,21.25,21.875,22.5,23.125,23.75,24.375,25.0,25.625,26.25,26.875,27.5,28.125,28.75,29.375,30.0],"seg":[{"k":0,"label":{"ja":"\u6a2a\u50be\u659c\u89d2","en":"heel angle","zh":"\u8ddf\u89d2","tw":"\u8ddf\u89d2","ko":"\ud790 \uac01\ub3c4","de":"Fersenwinkel","hi":"\u090f\u0921\u093c\u0940 \u0915\u093e \u0915\u094b\u0923","fr":"angle du talon"},"unit":"\u00b0","dec":1}]}}],"credit":{"ja":"\u3059\u3079\u3066\u5408\u6210\u3002\u8239\u578b\u3068\u9577\u3055 72 m\u3001\u5e45 14 m\u3001\u6df1\u3055 8 m\u3001\u6d77\u6c34\u5bc6\u5ea6 1,025 kg/m\u00b3 \u306f\u8aac\u660e\u7528\u306e\u4ee3\u8868\u5024\u3068\u3057\u3066\u7f6e\u3044\u305f\u4eee\u5b9a\u3067\u3001\u7279\u5b9a\u306e\u8239\u30fb\u9020\u8239\u6240\u30fb\u6a19\u6e96\u8239\u578b\u3092\u8868\u3055\u306a\u3044\u3002","en":"Entirely synthetic. Hull shape, length 72 m, beam 14 m, depth 8 m and seawater density 1,025 kg/m\u00b3 are representative assumptions for explanation, not a specific vessel, yard or standard hull form.","zh":"\u5b8c\u5168\u5408\u6210\u7684\u3002\u8239\u4f53\u5f62\u72b6\u3001\u957f\u5ea6 72 m\u3001\u6a2a\u6881 14 m\u3001\u6df1\u5ea6 8 m \u548c\u6d77\u6c34\u5bc6\u5ea6 1,025 kg/m\u00b3 \u662f\u7528\u4e8e\u89e3\u91ca\u7684\u4ee3\u8868\u6027\u5047\u8bbe\uff0c\u800c\u4e0d\u662f\u7279\u5b9a\u7684\u8239\u8236\u3001\u8239\u5382\u6216\u6807\u51c6\u8239\u4f53\u5f62\u72b6\u3002","tw":"\u5b8c\u5168\u5408\u6210\u7684\u3002\u8239\u9ad4\u5f62\u72c0\u3001\u9577\u5ea6 72 m\u3001\u6a6b\u6a11 14 m\u3001\u6df1\u5ea6 8 m \u548c\u6d77\u6c34\u5bc6\u5ea6 1,025 kg/m\u00b3 \u662f\u7528\u65bc\u89e3\u91cb\u7684\u4ee3\u8868\u6027\u5047\u8a2d\uff0c\u800c\u4e0d\u662f\u7279\u5b9a\u7684\u8239\u8236\u3001\u8239\u5ee0\u6216\u6a19\u6e96\u8239\u9ad4\u5f62\u72c0\u3002","ko":"\uc644\uc804\ud788 \ud569\uc131\uc785\ub2c8\ub2e4. \uc120\uccb4 \ud615\uc0c1, \uae38\uc774 72m, \ubcf4 14m, \uae4a\uc774 8m, \ud574\uc218 \ubc00\ub3c4 1,025kg/m3\ub294 \uc124\uba85\uc744 \uc704\ud55c \ub300\ud45c\uc801\uc778 \uac00\uc815\uc774\uba70 \ud2b9\uc815 \uc120\ubc15, \uc57c\ub4dc \ub610\ub294 \ud45c\uc900 \uc120\uccb4 \ud615\ud0dc\uac00 \uc544\ub2d9\ub2c8\ub2e4.","de":"Vollst\u00e4ndig synthetisch. Rumpfform, L\u00e4nge 72 m, Breite 14 m, Tiefe 8 m und Meerwasserdichte 1,025 kg/m\u00b3 sind repr\u00e4sentative Annahmen, nicht ein bestimmtes Schiff, eine Werft oder eine Standardrumpfform.","hi":"\u092a\u0942\u0930\u0940 \u0924\u0930\u0939 \u0938\u0902\u0936\u094d\u0932\u0947\u0937\u093f\u0924\u0964 \u091c\u0939\u093e\u091c\u093c \u0915\u093e \u0906\u0915\u093e\u0930, \u0932\u0902\u092c\u093e\u0908 72m, \u091a\u094c\u0921\u093c\u093e\u0908 14m, \u0917\u0939\u0930\u093e\u0908 8m \u0914\u0930 \u0938\u092e\u0941\u0926\u094d\u0930\u0940 \u091c\u0932 \u0915\u093e \u0918\u0928\u0924\u094d\u0935 1,025 kg/m\u00b3 \u0915\u0947\u0935\u0932 \u0938\u092e\u091d\u093e\u0928\u0947 \u0915\u0940 \u092a\u094d\u0930\u0924\u093f\u0928\u093f\u0927\u093f \u092e\u093e\u0928\u094d\u092f\u0924\u093e\u090f\u0901 \u0939\u0948\u0902; \u092f\u0947 \u0915\u093f\u0938\u0940 \u0916\u093e\u0938 \u091c\u0939\u093e\u091c\u093c, \u092f\u093e\u0930\u094d\u0921 \u092f\u093e \u092e\u093e\u0928\u0915 \u091c\u0939\u093e\u091c\u093c-\u0930\u0942\u092a \u0915\u094b \u0928\u0939\u0940\u0902 \u0926\u0930\u094d\u0936\u093e\u0924\u0947\u0964","fr":"Enti\u00e8rement synth\u00e9tique. La forme de la coque, la longueur 72 m, la largeur 14 m, la profondeur 8 m et la densit\u00e9 de l'eau de mer 1\u00a0025 kg/m\u00b3 sont des hypoth\u00e8ses repr\u00e9sentatives \u00e0 des fins d'explication, et non une forme sp\u00e9cifique de navire, de chantier ou de coque standard."},"badges":{"passed":{"ja":"\u9580\u3092\u901a\u3063\u305f","en":"Checked","zh":"\u5df2\u9a8c\u8bc1","tw":"\u5df2\u9a57\u8b49","ko":"\uac80\uc99d\ub428","de":"Gepr\u00fcft","hi":"\u091c\u093e\u0901\u091a\u093e \u0917\u092f\u093e","fr":"V\u00e9rifi\u00e9"},"limit":{"ja":"\u9650\u754c\u3092\u898b\u305b\u308b","en":"Shows the limit","zh":"\u5c55\u793a\u6781\u9650","tw":"\u5c55\u793a\u6975\u9650","ko":"\ud55c\uacc4\ub97c \ubcf4\uc5ec\uc90c","de":"Zeigt die Grenze","hi":"\u0938\u0940\u092e\u093e \u0926\u093f\u0916\u093e\u0924\u093e \u0939\u0948","fr":"Montre la limite"},"null":{"ja":"\u4f55\u3082\u3057\u306a\u3044\u5834\u5408","en":"Doing nothing","zh":"\u4ec0\u4e48\u90fd\u4e0d\u505a\u65f6","tw":"\u4ec0\u9ebc\u90fd\u4e0d\u505a\u6642","ko":"\uc544\ubb34\uac83\ub3c4 \uc548 \ud560 \ub54c","de":"Ohne Ma\u00dfnahme","hi":"\u0915\u0941\u091b \u0928 \u0915\u0930\u0928\u0947 \u092a\u0930","fr":"Sans rien faire"}},"bh":{"def":{"passed":{"ja":"\u9580 = \u81ea\u52d5\u306e\u7b54\u3048\u5408\u308f\u305b\u3002op \u306e\u5024\u3092\u7406\u8ad6\u5024\u30fb\u5225\u306e\u65b9\u6cd5\u3068\u7a81\u304d\u5408\u308f\u305b\u3001\u57fa\u6e96\u306e\u5185\u306b\u5165\u3063\u305f\u3089\u901a\u308b\u3002","en":"Checked \u2014 an automatic answer check (a 'gate'): the op's value is compared with theory or an independent method, and passes when it falls within the criterion.","zh":"\u5df2\u9a8c\u8bc1 \u2014\u2014 \u81ea\u52a8\u6838\u5bf9\u7b54\u6848(\u201c\u95e8\u201d):\u628a op \u7684\u503c\u4e0e\u7406\u8bba\u503c\u6216\u53e6\u4e00\u79cd\u72ec\u7acb\u65b9\u6cd5\u5bf9\u7167,\u843d\u5728\u57fa\u51c6\u4e4b\u5185\u5373\u901a\u8fc7\u3002","tw":"\u5df2\u9a57\u8b49 \u2014\u2014 \u81ea\u52d5\u6838\u5c0d\u7b54\u6848(\u300c\u9580\u300d):\u628a op \u7684\u503c\u8207\u7406\u8ad6\u503c\u6216\u53e6\u4e00\u7a2e\u7368\u7acb\u65b9\u6cd5\u5c0d\u7167,\u843d\u5728\u57fa\u6e96\u4e4b\u5167\u5373\u901a\u904e\u3002","ko":"\uac80\uc99d\ub428 \u2014 \uc790\ub3d9 \uc815\ub2f5 \ub300\uc870('\uac8c\uc774\ud2b8'): op\uc758 \uac12\uc744 \uc774\ub860\uac12\uc774\ub098 \ub2e4\ub978 \ub3c5\ub9bd\ub41c \ubc29\ubc95\uacfc \ub9de\ub300\uc5b4 \ubcf4\uace0, \uae30\uc900 \uc548\uc5d0 \ub4e4\uba74 \ud1b5\uacfc\ud569\ub2c8\ub2e4.","de":"Gepr\u00fcft \u2014 ein automatischer Abgleich (ein \u201eGate\u201c): Der Wert des Ops wird mit der Theorie oder einer unabh\u00e4ngigen Methode verglichen und besteht, wenn er im Kriterium liegt.","hi":"\u091c\u093e\u0901\u091a\u093e \u0917\u092f\u093e \u2014 \u0938\u094d\u0935\u091a\u093e\u0932\u093f\u0924 \u0909\u0924\u094d\u0924\u0930-\u092e\u093f\u0932\u093e\u0928 (\u090f\u0915 'gate'): op \u0915\u0947 \u092e\u093e\u0928 \u0915\u094b \u0938\u093f\u0926\u094d\u0927\u093e\u0902\u0924 \u092f\u093e \u0915\u093f\u0938\u0940 \u0938\u094d\u0935\u0924\u0902\u0924\u094d\u0930 \u0935\u093f\u0927\u093f \u0938\u0947 \u092e\u093f\u0932\u093e\u092f\u093e \u091c\u093e\u0924\u093e \u0939\u0948; \u092e\u093e\u0928\u0926\u0902\u0921 \u0915\u0947 \u092d\u0940\u0924\u0930 \u0939\u094b \u0924\u094b \u092a\u093e\u0938\u0964","fr":"V\u00e9rifi\u00e9 \u2014 une v\u00e9rification automatique (une \u00ab porte \u00bb) : la valeur de l'op est compar\u00e9e \u00e0 la th\u00e9orie ou \u00e0 une m\u00e9thode ind\u00e9pendante, et passe si elle reste dans le crit\u00e8re."},"limit":{"ja":"\u9650\u754c\u3092\u898b\u305b\u308b = \u308f\u3056\u3068\u65b9\u6cd5\u304c\u58ca\u308c\u308b\u6761\u4ef6\u3067\u56de\u3057\u3001\u3069\u3053\u3067\u30fb\u3069\u3046\u5916\u308c\u308b\u304b\u3092\u6b63\u76f4\u306b\u898b\u305b\u308b\u56de\u3002\u300c\u9580\u3092\u901a\u3063\u305f\u300d\u56de\u3068\u5bfe\u3067\u8aad\u3080\u3002","en":"Shows the limit \u2014 the method is run on purpose where it breaks, to show honestly where and how it goes wrong. Read it as the pair of the checked runs.","zh":"\u5c55\u793a\u6781\u9650 \u2014\u2014 \u6545\u610f\u5728\u65b9\u6cd5\u4f1a\u5931\u6548\u7684\u6761\u4ef6\u4e0b\u8fd0\u884c,\u5982\u5b9e\u5c55\u793a\u5728\u54ea\u91cc\u3001\u600e\u6837\u51fa\u9519\u3002\u4e0e\u201c\u5df2\u9a8c\u8bc1\u201d\u6210\u5bf9\u9605\u8bfb\u3002","tw":"\u5c55\u793a\u6975\u9650 \u2014\u2014 \u523b\u610f\u5728\u65b9\u6cd5\u6703\u5931\u6548\u7684\u689d\u4ef6\u4e0b\u57f7\u884c,\u5982\u5be6\u5448\u73fe\u5728\u54ea\u88e1\u3001\u5982\u4f55\u51fa\u932f\u3002\u8207\u300c\u5df2\u9a57\u8b49\u300d\u6210\u5c0d\u95b1\u8b80\u3002","ko":"\ud55c\uacc4\ub97c \ubcf4\uc5ec\uc90c \u2014 \ubc29\ubc95\uc774 \ubb34\ub108\uc9c0\ub294 \uc870\uac74\uc5d0\uc11c \uc77c\ubd80\ub7ec \ub3cc\ub824, \uc5b4\ub514\uc11c \uc5b4\ub5bb\uac8c \uc5b4\uae0b\ub098\ub294\uc9c0 \uc815\uc9c1\ud558\uac8c \ubcf4\uc5ec \uc90d\ub2c8\ub2e4. '\uac80\uc99d\ub428'\uacfc \uc9dd\uc73c\ub85c \uc77d\uc2b5\ub2c8\ub2e4.","de":"Zeigt die Grenze \u2014 die Methode wird absichtlich dort betrieben, wo sie versagt, um ehrlich zu zeigen, wo und wie sie danebenliegt. Geh\u00f6rt zu den gepr\u00fcften L\u00e4ufen.","hi":"\u0938\u0940\u092e\u093e \u0926\u093f\u0916\u093e\u0924\u093e \u0939\u0948 \u2014 \u0935\u093f\u0927\u093f \u0915\u094b \u091c\u093e\u0928\u092c\u0942\u091d\u0915\u0930 \u0935\u0939\u093e\u0901 \u091a\u0932\u093e\u092f\u093e \u091c\u093e\u0924\u093e \u0939\u0948 \u091c\u0939\u093e\u0901 \u0935\u0939 \u091f\u0942\u091f\u0924\u0940 \u0939\u0948, \u0924\u093e\u0915\u093f \u0908\u092e\u093e\u0928\u0926\u093e\u0930\u0940 \u0938\u0947 \u0926\u093f\u0916\u0947 \u0915\u093f \u0915\u0939\u093e\u0901 \u0914\u0930 \u0915\u0948\u0938\u0947 \u091a\u0942\u0915\u0924\u0940 \u0939\u0948\u0964 \u0907\u0938\u0947 '\u091c\u093e\u0901\u091a\u093e \u0917\u092f\u093e' \u0915\u0947 \u0938\u093e\u0925 \u091c\u094b\u0921\u093c\u0940 \u092e\u0947\u0902 \u092a\u0922\u093c\u0947\u0902\u0964","fr":"Montre la limite \u2014 la m\u00e9thode est lanc\u00e9e expr\u00e8s l\u00e0 o\u00f9 elle casse, pour montrer honn\u00eatement o\u00f9 et comment elle se trompe. \u00c0 lire en paire avec les cas v\u00e9rifi\u00e9s."},"null":{"ja":"\u4f55\u3082\u3057\u306a\u3044\u5834\u5408 = \u6bd4\u3079\u308b\u305f\u3081\u306e\u96f6\u70b9\u3002\u88dc\u6b63\u3092\u3057\u306a\u3044\u30fb\u7d20\u6734\u306b\u3084\u308b\u3068\u3001\u3053\u3046\u306a\u308b\u3002","en":"Doing nothing \u2014 the zero point for comparison: what you get with no correction, or the naive approach.","zh":"\u4ec0\u4e48\u90fd\u4e0d\u505a\u65f6 \u2014\u2014 \u7528\u4e8e\u6bd4\u8f83\u7684\u96f6\u70b9:\u4e0d\u505a\u6821\u6b63\u3001\u6216\u7528\u6700\u6734\u7d20\u7684\u65b9\u6cd5\u65f6\u7684\u7ed3\u679c\u3002","tw":"\u4ec0\u9ebc\u90fd\u4e0d\u505a\u6642 \u2014\u2014 \u7528\u4f86\u6bd4\u8f03\u7684\u96f6\u9ede:\u4e0d\u505a\u6821\u6b63\u3001\u6216\u7528\u6700\u6a38\u7d20\u7684\u65b9\u6cd5\u6642\u7684\u7d50\u679c\u3002","ko":"\uc544\ubb34\uac83\ub3c4 \uc548 \ud560 \ub54c \u2014 \ube44\uad50\ub97c \uc704\ud55c \uc601\uc810: \ubcf4\uc815\ud558\uc9c0 \uc54a\uac70\ub098 \uac00\uc7a5 \uc18c\ubc15\ud55c \ubc29\ubc95\uc744 \uc37c\uc744 \ub54c\uc758 \uacb0\uacfc.","de":"Ohne Ma\u00dfnahme \u2014 der Nullpunkt zum Vergleich: was ohne Korrektur oder mit dem naiven Ansatz herauskommt.","hi":"\u0915\u0941\u091b \u0928 \u0915\u0930\u0928\u0947 \u092a\u0930 \u2014 \u0924\u0941\u0932\u0928\u093e \u0915\u093e \u0936\u0942\u0928\u094d\u092f-\u092c\u093f\u0902\u0926\u0941: \u092c\u093f\u0928\u093e \u0938\u0941\u0927\u093e\u0930 \u0915\u0947, \u092f\u093e \u0938\u092c\u0938\u0947 \u0938\u0940\u0927\u0947 \u0924\u0930\u0940\u0915\u0947 \u0938\u0947 \u0915\u094d\u092f\u093e \u092e\u093f\u0932\u0924\u093e \u0939\u0948\u0964","fr":"Sans rien faire \u2014 le point z\u00e9ro de comparaison : ce qu'on obtient sans correction, ou avec l'approche na\u00efve."}},"legend":{"ja":"\u30d0\u30c3\u30b8\u306e\u898b\u65b9: \u300c\u9580\u3092\u901a\u3063\u305f\u300d\u3068\u300c\u9650\u754c\u3092\u898b\u305b\u308b\u300d\u306f\u5bfe\u3067\u8aad\u3080 \u2014\u2014 \u3046\u307e\u304f\u3044\u304f\u56de\u3060\u3051\u3067\u306a\u304f\u3001\u5916\u308c\u308b\u56de\u3082\u4e26\u3079\u308b\u3002\u300c\u4f55\u3082\u3057\u306a\u3044\u5834\u5408\u300d\u306f\u6bd4\u3079\u308b\u305f\u3081\u306e\u96f6\u70b9\u3002\u30d0\u30c3\u30b8\u3092\u62bc\u3059\u3068\u3001\u78ba\u304b\u3081\u305f\u9805\u76ee\u30fb\u57fa\u6e96\u30fb\u7d50\u679c\u304c\u958b\u304f\u3002","en":"How to read the badges: 'Checked' and 'Shows the limit' come as a pair \u2014 the page shows where a method fails, not only where it works. 'Doing nothing' is the zero point for comparison. Tap a badge to open what was checked, the criterion and the result.","zh":"\u5fbd\u7ae0\u7684\u8bfb\u6cd5:\u201c\u5df2\u9a8c\u8bc1\u201d\u4e0e\u201c\u5c55\u793a\u6781\u9650\u201d\u6210\u5bf9\u9605\u8bfb \u2014\u2014 \u4e0d\u53ea\u5217\u51fa\u6210\u529f\u7684\u60c5\u51b5,\u4e5f\u5217\u51fa\u5931\u8d25\u7684\u60c5\u51b5\u3002\u201c\u4ec0\u4e48\u90fd\u4e0d\u505a\u65f6\u201d\u662f\u7528\u4e8e\u6bd4\u8f83\u7684\u96f6\u70b9\u3002\u70b9\u6309\u5fbd\u7ae0\u53ef\u5c55\u5f00\u68c0\u9a8c\u9879\u76ee\u3001\u57fa\u51c6\u548c\u7ed3\u679c\u3002","tw":"\u5fbd\u7ae0\u7684\u8b80\u6cd5:\u300c\u5df2\u9a57\u8b49\u300d\u8207\u300c\u5c55\u793a\u6975\u9650\u300d\u6210\u5c0d\u95b1\u8b80 \u2014\u2014 \u4e0d\u53ea\u5217\u51fa\u6210\u529f\u7684\u60c5\u6cc1,\u4e5f\u5217\u51fa\u5931\u6557\u7684\u60c5\u6cc1\u3002\u300c\u4ec0\u9ebc\u90fd\u4e0d\u505a\u6642\u300d\u662f\u7528\u4f86\u6bd4\u8f03\u7684\u96f6\u9ede\u3002\u9ede\u6309\u5fbd\u7ae0\u53ef\u5c55\u958b\u6aa2\u9a57\u9805\u76ee\u3001\u57fa\u6e96\u8207\u7d50\u679c\u3002","ko":"\ubc30\uc9c0 \uc77d\ub294 \ubc95: '\uac80\uc99d\ub428'\uacfc '\ud55c\uacc4\ub97c \ubcf4\uc5ec\uc90c'\uc740 \uc9dd\uc73c\ub85c \uc77d\uc2b5\ub2c8\ub2e4 \u2014 \uc798 \ub418\ub294 \uacbd\uc6b0\ub9cc\uc774 \uc544\ub2c8\ub77c \uc5b4\uae0b\ub098\ub294 \uacbd\uc6b0\ub3c4 \ud568\uaed8 \ubcf4\uc5ec \uc90d\ub2c8\ub2e4. '\uc544\ubb34\uac83\ub3c4 \uc548 \ud560 \ub54c'\ub294 \ube44\uad50\ub97c \uc704\ud55c \uc601\uc810\uc785\ub2c8\ub2e4. \ubc30\uc9c0\ub97c \ub204\ub974\uba74 \ud655\uc778\ud55c \ud56d\ubaa9\u00b7\uae30\uc900\u00b7\uacb0\uacfc\uac00 \uc5f4\ub9bd\ub2c8\ub2e4.","de":"So liest man die Abzeichen: \u201eGepr\u00fcft\u201c und \u201eZeigt die Grenze\u201c geh\u00f6ren zusammen \u2014 die Seite zeigt, wo eine Methode versagt, nicht nur, wo sie funktioniert. \u201eOhne Ma\u00dfnahme\u201c ist der Nullpunkt zum Vergleich. Ein Abzeichen antippen \u00f6ffnet, was gepr\u00fcft wurde, das Kriterium und das Ergebnis.","hi":"\u092c\u0948\u091c \u0915\u0948\u0938\u0947 \u092a\u0922\u093c\u0947\u0902: '\u091c\u093e\u0901\u091a\u093e \u0917\u092f\u093e' \u0914\u0930 '\u0938\u0940\u092e\u093e \u0926\u093f\u0916\u093e\u0924\u093e \u0939\u0948' \u0915\u094b \u091c\u094b\u0921\u093c\u0940 \u092e\u0947\u0902 \u092a\u0922\u093c\u0947\u0902 \u2014 \u092a\u0947\u091c \u0915\u0947\u0935\u0932 \u0938\u092b\u0932 \u092e\u093e\u092e\u0932\u0947 \u0928\u0939\u0940\u0902, \u0935\u093f\u092b\u0932 \u092e\u093e\u092e\u0932\u0947 \u092d\u0940 \u0926\u093f\u0916\u093e\u0924\u093e \u0939\u0948\u0964 '\u0915\u0941\u091b \u0928 \u0915\u0930\u0928\u0947 \u092a\u0930' \u0924\u0941\u0932\u0928\u093e \u0915\u093e \u0936\u0942\u0928\u094d\u092f-\u092c\u093f\u0902\u0926\u0941 \u0939\u0948\u0964 \u092c\u0948\u091c \u0926\u092c\u093e\u0928\u0947 \u092a\u0930 \u0915\u094d\u092f\u093e \u091c\u093e\u0901\u091a\u093e \u0917\u092f\u093e, \u092e\u093e\u0928\u0926\u0902\u0921 \u0914\u0930 \u092a\u0930\u093f\u0923\u093e\u092e \u0916\u0941\u0932\u0924\u0947 \u0939\u0948\u0902\u0964","fr":"Lire les badges : \u00ab V\u00e9rifi\u00e9 \u00bb et \u00ab Montre la limite \u00bb vont par paire \u2014 la page montre o\u00f9 une m\u00e9thode \u00e9choue, pas seulement o\u00f9 elle marche. \u00ab Sans rien faire \u00bb est le point z\u00e9ro de comparaison. Touchez un badge pour ouvrir ce qui a \u00e9t\u00e9 v\u00e9rifi\u00e9, le crit\u00e8re et le r\u00e9sultat."},"ui":{"what":{"ja":"\u78ba\u304b\u3081\u305f\u9805\u76ee","en":"What was checked","zh":"\u68c0\u9a8c\u9879\u76ee","tw":"\u6aa2\u9a57\u9805\u76ee","ko":"\ud655\uc778\ud55c \ud56d\ubaa9","de":"Gepr\u00fcft wurde","hi":"\u0915\u094d\u092f\u093e \u091c\u093e\u0901\u091a\u093e \u0917\u092f\u093e","fr":"Ce qui a \u00e9t\u00e9 v\u00e9rifi\u00e9"},"criterion":{"ja":"\u57fa\u6e96","en":"Criterion","zh":"\u57fa\u51c6","tw":"\u57fa\u6e96","ko":"\uae30\uc900","de":"Kriterium","hi":"\u092e\u093e\u0928\u0926\u0902\u0921","fr":"Crit\u00e8re"},"result":{"ja":"\u7d50\u679c","en":"Result","zh":"\u7ed3\u679c","tw":"\u7d50\u679c","ko":"\uacb0\uacfc","de":"Ergebnis","hi":"\u092a\u0930\u093f\u0923\u093e\u092e","fr":"R\u00e9sultat"},"ok":{"ja":"\u901a\u3063\u305f","en":"pass","zh":"\u901a\u8fc7","tw":"\u901a\u904e","ko":"\ud1b5\uacfc","de":"bestanden","hi":"\u092a\u093e\u0938","fr":"r\u00e9ussi"},"ng":{"ja":"\u5916\u308c\u305f","en":"outside","zh":"\u8d85\u51fa","tw":"\u8d85\u51fa","ko":"\ubc97\uc5b4\ub0a8","de":"au\u00dferhalb","hi":"\u0938\u0940\u092e\u093e \u0938\u0947 \u092c\u093e\u0939\u0930","fr":"hors crit\u00e8re"}}},"lu":{"q":{"ja":"\u554f\u3044","en":"Question","zh":"\u95ee\u9898","tw":"\u554f\u984c","ko":"\uc9c8\ubb38","de":"Frage","hi":"\u092a\u094d\u0930\u0936\u094d\u0928","fr":"Question"},"p":{"ja":"\u4e88\u60f3: \u3069\u3046\u306a\u308b\u3068\u601d\u3046?","en":"Predict: what do you think will happen?","zh":"\u9884\u6d4b:\u4f60\u89c9\u5f97\u4f1a\u600e\u6837?","tw":"\u9810\u6e2c:\u4f60\u89ba\u5f97\u6703\u600e\u6a23?","ko":"\uc608\uc0c1: \uc5b4\ub5bb\uac8c \ub420\uae4c\uc694?","de":"Vorhersage: Was glaubst du, passiert?","hi":"\u0905\u0928\u0941\u092e\u093e\u0928: \u0906\u092a\u0915\u0947 \u0939\u093f\u0938\u093e\u092c \u0938\u0947 \u0915\u094d\u092f\u093e \u0939\u094b\u0917\u093e?","fr":"Pr\u00e9diction : que va-t-il se passer, selon vous ?"},"play":{"ja":"\u518d\u751f: \u25b6 \u3067\u78ba\u304b\u3081\u308b","en":"Play: press \u25b6 to check","zh":"\u64ad\u653e:\u6309 \u25b6 \u9a8c\u8bc1","tw":"\u64ad\u653e:\u6309 \u25b6 \u9a57\u8b49","ko":"\uc7ac\uc0dd: \u25b6 \ub97c \ub20c\ub7ec \ud655\uc778","de":"Abspielen: mit \u25b6 \u00fcberpr\u00fcfen","hi":"\u091a\u0932\u093e\u090f\u0901: \u25b6 \u0926\u092c\u093e\u0915\u0930 \u091c\u093e\u0901\u091a\u0947\u0902","fr":"Lecture : appuyez sur \u25b6 pour v\u00e9rifier"},"f":{"ja":"\u5f0f","en":"Equation","zh":"\u516c\u5f0f","tw":"\u516c\u5f0f","ko":"\uc2dd","de":"Gleichung","hi":"\u0938\u0942\u0924\u094d\u0930","fr":"\u00c9quation"},"why":{"ja":"\u8aac\u660e","en":"Explanation","zh":"\u8bf4\u660e","tw":"\u8aaa\u660e","ko":"\uc124\uba85","de":"Erkl\u00e4rung","hi":"\u0935\u094d\u092f\u093e\u0916\u094d\u092f\u093e","fr":"Explication"},"lim":{"ja":"\u9650\u754c","en":"Limit","zh":"\u5c40\u9650","tw":"\u5c40\u9650","ko":"\ud55c\uacc4","de":"Grenze","hi":"\u0938\u0940\u092e\u093e","fr":"Limite"},"right":{"ja":"\u6b63\u89e3\u3002","en":"Correct.","zh":"\u7b54\u5bf9\u4e86\u3002","tw":"\u7b54\u5c0d\u4e86\u3002","ko":"\uc815\ub2f5.","de":"Richtig.","hi":"\u0938\u0939\u0940\u0964","fr":"Exact."},"wrong":{"ja":"\u306f\u305a\u308c\u3002\u6b63\u89e3\u306f","en":"Not quite. The answer is","zh":"\u4e0d\u5bf9\u3002\u6b63\u786e\u7b54\u6848\u662f","tw":"\u4e0d\u5c0d\u3002\u6b63\u78ba\u7b54\u6848\u662f","ko":"\uc544\uc27d\ub124\uc694. \uc815\ub2f5\uc740","de":"Nicht ganz. Richtig ist","hi":"\u0938\u0939\u0940 \u0928\u0939\u0940\u0902\u0964 \u0909\u0924\u094d\u0924\u0930 \u0939\u0948","fr":"Pas tout \u00e0 fait. La r\u00e9ponse est"}},"ui":{"front":{"ja":"\u6b63\u9762","en":"Front","zh":"\u6b63\u9762","tw":"\u6b63\u9762","ko":"\uc815\uba74","de":"Vorne","hi":"\u0938\u093e\u092e\u0928\u0947","fr":"Face"},"side":{"ja":"\u771f\u6a2a","en":"Side","zh":"\u4fa7\u9762","tw":"\u5074\u9762","ko":"\uce21\uba74","de":"Seite","hi":"\u092c\u0917\u0932","fr":"C\u00f4t\u00e9"},"iso":{"ja":"\u659c\u3081","en":"Oblique","zh":"\u659c\u89c6","tw":"\u659c\u8996","ko":"\uc0ac\uc120","de":"Schr\u00e4g","hi":"\u0924\u093f\u0930\u091b\u093e","fr":"Oblique"},"top":{"ja":"\u4fef\u77b0","en":"Top","zh":"\u4fef\u89c6","tw":"\u4fef\u8996","ko":"\uc704\uc5d0\uc11c","de":"Oben","hi":"\u090a\u092a\u0930 \u0938\u0947","fr":"Dessus"},"play":{"ja":"\u25b6 \u518d\u751f","en":"\u25b6 Play","zh":"\u25b6 \u64ad\u653e","tw":"\u25b6 \u64ad\u653e","ko":"\u25b6 \uc7ac\uc0dd","de":"\u25b6 Abspielen","hi":"\u25b6 \u091a\u0932\u093e\u090f\u0901","fr":"\u25b6 Lecture"},"pause":{"ja":"\u23f8 \u4e00\u6642\u505c\u6b62","en":"\u23f8 Pause","zh":"\u23f8 \u6682\u505c","tw":"\u23f8 \u66ab\u505c","ko":"\u23f8 \uc77c\uc2dc\uc815\uc9c0","de":"\u23f8 Pause","hi":"\u23f8 \u0930\u094b\u0915\u0947\u0902","fr":"\u23f8 Pause"},"speed":{"ja":"\u901f\u5ea6","en":"Speed","zh":"\u901f\u5ea6","tw":"\u901f\u5ea6","ko":"\uc18d\ub3c4","de":"Tempo","hi":"\u0917\u0924\u093f","fr":"Vitesse"},"loop":{"ja":"\u30eb\u30fc\u30d7","en":"Loop","zh":"\u5faa\u73af","tw":"\u5faa\u74b0","ko":"\ubc18\ubcf5","de":"Schleife","hi":"\u0926\u094b\u0939\u0930\u093e\u090f\u0901","fr":"Boucle"},"nogl":{"ja":"\u3053\u306e\u74b0\u5883\u3067\u306f WebGL \u3092\u521d\u671f\u5316\u3067\u304d\u307e\u305b\u3093\u3067\u3057\u305f\u3002\u5225\u306e\u30d6\u30e9\u30a6\u30b6(Chrome / Edge / Safari \u306e\u6700\u65b0\u7248)\u3067\u304a\u8a66\u3057\u304f\u3060\u3055\u3044\u3002","en":"WebGL could not be initialised here. Please try a recent Chrome, Edge or Safari.","zh":"\u5f53\u524d\u73af\u5883\u65e0\u6cd5\u521d\u59cb\u5316 WebGL\u3002\u8bf7\u4f7f\u7528\u6700\u65b0\u7248 Chrome\u3001Edge \u6216 Safari \u91cd\u8bd5\u3002","tw":"\u76ee\u524d\u74b0\u5883\u7121\u6cd5\u521d\u59cb\u5316 WebGL\u3002\u8acb\u6539\u7528\u6700\u65b0\u7248 Chrome\u3001Edge \u6216 Safari \u518d\u8a66\u3002","ko":"\uc774 \ud658\uacbd\uc5d0\uc11c\ub294 WebGL\uc744 \ucd08\uae30\ud654\ud560 \uc218 \uc5c6\uc2b5\ub2c8\ub2e4. \ucd5c\uc2e0 Chrome, Edge \ub610\ub294 Safari\ub85c \ub2e4\uc2dc \uc2dc\ub3c4\ud574 \uc8fc\uc138\uc694.","de":"WebGL konnte hier nicht initialisiert werden. Bitte einen aktuellen Browser (Chrome, Edge oder Safari) verwenden.","hi":"\u092f\u0939\u093e\u0901 WebGL \u0936\u0941\u0930\u0942 \u0928\u0939\u0940\u0902 \u0939\u094b \u0938\u0915\u093e\u0964 \u0915\u0943\u092a\u092f\u093e Chrome, Edge \u092f\u093e Safari \u0915\u093e \u0928\u092f\u093e \u0938\u0902\u0938\u094d\u0915\u0930\u0923 \u0906\u091c\u093c\u092e\u093e\u090f\u0901\u0964","fr":"WebGL n'a pas pu \u00eatre initialis\u00e9 ici. Essayez une version r\u00e9cente de Chrome, Edge ou Safari."},"frame":{"ja":"\u30b3\u30de","en":"frame","zh":"\u5e27","tw":"\u5f71\u683c","ko":"\ud504\ub808\uc784","de":"Bild","hi":"\u092b\u093c\u094d\u0930\u0947\u092e","fr":"image"},"points":{"ja":"\u70b9","en":"points","zh":"\u4e2a\u70b9","tw":"\u500b\u9ede","ko":"\uac1c \uc810","de":"Punkte","hi":"\u092c\u093f\u0902\u0926\u0941","fr":"points"},"verts":{"ja":"\u9802\u70b9","en":"vertices","zh":"\u4e2a\u9876\u70b9","tw":"\u500b\u9802\u9ede","ko":"\uac1c \uaf2d\uc9d3\uc810","de":"Eckpunkte","hi":"\u0936\u0940\u0930\u094d\u0937","fr":"sommets"},"drag":{"ja":"\u30c9\u30e9\u30c3\u30b0\u3067\u56de\u3059\u30fb\u30db\u30a4\u30fc\u30eb/\u30d4\u30f3\u30c1\u3067\u62e1\u5927","en":"Drag to orbit, wheel / pinch to zoom","zh":"\u62d6\u52a8\u65cb\u8f6c,\u6eda\u8f6e/\u53cc\u6307\u7f29\u653e","tw":"\u62d6\u66f3\u65cb\u8f49,\u6efe\u8f2a/\u96d9\u6307\u7e2e\u653e","ko":"\ub4dc\ub798\uadf8\ub85c \ud68c\uc804, \ud720/\ud540\uce58\ub85c \ud655\ub300","de":"Ziehen zum Drehen, Mausrad/Pinch zum Zoomen","hi":"\u0916\u0940\u0902\u091a\u0915\u0930 \u0918\u0941\u092e\u093e\u090f\u0901, \u0935\u094d\u0939\u0940\u0932/\u092a\u093f\u0902\u091a \u0938\u0947 \u091c\u093c\u0942\u092e \u0915\u0930\u0947\u0902","fr":"Glisser pour tourner, molette/pincement pour zoomer"},"split":{"ja":"\u5de6\u53f3\u306b\u30c9\u30e9\u30c3\u30b0\u3057\u3066\u524d\u5f8c\u3092\u6bd4\u3079\u308b","en":"Drag left/right to compare","zh":"\u5de6\u53f3\u62d6\u52a8\u4ee5\u5bf9\u6bd4\u524d\u540e","tw":"\u5de6\u53f3\u62d6\u66f3\u4ee5\u6bd4\u8f03\u524d\u5f8c","ko":"\uc88c\uc6b0\ub85c \ub4dc\ub798\uadf8\ud574 \uc804\ud6c4\ub97c \ube44\uad50","de":"Nach links/rechts ziehen zum Vergleichen","hi":"\u092c\u093e\u090f\u0901-\u0926\u093e\u090f\u0901 \u0916\u0940\u0902\u091a\u0915\u0930 \u092a\u0939\u0932\u0947-\u092c\u093e\u0926 \u0915\u0940 \u0924\u0941\u0932\u0928\u093e \u0915\u0930\u0947\u0902","fr":"Glisser \u00e0 gauche ou \u00e0 droite pour comparer"},"above":{"ja":"\u3057\u304d\u3044\u5024\u4ee5\u4e0a","en":"at/above threshold","zh":"\u4e0d\u4f4e\u4e8e\u9608\u503c","tw":"\u4e0d\u4f4e\u65bc\u95be\u503c","ko":"\uc784\uacc4\uac12 \uc774\uc0c1","de":"ab Schwelle","hi":"\u0938\u0940\u092e\u093e \u092f\u093e \u0909\u0938\u0938\u0947 \u090a\u092a\u0930","fr":"au-dessus du seuil"},"below":{"ja":"\u3057\u304d\u3044\u5024\u672a\u6e80","en":"below threshold","zh":"\u4f4e\u4e8e\u9608\u503c","tw":"\u4f4e\u65bc\u95be\u503c","ko":"\uc784\uacc4\uac12 \ubbf8\ub9cc","de":"unter Schwelle","hi":"\u0938\u0940\u092e\u093e \u0938\u0947 \u0928\u0940\u091a\u0947","fr":"sous le seuil"},"azimuth":{"ja":"\u65b9\u4f4d","en":"azimuth","zh":"\u65b9\u4f4d\u89d2","tw":"\u65b9\u4f4d\u89d2","ko":"\ubc29\uc704\uac01","de":"Azimut","hi":"\u0926\u093f\u0917\u0902\u0936","fr":"azimut"},"back1":{"ja":"\u25c0 1 \u30b3\u30de\u623b\u3059","en":"\u25c0 1 frame back","zh":"\u25c0 \u540e\u9000 1 \u5e27","tw":"\u25c0 \u5012\u9000 1 \u683c","ko":"\u25c0 1 \ud504\ub808\uc784 \ub4a4\ub85c","de":"\u25c0 1 Bild zur\u00fcck","hi":"\u25c0 1 \u092b\u093c\u094d\u0930\u0947\u092e \u092a\u0940\u091b\u0947","fr":"\u25c0 1 image en arri\u00e8re"},"fwd1":{"ja":"1 \u30b3\u30de\u9032\u3081\u308b \u25b6","en":"1 frame forward \u25b6","zh":"\u524d\u8fdb 1 \u5e27 \u25b6","tw":"\u524d\u9032 1 \u683c \u25b6","ko":"1 \ud504\ub808\uc784 \uc55e\uc73c\ub85c \u25b6","de":"1 Bild vor \u25b6","hi":"1 \u092b\u093c\u094d\u0930\u0947\u092e \u0906\u0917\u0947 \u25b6","fr":"1 image en avant \u25b6"},"evprev":{"ja":"\u23ee \u524d\u306e\u6bb5","en":"\u23ee Previous stage","zh":"\u23ee \u4e0a\u4e00\u9636\u6bb5","tw":"\u23ee \u4e0a\u4e00\u968e\u6bb5","ko":"\u23ee \uc774\uc804 \ub2e8\uacc4","de":"\u23ee Vorherige Phase","hi":"\u23ee \u092a\u093f\u091b\u0932\u093e \u091a\u0930\u0923","fr":"\u23ee \u00c9tape pr\u00e9c\u00e9dente"},"evnext":{"ja":"\u6b21\u306e\u6bb5 \u23ed","en":"Next stage \u23ed","zh":"\u4e0b\u4e00\u9636\u6bb5 \u23ed","tw":"\u4e0b\u4e00\u968e\u6bb5 \u23ed","ko":"\ub2e4\uc74c \ub2e8\uacc4 \u23ed","de":"N\u00e4chste Phase \u23ed","hi":"\u0905\u0917\u0932\u093e \u091a\u0930\u0923 \u23ed","fr":"\u00c9tape suivante \u23ed"},"follow":{"ja":"\u30ab\u30e1\u30e9\u3092\u8ffd\u5f93\u3055\u305b\u308b","en":"Camera follows","zh":"\u955c\u5934\u8ddf\u968f\u7269\u4f53","tw":"\u93e1\u982d\u8ddf\u96a8\u7269\u9ad4","ko":"\uce74\uba54\ub77c\uac00 \ub530\ub77c\uac10","de":"Kamera folgt","hi":"\u0915\u0948\u092e\u0930\u093e \u0938\u093e\u0925 \u091a\u0932\u0947","fr":"Cam\u00e9ra qui suit"},"stage":{"ja":"\u6bb5","en":"stage","zh":"\u9636\u6bb5","tw":"\u968e\u6bb5","ko":"\ub2e8\uacc4","de":"Phase","hi":"\u091a\u0930\u0923","fr":"\u00e9tape"},"bodies":{"ja":"\u7269\u4f53","en":"bodies","zh":"\u4e2a\u7269\u4f53","tw":"\u500b\u7269\u9ad4","ko":"\uac1c \ubb3c\uccb4","de":"K\u00f6rper","hi":"\u0935\u0938\u094d\u0924\u0941\u090f\u0901","fr":"objets"}},"arrays":{"7d6bd993bfb2":{"t":"q16","shape":[289,3],"lo":[-36.0,-7.0,-8.0],"hi":[36.0,7.0,-0.0],"b64":"AADCdf//AAD0dQD8AACKdin4AAB8d570AADCeITxAABPevjuAAAUfBPtAAAAfunrAAAAgITrAAD/genrAADrgxPtAACwhfjuAAA9h4TxAACDiJ70AAB1iSn4AAALigD8AAA9iv//ABAIQv//ABA5Q9HnABDARpLQABB5TCS7ABAuVF2oABCSXfOYABBJaH+NABDpc3KGABAAgBCEABAWjHKGABC2l3+NABBtovOYABDRq12oABCGsyS7ABA/uZLQABDGvNHnABD3vf//ACBWK///ACD2LPbeACDIMTO/ACCbOe2hACAiRESIACD2UDVzACCZX49jACB7b+1ZACAAgKxWACCEkO1ZACBmoI9jACAJrzVzACDdu0SIACBkxu2hACA3zjO/ACAJ0/beACCp1P//ADAUHP//ADAAHgPZADCvI4azADDrLPmQADBYObFyADB9SNZZADDDWV9HADCBbAA8ADAAgCk4ADB+kwA8ADA8pl9HADCCt9ZZADCnxrFyADAU0/mQADBQ3IazADD/4QPZADDr4///AEAmEf//AEBHE7/UAECWGSirAEDUI9SEAECeMTtjAEBqQqlHAECUVSwzAEBfao8mAEAAgEwiAECglY8mAEBrqiwzAECVvalHAEBhzjtjAEAr3NSEAEBp5iirAEC47L/UAEDZ7v//AFBXCf//AFCfC7PRAFBfEi6lAFBXHSd8AFAYLDBYAFATPq06AFCXUr8kAFDZaD4XAFAAgK4SAFAmlz4XAFBorb8kAFDswa06AFDn0zBYAFCo4id8AFCg7S6lAFBg9LPRAFCo9v//AGARBP//AGByBqTPAGCADSShAGDzGEp2AGBdKLpQAGAlO+cxAGCSUP8aAGDSZ+QMAGAAgCEIAGAtmOQMAGBtr/8aAGDaxOcxAGCi17pQAGAM50p2AGB/8iShAGCN+aTPAGDu+///AHABAf//AHByA3LOAHCsCs2eAHBoFuNyAHAzJmZMAHByOdAsAHBmT1cVAHA5Z+MGAHAAgAICAHDGmOMGAHCZsFcVAHCNxtAsAHDM2WZMAHCX6eNyAHBT9c2eAHCN/HLOAHD+/v//AIAAAP//AIB2Ag7OAIC+CQieAICSFcZxAIB9JftKAIDjOCUrAIAET30TAIAHZ+sEAIAAgAAAAID4mOsEAID7sH0TAIAcxyUrAICC2vtKAIBt6sZxAIBB9gieAICJ/Q7OAID//////48BAf///49yA3LO/4+sCs2e/49oFuNy/48zJmZM/49yOdAs/49mT1cV/485Z+MG/48AgAIC/4/GmOMG/4+ZsFcV/4+NxtAs/4/M2WZM/4+X6eNy/49T9c2e/4+N/HLO/4/+/v///58RBP///59yBqTP/5+ADSSh/5/zGEp2/59dKLpQ/58lO+cx/5+SUP8a/5/SZ+QM/58AgCEI/58tmOQM/59tr/8a/5/axOcx/5+i17pQ/58M50p2/59/8iSh/5+N+aTP/5/u+////69XCf///6+fC7PR/69fEi6l/69XHSd8/68YLDBY/68TPq06/6+XUr8k/6/ZaD4X/68AgK4S/68mlz4X/69orb8k/6/swa06/6/n0zBY/6+o4id8/6+g7S6l/69g9LPR/6+o9v///78mEf///79HE7/U/7+WGSir/7/UI9SE/7+eMTtj/79qQqlH/7+UVSwz/79fao8m/78AgEwi/7+glY8m/79rqiwz/7+VvalH/79hzjtj/78r3NSE/79p5iir/7+47L/U/7/Z7v///88UHP///88AHgPZ/8+vI4az/8/rLPmQ/89YObFy/899SNZZ/8/DWV9H/8+BbAA8/88AgCk4/89+kwA8/888pl9H/8+Ct9ZZ/8+nxrFy/88U0/mQ/89Q3Iaz/8//4QPZ/8/r4////99WK////9/2LPbe/9/IMTO//9+bOe2h/98iRESI/9/2UDVz/9+ZX49j/997b+1Z/98AgKxW/9+EkO1Z/99moI9j/98JrzVz/9/du0SI/99kxu2h/983zjO//98J0/be/9+p1P///+8IQv///+85Q9Hn/+/ARpLQ/+95TCS7/+8uVF2o/++SXfOY/+9JaH+N/+/pc3KG/+8AgBCE/+8WjHKG/++2l3+N/+9tovOY/+/Rq12o/++GsyS7/+8/uZLQ/+/GvNHn/+/3vf/////Cdf/////0dQD8//+Kdin4//98d570///CeITx//9Pevju//8UfBPt//8Afunr//8AgITr////genr///rgxPt//+whfju//89h4Tx//+DiJ70//91iSn4//8LigD8//89iv//"},"e35606f2d655":{"t":"u16","shape":[574,3],"b64":"dgBkAGUAugDLAMoAPAAqACsARwBIAFkAzwC/ANAAHAAdAC0AMQAyAEIAMQBCADAAQwBCADIAQAAvADAAQABQAD8AtwDIALYAhwCGAHYATwBQAGAAYQBiAHIAYQBgAFAAlgCnAJUAcwByAGIACgH5AAsB/QDsAP4A/QD8AOwA7QD+AOwA6gD8APsA6gDpANgA+gALAfkA+gD5AOkA+gDpAOoA+gDqAPsA+ADnAPkA1wDnANYAxgDYANcAxwC2AMgAxwDYAMYAxwC1ALYAxwDGALUALAAtAD0ALAA9ADwALAA8ACsALgAtAB0ALgA/AC0ALgBAAD8ALgAvAEAAXwBPAGAAIgARABIAIgA0ADMARgBHAFcARgA0ADUARAAzADQAOAAnADkAKAA5ACcAOwAqADwAJAAUACUAJAA1ADQANgBGADUANgBHAEYANgA1ACQANgAkACUANgBIAEcA7gAAAf8A7gDdAN4AzgC9AM8AzgDfAN4AzADeAN0A4gDjAPMA0wDCANQA9ADzAOMA8ADxAAIB8ADeAN8A4ADfAM4A4ADOAM8A4ADwAN8A4ADxAPAA4ADPANAAVgBGAFcAVgBmAFUAVgBVAEQAaABWAFcAvAC9AM4AvAC7AKoAvADMALsArAC9ALwAWABXAEcAWABHAFkAWABoAFcAvgDPAL0AvgC/AM8AvgC9AKwAiwB6AHsAnQCcAIsAHgAwAC8AHgAfADAAIAAhADIAIAAyADEAIAAwAB8AIAAxADAAVABlAGQAVABCAEMAdQBkAHYAdQB2AIYAQQAwAEIAQQBAADAAUQBQAEAAUQBiAGEAUQBhAFAAUQBjAGIACwAcABsACwAdABwAGgArACoAGgAbACwAGgAsACsApgCVAKcAuADKAMkAuADIALcAuADJAMgAuACnAKgAqQC6AKgAuQC6AMoAuQCoALoAuQDKALgAuQC4AKgAPgBPAD0APgAtAD8APgA9AC0APgA/AFAAPgBQAE8AcQBgAGEAcQBhAHIAcQBfAGAApQCVAKYApQCkAJMApQC2ALUApQC1AKQAlwCoAKcAlwCnAJYAlwCHAJgAlwCGAIcAlwCYAKkAlwCpAKgAdABiAGMAdABzAGIAdABjAGQAdABkAHUAdAB1AIYADAH7APwADAH8AA0BDgH+AA8BDgH9AP4ADgENAfwADgH8AP0A3ADKAMsA3ADtAOwA6wDsAPwA6wD8AOoAGwEJAQoBGwEKAQsBCAH4AAkB1QDUAMQA5gDnAPgA5gDUANUA5gDWAOcA5gDVANYA6ADnANcA6ADpAPkA6AD5AOcA6ADYAOkA6ADXANgAxQDXANYAxQDGANcAxQC0ALUAxQC1AMYAxQDWANUAxQDVAMQAwwDUAMIAwwDEANQATAA7ADwATgA9AE8ATgBPAF8ATgA8AD0AEwAUACQAEwAkABIAKQAYACoAKQAoABgAIwAiABIAIwASACQAIwA0ACIAIwAkADQANwAnADgANwA4AEgANwBIADYAFwAYACgAFQAlABQAFQAWACcAFQAUAAMAbAB9AGsAbABrAFsAbAB+AH0AAQHwAAIBAQEAAfAAwADQAL8AwAC/AK8A5AD0AOMA5ADTANQA9QD2AAYB9QAGAfQA9QDkAPYA9QD0AOQA7wAAAe4A7wDwAAAB7wDuAN4A7wDeAPAA4QDiAPMA4QDQAOIA4QDgANAABQH0AAYBAwECAfEAAwHzAAQBAwETAQIBdwBmAHgAdwCJAIgAdwB4AIkAZwB4AGYAZwBmAFYAZwBoAHgAZwBWAGgARQBEADQARQBWAEQARQA0AEYARQBGAFYAeQB4AGgAeQCKAIkAeQCJAHgAeQCLAIoAeQB6AIsAmQCaAKoAmQCIAIkAmQCJAJoAqwCqAJoAqwC8AKoAqwCaAKwAqwCsALwAzQDeAMwAzQDMALwAzQDOAN4AzQC8AM4AmwCsAJoAmwCJAIoAmwCaAIkAmwCKAIsAmwCLAJwAaQBoAFgAaQB7AHoAagBZAGsAagBrAHsAagB7AGkAagBYAFkAagBpAFgAfACNAHsAfAB7AGsAfABrAH0AsACfAKAAsACvAJ8AjgCNAHwAjgB8AH0ArgCvAL8ArgCdAK8AngCdAI0AngCvAJ0AngCfAK8AngCNAI4AngCOAJ8AjACLAHsAjACdAIsAjAB7AI0AjACNAJ0AUwBUAGQAUwBCAFQAUgBAAEEAUgBRAEAAUgBjAFEAUgBkAGMAUgBTAGQAUgBBAEIAUgBCAFMADQAeAB0AGQAqABgAGQAaACoAkgCTAKQAggCBAHEAggCSAIEAggCTAJIAcABxAIEAcABfAHEAcABvAF8AcACAAG8AcACBAIAAlACVAKUAlAClAJMAhQCVAIQAhQCWAJUAhQB0AIYAhQCGAJcAhQCXAJYA2wDKANwA2wDcAOwA2gDrAOoA2gDJAMoA2gDKANsA2gDsAOsA2gDbAOwAHQELAQwBBwEGAfYABwH2AAgB9wAIAfYA9wD4AAgB9wD2AOYA9wDmAPgAXQBvAG4AXQBcAEwATQBOAF8ATQBMADwATQA8AE4AOgA7AEwAOgA5ACgAOgAoACkAOgAqADsAOgApACoAOgBKADkAJgAnADcAJgAVACcAJgAlABUAJgA2ACUAJgA3ADYABQAXABYABQAWABUASQBIADgASQBKAFsASQA4ADkASQA5AEoAbQB+AGwAbQBbAFwAbQBsAFsAwQDCANMAwQDAAK8AwQCvALAA5QDmAPYA5QD2AOQA5QDUAOYA5QDkANQA8gDhAPMA8gDzAAMB8gADAfEA8gDxAOAA8gDgAOEAFQEEAQUBFQEDAQQBsQCwAKAAsQDCAMEAsQDBALAAjwB+AH8AjwB/AJAAjwChAKAAjwCQAKEArQC+AKwADAAdAAsADAANAB0ACgALABsAowCSAKQAowC1ALQAowCkALUAowC0AKIAkQB/AIAAkQCQAH8AkQChAJAAkQCiAKEAgwCEAJUAgwCVAJQAgwBxAHIAgwCCAHEAgwCTAIIAgwCUAJMA2QDaAOoA2QDqANgA2QDIAMkA2QDJANoA2QDHAMgA2QDYAMcAHAEbAQsBHAELAR0BGgEJARsBswCiALQAswC0AMUAswDFAMQAXgBvAF0AXgBfAG8AXgBNAF8AXgBdAEwAXgBMAE0ASwBMAFwASwA6AEwASwBKADoASwBcAFsASwBbAEoABAAVAAMABAAFABUAWgBrAFkAWgBZAEgAWgBIAEkAWgBbAGsAWgBJAFsA0QDjAOIA0QDAAMEA0QDiANAA0QDQAMAAFAETAQMBFAEDARUBBgAXAAUA0gDjANEA0gDRAMEA0gDBANMA0gDkAOMA0gDTAOQAFgEVAQUB+AD5AAoB+AAKAQkBLAAcAC0ALAAbABwAAQASABEAAQARAAAAEQH/AAABEQEQAf8AHgAvAC4AHgAuAB0AIAAPABAAIAAQACEAIAAfAA4AIAAOAA8AuAC3AKYAuACmAKcApQCmALcApQC3ALYADAH6APsADAELAfoADgEgAR8BDgEPASABDgEeAQ0BDgEfAR4BfwBuAG8AfwBvAIAAFwAnABYAFwAoACcABQEEAfMABQHzAPQAmQDMAN0AmQDcAMsAmQBDADIAmQBlAFQAmQCYAIcAmQAAABEAmQD/ABABmQAyACEAmQAQAAAAmQAPAf4AmQAQASABmQD+AO0AmQAiADMAmQAzAEQAmQDdAO4AmQB2AGUAmQDLALoAmQAhABAAmQB3AIgAmQCHAHYAmQAgAQ8BmQCpAJgAmQARACIAmQBEAFUAmQDuAP8AmQC7AMwAmQBVAGYAmQCqALsAmQBUAEMAmQC6AKkAmQDtANwAmQBmAHcAaQB5AGgAaQB6AHkADQAOAB8ADQAfAB4ACQAZAAgACQAaABkAhQBzAHQAhQCEAHMAHQENAR4BHQEMAQ0BGQEYAQcBGQEHAQgBAgADABQAAgAUABMAAgASAAEAAgATABIAbQBuAH8AbQB/AH4AbQBdAG4AbQBcAF0AEgECARMBEgEBAQIBEgERAQABEgEAAQEBsQChALIAsQCgAKEAsQCyAMMAsQDDAMIAjwB9AH4AjwCOAH0AjwCgAJ8AjwCfAI4ArQCsAJsArQCbAJwArQCuAL8ArQC/AL4ArQCdAK4ArQCcAJ0ACgAaAAkACgAbABoAkQCBAJIAkQCAAIEAkQCSAKMAkQCjAKIAgwBzAIQAgwByAHMAGgEZAQgBGgEIAQkBswCyAKEAswChAKIAswDDALIAswDEAMMABwAIABkABwAZABgAFwEHARgBFwEGAQcBBgAAABAABgAPAA4ABgABAAAABgADAAIABgAJAAgABgAQAA8ABgAOAA0ABgALAAoABgAMAAsABgACAAEABgAEAAMABgANAAwABgAKAAkABgAFAAQABgAIAAcABgAHABgABgAYABcAFgEgARABFgEeAR8BFgEQAREBFgESARMBFgEYARkBFgEfASABFgEdAR4BFgEaARsBFgEbARwBFgERARIBFgETARQBFgEcAR0BFgEZARoBFgEUARUBFgEXARgBFgEGARcBFgEFAQYB"},"1df69a7fa6ae":{"t":"q16","shape":[8,3],"lo":[-45.0,-14.0,-0.18],"hi":[45.0,14.0,0.0],"b64":"AAAAAAAAAAAAAP//AAD//wAAAAD///////8AAAAA//8AAP///////wAA////////"},"a5a43d6de7b4":{"t":"u16","shape":[12,3],"b64":"BgAAAAIABgAEAAAABQAAAAQABQABAAAABQAEAAYABQAGAAcAAwACAAAAAwAAAAEAAwAGAAIAAwAHAAYAAwABAAUAAwAFAAcA"},"c4a193e2d8f2":{"t":"q16","shape":[8,3],"lo":[-4.0,-2.5,-1.2],"hi":[4.0,2.5,0.0],"b64":"AAAAAAAAAAAAAP//AAD//wAAAAD///////8AAAAA//8AAP///////wAA////////"},"692df9b70513":{"t":"q16","shape":[49,3,3],"lo":[0.0,0.0,-2.53027436],"hi":[1.0,2.775,3.01972564],"b64":"AAAAAP//AAAAALZ0AAAAAAAAAAAAAP//AAAAALZ0AACWBQMAAAAAAP3/AAAAALZ0AAArCw4AAAAAAPv/AAAAALZ0AADAEB8AAAAAAPj/AAAAALZ0AABVFjgAAAAAAPT/AAAAALZ0AADpG1cAAAAAAO//AAAAALZ0AAB8IXwAAAAAAOn/AAAAALZ0AAAPJ6kAAAAAAOL/AAAAALZ0AACgLNwAAAAAANr/AAAAALZ0AAAvMhYBAAAAAND/AAAAALZ0AAC9N1cBAAAAAMb/AAAAALZ0AABKPZ4BAAAAALr/AAAAALZ0AADUQuwBAAAAAK7/AAAAALZ0AABdSEECAAAAAKD/AAAAALZ0AADjTZwCAAAAAJL/AAAAALZ0AABnU/4CAAAAAIL/AAAAALZ0AADoWGcDAAAAAHL/AAAAALZ0AABnXtYDAAAAAGD/AAAAALZ0AADiY0wEAAAAAE7/AAAAALZ0AABbackEAAAAADv/AAAAALZ0AADRbk0FAAAAACf/AAAAALZ0AABDdNgFAAAAABL/AAAAALZ0AACxeWkGAAAAAP3+AAAAALZ0AAAcfwIHAAAAAOf+AAAAALZ0AACDhKEHAAAAAND+AAAAALZ0AADmiUcIAAAAALj+AAAAALZ0AABFj/MIAAAAAJ/+AAAAALZ0AACglKYJAAAAAIb+AAAAALZ0AAD2mWAKAAAAAGv+AAAAALZ0AABHnyALAAAAAE/+AAAAALZ0AACTpOYLAAAAADP+AAAAALZ0AADaqbMMAAAAABX+AAAAALZ0AAAdr4cNAAAAAPf9AAAAALZ0AABZtGEOAAAAANj9AAAAALZ0AACRuUEPAAAAALj9AAAAALZ0AADCvigQAAAAAJf9AAAAALZ0AADuwxURAAAAAHb9AAAAALZ0AAAUyQgSAAAAAFP9AAAAALZ0AAA0zgITAAAAADD9AAAAALZ0AABO0wMUAAAAAA39AAAAALZ0AABh2AoVAAAAAOj8AAAAALZ0AABt3RcWAAAAAL/8AAAAALZ0AABz4icXAAAAAJL8AAAAALZ0AABy5zkYAAAAAF/8AAAAALZ0AABp7E0ZAAAAACb8AAAAALZ0AABa8WIaAAAAAOf7AAAAALZ0AABD9ncbAAAAAKL7AAAAALZ0AAAl+40cAAAAAFb7AAAAALZ0AAD//6Md"},"70058eaa7dd1":{"t":"s16","shape":[49,3,4],"b64":"/38AAAAAAAD/fwAAAAAAAP9/AAAAAAAA/3+zAAAAAAD/fwAAAAAAAP9/AAAAAAAA/X9lAQAAAAD/fwAAAAAAAP9/AAAAAAAA+38YAgAAAAD/fwAAAAAAAP9/AAAAAAAA93/LAgAAAAD/fwAAAAAAAP9/AAAAAAAA8399AwAAAAD/fwAAAAAAAP9/AAAAAAAA7X8wBAAAAAD/fwAAAAAAAP9/AAAAAAAA53/jBAAAAAD/fwAAAAAAAP9/AAAAAAAA4H+VBQAAAAD/fwAAAAAAAP9/AAAAAAAA2H9IBgAAAAD/fwAAAAAAAP9/AAAAAAAAzn/6BgAAAAD/fwAAAAAAAP9/AAAAAAAAxH+tBwAAAAD/fwAAAAAAAP9/AAAAAAAAuX9fCAAAAAD/fwAAAAAAAP9/AAAAAAAArX8RCQAAAAD/fwAAAAAAAP9/AAAAAAAAoH/ECQAAAAD/fwAAAAAAAP9/AAAAAAAAkX92CgAAAAD/fwAAAAAAAP9/AAAAAAAAgn8oCwAAAAD/fwAAAAAAAP9/AAAAAAAAcn/aCwAAAAD/fwAAAAAAAP9/AAAAAAAAYX+MDAAAAAD/fwAAAAAAAP9/AAAAAAAAT38+DQAAAAD/fwAAAAAAAP9/AAAAAAAAPH/vDQAAAAD/fwAAAAAAAP9/AAAAAAAAKH+hDgAAAAD/fwAAAAAAAP9/AAAAAAAAE39SDwAAAAD/fwAAAAAAAP9/AAAAAAAA/n4EEAAAAAD/fwAAAAAAAP9/AAAAAAAA5361EAAAAAD/fwAAAAAAAP9/AAAAAAAAz35mEQAAAAD/fwAAAAAAAP9/AAAAAAAAtn4XEgAAAAD/fwAAAAAAAP9/AAAAAAAAnH7IEgAAAAD/fwAAAAAAAP9/AAAAAAAAgn55EwAAAAD/fwAAAAAAAP9/AAAAAAAAZn4pFAAAAAD/fwAAAAAAAP9/AAAAAAAASX7aFAAAAAD/fwAAAAAAAP9/AAAAAAAALH6KFQAAAAD/fwAAAAAAAP9/AAAAAAAADX46FgAAAAD/fwAAAAAAAP9/AAAAAAAA7n3qFgAAAAD/fwAAAAAAAP9/AAAAAAAAzX2aFwAAAAD/fwAAAAAAAP9/AAAAAAAArH1JGAAAAAD/fwAAAAAAAP9/AAAAAAAAiX35GAAAAAD/fwAAAAAAAP9/AAAAAAAAZn2oGQAAAAD/fwAAAAAAAP9/AAAAAAAAQn1XGgAAAAD/fwAAAAAAAP9/AAAAAAAAHH0FGwAAAAD/fwAAAAAAAP9/AAAAAAAA9ny0GwAAAAD/fwAAAAAAAP9/AAAAAAAAz3xiHAAAAAD/fwAAAAAAAP9/AAAAAAAAp3wRHQAAAAD/fwAAAAAAAP9/AAAAAAAAfny/HQAAAAD/fwAAAAAAAP9/AAAAAAAAVHxsHgAAAAD/fwAAAAAAAP9/AAAAAAAAKXwaHwAAAAD/fwAAAAAAAP9/AAAAAAAA/XvHHwAAAAD/fwAAAAAAAP9/AAAAAAAA0Ht0IAAAAAD/fwAAAAAAAP9/AAAAAAAAonshIQAAAAD/fwAAAAAAAP9/AAAAAAAA"},"3ce365b7d150":{"t":"png","shape":[2,96,720,3],"png":["iVBORw0KGgoAAAANSUhEUgAAAtAAAABgCAIAAAC7YNKXAAABnElEQVR42u3coQ2AMABFQYqsIanAlNVw7EHYA8dqKBwbsAAISCqAO9lUffVS0RBTrgAASqpNAAAIDgBAcAAACA4AQHAAAIIDAEBwAACCAwBAcAAAggMA+IBw9bV5Ny7WgZ9bp/7W/W1ujAY/1w776bkXDgCgOMEBAAgOAEBwAAAIDgBAcAAAggMAQHAAAIIDAEBwAACCAwAQHAAAggMAEBwAgOAAABAcAIDgAAAQHACA4AAABAcAgOAAAAQHACA4AAAEBwAgOAAABAcAIDgAAMEBACA4AADBAQAIDgAAwQEACA4AAMEBAAgOAEBwAAAIDgBAcAAAggMAQHAAAIIDAEBwAACCAwAQHAAAggMAEBwAgOAAABAcAIDgAAAQHACA4AAABAcAgOAAAAQHACA4AAAEBwAgOAAABAcAIDgAAMEBACA4AADBAQAIDgAAwQEACA4AAMEBAAgOAEBwAAAIDgBAcAAAggMAQHAAAIIDAEBwAACCAwAQHAAAD4SYshUAgKK8cAAAggMAEBwAAIIDABAcAIDgAAAQHADACxztewdjQs2etQAAAABJRU5ErkJggg==","iVBORw0KGgoAAAANSUhEUgAAAtAAAABgCAIAAAC7YNKXAAABnklEQVR42u3cIQqAMACGUWdcERYs82o27yHew+bVTDZv4AW0CANl78XFP31ssBBTbgAASmpNAAAIDgBAcAAACA4AQHAAAIIDAEBwAACCAwBAcAAA5YWnn0aHebMOVG5fRiMAggP4VnAca2c0qFw/nbfnnlQAgOIEBwAgOAAAwQEAIDgAAMEBAAgOAADBAQAIDgAAwQEACA4AQHAAAAgOAEBwAACCAwBAcAAAggMAQHAAAIIDABAcAACCAwAQHACA4AAAEBwAgOAAABAcAIDgAAAEBwCA4AAABAcAIDgAAAQHACA4AAAEBwAgOAAAwQEAIDgAAMEBAAgOAADBAQAIDgAAwQEACA4AQHAAAAgOAEBwAACCAwBAcAAAggMAQHAAAIIDABAcAACCAwAQHACA4AAAEBwAgOAAABAcAIDgAAAEBwCA4AAABAcAIDgAAAQHACA4AAAEBwAgOAAAwQEAIDgAAMEBAAgOAADBAQAIDgAAwQEACA4AQHAAALwQYspWAACKcsMBAAgOAEBwAAAIDgBAcAAAggMAQHAAAD9wARULCplwLQTVAAAAAElFTkSuQmCC"]},"e0dbf87114d0":{"t":"q16","shape":[49,3],"lo":[-7.447618799999999e-15,-5.02095804e-16,-1.75688283],"hi":[4.52734869e-15,0.524242224,-1.71406252],"b64":"e8kAAAAApoTeBS4A68nCC7sA57GrEZ8BCKqYF9QClJCIHVQEGpd6IxsGwahtKScIN5FfL3QKoapPNQINX586O88PopsgQdoStcj+RiMW3pzUTKsZSJWfUnIdV5BeWHkhj6QPXsMlHqWyY1MqZ51EaSwv35vFblU0fKA1dNQ5maGVeas/T2DsftpF//89hF5MoJWHiS5TS5jIjkJa9J4BlJhhxoAvmSlp1nJRnvJwtGBlo/J45Z5qqCWB9bVerYuJVKNAsiKScoQOt+uaMKPFu+Wjc7pmwBCt257uxG+2H5pbyQTACJyszdPJ+lrh0eDTzpL51TLeAAAK2l3oiuFW3j3xUNj14kv4raH25zb98ZZb7dD/Z64p8///k6xg+a79QkD//9n4"},"57c46b1962be":{"t":"q16","shape":[49,3],"lo":[0.0,0.0,-2.53027436],"hi":[1.0,2.775,-1.88777369],"b64":"AAAAAAAAAACWBR4AAAArC3gAAADAEA4BAABVFuABAADpG+wCAAB8ITIEAAAPJ7MFAACgLG4HAAAvMmIJAAC9N5ELAABKPfkNAADUQpoQAABdSHYTAADjTYoWAABnU9kZAADoWGIdAABnXiQhAADiYyElAABbaVkpAADRbsstAABDdHoyAACxeWM3AAAcf4c8AACDhOZBAADmiX5HAABFj1BNAACglFpTAAD2mZxZAABHnxdgAACTpMpmAADaqbVtAAAdr9d0AABZtDF8AACRucODAADCvouLAADuw4yTAAAUycSbAAA0zjOkAABO09usAABh2Ly1AABt3c2+AABz4vzHAABy5z7RAABp7IzaAABa8ePjAABD9kDtAAAl+5/2AAD/////"},"a1b7b74b6967":{"t":"q16","shape":[49,2,3],"lo":[0.0,0.0,0.0],"hi":[1.0,1.0,3.01972564],"b64":"AAAAAP//AAAAAAAAAAAAAP7/AAAAAAAAAAAAAPz/AAAAAAAAAAAAAPj/AAAAAAAAAAAAAPL/AAAAAAAAAAAAAOv/AAAAAAAAAAAAAOL/AAAAAAAAAAAAANb/AAAAAAAAAAAAAMn/AAAAAAAAAAAAALr/AAAAAAAAAAAAAKn/AAAAAAAAAAAAAJb/AAAAAAAAAAAAAIH/AAAAAAAAAAAAAGr/AAAAAAAAAAAAAFH/AAAAAAAAAAAAADb/AAAAAAAAAAAAABn/AAAAAAAAAAAAAPv+AAAAAAAAAAAAANv+AAAAAAAAAAAAALn+AAAAAAAAAAAAAJb+AAAAAAAAAAAAAHL+AAAAAAAAAAAAAEz+AAAAAAAAAAAAACX+AAAAAAAAAAAAAPz9AAAAAAAAAAAAANL9AAAAAAAAAAAAAKb9AAAAAAAAAAAAAHn9AAAAAAAAAAAAAEn9AAAAAAAAAAAAABj9AAAAAAAAAAAAAOb8AAAAAAAAAAAAALH8AAAAAAAAAAAAAHv8AAAAAAAAAAAAAET8AAAAAAAAAAAAAAr8AAAAAAAAAAAAAM/7AAAAAAAAAAAAAJP7AAAAAAAAAAAAAFX7AAAAAAAAAAAAABb7AAAAAAAAAAAAANb6AAAAAAAAAAAAAJX6AAAAAAAAAAAAAFH6AAAAAAAAAAAAAAb6AAAAAAAAAAAAALP5AAAAAAAAAAAAAFb5AAAAAAAAAAAAAO34AAAAAAAAAAAAAHr4AAAAAAAAAAAAAPr3AAAAAAAAAAAAAG73AAAAAAAA"},"6cd3b1ea9301":{"t":"s16","shape":[49,2,4],"b64":"/38AAAAAAAD/fwAAAAAAAP9/swAAAAAA/38AAAAAAAD9f2UBAAAAAP9/AAAAAAAA+38YAgAAAAD/fwAAAAAAAPd/ywIAAAAA/38AAAAAAADzf30DAAAAAP9/AAAAAAAA7X8wBAAAAAD/fwAAAAAAAOd/4wQAAAAA/38AAAAAAADgf5UFAAAAAP9/AAAAAAAA2H9IBgAAAAD/fwAAAAAAAM5/+gYAAAAA/38AAAAAAADEf60HAAAAAP9/AAAAAAAAuX9fCAAAAAD/fwAAAAAAAK1/EQkAAAAA/38AAAAAAACgf8QJAAAAAP9/AAAAAAAAkX92CgAAAAD/fwAAAAAAAIJ/KAsAAAAA/38AAAAAAAByf9oLAAAAAP9/AAAAAAAAYX+MDAAAAAD/fwAAAAAAAE9/Pg0AAAAA/38AAAAAAAA8f+8NAAAAAP9/AAAAAAAAKH+hDgAAAAD/fwAAAAAAABN/Ug8AAAAA/38AAAAAAAD+fgQQAAAAAP9/AAAAAAAA5361EAAAAAD/fwAAAAAAAM9+ZhEAAAAA/38AAAAAAAC2fhcSAAAAAP9/AAAAAAAAnH7IEgAAAAD/fwAAAAAAAIJ+eRMAAAAA/38AAAAAAABmfikUAAAAAP9/AAAAAAAASX7aFAAAAAD/fwAAAAAAACx+ihUAAAAA/38AAAAAAAANfjoWAAAAAP9/AAAAAAAA7n3qFgAAAAD/fwAAAAAAAM19mhcAAAAA/38AAAAAAACsfUkYAAAAAP9/AAAAAAAAiX35GAAAAAD/fwAAAAAAAGZ9qBkAAAAA/38AAAAAAABCfVcaAAAAAP9/AAAAAAAAHH0FGwAAAAD/fwAAAAAAAPZ8tBsAAAAA/38AAAAAAADPfGIcAAAAAP9/AAAAAAAAp3wRHQAAAAD/fwAAAAAAAH58vx0AAAAA/38AAAAAAABUfGweAAAAAP9/AAAAAAAAKXwaHwAAAAD/fwAAAAAAAP17xx8AAAAA/38AAAAAAADQe3QgAAAAAP9/AAAAAAAAonshIQAAAAD/fwAAAAAAAA=="}}};
+const $ = id => document.getElementById(id);
+const qs = new URLSearchParams(location.search);
+function pickLang(q, nav, langs){
+  if (q && langs.indexOf(q) >= 0) return q;
+  const n = String(nav || '').toLowerCase().replace(/_/g, '-');
+  let t = 'en';
+  if (n.indexOf('zh') === 0) t = /^zh-(tw|hk|mo)\b|hant/.test(n) ? 'tw' : 'zh';
+  else { const p = n.slice(0, 2); if (['ko', 'de', 'hi', 'fr', 'ja'].indexOf(p) >= 0 && (n.length === 2 || n[2] === '-')) t = p; }
+  return langs.indexOf(t) >= 0 ? t : (langs.indexOf('en') >= 0 ? 'en' : langs[0]);
+}
+let L = pickLang(qs.get('lang'), (typeof navigator !== 'undefined' && navigator.language) || '', D.langs);
+const T = o => o == null ? '' : (typeof o === 'string' ? o : (o[L] || ''));
+const U = k => T(D.ui[k]);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const tabs = D.tabs;
+let cur = tabs.some(t => t.id === qs.get('tab')) ? qs.get('tab') : tabs[0].id;
+const get = () => tabs.find(t => t.id === cur);
+
+/* ---------- 配列の復元(Python の decode_array と同じ式) ---------- */
+const cache = {};
+function arr(key){
+  if (cache[key]) return cache[key];
+  const rec = D.arrays[key];
+  if (rec.t === 'png') return cache[key] = {a: null, shape: rec.shape, png: rec.png};   /* コマごとの PNG は pngImg で読む */
+  const b = atob(rec.b64), u = new Uint8Array(b.length);
+  for (let i = 0; i < b.length; i++) u[i] = b.charCodeAt(i);
+  let r;
+  switch (rec.t) {
+    case 'u8': case 'q8': r = u; break;
+    case 'u16': case 'q16': r = new Uint16Array(u.buffer); break;
+    case 'u32': r = new Uint32Array(u.buffer); break;
+    case 's16': r = new Int16Array(u.buffer); break;
+    default: r = new Float32Array(u.buffer);
+  }
+  let out = r;
+  if (rec.t === 'q8' || rec.t === 'q16') {
+    const maxv = rec.t === 'q8' ? 255 : 65535, nax = rec.lo.length;
+    out = new Float64Array(r.length);
+    for (let i = 0; i < r.length; i++) { const a = i % nax; out[i] = rec.lo[a] + r[i] * (rec.hi[a] - rec.lo[a]) / maxv; }
+  }
+  if (rec.t === 's16') { out = new Float64Array(r.length); for (let i = 0; i < r.length; i++) out[i] = r[i] / 32767; }
+  return cache[key] = {a: out, shape: rec.shape};
+}
+
+/* ---------- 色 ---------- */
+const STOPS = {
+  div: ['#e66101','#fdb863','#e6ebef','#7fb0e6','#2f7fd6'],
+  seq: ['#30409a','#2a9fb5','#7fcf8a','#f2e05a','#f2863c']
+};
+const hex = h => [parseInt(h.slice(1,3),16), parseInt(h.slice(3,5),16), parseInt(h.slice(5,7),16)];
+function cmapRGB(name, t){
+  const s = STOPS[name].map(hex); t = Math.min(1, Math.max(0, t));
+  const x = t * (s.length - 1), i = Math.min(s.length - 2, Math.floor(x)), f = x - i;
+  return [0,1,2].map(k => s[i][k] + (s[i+1][k] - s[i][k]) * f);
+}
+function colorsOf(tab){
+  const n = tab.n, c = new Uint8Array(n * 3);
+  if (tab.val != null) {
+    const V = arr(tab.val).a, cb = tab.cbar, sp = cb.hi - cb.lo;
+    for (let i = 0; i < n; i++) { const r = cmapRGB(cb.cmap, (V[i] - cb.lo) / sp); c[i*3] = r[0]; c[i*3+1] = r[1]; c[i*3+2] = r[2]; }
+  } else { c.set(arr(tab.rgb).a); }
+  return c;
+}
+
+/* ---------- 行列 ---------- */
+function mul(a,b){const o=new Float32Array(16);for(let c=0;c<4;c++)for(let r=0;r<4;r++){let s=0;for(let k=0;k<4;k++)s+=a[k*4+r]*b[c*4+k];o[c*4+r]=s;}return o;}
+function persp(fy,as,n,f){const t=1/Math.tan(fy/2),nf=1/(n-f);return new Float32Array([t/as,0,0,0, 0,t,0,0, 0,0,(f+n)*nf,-1, 0,0,2*f*n*nf,0]);}
+function look(e,c,u){let z=[e[0]-c[0],e[1]-c[1],e[2]-c[2]];const zl=Math.hypot(z[0],z[1],z[2]);z=[z[0]/zl,z[1]/zl,z[2]/zl];
+  let x=[u[1]*z[2]-u[2]*z[1],u[2]*z[0]-u[0]*z[2],u[0]*z[1]-u[1]*z[0]];const xl=Math.hypot(x[0],x[1],x[2])||1;x=[x[0]/xl,x[1]/xl,x[2]/xl];
+  const y=[z[1]*x[2]-z[2]*x[1],z[2]*x[0]-z[0]*x[2],z[0]*x[1]-z[1]*x[0]];
+  return new Float32Array([x[0],y[0],z[0],0, x[1],y[1],z[1],0, x[2],y[2],z[2],0,
+    -(x[0]*e[0]+x[1]*e[1]+x[2]*e[2]),-(y[0]*e[0]+y[1]*e[1]+y[2]*e[2]),-(z[0]*e[0]+z[1]*e[1]+z[2]*e[2]),1]);}
+
+/* ---------- WebGL ---------- */
+const cv = $('gl'), c2 = $('c2d'), ctx = c2.getContext('2d');
+const gl = cv.getContext('webgl', {antialias:true}) || cv.getContext('experimental-webgl');
+const u32ext = gl ? gl.getExtension('OES_element_index_uint') : null;
+function sh(t, src){ const o = gl.createShader(t); gl.shaderSource(o, src); gl.compileShader(o);
+  if (!gl.getShaderParameter(o, gl.COMPILE_STATUS)) console.error(gl.getShaderInfoLog(o)); return o; }
+function prog(vs, fs){ const p = gl.createProgram(); gl.attachShader(p, sh(gl.VERTEX_SHADER, vs)); gl.attachShader(p, sh(gl.FRAGMENT_SHADER, fs));
+  gl.linkProgram(p); if (!gl.getProgramParameter(p, gl.LINK_STATUS)) { console.error(gl.getProgramInfoLog(p)); return null; } return p; }
+let PP = null, MP = null;
+if (gl) {
+  PP = prog('attribute vec3 a_p;attribute vec3 a_c;uniform mat4 u_vp;uniform float u_ps;varying vec3 v_c;'+
+    'void main(){gl_Position=u_vp*vec4(a_p,1.0);v_c=a_c;gl_PointSize=clamp(u_ps/gl_Position.w,1.5,28.0);}',
+    'precision mediump float;varying vec3 v_c;void main(){vec2 d=gl_PointCoord-0.5;if(dot(d,d)>0.25)discard;gl_FragColor=vec4(v_c,1.0);}');
+  MP = prog('attribute vec3 a_p;attribute vec3 a_n;attribute vec3 a_c;uniform mat4 u_vp;varying vec3 v_n;varying vec3 v_c;'+
+    'void main(){gl_Position=u_vp*vec4(a_p,1.0);v_n=a_n;v_c=a_c;}',
+    'precision mediump float;varying vec3 v_n;varying vec3 v_c;uniform vec3 u_l;'+
+    'void main(){float d=abs(dot(normalize(v_n),u_l))*0.65+0.38;gl_FragColor=vec4(v_c*d,1.0);}');
+}
+function buf(data, target){ const b = gl.createBuffer(); gl.bindBuffer(target || gl.ARRAY_BUFFER, b); gl.bufferData(target || gl.ARRAY_BUFFER, data, gl.STATIC_DRAW); return b; }
+
+const scenes = {};
+function bbox(P){
+  const lo = [Infinity,Infinity,Infinity], hi = [-Infinity,-Infinity,-Infinity];
+  for (let i = 0; i < P.length; i += 3) for (let k = 0; k < 3; k++) { const v = P[i+k]; if (v < lo[k]) lo[k] = v; if (v > hi[k]) hi[k] = v; }
+  return {lo, hi, ctr: [0,1,2].map(k => (lo[k] + hi[k]) / 2)};
+}
+function centred(P, ctr){ const o = new Float32Array(P.length); for (let i = 0; i < P.length; i++) o[i] = P[i] - ctr[i % 3]; return o; }
+function scene3d(tab){
+  if (tab.kind === 'anim3d') return sceneAnim(tab);
+  if (scenes[tab.id]) return scenes[tab.id];
+  const P = arr(tab.pos).a, bb = bbox(P), n = tab.n;
+  const rad = 0.5 * Math.hypot(bb.hi[0]-bb.lo[0], bb.hi[1]-bb.lo[1], bb.hi[2]-bb.lo[2]) || 1;
+  const S = {rad, n, cbufC: null};
+  S.pos = buf(centred(P, bb.ctr)); S.col = buf(colorsOf(tab));
+  if (tab.kind === 'points') {
+    S.ps = tab.point_size || (3.2 * rad / Math.sqrt(n));
+    if (tab.ghost != null) {
+      const G = arr(tab.ghost).a, gc = new Uint8Array(G.length); gc.fill(110);
+      S.gpos = buf(centred(G, bb.ctr)); S.gcol = buf(gc); S.gn = G.length / 3;
+    }
+  } else {
+    const F = arr(tab.faces).a, nv = n;
+    if (nv > 65535 && !u32ext) { S.fail = true; return scenes[tab.id] = S; }
+    const idx = nv > 65535 ? new Uint32Array(F) : new Uint16Array(F);
+    const N = new Float32Array(P.length);
+    for (let f = 0; f < F.length; f += 3) {
+      const a = F[f]*3, b = F[f+1]*3, c = F[f+2]*3;
+      const ux = P[b]-P[a], uy = P[b+1]-P[a+1], uz = P[b+2]-P[a+2], vx = P[c]-P[a], vy = P[c+1]-P[a+1], vz = P[c+2]-P[a+2];
+      const nx = uy*vz-uz*vy, ny = uz*vx-ux*vz, nz = ux*vy-uy*vx;
+      for (const q of [a,b,c]) { N[q] += nx; N[q+1] += ny; N[q+2] += nz; }
+    }
+    for (let i = 0; i < N.length; i += 3) { const l = Math.hypot(N[i],N[i+1],N[i+2]) || 1; N[i]/=l; N[i+1]/=l; N[i+2]/=l; }
+    S.nrm = buf(N); S.idx = buf(idx, gl.ELEMENT_ARRAY_BUFFER); S.count = idx.length; S.itype = nv > 65535 ? gl.UNSIGNED_INT : gl.UNSIGNED_SHORT;
+  }
+  return scenes[tab.id] = S;
+}
+
+/* ---------- 状態 ---------- */
+let az = -1.0, el = 0.5, dist = 3, playing = false, frame = 0, last = performance.now(), dirty = true;
+let atime = 0;   /* anim3d の再生時刻(秒、t と同じ尺度) */
+let splitX = 0.5;
+const PRESETS = {front:[-Math.PI/2, 0.08, 1], side:[0, 0.08, 1], iso:[-1.0, 0.5, 1], top:[-Math.PI/2, 1.5, 1]};
+function dist0(S){ return S.rad * 2.0; }
+function applyView(tab, S){
+  const v = tab.view || {};
+  az = v.az != null ? v.az : -1.0; el = v.el != null ? v.el : 0.5; dist = dist0(S) * (v.dist != null ? v.dist : 1);
+}
+function isTwoD(tab){ return tab.kind === 'frames' || tab.kind === 'split'; }
+
+function resize3d(){
+  const r = cv.getBoundingClientRect(), d = Math.min(2, window.devicePixelRatio || 1);
+  const w = Math.max(1, Math.round(r.width * d)), h = Math.max(1, Math.round(r.height * d));
+  if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; }
+  gl.viewport(0, 0, cv.width, cv.height);
+}
+function draw3d(tab){
+  if (tab.kind === 'anim3d') { drawAnim(tab); return; }
+  const S = scene3d(tab);
+  if (S.fail || !PP) { showErr(U('nogl')); return; }
+  resize3d();
+  const cd = Math.cos(el), sd = Math.sin(el), ca = Math.cos(az), sa = Math.sin(az);
+  const eye = [dist*cd*ca, dist*cd*sa, dist*sd];
+  const fy = 0.9, vp = mul(persp(fy, cv.width/cv.height, S.rad*0.02, S.rad*40), look(eye, [0,0,0], [0,0,1]));
+  gl.enable(gl.DEPTH_TEST); gl.clearColor(0.051, 0.067, 0.086, 1); gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  if (tab.kind === 'points') {
+    gl.useProgram(PP);
+    const lp = gl.getAttribLocation(PP, 'a_p'), lc = gl.getAttribLocation(PP, 'a_c');
+    gl.uniformMatrix4fv(gl.getUniformLocation(PP, 'u_vp'), false, vp);
+    const px = S.ps * cv.height / (2 * Math.tan(fy / 2));
+    gl.uniform1f(gl.getUniformLocation(PP, 'u_ps'), px);
+    const run = (pb, cb, cnt) => {
+      gl.bindBuffer(gl.ARRAY_BUFFER, pb); gl.enableVertexAttribArray(lp); gl.vertexAttribPointer(lp, 3, gl.FLOAT, false, 0, 0);
+      gl.bindBuffer(gl.ARRAY_BUFFER, cb); gl.enableVertexAttribArray(lc); gl.vertexAttribPointer(lc, 3, gl.UNSIGNED_BYTE, true, 0, 0);
+      gl.drawArrays(gl.POINTS, 0, cnt);
+    };
+    if (S.gpos) run(S.gpos, S.gcol, S.gn);
+    run(S.pos, S.col, S.n);
+  } else {
+    gl.useProgram(MP);
+    const lp = gl.getAttribLocation(MP, 'a_p'), ln = gl.getAttribLocation(MP, 'a_n'), lc = gl.getAttribLocation(MP, 'a_c');
+    gl.bindBuffer(gl.ARRAY_BUFFER, S.pos); gl.enableVertexAttribArray(lp); gl.vertexAttribPointer(lp, 3, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ARRAY_BUFFER, S.nrm); gl.enableVertexAttribArray(ln); gl.vertexAttribPointer(ln, 3, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ARRAY_BUFFER, S.col); gl.enableVertexAttribArray(lc); gl.vertexAttribPointer(lc, 3, gl.UNSIGNED_BYTE, true, 0, 0);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, S.idx);
+    let l = [eye[0]/dist*0.5, eye[1]/dist*0.5, eye[2]/dist*0.5 + 0.5]; const ll = Math.hypot(l[0], l[1], l[2]); l = l.map(v => v/ll);
+    gl.uniform3f(gl.getUniformLocation(MP, 'u_l'), l[0], l[1], l[2]);
+    gl.uniformMatrix4fv(gl.getUniformLocation(MP, 'u_vp'), false, vp);
+    gl.drawElements(gl.TRIANGLES, S.count, S.itype, 0);
+  }
+  const deg = ((az * 180 / Math.PI) % 360 + 360) % 360;
+  $('hud').innerHTML = esc(tab.n.toLocaleString() + ' ' + (tab.kind === 'points' ? U('points') : U('verts'))) + '<br>' + esc(U('drag'));
+  $('tlabel').textContent = U('azimuth') + ' ' + deg.toFixed(0) + '°';
+  $('scrub').value = String(Math.round(deg / 360 * 1000));
+}
+
+/* ---------- 動く 3-D(anim3d)。物体の頂点は GPU に 1 回だけ上げ、コマごとには姿勢(model 行列)だけを渡す ---------- */
+let AP = null, LP = null;
+if (gl) {
+  AP = prog('attribute vec3 a_p;attribute vec3 a_n;attribute vec3 a_c;uniform mat4 u_vp;uniform mat4 u_m;varying vec3 v_n;varying vec3 v_c;'+
+    'void main(){gl_Position=u_vp*u_m*vec4(a_p,1.0);v_n=(u_m*vec4(a_n,0.0)).xyz;v_c=a_c;}',
+    'precision mediump float;varying vec3 v_n;varying vec3 v_c;uniform vec3 u_l;'+
+    'void main(){float d=abs(dot(normalize(v_n),u_l))*0.65+0.38;gl_FragColor=vec4(v_c*d,1.0);}');
+  LP = prog('attribute vec3 a_p;attribute float a_s;uniform mat4 u_vp;uniform float u_tc;uniform float u_tail;varying float v_a;'+
+    'void main(){gl_Position=u_vp*vec4(a_p,1.0);v_a=u_tail>0.0?clamp(1.0-(u_tc-a_s)/u_tail,0.0,1.0):1.0;}',
+    'precision mediump float;uniform vec3 u_col;varying float v_a;void main(){gl_FragColor=vec4(u_col,v_a);}');
+}
+const anims = {};
+function attrsOff(){ if (!gl) return; const n = gl.getParameter(gl.MAX_VERTEX_ATTRIBS); for (let i = 0; i < Math.min(n, 8); i++) gl.disableVertexAttribArray(i); }
+function normalsOf(P, F){
+  const N = new Float32Array(P.length);
+  for (let f = 0; f < F.length; f += 3) {
+    const a = F[f]*3, b = F[f+1]*3, c = F[f+2]*3;
+    const ux = P[b]-P[a], uy = P[b+1]-P[a+1], uz = P[b+2]-P[a+2], vx = P[c]-P[a], vy = P[c+1]-P[a+1], vz = P[c+2]-P[a+2];
+    const nx = uy*vz-uz*vy, ny = uz*vx-ux*vz, nz = ux*vy-uy*vx;
+    for (const q of [a,b,c]) { N[q] += nx; N[q+1] += ny; N[q+2] += nz; }
+  }
+  for (let i = 0; i < N.length; i += 3) { const l = Math.hypot(N[i],N[i+1],N[i+2]) || 1; N[i]/=l; N[i+1]/=l; N[i+2]/=l; }
+  return N;
+}
+/* 単位四元数 (w,x,y,z) + 位置 → 列優先の 4x4(Python の _quat_matrix と同じ式) */
+function quatMat(w, x, y, z, px, py, pz){
+  const n = Math.hypot(w, x, y, z) || 1; w /= n; x /= n; y /= n; z /= n;
+  return new Float32Array([1-2*(y*y+z*z), 2*(x*y+w*z), 2*(x*z-w*y), 0,
+                           2*(x*y-w*z), 1-2*(x*x+z*z), 2*(y*z+w*x), 0,
+                           2*(x*z+w*y), 2*(y*z-w*x), 1-2*(x*x+y*y), 0,
+                           px, py, pz, 1]);
+}
+function frameAt(tab, tt){
+  const t = tab.t; let a = 0, b = t.length - 1;
+  if (tt <= t[0]) return 0; if (tt >= t[b]) return b;
+  while (b - a > 1) { const m = (a + b) >> 1; if (t[m] <= tt) a = m; else b = m; }
+  return a;
+}
+function seekFrame(tab, k){
+  if (tab.kind !== 'anim3d') return;
+  k = Math.max(0, Math.min(tab.t.length - 1, k)); atime = tab.t[k]; frame = k; dirty = true;
+}
+function animStep(tab, dt){
+  const n = tab.t.length, t0 = tab.t[0], tN = tab.t[n-1], step = n > 1 ? (tN - t0) / (n - 1) : 0;
+  atime += dt * (+$('rate').value || 1);
+  if (atime >= tN + step) {                       /* 最後のコマも 1 コマぶん見せてから */
+    if ($('loop').checked && n > 1) atime = t0 + (atime - t0) % (tN - t0 + step);
+    else { atime = tN; playing = false; setBtn(); }
+  }
+  frame = frameAt(tab, atime);
+}
+function sceneAnim(tab){
+  if (anims[tab.id]) return anims[tab.id];
+  if (!gl) return anims[tab.id] = {fail: true, rad: 1, ctr: [0,0,0], tgt: [0,0,0]};
+  const X = arr(tab.xyz).a, Q = arr(tab.quat).a, B = tab.bodies.length, T_ = tab.t.length, t0 = tab.t[0];
+  const S = {B, T: T_, X, Q, bodies: [], trails: [], clouds: []};
+  const lo = [Infinity,Infinity,Infinity], hi = [-Infinity,-Infinity,-Infinity];
+  const grow = (x, y, z, r) => { const v = [x, y, z]; for (let k = 0; k < 3; k++) { if (v[k]-r < lo[k]) lo[k] = v[k]-r; if (v[k]+r > hi[k]) hi[k] = v[k]+r; } };
+  for (let j = 0; j < B; j++) {
+    const b = tab.bodies[j], P = arr(b.pos).a, F = arr(b.faces).a;
+    if (b.n > 65535 && !u32ext) { S.fail = true; return anims[tab.id] = Object.assign(S, {rad: 1, ctr: [0,0,0], tgt: [0,0,0]}); }
+    const blo = [Infinity,Infinity,Infinity], bhi = [-Infinity,-Infinity,-Infinity];   /* 物体の局所 AABB */
+    for (let i = 0; i < P.length; i += 3) for (let k = 0; k < 3; k++) { blo[k] = Math.min(blo[k], P[i+k]); bhi[k] = Math.max(bhi[k], P[i+k]); }
+    const corners = [];
+    for (const x of [blo[0], bhi[0]]) for (const y of [blo[1], bhi[1]]) for (const z of [blo[2], bhi[2]]) corners.push([x, y, z]);
+    const col = new Uint8Array(b.n * 3);
+    if (b.rgb1) { for (let i = 0; i < b.n; i++) col.set(b.rgb1, i*3); }
+    else if (b.rgb != null) col.set(arr(b.rgb).a);
+    else { const V = arr(b.val).a, cb = tab.cbar, sp = cb.hi - cb.lo;
+      for (let i = 0; i < b.n; i++) { const c = cmapRGB(cb.cmap, (V[i] - cb.lo) / sp); col[i*3] = c[0]; col[i*3+1] = c[1]; col[i*3+2] = c[2]; } }
+    const idx = b.n > 65535 ? new Uint32Array(F) : new Uint16Array(F);
+    S.bodies.push({pos: buf(new Float32Array(P)), nrm: buf(normalsOf(P, F)), col: buf(col),
+      idx: buf(idx, gl.ELEMENT_ARRAY_BUFFER), count: idx.length, itype: b.n > 65535 ? gl.UNSIGNED_INT : gl.UNSIGNED_SHORT});
+    for (let f = 0; f < T_; f++) {                  /* 場面の大きさ = 全コマで動かした AABB の角 */
+      const o = f*B + j, m = quatMat(Q[o*4], Q[o*4+1], Q[o*4+2], Q[o*4+3], X[o*3], X[o*3+1], X[o*3+2]);
+      for (const c of corners) grow(m[0]*c[0]+m[4]*c[1]+m[8]*c[2]+m[12], m[1]*c[0]+m[5]*c[1]+m[9]*c[2]+m[13], m[2]*c[0]+m[6]*c[1]+m[10]*c[2]+m[14], 0);
+    }
+  }
+  for (const tr of tab.trails) {
+    const P = arr(tr.xyz).a, s = new Float32Array(T_);
+    for (let f = 0; f < T_; f++) { s[f] = tab.t[f] - t0; grow(P[f*3], P[f*3+1], P[f*3+2], 0); }
+    S.trails.push({pos: buf(new Float32Array(P)), s: buf(s), col: hex(tr.color).map(v => v / 255), tail: tr.tail});
+  }
+  for (const c of tab.clouds) {
+    const P = arr(c.pos).a; let col;
+    if (c.rgb != null) col = new Uint8Array(arr(c.rgb).a);
+    else { col = new Uint8Array(c.n * 3); const h = hex(c.color); for (let i = 0; i < c.n; i++) col.set(h, i*3); }
+    for (let i = 0; i < P.length; i += 3) grow(P[i], P[i+1], P[i+2], 0);
+    S.clouds.push({k: c.k, n: c.n, pos: buf(new Float32Array(P)), col: buf(col), ps: c.point_size || 0});
+  }
+  S.ctr = [0,1,2].map(k => (lo[k] + hi[k]) / 2);
+  if (tab.view && tab.view.target) S.ctr = tab.view.target.slice();   /* 見たい所(作業域)を中心に */
+  S.rad = 0.5 * Math.hypot(hi[0]-lo[0], hi[1]-lo[1], hi[2]-lo[2]) || 1;
+  for (const c of S.clouds) if (!c.ps) c.ps = 3.2 * S.rad / Math.sqrt(c.n) * 0.5;
+  S.tgt = S.ctr.slice();                          /* 追従の注視点(平滑化して動かす) */
+  return anims[tab.id] = S;
+}
+function followPoint(tab, S, f){
+  if (tab.follow != null) { const o = (f*S.B + tab.follow)*3; return [S.X[o], S.X[o+1], S.X[o+2]]; }
+  const c = [0, 0, 0];
+  for (let j = 0; j < S.B; j++) { const o = (f*S.B + j)*3; c[0] += S.X[o]; c[1] += S.X[o+1]; c[2] += S.X[o+2]; }
+  return c.map(v => v / S.B);
+}
+/* 追従: 目標へ指数で寄せる(時定数 0.35 s)。コマごとの小さな揺れはならされ、カメラは跳ばない */
+function followTick(tab, dt){
+  const S = sceneAnim(tab); if (S.fail) return false;
+  const p = followPoint(tab, S, Math.floor(frame)), a = 1 - Math.exp(-Math.max(dt, 1e-3) / 0.35);
+  let moved = 0;
+  for (let k = 0; k < 3; k++) { const d = p[k] - S.tgt[k]; S.tgt[k] += d * a; moved = Math.max(moved, Math.abs(d)); }
+  return moved > S.rad * 1e-4;
+}
+function curEvent(tab, f){ let e = -1; tab.events.forEach((ev, j) => { if (ev.k <= f) e = j; }); return e; }
+function drawAnimHud(tab, f){
+  const T_ = tab.t.length, ei = curEvent(tab, f);
+  let hud = tab.axis ? '<b>' + esc(axisText(tab, f)) + '</b>  <span style="opacity:.7">(' + U('frame') + ' ' + f + ' / ' + (T_-1) + ')</span>'
+    : U('frame') + ' ' + f + ' / ' + (T_-1) + '  (' + (tab.t[f] - tab.t[0]).toFixed(2) + ' s)';
+  if (ei >= 0) hud += '<br>' + esc(U('stage')) + ': <b>' + esc(T(tab.events[ei].label)) + '</b>';
+  for (const s of tab.series) {
+    const v = s.values[f]; let line = esc(T(s.label)) + ': ' + (v == null ? '—' : v.toFixed(s.decimals) + (s.unit ? ' ' + esc(s.unit) : ''));
+    if (s.threshold != null && v != null) line += ' (' + esc(v >= s.threshold ? U('above') : U('below')) + ' ' + s.threshold.toFixed(s.decimals) + ')';
+    hud += '<br><span style="color:' + esc(s.color) + '">■</span> ' + line;
+  }
+  hud += '<br>' + esc(tab.bodies.length + ' ' + U('bodies') + ' · ' + U('drag'));
+  $('hud').innerHTML = hud;
+  $('tlabel').textContent = tab.axis ? axisText(tab, f) : (tab.t[f] - tab.t[0]).toFixed(2) + ' s';
+  $('scrub').value = String(Math.round(f / Math.max(1, T_-1) * 1000));
+  document.querySelectorAll('#evs [data-ev]').forEach(b => b.classList.toggle('on', +b.dataset.ev === ei));
+}
+function drawAnim(tab){
+  const S = sceneAnim(tab), f = Math.max(0, Math.min(tab.t.length - 1, Math.floor(frame)));
+  if (S.fail || !AP || !LP || !PP) { showErr(U('nogl')); drawAnimHud(tab, f); return; }
+  resize3d();
+  const tg = $('follow').checked ? S.tgt : S.ctr;
+  const cd = Math.cos(el), sd = Math.sin(el), ca = Math.cos(az), sa = Math.sin(az);
+  const eye = [tg[0] + dist*cd*ca, tg[1] + dist*cd*sa, tg[2] + dist*sd];
+  const fy = 0.9, vp = mul(persp(fy, cv.width/cv.height, S.rad*0.02, S.rad*40), look(eye, tg, [0,0,1]));
+  gl.enable(gl.DEPTH_TEST); gl.disable(gl.BLEND); gl.clearColor(0.051, 0.067, 0.086, 1); gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  attrsOff();
+  /* 物体 */
+  gl.useProgram(AP);
+  const lp = gl.getAttribLocation(AP, 'a_p'), ln = gl.getAttribLocation(AP, 'a_n'), lc = gl.getAttribLocation(AP, 'a_c');
+  const um = gl.getUniformLocation(AP, 'u_m');
+  let l = [ca*cd*0.5, sa*cd*0.5, sd*0.5 + 0.5]; const ll = Math.hypot(l[0], l[1], l[2]); l = l.map(v => v/ll);
+  gl.uniform3f(gl.getUniformLocation(AP, 'u_l'), l[0], l[1], l[2]);
+  gl.uniformMatrix4fv(gl.getUniformLocation(AP, 'u_vp'), false, vp);
+  gl.enableVertexAttribArray(lp); gl.enableVertexAttribArray(ln); gl.enableVertexAttribArray(lc);
+  S.bodies.forEach((b, j) => {
+    const o = f*S.B + j;
+    gl.bindBuffer(gl.ARRAY_BUFFER, b.pos); gl.vertexAttribPointer(lp, 3, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ARRAY_BUFFER, b.nrm); gl.vertexAttribPointer(ln, 3, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ARRAY_BUFFER, b.col); gl.vertexAttribPointer(lc, 3, gl.UNSIGNED_BYTE, true, 0, 0);
+    gl.uniformMatrix4fv(um, false, quatMat(S.Q[o*4], S.Q[o*4+1], S.Q[o*4+2], S.Q[o*4+3], S.X[o*3], S.X[o*3+1], S.X[o*3+2]));
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, b.idx);
+    gl.drawElements(gl.TRIANGLES, b.count, b.itype, 0);
+  });
+  attrsOff();
+  /* 軌跡(残像: tail 秒より古い部分は薄く消える) */
+  if (S.trails.length) {
+    gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    gl.useProgram(LP);
+    const pl = gl.getAttribLocation(LP, 'a_p'), sl = gl.getAttribLocation(LP, 'a_s');
+    gl.uniformMatrix4fv(gl.getUniformLocation(LP, 'u_vp'), false, vp);
+    gl.uniform1f(gl.getUniformLocation(LP, 'u_tc'), tab.t[f] - tab.t[0]);
+    gl.enableVertexAttribArray(pl); gl.enableVertexAttribArray(sl);
+    tab.trails.forEach((tr, j) => {
+      const R = S.trails[j], start = R.tail > 0 ? frameAt(tab, tab.t[f] - R.tail) : 0, cnt = f - start + 1;
+      if (cnt < 2) return;
+      gl.bindBuffer(gl.ARRAY_BUFFER, R.pos); gl.vertexAttribPointer(pl, 3, gl.FLOAT, false, 0, 0);
+      gl.bindBuffer(gl.ARRAY_BUFFER, R.s); gl.vertexAttribPointer(sl, 1, gl.FLOAT, false, 0, 0);
+      gl.uniform1f(gl.getUniformLocation(LP, 'u_tail'), R.tail);
+      gl.uniform3f(gl.getUniformLocation(LP, 'u_col'), R.col[0], R.col[1], R.col[2]);
+      gl.drawArrays(gl.LINE_STRIP, start, cnt);
+    });
+    attrsOff(); gl.disable(gl.BLEND);
+  }
+  /* 点群: k が今のコマ以下で最も新しい雲を、次の雲まで出す */
+  let cl = null; for (const c of S.clouds) if (c.k <= f) cl = c;
+  if (cl) {
+    gl.useProgram(PP);
+    const pl = gl.getAttribLocation(PP, 'a_p'), cc = gl.getAttribLocation(PP, 'a_c');
+    gl.uniformMatrix4fv(gl.getUniformLocation(PP, 'u_vp'), false, vp);
+    gl.uniform1f(gl.getUniformLocation(PP, 'u_ps'), cl.ps * cv.height / (2 * Math.tan(fy / 2)));
+    gl.enableVertexAttribArray(pl); gl.enableVertexAttribArray(cc);
+    gl.bindBuffer(gl.ARRAY_BUFFER, cl.pos); gl.vertexAttribPointer(pl, 3, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ARRAY_BUFFER, cl.col); gl.vertexAttribPointer(cc, 3, gl.UNSIGNED_BYTE, true, 0, 0);
+    gl.drawArrays(gl.POINTS, 0, cl.n);
+    attrsOff();
+  }
+  drawAnimHud(tab, f);
+}
+/* ---------- 半透明の物体(alpha < 1)。この塊は半透明の物体がある場面だけページに入る ----------
+   描く順: 不透明の物体 → 軌跡 → 点群(ここまで drawAnimOpaque)→ 半透明の物体。軌跡と点群が深度を書いた後に、
+   半透明の物体を BLEND・depthMask(false)・深度テスト有効のまま重ねるので、レンズの中や後ろの光線が透けて見え、
+   不透明の物の後ろにある部分は隠れる。半透明どうしは毎コマ、カメラから遠い順(物体の世界 AABB の中心)に並べ、
+   1 物体の中は CULL_FACE で 裏面 → 表面 の 2 パス(凸形状の裏面が表面に被らない)。巻き順は物体ごとに符号付き体積で
+   確かめ、内向き(体積 < 0)なら 2 パスの順を入れ替える。陰影は不透明と同じ |n·l|(両面ライティング = 法線の向きに依らない)。
+   縁はフレネル風に濃く・明るく(視線と面が寝るほど alpha を 1 へ寄せる)して、薄い alpha でも輪郭が見えるようにする。 */
+let TP = null;
+if (gl) {
+  TP = prog('attribute vec3 a_p;attribute vec3 a_n;attribute vec3 a_c;uniform mat4 u_vp;uniform mat4 u_m;varying vec3 v_n;varying vec3 v_c;varying vec3 v_w;'+
+    'void main(){vec4 w=u_m*vec4(a_p,1.0);gl_Position=u_vp*w;v_w=w.xyz;v_n=(u_m*vec4(a_n,0.0)).xyz;v_c=a_c;}',
+    'precision mediump float;varying vec3 v_n;varying vec3 v_c;varying vec3 v_w;uniform vec3 u_l;uniform vec3 u_eye;uniform float u_a;'+
+    'void main(){vec3 n=normalize(v_n);float c=abs(dot(n,normalize(u_eye-v_w)));float r=pow(1.0-c,3.0);'+
+    'float d=abs(dot(n,u_l))*0.65+0.38;float a=clamp(u_a+(1.0-u_a)*0.75*r,0.0,1.0);'+
+    'gl_FragColor=vec4(min(v_c*d+0.3*r,vec3(1.0)),a);}');
+}
+const transl = {};
+/* 半透明の物体の一覧(場面ごとに 1 回): 番号・alpha・局所 AABB の中心・巻き順が内向きか */
+function translOf(tab){
+  if (transl[tab.id]) return transl[tab.id];
+  const L = [];
+  tab.bodies.forEach((b, j) => {
+    if (b.alpha == null || !(b.alpha < 1)) return;
+    const P = arr(b.pos).a, F = arr(b.faces).a, lo = [Infinity,Infinity,Infinity], hi = [-Infinity,-Infinity,-Infinity];
+    for (let i = 0; i < P.length; i += 3) for (let k = 0; k < 3; k++) { lo[k] = Math.min(lo[k], P[i+k]); hi[k] = Math.max(hi[k], P[i+k]); }
+    const c = [0,1,2].map(k => (lo[k] + hi[k]) / 2);
+    let vol = 0;                                    /* 6 × 符号付き体積(中心からの四面体の和)。外向き = 正 */
+    for (let f = 0; f < F.length; f += 3) {
+      const a = F[f]*3, q = F[f+1]*3, r = F[f+2]*3;
+      const ax = P[a]-c[0], ay = P[a+1]-c[1], az_ = P[a+2]-c[2], bx = P[q]-c[0], by = P[q+1]-c[1], bz = P[q+2]-c[2];
+      const cx = P[r]-c[0], cy = P[r+1]-c[1], cz = P[r+2]-c[2];
+      vol += ax*(by*cz-bz*cy) + ay*(bz*cx-bx*cz) + az_*(bx*cy-by*cx);
+    }
+    L.push({j, a: b.alpha, c, inward: vol < 0});
+  });
+  return transl[tab.id] = L;
+}
+const drawAnimOpaque = drawAnim;
+drawAnim = function(tab){
+  const S = sceneAnim(tab), L = S.fail || !TP ? [] : translOf(tab);
+  if (!L.length) { drawAnimOpaque(tab); return; }
+  const keep = L.map(e => S.bodies[e.j].count);
+  L.forEach(e => { S.bodies[e.j].count = 0; });   /* 不透明のパスでは描かない(drawElements の 0 個は何も描かない) */
+  try { drawAnimOpaque(tab); } finally { L.forEach((e, i) => { S.bodies[e.j].count = keep[i]; }); }
+  if (AP && LP && PP) drawTranslucent(tab, S, L);
+};
+function drawTranslucent(tab, S, L){
+  const f = Math.max(0, Math.min(tab.t.length - 1, Math.floor(frame)));
+  /* カメラは drawAnim と同じ式(テストが両方の式の一致を見ている) */
+  const tg = $('follow').checked ? S.tgt : S.ctr;
+  const cd = Math.cos(el), sd = Math.sin(el), ca = Math.cos(az), sa = Math.sin(az);
+  const eye = [tg[0] + dist*cd*ca, tg[1] + dist*cd*sa, tg[2] + dist*sd];
+  const fy = 0.9, vp = mul(persp(fy, cv.width/cv.height, S.rad*0.02, S.rad*40), look(eye, tg, [0,0,1]));
+  let l = [ca*cd*0.5, sa*cd*0.5, sd*0.5 + 0.5]; const ll = Math.hypot(l[0], l[1], l[2]); l = l.map(v => v/ll);
+  const order = L.map(e => {
+    const o = f*S.B + e.j, m = quatMat(S.Q[o*4], S.Q[o*4+1], S.Q[o*4+2], S.Q[o*4+3], S.X[o*3], S.X[o*3+1], S.X[o*3+2]), c = e.c;
+    const w = [m[0]*c[0]+m[4]*c[1]+m[8]*c[2]+m[12], m[1]*c[0]+m[5]*c[1]+m[9]*c[2]+m[13], m[2]*c[0]+m[6]*c[1]+m[10]*c[2]+m[14]];
+    return {e, m, d: Math.hypot(w[0]-eye[0], w[1]-eye[1], w[2]-eye[2])};
+  }).sort((p, q) => q.d - p.d);                   /* 遠い順 */
+  gl.useProgram(TP);
+  const lp = gl.getAttribLocation(TP, 'a_p'), ln = gl.getAttribLocation(TP, 'a_n'), lc = gl.getAttribLocation(TP, 'a_c');
+  const um = gl.getUniformLocation(TP, 'u_m'), ua = gl.getUniformLocation(TP, 'u_a');
+  gl.uniform3f(gl.getUniformLocation(TP, 'u_l'), l[0], l[1], l[2]);
+  gl.uniform3f(gl.getUniformLocation(TP, 'u_eye'), eye[0], eye[1], eye[2]);
+  gl.uniformMatrix4fv(gl.getUniformLocation(TP, 'u_vp'), false, vp);
+  gl.enableVertexAttribArray(lp); gl.enableVertexAttribArray(ln); gl.enableVertexAttribArray(lc);
+  gl.enable(gl.DEPTH_TEST); gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+  gl.depthMask(false); gl.enable(gl.CULL_FACE);
+  for (const it of order) {
+    const b = S.bodies[it.e.j];
+    gl.bindBuffer(gl.ARRAY_BUFFER, b.pos); gl.vertexAttribPointer(lp, 3, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ARRAY_BUFFER, b.nrm); gl.vertexAttribPointer(ln, 3, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ARRAY_BUFFER, b.col); gl.vertexAttribPointer(lc, 3, gl.UNSIGNED_BYTE, true, 0, 0);
+    gl.uniformMatrix4fv(um, false, it.m);
+    gl.uniform1f(ua, it.e.a);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, b.idx);
+    /* cullFace(FRONT) = 裏面だけ描く → cullFace(BACK) = 表面だけ描く。内向きの巻きなら逆 */
+    for (const side of it.e.inward ? [gl.BACK, gl.FRONT] : [gl.FRONT, gl.BACK]) {
+      gl.cullFace(side); gl.drawElements(gl.TRIANGLES, b.count, b.itype, 0);
+    }
+  }
+  gl.disable(gl.CULL_FACE); gl.cullFace(gl.BACK); gl.depthMask(true); gl.disable(gl.BLEND);
+  attrsOff();
+}
+/* 同じ時間軸の 2-D(センサー画像・op の結果)。PNG はブラウザが無損失で復号する */
+const imgs = {}, pimgs = {};
+function pngImg(key, t){
+  const id = key + ':' + t; let im = pimgs[id];
+  if (!im) { im = new Image(); im.onload = () => { dirty = true; }; im.src = 'data:image/png;base64,' + D.arrays[key].png[t]; pimgs[id] = im; }
+  return im.complete && im.naturalWidth > 0 ? im : null;
+}
+function paneImage(key, t){
+  if (D.arrays[key].t === 'png') return pngImg(key, t);
+  const id = key + ':' + t; if (imgs[id]) return imgs[id];
+  const A = arr(key), sh_ = A.shape, H = sh_[1], W = sh_[2], ch = sh_.length === 4 ? 3 : 1, base = t * H * W * ch;
+  const o = document.createElement('canvas'); o.width = W; o.height = H;
+  const im = o.getContext('2d').createImageData(W, H), d = im.data;
+  for (let i = 0; i < W * H; i++) {
+    if (ch === 3) { d[i*4] = A.a[base+i*3]; d[i*4+1] = A.a[base+i*3+1]; d[i*4+2] = A.a[base+i*3+2]; }
+    else { const g = A.a[base+i]; d[i*4] = g; d[i*4+1] = g; d[i*4+2] = g; }
+    d[i*4+3] = 255;
+  }
+  o.getContext('2d').putImageData(im, 0, 0);
+  return imgs[id] = o;
+}
+function buildPanes(tab){
+  const box = $('panes');
+  if (tab.kind !== 'anim3d' || !tab.panes.length) { box.style.display = 'none'; box.innerHTML = ''; return; }
+  box.style.display = 'flex';
+  box.innerHTML = tab.panes.map((p, j) => '<div class="pane' + (p.wide ? ' wide' : '') + '"><div class="pl">' + esc(T(p.label)) + '</div><canvas id="pane' + j + '"></canvas></div>').join('');
+}
+function buildEvents(tab){
+  const box = $('evs');
+  if (tab.kind !== 'anim3d' || !tab.events.length) { box.style.display = 'none'; box.innerHTML = ''; return; }
+  box.style.display = 'flex';
+  box.innerHTML = tab.events.map((e, j) => '<button data-ev="' + j + '">' + esc(T(e.label)) + ' · ' + (e.t - tab.t[0]).toFixed(2) + ' s</button>').join('');
+  box.querySelectorAll('[data-ev]').forEach(b => { b.onclick = () => seekFrame(tab, tab.events[+b.dataset.ev].k); });
+}
+function drawPanes(tab, f){
+  tab.panes.forEach((p, j) => {
+    const c = $('pane' + j); if (!c) return;
+    const rec = D.arrays[p.frames], sh_ = rec.shape, H = sh_[1], W = sh_[2], k = Math.max(1, Math.round(320 / W));
+    const at = i => p.index ? p.index[Math.min(i, p.index.length - 1)] : i;                      /* 同じ絵は 1 回だけ持つ */
+    if (c.width !== W*k || c.height !== H*k) { c.width = W*k; c.height = H*k; }
+    if (rec.t === 'png') for (let i = 1; i <= 6 && at(f + i) < sh_[0]; i++) pngImg(p.frames, at(f + i));   /* 先読み */
+    const im = paneImage(p.frames, at(f)); if (!im) return;                                      /* 読めるまで前のコマを残す */
+    const g = c.getContext('2d'); g.imageSmoothingEnabled = false; g.clearRect(0, 0, c.width, c.height);
+    g.drawImage(im, 0, 0, W*k, H*k);
+    g.font = (12 * Math.max(1, k/2)) + 'px sans-serif'; g.textBaseline = 'bottom';
+    for (const b of p.boxes) {
+      const fl = b.flag ? b.flag[f] : false, [x, y] = b.xy[f], w = b.size[0]*k, h = b.size[1]*k;
+      g.strokeStyle = fl ? b.flag_color : b.color; g.lineWidth = Math.max(2, k * 0.8);
+      g.strokeRect((x + 0.5)*k - w/2, (y + 0.5)*k - h/2, w, h);
+      g.fillStyle = fl ? b.flag_color : b.color;
+      g.fillText(T(b.label) + (fl && b.flag_text ? ' ' + T(b.flag_text) : ''), (x + 0.5)*k - w/2, (y + 0.5)*k - h/2 - 2);
+    }
+  });
+}
+
+/* ---------- 2-D(動画・分割) ---------- */
+function frameCanvas(tab, key, t){
+  if (tab.kind === 'frames') return paneImage(tab.frames, t);
+  const id = tab.id + ':' + key + ':' + t;
+  if (imgs[id]) return imgs[id];
+  const A = arr(tab[key] || tab.frames), sh_ = A.shape;
+  const H = tab.kind === 'frames' ? sh_[1] : sh_[0], W = tab.kind === 'frames' ? sh_[2] : sh_[1];
+  const ch = sh_.length === (tab.kind === 'frames' ? 4 : 3) ? 3 : 1;
+  const base = tab.kind === 'frames' ? t * H * W * ch : 0;
+  const o = document.createElement('canvas'); o.width = W; o.height = H;
+  const im = o.getContext('2d').createImageData(W, H), d = im.data;
+  for (let i = 0; i < W * H; i++) {
+    if (ch === 3) { d[i*4] = A.a[base+i*3]; d[i*4+1] = A.a[base+i*3+1]; d[i*4+2] = A.a[base+i*3+2]; }
+    else { const g = A.a[base+i]; d[i*4] = g; d[i*4+1] = g; d[i*4+2] = g; }
+    d[i*4+3] = 255;
+  }
+  o.getContext('2d').putImageData(im, 0, 0);
+  return imgs[id] = o;
+}
+function dims(tab){ const s = arr(tab.kind === 'frames' ? tab.frames : tab.before).shape; return tab.kind === 'frames' ? [s[2], s[1]] : [s[1], s[0]]; }
+function fit2d(tab){
+  const [W, H] = dims(tab), k = Math.max(1, Math.round(640 / W));
+  if (c2.width !== W * k || c2.height !== H * k) { c2.width = W * k; c2.height = H * k; }
+  return k;
+}
+function draw2d(tab){
+  const k = fit2d(tab), [W, H] = dims(tab);
+  let fimg = null;
+  if (tab.kind === 'frames') {                   /* PNG がまだ読めていなければ前のコマを残す(ちらつかせない) */
+    const T0 = arr(tab.frames).shape[0], f0 = Math.min(T0 - 1, Math.max(0, Math.floor(frame)));
+    if (D.arrays[tab.frames].t === 'png') for (let j = 1; j <= 6 && f0 + j < T0; j++) pngImg(tab.frames, f0 + j);
+    fimg = frameCanvas(tab, 'frames', f0); if (!fimg) return;
+  }
+  ctx.imageSmoothingEnabled = false; ctx.clearRect(0, 0, c2.width, c2.height);
+  if (tab.kind === 'split') {
+    ctx.drawImage(frameCanvas(tab, 'after', 0), 0, 0, W*k, H*k);
+    const sx = Math.round(splitX * W * k);
+    ctx.save(); ctx.beginPath(); ctx.rect(0, 0, sx, H*k); ctx.clip();
+    ctx.drawImage(frameCanvas(tab, 'before', 0), 0, 0, W*k, H*k); ctx.restore();
+    ctx.fillStyle = '#ffffff'; ctx.fillRect(sx - 1, 0, 2, H*k);
+    ctx.beginPath(); ctx.arc(sx, H*k/2, 14, 0, 6.2832); ctx.fillStyle = '#2c6fb5'; ctx.fill(); ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.fillStyle = '#fff'; ctx.font = (13*Math.max(1,k/2))+'px sans-serif'; ctx.textBaseline = 'top';
+    ctx.textAlign = 'left'; ctx.fillText(T(tab.label_before), 8, 6); ctx.textAlign = 'right'; ctx.fillText(T(tab.label_after), W*k-8, 6);
+    $('hud').innerHTML = esc(U('split'));
+    return;
+  }
+  const T_ = arr(tab.frames).shape[0], f = Math.min(T_-1, Math.max(0, Math.floor(frame)));
+  ctx.drawImage(fimg, 0, 0, W*k, H*k);
+  let hud = U('frame') + ' ' + f + ' / ' + (T_-1) + '  (' + (f * tab.dt).toFixed(2) + ' s)';
+  for (const b of tab.boxes) {
+    const fl = b.flag ? b.flag[f] : false, [x, y] = b.xy[f], w = b.size[0]*k, h = b.size[1]*k;
+    ctx.strokeStyle = fl ? b.flag_color : b.color; ctx.lineWidth = Math.max(2, k * 0.8);
+    ctx.strokeRect((x + 0.5)*k - w/2, (y + 0.5)*k - h/2, w, h);
+    hud += '<br><span style="color:' + esc(b.color) + '">■</span> ' + esc(T(b.label)) + (fl && b.flag_text ? ' <b class="flag">' + esc(T(b.flag_text)) + '</b>' : '');
+  }
+  for (const s of tab.series) {
+    const v = s.values[f]; let line = esc(T(s.label)) + ': ' + (v == null ? '—' : v.toFixed(s.decimals) + (s.unit ? ' ' + esc(s.unit) : ''));
+    if (s.threshold != null && v != null) line += ' (' + esc(v >= s.threshold ? U('above') : U('below')) + ' ' + s.threshold.toFixed(s.decimals) + ')';
+    hud += '<br><span style="color:' + esc(s.color) + '">■</span> ' + line;
+  }
+  $('hud').innerHTML = hud;
+  $('tlabel').textContent = (f * tab.dt).toFixed(2) + ' s';
+  $('scrub').value = String(Math.round(f / Math.max(1, T_-1) * 1000));
+  drawPlot(tab, f);
+}
+function drawPlot(tab, f){
+  const p = $('plot'); if (!tab.series.length) { p.style.display = 'none'; return; }
+  p.style.display = 'block';
+  const r = p.getBoundingClientRect(), d = Math.min(2, window.devicePixelRatio || 1);
+  p.width = Math.max(1, Math.round(r.width * d)); p.height = Math.max(1, Math.round(r.height * d));
+  const g = p.getContext('2d'); g.setTransform(d, 0, 0, d, 0, 0);
+  const w = r.width, h = r.height, ml = 8, mr = 8, mt = 8, mb = 22, n = tab.series[0].values.length;
+  g.fillStyle = '#0d1116'; g.fillRect(0, 0, w, h);
+  const X = i => ml + (w - ml - mr) * i / Math.max(1, n - 1), Y = (s, v) => mt + (h - mt - mb) * (1 - (v - s.lo) / (s.hi - s.lo));
+  g.strokeStyle = '#26313c'; g.lineWidth = 1; g.strokeRect(ml, mt, w - ml - mr, h - mt - mb);
+  g.font = '11px sans-serif'; g.textBaseline = 'alphabetic';
+  let lx = ml + 4;
+  for (const s of tab.series) {
+    if (s.threshold != null) { g.setLineDash([4, 4]); g.strokeStyle = s.color; g.globalAlpha = 0.6; g.beginPath(); g.moveTo(ml, Y(s, s.threshold)); g.lineTo(w - mr, Y(s, s.threshold)); g.stroke(); g.setLineDash([]); g.globalAlpha = 1; }
+    for (const pass of [0, 1]) {
+      g.strokeStyle = s.color; g.lineWidth = pass ? 2 : 1; g.globalAlpha = pass ? 1 : 0.28; g.beginPath(); let pen = false;
+      const a = pass ? 0 : f, b = pass ? f : n - 1;
+      for (let i = a; i <= b; i++) { const v = s.values[i]; if (v == null) { pen = false; continue; } if (!pen) { g.moveTo(X(i), Y(s, v)); pen = true; } else g.lineTo(X(i), Y(s, v)); }
+      g.stroke();
+    }
+    g.globalAlpha = 1; g.fillStyle = s.color;
+    const lab = T(s.label) + ' [' + s.lo + '–' + s.hi + (s.unit ? ' ' + s.unit : '') + ']'; g.fillText(lab, lx, h - 6); lx += g.measureText(lab).width + 16;
+  }
+  if (tab.events) { g.strokeStyle = '#93a2b1'; g.globalAlpha = 0.55; g.setLineDash([2, 3]);
+    for (const e of tab.events) { g.beginPath(); g.moveTo(X(e.k), mt); g.lineTo(X(e.k), h - mb); g.stroke(); }
+    g.setLineDash([]); g.globalAlpha = 1; }
+  g.strokeStyle = '#ffffff'; g.globalAlpha = 0.7; g.beginPath(); g.moveTo(X(f), mt); g.lineTo(X(f), h - mb); g.stroke(); g.globalAlpha = 1;
+}
+
+/* ---------- バッジの説明(定義の一言 + 確かめた項目の表 + 凡例)。この塊は checks を持つ場面だけページに入る ----------
+   ホバーで定義の一言(title)。押す・Enter・Space で開閉(aria-expanded)。checks の無いタブは定義の一言だけ。 */
+const bhOpen = {};
+const BU = k => T(D.bh.ui[k]);
+function badgeHTML(t){
+  const open = !!bhOpen[t.id];
+  return '<span class="badge ' + t.badge + ' bh" role="button" tabindex="0" aria-expanded="' + open + '" aria-controls="bhbox" title="' +
+    esc(T(D.bh.def[t.badge])) + '">' + esc(T(D.badges[t.badge])) + '<span class="bhq" aria-hidden="true">' + (open ? ' \u25be' : ' \u24d8') + '</span></span>';
+}
+function checksHTML(t){
+  let h = '<div class="bhbox" id="bhbox"' + (bhOpen[t.id] ? '' : ' hidden') + '><div class="bhdef">' + esc(T(D.bh.def[t.badge])) + '</div>';
+  if (t.checks && t.checks.length) {
+    h += '<div class="bhscroll"><table class="bht"><thead><tr><th>' + esc(BU('what')) + '</th><th>' + esc(BU('criterion')) + '</th><th>' +
+      esc(BU('result')) + '</th><th></th></tr></thead><tbody>' +
+      t.checks.map(c => '<tr class="' + (c.ok ? 'ok' : 'ng') + '"><td>' + esc(T(c.what)) + '</td><td class="v">' + esc(T(c.criterion)) +
+        '</td><td class="v">' + esc(T(c.result)) + '</td><td class="v">' + (c.ok ? '\u2713 ' + esc(BU('ok')) : '\u2717 ' + esc(BU('ng'))) + '</td></tr>').join('') +
+      '</tbody></table></div>';
+  }
+  return h + '</div>';
+}
+function bhToggle(){ const t = get(); bhOpen[t.id] = !bhOpen[t.id]; renderMeta(); const b = document.querySelector('#meta .bh'); if (b) b.focus(); }
+function renderLegend(){
+  $('legend').innerHTML = ['passed', 'limit', 'null'].map(k => '<span class="badge ' + k + '" title="' + esc(T(D.bh.def[k])) + '">' +
+    esc(T(D.badges[k])) + '</span>').join('') + '<span class="lgt">' + esc(T(D.bh.legend)) + '</span>';
+}
+$('meta').addEventListener('click', e => { if (e.target.closest('.bh')) bhToggle(); });
+$('meta').addEventListener('keydown', e => {
+  if ((e.key === 'Enter' || e.key === ' ') && e.target.closest('.bh')) { e.preventDefault(); e.stopPropagation(); bhToggle(); }
+});
+/* ---------- 時間つまみの読みを物理量に(入射角 θ = 42.3° など)。axis を持つ場面だけページに入る ---------- */
+function axisText(tab, f){
+  const A = tab.axis; let g = A.seg[0];
+  for (const s of A.seg) if (s.k <= f) g = s;
+  const v = A.v[f];
+  return T(g.label) + ' = ' + (v == null ? '\u2014' : v.toFixed(g.dec)) + (g.unit ? (/^[\u00b0%]/.test(g.unit) ? '' : ' ') + g.unit : '');
+}
+/* ---------- 学習用の型(問い → 予想 → 再生 → 式 → 限界)。lesson を持つ場面だけページに入る ----------
+   選択肢を押すと答えが開く(静的。どの選択肢を押したかはタブごとに覚え、言語を変えても残る)。 */
+const lsPick = {};
+const LU = k => T(D.lu[k]);
+const ABC = 'ABC';
+function lessonTop(t){
+  const ls = t.lesson, p = lsPick[t.id];
+  return '<div class="lsh">\u2460 ' + esc(LU('q')) + '</div><div class="lsq">' + esc(T(ls.question)) + '</div>' +
+    '<div class="lsh">\u2461 ' + esc(LU('p')) + '</div><div class="lsc">' +
+    ls.choices.map((c, i) => '<button class="lsb' + (p == null ? '' : (i === ls.answer ? ' right' : (i === p ? ' wrong' : ''))) +
+      '" data-ch="' + i + '" aria-pressed="' + (p === i) + '">' + ABC[i] + '. ' + esc(T(c)) + '</button>').join('') + '</div>' +
+    '<div class="lsa" aria-live="polite"' + (p == null ? ' hidden>' : '>') +
+      (p == null ? '' : '<b>' + esc(p === ls.answer ? LU('right') : LU('wrong') + ' ' + ABC[ls.answer] + '.') + '</b> ' + esc(T(ls.explain))) + '</div>' +
+    '<div class="lsh">\u2462 ' + esc(LU('play')) + '</div>';
+}
+function lessonBottom(){
+  const t = get(), box = $('lesson2'), ls = t.lesson;
+  if (!ls) { box.style.display = 'none'; box.innerHTML = ''; return; }
+  const br = s => esc(s).replace(/\n/g, '<br>');
+  box.style.display = '';
+  box.innerHTML = '<div class="lsh">\u2463 ' + esc(LU('f')) + '</div><div class="lsf">' + br(T(ls.formula)) + '</div>' +
+    '<div class="lsh">' + esc(LU('why')) + '</div><div>' + br(T(t.text)) + '</div>' +
+    '<div class="lsh">\u2464 ' + esc(LU('lim')) + '</div><div class="lsl">' + br(T(ls.limit)) + '</div>';
+}
+$('meta').addEventListener('click', e => { const b = e.target.closest('.lsb'); if (!b) return; lsPick[get().id] = +b.dataset.ch; renderMeta(); });
+/* ---------- ページ ---------- */
+function showErr(msg){ const e = $('err'); e.textContent = msg; e.style.display = 'flex'; }
+function colorbar(tab){
+  const cb = $('cb');
+  if (isTwoD(tab) || !tab.cbar) { cb.style.display = 'none'; return; }
+  const c = tab.cbar, st = STOPS[c.cmap];
+  cb.style.display = 'flex';
+  const f = v => Math.abs(v) >= 100 ? v.toFixed(0) : (Math.abs(v) >= 1 ? v.toFixed(1) : v.toFixed(2));
+  cb.innerHTML = '<span>' + esc(c.label ? T(c.label) : '') + '</span><div><div class="bar" style="background:linear-gradient(90deg,' + st.join(',') + ')"></div>' +
+    '<div class="ticks"><span>' + f(c.lo) + '</span><span>' + f((c.lo + c.hi) / 2) + '</span><span>' + f(c.hi) + ' ' + esc(c.unit) + '</span></div></div>';
+}
+function renderTabs(){
+  $('tabs').innerHTML = tabs.map(t => '<button class="tab ' + (t.id === cur ? 'on' : '') + '" data-id="' + esc(t.id) + '"><i class="' + t.badge + '-dot"></i>' + esc(T(t.label)) + '</button>').join('');
+  document.querySelectorAll('.tab').forEach(b => b.onclick = () => select(b.dataset.id));
+}
+function renderMeta(){
+  const t = get(); lessonBottom();
+  const nums = t.numbers.map(n => '<span class="num"><i>' + esc(T(n.label)) + '</i><b>' + esc(T(n.value)) + '</b></span>').join('');
+  $('meta').innerHTML = badgeHTML(t) + '<b>' + esc(T(t.label)) + '</b>' + (t.lesson ? lessonTop(t) : '<br>' + esc(T(t.text))) +
+    (nums ? '<div class="nums">' + nums + '</div>' : '') + checksHTML(t);
+}
+function renderText(){
+  document.documentElement.lang = L;
+  $('h1').textContent = T(D.title); document.title = T(D.title);
+  $('sub').textContent = T(D.subtitle); $('hint').textContent = T(D.hint); $('credit').textContent = T(D.credit);
+  const sel = $('lang'); sel.style.display = D.langs.length > 1 ? 'block' : 'none';
+  sel.innerHTML = D.langs.map(l => '<option value="' + l + '"' + (l === L ? ' selected' : '') + '>' + esc(D.langnames[l]) + '</option>').join('');
+  document.querySelectorAll('[data-v]').forEach(b => b.textContent = U(b.dataset.v));
+  $('spd').textContent = U('speed'); $('lpt').textContent = U('loop'); $('err').textContent = U('nogl');
+  $('b1').textContent = U('back1'); $('f1').textContent = U('fwd1'); $('evp').textContent = U('evprev'); $('evn').textContent = U('evnext');
+  $('rtt').textContent = U('speed'); $('fwt').textContent = U('follow');
+  setBtn(); renderLegend(); renderTabs(); renderMeta(); colorbar(get()); buildPanes(get()); buildEvents(get());
+}
+function setBtn(){ $('play').textContent = playing ? U('pause') : U('play'); }
+function select(id){
+  cur = id; frame = 0; splitX = 0.5; const t = get();
+  try { const u = new URL(location.href); u.searchParams.set('tab', cur); history.replaceState(null, '', u); } catch (e) {}
+  $('err').style.display = 'none';
+  const two = isTwoD(t);
+  const an = t.kind === 'anim3d';
+  $('wrap').className = two ? 'two' : (an && t.panes.length ? 'a3w' : ''); cv.style.display = two ? 'none' : 'block'; c2.style.display = two ? 'block' : 'none';
+  document.querySelectorAll('.a3').forEach(e => { e.style.display = an ? '' : 'none'; });
+  $('spl').style.display = an ? 'none' : '';
+  if (an) { atime = t.t[0]; $('follow').checked = false; }
+  $('views').style.display = two ? 'none' : 'flex';
+  $('ctl').style.display = t.kind === 'split' ? 'none' : 'flex';
+  $('lpl').style.display = t.kind === 'frames' || an ? 'inline' : 'none';
+  $('plot').style.display = (t.kind === 'frames' || an) && t.series.length ? 'block' : 'none';
+  playing = t.kind === 'frames' || an; last = performance.now();
+  if (!two) { if (!gl) showErr(U('nogl')); else { const S = scene3d(t); applyView(t, S); } }
+  renderTabs(); renderMeta(); colorbar(t); setBtn(); buildPanes(t); buildEvents(t); dirty = true;
+}
+function render(){
+  const t = get();
+  if (t.kind === 'anim3d') { const f = Math.floor(frame); if (gl) draw3d(t); else drawAnimHud(t, f); drawPanes(t, f); drawPlot(t, f); return; }
+  if (isTwoD(t)) draw2d(t); else if (gl) draw3d(t);
+}
+function tick(now){
+  const t = get(), dt = Math.min(0.1, (now - last) / 1000); last = now;
+  const sp = $('speed').value / 100;
+  if (playing) {
+    if (t.kind === 'frames') {
+      const n = arr(t.frames).shape[0]; frame += dt * sp / t.dt;
+      if (frame >= n - 1) { if ($('loop').checked) frame = frame % (n - 1 || 1); else { frame = n - 1; playing = false; setBtn(); } }
+    } else if (t.kind === 'anim3d') { animStep(t, dt); } else if (!isTwoD(t)) { az += dt * sp * 0.6; }
+    dirty = true;
+  }
+  if (t.kind === 'anim3d' && gl && $('follow').checked && followTick(t, dt)) dirty = true;
+  if (dirty) { dirty = false; render(); }
+  requestAnimationFrame(tick);
+}
+
+/* ---------- 入力 ---------- */
+$('play').onclick = () => {
+  const t = get();
+  if (!playing && t.kind === 'anim3d' && Math.floor(frame) >= t.t.length - 1) { atime = t.t[0]; frame = 0; }   /* 終わりからは頭へ */
+  playing = !playing; setBtn(); last = performance.now(); dirty = true; };
+$('b1').onclick = () => { playing = false; setBtn(); seekFrame(get(), Math.floor(frame) - 1); };
+$('f1').onclick = () => { playing = false; setBtn(); seekFrame(get(), Math.floor(frame) + 1); };
+$('evp').onclick = () => { const t = get(), f = Math.floor(frame); let k = 0; for (const e of t.events) if (e.k < f) k = e.k; seekFrame(t, k); };
+$('evn').onclick = () => { const t = get(), f = Math.floor(frame), e = t.events.find(e => e.k > f); if (e) seekFrame(t, e.k); };
+$('follow').onchange = () => { const t = get(); if (t.kind === 'anim3d' && gl) { const S = sceneAnim(t); if (!$('follow').checked) S.tgt = S.ctr.slice(); } dirty = true; };
+document.addEventListener('keydown', e => {
+  const t = get(); if (t.kind !== 'anim3d' || /^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName)) return;
+  if (e.key === ' ') { e.preventDefault(); $('play').onclick(); }
+  else if (e.key === 'ArrowLeft') { e.preventDefault(); $('b1').onclick(); }
+  else if (e.key === 'ArrowRight') { e.preventDefault(); $('f1').onclick(); }
+});
+$('lang').onchange = e => { L = e.target.value; try { const u = new URL(location.href); u.searchParams.set('lang', L); history.replaceState(null, '', u); } catch (e) {} renderText(); dirty = true; };
+$('scrub').oninput = e => {
+  const t = get(); playing = false; setBtn();
+  if (t.kind === 'anim3d') { seekFrame(t, Math.round(e.target.value / 1000 * (t.t.length - 1))); return; }
+  if (t.kind === 'frames') frame = e.target.value / 1000 * (arr(t.frames).shape[0] - 1); else az = e.target.value / 1000 * 2 * Math.PI;
+  dirty = true;
+};
+document.querySelectorAll('[data-v]').forEach(b => b.onclick = () => { const t = get(), S = scene3d(t), v = PRESETS[b.dataset.v]; az = v[0]; el = v[1]; dist = dist0(S); dirty = true; });
+const pts = new Map(); let pinch = 0;
+function target(){ return isTwoD(get()) ? c2 : cv; }
+function splitMove(e){ const r = c2.getBoundingClientRect(); splitX = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width)); dirty = true; }
+[cv, c2].forEach(el_ => {
+  el_.addEventListener('pointerdown', e => { el_.setPointerCapture(e.pointerId); pts.set(e.pointerId, {x: e.clientX, y: e.clientY});
+    if (pts.size === 2) { const a = [...pts.values()]; pinch = Math.hypot(a[0].x - a[1].x, a[0].y - a[1].y); }
+    if (get().kind === 'split' && el_ === c2) splitMove(e); });
+  el_.addEventListener('pointermove', e => {
+    const p = pts.get(e.pointerId); if (!p) return;
+    if (get().kind === 'split' && el_ === c2) { splitMove(e); return; }
+    if (isTwoD(get())) return;
+    if (pts.size === 2) { p.x = e.clientX; p.y = e.clientY; const a = [...pts.values()], d = Math.hypot(a[0].x - a[1].x, a[0].y - a[1].y);
+      if (pinch > 0) { dist = Math.min(dist0(scene3d(get())) * 8, Math.max(dist0(scene3d(get())) * 0.05, dist * pinch / d)); } pinch = d; dirty = true; return; }
+    az -= (e.clientX - p.x) * 0.008; el = Math.max(-1.5, Math.min(1.5, el + (e.clientY - p.y) * 0.008));
+    p.x = e.clientX; p.y = e.clientY; dirty = true; });
+  const up = e => { pts.delete(e.pointerId); pinch = 0; };
+  el_.addEventListener('pointerup', up); el_.addEventListener('pointercancel', up);
+});
+cv.addEventListener('wheel', e => { e.preventDefault(); const S = scene3d(get());
+  dist = Math.min(dist0(S) * 8, Math.max(dist0(S) * 0.05, dist * Math.exp(e.deltaY * 0.0012))); dirty = true; }, {passive: false});
+window.addEventListener('resize', () => { dirty = true; });
+
+renderText(); select(cur); requestAnimationFrame(tick);
+})();
+</script>
+</html>

@@ -1753,6 +1753,40 @@
     "hi": "400 km ऊँचाई, 5 µm pixels और 8 m focal length पर GSD 0.250 m है। 550 nm और 2.4 m aperture पर Rayleigh ground radius 0.112 m है। वातावरण को सीमा-पंक्ति में स्पष्ट रूप से अनगणित रखा गया है।",
     "fr": "À 400 km, avec des pixels de 5 µm et une focale de 8 m, la GSD vaut 0.250 m. À 550 nm avec une ouverture de 2.4 m, le rayon de Rayleigh au sol vaut 0.112 m. L'atmosphère reste explicitement non calculée dans la ligne de limite."
    }
+  },
+  {
+   "id": "ship_stability",
+   "category": "anim3d",
+   "media": "ship_stability_anim3d.html",
+   "media_path": "view2026/anim3d/ship_stability_anim3d.html",
+   "motion": true,
+   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_ship_anim3d.py",
+   "label": {
+    "ja": "船はなぜ浮き、傾いても戻るのか", "en": "Why a ship floats and returns after heeling",
+    "zh": "船为何能浮起并在倾斜后复原", "tw": "船為何能浮起並在傾斜後復原",
+    "ko": "배는 왜 뜨고 기울어도 돌아오는가", "de": "Warum ein Schiff schwimmt und sich wieder aufrichtet",
+    "hi": "जहाज़ क्यों तैरता है और झुकने के बाद लौटता है", "fr": "Pourquoi un navire flotte et se redresse"
+   },
+   "see": {
+    "ja": "傾くと浮心 B が沈んだ側へ動き、重心 G との水平距離 GZ が生まれる。G を上げると復原てこが逆向きになる。",
+    "en": "As the hull heels, B moves toward the immersed side and creates arm GZ from G. Raising G reverses the arm.",
+    "zh": "船体倾斜时 B 向浸水侧移动，与 G 形成力臂 GZ；抬高 G 后力臂反向。",
+    "tw": "船體傾斜時 B 向浸水側移動，與 G 形成力臂 GZ；抬高 G 後力臂反向。",
+    "ko": "선체가 기울면 B가 잠긴 쪽으로 움직여 G와 복원정 GZ를 만들고, G를 높이면 방향이 뒤집힌다.",
+    "de": "Beim Krängen wandert B zur eingetauchten Seite und bildet mit G den Hebel GZ. Ein höheres G kehrt ihn um.",
+    "hi": "झुकने पर B डूबी ओर जाता है और G से भुजा GZ बनती है। G ऊपर करने पर भुजा उलटती है।",
+    "fr": "À la gîte, B va vers le côté immergé et forme le bras GZ avec G. Relever G inverse ce bras."
+   },
+   "num": {
+    "ja": "箱形船の閉形式との相対誤差 2.26e-16、重量一致 9.17e-15、GZ の傾きと GM の差 0.122%。高い重心では GM = -0.350 m。",
+    "en": "Box closed-form error 2.26e-16; weight error 9.17e-15; GZ-slope versus GM difference 0.122%. Raised G gives GM = -0.350 m.",
+    "zh": "箱形闭式误差 2.26e-16；重量误差 9.17e-15；GZ 斜率与 GM 相差 0.122%。高重心时 GM = -0.350 m。",
+    "tw": "箱形閉式誤差 2.26e-16；重量誤差 9.17e-15；GZ 斜率與 GM 相差 0.122%。高重心時 GM = -0.350 m。",
+    "ko": "상자형 폐형식 오차 2.26e-16, 중량 오차 9.17e-15, GZ 기울기와 GM 차이 0.122%. 높은 G에서는 GM = -0.350 m.",
+    "de": "Kastenfehler 2.26e-16; Gewichtsfehler 9.17e-15; GZ-Steigung gegen GM 0.122 %. Mit hohem G ist GM = -0.350 m.",
+    "hi": "डिब्बाकार त्रुटि 2.26e-16; भार त्रुटि 9.17e-15; GZ ढाल और GM में अंतर 0.122%। ऊँचे G पर GM = -0.350 m।",
+    "fr": "Erreur du caisson 2.26e-16 ; erreur de poids 9.17e-15 ; écart pente GZ–GM 0.122 %. Avec G haut, GM = -0.350 m."
+   }
   }
  ],
  "series": [
