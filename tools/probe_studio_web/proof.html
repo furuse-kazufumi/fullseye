@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fullseye ブラウザ探針</title>
+<style>
+  :root { --bg:#0d1116; --panel:#121a22; --line:#1d4e7a; --accent:#2c6fb5; --accent2:#5aa9f0;
+          --text:#c8d4df; --muted:#93a2b1; --warn:#ffd54f; --ok:#5aa9f0; }
+  html, body { margin:0; background:var(--bg); color:var(--text);
+    font-family:"Segoe UI","Hiragino Sans",Meiryo,sans-serif; -webkit-text-size-adjust:100%; }
+  header { padding:14px 18px 6px; }
+  h1 { font-size:20px; margin:0 0 4px; }
+  .sub { color:var(--muted); font-size:13px; }
+  .bar { display:flex; gap:12px; align-items:center; flex-wrap:wrap; padding:8px 18px; }
+  .bar input[type=file] { color:var(--muted); font-size:12px; }
+  button { background:var(--accent); color:#fff; border:0; border-radius:6px; padding:6px 14px; font-size:13px; cursor:pointer; }
+  button:disabled { background:#2a3a4a; color:var(--muted); cursor:default; }
+  .status { font-size:13px; color:var(--muted); }
+  .status b { color:var(--text); }
+  .band { display:flex; gap:10px; overflow-x:auto; padding:8px 18px 14px; align-items:stretch; }
+  .card { background:var(--panel); border:1px solid #1b2733; border-radius:10px; padding:8px; min-width:200px; flex:0 0 auto; }
+  .card h3 { margin:0 0 6px; font-size:13px; color:var(--accent2); display:flex; justify-content:space-between; gap:8px; }
+  .card h3 span.t { color:var(--muted); font-weight:normal; font-size:12px; }
+  .card canvas { width:192px; height:192px; image-rendering:pixelated; background:#000; border-radius:6px; display:block; }
+  .arrow { align-self:center; color:var(--muted); font-size:22px; flex:0 0 auto; }
+  .nums { font-size:12px; color:var(--muted); margin-top:6px; line-height:1.5; }
+  .nums b { color:var(--text); }
+  .badge { display:inline-block; font-size:11px; border-radius:10px; padding:1px 8px; margin-left:6px; border:1px solid var(--line); color:var(--accent2); }
+  .badge.limit { color:var(--warn); border-color:#6b5a1f; }
+  pre#log { margin:0 18px 18px; padding:10px; background:#0a0e12; border:1px solid #1b2733; border-radius:8px;
+            font-size:11px; color:var(--muted); max-height:160px; overflow:auto; white-space:pre-wrap; }
+  .foot { padding:0 18px 18px; font-size:12px; color:var(--muted); }
+</style>
+</head>
+<body>
+<header>
+  <h1>Fullseye ブラウザ探針 — op 列をブラウザの中の Python で走らせる</h1>
+  <div class="sub">Pyodide(WebAssembly の CPython)+ numpy + scipy + fullseye の numpy/scipy 部分集合。外部 URL は読まない(全部この dist の中)。
+    処理の帯: 入力 → gaussian → sobel_amp → otsu → 理論 vs op。</div>
+</header>
+<div class="bar">
+  <input type="file" id="file" accept="image/*" disabled>
+  <button id="run" disabled>合成画像で走らせる</button>
+  <span class="status" id="status">起動中…</span>
+</div>
+<div class="band" id="band"></div>
+<pre id="log"></pre>
+<div class="foot" id="foot"></div>
+<script type="module">
+import { loadPyodide } from "./pyodide/pyodide.mjs";
+const $ = (id) => document.getElementById(id);
+const log = (s) => { $("log").textContent += s + "\n"; $("log").scrollTop = 1e9; };
+const T0 = performance.now();
+const ms = () => Math.round(performance.now() - T0);
+const timings = {};
+
+function card(title, t, canvas, nums, badge) {
+  const d = document.createElement("div"); d.className = "card";
+  const h = document.createElement("h3");
+  h.innerHTML = `<span>${title}${badge ? `<span class="badge ${badge[1]||""}">${badge[0]}</span>` : ""}</span><span class="t">${t}</span>`;
+  d.appendChild(h);
+  if (canvas) d.appendChild(canvas);
+  const n = document.createElement("div"); n.className = "nums"; n.innerHTML = nums; d.appendChild(n);
+  return d;
+}
+function arrow() { const a = document.createElement("div"); a.className = "arrow"; a.textContent = "→"; return a; }
+function paint(rgba, h, w) {
+  const c = document.createElement("canvas"); c.width = w; c.height = h;
+  c.getContext("2d").putImageData(new ImageData(new Uint8ClampedArray(rgba.buffer, rgba.byteOffset, rgba.byteLength), w, h), 0, 0);
+  return c;
+}
+
+let py;
+try {
+  $("status").textContent = "Pyodide を読み込み中…";
+  let t = performance.now();
+  py = await loadPyodide({ indexURL: "./pyodide/" });
+  timings.boot_ms = Math.round(performance.now() - t); log(`pyodide 起動 ${timings.boot_ms} ms`);
+  t = performance.now();
+  await py.loadPackage(["numpy", "scipy", "threadpoolctl"], { messageCallback: () => {} });
+  timings.packages_ms = Math.round(performance.now() - t); log(`numpy / scipy 読み込み ${timings.packages_ms} ms`);
+  t = performance.now();
+  const zip = await (await fetch("./fullseye_subset.zip")).arrayBuffer();
+  py.FS.mkdir("/fullseye");
+  py.unpackArchive(zip, "zip", { extractDir: "/fullseye" });
+  timings.unzip_ms = Math.round(performance.now() - t); log(`fullseye 部分集合 ${(zip.byteLength/1e6).toFixed(2)} MB 展開 ${timings.unzip_ms} ms`);
+  t = performance.now();
+  py.runPython(`
+import sys, time, json
+sys.path.insert(0, "/fullseye")
+import numpy as np
+import api
+`);
+  timings.import_api_ms = Math.round(performance.now() - t); log(`import api ${timings.import_api_ms} ms(registry ${py.runPython("len(api.REGISTRY)")} op)`);
+  timings.first_load_ms = ms();
+  $("status").innerHTML = `準備完了 <b>${(timings.first_load_ms/1000).toFixed(1)} s</b>(起動 ${timings.boot_ms} / パッケージ ${timings.packages_ms} / 展開 ${timings.unzip_ms} / import ${timings.import_api_ms} ms)`;
+  $("run").disabled = false; $("file").disabled = false;
+} catch (e) { $("status").textContent = "起動に失敗: " + e; log(String(e.stack || e)); }
+
+py.runPython(`
+def _rgba(x):
+    x = np.asarray(x)
+    if x.dtype == bool:
+        g = (x * 255).astype(np.uint8)
+    else:
+        x = x.astype(np.float64); lo, hi = float(np.nanmin(x)), float(np.nanmax(x))
+        g = np.zeros(x.shape, np.uint8) if hi <= lo else ((x - lo) / (hi - lo) * 255).astype(np.uint8)
+    out = np.empty(g.shape + (4,), np.uint8); out[..., 0] = out[..., 1] = out[..., 2] = g; out[..., 3] = 255
+    return out.tobytes()
+
+def synth():
+    rng = np.random.default_rng(0)
+    yy, xx = np.mgrid[0:512, 0:512].astype(np.float32) / 512.0
+    img = 0.5 + 0.25 * np.sin(2 * np.pi * 6 * xx) * np.cos(2 * np.pi * 4 * yy)
+    img += 0.3 * (((xx - 0.5) ** 2 + (yy - 0.5) ** 2) < 0.08)
+    img += 0.05 * rng.standard_normal(img.shape, dtype=np.float32)
+    return np.clip(img, 0, 1).astype(np.float32)
+
+def otsu_theory(x):
+    # 理論: 256 階調の histogram で級間分散を最大にする閾値(総当たり)
+    x = np.asarray(x, np.float64); lo, hi = float(x.min()), float(x.max())
+    if hi <= lo: return lo, 0.0
+    h, edges = np.histogram(x, bins=256, range=(lo, hi)); p = h / h.sum()
+    w0 = np.cumsum(p); w1 = 1 - w0; mu = np.cumsum(p * (edges[:-1] + edges[1:]) / 2)
+    mu_t = mu[-1]
+    with np.errstate(divide="ignore", invalid="ignore"):
+        sb = (mu_t * w0 - mu) ** 2 / (w0 * w1)
+    k = int(np.nanargmax(sb)); t = float(edges[k + 1])
+    return t, float((x > t).mean())
+
+def run_chain(flat, h, w):
+    img = np.frombuffer(flat.to_py(), dtype=np.float32).reshape(h, w).copy() if flat is not None else synth()
+    stages = [("gaussian", 0.4, 0.5), ("sobel_amp", 0.5, 0.5), ("otsu", 0.4, 0.5)]
+    cur, outs, ts = img, [], []
+    for op, a, b in stages:
+        t = time.perf_counter(); cur = api.apply(cur, op, a, b); ts.append(round((time.perf_counter() - t) * 1e3, 2)); outs.append(cur)
+    t_th, frac_th = otsu_theory(outs[1])
+    reg = np.asarray(outs[2]).astype(bool)
+    frac_op = float(reg.mean())
+    mismatch = int(np.count_nonzero(reg != (np.asarray(outs[1], np.float64) > t_th)))
+    return {"h": img.shape[0], "w": img.shape[1],
+            "images": [_rgba(img)] + [_rgba(o) for o in outs],
+            "stages": [list(s) for s in stages], "ms": ts,
+            "theory": {"t_otsu": t_th, "frac_theory": frac_th, "frac_op": frac_op, "mismatch_px": mismatch,
+                       "n_px": int(reg.size)}}
+`);
+
+async function run(flat, h, w) {
+  try { await run_(flat, h, w); }
+  catch (e) { $("status").innerHTML = `<span style="color:#f0a45a">失敗: ${String(e).slice(0, 400)}</span>`; log(String(e.stack || e)); window.__probe = { timings, error: String(e) }; $("run").disabled = false; }
+}
+async function run_(flat, h, w) {
+  $("run").disabled = true; $("status").textContent = "実行中…";
+  const t = performance.now();
+  if (flat) py.globals.set("FLAT", py.toPy(flat));
+  const r = py.runPython(`run_chain(${flat ? "FLAT" : "None"}, ${h|0}, ${w|0})`).toJs({ dict_converter: Object.fromEntries });
+  const wall = Math.round(performance.now() - t);
+  const band = $("band"); band.innerHTML = "";
+  const names = ["入力", ...r.stages.map(s => `${s[0]} (a=${s[1]}, b=${s[2]})`)];
+  r.images.forEach((im, i) => {
+    if (i) band.appendChild(arrow());
+    band.appendChild(card(names[i], i ? `${r.ms[i-1]} ms` : `${r.w}×${r.h}`, paint(im, r.h, r.w),
+      i === 0 ? "float32 0..1" : (i === 3 ? "region (bool)" : "image (float)")));
+  });
+  band.appendChild(arrow());
+  const th = r.theory; const ok = th.mismatch_px === 0;
+  band.appendChild(card("理論 vs op", "", null,
+    `Otsu 閾値(総当たり 256 階調)= <b>${th.t_otsu.toFixed(5)}</b><br>` +
+    `理論の前景率 <b>${(th.frac_theory*100).toFixed(3)} %</b> / op の前景率 <b>${(th.frac_op*100).toFixed(3)} %</b><br>` +
+    `不一致画素 <b>${th.mismatch_px}</b> / ${th.n_px}<br>(閾値の階調の丸めが唯一の差の源)`,
+    ok ? ["門を通った", ""] : ["限界を見せる", "limit"]));
+  $("status").innerHTML = `完了: 3 op <b>${r.ms.reduce((a,b)=>a+b,0).toFixed(1)} ms</b>(往復込み ${wall} ms)`;
+  $("foot").textContent = `初回読み込み ${(timings.first_load_ms/1000).toFixed(1)} s / ${JSON.stringify(timings)}`;
+  $("run").disabled = false;
+  window.__probe = { timings, result: { ms: r.ms, theory: th, wall_ms: wall } };
+}
+$("run").onclick = () => run(null, 0, 0);
+$("file").onchange = async (ev) => {
+  const f = ev.target.files[0]; if (!f) return;
+  const bmp = await createImageBitmap(f);
+  const c = document.createElement("canvas"); c.width = bmp.width; c.height = bmp.height;
+  const g = c.getContext("2d"); g.drawImage(bmp, 0, 0);
+  const d = g.getImageData(0, 0, c.width, c.height).data;
+  const flat = new Float32Array(c.width * c.height);
+  for (let i = 0; i < flat.length; i++) flat[i] = (0.299 * d[4*i] + 0.587 * d[4*i+1] + 0.114 * d[4*i+2]) / 255;
+  await run(flat, c.height, c.width);
+};
+if (py && location.search.includes("auto")) await run(null, 0, 0);
+</script>
+</body>
+</html>
