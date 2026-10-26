@@ -294,6 +294,24 @@ _IMAGE_REASON = ("画像・動画の書き手。PNG/GIF のバイトは Pillow �
 _SPIKE_REASON = ("スパイク(実験)の記録。spikes/out_gallery/ の図は当時の証跡として凍結してあり、"
                  "再描画(matplotlib / GUI)はバイトが変わる。")
 EXCLUDED = {
+    "tools/check_page_overflow.py": ("門(生成器ではない): pocviewer のページを幅 390 px の iframe に入れて headless Chrome で開き、全タブ × 全言語の"
+                                     "横はみ出しを測る。書くのは一時フォルダの計測用の写しだけで、repo には何も書かない。Chrome が要るので手で回す"
+                                     "(tests/test_itokawa_page_overflow_2026_10_25.py、Chrome が無ければ skip)。"),
+    "tools/build_itokawa_anim3d.py": ("小惑星イトカワの重力の動く 3-D の教材(docs/anim3d/itokawa_gravity.html)。"
+                                      "pocviewer.write_viewer で書く手回しの生成物で、polyhedron_gravity を頂点 2.5 万個 × 面 4.9 万枚で"
+                                      "回すので数分かかる(結果は out/ に入力のハッシュで保存)。commit するページは 8 言語版で、"
+                                      "`py -3.11 tools/anim3d_i18n.py --build build_itokawa_anim3d --out docs/anim3d/itokawa_gravity.html` で書く"
+                                      "(翻訳表 tools/anim3d_i18n_tables/build_itokawa_anim3d.json)。門は tests/test_itokawa_anim3d.py と "
+                                      "tests/test_anim3d_i18n_itokawa_2026_10_25.py。"),
+    "tools/import_itokawa_shape.py": ("イトカワの形状モデル(NASA PDS SBN の Gaskell Q = 64、CC0 1.0)の取り込み。入力の原本 ver64q.tab は"
+                                      "repo の外で手で取得する(取得物は untrusted として専用の空ディレクトリに置く)ので CI では作れない —— "
+                                      "SHA-256 を照合して data/itokawa_shape/gaskell_q64.npz を書き、出典と改変は同じ場所の README.md に書く。"),
+    "tools/build_organvol_anim3d.py": ("臓器の体積と球形度の動く 3-D の教材(docs/anim3d/organ_volume.html)。"
+                                       "`py -3.11 tools/anim3d_i18n.py --build build_organvol_anim3d --out docs/anim3d/organ_volume.html` で書く"
+                                       "(翻訳表 tools/anim3d_i18n_tables/build_organvol_anim3d.json)。門は tests/test_anim3d_organvol_2026_10_26.py と "
+                                       "tests/test_anim3d_i18n_organvol_2026_10_26.py。"),
+    "tools/import_bodyparts3d_organs.py": ("BodyParts3D 4.0(99 % 削減版、CC BY 4.0)の 6 臓器の取り込み。原本の zip は配布しないので"
+                                           "回せない。縫い目の頂点を溶接して data/bodyparts3d/*.npz を書き、出典と改変は同じ場所の README.md に書く。"),
     "tools/build_gsplat_pages.py": ("docs/gsplat/ の 3DGS の商品ビューアとカタログ(examples/gsplat_product_viewer.py の build)。"
                                     "marching cubes に scikit-image(任意の依存)が要り、5 品の 3DGS 化とサムネイルの numpy 描画で"
                                     "1 分ほどかかり、出力は 1 本数 MB —— 鎖に入れず、ページを変える回は手で回して commit する。"),

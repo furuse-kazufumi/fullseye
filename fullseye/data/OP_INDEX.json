@@ -1,8 +1,8 @@
 {
- "n_ops": 3568,
+ "n_ops": 3570,
  "tiers": {
   "color": 12,
-  "ledger": 2609,
+  "ledger": 2611,
   "nary": 17,
   "registry": 930
  },
@@ -22093,6 +22093,35 @@
    "dim": "drive",
    "in_sorts": [
     "image2d"
+   ]
+  },
+  {
+   "name": "polyhedron_clip_halfspace",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "any",
+   "category": "polygrav",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any",
+    "any",
+    "any"
+   ]
+  },
+  {
+   "name": "polyhedron_gravity",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "polygrav",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any",
+    "points"
    ]
   },
   {
