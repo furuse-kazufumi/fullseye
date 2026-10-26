@@ -75,8 +75,10 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 <a href="../../articles/assets/poc/poc_microns_brain_wave/04_wave_on_wiring.gif"><img src="../thumbs/poc_microns_brain_wave.jpg" alt="Mouse cortex wave" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Mouse cortex wave</span></a>
 <a href="../../articles/assets/media/evis_stereo_fullseye.mp4"><img src="../thumbs/evis_stereo_depth.jpg" alt="Humanoid stereo eyes" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Humanoid stereo eyes</span></a>
 <a href="../../articles/assets/media/evis_bean_track_fullseye.mp4"><img src="../thumbs/evis_bean_track.jpg" alt="Chopstick-cam tracking" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Chopstick-cam tracking</span></a>
+<a href="../../anim3d/organ_volume.html?lang=en"><img src="../thumbs/organ_volume.jpg" alt="Organ volume and sphericity" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Organ volume and sphericity · 0.5 MB</span></a>
 <a href="../../view2026/anim3d/interactive_anim3d_viewer.html?lang=en"><img src="../thumbs/interactive_anim3d_viewer.jpg" alt="Arm and translucent lens" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Arm and translucent lens · 0.3 MB</span></a>
 <a href="../../view2026/anim3d/salt_xrd_anim3d.html?lang=en"><img src="../thumbs/salt_xrd_anim3d.jpg" alt="Powder X-ray diffraction of salt" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Powder X-ray diffraction of salt · 2.5 MB</span></a>
+<a href="../../view2026/anim3d/satellite_gsd_anim3d.html?lang=en"><img src="../thumbs/satellite_gsd.jpg" alt="Why tiny lettering disappears from orbit" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Why tiny lettering disappears from orbit · 0.2 MB</span></a>
 </div>
 
 ## Article series (articles on Qiita)
@@ -659,8 +661,10 @@ Every number is measured against ground truth the PoC planted itself (closed for
 
 **Moving 3-D you can rotate**
 
+- [Organ volume and sphericity](../../anim3d/organ_volume.html?lang=en) (moving 3-D, drag to rotate, 0.5 MB): Rank 6 organs by volume, overlay equal-volume translucent spheres, and stack sections. Divergence-theorem and solid-voxel volumes differ by at most 0.191%; closed surfaces have χ = 2. The limit tab shows thin structures lost by the 99% reduction. **6 organs; volume difference ≤ 0.191%; χ = 2 and 0 boundary edges.** [source](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_organvol_anim3d.py)
 - [Arm and translucent lens](../../view2026/anim3d/interactive_anim3d_viewer.html?lang=en) (moving 3-D, drag to rotate, 0.3 MB): Rotate with a finger and watch the arm carry a box from any angle. Rays pass through a translucent lens to its focus, while a top-down height image and its binarisation advance on the same timeline. [source](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
 - [Powder X-ray diffraction of salt](../../view2026/anim3d/salt_xrd_anim3d.html?lang=en) (moving 3-D, drag to rotate, 2.5 MB): Lattice planes are laid over the unit cell of salt; sweep the Bragg angle and the detector lights up only where the path difference is a whole number of λ. Scatter the grain orientations and spots grow into rings; lengthen the wavelength and the rings expand and vanish. The extinction rule is shown by adding the waves of the 8 atoms. [source](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_saltxrd_anim3d.py)
+- [Why tiny lettering disappears from orbit](../../view2026/anim3d/satellite_gsd_anim3d.html?lang=en) (moving 3-D, drag to rotate, 0.2 MB): Raise the altitude and 1 pixel covers more ground; shrink the aperture and the Airy disc at the foot of the translucent light cone spreads. Beyond the crossing of blue GSD and orange diffraction width, finer pixels alone cannot restore a 10 cm line. **At 400 km with 5 µm pixels and an 8 m focal length, GSD is 0.250 m. At 550 nm with a 2.4 m aperture, Rayleigh ground radius is 0.112 m. Atmosphere is explicitly left uncomputed in the limit row.** [source](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_satgsd_anim3d.py)
 
 </div>
 

@@ -75,8 +75,10 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_microns_brain_wave/04_wave_on_wiring.gif"><img src="../thumbs/poc_microns_brain_wave.jpg" alt="마우스 시각피질 파동" loading="lazy" width="320" height="320"><b>&#9654;</b><span>마우스 시각피질 파동</span></a>
 <a href="../../articles/assets/media/evis_stereo_fullseye.mp4"><img src="../thumbs/evis_stereo_depth.jpg" alt="휴머노이드 두 눈" loading="lazy" width="320" height="320"><b>&#9654;</b><span>휴머노이드 두 눈</span></a>
 <a href="../../articles/assets/media/evis_bean_track_fullseye.mp4"><img src="../thumbs/evis_bean_track.jpg" alt="젓가락 끝 카메라 추적" loading="lazy" width="320" height="320"><b>&#9654;</b><span>젓가락 끝 카메라 추적</span></a>
+<a href="../../anim3d/organ_volume.html?lang=ko"><img src="../thumbs/organ_volume.jpg" alt="장기 부피와 구형도" loading="lazy" width="320" height="320"><b>&#9654;</b><span>장기 부피와 구형도 · 0.5 MB</span></a>
 <a href="../../view2026/anim3d/interactive_anim3d_viewer.html?lang=ko"><img src="../thumbs/interactive_anim3d_viewer.jpg" alt="로봇 팔과 반투명 렌즈" loading="lazy" width="320" height="320"><b>&#9654;</b><span>로봇 팔과 반투명 렌즈 · 0.3 MB</span></a>
 <a href="../../view2026/anim3d/salt_xrd_anim3d.html?lang=ko"><img src="../thumbs/salt_xrd_anim3d.jpg" alt="소금 결정의 분말 X선 회절" loading="lazy" width="320" height="320"><b>&#9654;</b><span>소금 결정의 분말 X선 회절 · 2.5 MB</span></a>
+<a href="../../view2026/anim3d/satellite_gsd_anim3d.html?lang=ko"><img src="../thumbs/satellite_gsd.jpg" alt="궤도에서 작은 글씨가 사라지는 이유" loading="lazy" width="320" height="320"><b>&#9654;</b><span>궤도에서 작은 글씨가 사라지는 이유 · 0.2 MB</span></a>
 </div>
 
 ## 시리즈 기사 (Qiita의 영어 기사)
@@ -659,8 +661,10 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 
 **돌려 볼 수 있는 움직이는 3-D**
 
+- [장기 부피와 구형도](../../anim3d/organ_volume.html?lang=ko) (움직이는 3-D, 드래그로 회전, 0.5 MB): 장기 6개를 부피순으로 놓고 같은 부피의 반투명 구를 겹치며 단면을 쌓는다. 발산 정리와 고체 복셀 부피의 최대 차이는 0.191%이고 닫힌 표면은 χ = 2다. 99% 축소판이 잃는 가는 구조도 보여 준다. **장기 6개, 부피 차이 ≤ 0.191%, χ = 2, 경계 모서리 0개.** [소스](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_organvol_anim3d.py)
 - [로봇 팔과 반투명 렌즈](../../view2026/anim3d/interactive_anim3d_viewer.html?lang=ko) (움직이는 3-D, 드래그로 회전, 0.3 MB): 손가락으로 돌려 로봇 팔이 상자를 옮기는 모습을 원하는 방향에서 본다. 광선이 반투명 렌즈를 지나 초점에 모이고, 아래에서는 위에서 본 높이 영상과 그 이진화가 같은 시간축으로 진행된다. [소스](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
 - [소금 결정의 분말 X선 회절](../../view2026/anim3d/salt_xrd_anim3d.html?lang=ko) (움직이는 3-D, 드래그로 회전, 2.5 MB): 소금의 단위세포에 격자면의 판을 겹치고 Bragg 각을 훑으면, 행로차가 λ의 정수배인 곳에서만 검출기가 빛난다. 알갱이의 방향을 흩뜨리면 점이 환으로 자라고, 파장을 길게 하면 환은 넓어져 사라진다. 소멸 규칙은 원자 8개의 파동을 더해 보인다. [소스](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_saltxrd_anim3d.py)
+- [궤도에서 작은 글씨가 사라지는 이유](../../view2026/anim3d/satellite_gsd_anim3d.html?lang=ko) (움직이는 3-D, 드래그로 회전, 0.2 MB): 고도가 높아지면 1 픽셀이 덮는 지상 폭이 넓어지고, 구경이 작아지면 반투명 빛 원뿔 바닥의 Airy 원반이 퍼진다. 파란 GSD와 주황 회절 폭의 교점을 지나면 픽셀만 줄여도 10 cm 선은 돌아오지 않는다. **고도 400 km, 5 µm 픽셀, 초점거리 8 m이면 GSD는 0.250 m이다. 파장 550 nm, 구경 2.4 m의 Rayleigh 지상 반경은 0.112 m이며 대기는 한계 행에서 미계산으로 명시한다.** [소스](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_satgsd_anim3d.py)
 
 </div>
 

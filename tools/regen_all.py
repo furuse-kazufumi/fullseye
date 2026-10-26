@@ -306,6 +306,15 @@ EXCLUDED = {
     "tools/import_itokawa_shape.py": ("イトカワの形状モデル(NASA PDS SBN の Gaskell Q = 64、CC0 1.0)の取り込み。入力の原本 ver64q.tab は"
                                       "repo の外で手で取得する(取得物は untrusted として専用の空ディレクトリに置く)ので CI では作れない —— "
                                       "SHA-256 を照合して data/itokawa_shape/gaskell_q64.npz を書き、出典と改変は同じ場所の README.md に書く。"),
+    "tools/build_organvol_anim3d.py": ("臓器の体積と球形度の動く 3-D の教材(docs/anim3d/organ_volume.html)。"
+                                       "`py -3.11 tools/anim3d_i18n.py --build build_organvol_anim3d --out docs/anim3d/organ_volume.html` で書く"
+                                       "(翻訳表 tools/anim3d_i18n_tables/build_organvol_anim3d.json)。門は tests/test_anim3d_organvol_2026_10_26.py と "
+                                       "tests/test_anim3d_i18n_organvol_2026_10_26.py。"),
+    "tools/import_bodyparts3d_organs.py": ("BodyParts3D 4.0(99 % 削減版、CC BY 4.0)の 6 臓器の取り込み。原本の zip は配布しないので"
+                                           "回せない。縫い目の頂点を溶接して data/bodyparts3d/*.npz を書き、出典と改変は同じ場所の README.md に書く。"),
+    "tools/build_satgsd_anim3d.py": ("衛星の地上分解能と回折の動く 3-D の教材(docs/view2026/anim3d/satellite_gsd_anim3d.html)。"
+                                     "`py -3.11 tools/anim3d_i18n.py --build build_satgsd_anim3d --out docs/view2026/anim3d/satellite_gsd_anim3d.html` で書く"
+                                     "(翻訳表 tools/anim3d_i18n_tables/build_satgsd_anim3d.json)。門は tests/test_anim3d_satgsd_2026_10_26.py。"),
     "tools/build_gsplat_pages.py": ("docs/gsplat/ の 3DGS の商品ビューアとカタログ(examples/gsplat_product_viewer.py の build)。"
                                     "marching cubes に scikit-image(任意の依存)が要り、5 品の 3DGS 化とサムネイルの numpy 描画で"
                                     "1 分ほどかかり、出力は 1 本数 MB —— 鎖に入れず、ページを変える回は手で回して commit する。"),
