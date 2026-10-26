@@ -317,10 +317,12 @@ def test_rejects_out_of_range_events_and_clouds():
 
 def test_missing_translation_in_anim3d_strings_is_named():
     tab = _tab()
+    # 時刻の列は共有の乱数で _tab() のたびに変わる。段の時刻を取った列をそのまま渡す
+    # (渡さないと 2 回目の列の範囲外になることがあり、実行順しだいで「範囲」の検査に先に落ちた)。
     ev = [{"t": float(tab["t"][1]), "label": {"ja": "だけ"}}]
     with pytest.raises(ValueError, match=r"events\[0\]\.label\.en"):
-        pv._build_html(_spec([_tab(events=ev)]), ["ja", "en"])
-    pv._build_html(_spec([_tab(events=ev)]), "ja")                    # 要求していない言語の欠けは問わない
+        pv._build_html(_spec([_tab(events=ev, t=tab["t"])]), ["ja", "en"])
+    pv._build_html(_spec([_tab(events=ev, t=tab["t"])]), "ja")                    # 要求していない言語の欠けは問わない
 
 
 # --------------------------------------------------------------------------- ページ
