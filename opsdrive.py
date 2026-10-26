@@ -460,6 +460,7 @@ _CATALOG = {
         ("prism_mesh", "driveplateau", ["any"], "any"),
         ("triangulate_polygon", "driveplateau", ["any"], "any"),
         ("polygon_area", "driveplateau", ["any"], "scalar"),
+        ("plateau_lod2_mesh", "driveplateau", ["any"], "table"),
     ],
     # 他人の場面 × 自分の運転手 × 他人の採点器(2026-10-04、「自作の罠を自分で解くのは限界」→ 真値・門・被験者の 1 つを外から): CommonRoad(TUM、BSD-3)の
     # 2020a シナリオを自前で読み、縦 IDM + pure-pursuit の運転手を KS 運動学(後軸、RK4、BMW_320i = parameters_vehicle2 の値)で走らせ、公式の solution XML を書き、

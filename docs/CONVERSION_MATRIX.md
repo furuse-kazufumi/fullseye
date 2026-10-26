@@ -4,7 +4,7 @@
 手で編集しない。
 
 ```
-型 95 / 変換ペア 395 / 変換を行う op のべ 2299
+型 95 / 変換ペア 395 / 変換を行う op のべ 2300
 生成器のある型 68 / 出力型に述語のある型 94
 
 ■ 袋小路 (4) ― 産めるのに、そこから他の型へ出られない
@@ -592,7 +592,7 @@
 | from \ to | angle | any | attnmap | axes | beatcube | bspline_curve | bspline_surface | calresult | cimage | conn_graph | coordgrid | countrate | counts | cpoints | cscalar | curvature | deformation | depth | descriptor | design | efdmodel | entries | fingerprint | flow2d | flow_dense | flow_scattered | frame | gaussians | gradient | graph | hessian | histcube | image2d | images | indices | jones | keypoints | lab | labels | labels2d | lightfield | lut | mask | matrix | measurehandle | measurement | mesh | metrics | metrologymodel | normalmap | normals | pairs | phash | pointmap | points | polsweep | poly_surface | pose | position | positions | primitive | qimage | rgb | rgba | rgba_premul | rgbimage | rgbvideo | rgbvolume | rle_region | roots | rot_scale | scalar | score | sdf | shapemodel | shapeset | shift | signal | simmodel | sinogram | sinostack | sprites | stokes | sweep | synapse_table | table | text | tokens | transport_plan | vector | video | volseq | volume | voxel | zscan |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | **angle** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 1 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
-| **any** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 1 |  |  |  |  |  |  |  |  |  |  | 3 |  |  |  |  |  |  |  |  |  |  |  |  |  | 2 |  |  |  |  | 1 |  |  |  |  |  |  |  |  | 9 |  |  |  |  |  | 5 |  |  |  |  |  |  |  | 85 |  |  |  |  |  |  |  | 1 |  |
+| **any** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 1 |  |  |  |  |  |  |  |  |  |  | 3 |  |  |  |  |  |  |  |  |  |  |  |  |  | 2 |  |  |  |  | 1 |  |  |  |  |  |  |  |  | 9 |  |  |  |  |  | 5 |  |  |  |  |  |  |  | 86 |  |  |  |  |  |  |  | 1 |  |
 | **attnmap** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 1 |  |  |  |  |  |  |  |
 | **axes** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 4 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 1 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
 | **beatcube** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 1 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 2 |  |  |  |  |  |  |  | 1 |  |  |  |  |  |  |  |  |  |

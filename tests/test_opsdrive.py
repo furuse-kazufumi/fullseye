@@ -49,8 +49,9 @@ def test_the_ledger_lists_every_op_and_nothing_is_missing():
     # 679 → 694: 惑星ローバーの車輪の滑り 15(roverslip: Bekker の圧力・沈下の近似 2・Wong–Reece の力・沈下・牽引–滑り 3・斜面の滑り・視覚オドメトリ 2・ガウス過程・分位点回帰・予測・CVaR 4・コスト地図・経路・経路の評価 3、2026-10-06。numpy)
     # 694 → 700: 映像の物理整合性 6(ballistics: 推力つき RK4・推力あり/なしの当てはめ・AIC・弾道 vs 推力・g からの時間引き延ばし、2026-10-23)
     # 700 → 702: 3DGS をブラウザで見せる 2(gsviewer: 1 品のビューア・サムネイルから選ぶカタログ。量子化 + gzip の埋め込み、WebGL2 の EWA、寸法は smallest_box3、2026-10-25。numpy + scipy)
-    # 702 → 704: 小惑星の表面の重力 2(polygrav: 多面体の重力・平面で切った閉じた立体、2026-10-25。numpy)
-    assert len(opsdrive.OPSDRIVE) == 704
+    # 702 → 703: PLATEAU の CityGML LOD2 を三角形メッシュにする 1(driveplateau.plateau_lod2_mesh: 主題面 → (V, F) と部位ごとの属性、EPSG:6697 → 接平面 ENU を GRS80 の ECEF 経由で厳密に、穴は橋渡しで耳切り、未知の幾何・座標系・単位は fail-closed、2026-10-25。stdlib + numpy)
+    # 703 → 705: 小惑星の表面の重力 2(polygrav: 多面体の重力・平面で切った閉じた立体、2026-10-25。numpy)
+    assert len(opsdrive.OPSDRIVE) == 705
     # 台帳の op は実装モジュールの __all__ に在る(逆は要らない: 補助関数は台帳に載せない)
     import drivecourse, driveworld, lidarsim, drivettc, rsssafety, driveterrain, ballistics, balltrack, ballworld, racket
     import roadjp
@@ -120,7 +121,7 @@ def test_the_typed_catalog_declares_the_family():
     import typed_catalog as tc
 
     rows = [r for r in tc.catalog() if r[1] == "drive"]
-    assert len(rows) == 704
+    assert len(rows) == 705
     assert {r[3] for r in rows} == {"table", "image2d", "signal", "matrix", "scalar", "any", "points", "rgba", "rgb", "voxel", "normalmap"}
 
 

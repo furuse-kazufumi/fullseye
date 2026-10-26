@@ -1,8 +1,8 @@
 {
- "n_ops": 3569,
+ "n_ops": 3570,
  "tiers": {
   "color": 12,
-  "ledger": 2610,
+  "ledger": 2611,
   "nary": 17,
   "registry": 930
  },
@@ -21473,6 +21473,19 @@
    "dim": "drive",
    "in_sorts": [
     "rgba"
+   ]
+  },
+  {
+   "name": "plateau_lod2_mesh",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "japan",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any"
    ]
   },
   {

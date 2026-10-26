@@ -13,7 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/skeleton.inputs.jpg">skeleton: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在保持拓扑结构的前提下,将区域细化为 1 像素宽的骨架线(<code style="color:#22d3bf">skimage.morphology.skeletonize</code>)。分支点和端点的位置得以保留,因此常用于分析带分支的形状(例如数手指的根数)。相当于 HALCON 的 <code style="color:#22d3bf">skeleton</code>(Compute the skeleton of a region.)。</p>
-<p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。在没有 skimage 的环境中无法调用此分支。</p>
+<p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。没有 scikit-image 时由 numpy 的孪生实现（<code style="color:#22d3bf">numpy_twins</code>）计算出相同的答案（门禁检查逐位一致）。</p>
 <p><b>边界处理</b>：将图像外部视为背景（0）（实测。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>

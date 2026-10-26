@@ -13,7 +13,7 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Extracts the zero crossings of LoG (Laplacian with built-in Gaussian smoothing, sigma <code style="color:#22d3bf">0.5+2*a</code>) as a sub-pixel-accuracy contour using <code style="color:#22d3bf">find_contours</code>. The sub-pixel-accuracy version of the region-based <code style="color:#22d3bf">zero_crossing</code> (pixel resolution). Corresponds to HALCON&#x27;s <code style="color:#22d3bf">zero_crossing_sub_pix</code> (Extract zero crossings from an image with subpixel accuracy.).</p>
-<p><code style="color:#22d3bf">a</code> sweeps the sigma of the Gaussian smoothing. <code style="color:#22d3bf">b</code> is unused. In environments without skimage this branch cannot be called.</p>
+<p><code style="color:#22d3bf">a</code> sweeps the sigma of the Gaussian smoothing. <code style="color:#22d3bf">b</code> is unused. Without scikit-image it stops with <code style="color:#22d3bf">MissingDependencyError</code> (which says what to install) — it never returns a different answer.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
