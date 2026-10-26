@@ -1,0 +1,582 @@
+{
+ "_": "English fallback translations for the low-cost prototype; formulas, values and op names are preserved.",
+ "example": "build_dissolution_anim3d",
+ "strings": {
+  "How medicine particles dissolve": {
+   "ja": "薬の粒はどう溶けるか",
+   "zh": "How medicine particles dissolve",
+   "tw": "How medicine particles dissolve",
+   "ko": "How medicine particles dissolve",
+   "de": "How medicine particles dissolve",
+   "hi": "How medicine particles dissolve",
+   "fr": "How medicine particles dissolve"
+  },
+  "Test why smaller particles dissolve faster using image measurement and a dissolution model": {
+   "ja": "小さい粒ほど速く溶ける理由を、画像計測と溶出模型で確かめる",
+   "zh": "Test why smaller particles dissolve faster using image measurement and a dissolution model",
+   "tw": "Test why smaller particles dissolve faster using image measurement and a dissolution model",
+   "ko": "Test why smaller particles dissolve faster using image measurement and a dissolution model",
+   "de": "Test why smaller particles dissolve faster using image measurement and a dissolution model",
+   "hi": "Test why smaller particles dissolve faster using image measurement and a dissolution model",
+   "fr": "Test why smaller particles dissolve faster using image measurement and a dissolution model"
+  },
+  "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Drag to orbit; tap a badge for computed gates.": {
+   "ja": "①問い → ②予想 → ③再生 → ④式 → ⑤限界。ドラッグで回転し、バッジで計算の門を見る。",
+   "zh": "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Drag to orbit; tap a badge for computed gates.",
+   "tw": "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Drag to orbit; tap a badge for computed gates.",
+   "ko": "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Drag to orbit; tap a badge for computed gates.",
+   "de": "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Drag to orbit; tap a badge for computed gates.",
+   "hi": "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Drag to orbit; tap a badge for computed gates.",
+   "fr": "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Drag to orbit; tap a badge for computed gates."
+  },
+  "One grain or eight": {
+   "ja": "1 粒と 8 粒",
+   "zh": "One grain or eight",
+   "tw": "One grain or eight",
+   "ko": "One grain or eight",
+   "de": "One grain or eight",
+   "hi": "One grain or eight",
+   "fr": "One grain or eight"
+  },
+  "For equal total mass, eight grains have twice the surface area, and the image-measured remaining-mass curve reaches zero sooner.": {
+   "ja": "同じ総量でも 8 粒は表面積が 2 倍になり、画像から測る溶け残り曲線が早くゼロへ向かう。",
+   "zh": "For equal total mass, eight grains have twice the surface area, and the image-measured remaining-mass curve reaches zero sooner.",
+   "tw": "For equal total mass, eight grains have twice the surface area, and the image-measured remaining-mass curve reaches zero sooner.",
+   "ko": "For equal total mass, eight grains have twice the surface area, and the image-measured remaining-mass curve reaches zero sooner.",
+   "de": "For equal total mass, eight grains have twice the surface area, and the image-measured remaining-mass curve reaches zero sooner.",
+   "hi": "For equal total mass, eight grains have twice the surface area, and the image-measured remaining-mass curve reaches zero sooner.",
+   "fr": "For equal total mass, eight grains have twice the surface area, and the image-measured remaining-mass curve reaches zero sooner."
+  },
+  "one: estimated from image": {
+   "ja": "1 粒: 像から推定",
+   "zh": "one: estimated from image",
+   "tw": "one: estimated from image",
+   "ko": "one: estimated from image",
+   "de": "one: estimated from image",
+   "hi": "one: estimated from image",
+   "fr": "one: estimated from image"
+  },
+  "eight: estimated from image": {
+   "ja": "8 粒: 像から推定",
+   "zh": "eight: estimated from image",
+   "tw": "eight: estimated from image",
+   "ko": "eight: estimated from image",
+   "de": "eight: estimated from image",
+   "hi": "eight: estimated from image",
+   "fr": "eight: estimated from image"
+  },
+  "one particle: numerical ODE vs cube-root law": {
+   "ja": "1 粒: 数値 ODE と立方根則",
+   "zh": "one particle: numerical ODE vs cube-root law",
+   "tw": "one particle: numerical ODE vs cube-root law",
+   "ko": "one particle: numerical ODE vs cube-root law",
+   "de": "one particle: numerical ODE vs cube-root law",
+   "hi": "one particle: numerical ODE vs cube-root law",
+   "fr": "one particle: numerical ODE vs cube-root law"
+  },
+  "remaining mass measured from synthetic images": {
+   "ja": "合成像から測った溶け残り量",
+   "zh": "remaining mass measured from synthetic images",
+   "tw": "remaining mass measured from synthetic images",
+   "ko": "remaining mass measured from synthetic images",
+   "de": "remaining mass measured from synthetic images",
+   "hi": "remaining mass measured from synthetic images",
+   "fr": "remaining mass measured from synthetic images"
+  },
+  "particles separated and measured in the image": {
+   "ja": "画像で分離して測った粒",
+   "zh": "particles separated and measured in the image",
+   "tw": "particles separated and measured in the image",
+   "ko": "particles separated and measured in the image",
+   "de": "particles separated and measured in the image",
+   "hi": "particles separated and measured in the image",
+   "fr": "particles separated and measured in the image"
+  },
+  "8 particles": {
+   "ja": "8 個",
+   "zh": "8 particles",
+   "tw": "8 particles",
+   "ko": "8 particles",
+   "de": "8 particles",
+   "hi": "8 particles",
+   "fr": "8 particles"
+  },
+  "time": {
+   "ja": "時間",
+   "zh": "time",
+   "tw": "time",
+   "ko": "time",
+   "de": "time",
+   "hi": "time",
+   "fr": "time"
+  },
+  "For equal mass, which dissolves faster: one grain or eight?": {
+   "ja": "同じ量なら、1 個と 8 個のどちらが速く溶ける?",
+   "zh": "For equal mass, which dissolves faster: one grain or eight?",
+   "tw": "For equal mass, which dissolves faster: one grain or eight?",
+   "ko": "For equal mass, which dissolves faster: one grain or eight?",
+   "de": "For equal mass, which dissolves faster: one grain or eight?",
+   "hi": "For equal mass, which dissolves faster: one grain or eight?",
+   "fr": "For equal mass, which dissolves faster: one grain or eight?"
+  },
+  "one": {
+   "ja": "1 個",
+   "zh": "one",
+   "tw": "one",
+   "ko": "one",
+   "de": "one",
+   "hi": "one",
+   "fr": "one"
+  },
+  "eight": {
+   "ja": "8 個",
+   "zh": "eight",
+   "tw": "eight",
+   "ko": "eight",
+   "de": "eight",
+   "hi": "eight",
+   "fr": "eight"
+  },
+  "same": {
+   "ja": "同じ",
+   "zh": "same",
+   "tw": "same",
+   "ko": "same",
+   "de": "same",
+   "hi": "same",
+   "fr": "same"
+  },
+  "Eight-way splitting halves radius and doubles total surface area.": {
+   "ja": "8 分割すると半径は半分、総表面積は 2 倍になる。",
+   "zh": "Eight-way splitting halves radius and doubles total surface area.",
+   "tw": "Eight-way splitting halves radius and doubles total surface area.",
+   "ko": "Eight-way splitting halves radius and doubles total surface area.",
+   "de": "Eight-way splitting halves radius and doubles total surface area.",
+   "hi": "Eight-way splitting halves radius and doubles total surface area.",
+   "fr": "Eight-way splitting halves radius and doubles total surface area."
+  },
+  "dm/dt = −k A (Cs − C)": {
+   "ja": "dm/dt = −k A (Cs − C)",
+   "zh": "dm/dt = −k A (Cs − C)",
+   "tw": "dm/dt = −k A (Cs − C)",
+   "ko": "dm/dt = −k A (Cs − C)",
+   "de": "dm/dt = −k A (Cs − C)",
+   "hi": "dm/dt = −k A (Cs − C)",
+   "fr": "dm/dt = −k A (Cs − C)"
+  },
+  "Assumes spheres, constant density and sink conditions.": {
+   "ja": "球形、一定密度、シンク条件を仮定。",
+   "zh": "Assumes spheres, constant density and sink conditions.",
+   "tw": "Assumes spheres, constant density and sink conditions.",
+   "ko": "Assumes spheres, constant density and sink conditions.",
+   "de": "Assumes spheres, constant density and sink conditions.",
+   "hi": "Assumes spheres, constant density and sink conditions.",
+   "fr": "Assumes spheres, constant density and sink conditions."
+  },
+  "Cube-root law": {
+   "ja": "立方根則",
+   "zh": "Cube-root law",
+   "tw": "Cube-root law",
+   "ko": "Cube-root law",
+   "de": "Cube-root law",
+   "hi": "Cube-root law",
+   "fr": "Cube-root law"
+  },
+  "The numerical ODE and closed form are computed separately. The cube root of mass is linear in time and passes a step-derived gate.": {
+   "ja": "数値 ODE と閉形式を別々に計算する。m の立方根は時間に対して直線になり、残差は刻みから決めた門を通る。",
+   "zh": "The numerical ODE and closed form are computed separately. The cube root of mass is linear in time and passes a step-derived gate.",
+   "tw": "The numerical ODE and closed form are computed separately. The cube root of mass is linear in time and passes a step-derived gate.",
+   "ko": "The numerical ODE and closed form are computed separately. The cube root of mass is linear in time and passes a step-derived gate.",
+   "de": "The numerical ODE and closed form are computed separately. The cube root of mass is linear in time and passes a step-derived gate.",
+   "hi": "The numerical ODE and closed form are computed separately. The cube root of mass is linear in time and passes a step-derived gate.",
+   "fr": "The numerical ODE and closed form are computed separately. The cube root of mass is linear in time and passes a step-derived gate."
+  },
+  "maximum relative residual": {
+   "ja": "最大相対残差",
+   "zh": "maximum relative residual",
+   "tw": "maximum relative residual",
+   "ko": "maximum relative residual",
+   "de": "maximum relative residual",
+   "hi": "maximum relative residual",
+   "fr": "maximum relative residual"
+  },
+  "numerical ODE: m^(1/3)": {
+   "ja": "数値 ODE: m^(1/3)",
+   "zh": "numerical ODE: m^(1/3)",
+   "tw": "numerical ODE: m^(1/3)",
+   "ko": "numerical ODE: m^(1/3)",
+   "de": "numerical ODE: m^(1/3)",
+   "hi": "numerical ODE: m^(1/3)",
+   "fr": "numerical ODE: m^(1/3)"
+  },
+  "closed form": {
+   "ja": "閉形式",
+   "zh": "closed form",
+   "tw": "closed form",
+   "ko": "closed form",
+   "de": "closed form",
+   "hi": "closed form",
+   "fr": "closed form"
+  },
+  "What does cube-root mass look like against time?": {
+   "ja": "球の質量の立方根を時間に対して描くと?",
+   "zh": "What does cube-root mass look like against time?",
+   "tw": "What does cube-root mass look like against time?",
+   "ko": "What does cube-root mass look like against time?",
+   "de": "What does cube-root mass look like against time?",
+   "hi": "What does cube-root mass look like against time?",
+   "fr": "What does cube-root mass look like against time?"
+  },
+  "a straight line": {
+   "ja": "直線",
+   "zh": "a straight line",
+   "tw": "a straight line",
+   "ko": "a straight line",
+   "de": "a straight line",
+   "hi": "a straight line",
+   "fr": "a straight line"
+  },
+  "a parabola": {
+   "ja": "放物線",
+   "zh": "a parabola",
+   "tw": "a parabola",
+   "ko": "a parabola",
+   "de": "a parabola",
+   "hi": "a parabola",
+   "fr": "a parabola"
+  },
+  "Area scales as radius squared and mass as radius cubed, so radius shrinks at constant speed.": {
+   "ja": "表面積が半径の二乗、質量が半径の三乗なので半径が一定速で縮む。",
+   "zh": "Area scales as radius squared and mass as radius cubed, so radius shrinks at constant speed.",
+   "tw": "Area scales as radius squared and mass as radius cubed, so radius shrinks at constant speed.",
+   "ko": "Area scales as radius squared and mass as radius cubed, so radius shrinks at constant speed.",
+   "de": "Area scales as radius squared and mass as radius cubed, so radius shrinks at constant speed.",
+   "hi": "Area scales as radius squared and mass as radius cubed, so radius shrinks at constant speed.",
+   "fr": "Area scales as radius squared and mass as radius cubed, so radius shrinks at constant speed."
+  },
+  "m0^(1/3) − m^(1/3) ∝ t": {
+   "ja": "m0^(1/3) − m^(1/3) ∝ t",
+   "zh": "m0^(1/3) − m^(1/3) ∝ t",
+   "tw": "m0^(1/3) − m^(1/3) ∝ t",
+   "ko": "m0^(1/3) − m^(1/3) ∝ t",
+   "de": "m0^(1/3) − m^(1/3) ∝ t",
+   "hi": "m0^(1/3) − m^(1/3) ∝ t",
+   "fr": "m0^(1/3) − m^(1/3) ∝ t"
+  },
+  "Linear only under sink conditions where liquid concentration stays negligible.": {
+   "ja": "液中濃度を無視できるシンク条件でのみ直線。",
+   "zh": "Linear only under sink conditions where liquid concentration stays negligible.",
+   "tw": "Linear only under sink conditions where liquid concentration stays negligible.",
+   "ko": "Linear only under sink conditions where liquid concentration stays negligible.",
+   "de": "Linear only under sink conditions where liquid concentration stays negligible.",
+   "hi": "Linear only under sink conditions where liquid concentration stays negligible.",
+   "fr": "Linear only under sink conditions where liquid concentration stays negligible."
+  },
+  "Particle-size distribution": {
+   "ja": "粒度分布",
+   "zh": "Particle-size distribution",
+   "tw": "Particle-size distribution",
+   "ko": "Particle-size distribution",
+   "de": "Particle-size distribution",
+   "hi": "Particle-size distribution",
+   "fr": "Particle-size distribution"
+  },
+  "pixel/noise bound": {
+   "ja": "画素・雑音の上限",
+   "zh": "pixel/noise bound",
+   "tw": "pixel/noise bound",
+   "ko": "pixel/noise bound",
+   "de": "pixel/noise bound",
+   "hi": "pixel/noise bound",
+   "fr": "pixel/noise bound"
+  },
+  "image-derived remaining mass": {
+   "ja": "像からの残存量",
+   "zh": "image-derived remaining mass",
+   "tw": "image-derived remaining mass",
+   "ko": "image-derived remaining mass",
+   "de": "image-derived remaining mass",
+   "hi": "image-derived remaining mass",
+   "fr": "image-derived remaining mass"
+  },
+  "ODE truth": {
+   "ja": "ODE 真値",
+   "zh": "ODE truth",
+   "tw": "ODE truth",
+   "ko": "ODE truth",
+   "de": "ODE truth",
+   "hi": "ODE truth",
+   "fr": "ODE truth"
+  },
+  "synthetic image measured by threshold, labels and area": {
+   "ja": "二値化・ラベル・面積で測る合成像",
+   "zh": "synthetic image measured by threshold, labels and area",
+   "tw": "synthetic image measured by threshold, labels and area",
+   "ko": "synthetic image measured by threshold, labels and area",
+   "de": "synthetic image measured by threshold, labels and area",
+   "hi": "synthetic image measured by threshold, labels and area",
+   "fr": "synthetic image measured by threshold, labels and area"
+  },
+  "Where does a distribution rich in small grains change the curve?": {
+   "ja": "小粒が多い分布の曲線はどこが変わる?",
+   "zh": "Where does a distribution rich in small grains change the curve?",
+   "tw": "Where does a distribution rich in small grains change the curve?",
+   "ko": "Where does a distribution rich in small grains change the curve?",
+   "de": "Where does a distribution rich in small grains change the curve?",
+   "hi": "Where does a distribution rich in small grains change the curve?",
+   "fr": "Where does a distribution rich in small grains change the curve?"
+  },
+  "faster initially": {
+   "ja": "初期が速い",
+   "zh": "faster initially",
+   "tw": "faster initially",
+   "ko": "faster initially",
+   "de": "faster initially",
+   "hi": "faster initially",
+   "fr": "faster initially"
+  },
+  "only the end is faster": {
+   "ja": "最後だけ速い",
+   "zh": "only the end is faster",
+   "tw": "only the end is faster",
+   "ko": "only the end is faster",
+   "de": "only the end is faster",
+   "hi": "only the end is faster",
+   "fr": "only the end is faster"
+  },
+  "Small grains have more surface area per unit mass.": {
+   "ja": "小粒は質量あたりの表面積が大きい。",
+   "zh": "Small grains have more surface area per unit mass.",
+   "tw": "Small grains have more surface area per unit mass.",
+   "ko": "Small grains have more surface area per unit mass.",
+   "de": "Small grains have more surface area per unit mass.",
+   "hi": "Small grains have more surface area per unit mass.",
+   "fr": "Small grains have more surface area per unit mass."
+  },
+  "C(t) = (m0 − Σm(t)) / V": {
+   "ja": "C(t) = (m0 − Σm(t)) / V",
+   "zh": "C(t) = (m0 − Σm(t)) / V",
+   "tw": "C(t) = (m0 − Σm(t)) / V",
+   "ko": "C(t) = (m0 − Σm(t)) / V",
+   "de": "C(t) = (m0 − Σm(t)) / V",
+   "hi": "C(t) = (m0 − Σm(t)) / V",
+   "fr": "C(t) = (m0 − Σm(t)) / V"
+  },
+  "Model limits": {
+   "ja": "モデルの限界",
+   "zh": "Model limits",
+   "tw": "Model limits",
+   "ko": "Model limits",
+   "de": "Model limits",
+   "hi": "Model limits",
+   "fr": "Model limits"
+  },
+  "Near saturation, Cs − C falls. Aggregation reduces exposed area, and non-spherical shape breaks conversion from image area to mass.": {
+   "ja": "液が飽和に近づくと Cs − C が小さくなる。凝集は見かけの表面積を減らし、非球形は面積から質量への換算を崩す。",
+   "zh": "Near saturation, Cs − C falls. Aggregation reduces exposed area, and non-spherical shape breaks conversion from image area to mass.",
+   "tw": "Near saturation, Cs − C falls. Aggregation reduces exposed area, and non-spherical shape breaks conversion from image area to mass.",
+   "ko": "Near saturation, Cs − C falls. Aggregation reduces exposed area, and non-spherical shape breaks conversion from image area to mass.",
+   "de": "Near saturation, Cs − C falls. Aggregation reduces exposed area, and non-spherical shape breaks conversion from image area to mass.",
+   "hi": "Near saturation, Cs − C falls. Aggregation reduces exposed area, and non-spherical shape breaks conversion from image area to mass.",
+   "fr": "Near saturation, Cs − C falls. Aggregation reduces exposed area, and non-spherical shape breaks conversion from image area to mass."
+  },
+  "uncomputed effects": {
+   "ja": "未計算の効果",
+   "zh": "uncomputed effects",
+   "tw": "uncomputed effects",
+   "ko": "uncomputed effects",
+   "de": "uncomputed effects",
+   "hi": "uncomputed effects",
+   "fr": "uncomputed effects"
+  },
+  "saturation, aggregation, shape": {
+   "ja": "飽和・凝集・非球形",
+   "zh": "saturation, aggregation, shape",
+   "tw": "saturation, aggregation, shape",
+   "ko": "saturation, aggregation, shape",
+   "de": "saturation, aggregation, shape",
+   "hi": "saturation, aggregation, shape",
+   "fr": "saturation, aggregation, shape"
+  },
+  "sink-condition prediction": {
+   "ja": "シンク条件の予測",
+   "zh": "sink-condition prediction",
+   "tw": "sink-condition prediction",
+   "ko": "sink-condition prediction",
+   "de": "sink-condition prediction",
+   "hi": "sink-condition prediction",
+   "fr": "sink-condition prediction"
+  },
+  "same cube-root law near saturation, with aggregation or non-spherical grains": {
+   "ja": "飽和・凝集・非球形でも同じ立方根則",
+   "zh": "same cube-root law near saturation, with aggregation or non-spherical grains",
+   "tw": "same cube-root law near saturation, with aggregation or non-spherical grains",
+   "ko": "same cube-root law near saturation, with aggregation or non-spherical grains",
+   "de": "same cube-root law near saturation, with aggregation or non-spherical grains",
+   "hi": "same cube-root law near saturation, with aggregation or non-spherical grains",
+   "fr": "same cube-root law near saturation, with aggregation or non-spherical grains"
+  },
+  "model includes them": {
+   "ja": "それらをモデルに含む",
+   "zh": "model includes them",
+   "tw": "model includes them",
+   "ko": "model includes them",
+   "de": "model includes them",
+   "hi": "model includes them",
+   "fr": "model includes them"
+  },
+  "not computed": {
+   "ja": "未計算",
+   "zh": "not computed",
+   "tw": "not computed",
+   "ko": "not computed",
+   "de": "not computed",
+   "hi": "not computed",
+   "fr": "not computed"
+  },
+  "Does the same straight line hold near saturation?": {
+   "ja": "液が飽和へ近づいても同じ直線になる?",
+   "zh": "Does the same straight line hold near saturation?",
+   "tw": "Does the same straight line hold near saturation?",
+   "ko": "Does the same straight line hold near saturation?",
+   "de": "Does the same straight line hold near saturation?",
+   "hi": "Does the same straight line hold near saturation?",
+   "fr": "Does the same straight line hold near saturation?"
+  },
+  "yes": {
+   "ja": "なる",
+   "zh": "yes",
+   "tw": "yes",
+   "ko": "yes",
+   "de": "yes",
+   "hi": "yes",
+   "fr": "yes"
+  },
+  "it slows": {
+   "ja": "遅くなる",
+   "zh": "it slows",
+   "tw": "it slows",
+   "ko": "it slows",
+   "de": "it slows",
+   "hi": "it slows",
+   "fr": "it slows"
+  },
+  "The driving difference Cs − C becomes smaller.": {
+   "ja": "駆動力 Cs − C が小さくなるため。",
+   "zh": "The driving difference Cs − C becomes smaller.",
+   "tw": "The driving difference Cs − C becomes smaller.",
+   "ko": "The driving difference Cs − C becomes smaller.",
+   "de": "The driving difference Cs − C becomes smaller.",
+   "hi": "The driving difference Cs − C becomes smaller.",
+   "fr": "The driving difference Cs − C becomes smaller."
+  },
+  "This synthetic model is not for medicine quality decisions or dose design.": {
+   "ja": "この教材は合成模型で、製剤の品質判定や投与設計には使えない。",
+   "zh": "This synthetic model is not for medicine quality decisions or dose design.",
+   "tw": "This synthetic model is not for medicine quality decisions or dose design.",
+   "ko": "This synthetic model is not for medicine quality decisions or dose design.",
+   "de": "This synthetic model is not for medicine quality decisions or dose design.",
+   "hi": "This synthetic model is not for medicine quality decisions or dose design.",
+   "fr": "This synthetic model is not for medicine quality decisions or dose design."
+  },
+  "Particles, liquid and images are entirely synthetic. These are generic medicine particles, with no company, product or generic drug name.": {
+   "ja": "粒・液・画像はすべて合成。一般化した薬の粒で、会社名・商品名・一般名を表さない。",
+   "zh": "Particles, liquid and images are entirely synthetic. These are generic medicine particles, with no company, product or generic drug name.",
+   "tw": "Particles, liquid and images are entirely synthetic. These are generic medicine particles, with no company, product or generic drug name.",
+   "ko": "Particles, liquid and images are entirely synthetic. These are generic medicine particles, with no company, product or generic drug name.",
+   "de": "Particles, liquid and images are entirely synthetic. These are generic medicine particles, with no company, product or generic drug name.",
+   "hi": "Particles, liquid and images are entirely synthetic. These are generic medicine particles, with no company, product or generic drug name.",
+   "fr": "Particles, liquid and images are entirely synthetic. These are generic medicine particles, with no company, product or generic drug name."
+  },
+  "image curve to 10%: one": {
+   "ja": "画像曲線の 10 % 到達: 1 粒",
+   "zh": "image curve to 10%: one",
+   "tw": "image curve to 10%: one",
+   "ko": "image curve to 10%: one",
+   "de": "image curve to 10%: one",
+   "hi": "image curve to 10%: one",
+   "fr": "image curve to 10%: one"
+  },
+  "image curve to 10%: eight": {
+   "ja": "画像曲線の 10 % 到達: 8 粒",
+   "zh": "image curve to 10%: eight",
+   "tw": "image curve to 10%: eight",
+   "ko": "image curve to 10%: eight",
+   "de": "image curve to 10%: eight",
+   "hi": "image curve to 10%: eight",
+   "fr": "image curve to 10%: eight"
+  },
+  "synthetic top view: one grain (measured at 256 px, displayed at 128 px)": {
+   "ja": "上から撮った合成像: 1 粒(計測 256 px、表示 128 px)",
+   "zh": "synthetic top view: one grain (measured at 256 px, displayed at 128 px)",
+   "tw": "synthetic top view: one grain (measured at 256 px, displayed at 128 px)",
+   "ko": "synthetic top view: one grain (measured at 256 px, displayed at 128 px)",
+   "de": "synthetic top view: one grain (measured at 256 px, displayed at 128 px)",
+   "hi": "synthetic top view: one grain (measured at 256 px, displayed at 128 px)",
+   "fr": "synthetic top view: one grain (measured at 256 px, displayed at 128 px)"
+  },
+  "synthetic top view: eight grains (measured at 256 px, displayed at 128 px)": {
+   "ja": "上から撮った合成像: 8 粒(計測 256 px、表示 128 px)",
+   "zh": "synthetic top view: eight grains (measured at 256 px, displayed at 128 px)",
+   "tw": "synthetic top view: eight grains (measured at 256 px, displayed at 128 px)",
+   "ko": "synthetic top view: eight grains (measured at 256 px, displayed at 128 px)",
+   "de": "synthetic top view: eight grains (measured at 256 px, displayed at 128 px)",
+   "hi": "synthetic top view: eight grains (measured at 256 px, displayed at 128 px)",
+   "fr": "synthetic top view: eight grains (measured at 256 px, displayed at 128 px)"
+  },
+  "below pixel/noise bound 0.062": {
+   "ja": "画素・雑音からの上限 0.062 未満",
+   "zh": "below pixel/noise bound 0.062",
+   "tw": "below pixel/noise bound 0.062",
+   "ko": "below pixel/noise bound 0.062",
+   "de": "below pixel/noise bound 0.062",
+   "hi": "below pixel/noise bound 0.062",
+   "fr": "below pixel/noise bound 0.062"
+  },
+  "image-curve time to 10%: eight / one": {
+   "ja": "画像曲線の 10 % 到達時間: 8 粒 / 1 粒",
+   "zh": "image-curve time to 10%: eight / one",
+   "tw": "image-curve time to 10%: eight / one",
+   "ko": "image-curve time to 10%: eight / one",
+   "de": "image-curve time to 10%: eight / one",
+   "hi": "image-curve time to 10%: eight / one",
+   "fr": "image-curve time to 10%: eight / one"
+  },
+  "difference from 1/2 < image/frame bound 0.048": {
+   "ja": "1/2 との差 < 画像誤差・コマ刻み由来 0.048",
+   "zh": "difference from 1/2 < image/frame bound 0.048",
+   "tw": "difference from 1/2 < image/frame bound 0.048",
+   "ko": "difference from 1/2 < image/frame bound 0.048",
+   "de": "difference from 1/2 < image/frame bound 0.048",
+   "hi": "difference from 1/2 < image/frame bound 0.048",
+   "fr": "difference from 1/2 < image/frame bound 0.048"
+  },
+  "Mixing sizes makes small grains drive the early rise while large grains make a long tail. Image circles are thresholded and labelled; equivalent radius comes from each labelled area. Error is evaluated while radius is at least 3.0 mm (60 px diameter).": {
+   "ja": "大粒と小粒を混ぜると、小粒が初期の立ち上がりを作り、大粒が長い尾を作る。画像の円を二値化し、ラベルごとの面積から円相当半径を測る。誤差は半径 3.0 mm(直径 60 px)以上の区間で評価する。",
+   "zh": "Mixing sizes makes small grains drive the early rise while large grains make a long tail. Image circles are thresholded and labelled; equivalent radius comes from each labelled area. Error is evaluated while radius is at least 3.0 mm (60 px diameter).",
+   "tw": "Mixing sizes makes small grains drive the early rise while large grains make a long tail. Image circles are thresholded and labelled; equivalent radius comes from each labelled area. Error is evaluated while radius is at least 3.0 mm (60 px diameter).",
+   "ko": "Mixing sizes makes small grains drive the early rise while large grains make a long tail. Image circles are thresholded and labelled; equivalent radius comes from each labelled area. Error is evaluated while radius is at least 3.0 mm (60 px diameter).",
+   "de": "Mixing sizes makes small grains drive the early rise while large grains make a long tail. Image circles are thresholded and labelled; equivalent radius comes from each labelled area. Error is evaluated while radius is at least 3.0 mm (60 px diameter).",
+   "hi": "Mixing sizes makes small grains drive the early rise while large grains make a long tail. Image circles are thresholded and labelled; equivalent radius comes from each labelled area. Error is evaluated while radius is at least 3.0 mm (60 px diameter).",
+   "fr": "Mixing sizes makes small grains drive the early rise while large grains make a long tail. Image circles are thresholded and labelled; equivalent radius comes from each labelled area. Error is evaluated while radius is at least 3.0 mm (60 px diameter)."
+  },
+  "maximum image error (radius at least 3.0 mm)": {
+   "ja": "最大像誤差(半径 3.0 mm 以上)",
+   "zh": "maximum image error (radius at least 3.0 mm)",
+   "tw": "maximum image error (radius at least 3.0 mm)",
+   "ko": "maximum image error (radius at least 3.0 mm)",
+   "de": "maximum image error (radius at least 3.0 mm)",
+   "hi": "maximum image error (radius at least 3.0 mm)",
+   "fr": "maximum image error (radius at least 3.0 mm)"
+  },
+  "Overlapping grains and grains below 60 px diameter are outside this error evaluation.": {
+   "ja": "重なった粒や直径 60 px 未満の粒は、この誤差評価の対象外。",
+   "zh": "Overlapping grains and grains below 60 px diameter are outside this error evaluation.",
+   "tw": "Overlapping grains and grains below 60 px diameter are outside this error evaluation.",
+   "ko": "Overlapping grains and grains below 60 px diameter are outside this error evaluation.",
+   "de": "Overlapping grains and grains below 60 px diameter are outside this error evaluation.",
+   "hi": "Overlapping grains and grains below 60 px diameter are outside this error evaluation.",
+   "fr": "Overlapping grains and grains below 60 px diameter are outside this error evaluation."
+  }
+ }
+}
