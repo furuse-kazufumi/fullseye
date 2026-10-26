@@ -1,0 +1,573 @@
+{
+ "_": "English fallback translations for the synthetic tablet-inspection prototype; formulas, values and op names are preserved.",
+ "example": "build_tablet_anim3d",
+ "strings": {
+  "How small can tablet chips, cracks, colour patches and foreign particles be?": {
+   "ja": "錠剤の欠け・割れ・色むら・異物はどこまで見える?",
+   "zh": "How small can tablet chips, cracks, colour patches and foreign particles be?",
+   "tw": "How small can tablet chips, cracks, colour patches and foreign particles be?",
+   "ko": "How small can tablet chips, cracks, colour patches and foreign particles be?",
+   "de": "How small can tablet chips, cracks, colour patches and foreign particles be?",
+   "hi": "How small can tablet chips, cracks, colour patches and foreign particles be?",
+   "fr": "How small can tablet chips, cracks, colour patches and foreign particles be?"
+  },
+  "Measure synthetic truth with Otsu, area and centroid, blobs, and CIEDE2000": {
+   "ja": "合成した真値を Otsu、面積・重心、blob、CIEDE2000 で測る",
+   "zh": "Measure synthetic truth with Otsu, area and centroid, blobs, and CIEDE2000",
+   "tw": "Measure synthetic truth with Otsu, area and centroid, blobs, and CIEDE2000",
+   "ko": "Measure synthetic truth with Otsu, area and centroid, blobs, and CIEDE2000",
+   "de": "Measure synthetic truth with Otsu, area and centroid, blobs, and CIEDE2000",
+   "hi": "Measure synthetic truth with Otsu, area and centroid, blobs, and CIEDE2000",
+   "fr": "Measure synthetic truth with Otsu, area and centroid, blobs, and CIEDE2000"
+  },
+  "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Drag to orbit; tap a badge for computed gates.": {
+   "ja": "①問い → ②予想 → ③再生 → ④式 → ⑤限界。ドラッグで回転し、バッジで計算の門を見る。",
+   "zh": "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Drag to orbit; tap a badge for computed gates.",
+   "tw": "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Drag to orbit; tap a badge for computed gates.",
+   "ko": "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Drag to orbit; tap a badge for computed gates.",
+   "de": "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Drag to orbit; tap a badge for computed gates.",
+   "hi": "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Drag to orbit; tap a badge for computed gates.",
+   "fr": "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Drag to orbit; tap a badge for computed gates."
+  },
+  "Whole tray": {
+   "ja": "トレイ全体",
+   "zh": "Whole tray",
+   "tw": "Whole tray",
+   "ko": "Whole tray",
+   "de": "Whole tray",
+   "hi": "Whole tray",
+   "fr": "Whole tray"
+  },
+  "Synthetic tablets use shape and colour only. Known chips, cracks, colour patches and foreign particles are embedded in the camera image and measured with Otsu, area_center and blob_count_interval.": {
+   "ja": "形と色だけの合成錠剤。カメラ像には欠け、割れ、色むら、異物の真値を埋め、Otsu、area_center、blob_count_interval で測る。",
+   "zh": "Synthetic tablets use shape and colour only. Known chips, cracks, colour patches and foreign particles are embedded in the camera image and measured with Otsu, area_center and blob_count_interval.",
+   "tw": "Synthetic tablets use shape and colour only. Known chips, cracks, colour patches and foreign particles are embedded in the camera image and measured with Otsu, area_center and blob_count_interval.",
+   "ko": "Synthetic tablets use shape and colour only. Known chips, cracks, colour patches and foreign particles are embedded in the camera image and measured with Otsu, area_center and blob_count_interval.",
+   "de": "Synthetic tablets use shape and colour only. Known chips, cracks, colour patches and foreign particles are embedded in the camera image and measured with Otsu, area_center and blob_count_interval.",
+   "hi": "Synthetic tablets use shape and colour only. Known chips, cracks, colour patches and foreign particles are embedded in the camera image and measured with Otsu, area_center and blob_count_interval.",
+   "fr": "Synthetic tablets use shape and colour only. Known chips, cracks, colour patches and foreign particles are embedded in the camera image and measured with Otsu, area_center and blob_count_interval."
+  },
+  "separated blobs": {
+   "ja": "分離 blob",
+   "zh": "separated blobs",
+   "tw": "separated blobs",
+   "ko": "separated blobs",
+   "de": "separated blobs",
+   "hi": "separated blobs",
+   "fr": "separated blobs"
+  },
+  "position error": {
+   "ja": "位置誤差",
+   "zh": "position error",
+   "tw": "position error",
+   "ko": "position error",
+   "de": "position error",
+   "hi": "position error",
+   "fr": "position error"
+  },
+  "synthetic camera image": {
+   "ja": "合成カメラ像",
+   "zh": "synthetic camera image",
+   "tw": "synthetic camera image",
+   "ko": "synthetic camera image",
+   "de": "synthetic camera image",
+   "hi": "synthetic camera image",
+   "fr": "synthetic camera image"
+  },
+  "foreign-particle location: Otsu → area_center": {
+   "ja": "異物位置: Otsu → area_center",
+   "zh": "foreign-particle location: Otsu → area_center",
+   "tw": "foreign-particle location: Otsu → area_center",
+   "ko": "foreign-particle location: Otsu → area_center",
+   "de": "foreign-particle location: Otsu → area_center",
+   "hi": "foreign-particle location: Otsu → area_center",
+   "fr": "foreign-particle location: Otsu → area_center"
+  },
+  "≤ 1 px from truth": {
+   "ja": "真値から ≤ 1 px",
+   "zh": "≤ 1 px from truth",
+   "tw": "≤ 1 px from truth",
+   "ko": "≤ 1 px from truth",
+   "de": "≤ 1 px from truth",
+   "hi": "≤ 1 px from truth",
+   "fr": "≤ 1 px from truth"
+  },
+  "minimum detectable chip area: 800 trials/area": {
+   "ja": "欠けの最小検出面積: 800 試行/面積",
+   "zh": "minimum detectable chip area: 800 trials/area",
+   "tw": "minimum detectable chip area: 800 trials/area",
+   "ko": "minimum detectable chip area: 800 trials/area",
+   "de": "minimum detectable chip area: 800 trials/area",
+   "hi": "minimum detectable chip area: 800 trials/area",
+   "fr": "minimum detectable chip area: 800 trials/area"
+  },
+  "90% detection point within ±1 px² of normal approximation": {
+   "ja": "90 % 検出点が正規近似の ±1 px²",
+   "zh": "90% detection point within ±1 px² of normal approximation",
+   "tw": "90% detection point within ±1 px² of normal approximation",
+   "ko": "90% detection point within ±1 px² of normal approximation",
+   "de": "90% detection point within ±1 px² of normal approximation",
+   "hi": "90% detection point within ±1 px² of normal approximation",
+   "fr": "90% detection point within ±1 px² of normal approximation"
+  },
+  "CIEDE2000: op vs direct formula": {
+   "ja": "CIEDE2000: op と直接式",
+   "zh": "CIEDE2000: op vs direct formula",
+   "tw": "CIEDE2000: op vs direct formula",
+   "ko": "CIEDE2000: op vs direct formula",
+   "de": "CIEDE2000: op vs direct formula",
+   "hi": "CIEDE2000: op vs direct formula",
+   "fr": "CIEDE2000: op vs direct formula"
+  },
+  "blob count for separated tablets": {
+   "ja": "分離した錠剤の blob 数",
+   "zh": "blob count for separated tablets",
+   "tw": "blob count for separated tablets",
+   "ko": "blob count for separated tablets",
+   "de": "blob count for separated tablets",
+   "hi": "blob count for separated tablets",
+   "fr": "blob count for separated tablets"
+  },
+  "determined as 5, not an interval": {
+   "ja": "区間でなく 5 個に決まる",
+   "zh": "determined as 5, not an interval",
+   "tw": "determined as 5, not an interval",
+   "ko": "determined as 5, not an interval",
+   "de": "determined as 5, not an interval",
+   "hi": "determined as 5, not an interval",
+   "fr": "determined as 5, not an interval"
+  },
+  "inspection step": {
+   "ja": "検査順",
+   "zh": "inspection step",
+   "tw": "inspection step",
+   "ko": "inspection step",
+   "de": "inspection step",
+   "hi": "inspection step",
+   "fr": "inspection step"
+  },
+  "Can visual inspection find every defect with equal certainty?": {
+   "ja": "目視だけで全欠陥を同じ確かさで見つけられる?",
+   "zh": "Can visual inspection find every defect with equal certainty?",
+   "tw": "Can visual inspection find every defect with equal certainty?",
+   "ko": "Can visual inspection find every defect with equal certainty?",
+   "de": "Can visual inspection find every defect with equal certainty?",
+   "hi": "Can visual inspection find every defect with equal certainty?",
+   "fr": "Can visual inspection find every defect with equal certainty?"
+  },
+  "yes": {
+   "ja": "はい",
+   "zh": "yes",
+   "tw": "yes",
+   "ko": "yes",
+   "de": "yes",
+   "hi": "yes",
+   "fr": "yes"
+  },
+  "no": {
+   "ja": "いいえ",
+   "zh": "no",
+   "tw": "no",
+   "ko": "no",
+   "de": "no",
+   "hi": "no",
+   "fr": "no"
+  },
+  "Detectability changes with pixel count, noise, colour difference and lighting direction.": {
+   "ja": "画素数、ノイズ、色差、照明方向で見つけやすさが変わる。",
+   "zh": "Detectability changes with pixel count, noise, colour difference and lighting direction.",
+   "tw": "Detectability changes with pixel count, noise, colour difference and lighting direction.",
+   "ko": "Detectability changes with pixel count, noise, colour difference and lighting direction.",
+   "de": "Detectability changes with pixel count, noise, colour difference and lighting direction.",
+   "hi": "Detectability changes with pixel count, noise, colour difference and lighting direction.",
+   "fr": "Detectability changes with pixel count, noise, colour difference and lighting direction."
+  },
+  "region = Otsu(image); (A,r,c) = area_center(region)": {
+   "ja": "領域 = Otsu(像); (A,r,c) = area_center(領域)",
+   "zh": "region = Otsu(image); (A,r,c) = area_center(region)",
+   "tw": "region = Otsu(image); (A,r,c) = area_center(region)",
+   "ko": "region = Otsu(image); (A,r,c) = area_center(region)",
+   "de": "region = Otsu(image); (A,r,c) = area_center(region)",
+   "hi": "region = Otsu(image); (A,r,c) = area_center(region)",
+   "fr": "region = Otsu(image); (A,r,c) = area_center(region)"
+  },
+  "This is synthetic imagery, not an acceptance rule for a production line.": {
+   "ja": "合成像であり、実製造ラインの合否基準ではない。",
+   "zh": "This is synthetic imagery, not an acceptance rule for a production line.",
+   "tw": "This is synthetic imagery, not an acceptance rule for a production line.",
+   "ko": "This is synthetic imagery, not an acceptance rule for a production line.",
+   "de": "This is synthetic imagery, not an acceptance rule for a production line.",
+   "hi": "This is synthetic imagery, not an acceptance rule for a production line.",
+   "fr": "This is synthetic imagery, not an acceptance rule for a production line."
+  },
+  "Chip detection limit": {
+   "ja": "欠けの検出限界",
+   "zh": "Chip detection limit",
+   "tw": "Chip detection limit",
+   "ko": "Chip detection limit",
+   "de": "Chip detection limit",
+   "hi": "Chip detection limit",
+   "fr": "Chip detection limit"
+  },
+  "For every area from 1 to 15 px², synthesize 800 images without a chip and 800 with one. Measure the smallest area detected at least 90% of the time by a mean-contrast detector whose false-positive rate is set to 1% on chip-free trials.": {
+   "ja": "面積 1〜15 px² ごとに欠けなし 800 像と欠けあり 800 像を合成する。欠けなしの誤検出率を 1 % にした平均コントラスト検出器が、90 % 以上を拾う最小面積を測る。",
+   "zh": "For every area from 1 to 15 px², synthesize 800 images without a chip and 800 with one. Measure the smallest area detected at least 90% of the time by a mean-contrast detector whose false-positive rate is set to 1% on chip-free trials.",
+   "tw": "For every area from 1 to 15 px², synthesize 800 images without a chip and 800 with one. Measure the smallest area detected at least 90% of the time by a mean-contrast detector whose false-positive rate is set to 1% on chip-free trials.",
+   "ko": "For every area from 1 to 15 px², synthesize 800 images without a chip and 800 with one. Measure the smallest area detected at least 90% of the time by a mean-contrast detector whose false-positive rate is set to 1% on chip-free trials.",
+   "de": "For every area from 1 to 15 px², synthesize 800 images without a chip and 800 with one. Measure the smallest area detected at least 90% of the time by a mean-contrast detector whose false-positive rate is set to 1% on chip-free trials.",
+   "hi": "For every area from 1 to 15 px², synthesize 800 images without a chip and 800 with one. Measure the smallest area detected at least 90% of the time by a mean-contrast detector whose false-positive rate is set to 1% on chip-free trials.",
+   "fr": "For every area from 1 to 15 px², synthesize 800 images without a chip and 800 with one. Measure the smallest area detected at least 90% of the time by a mean-contrast detector whose false-positive rate is set to 1% on chip-free trials."
+  },
+  "measured 90% point": {
+   "ja": "実測 90 % 点",
+   "zh": "measured 90% point",
+   "tw": "measured 90% point",
+   "ko": "measured 90% point",
+   "de": "measured 90% point",
+   "hi": "measured 90% point",
+   "fr": "measured 90% point"
+  },
+  "normal approximation": {
+   "ja": "正規近似",
+   "zh": "normal approximation",
+   "tw": "normal approximation",
+   "ko": "normal approximation",
+   "de": "normal approximation",
+   "hi": "normal approximation",
+   "fr": "normal approximation"
+  },
+  "pixel pitch": {
+   "ja": "画素ピッチ",
+   "zh": "pixel pitch",
+   "tw": "pixel pitch",
+   "ko": "pixel pitch",
+   "de": "pixel pitch",
+   "hi": "pixel pitch",
+   "fr": "pixel pitch"
+  },
+  "detection rate over 800 trials": {
+   "ja": "800 試行の検出率",
+   "zh": "detection rate over 800 trials",
+   "tw": "detection rate over 800 trials",
+   "ko": "detection rate over 800 trials",
+   "de": "detection rate over 800 trials",
+   "hi": "detection rate over 800 trials",
+   "fr": "detection rate over 800 trials"
+  },
+  "camera image as chip area grows": {
+   "ja": "面積を増やした欠けのカメラ像",
+   "zh": "camera image as chip area grows",
+   "tw": "camera image as chip area grows",
+   "ko": "camera image as chip area grows",
+   "de": "camera image as chip area grows",
+   "hi": "camera image as chip area grows",
+   "fr": "camera image as chip area grows"
+  },
+  "chip area": {
+   "ja": "欠け面積",
+   "zh": "chip area",
+   "tw": "chip area",
+   "ko": "chip area",
+   "de": "chip area",
+   "hi": "chip area",
+   "fr": "chip area"
+  },
+  "When is a shrinking chip missed?": {
+   "ja": "欠けを小さくすると、いつ見逃す?",
+   "zh": "When is a shrinking chip missed?",
+   "tw": "When is a shrinking chip missed?",
+   "ko": "When is a shrinking chip missed?",
+   "de": "When is a shrinking chip missed?",
+   "hi": "When is a shrinking chip missed?",
+   "fr": "When is a shrinking chip missed?"
+  },
+  "independent of area": {
+   "ja": "面積と無関係",
+   "zh": "independent of area",
+   "tw": "independent of area",
+   "ko": "independent of area",
+   "de": "independent of area",
+   "hi": "independent of area",
+   "fr": "independent of area"
+  },
+  "when detection rate falls below 90%": {
+   "ja": "検出率が 90 % を下回る",
+   "zh": "when detection rate falls below 90%",
+   "tw": "when detection rate falls below 90%",
+   "ko": "when detection rate falls below 90%",
+   "de": "when detection rate falls below 90%",
+   "hi": "when detection rate falls below 90%",
+   "fr": "when detection rate falls below 90%"
+  },
+  "At fixed contrast, averaging more pixels lowers noise and raises detection probability.": {
+   "ja": "同じコントラストなら、面積が増えるほど平均値の雑音が減って検出率が上がる。",
+   "zh": "At fixed contrast, averaging more pixels lowers noise and raises detection probability.",
+   "tw": "At fixed contrast, averaging more pixels lowers noise and raises detection probability.",
+   "ko": "At fixed contrast, averaging more pixels lowers noise and raises detection probability.",
+   "de": "At fixed contrast, averaging more pixels lowers noise and raises detection probability.",
+   "hi": "At fixed contrast, averaging more pixels lowers noise and raises detection probability.",
+   "fr": "At fixed contrast, averaging more pixels lowers noise and raises detection probability."
+  },
+  "A ≈ ((z0.99 + z0.90)σ/ΔI)²": {
+   "ja": "A ≈ ((z0.99 + z0.90)σ/ΔI)²",
+   "zh": "A ≈ ((z0.99 + z0.90)σ/ΔI)²",
+   "tw": "A ≈ ((z0.99 + z0.90)σ/ΔI)²",
+   "ko": "A ≈ ((z0.99 + z0.90)σ/ΔI)²",
+   "de": "A ≈ ((z0.99 + z0.90)σ/ΔI)²",
+   "hi": "A ≈ ((z0.99 + z0.90)σ/ΔI)²",
+   "fr": "A ≈ ((z0.99 + z0.90)σ/ΔI)²"
+  },
+  "Assumes independent Gaussian noise, known chip position and a uniform background; location search and defocus add further costs in real images.": {
+   "ja": "独立なガウス雑音、既知の欠け位置、一様な背景を仮定。実像では位置探索と焦点ぼけがさらに効く。",
+   "zh": "Assumes independent Gaussian noise, known chip position and a uniform background; location search and defocus add further costs in real images.",
+   "tw": "Assumes independent Gaussian noise, known chip position and a uniform background; location search and defocus add further costs in real images.",
+   "ko": "Assumes independent Gaussian noise, known chip position and a uniform background; location search and defocus add further costs in real images.",
+   "de": "Assumes independent Gaussian noise, known chip position and a uniform background; location search and defocus add further costs in real images.",
+   "hi": "Assumes independent Gaussian noise, known chip position and a uniform background; location search and defocus add further costs in real images.",
+   "fr": "Assumes independent Gaussian noise, known chip position and a uniform background; location search and defocus add further costs in real images."
+  },
+  "Colour patch and ΔE00": {
+   "ja": "色むらと ΔE00",
+   "zh": "Colour patch and ΔE00",
+   "tw": "Colour patch and ΔE00",
+   "ko": "Colour patch and ΔE00",
+   "de": "Colour patch and ΔE00",
+   "hi": "Colour patch and ΔE00",
+   "fr": "Colour patch and ΔE00"
+  },
+  "A local patch fades from ΔE00 = 8 to 0. Lab and CIEDE2000 are used instead of RGB distance, and the op is checked against the direct formula.": {
+   "ja": "局所パッチの色差を ΔE00 = 8 から 0 へ下げる。RGB 距離でなく Lab と CIEDE2000 を使い、op を直接式で検算する。",
+   "zh": "A local patch fades from ΔE00 = 8 to 0. Lab and CIEDE2000 are used instead of RGB distance, and the op is checked against the direct formula.",
+   "tw": "A local patch fades from ΔE00 = 8 to 0. Lab and CIEDE2000 are used instead of RGB distance, and the op is checked against the direct formula.",
+   "ko": "A local patch fades from ΔE00 = 8 to 0. Lab and CIEDE2000 are used instead of RGB distance, and the op is checked against the direct formula.",
+   "de": "A local patch fades from ΔE00 = 8 to 0. Lab and CIEDE2000 are used instead of RGB distance, and the op is checked against the direct formula.",
+   "hi": "A local patch fades from ΔE00 = 8 to 0. Lab and CIEDE2000 are used instead of RGB distance, and the op is checked against the direct formula.",
+   "fr": "A local patch fades from ΔE00 = 8 to 0. Lab and CIEDE2000 are used instead of RGB distance, and the op is checked against the direct formula."
+  },
+  "residual from formula": {
+   "ja": "式との残差",
+   "zh": "residual from formula",
+   "tw": "residual from formula",
+   "ko": "residual from formula",
+   "de": "residual from formula",
+   "hi": "residual from formula",
+   "fr": "residual from formula"
+  },
+  "display sweep": {
+   "ja": "表示範囲",
+   "zh": "display sweep",
+   "tw": "display sweep",
+   "ko": "display sweep",
+   "de": "display sweep",
+   "hi": "display sweep",
+   "fr": "display sweep"
+  },
+  "ΔE00": {
+   "ja": "ΔE00",
+   "zh": "ΔE00",
+   "tw": "ΔE00",
+   "ko": "ΔE00",
+   "de": "ΔE00",
+   "hi": "ΔE00",
+   "fr": "ΔE00"
+  },
+  "camera image as the colour patch fades": {
+   "ja": "色むらを弱めたカメラ像",
+   "zh": "camera image as the colour patch fades",
+   "tw": "camera image as the colour patch fades",
+   "ko": "camera image as the colour patch fades",
+   "de": "camera image as the colour patch fades",
+   "hi": "camera image as the colour patch fades",
+   "fr": "camera image as the colour patch fades"
+  },
+  "Can RGB distance alone judge perceptual colour difference?": {
+   "ja": "RGB の差だけで知覚的な色差を判定できる?",
+   "zh": "Can RGB distance alone judge perceptual colour difference?",
+   "tw": "Can RGB distance alone judge perceptual colour difference?",
+   "ko": "Can RGB distance alone judge perceptual colour difference?",
+   "de": "Can RGB distance alone judge perceptual colour difference?",
+   "hi": "Can RGB distance alone judge perceptual colour difference?",
+   "fr": "Can RGB distance alone judge perceptual colour difference?"
+  },
+  "Lab and viewing conditions are needed": {
+   "ja": "Lab と観察条件が要る",
+   "zh": "Lab and viewing conditions are needed",
+   "tw": "Lab and viewing conditions are needed",
+   "ko": "Lab and viewing conditions are needed",
+   "de": "Lab and viewing conditions are needed",
+   "hi": "Lab and viewing conditions are needed",
+   "fr": "Lab and viewing conditions are needed"
+  },
+  "CIEDE2000 corrects non-uniformity in lightness, chroma and hue.": {
+   "ja": "CIEDE2000 は明度、彩度、色相の非一様さを補正する。",
+   "zh": "CIEDE2000 corrects non-uniformity in lightness, chroma and hue.",
+   "tw": "CIEDE2000 corrects non-uniformity in lightness, chroma and hue.",
+   "ko": "CIEDE2000 corrects non-uniformity in lightness, chroma and hue.",
+   "de": "CIEDE2000 corrects non-uniformity in lightness, chroma and hue.",
+   "hi": "CIEDE2000 corrects non-uniformity in lightness, chroma and hue.",
+   "fr": "CIEDE2000 corrects non-uniformity in lightness, chroma and hue."
+  },
+  "ΔE00 = CIEDE2000(Lab1, Lab2)": {
+   "ja": "ΔE00 = CIEDE2000(Lab1, Lab2)",
+   "zh": "ΔE00 = CIEDE2000(Lab1, Lab2)",
+   "tw": "ΔE00 = CIEDE2000(Lab1, Lab2)",
+   "ko": "ΔE00 = CIEDE2000(Lab1, Lab2)",
+   "de": "ΔE00 = CIEDE2000(Lab1, Lab2)",
+   "hi": "ΔE00 = CIEDE2000(Lab1, Lab2)",
+   "fr": "ΔE00 = CIEDE2000(Lab1, Lab2)"
+  },
+  "Colour differences are not comparable unless white point, lighting and exposure match.": {
+   "ja": "白色点、照明、露光を揃えない色差は比較できない。",
+   "zh": "Colour differences are not comparable unless white point, lighting and exposure match.",
+   "tw": "Colour differences are not comparable unless white point, lighting and exposure match.",
+   "ko": "Colour differences are not comparable unless white point, lighting and exposure match.",
+   "de": "Colour differences are not comparable unless white point, lighting and exposure match.",
+   "hi": "Colour differences are not comparable unless white point, lighting and exposure match.",
+   "fr": "Colour differences are not comparable unless white point, lighting and exposure match."
+  },
+  "Foreign particle, crack and lighting": {
+   "ja": "異物・割れと照明",
+   "zh": "Foreign particle, crack and lighting",
+   "tw": "Foreign particle, crack and lighting",
+   "ko": "Foreign particle, crack and lighting",
+   "de": "Foreign particle, crack and lighting",
+   "hi": "Foreign particle, crack and lighting",
+   "fr": "Foreign particle, crack and lighting"
+  },
+  "A small dark particle remains under frontal light, but shallow-crack shading vanishes at 0° when light is parallel to the groove. One lighting direction has a blind spot.": {
+   "ja": "小さな暗点は正面照明でも残るが、浅い割れの陰影は照明が溝と平行な 0° で消える。1 方向だけの照明には死角がある。",
+   "zh": "A small dark particle remains under frontal light, but shallow-crack shading vanishes at 0° when light is parallel to the groove. One lighting direction has a blind spot.",
+   "tw": "A small dark particle remains under frontal light, but shallow-crack shading vanishes at 0° when light is parallel to the groove. One lighting direction has a blind spot.",
+   "ko": "A small dark particle remains under frontal light, but shallow-crack shading vanishes at 0° when light is parallel to the groove. One lighting direction has a blind spot.",
+   "de": "A small dark particle remains under frontal light, but shallow-crack shading vanishes at 0° when light is parallel to the groove. One lighting direction has a blind spot.",
+   "hi": "A small dark particle remains under frontal light, but shallow-crack shading vanishes at 0° when light is parallel to the groove. One lighting direction has a blind spot.",
+   "fr": "A small dark particle remains under frontal light, but shallow-crack shading vanishes at 0° when light is parallel to the groove. One lighting direction has a blind spot."
+  },
+  "crack contrast at 0°": {
+   "ja": "0° の割れコントラスト",
+   "zh": "crack contrast at 0°",
+   "tw": "crack contrast at 0°",
+   "ko": "crack contrast at 0°",
+   "de": "crack contrast at 0°",
+   "hi": "crack contrast at 0°",
+   "fr": "crack contrast at 0°"
+  },
+  "foreign-particle radius": {
+   "ja": "異物半径",
+   "zh": "foreign-particle radius",
+   "tw": "foreign-particle radius",
+   "ko": "foreign-particle radius",
+   "de": "foreign-particle radius",
+   "hi": "foreign-particle radius",
+   "fr": "foreign-particle radius"
+  },
+  "crack contrast": {
+   "ja": "割れコントラスト",
+   "zh": "crack contrast",
+   "tw": "crack contrast",
+   "ko": "crack contrast",
+   "de": "crack contrast",
+   "hi": "crack contrast",
+   "fr": "crack contrast"
+  },
+  "camera image as lighting angle changes": {
+   "ja": "照明角を変えたカメラ像",
+   "zh": "camera image as lighting angle changes",
+   "tw": "camera image as lighting angle changes",
+   "ko": "camera image as lighting angle changes",
+   "de": "camera image as lighting angle changes",
+   "hi": "camera image as lighting angle changes",
+   "fr": "camera image as lighting angle changes"
+  },
+  "one light direction always detects a shallow crack": {
+   "ja": "照明 1 方向で浅い割れを常に検出",
+   "zh": "one light direction always detects a shallow crack",
+   "tw": "one light direction always detects a shallow crack",
+   "ko": "one light direction always detects a shallow crack",
+   "de": "one light direction always detects a shallow crack",
+   "hi": "one light direction always detects a shallow crack",
+   "fr": "one light direction always detects a shallow crack"
+  },
+  "contrast ≥ 0.05": {
+   "ja": "コントラスト ≥ 0.05",
+   "zh": "contrast ≥ 0.05",
+   "tw": "contrast ≥ 0.05",
+   "ko": "contrast ≥ 0.05",
+   "de": "contrast ≥ 0.05",
+   "hi": "contrast ≥ 0.05",
+   "fr": "contrast ≥ 0.05"
+  },
+  "lighting angle": {
+   "ja": "照明角",
+   "zh": "lighting angle",
+   "tw": "lighting angle",
+   "ko": "lighting angle",
+   "de": "lighting angle",
+   "hi": "lighting angle",
+   "fr": "lighting angle"
+  },
+  "Does one lighting direction always reveal a shallow crack?": {
+   "ja": "照明が 1 方向でも浅い割れを必ず見つけられる?",
+   "zh": "Does one lighting direction always reveal a shallow crack?",
+   "tw": "Does one lighting direction always reveal a shallow crack?",
+   "ko": "Does one lighting direction always reveal a shallow crack?",
+   "de": "Does one lighting direction always reveal a shallow crack?",
+   "hi": "Does one lighting direction always reveal a shallow crack?",
+   "fr": "Does one lighting direction always reveal a shallow crack?"
+  },
+  "always": {
+   "ja": "必ず見つかる",
+   "zh": "always",
+   "tw": "always",
+   "ko": "always",
+   "de": "always",
+   "hi": "always",
+   "fr": "always"
+  },
+  "it vanishes at some orientations": {
+   "ja": "向きによって消える",
+   "zh": "it vanishes at some orientations",
+   "tw": "it vanishes at some orientations",
+   "ko": "it vanishes at some orientations",
+   "de": "it vanishes at some orientations",
+   "hi": "it vanishes at some orientations",
+   "fr": "it vanishes at some orientations"
+  },
+  "In this model, shading contrast becomes zero when the groove and light are parallel.": {
+   "ja": "溝と光が平行なとき陰影のコントラストが 0 になる模型。",
+   "zh": "In this model, shading contrast becomes zero when the groove and light are parallel.",
+   "tw": "In this model, shading contrast becomes zero when the groove and light are parallel.",
+   "ko": "In this model, shading contrast becomes zero when the groove and light are parallel.",
+   "de": "In this model, shading contrast becomes zero when the groove and light are parallel.",
+   "hi": "In this model, shading contrast becomes zero when the groove and light are parallel.",
+   "fr": "In this model, shading contrast becomes zero when the groove and light are parallel."
+  },
+  "Ccrack = Cmax |sin θ|": {
+   "ja": "Ccrack = Cmax |sin θ|",
+   "zh": "Ccrack = Cmax |sin θ|",
+   "tw": "Ccrack = Cmax |sin θ|",
+   "ko": "Ccrack = Cmax |sin θ|",
+   "de": "Ccrack = Cmax |sin θ|",
+   "hi": "Ccrack = Cmax |sin θ|",
+   "fr": "Ccrack = Cmax |sin θ|"
+  },
+  "This is the limit tab. A shallow crack can be missed unless multi-directional lighting or shape measurement is added.": {
+   "ja": "これが限界の回。多方向照明や形状計測を足さない限り、浅い割れを見逃す。",
+   "zh": "This is the limit tab. A shallow crack can be missed unless multi-directional lighting or shape measurement is added.",
+   "tw": "This is the limit tab. A shallow crack can be missed unless multi-directional lighting or shape measurement is added.",
+   "ko": "This is the limit tab. A shallow crack can be missed unless multi-directional lighting or shape measurement is added.",
+   "de": "This is the limit tab. A shallow crack can be missed unless multi-directional lighting or shape measurement is added.",
+   "hi": "This is the limit tab. A shallow crack can be missed unless multi-directional lighting or shape measurement is added.",
+   "fr": "This is the limit tab. A shallow crack can be missed unless multi-directional lighting or shape measurement is added."
+  },
+  "Entirely synthetic generic tablet shapes and colours; no company, product, medicine or patient data are included.": {
+   "ja": "すべて合成。形と色だけの一般的な錠剤模型で、会社名、製品名、薬剤名、実患者データは含まない。",
+   "zh": "Entirely synthetic generic tablet shapes and colours; no company, product, medicine or patient data are included.",
+   "tw": "Entirely synthetic generic tablet shapes and colours; no company, product, medicine or patient data are included.",
+   "ko": "Entirely synthetic generic tablet shapes and colours; no company, product, medicine or patient data are included.",
+   "de": "Entirely synthetic generic tablet shapes and colours; no company, product, medicine or patient data are included.",
+   "hi": "Entirely synthetic generic tablet shapes and colours; no company, product, medicine or patient data are included.",
+   "fr": "Entirely synthetic generic tablet shapes and colours; no company, product, medicine or patient data are included."
+  }
+ }
+}
