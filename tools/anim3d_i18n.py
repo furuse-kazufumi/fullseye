@@ -62,6 +62,8 @@ from collections import Counter
 from pathlib import Path
 from typing import Any, Iterator
 
+import numpy as np
+
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
@@ -427,6 +429,139 @@ def normalize_rasters(html: str) -> str:
     return html[:start] + encoded + html[end:]
 
 
+def _portable_data(html: str) -> tuple[dict, str, str, list[tuple[str, str]]]:
+    """Canonicalise array keys in deterministic first-reference order."""
+    data, start, end = _embedded_data(html)
+    data = copy.deepcopy(data)
+    arrays = data.get("arrays")
+    if not isinstance(arrays, dict):
+        raise ValueError("viewer arrays is not an object")
+    names: dict[str, str] = {}
+    refs: list[tuple[str, str]] = []
+
+    def visit(value, path):
+        if isinstance(value, dict):
+            for key, child in value.items():
+                if not (path == "$" and key == "arrays"):
+                    visit(child, path + "." + key)
+        elif isinstance(value, list):
+            for index, child in enumerate(value):
+                visit(child, "%s[%d]" % (path, index))
+        elif isinstance(value, str) and value in arrays and value not in names:
+            names[value] = "K%d" % len(names)
+            refs.append((value, path))
+
+    visit(data, "$")
+    for key in sorted(arrays):
+        if key not in names:
+            names[key] = "K%d" % len(names)
+            refs.append((key, "$.arrays(unreferenced)"))
+
+    def rename(value, root=False):
+        if isinstance(value, dict):
+            return {k: rename(v) for k, v in value.items() if not (root and k == "arrays")}
+        if isinstance(value, list):
+            return [rename(v) for v in value]
+        return names.get(value, value) if isinstance(value, str) else value
+
+    result = rename(data, True)
+    result["arrays"] = {names[key]: arrays[key] for key, _ in refs}
+    return result, html[:start], html[end:], refs
+
+
+def _compare_json(a, b, path: str, diffs: list[str], skip_arrays=False) -> None:
+    if len(diffs) >= 8:
+        return
+    if isinstance(a, bool) or isinstance(b, bool):
+        same = type(a) is type(b) and a == b
+    elif isinstance(a, float) or isinstance(b, float):
+        same = (isinstance(a, float) and isinstance(b, float)
+                and bool(np.isclose(a, b, rtol=1e-7, atol=1e-12, equal_nan=True)))
+    elif type(a) is not type(b):
+        diffs.append("%s: type %s != %s" % (path, type(a).__name__, type(b).__name__))
+        return
+    elif isinstance(a, dict):
+        ak, bk = set(a), set(b)
+        if skip_arrays:
+            ak.discard("arrays"); bk.discard("arrays")
+        if ak != bk:
+            diffs.append("%s: keys %r != %r" % (path, sorted(ak), sorted(bk)))
+        for key in sorted(ak & bk):
+            _compare_json(a[key], b[key], path + "." + key, diffs)
+        return
+    elif isinstance(a, list):
+        if len(a) != len(b):
+            diffs.append("%s: length %d != %d" % (path, len(a), len(b)))
+        for index, (x, y) in enumerate(zip(a, b)):
+            _compare_json(x, y, "%s[%d]" % (path, index), diffs)
+        return
+    else:
+        same = a == b
+    if not same:
+        diffs.append("%s: %r != %r" % (path, a, b))
+
+
+def compare_pages_portable(committed: str, rebuilt: str) -> list[str]:
+    """Return structural differences after applying portable numeric rules."""
+    a, ap, az, refs = _portable_data(committed)
+    b, bp, bz, _ = _portable_data(rebuilt)
+    diffs: list[str] = []
+    if ap != bp:
+        diffs.append("HTML before const D differs")
+    if az != bz:
+        diffs.append("HTML after const D differs")
+    _compare_json(a, b, "$", diffs, skip_arrays=True)
+    aa, ba = a["arrays"], b["arrays"]
+    if len(aa) != len(ba):
+        diffs.append("$.arrays: count %d != %d" % (len(aa), len(ba)))
+
+    def raster_keys(data):
+        return {pane["frames"] for tab in data.get("tabs", []) if isinstance(tab, dict) and tab.get("kind") == "anim3d"
+                for pane in tab.get("panes", []) if isinstance(pane, dict) and isinstance(pane.get("frames"), str)}
+
+    ar, br = raster_keys(a), raster_keys(b)
+    for index in range(min(len(aa), len(ba))):
+        key = "K%d" % index
+        if key not in aa or key not in ba:
+            diffs.append("$.arrays.%s: missing record" % key)
+            continue
+        x, y = aa[key], ba[key]
+        label = "array %s at %s" % refs[index]
+        if not isinstance(x, dict) or not isinstance(y, dict):
+            _compare_json(x, y, "$.arrays." + key, diffs)
+            continue
+        if x.get("t") != y.get("t") or x.get("shape") != y.get("shape"):
+            diffs.append("%s: t/shape %r/%r != %r/%r" % (label, x.get("t"), x.get("shape"), y.get("t"), y.get("shape")))
+            continue
+        if key in ar or key in br:
+            if key not in ar or key not in br:
+                diffs.append("%s: pane raster role differs" % label)
+            elif x.get("t") == "png" and len(x.get("png", [])) != len(y.get("png", [])):
+                diffs.append("%s: PNG count differs" % label)
+            continue
+        payload_fields = {"b64", "lo", "hi"} if x.get("t") in ("q8", "q16") else {"b64"}
+        _compare_json({k: v for k, v in x.items() if k not in payload_fields},
+                      {k: v for k, v in y.items() if k not in payload_fields}, "$.arrays." + key, diffs)
+        try:
+            av, bv = pv._decode_array(x), pv._decode_array(y)
+            finite_a, finite_b = av[np.isfinite(av)], bv[np.isfinite(bv)]
+            range_a = float(np.ptp(finite_a)) if finite_a.size else 0.0
+            range_b = float(np.ptp(finite_b)) if finite_b.size else 0.0
+            scale = max(1.0, range_a, range_b)
+            tolerance = np.full(av.shape, 1e-6 * scale)
+            if x.get("t") in ("q8", "q16"):
+                step = np.maximum(np.abs(pv._quant_step(x)), np.abs(pv._quant_step(y)))
+                tolerance += step.reshape((1,) * (av.ndim - 1) + (-1,)) if step.size > 1 else float(step[0])
+            bad = ~np.isclose(av, bv, rtol=0, atol=tolerance, equal_nan=True)
+            for pos in np.argwhere(bad)[:max(0, 8 - len(diffs))]:
+                idx = tuple(map(int, pos))
+                diffs.append("%s%s: %r != %r (delta %.6g, tolerance %.6g)" %
+                             (label, idx, av[idx], bv[idx], abs(float(av[idx]) - float(bv[idx])), float(tolerance[idx])))
+        except Exception as exc:
+            diffs.append("%s: cannot decode (%s)" % (label, exc))
+    return diffs[:8]
+
+
 def _raster_font_name() -> str:
     """Basename of the actual font selected by annotate for raster labels."""
     font = annotate._font(11)
@@ -491,14 +626,13 @@ def check_same_page(committed: str, rebuilt: str, page, example: str) -> str:
         return "exact"
     if _raster_font_name() != RASTER_REFERENCE_FONT.lower():
         try:
-            same = normalize_rasters(committed) == normalize_rasters(rebuilt)
+            differences = compare_pages_portable(committed, rebuilt)
         except ValueError as exc:
             msg = describe_page_mismatch(committed, rebuilt, page, example)
-            raise AssertionError("図の正規化に失敗: %s\n%s" % (exc, msg)) from exc
-        if same:
-            return "rasters-normalised"
-        normal_msg = describe_page_mismatch(normalize_rasters(committed), normalize_rasters(rebuilt), page, example)
-        raise AssertionError(normal_msg)
+            raise AssertionError("portable page comparison failed: %s\n%s" % (exc, msg)) from exc
+        if not differences:
+            return "portable"
+        raise AssertionError("portable page mismatch:\n  " + "\n  ".join(differences))
     raise AssertionError(describe_page_mismatch(committed, rebuilt, page, example))
 
 
