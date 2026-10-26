@@ -1588,8 +1588,8 @@ def gates(res) -> dict:
 
 
 def _e(x):
-    """門の値の印字(0 はそのまま 0、他は指数 1 桁)。"""
-    return "0" if x == 0 else "%.1e" % x
+    """門の値の印字(1e-12 未満はプラットフォーム非依存の上限表示)。"""
+    return "< 1e-12" if abs(x) < 1e-12 else "%.1e" % x
 
 
 def _row(what_ja, what_en, criterion, result, ok):
@@ -1848,8 +1848,8 @@ def build_spec(res):
         "大きくなり、f を割ると光は集まらなくなって正立の虚像(虫めがね)に変わる(灰の線 = 出た光を後ろへ伸ばした線)。\n"
         "限界: 近軸の式は「光軸のすぐそばの光」だけの式。レンズの縁寄り(半径の 0.45)を通る実光線は a = 3f で %.1f%%、"
         "a = 2f で %.1f%% 手前で集まり、a が f に近づくと差が大きく開く(式は無限遠、実光線は有限)。"
-        "thin_lens と paraxial_trace(厚いレンズの近軸の追跡、主点から測る)は全コマで相対 %.0e 以内で一致(門)。" % (
-            100 * S["A_ray_3f"], 100 * S["A_ray_2f"], S["A_para_vs_thin"] + 1e-300),
+        "thin_lens と paraxial_trace(厚いレンズの近軸の追跡、主点から測る)は全コマで相対 %s 以内で一致(門)。" % (
+            100 * S["A_ray_3f"], 100 * S["A_ray_2f"], _e(S["A_para_vs_thin"])),
         "Terms: focal length f = where parallel light meets. Principal planes H, H′ = the reference planes from which "
         "distances are measured in a thick lens (the middle of a thin lens). Real image = light really converges and "
         "shows on a screen. Virtual image = light never meets; you only see it through the lens. Magnification m = "
@@ -1860,11 +1860,11 @@ def build_spec(res):
         "virtual image (a magnifier; grey lines are the outgoing rays extended backwards).\n"
         "Limit: the paraxial formula is for rays close to the axis. Real rays through 0.45 of the radius meet %.1f%% "
         "short at a = 3f and %.1f%% at a = 2f, and the gap opens up as a nears f (formula: infinity; real rays: finite). "
-        "thin_lens and paraxial_trace (thick lens, measured from the principal planes) agree to %.0e on every frame (gate)." % (
-            100 * S["A_ray_3f"], 100 * S["A_ray_2f"], S["A_para_vs_thin"] + 1e-300))
+        "thin_lens and paraxial_trace (thick lens, measured from the principal planes) agree to %s on every frame (gate)." % (
+            100 * S["A_ray_3f"], 100 * S["A_ray_2f"], _e(S["A_para_vs_thin"])))
     nums = [pv.viewer_number(T("焦点距離 f(paraxial_trace)", "focal length f (paraxial_trace)"), "%.2f mm" % S["A_f"]),
             pv.viewer_number(T("thin_lens と paraxial_trace の差(最大)", "thin_lens vs paraxial_trace (max)"),
-                             "%.0e" % S["A_para_vs_thin"]),
+                             _e(S["A_para_vs_thin"])),
             pv.viewer_number(T("a = 2f の倍率", "magnification at a = 2f"), "%+.3f" % S["A_m_2f"]),
             pv.viewer_number(T("実光線の像の位置のずれ(3f / 2f)", "real-ray image shift (3f / 2f)"),
                              "%.1f%% / %.1f%%" % (100 * S["A_ray_3f"], 100 * S["A_ray_2f"]))]
@@ -1891,9 +1891,9 @@ def build_spec(res):
         "緑の点が paraxial_trace の焦点、黄色の線が trace_rays の実光線。\n"
         "限界: 薄肉の式はレンズの厚みを 0 とみなす。R = 300 mm では差 %.2f%% だが、R = 24 mm(厚さ 7.9 mm)では %.1f%% 外れる"
         "(薄肉 %.1f mm、厚肉 %.1f mm)。さらに縁(高さ 10 mm)の実光線は %.1f mm で集まる。厚肉の閉形式 thick_lens と"
-        "paraxial_trace は全コマ相対 %.0e 以内で一致(門)。" % (
+        "paraxial_trace は全コマ相対 %s 以内で一致(門)。" % (
             100 * S["B_dev_R300"], 100 * S["B_dev_R24"], S["B_thin_R24"], S["B_thick_R24"], S["B_ray_R24"],
-            S["B_thick_vs_para"] + 1e-300),
+            _e(S["B_thick_vs_para"])),
         "Terms: refractive index n = how much light slows down in the material (water 1.33, ordinary glass 1.52). "
         "Radius of curvature R = the radius of the sphere a lens surface is part of (smaller = more strongly curved). "
         "Power 1/f = how strongly the lens bends light (unit D = 1/m).\n"
@@ -1904,11 +1904,11 @@ def build_spec(res):
         "thin-lens formula 1/f = (n−1)(1/R1 − 1/R2); green dot: paraxial_trace; yellow lines: real rays from trace_rays.\n"
         "Limit: the thin-lens formula treats the lens as having zero thickness. At R = 300 mm it is off by %.2f%%; at "
         "R = 24 mm (7.9 mm thick) by %.1f%% (thin %.1f mm, thick %.1f mm), and the edge ray (10 mm high) meets at %.1f mm. "
-        "The closed-form thick_lens and paraxial_trace agree to %.0e on every frame (gate)." % (
+        "The closed-form thick_lens and paraxial_trace agree to %s on every frame (gate)." % (
             100 * S["B_dev_R300"], 100 * S["B_dev_R24"], S["B_thin_R24"], S["B_thick_R24"], S["B_ray_R24"],
-            S["B_thick_vs_para"] + 1e-300))
+            _e(S["B_thick_vs_para"])))
     nums = [pv.viewer_number(T("thick_lens と paraxial_trace の差(最大)", "thick_lens vs paraxial_trace (max)"),
-                             "%.0e" % S["B_thick_vs_para"]),
+                             _e(S["B_thick_vs_para"])),
             pv.viewer_number(T("薄肉の式のずれ(R = 300 / 24 mm)", "thin formula error (R = 300 / 24 mm)"),
                              "%.2f%% / %.1f%%" % (100 * S["B_dev_R300"], 100 * S["B_dev_R24"])),
             pv.viewer_number(T("材料", "materials"), T(" · ".join(mat_label(m, "ja") for m in MATS_B),
@@ -1934,9 +1934,9 @@ def build_spec(res):
         "(右端のグラフの白い線)。d = f1 + f2 = %.1f mm で屈折力が 0(焦点距離が無限大)、平行光が平行光のまま出る = 望遠鏡。"
         "その先は f が負になる。\n"
         "ここで大事な点: 実のレンズは厚いので、d を「主点の間」で測ると薄レンズの ABCD がそのまま当たる "
-        "(abcd_matrix と実の処方の paraxial_trace が全コマ相対 %.0e で一致、det M = 1 も %.0e で成立: 門)。"
+        "(abcd_matrix と実の処方の paraxial_trace が全コマ相対 %s で一致、det M = 1 も %s で成立: 門)。"
         "限界: 高さ 9 mm の実光線(黄色)は近軸の焦点より手前で集まり、望遠鏡の近くでは差が大きく開く。" % (
-            C["f1"], C["f2"], S["C_afocal_d"], S["C_abcd_vs_para"] + 1e-300, S["C_det"] + 1e-300),
+            C["f1"], C["f2"], S["C_afocal_d"], _e(S["C_abcd_vs_para"]), _e(S["C_det"])),
         "Terms: ABCD matrix = a way to carry a ray's height y and slope θ through each lens or gap by multiplying a 2×2 "
         "matrix; the whole system becomes one matrix and its focal length is f = −1/C. Principal plane H′ = where the "
         "pair acts like one thin lens (grey lines: the incoming and outgoing rays extended until they meet).\n"
@@ -1944,12 +1944,12 @@ def build_spec(res):
         "(white line in the right graph). At d = f1 + f2 = %.1f mm the power is zero (infinite focal length): parallel "
         "light leaves parallel — a telescope. Beyond that f is negative.\n"
         "Key point: real lenses are thick, and if d is measured between the principal planes the thin-lens ABCD holds "
-        "exactly (abcd_matrix vs paraxial_trace of the real prescription agree to %.0e on every frame; det M = 1 to %.0e: "
+        "exactly (abcd_matrix vs paraxial_trace of the real prescription agree to %s on every frame; det M = 1 to %s: "
         "gates). Limit: the real 9 mm ray (yellow) meets short of the paraxial focus, and near the telescope setting the "
-        "gap opens up." % (C["f1"], C["f2"], S["C_afocal_d"], S["C_abcd_vs_para"] + 1e-300, S["C_det"] + 1e-300))
+        "gap opens up." % (C["f1"], C["f2"], S["C_afocal_d"], _e(S["C_abcd_vs_para"]), _e(S["C_det"])))
     nums = [pv.viewer_number(T("f1 / f2(paraxial_trace)", "f1 / f2 (paraxial_trace)"), "%.2f / %.2f mm" % (C["f1"], C["f2"])),
             pv.viewer_number(T("abcd_matrix と paraxial_trace の差(最大)", "abcd_matrix vs paraxial_trace (max)"),
-                             "%.0e" % S["C_abcd_vs_para"]),
+                             _e(S["C_abcd_vs_para"])),
             pv.viewer_number(T("望遠鏡になる間隔 f1 + f2", "telescope spacing f1 + f2"), "%.1f mm" % S["C_afocal_d"])]
     tabs.append(pv.viewer_anim3d_tab(
         "doublet", T("2 枚組と ABCD 行列", "Two lenses and ABCD matrices"), "passed", text, C["t"], bodies, xyz, quat,
@@ -1969,11 +1969,11 @@ def build_spec(res):
         "見た絞りの像(水色の輪)。主光線 = 絞りの中心を通る光線(オレンジ)。ケラレ = レンズの縁が斜めの光束を切ること"
         "(赤い線 = 縁で切られた光、灰の線 = 絞りで止まった光)。周辺減光 = 画面の端ほど暗くなること。教科書の cos⁴ 則: E/E0 = cos⁴θ。\n"
         "2 枚のレンズの間に絞りを置いた対称な系で、斜めから来る平行光の角度 θ を 0 → %.0f° に振る。paraxial_trace が"
-        "入射瞳を頂点から %.1f mm・半径 %.2f mm と出し、chief_ray は全コマで絞りの中心から %.0e mm 以内を通る(門)。\n"
+        "入射瞳を頂点から %.1f mm・半径 %.2f mm と出し、chief_ray は全コマで絞りの中心から %s mm 以内を通る(門)。\n"
         "限界: cos⁴ は「瞳がゆがまず、どこも切られない」ときの式。縁で切らない場合でも 10° までは %.1f%% 以内で合うが、"
         "その先は瞳の見かけが広がって cos⁴ より最大 %.0f%% 明るい(灰の点)。縁で切ると %.0f° で cos⁴ の %.3f に対し"
         "実光線は %.3f(ray_bundle で通る光線は %.0f%%)—— cos⁴ だけで周辺の明るさを見積もると外れる。" % (
-            FIELD_MAX, ep_z, ep_r, S["D_stop_hit"] + 1e-300, 100 * S["D_noclip_10deg"], 100 * S["D_noclip_max"],
+            FIELD_MAX, ep_z, ep_r, _e(S["D_stop_hit"]), 100 * S["D_noclip_10deg"], 100 * S["D_noclip_max"],
             S["D_theta_end"], S["D_cos4_end"], S["D_ri_end"], 100 * S["D_vig_end"]),
         "Terms: aperture stop = the hole that sets how thick the beam is (dark ring). Entrance pupil = the stop as seen "
         "from the front; exit pupil = as seen from the back (light-blue rings). Chief ray = the ray through the centre "
@@ -1981,11 +1981,11 @@ def build_spec(res):
         "illumination = the picture getting darker towards the edge; the textbook cos⁴ law says E/E0 = cos⁴θ.\n"
         "A symmetric system with the stop between two lenses; the angle θ of the incoming parallel light goes 0 → %.0f°. "
         "paraxial_trace puts the entrance pupil %.1f mm from the first vertex with radius %.2f mm, and chief_ray passes "
-        "within %.0e mm of the stop centre on every frame (gate).\n"
+        "within %s mm of the stop centre on every frame (gate).\n"
         "Limit: cos⁴ assumes an undistorted pupil and no clipping. Without rim clipping it holds within %.1f%% up to 10°, "
         "beyond which the pupil looks larger and the edge is up to %.0f%% brighter than cos⁴ (grey dots). With the rims, at "
         "%.0f° cos⁴ gives %.3f but the real rays give %.3f (ray_bundle passes %.0f%% of the rays) — cos⁴ alone is the "
-        "wrong estimate." % (FIELD_MAX, ep_z, ep_r, S["D_stop_hit"] + 1e-300, 100 * S["D_noclip_10deg"],
+        "wrong estimate." % (FIELD_MAX, ep_z, ep_r, _e(S["D_stop_hit"]), 100 * S["D_noclip_10deg"],
                              100 * S["D_noclip_max"], S["D_theta_end"], S["D_cos4_end"], S["D_ri_end"], 100 * S["D_vig_end"]))
     nums = [pv.viewer_number(T("入射瞳(位置 / 半径)", "entrance pupil (position / radius)"), "%.2f / %.2f mm" % (ep_z, ep_r)),
             pv.viewer_number(T("F 値(paraxial_trace)", "F-number (paraxial_trace)"), "%.2f" % D["para"]["fno"]),

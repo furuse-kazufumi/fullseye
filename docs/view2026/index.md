@@ -230,11 +230,11 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 </div>
 
-[PoC 以外の使用例 165 本の一覧](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[PoC 以外の使用例 168 本の一覧](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## ぜんぶ見る
 
-PoC 276 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
+PoC 277 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
 
 <noscript><p><a href="../GALLERY.html">(JavaScript が無い環境では、ギャラリーのページで全部の図を見られます)</a></p></noscript>
 
@@ -363,7 +363,7 @@ PoC 276 本と、ロボットの例 5 本。グループを開くとサムネイ
 </div>
 </details>
 
-<details class="vall"><summary><b>3-D 形状</b> (18)</summary>
+<details class="vall"><summary><b>3-D 形状</b> (19)</summary>
 <div class="vg vs">
 <a href="../articles/assets/poc/poc_battery_ct_degradation/01_xray_projection.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_battery_ct_degradation.jpg" alt="電池の CT 劣化" width="200" height="200"><span>電池の CT 劣化</span></a>
 <a href="../articles/assets/poc/poc_bev_sensor_fusion/01_scene_bev.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_bev_sensor_fusion.jpg" alt="鳥瞰図の融合" width="200" height="200"><span>鳥瞰図の融合</span></a>
@@ -383,6 +383,7 @@ PoC 276 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_symmetry_restoration/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_symmetry_restoration.jpg" alt="対称性で補う" width="200" height="200"><span>対称性で補う</span></a>
 <a href="../articles/assets/poc/poc_endless_zoom_and_turning_solids/03_zoom_loop.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_endless_zoom_and_turning_solids.jpg" alt="無限ズーム" width="200" height="200"><b>&#9654;</b><span>無限ズーム</span></a>
 <a href="../articles/assets/poc/poc_four_dimensions_by_three_d_tools/03_hopf_turn.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_four_dimensions_by_three_d_tools.jpg" alt="4 次元を 3-D で" width="200" height="200"><b>&#9654;</b><span>4 次元を 3-D で</span></a>
+<a href="../articles/assets/poc/poc_plateau_venue_lod2/01_venue_itokawa_top.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_plateau_venue_lod2.jpg" alt="会場の建物と小惑星イトカワを同じ物差しで ―― PLATEAU の CityGML LOD2 をメッシュに" width="200" height="200"><span>会場の建物と小惑星イトカワを同じ物差しで ―― PLATEAU の CityGML LOD2 をメッシュに</span></a>
 </div>
 </details>
 

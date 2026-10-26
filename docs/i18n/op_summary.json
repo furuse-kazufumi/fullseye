@@ -1010,13 +1010,13 @@
    "hi": "OpenCV का bilateral filter (``cv2.bilateralFilter``)। पड़ोसी pixels को spatial दूरी और brightness अंतर दोनों से weight देकर औसत लेने वाली, edges बचाते हुए smoothing करने की मानक विधि। HALCON के ``bilateral_filter`` (bilateral filtering of an image.) के समकक्ष है।"
   },
   "2d/bin_threshold": {
-   "fp": "98d03893c880",
-   "en": "Automatic threshold binarization using Otsu's method. Shares the ``otsu`` branch of ``_sh_threshold`` with ``binary_threshold``/``auto_threshold``; a and b are unused. Pixels brighter than the threshold become the foreground (1). In environments without skimage, it falls back to using the image mean as the threshold.",
-   "zh": "使用大津判别分析法（Otsu's method）的自动阈值二值化。与 ``binary_threshold``/``auto_threshold`` 共享 ``_sh_threshold`` 中的 ``otsu`` 分支，a、b 未使用。比阈值更亮的像素作为前景(1)。在没有 skimage 的环境中，会回退为以图像均值作为阈值。",
-   "tw": "使用大津判別分析法（Otsu's method）的自動閾值二值化。與 ``binary_threshold``/``auto_threshold`` 共用 ``_sh_threshold`` 中的 ``otsu`` 分支，a、b 未使用。比閾值更亮的像素作為前景(1)。在沒有 skimage 的環境中，會退回以影像均值作為閾值。",
-   "ko": "오츠 판별분석법(Otsu's method)에 의한 자동 임계값 이진화. ``binary_threshold``/``auto_threshold``와 동일한 ``_sh_threshold``의 ``otsu`` 분기를 공유하며, a, b는 사용되지 않는다. 임계값보다 밝은 화소를 전경(1)으로 한다. skimage가 없는 환경에서는 이미지 평균값을 임계값으로 하는 폴백이 된다.",
-   "de": "Automatische Schwellenwert-Binarisierung mit Otsus Methode (Otsu's method). Teilt sich den ``otsu``-Zweig von ``_sh_threshold`` mit ``binary_threshold``/``auto_threshold``; a und b werden nicht verwendet. Pixel, die heller als der Schwellenwert sind, werden zum Vordergrund (1). In Umgebungen ohne skimage wird als Fallback der Bildmittelwert als Schwellenwert verwendet.",
-   "hi": "Otsu की discriminant analysis method (Otsu's method) से automatic threshold binarisation। ``binary_threshold``/``auto_threshold`` वाली ही ``_sh_threshold`` की ``otsu`` branch साझा करता है, a, b इस्तेमाल नहीं होते। Threshold से ज़्यादा चमकीले pixels को foreground (1) मानता है। skimage न होने वाले environment में image के mean को threshold बनाने वाला fallback होता है।"
+   "fp": "a04dfb64430d",
+   "en": "Automatic threshold binarization using Otsu's method. Shares the ``otsu`` branch of ``_sh_threshold`` with ``binary_threshold``/``auto_threshold``; a and b are unused. Pixels brighter than the threshold become the foreground (1). Without scikit-image the same 256-bin Otsu is computed by the numpy twin (``numpy_twins.threshold_otsu``), bit-identical (until 2026-10-25 it silently fell back to a different answer: the image mean as the threshold).",
+   "zh": "使用大津判别分析法（Otsu's method）的自动阈值二值化。与 ``binary_threshold``/``auto_threshold`` 共享 ``_sh_threshold`` 中的 ``otsu`` 分支，a、b 未使用。比阈值更亮的像素作为前景(1)。没有 scikit-image 时由 numpy 的孪生实现（``numpy_twins.threshold_otsu``）计算同样的 256 bin Otsu，逐位一致（2026-10-25 之前会悄悄退化为以图像均值作阈值的另一种答案）。",
+   "tw": "使用大津判別分析法（Otsu's method）的自動閾值二值化。與 ``binary_threshold``/``auto_threshold`` 共用 ``_sh_threshold`` 中的 ``otsu`` 分支，a、b 未使用。比閾值更亮的像素作為前景(1)。沒有 scikit-image 時由 numpy 的孿生實作（``numpy_twins.threshold_otsu``）計算同樣的 256 bin Otsu，逐位元一致（2026-10-25 之前會悄悄退回以影像均值作閾值的另一種答案）。",
+   "ko": "오츠 판별분석법(Otsu's method)에 의한 자동 임계값 이진화. ``binary_threshold``/``auto_threshold``와 동일한 ``_sh_threshold``의 ``otsu`` 분기를 공유하며, a, b는 사용되지 않는다. 임계값보다 밝은 화소를 전경(1)으로 한다. scikit-image가 없는 환경에서는 같은 256 빈 Otsu를 numpy 쌍둥이(``numpy_twins.threshold_otsu``)로 계산한다(비트 단위 일치. 2026-10-25까지는 이미지 평균값을 임계값으로 하는 다른 답에 조용히 떨어졌다).",
+   "de": "Automatische Schwellenwert-Binarisierung mit Otsus Methode (Otsu's method). Teilt sich den ``otsu``-Zweig von ``_sh_threshold`` mit ``binary_threshold``/``auto_threshold``; a und b werden nicht verwendet. Pixel, die heller als der Schwellenwert sind, werden zum Vordergrund (1). Ohne scikit-image berechnet der numpy-Zwilling (``numpy_twins.threshold_otsu``) dasselbe 256-Bin-Otsu bitidentisch (bis zum 2026-10-25 fiel der Operator stillschweigend auf eine andere Antwort zurück: den Bildmittelwert als Schwellenwert).",
+   "hi": "Otsu की discriminant analysis method (Otsu's method) से automatic threshold binarisation। ``binary_threshold``/``auto_threshold`` वाली ही ``_sh_threshold`` की ``otsu`` branch साझा करता है, a, b इस्तेमाल नहीं होते। Threshold से ज़्यादा चमकीले pixels को foreground (1) मानता है। scikit-image न हो तो वही 256-bin Otsu numpy twin (``numpy_twins.threshold_otsu``) से bit-identical निकलता है (2026-10-25 तक यह चुपचाप image mean को threshold बनाने वाले अलग जवाब पर गिर जाता था)।"
   },
   "2d/binary_threshold": {
    "fp": "fd738eeeafbd",
@@ -1253,13 +1253,13 @@
    "hi": "Convexity ``area / convex-hull area`` (1 के जितना करीब, shape उतना convex)। ``skimage. measure.regionprops`` के ``area`` और ``area_convex`` का अनुपात। HALCON के ``convexity`` (Shape factor for the convexity of a region.) के समकक्ष है।"
   },
   "2d/convexity_xld": {
-   "fp": "d9db93058de1",
-   "en": "For the largest contour, computes convexity as ``contour area / convex hull area`` (``cv2.convexHull`` + ``cv2.contourArea``). Note that in environments without cv2 this falls back to always returning 1.0 (fully convex). Corresponds to HALCON's ``convexity_xld`` (Shape factor for the convexity of contours or polygons.).",
-   "zh": "针对最大的轮廓，计算凸性 ``轮廓面积 / 凸包面积``（``cv2.convexHull`` + ``cv2.contourArea``）。注意在没有 cv2 的环境下会退化为始终返回 1.0（完全凸）。相当于 HALCON 的 ``convexity_xld``（Shape factor for the convexity of contours or polygons.）。",
-   "tw": "針對最大的輪廓，計算凸性 ``輪廓面積 / 凸包面積``（``cv2.convexHull`` + ``cv2.contourArea``）。注意在沒有 cv2 的環境下會退化為永遠回傳 1.0（完全凸）。相當於 HALCON 的 ``convexity_xld``（Shape factor for the convexity of contours or polygons.）。",
-   "ko": "가장 큰 윤곽선에 대해 볼록도 ``윤곽선 면적 / 볼록 껍질 면적``을 계산한다(``cv2.convexHull`` + ``cv2.contourArea``). cv2가 없는 환경에서는 항상 1.0(완전 볼록)을 반환하는 폴백이 된다는 점에 주의. HALCON의 ``convexity_xld``(Shape factor for the convexity of contours or polygons.)에 해당.",
-   "de": "Für die größte Kontur wird die Konvexität als ``Konturfläche / Fläche der konvexen Hülle`` berechnet (``cv2.convexHull`` + ``cv2.contourArea``). Zu beachten: In Umgebungen ohne cv2 wird als Fallback immer 1,0 (vollständig konvex) zurückgegeben. Entspricht HALCONs ``convexity_xld`` (Shape factor for the convexity of contours or polygons.).",
-   "hi": "सबसे बड़े contour के लिए convexity ``contour area / convex hull area`` की गणना करता है (``cv2.convexHull`` + ``cv2.contourArea``)। ध्यान दें कि cv2 न होने वाले environment में यह हमेशा 1.0 (पूरी तरह convex) लौटाने वाला fallback बन जाता है। HALCON के ``convexity_xld`` (Shape factor for the convexity of contours or polygons.) के समकक्ष है।"
+   "fp": "b103700064a1",
+   "en": "For the largest contour, computes convexity as ``contour area / convex hull area`` (``cv2.convexHull`` + ``cv2.contourArea``). Without cv2 it stops with ``MissingDependencyError`` (until 2026-10-25 it always returned 1.0 = fully convex). Corresponds to HALCON's ``convexity_xld`` (Shape factor for the convexity of contours or polygons.).",
+   "zh": "针对最大的轮廓，计算凸性 ``轮廓面积 / 凸包面积``（``cv2.convexHull`` + ``cv2.contourArea``）。没有 cv2 时以 ``MissingDependencyError`` 停止（2026-10-25 之前会始终返回 1.0 = 完全凸）。相当于 HALCON 的 ``convexity_xld``（Shape factor for the convexity of contours or polygons.）。",
+   "tw": "針對最大的輪廓，計算凸性 ``輪廓面積 / 凸包面積``（``cv2.convexHull`` + ``cv2.contourArea``）。沒有 cv2 時以 ``MissingDependencyError`` 停止（2026-10-25 之前會永遠回傳 1.0 = 完全凸）。相當於 HALCON 的 ``convexity_xld``（Shape factor for the convexity of contours or polygons.）。",
+   "ko": "가장 큰 윤곽선에 대해 볼록도 ``윤곽선 면적 / 볼록 껍질 면적``을 계산한다(``cv2.convexHull`` + ``cv2.contourArea``). cv2가 없는 환경에서는 ``MissingDependencyError``로 멈춘다(2026-10-25까지는 항상 1.0 = 완전 볼록을 반환했다). HALCON의 ``convexity_xld``(Shape factor for the convexity of contours or polygons.)에 해당.",
+   "de": "Für die größte Kontur wird die Konvexität als ``Konturfläche / Fläche der konvexen Hülle`` berechnet (``cv2.convexHull`` + ``cv2.contourArea``). Ohne cv2 hält der Operator mit ``MissingDependencyError`` an (bis zum 2026-10-25 gab er immer 1,0 = vollständig konvex zurück). Entspricht HALCONs ``convexity_xld`` (Shape factor for the convexity of contours or polygons.).",
+   "hi": "सबसे बड़े contour के लिए convexity ``contour area / convex hull area`` की गणना करता है (``cv2.convexHull`` + ``cv2.contourArea``)। cv2 न हो तो ``MissingDependencyError`` के साथ रुक जाता है (2026-10-25 तक यह हमेशा 1.0 = पूरी तरह convex लौटाता था)। HALCON के ``convexity_xld`` (Shape factor for the convexity of contours or polygons.) के समकक्ष है।"
   },
   "2d/cooc_feature_matrix": {
    "fp": "1c1281568661",
@@ -2299,13 +2299,13 @@
    "hi": "Grayscale dilation (चमकीले हिस्से को फैलाता है)। HALCON के ``gray_dilation`` (Perform a gray value dilation on an image.) के समकक्ष है।"
   },
   "2d/gen_contour_region_xld": {
-   "fp": "a99f19ed0235",
-   "en": "Extracts the outer boundary of a region (pixel mask) as an XLD contour, preserving trace order (order along the boundary). Uses ``find_contours`` (subpixel contours via marching squares) if skimage is available, otherwise falls back to a custom Moore-neighborhood tracing (8-neighborhood, Jacob's stopping criterion). a and b are unused.",
-   "zh": "将 region（像素掩膜）的外周作为保留追踪顺序（沿轮廓的顺序）的 XLD 轮廓提取出来。若有 skimage 则使用 ``find_contours``（通过 marching squares 实现的亚像素轮廓），否则回退到自实现的 Moore 邻域追踪（8 邻域，Jacob 停止条件）。a、b 未使用。",
-   "tw": "將 region（像素遮罩）的外周作為保留追蹤順序（沿輪廓的順序）的 XLD 輪廓擷取出來。若有 skimage 則使用 ``find_contours``（透過 marching squares 實現的次像素輪廓），否則回退到自行實作的 Moore 鄰域追蹤（8 鄰域，Jacob 停止條件）。a、b 未使用。",
-   "ko": "region(픽셀 마스크)의 외곽을 추적 순서(윤곽을 따라가는 순서)를 유지한 XLD 윤곽으로 추출한다. skimage가 있으면 ``find_contours``(marching squares에 의한 서브픽셀 윤곽), 없으면 자체 구현한 Moore 근방 추적(8-근방, Jacob의 정지 조건)으로 폴백한다. a, b는 사용되지 않는다.",
-   "de": "Extrahiert den Außenrand einer Region (Pixelmaske) als XLD-Kontur unter Beibehaltung der Verfolgungsreihenfolge (Reihenfolge entlang der Kontur). Verwendet ``find_contours`` (Subpixel-Konturen mittels Marching Squares), falls skimage verfügbar ist, andernfalls Fallback auf eine eigene Moore-Nachbarschaftsverfolgung (8er-Nachbarschaft, Jacobs Abbruchkriterium). a und b werden nicht verwendet.",
-   "hi": "Region (pixel mask) की बाहरी सीमा को trace क्रम (contour के साथ-साथ क्रम) बनाए रखते हुए XLD contour के रूप में निकालता है। skimage हो तो ``find_contours`` (marching squares से sub-pixel contour), न हो तो अपने Moore neighbourhood tracing (8-neighbourhood, Jacob की stopping condition) पर fallback करता है। a, b इस्तेमाल नहीं होते।"
+   "fp": "933064d6c835",
+   "en": "Extracts the outer boundary of a region (pixel mask) as an XLD contour, preserving trace order (order along the boundary). Uses ``find_contours`` (subpixel contours via marching squares). Without scikit-image it stops with ``MissingDependencyError`` (until 2026-10-25 it silently fell back to a custom Moore-neighborhood tracing — a different, pixel-resolution contour with different point counts and coordinates; the tracer remains callable by name as ``backends_auto._moore_boundaries``). a and b are unused.",
+   "zh": "将 region（像素掩膜）的外周作为保留追踪顺序（沿轮廓的顺序）的 XLD 轮廓提取出来。使用 ``find_contours``（通过 marching squares 实现的亚像素轮廓）。没有 scikit-image 时以 ``MissingDependencyError`` 停止（2026-10-25 之前会悄悄回退到自实现的 Moore 邻域追踪——像素分辨率、点数和坐标都不同的另一种轮廓；该追踪仍可按名称 ``backends_auto._moore_boundaries`` 调用）。a、b 未使用。",
+   "tw": "將 region（像素遮罩）的外周作為保留追蹤順序（沿輪廓的順序）的 XLD 輪廓擷取出來。使用 ``find_contours``（透過 marching squares 實現的次像素輪廓）。沒有 scikit-image 時以 ``MissingDependencyError`` 停止（2026-10-25 之前會悄悄退回自行實作的 Moore 鄰域追蹤——像素解析度、點數與座標都不同的另一種輪廓；該追蹤仍可按名稱 ``backends_auto._moore_boundaries`` 呼叫）。a、b 未使用。",
+   "ko": "region(픽셀 마스크)의 외곽을 추적 순서(윤곽을 따라가는 순서)를 유지한 XLD 윤곽으로 추출한다. ``find_contours``(marching squares에 의한 서브픽셀 윤곽)를 쓴다. scikit-image가 없는 환경에서는 ``MissingDependencyError``로 멈춘다(2026-10-25까지는 자체 구현한 Moore 근방 추적——픽셀 해상도로 점 개수도 좌표도 다른 별개의 윤곽——에 조용히 떨어졌다. 추적 자체는 ``backends_auto._moore_boundaries``라는 이름으로 호출할 수 있다). a, b는 사용되지 않는다.",
+   "de": "Extrahiert den Außenrand einer Region (Pixelmaske) als XLD-Kontur unter Beibehaltung der Verfolgungsreihenfolge (Reihenfolge entlang der Kontur). Verwendet ``find_contours`` (Subpixel-Konturen mittels Marching Squares). Ohne scikit-image hält der Operator mit ``MissingDependencyError`` an (bis zum 2026-10-25 fiel er stillschweigend auf eine eigene Moore-Nachbarschaftsverfolgung zurück — eine andere Kontur in Pixelauflösung mit anderer Punktzahl und anderen Koordinaten; die Verfolgung bleibt unter dem Namen ``backends_auto._moore_boundaries`` aufrufbar). a und b werden nicht verwendet.",
+   "hi": "Region (pixel mask) की बाहरी सीमा को trace क्रम (contour के साथ-साथ क्रम) बनाए रखते हुए XLD contour के रूप में निकालता है। ``find_contours`` (marching squares से sub-pixel contour) इस्तेमाल करता है। scikit-image न हो तो ``MissingDependencyError`` के साथ रुक जाता है (2026-10-25 तक यह चुपचाप अपने Moore neighbourhood tracing पर गिर जाता था — pixel resolution का अलग contour, जिसमें points की संख्या और coordinates दोनों अलग थे; वह tracing अब भी ``backends_auto._moore_boundaries`` नाम से बुलाई जा सकती है)। a, b इस्तेमाल नहीं होते।"
   },
   "2d/gen_gabor": {
    "fp": "0e7d909bb5a7",
@@ -14755,10 +14755,22 @@
    "hi": "air-से-material interface की reflectance R(λ) pairs (λ [nm], R) के रूप में (Fresnel, complex index)।"
   },
   "optics/acoustic_impedance_mismatch": {
-   "fp": "94e6c000e29b", "en": "Return the acoustic-impedance mismatch at normal incidence between two materials.", "zh": "返回两种材料在垂直入射时的声阻抗失配。", "tw": "回傳兩種材料在垂直入射時的聲阻抗失配。", "ko": "두 재료의 수직 입사 음향 임피던스 불일치를 반환한다.", "de": "Gibt die akustische Impedanzfehlanpassung bei senkrechtem Einfall zwischen zwei Materialien zurück.", "hi": "दो materials के बीच सामान्य आपतन पर acoustic-impedance mismatch लौटाता है।"
+   "fp": "94e6c000e29b",
+   "en": "Return the acoustic-impedance mismatch at normal incidence between two materials.",
+   "zh": "返回两种材料在垂直入射时的声阻抗失配。",
+   "tw": "回傳兩種材料在垂直入射時的聲阻抗失配。",
+   "ko": "두 재료의 수직 입사 음향 임피던스 불일치를 반환한다.",
+   "de": "Gibt die akustische Impedanzfehlanpassung bei senkrechtem Einfall zwischen zwei Materialien zurück.",
+   "hi": "दो materials के बीच सामान्य आपतन पर acoustic-impedance mismatch लौटाता है।"
   },
   "optics/material_acoustic": {
-   "fp": "6ca8e48be748", "en": "Return acoustic properties and provenance stored in a material record.", "zh": "返回材料记录中保存的声学属性和来源。", "tw": "回傳材料記錄中保存的聲學屬性與來源。", "ko": "재료 레코드에 저장된 음향 물성과 출처를 반환한다.", "de": "Gibt die in einem Materialdatensatz gespeicherten akustischen Eigenschaften und Quellen zurück.", "hi": "material record में संग्रहीत acoustic properties और provenance लौटाता है।"
+   "fp": "6ca8e48be748",
+   "en": "Return acoustic properties and provenance stored in a material record.",
+   "zh": "返回材料记录中保存的声学属性和来源。",
+   "tw": "回傳材料記錄中保存的聲學屬性與來源。",
+   "ko": "재료 레코드에 저장된 음향 물성과 출처를 반환한다.",
+   "de": "Gibt die in einem Materialdatensatz gespeicherten akustischen Eigenschaften und Quellen zurück.",
+   "hi": "material record में संग्रहीत acoustic properties और provenance लौटाता है।"
   },
   "optics/abbe_number": {
    "fp": "12d31951577d",
@@ -20510,6 +20522,24 @@
    "ko": "3D Gaussian Splatting 파일을 읽고, 가우스의 중심·색·불투명도·크기·방향을 반환합니다.",
    "de": "Liest eine 3D-Gaussian-Splatting-Datei und gibt Mittelpunkte, Farben, Deckkraft, Größen und Ausrichtungen der Gaußschen zurück.",
    "hi": "3D Gaussian Splatting file पढ़ता है और Gaussians के केंद्र, रंग, opacity, scale और दिशाएँ लौटाता है।"
+  },
+  "drive/gs_viewer_html": {
+   "fp": "4d3aa72a9481",
+   "en": "Turns a 3DGS into a single self-contained HTML page that can be rotated in the browser (no external URLs, no CDN, works offline).",
+   "zh": "把 3DGS 做成可在浏览器中旋转查看的单个自包含 HTML(无外部 URL、无 CDN、可离线运行)。",
+   "tw": "把 3DGS 做成可在瀏覽器中旋轉檢視的單一自足 HTML(無外部 URL、無 CDN、可離線執行)。",
+   "ko": "3DGS를 브라우저에서 돌려 볼 수 있는 자체 완결형 HTML 한 장으로 만듭니다(외부 URL·CDN 없음, 오프라인 동작).",
+   "de": "Macht aus einem 3DGS eine einzelne, eigenständige HTML-Seite, die im Browser gedreht werden kann (keine externen URLs, kein CDN, offline lauffähig).",
+   "hi": "3DGS को एक स्व-निहित HTML पेज बनाता है जिसे browser में घुमाकर देखा जा सके (कोई external URL या CDN नहीं, offline चलता है)।"
+  },
+  "drive/gs_catalog_html": {
+   "fp": "fe2c8b86b26b",
+   "en": "Writes a single self-contained catalogue HTML page where several 3DGS models are chosen from a list of thumbnails and viewed.",
+   "zh": "写出单个自包含的目录 HTML:从缩略图列表中选择多个 3DGS 并查看。",
+   "tw": "寫出單一自足的目錄 HTML:從縮圖列表中選擇多個 3DGS 並檢視。",
+   "ko": "여러 3DGS를 썸네일 목록에서 골라 보는 자체 완결형 카탈로그 HTML 한 장을 씁니다.",
+   "de": "Schreibt eine einzelne, eigenständige Katalog-HTML-Seite, auf der mehrere 3DGS aus einer Liste von Vorschaubildern gewählt und betrachtet werden.",
+   "hi": "एक स्व-निहित catalogue HTML पेज लिखता है जिसमें कई 3DGS को thumbnails की सूची से चुनकर देखा जाता है।"
   },
   "drive/read_bvh": {
    "fp": "27dfdb4221ba",
@@ -32147,6 +32177,33 @@
    "ko": "너비와 높이를 독립적으로 고르는 평균(box) 필터. HALCON의 ``mean_image``(Smooth by averaging.)에 해당한다.",
    "de": "Mittelwert-(Box-)Filter mit unabhängig gewählter Breite und Höhe. Entspricht HALCONs ``mean_image`` (Smooth by averaging.).",
    "hi": "स्वतंत्र रूप से चुनी गई चौड़ाई और ऊँचाई वाला औसत (box) filter। HALCON के ``mean_image`` (Smooth by averaging.) के समकक्ष है।"
+  },
+  "drive/polyhedron_gravity": {
+   "fp": "b65115b5b5a9",
+   "en": "Gravity that a closed, uniform-density polyhedron produces at observation points (the exact formula of Werner & Scheeres 1997).",
+   "zh": "均匀密度的闭合多面体在观测点产生的引力(Werner & Scheeres 1997 的精确公式)。",
+   "tw": "均勻密度的封閉多面體在觀測點產生的重力(Werner & Scheeres 1997 的精確公式)。",
+   "ko": "밀도가 균일한 닫힌 다면체가 관측점에 만드는 중력 (Werner & Scheeres 1997 의 정확한 식).",
+   "de": "Schwerkraft, die ein geschlossenes Polyeder mit homogener Dichte an Beobachtungspunkten erzeugt (exakte Formel von Werner & Scheeres 1997).",
+   "hi": "एकसमान घनत्व वाला बंद बहुफलक प्रेक्षण बिंदुओं पर जो गुरुत्व पैदा करता है (Werner & Scheeres 1997 का सटीक सूत्र)।"
+  },
+  "drive/polyhedron_clip_halfspace": {
+   "fp": "390c8c94e5b6",
+   "en": "Cut a closed mesh with a plane and return the side ``(x − point)·normal ≥ 0`` as a closed solid → (vertices, faces).",
+   "zh": "用平面切开闭合网格,把 ``(x − point)·normal ≥ 0`` 一侧作为闭合实体返回 → (vertices, faces)。",
+   "tw": "以平面切開封閉網格,把 ``(x − point)·normal ≥ 0`` 一側作為封閉實體回傳 → (vertices, faces)。",
+   "ko": "닫힌 메시를 평면으로 잘라 ``(x − point)·normal ≥ 0`` 쪽을 닫힌 입체로 반환한다 → (vertices, faces).",
+   "de": "Schneidet ein geschlossenes Netz mit einer Ebene und gibt die Seite ``(x − point)·normal ≥ 0`` als geschlossenen Körper zurück → (vertices, faces).",
+   "hi": "बंद mesh को एक समतल से काटकर ``(x − point)·normal ≥ 0`` वाली ओर को बंद ठोस के रूप में लौटाता है → (vertices, faces)।"
+  },
+  "drive/plateau_lod2_mesh": {
+   "fp": "7e7ad4da9dfe",
+   "en": "Reads LOD2 buildings from PLATEAU CityGML and returns a triangle mesh (V, F) in local metric coordinates together with per-building attributes.",
+   "zh": "从 PLATEAU 的 CityGML 读取 LOD2 建筑,返回局部米制坐标的三角网格 (V, F) 以及每栋建筑的属性。",
+   "tw": "從 PLATEAU 的 CityGML 讀取 LOD2 建物,回傳局部公尺座標的三角網格 (V, F) 以及每棟建物的屬性。",
+   "ko": "PLATEAU 의 CityGML 에서 LOD2 건물을 읽어, 국소 미터 좌표의 삼각형 메시 (V, F) 와 건물별 속성을 반환한다.",
+   "de": "Liest LOD2-Gebäude aus PLATEAU-CityGML und gibt ein Dreiecksnetz (V, F) in lokalen metrischen Koordinaten samt Attributen je Gebäude zurück.",
+   "hi": "PLATEAU के CityGML से LOD2 इमारतें पढ़कर स्थानीय मीट्रिक निर्देशांकों में triangle mesh (V, F) और हर इमारत के attributes लौटाता है।"
   }
  }
 }

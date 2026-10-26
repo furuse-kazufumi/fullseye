@@ -11,7 +11,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/bin_threshold.inputs.jpg">bin_threshold: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>오츠 판별분석법(Otsu&#x27;s method)에 의한 자동 임계값 이진화. <code style="color:#22d3bf">binary_threshold</code>/<code style="color:#22d3bf">auto_threshold</code>와 동일한 <code style="color:#22d3bf">_sh_threshold</code>의 <code style="color:#22d3bf">otsu</code> 분기를 공유하며, a, b는 사용되지 않는다. 임계값보다 밝은 화소를 전경(1)으로 한다. skimage가 없는 환경에서는 이미지 평균값을 임계값으로 하는 폴백이 된다.</p>
+<p>오츠 판별분석법(Otsu&#x27;s method)에 의한 자동 임계값 이진화. <code style="color:#22d3bf">binary_threshold</code>/<code style="color:#22d3bf">auto_threshold</code>와 동일한 <code style="color:#22d3bf">_sh_threshold</code>의 <code style="color:#22d3bf">otsu</code> 분기를 공유하며, a, b는 사용되지 않는다. 임계값보다 밝은 화소를 전경(1)으로 한다. scikit-image가 없는 환경에서는 같은 256 빈 Otsu를 numpy 쌍둥이(<code style="color:#22d3bf">numpy_twins.threshold_otsu</code>)로 계산한다(비트 단위 일치. 2026-10-25까지는 이미지 평균값을 임계값으로 하는 다른 답에 조용히 떨어졌다).</p>
 <p>HALCON의 <code style="color:#22d3bf">bin_threshold</code>(여러 자동 임계값 결정 알고리즘 중에서 골라 이진화하는 연산, 기본값은 최대 분리도=오츠(Otsu) 방법 상당)에 해당하는 근사로, 오츠 방법만 지원하며 다른 알고리즘 선택지는 없다.</p>
 <p><b>아무것도 찍히지 않은 프레임(실측)</b>: 밝기가 균일한 이미지를 넣으면 <b>밝기와 무관하게 결과가 비어 있다(모든 화소가 배경 0)</b>. 순백이든 순흑이든 같으며, 밝기 자체로는 아무것도 검출하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

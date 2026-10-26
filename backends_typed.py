@@ -841,6 +841,8 @@ def _make_runner(fn, kwargs, tunable, in_sort, out_sort, doc=None, knob_ranges=N
             if call_time is not None:                     # CALL_TIME_ARGS: 入力の形に合わせる束縛
                 kw.update(call_time(v, a, b))
             got = _coerce(fn(v, **kw), out_sort)
+        except __import__("backend_safe").MissingDependencyError:   # fail-closed: no stand-in value
+            raise
         except Exception as _e:                           # noqa: BLE001 - fail-soft, RECORDED
             from backend_safe import is_strict, record
             if is_strict():

@@ -1,0 +1,1671 @@
+{
+ "_": "小惑星イトカワの重力の動く 3-D の教材(docs/anim3d/itokawa_gravity.html)の翻訳表。キー = en の文字列、ja = 訳した時点の日本語の控え。ViEW2026 の来場者向けに zh / tw(台湾の用語)/ ko / de / hi / fr。数値・単位・op 名・式は en のまま。用語: ミューゼスの海 = 缪斯海 / 繆斯海 / 뮤즈의 바다 / Muses-Meer / म्यूज़ सागर / mer des Muses、ジオポテンシャル高度 = 位势高度 / 重力位高度 / 지오퍼텐셜 고도 / geopotentielle Höhe / भू-विभव ऊँचाई / hauteur géopotentielle。",
+ "example": "build_itokawa_anim3d",
+ "strings": {
+  "Gravity on asteroid Itokawa": {
+   "ja": "小惑星イトカワの重力",
+   "zh": "小行星糸川的引力",
+   "tw": "小行星糸川的重力",
+   "ko": "소행성 이토카와의 중력",
+   "de": "Schwerkraft auf dem Asteroiden Itokawa",
+   "hi": "क्षुद्रग्रह इटोकावा पर गुरुत्व",
+   "fr": "La gravité sur l'astéroïde Itokawa"
+  },
+  "The real shape: weight, slopes and where gravel gathers — computed by fullseye's ops": {
+   "ja": "実際の形のまま、立つ場所の重さ・坂・砂のたまり方を計算する —— 計算は fullseye の op",
+   "zh": "真实的形状：站的地方有多重、坡度、砾石聚集在哪里 —— 由 fullseye 的 op 计算",
+   "tw": "真實的形狀：站的地方有多重、坡度、礫石聚集在哪裡 —— 由 fullseye 的 op 計算",
+   "ko": "실제 모양 그대로: 서 있는 곳의 무게, 경사, 자갈이 모이는 곳 —— 계산은 fullseye의 op",
+   "de": "Die echte Form: Gewicht, Hangneigung und wo sich Schotter sammelt — berechnet mit den Ops von fullseye",
+   "hi": "असली आकार: वज़न, ढलान और बजरी कहाँ जमा होती है — fullseye के ops से गणना",
+   "fr": "La forme réelle : poids, pentes et où s'accumule le gravier — calculés par les ops de fullseye"
+  },
+  "Each tab runs ① question → ② predict (tap a choice to reveal the answer) → ③ play (▶) → ④ equation → ⑤ limit. The time slider reads a physical quantity (time, distance walked, density …). Tap a badge to open what was checked, the criterion and the result. Drag to orbit.": {
+   "ja": "各タブは ① 問い → ② 予想(選択肢を押すと答えが開く)→ ③ 再生(▶)→ ④ 式 → ⑤ 限界 の順。時間つまみの読みは物理量(時刻・歩いた距離・密度など)。バッジを押すと、確かめた項目・基準・結果の表が開く。ドラッグで視点を回す。",
+   "zh": "每个标签页按 ① 问题 → ② 预测（点选项会显示答案）→ ③ 播放（▶）→ ④ 公式 → ⑤ 局限 的顺序。时间滑块显示的是物理量（时刻、走过的距离、密度 …）。点徽章会打开检查项目、标准和结果的表。拖动可旋转视角。",
+   "tw": "每個分頁依 ① 問題 → ② 預測（點選項會顯示答案）→ ③ 播放（▶）→ ④ 公式 → ⑤ 限制 的順序。時間滑桿顯示的是物理量（時刻、走過的距離、密度 …）。點徽章會打開檢查項目、標準與結果的表。拖曳可旋轉視角。",
+   "ko": "각 탭은 ① 질문 → ② 예상(선택지를 누르면 답이 열림) → ③ 재생(▶) → ④ 식 → ⑤ 한계 순서입니다. 시간 슬라이더는 물리량(시각, 걸은 거리, 밀도 …)을 읽습니다. 배지를 누르면 확인한 항목·기준·결과 표가 열립니다. 드래그하면 시점이 돌아갑니다.",
+   "de": "Jeder Reiter läuft so ab: ① Frage → ② Vorhersage (eine Antwort antippen, um die Lösung zu sehen) → ③ Abspielen (▶) → ④ Gleichung → ⑤ Grenze. Der Zeitregler zeigt eine physikalische Größe (Zeit, gelaufene Strecke, Dichte …). Ein Abzeichen antippen öffnet, was geprüft wurde, das Kriterium und das Ergebnis. Ziehen dreht die Ansicht.",
+   "hi": "हर टैब इस क्रम में चलता है: ① प्रश्न → ② अनुमान (उत्तर देखने के लिए कोई विकल्प दबाएँ) → ③ चलाएँ (▶) → ④ समीकरण → ⑤ सीमा। समय-स्लाइडर एक भौतिक राशि दिखाता है (समय, चली गई दूरी, घनत्व …)। बैज दबाने पर जाँचे गए बिंदु, मानदंड और परिणाम की तालिका खुलती है। घुमाने के लिए खींचें।",
+   "fr": "Chaque onglet suit l'ordre ① question → ② prédiction (touchez un choix pour voir la réponse) → ③ lecture (▶) → ④ équation → ⑤ limite. Le curseur du temps affiche une grandeur physique (temps, distance parcourue, densité …). Touchez un badge pour ouvrir ce qui a été vérifié, le critère et le résultat. Faites glisser pour tourner la vue."
+  },
+  "Shape and size": {
+   "ja": "形と大きさ",
+   "zh": "形状与大小",
+   "tw": "形狀與大小",
+   "ko": "모양과 크기",
+   "de": "Form und Größe",
+   "hi": "आकार और माप",
+   "fr": "Forme et taille"
+  },
+  "The shape built from 775 images of Hayabusa's (JAXA) camera (Gaskell, 49,152 faces) turns once about the spin axis z (12.13 h). The volume comes from the faces alone (mesh_volume), the size from a box on the principal axes (obb, light blue). The yellow rod is the spin axis through the centre of mass. Volume × density gives the mass.": {
+   "ja": "はやぶさ(JAXA)のカメラの画像 775 枚から作られた形(Gaskell、49,152 面)を、自転軸 z のまわりに 1 周(12.13 時間)回す。体積は面だけから出す mesh_volume、大きさは主軸の向きの外接箱 obb(水色)。黄色の棒が重心を通る自転軸。体積 × 密度で質量が出る。",
+   "zh": "由隼鸟号（JAXA）相机的 775 张图像建立的形状（Gaskell，49,152 个面）绕自转轴 z 转一圈（12.13 h）。体积只由面计算（mesh_volume），大小由主轴方向的外接盒给出（obb，浅蓝色）。黄色的棒是通过质心的自转轴。体积 × 密度就是质量。",
+   "tw": "由隼鳥號（JAXA）相機的 775 張影像建立的形狀（Gaskell，49,152 個面）繞自轉軸 z 轉一圈（12.13 h）。體積只由面計算（mesh_volume），大小由主軸方向的外接盒給出（obb，淺藍色）。黃色的棒是通過質心的自轉軸。體積 × 密度就是質量。",
+   "ko": "하야부사(JAXA) 카메라의 영상 775장으로 만든 모양(Gaskell, 49,152개 면)이 자전축 z를 중심으로 한 바퀴(12.13 h) 돕니다. 부피는 면만으로 구하고(mesh_volume), 크기는 주축 방향의 외접 상자(obb, 하늘색)로 구합니다. 노란 막대는 질량중심을 지나는 자전축입니다. 부피 × 밀도가 질량입니다.",
+   "de": "Die Form aus 775 Bildern der Kamera von Hayabusa (JAXA) (Gaskell, 49,152 Flächen) dreht sich einmal um die Rotationsachse z (12.13 h). Das Volumen ergibt sich allein aus den Flächen (mesh_volume), die Größe aus einem Quader auf den Hauptachsen (obb, hellblau). Der gelbe Stab ist die Rotationsachse durch den Schwerpunkt. Volumen × Dichte ergibt die Masse.",
+   "hi": "हायाबुसा (JAXA) के कैमरे की 775 तस्वीरों से बना आकार (Gaskell, 49,152 फलक) घूर्णन अक्ष z के चारों ओर एक चक्कर (12.13 h) लगाता है। आयतन केवल फलकों से निकलता है (mesh_volume), माप मुख्य अक्षों पर बने बॉक्स से (obb, हल्का नीला)। पीली छड़ द्रव्यमान केंद्र से गुज़रने वाला घूर्णन अक्ष है। आयतन × घनत्व = द्रव्यमान।",
+   "fr": "La forme construite à partir de 775 images de la caméra de Hayabusa (JAXA) (Gaskell, 49,152 faces) fait un tour autour de l'axe de rotation z (12.13 h). Le volume vient des seules faces (mesh_volume), la taille d'une boîte sur les axes principaux (obb, bleu clair). La tige jaune est l'axe de rotation passant par le centre de masse. Volume × densité donne la masse."
+  },
+  "volume (mesh_volume) / published": {
+   "ja": "体積(mesh_volume)/ 公表値",
+   "zh": "体积（mesh_volume）/ 公布值",
+   "tw": "體積（mesh_volume）/ 公布值",
+   "ko": "부피(mesh_volume) / 공표값",
+   "de": "Volumen (mesh_volume) / veröffentlicht",
+   "hi": "आयतन (mesh_volume) / प्रकाशित",
+   "fr": "volume (mesh_volume) / publié"
+  },
+  "mass (× 1.9 g/cm³) / published": {
+   "ja": "質量(× 1.9 g/cm³)/ 公表値",
+   "zh": "质量（× 1.9 g/cm³）/ 公布值",
+   "tw": "質量（× 1.9 g/cm³）/ 公布值",
+   "ko": "질량(× 1.9 g/cm³) / 공표값",
+   "de": "Masse (× 1.9 g/cm³) / veröffentlicht",
+   "hi": "द्रव्यमान (× 1.9 g/cm³) / प्रकाशित",
+   "fr": "masse (× 1.9 g/cm³) / publiée"
+  },
+  "spin period (PDS pole and rotation)": {
+   "ja": "自転の周期(PDS の極と自転の値)",
+   "zh": "自转周期（PDS 的极和自转参数）",
+   "tw": "自轉週期（PDS 的極與自轉參數）",
+   "ko": "자전 주기(PDS의 극과 자전 값)",
+   "de": "Rotationsperiode (Pol und Rotation aus PDS)",
+   "hi": "घूर्णन अवधि (PDS का ध्रुव और घूर्णन)",
+   "fr": "période de rotation (pôle et rotation du PDS)"
+  },
+  "Itokawa (Gaskell shape, 49,152 faces)": {
+   "ja": "イトカワ(Gaskell の形、49,152 面)",
+   "zh": "糸川（Gaskell 的形状，49,152 个面）",
+   "tw": "糸川（Gaskell 的形狀，49,152 個面）",
+   "ko": "이토카와(Gaskell 모양, 49,152개 면)",
+   "de": "Itokawa (Gaskell-Form, 49,152 Flächen)",
+   "hi": "इटोकावा (Gaskell आकार, 49,152 फलक)",
+   "fr": "Itokawa (forme de Gaskell, 49,152 faces)"
+  },
+  "obb box (bounding box on the principal axes)": {
+   "ja": "obb の箱(主軸の向きの外接箱)",
+   "zh": "obb 盒（主轴方向的外接盒）",
+   "tw": "obb 盒（主軸方向的外接盒）",
+   "ko": "obb 상자(주축 방향의 외접 상자)",
+   "de": "obb-Quader (umschreibender Quader auf den Hauptachsen)",
+   "hi": "obb बॉक्स (मुख्य अक्षों पर घेरने वाला बॉक्स)",
+   "fr": "boîte obb (boîte englobante sur les axes principaux)"
+  },
+  "spin axis (z, through the centre of mass)": {
+   "ja": "自転軸(z、重心を通る)",
+   "zh": "自转轴（z，通过质心）",
+   "tw": "自轉軸（z，通過質心）",
+   "ko": "자전축(z, 질량중심을 지남)",
+   "de": "Rotationsachse (z, durch den Schwerpunkt)",
+   "hi": "घूर्णन अक्ष (z, द्रव्यमान केंद्र से होकर)",
+   "fr": "axe de rotation (z, passant par le centre de masse)"
+  },
+  "quarter turn (3.03 h)": {
+   "ja": "1/4 周(3.03 時間)",
+   "zh": "四分之一圈（3.03 h）",
+   "tw": "四分之一圈（3.03 h）",
+   "ko": "사분의 일 바퀴(3.03 h)",
+   "de": "Vierteldrehung (3.03 h)",
+   "hi": "चौथाई चक्कर (3.03 h)",
+   "fr": "quart de tour (3.03 h)"
+  },
+  "half turn (6.07 h)": {
+   "ja": "半周(6.07 時間)",
+   "zh": "半圈（6.07 h）",
+   "tw": "半圈（6.07 h）",
+   "ko": "반 바퀴(6.07 h)",
+   "de": "halbe Drehung (6.07 h)",
+   "hi": "आधा चक्कर (6.07 h)",
+   "fr": "demi-tour (6.07 h)"
+  },
+  "one turn = 12.13 h": {
+   "ja": "1 周 = 12.13 時間",
+   "zh": "一圈 = 12.13 h",
+   "tw": "一圈 = 12.13 h",
+   "ko": "한 바퀴 = 12.13 h",
+   "de": "eine Drehung = 12.13 h",
+   "hi": "एक चक्कर = 12.13 h",
+   "fr": "un tour = 12.13 h"
+  },
+  "closed surface (mesh_edge_stats: boundary / non-manifold edges)": {
+   "ja": "閉じた曲面(mesh_edge_stats: 境界の辺・3 面以上が接する辺)",
+   "zh": "闭合曲面（mesh_edge_stats：边界边 / 非流形边）",
+   "tw": "封閉曲面（mesh_edge_stats：邊界邊 / 非流形邊）",
+   "ko": "닫힌 곡면(mesh_edge_stats: 경계 모서리 / 비다양체 모서리)",
+   "de": "geschlossene Fläche (mesh_edge_stats: Rand- / nicht-mannigfaltige Kanten)",
+   "hi": "बंद सतह (mesh_edge_stats: सीमा / non-manifold किनारे)",
+   "fr": "surface fermée (mesh_edge_stats : arêtes de bord / non-variétés)"
+  },
+  "volume: mesh_volume vs polyhedron_gravity (separate code)": {
+   "ja": "体積: mesh_volume と polyhedron_gravity(別の実装)",
+   "zh": "体积：mesh_volume 与 polyhedron_gravity（不同的实现）",
+   "tw": "體積：mesh_volume 與 polyhedron_gravity（不同的實作）",
+   "ko": "부피: mesh_volume 대 polyhedron_gravity(별도 구현)",
+   "de": "Volumen: mesh_volume gegen polyhedron_gravity (getrennter Code)",
+   "hi": "आयतन: mesh_volume बनाम polyhedron_gravity (अलग कोड)",
+   "fr": "volume : mesh_volume contre polyhedron_gravity (code distinct)"
+  },
+  "volume vs published 0.018378 km³ (Demura 2006, ± 5 %)": {
+   "ja": "体積と公表値 0.018378 km³(Demura 2006、± 5 %)",
+   "zh": "体积与公布值 0.018378 km³（Demura 2006，± 5 %）",
+   "tw": "體積與公布值 0.018378 km³（Demura 2006，± 5 %）",
+   "ko": "부피 대 공표값 0.018378 km³(Demura 2006, ± 5 %)",
+   "de": "Volumen gegen veröffentlichte 0.018378 km³ (Demura 2006, ± 5 %)",
+   "hi": "आयतन बनाम प्रकाशित 0.018378 km³ (Demura 2006, ± 5 %)",
+   "fr": "volume contre la valeur publiée 0.018378 km³ (Demura 2006, ± 5 %)"
+  },
+  "mass = volume × 1.9 g/cm³ vs 3.51 × 10^10 kg (Fujiwara 2006; density ± 7 %)": {
+   "ja": "質量 = 体積 × 1.9 g/cm³ と 3.51 × 10^10 kg(Fujiwara 2006。密度の幅 ± 7 %)",
+   "zh": "质量 = 体积 × 1.9 g/cm³ 与 3.51 × 10^10 kg（Fujiwara 2006；密度 ± 7 %）",
+   "tw": "質量 = 體積 × 1.9 g/cm³ 與 3.51 × 10^10 kg（Fujiwara 2006；密度 ± 7 %）",
+   "ko": "질량 = 부피 × 1.9 g/cm³ 대 3.51 × 10^10 kg(Fujiwara 2006, 밀도 ± 7 %)",
+   "de": "Masse = Volumen × 1.9 g/cm³ gegen 3.51 × 10^10 kg (Fujiwara 2006; Dichte ± 7 %)",
+   "hi": "द्रव्यमान = आयतन × 1.9 g/cm³ बनाम 3.51 × 10^10 kg (Fujiwara 2006; घनत्व ± 7 %)",
+   "fr": "masse = volume × 1.9 g/cm³ contre 3.51 × 10^10 kg (Fujiwara 2006 ; densité ± 7 %)"
+  },
+  "time in the spin": {
+   "ja": "自転の時刻",
+   "zh": "自转中的时刻",
+   "tw": "自轉中的時刻",
+   "ko": "자전 중의 시각",
+   "de": "Zeit in der Drehung",
+   "hi": "घूर्णन में समय",
+   "fr": "instant de la rotation"
+  },
+  "From Itokawa's volume (computed from this shape) and a density of 1.9 g/cm³, how heavy is it?": {
+   "ja": "イトカワの体積(この形から計算)と密度 1.9 g/cm³ から、質量はどれくらい?",
+   "zh": "由糸川的体积（用这个形状计算）和密度 1.9 g/cm³，它有多重？",
+   "tw": "由糸川的體積（用這個形狀計算）和密度 1.9 g/cm³，它有多重？",
+   "ko": "이토카와의 부피(이 모양으로 계산)와 밀도 1.9 g/cm³로부터, 질량은 얼마일까?",
+   "de": "Wie schwer ist Itokawa bei seinem Volumen (aus dieser Form berechnet) und einer Dichte von 1.9 g/cm³?",
+   "hi": "इटोकावा के आयतन (इस आकार से गणना) और 1.9 g/cm³ घनत्व से, यह कितना भारी है?",
+   "fr": "À partir du volume d'Itokawa (calculé sur cette forme) et d'une densité de 1.9 g/cm³, quelle est sa masse ?"
+  },
+  "3.4 × 10^7 kg": {
+   "ja": "3.4 × 10^7 kg",
+   "zh": "3.4 × 10^7 kg",
+   "tw": "3.4 × 10^7 kg",
+   "ko": "3.4 × 10^7 kg",
+   "de": "3.4 × 10^7 kg",
+   "hi": "3.4 × 10^7 kg",
+   "fr": "3.4 × 10^7 kg"
+  },
+  "3.4 × 10^10 kg": {
+   "ja": "3.4 × 10^10 kg",
+   "zh": "3.4 × 10^10 kg",
+   "tw": "3.4 × 10^10 kg",
+   "ko": "3.4 × 10^10 kg",
+   "de": "3.4 × 10^10 kg",
+   "hi": "3.4 × 10^10 kg",
+   "fr": "3.4 × 10^10 kg"
+  },
+  "3.4 × 10^13 kg": {
+   "ja": "3.4 × 10^13 kg",
+   "zh": "3.4 × 10^13 kg",
+   "tw": "3.4 × 10^13 kg",
+   "ko": "3.4 × 10^13 kg",
+   "de": "3.4 × 10^13 kg",
+   "hi": "3.4 × 10^13 kg",
+   "fr": "3.4 × 10^13 kg"
+  },
+  "The volume is 1.779 × 10^7 m³ (mesh_volume). Times 1,900 kg/m³ gives 3.38 × 10^10 kg, within -3.7 % of the 3.51 × 10^10 kg measured from the spacecraft's trajectory (Fujiwara 2006) — inside the spread of the shape versions and the density (± 0.13).": {
+   "ja": "体積は 1.779 × 10^7 m³(mesh_volume)。1.9 g/cm³ = 1,900 kg/m³ を掛けて 3.38 × 10^10 kg。探査機の軌道から測った値 3.51 × 10^10 kg(Fujiwara 2006)と -3.7 % で合う。差は形の版と密度の幅(± 0.13)の範囲。",
+   "zh": "体积为 1.779 × 10^7 m³（mesh_volume）。乘以 1,900 kg/m³ 得到 3.38 × 10^10 kg，与由探测器轨道测得的 3.51 × 10^10 kg（Fujiwara 2006）相差 -3.7 % —— 在形状版本和密度（± 0.13）的差异范围之内。",
+   "tw": "體積為 1.779 × 10^7 m³（mesh_volume）。乘以 1,900 kg/m³ 得到 3.38 × 10^10 kg，與由探測器軌道測得的 3.51 × 10^10 kg（Fujiwara 2006）相差 -3.7 % —— 在形狀版本與密度（± 0.13）的差異範圍之內。",
+   "ko": "부피는 1.779 × 10^7 m³(mesh_volume). 1,900 kg/m³를 곱하면 3.38 × 10^10 kg으로, 탐사선의 궤도로 측정한 3.51 × 10^10 kg(Fujiwara 2006)과 -3.7 % 차이 —— 모양의 판과 밀도(± 0.13)의 폭 안입니다.",
+   "de": "Das Volumen beträgt 1.779 × 10^7 m³ (mesh_volume). Mal 1,900 kg/m³ ergibt 3.38 × 10^10 kg, -3.7 % neben den 3.51 × 10^10 kg, die aus der Bahn der Sonde gemessen wurden (Fujiwara 2006) — innerhalb der Streuung der Formversionen und der Dichte (± 0.13).",
+   "hi": "आयतन 1.779 × 10^7 m³ है (mesh_volume)। 1,900 kg/m³ से गुणा करने पर 3.38 × 10^10 kg मिलता है, जो यान की कक्षा से मापे गए 3.51 × 10^10 kg (Fujiwara 2006) से -3.7 % अलग है — आकार के संस्करणों और घनत्व (± 0.13) के फैलाव के भीतर।",
+   "fr": "Le volume vaut 1.779 × 10^7 m³ (mesh_volume). Multiplié par 1,900 kg/m³, il donne 3.38 × 10^10 kg, à -3.7 % des 3.51 × 10^10 kg mesurés d'après la trajectoire de la sonde (Fujiwara 2006) — dans la dispersion des versions de forme et de la densité (± 0.13)."
+  },
+  "volume V = (1/6) Σ_faces v0 · (v1 × v2) (divergence theorem)\nmass M = ρ V\nporosity = 1 − ρ / ρ_grain (about 40 % with the LL-chondrite grain density, Abe 2006)": {
+   "ja": "体積 V = (1/6) Σ_面 v0 · (v1 × v2)(発散定理)\n質量 M = ρ V\n空隙率 = 1 − ρ / ρ_粒(Abe 2006 は LL コンドライトの粒の密度を仮定して約 40 %)",
+   "zh": "体积 V = (1/6) Σ_faces v0 · (v1 × v2)（散度定理）\n质量 M = ρ V\n孔隙率 = 1 − ρ / ρ_grain（按 LL 球粒陨石的颗粒密度约为 40 %，Abe 2006）",
+   "tw": "體積 V = (1/6) Σ_faces v0 · (v1 × v2)（散度定理）\n質量 M = ρ V\n孔隙率 = 1 − ρ / ρ_grain（以 LL 球粒隕石的顆粒密度約為 40 %，Abe 2006）",
+   "ko": "부피 V = (1/6) Σ_faces v0 · (v1 × v2) (발산 정리)\n질량 M = ρ V\n공극률 = 1 − ρ / ρ_grain (LL 콘드라이트의 입자 밀도로 약 40 %, Abe 2006)",
+   "de": "Volumen V = (1/6) Σ_faces v0 · (v1 × v2) (gaußscher Integralsatz)\nMasse M = ρ V\nPorosität = 1 − ρ / ρ_grain (etwa 40 % mit der Korndichte von LL-Chondriten, Abe 2006)",
+   "hi": "आयतन V = (1/6) Σ_faces v0 · (v1 × v2) (अपसरण प्रमेय)\nद्रव्यमान M = ρ V\nसरंध्रता = 1 − ρ / ρ_grain (LL-कॉन्ड्राइट के कण घनत्व से लगभग 40 %, Abe 2006)",
+   "fr": "volume V = (1/6) Σ_faces v0 · (v1 × v2) (théorème de flux-divergence)\nmasse M = ρ V\nporosité = 1 − ρ / ρ_grain (environ 40 % avec la densité des grains des chondrites LL, Abe 2006)"
+  },
+  "Surface gravity": {
+   "ja": "表面の重力",
+   "zh": "表面的引力",
+   "tw": "表面的重力",
+   "ko": "표면의 중력",
+   "de": "Schwerkraft an der Oberfläche",
+   "hi": "सतह पर गुरुत्व",
+   "fr": "Gravité à la surface"
+  },
+  "surface |g_eff| (min–max)": {
+   "ja": "表面の |g_eff|(最小〜最大)",
+   "zh": "表面的 |g_eff|（最小–最大）",
+   "tw": "表面的 |g_eff|（最小–最大）",
+   "ko": "표면의 |g_eff|(최소–최대)",
+   "de": "|g_eff| an der Oberfläche (min–max)",
+   "hi": "सतह का |g_eff| (न्यूनतम–अधिकतम)",
+   "fr": "|g_eff| en surface (min–max)"
+  },
+  "54.3 to 82.0 µm/s²": {
+   "ja": "54.3〜82.0 µm/s²",
+   "zh": "54.3 至 82.0 µm/s²",
+   "tw": "54.3 至 82.0 µm/s²",
+   "ko": "54.3 ~ 82.0 µm/s²",
+   "de": "54.3 bis 82.0 µm/s²",
+   "hi": "54.3 से 82.0 µm/s²",
+   "fr": "de 54.3 à 82.0 µm/s²"
+  },
+  "centrifugal ÷ gravity (max)": {
+   "ja": "遠心力 ÷ 引力(最大)",
+   "zh": "离心力 ÷ 引力（最大）",
+   "tw": "離心力 ÷ 重力（最大）",
+   "ko": "원심력 ÷ 중력(최대)",
+   "de": "Fliehkraft ÷ Schwerkraft (max)",
+   "hi": "अपकेंद्री ÷ गुरुत्व (अधिकतम)",
+   "fr": "centrifuge ÷ gravité (max)"
+  },
+  "slope (area mean / max)": {
+   "ja": "斜面の角(面積の平均 / 最大)",
+   "zh": "坡度（面积平均 / 最大）",
+   "tw": "坡度（面積平均 / 最大）",
+   "ko": "경사각(면적 평균 / 최대)",
+   "de": "Hangneigung (Flächenmittel / max)",
+   "hi": "ढलान (क्षेत्रफल-औसत / अधिकतम)",
+   "fr": "pente (moyenne surfacique / max)"
+  },
+  "Gauss's law: ∇·g inside vs −4πGρ": {
+   "ja": "ガウスの法則: 中の ∇·g と −4πGρ の差",
+   "zh": "高斯定律：内部的 ∇·g 与 −4πGρ",
+   "tw": "高斯定律：內部的 ∇·g 與 −4πGρ",
+   "ko": "가우스 법칙: 내부의 ∇·g 대 −4πGρ",
+   "de": "gaußsches Gesetz: ∇·g innen gegen −4πGρ",
+   "hi": "गॉस का नियम: भीतर ∇·g बनाम −4πGρ",
+   "fr": "loi de Gauss : ∇·g à l'intérieur contre −4πGρ"
+  },
+  "effective gravity |g_eff|": {
+   "ja": "実効重力 |g_eff|",
+   "zh": "有效重力 |g_eff|",
+   "tw": "有效重力 |g_eff|",
+   "ko": "유효 중력 |g_eff|",
+   "de": "effektive Schwerkraft |g_eff|",
+   "hi": "प्रभावी गुरुत्व |g_eff|",
+   "fr": "pesanteur effective |g_eff|"
+  },
+  "walker": {
+   "ja": "歩く人",
+   "zh": "行走的人",
+   "tw": "行走的人",
+   "ko": "걷는 사람",
+   "de": "Wanderer",
+   "hi": "चलने वाला",
+   "fr": "marcheur"
+  },
+  "direction of effective gravity there": {
+   "ja": "その場所の実効重力の向き",
+   "zh": "该处有效重力的方向",
+   "tw": "該處有效重力的方向",
+   "ko": "그곳의 유효 중력 방향",
+   "de": "Richtung der effektiven Schwerkraft dort",
+   "hi": "वहाँ प्रभावी गुरुत्व की दिशा",
+   "fr": "direction de la pesanteur effective à cet endroit"
+  },
+  "path walked (section y = 0)": {
+   "ja": "歩いた道(y = 0 の断面)",
+   "zh": "走过的路（截面 y = 0）",
+   "tw": "走過的路（截面 y = 0）",
+   "ko": "걸은 길(단면 y = 0)",
+   "de": "gelaufener Weg (Schnitt y = 0)",
+   "hi": "चला गया रास्ता (खंड y = 0)",
+   "fr": "chemin parcouru (section y = 0)"
+  },
+  "tip of the head (+x end)": {
+   "ja": "頭の先(+x の端)",
+   "zh": "头部的顶端（+x 端）",
+   "tw": "頭部的頂端（+x 端）",
+   "ko": "머리 끝(+x 끝)",
+   "de": "Spitze des Kopfes (+x-Ende)",
+   "hi": "सिर का सिरा (+x छोर)",
+   "fr": "pointe de la tête (extrémité +x)"
+  },
+  "largest |g_eff|": {
+   "ja": "|g_eff| が最大",
+   "zh": "|g_eff| 最大",
+   "tw": "|g_eff| 最大",
+   "ko": "|g_eff| 최대",
+   "de": "größtes |g_eff|",
+   "hi": "सबसे बड़ा |g_eff|",
+   "fr": "|g_eff| maximal"
+  },
+  "end of the body (−x end)": {
+   "ja": "胴の端(−x の端)",
+   "zh": "身体的末端（−x 端）",
+   "tw": "身體的末端（−x 端）",
+   "ko": "몸통 끝(−x 끝)",
+   "de": "Ende des Rumpfes (−x-Ende)",
+   "hi": "धड़ का छोर (−x छोर)",
+   "fr": "bout du corps (extrémité −x)"
+  },
+  "effective gravity |g_eff| (along the path)": {
+   "ja": "実効重力の大きさ |g_eff|(歩く道の上)",
+   "zh": "有效重力 |g_eff|（沿行走路线）",
+   "tw": "有效重力 |g_eff|（沿行走路線）",
+   "ko": "유효 중력 |g_eff|(걷는 길 위)",
+   "de": "effektive Schwerkraft |g_eff| (entlang des Weges)",
+   "hi": "प्रभावी गुरुत्व |g_eff| (रास्ते के साथ)",
+   "fr": "pesanteur effective |g_eff| (le long du chemin)"
+  },
+  "slope (angle between g_eff and −normal)": {
+   "ja": "斜面の角(実効重力と −法線のなす角)",
+   "zh": "坡度（g_eff 与 −法线的夹角）",
+   "tw": "坡度（g_eff 與 −法線的夾角）",
+   "ko": "경사각(g_eff와 −법선 사이의 각)",
+   "de": "Hangneigung (Winkel zwischen g_eff und −Normale)",
+   "hi": "ढलान (g_eff और −अभिलंब के बीच कोण)",
+   "fr": "pente (angle entre g_eff et −normale)"
+  },
+  "sphere (geodesic_dome, 5,120 faces) far field vs point mass GM/r²": {
+   "ja": "球(geodesic_dome 5,120 面)の遠くの重力と点質量 GM/r²",
+   "zh": "球（geodesic_dome，5,120 个面）的远场与点质量 GM/r²",
+   "tw": "球（geodesic_dome，5,120 個面）的遠場與點質量 GM/r²",
+   "ko": "구(geodesic_dome, 5,120개 면)의 원거리장 대 점질량 GM/r²",
+   "de": "Kugel (geodesic_dome, 5,120 Flächen): Fernfeld gegen Punktmasse GM/r²",
+   "hi": "गोला (geodesic_dome, 5,120 फलक): दूर-क्षेत्र बनाम बिंदु द्रव्यमान GM/r²",
+   "fr": "sphère (geodesic_dome, 5,120 faces) : champ lointain contre masse ponctuelle GM/r²"
+  },
+  "box: polyhedron formula vs Gauss–Legendre triple quadrature (separate path)": {
+   "ja": "直方体: 多面体の式と Gauss–Legendre の 3 重求積(別の経路)",
+   "zh": "长方体：多面体公式与 Gauss–Legendre 三重求积（另一条路径）",
+   "tw": "長方體：多面體公式與 Gauss–Legendre 三重求積（另一條路徑）",
+   "ko": "직육면체: 다면체 식 대 Gauss–Legendre 삼중 구적(별도 경로)",
+   "de": "Quader: Polyederformel gegen dreifache Gauß–Legendre-Quadratur (getrennter Weg)",
+   "hi": "घनाभ: बहुफलक सूत्र बनाम Gauss–Legendre त्रि-क्षेत्रकलन (अलग रास्ता)",
+   "fr": "pavé : formule du polyèdre contre quadrature triple de Gauss–Legendre (voie distincte)"
+  },
+  "Gauss's law: ∇·g = −4πGρ inside Itokawa (sum of solid angles)": {
+   "ja": "ガウスの法則: イトカワの中で ∇·g = −4πGρ(立体角の和)",
+   "zh": "高斯定律：糸川内部 ∇·g = −4πGρ（立体角之和）",
+   "tw": "高斯定律：糸川內部 ∇·g = −4πGρ（立體角之和）",
+   "ko": "가우스 법칙: 이토카와 내부에서 ∇·g = −4πGρ (입체각의 합)",
+   "de": "gaußsches Gesetz: ∇·g = −4πGρ im Inneren von Itokawa (Summe der Raumwinkel)",
+   "hi": "गॉस का नियम: इटोकावा के भीतर ∇·g = −4πGρ (घन कोणों का योग)",
+   "fr": "loi de Gauss : ∇·g = −4πGρ à l'intérieur d'Itokawa (somme des angles solides)"
+  },
+  "Gauss's law: ∇·g = 0 outside": {
+   "ja": "ガウスの法則: 外で ∇·g = 0",
+   "zh": "高斯定律：外部 ∇·g = 0",
+   "tw": "高斯定律：外部 ∇·g = 0",
+   "ko": "가우스 법칙: 외부에서 ∇·g = 0",
+   "de": "gaußsches Gesetz: ∇·g = 0 außen",
+   "hi": "गॉस का नियम: बाहर ∇·g = 0",
+   "fr": "loi de Gauss : ∇·g = 0 à l'extérieur"
+  },
+  "finite-difference divergence (5 cm central differences, no solid angles): inside / outside": {
+   "ja": "発散の差分(5 cm 刻みの中心差分。立体角を使わない経路): 中 / 外",
+   "zh": "差分散度（5 cm 中心差分，不用立体角）：内 / 外",
+   "tw": "差分散度（5 cm 中心差分，不用立體角）：內 / 外",
+   "ko": "차분 발산(5 cm 중심 차분, 입체각 미사용): 내부 / 외부",
+   "de": "Divergenz aus Differenzen (zentrale Differenzen mit 5 cm, ohne Raumwinkel): innen / außen",
+   "hi": "परिमित-अंतर अपसरण (5 cm केंद्रीय अंतर, घन कोण के बिना): भीतर / बाहर",
+   "fr": "divergence par différences finies (différences centrées de 5 cm, sans angles solides) : intérieur / extérieur"
+  },
+  "acceleration = −(finite-difference gradient of the potential)": {
+   "ja": "加速度 = −(ポテンシャルの差分の勾配)",
+   "zh": "加速度 = −（势的差分梯度）",
+   "tw": "加速度 = −（位勢的差分梯度）",
+   "ko": "가속도 = −(퍼텐셜의 차분 기울기)",
+   "de": "Beschleunigung = −(Gradient des Potentials aus Differenzen)",
+   "hi": "त्वरण = −(विभव का परिमित-अंतर प्रवणता)",
+   "fr": "accélération = −(gradient du potentiel par différences finies)"
+  },
+  "Itokawa at 100 km vs point mass": {
+   "ja": "イトカワの 100 km 先の重力と点質量",
+   "zh": "糸川 100 km 外与点质量",
+   "tw": "糸川 100 km 外與點質量",
+   "ko": "이토카와 100 km 거리 대 점질량",
+   "de": "Itokawa in 100 km Abstand gegen Punktmasse",
+   "hi": "100 km पर इटोकावा बनाम बिंदु द्रव्यमान",
+   "fr": "Itokawa à 100 km contre masse ponctuelle"
+  },
+  "distance walked": {
+   "ja": "歩いた距離",
+   "zh": "走过的距离",
+   "tw": "走過的距離",
+   "ko": "걸은 거리",
+   "de": "gelaufene Strecke",
+   "hi": "चली गई दूरी",
+   "fr": "distance parcourue"
+  },
+  "Walk over Itokawa from the tip of the head, across the neck, to the end of the body. Where do you weigh the least?": {
+   "ja": "イトカワの上を、頭の先から首を通って胴の端まで歩く。「重さ」(実効重力)はどこで一番軽い?",
+   "zh": "在糸川上从头部顶端经过颈部走到身体末端。在哪里最轻？",
+   "tw": "在糸川上從頭部頂端經過頸部走到身體末端。在哪裡最輕？",
+   "ko": "이토카와 위를 머리 끝에서 목을 지나 몸통 끝까지 걷는다. 어디에서 가장 가벼울까?",
+   "de": "Gehe über Itokawa von der Spitze des Kopfes über den Hals bis zum Ende des Rumpfes. Wo wiegst du am wenigsten?",
+   "hi": "इटोकावा पर सिर के सिरे से गर्दन पार करके धड़ के छोर तक चलें। आपका वज़न सबसे कम कहाँ होगा?",
+   "fr": "Marchez sur Itokawa de la pointe de la tête, par le cou, jusqu'au bout du corps. Où pesez-vous le moins ?"
+  },
+  "The same everywhere (it is small)": {
+   "ja": "どこでも同じ(小さいから)",
+   "zh": "到处都一样（因为它很小）",
+   "tw": "到處都一樣（因為它很小）",
+   "ko": "어디서나 같다(작으니까)",
+   "de": "Überall gleich (er ist klein)",
+   "hi": "हर जगह एक जैसा (यह छोटा है)",
+   "fr": "Partout pareil (il est petit)"
+  },
+  "At the ends (far from the centre of mass, more centrifugal force)": {
+   "ja": "両端(重心から遠く、遠心力も大きい)",
+   "zh": "在两端（离质心远，离心力也更大）",
+   "tw": "在兩端（離質心遠，離心力也更大）",
+   "ko": "양 끝(질량중심에서 멀고 원심력도 크다)",
+   "de": "An den Enden (weit vom Schwerpunkt, mehr Fliehkraft)",
+   "hi": "दोनों छोरों पर (द्रव्यमान केंद्र से दूर, अधिक अपकेंद्री बल)",
+   "fr": "Aux extrémités (loin du centre de masse, plus de force centrifuge)"
+  },
+  "At the narrow neck (it is thin)": {
+   "ja": "首のくびれ(細いから)",
+   "zh": "在细的颈部（因为它细）",
+   "tw": "在細的頸部（因為它細）",
+   "ko": "잘록한 목(가느니까)",
+   "de": "Am schmalen Hals (er ist dünn)",
+   "hi": "पतली गर्दन पर (वह पतली है)",
+   "fr": "Au cou étroit (il est mince)"
+  },
+  "Surface effective gravity is 54.3–82.0 µm/s² (about 1/100,000 of Earth's) and varies 1.5× over the surface. The ends are farthest from the centre of mass, so the pull is weakest there, and the centrifugal term (up to 10.1 % of the pull) points outwards too. A 60 kg person weighs about 0.33 grams-force at the ends and 0.50 grams-force at the heaviest spot.": {
+   "ja": "表面の実効重力は 54.3〜82.0 µm/s²(地球の約 10 万分の 1)で、場所によって 1.5 倍違う。重心から遠い両端ほど引力が弱く、自転の遠心力(最大で引力の 10.1 %)も外向きに効くので軽い。60 kg の人なら、端で約 0.33 g 重、重い所で約 0.50 g 重。",
+   "zh": "表面的有效重力为 54.3–82.0 µm/s²（约为地球的 1/100,000），在表面上相差 1.5× 倍。两端离质心最远，所以引力最弱，而且离心项（最大为引力的 10.1 %）也指向外侧。60 kg 的人在两端约重 0.33 克力，在最重的地方约重 0.50 克力。",
+   "tw": "表面的有效重力為 54.3–82.0 µm/s²（約為地球的 1/100,000），在表面上相差 1.5× 倍。兩端離質心最遠，所以重力最弱，而且離心項（最大為重力的 10.1 %）也指向外側。60 kg 的人在兩端約重 0.33 公克重，在最重的地方約重 0.50 公克重。",
+   "ko": "표면의 유효 중력은 54.3–82.0 µm/s²(지구의 약 1/100,000)이고, 표면에서 1.5×배 차이가 납니다. 양 끝은 질량중심에서 가장 멀어서 인력이 가장 약하고, 원심 항(최대 인력의 10.1 %)도 바깥을 향합니다. 60 kg인 사람은 양 끝에서 약 0.33 그램힘, 가장 무거운 곳에서 약 0.50 그램힘입니다.",
+   "de": "Die effektive Schwerkraft an der Oberfläche beträgt 54.3–82.0 µm/s² (etwa 1/100,000 der Erde) und schwankt über die Oberfläche um das 1.5×-Fache. Die Enden liegen am weitesten vom Schwerpunkt entfernt, dort ist die Anziehung am schwächsten, und der Fliehkraftterm (bis zu 10.1 % der Anziehung) zeigt ebenfalls nach außen. Eine Person mit 60 kg wiegt an den Enden etwa 0.33 Pond (Gramm-Kraft) und an der schwersten Stelle 0.50 Pond.",
+   "hi": "सतह पर प्रभावी गुरुत्व 54.3–82.0 µm/s² है (पृथ्वी का लगभग 1/100,000) और सतह पर 1.5× गुना बदलता है। दोनों छोर द्रव्यमान केंद्र से सबसे दूर हैं, इसलिए वहाँ खिंचाव सबसे कमज़ोर है, और अपकेंद्री पद (खिंचाव का अधिकतम 10.1 %) भी बाहर की ओर है। 60 kg का व्यक्ति छोरों पर लगभग 0.33 ग्राम-बल और सबसे भारी जगह पर 0.50 ग्राम-बल का होता है।",
+   "fr": "La pesanteur effective en surface vaut 54.3–82.0 µm/s² (environ 1/100,000 de celle de la Terre) et varie d'un facteur 1.5× sur la surface. Les extrémités sont les plus éloignées du centre de masse, l'attraction y est donc la plus faible, et le terme centrifuge (jusqu'à 10.1 % de l'attraction) pointe aussi vers l'extérieur. Une personne de 60 kg pèse environ 0.33 gramme-force aux extrémités et 0.50 gramme-force à l'endroit le plus lourd."
+  },
+  "Φ = −(Gρ/2) Σ_f ( h_f S_f − h_f² ω_f ) (Werner & Scheeres 1997)\ng = −∇Φ,  g_eff = g + ω² ρ⊥\n∇·g = −Gρ Σ_f ω_f (−4πGρ inside, 0 outside)\nslope = ∠(g_eff, −n)": {
+   "ja": "Φ = −(Gρ/2) Σ_f ( h_f S_f − h_f² ω_f )(Werner & Scheeres 1997)\ng = −∇Φ、 g_eff = g + ω² ρ⊥\n∇·g = −Gρ Σ_f ω_f(中で −4πGρ、外で 0)\n斜面の角 = ∠(g_eff, −n)",
+   "zh": "Φ = −(Gρ/2) Σ_f ( h_f S_f − h_f² ω_f )（Werner & Scheeres 1997）\ng = −∇Φ，  g_eff = g + ω² ρ⊥\n∇·g = −Gρ Σ_f ω_f（内部 −4πGρ，外部 0）\n坡度 = ∠(g_eff, −n)",
+   "tw": "Φ = −(Gρ/2) Σ_f ( h_f S_f − h_f² ω_f )（Werner & Scheeres 1997）\ng = −∇Φ，  g_eff = g + ω² ρ⊥\n∇·g = −Gρ Σ_f ω_f（內部 −4πGρ，外部 0）\n坡度 = ∠(g_eff, −n)",
+   "ko": "Φ = −(Gρ/2) Σ_f ( h_f S_f − h_f² ω_f ) (Werner & Scheeres 1997)\ng = −∇Φ,  g_eff = g + ω² ρ⊥\n∇·g = −Gρ Σ_f ω_f (내부 −4πGρ, 외부 0)\n경사각 = ∠(g_eff, −n)",
+   "de": "Φ = −(Gρ/2) Σ_f ( h_f S_f − h_f² ω_f ) (Werner & Scheeres 1997)\ng = −∇Φ,  g_eff = g + ω² ρ⊥\n∇·g = −Gρ Σ_f ω_f (−4πGρ innen, 0 außen)\nHangneigung = ∠(g_eff, −n)",
+   "hi": "Φ = −(Gρ/2) Σ_f ( h_f S_f − h_f² ω_f ) (Werner & Scheeres 1997)\ng = −∇Φ,  g_eff = g + ω² ρ⊥\n∇·g = −Gρ Σ_f ω_f (भीतर −4πGρ, बाहर 0)\nढलान = ∠(g_eff, −n)",
+   "fr": "Φ = −(Gρ/2) Σ_f ( h_f S_f − h_f² ω_f ) (Werner & Scheeres 1997)\ng = −∇Φ,  g_eff = g + ω² ρ⊥\n∇·g = −Gρ Σ_f ω_f (−4πGρ à l'intérieur, 0 à l'extérieur)\npente = ∠(g_eff, −n)"
+  },
+  "Density is assumed uniform (see the limit tab). The slope uses vertex normals (area-weighted), so slopes of bumps smaller than a few metres are absent. The path is the chain of vertices nearest to the y = 0 section.": {
+   "ja": "密度は一様と仮定している(限界のタブ)。斜面の角は頂点の法線(面積の重みの平均)で測るので、数 m より細かい凹凸の斜面は入らない。歩く道は y = 0 の断面の輪郭に最も近い頂点の列。",
+   "zh": "假设密度均匀（见局限标签页）。坡度使用顶点法线（按面积加权），所以小于数米的起伏的坡度不包括在内。路线是最接近 y = 0 截面的顶点链。",
+   "tw": "假設密度均勻（見限制分頁）。坡度使用頂點法線（依面積加權），所以小於數公尺的起伏的坡度不包括在內。路線是最接近 y = 0 截面的頂點鏈。",
+   "ko": "밀도는 균일하다고 가정합니다(한계 탭 참조). 경사각은 꼭짓점 법선(면적 가중)으로 재므로 수 m보다 작은 요철의 경사는 들어가지 않습니다. 길은 y = 0 단면에 가장 가까운 꼭짓점의 사슬입니다.",
+   "de": "Die Dichte wird als homogen angenommen (siehe Reiter Grenze). Die Hangneigung nutzt Eckpunktnormalen (flächengewichtet), daher fehlen Neigungen von Unebenheiten unter einigen Metern. Der Weg ist die Kette der Eckpunkte, die dem Schnitt y = 0 am nächsten liegen.",
+   "hi": "घनत्व एकसमान माना गया है (सीमा टैब देखें)। ढलान शीर्ष-अभिलंबों (क्षेत्रफल-भारित) से मापा जाता है, इसलिए कुछ मीटर से छोटे उभारों की ढलान इसमें नहीं है। रास्ता y = 0 खंड के सबसे नज़दीकी शीर्षों की शृंखला है।",
+   "fr": "La densité est supposée uniforme (voir l'onglet limite). La pente utilise les normales aux sommets (pondérées par l'aire), donc les pentes des bosses de moins de quelques mètres sont absentes. Le chemin est la chaîne des sommets les plus proches de la section y = 0."
+  },
+  "Why the Muses Sea is flat and low": {
+   "ja": "ミューゼスの海はなぜ平らで低い",
+   "zh": "缪斯海为什么平坦又低",
+   "tw": "繆斯海為什麼平坦又低",
+   "ko": "뮤즈의 바다는 왜 평평하고 낮을까",
+   "de": "Warum das Muses-Meer flach und tief liegt",
+   "hi": "म्यूज़ सागर समतल और नीचा क्यों है",
+   "fr": "Pourquoi la mer des Muses est plate et basse"
+  },
+  "height range (max)": {
+   "ja": "高さの範囲(最大)",
+   "zh": "高度范围（最大）",
+   "tw": "高度範圍（最大）",
+   "ko": "높이 범위(최대)",
+   "de": "Höhenbereich (max)",
+   "hi": "ऊँचाई की सीमा (अधिकतम)",
+   "fr": "plage de hauteur (max)"
+  },
+  "grains' mean height (start → 80 steps)": {
+   "ja": "粒の平均の高さ(最初 → 80 歩)",
+   "zh": "颗粒的平均高度（开始 → 80 步）",
+   "tw": "顆粒的平均高度（開始 → 80 步）",
+   "ko": "입자의 평균 높이(처음 → 80 걸음)",
+   "de": "mittlere Höhe der Körner (Start → 80 Schritte)",
+   "hi": "कणों की औसत ऊँचाई (शुरुआत → 80 कदम)",
+   "fr": "hauteur moyenne des grains (départ → 80 pas)"
+  },
+  "height rank of TD1 / TD2": {
+   "ja": "着陸点 TD1 / TD2 の高さの順位",
+   "zh": "TD1 / TD2 的高度排名",
+   "tw": "TD1 / TD2 的高度排名",
+   "ko": "TD1 / TD2의 높이 순위",
+   "de": "Höhenrang von TD1 / TD2",
+   "hi": "TD1 / TD2 की ऊँचाई क्रम",
+   "fr": "rang de hauteur de TD1 / TD2"
+  },
+  "slope at TD1 / TD2": {
+   "ja": "TD1 / TD2 の斜面の角",
+   "zh": "TD1 / TD2 的坡度",
+   "tw": "TD1 / TD2 的坡度",
+   "ko": "TD1 / TD2의 경사각",
+   "de": "Hangneigung bei TD1 / TD2",
+   "hi": "TD1 / TD2 पर ढलान",
+   "fr": "pente en TD1 / TD2"
+  },
+  "geopotential height (effective potential ÷ mean gravity)": {
+   "ja": "ジオポテンシャル高度(実効ポテンシャル ÷ 平均の重力)",
+   "zh": "位势高度（有效势 ÷ 平均重力）",
+   "tw": "重力位高度（有效位勢 ÷ 平均重力）",
+   "ko": "지오퍼텐셜 고도(유효 퍼텐셜 ÷ 평균 중력)",
+   "de": "geopotentielle Höhe (effektives Potential ÷ mittlere Schwerkraft)",
+   "hi": "भू-विभव ऊँचाई (प्रभावी विभव ÷ औसत गुरुत्व)",
+   "fr": "hauteur géopotentielle (potentiel effectif ÷ pesanteur moyenne)"
+  },
+  "estimated touchdown site (TD1, Yano & Aida 2013)": {
+   "ja": "着陸点の推定(TD1、Yano & Aida 2013)",
+   "zh": "着陆点的推定位置（TD1，Yano & Aida 2013）",
+   "tw": "著陸點的推定位置（TD1，Yano & Aida 2013）",
+   "ko": "착륙 지점의 추정 위치(TD1, Yano & Aida 2013)",
+   "de": "geschätzter Aufsetzpunkt (TD1, Yano & Aida 2013)",
+   "hi": "अनुमानित अवतरण स्थल (TD1, Yano & Aida 2013)",
+   "fr": "site d'atterrissage estimé (TD1, Yano & Aida 2013)"
+  },
+  "estimated touchdown site (TD2, Yano & Aida 2013)": {
+   "ja": "着陸点の推定(TD2、Yano & Aida 2013)",
+   "zh": "着陆点的推定位置（TD2，Yano & Aida 2013）",
+   "tw": "著陸點的推定位置（TD2，Yano & Aida 2013）",
+   "ko": "착륙 지점의 추정 위치(TD2, Yano & Aida 2013)",
+   "de": "geschätzter Aufsetzpunkt (TD2, Yano & Aida 2013)",
+   "hi": "अनुमानित अवतरण स्थल (TD2, Yano & Aida 2013)",
+   "fr": "site d'atterrissage estimé (TD2, Yano & Aida 2013)"
+  },
+  "0 steps": {
+   "ja": "0 歩",
+   "zh": "0 步",
+   "tw": "0 步",
+   "ko": "0 걸음",
+   "de": "0 Schritte",
+   "hi": "0 कदम",
+   "fr": "0 pas"
+  },
+  "10 steps": {
+   "ja": "10 歩",
+   "zh": "10 步",
+   "tw": "10 步",
+   "ko": "10 걸음",
+   "de": "10 Schritte",
+   "hi": "10 कदम",
+   "fr": "10 pas"
+  },
+  "80 steps": {
+   "ja": "80 歩",
+   "zh": "80 步",
+   "tw": "80 步",
+   "ko": "80 걸음",
+   "de": "80 Schritte",
+   "hi": "80 कदम",
+   "fr": "80 pas"
+  },
+  "mean height of the grains": {
+   "ja": "粒の高さの平均",
+   "zh": "颗粒的平均高度",
+   "tw": "顆粒的平均高度",
+   "ko": "입자의 평균 높이",
+   "de": "mittlere Höhe der Körner",
+   "hi": "कणों की औसत ऊँचाई",
+   "fr": "hauteur moyenne des grains"
+  },
+  "height (low = grains gather)": {
+   "ja": "高さ(低い = 粒が集まる)",
+   "zh": "高度（低 = 颗粒聚集）",
+   "tw": "高度（低 = 顆粒聚集）",
+   "ko": "높이(낮음 = 입자가 모임)",
+   "de": "Höhe (tief = Körner sammeln sich)",
+   "hi": "ऊँचाई (नीचा = कण जमा होते हैं)",
+   "fr": "hauteur (bas = les grains s'accumulent)"
+  },
+  "grains moving downhill lower their mean height (start → 80 steps)": {
+   "ja": "粒が坂を下ると平均の高さが下がる(最初 → 80 歩)",
+   "zh": "颗粒向下坡移动，平均高度降低（开始 → 80 步）",
+   "tw": "顆粒向下坡移動，平均高度降低（開始 → 80 步）",
+   "ko": "입자가 비탈을 내려가면 평균 높이가 낮아진다(처음 → 80 걸음)",
+   "de": "bergab wandernde Körner senken ihre mittlere Höhe (Start → 80 Schritte)",
+   "hi": "ढलान पर नीचे जाते कणों की औसत ऊँचाई घटती है (शुरुआत → 80 कदम)",
+   "fr": "les grains qui descendent abaissent leur hauteur moyenne (départ → 80 pas)"
+  },
+  "lower": {
+   "ja": "下がる",
+   "zh": "降低",
+   "tw": "降低",
+   "ko": "낮아짐",
+   "de": "sinkt",
+   "hi": "घटती है",
+   "fr": "baisse"
+  },
+  "share of grains in the lowest 20 % of the area (start → 80 steps)": {
+   "ja": "低い方から 20 % の面積に入る粒の割合(最初 → 80 歩)",
+   "zh": "位于面积最低 20 % 处的颗粒比例（开始 → 80 步）",
+   "tw": "位於面積最低 20 % 處的顆粒比例（開始 → 80 步）",
+   "ko": "면적의 가장 낮은 20 %에 든 입자의 비율(처음 → 80 걸음)",
+   "de": "Anteil der Körner in den tiefsten 20 % der Fläche (Start → 80 Schritte)",
+   "hi": "क्षेत्रफल के सबसे निचले 20 % में कणों का हिस्सा (शुरुआत → 80 कदम)",
+   "fr": "part des grains dans les 20 % les plus bas de la surface (départ → 80 pas)"
+  },
+  "rises": {
+   "ja": "増える",
+   "zh": "增加",
+   "tw": "增加",
+   "ko": "늘어남",
+   "de": "steigt",
+   "hi": "बढ़ता है",
+   "fr": "augmente"
+  },
+  "height rank of the estimated site TD1 (near the south pole; % of area below it)": {
+   "ja": "着陸点の推定 TD1(南極寄り)の高さの順位(低い方から、面積の %)",
+   "zh": "推定位置 TD1（靠近南极；低于它的面积 %）的高度排名",
+   "tw": "推定位置 TD1（靠近南極；低於它的面積 %）的高度排名",
+   "ko": "추정 위치 TD1(남극 근처, 그보다 낮은 면적의 %)의 높이 순위",
+   "de": "Höhenrang des geschätzten Punkts TD1 (nahe dem Südpol; % der Fläche darunter)",
+   "hi": "अनुमानित स्थल TD1 की ऊँचाई क्रम (दक्षिणी ध्रुव के पास; उससे नीचे के क्षेत्रफल का %)",
+   "fr": "rang de hauteur du site estimé TD1 (près du pôle sud ; % de la surface en dessous)"
+  },
+  "height rank of the estimated site TD2 (near the equator)": {
+   "ja": "着陸点の推定 TD2(赤道寄り)の高さの順位",
+   "zh": "推定位置 TD2（靠近赤道）的高度排名",
+   "tw": "推定位置 TD2（靠近赤道）的高度排名",
+   "ko": "추정 위치 TD2(적도 근처)의 높이 순위",
+   "de": "Höhenrang des geschätzten Punkts TD2 (nahe dem Äquator)",
+   "hi": "अनुमानित स्थल TD2 की ऊँचाई क्रम (भूमध्य रेखा के पास)",
+   "fr": "rang de hauteur du site estimé TD2 (près de l'équateur)"
+  },
+  "downhill steps taken by the grains": {
+   "ja": "粒が坂を下った歩数",
+   "zh": "颗粒下坡走的步数",
+   "tw": "顆粒下坡走的步數",
+   "ko": "입자가 비탈을 내려간 걸음 수",
+   "de": "von den Körnern bergab gemachte Schritte",
+   "hi": "कणों द्वारा ढलान पर नीचे लिए गए कदम",
+   "fr": "pas de descente effectués par les grains"
+  },
+  "The Muses Sea, where Hayabusa touched down, is a flat pond of fine gravel. Why does it collect there?": {
+   "ja": "はやぶさが降りたミューゼスの海は、細かい砂利が平らにたまった場所。なぜそこにたまる?",
+   "zh": "隼鸟号着陆的缪斯海是一片堆满细砾石的平坦区域。为什么砾石会聚集在那里？",
+   "tw": "隼鳥號著陸的繆斯海是一片堆滿細礫石的平坦區域。為什麼礫石會聚集在那裡？",
+   "ko": "하야부사가 내려앉은 뮤즈의 바다는 고운 자갈이 평평하게 쌓인 곳이다. 왜 그곳에 모일까?",
+   "de": "Das Muses-Meer, wo Hayabusa aufsetzte, ist ein flacher Teich aus feinem Schotter. Warum sammelt er sich dort?",
+   "hi": "म्यूज़ सागर, जहाँ हायाबुसा उतरा, बारीक बजरी का एक समतल ताल है। वह वहाँ क्यों जमा होती है?",
+   "fr": "La mer des Muses, où Hayabusa s'est posé, est une mare plate de gravier fin. Pourquoi s'y accumule-t-il ?"
+  },
+  "It was levelled for the landing": {
+   "ja": "降りるために平らにならした",
+   "zh": "为了着陆而被整平了",
+   "tw": "為了著陸而被整平了",
+   "ko": "착륙을 위해 평평하게 골랐다",
+   "de": "Sie wurde für die Landung eingeebnet",
+   "hi": "उतरने के लिए उसे समतल किया गया",
+   "fr": "Elle a été nivelée pour l'atterrissage"
+  },
+  "Shaken grains flow down into places where the effective potential is low": {
+   "ja": "実効ポテンシャルが低い所へ、揺れた粒が流れ込む",
+   "zh": "被震动的颗粒流向有效势低的地方",
+   "tw": "被震動的顆粒流向有效位勢低的地方",
+   "ko": "흔들린 입자가 유효 퍼텐셜이 낮은 곳으로 흘러든다",
+   "de": "Gerüttelte Körner fließen dorthin, wo das effektive Potential niedrig ist",
+   "hi": "हिलाए गए कण वहाँ बह जाते हैं जहाँ प्रभावी विभव कम है",
+   "fr": "Les grains secoués s'écoulent vers les endroits où le potentiel effectif est bas"
+  },
+  "It is where the centrifugal force is strongest": {
+   "ja": "遠心力が一番強い所だから",
+   "zh": "因为那里的离心力最强",
+   "tw": "因為那裡的離心力最強",
+   "ko": "원심력이 가장 강한 곳이라서",
+   "de": "Dort ist die Fliehkraft am stärksten",
+   "hi": "वहाँ अपकेंद्री बल सबसे प्रबल है",
+   "fr": "C'est là que la force centrifuge est la plus forte"
+  },
+  "Dividing the effective potential (gravity plus centrifugal) by the mean gravity gives a 'height' (up to 66.8 m). Grains roll from high to low: moving scattered grains downhill by the op's values lowers their mean height from 22.1 to 11.3 m, and the share in the lowest 20 % of the area rises from 20 to 53 %. The estimated touchdown site TD1 (mid-pond) sits at the 2 % height rank and TD2 at 46 % (Yano & Aida 2013 note that TD2 lies right next to one of Itokawa's steepest potential slopes). Fujiwara 2006 reports that the smooth areas (Muses Sea, Sagamihara) match the gravitationally low regions.": {
+   "ja": "重力と遠心力をまとめた実効ポテンシャルを、平均の重力で割ると「高さ」になる(最大 66.8 m)。粒は高い所から低い所へ転がるので、撒いた粒を op の値で坂の下へ動かすと、平均の高さは 22.1 → 11.3 m に下がり、低い方 20 % の面積に入る粒は 20 → 53 % に増える。着陸点の推定位置 TD1(平らな所の真ん中)は低い方から 2 %、TD2 は 46 %(Yano & Aida 2013 は、TD2 がイトカワで最も急なポテンシャルの斜面の 1 つのすぐ隣だと書いている)。Fujiwara 2006 は、平らな所(ミューゼスの海・相模原)が重力的に低い所と一致すると報告している。",
+   "zh": "把有效势（引力加离心力）除以平均重力就得到“高度”（最大 66.8 m）。颗粒从高处滚向低处：按 op 的值让撒下的颗粒下坡，平均高度从 22.1 降到 11.3 m，位于面积最低 20 % 的颗粒比例从 20 增加到 53 %。推定着陆点 TD1（平坦区中央）的高度排名为 2 %，TD2 为 46 %（Yano & Aida 2013 指出 TD2 紧邻糸川上最陡的势坡之一）。Fujiwara 2006 报告平坦区域（缪斯海、相模原）与引力上的低处一致。",
+   "tw": "把有效位勢（重力加離心力）除以平均重力就得到「高度」（最大 66.8 m）。顆粒從高處滾向低處：依 op 的值讓撒下的顆粒下坡，平均高度從 22.1 降到 11.3 m，位於面積最低 20 % 的顆粒比例從 20 增加到 53 %。推定著陸點 TD1（平坦區中央）的高度排名為 2 %，TD2 為 46 %（Yano & Aida 2013 指出 TD2 緊鄰糸川上最陡的位勢坡之一）。Fujiwara 2006 報告平坦區域（繆斯海、相模原）與重力上的低處一致。",
+   "ko": "유효 퍼텐셜(중력 + 원심력)을 평균 중력으로 나누면 '높이'가 됩니다(최대 66.8 m). 입자는 높은 곳에서 낮은 곳으로 구르므로, 뿌린 입자를 op 값에 따라 비탈 아래로 옮기면 평균 높이는 22.1에서 11.3 m로 낮아지고, 면적의 가장 낮은 20 %에 든 입자는 20에서 53 %로 늘어납니다. 착륙 지점의 추정 위치 TD1(평지 한가운데)은 높이 순위 2 %, TD2는 46 %입니다(Yano & Aida 2013은 TD2가 이토카와에서 가장 가파른 퍼텐셜 비탈 중 하나의 바로 옆이라고 씁니다). Fujiwara 2006은 평탄한 곳(뮤즈의 바다, 사가미하라)이 중력적으로 낮은 곳과 일치한다고 보고했습니다.",
+   "de": "Teilt man das effektive Potential (Schwerkraft plus Fliehkraft) durch die mittlere Schwerkraft, erhält man eine „Höhe“ (bis 66.8 m). Körner rollen von hoch nach tief: Bewegt man verteilte Körner nach den Werten des Ops bergab, sinkt ihre mittlere Höhe von 22.1 auf 11.3 m, und der Anteil in den tiefsten 20 % der Fläche steigt von 20 auf 53 %. Der geschätzte Aufsetzpunkt TD1 (Teichmitte) liegt auf dem Höhenrang 2 %, TD2 auf 46 % (Yano & Aida 2013 schreiben, dass TD2 direkt neben einem der steilsten Potentialhänge Itokawas liegt). Fujiwara 2006 berichtet, dass die glatten Gebiete (Muses-Meer, Sagamihara) mit den gravitativ tiefen Regionen übereinstimmen.",
+   "hi": "प्रभावी विभव (गुरुत्व और अपकेंद्री) को औसत गुरुत्व से भाग देने पर एक 'ऊँचाई' मिलती है (अधिकतम 66.8 m)। कण ऊँचाई से नीचे लुढ़कते हैं: op के मानों के अनुसार बिखरे कणों को ढलान पर नीचे ले जाने से उनकी औसत ऊँचाई 22.1 से 11.3 m हो जाती है, और क्षेत्रफल के सबसे निचले 20 % में उनका हिस्सा 20 से 53 % हो जाता है। अनुमानित अवतरण स्थल TD1 (ताल के बीच) ऊँचाई क्रम 2 % पर है और TD2 46 % पर (Yano & Aida 2013 लिखते हैं कि TD2 इटोकावा की सबसे खड़ी विभव-ढलानों में से एक के ठीक बगल में है)। Fujiwara 2006 बताते हैं कि समतल क्षेत्र (म्यूज़ सागर, सागामिहारा) गुरुत्वीय रूप से नीचे के क्षेत्रों से मेल खाते हैं।",
+   "fr": "En divisant le potentiel effectif (gravité plus force centrifuge) par la pesanteur moyenne, on obtient une « hauteur » (jusqu'à 66.8 m). Les grains roulent du haut vers le bas : en déplaçant les grains vers le bas selon les valeurs de l'op, leur hauteur moyenne passe de 22.1 à 11.3 m, et la part dans les 20 % les plus bas de la surface passe de 20 à 53 %. Le site estimé TD1 (milieu de la mare) se situe au rang de hauteur 2 % et TD2 à 46 % (Yano & Aida 2013 notent que TD2 jouxte l'une des pentes de potentiel les plus raides d'Itokawa). Fujiwara 2006 rapporte que les zones lisses (mer des Muses, Sagamihara) coïncident avec les régions gravitationnellement basses."
+  },
+  "effective potential Φ_eff = Φ − ½ ω² ρ⊥²\ngeopotential height H = (Φ_eff − Φ_eff,min) / ḡ\none grain step: to the neighbouring vertex with the lowest Φ_eff": {
+   "ja": "実効ポテンシャル Φ_eff = Φ − ½ ω² ρ⊥²\nジオポテンシャル高度 H = (Φ_eff − Φ_eff,min) / ḡ\n粒の 1 歩: 隣の頂点のうち Φ_eff が最も低い所へ",
+   "zh": "有效势 Φ_eff = Φ − ½ ω² ρ⊥²\n位势高度 H = (Φ_eff − Φ_eff,min) / ḡ\n颗粒的一步：移到相邻顶点中 Φ_eff 最低的那个",
+   "tw": "有效位勢 Φ_eff = Φ − ½ ω² ρ⊥²\n重力位高度 H = (Φ_eff − Φ_eff,min) / ḡ\n顆粒的一步：移到相鄰頂點中 Φ_eff 最低的那個",
+   "ko": "유효 퍼텐셜 Φ_eff = Φ − ½ ω² ρ⊥²\n지오퍼텐셜 고도 H = (Φ_eff − Φ_eff,min) / ḡ\n입자의 한 걸음: 이웃 꼭짓점 중 Φ_eff가 가장 낮은 곳으로",
+   "de": "effektives Potential Φ_eff = Φ − ½ ω² ρ⊥²\ngeopotentielle Höhe H = (Φ_eff − Φ_eff,min) / ḡ\nein Kornschritt: zum benachbarten Eckpunkt mit dem niedrigsten Φ_eff",
+   "hi": "प्रभावी विभव Φ_eff = Φ − ½ ω² ρ⊥²\nभू-विभव ऊँचाई H = (Φ_eff − Φ_eff,min) / ḡ\nकण का एक कदम: सबसे कम Φ_eff वाले पड़ोसी शीर्ष पर",
+   "fr": "potentiel effectif Φ_eff = Φ − ½ ω² ρ⊥²\nhauteur géopotentielle H = (Φ_eff − Φ_eff,min) / ḡ\nun pas de grain : vers le sommet voisin de Φ_eff le plus bas"
+  },
+  "Grain motion is a 'downhill only' model: no friction, bouncing or the strength of impact shaking. The touchdown sites are the centres of the Yano & Aida 2013 estimates, assuming their latitude/longitude use the shape model's frame (north = +z, east longitude). Density is assumed uniform.": {
+   "ja": "粒の動きは「坂の下へ」だけの模型で、摩擦・跳ね返り・揺れ(衝突の振動)の強さは入れていない。着陸点はYano & Aida 2013 の推定範囲の中心を、緯度・経度が形状モデルの座標系(北極 = +z、経度は東向き)と同じと仮定して置いた。密度は一様と仮定している。",
+   "zh": "颗粒的运动是“只往下坡”的模型：没有摩擦、弹跳和撞击震动的强度。着陆点是 Yano & Aida 2013 推定范围的中心，并假设其纬度/经度使用形状模型的坐标系（北 = +z，东经）。假设密度均匀。",
+   "tw": "顆粒的運動是「只往下坡」的模型：沒有摩擦、彈跳與撞擊震動的強度。著陸點是 Yano & Aida 2013 推定範圍的中心，並假設其緯度/經度使用形狀模型的座標系（北 = +z，東經）。假設密度均勻。",
+   "ko": "입자의 움직임은 '비탈 아래로만' 가는 모형으로, 마찰·튀어 오름·충돌 진동의 세기는 넣지 않았습니다. 착륙 지점은 Yano & Aida 2013 추정 범위의 중심이며, 그 위도·경도가 모양 모델의 좌표계(북 = +z, 동경)를 쓴다고 가정했습니다. 밀도는 균일하다고 가정합니다.",
+   "de": "Die Kornbewegung ist ein Modell „nur bergab“: keine Reibung, kein Abprallen, keine Stärke der Erschütterung durch Einschläge. Die Aufsetzpunkte sind die Mitten der Schätzungen von Yano & Aida 2013, unter der Annahme, dass deren Breite/Länge das Koordinatensystem des Formmodells nutzt (Norden = +z, östliche Länge). Die Dichte wird als homogen angenommen.",
+   "hi": "कणों की गति 'केवल ढलान पर नीचे' वाला मॉडल है: घर्षण, उछाल या टक्कर के कंपन की तीव्रता नहीं। अवतरण स्थल Yano & Aida 2013 के अनुमानों के केंद्र हैं, यह मानकर कि उनके अक्षांश/देशांतर आकार मॉडल के निर्देश-तंत्र का उपयोग करते हैं (उत्तर = +z, पूर्वी देशांतर)। घनत्व एकसमान माना गया है।",
+   "fr": "Le mouvement des grains est un modèle « uniquement vers le bas » : ni frottement, ni rebond, ni intensité des secousses d'impact. Les sites d'atterrissage sont les centres des estimations de Yano & Aida 2013, en supposant que leurs latitude/longitude utilisent le repère du modèle de forme (nord = +z, longitude est). La densité est supposée uniforme."
+  },
+  "Limit: the uniform-density assumption": {
+   "ja": "限界: 一様密度という仮定",
+   "zh": "局限：密度均匀的假设",
+   "tw": "限制：密度均勻的假設",
+   "ko": "한계: 균일 밀도라는 가정",
+   "de": "Grenze: die Annahme homogener Dichte",
+   "hi": "सीमा: एकसमान घनत्व की मान्यता",
+   "fr": "Limite : l'hypothèse de densité uniforme"
+  },
+  "head share of the volume": {
+   "ja": "頭の体積の割合",
+   "zh": "头部占体积的比例",
+   "tw": "頭部佔體積的比例",
+   "ko": "머리의 부피 비율",
+   "de": "Anteil des Kopfes am Volumen",
+   "hi": "आयतन में सिर का हिस्सा",
+   "fr": "part de la tête dans le volume"
+  },
+  "body density (head 2,850) / Lowry 2014": {
+   "ja": "胴の密度(頭 2,850 のとき)/ Lowry 2014",
+   "zh": "身体的密度（头部 2,850）/ Lowry 2014",
+   "tw": "身體的密度（頭部 2,850）/ Lowry 2014",
+   "ko": "몸통의 밀도(머리 2,850) / Lowry 2014",
+   "de": "Dichte des Rumpfes (Kopf 2,850) / Lowry 2014",
+   "hi": "धड़ का घनत्व (सिर 2,850) / Lowry 2014",
+   "fr": "densité du corps (tête 2,850) / Lowry 2014"
+  },
+  "centre-of-mass shift (x) / Lowry 2014": {
+   "ja": "重心のずれ(x)/ Lowry 2014",
+   "zh": "质心偏移（x）/ Lowry 2014",
+   "tw": "質心偏移（x）/ Lowry 2014",
+   "ko": "질량중심의 어긋남(x) / Lowry 2014",
+   "de": "Verschiebung des Schwerpunkts (x) / Lowry 2014",
+   "hi": "द्रव्यमान केंद्र का खिसकाव (x) / Lowry 2014",
+   "fr": "décalage du centre de masse (x) / Lowry 2014"
+  },
+  "change in surface |g_eff|": {
+   "ja": "表面の |g_eff| の変化",
+   "zh": "表面 |g_eff| 的变化",
+   "tw": "表面 |g_eff| 的變化",
+   "ko": "표면 |g_eff|의 변화",
+   "de": "Änderung von |g_eff| an der Oberfläche",
+   "hi": "सतह पर |g_eff| का बदलाव",
+   "fr": "variation de |g_eff| en surface"
+  },
+  "-10.0 to +35.2 %": {
+   "ja": "-10.0〜+35.2 %",
+   "zh": "-10.0 至 +35.2 %",
+   "tw": "-10.0 至 +35.2 %",
+   "ko": "-10.0 ~ +35.2 %",
+   "de": "-10.0 bis +35.2 %",
+   "hi": "-10.0 से +35.2 %",
+   "fr": "de -10.0 à +35.2 %"
+  },
+  "change in |g_eff| (two densities ÷ uniform − 1)": {
+   "ja": "|g_eff| の変化(2 密度 ÷ 一様 − 1)",
+   "zh": "|g_eff| 的变化（两种密度 ÷ 均匀 − 1）",
+   "tw": "|g_eff| 的變化（兩種密度 ÷ 均勻 − 1）",
+   "ko": "|g_eff|의 변화(두 밀도 ÷ 균일 − 1)",
+   "de": "Änderung von |g_eff| (zwei Dichten ÷ homogen − 1)",
+   "hi": "|g_eff| का बदलाव (दो घनत्व ÷ एकसमान − 1)",
+   "fr": "variation de |g_eff| (deux densités ÷ uniforme − 1)"
+  },
+  "centre of figure (uniform-density centre of mass)": {
+   "ja": "形の中心(一様密度の重心)",
+   "zh": "形心（均匀密度的质心）",
+   "tw": "形心（均勻密度的質心）",
+   "ko": "도형 중심(균일 밀도의 질량중심)",
+   "de": "Formmittelpunkt (Schwerpunkt bei homogener Dichte)",
+   "hi": "आकृति केंद्र (एकसमान घनत्व का द्रव्यमान केंद्र)",
+   "fr": "centre de figure (centre de masse à densité uniforme)"
+  },
+  "centre of mass (head made denser)": {
+   "ja": "重心(頭を重くしていく)",
+   "zh": "质心（逐渐加重头部）",
+   "tw": "質心（逐漸加重頭部）",
+   "ko": "질량중심(머리를 무겁게 해 감)",
+   "de": "Schwerpunkt (Kopf wird dichter)",
+   "hi": "द्रव्यमान केंद्र (सिर को घना करते हुए)",
+   "fr": "centre de masse (tête rendue plus dense)"
+  },
+  "head / body boundary x = 150 m (Lowry 2014)": {
+   "ja": "頭と胴の境 x = 150 m(Lowry 2014)",
+   "zh": "头部与身体的分界 x = 150 m（Lowry 2014）",
+   "tw": "頭部與身體的分界 x = 150 m（Lowry 2014）",
+   "ko": "머리와 몸통의 경계 x = 150 m(Lowry 2014)",
+   "de": "Grenze Kopf / Rumpf x = 150 m (Lowry 2014)",
+   "hi": "सिर / धड़ की सीमा x = 150 m (Lowry 2014)",
+   "fr": "limite tête / corps x = 150 m (Lowry 2014)"
+  },
+  "path of the centre of mass": {
+   "ja": "重心の動き",
+   "zh": "质心的移动路径",
+   "tw": "質心的移動路徑",
+   "ko": "질량중심의 움직임",
+   "de": "Bahn des Schwerpunkts",
+   "hi": "द्रव्यमान केंद्र का पथ",
+   "fr": "trajet du centre de masse"
+  },
+  "Lowry 2014 densities": {
+   "ja": "Lowry 2014 の密度",
+   "zh": "Lowry 2014 的密度",
+   "tw": "Lowry 2014 的密度",
+   "ko": "Lowry 2014의 밀도",
+   "de": "Dichten nach Lowry 2014",
+   "hi": "Lowry 2014 के घनत्व",
+   "fr": "densités de Lowry 2014"
+  },
+  "centre-of-mass shift (x, towards the head)": {
+   "ja": "重心のずれ(x、頭の側が正)",
+   "zh": "质心偏移（x，朝头部为正）",
+   "tw": "質心偏移（x，朝頭部為正）",
+   "ko": "질량중심의 어긋남(x, 머리 쪽이 양)",
+   "de": "Verschiebung des Schwerpunkts (x, zum Kopf hin)",
+   "hi": "द्रव्यमान केंद्र का खिसकाव (x, सिर की ओर)",
+   "fr": "décalage du centre de masse (x, vers la tête)"
+  },
+  "body density (total mass kept)": {
+   "ja": "胴の密度(全体の質量を保つ)",
+   "zh": "身体的密度（保持总质量）",
+   "tw": "身體的密度（保持總質量）",
+   "ko": "몸통의 밀도(전체 질량 유지)",
+   "de": "Dichte des Rumpfes (Gesamtmasse bleibt)",
+   "hi": "धड़ का घनत्व (कुल द्रव्यमान स्थिर)",
+   "fr": "densité du corps (masse totale conservée)"
+  },
+  "change in |g_eff| (head 2,850 / body 1754 kg/m³)": {
+   "ja": "|g_eff| の変化(頭 2,850 / 胴 1754 kg/m³)",
+   "zh": "|g_eff| 的变化（头部 2,850 / 身体 1754 kg/m³）",
+   "tw": "|g_eff| 的變化（頭部 2,850 / 身體 1754 kg/m³）",
+   "ko": "|g_eff|의 변화(머리 2,850 / 몸통 1754 kg/m³)",
+   "de": "Änderung von |g_eff| (Kopf 2,850 / Rumpf 1754 kg/m³)",
+   "hi": "|g_eff| का बदलाव (सिर 2,850 / धड़ 1754 kg/m³)",
+   "fr": "variation de |g_eff| (tête 2,850 / corps 1754 kg/m³)"
+  },
+  "head + body pieces (polyhedron_clip_halfspace) = whole: volume / gravity": {
+   "ja": "頭と胴に切った 2 つ(polyhedron_clip_halfspace)の和 = 全体: 体積 / 重力",
+   "zh": "头部 + 身体两块（polyhedron_clip_halfspace）= 整体：体积 / 引力",
+   "tw": "頭部 + 身體兩塊（polyhedron_clip_halfspace）= 整體：體積 / 重力",
+   "ko": "머리 + 몸통 조각(polyhedron_clip_halfspace) = 전체: 부피 / 중력",
+   "de": "Kopf- + Rumpfstück (polyhedron_clip_halfspace) = Ganzes: Volumen / Schwerkraft",
+   "hi": "सिर + धड़ के टुकड़े (polyhedron_clip_halfspace) = पूरा: आयतन / गुरुत्व",
+   "fr": "morceaux tête + corps (polyhedron_clip_halfspace) = tout : volume / gravité"
+  },
+  "total mass stays 1,950 kg/m³ × volume at every step": {
+   "ja": "密度を振っても全体の質量は 1,950 kg/m³ × 体積のまま",
+   "zh": "每一步总质量都保持 1,950 kg/m³ × 体积",
+   "tw": "每一步總質量都保持 1,950 kg/m³ × 體積",
+   "ko": "모든 단계에서 전체 질량은 1,950 kg/m³ × 부피 그대로",
+   "de": "Gesamtmasse bleibt bei jedem Schritt 1,950 kg/m³ × Volumen",
+   "hi": "हर कदम पर कुल द्रव्यमान 1,950 kg/m³ × आयतन रहता है",
+   "fr": "la masse totale reste 1,950 kg/m³ × volume à chaque pas"
+  },
+  "body density with the head at 2,850 (on this shape) vs Lowry 2014: 1,750 ± 110": {
+   "ja": "頭 2,850 のとき胴の密度(この形で)と Lowry 2014 の 1,750 ± 110",
+   "zh": "头部为 2,850 时身体的密度（在此形状上）与 Lowry 2014：1,750 ± 110",
+   "tw": "頭部為 2,850 時身體的密度（在此形狀上）與 Lowry 2014：1,750 ± 110",
+   "ko": "머리가 2,850일 때 몸통의 밀도(이 모양에서) 대 Lowry 2014: 1,750 ± 110",
+   "de": "Dichte des Rumpfes bei Kopf 2,850 (auf dieser Form) gegen Lowry 2014: 1,750 ± 110",
+   "hi": "सिर 2,850 पर धड़ का घनत्व (इस आकार पर) बनाम Lowry 2014: 1,750 ± 110",
+   "fr": "densité du corps avec la tête à 2,850 (sur cette forme) contre Lowry 2014 : 1,750 ± 110"
+  },
+  "centre-of-mass shift (x) then vs Lowry 2014: 21 ± 12 m": {
+   "ja": "そのときの重心のずれ(x)と Lowry 2014 の 21 ± 12 m",
+   "zh": "此时的质心偏移（x）与 Lowry 2014：21 ± 12 m",
+   "tw": "此時的質心偏移（x）與 Lowry 2014：21 ± 12 m",
+   "ko": "그때의 질량중심 어긋남(x) 대 Lowry 2014: 21 ± 12 m",
+   "de": "Verschiebung des Schwerpunkts (x) dabei gegen Lowry 2014: 21 ± 12 m",
+   "hi": "तब द्रव्यमान केंद्र का खिसकाव (x) बनाम Lowry 2014: 21 ± 12 m",
+   "fr": "décalage du centre de masse (x) alors contre Lowry 2014 : 21 ± 12 m"
+  },
+  "can the uniform-density assumption give the centre-of-mass shift the YORP observation needs (≥ 14 m)?": {
+   "ja": "一様密度の仮定は、YORP の観測が求める重心のずれ(14 m 以上)を出せるか",
+   "zh": "密度均匀的假设能否给出 YORP 观测所需的质心偏移（≥ 14 m）？",
+   "tw": "密度均勻的假設能否給出 YORP 觀測所需的質心偏移（≥ 14 m）？",
+   "ko": "균일 밀도 가정으로 YORP 관측이 요구하는 질량중심의 어긋남(≥ 14 m)을 낼 수 있을까?",
+   "de": "Kann die Annahme homogener Dichte die von der YORP-Beobachtung verlangte Verschiebung des Schwerpunkts (≥ 14 m) liefern?",
+   "hi": "क्या एकसमान घनत्व की मान्यता YORP प्रेक्षण द्वारा माँगा गया द्रव्यमान केंद्र का खिसकाव (≥ 14 m) दे सकती है?",
+   "fr": "l'hypothèse de densité uniforme peut-elle donner le décalage du centre de masse exigé par l'observation YORP (≥ 14 m) ?"
+  },
+  "head density ρ_head": {
+   "ja": "頭の密度 ρ_頭",
+   "zh": "头部的密度 ρ_head",
+   "tw": "頭部的密度 ρ_head",
+   "ko": "머리의 밀도 ρ_head",
+   "de": "Dichte des Kopfes ρ_head",
+   "hi": "सिर का घनत्व ρ_head",
+   "fr": "densité de la tête ρ_head"
+  },
+  "If the head is denser than the body, how does the centre of mass move?": {
+   "ja": "頭の方が胴より重い(密度が高い)と、重心はどう動く?",
+   "zh": "如果头部比身体密度高，质心会怎样移动？",
+   "tw": "如果頭部比身體密度高，質心會怎樣移動？",
+   "ko": "머리가 몸통보다 밀도가 높으면 질량중심은 어떻게 움직일까?",
+   "de": "Wenn der Kopf dichter ist als der Rumpf, wie bewegt sich der Schwerpunkt?",
+   "hi": "अगर सिर धड़ से अधिक घना हो, तो द्रव्यमान केंद्र कैसे खिसकेगा?",
+   "fr": "Si la tête est plus dense que le corps, comment le centre de masse se déplace-t-il ?"
+  },
+  "It does not move (the shape is the same)": {
+   "ja": "動かない(形が同じだから)",
+   "zh": "不动（形状相同）",
+   "tw": "不動（形狀相同）",
+   "ko": "움직이지 않는다(모양이 같으니까)",
+   "de": "Er bewegt sich nicht (die Form ist gleich)",
+   "hi": "यह नहीं खिसकता (आकार वही है)",
+   "fr": "Il ne bouge pas (la forme est la même)"
+  },
+  "It shifts towards the head": {
+   "ja": "頭の方へずれる",
+   "zh": "向头部偏移",
+   "tw": "向頭部偏移",
+   "ko": "머리 쪽으로 어긋난다",
+   "de": "Er verschiebt sich zum Kopf hin",
+   "hi": "यह सिर की ओर खिसकता है",
+   "fr": "Il se décale vers la tête"
+  },
+  "It shifts towards the body": {
+   "ja": "胴の方へずれる",
+   "zh": "向身体偏移",
+   "tw": "向身體偏移",
+   "ko": "몸통 쪽으로 어긋난다",
+   "de": "Er verschiebt sich zum Rumpf hin",
+   "hi": "यह धड़ की ओर खिसकता है",
+   "fr": "Il se décale vers le corps"
+  },
+  "Raising the head's density (x ≥ 150 m, 17.9 % of the volume) from 1,950 to 2,850 kg/m³ and lowering the body to 1754 kg/m³ to keep the total mass shifts the centre of mass 21.5 m towards the head. Lowry 2014 derived a 21 ± 12 m shift and body 1,750 ± 110 / head 2,850 ± 500 kg/m³ from the observed spin-up (YORP). Surface gravity changes by -10.0 to +35.2 %. A uniform density gives 0 m and cannot explain the observation.": {
+   "ja": "頭(x ≥ 150 m、体積の 17.9 %)の密度を 1,950 → 2,850 kg/m³ に上げ、全体の質量を保つように胴を 1754 kg/m³ に下げると、重心は頭の方へ 21.5 m ずれる。Lowry 2014 は自転の加速(YORP)の観測から 21 ± 12 m のずれと、胴 1,750 ± 110・頭 2,850 ± 500 kg/m³ を導いた。表面の重力は -10.0〜+35.2 % 変わる。一様密度の仮定ではずれは 0 m で、観測を説明できない。",
+   "zh": "把头部（x ≥ 150 m，占体积的 17.9 %）的密度从 1,950 提高到 2,850 kg/m³，并为保持总质量把身体降到 1754 kg/m³，质心就向头部偏移 21.5 m。Lowry 2014 由观测到的自转加速（YORP）推出 21 ± 12 m 的偏移以及身体 1,750 ± 110 / 头部 2,850 ± 500 kg/m³。表面引力变化 -10.0 至 +35.2 %。均匀密度给出 0 m，无法解释观测。",
+   "tw": "把頭部（x ≥ 150 m，佔體積的 17.9 %）的密度從 1,950 提高到 2,850 kg/m³，並為保持總質量把身體降到 1754 kg/m³，質心就向頭部偏移 21.5 m。Lowry 2014 由觀測到的自轉加速（YORP）推出 21 ± 12 m 的偏移以及身體 1,750 ± 110 / 頭部 2,850 ± 500 kg/m³。表面重力變化 -10.0 至 +35.2 %。均勻密度給出 0 m，無法解釋觀測。",
+   "ko": "머리(x ≥ 150 m, 부피의 17.9 %)의 밀도를 1,950에서 2,850 kg/m³로 올리고, 전체 질량을 유지하도록 몸통을 1754 kg/m³로 낮추면 질량중심이 머리 쪽으로 21.5 m 어긋납니다. Lowry 2014는 관측된 자전 가속(YORP)으로부터 21 ± 12 m의 어긋남과 몸통 1,750 ± 110 / 머리 2,850 ± 500 kg/m³를 이끌어 냈습니다. 표면 중력은 -10.0 ~ +35.2 % 변합니다. 균일 밀도는 0 m를 주므로 관측을 설명할 수 없습니다.",
+   "de": "Erhöht man die Dichte des Kopfes (x ≥ 150 m, 17.9 % des Volumens) von 1,950 auf 2,850 kg/m³ und senkt den Rumpf auf 1754 kg/m³, um die Gesamtmasse zu halten, verschiebt sich der Schwerpunkt um 21.5 m zum Kopf hin. Lowry 2014 leitete aus der beobachteten Rotationsbeschleunigung (YORP) eine Verschiebung von 21 ± 12 m sowie Rumpf 1,750 ± 110 / Kopf 2,850 ± 500 kg/m³ ab. Die Schwerkraft an der Oberfläche ändert sich um -10.0 bis +35.2 %. Eine homogene Dichte ergibt 0 m und kann die Beobachtung nicht erklären.",
+   "hi": "सिर (x ≥ 150 m, आयतन का 17.9 %) का घनत्व 1,950 से 2,850 kg/m³ करने और कुल द्रव्यमान बनाए रखने के लिए धड़ को 1754 kg/m³ करने पर द्रव्यमान केंद्र सिर की ओर 21.5 m खिसक जाता है। Lowry 2014 ने देखे गए घूर्णन-त्वरण (YORP) से 21 ± 12 m का खिसकाव और धड़ 1,750 ± 110 / सिर 2,850 ± 500 kg/m³ निकाला। सतह पर गुरुत्व -10.0 से +35.2 % बदलता है। एकसमान घनत्व 0 m देता है और प्रेक्षण की व्याख्या नहीं कर सकता।",
+   "fr": "En portant la densité de la tête (x ≥ 150 m, 17.9 % du volume) de 1,950 à 2,850 kg/m³ et en abaissant le corps à 1754 kg/m³ pour conserver la masse totale, le centre de masse se décale de 21.5 m vers la tête. Lowry 2014 a déduit de l'accélération de rotation observée (YORP) un décalage de 21 ± 12 m et corps 1,750 ± 110 / tête 2,850 ± 500 kg/m³. La gravité en surface varie de -10.0 à +35.2 %. Une densité uniforme donne 0 m et ne peut pas expliquer l'observation."
+  },
+  "Φ_2 = ρ_body Φ_1(whole) + (ρ_head − ρ_body) Φ_1(head) (linear in density)\ntotal mass: ρ_body V + (ρ_head − ρ_body) V_head = 1,950 V\ncentre of mass: (ρ_body V c + (ρ_head − ρ_body) V_head c_head) / M": {
+   "ja": "Φ_2 = ρ_胴 Φ_1(全体) + (ρ_頭 − ρ_胴) Φ_1(頭)(式が密度について線形)\n全体の質量: ρ_胴 V + (ρ_頭 − ρ_胴) V_頭 = 1,950 V\n重心: (ρ_胴 V c + (ρ_頭 − ρ_胴) V_頭 c_頭) / M",
+   "zh": "Φ_2 = ρ_body Φ_1(whole) + (ρ_head − ρ_body) Φ_1(head)（对密度是线性的）\n总质量：ρ_body V + (ρ_head − ρ_body) V_head = 1,950 V\n质心：(ρ_body V c + (ρ_head − ρ_body) V_head c_head) / M",
+   "tw": "Φ_2 = ρ_body Φ_1(whole) + (ρ_head − ρ_body) Φ_1(head)（對密度是線性的）\n總質量：ρ_body V + (ρ_head − ρ_body) V_head = 1,950 V\n質心：(ρ_body V c + (ρ_head − ρ_body) V_head c_head) / M",
+   "ko": "Φ_2 = ρ_body Φ_1(whole) + (ρ_head − ρ_body) Φ_1(head) (밀도에 대해 선형)\n전체 질량: ρ_body V + (ρ_head − ρ_body) V_head = 1,950 V\n질량중심: (ρ_body V c + (ρ_head − ρ_body) V_head c_head) / M",
+   "de": "Φ_2 = ρ_body Φ_1(whole) + (ρ_head − ρ_body) Φ_1(head) (linear in der Dichte)\nGesamtmasse: ρ_body V + (ρ_head − ρ_body) V_head = 1,950 V\nSchwerpunkt: (ρ_body V c + (ρ_head − ρ_body) V_head c_head) / M",
+   "hi": "Φ_2 = ρ_body Φ_1(whole) + (ρ_head − ρ_body) Φ_1(head) (घनत्व में रैखिक)\nकुल द्रव्यमान: ρ_body V + (ρ_head − ρ_body) V_head = 1,950 V\nद्रव्यमान केंद्र: (ρ_body V c + (ρ_head − ρ_body) V_head c_head) / M",
+   "fr": "Φ_2 = ρ_body Φ_1(whole) + (ρ_head − ρ_body) Φ_1(head) (linéaire en densité)\nmasse totale : ρ_body V + (ρ_head − ρ_body) V_head = 1,950 V\ncentre de masse : (ρ_body V c + (ρ_head − ρ_body) V_head c_head) / M"
+  },
+  "Each part is still uniform inside. The boundary x = 150 m and the densities are Lowry 2014's; the interior was not measured directly (the spacecraft did not orbit, so the gravity field could not fix the density distribution). A shifted centre of mass also moves the spin axis; here the axis keeps the z direction through the new centre of mass.": {
+   "ja": "2 密度でも各部分の中は一様と仮定している。境 x = 150 m・密度の値は Lowry 2014 のもので、中身を直接測ったわけではない(探査機は周回していないので、重力場から密度の分布は決められていない)。重心が動けば自転軸の位置と向きも変わるが、ここでは z 軸の向きのまま重心を通す軸にした。",
+   "zh": "每一部分内部仍然是均匀的。分界 x = 150 m 和密度值取自 Lowry 2014；内部并没有被直接测量（探测器没有环绕飞行，所以引力场无法确定密度分布）。质心移动后自转轴的位置也会改变；这里让自转轴保持 z 方向并通过新的质心。",
+   "tw": "每一部分內部仍然是均勻的。分界 x = 150 m 與密度值取自 Lowry 2014；內部並沒有被直接測量（探測器沒有環繞飛行，所以重力場無法確定密度分布）。質心移動後自轉軸的位置也會改變；這裡讓自轉軸保持 z 方向並通過新的質心。",
+   "ko": "각 부분의 내부는 여전히 균일합니다. 경계 x = 150 m와 밀도 값은 Lowry 2014의 것이며, 내부를 직접 잰 것은 아닙니다(탐사선이 궤도를 돌지 않아 중력장으로 밀도 분포를 정할 수 없었습니다). 질량중심이 움직이면 자전축도 움직이지만, 여기서는 z 방향을 유지한 채 새 질량중심을 지나는 축으로 했습니다.",
+   "de": "Jeder Teil ist innen weiterhin homogen. Die Grenze x = 150 m und die Dichten stammen von Lowry 2014; das Innere wurde nicht direkt gemessen (die Sonde umkreiste den Asteroiden nicht, daher konnte das Schwerefeld die Dichteverteilung nicht festlegen). Ein verschobener Schwerpunkt verschiebt auch die Rotationsachse; hier behält die Achse die z-Richtung durch den neuen Schwerpunkt.",
+   "hi": "हर भाग भीतर से अब भी एकसमान है। सीमा x = 150 m और घनत्व Lowry 2014 के हैं; भीतरी भाग को सीधे नहीं मापा गया (यान ने परिक्रमा नहीं की, इसलिए गुरुत्व-क्षेत्र घनत्व वितरण तय नहीं कर सका)। खिसका हुआ द्रव्यमान केंद्र घूर्णन अक्ष को भी खिसकाता है; यहाँ अक्ष नए द्रव्यमान केंद्र से होकर z दिशा में ही रखा गया है।",
+   "fr": "Chaque partie reste uniforme à l'intérieur. La limite x = 150 m et les densités sont celles de Lowry 2014 ; l'intérieur n'a pas été mesuré directement (la sonde n'a pas orbité, le champ de gravité n'a donc pas pu fixer la répartition des densités). Un centre de masse décalé déplace aussi l'axe de rotation ; ici l'axe garde la direction z en passant par le nouveau centre de masse."
+  },
+  "Maths: volume = sum of signed tetrahedra": {
+   "ja": "数学: 体積 = 符号付き四面体の和",
+   "zh": "数学：体积 = 有向四面体之和",
+   "tw": "數學：體積 = 帶號四面體之和",
+   "ko": "수학: 부피 = 부호 있는 사면체의 합",
+   "de": "Mathematik: Volumen = Summe vorzeichenbehafteter Tetraeder",
+   "hi": "गणित: आयतन = चिह्नित चतुष्फलकों का योग",
+   "fr": "Maths : volume = somme de tétraèdres signés"
+  },
+  "The faces are split into 24 chunks by azimuth. Each time a chunk comes back, the volumes of the tetrahedra built from the centre of mass and each face are added (green = positive, red = negative). When every face is back, the sum is exactly the volume — without a single interior point.": {
+   "ja": "面を方位角の順に 24 の塊に分け、塊が 1 つずつ戻ってくるたびに、重心と各面で作った四面体の体積を足していく(緑 = 正、赤 = 負)。全部の面が戻ると、和はちょうど全体の体積になる。中の点は 1 つも使わない。",
+   "zh": "按方位角把面分成 24 块。每回来一块，就加上由质心和每个面构成的四面体的体积（绿 = 正，红 = 负）。所有面都回来时，总和正好就是体积 —— 一个内部点也不用。",
+   "tw": "依方位角把面分成 24 塊。每回來一塊，就加上由質心與每個面構成的四面體的體積（綠 = 正，紅 = 負）。所有面都回來時，總和正好就是體積 —— 一個內部點也不用。",
+   "ko": "면을 방위각에 따라 24개 덩어리로 나눕니다. 덩어리가 하나씩 돌아올 때마다 질량중심과 각 면으로 만든 사면체의 부피를 더합니다(초록 = 양, 빨강 = 음). 모든 면이 돌아오면 합은 정확히 부피가 됩니다 —— 내부의 점은 하나도 쓰지 않습니다.",
+   "de": "Die Flächen werden nach dem Azimut in 24 Stücke geteilt. Jedes Mal, wenn ein Stück zurückkehrt, werden die Volumina der Tetraeder aus Schwerpunkt und jeder Fläche addiert (grün = positiv, rot = negativ). Sind alle Flächen zurück, ist die Summe genau das Volumen — ohne einen einzigen inneren Punkt.",
+   "hi": "फलकों को दिगंश के अनुसार 24 टुकड़ों में बाँटा गया है। हर बार जब कोई टुकड़ा लौटता है, द्रव्यमान केंद्र और हर फलक से बने चतुष्फलकों के आयतन जोड़े जाते हैं (हरा = धनात्मक, लाल = ऋणात्मक)। जब सारे फलक लौट आते हैं, योग ठीक आयतन होता है — एक भी भीतरी बिंदु के बिना।",
+   "fr": "Les faces sont réparties en 24 morceaux selon l'azimut. Chaque fois qu'un morceau revient, on ajoute les volumes des tétraèdres formés par le centre de masse et chaque face (vert = positif, rouge = négatif). Quand toutes les faces sont revenues, la somme vaut exactement le volume — sans un seul point intérieur."
+  },
+  "sum vs mesh_volume": {
+   "ja": "和と mesh_volume の差",
+   "zh": "总和与 mesh_volume",
+   "tw": "總和與 mesh_volume",
+   "ko": "합 대 mesh_volume",
+   "de": "Summe gegen mesh_volume",
+   "hi": "योग बनाम mesh_volume",
+   "fr": "somme contre mesh_volume"
+  },
+  "negative tetrahedra": {
+   "ja": "負の四面体",
+   "zh": "负的四面体",
+   "tw": "負的四面體",
+   "ko": "음의 사면체",
+   "de": "negative Tetraeder",
+   "hi": "ऋणात्मक चतुष्फलक",
+   "fr": "tétraèdres négatifs"
+  },
+  "all faces added": {
+   "ja": "全部の面を足した",
+   "zh": "所有面都已加上",
+   "tw": "所有面都已加上",
+   "ko": "모든 면을 더함",
+   "de": "alle Flächen addiert",
+   "hi": "सभी फलक जोड़े गए",
+   "fr": "toutes les faces ajoutées"
+  },
+  "sum of signed tetrahedra so far ÷ total": {
+   "ja": "足した四面体の体積の和 ÷ 全体",
+   "zh": "目前有向四面体之和 ÷ 总体积",
+   "tw": "目前帶號四面體之和 ÷ 總體積",
+   "ko": "지금까지의 부호 있는 사면체의 합 ÷ 전체",
+   "de": "bisherige Summe vorzeichenbehafteter Tetraeder ÷ Gesamt",
+   "hi": "अब तक चिह्नित चतुष्फलकों का योग ÷ कुल",
+   "fr": "somme des tétraèdres signés jusqu'ici ÷ total"
+  },
+  "of which negative volume (inward-facing faces)": {
+   "ja": "そのうち負の体積(内向きの面)",
+   "zh": "其中负体积（朝内的面）",
+   "tw": "其中負體積（朝內的面）",
+   "ko": "그중 음의 부피(안쪽을 향한 면)",
+   "de": "davon negatives Volumen (nach innen weisende Flächen)",
+   "hi": "जिसमें से ऋणात्मक आयतन (भीतर की ओर वाले फलक)",
+   "fr": "dont volume négatif (faces tournées vers l'intérieur)"
+  },
+  "sum of signed tetrahedra (apex = centre of mass) vs mesh_volume": {
+   "ja": "符号付き四面体の和(頂点 = 重心)と mesh_volume",
+   "zh": "有向四面体之和（顶点 = 质心）与 mesh_volume",
+   "tw": "帶號四面體之和（頂點 = 質心）與 mesh_volume",
+   "ko": "부호 있는 사면체의 합(꼭짓점 = 질량중심) 대 mesh_volume",
+   "de": "Summe vorzeichenbehafteter Tetraeder (Spitze = Schwerpunkt) gegen mesh_volume",
+   "hi": "चिह्नित चतुष्फलकों का योग (शीर्ष = द्रव्यमान केंद्र) बनाम mesh_volume",
+   "fr": "somme des tétraèdres signés (sommet = centre de masse) contre mesh_volume"
+  },
+  "apex outside the body gives the same volume (independent of the apex for a closed surface)": {
+   "ja": "頂点を天体の外に置いても同じ体積(閉じた曲面なら頂点に依らない)",
+   "zh": "顶点放在天体外也得到相同的体积（闭合曲面与顶点无关）",
+   "tw": "頂點放在天體外也得到相同的體積（封閉曲面與頂點無關）",
+   "ko": "꼭짓점을 천체 밖에 두어도 같은 부피(닫힌 곡면이면 꼭짓점과 무관)",
+   "de": "Spitze außerhalb des Körpers ergibt dasselbe Volumen (bei geschlossener Fläche unabhängig von der Spitze)",
+   "hi": "शीर्ष को पिंड के बाहर रखने पर भी वही आयतन (बंद सतह के लिए शीर्ष से स्वतंत्र)",
+   "fr": "un sommet hors du corps donne le même volume (indépendant du sommet pour une surface fermée)"
+  },
+  "some tetrahedra are negative (inward-facing faces)": {
+   "ja": "負の体積の四面体(内向きの面)がある",
+   "zh": "有些四面体是负的（朝内的面）",
+   "tw": "有些四面體是負的（朝內的面）",
+   "ko": "일부 사면체는 음수(안쪽을 향한 면)",
+   "de": "einige Tetraeder sind negativ (nach innen weisende Flächen)",
+   "hi": "कुछ चतुष्फलक ऋणात्मक हैं (भीतर की ओर वाले फलक)",
+   "fr": "certains tétraèdres sont négatifs (faces tournées vers l'intérieur)"
+  },
+  "faces added": {
+   "ja": "足した面の数",
+   "zh": "已加上的面数",
+   "tw": "已加上的面數",
+   "ko": "더한 면의 수",
+   "de": "addierte Flächen",
+   "hi": "जोड़े गए फलक",
+   "fr": "faces ajoutées"
+  },
+  "Can you get the exact volume of a bumpy shape from its faces alone, without any interior points?": {
+   "ja": "でこぼこの形の体積を、中の点を使わず「面だけ」から正確に出せる?",
+   "zh": "凹凸不平的形状的精确体积，能不能不用任何内部点、只用面求出？",
+   "tw": "凹凸不平的形狀的精確體積，能不能不用任何內部點、只用面求出？",
+   "ko": "울퉁불퉁한 모양의 정확한 부피를 내부의 점 없이 '면만으로' 구할 수 있을까?",
+   "de": "Kann man das exakte Volumen einer unebenen Form allein aus ihren Flächen bestimmen, ohne einen inneren Punkt?",
+   "hi": "क्या किसी ऊबड़-खाबड़ आकार का सटीक आयतन केवल उसके फलकों से, बिना किसी भीतरी बिंदु के, निकाला जा सकता है?",
+   "fr": "Peut-on obtenir le volume exact d'une forme bosselée à partir de ses seules faces, sans aucun point intérieur ?"
+  },
+  "No (you must chop the inside into tiny cells)": {
+   "ja": "出せない(中を細かく区切って数えるしかない)",
+   "zh": "不能（只能把内部切成很小的格子来数）",
+   "tw": "不能（只能把內部切成很小的格子來數）",
+   "ko": "구할 수 없다(내부를 잘게 나눠 세는 수밖에 없다)",
+   "de": "Nein (man muss das Innere in winzige Zellen zerlegen)",
+   "hi": "नहीं (भीतर को छोटे-छोटे खानों में काटना पड़ेगा)",
+   "fr": "Non (il faut découper l'intérieur en petites cellules)"
+  },
+  "Yes: add the signed volumes of one tetrahedron per face": {
+   "ja": "出せる: 面ごとの符号付き四面体の体積を足す",
+   "zh": "能：把每个面一个有向四面体的体积加起来",
+   "tw": "能：把每個面一個帶號四面體的體積加起來",
+   "ko": "구할 수 있다: 면마다 부호 있는 사면체 하나의 부피를 더한다",
+   "de": "Ja: die vorzeichenbehafteten Volumina je eines Tetraeders pro Fläche addieren",
+   "hi": "हाँ: हर फलक के लिए एक चतुष्फलक का चिह्नित आयतन जोड़ें",
+   "fr": "Oui : additionner les volumes signés d'un tétraèdre par face"
+  },
+  "Only for convex shapes": {
+   "ja": "凸な形のときだけ出せる",
+   "zh": "只有凸形状才能",
+   "tw": "只有凸形狀才能",
+   "ko": "볼록한 모양일 때만",
+   "de": "Nur bei konvexen Formen",
+   "hi": "केवल उत्तल आकारों के लिए",
+   "fr": "Seulement pour les formes convexes"
+  },
+  "V = Σ_f (1/6) (v0 − p) · ((v1 − p) × (v2 − p))\n= (1/3) ∮ x · n dS (divergence theorem, independent of p)": {
+   "ja": "V = Σ_f (1/6) (v0 − p) · ((v1 − p) × (v2 − p))\n= (1/3) ∮ x · n dS(発散定理、p に依らない)",
+   "zh": "V = Σ_f (1/6) (v0 − p) · ((v1 − p) × (v2 − p))\n= (1/3) ∮ x · n dS（散度定理，与 p 无关）",
+   "tw": "V = Σ_f (1/6) (v0 − p) · ((v1 − p) × (v2 − p))\n= (1/3) ∮ x · n dS（散度定理，與 p 無關）",
+   "ko": "V = Σ_f (1/6) (v0 − p) · ((v1 − p) × (v2 − p))\n= (1/3) ∮ x · n dS (발산 정리, p와 무관)",
+   "de": "V = Σ_f (1/6) (v0 − p) · ((v1 − p) × (v2 − p))\n= (1/3) ∮ x · n dS (gaußscher Integralsatz, unabhängig von p)",
+   "hi": "V = Σ_f (1/6) (v0 − p) · ((v1 − p) × (v2 − p))\n= (1/3) ∮ x · n dS (अपसरण प्रमेय, p से स्वतंत्र)",
+   "fr": "V = Σ_f (1/6) (v0 − p) · ((v1 − p) × (v2 − p))\n= (1/3) ∮ x · n dS (théorème de flux-divergence, indépendant de p)"
+  },
+  "Only correct for a closed, consistently oriented surface (with a hole you get the solid closed towards p). Self-intersections count twice. Here the 49,152 faces are shown in 24 chunks by azimuth.": {
+   "ja": "面が閉じていて向きが揃っているときだけ正しい(穴があると、穴を p へ向かって塞いだ立体の体積になる)。自己交差は二重に数える。ここでは 49,152 面を方位角で 24 の塊に分けて見せている。",
+   "zh": "只有闭合且方向一致的曲面才正确（有洞时得到的是把洞朝 p 封闭后的立体）。自相交部分会被重复计算。这里把 49,152 个面按方位角分成 24 块来显示。",
+   "tw": "只有封閉且方向一致的曲面才正確（有洞時得到的是把洞朝 p 封閉後的立體）。自相交部分會被重複計算。這裡把 49,152 個面依方位角分成 24 塊來顯示。",
+   "ko": "닫혀 있고 방향이 일관된 곡면에서만 옳습니다(구멍이 있으면 구멍을 p 쪽으로 막은 입체의 부피가 됩니다). 자기 교차는 두 번 셉니다. 여기서는 49,152개 면을 방위각에 따라 24덩어리로 나눠 보여 줍니다.",
+   "de": "Nur für eine geschlossene, einheitlich orientierte Fläche korrekt (mit einem Loch erhält man den zu p hin geschlossenen Körper). Selbstdurchdringungen zählen doppelt. Hier werden die 49,152 Flächen in 24 Stücken nach dem Azimut gezeigt.",
+   "hi": "केवल बंद और एकसमान अभिविन्यास वाली सतह के लिए सही (छेद होने पर p की ओर बंद किया गया ठोस मिलता है)। स्व-प्रतिच्छेदन दो बार गिने जाते हैं। यहाँ 49,152 फलक दिगंश के अनुसार 24 टुकड़ों में दिखाए गए हैं।",
+   "fr": "Correct seulement pour une surface fermée et orientée de façon cohérente (avec un trou, on obtient le solide fermé vers p). Les auto-intersections comptent deux fois. Ici, les 49,152 faces sont montrées en 24 morceaux selon l'azimut."
+  },
+  "magnitude of effective gravity |g_eff|": {
+   "ja": "実効重力の大きさ |g_eff|",
+   "zh": "有效重力的大小 |g_eff|",
+   "tw": "有效重力的大小 |g_eff|",
+   "ko": "유효 중력의 크기 |g_eff|",
+   "de": "Betrag der effektiven Schwerkraft |g_eff|",
+   "hi": "प्रभावी गुरुत्व का परिमाण |g_eff|",
+   "fr": "intensité de la pesanteur effective |g_eff|"
+  },
+  "Compare the sizes": {
+   "ja": "大きさを比べる",
+   "zh": "比较大小",
+   "tw": "比較大小",
+   "ko": "크기 비교",
+   "de": "Größen vergleichen",
+   "hi": "आकार की तुलना",
+   "fr": "Comparer les tailles"
+  },
+  "Itokawa's length ÷ a person's height": {
+   "ja": "イトカワの長さ ÷ 人の背丈",
+   "zh": "糸川的长度 ÷ 人的身高",
+   "tw": "糸川的長度 ÷ 人的身高",
+   "ko": "이토카와의 길이 ÷ 사람의 키",
+   "de": "Länge von Itokawa ÷ Körpergröße eines Menschen",
+   "hi": "इटोकावा की लंबाई ÷ व्यक्ति की ऊँचाई",
+   "fr": "longueur d'Itokawa ÷ taille d'une personne"
+  },
+  "distance to the horizon (eye at 1.7 m)": {
+   "ja": "地平線までの距離(目の高さ 1.7 m)",
+   "zh": "到地平线的距离（眼睛高 1.7 m）",
+   "tw": "到地平線的距離（眼睛高 1.7 m）",
+   "ko": "지평선까지의 거리(눈높이 1.7 m)",
+   "de": "Entfernung zum Horizont (Augenhöhe 1.7 m)",
+   "hi": "क्षितिज तक की दूरी (आँख 1.7 m पर)",
+   "fr": "distance à l'horizon (yeux à 1.7 m)"
+  },
+  "a ball dropped from 1.7 m reaches the ground in": {
+   "ja": "1.7 m から落とした球が足元に届くまで",
+   "zh": "从 1.7 m 落下的球到达地面需要",
+   "tw": "從 1.7 m 落下的球到達地面需要",
+   "ko": "1.7 m에서 떨어뜨린 공이 발밑에 닿기까지",
+   "de": "ein aus 1.7 m fallender Ball erreicht den Boden nach",
+   "hi": "1.7 m से गिराई गेंद ज़मीन तक पहुँचती है",
+   "fr": "une balle lâchée de 1.7 m touche le sol en"
+  },
+  "207 s (3.4 min)": {
+   "ja": "207 秒(3.4 分)",
+   "zh": "207 s（3.4 分钟）",
+   "tw": "207 s（3.4 分鐘）",
+   "ko": "207 s(3.4분)",
+   "de": "207 s (3.4 min)",
+   "hi": "207 s (3.4 मिनट)",
+   "fr": "207 s (3.4 min)"
+  },
+  "effective gravity underfoot |g_eff|": {
+   "ja": "足元の実効重力 |g_eff|",
+   "zh": "脚下的有效重力 |g_eff|",
+   "tw": "腳下的有效重力 |g_eff|",
+   "ko": "발밑의 유효 중력 |g_eff|",
+   "de": "effektive Schwerkraft unter den Füßen |g_eff|",
+   "hi": "पैरों के नीचे प्रभावी गुरुत्व |g_eff|",
+   "fr": "pesanteur effective sous les pieds |g_eff|"
+  },
+  "a person (1.7 m)": {
+   "ja": "人(1.7 m)",
+   "zh": "人（1.7 m）",
+   "tw": "人（1.7 m）",
+   "ko": "사람(1.7 m)",
+   "de": "ein Mensch (1.7 m)",
+   "hi": "एक व्यक्ति (1.7 m)",
+   "fr": "une personne (1.7 m)"
+  },
+  "Hayabusa (body 1.0 × 1.1 × 1.6 m, 5.7 m with panels open)": {
+   "ja": "はやぶさ(本体 1.0 × 1.1 × 1.6 m、パドルを開いて 5.7 m)",
+   "zh": "隼鸟号（本体 1.0 × 1.1 × 1.6 m，展开太阳能板后 5.7 m）",
+   "tw": "隼鳥號（本體 1.0 × 1.1 × 1.6 m，展開太陽能板後 5.7 m）",
+   "ko": "하야부사(본체 1.0 × 1.1 × 1.6 m, 패들을 펴면 5.7 m)",
+   "de": "Hayabusa (Körper 1.0 × 1.1 × 1.6 m, mit offenen Paneelen 5.7 m)",
+   "hi": "हायाबुसा (ढाँचा 1.0 × 1.1 × 1.6 m, पैनल खुलने पर 5.7 m)",
+   "fr": "Hayabusa (corps 1.0 × 1.1 × 1.6 m, 5.7 m panneaux déployés)"
+  },
+  "a football pitch (105 × 68 m)": {
+   "ja": "サッカー場(105 × 68 m)",
+   "zh": "足球场（105 × 68 m）",
+   "tw": "足球場（105 × 68 m）",
+   "ko": "축구장(105 × 68 m)",
+   "de": "ein Fußballfeld (105 × 68 m)",
+   "hi": "एक फ़ुटबॉल मैदान (105 × 68 m)",
+   "fr": "un terrain de football (105 × 68 m)"
+  },
+  "a 333 m tower": {
+   "ja": "高さ 333 m の塔",
+   "zh": "高 333 m 的塔",
+   "tw": "高 333 m 的塔",
+   "ko": "높이 333 m의 탑",
+   "de": "ein 333 m hoher Turm",
+   "hi": "333 m ऊँचा मीनार",
+   "fr": "une tour de 333 m"
+  },
+  "the whole asteroid": {
+   "ja": "全体",
+   "zh": "整个小行星",
+   "tw": "整個小行星",
+   "ko": "소행성 전체",
+   "de": "der ganze Asteroid",
+   "hi": "पूरा क्षुद्रग्रह",
+   "fr": "l'astéroïde entier"
+  },
+  "about a football pitch": {
+   "ja": "サッカー場くらい",
+   "zh": "约一个足球场",
+   "tw": "約一個足球場",
+   "ko": "축구장 정도",
+   "de": "etwa ein Fußballfeld",
+   "hi": "लगभग एक फ़ुटबॉल मैदान",
+   "fr": "environ un terrain de football"
+  },
+  "Hayabusa": {
+   "ja": "はやぶさ",
+   "zh": "隼鸟号",
+   "tw": "隼鳥號",
+   "ko": "하야부사",
+   "de": "Hayabusa",
+   "hi": "हायाबुसा",
+   "fr": "Hayabusa"
+  },
+  "the person": {
+   "ja": "人",
+   "zh": "人",
+   "tw": "人",
+   "ko": "사람",
+   "de": "der Mensch",
+   "hi": "व्यक्ति",
+   "fr": "la personne"
+  },
+  "fall time: RK4 through the op's gravity at 9 heights up to eye level / √(2h/g) (the gap is gravity changing 1.7 % over that height)": {
+   "ja": "落ちる時間: 目の高さまで 9 点で op を回した重力の列を 4 次 Runge–Kutta で積分 / √(2h/g)(差は重力が高さで1.7 % 変わる分)",
+   "zh": "下落时间：沿着到眼睛高度的 9 个点用 op 计算的重力，以四阶 Runge–Kutta 积分 / √(2h/g)（差异来自重力在这段高度内变化 1.7 %）",
+   "tw": "下落時間：沿著到眼睛高度的 9 個點用 op 計算的重力，以四階 Runge–Kutta 積分 / √(2h/g)（差異來自重力在這段高度內變化 1.7 %）",
+   "ko": "낙하 시간: 눈높이까지 9개 점에서 op로 구한 중력을 RK4(Runge–Kutta)로 적분 / √(2h/g)(차이는 그 높이에서 중력이 1.7 % 변하는 몫)",
+   "de": "Fallzeit: RK4 durch die Schwerkraft des Ops an 9 Höhen bis zur Augenhöhe / √(2h/g) (die Abweichung ist die Änderung der Schwerkraft um 1.7 % über diese Höhe)",
+   "hi": "गिरने का समय: आँख की ऊँचाई तक 9 ऊँचाइयों पर op के गुरुत्व से RK4 / √(2h/g) (अंतर इस ऊँचाई में गुरुत्व के 1.7 % बदलने से है)",
+   "fr": "temps de chute : RK4 à travers la gravité de l'op en 9 hauteurs jusqu'aux yeux / √(2h/g) (l'écart vient de la variation de 1.7 % de la gravité sur cette hauteur)"
+  },
+  "horizon: √(2R1h + h²) with R1 from the smoothed shape (vertex_curvature) / √(2R2h) with an independent R2 (20 m quadric fit)": {
+   "ja": "地平線: 平滑化した形の曲率半径 R1(vertex_curvature)で √(2R1h + h²)/ 独立な R2(20 m の 2 次曲面)で √(2R2h)",
+   "zh": "地平线：用平滑后形状的曲率半径 R1（vertex_curvature）求 √(2R1h + h²) / 用独立的 R2（20 m 二次曲面拟合）求 √(2R2h)",
+   "tw": "地平線：用平滑後形狀的曲率半徑 R1（vertex_curvature）求 √(2R1h + h²) / 用獨立的 R2（20 m 二次曲面擬合）求 √(2R2h)",
+   "ko": "지평선: 평활화한 모양의 곡률 반지름 R1(vertex_curvature)로 √(2R1h + h²) / 독립적인 R2(20 m 이차 곡면 맞춤)로 √(2R2h)",
+   "de": "Horizont: √(2R1h + h²) mit R1 aus der geglätteten Form (vertex_curvature) / √(2R2h) mit einem unabhängigen R2 (Quadrik-Anpassung über 20 m)",
+   "hi": "क्षितिज: चिकने आकार की वक्रता-त्रिज्या R1 (vertex_curvature) से √(2R1h + h²) / स्वतंत्र R2 (20 m द्विघात सतह फ़िट) से √(2R2h)",
+   "fr": "horizon : √(2R1h + h²) avec R1 de la forme lissée (vertex_curvature) / √(2R2h) avec un R2 indépendant (ajustement quadrique sur 20 m)"
+  },
+  "drawn yardstick sizes (person 1.7, Hayabusa 1.0 / 1.1 / 1.6 / 5.7, pitch 105 × 68, tower 333 m) vs the numbers": {
+   "ja": "描いた物差しの大きさ(人 1.7・はやぶさ 1.0 / 1.1 / 1.6 / 5.7・サッカー場 105 × 68・塔 333 m)と数値",
+   "zh": "绘制的标尺大小（人 1.7、隼鸟号 1.0 / 1.1 / 1.6 / 5.7、足球场 105 × 68、塔 333 m）与数值",
+   "tw": "繪製的標尺大小（人 1.7、隼鳥號 1.0 / 1.1 / 1.6 / 5.7、足球場 105 × 68、塔 333 m）與數值",
+   "ko": "그린 잣대의 크기(사람 1.7, 하야부사 1.0 / 1.1 / 1.6 / 5.7, 축구장 105 × 68, 탑 333 m) 대 수치",
+   "de": "gezeichnete Größen der Vergleichsobjekte (Mensch 1.7, Hayabusa 1.0 / 1.1 / 1.6 / 5.7, Feld 105 × 68, Turm 333 m) gegen die Zahlen",
+   "hi": "बनाए गए पैमानों के माप (व्यक्ति 1.7, हायाबुसा 1.0 / 1.1 / 1.6 / 5.7, मैदान 105 × 68, मीनार 333 m) बनाम संख्याएँ",
+   "fr": "tailles dessinées des étalons (personne 1.7, Hayabusa 1.0 / 1.1 / 1.6 / 5.7, terrain 105 × 68, tour 333 m) contre les valeurs"
+  },
+  "field of view (height)": {
+   "ja": "視野の縦の幅",
+   "zh": "视野的纵向宽度",
+   "tw": "視野的縱向寬度",
+   "ko": "시야의 세로 폭",
+   "de": "Sichtfeld (Höhe)",
+   "hi": "दृश्य-क्षेत्र (ऊँचाई)",
+   "fr": "champ de vision (hauteur)"
+  },
+  "Standing on Itokawa (where Hayabusa touched down), how far away is the horizon? (eye at 1.7 m)": {
+   "ja": "イトカワの上(はやぶさが降りた所)に立つと、地平線までどれくらい?(目の高さ 1.7 m)",
+   "zh": "站在糸川上（隼鸟号着陆的地方），到地平线有多远？（眼睛高 1.7 m）",
+   "tw": "站在糸川上（隼鳥號著陸的地方），到地平線有多遠？（眼睛高 1.7 m）",
+   "ko": "이토카와 위(하야부사가 내려앉은 곳)에 서면 지평선까지 얼마나 될까? (눈높이 1.7 m)",
+   "de": "Wenn du auf Itokawa stehst (wo Hayabusa aufsetzte), wie weit ist der Horizont entfernt? (Augenhöhe 1.7 m)",
+   "hi": "इटोकावा पर (जहाँ हायाबुसा उतरा) खड़े होने पर क्षितिज कितनी दूर है? (आँख 1.7 m पर)",
+   "fr": "Debout sur Itokawa (là où Hayabusa s'est posé), à quelle distance est l'horizon ? (yeux à 1.7 m)"
+  },
+  "about 2.5 m": {
+   "ja": "約 2.5 m",
+   "zh": "约 2.5 m",
+   "tw": "約 2.5 m",
+   "ko": "약 2.5 m",
+   "de": "etwa 2.5 m",
+   "hi": "लगभग 2.5 m",
+   "fr": "environ 2.5 m"
+  },
+  "about 25 m": {
+   "ja": "約 25 m",
+   "zh": "约 25 m",
+   "tw": "約 25 m",
+   "ko": "약 25 m",
+   "de": "etwa 25 m",
+   "hi": "लगभग 25 m",
+   "fr": "environ 25 m"
+  },
+  "about 4.7 km (the same as on Earth)": {
+   "ja": "約 4.7 km(地球と同じ)",
+   "zh": "约 4.7 km（和地球一样）",
+   "tw": "約 4.7 km（和地球一樣）",
+   "ko": "약 4.7 km(지구와 같다)",
+   "de": "etwa 4.7 km (wie auf der Erde)",
+   "hi": "लगभग 4.7 km (पृथ्वी जैसा)",
+   "fr": "environ 4.7 km (comme sur Terre)"
+  },
+  "horizon d = √((R + h)² − R²) = √(2Rh + h²) ≈ √(2Rh)\nfall time t = √(2h / g)\nfield of view W = 2 D tan(angle / 2)": {
+   "ja": "地平線 d = √((R + h)² − R²) = √(2Rh + h²) ≈ √(2Rh)\n落ちる時間 t = √(2h / g)\n視野の縦の幅 W = 2 D tan(画角 / 2)",
+   "zh": "地平线 d = √((R + h)² − R²) = √(2Rh + h²) ≈ √(2Rh)\n下落时间 t = √(2h / g)\n视野的纵向宽度 W = 2 D tan(视角 / 2)",
+   "tw": "地平線 d = √((R + h)² − R²) = √(2Rh + h²) ≈ √(2Rh)\n下落時間 t = √(2h / g)\n視野的縱向寬度 W = 2 D tan(視角 / 2)",
+   "ko": "지평선 d = √((R + h)² − R²) = √(2Rh + h²) ≈ √(2Rh)\n낙하 시간 t = √(2h / g)\n시야의 세로 폭 W = 2 D tan(화각 / 2)",
+   "de": "Horizont d = √((R + h)² − R²) = √(2Rh + h²) ≈ √(2Rh)\nFallzeit t = √(2h / g)\nSichtfeld W = 2 D tan(Bildwinkel / 2)",
+   "hi": "क्षितिज d = √((R + h)² − R²) = √(2Rh + h²) ≈ √(2Rh)\nगिरने का समय t = √(2h / g)\nदृश्य-क्षेत्र W = 2 D tan(कोण / 2)",
+   "fr": "horizon d = √((R + h)² − R²) = √(2Rh + h²) ≈ √(2Rh)\ntemps de chute t = √(2h / g)\nchamp de vision W = 2 D tan(angle / 2)"
+  },
+  "Colour = magnitude of effective gravity (gravity plus spin centrifugal). The gravity of a uniform 1.9 g/cm³ polyhedron is computed with Werner & Scheeres' exact formula (op polyhedron_gravity) at all 25,350 vertices. The white walker goes round the long-axis section (mesh_slice_contours); the yellow arrow shows the direction of effective gravity there. Where it is not perpendicular to the ground, the ground is a slope. The camera follows the walker; the readout at the top left shows |g_eff| and the slope underfoot.": {
+   "ja": "表面の色 = 実効重力の大きさ(重力 + 自転の遠心力)。一様密度 1.9 g/cm³ の多面体の重力を、Werner & Scheeres の厳密な式(op polyhedron_gravity)で頂点 25,350 個すべてで計算した。白い人が長軸の断面(mesh_slice_contours)を一周し、黄色の矢印がその場所の実効重力の向き。矢印が地面に垂直でないところは坂(斜面の角)。カメラは歩く人を追い、左上の読みに足元の |g_eff| と斜面の角が出る。",
+   "zh": "颜色 = 有效重力的大小（引力加上自转的离心力）。用 Werner & Scheeres 的精确公式（op polyhedron_gravity）在全部 25,350 个顶点上计算密度均匀为 1.9 g/cm³ 的多面体的引力。白色的人沿长轴截面（mesh_slice_contours）走一圈；黄色箭头表示该处有效重力的方向。箭头不垂直于地面的地方就是斜坡。相机跟随行走的人，左上角的读数显示脚下的 |g_eff| 和坡度。",
+   "tw": "顏色 = 有效重力的大小（重力加上自轉的離心力）。用 Werner & Scheeres 的精確公式（op polyhedron_gravity）在全部 25,350 個頂點上計算密度均勻為 1.9 g/cm³ 的多面體的重力。白色的人沿長軸截面（mesh_slice_contours）走一圈；黃色箭頭表示該處有效重力的方向。箭頭不垂直於地面的地方就是斜坡。相機跟隨行走的人，左上角的讀數顯示腳下的 |g_eff| 與坡度。",
+   "ko": "색 = 유효 중력의 크기(중력 + 자전의 원심력). 밀도가 균일한 1.9 g/cm³ 다면체의 중력을 Werner & Scheeres의 정확한 식(op polyhedron_gravity)으로 꼭짓점 25,350개 모두에서 계산했습니다. 흰 사람이 장축 단면(mesh_slice_contours)을 한 바퀴 돌고, 노란 화살표가 그곳의 유효 중력 방향입니다. 화살표가 지면에 수직이 아닌 곳은 경사입니다. 카메라가 걷는 사람을 따라가며, 왼쪽 위의 표시에 발밑의 |g_eff|와 경사각이 나옵니다.",
+   "de": "Farbe = Betrag der effektiven Schwerkraft (Schwerkraft plus Fliehkraft der Rotation). Die Schwerkraft eines homogenen Polyeders mit 1.9 g/cm³ wird mit der exakten Formel von Werner & Scheeres (Op polyhedron_gravity) an allen 25,350 Eckpunkten berechnet. Die weiße Figur läuft den Schnitt entlang der Längsachse ab (mesh_slice_contours); der gelbe Pfeil zeigt dort die Richtung der effektiven Schwerkraft. Wo er nicht senkrecht zum Boden steht, ist der Boden geneigt. Die Kamera folgt dem Wanderer; die Anzeige oben links zeigt |g_eff| und die Hangneigung unter den Füßen.",
+   "hi": "रंग = प्रभावी गुरुत्व का परिमाण (गुरुत्व और घूर्णन का अपकेंद्री बल)। 1.9 g/cm³ के एकसमान बहुफलक का गुरुत्व Werner & Scheeres के सटीक सूत्र (op polyhedron_gravity) से सभी 25,350 शीर्षों पर गिना गया है। सफ़ेद चलने वाला लंबी धुरी के खंड (mesh_slice_contours) का चक्कर लगाता है; पीला तीर वहाँ प्रभावी गुरुत्व की दिशा दिखाता है। जहाँ यह ज़मीन के लंबवत नहीं है, वहाँ ढलान है। कैमरा चलने वाले के साथ चलता है; ऊपर बाईं ओर का पाठ पैरों के नीचे |g_eff| और ढलान दिखाता है।",
+   "fr": "Couleur = intensité de la pesanteur effective (gravité plus force centrifuge de la rotation). La gravité d'un polyèdre homogène de 1.9 g/cm³ est calculée avec la formule exacte de Werner & Scheeres (op polyhedron_gravity) aux 25,350 sommets. Le marcheur blanc fait le tour de la section selon le grand axe (mesh_slice_contours) ; la flèche jaune montre la direction de la pesanteur effective. Là où elle n'est pas perpendiculaire au sol, le sol est en pente. La caméra suit le marcheur ; l'affichage en haut à gauche montre |g_eff| et la pente sous les pieds."
+  },
+  "Colour = geopotential height (the effective potential divided by the mean gravity 72.4 µm/s²). The translucent shell adds the same heights ×2 outside the surface: where the shell hugs the surface, the place is low. White dots are grains scattered over the surface; each step moves a grain to the neighbouring vertex with the lowest effective potential (op values). The grains gather in the low places. Red balls: estimated touchdown sites (TD1, TD2).": {
+   "ja": "色 = ジオポテンシャル高度(実効ポテンシャルを平均の重力 72.4 µm/s² で割った「高さ」)。外側の半透明の殻は、同じ高さを 2 倍にして表面の外へ足したもの: 殻が表面に近い所ほど低い。白い点は表面に撒いた粒で、1 歩ごとに隣の頂点のうち実効ポテンシャル(op の値)が一番低い所へ移る。粒は低い所へ集まる。赤い玉が着陸点の推定位置(TD1・TD2)。",
+   "zh": "颜色 = 位势高度（有效势除以平均重力 72.4 µm/s²）。外侧的半透明壳是把同样的高度放大 2 倍后加到表面外侧：壳越贴近表面的地方越低。白点是撒在表面的颗粒；每一步把颗粒移到相邻顶点中有效势最低的那个（op 的值）。颗粒聚集在低处。红球：着陆点的推定位置（TD1、TD2）。",
+   "tw": "顏色 = 重力位高度（有效位勢除以平均重力 72.4 µm/s²）。外側的半透明殼是把同樣的高度放大 2 倍後加到表面外側：殼越貼近表面的地方越低。白點是撒在表面的顆粒；每一步把顆粒移到相鄰頂點中有效位勢最低的那個（op 的值）。顆粒聚集在低處。紅球：著陸點的推定位置（TD1、TD2）。",
+   "ko": "색 = 지오퍼텐셜 고도(유효 퍼텐셜을 평균 중력 72.4 µm/s²로 나눈 값). 바깥쪽의 반투명 껍질은 같은 높이를 2배 해서 표면 바깥에 더한 것으로, 껍질이 표면에 가까운 곳일수록 낮습니다. 흰 점은 표면에 뿌린 입자로, 한 걸음마다 이웃 꼭짓점 중 유효 퍼텐셜(op 값)이 가장 낮은 곳으로 옮겨 갑니다. 입자는 낮은 곳에 모입니다. 빨간 공: 착륙 지점의 추정 위치(TD1, TD2).",
+   "de": "Farbe = geopotentielle Höhe (das effektive Potential geteilt durch die mittlere Schwerkraft 72.4 µm/s²). Die durchscheinende Hülle setzt dieselben Höhen ×2 außen auf die Oberfläche: Wo die Hülle eng anliegt, ist die Stelle tief. Weiße Punkte sind über die Oberfläche verteilte Körner; jeder Schritt bringt ein Korn zum benachbarten Eckpunkt mit dem niedrigsten effektiven Potential (Werte des Ops). Die Körner sammeln sich an den tiefen Stellen. Rote Kugeln: geschätzte Aufsetzpunkte (TD1, TD2).",
+   "hi": "रंग = भू-विभव ऊँचाई (प्रभावी विभव को औसत गुरुत्व 72.4 µm/s² से भाग)। पारभासी खोल वही ऊँचाइयाँ ×2 करके सतह के बाहर जोड़ता है: जहाँ खोल सतह से सटा है, वह जगह नीची है। सफ़ेद बिंदु सतह पर बिखेरे गए कण हैं; हर कदम कण को उस पड़ोसी शीर्ष पर ले जाता है जिसका प्रभावी विभव (op के मान) सबसे कम है। कण निचली जगहों में जमा होते हैं। लाल गोले: अनुमानित अवतरण स्थल (TD1, TD2)।",
+   "fr": "Couleur = hauteur géopotentielle (le potentiel effectif divisé par la pesanteur moyenne 72.4 µm/s²). La coque translucide ajoute les mêmes hauteurs ×2 à l'extérieur de la surface : là où elle épouse la surface, l'endroit est bas. Les points blancs sont des grains répartis sur la surface ; à chaque pas, un grain passe au sommet voisin de potentiel effectif le plus bas (valeurs de l'op). Les grains se rassemblent dans les creux. Boules rouges : sites d'atterrissage estimés (TD1, TD2)."
+  },
+  "translucent shell: the same heights ×2 added outside the surface": {
+   "ja": "同じ高さを 2 倍にして表面の外に足した半透明の殻",
+   "zh": "半透明的壳：把同样的高度放大 2 倍加到表面外侧",
+   "tw": "半透明的殼：把同樣的高度放大 2 倍加到表面外側",
+   "ko": "반투명 껍질: 같은 높이를 2배 해서 표면 바깥에 더한 것",
+   "de": "durchscheinende Hülle: dieselben Höhen ×2 außen auf die Oberfläche gesetzt",
+   "hi": "पारभासी खोल: वही ऊँचाइयाँ ×2 करके सतह के बाहर जोड़ी गईं",
+   "fr": "coque translucide : les mêmes hauteurs ×2 ajoutées à l'extérieur de la surface"
+  },
+  "Itokawa's length ÷ the venue's length (obb)": {
+   "ja": "イトカワの長さ ÷ 会場の長さ(obb)",
+   "zh": "糸川的长度 ÷ 会场的长度（obb）",
+   "tw": "糸川的長度 ÷ 會場的長度（obb）",
+   "ko": "이토카와의 길이 ÷ 회장의 길이(obb)",
+   "de": "Länge von Itokawa ÷ Länge des Veranstaltungsorts (obb)",
+   "hi": "इटोकावा की लंबाई ÷ आयोजन-स्थल की लंबाई (obb)",
+   "fr": "longueur d'Itokawa ÷ longueur du lieu (obb)"
+  },
+  "Itokawa's volume ÷ the venue's volume (approximate: the venue mesh has 33 open edges)": {
+   "ja": "イトカワの体積 ÷ 会場の体積(会場のメッシュは 33 辺が開いているので近似)",
+   "zh": "糸川的体积 ÷ 会场的体积（近似：会场的网格有 33 条开放的边）",
+   "tw": "糸川的體積 ÷ 會場的體積（近似：會場的網格有 33 條開放的邊）",
+   "ko": "이토카와의 부피 ÷ 회장의 부피(근사: 회장 메시에 열린 모서리가 33개)",
+   "de": "Volumen von Itokawa ÷ Volumen des Veranstaltungsorts (näherungsweise: das Netz des Orts hat 33 offene Kanten)",
+   "hi": "इटोकावा का आयतन ÷ आयोजन-स्थल का आयतन (लगभग: स्थल के mesh में 33 खुले किनारे हैं)",
+   "fr": "volume d'Itokawa ÷ volume du lieu (approché : le maillage du lieu a 33 arêtes ouvertes)"
+  },
+  "9.4 venues": {
+   "ja": "9.4 個分",
+   "zh": "9.4 个会场",
+   "tw": "9.4 個會場",
+   "ko": "회장 9.4개분",
+   "de": "9.4 Veranstaltungsorte",
+   "hi": "9.4 आयोजन-स्थल",
+   "fr": "9.4 lieux"
+  },
+  "the venue (Pacifico Yokohama)": {
+   "ja": "会場(パシフィコ横浜)",
+   "zh": "会场（Pacifico 横滨）",
+   "tw": "會場（Pacifico 橫濱）",
+   "ko": "회장(퍼시피코 요코하마)",
+   "de": "der Veranstaltungsort (Pacifico Yokohama)",
+   "hi": "आयोजन-स्थल (पैसिफ़िको योकोहामा)",
+   "fr": "le lieu d'exposition (Pacifico Yokohama)"
+  },
+  "drawn venue extents (east-west, north-south, height) vs the bbox of the PLATEAU asset": {
+   "ja": "描いた会場の幅(東西・南北・高さ)と、PLATEAU の資産の外接箱",
+   "zh": "绘制的会场宽度（东西、南北、高度）与 PLATEAU 资产的外接盒",
+   "tw": "繪製的會場寬度（東西、南北、高度）與 PLATEAU 資產的外接盒",
+   "ko": "그린 회장의 폭(동서, 남북, 높이) 대 PLATEAU 자산의 외접 상자",
+   "de": "gezeichnete Ausdehnung des Orts (Ost-West, Nord-Süd, Höhe) gegen den umschreibenden Quader des PLATEAU-Datensatzes",
+   "hi": "बनाए गए स्थल का विस्तार (पूर्व-पश्चिम, उत्तर-दक्षिण, ऊँचाई) बनाम PLATEAU संपत्ति का घेरने वाला बॉक्स",
+   "fr": "étendue dessinée du lieu (est-ouest, nord-sud, hauteur) contre la boîte englobante de l'actif PLATEAU"
+  },
+  "The local radius of curvature is about 176 m (the shape with boulders smoothed out). The horizon is √(2Rh + h²) = 25 m, 1/190 of Earth's (4.7 km) — not even the far end of a football pitch. Effective gravity underfoot is only 79.4 µm/s², so a ball dropped from 1.7 m takes 207 s (3.4 min) to reach the ground. Compared with this venue (Pacifico Yokohama), Itokawa is 0.81 times its length and holds about 9 venues by volume.": {
+   "ja": "足元の形の曲率半径は約 176 m(岩の凹凸を平滑化した形)。地平線は √(2Rh + h²) = 25 m で、地球(4.7 km)の 190 分の 1。サッカー場の端まで見えない。足元の実効重力は 79.4 µm/s² しかないので、1.7 m の高さから落とした球が足元に届くまで 207 秒(3.4 分)かかる。いまいる会場(パシフィコ横浜)と比べると、長さは会場の 0.81 倍、体積は会場 9 個分。",
+   "zh": "脚下形状的曲率半径约为 176 m（把岩石的凹凸平滑掉后的形状）。地平线为 √(2Rh + h²) = 25 m，是地球（4.7 km）的 1/190 —— 连足球场的另一端都看不到。脚下的有效重力只有 79.4 µm/s²，所以从 1.7 m 落下的球要 207 s（3.4 分钟）才落到地面。和现在所在的会场（Pacifico 横滨）相比，糸川的长度是会场的 0.81 倍，体积约为 9 个会场。",
+   "tw": "腳下形狀的曲率半徑約為 176 m（把岩石的凹凸平滑掉後的形狀）。地平線為 √(2Rh + h²) = 25 m，是地球（4.7 km）的 1/190 —— 連足球場的另一端都看不到。腳下的有效重力只有 79.4 µm/s²，所以從 1.7 m 落下的球要 207 s（3.4 分鐘）才落到地面。和現在所在的會場（Pacifico 橫濱）相比，糸川的長度是會場的 0.81 倍，體積約為 9 個會場。",
+   "ko": "발밑 모양의 곡률 반지름은 약 176 m(바위의 요철을 평활화한 모양)입니다. 지평선은 √(2Rh + h²) = 25 m로, 지구(4.7 km)의 1/190 —— 축구장 반대편 끝도 보이지 않습니다. 발밑의 유효 중력은 79.4 µm/s²뿐이라, 1.7 m에서 떨어뜨린 공이 발밑에 닿기까지 207 s(3.4분) 걸립니다. 지금 있는 회장(퍼시피코 요코하마)과 비교하면, 이토카와의 길이는 회장의 0.81배, 부피는 회장 약 9개분입니다.",
+   "de": "Der örtliche Krümmungsradius beträgt etwa 176 m (die Form mit geglätteten Felsbrocken). Der Horizont liegt bei √(2Rh + h²) = 25 m, 1/190 des Erdhorizonts (4.7 km) — nicht einmal das andere Ende eines Fußballfelds. Die effektive Schwerkraft unter den Füßen beträgt nur 79.4 µm/s², daher braucht ein aus 1.7 m fallender Ball 207 s (3.4 min) bis zum Boden. Verglichen mit diesem Veranstaltungsort (Pacifico Yokohama) ist Itokawa 0.81-mal so lang und fasst etwa 9 Veranstaltungsorte an Volumen.",
+   "hi": "स्थानीय वक्रता-त्रिज्या लगभग 176 m है (चट्टानों के उभार चिकने करने के बाद का आकार)। क्षितिज √(2Rh + h²) = 25 m पर है, पृथ्वी (4.7 km) का 1/190 — फ़ुटबॉल मैदान का दूसरा छोर भी नहीं दिखता। पैरों के नीचे प्रभावी गुरुत्व केवल 79.4 µm/s² है, इसलिए 1.7 m से गिराई गेंद को ज़मीन तक पहुँचने में 207 s (3.4 मिनट) लगते हैं। इस आयोजन-स्थल (पैसिफ़िको योकोहामा) से तुलना करें तो इटोकावा उसकी लंबाई का 0.81 गुना है और आयतन में लगभग 9 स्थल समा जाएँ।",
+   "fr": "Le rayon de courbure local vaut environ 176 m (la forme avec les rochers lissés). L'horizon est à √(2Rh + h²) = 25 m, 1/190 de celui de la Terre (4.7 km) — pas même l'autre bout d'un terrain de football. La pesanteur effective sous les pieds n'est que de 79.4 µm/s², si bien qu'une balle lâchée de 1.7 m met 207 s (3.4 min) à toucher le sol. Comparé à ce lieu (Pacifico Yokohama), Itokawa mesure 0.81 fois sa longueur et contient environ 9 lieux en volume."
+  },
+  "Itokawa's radius of curvature depends on the scale you measure over (a boulder-strewn rubble pile: bumps at a few metres, the body's bend at tens of metres). The two estimates R1, R2 are 176 m and 198 m, giving horizons of 25 m and 26 m; the real line of sight is blocked by nearby boulders. The yardsticks are schematic shapes; Hayabusa's panel chord is schematic (only the 5.7 m span and the body size are primary-source values). The venue is PLATEAU LOD2 (buildings simplified up to roof shape), and its mesh has 33 open edges, so its volume is approximate.": {
+   "ja": "イトカワの曲率半径は測る広さで変わる(岩の多い瓦礫の山なので、数 m では凹凸、数十 m で形の曲がり)。2 つの推定 R1・R2 は 176 m と 198 m で、地平線は 25 m と 26 m。実際の見通しは近くの岩でさえぎられる。物差しの物体は模式の形で、はやぶさのパドルの幅は模式(全幅 5.7 m と本体の寸法だけが一次情報の値)。会場の形は PLATEAU の LOD2(屋根の形までの簡略な建物)で、メッシュに 33 辺のすき間があるので体積は近似。",
+   "zh": "糸川的曲率半径随测量范围而变（它是布满岩石的碎石堆：几米尺度是凹凸，几十米尺度才是形体的弯曲）。两个估计 R1、R2 分别为 176 m 和 198 m，对应的地平线为 25 m 和 26 m；实际的视线会被附近的岩石挡住。标尺物体是示意形状；隼鸟号太阳能板的宽度是示意（只有全宽 5.7 m 和本体尺寸是一手资料的数值）。会场的形状是 PLATEAU 的 LOD2（简化到屋顶形状的建筑），网格有 33 条边的缝隙，所以体积是近似值。",
+   "tw": "糸川的曲率半徑隨量測範圍而變（它是布滿岩石的碎石堆：幾公尺尺度是凹凸，幾十公尺尺度才是形體的彎曲）。兩個估計 R1、R2 分別為 176 m 和 198 m，對應的地平線為 25 m 和 26 m；實際的視線會被附近的岩石擋住。標尺物體是示意形狀；隼鳥號太陽能板的寬度是示意（只有全寬 5.7 m 和本體尺寸是一手資料的數值）。會場的形狀是 PLATEAU 的 LOD2（簡化到屋頂形狀的建築），網格有 33 條邊的縫隙，所以體積是近似值。",
+   "ko": "이토카와의 곡률 반지름은 재는 범위에 따라 달라집니다(바위가 많은 잔해 더미라서, 수 m에서는 요철, 수십 m에서 형체의 휨). 두 추정 R1, R2는 176 m와 198 m이고, 지평선은 25 m와 26 m입니다. 실제 시야는 가까운 바위에 가립니다. 잣대 물체는 모식적인 모양이고, 하야부사 패들의 폭은 모식입니다(전체 폭 5.7 m와 본체 치수만 일차 정보의 값). 회장의 모양은 PLATEAU의 LOD2(지붕 모양까지 단순화한 건물)이고, 메시에 33개 모서리의 틈이 있어 부피는 근사입니다.",
+   "de": "Der Krümmungsradius von Itokawa hängt vom Maßstab ab, über den man misst (ein mit Felsbrocken übersäter Schutthaufen: Unebenheiten auf einigen Metern, die Krümmung des Körpers auf Dutzenden Metern). Die beiden Schätzungen R1, R2 sind 176 m und 198 m, mit Horizonten von 25 m und 26 m; die echte Sichtlinie wird von nahen Felsbrocken verdeckt. Die Vergleichsobjekte sind schematisch; die Paneelbreite von Hayabusa ist schematisch (nur die Spannweite 5.7 m und die Körpermaße sind Werte aus Primärquellen). Der Veranstaltungsort ist PLATEAU LOD2 (Gebäude bis zur Dachform vereinfacht), und sein Netz hat 33 offene Kanten, daher ist sein Volumen genähert.",
+   "hi": "इटोकावा की वक्रता-त्रिज्या इस पर निर्भर करती है कि आप कितने क्षेत्र पर मापते हैं (चट्टानों से भरा मलबे का ढेर: कुछ मीटर पर उभार, दसियों मीटर पर पिंड का मोड़)। दोनों अनुमान R1, R2 176 m और 198 m हैं, जिनसे क्षितिज 25 m और 26 m मिलते हैं; असली दृष्टि-रेखा पास की चट्टानों से रुक जाती है। पैमाने की वस्तुएँ सांकेतिक आकार हैं; हायाबुसा के पैनल की चौड़ाई सांकेतिक है (केवल 5.7 m का फैलाव और ढाँचे का माप प्राथमिक स्रोत के मान हैं)। आयोजन-स्थल PLATEAU LOD2 है (छत के आकार तक सरल की गई इमारतें), और उसके mesh में 33 खुले किनारे हैं, इसलिए उसका आयतन लगभग है।",
+   "fr": "Le rayon de courbure d'Itokawa dépend de l'échelle sur laquelle on mesure (un tas de gravats parsemé de rochers : des bosses à quelques mètres, la courbure du corps à des dizaines de mètres). Les deux estimations R1, R2 valent 176 m et 198 m, soit des horizons de 25 m et 26 m ; la vraie ligne de visée est masquée par les rochers proches. Les étalons sont des formes schématiques ; la largeur des panneaux de Hayabusa est schématique (seuls l'envergure de 5.7 m et les dimensions du corps sont des valeurs de source primaire). Le lieu est en PLATEAU LOD2 (bâtiments simplifiés jusqu'à la forme du toit) et son maillage a 33 arêtes ouvertes, son volume est donc approché."
+  },
+  "the venue (Pacifico Yokohama) 694 m": {
+   "ja": "会場(パシフィコ横浜) 694 m",
+   "zh": "会场（Pacifico 横滨）694 m",
+   "tw": "會場（Pacifico 橫濱）694 m",
+   "ko": "회장(퍼시피코 요코하마) 694 m",
+   "de": "Veranstaltungsort (Pacifico Yokohama) 694 m",
+   "hi": "आयोजन-स्थल (पैसिफ़िको योकोहामा) 694 m",
+   "fr": "le lieu (Pacifico Yokohama) 694 m"
+  },
+  "tower 333 m": {
+   "ja": "塔 333 m",
+   "zh": "塔 333 m",
+   "tw": "塔 333 m",
+   "ko": "탑 333 m",
+   "de": "Turm 333 m",
+   "hi": "मीनार 333 m",
+   "fr": "tour 333 m"
+  },
+  "football pitch 105 m": {
+   "ja": "サッカー場 105 m",
+   "zh": "足球场 105 m",
+   "tw": "足球場 105 m",
+   "ko": "축구장 105 m",
+   "de": "Fußballfeld 105 m",
+   "hi": "फ़ुटबॉल मैदान 105 m",
+   "fr": "terrain de football 105 m"
+  },
+  "Hayabusa 5.7 m": {
+   "ja": "はやぶさ 5.7 m",
+   "zh": "隼鸟号 5.7 m",
+   "tw": "隼鳥號 5.7 m",
+   "ko": "하야부사 5.7 m",
+   "de": "Hayabusa 5.7 m",
+   "hi": "हायाबुसा 5.7 m",
+   "fr": "Hayabusa 5.7 m"
+  },
+  "person 1.7 m": {
+   "ja": "人 1.7 m",
+   "zh": "人 1.7 m",
+   "tw": "人 1.7 m",
+   "ko": "사람 1.7 m",
+   "de": "Mensch 1.7 m",
+   "hi": "व्यक्ति 1.7 m",
+   "fr": "personne 1.7 m"
+  },
+  "Itokawa's surface area (mesh_area)": {
+   "ja": "イトカワの表面積(mesh_area)",
+   "zh": "糸川的表面积（mesh_area）",
+   "tw": "糸川的表面積（mesh_area）",
+   "ko": "이토카와의 표면적(mesh_area)",
+   "de": "Oberfläche von Itokawa (mesh_area)",
+   "hi": "इटोकावा का पृष्ठीय क्षेत्रफल (mesh_area)",
+   "fr": "surface d'Itokawa (mesh_area)"
+  },
+  "398,551 m² = 0.399 km² (about 56 football pitches)": {
+   "ja": "398,551 m² = 0.399 km²(サッカー場 約 56 面分)",
+   "zh": "398,551 m² = 0.399 km²（约 56 个足球场）",
+   "tw": "398,551 m² = 0.399 km²（約 56 個足球場）",
+   "ko": "398,551 m² = 0.399 km²(축구장 약 56면)",
+   "de": "398,551 m² = 0.399 km² (etwa 56 Fußballfelder)",
+   "hi": "398,551 m² = 0.399 km² (लगभग 56 फ़ुटबॉल मैदान)",
+   "fr": "398,551 m² = 0.399 km² (environ 56 terrains de football)"
+  },
+  "Itokawa's volume (mesh_volume)": {
+   "ja": "イトカワの体積(mesh_volume)",
+   "zh": "糸川的体积（mesh_volume）",
+   "tw": "糸川的體積（mesh_volume）",
+   "ko": "이토카와의 부피(mesh_volume)",
+   "de": "Volumen von Itokawa (mesh_volume)",
+   "hi": "इटोकावा का आयतन (mesh_volume)",
+   "fr": "volume d'Itokawa (mesh_volume)"
+  },
+  "17,785,601 m³ (about 47,428 pools of 25 × 10 × 1.5 m)": {
+   "ja": "17,785,601 m³(25 × 10 × 1.5 m のプール 約 47,428 杯分)",
+   "zh": "17,785,601 m³（约 47,428 个 25 × 10 × 1.5 m 的泳池）",
+   "tw": "17,785,601 m³（約 47,428 個 25 × 10 × 1.5 m 的泳池）",
+   "ko": "17,785,601 m³(25 × 10 × 1.5 m 수영장 약 47,428개분)",
+   "de": "17,785,601 m³ (etwa 47,428 Becken von 25 × 10 × 1.5 m)",
+   "hi": "17,785,601 m³ (25 × 10 × 1.5 m के लगभग 47,428 तालाब)",
+   "fr": "17,785,601 m³ (environ 47,428 piscines de 25 × 10 × 1.5 m)"
+  },
+  "surface area: mesh_area vs our own sum of triangle areas ½|(v1 − v0) × (v2 − v0)|": {
+   "ja": "表面積: mesh_area と、三角形ごとの面積 ½|(v1 − v0) × (v2 − v0)| を自分で足した値",
+   "zh": "表面积：mesh_area 与自己累加的三角形面积 ½|(v1 − v0) × (v2 − v0)|",
+   "tw": "表面積：mesh_area 與自己累加的三角形面積 ½|(v1 − v0) × (v2 − v0)|",
+   "ko": "표면적: mesh_area 대 직접 더한 삼각형 넓이 ½|(v1 − v0) × (v2 − v0)|",
+   "de": "Oberfläche: mesh_area gegen die selbst addierten Dreiecksflächen ½|(v1 − v0) × (v2 − v0)|",
+   "hi": "पृष्ठीय क्षेत्रफल: mesh_area बनाम स्वयं जोड़े गए त्रिभुज-क्षेत्रफल ½|(v1 − v0) × (v2 − v0)|",
+   "fr": "surface : mesh_area contre notre propre somme des aires des triangles ½|(v1 − v0) × (v2 − v0)|"
+  },
+  "volume: mesh_volume vs the sum of signed tetrahedra (as in the maths tab)": {
+   "ja": "体積: mesh_volume と、符号付き四面体の和(数学のタブと同じ)",
+   "zh": "体积：mesh_volume 与有向四面体之和（同数学标签页）",
+   "tw": "體積：mesh_volume 與帶號四面體之和（同數學分頁）",
+   "ko": "부피: mesh_volume 대 부호 있는 사면체의 합(수학 탭과 같음)",
+   "de": "Volumen: mesh_volume gegen die Summe vorzeichenbehafteter Tetraeder (wie im Mathematik-Reiter)",
+   "hi": "आयतन: mesh_volume बनाम चिह्नित चतुष्फलकों का योग (गणित टैब जैसा)",
+   "fr": "volume : mesh_volume contre la somme des tétraèdres signés (comme dans l'onglet maths)"
+  },
+  "surface area vs published 0.393 km² (Demura 2006)": {
+   "ja": "表面積と公表値 0.393 km²(Demura 2006)",
+   "zh": "表面积与公布值 0.393 km²（Demura 2006）",
+   "tw": "表面積與公布值 0.393 km²（Demura 2006）",
+   "ko": "표면적 대 공표값 0.393 km²(Demura 2006)",
+   "de": "Oberfläche gegen veröffentlichte 0.393 km² (Demura 2006)",
+   "hi": "पृष्ठीय क्षेत्रफल बनाम प्रकाशित 0.393 km² (Demura 2006)",
+   "fr": "surface contre la valeur publiée 0.393 km² (Demura 2006)"
+  },
+  "Next to Itokawa (564 m along its principal axis; published 535 m) stand true-scale yardsticks: this venue (Pacifico Yokohama), a 333 m tower, a football pitch, Hayabusa and a person. A person is only 0.3 % of the length, so playback zooms on a log scale from the whole asteroid (field of view 1231 m high) down to the person (3 m) standing where Hayabusa touched down (estimated site TD1). The person stands against the effective gravity (the local 'up'). Each object carries a label with its name and size.": {
+   "ja": "イトカワ(主軸に沿った長さ 564 m、公表 535 m)の横に、実寸の物差しを置いた: いまいる会場(パシフィコ横浜)、高さ 333 m の塔、サッカー場、はやぶさ、そして人。人は長さの 0.3 % しかないので、再生すると全体(視野の縦の幅 1231 m)から、はやぶさが降りた所(TD1 の推定位置)に立つ人(3 m)まで、対数の等間隔で寄っていく。人は実効重力の逆向き(その場所の「上」)に立っている。物にはそれぞれ名前と大きさのラベルが付いている。",
+   "zh": "在糸川（沿主轴的长度 564 m，公布值 535 m）旁边放上了实际尺寸的标尺：现在所在的会场（Pacifico 横滨）、高 333 m 的塔、足球场、隼鸟号，以及一个人。人只有长度的 0.3 %，所以播放时会以对数等间隔，从整体（视野纵向宽度 1231 m）一直拉近到站在隼鸟号着陆处（推定位置 TD1）的人（3 m）。人沿有效重力的反方向（当地的“上”）站立。每个物体都带有名称和大小的标签。",
+   "tw": "在糸川（沿主軸的長度 564 m，公布值 535 m）旁邊放上了實際尺寸的標尺：現在所在的會場（Pacifico 橫濱）、高 333 m 的塔、足球場、隼鳥號，以及一個人。人只有長度的 0.3 %，所以播放時會以對數等間隔，從整體（視野縱向寬度 1231 m）一直拉近到站在隼鳥號著陸處（推定位置 TD1）的人（3 m）。人沿有效重力的反方向（當地的「上」）站立。每個物體都帶有名稱與大小的標籤。",
+   "ko": "이토카와(주축을 따른 길이 564 m, 공표 535 m) 옆에 실제 크기의 잣대를 두었습니다: 지금 있는 회장(퍼시피코 요코하마), 높이 333 m의 탑, 축구장, 하야부사, 그리고 사람. 사람은 길이의 0.3 %에 불과하므로, 재생하면 전체(시야의 세로 폭 1231 m)에서 하야부사가 내려앉은 곳(추정 위치 TD1)에 선 사람(3 m)까지 로그 등간격으로 다가갑니다. 사람은 유효 중력의 반대 방향(그곳의 '위')으로 서 있습니다. 물체마다 이름과 크기의 라벨이 붙어 있습니다.",
+   "de": "Neben Itokawa (564 m entlang der Hauptachse; veröffentlicht 535 m) stehen maßstabsgetreue Vergleichsobjekte: dieser Veranstaltungsort (Pacifico Yokohama), ein 333 m hoher Turm, ein Fußballfeld, Hayabusa und ein Mensch. Ein Mensch ist nur 0.3 % der Länge, daher zoomt die Wiedergabe logarithmisch vom ganzen Asteroiden (Sichtfeld 1231 m hoch) bis zum Menschen (3 m), der dort steht, wo Hayabusa aufsetzte (geschätzter Punkt TD1). Der Mensch steht entgegen der effektiven Schwerkraft (dem örtlichen „Oben“). Jedes Objekt trägt ein Etikett mit Namen und Größe.",
+   "hi": "इटोकावा (मुख्य अक्ष के साथ 564 m; प्रकाशित 535 m) के पास असली माप के पैमाने रखे गए हैं: यह आयोजन-स्थल (पैसिफ़िको योकोहामा), 333 m ऊँचा एक मीनार, एक फ़ुटबॉल मैदान, हायाबुसा और एक व्यक्ति। व्यक्ति लंबाई का केवल 0.3 % है, इसलिए चलाने पर दृश्य पूरे क्षुद्रग्रह (दृश्य-क्षेत्र 1231 m ऊँचा) से लघुगणकीय समान अंतराल में उस व्यक्ति (3 m) तक पास आता है जो हायाबुसा के उतरने की जगह (अनुमानित स्थल TD1) पर खड़ा है। व्यक्ति प्रभावी गुरुत्व के विपरीत (वहाँ के 'ऊपर') खड़ा है। हर वस्तु पर उसके नाम और माप का लेबल है।",
+   "fr": "À côté d'Itokawa (564 m le long de son axe principal ; publié 535 m) se dressent des étalons à l'échelle réelle : ce lieu d'exposition (Pacifico Yokohama), une tour de 333 m, un terrain de football, Hayabusa et une personne. Une personne ne fait que 0.3 % de la longueur ; la lecture zoome donc sur une échelle logarithmique de l'astéroïde entier (champ de vision de 1231 m de haut) jusqu'à la personne (3 m) debout là où Hayabusa s'est posé (site estimé TD1). La personne se tient à l'opposé de la pesanteur effective (le « haut » local). Chaque objet porte une étiquette avec son nom et sa taille."
+  },
+  "extents along the principal axes (this shape model, uniform-density inertia)": {
+   "ja": "主軸に沿った長さ(この形状モデル、一様密度の慣性主軸)",
+   "zh": "沿主轴的长度（此形状模型，均匀密度的惯性主轴）",
+   "tw": "沿主軸的長度（此形狀模型，均勻密度的慣性主軸）",
+   "ko": "주축을 따른 길이(이 모양 모델, 균일 밀도의 관성 주축)",
+   "de": "Ausdehnung entlang der Hauptachsen (dieses Formmodell, Trägheit bei homogener Dichte)",
+   "hi": "मुख्य अक्षों के साथ विस्तार (यह आकार मॉडल, एकसमान घनत्व का जड़त्व)",
+   "fr": "étendues le long des axes principaux (ce modèle de forme, inertie à densité uniforme)"
+  },
+  "564 × 300 × 244 m (published 535 × 294 × 209 m)": {
+   "ja": "564 × 300 × 244 m(公表 535 × 294 × 209 m)",
+   "zh": "564 × 300 × 244 m（公布值 535 × 294 × 209 m）",
+   "tw": "564 × 300 × 244 m（公布值 535 × 294 × 209 m）",
+   "ko": "564 × 300 × 244 m(공표 535 × 294 × 209 m)",
+   "de": "564 × 300 × 244 m (veröffentlicht 535 × 294 × 209 m)",
+   "hi": "564 × 300 × 244 m (प्रकाशित 535 × 294 × 209 m)",
+   "fr": "564 × 300 × 244 m (publié 535 × 294 × 209 m)"
+  },
+  "Itokawa (564 m along its principal axis; published 535 m)": {
+   "ja": "イトカワ(主軸に沿った長さ 564 m、公表 535 m)",
+   "zh": "糸川（沿主轴的长度 564 m，公布值 535 m）",
+   "tw": "糸川（沿主軸的長度 564 m，公布值 535 m）",
+   "ko": "이토카와(주축을 따른 길이 564 m, 공표 535 m)",
+   "de": "Itokawa (564 m entlang der Hauptachse; veröffentlicht 535 m)",
+   "hi": "इटोकावा (मुख्य अक्ष के साथ 564 m; प्रकाशित 535 m)",
+   "fr": "Itokawa (564 m le long de son axe principal ; publié 535 m)"
+  },
+  "Itokawa 564 m (published 535 m)": {
+   "ja": "イトカワ 564 m(公表 535 m)",
+   "zh": "糸川 564 m（公布值 535 m）",
+   "tw": "糸川 564 m（公布值 535 m）",
+   "ko": "이토카와 564 m(공표 535 m)",
+   "de": "Itokawa 564 m (veröffentlicht 535 m)",
+   "hi": "इटोकावा 564 m (प्रकाशित 535 m)",
+   "fr": "Itokawa 564 m (publié 535 m)"
+  },
+  "extents along the principal axes (inertia) / published": {
+   "ja": "主軸に沿った長さ(慣性主軸)/ 公表値",
+   "zh": "沿主轴的长度（惯性主轴）/ 公布值",
+   "tw": "沿主軸的長度（慣性主軸）/ 公布值",
+   "ko": "주축을 따른 길이(관성 주축) / 공표값",
+   "de": "Ausdehnung entlang der Hauptachsen (Trägheit) / veröffentlicht",
+   "hi": "मुख्य अक्षों के साथ विस्तार (जड़त्व) / प्रकाशित",
+   "fr": "étendues le long des axes principaux (inertie) / publiées"
+  },
+  "bounding box on the principal components of the vertices (obb, light-blue box)": {
+   "ja": "頂点の分布の主成分に沿った外接箱(obb、水色の箱)",
+   "zh": "沿顶点分布主成分的外接盒（obb，浅蓝色的盒）",
+   "tw": "沿頂點分布主成分的外接盒（obb，淺藍色的盒）",
+   "ko": "꼭짓점 분포의 주성분을 따른 외접 상자(obb, 하늘색 상자)",
+   "de": "umschreibender Quader auf den Hauptkomponenten der Eckpunkte (obb, hellblauer Quader)",
+   "hi": "शीर्षों के मुख्य घटकों पर घेरने वाला बॉक्स (obb, हल्का नीला बॉक्स)",
+   "fr": "boîte englobante sur les composantes principales des sommets (obb, boîte bleu clair)"
+  },
+  "The shape is the coarse Q = 64 version (49,152 faces, edges a few metres), so rocks smaller than a few metres are absent. Along this shape's principal axes of inertia (uniform density) the extents are 564 × 300 × 244 m, longer than the published values (especially the short axis, +17 %). Whether this comes from a different measuring definition for the published values is unverified. The light-blue obb is a box on the principal components of the vertices, so it also differs slightly from the principal-axis box (561 × 303 × 253 m). The mass scales with the assumed density; the 40 % porosity assumes the grain density of LL-chondrite meteorites (Abe 2006).": {
+   "ja": "形は Q = 64(49,152 面、辺の長さ 数 m)の粗い版で、数 m より細かい岩は入っていない。大きさの 535 × 294 × 209 m はこの形状モデルの慣性主軸(一様密度)に沿った長さは 564 × 300 × 244 m で、公表値より長い(特に短軸 +17 %)。公表値の測り方の定義との違いかどうかは未確認。水色の obb は頂点の分布の主成分に沿った箱なので、主軸の箱とも少し違う(561 × 303 × 253 m)。質量は密度の推定に比例し、空隙率 40 % は隕石(LL コンドライト)の粒の密度を仮定した値(Abe 2006)。",
+   "zh": "形状是较粗的 Q = 64 版本（49,152 个面，边长数米），所以没有小于数米的岩石。沿此形状惯性主轴（均匀密度）的长度为 564 × 300 × 244 m，比公布值长（特别是短轴 +17 %）。是否源于公布值测量定义的不同，尚未确认。浅蓝色的 obb 是沿顶点分布主成分的盒，所以与主轴的盒也略有不同（561 × 303 × 253 m）。质量与假设的密度成正比；40 % 的孔隙率假设了 LL 球粒陨石的颗粒密度（Abe 2006）。",
+   "tw": "形狀是較粗的 Q = 64 版本（49,152 個面，邊長數公尺），所以沒有小於數公尺的岩石。沿此形狀慣性主軸（均勻密度）的長度為 564 × 300 × 244 m，比公布值長（特別是短軸 +17 %）。是否源於公布值量測定義的不同，尚未確認。淺藍色的 obb 是沿頂點分布主成分的盒，所以與主軸的盒也略有不同（561 × 303 × 253 m）。質量與假設的密度成正比；40 % 的孔隙率假設了 LL 球粒隕石的顆粒密度（Abe 2006）。",
+   "ko": "모양은 거친 Q = 64 판(49,152개 면, 모서리 길이 수 m)이라 수 m보다 작은 바위는 없습니다. 이 모양의 관성 주축(균일 밀도)을 따른 길이는 564 × 300 × 244 m로, 공표값보다 깁니다(특히 단축 +17 %). 공표값의 측정 정의 차이 때문인지는 확인하지 않았습니다. 하늘색 obb는 꼭짓점 분포의 주성분을 따른 상자라서 주축의 상자와도 조금 다릅니다(561 × 303 × 253 m). 질량은 가정한 밀도에 비례하며, 공극률 40 %는 LL 콘드라이트 운석의 입자 밀도를 가정한 값입니다(Abe 2006).",
+   "de": "Die Form ist die grobe Version Q = 64 (49,152 Flächen, Kanten von einigen Metern), daher fehlen Felsen unter einigen Metern. Entlang der Trägheitshauptachsen dieser Form (homogene Dichte) betragen die Ausdehnungen 564 × 300 × 244 m, länger als die veröffentlichten Werte (besonders die kurze Achse, +17 %). Ob dies an einer anderen Messdefinition der veröffentlichten Werte liegt, ist nicht geprüft. Der hellblaue obb ist ein Quader auf den Hauptkomponenten der Eckpunkte und weicht daher auch etwas vom Hauptachsen-Quader ab (561 × 303 × 253 m). Die Masse skaliert mit der angenommenen Dichte; die Porosität von 40 % setzt die Korndichte von LL-Chondriten voraus (Abe 2006).",
+   "hi": "आकार मोटा Q = 64 संस्करण है (49,152 फलक, किनारे कुछ मीटर के), इसलिए कुछ मीटर से छोटी चट्टानें इसमें नहीं हैं। इस आकार के जड़त्व के मुख्य अक्षों (एकसमान घनत्व) के साथ विस्तार 564 × 300 × 244 m है, जो प्रकाशित मानों से लंबा है (विशेषकर लघु अक्ष, +17 %)। यह प्रकाशित मानों की माप-परिभाषा के अंतर से है या नहीं, इसकी पुष्टि नहीं हुई है। हल्का नीला obb शीर्षों के मुख्य घटकों पर बना बॉक्स है, इसलिए यह मुख्य-अक्ष बॉक्स से भी थोड़ा अलग है (561 × 303 × 253 m)। द्रव्यमान माने गए घनत्व के अनुपात में है; 40 % सरंध्रता LL-कॉन्ड्राइट उल्कापिंडों के कण घनत्व को मानकर है (Abe 2006)।",
+   "fr": "La forme est la version grossière Q = 64 (49,152 faces, arêtes de quelques mètres) : les rochers de moins de quelques mètres en sont absents. Le long des axes principaux d'inertie de cette forme (densité uniforme), les étendues valent 564 × 300 × 244 m, plus longues que les valeurs publiées (surtout l'axe court, +17 %). Il n'est pas vérifié si cela vient d'une définition de mesure différente pour les valeurs publiées. La boîte obb bleu clair est construite sur les composantes principales des sommets, elle diffère donc aussi un peu de la boîte des axes principaux (561 × 303 × 253 m). La masse est proportionnelle à la densité supposée ; la porosité de 40 % suppose la densité des grains des météorites chondrites LL (Abe 2006)."
+  },
+  "So far the interior was assumed uniform. Lowry 2014 found that the slowly increasing spin rate (YORP) needs the centre of mass about 21 m from the centre of figure towards the head, and concluded that the head (x ≥ 150 m) is denser than the body. The slider raises the head's density (total mass kept). Orange ball = centre of mass, white ball = centre of figure, colour = how surface gravity changes. The last two rows of the table fail: a uniform density cannot shift the centre of mass (so it cannot explain the observation), and this shape model's extents along its principal axes are longer than the published values (especially the short axis, +17 %; whether the published measuring definition differs is unverified).": {
+   "ja": "ここまでは中身の密度が一様と仮定した。Lowry 2014 は、自転がわずかに速くなっていく観測(YORP)を説明するには重心が形の中心から頭の側へ約 21 m ずれている必要があり、頭(x ≥ 150 m)が胴より重いと考えた。時間つまみで頭の密度を上げていく(全体の質量は保つ)。橙の玉 = 重心、白い玉 = 形の中心、色 = 表面の重力の変わり方。表の最後の 2 行は落ちる項目:一様密度では重心がずれない(観測を説明できない)こと、この形状モデルの慣性主軸に沿った長さが公表値より長い(特に短軸 +17 %。公表値の測り方の定義との違いかどうかは未確認)こと。",
+   "zh": "到这里为止都假设内部密度均匀。Lowry 2014 发现，要解释自转速度慢慢加快的观测（YORP），质心需要从形心向头部偏约 21 m，并得出头部（x ≥ 150 m）比身体密度更高的结论。滑块逐渐提高头部的密度（保持总质量）。橙色球 = 质心，白色球 = 形心，颜色 = 表面引力的变化。表的最后两行不通过：均匀密度无法使质心偏移（因此无法解释观测），以及此形状模型沿主轴的长度比公布值长（特别是短轴 +17 %；是否源于公布值测量定义的不同尚未确认）。",
+   "tw": "到這裡為止都假設內部密度均勻。Lowry 2014 發現，要解釋自轉速度慢慢加快的觀測（YORP），質心需要從形心向頭部偏約 21 m，並得出頭部（x ≥ 150 m）比身體密度更高的結論。滑桿逐漸提高頭部的密度（保持總質量）。橙色球 = 質心，白色球 = 形心，顏色 = 表面重力的變化。表的最後兩列不通過：均勻密度無法使質心偏移（因此無法解釋觀測），以及此形狀模型沿主軸的長度比公布值長（特別是短軸 +17 %；是否源於公布值量測定義的不同尚未確認）。",
+   "ko": "지금까지는 내부 밀도가 균일하다고 가정했습니다. Lowry 2014는 자전이 조금씩 빨라지는 관측(YORP)을 설명하려면 질량중심이 도형 중심에서 머리 쪽으로 약 21 m 어긋나 있어야 한다는 것을 발견하고, 머리(x ≥ 150 m)가 몸통보다 밀도가 높다고 결론지었습니다. 슬라이더로 머리의 밀도를 올립니다(전체 질량은 유지). 주황 공 = 질량중심, 흰 공 = 도형 중심, 색 = 표면 중력의 변화. 표의 마지막 두 행은 통과하지 못합니다: 균일 밀도로는 질량중심이 어긋나지 않는다는 것(관측을 설명할 수 없음), 그리고 이 모양 모델의 주축을 따른 길이가 공표값보다 길다는 것(특히 단축 +17 %, 공표값의 측정 정의 차이 때문인지는 미확인).",
+   "de": "Bisher wurde das Innere als homogen angenommen. Lowry 2014 fand, dass die langsam zunehmende Rotationsgeschwindigkeit (YORP) einen um etwa 21 m vom Formmittelpunkt zum Kopf hin verschobenen Schwerpunkt verlangt, und folgerte, dass der Kopf (x ≥ 150 m) dichter ist als der Rumpf. Der Regler erhöht die Dichte des Kopfes (Gesamtmasse bleibt). Orange Kugel = Schwerpunkt, weiße Kugel = Formmittelpunkt, Farbe = Änderung der Schwerkraft an der Oberfläche. Die letzten beiden Zeilen der Tabelle scheitern: Eine homogene Dichte kann den Schwerpunkt nicht verschieben (und die Beobachtung nicht erklären), und die Ausdehnungen dieses Formmodells entlang seiner Hauptachsen sind länger als die veröffentlichten Werte (besonders die kurze Achse, +17 %; ob die veröffentlichte Messdefinition abweicht, ist nicht geprüft).",
+   "hi": "अब तक भीतरी भाग को एकसमान माना गया। Lowry 2014 ने पाया कि धीरे-धीरे बढ़ती घूर्णन गति (YORP) के लिए द्रव्यमान केंद्र को आकृति केंद्र से सिर की ओर लगभग 21 m खिसका होना चाहिए, और निष्कर्ष निकाला कि सिर (x ≥ 150 m) धड़ से अधिक घना है। स्लाइडर सिर का घनत्व बढ़ाता है (कुल द्रव्यमान वही रहता है)। नारंगी गोला = द्रव्यमान केंद्र, सफ़ेद गोला = आकृति केंद्र, रंग = सतह पर गुरुत्व का बदलाव। तालिका की अंतिम दो पंक्तियाँ असफल हैं: एकसमान घनत्व द्रव्यमान केंद्र को नहीं खिसका सकता (इसलिए प्रेक्षण की व्याख्या नहीं कर सकता), और इस आकार मॉडल के मुख्य अक्षों के साथ विस्तार प्रकाशित मानों से लंबे हैं (विशेषकर लघु अक्ष, +17 %; प्रकाशित माप-परिभाषा अलग है या नहीं, इसकी पुष्टि नहीं हुई)।",
+   "fr": "Jusqu'ici, l'intérieur était supposé uniforme. Lowry 2014 a trouvé que l'accélération lente de la rotation (YORP) exige un centre de masse décalé d'environ 21 m du centre de figure vers la tête, et en a conclu que la tête (x ≥ 150 m) est plus dense que le corps. Le curseur augmente la densité de la tête (masse totale conservée). Boule orange = centre de masse, boule blanche = centre de figure, couleur = variation de la gravité en surface. Les deux dernières lignes du tableau échouent : une densité uniforme ne peut pas décaler le centre de masse (elle ne peut donc pas expliquer l'observation), et les étendues de ce modèle de forme le long de ses axes principaux sont plus longues que les valeurs publiées (surtout l'axe court, +17 % ; on n'a pas vérifié si la définition de mesure publiée diffère)."
+  },
+  "limit (shape): extents along the principal axes of inertia (this shape model) vs the published 535 × 294 × 209 m (Fujiwara 2006) — reason for the difference unverified": {
+   "ja": "限界(形): 慣性主軸に沿った長さ(この形状モデル)と公表の 535 × 294 × 209 m(Fujiwara 2006)—— 違いの理由は未確認",
+   "zh": "局限（形状）：沿惯性主轴的长度（此形状模型）与公布的 535 × 294 × 209 m（Fujiwara 2006）—— 差异原因尚未确认",
+   "tw": "限制（形狀）：沿慣性主軸的長度（此形狀模型）與公布的 535 × 294 × 209 m（Fujiwara 2006）—— 差異原因尚未確認",
+   "ko": "한계(모양): 관성 주축을 따른 길이(이 모양 모델) 대 공표된 535 × 294 × 209 m(Fujiwara 2006) —— 차이의 이유는 미확인",
+   "de": "Grenze (Form): Ausdehnung entlang der Trägheitshauptachsen (dieses Formmodell) gegen die veröffentlichten 535 × 294 × 209 m (Fujiwara 2006) — Grund für die Abweichung nicht geprüft",
+   "hi": "सीमा (आकार): जड़त्व के मुख्य अक्षों के साथ विस्तार (यह आकार मॉडल) बनाम प्रकाशित 535 × 294 × 209 m (Fujiwara 2006) — अंतर का कारण अपुष्ट",
+   "fr": "limite (forme) : étendues le long des axes principaux d'inertie (ce modèle de forme) contre les 535 × 294 × 209 m publiés (Fujiwara 2006) — raison de l'écart non vérifiée"
+  },
+  "Shape: Gaskell Itokawa Shape Model V1.1 (R. Gaskell et al., from Hayabusa [JAXA] AMICA images), NASA PDS Small Bodies Node, CC0 1.0 (public-domain dedication). The Q = 64 version (25,350 vertices, 49,152 faces, units km, z = spin pole, x = longitude 0) with vertex numbers made 0-based and unused duplicate vertices dropped. Numbers: Fujiwara et al. 2006, Abe et al. 2006, Demura et al. 2006 (all Science 312), Lowry et al. 2014 (A&A 562), Yano & Aida 2013. Gravity formula: Werner & Scheeres 1997. Venue shape: created by processing '3D City Model (Project PLATEAU) Yokohama City (FY2020)' (MLIT) (https://www.geospatial.jp/ckan/dataset/plateau-14100-yokohama-city-2020) (Public Data License 1.0; copyright Yokohama City; 7 parts of the CityGML LOD2 turned into a triangle mesh in local coordinates).": {
+   "ja": "形: Gaskell Itokawa Shape Model V1.1(R. Gaskell ほか。はやぶさ〔JAXA〕の AMICA の画像から作成)、NASA PDS Small Bodies Node、CC0 1.0(パブリックドメインへの献呈)。Q = 64 の版(25,350 頂点・49,152 面、単位 km、z 軸 = 自転の極、x 軸 = 経度 0)を使い、頂点番号を 0 始まりにし、面から使われない重複頂点を落とした。数値: Fujiwara ほか 2006・Abe ほか 2006・Demura ほか 2006(いずれも Science 312)、Lowry ほか 2014(A&A 562)、Yano & Aida 2013。重力の式: Werner & Scheeres 1997。会場の形: 「3D都市モデル(Project PLATEAU)横浜市(2020年度)」(国土交通省)(https://www.geospatial.jp/ckan/dataset/plateau-14100-yokohama-city-2020)を加工して作成(公共データ利用規約 第1.0版、著作権は横浜市。CityGML LOD2 の 7 部位を三角形メッシュにし、局所座標へ移した)。",
+   "zh": "形状：Gaskell Itokawa Shape Model V1.1（R. Gaskell 等，由隼鸟号〔JAXA〕AMICA 图像制作），NASA PDS Small Bodies Node，CC0 1.0（献给公有领域）。使用 Q = 64 版本（25,350 个顶点、49,152 个面，单位 km，z = 自转极，x = 经度 0），顶点编号改为从 0 开始，并删除未使用的重复顶点。数值：Fujiwara et al. 2006、Abe et al. 2006、Demura et al. 2006（均为 Science 312），Lowry et al. 2014（A&A 562），Yano & Aida 2013。引力公式：Werner & Scheeres 1997。会场形状：加工「3D City Model (Project PLATEAU) Yokohama City (FY2020)」（国土交通省）（https://www.geospatial.jp/ckan/dataset/plateau-14100-yokohama-city-2020）制作（公共数据利用规约 第1.0版，著作权属横滨市；把 CityGML LOD2 的 7 个部分转为三角网格并移到局部坐标）。",
+   "tw": "形狀：Gaskell Itokawa Shape Model V1.1（R. Gaskell 等，由隼鳥號〔JAXA〕AMICA 影像製作），NASA PDS Small Bodies Node，CC0 1.0（貢獻至公有領域）。使用 Q = 64 版本（25,350 個頂點、49,152 個面，單位 km，z = 自轉極，x = 經度 0），頂點編號改為從 0 開始，並刪除未使用的重複頂點。數值：Fujiwara et al. 2006、Abe et al. 2006、Demura et al. 2006（皆為 Science 312），Lowry et al. 2014（A&A 562），Yano & Aida 2013。重力公式：Werner & Scheeres 1997。會場形狀：加工「3D City Model (Project PLATEAU) Yokohama City (FY2020)」（國土交通省）（https://www.geospatial.jp/ckan/dataset/plateau-14100-yokohama-city-2020）製作（公共資料利用規約 第1.0版，著作權屬橫濱市；把 CityGML LOD2 的 7 個部分轉為三角網格並移到局部座標）。",
+   "ko": "모양: Gaskell Itokawa Shape Model V1.1(R. Gaskell 외, 하야부사〔JAXA〕 AMICA 영상으로 제작), NASA PDS Small Bodies Node, CC0 1.0(퍼블릭 도메인 헌정). Q = 64 판(25,350 꼭짓점, 49,152 면, 단위 km, z = 자전극, x = 경도 0)을 쓰고, 꼭짓점 번호를 0부터로 바꾸고 쓰이지 않는 중복 꼭짓점을 뺐습니다. 수치: Fujiwara et al. 2006, Abe et al. 2006, Demura et al. 2006(모두 Science 312), Lowry et al. 2014(A&A 562), Yano & Aida 2013. 중력 식: Werner & Scheeres 1997. 회장 모양: 「3D City Model (Project PLATEAU) Yokohama City (FY2020)」(국토교통성)(https://www.geospatial.jp/ckan/dataset/plateau-14100-yokohama-city-2020)를 가공하여 작성(공공데이터 이용규약 제1.0판, 저작권은 요코하마시. CityGML LOD2의 7개 부위를 삼각형 메시로 만들어 국소 좌표로 옮김).",
+   "de": "Form: Gaskell Itokawa Shape Model V1.1 (R. Gaskell et al., aus AMICA-Bildern von Hayabusa [JAXA]), NASA PDS Small Bodies Node, CC0 1.0 (Widmung an die Gemeinfreiheit). Die Version Q = 64 (25,350 Eckpunkte, 49,152 Flächen, Einheit km, z = Rotationspol, x = Länge 0), Eckpunktnummern ab 0 und ungenutzte doppelte Eckpunkte entfernt. Zahlen: Fujiwara et al. 2006, Abe et al. 2006, Demura et al. 2006 (alle Science 312), Lowry et al. 2014 (A&A 562), Yano & Aida 2013. Schwerkraftformel: Werner & Scheeres 1997. Form des Veranstaltungsorts: erstellt durch Bearbeitung von „3D City Model (Project PLATEAU) Yokohama City (FY2020)“ (MLIT) (https://www.geospatial.jp/ckan/dataset/plateau-14100-yokohama-city-2020) (Public Data License 1.0; Urheberrecht Stadt Yokohama; 7 Teile des CityGML LOD2 als Dreiecksnetz in lokalen Koordinaten).",
+   "hi": "आकार: Gaskell Itokawa Shape Model V1.1 (R. Gaskell et al., हायाबुसा [JAXA] की AMICA तस्वीरों से), NASA PDS Small Bodies Node, CC0 1.0 (सार्वजनिक डोमेन को समर्पण)। Q = 64 संस्करण (25,350 शीर्ष, 49,152 फलक, इकाई km, z = घूर्णन ध्रुव, x = देशांतर 0), शीर्ष संख्याएँ 0 से शुरू की गईं और अप्रयुक्त दोहरे शीर्ष हटाए गए। संख्याएँ: Fujiwara et al. 2006, Abe et al. 2006, Demura et al. 2006 (सभी Science 312), Lowry et al. 2014 (A&A 562), Yano & Aida 2013। गुरुत्व सूत्र: Werner & Scheeres 1997। आयोजन-स्थल का आकार: '3D City Model (Project PLATEAU) Yokohama City (FY2020)' (MLIT) (https://www.geospatial.jp/ckan/dataset/plateau-14100-yokohama-city-2020) को संसाधित करके बनाया गया (Public Data License 1.0; कॉपीराइट योकोहामा शहर; CityGML LOD2 के 7 भागों को स्थानीय निर्देशांकों में त्रिभुज mesh बनाया गया)।",
+   "fr": "Forme : Gaskell Itokawa Shape Model V1.1 (R. Gaskell et al., à partir des images AMICA de Hayabusa [JAXA]), NASA PDS Small Bodies Node, CC0 1.0 (dédicace au domaine public). La version Q = 64 (25,350 sommets, 49,152 faces, unité km, z = pôle de rotation, x = longitude 0), numéros de sommets à partir de 0 et sommets dupliqués inutilisés supprimés. Chiffres : Fujiwara et al. 2006, Abe et al. 2006, Demura et al. 2006 (tous Science 312), Lowry et al. 2014 (A&A 562), Yano & Aida 2013. Formule de gravité : Werner & Scheeres 1997. Forme du lieu : créée en traitant « 3D City Model (Project PLATEAU) Yokohama City (FY2020) » (MLIT) (https://www.geospatial.jp/ckan/dataset/plateau-14100-yokohama-city-2020) (Public Data License 1.0 ; droits d'auteur Ville de Yokohama ; 7 parties du CityGML LOD2 converties en maillage triangulaire en coordonnées locales)."
+  },
+  "Build one tetrahedron from a point (here the centre of mass) and each face, and add (1/6) v0·(v1×v2). Outward faces count positive, inward ones (behind the neck) negative, cancelling what was over-counted: 766 faces (0.47 %) are negative. The total matches mesh_volume to < 1e-12, and moving the apex outside the body changes nothing (< 1e-12). It is the divergence theorem ∫∇·(x/3) dV = ∮ (x/3)·n dS.": {
+   "ja": "1 点(ここでは重心)と各面で四面体を作り、体積 (1/6) v0·(v1×v2) を足す。面が外向きなら正、内向き(首のくびれの裏側)なら負で、余分に数えた所を打ち消す。766 面(0.47 %)が負。合計は mesh_volume と < 1e-12 の差で一致し、頂点を天体の外に置いても同じ(差 < 1e-12)。発散定理 ∫∇·(x/3) dV = ∮ (x/3)·n dS そのもの。",
+   "zh": "用一个点（这里是质心）和每个面构成一个四面体，把 (1/6) v0·(v1×v2) 加起来。朝外的面算正，朝内的面（颈部背后）算负，抵消多算的部分：766 个面（0.47 %）是负的。总和与 mesh_volume 相差 < 1e-12，把顶点移到天体外也不变（< 1e-12）。这正是散度定理 ∫∇·(x/3) dV = ∮ (x/3)·n dS。",
+   "tw": "用一個點（這裡是質心）和每個面構成一個四面體，把 (1/6) v0·(v1×v2) 加起來。朝外的面算正，朝內的面（頸部背後）算負，抵消多算的部分：766 個面（0.47 %）是負的。總和與 mesh_volume 相差 < 1e-12，把頂點移到天體外也不變（< 1e-12）。這正是散度定理 ∫∇·(x/3) dV = ∮ (x/3)·n dS。",
+   "ko": "한 점(여기서는 질량중심)과 각 면으로 사면체를 하나씩 만들고 (1/6) v0·(v1×v2)를 더합니다. 바깥을 향한 면은 양, 안쪽을 향한 면(목 뒤쪽)은 음으로 세어 더 센 부분을 상쇄합니다: 766개 면(0.47 %)이 음입니다. 합은 mesh_volume과 < 1e-12 차이로 일치하고, 꼭짓점을 천체 밖으로 옮겨도 변하지 않습니다(< 1e-12). 바로 발산 정리 ∫∇·(x/3) dV = ∮ (x/3)·n dS입니다.",
+   "de": "Man bildet aus einem Punkt (hier dem Schwerpunkt) und jeder Fläche ein Tetraeder und addiert (1/6) v0·(v1×v2). Nach außen weisende Flächen zählen positiv, nach innen weisende (hinter dem Hals) negativ und heben das Zuviel auf: 766 Flächen (0.47 %) sind negativ. Die Summe stimmt mit mesh_volume auf < 1e-12 überein, und eine Spitze außerhalb des Körpers ändert nichts (< 1e-12). Das ist der gaußsche Integralsatz ∫∇·(x/3) dV = ∮ (x/3)·n dS.",
+   "hi": "एक बिंदु (यहाँ द्रव्यमान केंद्र) और हर फलक से एक चतुष्फलक बनाकर (1/6) v0·(v1×v2) जोड़ें। बाहर की ओर वाले फलक धनात्मक, भीतर की ओर वाले (गर्दन के पीछे) ऋणात्मक गिने जाते हैं, जो ज़्यादा गिने गए भाग को रद्द करते हैं: 766 फलक (0.47 %) ऋणात्मक हैं। योग mesh_volume से < 1e-12 तक मेल खाता है, और शीर्ष को पिंड के बाहर ले जाने से कुछ नहीं बदलता (< 1e-12)। यही अपसरण प्रमेय ∫∇·(x/3) dV = ∮ (x/3)·n dS है।",
+   "fr": "On construit un tétraèdre à partir d'un point (ici le centre de masse) et de chaque face, et on additionne (1/6) v0·(v1×v2). Les faces tournées vers l'extérieur comptent positivement, celles tournées vers l'intérieur (derrière le cou) négativement, ce qui annule le surplus : 766 faces (0.47 %) sont négatives. Le total coïncide avec mesh_volume à < 1e-12 près, et placer le sommet hors du corps ne change rien (< 1e-12). C'est le théorème de flux-divergence ∫∇·(x/3) dV = ∮ (x/3)·n dS."
+  }
+ }
+}

@@ -1,0 +1,16 @@
+{
+ "_note": "Studio-lite v0 の門に使う 10 レシピ。全段がブラウザの op 台帳(ops_subset.json)にあること。入力は studio_assets/sample_images/coins.png の 256×256(float32 0..1)。",
+ "recipes": [
+  {"name": "Edge — Sobel + Otsu", "stages": [["gaussian", 0.4, 0.5], ["sobel_amp", 0.5, 0.5], ["otsu", 0.4, 0.5]]},
+  {"name": "Edge — Canny", "stages": [["gaussian", 0.4, 0.5], ["canny", 0.4, 0.5]]},
+  {"name": "Denoise — median", "stages": [["median", 0.4, 0.5]]},
+  {"name": "Enhance — gamma", "stages": [["gamma", 0.4, 0.5]]},
+  {"name": "Count — blobs", "stages": [["gaussian", 0.45, 0.5], ["otsu", 0.4, 0.5], ["fill_up", 0.5, 0.5], ["count_obj", 0.5, 0.5]]},
+  {"name": "Morph — gray opening then threshold", "stages": [["gopen", 0.3, 0.5], ["threshold", 0.5, 0.5]]},
+  {"name": "Distance — otsu + dist_transform", "stages": [["otsu", 0.5, 0.5], ["dist_transform", 0.5, 0.5]]},
+  {"name": "Smooth — mean_box + laplace", "stages": [["mean_box", 0.5, 0.5], ["laplace", 0.5, 0.5]]},
+  {"name": "Texture — local std", "stages": [["gaussian", 0.2, 0.5], ["std_filter", 0.5, 0.5]]},
+  {"name": "Threshold — adaptive", "stages": [["adaptive_gauss_thresh", 0.5, 0.5]]}
+ ],
+ "studio_format_sample": {"stages": [["gaussian", 0.4, 0.5, true], ["sobel_amp", 0.5, 0.5], ["otsu", 0.4, 0.5]], "pinned": []}
+}

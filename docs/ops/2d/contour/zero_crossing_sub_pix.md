@@ -41,8 +41,7 @@ LoG(ガウス平滑化込みラプラシアン、シグマ ``0.5+2*a``)のゼロ
 ``zero_crossing_sub_pix``（Extract zero crossings from an image with
 subpixel accuracy.）に相当。
 
-``a`` がガウス平滑化のシグマを振る。``b`` は未使用。skimage が無い環境
-ではこの分岐は呼べない。
+``a`` がガウス平滑化のシグマを振る。``b`` は未使用。scikit-image が無い環境では ``MissingDependencyError``(何を入れればよいかを言う)で止まる —— 別の答えは返さない。
 
 ## 詳しい使い方ガイド
 
