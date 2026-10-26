@@ -75,8 +75,10 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_microns_brain_wave/04_wave_on_wiring.gif"><img src="../thumbs/poc_microns_brain_wave.jpg" alt="小鼠視皮質波" loading="lazy" width="320" height="320"><b>&#9654;</b><span>小鼠視皮質波</span></a>
 <a href="../../articles/assets/media/evis_stereo_fullseye.mp4"><img src="../thumbs/evis_stereo_depth.jpg" alt="人形機器人雙眼" loading="lazy" width="320" height="320"><b>&#9654;</b><span>人形機器人雙眼</span></a>
 <a href="../../articles/assets/media/evis_bean_track_fullseye.mp4"><img src="../thumbs/evis_bean_track.jpg" alt="筷尖相機追蹤豆子" loading="lazy" width="320" height="320"><b>&#9654;</b><span>筷尖相機追蹤豆子</span></a>
+<a href="../../anim3d/organ_volume.html?lang=tw"><img src="../thumbs/organ_volume.jpg" alt="器官體積和球形度" loading="lazy" width="320" height="320"><b>&#9654;</b><span>器官體積和球形度 · 0.5 MB</span></a>
 <a href="../../view2026/anim3d/interactive_anim3d_viewer.html?lang=tw"><img src="../thumbs/interactive_anim3d_viewer.jpg" alt="機械臂與半透明透鏡" loading="lazy" width="320" height="320"><b>&#9654;</b><span>機械臂與半透明透鏡 · 0.3 MB</span></a>
 <a href="../../anim3d/gauss_bonnet.html?lang=tw"><img src="../thumbs/gauss_bonnet.jpg" alt="彎曲全部相加都是同一個數" loading="lazy" width="320" height="320"><b>&#9654;</b><span>彎曲全部相加都是同一個數 · 3.1 MB</span></a>
+<a href="../../view2026/anim3d/satellite_gsd_anim3d.html?lang=tw"><img src="../thumbs/satellite_gsd.jpg" alt="為什麼從軌道上看不清小字" loading="lazy" width="320" height="320"><b>&#9654;</b><span>為什麼從軌道上看不清小字 · 0.2 MB</span></a>
 </div>
 
 ## 系列文章 (Qiita 上的英文文章)
@@ -659,8 +661,10 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 
 **可旋轉的動態 3-D**
 
+- [器官體積和球形度](../../anim3d/organ_volume.html?lang=tw) (動態 3-D,可拖曳旋轉, 0.5 MB): 將 6 個器官按體積排序，疊加等體積半透明球，並累積截面。散度定理與實體體素的體積最多相差 0.191%，閉合曲面的 χ = 2；限制頁顯示 99% 簡化所遺失的細結構。 **6 個器官；體積差 ≤ 0.191%；χ = 2，邊界邊為 0。** [原始碼](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_organvol_anim3d.py)
 - [機械臂與半透明透鏡](../../view2026/anim3d/interactive_anim3d_viewer.html?lang=tw) (動態 3-D,可拖曳旋轉, 0.3 MB): 用手指旋轉,從任意角度觀看機械臂搬運箱子。光線穿過半透明透鏡匯聚到焦點,下方的俯視高度影像及其二值化結果在同一時間軸上同步播放。 [原始碼](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
 - [彎曲全部相加都是同一個數](../../anim3d/gauss_bonnet.html?lang=tw) (動態 3-D,可拖曳旋轉, 3.1 MB): 把球削成立方體、換成環面、增加孔洞，或用實測的小行星: 把各頂點的角虧損 K 加起來，Σ K / 2π 都等於 χ = V − E + F。用手指旋轉，看半透明平面把頂點掃進總和。有邊界的碗則不成立(限制分頁)。 **17 列檢驗中 Σ K / 2π 與 χ 的差小於 1e-12；只有帶邊界的碗偏離 24.0 × 2π，加上邊界項後即一致。** [原始碼](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_gaussbonnet_anim3d.py)
+- [為什麼從軌道上看不清小字](../../view2026/anim3d/satellite_gsd_anim3d.html?lang=tw) (動態 3-D,可拖曳旋轉, 0.2 MB): 高度越高,1 個像素覆蓋的地面越寬;口徑越小,半透明光錐底部的艾里斑越大。越過藍色 GSD 與橙色繞射寬度的交點後,僅縮小像素也無法恢復 10 cm 線條。 **高度 400 km、像素 5 µm、焦距 8 m 時,GSD 為 0.250 m。波長 550 nm、口徑 2.4 m 時,Rayleigh 地面半徑為 0.112 m。大氣影響在限制列中明確標為未計算。** [原始碼](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_satgsd_anim3d.py)
 
 </div>
 
