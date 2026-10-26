@@ -48,6 +48,7 @@
 from __future__ import annotations
 
 import argparse
+import base64
 import contextlib
 import copy
 import importlib.util
@@ -65,6 +66,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 import pocviewer as pv  # noqa: E402
+import annotate  # noqa: E402
 
 LANGS = pv.LANGS
 NEW_LANGS = tuple(l for l in LANGS if l not in ("ja", "en"))       # 表で埋める 6 言語
@@ -72,6 +74,7 @@ TABLES = ROOT / "tools" / "anim3d_i18n_tables"
 EXAMPLE_DIRS = ("examples", "examples_3d")
 #: 作例の外で探す生成器: ``tools/build_*.py``(題材の動く 3-D、``main(argv)`` を持ち write_viewer で書く)。
 BUILDER_DIR, BUILDER_PREFIX = "tools", "build_"
+RASTER_REFERENCE_FONT = "meiryo.ttc"
 
 #: 数値トークン: 整数・小数・指数 + 直後(空白 0〜1 個)の単位。符号は付けない(「2-10 cm」の - は範囲)。
 #: 英字・_ に続く数字(``anim3d``・``uint16`` のような名前の一部)は数えない(コード片の門が見る)。
@@ -336,6 +339,100 @@ def build(example: str, out: str | os.PathLike, table: dict | None = None, viewe
 
 
 # --------------------------------------------------------------------------- commit 済みページの門
+_DATA_MARKER = "const D = "
+
+
+def _embedded_data(html: str) -> tuple[dict, int, int]:
+    """Return the viewer's embedded JSON and its half-open span in ``html``."""
+    start = html.find(_DATA_MARKER)
+    if start < 0:
+        raise ValueError("viewer の埋め込み JSON(const D) が無い")
+    start += len(_DATA_MARKER)
+    data, used = json.JSONDecoder().raw_decode(html[start:])
+    if not isinstance(data, dict):
+        raise ValueError("viewer の埋め込み JSON(const D) が object でない")
+    return data, start, start + used
+
+
+def _png_shape(encoded: str) -> tuple[int, ...]:
+    """Read one grayscale/RGB PNG shape from its signature and IHDR."""
+    try:
+        raw = base64.b64decode(encoded, validate=True)
+    except (ValueError, TypeError) as exc:
+        raise ValueError("pane frames の PNG が正しい base64 でない") from exc
+    if len(raw) < 33 or raw[:8] != b"\x89PNG\r\n\x1a\n" or raw[12:16] != b"IHDR":
+        raise ValueError("pane frames の PNG header が壊れている")
+    width, height, colour = (int.from_bytes(raw[16:20], "big"), int.from_bytes(raw[20:24], "big"), raw[25])
+    if width < 1 or height < 1 or colour not in (0, 2):
+        raise ValueError("pane frames の PNG IHDR が未対応")
+    return (height, width, 3) if colour == 2 else (height, width)
+
+
+def normalize_rasters(html: str) -> str:
+    """Replace only anim3d pane-frame pixels and their content-addressed keys.
+
+    Array metadata (including shape), all 3-D arrays, numbers and strings remain
+    exact.  Raster keys are renamed in first pane occurrence order.
+    """
+    data, start, end = _embedded_data(html)
+    arrays = data.get("arrays")
+    tabs = data.get("tabs")
+    if not isinstance(arrays, dict) or not isinstance(tabs, list):
+        raise ValueError("viewer の arrays/tabs の形が違う")
+    raster_keys = []
+    for tab in tabs:
+        if not isinstance(tab, dict) or tab.get("kind") != "anim3d":
+            continue
+        panes = tab.get("panes", [])
+        if not isinstance(panes, list):
+            raise ValueError("anim3d panes が list でない")
+        for pane in panes:
+            key = pane.get("frames") if isinstance(pane, dict) else None
+            if not isinstance(key, str) or key not in arrays:
+                raise ValueError("anim3d pane frames の配列が無い")
+            if key not in raster_keys:
+                raster_keys.append(key)
+
+    for index, old_key in enumerate(raster_keys):
+        rec = arrays.get(old_key)
+        if not isinstance(rec, dict) or not isinstance(rec.get("shape"), list):
+            raise ValueError("pane frames の配列 record/shape が無い")
+        shape = rec["shape"]
+        if rec.get("t") == "png":
+            payload = rec.get("png")
+            if not isinstance(payload, list) or len(shape) not in (3, 4) or len(payload) != shape[0]:
+                raise ValueError("pane frames の PNG 件数または shape が違う")
+            expected = tuple(shape[1:])
+            if any(_png_shape(item) != expected for item in payload):
+                raise ValueError("pane frames の PNG IHDR と shape が違う")
+            rec["png"] = ["<RASTER>" for _ in payload]
+        elif "b64" in rec:
+            if not isinstance(rec["b64"], str):
+                raise ValueError("pane frames の b64 が文字列でない")
+            rec["b64"] = "<RASTER>"
+        else:
+            raise ValueError("pane frames の pixel payload が無い")
+
+        new_key = "K%d" % index
+        if new_key in arrays and new_key != old_key:
+            raise ValueError("pane frames の正規化 key %s が既存配列と衝突した" % new_key)
+        for tab in tabs:
+            if isinstance(tab, dict) and tab.get("kind") == "anim3d":
+                for pane in tab.get("panes", []):
+                    if isinstance(pane, dict) and pane.get("frames") == old_key:
+                        pane["frames"] = new_key
+        arrays[new_key] = arrays.pop(old_key)
+
+    encoded = json.dumps(data, ensure_ascii=False, separators=(",", ":"))
+    return html[:start] + encoded + html[end:]
+
+
+def _raster_font_name() -> str:
+    """Basename of the actual font selected by annotate for raster labels."""
+    font = annotate._font(11)
+    return os.path.basename(str(getattr(font, "path", ""))).lower()
+
+
 def first_diff_offset(a: bytes, b: bytes) -> int:
     """最初に違うバイトの位置(片方が他方の前置なら短い方の長さ)。64 KiB の塊で粗く、次に 1 バイトずつ。"""
     n, i, step = min(len(a), len(b)), 0, 65536
@@ -380,7 +477,7 @@ def describe_page_mismatch(committed: str, rebuilt: str, page, example: str, ctx
                lo, off + ctx, side_a, lo, off + ctx, side_b, out))
 
 
-def check_same_page(committed: str, rebuilt: str, page, example: str) -> None:
+def check_same_page(committed: str, rebuilt: str, page, example: str) -> str:
     """commit 済みのページが作り直しとバイト一致しなければ、:func:`describe_page_mismatch` の短い文で ``AssertionError``。
 
     テストでの使い方(巨大な文字列の ``==`` を書かない)::
@@ -388,9 +485,21 @@ def check_same_page(committed: str, rebuilt: str, page, example: str) -> None:
         want = I18N.pv._build_html(I18N.translate(spec, table), list(I18N.LANGS), detect_lang=True)
         I18N.check_same_page(html, want, PAGE, BUILDER)
     """
-    msg = describe_page_mismatch(committed, rebuilt, page, example)
-    if msg is not None:
-        raise AssertionError(msg)
+    import hashlib
+
+    if hashlib.sha256(committed.encode("utf-8")).digest() == hashlib.sha256(rebuilt.encode("utf-8")).digest():
+        return "exact"
+    if _raster_font_name() != RASTER_REFERENCE_FONT.lower():
+        try:
+            same = normalize_rasters(committed) == normalize_rasters(rebuilt)
+        except ValueError as exc:
+            msg = describe_page_mismatch(committed, rebuilt, page, example)
+            raise AssertionError("図の正規化に失敗: %s\n%s" % (exc, msg)) from exc
+        if same:
+            return "rasters-normalised"
+        normal_msg = describe_page_mismatch(normalize_rasters(committed), normalize_rasters(rebuilt), page, example)
+        raise AssertionError(normal_msg)
+    raise AssertionError(describe_page_mismatch(committed, rebuilt, page, example))
 
 
 # --------------------------------------------------------------------------- 走るサンプル
