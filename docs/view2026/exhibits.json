@@ -1624,9 +1624,14 @@
    "motion": true,
    "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_organvol_anim3d.py",
    "label": {
-    "ja": "臓器の体積と球形度", "en": "Organ volume and sphericity",
-    "zh": "器官体积和球形度", "tw": "器官體積和球形度", "ko": "장기 부피와 구형도",
-    "de": "Organvolumen und Sphärizität", "hi": "अंग का आयतन और गोलाकारता", "fr": "Volume et sphéricité des organes"
+    "ja": "臓器の体積と球形度",
+    "en": "Organ volume and sphericity",
+    "zh": "器官体积和球形度",
+    "tw": "器官體積和球形度",
+    "ko": "장기 부피와 구형도",
+    "de": "Organvolumen und Sphärizität",
+    "hi": "अंग का आयतन और गोलाकारता",
+    "fr": "Volume et sphéricité des organes"
    },
    "see": {
     "ja": "6 臓器を体積順に並べ、同体積の半透明球を重ね、断面を積む。発散定理と固体ボクセルの体積は最大 0.191 % 差で、閉曲面は χ = 2。99 % 削減版が細い構造を失う限界も示す。",
@@ -1639,10 +1644,14 @@
     "fr": "6 organes sont classés par volume, superposés à des sphères translucides de même volume, puis reconstruits par sections. Les volumes par divergence et voxels solides diffèrent d’au plus 0.191 %; les surfaces fermées ont χ = 2. La limite montre les structures fines perdues par la réduction de 99 %."
    },
    "num": {
-    "ja": "6 臓器、体積差 ≤ 0.191 %、χ = 2・境界辺 0。", "en": "6 organs; volume difference ≤ 0.191%; χ = 2 and 0 boundary edges.",
-    "zh": "6 个器官；体积差 ≤ 0.191%；χ = 2，边界边为 0。", "tw": "6 個器官；體積差 ≤ 0.191%；χ = 2，邊界邊為 0。",
-    "ko": "장기 6개, 부피 차이 ≤ 0.191%, χ = 2, 경계 모서리 0개.", "de": "6 Organe; Volumendifferenz ≤ 0.191 %; χ = 2 und 0 Randkanten.",
-    "hi": "6 अंग; आयतन अंतर ≤ 0.191%; χ = 2 और सीमा किनारे 0।", "fr": "6 organes ; écart de volume ≤ 0.191 % ; χ = 2 et 0 arête de bord."
+    "ja": "6 臓器、体積差 ≤ 0.191 %、χ = 2・境界辺 0。",
+    "en": "6 organs; volume difference ≤ 0.191%; χ = 2 and 0 boundary edges.",
+    "zh": "6 个器官；体积差 ≤ 0.191%；χ = 2，边界边为 0。",
+    "tw": "6 個器官；體積差 ≤ 0.191%；χ = 2，邊界邊為 0。",
+    "ko": "장기 6개, 부피 차이 ≤ 0.191%, χ = 2, 경계 모서리 0개.",
+    "de": "6 Organe; Volumendifferenz ≤ 0.191 %; χ = 2 und 0 Randkanten.",
+    "hi": "6 अंग; आयतन अंतर ≤ 0.191%; χ = 2 और सीमा किनारे 0।",
+    "fr": "6 organes ; écart de volume ≤ 0.191 % ; χ = 2 et 0 arête de bord."
    }
   },
   {
@@ -1718,6 +1727,44 @@
     "de": "Bei 400 km, 5-µm-Pixeln und 8 m Brennweite beträgt die GSD 0.250 m. Bei 550 nm und 2.4 m Öffnung beträgt der Rayleigh-Bodenradius 0.112 m. Die Atmosphäre bleibt in der Grenzzeile ausdrücklich unberechnet.",
     "hi": "400 km ऊँचाई, 5 µm pixels और 8 m focal length पर GSD 0.250 m है। 550 nm और 2.4 m aperture पर Rayleigh ground radius 0.112 m है। वातावरण को सीमा-पंक्ति में स्पष्ट रूप से अनगणित रखा गया है।",
     "fr": "À 400 km, avec des pixels de 5 µm et une focale de 8 m, la GSD vaut 0.250 m. À 550 nm avec une ouverture de 2.4 m, le rayon de Rayleigh au sol vaut 0.112 m. L'atmosphère reste explicitement non calculée dans la ligne de limite."
+   }
+  },
+  {
+   "id": "pulseox",
+   "category": "anim3d",
+   "media": "pulseox_anim3d.html",
+   "media_path": "view2026/anim3d/pulseox_anim3d.html",
+   "motion": true,
+   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_pulseox_anim3d.py",
+   "label": {
+    "ja": "パルスオキシメータの二波長吸収",
+    "en": "Dual-wavelength pulse oximetry",
+    "zh": "脉搏血氧仪的双波长吸收",
+    "tw": "脈搏血氧儀的雙波長吸收",
+    "ko": "맥박 산소 측정의 두 파장 흡수",
+    "de": "Doppelwellenlängen-Pulsoximetrie",
+    "hi": "दोहरी तरंगदैर्घ्य वाली पल्स ऑक्सीमेट्री",
+    "fr": "Oxymétrie de pouls à double longueur d’onde"
+   },
+   "see": {
+    "ja": "拍動する動脈を通る赤と近赤外の光を追い、AC/DC の比 R から酸素飽和度を読む。雑音入り時系列と閉形式を比べ、COHb を見分けられない限界も示す。",
+    "en": "Follow red and near-infrared light through a pulsating artery and read oxygen saturation from the AC/DC ratio R. Noisy time series are compared with the closed form, and the COHb ambiguity is shown as a limit of dual-wavelength measurement.",
+    "zh": "跟随红光和近红外光穿过搏动的动脉，用 AC/DC 比值 R 读取血氧饱和度；比较带噪时序与闭式解，并显示无法区分 COHb 的局限。",
+    "tw": "跟隨紅光和近紅外光穿過搏動的動脈，用 AC/DC 比值 R 讀取血氧飽和度；比較帶雜訊時序與閉式解，並顯示無法區分 COHb 的限制。",
+    "ko": "박동하는 동맥을 지나는 적색광과 근적외선을 따라가며 AC/DC 비 R로 산소포화도를 읽는다. 잡음 시계열과 닫힌식을 비교하고 COHb를 구별하지 못하는 한계도 보인다.",
+    "de": "Rotes und nahinfrarotes Licht durch eine pulsierende Arterie verfolgen und aus dem AC/DC-Verhältnis R die Sauerstoffsättigung ablesen. Verrauschte Zeitreihen werden mit der geschlossenen Form verglichen; die COHb-Mehrdeutigkeit erscheint als Grenze.",
+    "hi": "धड़कती धमनी से गुजरती लाल और निकट-अवरक्त रोशनी देखें और AC/DC अनुपात R से ऑक्सीजन संतृप्ति पढ़ें। शोरयुक्त समय-श्रृंखला की बंद रूप से तुलना होती है और COHb की अस्पष्टता सीमा के रूप में दिखाई जाती है।",
+    "fr": "Suivre la lumière rouge et proche infrarouge dans une artère pulsatile, puis lire la saturation en oxygène avec le rapport AC/DC R. La série bruitée est comparée à la forme fermée et l’ambiguïté du COHb montre la limite."
+   },
+   "num": {
+    "ja": "R の最大差 0.00068、SpO₂ の最大誤差 0.034 %。COHb 10 % の模型では 90.0 % を 91.0 % と読む。",
+    "en": "Maximum R difference 0.00068; maximum oxygen-saturation error 0.034%. With 10% COHb, the model reads true 90.0% as 91.0%.",
+    "zh": "R 最大差 0.00068；SpO₂ 最大误差 0.034%。在 10% COHb 模型中，真值 90.0% 被读为 91.0%。",
+    "tw": "R 最大差 0.00068；SpO₂ 最大誤差 0.034%。在 10% COHb 模型中，真值 90.0% 被讀為 91.0%。",
+    "ko": "R 최대 차이 0.00068, SpO₂ 최대 오차 0.034%. COHb 10% 모형에서는 실제 90.0%를 91.0%로 읽는다.",
+    "de": "Maximale R-Abweichung 0.00068; maximaler SpO₂-Fehler 0.034 %. Bei 10 % COHb liest das Modell wahre 90.0 % als 91.0 %.",
+    "hi": "R का अधिकतम अंतर 0.00068 और SpO₂ की अधिकतम त्रुटि 0.034%। 10% COHb पर मॉडल सही 90.0% को 91.0% पढ़ता है।",
+    "fr": "Écart maximal de R : 0.00068 ; erreur maximale de SpO₂ : 0.034 %. Avec 10 % de COHb, le modèle lit 91.0 % au lieu de 90.0 %."
    }
   }
  ],

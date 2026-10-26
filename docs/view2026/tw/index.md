@@ -78,6 +78,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../anim3d/organ_volume.html?lang=tw"><img src="../thumbs/organ_volume.jpg" alt="器官體積和球形度" loading="lazy" width="320" height="320"><b>&#9654;</b><span>器官體積和球形度 · 0.5 MB</span></a>
 <a href="../../view2026/anim3d/interactive_anim3d_viewer.html?lang=tw"><img src="../thumbs/interactive_anim3d_viewer.jpg" alt="機械臂與半透明透鏡" loading="lazy" width="320" height="320"><b>&#9654;</b><span>機械臂與半透明透鏡 · 0.3 MB</span></a>
 <a href="../../view2026/anim3d/satellite_gsd_anim3d.html?lang=tw"><img src="../thumbs/satellite_gsd.jpg" alt="為什麼從軌道上看不清小字" loading="lazy" width="320" height="320"><b>&#9654;</b><span>為什麼從軌道上看不清小字 · 0.2 MB</span></a>
+<a href="../../view2026/anim3d/pulseox_anim3d.html?lang=tw"><img src="../thumbs/pulseox.jpg" alt="脈搏血氧儀的雙波長吸收" loading="lazy" width="320" height="320"><b>&#9654;</b><span>脈搏血氧儀的雙波長吸收 · 0.2 MB</span></a>
 </div>
 
 ## 系列文章 (Qiita 上的英文文章)
@@ -663,6 +664,7 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 - [器官體積和球形度](../../anim3d/organ_volume.html?lang=tw) (動態 3-D,可拖曳旋轉, 0.5 MB): 將 6 個器官按體積排序，疊加等體積半透明球，並累積截面。散度定理與實體體素的體積最多相差 0.191%，閉合曲面的 χ = 2；限制頁顯示 99% 簡化所遺失的細結構。 **6 個器官；體積差 ≤ 0.191%；χ = 2，邊界邊為 0。** [原始碼](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_organvol_anim3d.py)
 - [機械臂與半透明透鏡](../../view2026/anim3d/interactive_anim3d_viewer.html?lang=tw) (動態 3-D,可拖曳旋轉, 0.3 MB): 用手指旋轉,從任意角度觀看機械臂搬運箱子。光線穿過半透明透鏡匯聚到焦點,下方的俯視高度影像及其二值化結果在同一時間軸上同步播放。 [原始碼](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
 - [為什麼從軌道上看不清小字](../../view2026/anim3d/satellite_gsd_anim3d.html?lang=tw) (動態 3-D,可拖曳旋轉, 0.2 MB): 高度越高,1 個像素覆蓋的地面越寬;口徑越小,半透明光錐底部的艾里斑越大。越過藍色 GSD 與橙色繞射寬度的交點後,僅縮小像素也無法恢復 10 cm 線條。 **高度 400 km、像素 5 µm、焦距 8 m 時,GSD 為 0.250 m。波長 550 nm、口徑 2.4 m 時,Rayleigh 地面半徑為 0.112 m。大氣影響在限制列中明確標為未計算。** [原始碼](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_satgsd_anim3d.py)
+- [脈搏血氧儀的雙波長吸收](../../view2026/anim3d/pulseox_anim3d.html?lang=tw) (動態 3-D,可拖曳旋轉, 0.2 MB): 跟隨紅光和近紅外光穿過搏動的動脈，用 AC/DC 比值 R 讀取血氧飽和度；比較帶雜訊時序與閉式解，並顯示無法區分 COHb 的限制。 **R 最大差 0.00068；SpO₂ 最大誤差 0.034%。在 10% COHb 模型中，真值 90.0% 被讀為 91.0%。** [原始碼](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_pulseox_anim3d.py)
 
 </div>
 

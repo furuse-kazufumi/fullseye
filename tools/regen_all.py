@@ -294,6 +294,9 @@ _IMAGE_REASON = ("画像・動画の書き手。PNG/GIF のバイトは Pillow �
 _SPIKE_REASON = ("スパイク(実験)の記録。spikes/out_gallery/ の図は当時の証跡として凍結してあり、"
                  "再描画(matplotlib / GUI)はバイトが変わる。")
 EXCLUDED = {
+    "tools/build_pulseox_anim3d.py": ("パルスオキシメータの二波長吸収の動く 3-D 教材(docs/view2026/anim3d/pulseox_anim3d.html)。"
+                                       "`py -3.11 tools/anim3d_i18n.py --build build_pulseox_anim3d --out docs/view2026/anim3d/pulseox_anim3d.html` で書く"
+                                       "(翻訳表 tools/anim3d_i18n_tables/build_pulseox_anim3d.json)。門は tests/test_anim3d_pulseox_2026_10_26.py。"),
     "tools/check_page_overflow.py": ("門(生成器ではない): pocviewer のページを幅 390 px の iframe に入れて headless Chrome で開き、全タブ × 全言語の"
                                      "横はみ出しを測る。書くのは一時フォルダの計測用の写しだけで、repo には何も書かない。Chrome が要るので手で回す"
                                      "(tests/test_itokawa_page_overflow_2026_10_25.py、Chrome が無ければ skip)。"),
