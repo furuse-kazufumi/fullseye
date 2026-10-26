@@ -480,7 +480,7 @@ with warnings.catch_warnings():
     from engine import FullseyeEngine, diagnose_stages, pipeline_states  # noqa: E402,F401  (pipeline runtime)
     # engine-layer result state + memory-bounded stage cache (Qt-free; the browser Studio consumes these)
     from studio_result import (  # noqa: E402,F401
-        StageCache, assess_validity, input_reference, resolve_input_ref, file_sha256,
+        StageCache, assess_validity, input_reference, resolve_input_ref, file_sha256, cache_summary_text,
     )
     import graphengine  # noqa: E402,F401  (DAG pipeline runtime)
     from graphengine import FullseyeGraph  # noqa: E402,F401
@@ -961,6 +961,7 @@ __all__ = [
     "measure3d", "regionprops3d", "ops3d", "pipeline3d",
     "FullseyeEngine", "diagnose_stages", "graphengine", "FullseyeGraph",
     "pipeline_states", "StageCache", "assess_validity", "input_reference", "resolve_input_ref", "file_sha256",
+    "cache_summary_text",
     "Camera", "list_cameras", "open_framegrabber", "grab_image", "close_framegrabber",
     "open_channel", "protocols", "capabilities", "Channel",
     "TcpChannel", "UdpChannel", "HttpChannel", "ModbusTcpChannel", "ModbusTcpServer",

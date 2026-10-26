@@ -29,7 +29,7 @@ import numpy as np
 
 __all__ = [
     "assess_validity", "file_sha256", "input_reference", "resolve_input_ref",
-    "StageCache", "array_nbytes", "CACHE_BUDGET_BYTES",
+    "StageCache", "array_nbytes", "CACHE_BUDGET_BYTES", "cache_summary_text",
 ]
 
 # --------------------------------------------------------------------------- #
@@ -318,3 +318,22 @@ class StageCache:
     def stats(self):
         """報告用: 保持段数・合計バイト・予算。"""
         return {"entries": len(self._d), "bytes": self._bytes, "budget_bytes": self.budget_bytes}
+
+
+def cache_summary_text(summary):
+    """キャッシュの要約 1 行(idea 114 段ごとの時間とメモリ / 113 キャッシュの範囲も表示)。Qt 非依存。
+
+    ``summary`` は ``PipelineModel.cache_summary()`` か ``StageCache.stats()`` の dict。
+    例: ``"cache 8.4 / 256.0 MB · live 4/20 · evicted 16"``(evicted は 0 なら省く)。数字は報告だけで、
+    何も変えない。"""
+    mb = 1024.0 * 1024.0
+    used = float(summary.get("bytes", 0)) / mb
+    budget = float(summary.get("budget_bytes", 0)) / mb
+    live = summary.get("live", summary.get("entries", 0))
+    total = summary.get("stages")
+    s = "cache %.1f / %.1f MB" % (used, budget)
+    s += (" \u00b7 live %d/%d" % (live, total)) if total is not None else (" \u00b7 live %d" % live)
+    ev = int(summary.get("evicted", 0) or 0)
+    if ev:
+        s += " \u00b7 evicted %d" % ev
+    return s
