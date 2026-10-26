@@ -95,6 +95,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../view2026/anim3d/tablet_inspection_anim3d.html?lang=ja"><img src="thumbs/tablet_inspection.jpg" alt="錠剤の外観と色の検査" loading="lazy" width="320" height="320"><b>&#9654;</b><span>錠剤の外観と色の検査 · 0.5 MB</span></a>
 <a href="../view2026/anim3d/satellite_gsd_anim3d.html?lang=ja"><img src="thumbs/satellite_gsd.jpg" alt="軌道上から小さな文字が読めない理由" loading="lazy" width="320" height="320"><b>&#9654;</b><span>軌道上から小さな文字が読めない理由 · 0.2 MB</span></a>
 <a href="../view2026/anim3d/rail_light_section_anim3d.html?lang=ja"><img src="thumbs/rail_light_section.jpg" alt="光切断でレールの摩耗と軌間を測る" loading="lazy" width="320" height="320"><b>&#9654;</b><span>光切断でレールの摩耗と軌間を測る · 0.1 MB</span></a>
+<a href="../view2026/anim3d/venue_shadow_anim3d.html?lang=ja"><img src="thumbs/venue_shadow.jpg" alt="会場の街の冬至の日影" loading="lazy" width="320" height="320"><b>&#9654;</b><span>会場の街の冬至の日影 · 0.3 MB</span></a>
 </div>
 
 ## シリーズ記事
@@ -682,6 +683,7 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 - [錠剤の外観と色の検査](../view2026/anim3d/tablet_inspection_anim3d.html?lang=ja) (動く 3-D・触って回せる, 0.5 MB): 形と色だけの合成錠剤を回す。面積ごとに欠けなし 800 像と欠けあり 800 像を合成して検出率曲線を測り、色むらを ΔE00 = 8 から 0 へ下げる。異物位置と blob 数を測り、照明と平行な浅い割れが消える限界まで見る。 **異物位置誤差 0.292 px、90 % 検出の実測・正規近似とも 3 px² = 0.0192 mm²、CIEDE2000 の直接式との差 < 1e-12、分離 blob 5 個。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_tablet_anim3d.py)
 - [軌道上から小さな文字が読めない理由](../view2026/anim3d/satellite_gsd_anim3d.html?lang=ja) (動く 3-D・触って回せる, 0.2 MB): 高度を上げると 1 画素が覆う地上幅が広がり、口径を小さくすると半透明の光円錐の底にある Airy 円板が広がる。青い GSD と橙の回折幅の交点を越えると、画素だけ細かくしても 10 cm の線は戻らない。 **高度 400 km、5 µm 画素、焦点距離 8 m なら GSD は 0.250 m。波長 550 nm、口径 2.4 m の Rayleigh 地上半径は 0.112 m。大気は限界の行として未計算。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_satgsd_anim3d.py)
 - [光切断でレールの摩耗と軌間を測る](../view2026/anim3d/rail_light_section_anim3d.html?lang=ja) (動く 3-D・触って回せる, 0.1 MB): 斜めの光の面とレール表面の交線が、頭頂・ウェブ・底部に沿って曲がる。走行すると左頭頂の摩耗が立ち上がり、二本の内側距離から軌間の広がりが見える。 **雑音付きのサブピクセル光線から断面 RMS 0.699 mm、形を仮定しない摩耗誤差 0.0577 mm、点列から測った軌間誤差 0.346 mm。三角測量 op と独立閉形式は < 1e-12 mm。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_rail_anim3d.py)
+- [会場の街の冬至の日影](../view2026/anim3d/venue_shadow_anim3d.html?lang=ja) (動く 3-D・触って回せる, 0.3 MB): パシフィコ横浜のLOD2建物の上を太陽が8時から16時まで動き、青い影が朝夕に伸びて正午に縮む。1・2・3時間の日影線から、建物の並びで日照時間が変わる場所を読む。 **太陽位置の2経路の最大差 < 1e-12°、20 m箱の影長・面積の相対差 < 1e-12、実建物の正午影は最高点からの上限内。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_shadow_anim3d.py)
 
 </div>
 
