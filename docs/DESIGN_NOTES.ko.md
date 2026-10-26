@@ -2215,8 +2215,8 @@
 
 ## `tests/test_capabilities.py`
 
-- **L166** _(ja)_ — ★2026-09-24 に見つけた穴: 既存の門は frontmatter の `ops:` に書いた名前が実在 するかは見るが、**本文のコードは一度も実行していなかった**。だから `measure_pos(img, row=32, col0=0, col1=127)`(実際の引数は測定線ハンドル)、 `fs.frame_align([a, b])`(実際は (reference, frame) の 2 引数)、 `fs.ledger.blob_count(mask)`(blob_count は台帳ではなく 2-D の進化 op)が 3 本とも**走らないまま出荷**されていた。名前の実在と呼び方の正しさは別物で、 前者だけの門は後者に構造的に盲目([[feedback_registered_only_gates_miss_unregistered]])。 走らないことが正しい例もある —— 利用者自身の写真や校正板の角点が要るもの。 それは**理由つきで名指し**する。名指しの無いものが 1 本でも落ちたら赤。 「ファイルが無いから仕方ない」を既定にすると、呼び方の誤りがそこに紛れる。
-- **L182** _(ja)_ — ★2026-09-25: `io` は例のなかで `fs.open_driver("io-memory")` から開く ようにしたので、免除の理由は**ロット画像だけ**に縮んだ。
+- **L167** _(ja)_ — ★2026-09-24 に見つけた穴: 既存の門は frontmatter の `ops:` に書いた名前が実在 するかは見るが、**本文のコードは一度も実行していなかった**。だから `measure_pos(img, row=32, col0=0, col1=127)`(実際の引数は測定線ハンドル)、 `fs.frame_align([a, b])`(実際は (reference, frame) の 2 引数)、 `fs.ledger.blob_count(mask)`(blob_count は台帳ではなく 2-D の進化 op)が 3 本とも**走らないまま出荷**されていた。名前の実在と呼び方の正しさは別物で、 前者だけの門は後者に構造的に盲目([[feedback_registered_only_gates_miss_unregistered]])。 走らないことが正しい例もある —— 利用者自身の写真や校正板の角点が要るもの。 それは**理由つきで名指し**する。名指しの無いものが 1 本でも落ちたら赤。 「ファイルが無いから仕方ない」を既定にすると、呼び方の誤りがそこに紛れる。
+- **L183** _(ja)_ — ★2026-09-25: `io` は例のなかで `fs.open_driver("io-memory")` から開く ようにしたので、免除の理由は**ロット画像だけ**に縮んだ。
 
 ## `tests/test_chain_type_contracts.py`
 

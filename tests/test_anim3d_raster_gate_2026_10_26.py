@@ -48,7 +48,7 @@ def test_one_changed_pixel_is_only_accepted_off_the_reference_font(monkeypatch):
     with pytest.raises(AssertionError):
         gate.check_same_page(committed, rebuilt, "page.html", "example")
     monkeypatch.setattr(gate, "_raster_font_name", lambda: "DejaVuSans.ttf")
-    assert gate.check_same_page(committed, rebuilt, "page.html", "example") == "rasters-normalised"
+    assert gate.check_same_page(committed, rebuilt, "page.html", "example") == "portable"
 
 
 @pytest.mark.parametrize("font", [gate.RASTER_REFERENCE_FONT, "NotoSansCJK-Regular.ttc"])
@@ -77,3 +77,39 @@ def test_normal_form_has_a_nonempty_raster_target_and_keeps_shape():
     assert len(records) >= 1
     assert records[0]["shape"] == [2, 3, 4]
     assert records[0]["png"] == ["<RASTER>", "<RASTER>"]
+
+
+def test_tiny_vertex_drift_is_portable_but_reference_font_stays_exact(monkeypatch):
+    committed, rebuilt = _page(), _page(xyz_value=1e-10)
+    assert committed != rebuilt
+    monkeypatch.setattr(gate, "_raster_font_name", lambda: "DejaVuSans.ttf")
+    assert gate.check_same_page(committed, rebuilt, "page.html", "example") == "portable"
+    monkeypatch.setattr(gate, "_raster_font_name", lambda: gate.RASTER_REFERENCE_FONT)
+    with pytest.raises(AssertionError):
+        gate.check_same_page(committed, rebuilt, "page.html", "example")
+
+
+def test_material_vertex_drift_reports_original_key_and_json_location(monkeypatch):
+    committed, rebuilt = _page(), _page(xyz_value=1e-3)
+    data, _, _ = gate._embedded_data(committed)
+    original_key = data["tabs"][0]["xyz"]
+    monkeypatch.setattr(gate, "_raster_font_name", lambda: "DejaVuSans.ttf")
+    with pytest.raises(AssertionError) as caught:
+        gate.check_same_page(committed, rebuilt, "page.html", "example")
+    message = str(caught.value)
+    assert original_key in message
+    assert "$.tabs[0].xyz" in message
+    assert "delta" in message
+
+
+def test_portable_comparison_rejects_string_and_array_count_changes():
+    base = _page()
+    assert gate.compare_pages_portable(base, _page(check_result="1.X"))
+    data, start, end = gate._embedded_data(base)
+    key = data["tabs"][0]["quat"]
+    del data["arrays"][key]
+    import json
+    fewer = base[:start] + json.dumps(data, ensure_ascii=False, separators=(",", ":")) + base[end:]
+    differences = gate.compare_pages_portable(base, fewer)
+    assert differences
+    assert any("count" in item or "quat" in item for item in differences)
