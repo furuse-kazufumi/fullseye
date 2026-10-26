@@ -62,7 +62,7 @@ Die 95 Fähigkeiten, aufgeteilt nach Art der Prüfung (`docs/maturity.json`, von
 | `validated-public-real-data` | ein Beispiel mit öffentlichen Messdaten läuft in einem Gate | 18 |
 | `validated-hardware` | an Hardware validiert (nur über angenommene externe Berichte) | 0 |
 
-Von 436 Beispielen werden 436 tatsächlich von einem Gate ausgeführt.
+Von 437 Beispielen werden 437 tatsächlich von einem Gate ausgeführt.
 
 ### Operatorzahlen pro Version
 
@@ -137,16 +137,16 @@ Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. F
 
 ## Einen Operator finden
 
-**3,574 Operator-Notizen** (Aufrufform, Typvertrag, HALCON-Pendant, Literatur, Provenienz) und **69 Familien-Leitfäden**. Einstiegspunkte nach Dimension:
+**3,576 Operator-Notizen** (Aufrufform, Typvertrag, HALCON-Pendant, Literatur, Provenienz) und **69 Familien-Leitfäden**. Einstiegspunkte nach Dimension:
 
-**Gemessene Abdeckung**: evolvierbare Ops 942/942, typisiertes Ledger 2611/2623, Fassade `fullseye.<name>` 706/1491 — **die Fassade ist erst zur Hälfte abgedeckt**.
+**Gemessene Abdeckung**: evolvierbare Ops 942/942, typisiertes Ledger 2613/2625, Fassade `fullseye.<name>` 706/1491 — **die Fassade ist erst zur Hälfte abgedeckt**.
 
-**Gemessener Inhalt**: von 3574 Notizen verweisen **3547** auf mindestens ein lauffähiges Beispiel (27 ohne), **3376** haben einen Nutzungsabschnitt ab 120 Zeichen (198 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 3574.
+**Gemessener Inhalt**: von 3576 Notizen verweisen **3549** auf mindestens ein lauffähiges Beispiel (27 ohne), **3378** haben einen Nutzungsabschnitt ab 120 Zeichen (198 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 3576.
 
 | Dimension | Ops | Einstieg |
 |---|---:|---|
 | `2d` | 959 | [INDEX](ops/2d/INDEX.md) |
-| `drive` | 703 | [INDEX](ops/drive/INDEX.md) |
+| `drive` | 705 | [INDEX](ops/drive/INDEX.md) |
 | `optics` | 465 | [INDEX](ops/optics/INDEX.md) · [guide](ops/optics/guides/optics_imaging.md) |
 | `3d` | 373 | [INDEX](ops/3d/INDEX.md) |
 | `math` | 114 | [INDEX](ops/math/INDEX.md) · [guide](ops/math/guides/math_metrology.md) |
@@ -298,7 +298,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## Dokumentkarte — alle 288
 
-Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** (die 3,574 Operator-Notizen und 69 Familien-Leitfäden unter `docs/ops/` über den Operator-Abschnitt oben; Artikel über [articles/](articles/README.md)). **Die Texte sind überwiegend japanisch.**
+Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** (die 3,576 Operator-Notizen und 69 Familien-Leitfäden unter `docs/ops/` über den Operator-Abschnitt oben; Artikel über [articles/](articles/README.md)). **Die Texte sind überwiegend japanisch.**
 
 **Getting started**(12)
 
