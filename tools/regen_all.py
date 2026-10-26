@@ -315,6 +315,9 @@ EXCLUDED = {
     "tools/build_satgsd_anim3d.py": ("衛星の地上分解能と回折の動く 3-D の教材(docs/view2026/anim3d/satellite_gsd_anim3d.html)。"
                                      "`py -3.11 tools/anim3d_i18n.py --build build_satgsd_anim3d --out docs/view2026/anim3d/satellite_gsd_anim3d.html` で書く"
                                      "(翻訳表 tools/anim3d_i18n_tables/build_satgsd_anim3d.json)。門は tests/test_anim3d_satgsd_2026_10_26.py。"),
+    "tools/build_tablet_anim3d.py": ("合成錠剤の外観検査の動く 3-D 教材(docs/view2026/anim3d/tablet_inspection_anim3d.html)。"
+                                     "`py -3.11 tools/anim3d_i18n.py --build build_tablet_anim3d --out docs/view2026/anim3d/tablet_inspection_anim3d.html` で書く"
+                                     "(翻訳表 tools/anim3d_i18n_tables/build_tablet_anim3d.json)。門は tests/test_anim3d_tablet_2026_10_26.py。"),
     "tools/build_gsplat_pages.py": ("docs/gsplat/ の 3DGS の商品ビューアとカタログ(examples/gsplat_product_viewer.py の build)。"
                                     "marching cubes に scikit-image(任意の依存)が要り、5 品の 3DGS 化とサムネイルの numpy 描画で"
                                     "1 分ほどかかり、出力は 1 本数 MB —— 鎖に入れず、ページを変える回は手で回して commit する。"),

@@ -76,6 +76,7 @@ SPEC = [
     ("interactive_anim3d_viewer", "view2026/anim3d/interactive_anim3d_viewer_poster.jpg", None, None),
     ("organ_volume", "anim3d/organ_volume_poster.jpg", None, None),
     ("satellite_gsd", "view2026/anim3d/satellite_gsd_anim3d_poster.png", None, None),
+    ("tablet_inspection", "view2026/anim3d/tablet_inspection_anim3d_poster.png", None, None),
 ]
 
 #: シリーズの入口の動くサムネイル。(名前, 元の GIF(docs/ からの相対), コマ数, 幅)。64 色に減らす。

@@ -1683,6 +1683,40 @@
    }
   },
   {
+   "id": "tablet_inspection",
+   "category": "anim3d",
+   "media": "tablet_inspection_anim3d.html",
+   "media_path": "view2026/anim3d/tablet_inspection_anim3d.html",
+   "motion": true,
+   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_tablet_anim3d.py",
+   "label": {
+    "ja": "錠剤の外観と色の検査", "en": "Tablet appearance and colour inspection",
+    "zh": "Tablet appearance and colour inspection", "tw": "Tablet appearance and colour inspection",
+    "ko": "Tablet appearance and colour inspection", "de": "Tablet appearance and colour inspection",
+    "hi": "Tablet appearance and colour inspection", "fr": "Tablet appearance and colour inspection"
+   },
+   "see": {
+    "ja": "形と色だけの合成錠剤を回す。面積ごとに欠けなし 800 像と欠けあり 800 像を合成して検出率曲線を測り、色むらを ΔE00 = 8 から 0 へ下げる。異物位置と blob 数を測り、照明と平行な浅い割れが消える限界まで見る。",
+    "en": "Rotate synthetic tablets defined only by shape and colour. At each area, synthesize 800 chip-free and 800 chipped images and measure the detection-rate curve; fade a colour patch from ΔE00 = 8 to 0. Measure foreign-particle position and blob count, then expose the limit where a shallow crack parallel to the light vanishes.",
+    "zh": "Rotate synthetic tablets defined only by shape and colour. At each area, synthesize 800 chip-free and 800 chipped images and measure the detection-rate curve; fade a colour patch from ΔE00 = 8 to 0. Measure foreign-particle position and blob count, then expose the limit where a shallow crack parallel to the light vanishes.",
+    "tw": "Rotate synthetic tablets defined only by shape and colour. At each area, synthesize 800 chip-free and 800 chipped images and measure the detection-rate curve; fade a colour patch from ΔE00 = 8 to 0. Measure foreign-particle position and blob count, then expose the limit where a shallow crack parallel to the light vanishes.",
+    "ko": "Rotate synthetic tablets defined only by shape and colour. At each area, synthesize 800 chip-free and 800 chipped images and measure the detection-rate curve; fade a colour patch from ΔE00 = 8 to 0. Measure foreign-particle position and blob count, then expose the limit where a shallow crack parallel to the light vanishes.",
+    "de": "Rotate synthetic tablets defined only by shape and colour. At each area, synthesize 800 chip-free and 800 chipped images and measure the detection-rate curve; fade a colour patch from ΔE00 = 8 to 0. Measure foreign-particle position and blob count, then expose the limit where a shallow crack parallel to the light vanishes.",
+    "hi": "Rotate synthetic tablets defined only by shape and colour. At each area, synthesize 800 chip-free and 800 chipped images and measure the detection-rate curve; fade a colour patch from ΔE00 = 8 to 0. Measure foreign-particle position and blob count, then expose the limit where a shallow crack parallel to the light vanishes.",
+    "fr": "Rotate synthetic tablets defined only by shape and colour. At each area, synthesize 800 chip-free and 800 chipped images and measure the detection-rate curve; fade a colour patch from ΔE00 = 8 to 0. Measure foreign-particle position and blob count, then expose the limit where a shallow crack parallel to the light vanishes."
+   },
+   "num": {
+    "ja": "異物位置誤差 0.292 px、90 % 検出の実測・正規近似とも 3 px² = 0.0192 mm²、CIEDE2000 の直接式との差 < 1e-12、分離 blob 5 個。",
+    "en": "Foreign-particle position error 0.292 px; measured and normal-approximation 90% detection areas are both 3 px² = 0.0192 mm²; CIEDE2000 direct-formula difference < 1e-12; 5 separated blobs.",
+    "zh": "Foreign-particle position error 0.292 px; measured and normal-approximation 90% detection areas are both 3 px² = 0.0192 mm²; CIEDE2000 direct-formula difference < 1e-12; 5 separated blobs.",
+    "tw": "Foreign-particle position error 0.292 px; measured and normal-approximation 90% detection areas are both 3 px² = 0.0192 mm²; CIEDE2000 direct-formula difference < 1e-12; 5 separated blobs.",
+    "ko": "Foreign-particle position error 0.292 px; measured and normal-approximation 90% detection areas are both 3 px² = 0.0192 mm²; CIEDE2000 direct-formula difference < 1e-12; 5 separated blobs.",
+    "de": "Foreign-particle position error 0.292 px; measured and normal-approximation 90% detection areas are both 3 px² = 0.0192 mm²; CIEDE2000 direct-formula difference < 1e-12; 5 separated blobs.",
+    "hi": "Foreign-particle position error 0.292 px; measured and normal-approximation 90% detection areas are both 3 px² = 0.0192 mm²; CIEDE2000 direct-formula difference < 1e-12; 5 separated blobs.",
+    "fr": "Foreign-particle position error 0.292 px; measured and normal-approximation 90% detection areas are both 3 px² = 0.0192 mm²; CIEDE2000 direct-formula difference < 1e-12; 5 separated blobs."
+   }
+  },
+  {
    "id": "satellite_gsd",
    "category": "anim3d",
    "media": "satellite_gsd_anim3d.html",
