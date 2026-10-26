@@ -14,7 +14,7 @@
 <p>*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>円形窓内のグレースケール Shannon エントロピー(<code style="color:#22d3bf">skimage.filters.rank. entropy</code>、8bit 量子化)を正規化した画像。窓内の階調の「散らばり具合」を測るテクスチャ指標で、一様な領域では低く、雑多な階調が混在する領域では高くなる。HALCON の <code style="color:#22d3bf">entropy_image</code>（Calculate the entropy of gray values within a rectangular window.）に相当(HALCON は矩形窓、ここでは円形窓を使う近似)。</p>
-<p><code style="color:#22d3bf">a</code> が窓の半径を 1〜4 の範囲(<code style="color:#22d3bf">_rad(a)</code>)で振る。<code style="color:#22d3bf">b</code> は未使用。skimage が無い環境ではこの分岐は呼べない。</p>
+<p><code style="color:#22d3bf">a</code> が窓の半径を 1〜4 の範囲(<code style="color:#22d3bf">_rad(a)</code>)で振る。<code style="color:#22d3bf">b</code> は未使用。scikit-image が無い環境では <code style="color:#22d3bf">MissingDependencyError</code>(何を入れればよいかを言う)で止まる —— 別の答えは返さない。</p>
 <p><b>つまみ(実測)</b>: <code style="color:#22d3bf">a</code> は<b>段階的</b>に効き、切り替わるのは a ≈ 0.33、0.67、0.99(実測。刻み 0.02 の掃きで測った位置)。</p>
 <p><b>何も写っていないフレーム(実測)</b>: 明るさが一様な画像を入れると、<b>明るさに関係なく空(全画素が背景 0)</b>になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>

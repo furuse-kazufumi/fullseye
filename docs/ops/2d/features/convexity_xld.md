@@ -32,8 +32,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 ## 使い方
 
 最大の輪郭について凸性 ``輪郭の面積 / 凸包の面積`` を計算する
-(``cv2.convexHull`` + ``cv2.contourArea``)。cv2 が無い環境では常に 1.0
-(完全凸)を返すフォールバックになる点に注意。HALCON の ``convexity_xld``
+(``cv2.convexHull`` + ``cv2.contourArea``)。cv2 が無い環境では ``MissingDependencyError`` で止まる(2026-10-25 までは常に 1.0 = 完全凸を返していた)。HALCON の ``convexity_xld``
 （Shape factor for the convexity of contours or polygons.）に相当。
 
 ``a``, ``b`` は未使用。

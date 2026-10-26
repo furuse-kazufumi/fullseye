@@ -37,6 +37,13 @@ try:  # skimage is a repo-wide dependency; guard so import never hard-fails.
 except Exception:  # noqa: BLE001  # pragma: no cover - skimage is present in this env
     _skmorph = None
 
+# scikit-image が無いときの骨格化は bit 一致の numpy 双子(numpy_twins.skeletonize)。
+# 2026-10-25 まで ``f2_gray_skeleton`` は skimage 無しで**入力をそのまま返していた**(別の答え、例外なし)。
+if _skmorph is not None:
+    _skeletonize = _skmorph.skeletonize
+else:
+    from numpy_twins import skeletonize as _skeletonize
+
 
 # --------------------------------------------------------------------------- #
 # small helpers                                                               #
@@ -160,13 +167,11 @@ def f2_gray_skeleton(v, a, b):
     set by ``a``) and lift the 1-px medial ridge back to the original gray
     values. ``b`` is ignored."""
     x = _img(v)
-    if _skmorph is None:
-        return x
     thr = 0.15 + 0.60 * float(a)                  # bright-region threshold
     mask = x > thr
     if not mask.any():
         return np.zeros_like(x)
-    sk = _skmorph.skeletonize(mask)
+    sk = _skeletonize(mask)
     return np.clip(x * sk.astype(np.float64), 0.0, 1.0)
 
 
@@ -308,8 +313,12 @@ def f2_gray_inside(v, a, b):
     are raised toward the wall height; regions connected to the border stay dark.
     ``a`` sets the maximum fill depth ``h = 0.02 + 0.98*a``; ``b`` is ignored."""
     x = _img(v)
-    if _skmorph is None or x.size < 4:
+    if x.size < 4:
         return x
+    # 2026-10-25 まで skimage 無しでは入力をそのまま返していた(穴埋めをしていないのに例外なし)。
+    # ``reconstruction`` は Cython の優先度キューで bit 一致の numpy 版が無いので fail-closed。
+    from backend_safe import require_dependency
+    require_dependency(_skmorph is not None, "skimage", "grayscale reconstruction = skimage.morphology.reconstruction")
     h = 0.02 + 0.98 * float(a)
     marker = np.minimum(x + h, 1.0)
     marker[0, :] = x[0, :]

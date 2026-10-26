@@ -335,6 +335,64 @@ def build(example: str, out: str | os.PathLike, table: dict | None = None, viewe
     return pv.write_viewer(spec8, out, list(LANGS), detect_lang=True)
 
 
+# --------------------------------------------------------------------------- commit 済みページの門
+def first_diff_offset(a: bytes, b: bytes) -> int:
+    """最初に違うバイトの位置(片方が他方の前置なら短い方の長さ)。64 KiB の塊で粗く、次に 1 バイトずつ。"""
+    n, i, step = min(len(a), len(b)), 0, 65536
+    while i < n and a[i:i + step] == b[i:i + step]:
+        i += step
+    while i < n and a[i] == b[i]:
+        i += 1
+    return i
+
+
+def describe_page_mismatch(committed: str, rebuilt: str, page, example: str, ctx: int = 200) -> str | None:
+    """commit 済みのページ(``committed``)と今の生成器 + 翻訳表で作り直したページ(``rebuilt``)を比べ、同じなら None、
+    違えば **短い** 説明文を返す(sha256 → 最初に違うバイトの位置 → その前後 ``ctx`` 文字を両側 → 違う行の数。
+    作り直したページは一時フォルダに書いてパスを添える)。
+
+    ページは数 MB なので ``assert html == want`` にしてはいけない —— pytest の assertion rewriting が 2 本の文字列を
+    difflib に通し、CI で 10 分の timeout に当たった(2026-10-25、イトカワ run 40215975176・レンズ系 PR #153)。
+    門は :func:`check_same_page` を 1 行呼ぶ。
+    """
+    import hashlib
+    import itertools
+
+    a, b = committed.encode("utf-8"), rebuilt.encode("utf-8")
+    ha, hb = hashlib.sha256(a).hexdigest(), hashlib.sha256(b).hexdigest()
+    if ha == hb:
+        return None
+    off = first_diff_offset(a, b)
+    lo = max(0, off - ctx)
+    side_a = a[lo:off + ctx].decode("utf-8", errors="replace")
+    side_b = b[lo:off + ctx].decode("utf-8", errors="replace")
+    n_lines = sum(1 for x, y in itertools.zip_longest(committed.splitlines(), rebuilt.splitlines()) if x != y)
+    name = os.path.basename(str(page))
+    out = os.path.join(tempfile.gettempdir(), name.replace(".html", "") + ".rebuilt.html")
+    with open(out, "w", encoding="utf-8", newline="") as f:
+        f.write(rebuilt)
+    return ("commit 済みの %s が今の生成器 + 翻訳表の 8 言語版と違う —— "
+            "py -3.11 tools/anim3d_i18n.py --build %s --out %s で作り直す。\n"
+            "  sha256 committed=%s rebuilt=%s\n"
+            "  bytes committed=%d rebuilt=%d, 違う行 %d 本, 最初に違うバイト offset=%d\n"
+            "  committed[%d:%d]=%r\n  rebuilt  [%d:%d]=%r\n  作り直したページ: %s"
+            % (name, example, str(page).replace(chr(92), "/"), ha[:16], hb[:16], len(a), len(b), n_lines, off,
+               lo, off + ctx, side_a, lo, off + ctx, side_b, out))
+
+
+def check_same_page(committed: str, rebuilt: str, page, example: str) -> None:
+    """commit 済みのページが作り直しとバイト一致しなければ、:func:`describe_page_mismatch` の短い文で ``AssertionError``。
+
+    テストでの使い方(巨大な文字列の ``==`` を書かない)::
+
+        want = I18N.pv._build_html(I18N.translate(spec, table), list(I18N.LANGS), detect_lang=True)
+        I18N.check_same_page(html, want, PAGE, BUILDER)
+    """
+    msg = describe_page_mismatch(committed, rebuilt, page, example)
+    if msg is not None:
+        raise AssertionError(msg)
+
+
 # --------------------------------------------------------------------------- 走るサンプル
 def demo() -> int:
     """見本(interactive_anim3d_viewer)を 8 言語にし、わざと壊した表 3 通りが止まることを見せる。"""

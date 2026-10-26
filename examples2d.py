@@ -266,6 +266,9 @@ EXAMPLES = [
     {"id": "poc_driving_japan_town", "task": "imgmetrics", "data": "synthetic",
      "name": "実在の日本の町を自前の世界に建てて走る —— 道は OpenStreetMap、建物は PLATEAU、道具立てと規則は日本のもの",
      "summary": "著者の発案「出来れば日本のマップでやりたい」。外部シミュレータの同梱マップは欧米の町なので、自前の世界に日本を作る。新モジュール drivejapan 15 op(OSM の読み込みと等距円筒、道路網、幅つき線分のラスタ和集合、contours_xld の境界追跡で穴 = 街区、最短路を左の車線中心に寄せて停止線を並べる、日本の道具立て: 一時停止 330-A 一辺 80 cm・停止線 45 cm・「止まれ」240 × 80 cm × 3 字・踏切警標・電柱・カーブミラー・進行方向に平行な横断歩道)と driveplateau 7 op(国交省 PLATEAU の CityGML から LOD1 の足元と高さ → 押し出し柱)。門 24 本: 緯度 0.001° = 111.3195 m、第 2 実装と 1e-9 で一致、直線路の面積 = L w + π(w/2)² に 0.04 %、境界ループの面積 = 画素数 × step² に 1.5e-11、格子の穴 4、最短路 160 m、停止線 76.25 / 156.25 m(閉形式)、右側通行は鏡像、逆向き一方通行を避けて 320 m、停止 2 回が停止線の 0.54 m 手前、town_checks ok、一時停止の板は一辺 0.8 m、「止まれ」の列 9.2 m、合成の柱 30 m。実データ(銀座 0.7 × 0.6 km、OSM 586 辺・街区 122・PLATEAU 852 棟)では面積の門 5e-8、経路 461 m を停止 7 回で走り ok。正直に: 幅は 6 割が種別の既定、字形は略字形、他車・歩行者・現示なし、地盤は平ら。図の出典: © OpenStreetMap contributors (ODbL) / 国土交通省 Project PLATEAU。"},
+    {"id": "poc_plateau_venue_lod2", "task": "metrology", "data": "real",
+     "name": "会場の建物と小惑星イトカワを同じ物差しで —— PLATEAU の CityGML LOD2 を三角形メッシュにして並べる",
+     "summary": "著者の発案「イトカワ(約 535 m)と会場の建物を比べたら大きさが実感できる」。新 op driveplateau.plateau_lod2_mesh(CityGML LOD2 の主題面 → 三角形メッシュ (V, F) と部位ごとの属性、EPSG:6697 を GRS80 の ECEF 経由で接平面 ENU [m] へ厳密に、穴は橋渡しで耳切り、未知の幾何・座標系・単位は fail-closed)。会場の 7 部位は国土交通省 PLATEAU 横浜市 2020 年度から作った data/plateau_yokohama/venue_lod2.npz(112 kB、PDL1.0 / CC BY 4.0 互換、加工の内容は README)。門 7 本: 合成の切妻屋根で高さ 12 / 4 m・体積 2000 / 144 m³(発散定理)・穴あき屋根の面積が閉形式、EPSG:6697 以外は拒否、会場のメッシュの高さ = measuredHeight ±0.05 m(最大差 0.045 m)、面は外向き、イトカワの点群は細長い。イトカワの長さ 535 m = 展示ホールの長辺 263 m の 2.0 倍 = ホテル棟 142 m の 3.8 本分。正直に: 点群の主軸方向の外接幅(562 × 298 × 244 m)は文献値より 1〜17 % 大きく門にしない。ホテル棟と会議センターは PLATEAU では 1 部位。図の出典: 「3D都市モデル(Project PLATEAU)横浜市(2020年度)」(国土交通省)を加工して作成。"},
     {"id": "poc_driving_town", "task": "imgmetrics", "data": "synthetic",
      "name": "町を 1 つに組む —— 教習所の要素を自動で継ぎ、入口から出口まで通して走り、途中の停止線を全部採点する",
      "summary": "著者の発案「各 PoC 系列で 1 回ずつ集大成を作る。第 1 弾は運転」の土台。新モジュール drivetown 10 op(要素 k+1 の entry を要素 k の exit に合わせる閉形式の配置 p = target ∘ entry⁻¹、既定の町 9 要素 235.1 m、1 本の中心線、通行側で選ぶ停止線、法規パック JP/US/DE、遮断機つき警報機・遮断かん・列車を解釈基準の状態機械で動かす踏切、先の停止線を止まっている先行車と見なす IDM の縦だけの通し走行、通しの採点、教則 159 場面の台帳の集計)。門 38 本: 警報 20 s の列車で踏切の発進 65.50 s ≥ 上昇完了 65.45 s・警報中に踏切面にかかった時間 0、JP は 2 回停止・US/DE は列車なしなら 1 回、右側通行の停止線は交差点中心の鏡像(s 40.95 ↔ 65.95)、遮断中のコマに遮断かん 1078 画素・列車のコマに 46,129 画素、 継ぎ目 8 か所の位置差 − overlap = 1.1e-14・向きの差 0、総延長 = Σ − 0.05 × 8 で差 0、停止線 2 本の位置は規格の寸法から閉形式(1e-9)、停止は停止線の 0.537 / 0.536 m 手前、|a| 最大 1.877 ≤ 3、台形則の ∫v dt と s の差 3.9e-11 m、制動距離 ≥ v²/2b、crossing_stop_check が ok(左右を見た)、同じ指令を long_simulate(RK4)に渡した第 2 実装と停止位置の差 0.002 m、車載カメラのコマに信号機・レール・斜面の面が映る。正直に: 縦だけ(横は中心線に貼り付け)、信号は 2 秒待てば青の規則で灯火は読まない、他車・歩行者なし、US/DE の規則は一次資料未確認(verified False)。"},
@@ -529,6 +532,13 @@ EXAMPLES = [
                 "等間隔の補間は 41 点で誤差 1e5、Chebyshev 点は 3e-4 / Euler はエネルギーが 300 歩で 20 倍、Verlet は有界、"
                 "RK4 は短時間は正確だが誤差が時間に比例して増え t≈2300 で Verlet に抜かれる / 積分誤差の傾き 乱数 −0.5・Sobol −1 / "
                 "Gauss は n 点で 2n−1 次まで厳密 / ガウスでぼけた段差は ½(1+erf)。"},
+    {"id": "itokawa_gravity_tour", "task": "measurement", "data": "real",
+     "name": "小惑星イトカワの実際の形の上で、立つ場所の重さと坂を測る —— 一様密度の多面体の厳密な重力(polygrav 2 op)",
+     "summary": "公開データの形(NASA PDS Small Bodies Node の Gaskell Itokawa Shape Model、Q = 64 の 49,152 面、CC0 1.0、"
+                "data/itokawa_shape/)で、polyhedron_gravity(Werner & Scheeres 1997 の面と辺の和)を長軸の断面に沿って計算: "
+                "自転の遠心力を足した実効重力は 56.8〜82.0 µm/s²、両端で軽い。重心でガウスの法則 ∇·g = −4πGρ が 2e-16。"
+                "polyhedron_clip_halfspace で x ≥ 150 m を頭として切り、頭 2,850 kg/m³・全体の質量を保つと胴 1,754 kg/m³・"
+                "重心 +21.5 m(Lowry 2014: 1,750 ± 110・21 ± 12 m)。動く 3-D 版は tools/build_itokawa_anim3d.py。"},
     {"id": "transforms_tour", "task": "math", "data": "synthetic",
      "name": "フーリエ以外の積分変換を一巡する —— 炎の Abel 断層化・円い穴の Airy(Hankel)・2 次系の応答・数値逆ラプラス",
      "summary": "棚卸し(2026-10-03)で 0 本だった Laplace 系統と Abel・Hankel を足した 10 本を、閉じた式と重ねて確かめる: "
@@ -636,6 +646,13 @@ EXAMPLES = [
                 "単レンズの焦点 = 厚肉の閉形式、アクロマートの F−C = 0。限界の回: f/2.5 で 13 %、"
                 "20° の T 像面で 20 % 外れる。波面が数十波長の瞳は回折の PSF を作らず幾何の PSF(光線の密度 ⊗ Airy、"
                 "重なりの領域で回折の PSF と集中半径 4 % 以内)に切り替える。"},
+     {"id": "gsplat_product_viewer", "task": "visualization", "data": "synthetic",
+     "name": "商品を 3D Gaussian Splatting にしてブラウザで回して見る(1 品のビューア + 5 品のカタログ)",
+     "summary": "fs.gs_viewer_html / fs.gs_catalog_html の最小例。符号付き距離場の op と marching cubes で作った"
+                "マグ・ヘッドホン・腕時計・スニーカー・ランプを gs_from_world で 3DGS にし(メッシュから初期化、"
+                "学習ではない)、外部読み込み無しの 1 枚の HTML に書く。WebGL2 で gs_render と同じ EWA の式、"
+                "並べ替えは Web Worker、寸法は smallest_box3。注記点・回転台・背景・品質つまみ、8 言語。"
+                "書いた HTML を読み戻し、量子化の刻みの半分以内で戻ること・外部 URL 0 を確かめる。"},
     {"id": "camera_intrinsics_calibration", "task": "calibration", "data": "synthetic",
      "name": "平面ターゲットの多視点から内部行列 K を推定する(Zhang 法)",
      "summary": "fs.camera_calibration を facade から呼ぶ最小例。傾けた 6 視点で K を厳密回収し"
@@ -1999,6 +2016,8 @@ EXCLUDED = {
                          "external MuJoCo Menagerie assets (not shipped)",
     "tof_camera_physical": "support module required by poc_tof_camera; it cannot run as a "
                            "standalone gallery example",
+    "gsplat_trained_product": "needs a Python with CUDA torch (FULLSEYE_TORCH_PYTHON) to train the 3DGS on the GPU; "
+                              "without one it prints SKIP, so it cannot self-run as a gallery example",
     "tof_realdata": "support module required by poc_tof_camera; it needs optional external "
                     "validation data and cannot run as a standalone gallery example",
 }

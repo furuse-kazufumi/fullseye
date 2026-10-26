@@ -34,10 +34,11 @@ from __future__ import annotations
 import numpy as np
 from scipy import ndimage
 
-try:  # skimage is used only to thin regions for split_skeleton_lines; degrade gracefully
+try:  # skimage is used only to thin regions for split_skeleton_lines
     from skimage.morphology import skeletonize as _sk_skeletonize
 except ImportError:  # pragma: no cover - environment without skimage
-    _sk_skeletonize = None
+    # bit 一致の numpy 双子(2026-10-25 までは ``m`` をそのまま骨格として使い、別の答えを返していた)
+    from numpy_twins import skeletonize as _sk_skeletonize
 
 # HALCON operators deliberately skipped in this tier (with the honest reason).
 SKIPPED = {
@@ -562,7 +563,7 @@ def r2_split_skeleton_lines(v, a, b):
     out = np.zeros(m.shape, np.float64)
     if not m.any():
         return out
-    skel = _sk_skeletonize(m) if _sk_skeletonize is not None else m
+    skel = _sk_skeletonize(m)
     skel = np.asarray(skel, dtype=bool)
     if not skel.any():
         return out
