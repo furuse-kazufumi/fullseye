@@ -6809,6 +6809,25 @@ def _b_rs_risk(pool, rng):
     return (f["path"], f["Z"], 1.0, f["qr"]), {"alpha": float(rng.uniform(0, 0.95))}
 
 
+# --- 小惑星の表面の重力(polygrav、2026-10-25): 閉じた楕円体の多面体を軸ごとに伸ばし、観測点と切る平面を振る --- #
+def _pg_body(rng):
+    import ops3d
+    V, F = ops3d.get("geodesic_dome")(int(rng.integers(1, 4)), radius=float(rng.uniform(20.0, 200.0)))
+    return np.asarray(V, float) * rng.uniform(0.5, 2.0, 3), np.asarray(F)
+
+
+def _b_pg_gravity(pool, rng):
+    V, F = _pg_body(rng)
+    P = rng.normal(0.0, 1.0, (int(rng.integers(1, 12)), 3)) * float(np.abs(V).max()) * rng.uniform(0.2, 3.0)
+    return ((V, F), P), {"density": float(rng.uniform(500.0, 8000.0)), "omega": float(rng.choice([0.0, 1.4e-4]))}
+
+
+def _b_pg_clip(pool, rng):
+    V, F = _pg_body(rng)
+    n = rng.normal(0.0, 1.0, 3)
+    return ((V, F), V.mean(axis=0) + rng.uniform(-0.3, 0.3, 3) * np.abs(V).max(axis=0), n), {}
+
+
 # --- EMVA 1288(2026-10-13): 規格の残りの式・General・前処理の閉形式。露光段の列は線形なカメラから作る --- #
 def _emva_linear_series():
     mp = np.concatenate([np.geomspace(1.0, 200.0, 12), np.linspace(0.0, 4.0e4, 31)[1:]])
@@ -7572,6 +7591,7 @@ OP_ARG_BUILDERS = {
     "ground_shift_track": _b_rs_track, "odometry_slip": _b_rs_odo, "slip_gp_fit": _b_rs_gp,
     "slip_quantile_fit": _b_rs_qr, "slip_predict": _b_rs_pred, "slip_cvar": _b_rs_cvar,
     "cvar_cost_map": _b_rs_costmap, "risk_aware_path": _b_rs_path, "path_slip_risk": _b_rs_risk,
+    "polyhedron_gravity": _b_pg_gravity, "polyhedron_clip_halfspace": _b_pg_clip,
     "luma_limited_u8": _b_luma_limited_u8, "rank_data": _b_rank_data, "rank_spearman": _b_rank_pair, "rank_kendall_b": _b_rank_pair,
     "tid2013_published": _b_noargs, "tid2013_root": _b_noargs, "tid2013_index": _b_tid_root, "tid2013_metric_values": _b_tid_metric_values,
     "tid2013_evaluate": _b_tid_evaluate, "tid2013_compare": _b_tid_compare, "tid2013_by_distortion": _b_tid_by_distortion,

@@ -14755,10 +14755,22 @@
    "hi": "air-से-material interface की reflectance R(λ) pairs (λ [nm], R) के रूप में (Fresnel, complex index)।"
   },
   "optics/acoustic_impedance_mismatch": {
-   "fp": "94e6c000e29b", "en": "Return the acoustic-impedance mismatch at normal incidence between two materials.", "zh": "返回两种材料在垂直入射时的声阻抗失配。", "tw": "回傳兩種材料在垂直入射時的聲阻抗失配。", "ko": "두 재료의 수직 입사 음향 임피던스 불일치를 반환한다.", "de": "Gibt die akustische Impedanzfehlanpassung bei senkrechtem Einfall zwischen zwei Materialien zurück.", "hi": "दो materials के बीच सामान्य आपतन पर acoustic-impedance mismatch लौटाता है।"
+   "fp": "94e6c000e29b",
+   "en": "Return the acoustic-impedance mismatch at normal incidence between two materials.",
+   "zh": "返回两种材料在垂直入射时的声阻抗失配。",
+   "tw": "回傳兩種材料在垂直入射時的聲阻抗失配。",
+   "ko": "두 재료의 수직 입사 음향 임피던스 불일치를 반환한다.",
+   "de": "Gibt die akustische Impedanzfehlanpassung bei senkrechtem Einfall zwischen zwei Materialien zurück.",
+   "hi": "दो materials के बीच सामान्य आपतन पर acoustic-impedance mismatch लौटाता है।"
   },
   "optics/material_acoustic": {
-   "fp": "6ca8e48be748", "en": "Return acoustic properties and provenance stored in a material record.", "zh": "返回材料记录中保存的声学属性和来源。", "tw": "回傳材料記錄中保存的聲學屬性與來源。", "ko": "재료 레코드에 저장된 음향 물성과 출처를 반환한다.", "de": "Gibt die in einem Materialdatensatz gespeicherten akustischen Eigenschaften und Quellen zurück.", "hi": "material record में संग्रहीत acoustic properties और provenance लौटाता है।"
+   "fp": "6ca8e48be748",
+   "en": "Return acoustic properties and provenance stored in a material record.",
+   "zh": "返回材料记录中保存的声学属性和来源。",
+   "tw": "回傳材料記錄中保存的聲學屬性與來源。",
+   "ko": "재료 레코드에 저장된 음향 물성과 출처를 반환한다.",
+   "de": "Gibt die in einem Materialdatensatz gespeicherten akustischen Eigenschaften und Quellen zurück.",
+   "hi": "material record में संग्रहीत acoustic properties और provenance लौटाता है।"
   },
   "optics/abbe_number": {
    "fp": "12d31951577d",
@@ -32165,6 +32177,24 @@
    "ko": "너비와 높이를 독립적으로 고르는 평균(box) 필터. HALCON의 ``mean_image``(Smooth by averaging.)에 해당한다.",
    "de": "Mittelwert-(Box-)Filter mit unabhängig gewählter Breite und Höhe. Entspricht HALCONs ``mean_image`` (Smooth by averaging.).",
    "hi": "स्वतंत्र रूप से चुनी गई चौड़ाई और ऊँचाई वाला औसत (box) filter। HALCON के ``mean_image`` (Smooth by averaging.) के समकक्ष है।"
+  },
+  "drive/polyhedron_gravity": {
+   "fp": "b65115b5b5a9",
+   "en": "Gravity that a closed, uniform-density polyhedron produces at observation points (the exact formula of Werner & Scheeres 1997).",
+   "zh": "均匀密度的闭合多面体在观测点产生的引力(Werner & Scheeres 1997 的精确公式)。",
+   "tw": "均勻密度的封閉多面體在觀測點產生的重力(Werner & Scheeres 1997 的精確公式)。",
+   "ko": "밀도가 균일한 닫힌 다면체가 관측점에 만드는 중력 (Werner & Scheeres 1997 의 정확한 식).",
+   "de": "Schwerkraft, die ein geschlossenes Polyeder mit homogener Dichte an Beobachtungspunkten erzeugt (exakte Formel von Werner & Scheeres 1997).",
+   "hi": "एकसमान घनत्व वाला बंद बहुफलक प्रेक्षण बिंदुओं पर जो गुरुत्व पैदा करता है (Werner & Scheeres 1997 का सटीक सूत्र)।"
+  },
+  "drive/polyhedron_clip_halfspace": {
+   "fp": "390c8c94e5b6",
+   "en": "Cut a closed mesh with a plane and return the side ``(x − point)·normal ≥ 0`` as a closed solid → (vertices, faces).",
+   "zh": "用平面切开闭合网格,把 ``(x − point)·normal ≥ 0`` 一侧作为闭合实体返回 → (vertices, faces)。",
+   "tw": "以平面切開封閉網格,把 ``(x − point)·normal ≥ 0`` 一側作為封閉實體回傳 → (vertices, faces)。",
+   "ko": "닫힌 메시를 평면으로 잘라 ``(x − point)·normal ≥ 0`` 쪽을 닫힌 입체로 반환한다 → (vertices, faces).",
+   "de": "Schneidet ein geschlossenes Netz mit einer Ebene und gibt die Seite ``(x − point)·normal ≥ 0`` als geschlossenen Körper zurück → (vertices, faces).",
+   "hi": "बंद mesh को एक समतल से काटकर ``(x − point)·normal ≥ 0`` वाली ओर को बंद ठोस के रूप में लौटाता है → (vertices, faces)।"
   },
   "drive/plateau_lod2_mesh": {
    "fp": "7e7ad4da9dfe",

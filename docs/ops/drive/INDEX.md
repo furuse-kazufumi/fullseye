@@ -1,4 +1,4 @@
-# DRIVE operator help — 703 ops in 51 categories
+# DRIVE operator help — 705 ops in 52 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/drive/<category>/<op>.md` を走査。
 
@@ -135,6 +135,10 @@
 ### polish (13)
 
 [band_width_profile](polish/band_width_profile.md) · [coat_image](polish/coat_image.md) · [coat_thickness_from_image](polish/coat_thickness_from_image.md) · [polish_scene_mjcf](polish/polish_scene_mjcf.md) · [preston_coefficient_fit](polish/preston_coefficient_fit.md) · [preston_pressure_kernel](polish/preston_pressure_kernel.md) · [preston_removal_map](polish/preston_removal_map.md) · [preston_track_profile](polish/preston_track_profile.md) · [raster_wipe_area](polish/raster_wipe_area.md) · [removal_depth_from_heights](polish/removal_depth_from_heights.md) · [winkler_polish_run](polish/winkler_polish_run.md) · [wipe_band_width](polish/wipe_band_width.md) · [wipe_coverage](polish/wipe_coverage.md)
+
+### polygrav (2)
+
+[polyhedron_clip_halfspace](polygrav/polyhedron_clip_halfspace.md) · [polyhedron_gravity](polygrav/polyhedron_gravity.md)
 
 ### puck (26)
 

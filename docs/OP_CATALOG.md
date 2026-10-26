@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(436 例)
+### 2-D 画像/信号/幾何(437 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -269,6 +269,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **レンズに微分を計算させる(4f 光学プロセッサ)** — 2 枚のレンズの間にフィルタを 1 枚置くと、光が空間微分を実行する —— GPU も 畳み込みカーネルも要らず、光が通り抜ける時間で終わる。真値は全部**閉形式か整数**: 恒等フィルタなら出力は入力の 180 度回転(2 枚のレンズがそれぞれ前向きの フーリエ変換を行うため)、(i2πf)^n なら n 階微分でガウシアンの閉形式と一致、渦位相板の**巻き数は整数**。外部の参照値を一つも使わない。--morph で 分数階微分 0→2 の連続変化を動画にする(静止画では別々の絵に見えるものが 1 本の族であることが目で分かる)。★偶数長のナイキストのビンを 0 にしないと 片側位相が奇対称を厳密に満たさないことも、桁で見せる。 `py -3.11 examples/optics_four_f_processor.py`
 - **特徴の次元を、真値を一つも使わずに測る** — 形を k 倍に拡大して値が k^p 倍になる指数 p を測り、領域を受けて数を返す 35 op の**次元**(無次元 29・長さ 5・面積 1)を表にする。HALCON の数値も閉形式の真値も使わない —— 変成関係だけで採点する。2026-09-26 に直した 8 op のうち 5 本はこの 1 枚で出ており、同じ枚で未解決の §52(moments 族が p=0、HALCON は 4/5/8)も指す。画布で割ると p が 1.015 から 0.015 へ落ちることをその場で見せ、値域や有限性の門では区別できないことを示す。 `py -3.11 examples/scale_law_of_features.py`
 - **形状特徴を閉形式の真値で採点する —— そして消えないバイアスを見せる** — 矩形と円の厳密な閉形式(面積・矩形度・周囲長²/(4π面積)・円形度)で region 特徴を採点。面積と矩形度は丸め誤差 0 で一致。コンパクトさが頭打ちしないことを長さを伸ばして assert し、周囲長の 2 つの推定量が**逆の形で外す**(perimeter は円で +5%・crofton は正方形で -5%、どちらも解像度で消えない)ことを示す。 `py -3.11 examples/shape_factors_closed_form.py`
+- **小惑星イトカワの実際の形の上で、立つ場所の重さと坂を測る —— 一様密度の多面体の厳密な重力(polygrav 2 op)** — 公開データの形(NASA PDS Small Bodies Node の Gaskell Itokawa Shape Model、Q = 64 の 49,152 面、CC0 1.0、data/itokawa_shape/)で、polyhedron_gravity(Werner & Scheeres 1997 の面と辺の和)を長軸の断面に沿って計算: 自転の遠心力を足した実効重力は 56.8〜82.0 µm/s²、両端で軽い。重心でガウスの法則 ∇·g = −4πGρ が 2e-16。polyhedron_clip_halfspace で x ≥ 150 m を頭として切り、頭 2,850 kg/m³・全体の質量を保つと胴 1,754 kg/m³・重心 +21.5 m(Lowry 2014: 1,750 ± 110・21 ± 12 m)。動く 3-D 版は tools/build_itokawa_anim3d.py。 `py -3.11 examples/itokawa_gravity_tour.py`
 
 **color**
 - **Bayer の生フレームを段ごとに説明できる式で表示画像にする(ISP 8 段)** — 黒レベル → 欠陥画素 → 周辺減光 → AWB(RAW 側)→ 双線形デモザイク → CCM → 色相彩度 → 明暗を全部閉じた式で。植えた台座・減光・かぶり・欠陥 12 画素を順に外し、デモザイク後の誤差は 95 % 点で 5e-4(最大は円の縁のジッパー 6e-2 を隠さず印字)。★gray-world は場面の平均が灰でないと真の照明の逆にならない —— 一致しない数字を並べて段の限界を見せる。 `py -3.11 examples/raw_to_display_isp.py`
@@ -778,9 +779,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3574 ops / 54 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3576 ops / 54 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 959 · **3d** 373 · **math** 114 · **optics** 465 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 39 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 703 · **tomography** 31 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 3 · **calib** 21 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族の一覧: **2d** 959 · **3d** 373 · **math** 114 · **optics** 465 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 39 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 705 · **tomography** 31 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 3 · **calib** 21 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d(959 ops / 49 categories)
 
@@ -3498,7 +3499,7 @@ _計 3574 ops / 54 families。並びとノートの在り処は `docs/ops/INDEX.
 #### vx / suppress(1)
 - `vx_nonmax_suppression` `image2d → image2d` — 非極大の抑制(3.39 節)。画素 (x, y) は、窓の中で**自分より前(上の行と、同じ行の左)の隣には ≥、後ろの隣には >** の ときだけ残る(REQ-0337)。平らな頂上が 1 画素だけ残るのはこの非対称のため。*mask* の非ゼロ画素は比べず、そのまま残す (他の画素の比較にも使わない、REQ-0336)。抑制した画素は U8 なら 0、S16 なら INT16_MIN(REQ-0335)。窓の外にはみ出す隣は比べない。 · 例: `gallery_openvx_spec_values`
 
-### drive(703 ops / 51 categories)
+### drive(705 ops / 52 categories)
 
 名前は運転だが、中身は**物理シミュレーションとロボットの PoC の台帳**: 運転(コース・交通・判断・CARLA / CommonRoad)に加え、触覚(tac*)・peg-in-hole(peg*)・研磨(polish)・研削(grind)・切削(cutting)・粉体(granular / scoop)・粉末 X 線回折(pxrd)・球技(ball / puck)などがカテゴリとして同居している。カテゴリ名で引くこと。
 
@@ -4025,6 +4026,10 @@ _計 3574 ops / 54 families。並びとノートの在り処は `docs/ops/INDEX.
 - `winkler_polish_run` `image2d × scalar × scalar × scalar × scalar × scalar → table` — 弾性床(Winkler)のパッドを平均圧 ``pressure`` で押し、相対速度 ``speed`` で磨いた時の表面の高さ図 ``z`` の時間発展。 各刻みでパッドの面の高さ z_t を Σ k_w max(0, z − z_t) = N p̄ から解き(当たっている所だけが圧を受ける)、Preston の式で z ← z − k_p v k_w max(0, z − z_t) Δt(陽解法、c Δt ≤ 0.01、c = k_p k_w v)。 返り ``z``(最後)、``t``・``rms``(平均からのずれの rms、形の除去なし)・``mean``・``contact``(当たっている割合)を ``n_record`` 点、``rate_full_contact`` = c(全面が当たる間 rms は exp(−c t) で減る —— 導出、この関数は使わない)、``dt``、 ``steps``。**Raises** ValueError: z の検査、数の検査、c Δt > 0.01。 · 例: `poc_polish_wipe_measure`
 - `wipe_band_width` `scalar × scalar × scalar × scalar → table` — 厚さ ``coat`` の膜を回らない工具の直線の一筆で拭いた時、膜が消える帯の幅(閉形式)。返り ``width``(0 なら拭けない)、 ``half_width``、``force_min``(帯ができ始める力)、``centre_depth``(中心の除去の深さ)、``a``(接触半径)。 平板: D = 2 a k_p p、半幅 a √(1 − (h0/D)²)、F_min = π a h0/(2 k_p)。Hertz: D = k_p E* a²/R、半幅 √(a² − h0 R/(k_p E*))、 F_min = (4E*/3R)(h0 R/(k_p E*))^{3/2}。速さに依らない(回らない時)。**Raises** ValueError: 数の検査。 · 例: `poc_polish_wipe_measure`
 - `wipe_coverage` `image2d × scalar → table` — 拭けた所(明るい = 膜が消えた所)の面積を画像から読む。2 値化と連結成分は detect.segment_objects(Otsu が既定)。 返り ``area``(拭けた画素 × res² [m²])、``fraction``、``largest_area``、``n_regions``、``mask``、``threshold``(Otsu の しきい値 = 拭けた側の最小と残った側の最大の中点で推定)、``coat`` を渡せば ``residual_at_threshold``(しきい値の明るさが意味する 残った膜の厚さ —— 読んだ帯は「除去 ≥ h0 − この厚さ」の所)。**Raises** ValueError: 画像の検査、res ≤ 0、拭けた所も残った所も 無い(しきい値が決まらない)。 · 例: `poc_polish_wipe_measure`
+
+#### drive / polygrav(2)
+- `polyhedron_clip_halfspace` `any × any × any → any` — 閉じたメッシュを平面で切り、``(x − point)·normal ≥ 0`` の側を閉じた立体として返す → (vertices, faces)。 · 例: `itokawa_gravity_tour`
+- `polyhedron_gravity` `any × points → table` — 一様密度の閉じた多面体が観測点に作る重力(Werner & Scheeres 1997 の厳密な式)。 · 例: `itokawa_gravity_tour`
 
 #### drive / puck(26)
 - `fivebar_fk` `signal × table → any` — 順運動学: 関節角 (q₁, q₂)(各腕の近位リンクの x 軸からの角)→ 先端 E。肘 Bᵢ = Aᵢ + l₁(cos qᵢ, sin qᵢ)、 E = 円(B₁, l₂) ∩ 円(B₂, l₂) の "forward"(x が大きい側)か "back"。返り値 ``{"E", "B1", "B2"}``、交わらなければ ``None``。 · 例: `poc_air_hockey_intercept`
@@ -5371,7 +5376,7 @@ _計 3574 ops / 54 families。並びとノートの在り処は `docs/ops/INDEX.
 
 #### printpath / slice(3)
 - `contours_to_gcode` `table → table` — 輪郭(``mesh_slice_contours`` の表)を**周回する経路の表**に(``gcode_read`` と同じ列)。 · 例: `poc_one_stroke_epicycles`, `poc_print_layer_inspection`
-- `mesh_slice_contours` `mesh → table` — 三角形メッシュを平面 ``z`` で切った**輪郭の表** ``table``: 列 ``ring``(輪の番号)、``x``、``y``(mm)。 · 例: `poc_print_layer_inspection`
+- `mesh_slice_contours` `mesh → table` — 三角形メッシュを平面 ``z`` で切った**輪郭の表** ``table``: 列 ``ring``(輪の番号)、``x``、``y``(mm)。 · 例: `itokawa_gravity_tour`, `poc_print_layer_inspection`
 - `mesh_slice_stack` `mesh → voxel` — メッシュを ``layer_mm`` 刻みで切った**層マスクの積み** ``voxel`` (Z, Y, X)(0 / 1、Z は下から)。 · 例: `poc_am_thermal_to_ct`, `poc_print_layer_inspection`
 
 #### printpath / stroke(6)
