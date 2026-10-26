@@ -79,6 +79,7 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 <a href="../../view2026/anim3d/interactive_anim3d_viewer.html?lang=de"><img src="../thumbs/interactive_anim3d_viewer.jpg" alt="Arm und halbtransparente Linse" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Arm und halbtransparente Linse · 0.3 MB</span></a>
 <a href="../../view2026/anim3d/tablet_inspection_anim3d.html?lang=de"><img src="../thumbs/tablet_inspection.jpg" alt="Tablet appearance and colour inspection" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Tablet appearance and colour inspection · 0.5 MB</span></a>
 <a href="../../view2026/anim3d/satellite_gsd_anim3d.html?lang=de"><img src="../thumbs/satellite_gsd.jpg" alt="Warum kleine Schrift aus dem Orbit verschwindet" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Warum kleine Schrift aus dem Orbit verschwindet · 0.2 MB</span></a>
+<a href="../../view2026/anim3d/star_tracker_anim3d.html?lang=de"><img src="../thumbs/poc_star_tracker.jpg" alt="Satellite attitude from one star image" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Satellite attitude from one star image · 0.2 MB</span></a>
 </div>
 
 ## Artikelserien (englische Artikel auf Qiita)
@@ -222,7 +223,7 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 
 ## Alles ansehen
 
-277 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
+278 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
 
 <noscript><p><a href="../../GALLERY.en.html">(Ohne JavaScript stehen alle Abbildungen auf der Galerieseite.)</a></p></noscript>
 
@@ -351,7 +352,7 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 </div>
 </details>
 
-<details class="vall"><summary><b>3-D-Form</b> (19)</summary>
+<details class="vall"><summary><b>3-D-Form</b> (20)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_battery_ct_degradation/01_xray_projection.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_battery_ct_degradation.jpg" alt="Batterie-CT" width="200" height="200"><span>Batterie-CT</span></a>
 <a href="../../articles/assets/poc/poc_bev_sensor_fusion/01_scene_bev.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_bev_sensor_fusion.jpg" alt="BEV-Sensorfusion" width="200" height="200"><span>BEV-Sensorfusion</span></a>
@@ -372,6 +373,7 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 <a href="../../articles/assets/poc/poc_endless_zoom_and_turning_solids/03_zoom_loop.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_endless_zoom_and_turning_solids.jpg" alt="Endloser Zoom" width="200" height="200"><b>&#9654;</b><span>Endloser Zoom</span></a>
 <a href="../../articles/assets/poc/poc_four_dimensions_by_three_d_tools/03_hopf_turn.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_four_dimensions_by_three_d_tools.jpg" alt="4-D mit 3-D-Werkzeugen" width="200" height="200"><b>&#9654;</b><span>4-D mit 3-D-Werkzeugen</span></a>
 <a href="../../articles/assets/poc/poc_plateau_venue_lod2/01_venue_itokawa_top.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_plateau_venue_lod2.jpg" alt="Die Gebäude des Veranstaltungsorts und der Asteroid Itokawa auf einem Maßstab: PLATEAU-CityGML LOD2 als Netz" width="200" height="200"><span>Die Gebäude des Veranstaltungsorts und der Asteroid Itokawa auf einem Maßstab: PLATEAU-CityGML LOD2 als Netz</span></a>
+<a href="../../view2026/anim3d/star_tracker_anim3d.html?lang=de"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_star_tracker.jpg" alt="Estimate satellite attitude from a synthetic star image" width="200" height="200"><b>&#9654;</b><span>Estimate satellite attitude from a synthetic star image</span></a>
 </div>
 </details>
 
@@ -665,6 +667,7 @@ Jede Zahl ist gegen eine Ground Truth gemessen, die der PoC selbst eingesetzt ha
 - [Arm und halbtransparente Linse](../../view2026/anim3d/interactive_anim3d_viewer.html?lang=de) (bewegtes 3-D, drehbar, 0.3 MB): Mit dem Finger drehen und den Arm beim Tragen einer Kiste aus jedem Winkel ansehen. Strahlen laufen durch eine halbtransparente Linse in den Brennpunkt, darunter laufen ein Höhenbild von oben und seine Binarisierung zeitgleich mit. [Quelle](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
 - [Tablet appearance and colour inspection](../../view2026/anim3d/tablet_inspection_anim3d.html?lang=de) (bewegtes 3-D, drehbar, 0.5 MB): Rotate synthetic tablets defined only by shape and colour. At each area, synthesize 800 chip-free and 800 chipped images and measure the detection-rate curve; fade a colour patch from ΔE00 = 8 to 0. Measure foreign-particle position and blob count, then expose the limit where a shallow crack parallel to the light vanishes. **Foreign-particle position error 0.292 px; measured and normal-approximation 90% detection areas are both 3 px² = 0.0192 mm²; CIEDE2000 direct-formula difference < 1e-12; 5 separated blobs.** [Quelle](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_tablet_anim3d.py)
 - [Warum kleine Schrift aus dem Orbit verschwindet](../../view2026/anim3d/satellite_gsd_anim3d.html?lang=de) (bewegtes 3-D, drehbar, 0.2 MB): Mit der Höhe wächst die Bodenbreite von 1 Pixel; mit kleinerer Öffnung wächst die Airy-Scheibe am Fuß des transparenten Lichtkegels. Jenseits des Schnittpunkts von blauer GSD und orangefarbener Beugungsbreite bringen feinere Pixel allein eine 10-cm-Linie nicht zurück. **Bei 400 km, 5-µm-Pixeln und 8 m Brennweite beträgt die GSD 0.250 m. Bei 550 nm und 2.4 m Öffnung beträgt der Rayleigh-Bodenradius 0.112 m. Die Atmosphäre bleibt in der Grenzzeile ausdrücklich unberechnet.** [Quelle](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_satgsd_anim3d.py)
+- [Satellite attitude from one star image](../../view2026/anim3d/star_tracker_anim3d.html?lang=de) (bewegtes 3-D, drehbar, 0.2 MB): Sweep a camera cone through a synthetic sky, centroid noisy point images plus false points, match triangle angles against the full 196-star catalogue, reject outliers and solve attitude with Kabsch. The final tab exposes uncomputed limits from glare, too few stars and star trails. **Against the full 196-star catalogue: 16 genuine stars, 0 mismatches, 2/2 false points rejected, 0.0046-degree attitude error and 0.1406 degree per 1 pixel; Kabsch vs direct SVD differs by less than 1e-12.** [Quelle](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_startrk_anim3d.py)
 
 </div>
 

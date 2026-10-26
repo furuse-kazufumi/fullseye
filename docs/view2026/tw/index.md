@@ -79,6 +79,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../view2026/anim3d/interactive_anim3d_viewer.html?lang=tw"><img src="../thumbs/interactive_anim3d_viewer.jpg" alt="機械臂與半透明透鏡" loading="lazy" width="320" height="320"><b>&#9654;</b><span>機械臂與半透明透鏡 · 0.3 MB</span></a>
 <a href="../../view2026/anim3d/tablet_inspection_anim3d.html?lang=tw"><img src="../thumbs/tablet_inspection.jpg" alt="Tablet appearance and colour inspection" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Tablet appearance and colour inspection · 0.5 MB</span></a>
 <a href="../../view2026/anim3d/satellite_gsd_anim3d.html?lang=tw"><img src="../thumbs/satellite_gsd.jpg" alt="為什麼從軌道上看不清小字" loading="lazy" width="320" height="320"><b>&#9654;</b><span>為什麼從軌道上看不清小字 · 0.2 MB</span></a>
+<a href="../../view2026/anim3d/star_tracker_anim3d.html?lang=tw"><img src="../thumbs/poc_star_tracker.jpg" alt="Satellite attitude from one star image" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Satellite attitude from one star image · 0.2 MB</span></a>
 </div>
 
 ## 系列文章 (Qiita 上的英文文章)
@@ -222,7 +223,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 全部看
 
-PoC 277 個,另有機器人範例 5 個。展開分組即可載入縮圖。
+PoC 278 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 
 <noscript><p><a href="../../GALLERY.en.html">(沒有 JavaScript 時,可在圖庫頁面查看全部圖。)</a></p></noscript>
 
@@ -351,7 +352,7 @@ PoC 277 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 </div>
 </details>
 
-<details class="vall"><summary><b>三維形狀</b> (19)</summary>
+<details class="vall"><summary><b>三維形狀</b> (20)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_battery_ct_degradation/01_xray_projection.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_battery_ct_degradation.jpg" alt="電池 CT 劣化" width="200" height="200"><span>電池 CT 劣化</span></a>
 <a href="../../articles/assets/poc/poc_bev_sensor_fusion/01_scene_bev.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_bev_sensor_fusion.jpg" alt="鳥瞰圖融合" width="200" height="200"><span>鳥瞰圖融合</span></a>
@@ -372,6 +373,7 @@ PoC 277 個,另有機器人範例 5 個。展開分組即可載入縮圖。
 <a href="../../articles/assets/poc/poc_endless_zoom_and_turning_solids/03_zoom_loop.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_endless_zoom_and_turning_solids.jpg" alt="無限縮放" width="200" height="200"><b>&#9654;</b><span>無限縮放</span></a>
 <a href="../../articles/assets/poc/poc_four_dimensions_by_three_d_tools/03_hopf_turn.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_four_dimensions_by_three_d_tools.jpg" alt="以三維工具量四維" width="200" height="200"><b>&#9654;</b><span>以三維工具量四維</span></a>
 <a href="../../articles/assets/poc/poc_plateau_venue_lod2/01_venue_itokawa_top.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_plateau_venue_lod2.jpg" alt="會場建築與小行星糸川同一把尺:把 PLATEAU 的 CityGML LOD2 變成網格" width="200" height="200"><span>會場建築與小行星糸川同一把尺:把 PLATEAU 的 CityGML LOD2 變成網格</span></a>
+<a href="../../view2026/anim3d/star_tracker_anim3d.html?lang=tw"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_star_tracker.jpg" alt="Estimate satellite attitude from a synthetic star image" width="200" height="200"><b>&#9654;</b><span>Estimate satellite attitude from a synthetic star image</span></a>
 </div>
 </details>
 
@@ -665,6 +667,7 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 - [機械臂與半透明透鏡](../../view2026/anim3d/interactive_anim3d_viewer.html?lang=tw) (動態 3-D,可拖曳旋轉, 0.3 MB): 用手指旋轉,從任意角度觀看機械臂搬運箱子。光線穿過半透明透鏡匯聚到焦點,下方的俯視高度影像及其二值化結果在同一時間軸上同步播放。 [原始碼](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
 - [Tablet appearance and colour inspection](../../view2026/anim3d/tablet_inspection_anim3d.html?lang=tw) (動態 3-D,可拖曳旋轉, 0.5 MB): Rotate synthetic tablets defined only by shape and colour. At each area, synthesize 800 chip-free and 800 chipped images and measure the detection-rate curve; fade a colour patch from ΔE00 = 8 to 0. Measure foreign-particle position and blob count, then expose the limit where a shallow crack parallel to the light vanishes. **Foreign-particle position error 0.292 px; measured and normal-approximation 90% detection areas are both 3 px² = 0.0192 mm²; CIEDE2000 direct-formula difference < 1e-12; 5 separated blobs.** [原始碼](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_tablet_anim3d.py)
 - [為什麼從軌道上看不清小字](../../view2026/anim3d/satellite_gsd_anim3d.html?lang=tw) (動態 3-D,可拖曳旋轉, 0.2 MB): 高度越高,1 個像素覆蓋的地面越寬;口徑越小,半透明光錐底部的艾里斑越大。越過藍色 GSD 與橙色繞射寬度的交點後,僅縮小像素也無法恢復 10 cm 線條。 **高度 400 km、像素 5 µm、焦距 8 m 時,GSD 為 0.250 m。波長 550 nm、口徑 2.4 m 時,Rayleigh 地面半徑為 0.112 m。大氣影響在限制列中明確標為未計算。** [原始碼](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_satgsd_anim3d.py)
+- [Satellite attitude from one star image](../../view2026/anim3d/star_tracker_anim3d.html?lang=tw) (動態 3-D,可拖曳旋轉, 0.2 MB): Sweep a camera cone through a synthetic sky, centroid noisy point images plus false points, match triangle angles against the full 196-star catalogue, reject outliers and solve attitude with Kabsch. The final tab exposes uncomputed limits from glare, too few stars and star trails. **Against the full 196-star catalogue: 16 genuine stars, 0 mismatches, 2/2 false points rejected, 0.0046-degree attitude error and 0.1406 degree per 1 pixel; Kabsch vs direct SVD differs by less than 1e-12.** [原始碼](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_startrk_anim3d.py)
 
 </div>
 

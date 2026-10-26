@@ -79,6 +79,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 <a href="../../view2026/anim3d/interactive_anim3d_viewer.html?lang=fr"><img src="../thumbs/interactive_anim3d_viewer.jpg" alt="Bras et lentille translucide" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Bras et lentille translucide · 0.3 MB</span></a>
 <a href="../../view2026/anim3d/tablet_inspection_anim3d.html?lang=fr"><img src="../thumbs/tablet_inspection.jpg" alt="Tablet appearance and colour inspection" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Tablet appearance and colour inspection · 0.5 MB</span></a>
 <a href="../../view2026/anim3d/satellite_gsd_anim3d.html?lang=fr"><img src="../thumbs/satellite_gsd.jpg" alt="Pourquoi les petits caractères disparaissent depuis l'orbite" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Pourquoi les petits caractères disparaissent depuis l'orbite · 0.2 MB</span></a>
+<a href="../../view2026/anim3d/star_tracker_anim3d.html?lang=fr"><img src="../thumbs/poc_star_tracker.jpg" alt="Satellite attitude from one star image" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Satellite attitude from one star image · 0.2 MB</span></a>
 </div>
 
 ## Série d'articles (articles sur Qiita)
@@ -222,7 +223,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 
 ## Tout voir
 
-277 PoC et 5 exemples de robots. Ouvrez un groupe pour afficher ses vignettes.
+278 PoC et 5 exemples de robots. Ouvrez un groupe pour afficher ses vignettes.
 
 <noscript><p><a href="../../GALLERY.en.html">(Sans JavaScript, toutes les figures sont visibles sur la page de la galerie.)</a></p></noscript>
 
@@ -351,7 +352,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 </div>
 </details>
 
-<details class="vall"><summary><b>Forme 3-D</b> (19)</summary>
+<details class="vall"><summary><b>Forme 3-D</b> (20)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_battery_ct_degradation/01_xray_projection.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_battery_ct_degradation.jpg" alt="Dégradation des batteries observée par CT" width="200" height="200"><span>Dégradation des batteries observée par CT</span></a>
 <a href="../../articles/assets/poc/poc_bev_sensor_fusion/01_scene_bev.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_bev_sensor_fusion.jpg" alt="Fusion de vues en vue aérienne (BEV)" width="200" height="200"><span>Fusion de vues en vue aérienne (BEV)</span></a>
@@ -372,6 +373,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 <a href="../../articles/assets/poc/poc_endless_zoom_and_turning_solids/03_zoom_loop.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_endless_zoom_and_turning_solids.jpg" alt="Zoom sans fin" width="200" height="200"><b>&#9654;</b><span>Zoom sans fin</span></a>
 <a href="../../articles/assets/poc/poc_four_dimensions_by_three_d_tools/03_hopf_turn.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_four_dimensions_by_three_d_tools.jpg" alt="Traiter 4 dimensions avec des outils 3-D" width="200" height="200"><b>&#9654;</b><span>Traiter 4 dimensions avec des outils 3-D</span></a>
 <a href="../../articles/assets/poc/poc_plateau_venue_lod2/01_venue_itokawa_top.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_plateau_venue_lod2.jpg" alt="Les bâtiments du site et l'astéroïde Itokawa à la même échelle : le CityGML LOD2 de PLATEAU en maillage" width="200" height="200"><span>Les bâtiments du site et l'astéroïde Itokawa à la même échelle : le CityGML LOD2 de PLATEAU en maillage</span></a>
+<a href="../../view2026/anim3d/star_tracker_anim3d.html?lang=fr"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_star_tracker.jpg" alt="Estimate satellite attitude from a synthetic star image" width="200" height="200"><b>&#9654;</b><span>Estimate satellite attitude from a synthetic star image</span></a>
 </div>
 </details>
 
@@ -665,6 +667,7 @@ Chaque valeur est mesurée par rapport à la vérité terrain que chaque PoC a e
 - [Bras et lentille translucide](../../view2026/anim3d/interactive_anim3d_viewer.html?lang=fr) (3-D animée, à faire pivoter, 0.3 MB): Faites pivoter du doigt et regardez le bras porter une boîte sous n'importe quel angle. Des rayons traversent une lentille translucide jusqu'à son foyer, tandis qu'une image de hauteur vue de dessus et sa binarisation avancent sur la même échelle de temps. [source](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
 - [Tablet appearance and colour inspection](../../view2026/anim3d/tablet_inspection_anim3d.html?lang=fr) (3-D animée, à faire pivoter, 0.5 MB): Rotate synthetic tablets defined only by shape and colour. At each area, synthesize 800 chip-free and 800 chipped images and measure the detection-rate curve; fade a colour patch from ΔE00 = 8 to 0. Measure foreign-particle position and blob count, then expose the limit where a shallow crack parallel to the light vanishes. **Foreign-particle position error 0.292 px; measured and normal-approximation 90% detection areas are both 3 px² = 0.0192 mm²; CIEDE2000 direct-formula difference < 1e-12; 5 separated blobs.** [source](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_tablet_anim3d.py)
 - [Pourquoi les petits caractères disparaissent depuis l'orbite](../../view2026/anim3d/satellite_gsd_anim3d.html?lang=fr) (3-D animée, à faire pivoter, 0.2 MB): Quand l'altitude augmente, 1 pixel couvre plus de terrain ; quand l'ouverture diminue, le disque d'Airy au pied du cône lumineux translucide s'étale. Au-delà du croisement entre GSD bleue et diffraction orange, affiner les pixels ne restaure pas à lui seul une ligne de 10 cm. **À 400 km, avec des pixels de 5 µm et une focale de 8 m, la GSD vaut 0.250 m. À 550 nm avec une ouverture de 2.4 m, le rayon de Rayleigh au sol vaut 0.112 m. L'atmosphère reste explicitement non calculée dans la ligne de limite.** [source](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_satgsd_anim3d.py)
+- [Satellite attitude from one star image](../../view2026/anim3d/star_tracker_anim3d.html?lang=fr) (3-D animée, à faire pivoter, 0.2 MB): Sweep a camera cone through a synthetic sky, centroid noisy point images plus false points, match triangle angles against the full 196-star catalogue, reject outliers and solve attitude with Kabsch. The final tab exposes uncomputed limits from glare, too few stars and star trails. **Against the full 196-star catalogue: 16 genuine stars, 0 mismatches, 2/2 false points rejected, 0.0046-degree attitude error and 0.1406 degree per 1 pixel; Kabsch vs direct SVD differs by less than 1e-12.** [source](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_startrk_anim3d.py)
 
 </div>
 

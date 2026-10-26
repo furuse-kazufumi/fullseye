@@ -79,6 +79,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../view2026/anim3d/interactive_anim3d_viewer.html?lang=hi"><img src="../thumbs/interactive_anim3d_viewer.jpg" alt="Arm और अर्ध-पारदर्शी lens" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Arm और अर्ध-पारदर्शी lens · 0.3 MB</span></a>
 <a href="../../view2026/anim3d/tablet_inspection_anim3d.html?lang=hi"><img src="../thumbs/tablet_inspection.jpg" alt="Tablet appearance and colour inspection" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Tablet appearance and colour inspection · 0.5 MB</span></a>
 <a href="../../view2026/anim3d/satellite_gsd_anim3d.html?lang=hi"><img src="../thumbs/satellite_gsd.jpg" alt="कक्षा से छोटे अक्षर क्यों गायब होते हैं" loading="lazy" width="320" height="320"><b>&#9654;</b><span>कक्षा से छोटे अक्षर क्यों गायब होते हैं · 0.2 MB</span></a>
+<a href="../../view2026/anim3d/star_tracker_anim3d.html?lang=hi"><img src="../thumbs/poc_star_tracker.jpg" alt="Satellite attitude from one star image" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Satellite attitude from one star image · 0.2 MB</span></a>
 </div>
 
 ## Article series (Qiita पर English articles)
@@ -222,7 +223,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## सब कुछ देखें
 
-277 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
+278 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript के बिना सभी figures gallery page पर हैं।)</a></p></noscript>
 
@@ -351,7 +352,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 </div>
 </details>
 
-<details class="vall"><summary><b>3-D shape</b> (19)</summary>
+<details class="vall"><summary><b>3-D shape</b> (20)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_battery_ct_degradation/01_xray_projection.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_battery_ct_degradation.jpg" alt="Battery CT" width="200" height="200"><span>Battery CT</span></a>
 <a href="../../articles/assets/poc/poc_bev_sensor_fusion/01_scene_bev.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_bev_sensor_fusion.jpg" alt="BEV sensor fusion" width="200" height="200"><span>BEV sensor fusion</span></a>
@@ -372,6 +373,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_endless_zoom_and_turning_solids/03_zoom_loop.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_endless_zoom_and_turning_solids.jpg" alt="Endless zoom" width="200" height="200"><b>&#9654;</b><span>Endless zoom</span></a>
 <a href="../../articles/assets/poc/poc_four_dimensions_by_three_d_tools/03_hopf_turn.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_four_dimensions_by_three_d_tools.jpg" alt="3-D tools से 4-D" width="200" height="200"><b>&#9654;</b><span>3-D tools से 4-D</span></a>
 <a href="../../articles/assets/poc/poc_plateau_venue_lod2/01_venue_itokawa_top.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_plateau_venue_lod2.jpg" alt="आयोजन-स्थल की इमारतें और क्षुद्रग्रह Itokawa एक ही पैमाने पर: PLATEAU CityGML LOD2 को mesh में" width="200" height="200"><span>आयोजन-स्थल की इमारतें और क्षुद्रग्रह Itokawa एक ही पैमाने पर: PLATEAU CityGML LOD2 को mesh में</span></a>
+<a href="../../view2026/anim3d/star_tracker_anim3d.html?lang=hi"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_star_tracker.jpg" alt="Estimate satellite attitude from a synthetic star image" width="200" height="200"><b>&#9654;</b><span>Estimate satellite attitude from a synthetic star image</span></a>
 </div>
 </details>
 
@@ -665,6 +667,7 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 - [Arm और अर्ध-पारदर्शी lens](../../view2026/anim3d/interactive_anim3d_viewer.html?lang=hi) (चलता 3-D, drag से घुमाएँ, 0.3 MB): उंगली से घुमाकर किसी भी कोण से देखें कि arm box कैसे ले जाता है। किरणें अर्ध-पारदर्शी lens से होकर focus पर मिलती हैं, और नीचे ऊपर से ली गई height image और उसका binarisation उसी timeline पर चलते हैं। [source](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
 - [Tablet appearance and colour inspection](../../view2026/anim3d/tablet_inspection_anim3d.html?lang=hi) (चलता 3-D, drag से घुमाएँ, 0.5 MB): Rotate synthetic tablets defined only by shape and colour. At each area, synthesize 800 chip-free and 800 chipped images and measure the detection-rate curve; fade a colour patch from ΔE00 = 8 to 0. Measure foreign-particle position and blob count, then expose the limit where a shallow crack parallel to the light vanishes. **Foreign-particle position error 0.292 px; measured and normal-approximation 90% detection areas are both 3 px² = 0.0192 mm²; CIEDE2000 direct-formula difference < 1e-12; 5 separated blobs.** [source](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_tablet_anim3d.py)
 - [कक्षा से छोटे अक्षर क्यों गायब होते हैं](../../view2026/anim3d/satellite_gsd_anim3d.html?lang=hi) (चलता 3-D, drag से घुमाएँ, 0.2 MB): ऊँचाई बढ़ाने पर 1 pixel अधिक जमीन ढकता है; aperture घटाने पर पारदर्शी प्रकाश-शंकु के तल की Airy disk फैलती है। नीली GSD और नारंगी diffraction width के प्रतिच्छेद के बाद केवल छोटे pixels से 10 cm रेखा वापस नहीं आती। **400 km ऊँचाई, 5 µm pixels और 8 m focal length पर GSD 0.250 m है। 550 nm और 2.4 m aperture पर Rayleigh ground radius 0.112 m है। वातावरण को सीमा-पंक्ति में स्पष्ट रूप से अनगणित रखा गया है।** [source](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_satgsd_anim3d.py)
+- [Satellite attitude from one star image](../../view2026/anim3d/star_tracker_anim3d.html?lang=hi) (चलता 3-D, drag से घुमाएँ, 0.2 MB): Sweep a camera cone through a synthetic sky, centroid noisy point images plus false points, match triangle angles against the full 196-star catalogue, reject outliers and solve attitude with Kabsch. The final tab exposes uncomputed limits from glare, too few stars and star trails. **Against the full 196-star catalogue: 16 genuine stars, 0 mismatches, 2/2 false points rejected, 0.0046-degree attitude error and 0.1406 degree per 1 pixel; Kabsch vs direct SVD differs by less than 1e-12.** [source](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_startrk_anim3d.py)
 
 </div>
 

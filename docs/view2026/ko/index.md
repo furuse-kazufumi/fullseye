@@ -79,6 +79,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../view2026/anim3d/interactive_anim3d_viewer.html?lang=ko"><img src="../thumbs/interactive_anim3d_viewer.jpg" alt="로봇 팔과 반투명 렌즈" loading="lazy" width="320" height="320"><b>&#9654;</b><span>로봇 팔과 반투명 렌즈 · 0.3 MB</span></a>
 <a href="../../view2026/anim3d/tablet_inspection_anim3d.html?lang=ko"><img src="../thumbs/tablet_inspection.jpg" alt="Tablet appearance and colour inspection" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Tablet appearance and colour inspection · 0.5 MB</span></a>
 <a href="../../view2026/anim3d/satellite_gsd_anim3d.html?lang=ko"><img src="../thumbs/satellite_gsd.jpg" alt="궤도에서 작은 글씨가 사라지는 이유" loading="lazy" width="320" height="320"><b>&#9654;</b><span>궤도에서 작은 글씨가 사라지는 이유 · 0.2 MB</span></a>
+<a href="../../view2026/anim3d/star_tracker_anim3d.html?lang=ko"><img src="../thumbs/poc_star_tracker.jpg" alt="Satellite attitude from one star image" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Satellite attitude from one star image · 0.2 MB</span></a>
 </div>
 
 ## 시리즈 기사 (Qiita의 영어 기사)
@@ -222,7 +223,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 전부 보기
 
-PoC 277개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
+PoC 278개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript가 없으면 갤러리 페이지에서 모든 그림을 볼 수 있습니다.)</a></p></noscript>
 
@@ -351,7 +352,7 @@ PoC 277개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 </div>
 </details>
 
-<details class="vall"><summary><b>3-D 형상</b> (19)</summary>
+<details class="vall"><summary><b>3-D 형상</b> (20)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_battery_ct_degradation/01_xray_projection.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_battery_ct_degradation.jpg" alt="배터리 CT 열화" width="200" height="200"><span>배터리 CT 열화</span></a>
 <a href="../../articles/assets/poc/poc_bev_sensor_fusion/01_scene_bev.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_bev_sensor_fusion.jpg" alt="BEV 센서 융합" width="200" height="200"><span>BEV 센서 융합</span></a>
@@ -372,6 +373,7 @@ PoC 277개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 <a href="../../articles/assets/poc/poc_endless_zoom_and_turning_solids/03_zoom_loop.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_endless_zoom_and_turning_solids.jpg" alt="무한 줌" width="200" height="200"><b>&#9654;</b><span>무한 줌</span></a>
 <a href="../../articles/assets/poc/poc_four_dimensions_by_three_d_tools/03_hopf_turn.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_four_dimensions_by_three_d_tools.jpg" alt="3-D로 4차원" width="200" height="200"><b>&#9654;</b><span>3-D로 4차원</span></a>
 <a href="../../articles/assets/poc/poc_plateau_venue_lod2/01_venue_itokawa_top.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_plateau_venue_lod2.jpg" alt="회의장 건물과 소행성 이토카와를 같은 자로: PLATEAU CityGML LOD2 를 메시로" width="200" height="200"><span>회의장 건물과 소행성 이토카와를 같은 자로: PLATEAU CityGML LOD2 를 메시로</span></a>
+<a href="../../view2026/anim3d/star_tracker_anim3d.html?lang=ko"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_star_tracker.jpg" alt="Estimate satellite attitude from a synthetic star image" width="200" height="200"><b>&#9654;</b><span>Estimate satellite attitude from a synthetic star image</span></a>
 </div>
 </details>
 
@@ -665,6 +667,7 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 - [로봇 팔과 반투명 렌즈](../../view2026/anim3d/interactive_anim3d_viewer.html?lang=ko) (움직이는 3-D, 드래그로 회전, 0.3 MB): 손가락으로 돌려 로봇 팔이 상자를 옮기는 모습을 원하는 방향에서 본다. 광선이 반투명 렌즈를 지나 초점에 모이고, 아래에서는 위에서 본 높이 영상과 그 이진화가 같은 시간축으로 진행된다. [소스](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
 - [Tablet appearance and colour inspection](../../view2026/anim3d/tablet_inspection_anim3d.html?lang=ko) (움직이는 3-D, 드래그로 회전, 0.5 MB): Rotate synthetic tablets defined only by shape and colour. At each area, synthesize 800 chip-free and 800 chipped images and measure the detection-rate curve; fade a colour patch from ΔE00 = 8 to 0. Measure foreign-particle position and blob count, then expose the limit where a shallow crack parallel to the light vanishes. **Foreign-particle position error 0.292 px; measured and normal-approximation 90% detection areas are both 3 px² = 0.0192 mm²; CIEDE2000 direct-formula difference < 1e-12; 5 separated blobs.** [소스](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_tablet_anim3d.py)
 - [궤도에서 작은 글씨가 사라지는 이유](../../view2026/anim3d/satellite_gsd_anim3d.html?lang=ko) (움직이는 3-D, 드래그로 회전, 0.2 MB): 고도가 높아지면 1 픽셀이 덮는 지상 폭이 넓어지고, 구경이 작아지면 반투명 빛 원뿔 바닥의 Airy 원반이 퍼진다. 파란 GSD와 주황 회절 폭의 교점을 지나면 픽셀만 줄여도 10 cm 선은 돌아오지 않는다. **고도 400 km, 5 µm 픽셀, 초점거리 8 m이면 GSD는 0.250 m이다. 파장 550 nm, 구경 2.4 m의 Rayleigh 지상 반경은 0.112 m이며 대기는 한계 행에서 미계산으로 명시한다.** [소스](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_satgsd_anim3d.py)
+- [Satellite attitude from one star image](../../view2026/anim3d/star_tracker_anim3d.html?lang=ko) (움직이는 3-D, 드래그로 회전, 0.2 MB): Sweep a camera cone through a synthetic sky, centroid noisy point images plus false points, match triangle angles against the full 196-star catalogue, reject outliers and solve attitude with Kabsch. The final tab exposes uncomputed limits from glare, too few stars and star trails. **Against the full 196-star catalogue: 16 genuine stars, 0 mismatches, 2/2 false points rejected, 0.0046-degree attitude error and 0.1406 degree per 1 pixel; Kabsch vs direct SVD differs by less than 1e-12.** [소스](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_startrk_anim3d.py)
 
 </div>
 

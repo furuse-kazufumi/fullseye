@@ -1,0 +1,12 @@
+[
+ {
+  "name": "star_tracker_anim3d",
+  "file": "01_star_tracker_anim3d.png",
+  "caption": "固定seedの合成天球、衛星とカメラ。16星の点像から姿勢を推定する動く3-D教材の視野タブ。"
+ },
+ {
+  "name": "star_tracker_camera_image",
+  "file": "02_star_tracker_camera_image.png",
+  "caption": "PSF、光子雑音、読み出し雑音を含む合成カメラ像と、副画素重心の検査。"
+ }
+]

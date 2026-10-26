@@ -94,6 +94,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../view2026/anim3d/interactive_anim3d_viewer.html?lang=ja"><img src="thumbs/interactive_anim3d_viewer.jpg" alt="アームと半透明のレンズ" loading="lazy" width="320" height="320"><b>&#9654;</b><span>アームと半透明のレンズ · 0.3 MB</span></a>
 <a href="../view2026/anim3d/tablet_inspection_anim3d.html?lang=ja"><img src="thumbs/tablet_inspection.jpg" alt="錠剤の外観と色の検査" loading="lazy" width="320" height="320"><b>&#9654;</b><span>錠剤の外観と色の検査 · 0.5 MB</span></a>
 <a href="../view2026/anim3d/satellite_gsd_anim3d.html?lang=ja"><img src="thumbs/satellite_gsd.jpg" alt="軌道上から小さな文字が読めない理由" loading="lazy" width="320" height="320"><b>&#9654;</b><span>軌道上から小さな文字が読めない理由 · 0.2 MB</span></a>
+<a href="../view2026/anim3d/star_tracker_anim3d.html?lang=ja"><img src="thumbs/poc_star_tracker.jpg" alt="星の写真から衛星姿勢を知る" loading="lazy" width="320" height="320"><b>&#9654;</b><span>星の写真から衛星姿勢を知る · 0.2 MB</span></a>
 </div>
 
 ## シリーズ記事
@@ -237,7 +238,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## ぜんぶ見る
 
-PoC 277 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
+PoC 278 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
 
 <noscript><p><a href="../GALLERY.html">(JavaScript が無い環境では、ギャラリーのページで全部の図を見られます)</a></p></noscript>
 
@@ -366,7 +367,7 @@ PoC 277 本と、ロボットの例 5 本。グループを開くとサムネイ
 </div>
 </details>
 
-<details class="vall"><summary><b>3-D 形状</b> (19)</summary>
+<details class="vall"><summary><b>3-D 形状</b> (20)</summary>
 <div class="vg vs">
 <a href="../articles/assets/poc/poc_battery_ct_degradation/01_xray_projection.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_battery_ct_degradation.jpg" alt="電池の CT 劣化" width="200" height="200"><span>電池の CT 劣化</span></a>
 <a href="../articles/assets/poc/poc_bev_sensor_fusion/01_scene_bev.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_bev_sensor_fusion.jpg" alt="鳥瞰図の融合" width="200" height="200"><span>鳥瞰図の融合</span></a>
@@ -387,6 +388,7 @@ PoC 277 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_endless_zoom_and_turning_solids/03_zoom_loop.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_endless_zoom_and_turning_solids.jpg" alt="無限ズーム" width="200" height="200"><b>&#9654;</b><span>無限ズーム</span></a>
 <a href="../articles/assets/poc/poc_four_dimensions_by_three_d_tools/03_hopf_turn.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_four_dimensions_by_three_d_tools.jpg" alt="4 次元を 3-D で" width="200" height="200"><b>&#9654;</b><span>4 次元を 3-D で</span></a>
 <a href="../articles/assets/poc/poc_plateau_venue_lod2/01_venue_itokawa_top.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_plateau_venue_lod2.jpg" alt="会場の建物と小惑星イトカワを同じ物差しで ―― PLATEAU の CityGML LOD2 をメッシュに" width="200" height="200"><span>会場の建物と小惑星イトカワを同じ物差しで ―― PLATEAU の CityGML LOD2 をメッシュに</span></a>
+<a href="../view2026/anim3d/star_tracker_anim3d.html?lang=ja"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_star_tracker.jpg" alt="合成星像から衛星姿勢を推定する" width="200" height="200"><b>&#9654;</b><span>合成星像から衛星姿勢を推定する</span></a>
 </div>
 </details>
 
@@ -680,6 +682,7 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 - [アームと半透明のレンズ](../view2026/anim3d/interactive_anim3d_viewer.html?lang=ja) (動く 3-D・触って回せる, 0.3 MB): アームが箱を運ぶ様子を、指で回して好きな向きから見る。光線が半透明のレンズを貫いて焦点へ集まり、右下では真上からの高さ画像とその二値化が同じ時間軸で進む。 [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
 - [錠剤の外観と色の検査](../view2026/anim3d/tablet_inspection_anim3d.html?lang=ja) (動く 3-D・触って回せる, 0.5 MB): 形と色だけの合成錠剤を回す。面積ごとに欠けなし 800 像と欠けあり 800 像を合成して検出率曲線を測り、色むらを ΔE00 = 8 から 0 へ下げる。異物位置と blob 数を測り、照明と平行な浅い割れが消える限界まで見る。 **異物位置誤差 0.292 px、90 % 検出の実測・正規近似とも 3 px² = 0.0192 mm²、CIEDE2000 の直接式との差 < 1e-12、分離 blob 5 個。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_tablet_anim3d.py)
 - [軌道上から小さな文字が読めない理由](../view2026/anim3d/satellite_gsd_anim3d.html?lang=ja) (動く 3-D・触って回せる, 0.2 MB): 高度を上げると 1 画素が覆う地上幅が広がり、口径を小さくすると半透明の光円錐の底にある Airy 円板が広がる。青い GSD と橙の回折幅の交点を越えると、画素だけ細かくしても 10 cm の線は戻らない。 **高度 400 km、5 µm 画素、焦点距離 8 m なら GSD は 0.250 m。波長 550 nm、口径 2.4 m の Rayleigh 地上半径は 0.112 m。大気は限界の行として未計算。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_satgsd_anim3d.py)
+- [星の写真から衛星姿勢を知る](../view2026/anim3d/star_tracker_anim3d.html?lang=ja) (動く 3-D・触って回せる, 0.2 MB): 合成天球の中で視野錐を回し、雑音を含む点像と偽点から副画素重心を取る。三角形の角距離を全196星表へ照合し、偽点を捨ててKabschで姿勢を求める。最後は迷光、星不足、星の流れという未計算の限界を見る。 **全196星表に対し、真の星16、誤対応0、偽点棄却2/2、姿勢角誤差0.0046度、1画素0.1406度。Kabschと直接SVDの差は1e-12未満。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_startrk_anim3d.py)
 
 </div>
 
