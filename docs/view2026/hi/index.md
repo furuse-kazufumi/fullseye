@@ -75,6 +75,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_microns_brain_wave/04_wave_on_wiring.gif"><img src="../thumbs/poc_microns_brain_wave.jpg" alt="Mouse cortex wave" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Mouse cortex wave</span></a>
 <a href="../../articles/assets/media/evis_stereo_fullseye.mp4"><img src="../thumbs/evis_stereo_depth.jpg" alt="Humanoid stereo eyes" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Humanoid stereo eyes</span></a>
 <a href="../../articles/assets/media/evis_bean_track_fullseye.mp4"><img src="../thumbs/evis_bean_track.jpg" alt="Chopstick-cam tracking" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Chopstick-cam tracking</span></a>
+<a href="../../anim3d/organ_volume.html?lang=hi"><img src="../thumbs/organ_volume.jpg" alt="अंग का आयतन और गोलाकारता" loading="lazy" width="320" height="320"><b>&#9654;</b><span>अंग का आयतन और गोलाकारता · 0.5 MB</span></a>
 <a href="../../view2026/anim3d/interactive_anim3d_viewer.html?lang=hi"><img src="../thumbs/interactive_anim3d_viewer.jpg" alt="Arm और अर्ध-पारदर्शी lens" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Arm और अर्ध-पारदर्शी lens · 0.3 MB</span></a>
 </div>
 
@@ -658,6 +659,7 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 
 **घुमाकर देखें: चलता 3-D**
 
+- [अंग का आयतन और गोलाकारता](../../anim3d/organ_volume.html?lang=hi) (चलता 3-D, drag से घुमाएँ, 0.5 MB): 6 अंगों को आयतन के क्रम में रखें, समान आयतन वाले पारदर्शी गोले चढ़ाएँ और खंड जोड़ें। अपसरण प्रमेय और ठोस voxel आयतन में अधिकतम 0.191% अंतर है; बंद सतहों के लिए χ = 2 है। 99% reduction में खोई पतली संरचनाएँ भी दिखाई गई हैं। **6 अंग; आयतन अंतर ≤ 0.191%; χ = 2 और सीमा किनारे 0।** [source](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_organvol_anim3d.py)
 - [Arm और अर्ध-पारदर्शी lens](../../view2026/anim3d/interactive_anim3d_viewer.html?lang=hi) (चलता 3-D, drag से घुमाएँ, 0.3 MB): उंगली से घुमाकर किसी भी कोण से देखें कि arm box कैसे ले जाता है। किरणें अर्ध-पारदर्शी lens से होकर focus पर मिलती हैं, और नीचे ऊपर से ली गई height image और उसका binarisation उसी timeline पर चलते हैं। [source](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
 
 </div>

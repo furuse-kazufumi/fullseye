@@ -75,6 +75,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_microns_brain_wave/04_wave_on_wiring.gif"><img src="../thumbs/poc_microns_brain_wave.jpg" alt="小鼠視皮質波" loading="lazy" width="320" height="320"><b>&#9654;</b><span>小鼠視皮質波</span></a>
 <a href="../../articles/assets/media/evis_stereo_fullseye.mp4"><img src="../thumbs/evis_stereo_depth.jpg" alt="人形機器人雙眼" loading="lazy" width="320" height="320"><b>&#9654;</b><span>人形機器人雙眼</span></a>
 <a href="../../articles/assets/media/evis_bean_track_fullseye.mp4"><img src="../thumbs/evis_bean_track.jpg" alt="筷尖相機追蹤豆子" loading="lazy" width="320" height="320"><b>&#9654;</b><span>筷尖相機追蹤豆子</span></a>
+<a href="../../anim3d/organ_volume.html?lang=tw"><img src="../thumbs/organ_volume.jpg" alt="器官體積和球形度" loading="lazy" width="320" height="320"><b>&#9654;</b><span>器官體積和球形度 · 0.5 MB</span></a>
 <a href="../../view2026/anim3d/interactive_anim3d_viewer.html?lang=tw"><img src="../thumbs/interactive_anim3d_viewer.jpg" alt="機械臂與半透明透鏡" loading="lazy" width="320" height="320"><b>&#9654;</b><span>機械臂與半透明透鏡 · 0.3 MB</span></a>
 </div>
 
@@ -658,6 +659,7 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 
 **可旋轉的動態 3-D**
 
+- [器官體積和球形度](../../anim3d/organ_volume.html?lang=tw) (動態 3-D,可拖曳旋轉, 0.5 MB): 將 6 個器官按體積排序，疊加等體積半透明球，並累積截面。散度定理與實體體素的體積最多相差 0.191%，閉合曲面的 χ = 2；限制頁顯示 99% 簡化所遺失的細結構。 **6 個器官；體積差 ≤ 0.191%；χ = 2，邊界邊為 0。** [原始碼](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_organvol_anim3d.py)
 - [機械臂與半透明透鏡](../../view2026/anim3d/interactive_anim3d_viewer.html?lang=tw) (動態 3-D,可拖曳旋轉, 0.3 MB): 用手指旋轉,從任意角度觀看機械臂搬運箱子。光線穿過半透明透鏡匯聚到焦點,下方的俯視高度影像及其二值化結果在同一時間軸上同步播放。 [原始碼](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
 
 </div>
