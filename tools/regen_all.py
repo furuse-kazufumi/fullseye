@@ -321,6 +321,12 @@ EXCLUDED = {
     "tools/build_gsplat_pages.py": ("docs/gsplat/ の 3DGS の商品ビューアとカタログ(examples/gsplat_product_viewer.py の build)。"
                                     "marching cubes に scikit-image(任意の依存)が要り、5 品の 3DGS 化とサムネイルの numpy 描画で"
                                     "1 分ほどかかり、出力は 1 本数 MB —— 鎖に入れず、ページを変える回は手で回して commit する。"),
+    "tools/build_saltxrd_anim3d.py": ("塩の結晶の粉末 X 線回折の動く 3-D の教科書(docs/view2026/anim3d/salt_xrd_anim3d.html)。"
+                                        "pocviewer.write_viewer で書く手回しの生成物(2.5 MB、pxrd の op を 4 題材ぶん回す)。"
+                                        "出力を変えたら手で回して commit する。門は tests/test_anim3d_saltxrd_2026_10_26.py。"
+                                        "ページは 8 言語版で、`py -3.11 tools/anim3d_i18n.py --build build_saltxrd_anim3d"
+                                        " --out docs/view2026/anim3d/salt_xrd_anim3d.html` で書く(生成器を直接回すと ja/en だけに戻る)。"
+                                        "表は tools/anim3d_i18n_tables/、一致は同じテストが見る。"),
     "tools/anim3d_i18n.py": ("動く 3-D の作例を 8 言語にする翻訳の層。作例の main() を走らせて仕様を横取りするので"
                              "1 本 10 秒前後かかり、作例(枝ごとに 15 本ほど)が増えるほど長くなる —— 鎖に入れず、"
                              "docs/view2026/anim3d/*.html は `--build <作例> --out ...` を手で回して commit する。"

@@ -1624,9 +1624,14 @@
    "motion": true,
    "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_organvol_anim3d.py",
    "label": {
-    "ja": "臓器の体積と球形度", "en": "Organ volume and sphericity",
-    "zh": "器官体积和球形度", "tw": "器官體積和球形度", "ko": "장기 부피와 구형도",
-    "de": "Organvolumen und Sphärizität", "hi": "अंग का आयतन और गोलाकारता", "fr": "Volume et sphéricité des organes"
+    "ja": "臓器の体積と球形度",
+    "en": "Organ volume and sphericity",
+    "zh": "器官体积和球形度",
+    "tw": "器官體積和球形度",
+    "ko": "장기 부피와 구형도",
+    "de": "Organvolumen und Sphärizität",
+    "hi": "अंग का आयतन और गोलाकारता",
+    "fr": "Volume et sphéricité des organes"
    },
    "see": {
     "ja": "6 臓器を体積順に並べ、同体積の半透明球を重ね、断面を積む。発散定理と固体ボクセルの体積は最大 0.191 % 差で、閉曲面は χ = 2。99 % 削減版が細い構造を失う限界も示す。",
@@ -1639,10 +1644,14 @@
     "fr": "6 organes sont classés par volume, superposés à des sphères translucides de même volume, puis reconstruits par sections. Les volumes par divergence et voxels solides diffèrent d’au plus 0.191 %; les surfaces fermées ont χ = 2. La limite montre les structures fines perdues par la réduction de 99 %."
    },
    "num": {
-    "ja": "6 臓器、体積差 ≤ 0.191 %、χ = 2・境界辺 0。", "en": "6 organs; volume difference ≤ 0.191%; χ = 2 and 0 boundary edges.",
-    "zh": "6 个器官；体积差 ≤ 0.191%；χ = 2，边界边为 0。", "tw": "6 個器官；體積差 ≤ 0.191%；χ = 2，邊界邊為 0。",
-    "ko": "장기 6개, 부피 차이 ≤ 0.191%, χ = 2, 경계 모서리 0개.", "de": "6 Organe; Volumendifferenz ≤ 0.191 %; χ = 2 und 0 Randkanten.",
-    "hi": "6 अंग; आयतन अंतर ≤ 0.191%; χ = 2 और सीमा किनारे 0।", "fr": "6 organes ; écart de volume ≤ 0.191 % ; χ = 2 et 0 arête de bord."
+    "ja": "6 臓器、体積差 ≤ 0.191 %、χ = 2・境界辺 0。",
+    "en": "6 organs; volume difference ≤ 0.191%; χ = 2 and 0 boundary edges.",
+    "zh": "6 个器官；体积差 ≤ 0.191%；χ = 2，边界边为 0。",
+    "tw": "6 個器官；體積差 ≤ 0.191%；χ = 2，邊界邊為 0。",
+    "ko": "장기 6개, 부피 차이 ≤ 0.191%, χ = 2, 경계 모서리 0개.",
+    "de": "6 Organe; Volumendifferenz ≤ 0.191 %; χ = 2 und 0 Randkanten.",
+    "hi": "6 अंग; आयतन अंतर ≤ 0.191%; χ = 2 और सीमा किनारे 0।",
+    "fr": "6 organes ; écart de volume ≤ 0.191 % ; χ = 2 et 0 arête de bord."
    }
   },
   {
@@ -1690,10 +1699,14 @@
    "motion": true,
    "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_tablet_anim3d.py",
    "label": {
-    "ja": "錠剤の外観と色の検査", "en": "Tablet appearance and colour inspection",
-    "zh": "Tablet appearance and colour inspection", "tw": "Tablet appearance and colour inspection",
-    "ko": "Tablet appearance and colour inspection", "de": "Tablet appearance and colour inspection",
-    "hi": "Tablet appearance and colour inspection", "fr": "Tablet appearance and colour inspection"
+    "ja": "錠剤の外観と色の検査",
+    "en": "Tablet appearance and colour inspection",
+    "zh": "Tablet appearance and colour inspection",
+    "tw": "Tablet appearance and colour inspection",
+    "ko": "Tablet appearance and colour inspection",
+    "de": "Tablet appearance and colour inspection",
+    "hi": "Tablet appearance and colour inspection",
+    "fr": "Tablet appearance and colour inspection"
    },
    "see": {
     "ja": "形と色だけの合成錠剤を回す。面積ごとに欠けなし 800 像と欠けあり 800 像を合成して検出率曲線を測り、色むらを ΔE00 = 8 から 0 へ下げる。異物位置と blob 数を測り、照明と平行な浅い割れが消える限界まで見る。",
@@ -1752,6 +1765,44 @@
     "de": "Bei 400 km, 5-µm-Pixeln und 8 m Brennweite beträgt die GSD 0.250 m. Bei 550 nm und 2.4 m Öffnung beträgt der Rayleigh-Bodenradius 0.112 m. Die Atmosphäre bleibt in der Grenzzeile ausdrücklich unberechnet.",
     "hi": "400 km ऊँचाई, 5 µm pixels और 8 m focal length पर GSD 0.250 m है। 550 nm और 2.4 m aperture पर Rayleigh ground radius 0.112 m है। वातावरण को सीमा-पंक्ति में स्पष्ट रूप से अनगणित रखा गया है।",
     "fr": "À 400 km, avec des pixels de 5 µm et une focale de 8 m, la GSD vaut 0.250 m. À 550 nm avec une ouverture de 2.4 m, le rayon de Rayleigh au sol vaut 0.112 m. L'atmosphère reste explicitement non calculée dans la ligne de limite."
+   }
+  },
+  {
+   "id": "salt_xrd_anim3d",
+   "category": "anim3d",
+   "media": "salt_xrd_anim3d.html",
+   "media_path": "view2026/anim3d/salt_xrd_anim3d.html",
+   "motion": true,
+   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_saltxrd_anim3d.py",
+   "label": {
+    "ja": "塩の結晶の粉末 X 線回折",
+    "en": "Powder X-ray diffraction of salt",
+    "zh": "食盐晶体的粉末 X 射线衍射",
+    "tw": "食鹽晶體的粉末 X 光繞射",
+    "ko": "소금 결정의 분말 X선 회절",
+    "de": "Pulver-Röntgenbeugung an Salz",
+    "hi": "नमक के क्रिस्टल का powder X-ray diffraction",
+    "fr": "Diffraction des rayons X sur poudre de sel"
+   },
+   "see": {
+    "ja": "塩の単位胞に格子面の板を重ね、Bragg の角度を振ると行路差が λ の整数倍の所だけ受光面が光る。粒の向きをばらばらにすると点が環に育ち、波長を長くすると環は広がって消える。消滅則は 8 原子の波を足して見せる。",
+    "en": "Lattice planes are laid over the unit cell of salt; sweep the Bragg angle and the detector lights up only where the path difference is a whole number of λ. Scatter the grain orientations and spots grow into rings; lengthen the wavelength and the rings expand and vanish. The extinction rule is shown by adding the waves of the 8 atoms.",
+    "zh": "在食盐晶胞上叠加晶格面的薄板;扫过 Bragg 角时,只有光程差为 λ 整数倍处探测器才会亮。把晶粒取向打乱,点就长成环;把波长拉长,环扩大并消失。消光规则通过把 8 个原子的波相加来展示。",
+    "tw": "在食鹽晶胞上疊加晶格面的薄板;掃過 Bragg 角時,只有光程差為 λ 整數倍處探測器才會亮。把晶粒取向打亂,點就長成環;把波長拉長,環擴大並消失。消光規則透過把 8 個原子的波相加來展示。",
+    "ko": "소금의 단위세포에 격자면의 판을 겹치고 Bragg 각을 훑으면, 행로차가 λ의 정수배인 곳에서만 검출기가 빛난다. 알갱이의 방향을 흩뜨리면 점이 환으로 자라고, 파장을 길게 하면 환은 넓어져 사라진다. 소멸 규칙은 원자 8개의 파동을 더해 보인다.",
+    "de": "Gitterebenen liegen über der Elementarzelle des Salzes; beim Durchfahren des Bragg-Winkels leuchtet der Detektor nur dort, wo der Gangunterschied ein ganzes Vielfaches von λ ist. Werden die Körner zufällig gedreht, wachsen Punkte zu Ringen; wird die Wellenlänge länger, dehnen sich die Ringe aus und verschwinden. Die Auslöschungsregel zeigt sich beim Addieren der Wellen der 8 Atome.",
+    "hi": "नमक की unit cell पर lattice plane की चादरें रखी हैं; Bragg कोण घुमाइए तो detector केवल वहाँ जलता है जहाँ path difference λ का पूर्ण गुणज है। दानों के orientation बिखेरिए तो बिंदु ring बन जाते हैं; तरंगदैर्घ्य लंबी कीजिए तो ring फैलकर गायब हो जाते हैं। extinction नियम 8 परमाणुओं की तरंगें जोड़कर दिखाया गया है।",
+    "fr": "Des plans réticulaires sont posés sur la maille du sel ; balayez l'angle de Bragg et le détecteur ne s'allume que là où la différence de marche est un multiple entier de λ. Dispersez les orientations des grains et les points deviennent des anneaux ; allongez la longueur d'onde et les anneaux s'élargissent puis disparaissent. La règle d'extinction est montrée en additionnant les ondes des 8 atomes."
+   },
+   "num": {
+    "ja": "",
+    "en": "",
+    "zh": "",
+    "tw": "",
+    "ko": "",
+    "de": "",
+    "hi": "",
+    "fr": ""
    }
   }
  ],
