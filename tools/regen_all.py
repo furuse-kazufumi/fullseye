@@ -294,6 +294,9 @@ _IMAGE_REASON = ("画像・動画の書き手。PNG/GIF のバイトは Pillow �
 _SPIKE_REASON = ("スパイク(実験)の記録。spikes/out_gallery/ の図は当時の証跡として凍結してあり、"
                  "再描画(matplotlib / GUI)はバイトが変わる。")
 EXCLUDED = {
+    "tools/build_bore_anim3d.py": ("ボアスコープのリレー結像とファイバ束の動く 3-D 教材(docs/view2026/anim3d/borescope_anim3d.html)。"
+                                    "`py -3.11 tools/anim3d_i18n.py --build build_bore_anim3d --out docs/view2026/anim3d/borescope_anim3d.html` で書く"
+                                    "(翻訳表 tools/anim3d_i18n_tables/build_bore_anim3d.json)。門は tests/test_anim3d_bore_2026_10_26.py。"),
     "tools/build_pulseox_anim3d.py": ("パルスオキシメータの二波長吸収の動く 3-D 教材(docs/view2026/anim3d/pulseox_anim3d.html)。"
                                        "`py -3.11 tools/anim3d_i18n.py --build build_pulseox_anim3d --out docs/view2026/anim3d/pulseox_anim3d.html` で書く"
                                        "(翻訳表 tools/anim3d_i18n_tables/build_pulseox_anim3d.json)。門は tests/test_anim3d_pulseox_2026_10_26.py。"),
@@ -324,9 +327,15 @@ EXCLUDED = {
                                        "tests/test_anim3d_i18n_organvol_2026_10_26.py。"),
     "tools/import_bodyparts3d_organs.py": ("BodyParts3D 4.0(99 % 削減版、CC BY 4.0)の 6 臓器の取り込み。原本の zip は配布しないので"
                                            "回せない。縫い目の頂点を溶接して data/bodyparts3d/*.npz を書き、出典と改変は同じ場所の README.md に書く。"),
+    "tools/build_oct_anim3d.py": ("合成 OCT で網膜の層厚を測る動く 3-D 教材(docs/view2026/anim3d/oct_retina_anim3d.html)。"
+                                  "`py -3.11 tools/anim3d_i18n.py --build build_oct_anim3d --out docs/view2026/anim3d/oct_retina_anim3d.html` で書く"
+                                  "手回しの 8 言語生成物。門は tests/test_anim3d_oct_2026_10_27.py。"),
     "tools/build_satgsd_anim3d.py": ("衛星の地上分解能と回折の動く 3-D の教材(docs/view2026/anim3d/satellite_gsd_anim3d.html)。"
                                      "`py -3.11 tools/anim3d_i18n.py --build build_satgsd_anim3d --out docs/view2026/anim3d/satellite_gsd_anim3d.html` で書く"
                                      "(翻訳表 tools/anim3d_i18n_tables/build_satgsd_anim3d.json)。門は tests/test_anim3d_satgsd_2026_10_26.py。"),
+    "tools/build_hypercentric_anim3d.py": ("ハイパーセントリックレンズの動く 3-D 教材(docs/view2026/anim3d/hypercentric_lens_anim3d.html)。"
+                                           "`py -3.11 tools/anim3d_i18n.py --build build_hypercentric_anim3d --out docs/view2026/anim3d/hypercentric_lens_anim3d.html` で書く"
+                                           "(翻訳表 tools/anim3d_i18n_tables/build_hypercentric_anim3d.json)。門は tests/test_anim3d_hypercentric_2026_10_27.py。"),
     "tools/build_ship_anim3d.py": ("排水量・浮心・メタセンタ高さの動く 3-D 教材(docs/view2026/anim3d/ship_stability_anim3d.html)。"
                                   "`py -3.11 tools/anim3d_i18n.py --build build_ship_anim3d --out docs/view2026/anim3d/ship_stability_anim3d.html` で書く"
                                   "(翻訳表 tools/anim3d_i18n_tables/build_ship_anim3d.json)。門は tests/test_anim3d_ship_2026_10_27.py。"),
@@ -336,9 +345,14 @@ EXCLUDED = {
     "tools/build_shadow_anim3d.py": ("冬至の会場周辺の日影を追う動く 3-D 教材(docs/view2026/anim3d/venue_shadow_anim3d.html)。"
                                      "`py -3.11 tools/anim3d_i18n.py --build build_shadow_anim3d --out docs/view2026/anim3d/venue_shadow_anim3d.html` で書く"
                                      "(翻訳表 tools/anim3d_i18n_tables/build_shadow_anim3d.json)。門は tests/test_anim3d_shadow_2026_10_27.py。"),
+    "tools/build_catenary_anim3d.py": ("架線トロリ線の摩耗を走行中のラインカメラ像から測る動く 3-D 教材。"
+                                       "8 言語ページは anim3d_i18n.py で手回し生成し、専用テストで byte 一致を検査する。"),
     "tools/build_rail_anim3d.py": ("レールの頭頂摩耗と軌間を光切断で測る動く 3-D 教材(docs/view2026/anim3d/rail_light_section_anim3d.html)。"
                                    "`py -3.11 tools/anim3d_i18n.py --build build_rail_anim3d --out docs/view2026/anim3d/rail_light_section_anim3d.html` で書く"
                                    "(翻訳表 tools/anim3d_i18n_tables/build_rail_anim3d.json)。門は tests/test_anim3d_rail_2026_10_26.py。"),
+    "tools/build_bridge_dic_anim3d.py": ("橋のたわみを画像相関で測る動く 3-D 教材(docs/view2026/anim3d/bridge_dic_anim3d.html)。"
+                                         "`py -3.11 tools/anim3d_i18n.py --build build_bridge_dic_anim3d --out docs/view2026/anim3d/bridge_dic_anim3d.html` で書く"
+                                         "(翻訳表 tools/anim3d_i18n_tables/build_bridge_dic_anim3d.json)。門は tests/test_anim3d_bridge_dic_2026_10_27.py。"),
     "tools/build_tunnel_anim3d.py": ("トンネル覆工のひびを走行撮影して測る動く 3-D 教材(docs/view2026/anim3d/tunnel_crack_anim3d.html)。"
                                      "`py -3.11 tools/anim3d_i18n.py --build build_tunnel_anim3d --out docs/view2026/anim3d/tunnel_crack_anim3d.html` で書く"
                                      "(翻訳表 tools/anim3d_i18n_tables/build_tunnel_anim3d.json)。門は tests/test_anim3d_tunnel_2026_10_27.py。"),
@@ -348,6 +362,9 @@ EXCLUDED = {
     "tools/build_dissolution_anim3d.py": ("薬の粒の溶出を合成画像から測る動く 3-D 教材(docs/view2026/anim3d/particle_dissolution_anim3d.html)。"
                                           "`py -3.11 tools/anim3d_i18n.py --build build_dissolution_anim3d --out docs/view2026/anim3d/particle_dissolution_anim3d.html` で書く"
                                           "(翻訳表 tools/anim3d_i18n_tables/build_dissolution_anim3d.json)。門は tests/test_anim3d_dissolution_2026_10_27.py。"),
+    "tools/build_laserdiff_anim3d.py": ("レーザー回折リングから粒度分布を復元する動く 3-D 教材(docs/view2026/anim3d/laser_diffraction_anim3d.html)。"
+                                        "`py -3.11 tools/anim3d_i18n.py --build build_laserdiff_anim3d --out docs/view2026/anim3d/laser_diffraction_anim3d.html` で書く"
+                                        "(翻訳表 tools/anim3d_i18n_tables/build_laserdiff_anim3d.json)。門は tests/test_anim3d_laserdiff_2026_10_27.py。"),
     "tools/build_gsplat_pages.py": ("docs/gsplat/ の 3DGS の商品ビューアとカタログ(examples/gsplat_product_viewer.py の build)。"
                                     "marching cubes に scikit-image(任意の依存)が要り、5 品の 3DGS 化とサムネイルの numpy 描画で"
                                     "1 分ほどかかり、出力は 1 本数 MB —— 鎖に入れず、ページを変える回は手で回して commit する。"),

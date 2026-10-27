@@ -1,0 +1,420 @@
+{
+ "_": "Six-language translation table for the catenary wear lesson.",
+ "example": "build_catenary_anim3d",
+ "strings": {
+  "Measure contact-wire wear while moving": {
+   "ja": "走りながら架線のすり減りを測る",
+   "zh": "Measure contact-wire wear while moving",
+   "tw": "Measure contact-wire wear while moving",
+   "ko": "Measure contact-wire wear while moving",
+   "de": "Measure contact-wire wear while moving",
+   "hi": "Measure contact-wire wear while moving",
+   "fr": "Measure contact-wire wear while moving"
+  },
+  "Recover contact-wire height from a bright-band width": {
+   "ja": "明るい帯の幅からトロリ線の残存高さを求める",
+   "zh": "Recover contact-wire height from a bright-band width",
+   "tw": "Recover contact-wire height from a bright-band width",
+   "ko": "Recover contact-wire height from a bright-band width",
+   "de": "Recover contact-wire height from a bright-band width",
+   "hi": "Recover contact-wire height from a bright-band width",
+   "fr": "Recover contact-wire height from a bright-band width"
+  },
+  "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Badges report values computed from images.": {
+   "ja": "①問い → ②予想 → ③再生 → ④式 → ⑤限界。バッジは画像から計算した値を示す。",
+   "zh": "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Badges report values computed from images.",
+   "tw": "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Badges report values computed from images.",
+   "ko": "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Badges report values computed from images.",
+   "de": "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Badges report values computed from images.",
+   "hi": "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Badges report values computed from images.",
+   "fr": "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Badges report values computed from images."
+  },
+  "Why the underside wears flat": {
+   "ja": "なぜ下面が平らに削れるのか",
+   "zh": "Why the underside wears flat",
+   "tw": "Why the underside wears flat",
+   "ko": "Why the underside wears flat",
+   "de": "Why the underside wears flat",
+   "hi": "Why the underside wears flat",
+   "fr": "Why the underside wears flat"
+  },
+  "The pantograph strip repeatedly touches only the underside of the nearly circular contact wire, making a chord-shaped flat.": {
+   "ja": "パンタグラフのすり板が円形に近いトロリ線の下面だけに繰り返し接触し、弦の形の平面を作る。",
+   "zh": "The pantograph strip repeatedly touches only the underside of the nearly circular contact wire, making a chord-shaped flat.",
+   "tw": "The pantograph strip repeatedly touches only the underside of the nearly circular contact wire, making a chord-shaped flat.",
+   "ko": "The pantograph strip repeatedly touches only the underside of the nearly circular contact wire, making a chord-shaped flat.",
+   "de": "The pantograph strip repeatedly touches only the underside of the nearly circular contact wire, making a chord-shaped flat.",
+   "hi": "The pantograph strip repeatedly touches only the underside of the nearly circular contact wire, making a chord-shaped flat.",
+   "fr": "The pantograph strip repeatedly touches only the underside of the nearly circular contact wire, making a chord-shaped flat."
+  },
+  "band width measured from the image": {
+   "ja": "画像から測った帯幅",
+   "zh": "band width measured from the image",
+   "tw": "band width measured from the image",
+   "ko": "band width measured from the image",
+   "de": "band width measured from the image",
+   "hi": "band width measured from the image",
+   "fr": "band width measured from the image"
+  },
+  "remaining height converted from band width": {
+   "ja": "帯幅から換算した残存高さ",
+   "zh": "remaining height converted from band width",
+   "tw": "remaining height converted from band width",
+   "ko": "remaining height converted from band width",
+   "de": "remaining height converted from band width",
+   "hi": "remaining height converted from band width",
+   "fr": "remaining height converted from band width"
+  },
+  "width difference with and without stagger": {
+   "ja": "偏位あり・なしでの幅の差",
+   "zh": "width difference with and without stagger",
+   "tw": "width difference with and without stagger",
+   "ko": "width difference with and without stagger",
+   "de": "width difference with and without stagger",
+   "hi": "width difference with and without stagger",
+   "fr": "width difference with and without stagger"
+  },
+  "travel distance": {
+   "ja": "走行距離",
+   "zh": "travel distance",
+   "tw": "travel distance",
+   "ko": "travel distance",
+   "de": "travel distance",
+   "hi": "travel distance",
+   "fr": "travel distance"
+  },
+  "As wear grows, what happens to the bright flat width?": {
+   "ja": "摩耗が進むと明るい平面の幅はどうなる？",
+   "zh": "As wear grows, what happens to the bright flat width?",
+   "tw": "As wear grows, what happens to the bright flat width?",
+   "ko": "As wear grows, what happens to the bright flat width?",
+   "de": "As wear grows, what happens to the bright flat width?",
+   "hi": "As wear grows, what happens to the bright flat width?",
+   "fr": "As wear grows, what happens to the bright flat width?"
+  },
+  "it grows wider": {
+   "ja": "広くなる",
+   "zh": "it grows wider",
+   "tw": "it grows wider",
+   "ko": "it grows wider",
+   "de": "it grows wider",
+   "hi": "it grows wider",
+   "fr": "it grows wider"
+  },
+  "it becomes narrower": {
+   "ja": "狭くなる",
+   "zh": "it becomes narrower",
+   "tw": "it becomes narrower",
+   "ko": "it becomes narrower",
+   "de": "it becomes narrower",
+   "hi": "it becomes narrower",
+   "fr": "it becomes narrower"
+  },
+  "A deeper cut through a circle makes a wider chord.": {
+   "ja": "円を深く削るほど弦は広くなる。",
+   "zh": "A deeper cut through a circle makes a wider chord.",
+   "tw": "A deeper cut through a circle makes a wider chord.",
+   "ko": "A deeper cut through a circle makes a wider chord.",
+   "de": "A deeper cut through a circle makes a wider chord.",
+   "hi": "A deeper cut through a circle makes a wider chord.",
+   "fr": "A deeper cut through a circle makes a wider chord."
+  },
+  "h = R + sqrt(R² − (w/2)²)": {
+   "ja": "h = R + sqrt(R² − (w/2)²)",
+   "zh": "h = R + sqrt(R² − (w/2)²)",
+   "tw": "h = R + sqrt(R² − (w/2)²)",
+   "ko": "h = R + sqrt(R² − (w/2)²)",
+   "de": "h = R + sqrt(R² − (w/2)²)",
+   "hi": "h = R + sqrt(R² − (w/2)²)",
+   "fr": "h = R + sqrt(R² − (w/2)²)"
+  },
+  "Synthetic model with a circular section and uniform contact.": {
+   "ja": "断面を円、接触を一様とした合成モデル。",
+   "zh": "Synthetic model with a circular section and uniform contact.",
+   "tw": "Synthetic model with a circular section and uniform contact.",
+   "ko": "Synthetic model with a circular section and uniform contact.",
+   "de": "Synthetic model with a circular section and uniform contact.",
+   "hi": "Synthetic model with a circular section and uniform contact.",
+   "fr": "Synthetic model with a circular section and uniform contact."
+  },
+  "Track the band in a line-camera image": {
+   "ja": "ラインカメラ像で帯を追う",
+   "zh": "Track the band in a line-camera image",
+   "tw": "Track the band in a line-camera image",
+   "ko": "Track the band in a line-camera image",
+   "de": "Track the band in a line-camera image",
+   "hi": "Track the band in a line-camera image",
+   "fr": "Track the band in a line-camera image"
+  },
+  "Rows along the journey stack the strongly reflecting wear flat. Stagger moves the band sideways while preserving the edge spacing.": {
+   "ja": "照明を強く反射する摩耗面を、走行距離ごとの横一列として積み上げる。偏位は帯を横へ動かすが、両端の間隔は保つ。",
+   "zh": "Rows along the journey stack the strongly reflecting wear flat. Stagger moves the band sideways while preserving the edge spacing.",
+   "tw": "Rows along the journey stack the strongly reflecting wear flat. Stagger moves the band sideways while preserving the edge spacing.",
+   "ko": "Rows along the journey stack the strongly reflecting wear flat. Stagger moves the band sideways while preserving the edge spacing.",
+   "de": "Rows along the journey stack the strongly reflecting wear flat. Stagger moves the band sideways while preserving the edge spacing.",
+   "hi": "Rows along the journey stack the strongly reflecting wear flat. Stagger moves the band sideways while preserving the edge spacing.",
+   "fr": "Rows along the journey stack the strongly reflecting wear flat. Stagger moves the band sideways while preserving the edge spacing."
+  },
+  "width measured from image only": {
+   "ja": "画像だけから測った帯幅",
+   "zh": "width measured from image only",
+   "tw": "width measured from image only",
+   "ko": "width measured from image only",
+   "de": "width measured from image only",
+   "hi": "width measured from image only",
+   "fr": "width measured from image only"
+  },
+  "synthetic line image: time by lateral position": {
+   "ja": "時間 × 横位置の合成ライン像",
+   "zh": "synthetic line image: time by lateral position",
+   "tw": "synthetic line image: time by lateral position",
+   "ko": "synthetic line image: time by lateral position",
+   "de": "synthetic line image: time by lateral position",
+   "hi": "synthetic line image: time by lateral position",
+   "fr": "synthetic line image: time by lateral position"
+  },
+  "Does lateral stagger change the band width?": {
+   "ja": "偏位で帯が横へ動くと幅も変わる？",
+   "zh": "Does lateral stagger change the band width?",
+   "tw": "Does lateral stagger change the band width?",
+   "ko": "Does lateral stagger change the band width?",
+   "de": "Does lateral stagger change the band width?",
+   "hi": "Does lateral stagger change the band width?",
+   "fr": "Does lateral stagger change the band width?"
+  },
+  "only position changes": {
+   "ja": "位置だけが変わる",
+   "zh": "only position changes",
+   "tw": "only position changes",
+   "ko": "only position changes",
+   "de": "only position changes",
+   "hi": "only position changes",
+   "fr": "only position changes"
+  },
+  "width changes equally": {
+   "ja": "幅も同じだけ変わる",
+   "zh": "width changes equally",
+   "tw": "width changes equally",
+   "ko": "width changes equally",
+   "de": "width changes equally",
+   "hi": "width changes equally",
+   "fr": "width changes equally"
+  },
+  "Each row supplies its own threshold; both edges are interpolated to subpixels. The detector never receives the true width.": {
+   "ja": "各行の明暗分布だけから閾値を作り、左右の端をサブピクセル補間する。真の幅は検出に渡さない。",
+   "zh": "Each row supplies its own threshold; both edges are interpolated to subpixels. The detector never receives the true width.",
+   "tw": "Each row supplies its own threshold; both edges are interpolated to subpixels. The detector never receives the true width.",
+   "ko": "Each row supplies its own threshold; both edges are interpolated to subpixels. The detector never receives the true width.",
+   "de": "Each row supplies its own threshold; both edges are interpolated to subpixels. The detector never receives the true width.",
+   "hi": "Each row supplies its own threshold; both edges are interpolated to subpixels. The detector never receives the true width.",
+   "fr": "Each row supplies its own threshold; both edges are interpolated to subpixels. The detector never receives the true width."
+  },
+  "w = (x_right − x_left) × 0.08 mm/pixel": {
+   "ja": "w = (x_right − x_left) × 0.08 mm/pixel",
+   "zh": "w = (x_right − x_left) × 0.08 mm/pixel",
+   "tw": "w = (x_right − x_left) × 0.08 mm/pixel",
+   "ko": "w = (x_right − x_left) × 0.08 mm/pixel",
+   "de": "w = (x_right − x_left) × 0.08 mm/pixel",
+   "hi": "w = (x_right − x_left) × 0.08 mm/pixel",
+   "fr": "w = (x_right − x_left) × 0.08 mm/pixel"
+  },
+  "The 0.08 mm/pixel scale and illumination profile are explanatory assumptions.": {
+   "ja": "0.08 mm/pixel と照明分布は説明用の仮定。",
+   "zh": "The 0.08 mm/pixel scale and illumination profile are explanatory assumptions.",
+   "tw": "The 0.08 mm/pixel scale and illumination profile are explanatory assumptions.",
+   "ko": "The 0.08 mm/pixel scale and illumination profile are explanatory assumptions.",
+   "de": "The 0.08 mm/pixel scale and illumination profile are explanatory assumptions.",
+   "hi": "The 0.08 mm/pixel scale and illumination profile are explanatory assumptions.",
+   "fr": "The 0.08 mm/pixel scale and illumination profile are explanatory assumptions."
+  },
+  "Map wear along the route": {
+   "ja": "摩耗を走行距離の地図にする",
+   "zh": "Map wear along the route",
+   "tw": "Map wear along the route",
+   "ko": "Map wear along the route",
+   "de": "Map wear along the route",
+   "hi": "Map wear along the route",
+   "fr": "Map wear along the route"
+  },
+  "The measured image width enters the circle-chord equation to give remaining height by section. The red line is synthetic geometry withheld from the detector.": {
+   "ja": "画像で測った幅を円の弦の式へ入れ、区間ごとの残存高さに直す。赤い線は合成に使った幾何で、検出器には渡していない。",
+   "zh": "The measured image width enters the circle-chord equation to give remaining height by section. The red line is synthetic geometry withheld from the detector.",
+   "tw": "The measured image width enters the circle-chord equation to give remaining height by section. The red line is synthetic geometry withheld from the detector.",
+   "ko": "The measured image width enters the circle-chord equation to give remaining height by section. The red line is synthetic geometry withheld from the detector.",
+   "de": "The measured image width enters the circle-chord equation to give remaining height by section. The red line is synthetic geometry withheld from the detector.",
+   "hi": "The measured image width enters the circle-chord equation to give remaining height by section. The red line is synthetic geometry withheld from the detector.",
+   "fr": "The measured image width enters the circle-chord equation to give remaining height by section. The red line is synthetic geometry withheld from the detector."
+  },
+  "estimated remaining height": {
+   "ja": "推定した残存高さ",
+   "zh": "estimated remaining height",
+   "tw": "estimated remaining height",
+   "ko": "estimated remaining height",
+   "de": "estimated remaining height",
+   "hi": "estimated remaining height",
+   "fr": "estimated remaining height"
+  },
+  "synthetic geometry": {
+   "ja": "合成した幾何",
+   "zh": "synthetic geometry",
+   "tw": "synthetic geometry",
+   "ko": "synthetic geometry",
+   "de": "synthetic geometry",
+   "hi": "synthetic geometry",
+   "fr": "synthetic geometry"
+  },
+  "What follows directly from band width?": {
+   "ja": "帯幅から直接わかるのは何？",
+   "zh": "What follows directly from band width?",
+   "tw": "What follows directly from band width?",
+   "ko": "What follows directly from band width?",
+   "de": "What follows directly from band width?",
+   "hi": "What follows directly from band width?",
+   "fr": "What follows directly from band width?"
+  },
+  "remaining height under a circular-section assumption": {
+   "ja": "円弧を仮定した残存高さ",
+   "zh": "remaining height under a circular-section assumption",
+   "tw": "remaining height under a circular-section assumption",
+   "ko": "remaining height under a circular-section assumption",
+   "de": "remaining height under a circular-section assumption",
+   "hi": "remaining height under a circular-section assumption",
+   "fr": "remaining height under a circular-section assumption"
+  },
+  "material strength": {
+   "ja": "材質の強度",
+   "zh": "material strength",
+   "tw": "material strength",
+   "ko": "material strength",
+   "de": "material strength",
+   "hi": "material strength",
+   "fr": "material strength"
+  },
+  "The conversion changes if the section is not circular.": {
+   "ja": "同じ幅でも断面が円でなければ換算結果は変わる。",
+   "zh": "The conversion changes if the section is not circular.",
+   "tw": "The conversion changes if the section is not circular.",
+   "ko": "The conversion changes if the section is not circular.",
+   "de": "The conversion changes if the section is not circular.",
+   "hi": "The conversion changes if the section is not circular.",
+   "fr": "The conversion changes if the section is not circular."
+  },
+  "This is a measurement map, not a replacement decision.": {
+   "ja": "交換判定そのものではなく、測定の地図を示す。",
+   "zh": "This is a measurement map, not a replacement decision.",
+   "tw": "This is a measurement map, not a replacement decision.",
+   "ko": "This is a measurement map, not a replacement decision.",
+   "de": "This is a measurement map, not a replacement decision.",
+   "hi": "This is a measurement map, not a replacement decision.",
+   "fr": "This is a measurement map, not a replacement decision."
+  },
+  "Rain, dirt and vibration are separate errors": {
+   "ja": "雨・汚れ・振動は別の誤差",
+   "zh": "Rain, dirt and vibration are separate errors",
+   "tw": "Rain, dirt and vibration are separate errors",
+   "ko": "Rain, dirt and vibration are separate errors",
+   "de": "Rain, dirt and vibration are separate errors",
+   "hi": "Rain, dirt and vibration are separate errors",
+   "fr": "Rain, dirt and vibration are separate errors"
+  },
+  "Lost reflection can erase an edge, and oblique viewing shortens apparent width. A missing row must not become zero width.": {
+   "ja": "反射が落ちると端が欠け、斜めから見ると見かけの幅が縮む。欠測をゼロ幅として扱ってはいけない。",
+   "zh": "Lost reflection can erase an edge, and oblique viewing shortens apparent width. A missing row must not become zero width.",
+   "tw": "Lost reflection can erase an edge, and oblique viewing shortens apparent width. A missing row must not become zero width.",
+   "ko": "Lost reflection can erase an edge, and oblique viewing shortens apparent width. A missing row must not become zero width.",
+   "de": "Lost reflection can erase an edge, and oblique viewing shortens apparent width. A missing row must not become zero width.",
+   "hi": "Lost reflection can erase an edge, and oblique viewing shortens apparent width. A missing row must not become zero width.",
+   "fr": "Lost reflection can erase an edge, and oblique viewing shortens apparent width. A missing row must not become zero width."
+  },
+  "width remains correct with rain, dirt, vibration and oblique viewing": {
+   "ja": "雨・汚れ・振動・斜め視でも正しい幅になる",
+   "zh": "width remains correct with rain, dirt, vibration and oblique viewing",
+   "tw": "width remains correct with rain, dirt, vibration and oblique viewing",
+   "ko": "width remains correct with rain, dirt, vibration and oblique viewing",
+   "de": "width remains correct with rain, dirt, vibration and oblique viewing",
+   "hi": "width remains correct with rain, dirt, vibration and oblique viewing",
+   "fr": "width remains correct with rain, dirt, vibration and oblique viewing"
+  },
+  "include field conditions": {
+   "ja": "現場条件を含める",
+   "zh": "include field conditions",
+   "tw": "include field conditions",
+   "ko": "include field conditions",
+   "de": "include field conditions",
+   "hi": "include field conditions",
+   "fr": "include field conditions"
+  },
+  "not computed: evaluate reflectance loss and projection bias separately": {
+   "ja": "未計算: 反射低下と投影誤差を別に評価する",
+   "zh": "not computed: evaluate reflectance loss and projection bias separately",
+   "tw": "not computed: evaluate reflectance loss and projection bias separately",
+   "ko": "not computed: evaluate reflectance loss and projection bias separately",
+   "de": "not computed: evaluate reflectance loss and projection bias separately",
+   "hi": "not computed: evaluate reflectance loss and projection bias separately",
+   "fr": "not computed: evaluate reflectance loss and projection bias separately"
+  },
+  "May an invisible band be recorded as 0 mm?": {
+   "ja": "帯が見えない行を 0 mm と記録してよい？",
+   "zh": "May an invisible band be recorded as 0 mm?",
+   "tw": "May an invisible band be recorded as 0 mm?",
+   "ko": "May an invisible band be recorded as 0 mm?",
+   "de": "May an invisible band be recorded as 0 mm?",
+   "hi": "May an invisible band be recorded as 0 mm?",
+   "fr": "May an invisible band be recorded as 0 mm?"
+  },
+  "yes": {
+   "ja": "よい",
+   "zh": "yes",
+   "tw": "yes",
+   "ko": "yes",
+   "de": "yes",
+   "hi": "yes",
+   "fr": "yes"
+  },
+  "mark it missing and reassess": {
+   "ja": "欠測にして再評価する",
+   "zh": "mark it missing and reassess",
+   "tw": "mark it missing and reassess",
+   "ko": "mark it missing and reassess",
+   "de": "mark it missing and reassess",
+   "hi": "mark it missing and reassess",
+   "fr": "mark it missing and reassess"
+  },
+  "Zero would falsely mean no wear.": {
+   "ja": "0 mm は摩耗なしという誤った観測になる。",
+   "zh": "Zero would falsely mean no wear.",
+   "tw": "Zero would falsely mean no wear.",
+   "ko": "Zero would falsely mean no wear.",
+   "de": "Zero would falsely mean no wear.",
+   "hi": "Zero would falsely mean no wear.",
+   "fr": "Zero would falsely mean no wear."
+  },
+  "missing ≠ 0 mm": {
+   "ja": "欠測 ≠ 0 mm",
+   "zh": "missing ≠ 0 mm",
+   "tw": "missing ≠ 0 mm",
+   "ko": "missing ≠ 0 mm",
+   "de": "missing ≠ 0 mm",
+   "hi": "missing ≠ 0 mm",
+   "fr": "missing ≠ 0 mm"
+  },
+  "Rain, dirt, vibration, oblique views and maintenance decisions are outside this synthetic model.": {
+   "ja": "雨、汚れ、振動、斜視と保守判定はこの合成モデルの外。",
+   "zh": "Rain, dirt, vibration, oblique views and maintenance decisions are outside this synthetic model.",
+   "tw": "Rain, dirt, vibration, oblique views and maintenance decisions are outside this synthetic model.",
+   "ko": "Rain, dirt, vibration, oblique views and maintenance decisions are outside this synthetic model.",
+   "de": "Rain, dirt, vibration, oblique views and maintenance decisions are outside this synthetic model.",
+   "hi": "Rain, dirt, vibration, oblique views and maintenance decisions are outside this synthetic model.",
+   "fr": "Rain, dirt, vibration, oblique views and maintenance decisions are outside this synthetic model."
+  },
+  "Wire, vehicle and camera image are entirely synthetic and represent no specific operator, vehicle, product or standard.": {
+   "ja": "架線、車両、カメラ像はすべて合成。固有の事業者、車両、製品、規格を表さない。",
+   "zh": "Wire, vehicle and camera image are entirely synthetic and represent no specific operator, vehicle, product or standard.",
+   "tw": "Wire, vehicle and camera image are entirely synthetic and represent no specific operator, vehicle, product or standard.",
+   "ko": "Wire, vehicle and camera image are entirely synthetic and represent no specific operator, vehicle, product or standard.",
+   "de": "Wire, vehicle and camera image are entirely synthetic and represent no specific operator, vehicle, product or standard.",
+   "hi": "Wire, vehicle and camera image are entirely synthetic and represent no specific operator, vehicle, product or standard.",
+   "fr": "Wire, vehicle and camera image are entirely synthetic and represent no specific operator, vehicle, product or standard."
+  }
+ }
+}

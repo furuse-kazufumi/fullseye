@@ -1699,9 +1699,14 @@
    "motion": true,
    "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_dissolution_anim3d.py",
    "label": {
-    "ja": "薬の粒はどう溶けるか", "en": "How medicine particles dissolve",
-    "zh": "药物颗粒如何溶解", "tw": "藥物顆粒如何溶解", "ko": "약 입자는 어떻게 녹는가",
-    "de": "Wie sich Arzneipartikel auflösen", "hi": "दवा के कण कैसे घुलते हैं", "fr": "Comment les particules de médicament se dissolvent"
+    "ja": "薬の粒はどう溶けるか",
+    "en": "How medicine particles dissolve",
+    "zh": "药物颗粒如何溶解",
+    "tw": "藥物顆粒如何溶解",
+    "ko": "약 입자는 어떻게 녹는가",
+    "de": "Wie sich Arzneipartikel auflösen",
+    "hi": "दवा के कण कैसे घुलते हैं",
+    "fr": "Comment les particules de médicament se dissolvent"
    },
    "see": {
     "ja": "同じ総量の 1 粒と 8 粒が縮む。雑音像を測ると、8 分割は表面積が 2 倍になり、8 粒は半分の時間で溶ける。",
@@ -1722,6 +1727,44 @@
     "de": "Numerische ODE gegen Kubikwurzelgesetz: < 1e-12. Ab Radius 3.0 mm liegt der Bildfehler 0.00058 unter der Grenze 0.0616. Aus Bildkurven gemessenes Zeitverhältnis: 0.5008.",
     "hi": "संख्यात्मक ODE और घनमूल नियम का अंतर < 1e-12 है। 3.0 mm या अधिक त्रिज्या पर चित्र त्रुटि 0.00058, सीमा 0.0616 से कम है। चित्र वक्र से मापा समय अनुपात 0.5008 है।",
     "fr": "ODE numérique contre loi de racine cubique : < 1e-12. Au-dessus d'un rayon de 3.0 mm, l'erreur d'image 0.00058 reste sous la borne 0.0616. Rapport temporel mesuré sur les courbes d'image : 0.5008."
+   }
+  },
+  {
+   "id": "laser_diffraction",
+   "category": "anim3d",
+   "media": "laser_diffraction_anim3d.html",
+   "media_path": "view2026/anim3d/laser_diffraction_anim3d.html",
+   "motion": true,
+   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_laserdiff_anim3d.py",
+   "label": {
+    "ja": "光の輪で粉の粒径を測る",
+    "en": "Measure powder size with rings of light",
+    "zh": "Measure powder size with rings of light",
+    "tw": "Measure powder size with rings of light",
+    "ko": "Measure powder size with rings of light",
+    "de": "Measure powder size with rings of light",
+    "hi": "Measure powder size with rings of light",
+    "fr": "Measure powder size with rings of light"
+   },
+   "see": {
+    "ja": "粒が小さいほど散乱リングが外へ広がる。リング信号だけを非負最小二乗で解き、単峰・二峰の粒度分布と D10/D50/D90 を復元する。",
+    "en": "Smaller grains spread diffraction rings outward. Non-negative least squares uses ring signals alone to recover unimodal and bimodal size distributions and D10/D50/D90.",
+    "zh": "Smaller grains spread diffraction rings outward. Non-negative least squares uses ring signals alone to recover unimodal and bimodal size distributions and D10/D50/D90.",
+    "tw": "Smaller grains spread diffraction rings outward. Non-negative least squares uses ring signals alone to recover unimodal and bimodal size distributions and D10/D50/D90.",
+    "ko": "Smaller grains spread diffraction rings outward. Non-negative least squares uses ring signals alone to recover unimodal and bimodal size distributions and D10/D50/D90.",
+    "de": "Smaller grains spread diffraction rings outward. Non-negative least squares uses ring signals alone to recover unimodal and bimodal size distributions and D10/D50/D90.",
+    "hi": "Smaller grains spread diffraction rings outward. Non-negative least squares uses ring signals alone to recover unimodal and bimodal size distributions and D10/D50/D90.",
+    "fr": "Smaller grains spread diffraction rings outward. Non-negative least squares uses ring signals alone to recover unimodal and bimodal size distributions and D10/D50/D90."
+   },
+   "num": {
+    "ja": "画像で測った第 1 暗環と 1.22 λ/d の差 0.0000587 rad。別の細密格子で合成した信号からの D50 誤差は単峰 4.22 %、二峰 3.79 %。許容 5.25 %。",
+    "en": "1st-dark-ring difference from 1.22 λ/d: 0.0000587 rad. D50 errors from signals synthesized on a separate fine grid: 4.22% unimodal and 3.79% bimodal, below the 5.25% bound.",
+    "zh": "1st-dark-ring difference from 1.22 λ/d: 0.0000587 rad. D50 errors from signals synthesized on a separate fine grid: 4.22% unimodal and 3.79% bimodal, below the 5.25% bound.",
+    "tw": "1st-dark-ring difference from 1.22 λ/d: 0.0000587 rad. D50 errors from signals synthesized on a separate fine grid: 4.22% unimodal and 3.79% bimodal, below the 5.25% bound.",
+    "ko": "1st-dark-ring difference from 1.22 λ/d: 0.0000587 rad. D50 errors from signals synthesized on a separate fine grid: 4.22% unimodal and 3.79% bimodal, below the 5.25% bound.",
+    "de": "1st-dark-ring difference from 1.22 λ/d: 0.0000587 rad. D50 errors from signals synthesized on a separate fine grid: 4.22% unimodal and 3.79% bimodal, below the 5.25% bound.",
+    "hi": "1st-dark-ring difference from 1.22 λ/d: 0.0000587 rad. D50 errors from signals synthesized on a separate fine grid: 4.22% unimodal and 3.79% bimodal, below the 5.25% bound.",
+    "fr": "1st-dark-ring difference from 1.22 λ/d: 0.0000587 rad. D50 errors from signals synthesized on a separate fine grid: 4.22% unimodal and 3.79% bimodal, below the 5.25% bound."
    }
   },
   {
@@ -1839,6 +1882,44 @@
    }
   },
   {
+   "id": "bridge_dic",
+   "category": "anim3d",
+   "media": "bridge_dic_anim3d.html",
+   "media_path": "view2026/anim3d/bridge_dic_anim3d.html",
+   "motion": true,
+   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_bridge_dic_anim3d.py",
+   "label": {
+    "ja": "離れたカメラで橋のたわみを測る",
+    "en": "Measure bridge deflection with a distant camera",
+    "zh": "用远处相机测量桥梁挠度",
+    "tw": "用遠處相機量測橋梁撓度",
+    "ko": "원거리 카메라로 교량 처짐 측정",
+    "de": "Brückendurchbiegung mit einer entfernten Kamera messen",
+    "hi": "दूरस्थ कैमरे से पुल का झुकाव मापना",
+    "fr": "Mesurer la flèche d'un pont avec une caméra distante"
+   },
+   "see": {
+    "ja": "合成トラックが格子で作った桁を渡ると、斑点像が副画素だけ動く。固定窓の正規化相互相関から中央たわみを測り、はりの閉形式と独立に比べる。",
+    "en": "A synthetic load crosses a gridded beam and moves its speckle image by subpixels. Fixed-window normalized cross-correlation measures midspan deflection independently of the beam closed form.",
+    "zh": "合成荷载越过格子梁，使斑点图像产生亚像素移动。固定窗口归一化互相关独立测量跨中挠度。",
+    "tw": "合成荷載越過格子梁，使斑點影像產生次像素移動。固定視窗正規化互相關獨立量測跨中撓度。",
+    "ko": "합성 하중이 격자 보를 지나며 스펙클 영상을 서브픽셀만큼 움직인다. 고정 창 정규화 상관으로 중앙 처짐을 독립 측정한다.",
+    "de": "Eine synthetische Last überquert einen Gitterbalken und verschiebt das Specklebild um Subpixel. Eine feste NCC-Messung bestimmt die Durchbiegung unabhängig von der Balkenformel.",
+    "hi": "कृत्रिम load ग्रिड beam पर चलता है और speckle image को subpixel जितना खिसकाता है। स्थिर-window NCC मध्य झुकाव को स्वतंत्र रूप से मापता है।",
+    "fr": "Une charge synthétique traverse une poutre maillée et déplace l'image de speckle au sous-pixel. Une NCC à fenêtre fixe mesure la flèche indépendamment de la formule de poutre."
+   },
+   "num": {
+    "ja": "DIC と閉形式の RMS 差 0.0823 mm、無雑音バイアスと雑音試行から作った基準 0.0927 mm。最大時刻は中央フレームと一致し、雑音対ばらつきの傾きは 1.012。",
+    "en": "DIC versus closed-form RMS is 0.0823 mm against a 0.0927 mm criterion built from zero-noise bias and noisy trials. The measured peak is the centre frame and noise-versus-spread slope is 1.012.",
+    "zh": "DIC 与闭式解的 RMS 为 0.0823 mm，低于由零噪声偏差和噪声试验得到的基准 0.0927 mm；峰值位于中央帧，噪声斜率为 1.012。",
+    "tw": "DIC 與閉式解的 RMS 為 0.0823 mm，低於由零雜訊偏差和雜訊試驗得到的基準 0.0927 mm；峰值位於中央影格，雜訊斜率為 1.012。",
+    "ko": "DIC와 폐형식 RMS는 0.0823 mm로 무잡음 편향과 잡음 시험에서 만든 기준 0.0927 mm보다 작다. 피크는 중앙 프레임이며 잡음 기울기는 1.012다.",
+    "de": "DIC gegen geschlossene Form: RMS 0.0823 mm bei einer aus Nullrausch-Bias und Rauschversuchen gebildeten Grenze von 0.0927 mm. Das Maximum liegt im mittleren Frame; die Rauschsteigung ist 1.012.",
+    "hi": "DIC बनाम closed form RMS 0.0823 mm है, zero-noise bias और noisy trials से बनी सीमा 0.0927 mm। peak मध्य frame पर है और noise slope 1.012 है।",
+    "fr": "RMS DIC–forme fermée : 0.0823 mm pour un seuil de 0.0927 mm issu du biais sans bruit et d'essais bruités. Le pic est sur l'image centrale et la pente du bruit vaut 1.012."
+   }
+  },
+  {
    "id": "rail_light_section",
    "category": "anim3d",
    "media": "rail_light_section_anim3d.html",
@@ -1950,6 +2031,44 @@
     "de": "In 17 geprüften Zeilen unterscheiden sich Σ K / 2π und χ um weniger als 1e-12; nur die Schale mit Rand liegt um 24.0 × 2π daneben und stimmt, sobald der Randterm hinzukommt.",
     "hi": "17 जाँची गई पंक्तियों में Σ K / 2π और χ का अंतर 1e-12 से कम; केवल सीमा वाला कटोरा 24.0 × 2π से चूकता है, और सीमा-पद जोड़ते ही मेल खाता है।",
     "fr": "Sur 17 lignes vérifiées, Σ K / 2π et χ diffèrent de moins de 1e-12 ; seul le bol à bord manque de 24.0 × 2π, et coïncide dès qu'on ajoute le terme de bord."
+   }
+  },
+  {
+   "id": "oct_retina",
+   "category": "anim3d",
+   "media": "oct_retina_anim3d.html",
+   "media_path": "view2026/anim3d/oct_retina_anim3d.html",
+   "motion": true,
+   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_oct_anim3d.py",
+   "label": {
+    "ja": "OCT で網膜の層を測る",
+    "en": "Measuring retinal layers with OCT",
+    "zh": "用 OCT 测量视网膜层",
+    "tw": "用 OCT 測量視網膜層",
+    "ko": "OCT로 망막층 측정",
+    "de": "Netzhautschichten mit OCT messen",
+    "hi": "OCT से रेटिना की परतें मापना",
+    "fr": "Mesurer les couches rétiniennes par OCT"
+   },
+   "see": {
+    "ja": "広帯域スペクトルの干渉縞を逆 FFT して A スキャンを作り、並べた B スキャンから三つの層境界を画像処理だけで追う。黄色い光が合成網膜の中心窩を走査する。",
+    "en": "Inverse-transform broadband spectral fringes into A-scans, stack them into a B-scan, and follow three layer boundaries using image processing alone. The yellow beam scans the fovea of a synthetic retina.",
+    "zh": "将宽带光谱干涉条纹逆变换为 A 扫描，再叠成 B 扫描，仅用图像处理追踪三条层边界。黄色光束扫描合成视网膜的中央凹。",
+    "tw": "將寬頻光譜干涉條紋逆轉換為 A 掃描，再疊成 B 掃描，僅用影像處理追蹤三條層邊界。黃色光束掃描合成視網膜的中央凹。",
+    "ko": "광대역 스펙트럼 간섭무늬를 역 FFT해 A-스캔을 만들고 B-스캔으로 쌓아 영상 처리만으로 세 층 경계를 추적한다. 노란 빛이 합성 망막의 중심와를 주사한다.",
+    "de": "Breitbandige Spektralinterferenzen werden zu A-Scans rücktransformiert und zu einem B-Scan gestapelt; drei Schichtgrenzen werden nur aus dem Bild verfolgt. Der gelbe Strahl scannt die Fovea einer synthetischen Netzhaut.",
+    "hi": "ब्रॉडबैंड स्पेक्ट्रल फ्रिंजों का उलटा FFT करके A-स्कैन बनते हैं, उन्हें B-स्कैन में जोड़कर केवल चित्र प्रसंस्करण से तीन परत-सीमाएँ खोजी जाती हैं। पीली किरण कृत्रिम रेटिना के फोविया को स्कैन करती है।",
+    "fr": "Les franges spectrales large bande sont transformées en A-scans puis empilées en B-scan; trois limites de couches sont suivies uniquement dans l’image. Le faisceau jaune balaie la fovéa d’une rétine synthétique."
+   },
+   "num": {
+    "ja": "45 / 70 nm 帯域の半値幅は閉形式との差 0.35 / 0.17 µm。全層厚の最大誤差 8.66 µm、中心窩の誤差 0.38 µm。有限画素による 600 µm の感度は 0.798。",
+    "en": "For 45/70 nm bandwidths, FWHM differs from the closed form by 0.35/0.17 µm. Maximum total-thickness error is 8.66 µm, foveal-pit error is 0.38 µm, and finite pixels reduce sensitivity at 600 µm to 0.798.",
+    "zh": "45/70 nm 带宽的半高宽与闭式解相差 0.35/0.17 µm；总厚度最大误差 8.66 µm，中央凹误差 0.38 µm，有限像素使 600 µm 深处的灵敏度降至 0.798。",
+    "tw": "45/70 nm 頻寬的半高寬與閉式解相差 0.35/0.17 µm；總厚度最大誤差 8.66 µm，中央凹誤差 0.38 µm，有限像素使 600 µm 深處的靈敏度降至 0.798。",
+    "ko": "45/70 nm 대역폭의 반치폭은 닫힌식과 0.35/0.17 µm 차이 난다. 전체 두께 최대 오차는 8.66 µm, 중심와 오차는 0.38 µm이며 유한 화소 때문에 600 µm 감도는 0.798로 떨어진다.",
+    "de": "Bei 45/70 nm Bandbreite weicht die FWHM um 0.35/0.17 µm von der geschlossenen Form ab. Der maximale Dickenfehler beträgt 8.66 µm, der Foveafehler 0.38 µm; endliche Pixel senken die Empfindlichkeit bei 600 µm auf 0.798.",
+    "hi": "45/70 nm बैंडविड्थ पर FWHM बंद रूप से 0.35/0.17 µm अलग है। कुल मोटाई की अधिकतम त्रुटि 8.66 µm, फोवियल त्रुटि 0.38 µm और सीमित पिक्सेल के कारण 600 µm पर संवेदनशीलता 0.798 है।",
+    "fr": "Pour 45/70 nm de bande, la FWHM diffère de la forme fermée de 0.35/0.17 µm. L’erreur maximale d’épaisseur vaut 8.66 µm, celle de la fovéa 0.38 µm ; les pixels finis réduisent la sensibilité à 600 µm à 0.798."
    }
   },
   {
@@ -2102,6 +2221,120 @@
     "de": "Auf demselben physikalischen Gitter liegen die gemessenen Halbwinkel bei 18.10–20.25 deg; der maximale Fehler zu arcsin(1/3) beträgt 1.37 deg, die Streuung über drei Geschwindigkeiten 2.15 deg. Der maximale Wellenlängenfehler ist 0.50 m; das Verhältnis bei 12 m/s zu 4 m/s beträgt 9.05.",
     "hi": "एक ही वास्तविक grid पर मापा अर्ध-कोण 18.10–20.25 deg है; arcsin(1/3) से अधिकतम अंतर 1.37 deg और तीन गतियों का फैलाव 2.15 deg है। अधिकतम wavelength error 0.50 m है; 12 m/s और 4 m/s का wavelength ratio 9.05 है।",
     "fr": "Sur la même grille physique, les demi-angles mesurés vont de 18.10 à 20.25 deg; l'écart maximal à arcsin(1/3) vaut 1.37 deg et la dispersion entre trois vitesses 2.15 deg. L'erreur maximale de longueur d'onde est de 0.50 m; le rapport entre 12 m/s et 4 m/s vaut 9.05."
+   }
+  },
+  {
+   "id": "catenary_wear",
+   "category": "anim3d",
+   "media": "catenary_wear_anim3d.html",
+   "media_path": "view2026/anim3d/catenary_wear_anim3d.html",
+   "motion": true,
+   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_catenary_anim3d.py",
+   "label": {
+    "ja": "走りながら架線のすり減りを測る",
+    "en": "Measure contact-wire wear while moving",
+    "zh": "运行中测量接触线磨耗",
+    "tw": "行駛中量測接觸線磨耗",
+    "ko": "주행 중 전차선 마모 측정",
+    "de": "Fahrdrahtverschleiß während der Fahrt messen",
+    "hi": "चलते समय संपर्क तार का घिसाव मापना",
+    "fr": "Mesurer l'usure du fil de contact en mouvement"
+   },
+   "see": {
+    "ja": "支持点間でたるみ、左右へ偏位する架線の下を車両が走る。ラインカメラ像では摩耗面が明るい帯になり、偏位で横へ動いても帯幅から残存高さを測れる。",
+    "en": "A vehicle runs beneath a sagging, staggered contact wire. Its wear flat becomes a bright band in the line-camera image; even as stagger moves it sideways, band width gives remaining height.",
+    "zh": "A vehicle runs beneath a sagging, staggered contact wire. Its wear flat becomes a bright band in the line-camera image; even as stagger moves it sideways, band width gives remaining height.",
+    "tw": "A vehicle runs beneath a sagging, staggered contact wire. Its wear flat becomes a bright band in the line-camera image; even as stagger moves it sideways, band width gives remaining height.",
+    "ko": "A vehicle runs beneath a sagging, staggered contact wire. Its wear flat becomes a bright band in the line-camera image; even as stagger moves it sideways, band width gives remaining height.",
+    "de": "A vehicle runs beneath a sagging, staggered contact wire. Its wear flat becomes a bright band in the line-camera image; even as stagger moves it sideways, band width gives remaining height.",
+    "hi": "A vehicle runs beneath a sagging, staggered contact wire. Its wear flat becomes a bright band in the line-camera image; even as stagger moves it sideways, band width gives remaining height.",
+    "fr": "A vehicle runs beneath a sagging, staggered contact wire. Its wear flat becomes a bright band in the line-camera image; even as stagger moves it sideways, band width gives remaining height."
+   },
+   "num": {
+    "ja": "断面への副画素視線交差、法線反射、画素積分、PSF、雑音から描いた 36 行だけで、帯幅の最大誤差 0.0469 mm、残存高さの最大誤差 0.0068 mm、偏位あり・なしの幅差 0.0436 mm。雨・汚れ・振動・斜視は未計算の限界として表示する。",
+    "en": "From 36 rows rendered by subpixel ray-section intersections, normal-based reflection, pixel integration, PSF and noise: maximum band-width error 0.0469 mm, remaining-height error 0.0068 mm and width difference with versus without stagger 0.0436 mm. Rain, dirt, vibration and oblique viewing remain an explicit uncomputed limit.",
+    "zh": "From 36 rows rendered by subpixel ray-section intersections, normal-based reflection, pixel integration, PSF and noise: maximum band-width error 0.0469 mm, remaining-height error 0.0068 mm and width difference with versus without stagger 0.0436 mm. Rain, dirt, vibration and oblique viewing remain an explicit uncomputed limit.",
+    "tw": "From 36 rows rendered by subpixel ray-section intersections, normal-based reflection, pixel integration, PSF and noise: maximum band-width error 0.0469 mm, remaining-height error 0.0068 mm and width difference with versus without stagger 0.0436 mm. Rain, dirt, vibration and oblique viewing remain an explicit uncomputed limit.",
+    "ko": "From 36 rows rendered by subpixel ray-section intersections, normal-based reflection, pixel integration, PSF and noise: maximum band-width error 0.0469 mm, remaining-height error 0.0068 mm and width difference with versus without stagger 0.0436 mm. Rain, dirt, vibration and oblique viewing remain an explicit uncomputed limit.",
+    "de": "From 36 rows rendered by subpixel ray-section intersections, normal-based reflection, pixel integration, PSF and noise: maximum band-width error 0.0469 mm, remaining-height error 0.0068 mm and width difference with versus without stagger 0.0436 mm. Rain, dirt, vibration and oblique viewing remain an explicit uncomputed limit.",
+    "hi": "From 36 rows rendered by subpixel ray-section intersections, normal-based reflection, pixel integration, PSF and noise: maximum band-width error 0.0469 mm, remaining-height error 0.0068 mm and width difference with versus without stagger 0.0436 mm. Rain, dirt, vibration and oblique viewing remain an explicit uncomputed limit.",
+    "fr": "From 36 rows rendered by subpixel ray-section intersections, normal-based reflection, pixel integration, PSF and noise: maximum band-width error 0.0469 mm, remaining-height error 0.0068 mm and width difference with versus without stagger 0.0436 mm. Rain, dirt, vibration and oblique viewing remain an explicit uncomputed limit."
+   }
+  },
+  {
+   "id": "hypercentric_lens",
+   "category": "anim3d",
+   "media": "hypercentric_lens_anim3d.html",
+   "media_path": "view2026/anim3d/hypercentric_lens_anim3d.html",
+   "motion": true,
+   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_hypercentric_anim3d.py",
+   "label": {
+    "ja": "円柱の上面と側面を一枚で見るハイパーセントリックレンズ",
+    "en": "A hypercentric lens sees a cylinder top and side in one image",
+    "zh": "A hypercentric lens sees a cylinder top and side in one image",
+    "tw": "A hypercentric lens sees a cylinder top and side in one image",
+    "ko": "A hypercentric lens sees a cylinder top and side in one image",
+    "de": "A hypercentric lens sees a cylinder top and side in one image",
+    "hi": "A hypercentric lens sees a cylinder top and side in one image",
+    "fr": "A hypercentric lens sees a cylinder top and side in one image"
+   },
+   "see": {
+    "ja": "通常・テレセントリック・ハイパーセントリックの主光線を切り替え、入射瞳が物体の向こうへ移ると、青い上面の外側に橙の側面がドーナツ状に現れる。",
+    "en": "Switch among entocentric, telecentric and hypercentric chief rays. As the entrance pupil moves beyond the object, the orange side appears as a doughnut around the blue top.",
+    "zh": "Switch among entocentric, telecentric and hypercentric chief rays. As the entrance pupil moves beyond the object, the orange side appears as a doughnut around the blue top.",
+    "tw": "Switch among entocentric, telecentric and hypercentric chief rays. As the entrance pupil moves beyond the object, the orange side appears as a doughnut around the blue top.",
+    "ko": "Switch among entocentric, telecentric and hypercentric chief rays. As the entrance pupil moves beyond the object, the orange side appears as a doughnut around the blue top.",
+    "de": "Switch among entocentric, telecentric and hypercentric chief rays. As the entrance pupil moves beyond the object, the orange side appears as a doughnut around the blue top.",
+    "hi": "Switch among entocentric, telecentric and hypercentric chief rays. As the entrance pupil moves beyond the object, the orange side appears as a doughnut around the blue top.",
+    "fr": "Switch among entocentric, telecentric and hypercentric chief rays. As the entrance pupil moves beyond the object, the orange side appears as a doughnut around the blue top."
+   },
+   "num": {
+    "ja": "入射瞳は paraxial_trace と ABCD で差 < 1e-12 mm。雑音入り合成像の側面帯は閉形式と 0.180 px 以内で一致し、テレセントリック像の測定値は雑音床 0.900 px。被写界深度と歪みは未計算の限界として表示。",
+    "en": "Entrance-pupil positions from paraxial_trace and ABCD differ by less than 1e-12 mm. The side band measured in noisy synthetic images agrees with the closed form within 0.180 px; the telecentric measurement is a 0.900 px noise floor. Depth of field and distortion are shown as uncomputed limits.",
+    "zh": "Entrance-pupil positions from paraxial_trace and ABCD differ by less than 1e-12 mm. The side band measured in noisy synthetic images agrees with the closed form within 0.180 px; the telecentric measurement is a 0.900 px noise floor. Depth of field and distortion are shown as uncomputed limits.",
+    "tw": "Entrance-pupil positions from paraxial_trace and ABCD differ by less than 1e-12 mm. The side band measured in noisy synthetic images agrees with the closed form within 0.180 px; the telecentric measurement is a 0.900 px noise floor. Depth of field and distortion are shown as uncomputed limits.",
+    "ko": "Entrance-pupil positions from paraxial_trace and ABCD differ by less than 1e-12 mm. The side band measured in noisy synthetic images agrees with the closed form within 0.180 px; the telecentric measurement is a 0.900 px noise floor. Depth of field and distortion are shown as uncomputed limits.",
+    "de": "Entrance-pupil positions from paraxial_trace and ABCD differ by less than 1e-12 mm. The side band measured in noisy synthetic images agrees with the closed form within 0.180 px; the telecentric measurement is a 0.900 px noise floor. Depth of field and distortion are shown as uncomputed limits.",
+    "hi": "Entrance-pupil positions from paraxial_trace and ABCD differ by less than 1e-12 mm. The side band measured in noisy synthetic images agrees with the closed form within 0.180 px; the telecentric measurement is a 0.900 px noise floor. Depth of field and distortion are shown as uncomputed limits.",
+    "fr": "Entrance-pupil positions from paraxial_trace and ABCD differ by less than 1e-12 mm. The side band measured in noisy synthetic images agrees with the closed form within 0.180 px; the telecentric measurement is a 0.900 px noise floor. Depth of field and distortion are shown as uncomputed limits."
+   }
+  },
+  {
+   "id": "borescope",
+   "category": "anim3d",
+   "media": "borescope_anim3d.html",
+   "media_path": "view2026/anim3d/borescope_anim3d.html",
+   "motion": true,
+   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_bore_anim3d.py",
+   "label": {
+    "ja": "ボアスコープは細い管の奥をどう見るか",
+    "en": "How a borescope sees through a narrow tube",
+    "zh": "How a borescope sees through a narrow tube",
+    "tw": "How a borescope sees through a narrow tube",
+    "ko": "How a borescope sees through a narrow tube",
+    "de": "How a borescope sees through a narrow tube",
+    "hi": "How a borescope sees through a narrow tube",
+    "fr": "How a borescope sees through a narrow tube"
+   },
+   "see": {
+    "ja": "直径 6 mm の管で像を何度も結び直す光線を追う。細さ・視野・明るさの交換を光学不変量で確かめ、曲がるファイバ束では網目と断線が残る限界を見る。",
+    "en": "Trace rays as the image is refocused repeatedly inside a 6 mm tube. The optical invariant exposes the trade between diameter, field and brightness; a flexible fibre bundle retains its grid and broken cores.",
+    "zh": "Trace rays as the image is refocused repeatedly inside a 6 mm tube. The optical invariant exposes the trade between diameter, field and brightness; a flexible fibre bundle retains its grid and broken cores.",
+    "tw": "Trace rays as the image is refocused repeatedly inside a 6 mm tube. The optical invariant exposes the trade between diameter, field and brightness; a flexible fibre bundle retains its grid and broken cores.",
+    "ko": "Trace rays as the image is refocused repeatedly inside a 6 mm tube. The optical invariant exposes the trade between diameter, field and brightness; a flexible fibre bundle retains its grid and broken cores.",
+    "de": "Trace rays as the image is refocused repeatedly inside a 6 mm tube. The optical invariant exposes the trade between diameter, field and brightness; a flexible fibre bundle retains its grid and broken cores.",
+    "hi": "Trace rays as the image is refocused repeatedly inside a 6 mm tube. The optical invariant exposes the trade between diameter, field and brightness; a flexible fibre bundle retains its grid and broken cores.",
+    "fr": "Trace rays as the image is refocused repeatedly inside a 6 mm tube. The optical invariant exposes the trade between diameter, field and brightness; a flexible fibre bundle retains its grid and broken cores."
+   },
+   "num": {
+    "ja": "逐次追跡と ABCD op の最大差 1.33e-15、不変量残差 3.47e-18。透過率は段数で不変、401×401 光線格子と口径面積の閉形式との差は 0.0030。再構成像と jinc 近似の 50 % 周期は 61.64 / 58.43 µm。",
+    "en": "Maximum sequential-trace versus ABCD-op difference is 1.33e-15; invariant residual is 3.47e-18. Transmission is stage-invariant; the 401×401 ray grid differs from the closed aperture area by 0.0030. Reconstructed-image and jinc-approximation 50% periods are 61.64 / 58.43 µm.",
+    "zh": "Maximum sequential-trace versus ABCD-op difference is 1.33e-15; invariant residual is 3.47e-18. Transmission is stage-invariant; the 401×401 ray grid differs from the closed aperture area by 0.0030. Reconstructed-image and jinc-approximation 50% periods are 61.64 / 58.43 µm.",
+    "tw": "Maximum sequential-trace versus ABCD-op difference is 1.33e-15; invariant residual is 3.47e-18. Transmission is stage-invariant; the 401×401 ray grid differs from the closed aperture area by 0.0030. Reconstructed-image and jinc-approximation 50% periods are 61.64 / 58.43 µm.",
+    "ko": "Maximum sequential-trace versus ABCD-op difference is 1.33e-15; invariant residual is 3.47e-18. Transmission is stage-invariant; the 401×401 ray grid differs from the closed aperture area by 0.0030. Reconstructed-image and jinc-approximation 50% periods are 61.64 / 58.43 µm.",
+    "de": "Maximum sequential-trace versus ABCD-op difference is 1.33e-15; invariant residual is 3.47e-18. Transmission is stage-invariant; the 401×401 ray grid differs from the closed aperture area by 0.0030. Reconstructed-image and jinc-approximation 50% periods are 61.64 / 58.43 µm.",
+    "hi": "Maximum sequential-trace versus ABCD-op difference is 1.33e-15; invariant residual is 3.47e-18. Transmission is stage-invariant; the 401×401 ray grid differs from the closed aperture area by 0.0030. Reconstructed-image and jinc-approximation 50% periods are 61.64 / 58.43 µm.",
+    "fr": "Maximum sequential-trace versus ABCD-op difference is 1.33e-15; invariant residual is 3.47e-18. Transmission is stage-invariant; the 401×401 ray grid differs from the closed aperture area by 0.0030. Reconstructed-image and jinc-approximation 50% periods are 61.64 / 58.43 µm."
    }
   },
   {

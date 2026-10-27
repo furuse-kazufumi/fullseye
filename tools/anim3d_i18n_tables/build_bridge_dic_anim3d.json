@@ -1,0 +1,446 @@
+{
+ "_": "橋梁 DIC の動く 3-D 教材。キーは英語、ja は生成器の日本語。",
+ "strings": {
+  "Measure bridge deflection with a distant camera": {
+   "ja": "橋のたわみを離れたカメラで測る",
+   "zh": "橋のたわみを離れたカメラで測る",
+   "tw": "橋のたわみを離れたカメラで測る",
+   "ko": "橋のたわみを離れたカメラで測る",
+   "de": "橋のたわみを離れたカメラで測る",
+   "hi": "橋のたわみを離れたカメラで測る",
+   "fr": "橋のたわみを離れたカメラで測る"
+  },
+  "Track synthetic speckle images by DIC and compare independently with beam theory": {
+   "ja": "合成した斑点像を DIC で追い、はりの式と独立に比べる",
+   "zh": "合成した斑点像を DIC で追い、はりの式と独立に比べる",
+   "tw": "合成した斑点像を DIC で追い、はりの式と独立に比べる",
+   "ko": "合成した斑点像を DIC で追い、はりの式と独立に比べる",
+   "de": "合成した斑点像を DIC で追い、はりの式と独立に比べる",
+   "hi": "合成した斑点像を DIC で追い、はりの式と独立に比べる",
+   "fr": "合成した斑点像を DIC で追い、はりの式と独立に比べる"
+  },
+  "Follow question, prediction, play, formula and limit. Every measured value comes from synthetic observations.": {
+   "ja": "①問い → ②予想 → ③再生 → ④式 → ⑤限界。値はすべて合成観測から計算する。",
+   "zh": "①問い → ②予想 → ③再生 → ④式 → ⑤限界。値はすべて合成観測から計算する。",
+   "tw": "①問い → ②予想 → ③再生 → ④式 → ⑤限界。値はすべて合成観測から計算する。",
+   "ko": "①問い → ②予想 → ③再生 → ④式 → ⑤限界。値はすべて合成観測から計算する。",
+   "de": "①問い → ②予想 → ③再生 → ④式 → ⑤限界。値はすべて合成観測から計算する。",
+   "hi": "①問い → ②予想 → ③再生 → ④式 → ⑤限界。値はすべて合成観測から計算する。",
+   "fr": "①問い → ②予想 → ③再生 → ④式 → ⑤限界。値はすべて合成観測から計算する。"
+  },
+  "A moving load bends the beam": {
+   "ja": "移動荷重で桁がたわむ",
+   "zh": "移動荷重で桁がたわむ",
+   "tw": "移動荷重で桁がたわむ",
+   "ko": "移動荷重で桁がたわむ",
+   "de": "移動荷重で桁がたわむ",
+   "hi": "移動荷重で桁がたわむ",
+   "fr": "移動荷重で桁がたわむ"
+  },
+  "A gridded synthetic beam and load; deflection is exaggerated only in the 3-D display.": {
+   "ja": "格子で決めた桁と合成荷重。表示だけはたわみを誇張した。",
+   "zh": "格子生成的合成梁和荷载；仅在 3-D 显示中夸大挠度。",
+   "tw": "格子生成的合成梁和荷載；僅在 3-D 顯示中誇大撓度。",
+   "ko": "격자로 만든 합성 보와 하중이며 처짐은 3-D 표시에만 과장했다.",
+   "de": "Synthetischer Balken und Last auf einem Gitter; die Durchbiegung ist nur in der 3-D-Anzeige überhöht.",
+   "hi": "ग्रिड से बनी कृत्रिम beam और load; झुकाव केवल 3-D दृश्य में बढ़ाकर दिखाया गया है।",
+   "fr": "Poutre et charge synthétiques sur une grille ; la flèche n'est exagérée que dans l'affichage 3-D."
+  },
+  "DIC measurement": {
+   "ja": "DIC 測定",
+   "zh": "DIC 測定",
+   "tw": "DIC 測定",
+   "ko": "DIC 測定",
+   "de": "DIC 測定",
+   "hi": "DIC 測定",
+   "fr": "DIC 測定"
+  },
+  "beam closed form": {
+   "ja": "はりの閉形式",
+   "zh": "はりの閉形式",
+   "tw": "はりの閉形式",
+   "ko": "はりの閉形式",
+   "de": "はりの閉形式",
+   "hi": "はりの閉形式",
+   "fr": "はりの閉形式"
+  },
+  "centre deflection: DIC versus closed form": {
+   "ja": "DIC と閉形式の中央たわみ RMS",
+   "zh": "DIC と閉形式の中央たわみ RMS",
+   "tw": "DIC と閉形式の中央たわみ RMS",
+   "ko": "DIC と閉形式の中央たわみ RMS",
+   "de": "DIC と閉形式の中央たわみ RMS",
+   "hi": "DIC と閉形式の中央たわみ RMS",
+   "fr": "DIC と閉形式の中央たわみ RMS"
+  },
+  "peak time found from measured curve": {
+   "ja": "測定曲線から求めた最大時刻",
+   "zh": "測定曲線から求めた最大時刻",
+   "tw": "測定曲線から求めた最大時刻",
+   "ko": "測定曲線から求めた最大時刻",
+   "de": "測定曲線から求めた最大時刻",
+   "hi": "測定曲線から求めた最大時刻",
+   "fr": "測定曲線から求めた最大時刻"
+  },
+  "centre frame ±1": {
+   "ja": "中央フレーム ±1",
+   "zh": "中央フレーム ±1",
+   "tw": "中央フレーム ±1",
+   "ko": "中央フレーム ±1",
+   "de": "中央フレーム ±1",
+   "hi": "中央フレーム ±1",
+   "fr": "中央フレーム ±1"
+  },
+  "difference 0 frame(s)": {
+   "ja": "差 0 フレーム",
+   "zh": "差 0 フレーム",
+   "tw": "差 0 フレーム",
+   "ko": "差 0 フレーム",
+   "de": "差 0 フレーム",
+   "hi": "差 0 フレーム",
+   "fr": "差 0 フレーム"
+  },
+  "noise-spread slope: measured / Cramér–Rao approximation": {
+   "ja": "雑音と測定ばらつきの傾き: 測定 / Cramér–Rao 近似",
+   "zh": "噪声与测量离散度的斜率: 测量值 / Cramér–Rao 近似",
+   "tw": "雜訊與量測離散度的斜率: 量測值 / Cramér–Rao 近似",
+   "ko": "잡음-측정 산포 기울기: 측정값 / Cramér–Rao 근사",
+   "de": "Steigung Rauschen zu Messstreuung: Messung / Cramér–Rao-Näherung",
+   "hi": "noise और measurement spread की ढाल: माप / Cramér–Rao approximation",
+   "fr": "Pente bruit-dispersion: mesure / approximation de Cramér–Rao"
+  },
+  "slope difference < 0.3": {
+   "ja": "傾きの差 < 0.3",
+   "zh": "斜率差 < 0.3",
+   "tw": "斜率差 < 0.3",
+   "ko": "기울기 차이 < 0.3",
+   "de": "Steigungsdifferenz < 0.3",
+   "hi": "ढाल का अंतर < 0.3",
+   "fr": "écart de pente < 0.3"
+  },
+  "load position": {
+   "ja": "荷重位置",
+   "zh": "荷重位置",
+   "tw": "荷重位置",
+   "ko": "荷重位置",
+   "de": "荷重位置",
+   "hi": "荷重位置",
+   "fr": "荷重位置"
+  },
+  "Where is the load when deflection is largest?": {
+   "ja": "たわみが最大になるのは荷重がどこに来た時?",
+   "zh": "たわみが最大になるのは荷重がどこに来た時?",
+   "tw": "たわみが最大になるのは荷重がどこに来た時?",
+   "ko": "たわみが最大になるのは荷重がどこに来た時?",
+   "de": "たわみが最大になるのは荷重がどこに来た時?",
+   "hi": "たわみが最大になるのは荷重がどこに来た時?",
+   "fr": "たわみが最大になるのは荷重がどこに来た時?"
+  },
+  "near a support": {
+   "ja": "支点の近く",
+   "zh": "支点の近く",
+   "tw": "支点の近く",
+   "ko": "支点の近く",
+   "de": "支点の近く",
+   "hi": "支点の近く",
+   "fr": "支点の近く"
+  },
+  "at midspan": {
+   "ja": "スパン中央",
+   "zh": "スパン中央",
+   "tw": "スパン中央",
+   "ko": "スパン中央",
+   "de": "スパン中央",
+   "hi": "スパン中央",
+   "fr": "スパン中央"
+  },
+  "Bending is greatest at the point farthest from both supports.": {
+   "ja": "左右の支点から最も遠い中央で曲げが最大になる。",
+   "zh": "左右の支点から最も遠い中央で曲げが最大になる。",
+   "tw": "左右の支点から最も遠い中央で曲げが最大になる。",
+   "ko": "左右の支点から最も遠い中央で曲げが最大になる。",
+   "de": "左右の支点から最も遠い中央で曲げが最大になる。",
+   "hi": "左右の支点から最も遠い中央で曲げが最大になる。",
+   "fr": "左右の支点から最も遠い中央で曲げが最大になる。"
+  },
+  "Euler–Bernoulli simply supported beam": {
+   "ja": "Euler–Bernoulli の単純支持はり",
+   "zh": "Euler–Bernoulli の単純支持はり",
+   "tw": "Euler–Bernoulli の単純支持はり",
+   "ko": "Euler–Bernoulli の単純支持はり",
+   "de": "Euler–Bernoulli の単純支持はり",
+   "hi": "Euler–Bernoulli の単純支持はり",
+   "fr": "Euler–Bernoulli の単純支持はり"
+  },
+  "This synthetic model is not for safety diagnosis.": {
+   "ja": "合成模型であり、安全診断には使わない。",
+   "zh": "合成模型であり、安全診断には使わない。",
+   "tw": "合成模型であり、安全診断には使わない。",
+   "ko": "合成模型であり、安全診断には使わない。",
+   "de": "合成模型であり、安全診断には使わない。",
+   "hi": "合成模型であり、安全診断には使わない。",
+   "fr": "合成模型であり、安全診断には使わない。"
+  },
+  "Measure speckle motion by correlation": {
+   "ja": "斑点の移動を相関で測る",
+   "zh": "斑点の移動を相関で測る",
+   "tw": "斑点の移動を相関で測る",
+   "ko": "斑点の移動を相関で測る",
+   "de": "斑点の移動を相関で測る",
+   "hi": "斑点の移動を相関で測る",
+   "fr": "斑点の移動を相関で測る"
+  },
+  "A fixed 31 by 31 pixel window is cut from a separately captured unloaded reference frame containing noise and illumination fluctuation. Each frame is searched by find_ncc_model and refined by a three-point parabola. Neither the clean texture nor truth is passed to the estimator.": {
+   "ja": "無荷重時に別撮影した雑音・照明ゆらぎ入りの基準コマから固定 31×31 画素窓を切り出す。各コマを find_ncc_model で探索し、3 点放物線で副画素位置を求める。原画と真値は推定器へ渡さない。",
+   "zh": "从另行拍摄且含噪声和照明波动的无荷载基准帧切出固定 31×31 像素窗口。用 find_ncc_model 搜索各帧并以三点抛物线细化。估计器不读取原始纹理或真值。",
+   "tw": "從另行拍攝且含雜訊和照明波動的無荷載基準影格切出固定 31×31 像素視窗。用 find_ncc_model 搜尋各影格並以三點拋物線細化。估計器不讀取原始紋理或真值。",
+   "ko": "별도로 촬영해 잡음과 조명 변동이 든 무하중 기준 프레임에서 고정 31×31 픽셀 창을 자른다. find_ncc_model로 각 프레임을 찾고 세 점 포물선으로 보정한다. 추정기는 원본 무늬와 참값을 받지 않는다.",
+   "de": "Aus einem separat aufgenommenen unbelasteten Referenzbild mit Rauschen und Beleuchtungsschwankung wird ein festes Fenster von 31×31 Pixeln ausgeschnitten. Jedes Bild wird mit find_ncc_model gesucht und durch eine Dreipunktparabel verfeinert. Weder saubere Textur noch Sollwert gelangen zum Schätzer.",
+   "hi": "अलग लिए गए, noise और illumination fluctuation वाले unloaded reference frame से स्थिर 31×31 pixel window काटी जाती है। हर frame को find_ncc_model से खोजकर three-point parabola से सुधारा जाता है। estimator को clean texture या truth नहीं मिलता।",
+   "fr": "Une fenêtre fixe de 31×31 pixels est découpée dans une référence sans charge, acquise séparément avec bruit et fluctuation d'éclairage. Chaque image est recherchée par find_ncc_model puis affinée par une parabole à trois points. Ni la texture propre ni la vérité ne sont transmises à l'estimateur."
+  },
+  "camera image with noise and illumination drift": {
+   "ja": "雑音と照明変動を含むカメラ像",
+   "zh": "雑音と照明変動を含むカメラ像",
+   "tw": "雑音と照明変動を含むカメラ像",
+   "ko": "雑音と照明変動を含むカメラ像",
+   "de": "雑音と照明変動を含むカメラ像",
+   "hi": "雑音と照明変動を含むカメラ像",
+   "fr": "雑音と照明変動を含むカメラ像"
+  },
+  "Is tracking only the brightest speckle enough?": {
+   "ja": "一番明るい斑点だけを追えばよい?",
+   "zh": "一番明るい斑点だけを追えばよい?",
+   "tw": "一番明るい斑点だけを追えばよい?",
+   "ko": "一番明るい斑点だけを追えばよい?",
+   "de": "一番明るい斑点だけを追えばよい?",
+   "hi": "一番明るい斑点だけを追えばよい?",
+   "fr": "一番明るい斑点だけを追えばよい?"
+  },
+  "yes": {
+   "ja": "よい",
+   "zh": "よい",
+   "tw": "よい",
+   "ko": "よい",
+   "de": "よい",
+   "hi": "よい",
+   "fr": "よい"
+  },
+  "correlate the whole pattern": {
+   "ja": "模様全体を相関する",
+   "zh": "模様全体を相関する",
+   "tw": "模様全体を相関する",
+   "ko": "模様全体を相関する",
+   "de": "模様全体を相関する",
+   "hi": "模様全体を相関する",
+   "fr": "模様全体を相関する"
+  },
+  "The whole pattern averages noise and changes in one speckle.": {
+   "ja": "模様全体なら雑音や一個の斑点の変化を平均できる。",
+   "zh": "模様全体なら雑音や一個の斑点の変化を平均できる。",
+   "tw": "模様全体なら雑音や一個の斑点の変化を平均できる。",
+   "ko": "模様全体なら雑音や一個の斑点の変化を平均できる。",
+   "de": "模様全体なら雑音や一個の斑点の変化を平均できる。",
+   "hi": "模様全体なら雑音や一個の斑点の変化を平均できる。",
+   "fr": "模様全体なら雑音や一個の斑点の変化を平均できる。"
+  },
+  "NCC = normalized cross-correlation": {
+   "ja": "NCC = 正規化相互相関",
+   "zh": "NCC = 正規化相互相関",
+   "tw": "NCC = 正規化相互相関",
+   "ko": "NCC = 正規化相互相関",
+   "de": "NCC = 正規化相互相関",
+   "hi": "NCC = 正規化相互相関",
+   "fr": "NCC = 正規化相互相関"
+  },
+  "Large within-window deformation needs multi-point DIC.": {
+   "ja": "窓内の変形が大きい場合は多点 DIC が要る。",
+   "zh": "窓内の変形が大きい場合は多点 DIC が要る。",
+   "tw": "窓内の変形が大きい場合は多点 DIC が要る。",
+   "ko": "窓内の変形が大きい場合は多点 DIC が要る。",
+   "de": "窓内の変形が大きい場合は多点 DIC が要る。",
+   "hi": "窓内の変形が大きい場合は多点 DIC が要る。",
+   "fr": "窓内の変形が大きい場合は多点 DIC が要る。"
+  },
+  "Convert one pixel to millimetres": {
+   "ja": "1 画素を mm に直す",
+   "zh": "把一个像素换算为 mm",
+   "tw": "把一個像素換算為 mm",
+   "ko": "한 픽셀을 mm로 변환",
+   "de": "Ein Pixel in mm umrechnen",
+   "hi": "एक pixel को mm में बदलें",
+   "fr": "Convertir un pixel en mm"
+  },
+  "Projection scale set by distance and focal length is assumed to be 0.40 mm per pixel; subpixel correlation shifts are converted with it.": {
+   "ja": "距離と焦点距離で決まる投影倍率を 0.40 mm/画素と仮定し、副画素相関の移動量を換算する。",
+   "zh": "距離と焦点距離で決まる投影倍率を 0.40 mm/画素と仮定し、副画素相関の移動量を換算する。",
+   "tw": "距離と焦点距離で決まる投影倍率を 0.40 mm/画素と仮定し、副画素相関の移動量を換算する。",
+   "ko": "距離と焦点距離で決まる投影倍率を 0.40 mm/画素と仮定し、副画素相関の移動量を換算する。",
+   "de": "距離と焦点距離で決まる投影倍率を 0.40 mm/画素と仮定し、副画素相関の移動量を換算する。",
+   "hi": "距離と焦点距離で決まる投影倍率を 0.40 mm/画素と仮定し、副画素相関の移動量を換算する。",
+   "fr": "距離と焦点距離で決まる投影倍率を 0.40 mm/画素と仮定し、副画素相関の移動量を換算する。"
+  },
+  "What happens to the same deflection farther away?": {
+   "ja": "遠くへ離れると同じたわみは像でどうなる?",
+   "zh": "遠くへ離れると同じたわみは像でどうなる?",
+   "tw": "遠くへ離れると同じたわみは像でどうなる?",
+   "ko": "遠くへ離れると同じたわみは像でどうなる?",
+   "de": "遠くへ離れると同じたわみは像でどうなる?",
+   "hi": "遠くへ離れると同じたわみは像でどうなる?",
+   "fr": "遠くへ離れると同じたわみは像でどうなる?"
+  },
+  "pixel motion becomes smaller": {
+   "ja": "画素移動が小さくなる",
+   "zh": "画素移動が小さくなる",
+   "tw": "画素移動が小さくなる",
+   "ko": "画素移動が小さくなる",
+   "de": "画素移動が小さくなる",
+   "hi": "画素移動が小さくなる",
+   "fr": "画素移動が小さくなる"
+  },
+  "pixel motion becomes larger": {
+   "ja": "画素移動が大きくなる",
+   "zh": "画素移動が大きくなる",
+   "tw": "画素移動が大きくなる",
+   "ko": "画素移動が大きくなる",
+   "de": "画素移動が大きくなる",
+   "hi": "画素移動が大きくなる",
+   "fr": "画素移動が大きくなる"
+  },
+  "At fixed focal length, image motion decreases inversely with distance.": {
+   "ja": "同じ焦点距離なら距離に反比例して像の移動が小さくなる。",
+   "zh": "同じ焦点距離なら距離に反比例して像の移動が小さくなる。",
+   "tw": "同じ焦点距離なら距離に反比例して像の移動が小さくなる。",
+   "ko": "同じ焦点距離なら距離に反比例して像の移動が小さくなる。",
+   "de": "同じ焦点距離なら距離に反比例して像の移動が小さくなる。",
+   "hi": "同じ焦点距離なら距離に反比例して像の移動が小さくなる。",
+   "fr": "同じ焦点距離なら距離に反比例して像の移動が小さくなる。"
+  },
+  "object size/pixel = pixel pitch × distance / focal length": {
+   "ja": "物体寸法/画素 = pixel pitch × distance / focal length",
+   "zh": "物体寸法/画素 = pixel pitch × distance / focal length",
+   "tw": "物体寸法/画素 = pixel pitch × distance / focal length",
+   "ko": "物体寸法/画素 = pixel pitch × distance / focal length",
+   "de": "物体寸法/画素 = pixel pitch × distance / focal length",
+   "hi": "物体寸法/画素 = pixel pitch × distance / focal length",
+   "fr": "物体寸法/画素 = pixel pitch × distance / focal length"
+  },
+  "0.40 mm per pixel is an explanatory assumption; calibration error is omitted.": {
+   "ja": "0.40 mm/画素は説明用の仮定。校正誤差は含めない。",
+   "zh": "0.40 mm/画素は説明用の仮定。校正誤差は含めない。",
+   "tw": "0.40 mm/画素は説明用の仮定。校正誤差は含めない。",
+   "ko": "0.40 mm/画素は説明用の仮定。校正誤差は含めない。",
+   "de": "0.40 mm/画素は説明用の仮定。校正誤差は含めない。",
+   "hi": "0.40 mm/画素は説明用の仮定。校正誤差は含めない。",
+   "fr": "0.40 mm/画素は説明用の仮定。校正誤差は含めない。"
+  },
+  "The camera and air also move": {
+   "ja": "カメラも空気も動く",
+   "zh": "カメラも空気も動く",
+   "tw": "カメラも空気も動く",
+   "ko": "カメラも空気も動く",
+   "de": "カメラも空気も動く",
+   "hi": "カメラも空気も動く",
+   "fr": "カメラも空気も動く"
+  },
+  "Independent noise is added to both reference and deformed frames while the window remains fixed. Spread is compared with the Cramér–Rao slope of 1. The RMSE gate, 0.0927 mm, is the zero-noise interpolation bias 0.0834 mm plus three times the measured nominal-noise standard deviation 0.0031 mm. Shimmer and camera shake still cannot be distinguished from beam motion.": {
+   "ja": "基準と変形後の両コマへ独立な雑音を入れ、固定窓のまま雑音を増やした。ばらつきは Cramér–Rao 近似の傾き 1 と比べる。RMSE の門は、雑音ゼロで測った補間バイアス 0.0834 mm と、公称雑音で測った標準偏差 0.0031 mm の 3 倍との和 0.0927 mm である。しかし陽炎やカメラ揺れは桁の動きと区別できない。",
+   "zh": "基准帧与变形帧加入独立噪声，窗口保持固定。离散度与 Cramér–Rao 斜率 1 比较。RMSE 门限 0.0927 mm，由零噪声插值偏差 0.0834 mm 加公称噪声标准差 0.0031 mm 的三倍组成。仍无法区分阳炎、相机晃动与梁运动。",
+   "tw": "基準影格與變形影格加入獨立雜訊，視窗保持固定。離散度與 Cramér–Rao 斜率 1 比較。RMSE 門檻 0.0927 mm，由零雜訊插值偏差 0.0834 mm 加公稱雜訊標準差 0.0031 mm 的三倍組成。仍無法區分陽炎、相機晃動與梁運動。",
+   "ko": "기준과 변형 프레임에 독립 잡음을 넣고 창은 고정한다. 산포를 Cramér–Rao 기울기 1과 비교한다. RMSE 문턱 0.0927 mm는 무잡음 보간 편향 0.0834 mm와 공칭 잡음 표준편차 0.0031 mm의 세 배를 더한 값이다. 아지랑이와 카메라 흔들림은 보의 움직임과 구별할 수 없다.",
+   "de": "Referenz- und verformtes Bild erhalten unabhängiges Rauschen bei festem Fenster. Die Streuung wird mit der Cramér–Rao-Steigung 1 verglichen. Die RMSE-Grenze 0.0927 mm besteht aus dem rauschfreien Interpolationsbias 0.0834 mm plus dem Dreifachen der gemessenen Standardabweichung 0.0031 mm. Flimmern und Kamerawackeln bleiben von der Balkenbewegung ununterscheidbar.",
+   "hi": "reference और deformed दोनों frames में स्वतंत्र noise डाला जाता है और window स्थिर रहता है। spread की तुलना Cramér–Rao slope 1 से होती है। RMSE gate 0.0927 mm, zero-noise interpolation bias 0.0834 mm और nominal-noise standard deviation 0.0031 mm के तीन गुने का योग है। shimmer और camera shake को beam motion से अलग नहीं किया जा सकता।",
+   "fr": "Un bruit indépendant est ajouté à la référence et à l'image déformée, la fenêtre restant fixe. La dispersion est comparée à la pente 1 de Cramér–Rao. Le seuil RMSE de 0.0927 mm additionne le biais d'interpolation sans bruit de 0.0834 mm et trois fois l'écart-type nominal mesuré de 0.0031 mm. Le mirage et le bougé restent indiscernables du mouvement de la poutre."
+  },
+  "same accuracy with shimmer, camera shake and large lighting change": {
+   "ja": "陽炎・カメラ揺れ・大きな照明変化でも同じ精度",
+   "zh": "陽炎・カメラ揺れ・大きな照明変化でも同じ精度",
+   "tw": "陽炎・カメラ揺れ・大きな照明変化でも同じ精度",
+   "ko": "陽炎・カメラ揺れ・大きな照明変化でも同じ精度",
+   "de": "陽炎・カメラ揺れ・大きな照明変化でも同じ精度",
+   "hi": "陽炎・カメラ揺れ・大きな照明変化でも同じ精度",
+   "fr": "陽炎・カメラ揺れ・大きな照明変化でも同じ精度"
+  },
+  "include field disturbances": {
+   "ja": "現場の外乱を含む",
+   "zh": "現場の外乱を含む",
+   "tw": "現場の外乱を含む",
+   "ko": "現場の外乱を含む",
+   "de": "現場の外乱を含む",
+   "hi": "現場の外乱を含む",
+   "fr": "現場の外乱を含む"
+  },
+  "not computed: fixed targets and field tests required": {
+   "ja": "未計算: 不動点と現場試験が必要",
+   "zh": "未計算: 不動点と現場試験が必要",
+   "tw": "未計算: 不動点と現場試験が必要",
+   "ko": "未計算: 不動点と現場試験が必要",
+   "de": "未計算: 不動点と現場試験が必要",
+   "hi": "未計算: 不動点と現場試験が必要",
+   "fr": "未計算: 不動点と現場試験が必要"
+  },
+  "How can whole-image shake be separated from beam deflection?": {
+   "ja": "画面全体が揺れた時、桁のたわみと区別するには?",
+   "zh": "画面全体が揺れた時、桁のたわみと区別するには?",
+   "tw": "画面全体が揺れた時、桁のたわみと区別するには?",
+   "ko": "画面全体が揺れた時、桁のたわみと区別するには?",
+   "de": "画面全体が揺れた時、桁のたわみと区別するには?",
+   "hi": "画面全体が揺れた時、桁のたわみと区別するには?",
+   "fr": "画面全体が揺れた時、桁のたわみと区別するには?"
+  },
+  "use a fixed reference target": {
+   "ja": "不動点の参照ターゲットを使う",
+   "zh": "不動点の参照ターゲットを使う",
+   "tw": "不動点の参照ターゲットを使う",
+   "ko": "不動点の参照ターゲットを使う",
+   "de": "不動点の参照ターゲットを使う",
+   "hi": "不動点の参照ターゲットを使う",
+   "fr": "不動点の参照ターゲットを使う"
+  },
+  "look only at the beam": {
+   "ja": "桁だけを見る",
+   "zh": "桁だけを見る",
+   "tw": "桁だけを見る",
+   "ko": "桁だけを見る",
+   "de": "桁だけを見る",
+   "hi": "桁だけを見る",
+   "fr": "桁だけを見る"
+  },
+  "Measure a fixed point outside the bridge and subtract common motion.": {
+   "ja": "橋の外の不動点を同時に測り、共通の動きを差し引く。",
+   "zh": "橋の外の不動点を同時に測り、共通の動きを差し引く。",
+   "tw": "橋の外の不動点を同時に測り、共通の動きを差し引く。",
+   "ko": "橋の外の不動点を同時に測り、共通の動きを差し引く。",
+   "de": "橋の外の不動点を同時に測り、共通の動きを差し引く。",
+   "hi": "橋の外の不動点を同時に測り、共通の動きを差し引く。",
+   "fr": "橋の外の不動点を同時に測り、共通の動きを差し引く。"
+  },
+  "relative motion = beam target − fixed target": {
+   "ja": "relative motion = beam target − fixed target",
+   "zh": "relative motion = beam target − fixed target",
+   "tw": "relative motion = beam target − fixed target",
+   "ko": "relative motion = beam target − fixed target",
+   "de": "relative motion = beam target − fixed target",
+   "hi": "relative motion = beam target − fixed target",
+   "fr": "relative motion = beam target − fixed target"
+  },
+  "Shimmer, shake and lighting changes are uncomputed; field tests are required before maintenance use.": {
+   "ja": "陽炎、揺れ、照明変化は未計算。現場試験なしに保守判断へ使えない。",
+   "zh": "陽炎、揺れ、照明変化は未計算。現場試験なしに保守判断へ使えない。",
+   "tw": "陽炎、揺れ、照明変化は未計算。現場試験なしに保守判断へ使えない。",
+   "ko": "陽炎、揺れ、照明変化は未計算。現場試験なしに保守判断へ使えない。",
+   "de": "陽炎、揺れ、照明変化は未計算。現場試験なしに保守判断へ使えない。",
+   "hi": "陽炎、揺れ、照明変化は未計算。現場試験なしに保守判断へ使えない。",
+   "fr": "陽炎、揺れ、照明変化は未計算。現場試験なしに保守判断へ使えない。"
+  },
+  "Entirely synthetic. Span, deflection, projection scale and noise are general explanatory assumptions, not a real bridge, authority, company or product.": {
+   "ja": "すべて合成。スパン、たわみ、投影倍率、雑音は一般的な説明用の仮定で、実在の橋・自治体・会社・製品を表さない。",
+   "zh": "すべて合成。スパン、たわみ、投影倍率、雑音は一般的な説明用の仮定で、実在の橋・自治体・会社・製品を表さない。",
+   "tw": "すべて合成。スパン、たわみ、投影倍率、雑音は一般的な説明用の仮定で、実在の橋・自治体・会社・製品を表さない。",
+   "ko": "すべて合成。スパン、たわみ、投影倍率、雑音は一般的な説明用の仮定で、実在の橋・自治体・会社・製品を表さない。",
+   "de": "すべて合成。スパン、たわみ、投影倍率、雑音は一般的な説明用の仮定で、実在の橋・自治体・会社・製品を表さない。",
+   "hi": "すべて合成。スパン、たわみ、投影倍率、雑音は一般的な説明用の仮定で、実在の橋・自治体・会社・製品を表さない。",
+   "fr": "すべて合成。スパン、たわみ、投影倍率、雑音は一般的な説明用の仮定で、実在の橋・自治体・会社・製品を表さない。"
+  }
+ }
+}
