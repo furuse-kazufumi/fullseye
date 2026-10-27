@@ -1839,6 +1839,44 @@
    }
   },
   {
+   "id": "bridge_dic",
+   "category": "anim3d",
+   "media": "bridge_dic_anim3d.html",
+   "media_path": "view2026/anim3d/bridge_dic_anim3d.html",
+   "motion": true,
+   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_bridge_dic_anim3d.py",
+   "label": {
+    "ja": "離れたカメラで橋のたわみを測る",
+    "en": "Measure bridge deflection with a distant camera",
+    "zh": "用远处相机测量桥梁挠度",
+    "tw": "用遠處相機量測橋梁撓度",
+    "ko": "원거리 카메라로 교량 처짐 측정",
+    "de": "Brückendurchbiegung mit einer entfernten Kamera messen",
+    "hi": "दूरस्थ कैमरे से पुल का झुकाव मापना",
+    "fr": "Mesurer la flèche d'un pont avec une caméra distante"
+   },
+   "see": {
+    "ja": "合成トラックが格子で作った桁を渡ると、斑点像が副画素だけ動く。固定窓の正規化相互相関から中央たわみを測り、はりの閉形式と独立に比べる。",
+    "en": "A synthetic load crosses a gridded beam and moves its speckle image by subpixels. Fixed-window normalized cross-correlation measures midspan deflection independently of the beam closed form.",
+    "zh": "合成荷载越过格子梁，使斑点图像产生亚像素移动。固定窗口归一化互相关独立测量跨中挠度。",
+    "tw": "合成荷載越過格子梁，使斑點影像產生次像素移動。固定視窗正規化互相關獨立量測跨中撓度。",
+    "ko": "합성 하중이 격자 보를 지나며 스펙클 영상을 서브픽셀만큼 움직인다. 고정 창 정규화 상관으로 중앙 처짐을 독립 측정한다.",
+    "de": "Eine synthetische Last überquert einen Gitterbalken und verschiebt das Specklebild um Subpixel. Eine feste NCC-Messung bestimmt die Durchbiegung unabhängig von der Balkenformel.",
+    "hi": "कृत्रिम load ग्रिड beam पर चलता है और speckle image को subpixel जितना खिसकाता है। स्थिर-window NCC मध्य झुकाव को स्वतंत्र रूप से मापता है।",
+    "fr": "Une charge synthétique traverse une poutre maillée et déplace l'image de speckle au sous-pixel. Une NCC à fenêtre fixe mesure la flèche indépendamment de la formule de poutre."
+   },
+   "num": {
+    "ja": "DIC と閉形式の RMS 差 0.0823 mm、無雑音バイアスと雑音試行から作った基準 0.0927 mm。最大時刻は中央フレームと一致し、雑音対ばらつきの傾きは 1.012。",
+    "en": "DIC versus closed-form RMS is 0.0823 mm against a 0.0927 mm criterion built from zero-noise bias and noisy trials. The measured peak is the centre frame and noise-versus-spread slope is 1.012.",
+    "zh": "DIC 与闭式解的 RMS 为 0.0823 mm，低于由零噪声偏差和噪声试验得到的基准 0.0927 mm；峰值位于中央帧，噪声斜率为 1.012。",
+    "tw": "DIC 與閉式解的 RMS 為 0.0823 mm，低於由零雜訊偏差和雜訊試驗得到的基準 0.0927 mm；峰值位於中央影格，雜訊斜率為 1.012。",
+    "ko": "DIC와 폐형식 RMS는 0.0823 mm로 무잡음 편향과 잡음 시험에서 만든 기준 0.0927 mm보다 작다. 피크는 중앙 프레임이며 잡음 기울기는 1.012다.",
+    "de": "DIC gegen geschlossene Form: RMS 0.0823 mm bei einer aus Nullrausch-Bias und Rauschversuchen gebildeten Grenze von 0.0927 mm. Das Maximum liegt im mittleren Frame; die Rauschsteigung ist 1.012.",
+    "hi": "DIC बनाम closed form RMS 0.0823 mm है, zero-noise bias और noisy trials से बनी सीमा 0.0927 mm। peak मध्य frame पर है और noise slope 1.012 है।",
+    "fr": "RMS DIC–forme fermée : 0.0823 mm pour un seuil de 0.0927 mm issu du biais sans bruit et d'essais bruités. Le pic est sur l'image centrale et la pente du bruit vaut 1.012."
+   }
+  },
+  {
    "id": "rail_light_section",
    "category": "anim3d",
    "media": "rail_light_section_anim3d.html",
