@@ -353,6 +353,8 @@ EXCLUDED = {
     "tools/build_bridge_dic_anim3d.py": ("橋のたわみを画像相関で測る動く 3-D 教材(docs/view2026/anim3d/bridge_dic_anim3d.html)。"
                                          "`py -3.11 tools/anim3d_i18n.py --build build_bridge_dic_anim3d --out docs/view2026/anim3d/bridge_dic_anim3d.html` で書く"
                                          "(翻訳表 tools/anim3d_i18n_tables/build_bridge_dic_anim3d.json)。門は tests/test_anim3d_bridge_dic_2026_10_27.py。"),
+    "tools/build_thermo_anim3d.py": ("コンクリート浮きの赤外線サーモグラフィ教材(docs/view2026/anim3d/thermo_delamination_anim3d.html)。"
+                                      "anim3d_i18n.py で手回し生成する 8 言語ページ。門は tests/test_anim3d_thermo_2026_10_27.py。"),
     "tools/build_tunnel_anim3d.py": ("トンネル覆工のひびを走行撮影して測る動く 3-D 教材(docs/view2026/anim3d/tunnel_crack_anim3d.html)。"
                                      "`py -3.11 tools/anim3d_i18n.py --build build_tunnel_anim3d --out docs/view2026/anim3d/tunnel_crack_anim3d.html` で書く"
                                      "(翻訳表 tools/anim3d_i18n_tables/build_tunnel_anim3d.json)。門は tests/test_anim3d_tunnel_2026_10_27.py。"),
