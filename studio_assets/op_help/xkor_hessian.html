@@ -11,9 +11,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xkor_hessian.inputs.jpg">xkor_hessian: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p>*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>ヘシアン行列に基づくブロブ・コーナー応答。<code style="color:#22d3bf">kornia.feature.hessian_response</code> を既定パラメータで呼び、絶対値を取って最大絶対値で正規化する。</p>
-<p><b>a, b は未使用</b>（共通ヘルパー <code style="color:#22d3bf">_resp</code> が a, b を受け取るだけで捨てる）。</p>
-<p><b>端の扱い</b>: 端の画素を複製する(最近傍)(実測。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>)。</p>
+<p>ヘシアン行列の行列式 det H = Ixx·Iyy − Ixy² によるブロブ・コーナー応答。<code style="color:#22d3bf">kornia.filters.spatial_gradient</code> の 5x5 Sobel 2 階微分カーネルを正規化なし（<code style="color:#22d3bf">normalized=False</code>）で掛けて 64 で割り（2 次・3 次の曲面で微分値そのものになる）、端は複製、絶対値を取って最大絶対値で正規化する。</p>
+<p><b>a, b は未使用</b>。<code style="color:#22d3bf">kornia.feature.hessian_response</code> を呼ばないのは、kornia 0.9 で 2 階微分カーネルの正規化が変わったため（0.8 は各カーネルを絶対値和で割るので Ixy だけが 64/36 倍に効き、行列式が Hessian の行列式にならない。同じ画像で内側の値が最大 0.68 ずれた）。正規化を自前で固定したので版に依らず、0.9 の値と一致する。</p>
 <p><b>値の比較可能性(実測)</b>: 出力を<b>その画像の最大値で正規化</b>している(出力の最大が常に 1.0、入力を定数倍しても出力が変わらない)。したがって<b>画像をまたいで値を比較できない</b> —— 同じ強さの特徴でも、その画像の中で最も強い特徴が何かによって値が変わる。弱い特徴しか無い画像では雑音が 1.0 まで持ち上がる。画像間で比べたいときは、共通の基準で割り直すこと。</p>
 <p><b>何も写っていないフレーム(実測)</b>: 明るさが一様な画像を入れると、<b>明るさに関係なく空(全画素が背景 0)</b>になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>

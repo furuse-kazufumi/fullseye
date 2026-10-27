@@ -2423,13 +2423,13 @@
    "hi": "**a, b उपयोग नहीं होते** (साझा helper ``_resp`` केवल a, b लेता है और उन्हें छोड़ देता है)।"
   },
   "2d/xkor_hessian": {
-   "fp": "6b8f8c299e10",
-   "en": "**a, b are unused** (the shared helper ``_resp`` merely receives a, b and discards them).",
-   "zh": "**a、b 未使用**(公共辅助函数 ``_resp`` 只是接收 a、b 后就丢弃)。",
-   "tw": "**a、b 未使用**(共用輔助函式 ``_resp`` 只是接收 a、b 後就丟棄)。",
-   "ko": "**a, b는 미사용**(공통 헬퍼 ``_resp``가 a, b를 받기만 하고 버린다).",
-   "de": "**a, b sind ungenutzt** (die gemeinsame Hilfsfunktion ``_resp`` nimmt a, b nur entgegen und verwirft sie).",
-   "hi": "**a, b उपयोग नहीं होते** (साझा helper ``_resp`` केवल a, b लेता है और उन्हें छोड़ देता है)।"
+   "fp": "097a7417ab33",
+   "en": "**a, b are unused**. ``kornia.feature.hessian_response`` is not called because kornia 0.9 changed how the second-derivative kernels are normalised (0.8 divides each kernel by its absolute sum, so Ixy alone is weighted 64/36 times too much and the determinant is not the determinant of the Hessian; on the same image the interior values differed by up to 0.68). The normalisation is fixed here, so the result does not depend on the version and agrees with the 0.9 values.",
+   "zh": "**a、b 未使用**。不调用 ``kornia.feature.hessian_response``，是因为 kornia 0.9 改变了二阶导数核的归一化方式（0.8 将每个核除以其绝对值之和，因此只有 Ixy 被放大 64/36 倍，行列式不再是 Hessian 的行列式；同一图像内部的值最多相差 0.68）。这里自行固定了归一化，因此结果与版本无关，并与 0.9 的值一致。",
+   "tw": "**a、b 未使用**。不呼叫 ``kornia.feature.hessian_response``，是因為 kornia 0.9 改變了二階導數核的正規化方式（0.8 將每個核除以其絕對值之和，因此只有 Ixy 被放大 64/36 倍，行列式不再是 Hessian 的行列式；同一影像內部的值最多相差 0.68）。這裡自行固定了正規化，因此結果與版本無關，並與 0.9 的值一致。",
+   "ko": "**a, b는 미사용**. ``kornia.feature.hessian_response``를 호출하지 않는 것은 kornia 0.9에서 2차 미분 커널의 정규화가 바뀌었기 때문이다(0.8은 각 커널을 절댓값 합으로 나누므로 Ixy만 64/36배로 작용해 행렬식이 Hessian의 행렬식이 되지 않는다. 같은 이미지에서 내부 값이 최대 0.68 어긋났다). 정규화를 직접 고정했으므로 버전에 의존하지 않고 0.9의 값과 일치한다.",
+   "de": "**a, b sind ungenutzt**. ``kornia.feature.hessian_response`` wird nicht aufgerufen, weil kornia 0.9 die Normierung der Kerne zweiter Ableitung geändert hat (0.8 teilt jeden Kern durch seine Betragssumme, sodass allein Ixy 64/36-mal zu stark gewichtet wird und die Determinante nicht die der Hesse-Matrix ist; auf demselben Bild wichen die inneren Werte um bis zu 0.68 ab). Die Normierung ist hier fest vorgegeben, daher hängt das Ergebnis nicht von der Version ab und stimmt mit den Werten von 0.9 überein.",
+   "hi": "**a, b उपयोग नहीं होते**। ``kornia.feature.hessian_response`` को call नहीं किया जाता, क्योंकि kornia 0.9 में second-derivative kernels का normalisation बदल गया (0.8 हर kernel को उसके absolute sum से भाग देता है, इसलिए केवल Ixy 64/36 गुना अधिक असर करता है और determinant Hessian का determinant नहीं रहता; एक ही image पर भीतरी मान अधिकतम 0.68 तक अलग थे)। यहाँ normalisation स्वयं तय किया गया है, इसलिए परिणाम version पर निर्भर नहीं करता और 0.9 के मानों से मेल खाता है।"
   },
   "2d/xkor_dog": {
    "fp": "baf149c9411a",
@@ -7013,13 +7013,13 @@
    "hi": "a से kernel size को 3/5/7/9 के 4 चरणों में से चुना जाता है\n(``(3,5,7,9)[min(3, int(a*4))]``)। b उपयोग नहीं होता। salt-and-pepper noise जैसे\noutlier noise के प्रति robust है, और Gaussian blur की तुलना में edges को बेहतर बचाता है।"
   },
   "2d/xkor_clahe": {
-   "fp": "e1a0fb985ac9",
-   "en": "a sweeps the clip limit (``1.0 + 4.0 * a``, range 1.0-5.0). The larger the value,\nthe more strongly the contrast is lifted, but the more easily noise is emphasised as well.\nb is unused.",
-   "zh": "a 调节裁剪限制（``1.0 + 4.0 * a``，范围 1.0~5.0）。值越大\n对比度提升得越强，但噪声也越容易被强调。\nb 未使用。",
-   "tw": "a 調整截斷限制（``1.0 + 4.0 * a``，範圍 1.0~5.0）。值越大\n對比度提升得越強，但雜訊也越容易被強調。\nb 未使用。",
-   "ko": "a가 클립 제한(``1.0 + 4.0 * a``, 범위 1.0~5.0)을 바꾼다. 값이 클\n수록 대비가 강하게 올라가는 대신 잡음도 강조되기 쉽다.\nb는 사용하지 않는다.",
-   "de": "a variiert das Clip-Limit (``1.0 + 4.0 * a``, Bereich 1.0-5.0). Je größer der Wert,\ndesto stärker wird der Kontrast angehoben, desto leichter wird aber auch Rauschen betont.\nb wird nicht verwendet.",
-   "hi": "a clip limit (``1.0 + 4.0 * a``, range 1.0-5.0) को बदलता है। मान जितना बड़ा,\ncontrast उतना तेज़ी से उठता है, पर noise भी उतनी आसानी से उभर जाता है।\nb उपयोग नहीं होता।"
+   "fp": "61d9783ec5d6",
+   "en": "a sweeps the clip limit (``1.0 + 4.0 * a``, range 1.0-5.0). The larger the value,\nthe more strongly the contrast is lifted, but the more easily noise is emphasised as well.\nb is unused.\n\n**Requires kornia 0.9 or later**. ``equalize_clahe`` in 0.8 and earlier differs from OpenCV's CLAHE\nby 0.04-0.17 on average and up to 0.46 (0.9 fixed the histogram bins, the way the clipped excess is\nredistributed, the rounding of the LUT and the tile interpolation). So that the values do not change\nsilently with the version, the op refuses with a reason below 0.9. The tile grid is passed explicitly as 8x8.",
+   "zh": "a 调节裁剪限制（``1.0 + 4.0 * a``，范围 1.0~5.0）。值越大\n对比度提升得越强，但噪声也越容易被强调。\nb 未使用。\n\n**需要 kornia 0.9 及以上**。0.8 及更早版本的 ``equalize_clahe`` 与 OpenCV 的 CLAHE\n平均相差 0.04~0.17，最大相差 0.46（0.9 修正了直方图的分箱、被裁剪余量的分配方式、\nLUT 的取整和分块插值）。为了不让数值随版本悄然改变，低于 0.9 时\n会附带理由拒绝。分块网格显式传入 8x8。",
+   "tw": "a 調整截斷限制（``1.0 + 4.0 * a``，範圍 1.0~5.0）。值越大\n對比度提升得越強，但雜訊也越容易被強調。\nb 未使用。\n\n**需要 kornia 0.9 以上**。0.8 及更早版本的 ``equalize_clahe`` 與 OpenCV 的 CLAHE\n平均相差 0.04~0.17，最大相差 0.46（0.9 修正了直方圖的分箱、被截斷餘量的分配方式、\nLUT 的取整與分塊內插）。為了不讓數值隨版本悄悄改變，低於 0.9 時\n會附上理由拒絕。分塊網格明確傳入 8x8。",
+   "ko": "a가 클립 제한(``1.0 + 4.0 * a``, 범위 1.0~5.0)을 바꾼다. 값이 클\n수록 대비가 강하게 올라가는 대신 잡음도 강조되기 쉽다.\nb는 사용하지 않는다.\n\n**kornia 0.9 이상이 필요하다**. 0.8 이전의 ``equalize_clahe``는 OpenCV의 CLAHE와\n평균 0.04~0.17, 최대 0.46 어긋난다(0.9에서 히스토그램의 bin, 잘라 낸 나머지의 분배 방식,\nLUT의 반올림, 타일 보간이 고쳐졌다). 버전에 따라 값이 조용히 바뀌지 않도록 0.9 미만에서는\n이유를 붙여 거부한다. 타일 격자는 8x8을 명시해 넘긴다.",
+   "de": "a variiert das Clip-Limit (``1.0 + 4.0 * a``, Bereich 1.0-5.0). Je größer der Wert,\ndesto stärker wird der Kontrast angehoben, desto leichter wird aber auch Rauschen betont.\nb wird nicht verwendet.\n\n**Benötigt kornia 0.9 oder neuer**. ``equalize_clahe`` in 0.8 und früher weicht von OpenCVs CLAHE\nim Mittel um 0.04-0.17 und maximal um 0.46 ab (0.9 hat die Histogramm-Bins, die Verteilung des\nabgeschnittenen Überschusses, das Runden der LUT und die Kachelinterpolation korrigiert). Damit sich die\nWerte nicht stillschweigend mit der Version ändern, lehnt der Op unter 0.9 mit Begründung ab. Das\nKachelraster wird ausdrücklich als 8x8 übergeben.",
+   "hi": "a clip limit (``1.0 + 4.0 * a``, range 1.0-5.0) को बदलता है। मान जितना बड़ा,\ncontrast उतना तेज़ी से उठता है, पर noise भी उतनी आसानी से उभर जाता है।\nb उपयोग नहीं होता।\n\n**kornia 0.9 या उससे नया चाहिए**। 0.8 और उससे पुराने ``equalize_clahe`` का परिणाम OpenCV के CLAHE से\nऔसतन 0.04-0.17 और अधिकतम 0.46 अलग होता है (0.9 ने histogram के bins, काटे गए अतिरिक्त हिस्से को बाँटने का तरीका,\nLUT की rounding और tile interpolation ठीक किए)। version के साथ मान चुपचाप न बदलें, इसलिए 0.9 से नीचे\nयह op कारण बताकर मना कर देता है। tile grid स्पष्ट रूप से 8x8 दिया जाता है।"
   },
   "2d/r2_inner_circle": {
    "fp": "7162a802ede0",
