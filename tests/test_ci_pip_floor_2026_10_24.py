@@ -24,12 +24,13 @@ def _steps_after_setup_python(text):
 
 
 def test_every_setup_python_is_followed_by_the_pip_and_certifi_floor():
-    seen = 0
+    steps = []
     for name in ("ci.yml", "release.yml"):
         with open(os.path.join(WF, name), encoding="utf-8") as f:
             text = f.read().replace("\r\n", "\n")
-        for lineno, nxt in _steps_after_setup_python(text):
-            seen += 1
-            assert re.search(r'"pip>=26\.2\.2"', nxt) and re.search(r'"certifi>=2026\.10\.19"', nxt), (
-                "%s:%d の setup-python の直後に pip / certifi を上げる step が無い" % (name, lineno))
-    assert seen >= 8, "setup-python の step が %d 本しか見つからない(読み方が壊れていないか)" % seen
+        steps += [(name, lineno, nxt) for lineno, nxt in _steps_after_setup_python(text)]
+    # 先に件数を保証する(読み方が壊れて 0 本になると、下のループは何も確かめずに通る)。
+    assert len(steps) >= 8, "setup-python の step が %d 本しか見つからない(読み方が壊れていないか)" % len(steps)
+    for name, lineno, nxt in steps:
+        assert re.search(r'"pip>=26\.2\.2"', nxt) and re.search(r'"certifi>=2026\.10\.19"', nxt), (
+            "%s:%d の setup-python の直後に pip / certifi を上げる step が無い" % (name, lineno))
