@@ -14,6 +14,23 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
   - 応力光学則: `photoelastic_retardation`(δ = 2π t C (σ1−σ2)/λ と材料縞値)、`retardation_from_birefringence`、`retardation_convert`(rad / deg / nm / waves)。
   - 立方晶 {100} 面: `cubic_photoelastic_birefringence`(4 階の圧電光学テンソルを結晶方位で回す。Stoehr ら 2020, J. Sens. Sens. Syst. 9:209 の式 (26) と 1e-12 で一致、π44 = π11 − π12 で等方の式に戻る)、`silicon_piezo_optic_coefficients`(同論文の表 1 を出典つきで。同論文の測定値以外の 4 行は同表の引用値で、原論文は未照合)。
   - 偏光器と偏光像: `polariscope_intensity`(平面・円偏光器の明暗視野、`optics.mueller_element` の鎖と 1e-12 で一致)、`photoelastic_polarization_images`(円偏光照明の試料を偏光カメラ 4 方位 / 6 強度の偏光計で撮る)、`photoelastic_phase_estimate`(閉形式の逆算: 4 方位は δ ≤ π/2、6 強度は δ ≤ π。合成 → 推定で δ と主軸が 1e-9、円板の応力場から主応力差が 1e-6 で戻る)、`retardation_unwrap_multiwavelength`(分散なしの仮定で多波長から次数を決め、別の次数との差 `margin_nm` を返す)。
+### 修正(値が変わる) — 傾けた像面の座標を、傾いた面そのものの上で返す(`raytrace3d`)
+
+- `noncoaxial_trace` / `noncoaxial_spot` の `image_xy`(と `chief`・重心)は、`image_tilt` を与えると**傾けない像面へ
+  射影した座標**を返していた(docstring は「像面の局所の座標」)。傾けた向きの長さが cos θ' 倍に縮み、
+  `noncoaxial_spot` の RMS・幾何半径も同じだけ小さく出ていた。今は傾いた像面の正規直交基底(x = 面と xz 面の交線、
+  法線 = (−tan ty, −tan tx, 1)/‖·‖、y = 法線 × x)で測り、傾いた受光素子の上の距離がそのまま出る。
+- **値が変わる**のは `image_tilt` ≠ (0, 0) の系だけ(傾けない系は基底が厳密に単位行列で、数値は 1 ビットも変わらない)。
+  例: 30° の傾きで、瞳の上下の 2 点の距離は 10 → 10/cos 30° = 11.547 mm、RMS は 3.8037 → 4.1085 mm。
+  `noncoaxial_example("scheimpflug")`(θ' = −28.0°)では傾けた向きの長さが 1/cos θ' = 1.133 倍になり、視野 −3 mm の
+  RMS は 0.2439 → 0.2609 mm。`poc_noncoaxial_optics` の第 4 章の最大 RMS は
+  0.0170 → 0.0185 mm(reduced 予算の実行。門 = 傾けない像面の 3 分の 1 以下、は通ったまま)。
+- 同じ型の兄弟も揃えた: `noncoaxial_layout` の `image.rotation` / `image.normal` は傾いた面の姿勢になった(以前は
+  傾けない座標系の値で、`tilt` を別に読む必要があった)。`image_orientation` のヤコビアン、`ghost_analysis` /
+  `ghost_path` / `ghost_image` の像面の座標と焦点ずれ(法線方向)も傾いた面の上で測る。
+- 呼び出し側で cos θ' を割り戻していたコードは、この版からその補正を外すこと(二重に補正すると逆に 1/cos θ' 倍に
+  なる)。門 = `tests/test_raytrace3d_tilted_image.py`(閉形式の 2 点の距離・RMS、2 軸の傾きの等長性、収差のある
+  系の RMS = 大域の 3-D 点の RMS)。
 
 ### 変更(破壊的) — Python 3.10 のサポートを終了(requires-python >= 3.11)
 

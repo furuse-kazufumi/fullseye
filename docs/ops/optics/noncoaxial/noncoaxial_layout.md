@@ -23,7 +23,8 @@ Per surface: ``vertex`` (mm, global), ``rotation`` (3×3, columns = the local x,
 coordinates; ``local = (P − vertex) @ rotation``), ``euler_zyx_deg`` (the same rotation as
 ``Rz(γ)·Ry(β)·Rx(α)`` about the global axes — the extrinsic x-then-y-then-z form other ray tracers take for
 absolute placement), ``normal`` (the local +z) and the record's ``R`` / ``k`` / ``ap`` / ``mirror``.
-``axis`` is the polyline of the frame origins (the mechanical axis), ``image`` the image-plane pose.
+``axis`` is the polyline of the frame origins (the mechanical axis), ``image`` the image-plane pose
+(with ``image_tilt`` its ``rotation`` / ``normal`` are those of the tilted plane itself).
 
 ## ファミリ共通の入力契約(fail-closed)
 
