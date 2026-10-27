@@ -2382,9 +2382,74 @@
    "media_path": "view2026/anim3d/multibeam_bathymetry_anim3d.html",
    "motion": true,
    "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_multibeam_anim3d.py",
-   "label": {"ja":"船から音で海底地形を測る","en":"Mapping the seabed with sound from a vessel","zh":"Mapping the seabed with sound from a vessel","tw":"Mapping the seabed with sound from a vessel","ko":"Mapping the seabed with sound from a vessel","de":"Mapping the seabed with sound from a vessel","hi":"Mapping the seabed with sound from a vessel","fr":"Mapping the seabed with sound from a vessel"},
-   "see": {"ja":"扇状の 41 ビームを合成海底へ飛ばし、正しい層状音速と一定音速で同じ往復時間を復元する。音速を誤ると外側ビームだけが笑顔状に曲がる。","en":"Send a 41-beam fan toward a synthetic seabed and invert the same travel times with a layered and a constant sound speed. The wrong speed bends the outer beams into a smile.","zh":"Send a 41-beam fan toward a synthetic seabed and invert the same travel times with a layered and a constant sound speed. The wrong speed bends the outer beams into a smile.","tw":"Send a 41-beam fan toward a synthetic seabed and invert the same travel times with a layered and a constant sound speed. The wrong speed bends the outer beams into a smile.","ko":"Send a 41-beam fan toward a synthetic seabed and invert the same travel times with a layered and a constant sound speed. The wrong speed bends the outer beams into a smile.","de":"Send a 41-beam fan toward a synthetic seabed and invert the same travel times with a layered and a constant sound speed. The wrong speed bends the outer beams into a smile.","hi":"Send a 41-beam fan toward a synthetic seabed and invert the same travel times with a layered and a constant sound speed. The wrong speed bends the outer beams into a smile.","fr":"Send a 41-beam fan toward a synthetic seabed and invert the same travel times with a layered and a constant sound speed. The wrong speed bends the outer beams into a smile."},
-   "num": {"ja":"独立な層解析による RMS は 0.069 m、合成 3σ 基準は 0.202 m。外側ビームの二項近似残差は曲がり RMS の 2.76 % で、25 % 基準内。RK4 光線の Snell 不変量残差は 2.91e-16。","en":"Independent layered inversion gives 0.069 m RMS against a 0.202 m combined 3σ criterion. The outer-beam two-term approximation residual is 2.76% of bend RMS, within its 25% criterion. The RK4 ray's Snell-invariant residual is 2.91e-16.","zh":"Independent layered inversion gives 0.069 m RMS against a 0.202 m combined 3σ criterion. The outer-beam two-term approximation residual is 2.76% of bend RMS, within its 25% criterion. The RK4 ray's Snell-invariant residual is 2.91e-16.","tw":"Independent layered inversion gives 0.069 m RMS against a 0.202 m combined 3σ criterion. The outer-beam two-term approximation residual is 2.76% of bend RMS, within its 25% criterion. The RK4 ray's Snell-invariant residual is 2.91e-16.","ko":"Independent layered inversion gives 0.069 m RMS against a 0.202 m combined 3σ criterion. The outer-beam two-term approximation residual is 2.76% of bend RMS, within its 25% criterion. The RK4 ray's Snell-invariant residual is 2.91e-16.","de":"Independent layered inversion gives 0.069 m RMS against a 0.202 m combined 3σ criterion. The outer-beam two-term approximation residual is 2.76% of bend RMS, within its 25% criterion. The RK4 ray's Snell-invariant residual is 2.91e-16.","hi":"Independent layered inversion gives 0.069 m RMS against a 0.202 m combined 3σ criterion. The outer-beam two-term approximation residual is 2.76% of bend RMS, within its 25% criterion. The RK4 ray's Snell-invariant residual is 2.91e-16.","fr":"Independent layered inversion gives 0.069 m RMS against a 0.202 m combined 3σ criterion. The outer-beam two-term approximation residual is 2.76% of bend RMS, within its 25% criterion. The RK4 ray's Snell-invariant residual is 2.91e-16."}
+   "label": {
+    "ja": "船から音で海底地形を測る",
+    "en": "Mapping the seabed with sound from a vessel",
+    "zh": "Mapping the seabed with sound from a vessel",
+    "tw": "Mapping the seabed with sound from a vessel",
+    "ko": "Mapping the seabed with sound from a vessel",
+    "de": "Mapping the seabed with sound from a vessel",
+    "hi": "Mapping the seabed with sound from a vessel",
+    "fr": "Mapping the seabed with sound from a vessel"
+   },
+   "see": {
+    "ja": "扇状の 41 ビームを合成海底へ飛ばし、正しい層状音速と一定音速で同じ往復時間を復元する。音速を誤ると外側ビームだけが笑顔状に曲がる。",
+    "en": "Send a 41-beam fan toward a synthetic seabed and invert the same travel times with a layered and a constant sound speed. The wrong speed bends the outer beams into a smile.",
+    "zh": "Send a 41-beam fan toward a synthetic seabed and invert the same travel times with a layered and a constant sound speed. The wrong speed bends the outer beams into a smile.",
+    "tw": "Send a 41-beam fan toward a synthetic seabed and invert the same travel times with a layered and a constant sound speed. The wrong speed bends the outer beams into a smile.",
+    "ko": "Send a 41-beam fan toward a synthetic seabed and invert the same travel times with a layered and a constant sound speed. The wrong speed bends the outer beams into a smile.",
+    "de": "Send a 41-beam fan toward a synthetic seabed and invert the same travel times with a layered and a constant sound speed. The wrong speed bends the outer beams into a smile.",
+    "hi": "Send a 41-beam fan toward a synthetic seabed and invert the same travel times with a layered and a constant sound speed. The wrong speed bends the outer beams into a smile.",
+    "fr": "Send a 41-beam fan toward a synthetic seabed and invert the same travel times with a layered and a constant sound speed. The wrong speed bends the outer beams into a smile."
+   },
+   "num": {
+    "ja": "独立な層解析による RMS は 0.069 m、合成 3σ 基準は 0.202 m。外側ビームの二項近似残差は曲がり RMS の 2.76 % で、25 % 基準内。RK4 光線の Snell 不変量残差は 2.91e-16。",
+    "en": "Independent layered inversion gives 0.069 m RMS against a 0.202 m combined 3σ criterion. The outer-beam two-term approximation residual is 2.76% of bend RMS, within its 25% criterion. The RK4 ray's Snell-invariant residual is 2.91e-16.",
+    "zh": "Independent layered inversion gives 0.069 m RMS against a 0.202 m combined 3σ criterion. The outer-beam two-term approximation residual is 2.76% of bend RMS, within its 25% criterion. The RK4 ray's Snell-invariant residual is 2.91e-16.",
+    "tw": "Independent layered inversion gives 0.069 m RMS against a 0.202 m combined 3σ criterion. The outer-beam two-term approximation residual is 2.76% of bend RMS, within its 25% criterion. The RK4 ray's Snell-invariant residual is 2.91e-16.",
+    "ko": "Independent layered inversion gives 0.069 m RMS against a 0.202 m combined 3σ criterion. The outer-beam two-term approximation residual is 2.76% of bend RMS, within its 25% criterion. The RK4 ray's Snell-invariant residual is 2.91e-16.",
+    "de": "Independent layered inversion gives 0.069 m RMS against a 0.202 m combined 3σ criterion. The outer-beam two-term approximation residual is 2.76% of bend RMS, within its 25% criterion. The RK4 ray's Snell-invariant residual is 2.91e-16.",
+    "hi": "Independent layered inversion gives 0.069 m RMS against a 0.202 m combined 3σ criterion. The outer-beam two-term approximation residual is 2.76% of bend RMS, within its 25% criterion. The RK4 ray's Snell-invariant residual is 2.91e-16.",
+    "fr": "Independent layered inversion gives 0.069 m RMS against a 0.202 m combined 3σ criterion. The outer-beam two-term approximation residual is 2.76% of bend RMS, within its 25% criterion. The RK4 ray's Snell-invariant residual is 2.91e-16."
+   }
+  },
+  {
+   "id": "thermo_delamination",
+   "category": "anim3d",
+   "media": "thermo_delamination_anim3d.html",
+   "media_path": "view2026/anim3d/thermo_delamination_anim3d.html",
+   "motion": true,
+   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_thermo_anim3d.py",
+   "label": {
+    "ja": "温度のむらでコンクリートの浮きを探す",
+    "en": "Find concrete delamination from thermal patterns",
+    "zh": "用温度不均寻找混凝土脱层",
+    "tw": "用溫度不均尋找混凝土脫層",
+    "ko": "온도 얼룩으로 콘크리트 들뜸 찾기",
+    "de": "Betonablösung anhand von Wärmemustern finden",
+    "hi": "तापीय पैटर्न से कंक्रीट का अलगाव खोजें",
+    "fr": "Repérer un décollement du béton par les motifs thermiques"
+   },
+   "see": {
+    "ja": "加熱後の赤外線像で、浅い空気層は熱い斑点として残り、深さ 38 mm の小さい浮きは横拡散と雑音に消える。",
+    "en": "After pulse heating, shallow air layers remain as warm spots, while a small delamination at 38 mm disappears into lateral diffusion and noise.",
+    "zh": "脉冲加热后，浅层空气层留下热斑，而 38 mm 深的小脱层消失在横向扩散和噪声中。",
+    "tw": "脈衝加熱後，淺層空氣層留下熱斑，而 38 mm 深的小脫層消失在橫向擴散和雜訊中。",
+    "ko": "펄스 가열 뒤 얕은 공기층은 따뜻한 반점으로 남지만 깊이 38 mm의 작은 들뜸은 횡확산과 잡음에 묻힌다.",
+    "de": "Nach der Pulsheizung bleiben flache Luftschichten als warme Flecken sichtbar; eine kleine Ablösung in 38 mm Tiefe verschwindet durch Querleitung und Rauschen.",
+    "hi": "पल्स गरम करने के बाद उथली वायु परतें गर्म धब्बों की तरह रहती हैं, जबकि 38 mm गहरा छोटा अलगाव पार्श्व प्रसार और शोर में खो जाता है।",
+    "fr": "Après une chauffe pulsée, les lames d'air peu profondes restent chaudes, tandis qu'un petit décollement à 38 mm disparaît dans la diffusion latérale et le bruit."
+   },
+   "num": {
+    "ja": "差分解と閉形式の差 0.217 %、中心誤差 6.92 mm、径誤差 4.70 mm、深さ誤差 0.960 mm。3 個を検出し、深い 1 個は検出不能。",
+    "en": "Finite difference differs from the closed form by 0.217%; centre error is 6.92 mm, diameter error 4.70 mm and depth error 0.960 mm. 3 defects are detected and the deepest 1 is not.",
+    "zh": "差分解与闭式解相差 0.217%；中心误差 6.92 mm、直径误差 4.70 mm、深度误差 0.960 mm。检出 3 个缺陷，最深的 1 个未检出。",
+    "tw": "差分解與閉式解相差 0.217%；中心誤差 6.92 mm、直徑誤差 4.70 mm、深度誤差 0.960 mm。檢出 3 個缺陷，最深的 1 個未檢出。",
+    "ko": "차분해와 닫힌형 해의 차이는 0.217%, 중심 오차 6.92 mm, 지름 오차 4.70 mm, 깊이 오차 0.960 mm다. 결함 3개를 검출하고 가장 깊은 1개는 검출하지 못한다.",
+    "de": "Die Differenz zur geschlossenen Lösung beträgt 0.217 %, der Mittelpunktfehler 6.92 mm, der Durchmesserfehler 4.70 mm und der Tiefenfehler 0.960 mm. 3 Defekte werden erkannt, der tiefste 1 nicht.",
+    "hi": "परिमित-अंतर और बंद रूप में 0.217% अंतर है; केंद्र त्रुटि 6.92 mm, व्यास त्रुटि 4.70 mm और गहराई त्रुटि 0.960 mm है। 3 दोष मिलते हैं और सबसे गहरा 1 नहीं मिलता।",
+    "fr": "L'écart à la forme fermée vaut 0.217 %, l'erreur de centre 6.92 mm, de diamètre 4.70 mm et de profondeur 0.960 mm. 3 défauts sont détectés, le plus profond 1 ne l'est pas."
+   }
   }
  ],
  "series": [
