@@ -39,12 +39,13 @@
 | [周期パターンが標本化格子で折り返す距離と、縞の上で狂う衝突時間を閉形式で測る(複眼・検査カメラ)](capabilities/compound-eye-aliasing-and-ttc.md) | The distance at which a periodic pattern aliases on a sampling lattice, and the time-to-contact that stripes corrupt — in closed form (compound eyes and inspection cameras) | 測る | `verified-synthetic` | 8/8 | `poc_zebra_stripes_fly_eye` synthetic → tests/test_poc_scripts_run.py |
 | [多重反射・多重散乱・反復を収束まで回す —— 収束した証拠と残りの誤差を返し、収束しなければ値を出さない](capabilities/convergent-forward-models.md) | Run inter-reflections, multiple scattering and iterations to convergence — return the evidence and the remaining error, and no value when it did not converge | 光と色 | `verified-synthetic` | 6/6 | `converge_tour` synthetic → tests/test_example_scripts_run.py |
 | [圃場の RGB から作物と雑草を色と肌理で分け、雑草の被度を宣言した境で段階にする(学習器なし)](capabilities/crop-weed-cover-grade.md) | Separating crop from weeds in field RGB by colour and texture, and grading weed cover at declared edges (no learned network) | 見つける | `validated-public-real-data` | 5/5 | `poc_weed_rice_ratio` real → tests/test_poc_scripts_run.py |
-| [X 線の 2 つのエネルギーで厚みと材質を分ける(デュアルエナジー / フォトンカウンティング: スペクトル → 窓 → 基底分解 → 実効 Z)](capabilities/dual-energy-xray-material-discrimination.md) | Separate thickness from material with two X-ray energies (dual-energy and photon-counting X-ray: spectrum, energy windows, basis decomposition, effective Z) | 見つける | `verified-synthetic` | 14/14 | `poc_dual_energy_xray` synthetic → tests/test_poc_scripts_run.py |
+| [X 線の 2 つのエネルギーで厚みと材質を分ける(デュアルエナジー / フォトンカウンティング: スペクトル → 窓 → 基底分解 → 実効 Z)](capabilities/dual-energy-xray-material-discrimination.md) | Separate thickness from material with two X-ray energies (dual-energy and photon-counting X-ray: spectrum, energy windows, basis decomposition, effective Z) | 見つける | `verified-synthetic` | 15/15 | `poc_dual_energy_xray` synthetic → tests/test_poc_scripts_run.py |
 | [カメラのデータシートの数を EMVA 1288 の手順で測り直し、カメラの中の前処理がその数をどれだけ動かすかを見る(Linear と General)](capabilities/emva1288-camera-datasheets.md) | Re-measure a camera's datasheet numbers with the EMVA 1288 procedure, and see how much in-camera processing moves them (Linear and General) | 測る | `verified-synthetic` | 13/13 | `poc_emva1288_sensor` synthetic → tests/test_poc_scripts_run.py<br>`poc_emva1288_in_camera_processing` synthetic → tests/test_poc_scripts_run.py |
 | [本来まっすぐな線から歪み係数を推定する(plumb-line、チェッカー不要)](capabilities/estimate-lens-distortion.md) | Estimate lens distortion coefficients from straight lines (plumb-line, no board) | 測る | `verified-synthetic` | 4/4 | `estimate_lens_distortion` synthetic → tests/test_example_scripts_run.py |
 | [光ファイバとライトガイド(ガラスの分散 → LP モード → モード径 → 照明の効率)](capabilities/fiber-and-light-guide.md) | Optical fibres and light guides (glass dispersion, LP modes, mode field diameter, illumination efficiency) | 光と色 | `verified-synthetic` | 7/7 | `poc_fiber_light_guide` synthetic → tests/test_poc_scripts_run.py |
 | [結果を人が読める図にする](capabilities/figures-and-annotation.md) | Turn results into figures people can read | 見せる | `verified-synthetic` | 3/3 | `poc_colormap_readability` synthetic → tests/test_poc_scripts_run.py<br>`poc_dem_terrain` synthetic → tests/test_poc_scripts_run.py |
 | [画像の中の文字を、正しい文字列に合わせて直す](capabilities/fix-text-in-images.md) | Fix the text inside an image against the string it should read | 見つける | `verified-synthetic` | 1/11 | `fix_text_in_image` synthetic → tests/test_example_scripts_run.py<br>`poc_glyph_typo_detection` synthetic → tests/test_poc_scripts_run.py |
+| [フーリエ・タイコグラフィ(LED の斜め照明の像の組 → 位相回復で高 NA の振幅と位相、収束しなければ拒否)](capabilities/fourier-ptychography.md) | Fourier ptychography (oblique LED illumination, phase retrieval to a high-NA amplitude and phase, refused unless it converges) | 測る | `verified-synthetic` | 6/6 | `poc_fourier_ptychography` synthetic → tests/test_poc_scripts_run.py |
 | [地球規模の座標に載せる(ECEF・高さの基準・局所 ENU)](capabilities/geodetic-frames.md) | Put measurements on the Earth (ECEF, height frames, local ENU) | 測る | `validated-public-real-data` | 8/8 | `poc_geodetic_height_frames` synthetic → tests/test_poc_scripts_run.py<br>`poc_geodetic_benchmarks_real` real → tests/test_poc_scripts_run.py<br>`dem_geodesy_tour` synthetic → tests/test_example_scripts_run.py |
 | [基準画像(ゴールデン)と比べて欠陥を測り、ロットごと判定する](capabilities/golden-compare.md) | Compare against a golden image — align, diff, count defects, judge the lot | 組み立てる | `verified-synthetic` | 7/7 | `golden_compare` synthetic → tests/test_example_scripts_run.py |
 | [良品を並べて「いつもと違う」を言う(良品統計の変動モデル、誤検出率の宣言つき)](capabilities/good-sample-variation-model.md) | Flag what differs from aligned good samples (a per-pixel variation model with a declared false-alarm rate) | 見つける | `validated-public-real-data` | 10/10 | `poc_good_sample_variation_model` real → tests/test_poc_scripts_run.py<br>`anomaly_eval_metrics` synthetic → tests/test_example_scripts_run.py |
@@ -134,9 +135,9 @@
 
 | | 件数 |
 |---|---|
-| 2-D 台帳の例 | 440 |
-| `tests/test_poc_scripts_run.py` が走らせる | 278 |
-| `tests/test_example_scripts_run.py` が走らせる | 162 |
+| 2-D 台帳の例 | 443 |
+| `tests/test_poc_scripts_run.py` が走らせる | 280 |
+| `tests/test_example_scripts_run.py` が走らせる | 163 |
 | **どの門も走らせていない** | **0** |
 
 走らせない門は、実行時の壊れに盲目です。2026-09-06 に PoC 側で穴が見つかり
