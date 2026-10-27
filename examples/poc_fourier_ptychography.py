@@ -678,7 +678,7 @@ def make_figures(design, res1, res2, rows, pup, led, refl, real):
                    ncols=2, gray=True,
                    caption="デフォーカス 0.2 波 + 非点 0.1 波。推定した瞳は真値と %.3f 波(ピストンと傾きを除く)。" % NUMBERS["pupil_err"])
     lres, true_geo = led
-    figs.save_grid("led_misalignment", [lres[False][0]["amplitude"], lres[True][0]["amplitude"]],
+    figs.save_grid("led_misalignment", [lres[False][0]["amplitude"], lres[True][0]["amplitude"]],  # gray-ok: 図は振幅の像。キャプションの「高さ」は LED アレイの Z のずれで、高さの場ではない
                    captions=["補正なし(誤差 %.3f)" % lres[False][1], "補正あり(誤差 %.3f)" % lres[True][1]], ncols=2, gray=True,
                    caption="LED アレイが (0.6, −0.4) mm・1°・高さ 1.5 mm ずれている。補正で (%.2f, %.2f) mm・%.2f°・%.2f mm と読み戻す。"
                    % tuple(lres[True][0]["led_geometry"][k] for k in ("offset_x_mm", "offset_y_mm", "rotation_deg", "height_error_mm")))
