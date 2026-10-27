@@ -62,7 +62,7 @@
 | `validated-public-real-data` | 使用公開實測資料的範例在檢查中實際執行 | 18 |
 | `validated-hardware` | 已在實機上驗證(僅在接受外部報告時) | 0 |
 
-438 個範例中,檢查實際執行的有 438 個。
+439 個範例中,檢查實際執行的有 439 個。
 
 ### 各版本的運算子數
 
@@ -90,7 +90,7 @@
 
 <!-- poc-index:start -->
 
-## PoC 系列 — 帶真值求解的 277 個實際問題
+## PoC 系列 — 帶真值求解的 278 個實際問題
 
 每一個都具有閉式或合成的真值，並必定附上零點(什麼都不做)。失敗方式分開計數，原因以對照組區分。完整列表: [examples/README.md](../examples/README.md)。
 
@@ -128,6 +128,7 @@
 | vibration (2) | [`poc_beam_modal_video`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_beam_modal_video.py) Modal identification from video — frequency survives to the end, damping lies first<br>[`poc_motion_magnification`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_motion_magnification.py) Micro-Vibration of a Structure From Video — Does Motion Magnification Help You Measure? |
 | colour (1) | [`poc_white_balance`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_white_balance.py) Colour Constancy (White Balance) — No Method Works, Only Conditions Do |
 | rectification (1) | [`poc_document_scan`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_document_scan.py) Straightening a Hand-Held Document Photo — Keystone Correction and Shadow Removal Against Ground Truth |
+| space (1) | [`poc_star_tracker`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_star_tracker.py) How One Star Image Reveals Satellite Attitude |
 | tomography (1) | [`poc_ct_fidelity`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_fidelity.py) Where CT Reconstruction Starts to Break as Projections Are Removed |
 | super-resolution (1) | [`poc_superresolution_limits`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_superresolution_limits.py) Does Super-Resolution Add Information? Downsample With the Truth in Hand, Restore, Count |
 
