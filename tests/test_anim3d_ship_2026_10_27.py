@@ -2,6 +2,7 @@
 from __future__ import annotations
 import importlib.util
 import pathlib
+import inspect
 import numpy as np
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -11,6 +12,19 @@ def _load():
     m=importlib.util.module_from_spec(s); s.loader.exec_module(m); return m
 
 B=_load()
+
+def test_structured_hull_faces_are_fixed_and_qhull_free():
+    v1,f1=B.hull_mesh(); v2,f2=B.hull_mesh()
+    assert v1.shape == (257,3)
+    assert f1.shape == (510,3)
+    assert np.array_equal(v1,v2)
+    assert np.array_equal(f1,f2)
+    assert "ConvexHull" not in inspect.getsource(B)
+    c1,cf1=B.clip_below(B.rotate_x(v1,.17)+[0,0,2.8],f1)
+    c2,cf2=B.clip_below(B.rotate_x(v2,.17)+[0,0,2.8],f2)
+    assert len(cf1) > 0
+    assert np.array_equal(c1,c2)
+    assert np.array_equal(cf1,cf2)
 
 def test_box_mesh_displacement_buoyancy_centre_and_gm_match_closed_form():
     r=B.compute(); g=B.gates(r)

@@ -8,7 +8,6 @@ import sys
 from pathlib import Path
 
 import numpy as np
-from scipy.spatial import ConvexHull
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
@@ -32,37 +31,41 @@ def _e(x):
     return "< 1e-12" if abs(float(x)) < 1e-12 else "%.3g" % float(x)
 
 
-def _orient(V, F):
-    """ConvexHull の面を、内部点から見て外向きにそろえる。"""
-    c = np.mean(V, axis=0)
-    F = np.asarray(F, dtype=int).copy()
-    a, b, d = V[F[:, 0]], V[F[:, 1]], V[F[:, 2]]
-    flip = np.einsum("ij,ij->i", np.cross(b-a, d-a), (a+b+d)/3-c) < 0
-    F[flip] = F[flip][:, [0, 2, 1]]
-    return F
-
-
-def _convex_mesh(points):
-    V = np.unique(np.round(np.asarray(points, float), 12), axis=0)
-    h = ConvexHull(V)
-    return V, _orient(V, h.simplices)
-
-
 def hull_mesh(length=LENGTH, beam=BEAM, depth=DEPTH, nx=17, na=17):
-    """平らな甲板と丸い船底を持つ、一般的な無名の合成船型。"""
-    pts = []
-    for x in np.linspace(-length/2, length/2, nx):
-        taper = max(0.08, math.sqrt(max(0.0, 1.0-(2*x/length)**2)))
-        for a in np.linspace(math.pi, 2*math.pi, na):
-            pts.append([x, beam/2*taper*math.cos(a), depth*taper*math.sin(a)])
-        pts.extend(([x, -beam/2*taper, 0.0], [x, beam/2*taper, 0.0]))
-    return _convex_mesh(pts)
+    """式と添字だけで面が決まる構造化船体(nx=断面数、na=各断面の周点数)。"""
+    if nx < 3 or na < 4:
+        raise ValueError("nx >= 3 and na >= 4 are required")
+    V = [[-length/2, 0.0, 0.0]]
+    angles = np.linspace(math.pi, 2*math.pi, na)
+    for x in np.linspace(-length/2, length/2, nx)[1:-1]:
+        taper = math.sqrt(max(0.0, 1.0-(2*x/length)**2))
+        V.extend([x, beam/2*taper*math.cos(a), depth*taper*math.sin(a)] for a in angles)
+    V.append([length/2, 0.0, 0.0])
+    F = []
+    first, last = 1, 1+(nx-3)*na
+    for j in range(na):
+        k=(j+1)%na
+        F.append([0, first+k, first+j])
+        F.append([len(V)-1, last+j, last+k])
+    for i in range(nx-3):
+        a=1+i*na; b=a+na
+        for j in range(na):
+            k=(j+1)%na
+            F.extend(([a+j,b+k,b+j],[a+j,a+k,b+k]))
+    V=np.asarray(V,float); F=np.asarray(F,int)
+    if np.einsum("ij,ij->",V[F[:,0]],np.cross(V[F[:,1]],V[F[:,2]])) < 0:
+        F=F[:,[0,2,1]]
+    return V,F
 
 
 def box_mesh(length, beam, depth):
     V = np.array([[x, y, z] for x in (-length/2, length/2)
                   for y in (-beam/2, beam/2) for z in (-depth, 0.0)], float)
-    return _convex_mesh(V)
+    F=np.array([[0,3,1],[0,2,3],[4,5,7],[4,7,6],[0,1,5],[0,5,4],
+                [2,6,7],[2,7,3],[0,4,6],[0,6,2],[1,3,7],[1,7,5]],int)
+    if np.einsum("ij,ij->",V[F[:,0]],np.cross(V[F[:,1]],V[F[:,2]])) < 0:
+        F=F[:,[0,2,1]]
+    return V,F
 
 
 def rotate_x(V, phi):
@@ -72,19 +75,36 @@ def rotate_x(V, phi):
 
 
 def clip_below(V, F, z=0.0):
-    """凸メッシュを水平面以下へ切る。公開の平面切断 op が無いため NumPy で辺交点を作る。"""
-    inside = V[:, 2] <= z + 1e-12
-    pts = [p for p, ok in zip(V, inside) if ok]
-    edges = np.vstack((F[:, [0, 1]], F[:, [1, 2]], F[:, [2, 0]]))
-    edges = np.unique(np.sort(edges, axis=1), axis=0)
-    for i, j in edges:
-        zi, zj = V[i, 2]-z, V[j, 2]-z
-        if zi*zj < 0:
-            u = zi/(zi-zj)
-            pts.append(V[i] + u*(V[j]-V[i]))
-    if len(pts) < 4:
+    """構造化メッシュを水平面以下へ切り、元の頂点・辺番号順で決定的に三角形化する。"""
+    points=[]; index={}; faces=[]; cut_keys=set()
+    def point(key):
+        if key not in index:
+            if key[0]=='v': p=V[key[1]]
+            else:
+                i,j=key[1],key[2]; u=(z-V[i,2])/(V[j,2]-V[i,2]); p=V[i]+u*(V[j]-V[i])
+            index[key]=len(points); points.append(np.asarray(p,float))
+        return index[key]
+    def edge_key(i,j):
+        a,b=sorted((int(i),int(j))); cut_keys.add(('e',a,b)); return ('e',a,b)
+    for tri in F:
+        poly=[('v',int(i)) for i in tri]
+        out=[]
+        for a,b in zip(poly,poly[1:]+poly[:1]):
+            ia,ib=a[1],b[1]; ina=V[ia,2]<=z; inb=V[ib,2]<=z
+            if ina: out.append(a)
+            if ina != inb: out.append(edge_key(ia,ib))
+        if len(out)>=3:
+            ids=[point(k) for k in out]
+            for j in range(1,len(ids)-1): faces.append([ids[0],ids[j],ids[j+1]])
+    cuts=sorted(cut_keys)
+    if len(cuts)<3:
         raise ValueError("water plane does not cut a volume")
-    return _convex_mesh(pts)
+    cp=np.array([points[point(k)] for k in cuts]); c=np.mean(cp,axis=0)
+    order=sorted(range(len(cuts)),key=lambda j:(math.atan2(cp[j,1]-c[1],cp[j,0]-c[0]),cuts[j]))
+    ci=len(points); points.append(c)
+    cap=[point(cuts[j]) for j in order]
+    for j in range(len(cap)): faces.append([ci,cap[j],cap[(j+1)%len(cap)]])
+    return np.asarray(points),np.asarray(faces,int)
 
 
 def volume_centroid(V, F):
@@ -123,19 +143,6 @@ def solve_heave(V, F, heel, target, iterations=60):
     return (h,) + submerged(V, F, heel, h)
 
 
-def waterplane_moments(V):
-    """z=0 の甲板輪郭から水線面積と縦軸まわり二次モーメントを測る。"""
-    p = V[np.isclose(V[:, 2], 0.0)]
-    h = ConvexHull(p[:, :2])
-    q = p[h.vertices, :2]
-    x, y = q[:, 0], q[:, 1]
-    xn, yn = np.roll(x, -1), np.roll(y, -1)
-    cr = x*yn-xn*y
-    area = abs(np.sum(cr)/2)
-    ix = abs(np.sum((y*y+y*yn+yn*yn)*cr)/12)
-    return area, ix
-
-
 def hydrostatic_gm(V, F, target, kg):
     h, vol, B, *_ = solve_heave(V, F, 0.0, target)
     W = rotate_x(V, 0.0) + [0, 0, h]
@@ -145,7 +152,8 @@ def hydrostatic_gm(V, F, target, kg):
     for i, j in np.unique(np.sort(edges, axis=1), axis=0):
         if W[i, 2]*W[j, 2] < 0:
             u = W[i, 2]/(W[i, 2]-W[j, 2]); pts.append(W[i]+u*(W[j]-W[i]))
-    p = np.asarray(pts); hp = ConvexHull(p[:, :2]); q = p[hp.vertices, :2]
+    p=np.asarray(pts); c=np.mean(p[:,:2],axis=0)
+    order=np.argsort(np.arctan2(p[:,1]-c[1],p[:,0]-c[0]),kind="stable"); q=p[order,:2]
     x, y = q[:, 0], q[:, 1]; xn, yn = np.roll(x,-1), np.roll(y,-1); cr=x*yn-xn*y
     iwp = abs(np.sum((y*y+y*yn+yn*yn)*cr)/12)
     kb = DEPTH + B[2] - h

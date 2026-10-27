@@ -1795,14 +1795,14 @@
     "fr": "À la gîte, B va vers le côté immergé et forme le bras GZ avec G. Relever G inverse ce bras."
    },
    "num": {
-    "ja": "箱形船の閉形式との相対誤差 2.26e-16、重量一致 9.17e-15、GZ の傾きと GM の差 0.122%。高い重心では GM = -0.350 m。",
-    "en": "Box closed-form error 2.26e-16; weight error 9.17e-15; GZ-slope versus GM difference 0.122%. Raised G gives GM = -0.350 m.",
-    "zh": "箱形闭式误差 2.26e-16；重量误差 9.17e-15；GZ 斜率与 GM 相差 0.122%。高重心时 GM = -0.350 m。",
-    "tw": "箱形閉式誤差 2.26e-16；重量誤差 9.17e-15；GZ 斜率與 GM 相差 0.122%。高重心時 GM = -0.350 m。",
-    "ko": "상자형 폐형식 오차 2.26e-16, 중량 오차 9.17e-15, GZ 기울기와 GM 차이 0.122%. 높은 G에서는 GM = -0.350 m.",
-    "de": "Kastenfehler 2.26e-16; Gewichtsfehler 9.17e-15; GZ-Steigung gegen GM 0.122 %. Mit hohem G ist GM = -0.350 m.",
-    "hi": "डिब्बाकार त्रुटि 2.26e-16; भार त्रुटि 9.17e-15; GZ ढाल और GM में अंतर 0.122%। ऊँचे G पर GM = -0.350 m।",
-    "fr": "Erreur du caisson 2.26e-16 ; erreur de poids 9.17e-15 ; écart pente GZ–GM 0.122 %. Avec G haut, GM = -0.350 m."
+    "ja": "箱形船の閉形式との相対誤差 2.26e-16、重量一致 3.58e-16、GZ の傾きと GM の差 0.123%。高い重心では GM = -0.350 m。",
+    "en": "Box closed-form error 2.26e-16; weight error 3.58e-16; GZ-slope versus GM difference 0.123%. Raised G gives GM = -0.350 m.",
+    "zh": "箱形闭式误差 2.26e-16；重量误差 3.58e-16；GZ 斜率与 GM 相差 0.123%。高重心时 GM = -0.350 m。",
+    "tw": "箱形閉式誤差 2.26e-16；重量誤差 3.58e-16；GZ 斜率與 GM 相差 0.123%。高重心時 GM = -0.350 m。",
+    "ko": "상자형 폐형식 오차 2.26e-16, 중량 오차 3.58e-16, GZ 기울기와 GM 차이 0.123%. 높은 G에서는 GM = -0.350 m.",
+    "de": "Kastenfehler 2.26e-16; Gewichtsfehler 3.58e-16; GZ-Steigung gegen GM 0.123 %. Mit hohem G ist GM = -0.350 m.",
+    "hi": "डिब्बाकार त्रुटि 2.26e-16; भार त्रुटि 3.58e-16; GZ ढाल और GM में अंतर 0.123%। ऊँचे G पर GM = -0.350 m।",
+    "fr": "Erreur du caisson 2.26e-16 ; erreur de poids 3.58e-16 ; écart pente GZ–GM 0.123 %. Avec G haut, GM = -0.350 m."
    }
   },
   {
