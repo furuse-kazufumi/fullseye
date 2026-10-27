@@ -3447,7 +3447,7 @@
    "wing": "wing_threed",
    "added": "2026-10-26",
    "numbers_source": "builder",
-   "figure": "star_tracker_anim3d",
+   "figure": "star_tracker_camera_image",
    "title_ja": "星の写真1枚から衛星の姿勢が分かるのはなぜか",
    "title_en": "How One Star Image Reveals Satellite Attitude",
    "caption_ja": "固定seedの合成星表196星と、PSF・光子雑音・読み出し雑音を含む128×128画素の合成像だけを使う。像には星表に無いホットピクセル2個も足した。star_detectの18検出を、真の姿勢や可視星の行番号を使わず、三角形の角距離でランダム順の全星表へ照合し、偽点を捨ててkabschで回転を求めた。真の星16、誤対応0、偽点棄却2/2、姿勢角誤差0.0046度（1画素の角度幅0.1406度未満）。kabschと直接SVDの回転差は1e-12未満。太陽・月の迷光、星不足、高速回転の星の流れは未計算の限界としてok:falseにした。実カタログ、外部画像、事業者名、製品名は使わない。",

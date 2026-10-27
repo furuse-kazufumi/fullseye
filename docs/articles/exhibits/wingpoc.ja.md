@@ -8386,13 +8386,17 @@ py -3.11 examples/poc_plateau_venue_lod2.py
 
 ## No.2026.279 —— 星の写真1枚から衛星の姿勢が分かるのはなぜか
 
-[![星の写真1枚から衛星の姿勢が分かるのはなぜか](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_tracker/01_star_tracker_anim3d_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_tracker/01_star_tracker_anim3d.png)
+[![星の写真1枚から衛星の姿勢が分かるのはなぜか](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_tracker/01_star_tracker_camera_image_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_tracker/01_star_tracker_camera_image.png)
 
 *↑ **星の写真1枚から衛星の姿勢が分かるのはなぜか** ―― 固定seedの合成星表196星と、PSF・光子雑音・読み出し雑音を含む128×128画素の合成像だけを使う。像には星表に無いホットピクセル2個も足した。star_detectの18検出を、真の姿勢や可視星の行番号を使わず、三角形の角距離でランダム順の全星表へ照合し、偽点を捨ててkabschで回転を求めた。真の星16、誤対応0、偽点棄却2/2、姿勢角誤差0.0046度（1画素の角度幅0.1406度未満）。kabschと直接SVDの回転差は1e-12未満。太陽・月の迷光、星不足、高速回転の星の流れは未計算の限界としてok:falseにした。実カタログ、外部画像、事業者名、製品名は使わない。*
 
-[![PSF、光子雑音、読み出し雑音を含む合成カメラ像と、副画素重心の検査。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_tracker/02_star_tracker_camera_image_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_tracker/02_star_tracker_camera_image.png)
+[![三角形の角距離で全196星表を探索し、ホットピクセル2個を外れ値として棄却した。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_tracker/02_star_tracker_detections_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_tracker/02_star_tracker_detections.png)
 
-*↑ 測定の図 ―― PSF、光子雑音、読み出し雑音を含む合成カメラ像と、副画素重心の検査。*
+*↑ 測定の図 ―― 三角形の角距離で全196星表を探索し、ホットピクセル2個を外れ値として棄却した。*
+
+[![推定値は合成像の検出点から計算し、真値は採点だけに使った。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_tracker/03_star_tracker_gates_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_tracker/03_star_tracker_gates.png)
+
+*↑ 推定値は合成像の検出点から計算し、真値は採点だけに使った。*
 
 ```
 py -3.11 examples/poc_star_tracker.py
@@ -8400,7 +8404,7 @@ py -3.11 examples/poc_star_tracker.py
 
 ソース: [examples/poc_star_tracker.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_star_tracker.py)
 
-この回が作った図は全部で **2 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_star_tracker)
+この回が作った図は全部で **3 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_star_tracker)
 
 
 

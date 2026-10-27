@@ -8386,13 +8386,17 @@ Ops used (notes): [`plateau_lod2_mesh`](https://furuse.work/ops/drive/japan/plat
 
 ## No.2026.279 —— How One Star Image Reveals Satellite Attitude
 
-[![How One Star Image Reveals Satellite Attitude](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_tracker/01_star_tracker_anim3d_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_tracker/01_star_tracker_anim3d.png)
+[![How One Star Image Reveals Satellite Attitude](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_tracker/01_star_tracker_camera_image_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_tracker/01_star_tracker_camera_image.png)
 
 *↑ **How One Star Image Reveals Satellite Attitude** ―― A seeded 196-star synthetic catalogue and a 128 by 128 synthetic image with PSF, photon noise and read noise are used; two hot pixels absent from the catalogue are added. Without the true attitude or visible-star rows, triangle angles match all 18 star_detect detections against the shuffled full catalogue, reject the false points, and let kabsch solve the rotation. The result has 16 genuine stars, zero mismatches, 2 of 2 false points rejected and 0.0046-degree attitude error, below the 0.1406-degree angular pixel width. The kabsch and direct-SVD rotations differ by less than 1e-12. Sun or Moon glare, too few stars and trails during fast slew are an explicitly uncomputed ok:false limit. No real catalogue, external image, operator or product name is used.*
 
-[![PSF、光子雑音、読み出し雑音を含む合成カメラ像と、副画素重心の検査。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_tracker/02_star_tracker_camera_image_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_tracker/02_star_tracker_camera_image.png)
+[![三角形の角距離で全196星表を探索し、ホットピクセル2個を外れ値として棄却した。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_tracker/02_star_tracker_detections_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_tracker/02_star_tracker_detections.png)
 
-*↑ The measurement ―― PSF、光子雑音、読み出し雑音を含む合成カメラ像と、副画素重心の検査。 (figure labels are in Japanese; the numbers are the same)*
+*↑ The measurement ―― 三角形の角距離で全196星表を探索し、ホットピクセル2個を外れ値として棄却した。 (figure labels are in Japanese; the numbers are the same)*
+
+[![推定値は合成像の検出点から計算し、真値は採点だけに使った。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_tracker/03_star_tracker_gates_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_tracker/03_star_tracker_gates.png)
+
+*↑ 推定値は合成像の検出点から計算し、真値は採点だけに使った。*
 
 ```
 py -3.11 examples/poc_star_tracker.py
@@ -8400,7 +8404,7 @@ py -3.11 examples/poc_star_tracker.py
 
 Source: [examples/poc_star_tracker.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_star_tracker.py)
 
-This run produced **2 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_star_tracker)
+This run produced **3 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_star_tracker)
 
 
 
