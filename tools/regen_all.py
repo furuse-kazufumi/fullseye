@@ -342,6 +342,9 @@ EXCLUDED = {
     "tools/build_ship_anim3d.py": ("排水量・浮心・メタセンタ高さの動く 3-D 教材(docs/view2026/anim3d/ship_stability_anim3d.html)。"
                                   "`py -3.11 tools/anim3d_i18n.py --build build_ship_anim3d --out docs/view2026/anim3d/ship_stability_anim3d.html` で書く"
                                   "(翻訳表 tools/anim3d_i18n_tables/build_ship_anim3d.json)。門は tests/test_anim3d_ship_2026_10_27.py。"),
+    "tools/build_multibeam_anim3d.py": ("合成海底を音で測るマルチビーム測深の動く 3-D 教材。"
+                                       "`py -3.11 tools/anim3d_i18n.py --build build_multibeam_anim3d --out docs/view2026/anim3d/multibeam_bathymetry_anim3d.html` で書く"
+                                       "(翻訳表 tools/anim3d_i18n_tables/build_multibeam_anim3d.json)。門は tests/test_anim3d_multibeam_2026_10_27.py。"),
     "tools/build_startrk_anim3d.py": ("合成星野から衛星姿勢を推定する動く 3-D の教材(docs/view2026/anim3d/star_tracker_anim3d.html)。"
                                      "`py -3.11 tools/anim3d_i18n.py --build build_startrk_anim3d --out docs/view2026/anim3d/star_tracker_anim3d.html` で書く"
                                      "(翻訳表 tools/anim3d_i18n_tables/build_startrk_anim3d.json)。門は tests/test_anim3d_startrk_2026_10_26.py。"),
@@ -356,6 +359,8 @@ EXCLUDED = {
     "tools/build_bridge_dic_anim3d.py": ("橋のたわみを画像相関で測る動く 3-D 教材(docs/view2026/anim3d/bridge_dic_anim3d.html)。"
                                          "`py -3.11 tools/anim3d_i18n.py --build build_bridge_dic_anim3d --out docs/view2026/anim3d/bridge_dic_anim3d.html` で書く"
                                          "(翻訳表 tools/anim3d_i18n_tables/build_bridge_dic_anim3d.json)。門は tests/test_anim3d_bridge_dic_2026_10_27.py。"),
+    "tools/build_thermo_anim3d.py": ("コンクリート浮きの赤外線サーモグラフィ教材(docs/view2026/anim3d/thermo_delamination_anim3d.html)。"
+                                      "anim3d_i18n.py で手回し生成する 8 言語ページ。門は tests/test_anim3d_thermo_2026_10_27.py。"),
     "tools/build_tunnel_anim3d.py": ("トンネル覆工のひびを走行撮影して測る動く 3-D 教材(docs/view2026/anim3d/tunnel_crack_anim3d.html)。"
                                      "`py -3.11 tools/anim3d_i18n.py --build build_tunnel_anim3d --out docs/view2026/anim3d/tunnel_crack_anim3d.html` で書く"
                                      "(翻訳表 tools/anim3d_i18n_tables/build_tunnel_anim3d.json)。門は tests/test_anim3d_tunnel_2026_10_27.py。"),
