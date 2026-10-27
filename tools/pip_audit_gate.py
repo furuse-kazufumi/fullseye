@@ -17,6 +17,11 @@ This tool closes both gaps:
   installed in the running interpreter.  The CI runs it as a warning only: an
   upstream CVE in the runner's pip is not a defect of this package.
 
+Scope: ``deps`` audits what pip resolves **today** for **one** target (CI: Linux,
+Python 3.11).  Windows/macOS-only dependencies, dependencies that only install on newer
+Pythons and the oldest versions the floors in ``pyproject.toml`` still allow are not
+audited here (the floors were chosen from OSV by hand, see the CHANGELOG).
+
 The allowlist is validated first in both modes: an expired or malformed entry
 fails the run (``tests/test_pip_audit_allowlist.py`` checks the same thing on
 every test run, so an expiry is noticed even when nobody touches dependencies).
@@ -118,13 +123,44 @@ def load_allowlist(path: Path = ALLOWLIST, today: _dt.date | None = None) -> lis
     return data["entries"]
 
 
-def ignore_args(entries: list[dict]) -> list[str]:
-    """``--ignore-vuln`` arguments for every id and alias in the ledger."""
-    out: list[str] = []
+def _norm(name: str) -> str:
+    """PEP 503 name normalisation (``Foo_Bar`` and ``foo-bar`` are the same project)."""
+    return re.sub(r"[-_.]+", "-", name).lower()
+
+
+def unwaived(report: dict, entries: list[dict]) -> tuple[list[str], list[str]]:
+    """Findings in a pip-audit JSON *report* that the ledger does not waive.
+
+    A finding is waived only when **both** the package and one of its ids/aliases match a
+    ledger entry.  ``--ignore-vuln`` matched the id alone, so an id written down for torch
+    would also have silenced the same id on any other package (review 2026-10-24).
+    Returns ``(problems, unused_entry_ids)``; a dependency pip-audit could not audit
+    (``skip_reason``) is a problem too, as ``--strict`` intends.
+    """
+    waivers = {}
     for e in entries:
         for vid in (e["id"], *e.get("aliases", [])):
-            out += ["--ignore-vuln", vid]
-    return out
+            waivers.setdefault((_norm(e["package"]), vid), e["id"])
+    used: set[str] = set()
+    problems: list[str] = []
+    deps = report.get("dependencies")
+    if not isinstance(deps, list) or not deps:
+        return ["pip-audit returned no dependencies — refusing to pass an empty audit"], []
+    for dep in deps:
+        name = str(dep.get("name", "?"))
+        if dep.get("skip_reason"):
+            problems.append(f"{name}: not audited ({dep['skip_reason']})")
+            continue
+        for v in dep.get("vulns", []):
+            ids = [v.get("id", "?"), *v.get("aliases", [])]
+            hit = next((waivers[(_norm(name), i)] for i in ids if (_norm(name), i) in waivers), None)
+            if hit:
+                used.add(hit)
+            else:
+                fix = ", ".join(v.get("fix_versions", [])) or "no fixed version"
+                problems.append(f"{name}=={dep.get('version', '?')}: {' / '.join(ids)} (fix: {fix})")
+    unused = sorted({e["id"] for e in entries} - used)
+    return problems, unused
 
 
 def declared_requirements(pyproject: Path = PYPROJECT) -> list[str]:
@@ -190,12 +226,33 @@ def run_pip_audit(pins: list[str], entries: list[dict], label: str) -> int:
     with tempfile.TemporaryDirectory() as tmp:
         req = Path(tmp) / f"{label}.txt"
         req.write_text("\n".join(pins) + "\n", encoding="utf-8")
+        out = Path(tmp) / f"{label}.json"
         cmd = [sys.executable, "-m", "pip_audit", "-r", str(req), "--no-deps", "--disable-pip",
                "--strict", "--vulnerability-service", "osv", "--progress-spinner", "off",
-               "--desc", "on", *ignore_args(entries)]
+               "--format", "json", "--output", str(out)]
         print(f"[pip-audit gate] {label}: auditing {len(pins)} pinned packages "
               f"({len(entries)} ledger exceptions)", flush=True)
-        return subprocess.run(cmd).returncode
+        rc = subprocess.run(cmd).returncode
+        # 0 = clean, 1 = findings (we judge them ourselves below); anything else, or no
+        # report, means the audit itself failed — never read that as "clean".
+        if rc not in (0, 1) or not out.is_file():
+            print(f"[pip-audit gate] {label}: pip-audit failed (exit {rc})", file=sys.stderr)
+            return 2
+        try:
+            report = json.loads(out.read_text(encoding="utf-8"))
+        except json.JSONDecodeError as exc:
+            print(f"[pip-audit gate] {label}: unreadable report: {exc}", file=sys.stderr)
+            return 2
+    problems, unused = unwaived(report, entries)
+    for u in unused:
+        print(f"[pip-audit gate] {label}: ledger entry {u} matched nothing (fixed upstream? remove it)")
+    for p in problems:
+        print(f"[pip-audit gate] {label}: {p}", file=sys.stderr)
+    if problems:
+        return 1
+    # rc == 1 here only means waived findings exist (no --ignore-vuln is passed any more).
+    print(f"[pip-audit gate] {label}: 0 unwaived findings", flush=True)
+    return 0
 
 
 def _installed_tools() -> list[str]:
