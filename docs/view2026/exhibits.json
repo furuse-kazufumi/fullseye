@@ -2374,6 +2374,44 @@
     "hi": "0.10 mm/pixel पर सही दरार लंबाई का 99.1% मिलता है। स्थानीय पृष्ठभूमि से चौड़ाई त्रुटि 0.023 mm है और मानदंड 0.038 mm है। 90% प्राप्ति का माप और अनुमान दोनों 0.25 mm/pixel हैं, तुलना मानदंड 0.029 mm है। जोड़ की 24.31 mm गलत पहचान भी दिखती है।",
     "fr": "À 0.10 mm/pixel, 99.1 % de la longueur vraie est retrouvée. L'erreur de largeur sur fond local vaut 0.023 mm pour un critère de 0.038 mm. La mesure et l'estimation à 90 % valent toutes deux 0.25 mm/pixel, avec un critère de comparaison de 0.029 mm. Un faux positif de joint de 24.31 mm reste visible."
    }
+  },
+  {
+   "id": "insar_subsidence",
+   "category": "anim3d",
+   "media": "insar_subsidence_anim3d.html",
+   "media_path": "view2026/anim3d/insar_subsidence_anim3d.html",
+   "motion": true,
+   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_insar_anim3d.py",
+   "label": {
+    "ja": "????? mm ??????",
+    "en": "Measure millimetre subsidence from orbit",
+    "zh": "Measure millimetre subsidence from orbit",
+    "tw": "Measure millimetre subsidence from orbit",
+    "ko": "Measure millimetre subsidence from orbit",
+    "de": "Measure millimetre subsidence from orbit",
+    "hi": "Measure millimetre subsidence from orbit",
+    "fr": "Measure millimetre subsidence from orbit"
+   },
+   "see": {
+    "ja": "???????????????????????????????????????",
+    "en": "Unwrap coloured rings into a bowl-shaped subsidence map; stronger atmosphere measurably increases error.",
+    "zh": "Unwrap coloured rings into a bowl-shaped subsidence map; stronger atmosphere measurably increases error.",
+    "tw": "Unwrap coloured rings into a bowl-shaped subsidence map; stronger atmosphere measurably increases error.",
+    "ko": "Unwrap coloured rings into a bowl-shaped subsidence map; stronger atmosphere measurably increases error.",
+    "de": "Unwrap coloured rings into a bowl-shaped subsidence map; stronger atmosphere measurably increases error.",
+    "hi": "Unwrap coloured rings into a bowl-shaped subsidence map; stronger atmosphere measurably increases error.",
+    "fr": "Unwrap coloured rings into a bowl-shaped subsidence map; stronger atmosphere measurably increases error."
+   },
+   "num": {
+    "ja": "?? RMS 1.53 mm????? 1.02 mm?????????? RMS ? 3.70 mm ????",
+    "en": "Map RMS 1.53 mm and centre error 1.02 mm; stronger atmospheric delay adds 3.70 mm RMS.",
+    "zh": "Map RMS 1.53 mm and centre error 1.02 mm; stronger atmospheric delay adds 3.70 mm RMS.",
+    "tw": "Map RMS 1.53 mm and centre error 1.02 mm; stronger atmospheric delay adds 3.70 mm RMS.",
+    "ko": "Map RMS 1.53 mm and centre error 1.02 mm; stronger atmospheric delay adds 3.70 mm RMS.",
+    "de": "Map RMS 1.53 mm and centre error 1.02 mm; stronger atmospheric delay adds 3.70 mm RMS.",
+    "hi": "Map RMS 1.53 mm and centre error 1.02 mm; stronger atmospheric delay adds 3.70 mm RMS.",
+    "fr": "Map RMS 1.53 mm and centre error 1.02 mm; stronger atmospheric delay adds 3.70 mm RMS."
+   }
   }
  ],
  "series": [

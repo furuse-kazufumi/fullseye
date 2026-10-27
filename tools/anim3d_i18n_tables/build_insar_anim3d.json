@@ -1,0 +1,546 @@
+{
+ "_": "English fallback translations for the low-cost prototype; formulas, values and op names are preserved.",
+ "example": "build_insar_anim3d",
+ "strings": {
+  "Measure millimetre subsidence from orbit": {
+   "ja": "宇宙から数 mm の沈下を測る",
+   "zh": "Measure millimetre subsidence from orbit",
+   "tw": "Measure millimetre subsidence from orbit",
+   "ko": "Measure millimetre subsidence from orbit",
+   "de": "Measure millimetre subsidence from orbit",
+   "hi": "Measure millimetre subsidence from orbit",
+   "fr": "Measure millimetre subsidence from orbit"
+  },
+  "Unwrap interference fringes into subsidence of a synthetic surface": {
+   "ja": "干渉縞をほどき、合成地表の沈下へ変える",
+   "zh": "Unwrap interference fringes into subsidence of a synthetic surface",
+   "tw": "Unwrap interference fringes into subsidence of a synthetic surface",
+   "ko": "Unwrap interference fringes into subsidence of a synthetic surface",
+   "de": "Unwrap interference fringes into subsidence of a synthetic surface",
+   "hi": "Unwrap interference fringes into subsidence of a synthetic surface",
+   "fr": "Unwrap interference fringes into subsidence of a synthetic surface"
+  },
+  "Follow question, prediction, play, formula and limit.": {
+   "ja": "問い、予想、再生、式、限界の順に進む。",
+   "zh": "Follow question, prediction, play, formula and limit.",
+   "tw": "Follow question, prediction, play, formula and limit.",
+   "ko": "Follow question, prediction, play, formula and limit.",
+   "de": "Follow question, prediction, play, formula and limit.",
+   "hi": "Follow question, prediction, play, formula and limit.",
+   "fr": "Follow question, prediction, play, formula and limit."
+  },
+  "Why can it see millimetres?": {
+   "ja": "なぜ数 mm が分かる？",
+   "zh": "Why can it see millimetres?",
+   "tw": "Why can it see millimetres?",
+   "ko": "Why can it see millimetres?",
+   "de": "Why can it see millimetres?",
+   "hi": "Why can it see millimetres?",
+   "fr": "Why can it see millimetres?"
+  },
+  "one phase cycle": {
+   "ja": "位相 1 周",
+   "zh": "one phase cycle",
+   "tw": "one phase cycle",
+   "ko": "one phase cycle",
+   "de": "one phase cycle",
+   "hi": "one phase cycle",
+   "fr": "one phase cycle"
+  },
+  "range per cycle": {
+   "ja": "1 周に相当する距離",
+   "zh": "range per cycle",
+   "tw": "range per cycle",
+   "ko": "range per cycle",
+   "de": "range per cycle",
+   "hi": "range per cycle",
+   "fr": "range per cycle"
+  },
+  "subsidence map from unwrapped phase": {
+   "ja": "アンラップ位相からの沈下地図",
+   "zh": "subsidence map from unwrapped phase",
+   "tw": "subsidence map from unwrapped phase",
+   "ko": "subsidence map from unwrapped phase",
+   "de": "subsidence map from unwrapped phase",
+   "hi": "subsidence map from unwrapped phase",
+   "fr": "subsidence map from unwrapped phase"
+  },
+  "estimated central subsidence": {
+   "ja": "推定中心沈下",
+   "zh": "estimated central subsidence",
+   "tw": "estimated central subsidence",
+   "ko": "estimated central subsidence",
+   "de": "estimated central subsidence",
+   "hi": "estimated central subsidence",
+   "fr": "estimated central subsidence"
+  },
+  "image-counted fringes × λ/2": {
+   "ja": "画像から数えた縞 × λ/2",
+   "zh": "image-counted fringes × λ/2",
+   "tw": "image-counted fringes × λ/2",
+   "ko": "image-counted fringes × λ/2",
+   "de": "image-counted fringes × λ/2",
+   "hi": "image-counted fringes × λ/2",
+   "fr": "image-counted fringes × λ/2"
+  },
+  "observation progress": {
+   "ja": "観測の進行",
+   "zh": "observation progress",
+   "tw": "observation progress",
+   "ko": "observation progress",
+   "de": "observation progress",
+   "hi": "observation progress",
+   "fr": "observation progress"
+  },
+  "How much range change makes one phase cycle?": {
+   "ja": "位相が一周すると距離はいくら変わる？",
+   "zh": "How much range change makes one phase cycle?",
+   "tw": "How much range change makes one phase cycle?",
+   "ko": "How much range change makes one phase cycle?",
+   "de": "How much range change makes one phase cycle?",
+   "hi": "How much range change makes one phase cycle?",
+   "fr": "How much range change makes one phase cycle?"
+  },
+  "λ": {
+   "ja": "λ",
+   "zh": "λ",
+   "tw": "λ",
+   "ko": "λ",
+   "de": "λ",
+   "hi": "λ",
+   "fr": "λ"
+  },
+  "λ/2": {
+   "ja": "λ/2",
+   "zh": "λ/2",
+   "tw": "λ/2",
+   "ko": "λ/2",
+   "de": "λ/2",
+   "hi": "λ/2",
+   "fr": "λ/2"
+  },
+  "2λ": {
+   "ja": "2λ",
+   "zh": "2λ",
+   "tw": "2λ",
+   "ko": "2λ",
+   "de": "2λ",
+   "hi": "2λ",
+   "fr": "2λ"
+  },
+  "The wave travels to the ground and back.": {
+   "ja": "電波は地表まで往復するため。",
+   "zh": "The wave travels to the ground and back.",
+   "tw": "The wave travels to the ground and back.",
+   "ko": "The wave travels to the ground and back.",
+   "de": "The wave travels to the ground and back.",
+   "hi": "The wave travels to the ground and back.",
+   "fr": "The wave travels to the ground and back."
+  },
+  "Only line-of-sight motion is measured.": {
+   "ja": "測れるのは視線方向だけ。",
+   "zh": "Only line-of-sight motion is measured.",
+   "tw": "Only line-of-sight motion is measured.",
+   "ko": "Only line-of-sight motion is measured.",
+   "de": "Only line-of-sight motion is measured.",
+   "hi": "Only line-of-sight motion is measured.",
+   "fr": "Only line-of-sight motion is measured."
+  },
+  "Count the coloured rings": {
+   "ja": "色の輪を数える",
+   "zh": "Count the coloured rings",
+   "tw": "Count the coloured rings",
+   "ko": "Count the coloured rings",
+   "de": "Count the coloured rings",
+   "hi": "Count the coloured rings",
+   "fr": "Count the coloured rings"
+  },
+  "cycles counted from image": {
+   "ja": "像から数えた周回",
+   "zh": "cycles counted from image",
+   "tw": "cycles counted from image",
+   "ko": "cycles counted from image",
+   "de": "cycles counted from image",
+   "hi": "cycles counted from image",
+   "fr": "cycles counted from image"
+  },
+  "phase cycles on section": {
+   "ja": "断面の位相周回数",
+   "zh": "phase cycles on section",
+   "tw": "phase cycles on section",
+   "ko": "phase cycles on section",
+   "de": "phase cycles on section",
+   "hi": "phase cycles on section",
+   "fr": "phase cycles on section"
+  },
+  "wrapped interferometric phase −π to π": {
+   "ja": "巻き戻った干渉位相 −π〜π",
+   "zh": "wrapped interferometric phase −π to π",
+   "tw": "wrapped interferometric phase −π to π",
+   "ko": "wrapped interferometric phase −π to π",
+   "de": "wrapped interferometric phase −π to π",
+   "hi": "wrapped interferometric phase −π to π",
+   "fr": "wrapped interferometric phase −π to π"
+  },
+  "Is subsidence larger toward the ring centre?": {
+   "ja": "輪の中心ほど沈下が大きい？",
+   "zh": "Is subsidence larger toward the ring centre?",
+   "tw": "Is subsidence larger toward the ring centre?",
+   "ko": "Is subsidence larger toward the ring centre?",
+   "de": "Is subsidence larger toward the ring centre?",
+   "hi": "Is subsidence larger toward the ring centre?",
+   "fr": "Is subsidence larger toward the ring centre?"
+  },
+  "yes": {
+   "ja": "はい",
+   "zh": "yes",
+   "tw": "yes",
+   "ko": "yes",
+   "de": "yes",
+   "hi": "yes",
+   "fr": "yes"
+  },
+  "no": {
+   "ja": "いいえ",
+   "zh": "no",
+   "tw": "no",
+   "ko": "no",
+   "de": "no",
+   "hi": "no",
+   "fr": "no"
+  },
+  "Continuous range change wraps every 2π.": {
+   "ja": "連続した距離変化が 2π ごとに折り返す。",
+   "zh": "Continuous range change wraps every 2π.",
+   "tw": "Continuous range change wraps every 2π.",
+   "ko": "Continuous range change wraps every 2π.",
+   "de": "Continuous range change wraps every 2π.",
+   "hi": "Continuous range change wraps every 2π.",
+   "fr": "Continuous range change wraps every 2π."
+  },
+  "Atmosphere also bends the rings.": {
+   "ja": "大気も輪を曲げる。",
+   "zh": "Atmosphere also bends the rings.",
+   "tw": "Atmosphere also bends the rings.",
+   "ko": "Atmosphere also bends the rings.",
+   "de": "Atmosphere also bends the rings.",
+   "hi": "Atmosphere also bends the rings.",
+   "fr": "Atmosphere also bends the rings."
+  },
+  "Turn rings into a subsidence map": {
+   "ja": "輪を沈下地図へ",
+   "zh": "Turn rings into a subsidence map",
+   "tw": "Turn rings into a subsidence map",
+   "ko": "Turn rings into a subsidence map",
+   "de": "Turn rings into a subsidence map",
+   "hi": "Turn rings into a subsidence map",
+   "fr": "Turn rings into a subsidence map"
+  },
+  "The existing 2-D phase-unwrapping op processes the observed image; only a quiet border sets the offset. The estimator never sees true displacement.": {
+   "ja": "既存の 2-D 位相アンラップ op を観測像に適用し、静かな外周だけで零点を決めた。推定器は真の沈下を見ない。",
+   "zh": "The existing 2-D phase-unwrapping op processes the observed image; only a quiet border sets the offset. The estimator never sees true displacement.",
+   "tw": "The existing 2-D phase-unwrapping op processes the observed image; only a quiet border sets the offset. The estimator never sees true displacement.",
+   "ko": "The existing 2-D phase-unwrapping op processes the observed image; only a quiet border sets the offset. The estimator never sees true displacement.",
+   "de": "The existing 2-D phase-unwrapping op processes the observed image; only a quiet border sets the offset. The estimator never sees true displacement.",
+   "hi": "The existing 2-D phase-unwrapping op processes the observed image; only a quiet border sets the offset. The estimator never sees true displacement.",
+   "fr": "The existing 2-D phase-unwrapping op processes the observed image; only a quiet border sets the offset. The estimator never sees true displacement."
+  },
+  "map RMS error": {
+   "ja": "地図 RMS 誤差",
+   "zh": "map RMS error",
+   "tw": "map RMS error",
+   "ko": "map RMS error",
+   "de": "map RMS error",
+   "hi": "map RMS error",
+   "fr": "map RMS error"
+  },
+  "centre error": {
+   "ja": "中心誤差",
+   "zh": "centre error",
+   "tw": "centre error",
+   "ko": "centre error",
+   "de": "centre error",
+   "hi": "centre error",
+   "fr": "centre error"
+  },
+  "estimated line-of-sight subsidence": {
+   "ja": "推定した視線方向沈下",
+   "zh": "estimated line-of-sight subsidence",
+   "tw": "estimated line-of-sight subsidence",
+   "ko": "estimated line-of-sight subsidence",
+   "de": "estimated line-of-sight subsidence",
+   "hi": "estimated line-of-sight subsidence",
+   "fr": "estimated line-of-sight subsidence"
+  },
+  "After unwrapping, what converts phase to range?": {
+   "ja": "色の飛びを戻した後、距離へ何を掛ける？",
+   "zh": "After unwrapping, what converts phase to range?",
+   "tw": "After unwrapping, what converts phase to range?",
+   "ko": "After unwrapping, what converts phase to range?",
+   "de": "After unwrapping, what converts phase to range?",
+   "hi": "After unwrapping, what converts phase to range?",
+   "fr": "After unwrapping, what converts phase to range?"
+  },
+  "−λ/(4π)": {
+   "ja": "−λ/(4π)",
+   "zh": "−λ/(4π)",
+   "tw": "−λ/(4π)",
+   "ko": "−λ/(4π)",
+   "de": "−λ/(4π)",
+   "hi": "−λ/(4π)",
+   "fr": "−λ/(4π)"
+  },
+  "4π/λ": {
+   "ja": "4π/λ",
+   "zh": "4π/λ",
+   "tw": "4π/λ",
+   "ko": "4π/λ",
+   "de": "4π/λ",
+   "hi": "4π/λ",
+   "fr": "4π/λ"
+  },
+  "Solve the round-trip phase equation for range.": {
+   "ja": "往復位相式を距離について解く。",
+   "zh": "Solve the round-trip phase equation for range.",
+   "tw": "Solve the round-trip phase equation for range.",
+   "ko": "Solve the round-trip phase equation for range.",
+   "de": "Solve the round-trip phase equation for range.",
+   "hi": "Solve the round-trip phase equation for range.",
+   "fr": "Solve the round-trip phase equation for range."
+  },
+  "ΔR = −λ φ / (4π)": {
+   "ja": "ΔR = −λ φ / (4π)",
+   "zh": "ΔR = −λ φ / (4π)",
+   "tw": "ΔR = −λ φ / (4π)",
+   "ko": "ΔR = −λ φ / (4π)",
+   "de": "ΔR = −λ φ / (4π)",
+   "hi": "ΔR = −λ φ / (4π)",
+   "fr": "ΔR = −λ φ / (4π)"
+  },
+  "An absolute offset needs a reference area.": {
+   "ja": "絶対オフセットには基準領域が要る。",
+   "zh": "An absolute offset needs a reference area.",
+   "tw": "An absolute offset needs a reference area.",
+   "ko": "An absolute offset needs a reference area.",
+   "de": "An absolute offset needs a reference area.",
+   "hi": "An absolute offset needs a reference area.",
+   "fr": "An absolute offset needs a reference area."
+  },
+  "Atmosphere and vegetation limits": {
+   "ja": "大気と植生の限界",
+   "zh": "Atmosphere and vegetation limits",
+   "tw": "Atmosphere and vegetation limits",
+   "ko": "Atmosphere and vegetation limits",
+   "de": "Atmosphere and vegetation limits",
+   "hi": "Atmosphere and vegetation limits",
+   "fr": "Atmosphere and vegetation limits"
+  },
+  "Recomputing with stronger atmospheric delay increases RMS. Low-coherence areas have more phase noise. One line of sight cannot separate horizontal and vertical motion.": {
+   "ja": "大気遅延を実際に増やして再計算すると RMS が増える。低コヒーレンス域は位相雑音が大きい。水平と鉛直は一本の視線だけでは分離できない。",
+   "zh": "Recomputing with stronger atmospheric delay increases RMS. Low-coherence areas have more phase noise. One line of sight cannot separate horizontal and vertical motion.",
+   "tw": "Recomputing with stronger atmospheric delay increases RMS. Low-coherence areas have more phase noise. One line of sight cannot separate horizontal and vertical motion.",
+   "ko": "Recomputing with stronger atmospheric delay increases RMS. Low-coherence areas have more phase noise. One line of sight cannot separate horizontal and vertical motion.",
+   "de": "Recomputing with stronger atmospheric delay increases RMS. Low-coherence areas have more phase noise. One line of sight cannot separate horizontal and vertical motion.",
+   "hi": "Recomputing with stronger atmospheric delay increases RMS. Low-coherence areas have more phase noise. One line of sight cannot separate horizontal and vertical motion.",
+   "fr": "Recomputing with stronger atmospheric delay increases RMS. Low-coherence areas have more phase noise. One line of sight cannot separate horizontal and vertical motion."
+  },
+  "baseline-atmosphere RMS": {
+   "ja": "通常大気の RMS",
+   "zh": "baseline-atmosphere RMS",
+   "tw": "baseline-atmosphere RMS",
+   "ko": "baseline-atmosphere RMS",
+   "de": "baseline-atmosphere RMS",
+   "hi": "baseline-atmosphere RMS",
+   "fr": "baseline-atmosphere RMS"
+  },
+  "strong-atmosphere RMS": {
+   "ja": "強い大気の RMS",
+   "zh": "strong-atmosphere RMS",
+   "tw": "strong-atmosphere RMS",
+   "ko": "strong-atmosphere RMS",
+   "de": "strong-atmosphere RMS",
+   "hi": "strong-atmosphere RMS",
+   "fr": "strong-atmosphere RMS"
+  },
+  "coherence (dark means unstable)": {
+   "ja": "コヒーレンス（暗い所ほど不安定）",
+   "zh": "coherence (dark means unstable)",
+   "tw": "coherence (dark means unstable)",
+   "ko": "coherence (dark means unstable)",
+   "de": "coherence (dark means unstable)",
+   "hi": "coherence (dark means unstable)",
+   "fr": "coherence (dark means unstable)"
+  },
+  "accuracy unchanged when atmospheric delay grows from 1.4 to 5.0 mm": {
+   "ja": "大気遅延を 1.4 mm から 5.0 mm に増やしても精度が同じ",
+   "zh": "accuracy unchanged when atmospheric delay grows from 1.4 to 5.0 mm",
+   "tw": "accuracy unchanged when atmospheric delay grows from 1.4 to 5.0 mm",
+   "ko": "accuracy unchanged when atmospheric delay grows from 1.4 to 5.0 mm",
+   "de": "accuracy unchanged when atmospheric delay grows from 1.4 to 5.0 mm",
+   "hi": "accuracy unchanged when atmospheric delay grows from 1.4 to 5.0 mm",
+   "fr": "accuracy unchanged when atmospheric delay grows from 1.4 to 5.0 mm"
+  },
+  "error does not grow": {
+   "ja": "誤差が増えない",
+   "zh": "error does not grow",
+   "tw": "error does not grow",
+   "ko": "error does not grow",
+   "de": "error does not grow",
+   "hi": "error does not grow",
+   "fr": "error does not grow"
+  },
+  "What happens when atmospheric delay grows?": {
+   "ja": "大気遅延を増やすと沈下推定は？",
+   "zh": "What happens when atmospheric delay grows?",
+   "tw": "What happens when atmospheric delay grows?",
+   "ko": "What happens when atmospheric delay grows?",
+   "de": "What happens when atmospheric delay grows?",
+   "hi": "What happens when atmospheric delay grows?",
+   "fr": "What happens when atmospheric delay grows?"
+  },
+  "error grows": {
+   "ja": "誤差が増える",
+   "zh": "error grows",
+   "tw": "error grows",
+   "ko": "error grows",
+   "de": "error grows",
+   "hi": "error grows",
+   "fr": "error grows"
+  },
+  "unchanged": {
+   "ja": "変わらない",
+   "zh": "unchanged",
+   "tw": "unchanged",
+   "ko": "unchanged",
+   "de": "unchanged",
+   "hi": "unchanged",
+   "fr": "unchanged"
+  },
+  "Atmospheric phase adds to displacement phase.": {
+   "ja": "大気位相も変位位相に加算される。",
+   "zh": "Atmospheric phase adds to displacement phase.",
+   "tw": "Atmospheric phase adds to displacement phase.",
+   "ko": "Atmospheric phase adds to displacement phase.",
+   "de": "Atmospheric phase adds to displacement phase.",
+   "hi": "Atmospheric phase adds to displacement phase.",
+   "fr": "Atmospheric phase adds to displacement phase."
+  },
+  "φ = φterrain + φmotion + φatmosphere + noise": {
+   "ja": "φ = φterrain + φmotion + φatmosphere + noise",
+   "zh": "φ = φterrain + φmotion + φatmosphere + noise",
+   "tw": "φ = φterrain + φmotion + φatmosphere + noise",
+   "ko": "φ = φterrain + φmotion + φatmosphere + noise",
+   "de": "φ = φterrain + φmotion + φatmosphere + noise",
+   "hi": "φ = φterrain + φmotion + φatmosphere + noise",
+   "fr": "φ = φterrain + φmotion + φatmosphere + noise"
+  },
+  "Vegetation decorrelation and line-of-sight ambiguity remain.": {
+   "ja": "植生の低コヒーレンスと視線方向だけという曖昧さも残る。",
+   "zh": "Vegetation decorrelation and line-of-sight ambiguity remain.",
+   "tw": "Vegetation decorrelation and line-of-sight ambiguity remain.",
+   "ko": "Vegetation decorrelation and line-of-sight ambiguity remain.",
+   "de": "Vegetation decorrelation and line-of-sight ambiguity remain.",
+   "hi": "Vegetation decorrelation and line-of-sight ambiguity remain.",
+   "fr": "Vegetation decorrelation and line-of-sight ambiguity remain."
+  },
+  "Terrain, subsidence, orbit, atmosphere and noise are entirely synthetic and represent no specific satellite, institution or place.": {
+   "ja": "地形・沈下・軌道・大気・雑音はすべて合成。固有の衛星、機関、地域を表さない。",
+   "zh": "Terrain, subsidence, orbit, atmosphere and noise are entirely synthetic and represent no specific satellite, institution or place.",
+   "tw": "Terrain, subsidence, orbit, atmosphere and noise are entirely synthetic and represent no specific satellite, institution or place.",
+   "ko": "Terrain, subsidence, orbit, atmosphere and noise are entirely synthetic and represent no specific satellite, institution or place.",
+   "de": "Terrain, subsidence, orbit, atmosphere and noise are entirely synthetic and represent no specific satellite, institution or place.",
+   "hi": "Terrain, subsidence, orbit, atmosphere and noise are entirely synthetic and represent no specific satellite, institution or place.",
+   "fr": "Terrain, subsidence, orbit, atmosphere and noise are entirely synthetic and represent no specific satellite, institution or place."
+  },
+  "Two orbits at 700 km altitude, 35° incidence and 120 m perpendicular baseline view the same synthetic surface. At 5.6 cm wavelength, colour cycles for every λ/2 of range.": {
+   "ja": "高度 700 km、入射角 35°、垂直基線 120 m の二つの軌道から同じ合成地表を見る。波長 5.6 cm では往復距離 λ/2 ごとに色が一周する。",
+   "zh": "Two orbits at 700 km altitude, 35° incidence and 120 m perpendicular baseline view the same synthetic surface. At 5.6 cm wavelength, colour cycles for every λ/2 of range.",
+   "tw": "Two orbits at 700 km altitude, 35° incidence and 120 m perpendicular baseline view the same synthetic surface. At 5.6 cm wavelength, colour cycles for every λ/2 of range.",
+   "ko": "Two orbits at 700 km altitude, 35° incidence and 120 m perpendicular baseline view the same synthetic surface. At 5.6 cm wavelength, colour cycles for every λ/2 of range.",
+   "de": "Two orbits at 700 km altitude, 35° incidence and 120 m perpendicular baseline view the same synthetic surface. At 5.6 cm wavelength, colour cycles for every λ/2 of range.",
+   "hi": "Two orbits at 700 km altitude, 35° incidence and 120 m perpendicular baseline view the same synthetic surface. At 5.6 cm wavelength, colour cycles for every λ/2 of range.",
+   "fr": "Two orbits at 700 km altitude, 35° incidence and 120 m perpendicular baseline view the same synthetic surface. At 5.6 cm wavelength, colour cycles for every λ/2 of range."
+  },
+  "height ambiguity h₂π": {
+   "ja": "高さ曖昧さ h₂π",
+   "zh": "height ambiguity h₂π",
+   "tw": "height ambiguity h₂π",
+   "ko": "height ambiguity h₂π",
+   "de": "height ambiguity h₂π",
+   "hi": "height ambiguity h₂π",
+   "fr": "height ambiguity h₂π"
+  },
+  "below 1.97 mm from 16-look phase CRB and atmospheric RMS": {
+   "ja": "16 ルックの位相 CRB と大気 RMS から 1.97 mm 未満",
+   "zh": "below 1.97 mm from 16-look phase CRB and atmospheric RMS",
+   "tw": "below 1.97 mm from 16-look phase CRB and atmospheric RMS",
+   "ko": "below 1.97 mm from 16-look phase CRB and atmospheric RMS",
+   "de": "below 1.97 mm from 16-look phase CRB and atmospheric RMS",
+   "hi": "below 1.97 mm from 16-look phase CRB and atmospheric RMS",
+   "fr": "below 1.97 mm from 16-look phase CRB and atmospheric RMS"
+  },
+  "φtopo = 4π B⊥ h / (λ R sinθ); h₂π = λ R sinθ / (2 B⊥)": {
+   "ja": "φtopo = 4π B⊥ h / (λ R sinθ); h₂π = λ R sinθ / (2 B⊥)",
+   "zh": "φtopo = 4π B⊥ h / (λ R sinθ); h₂π = λ R sinθ / (2 B⊥)",
+   "tw": "φtopo = 4π B⊥ h / (λ R sinθ); h₂π = λ R sinθ / (2 B⊥)",
+   "ko": "φtopo = 4π B⊥ h / (λ R sinθ); h₂π = λ R sinθ / (2 B⊥)",
+   "de": "φtopo = 4π B⊥ h / (λ R sinθ); h₂π = λ R sinθ / (2 B⊥)",
+   "hi": "φtopo = 4π B⊥ h / (λ R sinθ); h₂π = λ R sinθ / (2 B⊥)",
+   "fr": "φtopo = 4π B⊥ h / (λ R sinθ); h₂π = λ R sinθ / (2 B⊥)"
+  },
+  "Two complex SAR images use correlated circular-Gaussian speckle. The interferogram is the 4×4-look mean of s1·conj(s2); subtracting DEM topographic phase leaves motion, atmosphere and decorrelation.": {
+   "ja": "相関した円形ガウスのスペックルから二つの複素 SAR 像を作り、s1·conj(s2) を 4×4 平均して干渉を得た。DEM の地形位相を引き、変位・大気・デコヒーレンスが残る。",
+   "zh": "Two complex SAR images use correlated circular-Gaussian speckle. The interferogram is the 4×4-look mean of s1·conj(s2); subtracting DEM topographic phase leaves motion, atmosphere and decorrelation.",
+   "tw": "Two complex SAR images use correlated circular-Gaussian speckle. The interferogram is the 4×4-look mean of s1·conj(s2); subtracting DEM topographic phase leaves motion, atmosphere and decorrelation.",
+   "ko": "Two complex SAR images use correlated circular-Gaussian speckle. The interferogram is the 4×4-look mean of s1·conj(s2); subtracting DEM topographic phase leaves motion, atmosphere and decorrelation.",
+   "de": "Two complex SAR images use correlated circular-Gaussian speckle. The interferogram is the 4×4-look mean of s1·conj(s2); subtracting DEM topographic phase leaves motion, atmosphere and decorrelation.",
+   "hi": "Two complex SAR images use correlated circular-Gaussian speckle. The interferogram is the 4×4-look mean of s1·conj(s2); subtracting DEM topographic phase leaves motion, atmosphere and decorrelation.",
+   "fr": "Two complex SAR images use correlated circular-Gaussian speckle. The interferogram is the 4×4-look mean of s1·conj(s2); subtracting DEM topographic phase leaves motion, atmosphere and decorrelation."
+  },
+  "I = mean(s1·conj(s2)); ΔR = N λ / 2": {
+   "ja": "I = mean(s1·conj(s2)); ΔR = N λ / 2",
+   "zh": "I = mean(s1·conj(s2)); ΔR = N λ / 2",
+   "tw": "I = mean(s1·conj(s2)); ΔR = N λ / 2",
+   "ko": "I = mean(s1·conj(s2)); ΔR = N λ / 2",
+   "de": "I = mean(s1·conj(s2)); ΔR = N λ / 2",
+   "hi": "I = mean(s1·conj(s2)); ΔR = N λ / 2",
+   "fr": "I = mean(s1·conj(s2)); ΔR = N λ / 2"
+  },
+  "phase remains stable in low-coherence area": {
+   "ja": "低コヒーレンス域でも位相が安定",
+   "zh": "phase remains stable in low-coherence area",
+   "tw": "phase remains stable in low-coherence area",
+   "ko": "phase remains stable in low-coherence area",
+   "de": "phase remains stable in low-coherence area",
+   "hi": "phase remains stable in low-coherence area",
+   "fr": "phase remains stable in low-coherence area"
+  },
+  "same accuracy where gamma < 0.5": {
+   "ja": "γ < 0.5 の領域でも全体と同等",
+   "zh": "same accuracy where gamma < 0.5",
+   "tw": "same accuracy where gamma < 0.5",
+   "ko": "same accuracy where gamma < 0.5",
+   "de": "same accuracy where gamma < 0.5",
+   "hi": "same accuracy where gamma < 0.5",
+   "fr": "same accuracy where gamma < 0.5"
+  },
+  "1.1 % of pixels; RMS 2.53 mm": {
+   "ja": "全画素の 1.1 %、RMS 2.53 mm",
+   "zh": "1.1 % of pixels; RMS 2.53 mm",
+   "tw": "1.1 % of pixels; RMS 2.53 mm",
+   "ko": "1.1 % of pixels; RMS 2.53 mm",
+   "de": "1.1 % of pixels; RMS 2.53 mm",
+   "hi": "1.1 % of pixels; RMS 2.53 mm",
+   "fr": "1.1 % of pixels; RMS 2.53 mm"
+  },
+  "RMS increases by 3.70 mm": {
+   "ja": "RMS が 3.70 mm 増加",
+   "zh": "RMS increases by 3.70 mm",
+   "tw": "RMS increases by 3.70 mm",
+   "ko": "RMS increases by 3.70 mm",
+   "de": "RMS increases by 3.70 mm",
+   "hi": "RMS increases by 3.70 mm",
+   "fr": "RMS increases by 3.70 mm"
+  }
+ }
+}
