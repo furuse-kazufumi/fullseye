@@ -345,6 +345,9 @@ EXCLUDED = {
     "tools/build_dissolution_anim3d.py": ("薬の粒の溶出を合成画像から測る動く 3-D 教材(docs/view2026/anim3d/particle_dissolution_anim3d.html)。"
                                           "`py -3.11 tools/anim3d_i18n.py --build build_dissolution_anim3d --out docs/view2026/anim3d/particle_dissolution_anim3d.html` で書く"
                                           "(翻訳表 tools/anim3d_i18n_tables/build_dissolution_anim3d.json)。門は tests/test_anim3d_dissolution_2026_10_27.py。"),
+    "tools/build_laserdiff_anim3d.py": ("レーザー回折リングから粒度分布を復元する動く 3-D 教材(docs/view2026/anim3d/laser_diffraction_anim3d.html)。"
+                                        "`py -3.11 tools/anim3d_i18n.py --build build_laserdiff_anim3d --out docs/view2026/anim3d/laser_diffraction_anim3d.html` で書く"
+                                        "(翻訳表 tools/anim3d_i18n_tables/build_laserdiff_anim3d.json)。門は tests/test_anim3d_laserdiff_2026_10_27.py。"),
     "tools/build_gsplat_pages.py": ("docs/gsplat/ の 3DGS の商品ビューアとカタログ(examples/gsplat_product_viewer.py の build)。"
                                     "marching cubes に scikit-image(任意の依存)が要り、5 品の 3DGS 化とサムネイルの numpy 描画で"
                                     "1 分ほどかかり、出力は 1 本数 MB —— 鎖に入れず、ページを変える回は手で回して commit する。"),
