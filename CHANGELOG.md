@@ -65,6 +65,31 @@ pyproject の制約は `kornia>=0.7`(上限なし)で、CI は最新(0.9.0)、�
 - ★`polarization_stokes_map.max_violation_frac` を効かないノブの台帳(`docs/LEDGER_GAP_DEBT.json`、601 → 602)に兄弟 3 本(`polarization_separate` / `_dolp_map` / `_stokes`)と同じ区分で足した。このノブは「何割の画素の負の最小値まで許すか」の門で、出力の値は変えず通すか断るかだけを決めるため、きれいな探針入力では原理的に動かない。実カメラの掃引(デモザイクの誤差)を通すのに要る(例の 6 は 0.05 で通す)ので外さなかった —— 台帳を増やした判断として明記する。
 - 例 `examples/polarization_camera_pipeline.py` に 6・7 を追加(画素ごとの AoLP が真値と 0.18° 以内、角度の向きを逆に読むと中央値 46° ずれる / ER = 100 の検光子で完全偏光の DoLP が 0.9802 で頭打ち)。
 
+### 修正 — 偏光まわりの入口検査(マージ後レビュー 2026-10-24、所見を一件ずつ再現してから)
+
+門は `tests/test_polarization_input_checks_2026_10_24.py`(41 件、直す前のコードで 32 件が赤)。引数は足していない。
+
+- 掃引の当てはめ(`polarization_separate` / `_dolp_map` / `_stokes` / `_analyze` / `_stokes_map` の共通部): **負のフレーム値**を拒否する。
+  `[1, 1, 1.5, -0.1]`(0/45/90/135)は当てはめた最小値が正なので通り、負の輝度から DoLP 0.711・AoLP 57.2° を返していた
+  (逆向きの `polarization_render` は負の輝度を拒否する)。床は「スタックの最大絶対値の 2 %」(`specularity.POLAR_NEGATIVE_FLOOR`):
+  暗電流を引いたデータは黒い画素で少し負になる。8 bit で読み出し雑音 1.5 DN は満量の 0.59 % なので 2 % は 3.4σ。床を下回る画素は
+  負の最小値と同じ `max_violation_frac` の枠に数える。
+- 検光子の角度: **条件数が 1e3 を超える配置**(`specularity.POLAR_DESIGN_MAX_COND`、0/45/90/135 は 1.41)と、**全角度の絶対値が 2π 以下**
+  (ラジアンを度として渡した形)を拒否する。`(0, π/4, π/2, 3π/4)` が S0 = 1331・DoLP 0.9998 で通っていた(条件数 5.3e3、
+  従来の検査は階数落ち = 1e10 だけ)。±2π 度の箱の中で最良の配置でも条件数 174 なので、正当な配置は落とさない。
+  数度の掃引を本当にしたいときは 180 を足して渡せる(角度は 180 を法とする)。
+- `polarization_stokes_map` の返り値に **`residual`**(N 枚にわたる「フレーム − 当てはめた Malus 曲線」の RMS)を足した。既存のキーは
+  そのまま(後方互換の追加)。DoFP の 4 方位では `|I0 + I90 − I45 − I135| / 4` で、位置ずれ・飽和したチャンネルが見える。
+  レビューの例 `(1, 1, 3, 3)` は 0/45/90/135 の順では I0 + I90 = I45 + I135 = 4 の**整合した**掃引で(DoLP 0.707 は正しい)、
+  食い違う例は `(1, 3, 1, 1)`(残差 0.5)。
+- 画素数 0 のスタック(`(4, 0, 3)` など)は RuntimeWarning を出して空配列を返していた → ValueError。
+- `optics.stokes_analyze`: `handedness` / `azimuth_deg` / `ellipticity_deg` の「0」を `≤ 1e-12·S0` の相対判定に。
+  `mueller_element("half_wave", 22.5) @ [1, 1, 0, 0]` の S3 = 8.7e-17 が `"right"` に、四分の一波長板 45° の直線成分 8.7e-17 が
+  方位 22.5° になっていた。兄弟: 負の微小な S2 で `azimuth_deg` が 180.0(`[0, 180)` の外)になっていたのも直した。
+- 範囲外のエラー文が `%g` で値を境界に丸めていた(`transmission=1.0000001` →「got 1」)→ `%r`。`mueller_partial_polarizer` の
+  `transmission` / `extinction_ratio`、偏光 5 op の `max_violation_frac`(共通関数にまとめた)、specularity の `max_negative_frac` /
+  `roughness` / 反射率 `[0, 1]` の検査。
+
 ### 追加 — Studio: 前段の出力を受けられる op だけを一覧に出す(改善案 018 の残り)
 
 - op 一覧の上にスイッチ「前段の出力を受けられる op だけ表示」(既定 on)と状況の 1 行(例「998 件中 135 件、段 2 threshold の出力 'region'」)。

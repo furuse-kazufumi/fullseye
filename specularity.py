@@ -283,8 +283,18 @@ def _positive(v, name: str) -> float:
 def _unit_interval(v, name: str) -> float:
     f = _finite_scalar(v, name)
     if not (0.0 <= f <= 1.0):
+        # %r, not %g: %g prints 1.0000001 as "1" and the message then reads
+        # "must be in [0, 1], got 1" (found by the 2026-10-24 review).
         raise ValueError("%s must be in [0, 1] (it is a reflectance fraction), "
-                         "got %g" % (name, f))
+                         "got %r" % (name, f))
+    return f
+
+
+def _violation_frac(v) -> float:
+    """``max_violation_frac`` of the polariser-sweep ops: a finite value in [0, 1]."""
+    f = _finite_scalar(v, "max_violation_frac")
+    if not (0.0 <= f <= 1.0):
+        raise ValueError("max_violation_frac must be in [0, 1], got %r" % (f,))
     return f
 
 
@@ -476,14 +486,38 @@ def _require_angles(a, n_frames: int, op: str) -> np.ndarray:
     return arr
 
 
+#: Largest condition number ``s_max / s_min`` of the design ``[1, cos 2t,
+#: sin 2t]`` that a polariser sweep may have (2026-10-24). The condition number
+#: bounds how much a relative error in the frames grows in the fitted
+#: ``(S0, S1, S2)``. The designs in use sit near 1: 0/45/90/135 and 0/60/120
+#: are 1.41, 0/30/90/135 is 1.69, 0/20/45/90/160 is 2.09 (measured). At 1e3
+#: the quantisation step of a 12-bit sensor (2.4e-4 of full scale) alone
+#: becomes a 24 % error in the Stokes vector, so a design past it measures the
+#: sensor, not the scene. Before this the only test was rank (``s_min <=
+#: 1e-10 s_max``), and radians passed as degrees, ``(0, pi/4, pi/2, 3 pi/4)``
+#: (condition number 5.3e3), went through as S0 = 1331, DoLP 0.9998.
+POLAR_DESIGN_MAX_COND = 1e3
+
+
 def _polarizer_design(angles_deg: np.ndarray, op: str) -> np.ndarray:
-    """Design matrix ``[1, cos 2t, sin 2t]`` with a rank check.
+    """Design matrix ``[1, cos 2t, sin 2t]`` with rank, conditioning and unit checks.
 
     A linear polariser at 0 and at 180 degrees is the same instrument, so
     angles that coincide modulo 180 add a row but no information. The check is
     on the smallest singular value rather than on the angles themselves,
     because three angles can be pairwise distinct and still leave the fit
     rank-deficient.
+
+    Two further refusals (2026-10-24). **Radians**: if every angle is at most
+    2*pi in magnitude the sweep spans at most 12.6 degrees, which is what
+    a radian sweep read as degrees looks like. No useful design lives there:
+    the best-conditioned design inside that box (three angles at -2*pi, 0 and
+    +2*pi degrees) has condition number 174, against 1.41 for 0/45/90/135
+    (measured), and ``(0, pi, 2*pi)`` read as degrees has 704 — under the
+    conditioning cap, so this is the only check that stops it. A genuine
+    few-degree sweep can still be passed by adding 180 to every angle (angles
+    are taken modulo 180). **Conditioning**: a condition number above
+    :data:`POLAR_DESIGN_MAX_COND` is refused (see there for why 1e3).
     """
     t = np.radians(2.0 * angles_deg)
     M = np.stack([np.ones_like(t), np.cos(t), np.sin(t)], axis=1)   # (N, 3)
@@ -495,6 +529,24 @@ def _polarizer_design(angles_deg: np.ndarray, op: str) -> np.ndarray:
                          "180 are the same measurement; use at least three "
                          "distinct orientations such as (0, 45, 90)"
                          % (op, s[-1], s[0]))
+    peak = float(np.abs(angles_deg).max())
+    if peak <= 2.0 * np.pi:
+        raise ValueError("%s: every polariser angle is at most 2*pi in magnitude "
+                         "(largest %r) — angles_deg must be in degrees, and "
+                         "this looks like radians (e.g. (0, pi/4, pi/2, 3*pi/4) "
+                         "instead of (0, 45, 90, 135)). Convert with "
+                         "np.degrees. A genuine sweep of a few degrees can be "
+                         "passed as 180 + angle (angles are taken modulo 180)"
+                         % (op, peak))
+    cond = float(s[0] / s[-1])
+    if cond > POLAR_DESIGN_MAX_COND:
+        raise ValueError("%s: the polariser angles leave the fit "
+                         "ill-conditioned (condition number %.4g, over the %g "
+                         "cap specularity.POLAR_DESIGN_MAX_COND; 0/45/90/135 "
+                         "is 1.41) — frame noise would be amplified that many "
+                         "times into S0, S1, S2. Spread the angles over the "
+                         "180-degree range"
+                         % (op, cond, POLAR_DESIGN_MAX_COND))
     return M
 
 
@@ -749,8 +801,8 @@ def _split_guards(max_rank_ratio, max_negative_frac):
     if max_negative_frac is not None:
         max_negative_frac = _finite_scalar(max_negative_frac, "max_negative_frac")
         if not (0.0 <= max_negative_frac <= 1.0):
-            raise ValueError("max_negative_frac must be in [0, 1], got %g"
-                             % max_negative_frac)
+            raise ValueError("max_negative_frac must be in [0, 1], got %r"
+                             % (max_negative_frac,))
     return max_rank_ratio, max_negative_frac
 
 
@@ -1036,7 +1088,7 @@ def brdf_microfacet(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0),
     op = "brdf_microfacet"
     roughness = _positive(roughness, "roughness")
     if roughness > 1.0:
-        raise ValueError("roughness must be in (0, 1], got %g" % roughness)
+        raise ValueError("roughness must be in (0, 1], got %r" % (roughness,))
     f0 = _unit_interval(f0, "f0")
     ndl, ndv, ndh, vdh, vis = _lobe_geometry(normals, light, view, op)
     a = roughness * roughness
@@ -1546,34 +1598,77 @@ def photometric_residual(images, lights, normals=None, albedo=None,
 _DEFAULT_ANGLES = (0.0, 45.0, 90.0, 135.0)
 
 
-def _polar_fit(images, angles_deg, op, max_violation_frac):
+#: Negative-frame floor of the polariser-sweep ops, as a fraction of the
+#: stack's largest magnitude (2026-10-24). A frame value below
+#: ``-POLAR_NEGATIVE_FLOOR * max|I|`` makes that pixel a violation, counted in
+#: the same *max_violation_frac* budget as a negative fitted minimum. Before
+#: this only the fitted minimum was checked, and ``[1, 1, 1.5, -0.1]``
+#: (0/45/90/135) — whose fitted minimum is positive — came back as DoLP 0.711,
+#: AoLP 57.2 from a negative radiance, while :func:`polarization_render`
+#: refuses any negative radiance. Why not zero: dark-frame subtraction leaves
+#: zero-mean read noise, so a black pixel legitimately dips below 0. A read
+#: noise of 1.5 DN on an 8-bit scale is 0.59 % of full scale, so 2 % is 3.4
+#: sigma there (and far more on 12/16-bit data). The stack maximum stands in
+#: for full scale; an underexposed stack makes the floor stricter, and its
+#: noise-level dips are then let through with *max_violation_frac*, as for
+#: negative fitted minima.
+POLAR_NEGATIVE_FLOOR = 0.02
+
+
+def _polar_fit(images, angles_deg, op, max_violation_frac, want_residual=False):
     """Fit ``I(t) = a0 + a1 cos 2t + a2 sin 2t`` per pixel and return the parts.
 
     Malus's law for partially polarised light: a linear analyser at angle ``t``
     transmits ``0.5 * (S0 + S1 cos 2t + S2 sin 2t)``. Three unknowns, so three
     angles determine it exactly and more are least squares.
+
+    A pixel is a violation when its fitted minimum is negative or when any of
+    its frames is below the negative floor (:data:`POLAR_NEGATIVE_FLOOR`);
+    more than *max_violation_frac* violating pixels raise. With
+    *want_residual* the per-pixel RMS of ``frame - fit`` over the N frames is
+    appended to the returned tuple (computed before any clamp).
     """
     I = _require_stack(images, "images", op)
     N, H, W = I.shape
+    if H * W == 0:
+        # Found by the 2026-10-24 review: a (4, 0, 3) stack made bad.mean() a
+        # NaN with a RuntimeWarning, NaN > max_violation_frac is False, and
+        # empty arrays came back as if a sweep had been measured.
+        raise ValueError("%s: images has no pixels (shape %r) — an empty sweep "
+                         "has no polarisation to fit" % (op, tuple(I.shape)))
     ang = _require_angles(angles_deg, N, op)
     M = _polarizer_design(ang, op)
-    a = np.linalg.lstsq(M, I.reshape(N, -1), rcond=None)[0]     # (3, P)
+    flat = I.reshape(N, -1)
+    a = np.linalg.lstsq(M, flat, rcond=None)[0]                 # (3, P)
     a0, a1, a2 = a[0], a[1], a[2]
     amp = np.hypot(a1, a2)
     i_min = a0 - amp
-    bad = i_min < -1e-12 * np.maximum(np.abs(a0), 1.0)
+    fit_bad = i_min < -1e-12 * np.maximum(np.abs(a0), 1.0)
+    floor = -POLAR_NEGATIVE_FLOOR * float(np.abs(flat).max())
+    neg = (flat < floor).any(axis=0)
+    bad = fit_bad | neg
     frac = float(bad.mean())
     if frac > max_violation_frac:
-        worst = float(i_min.min())
         raise ValueError(
-            "%s: the fitted minimum transmitted radiance is negative at %d of "
-            "%d pixel(s) (%.3f, worst %.6g), so these frames are not a "
-            "polariser sweep of a physical scene: the modulation amplitude "
-            "exceeds the mean, which no analyser can produce. Check the frame "
-            "order against angles_deg, or raise max_violation_frac to clamp "
-            "sensor-noise-level violations to zero deliberately"
-            % (op, int(bad.sum()), i_min.size, frac, worst))
+            "%s: %d of %d pixel(s) (%.3f) are not a polariser sweep of a "
+            "physical scene — %d fit a negative minimum transmitted radiance "
+            "(worst %.6g: the modulation amplitude exceeds the mean, which no "
+            "analyser can produce) and %d have a negative frame value below "
+            "the floor %.6g (worst %.6g; the floor is "
+            "specularity.POLAR_NEGATIVE_FLOOR = %g of the stack's largest "
+            "magnitude, a negative radiance is not a scene). Check the frame "
+            "order against angles_deg and any dark-frame offset, or raise "
+            "max_violation_frac to clamp sensor-noise-level violations "
+            "deliberately"
+            % (op, int(bad.sum()), i_min.size, frac, int(fit_bad.sum()),
+               float(i_min.min()), int(neg.sum()), floor, float(flat.min()),
+               POLAR_NEGATIVE_FLOOR))
+    resid = None
+    if want_residual:
+        resid = np.sqrt(np.mean((M @ a - flat) ** 2, axis=0))
     i_min = np.maximum(i_min, 0.0)
+    if want_residual:
+        return a0, a1, a2, amp, i_min, (H, W), resid
     return a0, a1, a2, amp, i_min, (H, W)
 
 
@@ -1680,17 +1775,25 @@ def polarization_separate(images, angles_deg=_DEFAULT_ANGLES,
     a correct sweep at another azimuth, so the order is metadata this check
     cannot recover.
 
+    **Negative frames (2026-10-24).** A pixel with a frame value below
+    ``-POLAR_NEGATIVE_FLOOR * max|I|`` (2 % of the stack's largest magnitude)
+    is a violation too, in the same *max_violation_frac* budget: a negative
+    radiance is not a scene, and :func:`polarization_render` refuses it in
+    the forward direction. The floor leaves room for the read noise of
+    dark-frame-subtracted data; the reasoning is at
+    :data:`POLAR_NEGATIVE_FLOOR`.
+
     **Raises** ``ValueError``: *images* is not an ``(N, H, W)`` stack of at
-    least 3 frames, or exceeds :data:`MAX_LIGHTS` / :data:`MAX_STACK_ELEMENTS`;
-    *angles_deg* does not match the frame count or leaves the fit
-    rank-deficient (two angles equal modulo 180); more than
-    *max_violation_frac* of the pixels fit a negative minimum.
+    least 3 frames, has no pixels, or exceeds :data:`MAX_LIGHTS` /
+    :data:`MAX_STACK_ELEMENTS`; *angles_deg* does not match the frame count,
+    leaves the fit rank-deficient (two angles equal modulo 180) or
+    ill-conditioned (condition number over :data:`POLAR_DESIGN_MAX_COND`), or
+    has every angle at most 2*pi in magnitude (radians passed as degrees); more
+    than *max_violation_frac* of the pixels fit a negative minimum or have a
+    frame below the negative floor.
     """
     op = "polarization_separate"
-    max_violation_frac = _finite_scalar(max_violation_frac, "max_violation_frac")
-    if not (0.0 <= max_violation_frac <= 1.0):
-        raise ValueError("max_violation_frac must be in [0, 1], got %g"
-                         % max_violation_frac)
+    max_violation_frac = _violation_frac(max_violation_frac)
     a0, _a1, _a2, amp, i_min, (H, W) = _polar_fit(images, angles_deg, op,
                                                   max_violation_frac)
     i_max = a0 + amp
@@ -1701,10 +1804,7 @@ def polarization_analyze(images, angles_deg=_DEFAULT_ANGLES,
                          max_violation_frac=0.0):
     """Derive separation, linear-polarisation degree and integrated Stokes data in one fit."""
     op = "polarization_analyze"
-    max_violation_frac = _finite_scalar(max_violation_frac, "max_violation_frac")
-    if not (0.0 <= max_violation_frac <= 1.0):
-        raise ValueError("max_violation_frac must be in [0, 1], got %g"
-                         % max_violation_frac)
+    max_violation_frac = _violation_frac(max_violation_frac)
     a0, a1, a2, amp, i_min, (H, W) = _polar_fit(
         images, angles_deg, op, max_violation_frac)
     dolp = np.zeros_like(a0)
@@ -1746,10 +1846,7 @@ def polarization_dolp_map(images, angles_deg=_DEFAULT_ANGLES,
     **Raises** ``ValueError``: as :func:`polarization_separate`.
     """
     op = "polarization_dolp_map"
-    max_violation_frac = _finite_scalar(max_violation_frac, "max_violation_frac")
-    if not (0.0 <= max_violation_frac <= 1.0):
-        raise ValueError("max_violation_frac must be in [0, 1], got %g"
-                         % max_violation_frac)
+    max_violation_frac = _violation_frac(max_violation_frac)
     a0, _a1, _a2, amp, _i_min, (H, W) = _polar_fit(images, angles_deg, op,
                                                    max_violation_frac)
     dolp = np.zeros_like(a0)
@@ -1784,10 +1881,7 @@ def polarization_stokes(images, angles_deg=_DEFAULT_ANGLES,
     **Raises** ``ValueError``: as :func:`polarization_separate`.
     """
     op = "polarization_stokes"
-    max_violation_frac = _finite_scalar(max_violation_frac, "max_violation_frac")
-    if not (0.0 <= max_violation_frac <= 1.0):
-        raise ValueError("max_violation_frac must be in [0, 1], got %g"
-                         % max_violation_frac)
+    max_violation_frac = _violation_frac(max_violation_frac)
     a0, a1, a2, amp, _i_min, _shape = _polar_fit(images, angles_deg, op,
                                                  max_violation_frac)
     s0 = 2.0 * float(a0.mean())
@@ -1828,6 +1922,12 @@ def polarization_stokes_map(images, angles_deg=_DEFAULT_ANGLES,
       ``[0, 180)`` (an axis, so 0 and 180 are the same).
     * ``lit`` — bool, ``S0 > 0``.
     * ``aolp_defined`` — bool, ``S0 > 0`` and ``hypot(S1, S2) > 1e-12 * S0``.
+    * ``residual`` — RMS over the N frames of ``frame - fitted Malus curve``,
+      in the frames' units (added 2026-10-24). A sweep of a real scene fits
+      exactly, so a large value says the frames do not agree with each other:
+      a misregistered or saturated channel. For the four DoFP angles it is
+      ``|I0 + I90 - I45 - I135| / 4``; for three angles it is always 0 (the
+      fit is exact and nothing is left to check).
 
     **Where the ratios do not exist, the value is 0 and a mask says so — never
     NaN.** At ``S0 = 0`` DoLP is 0/0: it is returned as 0.0, the same
@@ -1874,15 +1974,14 @@ def polarization_stokes_map(images, angles_deg=_DEFAULT_ANGLES,
     not an ``(N, H, W)`` stack with N >= 3, exceeds the caps, or is
     non-finite; *angles_deg* does not match N or leaves the fit
     rank-deficient; more than *max_violation_frac* of the pixels fit a negative
-    minimum.
+    minimum. Also (2026-10-24): *images* has no pixels; *angles_deg* is
+    ill-conditioned or looks like radians; a frame value below the negative
+    floor counts as a violating pixel.
     """
     op = "polarization_stokes_map"
-    max_violation_frac = _finite_scalar(max_violation_frac, "max_violation_frac")
-    if not (0.0 <= max_violation_frac <= 1.0):
-        raise ValueError("max_violation_frac must be in [0, 1], got %g"
-                         % max_violation_frac)
-    a0, a1, a2, _amp, _i_min, (H, W) = _polar_fit(images, angles_deg, op,
-                                                  max_violation_frac)
+    max_violation_frac = _violation_frac(max_violation_frac)
+    a0, a1, a2, _amp, _i_min, (H, W), resid = _polar_fit(
+        images, angles_deg, op, max_violation_frac, want_residual=True)
     s0 = np.maximum(2.0 * a0, 0.0)
     s1 = 2.0 * a1
     s2 = 2.0 * a2
@@ -1907,4 +2006,5 @@ def polarization_stokes_map(images, angles_deg=_DEFAULT_ANGLES,
         "s0": s0.reshape(H, W), "s1": s1.reshape(H, W), "s2": s2.reshape(H, W),
         "dolp": dolp.reshape(H, W), "aolp_deg": aolp.reshape(H, W),
         "lit": lit.reshape(H, W), "aolp_defined": defined.reshape(H, W),
+        "residual": resid.reshape(H, W),
     }

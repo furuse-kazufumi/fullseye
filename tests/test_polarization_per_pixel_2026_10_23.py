@@ -374,7 +374,7 @@ def test_dark_and_unpolarised_pixels_are_masked_never_nan():
     I[:, 0, 0] = 1.0                       # unpolarised: same in every frame
     I[:, 1, 1] = [1.0, 0.5, 0.0, 0.5]      # fully polarised at 0 degrees
     r = sp.polarization_stokes_map(I)
-    assert len(r) == 7
+    assert len(r) == 8                     # 7 + "residual" (2026-10-24, additive)
     for v in r.values():
         assert np.isfinite(v).all() if v.dtype != bool else True
     assert not r["lit"][2, 2] and r["dolp"][2, 2] == 0.0 and r["aolp_deg"][2, 2] == 0.0
