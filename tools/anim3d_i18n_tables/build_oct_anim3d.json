@@ -1,0 +1,509 @@
+{
+    "example":  "build_oct_anim3d",
+    "strings":  {
+                    "Imaging a retinal cross-section with light":  {
+                                                                       "ja":  "光で目の奥の断面を撮る",
+                                                                       "zh":  "Imaging a retinal cross-section with light",
+                                                                       "tw":  "Imaging a retinal cross-section with light",
+                                                                       "ko":  "Imaging a retinal cross-section with light",
+                                                                       "de":  "Imaging a retinal cross-section with light",
+                                                                       "hi":  "Imaging a retinal cross-section with light",
+                                                                       "fr":  "Imaging a retinal cross-section with light"
+                                                                   },
+                    "Build A-scans from spectra and measure B-scan layer thickness from the image alone":  {
+                                                                                                               "ja":  "スペクトルから A スキャンを作り、B スキャンの層厚を画像だけから測る",
+                                                                                                               "zh":  "Build A-scans from spectra and measure B-scan layer thickness from the image alone",
+                                                                                                               "tw":  "Build A-scans from spectra and measure B-scan layer thickness from the image alone",
+                                                                                                               "ko":  "Build A-scans from spectra and measure B-scan layer thickness from the image alone",
+                                                                                                               "de":  "Build A-scans from spectra and measure B-scan layer thickness from the image alone",
+                                                                                                               "hi":  "Build A-scans from spectra and measure B-scan layer thickness from the image alone",
+                                                                                                               "fr":  "Build A-scans from spectra and measure B-scan layer thickness from the image alone"
+                                                                                                           },
+                    "Question, prediction, playback, formula, then limitations. Retina and measurements are entirely synthetic.":  {
+                                                                                                                                       "ja":  "①問い → ②予想 → ③再生 → ④式 → ⑤限界。網膜と測定値はすべて合成。",
+                                                                                                                                       "zh":  "Question, prediction, playback, formula, then limitations. Retina and measurements are entirely synthetic.",
+                                                                                                                                       "tw":  "Question, prediction, playback, formula, then limitations. Retina and measurements are entirely synthetic.",
+                                                                                                                                       "ko":  "Question, prediction, playback, formula, then limitations. Retina and measurements are entirely synthetic.",
+                                                                                                                                       "de":  "Question, prediction, playback, formula, then limitations. Retina and measurements are entirely synthetic.",
+                                                                                                                                       "hi":  "Question, prediction, playback, formula, then limitations. Retina and measurements are entirely synthetic.",
+                                                                                                                                       "fr":  "Question, prediction, playback, formula, then limitations. Retina and measurements are entirely synthetic."
+                                                                                                                                   },
+                    "Interference encodes depth":  {
+                                                       "ja":  "干渉が深さを符号にする",
+                                                       "zh":  "Interference encodes depth",
+                                                       "tw":  "Interference encodes depth",
+                                                       "ko":  "Interference encodes depth",
+                                                       "de":  "Interference encodes depth",
+                                                       "hi":  "Interference encodes depth",
+                                                       "fr":  "Interference encodes depth"
+                                                   },
+                    "Reference and retinal reflections form spectral fringes whose frequency encodes path difference. The yellow scan crosses the fovea.":  {
+                                                                                                                                                                "ja":  "参照光と網膜の反射光は、光路差に応じた周波数の縞を分光器に作る。黄色い走査光が中心窩を横切る。",
+                                                                                                                                                                "zh":  "Reference and retinal reflections form spectral fringes whose frequency encodes path difference. The yellow scan crosses the fovea.",
+                                                                                                                                                                "tw":  "Reference and retinal reflections form spectral fringes whose frequency encodes path difference. The yellow scan crosses the fovea.",
+                                                                                                                                                                "ko":  "Reference and retinal reflections form spectral fringes whose frequency encodes path difference. The yellow scan crosses the fovea.",
+                                                                                                                                                                "de":  "Reference and retinal reflections form spectral fringes whose frequency encodes path difference. The yellow scan crosses the fovea.",
+                                                                                                                                                                "hi":  "Reference and retinal reflections form spectral fringes whose frequency encodes path difference. The yellow scan crosses the fovea.",
+                                                                                                                                                                "fr":  "Reference and retinal reflections form spectral fringes whose frequency encodes path difference. The yellow scan crosses the fovea."
+                                                                                                                                                            },
+                    "centre wavelength":  {
+                                              "ja":  "中心波長",
+                                              "zh":  "centre wavelength",
+                                              "tw":  "centre wavelength",
+                                              "ko":  "centre wavelength",
+                                              "de":  "centre wavelength",
+                                              "hi":  "centre wavelength",
+                                              "fr":  "centre wavelength"
+                                          },
+                    "point-reflector A-scan":  {
+                                                   "ja":  "点反射の A スキャン",
+                                                   "zh":  "point-reflector A-scan",
+                                                   "tw":  "point-reflector A-scan",
+                                                   "ko":  "point-reflector A-scan",
+                                                   "de":  "point-reflector A-scan",
+                                                   "hi":  "point-reflector A-scan",
+                                                   "fr":  "point-reflector A-scan"
+                                               },
+                    "inverse-FFT point-reflector FWHM vs axial resolution (two bandwidths)":  {
+                                                                                                  "ja":  "逆 FFT 点反射の半値幅と軸方向分解能(帯域 2 種)",
+                                                                                                  "zh":  "inverse-FFT point-reflector FWHM vs axial resolution (two bandwidths)",
+                                                                                                  "tw":  "inverse-FFT point-reflector FWHM vs axial resolution (two bandwidths)",
+                                                                                                  "ko":  "inverse-FFT point-reflector FWHM vs axial resolution (two bandwidths)",
+                                                                                                  "de":  "inverse-FFT point-reflector FWHM vs axial resolution (two bandwidths)",
+                                                                                                  "hi":  "inverse-FFT point-reflector FWHM vs axial resolution (two bandwidths)",
+                                                                                                  "fr":  "inverse-FFT point-reflector FWHM vs axial resolution (two bandwidths)"
+                                                                                              },
+                    "total layer thickness measured only from B-scan vs synthetic geometry":  {
+                                                                                                  "ja":  "B スキャンだけから測った全層厚と合成幾何",
+                                                                                                  "zh":  "total layer thickness measured only from B-scan vs synthetic geometry",
+                                                                                                  "tw":  "total layer thickness measured only from B-scan vs synthetic geometry",
+                                                                                                  "ko":  "total layer thickness measured only from B-scan vs synthetic geometry",
+                                                                                                  "de":  "total layer thickness measured only from B-scan vs synthetic geometry",
+                                                                                                  "hi":  "total layer thickness measured only from B-scan vs synthetic geometry",
+                                                                                                  "fr":  "total layer thickness measured only from B-scan vs synthetic geometry"
+                                                                                              },
+                    "foveal pit measured from image vs synthetic geometry":  {
+                                                                                 "ja":  "画像から測った中心窩のくぼみと合成幾何",
+                                                                                 "zh":  "foveal pit measured from image vs synthetic geometry",
+                                                                                 "tw":  "foveal pit measured from image vs synthetic geometry",
+                                                                                 "ko":  "foveal pit measured from image vs synthetic geometry",
+                                                                                 "de":  "foveal pit measured from image vs synthetic geometry",
+                                                                                 "hi":  "foveal pit measured from image vs synthetic geometry",
+                                                                                 "fr":  "foveal pit measured from image vs synthetic geometry"
+                                                                             },
+                    "scan position":  {
+                                          "ja":  "走査位置",
+                                          "zh":  "scan position",
+                                          "tw":  "scan position",
+                                          "ko":  "scan position",
+                                          "de":  "scan position",
+                                          "hi":  "scan position",
+                                          "fr":  "scan position"
+                                      },
+                    "What happens to spectral fringes for a deeper reflector?":  {
+                                                                                     "ja":  "深い反射ほどスペクトルの縞はどうなる?",
+                                                                                     "zh":  "What happens to spectral fringes for a deeper reflector?",
+                                                                                     "tw":  "What happens to spectral fringes for a deeper reflector?",
+                                                                                     "ko":  "What happens to spectral fringes for a deeper reflector?",
+                                                                                     "de":  "What happens to spectral fringes for a deeper reflector?",
+                                                                                     "hi":  "What happens to spectral fringes for a deeper reflector?",
+                                                                                     "fr":  "What happens to spectral fringes for a deeper reflector?"
+                                                                                 },
+                    "become finer":  {
+                                         "ja":  "細かくなる",
+                                         "zh":  "become finer",
+                                         "tw":  "become finer",
+                                         "ko":  "become finer",
+                                         "de":  "become finer",
+                                         "hi":  "become finer",
+                                         "fr":  "become finer"
+                                     },
+                    "become coarser":  {
+                                           "ja":  "粗くなる",
+                                           "zh":  "become coarser",
+                                           "tw":  "become coarser",
+                                           "ko":  "become coarser",
+                                           "de":  "become coarser",
+                                           "hi":  "become coarser",
+                                           "fr":  "become coarser"
+                                       },
+                    "A larger path difference rotates phase faster with wavenumber.":  {
+                                                                                           "ja":  "光路差が大きいほど波数に対する位相の回転が速い。",
+                                                                                           "zh":  "A larger path difference rotates phase faster with wavenumber.",
+                                                                                           "tw":  "A larger path difference rotates phase faster with wavenumber.",
+                                                                                           "ko":  "A larger path difference rotates phase faster with wavenumber.",
+                                                                                           "de":  "A larger path difference rotates phase faster with wavenumber.",
+                                                                                           "hi":  "A larger path difference rotates phase faster with wavenumber.",
+                                                                                           "fr":  "A larger path difference rotates phase faster with wavenumber."
+                                                                                       },
+                    "I(k) ∝ cos(2kz)":  {
+                                            "ja":  "I(k) ∝ cos(2kz)",
+                                            "zh":  "I(k) ∝ cos(2kz)",
+                                            "tw":  "I(k) ∝ cos(2kz)",
+                                            "ko":  "I(k) ∝ cos(2kz)",
+                                            "de":  "I(k) ∝ cos(2kz)",
+                                            "hi":  "I(k) ∝ cos(2kz)",
+                                            "fr":  "I(k) ∝ cos(2kz)"
+                                        },
+                    "Single scattering and a uniform refractive index are assumed.":  {
+                                                                                          "ja":  "単一散乱と均一な屈折率を仮定する。",
+                                                                                          "zh":  "Single scattering and a uniform refractive index are assumed.",
+                                                                                          "tw":  "Single scattering and a uniform refractive index are assumed.",
+                                                                                          "ko":  "Single scattering and a uniform refractive index are assumed.",
+                                                                                          "de":  "Single scattering and a uniform refractive index are assumed.",
+                                                                                          "hi":  "Single scattering and a uniform refractive index are assumed.",
+                                                                                          "fr":  "Single scattering and a uniform refractive index are assumed."
+                                                                                      },
+                    "Inverse FFT the spectrum":  {
+                                                     "ja":  "スペクトルを逆 FFT する",
+                                                     "zh":  "Inverse FFT the spectrum",
+                                                     "tw":  "Inverse FFT the spectrum",
+                                                     "ko":  "Inverse FFT the spectrum",
+                                                     "de":  "Inverse FFT the spectrum",
+                                                     "hi":  "Inverse FFT the spectrum",
+                                                     "fr":  "Inverse FFT the spectrum"
+                                                 },
+                    "closed form":  {
+                                        "ja":  "閉形式",
+                                        "zh":  "closed form",
+                                        "tw":  "closed form",
+                                        "ko":  "closed form",
+                                        "de":  "closed form",
+                                        "hi":  "closed form",
+                                        "fr":  "closed form"
+                                    },
+                    "measured FWHM at 45 nm":  {
+                                                   "ja":  "45 nm の実測半値幅",
+                                                   "zh":  "measured FWHM at 45 nm",
+                                                   "tw":  "measured FWHM at 45 nm",
+                                                   "ko":  "measured FWHM at 45 nm",
+                                                   "de":  "measured FWHM at 45 nm",
+                                                   "hi":  "measured FWHM at 45 nm",
+                                                   "fr":  "measured FWHM at 45 nm"
+                                               },
+                    "measured FWHM at 70 nm":  {
+                                                   "ja":  "70 nm の実測半値幅",
+                                                   "zh":  "measured FWHM at 70 nm",
+                                                   "tw":  "measured FWHM at 70 nm",
+                                                   "ko":  "measured FWHM at 70 nm",
+                                                   "de":  "measured FWHM at 70 nm",
+                                                   "hi":  "measured FWHM at 70 nm",
+                                                   "fr":  "measured FWHM at 70 nm"
+                                               },
+                    "What does a broader source bandwidth do to depth resolution?":  {
+                                                                                         "ja":  "光源の帯域を広げると深さ分解能は?",
+                                                                                         "zh":  "What does a broader source bandwidth do to depth resolution?",
+                                                                                         "tw":  "What does a broader source bandwidth do to depth resolution?",
+                                                                                         "ko":  "What does a broader source bandwidth do to depth resolution?",
+                                                                                         "de":  "What does a broader source bandwidth do to depth resolution?",
+                                                                                         "hi":  "What does a broader source bandwidth do to depth resolution?",
+                                                                                         "fr":  "What does a broader source bandwidth do to depth resolution?"
+                                                                                     },
+                    "improves":  {
+                                     "ja":  "細かくなる",
+                                     "zh":  "improves",
+                                     "tw":  "improves",
+                                     "ko":  "improves",
+                                     "de":  "improves",
+                                     "hi":  "improves",
+                                     "fr":  "improves"
+                                 },
+                    "worsens":  {
+                                    "ja":  "粗くなる",
+                                    "zh":  "worsens",
+                                    "tw":  "worsens",
+                                    "ko":  "worsens",
+                                    "de":  "worsens",
+                                    "hi":  "worsens",
+                                    "fr":  "worsens"
+                                },
+                    "A wider wavenumber band transforms into a narrower depth peak.":  {
+                                                                                           "ja":  "広い波数帯域の逆 FFT は狭い深さピークになる。",
+                                                                                           "zh":  "A wider wavenumber band transforms into a narrower depth peak.",
+                                                                                           "tw":  "A wider wavenumber band transforms into a narrower depth peak.",
+                                                                                           "ko":  "A wider wavenumber band transforms into a narrower depth peak.",
+                                                                                           "de":  "A wider wavenumber band transforms into a narrower depth peak.",
+                                                                                           "hi":  "A wider wavenumber band transforms into a narrower depth peak.",
+                                                                                           "fr":  "A wider wavenumber band transforms into a narrower depth peak."
+                                                                                       },
+                    "δz = 2 ln2/π · λ₀²/Δλ":  {
+                                                  "ja":  "δz = 2 ln2/π · λ₀²/Δλ",
+                                                  "zh":  "δz = 2 ln2/π · λ₀²/Δλ",
+                                                  "tw":  "δz = 2 ln2/π · λ₀²/Δλ",
+                                                  "ko":  "δz = 2 ln2/π · λ₀²/Δλ",
+                                                  "de":  "δz = 2 ln2/π · λ₀²/Δλ",
+                                                  "hi":  "δz = 2 ln2/π · λ₀²/Δλ",
+                                                  "fr":  "δz = 2 ln2/π · λ₀²/Δλ"
+                                              },
+                    "Value in air; divide by refractive index in tissue.":  {
+                                                                                "ja":  "空気中の値。組織では屈折率で割る。",
+                                                                                "zh":  "Value in air; divide by refractive index in tissue.",
+                                                                                "tw":  "Value in air; divide by refractive index in tissue.",
+                                                                                "ko":  "Value in air; divide by refractive index in tissue.",
+                                                                                "de":  "Value in air; divide by refractive index in tissue.",
+                                                                                "hi":  "Value in air; divide by refractive index in tissue.",
+                                                                                "fr":  "Value in air; divide by refractive index in tissue."
+                                                                            },
+                    "Stack A-scans and measure layers":  {
+                                                             "ja":  "A スキャンを並べて層を測る",
+                                                             "zh":  "Stack A-scans and measure layers",
+                                                             "tw":  "Stack A-scans and measure layers",
+                                                             "ko":  "Stack A-scans and measure layers",
+                                                             "de":  "Stack A-scans and measure layers",
+                                                             "hi":  "Stack A-scans and measure layers",
+                                                             "fr":  "Stack A-scans and measure layers"
+                                                         },
+                    "maximum thickness error":  {
+                                                    "ja":  "最大厚み誤差",
+                                                    "zh":  "maximum thickness error",
+                                                    "tw":  "maximum thickness error",
+                                                    "ko":  "maximum thickness error",
+                                                    "de":  "maximum thickness error",
+                                                    "hi":  "maximum thickness error",
+                                                    "fr":  "maximum thickness error"
+                                                },
+                    "foveal-pit error":  {
+                                             "ja":  "中心窩の誤差",
+                                             "zh":  "foveal-pit error",
+                                             "tw":  "foveal-pit error",
+                                             "ko":  "foveal-pit error",
+                                             "de":  "foveal-pit error",
+                                             "hi":  "foveal-pit error",
+                                             "fr":  "foveal-pit error"
+                                         },
+                    "measured total thickness":  {
+                                                     "ja":  "測定した全層厚",
+                                                     "zh":  "measured total thickness",
+                                                     "tw":  "measured total thickness",
+                                                     "ko":  "measured total thickness",
+                                                     "de":  "measured total thickness",
+                                                     "hi":  "measured total thickness",
+                                                     "fr":  "measured total thickness"
+                                                 },
+                    "synthetic B-scan; yellow line is scan position":  {
+                                                                           "ja":  "合成 B スキャン。黄線は走査位置",
+                                                                           "zh":  "synthetic B-scan; yellow line is scan position",
+                                                                           "tw":  "synthetic B-scan; yellow line is scan position",
+                                                                           "ko":  "synthetic B-scan; yellow line is scan position",
+                                                                           "de":  "synthetic B-scan; yellow line is scan position",
+                                                                           "hi":  "synthetic B-scan; yellow line is scan position",
+                                                                           "fr":  "synthetic B-scan; yellow line is scan position"
+                                                                       },
+                    "What happens if every column independently picks only the strongest gradient?":  {
+                                                                                                          "ja":  "境界を一列ずつ最大勾配だけで選ぶと何が起こる?",
+                                                                                                          "zh":  "What happens if every column independently picks only the strongest gradient?",
+                                                                                                          "tw":  "What happens if every column independently picks only the strongest gradient?",
+                                                                                                          "ko":  "What happens if every column independently picks only the strongest gradient?",
+                                                                                                          "de":  "What happens if every column independently picks only the strongest gradient?",
+                                                                                                          "hi":  "What happens if every column independently picks only the strongest gradient?",
+                                                                                                          "fr":  "What happens if every column independently picks only the strongest gradient?"
+                                                                                                      },
+                    "it jumps to speckle":  {
+                                                "ja":  "スペックルへ飛ぶ",
+                                                "zh":  "it jumps to speckle",
+                                                "tw":  "it jumps to speckle",
+                                                "ko":  "it jumps to speckle",
+                                                "de":  "it jumps to speckle",
+                                                "hi":  "it jumps to speckle",
+                                                "fr":  "it jumps to speckle"
+                                            },
+                    "it always follows one layer":  {
+                                                        "ja":  "必ず同じ層を追う",
+                                                        "zh":  "it always follows one layer",
+                                                        "tw":  "it always follows one layer",
+                                                        "ko":  "it always follows one layer",
+                                                        "de":  "it always follows one layer",
+                                                        "hi":  "it always follows one layer",
+                                                        "fr":  "it always follows one layer"
+                                                    },
+                    "A path search with a continuity cost suppresses jumps.":  {
+                                                                                   "ja":  "連続性の費用を加えた経路探索で飛びを抑える。",
+                                                                                   "zh":  "A path search with a continuity cost suppresses jumps.",
+                                                                                   "tw":  "A path search with a continuity cost suppresses jumps.",
+                                                                                   "ko":  "A path search with a continuity cost suppresses jumps.",
+                                                                                   "de":  "A path search with a continuity cost suppresses jumps.",
+                                                                                   "hi":  "A path search with a continuity cost suppresses jumps.",
+                                                                                   "fr":  "A path search with a continuity cost suppresses jumps."
+                                                                               },
+                    "score = Σ edge − continuity cost":  {
+                                                             "ja":  "score = Σ edge − continuity cost",
+                                                             "zh":  "score = Σ edge − continuity cost",
+                                                             "tw":  "score = Σ edge − continuity cost",
+                                                             "ko":  "score = Σ edge − continuity cost",
+                                                             "de":  "score = Σ edge − continuity cost",
+                                                             "hi":  "score = Σ edge − continuity cost",
+                                                             "fr":  "score = Σ edge − continuity cost"
+                                                         },
+                    "Synthetic data; it must not be used for diagnosis.":  {
+                                                                               "ja":  "合成データであり、患者の診断には使えない。",
+                                                                               "zh":  "Synthetic data; it must not be used for diagnosis.",
+                                                                               "tw":  "Synthetic data; it must not be used for diagnosis.",
+                                                                               "ko":  "Synthetic data; it must not be used for diagnosis.",
+                                                                               "de":  "Synthetic data; it must not be used for diagnosis.",
+                                                                               "hi":  "Synthetic data; it must not be used for diagnosis.",
+                                                                               "fr":  "Synthetic data; it must not be used for diagnosis."
+                                                                           },
+                    "Why deeper images degrade":  {
+                                                      "ja":  "深くなるほど像が壊れる",
+                                                      "zh":  "Why deeper images degrade",
+                                                      "tw":  "Why deeper images degrade",
+                                                      "ko":  "Why deeper images degrade",
+                                                      "de":  "Why deeper images degrade",
+                                                      "hi":  "Why deeper images degrade",
+                                                      "fr":  "Why deeper images degrade"
+                                                  },
+                    "Can this image be used for diagnosis?":  {
+                                                                  "ja":  "この画像だけで診断できる?",
+                                                                  "zh":  "Can this image be used for diagnosis?",
+                                                                  "tw":  "Can this image be used for diagnosis?",
+                                                                  "ko":  "Can this image be used for diagnosis?",
+                                                                  "de":  "Can this image be used for diagnosis?",
+                                                                  "hi":  "Can this image be used for diagnosis?",
+                                                                  "fr":  "Can this image be used for diagnosis?"
+                                                              },
+                    "yes":  {
+                                "ja":  "できる",
+                                "zh":  "yes",
+                                "tw":  "yes",
+                                "ko":  "yes",
+                                "de":  "yes",
+                                "hi":  "yes",
+                                "fr":  "yes"
+                            },
+                    "no":  {
+                               "ja":  "できない",
+                               "zh":  "no",
+                               "tw":  "no",
+                               "ko":  "no",
+                               "de":  "no",
+                               "hi":  "no",
+                               "fr":  "no"
+                           },
+                    "It is not patient data but a simplified synthetic scatterer model.":  {
+                                                                                               "ja":  "患者データではなく、単純化した合成散乱体である。",
+                                                                                               "zh":  "It is not patient data but a simplified synthetic scatterer model.",
+                                                                                               "tw":  "It is not patient data but a simplified synthetic scatterer model.",
+                                                                                               "ko":  "It is not patient data but a simplified synthetic scatterer model.",
+                                                                                               "de":  "It is not patient data but a simplified synthetic scatterer model.",
+                                                                                               "hi":  "It is not patient data but a simplified synthetic scatterer model.",
+                                                                                               "fr":  "It is not patient data but a simplified synthetic scatterer model."
+                                                                                           },
+                    "calibrate roll-off, dispersion, and mirror image separately":  {
+                                                                                        "ja":  "roll-off・分散・鏡像は別々に校正",
+                                                                                        "zh":  "calibrate roll-off, dispersion, and mirror image separately",
+                                                                                        "tw":  "calibrate roll-off, dispersion, and mirror image separately",
+                                                                                        "ko":  "calibrate roll-off, dispersion, and mirror image separately",
+                                                                                        "de":  "calibrate roll-off, dispersion, and mirror image separately",
+                                                                                        "hi":  "calibrate roll-off, dispersion, and mirror image separately",
+                                                                                        "fr":  "calibrate roll-off, dispersion, and mirror image separately"
+                                                                                    },
+                    "Depth sensitivity, dispersion, multiple scattering, and eye motion are omitted.":  {
+                                                                                                            "ja":  "深部感度、分散、多重散乱、眼球運動を含めない。",
+                                                                                                            "zh":  "Depth sensitivity, dispersion, multiple scattering, and eye motion are omitted.",
+                                                                                                            "tw":  "Depth sensitivity, dispersion, multiple scattering, and eye motion are omitted.",
+                                                                                                            "ko":  "Depth sensitivity, dispersion, multiple scattering, and eye motion are omitted.",
+                                                                                                            "de":  "Depth sensitivity, dispersion, multiple scattering, and eye motion are omitted.",
+                                                                                                            "hi":  "Depth sensitivity, dispersion, multiple scattering, and eye motion are omitted.",
+                                                                                                            "fr":  "Depth sensitivity, dispersion, multiple scattering, and eye motion are omitted."
+                                                                                                        },
+                    "Entirely synthetic. No real patient data, instrument calibration, manufacturer, product, or hospital is included. Not for diagnosis.":  {
+                                                                                                                                                                 "ja":  "すべて合成。実在の患者データ、装置の較正値、メーカー名、製品名、病院名を含まない。診断には使わない。",
+                                                                                                                                                                 "zh":  "Entirely synthetic. No real patient data, instrument calibration, manufacturer, product, or hospital is included. Not for diagnosis.",
+                                                                                                                                                                 "tw":  "Entirely synthetic. No real patient data, instrument calibration, manufacturer, product, or hospital is included. Not for diagnosis.",
+                                                                                                                                                                 "ko":  "Entirely synthetic. No real patient data, instrument calibration, manufacturer, product, or hospital is included. Not for diagnosis.",
+                                                                                                                                                                 "de":  "Entirely synthetic. No real patient data, instrument calibration, manufacturer, product, or hospital is included. Not for diagnosis.",
+                                                                                                                                                                 "hi":  "Entirely synthetic. No real patient data, instrument calibration, manufacturer, product, or hospital is included. Not for diagnosis.",
+                                                                                                                                                                 "fr":  "Entirely synthetic. No real patient data, instrument calibration, manufacturer, product, or hospital is included. Not for diagnosis."
+                                                                                                                                                             },
+                    "≤ 10 µm (about 13 depth pixels or two PSF widths)":  {
+                                                                              "ja":  "≤ 10 µm (約 13 深さ画素・2 PSF 幅)",
+                                                                              "zh":  "≤ 10 µm (about 13 depth pixels or two PSF widths)",
+                                                                              "tw":  "≤ 10 µm (about 13 depth pixels or two PSF widths)",
+                                                                              "ko":  "≤ 10 µm (about 13 depth pixels or two PSF widths)",
+                                                                              "de":  "≤ 10 µm (about 13 depth pixels or two PSF widths)",
+                                                                              "hi":  "≤ 10 µm (about 13 depth pixels or two PSF widths)",
+                                                                              "fr":  "≤ 10 µm (about 13 depth pixels or two PSF widths)"
+                                                                          },
+                    "Box-averaging fringes over finite spectrometer pixels reduces a reflector at 600 µm to amplitude 0.798; the sinc closed form gives 0.811. Dispersion mismatch broadens peaks, and the inverse FFT of a real signal also creates a mirror image.":  {
+                                                                                                                                                                                                                                                                            "ja":  "有限幅の分光器画素で干渉縞を箱平均すると、600 µm の反射振幅は 0.798 まで落ちる。sinc の閉形式は 0.811。分散差はピークを広げ、実信号の逆 FFT は鏡像も作る。",
+                                                                                                                                                                                                                                                                            "zh":  "Box-averaging fringes over finite spectrometer pixels reduces a reflector at 600 µm to amplitude 0.798; the sinc closed form gives 0.811. Dispersion mismatch broadens peaks, and the inverse FFT of a real signal also creates a mirror image.",
+                                                                                                                                                                                                                                                                            "tw":  "Box-averaging fringes over finite spectrometer pixels reduces a reflector at 600 µm to amplitude 0.798; the sinc closed form gives 0.811. Dispersion mismatch broadens peaks, and the inverse FFT of a real signal also creates a mirror image.",
+                                                                                                                                                                                                                                                                            "ko":  "Box-averaging fringes over finite spectrometer pixels reduces a reflector at 600 µm to amplitude 0.798; the sinc closed form gives 0.811. Dispersion mismatch broadens peaks, and the inverse FFT of a real signal also creates a mirror image.",
+                                                                                                                                                                                                                                                                            "de":  "Box-averaging fringes over finite spectrometer pixels reduces a reflector at 600 µm to amplitude 0.798; the sinc closed form gives 0.811. Dispersion mismatch broadens peaks, and the inverse FFT of a real signal also creates a mirror image.",
+                                                                                                                                                                                                                                                                            "hi":  "Box-averaging fringes over finite spectrometer pixels reduces a reflector at 600 µm to amplitude 0.798; the sinc closed form gives 0.811. Dispersion mismatch broadens peaks, and the inverse FFT of a real signal also creates a mirror image.",
+                                                                                                                                                                                                                                                                            "fr":  "Box-averaging fringes over finite spectrometer pixels reduces a reflector at 600 µm to amplitude 0.798; the sinc closed form gives 0.811. Dispersion mismatch broadens peaks, and the inverse FFT of a real signal also creates a mirror image."
+                                                                                                                                                                                                                                                                        },
+                    "measured sensitivity at 600 µm":  {
+                                                           "ja":  "600 µm の実測感度",
+                                                           "zh":  "measured sensitivity at 600 µm",
+                                                           "tw":  "measured sensitivity at 600 µm",
+                                                           "ko":  "measured sensitivity at 600 µm",
+                                                           "de":  "measured sensitivity at 600 µm",
+                                                           "hi":  "measured sensitivity at 600 µm",
+                                                           "fr":  "measured sensitivity at 600 µm"
+                                                       },
+                    "sensitivity measured by pixel integration":  {
+                                                                      "ja":  "画素内積分で測った感度",
+                                                                      "zh":  "sensitivity measured by pixel integration",
+                                                                      "tw":  "sensitivity measured by pixel integration",
+                                                                      "ko":  "sensitivity measured by pixel integration",
+                                                                      "de":  "sensitivity measured by pixel integration",
+                                                                      "hi":  "sensitivity measured by pixel integration",
+                                                                      "fr":  "sensitivity measured by pixel integration"
+                                                                  },
+                    "sinc closed form":  {
+                                             "ja":  "sinc 閉形式",
+                                             "zh":  "sinc closed form",
+                                             "tw":  "sinc closed form",
+                                             "ko":  "sinc closed form",
+                                             "de":  "sinc closed form",
+                                             "hi":  "sinc closed form",
+                                             "fr":  "sinc closed form"
+                                         },
+                    "B-scan without finite-pixel roll-off":  {
+                                                                 "ja":  "有限画素の roll-off を含まない B スキャン",
+                                                                 "zh":  "B-scan without finite-pixel roll-off",
+                                                                 "tw":  "B-scan without finite-pixel roll-off",
+                                                                 "ko":  "B-scan without finite-pixel roll-off",
+                                                                 "de":  "B-scan without finite-pixel roll-off",
+                                                                 "hi":  "B-scan without finite-pixel roll-off",
+                                                                 "fr":  "B-scan without finite-pixel roll-off"
+                                                             },
+                    "roll-off measured with finite spectrometer pixels vs sinc closed form":  {
+                                                                                                  "ja":  "有限な分光器画素で測った roll-off と sinc 閉形式",
+                                                                                                  "zh":  "roll-off measured with finite spectrometer pixels vs sinc closed form",
+                                                                                                  "tw":  "roll-off measured with finite spectrometer pixels vs sinc closed form",
+                                                                                                  "ko":  "roll-off measured with finite spectrometer pixels vs sinc closed form",
+                                                                                                  "de":  "roll-off measured with finite spectrometer pixels vs sinc closed form",
+                                                                                                  "hi":  "roll-off measured with finite spectrometer pixels vs sinc closed form",
+                                                                                                  "fr":  "roll-off measured with finite spectrometer pixels vs sinc closed form"
+                                                                                              },
+                    "retain at least 95% sensitivity at 600 µm depth":  {
+                                                                            "ja":  "600 µm 深部で 95 % 以上の感度を保つ",
+                                                                            "zh":  "retain at least 95% sensitivity at 600 µm depth",
+                                                                            "tw":  "retain at least 95% sensitivity at 600 µm depth",
+                                                                            "ko":  "retain at least 95% sensitivity at 600 µm depth",
+                                                                            "de":  "retain at least 95% sensitivity at 600 µm depth",
+                                                                            "hi":  "retain at least 95% sensitivity at 600 µm depth",
+                                                                            "fr":  "retain at least 95% sensitivity at 600 µm depth"
+                                                                        },
+                    "A 2048-pixel spectrometer samples a Gaussian source and fringes uniformly in wavelength. They are interpolated to uniform k=2π/λ before inverse FFT. The 0.787 µm depth pitch comes from the k range, not the closed form.":  {
+                                                                                                                                                                                                                                                       "ja":  "波長等間隔の2048画素でガウス光源と干渉縞を観測し、k=2π/λ の等間隔へ補間してから逆 FFT する。深さ刻み0.787 µmはk範囲から決まり、閉形式からは与えていない。",
+                                                                                                                                                                                                                                                       "zh":  "A 2048-pixel spectrometer samples a Gaussian source and fringes uniformly in wavelength. They are interpolated to uniform k=2π/λ before inverse FFT. The 0.787 µm depth pitch comes from the k range, not the closed form.",
+                                                                                                                                                                                                                                                       "tw":  "A 2048-pixel spectrometer samples a Gaussian source and fringes uniformly in wavelength. They are interpolated to uniform k=2π/λ before inverse FFT. The 0.787 µm depth pitch comes from the k range, not the closed form.",
+                                                                                                                                                                                                                                                       "ko":  "A 2048-pixel spectrometer samples a Gaussian source and fringes uniformly in wavelength. They are interpolated to uniform k=2π/λ before inverse FFT. The 0.787 µm depth pitch comes from the k range, not the closed form.",
+                                                                                                                                                                                                                                                       "de":  "A 2048-pixel spectrometer samples a Gaussian source and fringes uniformly in wavelength. They are interpolated to uniform k=2π/λ before inverse FFT. The 0.787 µm depth pitch comes from the k range, not the closed form.",
+                                                                                                                                                                                                                                                       "hi":  "A 2048-pixel spectrometer samples a Gaussian source and fringes uniformly in wavelength. They are interpolated to uniform k=2π/λ before inverse FFT. The 0.787 µm depth pitch comes from the k range, not the closed form.",
+                                                                                                                                                                                                                                                       "fr":  "A 2048-pixel spectrometer samples a Gaussian source and fringes uniformly in wavelength. They are interpolated to uniform k=2π/λ before inverse FFT. The 0.787 µm depth pitch comes from the k range, not the closed form."
+                                                                                                                                                                                                                                                   },
+                    "After gaussian and sobel_mag, the first boundary is searched over the whole image. Each next boundary is sought at least 45 µm below the measured path. This minimum spacing is the only anatomical assumption; true positions are not passed to the estimator.":  {
+                                                                                                                                                                                                                                                                                            "ja":  "gaussian と sobel_mag の後、最初の境界は画像全体から探索する。次の境界は測定済み経路の45 µm以上下を探す。この最小間隔だけを解剖学的仮定とし、真の位置は推定器へ渡さない。",
+                                                                                                                                                                                                                                                                                            "zh":  "After gaussian and sobel_mag, the first boundary is searched over the whole image. Each next boundary is sought at least 45 µm below the measured path. This minimum spacing is the only anatomical assumption; true positions are not passed to the estimator.",
+                                                                                                                                                                                                                                                                                            "tw":  "After gaussian and sobel_mag, the first boundary is searched over the whole image. Each next boundary is sought at least 45 µm below the measured path. This minimum spacing is the only anatomical assumption; true positions are not passed to the estimator.",
+                                                                                                                                                                                                                                                                                            "ko":  "After gaussian and sobel_mag, the first boundary is searched over the whole image. Each next boundary is sought at least 45 µm below the measured path. This minimum spacing is the only anatomical assumption; true positions are not passed to the estimator.",
+                                                                                                                                                                                                                                                                                            "de":  "After gaussian and sobel_mag, the first boundary is searched over the whole image. Each next boundary is sought at least 45 µm below the measured path. This minimum spacing is the only anatomical assumption; true positions are not passed to the estimator.",
+                                                                                                                                                                                                                                                                                            "hi":  "After gaussian and sobel_mag, the first boundary is searched over the whole image. Each next boundary is sought at least 45 µm below the measured path. This minimum spacing is the only anatomical assumption; true positions are not passed to the estimator.",
+                                                                                                                                                                                                                                                                                            "fr":  "After gaussian and sobel_mag, the first boundary is searched over the whole image. Each next boundary is sought at least 45 µm below the measured path. This minimum spacing is the only anatomical assumption; true positions are not passed to the estimator."
+                                                                                                                                                                                                                                                                                        }
+                }
+}
