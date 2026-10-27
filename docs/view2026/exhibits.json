@@ -1768,6 +1768,82 @@
    }
   },
   {
+   "id": "ship_stability",
+   "category": "anim3d",
+   "media": "ship_stability_anim3d.html",
+   "media_path": "view2026/anim3d/ship_stability_anim3d.html",
+   "motion": true,
+   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_ship_anim3d.py",
+   "label": {
+    "ja": "船はなぜ浮き、傾いても戻るのか",
+    "en": "Why a ship floats and returns after heeling",
+    "zh": "船为何能浮起并在倾斜后复原",
+    "tw": "船為何能浮起並在傾斜後復原",
+    "ko": "배는 왜 뜨고 기울어도 돌아오는가",
+    "de": "Warum ein Schiff schwimmt und sich wieder aufrichtet",
+    "hi": "जहाज़ क्यों तैरता है और झुकने के बाद लौटता है",
+    "fr": "Pourquoi un navire flotte et se redresse"
+   },
+   "see": {
+    "ja": "傾くと浮心 B が沈んだ側へ動き、重心 G との水平距離 GZ が生まれる。G を上げると復原てこが逆向きになる。",
+    "en": "As the hull heels, B moves toward the immersed side and creates arm GZ from G. Raising G reverses the arm.",
+    "zh": "船体倾斜时 B 向浸水侧移动，与 G 形成力臂 GZ；抬高 G 后力臂反向。",
+    "tw": "船體傾斜時 B 向浸水側移動，與 G 形成力臂 GZ；抬高 G 後力臂反向。",
+    "ko": "선체가 기울면 B가 잠긴 쪽으로 움직여 G와 복원정 GZ를 만들고, G를 높이면 방향이 뒤집힌다.",
+    "de": "Beim Krängen wandert B zur eingetauchten Seite und bildet mit G den Hebel GZ. Ein höheres G kehrt ihn um.",
+    "hi": "झुकने पर B डूबी ओर जाता है और G से भुजा GZ बनती है। G ऊपर करने पर भुजा उलटती है।",
+    "fr": "À la gîte, B va vers le côté immergé et forme le bras GZ avec G. Relever G inverse ce bras."
+   },
+   "num": {
+    "ja": "箱形船の閉形式との相対誤差 2.26e-16、重量一致 3.58e-16、GZ の傾きと GM の差 0.123%。高い重心では GM = -0.350 m。",
+    "en": "Box closed-form error 2.26e-16; weight error 3.58e-16; GZ-slope versus GM difference 0.123%. Raised G gives GM = -0.350 m.",
+    "zh": "箱形闭式误差 2.26e-16；重量误差 3.58e-16；GZ 斜率与 GM 相差 0.123%。高重心时 GM = -0.350 m。",
+    "tw": "箱形閉式誤差 2.26e-16；重量誤差 3.58e-16；GZ 斜率與 GM 相差 0.123%。高重心時 GM = -0.350 m。",
+    "ko": "상자형 폐형식 오차 2.26e-16, 중량 오차 3.58e-16, GZ 기울기와 GM 차이 0.123%. 높은 G에서는 GM = -0.350 m.",
+    "de": "Kastenfehler 2.26e-16; Gewichtsfehler 3.58e-16; GZ-Steigung gegen GM 0.123 %. Mit hohem G ist GM = -0.350 m.",
+    "hi": "डिब्बाकार त्रुटि 2.26e-16; भार त्रुटि 3.58e-16; GZ ढाल और GM में अंतर 0.123%। ऊँचे G पर GM = -0.350 m।",
+    "fr": "Erreur du caisson 2.26e-16 ; erreur de poids 3.58e-16 ; écart pente GZ–GM 0.123 %. Avec G haut, GM = -0.350 m."
+   }
+  },
+  {
+   "id": "rail_light_section",
+   "category": "anim3d",
+   "media": "rail_light_section_anim3d.html",
+   "media_path": "view2026/anim3d/rail_light_section_anim3d.html",
+   "motion": true,
+   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_rail_anim3d.py",
+   "label": {
+    "ja": "光切断でレールの摩耗と軌間を測る",
+    "en": "Measure rail wear and gauge with light-section scanning",
+    "zh": "Measure rail wear and gauge with light-section scanning",
+    "tw": "Measure rail wear and gauge with light-section scanning",
+    "ko": "Measure rail wear and gauge with light-section scanning",
+    "de": "Measure rail wear and gauge with light-section scanning",
+    "hi": "Measure rail wear and gauge with light-section scanning",
+    "fr": "Measure rail wear and gauge with light-section scanning"
+   },
+   "see": {
+    "ja": "斜めの光の面とレール表面の交線が、頭頂・ウェブ・底部に沿って曲がる。走行すると左頭頂の摩耗が立ち上がり、二本の内側距離から軌間の広がりが見える。",
+    "en": "The intersection of an oblique light sheet and rail surface bends over head, web and foot. During travel, left-head wear rises and the inner distance between two rails reveals gauge widening.",
+    "zh": "The intersection of an oblique light sheet and rail surface bends over head, web and foot. During travel, left-head wear rises and the inner distance between two rails reveals gauge widening.",
+    "tw": "The intersection of an oblique light sheet and rail surface bends over head, web and foot. During travel, left-head wear rises and the inner distance between two rails reveals gauge widening.",
+    "ko": "The intersection of an oblique light sheet and rail surface bends over head, web and foot. During travel, left-head wear rises and the inner distance between two rails reveals gauge widening.",
+    "de": "The intersection of an oblique light sheet and rail surface bends over head, web and foot. During travel, left-head wear rises and the inner distance between two rails reveals gauge widening.",
+    "hi": "The intersection of an oblique light sheet and rail surface bends over head, web and foot. During travel, left-head wear rises and the inner distance between two rails reveals gauge widening.",
+    "fr": "The intersection of an oblique light sheet and rail surface bends over head, web and foot. During travel, left-head wear rises and the inner distance between two rails reveals gauge widening."
+   },
+   "num": {
+    "ja": "雑音付きのサブピクセル光線から断面 RMS 0.699 mm、形を仮定しない摩耗誤差 0.0577 mm、点列から測った軌間誤差 0.346 mm。三角測量 op と独立閉形式は < 1e-12 mm。",
+    "en": "From a noisy subpixel laser line: section RMS 0.699 mm, shape-free wear error 0.0577 mm and profile-measured gauge error 0.346 mm. The triangulation op and independent closed form agree to < 1e-12 mm.",
+    "zh": "From a noisy subpixel laser line: section RMS 0.699 mm, shape-free wear error 0.0577 mm and profile-measured gauge error 0.346 mm. The triangulation op and independent closed form agree to < 1e-12 mm.",
+    "tw": "From a noisy subpixel laser line: section RMS 0.699 mm, shape-free wear error 0.0577 mm and profile-measured gauge error 0.346 mm. The triangulation op and independent closed form agree to < 1e-12 mm.",
+    "ko": "From a noisy subpixel laser line: section RMS 0.699 mm, shape-free wear error 0.0577 mm and profile-measured gauge error 0.346 mm. The triangulation op and independent closed form agree to < 1e-12 mm.",
+    "de": "From a noisy subpixel laser line: section RMS 0.699 mm, shape-free wear error 0.0577 mm and profile-measured gauge error 0.346 mm. The triangulation op and independent closed form agree to < 1e-12 mm.",
+    "hi": "From a noisy subpixel laser line: section RMS 0.699 mm, shape-free wear error 0.0577 mm and profile-measured gauge error 0.346 mm. The triangulation op and independent closed form agree to < 1e-12 mm.",
+    "fr": "From a noisy subpixel laser line: section RMS 0.699 mm, shape-free wear error 0.0577 mm and profile-measured gauge error 0.346 mm. The triangulation op and independent closed form agree to < 1e-12 mm."
+   }
+  },
+  {
    "id": "salt_xrd_anim3d",
    "category": "anim3d",
    "media": "salt_xrd_anim3d.html",
@@ -1879,44 +1955,6 @@
     "de": "Maximale R-Abweichung 0.00068; maximaler SpO₂-Fehler 0.034 %. Bei 10 % COHb liest das Modell wahre 90.0 % als 91.0 %.",
     "hi": "R का अधिकतम अंतर 0.00068 और SpO₂ की अधिकतम त्रुटि 0.034%। 10% COHb पर मॉडल सही 90.0% को 91.0% पढ़ता है।",
     "fr": "Écart maximal de R : 0.00068 ; erreur maximale de SpO₂ : 0.034 %. Avec 10 % de COHb, le modèle lit 91.0 % au lieu de 90.0 %."
-   }
-  },
-  {
-   "id": "rail_light_section",
-   "category": "anim3d",
-   "media": "rail_light_section_anim3d.html",
-   "media_path": "view2026/anim3d/rail_light_section_anim3d.html",
-   "motion": true,
-   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_rail_anim3d.py",
-   "label": {
-    "ja": "光切断でレールの摩耗と軌間を測る",
-    "en": "Measure rail wear and gauge with light-section scanning",
-    "zh": "Measure rail wear and gauge with light-section scanning",
-    "tw": "Measure rail wear and gauge with light-section scanning",
-    "ko": "Measure rail wear and gauge with light-section scanning",
-    "de": "Measure rail wear and gauge with light-section scanning",
-    "hi": "Measure rail wear and gauge with light-section scanning",
-    "fr": "Measure rail wear and gauge with light-section scanning"
-   },
-   "see": {
-    "ja": "斜めの光の面とレール表面の交線が、頭頂・ウェブ・底部に沿って曲がる。走行すると左頭頂の摩耗が立ち上がり、二本の内側距離から軌間の広がりが見える。",
-    "en": "The intersection of an oblique light sheet and rail surface bends over head, web and foot. During travel, left-head wear rises and the inner distance between two rails reveals gauge widening.",
-    "zh": "The intersection of an oblique light sheet and rail surface bends over head, web and foot. During travel, left-head wear rises and the inner distance between two rails reveals gauge widening.",
-    "tw": "The intersection of an oblique light sheet and rail surface bends over head, web and foot. During travel, left-head wear rises and the inner distance between two rails reveals gauge widening.",
-    "ko": "The intersection of an oblique light sheet and rail surface bends over head, web and foot. During travel, left-head wear rises and the inner distance between two rails reveals gauge widening.",
-    "de": "The intersection of an oblique light sheet and rail surface bends over head, web and foot. During travel, left-head wear rises and the inner distance between two rails reveals gauge widening.",
-    "hi": "The intersection of an oblique light sheet and rail surface bends over head, web and foot. During travel, left-head wear rises and the inner distance between two rails reveals gauge widening.",
-    "fr": "The intersection of an oblique light sheet and rail surface bends over head, web and foot. During travel, left-head wear rises and the inner distance between two rails reveals gauge widening."
-   },
-   "num": {
-    "ja": "雑音付きのサブピクセル光線から断面 RMS 0.699 mm、形を仮定しない摩耗誤差 0.0577 mm、点列から測った軌間誤差 0.346 mm。三角測量 op と独立閉形式は < 1e-12 mm。",
-    "en": "From a noisy subpixel laser line: section RMS 0.699 mm, shape-free wear error 0.0577 mm and profile-measured gauge error 0.346 mm. The triangulation op and independent closed form agree to < 1e-12 mm.",
-    "zh": "From a noisy subpixel laser line: section RMS 0.699 mm, shape-free wear error 0.0577 mm and profile-measured gauge error 0.346 mm. The triangulation op and independent closed form agree to < 1e-12 mm.",
-    "tw": "From a noisy subpixel laser line: section RMS 0.699 mm, shape-free wear error 0.0577 mm and profile-measured gauge error 0.346 mm. The triangulation op and independent closed form agree to < 1e-12 mm.",
-    "ko": "From a noisy subpixel laser line: section RMS 0.699 mm, shape-free wear error 0.0577 mm and profile-measured gauge error 0.346 mm. The triangulation op and independent closed form agree to < 1e-12 mm.",
-    "de": "From a noisy subpixel laser line: section RMS 0.699 mm, shape-free wear error 0.0577 mm and profile-measured gauge error 0.346 mm. The triangulation op and independent closed form agree to < 1e-12 mm.",
-    "hi": "From a noisy subpixel laser line: section RMS 0.699 mm, shape-free wear error 0.0577 mm and profile-measured gauge error 0.346 mm. The triangulation op and independent closed form agree to < 1e-12 mm.",
-    "fr": "From a noisy subpixel laser line: section RMS 0.699 mm, shape-free wear error 0.0577 mm and profile-measured gauge error 0.346 mm. The triangulation op and independent closed form agree to < 1e-12 mm."
    }
   }
  ],

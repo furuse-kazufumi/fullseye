@@ -326,6 +326,9 @@ EXCLUDED = {
     "tools/build_satgsd_anim3d.py": ("衛星の地上分解能と回折の動く 3-D の教材(docs/view2026/anim3d/satellite_gsd_anim3d.html)。"
                                      "`py -3.11 tools/anim3d_i18n.py --build build_satgsd_anim3d --out docs/view2026/anim3d/satellite_gsd_anim3d.html` で書く"
                                      "(翻訳表 tools/anim3d_i18n_tables/build_satgsd_anim3d.json)。門は tests/test_anim3d_satgsd_2026_10_26.py。"),
+    "tools/build_ship_anim3d.py": ("排水量・浮心・メタセンタ高さの動く 3-D 教材(docs/view2026/anim3d/ship_stability_anim3d.html)。"
+                                  "`py -3.11 tools/anim3d_i18n.py --build build_ship_anim3d --out docs/view2026/anim3d/ship_stability_anim3d.html` で書く"
+                                  "(翻訳表 tools/anim3d_i18n_tables/build_ship_anim3d.json)。門は tests/test_anim3d_ship_2026_10_27.py。"),
     "tools/build_rail_anim3d.py": ("レールの頭頂摩耗と軌間を光切断で測る動く 3-D 教材(docs/view2026/anim3d/rail_light_section_anim3d.html)。"
                                    "`py -3.11 tools/anim3d_i18n.py --build build_rail_anim3d --out docs/view2026/anim3d/rail_light_section_anim3d.html` で書く"
                                    "(翻訳表 tools/anim3d_i18n_tables/build_rail_anim3d.json)。門は tests/test_anim3d_rail_2026_10_26.py。"),

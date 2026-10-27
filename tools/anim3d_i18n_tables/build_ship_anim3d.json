@@ -1,0 +1,501 @@
+{
+    "_":  "English-keyed translations for the synthetic ship-stability lesson.",
+    "example":  "build_ship_anim3d",
+    "strings":  {
+                    "Why a ship floats and returns after heeling":  {
+                                                                        "ja":  "船はなぜ浮き、傾いても戻るのか",
+                                                                        "zh":  "为什么船会漂浮并在横倾后返回",
+                                                                        "tw":  "為什麼船會漂浮並在橫傾後返回",
+                                                                        "ko":  "배가 떠서 기울었다가 돌아오는 이유",
+                                                                        "de":  "Warum ein Schiff schwimmt und nach einer Krängung zurückkehrt",
+                                                                        "hi":  "क्यों एक जहाज तैरता है और हिलने के बाद वापस लौट आता है?",
+                                                                        "fr":  "Pourquoi un navire flotte et revient après une gîte"
+                                                                    },
+                    "Track displacement, buoyancy centre B, metacentre M and centre of gravity G on one synthetic hull":  {
+                                                                                                                              "ja":  "排水量・浮心 B・メタセンタ M・重心 G を同じ合成船型で追う",
+                                                                                                                              "zh":  "一个合成船体上的轨迹位移、浮力中心 B、超中心 M 和重心 G",
+                                                                                                                              "tw":  "一個合成船體上的軌跡位移、浮力中心 B、超中心 M 和重心 G",
+                                                                                                                              "ko":  "하나의 합성 선체에 대한 트랙 변위, 부력 중심 B, 메타중심 M 및 무게 중심 G",
+                                                                                                                              "de":  "Gleisverdrängung, Auftriebszentrum B, Metazentrum M und Schwerpunkt G auf einem Kunststoffrumpf",
+                                                                                                                              "hi":  "एक सिंथेटिक पतवार पर ट्रैक विस्थापन, उत्प्लावन केंद्र बी, मेटासेंटर एम और गुरुत्वाकर्षण केंद्र जी",
+                                                                                                                              "fr":  "Déplacement de la chenille, centre de flottabilité B, métacentre M et centre de gravité G sur une coque synthétique"
+                                                                                                                          },
+                    "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Drag to orbit and open badges for computed gates.":  {
+                                                                                                                                               "ja":  "①問い → ②予想 → ③再生 → ④式 → ⑤限界。ドラッグで回転し、バッジで計算の門を見る。",
+                                                                                                                                               "zh":  "按照①题→②预测→③玩法→④公式→⑤限制。拖动到轨道并打开计算门的徽章。",
+                                                                                                                                               "tw":  "依照①題→②預測→③玩法→④公式→⑤限制。拖曳到軌道並打開計算門的徽章。",
+                                                                                                                                               "ko":  "①질문 → ②예측 → ③놀이 → ④공식 → ⑤제한 순으로 진행하세요. 궤도로 드래그하여 계산된 게이트의 배지를 엽니다.",
+                                                                                                                                               "de":  "Folgen Sie ① Frage → ② Vorhersage → ③ Spielen → ④ Formel → ⑤ Grenze. Ziehen Sie in den Orbit und öffnen Sie Abzeichen für berechnete Tore.",
+                                                                                                                                               "hi":  "① प्रश्न → ② भविष्यवाणी → ③ खेल → ④ सूत्र → ⑤ सीमा का पालन करें। कक्षा में खींचें और परिकलित गेटों के लिए बैज खोलें।",
+                                                                                                                                               "fr":  "Suivez ① question → ② prédiction → ③ jeu → ④ formule → ⑤ limite. Faites glisser vers l\u0027orbite et ouvrez les badges pour les portes calculées."
+                                                                                                                                           },
+                    "Why it floats":  {
+                                          "ja":  "なぜ浮くか",
+                                          "zh":  "为什么会漂浮",
+                                          "tw":  "為什麼會漂浮",
+                                          "ko":  "왜 뜨는가?",
+                                          "de":  "Warum es schwimmt",
+                                          "hi":  "यह क्यों तैरता है",
+                                          "fr":  "Pourquoi ça flotte"
+                                      },
+                    "Draft is found by bisection until submerged mesh volume times water density matches the specified weight. Blue displacement and yellow weight meet at equilibrium.":  {
+                                                                                                                                                                                               "ja":  "喫水を二分探索し、水面下メッシュの体積×水の密度が指定重量に合う位置で止める。青い帯が排水量、黄が重量で、重なる所が釣り合い。",
+                                                                                                                                                                                               "zh":  "通过平分找到吃水，直到浸没的网格体积乘以水密度与指定的重量相匹配。蓝色位移和黄色重量达到平衡。",
+                                                                                                                                                                                               "tw":  "透過平分找到吃水，直到浸沒的網格體積乘以水密度與指定的重量相符。藍色位移和黃色重量達到平衡。",
+                                                                                                                                                                                               "ko":  "초안은 물에 잠긴 메시 부피와 물 밀도를 곱하여 지정된 중량과 일치할 때까지 이등분하여 구합니다. 파란색 변위와 노란색 무게가 평형 상태에서 만납니다.",
+                                                                                                                                                                                               "de":  "Der Tiefgang wird durch Halbierung ermittelt, bis das eingetauchte Maschenvolumen mal die Wasserdichte dem angegebenen Gewicht entspricht. Blaue Verschiebung und gelbes Gewicht treffen im Gleichgewicht aufeinander.",
+                                                                                                                                                                                               "hi":  "ड्राफ्ट को द्विभाजन द्वारा तब तक पाया जाता है जब तक जलमग्न जाल की मात्रा गुणा पानी का घनत्व निर्दिष्ट वजन से मेल नहीं खाता। नीला विस्थापन और पीला भार संतुलन पर मिलते हैं।",
+                                                                                                                                                                                               "fr":  "Le tirant d\u0027eau est trouvé par bissection jusqu\u0027à ce que le volume du maillage immergé multiplié par la densité de l\u0027eau corresponde au poids spécifié. Le déplacement bleu et le poids jaune se rencontrent à l’équilibre."
+                                                                                                                                                                                           },
+                    "specified displaced volume":  {
+                                                       "ja":  "指定した排水体積",
+                                                       "zh":  "指定排量",
+                                                       "tw":  "指定排氣量",
+                                                       "ko":  "지정된 변위량",
+                                                       "de":  "spezifiziertes verdrängtes Volumen",
+                                                       "hi":  "निर्दिष्ट विस्थापित मात्रा",
+                                                       "fr":  "volume déplacé spécifié"
+                                                   },
+                    "synthetic hull dimensions":  {
+                                                      "ja":  "合成船型の寸法",
+                                                      "zh":  "合成船体尺寸",
+                                                      "tw":  "合成船體尺寸",
+                                                      "ko":  "합성 선체 치수",
+                                                      "de":  "Abmessungen des Kunststoffrumpfes",
+                                                      "hi":  "सिंथेटिक पतवार आयाम",
+                                                      "fr":  "dimensions de la coque synthétique"
+                                                  },
+                    "displaced volume":  {
+                                             "ja":  "排水体積",
+                                             "zh":  "排量",
+                                             "tw":  "排氣量",
+                                             "ko":  "변위된 부피",
+                                             "de":  "verdrängtes Volumen",
+                                             "hi":  "विस्थापित मात्रा",
+                                             "fr":  "volume déplacé"
+                                         },
+                    "blue: displacement; yellow: volume equivalent of specified weight":  {
+                                                                                              "ja":  "青: 排水量、黄: 指定重量に相当する体積",
+                                                                                              "zh":  "蓝色：位移；黄色：指定重量的体积当量",
+                                                                                              "tw":  "藍色：位移；黃色：指定重量的體積當量",
+                                                                                              "ko":  "파란색: 변위; 노란색: 지정된 무게에 해당하는 부피",
+                                                                                              "de":  "blau: Verschiebung; gelb: Volumenäquivalent des angegebenen Gewichts",
+                                                                                              "hi":  "नीला: विस्थापन; पीला: निर्दिष्ट वजन के बराबर मात्रा",
+                                                                                              "fr":  "bleu : déplacement ; jaune : volume équivalent au poids spécifié"
+                                                                                          },
+                    "box hull: displacement, B and GM":  {
+                                                             "ja":  "箱形船: 排水量・浮心・GM",
+                                                             "zh":  "箱形船体：排水量、B 和 GM",
+                                                             "tw":  "箱形船體：排水量、B 和 GM",
+                                                             "ko":  "상자 선체: 변위, B 및 GM",
+                                                             "de":  "Kastenrumpf: Verdrängung, B und GM",
+                                                             "hi":  "बॉक्स पतवार: विस्थापन, बी और जीएम",
+                                                             "fr":  "coque caisson : déplacement, B et GM"
+                                                         },
+                    "searched displacement vs specified weight":  {
+                                                                      "ja":  "喫水探索後の排水量と指定重量",
+                                                                      "zh":  "搜索位移与指定重量",
+                                                                      "tw":  "搜尋位移與指定重量",
+                                                                      "ko":  "검색된 변위 대 특정 중량",
+                                                                      "de":  "Gesuchter Hubraum im Vergleich zum angegebenen Gewicht",
+                                                                      "hi":  "खोजा गया विस्थापन बनाम निर्दिष्ट वजन",
+                                                                      "fr":  "déplacement recherché par rapport au poids spécifié"
+                                                                  },
+                    "small-angle GZ slope vs mesh GM":  {
+                                                            "ja":  "小傾斜 GZ の傾きとメッシュ GM",
+                                                            "zh":  "小角度 GZ 坡度与网格 GM",
+                                                            "tw":  "小角度 GZ 坡度與網格 GM",
+                                                            "ko":  "작은 각도 GZ 경사 대 메쉬 GM",
+                                                            "de":  "Kleinwinkel-GZ-Steigung vs. Netz-GM",
+                                                            "hi":  "छोटे-कोण जीजेड ढलान बनाम जाल जीएम",
+                                                            "fr":  "Pente GZ aux petits angles vs maillage GM"
+                                                        },
+                    "heel angle":  {
+                                       "ja":  "横傾斜角",
+                                       "zh":  "跟角",
+                                       "tw":  "跟角",
+                                       "ko":  "힐 각도",
+                                       "de":  "Fersenwinkel",
+                                       "hi":  "एड़ी का कोण",
+                                       "fr":  "angle du talon"
+                                   },
+                    "What happens to draft when weight increases?":  {
+                                                                         "ja":  "重さを増やすと喫水は?",
+                                                                         "zh":  "当重量增加时牵伸会发生什么？",
+                                                                         "tw":  "當重量增加時牽伸會發生什麼事？",
+                                                                         "ko":  "무게가 증가하면 드래프트는 어떻게 되나요?",
+                                                                         "de":  "Was passiert mit der Zugluft, wenn das Gewicht zunimmt?",
+                                                                         "hi":  "वजन बढ़ने पर ड्राफ्ट का क्या होता है?",
+                                                                         "fr":  "Qu’arrive-t-il au tirant d’eau lorsque le poids augmente ?"
+                                                                     },
+                    "becomes shallower":  {
+                                              "ja":  "浅くなる",
+                                              "zh":  "变得更浅",
+                                              "tw":  "變得更淺",
+                                              "ko":  "얕아진다",
+                                              "de":  "wird flacher",
+                                              "hi":  "उथला हो जाता है",
+                                              "fr":  "devient moins profond"
+                                          },
+                    "becomes deeper":  {
+                                           "ja":  "深くなる",
+                                           "zh":  "变得更深",
+                                           "tw":  "變得更深",
+                                           "ko":  "깊어진다",
+                                           "de":  "wird tiefer",
+                                           "hi":  "गहरा हो जाता है",
+                                           "fr":  "devient plus profond"
+                                       },
+                    "The hull sinks until the displaced water weighs as much as the ship.":  {
+                                                                                                 "ja":  "押しのけた水の重さが船の重さに等しくなるまで沈む。",
+                                                                                                 "zh":  "船体下沉，直到排出的水与船一样重。",
+                                                                                                 "tw":  "船體下沉，直到排出的水與船一樣重。",
+                                                                                                 "ko":  "밀려난 물의 무게가 배의 무게만큼 커질 때까지 선체가 가라앉습니다.",
+                                                                                                 "de":  "Der Rumpf sinkt, bis das verdrängte Wasser so viel wiegt wie das Schiff.",
+                                                                                                 "hi":  "पतवार तब तक डूबती रहती है जब तक कि विस्थापित पानी का वजन जहाज के बराबर न हो जाए।",
+                                                                                                 "fr":  "La coque coule jusqu\u0027à ce que l\u0027eau déplacée pèse autant que le navire."
+                                                                                             },
+                    "ρwater Vdisplaced g = W":  {
+                                                    "ja":  "ρ水 V排水 g = W",
+                                                    "zh":  "ρ水 V 位移 g = W",
+                                                    "tw":  "ρ水 V 位移 g = W",
+                                                    "ko":  "ρ물 V 변위 g = W",
+                                                    "de":  "ρWasser Vverdrängt g = W",
+                                                    "hi":  "ρजल Vविस्थापित g = W",
+                                                    "fr":  "ρeau Vdéplacée g = W"
+                                                },
+                    "Static water only; waves, forward speed and hull flexibility are omitted.":  {
+                                                                                                      "ja":  "静水中の釣り合い。波、速度、船体の弾性は含めない。",
+                                                                                                      "zh":  "仅静态水；波浪、前进速度和船体灵活性被忽略。",
+                                                                                                      "tw":  "僅靜態水；波浪、前進速度和船體靈活性被忽略。",
+                                                                                                      "ko":  "고정된 물만; 파도, 전진 속도 및 선체 유연성은 생략됩니다.",
+                                                                                                      "de":  "Nur statisches Wasser; Wellen, Vorwärtsgeschwindigkeit und Rumpfflexibilität werden weggelassen.",
+                                                                                                      "hi":  "केवल स्थैतिक जल; लहरें, आगे की गति और पतवार का लचीलापन छोड़ दिया गया है।",
+                                                                                                      "fr":  "Eau statique uniquement ; les vagues, la vitesse d\u0027avancement et la flexibilité de la coque sont omises."
+                                                                                                  },
+                    "Where does B move when the hull heels?":  {
+                                                                   "ja":  "傾けると浮心はどこへ動く?",
+                                                                   "zh":  "当船体倾斜时 B 会移动到哪里？",
+                                                                   "tw":  "當船體傾斜時 B 會移動到哪裡？",
+                                                                   "ko":  "선체가 굽힐 때 B는 어디로 이동합니까?",
+                                                                   "de":  "Wohin bewegt sich B, wenn der Rumpf krängt?",
+                                                                   "hi":  "जब पतवार हिलती है तो B कहाँ चलता है?",
+                                                                   "fr":  "Où se déplace B lorsque la coque gîte ?"
+                                                               },
+                    "The submerged shape is cut anew at every heel. Buoyancy centre B is its volume centroid; it moves toward the deeper side, and its horizontal distance from G is the righting arm GZ.":  {
+                                                                                                                                                                                                                 "ja":  "傾くたびに水面下の形を切り直す。浮心 B は水面下体積の中心なので、深く沈んだ側へ横移動し、重心 G との水平距離が復原てこ GZ になる。",
+                                                                                                                                                                                                                 "zh":  "每个鞋跟处的浸没形状均经过重新切割。浮力中心B为其体积质心；向深处移动，其与G的水平距离为复原力臂GZ。",
+                                                                                                                                                                                                                 "tw":  "每個鞋跟處的浸沒形狀均經過重新切割。浮力中心B為其體積質心；向深處移動，與G的水平距離為復原力臂GZ。",
+                                                                                                                                                                                                                 "ko":  "물에 잠긴 모양은 모든 힐에서 새롭게 재단되었습니다. 부력 중심 B는 부피 중심입니다. 더 깊은 쪽으로 이동하며 G로부터 수평 거리가 바로잡는 팔 GZ입니다.",
+                                                                                                                                                                                                                 "de":  "Die untergetauchte Form wird an jedem Absatz neu geschnitten. Auftriebszentrum B ist sein Volumenschwerpunkt; es bewegt sich zur tieferen Seite und sein horizontaler Abstand von G ist der aufrichtende Arm GZ.",
+                                                                                                                                                                                                                 "hi":  "जलमग्न आकृति को प्रत्येक एड़ी पर नए सिरे से काटा जाता है। उत्प्लावन केंद्र B इसका आयतन केन्द्रक है; यह गहराई की ओर बढ़ता है, और G से इसकी क्षैतिज दूरी दाहिनी भुजा GZ है।",
+                                                                                                                                                                                                                 "fr":  "La forme immergée est recoupée à chaque talon. Le centre de flottabilité B est son centre de gravité volumique ; il se déplace vers le côté le plus profond et sa distance horizontale par rapport à G est le bras de redressement GZ."
+                                                                                                                                                                                                             },
+                    "GM":  {
+                               "ja":  "GM",
+                               "zh":  "GM",
+                               "tw":  "GM",
+                               "ko":  "GM",
+                               "de":  "GM",
+                               "hi":  "GM",
+                               "fr":  "GM"
+                           },
+                    "BM":  {
+                               "ja":  "BM",
+                               "zh":  "BM",
+                               "tw":  "BM",
+                               "ko":  "BM",
+                               "de":  "BM",
+                               "hi":  "BM",
+                               "fr":  "BM"
+                           },
+                    "GZ":  {
+                               "ja":  "GZ",
+                               "zh":  "GZ",
+                               "tw":  "GZ",
+                               "ko":  "GZ",
+                               "de":  "GZ",
+                               "hi":  "GZ",
+                               "fr":  "GZ"
+                           },
+                    "When the hull heels right, where does B move?":  {
+                                                                          "ja":  "右へ傾くと浮心 B は?",
+                                                                          "zh":  "当船体右倾时，B 向哪里移动？",
+                                                                          "tw":  "當船體右傾時，B 往哪裡移動？",
+                                                                          "ko":  "선체의 굽이 오른쪽일 때 B는 어디로 이동합니까?",
+                                                                          "de":  "Wohin bewegt sich B, wenn der Rumpf nach rechts krängt?",
+                                                                          "hi":  "जब पतवार दाहिनी ओर झुकती है, तो B कहाँ जाता है?",
+                                                                          "fr":  "Lorsque la coque gîte à droite, où B se déplace-t-il ?"
+                                                                      },
+                    "toward the deeper side":  {
+                                                   "ja":  "深く沈む側へ",
+                                                   "zh":  "向更深的一面",
+                                                   "tw":  "向更深的一面",
+                                                   "ko":  "더 깊은 쪽으로",
+                                                   "de":  "zur tieferen Seite hin",
+                                                   "hi":  "गहरे पक्ष की ओर",
+                                                   "fr":  "vers le côté le plus profond"
+                                               },
+                    "fixed to G":  {
+                                       "ja":  "重心に固定",
+                                       "zh":  "固定为G",
+                                       "tw":  "固定為G",
+                                       "ko":  "G로 고정",
+                                       "de":  "auf G fixiert",
+                                       "hi":  "जी के लिए तय",
+                                       "fr":  "fixé à G"
+                                   },
+                    "Buoyancy acts upward through centroid B of the submerged volume.":  {
+                                                                                             "ja":  "浮力は水面下体積の中心 B を通って上向きに働く。",
+                                                                                             "zh":  "浮力通过浸没体积的质心 B 向上作用。",
+                                                                                             "tw":  "浮力透過浸沒體積的質心 B 向上作用。",
+                                                                                             "ko":  "부력은 물에 잠긴 체적의 중심 B를 통해 위쪽으로 작용합니다.",
+                                                                                             "de":  "Der Auftrieb wirkt nach oben durch den Schwerpunkt B des eingetauchten Volumens.",
+                                                                                             "hi":  "उत्प्लावन जलमग्न आयतन के केन्द्रक बी के माध्यम से ऊपर की ओर कार्य करता है।",
+                                                                                             "fr":  "La flottabilité agit vers le haut via le centroïde B du volume immergé."
+                                                                                         },
+                    "GZ = yG − yB":  {
+                                         "ja":  "GZ = yG − yB",
+                                         "zh":  "GZ = yG − yB",
+                                         "tw":  "GZ = yG − yB",
+                                         "ko":  "GZ = yG − yB",
+                                         "de":  "GZ = yG − yB",
+                                         "hi":  "GZ = yG − yB",
+                                         "fr":  "GZ = yG − yB"
+                                     },
+                    "The submerged shape is a convex polyhedral approximation. NumPy performs the plane cut; mesh_volume measures volume.":  {
+                                                                                                                                                 "ja":  "水面下形状は凸多面体近似。平面切断は NumPy、体積は mesh_volume で測った。",
+                                                                                                                                                 "zh":  "淹没形状是凸多面体近似。 NumPy 执行平面切割； mesh_volume 测量体积。",
+                                                                                                                                                 "tw":  "淹沒形狀是凸多面體近似。 NumPy 執行平面切割； mesh_volume 測量體積。",
+                                                                                                                                                 "ko":  "물에 잠긴 모양은 볼록한 다면체 근사치입니다. NumPy는 평면 절단을 수행합니다. mesh_volume은 볼륨을 측정합니다.",
+                                                                                                                                                 "de":  "Die untergetauchte Form ist eine konvexe polyedrische Näherung. NumPy führt den Ebenenschnitt durch; mesh_volume misst das Volumen.",
+                                                                                                                                                 "hi":  "जलमग्न आकृति उत्तल बहुफलक का सन्निकटन है। NumPy समतल काटता है; mesh_volume आयतन मापता है।",
+                                                                                                                                                 "fr":  "La forme immergée est une approximation polyédrique convexe. NumPy effectue la coupe plane ; mesh_volume mesure le volume."
+                                                                                                                                             },
+                    "GZ curve and GM":  {
+                                            "ja":  "GZ 曲線と GM",
+                                            "zh":  "GZ曲线和GM",
+                                            "tw":  "GZ曲線和GM",
+                                            "ko":  "GZ 곡선과 GM",
+                                            "de":  "GZ-Kurve und GM",
+                                            "hi":  "जीजेड वक्र और जीएम",
+                                            "fr":  "Courbe GZ et GM"
+                                        },
+                    "Green is GZ measured directly from clipped meshes; orange is the small-angle line GM sinφ. Its slope at the origin is GM, and separation toward 30° shows the formula\u0027s range.":  {
+                                                                                                                                                                                                                "ja":  "緑が切断メッシュから直接得た GZ、橙が小傾斜式 GM sinφ。原点近くの傾きが GM で、30°まで離れる様子が小傾斜式の範囲も示す。",
+                                                                                                                                                                                                                "zh":  "绿色是直接从剪裁的网格测量的 GZ；橙色是小角度线 GM sinφ。它在原点的斜率是 GM，向 30° 的分离显示了公式的范围。",
+                                                                                                                                                                                                                "tw":  "綠色是直接從剪裁的網格測量的 GZ；橙色是小角度線 GM sinφ。它在原點的斜率是 GM，向 30° 的分離顯示了公式的範圍。",
+                                                                                                                                                                                                                "ko":  "녹색은 잘린 메쉬에서 직접 측정된 GZ입니다. 주황색은 작은 각선 GM sinψ입니다. 원점에서의 기울기는 GM이고, 30°쪽으로 멀어지면 공식의 범위를 보여줍니다.",
+                                                                                                                                                                                                                "de":  "Grün ist die GZ, die direkt anhand der abgeschnittenen Netze gemessen wird; Orange ist die Kleinwinkellinie GM sinφ. Seine Steigung am Ursprung beträgt GM, und die Trennung in Richtung 30° zeigt den Bereich der Formel an.",
+                                                                                                                                                                                                                "hi":  "हरा रंग GZ है जिसे सीधे कटे हुए जालों से मापा जाता है; नारंगी लघु-कोण रेखा GM synφ है। मूल पर इसका ढलान जीएम है, और 30° की ओर पृथक्करण सूत्र की सीमा को दर्शाता है।",
+                                                                                                                                                                                                                "fr":  "Le vert est le GZ mesuré directement à partir de maillages coupés ; l\u0027orange est la ligne aux petits angles GM sinφ. Sa pente à l\u0027origine est GM, et la séparation vers 30° montre l\u0027étendue de la formule."
+                                                                                                                                                                                                            },
+                    "GM measured from mesh":  {
+                                                  "ja":  "メッシュから測った GM",
+                                                  "zh":  "从网格测量 GM",
+                                                  "tw":  "從網格測量 GM",
+                                                  "ko":  "메쉬에서 측정된 GM",
+                                                  "de":  "GM gemessen vom Netz",
+                                                  "hi":  "जीएम को जाल से मापा गया",
+                                                  "fr":  "GM mesuré à partir du maillage"
+                                              },
+                    "small-angle slope":  {
+                                              "ja":  "小傾斜の傾き",
+                                              "zh":  "小角度坡度",
+                                              "tw":  "小角度坡度",
+                                              "ko":  "작은 각도의 경사",
+                                              "de":  "Kleinwinkelneigung",
+                                              "hi":  "लघु-कोण ढलान",
+                                              "fr":  "pente à petit angle"
+                                          },
+                    "GZ from clipped mesh":  {
+                                                 "ja":  "切断メッシュの GZ",
+                                                 "zh":  "来自剪裁网格的 GZ",
+                                                 "tw":  "來自剪裁網格的 GZ",
+                                                 "ko":  "잘린 메쉬의 GZ",
+                                                 "de":  "GZ aus geschnittenem Netz",
+                                                 "hi":  "क्लिप्ड जाल से जीजेड",
+                                                 "fr":  "GZ à partir d\u0027un maillage coupé"
+                                             },
+                    "GM sinφ":  {
+                                    "ja":  "GM sinφ",
+                                    "zh":  "GM sinφ",
+                                    "tw":  "GM sinφ",
+                                    "ko":  "GM 죄 ψ",
+                                    "de":  "GM sinφ",
+                                    "hi":  "जीएम पापφ",
+                                    "fr":  "GM sinφ"
+                                },
+                    "Where does GM appear on the GZ curve?":  {
+                                                                  "ja":  "GM は GZ 曲線のどこに現れる?",
+                                                                  "zh":  "GM 出现在 GZ 曲线上的什么位置？",
+                                                                  "tw":  "GM 出現在 GZ 曲線上的什麼位置？",
+                                                                  "ko":  "GZ 곡선에서 GM은 어디에 나타납니까?",
+                                                                  "de":  "Wo erscheint GM auf der GZ-Kurve?",
+                                                                  "hi":  "GZ वक्र पर GM कहाँ दिखाई देता है?",
+                                                                  "fr":  "Où apparaît GM sur la courbe GZ ?"
+                                                              },
+                    "the slope at the origin":  {
+                                                    "ja":  "原点の傾き",
+                                                    "zh":  "原点处的斜率",
+                                                    "tw":  "原點的斜率",
+                                                    "ko":  "원점에서의 경사",
+                                                    "de":  "die Steigung im Ursprung",
+                                                    "hi":  "मूल पर ढलान",
+                                                    "fr":  "la pente à l\u0027origine"
+                                                },
+                    "only the value at 30°":  {
+                                                  "ja":  "30°の最大値だけ",
+                                                  "zh":  "仅30°时的值",
+                                                  "tw":  "僅30°時的值",
+                                                  "ko":  "30°에서의 값만",
+                                                  "de":  "nur der Wert bei 30°",
+                                                  "hi":  "केवल 30° पर मान",
+                                                  "fr":  "seulement la valeur à 30°"
+                                              },
+                    "At small heel, GZ / sinφ approaches GM.":  {
+                                                                    "ja":  "小傾斜では GZ/ sinφ が GM に近づく。",
+                                                                    "zh":  "在小跟处，GZ / sinφ 接近 GM。",
+                                                                    "tw":  "在小跟處，GZ / sinφ 接近 GM。",
+                                                                    "ko":  "작은 힐에서는 GZ/sinψ가 GM에 접근합니다.",
+                                                                    "de":  "Bei kleinem Absatz nähert sich GZ/sinφ GM.",
+                                                                    "hi":  "छोटी एड़ी पर, GZ/sinφ GM के पास पहुंचता है।",
+                                                                    "fr":  "Au petit talon, GZ/sinφ se rapproche de GM."
+                                                                },
+                    "GZ ≈ GM sinφ":  {
+                                         "ja":  "GZ ≈ GM sinφ",
+                                         "zh":  "GZ ≈ GM sinφ",
+                                         "tw":  "GZ ≈ GM sinφ",
+                                         "ko":  "GZ ≒ GM 죄 ψ",
+                                         "de":  "GZ ≈ GM sinφ",
+                                         "hi":  "जीजेड ≈ जीएम पापφ",
+                                         "fr":  "GZ ≈ GM sinφ"
+                                     },
+                    "At large heel the waterplane changes, so the small-angle formula is insufficient.":  {
+                                                                                                              "ja":  "大傾斜では水線形状が変わるため、小傾斜式だけでは足りない。",
+                                                                                                              "zh":  "在大横跟处，水线面发生变化，因此小角度公式是不够的。",
+                                                                                                              "tw":  "在大橫跟處，水線面發生變化，因此小角度公式是不夠的。",
+                                                                                                              "ko":  "큰 굽에서는 수선면이 바뀌기 때문에 작은 각도 공식은 불충분합니다.",
+                                                                                                              "de":  "Bei großer Krängung ändert sich die Wasserebene, sodass die Kleinwinkelformel nicht ausreicht.",
+                                                                                                              "hi":  "बड़ी एड़ी पर वॉटरप्लेन बदल जाता है, इसलिए छोटे-कोण का फॉर्मूला अपर्याप्त है।",
+                                                                                                              "fr":  "À forte inclinaison, le plan d\u0027eau change, la formule des petits angles est donc insuffisante."
+                                                                                                          },
+                    "Limit: centre of gravity too high":  {
+                                                              "ja":  "限界: 重心が高すぎる",
+                                                              "zh":  "限制：重心过高",
+                                                              "tw":  "限制：重心過高",
+                                                              "ko":  "한계: 무게 중심이 너무 높음",
+                                                              "de":  "Grenze: Schwerpunkt zu hoch",
+                                                              "hi":  "सीमा: गुरुत्वाकर्षण का केंद्र बहुत ऊँचा",
+                                                              "fr":  "Limite : centre de gravité trop élevé"
+                                                          },
+                    "Raise the load so KG is 0.35 m above KB+BM and GM becomes negative. The first GZ points toward capsize, so the hull does not return even in calm water.":  {
+                                                                                                                                                                                    "ja":  "荷物を高く積み、KG を KB+BM より 0.35 m 高くすると GM は負になる。最初の傾きで GZ も転倒側を向き、静かな水でも戻らない。",
+                                                                                                                                                                                    "zh":  "增加负载，使 KG 高于 KB+BM 0.35 m，GM 变为负值。第一个GZ指向倾覆，因此即使在平静的水中船体也不会返回。",
+                                                                                                                                                                                    "tw":  "增加負載，使 KG 高於 KB+BM 0.35 m，GM 變成負值。第一個GZ指向傾覆，因此即使在平靜的水中船體也不會返回。",
+                                                                                                                                                                                    "ko":  "KG가 KB+BM보다 0.35m 높고 GM이 음수가 되도록 부하를 높이십시오. 첫 번째 GZ는 전복을 향하고 있어 잔잔한 물 속에서도 선체가 돌아오지 않습니다.",
+                                                                                                                                                                                    "de":  "Die Last wird so angehoben, dass KG 0.35 m über KB+BM liegt und GM negativ wird. GZ zeigt dann zum Kentern; der Rumpf kehrt selbst in ruhigem Wasser nicht zurück.",
+                                                                                                                                                                                    "hi":  "भार इतना ऊपर रखें कि KG, KB+BM से 0.35 m ऊपर हो और GM ऋणात्मक बने। पहला GZ पलटने की ओर होता है, इसलिए शांत पानी में भी जहाज़ वापस नहीं आता।",
+                                                                                                                                                                                    "fr":  "Relevez la charge pour placer KG 0.35 m au-dessus de KB+BM et rendre GM négatif. Le premier GZ mène au chavirement : la coque ne revient pas, même en eau calme."
+                                                                                                                                                                                },
+                    "raised KG":  {
+                                      "ja":  "高い重心 KG",
+                                      "zh":  "升高公斤数",
+                                      "tw":  "升高公斤數",
+                                      "ko":  "KG 인상",
+                                      "de":  "KG erhöht",
+                                      "hi":  "केजी उठाया",
+                                      "fr":  "KG élevé"
+                                  },
+                    "unstable small-angle GZ":  {
+                                                    "ja":  "不安定な小傾斜 GZ",
+                                                    "zh":  "不稳定小角度GZ",
+                                                    "tw":  "不穩定小角度GZ",
+                                                    "ko":  "불안정한 소각 GZ",
+                                                    "de":  "instabiler Kleinwinkel-GZ",
+                                                    "hi":  "अस्थिर लघु-कोण GZ",
+                                                    "fr":  "GZ instable aux petits angles"
+                                                },
+                    "the ship returns even with a high centre of gravity":  {
+                                                                                "ja":  "高い重心でも船は戻る",
+                                                                                "zh":  "即使重心很高，船也会返回",
+                                                                                "tw":  "即使重心很高，船也會返回",
+                                                                                "ko":  "무게중심이 높아도 배는 돌아온다",
+                                                                                "de":  "Das Schiff kehrt auch bei hohem Schwerpunkt zurück",
+                                                                                "hi":  "गुरुत्वाकर्षण के उच्च केंद्र के साथ भी जहाज वापस लौट आता है",
+                                                                                "fr":  "le navire revient même avec un centre de gravité élevé"
+                                                                            },
+                    "GM \u003e 0":  {
+                                        "ja":  "GM \u003e 0",
+                                        "zh":  "GM \u003e 0",
+                                        "tw":  "GM \u003e 0",
+                                        "ko":  "GM \u003e 0",
+                                        "de":  "GM \u003e 0",
+                                        "hi":  "GM \u003e 0",
+                                        "fr":  "GM \u003e 0"
+                                    },
+                    "What happens after a small heel when GM \u003c 0?":  {
+                                                                              "ja":  "GM \u003c 0 の船を少し傾けると?",
+                                                                              "zh":  "当 GM \u003c 0 时，小跟后会发生什么？",
+                                                                              "tw":  "當 GM \u003c 0 時，小跟後會發生什麼事？",
+                                                                              "ko":  "GM \u003c 0일 때 작은 굽 이후에는 어떻게 되나요?",
+                                                                              "de":  "Was passiert nach einem kleinen Absatz, wenn GM \u003c 0 ist?",
+                                                                              "hi":  "जीएम \u003c0 होने पर छोटी एड़ी के बाद क्या होता है?",
+                                                                              "fr":  "Que se passe-t-il après un petit talon lorsque GM \u003c 0 ?"
+                                                                          },
+                    "it returns":  {
+                                       "ja":  "元へ戻る",
+                                       "zh":  "它返回",
+                                       "tw":  "它返回",
+                                       "ko":  "그것은 돌아온다",
+                                       "de":  "es kehrt zurück",
+                                       "hi":  "यह वापस आता है",
+                                       "fr":  "ça revient"
+                                   },
+                    "it heels farther":  {
+                                             "ja":  "さらに傾く",
+                                             "zh":  "它跟得更远",
+                                             "tw":  "它跟得更遠",
+                                             "ko":  "굽이 더 멀어요",
+                                             "de":  "es geht weiter",
+                                             "hi":  "यह आगे बढ़ता है",
+                                             "fr":  "ça talonne plus loin"
+                                         },
+                    "With M below G, buoyancy and weight form a moment that increases heel.":  {
+                                                                                                   "ja":  "M が G より下なら、浮力と重力の組は傾きを増やす向きに働く。",
+                                                                                                   "zh":  "当 M 低于 G 时，浮力和重量形成增加后跟的力矩。",
+                                                                                                   "tw":  "當 M 低於 G 時，浮力和重量形成增加後跟的力矩。",
+                                                                                                   "ko":  "M이 G 아래에 있으면 부력과 무게가 힐을 증가시키는 순간을 형성합니다.",
+                                                                                                   "de":  "Bei M unter G bilden Auftrieb und Gewicht ein Moment, das die Krängung erhöht.",
+                                                                                                   "hi":  "जी के नीचे एम के साथ, उछाल और वजन एक क्षण बनाते हैं जो एड़ी को बढ़ाता है।",
+                                                                                                   "fr":  "Avec M en dessous de G, la flottabilité et le poids forment un moment qui augmente la gîte."
+                                                                                               },
+                    "GM = KB + BM − KG":  {
+                                              "ja":  "GM = KB + BM − KG",
+                                              "zh":  "GM = KB + BM − KG",
+                                              "tw":  "GM = KB + BM − KG",
+                                              "ko":  "GM = KB + BM − KG",
+                                              "de":  "GM = KB + BM − KG",
+                                              "hi":  "जीएम = केबी + बीएम - केजी",
+                                              "fr":  "GM = KB + BM − KG"
+                                          },
+                    "Free-surface effect, waves, cargo shift, flooding and deck immersion beyond 30° are not computed. Do not use this lesson for real-vessel safety decisions.":  {
+                                                                                                                                                                                       "ja":  "自由水影響、波、荷崩れ、浸水、30°超での甲板浸水は計算していない。実船の安全判定には使わない。",
+                                                                                                                                                                                       "zh":  "不计算自由表面效应、波浪、货物移位、洪水和超过 30° 的甲板浸没。请勿将本课程用于实际船舶安全决策。",
+                                                                                                                                                                                       "tw":  "不計算自由表面效應、波浪、貨物移位、洪水和超過 30° 的甲板浸沒。請勿將本課程用於實際船舶安全決策。",
+                                                                                                                                                                                       "ko":  "자유 표면 효과, 파도, 화물 이동, 침수 및 30°를 초과하는 갑판 침수는 계산되지 않습니다. 실제 선박 안전 결정을 위해 이 교훈을 사용하지 마십시오.",
+                                                                                                                                                                                       "de":  "Freiflächeneffekt, Wellen, Ladungsverschiebung, Überschwemmung und Eintauchen des Decks über 30° werden nicht berechnet. Verwenden Sie diese Lektion nicht für Entscheidungen zur Sicherheit realer Schiffe.",
+                                                                                                                                                                                       "hi":  "मुक्त-सतह प्रभाव, लहरें, कार्गो शिफ्ट, बाढ़ और 30° से अधिक डेक विसर्जन की गणना नहीं की जाती है। वास्तविक जहाज सुरक्षा निर्णयों के लिए इस पाठ का उपयोग न करें।",
+                                                                                                                                                                                       "fr":  "L\u0027effet de carène liquide, les vagues, le déplacement de la cargaison, l\u0027inondation et l\u0027immersion du pont au-delà de 30° ne sont pas calculés. N\u0027utilisez pas cette leçon pour prendre des décisions réelles en matière de sécurité des navires."
+                                                                                                                                                                                   },
+                    "Entirely synthetic. Hull shape, length 72 m, beam 14 m, depth 8 m and seawater density 1,025 kg/m³ are representative assumptions for explanation, not a specific vessel, yard or standard hull form.":  {
+                                                                                                                                                                                                                                  "ja":  "すべて合成。船型と長さ 72 m、幅 14 m、深さ 8 m、海水密度 1,025 kg/m³ は説明用の代表値として置いた仮定で、特定の船・造船所・標準船型を表さない。",
+                                                                                                                                                                                                                                  "zh":  "完全合成的。船体形状、长度 72 m、横梁 14 m、深度 8 m 和海水密度 1,025 kg/m³ 是用于解释的代表性假设，而不是特定的船舶、船厂或标准船体形状。",
+                                                                                                                                                                                                                                  "tw":  "完全合成的。船體形狀、長度 72 m、橫樑 14 m、深度 8 m 和海水密度 1,025 kg/m³ 是用於解釋的代表性假設，而不是特定的船舶、船廠或標準船體形狀。",
+                                                                                                                                                                                                                                  "ko":  "완전히 합성입니다. 선체 형상, 길이 72m, 보 14m, 깊이 8m, 해수 밀도 1,025kg/m3는 설명을 위한 대표적인 가정이며 특정 선박, 야드 또는 표준 선체 형태가 아닙니다.",
+                                                                                                                                                                                                                                  "de":  "Vollständig synthetisch. Rumpfform, Länge 72 m, Breite 14 m, Tiefe 8 m und Meerwasserdichte 1,025 kg/m³ sind repräsentative Annahmen, nicht ein bestimmtes Schiff, eine Werft oder eine Standardrumpfform.",
+                                                                                                                                                                                                                                  "hi":  "पूरी तरह संश्लेषित। जहाज़ का आकार, लंबाई 72m, चौड़ाई 14m, गहराई 8m और समुद्री जल का घनत्व 1,025 kg/m³ केवल समझाने की प्रतिनिधि मान्यताएँ हैं; ये किसी खास जहाज़, यार्ड या मानक जहाज़-रूप को नहीं दर्शाते।",
+                                                                                                                                                                                                                                  "fr":  "Entièrement synthétique. La forme de la coque, la longueur 72 m, la largeur 14 m, la profondeur 8 m et la densité de l\u0027eau de mer 1 025 kg/m³ sont des hypothèses représentatives à des fins d\u0027explication, et non une forme spécifique de navire, de chantier ou de coque standard."
+                                                                                                                                                                                                                              }
+                }
+}
