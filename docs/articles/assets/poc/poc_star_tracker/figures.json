@@ -1,0 +1,22 @@
+[
+ {
+  "file": "01_star_tracker_camera_image.png",
+  "name": "star_tracker_camera_image",
+  "caption": "PSF・光子雑音・読み出し雑音を含む合成像。真の星16個に、星表に無いホットピクセル2個を加えた。",
+  "shape": [128, 128]
+ },
+ {
+  "file": "02_star_tracker_detections.png",
+  "name": "star_tracker_detections",
+  "caption": "三角形の角距離で全196星表を探索し、ホットピクセル2個を外れ値として棄却した。",
+  "shape": [360, 560, 3]
+ },
+ {
+  "file": "03_star_tracker_gates.png",
+  "name": "star_tracker_gates",
+  "caption": "推定値は合成像の検出点から計算し、真値は採点だけに使った。",
+  "shape": [176, 344, 3],
+  "csv": "03_star_tracker_gates.csv",
+  "tsv": "03_star_tracker_gates.tsv"
+ }
+]

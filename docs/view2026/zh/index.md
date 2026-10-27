@@ -77,12 +77,17 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/media/evis_bean_track_fullseye.mp4"><img src="../thumbs/evis_bean_track.jpg" alt="筷尖相机追踪豆子" loading="lazy" width="320" height="320"><b>&#9654;</b><span>筷尖相机追踪豆子</span></a>
 <a href="../../anim3d/organ_volume.html?lang=zh"><img src="../thumbs/organ_volume.jpg" alt="器官体积和球形度" loading="lazy" width="320" height="320"><b>&#9654;</b><span>器官体积和球形度 · 0.5 MB</span></a>
 <a href="../../view2026/anim3d/interactive_anim3d_viewer.html?lang=zh"><img src="../thumbs/interactive_anim3d_viewer.jpg" alt="机械臂与半透明透镜" loading="lazy" width="320" height="320"><b>&#9654;</b><span>机械臂与半透明透镜 · 0.3 MB</span></a>
+<a href="../../view2026/anim3d/particle_dissolution_anim3d.html?lang=zh"><img src="../thumbs/particle_dissolution.jpg" alt="药物颗粒如何溶解" loading="lazy" width="320" height="320"><b>&#9654;</b><span>药物颗粒如何溶解 · 1.9 MB</span></a>
 <a href="../../view2026/anim3d/tablet_inspection_anim3d.html?lang=zh"><img src="../thumbs/tablet_inspection.jpg" alt="Tablet appearance and colour inspection" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Tablet appearance and colour inspection · 0.5 MB</span></a>
 <a href="../../view2026/anim3d/satellite_gsd_anim3d.html?lang=zh"><img src="../thumbs/satellite_gsd.jpg" alt="为什么从轨道上看不清小字" loading="lazy" width="320" height="320"><b>&#9654;</b><span>为什么从轨道上看不清小字 · 0.2 MB</span></a>
+<a href="../../view2026/anim3d/ship_stability_anim3d.html?lang=zh"><img src="../thumbs/ship_stability.jpg" alt="船为何能浮起并在倾斜后复原" loading="lazy" width="320" height="320"><b>&#9654;</b><span>船为何能浮起并在倾斜后复原 · 0.2 MB</span></a>
+<a href="../../view2026/anim3d/rail_light_section_anim3d.html?lang=zh"><img src="../thumbs/rail_light_section.jpg" alt="Measure rail wear and gauge with light-section scanning" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Measure rail wear and gauge with light-section scanning · 0.1 MB</span></a>
 <a href="../../view2026/anim3d/salt_xrd_anim3d.html?lang=zh"><img src="../thumbs/salt_xrd_anim3d.jpg" alt="食盐晶体的粉末 X 射线衍射" loading="lazy" width="320" height="320"><b>&#9654;</b><span>食盐晶体的粉末 X 射线衍射 · 2.5 MB</span></a>
 <a href="../../anim3d/gauss_bonnet.html?lang=zh"><img src="../thumbs/gauss_bonnet.jpg" alt="弯曲全部相加都是同一个数" loading="lazy" width="320" height="320"><b>&#9654;</b><span>弯曲全部相加都是同一个数 · 3.1 MB</span></a>
 <a href="../../view2026/anim3d/pulseox_anim3d.html?lang=zh"><img src="../thumbs/pulseox.jpg" alt="脉搏血氧仪的双波长吸收" loading="lazy" width="320" height="320"><b>&#9654;</b><span>脉搏血氧仪的双波长吸收 · 0.2 MB</span></a>
-<a href="../../view2026/anim3d/rail_light_section_anim3d.html?lang=zh"><img src="../thumbs/rail_light_section.jpg" alt="Measure rail wear and gauge with light-section scanning" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Measure rail wear and gauge with light-section scanning · 0.1 MB</span></a>
+<a href="../../view2026/anim3d/star_tracker_anim3d.html?lang=zh"><img src="../thumbs/poc_star_tracker.jpg" alt="Satellite attitude from one star image" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Satellite attitude from one star image · 0.2 MB</span></a>
+<a href="../../view2026/anim3d/venue_shadow_anim3d.html?lang=zh"><img src="../thumbs/venue_shadow.jpg" alt="会场周边的冬至日影" loading="lazy" width="320" height="320"><b>&#9654;</b><span>会场周边的冬至日影 · 0.3 MB</span></a>
+<a href="../../view2026/anim3d/kelvin_wake_anim3d.html?lang=zh"><img src="../thumbs/kelvin_wake.jpg" alt="船的 V 形航迹" loading="lazy" width="320" height="320"><b>&#9654;</b><span>船的 V 形航迹 · 0.2 MB</span></a>
 </div>
 
 ## 系列文章 (Qiita 上的英文文章)
@@ -226,7 +231,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 全部看
 
-PoC 277 个,另有机器人示例 5 个。展开分组即可加载缩略图。
+PoC 278 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 
 <noscript><p><a href="../../GALLERY.en.html">(没有 JavaScript 时,可在图库页面查看全部图。)</a></p></noscript>
 
@@ -355,7 +360,7 @@ PoC 277 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 </div>
 </details>
 
-<details class="vall"><summary><b>三维形状</b> (19)</summary>
+<details class="vall"><summary><b>三维形状</b> (20)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_battery_ct_degradation/01_xray_projection.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_battery_ct_degradation.jpg" alt="电池 CT 劣化" width="200" height="200"><span>电池 CT 劣化</span></a>
 <a href="../../articles/assets/poc/poc_bev_sensor_fusion/01_scene_bev.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_bev_sensor_fusion.jpg" alt="鸟瞰图融合" width="200" height="200"><span>鸟瞰图融合</span></a>
@@ -376,6 +381,7 @@ PoC 277 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 <a href="../../articles/assets/poc/poc_endless_zoom_and_turning_solids/03_zoom_loop.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_endless_zoom_and_turning_solids.jpg" alt="无限缩放" width="200" height="200"><b>&#9654;</b><span>无限缩放</span></a>
 <a href="../../articles/assets/poc/poc_four_dimensions_by_three_d_tools/03_hopf_turn.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_four_dimensions_by_three_d_tools.jpg" alt="用三维工具测四维" width="200" height="200"><b>&#9654;</b><span>用三维工具测四维</span></a>
 <a href="../../articles/assets/poc/poc_plateau_venue_lod2/01_venue_itokawa_top.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_plateau_venue_lod2.jpg" alt="会场建筑与小行星丝川同一把尺:把 PLATEAU 的 CityGML LOD2 变成网格" width="200" height="200"><span>会场建筑与小行星丝川同一把尺:把 PLATEAU 的 CityGML LOD2 变成网格</span></a>
+<a href="../../view2026/anim3d/star_tracker_anim3d.html?lang=zh"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_star_tracker.jpg" alt="Estimate satellite attitude from a synthetic star image" width="200" height="200"><b>&#9654;</b><span>Estimate satellite attitude from a synthetic star image</span></a>
 </div>
 </details>
 
@@ -667,12 +673,17 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 
 - [器官体积和球形度](../../anim3d/organ_volume.html?lang=zh) (动态 3-D,可拖动旋转, 0.5 MB): 将 6 个器官按体积排序，叠加等体积半透明球，并累积截面。散度定理与实体体素的体积最多相差 0.191%，闭合曲面的 χ = 2；限制页显示 99% 简化所丢失的细结构。 **6 个器官；体积差 ≤ 0.191%；χ = 2，边界边为 0。** [源码](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_organvol_anim3d.py)
 - [机械臂与半透明透镜](../../view2026/anim3d/interactive_anim3d_viewer.html?lang=zh) (动态 3-D,可拖动旋转, 0.3 MB): 用手指旋转,从任意角度观看机械臂搬运箱子。光线穿过半透明透镜会聚到焦点,下方的俯视高度图像及其二值化结果在同一时间轴上同步播放。 [源码](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
+- [药物颗粒如何溶解](../../view2026/anim3d/particle_dissolution_anim3d.html?lang=zh) (动态 3-D,可拖动旋转, 1.9 MB): 观察 1 个大颗粒和 8 个小颗粒缩小。图像测量显示,分成 8 份使表面积变为 2 倍,所以 8 个颗粒用一半时间溶解。 **数值 ODE 与立方根定律之差 < 1e-12。半径 3.0 mm 以上时,图像误差 0.00058 低于上限 0.0616。由图像曲线测得时间比 0.5008。** [源码](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_dissolution_anim3d.py)
 - [Tablet appearance and colour inspection](../../view2026/anim3d/tablet_inspection_anim3d.html?lang=zh) (动态 3-D,可拖动旋转, 0.5 MB): Rotate synthetic tablets defined only by shape and colour. At each area, synthesize 800 chip-free and 800 chipped images and measure the detection-rate curve; fade a colour patch from ΔE00 = 8 to 0. Measure foreign-particle position and blob count, then expose the limit where a shallow crack parallel to the light vanishes. **Foreign-particle position error 0.292 px; measured and normal-approximation 90% detection areas are both 3 px² = 0.0192 mm²; CIEDE2000 direct-formula difference < 1e-12; 5 separated blobs.** [源码](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_tablet_anim3d.py)
 - [为什么从轨道上看不清小字](../../view2026/anim3d/satellite_gsd_anim3d.html?lang=zh) (动态 3-D,可拖动旋转, 0.2 MB): 高度越高,1 个像素覆盖的地面越宽;口径越小,半透明光锥底部的艾里斑越大。越过蓝色 GSD 与橙色衍射宽度的交点后,仅缩小像素也无法恢复 10 cm 线条。 **高度 400 km、像素 5 µm、焦距 8 m 时,GSD 为 0.250 m。波长 550 nm、口径 2.4 m 时,Rayleigh 地面半径为 0.112 m。大气影响在局限行中明确标为未计算。** [源码](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_satgsd_anim3d.py)
+- [船为何能浮起并在倾斜后复原](../../view2026/anim3d/ship_stability_anim3d.html?lang=zh) (动态 3-D,可拖动旋转, 0.2 MB): 船体倾斜时 B 向浸水侧移动，与 G 形成力臂 GZ；抬高 G 后力臂反向。 **箱形闭式误差 2.26e-16；重量误差 3.58e-16；GZ 斜率与 GM 相差 0.123%。高重心时 GM = -0.350 m。** [源码](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_ship_anim3d.py)
+- [Measure rail wear and gauge with light-section scanning](../../view2026/anim3d/rail_light_section_anim3d.html?lang=zh) (动态 3-D,可拖动旋转, 0.1 MB): The intersection of an oblique light sheet and rail surface bends over head, web and foot. During travel, left-head wear rises and the inner distance between two rails reveals gauge widening. **From a noisy subpixel laser line: section RMS 0.699 mm, shape-free wear error 0.0577 mm and profile-measured gauge error 0.346 mm. The triangulation op and independent closed form agree to < 1e-12 mm.** [源码](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_rail_anim3d.py)
 - [食盐晶体的粉末 X 射线衍射](../../view2026/anim3d/salt_xrd_anim3d.html?lang=zh) (动态 3-D,可拖动旋转, 2.5 MB): 在食盐晶胞上叠加晶格面的薄板;扫过 Bragg 角时,只有光程差为 λ 整数倍处探测器才会亮。把晶粒取向打乱,点就长成环;把波长拉长,环扩大并消失。消光规则通过把 8 个原子的波相加来展示。 [源码](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_saltxrd_anim3d.py)
 - [弯曲全部相加都是同一个数](../../anim3d/gauss_bonnet.html?lang=zh) (动态 3-D,可拖动旋转, 3.1 MB): 把球削成立方体、换成环面、增加孔洞，或用实测的小行星: 把各顶点的角亏损 K 加起来，Σ K / 2π 都等于 χ = V − E + F。用手指旋转，看半透明平面把顶点扫进总和。有边界的碗则不成立(局限标签页)。 **17 行检验中 Σ K / 2π 与 χ 的差小于 1e-12；只有带边界的碗偏离 24.0 × 2π，加上边界项后即一致。** [源码](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_gaussbonnet_anim3d.py)
 - [脉搏血氧仪的双波长吸收](../../view2026/anim3d/pulseox_anim3d.html?lang=zh) (动态 3-D,可拖动旋转, 0.2 MB): 跟随红光和近红外光穿过搏动的动脉，用 AC/DC 比值 R 读取血氧饱和度；比较带噪时序与闭式解，并显示无法区分 COHb 的局限。 **R 最大差 0.00068；SpO₂ 最大误差 0.034%。在 10% COHb 模型中，真值 90.0% 被读为 91.0%。** [源码](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_pulseox_anim3d.py)
-- [Measure rail wear and gauge with light-section scanning](../../view2026/anim3d/rail_light_section_anim3d.html?lang=zh) (动态 3-D,可拖动旋转, 0.1 MB): The intersection of an oblique light sheet and rail surface bends over head, web and foot. During travel, left-head wear rises and the inner distance between two rails reveals gauge widening. **From a noisy subpixel laser line: section RMS 0.699 mm, shape-free wear error 0.0577 mm and profile-measured gauge error 0.346 mm. The triangulation op and independent closed form agree to < 1e-12 mm.** [源码](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_rail_anim3d.py)
+- [Satellite attitude from one star image](../../view2026/anim3d/star_tracker_anim3d.html?lang=zh) (动态 3-D,可拖动旋转, 0.2 MB): Sweep a camera cone through a synthetic sky, centroid noisy point images plus false points, match triangle angles against the full 196-star catalogue, reject outliers and solve attitude with Kabsch. The final tab exposes uncomputed limits from glare, too few stars and star trails. **Against the full 196-star catalogue: 16 genuine stars, 0 mismatches, 2/2 false points rejected, 0.0046-degree attitude error and 0.1406 degree per 1 pixel; Kabsch vs direct SVD differs by less than 1e-12.** [源码](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_startrk_anim3d.py)
+- [会场周边的冬至日影](../../view2026/anim3d/venue_shadow_anim3d.html?lang=zh) (动态 3-D,可拖动旋转, 0.3 MB): 太阳从8时到16时掠过横滨国际平和会议场周边的LOD2建筑;蓝色阴影在早晚伸长、正午缩短。1、2、3小时等时线显示建筑布局如何改变日照时间。 **2条太阳位置计算路径的差小于1e-12°;20米箱体阴影长度和面积的相对误差小于1e-12;会场正午阴影处于最高点上限内。** [源码](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_shadow_anim3d.py)
+- [船的 V 形航迹](../../view2026/anim3d/kelvin_wake_anim3d.html?lang=zh) (动态 3-D,可拖动旋转, 0.2 MB): 旋转观察点状压力源在深水中移动所形成的三维高度场。速度从 4、7 到 12 m/s 时波长增大，但从图像测得的 V 形半角仍接近 19.47 deg。横波与发散波先分开再叠加，并明确浅水、船宽和黏性未计入。 **在同一实尺寸网格上，测得半角为 18.10–20.25 deg；与 arcsin(1/3) 的最大差为 1.37 deg，三种速度间差为 2.15 deg。波长最大误差为 0.50 m，12 m/s 与 4 m/s 的波长比为 9.05。** [源码](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_kelvin_anim3d.py)
 
 </div>
 
