@@ -85,6 +85,9 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../view2026/anim3d/salt_xrd_anim3d.html?lang=hi"><img src="../thumbs/salt_xrd_anim3d.jpg" alt="नमक के क्रिस्टल का powder X-ray diffraction" loading="lazy" width="320" height="320"><b>&#9654;</b><span>नमक के क्रिस्टल का powder X-ray diffraction · 2.5 MB</span></a>
 <a href="../../anim3d/gauss_bonnet.html?lang=hi"><img src="../thumbs/gauss_bonnet.jpg" alt="सारी वक्रता जोड़ो, वही संख्या" loading="lazy" width="320" height="320"><b>&#9654;</b><span>सारी वक्रता जोड़ो, वही संख्या · 3.1 MB</span></a>
 <a href="../../view2026/anim3d/pulseox_anim3d.html?lang=hi"><img src="../thumbs/pulseox.jpg" alt="दोहरी तरंगदैर्घ्य वाली पल्स ऑक्सीमेट्री" loading="lazy" width="320" height="320"><b>&#9654;</b><span>दोहरी तरंगदैर्घ्य वाली पल्स ऑक्सीमेट्री · 0.2 MB</span></a>
+<a href="../../view2026/anim3d/star_tracker_anim3d.html?lang=hi"><img src="../thumbs/poc_star_tracker.jpg" alt="Satellite attitude from one star image" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Satellite attitude from one star image · 0.2 MB</span></a>
+<a href="../../view2026/anim3d/venue_shadow_anim3d.html?lang=hi"><img src="../thumbs/venue_shadow.jpg" alt="स्थल के आसपास शीत अयनांत की छाया" loading="lazy" width="320" height="320"><b>&#9654;</b><span>स्थल के आसपास शीत अयनांत की छाया · 0.3 MB</span></a>
+<a href="../../view2026/anim3d/kelvin_wake_anim3d.html?lang=hi"><img src="../thumbs/kelvin_wake.jpg" alt="जहाज़ की V-आकार की लहर" loading="lazy" width="320" height="320"><b>&#9654;</b><span>जहाज़ की V-आकार की लहर · 0.2 MB</span></a>
 </div>
 
 ## Article series (Qiita पर English articles)
@@ -228,7 +231,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## सब कुछ देखें
 
-277 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
+278 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript के बिना सभी figures gallery page पर हैं।)</a></p></noscript>
 
@@ -357,7 +360,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 </div>
 </details>
 
-<details class="vall"><summary><b>3-D shape</b> (19)</summary>
+<details class="vall"><summary><b>3-D shape</b> (20)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_battery_ct_degradation/01_xray_projection.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_battery_ct_degradation.jpg" alt="Battery CT" width="200" height="200"><span>Battery CT</span></a>
 <a href="../../articles/assets/poc/poc_bev_sensor_fusion/01_scene_bev.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_bev_sensor_fusion.jpg" alt="BEV sensor fusion" width="200" height="200"><span>BEV sensor fusion</span></a>
@@ -378,6 +381,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_endless_zoom_and_turning_solids/03_zoom_loop.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_endless_zoom_and_turning_solids.jpg" alt="Endless zoom" width="200" height="200"><b>&#9654;</b><span>Endless zoom</span></a>
 <a href="../../articles/assets/poc/poc_four_dimensions_by_three_d_tools/03_hopf_turn.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_four_dimensions_by_three_d_tools.jpg" alt="3-D tools से 4-D" width="200" height="200"><b>&#9654;</b><span>3-D tools से 4-D</span></a>
 <a href="../../articles/assets/poc/poc_plateau_venue_lod2/01_venue_itokawa_top.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_plateau_venue_lod2.jpg" alt="आयोजन-स्थल की इमारतें और क्षुद्रग्रह Itokawa एक ही पैमाने पर: PLATEAU CityGML LOD2 को mesh में" width="200" height="200"><span>आयोजन-स्थल की इमारतें और क्षुद्रग्रह Itokawa एक ही पैमाने पर: PLATEAU CityGML LOD2 को mesh में</span></a>
+<a href="../../view2026/anim3d/star_tracker_anim3d.html?lang=hi"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_star_tracker.jpg" alt="Estimate satellite attitude from a synthetic star image" width="200" height="200"><b>&#9654;</b><span>Estimate satellite attitude from a synthetic star image</span></a>
 </div>
 </details>
 
@@ -677,6 +681,9 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 - [नमक के क्रिस्टल का powder X-ray diffraction](../../view2026/anim3d/salt_xrd_anim3d.html?lang=hi) (चलता 3-D, drag से घुमाएँ, 2.5 MB): नमक की unit cell पर lattice plane की चादरें रखी हैं; Bragg कोण घुमाइए तो detector केवल वहाँ जलता है जहाँ path difference λ का पूर्ण गुणज है। दानों के orientation बिखेरिए तो बिंदु ring बन जाते हैं; तरंगदैर्घ्य लंबी कीजिए तो ring फैलकर गायब हो जाते हैं। extinction नियम 8 परमाणुओं की तरंगें जोड़कर दिखाया गया है। [source](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_saltxrd_anim3d.py)
 - [सारी वक्रता जोड़ो, वही संख्या](../../anim3d/gauss_bonnet.html?lang=hi) (चलता 3-D, drag से घुमाएँ, 3.1 MB): गोले को घन में नुकीला करो, टोरस लो, छेद जोड़ो, या मापा हुआ क्षुद्रग्रह लो: शीर्षों पर जोड़े गए कोण-अभाव K से Σ K / 2π = χ = V − E + F मिलता है। उंगली से घुमाएँ और देखें कि पारभासी समतल शीर्षों को योग में समेटता है। सीमा वाला कटोरा इसे तोड़ देता है (सीमा टैब)। **17 जाँची गई पंक्तियों में Σ K / 2π और χ का अंतर 1e-12 से कम; केवल सीमा वाला कटोरा 24.0 × 2π से चूकता है, और सीमा-पद जोड़ते ही मेल खाता है।** [source](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_gaussbonnet_anim3d.py)
 - [दोहरी तरंगदैर्घ्य वाली पल्स ऑक्सीमेट्री](../../view2026/anim3d/pulseox_anim3d.html?lang=hi) (चलता 3-D, drag से घुमाएँ, 0.2 MB): धड़कती धमनी से गुजरती लाल और निकट-अवरक्त रोशनी देखें और AC/DC अनुपात R से ऑक्सीजन संतृप्ति पढ़ें। शोरयुक्त समय-श्रृंखला की बंद रूप से तुलना होती है और COHb की अस्पष्टता सीमा के रूप में दिखाई जाती है। **R का अधिकतम अंतर 0.00068 और SpO₂ की अधिकतम त्रुटि 0.034%। 10% COHb पर मॉडल सही 90.0% को 91.0% पढ़ता है।** [source](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_pulseox_anim3d.py)
+- [Satellite attitude from one star image](../../view2026/anim3d/star_tracker_anim3d.html?lang=hi) (चलता 3-D, drag से घुमाएँ, 0.2 MB): Sweep a camera cone through a synthetic sky, centroid noisy point images plus false points, match triangle angles against the full 196-star catalogue, reject outliers and solve attitude with Kabsch. The final tab exposes uncomputed limits from glare, too few stars and star trails. **Against the full 196-star catalogue: 16 genuine stars, 0 mismatches, 2/2 false points rejected, 0.0046-degree attitude error and 0.1406 degree per 1 pixel; Kabsch vs direct SVD differs by less than 1e-12.** [source](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_startrk_anim3d.py)
+- [स्थल के आसपास शीत अयनांत की छाया](../../view2026/anim3d/venue_shadow_anim3d.html?lang=hi) (चलता 3-D, drag से घुमाएँ, 0.3 MB): सूर्य 8 बजे से 16 बजे तक पैसिफिको योकोहामा के आसपास की LOD2 इमारतों पर चलता है; नीली छाया सुबह-शाम लंबी और दोपहर में छोटी होती है। 1, 2 और 3 घंटे की रेखाएँ विन्यास का असर दिखाती हैं। **सूर्य-स्थिति के 2 मार्गों में अंतर < 1e-12° है; 20 m डिब्बे की छाया की लंबाई और क्षेत्रफल की सापेक्ष त्रुटियाँ < 1e-12 हैं; दोपहर की छाया उच्चतम-बिंदु सीमा में है।** [source](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_shadow_anim3d.py)
+- [जहाज़ की V-आकार की लहर](../../view2026/anim3d/kelvin_wake_anim3d.html?lang=hi) (चलता 3-D, drag से घुमाएँ, 0.2 MB): गहरे पानी पर चलने वाले बिंदु-दाब स्रोत का ऊँचाई क्षेत्र घुमाकर देखें। 4, 7 और 12 m/s पर तरंगदैर्घ्य बढ़ता है, लेकिन चित्र से मापा V का अर्ध-कोण लगभग 19.47 deg रहता है। अनुप्रस्थ और अपसारी तरंगों को अलग करके जोड़ा गया है; उथला पानी, hull width और viscosity सीमा के रूप में छोड़े गए हैं। **एक ही वास्तविक grid पर मापा अर्ध-कोण 18.10–20.25 deg है; arcsin(1/3) से अधिकतम अंतर 1.37 deg और तीन गतियों का फैलाव 2.15 deg है। अधिकतम wavelength error 0.50 m है; 12 m/s और 4 m/s का wavelength ratio 9.05 है।** [source](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_kelvin_anim3d.py)
 
 </div>
 

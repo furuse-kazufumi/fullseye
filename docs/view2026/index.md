@@ -100,6 +100,9 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../view2026/anim3d/salt_xrd_anim3d.html?lang=ja"><img src="thumbs/salt_xrd_anim3d.jpg" alt="塩の結晶の粉末 X 線回折" loading="lazy" width="320" height="320"><b>&#9654;</b><span>塩の結晶の粉末 X 線回折 · 2.5 MB</span></a>
 <a href="../anim3d/gauss_bonnet.html?lang=ja"><img src="thumbs/gauss_bonnet.jpg" alt="曲がり方を全部足すと同じ数" loading="lazy" width="320" height="320"><b>&#9654;</b><span>曲がり方を全部足すと同じ数 · 3.1 MB</span></a>
 <a href="../view2026/anim3d/pulseox_anim3d.html?lang=ja"><img src="thumbs/pulseox.jpg" alt="パルスオキシメータの二波長吸収" loading="lazy" width="320" height="320"><b>&#9654;</b><span>パルスオキシメータの二波長吸収 · 0.2 MB</span></a>
+<a href="../view2026/anim3d/star_tracker_anim3d.html?lang=ja"><img src="thumbs/poc_star_tracker.jpg" alt="星の写真から衛星姿勢を知る" loading="lazy" width="320" height="320"><b>&#9654;</b><span>星の写真から衛星姿勢を知る · 0.2 MB</span></a>
+<a href="../view2026/anim3d/venue_shadow_anim3d.html?lang=ja"><img src="thumbs/venue_shadow.jpg" alt="会場の街の冬至の日影" loading="lazy" width="320" height="320"><b>&#9654;</b><span>会場の街の冬至の日影 · 0.3 MB</span></a>
+<a href="../view2026/anim3d/kelvin_wake_anim3d.html?lang=ja"><img src="thumbs/kelvin_wake.jpg" alt="船の V 字の航跡" loading="lazy" width="320" height="320"><b>&#9654;</b><span>船の V 字の航跡 · 0.2 MB</span></a>
 </div>
 
 ## シリーズ記事
@@ -243,7 +246,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## ぜんぶ見る
 
-PoC 277 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
+PoC 278 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
 
 <noscript><p><a href="../GALLERY.html">(JavaScript が無い環境では、ギャラリーのページで全部の図を見られます)</a></p></noscript>
 
@@ -372,7 +375,7 @@ PoC 277 本と、ロボットの例 5 本。グループを開くとサムネイ
 </div>
 </details>
 
-<details class="vall"><summary><b>3-D 形状</b> (19)</summary>
+<details class="vall"><summary><b>3-D 形状</b> (20)</summary>
 <div class="vg vs">
 <a href="../articles/assets/poc/poc_battery_ct_degradation/01_xray_projection.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_battery_ct_degradation.jpg" alt="電池の CT 劣化" width="200" height="200"><span>電池の CT 劣化</span></a>
 <a href="../articles/assets/poc/poc_bev_sensor_fusion/01_scene_bev.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_bev_sensor_fusion.jpg" alt="鳥瞰図の融合" width="200" height="200"><span>鳥瞰図の融合</span></a>
@@ -393,6 +396,7 @@ PoC 277 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_endless_zoom_and_turning_solids/03_zoom_loop.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_endless_zoom_and_turning_solids.jpg" alt="無限ズーム" width="200" height="200"><b>&#9654;</b><span>無限ズーム</span></a>
 <a href="../articles/assets/poc/poc_four_dimensions_by_three_d_tools/03_hopf_turn.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_four_dimensions_by_three_d_tools.jpg" alt="4 次元を 3-D で" width="200" height="200"><b>&#9654;</b><span>4 次元を 3-D で</span></a>
 <a href="../articles/assets/poc/poc_plateau_venue_lod2/01_venue_itokawa_top.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_plateau_venue_lod2.jpg" alt="会場の建物と小惑星イトカワを同じ物差しで ―― PLATEAU の CityGML LOD2 をメッシュに" width="200" height="200"><span>会場の建物と小惑星イトカワを同じ物差しで ―― PLATEAU の CityGML LOD2 をメッシュに</span></a>
+<a href="../view2026/anim3d/star_tracker_anim3d.html?lang=ja"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_star_tracker.jpg" alt="合成星像から衛星姿勢を推定する" width="200" height="200"><b>&#9654;</b><span>合成星像から衛星姿勢を推定する</span></a>
 </div>
 </details>
 
@@ -692,6 +696,9 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 - [塩の結晶の粉末 X 線回折](../view2026/anim3d/salt_xrd_anim3d.html?lang=ja) (動く 3-D・触って回せる, 2.5 MB): 塩の単位胞に格子面の板を重ね、Bragg の角度を振ると行路差が λ の整数倍の所だけ受光面が光る。粒の向きをばらばらにすると点が環に育ち、波長を長くすると環は広がって消える。消滅則は 8 原子の波を足して見せる。 [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_saltxrd_anim3d.py)
 - [曲がり方を全部足すと同じ数](../anim3d/gauss_bonnet.html?lang=ja) (動く 3-D・触って回せる, 3.1 MB): 球を立方体に角ばらせても、トーラスでも、穴を増やしても、実測の小惑星でも、頂点ごとの角欠損 K を足した Σ K / 2π は χ = V − E + F に一致する。半透明の面が通り過ぎた頂点を足し上げる動きを指で回して見る。境界のある皿では外れる(限界の回)。 **17 行の表で Σ K / 2π と χ の差は 1e-12 未満。境界のある皿だけ 24.0 × 2π 外れ、境界の項を入れると一致する。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_gaussbonnet_anim3d.py)
 - [パルスオキシメータの二波長吸収](../view2026/anim3d/pulseox_anim3d.html?lang=ja) (動く 3-D・触って回せる, 0.2 MB): 拍動する動脈を通る赤と近赤外の光を追い、AC/DC の比 R から酸素飽和度を読む。雑音入り時系列と閉形式を比べ、COHb を見分けられない限界も示す。 **R の最大差 0.00068、SpO₂ の最大誤差 0.034 %。COHb 10 % の模型では 90.0 % を 91.0 % と読む。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_pulseox_anim3d.py)
+- [星の写真から衛星姿勢を知る](../view2026/anim3d/star_tracker_anim3d.html?lang=ja) (動く 3-D・触って回せる, 0.2 MB): 合成天球の中で視野錐を回し、雑音を含む点像と偽点から副画素重心を取る。三角形の角距離を全196星表へ照合し、偽点を捨ててKabschで姿勢を求める。最後は迷光、星不足、星の流れという未計算の限界を見る。 **全196星表に対し、真の星16、誤対応0、偽点棄却2/2、姿勢角誤差0.0046度、1画素0.1406度。Kabschと直接SVDの差は1e-12未満。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_startrk_anim3d.py)
+- [会場の街の冬至の日影](../view2026/anim3d/venue_shadow_anim3d.html?lang=ja) (動く 3-D・触って回せる, 0.3 MB): パシフィコ横浜のLOD2建物の上を太陽が8時から16時まで動き、青い影が朝夕に伸びて正午に縮む。1・2・3時間の日影線から、建物の並びで日照時間が変わる場所を読む。 **太陽位置の2経路の最大差 < 1e-12°、20 m箱の影長・面積の相対差 < 1e-12、実建物の正午影は最高点からの上限内。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_shadow_anim3d.py)
+- [船の V 字の航跡](../view2026/anim3d/kelvin_wake_anim3d.html?lang=ja) (動く 3-D・触って回せる, 0.2 MB): 深水を進む点状の圧力源が作る立体的な高さ場を回す。船速を 4、7、12 m/s と変えると波長は伸びるが、画像から測った V 字の半角は約 19.47 deg のままになる。横波と発散波を分けて重ね、浅水・船体幅・粘性を含まない限界も示す。 **同じ実寸格子で測った半角は 18.10–20.25 deg、arcsin(1/3) からの最大差 1.37 deg、三速度間の差 2.15 deg。波長誤差は最大 0.50 m、12 m/s と 4 m/s の波長比は 9.05。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_kelvin_anim3d.py)
 
 </div>
 

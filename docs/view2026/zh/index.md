@@ -85,6 +85,9 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../view2026/anim3d/salt_xrd_anim3d.html?lang=zh"><img src="../thumbs/salt_xrd_anim3d.jpg" alt="食盐晶体的粉末 X 射线衍射" loading="lazy" width="320" height="320"><b>&#9654;</b><span>食盐晶体的粉末 X 射线衍射 · 2.5 MB</span></a>
 <a href="../../anim3d/gauss_bonnet.html?lang=zh"><img src="../thumbs/gauss_bonnet.jpg" alt="弯曲全部相加都是同一个数" loading="lazy" width="320" height="320"><b>&#9654;</b><span>弯曲全部相加都是同一个数 · 3.1 MB</span></a>
 <a href="../../view2026/anim3d/pulseox_anim3d.html?lang=zh"><img src="../thumbs/pulseox.jpg" alt="脉搏血氧仪的双波长吸收" loading="lazy" width="320" height="320"><b>&#9654;</b><span>脉搏血氧仪的双波长吸收 · 0.2 MB</span></a>
+<a href="../../view2026/anim3d/star_tracker_anim3d.html?lang=zh"><img src="../thumbs/poc_star_tracker.jpg" alt="Satellite attitude from one star image" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Satellite attitude from one star image · 0.2 MB</span></a>
+<a href="../../view2026/anim3d/venue_shadow_anim3d.html?lang=zh"><img src="../thumbs/venue_shadow.jpg" alt="会场周边的冬至日影" loading="lazy" width="320" height="320"><b>&#9654;</b><span>会场周边的冬至日影 · 0.3 MB</span></a>
+<a href="../../view2026/anim3d/kelvin_wake_anim3d.html?lang=zh"><img src="../thumbs/kelvin_wake.jpg" alt="船的 V 形航迹" loading="lazy" width="320" height="320"><b>&#9654;</b><span>船的 V 形航迹 · 0.2 MB</span></a>
 </div>
 
 ## 系列文章 (Qiita 上的英文文章)
@@ -228,7 +231,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 全部看
 
-PoC 277 个,另有机器人示例 5 个。展开分组即可加载缩略图。
+PoC 278 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 
 <noscript><p><a href="../../GALLERY.en.html">(没有 JavaScript 时,可在图库页面查看全部图。)</a></p></noscript>
 
@@ -357,7 +360,7 @@ PoC 277 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 </div>
 </details>
 
-<details class="vall"><summary><b>三维形状</b> (19)</summary>
+<details class="vall"><summary><b>三维形状</b> (20)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_battery_ct_degradation/01_xray_projection.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_battery_ct_degradation.jpg" alt="电池 CT 劣化" width="200" height="200"><span>电池 CT 劣化</span></a>
 <a href="../../articles/assets/poc/poc_bev_sensor_fusion/01_scene_bev.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_bev_sensor_fusion.jpg" alt="鸟瞰图融合" width="200" height="200"><span>鸟瞰图融合</span></a>
@@ -378,6 +381,7 @@ PoC 277 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 <a href="../../articles/assets/poc/poc_endless_zoom_and_turning_solids/03_zoom_loop.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_endless_zoom_and_turning_solids.jpg" alt="无限缩放" width="200" height="200"><b>&#9654;</b><span>无限缩放</span></a>
 <a href="../../articles/assets/poc/poc_four_dimensions_by_three_d_tools/03_hopf_turn.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_four_dimensions_by_three_d_tools.jpg" alt="用三维工具测四维" width="200" height="200"><b>&#9654;</b><span>用三维工具测四维</span></a>
 <a href="../../articles/assets/poc/poc_plateau_venue_lod2/01_venue_itokawa_top.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_plateau_venue_lod2.jpg" alt="会场建筑与小行星丝川同一把尺:把 PLATEAU 的 CityGML LOD2 变成网格" width="200" height="200"><span>会场建筑与小行星丝川同一把尺:把 PLATEAU 的 CityGML LOD2 变成网格</span></a>
+<a href="../../view2026/anim3d/star_tracker_anim3d.html?lang=zh"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_star_tracker.jpg" alt="Estimate satellite attitude from a synthetic star image" width="200" height="200"><b>&#9654;</b><span>Estimate satellite attitude from a synthetic star image</span></a>
 </div>
 </details>
 
@@ -677,6 +681,9 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 - [食盐晶体的粉末 X 射线衍射](../../view2026/anim3d/salt_xrd_anim3d.html?lang=zh) (动态 3-D,可拖动旋转, 2.5 MB): 在食盐晶胞上叠加晶格面的薄板;扫过 Bragg 角时,只有光程差为 λ 整数倍处探测器才会亮。把晶粒取向打乱,点就长成环;把波长拉长,环扩大并消失。消光规则通过把 8 个原子的波相加来展示。 [源码](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_saltxrd_anim3d.py)
 - [弯曲全部相加都是同一个数](../../anim3d/gauss_bonnet.html?lang=zh) (动态 3-D,可拖动旋转, 3.1 MB): 把球削成立方体、换成环面、增加孔洞，或用实测的小行星: 把各顶点的角亏损 K 加起来，Σ K / 2π 都等于 χ = V − E + F。用手指旋转，看半透明平面把顶点扫进总和。有边界的碗则不成立(局限标签页)。 **17 行检验中 Σ K / 2π 与 χ 的差小于 1e-12；只有带边界的碗偏离 24.0 × 2π，加上边界项后即一致。** [源码](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_gaussbonnet_anim3d.py)
 - [脉搏血氧仪的双波长吸收](../../view2026/anim3d/pulseox_anim3d.html?lang=zh) (动态 3-D,可拖动旋转, 0.2 MB): 跟随红光和近红外光穿过搏动的动脉，用 AC/DC 比值 R 读取血氧饱和度；比较带噪时序与闭式解，并显示无法区分 COHb 的局限。 **R 最大差 0.00068；SpO₂ 最大误差 0.034%。在 10% COHb 模型中，真值 90.0% 被读为 91.0%。** [源码](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_pulseox_anim3d.py)
+- [Satellite attitude from one star image](../../view2026/anim3d/star_tracker_anim3d.html?lang=zh) (动态 3-D,可拖动旋转, 0.2 MB): Sweep a camera cone through a synthetic sky, centroid noisy point images plus false points, match triangle angles against the full 196-star catalogue, reject outliers and solve attitude with Kabsch. The final tab exposes uncomputed limits from glare, too few stars and star trails. **Against the full 196-star catalogue: 16 genuine stars, 0 mismatches, 2/2 false points rejected, 0.0046-degree attitude error and 0.1406 degree per 1 pixel; Kabsch vs direct SVD differs by less than 1e-12.** [源码](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_startrk_anim3d.py)
+- [会场周边的冬至日影](../../view2026/anim3d/venue_shadow_anim3d.html?lang=zh) (动态 3-D,可拖动旋转, 0.3 MB): 太阳从8时到16时掠过横滨国际平和会议场周边的LOD2建筑;蓝色阴影在早晚伸长、正午缩短。1、2、3小时等时线显示建筑布局如何改变日照时间。 **2条太阳位置计算路径的差小于1e-12°;20米箱体阴影长度和面积的相对误差小于1e-12;会场正午阴影处于最高点上限内。** [源码](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_shadow_anim3d.py)
+- [船的 V 形航迹](../../view2026/anim3d/kelvin_wake_anim3d.html?lang=zh) (动态 3-D,可拖动旋转, 0.2 MB): 旋转观察点状压力源在深水中移动所形成的三维高度场。速度从 4、7 到 12 m/s 时波长增大，但从图像测得的 V 形半角仍接近 19.47 deg。横波与发散波先分开再叠加，并明确浅水、船宽和黏性未计入。 **在同一实尺寸网格上，测得半角为 18.10–20.25 deg；与 arcsin(1/3) 的最大差为 1.37 deg，三种速度间差为 2.15 deg。波长最大误差为 0.50 m，12 m/s 与 4 m/s 的波长比为 9.05。** [源码](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_kelvin_anim3d.py)
 
 </div>
 

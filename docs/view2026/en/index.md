@@ -85,6 +85,9 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 <a href="../../view2026/anim3d/salt_xrd_anim3d.html?lang=en"><img src="../thumbs/salt_xrd_anim3d.jpg" alt="Powder X-ray diffraction of salt" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Powder X-ray diffraction of salt · 2.5 MB</span></a>
 <a href="../../anim3d/gauss_bonnet.html?lang=en"><img src="../thumbs/gauss_bonnet.jpg" alt="Add up all the curvature" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Add up all the curvature · 3.1 MB</span></a>
 <a href="../../view2026/anim3d/pulseox_anim3d.html?lang=en"><img src="../thumbs/pulseox.jpg" alt="Dual-wavelength pulse oximetry" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Dual-wavelength pulse oximetry · 0.2 MB</span></a>
+<a href="../../view2026/anim3d/star_tracker_anim3d.html?lang=en"><img src="../thumbs/poc_star_tracker.jpg" alt="Satellite attitude from one star image" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Satellite attitude from one star image · 0.2 MB</span></a>
+<a href="../../view2026/anim3d/venue_shadow_anim3d.html?lang=en"><img src="../thumbs/venue_shadow.jpg" alt="Winter-solstice shadows around the venue" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Winter-solstice shadows around the venue · 0.3 MB</span></a>
+<a href="../../view2026/anim3d/kelvin_wake_anim3d.html?lang=en"><img src="../thumbs/kelvin_wake.jpg" alt="A ship's V-shaped wake" loading="lazy" width="320" height="320"><b>&#9654;</b><span>A ship's V-shaped wake · 0.2 MB</span></a>
 </div>
 
 ## Article series (articles on Qiita)
@@ -228,7 +231,7 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 
 ## See everything
 
-277 PoCs plus 5 robot demos. Open a group to load its thumbnails.
+278 PoCs plus 5 robot demos. Open a group to load its thumbnails.
 
 <noscript><p><a href="../../GALLERY.en.html">(Without JavaScript, every figure is on the gallery page.)</a></p></noscript>
 
@@ -357,7 +360,7 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 </div>
 </details>
 
-<details class="vall"><summary><b>3-D shape</b> (19)</summary>
+<details class="vall"><summary><b>3-D shape</b> (20)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_battery_ct_degradation/01_xray_projection.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_battery_ct_degradation.jpg" alt="Battery CT ageing" width="200" height="200"><span>Battery CT ageing</span></a>
 <a href="../../articles/assets/poc/poc_bev_sensor_fusion/01_scene_bev.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_bev_sensor_fusion.jpg" alt="BEV sensor fusion" width="200" height="200"><span>BEV sensor fusion</span></a>
@@ -378,6 +381,7 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 <a href="../../articles/assets/poc/poc_endless_zoom_and_turning_solids/03_zoom_loop.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_endless_zoom_and_turning_solids.jpg" alt="Endless zoom" width="200" height="200"><b>&#9654;</b><span>Endless zoom</span></a>
 <a href="../../articles/assets/poc/poc_four_dimensions_by_three_d_tools/03_hopf_turn.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_four_dimensions_by_three_d_tools.jpg" alt="4-D with 3-D tools" width="200" height="200"><b>&#9654;</b><span>4-D with 3-D tools</span></a>
 <a href="../../articles/assets/poc/poc_plateau_venue_lod2/01_venue_itokawa_top.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_plateau_venue_lod2.jpg" alt="The venue buildings and asteroid Itokawa on one ruler: PLATEAU CityGML LOD2 as a mesh" width="200" height="200"><span>The venue buildings and asteroid Itokawa on one ruler: PLATEAU CityGML LOD2 as a mesh</span></a>
+<a href="../../view2026/anim3d/star_tracker_anim3d.html?lang=en"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_star_tracker.jpg" alt="Estimate satellite attitude from a synthetic star image" width="200" height="200"><b>&#9654;</b><span>Estimate satellite attitude from a synthetic star image</span></a>
 </div>
 </details>
 
@@ -677,6 +681,9 @@ Every number is measured against ground truth the PoC planted itself (closed for
 - [Powder X-ray diffraction of salt](../../view2026/anim3d/salt_xrd_anim3d.html?lang=en) (moving 3-D, drag to rotate, 2.5 MB): Lattice planes are laid over the unit cell of salt; sweep the Bragg angle and the detector lights up only where the path difference is a whole number of λ. Scatter the grain orientations and spots grow into rings; lengthen the wavelength and the rings expand and vanish. The extinction rule is shown by adding the waves of the 8 atoms. [source](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_saltxrd_anim3d.py)
 - [Add up all the curvature](../../anim3d/gauss_bonnet.html?lang=en) (moving 3-D, drag to rotate, 3.1 MB): Sharpen a sphere into a cube, take a torus, add holes, or use the measured asteroid: the angle defects K added over the vertices give Σ K / 2π = χ = V − E + F. Rotate with a finger and watch the translucent plane sweep the vertices into the sum. A bowl with a boundary breaks it (the limit tab). **In 17 checked rows Σ K / 2π and χ differ by less than 1e-12; only the bowl with a boundary misses by 24.0 × 2π, and matches once the boundary term is added.** [source](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_gaussbonnet_anim3d.py)
 - [Dual-wavelength pulse oximetry](../../view2026/anim3d/pulseox_anim3d.html?lang=en) (moving 3-D, drag to rotate, 0.2 MB): Follow red and near-infrared light through a pulsating artery and read oxygen saturation from the AC/DC ratio R. Noisy time series are compared with the closed form, and the COHb ambiguity is shown as a limit of dual-wavelength measurement. **Maximum R difference 0.00068; maximum oxygen-saturation error 0.034%. With 10% COHb, the model reads true 90.0% as 91.0%.** [source](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_pulseox_anim3d.py)
+- [Satellite attitude from one star image](../../view2026/anim3d/star_tracker_anim3d.html?lang=en) (moving 3-D, drag to rotate, 0.2 MB): Sweep a camera cone through a synthetic sky, centroid noisy point images plus false points, match triangle angles against the full 196-star catalogue, reject outliers and solve attitude with Kabsch. The final tab exposes uncomputed limits from glare, too few stars and star trails. **Against the full 196-star catalogue: 16 genuine stars, 0 mismatches, 2/2 false points rejected, 0.0046-degree attitude error and 0.1406 degree per 1 pixel; Kabsch vs direct SVD differs by less than 1e-12.** [source](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_startrk_anim3d.py)
+- [Winter-solstice shadows around the venue](../../view2026/anim3d/venue_shadow_anim3d.html?lang=en) (moving 3-D, drag to rotate, 0.3 MB): The Sun moves over LOD2 buildings around Pacifico Yokohama from 8 h to 16 h; blue shadows lengthen in morning and evening and shrink at noon. The 1, 2 and 3 h contours reveal how the layout changes sunlight duration. **2 solar-position paths differ by < 1e-12°; relative errors for the 20 m box shadow length and area are < 1e-12; the venue's noon shadow stays within the highest-point bound.** [source](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_shadow_anim3d.py)
+- [A ship's V-shaped wake](../../view2026/anim3d/kelvin_wake_anim3d.html?lang=en) (moving 3-D, drag to rotate, 0.2 MB): Rotate the height field made by a point pressure source moving on deep water. At 4, 7 and 12 m/s the wavelength grows, but the V half-angle measured from the images stays near 19.47 deg. Transverse and divergent waves are separated and recombined; omitted shallow water, hull width and viscosity are exposed as limits. **On one physical grid, measured half-angles span 18.10–20.25 deg; maximum error from arcsin(1/3) is 1.37 deg and spread across three speeds is 2.15 deg. Maximum wavelength error is 0.50 m; the 12 m/s to 4 m/s wavelength ratio is 9.05.** [source](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_kelvin_anim3d.py)
 
 </div>
 

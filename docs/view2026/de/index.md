@@ -85,6 +85,9 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 <a href="../../view2026/anim3d/salt_xrd_anim3d.html?lang=de"><img src="../thumbs/salt_xrd_anim3d.jpg" alt="Pulver-Röntgenbeugung an Salz" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Pulver-Röntgenbeugung an Salz · 2.5 MB</span></a>
 <a href="../../anim3d/gauss_bonnet.html?lang=de"><img src="../thumbs/gauss_bonnet.jpg" alt="Krümmung aufsummiert, gleiche Zahl" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Krümmung aufsummiert, gleiche Zahl · 3.1 MB</span></a>
 <a href="../../view2026/anim3d/pulseox_anim3d.html?lang=de"><img src="../thumbs/pulseox.jpg" alt="Doppelwellenlängen-Pulsoximetrie" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Doppelwellenlängen-Pulsoximetrie · 0.2 MB</span></a>
+<a href="../../view2026/anim3d/star_tracker_anim3d.html?lang=de"><img src="../thumbs/poc_star_tracker.jpg" alt="Satellite attitude from one star image" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Satellite attitude from one star image · 0.2 MB</span></a>
+<a href="../../view2026/anim3d/venue_shadow_anim3d.html?lang=de"><img src="../thumbs/venue_shadow.jpg" alt="Schatten zur Wintersonnenwende am Veranstaltungsort" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Schatten zur Wintersonnenwende am Veranstaltungsort · 0.3 MB</span></a>
+<a href="../../view2026/anim3d/kelvin_wake_anim3d.html?lang=de"><img src="../thumbs/kelvin_wake.jpg" alt="Die V-förmige Heckwelle eines Schiffs" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Die V-förmige Heckwelle eines Schiffs · 0.2 MB</span></a>
 </div>
 
 ## Artikelserien (englische Artikel auf Qiita)
@@ -228,7 +231,7 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 
 ## Alles ansehen
 
-277 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
+278 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
 
 <noscript><p><a href="../../GALLERY.en.html">(Ohne JavaScript stehen alle Abbildungen auf der Galerieseite.)</a></p></noscript>
 
@@ -357,7 +360,7 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 </div>
 </details>
 
-<details class="vall"><summary><b>3-D-Form</b> (19)</summary>
+<details class="vall"><summary><b>3-D-Form</b> (20)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_battery_ct_degradation/01_xray_projection.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_battery_ct_degradation.jpg" alt="Batterie-CT" width="200" height="200"><span>Batterie-CT</span></a>
 <a href="../../articles/assets/poc/poc_bev_sensor_fusion/01_scene_bev.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_bev_sensor_fusion.jpg" alt="BEV-Sensorfusion" width="200" height="200"><span>BEV-Sensorfusion</span></a>
@@ -378,6 +381,7 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 <a href="../../articles/assets/poc/poc_endless_zoom_and_turning_solids/03_zoom_loop.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_endless_zoom_and_turning_solids.jpg" alt="Endloser Zoom" width="200" height="200"><b>&#9654;</b><span>Endloser Zoom</span></a>
 <a href="../../articles/assets/poc/poc_four_dimensions_by_three_d_tools/03_hopf_turn.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_four_dimensions_by_three_d_tools.jpg" alt="4-D mit 3-D-Werkzeugen" width="200" height="200"><b>&#9654;</b><span>4-D mit 3-D-Werkzeugen</span></a>
 <a href="../../articles/assets/poc/poc_plateau_venue_lod2/01_venue_itokawa_top.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_plateau_venue_lod2.jpg" alt="Die Gebäude des Veranstaltungsorts und der Asteroid Itokawa auf einem Maßstab: PLATEAU-CityGML LOD2 als Netz" width="200" height="200"><span>Die Gebäude des Veranstaltungsorts und der Asteroid Itokawa auf einem Maßstab: PLATEAU-CityGML LOD2 als Netz</span></a>
+<a href="../../view2026/anim3d/star_tracker_anim3d.html?lang=de"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_star_tracker.jpg" alt="Estimate satellite attitude from a synthetic star image" width="200" height="200"><b>&#9654;</b><span>Estimate satellite attitude from a synthetic star image</span></a>
 </div>
 </details>
 
@@ -677,6 +681,9 @@ Jede Zahl ist gegen eine Ground Truth gemessen, die der PoC selbst eingesetzt ha
 - [Pulver-Röntgenbeugung an Salz](../../view2026/anim3d/salt_xrd_anim3d.html?lang=de) (bewegtes 3-D, drehbar, 2.5 MB): Gitterebenen liegen über der Elementarzelle des Salzes; beim Durchfahren des Bragg-Winkels leuchtet der Detektor nur dort, wo der Gangunterschied ein ganzes Vielfaches von λ ist. Werden die Körner zufällig gedreht, wachsen Punkte zu Ringen; wird die Wellenlänge länger, dehnen sich die Ringe aus und verschwinden. Die Auslöschungsregel zeigt sich beim Addieren der Wellen der 8 Atome. [Quelle](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_saltxrd_anim3d.py)
 - [Krümmung aufsummiert, gleiche Zahl](../../anim3d/gauss_bonnet.html?lang=de) (bewegtes 3-D, drehbar, 3.1 MB): Kugel zum Würfel geschärft, Torus, mehr Löcher oder der gemessene Asteroid: Die über die Ecken aufsummierten Winkeldefekte K ergeben Σ K / 2π = χ = V − E + F. Mit dem Finger drehen und zusehen, wie die halbtransparente Ebene die Ecken in die Summe fegt. Eine Schale mit Rand bricht es (der Grenze-Tab). **In 17 geprüften Zeilen unterscheiden sich Σ K / 2π und χ um weniger als 1e-12; nur die Schale mit Rand liegt um 24.0 × 2π daneben und stimmt, sobald der Randterm hinzukommt.** [Quelle](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_gaussbonnet_anim3d.py)
 - [Doppelwellenlängen-Pulsoximetrie](../../view2026/anim3d/pulseox_anim3d.html?lang=de) (bewegtes 3-D, drehbar, 0.2 MB): Rotes und nahinfrarotes Licht durch eine pulsierende Arterie verfolgen und aus dem AC/DC-Verhältnis R die Sauerstoffsättigung ablesen. Verrauschte Zeitreihen werden mit der geschlossenen Form verglichen; die COHb-Mehrdeutigkeit erscheint als Grenze. **Maximale R-Abweichung 0.00068; maximaler SpO₂-Fehler 0.034 %. Bei 10 % COHb liest das Modell wahre 90.0 % als 91.0 %.** [Quelle](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_pulseox_anim3d.py)
+- [Satellite attitude from one star image](../../view2026/anim3d/star_tracker_anim3d.html?lang=de) (bewegtes 3-D, drehbar, 0.2 MB): Sweep a camera cone through a synthetic sky, centroid noisy point images plus false points, match triangle angles against the full 196-star catalogue, reject outliers and solve attitude with Kabsch. The final tab exposes uncomputed limits from glare, too few stars and star trails. **Against the full 196-star catalogue: 16 genuine stars, 0 mismatches, 2/2 false points rejected, 0.0046-degree attitude error and 0.1406 degree per 1 pixel; Kabsch vs direct SVD differs by less than 1e-12.** [Quelle](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_startrk_anim3d.py)
+- [Schatten zur Wintersonnenwende am Veranstaltungsort](../../view2026/anim3d/venue_shadow_anim3d.html?lang=de) (bewegtes 3-D, drehbar, 0.3 MB): Die Sonne zieht von 8 h bis 16 h über die LOD2-Gebäude um Pacifico Yokohama. Blaue Schatten werden morgens und abends länger und mittags kürzer; Konturen für 1, 2 und 3 Stunden zeigen den Einfluss der Anordnung. **Die 2 Sonnenpositionswege unterscheiden sich um < 1e-12°; relative Fehler von Länge und Fläche des Schattens einer 20-m-Box sind < 1e-12; der Mittagsschatten bleibt unter der Höchstpunktgrenze.** [Quelle](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_shadow_anim3d.py)
+- [Die V-förmige Heckwelle eines Schiffs](../../view2026/anim3d/kelvin_wake_anim3d.html?lang=de) (bewegtes 3-D, drehbar, 0.2 MB): Das Höhenfeld einer Punktdruckquelle auf tiefem Wasser lässt sich drehen. Bei 4, 7 und 12 m/s wächst die Wellenlänge, der aus den Bildern gemessene V-Halbwinkel bleibt jedoch nahe 19.47 deg. Quer- und Divergenzwellen werden getrennt und überlagert; Flachwasser, Rumpfbreite und Viskosität bleiben als Grenzen sichtbar. **Auf demselben physikalischen Gitter liegen die gemessenen Halbwinkel bei 18.10–20.25 deg; der maximale Fehler zu arcsin(1/3) beträgt 1.37 deg, die Streuung über drei Geschwindigkeiten 2.15 deg. Der maximale Wellenlängenfehler ist 0.50 m; das Verhältnis bei 12 m/s zu 4 m/s beträgt 9.05.** [Quelle](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_kelvin_anim3d.py)
 
 </div>
 

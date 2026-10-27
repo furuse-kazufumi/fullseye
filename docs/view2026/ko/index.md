@@ -85,6 +85,9 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../view2026/anim3d/salt_xrd_anim3d.html?lang=ko"><img src="../thumbs/salt_xrd_anim3d.jpg" alt="소금 결정의 분말 X선 회절" loading="lazy" width="320" height="320"><b>&#9654;</b><span>소금 결정의 분말 X선 회절 · 2.5 MB</span></a>
 <a href="../../anim3d/gauss_bonnet.html?lang=ko"><img src="../thumbs/gauss_bonnet.jpg" alt="굽은 정도를 전부 더하면 같은 수" loading="lazy" width="320" height="320"><b>&#9654;</b><span>굽은 정도를 전부 더하면 같은 수 · 3.1 MB</span></a>
 <a href="../../view2026/anim3d/pulseox_anim3d.html?lang=ko"><img src="../thumbs/pulseox.jpg" alt="맥박 산소 측정의 두 파장 흡수" loading="lazy" width="320" height="320"><b>&#9654;</b><span>맥박 산소 측정의 두 파장 흡수 · 0.2 MB</span></a>
+<a href="../../view2026/anim3d/star_tracker_anim3d.html?lang=ko"><img src="../thumbs/poc_star_tracker.jpg" alt="Satellite attitude from one star image" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Satellite attitude from one star image · 0.2 MB</span></a>
+<a href="../../view2026/anim3d/venue_shadow_anim3d.html?lang=ko"><img src="../thumbs/venue_shadow.jpg" alt="행사장 주변의 동지 그림자" loading="lazy" width="320" height="320"><b>&#9654;</b><span>행사장 주변의 동지 그림자 · 0.3 MB</span></a>
+<a href="../../view2026/anim3d/kelvin_wake_anim3d.html?lang=ko"><img src="../thumbs/kelvin_wake.jpg" alt="배의 V자 항적" loading="lazy" width="320" height="320"><b>&#9654;</b><span>배의 V자 항적 · 0.2 MB</span></a>
 </div>
 
 ## 시리즈 기사 (Qiita의 영어 기사)
@@ -228,7 +231,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 전부 보기
 
-PoC 277개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
+PoC 278개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript가 없으면 갤러리 페이지에서 모든 그림을 볼 수 있습니다.)</a></p></noscript>
 
@@ -357,7 +360,7 @@ PoC 277개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 </div>
 </details>
 
-<details class="vall"><summary><b>3-D 형상</b> (19)</summary>
+<details class="vall"><summary><b>3-D 형상</b> (20)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_battery_ct_degradation/01_xray_projection.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_battery_ct_degradation.jpg" alt="배터리 CT 열화" width="200" height="200"><span>배터리 CT 열화</span></a>
 <a href="../../articles/assets/poc/poc_bev_sensor_fusion/01_scene_bev.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_bev_sensor_fusion.jpg" alt="BEV 센서 융합" width="200" height="200"><span>BEV 센서 융합</span></a>
@@ -378,6 +381,7 @@ PoC 277개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 <a href="../../articles/assets/poc/poc_endless_zoom_and_turning_solids/03_zoom_loop.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_endless_zoom_and_turning_solids.jpg" alt="무한 줌" width="200" height="200"><b>&#9654;</b><span>무한 줌</span></a>
 <a href="../../articles/assets/poc/poc_four_dimensions_by_three_d_tools/03_hopf_turn.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_four_dimensions_by_three_d_tools.jpg" alt="3-D로 4차원" width="200" height="200"><b>&#9654;</b><span>3-D로 4차원</span></a>
 <a href="../../articles/assets/poc/poc_plateau_venue_lod2/01_venue_itokawa_top.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_plateau_venue_lod2.jpg" alt="회의장 건물과 소행성 이토카와를 같은 자로: PLATEAU CityGML LOD2 를 메시로" width="200" height="200"><span>회의장 건물과 소행성 이토카와를 같은 자로: PLATEAU CityGML LOD2 를 메시로</span></a>
+<a href="../../view2026/anim3d/star_tracker_anim3d.html?lang=ko"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_star_tracker.jpg" alt="Estimate satellite attitude from a synthetic star image" width="200" height="200"><b>&#9654;</b><span>Estimate satellite attitude from a synthetic star image</span></a>
 </div>
 </details>
 
@@ -677,6 +681,9 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 - [소금 결정의 분말 X선 회절](../../view2026/anim3d/salt_xrd_anim3d.html?lang=ko) (움직이는 3-D, 드래그로 회전, 2.5 MB): 소금의 단위세포에 격자면의 판을 겹치고 Bragg 각을 훑으면, 행로차가 λ의 정수배인 곳에서만 검출기가 빛난다. 알갱이의 방향을 흩뜨리면 점이 환으로 자라고, 파장을 길게 하면 환은 넓어져 사라진다. 소멸 규칙은 원자 8개의 파동을 더해 보인다. [소스](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_saltxrd_anim3d.py)
 - [굽은 정도를 전부 더하면 같은 수](../../anim3d/gauss_bonnet.html?lang=ko) (움직이는 3-D, 드래그로 회전, 3.1 MB): 구를 정육면체로 각지게 하든, 토러스든, 구멍을 늘리든, 실측한 소행성이든, 꼭짓점마다의 각 결손 K를 더한 Σ K / 2π는 χ = V − E + F와 일치한다. 반투명 평면이 지나간 꼭짓점을 더해 가는 움직임을 손가락으로 돌려 본다. 경계가 있는 그릇에서는 빗나간다(한계 탭). **17행의 표에서 Σ K / 2π와 χ의 차는 1e-12 미만. 경계가 있는 그릇만 24.0 × 2π 빗나가며, 경계 항을 넣으면 일치한다.** [소스](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_gaussbonnet_anim3d.py)
 - [맥박 산소 측정의 두 파장 흡수](../../view2026/anim3d/pulseox_anim3d.html?lang=ko) (움직이는 3-D, 드래그로 회전, 0.2 MB): 박동하는 동맥을 지나는 적색광과 근적외선을 따라가며 AC/DC 비 R로 산소포화도를 읽는다. 잡음 시계열과 닫힌식을 비교하고 COHb를 구별하지 못하는 한계도 보인다. **R 최대 차이 0.00068, SpO₂ 최대 오차 0.034%. COHb 10% 모형에서는 실제 90.0%를 91.0%로 읽는다.** [소스](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_pulseox_anim3d.py)
+- [Satellite attitude from one star image](../../view2026/anim3d/star_tracker_anim3d.html?lang=ko) (움직이는 3-D, 드래그로 회전, 0.2 MB): Sweep a camera cone through a synthetic sky, centroid noisy point images plus false points, match triangle angles against the full 196-star catalogue, reject outliers and solve attitude with Kabsch. The final tab exposes uncomputed limits from glare, too few stars and star trails. **Against the full 196-star catalogue: 16 genuine stars, 0 mismatches, 2/2 false points rejected, 0.0046-degree attitude error and 0.1406 degree per 1 pixel; Kabsch vs direct SVD differs by less than 1e-12.** [소스](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_startrk_anim3d.py)
+- [행사장 주변의 동지 그림자](../../view2026/anim3d/venue_shadow_anim3d.html?lang=ko) (움직이는 3-D, 드래그로 회전, 0.3 MB): 태양이 8시부터 16시까지 파시피코 요코하마 주변 LOD2 건물 위를 지나며 파란 그림자는 아침과 저녁에 길고 정오에 짧아진다. 1·2·3시간 등시간선으로 배치에 따른 일조 시간 변화를 읽는다. **2개 태양 위치 경로 차이는 1e-12° 미만, 20 m 상자 그림자 길이와 면적의 상대 오차는 1e-12 미만이며 실제 건물 정오 그림자는 최고점 상한 이내다.** [소스](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_shadow_anim3d.py)
+- [배의 V자 항적](../../view2026/anim3d/kelvin_wake_anim3d.html?lang=ko) (움직이는 3-D, 드래그로 회전, 0.2 MB): 깊은 물을 움직이는 점 압력원이 만든 높이장을 돌려 본다. 속도가 4, 7, 12 m/s로 커지면 파장은 늘지만 영상에서 잰 V자 반각은 약 19.47 deg로 유지된다. 횡파와 발산파를 나눠 겹치고 얕은 물, 선체 폭, 점성을 뺀 한계도 보인다. **같은 실제 길이 격자에서 잰 반각은 18.10–20.25 deg이며 arcsin(1/3)과의 최대 차이는 1.37 deg, 세 속도 사이 차이는 2.15 deg다. 최대 파장 오차는 0.50 m이고 12 m/s와 4 m/s의 파장비는 9.05다.** [소스](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_kelvin_anim3d.py)
 
 </div>
 

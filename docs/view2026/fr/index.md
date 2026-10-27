@@ -85,6 +85,9 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 <a href="../../view2026/anim3d/salt_xrd_anim3d.html?lang=fr"><img src="../thumbs/salt_xrd_anim3d.jpg" alt="Diffraction des rayons X sur poudre de sel" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Diffraction des rayons X sur poudre de sel · 2.5 MB</span></a>
 <a href="../../anim3d/gauss_bonnet.html?lang=fr"><img src="../thumbs/gauss_bonnet.jpg" alt="Toute la courbure additionnée" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Toute la courbure additionnée · 3.1 MB</span></a>
 <a href="../../view2026/anim3d/pulseox_anim3d.html?lang=fr"><img src="../thumbs/pulseox.jpg" alt="Oxymétrie de pouls à double longueur d’onde" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Oxymétrie de pouls à double longueur d’onde · 0.2 MB</span></a>
+<a href="../../view2026/anim3d/star_tracker_anim3d.html?lang=fr"><img src="../thumbs/poc_star_tracker.jpg" alt="Satellite attitude from one star image" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Satellite attitude from one star image · 0.2 MB</span></a>
+<a href="../../view2026/anim3d/venue_shadow_anim3d.html?lang=fr"><img src="../thumbs/venue_shadow.jpg" alt="Ombres du solstice d'hiver autour du site" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Ombres du solstice d'hiver autour du site · 0.3 MB</span></a>
+<a href="../../view2026/anim3d/kelvin_wake_anim3d.html?lang=fr"><img src="../thumbs/kelvin_wake.jpg" alt="Le sillage en V d'un navire" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Le sillage en V d'un navire · 0.2 MB</span></a>
 </div>
 
 ## Série d'articles (articles sur Qiita)
@@ -228,7 +231,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 
 ## Tout voir
 
-277 PoC et 5 exemples de robots. Ouvrez un groupe pour afficher ses vignettes.
+278 PoC et 5 exemples de robots. Ouvrez un groupe pour afficher ses vignettes.
 
 <noscript><p><a href="../../GALLERY.en.html">(Sans JavaScript, toutes les figures sont visibles sur la page de la galerie.)</a></p></noscript>
 
@@ -357,7 +360,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 </div>
 </details>
 
-<details class="vall"><summary><b>Forme 3-D</b> (19)</summary>
+<details class="vall"><summary><b>Forme 3-D</b> (20)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_battery_ct_degradation/01_xray_projection.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_battery_ct_degradation.jpg" alt="Dégradation des batteries observée par CT" width="200" height="200"><span>Dégradation des batteries observée par CT</span></a>
 <a href="../../articles/assets/poc/poc_bev_sensor_fusion/01_scene_bev.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_bev_sensor_fusion.jpg" alt="Fusion de vues en vue aérienne (BEV)" width="200" height="200"><span>Fusion de vues en vue aérienne (BEV)</span></a>
@@ -378,6 +381,7 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 <a href="../../articles/assets/poc/poc_endless_zoom_and_turning_solids/03_zoom_loop.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_endless_zoom_and_turning_solids.jpg" alt="Zoom sans fin" width="200" height="200"><b>&#9654;</b><span>Zoom sans fin</span></a>
 <a href="../../articles/assets/poc/poc_four_dimensions_by_three_d_tools/03_hopf_turn.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_four_dimensions_by_three_d_tools.jpg" alt="Traiter 4 dimensions avec des outils 3-D" width="200" height="200"><b>&#9654;</b><span>Traiter 4 dimensions avec des outils 3-D</span></a>
 <a href="../../articles/assets/poc/poc_plateau_venue_lod2/01_venue_itokawa_top.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_plateau_venue_lod2.jpg" alt="Les bâtiments du site et l'astéroïde Itokawa à la même échelle : le CityGML LOD2 de PLATEAU en maillage" width="200" height="200"><span>Les bâtiments du site et l'astéroïde Itokawa à la même échelle : le CityGML LOD2 de PLATEAU en maillage</span></a>
+<a href="../../view2026/anim3d/star_tracker_anim3d.html?lang=fr"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_star_tracker.jpg" alt="Estimate satellite attitude from a synthetic star image" width="200" height="200"><b>&#9654;</b><span>Estimate satellite attitude from a synthetic star image</span></a>
 </div>
 </details>
 
@@ -677,6 +681,9 @@ Chaque valeur est mesurée par rapport à la vérité terrain que chaque PoC a e
 - [Diffraction des rayons X sur poudre de sel](../../view2026/anim3d/salt_xrd_anim3d.html?lang=fr) (3-D animée, à faire pivoter, 2.5 MB): Des plans réticulaires sont posés sur la maille du sel ; balayez l'angle de Bragg et le détecteur ne s'allume que là où la différence de marche est un multiple entier de λ. Dispersez les orientations des grains et les points deviennent des anneaux ; allongez la longueur d'onde et les anneaux s'élargissent puis disparaissent. La règle d'extinction est montrée en additionnant les ondes des 8 atomes. [source](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_saltxrd_anim3d.py)
 - [Toute la courbure additionnée](../../anim3d/gauss_bonnet.html?lang=fr) (3-D animée, à faire pivoter, 3.1 MB): Aiguisez une sphère en cube, prenez un tore, ajoutez des trous ou l'astéroïde mesuré : les défauts angulaires K additionnés sur les sommets donnent Σ K / 2π = χ = V − E + F. Faites pivoter du doigt et regardez le plan translucide balayer les sommets dans la somme. Un bol à bord fait échouer la formule (l'onglet limite). **Sur 17 lignes vérifiées, Σ K / 2π et χ diffèrent de moins de 1e-12 ; seul le bol à bord manque de 24.0 × 2π, et coïncide dès qu'on ajoute le terme de bord.** [source](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_gaussbonnet_anim3d.py)
 - [Oxymétrie de pouls à double longueur d’onde](../../view2026/anim3d/pulseox_anim3d.html?lang=fr) (3-D animée, à faire pivoter, 0.2 MB): Suivre la lumière rouge et proche infrarouge dans une artère pulsatile, puis lire la saturation en oxygène avec le rapport AC/DC R. La série bruitée est comparée à la forme fermée et l’ambiguïté du COHb montre la limite. **Écart maximal de R : 0.00068 ; erreur maximale de SpO₂ : 0.034 %. Avec 10 % de COHb, le modèle lit 91.0 % au lieu de 90.0 %.** [source](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_pulseox_anim3d.py)
+- [Satellite attitude from one star image](../../view2026/anim3d/star_tracker_anim3d.html?lang=fr) (3-D animée, à faire pivoter, 0.2 MB): Sweep a camera cone through a synthetic sky, centroid noisy point images plus false points, match triangle angles against the full 196-star catalogue, reject outliers and solve attitude with Kabsch. The final tab exposes uncomputed limits from glare, too few stars and star trails. **Against the full 196-star catalogue: 16 genuine stars, 0 mismatches, 2/2 false points rejected, 0.0046-degree attitude error and 0.1406 degree per 1 pixel; Kabsch vs direct SVD differs by less than 1e-12.** [source](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_startrk_anim3d.py)
+- [Ombres du solstice d'hiver autour du site](../../view2026/anim3d/venue_shadow_anim3d.html?lang=fr) (3-D animée, à faire pivoter, 0.3 MB): Le Soleil parcourt les bâtiments LOD2 autour de Pacifico Yokohama de 8 h à 16 h; les ombres bleues s'allongent matin et soir et raccourcissent à midi. Les courbes de 1, 2 et 3 heures montrent l'effet de l'implantation. **Les 2 calculs de position solaire diffèrent de < 1e-12°; les erreurs relatives de longueur et d'aire de l'ombre d'une boîte de 20 m sont < 1e-12; l'ombre de midi reste sous la borne du point culminant.** [source](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_shadow_anim3d.py)
+- [Le sillage en V d'un navire](../../view2026/anim3d/kelvin_wake_anim3d.html?lang=fr) (3-D animée, à faire pivoter, 0.2 MB): Faites tourner le champ de hauteur produit par une source de pression ponctuelle en eau profonde. À 4, 7 et 12 m/s, la longueur d'onde augmente, mais le demi-angle du V mesuré dans les images reste proche de 19.47 deg. Les ondes transversales et divergentes sont séparées puis superposées; eau peu profonde, largeur de coque et viscosité restent des limites explicites. **Sur la même grille physique, les demi-angles mesurés vont de 18.10 à 20.25 deg; l'écart maximal à arcsin(1/3) vaut 1.37 deg et la dispersion entre trois vitesses 2.15 deg. L'erreur maximale de longueur d'onde est de 0.50 m; le rapport entre 12 m/s et 4 m/s vaut 9.05.** [source](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_kelvin_anim3d.py)
 
 </div>
 
