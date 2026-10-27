@@ -1725,6 +1725,44 @@
    }
   },
   {
+    "id": "laser_diffraction",
+    "category": "anim3d",
+    "media": "laser_diffraction_anim3d.html",
+    "media_path": "view2026/anim3d/laser_diffraction_anim3d.html",
+    "motion": true,
+    "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_laserdiff_anim3d.py",
+    "label": {
+     "ja": "光の輪で粉の粒径を測る",
+     "en": "Measure powder size with rings of light",
+     "zh": "Measure powder size with rings of light",
+     "tw": "Measure powder size with rings of light",
+     "ko": "Measure powder size with rings of light",
+     "de": "Measure powder size with rings of light",
+     "hi": "Measure powder size with rings of light",
+     "fr": "Measure powder size with rings of light"
+    },
+    "see": {
+     "ja": "粒が小さいほど散乱リングが外へ広がる。リング信号だけを非負最小二乗で解き、単峰・二峰の粒度分布と D10/D50/D90 を復元する。",
+     "en": "Smaller grains spread diffraction rings outward. Non-negative least squares uses ring signals alone to recover unimodal and bimodal size distributions and D10/D50/D90.",
+     "zh": "Smaller grains spread diffraction rings outward. Non-negative least squares uses ring signals alone to recover unimodal and bimodal size distributions and D10/D50/D90.",
+     "tw": "Smaller grains spread diffraction rings outward. Non-negative least squares uses ring signals alone to recover unimodal and bimodal size distributions and D10/D50/D90.",
+     "ko": "Smaller grains spread diffraction rings outward. Non-negative least squares uses ring signals alone to recover unimodal and bimodal size distributions and D10/D50/D90.",
+     "de": "Smaller grains spread diffraction rings outward. Non-negative least squares uses ring signals alone to recover unimodal and bimodal size distributions and D10/D50/D90.",
+     "hi": "Smaller grains spread diffraction rings outward. Non-negative least squares uses ring signals alone to recover unimodal and bimodal size distributions and D10/D50/D90.",
+     "fr": "Smaller grains spread diffraction rings outward. Non-negative least squares uses ring signals alone to recover unimodal and bimodal size distributions and D10/D50/D90."
+    },
+    "num": {
+     "ja": "画像で測った第 1 暗環と 1.22 λ/d の差 0.0000587 rad。別の細密格子で合成した信号からの D50 誤差は単峰 4.22 %、二峰 3.79 %。許容 5.25 %。",
+     "en": "1st-dark-ring difference from 1.22 λ/d: 0.0000587 rad. D50 errors from signals synthesized on a separate fine grid: 4.22% unimodal and 3.79% bimodal, below the 5.25% bound.",
+     "zh": "1st-dark-ring difference from 1.22 λ/d: 0.0000587 rad. D50 errors from signals synthesized on a separate fine grid: 4.22% unimodal and 3.79% bimodal, below the 5.25% bound.",
+     "tw": "1st-dark-ring difference from 1.22 λ/d: 0.0000587 rad. D50 errors from signals synthesized on a separate fine grid: 4.22% unimodal and 3.79% bimodal, below the 5.25% bound.",
+     "ko": "1st-dark-ring difference from 1.22 λ/d: 0.0000587 rad. D50 errors from signals synthesized on a separate fine grid: 4.22% unimodal and 3.79% bimodal, below the 5.25% bound.",
+     "de": "1st-dark-ring difference from 1.22 λ/d: 0.0000587 rad. D50 errors from signals synthesized on a separate fine grid: 4.22% unimodal and 3.79% bimodal, below the 5.25% bound.",
+     "hi": "1st-dark-ring difference from 1.22 λ/d: 0.0000587 rad. D50 errors from signals synthesized on a separate fine grid: 4.22% unimodal and 3.79% bimodal, below the 5.25% bound.",
+     "fr": "1st-dark-ring difference from 1.22 λ/d: 0.0000587 rad. D50 errors from signals synthesized on a separate fine grid: 4.22% unimodal and 3.79% bimodal, below the 5.25% bound."
+    }
+   },
+   {
    "id": "tablet_inspection",
    "category": "anim3d",
    "media": "tablet_inspection_anim3d.html",

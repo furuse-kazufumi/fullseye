@@ -1,0 +1,474 @@
+{
+    "_":  "English fallback translations for the low-cost prototype; formulas, values and op names are preserved.",
+    "example":  "build_laserdiff_anim3d",
+    "strings":  {
+                    "Measure powder size with rings of light":  {
+                                                                    "ja":  "光の輪で粉の粒径を測る",
+                                                                    "zh":  "Measure powder size with rings of light",
+                                                                    "tw":  "Measure powder size with rings of light",
+                                                                    "ko":  "Measure powder size with rings of light",
+                                                                    "de":  "Measure powder size with rings of light",
+                                                                    "hi":  "Measure powder size with rings of light",
+                                                                    "fr":  "Measure powder size with rings of light"
+                                                                },
+                    "Solve synthetic ring signals as an inverse problem to recover a size distribution and D10/D50/D90":  {
+                                                                                                                              "ja":  "合成リング信号を逆問題として解き、粒度分布と D10/D50/D90 を復元する",
+                                                                                                                              "zh":  "Solve synthetic ring signals as an inverse problem to recover a size distribution and D10/D50/D90",
+                                                                                                                              "tw":  "Solve synthetic ring signals as an inverse problem to recover a size distribution and D10/D50/D90",
+                                                                                                                              "ko":  "Solve synthetic ring signals as an inverse problem to recover a size distribution and D10/D50/D90",
+                                                                                                                              "de":  "Solve synthetic ring signals as an inverse problem to recover a size distribution and D10/D50/D90",
+                                                                                                                              "hi":  "Solve synthetic ring signals as an inverse problem to recover a size distribution and D10/D50/D90",
+                                                                                                                              "fr":  "Solve synthetic ring signals as an inverse problem to recover a size distribution and D10/D50/D90"
+                                                                                                                          },
+                    "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Drag to orbit; tap a badge for computed gates.":  {
+                                                                                                                                            "ja":  "①問い → ②予想 → ③再生 → ④式 → ⑤限界。ドラッグで回転し、バッジで計算の門を見る。",
+                                                                                                                                            "zh":  "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Drag to orbit; tap a badge for computed gates.",
+                                                                                                                                            "tw":  "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Drag to orbit; tap a badge for computed gates.",
+                                                                                                                                            "ko":  "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Drag to orbit; tap a badge for computed gates.",
+                                                                                                                                            "de":  "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Drag to orbit; tap a badge for computed gates.",
+                                                                                                                                            "hi":  "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Drag to orbit; tap a badge for computed gates.",
+                                                                                                                                            "fr":  "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Drag to orbit; tap a badge for computed gates."
+                                                                                                                                        },
+                    "Small grains spread light":  {
+                                                      "ja":  "小粒ほど広がる",
+                                                      "zh":  "Small grains spread light",
+                                                      "tw":  "Small grains spread light",
+                                                      "ko":  "Small grains spread light",
+                                                      "de":  "Small grains spread light",
+                                                      "hi":  "Small grains spread light",
+                                                      "fr":  "Small grains spread light"
+                                                  },
+                    "A laser crosses a particle cloud and reaches concentric focal-plane rings. Smaller displayed grains spread the pattern outward.":  {
+                                                                                                                                                            "ja":  "レーザーが粒子群を通り、焦点面の同心リングへ届く。表示粒が小さくなるほど散乱像は外側へ広がる。",
+                                                                                                                                                            "zh":  "A laser crosses a particle cloud and reaches concentric focal-plane rings. Smaller displayed grains spread the pattern outward.",
+                                                                                                                                                            "tw":  "A laser crosses a particle cloud and reaches concentric focal-plane rings. Smaller displayed grains spread the pattern outward.",
+                                                                                                                                                            "ko":  "A laser crosses a particle cloud and reaches concentric focal-plane rings. Smaller displayed grains spread the pattern outward.",
+                                                                                                                                                            "de":  "A laser crosses a particle cloud and reaches concentric focal-plane rings. Smaller displayed grains spread the pattern outward.",
+                                                                                                                                                            "hi":  "A laser crosses a particle cloud and reaches concentric focal-plane rings. Smaller displayed grains spread the pattern outward.",
+                                                                                                                                                            "fr":  "A laser crosses a particle cloud and reaches concentric focal-plane rings. Smaller displayed grains spread the pattern outward."
+                                                                                                                                                        },
+                    "first dark ring for 48 µm":  {
+                                                      "ja":  "48 µm の第 1 暗環",
+                                                      "zh":  "first dark ring for 48 µm",
+                                                      "tw":  "first dark ring for 48 µm",
+                                                      "ko":  "first dark ring for 48 µm",
+                                                      "de":  "first dark ring for 48 µm",
+                                                      "hi":  "first dark ring for 48 µm",
+                                                      "fr":  "first dark ring for 48 µm"
+                                                  },
+                    "representative diameter":  {
+                                                    "ja":  "代表粒径",
+                                                    "zh":  "representative diameter",
+                                                    "tw":  "representative diameter",
+                                                    "ko":  "representative diameter",
+                                                    "de":  "representative diameter",
+                                                    "hi":  "representative diameter",
+                                                    "fr":  "representative diameter"
+                                                },
+                    "synthetic focal-plane pattern":  {
+                                                          "ja":  "焦点面の合成散乱像",
+                                                          "zh":  "synthetic focal-plane pattern",
+                                                          "tw":  "synthetic focal-plane pattern",
+                                                          "ko":  "synthetic focal-plane pattern",
+                                                          "de":  "synthetic focal-plane pattern",
+                                                          "hi":  "synthetic focal-plane pattern",
+                                                          "fr":  "synthetic focal-plane pattern"
+                                                      },
+                    "first dark ring measured in the image":  {
+                                                                  "ja":  "画像で測った第 1 暗環",
+                                                                  "zh":  "first dark ring measured in the image",
+                                                                  "tw":  "first dark ring measured in the image",
+                                                                  "ko":  "first dark ring measured in the image",
+                                                                  "de":  "first dark ring measured in the image",
+                                                                  "hi":  "first dark ring measured in the image",
+                                                                  "fr":  "first dark ring measured in the image"
+                                                              },
+                    "difference from 1.22 λ/d \u003c 0.0005 rad":  {
+                                                                       "ja":  "1.22 λ/d との差 \u003c 0.0005 rad",
+                                                                       "zh":  "difference from 1.22 λ/d \u003c 0.0005 rad",
+                                                                       "tw":  "difference from 1.22 λ/d \u003c 0.0005 rad",
+                                                                       "ko":  "difference from 1.22 λ/d \u003c 0.0005 rad",
+                                                                       "de":  "difference from 1.22 λ/d \u003c 0.0005 rad",
+                                                                       "hi":  "difference from 1.22 λ/d \u003c 0.0005 rad",
+                                                                       "fr":  "difference from 1.22 λ/d \u003c 0.0005 rad"
+                                                                   },
+                    "unimodal D50 recovery error":  {
+                                                        "ja":  "単峰分布の D50 復元誤差",
+                                                        "zh":  "unimodal D50 recovery error",
+                                                        "tw":  "unimodal D50 recovery error",
+                                                        "ko":  "unimodal D50 recovery error",
+                                                        "de":  "unimodal D50 recovery error",
+                                                        "hi":  "unimodal D50 recovery error",
+                                                        "fr":  "unimodal D50 recovery error"
+                                                    },
+                    "bimodal D50 recovery error":  {
+                                                       "ja":  "二峰分布の D50 復元誤差",
+                                                       "zh":  "bimodal D50 recovery error",
+                                                       "tw":  "bimodal D50 recovery error",
+                                                       "ko":  "bimodal D50 recovery error",
+                                                       "de":  "bimodal D50 recovery error",
+                                                       "hi":  "bimodal D50 recovery error",
+                                                       "fr":  "bimodal D50 recovery error"
+                                                   },
+                    "D50 spread over 12 noise trials":  {
+                                                            "ja":  "12 回の雑音試行による D50 のばらつき",
+                                                            "zh":  "D50 spread over 12 noise trials",
+                                                            "tw":  "D50 spread over 12 noise trials",
+                                                            "ko":  "D50 spread over 12 noise trials",
+                                                            "de":  "D50 spread over 12 noise trials",
+                                                            "hi":  "D50 spread over 12 noise trials",
+                                                            "fr":  "D50 spread over 12 noise trials"
+                                                        },
+                    "coefficient of variation \u003c 8% (fixed kernel and grid)":  {
+                                                                                       "ja":  "変動係数 \u003c 8 %（核とグリッドは固定）",
+                                                                                       "zh":  "coefficient of variation \u003c 8% (fixed kernel and grid)",
+                                                                                       "tw":  "coefficient of variation \u003c 8% (fixed kernel and grid)",
+                                                                                       "ko":  "coefficient of variation \u003c 8% (fixed kernel and grid)",
+                                                                                       "de":  "coefficient of variation \u003c 8% (fixed kernel and grid)",
+                                                                                       "hi":  "coefficient of variation \u003c 8% (fixed kernel and grid)",
+                                                                                       "fr":  "coefficient of variation \u003c 8% (fixed kernel and grid)"
+                                                                                   },
+                    "state":  {
+                                  "ja":  "状態",
+                                  "zh":  "state",
+                                  "tw":  "state",
+                                  "ko":  "state",
+                                  "de":  "state",
+                                  "hi":  "state",
+                                  "fr":  "state"
+                              },
+                    "What happens to the rings as grains shrink?":  {
+                                                                        "ja":  "粒が小さくなると輪はどうなる?",
+                                                                        "zh":  "What happens to the rings as grains shrink?",
+                                                                        "tw":  "What happens to the rings as grains shrink?",
+                                                                        "ko":  "What happens to the rings as grains shrink?",
+                                                                        "de":  "What happens to the rings as grains shrink?",
+                                                                        "hi":  "What happens to the rings as grains shrink?",
+                                                                        "fr":  "What happens to the rings as grains shrink?"
+                                                                    },
+                    "spread outward":  {
+                                           "ja":  "外へ広がる",
+                                           "zh":  "spread outward",
+                                           "tw":  "spread outward",
+                                           "ko":  "spread outward",
+                                           "de":  "spread outward",
+                                           "hi":  "spread outward",
+                                           "fr":  "spread outward"
+                                       },
+                    "shrink inward":  {
+                                          "ja":  "内へ縮む",
+                                          "zh":  "shrink inward",
+                                          "tw":  "shrink inward",
+                                          "ko":  "shrink inward",
+                                          "de":  "shrink inward",
+                                          "hi":  "shrink inward",
+                                          "fr":  "shrink inward"
+                                      },
+                    "Dark-ring angle is inversely proportional to diameter.":  {
+                                                                                   "ja":  "暗環の角度は粒径に反比例する。",
+                                                                                   "zh":  "Dark-ring angle is inversely proportional to diameter.",
+                                                                                   "tw":  "Dark-ring angle is inversely proportional to diameter.",
+                                                                                   "ko":  "Dark-ring angle is inversely proportional to diameter.",
+                                                                                   "de":  "Dark-ring angle is inversely proportional to diameter.",
+                                                                                   "hi":  "Dark-ring angle is inversely proportional to diameter.",
+                                                                                   "fr":  "Dark-ring angle is inversely proportional to diameter."
+                                                                               },
+                    "θ₁ ≈ 1.22 λ/d":  {
+                                          "ja":  "θ₁ ≈ 1.22 λ/d",
+                                          "zh":  "θ₁ ≈ 1.22 λ/d",
+                                          "tw":  "θ₁ ≈ 1.22 λ/d",
+                                          "ko":  "θ₁ ≈ 1.22 λ/d",
+                                          "de":  "θ₁ ≈ 1.22 λ/d",
+                                          "hi":  "θ₁ ≈ 1.22 λ/d",
+                                          "fr":  "θ₁ ≈ 1.22 λ/d"
+                                      },
+                    "Fraunhofer approximation for spherical particles.":  {
+                                                                              "ja":  "球形粒子のフラウンホーファー近似。",
+                                                                              "zh":  "Fraunhofer approximation for spherical particles.",
+                                                                              "tw":  "Fraunhofer approximation for spherical particles.",
+                                                                              "ko":  "Fraunhofer approximation for spherical particles.",
+                                                                              "de":  "Fraunhofer approximation for spherical particles.",
+                                                                              "hi":  "Fraunhofer approximation for spherical particles.",
+                                                                              "fr":  "Fraunhofer approximation for spherical particles."
+                                                                          },
+                    "Recover one mode":  {
+                                             "ja":  "単峰分布を復元",
+                                             "zh":  "Recover one mode",
+                                             "tw":  "Recover one mode",
+                                             "ko":  "Recover one mode",
+                                             "de":  "Recover one mode",
+                                             "hi":  "Recover one mode",
+                                             "fr":  "Recover one mode"
+                                         },
+                    "From integrated ring signals alone, an L-curve selects smoothing and NNLS recovers the distribution. Truth is never passed to the estimator.":  {
+                                                                                                                                                                         "ja":  "リングごとの積分信号だけから、L 曲線で平滑化を選び非負最小二乗で分布を復元する。真の分布は推定器へ渡さない。",
+                                                                                                                                                                         "zh":  "From integrated ring signals alone, an L-curve selects smoothing and NNLS recovers the distribution. Truth is never passed to the estimator.",
+                                                                                                                                                                         "tw":  "From integrated ring signals alone, an L-curve selects smoothing and NNLS recovers the distribution. Truth is never passed to the estimator.",
+                                                                                                                                                                         "ko":  "From integrated ring signals alone, an L-curve selects smoothing and NNLS recovers the distribution. Truth is never passed to the estimator.",
+                                                                                                                                                                         "de":  "From integrated ring signals alone, an L-curve selects smoothing and NNLS recovers the distribution. Truth is never passed to the estimator.",
+                                                                                                                                                                         "hi":  "From integrated ring signals alone, an L-curve selects smoothing and NNLS recovers the distribution. Truth is never passed to the estimator.",
+                                                                                                                                                                         "fr":  "From integrated ring signals alone, an L-curve selects smoothing and NNLS recovers the distribution. Truth is never passed to the estimator."
+                                                                                                                                                                     },
+                    "D10":  {
+                                "ja":  "D10",
+                                "zh":  "D10",
+                                "tw":  "D10",
+                                "ko":  "D10",
+                                "de":  "D10",
+                                "hi":  "D10",
+                                "fr":  "D10"
+                            },
+                    "D50":  {
+                                "ja":  "D50",
+                                "zh":  "D50",
+                                "tw":  "D50",
+                                "ko":  "D50",
+                                "de":  "D50",
+                                "hi":  "D50",
+                                "fr":  "D50"
+                            },
+                    "D90":  {
+                                "ja":  "D90",
+                                "zh":  "D90",
+                                "tw":  "D90",
+                                "ko":  "D90",
+                                "de":  "D90",
+                                "hi":  "D90",
+                                "fr":  "D90"
+                            },
+                    "L-curve α":  {
+                                      "ja":  "L 曲線が選んだ α",
+                                      "zh":  "L-curve α",
+                                      "tw":  "L-curve α",
+                                      "ko":  "L-curve α",
+                                      "de":  "L-curve α",
+                                      "hi":  "L-curve α",
+                                      "fr":  "L-curve α"
+                                  },
+                    "estimated distribution":  {
+                                                   "ja":  "推定分布",
+                                                   "zh":  "estimated distribution",
+                                                   "tw":  "estimated distribution",
+                                                   "ko":  "estimated distribution",
+                                                   "de":  "estimated distribution",
+                                                   "hi":  "estimated distribution",
+                                                   "fr":  "estimated distribution"
+                                               },
+                    "generating distribution (check only)":  {
+                                                                 "ja":  "合成に使った分布（検査用）",
+                                                                 "zh":  "generating distribution (check only)",
+                                                                 "tw":  "generating distribution (check only)",
+                                                                 "ko":  "generating distribution (check only)",
+                                                                 "de":  "generating distribution (check only)",
+                                                                 "hi":  "generating distribution (check only)",
+                                                                 "fr":  "generating distribution (check only)"
+                                                             },
+                    "Can ring signals reveal sizes directly?":  {
+                                                                    "ja":  "リング信号から粒径を一意に読める?",
+                                                                    "zh":  "Can ring signals reveal sizes directly?",
+                                                                    "tw":  "Can ring signals reveal sizes directly?",
+                                                                    "ko":  "Can ring signals reveal sizes directly?",
+                                                                    "de":  "Can ring signals reveal sizes directly?",
+                                                                    "hi":  "Can ring signals reveal sizes directly?",
+                                                                    "fr":  "Can ring signals reveal sizes directly?"
+                                                                },
+                    "solve an inverse problem":  {
+                                                     "ja":  "逆問題として解く",
+                                                     "zh":  "solve an inverse problem",
+                                                     "tw":  "solve an inverse problem",
+                                                     "ko":  "solve an inverse problem",
+                                                     "de":  "solve an inverse problem",
+                                                     "hi":  "solve an inverse problem",
+                                                     "fr":  "solve an inverse problem"
+                                                 },
+                    "read only the brightest ring":  {
+                                                         "ja":  "最も明るい輪だけ読む",
+                                                         "zh":  "read only the brightest ring",
+                                                         "tw":  "read only the brightest ring",
+                                                         "ko":  "read only the brightest ring",
+                                                         "de":  "read only the brightest ring",
+                                                         "hi":  "read only the brightest ring",
+                                                         "fr":  "read only the brightest ring"
+                                                     },
+                    "Every size overlaps across rings, so the full kernel matrix is inverted.":  {
+                                                                                                     "ja":  "各粒径の散乱が全リングで重なるため、核行列をまとめて反転する。",
+                                                                                                     "zh":  "Every size overlaps across rings, so the full kernel matrix is inverted.",
+                                                                                                     "tw":  "Every size overlaps across rings, so the full kernel matrix is inverted.",
+                                                                                                     "ko":  "Every size overlaps across rings, so the full kernel matrix is inverted.",
+                                                                                                     "de":  "Every size overlaps across rings, so the full kernel matrix is inverted.",
+                                                                                                     "hi":  "Every size overlaps across rings, so the full kernel matrix is inverted.",
+                                                                                                     "fr":  "Every size overlaps across rings, so the full kernel matrix is inverted."
+                                                                                                 },
+                    "s = K p + ε;  p ≥ 0":  {
+                                                "ja":  "s = K p + ε;  p ≥ 0",
+                                                "zh":  "s = K p + ε;  p ≥ 0",
+                                                "tw":  "s = K p + ε;  p ≥ 0",
+                                                "ko":  "s = K p + ε;  p ≥ 0",
+                                                "de":  "s = K p + ε;  p ≥ 0",
+                                                "hi":  "s = K p + ε;  p ≥ 0",
+                                                "fr":  "s = K p + ε;  p ≥ 0"
+                                            },
+                    "Smoothing reveals that nearby solutions cannot be distinguished.":  {
+                                                                                             "ja":  "平滑化は近い解を区別できないことを示す。",
+                                                                                             "zh":  "Smoothing reveals that nearby solutions cannot be distinguished.",
+                                                                                             "tw":  "Smoothing reveals that nearby solutions cannot be distinguished.",
+                                                                                             "ko":  "Smoothing reveals that nearby solutions cannot be distinguished.",
+                                                                                             "de":  "Smoothing reveals that nearby solutions cannot be distinguished.",
+                                                                                             "hi":  "Smoothing reveals that nearby solutions cannot be distinguished.",
+                                                                                             "fr":  "Smoothing reveals that nearby solutions cannot be distinguished."
+                                                                                         },
+                    "Recover two modes":  {
+                                              "ja":  "二峰分布を復元",
+                                              "zh":  "Recover two modes",
+                                              "tw":  "Recover two modes",
+                                              "ko":  "Recover two modes",
+                                              "de":  "Recover two modes",
+                                              "hi":  "Recover two modes",
+                                              "fr":  "Recover two modes"
+                                          },
+                    "Limits of the approximation":  {
+                                                        "ja":  "近似の限界",
+                                                        "zh":  "Limits of the approximation",
+                                                        "tw":  "Limits of the approximation",
+                                                        "ko":  "Limits of the approximation",
+                                                        "de":  "Limits of the approximation",
+                                                        "hi":  "Limits of the approximation",
+                                                        "fr":  "Limits of the approximation"
+                                                    },
+                    "Below a few micrometres, Mie scattering with refractive index is needed. Shape and multiple scattering at high concentration are also absent.":  {
+                                                                                                                                                                          "ja":  "数 µm 以下では屈折率を含むミー散乱が必要。非球形と高濃度の多重散乱も、この核には入っていない。",
+                                                                                                                                                                          "zh":  "Below a few micrometres, Mie scattering with refractive index is needed. Shape and multiple scattering at high concentration are also absent.",
+                                                                                                                                                                          "tw":  "Below a few micrometres, Mie scattering with refractive index is needed. Shape and multiple scattering at high concentration are also absent.",
+                                                                                                                                                                          "ko":  "Below a few micrometres, Mie scattering with refractive index is needed. Shape and multiple scattering at high concentration are also absent.",
+                                                                                                                                                                          "de":  "Below a few micrometres, Mie scattering with refractive index is needed. Shape and multiple scattering at high concentration are also absent.",
+                                                                                                                                                                          "hi":  "Below a few micrometres, Mie scattering with refractive index is needed. Shape and multiple scattering at high concentration are also absent.",
+                                                                                                                                                                          "fr":  "Below a few micrometres, Mie scattering with refractive index is needed. Shape and multiple scattering at high concentration are also absent."
+                                                                                                                                                                      },
+                    "effects absent here":  {
+                                                "ja":  "この模型に無い効果",
+                                                "zh":  "effects absent here",
+                                                "tw":  "effects absent here",
+                                                "ko":  "effects absent here",
+                                                "de":  "effects absent here",
+                                                "hi":  "effects absent here",
+                                                "fr":  "effects absent here"
+                                            },
+                    "refractive index, shape, multiple scattering":  {
+                                                                         "ja":  "屈折率・形状・多重散乱",
+                                                                         "zh":  "refractive index, shape, multiple scattering",
+                                                                         "tw":  "refractive index, shape, multiple scattering",
+                                                                         "ko":  "refractive index, shape, multiple scattering",
+                                                                         "de":  "refractive index, shape, multiple scattering",
+                                                                         "hi":  "refractive index, shape, multiple scattering",
+                                                                         "fr":  "refractive index, shape, multiple scattering"
+                                                                     },
+                    "estimate under Fraunhofer kernel":  {
+                                                             "ja":  "フラウンホーファー核での推定",
+                                                             "zh":  "estimate under Fraunhofer kernel",
+                                                             "tw":  "estimate under Fraunhofer kernel",
+                                                             "ko":  "estimate under Fraunhofer kernel",
+                                                             "de":  "estimate under Fraunhofer kernel",
+                                                             "hi":  "estimate under Fraunhofer kernel",
+                                                             "fr":  "estimate under Fraunhofer kernel"
+                                                         },
+                    "same approximation for tiny, non-spherical or dense powder":  {
+                                                                                       "ja":  "微小・非球形・濃い粉にも同じ近似",
+                                                                                       "zh":  "same approximation for tiny, non-spherical or dense powder",
+                                                                                       "tw":  "same approximation for tiny, non-spherical or dense powder",
+                                                                                       "ko":  "same approximation for tiny, non-spherical or dense powder",
+                                                                                       "de":  "same approximation for tiny, non-spherical or dense powder",
+                                                                                       "hi":  "same approximation for tiny, non-spherical or dense powder",
+                                                                                       "fr":  "same approximation for tiny, non-spherical or dense powder"
+                                                                                   },
+                    "include Mie, shape and multiple scattering":  {
+                                                                       "ja":  "ミー散乱・形状・多重散乱を含む",
+                                                                       "zh":  "include Mie, shape and multiple scattering",
+                                                                       "tw":  "include Mie, shape and multiple scattering",
+                                                                       "ko":  "include Mie, shape and multiple scattering",
+                                                                       "de":  "include Mie, shape and multiple scattering",
+                                                                       "hi":  "include Mie, shape and multiple scattering",
+                                                                       "fr":  "include Mie, shape and multiple scattering"
+                                                                   },
+                    "not computed":  {
+                                         "ja":  "未計算",
+                                         "zh":  "not computed",
+                                         "tw":  "not computed",
+                                         "ko":  "not computed",
+                                         "de":  "not computed",
+                                         "hi":  "not computed",
+                                         "fr":  "not computed"
+                                     },
+                    "Can the same kernel measure every powder?":  {
+                                                                      "ja":  "どんな粉でも同じ核で測れる?",
+                                                                      "zh":  "Can the same kernel measure every powder?",
+                                                                      "tw":  "Can the same kernel measure every powder?",
+                                                                      "ko":  "Can the same kernel measure every powder?",
+                                                                      "de":  "Can the same kernel measure every powder?",
+                                                                      "hi":  "Can the same kernel measure every powder?",
+                                                                      "fr":  "Can the same kernel measure every powder?"
+                                                                  },
+                    "yes":  {
+                                "ja":  "測れる",
+                                "zh":  "yes",
+                                "tw":  "yes",
+                                "ko":  "yes",
+                                "de":  "yes",
+                                "hi":  "yes",
+                                "fr":  "yes"
+                            },
+                    "it can fail":  {
+                                        "ja":  "条件により崩れる",
+                                        "zh":  "it can fail",
+                                        "tw":  "it can fail",
+                                        "ko":  "it can fail",
+                                        "de":  "it can fail",
+                                        "hi":  "it can fail",
+                                        "fr":  "it can fail"
+                                    },
+                    "The scattering model changes with size, shape and concentration.":  {
+                                                                                             "ja":  "粒径、形状、濃度によって散乱模型が変わる。",
+                                                                                             "zh":  "The scattering model changes with size, shape and concentration.",
+                                                                                             "tw":  "The scattering model changes with size, shape and concentration.",
+                                                                                             "ko":  "The scattering model changes with size, shape and concentration.",
+                                                                                             "de":  "The scattering model changes with size, shape and concentration.",
+                                                                                             "hi":  "The scattering model changes with size, shape and concentration.",
+                                                                                             "fr":  "The scattering model changes with size, shape and concentration."
+                                                                                         },
+                    "I(θ) ∝ [2 J₁(x sin θ)/(x sin θ)]²":  {
+                                                              "ja":  "I(θ) ∝ [2 J₁(x sin θ)/(x sin θ)]²",
+                                                              "zh":  "I(θ) ∝ [2 J₁(x sin θ)/(x sin θ)]²",
+                                                              "tw":  "I(θ) ∝ [2 J₁(x sin θ)/(x sin θ)]²",
+                                                              "ko":  "I(θ) ∝ [2 J₁(x sin θ)/(x sin θ)]²",
+                                                              "de":  "I(θ) ∝ [2 J₁(x sin θ)/(x sin θ)]²",
+                                                              "hi":  "I(θ) ∝ [2 J₁(x sin θ)/(x sin θ)]²",
+                                                              "fr":  "I(θ) ∝ [2 J₁(x sin θ)/(x sin θ)]²"
+                                                          },
+                    "This synthetic lesson is not for medicine quality decisions.":  {
+                                                                                         "ja":  "合成教材であり、製剤の品質判定には使えない。",
+                                                                                         "zh":  "This synthetic lesson is not for medicine quality decisions.",
+                                                                                         "tw":  "This synthetic lesson is not for medicine quality decisions.",
+                                                                                         "ko":  "This synthetic lesson is not for medicine quality decisions.",
+                                                                                         "de":  "This synthetic lesson is not for medicine quality decisions.",
+                                                                                         "hi":  "This synthetic lesson is not for medicine quality decisions.",
+                                                                                         "fr":  "This synthetic lesson is not for medicine quality decisions."
+                                                                                     },
+                    "Particles, laser and detector signals are synthetic. The 0.633 µm wavelength and 0.6% noise are teaching assumptions.":  {
+                                                                                                                                                  "ja":  "粒子、レーザー、検出器信号はすべて合成。波長 0.633 µm と雑音 0.6 % は教材用の仮定。",
+                                                                                                                                                  "zh":  "Particles, laser and detector signals are synthetic. The 0.633 µm wavelength and 0.6% noise are teaching assumptions.",
+                                                                                                                                                  "tw":  "Particles, laser and detector signals are synthetic. The 0.633 µm wavelength and 0.6% noise are teaching assumptions.",
+                                                                                                                                                  "ko":  "Particles, laser and detector signals are synthetic. The 0.633 µm wavelength and 0.6% noise are teaching assumptions.",
+                                                                                                                                                  "de":  "Particles, laser and detector signals are synthetic. The 0.633 µm wavelength and 0.6% noise are teaching assumptions.",
+                                                                                                                                                  "hi":  "Particles, laser and detector signals are synthetic. The 0.633 µm wavelength and 0.6% noise are teaching assumptions.",
+                                                                                                                                                  "fr":  "Particles, laser and detector signals are synthetic. The 0.633 µm wavelength and 0.6% noise are teaching assumptions."
+                                                                                                                                              },
+                    "below half-grid 4.45% + 3 noise CV = 5.25%":  {
+                                                                       "ja":  "半格子 4.45 % + 雑音 CV の 3 倍 = 5.25 % 未満",
+                                                                       "zh":  "below half-grid 4.45% + 3 noise CV = 5.25%",
+                                                                       "tw":  "below half-grid 4.45% + 3 noise CV = 5.25%",
+                                                                       "ko":  "below half-grid 4.45% + 3 noise CV = 5.25%",
+                                                                       "de":  "below half-grid 4.45% + 3 noise CV = 5.25%",
+                                                                       "hi":  "below half-grid 4.45% + 3 noise CV = 5.25%",
+                                                                       "fr":  "below half-grid 4.45% + 3 noise CV = 5.25%"
+                                                                   }
+                }
+}
