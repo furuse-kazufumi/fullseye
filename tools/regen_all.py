@@ -333,6 +333,8 @@ EXCLUDED = {
     "tools/build_satgsd_anim3d.py": ("衛星の地上分解能と回折の動く 3-D の教材(docs/view2026/anim3d/satellite_gsd_anim3d.html)。"
                                      "`py -3.11 tools/anim3d_i18n.py --build build_satgsd_anim3d --out docs/view2026/anim3d/satellite_gsd_anim3d.html` で書く"
                                      "(翻訳表 tools/anim3d_i18n_tables/build_satgsd_anim3d.json)。門は tests/test_anim3d_satgsd_2026_10_26.py。"),
+    "tools/build_usound_anim3d.py": ("合成 RF、遅延加算、B モード像の動く 3-D 教材(docs/view2026/anim3d/ultrasound_bmode_anim3d.html)。"
+                                      "anim3d_i18n で生成し、門は tests/test_anim3d_usound_2026_10_27.py。"),
     "tools/build_hypercentric_anim3d.py": ("ハイパーセントリックレンズの動く 3-D 教材(docs/view2026/anim3d/hypercentric_lens_anim3d.html)。"
                                            "`py -3.11 tools/anim3d_i18n.py --build build_hypercentric_anim3d --out docs/view2026/anim3d/hypercentric_lens_anim3d.html` で書く"
                                            "(翻訳表 tools/anim3d_i18n_tables/build_hypercentric_anim3d.json)。門は tests/test_anim3d_hypercentric_2026_10_27.py。"),

@@ -2034,6 +2034,44 @@
    }
   },
   {
+   "id": "ultrasound_bmode",
+   "category": "anim3d",
+   "media": "ultrasound_bmode_anim3d.html",
+   "media_path": "view2026/anim3d/ultrasound_bmode_anim3d.html",
+   "motion": true,
+   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_usound_anim3d.py",
+   "label": {
+    "ja": "超音波エコーの B モード像",
+    "en": "Ultrasound B-mode imaging",
+    "zh": "超声 B 模式成像",
+    "tw": "超音波 B 模式成像",
+    "ko": "초음파 B 모드 영상",
+    "de": "Ultraschall-B-Bildgebung",
+    "hi": "अल्ट्रासाउंड बी-मोड इमेजिंग",
+    "fr": "Imagerie ultrasonore en mode B"
+   },
+   "see": {
+    "ja": "24 素子の合成 RF を遅延加算し、点像、嚢胞、音速を誤ったときのぼけを比較する。",
+    "en": "Delay and sum synthetic RF from 24 elements; compare point images, a cyst, and defocus from a wrong sound speed.",
+    "zh": "对 24 个阵元的合成 RF 进行延时求和，比较点像、囊肿和错误声速造成的散焦。",
+    "tw": "對 24 個陣元的合成 RF 進行延遲加總，比較點像、囊腫和錯誤聲速造成的失焦。",
+    "ko": "24개 소자의 합성 RF를 지연 합산해 점 영상, 낭종, 잘못된 음속에 의한 초점 흐림을 비교한다.",
+    "de": "Synthetische RF von 24 Elementen wird verzögert summiert; Punktbilder, Zyste und Defokus bei falscher Schallgeschwindigkeit werden verglichen.",
+    "hi": "24 तत्वों के संश्लेषित RF का विलंब-योग करके बिंदु छवियों, सिस्ट और गलत ध्वनि-वेग से धुंधलापन की तुलना करें।",
+    "fr": "Sommer avec retard les RF synthétiques de 24 éléments et comparer les points, un kyste et le défocus dû à une vitesse erronée."
+   },
+   "num": {
+    "ja": "224×768 の計測格子、150 超の散乱体。音速 1540→1480 m/s で深さずれを画像から測る。",
+    "en": "A 224 by 768 measurement grid with over 150 scatterers; depth shift is measured from images for 1540 versus 1480 m/s.",
+    "zh": "224×768 测量网格、150 多个散射体；从 1540 与 1480 m/s 的图像测量深度偏移。",
+    "tw": "224×768 量測網格、150 多個散射體；從 1540 與 1480 m/s 的影像量測深度偏移。",
+    "ko": "224×768 측정 격자와 150개 이상의 산란체에서 1540 및 1480 m/s 영상의 깊이 이동을 측정한다.",
+    "de": "Messgitter mit 224 mal 768 Punkten und über 150 Streuern; die Tiefenverschiebung wird bei 1540 gegenüber 1480 m/s im Bild gemessen.",
+    "hi": "224×768 मापन ग्रिड और 150 से अधिक प्रकीर्णक; 1540 और 1480 m/s की छवियों से गहराई का खिसकाव मापा जाता है।",
+    "fr": "Grille de mesure de 224 par 768 points et plus de 150 diffuseurs ; le décalage en profondeur est mesuré entre 1540 et 1480 m/s."
+   }
+  },
+  {
    "id": "oct_retina",
    "category": "anim3d",
    "media": "oct_retina_anim3d.html",
