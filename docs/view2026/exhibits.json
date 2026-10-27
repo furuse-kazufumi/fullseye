@@ -1994,6 +1994,196 @@
     "hi": "From a noisy subpixel laser line: section RMS 0.699 mm, shape-free wear error 0.0577 mm and profile-measured gauge error 0.346 mm. The triangulation op and independent closed form agree to < 1e-12 mm.",
     "fr": "From a noisy subpixel laser line: section RMS 0.699 mm, shape-free wear error 0.0577 mm and profile-measured gauge error 0.346 mm. The triangulation op and independent closed form agree to < 1e-12 mm."
    }
+  },
+  {
+   "id": "particle_dissolution",
+   "category": "anim3d",
+   "media": "particle_dissolution_anim3d.html",
+   "media_path": "view2026/anim3d/particle_dissolution_anim3d.html",
+   "motion": true,
+   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_dissolution_anim3d.py",
+   "label": {
+    "ja": "薬の粒はどう溶けるか",
+    "en": "How medicine particles dissolve",
+    "zh": "药物颗粒如何溶解",
+    "tw": "藥物顆粒如何溶解",
+    "ko": "약 입자는 어떻게 녹는가",
+    "de": "Wie sich Arzneipartikel auflösen",
+    "hi": "दवा के कण कैसे घुलते हैं",
+    "fr": "Comment les particules de médicament se dissolvent"
+   },
+   "see": {
+    "ja": "同じ総量の 1 粒と 8 粒が縮む。雑音像を測ると、8 分割は表面積が 2 倍になり、8 粒は半分の時間で溶ける。",
+    "en": "Watch 1 large grain and 8 small grains shrink. Image measurement shows that splitting into 8 makes surface area 2 times larger, so 8 grains dissolve in half the time.",
+    "zh": "观察 1 个大颗粒和 8 个小颗粒缩小。图像测量显示,分成 8 份使表面积变为 2 倍,所以 8 个颗粒用一半时间溶解。",
+    "tw": "觀察 1 個大顆粒和 8 個小顆粒縮小。影像測量顯示,分成 8 份使表面積變為 2 倍,所以 8 個顆粒用一半時間溶解。",
+    "ko": "큰 입자 1개와 작은 입자 8개가 줄어든다. 영상 측정에서 8분할은 표면적을 2배로 만들며, 8개 입자는 절반의 시간에 녹는다.",
+    "de": "1 großes und 8 kleine Partikel schrumpfen. Die Bildmessung zeigt: Die Teilung in 8 vergrößert die Oberfläche um Faktor 2, sodass sich 8 Partikel in halber Zeit auflösen.",
+    "hi": "1 बड़ा और 8 छोटे कण सिकुड़ते हैं। चित्र मापन दिखाता है कि 8 भाग करने पर सतह 2 गुना होती है, इसलिए 8 कण आधे समय में घुलते हैं।",
+    "fr": "1 gros grain et 8 petits grains rétrécissent. La mesure d'image montre qu'une division en 8 multiplie la surface par 2 ; les 8 grains se dissolvent donc en deux fois moins de temps."
+   },
+   "num": {
+    "ja": "数値 ODE と立方根則の最大相対差 < 1e-12。半径 3.0 mm 以上での像由来誤差 0.00058 は上限 0.0616 未満。画像曲線から測った時間比 0.5008。",
+    "en": "Numerical ODE versus cube-root law: < 1e-12. Above radius 3.0 mm, image-derived error 0.00058 is below bound 0.0616. Time ratio measured from image curves: 0.5008.",
+    "zh": "数值 ODE 与立方根定律之差 < 1e-12。半径 3.0 mm 以上时,图像误差 0.00058 低于上限 0.0616。由图像曲线测得时间比 0.5008。",
+    "tw": "數值 ODE 與立方根定律之差 < 1e-12。半徑 3.0 mm 以上時,影像誤差 0.00058 低於上限 0.0616。由影像曲線測得時間比 0.5008。",
+    "ko": "수치 ODE와 세제곱근 법칙의 차이는 < 1e-12이다. 반지름 3.0 mm 이상에서 영상 오차 0.00058은 한계 0.0616보다 작다. 영상 곡선에서 측정한 시간비는 0.5008이다.",
+    "de": "Numerische ODE gegen Kubikwurzelgesetz: < 1e-12. Ab Radius 3.0 mm liegt der Bildfehler 0.00058 unter der Grenze 0.0616. Aus Bildkurven gemessenes Zeitverhältnis: 0.5008.",
+    "hi": "संख्यात्मक ODE और घनमूल नियम का अंतर < 1e-12 है। 3.0 mm या अधिक त्रिज्या पर चित्र त्रुटि 0.00058, सीमा 0.0616 से कम है। चित्र वक्र से मापा समय अनुपात 0.5008 है।",
+    "fr": "ODE numérique contre loi de racine cubique : < 1e-12. Au-dessus d'un rayon de 3.0 mm, l'erreur d'image 0.00058 reste sous la borne 0.0616. Rapport temporel mesuré sur les courbes d'image : 0.5008."
+   }
+  },
+  {
+   "id": "ship_stability",
+   "category": "anim3d",
+   "media": "ship_stability_anim3d.html",
+   "media_path": "view2026/anim3d/ship_stability_anim3d.html",
+   "motion": true,
+   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_ship_anim3d.py",
+   "label": {
+    "ja": "船はなぜ浮き、傾いても戻るのか",
+    "en": "Why a ship floats and returns after heeling",
+    "zh": "船为何能浮起并在倾斜后复原",
+    "tw": "船為何能浮起並在傾斜後復原",
+    "ko": "배는 왜 뜨고 기울어도 돌아오는가",
+    "de": "Warum ein Schiff schwimmt und sich wieder aufrichtet",
+    "hi": "जहाज़ क्यों तैरता है और झुकने के बाद लौटता है",
+    "fr": "Pourquoi un navire flotte et se redresse"
+   },
+   "see": {
+    "ja": "傾くと浮心 B が沈んだ側へ動き、重心 G との水平距離 GZ が生まれる。G を上げると復原てこが逆向きになる。",
+    "en": "As the hull heels, B moves toward the immersed side and creates arm GZ from G. Raising G reverses the arm.",
+    "zh": "船体倾斜时 B 向浸水侧移动，与 G 形成力臂 GZ；抬高 G 后力臂反向。",
+    "tw": "船體傾斜時 B 向浸水側移動，與 G 形成力臂 GZ；抬高 G 後力臂反向。",
+    "ko": "선체가 기울면 B가 잠긴 쪽으로 움직여 G와 복원정 GZ를 만들고, G를 높이면 방향이 뒤집힌다.",
+    "de": "Beim Krängen wandert B zur eingetauchten Seite und bildet mit G den Hebel GZ. Ein höheres G kehrt ihn um.",
+    "hi": "झुकने पर B डूबी ओर जाता है और G से भुजा GZ बनती है। G ऊपर करने पर भुजा उलटती है।",
+    "fr": "À la gîte, B va vers le côté immergé et forme le bras GZ avec G. Relever G inverse ce bras."
+   },
+   "num": {
+    "ja": "箱形船の閉形式との相対誤差 2.26e-16、重量一致 3.58e-16、GZ の傾きと GM の差 0.123%。高い重心では GM = -0.350 m。",
+    "en": "Box closed-form error 2.26e-16; weight error 3.58e-16; GZ-slope versus GM difference 0.123%. Raised G gives GM = -0.350 m.",
+    "zh": "箱形闭式误差 2.26e-16；重量误差 3.58e-16；GZ 斜率与 GM 相差 0.123%。高重心时 GM = -0.350 m。",
+    "tw": "箱形閉式誤差 2.26e-16；重量誤差 3.58e-16；GZ 斜率與 GM 相差 0.123%。高重心時 GM = -0.350 m。",
+    "ko": "상자형 폐형식 오차 2.26e-16, 중량 오차 3.58e-16, GZ 기울기와 GM 차이 0.123%. 높은 G에서는 GM = -0.350 m.",
+    "de": "Kastenfehler 2.26e-16; Gewichtsfehler 3.58e-16; GZ-Steigung gegen GM 0.123 %. Mit hohem G ist GM = -0.350 m.",
+    "hi": "डिब्बाकार त्रुटि 2.26e-16; भार त्रुटि 3.58e-16; GZ ढाल और GM में अंतर 0.123%। ऊँचे G पर GM = -0.350 m।",
+    "fr": "Erreur du caisson 2.26e-16 ; erreur de poids 3.58e-16 ; écart pente GZ–GM 0.123 %. Avec G haut, GM = -0.350 m."
+   }
+  },
+  {
+   "id": "poc_star_tracker",
+   "category": "anim3d",
+   "media": "star_tracker_anim3d.html",
+   "media_path": "view2026/anim3d/star_tracker_anim3d.html",
+   "motion": true,
+   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_startrk_anim3d.py",
+   "label": {
+    "ja": "星の写真から衛星姿勢を知る",
+    "en": "Satellite attitude from one star image",
+    "zh": "Satellite attitude from one star image",
+    "tw": "Satellite attitude from one star image",
+    "ko": "Satellite attitude from one star image",
+    "de": "Satellite attitude from one star image",
+    "hi": "Satellite attitude from one star image",
+    "fr": "Satellite attitude from one star image"
+   },
+   "see": {
+    "ja": "合成天球の中で視野錐を回し、雑音を含む点像と偽点から副画素重心を取る。三角形の角距離を全196星表へ照合し、偽点を捨ててKabschで姿勢を求める。最後は迷光、星不足、星の流れという未計算の限界を見る。",
+    "en": "Sweep a camera cone through a synthetic sky, centroid noisy point images plus false points, match triangle angles against the full 196-star catalogue, reject outliers and solve attitude with Kabsch. The final tab exposes uncomputed limits from glare, too few stars and star trails.",
+    "zh": "Sweep a camera cone through a synthetic sky, centroid noisy point images plus false points, match triangle angles against the full 196-star catalogue, reject outliers and solve attitude with Kabsch. The final tab exposes uncomputed limits from glare, too few stars and star trails.",
+    "tw": "Sweep a camera cone through a synthetic sky, centroid noisy point images plus false points, match triangle angles against the full 196-star catalogue, reject outliers and solve attitude with Kabsch. The final tab exposes uncomputed limits from glare, too few stars and star trails.",
+    "ko": "Sweep a camera cone through a synthetic sky, centroid noisy point images plus false points, match triangle angles against the full 196-star catalogue, reject outliers and solve attitude with Kabsch. The final tab exposes uncomputed limits from glare, too few stars and star trails.",
+    "de": "Sweep a camera cone through a synthetic sky, centroid noisy point images plus false points, match triangle angles against the full 196-star catalogue, reject outliers and solve attitude with Kabsch. The final tab exposes uncomputed limits from glare, too few stars and star trails.",
+    "hi": "Sweep a camera cone through a synthetic sky, centroid noisy point images plus false points, match triangle angles against the full 196-star catalogue, reject outliers and solve attitude with Kabsch. The final tab exposes uncomputed limits from glare, too few stars and star trails.",
+    "fr": "Sweep a camera cone through a synthetic sky, centroid noisy point images plus false points, match triangle angles against the full 196-star catalogue, reject outliers and solve attitude with Kabsch. The final tab exposes uncomputed limits from glare, too few stars and star trails."
+   },
+   "num": {
+    "ja": "全196星表に対し、真の星16、誤対応0、偽点棄却2/2、姿勢角誤差0.0046度、1画素0.1406度。Kabschと直接SVDの差は1e-12未満。",
+    "en": "Against the full 196-star catalogue: 16 genuine stars, 0 mismatches, 2/2 false points rejected, 0.0046-degree attitude error and 0.1406 degree per 1 pixel; Kabsch vs direct SVD differs by less than 1e-12.",
+    "zh": "Against the full 196-star catalogue: 16 genuine stars, 0 mismatches, 2/2 false points rejected, 0.0046-degree attitude error and 0.1406 degree per 1 pixel; Kabsch vs direct SVD differs by less than 1e-12.",
+    "tw": "Against the full 196-star catalogue: 16 genuine stars, 0 mismatches, 2/2 false points rejected, 0.0046-degree attitude error and 0.1406 degree per 1 pixel; Kabsch vs direct SVD differs by less than 1e-12.",
+    "ko": "Against the full 196-star catalogue: 16 genuine stars, 0 mismatches, 2/2 false points rejected, 0.0046-degree attitude error and 0.1406 degree per 1 pixel; Kabsch vs direct SVD differs by less than 1e-12.",
+    "de": "Against the full 196-star catalogue: 16 genuine stars, 0 mismatches, 2/2 false points rejected, 0.0046-degree attitude error and 0.1406 degree per 1 pixel; Kabsch vs direct SVD differs by less than 1e-12.",
+    "hi": "Against the full 196-star catalogue: 16 genuine stars, 0 mismatches, 2/2 false points rejected, 0.0046-degree attitude error and 0.1406 degree per 1 pixel; Kabsch vs direct SVD differs by less than 1e-12.",
+    "fr": "Against the full 196-star catalogue: 16 genuine stars, 0 mismatches, 2/2 false points rejected, 0.0046-degree attitude error and 0.1406 degree per 1 pixel; Kabsch vs direct SVD differs by less than 1e-12."
+   }
+  },
+  {
+   "id": "venue_shadow",
+   "category": "anim3d",
+   "media": "venue_shadow_anim3d.html",
+   "media_path": "view2026/anim3d/venue_shadow_anim3d.html",
+   "motion": true,
+   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_shadow_anim3d.py",
+   "label": {
+    "ja": "会場の街の冬至の日影",
+    "en": "Winter-solstice shadows around the venue",
+    "zh": "会场周边的冬至日影",
+    "tw": "會場周邊的冬至日影",
+    "ko": "행사장 주변의 동지 그림자",
+    "de": "Schatten zur Wintersonnenwende am Veranstaltungsort",
+    "hi": "स्थल के आसपास शीत अयनांत की छाया",
+    "fr": "Ombres du solstice d'hiver autour du site"
+   },
+   "see": {
+    "ja": "パシフィコ横浜のLOD2建物の上を太陽が8時から16時まで動き、青い影が朝夕に伸びて正午に縮む。1・2・3時間の日影線から、建物の並びで日照時間が変わる場所を読む。",
+    "en": "The Sun moves over LOD2 buildings around Pacifico Yokohama from 8 h to 16 h; blue shadows lengthen in morning and evening and shrink at noon. The 1, 2 and 3 h contours reveal how the layout changes sunlight duration.",
+    "zh": "太阳从8时到16时掠过横滨国际平和会议场周边的LOD2建筑;蓝色阴影在早晚伸长、正午缩短。1、2、3小时等时线显示建筑布局如何改变日照时间。",
+    "tw": "太陽從8時到16時掠過橫濱國際平和會議場周邊的LOD2建築;藍色陰影在早晚伸長、正午縮短。1、2、3小時等時線顯示建築布局如何改變日照時間。",
+    "ko": "태양이 8시부터 16시까지 파시피코 요코하마 주변 LOD2 건물 위를 지나며 파란 그림자는 아침과 저녁에 길고 정오에 짧아진다. 1·2·3시간 등시간선으로 배치에 따른 일조 시간 변화를 읽는다.",
+    "de": "Die Sonne zieht von 8 h bis 16 h über die LOD2-Gebäude um Pacifico Yokohama. Blaue Schatten werden morgens und abends länger und mittags kürzer; Konturen für 1, 2 und 3 Stunden zeigen den Einfluss der Anordnung.",
+    "hi": "सूर्य 8 बजे से 16 बजे तक पैसिफिको योकोहामा के आसपास की LOD2 इमारतों पर चलता है; नीली छाया सुबह-शाम लंबी और दोपहर में छोटी होती है। 1, 2 और 3 घंटे की रेखाएँ विन्यास का असर दिखाती हैं।",
+    "fr": "Le Soleil parcourt les bâtiments LOD2 autour de Pacifico Yokohama de 8 h à 16 h; les ombres bleues s'allongent matin et soir et raccourcissent à midi. Les courbes de 1, 2 et 3 heures montrent l'effet de l'implantation."
+   },
+   "num": {
+    "ja": "太陽位置の2経路の最大差 < 1e-12°、20 m箱の影長・面積の相対差 < 1e-12、実建物の正午影は最高点からの上限内。",
+    "en": "2 solar-position paths differ by < 1e-12°; relative errors for the 20 m box shadow length and area are < 1e-12; the venue's noon shadow stays within the highest-point bound.",
+    "zh": "2条太阳位置计算路径的差小于1e-12°;20米箱体阴影长度和面积的相对误差小于1e-12;会场正午阴影处于最高点上限内。",
+    "tw": "2條太陽位置計算路徑的差小於1e-12°;20公尺箱體陰影長度和面積的相對誤差小於1e-12;會場正午陰影處於最高點上限內。",
+    "ko": "2개 태양 위치 경로 차이는 1e-12° 미만, 20 m 상자 그림자 길이와 면적의 상대 오차는 1e-12 미만이며 실제 건물 정오 그림자는 최고점 상한 이내다.",
+    "de": "Die 2 Sonnenpositionswege unterscheiden sich um < 1e-12°; relative Fehler von Länge und Fläche des Schattens einer 20-m-Box sind < 1e-12; der Mittagsschatten bleibt unter der Höchstpunktgrenze.",
+    "hi": "सूर्य-स्थिति के 2 मार्गों में अंतर < 1e-12° है; 20 m डिब्बे की छाया की लंबाई और क्षेत्रफल की सापेक्ष त्रुटियाँ < 1e-12 हैं; दोपहर की छाया उच्चतम-बिंदु सीमा में है।",
+    "fr": "Les 2 calculs de position solaire diffèrent de < 1e-12°; les erreurs relatives de longueur et d'aire de l'ombre d'une boîte de 20 m sont < 1e-12; l'ombre de midi reste sous la borne du point culminant."
+   }
+  },
+  {
+   "id": "kelvin_wake",
+   "category": "anim3d",
+   "media": "kelvin_wake_anim3d.html",
+   "media_path": "view2026/anim3d/kelvin_wake_anim3d.html",
+   "motion": true,
+   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_kelvin_anim3d.py",
+   "label": {
+    "ja": "船の V 字の航跡",
+    "en": "A ship's V-shaped wake",
+    "zh": "船的 V 形航迹",
+    "tw": "船的 V 字形航跡",
+    "ko": "배의 V자 항적",
+    "de": "Die V-förmige Heckwelle eines Schiffs",
+    "hi": "जहाज़ की V-आकार की लहर",
+    "fr": "Le sillage en V d'un navire"
+   },
+   "see": {
+    "ja": "深水を進む点状の圧力源が作る立体的な高さ場を回す。船速を 4、7、12 m/s と変えると波長は伸びるが、画像から測った V 字の半角は約 19.47 deg のままになる。横波と発散波を分けて重ね、浅水・船体幅・粘性を含まない限界も示す。",
+    "en": "Rotate the height field made by a point pressure source moving on deep water. At 4, 7 and 12 m/s the wavelength grows, but the V half-angle measured from the images stays near 19.47 deg. Transverse and divergent waves are separated and recombined; omitted shallow water, hull width and viscosity are exposed as limits.",
+    "zh": "旋转观察点状压力源在深水中移动所形成的三维高度场。速度从 4、7 到 12 m/s 时波长增大，但从图像测得的 V 形半角仍接近 19.47 deg。横波与发散波先分开再叠加，并明确浅水、船宽和黏性未计入。",
+    "tw": "旋轉觀察點狀壓力源在深水中移動形成的三維高度場。速度由 4、7 到 12 m/s 時波長增大，但從影像量得的 V 字半角仍接近 19.47 deg。橫波與發散波先分開再疊加，並明示淺水、船寬與黏性未納入。",
+    "ko": "깊은 물을 움직이는 점 압력원이 만든 높이장을 돌려 본다. 속도가 4, 7, 12 m/s로 커지면 파장은 늘지만 영상에서 잰 V자 반각은 약 19.47 deg로 유지된다. 횡파와 발산파를 나눠 겹치고 얕은 물, 선체 폭, 점성을 뺀 한계도 보인다.",
+    "de": "Das Höhenfeld einer Punktdruckquelle auf tiefem Wasser lässt sich drehen. Bei 4, 7 und 12 m/s wächst die Wellenlänge, der aus den Bildern gemessene V-Halbwinkel bleibt jedoch nahe 19.47 deg. Quer- und Divergenzwellen werden getrennt und überlagert; Flachwasser, Rumpfbreite und Viskosität bleiben als Grenzen sichtbar.",
+    "hi": "गहरे पानी पर चलने वाले बिंदु-दाब स्रोत का ऊँचाई क्षेत्र घुमाकर देखें। 4, 7 और 12 m/s पर तरंगदैर्घ्य बढ़ता है, लेकिन चित्र से मापा V का अर्ध-कोण लगभग 19.47 deg रहता है। अनुप्रस्थ और अपसारी तरंगों को अलग करके जोड़ा गया है; उथला पानी, hull width और viscosity सीमा के रूप में छोड़े गए हैं।",
+    "fr": "Faites tourner le champ de hauteur produit par une source de pression ponctuelle en eau profonde. À 4, 7 et 12 m/s, la longueur d'onde augmente, mais le demi-angle du V mesuré dans les images reste proche de 19.47 deg. Les ondes transversales et divergentes sont séparées puis superposées; eau peu profonde, largeur de coque et viscosité restent des limites explicites."
+   },
+   "num": {
+    "ja": "同じ実寸格子で測った半角は 18.10–20.25 deg、arcsin(1/3) からの最大差 1.37 deg、三速度間の差 2.15 deg。波長誤差は最大 0.50 m、12 m/s と 4 m/s の波長比は 9.05。",
+    "en": "On one physical grid, measured half-angles span 18.10–20.25 deg; maximum error from arcsin(1/3) is 1.37 deg and spread across three speeds is 2.15 deg. Maximum wavelength error is 0.50 m; the 12 m/s to 4 m/s wavelength ratio is 9.05.",
+    "zh": "在同一实尺寸网格上，测得半角为 18.10–20.25 deg；与 arcsin(1/3) 的最大差为 1.37 deg，三种速度间差为 2.15 deg。波长最大误差为 0.50 m，12 m/s 与 4 m/s 的波长比为 9.05。",
+    "tw": "在同一實尺寸網格上，量得半角為 18.10–20.25 deg；與 arcsin(1/3) 的最大差為 1.37 deg，三種速度間差為 2.15 deg。波長最大誤差為 0.50 m，12 m/s 與 4 m/s 的波長比為 9.05。",
+    "ko": "같은 실제 길이 격자에서 잰 반각은 18.10–20.25 deg이며 arcsin(1/3)과의 최대 차이는 1.37 deg, 세 속도 사이 차이는 2.15 deg다. 최대 파장 오차는 0.50 m이고 12 m/s와 4 m/s의 파장비는 9.05다.",
+    "de": "Auf demselben physikalischen Gitter liegen die gemessenen Halbwinkel bei 18.10–20.25 deg; der maximale Fehler zu arcsin(1/3) beträgt 1.37 deg, die Streuung über drei Geschwindigkeiten 2.15 deg. Der maximale Wellenlängenfehler ist 0.50 m; das Verhältnis bei 12 m/s zu 4 m/s beträgt 9.05.",
+    "hi": "एक ही वास्तविक grid पर मापा अर्ध-कोण 18.10–20.25 deg है; arcsin(1/3) से अधिकतम अंतर 1.37 deg और तीन गतियों का फैलाव 2.15 deg है। अधिकतम wavelength error 0.50 m है; 12 m/s और 4 m/s का wavelength ratio 9.05 है।",
+    "fr": "Sur la même grille physique, les demi-angles mesurés vont de 18.10 à 20.25 deg; l'écart maximal à arcsin(1/3) vaut 1.37 deg et la dispersion entre trois vitesses 2.15 deg. L'erreur maximale de longueur d'onde est de 0.50 m; le rapport entre 12 m/s et 4 m/s vaut 9.05."
+   }
   }
  ],
  "series": [
@@ -7146,6 +7336,24 @@
     "de": "Die Gebäude des Veranstaltungsorts und der Asteroid Itokawa auf einem Maßstab: PLATEAU-CityGML LOD2 als Netz",
     "hi": "आयोजन-स्थल की इमारतें और क्षुद्रग्रह Itokawa एक ही पैमाने पर: PLATEAU CityGML LOD2 को mesh में",
     "fr": "Les bâtiments du site et l'astéroïde Itokawa à la même échelle : le CityGML LOD2 de PLATEAU en maillage"
+   }
+  },
+  {
+   "id": "poc_star_tracker",
+   "group": "wing_threed",
+   "media": "star_tracker_anim3d.html",
+   "media_path": "view2026/anim3d/star_tracker_anim3d.html",
+   "motion": true,
+   "thumb_path": "view2026/anim3d/star_tracker_anim3d_poster.png",
+   "label": {
+    "ja": "合成星像から衛星姿勢を推定する",
+    "en": "Estimate satellite attitude from a synthetic star image",
+    "zh": "Estimate satellite attitude from a synthetic star image",
+    "tw": "Estimate satellite attitude from a synthetic star image",
+    "ko": "Estimate satellite attitude from a synthetic star image",
+    "de": "Estimate satellite attitude from a synthetic star image",
+    "hi": "Estimate satellite attitude from a synthetic star image",
+    "fr": "Estimate satellite attitude from a synthetic star image"
    }
   }
  ],

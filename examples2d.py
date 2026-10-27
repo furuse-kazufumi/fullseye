@@ -1998,6 +1998,9 @@ EXAMPLES = [
     {"id": "gallery_openvx_spec_values", "task": "family_coverage", "data": "synthetic",
      "name": "OpenVX 互換の 10 op を規格の式どおりの値で確かめる(vxcore)",
      "summary": "vxcore の 10 op: 坂 3x + 5y の Sobel 24/40 と端の扱い、magnitude の丸めと 32767 の飽和、phase の 0/64/128/192/224 と floor・round の 2π 手前、表引きの反転・S16 の offset・表の外で停止、histogram の升と範囲外、median/min/max を scipy と全画素一致、非極大抑制の平らな頂上は右下だけ・S16 は INT16_MIN、remap の恒等と半画素の bilinear、warp_affine の 90° 回転 = np.rot90、warp_perspective の同次座標(行列を 2 倍しても同じ)。"},
+    {"id": "poc_star_tracker", "task": "space", "data": "synthetic",
+     "name": "星の点像を副画素で測り、角距離で星表へ対応付けて衛星姿勢を求める",
+     "summary": "固定 seed の合成星表 196 星と PSF・光子雑音・読み出し雑音を含む 128×128 像を作り、star_detect の 18 検出(真の星 16 + ホットピクセル 2)を三角形の角距離で全星表へ照合し、偽点を捨てて kabsch で姿勢を推定する。誤対応 0・偽点棄却 2/2・姿勢角誤差 0.0046 度。太陽・月の迷光、星不足、高速回転の星の流れは未計算の限界。"},
 ]
 
 # Scripts under examples/ that are deliberately NOT in the gallery — each with the
