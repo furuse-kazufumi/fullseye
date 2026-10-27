@@ -1844,6 +1844,44 @@
    }
   },
   {
+   "id": "photoelastic",
+   "category": "anim3d",
+   "media": "photoelastic_anim3d.html",
+   "media_path": "view2026/anim3d/photoelastic_anim3d.html",
+   "motion": true,
+   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_photoelastic_anim3d.py",
+   "label": {
+    "ja": "力を色の縞として見る",
+    "en": "See force as colored fringes",
+    "zh": "See force as colored fringes",
+    "tw": "See force as colored fringes",
+    "ko": "See force as colored fringes",
+    "de": "See force as colored fringes",
+    "hi": "See force as colored fringes",
+    "fr": "See force as colored fringes"
+   },
+   "see": {
+    "ja": "透明な円板を上下から押すと、偏光の暗線が中心を通過する。荷重を上げるほど縞が増え、6 強度と 3 波長の像から力を逆算できる。",
+    "en": "Pressing a transparent disc from above and below drives dark polarized fringes across its centre. More load produces more fringes, and 6 intensities at 3 wavelengths recover the force.",
+    "zh": "Pressing a transparent disc from above and below drives dark polarized fringes across its centre. More load produces more fringes, and 6 intensities at 3 wavelengths recover the force.",
+    "tw": "Pressing a transparent disc from above and below drives dark polarized fringes across its centre. More load produces more fringes, and 6 intensities at 3 wavelengths recover the force.",
+    "ko": "Pressing a transparent disc from above and below drives dark polarized fringes across its centre. More load produces more fringes, and 6 intensities at 3 wavelengths recover the force.",
+    "de": "Pressing a transparent disc from above and below drives dark polarized fringes across its centre. More load produces more fringes, and 6 intensities at 3 wavelengths recover the force.",
+    "hi": "Pressing a transparent disc from above and below drives dark polarized fringes across its centre. More load produces more fringes, and 6 intensities at 3 wavelengths recover the force.",
+    "fr": "Pressing a transparent disc from above and below drives dark polarized fringes across its centre. More load produces more fringes, and 6 intensities at 3 wavelengths recover the force."
+   },
+   "num": {
+    "ja": "3 荷重で、多波長位相の荷重誤差は最大 0.11%、水平直径の暗線像による誤差は最大 0.60%、2 経路の差は最大 0.71%。像は 1% 読出し雑音、ショット雑音、8 bit 量子化を含む。",
+    "en": "Across 3 loads, multiwavelength-phase force error reaches 0.11%, horizontal-diameter dark-fringe error 0.60%, and the 2 routes differ by up to 0.71%. Images include 1% read noise, shot noise, and 8-bit quantization.",
+    "zh": "Across 3 loads, multiwavelength-phase force error reaches 0.11%, horizontal-diameter dark-fringe error 0.60%, and the 2 routes differ by up to 0.71%. Images include 1% read noise, shot noise, and 8-bit quantization.",
+    "tw": "Across 3 loads, multiwavelength-phase force error reaches 0.11%, horizontal-diameter dark-fringe error 0.60%, and the 2 routes differ by up to 0.71%. Images include 1% read noise, shot noise, and 8-bit quantization.",
+    "ko": "Across 3 loads, multiwavelength-phase force error reaches 0.11%, horizontal-diameter dark-fringe error 0.60%, and the 2 routes differ by up to 0.71%. Images include 1% read noise, shot noise, and 8-bit quantization.",
+    "de": "Across 3 loads, multiwavelength-phase force error reaches 0.11%, horizontal-diameter dark-fringe error 0.60%, and the 2 routes differ by up to 0.71%. Images include 1% read noise, shot noise, and 8-bit quantization.",
+    "hi": "Across 3 loads, multiwavelength-phase force error reaches 0.11%, horizontal-diameter dark-fringe error 0.60%, and the 2 routes differ by up to 0.71%. Images include 1% read noise, shot noise, and 8-bit quantization.",
+    "fr": "Across 3 loads, multiwavelength-phase force error reaches 0.11%, horizontal-diameter dark-fringe error 0.60%, and the 2 routes differ by up to 0.71%. Images include 1% read noise, shot noise, and 8-bit quantization."
+   }
+  },
+  {
    "id": "ship_stability",
    "category": "anim3d",
    "media": "ship_stability_anim3d.html",
