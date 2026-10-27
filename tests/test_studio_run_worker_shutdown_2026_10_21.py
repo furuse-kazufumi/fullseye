@@ -30,20 +30,30 @@ def test_overlapping_workers_close_cleanly_in_fresh_process():
 
         app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
 
-        def wait(predicate, timeout=5.0):
+        def wait(predicate, timeout, phase):
             end = time.monotonic() + timeout
             while time.monotonic() < end:
                 app.processEvents()
                 if predicate():
                     return
                 time.sleep(0.002)
-            raise AssertionError("condition timed out")
+            raise AssertionError(
+                f"{phase} timed out after {timeout:.1f} s")
 
         total = int(os.environ.get("FULLSEYE_STUDIO_SHUTDOWN_REPEATS", "30"))
+        # A loaded xdist runner can spend more than five seconds scheduling the
+        # first two QThreads after the one-off import/Qt/window initialization.
+        # Keep the tight deadline for every warmed-up iteration so an actual
+        # worker leak or deadlock is still detected promptly.
+        first_timeout = float(os.environ.get(
+            "FULLSEYE_STUDIO_SHUTDOWN_FIRST_TIMEOUT", "20"))
+        steady_timeout = 5.0
         original = studio.api.run_pipeline
         try:
             for iteration in range(total):
-                print(f"iteration {iteration} start {time.monotonic():.3f}",
+                iteration_started = time.monotonic()
+                timeout = first_timeout if iteration == 0 else steady_timeout
+                print(f"iteration {iteration} start {iteration_started:.3f}",
                       file=sys.stderr, flush=True)
                 model = studio.PipelineModel(studio.demo_image(16))
                 model.stages = [["gaussian", 0.2, 0.5]]
@@ -59,17 +69,21 @@ def test_overlapping_workers_close_cleanly_in_fresh_process():
                         n = ordinal["n"]
                     if n == 1:
                         entered.set()
-                        if not release.wait(5):
-                            raise AssertionError("old generation was not released")
+                        if not release.wait(timeout):
+                            raise AssertionError(
+                                "old generation was not released within "
+                                f"{timeout:.1f} s")
                     return np.full_like(value, n)
 
                 studio.api.run_pipeline = ordered
                 g1 = win._start_run_async()
-                wait(entered.is_set)
+                wait(entered.is_set, timeout, "first worker startup")
                 g2 = win._start_run_async()
-                wait(lambda: model.displayed_generation == g2)
+                wait(lambda: model.displayed_generation == g2, timeout,
+                     "second worker result")
                 release.set()
-                wait(lambda: not win._run_controller.running)
+                wait(lambda: not win._run_controller.running, timeout,
+                     "worker cleanup")
                 assert (g1, g2) == (1, 2)
                 assert model.displayed_generation == g2
                 assert not win._run_controller.threads
@@ -80,6 +94,10 @@ def test_overlapping_workers_close_cleanly_in_fresh_process():
                 QtCore.QCoreApplication.sendPostedEvents(
                     None, QtCore.QEvent.DeferredDelete)
                 app.processEvents()
+                print(
+                    f"iteration {iteration} end {time.monotonic():.3f} "
+                    f"elapsed {time.monotonic() - iteration_started:.3f}",
+                    file=sys.stderr, flush=True)
             print(f"codex_last: {total}/{total} passed", flush=True)
         finally:
             studio.api.run_pipeline = original
