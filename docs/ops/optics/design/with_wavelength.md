@@ -4,7 +4,7 @@ dim: optics
 category: design
 in: table
 out: table
-examples: [poc_chromatic_confocal, poc_lens_file_roundtrip, poc_lens_global_search, poc_lens_merit_operands, poc_material_optical_library, poc_photograph_through_prescription]
+examples: [anim3d_lens_aberrations, poc_chromatic_confocal, poc_lens_file_roundtrip, poc_lens_global_search, poc_lens_merit_operands, poc_material_optical_library, poc_photograph_through_prescription]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.8.1  # fullseye lib version this note was generated for
@@ -43,6 +43,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [anim3d_lens_aberrations](../../../../examples/anim3d_lens_aberrations.py) — `py -3.11 examples/anim3d_lens_aberrations.py`
 - [poc_chromatic_confocal](../../../../examples/poc_chromatic_confocal.py) — `py -3.11 examples/poc_chromatic_confocal.py`
 - [poc_lens_file_roundtrip](../../../../examples/poc_lens_file_roundtrip.py) — `py -3.11 examples/poc_lens_file_roundtrip.py`
 - [poc_lens_global_search](../../../../examples/poc_lens_global_search.py) — `py -3.11 examples/poc_lens_global_search.py`

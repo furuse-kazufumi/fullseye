@@ -4,7 +4,7 @@ dim: optics
 category: design
 in: table
 out: table
-examples: [poc_lens_tolerancing, poc_noncoaxial_optics]
+examples: [anim3d_lens_aberrations, poc_lens_tolerancing, poc_noncoaxial_optics]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.8.1  # fullseye lib version this note was generated for
@@ -56,6 +56,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [anim3d_lens_aberrations](../../../../examples/anim3d_lens_aberrations.py) — `py -3.11 examples/anim3d_lens_aberrations.py`
 - [poc_lens_tolerancing](../../../../examples/poc_lens_tolerancing.py) — `py -3.11 examples/poc_lens_tolerancing.py`
 - [poc_noncoaxial_optics](../../../../examples/poc_noncoaxial_optics.py) — `py -3.11 examples/poc_noncoaxial_optics.py`
 

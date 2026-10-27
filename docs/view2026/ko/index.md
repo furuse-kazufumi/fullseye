@@ -81,6 +81,9 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../view2026/anim3d/satellite_gsd_anim3d.html?lang=ko"><img src="../thumbs/satellite_gsd.jpg" alt="궤도에서 작은 글씨가 사라지는 이유" loading="lazy" width="320" height="320"><b>&#9654;</b><span>궤도에서 작은 글씨가 사라지는 이유 · 0.2 MB</span></a>
 <a href="../../view2026/anim3d/star_tracker_anim3d.html?lang=ko"><img src="../thumbs/poc_star_tracker.jpg" alt="Satellite attitude from one star image" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Satellite attitude from one star image · 0.2 MB</span></a>
 <a href="../../view2026/anim3d/rail_light_section_anim3d.html?lang=ko"><img src="../thumbs/rail_light_section.jpg" alt="Measure rail wear and gauge with light-section scanning" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Measure rail wear and gauge with light-section scanning · 0.1 MB</span></a>
+<a href="../../view2026/anim3d/salt_xrd_anim3d.html?lang=ko"><img src="../thumbs/salt_xrd_anim3d.jpg" alt="소금 결정의 분말 X선 회절" loading="lazy" width="320" height="320"><b>&#9654;</b><span>소금 결정의 분말 X선 회절 · 2.5 MB</span></a>
+<a href="../../anim3d/gauss_bonnet.html?lang=ko"><img src="../thumbs/gauss_bonnet.jpg" alt="굽은 정도를 전부 더하면 같은 수" loading="lazy" width="320" height="320"><b>&#9654;</b><span>굽은 정도를 전부 더하면 같은 수 · 3.1 MB</span></a>
+<a href="../../view2026/anim3d/pulseox_anim3d.html?lang=ko"><img src="../thumbs/pulseox.jpg" alt="맥박 산소 측정의 두 파장 흡수" loading="lazy" width="320" height="320"><b>&#9654;</b><span>맥박 산소 측정의 두 파장 흡수 · 0.2 MB</span></a>
 </div>
 
 ## 시리즈 기사 (Qiita의 영어 기사)
@@ -220,7 +223,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 </div>
 
-[PoC가 아닌 사용 예 168개 목록](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[PoC가 아닌 사용 예 169개 목록](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## 전부 보기
 
@@ -670,6 +673,9 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 - [궤도에서 작은 글씨가 사라지는 이유](../../view2026/anim3d/satellite_gsd_anim3d.html?lang=ko) (움직이는 3-D, 드래그로 회전, 0.2 MB): 고도가 높아지면 1 픽셀이 덮는 지상 폭이 넓어지고, 구경이 작아지면 반투명 빛 원뿔 바닥의 Airy 원반이 퍼진다. 파란 GSD와 주황 회절 폭의 교점을 지나면 픽셀만 줄여도 10 cm 선은 돌아오지 않는다. **고도 400 km, 5 µm 픽셀, 초점거리 8 m이면 GSD는 0.250 m이다. 파장 550 nm, 구경 2.4 m의 Rayleigh 지상 반경은 0.112 m이며 대기는 한계 행에서 미계산으로 명시한다.** [소스](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_satgsd_anim3d.py)
 - [Satellite attitude from one star image](../../view2026/anim3d/star_tracker_anim3d.html?lang=ko) (움직이는 3-D, 드래그로 회전, 0.2 MB): Sweep a camera cone through a synthetic sky, centroid noisy point images plus false points, match triangle angles against the full 196-star catalogue, reject outliers and solve attitude with Kabsch. The final tab exposes uncomputed limits from glare, too few stars and star trails. **Against the full 196-star catalogue: 16 genuine stars, 0 mismatches, 2/2 false points rejected, 0.0046-degree attitude error and 0.1406 degree per 1 pixel; Kabsch vs direct SVD differs by less than 1e-12.** [소스](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_startrk_anim3d.py)
 - [Measure rail wear and gauge with light-section scanning](../../view2026/anim3d/rail_light_section_anim3d.html?lang=ko) (움직이는 3-D, 드래그로 회전, 0.1 MB): The intersection of an oblique light sheet and rail surface bends over head, web and foot. During travel, left-head wear rises and the inner distance between two rails reveals gauge widening. **From a noisy subpixel laser line: section RMS 0.699 mm, shape-free wear error 0.0577 mm and profile-measured gauge error 0.346 mm. The triangulation op and independent closed form agree to < 1e-12 mm.** [소스](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_rail_anim3d.py)
+- [소금 결정의 분말 X선 회절](../../view2026/anim3d/salt_xrd_anim3d.html?lang=ko) (움직이는 3-D, 드래그로 회전, 2.5 MB): 소금의 단위세포에 격자면의 판을 겹치고 Bragg 각을 훑으면, 행로차가 λ의 정수배인 곳에서만 검출기가 빛난다. 알갱이의 방향을 흩뜨리면 점이 환으로 자라고, 파장을 길게 하면 환은 넓어져 사라진다. 소멸 규칙은 원자 8개의 파동을 더해 보인다. [소스](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_saltxrd_anim3d.py)
+- [굽은 정도를 전부 더하면 같은 수](../../anim3d/gauss_bonnet.html?lang=ko) (움직이는 3-D, 드래그로 회전, 3.1 MB): 구를 정육면체로 각지게 하든, 토러스든, 구멍을 늘리든, 실측한 소행성이든, 꼭짓점마다의 각 결손 K를 더한 Σ K / 2π는 χ = V − E + F와 일치한다. 반투명 평면이 지나간 꼭짓점을 더해 가는 움직임을 손가락으로 돌려 본다. 경계가 있는 그릇에서는 빗나간다(한계 탭). **17행의 표에서 Σ K / 2π와 χ의 차는 1e-12 미만. 경계가 있는 그릇만 24.0 × 2π 빗나가며, 경계 항을 넣으면 일치한다.** [소스](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_gaussbonnet_anim3d.py)
+- [맥박 산소 측정의 두 파장 흡수](../../view2026/anim3d/pulseox_anim3d.html?lang=ko) (움직이는 3-D, 드래그로 회전, 0.2 MB): 박동하는 동맥을 지나는 적색광과 근적외선을 따라가며 AC/DC 비 R로 산소포화도를 읽는다. 잡음 시계열과 닫힌식을 비교하고 COHb를 구별하지 못하는 한계도 보인다. **R 최대 차이 0.00068, SpO₂ 최대 오차 0.034%. COHb 10% 모형에서는 실제 90.0%를 91.0%로 읽는다.** [소스](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_pulseox_anim3d.py)
 
 </div>
 
