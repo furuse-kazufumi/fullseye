@@ -2103,6 +2103,44 @@
     "hi": "एक ही वास्तविक grid पर मापा अर्ध-कोण 18.10–20.25 deg है; arcsin(1/3) से अधिकतम अंतर 1.37 deg और तीन गतियों का फैलाव 2.15 deg है। अधिकतम wavelength error 0.50 m है; 12 m/s और 4 m/s का wavelength ratio 9.05 है।",
     "fr": "Sur la même grille physique, les demi-angles mesurés vont de 18.10 à 20.25 deg; l'écart maximal à arcsin(1/3) vaut 1.37 deg et la dispersion entre trois vitesses 2.15 deg. L'erreur maximale de longueur d'onde est de 0.50 m; le rapport entre 12 m/s et 4 m/s vaut 9.05."
    }
+  },
+  {
+   "id": "tunnel_crack",
+   "category": "anim3d",
+   "media": "tunnel_crack_anim3d.html",
+   "media_path": "view2026/anim3d/tunnel_crack_anim3d.html",
+   "motion": true,
+   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_tunnel_anim3d.py",
+   "label": {
+    "ja": "走行撮影でトンネルの 0.2 mm ひびを測る",
+    "en": "Measure a 0.2 mm tunnel crack from a moving scan",
+    "zh": "用移动扫描测量隧道中 0.2 mm 的裂缝",
+    "tw": "用移動掃描量測隧道中 0.2 mm 的裂縫",
+    "ko": "주행 촬영으로 터널의 0.2 mm 균열 측정",
+    "de": "Einen 0.2-mm-Riss im Tunnel bei der Durchfahrt messen",
+    "hi": "चलते स्कैन से सुरंग की 0.2 mm दरार मापना",
+    "fr": "Mesurer une fissure de tunnel de 0.2 mm en mouvement"
+   },
+   "see": {
+    "ja": "車両が円筒内面を進む横で、同じ実寸の展開画像だけが粗くなる。赤い検出骨格は 1.0 mm/画素では途切れ、0.10 mm/画素では真の曲線を追う。",
+    "en": "Beside a vehicle moving through a cylindrical lining, only the sampling of the same fixed-size unwrapped wall changes. The red skeleton breaks at 1.0 mm/pixel and follows the true curve at 0.10 mm/pixel.",
+    "zh": "车辆穿过圆筒形衬砌时，同一实际尺寸的展开墙面只改变采样。红色骨架在 1.0 mm/像素时断裂，在 0.10 mm/像素时沿真实曲线延伸。",
+    "tw": "車輛穿過圓筒形襯砌時，同一實際尺寸的展開牆面只改變取樣。紅色骨架在 1.0 mm/像素時斷裂，在 0.10 mm/像素時沿真實曲線延伸。",
+    "ko": "차량이 원통형 라이닝을 지나는 동안 같은 실물 크기의 펼친 벽은 샘플링만 바뀐다. 빨간 골격은 1.0 mm/픽셀에서 끊기고 0.10 mm/픽셀에서 실제 곡선을 따른다.",
+    "de": "Neben dem Fahrzeug in der zylindrischen Auskleidung ändert sich nur die Abtastung derselben abgewickelten Wand. Bei 1.0 mm/Pixel bricht das rote Skelett, bei 0.10 mm/Pixel folgt es der wahren Kurve.",
+    "hi": "बेलनाकार अस्तर में चलती गाड़ी के साथ उसी स्थिर आकार की खुली दीवार का केवल नमूनाकरण बदलता है। लाल कंकाल 1.0 mm/pixel पर टूटता है और 0.10 mm/pixel पर सही वक्र का अनुसरण करता है।",
+    "fr": "À côté du véhicule dans le tunnel cylindrique, seul l'échantillonnage de la même paroi dépliée change. Le squelette rouge se rompt à 1.0 mm/pixel et suit la courbe vraie à 0.10 mm/pixel."
+   },
+   "num": {
+    "ja": "0.10 mm/画素で真のひび長さを 99.1 % 回収。局所背景からの幅誤差 0.023 mm は基準 0.038 mm 内。90 % 到達は実測・見積りとも 0.25 mm/画素で、比較基準は 0.029 mm。目地の誤検出長 24.31 mm も表示する。",
+    "en": "At 0.10 mm/pixel, 99.1% of true crack length is recovered. The local-background width error is 0.023 mm against a 0.038 mm criterion. Measured and estimated 90% recovery are both 0.25 mm/pixel, with a 0.029 mm comparison criterion. A 24.31 mm joint false positive remains visible.",
+    "zh": "在 0.10 mm/像素时找回 99.1% 的真实裂缝长度。局部背景宽度误差为 0.023 mm，基准为 0.038 mm。90% 找回率的实测和估计均为 0.25 mm/像素，比较基准为 0.029 mm。还显示 24.31 mm 的接缝误检。",
+    "tw": "在 0.10 mm/像素時找回 99.1% 的真實裂縫長度。局部背景寬度誤差為 0.023 mm，基準為 0.038 mm。90% 找回率的實測和估計均為 0.25 mm/像素，比較基準為 0.029 mm。另顯示 24.31 mm 的接縫誤檢。",
+    "ko": "0.10 mm/픽셀에서 실제 균열 길이의 99.1%를 검출한다. 국소 배경 폭 오차는 0.023 mm로 0.038 mm 기준 안이다. 90% 검출의 실측과 추정은 모두 0.25 mm/픽셀이며 비교 기준은 0.029 mm다. 줄눈 오검출 24.31 mm도 표시한다.",
+    "de": "Bei 0.10 mm/Pixel werden 99.1 % der wahren Risslänge erfasst. Der Breitenfehler mit lokalem Hintergrund beträgt 0.023 mm bei einem Kriterium von 0.038 mm. Messung und Schätzung für 90 % liegen bei 0.25 mm/Pixel, das Vergleichskriterium bei 0.029 mm. Ein 24.31 mm langer Fugen-Fehlalarm bleibt sichtbar.",
+    "hi": "0.10 mm/pixel पर सही दरार लंबाई का 99.1% मिलता है। स्थानीय पृष्ठभूमि से चौड़ाई त्रुटि 0.023 mm है और मानदंड 0.038 mm है। 90% प्राप्ति का माप और अनुमान दोनों 0.25 mm/pixel हैं, तुलना मानदंड 0.029 mm है। जोड़ की 24.31 mm गलत पहचान भी दिखती है।",
+    "fr": "À 0.10 mm/pixel, 99.1 % de la longueur vraie est retrouvée. L'erreur de largeur sur fond local vaut 0.023 mm pour un critère de 0.038 mm. La mesure et l'estimation à 90 % valent toutes deux 0.25 mm/pixel, avec un critère de comparaison de 0.029 mm. Un faux positif de joint de 24.31 mm reste visible."
+   }
   }
  ],
  "series": [
