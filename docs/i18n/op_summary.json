@@ -31044,6 +31044,15 @@
    "de": "Wie gut sich zwei Materialien (Dicken) anhand der logarithmischen Schwächung der Kanäle unterscheiden lassen (d′ und Fehlerrate in geschlossener Form).",
    "hi": "channels के log attenuation से दो materials (thicknesses) को कितना अलग किया जा सकता है (d′ और error rate का closed form)।"
   },
+  "tomography/scintillator_sensor_qe": {
+   "fp": "fab83c479eef",
+   "en": "Quantum efficiency of a scintillator-coupled sensor: one X-ray photon → absorption in the scintillator → light emission → electrons in the photodetector.",
+   "zh": "闪烁体耦合传感器的量子效率:1 个 X 射线光子 → 闪烁体吸收 → 发光 → 光探测器中的电子数。",
+   "tw": "閃爍體耦合感測器的量子效率:1 個 X 射線光子 → 閃爍體吸收 → 發光 → 光偵測器中的電子數。",
+   "ko": "신틸레이터 결합 센서의 양자 효율: X선 광자 1개 → 신틸레이터의 흡수 → 발광 → 광검출기의 전자 수.",
+   "de": "Quanteneffizienz eines Sensors mit Szintillator: ein Röntgenphoton → Absorption im Szintillator → Lichtemission → Elektronen im Photodetektor.",
+   "hi": "scintillator से जुड़े sensor की quantum efficiency: एक X-ray photon → scintillator में absorption → light emission → photodetector में electrons की संख्या।"
+  },
   "codematch/orientation_code": {
    "fp": "72d086b77265",
    "en": "Orientation-code image: gradient direction quantised into ``n_codes`` steps (the OCM coding).",

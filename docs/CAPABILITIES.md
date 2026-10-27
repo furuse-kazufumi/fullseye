@@ -578,7 +578,7 @@ X 線(や可視光)の透過像は「どれだけ吸われたか」しか写し�
 
 1 枚の X 線透過像は、各画素で L = −ln(I/I₀) = Σ μₘ tₘ という**1 つの数**しか測りません。厚い肉と薄い骨片・ガラスは同じ L を作れるので、厚みと材質は分けられません。光子のエネルギーを 2 つ以上の窓で数え分ける検出器(フォトンカウンティング)か、2 つの管電圧で撮ると、μ(E) の**形**が材質で違う(光電効果は ≈ Z³/E³、コンプトン散乱は電子密度だけ)ので、各画素で方程式が窓の数だけ立ち、2 つの基底物質の厚みに分けられます(Alvarez & Macovski 1976、Lehmann ら 1981)。
 
-使う op: `material_xray_table`, `material_xray_attenuation`, `material_xray_constants`, `material_effective_z`, `xray_tube_spectrum`, `xray_beam_quality`, `photon_counting_channels`, `dual_kvp_channels`, `xray_channel_projection`, `basis_material_decompose`, `basis_decomposition_crlb`, `r_value_map`, `effective_z_map`, `dual_energy_separability`
+使う op: `material_xray_table`, `material_xray_attenuation`, `material_xray_constants`, `material_effective_z`, `xray_tube_spectrum`, `xray_beam_quality`, `photon_counting_channels`, `dual_kvp_channels`, `xray_channel_projection`, `basis_material_decompose`, `basis_decomposition_crlb`, `r_value_map`, `effective_z_map`, `dual_energy_separability`, `scintillator_sensor_qe`
 
 推奨パイプライン: [`xray_tube_spectrum`](ops/tomography/spectral_xray/xray_tube_spectrum.md) → [`photon_counting_channels`](ops/tomography/spectral_xray/photon_counting_channels.md) → [`basis_decomposition_crlb`](ops/tomography/spectral_xray/basis_decomposition_crlb.md) → [`basis_material_decompose`](ops/tomography/spectral_xray/basis_material_decompose.md) → [`effective_z_map`](ops/tomography/spectral_xray/effective_z_map.md)
 

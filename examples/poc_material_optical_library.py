@@ -1,5 +1,5 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
-"""PoC: 材料の光学物性ライブラリ —— 光学・音響材料 89 種を 1 つの表にし、
+"""PoC: 材料の光学物性ライブラリ —— 光学・音響・シンチレータの材料 96 種を 1 つの表にし、
 カタログ公表値と第二実装で採点する。
 
 【問い】観察用の光学系(レンズ・窓・鏡・膜)と観察対象(ウェハ・モールド・はんだ)は、どちらも材料の
@@ -155,7 +155,7 @@ def chapter_glass():
     cat = MT.material_table()
     print("   同梱 %d 材料: %s" % (len(cat), ", ".join("%s %d" % (c, sum(r["class"] == c for r in cat))
                                                    for c in MT.CLASSES[:-1])))
-    gate("同梱の材料は 89 種(光学 86 種と音響専用 3 種)", len(cat) == 89
+    gate("同梱の材料は 96 種(光学 89 種・発光の列だけのシンチレータ 4 種・音響専用 3 種)", len(cat) == 96
          and sum(r["class"] == "glass" for r in cat) == 46)
     rec = MT.material_record("SI")
     print("   例: Si のレコード = %s、区間 %s" % (rec["class"], ", ".join("%s %s %.3g-%.3g µm (%s)" % (
@@ -398,7 +398,8 @@ def chapter_shared():
     NUMBERS["local_vs_table"] = worst
     gate("raytrace が手で写していた 20 種の Sellmeier 係数は materials と同じ曲線(400〜950 nm で 1e-12)",
          len(local) == 20 and worst < 1e-12, "最大 %.1e" % worst)
-    transparent = [m for m in MT.MATERIALS if MT.material_record(m)["class"] in ("glass", "crystal", "polymer", "liquid")]
+    transparent = [m for m in MT.MATERIALS if MT.material_record(m)["class"] in ("glass", "crystal", "polymer", "liquid")
+                   and any(d["type"] in ("formula", "nk", "n") for d in MT.material_record(m)["datasets"])]
     gate("レンズの媒質の一覧 = 透過材 %d 種(硝材・結晶・樹脂・水)、金属はレンズに使えない" % len(transparent),
          sorted(names) == sorted(transparent) and _refuses(lambda: RT.glass_catalog("AU")), "%d 種" % len(names))
     lens = {}

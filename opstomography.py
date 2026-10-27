@@ -155,6 +155,8 @@ _CATALOG = {
         ("r_value_map", "dualxray", ["images"], "image2d"),
         ("effective_z_map", "dualxray", ["images"], "image2d"),
         ("dual_energy_separability", "dualxray", [], "table"),
+        # 2026-10-23: シンチレータ積層のセンサ(吸収 → 発光 → 光検出器の QE)。材料表のシンチレータのレコードを引く。
+        ("scintillator_sensor_qe", "dualxray", [], "table"),
     ],
 }
 

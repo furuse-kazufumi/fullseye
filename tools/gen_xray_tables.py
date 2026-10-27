@@ -17,8 +17,10 @@
 
 **何を同梱するか(2026-10-15)**: NIST の標準参照データ(SRD)は Standard Reference Data Act
 (15 U.S.C. 290e)により米国商務長官の著作権の表示がある。数値そのものは測定・計算の事実なので、
-**X 線検査で使う元素 49 種と化合物 21 種、1 keV〜1 MeV の行だけ**を、出典の表示つきで同梱する
-(全 92 元素・48 化合物・1 keV〜100 GeV の表は同梱しない)。全体が要る使い方は、ユーザーが
+**X 線検査で使う元素 51 種と化合物 21 種、1 keV〜1 MeV の行だけ**を、出典の表示つきで同梱する
+(全 92 元素・48 化合物・1 keV〜100 GeV の表は同梱しない)。2026-10-23 に Lu(71)と Bi(83)を足した
+—— シンチレータの Lu2SiO5:Ce / Lu1.8Y0.2SiO5:Ce / Bi4Ge3O12 の X 線の列を組成から作るため
+(``elem/z71.html`` / ``elem/z83.html`` を同じ URL の形で保存して ``--nist`` に置く)。全体が要る使い方は、ユーザーが
 NIST のページを読むか、xraylib(BSD-3)を optional で入れる。
 
 数値は HTML の文字列をそのまま float にする(手で写さない)。エネルギーは MeV → keV に直す
@@ -63,7 +65,7 @@ SOURCE = ("J. H. Hubbell and S. M. Seltzer, Tables of X-Ray Mass Attenuation Coe
           "Energy-Absorption Coefficients (version 1.4), NIST Standard Reference Database 126 (2004), "
           "https://physics.nist.gov/xaamdi, doi:10.18434/T4D01F. Human-tissue compositions: ICRU Report 44 (1989).")
 NOTICE = ("NIST Standard Reference Data, (c) U.S. Secretary of Commerce on behalf of the United States "
-          "(15 U.S.C. 290e). A small subset (49 elements, 21 materials, 1 keV - 1 MeV) is reproduced "
+          "(15 U.S.C. 290e). A small subset (51 elements, 21 materials, 1 keV - 1 MeV) is reproduced "
           "with attribution; the full tables are at the URL above.")
 
 _NUM = re.compile(r"^[0-9]+\.[0-9]+E[+-][0-9]+$")

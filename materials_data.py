@@ -10632,6 +10632,378 @@ MATERIAL_RECORDS = [
         }
     },
     {
+        'name': 'CSI:TL',
+        'class': 'crystal',
+        'aliases': ('CSI(TL)', 'CSI_TL'),
+        'datasets': [
+            {
+                'type': 'formula',
+                'formula': 1,
+                'range_um': (0.25, 67.0),
+                'coefficients': (0.27587, 0.68689, 0.13, 0.2609, 0.147, 0.06256, 0.163, 0.06527, 0.177, 0.14991, 0.185, 0.51818, 0.206, 0.01918, 0.218, 3.38229, 161.29),
+                'page': 'main/CsI/nk/Li.yml',
+                'reference': 'H. H. Li. Refractive index of alkali halides and its wavelength and temperature derivatives. J. Phys. Chem. Ref. Data 5, 329-528 (1976) and references therein. * Sellmeier formula is derived by fitting experimental data from several sources.',
+                'note': 'undoped CsI; the Tl activator (~0.1 %) is not resolved in n'
+            },
+        ],
+        'properties': {
+            'density_kg_m3': 4510.0,
+            'scintillator': {
+                'activator': 'Tl+',
+                'form': 'single crystal',
+                'xray_material': 'CSI',
+                'density_g_cm3': 4.51,
+                'light_yield_photons_per_mev': 56000.0,
+                'light_yield_range_photons_per_mev': None,
+                'decay_time_ns': 1220.0,
+                'emission_peak_nm': 550.0,
+                'emission_components': None,
+                'refractive_index_at_peak': 1.79,
+                'sources': {
+                    'density_g_cm3': "Particle Data Group, S. Navas et al., Phys. Rev. D 110, 030001 (2024), review 35 'Particle detectors at accelerators', Table 35.4",
+                    'decay_time_ns': "Particle Data Group, S. Navas et al., Phys. Rev. D 110, 030001 (2024), review 35 'Particle detectors at accelerators', Table 35.4",
+                    'emission_peak_nm': "Particle Data Group, S. Navas et al., Phys. Rev. D 110, 030001 (2024), review 35 'Particle detectors at accelerators', Table 35.4",
+                    'refractive_index_at_peak': "Particle Data Group, S. Navas et al., Phys. Rev. D 110, 030001 (2024), review 35 'Particle detectors at accelerators', Table 35.4",
+                    'light_yield_photons_per_mev': 'Berkeley Lab Inorganic Scintillator Library, https://scintillator.lbl.gov/inorganic-scintillator-library/ (csv read 2026-10-23), row Sakai1987 (56,000; deHaas2005 and dehaas2008 also 56,000)',
+                    'xray_material': "NIST SRD 126 compound table 'Cesium Iodide' (Tl neglected)"
+                },
+                'unverified': ('light_yield_range_photons_per_mev', 'emission_components'),
+                'notes': (),
+                'emission_default_geometry': None
+            }
+        }
+    },
+    {
+        'name': 'NAI:TL',
+        'class': 'crystal',
+        'aliases': ('NAI(TL)', 'NAI_TL'),
+        'datasets': [
+            {
+                'type': 'formula',
+                'formula': 1,
+                'range_um': (0.25, 40.0),
+                'coefficients': (0.478, 1.532, 0.17, 4.27, 86.21),
+                'page': 'main/NaI/nk/Li.yml',
+                'reference': 'H. H. Li. Refractive index of alkali halides and its wavelength and temperature derivatives. J. Phys. Chem. Ref. Data 5, 329-528 (1976) and references therein. * Sellmeier formula derivation is based on a single data point and knowledge of the dielectric constants and the characteristic absorption peaks.',
+                'note': 'undoped NaI; the Tl activator is not resolved in n',
+                'temperature_k': 297.0
+            },
+        ],
+        'properties': {
+            'density_kg_m3': 3670.0,
+            'scintillator': {
+                'activator': 'Tl+',
+                'form': 'single crystal',
+                'xray_material': 'NaI',
+                'density_g_cm3': 3.67,
+                'light_yield_photons_per_mev': 45000.0,
+                'light_yield_range_photons_per_mev': None,
+                'decay_time_ns': 245.0,
+                'emission_peak_nm': 410.0,
+                'emission_components': None,
+                'refractive_index_at_peak': 1.85,
+                'sources': {
+                    'density_g_cm3': "Particle Data Group, S. Navas et al., Phys. Rev. D 110, 030001 (2024), review 35 'Particle detectors at accelerators', Table 35.4",
+                    'decay_time_ns': "Particle Data Group, S. Navas et al., Phys. Rev. D 110, 030001 (2024), review 35 'Particle detectors at accelerators', Table 35.4",
+                    'emission_peak_nm': "Particle Data Group, S. Navas et al., Phys. Rev. D 110, 030001 (2024), review 35 'Particle detectors at accelerators', Table 35.4",
+                    'refractive_index_at_peak': "Particle Data Group, S. Navas et al., Phys. Rev. D 110, 030001 (2024), review 35 'Particle detectors at accelerators', Table 35.4",
+                    'light_yield_photons_per_mev': 'Berkeley Lab Inorganic Scintillator Library, https://scintillator.lbl.gov/inorganic-scintillator-library/ (csv read 2026-10-23), row Sakai1987 (45,000; dehaas2008 also 45,000)',
+                    'xray_material': 'chemical formula NaI, mixture rule over NIST SRD 126 (Tl neglected)'
+                },
+                'unverified': ('light_yield_range_photons_per_mev', 'emission_components'),
+                'notes': (),
+                'emission_default_geometry': None
+            }
+        }
+    },
+    {
+        'name': 'BI4GE3O12',
+        'class': 'crystal',
+        'aliases': ('BGO',),
+        'datasets': [
+            {
+                'type': 'formula',
+                'formula': 1,
+                'range_um': (0.305, 1.0),
+                'coefficients': (0.0, 3.1218393, 0.1807),
+                'page': 'main/Bi4Ge3O12/nk/Williams.yml',
+                'reference': 'P. A. Williams, A. H. Rose, K. S. Lee, D. C. Conrad, G. W. Day, P. D. Hale. Optical, thermo-optic, electro-optic, and photoelastic properties of bismuth germanate Bi4Ge3O12. Appl. Opt. 35, 3562-3569 (1996)'
+            },
+        ],
+        'properties': {
+            'density_kg_m3': 7130.0,
+            'scintillator': {
+                'activator': 'Bi3+ (intrinsic)',
+                'form': 'single crystal',
+                'xray_material': 'Bi4Ge3O12',
+                'density_g_cm3': 7.13,
+                'light_yield_photons_per_mev': 8500.0,
+                'light_yield_range_photons_per_mev': None,
+                'decay_time_ns': 300.0,
+                'emission_peak_nm': 480.0,
+                'emission_components': (
+                    {
+                        'geometry': 'surface',
+                        'excitation': 'uv',
+                        'center_nm': 480.0,
+                        'fwhm_ev': 0.7,
+                        'weight': 1.0,
+                        'digitized_from_figure': True,
+                        'source': "M. Itoh and T. Katagiri, J. Phys. Soc. Jpn., 'Intrinsic luminescence from self-trapped excitons in Bi4Ge3O12 and Bi12GeO20', Fig. 2 (300 K, 150 nm excitation, light from the sample surface): one Gaussian in energy, FWHM 0.70 eV read from the figure; the 90 kVp X-ray spectrum of H. V. Piltingsrud, J. Nucl. Med. 20, 1279 (1979), Table 2 peaks at the same place"
+                    },
+                ),
+                'refractive_index_at_peak': 2.15,
+                'sources': {
+                    'density_g_cm3': "Particle Data Group, S. Navas et al., Phys. Rev. D 110, 030001 (2024), review 35 'Particle detectors at accelerators', Table 35.4",
+                    'decay_time_ns': "Particle Data Group, S. Navas et al., Phys. Rev. D 110, 030001 (2024), review 35 'Particle detectors at accelerators', Table 35.4",
+                    'emission_peak_nm': "Particle Data Group, S. Navas et al., Phys. Rev. D 110, 030001 (2024), review 35 'Particle detectors at accelerators', Table 35.4",
+                    'refractive_index_at_peak': "Particle Data Group, S. Navas et al., Phys. Rev. D 110, 030001 (2024), review 35 'Particle detectors at accelerators', Table 35.4",
+                    'light_yield_photons_per_mev': 'Berkeley Lab Inorganic Scintillator Library, https://scintillator.lbl.gov/inorganic-scintillator-library/ (csv read 2026-10-23), row Moszynski1997a (8,500; the room-temperature rows span 7,100-10,600)',
+                    'emission_components': 'one Gaussian, read from a figure (see the component)',
+                    'xray_material': 'chemical formula Bi4Ge3O12, mixture rule over NIST SRD 126'
+                },
+                'unverified': ('light_yield_range_photons_per_mev',),
+                'notes': (),
+                'emission_default_geometry': 'surface'
+            }
+        }
+    },
+    {
+        'name': 'LU2SIO5:CE',
+        'class': 'crystal',
+        'aliases': ('LSO', 'LSO:CE', 'LU2SIO5(CE)'),
+        'datasets': [],
+        'properties': {
+            'density_kg_m3': 7400.0,
+            'scintillator': {
+                'activator': 'Ce3+',
+                'form': 'single crystal',
+                'xray_material': 'Lu2SiO5',
+                'density_g_cm3': 7.4,
+                'light_yield_photons_per_mev': 27000.0,
+                'light_yield_range_photons_per_mev': None,
+                'decay_time_ns': 40.0,
+                'emission_peak_nm': 402.0,
+                'emission_components': (
+                    {
+                        'geometry': 'surface',
+                        'excitation': 'uv',
+                        'center_nm': 402.0,
+                        'fwhm_ev': 0.5,
+                        'weight': 1.0,
+                        'digitized_from_figure': True,
+                        'source': 'R. Mao, L. Zhang and R.-Y. Zhu, IEEE Trans. Nucl. Sci. 55, 1759 (2008), Figs. 7-8: UV-excited emission taken from the excited surface, peak 402 nm, FWHM 0.50 eV read from the figure'
+                    },
+                    {
+                        'geometry': 'thick_crystal_transmission',
+                        'excitation': 'gamma',
+                        'center_nm': 453.0,
+                        'fwhm_ev': 0.63,
+                        'weight': 1.0,
+                        'digitized_from_figure': True,
+                        'source': 'R. Mao, L. Zhang and R.-Y. Zhu, IEEE Trans. Nucl. Sci. 55, 1759 (2008), Figs. 7-8: gamma-excited emission after passing through a long crystal - the blue side is re-absorbed by Ce3+ (self-absorption) and the peak moves to 430-453 nm depending on the sample; 453 nm and FWHM 0.63 eV read from the figure'
+                    },
+                ),
+                'refractive_index_at_peak': 1.82,
+                'sources': {
+                    'density_g_cm3': "Particle Data Group, S. Navas et al., Phys. Rev. D 110, 030001 (2024), review 35 'Particle detectors at accelerators', Table 35.4",
+                    'decay_time_ns': "Particle Data Group, S. Navas et al., Phys. Rev. D 110, 030001 (2024), review 35 'Particle detectors at accelerators', Table 35.4",
+                    'emission_peak_nm': "Particle Data Group, S. Navas et al., Phys. Rev. D 110, 030001 (2024), review 35 'Particle detectors at accelerators', Table 35.4",
+                    'refractive_index_at_peak': "Particle Data Group, S. Navas et al., Phys. Rev. D 110, 030001 (2024), review 35 'Particle detectors at accelerators', Table 35.4",
+                    'light_yield_photons_per_mev': 'Berkeley Lab Inorganic Scintillator Library, https://scintillator.lbl.gov/inorganic-scintillator-library/ (csv read 2026-10-23), row Melcher1996 (27,000; the rows span 22,200-33,000 with Ce content; J. T. M. de Haas and P. Dorenbos, IEEE Trans. Nucl. Sci. 55, 1086 (2008), doi:10.1109/TNS.2008.922819, Table II agrees)',
+                    'emission_components': 'one Gaussian per geometry, read from figures (see the components)',
+                    'xray_material': 'chemical formula Lu2SiO5, mixture rule over NIST SRD 126 (Ce neglected)'
+                },
+                'unverified': ('light_yield_range_photons_per_mev',),
+                'notes': ('emission_components: the band shape is an approximation - the Ce3+ 5d-4f emission is two overlapping bands (to the 2F5/2 and 2F7/2 levels, as kept for LYSO), merged here into one Gaussian in energy per geometry',),
+                'emission_default_geometry': 'surface'
+            }
+        }
+    },
+    {
+        'name': 'LU1.8Y0.2SIO5:CE',
+        'class': 'crystal',
+        'aliases': ('LYSO', 'LYSO:CE'),
+        'datasets': [],
+        'properties': {
+            'density_kg_m3': 7100.0,
+            'scintillator': {
+                'activator': 'Ce3+',
+                'form': 'single crystal',
+                'xray_material': 'Lu1.8Y0.2SiO5',
+                'density_g_cm3': 7.1,
+                'light_yield_photons_per_mev': 27000.0,
+                'light_yield_range_photons_per_mev': (26000.0, 27000.0),
+                'decay_time_ns': 41.0,
+                'emission_peak_nm': 397.0,
+                'emission_components': (
+                    {
+                        'geometry': 'surface',
+                        'excitation': 'xray',
+                        'center_nm': 397.0,
+                        'fwhm_ev': 0.43,
+                        'weight': 0.5,
+                        'digitized_from_figure': True,
+                        'weight_assumed': True,
+                        'source': 'L. Pidol et al. 2007 (hal-02423145), Table 2 (emission 397/427 nm, the two Ce3+ 5d-4f bands) and Fig. 2 (X-ray excitation, room temperature): FWHM 0.37-0.50 eV read from figures, 0.43 eV used; the intensity ratio of the two bands is not verified - 1:1 is an assumption'
+                    },
+                    {
+                        'geometry': 'surface',
+                        'excitation': 'xray',
+                        'center_nm': 427.0,
+                        'fwhm_ev': 0.43,
+                        'weight': 0.5,
+                        'digitized_from_figure': True,
+                        'weight_assumed': True,
+                        'source': 'L. Pidol et al. 2007 (hal-02423145), Table 2 / Fig. 2 (as the 397 nm band; ratio assumed 1:1)'
+                    },
+                ),
+                'refractive_index_at_peak': None,
+                'sources': {
+                    'density_g_cm3': 'Berkeley Lab Inorganic Scintillator Library, https://scintillator.lbl.gov/inorganic-scintillator-library/ (csv read 2026-10-23), row Pidol2004',
+                    'light_yield_photons_per_mev': 'J. T. M. de Haas and P. Dorenbos, IEEE Trans. Nucl. Sci. 55, 1086 (2008), doi:10.1109/TNS.2008.922819, Table II (APD 26,000 / PD 27,000 ph/MeV, 10 us shaping; the Lu:Y ratio of the measured sample is not stated). The earlier Berkeley Lab Inorganic Scintillator Library, https://scintillator.lbl.gov/inorganic-scintillator-library/ (csv read 2026-10-23), row Pidol2004 value 34,000 is not used',
+                    'light_yield_range_photons_per_mev': 'J. T. M. de Haas and P. Dorenbos, IEEE Trans. Nucl. Sci. 55, 1086 (2008), doi:10.1109/TNS.2008.922819, Table II: the APD and PD readings of the same crystal (26,000 and 27,000)',
+                    'decay_time_ns': "Berkeley Lab Inorganic Scintillator Library, https://scintillator.lbl.gov/inorganic-scintillator-library/ (csv read 2026-10-23), row Pidol2004 ('41 + slow': the fast component; a slow tail is not given)",
+                    'emission_peak_nm': 'Berkeley Lab Inorganic Scintillator Library, https://scintillator.lbl.gov/inorganic-scintillator-library/ (csv read 2026-10-23), row Pidol2004',
+                    'emission_components': 'two Gaussians, widths read from figures, ratio assumed (see the components)',
+                    'xray_material': 'chemical formula Lu1.8Y0.2SiO5, mixture rule over NIST SRD 126 (Ce neglected)'
+                },
+                'unverified': ('refractive_index_at_peak',),
+                'notes': (),
+                'emission_default_geometry': 'surface'
+            }
+        }
+    },
+    {
+        'name': 'CDWO4',
+        'class': 'crystal',
+        'aliases': (),
+        'datasets': [],
+        'properties': {
+            'density_kg_m3': 7900.0,
+            'scintillator': {
+                'activator': 'self-activated',
+                'form': 'single crystal',
+                'xray_material': 'CdWO4',
+                'density_g_cm3': 7.9,
+                'light_yield_photons_per_mev': 27000.0,
+                'light_yield_range_photons_per_mev': (20000.0, 28000.0),
+                'decay_time_ns': 12000.0,
+                'emission_peak_nm': 480.0,
+                'emission_components': (
+                    {
+                        'geometry': 'thick_crystal_transmission',
+                        'excitation': 'gamma',
+                        'center_nm': 480.0,
+                        'fwhm_ev': 0.58,
+                        'weight': 1.0,
+                        'digitized_from_figure': True,
+                        'source': 'L. Bardelli et al., Nucl. Instrum. Meth. A 569, 743 (2006), arXiv:nucl-ex/0608004, Table 1 (emission maximum 480 nm) and Fig. 6a (60Co gamma, crystal 42 mm diameter x 25 mm): one Gaussian in energy, FWHM 0.58 eV read from the figure; the weak long-wavelength tail is neglected'
+                    },
+                ),
+                'refractive_index_at_peak': None,
+                'sources': {
+                    'density_g_cm3': 'Berkeley Lab Inorganic Scintillator Library, https://scintillator.lbl.gov/inorganic-scintillator-library/ (csv read 2026-10-23), row Moszynski2005',
+                    'light_yield_photons_per_mev': 'M. Moszynski et al., IEEE Trans. Nucl. Sci. 52, 3124 (2005) (abstract: 6,500 +- 200 phe/MeV, 10x10x3 mm) -> 27,400 ph/MeV as tabulated in V. B. Mikhailik and H. Kraus, arXiv:1001.5461 (2010), Table 2; P. Dorenbos et al., IEEE Trans. Nucl. Sci. 42, 2190 (1995), Table I ~28,000 (estimate); R. Holl et al., IEEE Trans. Nucl. Sci. 35, 105 (1988), Si photodiode absolute 20,000. Lower published values (7,800-15,800) mostly come from shaping times short against the 13 us decay and from quoting photoelectrons (phe/MeV) as photons',
+                    'light_yield_range_photons_per_mev': 'absolute measurements only: Holl 1988 (20,000) to Dorenbos 1995 (~28,000); see light_yield_photons_per_mev',
+                    'decay_time_ns': 'Berkeley Lab Inorganic Scintillator Library, https://scintillator.lbl.gov/inorganic-scintillator-library/ (csv read 2026-10-23), row Moszynski2005',
+                    'emission_peak_nm': 'L. Bardelli et al., Nucl. Instrum. Meth. A 569, 743 (2006), arXiv:nucl-ex/0608004, Table 1 (480 nm; the 495 nm of the Moszynski2005 row is the outlier)',
+                    'emission_components': 'one Gaussian, read from a figure (see the component)',
+                    'xray_material': 'chemical formula CdWO4, mixture rule over NIST SRD 126'
+                },
+                'unverified': ('refractive_index_at_peak',),
+                'notes': (),
+                'emission_default_geometry': 'thick_crystal_transmission'
+            }
+        }
+    },
+    {
+        'name': 'GD2O2S:TB',
+        'class': 'crystal',
+        'aliases': ('GOS:TB', 'GD2O2S(TB)'),
+        'datasets': [],
+        'properties': {
+            'density_kg_m3': 7440.0,
+            'scintillator': {
+                'activator': 'Tb3+',
+                'form': 'powder phosphor / ceramic',
+                'xray_material': 'GOS',
+                'density_g_cm3': 7.44,
+                'light_yield_photons_per_mev': None,
+                'light_yield_range_photons_per_mev': None,
+                'decay_time_ns': 638000.0,
+                'emission_peak_nm': 545.0,
+                'emission_components': (
+                    {
+                        'geometry': 'surface',
+                        'excitation': 'xray',
+                        'center_nm': 411.0,
+                        'fwhm_ev': None,
+                        'weight': 0.1,
+                        'digitized_from_figure': True,
+                        'source': 'J. Inorg. Mater. 38 (2023), doi:10.15541/jim20220542, Fig. 5(a) (commercial Gd2O2S:Tb powder, X-ray 75 kV); integrated shares read from the digitized figure (5D3 group 380-460 nm, centroid 411 nm, ~10 %; depends on the Tb content)'
+                    },
+                    {
+                        'geometry': 'surface',
+                        'excitation': 'xray',
+                        'center_nm': 490.0,
+                        'fwhm_ev': None,
+                        'weight': 0.12,
+                        'digitized_from_figure': True,
+                        'source': 'J. Inorg. Mater. 38 (2023), doi:10.15541/jim20220542, Fig. 5(a) (commercial Gd2O2S:Tb powder, X-ray 75 kV); integrated shares read from the digitized figure (5D4 -> 7F6, ~12 %)'
+                    },
+                    {
+                        'geometry': 'surface',
+                        'excitation': 'xray',
+                        'center_nm': 545.0,
+                        'fwhm_ev': None,
+                        'weight': 0.53,
+                        'digitized_from_figure': True,
+                        'source': 'J. Inorg. Mater. 38 (2023), doi:10.15541/jim20220542, Fig. 5(a) (commercial Gd2O2S:Tb powder, X-ray 75 kV); integrated shares read from the digitized figure (5D4 -> 7F5, ~53 %)'
+                    },
+                    {
+                        'geometry': 'surface',
+                        'excitation': 'xray',
+                        'center_nm': 587.0,
+                        'fwhm_ev': None,
+                        'weight': 0.13,
+                        'digitized_from_figure': True,
+                        'source': 'J. Inorg. Mater. 38 (2023), doi:10.15541/jim20220542, Fig. 5(a) (commercial Gd2O2S:Tb powder, X-ray 75 kV); integrated shares read from the digitized figure (5D4 -> 7F4, ~13 %)'
+                    },
+                    {
+                        'geometry': 'surface',
+                        'excitation': 'xray',
+                        'center_nm': 620.0,
+                        'fwhm_ev': None,
+                        'weight': 0.08,
+                        'digitized_from_figure': True,
+                        'source': 'J. Inorg. Mater. 38 (2023), doi:10.15541/jim20220542, Fig. 5(a) (commercial Gd2O2S:Tb powder, X-ray 75 kV); integrated shares read from the digitized figure (5D4 -> 7F3, ~8 %)'
+                    },
+                    {
+                        'geometry': 'surface',
+                        'excitation': 'xray',
+                        'center_nm': 667.0,
+                        'fwhm_ev': None,
+                        'weight': 0.04,
+                        'digitized_from_figure': True,
+                        'source': 'J. Inorg. Mater. 38 (2023), doi:10.15541/jim20220542, Fig. 5(a) (commercial Gd2O2S:Tb powder, X-ray 75 kV); integrated shares read from the digitized figure (5D4 -> 7F2..0, centroid 667 nm, ~4 %)'
+                    },
+                ),
+                'refractive_index_at_peak': None,
+                'sources': {
+                    'density_g_cm3': "NIST SRD 126 Table 2 'Gadolinium Oxysulfide' (bulk; a powder screen is less dense)",
+                    'decay_time_ns': 'B. Tang et al., Molecules 28, 1815 (2023), doi:10.3390/molecules28041815, Table 1 (x = 0: 638 us; photoluminescence lifetime of Tb3+ under 293-298 nm excitation, not X-ray)',
+                    'emission_peak_nm': 'B. Tang et al., Molecules 28, 1815 (2023): strongest line 545 nm (5D4 -> 7F5); further lines at 494 / 589 / 623 nm (a line spectrum, not one band)',
+                    'emission_components': 'a bundle of six lines (weights read from a figure, see the components)',
+                    'xray_material': "NIST SRD 126 compound table 'Gadolinium Oxysulfide' (Tb neglected)"
+                },
+                'unverified': ('light_yield_photons_per_mev', 'light_yield_range_photons_per_mev', 'refractive_index_at_peak'),
+                'notes': ('density_g_cm3: the bulk value 7.44 g/cm3 - a powder screen or a porous ceramic is less dense by its packing fraction, so the absorption computed with it is an upper bound for a powder screen', 'emission_components: the line positions 490 / 587 / 620 nm were read from the J. Inorg. Mater. 2023 figure; the 494 / 589 / 623 nm quoted with emission_peak_nm (Tang 2023) are a different measurement (other sample and spectrometer) - both kept as read, not reconciled'),
+                'emission_default_geometry': 'surface'
+            }
+        }
+    },
+    {
         'name': 'AIR',
         'class': 'gas',
         'aliases': (),

@@ -5,6 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>2 つの管電圧で撮るエネルギー積分型(シンチレータ)の 2 チャネル。</p>
 <p>信号は吸収した光子のエネルギーの和(gain = E)。分散は Σ φ E² e^{−μt}(複合 Poisson、Swank の雑音の増えは入れない)。2 つのスペクトルは同じエネルギーの格子に載せる(線形補間、範囲の外は 0)。返り値の形は <code style="color:#22d3bf">photon_counting_channels</code> と同じ(mode = &quot;integrating&quot;)。</p>
+<p><code style="color:#22d3bf">detector</code> は X 線の列の名前(既定 <code style="color:#22d3bf">CSI</code> = NIST の CsI の表)か、材料表のシンチレータの名前(<code style="color:#22d3bf">CSI:TL</code> / <code style="color:#22d3bf">GD2O2S:TB</code> / <code style="color:#22d3bf">BGO</code> / <code style="color:#22d3bf">LYSO</code> …)。シンチレータの名前なら吸収効率 1 − e^{−μt} の μ はそのレコードの X 線の列と密度で、<code style="color:#22d3bf">response[&quot;scintillator&quot;]</code> に光収率・発光の極大・減衰時間を足す(光の量は <code style="color:#22d3bf">light_photons_per_kev</code> = 光収率 / 1000 —— 吸収したエネルギー [keV] に掛ける)。重みと gain は名前の種類に依らず同じ式で、既定の <code style="color:#22d3bf">CSI</code> の結果は 2026-10-23 の前と 1 ビットも変わらない(<code style="color:#22d3bf">CSI:TL</code> は同じ NIST の表と密度なので重みも同じ)。光検出器の QE まで通すのは <code style="color:#22d3bf">scintillator_sensor_qe</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
