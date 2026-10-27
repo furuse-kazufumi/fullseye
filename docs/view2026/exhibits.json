@@ -1692,6 +1692,39 @@
    }
   },
   {
+   "id": "particle_dissolution",
+   "category": "anim3d",
+   "media": "particle_dissolution_anim3d.html",
+   "media_path": "view2026/anim3d/particle_dissolution_anim3d.html",
+   "motion": true,
+   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_dissolution_anim3d.py",
+   "label": {
+    "ja": "薬の粒はどう溶けるか", "en": "How medicine particles dissolve",
+    "zh": "药物颗粒如何溶解", "tw": "藥物顆粒如何溶解", "ko": "약 입자는 어떻게 녹는가",
+    "de": "Wie sich Arzneipartikel auflösen", "hi": "दवा के कण कैसे घुलते हैं", "fr": "Comment les particules de médicament se dissolvent"
+   },
+   "see": {
+    "ja": "同じ総量の 1 粒と 8 粒が縮む。雑音像を測ると、8 分割は表面積が 2 倍になり、8 粒は半分の時間で溶ける。",
+    "en": "Watch 1 large grain and 8 small grains shrink. Image measurement shows that splitting into 8 makes surface area 2 times larger, so 8 grains dissolve in half the time.",
+    "zh": "观察 1 个大颗粒和 8 个小颗粒缩小。图像测量显示,分成 8 份使表面积变为 2 倍,所以 8 个颗粒用一半时间溶解。",
+    "tw": "觀察 1 個大顆粒和 8 個小顆粒縮小。影像測量顯示,分成 8 份使表面積變為 2 倍,所以 8 個顆粒用一半時間溶解。",
+    "ko": "큰 입자 1개와 작은 입자 8개가 줄어든다. 영상 측정에서 8분할은 표면적을 2배로 만들며, 8개 입자는 절반의 시간에 녹는다.",
+    "de": "1 großes und 8 kleine Partikel schrumpfen. Die Bildmessung zeigt: Die Teilung in 8 vergrößert die Oberfläche um Faktor 2, sodass sich 8 Partikel in halber Zeit auflösen.",
+    "hi": "1 बड़ा और 8 छोटे कण सिकुड़ते हैं। चित्र मापन दिखाता है कि 8 भाग करने पर सतह 2 गुना होती है, इसलिए 8 कण आधे समय में घुलते हैं।",
+    "fr": "1 gros grain et 8 petits grains rétrécissent. La mesure d'image montre qu'une division en 8 multiplie la surface par 2 ; les 8 grains se dissolvent donc en deux fois moins de temps."
+   },
+   "num": {
+    "ja": "数値 ODE と立方根則の最大相対差 < 1e-12。半径 3.0 mm 以上での像由来誤差 0.00058 は上限 0.0616 未満。画像曲線から測った時間比 0.5008。",
+    "en": "Numerical ODE versus cube-root law: < 1e-12. Above radius 3.0 mm, image-derived error 0.00058 is below bound 0.0616. Time ratio measured from image curves: 0.5008.",
+    "zh": "数值 ODE 与立方根定律之差 < 1e-12。半径 3.0 mm 以上时,图像误差 0.00058 低于上限 0.0616。由图像曲线测得时间比 0.5008。",
+    "tw": "數值 ODE 與立方根定律之差 < 1e-12。半徑 3.0 mm 以上時,影像誤差 0.00058 低於上限 0.0616。由影像曲線測得時間比 0.5008。",
+    "ko": "수치 ODE와 세제곱근 법칙의 차이는 < 1e-12이다. 반지름 3.0 mm 이상에서 영상 오차 0.00058은 한계 0.0616보다 작다. 영상 곡선에서 측정한 시간비는 0.5008이다.",
+    "de": "Numerische ODE gegen Kubikwurzelgesetz: < 1e-12. Ab Radius 3.0 mm liegt der Bildfehler 0.00058 unter der Grenze 0.0616. Aus Bildkurven gemessenes Zeitverhältnis: 0.5008.",
+    "hi": "संख्यात्मक ODE और घनमूल नियम का अंतर < 1e-12 है। 3.0 mm या अधिक त्रिज्या पर चित्र त्रुटि 0.00058, सीमा 0.0616 से कम है। चित्र वक्र से मापा समय अनुपात 0.5008 है।",
+    "fr": "ODE numérique contre loi de racine cubique : < 1e-12. Au-dessus d'un rayon de 3.0 mm, l'erreur d'image 0.00058 reste sous la borne 0.0616. Rapport temporel mesuré sur les courbes d'image : 0.5008."
+   }
+  },
+  {
    "id": "tablet_inspection",
    "category": "anim3d",
    "media": "tablet_inspection_anim3d.html",
