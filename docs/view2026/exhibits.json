@@ -1844,6 +1844,44 @@
    }
   },
   {
+   "id": "photoelastic",
+   "category": "anim3d",
+   "media": "photoelastic_anim3d.html",
+   "media_path": "view2026/anim3d/photoelastic_anim3d.html",
+   "motion": true,
+   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_photoelastic_anim3d.py",
+   "label": {
+    "ja": "力を色の縞として見る",
+    "en": "See force as colored fringes",
+    "zh": "See force as colored fringes",
+    "tw": "See force as colored fringes",
+    "ko": "See force as colored fringes",
+    "de": "See force as colored fringes",
+    "hi": "See force as colored fringes",
+    "fr": "See force as colored fringes"
+   },
+   "see": {
+    "ja": "透明な円板を上下から押すと、偏光の暗線が中心を通過する。荷重を上げるほど縞が増え、6 強度と 3 波長の像から力を逆算できる。",
+    "en": "Pressing a transparent disc from above and below drives dark polarized fringes across its centre. More load produces more fringes, and 6 intensities at 3 wavelengths recover the force.",
+    "zh": "Pressing a transparent disc from above and below drives dark polarized fringes across its centre. More load produces more fringes, and 6 intensities at 3 wavelengths recover the force.",
+    "tw": "Pressing a transparent disc from above and below drives dark polarized fringes across its centre. More load produces more fringes, and 6 intensities at 3 wavelengths recover the force.",
+    "ko": "Pressing a transparent disc from above and below drives dark polarized fringes across its centre. More load produces more fringes, and 6 intensities at 3 wavelengths recover the force.",
+    "de": "Pressing a transparent disc from above and below drives dark polarized fringes across its centre. More load produces more fringes, and 6 intensities at 3 wavelengths recover the force.",
+    "hi": "Pressing a transparent disc from above and below drives dark polarized fringes across its centre. More load produces more fringes, and 6 intensities at 3 wavelengths recover the force.",
+    "fr": "Pressing a transparent disc from above and below drives dark polarized fringes across its centre. More load produces more fringes, and 6 intensities at 3 wavelengths recover the force."
+   },
+   "num": {
+    "ja": "3 荷重で、多波長位相の荷重誤差は最大 0.11%、水平直径の暗線像による誤差は最大 0.60%、2 経路の差は最大 0.71%。像は 1% 読出し雑音、ショット雑音、8 bit 量子化を含む。",
+    "en": "Across 3 loads, multiwavelength-phase force error reaches 0.11%, horizontal-diameter dark-fringe error 0.60%, and the 2 routes differ by up to 0.71%. Images include 1% read noise, shot noise, and 8-bit quantization.",
+    "zh": "Across 3 loads, multiwavelength-phase force error reaches 0.11%, horizontal-diameter dark-fringe error 0.60%, and the 2 routes differ by up to 0.71%. Images include 1% read noise, shot noise, and 8-bit quantization.",
+    "tw": "Across 3 loads, multiwavelength-phase force error reaches 0.11%, horizontal-diameter dark-fringe error 0.60%, and the 2 routes differ by up to 0.71%. Images include 1% read noise, shot noise, and 8-bit quantization.",
+    "ko": "Across 3 loads, multiwavelength-phase force error reaches 0.11%, horizontal-diameter dark-fringe error 0.60%, and the 2 routes differ by up to 0.71%. Images include 1% read noise, shot noise, and 8-bit quantization.",
+    "de": "Across 3 loads, multiwavelength-phase force error reaches 0.11%, horizontal-diameter dark-fringe error 0.60%, and the 2 routes differ by up to 0.71%. Images include 1% read noise, shot noise, and 8-bit quantization.",
+    "hi": "Across 3 loads, multiwavelength-phase force error reaches 0.11%, horizontal-diameter dark-fringe error 0.60%, and the 2 routes differ by up to 0.71%. Images include 1% read noise, shot noise, and 8-bit quantization.",
+    "fr": "Across 3 loads, multiwavelength-phase force error reaches 0.11%, horizontal-diameter dark-fringe error 0.60%, and the 2 routes differ by up to 0.71%. Images include 1% read noise, shot noise, and 8-bit quantization."
+   }
+  },
+  {
    "id": "ship_stability",
    "category": "anim3d",
    "media": "ship_stability_anim3d.html",
@@ -2373,6 +2411,44 @@
     "de": "Bei 0.10 mm/Pixel werden 99.1 % der wahren Risslänge erfasst. Der Breitenfehler mit lokalem Hintergrund beträgt 0.023 mm bei einem Kriterium von 0.038 mm. Messung und Schätzung für 90 % liegen bei 0.25 mm/Pixel, das Vergleichskriterium bei 0.029 mm. Ein 24.31 mm langer Fugen-Fehlalarm bleibt sichtbar.",
     "hi": "0.10 mm/pixel पर सही दरार लंबाई का 99.1% मिलता है। स्थानीय पृष्ठभूमि से चौड़ाई त्रुटि 0.023 mm है और मानदंड 0.038 mm है। 90% प्राप्ति का माप और अनुमान दोनों 0.25 mm/pixel हैं, तुलना मानदंड 0.029 mm है। जोड़ की 24.31 mm गलत पहचान भी दिखती है।",
     "fr": "À 0.10 mm/pixel, 99.1 % de la longueur vraie est retrouvée. L'erreur de largeur sur fond local vaut 0.023 mm pour un critère de 0.038 mm. La mesure et l'estimation à 90 % valent toutes deux 0.25 mm/pixel, avec un critère de comparaison de 0.029 mm. Un faux positif de joint de 24.31 mm reste visible."
+   }
+  },
+  {
+   "id": "insar_subsidence",
+   "category": "anim3d",
+   "media": "insar_subsidence_anim3d.html",
+   "media_path": "view2026/anim3d/insar_subsidence_anim3d.html",
+   "motion": true,
+   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_insar_anim3d.py",
+   "label": {
+    "ja": "????? mm ??????",
+    "en": "Measure millimetre subsidence from orbit",
+    "zh": "Measure millimetre subsidence from orbit",
+    "tw": "Measure millimetre subsidence from orbit",
+    "ko": "Measure millimetre subsidence from orbit",
+    "de": "Measure millimetre subsidence from orbit",
+    "hi": "Measure millimetre subsidence from orbit",
+    "fr": "Measure millimetre subsidence from orbit"
+   },
+   "see": {
+    "ja": "???????????????????????????????????????",
+    "en": "Unwrap coloured rings into a bowl-shaped subsidence map; stronger atmosphere measurably increases error.",
+    "zh": "Unwrap coloured rings into a bowl-shaped subsidence map; stronger atmosphere measurably increases error.",
+    "tw": "Unwrap coloured rings into a bowl-shaped subsidence map; stronger atmosphere measurably increases error.",
+    "ko": "Unwrap coloured rings into a bowl-shaped subsidence map; stronger atmosphere measurably increases error.",
+    "de": "Unwrap coloured rings into a bowl-shaped subsidence map; stronger atmosphere measurably increases error.",
+    "hi": "Unwrap coloured rings into a bowl-shaped subsidence map; stronger atmosphere measurably increases error.",
+    "fr": "Unwrap coloured rings into a bowl-shaped subsidence map; stronger atmosphere measurably increases error."
+   },
+   "num": {
+    "ja": "?? RMS 1.53 mm????? 1.02 mm?????????? RMS ? 3.70 mm ????",
+    "en": "Map RMS 1.53 mm and centre error 1.02 mm; stronger atmospheric delay adds 3.70 mm RMS.",
+    "zh": "Map RMS 1.53 mm and centre error 1.02 mm; stronger atmospheric delay adds 3.70 mm RMS.",
+    "tw": "Map RMS 1.53 mm and centre error 1.02 mm; stronger atmospheric delay adds 3.70 mm RMS.",
+    "ko": "Map RMS 1.53 mm and centre error 1.02 mm; stronger atmospheric delay adds 3.70 mm RMS.",
+    "de": "Map RMS 1.53 mm and centre error 1.02 mm; stronger atmospheric delay adds 3.70 mm RMS.",
+    "hi": "Map RMS 1.53 mm and centre error 1.02 mm; stronger atmospheric delay adds 3.70 mm RMS.",
+    "fr": "Map RMS 1.53 mm and centre error 1.02 mm; stronger atmospheric delay adds 3.70 mm RMS."
    }
   },
   {
@@ -8444,6 +8520,14 @@
     "de": "Fertigungstoleranzen von Objektiven nach MTF und Ausbeute budgetieren",
     "hi": "MTF और yield से lens manufacturing tolerances तय करना",
     "fr": "Budgéter les tolérances de fabrication d'un objectif selon la FTM et le rendement"
+   },
+   "photoelasticity": {
+    "zh": "用光弹性测量应力(应力场 → 条纹 → 偏振图像 → 相位延迟与主轴)",
+    "tw": "以光彈性量測應力(應力場 → 條紋 → 偏振影像 → 相位延遲與主軸)",
+    "ko": "광탄성으로 응력 측정(응력장 → 무늬 → 편광 영상 → 위상 지연과 주축)",
+    "de": "Spannungen spannungsoptisch messen (Spannungsfeld, Isochromaten, Polarisationsbilder, Gangunterschied und Hauptachse)",
+    "hi": "प्रकाश-प्रत्यास्थता से प्रतिबल मापना (प्रतिबल क्षेत्र → फ्रिंज → ध्रुवण छवियाँ → मंदन और मुख्य अक्ष)",
+    "fr": "Mesurer les contraintes par photoélasticité (champ de contraintes, franges, images de polarisation, retard et axe)"
    },
    "plenoptic-camera": {
     "zh": "基于镜头处方的光场相机",

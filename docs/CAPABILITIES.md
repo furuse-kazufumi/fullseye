@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 95 項目**
+**収録 96 項目**
 
 ## 課題から引く(推奨パイプライン)
 
@@ -55,6 +55,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 | [良品だけから学んで外れたパッチを指す(古典特徴の「位置ごとの正規分布」と「記憶バンク」、再現率を保証する運用点)](capabilities/patch-feature-anomaly-detection.md) | `patchbank_fit` → `patchbank_score` | `poc_patch_anomaly` |
 | [1-D 信号の周期欠陥を見つける](capabilities/periodic-defects-in-1d-signals.md) | `smooth_funct_1d_gauss` → `bandpass` → `spectrum` → `find_peaks` → `peak_subbin` → `envelope` → `local_min_max_funct_1d` | `poc_web_roll_periodicity` |
 | [光沢面の µm の凹みを縞の鏡像で測る(位相計測デフレクトメトリ: 縞 → 位相 → 傾き → 曲率)](capabilities/phase-measuring-deflectometry.md) | `deflectometry_rig` → `deflectometry_sensitivity` → `wrapped_phase` → `absolute_phase` → `deflectometry_phase_to_slope` → `slope_to_curvature` | `poc_phase_measuring_deflectometry` |
+| [光弾性で応力を測る(応力場 → 縞 → 偏光像 → 位相差と主軸)](capabilities/photoelasticity.md) | `polarization_demosaic` → `photoelastic_phase_estimate` | `poc_photoelasticity` |
 | [処方どおりのレンズ越しに 3 次元の場面を撮る(被写界深度・猫の目のボケ・隅の光量・色収差・ゴースト)](capabilities/photograph-through-prescription.md) | `lens_system` → `lens_scene` → `render_scene_through_lens` → `render_compare_prescriptions` | `poc_photograph_through_prescription` |
 | [ピクセルシフト撮像(1 画素シフトで全色、半画素シフトで折り返しを消す、壊れる条件まで)](capabilities/pixel-shift-imaging.md) | `pixel_shift_resolution_budget` → `pixel_shift_pattern` → `pixel_shift_capture` → `pixel_shift_motion_mask` → `pixel_shift_merge` → `false_color_metric` | `poc_pixel_shift` |
 | [3-D 点群から平面度を出す](capabilities/planarity-from-point-cloud.md) | `statistical_outlier_removal` → `ransac_plane` → `fit_plane_3d` → `distance_point_plane` | `geometry_metrology` |
@@ -89,7 +90,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 
 レシピ欄(推奨パイプライン / 代替 / 限界 / 実寸校正)がまだ無い項目が 33 件あります(下の各項目。`gen_capabilities_index.NO_RECIPE_YET` に理由つきで名指し)。
 
-## 測る (33)
+## 測る (34)
 
 ### [平面ターゲットの多視点から内部行列 K を推定する(Zhang 法)](capabilities/camera-intrinsics-calibration.md)
 
@@ -282,6 +283,22 @@ X 線(や可視光)の透過像は「どれだけ吸われたか」しか写し�
 実寸校正: 較正の op は無く、装置の幾何(入射角・カメラと画面までの距離 d・画面の画素ピッチ)は実測して `deflectometry_rig` に入れる。傾きは画面上のずれ / (2d) なので、d の誤りはそのまま傾きと曲率の比の誤りになる。
 
 動く例: `poc_phase_measuring_deflectometry`
+
+### [光弾性で応力を測る(応力場 → 縞 → 偏光像 → 位相差と主軸)](capabilities/photoelasticity.md)
+
+透明な試験片や単結晶ウェハを偏光で撮り、縞から**主応力差と主応力の向き**を読む族です。真値つきの応力場(直径方向に圧縮した円板 `brazilian_disc_stress`、穴のある無限板の一軸引張 `kirsch_plate_stress`)、主応力 `principal_stress`、等方材料の応力光学則 `photoelastic_retardation`(δ = 2π t C (σ1−σ2)/λ と材料縞値)、立方晶 {100} 面の異方性 `cubic_photoelastic_birefringence`(Si などで結晶方位により位相差が変わる。係数は `silicon_piezo_optic_coefficients` が出典つきで返す)、平面・円偏光器の明暗視野の強度 `polariscope_intensity`、円偏光照明の試料を偏光カメラ(0/45/90/135 度)や 6 強度の偏光計で撮った像 `photoelastic_polarization_images` と、その閉形式の逆算 `photoelastic_phase_estimate`、多波長からの次数決定 `retardation_unwrap_multiwavelength` まで揃います。
+
+使う op: `brazilian_disc_stress`, `kirsch_plate_stress`, `principal_stress`, `photoelastic_retardation`, `retardation_from_birefringence`, `retardation_convert`, `cubic_photoelastic_birefringence`, `silicon_piezo_optic_coefficients`, `polariscope_intensity`, `photoelastic_polarization_images`, `photoelastic_phase_estimate`, `retardation_unwrap_multiwavelength`, `polarization_demosaic`
+
+推奨パイプライン: [`polarization_demosaic`](ops/optics/polarization/polarization_demosaic.md) → [`photoelastic_phase_estimate`](ops/optics/photoelastic/photoelastic_phase_estimate.md)
+
+代替: [`polarization_stokes`](ops/specular/polarization/polarization_stokes.md), [`mueller_from_intensities`](ops/optics/polarization/mueller_from_intensities.md), [`unwrap_phase_2d`](ops/3d/structured_light/unwrap_phase_2d.md)
+
+限界: 平面応力と薄い試験片(光が板厚方向に一様な応力を通る)を仮定し、応力光学係数の分散は扱わない。4 方位の偏光カメラだけでは位相差は 1/4 波長まで。
+
+実寸校正: 円板の直径圧縮(荷重既知)を撮って応力光学係数(材料縞値)を合わせ、波長と板厚は SI(m)で渡す。
+
+動く例: `poc_photoelasticity`
 
 ### [3-D 点群から平面度を出す](capabilities/planarity-from-point-cloud.md)
 

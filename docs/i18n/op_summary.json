@@ -9,6 +9,114 @@
   "hi"
  ],
  "summaries": {
+  "optics/brazilian_disc_stress": {
+   "fp": "42f3f7ca4257",
+   "en": "Closed-form plane stress σx, σy, τxy of a diametrically compressed disc (Brazilian disc) → dict.",
+   "zh": "径向受压圆盘(巴西圆盘)平面应力 σx、σy、τxy 的闭式解 → dict。",
+   "tw": "徑向受壓圓盤(巴西圓盤)平面應力 σx、σy、τxy 的閉式解 → dict。",
+   "ko": "지름 방향으로 압축된 원판(브라질리언 디스크)의 평면 응력 σx, σy, τxy 닫힌 형식 → dict.",
+   "de": "Geschlossene Lösung des ebenen Spannungszustands σx, σy, τxy einer diametral gedrückten Scheibe (Brazilian disc) → dict.",
+   "hi": "व्यास की दिशा में दबाई गई डिस्क (ब्राज़ीलियन डिस्क) के समतल प्रतिबल σx, σy, τxy का बंद रूप → dict।"
+  },
+  "optics/kirsch_plate_stress": {
+   "fp": "08e3d0eb55ad",
+   "en": "Closed-form σx, σy, τxy and polar components for an infinite plate with a hole under uniaxial tension (Kirsch solution) → dict.",
+   "zh": "含孔无限大板单轴拉伸(Kirsch 解)的 σx、σy、τxy 及极坐标分量闭式解 → dict。",
+   "tw": "含孔無限大板單軸拉伸(Kirsch 解)的 σx、σy、τxy 及極座標分量閉式解 → dict。",
+   "ko": "구멍이 있는 무한 평판의 단축 인장(Kirsch 해)에 대한 σx, σy, τxy 및 극좌표 성분 닫힌 형식 → dict.",
+   "de": "Geschlossene Lösung σx, σy, τxy und Polarkomponenten einer unendlichen Platte mit Loch unter einachsigem Zug (Kirsch-Lösung) → dict.",
+   "hi": "छेद वाली अनंत प्लेट पर एकअक्षीय तनाव (Kirsch हल) के σx, σy, τxy और ध्रुवीय घटकों का बंद रूप → dict।"
+  },
+  "optics/principal_stress": {
+   "fp": "a8e83649cc72",
+   "en": "Principal stresses σ1 ≥ σ2 of a plane stress state, their difference, and the direction of σ1 (isoclinic angle) → dict.",
+   "zh": "平面应力的主应力 σ1 ≥ σ2、主应力差与 σ1 的方向(等倾角)→ dict。",
+   "tw": "平面應力的主應力 σ1 ≥ σ2、主應力差與 σ1 的方向(等傾角)→ dict。",
+   "ko": "평면 응력의 주응력 σ1 ≥ σ2, 주응력 차, σ1 의 방향(등경각) → dict.",
+   "de": "Hauptspannungen σ1 ≥ σ2 eines ebenen Spannungszustands, ihre Differenz und die Richtung von σ1 (Isoklinenwinkel) → dict.",
+   "hi": "समतल प्रतिबल के मुख्य प्रतिबल σ1 ≥ σ2, उनका अंतर और σ1 की दिशा (आइसोक्लिनिक कोण) → dict।"
+  },
+  "optics/retardation_from_birefringence": {
+   "fp": "6e4a976a9ce9",
+   "en": "Retardation from a birefringence Δn → dict (returns rad, nm and fringe order side by side).",
+   "zh": "由双折射 Δn 求相位延迟 → dict(并列返回 rad、nm 与条纹级数)。",
+   "tw": "由雙折射 Δn 求相位延遲 → dict(並列傳回 rad、nm 與條紋級數)。",
+   "ko": "복굴절 Δn 으로부터 위상 지연 → dict(rad, nm, 무늬 차수를 나란히 반환).",
+   "de": "Gangunterschied aus einer Doppelbrechung Δn → dict (gibt rad, nm und Isochromatenordnung nebeneinander zurück).",
+   "hi": "द्विअपवर्तन Δn से मंदन (retardation) → dict (rad, nm और फ्रिंज क्रम साथ-साथ लौटाता है)।"
+  },
+  "optics/photoelastic_retardation": {
+   "fp": "3f180430a5a0",
+   "en": "Stress-optic law of an isotropic material δ = 2π t C (σ1−σ2)/λ → dict (rad, nm, fringe order and material fringe value).",
+   "zh": "各向同性材料的应力光学定律 δ = 2π t C (σ1−σ2)/λ → dict(rad、nm、条纹级数与材料条纹值)。",
+   "tw": "等向性材料的應力光學定律 δ = 2π t C (σ1−σ2)/λ → dict(rad、nm、條紋級數與材料條紋值)。",
+   "ko": "등방성 재료의 응력 광학 법칙 δ = 2π t C (σ1−σ2)/λ → dict(rad, nm, 무늬 차수, 재료 무늬값).",
+   "de": "Spannungsoptisches Gesetz eines isotropen Werkstoffs δ = 2π t C (σ1−σ2)/λ → dict (rad, nm, Isochromatenordnung und Materialkennwert).",
+   "hi": "समदैशिक पदार्थ का प्रतिबल-प्रकाशिक नियम δ = 2π t C (σ1−σ2)/λ → dict (rad, nm, फ्रिंज क्रम और पदार्थ फ्रिंज मान)।"
+  },
+  "optics/retardation_convert": {
+   "fp": "a5901f6a5276",
+   "en": "Unit conversion of a retardation (rad / deg / nm / waves = fringe order).",
+   "zh": "相位延迟的单位换算(rad / deg / nm / waves = 条纹级数)。",
+   "tw": "相位延遲的單位換算(rad / deg / nm / waves = 條紋級數)。",
+   "ko": "위상 지연의 단위 환산(rad / deg / nm / waves = 무늬 차수).",
+   "de": "Einheitenumrechnung eines Gangunterschieds (rad / deg / nm / waves = Isochromatenordnung).",
+   "hi": "मंदन का इकाई रूपांतरण (rad / deg / nm / waves = फ्रिंज क्रम)।"
+  },
+  "optics/cubic_photoelastic_birefringence": {
+   "fp": "edece6b7191b",
+   "en": "Stress birefringence Δn and slow axis of a cubic crystal on a {100} plane (e.g. a Si wafer) → dict.",
+   "zh": "立方晶体 {100} 面(如 Si 晶圆)的应力双折射 Δn 与慢轴 → dict。",
+   "tw": "立方晶體 {100} 面(如 Si 晶圓)的應力雙折射 Δn 與慢軸 → dict。",
+   "ko": "입방정 {100} 면(Si 웨이퍼 등)의 응력 복굴절 Δn 과 지상축 → dict.",
+   "de": "Spannungsdoppelbrechung Δn und langsame Achse eines kubischen Kristalls auf einer {100}-Ebene (z. B. Si-Wafer) → dict.",
+   "hi": "{100} तल पर घनीय क्रिस्टल (जैसे Si वेफ़र) का प्रतिबल द्विअपवर्तन Δn और मंद अक्ष → dict।"
+  },
+  "optics/silicon_piezo_optic_coefficients": {
+   "fp": "0c3c8d5c0e8a",
+   "en": "Piezo-optic coefficients π11−π12 and π44 [Pa⁻¹] of single-crystal silicon, returned with their source → dict.",
+   "zh": "返回单晶硅的压光系数 π11−π12、π44 [Pa⁻¹] 及其出处 → dict。",
+   "tw": "傳回單晶矽的壓光係數 π11−π12、π44 [Pa⁻¹] 及其出處 → dict。",
+   "ko": "단결정 실리콘의 압전광학 계수 π11−π12, π44 [Pa⁻¹] 를 출처와 함께 반환 → dict.",
+   "de": "Piezooptische Koeffizienten π11−π12 und π44 [Pa⁻¹] von einkristallinem Silizium mit Quellenangabe → dict.",
+   "hi": "एकल-क्रिस्टल सिलिकॉन के पीज़ो-प्रकाशिक गुणांक π11−π12 और π44 [Pa⁻¹] स्रोत सहित लौटाता है → dict।"
+  },
+  "optics/polariscope_intensity": {
+   "fp": "d28f23537fbf",
+   "en": "Closed-form intensity of plane and circular polariscopes in dark and bright field (isochromatics and isoclinics).",
+   "zh": "平面与圆偏振仪暗场、明场强度(等色线、等倾线)的闭式解。",
+   "tw": "平面與圓偏光儀暗場、明場強度(等色線、等傾線)的閉式解。",
+   "ko": "평면·원 편광기의 암시야·명시야 강도(등색선·등경선) 닫힌 형식.",
+   "de": "Geschlossene Intensität von ebenen und zirkularen Polariskopen im Dunkel- und Hellfeld (Isochromaten und Isoklinen).",
+   "hi": "समतल और वृत्तीय पोलारिस्कोप के अंधकार और उज्ज्वल क्षेत्र की तीव्रता (आइसोक्रोमैटिक और आइसोक्लिनिक) का बंद रूप।"
+  },
+  "optics/photoelastic_polarization_images": {
+   "fp": "c60730cf1beb",
+   "en": "Images of a specimen under circularly polarised light taken by a polarisation camera (0/45/90/135 deg) or a six-intensity polarimeter → (K, H, W).",
+   "zh": "以偏振相机(0/45/90/135 度)或六强度偏振计拍摄圆偏振光照明下试样的图像 → (K, H, W)。",
+   "tw": "以偏振相機(0/45/90/135 度)或六強度偏振計拍攝圓偏振光照明下試樣的影像 → (K, H, W)。",
+   "ko": "원편광 조명 아래 시편을 편광 카메라(0/45/90/135 도) 또는 6 강도 편광계로 찍은 영상 → (K, H, W).",
+   "de": "Bilder einer Probe unter zirkular polarisiertem Licht, aufgenommen mit einer Polarisationskamera (0/45/90/135 Grad) oder einem Polarimeter mit sechs Intensitäten → (K, H, W).",
+   "hi": "वृत्तीय ध्रुवित प्रकाश में नमूने की ध्रुवण कैमरा (0/45/90/135 डिग्री) या छह-तीव्रता ध्रुवणमापी से ली गई छवियाँ → (K, H, W)।"
+  },
+  "optics/photoelastic_phase_estimate": {
+   "fp": "bb91e32dde6f",
+   "en": "Closed-form inversion of polarisation images to retardation δ and principal axis θ → dict.",
+   "zh": "由偏振图像以闭式反求相位延迟 δ 与主轴 θ → dict。",
+   "tw": "由偏振影像以閉式反求相位延遲 δ 與主軸 θ → dict。",
+   "ko": "편광 영상으로부터 위상 지연 δ 와 주축 θ 를 닫힌 형식으로 역산 → dict.",
+   "de": "Geschlossene Rückrechnung von Polarisationsbildern auf Gangunterschied δ und Hauptachse θ → dict.",
+   "hi": "ध्रुवण छवियों से मंदन δ और मुख्य अक्ष θ का बंद रूप में व्युत्क्रम → dict।"
+  },
+  "optics/retardation_unwrap_multiwavelength": {
+   "fp": "6acd503a4c32",
+   "en": "Absolute retardation (nm) from wrapped retardations at several wavelengths (assuming no dispersion) → dict.",
+   "zh": "由多个波长的折叠相位延迟确定绝对相位延迟(nm)(假定无色散)→ dict。",
+   "tw": "由多個波長的折疊相位延遲決定絕對相位延遲(nm)(假定無色散)→ dict。",
+   "ko": "여러 파장의 감긴 위상 지연으로부터 절대 위상 지연(nm)을 결정(분산 없음 가정) → dict.",
+   "de": "Absoluter Gangunterschied (nm) aus gefalteten Gangunterschieden bei mehreren Wellenlängen (ohne Dispersion) → dict.",
+   "hi": "कई तरंगदैर्घ्यों पर लिपटे मंदन से निरपेक्ष मंदन (nm) निर्धारित करता है (वर्ण-विक्षेपण नहीं माना) → dict।"
+  },
   "drive/thrust_ode": {
    "fp": "843e51f6e791",
    "en": "RK4 for gravity + drag + a **constant specific thrust** (thrust per unit mass [m/s²], fixed in direction and magnitude in world coordinates). No spin (ω = 0). Returns ``{\"t\" (N,), \"p\" (N, 3), \"v\" (N, 3)}`` (t = 0, dt, …, ≤ t_end). With a zero ``thrust`` it matches :func:`flight_ode` (ω = 0) to 1e-12, and in vacuum (rho = 0) it matches the closed form p₀ + v₀ t + ½ (a_T − g ẑ) t² to 1e-9 (gate). The smallest model for \"almost a rocket\" footage; a thrust fixed to the body that turns with it is only approximated (the shorter the segment, the better). ``t_end`` / ``dt`` must be finite numbers, ``bp`` the table from :func:`ball_params` (a missing key, a non-finite value or zero mass is a ValueError), and the step count t_end / dt is capped at 5×10⁶ (this stops a t passed in ms instead of seconds).",

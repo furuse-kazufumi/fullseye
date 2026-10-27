@@ -294,6 +294,8 @@ _IMAGE_REASON = ("画像・動画の書き手。PNG/GIF のバイトは Pillow �
 _SPIKE_REASON = ("スパイク(実験)の記録。spikes/out_gallery/ の図は当時の証跡として凍結してあり、"
                  "再描画(matplotlib / GUI)はバイトが変わる。")
 EXCLUDED = {
+    "tools/build_photoelastic_anim3d.py": ("光弾性の動く 3-D 教材。anim3d_i18n の翻訳表を通して生成し、"
+                                             "tests/test_anim3d_photoelastic_2026_10_27.py で門にする。"),
     "tools/build_bore_anim3d.py": ("ボアスコープのリレー結像とファイバ束の動く 3-D 教材(docs/view2026/anim3d/borescope_anim3d.html)。"
                                     "`py -3.11 tools/anim3d_i18n.py --build build_bore_anim3d --out docs/view2026/anim3d/borescope_anim3d.html` で書く"
                                     "(翻訳表 tools/anim3d_i18n_tables/build_bore_anim3d.json)。門は tests/test_anim3d_bore_2026_10_26.py。"),
@@ -333,6 +335,7 @@ EXCLUDED = {
     "tools/build_satgsd_anim3d.py": ("衛星の地上分解能と回折の動く 3-D の教材(docs/view2026/anim3d/satellite_gsd_anim3d.html)。"
                                      "`py -3.11 tools/anim3d_i18n.py --build build_satgsd_anim3d --out docs/view2026/anim3d/satellite_gsd_anim3d.html` で書く"
                                      "(翻訳表 tools/anim3d_i18n_tables/build_satgsd_anim3d.json)。門は tests/test_anim3d_satgsd_2026_10_26.py。"),
+    "tools/build_insar_anim3d.py": ("合成 InSAR 位相から沈下を測る動く 3-D 教材。anim3d_i18n.py で 8 言語ページを手動生成し、専用テストで byte 一致を検査する。"),
     "tools/build_hypercentric_anim3d.py": ("ハイパーセントリックレンズの動く 3-D 教材(docs/view2026/anim3d/hypercentric_lens_anim3d.html)。"
                                            "`py -3.11 tools/anim3d_i18n.py --build build_hypercentric_anim3d --out docs/view2026/anim3d/hypercentric_lens_anim3d.html` で書く"
                                            "(翻訳表 tools/anim3d_i18n_tables/build_hypercentric_anim3d.json)。門は tests/test_anim3d_hypercentric_2026_10_27.py。"),

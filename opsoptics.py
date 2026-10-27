@@ -16,6 +16,13 @@ spectrometer(gratingspec.py、2026-10-15 追加)— **回折格子と分光器**
 Shafer の角・smile と keystone(溝に沿った方向余弦を保つ 3 次元の格子の式)・高次の重なり(迷光の次数)を出す。
 同日、illumination に顕微鏡の照明系(ケーラー / クリティカル)と同軸落射のハーフミラー(往復の T·R)の 3 op。
 
+photoelastic(photoelastic.py、2026-10-23 追加)— **光弾性で応力を測る**。Stokes / Mueller の素材
+(``mueller_element`` / ``mueller_apply``)と偏光カメラの分解はあったが、応力から縞、縞から応力への
+経路が無く、``examples/poc_photoelasticity.py`` が応力場も位相子の場も自前で書いていた。円板の直径圧縮と
+Kirsch の閉形式(境界条件が門)、主応力、等方の応力光学則と立方晶 {100} 面の異方性(Stoehr ら 2020 の
+式 (26) と一致、Si の係数は同論文の表 1 を出典つきで)、平面・円偏光器の強度、円偏光照明の偏光カメラ
+4 方位・6 強度の像とその閉形式の逆算、分散なしを仮定した多波長の次数決定。単位は SI、位相差は rad と nm を並べて返す。
+
 shape_from_polarization(sfpolar.py、2026-10-13 追加)— **偏光で形を測る**。偏光の分解
 (``polarization_demosaic`` → specularity の ``polarization_dolp_map`` / Stokes)はあったが、
 DoLP から天頂角、AoLP から方位角を逆算して法線にする経路が無かった(``polar_cam`` の
@@ -161,11 +168,13 @@ import linescan
 import pixelshift
 import octscan
 import itof
+import photoelastic
 
 _MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage, "cavityoptics": cavityoptics, "materials": materials, "spectralrad": spectralrad, "chromconf": chromconf, "gratingspec": gratingspec, "gratinginterf": gratinginterf, "fiberoptics": fiberoptics, "temsim": temsim, "lensfile": lensfile, "lensconfig": lensconfig, "lockin": lockin, "watermedia": watermedia, "watervision": watervision, "omni360": omni360, "lensglobal": lensglobal, "lensmerit": lensmerit, "lensrender": lensrender, "lenstol": lenstol, "plenoptic": plenoptic, "lenssolve": lenssolve, "filmoptics": filmoptics, "moirealign": moirealign,
         "telecentric": telecentric,
         "optdraw": optdraw,
         "raytrace3d": raytrace3d,
+        "photoelastic": photoelastic,
         "linescan": linescan,
         "pixelshift": pixelshift,
         "octscan": octscan,
@@ -915,6 +924,21 @@ _CATALOG = {
     #   返す経路が無いので、語彙を増やす理由が無い(2026-10-13 に確かめて決めた)。
     # ★2-D の橋(tb_*)は架からない: 1 入力の op の in は image2d(sort image、_NEW_SORTS の外)
     #   か normalmap / polsweep / table(TYPE_TO_SORT に無い)。_OP_BRIDGE_SKIP 不要。
+    "photoelastic": [  # 光弾性(photoelastic、2026-10-23): 応力場の閉形式(円板の直径圧縮・Kirsch)→ 主応力 → 応力光学則
+        # (等方 / 立方晶 {100} 面)→ 平面・円偏光器の縞 → 偏光カメラ 4 方位・6 強度の像 → 位相差と主軸の逆算 → 多波長の次数決定
+        ("brazilian_disc_stress", "photoelastic", [], "table"),
+        ("kirsch_plate_stress", "photoelastic", [], "table"),
+        ("principal_stress", "photoelastic", ["image2d", "image2d", "image2d"], "table"),
+        ("retardation_from_birefringence", "photoelastic", ["image2d"], "table"),
+        ("photoelastic_retardation", "photoelastic", ["image2d"], "table"),
+        ("retardation_convert", "photoelastic", ["image2d"], "image2d"),
+        ("cubic_photoelastic_birefringence", "photoelastic", ["image2d", "image2d", "image2d"], "table"),
+        ("silicon_piezo_optic_coefficients", "photoelastic", [], "table"),
+        ("polariscope_intensity", "photoelastic", ["image2d"], "image2d"),
+        ("photoelastic_polarization_images", "photoelastic", ["image2d"], "polsweep"),
+        ("photoelastic_phase_estimate", "photoelastic", ["polsweep"], "table"),
+        ("retardation_unwrap_multiwavelength", "photoelastic", ["images"], "table"),
+    ],
     "shape_from_polarization": [
         ("sfp_dolp_model", "sfpolar", ["image2d"], "image2d"),
         ("dolp_to_zenith", "sfpolar", ["image2d"], "table"),

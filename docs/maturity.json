@@ -1243,6 +1243,27 @@
    ]
   },
   {
+   "id": "photoelasticity",
+   "title": "光弾性で応力を測る(応力場 → 縞 → 偏光像 → 位相差と主軸)",
+   "title_en": "Measure stress by photoelasticity (stress field, fringes, polarisation images, retardation and axis)",
+   "category": "測る",
+   "note": "docs/capabilities/photoelasticity.md",
+   "status": "verified-synthetic",
+   "ops_total": 13,
+   "ops_named_in_tests": 13,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_photoelasticity",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "photograph-through-prescription",
    "title": "処方どおりのレンズ越しに 3 次元の場面を撮る(被写界深度・猫の目のボケ・隅の光量・色収差・ゴースト)",
    "title_en": "Photographing a 3-D scene through the actual lens prescription (depth of field, cat's-eye bokeh, corner illumination, colour fringes, ghosts)",
@@ -2409,9 +2430,9 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 439,
+  "examples2d_total": 440,
   "run_by_the_poc_gate": 278,
-  "run_by_the_example_gate": 161,
+  "run_by_the_example_gate": 162,
   "not_run_by_any_gate": 0,
   "gates": [
    "tests/test_poc_scripts_run.py",

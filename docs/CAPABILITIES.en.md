@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 95 capabilities**
+**Currently 96 capabilities**
 
 ## Look up by task (recommended pipeline)
 
@@ -56,6 +56,7 @@ Every operator exists in the registry and the types connect from one step to the
 | [Flag patches that leave what good samples look like (classical features, a normal distribution per position or a memory bank, and a recall-guaranteeing operating point)](capabilities/patch-feature-anomaly-detection.md) | `patchbank_fit` → `patchbank_score` | `poc_patch_anomaly` |
 | [Periodic defects in a 1-D signal](capabilities/periodic-defects-in-1d-signals.md) | `smooth_funct_1d_gauss` → `bandpass` → `spectrum` → `find_peaks` → `peak_subbin` → `envelope` → `local_min_max_funct_1d` | `poc_web_roll_periodicity` |
 | [Find micrometre dents on glossy surfaces from the mirror image of a fringe screen (phase-measuring deflectometry)](capabilities/phase-measuring-deflectometry.md) | `deflectometry_rig` → `deflectometry_sensitivity` → `wrapped_phase` → `absolute_phase` → `deflectometry_phase_to_slope` → `slope_to_curvature` | `poc_phase_measuring_deflectometry` |
+| [Measure stress by photoelasticity (stress field, fringes, polarisation images, retardation and axis)](capabilities/photoelasticity.md) | `polarization_demosaic` → `photoelastic_phase_estimate` | `poc_photoelasticity` |
 | [Photographing a 3-D scene through the actual lens prescription (depth of field, cat's-eye bokeh, corner illumination, colour fringes, ghosts)](capabilities/photograph-through-prescription.md) | `lens_system` → `lens_scene` → `render_scene_through_lens` → `render_compare_prescriptions` | `poc_photograph_through_prescription` |
 | [Pixel-shift imaging (full colour from 1-pixel shifts, no aliasing from half-pixel shifts, and where it breaks)](capabilities/pixel-shift-imaging.md) | `pixel_shift_resolution_budget` → `pixel_shift_pattern` → `pixel_shift_capture` → `pixel_shift_motion_mask` → `pixel_shift_merge` → `false_color_metric` | `poc_pixel_shift` |
 | [Flatness of a surface from a 3-D point cloud](capabilities/planarity-from-point-cloud.md) | `statistical_outlier_removal` → `ransac_plane` → `fit_plane_3d` → `distance_point_plane` | `geometry_metrology` |
@@ -90,7 +91,7 @@ Every operator exists in the registry and the types connect from one step to the
 
 33 entries do not have the recipe fields (pipeline / alternatives / limits / calibration) yet — see each entry below; they are named in `gen_capabilities_index.NO_RECIPE_YET`.
 
-## Measure (33)
+## Measure (34)
 
 ### [Estimate the camera intrinsic matrix K from multiple planar views (Zhang)](capabilities/camera-intrinsics-calibration.md)
 
@@ -251,6 +252,18 @@ Pipeline: [`deflectometry_rig`](ops/specular/deflectometry/deflectometry_rig.md)
 Alternatives: [`deflectometry_render`](ops/specular/deflectometry/deflectometry_render.md), [`deflectometry_screen_pattern`](ops/specular/deflectometry/deflectometry_screen_pattern.md), [`sfp_height`](ops/optics/shape_from_polarization/sfp_height.md), [`integrate_normals`](ops/3d/photometric/integrate_normals.md)
 
 Runnable: `poc_phase_measuring_deflectometry`
+
+### [Measure stress by photoelasticity (stress field, fringes, polarisation images, retardation and axis)](capabilities/photoelasticity.md)
+
+A photoelasticity family: closed-form stress fields with known truth (a diametrically compressed disc, Kirsch's plate with a hole), principal stresses, the stress-optic law for isotropic materials and for cubic crystals cut on a {100} plane (silicon coefficients with their published source), plane and circular polariscope intensities, the four-direction polarisation-camera and six-intensity polarimeter images of a specimen under circular light, their closed-form inversion to retardation and principal axis, and multi-wavelength order resolution. Retardation is always returned in rad, nm and fringe order together; lengths are metres, stresses Pa, coefficients Pa⁻¹, and unit slips (mm as m, nm as m, a table value in ×10⁻⁷ MPa⁻¹ as Pa⁻¹) raise ValueError.
+
+Operators: `brazilian_disc_stress`, `kirsch_plate_stress`, `principal_stress`, `photoelastic_retardation`, `retardation_from_birefringence`, `retardation_convert`, `cubic_photoelastic_birefringence`, `silicon_piezo_optic_coefficients`, `polariscope_intensity`, `photoelastic_polarization_images`, `photoelastic_phase_estimate`, `retardation_unwrap_multiwavelength`, `polarization_demosaic`
+
+Pipeline: [`polarization_demosaic`](ops/optics/polarization/polarization_demosaic.md) → [`photoelastic_phase_estimate`](ops/optics/photoelastic/photoelastic_phase_estimate.md)
+
+Alternatives: [`polarization_stokes`](ops/specular/polarization/polarization_stokes.md), [`mueller_from_intensities`](ops/optics/polarization/mueller_from_intensities.md), [`unwrap_phase_2d`](ops/3d/structured_light/unwrap_phase_2d.md)
+
+Runnable: `poc_photoelasticity`
 
 ### [Flatness of a surface from a 3-D point cloud](capabilities/planarity-from-point-cloud.md)
 

@@ -1070,6 +1070,13 @@ from lenstol import (  # noqa: E402,F401
     tolerance_table, tolerance_criteria, tolerance_compensators, tolerance_monte_carlo,
     tolerance_sensitivity, tolerance_report, tolerance_table_zmx, tolerance_table_from_zmx,
 )
+import photoelastic  # noqa: E402  (photoelasticity: stress fields, stress-optic law, polariscope images)
+from photoelastic import (  # noqa: E402,F401
+    brazilian_disc_stress, kirsch_plate_stress, principal_stress, retardation_from_birefringence,
+    photoelastic_retardation, retardation_convert, cubic_photoelastic_birefringence,
+    silicon_piezo_optic_coefficients, polariscope_intensity, photoelastic_polarization_images,
+    photoelastic_phase_estimate, retardation_unwrap_multiwavelength,
+)
 import lensopt  # noqa: E402  (damped-least-squares lens optimisation)
 from lensopt import optimize_lens, merit_function, bend_singlet  # noqa: E402,F401
 import sensorchar  # noqa: E402  (EMVA 1288 camera characterisation)

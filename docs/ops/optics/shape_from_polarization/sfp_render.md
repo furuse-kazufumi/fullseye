@@ -70,7 +70,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`polsweep` を入力に取れる)
 
-[sfp_normals](sfp_normals.md)
+[photoelastic_phase_estimate](../photoelastic/photoelastic_phase_estimate.md) · [sfp_normals](sfp_normals.md)
 
 ## 同カテゴリ(`shape_from_polarization`)
 

@@ -96,6 +96,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../view2026/anim3d/laser_diffraction_anim3d.html?lang=ja"><img src="thumbs/laser_diffraction.jpg" alt="光の輪で粉の粒径を測る" loading="lazy" width="320" height="320"><b>&#9654;</b><span>光の輪で粉の粒径を測る · 0.3 MB</span></a>
 <a href="../view2026/anim3d/tablet_inspection_anim3d.html?lang=ja"><img src="thumbs/tablet_inspection.jpg" alt="錠剤の外観と色の検査" loading="lazy" width="320" height="320"><b>&#9654;</b><span>錠剤の外観と色の検査 · 0.5 MB</span></a>
 <a href="../view2026/anim3d/satellite_gsd_anim3d.html?lang=ja"><img src="thumbs/satellite_gsd.jpg" alt="軌道上から小さな文字が読めない理由" loading="lazy" width="320" height="320"><b>&#9654;</b><span>軌道上から小さな文字が読めない理由 · 0.2 MB</span></a>
+<a href="../view2026/anim3d/photoelastic_anim3d.html?lang=ja"><img src="thumbs/photoelastic.jpg" alt="力を色の縞として見る" loading="lazy" width="320" height="320"><b>&#9654;</b><span>力を色の縞として見る · 0.5 MB</span></a>
 <a href="../view2026/anim3d/ship_stability_anim3d.html?lang=ja"><img src="thumbs/ship_stability.jpg" alt="船はなぜ浮き、傾いても戻るのか" loading="lazy" width="320" height="320"><b>&#9654;</b><span>船はなぜ浮き、傾いても戻るのか · 0.2 MB</span></a>
 <a href="../view2026/anim3d/bridge_dic_anim3d.html?lang=ja"><img src="thumbs/bridge_dic.jpg" alt="離れたカメラで橋のたわみを測る" loading="lazy" width="320" height="320"><b>&#9654;</b><span>離れたカメラで橋のたわみを測る · 0.6 MB</span></a>
 <a href="../view2026/anim3d/rail_light_section_anim3d.html?lang=ja"><img src="thumbs/rail_light_section.jpg" alt="光切断でレールの摩耗と軌間を測る" loading="lazy" width="320" height="320"><b>&#9654;</b><span>光切断でレールの摩耗と軌間を測る · 0.1 MB</span></a>
@@ -110,6 +111,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../view2026/anim3d/hypercentric_lens_anim3d.html?lang=ja"><img src="thumbs/hypercentric_lens.jpg" alt="円柱の上面と側面を一枚で見るハイパーセントリックレンズ" loading="lazy" width="320" height="320"><b>&#9654;</b><span>円柱の上面と側面を一枚で見るハイパーセントリックレンズ · 0.4 MB</span></a>
 <a href="../view2026/anim3d/borescope_anim3d.html?lang=ja"><img src="thumbs/borescope.jpg" alt="ボアスコープは細い管の奥をどう見るか" loading="lazy" width="320" height="320"><b>&#9654;</b><span>ボアスコープは細い管の奥をどう見るか · 0.5 MB</span></a>
 <a href="../view2026/anim3d/tunnel_crack_anim3d.html?lang=ja"><img src="thumbs/tunnel_crack.jpg" alt="走行撮影でトンネルの 0.2 mm ひびを測る" loading="lazy" width="320" height="320"><b>&#9654;</b><span>走行撮影でトンネルの 0.2 mm ひびを測る · 0.3 MB</span></a>
+<a href="../view2026/anim3d/insar_subsidence_anim3d.html?lang=ja"><img src="thumbs/insar_subsidence.jpg" alt="????? mm ??????" loading="lazy" width="320" height="320"><b>&#9654;</b><span>????? mm ?????? · 0.1 MB</span></a>
 <a href="../view2026/anim3d/multibeam_bathymetry_anim3d.html?lang=ja"><img src="thumbs/multibeam_bathymetry.jpg" alt="船から音で海底地形を測る" loading="lazy" width="320" height="320"><b>&#9654;</b><span>船から音で海底地形を測る · 0.2 MB</span></a>
 <a href="../view2026/anim3d/thermo_delamination_anim3d.html?lang=ja"><img src="thumbs/thermo_delamination.jpg" alt="温度のむらでコンクリートの浮きを探す" loading="lazy" width="320" height="320"><b>&#9654;</b><span>温度のむらでコンクリートの浮きを探す · 0.3 MB</span></a>
 </div>
@@ -126,7 +128,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## できること
 
-95 件。それぞれ説明のページ(使い方と限界)と、走る例へのリンクです。
+96 件。それぞれ説明のページ(使い方と限界)と、走る例へのリンクです。
 
 <div class="vl" markdown="1">
 
@@ -164,6 +166,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - その数字のうち、いくつが測り方のものか(ゲージ R&R と測定の不確かさ): [説明](../capabilities/measurement-system-and-uncertainty.md) · 例 [poc_measurement_system_analysis](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_measurement_system_analysis.py)
 - モアレで位置合わせ(ピッチの僅かに違う 2 枚の格子 → 縞の位相 → nm のずれ、差動と Talbot ギャップ): [説明](../capabilities/moire-alignment.md) · 例 [poc_moire_alignment](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_moire_alignment.py)
 - 光沢面の µm の凹みを縞の鏡像で測る(位相計測デフレクトメトリ: 縞 → 位相 → 傾き → 曲率): [説明](../capabilities/phase-measuring-deflectometry.md) · 例 [poc_phase_measuring_deflectometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_phase_measuring_deflectometry.py)
+- 光弾性で応力を測る(応力場 → 縞 → 偏光像 → 位相差と主軸): [説明](../capabilities/photoelasticity.md) · 例 [poc_photoelasticity](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_photoelasticity.py)
 - 3-D 点群から平面度を出す: [説明](../capabilities/planarity-from-point-cloud.md) · 例 [geometry_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples_3d/geometry_metrology.py) · [poc_bump_coplanarity](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bump_coplanarity.py) · [poc_scan_to_bim_asbuilt](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_scan_to_bim_asbuilt.py)
 - どの大きさなら見つかるか(検出確率 POD と a90/95、MIL-HDBK-1823A): [説明](../capabilities/probability-of-detection.md) · 例 [poc_pod_lighting](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pod_lighting.py)
 - 傷や突起に引きずられない平均線を引く(ロバストなガウス回帰・スプラインフィルタ、断面と面): [説明](../capabilities/robust-gaussian-spline-profile-filter.md) · 例 [poc_robust_profile_filter](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_robust_profile_filter.py) · [example_robust_profile_filter](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/example_robust_profile_filter.py)
@@ -251,7 +254,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 </div>
 
-[PoC 以外の使用例 169 本の一覧](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[PoC 以外の使用例 170 本の一覧](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## ぜんぶ見る
 
@@ -701,6 +704,7 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 - [光の輪で粉の粒径を測る](../view2026/anim3d/laser_diffraction_anim3d.html?lang=ja) (動く 3-D・触って回せる, 0.3 MB): 粒が小さいほど散乱リングが外へ広がる。リング信号だけを非負最小二乗で解き、単峰・二峰の粒度分布と D10/D50/D90 を復元する。 **画像で測った第 1 暗環と 1.22 λ/d の差 0.0000587 rad。別の細密格子で合成した信号からの D50 誤差は単峰 4.22 %、二峰 3.79 %。許容 5.25 %。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_laserdiff_anim3d.py)
 - [錠剤の外観と色の検査](../view2026/anim3d/tablet_inspection_anim3d.html?lang=ja) (動く 3-D・触って回せる, 0.5 MB): 形と色だけの合成錠剤を回す。面積ごとに欠けなし 800 像と欠けあり 800 像を合成して検出率曲線を測り、色むらを ΔE00 = 8 から 0 へ下げる。異物位置と blob 数を測り、照明と平行な浅い割れが消える限界まで見る。 **異物位置誤差 0.292 px、90 % 検出の実測・正規近似とも 3 px² = 0.0192 mm²、CIEDE2000 の直接式との差 < 1e-12、分離 blob 5 個。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_tablet_anim3d.py)
 - [軌道上から小さな文字が読めない理由](../view2026/anim3d/satellite_gsd_anim3d.html?lang=ja) (動く 3-D・触って回せる, 0.2 MB): 高度を上げると 1 画素が覆う地上幅が広がり、口径を小さくすると半透明の光円錐の底にある Airy 円板が広がる。青い GSD と橙の回折幅の交点を越えると、画素だけ細かくしても 10 cm の線は戻らない。 **高度 400 km、5 µm 画素、焦点距離 8 m なら GSD は 0.250 m。波長 550 nm、口径 2.4 m の Rayleigh 地上半径は 0.112 m。大気は限界の行として未計算。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_satgsd_anim3d.py)
+- [力を色の縞として見る](../view2026/anim3d/photoelastic_anim3d.html?lang=ja) (動く 3-D・触って回せる, 0.5 MB): 透明な円板を上下から押すと、偏光の暗線が中心を通過する。荷重を上げるほど縞が増え、6 強度と 3 波長の像から力を逆算できる。 **3 荷重で、多波長位相の荷重誤差は最大 0.11%、水平直径の暗線像による誤差は最大 0.60%、2 経路の差は最大 0.71%。像は 1% 読出し雑音、ショット雑音、8 bit 量子化を含む。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_photoelastic_anim3d.py)
 - [船はなぜ浮き、傾いても戻るのか](../view2026/anim3d/ship_stability_anim3d.html?lang=ja) (動く 3-D・触って回せる, 0.2 MB): 傾くと浮心 B が沈んだ側へ動き、重心 G との水平距離 GZ が生まれる。G を上げると復原てこが逆向きになる。 **箱形船の閉形式との相対誤差 2.26e-16、重量一致 3.58e-16、GZ の傾きと GM の差 0.123%。高い重心では GM = -0.350 m。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_ship_anim3d.py)
 - [離れたカメラで橋のたわみを測る](../view2026/anim3d/bridge_dic_anim3d.html?lang=ja) (動く 3-D・触って回せる, 0.6 MB): 合成トラックが格子で作った桁を渡ると、斑点像が副画素だけ動く。固定窓の正規化相互相関から中央たわみを測り、はりの閉形式と独立に比べる。 **DIC と閉形式の RMS 差 0.0823 mm、無雑音バイアスと雑音試行から作った基準 0.0927 mm。最大時刻は中央フレームと一致し、雑音対ばらつきの傾きは 1.012。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_bridge_dic_anim3d.py)
 - [光切断でレールの摩耗と軌間を測る](../view2026/anim3d/rail_light_section_anim3d.html?lang=ja) (動く 3-D・触って回せる, 0.1 MB): 斜めの光の面とレール表面の交線が、頭頂・ウェブ・底部に沿って曲がる。走行すると左頭頂の摩耗が立ち上がり、二本の内側距離から軌間の広がりが見える。 **雑音付きのサブピクセル光線から断面 RMS 0.699 mm、形を仮定しない摩耗誤差 0.0577 mm、点列から測った軌間誤差 0.346 mm。三角測量 op と独立閉形式は < 1e-12 mm。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_rail_anim3d.py)
@@ -715,6 +719,7 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 - [円柱の上面と側面を一枚で見るハイパーセントリックレンズ](../view2026/anim3d/hypercentric_lens_anim3d.html?lang=ja) (動く 3-D・触って回せる, 0.4 MB): 通常・テレセントリック・ハイパーセントリックの主光線を切り替え、入射瞳が物体の向こうへ移ると、青い上面の外側に橙の側面がドーナツ状に現れる。 **入射瞳は paraxial_trace と ABCD で差 < 1e-12 mm。雑音入り合成像の側面帯は閉形式と 0.180 px 以内で一致し、テレセントリック像の測定値は雑音床 0.900 px。被写界深度と歪みは未計算の限界として表示。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_hypercentric_anim3d.py)
 - [ボアスコープは細い管の奥をどう見るか](../view2026/anim3d/borescope_anim3d.html?lang=ja) (動く 3-D・触って回せる, 0.5 MB): 直径 6 mm の管で像を何度も結び直す光線を追う。細さ・視野・明るさの交換を光学不変量で確かめ、曲がるファイバ束では網目と断線が残る限界を見る。 **逐次追跡と ABCD op の最大差 1.33e-15、不変量残差 3.47e-18。透過率は段数で不変、401×401 光線格子と口径面積の閉形式との差は 0.0030。再構成像と jinc 近似の 50 % 周期は 61.64 / 58.43 µm。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_bore_anim3d.py)
 - [走行撮影でトンネルの 0.2 mm ひびを測る](../view2026/anim3d/tunnel_crack_anim3d.html?lang=ja) (動く 3-D・触って回せる, 0.3 MB): 車両が円筒内面を進む横で、同じ実寸の展開画像だけが粗くなる。赤い検出骨格は 1.0 mm/画素では途切れ、0.10 mm/画素では真の曲線を追う。 **0.10 mm/画素で真のひび長さを 99.1 % 回収。局所背景からの幅誤差 0.023 mm は基準 0.038 mm 内。90 % 到達は実測・見積りとも 0.25 mm/画素で、比較基準は 0.029 mm。目地の誤検出長 24.31 mm も表示する。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_tunnel_anim3d.py)
+- [????? mm ??????](../view2026/anim3d/insar_subsidence_anim3d.html?lang=ja) (動く 3-D・触って回せる, 0.1 MB): ??????????????????????????????????????? **?? RMS 1.53 mm????? 1.02 mm?????????? RMS ? 3.70 mm ????** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_insar_anim3d.py)
 - [船から音で海底地形を測る](../view2026/anim3d/multibeam_bathymetry_anim3d.html?lang=ja) (動く 3-D・触って回せる, 0.2 MB): 扇状の 41 ビームを合成海底へ飛ばし、正しい層状音速と一定音速で同じ往復時間を復元する。音速を誤ると外側ビームだけが笑顔状に曲がる。 **独立な層解析による RMS は 0.069 m、合成 3σ 基準は 0.202 m。外側ビームの二項近似残差は曲がり RMS の 2.76 % で、25 % 基準内。RK4 光線の Snell 不変量残差は 2.91e-16。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_multibeam_anim3d.py)
 - [温度のむらでコンクリートの浮きを探す](../view2026/anim3d/thermo_delamination_anim3d.html?lang=ja) (動く 3-D・触って回せる, 0.3 MB): 加熱後の赤外線像で、浅い空気層は熱い斑点として残り、深さ 38 mm の小さい浮きは横拡散と雑音に消える。 **差分解と閉形式の差 0.217 %、中心誤差 6.92 mm、径誤差 4.70 mm、深さ誤差 0.960 mm。3 個を検出し、深い 1 個は検出不能。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_thermo_anim3d.py)
 
