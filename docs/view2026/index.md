@@ -92,12 +92,17 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../articles/assets/media/evis_bean_track_fullseye.mp4"><img src="thumbs/evis_bean_track.jpg" alt="箸先カメラの豆追跡" loading="lazy" width="320" height="320"><b>&#9654;</b><span>箸先カメラの豆追跡</span></a>
 <a href="../anim3d/organ_volume.html?lang=ja"><img src="thumbs/organ_volume.jpg" alt="臓器の体積と球形度" loading="lazy" width="320" height="320"><b>&#9654;</b><span>臓器の体積と球形度 · 0.5 MB</span></a>
 <a href="../view2026/anim3d/interactive_anim3d_viewer.html?lang=ja"><img src="thumbs/interactive_anim3d_viewer.jpg" alt="アームと半透明のレンズ" loading="lazy" width="320" height="320"><b>&#9654;</b><span>アームと半透明のレンズ · 0.3 MB</span></a>
+<a href="../view2026/anim3d/particle_dissolution_anim3d.html?lang=ja"><img src="thumbs/particle_dissolution.jpg" alt="薬の粒はどう溶けるか" loading="lazy" width="320" height="320"><b>&#9654;</b><span>薬の粒はどう溶けるか · 1.9 MB</span></a>
 <a href="../view2026/anim3d/tablet_inspection_anim3d.html?lang=ja"><img src="thumbs/tablet_inspection.jpg" alt="錠剤の外観と色の検査" loading="lazy" width="320" height="320"><b>&#9654;</b><span>錠剤の外観と色の検査 · 0.5 MB</span></a>
 <a href="../view2026/anim3d/satellite_gsd_anim3d.html?lang=ja"><img src="thumbs/satellite_gsd.jpg" alt="軌道上から小さな文字が読めない理由" loading="lazy" width="320" height="320"><b>&#9654;</b><span>軌道上から小さな文字が読めない理由 · 0.2 MB</span></a>
+<a href="../view2026/anim3d/ship_stability_anim3d.html?lang=ja"><img src="thumbs/ship_stability.jpg" alt="船はなぜ浮き、傾いても戻るのか" loading="lazy" width="320" height="320"><b>&#9654;</b><span>船はなぜ浮き、傾いても戻るのか · 0.2 MB</span></a>
+<a href="../view2026/anim3d/rail_light_section_anim3d.html?lang=ja"><img src="thumbs/rail_light_section.jpg" alt="光切断でレールの摩耗と軌間を測る" loading="lazy" width="320" height="320"><b>&#9654;</b><span>光切断でレールの摩耗と軌間を測る · 0.1 MB</span></a>
 <a href="../view2026/anim3d/salt_xrd_anim3d.html?lang=ja"><img src="thumbs/salt_xrd_anim3d.jpg" alt="塩の結晶の粉末 X 線回折" loading="lazy" width="320" height="320"><b>&#9654;</b><span>塩の結晶の粉末 X 線回折 · 2.5 MB</span></a>
 <a href="../anim3d/gauss_bonnet.html?lang=ja"><img src="thumbs/gauss_bonnet.jpg" alt="曲がり方を全部足すと同じ数" loading="lazy" width="320" height="320"><b>&#9654;</b><span>曲がり方を全部足すと同じ数 · 3.1 MB</span></a>
 <a href="../view2026/anim3d/pulseox_anim3d.html?lang=ja"><img src="thumbs/pulseox.jpg" alt="パルスオキシメータの二波長吸収" loading="lazy" width="320" height="320"><b>&#9654;</b><span>パルスオキシメータの二波長吸収 · 0.2 MB</span></a>
-<a href="../view2026/anim3d/rail_light_section_anim3d.html?lang=ja"><img src="thumbs/rail_light_section.jpg" alt="光切断でレールの摩耗と軌間を測る" loading="lazy" width="320" height="320"><b>&#9654;</b><span>光切断でレールの摩耗と軌間を測る · 0.1 MB</span></a>
+<a href="../view2026/anim3d/star_tracker_anim3d.html?lang=ja"><img src="thumbs/poc_star_tracker.jpg" alt="星の写真から衛星姿勢を知る" loading="lazy" width="320" height="320"><b>&#9654;</b><span>星の写真から衛星姿勢を知る · 0.2 MB</span></a>
+<a href="../view2026/anim3d/venue_shadow_anim3d.html?lang=ja"><img src="thumbs/venue_shadow.jpg" alt="会場の街の冬至の日影" loading="lazy" width="320" height="320"><b>&#9654;</b><span>会場の街の冬至の日影 · 0.3 MB</span></a>
+<a href="../view2026/anim3d/kelvin_wake_anim3d.html?lang=ja"><img src="thumbs/kelvin_wake.jpg" alt="船の V 字の航跡" loading="lazy" width="320" height="320"><b>&#9654;</b><span>船の V 字の航跡 · 0.2 MB</span></a>
 <a href="../view2026/anim3d/tunnel_crack_anim3d.html?lang=ja"><img src="thumbs/tunnel_crack.jpg" alt="走行撮影でトンネルの 0.2 mm ひびを測る" loading="lazy" width="320" height="320"><b>&#9654;</b><span>走行撮影でトンネルの 0.2 mm ひびを測る · 0.3 MB</span></a>
 </div>
 
@@ -242,7 +247,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## ぜんぶ見る
 
-PoC 277 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
+PoC 278 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
 
 <noscript><p><a href="../GALLERY.html">(JavaScript が無い環境では、ギャラリーのページで全部の図を見られます)</a></p></noscript>
 
@@ -371,7 +376,7 @@ PoC 277 本と、ロボットの例 5 本。グループを開くとサムネイ
 </div>
 </details>
 
-<details class="vall"><summary><b>3-D 形状</b> (19)</summary>
+<details class="vall"><summary><b>3-D 形状</b> (20)</summary>
 <div class="vg vs">
 <a href="../articles/assets/poc/poc_battery_ct_degradation/01_xray_projection.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_battery_ct_degradation.jpg" alt="電池の CT 劣化" width="200" height="200"><span>電池の CT 劣化</span></a>
 <a href="../articles/assets/poc/poc_bev_sensor_fusion/01_scene_bev.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_bev_sensor_fusion.jpg" alt="鳥瞰図の融合" width="200" height="200"><span>鳥瞰図の融合</span></a>
@@ -392,6 +397,7 @@ PoC 277 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_endless_zoom_and_turning_solids/03_zoom_loop.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_endless_zoom_and_turning_solids.jpg" alt="無限ズーム" width="200" height="200"><b>&#9654;</b><span>無限ズーム</span></a>
 <a href="../articles/assets/poc/poc_four_dimensions_by_three_d_tools/03_hopf_turn.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_four_dimensions_by_three_d_tools.jpg" alt="4 次元を 3-D で" width="200" height="200"><b>&#9654;</b><span>4 次元を 3-D で</span></a>
 <a href="../articles/assets/poc/poc_plateau_venue_lod2/01_venue_itokawa_top.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_plateau_venue_lod2.jpg" alt="会場の建物と小惑星イトカワを同じ物差しで ―― PLATEAU の CityGML LOD2 をメッシュに" width="200" height="200"><span>会場の建物と小惑星イトカワを同じ物差しで ―― PLATEAU の CityGML LOD2 をメッシュに</span></a>
+<a href="../view2026/anim3d/star_tracker_anim3d.html?lang=ja"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_star_tracker.jpg" alt="合成星像から衛星姿勢を推定する" width="200" height="200"><b>&#9654;</b><span>合成星像から衛星姿勢を推定する</span></a>
 </div>
 </details>
 
@@ -683,12 +689,17 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 
 - [臓器の体積と球形度](../anim3d/organ_volume.html?lang=ja) (動く 3-D・触って回せる, 0.5 MB): 6 臓器を体積順に並べ、同体積の半透明球を重ね、断面を積む。発散定理と固体ボクセルの体積は最大 0.191 % 差で、閉曲面は χ = 2。99 % 削減版が細い構造を失う限界も示す。 **6 臓器、体積差 ≤ 0.191 %、χ = 2・境界辺 0。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_organvol_anim3d.py)
 - [アームと半透明のレンズ](../view2026/anim3d/interactive_anim3d_viewer.html?lang=ja) (動く 3-D・触って回せる, 0.3 MB): アームが箱を運ぶ様子を、指で回して好きな向きから見る。光線が半透明のレンズを貫いて焦点へ集まり、右下では真上からの高さ画像とその二値化が同じ時間軸で進む。 [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/interactive_anim3d_viewer.py)
+- [薬の粒はどう溶けるか](../view2026/anim3d/particle_dissolution_anim3d.html?lang=ja) (動く 3-D・触って回せる, 1.9 MB): 同じ総量の 1 粒と 8 粒が縮む。雑音像を測ると、8 分割は表面積が 2 倍になり、8 粒は半分の時間で溶ける。 **数値 ODE と立方根則の最大相対差 < 1e-12。半径 3.0 mm 以上での像由来誤差 0.00058 は上限 0.0616 未満。画像曲線から測った時間比 0.5008。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_dissolution_anim3d.py)
 - [錠剤の外観と色の検査](../view2026/anim3d/tablet_inspection_anim3d.html?lang=ja) (動く 3-D・触って回せる, 0.5 MB): 形と色だけの合成錠剤を回す。面積ごとに欠けなし 800 像と欠けあり 800 像を合成して検出率曲線を測り、色むらを ΔE00 = 8 から 0 へ下げる。異物位置と blob 数を測り、照明と平行な浅い割れが消える限界まで見る。 **異物位置誤差 0.292 px、90 % 検出の実測・正規近似とも 3 px² = 0.0192 mm²、CIEDE2000 の直接式との差 < 1e-12、分離 blob 5 個。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_tablet_anim3d.py)
 - [軌道上から小さな文字が読めない理由](../view2026/anim3d/satellite_gsd_anim3d.html?lang=ja) (動く 3-D・触って回せる, 0.2 MB): 高度を上げると 1 画素が覆う地上幅が広がり、口径を小さくすると半透明の光円錐の底にある Airy 円板が広がる。青い GSD と橙の回折幅の交点を越えると、画素だけ細かくしても 10 cm の線は戻らない。 **高度 400 km、5 µm 画素、焦点距離 8 m なら GSD は 0.250 m。波長 550 nm、口径 2.4 m の Rayleigh 地上半径は 0.112 m。大気は限界の行として未計算。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_satgsd_anim3d.py)
+- [船はなぜ浮き、傾いても戻るのか](../view2026/anim3d/ship_stability_anim3d.html?lang=ja) (動く 3-D・触って回せる, 0.2 MB): 傾くと浮心 B が沈んだ側へ動き、重心 G との水平距離 GZ が生まれる。G を上げると復原てこが逆向きになる。 **箱形船の閉形式との相対誤差 2.26e-16、重量一致 3.58e-16、GZ の傾きと GM の差 0.123%。高い重心では GM = -0.350 m。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_ship_anim3d.py)
+- [光切断でレールの摩耗と軌間を測る](../view2026/anim3d/rail_light_section_anim3d.html?lang=ja) (動く 3-D・触って回せる, 0.1 MB): 斜めの光の面とレール表面の交線が、頭頂・ウェブ・底部に沿って曲がる。走行すると左頭頂の摩耗が立ち上がり、二本の内側距離から軌間の広がりが見える。 **雑音付きのサブピクセル光線から断面 RMS 0.699 mm、形を仮定しない摩耗誤差 0.0577 mm、点列から測った軌間誤差 0.346 mm。三角測量 op と独立閉形式は < 1e-12 mm。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_rail_anim3d.py)
 - [塩の結晶の粉末 X 線回折](../view2026/anim3d/salt_xrd_anim3d.html?lang=ja) (動く 3-D・触って回せる, 2.5 MB): 塩の単位胞に格子面の板を重ね、Bragg の角度を振ると行路差が λ の整数倍の所だけ受光面が光る。粒の向きをばらばらにすると点が環に育ち、波長を長くすると環は広がって消える。消滅則は 8 原子の波を足して見せる。 [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_saltxrd_anim3d.py)
 - [曲がり方を全部足すと同じ数](../anim3d/gauss_bonnet.html?lang=ja) (動く 3-D・触って回せる, 3.1 MB): 球を立方体に角ばらせても、トーラスでも、穴を増やしても、実測の小惑星でも、頂点ごとの角欠損 K を足した Σ K / 2π は χ = V − E + F に一致する。半透明の面が通り過ぎた頂点を足し上げる動きを指で回して見る。境界のある皿では外れる(限界の回)。 **17 行の表で Σ K / 2π と χ の差は 1e-12 未満。境界のある皿だけ 24.0 × 2π 外れ、境界の項を入れると一致する。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_gaussbonnet_anim3d.py)
 - [パルスオキシメータの二波長吸収](../view2026/anim3d/pulseox_anim3d.html?lang=ja) (動く 3-D・触って回せる, 0.2 MB): 拍動する動脈を通る赤と近赤外の光を追い、AC/DC の比 R から酸素飽和度を読む。雑音入り時系列と閉形式を比べ、COHb を見分けられない限界も示す。 **R の最大差 0.00068、SpO₂ の最大誤差 0.034 %。COHb 10 % の模型では 90.0 % を 91.0 % と読む。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_pulseox_anim3d.py)
-- [光切断でレールの摩耗と軌間を測る](../view2026/anim3d/rail_light_section_anim3d.html?lang=ja) (動く 3-D・触って回せる, 0.1 MB): 斜めの光の面とレール表面の交線が、頭頂・ウェブ・底部に沿って曲がる。走行すると左頭頂の摩耗が立ち上がり、二本の内側距離から軌間の広がりが見える。 **雑音付きのサブピクセル光線から断面 RMS 0.699 mm、形を仮定しない摩耗誤差 0.0577 mm、点列から測った軌間誤差 0.346 mm。三角測量 op と独立閉形式は < 1e-12 mm。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_rail_anim3d.py)
+- [星の写真から衛星姿勢を知る](../view2026/anim3d/star_tracker_anim3d.html?lang=ja) (動く 3-D・触って回せる, 0.2 MB): 合成天球の中で視野錐を回し、雑音を含む点像と偽点から副画素重心を取る。三角形の角距離を全196星表へ照合し、偽点を捨ててKabschで姿勢を求める。最後は迷光、星不足、星の流れという未計算の限界を見る。 **全196星表に対し、真の星16、誤対応0、偽点棄却2/2、姿勢角誤差0.0046度、1画素0.1406度。Kabschと直接SVDの差は1e-12未満。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_startrk_anim3d.py)
+- [会場の街の冬至の日影](../view2026/anim3d/venue_shadow_anim3d.html?lang=ja) (動く 3-D・触って回せる, 0.3 MB): パシフィコ横浜のLOD2建物の上を太陽が8時から16時まで動き、青い影が朝夕に伸びて正午に縮む。1・2・3時間の日影線から、建物の並びで日照時間が変わる場所を読む。 **太陽位置の2経路の最大差 < 1e-12°、20 m箱の影長・面積の相対差 < 1e-12、実建物の正午影は最高点からの上限内。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_shadow_anim3d.py)
+- [船の V 字の航跡](../view2026/anim3d/kelvin_wake_anim3d.html?lang=ja) (動く 3-D・触って回せる, 0.2 MB): 深水を進む点状の圧力源が作る立体的な高さ場を回す。船速を 4、7、12 m/s と変えると波長は伸びるが、画像から測った V 字の半角は約 19.47 deg のままになる。横波と発散波を分けて重ね、浅水・船体幅・粘性を含まない限界も示す。 **同じ実寸格子で測った半角は 18.10–20.25 deg、arcsin(1/3) からの最大差 1.37 deg、三速度間の差 2.15 deg。波長誤差は最大 0.50 m、12 m/s と 4 m/s の波長比は 9.05。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_kelvin_anim3d.py)
 - [走行撮影でトンネルの 0.2 mm ひびを測る](../view2026/anim3d/tunnel_crack_anim3d.html?lang=ja) (動く 3-D・触って回せる, 0.3 MB): 車両が円筒内面を進む横で、同じ実寸の展開画像だけが粗くなる。赤い検出骨格は 1.0 mm/画素では途切れ、0.10 mm/画素では真の曲線を追う。 **0.10 mm/画素で真のひび長さを 99.1 % 回収。局所背景からの幅誤差 0.023 mm は基準 0.038 mm 内。90 % 到達は実測・見積りとも 0.25 mm/画素で、比較基準は 0.029 mm。目地の誤検出長 24.31 mm も表示する。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_tunnel_anim3d.py)
 
 </div>

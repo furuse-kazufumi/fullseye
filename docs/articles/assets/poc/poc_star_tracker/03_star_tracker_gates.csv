@@ -1,0 +1,5 @@
+﻿gate,result,criterion
+catalogue matching,0 mismatch,0
+false-point rejection,2/2,all
+attitude angle,0.0046 deg,< 0.1406 deg
+kabsch vs direct SVD,< 1e-12,< 1e-12

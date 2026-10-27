@@ -297,6 +297,7 @@ EXCLUDED = {
     "tools/build_pulseox_anim3d.py": ("パルスオキシメータの二波長吸収の動く 3-D 教材(docs/view2026/anim3d/pulseox_anim3d.html)。"
                                        "`py -3.11 tools/anim3d_i18n.py --build build_pulseox_anim3d --out docs/view2026/anim3d/pulseox_anim3d.html` で書く"
                                        "(翻訳表 tools/anim3d_i18n_tables/build_pulseox_anim3d.json)。門は tests/test_anim3d_pulseox_2026_10_26.py。"),
+    "tools/build_kelvin_anim3d.py": "8 言語の大きな動く 3-D ページ。専用の byte 一致テストで生成を検査する。",
     "tools/check_page_overflow.py": ("門(生成器ではない): pocviewer のページを幅 390 px の iframe に入れて headless Chrome で開き、全タブ × 全言語の"
                                      "横はみ出しを測る。書くのは一時フォルダの計測用の写しだけで、repo には何も書かない。Chrome が要るので手で回す"
                                      "(tests/test_itokawa_page_overflow_2026_10_25.py、Chrome が無ければ skip)。"),
@@ -326,6 +327,15 @@ EXCLUDED = {
     "tools/build_satgsd_anim3d.py": ("衛星の地上分解能と回折の動く 3-D の教材(docs/view2026/anim3d/satellite_gsd_anim3d.html)。"
                                      "`py -3.11 tools/anim3d_i18n.py --build build_satgsd_anim3d --out docs/view2026/anim3d/satellite_gsd_anim3d.html` で書く"
                                      "(翻訳表 tools/anim3d_i18n_tables/build_satgsd_anim3d.json)。門は tests/test_anim3d_satgsd_2026_10_26.py。"),
+    "tools/build_ship_anim3d.py": ("排水量・浮心・メタセンタ高さの動く 3-D 教材(docs/view2026/anim3d/ship_stability_anim3d.html)。"
+                                  "`py -3.11 tools/anim3d_i18n.py --build build_ship_anim3d --out docs/view2026/anim3d/ship_stability_anim3d.html` で書く"
+                                  "(翻訳表 tools/anim3d_i18n_tables/build_ship_anim3d.json)。門は tests/test_anim3d_ship_2026_10_27.py。"),
+    "tools/build_startrk_anim3d.py": ("合成星野から衛星姿勢を推定する動く 3-D の教材(docs/view2026/anim3d/star_tracker_anim3d.html)。"
+                                     "`py -3.11 tools/anim3d_i18n.py --build build_startrk_anim3d --out docs/view2026/anim3d/star_tracker_anim3d.html` で書く"
+                                     "(翻訳表 tools/anim3d_i18n_tables/build_startrk_anim3d.json)。門は tests/test_anim3d_startrk_2026_10_26.py。"),
+    "tools/build_shadow_anim3d.py": ("冬至の会場周辺の日影を追う動く 3-D 教材(docs/view2026/anim3d/venue_shadow_anim3d.html)。"
+                                     "`py -3.11 tools/anim3d_i18n.py --build build_shadow_anim3d --out docs/view2026/anim3d/venue_shadow_anim3d.html` で書く"
+                                     "(翻訳表 tools/anim3d_i18n_tables/build_shadow_anim3d.json)。門は tests/test_anim3d_shadow_2026_10_27.py。"),
     "tools/build_rail_anim3d.py": ("レールの頭頂摩耗と軌間を光切断で測る動く 3-D 教材(docs/view2026/anim3d/rail_light_section_anim3d.html)。"
                                    "`py -3.11 tools/anim3d_i18n.py --build build_rail_anim3d --out docs/view2026/anim3d/rail_light_section_anim3d.html` で書く"
                                    "(翻訳表 tools/anim3d_i18n_tables/build_rail_anim3d.json)。門は tests/test_anim3d_rail_2026_10_26.py。"),
@@ -335,6 +345,9 @@ EXCLUDED = {
     "tools/build_tablet_anim3d.py": ("合成錠剤の外観検査の動く 3-D 教材(docs/view2026/anim3d/tablet_inspection_anim3d.html)。"
                                      "`py -3.11 tools/anim3d_i18n.py --build build_tablet_anim3d --out docs/view2026/anim3d/tablet_inspection_anim3d.html` で書く"
                                      "(翻訳表 tools/anim3d_i18n_tables/build_tablet_anim3d.json)。門は tests/test_anim3d_tablet_2026_10_26.py。"),
+    "tools/build_dissolution_anim3d.py": ("薬の粒の溶出を合成画像から測る動く 3-D 教材(docs/view2026/anim3d/particle_dissolution_anim3d.html)。"
+                                          "`py -3.11 tools/anim3d_i18n.py --build build_dissolution_anim3d --out docs/view2026/anim3d/particle_dissolution_anim3d.html` で書く"
+                                          "(翻訳表 tools/anim3d_i18n_tables/build_dissolution_anim3d.json)。門は tests/test_anim3d_dissolution_2026_10_27.py。"),
     "tools/build_gsplat_pages.py": ("docs/gsplat/ の 3DGS の商品ビューアとカタログ(examples/gsplat_product_viewer.py の build)。"
                                     "marching cubes に scikit-image(任意の依存)が要り、5 品の 3DGS 化とサムネイルの numpy 描画で"
                                     "1 分ほどかかり、出力は 1 本数 MB —— 鎖に入れず、ページを変える回は手で回して commit する。"),
