@@ -33,6 +33,7 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 | [圃場の RGB から作物と雑草を色と肌理で分け、雑草の被度を宣言した境で段階にする(学習器なし)](capabilities/crop-weed-cover-grade.md) | `superpixel_color_texture_features` → `fisher_lda_fit` → `fisher_lda_score` → `cover_ratio_grade` | `poc_weed_rice_ratio` |
 | [X 線の 2 つのエネルギーで厚みと材質を分ける(デュアルエナジー / フォトンカウンティング: スペクトル → 窓 → 基底分解 → 実効 Z)](capabilities/dual-energy-xray-material-discrimination.md) | `xray_tube_spectrum` → `photon_counting_channels` → `basis_decomposition_crlb` → `basis_material_decompose` → `effective_z_map` | `poc_dual_energy_xray` |
 | [結果を人が読める図にする](capabilities/figures-and-annotation.md) | `annotate_figure_grid` → `annotate_panel_label` → `annotate_scale_bar` → `annotate_colorbar` | `poc_colormap_readability` |
+| [フーリエ・タイコグラフィ(LED の斜め照明の像の組 → 位相回復で高 NA の振幅と位相、収束しなければ拒否)](capabilities/fourier-ptychography.md) | `fp_design` → `fp_stack_from_images` → `fp_reconstruct` → `fp_element_contrast` | `poc_fourier_ptychography` |
 | [地球規模の座標に載せる(ECEF・高さの基準・局所 ENU)](capabilities/geodetic-frames.md) | `dem_geodetic_to_ecef` → `dem_ecef_to_geodetic` | `poc_geodetic_height_frames` |
 | [良品を並べて「いつもと違う」を言う(良品統計の変動モデル、誤検出率の宣言つき)](capabilities/good-sample-variation-model.md) | `varmodel_alignment` → `varmodel_fit` → `varmodel_calibrate` → `varmodel_score` | `poc_good_sample_variation_model` |
 | [格子干渉計(タルボ・ロー)で透過・微分位相・暗視野の 3 像を分ける](capabilities/grating-interferometry.md) | `talbot_grating_design` → `talbot_source_visibility` → `grating_step_period_estimate` → `grating_three_image_retrieve` → `darkfield_scatter_relation` → `dpc_integrate` | `poc_grating_interferometry` |
@@ -131,6 +132,22 @@ op 名は全部レジストリに実在し、**型(in → out)が前段から後
 使う op: `estimate_distortion`, `undistort_image`, `distort_points`, `undistort_points`
 
 動く例: `estimate_lens_distortion`
+
+### [フーリエ・タイコグラフィ(LED の斜め照明の像の組 → 位相回復で高 NA の振幅と位相、収束しなければ拒否)](capabilities/fourier-ptychography.md)
+
+低倍率の対物は視野が広いが分解能が低く、高倍率は逆になります。フーリエ・タイコグラフィ(FP)は LED アレイで照明の角度を変えながら低倍率で何枚も撮り、周波数空間で各像の受け持つ円(瞳)をつなぎ合わせて、**視野は低倍率のまま、分解能は合成 NA = NA_obj + NA_ill まで**上げます。強度しか撮らないのに位相も戻ります。戻すのは反復の位相回復(収束型の演算)なので、`fp_reconstruct` は収束の履歴・止めた理由・合成 NA を返し、収束しなければ拒否します。
+
+使う op: `fp_design`, `fp_usaf_target`, `fp_capture`, `fp_stack_from_images`, `fp_reconstruct`, `fp_element_contrast`
+
+推奨パイプライン: [`fp_design`](ops/optics/fpm/fp_design.md) → [`fp_stack_from_images`](ops/optics/fpm/fp_stack_from_images.md) → [`fp_reconstruct`](ops/optics/fpm/fp_reconstruct.md) → [`fp_element_contrast`](ops/optics/fpm/fp_element_contrast.md)
+
+代替: [`fp_capture`](ops/optics/fpm/fp_capture.md), [`fp_usaf_target`](ops/optics/fpm/fp_usaf_target.md), [`coherent_image`](ops/optics/coherent/coherent_image.md)
+
+限界: 薄い試料・スカラ回折・単色・平面波の照明(LED の大きさと帯域は無い)。照明の k は格子に丸める。隣り合う瞳の重なりが 35 % を割ると拒否されやすく、明視野と暗視野の境に乗る LED は失敗の元。散乱の弱い物体や LED の位置を補正した復元では、重なりが十分でも 2 本の初期値の位相が一致せず拒否されることがある。
+
+実寸校正: 照明の方向余弦(LED の位置・距離・スライドガラスの屈折)と、カメラの画素の物体側の大きさ(倍率)。符号の規約は USAF チャートで確かめる(k の符号を反転すると位相の符号だけが反転した像になり、強度だけでは区別できない)。
+
+動く例: `poc_fourier_ptychography`
 
 ### [地球規模の座標に載せる(ECEF・高さの基準・局所 ENU)](capabilities/geodetic-frames.md)
 

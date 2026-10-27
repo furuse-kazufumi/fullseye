@@ -34,6 +34,7 @@ Every operator exists in the registry and the types connect from one step to the
 | [Separating crop from weeds in field RGB by colour and texture, and grading weed cover at declared edges (no learned network)](capabilities/crop-weed-cover-grade.md) | `superpixel_color_texture_features` → `fisher_lda_fit` → `fisher_lda_score` → `cover_ratio_grade` | `poc_weed_rice_ratio` |
 | [Separate thickness from material with two X-ray energies (dual-energy and photon-counting X-ray: spectrum, energy windows, basis decomposition, effective Z)](capabilities/dual-energy-xray-material-discrimination.md) | `xray_tube_spectrum` → `photon_counting_channels` → `basis_decomposition_crlb` → `basis_material_decompose` → `effective_z_map` | `poc_dual_energy_xray` |
 | [Turn results into figures people can read](capabilities/figures-and-annotation.md) | `annotate_figure_grid` → `annotate_panel_label` → `annotate_scale_bar` → `annotate_colorbar` | `poc_colormap_readability` |
+| [Fourier ptychography (oblique LED illumination, phase retrieval to a high-NA amplitude and phase, refused unless it converges)](capabilities/fourier-ptychography.md) | `fp_design` → `fp_stack_from_images` → `fp_reconstruct` → `fp_element_contrast` | `poc_fourier_ptychography` |
 | [Put measurements on the Earth (ECEF, height frames, local ENU)](capabilities/geodetic-frames.md) | `dem_geodetic_to_ecef` → `dem_ecef_to_geodetic` | `poc_geodetic_height_frames` |
 | [Flag what differs from aligned good samples (a per-pixel variation model with a declared false-alarm rate)](capabilities/good-sample-variation-model.md) | `varmodel_alignment` → `varmodel_fit` → `varmodel_calibrate` → `varmodel_score` | `poc_good_sample_variation_model` |
 | [Grating interferometry (Talbot / Talbot-Lau): transmission, differential phase and dark field from one phase-stepping scan](capabilities/grating-interferometry.md) | `talbot_grating_design` → `talbot_source_visibility` → `grating_step_period_estimate` → `grating_three_image_retrieve` → `darkfield_scatter_relation` → `dpc_integrate` | `poc_grating_interferometry` |
@@ -132,6 +133,18 @@ The upstream of `undistort_image`: it *measures* the Brown–Conrady coefficient
 Operators: `estimate_distortion`, `undistort_image`, `distort_points`, `undistort_points`
 
 Runnable: `estimate_lens_distortion`
+
+### [Fourier ptychography (oblique LED illumination, phase retrieval to a high-NA amplitude and phase, refused unless it converges)](capabilities/fourier-ptychography.md)
+
+Six ops in `fourierptycho` for Fourier ptychographic microscopy: closed-form design numbers before measuring (synthetic NA, coherent cut-off period, overlap ratio of neighbouring pupils against the published 35 % minimum, LED count, camera sampling Δx ≤ λ/(2 NA_obj) and LEDs sitting on the bright-/dark-field boundary), a simulator of the image set under oblique LED illumination (LED fall-off, dark-field exposure, shot and read noise, pupil aberrations, LED array misalignment, reflective height to round-trip phase), an entry point for measured image sets, a sequential phase retrieval with joint pupil recovery (EPRY form, projected on low-order polynomials by default) and LED position correction, and a USAF 1951 target with an element-by-element read-out. The reconstruction returns its convergence history, the reason it stopped and the synthetic NA, and refuses (raises a MetricContractError carrying the record) unless the residual has stalled and two different starting points agree.
+
+Operators: `fp_design`, `fp_usaf_target`, `fp_capture`, `fp_stack_from_images`, `fp_reconstruct`, `fp_element_contrast`
+
+Pipeline: [`fp_design`](ops/optics/fpm/fp_design.md) → [`fp_stack_from_images`](ops/optics/fpm/fp_stack_from_images.md) → [`fp_reconstruct`](ops/optics/fpm/fp_reconstruct.md) → [`fp_element_contrast`](ops/optics/fpm/fp_element_contrast.md)
+
+Alternatives: [`fp_capture`](ops/optics/fpm/fp_capture.md), [`fp_usaf_target`](ops/optics/fpm/fp_usaf_target.md), [`coherent_image`](ops/optics/coherent/coherent_image.md)
+
+Runnable: `poc_fourier_ptychography`
 
 ### [Put measurements on the Earth (ECEF, height frames, local ENU)](capabilities/geodetic-frames.md)
 

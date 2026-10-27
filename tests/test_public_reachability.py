@@ -250,7 +250,11 @@ def test_pending_exposure_shrinks_when_fixed():
 #   入口 2 本)、backends_tomo.sart_np(skimage 無しの近似を**別名で**残したもの、登録 op の答えにはしない)、
 #   numpy_twins の 19 本(scikit-image と bit 一致する双子。利用者は op 経由で使う —— 双子そのものは公開経路に
 #   載せない。正本は scikit-image で、同名で出すと「fullseye の API」に見える)。実測 920 → 942。
-_HIDDEN_FUNCTIONS_TODAY = 942
+# 2026-10-23 フーリエ・タイコグラフィの例外の型 fourierptycho.FPNotConvergedError(converge の NotConvergedError と同じ形、
+#   6 op 本体は fs.ledger に載る)。実測 942 → 943。
+# 2026-10-23 組紐の例外の型 braidpath.TriplePointError(射影の三重点で組紐語が決まらない —— ValueError の子、
+#   12 op 本体は fs.ledger に載る)。実測 943 → 944。
+_HIDDEN_FUNCTIONS_TODAY = 944
 
 
 def _hidden_total():

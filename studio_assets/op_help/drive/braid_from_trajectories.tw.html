@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">braid_from_trajectories — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.braid_from_trajectories(trajectories, obstacles=None, angle=0.1, jitter=&#x27;auto&#x27;)</code>(要直接呼叫實作,<code style="color:#22d3bf">import braidpath; braidpath.braid_from_trajectories(trajectories, obstacles=None, angle=0.1, jitter=&#x27;auto&#x27;)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;braid_from_trajectories&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>由平面軌跡群(以及靜止障礙物的點)建構辮字(交叉符號的序列)。</p>
+<p>假設每個步長內為直線運動,在投影軸 x&#x27; = x cos θ + y sin θ 上求相鄰兩股交換順序的時刻(以閉式求出;相對運動也是直線,零點至多 1 個),並依時間順序寫成字母。左邊的股從<b>下方</b>(y&#x27; 較小的一側) 穿過到右邊則為 <code style="color:#22d3bf">+i</code>(逆時針半扭轉),從上方穿過則為 <code style="color:#22d3bf">−i</code>。</p>
+<p>★投影的三重點:在網格的對稱運動中(例如 2 台夾著障礙物點作點對稱運動等),3 股保持在一條直線上一起旋轉, 在任何角度下 3 個交叉都同時發生。<code style="color:#22d3bf">jitter=&quot;auto&quot;</code> 僅在這種情況下為每股加上一個固定的小偏移(最小距離 × <code style="color:#22d3bf">JITTER_FRACTION</code>,方向取黃金角)並重新計算。偏移遠小於最小距離,因此辮不變(由門檢驗確認)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>trajectories : numpy 的 (K, T, 2) = [x, y],或 list 形式的網格路徑(各台的 (row, col) 序列)/ 規劃器的 dict(<code style="color:#22d3bf">paths</code>)。</p>
+<p>obstacles : (M, 2) 的點,可選。每個孔以 1 個點代表(取孔內的任何點,類都不變)。</p>
+<p>angle : 投影軸的角度 [rad]。類的判定(<code style="color:#22d3bf">homotopy_class_compare</code>)與角度無關,但字本身會變。</p>
+<p>jitter : <code style="color:#22d3bf">&quot;auto&quot;</code> 或偏移的大小(0 = 不偏移,上限為最小距離的 1 %)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict: <code style="color:#22d3bf">word</code>(int 的一維陣列)、<code style="color:#22d3bf">n_strands</code>、<code style="color:#22d3bf">n_agents</code>、<code style="color:#22d3bf">start_order</code> / <code style="color:#22d3bf">end_order</code>(依位置順序的股編號)、<code style="color:#22d3bf">times</code>(各字母的時刻,以步長為單位)、<code style="color:#22d3bf">angle</code>、<code style="color:#22d3bf">jitter</code>(使用的偏移)、<code style="color:#22d3bf">clearance</code>(股之間的最小距離)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
+<p>ValueError:兩股到達同一點(碰撞沒有辮)、jitter=0 時出現三重點(TriplePointError)、形狀不對、NaN。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_braid_homotopy_classes">poc_braid_homotopy_classes</a> — <code style="color:#22d3bf">py -3.11 examples/poc_braid_homotopy_classes.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">braidpath</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:braid_reduce">braid_reduce</a> · <a style="color:#22d3bf" href="opdrive:braid_artin_images">braid_artin_images</a> · <a style="color:#22d3bf" href="opdrive:dynnikov_coordinates">dynnikov_coordinates</a> · <a style="color:#22d3bf" href="opdrive:dynnikov_act">dynnikov_act</a> · <a style="color:#22d3bf" href="opdrive:braid_equivalent">braid_equivalent</a> · <a style="color:#22d3bf" href="opdrive:homotopy_class_compare">homotopy_class_compare</a> · <a style="color:#22d3bf" href="opdrive:pairwise_winding">pairwise_winding</a> · <a style="color:#22d3bf" href="opdrive:homotopy_shortest_paths">homotopy_shortest_paths</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: braidpath.py — DRIVE 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

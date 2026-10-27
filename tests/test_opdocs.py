@@ -378,7 +378,7 @@ def test_optics_registry_is_connected():
     # 2026-09-05: optscene "scene" 44 op を追加 → 計 124。
     # 2026-09-15: optics "wave" に瞳形状 PSF 3 op を追加 → 計 127。
     # 2026-09-18: optics "polarization" に偏光カメラ 3 op を追加 → 計 130。
-    assert len(_OPT_RECS) == 477        # + 光弾性 12 op(photoelastic、2026-10-23)
+    assert len(_OPT_RECS) == 483        # + 光弾性 12 op(photoelastic) + fpm 6 op(fourierptycho、2026-10-23)
     #                                     + 有限消光比の偏光子 1 op(2026-10-23)
     #                                     + 音響物性 2 op(2026-10-22)
     #                                     + coherent 6 op(2026-10-13)
@@ -388,7 +388,7 @@ def test_optics_registry_is_connected():
     assert {"geometric", "wave", "imaging", "polarization", "design", "imaging_sim",
             "optimization", "illumination", "appearance", "interface", "mirror",
             "glassbody", "finish", "material", "surface",
-                "scene", "sensorchar", "sensorgeneral", "coherent", "shape_from_polarization", "light_transport", "cavity", "matprop", "spectral", "spectrometer", "fiber", "grating_interf", "moire_align", "telecentric", "linescan", "pixelshift", "plenoptic", "film", "confocal", "oct", "drawing", "itof", "lensfile", "lensconfig", "lensglobal", "lensmerit", "lensrender", "lenssolve", "lockin", "watermedia", "watervision", "radiosity", "tem", "noncoaxial", "omni360", "tolerancing", "photoelastic"} == {r["category"] for r in _OPT_RECS}
+                "scene", "sensorchar", "sensorgeneral", "coherent", "shape_from_polarization", "light_transport", "cavity", "matprop", "spectral", "spectrometer", "fiber", "grating_interf", "moire_align", "telecentric", "linescan", "pixelshift", "plenoptic", "film", "confocal", "oct", "fpm", "drawing", "itof", "lensfile", "lensconfig", "lensglobal", "lensmerit", "lensrender", "lenssolve", "lockin", "watermedia", "watervision", "radiosity", "tem", "noncoaxial", "omni360", "tolerancing", "photoelastic"} == {r["category"] for r in _OPT_RECS}
     # the design / imaging_sim notes must say where their implementation lives
     for r in _OPT_RECS:
         if r["category"] == "design":

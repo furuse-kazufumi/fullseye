@@ -4,7 +4,7 @@
  "counts": {
   "description": 0,
   "empty_input": 0,
-  "dead_knob": 602
+  "dead_knob": 603
  },
  "debt": {
   "description": {},
@@ -272,6 +272,7 @@
    "hole_detect.min_sat": "size_or_count",
    "hole_detect.min_chroma": "size_or_count",
    "hole_detect.min_area": "size_or_count",
+   "homotopy_class_compare.tol": "tolerance_or_iterations",
    "hough_plane_3d.mc": "other",
    "hough_sphere_3d.mc": "other",
    "icp_point2plane.iters": "tolerance_or_iterations",
