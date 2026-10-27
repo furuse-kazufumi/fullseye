@@ -1,0 +1,483 @@
+{
+    "_":  "English fallback translations for the low-cost prototype; formulas, values and op names are preserved.",
+    "example":  "build_hypercentric_anim3d",
+    "strings":  {
+                    "Why one image can show a cylinder top and side":  {
+                                                                           "ja":  "なぜ円柱の上面と側面を一枚で見られるのか",
+                                                                           "zh":  "Why one image can show a cylinder top and side",
+                                                                           "tw":  "Why one image can show a cylinder top and side",
+                                                                           "ko":  "Why one image can show a cylinder top and side",
+                                                                           "de":  "Why one image can show a cylinder top and side",
+                                                                           "hi":  "Why one image can show a cylinder top and side",
+                                                                           "fr":  "Why one image can show a cylinder top and side"
+                                                                       },
+                    "Compare chief rays and entrance pupils for entocentric, telecentric and hypercentric views":  {
+                                                                                                                       "ja":  "通常・テレセントリック・ハイパーセントリックの主光線と入射瞳を比べる",
+                                                                                                                       "zh":  "Compare chief rays and entrance pupils for entocentric, telecentric and hypercentric views",
+                                                                                                                       "tw":  "Compare chief rays and entrance pupils for entocentric, telecentric and hypercentric views",
+                                                                                                                       "ko":  "Compare chief rays and entrance pupils for entocentric, telecentric and hypercentric views",
+                                                                                                                       "de":  "Compare chief rays and entrance pupils for entocentric, telecentric and hypercentric views",
+                                                                                                                       "hi":  "Compare chief rays and entrance pupils for entocentric, telecentric and hypercentric views",
+                                                                                                                       "fr":  "Compare chief rays and entrance pupils for entocentric, telecentric and hypercentric views"
+                                                                                                                   },
+                    "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Tap a badge for computed gates.":  {
+                                                                                                                             "ja":  "①問い → ②予想 → ③再生 → ④式 → ⑤限界。バッジで計算の門を見る。",
+                                                                                                                             "zh":  "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Tap a badge for computed gates.",
+                                                                                                                             "tw":  "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Tap a badge for computed gates.",
+                                                                                                                             "ko":  "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Tap a badge for computed gates.",
+                                                                                                                             "de":  "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Tap a badge for computed gates.",
+                                                                                                                             "hi":  "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Tap a badge for computed gates.",
+                                                                                                                             "fr":  "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Tap a badge for computed gates."
+                                                                                                                         },
+                    "View one cylinder with three lens types":  {
+                                                                    "ja":  "3 種類のレンズで同じ円柱を見る",
+                                                                    "zh":  "View one cylinder with three lens types",
+                                                                    "tw":  "View one cylinder with three lens types",
+                                                                    "ko":  "View one cylinder with three lens types",
+                                                                    "de":  "View one cylinder with three lens types",
+                                                                    "hi":  "View one cylinder with three lens types",
+                                                                    "fr":  "View one cylinder with three lens types"
+                                                                },
+                    "Compare the entrance pupil formed by chief-ray extensions for entocentric, telecentric and hypercentric views. A virtual pupil beyond the object places the side outside the top face.":  {
+                                                                                                                                                                                                                   "ja":  "通常、テレセントリック、ハイパーセントリックで主光線の延長が作る入射瞳を比べる。物体の向こうにある仮想瞳では上面の外に側面が現れる。",
+                                                                                                                                                                                                                   "zh":  "Compare the entrance pupil formed by chief-ray extensions for entocentric, telecentric and hypercentric views. A virtual pupil beyond the object places the side outside the top face.",
+                                                                                                                                                                                                                   "tw":  "Compare the entrance pupil formed by chief-ray extensions for entocentric, telecentric and hypercentric views. A virtual pupil beyond the object places the side outside the top face.",
+                                                                                                                                                                                                                   "ko":  "Compare the entrance pupil formed by chief-ray extensions for entocentric, telecentric and hypercentric views. A virtual pupil beyond the object places the side outside the top face.",
+                                                                                                                                                                                                                   "de":  "Compare the entrance pupil formed by chief-ray extensions for entocentric, telecentric and hypercentric views. A virtual pupil beyond the object places the side outside the top face.",
+                                                                                                                                                                                                                   "hi":  "Compare the entrance pupil formed by chief-ray extensions for entocentric, telecentric and hypercentric views. A virtual pupil beyond the object places the side outside the top face.",
+                                                                                                                                                                                                                   "fr":  "Compare the entrance pupil formed by chief-ray extensions for entocentric, telecentric and hypercentric views. A virtual pupil beyond the object places the side outside the top face."
+                                                                                                                                                                                                               },
+                    "entocentric entrance pupil":  {
+                                                       "ja":  "通常の入射瞳",
+                                                       "zh":  "entocentric entrance pupil",
+                                                       "tw":  "entocentric entrance pupil",
+                                                       "ko":  "entocentric entrance pupil",
+                                                       "de":  "entocentric entrance pupil",
+                                                       "hi":  "entocentric entrance pupil",
+                                                       "fr":  "entocentric entrance pupil"
+                                                   },
+                    "hypercentric entrance pupil":  {
+                                                        "ja":  "ハイパーセントリックの入射瞳",
+                                                        "zh":  "hypercentric entrance pupil",
+                                                        "tw":  "hypercentric entrance pupil",
+                                                        "ko":  "hypercentric entrance pupil",
+                                                        "de":  "hypercentric entrance pupil",
+                                                        "hi":  "hypercentric entrance pupil",
+                                                        "fr":  "hypercentric entrance pupil"
+                                                    },
+                    "side band":  {
+                                      "ja":  "側面帯",
+                                      "zh":  "side band",
+                                      "tw":  "side band",
+                                      "ko":  "side band",
+                                      "de":  "side band",
+                                      "hi":  "side band",
+                                      "fr":  "side band"
+                                  },
+                    "entrance pupil: paraxial_trace vs ABCD":  {
+                                                                   "ja":  "入射瞳: paraxial_trace と ABCD",
+                                                                   "zh":  "entrance pupil: paraxial_trace vs ABCD",
+                                                                   "tw":  "entrance pupil: paraxial_trace vs ABCD",
+                                                                   "ko":  "entrance pupil: paraxial_trace vs ABCD",
+                                                                   "de":  "entrance pupil: paraxial_trace vs ABCD",
+                                                                   "hi":  "entrance pupil: paraxial_trace vs ABCD",
+                                                                   "fr":  "entrance pupil: paraxial_trace vs ABCD"
+                                                               },
+                    "image-measured side band vs closed form":  {
+                                                                    "ja":  "像から測った側面帯と閉形式",
+                                                                    "zh":  "image-measured side band vs closed form",
+                                                                    "tw":  "image-measured side band vs closed form",
+                                                                    "ko":  "image-measured side band vs closed form",
+                                                                    "de":  "image-measured side band vs closed form",
+                                                                    "hi":  "image-measured side band vs closed form",
+                                                                    "fr":  "image-measured side band vs closed form"
+                                                                },
+                    "side band in telecentric image":  {
+                                                           "ja":  "テレセントリック像の側面帯",
+                                                           "zh":  "side band in telecentric image",
+                                                           "tw":  "side band in telecentric image",
+                                                           "ko":  "side band in telecentric image",
+                                                           "de":  "side band in telecentric image",
+                                                           "hi":  "side band in telecentric image",
+                                                           "fr":  "side band in telecentric image"
+                                                       },
+                    "noise floor ≤ 1 px":  {
+                                                  "ja":  "雑音床 ≤ 1 px",
+                                                  "zh":  "noise floor ≤ 1 px",
+                                                  "tw":  "noise floor ≤ 1 px",
+                                                  "ko":  "noise floor ≤ 1 px",
+                                                  "de":  "noise floor ≤ 1 px",
+                                                  "hi":  "noise floor ≤ 1 px",
+                                                  "fr":  "noise floor ≤ 1 px"
+                                              },
+                    "lens type":  {
+                                      "ja":  "レンズ種別",
+                                      "zh":  "lens type",
+                                      "tw":  "lens type",
+                                      "ko":  "lens type",
+                                      "de":  "lens type",
+                                      "hi":  "lens type",
+                                      "fr":  "lens type"
+                                  },
+                    "Which view shows the cylinder side at the same time?":  {
+                                                                                 "ja":  "円柱の側面まで同時に見えるのはどれ?",
+                                                                                 "zh":  "Which view shows the cylinder side at the same time?",
+                                                                                 "tw":  "Which view shows the cylinder side at the same time?",
+                                                                                 "ko":  "Which view shows the cylinder side at the same time?",
+                                                                                 "de":  "Which view shows the cylinder side at the same time?",
+                                                                                 "hi":  "Which view shows the cylinder side at the same time?",
+                                                                                 "fr":  "Which view shows the cylinder side at the same time?"
+                                                                             },
+                    "entocentric":  {
+                                        "ja":  "通常",
+                                        "zh":  "entocentric",
+                                        "tw":  "entocentric",
+                                        "ko":  "entocentric",
+                                        "de":  "entocentric",
+                                        "hi":  "entocentric",
+                                        "fr":  "entocentric"
+                                    },
+                    "telecentric":  {
+                                        "ja":  "テレセントリック",
+                                        "zh":  "telecentric",
+                                        "tw":  "telecentric",
+                                        "ko":  "telecentric",
+                                        "de":  "telecentric",
+                                        "hi":  "telecentric",
+                                        "fr":  "telecentric"
+                                    },
+                    "hypercentric":  {
+                                         "ja":  "ハイパーセントリック",
+                                         "zh":  "hypercentric",
+                                         "tw":  "hypercentric",
+                                         "ko":  "hypercentric",
+                                         "de":  "hypercentric",
+                                         "hi":  "hypercentric",
+                                         "fr":  "hypercentric"
+                                     },
+                    "Chief rays appear to converge to a virtual entrance pupil beyond the object.":  {
+                                                                                                         "ja":  "物体の向こうの仮想入射瞳へ主光線が収束して見えるため。",
+                                                                                                         "zh":  "Chief rays appear to converge to a virtual entrance pupil beyond the object.",
+                                                                                                         "tw":  "Chief rays appear to converge to a virtual entrance pupil beyond the object.",
+                                                                                                         "ko":  "Chief rays appear to converge to a virtual entrance pupil beyond the object.",
+                                                                                                         "de":  "Chief rays appear to converge to a virtual entrance pupil beyond the object.",
+                                                                                                         "hi":  "Chief rays appear to converge to a virtual entrance pupil beyond the object.",
+                                                                                                         "fr":  "Chief rays appear to converge to a virtual entrance pupil beyond the object."
+                                                                                                     },
+                    "entrance pupil z = fd/(f-d)":  {
+                                                        "ja":  "入射瞳 z = fd/(f-d)",
+                                                        "zh":  "entrance pupil z = fd/(f-d)",
+                                                        "tw":  "entrance pupil z = fd/(f-d)",
+                                                        "ko":  "entrance pupil z = fd/(f-d)",
+                                                        "de":  "entrance pupil z = fd/(f-d)",
+                                                        "hi":  "entrance pupil z = fd/(f-d)",
+                                                        "fr":  "entrance pupil z = fd/(f-d)"
+                                                    },
+                    "Paraxial model; aberrations and aperture vignetting are omitted.":  {
+                                                                                             "ja":  "近軸模型で、収差と開口によるケラレは省略。",
+                                                                                             "zh":  "Paraxial model; aberrations and aperture vignetting are omitted.",
+                                                                                             "tw":  "Paraxial model; aberrations and aperture vignetting are omitted.",
+                                                                                             "ko":  "Paraxial model; aberrations and aperture vignetting are omitted.",
+                                                                                             "de":  "Paraxial model; aberrations and aperture vignetting are omitted.",
+                                                                                             "hi":  "Paraxial model; aberrations and aperture vignetting are omitted.",
+                                                                                             "fr":  "Paraxial model; aberrations and aperture vignetting are omitted."
+                                                                                         },
+                    "Move the entrance pupil":  {
+                                                    "ja":  "入射瞳を動かす",
+                                                    "zh":  "Move the entrance pupil",
+                                                    "tw":  "Move the entrance pupil",
+                                                    "ko":  "Move the entrance pupil",
+                                                    "de":  "Move the entrance pupil",
+                                                    "hi":  "Move the entrance pupil",
+                                                    "fr":  "Move the entrance pupil"
+                                                },
+                    "Moving the stop beyond the focal plane moves the virtual entrance pupil behind the object and widens the visible side band.":  {
+                                                                                                                                                        "ja":  "絞りを焦点面から遠ざけると、仮想入射瞳が物体の向こうへ移り、見える側面の帯が広がる。",
+                                                                                                                                                        "zh":  "Moving the stop beyond the focal plane moves the virtual entrance pupil behind the object and widens the visible side band.",
+                                                                                                                                                        "tw":  "Moving the stop beyond the focal plane moves the virtual entrance pupil behind the object and widens the visible side band.",
+                                                                                                                                                        "ko":  "Moving the stop beyond the focal plane moves the virtual entrance pupil behind the object and widens the visible side band.",
+                                                                                                                                                        "de":  "Moving the stop beyond the focal plane moves the virtual entrance pupil behind the object and widens the visible side band.",
+                                                                                                                                                        "hi":  "Moving the stop beyond the focal plane moves the virtual entrance pupil behind the object and widens the visible side band.",
+                                                                                                                                                        "fr":  "Moving the stop beyond the focal plane moves the virtual entrance pupil behind the object and widens the visible side band."
+                                                                                                                                                    },
+                    "entrance-pupil position":  {
+                                                    "ja":  "入射瞳位置",
+                                                    "zh":  "entrance-pupil position",
+                                                    "tw":  "entrance-pupil position",
+                                                    "ko":  "entrance-pupil position",
+                                                    "de":  "entrance-pupil position",
+                                                    "hi":  "entrance-pupil position",
+                                                    "fr":  "entrance-pupil position"
+                                                },
+                    "lens-to-stop distance d":  {
+                                                    "ja":  "レンズから絞りまで d",
+                                                    "zh":  "lens-to-stop distance d",
+                                                    "tw":  "lens-to-stop distance d",
+                                                    "ko":  "lens-to-stop distance d",
+                                                    "de":  "lens-to-stop distance d",
+                                                    "hi":  "lens-to-stop distance d",
+                                                    "fr":  "lens-to-stop distance d"
+                                                },
+                    "What happens to the side band as the pupil recedes?":  {
+                                                                                "ja":  "入射瞳が円柱から遠ざかると側面帯は?",
+                                                                                "zh":  "What happens to the side band as the pupil recedes?",
+                                                                                "tw":  "What happens to the side band as the pupil recedes?",
+                                                                                "ko":  "What happens to the side band as the pupil recedes?",
+                                                                                "de":  "What happens to the side band as the pupil recedes?",
+                                                                                "hi":  "What happens to the side band as the pupil recedes?",
+                                                                                "fr":  "What happens to the side band as the pupil recedes?"
+                                                                            },
+                    "narrows":  {
+                                    "ja":  "狭くなる",
+                                    "zh":  "narrows",
+                                    "tw":  "narrows",
+                                    "ko":  "narrows",
+                                    "de":  "narrows",
+                                    "hi":  "narrows",
+                                    "fr":  "narrows"
+                                },
+                    "widens":  {
+                                   "ja":  "広くなる",
+                                   "zh":  "widens",
+                                   "tw":  "widens",
+                                   "ko":  "widens",
+                                   "de":  "widens",
+                                   "hi":  "widens",
+                                   "fr":  "widens"
+                               },
+                    "At long distance the chief rays approach parallel.":  {
+                                                                               "ja":  "遠方では主光線が平行に近づく。",
+                                                                               "zh":  "At long distance the chief rays approach parallel.",
+                                                                               "tw":  "At long distance the chief rays approach parallel.",
+                                                                               "ko":  "At long distance the chief rays approach parallel.",
+                                                                               "de":  "At long distance the chief rays approach parallel.",
+                                                                               "hi":  "At long distance the chief rays approach parallel.",
+                                                                               "fr":  "At long distance the chief rays approach parallel."
+                                                                           },
+                    "w = RH/(|z_p|-H)":  {
+                                             "ja":  "w = RH/(|z_p|-H)",
+                                             "zh":  "w = RH/(|z_p|-H)",
+                                             "tw":  "w = RH/(|z_p|-H)",
+                                             "ko":  "w = RH/(|z_p|-H)",
+                                             "de":  "w = RH/(|z_p|-H)",
+                                             "hi":  "w = RH/(|z_p|-H)",
+                                             "fr":  "w = RH/(|z_p|-H)"
+                                         },
+                    "Configurations where the pupil intersects the object are not shown.":  {
+                                                                                                "ja":  "瞳が物体と交わる領域は表示しない。",
+                                                                                                "zh":  "Configurations where the pupil intersects the object are not shown.",
+                                                                                                "tw":  "Configurations where the pupil intersects the object are not shown.",
+                                                                                                "ko":  "Configurations where the pupil intersects the object are not shown.",
+                                                                                                "de":  "Configurations where the pupil intersects the object are not shown.",
+                                                                                                "hi":  "Configurations where the pupil intersects the object are not shown.",
+                                                                                                "fr":  "Configurations where the pupil intersects the object are not shown."
+                                                                                            },
+                    "How do top and side appear in the image?":  {
+                                                                     "ja":  "像では上面と側面がどう並ぶ?",
+                                                                     "zh":  "How do top and side appear in the image?",
+                                                                     "tw":  "How do top and side appear in the image?",
+                                                                     "ko":  "How do top and side appear in the image?",
+                                                                     "de":  "How do top and side appear in the image?",
+                                                                     "hi":  "How do top and side appear in the image?",
+                                                                     "fr":  "How do top and side appear in the image?"
+                                                                 },
+                    "In the image synthesized from projection rays, the orange side forms a doughnut around the blue top. Band width is measured from image pixels.":  {
+                                                                                                                                                                           "ja":  "投影光線から合成した像では、青い上面の外側に橙の側面がドーナツ状に並ぶ。帯幅は画像の色領域から測る。",
+                                                                                                                                                                           "zh":  "In the image synthesized from projection rays, the orange side forms a doughnut around the blue top. Band width is measured from image pixels.",
+                                                                                                                                                                           "tw":  "In the image synthesized from projection rays, the orange side forms a doughnut around the blue top. Band width is measured from image pixels.",
+                                                                                                                                                                           "ko":  "In the image synthesized from projection rays, the orange side forms a doughnut around the blue top. Band width is measured from image pixels.",
+                                                                                                                                                                           "de":  "In the image synthesized from projection rays, the orange side forms a doughnut around the blue top. Band width is measured from image pixels.",
+                                                                                                                                                                           "hi":  "In the image synthesized from projection rays, the orange side forms a doughnut around the blue top. Band width is measured from image pixels.",
+                                                                                                                                                                           "fr":  "In the image synthesized from projection rays, the orange side forms a doughnut around the blue top. Band width is measured from image pixels."
+                                                                                                                                                                       },
+                    "side band measured in image":  {
+                                                        "ja":  "画像で測った側面帯",
+                                                        "zh":  "side band measured in image",
+                                                        "tw":  "side band measured in image",
+                                                        "ko":  "side band measured in image",
+                                                        "de":  "side band measured in image",
+                                                        "hi":  "side band measured in image",
+                                                        "fr":  "side band measured in image"
+                                                    },
+                    "synthetic camera image":  {
+                                                   "ja":  "合成カメラ像",
+                                                   "zh":  "synthetic camera image",
+                                                   "tw":  "synthetic camera image",
+                                                   "ko":  "synthetic camera image",
+                                                   "de":  "synthetic camera image",
+                                                   "hi":  "synthetic camera image",
+                                                   "fr":  "synthetic camera image"
+                                               },
+                    "Does the side appear inside or outside the top face?":  {
+                                                                                 "ja":  "側面は上面の内側と外側のどちらに現れる?",
+                                                                                 "zh":  "Does the side appear inside or outside the top face?",
+                                                                                 "tw":  "Does the side appear inside or outside the top face?",
+                                                                                 "ko":  "Does the side appear inside or outside the top face?",
+                                                                                 "de":  "Does the side appear inside or outside the top face?",
+                                                                                 "hi":  "Does the side appear inside or outside the top face?",
+                                                                                 "fr":  "Does the side appear inside or outside the top face?"
+                                                                             },
+                    "inside":  {
+                                   "ja":  "内側",
+                                   "zh":  "inside",
+                                   "tw":  "inside",
+                                   "ko":  "inside",
+                                   "de":  "inside",
+                                   "hi":  "inside",
+                                   "fr":  "inside"
+                               },
+                    "outside":  {
+                                    "ja":  "外側",
+                                    "zh":  "outside",
+                                    "tw":  "outside",
+                                    "ko":  "outside",
+                                    "de":  "outside",
+                                    "hi":  "outside",
+                                    "fr":  "outside"
+                                },
+                    "The farther rim projects larger and becomes an outer annulus.":  {
+                                                                                          "ja":  "遠い側の円周が大きく投影され、外側の環になる。",
+                                                                                          "zh":  "The farther rim projects larger and becomes an outer annulus.",
+                                                                                          "tw":  "The farther rim projects larger and becomes an outer annulus.",
+                                                                                          "ko":  "The farther rim projects larger and becomes an outer annulus.",
+                                                                                          "de":  "The farther rim projects larger and becomes an outer annulus.",
+                                                                                          "hi":  "The farther rim projects larger and becomes an outer annulus.",
+                                                                                          "fr":  "The farther rim projects larger and becomes an outer annulus."
+                                                                                      },
+                    "pixel band ≈ scale × RH/(|z_p|-H)":  {
+                                                              "ja":  "画素帯 ≈ scale × RH/(|z_p|-H)",
+                                                              "zh":  "pixel band ≈ scale × RH/(|z_p|-H)",
+                                                              "tw":  "pixel band ≈ scale × RH/(|z_p|-H)",
+                                                              "ko":  "pixel band ≈ scale × RH/(|z_p|-H)",
+                                                              "de":  "pixel band ≈ scale × RH/(|z_p|-H)",
+                                                              "hi":  "pixel band ≈ scale × RH/(|z_p|-H)",
+                                                              "fr":  "pixel band ≈ scale × RH/(|z_p|-H)"
+                                                          },
+                    "Two-colour silhouette only; lighting, texture and reflection are omitted.":  {
+                                                                                                      "ja":  "照明、質感、反射は含まない二色の輪郭像。",
+                                                                                                      "zh":  "Two-colour silhouette only; lighting, texture and reflection are omitted.",
+                                                                                                      "tw":  "Two-colour silhouette only; lighting, texture and reflection are omitted.",
+                                                                                                      "ko":  "Two-colour silhouette only; lighting, texture and reflection are omitted.",
+                                                                                                      "de":  "Two-colour silhouette only; lighting, texture and reflection are omitted.",
+                                                                                                      "hi":  "Two-colour silhouette only; lighting, texture and reflection are omitted.",
+                                                                                                      "fr":  "Two-colour silhouette only; lighting, texture and reflection are omitted."
+                                                                                                  },
+                    "Is visibility the same as metrology?":  {
+                                                                 "ja":  "見えることと測れることは同じ?",
+                                                                 "zh":  "Is visibility the same as metrology?",
+                                                                 "tw":  "Is visibility the same as metrology?",
+                                                                 "ko":  "Is visibility the same as metrology?",
+                                                                 "de":  "Is visibility the same as metrology?",
+                                                                 "hi":  "Is visibility the same as metrology?",
+                                                                 "fr":  "Is visibility the same as metrology?"
+                                                             },
+                    "Putting top and side in one frame does not calibrate depth of field, distortion or vignetting. This model marks them as uncomputed limits.":  {
+                                                                                                                                                                       "ja":  "上面と側面を一枚に収めても、被写界深度、歪み、ケラレは別に校正が要る。この模型では未計算として限界を明示する。",
+                                                                                                                                                                       "zh":  "Putting top and side in one frame does not calibrate depth of field, distortion or vignetting. This model marks them as uncomputed limits.",
+                                                                                                                                                                       "tw":  "Putting top and side in one frame does not calibrate depth of field, distortion or vignetting. This model marks them as uncomputed limits.",
+                                                                                                                                                                       "ko":  "Putting top and side in one frame does not calibrate depth of field, distortion or vignetting. This model marks them as uncomputed limits.",
+                                                                                                                                                                       "de":  "Putting top and side in one frame does not calibrate depth of field, distortion or vignetting. This model marks them as uncomputed limits.",
+                                                                                                                                                                       "hi":  "Putting top and side in one frame does not calibrate depth of field, distortion or vignetting. This model marks them as uncomputed limits.",
+                                                                                                                                                                       "fr":  "Putting top and side in one frame does not calibrate depth of field, distortion or vignetting. This model marks them as uncomputed limits."
+                                                                                                                                                                   },
+                    "synthetic image; real-lens calibration excluded":  {
+                                                                            "ja":  "合成像。実レンズの校正は含まない",
+                                                                            "zh":  "synthetic image; real-lens calibration excluded",
+                                                                            "tw":  "synthetic image; real-lens calibration excluded",
+                                                                            "ko":  "synthetic image; real-lens calibration excluded",
+                                                                            "de":  "synthetic image; real-lens calibration excluded",
+                                                                            "hi":  "synthetic image; real-lens calibration excluded",
+                                                                            "fr":  "synthetic image; real-lens calibration excluded"
+                                                                        },
+                    "depth of field and distortion are corrected":  {
+                                                                        "ja":  "被写界深度と歪みも補正済み",
+                                                                        "zh":  "depth of field and distortion are corrected",
+                                                                        "tw":  "depth of field and distortion are corrected",
+                                                                        "ko":  "depth of field and distortion are corrected",
+                                                                        "de":  "depth of field and distortion are corrected",
+                                                                        "hi":  "depth of field and distortion are corrected",
+                                                                        "fr":  "depth of field and distortion are corrected"
+                                                                    },
+                    "includes real-lens calibration":  {
+                                                           "ja":  "実レンズ校正を含む",
+                                                           "zh":  "includes real-lens calibration",
+                                                           "tw":  "includes real-lens calibration",
+                                                           "ko":  "includes real-lens calibration",
+                                                           "de":  "includes real-lens calibration",
+                                                           "hi":  "includes real-lens calibration",
+                                                           "fr":  "includes real-lens calibration"
+                                                       },
+                    "not computed":  {
+                                         "ja":  "未計算",
+                                         "zh":  "not computed",
+                                         "tw":  "not computed",
+                                         "ko":  "not computed",
+                                         "de":  "not computed",
+                                         "hi":  "not computed",
+                                         "fr":  "not computed"
+                                     },
+                    "If it is visible in one frame, is it immediately measurable?":  {
+                                                                                         "ja":  "一枚で見えれば、そのまま寸法測定できる?",
+                                                                                         "zh":  "If it is visible in one frame, is it immediately measurable?",
+                                                                                         "tw":  "If it is visible in one frame, is it immediately measurable?",
+                                                                                         "ko":  "If it is visible in one frame, is it immediately measurable?",
+                                                                                         "de":  "If it is visible in one frame, is it immediately measurable?",
+                                                                                         "hi":  "If it is visible in one frame, is it immediately measurable?",
+                                                                                         "fr":  "If it is visible in one frame, is it immediately measurable?"
+                                                                                     },
+                    "yes":  {
+                                "ja":  "できる",
+                                "zh":  "yes",
+                                "tw":  "yes",
+                                "ko":  "yes",
+                                "de":  "yes",
+                                "hi":  "yes",
+                                "fr":  "yes"
+                            },
+                    "calibration is required":  {
+                                                    "ja":  "校正が必要",
+                                                    "zh":  "calibration is required",
+                                                    "tw":  "calibration is required",
+                                                    "ko":  "calibration is required",
+                                                    "de":  "calibration is required",
+                                                    "hi":  "calibration is required",
+                                                    "fr":  "calibration is required"
+                                                },
+                    "Metrology requires calibration of depth-dependent magnification and distortion.":  {
+                                                                                                            "ja":  "奥行きごとの倍率と歪みを校正して初めて測定に使える。",
+                                                                                                            "zh":  "Metrology requires calibration of depth-dependent magnification and distortion.",
+                                                                                                            "tw":  "Metrology requires calibration of depth-dependent magnification and distortion.",
+                                                                                                            "ko":  "Metrology requires calibration of depth-dependent magnification and distortion.",
+                                                                                                            "de":  "Metrology requires calibration of depth-dependent magnification and distortion.",
+                                                                                                            "hi":  "Metrology requires calibration of depth-dependent magnification and distortion.",
+                                                                                                            "fr":  "Metrology requires calibration of depth-dependent magnification and distortion."
+                                                                                                        },
+                    "display model = paraxial projection only":  {
+                                                                     "ja":  "表示模型 = 近軸投影のみ",
+                                                                     "zh":  "display model = paraxial projection only",
+                                                                     "tw":  "display model = paraxial projection only",
+                                                                     "ko":  "display model = paraxial projection only",
+                                                                     "de":  "display model = paraxial projection only",
+                                                                     "hi":  "display model = paraxial projection only",
+                                                                     "fr":  "display model = paraxial projection only"
+                                                                 },
+                    "Depth of field, distortion and vignetting remain uncomputed.":  {
+                                                                                         "ja":  "被写界深度、歪み、ケラレを未計算として残す。",
+                                                                                         "zh":  "Depth of field, distortion and vignetting remain uncomputed.",
+                                                                                         "tw":  "Depth of field, distortion and vignetting remain uncomputed.",
+                                                                                         "ko":  "Depth of field, distortion and vignetting remain uncomputed.",
+                                                                                         "de":  "Depth of field, distortion and vignetting remain uncomputed.",
+                                                                                         "hi":  "Depth of field, distortion and vignetting remain uncomputed.",
+                                                                                         "fr":  "Depth of field, distortion and vignetting remain uncomputed."
+                                                                                     },
+                    "Lens, cylinder and images are entirely synthetic. Dimensions are explanatory assumptions and represent no specific product or manufacturer.":  {
+                                                                                                                                                                        "ja":  "レンズ、円柱、像はすべて合成。寸法は説明用の仮定で、特定の製品やメーカーを表さない。",
+                                                                                                                                                                        "zh":  "Lens, cylinder and images are entirely synthetic. Dimensions are explanatory assumptions and represent no specific product or manufacturer.",
+                                                                                                                                                                        "tw":  "Lens, cylinder and images are entirely synthetic. Dimensions are explanatory assumptions and represent no specific product or manufacturer.",
+                                                                                                                                                                        "ko":  "Lens, cylinder and images are entirely synthetic. Dimensions are explanatory assumptions and represent no specific product or manufacturer.",
+                                                                                                                                                                        "de":  "Lens, cylinder and images are entirely synthetic. Dimensions are explanatory assumptions and represent no specific product or manufacturer.",
+                                                                                                                                                                        "hi":  "Lens, cylinder and images are entirely synthetic. Dimensions are explanatory assumptions and represent no specific product or manufacturer.",
+                                                                                                                                                                        "fr":  "Lens, cylinder and images are entirely synthetic. Dimensions are explanatory assumptions and represent no specific product or manufacturer."
+                                                                                                                                                                    }
+                }
+}
