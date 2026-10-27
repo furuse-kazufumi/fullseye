@@ -1,0 +1,528 @@
+{
+ "_": "English-keyed translations for the synthetic multibeam bathymetry lesson.",
+ "example": "build_multibeam_anim3d",
+ "strings": {
+  "Mapping the seabed with sound from a vessel": {
+   "ja": "船から音で海底地形を測る",
+   "zh": "Mapping the seabed with sound from a vessel",
+   "tw": "Mapping the seabed with sound from a vessel",
+   "ko": "Mapping the seabed with sound from a vessel",
+   "de": "Mapping the seabed with sound from a vessel",
+   "hi": "Mapping the seabed with sound from a vessel",
+   "fr": "Mapping the seabed with sound from a vessel"
+  },
+  "See how a layered sound speed bends outer beams in multibeam bathymetry": {
+   "ja": "マルチビーム測深で、層状の音速が外側ビームをどう曲げるかを見る",
+   "zh": "See how a layered sound speed bends outer beams in multibeam bathymetry",
+   "tw": "See how a layered sound speed bends outer beams in multibeam bathymetry",
+   "ko": "See how a layered sound speed bends outer beams in multibeam bathymetry",
+   "de": "See how a layered sound speed bends outer beams in multibeam bathymetry",
+   "hi": "See how a layered sound speed bends outer beams in multibeam bathymetry",
+   "fr": "See how a layered sound speed bends outer beams in multibeam bathymetry"
+  },
+  "Follow question, prediction, play, formula and limit while two methods invert the same synthetic observations.": {
+   "ja": "問い、予想、再生、式、限界の順に、同じ合成観測を二つの方法で復元する。",
+   "zh": "Follow question, prediction, play, formula and limit while two methods invert the same synthetic observations.",
+   "tw": "Follow question, prediction, play, formula and limit while two methods invert the same synthetic observations.",
+   "ko": "Follow question, prediction, play, formula and limit while two methods invert the same synthetic observations.",
+   "de": "Follow question, prediction, play, formula and limit while two methods invert the same synthetic observations.",
+   "hi": "Follow question, prediction, play, formula and limit while two methods invert the same synthetic observations.",
+   "fr": "Follow question, prediction, play, formula and limit while two methods invert the same synthetic observations."
+  },
+  "Why does travel time reveal depth?": {
+   "ja": "なぜ音で深さが分かる?",
+   "zh": "Why does travel time reveal depth?",
+   "tw": "Why does travel time reveal depth?",
+   "ko": "Why does travel time reveal depth?",
+   "de": "Why does travel time reveal depth?",
+   "hi": "Why does travel time reveal depth?",
+   "fr": "Why does travel time reveal depth?"
+  },
+  "For every beam in the fan, measure the time from transmission to the seabed echo. The centre travels a shorter path; outer beams travel longer oblique paths.": {
+   "ja": "扇状の各ビームについて、送信から海底反射が戻るまでの時間を測る。中央ほど短く、外側ほど斜めに長い道を通る。",
+   "zh": "For every beam in the fan, measure the time from transmission to the seabed echo. The centre travels a shorter path; outer beams travel longer oblique paths.",
+   "tw": "For every beam in the fan, measure the time from transmission to the seabed echo. The centre travels a shorter path; outer beams travel longer oblique paths.",
+   "ko": "For every beam in the fan, measure the time from transmission to the seabed echo. The centre travels a shorter path; outer beams travel longer oblique paths.",
+   "de": "For every beam in the fan, measure the time from transmission to the seabed echo. The centre travels a shorter path; outer beams travel longer oblique paths.",
+   "hi": "For every beam in the fan, measure the time from transmission to the seabed echo. The centre travels a shorter path; outer beams travel longer oblique paths.",
+   "fr": "For every beam in the fan, measure the time from transmission to the seabed echo. The centre travels a shorter path; outer beams travel longer oblique paths."
+  },
+  "time resolution": {
+   "ja": "時間分解能",
+   "zh": "time resolution",
+   "tw": "time resolution",
+   "ko": "time resolution",
+   "de": "time resolution",
+   "hi": "time resolution",
+   "fr": "time resolution"
+  },
+  "two-way travel time": {
+   "ja": "往復時間",
+   "zh": "two-way travel time",
+   "tw": "two-way travel time",
+   "ko": "two-way travel time",
+   "de": "two-way travel time",
+   "hi": "two-way travel time",
+   "fr": "two-way travel time"
+  },
+  "seabed RMS with the correct sound-speed profile": {
+   "ja": "正しい音速で復元した海底の RMS",
+   "zh": "seabed RMS with the correct sound-speed profile",
+   "tw": "seabed RMS with the correct sound-speed profile",
+   "ko": "seabed RMS with the correct sound-speed profile",
+   "de": "seabed RMS with the correct sound-speed profile",
+   "hi": "seabed RMS with the correct sound-speed profile",
+   "fr": "seabed RMS with the correct sound-speed profile"
+  },
+  "Snell invariant along every ray": {
+   "ja": "各光線の Snell 不変量",
+   "zh": "Snell invariant along every ray",
+   "tw": "Snell invariant along every ray",
+   "ko": "Snell invariant along every ray",
+   "de": "Snell invariant along every ray",
+   "hi": "Snell invariant along every ray",
+   "fr": "Snell invariant along every ray"
+  },
+  "beam angle": {
+   "ja": "送信角",
+   "zh": "beam angle",
+   "tw": "beam angle",
+   "ko": "beam angle",
+   "de": "beam angle",
+   "hi": "beam angle",
+   "fr": "beam angle"
+  },
+  "For the same travel time, what does faster sound imply?": {
+   "ja": "同じ往復時間なら、速い音ほど推定距離は?",
+   "zh": "For the same travel time, what does faster sound imply?",
+   "tw": "For the same travel time, what does faster sound imply?",
+   "ko": "For the same travel time, what does faster sound imply?",
+   "de": "For the same travel time, what does faster sound imply?",
+   "hi": "For the same travel time, what does faster sound imply?",
+   "fr": "For the same travel time, what does faster sound imply?"
+  },
+  "shorter": {
+   "ja": "短い",
+   "zh": "shorter",
+   "tw": "shorter",
+   "ko": "shorter",
+   "de": "shorter",
+   "hi": "shorter",
+   "fr": "shorter"
+  },
+  "longer": {
+   "ja": "長い",
+   "zh": "longer",
+   "tw": "longer",
+   "ko": "longer",
+   "de": "longer",
+   "hi": "longer",
+   "fr": "longer"
+  },
+  "Distance is sound speed times one-way time.": {
+   "ja": "距離は音速と片道時間の積。",
+   "zh": "Distance is sound speed times one-way time.",
+   "tw": "Distance is sound speed times one-way time.",
+   "ko": "Distance is sound speed times one-way time.",
+   "de": "Distance is sound speed times one-way time.",
+   "hi": "Distance is sound speed times one-way time.",
+   "fr": "Distance is sound speed times one-way time."
+  },
+  "range = c × t / 2": {
+   "ja": "range = c × t / 2",
+   "zh": "range = c × t / 2",
+   "tw": "range = c × t / 2",
+   "ko": "range = c × t / 2",
+   "de": "range = c × t / 2",
+   "hi": "range = c × t / 2",
+   "fr": "range = c × t / 2"
+  },
+  "An oblique beam also needs its direction.": {
+   "ja": "斜めのビームでは距離だけでなく向きも必要。",
+   "zh": "An oblique beam also needs its direction.",
+   "tw": "An oblique beam also needs its direction.",
+   "ko": "An oblique beam also needs its direction.",
+   "de": "An oblique beam also needs its direction.",
+   "hi": "An oblique beam also needs its direction.",
+   "fr": "An oblique beam also needs its direction."
+  },
+  "A fan of beams fills a swath": {
+   "ja": "扇のビームが海底を帯で埋める",
+   "zh": "A fan of beams fills a swath",
+   "tw": "A fan of beams fills a swath",
+   "ko": "A fan of beams fills a swath",
+   "de": "A fan of beams fills a swath",
+   "hi": "A fan of beams fills a swath",
+   "fr": "A fan of beams fills a swath"
+  },
+  "Forty-one rays hit a gridded synthetic slope, valley and small mound. Their yellow footprints form one cross-track line; vessel motion turns it into a swath.": {
+   "ja": "規則格子から作った斜面・谷・小さな高まりへ 41 本の光線を追跡した。黄色い着底点が一度の測線幅を作り、船の前進で帯になる。",
+   "zh": "Forty-one rays hit a gridded synthetic slope, valley and small mound. Their yellow footprints form one cross-track line; vessel motion turns it into a swath.",
+   "tw": "Forty-one rays hit a gridded synthetic slope, valley and small mound. Their yellow footprints form one cross-track line; vessel motion turns it into a swath.",
+   "ko": "Forty-one rays hit a gridded synthetic slope, valley and small mound. Their yellow footprints form one cross-track line; vessel motion turns it into a swath.",
+   "de": "Forty-one rays hit a gridded synthetic slope, valley and small mound. Their yellow footprints form one cross-track line; vessel motion turns it into a swath.",
+   "hi": "Forty-one rays hit a gridded synthetic slope, valley and small mound. Their yellow footprints form one cross-track line; vessel motion turns it into a swath.",
+   "fr": "Forty-one rays hit a gridded synthetic slope, valley and small mound. Their yellow footprints form one cross-track line; vessel motion turns it into a swath."
+  },
+  "beam count": {
+   "ja": "ビーム数",
+   "zh": "beam count",
+   "tw": "beam count",
+   "ko": "beam count",
+   "de": "beam count",
+   "hi": "beam count",
+   "fr": "beam count"
+  },
+  "bottom depth": {
+   "ja": "着底深さ",
+   "zh": "bottom depth",
+   "tw": "bottom depth",
+   "ko": "bottom depth",
+   "de": "bottom depth",
+   "hi": "bottom depth",
+   "fr": "bottom depth"
+  },
+  "Compared with the centre, outer footprints are...?": {
+   "ja": "外側ビームの海底点は中央より?",
+   "zh": "Compared with the centre, outer footprints are...?",
+   "tw": "Compared with the centre, outer footprints are...?",
+   "ko": "Compared with the centre, outer footprints are...?",
+   "de": "Compared with the centre, outer footprints are...?",
+   "hi": "Compared with the centre, outer footprints are...?",
+   "fr": "Compared with the centre, outer footprints are...?"
+  },
+  "farther across-track": {
+   "ja": "横に離れる",
+   "zh": "farther across-track",
+   "tw": "farther across-track",
+   "ko": "farther across-track",
+   "de": "farther across-track",
+   "hi": "farther across-track",
+   "fr": "farther across-track"
+  },
+  "directly underneath": {
+   "ja": "真下に重なる",
+   "zh": "directly underneath",
+   "tw": "directly underneath",
+   "ko": "directly underneath",
+   "de": "directly underneath",
+   "hi": "directly underneath",
+   "fr": "directly underneath"
+  },
+  "Each steering angle follows a different ray, producing a fan.": {
+   "ja": "送信角ごとに別の光線を追跡するため、扇状に広がる。",
+   "zh": "Each steering angle follows a different ray, producing a fan.",
+   "tw": "Each steering angle follows a different ray, producing a fan.",
+   "ko": "Each steering angle follows a different ray, producing a fan.",
+   "de": "Each steering angle follows a different ray, producing a fan.",
+   "hi": "Each steering angle follows a different ray, producing a fan.",
+   "fr": "Each steering angle follows a different ray, producing a fan."
+  },
+  "q = sinθ / c(z)": {
+   "ja": "q = sinθ / c(z)",
+   "zh": "q = sinθ / c(z)",
+   "tw": "q = sinθ / c(z)",
+   "ko": "q = sinθ / c(z)",
+   "de": "q = sinθ / c(z)",
+   "hi": "q = sinθ / c(z)",
+   "fr": "q = sinθ / c(z)"
+  },
+  "The terrain and water column are synthetic, not a real site.": {
+   "ja": "合成地形と合成海水であり、特定海域ではない。",
+   "zh": "The terrain and water column are synthetic, not a real site.",
+   "tw": "The terrain and water column are synthetic, not a real site.",
+   "ko": "The terrain and water column are synthetic, not a real site.",
+   "de": "The terrain and water column are synthetic, not a real site.",
+   "hi": "The terrain and water column are synthetic, not a real site.",
+   "fr": "The terrain and water column are synthetic, not a real site."
+  },
+  "A wrong sound speed bends the bottom into a smile": {
+   "ja": "音速を誤ると海底が笑う",
+   "zh": "A wrong sound speed bends the bottom into a smile",
+   "tw": "A wrong sound speed bends the bottom into a smile",
+   "ko": "A wrong sound speed bends the bottom into a smile",
+   "de": "A wrong sound speed bends the bottom into a smile",
+   "hi": "A wrong sound speed bends the bottom into a smile",
+   "fr": "A wrong sound speed bends the bottom into a smile"
+  },
+  "correct-profile RMS": {
+   "ja": "正しい復元の RMS",
+   "zh": "correct-profile RMS",
+   "tw": "correct-profile RMS",
+   "ko": "correct-profile RMS",
+   "de": "correct-profile RMS",
+   "hi": "correct-profile RMS",
+   "fr": "correct-profile RMS"
+  },
+  "Where does ignoring the profile hurt most?": {
+   "ja": "音速プロファイルを無視すると誤差はどこで増える?",
+   "zh": "Where does ignoring the profile hurt most?",
+   "tw": "Where does ignoring the profile hurt most?",
+   "ko": "Where does ignoring the profile hurt most?",
+   "de": "Where does ignoring the profile hurt most?",
+   "hi": "Where does ignoring the profile hurt most?",
+   "fr": "Where does ignoring the profile hurt most?"
+  },
+  "outer beams": {
+   "ja": "外側ビーム",
+   "zh": "outer beams",
+   "tw": "outer beams",
+   "ko": "outer beams",
+   "de": "outer beams",
+   "hi": "outer beams",
+   "fr": "outer beams"
+  },
+  "nadir only": {
+   "ja": "真下だけ",
+   "zh": "nadir only",
+   "tw": "nadir only",
+   "ko": "nadir only",
+   "de": "nadir only",
+   "hi": "nadir only",
+   "fr": "nadir only"
+  },
+  "Oblique rays spend longer crossing layers, so neglected refraction accumulates.": {
+   "ja": "斜めほど異なる深さの層を長く通り、屈折の積み残しが増える。",
+   "zh": "Oblique rays spend longer crossing layers, so neglected refraction accumulates.",
+   "tw": "Oblique rays spend longer crossing layers, so neglected refraction accumulates.",
+   "ko": "Oblique rays spend longer crossing layers, so neglected refraction accumulates.",
+   "de": "Oblique rays spend longer crossing layers, so neglected refraction accumulates.",
+   "hi": "Oblique rays spend longer crossing layers, so neglected refraction accumulates.",
+   "fr": "Oblique rays spend longer crossing layers, so neglected refraction accumulates."
+  },
+  "Limit: missing and false echoes": {
+   "ja": "限界: 戻らない音と偽の音",
+   "zh": "Limit: missing and false echoes",
+   "tw": "Limit: missing and false echoes",
+   "ko": "Limit: missing and false echoes",
+   "de": "Limit: missing and false echoes",
+   "hi": "Limit: missing and false echoes",
+   "fr": "Limit: missing and false echoes"
+  },
+  "A steep cliff can reflect sound away, bubbles can block it, and multipath can create a late false echo. The assumption of one clean travel time then fails.": {
+   "ja": "急な崖では鏡面反射が船へ戻らず、気泡は音を遮り、多重反射は遅い偽エコーを作る。往復時間が一つ得られるという前提そのものが壊れる。",
+   "zh": "A steep cliff can reflect sound away, bubbles can block it, and multipath can create a late false echo. The assumption of one clean travel time then fails.",
+   "tw": "A steep cliff can reflect sound away, bubbles can block it, and multipath can create a late false echo. The assumption of one clean travel time then fails.",
+   "ko": "A steep cliff can reflect sound away, bubbles can block it, and multipath can create a late false echo. The assumption of one clean travel time then fails.",
+   "de": "A steep cliff can reflect sound away, bubbles can block it, and multipath can create a late false echo. The assumption of one clean travel time then fails.",
+   "hi": "A steep cliff can reflect sound away, bubbles can block it, and multipath can create a late false echo. The assumption of one clean travel time then fails.",
+   "fr": "A steep cliff can reflect sound away, bubbles can block it, and multipath can create a late false echo. The assumption of one clean travel time then fails."
+  },
+  "assessment": {
+   "ja": "判定",
+   "zh": "assessment",
+   "tw": "assessment",
+   "ko": "assessment",
+   "de": "assessment",
+   "hi": "assessment",
+   "fr": "assessment"
+  },
+  "ambiguous": {
+   "ja": "一意でない",
+   "zh": "ambiguous",
+   "tw": "ambiguous",
+   "ko": "ambiguous",
+   "de": "ambiguous",
+   "hi": "ambiguous",
+   "fr": "ambiguous"
+  },
+  "every beam returns from cliffs, bubbles and multipath": {
+   "ja": "崖・気泡・多重反射でも必ず海底を得る",
+   "zh": "every beam returns from cliffs, bubbles and multipath",
+   "tw": "every beam returns from cliffs, bubbles and multipath",
+   "ko": "every beam returns from cliffs, bubbles and multipath",
+   "de": "every beam returns from cliffs, bubbles and multipath",
+   "hi": "every beam returns from cliffs, bubbles and multipath",
+   "fr": "every beam returns from cliffs, bubbles and multipath"
+  },
+  "one unambiguous return": {
+   "ja": "単一で明瞭な反射",
+   "zh": "one unambiguous return",
+   "tw": "one unambiguous return",
+   "ko": "one unambiguous return",
+   "de": "one unambiguous return",
+   "hi": "one unambiguous return",
+   "fr": "one unambiguous return"
+  },
+  "missing or false returns are possible": {
+   "ja": "反射なし・偽反射があり得る",
+   "zh": "missing or false returns are possible",
+   "tw": "missing or false returns are possible",
+   "ko": "missing or false returns are possible",
+   "de": "missing or false returns are possible",
+   "hi": "missing or false returns are possible",
+   "fr": "missing or false returns are possible"
+  },
+  "Do two echoes give one unique depth?": {
+   "ja": "エコーが二つなら深さは一意?",
+   "zh": "Do two echoes give one unique depth?",
+   "tw": "Do two echoes give one unique depth?",
+   "ko": "Do two echoes give one unique depth?",
+   "de": "Do two echoes give one unique depth?",
+   "hi": "Do two echoes give one unique depth?",
+   "fr": "Do two echoes give one unique depth?"
+  },
+  "unique": {
+   "ja": "一意",
+   "zh": "unique",
+   "tw": "unique",
+   "ko": "unique",
+   "de": "unique",
+   "hi": "unique",
+   "fr": "unique"
+  },
+  "Additional echo classification is required.": {
+   "ja": "反射経路を選ぶ追加判定が必要。",
+   "zh": "Additional echo classification is required.",
+   "tw": "Additional echo classification is required.",
+   "ko": "Additional echo classification is required.",
+   "de": "Additional echo classification is required.",
+   "hi": "Additional echo classification is required.",
+   "fr": "Additional echo classification is required."
+  },
+  "tobs = min/selected echo time": {
+   "ja": "tobs = min/selected echo time",
+   "zh": "tobs = min/selected echo time",
+   "tw": "tobs = min/selected echo time",
+   "ko": "tobs = min/selected echo time",
+   "de": "tobs = min/selected echo time",
+   "hi": "tobs = min/selected echo time",
+   "fr": "tobs = min/selected echo time"
+  },
+  "Cliffs, bubbles and multipath exceed this single-return model.": {
+   "ja": "崖・気泡・多重反射はこの単一反射モデルでは復元できない。",
+   "zh": "Cliffs, bubbles and multipath exceed this single-return model.",
+   "tw": "Cliffs, bubbles and multipath exceed this single-return model.",
+   "ko": "Cliffs, bubbles and multipath exceed this single-return model.",
+   "de": "Cliffs, bubbles and multipath exceed this single-return model.",
+   "hi": "Cliffs, bubbles and multipath exceed this single-return model.",
+   "fr": "Cliffs, bubbles and multipath exceed this single-return model."
+  },
+  "Seabed, water, vessel and observations are entirely synthetic representative assumptions for learning, not for real surveys.": {
+   "ja": "海底・海水・船・観測はすべて合成。代表値による学習用モデルで、実航海の測量には使わない。",
+   "zh": "Seabed, water, vessel and observations are entirely synthetic representative assumptions for learning, not for real surveys.",
+   "tw": "Seabed, water, vessel and observations are entirely synthetic representative assumptions for learning, not for real surveys.",
+   "ko": "Seabed, water, vessel and observations are entirely synthetic representative assumptions for learning, not for real surveys.",
+   "de": "Seabed, water, vessel and observations are entirely synthetic representative assumptions for learning, not for real surveys.",
+   "hi": "Seabed, water, vessel and observations are entirely synthetic representative assumptions for learning, not for real surveys.",
+   "fr": "Seabed, water, vessel and observations are entirely synthetic representative assumptions for learning, not for real surveys."
+  },
+  "combined timing, CTD, layer and roll 3σ < 0.202 m": {
+   "ja": "時間・CTD・層・ロールの合成 3σ < 0.202 m",
+   "zh": "combined timing, CTD, layer and roll 3σ < 0.202 m",
+   "tw": "combined timing, CTD, layer and roll 3σ < 0.202 m",
+   "ko": "combined timing, CTD, layer and roll 3σ < 0.202 m",
+   "de": "combined timing, CTD, layer and roll 3σ < 0.202 m",
+   "hi": "combined timing, CTD, layer and roll 3σ < 0.202 m",
+   "fr": "combined timing, CTD, layer and roll 3σ < 0.202 m"
+  },
+  "RK4 without the invariant, 0.02 m step: < 1e-10": {
+   "ja": "不変量を使わない RK4、刻み 0.02 m: < 1e-10",
+   "zh": "RK4 without the invariant, 0.02 m step: < 1e-10",
+   "tw": "RK4 without the invariant, 0.02 m step: < 1e-10",
+   "ko": "RK4 without the invariant, 0.02 m step: < 1e-10",
+   "de": "RK4 without the invariant, 0.02 m step: < 1e-10",
+   "hi": "RK4 without the invariant, 0.02 m step: < 1e-10",
+   "fr": "RK4 without the invariant, 0.02 m step: < 1e-10"
+  },
+  "measured depth bend": {
+   "ja": "実測した深さの曲がり",
+   "zh": "measured depth bend",
+   "tw": "measured depth bend",
+   "ko": "measured depth bend",
+   "de": "measured depth bend",
+   "hi": "measured depth bend",
+   "fr": "measured depth bend"
+  },
+  "needs review": {
+   "ja": "要注意",
+   "zh": "needs review",
+   "tw": "needs review",
+   "ko": "needs review",
+   "de": "needs review",
+   "hi": "needs review",
+   "fr": "needs review"
+  },
+  "outer-beam bend versus two-term estimate": {
+   "ja": "外側ビームの曲がりと二項近似",
+   "zh": "outer-beam bend versus two-term estimate",
+   "tw": "outer-beam bend versus two-term estimate",
+   "ko": "outer-beam bend versus two-term estimate",
+   "de": "outer-beam bend versus two-term estimate",
+   "hi": "outer-beam bend versus two-term estimate",
+   "fr": "outer-beam bend versus two-term estimate"
+  },
+  "omitted angular-curvature term: RMS < 25 % of bend": {
+   "ja": "無視した角度曲率の項: RMS < 曲がりの 25 %",
+   "zh": "omitted angular-curvature term: RMS < 25 % of bend",
+   "tw": "omitted angular-curvature term: RMS < 25 % of bend",
+   "ko": "omitted angular-curvature term: RMS < 25 % of bend",
+   "de": "omitted angular-curvature term: RMS < 25 % of bend",
+   "hi": "omitted angular-curvature term: RMS < 25 % of bend",
+   "fr": "omitted angular-curvature term: RMS < 25 % of bend"
+  },
+  "Observations come from fine-step RK4 with direction as a state. Blue points use analytic straight segments in 1 m constant-speed layers sampled by a noisy CTD; red points assume one constant speed. Neither true seabed nor true roll enters the estimators. At every angle, measured bend is compared with the sum of range and angular terms.": {
+   "ja": "観測は方向を状態に持つ細刻み RK4 で作る。青は雑音入り CTD を 1 m の一定音速層として解析的に逆算した点、赤は一定音速の直線で逆算した点。真の海底や真のロールは推定器へ渡さない。各角度で、実測した曲がりを距離項と角度項の和と比べる。",
+   "zh": "Observations come from fine-step RK4 with direction as a state. Blue points use analytic straight segments in 1 m constant-speed layers sampled by a noisy CTD; red points assume one constant speed. Neither true seabed nor true roll enters the estimators. At every angle, measured bend is compared with the sum of range and angular terms.",
+   "tw": "Observations come from fine-step RK4 with direction as a state. Blue points use analytic straight segments in 1 m constant-speed layers sampled by a noisy CTD; red points assume one constant speed. Neither true seabed nor true roll enters the estimators. At every angle, measured bend is compared with the sum of range and angular terms.",
+   "ko": "Observations come from fine-step RK4 with direction as a state. Blue points use analytic straight segments in 1 m constant-speed layers sampled by a noisy CTD; red points assume one constant speed. Neither true seabed nor true roll enters the estimators. At every angle, measured bend is compared with the sum of range and angular terms.",
+   "de": "Observations come from fine-step RK4 with direction as a state. Blue points use analytic straight segments in 1 m constant-speed layers sampled by a noisy CTD; red points assume one constant speed. Neither true seabed nor true roll enters the estimators. At every angle, measured bend is compared with the sum of range and angular terms.",
+   "hi": "Observations come from fine-step RK4 with direction as a state. Blue points use analytic straight segments in 1 m constant-speed layers sampled by a noisy CTD; red points assume one constant speed. Neither true seabed nor true roll enters the estimators. At every angle, measured bend is compared with the sum of range and angular terms.",
+   "fr": "Observations come from fine-step RK4 with direction as a state. Blue points use analytic straight segments in 1 m constant-speed layers sampled by a noisy CTD; red points assume one constant speed. Neither true seabed nor true roll enters the estimators. At every angle, measured bend is compared with the sum of range and angular terms."
+  },
+  "outer approximation residual": {
+   "ja": "外側の近似残差",
+   "zh": "outer approximation residual",
+   "tw": "outer approximation residual",
+   "ko": "outer approximation residual",
+   "de": "outer approximation residual",
+   "hi": "outer approximation residual",
+   "fr": "outer approximation residual"
+  },
+  "two-term bend estimate": {
+   "ja": "二項近似の曲がり",
+   "zh": "two-term bend estimate",
+   "tw": "two-term bend estimate",
+   "ko": "two-term bend estimate",
+   "de": "two-term bend estimate",
+   "hi": "two-term bend estimate",
+   "fr": "two-term bend estimate"
+  },
+  "range term from effective speed": {
+   "ja": "実効音速による距離項",
+   "zh": "range term from effective speed",
+   "tw": "range term from effective speed",
+   "ko": "range term from effective speed",
+   "de": "range term from effective speed",
+   "hi": "range term from effective speed",
+   "fr": "range term from effective speed"
+  },
+  "angular term from refraction": {
+   "ja": "屈折による角度項",
+   "zh": "angular term from refraction",
+   "tw": "angular term from refraction",
+   "ko": "angular term from refraction",
+   "de": "angular term from refraction",
+   "hi": "angular term from refraction",
+   "fr": "angular term from refraction"
+  },
+  "δz ≈ (C0−ceff)t cosθ0 + ceff t[cosθ0−cos((θ0+θ1)/2)]": {
+   "ja": "δz ≈ (C0−ceff)t cosθ0 + ceff t[cosθ0−cos((θ0+θ1)/2)]",
+   "zh": "δz ≈ (C0−ceff)t cosθ0 + ceff t[cosθ0−cos((θ0+θ1)/2)]",
+   "tw": "δz ≈ (C0−ceff)t cosθ0 + ceff t[cosθ0−cos((θ0+θ1)/2)]",
+   "ko": "δz ≈ (C0−ceff)t cosθ0 + ceff t[cosθ0−cos((θ0+θ1)/2)]",
+   "de": "δz ≈ (C0−ceff)t cosθ0 + ceff t[cosθ0−cos((θ0+θ1)/2)]",
+   "hi": "δz ≈ (C0−ceff)t cosθ0 + ceff t[cosθ0−cos((θ0+θ1)/2)]",
+   "fr": "δz ≈ (C0−ceff)t cosθ0 + ceff t[cosθ0−cos((θ0+θ1)/2)]"
+  },
+  "ceff=L/t is the path-length-weighted harmonic mean of layer speeds. The first term is range error; the second is the change in mean direction caused by refraction. The approximation neglects curvature in angle along the path, bounded here to 25% of outer-beam bend.": {
+   "ja": "ceff=L/t は各層の音速を経路長で重み付けした調和平均。第1項は距離のずれ、第2項は屈折で平均角度が変わる寄与。角度が経路内で直線的に変わる近似が無視した曲率項を、外側ビームの曲がりの 25 % 以内とする。",
+   "zh": "ceff=L/t is the path-length-weighted harmonic mean of layer speeds. The first term is range error; the second is the change in mean direction caused by refraction. The approximation neglects curvature in angle along the path, bounded here to 25% of outer-beam bend.",
+   "tw": "ceff=L/t is the path-length-weighted harmonic mean of layer speeds. The first term is range error; the second is the change in mean direction caused by refraction. The approximation neglects curvature in angle along the path, bounded here to 25% of outer-beam bend.",
+   "ko": "ceff=L/t is the path-length-weighted harmonic mean of layer speeds. The first term is range error; the second is the change in mean direction caused by refraction. The approximation neglects curvature in angle along the path, bounded here to 25% of outer-beam bend.",
+   "de": "ceff=L/t is the path-length-weighted harmonic mean of layer speeds. The first term is range error; the second is the change in mean direction caused by refraction. The approximation neglects curvature in angle along the path, bounded here to 25% of outer-beam bend.",
+   "hi": "ceff=L/t is the path-length-weighted harmonic mean of layer speeds. The first term is range error; the second is the change in mean direction caused by refraction. The approximation neglects curvature in angle along the path, bounded here to 25% of outer-beam bend.",
+   "fr": "ceff=L/t is the path-length-weighted harmonic mean of layer speeds. The first term is range error; the second is the change in mean direction caused by refraction. The approximation neglects curvature in angle along the path, bounded here to 25% of outer-beam bend."
+  }
+ }
+}
