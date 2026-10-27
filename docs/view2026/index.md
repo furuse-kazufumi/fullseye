@@ -111,6 +111,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../view2026/anim3d/hypercentric_lens_anim3d.html?lang=ja"><img src="thumbs/hypercentric_lens.jpg" alt="円柱の上面と側面を一枚で見るハイパーセントリックレンズ" loading="lazy" width="320" height="320"><b>&#9654;</b><span>円柱の上面と側面を一枚で見るハイパーセントリックレンズ · 0.4 MB</span></a>
 <a href="../view2026/anim3d/borescope_anim3d.html?lang=ja"><img src="thumbs/borescope.jpg" alt="ボアスコープは細い管の奥をどう見るか" loading="lazy" width="320" height="320"><b>&#9654;</b><span>ボアスコープは細い管の奥をどう見るか · 0.5 MB</span></a>
 <a href="../view2026/anim3d/tunnel_crack_anim3d.html?lang=ja"><img src="thumbs/tunnel_crack.jpg" alt="走行撮影でトンネルの 0.2 mm ひびを測る" loading="lazy" width="320" height="320"><b>&#9654;</b><span>走行撮影でトンネルの 0.2 mm ひびを測る · 0.3 MB</span></a>
+<a href="../view2026/anim3d/insar_subsidence_anim3d.html?lang=ja"><img src="thumbs/insar_subsidence.jpg" alt="????? mm ??????" loading="lazy" width="320" height="320"><b>&#9654;</b><span>????? mm ?????? · 0.1 MB</span></a>
 </div>
 
 ## シリーズ記事
@@ -716,6 +717,7 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 - [円柱の上面と側面を一枚で見るハイパーセントリックレンズ](../view2026/anim3d/hypercentric_lens_anim3d.html?lang=ja) (動く 3-D・触って回せる, 0.4 MB): 通常・テレセントリック・ハイパーセントリックの主光線を切り替え、入射瞳が物体の向こうへ移ると、青い上面の外側に橙の側面がドーナツ状に現れる。 **入射瞳は paraxial_trace と ABCD で差 < 1e-12 mm。雑音入り合成像の側面帯は閉形式と 0.180 px 以内で一致し、テレセントリック像の測定値は雑音床 0.900 px。被写界深度と歪みは未計算の限界として表示。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_hypercentric_anim3d.py)
 - [ボアスコープは細い管の奥をどう見るか](../view2026/anim3d/borescope_anim3d.html?lang=ja) (動く 3-D・触って回せる, 0.5 MB): 直径 6 mm の管で像を何度も結び直す光線を追う。細さ・視野・明るさの交換を光学不変量で確かめ、曲がるファイバ束では網目と断線が残る限界を見る。 **逐次追跡と ABCD op の最大差 1.33e-15、不変量残差 3.47e-18。透過率は段数で不変、401×401 光線格子と口径面積の閉形式との差は 0.0030。再構成像と jinc 近似の 50 % 周期は 61.64 / 58.43 µm。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_bore_anim3d.py)
 - [走行撮影でトンネルの 0.2 mm ひびを測る](../view2026/anim3d/tunnel_crack_anim3d.html?lang=ja) (動く 3-D・触って回せる, 0.3 MB): 車両が円筒内面を進む横で、同じ実寸の展開画像だけが粗くなる。赤い検出骨格は 1.0 mm/画素では途切れ、0.10 mm/画素では真の曲線を追う。 **0.10 mm/画素で真のひび長さを 99.1 % 回収。局所背景からの幅誤差 0.023 mm は基準 0.038 mm 内。90 % 到達は実測・見積りとも 0.25 mm/画素で、比較基準は 0.029 mm。目地の誤検出長 24.31 mm も表示する。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_tunnel_anim3d.py)
+- [????? mm ??????](../view2026/anim3d/insar_subsidence_anim3d.html?lang=ja) (動く 3-D・触って回せる, 0.1 MB): ??????????????????????????????????????? **?? RMS 1.53 mm????? 1.02 mm?????????? RMS ? 3.70 mm ????** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_insar_anim3d.py)
 
 </div>
 
