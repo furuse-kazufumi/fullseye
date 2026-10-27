@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
 [![Docs](https://img.shields.io/badge/docs-furuse.work-informational)](https://furuse.work/)
 
-**Documentation: [furuse.work](https://furuse.work/)** — the operator index (3,570
+**Documentation: [furuse.work](https://furuse.work/)** — the operator index (3,582
 operators in the machine-readable index, `docs/OP_INDEX.json`: 942 single-input 2-D operators +
 17 n-ary + 2,608 in the typed ledgers, each with a per-operator note), the family guides, and the
 release notes.
@@ -190,7 +190,7 @@ knobs in `[0, 1]`. Feature operators return a Python float; contour operators a 
 
 ## Operator library
 
-**3,582 typed operators** (959 2-D in the registry, 17 of them n-ary, + 2,611 in the typed ledgers,
+**3,582 typed operators** (959 2-D in the registry, 17 of them n-ary, + 2,623 in the typed ledgers,
 the 3-D ledger among them), covering denoising, smoothing, sharpening,
 thresholding/segmentation, morphology, edge/corner/blob detection, distance
 transforms, color-space conversion, texture/shape features, contours, and the 3-D
