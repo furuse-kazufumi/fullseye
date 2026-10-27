@@ -81,6 +81,7 @@ SPEC = [
     ("satellite_gsd", "view2026/anim3d/satellite_gsd_anim3d_poster.png", None, None),
     ("ship_stability", "view2026/anim3d/ship_stability_anim3d_poster.png", None, None),
     ("poc_star_tracker", "view2026/anim3d/star_tracker_anim3d_poster.png", None, (0.22, 0.24, 0.56)),
+    ("catenary_wear", "view2026/anim3d/catenary_wear_anim3d_poster.png", None, None),
     ("rail_light_section", "view2026/anim3d/rail_light_section_anim3d_poster.png", None, None),
     ("bridge_dic", "view2026/anim3d/bridge_dic_anim3d_poster.png", None, None),
     ("tablet_inspection", "view2026/anim3d/tablet_inspection_anim3d_poster.png", None, None),

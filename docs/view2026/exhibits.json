@@ -1699,9 +1699,14 @@
    "motion": true,
    "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_dissolution_anim3d.py",
    "label": {
-    "ja": "薬の粒はどう溶けるか", "en": "How medicine particles dissolve",
-    "zh": "药物颗粒如何溶解", "tw": "藥物顆粒如何溶解", "ko": "약 입자는 어떻게 녹는가",
-    "de": "Wie sich Arzneipartikel auflösen", "hi": "दवा के कण कैसे घुलते हैं", "fr": "Comment les particules de médicament se dissolvent"
+    "ja": "薬の粒はどう溶けるか",
+    "en": "How medicine particles dissolve",
+    "zh": "药物颗粒如何溶解",
+    "tw": "藥物顆粒如何溶解",
+    "ko": "약 입자는 어떻게 녹는가",
+    "de": "Wie sich Arzneipartikel auflösen",
+    "hi": "दवा के कण कैसे घुलते हैं",
+    "fr": "Comment les particules de médicament se dissolvent"
    },
    "see": {
     "ja": "同じ総量の 1 粒と 8 粒が縮む。雑音像を測ると、8 分割は表面積が 2 倍になり、8 粒は半分の時間で溶ける。",
@@ -1725,44 +1730,44 @@
    }
   },
   {
-    "id": "laser_diffraction",
-    "category": "anim3d",
-    "media": "laser_diffraction_anim3d.html",
-    "media_path": "view2026/anim3d/laser_diffraction_anim3d.html",
-    "motion": true,
-    "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_laserdiff_anim3d.py",
-    "label": {
-     "ja": "光の輪で粉の粒径を測る",
-     "en": "Measure powder size with rings of light",
-     "zh": "Measure powder size with rings of light",
-     "tw": "Measure powder size with rings of light",
-     "ko": "Measure powder size with rings of light",
-     "de": "Measure powder size with rings of light",
-     "hi": "Measure powder size with rings of light",
-     "fr": "Measure powder size with rings of light"
-    },
-    "see": {
-     "ja": "粒が小さいほど散乱リングが外へ広がる。リング信号だけを非負最小二乗で解き、単峰・二峰の粒度分布と D10/D50/D90 を復元する。",
-     "en": "Smaller grains spread diffraction rings outward. Non-negative least squares uses ring signals alone to recover unimodal and bimodal size distributions and D10/D50/D90.",
-     "zh": "Smaller grains spread diffraction rings outward. Non-negative least squares uses ring signals alone to recover unimodal and bimodal size distributions and D10/D50/D90.",
-     "tw": "Smaller grains spread diffraction rings outward. Non-negative least squares uses ring signals alone to recover unimodal and bimodal size distributions and D10/D50/D90.",
-     "ko": "Smaller grains spread diffraction rings outward. Non-negative least squares uses ring signals alone to recover unimodal and bimodal size distributions and D10/D50/D90.",
-     "de": "Smaller grains spread diffraction rings outward. Non-negative least squares uses ring signals alone to recover unimodal and bimodal size distributions and D10/D50/D90.",
-     "hi": "Smaller grains spread diffraction rings outward. Non-negative least squares uses ring signals alone to recover unimodal and bimodal size distributions and D10/D50/D90.",
-     "fr": "Smaller grains spread diffraction rings outward. Non-negative least squares uses ring signals alone to recover unimodal and bimodal size distributions and D10/D50/D90."
-    },
-    "num": {
-     "ja": "画像で測った第 1 暗環と 1.22 λ/d の差 0.0000587 rad。別の細密格子で合成した信号からの D50 誤差は単峰 4.22 %、二峰 3.79 %。許容 5.25 %。",
-     "en": "1st-dark-ring difference from 1.22 λ/d: 0.0000587 rad. D50 errors from signals synthesized on a separate fine grid: 4.22% unimodal and 3.79% bimodal, below the 5.25% bound.",
-     "zh": "1st-dark-ring difference from 1.22 λ/d: 0.0000587 rad. D50 errors from signals synthesized on a separate fine grid: 4.22% unimodal and 3.79% bimodal, below the 5.25% bound.",
-     "tw": "1st-dark-ring difference from 1.22 λ/d: 0.0000587 rad. D50 errors from signals synthesized on a separate fine grid: 4.22% unimodal and 3.79% bimodal, below the 5.25% bound.",
-     "ko": "1st-dark-ring difference from 1.22 λ/d: 0.0000587 rad. D50 errors from signals synthesized on a separate fine grid: 4.22% unimodal and 3.79% bimodal, below the 5.25% bound.",
-     "de": "1st-dark-ring difference from 1.22 λ/d: 0.0000587 rad. D50 errors from signals synthesized on a separate fine grid: 4.22% unimodal and 3.79% bimodal, below the 5.25% bound.",
-     "hi": "1st-dark-ring difference from 1.22 λ/d: 0.0000587 rad. D50 errors from signals synthesized on a separate fine grid: 4.22% unimodal and 3.79% bimodal, below the 5.25% bound.",
-     "fr": "1st-dark-ring difference from 1.22 λ/d: 0.0000587 rad. D50 errors from signals synthesized on a separate fine grid: 4.22% unimodal and 3.79% bimodal, below the 5.25% bound."
-    }
+   "id": "laser_diffraction",
+   "category": "anim3d",
+   "media": "laser_diffraction_anim3d.html",
+   "media_path": "view2026/anim3d/laser_diffraction_anim3d.html",
+   "motion": true,
+   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_laserdiff_anim3d.py",
+   "label": {
+    "ja": "光の輪で粉の粒径を測る",
+    "en": "Measure powder size with rings of light",
+    "zh": "Measure powder size with rings of light",
+    "tw": "Measure powder size with rings of light",
+    "ko": "Measure powder size with rings of light",
+    "de": "Measure powder size with rings of light",
+    "hi": "Measure powder size with rings of light",
+    "fr": "Measure powder size with rings of light"
    },
-   {
+   "see": {
+    "ja": "粒が小さいほど散乱リングが外へ広がる。リング信号だけを非負最小二乗で解き、単峰・二峰の粒度分布と D10/D50/D90 を復元する。",
+    "en": "Smaller grains spread diffraction rings outward. Non-negative least squares uses ring signals alone to recover unimodal and bimodal size distributions and D10/D50/D90.",
+    "zh": "Smaller grains spread diffraction rings outward. Non-negative least squares uses ring signals alone to recover unimodal and bimodal size distributions and D10/D50/D90.",
+    "tw": "Smaller grains spread diffraction rings outward. Non-negative least squares uses ring signals alone to recover unimodal and bimodal size distributions and D10/D50/D90.",
+    "ko": "Smaller grains spread diffraction rings outward. Non-negative least squares uses ring signals alone to recover unimodal and bimodal size distributions and D10/D50/D90.",
+    "de": "Smaller grains spread diffraction rings outward. Non-negative least squares uses ring signals alone to recover unimodal and bimodal size distributions and D10/D50/D90.",
+    "hi": "Smaller grains spread diffraction rings outward. Non-negative least squares uses ring signals alone to recover unimodal and bimodal size distributions and D10/D50/D90.",
+    "fr": "Smaller grains spread diffraction rings outward. Non-negative least squares uses ring signals alone to recover unimodal and bimodal size distributions and D10/D50/D90."
+   },
+   "num": {
+    "ja": "画像で測った第 1 暗環と 1.22 λ/d の差 0.0000587 rad。別の細密格子で合成した信号からの D50 誤差は単峰 4.22 %、二峰 3.79 %。許容 5.25 %。",
+    "en": "1st-dark-ring difference from 1.22 λ/d: 0.0000587 rad. D50 errors from signals synthesized on a separate fine grid: 4.22% unimodal and 3.79% bimodal, below the 5.25% bound.",
+    "zh": "1st-dark-ring difference from 1.22 λ/d: 0.0000587 rad. D50 errors from signals synthesized on a separate fine grid: 4.22% unimodal and 3.79% bimodal, below the 5.25% bound.",
+    "tw": "1st-dark-ring difference from 1.22 λ/d: 0.0000587 rad. D50 errors from signals synthesized on a separate fine grid: 4.22% unimodal and 3.79% bimodal, below the 5.25% bound.",
+    "ko": "1st-dark-ring difference from 1.22 λ/d: 0.0000587 rad. D50 errors from signals synthesized on a separate fine grid: 4.22% unimodal and 3.79% bimodal, below the 5.25% bound.",
+    "de": "1st-dark-ring difference from 1.22 λ/d: 0.0000587 rad. D50 errors from signals synthesized on a separate fine grid: 4.22% unimodal and 3.79% bimodal, below the 5.25% bound.",
+    "hi": "1st-dark-ring difference from 1.22 λ/d: 0.0000587 rad. D50 errors from signals synthesized on a separate fine grid: 4.22% unimodal and 3.79% bimodal, below the 5.25% bound.",
+    "fr": "1st-dark-ring difference from 1.22 λ/d: 0.0000587 rad. D50 errors from signals synthesized on a separate fine grid: 4.22% unimodal and 3.79% bimodal, below the 5.25% bound."
+   }
+  },
+  {
    "id": "tablet_inspection",
    "category": "anim3d",
    "media": "tablet_inspection_anim3d.html",
@@ -2216,6 +2221,44 @@
     "de": "Auf demselben physikalischen Gitter liegen die gemessenen Halbwinkel bei 18.10–20.25 deg; der maximale Fehler zu arcsin(1/3) beträgt 1.37 deg, die Streuung über drei Geschwindigkeiten 2.15 deg. Der maximale Wellenlängenfehler ist 0.50 m; das Verhältnis bei 12 m/s zu 4 m/s beträgt 9.05.",
     "hi": "एक ही वास्तविक grid पर मापा अर्ध-कोण 18.10–20.25 deg है; arcsin(1/3) से अधिकतम अंतर 1.37 deg और तीन गतियों का फैलाव 2.15 deg है। अधिकतम wavelength error 0.50 m है; 12 m/s और 4 m/s का wavelength ratio 9.05 है।",
     "fr": "Sur la même grille physique, les demi-angles mesurés vont de 18.10 à 20.25 deg; l'écart maximal à arcsin(1/3) vaut 1.37 deg et la dispersion entre trois vitesses 2.15 deg. L'erreur maximale de longueur d'onde est de 0.50 m; le rapport entre 12 m/s et 4 m/s vaut 9.05."
+   }
+  },
+  {
+   "id": "catenary_wear",
+   "category": "anim3d",
+   "media": "catenary_wear_anim3d.html",
+   "media_path": "view2026/anim3d/catenary_wear_anim3d.html",
+   "motion": true,
+   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_catenary_anim3d.py",
+   "label": {
+    "ja": "走りながら架線のすり減りを測る",
+    "en": "Measure contact-wire wear while moving",
+    "zh": "运行中测量接触线磨耗",
+    "tw": "行駛中量測接觸線磨耗",
+    "ko": "주행 중 전차선 마모 측정",
+    "de": "Fahrdrahtverschleiß während der Fahrt messen",
+    "hi": "चलते समय संपर्क तार का घिसाव मापना",
+    "fr": "Mesurer l'usure du fil de contact en mouvement"
+   },
+   "see": {
+    "ja": "支持点間でたるみ、左右へ偏位する架線の下を車両が走る。ラインカメラ像では摩耗面が明るい帯になり、偏位で横へ動いても帯幅から残存高さを測れる。",
+    "en": "A vehicle runs beneath a sagging, staggered contact wire. Its wear flat becomes a bright band in the line-camera image; even as stagger moves it sideways, band width gives remaining height.",
+    "zh": "A vehicle runs beneath a sagging, staggered contact wire. Its wear flat becomes a bright band in the line-camera image; even as stagger moves it sideways, band width gives remaining height.",
+    "tw": "A vehicle runs beneath a sagging, staggered contact wire. Its wear flat becomes a bright band in the line-camera image; even as stagger moves it sideways, band width gives remaining height.",
+    "ko": "A vehicle runs beneath a sagging, staggered contact wire. Its wear flat becomes a bright band in the line-camera image; even as stagger moves it sideways, band width gives remaining height.",
+    "de": "A vehicle runs beneath a sagging, staggered contact wire. Its wear flat becomes a bright band in the line-camera image; even as stagger moves it sideways, band width gives remaining height.",
+    "hi": "A vehicle runs beneath a sagging, staggered contact wire. Its wear flat becomes a bright band in the line-camera image; even as stagger moves it sideways, band width gives remaining height.",
+    "fr": "A vehicle runs beneath a sagging, staggered contact wire. Its wear flat becomes a bright band in the line-camera image; even as stagger moves it sideways, band width gives remaining height."
+   },
+   "num": {
+    "ja": "断面への副画素視線交差、法線反射、画素積分、PSF、雑音から描いた 36 行だけで、帯幅の最大誤差 0.0469 mm、残存高さの最大誤差 0.0068 mm、偏位あり・なしの幅差 0.0436 mm。雨・汚れ・振動・斜視は未計算の限界として表示する。",
+    "en": "From 36 rows rendered by subpixel ray-section intersections, normal-based reflection, pixel integration, PSF and noise: maximum band-width error 0.0469 mm, remaining-height error 0.0068 mm and width difference with versus without stagger 0.0436 mm. Rain, dirt, vibration and oblique viewing remain an explicit uncomputed limit.",
+    "zh": "From 36 rows rendered by subpixel ray-section intersections, normal-based reflection, pixel integration, PSF and noise: maximum band-width error 0.0469 mm, remaining-height error 0.0068 mm and width difference with versus without stagger 0.0436 mm. Rain, dirt, vibration and oblique viewing remain an explicit uncomputed limit.",
+    "tw": "From 36 rows rendered by subpixel ray-section intersections, normal-based reflection, pixel integration, PSF and noise: maximum band-width error 0.0469 mm, remaining-height error 0.0068 mm and width difference with versus without stagger 0.0436 mm. Rain, dirt, vibration and oblique viewing remain an explicit uncomputed limit.",
+    "ko": "From 36 rows rendered by subpixel ray-section intersections, normal-based reflection, pixel integration, PSF and noise: maximum band-width error 0.0469 mm, remaining-height error 0.0068 mm and width difference with versus without stagger 0.0436 mm. Rain, dirt, vibration and oblique viewing remain an explicit uncomputed limit.",
+    "de": "From 36 rows rendered by subpixel ray-section intersections, normal-based reflection, pixel integration, PSF and noise: maximum band-width error 0.0469 mm, remaining-height error 0.0068 mm and width difference with versus without stagger 0.0436 mm. Rain, dirt, vibration and oblique viewing remain an explicit uncomputed limit.",
+    "hi": "From 36 rows rendered by subpixel ray-section intersections, normal-based reflection, pixel integration, PSF and noise: maximum band-width error 0.0469 mm, remaining-height error 0.0068 mm and width difference with versus without stagger 0.0436 mm. Rain, dirt, vibration and oblique viewing remain an explicit uncomputed limit.",
+    "fr": "From 36 rows rendered by subpixel ray-section intersections, normal-based reflection, pixel integration, PSF and noise: maximum band-width error 0.0469 mm, remaining-height error 0.0068 mm and width difference with versus without stagger 0.0436 mm. Rain, dirt, vibration and oblique viewing remain an explicit uncomputed limit."
    }
   }
  ],
