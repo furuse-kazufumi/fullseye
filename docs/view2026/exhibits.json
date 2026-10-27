@@ -1994,6 +1994,44 @@
     "hi": "Against the full 196-star catalogue: 16 genuine stars, 0 mismatches, 2/2 false points rejected, 0.0046-degree attitude error and 0.1406 degree per 1 pixel; Kabsch vs direct SVD differs by less than 1e-12.",
     "fr": "Against the full 196-star catalogue: 16 genuine stars, 0 mismatches, 2/2 false points rejected, 0.0046-degree attitude error and 0.1406 degree per 1 pixel; Kabsch vs direct SVD differs by less than 1e-12."
    }
+  },
+  {
+   "id": "venue_shadow",
+   "category": "anim3d",
+   "media": "venue_shadow_anim3d.html",
+   "media_path": "view2026/anim3d/venue_shadow_anim3d.html",
+   "motion": true,
+   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_shadow_anim3d.py",
+   "label": {
+    "ja": "会場の街の冬至の日影",
+    "en": "Winter-solstice shadows around the venue",
+    "zh": "会场周边的冬至日影",
+    "tw": "會場周邊的冬至日影",
+    "ko": "행사장 주변의 동지 그림자",
+    "de": "Schatten zur Wintersonnenwende am Veranstaltungsort",
+    "hi": "स्थल के आसपास शीत अयनांत की छाया",
+    "fr": "Ombres du solstice d'hiver autour du site"
+   },
+   "see": {
+    "ja": "パシフィコ横浜のLOD2建物の上を太陽が8時から16時まで動き、青い影が朝夕に伸びて正午に縮む。1・2・3時間の日影線から、建物の並びで日照時間が変わる場所を読む。",
+    "en": "The Sun moves over LOD2 buildings around Pacifico Yokohama from 8 h to 16 h; blue shadows lengthen in morning and evening and shrink at noon. The 1, 2 and 3 h contours reveal how the layout changes sunlight duration.",
+    "zh": "太阳从8时到16时掠过横滨国际平和会议场周边的LOD2建筑;蓝色阴影在早晚伸长、正午缩短。1、2、3小时等时线显示建筑布局如何改变日照时间。",
+    "tw": "太陽從8時到16時掠過橫濱國際平和會議場周邊的LOD2建築;藍色陰影在早晚伸長、正午縮短。1、2、3小時等時線顯示建築布局如何改變日照時間。",
+    "ko": "태양이 8시부터 16시까지 파시피코 요코하마 주변 LOD2 건물 위를 지나며 파란 그림자는 아침과 저녁에 길고 정오에 짧아진다. 1·2·3시간 등시간선으로 배치에 따른 일조 시간 변화를 읽는다.",
+    "de": "Die Sonne zieht von 8 h bis 16 h über die LOD2-Gebäude um Pacifico Yokohama. Blaue Schatten werden morgens und abends länger und mittags kürzer; Konturen für 1, 2 und 3 Stunden zeigen den Einfluss der Anordnung.",
+    "hi": "सूर्य 8 बजे से 16 बजे तक पैसिफिको योकोहामा के आसपास की LOD2 इमारतों पर चलता है; नीली छाया सुबह-शाम लंबी और दोपहर में छोटी होती है। 1, 2 और 3 घंटे की रेखाएँ विन्यास का असर दिखाती हैं।",
+    "fr": "Le Soleil parcourt les bâtiments LOD2 autour de Pacifico Yokohama de 8 h à 16 h; les ombres bleues s'allongent matin et soir et raccourcissent à midi. Les courbes de 1, 2 et 3 heures montrent l'effet de l'implantation."
+   },
+   "num": {
+    "ja": "太陽位置の2経路の最大差 < 1e-12°、20 m箱の影長・面積の相対差 < 1e-12、実建物の正午影は最高点からの上限内。",
+    "en": "2 solar-position paths differ by < 1e-12°; relative errors for the 20 m box shadow length and area are < 1e-12; the venue's noon shadow stays within the highest-point bound.",
+    "zh": "2条太阳位置计算路径的差小于1e-12°;20米箱体阴影长度和面积的相对误差小于1e-12;会场正午阴影处于最高点上限内。",
+    "tw": "2條太陽位置計算路徑的差小於1e-12°;20公尺箱體陰影長度和面積的相對誤差小於1e-12;會場正午陰影處於最高點上限內。",
+    "ko": "2개 태양 위치 경로 차이는 1e-12° 미만, 20 m 상자 그림자 길이와 면적의 상대 오차는 1e-12 미만이며 실제 건물 정오 그림자는 최고점 상한 이내다.",
+    "de": "Die 2 Sonnenpositionswege unterscheiden sich um < 1e-12°; relative Fehler von Länge und Fläche des Schattens einer 20-m-Box sind < 1e-12; der Mittagsschatten bleibt unter der Höchstpunktgrenze.",
+    "hi": "सूर्य-स्थिति के 2 मार्गों में अंतर < 1e-12° है; 20 m डिब्बे की छाया की लंबाई और क्षेत्रफल की सापेक्ष त्रुटियाँ < 1e-12 हैं; दोपहर की छाया उच्चतम-बिंदु सीमा में है।",
+    "fr": "Les 2 calculs de position solaire diffèrent de < 1e-12°; les erreurs relatives de longueur et d'aire de l'ombre d'une boîte de 20 m sont < 1e-12; l'ombre de midi reste sous la borne du point culminant."
+   }
   }
  ],
  "series": [
