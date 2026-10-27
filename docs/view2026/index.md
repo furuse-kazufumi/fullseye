@@ -105,6 +105,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../view2026/anim3d/star_tracker_anim3d.html?lang=ja"><img src="thumbs/poc_star_tracker.jpg" alt="星の写真から衛星姿勢を知る" loading="lazy" width="320" height="320"><b>&#9654;</b><span>星の写真から衛星姿勢を知る · 0.2 MB</span></a>
 <a href="../view2026/anim3d/venue_shadow_anim3d.html?lang=ja"><img src="thumbs/venue_shadow.jpg" alt="会場の街の冬至の日影" loading="lazy" width="320" height="320"><b>&#9654;</b><span>会場の街の冬至の日影 · 0.3 MB</span></a>
 <a href="../view2026/anim3d/kelvin_wake_anim3d.html?lang=ja"><img src="thumbs/kelvin_wake.jpg" alt="船の V 字の航跡" loading="lazy" width="320" height="320"><b>&#9654;</b><span>船の V 字の航跡 · 0.2 MB</span></a>
+<a href="../view2026/anim3d/tunnel_crack_anim3d.html?lang=ja"><img src="thumbs/tunnel_crack.jpg" alt="走行撮影でトンネルの 0.2 mm ひびを測る" loading="lazy" width="320" height="320"><b>&#9654;</b><span>走行撮影でトンネルの 0.2 mm ひびを測る · 0.3 MB</span></a>
 </div>
 
 ## シリーズ記事
@@ -703,6 +704,7 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 - [星の写真から衛星姿勢を知る](../view2026/anim3d/star_tracker_anim3d.html?lang=ja) (動く 3-D・触って回せる, 0.2 MB): 合成天球の中で視野錐を回し、雑音を含む点像と偽点から副画素重心を取る。三角形の角距離を全196星表へ照合し、偽点を捨ててKabschで姿勢を求める。最後は迷光、星不足、星の流れという未計算の限界を見る。 **全196星表に対し、真の星16、誤対応0、偽点棄却2/2、姿勢角誤差0.0046度、1画素0.1406度。Kabschと直接SVDの差は1e-12未満。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_startrk_anim3d.py)
 - [会場の街の冬至の日影](../view2026/anim3d/venue_shadow_anim3d.html?lang=ja) (動く 3-D・触って回せる, 0.3 MB): パシフィコ横浜のLOD2建物の上を太陽が8時から16時まで動き、青い影が朝夕に伸びて正午に縮む。1・2・3時間の日影線から、建物の並びで日照時間が変わる場所を読む。 **太陽位置の2経路の最大差 < 1e-12°、20 m箱の影長・面積の相対差 < 1e-12、実建物の正午影は最高点からの上限内。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_shadow_anim3d.py)
 - [船の V 字の航跡](../view2026/anim3d/kelvin_wake_anim3d.html?lang=ja) (動く 3-D・触って回せる, 0.2 MB): 深水を進む点状の圧力源が作る立体的な高さ場を回す。船速を 4、7、12 m/s と変えると波長は伸びるが、画像から測った V 字の半角は約 19.47 deg のままになる。横波と発散波を分けて重ね、浅水・船体幅・粘性を含まない限界も示す。 **同じ実寸格子で測った半角は 18.10–20.25 deg、arcsin(1/3) からの最大差 1.37 deg、三速度間の差 2.15 deg。波長誤差は最大 0.50 m、12 m/s と 4 m/s の波長比は 9.05。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_kelvin_anim3d.py)
+- [走行撮影でトンネルの 0.2 mm ひびを測る](../view2026/anim3d/tunnel_crack_anim3d.html?lang=ja) (動く 3-D・触って回せる, 0.3 MB): 車両が円筒内面を進む横で、同じ実寸の展開画像だけが粗くなる。赤い検出骨格は 1.0 mm/画素では途切れ、0.10 mm/画素では真の曲線を追う。 **0.10 mm/画素で真のひび長さを 99.1 % 回収。局所背景からの幅誤差 0.023 mm は基準 0.038 mm 内。90 % 到達は実測・見積りとも 0.25 mm/画素で、比較基準は 0.029 mm。目地の誤検出長 24.31 mm も表示する。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_tunnel_anim3d.py)
 
 </div>
 

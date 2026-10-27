@@ -90,6 +90,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../view2026/anim3d/star_tracker_anim3d.html?lang=tw"><img src="../thumbs/poc_star_tracker.jpg" alt="Satellite attitude from one star image" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Satellite attitude from one star image · 0.2 MB</span></a>
 <a href="../../view2026/anim3d/venue_shadow_anim3d.html?lang=tw"><img src="../thumbs/venue_shadow.jpg" alt="會場周邊的冬至日影" loading="lazy" width="320" height="320"><b>&#9654;</b><span>會場周邊的冬至日影 · 0.3 MB</span></a>
 <a href="../../view2026/anim3d/kelvin_wake_anim3d.html?lang=tw"><img src="../thumbs/kelvin_wake.jpg" alt="船的 V 字形航跡" loading="lazy" width="320" height="320"><b>&#9654;</b><span>船的 V 字形航跡 · 0.2 MB</span></a>
+<a href="../../view2026/anim3d/tunnel_crack_anim3d.html?lang=tw"><img src="../thumbs/tunnel_crack.jpg" alt="用移動掃描量測隧道中 0.2 mm 的裂縫" loading="lazy" width="320" height="320"><b>&#9654;</b><span>用移動掃描量測隧道中 0.2 mm 的裂縫 · 0.3 MB</span></a>
 </div>
 
 ## 系列文章 (Qiita 上的英文文章)
@@ -688,6 +689,7 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 - [Satellite attitude from one star image](../../view2026/anim3d/star_tracker_anim3d.html?lang=tw) (動態 3-D,可拖曳旋轉, 0.2 MB): Sweep a camera cone through a synthetic sky, centroid noisy point images plus false points, match triangle angles against the full 196-star catalogue, reject outliers and solve attitude with Kabsch. The final tab exposes uncomputed limits from glare, too few stars and star trails. **Against the full 196-star catalogue: 16 genuine stars, 0 mismatches, 2/2 false points rejected, 0.0046-degree attitude error and 0.1406 degree per 1 pixel; Kabsch vs direct SVD differs by less than 1e-12.** [原始碼](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_startrk_anim3d.py)
 - [會場周邊的冬至日影](../../view2026/anim3d/venue_shadow_anim3d.html?lang=tw) (動態 3-D,可拖曳旋轉, 0.3 MB): 太陽從8時到16時掠過橫濱國際平和會議場周邊的LOD2建築;藍色陰影在早晚伸長、正午縮短。1、2、3小時等時線顯示建築布局如何改變日照時間。 **2條太陽位置計算路徑的差小於1e-12°;20公尺箱體陰影長度和面積的相對誤差小於1e-12;會場正午陰影處於最高點上限內。** [原始碼](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_shadow_anim3d.py)
 - [船的 V 字形航跡](../../view2026/anim3d/kelvin_wake_anim3d.html?lang=tw) (動態 3-D,可拖曳旋轉, 0.2 MB): 旋轉觀察點狀壓力源在深水中移動形成的三維高度場。速度由 4、7 到 12 m/s 時波長增大，但從影像量得的 V 字半角仍接近 19.47 deg。橫波與發散波先分開再疊加，並明示淺水、船寬與黏性未納入。 **在同一實尺寸網格上，量得半角為 18.10–20.25 deg；與 arcsin(1/3) 的最大差為 1.37 deg，三種速度間差為 2.15 deg。波長最大誤差為 0.50 m，12 m/s 與 4 m/s 的波長比為 9.05。** [原始碼](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_kelvin_anim3d.py)
+- [用移動掃描量測隧道中 0.2 mm 的裂縫](../../view2026/anim3d/tunnel_crack_anim3d.html?lang=tw) (動態 3-D,可拖曳旋轉, 0.3 MB): 車輛穿過圓筒形襯砌時，同一實際尺寸的展開牆面只改變取樣。紅色骨架在 1.0 mm/像素時斷裂，在 0.10 mm/像素時沿真實曲線延伸。 **在 0.10 mm/像素時找回 99.1% 的真實裂縫長度。局部背景寬度誤差為 0.023 mm，基準為 0.038 mm。90% 找回率的實測和估計均為 0.25 mm/像素，比較基準為 0.029 mm。另顯示 24.31 mm 的接縫誤檢。** [原始碼](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_tunnel_anim3d.py)
 
 </div>
 

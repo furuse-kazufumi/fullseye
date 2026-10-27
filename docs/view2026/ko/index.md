@@ -90,6 +90,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../view2026/anim3d/star_tracker_anim3d.html?lang=ko"><img src="../thumbs/poc_star_tracker.jpg" alt="Satellite attitude from one star image" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Satellite attitude from one star image · 0.2 MB</span></a>
 <a href="../../view2026/anim3d/venue_shadow_anim3d.html?lang=ko"><img src="../thumbs/venue_shadow.jpg" alt="행사장 주변의 동지 그림자" loading="lazy" width="320" height="320"><b>&#9654;</b><span>행사장 주변의 동지 그림자 · 0.3 MB</span></a>
 <a href="../../view2026/anim3d/kelvin_wake_anim3d.html?lang=ko"><img src="../thumbs/kelvin_wake.jpg" alt="배의 V자 항적" loading="lazy" width="320" height="320"><b>&#9654;</b><span>배의 V자 항적 · 0.2 MB</span></a>
+<a href="../../view2026/anim3d/tunnel_crack_anim3d.html?lang=ko"><img src="../thumbs/tunnel_crack.jpg" alt="주행 촬영으로 터널의 0.2 mm 균열 측정" loading="lazy" width="320" height="320"><b>&#9654;</b><span>주행 촬영으로 터널의 0.2 mm 균열 측정 · 0.3 MB</span></a>
 </div>
 
 ## 시리즈 기사 (Qiita의 영어 기사)
@@ -688,6 +689,7 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 - [Satellite attitude from one star image](../../view2026/anim3d/star_tracker_anim3d.html?lang=ko) (움직이는 3-D, 드래그로 회전, 0.2 MB): Sweep a camera cone through a synthetic sky, centroid noisy point images plus false points, match triangle angles against the full 196-star catalogue, reject outliers and solve attitude with Kabsch. The final tab exposes uncomputed limits from glare, too few stars and star trails. **Against the full 196-star catalogue: 16 genuine stars, 0 mismatches, 2/2 false points rejected, 0.0046-degree attitude error and 0.1406 degree per 1 pixel; Kabsch vs direct SVD differs by less than 1e-12.** [소스](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_startrk_anim3d.py)
 - [행사장 주변의 동지 그림자](../../view2026/anim3d/venue_shadow_anim3d.html?lang=ko) (움직이는 3-D, 드래그로 회전, 0.3 MB): 태양이 8시부터 16시까지 파시피코 요코하마 주변 LOD2 건물 위를 지나며 파란 그림자는 아침과 저녁에 길고 정오에 짧아진다. 1·2·3시간 등시간선으로 배치에 따른 일조 시간 변화를 읽는다. **2개 태양 위치 경로 차이는 1e-12° 미만, 20 m 상자 그림자 길이와 면적의 상대 오차는 1e-12 미만이며 실제 건물 정오 그림자는 최고점 상한 이내다.** [소스](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_shadow_anim3d.py)
 - [배의 V자 항적](../../view2026/anim3d/kelvin_wake_anim3d.html?lang=ko) (움직이는 3-D, 드래그로 회전, 0.2 MB): 깊은 물을 움직이는 점 압력원이 만든 높이장을 돌려 본다. 속도가 4, 7, 12 m/s로 커지면 파장은 늘지만 영상에서 잰 V자 반각은 약 19.47 deg로 유지된다. 횡파와 발산파를 나눠 겹치고 얕은 물, 선체 폭, 점성을 뺀 한계도 보인다. **같은 실제 길이 격자에서 잰 반각은 18.10–20.25 deg이며 arcsin(1/3)과의 최대 차이는 1.37 deg, 세 속도 사이 차이는 2.15 deg다. 최대 파장 오차는 0.50 m이고 12 m/s와 4 m/s의 파장비는 9.05다.** [소스](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_kelvin_anim3d.py)
+- [주행 촬영으로 터널의 0.2 mm 균열 측정](../../view2026/anim3d/tunnel_crack_anim3d.html?lang=ko) (움직이는 3-D, 드래그로 회전, 0.3 MB): 차량이 원통형 라이닝을 지나는 동안 같은 실물 크기의 펼친 벽은 샘플링만 바뀐다. 빨간 골격은 1.0 mm/픽셀에서 끊기고 0.10 mm/픽셀에서 실제 곡선을 따른다. **0.10 mm/픽셀에서 실제 균열 길이의 99.1%를 검출한다. 국소 배경 폭 오차는 0.023 mm로 0.038 mm 기준 안이다. 90% 검출의 실측과 추정은 모두 0.25 mm/픽셀이며 비교 기준은 0.029 mm다. 줄눈 오검출 24.31 mm도 표시한다.** [소스](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_tunnel_anim3d.py)
 
 </div>
 
