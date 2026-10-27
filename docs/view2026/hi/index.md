@@ -81,6 +81,9 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../view2026/anim3d/satellite_gsd_anim3d.html?lang=hi"><img src="../thumbs/satellite_gsd.jpg" alt="कक्षा से छोटे अक्षर क्यों गायब होते हैं" loading="lazy" width="320" height="320"><b>&#9654;</b><span>कक्षा से छोटे अक्षर क्यों गायब होते हैं · 0.2 MB</span></a>
 <a href="../../view2026/anim3d/ship_stability_anim3d.html?lang=hi"><img src="../thumbs/ship_stability.jpg" alt="जहाज़ क्यों तैरता है और झुकने के बाद लौटता है" loading="lazy" width="320" height="320"><b>&#9654;</b><span>जहाज़ क्यों तैरता है और झुकने के बाद लौटता है · 0.2 MB</span></a>
 <a href="../../view2026/anim3d/rail_light_section_anim3d.html?lang=hi"><img src="../thumbs/rail_light_section.jpg" alt="Measure rail wear and gauge with light-section scanning" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Measure rail wear and gauge with light-section scanning · 0.1 MB</span></a>
+<a href="../../view2026/anim3d/salt_xrd_anim3d.html?lang=hi"><img src="../thumbs/salt_xrd_anim3d.jpg" alt="नमक के क्रिस्टल का powder X-ray diffraction" loading="lazy" width="320" height="320"><b>&#9654;</b><span>नमक के क्रिस्टल का powder X-ray diffraction · 2.5 MB</span></a>
+<a href="../../anim3d/gauss_bonnet.html?lang=hi"><img src="../thumbs/gauss_bonnet.jpg" alt="सारी वक्रता जोड़ो, वही संख्या" loading="lazy" width="320" height="320"><b>&#9654;</b><span>सारी वक्रता जोड़ो, वही संख्या · 3.1 MB</span></a>
+<a href="../../view2026/anim3d/pulseox_anim3d.html?lang=hi"><img src="../thumbs/pulseox.jpg" alt="दोहरी तरंगदैर्घ्य वाली पल्स ऑक्सीमेट्री" loading="lazy" width="320" height="320"><b>&#9654;</b><span>दोहरी तरंगदैर्घ्य वाली पल्स ऑक्सीमेट्री · 0.2 MB</span></a>
 </div>
 
 ## Article series (Qiita पर English articles)
@@ -220,7 +223,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 </div>
 
-[PoC के अलावा 168 usage examples की सूची](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[PoC के अलावा 169 usage examples की सूची](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## सब कुछ देखें
 
@@ -669,6 +672,9 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 - [कक्षा से छोटे अक्षर क्यों गायब होते हैं](../../view2026/anim3d/satellite_gsd_anim3d.html?lang=hi) (चलता 3-D, drag से घुमाएँ, 0.2 MB): ऊँचाई बढ़ाने पर 1 pixel अधिक जमीन ढकता है; aperture घटाने पर पारदर्शी प्रकाश-शंकु के तल की Airy disk फैलती है। नीली GSD और नारंगी diffraction width के प्रतिच्छेद के बाद केवल छोटे pixels से 10 cm रेखा वापस नहीं आती। **400 km ऊँचाई, 5 µm pixels और 8 m focal length पर GSD 0.250 m है। 550 nm और 2.4 m aperture पर Rayleigh ground radius 0.112 m है। वातावरण को सीमा-पंक्ति में स्पष्ट रूप से अनगणित रखा गया है।** [source](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_satgsd_anim3d.py)
 - [जहाज़ क्यों तैरता है और झुकने के बाद लौटता है](../../view2026/anim3d/ship_stability_anim3d.html?lang=hi) (चलता 3-D, drag से घुमाएँ, 0.2 MB): झुकने पर B डूबी ओर जाता है और G से भुजा GZ बनती है। G ऊपर करने पर भुजा उलटती है। **डिब्बाकार त्रुटि 2.26e-16; भार त्रुटि 3.58e-16; GZ ढाल और GM में अंतर 0.123%। ऊँचे G पर GM = -0.350 m।** [source](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_ship_anim3d.py)
 - [Measure rail wear and gauge with light-section scanning](../../view2026/anim3d/rail_light_section_anim3d.html?lang=hi) (चलता 3-D, drag से घुमाएँ, 0.1 MB): The intersection of an oblique light sheet and rail surface bends over head, web and foot. During travel, left-head wear rises and the inner distance between two rails reveals gauge widening. **From a noisy subpixel laser line: section RMS 0.699 mm, shape-free wear error 0.0577 mm and profile-measured gauge error 0.346 mm. The triangulation op and independent closed form agree to < 1e-12 mm.** [source](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_rail_anim3d.py)
+- [नमक के क्रिस्टल का powder X-ray diffraction](../../view2026/anim3d/salt_xrd_anim3d.html?lang=hi) (चलता 3-D, drag से घुमाएँ, 2.5 MB): नमक की unit cell पर lattice plane की चादरें रखी हैं; Bragg कोण घुमाइए तो detector केवल वहाँ जलता है जहाँ path difference λ का पूर्ण गुणज है। दानों के orientation बिखेरिए तो बिंदु ring बन जाते हैं; तरंगदैर्घ्य लंबी कीजिए तो ring फैलकर गायब हो जाते हैं। extinction नियम 8 परमाणुओं की तरंगें जोड़कर दिखाया गया है। [source](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_saltxrd_anim3d.py)
+- [सारी वक्रता जोड़ो, वही संख्या](../../anim3d/gauss_bonnet.html?lang=hi) (चलता 3-D, drag से घुमाएँ, 3.1 MB): गोले को घन में नुकीला करो, टोरस लो, छेद जोड़ो, या मापा हुआ क्षुद्रग्रह लो: शीर्षों पर जोड़े गए कोण-अभाव K से Σ K / 2π = χ = V − E + F मिलता है। उंगली से घुमाएँ और देखें कि पारभासी समतल शीर्षों को योग में समेटता है। सीमा वाला कटोरा इसे तोड़ देता है (सीमा टैब)। **17 जाँची गई पंक्तियों में Σ K / 2π और χ का अंतर 1e-12 से कम; केवल सीमा वाला कटोरा 24.0 × 2π से चूकता है, और सीमा-पद जोड़ते ही मेल खाता है।** [source](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_gaussbonnet_anim3d.py)
+- [दोहरी तरंगदैर्घ्य वाली पल्स ऑक्सीमेट्री](../../view2026/anim3d/pulseox_anim3d.html?lang=hi) (चलता 3-D, drag से घुमाएँ, 0.2 MB): धड़कती धमनी से गुजरती लाल और निकट-अवरक्त रोशनी देखें और AC/DC अनुपात R से ऑक्सीजन संतृप्ति पढ़ें। शोरयुक्त समय-श्रृंखला की बंद रूप से तुलना होती है और COHb की अस्पष्टता सीमा के रूप में दिखाई जाती है। **R का अधिकतम अंतर 0.00068 और SpO₂ की अधिकतम त्रुटि 0.034%। 10% COHb पर मॉडल सही 90.0% को 91.0% पढ़ता है।** [source](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_pulseox_anim3d.py)
 
 </div>
 

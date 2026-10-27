@@ -74,11 +74,14 @@ SPEC = [
     ("evis_bean_track", "articles/assets/evis_bean_track_fullseye_still.png", None, (0.5, 0.0, 1.0)),
     # 動く 3-D: 元はビューアをスマホ幅(375 px、WebGL)で開いた画面から 3-D の部分だけを切った静止画
     ("interactive_anim3d_viewer", "view2026/anim3d/interactive_anim3d_viewer_poster.jpg", None, None),
+    ("salt_xrd_anim3d", "view2026/anim3d/salt_xrd_anim3d_poster.jpg", None, None),
+    ("gauss_bonnet", "anim3d/gauss_bonnet_poster.jpg", None, None),
     ("organ_volume", "anim3d/organ_volume_poster.jpg", None, None),
     ("satellite_gsd", "view2026/anim3d/satellite_gsd_anim3d_poster.png", None, None),
     ("ship_stability", "view2026/anim3d/ship_stability_anim3d_poster.png", None, None),
     ("rail_light_section", "view2026/anim3d/rail_light_section_anim3d_poster.png", None, None),
     ("tablet_inspection", "view2026/anim3d/tablet_inspection_anim3d_poster.png", None, None),
+    ("pulseox", "view2026/anim3d/pulseox_anim3d_poster.png", None, None),
 ]
 
 #: シリーズの入口の動くサムネイル。(名前, 元の GIF(docs/ からの相対), コマ数, 幅)。64 色に減らす。

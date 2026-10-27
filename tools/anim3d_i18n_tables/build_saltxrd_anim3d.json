@@ -1,0 +1,1203 @@
+{
+ "_": "塩の結晶の粉末 X 線回折の動く 3-D の教科書(docs/view2026/anim3d/salt_xrd_anim3d.html)の翻訳表。キー = en の文字列、ja = 訳した時点の日本語の控え。ViEW2026 の来場者向けに zh / tw(台湾の用語)/ ko / de / hi / fr。数値・単位・op 名・式は en のまま。",
+ "example": "build_saltxrd_anim3d",
+ "strings": {
+  "(100): mixed parity → vanishes": {
+   "ja": "(100): 混合パリティ → 消える",
+   "zh": "(100):奇偶混合 → 消失",
+   "tw": "(100):奇偶混合 → 消失",
+   "ko": "(100): 홀짝 혼합 → 사라짐",
+   "de": "(100): gemischte Parität → verschwindet",
+   "hi": "(100): mixed parity → गायब",
+   "fr": "(100) : parité mixte → disparaît"
+  },
+  "(110): mixed parity → vanishes": {
+   "ja": "(110): 混合パリティ → 消える",
+   "zh": "(110):奇偶混合 → 消失",
+   "tw": "(110):奇偶混合 → 消失",
+   "ko": "(110): 홀짝 혼합 → 사라짐",
+   "de": "(110): gemischte Parität → verschwindet",
+   "hi": "(110): mixed parity → गायब",
+   "fr": "(110) : parité mixte → disparaît"
+  },
+  "(111): all odd → weak": {
+   "ja": "(111): 全部奇数 → 弱い",
+   "zh": "(111):全为奇数 → 弱",
+   "tw": "(111):全為奇數 → 弱",
+   "ko": "(111): 모두 홀수 → 약함",
+   "de": "(111): alle ungerade → schwach",
+   "hi": "(111): सब odd → कमज़ोर",
+   "fr": "(111) : tous impairs → faible"
+  },
+  "(200): all even → strong": {
+   "ja": "(200): 全部偶数 → 強い",
+   "zh": "(200):全为偶数 → 强",
+   "tw": "(200):全為偶數 → 強",
+   "ko": "(200): 모두 짝수 → 강함",
+   "de": "(200): alle gerade → stark",
+   "hi": "(200): सब even → प्रबल",
+   "fr": "(200) : tous pairs → forte"
+  },
+  "(210): mixed parity → vanishes": {
+   "ja": "(210): 混合パリティ → 消える",
+   "zh": "(210):奇偶混合 → 消失",
+   "tw": "(210):奇偶混合 → 消失",
+   "ko": "(210): 홀짝 혼합 → 사라짐",
+   "de": "(210): gemischte Parität → verschwindet",
+   "hi": "(210): mixed parity → गायब",
+   "fr": "(210) : parité mixte → disparaît"
+  },
+  "(220): all even → strong": {
+   "ja": "(220): 全部偶数 → 強い",
+   "zh": "(220):全为偶数 → 强",
+   "tw": "(220):全為偶數 → 強",
+   "ko": "(220): 모두 짝수 → 강함",
+   "de": "(220): alle gerade → stark",
+   "hi": "(220): सब even → प्रबल",
+   "fr": "(220) : tous pairs → forte"
+  },
+  "0 rings (the 1 row left in the op's list has |F|² = < 1e-12, numerically zero)": {
+   "ja": "0 本(op の一覧に残る 1 行は |F|² = < 1e-12 の数値ゼロ)",
+   "zh": "0 个环(op 列表中剩下的 1 行 |F|² = < 1e-12,数值上为零)",
+   "tw": "0 個環(op 列表中剩下的 1 行 |F|² = < 1e-12,數值上為零)",
+   "ko": "0개의 환(op 목록에 남은 1행은 |F|² = < 1e-12, 수치상 영)",
+   "de": "0 Ringe (die 1 verbleibende Zeile in der Liste des op hat |F|² = < 1e-12, numerisch null)",
+   "hi": "0 ring (op की सूची में बची 1 पंक्ति का |F|² = < 1e-12, संख्यात्मक रूप से शून्य)",
+   "fr": "0 anneau (la 1 ligne restante dans la liste de l'op a |F|² = < 1e-12, numériquement nulle)"
+  },
+  "1 ring or more": {
+   "ja": "環 1 本以上",
+   "zh": "1 个环或更多",
+   "tw": "1 個環或更多",
+   "ko": "환 1개 이상",
+   "de": "1 Ring oder mehr",
+   "hi": "1 ring या अधिक",
+   "fr": "1 anneau ou plus"
+  },
+  "2d sinθ = nλ\nI_N(θ) = [sin(Nφ/2) / (N sin(φ/2))]², φ = 2π · 2d sinθ / λ": {
+   "ja": "2d sinθ = nλ\nI_N(θ) = [sin(Nφ/2) / (N sin(φ/2))]²、φ = 2π · 2d sinθ / λ",
+   "zh": "2d sinθ = nλ\nI_N(θ) = [sin(Nφ/2) / (N sin(φ/2))]²,φ = 2π · 2d sinθ / λ",
+   "tw": "2d sinθ = nλ\nI_N(θ) = [sin(Nφ/2) / (N sin(φ/2))]²,φ = 2π · 2d sinθ / λ",
+   "ko": "2d sinθ = nλ\nI_N(θ) = [sin(Nφ/2) / (N sin(φ/2))]², φ = 2π · 2d sinθ / λ",
+   "de": "2d sinθ = nλ\nI_N(θ) = [sin(Nφ/2) / (N sin(φ/2))]², φ = 2π · 2d sinθ / λ",
+   "hi": "2d sinθ = nλ\nI_N(θ) = [sin(Nφ/2) / (N sin(φ/2))]², φ = 2π · 2d sinθ / λ",
+   "fr": "2d sinθ = nλ\nI_N(θ) = [sin(Nφ/2) / (N sin(φ/2))]², φ = 2π · 2d sinθ / λ"
+  },
+  "2θ (op)": {
+   "ja": "2θ(op)",
+   "zh": "2θ(op)",
+   "tw": "2θ(op)",
+   "ko": "2θ(op)",
+   "de": "2θ (op)",
+   "hi": "2θ (op)",
+   "fr": "2θ (op)"
+  },
+  "2θ of (200)(400)(600): op vs 2 asin(nλ/2d)": {
+   "ja": "(200)(400)(600) の 2θ: op と 2 asin(nλ/2d)",
+   "zh": "(200)(400)(600) 的 2θ:op 与 2 asin(nλ/2d)",
+   "tw": "(200)(400)(600) 的 2θ:op 與 2 asin(nλ/2d)",
+   "ko": "(200)(400)(600)의 2θ: op와 2 asin(nλ/2d)",
+   "de": "2θ von (200)(400)(600): op gegen 2 asin(nλ/2d)",
+   "hi": "(200)(400)(600) का 2θ: op बनाम 2 asin(nλ/2d)",
+   "fr": "2θ de (200)(400)(600) : op contre 2 asin(nλ/2d)"
+  },
+  "2θ of the 416 detector spots (from position) vs the op's 2θ of that plane (twice the Bragg tolerance θ ± 0.4°)": {
+   "ja": "検出器の点 416 個の 2θ(位置から)と、その面の op の 2θ(Bragg の許容 θ ± 0.4° の 2 倍)",
+   "zh": "探测器上 416 个点的 2θ(由位置算出)与该晶面 op 的 2θ(Bragg 容差 θ ± 0.4° 的两倍)",
+   "tw": "探測器上 416 個點的 2θ(由位置算出)與該晶面 op 的 2θ(Bragg 容差 θ ± 0.4° 的兩倍)",
+   "ko": "검출기 점 416개의 2θ(위치에서)와 그 면의 op 2θ(Bragg 허용 θ ± 0.4°의 두 배)",
+   "de": "2θ der 416 Detektorpunkte (aus der Position) gegen das 2θ des op für diese Ebene (das Doppelte der Bragg-Toleranz θ ± 0.4°)",
+   "hi": "detector के 416 बिंदुओं का 2θ (स्थिति से) बनाम उस तल का op 2θ (Bragg सहनशीलता θ ± 0.4° का दुगुना)",
+   "fr": "2θ des 416 points du détecteur (d'après la position) contre le 2θ de l'op pour ce plan (le double de la tolérance de Bragg θ ± 0.4°)"
+  },
+  "2θ: op vs closed form (33 reflections)": {
+   "ja": "2θ: op と閉形式の差(反射 33 本)",
+   "zh": "2θ:op 与闭式(33 条反射)",
+   "tw": "2θ:op 與閉式(33 條反射)",
+   "ko": "2θ: op와 닫힌 식(반사 33개)",
+   "de": "2θ: op gegen geschlossene Form (33 Reflexe)",
+   "hi": "2θ: op बनाम closed form (33 reflections)",
+   "fr": "2θ : op contre forme fermée (33 réflexions)"
+  },
+  "2θ: powder_reflections vs 2 asin(λ/2d) (all 33 reflections)": {
+   "ja": "2θ: powder_reflections と 2 asin(λ/2d)(反射 33 本、全部)",
+   "zh": "2θ:powder_reflections 与 2 asin(λ/2d)(全部 33 条反射)",
+   "tw": "2θ:powder_reflections 與 2 asin(λ/2d)(全部 33 條反射)",
+   "ko": "2θ: powder_reflections와 2 asin(λ/2d)(반사 33개 전부)",
+   "de": "2θ: powder_reflections gegen 2 asin(λ/2d) (alle 33 Reflexe)",
+   "hi": "2θ: powder_reflections बनाम 2 asin(λ/2d) (सभी 33 reflections)",
+   "fr": "2θ : powder_reflections contre 2 asin(λ/2d) (les 33 réflexions)"
+  },
+  "5 (200) planes, spacing d = 2.810 Å": {
+   "ja": "(200) の面 5 枚、間隔 d = 2.810 Å",
+   "zh": "5 个 (200) 晶面,间距 d = 2.810 Å",
+   "tw": "5 個 (200) 晶面,間距 d = 2.810 Å",
+   "ko": "(200) 면 5장, 간격 d = 2.810 Å",
+   "de": "5 (200)-Ebenen, Abstand d = 2.810 Å",
+   "hi": "5 (200) तल, अंतराल d = 2.810 Å",
+   "fr": "5 plans (200), espacement d = 2.810 Å"
+  },
+  "5 peaks from debye_ring_image → azimuthal_integrate → diffraction_peaks vs the op's 2θ": {
+   "ja": "debye_ring_image → azimuthal_integrate → diffraction_peaks の山 5 本と op の 2θ",
+   "zh": "debye_ring_image → azimuthal_integrate → diffraction_peaks 得到的 5 个峰与 op 的 2θ",
+   "tw": "debye_ring_image → azimuthal_integrate → diffraction_peaks 得到的 5 個峰與 op 的 2θ",
+   "ko": "debye_ring_image → azimuthal_integrate → diffraction_peaks의 봉우리 5개와 op의 2θ",
+   "de": "5 Peaks aus debye_ring_image → azimuthal_integrate → diffraction_peaks gegen das 2θ des op",
+   "hi": "debye_ring_image → azimuthal_integrate → diffraction_peaks से 5 peaks बनाम op का 2θ",
+   "fr": "5 pics de debye_ring_image → azimuthal_integrate → diffraction_peaks contre le 2θ de l'op"
+  },
+  "A larger angle": {
+   "ja": "大きい角度",
+   "zh": "更大的角度",
+   "tw": "更大的角度",
+   "ko": "더 큰 각도",
+   "de": "Ein größerer Winkel",
+   "hi": "बड़ा कोण",
+   "fr": "Un angle plus grand"
+  },
+  "A smaller angle": {
+   "ja": "小さい角度",
+   "zh": "更小的角度",
+   "tw": "更小的角度",
+   "ko": "더 작은 각도",
+   "de": "Ein kleinerer Winkel",
+   "hi": "छोटा कोण",
+   "fr": "Un angle plus petit"
+  },
+  "Bragg geometry: only where the path difference is a whole number of λ": {
+   "ja": "Bragg の幾何: 行路差が λ の整数倍の角度だけ",
+   "zh": "Bragg 几何:只在光程差为 λ 的整数倍处",
+   "tw": "Bragg 幾何:只在光程差為 λ 的整數倍處",
+   "ko": "Bragg 기하: 행로차가 λ의 정수배인 곳만",
+   "de": "Bragg-Geometrie: nur wo der Gangunterschied ein ganzes Vielfaches von λ ist",
+   "hi": "Bragg ज्यामिति: केवल जहाँ path difference λ का पूर्ण गुणज हो",
+   "fr": "Géométrie de Bragg : seulement là où la différence de marche est un multiple entier de λ"
+  },
+  "Cl⁻": {
+   "ja": "Cl⁻",
+   "zh": "Cl⁻",
+   "tw": "Cl⁻",
+   "ko": "Cl⁻",
+   "de": "Cl⁻",
+   "hi": "Cl⁻",
+   "fr": "Cl⁻"
+  },
+  "Cl⁻ (large)": {
+   "ja": "Cl⁻(大)",
+   "zh": "Cl⁻(大)",
+   "tw": "Cl⁻(大)",
+   "ko": "Cl⁻(큼)",
+   "de": "Cl⁻ (groß)",
+   "hi": "Cl⁻ (बड़ा)",
+   "fr": "Cl⁻ (gros)"
+  },
+  "Crystal structure: COD 1000041 (sodium chloride, Abrahams & Bernstein 1965), CC0. All numbers are outputs of fullseye's pxrd ops; the theory lines are closed forms written independently of the ops.": {
+   "ja": "結晶構造: COD 1000041(塩化ナトリウム、Abrahams & Bernstein 1965)、CC0。数値はすべて fullseye の pxrd op の出力で、理論の線は op とは別に書いた閉じた式。",
+   "zh": "晶体结构:COD 1000041(氯化钠,Abrahams & Bernstein 1965),CC0。所有数值都是 fullseye 的 pxrd op 的输出;理论线是独立于 op 另行写出的闭式。",
+   "tw": "晶體結構:COD 1000041(氯化鈉,Abrahams & Bernstein 1965),CC0。所有數值都是 fullseye 的 pxrd op 的輸出;理論線是獨立於 op 另行寫出的閉式。",
+   "ko": "결정 구조: COD 1000041(염화나트륨, Abrahams & Bernstein 1965), CC0. 모든 수치는 fullseye의 pxrd op의 출력이며, 이론의 선은 op와 별도로 쓴 닫힌 식이다.",
+   "de": "Kristallstruktur: COD 1000041 (Natriumchlorid, Abrahams & Bernstein 1965), CC0. Alle Zahlen sind Ausgaben der pxrd-Ops von fullseye; die Theorielinien sind geschlossene Formen, unabhängig von den Ops geschrieben.",
+   "hi": "क्रिस्टल संरचना: COD 1000041 (sodium chloride, Abrahams & Bernstein 1965), CC0। सभी संख्याएँ fullseye के pxrd ops के output हैं; theory की रेखाएँ ops से स्वतंत्र लिखे closed form हैं।",
+   "fr": "Structure cristalline : COD 1000041 (chlorure de sodium, Abrahams & Bernstein 1965), CC0. Tous les nombres sont des sorties des ops pxrd de fullseye ; les lignes de théorie sont des formes fermées écrites indépendamment des ops."
+  },
+  "Drawn as the interference of 5 planes, so the peaks have a width. A real crystal has thousands of planes and sharp peaks (Scherrer: width ∝ 1/number). Absorption and the different reflectivity of each plane (structure factor) are not included.": {
+   "ja": "5 枚の面の干渉として描いたので山には幅がある。実際の結晶は何千枚もの面を持ち、山は鋭い(Scherrer: 幅 ∝ 1/枚数)。吸収と、面ごとの反射率の違い(構造因子)は入れていない。",
+   "zh": "这里画成 5 个晶面的干涉,所以峰有宽度。真实晶体有成千上万个晶面,峰很尖锐(Scherrer:宽度 ∝ 1/晶面数)。吸收以及各晶面反射率的差异(结构因子)未计入。",
+   "tw": "這裡畫成 5 個晶面的干涉,所以峰有寬度。真實晶體有成千上萬個晶面,峰很尖銳(Scherrer:寬度 ∝ 1/晶面數)。吸收以及各晶面反射率的差異(結構因子)未計入。",
+   "ko": "면 5장의 간섭으로 그렸으므로 봉우리에 폭이 있다. 실제 결정은 수천 장의 면을 가져 봉우리가 날카롭다(Scherrer: 폭 ∝ 1/장수). 흡수와 면마다 다른 반사율(구조 인자)은 넣지 않았다.",
+   "de": "Als Interferenz von 5 Ebenen gezeichnet, daher haben die Peaks eine Breite. Ein echter Kristall hat Tausende Ebenen und scharfe Peaks (Scherrer: Breite ∝ 1/Anzahl). Absorption und die unterschiedliche Reflektivität der Ebenen (Strukturfaktor) sind nicht enthalten.",
+   "hi": "5 तलों के व्यतिकरण के रूप में बनाया है, इसलिए peaks की चौड़ाई है। असली क्रिस्टल में हज़ारों तल होते हैं और peaks तीखे (Scherrer: चौड़ाई ∝ 1/संख्या)। अवशोषण और हर तल की भिन्न परावर्तकता (structure factor) शामिल नहीं।",
+   "fr": "Dessiné comme l'interférence de 5 plans, donc les pics ont une largeur. Un cristal réel a des milliers de plans et des pics fins (Scherrer : largeur ∝ 1/nombre). L'absorption et la réflectivité différente de chaque plan (facteur de structure) ne sont pas incluses."
+  },
+  "Each tab runs ① question → ② predict (tap a choice to reveal the answer) → ③ play (▶) → ④ equation → ⑤ limit. The time slider reads a physical quantity such as spacing, angle or wavelength. The four band stages light up in turn (crystal → op → pattern → theory vs op). Tap a badge to open what was checked, the criterion and the result. Drag to orbit.": {
+   "ja": "各タブは ① 問い → ② 予想(選択肢を押すと答えが開く)→ ③ 再生(▶)→ ④ 式 → ⑤ 限界 の順。時間つまみの読みは面間隔・角度・波長などの物理量。下の帯の 4 段は順に光る(結晶 → op → パターン → 理論との差)。バッジを押すと、確かめた項目・基準・結果の表が開く。ドラッグで視点を回す。",
+   "zh": "每个标签页按 ① 问题 → ② 预测(点选项即显示答案)→ ③ 播放(▶)→ ④ 公式 → ⑤ 极限 的顺序进行。时间滑块读出的是面间距、角度、波长等物理量。下方处理带的四个阶段依次亮起(晶体 → op → 图样 → 理论与 op 之差)。点徽章可打开已检查项目、判据与结果的表。拖动可旋转视角。",
+   "tw": "每個分頁按 ① 問題 → ② 預測(點選項即顯示答案)→ ③ 播放(▶)→ ④ 公式 → ⑤ 極限 的順序進行。時間滑桿讀出的是面間距、角度、波長等物理量。下方處理帶的四個階段依序亮起(晶體 → op → 圖樣 → 理論與 op 之差)。點徽章可打開已檢查項目、判據與結果的表。拖曳可旋轉視角。",
+   "ko": "각 탭은 ① 질문 → ② 예상(선택지를 누르면 답이 열림) → ③ 재생(▶) → ④ 식 → ⑤ 한계 순서다. 시간 슬라이더의 읽기는 면간격·각도·파장 같은 물리량. 아래 띠의 네 단은 차례로 빛난다(결정 → op → 패턴 → 이론과 op의 차). 배지를 누르면 확인한 항목·기준·결과의 표가 열린다. 드래그로 시점을 돌린다.",
+   "de": "Jeder Tab läuft ① Frage → ② Vorhersage (Antwort durch Antippen einer Wahl) → ③ Abspielen (▶) → ④ Gleichung → ⑤ Grenze. Der Zeitregler zeigt eine physikalische Größe wie Abstand, Winkel oder Wellenlänge. Die vier Stufen des Bandes leuchten nacheinander auf (Kristall → op → Muster → Theorie gegen op). Ein Tipp auf das Abzeichen öffnet, was geprüft wurde, das Kriterium und das Ergebnis. Ziehen zum Drehen.",
+   "hi": "हर tab ① प्रश्न → ② अनुमान (विकल्प छूने पर उत्तर खुलता है) → ③ चलाएँ (▶) → ④ समीकरण → ⑤ सीमा के क्रम में चलता है। time slider अंतराल, कोण या तरंगदैर्घ्य जैसी भौतिक राशि पढ़ता है। नीचे की band की चार अवस्थाएँ क्रम से जलती हैं (crystal → op → pattern → theory बनाम op)। badge छूने पर जाँचे गए मद, मानदंड और परिणाम की तालिका खुलती है। घुमाने के लिए drag करें।",
+   "fr": "Chaque onglet suit ① question → ② prédiction (touchez un choix pour révéler la réponse) → ③ lecture (▶) → ④ équation → ⑤ limite. Le curseur temporel lit une grandeur physique comme l'espacement, l'angle ou la longueur d'onde. Les quatre étapes de la bande s'allument à tour de rôle (cristal → op → diagramme → théorie contre op). Touchez un badge pour ouvrir ce qui a été vérifié, le critère et le résultat. Faites glisser pour orbiter."
+  },
+  "Extinction rule: which planes vanish": {
+   "ja": "消滅則: どの面が消えるか",
+   "zh": "消光规则:哪些晶面消失",
+   "tw": "消光規則:哪些晶面消失",
+   "ko": "소멸 규칙: 어느 면이 사라지는가",
+   "de": "Auslöschungsregel: welche Ebenen verschwinden",
+   "hi": "Extinction नियम: कौन-से तल गायब होते हैं",
+   "fr": "Règle d'extinction : quels plans disparaissent"
+  },
+  "F(hkl) = Σ_j f_j e^(2πi (h x_j + k y_j + l z_j))\nFm-3m: F = 4 (f_Na + f_Cl) (all even), 4 (f_Na − f_Cl) (all odd), 0 (mixed)\nintensity ∝ m |F|² / (sin²θ cosθ)": {
+   "ja": "F(hkl) = Σ_j f_j e^(2πi (h x_j + k y_j + l z_j))\nFm-3m: F = 4 (f_Na + f_Cl)(全偶)、4 (f_Na − f_Cl)(全奇)、0(混合)\n強度 ∝ m |F|² / (sin²θ cosθ)",
+   "zh": "F(hkl) = Σ_j f_j e^(2πi (h x_j + k y_j + l z_j))\nFm-3m:F = 4 (f_Na + f_Cl)(全偶)、4 (f_Na − f_Cl)(全奇)、0(混合)\n强度 ∝ m |F|² / (sin²θ cosθ)",
+   "tw": "F(hkl) = Σ_j f_j e^(2πi (h x_j + k y_j + l z_j))\nFm-3m:F = 4 (f_Na + f_Cl)(全偶)、4 (f_Na − f_Cl)(全奇)、0(混合)\n強度 ∝ m |F|² / (sin²θ cosθ)",
+   "ko": "F(hkl) = Σ_j f_j e^(2πi (h x_j + k y_j + l z_j))\nFm-3m: F = 4 (f_Na + f_Cl)(모두 짝수), 4 (f_Na − f_Cl)(모두 홀수), 0(혼합)\n세기 ∝ m |F|² / (sin²θ cosθ)",
+   "de": "F(hkl) = Σ_j f_j e^(2πi (h x_j + k y_j + l z_j))\nFm-3m: F = 4 (f_Na + f_Cl) (alle gerade), 4 (f_Na − f_Cl) (alle ungerade), 0 (gemischt)\nIntensität ∝ m |F|² / (sin²θ cosθ)",
+   "hi": "F(hkl) = Σ_j f_j e^(2πi (h x_j + k y_j + l z_j))\nFm-3m: F = 4 (f_Na + f_Cl) (सब even), 4 (f_Na − f_Cl) (सब odd), 0 (mixed)\nतीव्रता ∝ m |F|² / (sin²θ cosθ)",
+   "fr": "F(hkl) = Σ_j f_j e^(2πi (h x_j + k y_j + l z_j))\nFm-3m : F = 4 (f_Na + f_Cl) (tous pairs), 4 (f_Na − f_Cl) (tous impairs), 0 (mixte)\nintensité ∝ m |F|² / (sin²θ cosθ)"
+  },
+  "Fullseye processing band (crystal → op → pattern → theory vs op; the active stage is highlighted)": {
+   "ja": "Fullseye の処理の帯(結晶 → op → パターン → 理論との差。いま効いている段を色で強調)",
+   "zh": "Fullseye 处理带(晶体 → op → 图样 → 理论与 op 之差;当前阶段高亮)",
+   "tw": "Fullseye 處理帶(晶體 → op → 圖樣 → 理論與 op 之差;當前階段高亮)",
+   "ko": "Fullseye 처리 띠(결정 → op → 패턴 → 이론과 op의 차. 지금 작동하는 단을 색으로 강조)",
+   "de": "Fullseye-Verarbeitungsband (Kristall → op → Muster → Theorie gegen op; die aktive Stufe ist hervorgehoben)",
+   "hi": "Fullseye processing band (crystal → op → pattern → theory बनाम op; सक्रिय चरण highlighted)",
+   "fr": "Bande de traitement Fullseye (cristal → op → diagramme → théorie contre op ; l'étape active est surlignée)"
+  },
+  "Gets stronger as the angle grows": {
+   "ja": "角度が大きいほど強い",
+   "zh": "角度越大越强",
+   "tw": "角度越大越強",
+   "ko": "각도가 클수록 강해진다",
+   "de": "Wird mit wachsendem Winkel stärker",
+   "hi": "कोण बढ़ने पर और प्रबल",
+   "fr": "Devient plus forte quand l'angle grandit"
+  },
+  "Grow, then disappear one by one": {
+   "ja": "大きくなり、やがて 1 本ずつ消える",
+   "zh": "变大,然后一个个消失",
+   "tw": "變大,然後一個個消失",
+   "ko": "커지다가, 하나씩 사라진다",
+   "de": "Wachsen und verschwinden dann einer nach dem anderen",
+   "hi": "बड़े होते हैं, फिर एक-एक कर गायब",
+   "fr": "Grandissent, puis disparaissent un à un"
+  },
+  "If the grains prefer some orientations (texture) the ring brightness varies around the ring; here they are uniform. The ring width comes from the crystallite size (Scherrer) and the instrument; the debye_ring_image frames use 900 Å crystallites and a 0.15° instrumental width. Absorption is not included.": {
+   "ja": "粒の向きの偏り(選択配向)があると環の明るさが方位で変わるが、ここでは一様とした。環の幅は結晶子の大きさ(Scherrer)と装置で決まり、debye_ring_image の像は結晶子 900 Å・装置の幅 0.15° の設定。吸収は入れていない。",
+   "zh": "若晶粒偏向某些取向(择优取向),环的亮度会随方位变化;这里假定均匀。环的宽度由晶粒尺寸(Scherrer)和仪器决定;debye_ring_image 的图像采用 900 Å 的晶粒与 0.15° 的仪器宽度。吸收未计入。",
+   "tw": "若晶粒偏向某些取向(擇優取向),環的亮度會隨方位變化;這裡假定均勻。環的寬度由晶粒尺寸(Scherrer)和儀器決定;debye_ring_image 的影像採用 900 Å 的晶粒與 0.15° 的儀器寬度。吸收未計入。",
+   "ko": "알갱이의 방향이 치우치면(선택 배향) 환의 밝기가 방위에 따라 달라지지만 여기서는 균일하게 두었다. 환의 폭은 결정자 크기(Scherrer)와 장치로 정해지며, debye_ring_image의 영상은 결정자 900 Å·장치 폭 0.15°의 설정이다. 흡수는 넣지 않았다.",
+   "de": "Bevorzugen die Körner bestimmte Orientierungen (Textur), schwankt die Helligkeit entlang des Rings; hier sind sie gleichverteilt. Die Ringbreite kommt von der Kristallitgröße (Scherrer) und dem Gerät; die Bilder aus debye_ring_image verwenden 900 Å Kristallite und eine Gerätebreite von 0.15°. Absorption ist nicht enthalten.",
+   "hi": "यदि दाने कुछ orientation पसंद करें (texture) तो ring की चमक ring के साथ बदलती है; यहाँ वे समान हैं। ring की चौड़ाई crystallite आकार (Scherrer) और उपकरण से आती है; debye_ring_image के frame 900 Å crystallite और 0.15° उपकरण चौड़ाई लेते हैं। अवशोषण शामिल नहीं।",
+   "fr": "Si les grains préfèrent certaines orientations (texture), la brillance varie le long de l'anneau ; ici ils sont uniformes. La largeur des anneaux vient de la taille des cristallites (Scherrer) et de l'instrument ; les images de debye_ring_image utilisent des cristallites de 900 Å et une largeur instrumentale de 0.15°. L'absorption n'est pas incluse."
+  },
+  "In a cubic crystal the spacing depends only on a and (hkl). This CIF gives a = 5.62 Å to 3 digits, so the density comes out 0.8 % above the handbook 2.17 g/cm³. Planes with the same d (333 and 511, for example) fall on the same 2θ in a powder and cannot be told apart.": {
+   "ja": "立方晶の面間隔は a と (hkl) だけで決まる。この CIF の a = 5.62 Å は 3 桁の値で、密度は手引書の 2.17 g/cm³ より 0.8 % 大きい。同じ d の面(333 と 511 など)は粉末では同じ 2θ に重なり、区別できない。",
+   "zh": "立方晶体的面间距只由 a 和 (hkl) 决定。这份 CIF 的 a = 5.62 Å 只有 3 位有效数字,因此算出的密度比手册值 2.17 g/cm³ 高 0.8 %。d 相同的晶面(例如 333 与 511)在粉末中落在同一个 2θ,无法区分。",
+   "tw": "立方晶體的面間距只由 a 和 (hkl) 決定。這份 CIF 的 a = 5.62 Å 只有 3 位有效數字,因此算出的密度比手冊值 2.17 g/cm³ 高 0.8 %。d 相同的晶面(例如 333 與 511)在粉末中落在同一個 2θ,無法區分。",
+   "ko": "입방 결정의 면간격은 a와 (hkl)만으로 정해진다. 이 CIF의 a = 5.62 Å는 3자리 값이어서 밀도가 편람의 2.17 g/cm³보다 0.8 % 크게 나온다. d가 같은 면(예: 333과 511)은 분말에서 같은 2θ에 겹쳐 구별할 수 없다.",
+   "de": "In einem kubischen Kristall hängt der Abstand nur von a und (hkl) ab. Dieses CIF gibt a = 5.62 Å mit 3 Stellen an, daher liegt die Dichte 0.8 % über dem Handbuchwert 2.17 g/cm³. Ebenen mit gleichem d (zum Beispiel 333 und 511) fallen im Pulver auf dasselbe 2θ und sind nicht zu unterscheiden.",
+   "hi": "घनीय क्रिस्टल में अंतराल केवल a और (hkl) पर निर्भर है। इस CIF में a = 5.62 Å केवल 3 अंकों तक है, इसलिए घनत्व handbook के 2.17 g/cm³ से 0.8 % ऊपर आता है। समान d वाले तल (जैसे 333 और 511) powder में एक ही 2θ पर पड़ते हैं और अलग नहीं पहचाने जा सकते।",
+   "fr": "Dans un cristal cubique, l'espacement ne dépend que de a et de (hkl). Ce CIF donne a = 5.62 Å à 3 chiffres, si bien que la densité ressort 0.8 % au-dessus de la valeur du manuel 2.17 g/cm³. Les plans de même d (333 et 511, par exemple) tombent au même 2θ dans une poudre et ne peuvent être distingués."
+  },
+  "In a face-centred lattice an identical plane sits exactly halfway between the (100) planes; its wave is half a wavelength out of step and cancels. Every plane with mixed-parity h, k, l gives 0. All-odd planes leave only f_Na − f_Cl (the Na and Cl waves oppose) and are weak (|F|² ratio (111)/(200) = 0.047); all-even planes add f_Na + f_Cl and are strong.": {
+   "ja": "面心格子では (100) の面と面の真ん中に同じ中身の面があり、そこからの波はちょうど半波長ずれて打ち消す。h, k, l が混合パリティの面は全部 0。全部奇数の面は Na と Cl の波が逆向きで f_Na − f_Cl だけ残り弱い((111)/(200) の |F|² の比 = 0.047)。全部偶数は f_Na + f_Cl で強い。",
+   "zh": "在面心格子中,(100) 晶面两两之间的正中有一个内容完全相同的晶面;它的波恰好差半个波长,因而抵消。h, k, l 奇偶混合的晶面全部为 0。全奇晶面只剩 f_Na − f_Cl(Na 与 Cl 的波方向相反),因而很弱(|F|² 之比 (111)/(200) = 0.047);全偶晶面相加得 f_Na + f_Cl,很强。",
+   "tw": "在面心格子中,(100) 晶面兩兩之間的正中有一個內容完全相同的晶面;它的波恰好差半個波長,因而抵消。h, k, l 奇偶混合的晶面全部為 0。全奇晶面只剩 f_Na − f_Cl(Na 與 Cl 的波方向相反),因而很弱(|F|² 之比 (111)/(200) = 0.047);全偶晶面相加得 f_Na + f_Cl,很強。",
+   "ko": "면심 격자에서는 (100) 면과 면의 정확히 중간에 같은 내용의 면이 있고, 그 파동은 반파장 어긋나 상쇄된다. h, k, l이 홀짝 혼합인 면은 모두 0. 모두 홀수인 면은 Na와 Cl의 파동이 반대여서 f_Na − f_Cl만 남아 약하고(|F|²의 비 (111)/(200) = 0.047), 모두 짝수인 면은 f_Na + f_Cl로 더해져 강하다.",
+   "de": "Im flächenzentrierten Gitter liegt genau in der Mitte zwischen den (100)-Ebenen eine identische Ebene; ihre Welle ist um eine halbe Wellenlänge versetzt und löscht aus. Jede Ebene mit gemischter Parität von h, k, l ergibt 0. Rein ungerade Ebenen lassen nur f_Na − f_Cl übrig (die Na- und Cl-Wellen sind gegenläufig) und sind schwach (|F|²-Verhältnis (111)/(200) = 0.047); rein gerade Ebenen addieren f_Na + f_Cl und sind stark.",
+   "hi": "face-centred lattice में (100) तलों के ठीक बीच में एक समान तल बैठा है; उसकी तरंग आधी तरंगदैर्घ्य से विपरीत होकर रद्द हो जाती है। mixed-parity h, k, l वाला हर तल 0 देता है। सब odd तलों में केवल f_Na − f_Cl बचता है (Na और Cl की तरंगें विपरीत) और वे कमज़ोर हैं (|F|² अनुपात (111)/(200) = 0.047); सब even तल f_Na + f_Cl जोड़ते हैं और प्रबल हैं।",
+   "fr": "Dans un réseau à faces centrées, un plan identique se trouve exactement à mi-chemin entre les plans (100) ; son onde est décalée d'une demi-longueur d'onde et s'annule. Tout plan à parité mixte de h, k, l donne 0. Les plans tous impairs ne laissent que f_Na − f_Cl (les ondes de Na et de Cl s'opposent) et sont faibles (rapport des |F|² (111)/(200) = 0.047) ; les plans tous pairs additionnent f_Na + f_Cl et sont forts."
+  },
+  "Intensities use the structure factor |F|² and the Lorentz factor only: absorption, polarisation, crystallite size (Scherrer) and anomalous dispersion are left out. The scattering factors are the 5-Gaussian fit for the ions (Na⁺, Cl⁻), and the displacement is set to B = 0.5 Å² because the CIF has none.": {
+   "ja": "強度は構造因子 |F|² と Lorentz 因子の近似で、吸収・偏光・結晶子の大きさ(Scherrer)・異常分散は入れていない。散乱因子はイオン(Na⁺、Cl⁻)の 5 ガウス近似、変位は CIF に無いので B = 0.5 Å² と置いた。",
+   "zh": "强度只用结构因子 |F|² 和 Lorentz 因子:吸收、偏振、晶粒尺寸(Scherrer)和反常散射均未计入。散射因子采用离子(Na⁺、Cl⁻)的 5 高斯拟合;CIF 中没有位移参数,故取 B = 0.5 Å²。",
+   "tw": "強度只用結構因子 |F|² 和 Lorentz 因子:吸收、偏振、晶粒尺寸(Scherrer)和異常散射均未計入。散射因子採用離子(Na⁺、Cl⁻)的 5 高斯擬合;CIF 中沒有位移參數,故取 B = 0.5 Å²。",
+   "ko": "세기는 구조 인자 |F|²와 Lorentz 인자만의 근사로, 흡수·편광·결정자 크기(Scherrer)·이상 분산은 넣지 않았다. 산란 인자는 이온(Na⁺, Cl⁻)의 5 가우스 근사이고, CIF에 변위가 없어 B = 0.5 Å²로 두었다.",
+   "de": "Die Intensitäten verwenden nur den Strukturfaktor |F|² und den Lorentz-Faktor: Absorption, Polarisation, Kristallitgröße (Scherrer) und anomale Dispersion fehlen. Die Streufaktoren sind die 5-Gauß-Näherung für die Ionen (Na⁺, Cl⁻), und die Auslenkung ist auf B = 0.5 Å² gesetzt, weil das CIF keine enthält.",
+   "hi": "तीव्रताएँ केवल structure factor |F|² और Lorentz factor लेती हैं: अवशोषण, ध्रुवण, crystallite आकार (Scherrer) और anomalous dispersion छूटे हैं। scattering factor आयनों (Na⁺, Cl⁻) का 5-Gaussian fit है, और CIF में displacement न होने से B = 0.5 Å² रखा है।",
+   "fr": "Les intensités n'utilisent que le facteur de structure |F|² et le facteur de Lorentz : absorption, polarisation, taille des cristallites (Scherrer) et dispersion anomale sont laissées de côté. Les facteurs de diffusion sont l'ajustement à 5 gaussiennes pour les ions (Na⁺, Cl⁻), et le déplacement est fixé à B = 0.5 Å² parce que le CIF n'en a pas."
+  },
+  "Is bright only at particular angles": {
+   "ja": "決まった角度でだけ強く光る",
+   "zh": "只在特定角度明亮",
+   "tw": "只在特定角度明亮",
+   "ko": "정해진 각도에서만 밝게 빛난다",
+   "de": "Ist nur bei bestimmten Winkeln hell",
+   "hi": "केवल विशेष कोणों पर चमकता है",
+   "fr": "N'est brillante qu'à certains angles"
+  },
+  "Is equally strong at every angle": {
+   "ja": "どの角度でも同じ強さ",
+   "zh": "在任何角度都一样强",
+   "tw": "在任何角度都一樣強",
+   "ko": "어느 각도에서나 같은 세기",
+   "de": "Ist bei jedem Winkel gleich stark",
+   "hi": "हर कोण पर समान प्रबल",
+   "fr": "Est aussi forte à tous les angles"
+  },
+  "It does not depend on d": {
+   "ja": "d によらない",
+   "zh": "与 d 无关",
+   "tw": "與 d 無關",
+   "ko": "d와 무관하다",
+   "de": "Es hängt nicht von d ab",
+   "hi": "d पर निर्भर नहीं",
+   "fr": "Cela ne dépend pas de d"
+  },
+  "Make the X-ray wavelength λ longer and longer. The rings on the detector…": {
+   "ja": "粉末の X 線の波長 λ を長くしていく。検出器の環は?",
+   "zh": "把 X 射线波长 λ 越拉越长。探测器上的环会……",
+   "tw": "把 X 光波長 λ 越拉越長。探測器上的環會……",
+   "ko": "X선의 파장 λ를 점점 길게 한다. 검출기의 환은…",
+   "de": "Die Röntgenwellenlänge λ wird immer länger. Die Ringe auf dem Detektor …",
+   "hi": "X-ray की तरंगदैर्घ्य λ को लंबा करते जाएँ। detector पर ring…",
+   "fr": "Allongez de plus en plus la longueur d'onde λ des rayons X. Les anneaux sur le détecteur…"
+  },
+  "Move the spacing, the angle and the wavelength and Bragg's law becomes a ring — computed by fullseye's pxrd ops": {
+   "ja": "面間隔・角度・波長を動かすと、Bragg の式の答えが環になる —— 計算は fullseye の pxrd op",
+   "zh": "拖动面间距、角度和波长,Bragg 定律就变成一个环 —— 由 fullseye 的 pxrd op 计算",
+   "tw": "拖動面間距、角度和波長,Bragg 定律就變成一個環 —— 由 fullseye 的 pxrd op 計算",
+   "ko": "면간격·각도·파장을 움직이면 Bragg의 법칙이 환이 된다 —— 계산은 fullseye의 pxrd op",
+   "de": "Bewege Abstand, Winkel und Wellenlänge, und das Bragg-Gesetz wird zum Ring — berechnet mit den pxrd-Ops von fullseye",
+   "hi": "अंतराल, कोण और तरंगदैर्घ्य बदलिए और Bragg का नियम एक ring बन जाता है — गणना fullseye के pxrd ops से",
+   "fr": "Faites varier l'espacement, l'angle et la longueur d'onde et la loi de Bragg devient un anneau — calculé par les ops pxrd de fullseye"
+  },
+  "Na⁺": {
+   "ja": "Na⁺",
+   "zh": "Na⁺",
+   "tw": "Na⁺",
+   "ko": "Na⁺",
+   "de": "Na⁺",
+   "hi": "Na⁺",
+   "fr": "Na⁺"
+  },
+  "Na⁺ (small)": {
+   "ja": "Na⁺(小)",
+   "zh": "Na⁺(小)",
+   "tw": "Na⁺(小)",
+   "ko": "Na⁺(작음)",
+   "de": "Na⁺ (klein)",
+   "hi": "Na⁺ (छोटा)",
+   "fr": "Na⁺ (petit)"
+  },
+  "No (the plane halfway between cancels it)": {
+   "ja": "出ない(間の面が打ち消す)",
+   "zh": "不出现(中间的晶面把它抵消了)",
+   "tw": "不出現(中間的晶面把它抵消了)",
+   "ko": "나오지 않는다(중간의 면이 상쇄한다)",
+   "de": "Nein (die Ebene genau dazwischen löscht ihn aus)",
+   "hi": "नहीं (बीच का तल उसे रद्द कर देता है)",
+   "fr": "Non (le plan à mi-chemin l'annule)"
+  },
+  "On the right, each of the 8 atoms in the unit cell (4 Na, violet / 4 Cl, green) scatters its own wave, and the summed wave (yellow) is drawn at the bottom. Each wave has phase 2π(hx + ky + lz) and amplitude f, the scattering factor. For mixed-parity planes such as (100)(110)(210), the 4 Na of the face-centred lattice cancel in opposite-phase pairs, the Cl likewise, and the sum is 0 — the planes exist, yet no peak appears. For the all-odd (111), the 4 Na waves oppose the 4 Cl waves and only f_Na − f_Cl survives: weak. For the all-even (200)(220) all 8 waves agree, f_Na + f_Cl: strong. The sticks in the band are the powder pattern from powder_reflections; a red stick marks where a vanished plane would have been. The 4th stage compares the closed form 4 (f_Na ± f_Cl) with the op's |F|².": {
+   "ja": "右に単位胞の 8 原子(Na 4、紫 / Cl 4、緑)それぞれが散乱する波を 1 本ずつ描き、いちばん下に足し合わせた波(黄)を出す。各波の位相は 2π(hx + ky + lz)、振幅は散乱因子 f。(100)(110)(210) のような混合パリティの面では、面心格子の 4 つの Na が 2 本ずつ逆位相で打ち消し、Cl も同じで、和は 0 —— 面はあるのに山は出ない。全部奇数の (111) では Na の 4 本と Cl の 4 本が逆向きで、f_Na − f_Cl だけが残って弱い。全部偶数の (200)(220) は 8 本が同じ向きで f_Na + f_Cl、強い。帯の棒図は powder_reflections の粉末パターンで、赤い棒は「消えた面がもし出るならここ」。閉じた式 4 (f_Na ± f_Cl) と op の |F|² の差が 4 段目。",
+   "zh": "右侧把晶胞里 8 个原子(4 个 Na,紫色 / 4 个 Cl,绿色)各自散射的波一条条画出,最下面是它们的和(黄色)。每条波的相位是 2π(hx + ky + lz),振幅是散射因子 f。对于 (100)(110)(210) 这类奇偶混合的晶面,面心格子的 4 个 Na 两两反相抵消,Cl 亦然,和为 0 —— 晶面存在,峰却不出现。全奇的 (111) 中,4 条 Na 波与 4 条 Cl 波方向相反,只剩 f_Na − f_Cl:弱。全偶的 (200)(220) 中 8 条波全部同向,f_Na + f_Cl:强。处理带中的棒图是 powder_reflections 的粉末图样;红棒标出\"消失的晶面若出现会在此处\"。第 4 阶段比较闭式 4 (f_Na ± f_Cl) 与 op 的 |F|²。",
+   "tw": "右側把晶胞裡 8 個原子(4 個 Na,紫色 / 4 個 Cl,綠色)各自散射的波一條條畫出,最下面是它們的和(黃色)。每條波的相位是 2π(hx + ky + lz),振幅是散射因子 f。對於 (100)(110)(210) 這類奇偶混合的晶面,面心格子的 4 個 Na 兩兩反相抵消,Cl 亦然,和為 0 —— 晶面存在,峰卻不出現。全奇的 (111) 中,4 條 Na 波與 4 條 Cl 波方向相反,只剩 f_Na − f_Cl:弱。全偶的 (200)(220) 中 8 條波全部同向,f_Na + f_Cl:強。處理帶中的棒圖是 powder_reflections 的粉末圖樣;紅棒標出「消失的晶面若出現會在此處」。第 4 階段比較閉式 4 (f_Na ± f_Cl) 與 op 的 |F|²。",
+   "ko": "오른쪽에 단위세포의 원자 8개(Na 4개, 보라 / Cl 4개, 녹색)가 각각 산란하는 파동을 한 줄씩 그리고, 맨 아래에 합한 파동(노랑)을 둔다. 각 파동의 위상은 2π(hx + ky + lz), 진폭은 산란 인자 f. (100)(110)(210)처럼 홀짝 혼합인 면에서는 면심 격자의 Na 4개가 둘씩 반대 위상으로 상쇄되고 Cl도 같아서 합은 0 —— 면은 있어도 봉우리는 나오지 않는다. 모두 홀수인 (111)에서는 Na 4줄과 Cl 4줄이 반대여서 f_Na − f_Cl만 남아 약하다. 모두 짝수인 (200)(220)에서는 8줄이 같은 방향, f_Na + f_Cl로 강하다. 띠의 막대는 powder_reflections의 분말 패턴이고, 빨간 막대는 사라진 면이 나왔다면 있을 자리. 4단은 닫힌 식 4 (f_Na ± f_Cl)과 op의 |F|²를 비교한다.",
+   "de": "Rechts streut jedes der 8 Atome der Elementarzelle (4 Na, violett / 4 Cl, grün) seine eigene Welle, und unten ist die summierte Welle (gelb) gezeichnet. Jede Welle hat die Phase 2π(hx + ky + lz) und die Amplitude f, den Streufaktor. Bei Ebenen gemischter Parität wie (100)(110)(210) löschen sich die 4 Na des flächenzentrierten Gitters paarweise gegenphasig aus, die Cl ebenso, und die Summe ist 0 — die Ebenen existieren, doch kein Peak erscheint. Bei der rein ungeraden (111) stehen die 4 Na-Wellen den 4 Cl-Wellen entgegen, nur f_Na − f_Cl bleibt: schwach. Bei den rein geraden (200)(220) stimmen alle 8 Wellen überein, f_Na + f_Cl: stark. Die Striche im Band sind das Pulvermuster aus powder_reflections; ein roter Strich markiert, wo eine verschwundene Ebene gewesen wäre. Die 4. Stufe vergleicht die geschlossene Form 4 (f_Na ± f_Cl) mit dem |F|² des op.",
+   "hi": "दाएँ, unit cell के 8 परमाणुओं (4 Na, बैंगनी / 4 Cl, हरा) में से हर एक अपनी तरंग बिखेरता है, और जोड़ी गई तरंग (पीली) सबसे नीचे बनी है। हर तरंग की कला 2π(hx + ky + lz) और आयाम f, scattering factor है। (100)(110)(210) जैसे mixed-parity तलों के लिए face-centred lattice के 4 Na विपरीत-कला जोड़ों में रद्द होते हैं, Cl भी वैसे ही, और योग 0 है — तल मौजूद हैं, फिर भी कोई peak नहीं। सब odd (111) के लिए 4 Na तरंगें 4 Cl तरंगों के विरुद्ध हैं और केवल f_Na − f_Cl बचता है: कमज़ोर। सब even (200)(220) के लिए सभी 8 तरंगें सहमत, f_Na + f_Cl: प्रबल। band की छड़ें powder_reflections का powder pattern हैं; लाल छड़ दिखाती है कि गायब तल कहाँ होता। 4था चरण closed form 4 (f_Na ± f_Cl) की op के |F|² से तुलना करता है।",
+   "fr": "À droite, chacun des 8 atomes de la maille (4 Na, violet / 4 Cl, vert) diffuse sa propre onde, et l'onde sommée (jaune) est dessinée en bas. Chaque onde a la phase 2π(hx + ky + lz) et l'amplitude f, le facteur de diffusion. Pour les plans à parité mixte comme (100)(110)(210), les 4 Na du réseau à faces centrées s'annulent par paires en opposition de phase, les Cl de même, et la somme vaut 0 — les plans existent, pourtant aucun pic n'apparaît. Pour le (111) tout impair, les 4 ondes de Na s'opposent aux 4 ondes de Cl et seul f_Na − f_Cl subsiste : faible. Pour les (200)(220) tout pairs, les 8 ondes s'accordent, f_Na + f_Cl : fort. Les bâtons de la bande sont le diagramme de poudre de powder_reflections ; un bâton rouge marque où un plan disparu se serait trouvé. La 4e étape compare la forme fermée 4 (f_Na ± f_Cl) au |F|² de l'op."
+  },
+  "Parallel X-rays of wavelength λ = 1.5406 Å hit 5 (200) planes (spacing d = 2.810 Å) at an angle θ. The extra path of the ray reflected by the next plane (orange) is 2d sinθ. As θ rises, only at the angles where that path is λ, 2λ or 3λ do the waves from all planes crest together and the detector on the right lights up; elsewhere the 5 waves cancel and it stays dark. The bright angles θ = 15.91°, 33.25°, 55.32° are half the 2θ of (200)(400)(600) from powder_reflections (difference in the band's 4th stage).": {
+   "ja": "(200) の面 5 枚(間隔 d = 2.810 Å)に、波長 λ = 1.5406 Å の平行な X 線を角 θ で当てる。隣の面で反射した光の行路差(橙)は 2d sinθ。θ を上げていくと、行路差が λ・2λ・3λ になる角度でだけ全部の面からの波の山が重なり、右の受光面が明るく光る。それ以外の角度では 5 枚の波が打ち消し合って暗い。光る角度 θ = 15.91°、33.25°、55.32° は powder_reflections の (200)(400)(600) の 2θ の半分と一致する(帯の 4 段目に差)。",
+   "zh": "波长 λ = 1.5406 Å 的平行 X 射线以角 θ 照到 5 个 (200) 晶面(间距 d = 2.810 Å)上。被下一个晶面反射的光线多走的路程(橙色)是 2d sinθ。随着 θ 增大,只有当这段路程等于 λ、2λ 或 3λ 时,所有晶面的波峰才重合,右侧的探测器亮起;其他角度下 5 条波互相抵消,保持黑暗。发亮的角度 θ = 15.91°、33.25°、55.32° 正是 powder_reflections 给出的 (200)(400)(600) 的 2θ 的一半(差值见处理带第 4 阶段)。",
+   "tw": "波長 λ = 1.5406 Å 的平行 X 光以角 θ 照到 5 個 (200) 晶面(間距 d = 2.810 Å)上。被下一個晶面反射的光線多走的路程(橙色)是 2d sinθ。隨著 θ 增大,只有當這段路程等於 λ、2λ 或 3λ 時,所有晶面的波峰才重合,右側的探測器亮起;其他角度下 5 條波互相抵消,保持黑暗。發亮的角度 θ = 15.91°、33.25°、55.32° 正是 powder_reflections 給出的 (200)(400)(600) 的 2θ 的一半(差值見處理帶第 4 階段)。",
+   "ko": "파장 λ = 1.5406 Å의 평행한 X선이 (200) 면 5장(간격 d = 2.810 Å)에 각 θ로 닿는다. 다음 면에서 반사된 광선이 더 가는 길(주황)은 2d sinθ. θ를 올리면 그 길이가 λ, 2λ, 3λ가 되는 각도에서만 모든 면의 파동의 마루가 겹쳐 오른쪽 검출기가 밝게 빛나고, 그 밖의 각도에서는 5줄의 파동이 상쇄되어 어둡다. 빛나는 각도 θ = 15.91°, 33.25°, 55.32°는 powder_reflections의 (200)(400)(600)의 2θ의 절반과 일치한다(차는 띠의 4단).",
+   "de": "Parallele Röntgenstrahlen der Wellenlänge λ = 1.5406 Å treffen 5 (200)-Ebenen (Abstand d = 2.810 Å) unter dem Winkel θ. Der zusätzliche Weg des an der nächsten Ebene reflektierten Strahls (orange) ist 2d sinθ. Mit steigendem θ fallen nur bei den Winkeln, an denen dieser Weg λ, 2λ oder 3λ beträgt, die Wellenberge aller Ebenen zusammen, und der Detektor rechts leuchtet auf; sonst löschen sich die 5 Wellen aus und er bleibt dunkel. Die hellen Winkel θ = 15.91°, 33.25°, 55.32° sind die Hälfte des 2θ von (200)(400)(600) aus powder_reflections (Differenz in der 4. Stufe des Bandes).",
+   "hi": "तरंगदैर्घ्य λ = 1.5406 Å की समानांतर X-rays 5 (200) तलों (अंतराल d = 2.810 Å) पर कोण θ से पड़ती हैं। अगले तल से परावर्तित किरण का अतिरिक्त पथ (नारंगी) 2d sinθ है। θ बढ़ने पर केवल उन कोणों पर, जहाँ यह पथ λ, 2λ या 3λ है, सभी तलों की तरंगों के शिखर मिलते हैं और दाएँ detector जल उठता है; अन्यत्र 5 तरंगें रद्द होकर अँधेरा रहता है। चमकीले कोण θ = 15.91°, 33.25°, 55.32° powder_reflections के (200)(400)(600) के 2θ के आधे हैं (अंतर band के 4थे चरण में)।",
+   "fr": "Des rayons X parallèles de longueur d'onde λ = 1.5406 Å frappent 5 plans (200) (espacement d = 2.810 Å) sous un angle θ. Le trajet supplémentaire du rayon réfléchi par le plan suivant (orange) vaut 2d sinθ. Quand θ augmente, ce n'est qu'aux angles où ce trajet vaut λ, 2λ ou 3λ que les crêtes des ondes de tous les plans coïncident et que le détecteur de droite s'allume ; ailleurs les 5 ondes s'annulent et il reste sombre. Les angles brillants θ = 15.91°, 33.25°, 55.32° sont la moitié des 2θ de (200)(400)(600) donnés par powder_reflections (écart dans la 4e étape de la bande)."
+  },
+  "Powder X-ray diffraction of salt — why it shines only at those angles": {
+   "ja": "塩の結晶の粉末 X 線回折 —— なぜその角度にだけ光るのか",
+   "zh": "食盐晶体的粉末 X 射线衍射 —— 为什么只在那些角度发亮",
+   "tw": "食鹽晶體的粉末 X 光繞射 —— 為什麼只在那些角度發亮",
+   "ko": "소금 결정의 분말 X선 회절 —— 왜 그 각도에서만 빛나는가",
+   "de": "Pulver-Röntgenbeugung an Salz — warum es nur bei diesen Winkeln leuchtet",
+   "hi": "नमक के क्रिस्टल का powder X-ray diffraction — यह उन्हीं कोणों पर क्यों चमकता है",
+   "fr": "Diffraction des rayons X sur poudre de sel — pourquoi elle ne brille qu'à ces angles"
+  },
+  "Powder and Debye rings (and their limit)": {
+   "ja": "粉末とデバイ環(と、その限界)",
+   "zh": "粉末与 Debye 环(及其极限)",
+   "tw": "粉末與 Debye 環(及其極限)",
+   "ko": "분말과 Debye 환(그리고 그 한계)",
+   "de": "Pulver und Debye-Ringe (und ihre Grenze)",
+   "hi": "Powder और Debye ring (और उनकी सीमा)",
+   "fr": "Poudre et anneaux de Debye (et leur limite)"
+  },
+  "Shine X-rays on the crystal and raise the angle θ to the planes. The reflected light…": {
+   "ja": "結晶に X 線を当て、面との角 θ を上げていく。はね返った光は?",
+   "zh": "把 X 射线照到晶体上,并逐渐增大与晶面的夹角 θ。反射光……",
+   "tw": "把 X 光照到晶體上,並逐漸增大與晶面的夾角 θ。反射光……",
+   "ko": "결정에 X선을 쬐고 면과의 각 θ를 올려 간다. 반사된 빛은…",
+   "de": "Röntgenstrahlen treffen den Kristall, der Winkel θ zu den Ebenen wird erhöht. Das reflektierte Licht …",
+   "hi": "क्रिस्टल पर X-ray डालिए और तलों से कोण θ बढ़ाइए। परावर्तित प्रकाश…",
+   "fr": "Envoyez des rayons X sur le cristal et augmentez l'angle θ avec les plans. La lumière réfléchie…"
+  },
+  "Shrink": {
+   "ja": "小さくなる",
+   "zh": "变小",
+   "tw": "變小",
+   "ko": "작아진다",
+   "de": "Schrumpfen",
+   "hi": "छोटे होते हैं",
+   "fr": "Rétrécissent"
+  },
+  "Stay the same": {
+   "ja": "変わらない",
+   "zh": "不变",
+   "tw": "不變",
+   "ko": "변하지 않는다",
+   "de": "Bleiben gleich",
+   "hi": "वैसे ही रहते हैं",
+   "fr": "Restent les mêmes"
+  },
+  "The (100) planes certainly exist in the crystal. Does the powder pattern show a (100) peak?": {
+   "ja": "面 (100) は結晶の中にちゃんとある。粉末パターンに (100) の山は出る?",
+   "zh": "晶体里确实有 (100) 晶面。粉末图样上会出现 (100) 峰吗?",
+   "tw": "晶體裡確實有 (100) 晶面。粉末圖樣上會出現 (100) 峰嗎?",
+   "ko": "(100) 면은 결정 안에 분명히 있다. 분말 패턴에 (100)의 봉우리가 나올까?",
+   "de": "Die (100)-Ebenen gibt es im Kristall ganz sicher. Zeigt das Pulvermuster einen (100)-Peak?",
+   "hi": "(100) तल क्रिस्टल में निश्चित रूप से हैं। क्या powder pattern में (100) peak दिखता है?",
+   "fr": "Les plans (100) existent bel et bien dans le cristal. Le diagramme de poudre montre-t-il un pic (100) ?"
+  },
+  "The crystal and its lattice planes": {
+   "ja": "結晶と格子面",
+   "zh": "晶体与晶格面",
+   "tw": "晶體與晶格面",
+   "ko": "결정과 격자면",
+   "de": "Der Kristall und seine Gitterebenen",
+   "hi": "क्रिस्टल और उसके lattice plane",
+   "fr": "Le cristal et ses plans réticulaires"
+  },
+  "The path difference between neighbouring planes is 2d sinθ. Only where it is a whole number of wavelengths do the crests line up and all 5 planes add up ((200) at θ = 15.91°, (400) at 33.25°); elsewhere they cancel and the detector stays dark.": {
+   "ja": "隣の面から戻る光の行路差は 2d sinθ。これが λ の整数倍の角度でだけ波の山が重なり、5 枚ぶんが足し合って強く光る((200) は θ = 15.91°、(400) は 33.25°)。それ以外の角度では打ち消し合って暗い。",
+   "zh": "相邻晶面之间的光程差是 2d sinθ。只有当它是波长的整数倍时波峰才对齐,5 个晶面全部叠加((200) 在 θ = 15.91°,(400) 在 33.25°);其他角度互相抵消,探测器保持黑暗。",
+   "tw": "相鄰晶面之間的光程差是 2d sinθ。只有當它是波長的整數倍時波峰才對齊,5 個晶面全部疊加((200) 在 θ = 15.91°,(400) 在 33.25°);其他角度互相抵消,探測器保持黑暗。",
+   "ko": "이웃한 면에서 돌아오는 빛의 행로차는 2d sinθ. 이것이 파장의 정수배가 되는 각도에서만 마루가 겹쳐 5장 모두가 더해진다((200)은 θ = 15.91°, (400)은 33.25°). 그 밖의 각도에서는 상쇄되어 검출기는 어둡다.",
+   "de": "Der Gangunterschied zwischen benachbarten Ebenen ist 2d sinθ. Nur wo er ein ganzes Vielfaches der Wellenlänge ist, liegen die Wellenberge übereinander und alle 5 Ebenen addieren sich ((200) bei θ = 15.91°, (400) bei 33.25°); sonst löschen sie sich aus und der Detektor bleibt dunkel.",
+   "hi": "पड़ोसी तलों के बीच path difference 2d sinθ है। केवल जहाँ यह तरंगदैर्घ्य का पूर्ण गुणज हो, शिखर मिलते हैं और सभी 5 तल जुड़ते हैं ((200) θ = 15.91° पर, (400) 33.25° पर); अन्यत्र वे रद्द होते हैं और detector अँधेरा रहता है।",
+   "fr": "La différence de marche entre plans voisins vaut 2d sinθ. Ce n'est que lorsqu'elle est un nombre entier de longueurs d'onde que les crêtes s'alignent et que les 5 plans s'additionnent ((200) à θ = 15.91°, (400) à 33.25°) ; ailleurs ils s'annulent et le détecteur reste sombre."
+  },
+  "The smaller the spacing d of the planes, at what angle 2θ does the X-ray come out?": {
+   "ja": "面間隔 d が小さい面ほど、X 線はどんな角度 2θ に出てくる?",
+   "zh": "晶面间距 d 越小,X 射线会从怎样的角度 2θ 射出?",
+   "tw": "晶面間距 d 越小,X 光會從怎樣的角度 2θ 射出?",
+   "ko": "면간격 d가 작은 면일수록, X선은 어떤 각도 2θ로 나올까?",
+   "de": "Je kleiner der Abstand d der Ebenen, unter welchem Winkel 2θ tritt der Röntgenstrahl aus?",
+   "hi": "तलों का अंतराल d जितना छोटा, X-ray किस कोण 2θ पर निकलती है?",
+   "fr": "Plus l'espacement d des plans est petit, à quel angle 2θ le rayon X ressort-il ?"
+  },
+  "The unit cell of salt (NaCl): a cube of edge a = 5.620 Å with Na⁺ (violet, small) and Cl⁻ (green, large) alternating. The structure comes from a CIF (COD 1000041) read by cif_read. The lattice planes (hkl) that 'reflect' the X-rays are drawn as translucent sheets, switching through (111) → (200) → (220) → (311) → (222) → (400). Their spacing d = a / √(h²+k²+l²) shrinks as the indices grow; the white ball travels exactly that distance from one plane to the next. The band shows the d and 2θ from powder_reflections and which stick of the powder pattern is the current plane. The (111) planes pass through Na only, with a Cl plane halfway between them — which is why the (111) peak is weak (extinction tab).": {
+   "ja": "塩(NaCl)の単位胞: 一辺 a = 5.620 Å の立方体に Na⁺(紫、小)と Cl⁻(緑、大)が交互に並ぶ。結晶構造は CIF(COD 1000041)を cif_read で読んだもの。X 線が「反射」する格子面 (hkl) を半透明の板で重ね、(111) → (200) → (220) → (311) → (222) → (400) と順に切り替える。面の間隔 d = a / √(h²+k²+l²) は指数が大きいほど狭く、白い球が面から次の面へ渡る距離がそれ。帯には powder_reflections が出した d と 2θ、そして棒図(粉末パターン)のどの山がいまの面かを示す。(111) の面は Na だけを通り、Cl の面がその真ん中にある —— これが (111) の山が弱い理由(消滅則のタブ)。",
+   "zh": "食盐(NaCl)的晶胞:边长 a = 5.620 Å 的立方体,Na⁺(紫色,小)与 Cl⁻(绿色,大)交替排列。结构来自 cif_read 读入的 CIF(COD 1000041)。\"反射\" X 射线的晶格面 (hkl) 画成半透明的薄板,依次切换 (111) → (200) → (220) → (311) → (222) → (400)。面间距 d = a / √(h²+k²+l²) 随指数增大而变窄;白球从一个晶面走到下一个晶面的距离正是 d。处理带显示 powder_reflections 给出的 d 与 2θ,以及粉末图样中哪根棒对应当前晶面。(111) 晶面只穿过 Na,Cl 的晶面正在它们中间 —— 这就是 (111) 峰很弱的原因(见消光规则标签页)。",
+   "tw": "食鹽(NaCl)的晶胞:邊長 a = 5.620 Å 的立方體,Na⁺(紫色,小)與 Cl⁻(綠色,大)交替排列。結構來自 cif_read 讀入的 CIF(COD 1000041)。「反射」X 光的晶格面 (hkl) 畫成半透明的薄板,依序切換 (111) → (200) → (220) → (311) → (222) → (400)。面間距 d = a / √(h²+k²+l²) 隨指數增大而變窄;白球從一個晶面走到下一個晶面的距離正是 d。處理帶顯示 powder_reflections 給出的 d 與 2θ,以及粉末圖樣中哪根棒對應當前晶面。(111) 晶面只穿過 Na,Cl 的晶面正在它們中間 —— 這就是 (111) 峰很弱的原因(見消光規則分頁)。",
+   "ko": "소금(NaCl)의 단위세포: 한 변 a = 5.620 Å의 정육면체에 Na⁺(보라, 작음)와 Cl⁻(녹색, 큼)가 번갈아 놓인다. 결정 구조는 CIF(COD 1000041)를 cif_read로 읽은 것. X선을 '반사'하는 격자면 (hkl)을 반투명 판으로 겹쳐 (111) → (200) → (220) → (311) → (222) → (400) 순으로 바꾼다. 면간격 d = a / √(h²+k²+l²)는 지수가 클수록 좁고, 흰 구슬이 한 면에서 다음 면으로 건너는 거리가 바로 그것. 띠에는 powder_reflections가 낸 d와 2θ, 그리고 분말 패턴의 어느 막대가 지금의 면인지를 보인다. (111) 면은 Na만 지나고 Cl의 면이 그 중간에 있다 —— 이것이 (111) 봉우리가 약한 이유(소멸 규칙 탭).",
+   "de": "Die Elementarzelle von Salz (NaCl): ein Würfel mit Kante a = 5.620 Å, in dem Na⁺ (violett, klein) und Cl⁻ (grün, groß) abwechseln. Die Struktur stammt aus einem CIF (COD 1000041), gelesen von cif_read. Die Gitterebenen (hkl), die die Röntgenstrahlen 'reflektieren', sind als halbtransparente Platten gezeichnet und wechseln durch (111) → (200) → (220) → (311) → (222) → (400). Ihr Abstand d = a / √(h²+k²+l²) schrumpft mit wachsenden Indizes; die weiße Kugel legt genau diese Strecke von einer Ebene zur nächsten zurück. Das Band zeigt d und 2θ aus powder_reflections und welcher Strich des Pulvermusters die aktuelle Ebene ist. Die (111)-Ebenen gehen nur durch Na, mit einer Cl-Ebene genau dazwischen — deshalb ist der (111)-Peak schwach (Tab Auslöschungsregel).",
+   "hi": "नमक (NaCl) की unit cell: किनारा a = 5.620 Å का घन जिसमें Na⁺ (बैंगनी, छोटा) और Cl⁻ (हरा, बड़ा) बारी-बारी हैं। संरचना cif_read से पढ़ी CIF (COD 1000041) से आती है। X-rays को 'परावर्तित' करने वाले lattice plane (hkl) अर्ध-पारदर्शी चादरों के रूप में बने हैं, जो (111) → (200) → (220) → (311) → (222) → (400) क्रम से बदलते हैं। उनका अंतराल d = a / √(h²+k²+l²) सूचकांक बढ़ने पर घटता है; सफ़ेद गेंद एक तल से अगले तक ठीक उतनी दूरी चलती है। band में powder_reflections से d और 2θ, और powder pattern की कौन-सी छड़ वर्तमान तल है, दिखता है। (111) तल केवल Na से गुज़रते हैं और Cl का तल उनके बीच में है — इसी कारण (111) peak कमज़ोर है (extinction tab)।",
+   "fr": "La maille du sel (NaCl) : un cube d'arête a = 5.620 Å où alternent Na⁺ (violet, petit) et Cl⁻ (vert, gros). La structure vient d'un CIF (COD 1000041) lu par cif_read. Les plans réticulaires (hkl) qui « réfléchissent » les rayons X sont dessinés en feuilles translucides, en passant par (111) → (200) → (220) → (311) → (222) → (400). Leur espacement d = a / √(h²+k²+l²) se resserre quand les indices grandissent ; la bille blanche parcourt exactement cette distance d'un plan au suivant. La bande montre d et 2θ issus de powder_reflections et quel bâton du diagramme de poudre est le plan courant. Les plans (111) ne passent que par Na, avec un plan de Cl à mi-chemin — c'est pourquoi le pic (111) est faible (onglet extinction)."
+  },
+  "X-ray source (parallel rays)": {
+   "ja": "X 線源(平行な光線)",
+   "zh": "X 射线源(平行光线)",
+   "tw": "X 光源(平行光線)",
+   "ko": "X선원(평행한 광선)",
+   "de": "Röntgenquelle (parallele Strahlen)",
+   "hi": "X-ray स्रोत (समानांतर किरणें)",
+   "fr": "Source de rayons X (rayons parallèles)"
+  },
+  "X-rays (white) hit the crystal and the diffracted light lands on the detector behind. At first all 16 grains share one orientation = a single crystal: only now and then does a plane meet the Bragg condition, so only scattered spots appear. Then the grains are turned every which way = a powder. Every orientation is present, so spots of the same 2θ line up on a circle and grow into rings (Debye rings), of radius r = D tan 2θ. The band's 2nd stage is the op path: debye_ring_image renders the detector image, azimuthal_integrate folds it to one dimension, and diffraction_peaks' peaks are compared with the 2θ of powder_reflections. Then the wavelength λ grows from 1.54 Å to 7.0 Å. The rings expand, leave the detector, and vanish one by one once λ exceeds 2d for that plane. At λ = 7.0 Å > 2d(111) = 6.49 Å none is left (the 'outside' row of the badge's table).": {
+   "ja": "X 線(白)が結晶に当たり、回折した光が奥の検出器に写る。最初は 16 個の粒が全部同じ向き = 単結晶 1 粒: Bragg の条件を満たす面がたまにしか無く、点がぱらぱらとしか写らない。次に粒の向きをばらばらにする = 粉末。あらゆる向きの面があるので、同じ 2θ の点が円周に並び、環(デバイ環)に育つ。環の半径は r = D tan 2θ。下の帯の 2 段目は op の経路: debye_ring_image が作った検出器像を azimuthal_integrate で 1 次元にし、diffraction_peaks の山を powder_reflections の 2θ と比べる。後半は波長 λ を 1.54 Å から 7.0 Å へ長くする。環は広がり、検出器の外へ出て、λ が 2d を越えた面から順に消える。λ = 7.0 Å > 2d(111) = 6.49 Å では 1 本も残らない(バッジの表の「外れた」の行)。",
+   "zh": "X 射线(白色)照到晶体上,衍射光落在后方的探测器上。起初 16 个晶粒取向全部相同 = 一颗单晶:只有偶尔才有晶面满足 Bragg 条件,所以只出现零星的点。随后把晶粒转得各朝各向 = 粉末。所有取向都有,因此同一 2θ 的点排成圆周,长成环(Debye 环),半径 r = D tan 2θ。处理带的第 2 阶段是 op 的路径:debye_ring_image 生成探测器图像,azimuthal_integrate 把它折成一维,diffraction_peaks 的峰与 powder_reflections 的 2θ 比较。然后波长 λ 从 1.54 Å 增至 7.0 Å。环扩大、跑出探测器,并在 λ 超过该晶面的 2d 时逐一消失。当 λ = 7.0 Å > 2d(111) = 6.49 Å 时一个也不剩(徽章表中\"超出\"的那一行)。",
+   "tw": "X 光(白色)照到晶體上,繞射光落在後方的探測器上。起初 16 個晶粒取向全部相同 = 一顆單晶:只有偶爾才有晶面滿足 Bragg 條件,所以只出現零星的點。隨後把晶粒轉得各朝各向 = 粉末。所有取向都有,因此同一 2θ 的點排成圓周,長成環(Debye 環),半徑 r = D tan 2θ。處理帶的第 2 階段是 op 的路徑:debye_ring_image 生成探測器影像,azimuthal_integrate 把它折成一維,diffraction_peaks 的峰與 powder_reflections 的 2θ 比較。然後波長 λ 從 1.54 Å 增至 7.0 Å。環擴大、跑出探測器,並在 λ 超過該晶面的 2d 時逐一消失。當 λ = 7.0 Å > 2d(111) = 6.49 Å 時一個也不剩(徽章表中「超出」的那一行)。",
+   "ko": "X선(흰색)이 결정에 닿고 회절된 빛이 뒤쪽 검출기에 찍힌다. 처음에는 알갱이 16개가 전부 같은 방향 = 단결정 하나: Bragg 조건을 만족하는 면이 가끔밖에 없어 점이 드문드문 찍힐 뿐이다. 다음에 알갱이의 방향을 제각각으로 = 분말. 모든 방향의 면이 있으므로 같은 2θ의 점이 원둘레에 늘어서 환(Debye 환)으로 자란다. 환의 반지름은 r = D tan 2θ. 띠의 2단은 op의 경로: debye_ring_image가 검출기 영상을 만들고 azimuthal_integrate가 일차원으로 접고, diffraction_peaks의 봉우리를 powder_reflections의 2θ와 비교한다. 후반은 파장 λ를 1.54 Å에서 7.0 Å로 길게 한다. 환은 넓어져 검출기 밖으로 나가고, λ가 그 면의 2d를 넘는 순서로 사라진다. λ = 7.0 Å > 2d(111) = 6.49 Å에서는 하나도 남지 않는다(배지 표의 '벗어남' 행).",
+   "de": "Röntgenstrahlen (weiß) treffen den Kristall, das gebeugte Licht landet auf dem Detektor dahinter. Zunächst teilen alle 16 Körner eine Orientierung = ein Einkristall: nur gelegentlich erfüllt eine Ebene die Bragg-Bedingung, daher erscheinen nur verstreute Punkte. Dann werden die Körner in alle Richtungen gedreht = ein Pulver. Jede Orientierung ist vorhanden, also reihen sich Punkte gleichen 2θ auf einem Kreis auf und wachsen zu Ringen (Debye-Ringen) mit Radius r = D tan 2θ. Die 2. Stufe des Bandes ist der op-Pfad: debye_ring_image rendert das Detektorbild, azimuthal_integrate faltet es auf eine Dimension, und die Peaks von diffraction_peaks werden mit dem 2θ von powder_reflections verglichen. Dann wächst die Wellenlänge λ von 1.54 Å auf 7.0 Å. Die Ringe dehnen sich aus, verlassen den Detektor und verschwinden einer nach dem anderen, sobald λ das 2d dieser Ebene übersteigt. Bei λ = 7.0 Å > 2d(111) = 6.49 Å bleibt keiner übrig (die Zeile 'außerhalb' in der Tabelle des Abzeichens).",
+   "hi": "X-rays (सफ़ेद) क्रिस्टल पर पड़ती हैं और विवर्तित प्रकाश पीछे के detector पर गिरता है। शुरू में सभी 16 दाने एक ही orientation में = एक single crystal: कभी-कभार ही कोई तल Bragg शर्त पूरी करता है, इसलिए केवल बिखरे बिंदु दिखते हैं। फिर दानों को हर दिशा में घुमाया जाता है = powder। हर orientation मौजूद है, इसलिए समान 2θ के बिंदु एक वृत्त पर सजकर ring (Debye ring) बन जाते हैं, त्रिज्या r = D tan 2θ। band का 2रा चरण op पथ है: debye_ring_image detector image बनाता है, azimuthal_integrate उसे एक आयाम में मोड़ता है, और diffraction_peaks के peaks की तुलना powder_reflections के 2θ से होती है। फिर तरंगदैर्घ्य λ 1.54 Å से 7.0 Å तक बढ़ती है। ring फैलते हैं, detector से बाहर जाते हैं, और जैसे ही λ उस तल के 2d से अधिक होती है, एक-एक कर गायब होते हैं। λ = 7.0 Å > 2d(111) = 6.49 Å पर कोई नहीं बचता (badge की तालिका की 'बाहर' पंक्ति)।",
+   "fr": "Les rayons X (blancs) frappent le cristal et la lumière diffractée atterrit sur le détecteur à l'arrière. D'abord les 16 grains partagent une seule orientation = un monocristal : ce n'est que de temps en temps qu'un plan satisfait la condition de Bragg, donc seuls des points épars apparaissent. Puis les grains sont tournés dans tous les sens = une poudre. Toutes les orientations sont présentes, donc les points de même 2θ s'alignent sur un cercle et deviennent des anneaux (anneaux de Debye), de rayon r = D tan 2θ. La 2e étape de la bande est le chemin de l'op : debye_ring_image rend l'image du détecteur, azimuthal_integrate la replie en une dimension, et les pics de diffraction_peaks sont comparés aux 2θ de powder_reflections. Ensuite la longueur d'onde λ passe de 1.54 Å à 7.0 Å. Les anneaux s'élargissent, quittent le détecteur et disparaissent un à un dès que λ dépasse 2d pour ce plan. À λ = 7.0 Å > 2d(111) = 6.49 Å il n'en reste aucun (la ligne « hors » de la table du badge)."
+  },
+  "Yes (the planes are there)": {
+   "ja": "出る(面があるから)",
+   "zh": "出现(因为有这个晶面)",
+   "tw": "出現(因為有這個晶面)",
+   "ko": "나온다(면이 있으니까)",
+   "de": "Ja (die Ebenen sind ja da)",
+   "hi": "हाँ (तल तो हैं)",
+   "fr": "Oui (les plans sont là)"
+  },
+  "Yes, but weakly": {
+   "ja": "弱く出る",
+   "zh": "出现,但很弱",
+   "tw": "出現,但很弱",
+   "ko": "약하게 나온다",
+   "de": "Ja, aber schwach",
+   "hi": "हाँ, पर कमज़ोर",
+   "fr": "Oui, mais faiblement"
+  },
+  "all match": {
+   "ja": "全部一致",
+   "zh": "全部一致",
+   "tw": "全部一致",
+   "ko": "전부 일치",
+   "de": "alle stimmen überein",
+   "hi": "सब मेल खाते हैं",
+   "fr": "tous concordent"
+  },
+  "amplitude of the summed wave (relative)": {
+   "ja": "和の波の振幅(相対)",
+   "zh": "合成波的振幅(相对)",
+   "tw": "合成波的振幅(相對)",
+   "ko": "합한 파동의 진폭(상대)",
+   "de": "Amplitude der summierten Welle (relativ)",
+   "hi": "जोड़ी गई तरंग का आयाम (सापेक्ष)",
+   "fr": "amplitude de l'onde sommée (relative)"
+  },
+  "angle θ between X-ray and planes": {
+   "ja": "X 線と面の角 θ",
+   "zh": "X 射线与晶面的夹角 θ",
+   "tw": "X 光與晶面的夾角 θ",
+   "ko": "X선과 면 사이의 각 θ",
+   "de": "Winkel θ zwischen Röntgenstrahl und Ebenen",
+   "hi": "X-ray और तलों के बीच कोण θ",
+   "fr": "angle θ entre le rayon X et les plans"
+  },
+  "bright angles θ (n = 1, 2, 3)": {
+   "ja": "光る角度 θ(n = 1, 2, 3)",
+   "zh": "发亮的角度 θ(n = 1, 2, 3)",
+   "tw": "發亮的角度 θ(n = 1, 2, 3)",
+   "ko": "빛나는 각도 θ(n = 1, 2, 3)",
+   "de": "helle Winkel θ (n = 1, 2, 3)",
+   "hi": "चमकीले कोण θ (n = 1, 2, 3)",
+   "fr": "angles brillants θ (n = 1, 2, 3)"
+  },
+  "bright at n = 1 (200): θ = 15.91°": {
+   "ja": "n = 1 (200) で輝く: θ = 15.91°",
+   "zh": "在 n = 1 (200) 发亮:θ = 15.91°",
+   "tw": "在 n = 1 (200) 發亮:θ = 15.91°",
+   "ko": "n = 1 (200)에서 빛남: θ = 15.91°",
+   "de": "hell bei n = 1 (200): θ = 15.91°",
+   "hi": "n = 1 (200) पर चमक: θ = 15.91°",
+   "fr": "brillant à n = 1 (200) : θ = 15.91°"
+  },
+  "bright at n = 2 (400): θ = 33.25°": {
+   "ja": "n = 2 (400) で輝く: θ = 33.25°",
+   "zh": "在 n = 2 (400) 发亮:θ = 33.25°",
+   "tw": "在 n = 2 (400) 發亮:θ = 33.25°",
+   "ko": "n = 2 (400)에서 빛남: θ = 33.25°",
+   "de": "hell bei n = 2 (400): θ = 33.25°",
+   "hi": "n = 2 (400) पर चमक: θ = 33.25°",
+   "fr": "brillant à n = 2 (400) : θ = 33.25°"
+  },
+  "bright at n = 3 (600): θ = 55.32°": {
+   "ja": "n = 3 (600) で輝く: θ = 55.32°",
+   "zh": "在 n = 3 (600) 发亮:θ = 55.32°",
+   "tw": "在 n = 3 (600) 發亮:θ = 55.32°",
+   "ko": "n = 3 (600)에서 빛남: θ = 55.32°",
+   "de": "hell bei n = 3 (600): θ = 55.32°",
+   "hi": "n = 3 (600) पर चमक: θ = 55.32°",
+   "fr": "brillant à n = 3 (600) : θ = 55.32°"
+  },
+  "crystal grains (16)": {
+   "ja": "結晶の粒(16 個)",
+   "zh": "晶粒(16 个)",
+   "tw": "晶粒(16 個)",
+   "ko": "결정 알갱이(16개)",
+   "de": "Kristallkörner (16)",
+   "hi": "crystal के दाने (16)",
+   "fr": "grains de cristal (16)"
+  },
+  "d = a / √(h² + k² + l²)\n2θ = 2 asin(λ / 2d)\nρ = Z M / (N_A a³), Z = 4": {
+   "ja": "d = a / √(h² + k² + l²)\n2θ = 2 asin(λ / 2d)\nρ = Z M / (N_A a³)、Z = 4",
+   "zh": "d = a / √(h² + k² + l²)\n2θ = 2 asin(λ / 2d)\nρ = Z M / (N_A a³),Z = 4",
+   "tw": "d = a / √(h² + k² + l²)\n2θ = 2 asin(λ / 2d)\nρ = Z M / (N_A a³),Z = 4",
+   "ko": "d = a / √(h² + k² + l²)\n2θ = 2 asin(λ / 2d)\nρ = Z M / (N_A a³), Z = 4",
+   "de": "d = a / √(h² + k² + l²)\n2θ = 2 asin(λ / 2d)\nρ = Z M / (N_A a³), Z = 4",
+   "hi": "d = a / √(h² + k² + l²)\n2θ = 2 asin(λ / 2d)\nρ = Z M / (N_A a³), Z = 4",
+   "fr": "d = a / √(h² + k² + l²)\n2θ = 2 asin(λ / 2d)\nρ = Z M / (N_A a³), Z = 4"
+  },
+  "density vs the handbook value 2.17 g/cm³": {
+   "ja": "密度と手引書の値 2.17 g/cm³ の差",
+   "zh": "密度与手册值 2.17 g/cm³",
+   "tw": "密度與手冊值 2.17 g/cm³",
+   "ko": "밀도와 편람 값 2.17 g/cm³",
+   "de": "Dichte gegen den Handbuchwert 2.17 g/cm³",
+   "hi": "घनत्व बनाम handbook मान 2.17 g/cm³",
+   "fr": "densité contre la valeur du manuel 2.17 g/cm³"
+  },
+  "density: cif_read vs Z M / (N_A a³) (handbook atomic masses)": {
+   "ja": "密度: cif_read と Z M / (N_A a³)(原子量は手引書の値)",
+   "zh": "密度:cif_read 与 Z M / (N_A a³)(手册的原子量)",
+   "tw": "密度:cif_read 與 Z M / (N_A a³)(手冊的原子量)",
+   "ko": "밀도: cif_read와 Z M / (N_A a³)(편람의 원자량)",
+   "de": "Dichte: cif_read gegen Z M / (N_A a³) (Atommassen aus dem Handbuch)",
+   "hi": "घनत्व: cif_read बनाम Z M / (N_A a³) (handbook के atomic mass)",
+   "fr": "densité : cif_read contre Z M / (N_A a³) (masses atomiques du manuel)"
+  },
+  "density: op / Z M/(N_A a³) / handbook": {
+   "ja": "密度: op / Z M/(N_A a³) / 手引書",
+   "zh": "密度:op / Z M/(N_A a³) / 手册",
+   "tw": "密度:op / Z M/(N_A a³) / 手冊",
+   "ko": "밀도: op / Z M/(N_A a³) / 편람",
+   "de": "Dichte: op / Z M/(N_A a³) / Handbuch",
+   "hi": "घनत्व: op / Z M/(N_A a³) / handbook",
+   "fr": "densité : op / Z M/(N_A a³) / manuel"
+  },
+  "detector": {
+   "ja": "検出器",
+   "zh": "探测器",
+   "tw": "探測器",
+   "ko": "검출기",
+   "de": "Detektor",
+   "hi": "detector",
+   "fr": "détecteur"
+  },
+  "detector image from debye_ring_image (op): exposure builds up → λ sweeps": {
+   "ja": "debye_ring_image(op)の検出器像: 露光が溜まる → λ を振る",
+   "zh": "debye_ring_image(op)的探测器图像:曝光逐渐累积 → 扫描 λ",
+   "tw": "debye_ring_image(op)的探測器影像:曝光逐漸累積 → 掃描 λ",
+   "ko": "debye_ring_image(op)의 검출기 영상: 노출이 쌓인다 → λ를 훑는다",
+   "de": "Detektorbild aus debye_ring_image (op): die Belichtung baut sich auf → λ wird durchgefahren",
+   "hi": "debye_ring_image (op) से detector image: exposure जमा होता है → λ sweep",
+   "fr": "image du détecteur par debye_ring_image (op) : l'exposition s'accumule → balayage de λ"
+  },
+  "detector intensity (5-plane interference)": {
+   "ja": "受光面の強度(5 枚の干渉)",
+   "zh": "探测器强度(5 个晶面的干涉)",
+   "tw": "探測器強度(5 個晶面的干涉)",
+   "ko": "검출기 세기(면 5장의 간섭)",
+   "de": "Detektorintensität (Interferenz von 5 Ebenen)",
+   "hi": "detector तीव्रता (5-तल व्यतिकरण)",
+   "fr": "intensité au détecteur (interférence de 5 plans)"
+  },
+  "detector screen": {
+   "ja": "受光面",
+   "zh": "受光面",
+   "tw": "受光面",
+   "ko": "수광면",
+   "de": "Detektorschirm",
+   "hi": "detector screen",
+   "fr": "écran détecteur"
+  },
+  "extinct flag = mixed parity (all 33 reflections)": {
+   "ja": "消滅の印 = 混合パリティ(反射 33 本、全部)",
+   "zh": "消光标记 = 奇偶混合(全部 33 条反射)",
+   "tw": "消光標記 = 奇偶混合(全部 33 條反射)",
+   "ko": "소멸 표시 = 홀짝 혼합(반사 33개 전부)",
+   "de": "Auslöschungsmarke = gemischte Parität (alle 33 Reflexe)",
+   "hi": "extinct flag = mixed parity (सभी 33 reflections)",
+   "fr": "marque d'extinction = parité mixte (les 33 réflexions)"
+  },
+  "from one plane to the next (distance d)": {
+   "ja": "面から次の面へ(距離 d)",
+   "zh": "从一个晶面到下一个(距离 d)",
+   "tw": "從一個晶面到下一個(距離 d)",
+   "ko": "한 면에서 다음 면으로(거리 d)",
+   "de": "von einer Ebene zur nächsten (Abstand d)",
+   "hi": "एक तल से अगले तक (दूरी d)",
+   "fr": "d'un plan au suivant (distance d)"
+  },
+  "image peaks (diffraction_peaks) vs op 2θ": {
+   "ja": "像の山(diffraction_peaks)と op の 2θ の差",
+   "zh": "图像的峰(diffraction_peaks)与 op 的 2θ",
+   "tw": "影像的峰(diffraction_peaks)與 op 的 2θ",
+   "ko": "영상의 봉우리(diffraction_peaks)와 op의 2θ",
+   "de": "Bildpeaks (diffraction_peaks) gegen 2θ des op",
+   "hi": "image के peaks (diffraction_peaks) बनाम op 2θ",
+   "fr": "pics de l'image (diffraction_peaks) contre le 2θ de l'op"
+  },
+  "incoming X-ray": {
+   "ja": "入ってくる X 線",
+   "zh": "入射的 X 射线",
+   "tw": "入射的 X 光",
+   "ko": "들어오는 X선",
+   "de": "einfallender Röntgenstrahl",
+   "hi": "आती हुई X-ray",
+   "fr": "rayon X incident"
+  },
+  "intensity at the peaks vs the maximum between them (more than 4.5° from a peak)": {
+   "ja": "山の頂の強度と、山の間(頂から 4.5° 以上離れた所)の最大",
+   "zh": "峰顶的强度与峰间的最大值(距峰 4.5° 以上处)",
+   "tw": "峰頂的強度與峰間的最大值(距峰 4.5° 以上處)",
+   "ko": "봉우리 꼭대기의 세기와 봉우리 사이(꼭대기에서 4.5° 이상 떨어진 곳)의 최대",
+   "de": "Intensität auf den Peaks gegen das Maximum dazwischen (mehr als 4.5° von einem Peak entfernt)",
+   "hi": "peaks पर तीव्रता बनाम उनके बीच का अधिकतम (peak से 4.5° से अधिक दूर)",
+   "fr": "intensité aux pics contre le maximum entre eux (à plus de 4.5° d'un pic)"
+  },
+  "interference peaks vs the op's θ": {
+   "ja": "干渉の山と op の θ の差",
+   "zh": "干涉峰与 op 的 θ",
+   "tw": "干涉峰與 op 的 θ",
+   "ko": "간섭의 봉우리와 op의 θ",
+   "de": "Interferenzpeaks gegen das θ des op",
+   "hi": "व्यतिकरण peaks बनाम op का θ",
+   "fr": "pics d'interférence contre le θ de l'op"
+  },
+  "lattice constant a (cif_read)": {
+   "ja": "格子定数 a(cif_read)",
+   "zh": "晶格常数 a(cif_read)",
+   "tw": "晶格常數 a(cif_read)",
+   "ko": "격자상수 a(cif_read)",
+   "de": "Gitterkonstante a (cif_read)",
+   "hi": "lattice constant a (cif_read)",
+   "fr": "paramètre de maille a (cif_read)"
+  },
+  "lattice planes (hkl), spacing d": {
+   "ja": "格子面 (hkl)、間隔 d",
+   "zh": "晶格面 (hkl),间距 d",
+   "tw": "晶格面 (hkl),間距 d",
+   "ko": "격자면 (hkl), 간격 d",
+   "de": "Gitterebenen (hkl), Abstand d",
+   "hi": "lattice plane (hkl), अंतराल d",
+   "fr": "plans réticulaires (hkl), espacement d"
+  },
+  "lengthen λ → rings grow and vanish": {
+   "ja": "λ を長くする → 環が広がり、消える",
+   "zh": "加长 λ → 环变大并消失",
+   "tw": "加長 λ → 環變大並消失",
+   "ko": "λ를 길게 → 환이 커지고 사라진다",
+   "de": "λ verlängern → Ringe wachsen und verschwinden",
+   "hi": "λ लंबा करें → ring बड़े होकर गायब",
+   "fr": "allonger λ → les anneaux grandissent et disparaissent"
+  },
+  "limit: does any ring survive at λ = 7.0 Å > 2d(111) = 6.49 Å?": {
+   "ja": "限界: λ = 7.0 Å > 2d(111) = 6.49 Å でも環が残るか",
+   "zh": "极限:在 λ = 7.0 Å > 2d(111) = 6.49 Å 时还剩环吗?",
+   "tw": "極限:在 λ = 7.0 Å > 2d(111) = 6.49 Å 時還剩環嗎?",
+   "ko": "한계: λ = 7.0 Å > 2d(111) = 6.49 Å에서도 환이 남는가?",
+   "de": "Grenze: bleibt bei λ = 7.0 Å > 2d(111) = 6.49 Å noch ein Ring?",
+   "hi": "सीमा: क्या λ = 7.0 Å > 2d(111) = 6.49 Å पर कोई ring बचता है?",
+   "fr": "limite : un anneau subsiste-t-il à λ = 7.0 Å > 2d(111) = 6.49 Å ?"
+  },
+  "limit: rings left at λ = 7.0 Å": {
+   "ja": "限界: λ = 7.0 Å で残る環",
+   "zh": "极限:λ = 7.0 Å 时剩下的环",
+   "tw": "極限:λ = 7.0 Å 時剩下的環",
+   "ko": "한계: λ = 7.0 Å에서 남는 환",
+   "de": "Grenze: verbleibende Ringe bei λ = 7.0 Å",
+   "hi": "सीमा: λ = 7.0 Å पर बचे ring",
+   "fr": "limite : anneaux restants à λ = 7.0 Å"
+  },
+  "match": {
+   "ja": "一致",
+   "zh": "一致",
+   "tw": "一致",
+   "ko": "일치",
+   "de": "stimmt überein",
+   "hi": "मेल",
+   "fr": "concorde"
+  },
+  "number of crystal orientations n": {
+   "ja": "結晶の向きの数 n",
+   "zh": "晶体取向的数目 n",
+   "tw": "晶體取向的數目 n",
+   "ko": "결정 방향의 수 n",
+   "de": "Zahl der Kristallorientierungen n",
+   "hi": "crystal orientation की संख्या n",
+   "fr": "nombre d'orientations du cristal n"
+  },
+  "orientations seen n (accumulated)": {
+   "ja": "見た向きの数 n(積算)",
+   "zh": "已看到的取向数 n(累计)",
+   "tw": "已看到的取向數 n(累計)",
+   "ko": "본 방향의 수 n(누적)",
+   "de": "gesehene Orientierungen n (kumuliert)",
+   "hi": "देखे गए orientation n (संचित)",
+   "fr": "orientations vues n (cumulé)"
+  },
+  "path difference / λ": {
+   "ja": "行路差 / λ",
+   "zh": "光程差 / λ",
+   "tw": "光程差 / λ",
+   "ko": "행로차 / λ",
+   "de": "Gangunterschied / λ",
+   "hi": "path difference / λ",
+   "fr": "différence de marche / λ"
+  },
+  "peaks > 0.999, between < 0.1": {
+   "ja": "頂 > 0.999、間 < 0.1",
+   "zh": "峰 > 0.999,峰间 < 0.1",
+   "tw": "峰 > 0.999,峰間 < 0.1",
+   "ko": "꼭대기 > 0.999, 사이 < 0.1",
+   "de": "Peaks > 0.999, dazwischen < 0.1",
+   "hi": "peaks > 0.999, बीच < 0.1",
+   "fr": "pics > 0.999, entre < 0.1"
+  },
+  "planes (111), d = 3.245 Å": {
+   "ja": "面 (111)、d = 3.245 Å",
+   "zh": "晶面 (111),d = 3.245 Å",
+   "tw": "晶面 (111),d = 3.245 Å",
+   "ko": "면 (111), d = 3.245 Å",
+   "de": "Ebenen (111), d = 3.245 Å",
+   "hi": "तल (111), d = 3.245 Å",
+   "fr": "plans (111), d = 3.245 Å"
+  },
+  "planes (200), d = 2.810 Å": {
+   "ja": "面 (200)、d = 2.810 Å",
+   "zh": "晶面 (200),d = 2.810 Å",
+   "tw": "晶面 (200),d = 2.810 Å",
+   "ko": "면 (200), d = 2.810 Å",
+   "de": "Ebenen (200), d = 2.810 Å",
+   "hi": "तल (200), d = 2.810 Å",
+   "fr": "plans (200), d = 2.810 Å"
+  },
+  "planes (220), d = 1.987 Å": {
+   "ja": "面 (220)、d = 1.987 Å",
+   "zh": "晶面 (220),d = 1.987 Å",
+   "tw": "晶面 (220),d = 1.987 Å",
+   "ko": "면 (220), d = 1.987 Å",
+   "de": "Ebenen (220), d = 1.987 Å",
+   "hi": "तल (220), d = 1.987 Å",
+   "fr": "plans (220), d = 1.987 Å"
+  },
+  "planes (222), d = 1.622 Å": {
+   "ja": "面 (222)、d = 1.622 Å",
+   "zh": "晶面 (222),d = 1.622 Å",
+   "tw": "晶面 (222),d = 1.622 Å",
+   "ko": "면 (222), d = 1.622 Å",
+   "de": "Ebenen (222), d = 1.622 Å",
+   "hi": "तल (222), d = 1.622 Å",
+   "fr": "plans (222), d = 1.622 Å"
+  },
+  "planes (311), d = 1.694 Å": {
+   "ja": "面 (311)、d = 1.694 Å",
+   "zh": "晶面 (311),d = 1.694 Å",
+   "tw": "晶面 (311),d = 1.694 Å",
+   "ko": "면 (311), d = 1.694 Å",
+   "de": "Ebenen (311), d = 1.694 Å",
+   "hi": "तल (311), d = 1.694 Å",
+   "fr": "plans (311), d = 1.694 Å"
+  },
+  "planes (400), d = 1.405 Å": {
+   "ja": "面 (400)、d = 1.405 Å",
+   "zh": "晶面 (400),d = 1.405 Å",
+   "tw": "晶面 (400),d = 1.405 Å",
+   "ko": "면 (400), d = 1.405 Å",
+   "de": "Ebenen (400), d = 1.405 Å",
+   "hi": "तल (400), d = 1.405 Å",
+   "fr": "plans (400), d = 1.405 Å"
+  },
+  "planes (hkl) (spacing d)": {
+   "ja": "面 (hkl)(間隔 d)",
+   "zh": "晶面 (hkl)(间距 d)",
+   "tw": "晶面 (hkl)(間距 d)",
+   "ko": "면 (hkl)(간격 d)",
+   "de": "Ebenen (hkl) (Abstand d)",
+   "hi": "तल (hkl) (अंतराल d)",
+   "fr": "plans (hkl) (espacement d)"
+  },
+  "powder: grains in random orientations → spots become rings": {
+   "ja": "粉: 粒の向きをばらばらに → 点が環へ",
+   "zh": "粉末:晶粒取向随机 → 点变成环",
+   "tw": "粉末:晶粒取向隨機 → 點變成環",
+   "ko": "분말: 알갱이의 방향이 제각각 → 점이 환이 된다",
+   "de": "Pulver: Körner in zufälligen Orientierungen → Punkte werden zu Ringen",
+   "hi": "powder: दाने random orientation में → बिंदु ring बन जाते हैं",
+   "fr": "poudre : grains en orientations aléatoires → les points deviennent des anneaux"
+  },
+  "raise θ": {
+   "ja": "θ を上げる",
+   "zh": "增大 θ",
+   "tw": "增大 θ",
+   "ko": "θ를 올린다",
+   "de": "θ erhöhen",
+   "hi": "θ बढ़ाएँ",
+   "fr": "augmenter θ"
+  },
+  "rings on the detector": {
+   "ja": "検出器に写る環の数",
+   "zh": "探测器上的环数",
+   "tw": "探測器上的環數",
+   "ko": "검출기에 찍힌 환의 수",
+   "de": "Ringe auf dem Detektor",
+   "hi": "detector पर ring",
+   "fr": "anneaux sur le détecteur"
+  },
+  "rings on the detector at Cu Kα": {
+   "ja": "Cu Kα で検出器に写る環の数",
+   "zh": "Cu Kα 下探测器上的环数",
+   "tw": "Cu Kα 下探測器上的環數",
+   "ko": "Cu Kα에서 검출기에 찍히는 환의 수",
+   "de": "Ringe auf dem Detektor bei Cu Kα",
+   "hi": "Cu Kα पर detector पर ring",
+   "fr": "anneaux sur le détecteur à Cu Kα"
+  },
+  "sin θ = λ / 2d, so a longer λ makes larger rings. Once λ exceeds 2d for a plane, sin θ > 1 and that plane cannot diffract at any angle. At λ = 7.0 Å > 2d(111) = 6.49 Å no plane is left (the limit tab; the op's list still holds one row, the forbidden (100) with |F|² = < 1e-12, numerically zero — its extinction test is relative to what remains).": {
+   "ja": "sin θ = λ / 2d なので λ が長いほど環は大きい。λ が 2d を越えた面は sin θ > 1 になり、どの角度にも環を作れない。λ = 7.0 Å > 2d(111) = 6.49 Å では残る面が 1 つも無い(限界の回。op の一覧には禁制の (100) が |F|² = < 1e-12 の数値ゼロで 1 行残る —— 消滅の判定が残った中での相対値だから)。",
+   "zh": "sin θ = λ / 2d,所以 λ 越长环越大。一旦 λ 超过某晶面的 2d,就有 sin θ > 1,该晶面在任何角度都无法衍射。当 λ = 7.0 Å > 2d(111) = 6.49 Å 时没有任何晶面剩下(极限标签页;op 的列表里仍留着一行,即禁止的 (100),|F|² = < 1e-12,数值上为零 —— 它的消光判定是相对于剩余项的)。",
+   "tw": "sin θ = λ / 2d,所以 λ 越長環越大。一旦 λ 超過某晶面的 2d,就有 sin θ > 1,該晶面在任何角度都無法繞射。當 λ = 7.0 Å > 2d(111) = 6.49 Å 時沒有任何晶面剩下(極限分頁;op 的列表裡仍留著一行,即禁止的 (100),|F|² = < 1e-12,數值上為零 —— 它的消光判定是相對於剩餘項的)。",
+   "ko": "sin θ = λ / 2d이므로 λ가 길수록 환은 크다. λ가 어떤 면의 2d를 넘으면 sin θ > 1이 되어 그 면은 어느 각도에서도 회절할 수 없다. λ = 7.0 Å > 2d(111) = 6.49 Å에서는 남는 면이 하나도 없다(한계의 탭. op의 목록에는 금제인 (100)이 |F|² = < 1e-12의 수치상 영으로 한 행 남는다 —— 소멸 판정이 남은 것 안에서의 상대값이기 때문).",
+   "de": "sin θ = λ / 2d, also macht ein längeres λ größere Ringe. Übersteigt λ das 2d einer Ebene, wird sin θ > 1 und diese Ebene kann unter keinem Winkel beugen. Bei λ = 7.0 Å > 2d(111) = 6.49 Å bleibt keine Ebene übrig (der Grenz-Tab; die Liste des op enthält noch eine Zeile, die verbotene (100) mit |F|² = < 1e-12, numerisch null — ihr Auslöschungstest ist relativ zum Verbleibenden).",
+   "hi": "sin θ = λ / 2d, इसलिए लंबी λ बड़े ring बनाती है। जैसे ही किसी तल के लिए λ 2d से अधिक होती है, sin θ > 1 और वह तल किसी भी कोण पर विवर्तन नहीं कर सकता। λ = 7.0 Å > 2d(111) = 6.49 Å पर कोई तल नहीं बचता (सीमा tab; op की सूची में अभी भी एक पंक्ति है, निषिद्ध (100) जिसका |F|² = < 1e-12, संख्यात्मक रूप से शून्य — उसकी extinction जाँच शेष के सापेक्ष है)।",
+   "fr": "sin θ = λ / 2d, donc un λ plus long donne des anneaux plus grands. Dès que λ dépasse 2d pour un plan, sin θ > 1 et ce plan ne peut diffracter à aucun angle. À λ = 7.0 Å > 2d(111) = 6.49 Å il ne reste aucun plan (l'onglet limite ; la liste de l'op garde encore une ligne, le (100) interdit avec |F|² = < 1e-12, numériquement nul — son test d'extinction est relatif à ce qui reste)."
+  },
+  "sin θ = λ / 2d, so a smaller d gives a larger θ: (111) has d = 3.245 Å and 2θ = 27.47°, (400) has d = 1.405 Å and 2θ = 66.49° (Cu Kα, op values).": {
+   "ja": "sin θ = λ / 2d なので d が小さいほど θ が大きい。(111) は d = 3.245 Å で 2θ = 27.47°、(400) は d = 1.405 Å で 2θ = 66.49°(Cu Kα、op の値)。",
+   "zh": "sin θ = λ / 2d,所以 d 越小 θ 越大:(111) 的 d = 3.245 Å,2θ = 27.47°;(400) 的 d = 1.405 Å,2θ = 66.49°(Cu Kα,op 的值)。",
+   "tw": "sin θ = λ / 2d,所以 d 越小 θ 越大:(111) 的 d = 3.245 Å,2θ = 27.47°;(400) 的 d = 1.405 Å,2θ = 66.49°(Cu Kα,op 的值)。",
+   "ko": "sin θ = λ / 2d이므로 d가 작을수록 θ가 크다. (111)은 d = 3.245 Å에 2θ = 27.47°, (400)은 d = 1.405 Å에 2θ = 66.49°(Cu Kα, op의 값).",
+   "de": "sin θ = λ / 2d, also gibt ein kleineres d ein größeres θ: (111) hat d = 3.245 Å und 2θ = 27.47°, (400) hat d = 1.405 Å und 2θ = 66.49° (Cu Kα, op-Werte).",
+   "hi": "sin θ = λ / 2d, इसलिए छोटा d बड़ा θ देता है: (111) का d = 3.245 Å और 2θ = 27.47°, (400) का d = 1.405 Å और 2θ = 66.49° (Cu Kα, op मान)।",
+   "fr": "sin θ = λ / 2d, donc un d plus petit donne un θ plus grand : (111) a d = 3.245 Å et 2θ = 27.47°, (400) a d = 1.405 Å et 2θ = 66.49° (Cu Kα, valeurs de l'op)."
+  },
+  "single crystal (all grains aligned)": {
+   "ja": "単結晶 1 粒(全部の粒が同じ向き)",
+   "zh": "单晶(所有晶粒同向)",
+   "tw": "單晶(所有晶粒同向)",
+   "ko": "단결정(모든 알갱이가 같은 방향)",
+   "de": "Einkristall (alle Körner gleich ausgerichtet)",
+   "hi": "single crystal (सभी दाने एक दिशा में)",
+   "fr": "monocristal (tous les grains alignés)"
+  },
+  "single crystal: only planes in the right orientation make a spot\npowder = every orientation → spots fill a cone of half-angle 2θ = a ring\nring radius r = D tan 2θ; no ring if λ > 2d": {
+   "ja": "単結晶: 条件を満たす向きの面だけが点を作る\n粉末 = 全部の向き → 点が半頂角 2θ の円錐 = 環\n環の半径 r = D tan 2θ、λ > 2d なら環なし",
+   "zh": "单晶:只有取向合适的晶面才形成一个点\n粉末 = 所有取向 → 点填满半顶角 2θ 的圆锥 = 一个环\n环半径 r = D tan 2θ;若 λ > 2d 则无环",
+   "tw": "單晶:只有取向合適的晶面才形成一個點\n粉末 = 所有取向 → 點填滿半頂角 2θ 的圓錐 = 一個環\n環半徑 r = D tan 2θ;若 λ > 2d 則無環",
+   "ko": "단결정: 알맞은 방향의 면만 점을 만든다\n분말 = 모든 방향 → 점이 반꼭지각 2θ의 원뿔을 채움 = 환\n환의 반지름 r = D tan 2θ, λ > 2d이면 환 없음",
+   "de": "Einkristall: nur Ebenen in der richtigen Orientierung erzeugen einen Punkt\nPulver = jede Orientierung → die Punkte füllen einen Kegel mit halbem Öffnungswinkel 2θ = ein Ring\nRingradius r = D tan 2θ; kein Ring, wenn λ > 2d",
+   "hi": "single crystal: केवल सही orientation वाले तल ही बिंदु बनाते हैं\npowder = हर orientation → बिंदु half-angle 2θ का शंकु भरते हैं = ring\nring त्रिज्या r = D tan 2θ; λ > 2d हो तो ring नहीं",
+   "fr": "monocristal : seuls les plans bien orientés font un point\npoudre = toutes les orientations → les points remplissent un cône de demi-angle 2θ = un anneau\nrayon de l'anneau r = D tan 2θ ; pas d'anneau si λ > 2d"
+  },
+  "spacing d (op)": {
+   "ja": "面間隔 d(op)",
+   "zh": "面间距 d(op)",
+   "tw": "面間距 d(op)",
+   "ko": "면간격 d(op)",
+   "de": "Abstand d (op)",
+   "hi": "अंतराल d (op)",
+   "fr": "espacement d (op)"
+  },
+  "spacing d of planes (111)": {
+   "ja": "面 (111) の面間隔 d",
+   "zh": "晶面 (111) 的间距 d",
+   "tw": "晶面 (111) 的間距 d",
+   "ko": "면 (111)의 면간격 d",
+   "de": "Abstand d der Ebenen (111)",
+   "hi": "तल (111) का अंतराल d",
+   "fr": "espacement d des plans (111)"
+  },
+  "spacing d of planes (200)": {
+   "ja": "面 (200) の面間隔 d",
+   "zh": "晶面 (200) 的间距 d",
+   "tw": "晶面 (200) 的間距 d",
+   "ko": "면 (200)의 면간격 d",
+   "de": "Abstand d der Ebenen (200)",
+   "hi": "तल (200) का अंतराल d",
+   "fr": "espacement d des plans (200)"
+  },
+  "spacing d of planes (220)": {
+   "ja": "面 (220) の面間隔 d",
+   "zh": "晶面 (220) 的间距 d",
+   "tw": "晶面 (220) 的間距 d",
+   "ko": "면 (220)의 면간격 d",
+   "de": "Abstand d der Ebenen (220)",
+   "hi": "तल (220) का अंतराल d",
+   "fr": "espacement d des plans (220)"
+  },
+  "spacing d of planes (222)": {
+   "ja": "面 (222) の面間隔 d",
+   "zh": "晶面 (222) 的间距 d",
+   "tw": "晶面 (222) 的間距 d",
+   "ko": "면 (222)의 면간격 d",
+   "de": "Abstand d der Ebenen (222)",
+   "hi": "तल (222) का अंतराल d",
+   "fr": "espacement d des plans (222)"
+  },
+  "spacing d of planes (311)": {
+   "ja": "面 (311) の面間隔 d",
+   "zh": "晶面 (311) 的间距 d",
+   "tw": "晶面 (311) 的間距 d",
+   "ko": "면 (311)의 면간격 d",
+   "de": "Abstand d der Ebenen (311)",
+   "hi": "तल (311) का अंतराल d",
+   "fr": "espacement d des plans (311)"
+  },
+  "spacing d of planes (400)": {
+   "ja": "面 (400) の面間隔 d",
+   "zh": "晶面 (400) 的间距 d",
+   "tw": "晶面 (400) 的間距 d",
+   "ko": "면 (400)의 면간격 d",
+   "de": "Abstand d der Ebenen (400)",
+   "hi": "तल (400) का अंतराल d",
+   "fr": "espacement d des plans (400)"
+  },
+  "spacing d: op vs a / √(h²+k²+l²)": {
+   "ja": "面間隔 d: op と a / √(h²+k²+l²)",
+   "zh": "面间距 d:op 与 a / √(h²+k²+l²)",
+   "tw": "面間距 d:op 與 a / √(h²+k²+l²)",
+   "ko": "면간격 d: op와 a / √(h²+k²+l²)",
+   "de": "Abstand d: op gegen a / √(h²+k²+l²)",
+   "hi": "अंतराल d: op बनाम a / √(h²+k²+l²)",
+   "fr": "espacement d : op contre a / √(h²+k²+l²)"
+  },
+  "spot 2θ (from position) vs op 2θ, max difference": {
+   "ja": "点の 2θ(位置)と op の 2θ の最大の差",
+   "zh": "点的 2θ(由位置)与 op 的 2θ,最大差",
+   "tw": "點的 2θ(由位置)與 op 的 2θ,最大差",
+   "ko": "점의 2θ(위치에서)와 op의 2θ, 최대 차",
+   "de": "2θ der Punkte (aus der Position) gegen 2θ des op, größte Differenz",
+   "hi": "बिंदु का 2θ (स्थिति से) बनाम op 2θ, अधिकतम अंतर",
+   "fr": "2θ des points (d'après la position) contre le 2θ de l'op, écart maximal"
+  },
+  "spots on the detector (accumulated)": {
+   "ja": "検出器の点の数(積算)",
+   "zh": "探测器上的点数(累计)",
+   "tw": "探測器上的點數(累計)",
+   "ko": "검출기의 점의 수(누적)",
+   "de": "Punkte auf dem Detektor (kumuliert)",
+   "hi": "detector पर बिंदु (संचित)",
+   "fr": "points sur le détecteur (cumulé)"
+  },
+  "the 5-plane interference peaks (0.001° sweep) stand at the op's θ": {
+   "ja": "5 枚の干渉の山(0.001° 刻みの掃引)が op の θ に立つ",
+   "zh": "5 个晶面干涉的峰(0.001° 步进扫描)落在 op 的 θ 上",
+   "tw": "5 個晶面干涉的峰(0.001° 步進掃描)落在 op 的 θ 上",
+   "ko": "면 5장 간섭의 봉우리(0.001° 간격 훑기)가 op의 θ에 선다",
+   "de": "die Interferenzpeaks der 5 Ebenen (0.001°-Abtastung) stehen beim θ des op",
+   "hi": "5-तल व्यतिकरण के peaks (0.001° sweep) op के θ पर खड़े हैं",
+   "fr": "les pics d'interférence des 5 plans (balayage à 0.001°) se tiennent au θ de l'op"
+  },
+  "the 8 atom waves and their sum (right)": {
+   "ja": "8 原子の波とその和(右)",
+   "zh": "8 个原子的波及其和(右侧)",
+   "tw": "8 個原子的波及其和(右側)",
+   "ko": "원자 8개의 파동과 그 합(오른쪽)",
+   "de": "die 8 Atomwellen und ihre Summe (rechts)",
+   "hi": "8 परमाणु तरंगें और उनका योग (दाएँ)",
+   "fr": "les 8 ondes atomiques et leur somme (à droite)"
+  },
+  "unit cell a × a × a": {
+   "ja": "単位胞 a × a × a",
+   "zh": "晶胞 a × a × a",
+   "tw": "晶胞 a × a × a",
+   "ko": "단위세포 a × a × a",
+   "de": "Elementarzelle a × a × a",
+   "hi": "unit cell a × a × a",
+   "fr": "maille élémentaire a × a × a"
+  },
+  "wavelength λ": {
+   "ja": "波長 λ",
+   "zh": "波长 λ",
+   "tw": "波長 λ",
+   "ko": "파장 λ",
+   "de": "Wellenlänge λ",
+   "hi": "तरंगदैर्घ्य λ",
+   "fr": "longueur d'onde λ"
+  },
+  "|F|² (op) of the 20 mixed-parity planes": {
+   "ja": "混合パリティの面 20 本の |F|²(op)",
+   "zh": "20 个奇偶混合晶面的 |F|²(op)",
+   "tw": "20 個奇偶混合晶面的 |F|²(op)",
+   "ko": "홀짝 혼합 면 20개의 |F|²(op)",
+   "de": "|F|² (op) der 20 Ebenen mit gemischter Parität",
+   "hi": "20 mixed-parity तलों का |F|² (op)",
+   "fr": "|F|² (op) des 20 plans à parité mixte"
+  },
+  "|F|² (op, max = 100)": {
+   "ja": "|F|²(op、最大 = 100)",
+   "zh": "|F|²(op,最大 = 100)",
+   "tw": "|F|²(op,最大 = 100)",
+   "ko": "|F|²(op, 최대 = 100)",
+   "de": "|F|² (op, max = 100)",
+   "hi": "|F|² (op, max = 100)",
+   "fr": "|F|² (op, max = 100)"
+  },
+  "|F|² of (100) (max = 100)": {
+   "ja": "(100) の |F|²(最大 = 100)",
+   "zh": "(100) 的 |F|²(最大 = 100)",
+   "tw": "(100) 的 |F|²(最大 = 100)",
+   "ko": "(100)의 |F|²(최대 = 100)",
+   "de": "|F|² von (100) (max = 100)",
+   "hi": "(100) का |F|² (max = 100)",
+   "fr": "|F|² de (100) (max = 100)"
+  },
+  "|F|² of (110) (max = 100)": {
+   "ja": "(110) の |F|²(最大 = 100)",
+   "zh": "(110) 的 |F|²(最大 = 100)",
+   "tw": "(110) 的 |F|²(最大 = 100)",
+   "ko": "(110)의 |F|²(최대 = 100)",
+   "de": "|F|² von (110) (max = 100)",
+   "hi": "(110) का |F|² (max = 100)",
+   "fr": "|F|² de (110) (max = 100)"
+  },
+  "|F|² of (111) (max = 100)": {
+   "ja": "(111) の |F|²(最大 = 100)",
+   "zh": "(111) 的 |F|²(最大 = 100)",
+   "tw": "(111) 的 |F|²(最大 = 100)",
+   "ko": "(111)의 |F|²(최대 = 100)",
+   "de": "|F|² von (111) (max = 100)",
+   "hi": "(111) का |F|² (max = 100)",
+   "fr": "|F|² de (111) (max = 100)"
+  },
+  "|F|² of (200) (max = 100)": {
+   "ja": "(200) の |F|²(最大 = 100)",
+   "zh": "(200) 的 |F|²(最大 = 100)",
+   "tw": "(200) 的 |F|²(最大 = 100)",
+   "ko": "(200)의 |F|²(최대 = 100)",
+   "de": "|F|² von (200) (max = 100)",
+   "hi": "(200) का |F|² (max = 100)",
+   "fr": "|F|² de (200) (max = 100)"
+  },
+  "|F|² of (210) (max = 100)": {
+   "ja": "(210) の |F|²(最大 = 100)",
+   "zh": "(210) 的 |F|²(最大 = 100)",
+   "tw": "(210) 的 |F|²(最大 = 100)",
+   "ko": "(210)의 |F|²(최대 = 100)",
+   "de": "|F|² von (210) (max = 100)",
+   "hi": "(210) का |F|² (max = 100)",
+   "fr": "|F|² de (210) (max = 100)"
+  },
+  "|F|² of (220) (max = 100)": {
+   "ja": "(220) の |F|²(最大 = 100)",
+   "zh": "(220) 的 |F|²(最大 = 100)",
+   "tw": "(220) 的 |F|²(最大 = 100)",
+   "ko": "(220)의 |F|²(최대 = 100)",
+   "de": "|F|² von (220) (max = 100)",
+   "hi": "(220) का |F|² (max = 100)",
+   "fr": "|F|² de (220) (max = 100)"
+  },
+  "|F|² of the 20 mixed-parity planes (relative to max)": {
+   "ja": "混合パリティ 20 本の |F|²(最大比)",
+   "zh": "20 个奇偶混合晶面的 |F|²(相对最大值)",
+   "tw": "20 個奇偶混合晶面的 |F|²(相對最大值)",
+   "ko": "홀짝 혼합 면 20개의 |F|²(최대 대비)",
+   "de": "|F|² der 20 Ebenen mit gemischter Parität (relativ zum Maximum)",
+   "hi": "20 mixed-parity तलों का |F|² (max के सापेक्ष)",
+   "fr": "|F|² des 20 plans à parité mixte (par rapport au max)"
+  },
+  "|F|² ratio (111) / (200)": {
+   "ja": "|F|² の比 (111) / (200)",
+   "zh": "|F|² 之比 (111) / (200)",
+   "tw": "|F|² 之比 (111) / (200)",
+   "ko": "|F|²의 비 (111) / (200)",
+   "de": "|F|²-Verhältnis (111) / (200)",
+   "hi": "|F|² अनुपात (111) / (200)",
+   "fr": "rapport des |F|² (111) / (200)"
+  },
+  "|F|²: op vs closed form (relative to max)": {
+   "ja": "|F|²: op と閉じた式の差(最大比)",
+   "zh": "|F|²:op 与闭式(相对最大值)",
+   "tw": "|F|²:op 與閉式(相對最大值)",
+   "ko": "|F|²: op와 닫힌 식(최대 대비)",
+   "de": "|F|²: op gegen geschlossene Form (relativ zum Maximum)",
+   "hi": "|F|²: op बनाम closed form (max के सापेक्ष)",
+   "fr": "|F|² : op contre forme fermée (par rapport au max)"
+  },
+  "|F|²: op vs the closed form 4 (f_Na ± f_Cl) e^(−Bs²)": {
+   "ja": "|F|²: op と 4 (f_Na ± f_Cl) e^(−Bs²) の閉じた式",
+   "zh": "|F|²:op 与闭式 4 (f_Na ± f_Cl) e^(−Bs²)",
+   "tw": "|F|²:op 與閉式 4 (f_Na ± f_Cl) e^(−Bs²)",
+   "ko": "|F|²: op와 닫힌 식 4 (f_Na ± f_Cl) e^(−Bs²)",
+   "de": "|F|²: op gegen die geschlossene Form 4 (f_Na ± f_Cl) e^(−Bs²)",
+   "hi": "|F|²: op बनाम closed form 4 (f_Na ± f_Cl) e^(−Bs²)",
+   "fr": "|F|² : op contre la forme fermée 4 (f_Na ± f_Cl) e^(−Bs²)"
+  },
+  "λ > 2d(111) = 6.49 Å: this ring is gone": {
+   "ja": "λ > 2d(111) = 6.49 Å: この面は消える",
+   "zh": "λ > 2d(111) = 6.49 Å:这个环消失",
+   "tw": "λ > 2d(111) = 6.49 Å:這個環消失",
+   "ko": "λ > 2d(111) = 6.49 Å: 이 환은 사라진다",
+   "de": "λ > 2d(111) = 6.49 Å: dieser Ring ist weg",
+   "hi": "λ > 2d(111) = 6.49 Å: यह ring गायब",
+   "fr": "λ > 2d(111) = 6.49 Å : cet anneau a disparu"
+  },
+  "λ > 2d(200) = 5.62 Å: this ring is gone": {
+   "ja": "λ > 2d(200) = 5.62 Å: この面は消える",
+   "zh": "λ > 2d(200) = 5.62 Å:这个环消失",
+   "tw": "λ > 2d(200) = 5.62 Å:這個環消失",
+   "ko": "λ > 2d(200) = 5.62 Å: 이 환은 사라진다",
+   "de": "λ > 2d(200) = 5.62 Å: dieser Ring ist weg",
+   "hi": "λ > 2d(200) = 5.62 Å: यह ring गायब",
+   "fr": "λ > 2d(200) = 5.62 Å : cet anneau a disparu"
+  },
+  "λ > 2d(220) = 3.97 Å: this ring is gone": {
+   "ja": "λ > 2d(220) = 3.97 Å: この面は消える",
+   "zh": "λ > 2d(220) = 3.97 Å:这个环消失",
+   "tw": "λ > 2d(220) = 3.97 Å:這個環消失",
+   "ko": "λ > 2d(220) = 3.97 Å: 이 환은 사라진다",
+   "de": "λ > 2d(220) = 3.97 Å: dieser Ring ist weg",
+   "hi": "λ > 2d(220) = 3.97 Å: यह ring गायब",
+   "fr": "λ > 2d(220) = 3.97 Å : cet anneau a disparu"
+  }
+ }
+}

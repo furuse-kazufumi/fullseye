@@ -96,6 +96,9 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../view2026/anim3d/satellite_gsd_anim3d.html?lang=ja"><img src="thumbs/satellite_gsd.jpg" alt="軌道上から小さな文字が読めない理由" loading="lazy" width="320" height="320"><b>&#9654;</b><span>軌道上から小さな文字が読めない理由 · 0.2 MB</span></a>
 <a href="../view2026/anim3d/ship_stability_anim3d.html?lang=ja"><img src="thumbs/ship_stability.jpg" alt="船はなぜ浮き、傾いても戻るのか" loading="lazy" width="320" height="320"><b>&#9654;</b><span>船はなぜ浮き、傾いても戻るのか · 0.2 MB</span></a>
 <a href="../view2026/anim3d/rail_light_section_anim3d.html?lang=ja"><img src="thumbs/rail_light_section.jpg" alt="光切断でレールの摩耗と軌間を測る" loading="lazy" width="320" height="320"><b>&#9654;</b><span>光切断でレールの摩耗と軌間を測る · 0.1 MB</span></a>
+<a href="../view2026/anim3d/salt_xrd_anim3d.html?lang=ja"><img src="thumbs/salt_xrd_anim3d.jpg" alt="塩の結晶の粉末 X 線回折" loading="lazy" width="320" height="320"><b>&#9654;</b><span>塩の結晶の粉末 X 線回折 · 2.5 MB</span></a>
+<a href="../anim3d/gauss_bonnet.html?lang=ja"><img src="thumbs/gauss_bonnet.jpg" alt="曲がり方を全部足すと同じ数" loading="lazy" width="320" height="320"><b>&#9654;</b><span>曲がり方を全部足すと同じ数 · 3.1 MB</span></a>
+<a href="../view2026/anim3d/pulseox_anim3d.html?lang=ja"><img src="thumbs/pulseox.jpg" alt="パルスオキシメータの二波長吸収" loading="lazy" width="320" height="320"><b>&#9654;</b><span>パルスオキシメータの二波長吸収 · 0.2 MB</span></a>
 </div>
 
 ## シリーズ記事
@@ -235,7 +238,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 </div>
 
-[PoC 以外の使用例 168 本の一覧](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+[PoC 以外の使用例 169 本の一覧](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
 
 ## ぜんぶ見る
 
@@ -684,6 +687,9 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 - [軌道上から小さな文字が読めない理由](../view2026/anim3d/satellite_gsd_anim3d.html?lang=ja) (動く 3-D・触って回せる, 0.2 MB): 高度を上げると 1 画素が覆う地上幅が広がり、口径を小さくすると半透明の光円錐の底にある Airy 円板が広がる。青い GSD と橙の回折幅の交点を越えると、画素だけ細かくしても 10 cm の線は戻らない。 **高度 400 km、5 µm 画素、焦点距離 8 m なら GSD は 0.250 m。波長 550 nm、口径 2.4 m の Rayleigh 地上半径は 0.112 m。大気は限界の行として未計算。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_satgsd_anim3d.py)
 - [船はなぜ浮き、傾いても戻るのか](../view2026/anim3d/ship_stability_anim3d.html?lang=ja) (動く 3-D・触って回せる, 0.2 MB): 傾くと浮心 B が沈んだ側へ動き、重心 G との水平距離 GZ が生まれる。G を上げると復原てこが逆向きになる。 **箱形船の閉形式との相対誤差 2.26e-16、重量一致 3.58e-16、GZ の傾きと GM の差 0.123%。高い重心では GM = -0.350 m。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_ship_anim3d.py)
 - [光切断でレールの摩耗と軌間を測る](../view2026/anim3d/rail_light_section_anim3d.html?lang=ja) (動く 3-D・触って回せる, 0.1 MB): 斜めの光の面とレール表面の交線が、頭頂・ウェブ・底部に沿って曲がる。走行すると左頭頂の摩耗が立ち上がり、二本の内側距離から軌間の広がりが見える。 **雑音付きのサブピクセル光線から断面 RMS 0.699 mm、形を仮定しない摩耗誤差 0.0577 mm、点列から測った軌間誤差 0.346 mm。三角測量 op と独立閉形式は < 1e-12 mm。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_rail_anim3d.py)
+- [塩の結晶の粉末 X 線回折](../view2026/anim3d/salt_xrd_anim3d.html?lang=ja) (動く 3-D・触って回せる, 2.5 MB): 塩の単位胞に格子面の板を重ね、Bragg の角度を振ると行路差が λ の整数倍の所だけ受光面が光る。粒の向きをばらばらにすると点が環に育ち、波長を長くすると環は広がって消える。消滅則は 8 原子の波を足して見せる。 [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_saltxrd_anim3d.py)
+- [曲がり方を全部足すと同じ数](../anim3d/gauss_bonnet.html?lang=ja) (動く 3-D・触って回せる, 3.1 MB): 球を立方体に角ばらせても、トーラスでも、穴を増やしても、実測の小惑星でも、頂点ごとの角欠損 K を足した Σ K / 2π は χ = V − E + F に一致する。半透明の面が通り過ぎた頂点を足し上げる動きを指で回して見る。境界のある皿では外れる(限界の回)。 **17 行の表で Σ K / 2π と χ の差は 1e-12 未満。境界のある皿だけ 24.0 × 2π 外れ、境界の項を入れると一致する。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_gaussbonnet_anim3d.py)
+- [パルスオキシメータの二波長吸収](../view2026/anim3d/pulseox_anim3d.html?lang=ja) (動く 3-D・触って回せる, 0.2 MB): 拍動する動脈を通る赤と近赤外の光を追い、AC/DC の比 R から酸素飽和度を読む。雑音入り時系列と閉形式を比べ、COHb を見分けられない限界も示す。 **R の最大差 0.00068、SpO₂ の最大誤差 0.034 %。COHb 10 % の模型では 90.0 % を 91.0 % と読む。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_pulseox_anim3d.py)
 
 </div>
 

@@ -4,7 +4,7 @@ dim: optics
 category: wave
 in: 
 out: image2d
-examples: [optics_imaging, poc_pixel_shift, poc_veiling_glare]
+examples: [anim3d_lens_aberrations, optics_imaging, poc_pixel_shift, poc_veiling_glare]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.8.1  # fullseye lib version this note was generated for
@@ -80,6 +80,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [anim3d_lens_aberrations](../../../../examples/anim3d_lens_aberrations.py) — `py -3.11 examples/anim3d_lens_aberrations.py`
 - [optics_imaging](../../../../examples/optics_imaging.py) — `py -3.11 examples/optics_imaging.py`
 - [poc_pixel_shift](../../../../examples/poc_pixel_shift.py) — `py -3.11 examples/poc_pixel_shift.py`
 - [poc_veiling_glare](../../../../examples/poc_veiling_glare.py) — `py -3.11 examples/poc_veiling_glare.py`
