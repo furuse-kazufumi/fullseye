@@ -83,6 +83,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../anim3d/gauss_bonnet.html?lang=ko"><img src="../thumbs/gauss_bonnet.jpg" alt="굽은 정도를 전부 더하면 같은 수" loading="lazy" width="320" height="320"><b>&#9654;</b><span>굽은 정도를 전부 더하면 같은 수 · 3.1 MB</span></a>
 <a href="../../view2026/anim3d/pulseox_anim3d.html?lang=ko"><img src="../thumbs/pulseox.jpg" alt="맥박 산소 측정의 두 파장 흡수" loading="lazy" width="320" height="320"><b>&#9654;</b><span>맥박 산소 측정의 두 파장 흡수 · 0.2 MB</span></a>
 <a href="../../view2026/anim3d/rail_light_section_anim3d.html?lang=ko"><img src="../thumbs/rail_light_section.jpg" alt="Measure rail wear and gauge with light-section scanning" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Measure rail wear and gauge with light-section scanning · 0.1 MB</span></a>
+<a href="../../view2026/anim3d/tunnel_crack_anim3d.html?lang=ko"><img src="../thumbs/tunnel_crack.jpg" alt="주행 촬영으로 터널의 0.2 mm 균열 측정" loading="lazy" width="320" height="320"><b>&#9654;</b><span>주행 촬영으로 터널의 0.2 mm 균열 측정 · 0.3 MB</span></a>
 </div>
 
 ## 시리즈 기사 (Qiita의 영어 기사)
@@ -673,6 +674,7 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 - [굽은 정도를 전부 더하면 같은 수](../../anim3d/gauss_bonnet.html?lang=ko) (움직이는 3-D, 드래그로 회전, 3.1 MB): 구를 정육면체로 각지게 하든, 토러스든, 구멍을 늘리든, 실측한 소행성이든, 꼭짓점마다의 각 결손 K를 더한 Σ K / 2π는 χ = V − E + F와 일치한다. 반투명 평면이 지나간 꼭짓점을 더해 가는 움직임을 손가락으로 돌려 본다. 경계가 있는 그릇에서는 빗나간다(한계 탭). **17행의 표에서 Σ K / 2π와 χ의 차는 1e-12 미만. 경계가 있는 그릇만 24.0 × 2π 빗나가며, 경계 항을 넣으면 일치한다.** [소스](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_gaussbonnet_anim3d.py)
 - [맥박 산소 측정의 두 파장 흡수](../../view2026/anim3d/pulseox_anim3d.html?lang=ko) (움직이는 3-D, 드래그로 회전, 0.2 MB): 박동하는 동맥을 지나는 적색광과 근적외선을 따라가며 AC/DC 비 R로 산소포화도를 읽는다. 잡음 시계열과 닫힌식을 비교하고 COHb를 구별하지 못하는 한계도 보인다. **R 최대 차이 0.00068, SpO₂ 최대 오차 0.034%. COHb 10% 모형에서는 실제 90.0%를 91.0%로 읽는다.** [소스](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_pulseox_anim3d.py)
 - [Measure rail wear and gauge with light-section scanning](../../view2026/anim3d/rail_light_section_anim3d.html?lang=ko) (움직이는 3-D, 드래그로 회전, 0.1 MB): The intersection of an oblique light sheet and rail surface bends over head, web and foot. During travel, left-head wear rises and the inner distance between two rails reveals gauge widening. **From a noisy subpixel laser line: section RMS 0.699 mm, shape-free wear error 0.0577 mm and profile-measured gauge error 0.346 mm. The triangulation op and independent closed form agree to < 1e-12 mm.** [소스](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_rail_anim3d.py)
+- [주행 촬영으로 터널의 0.2 mm 균열 측정](../../view2026/anim3d/tunnel_crack_anim3d.html?lang=ko) (움직이는 3-D, 드래그로 회전, 0.3 MB): 차량이 원통형 라이닝을 지나는 동안 같은 실물 크기의 펼친 벽은 샘플링만 바뀐다. 빨간 골격은 1.0 mm/픽셀에서 끊기고 0.10 mm/픽셀에서 실제 곡선을 따른다. **0.10 mm/픽셀에서 실제 균열 길이의 99.1%를 검출한다. 국소 배경 폭 오차는 0.023 mm로 0.038 mm 기준 안이다. 90% 검출의 실측과 추정은 모두 0.25 mm/픽셀이며 비교 기준은 0.029 mm다. 줄눈 오검출 24.31 mm도 표시한다.** [소스](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_tunnel_anim3d.py)
 
 </div>
 

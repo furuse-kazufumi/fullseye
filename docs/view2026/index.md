@@ -98,6 +98,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../anim3d/gauss_bonnet.html?lang=ja"><img src="thumbs/gauss_bonnet.jpg" alt="曲がり方を全部足すと同じ数" loading="lazy" width="320" height="320"><b>&#9654;</b><span>曲がり方を全部足すと同じ数 · 3.1 MB</span></a>
 <a href="../view2026/anim3d/pulseox_anim3d.html?lang=ja"><img src="thumbs/pulseox.jpg" alt="パルスオキシメータの二波長吸収" loading="lazy" width="320" height="320"><b>&#9654;</b><span>パルスオキシメータの二波長吸収 · 0.2 MB</span></a>
 <a href="../view2026/anim3d/rail_light_section_anim3d.html?lang=ja"><img src="thumbs/rail_light_section.jpg" alt="光切断でレールの摩耗と軌間を測る" loading="lazy" width="320" height="320"><b>&#9654;</b><span>光切断でレールの摩耗と軌間を測る · 0.1 MB</span></a>
+<a href="../view2026/anim3d/tunnel_crack_anim3d.html?lang=ja"><img src="thumbs/tunnel_crack.jpg" alt="走行撮影でトンネルの 0.2 mm ひびを測る" loading="lazy" width="320" height="320"><b>&#9654;</b><span>走行撮影でトンネルの 0.2 mm ひびを測る · 0.3 MB</span></a>
 </div>
 
 ## シリーズ記事
@@ -688,6 +689,7 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 - [曲がり方を全部足すと同じ数](../anim3d/gauss_bonnet.html?lang=ja) (動く 3-D・触って回せる, 3.1 MB): 球を立方体に角ばらせても、トーラスでも、穴を増やしても、実測の小惑星でも、頂点ごとの角欠損 K を足した Σ K / 2π は χ = V − E + F に一致する。半透明の面が通り過ぎた頂点を足し上げる動きを指で回して見る。境界のある皿では外れる(限界の回)。 **17 行の表で Σ K / 2π と χ の差は 1e-12 未満。境界のある皿だけ 24.0 × 2π 外れ、境界の項を入れると一致する。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_gaussbonnet_anim3d.py)
 - [パルスオキシメータの二波長吸収](../view2026/anim3d/pulseox_anim3d.html?lang=ja) (動く 3-D・触って回せる, 0.2 MB): 拍動する動脈を通る赤と近赤外の光を追い、AC/DC の比 R から酸素飽和度を読む。雑音入り時系列と閉形式を比べ、COHb を見分けられない限界も示す。 **R の最大差 0.00068、SpO₂ の最大誤差 0.034 %。COHb 10 % の模型では 90.0 % を 91.0 % と読む。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_pulseox_anim3d.py)
 - [光切断でレールの摩耗と軌間を測る](../view2026/anim3d/rail_light_section_anim3d.html?lang=ja) (動く 3-D・触って回せる, 0.1 MB): 斜めの光の面とレール表面の交線が、頭頂・ウェブ・底部に沿って曲がる。走行すると左頭頂の摩耗が立ち上がり、二本の内側距離から軌間の広がりが見える。 **雑音付きのサブピクセル光線から断面 RMS 0.699 mm、形を仮定しない摩耗誤差 0.0577 mm、点列から測った軌間誤差 0.346 mm。三角測量 op と独立閉形式は < 1e-12 mm。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_rail_anim3d.py)
+- [走行撮影でトンネルの 0.2 mm ひびを測る](../view2026/anim3d/tunnel_crack_anim3d.html?lang=ja) (動く 3-D・触って回せる, 0.3 MB): 車両が円筒内面を進む横で、同じ実寸の展開画像だけが粗くなる。赤い検出骨格は 1.0 mm/画素では途切れ、0.10 mm/画素では真の曲線を追う。 **0.10 mm/画素で真のひび長さを 99.1 % 回収。局所背景からの幅誤差 0.023 mm は基準 0.038 mm 内。90 % 到達は実測・見積りとも 0.25 mm/画素で、比較基準は 0.029 mm。目地の誤検出長 24.31 mm も表示する。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_tunnel_anim3d.py)
 
 </div>
 

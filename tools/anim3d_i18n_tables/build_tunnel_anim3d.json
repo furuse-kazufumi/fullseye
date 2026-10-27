@@ -1,0 +1,447 @@
+{
+    "_":  "Six added language fields are kept in one deterministic table.",
+    "example":  "build_tunnel_anim3d",
+    "strings":  {
+                    "Measuring a 0.2 mm tunnel crack while moving":  {
+                                                                         "ja":  "走りながらトンネルの 0.2 mm ひびを測る",
+                                                                         "zh":  "Measuring a 0.2 mm tunnel crack while moving",
+                                                                         "tw":  "Measuring a 0.2 mm tunnel crack while moving",
+                                                                         "ko":  "Measuring a 0.2 mm tunnel crack while moving",
+                                                                         "de":  "Measuring a 0.2 mm tunnel crack while moving",
+                                                                         "hi":  "Measuring a 0.2 mm tunnel crack while moving",
+                                                                         "fr":  "Measuring a 0.2 mm tunnel crack while moving"
+                                                                     },
+                    "A fixed-size synthetic wall links resolution, detected length and subpixel width":  {
+                                                                                                             "ja":  "固定実寸の合成壁で、解像度・検出長・サブピクセル幅を結ぶ",
+                                                                                                             "zh":  "A fixed-size synthetic wall links resolution, detected length and subpixel width",
+                                                                                                             "tw":  "A fixed-size synthetic wall links resolution, detected length and subpixel width",
+                                                                                                             "ko":  "A fixed-size synthetic wall links resolution, detected length and subpixel width",
+                                                                                                             "de":  "A fixed-size synthetic wall links resolution, detected length and subpixel width",
+                                                                                                             "hi":  "A fixed-size synthetic wall links resolution, detected length and subpixel width",
+                                                                                                             "fr":  "A fixed-size synthetic wall links resolution, detected length and subpixel width"
+                                                                                                         },
+                    "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Tap a badge for computed gates.":  {
+                                                                                                                             "ja":  "①問い → ②予想 → ③再生 → ④式 → ⑤限界。バッジを押すと計算した門を見る。",
+                                                                                                                             "zh":  "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Tap a badge for computed gates.",
+                                                                                                                             "tw":  "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Tap a badge for computed gates.",
+                                                                                                                             "ko":  "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Tap a badge for computed gates.",
+                                                                                                                             "de":  "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Tap a badge for computed gates.",
+                                                                                                                             "hi":  "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Tap a badge for computed gates.",
+                                                                                                                             "fr":  "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Tap a badge for computed gates."
+                                                                                                                         },
+                    "From a moving scan to an unwrapped wall":  {
+                                                                    "ja":  "走行撮影を壁の展開図へ",
+                                                                    "zh":  "From a moving scan to an unwrapped wall",
+                                                                    "tw":  "From a moving scan to an unwrapped wall",
+                                                                    "ko":  "From a moving scan to an unwrapped wall",
+                                                                    "de":  "From a moving scan to an unwrapped wall",
+                                                                    "hi":  "From a moving scan to an unwrapped wall",
+                                                                    "fr":  "From a moving scan to an unwrapped wall"
+                                                                },
+                    "A formula-built cylindrical lining and vehicle scan the same fixed 25.6 mm wall at different resolutions. The crack lies off pixel centres, with texture, noise and uneven lighting.":  {
+                                                                                                                                                                                                                 "ja":  "円筒内面と車両を式から作り、同じ実寸 25.6 mm の壁を解像度だけ変えて撮る。ひびの中心は画素中心から外し、模様・雑音・照明むらを加えた。",
+                                                                                                                                                                                                                 "zh":  "A formula-built cylindrical lining and vehicle scan the same fixed 25.6 mm wall at different resolutions. The crack lies off pixel centres, with texture, noise and uneven lighting.",
+                                                                                                                                                                                                                 "tw":  "A formula-built cylindrical lining and vehicle scan the same fixed 25.6 mm wall at different resolutions. The crack lies off pixel centres, with texture, noise and uneven lighting.",
+                                                                                                                                                                                                                 "ko":  "A formula-built cylindrical lining and vehicle scan the same fixed 25.6 mm wall at different resolutions. The crack lies off pixel centres, with texture, noise and uneven lighting.",
+                                                                                                                                                                                                                 "de":  "A formula-built cylindrical lining and vehicle scan the same fixed 25.6 mm wall at different resolutions. The crack lies off pixel centres, with texture, noise and uneven lighting.",
+                                                                                                                                                                                                                 "hi":  "A formula-built cylindrical lining and vehicle scan the same fixed 25.6 mm wall at different resolutions. The crack lies off pixel centres, with texture, noise and uneven lighting.",
+                                                                                                                                                                                                                 "fr":  "A formula-built cylindrical lining and vehicle scan the same fixed 25.6 mm wall at different resolutions. The crack lies off pixel centres, with texture, noise and uneven lighting."
+                                                                                                                                                                                                             },
+                    "crack-length recall":  {
+                                                "ja":  "ひび長さ再現率",
+                                                "zh":  "crack-length recall",
+                                                "tw":  "crack-length recall",
+                                                "ko":  "crack-length recall",
+                                                "de":  "crack-length recall",
+                                                "hi":  "crack-length recall",
+                                                "fr":  "crack-length recall"
+                                            },
+                    "unwrapped image: red is detected skeleton":  {
+                                                                      "ja":  "展開画像: 赤は検出骨格",
+                                                                      "zh":  "unwrapped image: red is detected skeleton",
+                                                                      "tw":  "unwrapped image: red is detected skeleton",
+                                                                      "ko":  "unwrapped image: red is detected skeleton",
+                                                                      "de":  "unwrapped image: red is detected skeleton",
+                                                                      "hi":  "unwrapped image: red is detected skeleton",
+                                                                      "fr":  "unwrapped image: red is detected skeleton"
+                                                                  },
+                    "true crack length recovered at 0.10 mm/pixel":  {
+                                                                         "ja":  "0.10 mm/画素で拾った真のひび長さ",
+                                                                         "zh":  "true crack length recovered at 0.10 mm/pixel",
+                                                                         "tw":  "true crack length recovered at 0.10 mm/pixel",
+                                                                         "ko":  "true crack length recovered at 0.10 mm/pixel",
+                                                                         "de":  "true crack length recovered at 0.10 mm/pixel",
+                                                                         "hi":  "true crack length recovered at 0.10 mm/pixel",
+                                                                         "fr":  "true crack length recovered at 0.10 mm/pixel"
+                                                                     },
+                    "width error from integrated darkness":  {
+                                                                 "ja":  "面積欠けから求めた幅の誤差",
+                                                                 "zh":  "width error from integrated darkness",
+                                                                 "tw":  "width error from integrated darkness",
+                                                                 "ko":  "width error from integrated darkness",
+                                                                 "de":  "width error from integrated darkness",
+                                                                 "hi":  "width error from integrated darkness",
+                                                                 "fr":  "width error from integrated darkness"
+                                                             },
+                    "90% resolution: measured vs width estimate":  {
+                                                                       "ja":  "90 % 到達解像度: 実測と幅からの見積り",
+                                                                       "zh":  "90% resolution: measured vs width estimate",
+                                                                       "tw":  "90% resolution: measured vs width estimate",
+                                                                       "ko":  "90% resolution: measured vs width estimate",
+                                                                       "de":  "90% resolution: measured vs width estimate",
+                                                                       "hi":  "90% resolution: measured vs width estimate",
+                                                                       "fr":  "90% resolution: measured vs width estimate"
+                                                                   },
+                    "wall sampling":  {
+                                          "ja":  "地上画素寸法",
+                                          "zh":  "wall sampling",
+                                          "tw":  "wall sampling",
+                                          "ko":  "wall sampling",
+                                          "de":  "wall sampling",
+                                          "hi":  "wall sampling",
+                                          "fr":  "wall sampling"
+                                      },
+                    "Does a 0.2 mm crack remain a line at 1 mm/pixel?":  {
+                                                                             "ja":  "1 mm/画素で幅 0.2 mm のひびは線として残る?",
+                                                                             "zh":  "Does a 0.2 mm crack remain a line at 1 mm/pixel?",
+                                                                             "tw":  "Does a 0.2 mm crack remain a line at 1 mm/pixel?",
+                                                                             "ko":  "Does a 0.2 mm crack remain a line at 1 mm/pixel?",
+                                                                             "de":  "Does a 0.2 mm crack remain a line at 1 mm/pixel?",
+                                                                             "hi":  "Does a 0.2 mm crack remain a line at 1 mm/pixel?",
+                                                                             "fr":  "Does a 0.2 mm crack remain a line at 1 mm/pixel?"
+                                                                         },
+                    "almost all remains":  {
+                                               "ja":  "ほぼ全部残る",
+                                               "zh":  "almost all remains",
+                                               "tw":  "almost all remains",
+                                               "ko":  "almost all remains",
+                                               "de":  "almost all remains",
+                                               "hi":  "almost all remains",
+                                               "fr":  "almost all remains"
+                                           },
+                    "averaging loses much of it":  {
+                                                       "ja":  "平均化され、多くを失う",
+                                                       "zh":  "averaging loses much of it",
+                                                       "tw":  "averaging loses much of it",
+                                                       "ko":  "averaging loses much of it",
+                                                       "de":  "averaging loses much of it",
+                                                       "hi":  "averaging loses much of it",
+                                                       "fr":  "averaging loses much of it"
+                                                   },
+                    "Pixel averaging reduces a thin crack\u0027s contrast in proportion to width divided by pixel size.":  {
+                                                                                                                               "ja":  "画素内で暗さが平均され、細いひびのコントラストは幅/画素寸法に比例して下がる。",
+                                                                                                                               "zh":  "Pixel averaging reduces a thin crack\u0027s contrast in proportion to width divided by pixel size.",
+                                                                                                                               "tw":  "Pixel averaging reduces a thin crack\u0027s contrast in proportion to width divided by pixel size.",
+                                                                                                                               "ko":  "Pixel averaging reduces a thin crack\u0027s contrast in proportion to width divided by pixel size.",
+                                                                                                                               "de":  "Pixel averaging reduces a thin crack\u0027s contrast in proportion to width divided by pixel size.",
+                                                                                                                               "hi":  "Pixel averaging reduces a thin crack\u0027s contrast in proportion to width divided by pixel size.",
+                                                                                                                               "fr":  "Pixel averaging reduces a thin crack\u0027s contrast in proportion to width divided by pixel size."
+                                                                                                                           },
+                    "contrast ≈ crack width / pixel size":  {
+                                                                "ja":  "contrast ≈ crack width / pixel size",
+                                                                "zh":  "contrast ≈ crack width / pixel size",
+                                                                "tw":  "contrast ≈ crack width / pixel size",
+                                                                "ko":  "contrast ≈ crack width / pixel size",
+                                                                "de":  "contrast ≈ crack width / pixel size",
+                                                                "hi":  "contrast ≈ crack width / pixel size",
+                                                                "fr":  "contrast ≈ crack width / pixel size"
+                                                            },
+                    "This synthetic lining is not for real maintenance decisions.":  {
+                                                                                         "ja":  "合成覆工であり、実トンネルの保守判定には使わない。",
+                                                                                         "zh":  "This synthetic lining is not for real maintenance decisions.",
+                                                                                         "tw":  "This synthetic lining is not for real maintenance decisions.",
+                                                                                         "ko":  "This synthetic lining is not for real maintenance decisions.",
+                                                                                         "de":  "This synthetic lining is not for real maintenance decisions.",
+                                                                                         "hi":  "This synthetic lining is not for real maintenance decisions.",
+                                                                                         "fr":  "This synthetic lining is not for real maintenance decisions."
+                                                                                     },
+                    "Resolution changes recovered length":  {
+                                                                "ja":  "解像度で拾える長さが変わる",
+                                                                "zh":  "Resolution changes recovered length",
+                                                                "tw":  "Resolution changes recovered length",
+                                                                "ko":  "Resolution changes recovered length",
+                                                                "de":  "Resolution changes recovered length",
+                                                                "hi":  "Resolution changes recovered length",
+                                                                "fr":  "Resolution changes recovered length"
+                                                            },
+                    "recovered true length":  {
+                                                  "ja":  "検出した真の長さ",
+                                                  "zh":  "recovered true length",
+                                                  "tw":  "recovered true length",
+                                                  "ko":  "recovered true length",
+                                                  "de":  "recovered true length",
+                                                  "hi":  "recovered true length",
+                                                  "fr":  "recovered true length"
+                                              },
+                    "90% target":  {
+                                       "ja":  "目標 90 %",
+                                       "zh":  "90% target",
+                                       "tw":  "90% target",
+                                       "ko":  "90% target",
+                                       "de":  "90% target",
+                                       "hi":  "90% target",
+                                       "fr":  "90% target"
+                                   },
+                    "Which resolution first exceeds 90%?":  {
+                                                                "ja":  "90 % を初めて超える解像度は?",
+                                                                "zh":  "Which resolution first exceeds 90%?",
+                                                                "tw":  "Which resolution first exceeds 90%?",
+                                                                "ko":  "Which resolution first exceeds 90%?",
+                                                                "de":  "Which resolution first exceeds 90%?",
+                                                                "hi":  "Which resolution first exceeds 90%?",
+                                                                "fr":  "Which resolution first exceeds 90%?"
+                                                            },
+                    "1.0 mm/pixel":  {
+                                         "ja":  "1.0 mm/画素",
+                                         "zh":  "1.0 mm/pixel",
+                                         "tw":  "1.0 mm/pixel",
+                                         "ko":  "1.0 mm/pixel",
+                                         "de":  "1.0 mm/pixel",
+                                         "hi":  "1.0 mm/pixel",
+                                         "fr":  "1.0 mm/pixel"
+                                     },
+                    "Read subpixel width from darkness":  {
+                                                              "ja":  "画素より細い幅を暗さから読む",
+                                                              "zh":  "Read subpixel width from darkness",
+                                                              "tw":  "Read subpixel width from darkness",
+                                                              "ko":  "Read subpixel width from darkness",
+                                                              "de":  "Read subpixel width from darkness",
+                                                              "hi":  "Read subpixel width from darkness",
+                                                              "fr":  "Read subpixel width from darkness"
+                                                          },
+                    "width estimated from image":  {
+                                                       "ja":  "像から推定した幅",
+                                                       "zh":  "width estimated from image",
+                                                       "tw":  "width estimated from image",
+                                                       "ko":  "width estimated from image",
+                                                       "de":  "width estimated from image",
+                                                       "hi":  "width estimated from image",
+                                                       "fr":  "width estimated from image"
+                                                   },
+                    "planted truth":  {
+                                          "ja":  "埋めた真値",
+                                          "zh":  "planted truth",
+                                          "tw":  "planted truth",
+                                          "ko":  "planted truth",
+                                          "de":  "planted truth",
+                                          "hi":  "planted truth",
+                                          "fr":  "planted truth"
+                                      },
+                    "Must a subpixel width measure as zero?":  {
+                                                                   "ja":  "1画素未満の幅は必ず 0 と測られる?",
+                                                                   "zh":  "Must a subpixel width measure as zero?",
+                                                                   "tw":  "Must a subpixel width measure as zero?",
+                                                                   "ko":  "Must a subpixel width measure as zero?",
+                                                                   "de":  "Must a subpixel width measure as zero?",
+                                                                   "hi":  "Must a subpixel width measure as zero?",
+                                                                   "fr":  "Must a subpixel width measure as zero?"
+                                                               },
+                    "it becomes zero":  {
+                                            "ja":  "0 になる",
+                                            "zh":  "it becomes zero",
+                                            "tw":  "it becomes zero",
+                                            "ko":  "it becomes zero",
+                                            "de":  "it becomes zero",
+                                            "hi":  "it becomes zero",
+                                            "fr":  "it becomes zero"
+                                        },
+                    "integrated darkness can estimate it":  {
+                                                                "ja":  "暗さの面積から推定できる",
+                                                                "zh":  "integrated darkness can estimate it",
+                                                                "tw":  "integrated darkness can estimate it",
+                                                                "ko":  "integrated darkness can estimate it",
+                                                                "de":  "integrated darkness can estimate it",
+                                                                "hi":  "integrated darkness can estimate it",
+                                                                "fr":  "integrated darkness can estimate it"
+                                                            },
+                    "Background estimation, blur and reflectance can bias width.":  {
+                                                                                        "ja":  "背景推定、ぼけ、反射率がずれると幅に偏りが出る。",
+                                                                                        "zh":  "Background estimation, blur and reflectance can bias width.",
+                                                                                        "tw":  "Background estimation, blur and reflectance can bias width.",
+                                                                                        "ko":  "Background estimation, blur and reflectance can bias width.",
+                                                                                        "de":  "Background estimation, blur and reflectance can bias width.",
+                                                                                        "hi":  "Background estimation, blur and reflectance can bias width.",
+                                                                                        "fr":  "Background estimation, blur and reflectance can bias width."
+                                                                                    },
+                    "Joints and stains also look like lines":  {
+                                                                   "ja":  "目地や汚れも線に見える",
+                                                                   "zh":  "Joints and stains also look like lines",
+                                                                   "tw":  "Joints and stains also look like lines",
+                                                                   "ko":  "Joints and stains also look like lines",
+                                                                   "de":  "Joints and stains also look like lines",
+                                                                   "hi":  "Joints and stains also look like lines",
+                                                                   "fr":  "Joints and stains also look like lines"
+                                                               },
+                    "A transverse joint and damp patch share the image. The line detector knows no semantics, leaving skeleton away from the true crack.":  {
+                                                                                                                                                                "ja":  "同じ画像に横目地と水しみを埋めた。線検出器は意味を知らないため、細線化後にも真のひびから離れた骨格が残る。",
+                                                                                                                                                                "zh":  "A transverse joint and damp patch share the image. The line detector knows no semantics, leaving skeleton away from the true crack.",
+                                                                                                                                                                "tw":  "A transverse joint and damp patch share the image. The line detector knows no semantics, leaving skeleton away from the true crack.",
+                                                                                                                                                                "ko":  "A transverse joint and damp patch share the image. The line detector knows no semantics, leaving skeleton away from the true crack.",
+                                                                                                                                                                "de":  "A transverse joint and damp patch share the image. The line detector knows no semantics, leaving skeleton away from the true crack.",
+                                                                                                                                                                "hi":  "A transverse joint and damp patch share the image. The line detector knows no semantics, leaving skeleton away from the true crack.",
+                                                                                                                                                                "fr":  "A transverse joint and damp patch share the image. The line detector knows no semantics, leaving skeleton away from the true crack."
+                                                                                                                                                            },
+                    "false-positive skeleton length":  {
+                                                           "ja":  "誤検出の骨格長",
+                                                           "zh":  "false-positive skeleton length",
+                                                           "tw":  "false-positive skeleton length",
+                                                           "ko":  "false-positive skeleton length",
+                                                           "de":  "false-positive skeleton length",
+                                                           "hi":  "false-positive skeleton length",
+                                                           "fr":  "false-positive skeleton length"
+                                                       },
+                    "stains, joints and damp patches are always separable from cracks":  {
+                                                                                             "ja":  "汚れ・目地・水しみをひびと区別できる",
+                                                                                             "zh":  "stains, joints and damp patches are always separable from cracks",
+                                                                                             "tw":  "stains, joints and damp patches are always separable from cracks",
+                                                                                             "ko":  "stains, joints and damp patches are always separable from cracks",
+                                                                                             "de":  "stains, joints and damp patches are always separable from cracks",
+                                                                                             "hi":  "stains, joints and damp patches are always separable from cracks",
+                                                                                             "fr":  "stains, joints and damp patches are always separable from cracks"
+                                                                                         },
+                    "false-positive length 0 mm":  {
+                                                       "ja":  "誤検出長 0 mm",
+                                                       "zh":  "false-positive length 0 mm",
+                                                       "tw":  "false-positive length 0 mm",
+                                                       "ko":  "false-positive length 0 mm",
+                                                       "de":  "false-positive length 0 mm",
+                                                       "hi":  "false-positive length 0 mm",
+                                                       "fr":  "false-positive length 0 mm"
+                                                   },
+                    "Can every thin dark line be called a crack?":  {
+                                                                        "ja":  "細い暗線なら全部ひびと呼べる?",
+                                                                        "zh":  "Can every thin dark line be called a crack?",
+                                                                        "tw":  "Can every thin dark line be called a crack?",
+                                                                        "ko":  "Can every thin dark line be called a crack?",
+                                                                        "de":  "Can every thin dark line be called a crack?",
+                                                                        "hi":  "Can every thin dark line be called a crack?",
+                                                                        "fr":  "Can every thin dark line be called a crack?"
+                                                                    },
+                    "yes":  {
+                                "ja":  "呼べる",
+                                "zh":  "yes",
+                                "tw":  "yes",
+                                "ko":  "yes",
+                                "de":  "yes",
+                                "hi":  "yes",
+                                "fr":  "yes"
+                            },
+                    "joints and stains must be separated":  {
+                                                                "ja":  "目地・汚れとの識別が要る",
+                                                                "zh":  "joints and stains must be separated",
+                                                                "tw":  "joints and stains must be separated",
+                                                                "ko":  "joints and stains must be separated",
+                                                                "de":  "joints and stains must be separated",
+                                                                "hi":  "joints and stains must be separated",
+                                                                "fr":  "joints and stains must be separated"
+                                                            },
+                    "Shape alone also responds to joints and stains; material, time-series or alternate illumination cues are needed.":  {
+                                                                                                                                             "ja":  "形だけでは目地や汚れも応答する。材質、時系列、別照明など追加の観測が要る。",
+                                                                                                                                             "zh":  "Shape alone also responds to joints and stains; material, time-series or alternate illumination cues are needed.",
+                                                                                                                                             "tw":  "Shape alone also responds to joints and stains; material, time-series or alternate illumination cues are needed.",
+                                                                                                                                             "ko":  "Shape alone also responds to joints and stains; material, time-series or alternate illumination cues are needed.",
+                                                                                                                                             "de":  "Shape alone also responds to joints and stains; material, time-series or alternate illumination cues are needed.",
+                                                                                                                                             "hi":  "Shape alone also responds to joints and stains; material, time-series or alternate illumination cues are needed.",
+                                                                                                                                             "fr":  "Shape alone also responds to joints and stains; material, time-series or alternate illumination cues are needed."
+                                                                                                                                         },
+                    "false length = skeleton length outside truth tolerance":  {
+                                                                                   "ja":  "false length = skeleton length outside truth tolerance",
+                                                                                   "zh":  "false length = skeleton length outside truth tolerance",
+                                                                                   "tw":  "false length = skeleton length outside truth tolerance",
+                                                                                   "ko":  "false length = skeleton length outside truth tolerance",
+                                                                                   "de":  "false length = skeleton length outside truth tolerance",
+                                                                                   "hi":  "false length = skeleton length outside truth tolerance",
+                                                                                   "fr":  "false length = skeleton length outside truth tolerance"
+                                                                               },
+                    "The limit row intentionally fails so false positives remain visible.":  {
+                                                                                                 "ja":  "限界を見せる行は意図的に不合格。誤検出を隠さない。",
+                                                                                                 "zh":  "The limit row intentionally fails so false positives remain visible.",
+                                                                                                 "tw":  "The limit row intentionally fails so false positives remain visible.",
+                                                                                                 "ko":  "The limit row intentionally fails so false positives remain visible.",
+                                                                                                 "de":  "The limit row intentionally fails so false positives remain visible.",
+                                                                                                 "hi":  "The limit row intentionally fails so false positives remain visible.",
+                                                                                                 "fr":  "The limit row intentionally fails so false positives remain visible."
+                                                                                             },
+                    "Entirely synthetic. Lining, crack and imaging dimensions are teaching assumptions and represent no operator, route or product.":  {
+                                                                                                                                                           "ja":  "すべて合成。覆工、ひび、撮像寸法は説明用の仮定で、事業者・路線・製品を表さない。",
+                                                                                                                                                           "zh":  "Entirely synthetic. Lining, crack and imaging dimensions are teaching assumptions and represent no operator, route or product.",
+                                                                                                                                                           "tw":  "Entirely synthetic. Lining, crack and imaging dimensions are teaching assumptions and represent no operator, route or product.",
+                                                                                                                                                           "ko":  "Entirely synthetic. Lining, crack and imaging dimensions are teaching assumptions and represent no operator, route or product.",
+                                                                                                                                                           "de":  "Entirely synthetic. Lining, crack and imaging dimensions are teaching assumptions and represent no operator, route or product.",
+                                                                                                                                                           "hi":  "Entirely synthetic. Lining, crack and imaging dimensions are teaching assumptions and represent no operator, route or product.",
+                                                                                                                                                           "fr":  "Entirely synthetic. Lining, crack and imaging dimensions are teaching assumptions and represent no operator, route or product."
+                                                                                                                                                       },
+                    "Each sampled image runs through sk_frangi, a fixed 0.30 threshold and sk_skeleton. Only skeleton length near planted truth counts toward recall. Trials at 0.05 mm steps measure the first point above 90%.":  {
+                                                                                                                                                                                                                                        "ja":  "各撮像像を sk_frangi で線強調し、固定しきい値 0.30 で二値化、sk_skeleton で細線化した。真値近傍の骨格長だけを再現率に数える。0.05 mm 刻みで 90 % を初めて超える点を実測する。",
+                                                                                                                                                                                                                                        "zh":  "Each sampled image runs through sk_frangi, a fixed 0.30 threshold and sk_skeleton. Only skeleton length near planted truth counts toward recall. Trials at 0.05 mm steps measure the first point above 90%.",
+                                                                                                                                                                                                                                        "tw":  "Each sampled image runs through sk_frangi, a fixed 0.30 threshold and sk_skeleton. Only skeleton length near planted truth counts toward recall. Trials at 0.05 mm steps measure the first point above 90%.",
+                                                                                                                                                                                                                                        "ko":  "Each sampled image runs through sk_frangi, a fixed 0.30 threshold and sk_skeleton. Only skeleton length near planted truth counts toward recall. Trials at 0.05 mm steps measure the first point above 90%.",
+                                                                                                                                                                                                                                        "de":  "Each sampled image runs through sk_frangi, a fixed 0.30 threshold and sk_skeleton. Only skeleton length near planted truth counts toward recall. Trials at 0.05 mm steps measure the first point above 90%.",
+                                                                                                                                                                                                                                        "hi":  "Each sampled image runs through sk_frangi, a fixed 0.30 threshold and sk_skeleton. Only skeleton length near planted truth counts toward recall. Trials at 0.05 mm steps measure the first point above 90%.",
+                                                                                                                                                                                                                                        "fr":  "Each sampled image runs through sk_frangi, a fixed 0.30 threshold and sk_skeleton. Only skeleton length near planted truth counts toward recall. Trials at 0.05 mm steps measure the first point above 90%."
+                                                                                                                                                                                                                                    },
+                    "0.25 mm/pixel":  {
+                                          "ja":  "0.25 mm/画素",
+                                          "zh":  "0.25 mm/pixel",
+                                          "tw":  "0.25 mm/pixel",
+                                          "ko":  "0.25 mm/pixel",
+                                          "de":  "0.25 mm/pixel",
+                                          "hi":  "0.25 mm/pixel",
+                                          "fr":  "0.25 mm/pixel"
+                                      },
+                    "A pilot scan with fixed Frangi scale and threshold 0.30 sets a detectable pixel fill ratio of 0.80: width 0.20 / 0.80 = 0.25 mm/pixel. The comparison tolerance adds half the 0.05 mm step to the finite-row recall standard error converted to resolution by the local slope.":  {
+                                                                                                                                                                                                                                                                                                           "ja":  "固定 Frangi 尺度としきい値 0.30 の予備走査から、画素内のひび充填率 0.80 を検出目安とした。幅 0.20 / 0.80 = 0.25 mm/画素。比較基準は 0.05 mm 刻みの半分と、有限なひび行数による再現率の標準誤差を局所勾配で解像度へ換算した値の和。",
+                                                                                                                                                                                                                                                                                                           "zh":  "A pilot scan with fixed Frangi scale and threshold 0.30 sets a detectable pixel fill ratio of 0.80: width 0.20 / 0.80 = 0.25 mm/pixel. The comparison tolerance adds half the 0.05 mm step to the finite-row recall standard error converted to resolution by the local slope.",
+                                                                                                                                                                                                                                                                                                           "tw":  "A pilot scan with fixed Frangi scale and threshold 0.30 sets a detectable pixel fill ratio of 0.80: width 0.20 / 0.80 = 0.25 mm/pixel. The comparison tolerance adds half the 0.05 mm step to the finite-row recall standard error converted to resolution by the local slope.",
+                                                                                                                                                                                                                                                                                                           "ko":  "A pilot scan with fixed Frangi scale and threshold 0.30 sets a detectable pixel fill ratio of 0.80: width 0.20 / 0.80 = 0.25 mm/pixel. The comparison tolerance adds half the 0.05 mm step to the finite-row recall standard error converted to resolution by the local slope.",
+                                                                                                                                                                                                                                                                                                           "de":  "A pilot scan with fixed Frangi scale and threshold 0.30 sets a detectable pixel fill ratio of 0.80: width 0.20 / 0.80 = 0.25 mm/pixel. The comparison tolerance adds half the 0.05 mm step to the finite-row recall standard error converted to resolution by the local slope.",
+                                                                                                                                                                                                                                                                                                           "hi":  "A pilot scan with fixed Frangi scale and threshold 0.30 sets a detectable pixel fill ratio of 0.80: width 0.20 / 0.80 = 0.25 mm/pixel. The comparison tolerance adds half the 0.05 mm step to the finite-row recall standard error converted to resolution by the local slope.",
+                                                                                                                                                                                                                                                                                                           "fr":  "A pilot scan with fixed Frangi scale and threshold 0.30 sets a detectable pixel fill ratio of 0.80: width 0.20 / 0.80 = 0.25 mm/pixel. The comparison tolerance adds half the 0.05 mm step to the finite-row recall standard error converted to resolution by the local slope."
+                                                                                                                                                                                                                                                                                                       },
+                    "estimated pixel = crack width / minimum fill = 0.20 / 0.80":  {
+                                                                                       "ja":  "estimated pixel = crack width / minimum fill = 0.20 / 0.80",
+                                                                                       "zh":  "estimated pixel = crack width / minimum fill = 0.20 / 0.80",
+                                                                                       "tw":  "estimated pixel = crack width / minimum fill = 0.20 / 0.80",
+                                                                                       "ko":  "estimated pixel = crack width / minimum fill = 0.20 / 0.80",
+                                                                                       "de":  "estimated pixel = crack width / minimum fill = 0.20 / 0.80",
+                                                                                       "hi":  "estimated pixel = crack width / minimum fill = 0.20 / 0.80",
+                                                                                       "fr":  "estimated pixel = crack width / minimum fill = 0.20 / 0.80"
+                                                                                   },
+                    "Changing Frangi scale or threshold changes the 0.80 fill criterion and the crossing resolution.":  {
+                                                                                                                            "ja":  "Frangi の尺度やしきい値を変えると、充填率 0.80 と到達解像度も変わる。",
+                                                                                                                            "zh":  "Changing Frangi scale or threshold changes the 0.80 fill criterion and the crossing resolution.",
+                                                                                                                            "tw":  "Changing Frangi scale or threshold changes the 0.80 fill criterion and the crossing resolution.",
+                                                                                                                            "ko":  "Changing Frangi scale or threshold changes the 0.80 fill criterion and the crossing resolution.",
+                                                                                                                            "de":  "Changing Frangi scale or threshold changes the 0.80 fill criterion and the crossing resolution.",
+                                                                                                                            "hi":  "Changing Frangi scale or threshold changes the 0.80 fill criterion and the crossing resolution.",
+                                                                                                                            "fr":  "Changing Frangi scale or threshold changes the 0.80 fill criterion and the crossing resolution."
+                                                                                                                        },
+                    "Without using the planted curve, each row follows the strongest detected-skeleton response near the previous row. The median of 14 flank pixels estimates local background, and missing brightness is integrated over nine central pixels. Texture, noise and uneven lighting remain in the observation.":  {
+                                                                                                                                                                                                                                                                                                                                     "ja":  "真の曲線は使わず、検出骨格の各行で前行に近い最大応答を追う。その両脇 14 画素の中央値を局所背景とし、中央 9 画素で失われた明るさを積分する。模様・雑音・照明むらは観測像に残る。",
+                                                                                                                                                                                                                                                                                                                                     "zh":  "Without using the planted curve, each row follows the strongest detected-skeleton response near the previous row. The median of 14 flank pixels estimates local background, and missing brightness is integrated over nine central pixels. Texture, noise and uneven lighting remain in the observation.",
+                                                                                                                                                                                                                                                                                                                                     "tw":  "Without using the planted curve, each row follows the strongest detected-skeleton response near the previous row. The median of 14 flank pixels estimates local background, and missing brightness is integrated over nine central pixels. Texture, noise and uneven lighting remain in the observation.",
+                                                                                                                                                                                                                                                                                                                                     "ko":  "Without using the planted curve, each row follows the strongest detected-skeleton response near the previous row. The median of 14 flank pixels estimates local background, and missing brightness is integrated over nine central pixels. Texture, noise and uneven lighting remain in the observation.",
+                                                                                                                                                                                                                                                                                                                                     "de":  "Without using the planted curve, each row follows the strongest detected-skeleton response near the previous row. The median of 14 flank pixels estimates local background, and missing brightness is integrated over nine central pixels. Texture, noise and uneven lighting remain in the observation.",
+                                                                                                                                                                                                                                                                                                                                     "hi":  "Without using the planted curve, each row follows the strongest detected-skeleton response near the previous row. The median of 14 flank pixels estimates local background, and missing brightness is integrated over nine central pixels. Texture, noise and uneven lighting remain in the observation.",
+                                                                                                                                                                                                                                                                                                                                     "fr":  "Without using the planted curve, each row follows the strongest detected-skeleton response near the previous row. The median of 14 flank pixels estimates local background, and missing brightness is integrated over nine central pixels. Texture, noise and uneven lighting remain in the observation."
+                                                                                                                                                                                                                                                                                                                                 },
+                    "A thinner line makes a shallower pixel, while integrated missing brightness preserves width. The width criterion combines pixel quantisation, noise in nine core pixels and uncertainty of the 14-pixel flank median.":  {
+                                                                                                                                                                                                                                                  "ja":  "線が細いほど一画素の暗さは浅いが、欠けた明るさの面積は幅を保つ。幅の基準は画素量子化、中央9画素の雑音、両脇14画素の背景中央値のばらつきから合成した。",
+                                                                                                                                                                                                                                                  "zh":  "A thinner line makes a shallower pixel, while integrated missing brightness preserves width. The width criterion combines pixel quantisation, noise in nine core pixels and uncertainty of the 14-pixel flank median.",
+                                                                                                                                                                                                                                                  "tw":  "A thinner line makes a shallower pixel, while integrated missing brightness preserves width. The width criterion combines pixel quantisation, noise in nine core pixels and uncertainty of the 14-pixel flank median.",
+                                                                                                                                                                                                                                                  "ko":  "A thinner line makes a shallower pixel, while integrated missing brightness preserves width. The width criterion combines pixel quantisation, noise in nine core pixels and uncertainty of the 14-pixel flank median.",
+                                                                                                                                                                                                                                                  "de":  "A thinner line makes a shallower pixel, while integrated missing brightness preserves width. The width criterion combines pixel quantisation, noise in nine core pixels and uncertainty of the 14-pixel flank median.",
+                                                                                                                                                                                                                                                  "hi":  "A thinner line makes a shallower pixel, while integrated missing brightness preserves width. The width criterion combines pixel quantisation, noise in nine core pixels and uncertainty of the 14-pixel flank median.",
+                                                                                                                                                                                                                                                  "fr":  "A thinner line makes a shallower pixel, while integrated missing brightness preserves width. The width criterion combines pixel quantisation, noise in nine core pixels and uncertainty of the 14-pixel flank median."
+                                                                                                                                                                                                                                              },
+                    "width ≈ Σ(local flank median − intensity) · pixel / contrast":  {
+                                                                                         "ja":  "width ≈ Σ(local flank median − intensity) · pixel / contrast",
+                                                                                         "zh":  "width ≈ Σ(local flank median − intensity) · pixel / contrast",
+                                                                                         "tw":  "width ≈ Σ(local flank median − intensity) · pixel / contrast",
+                                                                                         "ko":  "width ≈ Σ(local flank median − intensity) · pixel / contrast",
+                                                                                         "de":  "width ≈ Σ(local flank median − intensity) · pixel / contrast",
+                                                                                         "hi":  "width ≈ Σ(local flank median − intensity) · pixel / contrast",
+                                                                                         "fr":  "width ≈ Σ(local flank median − intensity) · pixel / contrast"
+                                                                                     }
+                }
+}

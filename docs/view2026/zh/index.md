@@ -83,6 +83,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../anim3d/gauss_bonnet.html?lang=zh"><img src="../thumbs/gauss_bonnet.jpg" alt="弯曲全部相加都是同一个数" loading="lazy" width="320" height="320"><b>&#9654;</b><span>弯曲全部相加都是同一个数 · 3.1 MB</span></a>
 <a href="../../view2026/anim3d/pulseox_anim3d.html?lang=zh"><img src="../thumbs/pulseox.jpg" alt="脉搏血氧仪的双波长吸收" loading="lazy" width="320" height="320"><b>&#9654;</b><span>脉搏血氧仪的双波长吸收 · 0.2 MB</span></a>
 <a href="../../view2026/anim3d/rail_light_section_anim3d.html?lang=zh"><img src="../thumbs/rail_light_section.jpg" alt="Measure rail wear and gauge with light-section scanning" loading="lazy" width="320" height="320"><b>&#9654;</b><span>Measure rail wear and gauge with light-section scanning · 0.1 MB</span></a>
+<a href="../../view2026/anim3d/tunnel_crack_anim3d.html?lang=zh"><img src="../thumbs/tunnel_crack.jpg" alt="用移动扫描测量隧道中 0.2 mm 的裂缝" loading="lazy" width="320" height="320"><b>&#9654;</b><span>用移动扫描测量隧道中 0.2 mm 的裂缝 · 0.3 MB</span></a>
 </div>
 
 ## 系列文章 (Qiita 上的英文文章)
@@ -673,6 +674,7 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 - [弯曲全部相加都是同一个数](../../anim3d/gauss_bonnet.html?lang=zh) (动态 3-D,可拖动旋转, 3.1 MB): 把球削成立方体、换成环面、增加孔洞，或用实测的小行星: 把各顶点的角亏损 K 加起来，Σ K / 2π 都等于 χ = V − E + F。用手指旋转，看半透明平面把顶点扫进总和。有边界的碗则不成立(局限标签页)。 **17 行检验中 Σ K / 2π 与 χ 的差小于 1e-12；只有带边界的碗偏离 24.0 × 2π，加上边界项后即一致。** [源码](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_gaussbonnet_anim3d.py)
 - [脉搏血氧仪的双波长吸收](../../view2026/anim3d/pulseox_anim3d.html?lang=zh) (动态 3-D,可拖动旋转, 0.2 MB): 跟随红光和近红外光穿过搏动的动脉，用 AC/DC 比值 R 读取血氧饱和度；比较带噪时序与闭式解，并显示无法区分 COHb 的局限。 **R 最大差 0.00068；SpO₂ 最大误差 0.034%。在 10% COHb 模型中，真值 90.0% 被读为 91.0%。** [源码](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_pulseox_anim3d.py)
 - [Measure rail wear and gauge with light-section scanning](../../view2026/anim3d/rail_light_section_anim3d.html?lang=zh) (动态 3-D,可拖动旋转, 0.1 MB): The intersection of an oblique light sheet and rail surface bends over head, web and foot. During travel, left-head wear rises and the inner distance between two rails reveals gauge widening. **From a noisy subpixel laser line: section RMS 0.699 mm, shape-free wear error 0.0577 mm and profile-measured gauge error 0.346 mm. The triangulation op and independent closed form agree to < 1e-12 mm.** [源码](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_rail_anim3d.py)
+- [用移动扫描测量隧道中 0.2 mm 的裂缝](../../view2026/anim3d/tunnel_crack_anim3d.html?lang=zh) (动态 3-D,可拖动旋转, 0.3 MB): 车辆穿过圆筒形衬砌时，同一实际尺寸的展开墙面只改变采样。红色骨架在 1.0 mm/像素时断裂，在 0.10 mm/像素时沿真实曲线延伸。 **在 0.10 mm/像素时找回 99.1% 的真实裂缝长度。局部背景宽度误差为 0.023 mm，基准为 0.038 mm。90% 找回率的实测和估计均为 0.25 mm/像素，比较基准为 0.029 mm。还显示 24.31 mm 的接缝误检。** [源码](https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_tunnel_anim3d.py)
 
 </div>
 
