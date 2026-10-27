@@ -49,10 +49,10 @@ def test_learning_flow_and_computed_checks(built):
     assert failed[:3]==[[],[],[]]
     assert len(failed[3])==1 and "terrain" in failed[3][0]["what"]["en"]
 
-def test_page_budget_and_allowed_source_url_only(built):
+def test_page_budget_and_no_external_url(built):
+    """動く 3-D のページは外部 URL 0(入口の門と同じ)。PLATEAU の出典 URL は data/plateau_yokohama/README.md にだけ置く。"""
     B,_r,_g,spec=built
     html=B.pv._build_html(spec,["ja","en"])
     assert len(html.encode("utf-8"))<3_300_000
-    urls=[x.split('"',1)[0] for x in html.split("https://")[1:]]
-    assert len(urls)==2  # one allowed source, repeated for ja/en credit
-    assert all("geospatial.jp/ckan/dataset/plateau-14100-yokohama-city-2020" in u for u in urls)
+    assert "http://" not in html and "https://" not in html
+    assert html.count("data/plateau_yokohama/README.md")>=2  # ja / en の出典表示
