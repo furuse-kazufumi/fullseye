@@ -336,6 +336,8 @@ EXCLUDED = {
     "tools/build_shadow_anim3d.py": ("冬至の会場周辺の日影を追う動く 3-D 教材(docs/view2026/anim3d/venue_shadow_anim3d.html)。"
                                      "`py -3.11 tools/anim3d_i18n.py --build build_shadow_anim3d --out docs/view2026/anim3d/venue_shadow_anim3d.html` で書く"
                                      "(翻訳表 tools/anim3d_i18n_tables/build_shadow_anim3d.json)。門は tests/test_anim3d_shadow_2026_10_27.py。"),
+    "tools/build_catenary_anim3d.py": ("架線トロリ線の摩耗を走行中のラインカメラ像から測る動く 3-D 教材。"
+                                       "8 言語ページは anim3d_i18n.py で手回し生成し、専用テストで byte 一致を検査する。"),
     "tools/build_rail_anim3d.py": ("レールの頭頂摩耗と軌間を光切断で測る動く 3-D 教材(docs/view2026/anim3d/rail_light_section_anim3d.html)。"
                                    "`py -3.11 tools/anim3d_i18n.py --build build_rail_anim3d --out docs/view2026/anim3d/rail_light_section_anim3d.html` で書く"
                                    "(翻訳表 tools/anim3d_i18n_tables/build_rail_anim3d.json)。門は tests/test_anim3d_rail_2026_10_26.py。"),

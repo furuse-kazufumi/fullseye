@@ -1839,6 +1839,44 @@
    }
   },
   {
+   "id": "catenary_wear",
+   "category": "anim3d",
+   "media": "catenary_wear_anim3d.html",
+   "media_path": "view2026/anim3d/catenary_wear_anim3d.html",
+   "motion": true,
+   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_catenary_anim3d.py",
+   "label": {
+    "ja": "走りながら架線のすり減りを測る",
+    "en": "Measure contact-wire wear while moving",
+    "zh": "运行中测量接触线磨耗",
+    "tw": "行駛中量測接觸線磨耗",
+    "ko": "주행 중 전차선 마모 측정",
+    "de": "Fahrdrahtverschleiß während der Fahrt messen",
+    "hi": "चलते समय संपर्क तार का घिसाव मापना",
+    "fr": "Mesurer l'usure du fil de contact en mouvement"
+   },
+   "see": {
+    "ja": "支持点間でたるみ、左右へ偏位する架線の下を車両が走る。ラインカメラ像では摩耗面が明るい帯になり、偏位で横へ動いても帯幅から残存高さを測れる。",
+    "en": "A vehicle runs beneath a sagging, staggered contact wire. Its wear flat becomes a bright band in the line-camera image; even as stagger moves it sideways, band width gives remaining height.",
+    "zh": "A vehicle runs beneath a sagging, staggered contact wire. Its wear flat becomes a bright band in the line-camera image; even as stagger moves it sideways, band width gives remaining height.",
+    "tw": "A vehicle runs beneath a sagging, staggered contact wire. Its wear flat becomes a bright band in the line-camera image; even as stagger moves it sideways, band width gives remaining height.",
+    "ko": "A vehicle runs beneath a sagging, staggered contact wire. Its wear flat becomes a bright band in the line-camera image; even as stagger moves it sideways, band width gives remaining height.",
+    "de": "A vehicle runs beneath a sagging, staggered contact wire. Its wear flat becomes a bright band in the line-camera image; even as stagger moves it sideways, band width gives remaining height.",
+    "hi": "A vehicle runs beneath a sagging, staggered contact wire. Its wear flat becomes a bright band in the line-camera image; even as stagger moves it sideways, band width gives remaining height.",
+    "fr": "A vehicle runs beneath a sagging, staggered contact wire. Its wear flat becomes a bright band in the line-camera image; even as stagger moves it sideways, band width gives remaining height."
+   },
+   "num": {
+    "ja": "断面への副画素視線交差、法線反射、画素積分、PSF、雑音から描いた 36 行だけで、帯幅の最大誤差 0.0469 mm、残存高さの最大誤差 0.0068 mm、偏位あり・なしの幅差 0.0436 mm。雨・汚れ・振動・斜視は未計算の限界として表示する。",
+    "en": "From 36 rows rendered by subpixel ray-section intersections, normal-based reflection, pixel integration, PSF and noise: maximum band-width error 0.0469 mm, remaining-height error 0.0068 mm and width difference with versus without stagger 0.0436 mm. Rain, dirt, vibration and oblique viewing remain an explicit uncomputed limit.",
+    "zh": "From 36 rows rendered by subpixel ray-section intersections, normal-based reflection, pixel integration, PSF and noise: maximum band-width error 0.0469 mm, remaining-height error 0.0068 mm and width difference with versus without stagger 0.0436 mm. Rain, dirt, vibration and oblique viewing remain an explicit uncomputed limit.",
+    "tw": "From 36 rows rendered by subpixel ray-section intersections, normal-based reflection, pixel integration, PSF and noise: maximum band-width error 0.0469 mm, remaining-height error 0.0068 mm and width difference with versus without stagger 0.0436 mm. Rain, dirt, vibration and oblique viewing remain an explicit uncomputed limit.",
+    "ko": "From 36 rows rendered by subpixel ray-section intersections, normal-based reflection, pixel integration, PSF and noise: maximum band-width error 0.0469 mm, remaining-height error 0.0068 mm and width difference with versus without stagger 0.0436 mm. Rain, dirt, vibration and oblique viewing remain an explicit uncomputed limit.",
+    "de": "From 36 rows rendered by subpixel ray-section intersections, normal-based reflection, pixel integration, PSF and noise: maximum band-width error 0.0469 mm, remaining-height error 0.0068 mm and width difference with versus without stagger 0.0436 mm. Rain, dirt, vibration and oblique viewing remain an explicit uncomputed limit.",
+    "hi": "From 36 rows rendered by subpixel ray-section intersections, normal-based reflection, pixel integration, PSF and noise: maximum band-width error 0.0469 mm, remaining-height error 0.0068 mm and width difference with versus without stagger 0.0436 mm. Rain, dirt, vibration and oblique viewing remain an explicit uncomputed limit.",
+    "fr": "From 36 rows rendered by subpixel ray-section intersections, normal-based reflection, pixel integration, PSF and noise: maximum band-width error 0.0469 mm, remaining-height error 0.0068 mm and width difference with versus without stagger 0.0436 mm. Rain, dirt, vibration and oblique viewing remain an explicit uncomputed limit."
+   }
+  },
+  {
    "id": "rail_light_section",
    "category": "anim3d",
    "media": "rail_light_section_anim3d.html",
