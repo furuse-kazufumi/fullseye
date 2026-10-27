@@ -1,0 +1,721 @@
+{
+    "example":  "build_usound_anim3d",
+    "table":  "tools/anim3d_i18n_tables/build_usound_anim3d.json",
+    "missing":  56,
+    "unused":  [
+
+               ],
+    "strings":  {
+                    "Imaging inside the body with sound echoes":  {
+                                                                      "ja":  "音の反射で体の中を描く",
+                                                                      "zh":  "Imaging inside the body with sound echoes",
+                                                                      "tw":  "Imaging inside the body with sound echoes",
+                                                                      "ko":  "Imaging inside the body with sound echoes",
+                                                                      "de":  "Imaging inside the body with sound echoes",
+                                                                      "hi":  "Imaging inside the body with sound echoes",
+                                                                      "fr":  "Imaging inside the body with sound echoes",
+                                                                      "_why":  [
+                                                                                   "未訳"
+                                                                               ]
+                                                                  },
+                    "Build a B-mode image from element RF by delay-and-sum, envelope detection and log compression":  {
+                                                                                                                          "ja":  "素子別 RF から遅延加算、包絡線、対数圧縮を経て B モード像を作る",
+                                                                                                                          "zh":  "Build a B-mode image from element RF by delay-and-sum, envelope detection and log compression",
+                                                                                                                          "tw":  "Build a B-mode image from element RF by delay-and-sum, envelope detection and log compression",
+                                                                                                                          "ko":  "Build a B-mode image from element RF by delay-and-sum, envelope detection and log compression",
+                                                                                                                          "de":  "Build a B-mode image from element RF by delay-and-sum, envelope detection and log compression",
+                                                                                                                          "hi":  "Build a B-mode image from element RF by delay-and-sum, envelope detection and log compression",
+                                                                                                                          "fr":  "Build a B-mode image from element RF by delay-and-sum, envelope detection and log compression",
+                                                                                                                          "_why":  [
+                                                                                                                                       "未訳"
+                                                                                                                                   ]
+                                                                                                                      },
+                    "Follow question, prediction, playback, formula and limit. All values and images are fixed-seed synthetic data.":  {
+                                                                                                                                           "ja":  "問い、予想、再生、式、限界の順に見る。値と像はすべて固定 seed の合成。",
+                                                                                                                                           "zh":  "Follow question, prediction, playback, formula and limit. All values and images are fixed-seed synthetic data.",
+                                                                                                                                           "tw":  "Follow question, prediction, playback, formula and limit. All values and images are fixed-seed synthetic data.",
+                                                                                                                                           "ko":  "Follow question, prediction, playback, formula and limit. All values and images are fixed-seed synthetic data.",
+                                                                                                                                           "de":  "Follow question, prediction, playback, formula and limit. All values and images are fixed-seed synthetic data.",
+                                                                                                                                           "hi":  "Follow question, prediction, playback, formula and limit. All values and images are fixed-seed synthetic data.",
+                                                                                                                                           "fr":  "Follow question, prediction, playback, formula and limit. All values and images are fixed-seed synthetic data.",
+                                                                                                                                           "_why":  [
+                                                                                                                                                        "未訳"
+                                                                                                                                                    ]
+                                                                                                                                       },
+                    "Build a section from echoes":  {
+                                                        "ja":  "こだまから断面を作る",
+                                                        "zh":  "Build a section from echoes",
+                                                        "tw":  "Build a section from echoes",
+                                                        "ko":  "Build a section from echoes",
+                                                        "de":  "Build a section from echoes",
+                                                        "hi":  "Build a section from echoes",
+                                                        "fr":  "Build a section from echoes",
+                                                        "_why":  [
+                                                                     "未訳"
+                                                                 ]
+                                                    },
+                    "Twenty-four elements transmit a short pulse and record return times from point scatterers. Parallel scan lines cross tissue, a vessel and a hypoechoic cyst.":  {
+                                                                                                                                                                                         "ja":  "24 素子が短い音波を送り、点散乱体から戻る時刻を記録する。平行な走査線が組織、血管、低エコーの嚢胞を横切る。",
+                                                                                                                                                                                         "zh":  "Twenty-four elements transmit a short pulse and record return times from point scatterers. Parallel scan lines cross tissue, a vessel and a hypoechoic cyst.",
+                                                                                                                                                                                         "tw":  "Twenty-four elements transmit a short pulse and record return times from point scatterers. Parallel scan lines cross tissue, a vessel and a hypoechoic cyst.",
+                                                                                                                                                                                         "ko":  "Twenty-four elements transmit a short pulse and record return times from point scatterers. Parallel scan lines cross tissue, a vessel and a hypoechoic cyst.",
+                                                                                                                                                                                         "de":  "Twenty-four elements transmit a short pulse and record return times from point scatterers. Parallel scan lines cross tissue, a vessel and a hypoechoic cyst.",
+                                                                                                                                                                                         "hi":  "Twenty-four elements transmit a short pulse and record return times from point scatterers. Parallel scan lines cross tissue, a vessel and a hypoechoic cyst.",
+                                                                                                                                                                                         "fr":  "Twenty-four elements transmit a short pulse and record return times from point scatterers. Parallel scan lines cross tissue, a vessel and a hypoechoic cyst.",
+                                                                                                                                                                                         "_why":  [
+                                                                                                                                                                                                      "未訳"
+                                                                                                                                                                                                  ]
+                                                                                                                                                                                     },
+                    "elements":  {
+                                     "ja":  "素子数",
+                                     "zh":  "elements",
+                                     "tw":  "elements",
+                                     "ko":  "elements",
+                                     "de":  "elements",
+                                     "hi":  "elements",
+                                     "fr":  "elements",
+                                     "_why":  [
+                                                  "未訳"
+                                              ]
+                                 },
+                    "scatterers":  {
+                                       "ja":  "散乱体数",
+                                       "zh":  "scatterers",
+                                       "tw":  "scatterers",
+                                       "ko":  "scatterers",
+                                       "de":  "scatterers",
+                                       "hi":  "scatterers",
+                                       "fr":  "scatterers",
+                                       "_why":  [
+                                                    "未訳"
+                                                ]
+                                   },
+                    "outgoing and returning pulse":  {
+                                                         "ja":  "往復するパルス",
+                                                         "zh":  "outgoing and returning pulse",
+                                                         "tw":  "outgoing and returning pulse",
+                                                         "ko":  "outgoing and returning pulse",
+                                                         "de":  "outgoing and returning pulse",
+                                                         "hi":  "outgoing and returning pulse",
+                                                         "fr":  "outgoing and returning pulse",
+                                                         "_why":  [
+                                                                      "未訳"
+                                                                  ]
+                                                     },
+                    "synthetic B-mode image":  {
+                                                   "ja":  "合成 B モード像",
+                                                   "zh":  "synthetic B-mode image",
+                                                   "tw":  "synthetic B-mode image",
+                                                   "ko":  "synthetic B-mode image",
+                                                   "de":  "synthetic B-mode image",
+                                                   "hi":  "synthetic B-mode image",
+                                                   "fr":  "synthetic B-mode image",
+                                                   "_why":  [
+                                                                "未訳"
+                                                            ]
+                                               },
+                    "Axial FWHM measured from image vs pulse length":  {
+                                                                           "ja":  "像から測った軸方向半値幅とパルス長",
+                                                                           "zh":  "Axial FWHM measured from image vs pulse length",
+                                                                           "tw":  "Axial FWHM measured from image vs pulse length",
+                                                                           "ko":  "Axial FWHM measured from image vs pulse length",
+                                                                           "de":  "Axial FWHM measured from image vs pulse length",
+                                                                           "hi":  "Axial FWHM measured from image vs pulse length",
+                                                                           "fr":  "Axial FWHM measured from image vs pulse length",
+                                                                           "_why":  [
+                                                                                        "未訳"
+                                                                                    ]
+                                                                       },
+                    "Point positions read from image with correct sound speed":  {
+                                                                                     "ja":  "正しい音速で像から読んだ点位置",
+                                                                                     "zh":  "Point positions read from image with correct sound speed",
+                                                                                     "tw":  "Point positions read from image with correct sound speed",
+                                                                                     "ko":  "Point positions read from image with correct sound speed",
+                                                                                     "de":  "Point positions read from image with correct sound speed",
+                                                                                     "hi":  "Point positions read from image with correct sound speed",
+                                                                                     "fr":  "Point positions read from image with correct sound speed",
+                                                                                     "_why":  [
+                                                                                                  "未訳"
+                                                                                              ]
+                                                                                 },
+                    "Depth shift from wrong sound speed vs z delta-c/c":  {
+                                                                              "ja":  "誤音速による深さずれと zΔc/c",
+                                                                              "zh":  "Depth shift from wrong sound speed vs z delta-c/c",
+                                                                              "tw":  "Depth shift from wrong sound speed vs z delta-c/c",
+                                                                              "ko":  "Depth shift from wrong sound speed vs z delta-c/c",
+                                                                              "de":  "Depth shift from wrong sound speed vs z delta-c/c",
+                                                                              "hi":  "Depth shift from wrong sound speed vs z delta-c/c",
+                                                                              "fr":  "Depth shift from wrong sound speed vs z delta-c/c",
+                                                                              "_why":  [
+                                                                                           "未訳"
+                                                                                       ]
+                                                                          },
+                    "depth":  {
+                                  "ja":  "深さ",
+                                  "zh":  "depth",
+                                  "tw":  "depth",
+                                  "ko":  "depth",
+                                  "de":  "depth",
+                                  "hi":  "depth",
+                                  "fr":  "depth",
+                                  "_why":  [
+                                               "未訳"
+                                           ]
+                              },
+                    "When does an echo from a deeper point return?":  {
+                                                                          "ja":  "深い点ほど反射はいつ戻る?",
+                                                                          "zh":  "When does an echo from a deeper point return?",
+                                                                          "tw":  "When does an echo from a deeper point return?",
+                                                                          "ko":  "When does an echo from a deeper point return?",
+                                                                          "de":  "When does an echo from a deeper point return?",
+                                                                          "hi":  "When does an echo from a deeper point return?",
+                                                                          "fr":  "When does an echo from a deeper point return?",
+                                                                          "_why":  [
+                                                                                       "未訳"
+                                                                                   ]
+                                                                      },
+                    "earlier":  {
+                                    "ja":  "早く",
+                                    "zh":  "earlier",
+                                    "tw":  "earlier",
+                                    "ko":  "earlier",
+                                    "de":  "earlier",
+                                    "hi":  "earlier",
+                                    "fr":  "earlier",
+                                    "_why":  [
+                                                 "未訳"
+                                             ]
+                                },
+                    "later":  {
+                                  "ja":  "遅く",
+                                  "zh":  "later",
+                                  "tw":  "later",
+                                  "ko":  "later",
+                                  "de":  "later",
+                                  "hi":  "later",
+                                  "fr":  "later",
+                                  "_why":  [
+                                               "未訳"
+                                           ]
+                              },
+                    "Sound travels to the point and back over the same distance.":  {
+                                                                                        "ja":  "音は点まで進み、反射して同じ距離を戻る。",
+                                                                                        "zh":  "Sound travels to the point and back over the same distance.",
+                                                                                        "tw":  "Sound travels to the point and back over the same distance.",
+                                                                                        "ko":  "Sound travels to the point and back over the same distance.",
+                                                                                        "de":  "Sound travels to the point and back over the same distance.",
+                                                                                        "hi":  "Sound travels to the point and back over the same distance.",
+                                                                                        "fr":  "Sound travels to the point and back over the same distance.",
+                                                                                        "_why":  [
+                                                                                                     "未訳"
+                                                                                                 ]
+                                                                                    },
+                    "t = path length / c":  {
+                                                "ja":  "t = 経路長 / c",
+                                                "zh":  "t = path length / c",
+                                                "tw":  "t = path length / c",
+                                                "ko":  "t = path length / c",
+                                                "de":  "t = path length / c",
+                                                "hi":  "t = path length / c",
+                                                "fr":  "t = path length / c",
+                                                "_why":  [
+                                                             "未訳"
+                                                         ]
+                                            },
+                    "Entirely synthetic, with no patient data. Not for diagnosis.":  {
+                                                                                         "ja":  "すべて合成で、患者データではない。診断には使わない。",
+                                                                                         "zh":  "Entirely synthetic, with no patient data. Not for diagnosis.",
+                                                                                         "tw":  "Entirely synthetic, with no patient data. Not for diagnosis.",
+                                                                                         "ko":  "Entirely synthetic, with no patient data. Not for diagnosis.",
+                                                                                         "de":  "Entirely synthetic, with no patient data. Not for diagnosis.",
+                                                                                         "hi":  "Entirely synthetic, with no patient data. Not for diagnosis.",
+                                                                                         "fr":  "Entirely synthetic, with no patient data. Not for diagnosis.",
+                                                                                         "_why":  [
+                                                                                                      "未訳"
+                                                                                                  ]
+                                                                                     },
+                    "Delay and sum element signals":  {
+                                                          "ja":  "素子信号を遅延加算する",
+                                                          "zh":  "Delay and sum element signals",
+                                                          "tw":  "Delay and sum element signals",
+                                                          "ko":  "Delay and sum element signals",
+                                                          "de":  "Delay and sum element signals",
+                                                          "hi":  "Delay and sum element signals",
+                                                          "fr":  "Delay and sum element signals",
+                                                          "_why":  [
+                                                                       "未訳"
+                                                                   ]
+                                                      },
+                    "For every pixel, paths to all elements select RF samples which are windowed and summed. Dynamic focusing changes the active aperture with depth.":  {
+                                                                                                                                                                             "ja":  "各画素から各素子までの経路を計算し、その時刻の RF を窓付きで加える。動的焦点は深さごとに有効開口を変える。",
+                                                                                                                                                                             "zh":  "For every pixel, paths to all elements select RF samples which are windowed and summed. Dynamic focusing changes the active aperture with depth.",
+                                                                                                                                                                             "tw":  "For every pixel, paths to all elements select RF samples which are windowed and summed. Dynamic focusing changes the active aperture with depth.",
+                                                                                                                                                                             "ko":  "For every pixel, paths to all elements select RF samples which are windowed and summed. Dynamic focusing changes the active aperture with depth.",
+                                                                                                                                                                             "de":  "For every pixel, paths to all elements select RF samples which are windowed and summed. Dynamic focusing changes the active aperture with depth.",
+                                                                                                                                                                             "hi":  "For every pixel, paths to all elements select RF samples which are windowed and summed. Dynamic focusing changes the active aperture with depth.",
+                                                                                                                                                                             "fr":  "For every pixel, paths to all elements select RF samples which are windowed and summed. Dynamic focusing changes the active aperture with depth.",
+                                                                                                                                                                             "_why":  [
+                                                                                                                                                                                          "未訳"
+                                                                                                                                                                                      ]
+                                                                                                                                                                         },
+                    "sampling":  {
+                                     "ja":  "標本化",
+                                     "zh":  "sampling",
+                                     "tw":  "sampling",
+                                     "ko":  "sampling",
+                                     "de":  "sampling",
+                                     "hi":  "sampling",
+                                     "fr":  "sampling",
+                                     "_why":  [
+                                                  "未訳"
+                                              ]
+                                 },
+                    "centre frequency":  {
+                                             "ja":  "中心周波数",
+                                             "zh":  "centre frequency",
+                                             "tw":  "centre frequency",
+                                             "ko":  "centre frequency",
+                                             "de":  "centre frequency",
+                                             "hi":  "centre frequency",
+                                             "fr":  "centre frequency",
+                                             "_why":  [
+                                                          "未訳"
+                                                      ]
+                                         },
+                    "envelope and log compression after delay-and-sum":  {
+                                                                             "ja":  "遅延加算後の包絡線と対数圧縮",
+                                                                             "zh":  "envelope and log compression after delay-and-sum",
+                                                                             "tw":  "envelope and log compression after delay-and-sum",
+                                                                             "ko":  "envelope and log compression after delay-and-sum",
+                                                                             "de":  "envelope and log compression after delay-and-sum",
+                                                                             "hi":  "envelope and log compression after delay-and-sum",
+                                                                             "fr":  "envelope and log compression after delay-and-sum",
+                                                                             "_why":  [
+                                                                                          "未訳"
+                                                                                      ]
+                                                                         },
+                    "How are echoes from one point added?":  {
+                                                                 "ja":  "同じ点の反射を足すには?",
+                                                                 "zh":  "How are echoes from one point added?",
+                                                                 "tw":  "How are echoes from one point added?",
+                                                                 "ko":  "How are echoes from one point added?",
+                                                                 "de":  "How are echoes from one point added?",
+                                                                 "hi":  "How are echoes from one point added?",
+                                                                 "fr":  "How are echoes from one point added?",
+                                                                 "_why":  [
+                                                                              "未訳"
+                                                                          ]
+                                                             },
+                    "same sample index":  {
+                                              "ja":  "同じ標本番号",
+                                              "zh":  "same sample index",
+                                              "tw":  "same sample index",
+                                              "ko":  "same sample index",
+                                              "de":  "same sample index",
+                                              "hi":  "same sample index",
+                                              "fr":  "same sample index",
+                                              "_why":  [
+                                                           "未訳"
+                                                       ]
+                                          },
+                    "shift by path differences":  {
+                                                      "ja":  "経路差だけ時刻をずらす",
+                                                      "zh":  "shift by path differences",
+                                                      "tw":  "shift by path differences",
+                                                      "ko":  "shift by path differences",
+                                                      "de":  "shift by path differences",
+                                                      "hi":  "shift by path differences",
+                                                      "fr":  "shift by path differences",
+                                                      "_why":  [
+                                                                   "未訳"
+                                                               ]
+                                                  },
+                    "Compensating path-dependent delays makes that reflection add coherently.":  {
+                                                                                                     "ja":  "経路長に応じた遅延を補うと反射だけが同相で加わる。",
+                                                                                                     "zh":  "Compensating path-dependent delays makes that reflection add coherently.",
+                                                                                                     "tw":  "Compensating path-dependent delays makes that reflection add coherently.",
+                                                                                                     "ko":  "Compensating path-dependent delays makes that reflection add coherently.",
+                                                                                                     "de":  "Compensating path-dependent delays makes that reflection add coherently.",
+                                                                                                     "hi":  "Compensating path-dependent delays makes that reflection add coherently.",
+                                                                                                     "fr":  "Compensating path-dependent delays makes that reflection add coherently.",
+                                                                                                     "_why":  [
+                                                                                                                  "未訳"
+                                                                                                              ]
+                                                                                                 },
+                    "B(x,z)=|sum w_e RF_e(t_e)|":  {
+                                                       "ja":  "B(x,z)=|Σ wₑ RFₑ(tₑ)|",
+                                                       "zh":  "B(x,z)=|sum w_e RF_e(t_e)|",
+                                                       "tw":  "B(x,z)=|sum w_e RF_e(t_e)|",
+                                                       "ko":  "B(x,z)=|sum w_e RF_e(t_e)|",
+                                                       "de":  "B(x,z)=|sum w_e RF_e(t_e)|",
+                                                       "hi":  "B(x,z)=|sum w_e RF_e(t_e)|",
+                                                       "fr":  "B(x,z)=|sum w_e RF_e(t_e)|",
+                                                       "_why":  [
+                                                                    "未訳"
+                                                                ]
+                                                   },
+                    "Teaching model with single scattering and uniform attenuation.":  {
+                                                                                           "ja":  "単一散乱と均一減衰の教育モデル。",
+                                                                                           "zh":  "Teaching model with single scattering and uniform attenuation.",
+                                                                                           "tw":  "Teaching model with single scattering and uniform attenuation.",
+                                                                                           "ko":  "Teaching model with single scattering and uniform attenuation.",
+                                                                                           "de":  "Teaching model with single scattering and uniform attenuation.",
+                                                                                           "hi":  "Teaching model with single scattering and uniform attenuation.",
+                                                                                           "fr":  "Teaching model with single scattering and uniform attenuation.",
+                                                                                           "_why":  [
+                                                                                                        "未訳"
+                                                                                                    ]
+                                                                                       },
+                    "Measure point images and cyst from the image":  {
+                                                                         "ja":  "点像と嚢胞を画像から測る",
+                                                                         "zh":  "Measure point images and cyst from the image",
+                                                                         "tw":  "Measure point images and cyst from the image",
+                                                                         "ko":  "Measure point images and cyst from the image",
+                                                                         "de":  "Measure point images and cyst from the image",
+                                                                         "hi":  "Measure point images and cyst from the image",
+                                                                         "fr":  "Measure point images and cyst from the image",
+                                                                         "_why":  [
+                                                                                      "未訳"
+                                                                                  ]
+                                                                     },
+                    "cyst CNR":  {
+                                     "ja":  "嚢胞 CNR",
+                                     "zh":  "cyst CNR",
+                                     "tw":  "cyst CNR",
+                                     "ko":  "cyst CNR",
+                                     "de":  "cyst CNR",
+                                     "hi":  "cyst CNR",
+                                     "fr":  "cyst CNR",
+                                     "_why":  [
+                                                  "未訳"
+                                              ]
+                                 },
+                    "axial FWHM":  {
+                                       "ja":  "軸方向半値幅",
+                                       "zh":  "axial FWHM",
+                                       "tw":  "axial FWHM",
+                                       "ko":  "axial FWHM",
+                                       "de":  "axial FWHM",
+                                       "hi":  "axial FWHM",
+                                       "fr":  "axial FWHM",
+                                       "_why":  [
+                                                    "未訳"
+                                                ]
+                                   },
+                    "B-mode image; the dark circle is the cyst":  {
+                                                                      "ja":  "B モード像。暗い円が嚢胞",
+                                                                      "zh":  "B-mode image; the dark circle is the cyst",
+                                                                      "tw":  "B-mode image; the dark circle is the cyst",
+                                                                      "ko":  "B-mode image; the dark circle is the cyst",
+                                                                      "de":  "B-mode image; the dark circle is the cyst",
+                                                                      "hi":  "B-mode image; the dark circle is the cyst",
+                                                                      "fr":  "B-mode image; the dark circle is the cyst",
+                                                                      "_why":  [
+                                                                                   "未訳"
+                                                                               ]
+                                                                  },
+                    "Does a point reflector remain a point in the image?":  {
+                                                                                "ja":  "点反射体は像で点になる?",
+                                                                                "zh":  "Does a point reflector remain a point in the image?",
+                                                                                "tw":  "Does a point reflector remain a point in the image?",
+                                                                                "ko":  "Does a point reflector remain a point in the image?",
+                                                                                "de":  "Does a point reflector remain a point in the image?",
+                                                                                "hi":  "Does a point reflector remain a point in the image?",
+                                                                                "fr":  "Does a point reflector remain a point in the image?",
+                                                                                "_why":  [
+                                                                                             "未訳"
+                                                                                         ]
+                                                                            },
+                    "a perfect point":  {
+                                            "ja":  "完全な点",
+                                            "zh":  "a perfect point",
+                                            "tw":  "a perfect point",
+                                            "ko":  "a perfect point",
+                                            "de":  "a perfect point",
+                                            "hi":  "a perfect point",
+                                            "fr":  "a perfect point",
+                                            "_why":  [
+                                                         "未訳"
+                                                     ]
+                                        },
+                    "a finite spot":  {
+                                          "ja":  "有限幅の斑点",
+                                          "zh":  "a finite spot",
+                                          "tw":  "a finite spot",
+                                          "ko":  "a finite spot",
+                                          "de":  "a finite spot",
+                                          "hi":  "a finite spot",
+                                          "fr":  "a finite spot",
+                                          "_why":  [
+                                                       "未訳"
+                                                   ]
+                                      },
+                    "Wrong sound speed defocuses the image":  {
+                                                                  "ja":  "音速を誤ると焦点が外れる",
+                                                                  "zh":  "Wrong sound speed defocuses the image",
+                                                                  "tw":  "Wrong sound speed defocuses the image",
+                                                                  "ko":  "Wrong sound speed defocuses the image",
+                                                                  "de":  "Wrong sound speed defocuses the image",
+                                                                  "hi":  "Wrong sound speed defocuses the image",
+                                                                  "fr":  "Wrong sound speed defocuses the image",
+                                                                  "_why":  [
+                                                                               "未訳"
+                                                                           ]
+                                                              },
+                    "Reconstructing observations made at 1540 m/s while assuming 1480 m/s shifts points shallower and broadens them. Bone, air and reverberation are also outside this single-scattering model.":  {
+                                                                                                                                                                                                                       "ja":  "1540 m/s の観測を 1480 m/s と仮定して再構成すると、点が浅くずれて広がる。骨、空気、多重反射もこの単一散乱モデルの外にある。",
+                                                                                                                                                                                                                       "zh":  "Reconstructing observations made at 1540 m/s while assuming 1480 m/s shifts points shallower and broadens them. Bone, air and reverberation are also outside this single-scattering model.",
+                                                                                                                                                                                                                       "tw":  "Reconstructing observations made at 1540 m/s while assuming 1480 m/s shifts points shallower and broadens them. Bone, air and reverberation are also outside this single-scattering model.",
+                                                                                                                                                                                                                       "ko":  "Reconstructing observations made at 1540 m/s while assuming 1480 m/s shifts points shallower and broadens them. Bone, air and reverberation are also outside this single-scattering model.",
+                                                                                                                                                                                                                       "de":  "Reconstructing observations made at 1540 m/s while assuming 1480 m/s shifts points shallower and broadens them. Bone, air and reverberation are also outside this single-scattering model.",
+                                                                                                                                                                                                                       "hi":  "Reconstructing observations made at 1540 m/s while assuming 1480 m/s shifts points shallower and broadens them. Bone, air and reverberation are also outside this single-scattering model.",
+                                                                                                                                                                                                                       "fr":  "Reconstructing observations made at 1540 m/s while assuming 1480 m/s shifts points shallower and broadens them. Bone, air and reverberation are also outside this single-scattering model.",
+                                                                                                                                                                                                                       "_why":  [
+                                                                                                                                                                                                                                    "未訳"
+                                                                                                                                                                                                                                ]
+                                                                                                                                                                                                                   },
+                    "maximum depth shift":  {
+                                                "ja":  "最大の深さずれ",
+                                                "zh":  "maximum depth shift",
+                                                "tw":  "maximum depth shift",
+                                                "ko":  "maximum depth shift",
+                                                "de":  "maximum depth shift",
+                                                "hi":  "maximum depth shift",
+                                                "fr":  "maximum depth shift",
+                                                "_why":  [
+                                                             "未訳"
+                                                         ]
+                                            },
+                    "left: correct speed; right: 1480 m/s assumed":  {
+                                                                         "ja":  "左: 正音速、右: 1480 m/s 仮定",
+                                                                         "zh":  "left: correct speed; right: 1480 m/s assumed",
+                                                                         "tw":  "left: correct speed; right: 1480 m/s assumed",
+                                                                         "ko":  "left: correct speed; right: 1480 m/s assumed",
+                                                                         "de":  "left: correct speed; right: 1480 m/s assumed",
+                                                                         "hi":  "left: correct speed; right: 1480 m/s assumed",
+                                                                         "fr":  "left: correct speed; right: 1480 m/s assumed",
+                                                                         "_why":  [
+                                                                                      "未訳"
+                                                                                  ]
+                                                                     },
+                    "Complete image including bone, air and reverberation":  {
+                                                                                 "ja":  "骨・空気・多重反射を含む完全な像",
+                                                                                 "zh":  "Complete image including bone, air and reverberation",
+                                                                                 "tw":  "Complete image including bone, air and reverberation",
+                                                                                 "ko":  "Complete image including bone, air and reverberation",
+                                                                                 "de":  "Complete image including bone, air and reverberation",
+                                                                                 "hi":  "Complete image including bone, air and reverberation",
+                                                                                 "fr":  "Complete image including bone, air and reverberation",
+                                                                                 "_why":  [
+                                                                                              "未訳"
+                                                                                          ]
+                                                                             },
+                    "reproduce all":  {
+                                          "ja":  "すべてを再現",
+                                          "zh":  "reproduce all",
+                                          "tw":  "reproduce all",
+                                          "ko":  "reproduce all",
+                                          "de":  "reproduce all",
+                                          "hi":  "reproduce all",
+                                          "fr":  "reproduce all",
+                                          "_why":  [
+                                                       "未訳"
+                                                   ]
+                                      },
+                    "not reproduced by the single-scattering model":  {
+                                                                          "ja":  "単一散乱モデルでは再現しない",
+                                                                          "zh":  "not reproduced by the single-scattering model",
+                                                                          "tw":  "not reproduced by the single-scattering model",
+                                                                          "ko":  "not reproduced by the single-scattering model",
+                                                                          "de":  "not reproduced by the single-scattering model",
+                                                                          "hi":  "not reproduced by the single-scattering model",
+                                                                          "fr":  "not reproduced by the single-scattering model",
+                                                                          "_why":  [
+                                                                                       "未訳"
+                                                                                   ]
+                                                                      },
+                    "Where does a point move when the assumed speed is too low?":  {
+                                                                                       "ja":  "低い音速を仮定すると点はどちらへずれる?",
+                                                                                       "zh":  "Where does a point move when the assumed speed is too low?",
+                                                                                       "tw":  "Where does a point move when the assumed speed is too low?",
+                                                                                       "ko":  "Where does a point move when the assumed speed is too low?",
+                                                                                       "de":  "Where does a point move when the assumed speed is too low?",
+                                                                                       "hi":  "Where does a point move when the assumed speed is too low?",
+                                                                                       "fr":  "Where does a point move when the assumed speed is too low?",
+                                                                                       "_why":  [
+                                                                                                    "未訳"
+                                                                                                ]
+                                                                                   },
+                    "deeper":  {
+                                   "ja":  "深く",
+                                   "zh":  "deeper",
+                                   "tw":  "deeper",
+                                   "ko":  "deeper",
+                                   "de":  "deeper",
+                                   "hi":  "deeper",
+                                   "fr":  "deeper",
+                                   "_why":  [
+                                                "未訳"
+                                            ]
+                               },
+                    "shallower":  {
+                                      "ja":  "浅く",
+                                      "zh":  "shallower",
+                                      "tw":  "shallower",
+                                      "ko":  "shallower",
+                                      "de":  "shallower",
+                                      "hi":  "shallower",
+                                      "fr":  "shallower",
+                                      "_why":  [
+                                                   "未訳"
+                                               ]
+                                  },
+                    "The same round-trip time converts to a smaller depth at a lower assumed speed.":  {
+                                                                                                           "ja":  "同じ往復時間を低い音速で距離に直すため、推定深さが小さくなる。",
+                                                                                                           "zh":  "The same round-trip time converts to a smaller depth at a lower assumed speed.",
+                                                                                                           "tw":  "The same round-trip time converts to a smaller depth at a lower assumed speed.",
+                                                                                                           "ko":  "The same round-trip time converts to a smaller depth at a lower assumed speed.",
+                                                                                                           "de":  "The same round-trip time converts to a smaller depth at a lower assumed speed.",
+                                                                                                           "hi":  "The same round-trip time converts to a smaller depth at a lower assumed speed.",
+                                                                                                           "fr":  "The same round-trip time converts to a smaller depth at a lower assumed speed.",
+                                                                                                           "_why":  [
+                                                                                                                        "未訳"
+                                                                                                                    ]
+                                                                                                       },
+                    "delta-z about z delta-c/c":  {
+                                                      "ja":  "Δz≈z Δc/c",
+                                                      "zh":  "delta-z about z delta-c/c",
+                                                      "tw":  "delta-z about z delta-c/c",
+                                                      "ko":  "delta-z about z delta-c/c",
+                                                      "de":  "delta-z about z delta-c/c",
+                                                      "hi":  "delta-z about z delta-c/c",
+                                                      "fr":  "delta-z about z delta-c/c",
+                                                      "_why":  [
+                                                                   "未訳"
+                                                               ]
+                                                  },
+                    "Strong bone and air reflections, reverberation, refraction and heterogeneous sound speed are omitted. The failed limit row is intentional.":  {
+                                                                                                                                                                       "ja":  "骨・空気での強反射、多重反射、屈折、非一様音速は未実装。限界行は不合格を意図して示す。",
+                                                                                                                                                                       "zh":  "Strong bone and air reflections, reverberation, refraction and heterogeneous sound speed are omitted. The failed limit row is intentional.",
+                                                                                                                                                                       "tw":  "Strong bone and air reflections, reverberation, refraction and heterogeneous sound speed are omitted. The failed limit row is intentional.",
+                                                                                                                                                                       "ko":  "Strong bone and air reflections, reverberation, refraction and heterogeneous sound speed are omitted. The failed limit row is intentional.",
+                                                                                                                                                                       "de":  "Strong bone and air reflections, reverberation, refraction and heterogeneous sound speed are omitted. The failed limit row is intentional.",
+                                                                                                                                                                       "hi":  "Strong bone and air reflections, reverberation, refraction and heterogeneous sound speed are omitted. The failed limit row is intentional.",
+                                                                                                                                                                       "fr":  "Strong bone and air reflections, reverberation, refraction and heterogeneous sound speed are omitted. The failed limit row is intentional.",
+                                                                                                                                                                       "_why":  [
+                                                                                                                                                                                    "未訳"
+                                                                                                                                                                                ]
+                                                                                                                                                                   },
+                    "Synthetic model only; no patient, hospital or device data. Sound speed, frequency and aperture are representative teaching assumptions. Not for diagnosis.":  {
+                                                                                                                                                                                       "ja":  "合成モデルのみ。患者・病院・装置のデータではない。音速、周波数、開口は説明用の代表値。診断には使わない。",
+                                                                                                                                                                                       "zh":  "Synthetic model only; no patient, hospital or device data. Sound speed, frequency and aperture are representative teaching assumptions. Not for diagnosis.",
+                                                                                                                                                                                       "tw":  "Synthetic model only; no patient, hospital or device data. Sound speed, frequency and aperture are representative teaching assumptions. Not for diagnosis.",
+                                                                                                                                                                                       "ko":  "Synthetic model only; no patient, hospital or device data. Sound speed, frequency and aperture are representative teaching assumptions. Not for diagnosis.",
+                                                                                                                                                                                       "de":  "Synthetic model only; no patient, hospital or device data. Sound speed, frequency and aperture are representative teaching assumptions. Not for diagnosis.",
+                                                                                                                                                                                       "hi":  "Synthetic model only; no patient, hospital or device data. Sound speed, frequency and aperture are representative teaching assumptions. Not for diagnosis.",
+                                                                                                                                                                                       "fr":  "Synthetic model only; no patient, hospital or device data. Sound speed, frequency and aperture are representative teaching assumptions. Not for diagnosis.",
+                                                                                                                                                                                       "_why":  [
+                                                                                                                                                                                                    "未訳"
+                                                                                                                                                                                                ]
+                                                                                                                                                                                   },
+                    "below 30% of closed form":  {
+                                                     "ja":  "閉形式の 30 % 未満",
+                                                     "zh":  "below 30% of closed form",
+                                                     "tw":  "below 30% of closed form",
+                                                     "ko":  "below 30% of closed form",
+                                                     "de":  "below 30% of closed form",
+                                                     "hi":  "below 30% of closed form",
+                                                     "fr":  "below 30% of closed form"
+                                                 },
+                    "Lateral FWHM at two depths vs 1.78 lambda F-number for a Hann window":  {
+                                                                                                 "ja":  "2 深度の横方向半値幅と Hann 窓の 1.78λF#",
+                                                                                                 "zh":  "Lateral FWHM at two depths vs 1.78 lambda F-number for a Hann window",
+                                                                                                 "tw":  "Lateral FWHM at two depths vs 1.78 lambda F-number for a Hann window",
+                                                                                                 "ko":  "Lateral FWHM at two depths vs 1.78 lambda F-number for a Hann window",
+                                                                                                 "de":  "Lateral FWHM at two depths vs 1.78 lambda F-number for a Hann window",
+                                                                                                 "hi":  "Lateral FWHM at two depths vs 1.78 lambda F-number for a Hann window",
+                                                                                                 "fr":  "Lateral FWHM at two depths vs 1.78 lambda F-number for a Hann window"
+                                                                                             },
+                    "below 30% of each closed form":  {
+                                                          "ja":  "各閉形式の 30 % 未満",
+                                                          "zh":  "below 30% of each closed form",
+                                                          "tw":  "below 30% of each closed form",
+                                                          "ko":  "below 30% of each closed form",
+                                                          "de":  "below 30% of each closed form",
+                                                          "hi":  "below 30% of each closed form",
+                                                          "fr":  "below 30% of each closed form"
+                                                      },
+                    "below two depth samples":  {
+                                                    "ja":  "深さ格子 2 個未満",
+                                                    "zh":  "below two depth samples",
+                                                    "tw":  "below two depth samples",
+                                                    "ko":  "below two depth samples",
+                                                    "de":  "below two depth samples",
+                                                    "hi":  "below two depth samples",
+                                                    "fr":  "below two depth samples"
+                                                },
+                    "below one wavelength":  {
+                                                 "ja":  "1 波長未満",
+                                                 "zh":  "below one wavelength",
+                                                 "tw":  "below one wavelength",
+                                                 "ko":  "below one wavelength",
+                                                 "de":  "below one wavelength",
+                                                 "hi":  "below one wavelength",
+                                                 "fr":  "below one wavelength"
+                                             },
+                    "Cyst CNR on linear envelope vs fully developed speckle":  {
+                                                                                   "ja":  "線形包絡で測る嚢胞 CNR と完全発達スペックル",
+                                                                                   "zh":  "Cyst CNR on linear envelope vs fully developed speckle",
+                                                                                   "tw":  "Cyst CNR on linear envelope vs fully developed speckle",
+                                                                                   "ko":  "Cyst CNR on linear envelope vs fully developed speckle",
+                                                                                   "de":  "Cyst CNR on linear envelope vs fully developed speckle",
+                                                                                   "hi":  "Cyst CNR on linear envelope vs fully developed speckle",
+                                                                                   "fr":  "Cyst CNR on linear envelope vs fully developed speckle"
+                                                                               },
+                    "within 35% of theoretical 1.913":  {
+                                                            "ja":  "理論値 1.913 の 35 % 以内",
+                                                            "zh":  "within 35% of theoretical 1.913",
+                                                            "tw":  "within 35% of theoretical 1.913",
+                                                            "ko":  "within 35% of theoretical 1.913",
+                                                            "de":  "within 35% of theoretical 1.913",
+                                                            "hi":  "within 35% of theoretical 1.913",
+                                                            "fr":  "within 35% of theoretical 1.913"
+                                                        },
+                    "Point FWHM differs axially and laterally. The cyst has no random tissue scatterers. CNR is measured on the linear Hilbert envelope before log compression as |mean tissue - mean cyst| / sqrt(var tissue + var cyst).":  {
+                                                                                                                                                                                                                                                  "ja":  "点の半値幅は軸・横で異なる。嚢胞にはランダムな組織散乱体を置かない。CNR は対数圧縮前の線形ヒルベルト包絡から |組織平均−嚢胞平均| / sqrt(組織分散+嚢胞分散) で測る。",
+                                                                                                                                                                                                                                                  "zh":  "Point FWHM differs axially and laterally. The cyst has no random tissue scatterers. CNR is measured on the linear Hilbert envelope before log compression as |mean tissue - mean cyst| / sqrt(var tissue + var cyst).",
+                                                                                                                                                                                                                                                  "tw":  "Point FWHM differs axially and laterally. The cyst has no random tissue scatterers. CNR is measured on the linear Hilbert envelope before log compression as |mean tissue - mean cyst| / sqrt(var tissue + var cyst).",
+                                                                                                                                                                                                                                                  "ko":  "Point FWHM differs axially and laterally. The cyst has no random tissue scatterers. CNR is measured on the linear Hilbert envelope before log compression as |mean tissue - mean cyst| / sqrt(var tissue + var cyst).",
+                                                                                                                                                                                                                                                  "de":  "Point FWHM differs axially and laterally. The cyst has no random tissue scatterers. CNR is measured on the linear Hilbert envelope before log compression as |mean tissue - mean cyst| / sqrt(var tissue + var cyst).",
+                                                                                                                                                                                                                                                  "hi":  "Point FWHM differs axially and laterally. The cyst has no random tissue scatterers. CNR is measured on the linear Hilbert envelope before log compression as |mean tissue - mean cyst| / sqrt(var tissue + var cyst).",
+                                                                                                                                                                                                                                                  "fr":  "Point FWHM differs axially and laterally. The cyst has no random tissue scatterers. CNR is measured on the linear Hilbert envelope before log compression as |mean tissue - mean cyst| / sqrt(var tissue + var cyst)."
+                                                                                                                                                                                                                                              },
+                    "Finite pulse length and aperture create axial and lateral widths. At depth, the finite full aperture limits the lateral F-number. The remaining lateral difference comes from the Hann coefficient approximation, defocus and the discrete edge of the dynamic aperture.":  {
+                                                                                                                                                                                                                                                                                                     "ja":  "有限のパルス長と開口が軸・横方向の幅を作る。横幅では深部ほど有限の全開口が F# を制限する。残る差は Hann 窓係数の近似、焦点外れ、動的開口端の離散化による。",
+                                                                                                                                                                                                                                                                                                     "zh":  "Finite pulse length and aperture create axial and lateral widths. At depth, the finite full aperture limits the lateral F-number. The remaining lateral difference comes from the Hann coefficient approximation, defocus and the discrete edge of the dynamic aperture.",
+                                                                                                                                                                                                                                                                                                     "tw":  "Finite pulse length and aperture create axial and lateral widths. At depth, the finite full aperture limits the lateral F-number. The remaining lateral difference comes from the Hann coefficient approximation, defocus and the discrete edge of the dynamic aperture.",
+                                                                                                                                                                                                                                                                                                     "ko":  "Finite pulse length and aperture create axial and lateral widths. At depth, the finite full aperture limits the lateral F-number. The remaining lateral difference comes from the Hann coefficient approximation, defocus and the discrete edge of the dynamic aperture.",
+                                                                                                                                                                                                                                                                                                     "de":  "Finite pulse length and aperture create axial and lateral widths. At depth, the finite full aperture limits the lateral F-number. The remaining lateral difference comes from the Hann coefficient approximation, defocus and the discrete edge of the dynamic aperture.",
+                                                                                                                                                                                                                                                                                                     "hi":  "Finite pulse length and aperture create axial and lateral widths. At depth, the finite full aperture limits the lateral F-number. The remaining lateral difference comes from the Hann coefficient approximation, defocus and the discrete edge of the dynamic aperture.",
+                                                                                                                                                                                                                                                                                                     "fr":  "Finite pulse length and aperture create axial and lateral widths. At depth, the finite full aperture limits the lateral F-number. The remaining lateral difference comes from the Hann coefficient approximation, defocus and the discrete edge of the dynamic aperture."
+                                                                                                                                                                                                                                                                                                 },
+                    "delta-z about c tau/2; delta-x about 1.78 lambda F-number (Hann, -6 dB); CNR=|mu_t-mu_c|/sqrt(var_t+var_c), Rayleigh limit 1.913":  {
+                                                                                                                                                             "ja":  "Δz≈cτ/2, Δx≈1.78λF# (Hann, -6 dB); CNR=|μt−μc|/sqrt(σt²+σc²), Rayleigh 極限 1.913",
+                                                                                                                                                             "zh":  "delta-z about c tau/2; delta-x about 1.78 lambda F-number (Hann, -6 dB); CNR=|mu_t-mu_c|/sqrt(var_t+var_c), Rayleigh limit 1.913",
+                                                                                                                                                             "tw":  "delta-z about c tau/2; delta-x about 1.78 lambda F-number (Hann, -6 dB); CNR=|mu_t-mu_c|/sqrt(var_t+var_c), Rayleigh limit 1.913",
+                                                                                                                                                             "ko":  "delta-z about c tau/2; delta-x about 1.78 lambda F-number (Hann, -6 dB); CNR=|mu_t-mu_c|/sqrt(var_t+var_c), Rayleigh limit 1.913",
+                                                                                                                                                             "de":  "delta-z about c tau/2; delta-x about 1.78 lambda F-number (Hann, -6 dB); CNR=|mu_t-mu_c|/sqrt(var_t+var_c), Rayleigh limit 1.913",
+                                                                                                                                                             "hi":  "delta-z about c tau/2; delta-x about 1.78 lambda F-number (Hann, -6 dB); CNR=|mu_t-mu_c|/sqrt(var_t+var_c), Rayleigh limit 1.913",
+                                                                                                                                                             "fr":  "delta-z about c tau/2; delta-x about 1.78 lambda F-number (Hann, -6 dB); CNR=|mu_t-mu_c|/sqrt(var_t+var_c), Rayleigh limit 1.913"
+                                                                                                                                                         },
+                    "Over 12,000 scatterers give 12.4 scatterers per representative resolution cell. Measurement uses 224 by 768 samples; display is decimated to 56 by 96. The CNR tolerance is 35% because finite PSF leakage makes the cyst nonzero.":  {
+                                                                                                                                                                                                                                                               "ja":  "散乱体 12,000 超で代表分解能セル当たり 12.4 個。計測は 224×768、表示は 56×96 へ間引く。有限 PSF が嚢胞へ漏れるため CNR の許容は理論値の 35 % とする。",
+                                                                                                                                                                                                                                                               "zh":  "Over 12,000 scatterers give 12.4 scatterers per representative resolution cell. Measurement uses 224 by 768 samples; display is decimated to 56 by 96. The CNR tolerance is 35% because finite PSF leakage makes the cyst nonzero.",
+                                                                                                                                                                                                                                                               "tw":  "Over 12,000 scatterers give 12.4 scatterers per representative resolution cell. Measurement uses 224 by 768 samples; display is decimated to 56 by 96. The CNR tolerance is 35% because finite PSF leakage makes the cyst nonzero.",
+                                                                                                                                                                                                                                                               "ko":  "Over 12,000 scatterers give 12.4 scatterers per representative resolution cell. Measurement uses 224 by 768 samples; display is decimated to 56 by 96. The CNR tolerance is 35% because finite PSF leakage makes the cyst nonzero.",
+                                                                                                                                                                                                                                                               "de":  "Over 12,000 scatterers give 12.4 scatterers per representative resolution cell. Measurement uses 224 by 768 samples; display is decimated to 56 by 96. The CNR tolerance is 35% because finite PSF leakage makes the cyst nonzero.",
+                                                                                                                                                                                                                                                               "hi":  "Over 12,000 scatterers give 12.4 scatterers per representative resolution cell. Measurement uses 224 by 768 samples; display is decimated to 56 by 96. The CNR tolerance is 35% because finite PSF leakage makes the cyst nonzero.",
+                                                                                                                                                                                                                                                               "fr":  "Over 12,000 scatterers give 12.4 scatterers per representative resolution cell. Measurement uses 224 by 768 samples; display is decimated to 56 by 96. The CNR tolerance is 35% because finite PSF leakage makes the cyst nonzero."
+                                                                                                                                                                                                                                                           }
+                }
+}
