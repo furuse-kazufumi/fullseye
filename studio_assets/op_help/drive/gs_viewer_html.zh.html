@@ -1,0 +1,68 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">gs_viewer_html — DRIVE <code style="color:#22d3bf">gsplat</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gs_viewer_html(gs, out_path=None, *, title=&#x27;3D Gaussian Splatting&#x27;, lang=(&#x27;ja&#x27;, &#x27;en&#x27;, &#x27;zh&#x27;, &#x27;tw&#x27;, &#x27;ko&#x27;, &#x27;de&#x27;, &#x27;hi&#x27;, &#x27;fr&#x27;), note=None, hotspots=None, dims=True, unit_mm: &#x27;float&#x27; = 1000.0, up=(0.0, 0.0, 1.0), bg: &#x27;str&#x27; = &#x27;gray&#x27;, max_bytes: &#x27;int&#x27; = 16777216, fov_deg: &#x27;float&#x27; = 35.0, camera=None, spin: &#x27;bool&#x27; = True, spin_deg_per_s: &#x27;float&#x27; = 20.0, bake_light=(0.3, -0.5, 0.8), ambient: &#x27;float&#x27; = 0.35, max_radius: &#x27;int&#x27; = 64, mobile_quality=0.5, mobile_above: &#x27;int&#x27; = 300000) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import gsviewer; gsviewer.gs_viewer_html(gs, out_path=None, *, title=&#x27;3D Gaussian Splatting&#x27;, lang=(&#x27;ja&#x27;, &#x27;en&#x27;, &#x27;zh&#x27;, &#x27;tw&#x27;, &#x27;ko&#x27;, &#x27;de&#x27;, &#x27;hi&#x27;, &#x27;fr&#x27;), note=None, hotspots=None, dims=True, unit_mm: &#x27;float&#x27; = 1000.0, up=(0.0, 0.0, 1.0), bg: &#x27;str&#x27; = &#x27;gray&#x27;, max_bytes: &#x27;int&#x27; = 16777216, fov_deg: &#x27;float&#x27; = 35.0, camera=None, spin: &#x27;bool&#x27; = True, spin_deg_per_s: &#x27;float&#x27; = 20.0, bake_light=(0.3, -0.5, 0.8), ambient: &#x27;float&#x27; = 0.35, max_radius: &#x27;int&#x27; = 64, mobile_quality=0.5, mobile_above: &#x27;int&#x27; = 300000) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;gs_viewer_html&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>把 3DGS 做成可在浏览器中旋转查看的单个自包含 HTML(无外部 URL、无 CDN、可离线运行)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>データは位置 3×u16(軸ごとの範囲)・log 大きさ 3×u16・四元数 4×u8・RGBA 4×u8 = 1 個 20 バイトに量子化し、gzip → base64 でページに埋める。ブラウザは <code style="color:#22d3bf">DecompressionStream(&#x27;gzip&#x27;)</code> で伸ばし、WebGL2 のインスタンス化した四角形で描く。2-D 共分散は <code style="color:#22d3bf">gsplatnp.gs_render</code> と同じ Σ&#x27; = J W Σ Wᵀ Jᵀ + 0.3 px²(不透明度は √(det Σ / det(Σ + 0.3 I)) 倍)、窓は中心の丸めから ±⌈3√λ_max⌉ 画素(≤ <code style="color:#22d3bf">max_radius</code>)、手前から C = Σ c_i α_i T_i(半精度の浮動小数のバッファに足してから背景を合成)。前後の並べ替えは Web Worker が視点の変わったときだけ行う(ガウシアンの中心の深さを 16 bit の桶で数える)。</p>
+<p>商品の閲覧の機能: ドラッグで回す(慣性つき)・ホイール / ピンチで拡大・自動の回転台(触ると止まる)・視点のプリセット(正面 / 側面 / 上 / 斜め)・背景(白 / 灰 / 黒)・注記点(押すと説明が開く、8 言語)・寸法(W × D × H mm)・不透明度のしきい値・品質つまみ(ガウシアンの数を重要度の高い順に減らす、スマホの既定 <code style="color:#22d3bf">mobile_quality</code>)。URL でも開ける: <code style="color:#22d3bf">?lang=en&amp;bg=white&amp;view=front&amp;dims=1&amp;hs=0&amp;spin=0&amp;quality=0.5</code>。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>gs : dict または パス</p>
+<p><code style="color:#22d3bf">gsplatnp.gs_read_file</code> / <code style="color:#22d3bf">gsplatnp.gs_from_world</code> の dict、または .ply / .splat のパス。</p>
+<p>out_path : str または None</p>
+<p>書き出す先。None なら書かずに返り値の <code style="color:#22d3bf">html</code> に入れる。</p>
+<p>title, note : str または {lang: str}</p>
+<p>題と、ページの「この表示について」に出す注記(例: 「メッシュから初期化した 3DGS で、写真から学習したものではない」)。</p>
+<p>lang : str または 言語の並び</p>
+<p><code style="color:#22d3bf">LANGS</code>(ja, en, zh, tw, ko, de, hi, fr)の部分集合。先頭が既定、<code style="color:#22d3bf">?lang</code> と navigator.language で選ぶ。</p>
+<p>hotspots : [{&quot;pos&quot;: (x, y, z), &quot;label&quot;: str|{lang}, &quot;desc&quot;: str|{lang}}]</p>
+<p>注記点。辞書で渡すなら要求した言語が全部要る(黙って補わない)。</p>
+<p>dims : bool または {&quot;upright&quot;, &quot;obb&quot;}</p>
+<p>寸法を出すか。True = <code style="color:#22d3bf">&quot;upright&quot;</code>(上向きを H に固定した最小の箱)、<code style="color:#22d3bf">&quot;obb&quot;</code> = 向き自由の最小体積の箱。</p>
+<p>どちらも向きは <code style="color:#22d3bf">measure3d.smallest_box3</code> が決め、大きさは全部の不透明なガウシアンの中心で測る。</p>
+<p>unit_mm : float</p>
+<p>座標の 1 単位が何 mm か(既定 1000 = メートル)。</p>
+<p>up : (3,)</p>
+<p>上向きの軸(回転台の軸、寸法の H)。</p>
+<p>bg : {&quot;white&quot;, &quot;gray&quot;, &quot;black&quot;}</p>
+<p>最初の背景。</p>
+<p>max_bytes : int</p>
+<p>埋め込むデータの上限(base64 後のバイト数、既定 16 MB)。超えたら不透明度・大きさの小さい順に間引く。</p>
+<p>fov_deg, camera, spin, spin_deg_per_s :</p>
+<p>縦の画角・最初の視点(<code style="color:#22d3bf">{&quot;yaw&quot;, &quot;pitch&quot;, &quot;dist&quot;, &quot;target&quot;}</code> の一部でよい)・回転台を回して開くか・その速さ。</p>
+<p>bake_light, ambient :</p>
+<p>gs_from_world の dict のとき、世界の座標の光で陰影を色へ焼き込む(gs_render と同じ Lambert)。None で焼かない。</p>
+<p>max_radius : int</p>
+<p>1 個の窓の半径の上限(画素、gs_render の <code style="color:#22d3bf">max_radius</code> と同じ意味)。</p>
+<p>mobile_quality, mobile_above : float または None, int</p>
+<p>指で触る端末(<code style="color:#22d3bf">pointer: coarse</code>)で、ガウシアンが <code style="color:#22d3bf">mobile_above</code> 個を超えるときに最初に描く割合。</p>
+<p>None なら全部。品質つまみは重要度の順(間引きと同じ順)の先頭から描くので、小さな部品から消える。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict</p>
+<p><code style="color:#22d3bf">path</code>・<code style="color:#22d3bf">bytes</code>(HTML の大きさ)・<code style="color:#22d3bf">n_input</code>・<code style="color:#22d3bf">n_kept</code>・<code style="color:#22d3bf">n_dropped</code>・<code style="color:#22d3bf">thinned</code>・<code style="color:#22d3bf">thinning</code>(間引きの記録)・</p>
+<p><code style="color:#22d3bf">dims_mm</code>(W, D, H)・<code style="color:#22d3bf">dims</code>(箱の 8 隅つき)・<code style="color:#22d3bf">camera</code>・<code style="color:#22d3bf">sh_degree_in</code>・<code style="color:#22d3bf">sh_degree_used</code>(= 0)・</p>
+<p><code style="color:#22d3bf">sh_dropped</code>・<code style="color:#22d3bf">embedded_bytes</code>・<code style="color:#22d3bf">external_urls</code>(= 0 を確かめた数)。<code style="color:#22d3bf">out_path</code> が None なら <code style="color:#22d3bf">html</code> も。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
+<p>ValueError</p>
+<p>gs が空・形が合わない・非有限、未対応の言語、文言の言語の欠け、bg が 3 色以外、上限に 1 個も入らない。</p>
+<p>空の入力(<code style="color:#22d3bf">gs</code> が空の dict)は ValueError。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
+<p>&gt;&gt;&gt; import gsplatnp, gsviewer</p>
+<p>&gt;&gt;&gt; r = gsviewer.gs_viewer_html(&quot;scene.ply&quot;, &quot;view.html&quot;, title=&quot;My product&quot;)    # doctest: +SKIP</p>
+<p>&gt;&gt;&gt; r[&quot;n_kept&quot;], r[&quot;dims_mm&quot;]                                                    # doctest: +SKIP</p>
+<p>CLI: <code style="color:#22d3bf">py -3.11 -m gsviewer in.ply --out view.html --title &quot;My product&quot;</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gsplat_product_viewer">gsplat_product_viewer</a> — <code style="color:#22d3bf">py -3.11 examples/gsplat_product_viewer.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gsplat_trained_product">gsplat_trained_product</a> — <code style="color:#22d3bf">py -3.11 examples/gsplat_trained_product.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">gsplat</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:gs_from_world">gs_from_world</a> · <a style="color:#22d3bf" href="opdrive:gs_update">gs_update</a> · <a style="color:#22d3bf" href="opdrive:gs_render">gs_render</a> · <a style="color:#22d3bf" href="opdrive:gs_render_fn">gs_render_fn</a> · <a style="color:#22d3bf" href="opdrive:gs_read_file">gs_read_file</a> · <a style="color:#22d3bf" href="opdrive:gs_catalog_html">gs_catalog_html</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: gsviewer.py — DRIVE 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

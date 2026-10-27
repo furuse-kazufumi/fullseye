@@ -1,0 +1,618 @@
+{
+ "_": "Borescope moving 3-D translations. English source text is retained for the six fallback locales pending editorial localization.",
+ "example": "build_bore_anim3d",
+ "strings": {
+  "How a borescope sees through a narrow tube": {
+   "ja": "ボアスコープは細い管の奥をどう見るか",
+   "zh": "How a borescope sees through a narrow tube",
+   "tw": "How a borescope sees through a narrow tube",
+   "ko": "How a borescope sees through a narrow tube",
+   "de": "How a borescope sees through a narrow tube",
+   "hi": "How a borescope sees through a narrow tube",
+   "fr": "How a borescope sees through a narrow tube"
+  },
+  "Compare relay imaging, optical invariant, vignetting and a fibre bundle in one model": {
+   "ja": "リレー結像、光学不変量、ケラレ、ファイバ束を同じ模型で比べる",
+   "zh": "Compare relay imaging, optical invariant, vignetting and a fibre bundle in one model",
+   "tw": "Compare relay imaging, optical invariant, vignetting and a fibre bundle in one model",
+   "ko": "Compare relay imaging, optical invariant, vignetting and a fibre bundle in one model",
+   "de": "Compare relay imaging, optical invariant, vignetting and a fibre bundle in one model",
+   "hi": "Compare relay imaging, optical invariant, vignetting and a fibre bundle in one model",
+   "fr": "Compare relay imaging, optical invariant, vignetting and a fibre bundle in one model"
+  },
+  "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Drag to rotate the 3-D view.": {
+   "ja": "①問い → ②予想 → ③再生 → ④式 → ⑤限界。3-D はドラッグで回せる。",
+   "zh": "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Drag to rotate the 3-D view.",
+   "tw": "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Drag to rotate the 3-D view.",
+   "ko": "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Drag to rotate the 3-D view.",
+   "de": "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Drag to rotate the 3-D view.",
+   "hi": "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Drag to rotate the 3-D view.",
+   "fr": "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Drag to rotate the 3-D view."
+  },
+  "Looking into a narrow tube": {
+   "ja": "細い管の奥を見る",
+   "zh": "Looking into a narrow tube",
+   "tw": "Looking into a narrow tube",
+   "ko": "Looking into a narrow tube",
+   "de": "Looking into a narrow tube",
+   "hi": "Looking into a narrow tube",
+   "fr": "Looking into a narrow tube"
+  },
+  "tube bore": {
+   "ja": "管の内径",
+   "zh": "tube bore",
+   "tw": "tube bore",
+   "ko": "tube bore",
+   "de": "tube bore",
+   "hi": "tube bore",
+   "fr": "tube bore"
+  },
+  "transmission after 6 stages": {
+   "ja": "6 段後の透過率",
+   "zh": "transmission after 6 stages",
+   "tw": "transmission after 6 stages",
+   "ko": "transmission after 6 stages",
+   "de": "transmission after 6 stages",
+   "hi": "transmission after 6 stages",
+   "fr": "transmission after 6 stages"
+  },
+  "traced transmission": {
+   "ja": "追跡透過率",
+   "zh": "traced transmission",
+   "tw": "traced transmission",
+   "ko": "traced transmission",
+   "de": "traced transmission",
+   "hi": "traced transmission",
+   "fr": "traced transmission"
+  },
+  "target → objective → relay stages → eyepiece": {
+   "ja": "対象 → 対物 → リレー段 → 接眼",
+   "zh": "target → objective → relay stages → eyepiece",
+   "tw": "target → objective → relay stages → eyepiece",
+   "ko": "target → objective → relay stages → eyepiece",
+   "de": "target → objective → relay stages → eyepiece",
+   "hi": "target → objective → relay stages → eyepiece",
+   "fr": "target → objective → relay stages → eyepiece"
+  },
+  "image position and magnification: sequential trace vs ABCD op": {
+   "ja": "段ごとの像位置・倍率: 逐次追跡と ABCD op",
+   "zh": "image position and magnification: sequential trace vs ABCD op",
+   "tw": "image position and magnification: sequential trace vs ABCD op",
+   "ko": "image position and magnification: sequential trace vs ABCD op",
+   "de": "image position and magnification: sequential trace vs ABCD op",
+   "hi": "image position and magnification: sequential trace vs ABCD op",
+   "fr": "image position and magnification: sequential trace vs ABCD op"
+  },
+  "Lagrange invariant at every surface": {
+   "ja": "各面のラグランジュ不変量",
+   "zh": "Lagrange invariant at every surface",
+   "tw": "Lagrange invariant at every surface",
+   "ko": "Lagrange invariant at every surface",
+   "de": "Lagrange invariant at every surface",
+   "hi": "Lagrange invariant at every surface",
+   "fr": "Lagrange invariant at every surface"
+  },
+  "relay stages": {
+   "ja": "リレー段数",
+   "zh": "relay stages",
+   "tw": "relay stages",
+   "ko": "relay stages",
+   "de": "relay stages",
+   "hi": "relay stages",
+   "fr": "relay stages"
+  },
+  "4f stage: P(2f) L(f) P(2f) L(f)": {
+   "ja": "4f 段: P(2f) L(f) P(2f) L(f)",
+   "zh": "4f stage: P(2f) L(f) P(2f) L(f)",
+   "tw": "4f stage: P(2f) L(f) P(2f) L(f)",
+   "ko": "4f stage: P(2f) L(f) P(2f) L(f)",
+   "de": "4f stage: P(2f) L(f) P(2f) L(f)",
+   "hi": "4f stage: P(2f) L(f) P(2f) L(f)",
+   "fr": "4f stage: P(2f) L(f) P(2f) L(f)"
+  },
+  "Refocusing the image repeatedly": {
+   "ja": "像を何度も結び直す",
+   "zh": "Refocusing the image repeatedly",
+   "tw": "Refocusing the image repeatedly",
+   "ko": "Refocusing the image repeatedly",
+   "de": "Refocusing the image repeatedly",
+   "hi": "Refocusing the image repeatedly",
+   "fr": "Refocusing the image repeatedly"
+  },
+  "Two paraxial rays are updated at every lens surface. The ABCD result and sequential trace overlap through every stage.": {
+   "ja": "青と橙の2本の近軸光線を各レンズ面で更新する。ABCD 行列の結果と逐次追跡が全段で重なる。",
+   "zh": "Two paraxial rays are updated at every lens surface. The ABCD result and sequential trace overlap through every stage.",
+   "tw": "Two paraxial rays are updated at every lens surface. The ABCD result and sequential trace overlap through every stage.",
+   "ko": "Two paraxial rays are updated at every lens surface. The ABCD result and sequential trace overlap through every stage.",
+   "de": "Two paraxial rays are updated at every lens surface. The ABCD result and sequential trace overlap through every stage.",
+   "hi": "Two paraxial rays are updated at every lens surface. The ABCD result and sequential trace overlap through every stage.",
+   "fr": "Two paraxial rays are updated at every lens surface. The ABCD result and sequential trace overlap through every stage."
+  },
+  "maximum ABCD difference": {
+   "ja": "最大 ABCD 差",
+   "zh": "maximum ABCD difference",
+   "tw": "maximum ABCD difference",
+   "ko": "maximum ABCD difference",
+   "de": "maximum ABCD difference",
+   "hi": "maximum ABCD difference",
+   "fr": "maximum ABCD difference"
+  },
+  "image after 6 stages": {
+   "ja": "6 段の像位置",
+   "zh": "image after 6 stages",
+   "tw": "image after 6 stages",
+   "ko": "image after 6 stages",
+   "de": "image after 6 stages",
+   "hi": "image after 6 stages",
+   "fr": "image after 6 stages"
+  },
+  "magnification": {
+   "ja": "倍率",
+   "zh": "magnification",
+   "tw": "magnification",
+   "ko": "magnification",
+   "de": "magnification",
+   "hi": "magnification",
+   "fr": "magnification"
+  },
+  "image position": {
+   "ja": "像位置",
+   "zh": "image position",
+   "tw": "image position",
+   "ko": "image position",
+   "de": "image position",
+   "hi": "image position",
+   "fr": "image position"
+  },
+  "stages": {
+   "ja": "段数",
+   "zh": "stages",
+   "tw": "stages",
+   "ko": "stages",
+   "de": "stages",
+   "hi": "stages",
+   "fr": "stages"
+  },
+  "Does magnification accumulate when identical 4f relays are added?": {
+   "ja": "同じ 4f リレーを足すと倍率は積み上がる?",
+   "zh": "Does magnification accumulate when identical 4f relays are added?",
+   "tw": "Does magnification accumulate when identical 4f relays are added?",
+   "ko": "Does magnification accumulate when identical 4f relays are added?",
+   "de": "Does magnification accumulate when identical 4f relays are added?",
+   "hi": "Does magnification accumulate when identical 4f relays are added?",
+   "fr": "Does magnification accumulate when identical 4f relays are added?"
+  },
+  "doubles each stage": {
+   "ja": "毎段で2倍",
+   "zh": "doubles each stage",
+   "tw": "doubles each stage",
+   "ko": "doubles each stage",
+   "de": "doubles each stage",
+   "hi": "doubles each stage",
+   "fr": "doubles each stage"
+  },
+  "stays at 1×": {
+   "ja": "1倍のまま",
+   "zh": "stays at 1×",
+   "tw": "stays at 1×",
+   "ko": "stays at 1×",
+   "de": "stays at 1×",
+   "hi": "stays at 1×",
+   "fr": "stays at 1×"
+  },
+  "Each stage has the identity matrix in this layout, passing the image onward.": {
+   "ja": "この配置の各段の行列は単位行列で、像だけを次へ送る。",
+   "zh": "Each stage has the identity matrix in this layout, passing the image onward.",
+   "tw": "Each stage has the identity matrix in this layout, passing the image onward.",
+   "ko": "Each stage has the identity matrix in this layout, passing the image onward.",
+   "de": "Each stage has the identity matrix in this layout, passing the image onward.",
+   "hi": "Each stage has the identity matrix in this layout, passing the image onward.",
+   "fr": "Each stage has the identity matrix in this layout, passing the image onward."
+  },
+  "[y',u']ᵀ = M[y,u]ᵀ": {
+   "ja": "[y',u']ᵀ = M[y,u]ᵀ",
+   "zh": "[y',u']ᵀ = M[y,u]ᵀ",
+   "tw": "[y',u']ᵀ = M[y,u]ᵀ",
+   "ko": "[y',u']ᵀ = M[y,u]ᵀ",
+   "de": "[y',u']ᵀ = M[y,u]ᵀ",
+   "hi": "[y',u']ᵀ = M[y,u]ᵀ",
+   "fr": "[y',u']ᵀ = M[y,u]ᵀ"
+  },
+  "Real lens thickness and aberrations prevent perfect agreement.": {
+   "ja": "実レンズの厚さと収差を含めると完全一致ではない。",
+   "zh": "Real lens thickness and aberrations prevent perfect agreement.",
+   "tw": "Real lens thickness and aberrations prevent perfect agreement.",
+   "ko": "Real lens thickness and aberrations prevent perfect agreement.",
+   "de": "Real lens thickness and aberrations prevent perfect agreement.",
+   "hi": "Real lens thickness and aberrations prevent perfect agreement.",
+   "fr": "Real lens thickness and aberrations prevent perfect agreement."
+  },
+  "Trading diameter, field and brightness": {
+   "ja": "細さ・視野・明るさの交換",
+   "zh": "Trading diameter, field and brightness",
+   "tw": "Trading diameter, field and brightness",
+   "ko": "Trading diameter, field and brightness",
+   "de": "Trading diameter, field and brightness",
+   "hi": "Trading diameter, field and brightness",
+   "fr": "Trading diameter, field and brightness"
+  },
+  "maximum invariant residual": {
+   "ja": "不変量の最大残差",
+   "zh": "maximum invariant residual",
+   "tw": "maximum invariant residual",
+   "ko": "maximum invariant residual",
+   "de": "maximum invariant residual",
+   "hi": "maximum invariant residual",
+   "fr": "maximum invariant residual"
+  },
+  "counting one fixed incident bundle through the same aperture at every stage": {
+   "ja": "固定した入射光束を、同じ口径で段ごとに数える",
+   "zh": "counting one fixed incident bundle through the same aperture at every stage",
+   "tw": "counting one fixed incident bundle through the same aperture at every stage",
+   "ko": "counting one fixed incident bundle through the same aperture at every stage",
+   "de": "counting one fixed incident bundle through the same aperture at every stage",
+   "hi": "counting one fixed incident bundle through the same aperture at every stage",
+   "fr": "counting one fixed incident bundle through the same aperture at every stage"
+  },
+  "Can brightness stay unchanged while field widens in the same narrow tube?": {
+   "ja": "管を細くしたまま視野を広げると、同じ明るさを保てる?",
+   "zh": "Can brightness stay unchanged while field widens in the same narrow tube?",
+   "tw": "Can brightness stay unchanged while field widens in the same narrow tube?",
+   "ko": "Can brightness stay unchanged while field widens in the same narrow tube?",
+   "de": "Can brightness stay unchanged while field widens in the same narrow tube?",
+   "hi": "Can brightness stay unchanged while field widens in the same narrow tube?",
+   "fr": "Can brightness stay unchanged while field widens in the same narrow tube?"
+  },
+  "yes": {
+   "ja": "保てる",
+   "zh": "yes",
+   "tw": "yes",
+   "ko": "yes",
+   "de": "yes",
+   "hi": "yes",
+   "fr": "yes"
+  },
+  "marginal light falls": {
+   "ja": "周辺光が減る",
+   "zh": "marginal light falls",
+   "tw": "marginal light falls",
+   "ko": "marginal light falls",
+   "de": "marginal light falls",
+   "hi": "marginal light falls",
+   "fr": "marginal light falls"
+  },
+  "The product of image height and ray angle is bounded; rays beyond the aperture vignette.": {
+   "ja": "像高と光線角の積には上限があり、口径を越えた光線はケラレる。",
+   "zh": "The product of image height and ray angle is bounded; rays beyond the aperture vignette.",
+   "tw": "The product of image height and ray angle is bounded; rays beyond the aperture vignette.",
+   "ko": "The product of image height and ray angle is bounded; rays beyond the aperture vignette.",
+   "de": "The product of image height and ray angle is bounded; rays beyond the aperture vignette.",
+   "hi": "The product of image height and ray angle is bounded; rays beyond the aperture vignette.",
+   "fr": "The product of image height and ray angle is bounded; rays beyond the aperture vignette."
+  },
+  "H = y₁u₂ − y₂u₁ = constant": {
+   "ja": "H = y₁u₂ − y₂u₁ = constant",
+   "zh": "H = y₁u₂ − y₂u₁ = constant",
+   "tw": "H = y₁u₂ − y₂u₁ = constant",
+   "ko": "H = y₁u₂ − y₂u₁ = constant",
+   "de": "H = y₁u₂ − y₂u₁ = constant",
+   "hi": "H = y₁u₂ − y₂u₁ = constant",
+   "fr": "H = y₁u₂ − y₂u₁ = constant"
+  },
+  "Illumination nonuniformity and reflectance are omitted.": {
+   "ja": "照明の不均一と反射率は含めない。",
+   "zh": "Illumination nonuniformity and reflectance are omitted.",
+   "tw": "Illumination nonuniformity and reflectance are omitted.",
+   "ko": "Illumination nonuniformity and reflectance are omitted.",
+   "de": "Illumination nonuniformity and reflectance are omitted.",
+   "hi": "Illumination nonuniformity and reflectance are omitted.",
+   "fr": "Illumination nonuniformity and reflectance are omitted."
+  },
+  "Bent tubes and fibre-bundle limits": {
+   "ja": "曲がる管とファイバ束の限界",
+   "zh": "Bent tubes and fibre-bundle limits",
+   "tw": "Bent tubes and fibre-bundle limits",
+   "ko": "Bent tubes and fibre-bundle limits",
+   "de": "Bent tubes and fibre-bundle limits",
+   "hi": "Bent tubes and fibre-bundle limits",
+   "fr": "Bent tubes and fibre-bundle limits"
+  },
+  "rigid relay carries an image around a bend": {
+   "ja": "曲げても硬性リレーが像を運ぶ",
+   "zh": "rigid relay carries an image around a bend",
+   "tw": "rigid relay carries an image around a bend",
+   "ko": "rigid relay carries an image around a bend",
+   "de": "rigid relay carries an image around a bend",
+   "hi": "rigid relay carries an image around a bend",
+   "fr": "rigid relay carries an image around a bend"
+  },
+  "passes a bent tube": {
+   "ja": "曲がった管を通る",
+   "zh": "passes a bent tube",
+   "tw": "passes a bent tube",
+   "ko": "passes a bent tube",
+   "de": "passes a bent tube",
+   "hi": "passes a bent tube",
+   "fr": "passes a bent tube"
+  },
+  "no; a fibre bundle also retains its grid and broken cores": {
+   "ja": "通らない。ファイバ束にも網目と断線が残る",
+   "zh": "no; a fibre bundle also retains its grid and broken cores",
+   "tw": "no; a fibre bundle also retains its grid and broken cores",
+   "ko": "no; a fibre bundle also retains its grid and broken cores",
+   "de": "no; a fibre bundle also retains its grid and broken cores",
+   "hi": "no; a fibre bundle also retains its grid and broken cores",
+   "fr": "no; a fibre bundle also retains its grid and broken cores"
+  },
+  "Can a flexible fibre bundle carry the same image as a rigid relay?": {
+   "ja": "曲がるファイバ束なら、硬性リレーと同じ像を運べる?",
+   "zh": "Can a flexible fibre bundle carry the same image as a rigid relay?",
+   "tw": "Can a flexible fibre bundle carry the same image as a rigid relay?",
+   "ko": "Can a flexible fibre bundle carry the same image as a rigid relay?",
+   "de": "Can a flexible fibre bundle carry the same image as a rigid relay?",
+   "hi": "Can a flexible fibre bundle carry the same image as a rigid relay?",
+   "fr": "Can a flexible fibre bundle carry the same image as a rigid relay?"
+  },
+  "identically": {
+   "ja": "完全に同じ",
+   "zh": "identically",
+   "tw": "identically",
+   "ko": "identically",
+   "de": "identically",
+   "hi": "identically",
+   "fr": "identically"
+  },
+  "core pitch and breaks remain": {
+   "ja": "芯の間隔と断線が残る",
+   "zh": "core pitch and breaks remain",
+   "tw": "core pitch and breaks remain",
+   "ko": "core pitch and breaks remain",
+   "de": "core pitch and breaks remain",
+   "hi": "core pitch and breaks remain",
+   "fr": "core pitch and breaks remain"
+  },
+  "A rigid relay cannot bend. A fibre bundle bends, but its grid, crosstalk and broken cores are limits.": {
+   "ja": "硬性リレーは曲がらない。ファイバ束は曲がるが、網目・クロストーク・断線が限界。",
+   "zh": "A rigid relay cannot bend. A fibre bundle bends, but its grid, crosstalk and broken cores are limits.",
+   "tw": "A rigid relay cannot bend. A fibre bundle bends, but its grid, crosstalk and broken cores are limits.",
+   "ko": "A rigid relay cannot bend. A fibre bundle bends, but its grid, crosstalk and broken cores are limits.",
+   "de": "A rigid relay cannot bend. A fibre bundle bends, but its grid, crosstalk and broken cores are limits.",
+   "hi": "A rigid relay cannot bend. A fibre bundle bends, but its grid, crosstalk and broken cores are limits.",
+   "fr": "A rigid relay cannot bend. A fibre bundle bends, but its grid, crosstalk and broken cores are limits."
+  },
+  "Tube, lenses, inspection target and fibre image are entirely synthetic. Dimensions are explanatory assumptions and represent no specific product.": {
+   "ja": "管、レンズ、点検対象、ファイバ像はすべて合成。寸法は説明用の仮定で、特定の製品を表さない。",
+   "zh": "Tube, lenses, inspection target and fibre image are entirely synthetic. Dimensions are explanatory assumptions and represent no specific product.",
+   "tw": "Tube, lenses, inspection target and fibre image are entirely synthetic. Dimensions are explanatory assumptions and represent no specific product.",
+   "ko": "Tube, lenses, inspection target and fibre image are entirely synthetic. Dimensions are explanatory assumptions and represent no specific product.",
+   "de": "Tube, lenses, inspection target and fibre image are entirely synthetic. Dimensions are explanatory assumptions and represent no specific product.",
+   "hi": "Tube, lenses, inspection target and fibre image are entirely synthetic. Dimensions are explanatory assumptions and represent no specific product.",
+   "fr": "Tube, lenses, inspection target and fibre image are entirely synthetic. Dimensions are explanatory assumptions and represent no specific product."
+  },
+  "An objective, relays and eyepiece fit in a 6 mm tube. Each 4f stage hands the image onward. The first pupil clips the bundle, but repeating that pupil exactly causes no additional vignetting in the ideal model.": {
+   "ja": "直径 6 mm の管に対物・リレー・接眼を並べる。各 4f 段が像を次へ渡す。最初の瞳で光束は切られるが、同じ瞳を正確に繰り返す理想模型では段数を増しても追加のケラレはない。",
+   "zh": "An objective, relays and eyepiece fit in a 6 mm tube. Each 4f stage hands the image onward. The first pupil clips the bundle, but repeating that pupil exactly causes no additional vignetting in the ideal model.",
+   "tw": "An objective, relays and eyepiece fit in a 6 mm tube. Each 4f stage hands the image onward. The first pupil clips the bundle, but repeating that pupil exactly causes no additional vignetting in the ideal model.",
+   "ko": "An objective, relays and eyepiece fit in a 6 mm tube. Each 4f stage hands the image onward. The first pupil clips the bundle, but repeating that pupil exactly causes no additional vignetting in the ideal model.",
+   "de": "An objective, relays and eyepiece fit in a 6 mm tube. Each 4f stage hands the image onward. The first pupil clips the bundle, but repeating that pupil exactly causes no additional vignetting in the ideal model.",
+   "hi": "An objective, relays and eyepiece fit in a 6 mm tube. Each 4f stage hands the image onward. The first pupil clips the bundle, but repeating that pupil exactly causes no additional vignetting in the ideal model.",
+   "fr": "An objective, relays and eyepiece fit in a 6 mm tube. Each 4f stage hands the image onward. The first pupil clips the bundle, but repeating that pupil exactly causes no additional vignetting in the ideal model."
+  },
+  "transmission through repeated identical ideal 4f pupils": {
+   "ja": "同じ瞳を繰り返す理想 4f 段の透過率",
+   "zh": "transmission through repeated identical ideal 4f pupils",
+   "tw": "transmission through repeated identical ideal 4f pupils",
+   "ko": "transmission through repeated identical ideal 4f pupils",
+   "de": "transmission through repeated identical ideal 4f pupils",
+   "hi": "transmission through repeated identical ideal 4f pupils",
+   "fr": "transmission through repeated identical ideal 4f pupils"
+  },
+  "many-ray transmission vs closed aperture-area form": {
+   "ja": "多数光線の透過率と口径面積の閉形式",
+   "zh": "many-ray transmission vs closed aperture-area form",
+   "tw": "many-ray transmission vs closed aperture-area form",
+   "ko": "many-ray transmission vs closed aperture-area form",
+   "de": "many-ray transmission vs closed aperture-area form",
+   "hi": "many-ray transmission vs closed aperture-area form",
+   "fr": "many-ray transmission vs closed aperture-area form"
+  },
+  "50% period: synthetic fibre image vs circular-aperture form": {
+   "ja": "合成ファイバ像と円開口閉形式の 50% 周期",
+   "zh": "50% period: synthetic fibre image vs circular-aperture form",
+   "tw": "50% period: synthetic fibre image vs circular-aperture form",
+   "ko": "50% period: synthetic fibre image vs circular-aperture form",
+   "de": "50% period: synthetic fibre image vs circular-aperture form",
+   "hi": "50% period: synthetic fibre image vs circular-aperture form",
+   "fr": "50% period: synthetic fibre image vs circular-aperture form"
+  },
+  "within one fibre pitch": {
+   "ja": "ファイバ間隔以内",
+   "zh": "within one fibre pitch",
+   "tw": "within one fibre pitch",
+   "ko": "within one fibre pitch",
+   "de": "within one fibre pitch",
+   "hi": "within one fibre pitch",
+   "fr": "within one fibre pitch"
+  },
+  "Does geometric transmission fall again whenever an identical ideal 4f relay is added?": {
+   "ja": "同じ理想 4f リレーを足すたび、幾何学的な透過率はさらに下がる?",
+   "zh": "Does geometric transmission fall again whenever an identical ideal 4f relay is added?",
+   "tw": "Does geometric transmission fall again whenever an identical ideal 4f relay is added?",
+   "ko": "Does geometric transmission fall again whenever an identical ideal 4f relay is added?",
+   "de": "Does geometric transmission fall again whenever an identical ideal 4f relay is added?",
+   "hi": "Does geometric transmission fall again whenever an identical ideal 4f relay is added?",
+   "fr": "Does geometric transmission fall again whenever an identical ideal 4f relay is added?"
+  },
+  "falls at every stage": {
+   "ja": "段ごとに下がる",
+   "zh": "falls at every stage",
+   "tw": "falls at every stage",
+   "ko": "falls at every stage",
+   "de": "falls at every stage",
+   "hi": "falls at every stage",
+   "fr": "falls at every stage"
+  },
+  "stays constant after the first pupil": {
+   "ja": "最初の瞳以後は一定",
+   "zh": "stays constant after the first pupil",
+   "tw": "stays constant after the first pupil",
+   "ko": "stays constant after the first pupil",
+   "de": "stays constant after the first pupil",
+   "hi": "stays constant after the first pupil",
+   "fr": "stays constant after the first pupil"
+  },
+  "A 4f stage returns the same bundle to the same pupil, so rays passing the first pupil pass later ideal stages.": {
+   "ja": "4f 段は同じ光束を同じ瞳へ戻すため、理想模型では最初に通った光線は後段も通る。",
+   "zh": "A 4f stage returns the same bundle to the same pupil, so rays passing the first pupil pass later ideal stages.",
+   "tw": "A 4f stage returns the same bundle to the same pupil, so rays passing the first pupil pass later ideal stages.",
+   "ko": "A 4f stage returns the same bundle to the same pupil, so rays passing the first pupil pass later ideal stages.",
+   "de": "A 4f stage returns the same bundle to the same pupil, so rays passing the first pupil pass later ideal stages.",
+   "hi": "A 4f stage returns the same bundle to the same pupil, so rays passing the first pupil pass later ideal stages.",
+   "fr": "A 4f stage returns the same bundle to the same pupil, so rays passing the first pupil pass later ideal stages."
+  },
+  "Real reflection loss, decentring and aberrations compound with stage count but are omitted here.": {
+   "ja": "実機の反射損失、芯ずれ、収差は段数とともに損失を増やすが、ここでは省いた。",
+   "zh": "Real reflection loss, decentring and aberrations compound with stage count but are omitted here.",
+   "tw": "Real reflection loss, decentring and aberrations compound with stage count but are omitted here.",
+   "ko": "Real reflection loss, decentring and aberrations compound with stage count but are omitted here.",
+   "de": "Real reflection loss, decentring and aberrations compound with stage count but are omitted here.",
+   "hi": "Real reflection loss, decentring and aberrations compound with stage count but are omitted here.",
+   "fr": "Real reflection loss, decentring and aberrations compound with stage count but are omitted here."
+  },
+  "The Lagrange invariant is unchanged at every surface. In a narrow tube, widening the field reduces the angular range that passes, so apertures clip marginal rays. The many-ray difference is finite-grid error from counting area on a 401×401 grid.": {
+   "ja": "ラグランジュ不変量は各面で同じ。細い管で視野を広げれば、通せる角度幅が減り、周辺光線が口径に切られる。多数光線との差は有限な 401×401 格子で面積を数えた離散化誤差。",
+   "zh": "The Lagrange invariant is unchanged at every surface. In a narrow tube, widening the field reduces the angular range that passes, so apertures clip marginal rays. The many-ray difference is finite-grid error from counting area on a 401×401 grid.",
+   "tw": "The Lagrange invariant is unchanged at every surface. In a narrow tube, widening the field reduces the angular range that passes, so apertures clip marginal rays. The many-ray difference is finite-grid error from counting area on a 401×401 grid.",
+   "ko": "The Lagrange invariant is unchanged at every surface. In a narrow tube, widening the field reduces the angular range that passes, so apertures clip marginal rays. The many-ray difference is finite-grid error from counting area on a 401×401 grid.",
+   "de": "The Lagrange invariant is unchanged at every surface. In a narrow tube, widening the field reduces the angular range that passes, so apertures clip marginal rays. The many-ray difference is finite-grid error from counting area on a 401×401 grid.",
+   "hi": "The Lagrange invariant is unchanged at every surface. In a narrow tube, widening the field reduces the angular range that passes, so apertures clip marginal rays. The many-ray difference is finite-grid error from counting area on a 401×401 grid.",
+   "fr": "The Lagrange invariant is unchanged at every surface. In a narrow tube, widening the field reduces the angular range that passes, so apertures clip marginal rays. The many-ray difference is finite-grid error from counting area on a 401×401 grid."
+  },
+  "finite-grid versus closed-form difference": {
+   "ja": "有限格子と閉形式の差",
+   "zh": "finite-grid versus closed-form difference",
+   "tw": "finite-grid versus closed-form difference",
+   "ko": "finite-grid versus closed-form difference",
+   "de": "finite-grid versus closed-form difference",
+   "hi": "finite-grid versus closed-form difference",
+   "fr": "finite-grid versus closed-form difference"
+  },
+  "closed aperture-area form": {
+   "ja": "口径面積の閉形式",
+   "zh": "closed aperture-area form",
+   "tw": "closed aperture-area form",
+   "ko": "closed aperture-area form",
+   "de": "closed aperture-area form",
+   "hi": "closed aperture-area form",
+   "fr": "closed aperture-area form"
+  },
+  "measured 50% period": {
+   "ja": "測った 50% 周期",
+   "zh": "measured 50% period",
+   "tw": "measured 50% period",
+   "ko": "measured 50% period",
+   "de": "measured 50% period",
+   "hi": "measured 50% period",
+   "fr": "measured 50% period"
+  },
+  "MTF measured from the synthetic image": {
+   "ja": "合成像から測った MTF",
+   "zh": "MTF measured from the synthetic image",
+   "tw": "MTF measured from the synthetic image",
+   "ko": "MTF measured from the synthetic image",
+   "de": "MTF measured from the synthetic image",
+   "hi": "MTF measured from the synthetic image",
+   "fr": "MTF measured from the synthetic image"
+  },
+  "image integrated by circular cores and reconstructed on the honeycomb": {
+   "ja": "円形コアで積分し、ハニカムへ再構成した像",
+   "zh": "image integrated by circular cores and reconstructed on the honeycomb",
+   "tw": "image integrated by circular cores and reconstructed on the honeycomb",
+   "ko": "image integrated by circular cores and reconstructed on the honeycomb",
+   "de": "image integrated by circular cores and reconstructed on the honeycomb",
+   "hi": "image integrated by circular cores and reconstructed on the honeycomb",
+   "fr": "image integrated by circular cores and reconstructed on the honeycomb"
+  },
+  "sine period": {
+   "ja": "正弦周期",
+   "zh": "sine period",
+   "tw": "sine period",
+   "ko": "sine period",
+   "de": "sine period",
+   "hi": "sine period",
+   "fr": "sine period"
+  },
+  "A continuous sine chart is area-integrated over circular cores of diameter 0.8p, given fixed noise, and painted into hexagonal cells. Its phase is offset; MTF is measured from a one-point DFT at the true frequency after a row-wise Hann window on the pitch/8 reconstruction.": {
+   "ja": "連続正弦チャートを直径 0.8p の円形コアで面積積分し、固定雑音を加えて六角セルへ塗り戻す。位相を格子からずらし、pitch/8 の再構成像に行別 Hann 窓を掛け、真の周波数の DFT 振幅から MTF を測る。",
+   "zh": "A continuous sine chart is area-integrated over circular cores of diameter 0.8p, given fixed noise, and painted into hexagonal cells. Its phase is offset; MTF is measured from a one-point DFT at the true frequency after a row-wise Hann window on the pitch/8 reconstruction.",
+   "tw": "A continuous sine chart is area-integrated over circular cores of diameter 0.8p, given fixed noise, and painted into hexagonal cells. Its phase is offset; MTF is measured from a one-point DFT at the true frequency after a row-wise Hann window on the pitch/8 reconstruction.",
+   "ko": "A continuous sine chart is area-integrated over circular cores of diameter 0.8p, given fixed noise, and painted into hexagonal cells. Its phase is offset; MTF is measured from a one-point DFT at the true frequency after a row-wise Hann window on the pitch/8 reconstruction.",
+   "de": "A continuous sine chart is area-integrated over circular cores of diameter 0.8p, given fixed noise, and painted into hexagonal cells. Its phase is offset; MTF is measured from a one-point DFT at the true frequency after a row-wise Hann window on the pitch/8 reconstruction.",
+   "hi": "A continuous sine chart is area-integrated over circular cores of diameter 0.8p, given fixed noise, and painted into hexagonal cells. Its phase is offset; MTF is measured from a one-point DFT at the true frequency after a row-wise Hann window on the pitch/8 reconstruction.",
+   "fr": "A continuous sine chart is area-integrated over circular cores of diameter 0.8p, given fixed noise, and painted into hexagonal cells. Its phase is offset; MTF is measured from a one-point DFT at the true frequency after a row-wise Hann window on the pitch/8 reconstruction."
+  },
+  "approximate-form 50% period": {
+   "ja": "近似式の 50% 周期",
+   "zh": "approximate-form 50% period",
+   "tw": "approximate-form 50% period",
+   "ko": "approximate-form 50% period",
+   "de": "approximate-form 50% period",
+   "hi": "approximate-form 50% period",
+   "fr": "approximate-form 50% period"
+  },
+  "jinc approximation for core and equal-area cell": {
+   "ja": "円開口と等面積セルの jinc 近似",
+   "zh": "jinc approximation for core and equal-area cell",
+   "tw": "jinc approximation for core and equal-area cell",
+   "ko": "jinc approximation for core and equal-area cell",
+   "de": "jinc approximation for core and equal-area cell",
+   "hi": "jinc approximation for core and equal-area cell",
+   "fr": "jinc approximation for core and equal-area cell"
+  },
+  "equal-area-circle approximation reproduces aliasing near Nyquist": {
+   "ja": "等面積円の近似が Nyquist 付近の折り返しも再現",
+   "zh": "equal-area-circle approximation reproduces aliasing near Nyquist",
+   "tw": "equal-area-circle approximation reproduces aliasing near Nyquist",
+   "ko": "equal-area-circle approximation reproduces aliasing near Nyquist",
+   "de": "equal-area-circle approximation reproduces aliasing near Nyquist",
+   "hi": "equal-area-circle approximation reproduces aliasing near Nyquist",
+   "fr": "equal-area-circle approximation reproduces aliasing near Nyquist"
+  },
+  "includes hex-cell shape and aliasing": {
+   "ja": "六角セル形状と折り返しを含む",
+   "zh": "includes hex-cell shape and aliasing",
+   "tw": "includes hex-cell shape and aliasing",
+   "ko": "includes hex-cell shape and aliasing",
+   "de": "includes hex-cell shape and aliasing",
+   "hi": "includes hex-cell shape and aliasing",
+   "fr": "includes hex-cell shape and aliasing"
+  },
+  "not included; 50% period difference 3.21 µm": {
+   "ja": "含まない。50% 周期差 3.21 µm",
+   "zh": "not included; 50% period difference 3.21 µm",
+   "tw": "not included; 50% period difference 3.21 µm",
+   "ko": "not included; 50% period difference 3.21 µm",
+   "de": "not included; 50% period difference 3.21 µm",
+   "hi": "not included; 50% period difference 3.21 µm",
+   "fr": "not included; 50% period difference 3.21 µm"
+  },
+  "Circular-core averaging and the hexagonal grid's Nyquist limit remove detail. The approximation multiplies the core jinc by the jinc of a circle equal in area to one hexagonal cell; near Nyquist it misses cell shape and aliasing.": {
+   "ja": "円形コアの平均化と六角格子の Nyquist 限界が細部を落とす。近似式はコアの jinc と、六角セルと同面積の円の jinc の積。Nyquist 付近の差はセル形状と折り返しを円近似が表せない限界。",
+   "zh": "Circular-core averaging and the hexagonal grid's Nyquist limit remove detail. The approximation multiplies the core jinc by the jinc of a circle equal in area to one hexagonal cell; near Nyquist it misses cell shape and aliasing.",
+   "tw": "Circular-core averaging and the hexagonal grid's Nyquist limit remove detail. The approximation multiplies the core jinc by the jinc of a circle equal in area to one hexagonal cell; near Nyquist it misses cell shape and aliasing.",
+   "ko": "Circular-core averaging and the hexagonal grid's Nyquist limit remove detail. The approximation multiplies the core jinc by the jinc of a circle equal in area to one hexagonal cell; near Nyquist it misses cell shape and aliasing.",
+   "de": "Circular-core averaging and the hexagonal grid's Nyquist limit remove detail. The approximation multiplies the core jinc by the jinc of a circle equal in area to one hexagonal cell; near Nyquist it misses cell shape and aliasing.",
+   "hi": "Circular-core averaging and the hexagonal grid's Nyquist limit remove detail. The approximation multiplies the core jinc by the jinc of a circle equal in area to one hexagonal cell; near Nyquist it misses cell shape and aliasing.",
+   "fr": "Circular-core averaging and the hexagonal grid's Nyquist limit remove detail. The approximation multiplies the core jinc by the jinc of a circle equal in area to one hexagonal cell; near Nyquist it misses cell shape and aliasing."
+  },
+  "MTF ≈ jinc(core) × jinc(equal-area cell)": {
+   "ja": "MTF ≈ jinc(core) × jinc(equal-area cell)",
+   "zh": "MTF ≈ jinc(core) × jinc(equal-area cell)",
+   "tw": "MTF ≈ jinc(core) × jinc(equal-area cell)",
+   "ko": "MTF ≈ jinc(core) × jinc(equal-area cell)",
+   "de": "MTF ≈ jinc(core) × jinc(equal-area cell)",
+   "hi": "MTF ≈ jinc(core) × jinc(equal-area cell)",
+   "fr": "MTF ≈ jinc(core) × jinc(equal-area cell)"
+  }
+ }
+}

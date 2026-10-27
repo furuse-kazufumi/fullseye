@@ -16,6 +16,14 @@ import studio
 _OPS3 = ["sobel_amp", "gaussian", "invert"]
 
 
+@pytest.fixture(autouse=True)
+def _restore_ui_language():
+    """``studio._UI_LANG["code"] = "ja"`` を直接書く試験があるので、終わりに元へ戻す(プロセス全体の状態)。"""
+    prev = studio._UI_LANG["code"]
+    yield
+    studio._UI_LANG["code"] = prev
+
+
 def _counting(monkeypatch, names):
     """``ops.RT`` の各 op を呼び出し回数つきの包みに差し替える(本物の計算はそのまま)。"""
     counts = {n: 0 for n in names}

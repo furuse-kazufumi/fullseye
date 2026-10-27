@@ -54,6 +54,41 @@ try:
 except Exception:  # pragma: no cover
     _HAS_CV = False
 
+import numpy_twins as _nt
+from backend_safe import missing_dependency as _missing_dep, require_dependency as _require_dep
+
+#: ★**scikit-image が無いときは、同じ答えを返す numpy の双子か、止まる例外か、どちらか**(2026-10-25)。
+#: それまでは ``_HAS_SK`` / ``_HAS_CV`` が偽だと別の式(面積率、矩形の構造要素、画像平均のしきい値、
+#: 恒等写像 …)に黙って落ちていた —— min 構成(numpy + scipy)で image / region 入力の登録 op 488 本を走らせると
+#: **89 本が例外なく走って別の値を返した**(``tools/check_fallback_parity.py`` で再現できる)。
+#: bit 一致で書けるものは ``numpy_twins`` に写し(門: ``tests/test_numpy_twins_2026_10_25.py``)、書けないものは
+#: ``_require_dep`` で :class:`backend_safe.MissingDependencyError` を投げる(門: ``tests/test_fallback_parity_2026_10_25.py``)。
+_disk = skmorph.disk if _HAS_SK else _nt.disk
+_threshold_otsu = skfilters.threshold_otsu if _HAS_SK else _nt.threshold_otsu
+_hysteresis_threshold = skfilters.apply_hysteresis_threshold if _HAS_SK else _nt.apply_hysteresis_threshold
+_skeletonize = skmorph.skeletonize if _HAS_SK else _nt.skeletonize
+_thin = skmorph.thin if _HAS_SK else _nt.thin
+_remove_small_holes = skmorph.remove_small_holes if _HAS_SK else _nt.remove_small_holes
+_euler_number = skmeasure.euler_number if _HAS_SK else _nt.euler_number
+_moments_central = skmeasure.moments_central if _HAS_SK else _nt.moments_central
+_moments_normalized = skmeasure.moments_normalized if _HAS_SK else _nt.moments_normalized
+_moments_hu = skmeasure.moments_hu if _HAS_SK else _nt.moments_hu
+_graycomatrix = skfeat.graycomatrix if _HAS_SK else _nt.graycomatrix
+_graycoprops = skfeat.graycoprops if _HAS_SK else _nt.graycoprops
+_corner_harris = skfeat.corner_harris if _HAS_SK else _nt.corner_harris
+_corner_foerstner = skfeat.corner_foerstner if _HAS_SK else _nt.corner_foerstner
+
+
+def _region_props(mask):
+    """``skimage.measure.regionprops(mask.astype(int))[0]``、無ければ同じ属性を持つ numpy の双子。
+
+    双子は ``area_convex``(凸包)だけ持たない —— ``convex_hull_image`` の格子点判定は Cython で bit 一致の
+    numpy 版が無いので、そこを読む op(``convexity``)は :class:`backend_safe.MissingDependencyError` で止まる。
+    """
+    if _HAS_SK:
+        return skmeasure.regionprops(np.asarray(mask).astype(int))[0]
+    return _nt.RegionTwin(mask)
+
 
 # --------------------------------------------------------------------------- #
 # small shared helpers                                                        #
@@ -494,8 +529,8 @@ def _sh_graymorph(p):
     op, shape = p["op"], p.get("shape", "rect")
 
     def _fp(a):
-        if shape == "disk" and _HAS_SK:
-            return skmorph.disk(_rad(a))
+        if shape == "disk":
+            return _disk(_rad(a))
         return np.ones((_k(a), _k(a)))
 
     def fn(v, a, b):
@@ -589,15 +624,11 @@ def _sh_corner(p):
         s = 0.5 + 2.0 * a
         if kind == "harris_binomial":                # Harris on a binomially pre-smoothed image
             xb = ndimage.gaussian_filter(x, 0.5 + 1.5 * b)
-            if _HAS_SK:
-                return signed01(skfeat.corner_harris(xb, sigma=s))
-            gx, gy = ndimage.sobel(xb, 1), ndimage.sobel(xb, 0)
-            axx = ndimage.gaussian_filter(gx * gx, s)
-            ayy = ndimage.gaussian_filter(gy * gy, s)
-            axy = ndimage.gaussian_filter(gx * gy, s)
-            return _norm(axx * ayy - axy * axy - 0.04 * (axx + ayy) ** 2)
-        if kind == "foerstner" and _HAS_SK:
-            w, q = skfeat.corner_foerstner(x, sigma=s)
+            # 2026-10-25 まで skimage 無しでは k=0.04・Sobel 直積・``_norm`` という**別の式**に落ちていた
+            # (coins で最大差 0.999)。双子 ``numpy_twins.corner_harris`` は同じ式・同じ丸め。
+            return signed01(_corner_harris(xb, sigma=s))
+        if kind == "foerstner":
+            w, q = _corner_foerstner(x, sigma=s)
             return _norm(np.nan_to_num(w) * np.nan_to_num(q))
         raise ValueError(kind)
     return fn
@@ -610,12 +641,16 @@ def _sh_hough(p):
     def fn(v, a, b):
         x = np.asarray(v, np.float64)
         edges = _norm(np.hypot(ndimage.sobel(x, 1), ndimage.sobel(x, 0))) > (0.2 + 0.4 * a)
-        if kind == "line" and _HAS_SK:
+        if kind == "line":
+            _require_dep(_HAS_SK, "skimage", "Hough line accumulator = skimage.transform.hough_line (Cython)")
+            # ``np.resize`` は**タイル貼り**であってリサンプルではない —— cv2 が無いときの旧 fallback は
+            # 累積器を繰り返し並べた別の画像を返していた。
+            _require_dep(_HAS_CV, "cv2", "accumulator resize = cv2.resize (bilinear, fixed-point)")
             h, _, _ = sktrans.hough_line(edges)
             acc = _norm(h.astype(np.float64))
-            return cv2.resize(acc, (x.shape[1], x.shape[0])).astype(np.float64) if _HAS_CV \
-                else np.resize(acc, x.shape)
-        if kind == "circle" and _HAS_SK:
+            return cv2.resize(acc, (x.shape[1], x.shape[0])).astype(np.float64)
+        if kind == "circle":
+            _require_dep(_HAS_SK, "skimage", "Hough circle accumulator = skimage.transform.hough_circle (Cython)")
             # 2026-09-08: radius range is now wired to `b`. It used to be a
             # hard-coded 4..19 with `b` genuinely unused -- feeding it a real
             # photo of coins (radius 19..31 px) returned a meaningless
@@ -692,7 +727,8 @@ def _sh_diffusion(p):
                 ce, cw = np.exp(-(de / K) ** 2), np.exp(-(dw / K) ** 2)
                 y = y + 0.2 * (cn * dn + cs * ds + ce * de + cw * dw)
             return np.clip(y, 0, 1)
-        if kind == "bilateral" and _HAS_CV:
+        if kind == "bilateral":
+            _require_dep(_HAS_CV, "cv2", "cv2.bilateralFilter")
             return cv2.bilateralFilter(x.astype(np.float32), 5, 0.05 + 0.4 * b,
                                        1 + 3 * a).astype(np.float64)
         raise ValueError(kind)
@@ -738,7 +774,8 @@ def _sh_texture(p):
             m2 = ndimage.uniform_filter(x0 * x0, k)
             var = np.maximum(m2 - m * m, 0.0)
             return _norm(np.sqrt(var) if kind == "deviation" else var)
-        if kind == "entropy" and _HAS_SK:
+        if kind == "entropy":
+            _require_dep(_HAS_SK, "skimage", "local entropy = skimage.filters.rank.entropy (Cython rank filter)")
             return _norm(skfilters.rank.entropy(_u8(x), skmorph.disk(_rad(a))).astype(np.float64))
         if kind == "gabor":
             # 向きの規約: a=0 (θ=0) が **縦縞**、a=0.5 (θ=90°) が横縞に応答する。
@@ -814,7 +851,8 @@ def _sh_geom(p):
                           [np.sin(ang), np.cos(ang)]])
             c = np.array(x.shape) / 2
             return np.clip(ndimage.affine_transform(x, M, offset=c - M @ c, mode="reflect"), 0, 1)
-        if kind == "polar" and _HAS_CV:
+        if kind == "polar":
+            _require_dep(_HAS_CV, "cv2", "cv2.warpPolar (bilinear, fixed-point)")
             h, w = x.shape
             # Zero-init the destination: cv2.warpPolar never writes pixels whose
             # source maps outside the image, so a fresh buffer would leak stale
@@ -832,7 +870,8 @@ def _sh_geom(p):
             out = cv2.warpPolar(x.astype(np.float32), (w, h), (w / 2, h / 2),
                                 min(h, w) / 2, cv2.WARP_POLAR_LINEAR, dst)
             return np.clip(np.asarray(out, np.float64), 0, 1)
-        if kind == "polar_inv" and _HAS_CV:          # inverse polar->Cartesian (polar_trans_image_inv)
+        if kind == "polar_inv":                      # inverse polar->Cartesian (polar_trans_image_inv)
+            _require_dep(_HAS_CV, "cv2", "cv2.warpPolar + WARP_INVERSE_MAP (bilinear, fixed-point)")
             h, w = x.shape
             # Cartesian corners fall outside the polar disc and are never written;
             # zero-init for determinism (see the forward branch above).
@@ -864,7 +903,8 @@ def _sh_geom(p):
             rr = np.hypot(xx + 0.5 - w / 2, yy + 0.5 - h / 2)
             out = np.where(rr <= radius - 1.0, out, 0.0)
             return np.clip(out, 0, 1)
-        if kind == "projective" and _HAS_CV:         # perspective warp (projective_trans_image)
+        if kind == "projective":                     # perspective warp (projective_trans_image)
+            _require_dep(_HAS_CV, "cv2", "cv2.getPerspectiveTransform + cv2.warpPerspective")
             h, w = x.shape
             d = 0.06 + 0.12 * a
             src = np.float32([[0, 0], [w, 0], [w, h], [0, h]])
@@ -895,9 +935,10 @@ def _sh_threshold(p):
         if method == "fixed":
             return ((x > a) & (x < (a + 0.5 + 0.5 * b))).astype(np.float64)
         if method == "otsu":
-            return (x > skfilters.threshold_otsu(x)).astype(np.float64) if _HAS_SK else \
-                   (x > x.mean()).astype(np.float64)
+            # 2026-10-25 まで skimage 無しでは**画像平均**をしきい値にしていた(別の答え)。双子は同じ 256 ビンの Otsu。
+            return (x > _threshold_otsu(x)).astype(np.float64)
         if method == "sauvola":
+            _require_dep(_HAS_SK, "skimage", "skimage.filters.threshold_sauvola (integral-image mean/std, Cython)")
             return (x > skfilters.threshold_sauvola(x, window_size=2 * int(a * 6) + 3)).astype(np.float64)
         if method == "dyn":
             return (x - ndimage.uniform_filter(x, _k(a))
@@ -905,8 +946,8 @@ def _sh_threshold(p):
         if method == "local_gauss":
             return (x - ndimage.gaussian_filter(x, 1 + 3 * a)
                     > (b - 0.5) * 0.3 + _FLAT_TOL).astype(np.float64)
-        if method == "hysteresis" and _HAS_SK:
-            return skfilters.apply_hysteresis_threshold(x, 0.2 + 0.3 * a, 0.5 + 0.3 * b).astype(np.float64)
+        if method == "hysteresis":
+            return _hysteresis_threshold(x, 0.2 + 0.3 * a, 0.5 + 0.3 * b).astype(np.float64)
         if method == "dual":                         # signed threshold: |x-0.5| > t (dual_threshold)
             return (np.abs(x - 0.5) > (0.1 + 0.35 * a)).astype(np.float64)
         raise ValueError(method)
@@ -918,24 +959,29 @@ def _sh_segment(p):
 
     def fn(v, a, b):
         x = np.clip(np.asarray(v, np.float64), 0, 1)
-        if kind == "sk_canny" and _HAS_SK:
+        if kind == "sk_canny":
+            _require_dep(_HAS_SK, "skimage", "skimage.feature.canny (non-maximum suppression + hysteresis)")
             return skfeat.canny(x, sigma=0.5 + 2 * a).astype(np.float64)
         if kind == "local_max":
             return ((x >= ndimage.maximum_filter(x, _k(a))) & (x > 0.3 + 0.4 * b)).astype(np.float64)
-        if kind == "watershed" and _HAS_SK:
+        if kind == "watershed":
+            _require_dep(_HAS_SK, "skimage", "skimage.segmentation.watershed (priority flood, Cython)")
             grad = _norm(np.hypot(ndimage.sobel(x, 1), ndimage.sobel(x, 0)))
             markers = ndimage.label(x < (0.2 + 0.3 * a))[0]
             return skseg.find_boundaries(skseg.watershed(grad, markers)).astype(np.float64)
         if kind == "regiongrow":
             seed = x > (0.5 + 0.3 * a)
             return ndimage.binary_dilation(seed, iterations=1 + int(b * 4)).astype(np.float64)
-        if kind == "mser" and _HAS_CV:               # maximally stable extremal regions (segment_image_mser)
+        if kind == "mser":                           # maximally stable extremal regions (segment_image_mser)
+            _require_dep(_HAS_CV, "cv2", "cv2.MSER_create")
+            _require_dep(_HAS_SK, "skimage", "region boundaries = skimage.segmentation.find_boundaries "
+                                             "(without it the filled regions were returned instead)")
             mser = cv2.MSER_create(delta=int(3 + 8 * a))
             regs, _ = mser.detectRegions(_u8(x))
             out = np.zeros_like(x, np.float64)
             for pts in regs:
                 out[pts[:, 1], pts[:, 0]] = 1.0
-            return skseg.find_boundaries(out > 0.5).astype(np.float64) if _HAS_SK else out
+            return skseg.find_boundaries(out > 0.5).astype(np.float64)
         if kind == "zero_crossing":                  # Laplacian sign-changes (zero_crossing)
             lap = _log_dc_free(x, 0.5 + 2.0 * a)
             s = np.sign(lap)
@@ -954,8 +1000,8 @@ def _sh_binmorph(p):
     op, shape = p["op"], p.get("shape", "disk")
 
     def _fp(a):
-        if shape == "disk" and _HAS_SK:
-            return skmorph.disk(_rad(a))
+        if shape == "disk":
+            return _disk(_rad(a))
         if shape == "rect":
             return np.ones((_k(a), _k(a)))
         return ndimage.generate_binary_structure(2, 1)
@@ -989,11 +1035,12 @@ def _sh_region_trans(p):
             return ndimage.binary_fill_holes(m).astype(np.float64)
         if kind == "boundary":
             return (m.astype(np.float64) - ndimage.binary_erosion(m).astype(np.float64)).clip(0, 1)
-        if kind == "skeleton" and _HAS_SK:
-            return skmorph.skeletonize(m).astype(np.float64)
-        if kind == "thin" and _HAS_SK:
-            return skmorph.thin(m).astype(np.float64)
-        if kind == "convex" and _HAS_SK:
+        if kind == "skeleton":
+            return _skeletonize(m).astype(np.float64)
+        if kind == "thin":
+            return _thin(m).astype(np.float64)
+        if kind == "convex":
+            _require_dep(_HAS_SK, "skimage", "skimage.morphology.convex_hull_image (grid_points_in_poly, Cython)")
             return skmorph.convex_hull_image(m).astype(np.float64)
         if kind == "remove_small":
             lab, n = ndimage.label(m)
@@ -1003,8 +1050,8 @@ def _sh_region_trans(p):
             thr = int(16 + a * 200)
             keep = np.isin(lab, [i for i, s in enumerate(sizes, 1) if s >= thr])
             return keep.astype(np.float64)
-        if kind == "remove_holes" and _HAS_SK:
-            return skmorph.remove_small_holes(m, area_threshold=int(16 + a * 200)).astype(np.float64)
+        if kind == "remove_holes":
+            return _remove_small_holes(m, area_threshold=int(16 + a * 200)).astype(np.float64)
         if kind == "select_largest":
             big, _, n = _largest_label(m)
             return big.astype(np.float64) if big is not None else np.zeros_like(m, np.float64)
@@ -1017,7 +1064,7 @@ def _sh_region_trans(p):
                 out[ys.min():ys.max() + 1, xs.min():xs.max() + 1] = 1.0
             return out
         if kind == "pruning":                        # remove skeleton spurs (pruning)
-            sk = skmorph.skeletonize(m) if _HAS_SK else m
+            sk = _skeletonize(m)
             for _ in range(1 + int(a * 4)):
                 nb = ndimage.convolve(sk.astype(int), np.ones((3, 3)), mode="constant") - sk.astype(int)
                 sk = sk & ~(sk & (nb <= 1))
@@ -1025,7 +1072,7 @@ def _sh_region_trans(p):
         if kind == "closest_point_transform":        # distance to the nearest region point (EDT of complement)
             return _norm(ndimage.distance_transform_edt(~m))
         if kind == "junctions_skeleton":             # skeleton branch points (>=3 neighbours)
-            sk = skmorph.skeletonize(m) if _HAS_SK else m
+            sk = _skeletonize(m)
             nb = ndimage.convolve(sk.astype(int), np.ones((3, 3)), mode="constant") - sk.astype(int)
             return (sk & (nb >= 3)).astype(np.float64)
         raise ValueError(kind)
@@ -1074,9 +1121,9 @@ def _sh_region_feat(p):
             if metric == "eccentricity":
                 return np.array([1.0, 1.0, 0.0])
             return np.float64(0.0)
-        if not _HAS_SK:
-            return np.float64(float(big.sum()) / big.size)
-        pr = skmeasure.regionprops(big.astype(int))[0]
+        # 2026-10-25 まで skimage 無しでは**ここで面積率を返していた** —— 23 本の領域特徴が全部同じ数(coins で
+        # 0.0844)になり、例外は出なかった。いまは regionprops と同じ属性を numpy で持つ双子に替わる。
+        pr = _region_props(big)
         per = pr.perimeter or 1.0
         if metric == "circularity":
             d, F = _centre_distances(big)
@@ -1117,7 +1164,7 @@ def _sh_region_feat(p):
             # 返していたので、**双子どうしで 5.6 倍食い違っていた**。
             return np.float64(_max_chord(big))
         if metric == "euler":
-            return np.float64(skmeasure.euler_number(m))
+            return np.float64(_euler_number(m))
         if metric == "anisometry":
             # ★**HALCON の `elliptic_axis` は (Ra, Rb, Phi) を返す。** ここが返して
             # いたのは Anisometry(= Ra/Rb、**別の演算子 `eccentricity` の出力**)を
@@ -1142,8 +1189,8 @@ def _sh_region_feat(p):
             minr, minc, maxr, maxc = pr.bbox
             return np.float64((maxr - minr) / max(maxc - minc, 1))
         if metric.startswith(("moment", "hu")):
-            nu = skmeasure.moments_normalized(skmeasure.moments_central(big.astype(float)))
-            hu = skmeasure.moments_hu(nu)
+            nu = _moments_normalized(_moments_central(big.astype(float)))
+            hu = _moments_hu(nu)
             table = {
                 "moment2": abs(nu[2, 0] + nu[0, 2]),
                 "moment3": abs(nu[3, 0] + nu[0, 3]),
@@ -1295,11 +1342,13 @@ def _sh_xld(p):
             # find_contours yields sub-pixel traced loops; the Moore tracer is
             # the numpy-only fallback (trace order, pixel resolution).
             m = _bin(v)
-            if _HAS_SK:
-                pm = np.pad(m.astype(np.float64), 1)     # close border-touching loops
-                cs = [c - 1.0 for c in skmeasure.find_contours(pm, 0.5) if len(c) >= 3]
-            else:
-                cs = [c for c in _moore_boundaries(m) if len(c) >= 3]
+            # ★2026-10-25: skimage 無しの Moore 追跡は**画素解像度の別の輪郭**(点数も座標も違う)だった。
+            #   登録 op の答えとしては返さない(fail-closed)。追跡そのものは明示的に
+            #   ``backends_auto._moore_boundaries(mask)`` を呼べば使える(近似であることを名乗った別経路)。
+            _require_dep(_HAS_SK, "skimage", "sub-pixel boundary = skimage.measure.find_contours (marching squares); "
+                                             "the pixel-resolution Moore tracer is backends_auto._moore_boundaries()")
+            pm = np.pad(m.astype(np.float64), 1)     # close border-touching loops
+            cs = [c - 1.0 for c in skmeasure.find_contours(pm, 0.5) if len(c) >= 3]
             return {"shape": m.shape, "cs": cs}
         if kind == "edges_sub_pix":
             _require_finite_image(v, "edges_sub_pix")
@@ -1323,17 +1372,20 @@ def _sh_xld(p):
                     pts = np.stack([ys, xs], 1).astype(np.float64)
                     cs.append(subpixel_refine_edges(pts, m, ny, nx))
             return {"shape": x.shape, "cs": cs}
-        if kind == "lines_gauss" and _HAS_SK:
+        if kind == "lines_gauss":
+            _require_dep(_HAS_SK, "skimage", "ridge filter = skimage.filters.frangi")
             x = np.asarray(v, np.float64)
             r = _norm(skfilters.frangi(x, sigmas=range(1, 4)))
             lab, n = ndimage.label(r > (0.1 + 0.4 * a), structure=np.ones((3, 3)))
             cs = [np.stack(np.where(lab == i), 1).astype(np.float64) for i in range(1, n + 1)]
             return {"shape": x.shape, "cs": [c for c in cs if len(c) >= 3]}
-        if kind == "threshold_sub_pix" and _HAS_SK:      # subpixel level crossings as contours
+        if kind == "threshold_sub_pix":                  # subpixel level crossings as contours
+            _require_dep(_HAS_SK, "skimage", "skimage.measure.find_contours (marching squares)")
             x = np.asarray(v, np.float64)
             cs = [c for c in skmeasure.find_contours(x, 0.2 + 0.5 * a) if len(c) >= 3]
             return {"shape": x.shape, "cs": cs}
-        if kind == "zero_crossing_sub_pix" and _HAS_SK:  # Laplacian zero crossings as contours
+        if kind == "zero_crossing_sub_pix":              # Laplacian zero crossings as contours
+            _require_dep(_HAS_SK, "skimage", "skimage.measure.find_contours (marching squares)")
             x = np.asarray(v, np.float64)
             lap = _log_dc_free(x, 0.5 + 2.0 * a)
             cs = [c for c in skmeasure.find_contours(lap, 0.0) if len(c) >= 3]
@@ -1395,14 +1447,15 @@ def _sh_xld(p):
                 # 直した op の双子を見落とすと、穴が半分残る。
                 return np.float64(_halcon_compactness(per, area))
             if kind == "convexity":
-                if _HAS_CV:
-                    hull = cv2.convexHull(np.stack([x, y], 1).astype(np.float32))
-                    ha = float(cv2.contourArea(hull))
-                    return np.float64(min(1.0, area / max(ha, 1e-6)))
-                return np.float64(1.0)
+                # 2026-10-25 まで cv2 無しでは**常に 1.0(完全凸)**を返していた。
+                _require_dep(_HAS_CV, "cv2", "cv2.convexHull + cv2.contourArea")
+                hull = cv2.convexHull(np.stack([x, y], 1).astype(np.float32))
+                ha = float(cv2.contourArea(hull))
+                return np.float64(min(1.0, area / max(ha, 1e-6)))
         # ---- contour -> feature (ellipse fit / diameter / moments; cv2) ----
         if kind in ("eccentricity", "orientation", "elliptic_axis", "diameter",
-                    "rectangularity", "moment_xld") and _HAS_CV:
+                    "rectangularity", "moment_xld"):
+            _require_dep(_HAS_CV, "cv2", "cv2.fitEllipse / cv2.moments on the contour points")
             cs = [c for c in cv["cs"] if len(c) >= 5]
             if not cs:
                 return np.array([1.0, 1.0, 0.0]) if kind == "eccentricity" else np.float64(0.0)
@@ -1455,7 +1508,8 @@ def _sh_xld(p):
                 phi -= np.pi
             return np.array([major / 2.0, minor / 2.0, phi], np.float64)
         # ---- contour -> contour (transforms / closing) ----
-        if kind == "convex" and _HAS_CV:
+        if kind == "convex":
+            _require_dep(_HAS_CV, "cv2", "cv2.convexHull")
             out = []
             for c in cv["cs"]:
                 if len(c) >= 3:
@@ -1506,9 +1560,9 @@ def _sh_cooc(p):
         #   逆に悪化(0.30 -> 0.56)。★根っこは距離を伸ばすと分解能そのものが
         #   0.0328 -> 0.0122 と潰れること。
         angles = [0.0, np.pi / 4, np.pi / 2, 3 * np.pi / 4] if b >= 0.75 else [0.0]
-        glcm = skfeat.graycomatrix(xq, distances=[1 + int(a * 3)], angles=angles,
-                                   levels=lv, symmetric=True, normed=True)
-        val = float(np.mean(skfeat.graycoprops(glcm, prop)[0]))
+        glcm = _graycomatrix(xq, distances=[1 + int(a * 3)], angles=angles,
+                             levels=lv, symmetric=True, normed=True)
+        val = float(np.mean(_graycoprops(glcm, prop)[0]))
         if prop in ("contrast", "dissimilarity"):
             val = val / (lv * lv)
         elif prop == "correlation":
@@ -1685,7 +1739,7 @@ SEED: list[tuple] = [
     ("coherence_enhancing_diff", "smoothing", IMG, IMG, "diffusion", {"kind": "anisotropic"},
      '実装は ``anisotropic_diffusion`` と同一(``kind: "anisotropic"``)。\n本来の coherence-enhancing diffusion は構造テンソルの固有ベクトルに沿って\n拡散方向を制御する(線状構造をつなげる)手法だが、この代役ではその構造\nテンソル計算を行わず、単純な Perona-Malik 異方性拡散で代用している\n(近似の限界 ―― 線状構造の連結効果は再現されない)。HALCON の\n``coherence_enhancing_diff``（Perform a coherence enhancing diffusion of\nan image.）の代役。\n\n``a`` が反復回数、``b`` が伝導度閾値 K を振る。両方が使われる。'),
     ("bilateral_filter", "smoothing", IMG, IMG, "diffusion", {"kind": "bilateral"},
-     'OpenCV のバイラテラルフィルタ(``cv2.bilateralFilter``)。近傍画素を\n空間距離と輝度差の両方で重み付けして平均する、エッジを保ったまま平滑化する\n定番手法。HALCON の ``bilateral_filter``（bilateral filtering of an\nimage.）に相当。\n\n``a`` が空間方向のシグマ(1〜4)を、``b`` が輝度(色)方向のシグマ(0.05〜0.45)\nを振る。両方が使われる。``cv2`` が無い環境ではこの分岐は呼べない。'),
+     'OpenCV のバイラテラルフィルタ(``cv2.bilateralFilter``)。近傍画素を\n空間距離と輝度差の両方で重み付けして平均する、エッジを保ったまま平滑化する\n定番手法。HALCON の ``bilateral_filter``（bilateral filtering of an\nimage.）に相当。\n\n``a`` が空間方向のシグマ(1〜4)を、``b`` が輝度(色)方向のシグマ(0.05〜0.45)\nを振る。両方が使われる。cv2 が無い環境では ``MissingDependencyError``(何を入れればよいかを言う)で止まる —— 別の答えは返さない。'),
     ("guided_filter", "smoothing", IMG, IMG, "diffusion", {"kind": "bilateral"},
      '実装は ``bilateral_filter`` と同一(``kind: "bilateral"``)。本来の\nガイド付きフィルタ(guided filter、局所線形モデルに基づくエッジ保存平滑化)\nとは数学的に別のアルゴリズムだが、この代役ではバイラテラルフィルタで\n代用している(似た用途=エッジ保存平滑化を満たすための近似、結果の数値は\n一致しない)。HALCON の ``guided_filter``（Guided filtering of an image.）\nの代役。\n\n``a`` が空間シグマ、``b`` が輝度シグマを振る。両方が使われる。'),
     ("deviation_image", "texture", IMG, IMG, "texture", {"kind": "deviation"},
@@ -1693,7 +1747,7 @@ SEED: list[tuple] = [
     ("texture_laws", "texture", IMG, IMG, "texture", {"kind": "variance"},
      "実装は局所分散(``deviation_image`` の分散版、窓内の\n``E[x^2]-E[x]^2``)。本来の Laws' テクスチャフィルタは L5/E5/S5/W5/R5 などの\n1 次元カーネル対から作る 25 種類の畳み込みバンク(エネルギー/エッジ/波状/\n斑点/波紋を捉える)だが、この代役ではその全カーネルバンクではなく単一の\n局所分散で代用している(近似の限界 ―― 方向別・周波数別の情報は失われる)。\nHALCON の ``texture_laws``（Filter an image using a Laws texture filter.）\nの代役。\n\n``a`` が窓の一辺を ``{3,5,7,9}`` で振る。``b`` は未使用。"),
     ("entropy_image", "texture", IMG, IMG, "texture", {"kind": "entropy"},
-     '円形窓内のグレースケール Shannon エントロピー(``skimage.filters.rank.\nentropy``、8bit 量子化)を正規化した画像。窓内の階調の「散らばり具合」を\n測るテクスチャ指標で、一様な領域では低く、雑多な階調が混在する領域では\n高くなる。HALCON の ``entropy_image``（Calculate the entropy of gray values\nwithin a rectangular window.）に相当(HALCON は矩形窓、ここでは円形窓を\n使う近似)。\n\n``a`` が窓の半径を 1〜4 の範囲(``_rad(a)``)で振る。``b`` は未使用。skimage\nが無い環境ではこの分岐は呼べない。'),
+     '円形窓内のグレースケール Shannon エントロピー(``skimage.filters.rank.\nentropy``、8bit 量子化)を正規化した画像。窓内の階調の「散らばり具合」を\n測るテクスチャ指標で、一様な領域では低く、雑多な階調が混在する領域では\n高くなる。HALCON の ``entropy_image``（Calculate the entropy of gray values\nwithin a rectangular window.）に相当(HALCON は矩形窓、ここでは円形窓を\n使う近似)。\n\n``a`` が窓の半径を 1〜4 の範囲(``_rad(a)``)で振る。``b`` は未使用。scikit-image が無い環境では ``MissingDependencyError``(何を入れればよいかを言う)で止まる —— 別の答えは返さない。'),
     ("gen_gabor", "texture", IMG, IMG, "texture", {"kind": "gabor"},
      '単一の Gabor カーネル(向き ``θ=π*a``、周波数 ``0.1+0.3*b``)による\n畳み込み応答の絶対値を、カーネルの L1 ノルムで正規化して返す。DC 成分を\n除いた(平均を引いた)実部のみのカーネルで、指定方向・周波数の縞模様に\n選択的に反応するバンドパステクスチャフィルタ。HALCON の ``gen_gabor``\n（Generate a Gabor filter.）に相当(虚部/位相は持たない実カーネルのみの\n簡易版)。\n\n``a`` が向き θ(0〜180°)を、``b`` が空間周波数(0.1〜0.4)を振る。両方が\n使われる。``a=0`` が縦縞、``a=0.5``(90°)が横縞に応答する規約。'),
     # ---- Transformations: geometric --------------------------------------
@@ -1732,7 +1786,7 @@ SEED: list[tuple] = [
      'ヒステリシスしきい値処理(``skimage.filters.apply_hysteresis_\nthreshold``)。低いしきい値(``0.2+0.3*a``)を超えた画素のうち、高い\nしきい値(``0.5+0.3*b``)を超えた画素につながっているものだけを前景として\n残す ―― Canny エッジ検出の後処理としても使われる、途切れにくいエッジ\n抽出手法。HALCON の ``hysteresis_threshold``（Perform a hysteresis\nthreshold operation on an image.）に相当。\n\n``a`` が低いしきい値を、``b`` が高いしきい値を振る。両方が使われる。'),
     # ---- Segmentation: edges / regions -----------------------------------
     ("edges_image", "segmentation", IMG, REG, "segment", {"kind": "sk_canny"},
-     'Canny エッジ検出(``skimage.feature.canny``、シグマ ``0.5+2*a``)による\n領域抽出。ガウス平滑化→勾配→非極大抑制→ヒステリシスしきい値という多段の\n処理をまとめて行う、広く使われるエッジ検出法。HALCON の ``edges_image``\n（Detect edges using Deriche, Lanser, Shen, or Canny filters.）に相当\n(HALCON は Deriche/Lanser/Shen/Canny を選べるが、ここでは Canny 固定)。\n\n``a`` がガウス平滑化のシグマを振る。``b`` は未使用(内部のヒステリシス\nしきい値は skimage の既定値)。skimage が無い環境ではこの分岐は呼べない。'),
+     'Canny エッジ検出(``skimage.feature.canny``、シグマ ``0.5+2*a``)による\n領域抽出。ガウス平滑化→勾配→非極大抑制→ヒステリシスしきい値という多段の\n処理をまとめて行う、広く使われるエッジ検出法。HALCON の ``edges_image``\n（Detect edges using Deriche, Lanser, Shen, or Canny filters.）に相当\n(HALCON は Deriche/Lanser/Shen/Canny を選べるが、ここでは Canny 固定)。\n\n``a`` がガウス平滑化のシグマを振る。``b`` は未使用(内部のヒステリシス\nしきい値は skimage の既定値)。scikit-image が無い環境では ``MissingDependencyError``(何を入れればよいかを言う)で止まる —— 別の答えは返さない。'),
     ("watersheds", "segmentation", IMG, REG, "segment", {"kind": "watershed"},
      '分水嶺(watershed)セグメンテーション。勾配画像を地形とみなし、\n暗い領域(``x < 0.2+0.3*a``)をマーカーとして分水嶺線を求め、その境界線を\n返す。HALCON の ``watersheds``（Extract watersheds and basins from an\nimage.）に相当。\n\n``a`` がマーカーを決める暗さのしきい値を振る。``b`` は未使用。'),
     ("watersheds_threshold", "segmentation", IMG, REG, "segment", {"kind": "watershed"},
@@ -1764,11 +1818,11 @@ SEED: list[tuple] = [
     ("boundary", "region", REG, REG, "region_trans", {"kind": "boundary"},
      '領域からその 1 画素収縮版を引くことで外周境界線(輪郭の内側 1 画素の\nリング)を取り出す。塗りつぶされた領域を輪郭線に変換する。HALCON の\n``boundary``（Reduce a region to its boundary.）に相当。\n\n``a``, ``b`` は未使用。\n\n**穴のある領域**: 外周だけでなく**穴の輪郭も返る**（「領域 − 収縮版」は定義上、外側からも穴の側からも 1 画素を残す。実測で確認）。\n\n**画像の縁**: 領域が画像の端に接する場合、**縁の側も境界に含まれる**(外側を背景とみなして収縮するため)。全面が領域の入力では、出力は画像の外周 1 画素の枠になる(8x8 で 28 画素。実測)。'),
     ("skeleton", "region", REG, REG, "region_trans", {"kind": "skeleton"},
-     '位相を保ったまま領域を 1 画素幅の骨格線に細める\n(``skimage.morphology.skeletonize``)。分岐や端点の位置は保存されるため、\n枝分かれした形状の解析(指の本数を数える等)によく使われる。HALCON の\n``skeleton``（Compute the skeleton of a region.）に相当。\n\n``a``, ``b`` は未使用。skimage が無い環境ではこの分岐は呼べない。'),
+     '位相を保ったまま領域を 1 画素幅の骨格線に細める\n(``skimage.morphology.skeletonize``)。分岐や端点の位置は保存されるため、\n枝分かれした形状の解析(指の本数を数える等)によく使われる。HALCON の\n``skeleton``（Compute the skeleton of a region.）に相当。\n\n``a``, ``b`` は未使用。scikit-image が無い環境では同じ答えを返す numpy の双子(``numpy_twins``)で計算する(bit 一致を門で確かめている)。'),
     ("thinning", "region", REG, REG, "region_trans", {"kind": "thin"},
-     '``skimage.morphology.thin``(Zhang-Suen 系の細線化アルゴリズム)による\n1 画素幅化。``skeleton`` と目的は似ているが内部アルゴリズムが異なるため、\n分岐点周辺などで結果がわずかに違うことがある。HALCON の ``thinning``\n（Remove the result of a hit-or-miss operation from a region.）の代役。\n\n``a``, ``b`` は未使用。skimage が無い環境ではこの分岐は呼べない。'),
+     '``skimage.morphology.thin``(Zhang-Suen 系の細線化アルゴリズム)による\n1 画素幅化。``skeleton`` と目的は似ているが内部アルゴリズムが異なるため、\n分岐点周辺などで結果がわずかに違うことがある。HALCON の ``thinning``\n（Remove the result of a hit-or-miss operation from a region.）の代役。\n\n``a``, ``b`` は未使用。scikit-image が無い環境では同じ答えを返す numpy の双子(``numpy_twins``)で計算する(bit 一致を門で確かめている)。'),
     ("shape_trans", "region", REG, REG, "region_trans", {"kind": "convex"},
-     '領域の凸包(``skimage.morphology.convex_hull_image``)を返す。HALCON の\n``shape_trans``（Transform the shape of a region.）は本来 convex/\nrectangle1/ellipse など複数の変形モードを ``Type`` 引数で選べる演算子\nだが、この代役では凸包 1 種類に固定している(近似の限界)。\n\n``a``, ``b`` は未使用。skimage が無い環境ではこの分岐は呼べない。'),
+     '領域の凸包(``skimage.morphology.convex_hull_image``)を返す。HALCON の\n``shape_trans``（Transform the shape of a region.）は本来 convex/\nrectangle1/ellipse など複数の変形モードを ``Type`` 引数で選べる演算子\nだが、この代役では凸包 1 種類に固定している(近似の限界)。\n\n``a``, ``b`` は未使用。scikit-image が無い環境では ``MissingDependencyError``(何を入れればよいかを言う)で止まる —— 別の答えは返さない。'),
     ("select_shape_std", "region", REG, REG, "region_trans", {"kind": "select_largest"},
      '連結成分のうち最大の面積を持つものだけを残す(``_largest_label`` で\n選択)。HALCON の ``select_shape_std``（Select regions of a given shape.）\nは ``max_area`` を含む複数の標準基準を選べる演算子だが、ここでは\n「面積最大」1 種類に固定している(近似)。\n\n``a``, ``b`` は未使用。複数領域が同面積の場合は ``argmax`` の実装依存で\nどれか 1 つが選ばれる。'),
     ("select_shape", "region", REG, REG, "region_trans", {"kind": "remove_small"},
@@ -1821,7 +1875,7 @@ SEED: list[tuple] = [
     ("edges_sub_pix", "contour", IMG, CON, "xld", {"kind": "edges_sub_pix"},
      'サブピクセル精度のエッジ点抽出。勾配とその法線方向(``gradient_\nnormals``)を求め、しきい値(``0.15+0.5*a``)を超える画素を連結成分化した\n後、放物線当てはめで各点をサブピクセル位置へ精密化する(``subpixel_\nrefine_edges``、``ops`` 側の同名 op と共有する実装 ―― 2026-09-02 修正で\n真の意味でサブピクセルになった。旧実装は整数画素座標をそのまま返して\nいた)。HALCON の ``edges_sub_pix``（Extract sub-pixel precise edges using\nDeriche, Lanser, Shen, or Canny filters.）に相当。\n\n``a`` がエッジ強度のしきい値を振る。``b`` は未使用。\n\nRaises:\n    FsValueError: NaN / inf を含む画像。'),
     ("lines_gauss", "contour", IMG, CON, "xld", {"kind": "lines_gauss"},
-     '線状構造(リッジ)検出。``skimage.filters.frangi``(血管様のリッジ強調\nフィルタ)の応答をしきい値(``0.1+0.4*a``)で二値化し、連結成分を輪郭点群\nとして返す。HALCON の ``lines_gauss``（Detect lines and their width.）が\n本来行う「線の中心線+幅の推定」ではなく、リッジ強調画像のしきい値化に\n単純化している(線幅の情報は返らない近似)。\n\n``a`` がリッジ検出のしきい値を振る。``b`` は未使用。skimage が無い環境\nではこの分岐は呼べない。\n\n**極性も返さない**(2026-09-15 実測): 明るい地の暗線(0.6 の地に 0.1、幅 2 px)と\n暗い地の明線(0.6 の地に 1.0)を同じ ``a`` で通すと、どちらも輪郭が出て\n(a=0.5 で 3 本 / 280 点と 3 本 / 276 点)返り値からは区別できない。暗線だけが\n要るなら ``bothat``(白トップハット ``tophat`` は暗線に 0 を返す)、明線だけなら\n``tophat`` を先に掛ける。**幅を測る道は別の op**: 線に直交する測定線を\n``gen_measure_rectangle2`` で張って ``measure_pairs``(measure1d 族)で両縁を取る。\nただし幅 1〜3 px はその op の危険域(エッジ間距離 / PSF 幅 < 3.09 で大きい側に\n偏る)なので、画素以下の幅は輝度欠損の積分で測る(``examples/example_scratch_width.py``、\n``poc_crack_width``)。使い分けの表は 2d/guides/gallery2d_contour_measure.md。'),
+     '線状構造(リッジ)検出。``skimage.filters.frangi``(血管様のリッジ強調\nフィルタ)の応答をしきい値(``0.1+0.4*a``)で二値化し、連結成分を輪郭点群\nとして返す。HALCON の ``lines_gauss``（Detect lines and their width.）が\n本来行う「線の中心線+幅の推定」ではなく、リッジ強調画像のしきい値化に\n単純化している(線幅の情報は返らない近似)。\n\n``a`` がリッジ検出のしきい値を振る。``b`` は未使用。scikit-image が無い環境では ``MissingDependencyError``(何を入れればよいかを言う)で止まる —— 別の答えは返さない。\n\n**極性も返さない**(2026-09-15 実測): 明るい地の暗線(0.6 の地に 0.1、幅 2 px)と\n暗い地の明線(0.6 の地に 1.0)を同じ ``a`` で通すと、どちらも輪郭が出て\n(a=0.5 で 3 本 / 280 点と 3 本 / 276 点)返り値からは区別できない。暗線だけが\n要るなら ``bothat``(白トップハット ``tophat`` は暗線に 0 を返す)、明線だけなら\n``tophat`` を先に掛ける。**幅を測る道は別の op**: 線に直交する測定線を\n``gen_measure_rectangle2`` で張って ``measure_pairs``(measure1d 族)で両縁を取る。\nただし幅 1〜3 px はその op の危険域(エッジ間距離 / PSF 幅 < 3.09 で大きい側に\n偏る)なので、画素以下の幅は輝度欠損の積分で測る(``examples/example_scratch_width.py``、\n``poc_crack_width``)。使い分けの表は 2d/guides/gallery2d_contour_measure.md。'),
     ("select_contours_xld", "contour", CON, CON, "xld", {"kind": "select_contours"},
      '既存の輪郭(XLD contour)集合から、点数が閾値(``3+40*a``)以上のものだけ\nを残すフィルタ。HALCON の ``select_contours_xld``（Select XLD contours\naccording to several features.）は面積・円形度など任意の特徴で選別できる\n汎用演算子だが、この代役では点数(長さの代理指標)による足切り 1 種類に\n固定している(近似)。\n\n``a`` が点数のしきい値を振る。``b`` は未使用。'),
     ("smooth_contours_xld", "contour", CON, CON, "xld", {"kind": "smooth_contours"},
@@ -1874,7 +1928,7 @@ SEED: list[tuple] = [
     ("compactness_xld", "features", CON, FEA, "xld", {"kind": "compactness"},
      '最大の輪郭についてコンパクトさ ``max(1, 周囲長²/(4π・面積))`` を計算する\n(``compactness`` の輪郭版)。円で 1、細長い/ぎざぎざなほど大きく、**上限は無い**。\nHALCON の ``compactness_xld``（Shape factor for the compactness of contours\nor polygons.）**と同じ式**。\n\n★2026-09-26 まで ``/10`` して 1 で頭打ちしていた —— **領域版と同じ欠陥が輪郭版\nにも在った**。直した op の双子を見落とすと穴が半分残る\n(``docs/hardening/compactness-saturated-at-one.md``)。\n\n``a``, ``b`` は未使用。'),
     ("convexity_xld", "features", CON, FEA, "xld", {"kind": "convexity"},
-     '最大の輪郭について凸性 ``輪郭の面積 / 凸包の面積`` を計算する\n(``cv2.convexHull`` + ``cv2.contourArea``)。cv2 が無い環境では常に 1.0\n(完全凸)を返すフォールバックになる点に注意。HALCON の ``convexity_xld``\n（Shape factor for the convexity of contours or polygons.）に相当。\n\n``a``, ``b`` は未使用。'),
+     '最大の輪郭について凸性 ``輪郭の面積 / 凸包の面積`` を計算する\n(``cv2.convexHull`` + ``cv2.contourArea``)。cv2 が無い環境では ``MissingDependencyError`` で止まる(2026-10-25 までは常に 1.0 = 完全凸を返していた)。HALCON の ``convexity_xld``\n（Shape factor for the convexity of contours or polygons.）に相当。\n\n``a``, ``b`` は未使用。'),
     # XLD contour -> contour (transforms / closing)
     ("close_contours_xld", "contour", CON, CON, "xld", {"kind": "close"},
      '各輪郭の始点を末尾に複製して追加し、開いた折れ線を閉じたループにする\n(点数 2 以上の輪郭のみ)。HALCON の ``close_contours_xld``（Close an XLD\ncontour.）に相当。\n\n``a``, ``b`` は未使用。'),
@@ -1899,19 +1953,19 @@ SEED: list[tuple] = [
     ("dual_threshold", "segmentation", IMG, REG, "threshold", {"method": "dual"},
      '符号つき画像向けのしきい値処理。中央値 0.5 を「ゼロ」とみなし、\n``|x - 0.5| > 0.1+0.35*a`` を満たす画素(0.5 から十分離れた画素)を前景と\nする ―― 正負どちらの側にも対称に反応する。HALCON の ``dual_threshold``\n（Threshold operator for signed images.）に相当(HALCON は正負で別々の\nしきい値を持てるが、ここでは 0.5 を中心とした対称な帯域に単純化)。\n\n``a`` が除外帯域の半幅を振る。``b`` は未使用。``highpass_image`` や\n``bandpass_image`` のような符号つき応答(0.5=ゼロ)の後段でよく使う。'),
     ("segment_image_mser", "segmentation", IMG, REG, "segment", {"kind": "mser"},
-     'MSER(Maximally Stable Extremal Regions、最大安定極値領域)検出\n(``cv2.MSER_create``)。しきい値を連続的に変化させても形が安定して残る\n領域を検出し、その境界線を返す(文字・ロゴなど照明変化に頑健な領域検出に\n使われる)。HALCON の ``segment_image_mser``（Segment image using Maximally\nStable Extremal Regions (MSER).）に相当。\n\n``a`` が MSER の安定性パラメータ(delta、3〜11)を振る。``b`` は未使用。\n``cv2`` が無い環境ではこの分岐は呼べない。'),
+     'MSER(Maximally Stable Extremal Regions、最大安定極値領域)検出\n(``cv2.MSER_create``)。しきい値を連続的に変化させても形が安定して残る\n領域を検出し、その境界線を返す(文字・ロゴなど照明変化に頑健な領域検出に\n使われる)。HALCON の ``segment_image_mser``（Segment image using Maximally\nStable Extremal Regions (MSER).）に相当。\n\n``a`` が MSER の安定性パラメータ(delta、3〜11)を振る。``b`` は未使用。\ncv2 が無い環境では ``MissingDependencyError``(何を入れればよいかを言う)で止まる —— 別の答えは返さない。'),
     ("regiongrowing_mean", "segmentation", IMG, REG, "segment", {"kind": "regiongrow"},
      '実装は ``regiongrowing`` と同一(しきい値によるシード生成+膨張)。\nHALCON の ``regiongrowing_mean``（Perform a region growing using mean gray\nvalues.）は本来、各領域の平均輝度との近さを基準に成長させる演算子だが、\nこの代役では平均輝度による判定を行わず ``regiongrowing`` と同じ処理を\n返す(近似の限界)。\n\n``a`` がシードのしきい値、``b`` が膨張の反復回数を振る。両方が使われる。'),
     ("estimate_noise", "features", IMG, FEA, "img_feat", {"metric": "noise_est"},
      '加法性ノイズの標準偏差 σ をロバスト推定する(``_noise_sigma``:\nラプラシアン応答の MAD を正規分布換算し、5 点ラプラシアン核のノイズ利得\n``sqrt(20)`` で割る)。エッジ由来の外れ値には鈍く、平坦部のノイズだけを\n拾う設計(2026-09-02 に旧実装の「σ が単位を持たず σ≈0.08 以上で 1.0 に\n張り付く」不具合を修正済み、詳細は ``_noise_sigma`` の docstring)。HALCON\nの ``estimate_noise``（Estimate the image noise from a single image.）に\n相当。\n\n``a``, ``b`` は未使用。'),
     # corner strength maps (points_harris already covered by core corner_response)
     ("points_foerstner", "edges", IMG, IMG, "corner", {"kind": "foerstner"},
-     'Förstner 演算子によるコーナー強度マップ(``skimage.feature.\ncorner_foerstner`` の重み ``w`` とロバスト形状指標 ``q`` の積、NaN は 0 に\n置換)。誤差楕円の大きさ(w)と円形度(q)を組み合わせて点特徴らしさを評価する。\nHALCON の ``points_foerstner``（Detect points of interest using the\nFörstner operator.）に相当。\n\n``a`` が勾配計算のガウス窓シグマを 0.5〜2.5 の範囲で振る。``b`` は未使用。\nskimage が無い環境ではこの分岐自体が呼べない(``_HAS_SK`` ガード)。'),
+     'Förstner 演算子によるコーナー強度マップ(``skimage.feature.\ncorner_foerstner`` の重み ``w`` とロバスト形状指標 ``q`` の積、NaN は 0 に\n置換)。誤差楕円の大きさ(w)と円形度(q)を組み合わせて点特徴らしさを評価する。\nHALCON の ``points_foerstner``（Detect points of interest using the\nFörstner operator.）に相当。\n\n``a`` が勾配計算のガウス窓シグマを 0.5〜2.5 の範囲で振る。``b`` は未使用。\nscikit-image が無い環境では同じ答えを返す numpy の双子(``numpy_twins``)で計算する(bit 一致を門で確かめている)。'),
     ("points_harris_binomial", "edges", IMG, IMG, "corner", {"kind": "harris_binomial"},
      '二項(ガウス)平滑化を前段に挟んだ Harris コーナー応答。まず ``b`` で\n決まるシグマで画像を平滑化し、その上で Harris 応答(skimage があれば\n``corner_harris``、無ければ構造テンソルを手計算、k=0.04)を求める。HALCON\nの ``points_harris_binomial``（Detect points of interest using the\nbinomial approximation of the Harris operator.）に相当。\n\n``a`` が Harris 応答自体のシグマ(0.5〜2.5)を、``b`` が前段の平滑化シグマ\n(0.5〜2.0)を振る。両方が使われる。'),
     # ---- v11e increment: XLD ellipse/moment features + crossings + pruning ----
     ("eccentricity_xld", "features", CON, MAT, "xld", {"kind": "eccentricity"},
-     '``eccentricity`` の輪郭版。最大の輪郭について ``(Anisometry, Bulkiness,\nStructureFactor)`` を ``match`` ソートの 3 成分ベクトルで返す。HALCON の\n``eccentricity_xld``（Shape features derived from the ellipse parameters of\ncontours or polygons.）**と同じ 3 値・同じ式**。\n\n★``Ra``/``Rb`` は**囲まれた面積の幾何モーメント**から導く。2026-09-26 まで\n``cv2.fitEllipse``(輪郭「点」への最小二乗当てはめ)を使っていて、細長い形で\n大きく外れていた —— 4x80 の棒で Anisometry 39.1 対 20.65。HALCON の定義は\nモーメント由来の方である。\n\ncv2 が無い、点数が足りない、面積が 0 のときは円の値 ``(1, 1, 0)`` を返す。\n``a``, ``b`` は未使用。'),
+     '``eccentricity`` の輪郭版。最大の輪郭について ``(Anisometry, Bulkiness,\nStructureFactor)`` を ``match`` ソートの 3 成分ベクトルで返す。HALCON の\n``eccentricity_xld``（Shape features derived from the ellipse parameters of\ncontours or polygons.）**と同じ 3 値・同じ式**。\n\n★``Ra``/``Rb`` は**囲まれた面積の幾何モーメント**から導く。2026-09-26 まで\n``cv2.fitEllipse``(輪郭「点」への最小二乗当てはめ)を使っていて、細長い形で\n大きく外れていた —— 4x80 の棒で Anisometry 39.1 対 20.65。HALCON の定義は\nモーメント由来の方である。\n\n点数が足りない、面積が 0 のときは円の値 ``(1, 1, 0)`` を返す。cv2 が無い環境では ``MissingDependencyError`` で止まる。\n``a``, ``b`` は未使用。'),
     ("orientation_xld", "features", CON, FEA, "xld", {"kind": "orientation"},
      '楕円フィットした輪郭の傾き角(``cv2.fitEllipse`` の角度を 180° で\n折り返して [0,1] に正規化)。HALCON の ``orientation_xld``（Calculate the\norientation of contours or polygons.）に相当。\n\n``a``, ``b`` は未使用。'),
     ("elliptic_axis_xld", "features", CON, MAT, "xld", {"kind": "elliptic_axis"},
@@ -1923,7 +1977,7 @@ SEED: list[tuple] = [
     ("moments_xld", "features", CON, FEA, "xld", {"kind": "moment_xld"},
      '輪郭の生モーメント(``cv2.moments``)から ``(mu20+mu02)/面積²`` という\n単一スカラーを計算する ―― HALCON の ``moments_xld``（Geometric moments\nM20, M02, and M11 of contours or polygons.）が返す M20/M02/M11 の 3 成分を\n1 つに合成した近似(個々の方向成分・M11 は失われる)。\n\n★2026-09-26 まで ``min(1, ...)`` で頭打ちしていた —— 細長い形(幅 4・長さ 80 以上)で**全部 1.0** になり、形が違うのに同じ数が返っていた。値域 [0,1] は feature の契約ではない(``docs/hardening/features-saturated-at-one.md``)。\n\n``a``, ``b`` は未使用。'),
     ("shape_trans_xld", "contour", CON, CON, "xld", {"kind": "convex"},
-     '輪郭の凸包(``cv2.convexHull``)を計算し、輪郭形式のまま返す\n(``shape_trans`` の輪郭版)。HALCON の ``shape_trans_xld``（Transform the\nshape of contours or polygons.）が持つ複数の変形モードのうち、凸包 1 種類\nのみを実装している(近似)。\n\n``a``, ``b`` は未使用。cv2 が無い環境ではこの分岐は呼べない。'),
+     '輪郭の凸包(``cv2.convexHull``)を計算し、輪郭形式のまま返す\n(``shape_trans`` の輪郭版)。HALCON の ``shape_trans_xld``（Transform the\nshape of contours or polygons.）が持つ複数の変形モードのうち、凸包 1 種類\nのみを実装している(近似)。\n\n``a``, ``b`` は未使用。cv2 が無い環境では ``MissingDependencyError``(何を入れればよいかを言う)で止まる —— 別の答えは返さない。'),
     ("zero_crossing", "segmentation", IMG, REG, "segment", {"kind": "zero_crossing"},
      'ラプラシアン(ガウス平滑化込み、シグマ ``0.5+2*a``)の符号が反転する\n画素(ゼロ交差)を検出する。LoG のゼロ交差はエッジの位置を高精度に示す\nことで知られる古典的な検出法。HALCON の ``zero_crossing``（Extract zero\ncrossings from an image.）に相当。\n\n``a`` がガウス平滑化のシグマを振る。``b`` は未使用。上下・左右いずれかの\n方向で符号が変わればゼロ交差とみなす(斜め方向は直接見ていない)。'),
     ("local_min", "segmentation", IMG, REG, "segment", {"kind": "local_min"},
@@ -1936,9 +1990,9 @@ SEED: list[tuple] = [
     ("hough_circle_trans", "features", IMG, IMG, "hough", {"kind": "circle"},
      '円検出のための Hough 変換。エッジマスクに対して半径 4〜19(3 刻み)の\n円テンプレート群で ``skimage.transform.hough_circle`` を計算し、全半径での\n最大応答を [0,1] に正規化して返す。HALCON の ``hough_circle_trans``\n（Return the Hough-Transform for circles with a given radius.）に相当\n(HALCON は半径を明示指定するが、ここでは固定レンジを総当たりする近似)。\n\n``a`` がエッジ抽出の閾値を振り、``b`` が探索する半径の上限を決める\n(``radii = arange(4, max(7, round(4 + 32*b)), 3)``。既定の ``b=0.5`` は\n従来どおり半径 4〜19)。★**対象より小さい半径しか探していないと、この op は\n落ちずに意味の無い累算器を返す**。実写のコイン 24 枚(半径 19〜31 px)で\n非極大抑制して数えると ``b=0.5`` で 13 峰、上限まで広げた ``b=1.0`` でも\n19 峰にしかならない ―― 半径の刻みが 3 で、しかも全半径の最大に潰して\nいるため。**半径を明示できる HALCON の同名 op の代わりにはならない**\n(``examples/poc_real_coin_metrology.py`` が数字で示す)。'),
     ("threshold_sub_pix", "contour", IMG, CON, "xld", {"kind": "threshold_sub_pix"},
-     'マーチングスクエア法(``skimage.measure.find_contours``)によるレベル\nクロッシング(等高線)抽出。指定した階調レベル(``0.2+0.5*a``)を横切る位置を\nサブピクセル精度で輪郭として返す。HALCON の ``threshold_sub_pix``\n（Extract level crossings from an image with subpixel accuracy.）に相当。\n\n``a`` がクロッシングを取るレベルを振る。``b`` は未使用。skimage が無い\n環境ではこの分岐は呼べない。'),
+     'マーチングスクエア法(``skimage.measure.find_contours``)によるレベル\nクロッシング(等高線)抽出。指定した階調レベル(``0.2+0.5*a``)を横切る位置を\nサブピクセル精度で輪郭として返す。HALCON の ``threshold_sub_pix``\n（Extract level crossings from an image with subpixel accuracy.）に相当。\n\n``a`` がクロッシングを取るレベルを振る。``b`` は未使用。scikit-image が無い環境では ``MissingDependencyError``(何を入れればよいかを言う)で止まる —— 別の答えは返さない。'),
     ("zero_crossing_sub_pix", "contour", IMG, CON, "xld", {"kind": "zero_crossing_sub_pix"},
-     'LoG(ガウス平滑化込みラプラシアン、シグマ ``0.5+2*a``)のゼロ交差を\n``find_contours`` でサブピクセル精度の輪郭として抽出する。領域版の\n``zero_crossing``(画素解像度)に対するサブピクセル精度版。HALCON の\n``zero_crossing_sub_pix``（Extract zero crossings from an image with\nsubpixel accuracy.）に相当。\n\n``a`` がガウス平滑化のシグマを振る。``b`` は未使用。skimage が無い環境\nではこの分岐は呼べない。'),
+     'LoG(ガウス平滑化込みラプラシアン、シグマ ``0.5+2*a``)のゼロ交差を\n``find_contours`` でサブピクセル精度の輪郭として抽出する。領域版の\n``zero_crossing``(画素解像度)に対するサブピクセル精度版。HALCON の\n``zero_crossing_sub_pix``（Extract zero crossings from an image with\nsubpixel accuracy.）に相当。\n\n``a`` がガウス平滑化のシグマを振る。``b`` は未使用。scikit-image が無い環境では ``MissingDependencyError``(何を入れればよいかを言う)で止まる —— 別の答えは返さない。'),
     ("closest_point_transform", "region", REG, IMG, "region_trans", {"kind": "closest_point_transform"},
      '領域の**補集合**に対するユークリッド距離変換を正規化して返す ―― 各\n画素から最も近い領域(前景)画素までの距離を表す、``distance_transform``\nとは前景/背景が逆の距離場。出力は ``image`` 型。HALCON の\n``closest_point_transform``（Compute the closest-point transformation of\na region.）に相当。\n\n``a``, ``b`` は未使用。'),
     ("junctions_skeleton", "region", REG, REG, "region_trans", {"kind": "junctions_skeleton"},

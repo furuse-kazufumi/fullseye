@@ -8364,6 +8364,50 @@ This run produced **10 figures** in total - [see them all](https://github.com/fu
 
 Ops used (notes): [`curve3d_tube_mesh`](https://furuse.work/ops/3d/surface/curve3d_tube_mesh.html) · [`fit_circle_3d`](https://furuse.work/ops/3d/geometry/fit_circle_3d.html) · [`mesh_volume`](https://furuse.work/ops/3d/mesh_process/mesh_volume.html)
 
+## No.2026.277 —— The Venue Buildings and Asteroid Itokawa on One Ruler — Turning PLATEAU CityGML LOD2 into a Triangle Mesh
+
+[![The Venue Buildings and Asteroid Itokawa on One Ruler — Turning PLATEAU CityGML LOD2 into a Triangle Mesh](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plateau_venue_lod2/01_venue_itokawa_top_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plateau_venue_lod2/01_venue_itokawa_top.png)
+
+*↑ **The Venue Buildings and Asteroid Itokawa on One Ruler — Turning PLATEAU CityGML LOD2 into a Triangle Mesh** ―― The author's idea: put Itokawa (about 535 m) next to the venue buildings and the size becomes tangible. A new op, plateau_lod2_mesh, reads the ViEW2026 venue (Pacifico Yokohama, Minato Mirai) from MLIT's Project PLATEAU 3D city model (CityGML 2.0, LOD2): the building body and each BuildingPart become one part, and the thematic surfaces (ground, wall, roof) are triangulated (holes bridged to the outer ring and ear-clipped, outward orientation kept). Coordinates go exactly from EPSG:6697 (latitude, longitude, height) through GRS80 Earth-centred Cartesian coordinates into the ENU frame [m] of the tangent plane at the ground centroid. A CRS other than 6697, unknown geometry, a thematic surface not in the table, an unresolved xlink or a height unit other than metres is refused rather than skipped (fail-closed). The seven venue parts (hotel tower with the conference centre = one PLATEAU part, the National Convention Hall, the exhibition hall, the annex hall, the North building and two low-rise annexes) ship as a 112 kB npz; the recipe and its gates stay in the tool. Gates: a synthetic gabled building gives heights of 12 / 4 m, volumes of 2000 / 144 m³ (divergence theorem) and a holed-roof area of 2·20·√41 + 36 − 4 m² in closed form (1e-5), the ellipsoid round trip holds to 1e-6 m, over the seven venue parts the mesh height (highest roof point minus lowest ground point) differs from CityGML measuredHeight by at most 0.045 m (within half the 0.1 m rounding step), the extents measured by a second formula (equirectangular) on coordinates pulled from the raw bytes by regex differ by 0.005 m, and every face points outward. Itokawa's 535 m length is 2.0 times the exhibition hall's long side of 263 m and 3.8 hotel-tower heights of 142.1 m. Figures: the venue (left) and Itokawa (right) dropped onto the same 2 m grid seen from above, and a silhouette from the south. Honestly: the bundled 3000-point cloud spans 562 × 298 × 244 m along its principal axes, 1 to 17 % more than the published 535 × 294 × 209 m, a difference in how axes and extents are taken, so it is not a gate. This PLATEAU vintage carries no building names, so the parts were identified by coordinates and checked against public map positions. The geoid height is ignored (6e-6 relative horizontal error). Attribution: processed from the 3D City Model (Project PLATEAU), Yokohama City (FY2020), MLIT Japan (https://www.geospatial.jp/ckan/dataset/plateau-14100-yokohama-city-2020), PDL1.0, compatible with CC BY 4.0. The extraction of seven parts, the coordinate conversion and the triangulation are Fullseye's own processing, not an MLIT product. The Itokawa points are decimated from the Gaskell shape model (PDS Small Bodies Node).*
+
+[![南から見た影絵。ホテル棟 142 m とイトカワの厚み(約 209〜244 m)を同じ縮尺で](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plateau_venue_lod2/02_venue_itokawa_side_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plateau_venue_lod2/02_venue_itokawa_side.png)
+
+*↑ The measurement ―― 南から見た影絵。ホテル棟 142 m とイトカワの厚み(約 209〜244 m)を同じ縮尺で (figure labels are in Japanese; the numbers are the same)*
+
+```
+py -3.11 examples/poc_plateau_venue_lod2.py
+```
+
+Source: [examples/poc_plateau_venue_lod2.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_plateau_venue_lod2.py)
+
+This run produced **2 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_plateau_venue_lod2)
+
+Ops used (notes): [`plateau_lod2_mesh`](https://furuse.work/ops/drive/japan/plateau_lod2_mesh.html)
+
+## No.2026.279 —— How One Star Image Reveals Satellite Attitude
+
+[![How One Star Image Reveals Satellite Attitude](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_tracker/01_star_tracker_camera_image_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_tracker/01_star_tracker_camera_image.png)
+
+*↑ **How One Star Image Reveals Satellite Attitude** ―― A seeded 196-star synthetic catalogue and a 128 by 128 synthetic image with PSF, photon noise and read noise are used; two hot pixels absent from the catalogue are added. Without the true attitude or visible-star rows, triangle angles match all 18 star_detect detections against the shuffled full catalogue, reject the false points, and let kabsch solve the rotation. The result has 16 genuine stars, zero mismatches, 2 of 2 false points rejected and 0.0046-degree attitude error, below the 0.1406-degree angular pixel width. The kabsch and direct-SVD rotations differ by less than 1e-12. Sun or Moon glare, too few stars and trails during fast slew are an explicitly uncomputed ok:false limit. No real catalogue, external image, operator or product name is used.*
+
+[![三角形の角距離で全196星表を探索し、ホットピクセル2個を外れ値として棄却した。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_tracker/02_star_tracker_detections_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_tracker/02_star_tracker_detections.png)
+
+*↑ The measurement ―― 三角形の角距離で全196星表を探索し、ホットピクセル2個を外れ値として棄却した。 (figure labels are in Japanese; the numbers are the same)*
+
+[![推定値は合成像の検出点から計算し、真値は採点だけに使った。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_tracker/03_star_tracker_gates_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_tracker/03_star_tracker_gates.png)
+
+*↑ 推定値は合成像の検出点から計算し、真値は採点だけに使った。*
+
+```
+py -3.11 examples/poc_star_tracker.py
+```
+
+Source: [examples/poc_star_tracker.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_star_tracker.py)
+
+This run produced **3 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_star_tracker)
+
+
+
 ### The Instrument Wing — From Raw Output to Instrument-Specific Failure
 
 It is easy to borrow an instrument's name and produce a convenient image. The 32 exhibits in this room instead build raw output from photons, electrons, interference, heat diffusion, scanning and ray tracing, then carry that output through to the quantity normally reported.

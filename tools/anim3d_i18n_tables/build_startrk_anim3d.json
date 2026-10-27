@@ -1,0 +1,592 @@
+{
+ "_": "English fallback translations for the low-cost prototype; formulas, values and op names are preserved.",
+ "example": "build_startrk_anim3d",
+ "strings": {
+  "How one star image reveals satellite attitude": {
+   "ja": "星の写真 1 枚で衛星の向きが分かるのはなぜか",
+   "zh": "How one star image reveals satellite attitude",
+   "tw": "How one star image reveals satellite attitude",
+   "ko": "How one star image reveals satellite attitude",
+   "de": "How one star image reveals satellite attitude",
+   "hi": "How one star image reveals satellite attitude",
+   "fr": "How one star image reveals satellite attitude"
+  },
+  "Measure point images, match their geometry to a catalogue, and solve the rotation": {
+   "ja": "点像を測り、配置で星表へ結び、方向ベクトルの回転を解く",
+   "zh": "Measure point images, match their geometry to a catalogue, and solve the rotation",
+   "tw": "Measure point images, match their geometry to a catalogue, and solve the rotation",
+   "ko": "Measure point images, match their geometry to a catalogue, and solve the rotation",
+   "de": "Measure point images, match their geometry to a catalogue, and solve the rotation",
+   "hi": "Measure point images, match their geometry to a catalogue, and solve the rotation",
+   "fr": "Measure point images, match their geometry to a catalogue, and solve the rotation"
+  },
+  "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Drag to orbit; tap a badge for computed gates.": {
+   "ja": "①問い → ②予想 → ③再生 → ④式 → ⑤限界。ドラッグで回転し、バッジで計算の門を見る。",
+   "zh": "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Drag to orbit; tap a badge for computed gates.",
+   "tw": "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Drag to orbit; tap a badge for computed gates.",
+   "ko": "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Drag to orbit; tap a badge for computed gates.",
+   "de": "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Drag to orbit; tap a badge for computed gates.",
+   "hi": "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Drag to orbit; tap a badge for computed gates.",
+   "fr": "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Drag to orbit; tap a badge for computed gates."
+  },
+  "Stars in the field of view": {
+   "ja": "視野に入る星",
+   "zh": "Stars in the field of view",
+   "tw": "Stars in the field of view",
+   "ko": "Stars in the field of view",
+   "de": "Stars in the field of view",
+   "hi": "Stars in the field of view",
+   "fr": "Stars in the field of view"
+  },
+  "A camera cone sweeps a seeded synthetic sky. Two stars leave rotation about their connecting axis ambiguous; three or more stars with geometry determine attitude.": {
+   "ja": "固定した種で作った合成天球の中をカメラの視野錐が回る。2 星だけでは星を結ぶ軸まわりの回転が残るため、姿勢を一意にするには配置をもつ 3 星以上が要る。",
+   "zh": "A camera cone sweeps a seeded synthetic sky. Two stars leave rotation about their connecting axis ambiguous; three or more stars with geometry determine attitude.",
+   "tw": "A camera cone sweeps a seeded synthetic sky. Two stars leave rotation about their connecting axis ambiguous; three or more stars with geometry determine attitude.",
+   "ko": "A camera cone sweeps a seeded synthetic sky. Two stars leave rotation about their connecting axis ambiguous; three or more stars with geometry determine attitude.",
+   "de": "A camera cone sweeps a seeded synthetic sky. Two stars leave rotation about their connecting axis ambiguous; three or more stars with geometry determine attitude.",
+   "hi": "A camera cone sweeps a seeded synthetic sky. Two stars leave rotation about their connecting axis ambiguous; three or more stars with geometry determine attitude.",
+   "fr": "A camera cone sweeps a seeded synthetic sky. Two stars leave rotation about their connecting axis ambiguous; three or more stars with geometry determine attitude."
+  },
+  "stars in this image": {
+   "ja": "この画像の星",
+   "zh": "stars in this image",
+   "tw": "stars in this image",
+   "ko": "stars in this image",
+   "de": "stars in this image",
+   "hi": "stars in this image",
+   "fr": "stars in this image"
+  },
+  "field of view": {
+   "ja": "視野",
+   "zh": "field of view",
+   "tw": "field of view",
+   "ko": "field of view",
+   "de": "field of view",
+   "hi": "field of view",
+   "fr": "field of view"
+  },
+  "detected stars": {
+   "ja": "検出星数",
+   "zh": "detected stars",
+   "tw": "detected stars",
+   "ko": "detected stars",
+   "de": "detected stars",
+   "hi": "detected stars",
+   "fr": "detected stars"
+  },
+  "angle between estimated and true attitude": {
+   "ja": "推定姿勢と真の姿勢の角度差",
+   "zh": "angle between estimated and true attitude",
+   "tw": "angle between estimated and true attitude",
+   "ko": "angle between estimated and true attitude",
+   "de": "angle between estimated and true attitude",
+   "hi": "angle between estimated and true attitude",
+   "fr": "angle between estimated and true attitude"
+  },
+  "angular-signature matching": {
+   "ja": "角距離署名による対応付け",
+   "zh": "angular-signature matching",
+   "tw": "angular-signature matching",
+   "ko": "angular-signature matching",
+   "de": "angular-signature matching",
+   "hi": "angular-signature matching",
+   "fr": "angular-signature matching"
+  },
+  "0 mismatches": {
+   "ja": "誤対応 0",
+   "zh": "0 mismatches",
+   "tw": "0 mismatches",
+   "ko": "0 mismatches",
+   "de": "0 mismatches",
+   "hi": "0 mismatches",
+   "fr": "0 mismatches"
+  },
+  "0 / 16 mismatches": {
+   "ja": "誤対応 0 / 16",
+   "zh": "0 / 16 mismatches",
+   "tw": "0 / 16 mismatches",
+   "ko": "0 / 16 mismatches",
+   "de": "0 / 16 mismatches",
+   "hi": "0 / 16 mismatches",
+   "fr": "0 / 16 mismatches"
+  },
+  "kabsch op vs direct SVD": {
+   "ja": "kabsch op と直接 SVD",
+   "zh": "kabsch op vs direct SVD",
+   "tw": "kabsch op vs direct SVD",
+   "ko": "kabsch op vs direct SVD",
+   "de": "kabsch op vs direct SVD",
+   "hi": "kabsch op vs direct SVD",
+   "fr": "kabsch op vs direct SVD"
+  },
+  "satellite rotation": {
+   "ja": "衛星の回転",
+   "zh": "satellite rotation",
+   "tw": "satellite rotation",
+   "ko": "satellite rotation",
+   "de": "satellite rotation",
+   "hi": "satellite rotation",
+   "fr": "satellite rotation"
+  },
+  "Do two stars uniquely fix a 3-D attitude?": {
+   "ja": "星 2 つだけで 3-D の向きは一意に決まる?",
+   "zh": "Do two stars uniquely fix a 3-D attitude?",
+   "tw": "Do two stars uniquely fix a 3-D attitude?",
+   "ko": "Do two stars uniquely fix a 3-D attitude?",
+   "de": "Do two stars uniquely fix a 3-D attitude?",
+   "hi": "Do two stars uniquely fix a 3-D attitude?",
+   "fr": "Do two stars uniquely fix a 3-D attitude?"
+  },
+  "yes, uniquely": {
+   "ja": "決まる",
+   "zh": "yes, uniquely",
+   "tw": "yes, uniquely",
+   "ko": "yes, uniquely",
+   "de": "yes, uniquely",
+   "hi": "yes, uniquely",
+   "fr": "yes, uniquely"
+  },
+  "yes, from one pixel": {
+   "ja": "なる",
+   "zh": "yes, from one pixel",
+   "tw": "yes, from one pixel",
+   "ko": "yes, from one pixel",
+   "de": "yes, from one pixel",
+   "hi": "yes, from one pixel",
+   "fr": "yes, from one pixel"
+  },
+  "yes, brightness is enough": {
+   "ja": "はい",
+   "zh": "yes, brightness is enough",
+   "tw": "yes, brightness is enough",
+   "ko": "yes, brightness is enough",
+   "de": "yes, brightness is enough",
+   "hi": "yes, brightness is enough",
+   "fr": "yes, brightness is enough"
+  },
+  "yes": {
+   "ja": "使える",
+   "zh": "yes",
+   "tw": "yes",
+   "ko": "yes",
+   "de": "yes",
+   "hi": "yes",
+   "fr": "yes"
+  },
+  "rotation about one axis remains": {
+   "ja": "1 軸まわりが残る",
+   "zh": "rotation about one axis remains",
+   "tw": "rotation about one axis remains",
+   "ko": "rotation about one axis remains",
+   "de": "rotation about one axis remains",
+   "hi": "rotation about one axis remains",
+   "fr": "rotation about one axis remains"
+  },
+  "Use three or more corresponded direction vectors.": {
+   "ja": "3 本以上の対応した方向ベクトルを使う。",
+   "zh": "Use three or more corresponded direction vectors.",
+   "tw": "Use three or more corresponded direction vectors.",
+   "ko": "Use three or more corresponded direction vectors.",
+   "de": "Use three or more corresponded direction vectors.",
+   "hi": "Use three or more corresponded direction vectors.",
+   "fr": "Use three or more corresponded direction vectors."
+  },
+  "catalogue direction = R × camera ray": {
+   "ja": "catalogue direction = R × camera ray",
+   "zh": "catalogue direction = R × camera ray",
+   "tw": "catalogue direction = R × camera ray",
+   "ko": "catalogue direction = R × camera ray",
+   "de": "catalogue direction = R × camera ray",
+   "hi": "catalogue direction = R × camera ray",
+   "fr": "catalogue direction = R × camera ray"
+  },
+  "The catalogue is seeded synthetic points, not a real catalogue.": {
+   "ja": "星表は実カタログでなく固定 seed の合成点。",
+   "zh": "The catalogue is seeded synthetic points, not a real catalogue.",
+   "tw": "The catalogue is seeded synthetic points, not a real catalogue.",
+   "ko": "The catalogue is seeded synthetic points, not a real catalogue.",
+   "de": "The catalogue is seeded synthetic points, not a real catalogue.",
+   "hi": "The catalogue is seeded synthetic points, not a real catalogue.",
+   "fr": "The catalogue is seeded synthetic points, not a real catalogue."
+  },
+  "Locate stars in the image": {
+   "ja": "像から星位置を取る",
+   "zh": "Locate stars in the image",
+   "tw": "Locate stars in the image",
+   "ko": "Locate stars in the image",
+   "de": "Locate stars in the image",
+   "hi": "Locate stars in the image",
+   "fr": "Locate stars in the image"
+  },
+  "synth_starfield makes an image with PSF, photon noise and read noise; star_detect returns background-subtracted centroids. True centres are off pixel centres.": {
+   "ja": "synth_starfield が PSF、光子雑音、読み出し雑音を含む像を作り、star_detect が背景を引いた重心を返す。真の中心は画素中心から外してある。",
+   "zh": "synth_starfield makes an image with PSF, photon noise and read noise; star_detect returns background-subtracted centroids. True centres are off pixel centres.",
+   "tw": "synth_starfield makes an image with PSF, photon noise and read noise; star_detect returns background-subtracted centroids. True centres are off pixel centres.",
+   "ko": "synth_starfield makes an image with PSF, photon noise and read noise; star_detect returns background-subtracted centroids. True centres are off pixel centres.",
+   "de": "synth_starfield makes an image with PSF, photon noise and read noise; star_detect returns background-subtracted centroids. True centres are off pixel centres.",
+   "hi": "synth_starfield makes an image with PSF, photon noise and read noise; star_detect returns background-subtracted centroids. True centres are off pixel centres.",
+   "fr": "synth_starfield makes an image with PSF, photon noise and read noise; star_detect returns background-subtracted centroids. True centres are off pixel centres."
+  },
+  "median centroid error": {
+   "ja": "重心誤差の中央値",
+   "zh": "median centroid error",
+   "tw": "median centroid error",
+   "ko": "median centroid error",
+   "de": "median centroid error",
+   "hi": "median centroid error",
+   "fr": "median centroid error"
+  },
+  "centroid error": {
+   "ja": "重心誤差",
+   "zh": "centroid error",
+   "tw": "centroid error",
+   "ko": "centroid error",
+   "de": "centroid error",
+   "hi": "centroid error",
+   "fr": "centroid error"
+  },
+  "synthetic camera image: PSF + noise": {
+   "ja": "合成カメラ像: PSF + 雑音",
+   "zh": "synthetic camera image: PSF + noise",
+   "tw": "synthetic camera image: PSF + noise",
+   "ko": "synthetic camera image: PSF + noise",
+   "de": "synthetic camera image: PSF + noise",
+   "hi": "synthetic camera image: PSF + noise",
+   "fr": "synthetic camera image: PSF + noise"
+  },
+  "detected point": {
+   "ja": "検出した点",
+   "zh": "detected point",
+   "tw": "detected point",
+   "ko": "detected point",
+   "de": "detected point",
+   "hi": "detected point",
+   "fr": "detected point"
+  },
+  "Does the brightest pixel give subpixel position?": {
+   "ja": "一番明るい画素を星位置にすれば副画素精度になる?",
+   "zh": "Does the brightest pixel give subpixel position?",
+   "tw": "Does the brightest pixel give subpixel position?",
+   "ko": "Does the brightest pixel give subpixel position?",
+   "de": "Does the brightest pixel give subpixel position?",
+   "hi": "Does the brightest pixel give subpixel position?",
+   "fr": "Does the brightest pixel give subpixel position?"
+  },
+  "a centroid is needed": {
+   "ja": "重心が要る",
+   "zh": "a centroid is needed",
+   "tw": "a centroid is needed",
+   "ko": "a centroid is needed",
+   "de": "a centroid is needed",
+   "hi": "a centroid is needed",
+   "fr": "a centroid is needed"
+  },
+  "Weight neighbouring pixels by the PSF intensity.": {
+   "ja": "PSF の周囲の画素強度を重みにする。",
+   "zh": "Weight neighbouring pixels by the PSF intensity.",
+   "tw": "Weight neighbouring pixels by the PSF intensity.",
+   "ko": "Weight neighbouring pixels by the PSF intensity.",
+   "de": "Weight neighbouring pixels by the PSF intensity.",
+   "hi": "Weight neighbouring pixels by the PSF intensity.",
+   "fr": "Weight neighbouring pixels by the PSF intensity."
+  },
+  "centroid = sum(I x) / sum(I)": {
+   "ja": "centroid = sum(I x) / sum(I)",
+   "zh": "centroid = sum(I x) / sum(I)",
+   "tw": "centroid = sum(I x) / sum(I)",
+   "ko": "centroid = sum(I x) / sum(I)",
+   "de": "centroid = sum(I x) / sum(I)",
+   "hi": "centroid = sum(I x) / sum(I)",
+   "fr": "centroid = sum(I x) / sum(I)"
+  },
+  "Close pairs and saturation are omitted from this simple centroid model.": {
+   "ja": "接近した星や飽和はこの単純な重心から除いた。",
+   "zh": "Close pairs and saturation are omitted from this simple centroid model.",
+   "tw": "Close pairs and saturation are omitted from this simple centroid model.",
+   "ko": "Close pairs and saturation are omitted from this simple centroid model.",
+   "de": "Close pairs and saturation are omitted from this simple centroid model.",
+   "hi": "Close pairs and saturation are omitted from this simple centroid model.",
+   "fr": "Close pairs and saturation are omitted from this simple centroid model."
+  },
+  "Match and solve with Kabsch": {
+   "ja": "対応付けと Kabsch",
+   "zh": "Match and solve with Kabsch",
+   "tw": "Match and solve with Kabsch",
+   "ko": "Match and solve with Kabsch",
+   "de": "Match and solve with Kabsch",
+   "hi": "Match and solve with Kabsch",
+   "fr": "Match and solve with Kabsch"
+  },
+  "attitude angle error": {
+   "ja": "姿勢角誤差",
+   "zh": "attitude angle error",
+   "tw": "attitude angle error",
+   "ko": "attitude angle error",
+   "de": "attitude angle error",
+   "hi": "attitude angle error",
+   "fr": "attitude angle error"
+  },
+  "solver progress": {
+   "ja": "解法の進行",
+   "zh": "solver progress",
+   "tw": "solver progress",
+   "ko": "solver progress",
+   "de": "solver progress",
+   "hi": "solver progress",
+   "fr": "solver progress"
+  },
+  "Match stars by brightness alone?": {
+   "ja": "星の明るさだけで対応を決める?",
+   "zh": "Match stars by brightness alone?",
+   "tw": "Match stars by brightness alone?",
+   "ko": "Match stars by brightness alone?",
+   "de": "Match stars by brightness alone?",
+   "hi": "Match stars by brightness alone?",
+   "fr": "Match stars by brightness alone?"
+  },
+  "use angular geometry": {
+   "ja": "角距離の配置を使う",
+   "zh": "use angular geometry",
+   "tw": "use angular geometry",
+   "ko": "use angular geometry",
+   "de": "use angular geometry",
+   "hi": "use angular geometry",
+   "fr": "use angular geometry"
+  },
+  "R = argmin sum ||R camera_i - catalogue_i||^2": {
+   "ja": "R = argmin sum ||R camera_i - catalogue_i||^2",
+   "zh": "R = argmin sum ||R camera_i - catalogue_i||^2",
+   "tw": "R = argmin sum ||R camera_i - catalogue_i||^2",
+   "ko": "R = argmin sum ||R camera_i - catalogue_i||^2",
+   "de": "R = argmin sum ||R camera_i - catalogue_i||^2",
+   "hi": "R = argmin sum ||R camera_i - catalogue_i||^2",
+   "fr": "R = argmin sum ||R camera_i - catalogue_i||^2"
+  },
+  "Glare, too few stars and trails": {
+   "ja": "迷光・星不足・星の流れ",
+   "zh": "Glare, too few stars and trails",
+   "tw": "Glare, too few stars and trails",
+   "ko": "Glare, too few stars and trails",
+   "de": "Glare, too few stars and trails",
+   "hi": "Glare, too few stars and trails",
+   "fr": "Glare, too few stars and trails"
+  },
+  "This successful case assumes point images and enough stars. Sun or Moon glare, a sparse field, and trails from fast slew are not computed, so the same accuracy cannot be claimed.": {
+   "ja": "この成功例は点像と十分な星を仮定する。太陽や月の迷光、星が少ない視野、高速回転で伸びた星像は未計算なので、同じ精度とは言えない。",
+   "zh": "This successful case assumes point images and enough stars. Sun or Moon glare, a sparse field, and trails from fast slew are not computed, so the same accuracy cannot be claimed.",
+   "tw": "This successful case assumes point images and enough stars. Sun or Moon glare, a sparse field, and trails from fast slew are not computed, so the same accuracy cannot be claimed.",
+   "ko": "This successful case assumes point images and enough stars. Sun or Moon glare, a sparse field, and trails from fast slew are not computed, so the same accuracy cannot be claimed.",
+   "de": "This successful case assumes point images and enough stars. Sun or Moon glare, a sparse field, and trails from fast slew are not computed, so the same accuracy cannot be claimed.",
+   "hi": "This successful case assumes point images and enough stars. Sun or Moon glare, a sparse field, and trails from fast slew are not computed, so the same accuracy cannot be claimed.",
+   "fr": "This successful case assumes point images and enough stars. Sun or Moon glare, a sparse field, and trails from fast slew are not computed, so the same accuracy cannot be claimed."
+  },
+  "needed for a unique attitude": {
+   "ja": "一意な姿勢に必要",
+   "zh": "needed for a unique attitude",
+   "tw": "needed for a unique attitude",
+   "ko": "needed for a unique attitude",
+   "de": "needed for a unique attitude",
+   "hi": "needed for a unique attitude",
+   "fr": "needed for a unique attitude"
+  },
+  "3+ stars": {
+   "ja": "3 星以上",
+   "zh": "3+ stars",
+   "tw": "3+ stars",
+   "ko": "3+ stars",
+   "de": "3+ stars",
+   "hi": "3+ stars",
+   "fr": "3+ stars"
+  },
+  "uncomputed conditions": {
+   "ja": "未計算の条件",
+   "zh": "uncomputed conditions",
+   "tw": "uncomputed conditions",
+   "ko": "uncomputed conditions",
+   "de": "uncomputed conditions",
+   "hi": "uncomputed conditions",
+   "fr": "uncomputed conditions"
+  },
+  "usable stars": {
+   "ja": "使える星数",
+   "zh": "usable stars",
+   "tw": "usable stars",
+   "ko": "usable stars",
+   "de": "usable stars",
+   "hi": "usable stars",
+   "fr": "usable stars"
+  },
+  "successful image; limit cases are not synthesized": {
+   "ja": "成功例の像。限界条件は未合成",
+   "zh": "successful image; limit cases are not synthesized",
+   "tw": "successful image; limit cases are not synthesized",
+   "ko": "successful image; limit cases are not synthesized",
+   "de": "successful image; limit cases are not synthesized",
+   "hi": "successful image; limit cases are not synthesized",
+   "fr": "successful image; limit cases are not synthesized"
+  },
+  "same accuracy with Sun/Moon, too few stars, or fast slew": {
+   "ja": "太陽・月、星不足、高速回転でも同じ精度",
+   "zh": "same accuracy with Sun/Moon, too few stars, or fast slew",
+   "tw": "same accuracy with Sun/Moon, too few stars, or fast slew",
+   "ko": "same accuracy with Sun/Moon, too few stars, or fast slew",
+   "de": "same accuracy with Sun/Moon, too few stars, or fast slew",
+   "hi": "same accuracy with Sun/Moon, too few stars, or fast slew",
+   "fr": "same accuracy with Sun/Moon, too few stars, or fast slew"
+  },
+  "includes glare, scarcity and trails": {
+   "ja": "迷光・不足・流れを含む",
+   "zh": "includes glare, scarcity and trails",
+   "tw": "includes glare, scarcity and trails",
+   "ko": "includes glare, scarcity and trails",
+   "de": "includes glare, scarcity and trails",
+   "hi": "includes glare, scarcity and trails",
+   "fr": "includes glare, scarcity and trails"
+  },
+  "not computed": {
+   "ja": "未計算",
+   "zh": "not computed",
+   "tw": "not computed",
+   "ko": "not computed",
+   "de": "not computed",
+   "hi": "not computed",
+   "fr": "not computed"
+  },
+  "proximity to limit": {
+   "ja": "限界への近さ",
+   "zh": "proximity to limit",
+   "tw": "proximity to limit",
+   "ko": "proximity to limit",
+   "de": "proximity to limit",
+   "hi": "proximity to limit",
+   "fr": "proximity to limit"
+  },
+  "Can a point-image result be reused unchanged during fast slew?": {
+   "ja": "点像で成功した結果を高速回転へそのまま使える?",
+   "zh": "Can a point-image result be reused unchanged during fast slew?",
+   "tw": "Can a point-image result be reused unchanged during fast slew?",
+   "ko": "Can a point-image result be reused unchanged during fast slew?",
+   "de": "Can a point-image result be reused unchanged during fast slew?",
+   "hi": "Can a point-image result be reused unchanged during fast slew?",
+   "fr": "Can a point-image result be reused unchanged during fast slew?"
+  },
+  "trails need a separate model": {
+   "ja": "星の流れを別に扱う",
+   "zh": "trails need a separate model",
+   "tw": "trails need a separate model",
+   "ko": "trails need a separate model",
+   "de": "trails need a separate model",
+   "hi": "trails need a separate model",
+   "fr": "trails need a separate model"
+  },
+  "Trails change the assumptions behind centroiding and matching.": {
+   "ja": "伸びた像では点像の重心・対応付けの前提が変わる。",
+   "zh": "Trails change the assumptions behind centroiding and matching.",
+   "tw": "Trails change the assumptions behind centroiding and matching.",
+   "ko": "Trails change the assumptions behind centroiding and matching.",
+   "de": "Trails change the assumptions behind centroiding and matching.",
+   "hi": "Trails change the assumptions behind centroiding and matching.",
+   "fr": "Trails change the assumptions behind centroiding and matching."
+  },
+  "trail length ≈ angular rate × exposure": {
+   "ja": "trail length ≈ angular rate × exposure",
+   "zh": "trail length ≈ angular rate × exposure",
+   "tw": "trail length ≈ angular rate × exposure",
+   "ko": "trail length ≈ angular rate × exposure",
+   "de": "trail length ≈ angular rate × exposure",
+   "hi": "trail length ≈ angular rate × exposure",
+   "fr": "trail length ≈ angular rate × exposure"
+  },
+  "Sun/Moon glare, too few stars and trails are uncomputed; this row is ok:false.": {
+   "ja": "太陽・月の迷光、星不足、星の流れは未計算。この行を ok:false にする。",
+   "zh": "Sun/Moon glare, too few stars and trails are uncomputed; this row is ok:false.",
+   "tw": "Sun/Moon glare, too few stars and trails are uncomputed; this row is ok:false.",
+   "ko": "Sun/Moon glare, too few stars and trails are uncomputed; this row is ok:false.",
+   "de": "Sun/Moon glare, too few stars and trails are uncomputed; this row is ok:false.",
+   "hi": "Sun/Moon glare, too few stars and trails are uncomputed; this row is ok:false.",
+   "fr": "Sun/Moon glare, too few stars and trails are uncomputed; this row is ok:false."
+  },
+  "Catalogue and image are entirely seeded synthetic data. No real catalogue, operator, product or external image is used.": {
+   "ja": "星表と画像はすべて固定 seed の合成データ。実カタログ、事業者名、製品名、外部画像は使っていない。",
+   "zh": "Catalogue and image are entirely seeded synthetic data. No real catalogue, operator, product or external image is used.",
+   "tw": "Catalogue and image are entirely seeded synthetic data. No real catalogue, operator, product or external image is used.",
+   "ko": "Catalogue and image are entirely seeded synthetic data. No real catalogue, operator, product or external image is used.",
+   "de": "Catalogue and image are entirely seeded synthetic data. No real catalogue, operator, product or external image is used.",
+   "hi": "Catalogue and image are entirely seeded synthetic data. No real catalogue, operator, product or external image is used.",
+   "fr": "Catalogue and image are entirely seeded synthetic data. No real catalogue, operator, product or external image is used."
+  },
+  "hot pixels absent from the catalogue": {
+   "ja": "星表に無いホットピクセル",
+   "zh": "hot pixels absent from the catalogue",
+   "tw": "hot pixels absent from the catalogue",
+   "ko": "hot pixels absent from the catalogue",
+   "de": "hot pixels absent from the catalogue",
+   "hi": "hot pixels absent from the catalogue",
+   "fr": "hot pixels absent from the catalogue"
+  },
+  "reject every false point": {
+   "ja": "偽点をすべて捨てる",
+   "zh": "reject every false point",
+   "tw": "reject every false point",
+   "ko": "reject every false point",
+   "de": "reject every false point",
+   "hi": "reject every false point",
+   "fr": "reject every false point"
+  },
+  "2 / 2 rejected": {
+   "ja": "2 / 2 個を棄却",
+   "zh": "2 / 2 rejected",
+   "tw": "2 / 2 rejected",
+   "ko": "2 / 2 rejected",
+   "de": "2 / 2 rejected",
+   "hi": "2 / 2 rejected",
+   "fr": "2 / 2 rejected"
+  },
+  "detections (stars + false points)": {
+   "ja": "検出数(星 + 偽点)",
+   "zh": "detections (stars + false points)",
+   "tw": "detections (stars + false points)",
+   "ko": "detections (stars + false points)",
+   "de": "detections (stars + false points)",
+   "hi": "detections (stars + false points)",
+   "fr": "detections (stars + false points)"
+  },
+  "Triangle angles from image stars are searched against every local triangle in the shuffled 196-star catalogue. The hypothesis with most agreeing points rejects outliers, then kabsch rotates detected rays onto catalogue directions.": {
+   "ja": "画像の星三つが作る角距離を、ランダム順の全196星表にある三角形と照合して姿勢仮説を作る。最も多くの点が一致する仮説を選び、偽点を捨て、検出光線を kabsch で星表方向へ回す。",
+   "zh": "Triangle angles from image stars are searched against every local triangle in the shuffled 196-star catalogue. The hypothesis with most agreeing points rejects outliers, then kabsch rotates detected rays onto catalogue directions.",
+   "tw": "Triangle angles from image stars are searched against every local triangle in the shuffled 196-star catalogue. The hypothesis with most agreeing points rejects outliers, then kabsch rotates detected rays onto catalogue directions.",
+   "ko": "Triangle angles from image stars are searched against every local triangle in the shuffled 196-star catalogue. The hypothesis with most agreeing points rejects outliers, then kabsch rotates detected rays onto catalogue directions.",
+   "de": "Triangle angles from image stars are searched against every local triangle in the shuffled 196-star catalogue. The hypothesis with most agreeing points rejects outliers, then kabsch rotates detected rays onto catalogue directions.",
+   "hi": "Triangle angles from image stars are searched against every local triangle in the shuffled 196-star catalogue. The hypothesis with most agreeing points rejects outliers, then kabsch rotates detected rays onto catalogue directions.",
+   "fr": "Triangle angles from image stars are searched against every local triangle in the shuffled 196-star catalogue. The hypothesis with most agreeing points rejects outliers, then kabsch rotates detected rays onto catalogue directions."
+  },
+  "mismatches / false points rejected": {
+   "ja": "誤対応 / 偽点棄却",
+   "zh": "mismatches / false points rejected",
+   "tw": "mismatches / false points rejected",
+   "ko": "mismatches / false points rejected",
+   "de": "mismatches / false points rejected",
+   "hi": "mismatches / false points rejected",
+   "fr": "mismatches / false points rejected"
+  },
+  "Inter-star angles do not change under rotation. Triangle candidates vote for the attitude supported by the most points.": {
+   "ja": "回転しても星どうしの角距離は変わらない。三角形の候補から、全点の一致が最も多い姿勢を選ぶ。",
+   "zh": "Inter-star angles do not change under rotation. Triangle candidates vote for the attitude supported by the most points.",
+   "tw": "Inter-star angles do not change under rotation. Triangle candidates vote for the attitude supported by the most points.",
+   "ko": "Inter-star angles do not change under rotation. Triangle candidates vote for the attitude supported by the most points.",
+   "de": "Inter-star angles do not change under rotation. Triangle candidates vote for the attitude supported by the most points.",
+   "hi": "Inter-star angles do not change under rotation. Triangle candidates vote for the attitude supported by the most points.",
+   "fr": "Inter-star angles do not change under rotation. Triangle candidates vote for the attitude supported by the most points."
+  },
+  "This lesson searches 196 stars directly; it is not an index for a large operational catalogue.": {
+   "ja": "196星の全探索を使う教材であり、大規模な実用星表の索引ではない。",
+   "zh": "This lesson searches 196 stars directly; it is not an index for a large operational catalogue.",
+   "tw": "This lesson searches 196 stars directly; it is not an index for a large operational catalogue.",
+   "ko": "This lesson searches 196 stars directly; it is not an index for a large operational catalogue.",
+   "de": "This lesson searches 196 stars directly; it is not an index for a large operational catalogue.",
+   "hi": "This lesson searches 196 stars directly; it is not an index for a large operational catalogue.",
+   "fr": "This lesson searches 196 stars directly; it is not an index for a large operational catalogue."
+  }
+ }
+}
+

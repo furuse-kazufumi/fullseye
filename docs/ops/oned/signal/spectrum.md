@@ -4,7 +4,7 @@ dim: oned
 category: signal
 in: signal
 out: pairs
-examples: [acoustic_condition_monitoring, poc_bearing_diagnosis, poc_gear_tooth_metrology, poc_machine_condition_fusion, poc_pipe_wall_loss, poc_recycling_sorting, poc_thin_film_reflectometry, poc_web_roll_periodicity]
+examples: [acoustic_condition_monitoring, anim3d_lens_aberrations, poc_bearing_diagnosis, poc_gear_tooth_metrology, poc_machine_condition_fusion, poc_pipe_wall_loss, poc_recycling_sorting, poc_thin_film_reflectometry, poc_web_roll_periodicity]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.8.1  # fullseye lib version this note was generated for
@@ -67,6 +67,7 @@ factor twice when comparing their output with this one.
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [acoustic_condition_monitoring](../../../../examples/acoustic_condition_monitoring.py) — `py -3.11 examples/acoustic_condition_monitoring.py`
+- [anim3d_lens_aberrations](../../../../examples/anim3d_lens_aberrations.py) — `py -3.11 examples/anim3d_lens_aberrations.py`
 - [poc_bearing_diagnosis](../../../../examples/poc_bearing_diagnosis.py) — `py -3.11 examples/poc_bearing_diagnosis.py`
 - [poc_gear_tooth_metrology](../../../../examples/poc_gear_tooth_metrology.py) — `py -3.11 examples/poc_gear_tooth_metrology.py`
 - [poc_machine_condition_fusion](../../../../examples/poc_machine_condition_fusion.py) — `py -3.11 examples/poc_machine_condition_fusion.py`

@@ -4,7 +4,7 @@ dim: optics
 category: design
 in: table
 out: table
-examples: [poc_lens_file_roundtrip, poc_lens_merit_operands, poc_lens_solves_afocal, poc_lens_tolerancing, poc_noncoaxial_optics, poc_photograph_through_prescription, poc_zmx_public_verify]
+examples: [anim3d_lens_aberrations, poc_lens_file_roundtrip, poc_lens_merit_operands, poc_lens_solves_afocal, poc_lens_tolerancing, poc_noncoaxial_optics, poc_photograph_through_prescription, poc_zmx_public_verify]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.8.1  # fullseye lib version this note was generated for
@@ -59,6 +59,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [anim3d_lens_aberrations](../../../../examples/anim3d_lens_aberrations.py) — `py -3.11 examples/anim3d_lens_aberrations.py`
 - [poc_lens_file_roundtrip](../../../../examples/poc_lens_file_roundtrip.py) — `py -3.11 examples/poc_lens_file_roundtrip.py`
 - [poc_lens_merit_operands](../../../../examples/poc_lens_merit_operands.py) — `py -3.11 examples/poc_lens_merit_operands.py`
 - [poc_lens_solves_afocal](../../../../examples/poc_lens_solves_afocal.py) — `py -3.11 examples/poc_lens_solves_afocal.py`

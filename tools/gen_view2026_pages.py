@@ -30,6 +30,12 @@
 
 サムネイルは ``tools/gen_view2026_thumbs.py`` が作る。
 
+動く 3-D(分類 ``anim3d``): 見どころの 1 本として ``media_path`` に自己完結の HTML
+(``docs/view2026/anim3d/<id>.html``、``tools/anim3d_i18n.py --build`` が 8 言語で書く)を置く。
+タイルと一覧のリンクは ``?lang=<そのページの言語>`` 付き(ビューアは ?lang が無ければブラウザの言語で開く)、
+容量(MB)はファイルから数えてタイルと一覧に出す(スマートフォンで開く前に重さが分かるように)。
+HTML が 8 言語そろっていない(``"langs"`` に足りない言語がある)なら止める。
+
 ★生成の前に検査して、通らなければ何も書かない(fail-closed):
   * 全言語の文字列がそろっている / 図・サムネイル・例のスクリプトが実在する
   * **説明文と数字に出てくる数の並びが、全言語で日本語と同じ**(訳で数字が化けない)
@@ -133,6 +139,22 @@ def _source(d: dict, e: dict) -> str:
     return GH_EXAMPLE % (d["repo"], e["id"])
 
 
+def _is_viewer(d: dict, e: dict) -> bool:
+    """図の代わりに触って見る HTML(動く 3-D)か。"""
+    return _media_rel(d, e).endswith(".html")
+
+
+def _viewer_mb(d: dict, e: dict) -> str:
+    """HTML の容量(MB、小数 1 桁、最小 0.1)。手で書かない。"""
+    return "%.1f MB" % max(0.1, (DOCS / _media_rel(d, e)).stat().st_size / 1e6)
+
+
+def _viewer_langs(path: Path) -> list[str]:
+    """自己完結のビューア HTML に埋めた言語の一覧(``"langs":[...]``)。"""
+    m = re.search(r'"langs":\[([^\]]*)\]', path.read_text(encoding="utf-8"))
+    return re.findall(r'"([a-z]{2})"', m.group(1)) if m else []
+
+
 def validate(d: dict) -> list[str]:
     """問題の一覧(空なら合格)。"""
     bad = []
@@ -191,6 +213,11 @@ def validate(d: dict) -> list[str]:
         for p, what in checks:
             if not p.is_file():
                 bad.append("%s: %s が無い (%s)" % (pid, what, p.relative_to(ROOT).as_posix()))
+        if _is_viewer(d, e) and (DOCS / _media_rel(d, e)).is_file():
+            lack = [l for l in langs if l not in _viewer_langs(DOCS / _media_rel(d, e))]
+            if lack:
+                bad.append("%s: ビューアに無い言語 %s —— py -3.11 tools/anim3d_i18n.py --build %s --out docs/%s"
+                           % (pid, lack, pid, _media_rel(d, e)))
         ref = Counter(_NUM.findall(e["see"]["ja"] + " " + e["num"]["ja"]))
         for l in langs[1:]:
             got = Counter(_NUM.findall(e["see"][l] + " " + e["num"][l]))
@@ -247,6 +274,8 @@ def validate(d: dict) -> list[str]:
 
 
 def _media_kind(name: str) -> str:
+    if name.endswith(".html"):
+        return "kind_anim3d"
     return "kind_video" if name.endswith(".mp4") else "kind_gif" if name.endswith(".gif") else "kind_fig"
 
 
@@ -305,7 +334,8 @@ def build(d: dict, lang: str) -> str:
     ui = {k: v.get(lang, "") for k, v in d["ui"].items()}
     up = "" if lang == "ja" else "../"            # ページから docs/view2026/ への相対
     docs = up + "../"                              # ページから docs/ への相対
-    media = lambda e: docs + _media_rel(d, e)      # noqa: E731
+    def media(e):                                  # 動く 3-D の HTML はそのページの言語で開く
+        return docs + _media_rel(d, e) + ("?lang=" + lang if _is_viewer(d, e) else "")
 
     sw = []
     for l in d["langs"]:
@@ -331,8 +361,9 @@ def build(d: dict, lang: str) -> str:
     for e in d["exhibits"]:
         lab = e["label"][lang]
         mark = "<b>&#9654;</b>" if e["motion"] else ""
+        cap = "%s · %s" % (lab, _viewer_mb(d, e)) if _is_viewer(d, e) else lab
         out.append('<a href="%s"><img src="%sthumbs/%s.jpg" alt="%s" loading="lazy" width="320" height="320">%s<span>%s</span></a>'
-                   % (media(e), up, e["id"], lab, mark, lab))
+                   % (media(e), up, e["id"], lab, mark, cap))
     out += ["</div>", ""]
 
     # 2. シリーズ記事
@@ -394,8 +425,11 @@ def build(d: dict, lang: str) -> str:
             num = " **%s**" % e["num"][lang] if e["num"][lang].strip() else ""
             src = _source(d, e)
             link = " [%s](%s)" % (ui["source"], src) if src else ""
+            kind = ui[_media_kind(_media_rel(d, e))]
+            if _is_viewer(d, e):
+                kind += ", " + _viewer_mb(d, e)
             out.append("- [%s](%s) (%s): %s%s%s" % (
-                e["label"][lang], media(e), ui[_media_kind(_media_rel(d, e))], e["see"][lang], num, link))
+                e["label"][lang], media(e), kind, e["see"][lang], num, link))
         out.append("")
     out += ["</div>", "", "## " + ui["h_about"], "", ui["about"], ""]
 

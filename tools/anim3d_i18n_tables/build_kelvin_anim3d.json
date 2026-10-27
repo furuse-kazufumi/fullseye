@@ -1,0 +1,501 @@
+{
+ "_": "Kelvin wake lesson, 2026-10-27",
+ "example": "build_kelvin_anim3d",
+ "strings": {
+  "A ship's V-shaped wake": {
+   "ja": "船の V 字の航跡",
+   "zh": "A ship's V-shaped wake",
+   "tw": "A ship's V-shaped wake",
+   "ko": "A ship's V-shaped wake",
+   "de": "A ship's V-shaped wake",
+   "hi": "A ship's V-shaped wake",
+   "fr": "A ship's V-shaped wake"
+  },
+  "Why the opening stays near 19.47 deg across speeds and sizes": {
+   "ja": "なぜ速さや大きさが違っても開きは約 19.47 deg なのか",
+   "zh": "Why the opening stays near 19.47 deg across speeds and sizes",
+   "tw": "Why the opening stays near 19.47 deg across speeds and sizes",
+   "ko": "Why the opening stays near 19.47 deg across speeds and sizes",
+   "de": "Why the opening stays near 19.47 deg across speeds and sizes",
+   "hi": "Why the opening stays near 19.47 deg across speeds and sizes",
+   "fr": "Why the opening stays near 19.47 deg across speeds and sizes"
+  },
+  "Follow question, prediction, play, formula and limit. Measure angle and wavelength from height images, then compare with closed forms.": {
+   "ja": "問い、予想、再生、式、限界の順に進む。高さ画像から角度と波長を測り、閉形式と比べる。",
+   "zh": "Follow question, prediction, play, formula and limit. Measure angle and wavelength from height images, then compare with closed forms.",
+   "tw": "Follow question, prediction, play, formula and limit. Measure angle and wavelength from height images, then compare with closed forms.",
+   "ko": "Follow question, prediction, play, formula and limit. Measure angle and wavelength from height images, then compare with closed forms.",
+   "de": "Follow question, prediction, play, formula and limit. Measure angle and wavelength from height images, then compare with closed forms.",
+   "hi": "Follow question, prediction, play, formula and limit. Measure angle and wavelength from height images, then compare with closed forms.",
+   "fr": "Follow question, prediction, play, formula and limit. Measure angle and wavelength from height images, then compare with closed forms."
+  },
+  "V-shaped wake": {
+   "ja": "V 字の航跡",
+   "zh": "V-shaped wake",
+   "tw": "V-shaped wake",
+   "ko": "V-shaped wake",
+   "de": "V-shaped wake",
+   "hi": "V-shaped wake",
+   "fr": "V-shaped wake"
+  },
+  "Superposing deep-water waves from a point pressure source crowds crests onto two cusp lines. The measurement scans height-image angles and finds the steepest signal edge.": {
+   "ja": "点状の圧力源が作る深水波を重ねると、波の山が二本のカスプ線へ集まる。高さ画像の角度方向を走査し、信号が最も急に落ちる境界を測った。",
+   "zh": "Superposing deep-water waves from a point pressure source crowds crests onto two cusp lines. The measurement scans height-image angles and finds the steepest signal edge.",
+   "tw": "Superposing deep-water waves from a point pressure source crowds crests onto two cusp lines. The measurement scans height-image angles and finds the steepest signal edge.",
+   "ko": "Superposing deep-water waves from a point pressure source crowds crests onto two cusp lines. The measurement scans height-image angles and finds the steepest signal edge.",
+   "de": "Superposing deep-water waves from a point pressure source crowds crests onto two cusp lines. The measurement scans height-image angles and finds the steepest signal edge.",
+   "hi": "Superposing deep-water waves from a point pressure source crowds crests onto two cusp lines. The measurement scans height-image angles and finds the steepest signal edge.",
+   "fr": "Superposing deep-water waves from a point pressure source crowds crests onto two cusp lines. The measurement scans height-image angles and finds the steepest signal edge."
+  },
+  "measured half-angle": {
+   "ja": "画像から測った半角",
+   "zh": "measured half-angle",
+   "tw": "measured half-angle",
+   "ko": "measured half-angle",
+   "de": "measured half-angle",
+   "hi": "measured half-angle",
+   "fr": "measured half-angle"
+  },
+  "closed form": {
+   "ja": "閉形式",
+   "zh": "closed form",
+   "tw": "closed form",
+   "ko": "closed form",
+   "de": "closed form",
+   "hi": "closed form",
+   "fr": "closed form"
+  },
+  "synthetic height image": {
+   "ja": "合成した高さ画像",
+   "zh": "synthetic height image",
+   "tw": "synthetic height image",
+   "ko": "synthetic height image",
+   "de": "synthetic height image",
+   "hi": "synthetic height image",
+   "fr": "synthetic height image"
+  },
+  "cusp angle measured from height images": {
+   "ja": "高さ画像から測ったカスプ角",
+   "zh": "cusp angle measured from height images",
+   "tw": "cusp angle measured from height images",
+   "ko": "cusp angle measured from height images",
+   "de": "cusp angle measured from height images",
+   "hi": "cusp angle measured from height images",
+   "fr": "cusp angle measured from height images"
+  },
+  "angle spread across speeds": {
+   "ja": "船速を変えたときの角度差",
+   "zh": "angle spread across speeds",
+   "tw": "angle spread across speeds",
+   "ko": "angle spread across speeds",
+   "de": "angle spread across speeds",
+   "hi": "angle spread across speeds",
+   "fr": "angle spread across speeds"
+  },
+  "transverse wavelength from centreline spectrum": {
+   "ja": "中心線スペクトルの横波波長",
+   "zh": "transverse wavelength from centreline spectrum",
+   "tw": "transverse wavelength from centreline spectrum",
+   "ko": "transverse wavelength from centreline spectrum",
+   "de": "transverse wavelength from centreline spectrum",
+   "hi": "transverse wavelength from centreline spectrum",
+   "fr": "transverse wavelength from centreline spectrum"
+  },
+  "boat travel": {
+   "ja": "船の進行",
+   "zh": "boat travel",
+   "tw": "boat travel",
+   "ko": "boat travel",
+   "de": "boat travel",
+   "hi": "boat travel",
+   "fr": "boat travel"
+  },
+  "Does a faster boat make a narrower V?": {
+   "ja": "速い船ほど V 字は細くなる?",
+   "zh": "Does a faster boat make a narrower V?",
+   "tw": "Does a faster boat make a narrower V?",
+   "ko": "Does a faster boat make a narrower V?",
+   "de": "Does a faster boat make a narrower V?",
+   "hi": "Does a faster boat make a narrower V?",
+   "fr": "Does a faster boat make a narrower V?"
+  },
+  "yes, narrower": {
+   "ja": "細くなる",
+   "zh": "yes, narrower",
+   "tw": "yes, narrower",
+   "ko": "yes, narrower",
+   "de": "yes, narrower",
+   "hi": "yes, narrower",
+   "fr": "yes, narrower"
+  },
+  "unchanged in deep water": {
+   "ja": "深水では同じ",
+   "zh": "unchanged in deep water",
+   "tw": "unchanged in deep water",
+   "ko": "unchanged in deep water",
+   "de": "unchanged in deep water",
+   "hi": "unchanged in deep water",
+   "fr": "unchanged in deep water"
+  },
+  "Speed changes wavelength, but not the deep-water point-source cusp angle.": {
+   "ja": "速さは波長を変えるが、点源の深水カスプ角は変えない。",
+   "zh": "Speed changes wavelength, but not the deep-water point-source cusp angle.",
+   "tw": "Speed changes wavelength, but not the deep-water point-source cusp angle.",
+   "ko": "Speed changes wavelength, but not the deep-water point-source cusp angle.",
+   "de": "Speed changes wavelength, but not the deep-water point-source cusp angle.",
+   "hi": "Speed changes wavelength, but not the deep-water point-source cusp angle.",
+   "fr": "Speed changes wavelength, but not the deep-water point-source cusp angle."
+  },
+  "omega^2 = g k; omega = U kx": {
+   "ja": "omega^2 = g k; omega = U kx",
+   "zh": "omega^2 = g k; omega = U kx",
+   "tw": "omega^2 = g k; omega = U kx",
+   "ko": "omega^2 = g k; omega = U kx",
+   "de": "omega^2 = g k; omega = U kx",
+   "hi": "omega^2 = g k; omega = U kx",
+   "fr": "omega^2 = g k; omega = U kx"
+  },
+  "Point-source, deep-water, linear and inviscid model.": {
+   "ja": "点源・深水・線形・非粘性の模型。",
+   "zh": "Point-source, deep-water, linear and inviscid model.",
+   "tw": "Point-source, deep-water, linear and inviscid model.",
+   "ko": "Point-source, deep-water, linear and inviscid model.",
+   "de": "Point-source, deep-water, linear and inviscid model.",
+   "hi": "Point-source, deep-water, linear and inviscid model.",
+   "fr": "Point-source, deep-water, linear and inviscid model."
+  },
+  "Triple the speed": {
+   "ja": "速さを 3 倍にする",
+   "zh": "Triple the speed",
+   "tw": "Triple the speed",
+   "ko": "Triple the speed",
+   "de": "Triple the speed",
+   "hi": "Triple the speed",
+   "fr": "Triple the speed"
+  },
+  "angle spread": {
+   "ja": "角度差",
+   "zh": "angle spread",
+   "tw": "angle spread",
+   "ko": "angle spread",
+   "de": "angle spread",
+   "hi": "angle spread",
+   "fr": "angle spread"
+  },
+  "wavelength, 4 → 12 m/s": {
+   "ja": "波長 4 → 12 m/s",
+   "zh": "wavelength, 4 → 12 m/s",
+   "tw": "wavelength, 4 → 12 m/s",
+   "ko": "wavelength, 4 → 12 m/s",
+   "de": "wavelength, 4 → 12 m/s",
+   "hi": "wavelength, 4 → 12 m/s",
+   "fr": "wavelength, 4 → 12 m/s"
+  },
+  "image-measured angle": {
+   "ja": "画像から測った角度",
+   "zh": "image-measured angle",
+   "tw": "image-measured angle",
+   "ko": "image-measured angle",
+   "de": "image-measured angle",
+   "hi": "image-measured angle",
+   "fr": "image-measured angle"
+  },
+  "height image at each speed": {
+   "ja": "速度ごとの高さ画像",
+   "zh": "height image at each speed",
+   "tw": "height image at each speed",
+   "ko": "height image at each speed",
+   "de": "height image at each speed",
+   "hi": "height image at each speed",
+   "fr": "height image at each speed"
+  },
+  "boat speed U": {
+   "ja": "船速 U",
+   "zh": "boat speed U",
+   "tw": "boat speed U",
+   "ko": "boat speed U",
+   "de": "boat speed U",
+   "hi": "boat speed U",
+   "fr": "boat speed U"
+  },
+  "What becomes 9 times larger when speed triples?": {
+   "ja": "船速を 3 倍にすると何が 9 倍になる?",
+   "zh": "What becomes 9 times larger when speed triples?",
+   "tw": "What becomes 9 times larger when speed triples?",
+   "ko": "What becomes 9 times larger when speed triples?",
+   "de": "What becomes 9 times larger when speed triples?",
+   "hi": "What becomes 9 times larger when speed triples?",
+   "fr": "What becomes 9 times larger when speed triples?"
+  },
+  "wake angle": {
+   "ja": "航跡角",
+   "zh": "wake angle",
+   "tw": "wake angle",
+   "ko": "wake angle",
+   "de": "wake angle",
+   "hi": "wake angle",
+   "fr": "wake angle"
+  },
+  "transverse wavelength": {
+   "ja": "横波の波長",
+   "zh": "transverse wavelength",
+   "tw": "transverse wavelength",
+   "ko": "transverse wavelength",
+   "de": "transverse wavelength",
+   "hi": "transverse wavelength",
+   "fr": "transverse wavelength"
+  },
+  "On the centreline, dispersion and stationarity give k=g/U^2.": {
+   "ja": "分散関係と定常条件から中心線では k=g/U^2。",
+   "zh": "On the centreline, dispersion and stationarity give k=g/U^2.",
+   "tw": "On the centreline, dispersion and stationarity give k=g/U^2.",
+   "ko": "On the centreline, dispersion and stationarity give k=g/U^2.",
+   "de": "On the centreline, dispersion and stationarity give k=g/U^2.",
+   "hi": "On the centreline, dispersion and stationarity give k=g/U^2.",
+   "fr": "On the centreline, dispersion and stationarity give k=g/U^2."
+  },
+  "lambda = 2 pi U^2 / g": {
+   "ja": "lambda = 2 pi U^2 / g",
+   "zh": "lambda = 2 pi U^2 / g",
+   "tw": "lambda = 2 pi U^2 / g",
+   "ko": "lambda = 2 pi U^2 / g",
+   "de": "lambda = 2 pi U^2 / g",
+   "hi": "lambda = 2 pi U^2 / g",
+   "fr": "lambda = 2 pi U^2 / g"
+  },
+  "Transverse and divergent waves": {
+   "ja": "横波と発散波",
+   "zh": "Transverse and divergent waves",
+   "tw": "Transverse and divergent waves",
+   "ko": "Transverse and divergent waves",
+   "de": "Transverse and divergent waves",
+   "hi": "Transverse and divergent waves",
+   "fr": "Transverse and divergent waves"
+  },
+  "Draw near-transverse stern waves and oblique divergent waves separately, then combine them. Group-velocity rays from both families crowd onto the same outer V edge.": {
+   "ja": "船尾にほぼ直角な横波と、斜めに走る発散波を別々に描き、最後に重ねる。両方の群速度の光線が同じ外縁へ密集して V 字を作る。",
+   "zh": "Draw near-transverse stern waves and oblique divergent waves separately, then combine them. Group-velocity rays from both families crowd onto the same outer V edge.",
+   "tw": "Draw near-transverse stern waves and oblique divergent waves separately, then combine them. Group-velocity rays from both families crowd onto the same outer V edge.",
+   "ko": "Draw near-transverse stern waves and oblique divergent waves separately, then combine them. Group-velocity rays from both families crowd onto the same outer V edge.",
+   "de": "Draw near-transverse stern waves and oblique divergent waves separately, then combine them. Group-velocity rays from both families crowd onto the same outer V edge.",
+   "hi": "Draw near-transverse stern waves and oblique divergent waves separately, then combine them. Group-velocity rays from both families crowd onto the same outer V edge.",
+   "fr": "Draw near-transverse stern waves and oblique divergent waves separately, then combine them. Group-velocity rays from both families crowd onto the same outer V edge."
+  },
+  "transverse → divergent → superposed": {
+   "ja": "横波 → 発散波 → 重ね合わせ",
+   "zh": "transverse → divergent → superposed",
+   "tw": "transverse → divergent → superposed",
+   "ko": "transverse → divergent → superposed",
+   "de": "transverse → divergent → superposed",
+   "hi": "transverse → divergent → superposed",
+   "fr": "transverse → divergent → superposed"
+  },
+  "component": {
+   "ja": "成分",
+   "zh": "component",
+   "tw": "component",
+   "ko": "component",
+   "de": "component",
+   "hi": "component",
+   "fr": "component"
+  },
+  "Does only one wave family make the V?": {
+   "ja": "V 字は一種類の波だけでできる?",
+   "zh": "Does only one wave family make the V?",
+   "tw": "Does only one wave family make the V?",
+   "ko": "Does only one wave family make the V?",
+   "de": "Does only one wave family make the V?",
+   "hi": "Does only one wave family make the V?",
+   "fr": "Does only one wave family make the V?"
+  },
+  "transverse only": {
+   "ja": "横波だけ",
+   "zh": "transverse only",
+   "tw": "transverse only",
+   "ko": "transverse only",
+   "de": "transverse only",
+   "hi": "transverse only",
+   "fr": "transverse only"
+  },
+  "both wave families": {
+   "ja": "横波と発散波の重ね合わせ",
+   "zh": "both wave families",
+   "tw": "both wave families",
+   "ko": "both wave families",
+   "de": "both wave families",
+   "hi": "both wave families",
+   "fr": "both wave families"
+  },
+  "Different wave-number directions collect on the envelope carried by group velocity.": {
+   "ja": "異なる向きの波数成分が、群速度で運ぶ包絡線上に集まる。",
+   "zh": "Different wave-number directions collect on the envelope carried by group velocity.",
+   "tw": "Different wave-number directions collect on the envelope carried by group velocity.",
+   "ko": "Different wave-number directions collect on the envelope carried by group velocity.",
+   "de": "Different wave-number directions collect on the envelope carried by group velocity.",
+   "hi": "Different wave-number directions collect on the envelope carried by group velocity.",
+   "fr": "Different wave-number directions collect on the envelope carried by group velocity."
+  },
+  "cg = d omega / d k": {
+   "ja": "cg = d omega / d k",
+   "zh": "cg = d omega / d k",
+   "tw": "cg = d omega / d k",
+   "ko": "cg = d omega / d k",
+   "de": "cg = d omega / d k",
+   "hi": "cg = d omega / d k",
+   "fr": "cg = d omega / d k"
+  },
+  "Wave height is linearly superposed; breaking is omitted.": {
+   "ja": "波高は線形重ね合わせで、砕波を含めない。",
+   "zh": "Wave height is linearly superposed; breaking is omitted.",
+   "tw": "Wave height is linearly superposed; breaking is omitted.",
+   "ko": "Wave height is linearly superposed; breaking is omitted.",
+   "de": "Wave height is linearly superposed; breaking is omitted.",
+   "hi": "Wave height is linearly superposed; breaking is omitted.",
+   "fr": "Wave height is linearly superposed; breaking is omitted."
+  },
+  "Limits of the deep-water model": {
+   "ja": "深水模型の限界",
+   "zh": "Limits of the deep-water model",
+   "tw": "Limits of the deep-water model",
+   "ko": "Limits of the deep-water model",
+   "de": "Limits of the deep-water model",
+   "hi": "Limits of the deep-water model",
+   "fr": "Limits of the deep-water model"
+  },
+  "About 19.47 deg is a point-source, deep-water result. Shallow water changes dispersion; finite hull width and high Froude number can narrow the apparent angle, while viscosity damps short waves.": {
+   "ja": "約 19.47 deg は点源・深水の結果である。浅水では分散関係が変わり、有限の船体幅や高いフルード数は見かけの角度を狭め、粘性は短い波を弱める。",
+   "zh": "About 19.47 deg is a point-source, deep-water result. Shallow water changes dispersion; finite hull width and high Froude number can narrow the apparent angle, while viscosity damps short waves.",
+   "tw": "About 19.47 deg is a point-source, deep-water result. Shallow water changes dispersion; finite hull width and high Froude number can narrow the apparent angle, while viscosity damps short waves.",
+   "ko": "About 19.47 deg is a point-source, deep-water result. Shallow water changes dispersion; finite hull width and high Froude number can narrow the apparent angle, while viscosity damps short waves.",
+   "de": "About 19.47 deg is a point-source, deep-water result. Shallow water changes dispersion; finite hull width and high Froude number can narrow the apparent angle, while viscosity damps short waves.",
+   "hi": "About 19.47 deg is a point-source, deep-water result. Shallow water changes dispersion; finite hull width and high Froude number can narrow the apparent angle, while viscosity damps short waves.",
+   "fr": "About 19.47 deg is a point-source, deep-water result. Shallow water changes dispersion; finite hull width and high Froude number can narrow the apparent angle, while viscosity damps short waves."
+  },
+  "deep-water height image computed by this model": {
+   "ja": "この模型が計算した深水の高さ画像",
+   "zh": "deep-water height image computed by this model",
+   "tw": "deep-water height image computed by this model",
+   "ko": "deep-water height image computed by this model",
+   "de": "deep-water height image computed by this model",
+   "hi": "deep-water height image computed by this model",
+   "fr": "deep-water height image computed by this model"
+  },
+  "same angle with shallow water, hull width and viscosity": {
+   "ja": "浅水・船体幅・粘性でも同じ角度",
+   "zh": "same angle with shallow water, hull width and viscosity",
+   "tw": "same angle with shallow water, hull width and viscosity",
+   "ko": "same angle with shallow water, hull width and viscosity",
+   "de": "same angle with shallow water, hull width and viscosity",
+   "hi": "same angle with shallow water, hull width and viscosity",
+   "fr": "same angle with shallow water, hull width and viscosity"
+  },
+  "model includes these effects": {
+   "ja": "これらをモデルに含む",
+   "zh": "model includes these effects",
+   "tw": "model includes these effects",
+   "ko": "model includes these effects",
+   "de": "model includes these effects",
+   "hi": "model includes these effects",
+   "fr": "model includes these effects"
+  },
+  "not computed": {
+   "ja": "未計算",
+   "zh": "not computed",
+   "tw": "not computed",
+   "ko": "not computed",
+   "de": "not computed",
+   "hi": "not computed",
+   "fr": "not computed"
+  },
+  "Is every real wake 19.47 deg?": {
+   "ja": "実船の航跡はいつも 19.47 deg?",
+   "zh": "Is every real wake 19.47 deg?",
+   "tw": "Is every real wake 19.47 deg?",
+   "ko": "Is every real wake 19.47 deg?",
+   "de": "Is every real wake 19.47 deg?",
+   "hi": "Is every real wake 19.47 deg?",
+   "fr": "Is every real wake 19.47 deg?"
+  },
+  "always": {
+   "ja": "いつも同じ",
+   "zh": "always",
+   "tw": "always",
+   "ko": "always",
+   "de": "always",
+   "hi": "always",
+   "fr": "always"
+  },
+  "it changes with depth, hull and viscosity": {
+   "ja": "水深・船体・粘性で変わる",
+   "zh": "it changes with depth, hull and viscosity",
+   "tw": "it changes with depth, hull and viscosity",
+   "ko": "it changes with depth, hull and viscosity",
+   "de": "it changes with depth, hull and viscosity",
+   "hi": "it changes with depth, hull and viscosity",
+   "fr": "it changes with depth, hull and viscosity"
+  },
+  "The universal value belongs to the restricted deep-water point-source cusp, not every apparent wake angle.": {
+   "ja": "普遍なのは限定した深水点源模型のカスプ角で、すべての見かけの航跡角ではない。",
+   "zh": "The universal value belongs to the restricted deep-water point-source cusp, not every apparent wake angle.",
+   "tw": "The universal value belongs to the restricted deep-water point-source cusp, not every apparent wake angle.",
+   "ko": "The universal value belongs to the restricted deep-water point-source cusp, not every apparent wake angle.",
+   "de": "The universal value belongs to the restricted deep-water point-source cusp, not every apparent wake angle.",
+   "hi": "The universal value belongs to the restricted deep-water point-source cusp, not every apparent wake angle.",
+   "fr": "The universal value belongs to the restricted deep-water point-source cusp, not every apparent wake angle."
+  },
+  "omega^2 = g k tanh(k h)": {
+   "ja": "omega^2 = g k tanh(k h)",
+   "zh": "omega^2 = g k tanh(k h)",
+   "tw": "omega^2 = g k tanh(k h)",
+   "ko": "omega^2 = g k tanh(k h)",
+   "de": "omega^2 = g k tanh(k h)",
+   "hi": "omega^2 = g k tanh(k h)",
+   "fr": "omega^2 = g k tanh(k h)"
+  },
+  "This is the limit tab. Shallow water, hull shape, breaking and viscosity are not computed.": {
+   "ja": "これが限界の回。浅水、船体形状、砕波、粘性は未計算。",
+   "zh": "This is the limit tab. Shallow water, hull shape, breaking and viscosity are not computed.",
+   "tw": "This is the limit tab. Shallow water, hull shape, breaking and viscosity are not computed.",
+   "ko": "This is the limit tab. Shallow water, hull shape, breaking and viscosity are not computed.",
+   "de": "This is the limit tab. Shallow water, hull shape, breaking and viscosity are not computed.",
+   "hi": "This is the limit tab. Shallow water, hull shape, breaking and viscosity are not computed.",
+   "fr": "This is the limit tab. Shallow water, hull shape, breaking and viscosity are not computed."
+  },
+  "Entirely synthetic: a linear inviscid point-pressure source moving on deep water. No specific vessel, yard or operator is represented.": {
+   "ja": "すべて合成。深水を進む点状圧力源の線形・非粘性モデル。特定の船、造船所、運航者を表さない。",
+   "zh": "Entirely synthetic: a linear inviscid point-pressure source moving on deep water. No specific vessel, yard or operator is represented.",
+   "tw": "Entirely synthetic: a linear inviscid point-pressure source moving on deep water. No specific vessel, yard or operator is represented.",
+   "ko": "Entirely synthetic: a linear inviscid point-pressure source moving on deep water. No specific vessel, yard or operator is represented.",
+   "de": "Entirely synthetic: a linear inviscid point-pressure source moving on deep water. No specific vessel, yard or operator is represented.",
+   "hi": "Entirely synthetic: a linear inviscid point-pressure source moving on deep water. No specific vessel, yard or operator is represented.",
+   "fr": "Entirely synthetic: a linear inviscid point-pressure source moving on deep water. No specific vessel, yard or operator is represented."
+  },
+  "transverse-wavelength ratio: 12 m/s to 4 m/s": {
+   "ja": "12 m/s と 4 m/s の横波波長比",
+   "zh": "transverse-wavelength ratio: 12 m/s to 4 m/s",
+   "tw": "transverse-wavelength ratio: 12 m/s to 4 m/s",
+   "ko": "transverse-wavelength ratio: 12 m/s to 4 m/s",
+   "de": "transverse-wavelength ratio: 12 m/s to 4 m/s",
+   "hi": "transverse-wavelength ratio: 12 m/s to 4 m/s",
+   "fr": "transverse-wavelength ratio: 12 m/s to 4 m/s"
+  },
+  "Compare height fields at 4, 7 and 12 m/s on the same physical grid. Their V angles agree within the grid-derived criterion while centreline wavelength grows with U^2.": {
+   "ja": "4、7、12 m/s の高さ場を同じ実寸格子で比較する。V の角度は格子基準内で一致し、中心線の波長は U^2 に比例して伸びる。",
+   "zh": "Compare height fields at 4, 7 and 12 m/s on the same physical grid. Their V angles agree within the grid-derived criterion while centreline wavelength grows with U^2.",
+   "tw": "Compare height fields at 4, 7 and 12 m/s on the same physical grid. Their V angles agree within the grid-derived criterion while centreline wavelength grows with U^2.",
+   "ko": "Compare height fields at 4, 7 and 12 m/s on the same physical grid. Their V angles agree within the grid-derived criterion while centreline wavelength grows with U^2.",
+   "de": "Compare height fields at 4, 7 and 12 m/s on the same physical grid. Their V angles agree within the grid-derived criterion while centreline wavelength grows with U^2.",
+   "hi": "Compare height fields at 4, 7 and 12 m/s on the same physical grid. Their V angles agree within the grid-derived criterion while centreline wavelength grows with U^2.",
+   "fr": "Compare height fields at 4, 7 and 12 m/s on the same physical grid. Their V angles agree within the grid-derived criterion while centreline wavelength grows with U^2."
+  },
+  "All speeds use the same physical grid, envelope width and attenuation length.": {
+   "ja": "全速度を同じ実寸格子、同じ包絡幅、同じ減衰長で比較する。",
+   "zh": "All speeds use the same physical grid, envelope width and attenuation length.",
+   "tw": "All speeds use the same physical grid, envelope width and attenuation length.",
+   "ko": "All speeds use the same physical grid, envelope width and attenuation length.",
+   "de": "All speeds use the same physical grid, envelope width and attenuation length.",
+   "hi": "All speeds use the same physical grid, envelope width and attenuation length.",
+   "fr": "All speeds use the same physical grid, envelope width and attenuation length."
+  }
+ }
+}

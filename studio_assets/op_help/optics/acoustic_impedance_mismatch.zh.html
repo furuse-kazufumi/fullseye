@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.acoustic_impedance_mismatch(material1=&#x27;WATER&#x27;, material2=&#x27;SI&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import materials; materials.acoustic_impedance_mismatch(material1=&#x27;WATER&#x27;, material2=&#x27;SI&#x27;) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;acoustic_impedance_mismatch&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>返回两种材料在垂直入射时的声阻抗失配。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>material1, material2 : str or dict</p>
-<p>材料名、別名、または材料レコード。</p>
+<p>材料名、别名或材料记录。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p>強度反射係数 <code style="color:#22d3bf">R=((Z2-Z1)/(Z2+Z1))**2</code> と強度透過係数 <code style="color:#22d3bf">T=1-R</code>。</p>
+<p>强度反射系数 <code style="color:#22d3bf">R=((Z2-Z1)/(Z2+Z1))**2</code> 和强度透射系数 <code style="color:#22d3bf">T=1-R</code>。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>材料が未知、音響物性が無い、またはインピーダンスが正でない場合。</p>
+<p>材料未知、缺少声学属性或阻抗非正时。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>

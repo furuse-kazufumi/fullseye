@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.acoustic_impedance_mismatch(material1=&#x27;WATER&#x27;, material2=&#x27;SI&#x27;) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import materials; materials.acoustic_impedance_mismatch(material1=&#x27;WATER&#x27;, material2=&#x27;SI&#x27;) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;acoustic_impedance_mismatch&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Return the acoustic-impedance mismatch at normal incidence between two materials.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>material1, material2 : str or dict</p>
-<p>材料名、別名、または材料レコード。</p>
+<p>Material names, aliases, or material records.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p>強度反射係数 <code style="color:#22d3bf">R=((Z2-Z1)/(Z2+Z1))**2</code> と強度透過係数 <code style="color:#22d3bf">T=1-R</code>。</p>
+<p>Intensity reflection coefficient <code style="color:#22d3bf">R=((Z2-Z1)/(Z2+Z1))**2</code> and intensity transmission coefficient <code style="color:#22d3bf">T=1-R</code>.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>材料が未知、音響物性が無い、またはインピーダンスが正でない場合。</p>
+<p>If a material is unknown, lacks acoustic properties, or has non-positive impedance.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

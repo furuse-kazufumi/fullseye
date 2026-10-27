@@ -109,10 +109,8 @@
    "note": "docs/capabilities/blob-and-region.md",
    "status": "validated-public-real-data",
    "ops_total": 5,
-   "ops_named_in_tests": 4,
-   "ops_not_named_in_tests": [
-    "watersheds"
-   ],
+   "ops_named_in_tests": 5,
+   "ops_not_named_in_tests": [],
    "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
    "examples": [
     {
@@ -732,13 +730,20 @@
    "category": "見せる",
    "note": "docs/capabilities/interactive-poc-viewer.md",
    "status": "verified-synthetic",
-   "ops_total": 6,
-   "ops_named_in_tests": 6,
+   "ops_total": 7,
+   "ops_named_in_tests": 7,
    "ops_not_named_in_tests": [],
    "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
    "examples": [
     {
      "id": "interactive_poc_viewer",
+     "data": "synthetic",
+     "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "interactive_anim3d_viewer",
      "data": "synthetic",
      "gate": "tests/test_example_scripts_run.py",
      "executed": true,
@@ -1694,10 +1699,8 @@
    "note": "docs/capabilities/scratch-detection-and-width.md",
    "status": "verified-synthetic",
    "ops_total": 4,
-   "ops_named_in_tests": 3,
-   "ops_not_named_in_tests": [
-    "lines_gauss"
-   ],
+   "ops_named_in_tests": 4,
+   "ops_not_named_in_tests": [],
    "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
    "examples": [
     {
@@ -2427,9 +2430,9 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 434,
-  "run_by_the_poc_gate": 276,
-  "run_by_the_example_gate": 158,
+  "examples2d_total": 440,
+  "run_by_the_poc_gate": 278,
+  "run_by_the_example_gate": 162,
   "not_run_by_any_gate": 0,
   "gates": [
    "tests/test_poc_scripts_run.py",

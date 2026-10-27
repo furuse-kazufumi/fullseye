@@ -8364,6 +8364,50 @@ py -3.11 examples/poc_four_dimensions_by_three_d_tools.py
 
 使用 op(ノートへ): [`curve3d_tube_mesh`](https://furuse.work/ops/3d/surface/curve3d_tube_mesh.html) · [`fit_circle_3d`](https://furuse.work/ops/3d/geometry/fit_circle_3d.html) · [`mesh_volume`](https://furuse.work/ops/3d/mesh_process/mesh_volume.html)
 
+## No.2026.277 —— 会場の建物と小惑星イトカワを同じ物差しで ―― PLATEAU の CityGML LOD2 を三角形メッシュにして並べる
+
+[![会場の建物と小惑星イトカワを同じ物差しで ―― PLATEAU の CityGML LOD2 を三角形メッシュにして並べる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plateau_venue_lod2/01_venue_itokawa_top_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plateau_venue_lod2/01_venue_itokawa_top.png)
+
+*↑ **会場の建物と小惑星イトカワを同じ物差しで ―― PLATEAU の CityGML LOD2 を三角形メッシュにして並べる** ―― 著者の発案「イトカワ(約 535 m)と会場の建物を並べれば大きさが実感できる」。ViEW2026 の会場(横浜・みなとみらい、パシフィコ横浜)の建物を国土交通省 Project PLATEAU の 3D 都市モデル(CityGML 2.0、LOD2)から読む新 op plateau_lod2_mesh: 本体と BuildingPart を部位として扱い、主題面(地面・壁・屋根)の多角形を三角形にする(穴は外周へ橋を架けて耳切り、向きは外向きのまま)。座標は EPSG:6697(緯度・経度・標高)を GRS80 の地心直交座標経由で地面の重心を原点とする接平面の ENU [m] へ厳密に移す。座標系が 6697 以外、未知の幾何、表に無い主題面、見つからない xlink、m 以外の高さの単位は読み飛ばさず拒否する(fail-closed)。会場の 7 部位(ホテル棟と会議センター = PLATEAU では 1 部位、国立大ホール、展示ホール、アネックスホール、ノースほか)は 112 kB の npz に同梱し、作り方と門は道具に残す。門: 合成の切妻屋根の建物で高さ 12 / 4 m・体積 2000 / 144 m³(発散定理)・穴あき屋根の面積 2·20·√41 + 36 − 4 m² が閉形式どおり(1e-5)、楕円体の往復変換 1e-6 m、会場の 7 部位でメッシュの高さ(屋根の最高点 − 地面の最低点)が CityGML の measuredHeight と最大差 0.045 m(0.1 m 単位の値の丸めの半分 0.05 以内)、原本のバイト列から正規表現で拾った座標を別式(等距円筒)で測った幅との差 0.005 m、面はすべて外向き。イトカワの長さ 535 m は展示ホールの長辺 263 m の 2.0 倍、ホテル棟の高さ 142.1 m の 3.8 本分。図は上から見た会場(左)とイトカワ(右)を 1 マス 2 m の同じ格子に落としたもの、南から見た影絵。正直に: 同梱の点群(3000 点)の主軸方向の外接幅 562 × 298 × 244 m は文献値 535 × 294 × 209 m より 1〜17 % 大きく、主軸と外接の取り方の違いなので門にしない。建物名はこの年度の PLATEAU に無く、座標で同定して公開地図の施設の位置と照合した。標高と楕円体高の差は無視(水平の相対誤差 6e-6)。出典表示: 「3D都市モデル(Project PLATEAU)横浜市(2020年度)」(国土交通省)(https://www.geospatial.jp/ckan/dataset/plateau-14100-yokohama-city-2020)を加工して作成(PDL1.0、CC BY 4.0 互換)。7 部位の抜き出し・座標変換・三角形分割は Fullseye 側の加工で、国土交通省の成果物ではない。イトカワの点群は Gaskell の形状モデル(PDS 小天体ノード)から間引いたもの。*
+
+[![南から見た影絵。ホテル棟 142 m とイトカワの厚み(約 209〜244 m)を同じ縮尺で](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plateau_venue_lod2/02_venue_itokawa_side_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plateau_venue_lod2/02_venue_itokawa_side.png)
+
+*↑ 測定の図 ―― 南から見た影絵。ホテル棟 142 m とイトカワの厚み(約 209〜244 m)を同じ縮尺で*
+
+```
+py -3.11 examples/poc_plateau_venue_lod2.py
+```
+
+ソース: [examples/poc_plateau_venue_lod2.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_plateau_venue_lod2.py)
+
+この回が作った図は全部で **2 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_plateau_venue_lod2)
+
+使用 op(ノートへ): [`plateau_lod2_mesh`](https://furuse.work/ops/drive/japan/plateau_lod2_mesh.html)
+
+## No.2026.279 —— 星の写真1枚から衛星の姿勢が分かるのはなぜか
+
+[![星の写真1枚から衛星の姿勢が分かるのはなぜか](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_tracker/01_star_tracker_camera_image_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_tracker/01_star_tracker_camera_image.png)
+
+*↑ **星の写真1枚から衛星の姿勢が分かるのはなぜか** ―― 固定seedの合成星表196星と、PSF・光子雑音・読み出し雑音を含む128×128画素の合成像だけを使う。像には星表に無いホットピクセル2個も足した。star_detectの18検出を、真の姿勢や可視星の行番号を使わず、三角形の角距離でランダム順の全星表へ照合し、偽点を捨ててkabschで回転を求めた。真の星16、誤対応0、偽点棄却2/2、姿勢角誤差0.0046度（1画素の角度幅0.1406度未満）。kabschと直接SVDの回転差は1e-12未満。太陽・月の迷光、星不足、高速回転の星の流れは未計算の限界としてok:falseにした。実カタログ、外部画像、事業者名、製品名は使わない。*
+
+[![三角形の角距離で全196星表を探索し、ホットピクセル2個を外れ値として棄却した。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_tracker/02_star_tracker_detections_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_tracker/02_star_tracker_detections.png)
+
+*↑ 測定の図 ―― 三角形の角距離で全196星表を探索し、ホットピクセル2個を外れ値として棄却した。*
+
+[![推定値は合成像の検出点から計算し、真値は採点だけに使った。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_tracker/03_star_tracker_gates_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_tracker/03_star_tracker_gates.png)
+
+*↑ 推定値は合成像の検出点から計算し、真値は採点だけに使った。*
+
+```
+py -3.11 examples/poc_star_tracker.py
+```
+
+ソース: [examples/poc_star_tracker.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_star_tracker.py)
+
+この回が作った図は全部で **3 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_star_tracker)
+
+
+
 ### 装置の棟 ―― 生の出力から、装置固有の壊れ方まで再現する
 
 計測装置を名前だけ借り、都合のよい画像を出すのは簡単です。この部屋の 32 点は逆に、光子・電子・干渉・熱拡散・走査・光線追跡から装置の生出力を作り、そこから普段の測定値までを一続きにしています。

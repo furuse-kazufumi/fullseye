@@ -195,7 +195,7 @@ from pcseg import (  # noqa: E402,F401
 )
 from pocviewer import (  # noqa: E402,F401
     write_viewer, viewer_spec, viewer_text, viewer_number, viewer_mesh_tab, viewer_points_tab,
-    viewer_frames_tab, viewer_split_tab,
+    viewer_frames_tab, viewer_split_tab, viewer_anim3d_tab,
 )
 import pocviewer  # noqa: E402,F401
 from mesh import (  # noqa: E402,F401
@@ -689,6 +689,7 @@ from drivelong import (  # noqa: E402,F401
 )
 import gsplatnp  # noqa: E402  (世界 → 3D Gaussian Splatting: 面に貼ったガウシアンと EWA 描画、密度と誤差のつまみ)
 from gsplatnp import gs_from_world, gs_update, gs_render, gs_render_fn, gs_read_file  # noqa: E402,F401
+from gsviewer import gs_viewer_html, gs_catalog_html  # noqa: E402,F401
 import motionio  # noqa: E402  (動きのデータ: BVH モーションキャプチャ・イベントカメラの x y t p、2026-10-03)
 from motionio import read_bvh, read_events, events_to_frames  # noqa: E402,F401
 import drivehumanoid  # noqa: E402  (運転の世界を歩くヒューマノイド: 間引いたメッシュ + マスク付きの事前描画、2026-10-03)
@@ -1152,7 +1153,7 @@ __all__ = [
     "euclidean_clusters", "region_growing", "aabb", "obb", "crop_box", "crop_sphere",
     "farthest_point_sampling", "curvature", "centroid", "principal_axes",
     "pocviewer", "write_viewer", "viewer_spec", "viewer_text", "viewer_number", "viewer_mesh_tab",
-    "viewer_points_tab", "viewer_frames_tab", "viewer_split_tab",
+    "viewer_points_tab", "viewer_frames_tab", "viewer_split_tab", "viewer_anim3d_tab",
     "mesh", "read_mesh", "read_points", "write_mesh", "write_points", "sample_surface",
     "mesh_to_points", "voxelize", "bounds", "recenter", "normalize_scale",
     "meshio_opt", "read_gltf", "read_gltf_merged", "read_las", "read_pcd", "formats_available",
@@ -1757,6 +1758,11 @@ def _resolve(name: str):
             % (name, name, name)
         )
     return op
+
+
+#: 登録はされているが、その環境に無い optional 依存を要する op が投げる(fail-closed)。本体は backend_safe。
+#: ``MissingBackendError``(登録そのものが無い)と対にして facade から公開する。
+MissingDependencyError = _bs.MissingDependencyError
 
 
 class MissingBackendError(KeyError):
@@ -2444,6 +2450,8 @@ def _run_guarded(name, fn, policy, out_sort=None, v=None):
                     out = fn()
             else:
                 out = fn()
+        except _bs.MissingDependencyError:   # fail-closed under every policy (see backend_safe)
+            raise
         except Exception as e:           # noqa: BLE001 - recorded, sort-valid fallback
             if policy == "warn":
                 with _bs.quiet_warnings():

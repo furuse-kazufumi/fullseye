@@ -39,6 +39,7 @@
 粉の粒径から 1 回分の含量のばらつきと必要な粉砕時間(doseunif: grind の続き。よく混ざった粉から 1 回分を取ると薬の粒の数がPoisson で揺らぐだけで含量がばらつく —— CV² = (πρ/6)·D63³/D を自分で導出し、対数正規の閉形式と Monte Carlo、体積基準の粒度分布からは恒等式 D63³ = E_v[d³] で形を仮定せずに。画像の標本の偏り(縁の粒の取りこぼし・d⁶ の重い裾)を Miles–Lantuéjoul の重みと対数正規の当てはめで直し区間を返す。粉砕則で CV が目標(受入値 15 相当、または第 1 段の合格の確率)まで下がる時間を逆算。外の真値は Monte Carlo と公開データのレーザー回折(Zenodo 10.5281/zenodo.18064323、CC BY 4.0、repo の外)。numpy + scipy)。
 包丁を指先の視触覚だけで持って切る(cuttouch: cutting × pegtactile の連鎖。2 枚のパッドの膜の読みから押し V・引き H・モーメント M_x を復元し、刃の当たり位置 Ly = (M_x + Lz·H)/V・slice/push 比 H/V・靱性 R を手首の力センサなしに。パッドのねじりは縁から必ず滑るので、無滑りの関係で読むと過大(比 0.5 で +33 %)—— Hertz 接触の部分滑りのねじりをCerruti 核の影響行列で数値的に解いて直す(両端 = Reissner–Sagoci と全滑りのトルク (3π/16)μPa)。持てる柄の長さの限界と全滑りの余裕も返す。外の真値は閉形式と MuJoCo(cutting_mujoco_wrist)。numpy + scipy)。
 惑星ローバーの車輪の滑りを測って避ける(roverslip: Bekker の圧力–沈下 → Wong–Reece の剛な車輪の応力の数値積分で沈下・牽引・トルク → 斜面の角ごとの定常の滑り率と登れる最大の角 → 地面を見るカメラの並進(相互相関 + 並進のLucas–Kanade)と車輪の回転から実際の滑り率 → 滑りの不確かさ(ガウス過程、分位点回帰 + 共形の補正)→ CVaR で割り引いた辺の所要時間のコスト地図と 8 近傍の Dijkstra・経路の評価。外の真値は閉形式(Bekker の締め固め抵抗・n = 1 の垂直力・放物線の沈下)、文献の土の定数(arXiv:2606.06790 表 2)、MuJoCo の剛体の車輪、HiRISE の DTM(repo の外・環境変数)。全部 numpy)。
+小惑星の表面の重力(polygrav: 一様密度の閉じた多面体の重力ポテンシャル・加速度・発散を Werner & Scheeres 1997 の面と辺の和で厳密に —— 外・中・表面の上のどこでも同じ式、ガウスの法則 ∇·g = −4πGρ / 0 は面の立体角の和。自転の遠心力を足した実効ポテンシャル・実効重力と、法線に対する斜面の角。閉じたメッシュを平面で切って閉じた立体にする op で、区分ごとに一様な密度を重ね合わせで。外の真値は点質量・Gauss–Legendre の求積・差分の発散。全部 numpy)。
 
 型語彙は既存のものだけを使う(新語なし):
   * ``table``   — コース(drivecourse の dict: polygon / centerline / entry / exit / params …)、世界(driveworld の dict:
@@ -69,6 +70,7 @@ import drivepass
 import drivelong
 import drivettc
 import gsplatnp
+import gsviewer
 import motionio
 import drivehumanoid
 import agvfleet
@@ -103,6 +105,7 @@ import pxrd
 import doseunif
 import cuttouch
 import roverslip
+import polygrav
 import racket
 import roadjp
 import rsssafety
@@ -111,7 +114,7 @@ _MOD = {"drivecourse": drivecourse, "driveworld": driveworld, "lidarsim": lidars
         "rsssafety": rsssafety, "driveterrain": driveterrain,
         "ballistics": ballistics, "balltrack": balltrack, "ballworld": ballworld, "racket": racket,
         "roadjp": roadjp,
-        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivecommonroad": drivecommonroad, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass, "pegsim": pegsim, "tacsim": tacsim, "tacslip": tacslip, "tactorque": tactorque, "puck": puck, "pegfail": pegfail, "granular": granular, "tacscalib": tacscalib, "pegtactile": pegtactile, "cutting": cutting, "diabolo": diabolo, "tacdome": tacdome, "pegsym": pegsym, "polish": polish, "scoop": scoop, "grind": grind, "ozakimm": ozakimm, "swarmflow": swarmflow, "pxrd": pxrd, "doseunif": doseunif, "cuttouch": cuttouch, "roverslip": roverslip}
+        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "gsviewer": gsviewer, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivecommonroad": drivecommonroad, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass, "pegsim": pegsim, "tacsim": tacsim, "tacslip": tacslip, "tactorque": tactorque, "puck": puck, "pegfail": pegfail, "granular": granular, "tacscalib": tacscalib, "pegtactile": pegtactile, "cutting": cutting, "diabolo": diabolo, "tacdome": tacdome, "pegsym": pegsym, "polish": polish, "scoop": scoop, "grind": grind, "ozakimm": ozakimm, "swarmflow": swarmflow, "pxrd": pxrd, "doseunif": doseunif, "cuttouch": cuttouch, "roverslip": roverslip, "polygrav": polygrav}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -339,6 +342,10 @@ _CATALOG = {
         ("gs_render_fn", "gsplatnp", ["table"], "any"),
         # 3DGS のファイル(.ply = INRIA 形式 / .splat)を読む入口(2026-10-03、Studio の D&D から)
         ("gs_read_file", "gsplatnp", [], "table"),
+        # 3DGS をブラウザで見せる 1 枚の HTML(2026-10-25、商品の閲覧・オフラインの展示向け): 量子化 + gzip で埋め、WebGL2 で
+        # gs_render と同じ EWA の式で描く。寸法は smallest_box3。複数の品はサムネイル(gs_render)から選ぶカタログ。
+        ("gs_viewer_html", "gsviewer", ["table"], "table"),
+        ("gs_catalog_html", "gsviewer", ["table"], "table"),
     ],
     # 動きのデータの入口(2026-10-03、Studio の D&D から): BVH のモーションキャプチャ(順運動学まで)と、イベントカメラの
     # (x, y, t, p)(列の順は見出しか中身で決める)→ 極性つきのコマ。真値 = 手で計算できる骨格・全極性の和の保存。
@@ -453,6 +460,7 @@ _CATALOG = {
         ("prism_mesh", "driveplateau", ["any"], "any"),
         ("triangulate_polygon", "driveplateau", ["any"], "any"),
         ("polygon_area", "driveplateau", ["any"], "scalar"),
+        ("plateau_lod2_mesh", "driveplateau", ["any"], "table"),
     ],
     # 他人の場面 × 自分の運転手 × 他人の採点器(2026-10-04、「自作の罠を自分で解くのは限界」→ 真値・門・被験者の 1 つを外から): CommonRoad(TUM、BSD-3)の
     # 2020a シナリオを自前で読み、縦 IDM + pure-pursuit の運転手を KS 運動学(後軸、RK4、BMW_320i = parameters_vehicle2 の値)で走らせ、公式の solution XML を書き、
@@ -1104,6 +1112,12 @@ _CATALOG = {
         ("cvar_cost_map", "roverslip", ["image2d", "scalar", "any"], "table"),
         ("risk_aware_path", "roverslip", ["table", "any", "any"], "table"),
         ("path_slip_risk", "roverslip", ["matrix", "image2d", "scalar", "table"], "table"),
+    ],
+    # 小惑星の表面の重力(polygrav、2026-10-25): メッシュ (V, F) と平面の点・法線は any、観測点は points、重力の結果は
+    # table(dict)、切った立体は (V, F) の any。外の真値 = 点質量(遠方)・Gauss–Legendre の 3 重求積(直方体)・差分の発散。
+    "polygrav": [
+        ("polyhedron_gravity", "polygrav", ["any", "points"], "table"),
+        ("polyhedron_clip_halfspace", "polygrav", ["any", "any", "any"], "any"),
     ],
 }
 

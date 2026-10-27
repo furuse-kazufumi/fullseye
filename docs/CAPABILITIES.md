@@ -1252,9 +1252,9 @@ JSON と Markdown は一緒に使う場面が多い —— 結果を報告書の
 
 PoC や計測の結果を、**自己完結した 1 枚の HTML ビューア**にします。暗色で、素の WebGL と 2-D canvas だけ、外部ライブラリも外部 URL の読み込みも無く、`file://` でも iPhone の Safari でも動きます。同じ課題を違う方法で試した記録を**タブ**に並べ、各タブに正直な**バッジ**(門を通った / 限界を見せる / 何もしない場合)・短い説明・実測の数字を付けます。
 
-使う op: `write_viewer`, `viewer_spec`, `viewer_points_tab`, `viewer_mesh_tab`, `viewer_frames_tab`, `viewer_split_tab`
+使う op: `write_viewer`, `viewer_spec`, `viewer_points_tab`, `viewer_mesh_tab`, `viewer_frames_tab`, `viewer_split_tab`, `viewer_anim3d_tab`
 
-動く例: `interactive_poc_viewer`
+動く例: `interactive_poc_viewer`, `interactive_anim3d_viewer`
 
 ### [地の色を知らずに線と領域を描く(反転色)](capabilities/inverted-colour-overlays.md)
 

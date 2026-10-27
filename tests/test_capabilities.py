@@ -16,6 +16,7 @@
 """
 import io
 import os
+import importlib.util
 import re
 import subprocess
 import sys
@@ -201,13 +202,33 @@ def _capability_samples():
     return out
 
 
+def _missing_optional_dependency(exc):
+    """例が ImportError で落ち、その原因の任意の依存がこの環境に本当に無いなら、その名前を返す。
+
+    fullseye の optional 依存は ``ImportError("<機能> needs <module> — install with: ...")`` の形で
+    落ちる。メッセージの名前を ``importlib.util.find_spec`` で確かめ、入っているのに落ちたもの
+    (= 呼び方の誤り)は None を返して赤にする。
+    """
+    if not isinstance(exc, ImportError):
+        return None
+    m = re.search(r"needs ([A-Za-z_][A-Za-z0-9_]*)", str(exc))
+    name = m.group(1) if m else getattr(exc, "name", None)
+    if not name:
+        return None
+    try:
+        present = importlib.util.find_spec(name) is not None
+    except (ImportError, ValueError):
+        present = False
+    return None if present else name
+
+
 def test_every_capability_sample_actually_runs(tmp_path, monkeypatch):
     """能力ノートの python ブロックを全部実行する。"""
     monkeypatch.chdir(tmp_path)          # 書き出す例があっても repo を汚さない
     samples = _capability_samples()
     assert len(samples) >= 30, "能力ノートの例が極端に少ない: %d" % len(samples)
 
-    broke, ran = [], 0
+    broke, ran, optional_missing = [], 0, []
     for cap_id, i, code in samples:
         try:
             exec(compile(code, "%s[%d]" % (cap_id, i), "exec"),
@@ -216,11 +237,17 @@ def test_every_capability_sample_actually_runs(tmp_path, monkeypatch):
         except Exception as exc:                                    # noqa: BLE001
             if cap_id in NEEDS_USER_INPUT:
                 continue                 # 名指し済み: 利用者の入力が要る例
+            missing = _missing_optional_dependency(exc)
+            if missing is not None:
+                # 任意の依存(extras)がこの環境に**本当に無い**ときだけ数え分ける(2026-10-26 の
+                # nightly shuffle は openpyxl 無しで inspection-fixture が落ちた)。入っている環境では必ず走る。
+                optional_missing.append((cap_id, i, missing))
+                continue
             broke.append((cap_id, i, "%s: %s" % (type(exc).__name__, exc)[:120]))
     assert not broke, (
         "能力ノートのコード例が走らない(名指しされていない): %s" % broke[:6])
-    assert ran >= len(samples) - len(NEEDS_USER_INPUT), (
-        "走った例が想定より少ない: %d / %d" % (ran, len(samples)))
+    assert ran + len(optional_missing) >= len(samples) - len(NEEDS_USER_INPUT), (
+        "走った例が想定より少ない: %d / %d(任意の依存が無く飛ばした %d)" % (ran, len(samples), len(optional_missing)))
 
 
 def test_the_needs_user_input_list_has_no_dead_entries():
