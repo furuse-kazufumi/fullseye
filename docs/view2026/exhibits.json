@@ -1991,6 +1991,44 @@
    }
   },
   {
+   "id": "oct_retina",
+   "category": "anim3d",
+   "media": "oct_retina_anim3d.html",
+   "media_path": "view2026/anim3d/oct_retina_anim3d.html",
+   "motion": true,
+   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_oct_anim3d.py",
+   "label": {
+    "ja": "OCT で網膜の層を測る",
+    "en": "Measuring retinal layers with OCT",
+    "zh": "用 OCT 测量视网膜层",
+    "tw": "用 OCT 測量視網膜層",
+    "ko": "OCT로 망막층 측정",
+    "de": "Netzhautschichten mit OCT messen",
+    "hi": "OCT से रेटिना की परतें मापना",
+    "fr": "Mesurer les couches rétiniennes par OCT"
+   },
+   "see": {
+    "ja": "広帯域スペクトルの干渉縞を逆 FFT して A スキャンを作り、並べた B スキャンから三つの層境界を画像処理だけで追う。黄色い光が合成網膜の中心窩を走査する。",
+    "en": "Inverse-transform broadband spectral fringes into A-scans, stack them into a B-scan, and follow three layer boundaries using image processing alone. The yellow beam scans the fovea of a synthetic retina.",
+    "zh": "将宽带光谱干涉条纹逆变换为 A 扫描，再叠成 B 扫描，仅用图像处理追踪三条层边界。黄色光束扫描合成视网膜的中央凹。",
+    "tw": "將寬頻光譜干涉條紋逆轉換為 A 掃描，再疊成 B 掃描，僅用影像處理追蹤三條層邊界。黃色光束掃描合成視網膜的中央凹。",
+    "ko": "광대역 스펙트럼 간섭무늬를 역 FFT해 A-스캔을 만들고 B-스캔으로 쌓아 영상 처리만으로 세 층 경계를 추적한다. 노란 빛이 합성 망막의 중심와를 주사한다.",
+    "de": "Breitbandige Spektralinterferenzen werden zu A-Scans rücktransformiert und zu einem B-Scan gestapelt; drei Schichtgrenzen werden nur aus dem Bild verfolgt. Der gelbe Strahl scannt die Fovea einer synthetischen Netzhaut.",
+    "hi": "ब्रॉडबैंड स्पेक्ट्रल फ्रिंजों का उलटा FFT करके A-स्कैन बनते हैं, उन्हें B-स्कैन में जोड़कर केवल चित्र प्रसंस्करण से तीन परत-सीमाएँ खोजी जाती हैं। पीली किरण कृत्रिम रेटिना के फोविया को स्कैन करती है।",
+    "fr": "Les franges spectrales large bande sont transformées en A-scans puis empilées en B-scan; trois limites de couches sont suivies uniquement dans l’image. Le faisceau jaune balaie la fovéa d’une rétine synthétique."
+   },
+   "num": {
+    "ja": "45 / 70 nm 帯域の半値幅は閉形式との差 0.35 / 0.17 µm。全層厚の最大誤差 8.66 µm、中心窩の誤差 0.38 µm。有限画素による 600 µm の感度は 0.798。",
+    "en": "For 45/70 nm bandwidths, FWHM differs from the closed form by 0.35/0.17 µm. Maximum total-thickness error is 8.66 µm, foveal-pit error is 0.38 µm, and finite pixels reduce sensitivity at 600 µm to 0.798.",
+    "zh": "45/70 nm 带宽的半高宽与闭式解相差 0.35/0.17 µm；总厚度最大误差 8.66 µm，中央凹误差 0.38 µm，有限像素使 600 µm 深处的灵敏度降至 0.798。",
+    "tw": "45/70 nm 頻寬的半高寬與閉式解相差 0.35/0.17 µm；總厚度最大誤差 8.66 µm，中央凹誤差 0.38 µm，有限像素使 600 µm 深處的靈敏度降至 0.798。",
+    "ko": "45/70 nm 대역폭의 반치폭은 닫힌식과 0.35/0.17 µm 차이 난다. 전체 두께 최대 오차는 8.66 µm, 중심와 오차는 0.38 µm이며 유한 화소 때문에 600 µm 감도는 0.798로 떨어진다.",
+    "de": "Bei 45/70 nm Bandbreite weicht die FWHM um 0.35/0.17 µm von der geschlossenen Form ab. Der maximale Dickenfehler beträgt 8.66 µm, der Foveafehler 0.38 µm; endliche Pixel senken die Empfindlichkeit bei 600 µm auf 0.798.",
+    "hi": "45/70 nm बैंडविड्थ पर FWHM बंद रूप से 0.35/0.17 µm अलग है। कुल मोटाई की अधिकतम त्रुटि 8.66 µm, फोवियल त्रुटि 0.38 µm और सीमित पिक्सेल के कारण 600 µm पर संवेदनशीलता 0.798 है।",
+    "fr": "Pour 45/70 nm de bande, la FWHM diffère de la forme fermée de 0.35/0.17 µm. L’erreur maximale d’épaisseur vaut 8.66 µm, celle de la fovéa 0.38 µm ; les pixels finis réduisent la sensibilité à 600 µm à 0.798."
+   }
+  },
+  {
    "id": "pulseox",
    "category": "anim3d",
    "media": "pulseox_anim3d.html",

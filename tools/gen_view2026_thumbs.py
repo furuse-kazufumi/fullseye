@@ -77,6 +77,7 @@ SPEC = [
     ("salt_xrd_anim3d", "view2026/anim3d/salt_xrd_anim3d_poster.jpg", None, None),
     ("gauss_bonnet", "anim3d/gauss_bonnet_poster.jpg", None, None),
     ("organ_volume", "anim3d/organ_volume_poster.jpg", None, None),
+    ("oct_retina", "view2026/anim3d/oct_retina_anim3d_poster.png", None, None),
     ("satellite_gsd", "view2026/anim3d/satellite_gsd_anim3d_poster.png", None, None),
     ("ship_stability", "view2026/anim3d/ship_stability_anim3d_poster.png", None, None),
     ("poc_star_tracker", "view2026/anim3d/star_tracker_anim3d_poster.png", None, (0.22, 0.24, 0.56)),
