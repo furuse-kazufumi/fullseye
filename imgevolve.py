@@ -69,17 +69,28 @@ def _all_ops():
 
 
 # ---- image I/O ------------------------------------------------------------- #
+def _to01_by_dtype(im):
+    """Integer samples / their dtype max (uint8 /255, uint16 /65535); float as is."""
+    im = np.asarray(im)
+    if im.dtype.kind in "ui":
+        return im.astype(np.float64) / float(np.iinfo(im.dtype).max)
+    return im.astype(np.float64)
+
+
 def _imread(path, sort):
+    # ★2026-10-24: IMREAD_COLOR / IMREAD_GRAYSCALE alone demote a 16-bit file to
+    #   8 bits (cv2 drops the low byte) and the result was then divided by 255.
+    #   IMREAD_ANYDEPTH keeps the samples; scaling follows the decoded dtype.
     import cv2
     if sort == "color":
-        im = cv2.imread(path, cv2.IMREAD_COLOR)
+        im = cv2.imread(path, cv2.IMREAD_COLOR | cv2.IMREAD_ANYDEPTH)
         if im is None:
             raise SystemExit("cannot read %s" % path)
-        return (im[:, :, ::-1].astype(np.float64)) / 255.0     # BGR->RGB
-    im = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
+        return _to01_by_dtype(im[:, :, ::-1])                  # BGR->RGB
+    im = cv2.imread(path, cv2.IMREAD_GRAYSCALE | cv2.IMREAD_ANYDEPTH)
     if im is None:
         raise SystemExit("cannot read %s" % path)
-    g = im.astype(np.float64) / 255.0
+    g = _to01_by_dtype(im)
     return (g > 0.5).astype(np.float64) if sort == "region" else g
 
 

@@ -18,9 +18,17 @@ This module reads those *without* demoting them, and exposes normalisation as an
 
 Backends (all already installed; none GPL, none added as a hard dependency):
 
-  ``imageio`` (v2 API)  8/16-bit PNG and other common rasters — keeps ``uint16``.
+  ``imageio`` (v2 API)  8-bit PNG/JPG/BMP and 16-bit *grayscale* PNG.
   ``tifffile``          TIFF: 8/16/32-bit, integer or float, multi-sample, tiled.
-  ``opencv`` (``cv2``)  fallback decoder (``IMREAD_UNCHANGED`` keeps bit depth).
+  ``opencv`` (``cv2``)  ``IMREAD_UNCHANGED`` keeps bit depth: the reader for any
+                        PNG whose IHDR declares more than 8 bits per sample, and
+                        the fallback decoder for everything else.
+
+  ★2026-10-24: imageio's Pillow plugin returns a **16-bit RGB / RGBA / gray+alpha
+  PNG as uint8** (Pillow has no 16-bit colour mode) without an error. A PNG whose
+  IHDR declares > 8 bits per sample therefore goes to OpenCV first; when no
+  reader keeps the depth the read is refused with a ``ValueError`` (fail-closed)
+  instead of returning silently truncated samples.
   PFM                   read/written here in pure numpy (~40 lines, no backend).
 
 Provenance of the formats:
@@ -40,8 +48,9 @@ Provenance of the formats:
 Honest limitations (nothing here claims more than a round-trip test proves):
 
   * :func:`read_raster` returns the sample values and channel order the backend
-    hands back (e.g. imageio/PNG gives RGB, ``cv2`` fallback is converted from
-    BGR; no colour-space management is done).
+    hands back (e.g. imageio/PNG gives RGB, ``cv2`` is converted from BGR(A) to
+    RGB(A) with alpha kept last; a 16-bit gray+alpha PNG comes back from OpenCV
+    expanded to 4 channels; no colour-space management is done).
   * :func:`to01` divides integers by their dtype maximum; **float** inputs are
     assumed already normalised and are only clipped into ``[0, 1]`` — it does not
     rescale radiance/metric floats.
@@ -117,12 +126,77 @@ def _png_dims(path: str):
     return (h, w)
 
 
+def _declared_bits_per_sample(path: str):
+    """Bits per sample the file *declares* (PNG and TIFF only), else ``None``.
+
+    PNG: the IHDR bit depth (byte 24 of the file). TIFF: the largest value of
+    tag 258 (``BitsPerSample``; absent means the TIFF default 1). Read from the
+    header, not from the decoder, because a decoder that truncates (Pillow /
+    imageio on 16-bit colour PNG) reports the truncated depth.
+
+    ★2026-10-24: the same reader as ``imgio.native_bits_per_sample`` on the
+    unmerged branch ``fix/minimal-install-ops-2026-10-24`` — to be unified into
+    one helper when the two branches meet.
+    """
+    import struct
+    try:
+        with open(path, "rb") as f:
+            head = f.read(32)
+            if len(head) >= 25 and head[:8] == b"\x89PNG\r\n\x1a\n" and head[12:16] == b"IHDR":
+                return int(head[24])
+            if head[:4] not in (b"II*\x00", b"MM\x00*"):
+                return None
+            e = "<" if head[:2] == b"II" else ">"
+            (ifd,) = struct.unpack(e + "I", head[4:8])
+            f.seek(ifd)
+            (n,) = struct.unpack(e + "H", f.read(2))
+            for _ in range(min(int(n), 4096)):
+                tag, typ, cnt, val = struct.unpack(e + "HHI4s", f.read(12))
+                if tag != 258:
+                    continue
+                if typ != 3 or not 1 <= cnt <= 64:        # SHORT only, sane count
+                    return None
+                if cnt * 2 <= 4:
+                    vals = struct.unpack(e + "%dH" % cnt, val[:cnt * 2])
+                else:
+                    (off,) = struct.unpack(e + "I", val)
+                    f.seek(off)
+                    vals = struct.unpack(e + "%dH" % cnt, f.read(cnt * 2))
+                return int(max(vals))
+            return 1                                       # TIFF default BitsPerSample
+    except (OSError, struct.error):
+        return None
+
+
 def _cv2():
     try:
         import cv2
         return cv2
     except Exception:
         return None
+
+
+def _cv2_read_rgb(path: str):
+    """``cv2.imread(IMREAD_UNCHANGED)`` with BGR(A) -> RGB(A), or ``None``.
+
+    Alpha stays the **last** channel (a plain ``[:, :, ::-1]`` turned BGRA into
+    ARGB). ``np.fromfile`` + ``imdecode`` so a non-ASCII Windows path works.
+    """
+    cv2 = _cv2()
+    if cv2 is None:
+        return None
+    try:
+        buf = np.fromfile(path, dtype=np.uint8)
+    except OSError:
+        return None
+    im = cv2.imdecode(buf, cv2.IMREAD_UNCHANGED) if buf.size else None
+    if im is None:
+        return None
+    if im.ndim == 3 and im.shape[-1] == 3:
+        im = im[:, :, ::-1]                                # BGR -> RGB
+    elif im.ndim == 3 and im.shape[-1] == 4:
+        im = im[:, :, [2, 1, 0, 3]]                        # BGRA -> RGBA
+    return np.ascontiguousarray(im)
 
 
 # ---- normalisation (explicit, never automatic) ----------------------------- #
@@ -203,26 +277,46 @@ def _read_imageio(path: str, ext: str):
     if dims is not None:
         _check_pixels(dims, path)                  # ValueError on oversize
 
-    arr = None
-    try:
-        import imageio.v2 as iio
-        arr = np.asarray(iio.imread(path))
-    except Exception:
-        arr = None
-    if arr is None:                                # fall back to cv2 (keeps depth)
-        cv2 = _cv2()
-        if cv2 is not None:
-            im = cv2.imread(path, cv2.IMREAD_UNCHANGED)
-            if im is not None:
-                if im.ndim == 3 and im.shape[-1] >= 3:
-                    im = im[:, :, ::-1]            # BGR -> RGB
-                arr = np.asarray(im)
+    # ★2026-10-24: imageio (Pillow) returns a 16-bit RGB/RGBA/gray+alpha PNG as
+    #   uint8 without an error. Read the declared depth from the IHDR and, when it
+    #   is > 8, try the depth-keeping reader (OpenCV IMREAD_UNCHANGED) first.
+    bits = _declared_bits_per_sample(path) if ext == ".png" else None
+    deep = bits is not None and bits > 8
+
+    def _via_imageio():
+        try:
+            import imageio.v2 as iio
+            return np.asarray(iio.imread(path))
+        except Exception:
+            return None
+
+    arr, backend = None, None
+    readers = (("opencv", lambda: _cv2_read_rgb(path)), ("imageio", _via_imageio)) if deep \
+        else (("imageio", _via_imageio), ("opencv", lambda: _cv2_read_rgb(path)))
+    lost = []
+    for name, read in readers:
+        got = read()
+        if got is None:
+            continue
+        if deep and got.dtype.itemsize < 2:            # truncated to 8 bits: never return it
+            lost.append("%s gave %s" % (name, got.dtype))
+            continue
+        arr, backend = got, name
+        break
     if arr is None:
+        if deep:
+            raise ValueError(
+                "cannot read %s without losing depth: the PNG declares %d-bit samples but no "
+                "reader keeps more than 8 bit (%s); install opencv-python (IMREAD_UNCHANGED keeps "
+                "16-bit colour) — refusing rather than returning truncated samples"
+                % (path, bits, "; ".join(lost) if lost else "no backend could decode it"))
         raise ValueError("cannot decode image: %s (no imageio / opencv backend "
                          "could read it)" % path)
     _check_pixels(arr.shape, path)                 # post-decode safety net
     meta = {"src_dtype": str(arr.dtype), "channels": _channels(arr),
-            "shape": tuple(int(x) for x in arr.shape), "backend": "imageio"}
+            "shape": tuple(int(x) for x in arr.shape), "backend": backend}
+    if bits is not None:
+        meta["declared_bits"] = bits
     return arr, meta
 
 
@@ -230,7 +324,9 @@ def _read_imageio(path: str, ext: str):
 def read_raster(path, keep_dtype: bool = True):
     """Read a raster **preserving its native bit depth** -> ``(arr, meta)``.
 
-    16-bit PNG comes back as ``uint16`` (not demoted to ``uint8``); a float or
+    16-bit PNG — grayscale, RGB, RGBA or gray+alpha — comes back as ``uint16``
+    (not demoted to ``uint8``; a 16-bit colour PNG needs OpenCV and is refused
+    with ``ValueError`` when no installed reader keeps its depth); a float or
     16-bit or tiled or multi-sample TIFF comes back in its own dtype; PFM comes
     back as ``float32``. *meta* is a dict with ``src_dtype``, ``channels``,
     ``shape`` and ``backend`` (plus ``photometric`` / ``resolution`` for TIFF and
