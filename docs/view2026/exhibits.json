@@ -1730,6 +1730,44 @@
    }
   },
   {
+   "id": "hypercentric_lens",
+   "category": "anim3d",
+   "media": "hypercentric_lens_anim3d.html",
+   "media_path": "view2026/anim3d/hypercentric_lens_anim3d.html",
+   "motion": true,
+   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_hypercentric_anim3d.py",
+   "label": {
+    "ja": "円柱の上面と側面を一枚で見るハイパーセントリックレンズ",
+    "en": "A hypercentric lens sees a cylinder top and side in one image",
+    "zh": "A hypercentric lens sees a cylinder top and side in one image",
+    "tw": "A hypercentric lens sees a cylinder top and side in one image",
+    "ko": "A hypercentric lens sees a cylinder top and side in one image",
+    "de": "A hypercentric lens sees a cylinder top and side in one image",
+    "hi": "A hypercentric lens sees a cylinder top and side in one image",
+    "fr": "A hypercentric lens sees a cylinder top and side in one image"
+   },
+   "see": {
+    "ja": "通常・テレセントリック・ハイパーセントリックの主光線を切り替え、入射瞳が物体の向こうへ移ると、青い上面の外側に橙の側面がドーナツ状に現れる。",
+    "en": "Switch among entocentric, telecentric and hypercentric chief rays. As the entrance pupil moves beyond the object, the orange side appears as a doughnut around the blue top.",
+    "zh": "Switch among entocentric, telecentric and hypercentric chief rays. As the entrance pupil moves beyond the object, the orange side appears as a doughnut around the blue top.",
+    "tw": "Switch among entocentric, telecentric and hypercentric chief rays. As the entrance pupil moves beyond the object, the orange side appears as a doughnut around the blue top.",
+    "ko": "Switch among entocentric, telecentric and hypercentric chief rays. As the entrance pupil moves beyond the object, the orange side appears as a doughnut around the blue top.",
+    "de": "Switch among entocentric, telecentric and hypercentric chief rays. As the entrance pupil moves beyond the object, the orange side appears as a doughnut around the blue top.",
+    "hi": "Switch among entocentric, telecentric and hypercentric chief rays. As the entrance pupil moves beyond the object, the orange side appears as a doughnut around the blue top.",
+    "fr": "Switch among entocentric, telecentric and hypercentric chief rays. As the entrance pupil moves beyond the object, the orange side appears as a doughnut around the blue top."
+   },
+   "num": {
+    "ja": "入射瞳は paraxial_trace と ABCD で差 < 1e-12 mm。雑音入り合成像の側面帯は閉形式と 0.180 px 以内で一致し、テレセントリック像の測定値は雑音床 0.900 px。被写界深度と歪みは未計算の限界として表示。",
+    "en": "Entrance-pupil positions from paraxial_trace and ABCD differ by less than 1e-12 mm. The side band measured in noisy synthetic images agrees with the closed form within 0.180 px; the telecentric measurement is a 0.900 px noise floor. Depth of field and distortion are shown as uncomputed limits.",
+    "zh": "Entrance-pupil positions from paraxial_trace and ABCD differ by less than 1e-12 mm. The side band measured in noisy synthetic images agrees with the closed form within 0.180 px; the telecentric measurement is a 0.900 px noise floor. Depth of field and distortion are shown as uncomputed limits.",
+    "tw": "Entrance-pupil positions from paraxial_trace and ABCD differ by less than 1e-12 mm. The side band measured in noisy synthetic images agrees with the closed form within 0.180 px; the telecentric measurement is a 0.900 px noise floor. Depth of field and distortion are shown as uncomputed limits.",
+    "ko": "Entrance-pupil positions from paraxial_trace and ABCD differ by less than 1e-12 mm. The side band measured in noisy synthetic images agrees with the closed form within 0.180 px; the telecentric measurement is a 0.900 px noise floor. Depth of field and distortion are shown as uncomputed limits.",
+    "de": "Entrance-pupil positions from paraxial_trace and ABCD differ by less than 1e-12 mm. The side band measured in noisy synthetic images agrees with the closed form within 0.180 px; the telecentric measurement is a 0.900 px noise floor. Depth of field and distortion are shown as uncomputed limits.",
+    "hi": "Entrance-pupil positions from paraxial_trace and ABCD differ by less than 1e-12 mm. The side band measured in noisy synthetic images agrees with the closed form within 0.180 px; the telecentric measurement is a 0.900 px noise floor. Depth of field and distortion are shown as uncomputed limits.",
+    "fr": "Entrance-pupil positions from paraxial_trace and ABCD differ by less than 1e-12 mm. The side band measured in noisy synthetic images agrees with the closed form within 0.180 px; the telecentric measurement is a 0.900 px noise floor. Depth of field and distortion are shown as uncomputed limits."
+   }
+  },
+  {
    "id": "satellite_gsd",
    "category": "anim3d",
    "media": "satellite_gsd_anim3d.html",
