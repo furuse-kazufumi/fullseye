@@ -294,6 +294,9 @@ _IMAGE_REASON = ("画像・動画の書き手。PNG/GIF のバイトは Pillow �
 _SPIKE_REASON = ("スパイク(実験)の記録。spikes/out_gallery/ の図は当時の証跡として凍結してあり、"
                  "再描画(matplotlib / GUI)はバイトが変わる。")
 EXCLUDED = {
+    "tools/build_bore_anim3d.py": ("ボアスコープのリレー結像とファイバ束の動く 3-D 教材(docs/view2026/anim3d/borescope_anim3d.html)。"
+                                    "`py -3.11 tools/anim3d_i18n.py --build build_bore_anim3d --out docs/view2026/anim3d/borescope_anim3d.html` で書く"
+                                    "(翻訳表 tools/anim3d_i18n_tables/build_bore_anim3d.json)。門は tests/test_anim3d_bore_2026_10_26.py。"),
     "tools/build_pulseox_anim3d.py": ("パルスオキシメータの二波長吸収の動く 3-D 教材(docs/view2026/anim3d/pulseox_anim3d.html)。"
                                        "`py -3.11 tools/anim3d_i18n.py --build build_pulseox_anim3d --out docs/view2026/anim3d/pulseox_anim3d.html` で書く"
                                        "(翻訳表 tools/anim3d_i18n_tables/build_pulseox_anim3d.json)。門は tests/test_anim3d_pulseox_2026_10_26.py。"),

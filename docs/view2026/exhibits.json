@@ -1882,6 +1882,44 @@
    }
   },
   {
+   "id": "borescope",
+   "category": "anim3d",
+   "media": "borescope_anim3d.html",
+   "media_path": "view2026/anim3d/borescope_anim3d.html",
+   "motion": true,
+   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_bore_anim3d.py",
+   "label": {
+    "ja": "ボアスコープは細い管の奥をどう見るか",
+    "en": "How a borescope sees through a narrow tube",
+    "zh": "How a borescope sees through a narrow tube",
+    "tw": "How a borescope sees through a narrow tube",
+    "ko": "How a borescope sees through a narrow tube",
+    "de": "How a borescope sees through a narrow tube",
+    "hi": "How a borescope sees through a narrow tube",
+    "fr": "How a borescope sees through a narrow tube"
+   },
+   "see": {
+    "ja": "直径 6 mm の管で像を何度も結び直す光線を追う。細さ・視野・明るさの交換を光学不変量で確かめ、曲がるファイバ束では網目と断線が残る限界を見る。",
+    "en": "Trace rays as the image is refocused repeatedly inside a 6 mm tube. The optical invariant exposes the trade between diameter, field and brightness; a flexible fibre bundle retains its grid and broken cores.",
+    "zh": "Trace rays as the image is refocused repeatedly inside a 6 mm tube. The optical invariant exposes the trade between diameter, field and brightness; a flexible fibre bundle retains its grid and broken cores.",
+    "tw": "Trace rays as the image is refocused repeatedly inside a 6 mm tube. The optical invariant exposes the trade between diameter, field and brightness; a flexible fibre bundle retains its grid and broken cores.",
+    "ko": "Trace rays as the image is refocused repeatedly inside a 6 mm tube. The optical invariant exposes the trade between diameter, field and brightness; a flexible fibre bundle retains its grid and broken cores.",
+    "de": "Trace rays as the image is refocused repeatedly inside a 6 mm tube. The optical invariant exposes the trade between diameter, field and brightness; a flexible fibre bundle retains its grid and broken cores.",
+    "hi": "Trace rays as the image is refocused repeatedly inside a 6 mm tube. The optical invariant exposes the trade between diameter, field and brightness; a flexible fibre bundle retains its grid and broken cores.",
+    "fr": "Trace rays as the image is refocused repeatedly inside a 6 mm tube. The optical invariant exposes the trade between diameter, field and brightness; a flexible fibre bundle retains its grid and broken cores."
+   },
+   "num": {
+    "ja": "逐次追跡と ABCD op の最大差 1.33e-15、不変量残差 3.47e-18。透過率は段数で不変、401×401 光線格子と口径面積の閉形式との差は 0.0030。再構成像と jinc 近似の 50 % 周期は 61.64 / 58.43 µm。",
+    "en": "Maximum sequential-trace versus ABCD-op difference is 1.33e-15; invariant residual is 3.47e-18. Transmission is stage-invariant; the 401×401 ray grid differs from the closed aperture area by 0.0030. Reconstructed-image and jinc-approximation 50% periods are 61.64 / 58.43 µm.",
+    "zh": "Maximum sequential-trace versus ABCD-op difference is 1.33e-15; invariant residual is 3.47e-18. Transmission is stage-invariant; the 401×401 ray grid differs from the closed aperture area by 0.0030. Reconstructed-image and jinc-approximation 50% periods are 61.64 / 58.43 µm.",
+    "tw": "Maximum sequential-trace versus ABCD-op difference is 1.33e-15; invariant residual is 3.47e-18. Transmission is stage-invariant; the 401×401 ray grid differs from the closed aperture area by 0.0030. Reconstructed-image and jinc-approximation 50% periods are 61.64 / 58.43 µm.",
+    "ko": "Maximum sequential-trace versus ABCD-op difference is 1.33e-15; invariant residual is 3.47e-18. Transmission is stage-invariant; the 401×401 ray grid differs from the closed aperture area by 0.0030. Reconstructed-image and jinc-approximation 50% periods are 61.64 / 58.43 µm.",
+    "de": "Maximum sequential-trace versus ABCD-op difference is 1.33e-15; invariant residual is 3.47e-18. Transmission is stage-invariant; the 401×401 ray grid differs from the closed aperture area by 0.0030. Reconstructed-image and jinc-approximation 50% periods are 61.64 / 58.43 µm.",
+    "hi": "Maximum sequential-trace versus ABCD-op difference is 1.33e-15; invariant residual is 3.47e-18. Transmission is stage-invariant; the 401×401 ray grid differs from the closed aperture area by 0.0030. Reconstructed-image and jinc-approximation 50% periods are 61.64 / 58.43 µm.",
+    "fr": "Maximum sequential-trace versus ABCD-op difference is 1.33e-15; invariant residual is 3.47e-18. Transmission is stage-invariant; the 401×401 ray grid differs from the closed aperture area by 0.0030. Reconstructed-image and jinc-approximation 50% periods are 61.64 / 58.43 µm."
+   }
+  },
+  {
    "id": "rail_light_section",
    "category": "anim3d",
    "media": "rail_light_section_anim3d.html",
