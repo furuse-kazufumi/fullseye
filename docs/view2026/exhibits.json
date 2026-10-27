@@ -2374,6 +2374,44 @@
     "hi": "0.10 mm/pixel पर सही दरार लंबाई का 99.1% मिलता है। स्थानीय पृष्ठभूमि से चौड़ाई त्रुटि 0.023 mm है और मानदंड 0.038 mm है। 90% प्राप्ति का माप और अनुमान दोनों 0.25 mm/pixel हैं, तुलना मानदंड 0.029 mm है। जोड़ की 24.31 mm गलत पहचान भी दिखती है।",
     "fr": "À 0.10 mm/pixel, 99.1 % de la longueur vraie est retrouvée. L'erreur de largeur sur fond local vaut 0.023 mm pour un critère de 0.038 mm. La mesure et l'estimation à 90 % valent toutes deux 0.25 mm/pixel, avec un critère de comparaison de 0.029 mm. Un faux positif de joint de 24.31 mm reste visible."
    }
+  },
+  {
+   "id": "shack-hartmann",
+   "category": "anim3d",
+   "media": "shack_hartmann_anim3d.html",
+   "media_path": "view2026/anim3d/shack_hartmann_anim3d.html",
+   "motion": true,
+   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_shwfs_anim3d.py",
+   "label": {
+    "ja": "???????????????",
+    "en": "Measuring a wavefront from spot shifts",
+    "zh": "Measuring a wavefront from spot shifts",
+    "tw": "Measuring a wavefront from spot shifts",
+    "ko": "Measuring a wavefront from spot shifts",
+    "de": "Measuring a wavefront from spot shifts",
+    "hi": "Measuring a wavefront from spot shifts",
+    "fr": "Measuring a wavefront from spot shifts"
+   },
+   "see": {
+    "ja": "?32?32?????128?128????????????????????8????6?8?12????????????????????????????????",
+    "en": "Centroids are measured from diffraction images made by padding each 32?32 subaperture to 128?128. 8 synthetic modes are recovered with 6, 8 and 12 modes to show omitted high order and leakage into extra modes.",
+    "zh": "Centroids are measured from diffraction images made by padding each 32?32 subaperture to 128?128. 8 synthetic modes are recovered with 6, 8 and 12 modes to show omitted high order and leakage into extra modes.",
+    "tw": "Centroids are measured from diffraction images made by padding each 32?32 subaperture to 128?128. 8 synthetic modes are recovered with 6, 8 and 12 modes to show omitted high order and leakage into extra modes.",
+    "ko": "Centroids are measured from diffraction images made by padding each 32?32 subaperture to 128?128. 8 synthetic modes are recovered with 6, 8 and 12 modes to show omitted high order and leakage into extra modes.",
+    "de": "Centroids are measured from diffraction images made by padding each 32?32 subaperture to 128?128. 8 synthetic modes are recovered with 6, 8 and 12 modes to show omitted high order and leakage into extra modes.",
+    "hi": "Centroids are measured from diffraction images made by padding each 32?32 subaperture to 128?128. 8 synthetic modes are recovered with 6, 8 and 12 modes to show omitted high order and leakage into extra modes.",
+    "fr": "Centroids are measured from diffraction images made by padding each 32?32 subaperture to 128?128. 8 synthetic modes are recovered with 6, 8 and 12 modes to show omitted high order and leakage into extra modes."
+   },
+   "num": {
+    "ja": "6 / 8 / 12?????????0.0437 / 0.0126 / 0.0132 waves??????0.0146 waves?????????????0.656???????2.94 waves??????????",
+    "en": "Wavefront errors with 6 / 8 / 12 modes are 0.0437 / 0.0126 / 0.0132 waves; the noise allowance is 0.0146 waves. The photon-error log-log slope is ?0.656, and the diffraction peak leaves the fixed window from 2.94 waves.",
+    "zh": "Wavefront errors with 6 / 8 / 12 modes are 0.0437 / 0.0126 / 0.0132 waves; the noise allowance is 0.0146 waves. The photon-error log-log slope is ?0.656, and the diffraction peak leaves the fixed window from 2.94 waves.",
+    "tw": "Wavefront errors with 6 / 8 / 12 modes are 0.0437 / 0.0126 / 0.0132 waves; the noise allowance is 0.0146 waves. The photon-error log-log slope is ?0.656, and the diffraction peak leaves the fixed window from 2.94 waves.",
+    "ko": "Wavefront errors with 6 / 8 / 12 modes are 0.0437 / 0.0126 / 0.0132 waves; the noise allowance is 0.0146 waves. The photon-error log-log slope is ?0.656, and the diffraction peak leaves the fixed window from 2.94 waves.",
+    "de": "Wavefront errors with 6 / 8 / 12 modes are 0.0437 / 0.0126 / 0.0132 waves; the noise allowance is 0.0146 waves. The photon-error log-log slope is ?0.656, and the diffraction peak leaves the fixed window from 2.94 waves.",
+    "hi": "Wavefront errors with 6 / 8 / 12 modes are 0.0437 / 0.0126 / 0.0132 waves; the noise allowance is 0.0146 waves. The photon-error log-log slope is ?0.656, and the diffraction peak leaves the fixed window from 2.94 waves.",
+    "fr": "Wavefront errors with 6 / 8 / 12 modes are 0.0437 / 0.0126 / 0.0132 waves; the noise allowance is 0.0146 waves. The photon-error log-log slope is ?0.656, and the diffraction peak leaves the fixed window from 2.94 waves."
+   }
   }
  ],
  "series": [

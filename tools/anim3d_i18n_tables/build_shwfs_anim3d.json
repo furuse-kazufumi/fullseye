@@ -1,0 +1,545 @@
+{
+ "example": "build_shwfs_anim3d",
+ "strings": {
+  "Measuring a wavefront from spot shifts": {
+   "ja": "スポットのずれで光の波面を測る",
+   "zh": "Measuring a wavefront from spot shifts",
+   "tw": "Measuring a wavefront from spot shifts",
+   "ko": "Measuring a wavefront from spot shifts",
+   "de": "Measuring a wavefront from spot shifts",
+   "hi": "Measuring a wavefront from spot shifts",
+   "fr": "Measuring a wavefront from spot shifts"
+  },
+  "Lenslet array, camera image, Zernike recovery, and sampling and light limits": {
+   "ja": "小レンズ配列、カメラ像、Zernike 復元、標本化と光量の限界",
+   "zh": "Lenslet array, camera image, Zernike recovery, and sampling and light limits",
+   "tw": "Lenslet array, camera image, Zernike recovery, and sampling and light limits",
+   "ko": "Lenslet array, camera image, Zernike recovery, and sampling and light limits",
+   "de": "Lenslet array, camera image, Zernike recovery, and sampling and light limits",
+   "hi": "Lenslet array, camera image, Zernike recovery, and sampling and light limits",
+   "fr": "Lenslet array, camera image, Zernike recovery, and sampling and light limits"
+  },
+  "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Drag to rotate the 3-D view.": {
+   "ja": "①問い → ②予想 → ③再生 → ④式 → ⑤限界。3-D はドラッグで回せる。",
+   "zh": "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Drag to rotate the 3-D view.",
+   "tw": "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Drag to rotate the 3-D view.",
+   "ko": "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Drag to rotate the 3-D view.",
+   "de": "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Drag to rotate the 3-D view.",
+   "hi": "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Drag to rotate the 3-D view.",
+   "fr": "Follow ① question → ② prediction → ③ play → ④ formula → ⑤ limit. Drag to rotate the 3-D view."
+  },
+  "Reading slope from displacement": {
+   "ja": "ずれから傾きを読む",
+   "zh": "Reading slope from displacement",
+   "tw": "Reading slope from displacement",
+   "ko": "Reading slope from displacement",
+   "de": "Reading slope from displacement",
+   "hi": "Reading slope from displacement",
+   "fr": "Reading slope from displacement"
+  },
+  "Each 32 by 32 complex subaperture is zero-padded to 128 by 128; Fraunhofer FFT intensity forms the spot. Higher-order shape inside the aperture remains as blur and asymmetry.": {
+   "ja": "各32×32サブ開口の複素波面を128×128へゼロ詰めし、フラウンホーファー FFT の強度からスポット像を作る。開口内の高次ゆがみも、ぼけと非対称として残る。",
+   "zh": "Each 32 by 32 complex subaperture is zero-padded to 128 by 128; Fraunhofer FFT intensity forms the spot. Higher-order shape inside the aperture remains as blur and asymmetry.",
+   "tw": "Each 32 by 32 complex subaperture is zero-padded to 128 by 128; Fraunhofer FFT intensity forms the spot. Higher-order shape inside the aperture remains as blur and asymmetry.",
+   "ko": "Each 32 by 32 complex subaperture is zero-padded to 128 by 128; Fraunhofer FFT intensity forms the spot. Higher-order shape inside the aperture remains as blur and asymmetry.",
+   "de": "Each 32 by 32 complex subaperture is zero-padded to 128 by 128; Fraunhofer FFT intensity forms the spot. Higher-order shape inside the aperture remains as blur and asymmetry.",
+   "hi": "Each 32 by 32 complex subaperture is zero-padded to 128 by 128; Fraunhofer FFT intensity forms the spot. Higher-order shape inside the aperture remains as blur and asymmetry.",
+   "fr": "Each 32 by 32 complex subaperture is zero-padded to 128 by 128; Fraunhofer FFT intensity forms the spot. Higher-order shape inside the aperture remains as blur and asymmetry."
+  },
+  "lenslets": {
+   "ja": "小レンズ数",
+   "zh": "lenslets",
+   "tw": "lenslets",
+   "ko": "lenslets",
+   "de": "lenslets",
+   "hi": "lenslets",
+   "fr": "lenslets"
+  },
+  "focal length": {
+   "ja": "焦点距離",
+   "zh": "focal length",
+   "tw": "focal length",
+   "ko": "focal length",
+   "de": "focal length",
+   "hi": "focal length",
+   "fr": "focal length"
+  },
+  "wavefront RMS": {
+   "ja": "波面 RMS",
+   "zh": "wavefront RMS",
+   "tw": "wavefront RMS",
+   "ko": "wavefront RMS",
+   "de": "wavefront RMS",
+   "hi": "wavefront RMS",
+   "fr": "wavefront RMS"
+  },
+  "camera image: one diffraction spot per cell": {
+   "ja": "カメラ像: 各セルの回折スポット",
+   "zh": "camera image: one diffraction spot per cell",
+   "tw": "camera image: one diffraction spot per cell",
+   "ko": "camera image: one diffraction spot per cell",
+   "de": "camera image: one diffraction spot per cell",
+   "hi": "camera image: one diffraction spot per cell",
+   "fr": "camera image: one diffraction spot per cell"
+  },
+  "Zernike coefficients recovered from image centroids": {
+   "ja": "画像重心から復元した Zernike 係数",
+   "zh": "Zernike coefficients recovered from image centroids",
+   "tw": "Zernike coefficients recovered from image centroids",
+   "ko": "Zernike coefficients recovered from image centroids",
+   "de": "Zernike coefficients recovered from image centroids",
+   "hi": "Zernike coefficients recovered from image centroids",
+   "fr": "Zernike coefficients recovered from image centroids"
+  },
+  "reconstructed versus synthetic wavefront": {
+   "ja": "復元波面と合成波面",
+   "zh": "reconstructed versus synthetic wavefront",
+   "tw": "reconstructed versus synthetic wavefront",
+   "ko": "reconstructed versus synthetic wavefront",
+   "de": "reconstructed versus synthetic wavefront",
+   "hi": "reconstructed versus synthetic wavefront",
+   "fr": "reconstructed versus synthetic wavefront"
+  },
+  "log-log slope of recovery error versus photon count": {
+   "ja": "光子数に対する復元誤差の両対数傾き",
+   "zh": "log-log slope of recovery error versus photon count",
+   "tw": "log-log slope of recovery error versus photon count",
+   "ko": "log-log slope of recovery error versus photon count",
+   "de": "log-log slope of recovery error versus photon count",
+   "hi": "log-log slope of recovery error versus photon count",
+   "fr": "log-log slope of recovery error versus photon count"
+  },
+  "8 synthetic modes recovered with 6 / 8 / 12 modes": {
+   "ja": "合成8モードを6 / 8 / 12モードで復元",
+   "zh": "8 synthetic modes recovered with 6 / 8 / 12 modes",
+   "tw": "8 synthetic modes recovered with 6 / 8 / 12 modes",
+   "ko": "8 synthetic modes recovered with 6 / 8 / 12 modes",
+   "de": "8 synthetic modes recovered with 6 / 8 / 12 modes",
+   "hi": "8 synthetic modes recovered with 6 / 8 / 12 modes",
+   "fr": "8 synthetic modes recovered with 6 / 8 / 12 modes"
+  },
+  "8- and 12-mode errors < noise allowance 0.0146": {
+   "ja": "8,12モード誤差 < 雑音許容 0.0146",
+   "zh": "8- and 12-mode errors < noise allowance 0.0146",
+   "tw": "8- and 12-mode errors < noise allowance 0.0146",
+   "ko": "8- and 12-mode errors < noise allowance 0.0146",
+   "de": "8- and 12-mode errors < noise allowance 0.0146",
+   "hi": "8- and 12-mode errors < noise allowance 0.0146",
+   "fr": "8- and 12-mode errors < noise allowance 0.0146"
+  },
+  "defocus coefficient": {
+   "ja": "デフォーカス係数",
+   "zh": "defocus coefficient",
+   "tw": "defocus coefficient",
+   "ko": "defocus coefficient",
+   "de": "defocus coefficient",
+   "hi": "defocus coefficient",
+   "fr": "defocus coefficient"
+  },
+  "What does lateral spot displacement measure?": {
+   "ja": "スポットの横ずれは何を測る?",
+   "zh": "What does lateral spot displacement measure?",
+   "tw": "What does lateral spot displacement measure?",
+   "ko": "What does lateral spot displacement measure?",
+   "de": "What does lateral spot displacement measure?",
+   "hi": "What does lateral spot displacement measure?",
+   "fr": "What does lateral spot displacement measure?"
+  },
+  "wavefront height": {
+   "ja": "波面の高さ",
+   "zh": "wavefront height",
+   "tw": "wavefront height",
+   "ko": "wavefront height",
+   "de": "wavefront height",
+   "hi": "wavefront height",
+   "fr": "wavefront height"
+  },
+  "wavefront slope": {
+   "ja": "波面の傾き",
+   "zh": "wavefront slope",
+   "tw": "wavefront slope",
+   "ko": "wavefront slope",
+   "de": "wavefront slope",
+   "hi": "wavefront slope",
+   "fr": "wavefront slope"
+  },
+  "The diffraction-spot centroid corresponds to mean slope over the subaperture.": {
+   "ja": "回折スポットの重心はサブ開口の平均傾きに対応する。",
+   "zh": "The diffraction-spot centroid corresponds to mean slope over the subaperture.",
+   "tw": "The diffraction-spot centroid corresponds to mean slope over the subaperture.",
+   "ko": "The diffraction-spot centroid corresponds to mean slope over the subaperture.",
+   "de": "The diffraction-spot centroid corresponds to mean slope over the subaperture.",
+   "hi": "The diffraction-spot centroid corresponds to mean slope over the subaperture.",
+   "fr": "The diffraction-spot centroid corresponds to mean slope over the subaperture."
+  },
+  "I = |FFT{exp(i 2πW/λ)}|²": {
+   "ja": "I = |FFT{exp(i 2πW/λ)}|²",
+   "zh": "I = |FFT{exp(i 2πW/λ)}|²",
+   "tw": "I = |FFT{exp(i 2πW/λ)}|²",
+   "ko": "I = |FFT{exp(i 2πW/λ)}|²",
+   "de": "I = |FFT{exp(i 2πW/λ)}|²",
+   "hi": "I = |FFT{exp(i 2πW/λ)}|²",
+   "fr": "I = |FFT{exp(i 2πW/λ)}|²"
+  },
+  "Fine high-order shape within one cell also changes spot shape, not only position.": {
+   "ja": "1セル内の細かな高次形状は位置だけでなくスポット形状にも現れる。",
+   "zh": "Fine high-order shape within one cell also changes spot shape, not only position.",
+   "tw": "Fine high-order shape within one cell also changes spot shape, not only position.",
+   "ko": "Fine high-order shape within one cell also changes spot shape, not only position.",
+   "de": "Fine high-order shape within one cell also changes spot shape, not only position.",
+   "hi": "Fine high-order shape within one cell also changes spot shape, not only position.",
+   "fr": "Fine high-order shape within one cell also changes spot shape, not only position."
+  },
+  "Lenslet array and spot image": {
+   "ja": "レンズ配列とスポット像",
+   "zh": "Lenslet array and spot image",
+   "tw": "Lenslet array and spot image",
+   "ko": "Lenslet array and spot image",
+   "de": "Lenslet array and spot image",
+   "hi": "Lenslet array and spot image",
+   "fr": "Lenslet array and spot image"
+  },
+  "A fixed circular pupil is sampled by a 7 by 7 grid. Only cells inside the circle are used, and centroids are measured from noisy images.": {
+   "ja": "固定した円形瞳を7×7格子で標本化する。円内に入るセルだけを使い、雑音入り像から重心を測る。",
+   "zh": "A fixed circular pupil is sampled by a 7 by 7 grid. Only cells inside the circle are used, and centroids are measured from noisy images.",
+   "tw": "A fixed circular pupil is sampled by a 7 by 7 grid. Only cells inside the circle are used, and centroids are measured from noisy images.",
+   "ko": "A fixed circular pupil is sampled by a 7 by 7 grid. Only cells inside the circle are used, and centroids are measured from noisy images.",
+   "de": "A fixed circular pupil is sampled by a 7 by 7 grid. Only cells inside the circle are used, and centroids are measured from noisy images.",
+   "hi": "A fixed circular pupil is sampled by a 7 by 7 grid. Only cells inside the circle are used, and centroids are measured from noisy images.",
+   "fr": "A fixed circular pupil is sampled by a 7 by 7 grid. Only cells inside the circle are used, and centroids are measured from noisy images."
+  },
+  "reconstruction residual": {
+   "ja": "復元残差",
+   "zh": "reconstruction residual",
+   "tw": "reconstruction residual",
+   "ko": "reconstruction residual",
+   "de": "reconstruction residual",
+   "hi": "reconstruction residual",
+   "fr": "reconstruction residual"
+  },
+  "measured spot grid": {
+   "ja": "読み出したスポット格子",
+   "zh": "measured spot grid",
+   "tw": "measured spot grid",
+   "ko": "measured spot grid",
+   "de": "measured spot grid",
+   "hi": "measured spot grid",
+   "fr": "measured spot grid"
+  },
+  "aberration strength": {
+   "ja": "収差の強さ",
+   "zh": "aberration strength",
+   "tw": "aberration strength",
+   "ko": "aberration strength",
+   "de": "aberration strength",
+   "hi": "aberration strength",
+   "fr": "aberration strength"
+  },
+  "How do spots from a flat wavefront arrange?": {
+   "ja": "平面波のスポットはどう並ぶ?",
+   "zh": "How do spots from a flat wavefront arrange?",
+   "tw": "How do spots from a flat wavefront arrange?",
+   "ko": "How do spots from a flat wavefront arrange?",
+   "de": "How do spots from a flat wavefront arrange?",
+   "hi": "How do spots from a flat wavefront arrange?",
+   "fr": "How do spots from a flat wavefront arrange?"
+  },
+  "regular grid": {
+   "ja": "規則格子",
+   "zh": "regular grid",
+   "tw": "regular grid",
+   "ko": "regular grid",
+   "de": "regular grid",
+   "hi": "regular grid",
+   "fr": "regular grid"
+  },
+  "one central point": {
+   "ja": "中心に1点",
+   "zh": "one central point",
+   "tw": "one central point",
+   "ko": "one central point",
+   "de": "one central point",
+   "hi": "one central point",
+   "fr": "one central point"
+  },
+  "Zero slope at every lenslet returns foci to the reference grid.": {
+   "ja": "各小レンズの傾きがゼロなので、焦点は基準格子へ戻る。",
+   "zh": "Zero slope at every lenslet returns foci to the reference grid.",
+   "tw": "Zero slope at every lenslet returns foci to the reference grid.",
+   "ko": "Zero slope at every lenslet returns foci to the reference grid.",
+   "de": "Zero slope at every lenslet returns foci to the reference grid.",
+   "hi": "Zero slope at every lenslet returns foci to the reference grid.",
+   "fr": "Zero slope at every lenslet returns foci to the reference grid."
+  },
+  "∇W = 0 ⇒ Δx = Δy = 0": {
+   "ja": "∇W = 0 ⇒ Δx = Δy = 0",
+   "zh": "∇W = 0 ⇒ Δx = Δy = 0",
+   "tw": "∇W = 0 ⇒ Δx = Δy = 0",
+   "ko": "∇W = 0 ⇒ Δx = Δy = 0",
+   "de": "∇W = 0 ⇒ Δx = Δy = 0",
+   "hi": "∇W = 0 ⇒ Δx = Δy = 0",
+   "fr": "∇W = 0 ⇒ Δx = Δy = 0"
+  },
+  "Missing spots and uneven background are omitted.": {
+   "ja": "欠けたスポットや背景むらはここでは入れていない。",
+   "zh": "Missing spots and uneven background are omitted.",
+   "tw": "Missing spots and uneven background are omitted.",
+   "ko": "Missing spots and uneven background are omitted.",
+   "de": "Missing spots and uneven background are omitted.",
+   "hi": "Missing spots and uneven background are omitted.",
+   "fr": "Missing spots and uneven background are omitted."
+  },
+  "Reconstructing a wavefront from slopes": {
+   "ja": "傾きから波面を復元",
+   "zh": "Reconstructing a wavefront from slopes",
+   "tw": "Reconstructing a wavefront from slopes",
+   "ko": "Reconstructing a wavefront from slopes",
+   "de": "Reconstructing a wavefront from slopes",
+   "hi": "Reconstructing a wavefront from slopes",
+   "fr": "Reconstructing a wavefront from slopes"
+  },
+  "Observations come from subaperture FFTs; the separate recovery matrix approximates each lenslet by Zernike slope at its centre. Eight synthetic modes are solved with 6, 8 and 12 modes to expose omitted high order and leakage into extra modes.": {
+   "ja": "観測はサブ開口 FFT から作り、復元行列は別にレンズ中心の Zernike 傾きで作る近似。合成8モードを6、8、12モードで解き、高次の取りこぼしと余分なモードへの混ざりを比べる。",
+   "zh": "Observations come from subaperture FFTs; the separate recovery matrix approximates each lenslet by Zernike slope at its centre. Eight synthetic modes are solved with 6, 8 and 12 modes to expose omitted high order and leakage into extra modes.",
+   "tw": "Observations come from subaperture FFTs; the separate recovery matrix approximates each lenslet by Zernike slope at its centre. Eight synthetic modes are solved with 6, 8 and 12 modes to expose omitted high order and leakage into extra modes.",
+   "ko": "Observations come from subaperture FFTs; the separate recovery matrix approximates each lenslet by Zernike slope at its centre. Eight synthetic modes are solved with 6, 8 and 12 modes to expose omitted high order and leakage into extra modes.",
+   "de": "Observations come from subaperture FFTs; the separate recovery matrix approximates each lenslet by Zernike slope at its centre. Eight synthetic modes are solved with 6, 8 and 12 modes to expose omitted high order and leakage into extra modes.",
+   "hi": "Observations come from subaperture FFTs; the separate recovery matrix approximates each lenslet by Zernike slope at its centre. Eight synthetic modes are solved with 6, 8 and 12 modes to expose omitted high order and leakage into extra modes.",
+   "fr": "Observations come from subaperture FFTs; the separate recovery matrix approximates each lenslet by Zernike slope at its centre. Eight synthetic modes are solved with 6, 8 and 12 modes to expose omitted high order and leakage into extra modes."
+  },
+  "6 / 8 / 12-mode wavefront errors": {
+   "ja": "6 / 8 / 12モード波面誤差",
+   "zh": "6 / 8 / 12-mode wavefront errors",
+   "tw": "6 / 8 / 12-mode wavefront errors",
+   "ko": "6 / 8 / 12-mode wavefront errors",
+   "de": "6 / 8 / 12-mode wavefront errors",
+   "hi": "6 / 8 / 12-mode wavefront errors",
+   "fr": "6 / 8 / 12-mode wavefront errors"
+  },
+  "allowance propagated from noise": {
+   "ja": "雑音から求めた許容",
+   "zh": "allowance propagated from noise",
+   "tw": "allowance propagated from noise",
+   "ko": "allowance propagated from noise",
+   "de": "allowance propagated from noise",
+   "hi": "allowance propagated from noise",
+   "fr": "allowance propagated from noise"
+  },
+  "true defocus": {
+   "ja": "真のデフォーカス",
+   "zh": "true defocus",
+   "tw": "true defocus",
+   "ko": "true defocus",
+   "de": "true defocus",
+   "hi": "true defocus",
+   "fr": "true defocus"
+  },
+  "8-mode recovery": {
+   "ja": "8モード復元",
+   "zh": "8-mode recovery",
+   "tw": "8-mode recovery",
+   "ko": "8-mode recovery",
+   "de": "8-mode recovery",
+   "hi": "8-mode recovery",
+   "fr": "8-mode recovery"
+  },
+  "input defocus": {
+   "ja": "入力デフォーカス",
+   "zh": "input defocus",
+   "tw": "input defocus",
+   "ko": "input defocus",
+   "de": "input defocus",
+   "hi": "input defocus",
+   "fr": "input defocus"
+  },
+  "Can one spot recover the full wavefront?": {
+   "ja": "スポット1個だけで波面全体を復元できる?",
+   "zh": "Can one spot recover the full wavefront?",
+   "tw": "Can one spot recover the full wavefront?",
+   "ko": "Can one spot recover the full wavefront?",
+   "de": "Can one spot recover the full wavefront?",
+   "hi": "Can one spot recover the full wavefront?",
+   "fr": "Can one spot recover the full wavefront?"
+  },
+  "yes": {
+   "ja": "できる",
+   "zh": "yes",
+   "tw": "yes",
+   "ko": "yes",
+   "de": "yes",
+   "hi": "yes",
+   "fr": "yes"
+  },
+  "slopes from all cells are needed": {
+   "ja": "全セルの傾きが要る",
+   "zh": "slopes from all cells are needed",
+   "tw": "slopes from all cells are needed",
+   "ko": "slopes from all cells are needed",
+   "de": "slopes from all cells are needed",
+   "hi": "slopes from all cells are needed",
+   "fr": "slopes from all cells are needed"
+  },
+  "Each cell measures only local slope, so global modes require a simultaneous fit to many points.": {
+   "ja": "各セルは局所傾きだけを測るため、全体のモードは多数点を同時に解いて得る。",
+   "zh": "Each cell measures only local slope, so global modes require a simultaneous fit to many points.",
+   "tw": "Each cell measures only local slope, so global modes require a simultaneous fit to many points.",
+   "ko": "Each cell measures only local slope, so global modes require a simultaneous fit to many points.",
+   "de": "Each cell measures only local slope, so global modes require a simultaneous fit to many points.",
+   "hi": "Each cell measures only local slope, so global modes require a simultaneous fit to many points.",
+   "fr": "Each cell measures only local slope, so global modes require a simultaneous fit to many points."
+  },
+  "min_c ||Acentre c − scentroid||²": {
+   "ja": "min_c ||Acentre c − scentroid||²",
+   "zh": "min_c ||Acentre c − scentroid||²",
+   "tw": "min_c ||Acentre c − scentroid||²",
+   "ko": "min_c ||Acentre c − scentroid||²",
+   "de": "min_c ||Acentre c − scentroid||²",
+   "hi": "min_c ||Acentre c − scentroid||²",
+   "fr": "min_c ||Acentre c − scentroid||²"
+  },
+  "Centre slope approximates the subaperture mean. Too few modes mix omitted high order; too many leak noise into extra coefficients.": {
+   "ja": "中心傾きはサブ開口平均の近似。少ないモードは高次を混ぜ、多すぎるモードは雑音を余分な係数へ流す。",
+   "zh": "Centre slope approximates the subaperture mean. Too few modes mix omitted high order; too many leak noise into extra coefficients.",
+   "tw": "Centre slope approximates the subaperture mean. Too few modes mix omitted high order; too many leak noise into extra coefficients.",
+   "ko": "Centre slope approximates the subaperture mean. Too few modes mix omitted high order; too many leak noise into extra coefficients.",
+   "de": "Centre slope approximates the subaperture mean. Too few modes mix omitted high order; too many leak noise into extra coefficients.",
+   "hi": "Centre slope approximates the subaperture mean. Too few modes mix omitted high order; too many leak noise into extra coefficients.",
+   "fr": "Centre slope approximates the subaperture mean. Too few modes mix omitted high order; too many leak noise into extra coefficients."
+  },
+  "Sampling, light and dynamic range": {
+   "ja": "細かさ・明るさ・測定範囲",
+   "zh": "Sampling, light and dynamic range",
+   "tw": "Sampling, light and dynamic range",
+   "ko": "Sampling, light and dynamic range",
+   "de": "Sampling, light and dynamic range",
+   "hi": "Sampling, light and dynamic range",
+   "fr": "Sampling, light and dynamic range"
+  },
+  "With grid and window fixed, errors at six photon levels give a fitted log-log slope. Dynamic range is also found from the same diffraction spot when its peak crosses the cell half-width.": {
+   "ja": "固定グリッドと窓で光子数6点の誤差を測り、両対数傾きを当てはめる。測定範囲も同じ回折スポットのピークがセル半幅を越えた所で決める。",
+   "zh": "With grid and window fixed, errors at six photon levels give a fitted log-log slope. Dynamic range is also found from the same diffraction spot when its peak crosses the cell half-width.",
+   "tw": "With grid and window fixed, errors at six photon levels give a fitted log-log slope. Dynamic range is also found from the same diffraction spot when its peak crosses the cell half-width.",
+   "ko": "With grid and window fixed, errors at six photon levels give a fitted log-log slope. Dynamic range is also found from the same diffraction spot when its peak crosses the cell half-width.",
+   "de": "With grid and window fixed, errors at six photon levels give a fitted log-log slope. Dynamic range is also found from the same diffraction spot when its peak crosses the cell half-width.",
+   "hi": "With grid and window fixed, errors at six photon levels give a fitted log-log slope. Dynamic range is also found from the same diffraction spot when its peak crosses the cell half-width.",
+   "fr": "With grid and window fixed, errors at six photon levels give a fitted log-log slope. Dynamic range is also found from the same diffraction spot when its peak crosses the cell half-width."
+  },
+  "coefficient leaving range": {
+   "ja": "範囲を外れる係数",
+   "zh": "coefficient leaving range",
+   "tw": "coefficient leaving range",
+   "ko": "coefficient leaving range",
+   "de": "coefficient leaving range",
+   "hi": "coefficient leaving range",
+   "fr": "coefficient leaving range"
+  },
+  "photon-error log-log slope": {
+   "ja": "光子誤差の両対数傾き",
+   "zh": "photon-error log-log slope",
+   "tw": "photon-error log-log slope",
+   "ko": "photon-error log-log slope",
+   "de": "photon-error log-log slope",
+   "hi": "photon-error log-log slope",
+   "fr": "photon-error log-log slope"
+  },
+  "diffraction peak beyond cell window": {
+   "ja": "回折ピークのセル窓超過",
+   "zh": "diffraction peak beyond cell window",
+   "tw": "diffraction peak beyond cell window",
+   "ko": "diffraction peak beyond cell window",
+   "de": "diffraction peak beyond cell window",
+   "hi": "diffraction peak beyond cell window",
+   "fr": "diffraction peak beyond cell window"
+  },
+  "unique recovery after a spot leaves its cell": {
+   "ja": "スポットが隣のセルへ出ても一意に復元",
+   "zh": "unique recovery after a spot leaves its cell",
+   "tw": "unique recovery after a spot leaves its cell",
+   "ko": "unique recovery after a spot leaves its cell",
+   "de": "unique recovery after a spot leaves its cell",
+   "hi": "unique recovery after a spot leaves its cell",
+   "fr": "unique recovery after a spot leaves its cell"
+  },
+  "inside half-window": {
+   "ja": "窓の半幅以内",
+   "zh": "inside half-window",
+   "tw": "inside half-window",
+   "ko": "inside half-window",
+   "de": "inside half-window",
+   "hi": "inside half-window",
+   "fr": "inside half-window"
+  },
+  "outside at 2.94 waves; maximum 5.00 px": {
+   "ja": "2.94 waves で範囲外、最大 5.00 px",
+   "zh": "outside at 2.94 waves; maximum 5.00 px",
+   "tw": "outside at 2.94 waves; maximum 5.00 px",
+   "ko": "outside at 2.94 waves; maximum 5.00 px",
+   "de": "outside at 2.94 waves; maximum 5.00 px",
+   "hi": "outside at 2.94 waves; maximum 5.00 px",
+   "fr": "outside at 2.94 waves; maximum 5.00 px"
+  },
+  "Can arbitrarily large aberration be measured?": {
+   "ja": "収差をどこまでも大きくして測れる?",
+   "zh": "Can arbitrarily large aberration be measured?",
+   "tw": "Can arbitrarily large aberration be measured?",
+   "ko": "Can arbitrarily large aberration be measured?",
+   "de": "Can arbitrarily large aberration be measured?",
+   "hi": "Can arbitrarily large aberration be measured?",
+   "fr": "Can arbitrarily large aberration be measured?"
+  },
+  "it can": {
+   "ja": "測れる",
+   "zh": "it can",
+   "tw": "it can",
+   "ko": "it can",
+   "de": "it can",
+   "hi": "it can",
+   "fr": "it can"
+  },
+  "spots become confused with neighbours": {
+   "ja": "隣のセルと混同する",
+   "zh": "spots become confused with neighbours",
+   "tw": "spots become confused with neighbours",
+   "ko": "spots become confused with neighbours",
+   "de": "spots become confused with neighbours",
+   "hi": "spots become confused with neighbours",
+   "fr": "spots become confused with neighbours"
+  },
+  "Association becomes ambiguous as the diffraction peak approaches the neighbouring cell.": {
+   "ja": "回折ピークがセル間隔へ近づくと対応付けが一意でなくなる。",
+   "zh": "Association becomes ambiguous as the diffraction peak approaches the neighbouring cell.",
+   "tw": "Association becomes ambiguous as the diffraction peak approaches the neighbouring cell.",
+   "ko": "Association becomes ambiguous as the diffraction peak approaches the neighbouring cell.",
+   "de": "Association becomes ambiguous as the diffraction peak approaches the neighbouring cell.",
+   "hi": "Association becomes ambiguous as the diffraction peak approaches the neighbouring cell.",
+   "fr": "Association becomes ambiguous as the diffraction peak approaches the neighbouring cell."
+  },
+  "|peak(FFT)| < pitch/2": {
+   "ja": "|peak(FFT)| < pitch/2",
+   "zh": "|peak(FFT)| < pitch/2",
+   "tw": "|peak(FFT)| < pitch/2",
+   "ko": "|peak(FFT)| < pitch/2",
+   "de": "|peak(FFT)| < pitch/2",
+   "hi": "|peak(FFT)| < pitch/2",
+   "fr": "|peak(FFT)| < pitch/2"
+  },
+  "Structure finer than a cell is unseen; weak light jitters centroids. Recovery fails beyond the fixed window.": {
+   "ja": "セルより細かな揺らぎは見えず、弱い光では重心がぶれる。固定窓を越えると復元は壊れる。",
+   "zh": "Structure finer than a cell is unseen; weak light jitters centroids. Recovery fails beyond the fixed window.",
+   "tw": "Structure finer than a cell is unseen; weak light jitters centroids. Recovery fails beyond the fixed window.",
+   "ko": "Structure finer than a cell is unseen; weak light jitters centroids. Recovery fails beyond the fixed window.",
+   "de": "Structure finer than a cell is unseen; weak light jitters centroids. Recovery fails beyond the fixed window.",
+   "hi": "Structure finer than a cell is unseen; weak light jitters centroids. Recovery fails beyond the fixed window.",
+   "fr": "Structure finer than a cell is unseen; weak light jitters centroids. Recovery fails beyond the fixed window."
+  },
+  "Wavefront, lenslet array and spot images are fixed-seed synthetic data. Dimensions are explanatory assumptions and represent no specific product.": {
+   "ja": "波面、レンズ配列、スポット像はすべて固定 seed の合成データ。寸法は説明用の仮定で、特定の製品を表さない。",
+   "zh": "Wavefront, lenslet array and spot images are fixed-seed synthetic data. Dimensions are explanatory assumptions and represent no specific product.",
+   "tw": "Wavefront, lenslet array and spot images are fixed-seed synthetic data. Dimensions are explanatory assumptions and represent no specific product.",
+   "ko": "Wavefront, lenslet array and spot images are fixed-seed synthetic data. Dimensions are explanatory assumptions and represent no specific product.",
+   "de": "Wavefront, lenslet array and spot images are fixed-seed synthetic data. Dimensions are explanatory assumptions and represent no specific product.",
+   "hi": "Wavefront, lenslet array and spot images are fixed-seed synthetic data. Dimensions are explanatory assumptions and represent no specific product.",
+   "fr": "Wavefront, lenslet array and spot images are fixed-seed synthetic data. Dimensions are explanatory assumptions and represent no specific product."
+  }
+ }
+}
