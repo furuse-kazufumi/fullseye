@@ -5,8 +5,8 @@
   "overall": {
     "search_recall_at_10": 0.625,
     "untyped_recall_at_10": 0.625,
-    "plan_recall_at_10": 0.875,
-    "executable_plan_recall_at_10": 0.625
+    "plan_recall_at_10": 0.775,
+    "executable_plan_recall_at_10": 0.6
   },
   "categories": {
     "fast_3d": {
@@ -24,19 +24,19 @@
     "multi_product": {
       "n_queries": 8,
       "search_recall_at_10": 0.625,
-      "plan_recall_at_10": 0.875,
-      "executable_plan_recall_at_10": 0.875
+      "plan_recall_at_10": 0.75,
+      "executable_plan_recall_at_10": 0.75
     },
     "positioning": {
       "n_queries": 8,
       "search_recall_at_10": 0.625,
-      "plan_recall_at_10": 1.0,
+      "plan_recall_at_10": 0.75,
       "executable_plan_recall_at_10": 0.875
     },
     "specular_transparent": {
       "n_queries": 8,
       "search_recall_at_10": 0.375,
-      "plan_recall_at_10": 1.0,
+      "plan_recall_at_10": 0.875,
       "executable_plan_recall_at_10": 0.625
     }
   },
@@ -104,12 +104,14 @@
       "query": "다품종 부품을 형상 기반으로 위치 찾기",
       "search_recall_at_10": 0.0,
       "untyped_recall_at_10": 0.0,
-      "plan_recall_at_10": 1.0,
-      "executable_plan_recall_at_10": 1.0,
+      "plan_recall_at_10": 0.0,
+      "executable_plan_recall_at_10": 0.0,
       "missed_by_search": [
         "shape_locate"
       ],
-      "missed_by_plan": []
+      "missed_by_plan": [
+        "shape_locate"
+      ]
     },
     {
       "id": "mv07",
@@ -228,12 +230,14 @@
       "query": "金属光沢部を偏光方向ごとに撮像するシミュレーション",
       "search_recall_at_10": 0.0,
       "untyped_recall_at_10": 0.0,
-      "plan_recall_at_10": 1.0,
+      "plan_recall_at_10": 0.0,
       "executable_plan_recall_at_10": 1.0,
       "missed_by_search": [
         "polarization_render"
       ],
-      "missed_by_plan": []
+      "missed_by_plan": [
+        "polarization_render"
+      ]
     },
     {
       "id": "po01",
@@ -252,12 +256,14 @@
       "query": "輪郭モデルでワークの位置を決める",
       "search_recall_at_10": 0.0,
       "untyped_recall_at_10": 0.0,
-      "plan_recall_at_10": 1.0,
+      "plan_recall_at_10": 0.0,
       "executable_plan_recall_at_10": 0.0,
       "missed_by_search": [
         "shape_locate"
       ],
-      "missed_by_plan": []
+      "missed_by_plan": [
+        "shape_locate"
+      ]
     },
     {
       "id": "po03",
@@ -311,12 +317,14 @@
       "query": "Werkstück mit einem Formmodell lokalisieren",
       "search_recall_at_10": 0.0,
       "untyped_recall_at_10": 0.0,
-      "plan_recall_at_10": 1.0,
+      "plan_recall_at_10": 0.0,
       "executable_plan_recall_at_10": 1.0,
       "missed_by_search": [
         "shape_locate"
       ],
-      "missed_by_plan": []
+      "missed_by_plan": [
+        "shape_locate"
+      ]
     },
     {
       "id": "po08",

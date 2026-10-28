@@ -122,67 +122,59 @@ def _hypergraph_plans(starts: list[str], want: str, query: str, *, executable_on
     edges = [e for e in graph["edges"] if (e.get("verified_executable") or not executable_only)
              and e.get("output") not in ("unknown", "any")
              and "unknown" not in e.get("inputs", ())]
+    import heapq
+    import itertools
     by_input = {}
     for edge in edges:
         for sort in set(edge.get("inputs", ())):
             by_input.setdefault(sort, []).append(edge)
     best = {s: [{"base": s, "sort": s, "cost": 0.0, "depth": 0,
                  "signature": "have:%s" % s, "consumed": frozenset({s})}] for s in starts}
-    started = time.monotonic(); expanded = 0; changed = True; capped = None
-    while changed:
-        changed = False
-        for edge in edges:
-            if expanded >= max_expansions:
-                capped = "max_expansions"; break
-            if (time.monotonic() - started) * 1000 >= timeout_ms:
-                capped = "timeout_ms"; break
-            ins = edge.get("inputs", [])
-            if not ins:
-                if not allow_sources or edge.get("type_semantics") != "source":
-                    continue
-                children = []
-            else:
-                choices = []
-                possible = True
-                for inp in ins:
-                    if inp == "poly":
-                        possible = False; break
-                    rows = best.get(inp)
-                    if not rows:
-                        possible = False; break
-                    choices.append(rows[0])
-                if not possible:
-                    continue
-                children = choices
-            expanded += 1
-            depth = 1 + max((x["depth"] for x in children), default=0)
-            if depth > max_depth:
-                continue
-            out = edge["output"]
-            if out == "poly":
-                out = children[0]["sort"] if children else "unknown"
-            consumed = frozenset().union(*(x["consumed"] for x in children)) if children else frozenset()
-            if not consumed and not allow_sources:
-                continue
-            relevance = max(0.0, scores.get(edge["op"], 0.0))
-            cost = sum(x["cost"] for x in children) + 1.0 / (1.0 + relevance)
-            sig = "%s(%s)" % (edge["op"], ",".join(x["signature"] for x in children))
-            row = {"sort": out, "cost": cost, "depth": depth, "edge": edge,
-                   "children": children, "signature": sig, "consumed": consumed}
-            rows = best.setdefault(out, [])
-            if any(x["signature"] == sig for x in rows):
-                continue
-            rows.append(row); rows.sort(key=lambda x: (x["cost"], x["depth"], x["signature"]))
-            del rows[k:]
-            if row in rows:
-                changed = True
-        if capped:
-            break
+    started=time.monotonic(); expanded=0; capped=None; heap=[]; queued=set(); serial=0
+    def enqueue(edge):
+        nonlocal serial
+        ins=edge.get("inputs",[])
+        if not ins:
+            combos=[()] if allow_sources and edge.get("type_semantics")=="source" else []
+        elif "poly" in ins or any(not best.get(inp) for inp in ins):
+            combos=[]
+        else:
+            combos=itertools.islice(itertools.product(*(best[inp][:k] for inp in ins)),k*k)
+        for children0 in combos:
+            children=list(children0); depth=1+max((x["depth"] for x in children),default=0)
+            if depth>max_depth: continue
+            out=edge["output"]
+            if out=="poly": out=children[0]["sort"] if children else "unknown"
+            consumed=frozenset().union(*(x["consumed"] for x in children)) if children else frozenset()
+            if not consumed and not allow_sources: continue
+            sig="%s(%s)"%(edge["op"],",".join(x["signature"] for x in children))
+            if sig in queued: continue
+            queued.add(sig); relevance=max(0.0,scores.get(edge["op"],0.0))
+            cost=sum(x["cost"] for x in children)+1.0/(1.0+relevance)
+            row={"sort":out,"cost":cost,"depth":depth,"edge":edge,"children":children,
+                 "signature":sig,"consumed":consumed}
+            serial+=1; heapq.heappush(heap,(cost,depth,serial,row))
+    for edge in edges: enqueue(edge)
+    while heap:
+        if expanded>=max_expansions: capped="max_expansions"; break
+        if (time.monotonic()-started)*1000>=timeout_ms: capped="timeout_ms"; break
+        _cost,_depth,_serial,row=heapq.heappop(heap); expanded+=1
+        rows=best.setdefault(row["sort"],[])
+        if any(x["signature"]==row["signature"] for x in rows): continue
+        rows.append(row); rows.sort(key=lambda x:(x["cost"],x["depth"],x["signature"]))
+        del rows[k:]
+        if row not in rows: continue
+        for edge in by_input.get(row["sort"],[]): enqueue(edge)
     plans = []
+    selected=[]
     for root in best.get(want, []):
         if root.get("base") is not None or not root["consumed"]:
             continue
         stages, outputs = _plan_dag(root)
+        ops=frozenset(x["op"] for x in stages)
+        if selected and any(ops==old for old in selected):
+            continue
+        selected.append(ops)
         plans.append({"dag": {"stages": stages, "outputs": outputs},
                       "ops": [x["op"] for x in stages], "weight": round(root["cost"], 6),
                       "depth": root["depth"], "consumed_have": sorted(root["consumed"])})

@@ -292,7 +292,7 @@ def test_plan_dag_contract_accepts_have_bindings_reorders_and_rejects_role_alias
     bad=validate_pipeline([{"op":"deflectometry_phase_to_slope",
                            "inputs":["have:image","have:image"],"params":{}}],None,cat,
                           bindings={"have:image":image},store=store)
-    assert any(e["reason"]=="distinct_role_reuses_reference" for e in bad["errors"])
+    assert "distinct_role_reuses_reference" in {e["reason"] for e in bad["errors"]}
 
 def test_parameter_refs_and_non_array_handles_share_the_pipeline_vocabulary():
     import numpy as np
@@ -309,3 +309,20 @@ def test_parameter_refs_and_non_array_handles_share_the_pipeline_vocabulary():
     table=store.put({"score":0.75,"label":"ok"},sort="table",provenance=[])
     inspected=call_tool("fullseye_inspect",{"handle":table["handle"]},cat,store)
     assert inspected["structuredContent"]["value"]["score"] == .75
+
+def test_priority_queue_planner_replays_backward_derivations_forward():
+    import random
+    graph=load("OP_GRAPH.json")
+    wants=sorted({e["output"] for e in graph["edges"] if e.get("verified_executable")
+                  and e["output"] not in {"unknown","poly"}})
+    random.Random(20261029).shuffle(wants)
+    checked=0; failures=[]
+    for want in wants[:40]:
+        backward=opsearch.plan(None,want,direction="backward",constraints={"k":2,"max_depth":4})
+        for candidate in backward.get("plans",[]):
+            replay=opsearch.plan(candidate["consumed_have"],want,direction="forward",
+                                 constraints={"k":3,"max_depth":4})
+            if not replay["ok"]: failures.append((want,candidate["consumed_have"]))
+            checked+=1
+    assert failures == []
+    assert checked >= 10
