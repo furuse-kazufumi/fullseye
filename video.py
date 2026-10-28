@@ -225,6 +225,16 @@ def iter_frames(path: str, gray: bool = True, step: int = 1, start: int = 0,
     if not os.path.exists(path):
         raise FileNotFoundError(path)
 
+    # ★2026-10-24: imageio (Pillow) decodes a 16-bit RGB/RGBA PNG to uint8 and the
+    #   uint16 request then stretched those 8 bits (off by up to 237/65535). A still
+    #   PNG declaring > 8 bits goes through raster.read_raster (OpenCV, or refused).
+    if path.lower().endswith(".png"):
+        import raster
+        bits = raster._declared_bits_per_sample(path)
+        if bits is not None and bits > 8:
+            yield from _iter_deep_png(path, bits, gray, start, step, cap, dtype, gray_backend)
+            return
+
     imageio = _imageio()
     if imageio is not None:
         reader = None
@@ -272,6 +282,38 @@ def iter_frames(path: str, gray: bool = True, step: int = 1, start: int = 0,
 
     raise RuntimeError(
         "read_frames needs imageio (with imageio-ffmpeg for mp4) or opencv-python")
+
+
+def _iter_deep_png(path, bits, gray, start, step, cap, dtype, gray_backend):
+    """The one frame of a PNG that declares > 8 bits per sample, depth kept.
+
+    Refuses (``RuntimeError``) an animated PNG — the depth-keeping reader decodes
+    only the first frame — and a still nobody can read without truncation.
+    """
+    import raster
+    try:
+        from PIL import Image
+        with Image.open(path) as im:
+            n = int(getattr(im, "n_frames", 1))
+    except Exception:
+        n = 1
+    if n > 1:
+        raise RuntimeError("%s: %d-bit animated PNG (%d frames) — no installed reader keeps "
+                           "the depth of every frame; refusing rather than truncating to 8 bit"
+                           % (path, bits, n))
+    try:
+        arr, _meta = raster.read_raster(path, keep_dtype=True)
+    except ValueError as e:
+        raise RuntimeError("%s: %d-bit PNG cannot be read without losing depth (%s)"
+                           % (path, bits, e)) from None
+    if start > 0 or cap == 0:
+        return
+    a = np.asarray(arr)
+    if a.ndim == 3 and a.shape[2] == 2:                # gray + alpha -> gray
+        a = a[:, :, 0]
+    if not gray and a.ndim == 2:
+        a = np.repeat(a[:, :, None], 3, axis=2)
+    yield _coerce(a, gray, dtype, gray_backend)
 
 
 def read_frames(path: str, gray: bool = True, step: int = 1, start: int = 0,

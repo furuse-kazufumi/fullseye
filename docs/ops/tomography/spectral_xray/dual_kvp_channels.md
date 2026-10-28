@@ -23,6 +23,13 @@ version: 0.8.1  # fullseye lib version this note was generated for
 Swank の雑音の増えは入れない)。2 つのスペクトルは同じエネルギーの格子に載せる(線形補間、
 範囲の外は 0)。返り値の形は :func:`photon_counting_channels` と同じ(mode = "integrating")。
 
+``detector`` は X 線の列の名前(既定 ``CSI`` = NIST の CsI の表)か、材料表のシンチレータの名前
+(``CSI:TL`` / ``GD2O2S:TB`` / ``BGO`` / ``LYSO`` …)。シンチレータの名前なら吸収効率 1 − e^{−μt} の μ は
+そのレコードの X 線の列と密度で、``response["scintillator"]`` に光収率・発光の極大・減衰時間を足す
+(光の量は ``light_photons_per_kev`` = 光収率 / 1000 —— 吸収したエネルギー [keV] に掛ける)。重みと gain は
+名前の種類に依らず同じ式で、既定の ``CSI`` の結果は 2026-10-23 の前と 1 ビットも変わらない
+(``CSI:TL`` は同じ NIST の表と密度なので重みも同じ)。光検出器の QE まで通すのは :func:`scintillator_sensor_qe`。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

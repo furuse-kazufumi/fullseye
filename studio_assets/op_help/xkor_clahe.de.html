@@ -13,6 +13,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>CLAHE (kontrastbegrenzte adaptive Histogrammausgleichung). Ruft <code style="color:#22d3bf">kornia.enhance.equalize_clahe</code> auf.</p>
 <p>a variiert das Clip-Limit (<code style="color:#22d3bf">1.0 + 4.0 * a</code>, Bereich 1.0-5.0). Je größer der Wert, desto stärker wird der Kontrast angehoben, desto leichter wird aber auch Rauschen betont. b wird nicht verwendet.</p>
+<p><b>Benötigt kornia 0.9 oder neuer</b>. <code style="color:#22d3bf">equalize_clahe</code> in 0.8 und früher weicht von OpenCVs CLAHE im Mittel um 0.04-0.17 und maximal um 0.46 ab (0.9 hat die Histogramm-Bins, die Verteilung des abgeschnittenen Überschusses, das Runden der LUT und die Kachelinterpolation korrigiert). Damit sich die Werte nicht stillschweigend mit der Version ändern, lehnt der Op unter 0.9 mit Begründung ab. Das Kachelraster wird ausdrücklich als 8x8 übergeben.</p>
 <p><b>Regler (gemessen)</b>: <code style="color:#22d3bf">a</code> von 0 bis 1 zu variieren <b>ändert die Ausgabe nicht</b> (an fünf verschiedenen Eingaben gemessen).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">Leitfaden zur Familie gallery2d_gray_arith</a></p>

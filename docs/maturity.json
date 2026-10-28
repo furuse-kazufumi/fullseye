@@ -304,8 +304,8 @@
    "category": "見つける",
    "note": "docs/capabilities/dual-energy-xray-material-discrimination.md",
    "status": "verified-synthetic",
-   "ops_total": 14,
-   "ops_named_in_tests": 14,
+   "ops_total": 15,
+   "ops_named_in_tests": 15,
    "ops_not_named_in_tests": [],
    "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
    "examples": [
@@ -448,6 +448,27 @@
     },
     {
      "id": "poc_glyph_typo_detection",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
+   "id": "fourier-ptychography",
+   "title": "フーリエ・タイコグラフィ(LED の斜め照明の像の組 → 位相回復で高 NA の振幅と位相、収束しなければ拒否)",
+   "title_en": "Fourier ptychography (oblique LED illumination, phase retrieval to a high-NA amplitude and phase, refused unless it converges)",
+   "category": "測る",
+   "note": "docs/capabilities/fourier-ptychography.md",
+   "status": "verified-synthetic",
+   "ops_total": 6,
+   "ops_named_in_tests": 6,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_fourier_ptychography",
      "data": "synthetic",
      "gate": "tests/test_poc_scripts_run.py",
      "executed": true,
@@ -2430,9 +2451,9 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 440,
-  "run_by_the_poc_gate": 278,
-  "run_by_the_example_gate": 162,
+  "examples2d_total": 443,
+  "run_by_the_poc_gate": 280,
+  "run_by_the_example_gate": 163,
   "not_run_by_any_gate": 0,
   "gates": [
    "tests/test_poc_scripts_run.py",

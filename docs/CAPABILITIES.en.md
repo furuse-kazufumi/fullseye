@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 96 capabilities**
+**Currently 97 capabilities**
 
 ## Look up by task (recommended pipeline)
 
@@ -34,6 +34,7 @@ Every operator exists in the registry and the types connect from one step to the
 | [Separating crop from weeds in field RGB by colour and texture, and grading weed cover at declared edges (no learned network)](capabilities/crop-weed-cover-grade.md) | `superpixel_color_texture_features` → `fisher_lda_fit` → `fisher_lda_score` → `cover_ratio_grade` | `poc_weed_rice_ratio` |
 | [Separate thickness from material with two X-ray energies (dual-energy and photon-counting X-ray: spectrum, energy windows, basis decomposition, effective Z)](capabilities/dual-energy-xray-material-discrimination.md) | `xray_tube_spectrum` → `photon_counting_channels` → `basis_decomposition_crlb` → `basis_material_decompose` → `effective_z_map` | `poc_dual_energy_xray` |
 | [Turn results into figures people can read](capabilities/figures-and-annotation.md) | `annotate_figure_grid` → `annotate_panel_label` → `annotate_scale_bar` → `annotate_colorbar` | `poc_colormap_readability` |
+| [Fourier ptychography (oblique LED illumination, phase retrieval to a high-NA amplitude and phase, refused unless it converges)](capabilities/fourier-ptychography.md) | `fp_design` → `fp_stack_from_images` → `fp_reconstruct` → `fp_element_contrast` | `poc_fourier_ptychography` |
 | [Put measurements on the Earth (ECEF, height frames, local ENU)](capabilities/geodetic-frames.md) | `dem_geodetic_to_ecef` → `dem_ecef_to_geodetic` | `poc_geodetic_height_frames` |
 | [Flag what differs from aligned good samples (a per-pixel variation model with a declared false-alarm rate)](capabilities/good-sample-variation-model.md) | `varmodel_alignment` → `varmodel_fit` → `varmodel_calibrate` → `varmodel_score` | `poc_good_sample_variation_model` |
 | [Grating interferometry (Talbot / Talbot-Lau): transmission, differential phase and dark field from one phase-stepping scan](capabilities/grating-interferometry.md) | `talbot_grating_design` → `talbot_source_visibility` → `grating_step_period_estimate` → `grating_three_image_retrieve` → `darkfield_scatter_relation` → `dpc_integrate` | `poc_grating_interferometry` |
@@ -91,7 +92,7 @@ Every operator exists in the registry and the types connect from one step to the
 
 33 entries do not have the recipe fields (pipeline / alternatives / limits / calibration) yet — see each entry below; they are named in `gen_capabilities_index.NO_RECIPE_YET`.
 
-## Measure (34)
+## Measure (35)
 
 ### [Estimate the camera intrinsic matrix K from multiple planar views (Zhang)](capabilities/camera-intrinsics-calibration.md)
 
@@ -132,6 +133,18 @@ The upstream of `undistort_image`: it *measures* the Brown–Conrady coefficient
 Operators: `estimate_distortion`, `undistort_image`, `distort_points`, `undistort_points`
 
 Runnable: `estimate_lens_distortion`
+
+### [Fourier ptychography (oblique LED illumination, phase retrieval to a high-NA amplitude and phase, refused unless it converges)](capabilities/fourier-ptychography.md)
+
+Six ops in `fourierptycho` for Fourier ptychographic microscopy: closed-form design numbers before measuring (synthetic NA, coherent cut-off period, overlap ratio of neighbouring pupils against the published 35 % minimum, LED count, camera sampling Δx ≤ λ/(2 NA_obj) and LEDs sitting on the bright-/dark-field boundary), a simulator of the image set under oblique LED illumination (LED fall-off, dark-field exposure, shot and read noise, pupil aberrations, LED array misalignment, reflective height to round-trip phase), an entry point for measured image sets, a sequential phase retrieval with joint pupil recovery (EPRY form, projected on low-order polynomials by default) and LED position correction, and a USAF 1951 target with an element-by-element read-out. The reconstruction returns its convergence history, the reason it stopped and the synthetic NA, and refuses (raises a MetricContractError carrying the record) unless the residual has stalled and two different starting points agree.
+
+Operators: `fp_design`, `fp_usaf_target`, `fp_capture`, `fp_stack_from_images`, `fp_reconstruct`, `fp_element_contrast`
+
+Pipeline: [`fp_design`](ops/optics/fpm/fp_design.md) → [`fp_stack_from_images`](ops/optics/fpm/fp_stack_from_images.md) → [`fp_reconstruct`](ops/optics/fpm/fp_reconstruct.md) → [`fp_element_contrast`](ops/optics/fpm/fp_element_contrast.md)
+
+Alternatives: [`fp_capture`](ops/optics/fpm/fp_capture.md), [`fp_usaf_target`](ops/optics/fpm/fp_usaf_target.md), [`coherent_image`](ops/optics/coherent/coherent_image.md)
+
+Runnable: `poc_fourier_ptychography`
 
 ### [Put measurements on the Earth (ECEF, height frames, local ENU)](capabilities/geodetic-frames.md)
 
@@ -481,9 +494,9 @@ Runnable: `poc_weed_rice_ratio`
 
 ### [Separate thickness from material with two X-ray energies (dual-energy and photon-counting X-ray: spectrum, energy windows, basis decomposition, effective Z)](capabilities/dual-energy-xray-material-discrimination.md)
 
-Dual-energy and photon-counting X-ray material discrimination. The material table gains an X-ray column: mass attenuation coefficients from a bundled subset of NIST SRD 126 (Hubbell and Seltzer; 49 elements, 21 materials, 1 keV to 1 MeV) and the mixture rule for anything with a known composition, under the same names as the optical column. On top of it: a tungsten-anode tube spectrum and its half-value layer, photon-counting energy windows (absorption efficiency, energy resolution, charge-sharing tail) and dual-kVp channels, a noisy channel projection, a per-pixel polychromatic basis-material decomposition that rejects pixels it cannot solve, its Cramér-Rao bound, the R value, an effective-Z map and the closed-form separability of two materials. The PoC finds bone and glass fragments that a single X-ray image buries under the thickness variation of meat.
+Dual-energy and photon-counting X-ray material discrimination. The material table gains an X-ray column: mass attenuation coefficients from a bundled subset of NIST SRD 126 (Hubbell and Seltzer; 51 elements, 21 materials, 1 keV to 1 MeV) and the mixture rule for anything with a known composition, under the same names as the optical column. On top of it: a tungsten-anode tube spectrum and its half-value layer, photon-counting energy windows (absorption efficiency, energy resolution, charge-sharing tail) and dual-kVp channels, a noisy channel projection, a per-pixel polychromatic basis-material decomposition that rejects pixels it cannot solve, its Cramér-Rao bound, the R value, an effective-Z map and the closed-form separability of two materials. Seven inorganic scintillators (CsI:Tl, NaI:Tl, Bi4Ge3O12, Lu2SiO5:Ce, Lu1.8Y0.2SiO5:Ce, CdWO4, Gd2O2S:Tb) carry an emission column with a source for every value, and a scintillator-coupled sensor model follows one X-ray photon through absorption, light yield and the overlap of the emission with a photodetector's quantum efficiency. The PoC finds bone and glass fragments that a single X-ray image buries under the thickness variation of meat.
 
-Operators: `material_xray_table`, `material_xray_attenuation`, `material_xray_constants`, `material_effective_z`, `xray_tube_spectrum`, `xray_beam_quality`, `photon_counting_channels`, `dual_kvp_channels`, `xray_channel_projection`, `basis_material_decompose`, `basis_decomposition_crlb`, `r_value_map`, `effective_z_map`, `dual_energy_separability`
+Operators: `material_xray_table`, `material_xray_attenuation`, `material_xray_constants`, `material_effective_z`, `xray_tube_spectrum`, `xray_beam_quality`, `photon_counting_channels`, `dual_kvp_channels`, `xray_channel_projection`, `basis_material_decompose`, `basis_decomposition_crlb`, `r_value_map`, `effective_z_map`, `dual_energy_separability`, `scintillator_sensor_qe`
 
 Pipeline: [`xray_tube_spectrum`](ops/tomography/spectral_xray/xray_tube_spectrum.md) → [`photon_counting_channels`](ops/tomography/spectral_xray/photon_counting_channels.md) → [`basis_decomposition_crlb`](ops/tomography/spectral_xray/basis_decomposition_crlb.md) → [`basis_material_decompose`](ops/tomography/spectral_xray/basis_material_decompose.md) → [`effective_z_map`](ops/tomography/spectral_xray/effective_z_map.md)
 

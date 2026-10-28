@@ -21,8 +21,9 @@ X 線の列(質量減衰係数 μ/ρ)を引ける材料の一覧を返す。
 
 返り値: 1 材料 1 行の dict(name, kind = table / mixture / element, density_g_cm3, composition
 ((記号, 質量分率), …), optical(光学の表にも同じ名前のレコードがあるか), reference)。
-元素 49 種と NIST の化合物 20 種は NIST SRD 126(Hubbell & Seltzer)の表そのもの、それ以外は
-:data:`XRAY_SOLID`(と電子線の表)の組成から混合則で作る。範囲は 1 keV〜1 MeV(表の外は外挿しない)。
+元素 51 種と NIST の化合物 21 種は NIST SRD 126(Hubbell & Seltzer)の表そのもの、それ以外は
+:data:`XRAY_SOLID`(と電子線の表)の組成から混合則で作る。シンチレータのレコード(CSI:TL / BI4GE3O12 …)は
+その ``xray_material`` の列とレコードの密度。範囲は 1 keV〜1 MeV(表の外は外挿しない)。
 
 ## 参考(サンプルデータ・文献)
 

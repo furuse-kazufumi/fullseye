@@ -40,6 +40,10 @@
     逆順)に展開する。光軸は鏡の法線について鏡映され、45° の鏡で 90° 折れる。
   * 像面は最後の座標系の z = 0 の面(``image_tilt`` で傾けられる)。像面の局所の (x, y) は、光の進む向きを z
     とした右手系 —— 反射を奇数回くぐると像は裏返り(行列式が負)、偶数回なら回転だけになる。
+  * 傾けた像面 ``z = x·tan(ty) + y·tan(tx)`` の局所の (x, y) は**傾いた面そのものの上の座標**(傾いた受光素子の
+    上の距離がそのまま出る): x 軸 = 面と傾けない座標系の xz 面との交線 ``(1, 0, tan ty)/‖·‖``、法線
+    ``n = (−tan ty, −tan tx, 1)/‖·‖``、y 軸 = ``n × x``。単軸の傾きなら傾けた向きの長さは傾けない面への射影の
+    1/cos θ' 倍(2026-10-24 までは射影した座標を返していた)。
 
 ゴースト: 面 i < j の組ごとに、光は j まで進んで反射し、j−1 … i+1 を逆向きにくぐって i で反射し、i+1 から
 先を通常どおり進んで像面に届く(2 回反射の経路は N(N−1)/2 本)。逆向きにくぐる面は通常の働き(屈折・反射)の
@@ -476,8 +480,27 @@ def _check(sysd, op):
 # --------------------------------------------------------------------------- #
 # 配置(各面の大域の姿勢)
 # --------------------------------------------------------------------------- #
+def _image_tilt_basis(tilt):
+    """傾けた像面 ``z = x·tan(ty) + y·tan(tx)`` の正規直交基底(傾けない像の座標系で、列 = 局所の x, y, 法線)。
+
+    x 軸は面と xz 面の交線、法線は光の進む +z の側、y = 法線 × x(右手系)。傾き 0 なら厳密に単位行列。
+    """
+    tx, ty = tilt
+    if tx == 0.0 and ty == 0.0:
+        return np.eye(3)
+    gx, gy = math.tan(math.radians(ty)), math.tan(math.radians(tx))
+    u = np.array([1.0, 0.0, gx])
+    u /= np.linalg.norm(u)
+    nrm = np.array([-gx, -gy, 1.0])
+    nrm /= np.linalg.norm(nrm)
+    v = np.cross(nrm, u)
+    return np.stack([u, v, nrm], 1)
+
+
 def _layout(sysd, image_mm=None):
-    """各記録の入口の座標系と、面の姿勢 (R, o)、像面の座標系を返す。``local = (P − o) @ R``。"""
+    """各記録の入口の座標系と、面の姿勢 (R, o)、像面の座標系を返す。``local = (P − o) @ R``。
+
+    ``image`` は傾けない像の座標系 (F, o)、``image_plane`` は傾けた像面そのものの回転(F @ 傾きの基底)。"""
     recs = sysd["records"]
     F = np.eye(3)
     o = np.zeros(3)
@@ -520,7 +543,8 @@ def _layout(sysd, image_mm=None):
     if image_mm is None:
         raise ValueError("the image distance is undefined (give the last t or image_mm)")
     o_img = o_last + F @ np.array([0.0, 0.0, image_mm])
-    return {"entry": entry, "poses": poses, "image": (F, o_img), "image_mm": float(image_mm)}
+    return {"entry": entry, "poses": poses, "image": (F, o_img), "image_mm": float(image_mm),
+            "image_plane": F @ _image_tilt_basis(sysd["image_tilt"])}
 
 
 def _media(sysd):
@@ -630,7 +654,8 @@ def _trace(sysd, P, D, path=None, wavelength_um=None, image_mm=None, layout=None
     valid &= np.isfinite(tt) & (den > _MIN_DZ)
     Qg[~valid] = np.nan
     pts.append(Qg)
-    loc = (Qg - oi) @ Ri
+    # ★局所座標は傾いた像面そのものの基底で取る(以前は傾けない座標系へ射影し、傾けた向きが cos θ' 倍に縮んでいた)
+    loc = (Qg - oi) @ lay["image_plane"]
     return {"points": np.stack(pts, 1), "dirs": np.stack(dirs, 1), "opl": opl, "valid": valid,
             "image_local": loc, "image_mm": lay["image_mm"], "n_image": float(n_before), "layout": lay}
 
@@ -897,7 +922,8 @@ def noncoaxial_layout(system):
     coordinates; ``local = (P − vertex) @ rotation``), ``euler_zyx_deg`` (the same rotation as
     ``Rz(γ)·Ry(β)·Rx(α)`` about the global axes — the extrinsic x-then-y-then-z form other ray tracers take for
     absolute placement), ``normal`` (the local +z) and the record's ``R`` / ``k`` / ``ap`` / ``mirror``.
-    ``axis`` is the polyline of the frame origins (the mechanical axis), ``image`` the image-plane pose.
+    ``axis`` is the polyline of the frame origins (the mechanical axis), ``image`` the image-plane pose
+    (with ``image_tilt`` its ``rotation`` / ``normal`` are those of the tilted plane itself).
     """
     sysd = _check(system, "noncoaxial_layout")
     lay = _layout(sysd)
@@ -911,7 +937,8 @@ def noncoaxial_layout(system):
                      "ap": r["ap"], "mirror": r["mirror"], "beamsplitter": r["beamsplitter"],
                      "reflect": r["reflect"]})
     axis = [e[1].tolist() for e in lay["entry"]] + [lay["image"][1].tolist()]
-    Fi, oi = lay["image"]
+    _, oi = lay["image"]
+    Fi = lay["image_plane"]                     # 傾けた像面そのものの姿勢(列 = 局所の x, y, 法線)
     return {"surfaces": rows, "axis": axis, "image": {"origin": oi.tolist(), "rotation": Fi.tolist(),
                                                       "normal": Fi[:, 2].tolist(), "tilt": sysd["image_tilt"]},
             "image_mm": lay["image_mm"], "n_reflections": sum(1 for r in sysd["records"]
@@ -948,7 +975,8 @@ def _fields(sysd, fields, op):
 def noncoaxial_trace(system, fields=None, rings=4, pupil_fill=1.0, branch=None):
     """Trace pupil-filling real-ray bundles through the 3-D system (``table``).
 
-    Per field: ``image_xy`` (N,2) on the image plane in its local frame, ``valid``, ``points`` (N, n+2, 3)
+    Per field: ``image_xy`` (N,2) on the image plane in its local frame (with ``image_tilt``, coordinates on the
+    tilted plane itself: distances on a tilted sensor, not their projection), ``valid``, ``points`` (N, n+2, 3)
     global polylines (start, every surface, image), ``chief`` (the chief-ray polyline and its image point),
     ``n_vignetted``. *fields* is a list of ``(fx, fy)`` pairs (or numbers = fy), default the system's field.
     Rays are aimed at the stop: a coaxial prescription converted from ``raytrace`` uses ``raytrace``'s own
@@ -979,7 +1007,8 @@ def noncoaxial_spot(system, field=None, rings=6, pupil_fill=1.0):
     """RMS / geometric spot radius (mm) and centroid on the (possibly tilted) image plane (``table``).
 
     Same statistics as ``raytrace.spot_stats`` (RMS about the centroid of the valid rays), with the
-    image coordinates in the image plane's local frame. *field* is ``(fx, fy)`` or a number (= fy).
+    image coordinates in the image plane's local frame (with ``image_tilt``, measured on the tilted plane itself,
+    so the radius is not shrunk by cos θ' along the tilt). *field* is ``(fx, fy)`` or a number (= fy).
     """
     op = "noncoaxial_spot"
     sysd = _check(system, op)
@@ -1461,7 +1490,7 @@ def ghost_analysis(system, coatings=None, field=None, rings=6, pupil_fill=0.98, 
     base = _bundle(sysd, f, rings=int(rings), pupil_fill=pf)
     P0, D0 = base["points"][:, 0, :], base["dirs"][:, 0, :]
     ok0 = base["valid"].copy()
-    Fi, _ = lay["image"]
+    Fi = lay["image_plane"]                     # 傾いた像面の基底(xy と同じ座標系で法線方向の進みを測る)
     Jn = _jacobian(sysd, f, nom, lay)
     rows = []
     for a in range(len(cand)):

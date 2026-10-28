@@ -20,7 +20,8 @@ version: 0.8.1  # fullseye lib version this note was generated for
 RMS / geometric spot radius (mm) and centroid on the (possibly tilted) image plane (``table``).
 
 Same statistics as ``raytrace.spot_stats`` (RMS about the centroid of the valid rays), with the
-image coordinates in the image plane's local frame. *field* is ``(fx, fy)`` or a number (= fy).
+image coordinates in the image plane's local frame (with ``image_tilt``, measured on the tilted plane itself,
+so the radius is not shrunk by cos θ' along the tilt). *field* is ``(fx, fy)`` or a number (= fy).
 
 ## ファミリ共通の入力契約(fail-closed)
 

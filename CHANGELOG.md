@@ -14,6 +14,40 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
   - 応力光学則: `photoelastic_retardation`(δ = 2π t C (σ1−σ2)/λ と材料縞値)、`retardation_from_birefringence`、`retardation_convert`(rad / deg / nm / waves)。
   - 立方晶 {100} 面: `cubic_photoelastic_birefringence`(4 階の圧電光学テンソルを結晶方位で回す。Stoehr ら 2020, J. Sens. Sens. Syst. 9:209 の式 (26) と 1e-12 で一致、π44 = π11 − π12 で等方の式に戻る)、`silicon_piezo_optic_coefficients`(同論文の表 1 を出典つきで。同論文の測定値以外の 4 行は同表の引用値で、原論文は未照合)。
   - 偏光器と偏光像: `polariscope_intensity`(平面・円偏光器の明暗視野、`optics.mueller_element` の鎖と 1e-12 で一致)、`photoelastic_polarization_images`(円偏光照明の試料を偏光カメラ 4 方位 / 6 強度の偏光計で撮る)、`photoelastic_phase_estimate`(閉形式の逆算: 4 方位は δ ≤ π/2、6 強度は δ ≤ π。合成 → 推定で δ と主軸が 1e-9、円板の応力場から主応力差が 1e-6 で戻る)、`retardation_unwrap_multiwavelength`(分散なしの仮定で多波長から次数を決め、別の次数との差 `margin_nm` を返す)。
+### 修正(値が変わる) — 傾けた像面の座標を、傾いた面そのものの上で返す(`raytrace3d`)
+
+- `noncoaxial_trace` / `noncoaxial_spot` の `image_xy`(と `chief`・重心)は、`image_tilt` を与えると**傾けない像面へ
+  射影した座標**を返していた(docstring は「像面の局所の座標」)。傾けた向きの長さが cos θ' 倍に縮み、
+  `noncoaxial_spot` の RMS・幾何半径も同じだけ小さく出ていた。今は傾いた像面の正規直交基底(x = 面と xz 面の交線、
+  法線 = (−tan ty, −tan tx, 1)/‖·‖、y = 法線 × x)で測り、傾いた受光素子の上の距離がそのまま出る。
+- **値が変わる**のは `image_tilt` ≠ (0, 0) の系だけ(傾けない系は基底が厳密に単位行列で、数値は 1 ビットも変わらない)。
+  例: 30° の傾きで、瞳の上下の 2 点の距離は 10 → 10/cos 30° = 11.547 mm、RMS は 3.8037 → 4.1085 mm。
+  `noncoaxial_example("scheimpflug")`(θ' = −28.0°)では傾けた向きの長さが 1/cos θ' = 1.133 倍になり、視野 −3 mm の
+  RMS は 0.2439 → 0.2609 mm。`poc_noncoaxial_optics` の第 4 章の最大 RMS は
+  0.0170 → 0.0185 mm(reduced 予算の実行。門 = 傾けない像面の 3 分の 1 以下、は通ったまま)。
+- 同じ型の兄弟も揃えた: `noncoaxial_layout` の `image.rotation` / `image.normal` は傾いた面の姿勢になった(以前は
+  傾けない座標系の値で、`tilt` を別に読む必要があった)。`image_orientation` のヤコビアン、`ghost_analysis` /
+  `ghost_path` / `ghost_image` の像面の座標と焦点ずれ(法線方向)も傾いた面の上で測る。
+- 呼び出し側で cos θ' を割り戻していたコードは、この版からその補正を外すこと(二重に補正すると逆に 1/cos θ' 倍に
+  なる)。門 = `tests/test_raytrace3d_tilted_image.py`(閉形式の 2 点の距離・RMS、2 軸の傾きの等長性、収差のある
+  系の RMS = 大域の 3-D 点の RMS)。
+### 追加 — シンチレータ・蛍光体の発光の列と、シンチレータ積層のセンサの QE
+
+- 材料表(`materials` / 生成物 `materials_data.py`、生成器 `tools/gen_material_tables.py`)にシンチレータ 7 種: `CSI:TL` / `NAI:TL` / `BI4GE3O12`(BGO)/ `LU2SIO5:CE`(LSO)/ `LU1.8Y0.2SIO5:CE`(LYSO)/ `CDWO4` / `GD2O2S:TB`(GOS:Tb)。化学式で名前を付け(別名 BGO / LSO / LYSO …)、`properties["scintillator"]` に発光の極大・光収率 [photons/MeV]・減衰時間・密度・極大での屈折率・X 線の列の引き先を持つ。値は一次情報を読んで写し、値ごとに出典(PDG 2024 表 35.4 / Berkeley Lab Inorganic Scintillator Library の csv の行 / Tang ら Molecules 28, 1815 (2023))。**確かめられなかった値は入れていない**: GOS:Tb の光収率と、全材料の発光の幅(FWHM)は `None` で `unverified` に名前が出る。CsI / NaI / BGO は RII の屈折率の一次文献も載せ、PDG の「極大での n」と独立に照合する(CsI・BGO は 0.01 以内、NaI は Li 1976 の 1 点の Sellmeier が 0.026 低い)。材料の件数 89 → 96。
+- X 線の列(`materials_xray_data.py`、`tools/gen_xray_tables.py`)に NIST SRD 126 の Lu(71)と Bi(83)を足した(元素 49 → 51)。シンチレータの名前で μ/ρ を引ける(`CSI:TL` は NIST の CsI の表そのもの、他は化学式の混合則とレコードの密度。付活剤は無視)。
+- `dualxray.dual_kvp_channels(detector=...)` が材料表のシンチレータの名前を受ける(`response["scintillator"]` に光収率・発光の極大・減衰時間)。既定の `detector="CSI"` の重み・gain・response は変わらない(master の値と 1e-13、同じプロセスでは `CSI` と `CSI:TL` が 1 ビットも違わないことをテストで固定)。
+- 新 op `dualxray.scintillator_sensor_qe`(spectral_xray): X 線のエネルギー → 吸収効率 1 − e^{−μt} → 光子数(光収率 × 吸収エネルギー × 集光率)→ 発光スペクトル × 光検出器の QE(既定 `spectralrad.silicon_photodiode_qe()`)の重なり → X 線 1 個あたりの電子数。表に幅が無いので、発光は既定で極大の 1 本の線として扱い(`emission_model` にそう書く)、実測の発光は `emission_spectrum=` で渡す。門 `tests/test_scintillator_materials_2026_10_23.py`(吸収効率の閉形式、厚さ → ∞ で 1、発光の正規化、細いガウス → 線、dual_kvp の CsI 既定との一致、fail-closed)。
+### 追加 — 複数ロボットの計画を回り方で分ける(braidpath 12 op + PoC、取り込まれずに残っていた枝を今の master の上に作り直し)
+
+- `braidpath`(台帳 `opsdrive` の `braidpath`、12 op、numpy + scipy): 軌道群と障害物の点を時空の組紐にして交差の符号列(組紐語)を作り(`braid_from_trajectories`)、Dynnikov 座標(`dynnikov_coordinates` / `dynnikov_act`)・Dehornoy の取っ手簡約(`braid_reduce`)・Artin 表現(`braid_artin_images`)の 3 つの独立な判定で同じ組紐か(`braid_equivalent`)= 同じホモトピー類か(`homotopy_class_compare`)を決める。対ごとの巻き数(`pairwise_winding`)、格子の上で類ごとの最短経路(`homotopy_shortest_paths`)、計画器の候補を類に分けて代表を選ぶ(`braid_class_representatives`)、格子の穴の点・経路の写し(`grid_hole_points` / `grid_paths_to_xy`)。
+- PoC `examples/poc_braid_homotopy_classes.py`(収蔵 2026.278、産業検査の棟。元の枝の仮番 2026.218 は master で別の展示が使っているので振り直した): 組紐の関係式 1311 通りが Dynnikov の作用で整数のずれ 0、3 つの判定が 100/100 で一致、参照実装(MIT)の出力と 240/240、1 台が柱を回る類ごとの最短 = 閉形式 14 + 16m、計画器の候補 61 本 → 26 類。外の真値の参照出力は `tests/data/braidpath_reference.json`。
+- 元の枝から今の門に合わせて直したこと: 空の語(単位元)を返す 4 op は docstring に台帳の定型文(空の入力(``word`` が 0 要素)は…を返す(理由: …))を、`grid_hole_points` は空・2 次元でない・非有限の格子を ValueError に(以前は IndexError、NaN を「走れる」と読んでいた)、`homotopy_shortest_paths` は非有限の格子・障害物の点を、`braid_class_representatives` は非有限の費用を拒否。答えを変えない打ち切りだけの引数(`braid_artin_images` の `max_length`、`homotopy_class_compare` の `tol`)は効かないノブなので外し、定数 `MAX_WORD` / `ENDPOINT_TOL` にした。射影の角 `angle`・状態の上限 `max_states` は効く入力で探る(効かないノブの負債は 0 行のまま)。展示の GIF は 36 → 24 コマ(3.4 → 2.2 MB、展示の上限 3 MiB)。
+
+### 追加 — フーリエ・タイコグラフィ(fourierptycho 6 op + PoC、取り込まれずに残っていた枝を今の master の上に作り直し)
+
+- `fourierptycho`(`opsoptics` の新カテゴリ `fpm`、6 op): `fp_design`(合成 NA・遮断周期 λ/NA_syn・隣り合う瞳の重なり率(2 円の交わり、公表の下限 35 %)・LED の数・標本化 Δx ≤ λ/(2 NA_obj)・明視野と暗視野の境の LED)/ `fp_usaf_target`(振幅・位相・両方の 3 種)/ `fp_capture`(斜めの平面波 → 瞳 → 強度、LED の明るさ・暗視野の露光・雑音・収差・LED アレイのずれ・反射型の高さ)/ `fp_stack_from_images` / `fp_reconstruct`(逐次の位相回復、瞳の同時推定、LED の位置の補正。収束の履歴・止めた理由・合成 NA を返し、残差が停留しない・初期値の違う 2 本が一致しないときは `FPNotConvergedError`(`MetricContractError`、記録つき)で拒否)/ `fp_element_contrast`。非有限・空・縮退の入力は ValueError。
+- PoC `examples/poc_fourier_ptychography.py`(収蔵 2026.277、産業検査の棟。元の枝の仮番 2026.243 は master で別の展示が使っているので振り直した): 4 倍 / NA 0.1 で 20 倍 / NA 0.40 と同じ G9 E5 まで分解、位相・反射型の段差、重なりと収束(境が 35 % を挟む、残差だけでは見抜けない)、瞳の推定、LED のずれ、k の符号の双子。公開の FP データの章は CC BY / CC0 ではないので repo に入れず、データがあるときだけ走る。
+- ★効かないノブを台帳に足さない: 元の枝は `dead_knob` の負債に 3 行(`fp_design.boundary_tolerance_na` / `fp_usaf_target.phase_rad` / `fp_reconstruct.led_start`)を足していた。探針の入力を効く条件(境の近くの NA_obj・振幅と位相の両方の物体 `kind="both"`・LED の補正つき)に替えて 0 行にした。
 
 ### 変更(破壊的) — Python 3.10 のサポートを終了(requires-python >= 3.11)
 
@@ -44,6 +78,15 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - 例外の台帳 `docs/security/pip_audit_allowlist.json`(`{id, aliases, package, reason, expires}`)。
   いまは torch の修正版の記録が無い 7 件(CVE-2025-2148 / 2149 / 2998 / 3121 / 3136 / 63396、CVE-2026-4538)。
   期限切れ・理由なし・1 年を超える期限は `tests/test_pip_audit_allowlist.py` が落とす。
+### 修正 — kornia の版で xkor_* の値が変わる・小さい画像で落ちる(マージ後レビュー 2026-10-24、指摘を一件ずつ再現してから)
+
+pyproject の制約は `kornia>=0.7`(上限なし)で、CI は最新(0.9.0)、手元は 0.8.3。PR #134 で `xkor_median` / `xkor_motion_blur` の境界(0.9 で 0 埋め → 鏡映)を `_zero_border` で固定したが、版で変わったのは境界だけではなかった。0.8.3 と 0.9.0(`--target` で別に入れた)で xkor_* 全 12 op を 5 画像 × 4 ノブで比べて確かめた。
+
+- `xkor_hessian`: 0.8.3 と 0.9.0 で内側(縁 3 画素を除く)でも最大 0.68 ずれていた。原因は `kornia.filters.spatial_gradient(order=2, normalized=True)` の正規化の変更 —— 0.8 は各カーネルを絶対値和で割る(Ixx・Iyy は 64、Ixy は 36)ので Ixy だけが 64/36 倍に効き、`hessian_response` の値は Hessian の行列式ではなかった。0.9 は 2 次曲面への応答で割る(3 本とも 64)。正規化なしの 5x5 Sobel 2 階カーネル(`normalized=False`、版で符号が 3 本そろって反転するだけ = 行列式は不変)を自前で 64 で割る形にした。0.9 では出力が 1 ビットも変わらず、0.8.3 でも 0.9 と一致する(手元 0.8.3 の値は変わる —— 正しい側へ)。門: scipy で独立に組んだ行列式と 2e-5、3 次曲面 `f = (x−10)³/6 + xy + y²/2` で det H = x − 11 が内側で厳密(0.8 の正規化だと零点が x ≈ 13.2 にずれる)。
+- `xkor_clahe`: 版で最大 0.46 ずれていた。0.9 で `equalize_clahe` の中身(ヒストグラムの bin、切った余りの配り方、LUT の丸め、タイル補間の縦横の取り違え)が OpenCV に寄せて直された —— OpenCV の CLAHE(8x8)との差は 0.8.3 が平均 0.04〜0.17・最大 0.46、0.9.0 が平均 0.001〜0.012・最大 0.047。引数では揃えられないので、**kornia 0.9 未満では理由つきで断る**(ValueError)。上限で 0.8 に固定するのは誤っている側に固定することになるので採らなかった。格子 8x8 を明示して渡す。手元が 0.8.3 のままだと `xkor_clahe` は fallback になる(`test_op_contracts` は古い kornia でだけその拒否文の劣化を許す: `KNOWN_REFUSES_ON_OLD_KORNIA`)。
+- `xkor_laplacian` / `xkor_dog` / `xkor_harris` / `xkor_gftt` が 4x4・3x7 の画像で `Padding size should be less than…`(torch の鏡映は半径 < 画像の辺でしか動かない)で fallback に落ちていた(両版とも)。laplacian と DoG は窓が 1 段の filter なので、kornia と同じ鏡映を `numpy.pad` で自前で足してから呼び切り戻す(`_own_border`)—— 普通の大きさの画像では値は 1 ビットも変わらず、numpy の鏡映は半径が辺を超えても折り返しを続けるので小さい画像も通る。harris / gftt は「勾配(端は複製)→ 7x7 ガウシアン(端は鏡映)」の 2 段で、外側に足すと縁の値が変わるため、kornia が例外を出す大きさ(辺 ≤ 3)に限って足す。`KNOWN_FALLS_BACK_ON_EDGE` から `xkor_dog` / `xkor_laplacian` の tiny4 を消した(台帳 −2)。
+- 門 `tests/test_kornia_version_drift_2026_10_24.py`: 上の独立参照(scipy / OpenCV / 手で書いたカーネル)に加え、**全 xkor_* op の golden 値**(0.9.0 で取り、0.8.3 でも 9e-7 以内)。CI は最新の kornia を入れるので、次に kornia が既定や中身を変えた日に黙って値が変わる代わりにここが赤になる。xkor_* を足すと表に無い op として赤になる。直す前のコードで、golden を除く門が 0.8.3 では 25 件、0.9.0 では 18 件赤(0.9.0 で通るのは hessian と clahe —— 0.9 の値が正しい側だから)。
+- `test_kornia_border_2026_10_24.py` の motion blur の門は一様な 1 の画像の隅 1 画素しか見ていなかった → kornia の `get_motion_kernel2d` を scipy の 0 埋め相関に通した参照と全画素を atol 1e-6 で比べる(両版で 1.3e-7 まで一致。#134 の前のコードでは 0.9.0 で 12 件すべて赤)。
 
 ### 追加 — 偏光を画素ごとに(Stokes / DoLP / AoLP の地図、素子の場、有限の消光比、角度と左右の規約)
 
@@ -55,6 +98,31 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - **角度の向きと円偏光の左右を docstring に明記**(optics の偏光節の冒頭・`jones_element`・`mueller_element`・`stokes_from_jones`・`stokes_analyze`・specularity の掃引角): 角度は +x(列方向)から +y(行方向 = **下**)へ測る = 表示画像で**時計回り**。決めたのではなく既存実装が暗黙に使っていた向きを実行して確かめた(`sfpolar.sfp_render` は法線の方位 `atan2(ny, nx)` = 30° の拡散面を AoLP 30° で描き、光弾性 PoC は画像座標の応力の `½ atan2(2τxy, σxx − σyy)` をそのまま `mueller_element` に渡している)。y 上向きで反時計回りに数えるセンサ・文献の角度は符号を反転して渡す(取り違えると 21.5° が 158.5° になり例外は出ない)。円偏光: `S3 > 0` = Jones `[1, −i]/√2`(`exp(−iωt)`)で、電場は +x から −y へ回る = **表示画像で反時計回り**(受け取るカメラから見た向き)。`stokes_analyze` の `"right"` という呼び名は y 上向きの座標系での名前で、互換のため残した(契約は S3 の符号と docstring の文)。門: 既知角(21.5°)の合成画像で AoLP が 21.5° に戻り、同じフレームを逆向きの角度で読むと 158.5° になる / 法線の方位 30° の拡散面で 30°(150° でなく)/ 放射状偏光子の場で全画素の AoLP が `atan2(row, col)` / `E(t)` を標本化して S3 > 0 が画面で反時計回り。
 - ★`polarization_stokes_map.max_violation_frac` を効かないノブの台帳(`docs/LEDGER_GAP_DEBT.json`、601 → 602)に兄弟 3 本(`polarization_separate` / `_dolp_map` / `_stokes`)と同じ区分で足した。このノブは「何割の画素の負の最小値まで許すか」の門で、出力の値は変えず通すか断るかだけを決めるため、きれいな探針入力では原理的に動かない。実カメラの掃引(デモザイクの誤差)を通すのに要る(例の 6 は 0.05 で通す)ので外さなかった —— 台帳を増やした判断として明記する。
 - 例 `examples/polarization_camera_pipeline.py` に 6・7 を追加(画素ごとの AoLP が真値と 0.18° 以内、角度の向きを逆に読むと中央値 46° ずれる / ER = 100 の検光子で完全偏光の DoLP が 0.9802 で頭打ち)。
+
+### 修正 — 偏光まわりの入口検査(マージ後レビュー 2026-10-24、所見を一件ずつ再現してから)
+
+門は `tests/test_polarization_input_checks_2026_10_24.py`(41 件、直す前のコードで 32 件が赤)。引数は足していない。
+
+- 掃引の当てはめ(`polarization_separate` / `_dolp_map` / `_stokes` / `_analyze` / `_stokes_map` の共通部): **負のフレーム値**を拒否する。
+  `[1, 1, 1.5, -0.1]`(0/45/90/135)は当てはめた最小値が正なので通り、負の輝度から DoLP 0.711・AoLP 57.2° を返していた
+  (逆向きの `polarization_render` は負の輝度を拒否する)。床は「スタックの最大絶対値の 2 %」(`specularity.POLAR_NEGATIVE_FLOOR`):
+  暗電流を引いたデータは黒い画素で少し負になる。8 bit で読み出し雑音 1.5 DN は満量の 0.59 % なので 2 % は 3.4σ。床を下回る画素は
+  負の最小値と同じ `max_violation_frac` の枠に数える。
+- 検光子の角度: **条件数が 1e3 を超える配置**(`specularity.POLAR_DESIGN_MAX_COND`、0/45/90/135 は 1.41)と、**全角度の絶対値が 2π 以下**
+  (ラジアンを度として渡した形)を拒否する。`(0, π/4, π/2, 3π/4)` が S0 = 1331・DoLP 0.9998 で通っていた(条件数 5.3e3、
+  従来の検査は階数落ち = 1e10 だけ)。±2π 度の箱の中で最良の配置でも条件数 174 なので、正当な配置は落とさない。
+  数度の掃引を本当にしたいときは 180 を足して渡せる(角度は 180 を法とする)。
+- `polarization_stokes_map` の返り値に **`residual`**(N 枚にわたる「フレーム − 当てはめた Malus 曲線」の RMS)を足した。既存のキーは
+  そのまま(後方互換の追加)。DoFP の 4 方位では `|I0 + I90 − I45 − I135| / 4` で、位置ずれ・飽和したチャンネルが見える。
+  レビューの例 `(1, 1, 3, 3)` は 0/45/90/135 の順では I0 + I90 = I45 + I135 = 4 の**整合した**掃引で(DoLP 0.707 は正しい)、
+  食い違う例は `(1, 3, 1, 1)`(残差 0.5)。
+- 画素数 0 のスタック(`(4, 0, 3)` など)は RuntimeWarning を出して空配列を返していた → ValueError。
+- `optics.stokes_analyze`: `handedness` / `azimuth_deg` / `ellipticity_deg` の「0」を `≤ 1e-12·S0` の相対判定に。
+  `mueller_element("half_wave", 22.5) @ [1, 1, 0, 0]` の S3 = 8.7e-17 が `"right"` に、四分の一波長板 45° の直線成分 8.7e-17 が
+  方位 22.5° になっていた。兄弟: 負の微小な S2 で `azimuth_deg` が 180.0(`[0, 180)` の外)になっていたのも直した。
+- 範囲外のエラー文が `%g` で値を境界に丸めていた(`transmission=1.0000001` →「got 1」)→ `%r`。`mueller_partial_polarizer` の
+  `transmission` / `extinction_ratio`、偏光 5 op の `max_violation_frac`(共通関数にまとめた)、specularity の `max_negative_frac` /
+  `roughness` / 反射率 `[0, 1]` の検査。
 
 ### 追加 — Studio: 前段の出力を受けられる op だけを一覧に出す(改善案 018 の残り)
 

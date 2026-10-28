@@ -7852,13 +7852,13 @@
    "hi": "Harris corner response। ``kornia.feature.harris_response`` को call करता है और signed response को ``signed01`` से [0,1] में map करता है (corner धनात्मक और edge ऋणात्मक आने वाले Harris response की चिह्न जानकारी बनाए रखते हुए दिखाने योग्य range में लाता है)।"
   },
   "2d/xkor_hessian": {
-   "fp": "309fc4f64029",
-   "en": "Blob/corner response based on the Hessian matrix. Calls ``kornia.feature.hessian_response`` with default parameters, takes the absolute value, and normalizes by the maximum absolute value.",
-   "zh": "基于 Hessian 矩阵的斑点/角点响应。以默认参数调用 ``kornia.feature.hessian_response``，取绝对值后按最大绝对值归一化。",
-   "tw": "基於 Hessian 矩陣的斑點/角點響應。以預設參數呼叫 ``kornia.feature.hessian_response``，取絕對值後依最大絕對值正規化。",
-   "ko": "Hessian 행렬 기반의 블롭·코너 응답. 기본 매개변수로 ``kornia.feature.hessian_response``를 호출하여 절댓값을 취한 뒤 최대 절댓값으로 정규화한다.",
-   "de": "Blob-/Eckenantwort basierend auf der Hesse-Matrix. Ruft ``kornia.feature.hessian_response`` mit Standardparametern auf, bildet den Absolutwert und normiert auf den maximalen Absolutwert.",
-   "hi": "Hessian matrix पर आधारित blob/corner response। ``kornia.feature.hessian_response`` को default parameters से call करता है, absolute value लेकर अधिकतम absolute value से normalise करता है।"
+   "fp": "a40804fe5807",
+   "en": "Blob/corner response from the determinant of the Hessian, det H = Ixx·Iyy − Ixy². Applies the 5x5 Sobel second-derivative kernels of ``kornia.filters.spatial_gradient`` without normalisation (``normalized=False``) and divides by 64 (which gives the derivatives themselves on quadratic and cubic surfaces), replicates the border, takes the absolute value and normalises by the maximum absolute value.",
+   "zh": "由 Hessian 矩阵的行列式 det H = Ixx·Iyy − Ixy² 得到的斑点/角点响应。以不归一化（``normalized=False``）的方式应用 ``kornia.filters.spatial_gradient`` 的 5x5 Sobel 二阶导数核并除以 64（在二次、三次曲面上恰好得到导数本身），边界复制，取绝对值后按最大绝对值归一化。",
+   "tw": "由 Hessian 矩陣的行列式 det H = Ixx·Iyy − Ixy² 得到的斑點/角點響應。以不正規化（``normalized=False``）的方式套用 ``kornia.filters.spatial_gradient`` 的 5x5 Sobel 二階導數核並除以 64（在二次、三次曲面上恰好得到導數本身），邊界複製，取絕對值後依最大絕對值正規化。",
+   "ko": "Hessian 행렬의 행렬식 det H = Ixx·Iyy − Ixy²에 의한 블롭·코너 응답. ``kornia.filters.spatial_gradient``의 5x5 Sobel 2차 미분 커널을 정규화 없이(``normalized=False``) 적용하고 64로 나누며(2차·3차 곡면에서 미분값 자체가 된다), 경계는 복제하고 절댓값을 취한 뒤 최대 절댓값으로 정규화한다.",
+   "de": "Blob-/Eckenantwort aus der Determinante der Hesse-Matrix, det H = Ixx·Iyy − Ixy². Wendet die 5x5-Sobel-Kerne zweiter Ableitung von ``kornia.filters.spatial_gradient`` ohne Normierung (``normalized=False``) an und teilt durch 64 (auf quadratischen und kubischen Flächen ergibt das genau die Ableitungen), repliziert den Rand, bildet den Absolutwert und normiert auf den maximalen Absolutwert.",
+   "hi": "Hessian matrix के determinant det H = Ixx·Iyy − Ixy² से blob/corner response। ``kornia.filters.spatial_gradient`` के 5x5 Sobel second-derivative kernels को बिना normalisation (``normalized=False``) लगाकर 64 से भाग देता है (quadratic और cubic surfaces पर यही ठीक derivative देता है), border को replicate करता है, absolute value लेकर अधिकतम absolute value से normalise करता है।"
   },
   "2d/xkor_laplacian": {
    "fp": "81c2485f0850",
@@ -31044,6 +31044,15 @@
    "de": "Wie gut sich zwei Materialien (Dicken) anhand der logarithmischen Schwächung der Kanäle unterscheiden lassen (d′ und Fehlerrate in geschlossener Form).",
    "hi": "channels के log attenuation से दो materials (thicknesses) को कितना अलग किया जा सकता है (d′ और error rate का closed form)।"
   },
+  "tomography/scintillator_sensor_qe": {
+   "fp": "fab83c479eef",
+   "en": "Quantum efficiency of a scintillator-coupled sensor: one X-ray photon → absorption in the scintillator → light emission → electrons in the photodetector.",
+   "zh": "闪烁体耦合传感器的量子效率:1 个 X 射线光子 → 闪烁体吸收 → 发光 → 光探测器中的电子数。",
+   "tw": "閃爍體耦合感測器的量子效率:1 個 X 射線光子 → 閃爍體吸收 → 發光 → 光偵測器中的電子數。",
+   "ko": "신틸레이터 결합 센서의 양자 효율: X선 광자 1개 → 신틸레이터의 흡수 → 발광 → 광검출기의 전자 수.",
+   "de": "Quanteneffizienz eines Sensors mit Szintillator: ein Röntgenphoton → Absorption im Szintillator → Lichtemission → Elektronen im Photodetektor.",
+   "hi": "scintillator से जुड़े sensor की quantum efficiency: एक X-ray photon → scintillator में absorption → light emission → photodetector में electrons की संख्या।"
+  },
   "codematch/orientation_code": {
    "fp": "72d086b77265",
    "en": "Orientation-code image: gradient direction quantised into ``n_codes`` steps (the OCM coding).",
@@ -32312,6 +32321,168 @@
    "ko": "PLATEAU 의 CityGML 에서 LOD2 건물을 읽어, 국소 미터 좌표의 삼각형 메시 (V, F) 와 건물별 속성을 반환한다.",
    "de": "Liest LOD2-Gebäude aus PLATEAU-CityGML und gibt ein Dreiecksnetz (V, F) in lokalen metrischen Koordinaten samt Attributen je Gebäude zurück.",
    "hi": "PLATEAU के CityGML से LOD2 इमारतें पढ़कर स्थानीय मीट्रिक निर्देशांकों में triangle mesh (V, F) और हर इमारत के attributes लौटाता है।"
+  },
+  "optics/fp_design": {
+   "fp": "7363712c22b1",
+   "en": "Fourier ptychography performance in closed form **before measuring** (``table``): synthetic NA, cut-off period, spectral overlap ratio, number of LEDs and pixel sampling.",
+   "zh": "在**拍摄之前**用闭式求出傅里叶叠层成像的性能(``table``):合成 NA、截止周期、频谱重叠率、LED 数量与像素采样。",
+   "tw": "在**拍攝之前**用閉式求出傅立葉疊層成像的性能(``table``):合成 NA、截止週期、頻譜重疊率、LED 數量與像素取樣。",
+   "ko": "**촬영하기 전에** 푸리에 타이코그래피의 성능을 닫힌 형식으로(``table``): 합성 NA, 차단 주기, 스펙트럼 중첩률, LED 수, 화소 샘플링.",
+   "de": "Leistung der Fourier-Ptychographie in geschlossener Form **vor der Aufnahme** (``table``): synthetische NA, Grenzperiode, spektraler Überlappungsgrad, Anzahl der LEDs und Pixelabtastung.",
+   "hi": "**लेने से पहले** Fourier ptychography का प्रदर्शन closed form में (``table``): synthetic NA, cut-off period, spectral overlap ratio, LED की संख्या और pixel sampling।"
+  },
+  "optics/fp_usaf_target": {
+   "fp": "5ae26f933ca2",
+   "en": "Object made of tiled USAF 1951 chart elements (``table``): amplitude (dark bars), phase (bar phase is ``phase_rad``), or both.",
+   "zh": "由 USAF 1951 分辨率板元素排列而成的物体(``table``):振幅(条纹为暗)、相位(条纹相位为 ``phase_rad``)或两者兼有。",
+   "tw": "由 USAF 1951 解析度板元素排列而成的物體(``table``):振幅(線條為暗)、相位(線條相位為 ``phase_rad``)或兩者兼具。",
+   "ko": "USAF 1951 차트의 요소를 나열한 물체(``table``): 진폭(막대가 어두움), 위상(막대의 위상이 ``phase_rad``) 또는 둘 다.",
+   "de": "Objekt aus aneinandergereihten Elementen der USAF-1951-Testtafel (``table``): Amplitude (Balken dunkel), Phase (Balkenphase ``phase_rad``) oder beides.",
+   "hi": "USAF 1951 chart के elements को क्रम से रखकर बना object (``table``): amplitude (bars गहरे), phase (bars का phase ``phase_rad``) या दोनों।"
+  },
+  "optics/fp_capture": {
+   "fp": "96aac181256a",
+   "en": "Simulate the set of low-resolution images taken under oblique illumination from an LED array (``table``, kind=\"fp_stack\").",
+   "zh": "合成由 LED 阵列斜向照明拍摄的一组低分辨率图像(``table``,kind=\"fp_stack\")。",
+   "tw": "合成由 LED 陣列斜向照明拍攝的一組低解析度影像(``table``,kind=\"fp_stack\")。",
+   "ko": "LED 어레이로 비스듬히 비춘 저해상도 영상의 묶음을 합성한다(``table``, kind=\"fp_stack\").",
+   "de": "Simuliert den Satz niedrig aufgelöster Bilder unter schräger Beleuchtung durch ein LED-Array (``table``, kind=\"fp_stack\").",
+   "hi": "LED array की तिरछी रोशनी में लिए गए कम-resolution images के समूह का simulation (``table``, kind=\"fp_stack\")।"
+  },
+  "optics/fp_stack_from_images": {
+   "fp": "c7efd50878af",
+   "en": "Turn an image set from an instrument or public data into this family's table (``table``, kind=\"fp_stack\").",
+   "zh": "把装置或公开数据的一组图像转换为本族的表(``table``,kind=\"fp_stack\")。",
+   "tw": "把裝置或公開資料的一組影像轉換為本族的表(``table``,kind=\"fp_stack\")。",
+   "ko": "장치·공개 데이터의 영상 묶음을 이 군의 표로 만든다(``table``, kind=\"fp_stack\").",
+   "de": "Wandelt einen Bildsatz aus einem Gerät oder aus öffentlichen Daten in die Tabelle dieser Familie um (``table``, kind=\"fp_stack\").",
+   "hi": "किसी उपकरण या public data के image set को इस family की table में बदलना (``table``, kind=\"fp_stack\")।"
+  },
+  "optics/fp_reconstruct": {
+   "fp": "5dcdf9993536",
+   "en": "Recover the high-resolution amplitude and phase from the set of low-resolution images (``table``, kind=\"fp_result\"). Refuses if it does not converge.",
+   "zh": "从一组低分辨率图像恢复高分辨率的振幅与相位(``table``,kind=\"fp_result\")。不收敛则拒绝。",
+   "tw": "從一組低解析度影像恢復高解析度的振幅與相位(``table``,kind=\"fp_result\")。不收斂則拒絕。",
+   "ko": "저해상도 영상의 묶음에서 고해상도의 진폭과 위상을 되돌린다(``table``, kind=\"fp_result\"). 수렴하지 않으면 거부한다.",
+   "de": "Gewinnt hochaufgelöste Amplitude und Phase aus dem Satz niedrig aufgelöster Bilder zurück (``table``, kind=\"fp_result\"). Lehnt ab, wenn die Iteration nicht konvergiert.",
+   "hi": "कम-resolution images के समूह से उच्च-resolution amplitude और phase वापस पाना (``table``, kind=\"fp_result\")। converge न हो तो मना करता है।"
+  },
+  "optics/fp_element_contrast": {
+   "fp": "4c393acd11fb",
+   "en": "Measure the modulation of the three bars of every USAF element and read how far the image resolves (``table``).",
+   "zh": "测量 USAF 每个要素三条条纹的调制度,读出图像分辨到哪一个要素(``table``)。",
+   "tw": "量測 USAF 每個要素三條條紋的調制度,讀出影像解析到哪一個要素(``table``)。",
+   "ko": "USAF의 요소마다 막대 3개의 변조를 재고, 어디까지 분해했는지 읽는다(``table``).",
+   "de": "Misst die Modulation der drei Balken jedes USAF-Elements und liest ab, bis zu welchem Element das Bild auflöst (``table``).",
+   "hi": "हर USAF element की तीन bars का modulation मापकर पढ़ना कि image कहाँ तक resolve करता है (``table``)।"
+  },
+  "drive/braid_from_trajectories": {
+   "fp": "099873523d6c",
+   "en": "Builds a braid word (a sequence of crossing signs) from planar trajectories (and stationary obstacle points).",
+   "zh": "由平面轨迹组(以及静止障碍物的点)构造辫字(交叉符号的序列)。",
+   "tw": "由平面軌跡群(以及靜止障礙物的點)建構辮字(交叉符號的序列)。",
+   "ko": "평면 궤적들(과 움직이지 않는 장애물 점)로부터 브레이드 단어(교차 부호의 열)를 만든다.",
+   "de": "Erzeugt aus ebenen Trajektorien (und unbeweglichen Hindernispunkten) ein Zopfwort (Folge von Kreuzungsvorzeichen).",
+   "hi": "समतल trajectories (और स्थिर obstacle points) से braid word (crossing signs का क्रम) बनाता है।"
+  },
+  "drive/braid_reduce": {
+   "fp": "055c245a62a6",
+   "en": "Reduces a braid word by Dehornoy handle reduction. **Returns the empty word ⇔ the braid is trivial** (same class).",
+   "zh": "用 Dehornoy 柄约化来约化辫字。**返回空字 ⇔ 平凡辫**(同一类)。",
+   "tw": "以 Dehornoy 柄約化來約化辮字。**回傳空字 ⇔ 平凡辮**(同一類)。",
+   "ko": "브레이드 단어를 Dehornoy 핸들 축약으로 축약한다. **빈 단어가 반환됨 ⇔ 자명한 브레이드**(같은 류).",
+   "de": "Reduziert ein Zopfwort mit der Henkelreduktion nach Dehornoy. **Leeres Wort als Ergebnis ⇔ trivialer Zopf** (gleiche Klasse).",
+   "hi": "Braid word को Dehornoy handle reduction से reduce करता है। **खाली word लौटे ⇔ trivial braid** (वही class)।"
+  },
+  "drive/braid_artin_images": {
+   "fp": "410f95df3bdc",
+   "en": "Artin representation of a braid: images (freely reduced words) of the generators x₁..xₙ of the free group F_n.",
+   "zh": "辫的 Artin 表示:自由群 F_n 的生成元 x₁..xₙ 的像(自由约化后的字)。",
+   "tw": "辮的 Artin 表示:自由群 F_n 的生成元 x₁..xₙ 的像(自由約化後的字)。",
+   "ko": "브레이드의 Artin 표현: 자유군 F_n 의 생성원 x₁..xₙ 의 상(자유 축약한 단어).",
+   "de": "Artin-Darstellung eines Zopfes: Bilder (frei reduzierte Wörter) der Erzeuger x₁..xₙ der freien Gruppe F_n.",
+   "hi": "Braid का Artin representation: free group F_n के generators x₁..xₙ की images (freely reduced words)।"
+  },
+  "drive/dynnikov_coordinates": {
+   "fp": "af49b5b2e939",
+   "en": "Dynnikov coordinates of the braid acting on the standard curve diagram E = (0, …, 0; −1, …, −1) (integers, no overflow).",
+   "zh": "辫作用于标准曲线图 E = (0, …, 0; −1, …, −1) 所得的 Dynnikov 坐标(整数,不溢出)。",
+   "tw": "辮作用於標準曲線圖 E = (0, …, 0; −1, …, −1) 所得的 Dynnikov 座標(整數,不溢位)。",
+   "ko": "표준 곡선도 E = (0, …, 0; −1, …, −1) 에 브레이드를 작용시킨 Dynnikov 좌표(정수, 넘치지 않음).",
+   "de": "Dynnikov-Koordinaten des auf das Standard-Kurvendiagramm E = (0, …, 0; −1, …, −1) wirkenden Zopfes (ganzzahlig, kein Überlauf).",
+   "hi": "मानक curve diagram E = (0, …, 0; −1, …, −1) पर braid की action से प्राप्त Dynnikov coordinates (integers, overflow नहीं)।"
+  },
+  "drive/dynnikov_act": {
+   "fp": "9e642255886a",
+   "en": "Applies a braid word to arbitrary Dynnikov coordinates (a; b) (integer or real —— the formulas are piecewise linear).",
+   "zh": "将辫字作用于任意 Dynnikov 坐标 (a; b)(整数或实数均可 —— 公式是分段线性的)。",
+   "tw": "將辮字作用於任意 Dynnikov 座標 (a; b)(整數或實數皆可 —— 公式為分段線性)。",
+   "ko": "임의의 Dynnikov 좌표 (a; b)(정수든 실수든 가능 —— 식은 구간별 선형)에 브레이드 단어를 작용시킨다.",
+   "de": "Wendet ein Zopfwort auf beliebige Dynnikov-Koordinaten (a; b) an (ganzzahlig oder reell —— die Formeln sind stückweise linear).",
+   "hi": "किसी भी Dynnikov coordinates (a; b) (integer या real दोनों चलेंगे —— सूत्र piecewise linear हैं) पर braid word की action लागू करता है।"
+  },
+  "drive/braid_equivalent": {
+   "fp": "ba5ec87ac02c",
+   "en": "Whether two braid words represent the same braid (are related by the relations alone).",
+   "zh": "两个辫字是否为同一辫(能否仅通过关系式互相变换)。",
+   "tw": "兩個辮字是否為同一辮(能否僅透過關係式互相轉換)。",
+   "ko": "두 브레이드 단어가 같은 브레이드인지(관계식만으로 서로 옮겨 갈 수 있는지).",
+   "de": "Ob zwei Zopfwörter denselben Zopf darstellen (allein durch die Relationen ineinander überführbar sind).",
+   "hi": "क्या दो braid words एक ही braid हैं (केवल relations से एक-दूसरे में बदले जा सकते हैं)।"
+  },
+  "drive/homotopy_class_compare": {
+   "fp": "e899e9ad521c",
+   "en": "Whether two path families with the same start and end points (multi-agent plans) are in the same homotopy class.",
+   "zh": "起点与终点相同的两个路径族(多智能体的规划)是否属于同一同伦类。",
+   "tw": "起點與終點相同的兩個路徑族(多代理人的規劃)是否屬於同一同倫類。",
+   "ko": "시작점과 끝점이 같은 두 경로족(복수 에이전트의 계획)이 같은 호모토피 류인지.",
+   "de": "Ob zwei Pfadfamilien mit gleichen Start- und Endpunkten (Mehragentenpläne) in derselben Homotopieklasse liegen.",
+   "hi": "समान start और end points वाले दो path families (multi-agent plans) एक ही homotopy class में हैं या नहीं।"
+  },
+  "drive/pairwise_winding": {
+   "fp": "17268e1cce9b",
+   "en": "Relative winding number for each pair of strands [turns] (total change of the argument of the relative vector / 2π). Symmetric matrix, zero diagonal.",
+   "zh": "每对股之间的相对绕数 [圈] (相对向量辐角的总变化 / 2π)。对称矩阵,对角为 0。",
+   "tw": "每對股之間的相對環繞數 [圈] (相對向量輻角的總變化 / 2π)。對稱矩陣,對角為 0。",
+   "ko": "가닥 쌍마다의 상대 감김수 [회전] (상대 벡터 편각의 총변화 / 2π). 대칭 행렬, 대각은 0.",
+   "de": "Relative Windungszahl je Strangpaar [Umdrehungen] (Gesamtänderung des Arguments des Relativvektors / 2π). Symmetrische Matrix, Diagonale 0.",
+   "hi": "हर strand pair का relative winding number [घुमाव] (relative vector के argument का कुल परिवर्तन / 2π)। Symmetric matrix, diagonal 0।"
+  },
+  "drive/homotopy_shortest_paths": {
+   "fp": "b1b6bec8a1be",
+   "en": "On a grid (True = traversable, 4-neighbourhood), the k shortest paths from start to goal in distinct homotopy classes, shortest first.",
+   "zh": "在网格(True = 可通行,4 邻域)上,按从短到长给出从 start 到 goal 的、同伦类各不相同的 k 条最短路径。",
+   "tw": "在網格(True = 可通行,4 鄰域)上,依由短到長給出從 start 到 goal 的、同倫類各不相同的 k 條最短路徑。",
+   "ko": "격자(True = 주행 가능, 4 근방) 위에서 start 에서 goal 까지 호모토피 류가 서로 다른 최단 경로를 짧은 순으로 k 개.",
+   "de": "Auf einem Gitter (True = befahrbar, 4er-Nachbarschaft) die k kürzesten Pfade von start nach goal in verschiedenen Homotopieklassen, kürzeste zuerst.",
+   "hi": "Grid (True = चलने योग्य, 4-neighbourhood) पर start से goal तक अलग-अलग homotopy classes के k shortest paths, छोटे से बड़े क्रम में।"
+  },
+  "drive/braid_class_representatives": {
+   "fp": "21da4b59e166",
+   "en": "Partitions several plans (output of any planner) into homotopy classes and picks the lowest-cost plan in each class as its representative.",
+   "zh": "将多个规划(任何规划器的输出均可)按同伦类划分,并在每类中选费用最小的规划作为代表。",
+   "tw": "將多個規劃(任何規劃器的輸出皆可)依同倫類劃分,並在每類中選費用最小的規劃作為代表。",
+   "ko": "여러 계획(어느 계획기의 출력이든 가능)을 호모토피 류로 나누고, 류마다 비용이 가장 작은 계획을 대표로 고른다.",
+   "de": "Teilt mehrere Pläne (Ausgaben beliebiger Planer) in Homotopieklassen ein und wählt je Klasse den Plan mit den geringsten Kosten als Repräsentanten.",
+   "hi": "कई plans (किसी भी planner का output) को homotopy classes में बाँटता है और हर class में सबसे कम cost वाले plan को प्रतिनिधि चुनता है।"
+  },
+  "drive/grid_hole_points": {
+   "fp": "692836f07cea",
+   "en": "One representative point per grid hole (connected component of blocked cells not touching the border): the centre [x, y] of the blocked cell nearest the centroid.",
+   "zh": "为每个网格孔(不接触外周的阻塞单元格连通分量)取 1 个代表点:离重心最近的阻塞单元格的中心 [x, y]。",
+   "tw": "為每個網格孔(不接觸外圍的阻塞格子連通分量)取 1 個代表點:離重心最近的阻塞格子的中心 [x, y]。",
+   "ko": "격자의 구멍(외곽에 닿지 않는, 막힌 칸의 연결 성분)마다 대표 점을 1 개: 무게중심에 가장 가까운 막힌 칸의 중심 [x, y].",
+   "de": "Ein repräsentativer Punkt je Gitterloch (Zusammenhangskomponente blockierter Zellen, die den Rand nicht berührt): Mittelpunkt [x, y] der blockierten Zelle, die dem Schwerpunkt am nächsten liegt.",
+   "hi": "Grid के हर hole (border को न छूने वाला blocked cells का connected component) के लिए 1 प्रतिनिधि point: centroid के सबसे निकट blocked cell का केंद्र [x, y]।"
+  },
+  "drive/grid_paths_to_xy": {
+   "fp": "442874c974d2",
+   "en": "Converts grid paths (each agent's (row, col) sequence) into (K, T, 2) [x, y] = [col, −row] (shorter paths are padded with their last point).",
+   "zh": "将网格路径(各台的 (row, col) 序列)转为 (K, T, 2) 的 [x, y] = [col, −row] (较短的路径用最后一个点补齐)。",
+   "tw": "將網格路徑(各台的 (row, col) 序列)轉為 (K, T, 2) 的 [x, y] = [col, −row] (較短的路徑以最後一個點補齊)。",
+   "ko": "격자 경로(각 대의 (row, col) 열)를 (K, T, 2) 의 [x, y] = [col, −row] 로 만든다(짧은 경로는 마지막 점으로 채운다).",
+   "de": "Wandelt Gitterpfade (je Agent eine Folge von (row, col)) in (K, T, 2) mit [x, y] = [col, −row] um (kürzere Pfade werden mit ihrem letzten Punkt aufgefüllt).",
+   "hi": "Grid paths (हर agent का (row, col) क्रम) को (K, T, 2) के [x, y] = [col, −row] में बदलता है (छोटे paths को अंतिम point से भरा जाता है)।"
   }
  }
 }

@@ -13,6 +13,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>CLAHE (Contrast Limited Adaptive Histogram Equalization). Calls <code style="color:#22d3bf">kornia.enhance.equalize_clahe</code>.</p>
 <p>a sweeps the clip limit (<code style="color:#22d3bf">1.0 + 4.0 * a</code>, range 1.0-5.0). The larger the value, the more strongly the contrast is lifted, but the more easily noise is emphasised as well. b is unused.</p>
+<p><b>Requires kornia 0.9 or later</b>. <code style="color:#22d3bf">equalize_clahe</code> in 0.8 and earlier differs from OpenCV&#x27;s CLAHE by 0.04-0.17 on average and up to 0.46 (0.9 fixed the histogram bins, the way the clipped excess is redistributed, the rounding of the LUT and the tile interpolation). So that the values do not change silently with the version, the op refuses with a reason below 0.9. The tile grid is passed explicitly as 8x8.</p>
 <p><b>Knobs (measured)</b>: sweeping <code style="color:#22d3bf">a</code> from 0 to 1 <b>does not change the output</b> (measured on five different inputs).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>

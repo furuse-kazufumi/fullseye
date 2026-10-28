@@ -18,11 +18,11 @@ import materials_data as MD
 # --------------------------------------------------------------------------- #
 # 表そのもの                                                                     #
 # --------------------------------------------------------------------------- #
-def test_table_has_89_materials_in_nine_classes():
+def test_table_has_96_materials_in_nine_classes():
     cat = M.material_table()
-    assert len(cat) == 89 == len(M.MATERIALS)
+    assert len(cat) == 96 == len(M.MATERIALS)            # 2026-10-23: シンチレータ 7 種(crystal)を足した
     counts = {c: sum(r["class"] == c for r in cat) for c in M.CLASSES[:-1]}
-    assert counts == {"glass": 46, "crystal": 12, "semiconductor": 6, "film": 7, "metal": 10,
+    assert counts == {"glass": 46, "crystal": 19, "semiconductor": 6, "film": 7, "metal": 10,
                       "liquid": 1, "polymer": 5, "gas": 1, "composite": 1}
     for r in cat:
         assert r["reference"], r["name"]                     # 出典の無い行は無い

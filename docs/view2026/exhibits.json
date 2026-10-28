@@ -7179,6 +7179,23 @@
    }
   },
   {
+   "id": "poc_fourier_ptychography",
+   "group": "wing_industrial",
+   "media": "01_usaf_4x_fp_20x.png",
+   "motion": false,
+   "thumb_src": "01_usaf_4x_fp_20x.png",
+   "label": {
+    "ja": "フーリエ・タイコグラフィ(4 倍の視野で 20 倍の分解能)",
+    "en": "Fourier ptychography (20x resolution in a 4x field)",
+    "zh": "傅里叶叠层成像(4 倍视野中的 20 倍分辨率)",
+    "tw": "傅立葉疊層成像(4 倍視野中的 20 倍解析度)",
+    "ko": "푸리에 타이코그래피(4배 시야에서 20배 분해능)",
+    "de": "Fourier-Ptychographie (20x-Auflösung im 4x-Sehfeld)",
+    "hi": "Fourier ptychography (4x field में 20x resolution)",
+    "fr": "Ptychographie de Fourier (résolution 20x dans un champ 4x)"
+   }
+  },
+  {
    "id": "poc_dense_bubble_count",
    "group": "wing_industrial",
    "media": "12_pair_merging.gif",
@@ -7567,6 +7584,23 @@
     "de": "Anomalieerkennung nur aus Gutteilen (klassische Patch-Merkmale: Verteilung gegen Speicher)",
     "hi": "केवल अच्छे नमूनों से patch-feature anomaly detection (classical features का distribution बनाम memory)",
     "fr": "Détection d'anomalies à partir des seules bonnes pièces (caractéristiques classiques : distribution contre mémoire)"
+   }
+  },
+  {
+   "id": "poc_braid_homotopy_classes",
+   "group": "wing_industrial",
+   "media": "01_braid_classes_spacetime.gif",
+   "motion": true,
+   "thumb_src": "02_braid_classes_spacetime_still.png",
+   "label": {
+    "ja": "複数ロボットの計画を組紐の回り方で分ける",
+    "en": "Sorting multi-robot plans by how they braid",
+    "zh": "按辫子的缠绕方式区分多机器人路径规划",
+    "tw": "依辮子的纏繞方式區分多機器人路徑規劃",
+    "ko": "다중 로봇 계획을 브레이드의 감김 방식으로 구분",
+    "de": "Mehrroboter-Pläne nach ihrem Zopf sortieren",
+    "hi": "Multi-robot plans को braid के घूमने के ढंग से अलग करना",
+    "fr": "Classer des plans multi-robots selon leur tresse"
    }
   },
   {
@@ -8628,6 +8662,14 @@
     "de": "Dieselbe 3-D-Szene mit indirekter und direkter Laufzeitmessung erfassen",
     "hi": "एक ही 3-D दृश्य को indirect और direct time of flight से मापना",
     "fr": "Mesurer une même scène 3-D par temps de vol indirect et direct"
+   },
+   "fourier-ptychography": {
+    "zh": "傅里叶叠层成像(LED 斜向照明的图像组 → 相位恢复得到高 NA 的振幅与相位,不收敛则拒绝)",
+    "tw": "傅立葉疊層成像(LED 斜向照明的影像組 → 相位恢復得到高 NA 的振幅與相位,不收斂則拒絕)",
+    "ko": "푸리에 타이코그래피(LED 경사 조명 영상 묶음 → 위상 복원으로 고 NA 진폭과 위상, 수렴하지 않으면 거부)",
+    "de": "Fourier-Ptychographie (schräge LED-Beleuchtung, Phasenrückgewinnung zu hochaperturiger Amplitude und Phase, Ablehnung ohne Konvergenz)",
+    "hi": "Fourier ptychography (तिरछी LED रोशनी, phase retrieval से high-NA amplitude और phase, converge न हो तो मना)",
+    "fr": "Ptychographie de Fourier (éclairage LED oblique, récupération de phase vers amplitude et phase à grande ouverture, refus sans convergence)"
    }
   }
  },

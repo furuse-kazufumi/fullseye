@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>X선 열(질량 감쇠 계수 μ/ρ)을 조회할 수 있는 재료 목록을 반환한다.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>返り値: 1 材料 1 行の dict(name, kind = table / mixture / element, density_g_cm3, composition ((記号, 質量分率), …), optical(光学の表にも同じ名前のレコードがあるか), reference)。元素 49 種と NIST の化合物 20 種は NIST SRD 126(Hubbell &amp; Seltzer)の表そのもの、それ以外は <code style="color:#22d3bf">XRAY_SOLID</code>(と電子線の表)の組成から混合則で作る。範囲は 1 keV〜1 MeV(表の外は外挿しない)。</p>
+<p>返り値: 1 材料 1 行の dict(name, kind = table / mixture / element, density_g_cm3, composition ((記号, 質量分率), …), optical(光学の表にも同じ名前のレコードがあるか), reference)。元素 51 種と NIST の化合物 21 種は NIST SRD 126(Hubbell &amp; Seltzer)の表そのもの、それ以外は <code style="color:#22d3bf">XRAY_SOLID</code>(と電子線の表)の組成から混合則で作る。シンチレータのレコード(CSI:TL / BI4GE3O12 …)はその <code style="color:#22d3bf">xray_material</code> の列とレコードの密度。範囲は 1 keV〜1 MeV(表の外は外挿しない)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

@@ -2,7 +2,7 @@
 
 ### The Industrial Inspection Wing — A Passing Number and a Failing Number Can Coexist
 
-Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The 35 exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.
+Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The 37 exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.
 
 Every ground truth is planted: a closed-form periodic background, the laser-profile h(x), the analytic 1-D heat-conduction solution, closed-form bearing defect frequencies. That is what lets each exhibit measure 'where detection stops working' instead of 'detection worked', without fitting the threshold afterwards.
 
@@ -1107,6 +1107,74 @@ Source: [examples/poc_dense_bubble_count.py](https://github.com/furuse-kazufumi/
 This run produced **12 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_dense_bubble_count)
 
 Ops used (notes): [`blob_count_interval`](https://furuse.work/ops/blob/split/blob_count_interval.html) · [`blob_distance`](https://furuse.work/ops/blob/split/blob_distance.html) · [`blob_features`](https://furuse.work/ops/blob/measure/blob_features.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`blob_seeds`](https://furuse.work/ops/blob/split/blob_seeds.html) · [`blob_split`](https://furuse.work/ops/blob/split/blob_split.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`world_blobs_touching`](https://furuse.work/ops/segmentation/world/world_blobs_touching.html)
+
+## No.2026.280 —— Fourier Ptychography — 20x-Equivalent Resolution and Phase from a 4x Objective's Wide Field, by Iterative Phase Retrieval
+
+[![Fourier Ptychography — 20x-Equivalent Resolution and Phase from a 4x Objective's Wide Field, by Iterative Phase Retrieval](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fourier_ptychography/01_usaf_4x_fp_20x_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fourier_ptychography/01_usaf_4x_fp_20x.png)
+
+*↑ **Fourier Ptychography — 20x-Equivalent Resolution and Phase from a 4x Objective's Wide Field, by Iterative Phase Retrieval** ―― Keep the wide field of a low-magnification objective, take a set of images under LED illumination from many angles, stitch them in frequency space and recover a 20x-equivalent resolution and the phase by iterative phase retrieval. Six new ops (`fourierptycho`, category `fpm` of `opsoptics`): closed-form design numbers before measuring (synthetic NA, cut-off period, pupil overlap, LED count, sampling, LEDs on the bright-/dark-field boundary), a USAF target, a capture simulator (noise, aberrations, LED misalignment, reflective heights), an entry point for measured data, a reconstruction with joint pupil recovery and LED position correction that returns its convergence history, stop reason and synthetic NA and refuses unless it converges, and an element-by-element USAF read-out. With a 4x / NA 0.1 objective and 13 x 13 LEDs (synthetic NA 0.424) one image resolves G7 E4 (5.53 um; closed form 5.32 um) and FP resolves G9 E5 (1.22 um; closed form 1.25 um), the same element as a 20x / NA 0.40 coherent image. Phase within 0.13 rad rms of the band-limited truth; reflective 20-40 nm steps within 4.0 nm rms. Lowering the pupil overlap from 64 % to 7 %, 43 % and above converge while 32 % and below are refused, bracketing the published 35 % minimum; the residual alone cannot tell (18 % overlap has a smaller residual than 64 %). Pupil aberrations of 0.12 waves rms are recovered to 0.005 waves and an LED array offset of (0.6, -0.4) mm, 1 deg and 1.5 mm is read back as (0.62, -0.36) mm, 0.93 deg and 1.25 mm. Flipping the sign of k yields the phase-conjugate image with the same residual. On public FP data of a USAF target (not shipped; run only when present) FP resolves G9 E3 (1.55 um) against the closed-form 1.60 um from the published set-up; a single raw image resolves G7 E3. Nothing learned, nothing calibrated, 33 gates.*
+
+[![G9(周期 1.95〜1.06 µm)を 3 倍に拡大。FP は E5(1.22 µm)まで 3 本の棒が分かれる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fourier_ptychography/02_group9_zoom_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fourier_ptychography/02_group9_zoom.png)
+
+*↑ The measurement ―― G9(周期 1.95〜1.06 µm)を 3 倍に拡大。FP は E5(1.22 µm)まで 3 本の棒が分かれる。 (figure labels are in Japanese; the numbers are the same)*
+
+[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fourier_ptychography/03_element_modulation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fourier_ptychography/03_element_modulation.png)
+
+*↑ この回の図*
+
+[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fourier_ptychography/05_overlap_vs_convergence_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fourier_ptychography/05_overlap_vs_convergence.png)
+
+*↑ この回の図*
+
+[![瞳の円(NA 0.1)の中の位相。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fourier_ptychography/07_pupil_phase_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fourier_ptychography/07_pupil_phase.png)
+
+*↑ 瞳の円(NA 0.1)の中の位相。*
+
+[![LED アレイが (0.6, −0.4) mm・1°・高さ 1.5 mm ずれている。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fourier_ptychography/09_led_misalignment_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fourier_ptychography/09_led_misalignment.png)
+
+*↑ LED アレイが (0.6, −0.4) mm・1°・高さ 1.5 mm ずれている。*
+
+```
+py -3.11 examples/poc_fourier_ptychography.py
+```
+
+Source: [examples/poc_fourier_ptychography.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_fourier_ptychography.py)
+
+This run produced **11 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_fourier_ptychography)
+
+Ops used (notes): [`coherent_image`](https://furuse.work/ops/optics/coherent/coherent_image.html) · [`fp_capture`](https://furuse.work/ops/optics/fpm/fp_capture.html) · [`fp_design`](https://furuse.work/ops/optics/fpm/fp_design.html) · [`fp_element_contrast`](https://furuse.work/ops/optics/fpm/fp_element_contrast.html) · [`fp_reconstruct`](https://furuse.work/ops/optics/fpm/fp_reconstruct.html) · [`fp_stack_from_images`](https://furuse.work/ops/optics/fpm/fp_stack_from_images.html) · [`fp_usaf_target`](https://furuse.work/ops/optics/fpm/fp_usaf_target.html)
+
+## No.2026.281 —— Sorting Multi-Robot Plans with the Same Starts and Goals by How They Wind — Counting Homotopy Classes with Space-Time Braids and Dynnikov Coordinates, 61 Planner Candidates in 26 Classes
+
+[![Sorting Multi-Robot Plans with the Same Starts and Goals by How They Wind — Counting Homotopy Classes with Space-Time Braids and Dynnikov Coordinates, 61 Planner Candidates in 26 Classes](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_braid_homotopy_classes/01_braid_classes_spacetime.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_braid_homotopy_classes/01_braid_classes_spacetime.gif)
+
+*↑ **Sorting Multi-Robot Plans with the Same Starts and Goals by How They Wind — Counting Homotopy Classes with Space-Time Braids and Dynnikov Coordinates, 61 Planner Candidates in 26 Classes** ―― Stack moving vehicles and fixed pillars along time and you get a braid; two plans that deform into each other with their ends held fixed are exactly the plans with the same braid. The times at which neighbouring strands swap order along a projection axis are solved in closed form into a signed crossing sequence (a braid word), and three independent deciders — Dynnikov coordinates, Dehornoy handle reduction and the Artin representation — decide whether two words are the same braid (background: homotopy in planar multi-agent path planning, doi:10.1613/jair.1.19243). The figure spins three differently wound plans of three robots as space-time braids. Gates: the braid relations hold under the Dynnikov action in 1311 cases with integer error 0 and real error 2.8e-14, while the non-relation σ₁σ₂ = σ₂σ₁ breaks in 100/100. The three deciders agree on 100/100 equal and 100/100 different braids; Dynnikov coordinates match the MIT-licensed reference implementation in 240/240. One robot around a pillar: shortest cost per class [14, 14, 30, 30, 46] = closed form 14 + 16m. 61 candidates from the agvfleet planners (CBS + prioritised with waypoints) fall into 26 classes, and the CBS optimum 40 represents the cheapest one. A commutator a b a⁻¹ b⁻¹ has all windings 0 yet a non-trivial braid. Trap: point-symmetric grid moves create projection triple points that no change of angle removes — a tiny constant per-strand offset resolves them. Honestly: there are infinitely many classes, and only those the candidate sampler finds are listed (waypoint sampling found 3 of 8).*
+
+[![図 01 の最初のコマ(等倍・可逆 PNG)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_braid_homotopy_classes/02_braid_classes_spacetime_still_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_braid_homotopy_classes/02_braid_classes_spacetime_still.png)
+
+*↑ The measurement ―― 図 01 の最初のコマ(等倍・可逆 PNG)。 (figure labels are in Japanese; the numbers are the same)*
+
+[![同じ 3 つの計画を床の上から見る(× は柱の代表の点)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_braid_homotopy_classes/03_braid_classes_floor_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_braid_homotopy_classes/03_braid_classes_floor.png)
+
+*↑ 同じ 3 つの計画を床の上から見る(× は柱の代表の点)。*
+
+[![1 台が柱を避けて左から右へ: 類ごとの最短経路を短い順に 5 本(費用 14・14・30・30・46 = 14 + 16m)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_braid_homotopy_classes/04_braid_single_agent_classes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_braid_homotopy_classes/04_braid_single_agent_classes.png)
+
+*↑ 1 台が柱を避けて左から右へ: 類ごとの最短経路を短い順に 5 本(費用 14・14・30・30・46 = 14 + 16m)。*
+
+[![候補を類に分けた表(費用の安い順)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_braid_homotopy_classes/05_braid_class_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_braid_homotopy_classes/05_braid_class_table.png)
+
+*↑ 候補を類に分けた表(費用の安い順)。*
+
+```
+py -3.11 examples/poc_braid_homotopy_classes.py
+```
+
+Source: [examples/poc_braid_homotopy_classes.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_braid_homotopy_classes.py)
+
+This run produced **5 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_braid_homotopy_classes)
+
+Ops used (notes): [`braid_class_representatives`](https://furuse.work/ops/drive/braidpath/braid_class_representatives.html) · [`braid_equivalent`](https://furuse.work/ops/drive/braidpath/braid_equivalent.html) · [`braid_from_trajectories`](https://furuse.work/ops/drive/braidpath/braid_from_trajectories.html) · [`braid_reduce`](https://furuse.work/ops/drive/braidpath/braid_reduce.html) · [`dynnikov_act`](https://furuse.work/ops/drive/braidpath/dynnikov_act.html) · [`dynnikov_coordinates`](https://furuse.work/ops/drive/braidpath/dynnikov_coordinates.html) · [`grid_distances`](https://furuse.work/ops/drive/agv/grid_distances.html) · [`grid_hole_points`](https://furuse.work/ops/drive/braidpath/grid_hole_points.html) · [`grid_paths_to_xy`](https://furuse.work/ops/drive/braidpath/grid_paths_to_xy.html) · [`homotopy_class_compare`](https://furuse.work/ops/drive/braidpath/homotopy_class_compare.html) · [`homotopy_shortest_paths`](https://furuse.work/ops/drive/braidpath/homotopy_shortest_paths.html) · [`mapf_cbs`](https://furuse.work/ops/drive/agv/mapf_cbs.html) · [`mapf_prioritized`](https://furuse.work/ops/drive/agv/mapf_prioritized.html) · [`pairwise_winding`](https://furuse.work/ops/drive/braidpath/pairwise_winding.html) · [`plan_conflicts`](https://furuse.work/ops/drive/agv/plan_conflicts.html) · [`plan_cost`](https://furuse.work/ops/drive/agv/plan_cost.html)
 
 ### The Dimensional and Shape Metrology Wing — Keep Bias and Scatter Apart
 

@@ -70,11 +70,22 @@ every permutation of a noise-free sweep still fits a non-negative minimum
 a correct sweep at another azimuth, so the order is metadata this check
 cannot recover.
 
+**Negative frames (2026-10-24).** A pixel with a frame value below
+``-POLAR_NEGATIVE_FLOOR * max|I|`` (2 % of the stack's largest magnitude)
+is a violation too, in the same *max_violation_frac* budget: a negative
+radiance is not a scene, and :func:`polarization_render` refuses it in
+the forward direction. The floor leaves room for the read noise of
+dark-frame-subtracted data; the reasoning is at
+:data:`POLAR_NEGATIVE_FLOOR`.
+
 **Raises** ``ValueError``: *images* is not an ``(N, H, W)`` stack of at
-least 3 frames, or exceeds :data:`MAX_LIGHTS` / :data:`MAX_STACK_ELEMENTS`;
-*angles_deg* does not match the frame count or leaves the fit
-rank-deficient (two angles equal modulo 180); more than
-*max_violation_frac* of the pixels fit a negative minimum.
+least 3 frames, has no pixels, or exceeds :data:`MAX_LIGHTS` /
+:data:`MAX_STACK_ELEMENTS`; *angles_deg* does not match the frame count,
+leaves the fit rank-deficient (two angles equal modulo 180) or
+ill-conditioned (condition number over :data:`POLAR_DESIGN_MAX_COND`), or
+has every angle at most 2*pi in magnitude (radians passed as degrees); more
+than *max_violation_frac* of the pixels fit a negative minimum or have a
+frame below the negative floor.
 
 ## 詳しい使い方ガイド
 

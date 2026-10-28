@@ -19,7 +19,8 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 Trace pupil-filling real-ray bundles through the 3-D system (``table``).
 
-Per field: ``image_xy`` (N,2) on the image plane in its local frame, ``valid``, ``points`` (N, n+2, 3)
+Per field: ``image_xy`` (N,2) on the image plane in its local frame (with ``image_tilt``, coordinates on the
+tilted plane itself: distances on a tilted sensor, not their projection), ``valid``, ``points`` (N, n+2, 3)
 global polylines (start, every surface, image), ``chief`` (the chief-ray polyline and its image point),
 ``n_vignetted``. *fields* is a list of ``(fx, fy)`` pairs (or numbers = fy), default the system's field.
 Rays are aimed at the stop: a coaxial prescription converted from ``raytrace`` uses ``raytrace``'s own

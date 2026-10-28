@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>List the materials whose X-ray column (mass attenuation coefficient μ/ρ) can be looked up.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>返り値: 1 材料 1 行の dict(name, kind = table / mixture / element, density_g_cm3, composition ((記号, 質量分率), …), optical(光学の表にも同じ名前のレコードがあるか), reference)。元素 49 種と NIST の化合物 20 種は NIST SRD 126(Hubbell &amp; Seltzer)の表そのもの、それ以外は <code style="color:#22d3bf">XRAY_SOLID</code>(と電子線の表)の組成から混合則で作る。範囲は 1 keV〜1 MeV(表の外は外挿しない)。</p>
+<p>返り値: 1 材料 1 行の dict(name, kind = table / mixture / element, density_g_cm3, composition ((記号, 質量分率), …), optical(光学の表にも同じ名前のレコードがあるか), reference)。元素 51 種と NIST の化合物 21 種は NIST SRD 126(Hubbell &amp; Seltzer)の表そのもの、それ以外は <code style="color:#22d3bf">XRAY_SOLID</code>(と電子線の表)の組成から混合則で作る。シンチレータのレコード(CSI:TL / BI4GE3O12 …)はその <code style="color:#22d3bf">xray_material</code> の列とレコードの密度。範囲は 1 keV〜1 MeV(表の外は外挿しない)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

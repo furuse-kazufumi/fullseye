@@ -2474,14 +2474,15 @@ def mueller_partial_polarizer(angle_deg=0.0, extinction_ratio=1000.0, transmissi
     op = "mueller_partial_polarizer"
     er = _finite_scalar(extinction_ratio, "extinction_ratio")
     if er < 1.0:
-        raise ValueError("%s: extinction_ratio must be >= 1, got %g — a ratio "
+        raise ValueError("%s: extinction_ratio must be >= 1, got %r — a ratio "
                          "below 1 says the transmission axis is the other one; "
                          "pass angle_deg + 90 and the reciprocal instead"
                          % (op, er))
     t1 = _finite_scalar(transmission, "transmission")
     if not (0.0 < t1 <= 1.0):
+        # %r, not %g: %g printed 1.0000001 as "got 1" (2026-10-24 review).
         raise ValueError("%s: transmission (intensity transmittance along the "
-                         "axis) must be in (0, 1], got %g" % (op, t1))
+                         "axis) must be in (0, 1], got %r" % (op, t1))
     t2 = t1 / er
     if _is_field(angle_deg):
         a_deg, _d, shape = _element_field_args(op, "polarizer", angle_deg, None, 16)
@@ -2625,11 +2626,22 @@ def stokes_analyze(stokes):
     the two agree only for fully polarised light (measured 2026-09-18).
 
     **``azimuth_deg`` and ``ellipticity_deg`` are ``None`` when they are
-    undefined** — azimuth when the linear part is exactly zero (circular or
+    undefined** — azimuth when the linear part is zero (circular or
     unpolarised light has no orientation), ellipticity when the polarised part
     is zero (unpolarised light has no ellipse). Returning 0.0 there would be a
     fabricated angle; ``None`` says the truth and forces the caller to handle
     it.
+
+    **"Zero" is relative: ``<= 1e-12 * S0`` (2026-10-24).** Mueller products
+    leave rounding dust: ``mueller_element("half_wave", 22.5)`` applied to
+    ``[1, 1, 0, 0]`` gives ``S3 = 8.7e-17``, which an exact ``S3 == 0`` test
+    reported as ``"right"``-handed, and a quarter-wave plate at 45 on the same
+    beam leaves a linear part of 8.7e-17 that came back as an azimuth of 22.5.
+    The same floor decides ``handedness`` (``"linear"`` when
+    ``|S3| <= 1e-12 * S0``), ``azimuth_deg`` and ``ellipticity_deg``; it is
+    relative to ``S0`` so that it means the same at every intensity scale.
+    ``dop`` / ``dolp`` / ``docp`` are returned as computed (the dust is an
+    honest number there, as in :func:`specularity.polarization_stokes_map`).
 
     Ground truth it reproduces exactly: ``[1,1,0,0]`` -> dop 1, azimuth 0,
     ellipticity 0, linear; ``[1,-1,0,0]`` -> azimuth 90; ``[1,0,1,0]`` ->
@@ -2652,13 +2664,22 @@ def stokes_analyze(stokes):
                          "blocked beam (crossed polarisers) before analysing")
     lin = float(np.hypot(s[1], s[2]))
     pol = float(np.sqrt(s[1] ** 2 + s[2] ** 2 + s[3] ** 2))
+    # Rounding-dust floor, relative to S0 (see the docstring): an exact-zero
+    # test turned S3 = 8.7e-17 into "right" and a 8.7e-17 linear part into an
+    # azimuth.
+    dust = 1e-12 * s0
     az = None
-    if lin > 0.0:
+    if lin > dust:
         az = float(np.degrees(0.5 * np.arctan2(s[2], s[1])) % 180.0)
+        if az >= 180.0:                      # -tiny % 180 rounds to 180.0
+            az = 0.0
     ell = None
-    if pol > 0.0:
+    if pol > dust:
         ell = float(np.degrees(0.5 * np.arcsin(np.clip(s[3] / pol, -1.0, 1.0))))
-    hand = "linear" if s[3] == 0.0 else ("right" if s[3] > 0.0 else "left")
+    if abs(float(s[3])) <= dust:
+        hand = "linear"
+    else:
+        hand = "right" if s[3] > 0.0 else "left"
     return {"intensity": s0, "dop": float(min(pol / s0, 1.0)),
             "dolp": float(min(lin / s0, 1.0)),
             "docp": float(min(abs(s[3]) / s0, 1.0)),

@@ -95,7 +95,7 @@ def _op_names_2d() -> list:
 def _strip_prose(src: str) -> str:
     """コメントと docstring を空白へ潰したソースを返す(誤リンク防止)。
 
-    2026-09-04 の実バグ: docstring の散文 "boundary (printed)" が `boundary\s*\(`
+    2026-09-04 の実バグ: docstring の散文 "boundary (printed)" が `boundary\\s*\\(`
     に当たり、**呼んでいない op を呼んだことにして**偽リンクを生んだ。「<op 名> (」という
     散文はどの example にも起こりうる ―― 言い換えで避けるのは対症療法なので、走査の前に
     コメントと docstring を落とす。

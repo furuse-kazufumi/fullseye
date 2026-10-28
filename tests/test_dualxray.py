@@ -330,6 +330,6 @@ def test_refusals(call):
 def test_registry_lists_the_new_ops_and_they_exist():
     import opstomography as T
     names = T.list_ops("spectral_xray")
-    assert len(names) == 14 and not T.missing()
+    assert len(names) == 15 and not T.missing()            # 2026-10-23: scintillator_sensor_qe を足した
     out = T.call("basis_material_decompose", np.ones((2, 2, 2)) * 1e4, None, ("WATER", "AL"), 1e5)
     assert isinstance(out, list) and len(out) == 2 and out[0].shape == (2, 2)     # 宣言型 images = 基底の厚みの並び
