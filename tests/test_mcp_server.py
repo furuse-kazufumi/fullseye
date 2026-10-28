@@ -91,6 +91,33 @@ def test_handle_byte_lru_and_stack_pixel_limits(monkeypatch):
     sample_store=HandleStore(max_bytes=10_000_000)
     with pytest.raises(ValueError,match="total pixels"):
         call_tool("fullseye_load_stack",{"paths":["gradient"]*2,"sort":"images"},Catalog.load(),sample_store)
+
+
+def test_pipeline_intermediate_and_image_pixel_limits(monkeypatch):
+    import numpy as np
+    from fullseye.mcp import server
+    from fullseye.mcp.handles import HandleStore
+
+    real=server.get_system
+    limits={"mcp_pipeline_max_intermediate_bytes":100_000,
+            "mcp_stack_max_pixels":10_000_000}
+    monkeypatch.setattr(server,"get_system",lambda name: limits.get(name,real(name)))
+    store=HandleStore(roots=[],max_bytes=10_000_000)
+    h=store.put(np.zeros((64,64)),sort="image",provenance=[])["handle"]
+    result=call_tool("fullseye_pipeline",{"handle":h,"vision":"none",
+        "stages":[{"op":"gaussian"} for _ in range(8)]},Catalog.load(),store)
+    assert result["isError"] is True
+    failed=next(row for row in result["structuredContent"]["stages"] if row.get("status")=="failed")
+    assert failed["reason"] == "resource_limit"
+    assert "intermediate bytes" in failed["error"]["message"]
+    assert result["structuredContent"]["intermediate_bytes"] > 100_000
+
+    limits["mcp_pipeline_max_intermediate_bytes"]=10_000_000
+    limits["mcp_stack_max_pixels"]=1000
+    with pytest.raises(ValueError,match="output pixels"):
+        call_tool("fullseye_apply",{"handle":h,"op":"gaussian","vision":"none"},Catalog.load(),store)
+    with pytest.raises(ValueError,match="output pixels"):
+        call_tool("fullseye_load_image",{"path":"gradient","vision":"none"},Catalog.load(),HandleStore())
 from fullseye.mcp.server import ArgError, MAX_SEARCH_LIMIT, read_message  # noqa: E402
 
 

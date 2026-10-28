@@ -648,6 +648,7 @@ def _maybe_thumb(store: HandleStore, meta: dict, inp, out, *, vision: str, escal
 def _load_image(a: dict, store: HandleStore) -> dict:
     meta = store.load(a["path"], color=bool(a.get("color", False)))
     _, arr = store.get(meta["handle"])
+    _enforce_pixel_limit(arr, "load_image")
     st, vd = _describe(meta, arr)
     links = _maybe_thumb(store, meta, None, arr, vision=a.get("vision", "auto"),
                          escalate=vd["escalate"], quantity=False, tag="load")
@@ -674,6 +675,61 @@ def _load_stack(a: dict, store: HandleStore) -> dict:
     sort = a["sort"]
     meta = store.put(stack, sort=sort, provenance=provenance + [{"load_stack":len(arrays)}])
     return tool_result("%s sort=%s shape=%s" % (meta["handle"],sort,meta["shape"]), meta)
+
+
+def _array_pixels(value) -> int:
+    """Count ndarray elements in a possibly nested operation result once each."""
+    seen: set[int] = set()
+
+    def count(item) -> int:
+        oid = id(item)
+        if oid in seen:
+            return 0
+        if isinstance(item, np.ndarray):
+            seen.add(oid)
+            return int(item.size)
+        if isinstance(item, dict):
+            seen.add(oid)
+            return sum(count(v) for v in item.values())
+        if isinstance(item, (list, tuple)):
+            seen.add(oid)
+            return sum(count(v) for v in item)
+        return 0
+
+    return count(value)
+
+
+def _value_nbytes(value) -> int:
+    """Bounded-accounting size for a pipeline intermediate, including nested arrays."""
+    seen: set[int] = set()
+
+    def size(item) -> int:
+        oid = id(item)
+        if oid in seen:
+            return 0
+        if isinstance(item, np.ndarray):
+            seen.add(oid)
+            return int(item.nbytes)
+        if isinstance(item, dict):
+            seen.add(oid)
+            return sum(len(str(k).encode("utf-8")) + size(v) for k, v in item.items())
+        if isinstance(item, (list, tuple)):
+            seen.add(oid)
+            return sum(size(v) for v in item)
+        if isinstance(item, str):
+            return len(item.encode("utf-8"))
+        if isinstance(item, (bytes, bytearray)):
+            return len(item)
+        return 8
+
+    return size(value)
+
+
+def _enforce_pixel_limit(value, where: str) -> None:
+    pixels = _array_pixels(value)
+    limit = int(get_system("mcp_stack_max_pixels"))
+    if pixels > limit:
+        raise ArgError("%s output pixels %d exceeds limit %d" % (where, pixels, limit))
 
 
 def _resolve_op(name: str, cat: Catalog, *, stage: int | None = None):
@@ -881,6 +937,7 @@ def _stage(store: HandleStore, meta: dict, arr, op, ka: float, kb: float, allow:
     if err is not None:
         rec["error"] = err
         return rec, [], None, None
+    _enforce_pixel_limit(out, "op %s" % op.name)
     st = stats_of(out)
     vd = verdict_of(st, op_name=op.name, out_sort=out_sort)
     if degraded:
@@ -1058,7 +1115,24 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
             raise ArgError("段 %s %s: %s"%(first.get("stage",0),op,
                 json.dumps(first,ensure_ascii=False)))
         return _tool_error(json.dumps(checked,ensure_ascii=False),checked)
+    outputs=a.get("outputs") or (["stage:%d"%len(a["stages"])] if a["stages"] else [])
+    from collections import Counter
+    remaining=Counter(outputs)
+    for normalized_stage in checked["stages"]:
+        remaining.update(normalized_stage["inputs"])
+        stage=a["stages"][normalized_stage["stage"]-1]
+        remaining.update(v["ref"] for v in stage.get("params",{}).values()
+                         if isinstance(v,dict) and "ref" in v)
     values={ref:store.get(handle) for ref,handle in bindings.items()}; records=[]; failed=set(); links=[]
+    intermediate_bytes=0
+    intermediate_limit=int(get_system("mcp_pipeline_max_intermediate_bytes"))
+
+    def release(refs):
+        for used_ref in refs:
+            remaining[used_ref]-=1
+            if remaining[used_ref] <= 0 and used_ref.startswith("stage:"):
+                values.pop(used_ref,None)
+
     original={i:s for i,s in enumerate(a["stages"],1)}
     for i in checked["execution_order"]:
         spec=original[i]
@@ -1071,6 +1145,7 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
             failed.add("stage:%d"%i)
             records.append({"stage":i,"ref":"stage:%d"%i,"op":edge["op"],"status":"skipped",
                             "reason":"dependency_failed","blocked_by":blocked})
+            release(refs + param_refs)
             continue
         for ref in refs:
             meta,value=_resolve_pipeline_ref(ref,values,store)
@@ -1106,15 +1181,34 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
             failed.add("stage:%d"%i)
             records.append({"stage":i,"ref":"stage:%d"%i,"op":edge["op"],"status":"failed",
                             "reason":"execution_failed","error":{"type":type(exc).__name__,"message":str(exc)[:300]}})
+            release(refs + param_refs)
             continue
         out_sort=metas[0]["sort"] if edge["output"]=="poly" and metas else edge["output"]
         ref="stage:%d"%i
+        produced_bytes=_value_nbytes(out)
+        intermediate_bytes+=produced_bytes
+        try:
+            _enforce_pixel_limit(out,"stage %d (%s)"%(i,edge["op"]))
+            if intermediate_bytes > intermediate_limit:
+                raise ArgError("pipeline intermediate bytes %d exceeds limit %d at stage %d (%s)" %
+                               (intermediate_bytes,intermediate_limit,i,edge["op"]))
+        except ArgError as exc:
+            failed.add(ref)
+            records.append({"stage":i,"ref":ref,"op":edge["op"],"status":"failed",
+                            "reason":"resource_limit","bytes":produced_bytes,
+                            "cumulative_bytes":intermediate_bytes,"error":{
+                                "type":type(exc).__name__,"message":str(exc)}})
+            release(refs + param_refs)
+            del out
+            continue
         array_sorts={"image","color","region","images","seq<image>","points","volume","depth","normalmap"}
         invalid=(out_sort in array_sorts and not isinstance(out,np.ndarray))
         invalid=invalid or (isinstance(out,np.ndarray) and out.dtype.kind in "fc" and not np.isfinite(out).all())
         if invalid:
             failed.add(ref); records.append({"stage":i,"ref":ref,"op":edge["op"],"status":"failed",
-                    "reason":"invalid_output","out_sort":out_sort}); continue
+                    "reason":"invalid_output","out_sort":out_sort})
+            release(refs + param_refs)
+            continue
         meta=store.put(out,sort=out_sort,provenance=[{"pipeline":edge["op"],"inputs":refs}])
         values[ref]=(meta,out); handle=meta["handle"]
         st=stats_of(out) if isinstance(out,np.ndarray) else {"kind":type(out).__name__}
@@ -1134,23 +1228,29 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
             if normalized is not None:
                 rec["value"]=normalized
         records.append(rec)
-    outputs=a.get("outputs") or (["stage:%d"%len(a["stages"])] if a["stages"] else [])
+        release(refs + param_refs)
+        if remaining[ref] <= 0:
+            values.pop(ref,None)
     output_rows=[{"ref":ref,"handle":values[ref][0]["handle"],"sort":values[ref][0]["sort"]}
                  for ref in outputs if ref in values]
     first_failed=next((r["stage"] for r in records if r.get("status")=="failed"),None)
     visible_records=records if explicit else [r for r in records if r.get("status")!="skipped"]
     result={"completed":sum(r.get("status")=="ok" for r in records),"failed":sum(r.get("status")=="failed" for r in records),
-            "stopped_at":first_failed,"strict":True,"stages":visible_records,"outputs":output_rows,"system_policy":policy}
+            "stopped_at":first_failed,"strict":True,"stages":visible_records,"outputs":output_rows,
+            "intermediate_bytes":intermediate_bytes,"intermediate_byte_limit":intermediate_limit,
+            "system_policy":policy}
     if len(output_rows)==1:
         result.update({"handle":output_rows[0]["handle"],"out_sort":output_rows[0]["sort"],
                        "output_ref":output_rows[0]["ref"]})
     if not explicit and records:
         last_value_record=next((r for r in reversed(records)
-                                if r.get("status")=="ok" and
-                                not isinstance(values[r["ref"]][1],np.ndarray)),None)
-        last_value=values[last_value_record["ref"]][1] if last_value_record is not None else None
-        last_array=next((values[r["ref"]][0]["handle"] for r in reversed(records)
-                         if r.get("status")=="ok" and isinstance(values[r["ref"]][1],np.ndarray)),None)
+                                if r.get("status")=="ok" and r.get("value_handle")),None)
+        last_value=None
+        if last_value_record is not None:
+            try: last_value=store.get(last_value_record["value_handle"])[1]
+            except HandleError: pass
+        last_array=next((r["handle"] for r in reversed(records)
+                         if r.get("status")=="ok" and r.get("handle")),None)
         result["handle"]=last_array
         if last_value_record is not None and "value" in last_value_record:
             result["value"]=last_value_record["value"]

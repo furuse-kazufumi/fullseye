@@ -88,6 +88,21 @@
       "affects_numbers": false,
       "status": "applied"
     },
+    "mcp_pipeline_max_intermediate_bytes": {
+      "default": 134217728,
+      "values": [
+        67108864,
+        134217728,
+        268435456
+      ],
+      "meaning": "Cumulative byte cap for outputs produced by one MCP pipeline request.",
+      "hide_from_ai": true,
+      "applied_by": [
+        "fullseye/mcp/server.py"
+      ],
+      "affects_numbers": false,
+      "status": "applied"
+    },
     "mcp_response_budget": {
       "default": 512000,
       "values": [
@@ -111,7 +126,7 @@
         33554432,
         67108864
       ],
-      "meaning": "Total source pixels admitted by load_stack.",
+      "meaning": "Pixel cap for MCP image loads, stacks, and operation outputs.",
       "hide_from_ai": true,
       "applied_by": [
         "fullseye/mcp/server.py"
