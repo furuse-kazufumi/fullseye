@@ -50,7 +50,9 @@ def _source(name: str, family: str) -> dict:
 
 
 def _knobs() -> dict:
-    p = DATA / "op_knob.json"
+    # docs/op_knob.json is the measured source.  The package copy is written by
+    # gen_mcp_data later in regen_all, so reading that copy would invert the chain.
+    p = ROOT / "docs" / "op_knob.json"
     rows = json.loads(p.read_text(encoding="utf-8")) if p.exists() else []
     return {r.get("op"): r for r in rows if isinstance(r, dict) and r.get("op")}
 
@@ -64,7 +66,7 @@ def _param_metadata(name: str, family: str, knob: dict | None) -> dict:
             # Older probe schema records an effect magnitude rather than a bool.
             effect = measured.get("effect", measured.get("range"))
             used = effect not in (None, 0, 0.0, [], {})
-        rec = {"used": bool(used), "source": "fullseye/data/op_knob.json" if knob else "unmeasured"}
+        rec = {"used": bool(used), "source": "docs/op_knob.json" if knob else "unmeasured"}
         if rec["used"]:
             rec.update({"kind": "normalized", "normalized": [0.0, 1.0],
                         "mapping": "measured normalized knob; physical mapping not documented"})
