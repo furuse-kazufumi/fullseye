@@ -21,6 +21,32 @@ sys.path[:0] = [str(ROOT), str(ROOT / "tools")]
 DATA = ROOT / "fullseye" / "data"
 DOCS = ROOT / "docs" / "ops"
 
+# Public canonical vocabulary is the executor vocabulary.  Graph/ledger aliases
+# are accepted at every API boundary and normalized exactly once here.
+SORT_ALIASES = {"image2d": "image", "mask": "region", "contour2d": "contour",
+                "features": "feature", "pointcloud": "points"}
+ACQUIRABLE = {
+    "image": "camera acquisition contract",
+    "images": "multi-frame camera acquisition contract",
+    "polsweep": "polarization camera/analyzer sweep",
+    "points": "range sensor or point sampler",
+    "lightfield": "light-field camera grid",
+    "volume": "tomographic/volumetric acquisition",
+    "video": "camera stream acquisition",
+}
+
+def canonical_sort(value: str | None) -> str:
+    value = (value or "untyped").strip()
+    return SORT_ALIASES.get(value, value)
+
+def split_inputs(value) -> list[str]:
+    if isinstance(value, list):
+        return [canonical_sort(x) for x in value]
+    if not value:
+        return ["untyped"]
+    # Old indexes encoded n-ary inputs as a display string.  It is never a sort.
+    return [canonical_sort(x) for x in re.split(r"\s*(?:×|\+|,)\s*", str(value)) if x]
+
 FAMILY_RULES = {
     "denoise": r"denois|noise.*(?:filter|remove|reduce)|median|bilateral|nlm|wiener",
     "edge_detection": r"canny|sobel|prewitt|scharr|laplac|edge|deriche",
@@ -46,7 +72,7 @@ def _dump(path: Path, obj) -> None:
 
 
 def _source(name: str, family: str) -> dict:
-    return {"kind": "registry", "value": "name/category", "detail": f"{name}/{family}"}
+    return {"kind": "registry", "value": "chain_fuzz catalog", "detail": family}
 
 
 def _knobs() -> dict:
@@ -59,39 +85,78 @@ def _knobs() -> dict:
 
 def _param_metadata(name: str, family: str, knob: dict | None) -> dict:
     out = {}
+    knob = knob or {}
     for key in ("a", "b"):
-        measured = (knob or {}).get(key) or {}
-        used = measured.get("used")
-        if used is None:
-            # Older probe schema records an effect magnitude rather than a bool.
-            effect = measured.get("effect", measured.get("range"))
-            used = effect not in (None, 0, 0.0, [], {})
-        rec = {"used": bool(used), "source": "docs/op_knob.json" if knob else "unmeasured"}
-        if rec["used"]:
-            rec.update({"kind": "normalized", "normalized": [0.0, 1.0],
-                        "mapping": "measured normalized knob; physical mapping not documented"})
-            if measured.get("breakpoints"):
-                rec["discrete"] = measured["breakpoints"]
+        kind = knob.get(key + "_kind")
+        effect = float(knob.get(key + "_effect") or 0.0)
+        used = (kind not in (None, "unused") and effect > 0) if key == "a" else bool(knob.get("b_used"))
+        rec = {"used": used, "source": "docs/op_knob.json" if knob else "unmeasured",
+               "effect": effect, "kind": kind or ("continuous" if used else "unused")}
+        if used:
+            rec.update({"normalized": [0.0, 1.0], "mapping": "measured normalized knob; physical mapping not documented"})
+            if key == "a" and knob.get("breakpoints"):
+                rec["discrete"] = knob["breakpoints"]
         out[key] = rec
     return out
+
+def _system_params():
+    def p(default, meaning, hidden, source="system design 2026-10-28"):
+        return {"default": default, "meaning": meaning, "hide_from_ai": hidden, "source": source}
+    return {"schema": 1, "params": {
+      "plan_k": p(5,"maximum returned plans",True), "plan_max_depth": p(4,"maximum graph depth",True),
+      "budget_tokens": p(800,"default textual response budget",True), "limit": p(20,"default row limit",True),
+      "max_structured_bytes": p(512000,"structured MCP response ceiling",True,"fullseye.mcp.server"),
+      "max_stages": p(64,"pipeline stage safety ceiling",True), "device": p("cpu","execution device",True),
+      "batch": p(1,"batch size",True), "lang": p("auto","response language",True),
+      "vision": p("auto","diagnostic image policy",True), "seed": p(0,"deterministic random seed",True),
+      "tile_size": p(512,"large-image tile edge",True), "border": p("reflect","neighborhood border policy",True),
+      "numeric_floor": p(1e-12,"numerical denominator floor",True), "iteration_limit": p(100,"iterative solver cap",True),
+      "gpu_idle_policy": p("no compute process and no loaded local model","GPU measurement admission",True)}}
 
 
 def build() -> dict[str, object]:
     import conversion_matrix as cm
     a = cm.analyse()
     knobs = _knobs()
+    index = json.loads((ROOT / "docs" / "OP_INDEX.json").read_text(encoding="utf-8"))
+    index_rows = index.get("ops") or []
+    if not index_rows:
+        raise RuntimeError("docs/OP_INDEX.json has no ops")
+    executable = {r["name"] for r in index_rows if r.get("tier") in {"registry", "color", "nary"}}
+    index_names = {r["name"] for r in index_rows}
     family_rows: dict[str, list] = defaultdict(list)
+    try:
+        import accel
+        accel_names = {core for _public, (_fn, core, _halcon) in accel.ACCEL.items()}
+    except Exception:
+        accel_names = set()
     edges = []
     produced, consumed = Counter(), Counter()
+    seen = set()
+    signatures = {}
+    duplicate_declarations = []
+    excluded_chain_only = []
     for name, category, ins, out, _fn in a["ops"]:
+        if name not in index_names:
+            excluded_chain_only.append({"op": name, "reason": "not present in public OP_INDEX"})
+            continue
+        ins, out = split_inputs(ins), canonical_sort(out)
+        signature = (tuple(ins), out, category)
+        if name in seen:
+            duplicate_declarations.append({"op": name, "conflicting": signatures[name] != signature,
+                                           "kept": signatures[name], "ignored": signature})
+            continue
+        seen.add(name); signatures[name] = signature
         produced[out] += 1
         consumed.update(ins)
         text = f"{name} {category}".lower()
         fam = next((f for f, rx in FAMILY_RULES.items() if re.search(rx, text)), None)
-        structure = next((s for s, rx in STRUCTURE_RULES if re.search(rx, text)), "elementwise_or_unknown")
+        structure = "unknown"
+        if name in accel_names:
+            structure = ("neighborhood_stencil" if re.search(r"gauss|sobel|median|morph|blur", name) else "elementwise")
         src = _source(name, category)
         edge = {"op": name, "inputs": list(ins), "output": out, "category": category,
-                "family": fam, "reversible": "unknown", "loss": "unknown",
+                "family": fam, "executable": name in executable,
                 "compute": {"structure": structure,
                             "intensity": "memory_or_unknown", "source": src},
                 "implementations": [{"backend": "python/registry", "status": "available", "source": src}],
@@ -104,61 +169,164 @@ def build() -> dict[str, object]:
                                      "properties": [], "property_sources": [src],
                                      "complexity_exponent": None, "quality": {"status": "unmeasured"}})
 
+    # OP_INDEX is the public population.  Add every op missing from the typed
+    # ledger; missing type facts stay explicit instead of silently dropping it.
+    for row in index_rows:
+        name = row["name"]
+        if name in seen:
+            continue
+        seen.add(name)
+        ins, out = split_inputs(row.get("in_sort")), canonical_sort(row.get("out_sort"))
+        category = row.get("category") or "untyped"
+        text = f"{name} {category}".lower()
+        fam = next((f for f, rx in FAMILY_RULES.items() if re.search(rx, text)), None)
+        src = {"kind": "index", "value": "docs/OP_INDEX.json"}
+        edge = {"op": name, "inputs": ins, "output": out, "category": category, "family": fam,
+                "executable": name in executable,
+                "compute": {"structure": "unknown", "intensity": "unknown", "source": src},
+                "implementations": [{"backend": row.get("module") or "registry", "status": "available", "source": src}],
+                "parity": {"status": "unmeasured", "source": "accel.parity required"},
+                "gpu_timing": "unmeasured", "parameters": _param_metadata(name, category, knobs.get(name)), "source": src}
+        edges.append(edge)
+        produced[out] += 1; consumed.update(ins)
+        if fam:
+            family_rows[fam].append({"op": name, "inputs": ins, "output": out, "properties": [],
+                                     "property_sources": [src], "complexity_exponent": None,
+                                     "quality": {"status": "unmeasured"}})
+
+    # The generic algorithm layer is intentionally outside OP_INDEX's image-op
+    # registry.  Keep the three requested sorting alternatives as an explicit,
+    # reasoned extension rather than hiding them behind a regex.
+    for name in ("quicksort", "heapsort", "mergesort"):
+        src = {"kind": "docstring", "value": "algo.py", "detail": name}
+        edges.append({"op": name, "inputs": ["sequence"], "output": "sequence", "category": "sort",
+                      "family": "sorting", "executable": False,
+                      "compute": {"structure": "irregular_sequential", "intensity": "comparison_bound", "source": src},
+                      "implementations": [{"backend":"algo Python/C generator","status":"available","source":src}],
+                      "parity":{"status":"unmeasured","source":"algo differential test"},
+                      "gpu_timing":"not_applicable", "parameters":{}, "source":src,
+                      "population_extension_reason":"generic algorithm layer requested by design"})
+        produced["sequence"] += 1; consumed["sequence"] += 1
+
+    # Intern provenance once and omit blanket unknown measurements.  This keeps
+    # OP_GRAPH readable instead of repeating the same unmeasured/source record
+    # thousands of times.
+    sources={}; source_ids={}
+    def intern(src):
+        key=json.dumps(src,ensure_ascii=False,sort_keys=True)
+        if key not in source_ids:
+            sid="S%05d"%(len(source_ids)+1); source_ids[key]=sid; sources[sid]=src
+        return source_ids[key]
+    for e in edges:
+        if e.get("source"): e["source_ref"]=intern(e.pop("source"))
+        comp=e.get("compute",{})
+        if comp.get("source"): comp["source_ref"]=intern(comp.pop("source"))
+        for impl in e.get("implementations",[]):
+            if impl.get("source"): impl["source_ref"]=intern(impl.pop("source"))
+        if e.get("parity",{}).get("status")=="unmeasured": e.pop("parity",None)
+        if e.get("gpu_timing")=="unmeasured": e.pop("gpu_timing",None)
+        for p in e.get("parameters",{}).values():
+            if p.get("source") and p["source"]!="unmeasured": p["source_ref"]=intern(p.pop("source"))
+
     nodes = []
-    generators = set(a["generators"])
-    checks = set(a["checks"])
-    for sort in a["sorts"]:
+    generators = {canonical_sort(x) for x in a["generators"]}
+    checks = {canonical_sort(x) for x in a["checks"]}
+    all_sorts = sorted({canonical_sort(s) for s in a["sorts"]} |
+                       {x for e in edges for x in e["inputs"]} | {e["output"] for e in edges})
+    for sort in all_sorts:
         nodes.append({"sort": sort, "container": _container(sort), "size_hint": "input-dependent",
                       "produced_by": produced[sort], "consumed_by": consumed[sort],
                       "generator": sort in generators, "type_check": sort in checks,
                       "choose_when": "undocumented", "source": "chain_fuzz catalog"})
-    graph = {"schema": 1, "generated_by": "tools/gen_op_facets.py", "model": "typed AND-OR hypergraph",
+    lifted = [{"op":"map::"+e["op"],"base_op":e["op"],"input":"seq<%s>"%e["inputs"][0],
+               "output":"seq<%s>"%e["output"],"kind":"map"}
+              for e in edges if e.get("executable") and len(e["inputs"])==1 and e["inputs"][0]==e["output"]]
+    parameter_summary={"measured_ops":sum(bool(knobs.get(e["op"])) for e in edges),
+                       "a_unused":sum("a" in e.get("parameters",{}) and e["parameters"]["a"].get("source")!="unmeasured" and not e["parameters"]["a"].get("used") for e in edges),
+                       "b_unused":sum("b" in e.get("parameters",{}) and e["parameters"]["b"].get("source")!="unmeasured" and not e["parameters"]["b"].get("used") for e in edges),
+                       "reason":"docs/op_knob.json measured no output effect"}
+    graph = {"schema": 2, "generated_by": "tools/gen_op_facets.py", "model": "typed AND-OR hypergraph",
+             "sort_aliases": SORT_ALIASES, "population": "union of docs/OP_INDEX.json and chain_fuzz catalog",
+             "acquirable_sorts": [{"sort": s, "source": src} for s, src in ACQUIRABLE.items()],
+             "type_constructors":{"images":"seq<image>","video":"seq<image>","polsweep":"seq<polarized_image>",
+                                  "lightfield":"grid<image>","volume":"stack3<image>"},
+             "lifted_map_edges":lifted,
+             "parameter_summary":parameter_summary,
+             "sources":sources,
              "counts": {"nodes": len(nodes), "edges": len(edges),
                         "conversion_pairs": len(a["edges"]),
                         "conversion_edge_incidence": sum(map(len, a["edges"].values()))},
              "nodes": nodes, "edges": edges,
-             "diagnostics": {k: a[k] for k in ("dead_ends", "orphans", "never_consumed", "unchecked_ops", "unreachable")}}
-    families = {"schema": 1, "source_graph": "OP_GRAPH.json", "rule_source": "tools/gen_op_facets.py:FAMILY_RULES",
-                "families": [{"name": f, "ops": sorted(family_rows.get(f, []), key=lambda x: x["op"]),
-                              "probes": [], "timing_source": "docs/ops/families_timing.json"}
-                             for f in FAMILY_RULES]}
-    device = {"schema": 1, "source_graph": "OP_GRAPH.json", "gpu_policy": "unmeasured unless device_timing says otherwise",
+             "diagnostics": {**{k: a[k] for k in ("dead_ends", "orphans", "never_consumed", "unchecked_ops", "unreachable")},
+                             "duplicate_declarations": duplicate_declarations}}
+    graph["diagnostics"]["excluded_chain_only"] = excluded_chain_only
+    ledger = json.loads((DOCS / "families.json").read_text(encoding="utf-8"))
+    edge_map = {e["op"]: e for e in edges}
+    timing_path = DOCS / "families_timing.json"
+    timing = json.loads(timing_path.read_text(encoding="utf-8")) if timing_path.exists() else {"measurements":{}}
+    fam_out=[]
+    for f in ledger["families"]:
+        rows=[]
+        for member in f["members"]:
+            e=edge_map.get(member["op"])
+            if not e: raise RuntimeError("family ledger names missing op: "+member["op"])
+            measured=(timing.get("measurements") or {}).get(member["op"],{})
+            rows.append({"op":member["op"],"inputs":e["inputs"],"output":e["output"],
+                         "membership_source":member["source"],"properties":measured.get("properties",[]),
+                         "property_sources":[{"kind":"measurement","value":"docs/ops/families_timing.json"}] if measured else [],
+                         "complexity_exponent":measured.get("complexity_exponent"),
+                         "quality":measured.get("quality",{"status":"unmeasured"})})
+            e["family"] = f["name"]
+        fam_out.append({"name":f["name"],"ops":rows,"probes":["synthetic_probe_1","synthetic_probe_2"],
+                        "timing_source":"docs/ops/families_timing.json"})
+    families = {"schema": 2, "source_graph": "OP_GRAPH.json", "membership_source":"docs/ops/families.json",
+                "regex_role":"candidate suggestions only", "families":fam_out}
+    known_device = [e for e in edges if e["compute"]["structure"] != "unknown" or e["op"] in accel_names]
+    device = {"schema": 2, "source_graph": "OP_GRAPH.json", "gpu_policy": "unmeasured unless device_timing says otherwise",
+              "summary":{"total_ops":len(edges),"rows_with_implementation_evidence":len(known_device),
+                         "omitted_unknown":len(edges)-len(known_device)},
               "ops": [{"op": e["op"], "compute": e["compute"], "implementations": e["implementations"],
-                       "parity": e["parity"], "gpu_timing": e["gpu_timing"]} for e in edges]}
+                       "parity": e.get("parity",{"status":"unmeasured"}),
+                       "gpu_timing": e.get("gpu_timing","unmeasured")} for e in known_device]}
     sorts = {"schema": 1, "source_graph": "OP_GRAPH.json", "sorts": nodes}
-    shapes = _shapes()
+    shapes = _shapes(edges)
     patterns = _patterns()
     return {"OP_GRAPH.json": graph, "OP_FAMILIES.json": families, "OP_DEVICE.json": device,
             "OP_SORTS.json": sorts, "OP_SHAPES.json": shapes, "OP_PATTERNS.json": patterns,
-            "docs/ops/patterns.json": patterns}
+            "SYSTEM_PARAMS.json": _system_params(), "docs/ops/patterns.json": patterns}
 
 
-def _shapes():
-    rows = [
-      ("single", "dense_field", "serial", True, "RMSE/PSNR"),
-      ("same_view_bundle", "dense_field", "bundle_reduction", True, "RMSE/PSNR"),
-      ("different_views", "pose", "join", False, "pose error"),
-      ("reference_target", "mask", "join", False, "IoU"),
-      ("time_series", "sparse_features", "stateful_stream", False, "position error/F1"),
-      ("volume", "mask", "serial", True, "IoU"),
-      ("point_mesh", "scalar", "serial", True, "bias/repeatability"),
-      ("huge_single", "dense_field", "tile", False, "RMSE/PSNR"),
-      ("batch", "decision", "map", True, "false positive/false negative"),
-    ]
-    return {"schema":1,"source_graph":"OP_GRAPH.json","shapes":[
-      {"input_form":i,"output_form":o,"shape":s,"currently_composable":ok,"metric":m,
-       "patterns":["Pipe-and-Filter"] if s=="serial" else [s],
-       "resource_hint":"GPU candidate only after measurement" if s=="map" else "device depends on edge attributes",
-       "missing":[] if ok else ["typed DAG executor" if s=="join" else "executor support for "+s],
-       "example":{"status":"none","source":"no mechanically verified example"}}
-      for i,o,s,ok,m in rows]}
+def _shapes(edges):
+    input_forms={"single":"image","same_view_bundle":"images","different_views":"images",
+                 "reference_target":"images","time_series":"video","volume":"volume",
+                 "point_mesh":"points","huge_single":"image","batch":"images"}
+    output_forms={"dense_field":{"image","depth","phase","flow"},"mask":{"region"},
+                  "sparse_features":{"feature","features","contour","points"},"pose":{"pose","transform"},
+                  "scalar":{"scalar","feature"},"decision":{"bool","decision"}}
+    rows=[]
+    for inf,insort in input_forms.items():
+      for outf,outs in output_forms.items():
+        direct=[e for e in edges if e.get("executable") and insort in e["inputs"] and e["output"] in outs]
+        joins=[e for e in direct if len(e["inputs"])>1]
+        reductions=[e for e in direct if insort in {"images","polsweep","lightfield","video","volume"}]
+        shape="join" if joins else ("bundle_reduction" if reductions else ("map" if inf=="batch" else "serial"))
+        rows.append({"input_form":inf,"output_form":outf,"input_sort":insort,"output_sorts":sorted(outs),
+                     "shape":shape,"derived_from":{"direct_edges":len(direct),"join_edges":len(joins),"reduce_edges":len(reductions)},
+                     "currently_composable":bool(direct) and shape in {"serial","bundle_reduction"},
+                     "metric":"IoU" if outf=="mask" else ("RMSE/PSNR" if outf=="dense_field" else "task-specific"),
+                     "representative_chain":[direct[0]["op"]] if direct else [],
+                     "example":{"status":"verified_graph_edge","op":direct[0]["op"]} if direct else {"status":"none"},
+                     "missing":[] if direct else ["typed DAG executor or matching executable edge"]})
+    return {"schema":2,"source_graph":"OP_GRAPH.json","input_forms":list(input_forms),
+            "output_forms":list(output_forms),"type_constructors":{"images":"seq<image>","video":"seq<image>",
+            "polsweep":"seq<polarized_image>","lightfield":"grid<image>","volume":"stack3<image>"},"shapes":rows}
 
 
 def _patterns():
     names = ["Pipe-and-Filter","Strategy","Adapter","Template Method","Coarse-to-fine",
              "Hypothesize-and-Verify","Voting","Chain of Responsibility","Decorator"]
     return {"schema":1,"source_graph":"OP_GRAPH.json","patterns":[
-      {"name":n,"intent":n,"slots":[{"role":"typed operator","input":"$current","output":"$next",
+      {"name":n,"intent":n,"grounded":False,"slots":[{"role":"typed operator","input":"$current","output":"$next",
                                        "family":None}],
        "example":{"status":"none","source":"no mechanically verified example"}}
       for n in names]}

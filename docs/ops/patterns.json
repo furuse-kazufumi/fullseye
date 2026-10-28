@@ -5,6 +5,7 @@
     {
       "name": "Pipe-and-Filter",
       "intent": "Pipe-and-Filter",
+      "grounded": false,
       "slots": [
         {
           "role": "typed operator",
@@ -21,6 +22,7 @@
     {
       "name": "Strategy",
       "intent": "Strategy",
+      "grounded": false,
       "slots": [
         {
           "role": "typed operator",
@@ -37,6 +39,7 @@
     {
       "name": "Adapter",
       "intent": "Adapter",
+      "grounded": false,
       "slots": [
         {
           "role": "typed operator",
@@ -53,6 +56,7 @@
     {
       "name": "Template Method",
       "intent": "Template Method",
+      "grounded": false,
       "slots": [
         {
           "role": "typed operator",
@@ -69,6 +73,7 @@
     {
       "name": "Coarse-to-fine",
       "intent": "Coarse-to-fine",
+      "grounded": false,
       "slots": [
         {
           "role": "typed operator",
@@ -85,6 +90,7 @@
     {
       "name": "Hypothesize-and-Verify",
       "intent": "Hypothesize-and-Verify",
+      "grounded": false,
       "slots": [
         {
           "role": "typed operator",
@@ -101,6 +107,7 @@
     {
       "name": "Voting",
       "intent": "Voting",
+      "grounded": false,
       "slots": [
         {
           "role": "typed operator",
@@ -117,6 +124,7 @@
     {
       "name": "Chain of Responsibility",
       "intent": "Chain of Responsibility",
+      "grounded": false,
       "slots": [
         {
           "role": "typed operator",
@@ -133,6 +141,7 @@
     {
       "name": "Decorator",
       "intent": "Decorator",
+      "grounded": false,
       "slots": [
         {
           "role": "typed operator",

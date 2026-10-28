@@ -1,158 +1,1370 @@
 {
-  "schema": 1,
+  "schema": 2,
   "source_graph": "OP_GRAPH.json",
+  "input_forms": [
+    "single",
+    "same_view_bundle",
+    "different_views",
+    "reference_target",
+    "time_series",
+    "volume",
+    "point_mesh",
+    "huge_single",
+    "batch"
+  ],
+  "output_forms": [
+    "dense_field",
+    "mask",
+    "sparse_features",
+    "pose",
+    "scalar",
+    "decision"
+  ],
+  "type_constructors": {
+    "images": "seq<image>",
+    "video": "seq<image>",
+    "polsweep": "seq<polarized_image>",
+    "lightfield": "grid<image>",
+    "volume": "stack3<image>"
+  },
   "shapes": [
     {
       "input_form": "single",
       "output_form": "dense_field",
+      "input_sort": "image",
+      "output_sorts": [
+        "depth",
+        "flow",
+        "image",
+        "phase"
+      ],
       "shape": "serial",
+      "derived_from": {
+        "direct_edges": 409,
+        "join_edges": 0,
+        "reduce_edges": 0
+      },
       "currently_composable": true,
       "metric": "RMSE/PSNR",
-      "patterns": [
-        "Pipe-and-Filter"
+      "representative_chain": [
+        "abs_diff_image"
       ],
-      "resource_hint": "device depends on edge attributes",
-      "missing": [],
       "example": {
-        "status": "none",
-        "source": "no mechanically verified example"
-      }
+        "status": "verified_graph_edge",
+        "op": "abs_diff_image"
+      },
+      "missing": []
+    },
+    {
+      "input_form": "single",
+      "output_form": "mask",
+      "input_sort": "image",
+      "output_sorts": [
+        "region"
+      ],
+      "shape": "serial",
+      "derived_from": {
+        "direct_edges": 83,
+        "join_edges": 0,
+        "reduce_edges": 0
+      },
+      "currently_composable": true,
+      "metric": "IoU",
+      "representative_chain": [
+        "adaptive_gauss_thresh"
+      ],
+      "example": {
+        "status": "verified_graph_edge",
+        "op": "adaptive_gauss_thresh"
+      },
+      "missing": []
+    },
+    {
+      "input_form": "single",
+      "output_form": "sparse_features",
+      "input_sort": "image",
+      "output_sorts": [
+        "contour",
+        "feature",
+        "features",
+        "points"
+      ],
+      "shape": "serial",
+      "derived_from": {
+        "direct_edges": 57,
+        "join_edges": 0,
+        "reduce_edges": 0
+      },
+      "currently_composable": true,
+      "metric": "task-specific",
+      "representative_chain": [
+        "cooc_feature_matrix"
+      ],
+      "example": {
+        "status": "verified_graph_edge",
+        "op": "cooc_feature_matrix"
+      },
+      "missing": []
+    },
+    {
+      "input_form": "single",
+      "output_form": "pose",
+      "input_sort": "image",
+      "output_sorts": [
+        "pose",
+        "transform"
+      ],
+      "shape": "serial",
+      "derived_from": {
+        "direct_edges": 0,
+        "join_edges": 0,
+        "reduce_edges": 0
+      },
+      "currently_composable": false,
+      "metric": "task-specific",
+      "representative_chain": [],
+      "example": {
+        "status": "none"
+      },
+      "missing": [
+        "typed DAG executor or matching executable edge"
+      ]
+    },
+    {
+      "input_form": "single",
+      "output_form": "scalar",
+      "input_sort": "image",
+      "output_sorts": [
+        "feature",
+        "scalar"
+      ],
+      "shape": "serial",
+      "derived_from": {
+        "direct_edges": 42,
+        "join_edges": 0,
+        "reduce_edges": 0
+      },
+      "currently_composable": true,
+      "metric": "task-specific",
+      "representative_chain": [
+        "cooc_feature_matrix"
+      ],
+      "example": {
+        "status": "verified_graph_edge",
+        "op": "cooc_feature_matrix"
+      },
+      "missing": []
+    },
+    {
+      "input_form": "single",
+      "output_form": "decision",
+      "input_sort": "image",
+      "output_sorts": [
+        "bool",
+        "decision"
+      ],
+      "shape": "serial",
+      "derived_from": {
+        "direct_edges": 0,
+        "join_edges": 0,
+        "reduce_edges": 0
+      },
+      "currently_composable": false,
+      "metric": "task-specific",
+      "representative_chain": [],
+      "example": {
+        "status": "none"
+      },
+      "missing": [
+        "typed DAG executor or matching executable edge"
+      ]
     },
     {
       "input_form": "same_view_bundle",
       "output_form": "dense_field",
-      "shape": "bundle_reduction",
-      "currently_composable": true,
-      "metric": "RMSE/PSNR",
-      "patterns": [
-        "bundle_reduction"
+      "input_sort": "images",
+      "output_sorts": [
+        "depth",
+        "flow",
+        "image",
+        "phase"
       ],
-      "resource_hint": "device depends on edge attributes",
-      "missing": [],
+      "shape": "serial",
+      "derived_from": {
+        "direct_edges": 0,
+        "join_edges": 0,
+        "reduce_edges": 0
+      },
+      "currently_composable": false,
+      "metric": "RMSE/PSNR",
+      "representative_chain": [],
       "example": {
-        "status": "none",
-        "source": "no mechanically verified example"
-      }
+        "status": "none"
+      },
+      "missing": [
+        "typed DAG executor or matching executable edge"
+      ]
+    },
+    {
+      "input_form": "same_view_bundle",
+      "output_form": "mask",
+      "input_sort": "images",
+      "output_sorts": [
+        "region"
+      ],
+      "shape": "serial",
+      "derived_from": {
+        "direct_edges": 0,
+        "join_edges": 0,
+        "reduce_edges": 0
+      },
+      "currently_composable": false,
+      "metric": "IoU",
+      "representative_chain": [],
+      "example": {
+        "status": "none"
+      },
+      "missing": [
+        "typed DAG executor or matching executable edge"
+      ]
+    },
+    {
+      "input_form": "same_view_bundle",
+      "output_form": "sparse_features",
+      "input_sort": "images",
+      "output_sorts": [
+        "contour",
+        "feature",
+        "features",
+        "points"
+      ],
+      "shape": "serial",
+      "derived_from": {
+        "direct_edges": 0,
+        "join_edges": 0,
+        "reduce_edges": 0
+      },
+      "currently_composable": false,
+      "metric": "task-specific",
+      "representative_chain": [],
+      "example": {
+        "status": "none"
+      },
+      "missing": [
+        "typed DAG executor or matching executable edge"
+      ]
+    },
+    {
+      "input_form": "same_view_bundle",
+      "output_form": "pose",
+      "input_sort": "images",
+      "output_sorts": [
+        "pose",
+        "transform"
+      ],
+      "shape": "serial",
+      "derived_from": {
+        "direct_edges": 0,
+        "join_edges": 0,
+        "reduce_edges": 0
+      },
+      "currently_composable": false,
+      "metric": "task-specific",
+      "representative_chain": [],
+      "example": {
+        "status": "none"
+      },
+      "missing": [
+        "typed DAG executor or matching executable edge"
+      ]
+    },
+    {
+      "input_form": "same_view_bundle",
+      "output_form": "scalar",
+      "input_sort": "images",
+      "output_sorts": [
+        "feature",
+        "scalar"
+      ],
+      "shape": "serial",
+      "derived_from": {
+        "direct_edges": 0,
+        "join_edges": 0,
+        "reduce_edges": 0
+      },
+      "currently_composable": false,
+      "metric": "task-specific",
+      "representative_chain": [],
+      "example": {
+        "status": "none"
+      },
+      "missing": [
+        "typed DAG executor or matching executable edge"
+      ]
+    },
+    {
+      "input_form": "same_view_bundle",
+      "output_form": "decision",
+      "input_sort": "images",
+      "output_sorts": [
+        "bool",
+        "decision"
+      ],
+      "shape": "serial",
+      "derived_from": {
+        "direct_edges": 0,
+        "join_edges": 0,
+        "reduce_edges": 0
+      },
+      "currently_composable": false,
+      "metric": "task-specific",
+      "representative_chain": [],
+      "example": {
+        "status": "none"
+      },
+      "missing": [
+        "typed DAG executor or matching executable edge"
+      ]
+    },
+    {
+      "input_form": "different_views",
+      "output_form": "dense_field",
+      "input_sort": "images",
+      "output_sorts": [
+        "depth",
+        "flow",
+        "image",
+        "phase"
+      ],
+      "shape": "serial",
+      "derived_from": {
+        "direct_edges": 0,
+        "join_edges": 0,
+        "reduce_edges": 0
+      },
+      "currently_composable": false,
+      "metric": "RMSE/PSNR",
+      "representative_chain": [],
+      "example": {
+        "status": "none"
+      },
+      "missing": [
+        "typed DAG executor or matching executable edge"
+      ]
+    },
+    {
+      "input_form": "different_views",
+      "output_form": "mask",
+      "input_sort": "images",
+      "output_sorts": [
+        "region"
+      ],
+      "shape": "serial",
+      "derived_from": {
+        "direct_edges": 0,
+        "join_edges": 0,
+        "reduce_edges": 0
+      },
+      "currently_composable": false,
+      "metric": "IoU",
+      "representative_chain": [],
+      "example": {
+        "status": "none"
+      },
+      "missing": [
+        "typed DAG executor or matching executable edge"
+      ]
+    },
+    {
+      "input_form": "different_views",
+      "output_form": "sparse_features",
+      "input_sort": "images",
+      "output_sorts": [
+        "contour",
+        "feature",
+        "features",
+        "points"
+      ],
+      "shape": "serial",
+      "derived_from": {
+        "direct_edges": 0,
+        "join_edges": 0,
+        "reduce_edges": 0
+      },
+      "currently_composable": false,
+      "metric": "task-specific",
+      "representative_chain": [],
+      "example": {
+        "status": "none"
+      },
+      "missing": [
+        "typed DAG executor or matching executable edge"
+      ]
     },
     {
       "input_form": "different_views",
       "output_form": "pose",
-      "shape": "join",
+      "input_sort": "images",
+      "output_sorts": [
+        "pose",
+        "transform"
+      ],
+      "shape": "serial",
+      "derived_from": {
+        "direct_edges": 0,
+        "join_edges": 0,
+        "reduce_edges": 0
+      },
       "currently_composable": false,
-      "metric": "pose error",
-      "patterns": [
-        "join"
-      ],
-      "resource_hint": "device depends on edge attributes",
-      "missing": [
-        "typed DAG executor"
-      ],
+      "metric": "task-specific",
+      "representative_chain": [],
       "example": {
-        "status": "none",
-        "source": "no mechanically verified example"
-      }
+        "status": "none"
+      },
+      "missing": [
+        "typed DAG executor or matching executable edge"
+      ]
+    },
+    {
+      "input_form": "different_views",
+      "output_form": "scalar",
+      "input_sort": "images",
+      "output_sorts": [
+        "feature",
+        "scalar"
+      ],
+      "shape": "serial",
+      "derived_from": {
+        "direct_edges": 0,
+        "join_edges": 0,
+        "reduce_edges": 0
+      },
+      "currently_composable": false,
+      "metric": "task-specific",
+      "representative_chain": [],
+      "example": {
+        "status": "none"
+      },
+      "missing": [
+        "typed DAG executor or matching executable edge"
+      ]
+    },
+    {
+      "input_form": "different_views",
+      "output_form": "decision",
+      "input_sort": "images",
+      "output_sorts": [
+        "bool",
+        "decision"
+      ],
+      "shape": "serial",
+      "derived_from": {
+        "direct_edges": 0,
+        "join_edges": 0,
+        "reduce_edges": 0
+      },
+      "currently_composable": false,
+      "metric": "task-specific",
+      "representative_chain": [],
+      "example": {
+        "status": "none"
+      },
+      "missing": [
+        "typed DAG executor or matching executable edge"
+      ]
+    },
+    {
+      "input_form": "reference_target",
+      "output_form": "dense_field",
+      "input_sort": "images",
+      "output_sorts": [
+        "depth",
+        "flow",
+        "image",
+        "phase"
+      ],
+      "shape": "serial",
+      "derived_from": {
+        "direct_edges": 0,
+        "join_edges": 0,
+        "reduce_edges": 0
+      },
+      "currently_composable": false,
+      "metric": "RMSE/PSNR",
+      "representative_chain": [],
+      "example": {
+        "status": "none"
+      },
+      "missing": [
+        "typed DAG executor or matching executable edge"
+      ]
     },
     {
       "input_form": "reference_target",
       "output_form": "mask",
-      "shape": "join",
+      "input_sort": "images",
+      "output_sorts": [
+        "region"
+      ],
+      "shape": "serial",
+      "derived_from": {
+        "direct_edges": 0,
+        "join_edges": 0,
+        "reduce_edges": 0
+      },
       "currently_composable": false,
       "metric": "IoU",
-      "patterns": [
-        "join"
-      ],
-      "resource_hint": "device depends on edge attributes",
+      "representative_chain": [],
+      "example": {
+        "status": "none"
+      },
       "missing": [
-        "typed DAG executor"
+        "typed DAG executor or matching executable edge"
+      ]
+    },
+    {
+      "input_form": "reference_target",
+      "output_form": "sparse_features",
+      "input_sort": "images",
+      "output_sorts": [
+        "contour",
+        "feature",
+        "features",
+        "points"
+      ],
+      "shape": "serial",
+      "derived_from": {
+        "direct_edges": 0,
+        "join_edges": 0,
+        "reduce_edges": 0
+      },
+      "currently_composable": false,
+      "metric": "task-specific",
+      "representative_chain": [],
+      "example": {
+        "status": "none"
+      },
+      "missing": [
+        "typed DAG executor or matching executable edge"
+      ]
+    },
+    {
+      "input_form": "reference_target",
+      "output_form": "pose",
+      "input_sort": "images",
+      "output_sorts": [
+        "pose",
+        "transform"
+      ],
+      "shape": "serial",
+      "derived_from": {
+        "direct_edges": 0,
+        "join_edges": 0,
+        "reduce_edges": 0
+      },
+      "currently_composable": false,
+      "metric": "task-specific",
+      "representative_chain": [],
+      "example": {
+        "status": "none"
+      },
+      "missing": [
+        "typed DAG executor or matching executable edge"
+      ]
+    },
+    {
+      "input_form": "reference_target",
+      "output_form": "scalar",
+      "input_sort": "images",
+      "output_sorts": [
+        "feature",
+        "scalar"
+      ],
+      "shape": "serial",
+      "derived_from": {
+        "direct_edges": 0,
+        "join_edges": 0,
+        "reduce_edges": 0
+      },
+      "currently_composable": false,
+      "metric": "task-specific",
+      "representative_chain": [],
+      "example": {
+        "status": "none"
+      },
+      "missing": [
+        "typed DAG executor or matching executable edge"
+      ]
+    },
+    {
+      "input_form": "reference_target",
+      "output_form": "decision",
+      "input_sort": "images",
+      "output_sorts": [
+        "bool",
+        "decision"
+      ],
+      "shape": "serial",
+      "derived_from": {
+        "direct_edges": 0,
+        "join_edges": 0,
+        "reduce_edges": 0
+      },
+      "currently_composable": false,
+      "metric": "task-specific",
+      "representative_chain": [],
+      "example": {
+        "status": "none"
+      },
+      "missing": [
+        "typed DAG executor or matching executable edge"
+      ]
+    },
+    {
+      "input_form": "time_series",
+      "output_form": "dense_field",
+      "input_sort": "video",
+      "output_sorts": [
+        "depth",
+        "flow",
+        "image",
+        "phase"
+      ],
+      "shape": "bundle_reduction",
+      "derived_from": {
+        "direct_edges": 1,
+        "join_edges": 0,
+        "reduce_edges": 1
+      },
+      "currently_composable": true,
+      "metric": "RMSE/PSNR",
+      "representative_chain": [
+        "tb_temporal_band_power"
       ],
       "example": {
-        "status": "none",
-        "source": "no mechanically verified example"
-      }
+        "status": "verified_graph_edge",
+        "op": "tb_temporal_band_power"
+      },
+      "missing": []
+    },
+    {
+      "input_form": "time_series",
+      "output_form": "mask",
+      "input_sort": "video",
+      "output_sorts": [
+        "region"
+      ],
+      "shape": "serial",
+      "derived_from": {
+        "direct_edges": 0,
+        "join_edges": 0,
+        "reduce_edges": 0
+      },
+      "currently_composable": false,
+      "metric": "IoU",
+      "representative_chain": [],
+      "example": {
+        "status": "none"
+      },
+      "missing": [
+        "typed DAG executor or matching executable edge"
+      ]
     },
     {
       "input_form": "time_series",
       "output_form": "sparse_features",
-      "shape": "stateful_stream",
-      "currently_composable": false,
-      "metric": "position error/F1",
-      "patterns": [
-        "stateful_stream"
+      "input_sort": "video",
+      "output_sorts": [
+        "contour",
+        "feature",
+        "features",
+        "points"
       ],
-      "resource_hint": "device depends on edge attributes",
+      "shape": "serial",
+      "derived_from": {
+        "direct_edges": 0,
+        "join_edges": 0,
+        "reduce_edges": 0
+      },
+      "currently_composable": false,
+      "metric": "task-specific",
+      "representative_chain": [],
+      "example": {
+        "status": "none"
+      },
       "missing": [
-        "executor support for stateful_stream"
+        "typed DAG executor or matching executable edge"
+      ]
+    },
+    {
+      "input_form": "time_series",
+      "output_form": "pose",
+      "input_sort": "video",
+      "output_sorts": [
+        "pose",
+        "transform"
+      ],
+      "shape": "serial",
+      "derived_from": {
+        "direct_edges": 0,
+        "join_edges": 0,
+        "reduce_edges": 0
+      },
+      "currently_composable": false,
+      "metric": "task-specific",
+      "representative_chain": [],
+      "example": {
+        "status": "none"
+      },
+      "missing": [
+        "typed DAG executor or matching executable edge"
+      ]
+    },
+    {
+      "input_form": "time_series",
+      "output_form": "scalar",
+      "input_sort": "video",
+      "output_sorts": [
+        "feature",
+        "scalar"
+      ],
+      "shape": "serial",
+      "derived_from": {
+        "direct_edges": 0,
+        "join_edges": 0,
+        "reduce_edges": 0
+      },
+      "currently_composable": false,
+      "metric": "task-specific",
+      "representative_chain": [],
+      "example": {
+        "status": "none"
+      },
+      "missing": [
+        "typed DAG executor or matching executable edge"
+      ]
+    },
+    {
+      "input_form": "time_series",
+      "output_form": "decision",
+      "input_sort": "video",
+      "output_sorts": [
+        "bool",
+        "decision"
+      ],
+      "shape": "serial",
+      "derived_from": {
+        "direct_edges": 0,
+        "join_edges": 0,
+        "reduce_edges": 0
+      },
+      "currently_composable": false,
+      "metric": "task-specific",
+      "representative_chain": [],
+      "example": {
+        "status": "none"
+      },
+      "missing": [
+        "typed DAG executor or matching executable edge"
+      ]
+    },
+    {
+      "input_form": "volume",
+      "output_form": "dense_field",
+      "input_sort": "volume",
+      "output_sorts": [
+        "depth",
+        "flow",
+        "image",
+        "phase"
+      ],
+      "shape": "bundle_reduction",
+      "derived_from": {
+        "direct_edges": 2,
+        "join_edges": 0,
+        "reduce_edges": 2
+      },
+      "currently_composable": true,
+      "metric": "RMSE/PSNR",
+      "representative_chain": [
+        "vol_mip"
       ],
       "example": {
-        "status": "none",
-        "source": "no mechanically verified example"
-      }
+        "status": "verified_graph_edge",
+        "op": "vol_mip"
+      },
+      "missing": []
     },
     {
       "input_form": "volume",
       "output_form": "mask",
-      "shape": "serial",
-      "currently_composable": true,
-      "metric": "IoU",
-      "patterns": [
-        "Pipe-and-Filter"
+      "input_sort": "volume",
+      "output_sorts": [
+        "region"
       ],
-      "resource_hint": "device depends on edge attributes",
-      "missing": [],
+      "shape": "serial",
+      "derived_from": {
+        "direct_edges": 0,
+        "join_edges": 0,
+        "reduce_edges": 0
+      },
+      "currently_composable": false,
+      "metric": "IoU",
+      "representative_chain": [],
       "example": {
-        "status": "none",
-        "source": "no mechanically verified example"
-      }
+        "status": "none"
+      },
+      "missing": [
+        "typed DAG executor or matching executable edge"
+      ]
+    },
+    {
+      "input_form": "volume",
+      "output_form": "sparse_features",
+      "input_sort": "volume",
+      "output_sorts": [
+        "contour",
+        "feature",
+        "features",
+        "points"
+      ],
+      "shape": "bundle_reduction",
+      "derived_from": {
+        "direct_edges": 1,
+        "join_edges": 0,
+        "reduce_edges": 1
+      },
+      "currently_composable": true,
+      "metric": "task-specific",
+      "representative_chain": [
+        "vol_count"
+      ],
+      "example": {
+        "status": "verified_graph_edge",
+        "op": "vol_count"
+      },
+      "missing": []
+    },
+    {
+      "input_form": "volume",
+      "output_form": "pose",
+      "input_sort": "volume",
+      "output_sorts": [
+        "pose",
+        "transform"
+      ],
+      "shape": "serial",
+      "derived_from": {
+        "direct_edges": 0,
+        "join_edges": 0,
+        "reduce_edges": 0
+      },
+      "currently_composable": false,
+      "metric": "task-specific",
+      "representative_chain": [],
+      "example": {
+        "status": "none"
+      },
+      "missing": [
+        "typed DAG executor or matching executable edge"
+      ]
+    },
+    {
+      "input_form": "volume",
+      "output_form": "scalar",
+      "input_sort": "volume",
+      "output_sorts": [
+        "feature",
+        "scalar"
+      ],
+      "shape": "bundle_reduction",
+      "derived_from": {
+        "direct_edges": 1,
+        "join_edges": 0,
+        "reduce_edges": 1
+      },
+      "currently_composable": true,
+      "metric": "task-specific",
+      "representative_chain": [
+        "vol_count"
+      ],
+      "example": {
+        "status": "verified_graph_edge",
+        "op": "vol_count"
+      },
+      "missing": []
+    },
+    {
+      "input_form": "volume",
+      "output_form": "decision",
+      "input_sort": "volume",
+      "output_sorts": [
+        "bool",
+        "decision"
+      ],
+      "shape": "serial",
+      "derived_from": {
+        "direct_edges": 0,
+        "join_edges": 0,
+        "reduce_edges": 0
+      },
+      "currently_composable": false,
+      "metric": "task-specific",
+      "representative_chain": [],
+      "example": {
+        "status": "none"
+      },
+      "missing": [
+        "typed DAG executor or matching executable edge"
+      ]
+    },
+    {
+      "input_form": "point_mesh",
+      "output_form": "dense_field",
+      "input_sort": "points",
+      "output_sorts": [
+        "depth",
+        "flow",
+        "image",
+        "phase"
+      ],
+      "shape": "serial",
+      "derived_from": {
+        "direct_edges": 5,
+        "join_edges": 0,
+        "reduce_edges": 0
+      },
+      "currently_composable": true,
+      "metric": "RMSE/PSNR",
+      "representative_chain": [
+        "tb_normals_to_egi"
+      ],
+      "example": {
+        "status": "verified_graph_edge",
+        "op": "tb_normals_to_egi"
+      },
+      "missing": []
+    },
+    {
+      "input_form": "point_mesh",
+      "output_form": "mask",
+      "input_sort": "points",
+      "output_sorts": [
+        "region"
+      ],
+      "shape": "serial",
+      "derived_from": {
+        "direct_edges": 0,
+        "join_edges": 0,
+        "reduce_edges": 0
+      },
+      "currently_composable": false,
+      "metric": "IoU",
+      "representative_chain": [],
+      "example": {
+        "status": "none"
+      },
+      "missing": [
+        "typed DAG executor or matching executable edge"
+      ]
+    },
+    {
+      "input_form": "point_mesh",
+      "output_form": "sparse_features",
+      "input_sort": "points",
+      "output_sorts": [
+        "contour",
+        "feature",
+        "features",
+        "points"
+      ],
+      "shape": "serial",
+      "derived_from": {
+        "direct_edges": 26,
+        "join_edges": 0,
+        "reduce_edges": 0
+      },
+      "currently_composable": true,
+      "metric": "task-specific",
+      "representative_chain": [
+        "tb_arc_length"
+      ],
+      "example": {
+        "status": "verified_graph_edge",
+        "op": "tb_arc_length"
+      },
+      "missing": []
+    },
+    {
+      "input_form": "point_mesh",
+      "output_form": "pose",
+      "input_sort": "points",
+      "output_sorts": [
+        "pose",
+        "transform"
+      ],
+      "shape": "serial",
+      "derived_from": {
+        "direct_edges": 0,
+        "join_edges": 0,
+        "reduce_edges": 0
+      },
+      "currently_composable": false,
+      "metric": "task-specific",
+      "representative_chain": [],
+      "example": {
+        "status": "none"
+      },
+      "missing": [
+        "typed DAG executor or matching executable edge"
+      ]
     },
     {
       "input_form": "point_mesh",
       "output_form": "scalar",
-      "shape": "serial",
-      "currently_composable": true,
-      "metric": "bias/repeatability",
-      "patterns": [
-        "Pipe-and-Filter"
+      "input_sort": "points",
+      "output_sorts": [
+        "feature",
+        "scalar"
       ],
-      "resource_hint": "device depends on edge attributes",
-      "missing": [],
+      "shape": "serial",
+      "derived_from": {
+        "direct_edges": 5,
+        "join_edges": 0,
+        "reduce_edges": 0
+      },
+      "currently_composable": true,
+      "metric": "task-specific",
+      "representative_chain": [
+        "tb_arc_length"
+      ],
       "example": {
-        "status": "none",
-        "source": "no mechanically verified example"
-      }
+        "status": "verified_graph_edge",
+        "op": "tb_arc_length"
+      },
+      "missing": []
+    },
+    {
+      "input_form": "point_mesh",
+      "output_form": "decision",
+      "input_sort": "points",
+      "output_sorts": [
+        "bool",
+        "decision"
+      ],
+      "shape": "serial",
+      "derived_from": {
+        "direct_edges": 0,
+        "join_edges": 0,
+        "reduce_edges": 0
+      },
+      "currently_composable": false,
+      "metric": "task-specific",
+      "representative_chain": [],
+      "example": {
+        "status": "none"
+      },
+      "missing": [
+        "typed DAG executor or matching executable edge"
+      ]
     },
     {
       "input_form": "huge_single",
       "output_form": "dense_field",
-      "shape": "tile",
-      "currently_composable": false,
-      "metric": "RMSE/PSNR",
-      "patterns": [
-        "tile"
+      "input_sort": "image",
+      "output_sorts": [
+        "depth",
+        "flow",
+        "image",
+        "phase"
       ],
-      "resource_hint": "device depends on edge attributes",
-      "missing": [
-        "executor support for tile"
+      "shape": "serial",
+      "derived_from": {
+        "direct_edges": 409,
+        "join_edges": 0,
+        "reduce_edges": 0
+      },
+      "currently_composable": true,
+      "metric": "RMSE/PSNR",
+      "representative_chain": [
+        "abs_diff_image"
       ],
       "example": {
-        "status": "none",
-        "source": "no mechanically verified example"
-      }
+        "status": "verified_graph_edge",
+        "op": "abs_diff_image"
+      },
+      "missing": []
+    },
+    {
+      "input_form": "huge_single",
+      "output_form": "mask",
+      "input_sort": "image",
+      "output_sorts": [
+        "region"
+      ],
+      "shape": "serial",
+      "derived_from": {
+        "direct_edges": 83,
+        "join_edges": 0,
+        "reduce_edges": 0
+      },
+      "currently_composable": true,
+      "metric": "IoU",
+      "representative_chain": [
+        "adaptive_gauss_thresh"
+      ],
+      "example": {
+        "status": "verified_graph_edge",
+        "op": "adaptive_gauss_thresh"
+      },
+      "missing": []
+    },
+    {
+      "input_form": "huge_single",
+      "output_form": "sparse_features",
+      "input_sort": "image",
+      "output_sorts": [
+        "contour",
+        "feature",
+        "features",
+        "points"
+      ],
+      "shape": "serial",
+      "derived_from": {
+        "direct_edges": 57,
+        "join_edges": 0,
+        "reduce_edges": 0
+      },
+      "currently_composable": true,
+      "metric": "task-specific",
+      "representative_chain": [
+        "cooc_feature_matrix"
+      ],
+      "example": {
+        "status": "verified_graph_edge",
+        "op": "cooc_feature_matrix"
+      },
+      "missing": []
+    },
+    {
+      "input_form": "huge_single",
+      "output_form": "pose",
+      "input_sort": "image",
+      "output_sorts": [
+        "pose",
+        "transform"
+      ],
+      "shape": "serial",
+      "derived_from": {
+        "direct_edges": 0,
+        "join_edges": 0,
+        "reduce_edges": 0
+      },
+      "currently_composable": false,
+      "metric": "task-specific",
+      "representative_chain": [],
+      "example": {
+        "status": "none"
+      },
+      "missing": [
+        "typed DAG executor or matching executable edge"
+      ]
+    },
+    {
+      "input_form": "huge_single",
+      "output_form": "scalar",
+      "input_sort": "image",
+      "output_sorts": [
+        "feature",
+        "scalar"
+      ],
+      "shape": "serial",
+      "derived_from": {
+        "direct_edges": 42,
+        "join_edges": 0,
+        "reduce_edges": 0
+      },
+      "currently_composable": true,
+      "metric": "task-specific",
+      "representative_chain": [
+        "cooc_feature_matrix"
+      ],
+      "example": {
+        "status": "verified_graph_edge",
+        "op": "cooc_feature_matrix"
+      },
+      "missing": []
+    },
+    {
+      "input_form": "huge_single",
+      "output_form": "decision",
+      "input_sort": "image",
+      "output_sorts": [
+        "bool",
+        "decision"
+      ],
+      "shape": "serial",
+      "derived_from": {
+        "direct_edges": 0,
+        "join_edges": 0,
+        "reduce_edges": 0
+      },
+      "currently_composable": false,
+      "metric": "task-specific",
+      "representative_chain": [],
+      "example": {
+        "status": "none"
+      },
+      "missing": [
+        "typed DAG executor or matching executable edge"
+      ]
+    },
+    {
+      "input_form": "batch",
+      "output_form": "dense_field",
+      "input_sort": "images",
+      "output_sorts": [
+        "depth",
+        "flow",
+        "image",
+        "phase"
+      ],
+      "shape": "map",
+      "derived_from": {
+        "direct_edges": 0,
+        "join_edges": 0,
+        "reduce_edges": 0
+      },
+      "currently_composable": false,
+      "metric": "RMSE/PSNR",
+      "representative_chain": [],
+      "example": {
+        "status": "none"
+      },
+      "missing": [
+        "typed DAG executor or matching executable edge"
+      ]
+    },
+    {
+      "input_form": "batch",
+      "output_form": "mask",
+      "input_sort": "images",
+      "output_sorts": [
+        "region"
+      ],
+      "shape": "map",
+      "derived_from": {
+        "direct_edges": 0,
+        "join_edges": 0,
+        "reduce_edges": 0
+      },
+      "currently_composable": false,
+      "metric": "IoU",
+      "representative_chain": [],
+      "example": {
+        "status": "none"
+      },
+      "missing": [
+        "typed DAG executor or matching executable edge"
+      ]
+    },
+    {
+      "input_form": "batch",
+      "output_form": "sparse_features",
+      "input_sort": "images",
+      "output_sorts": [
+        "contour",
+        "feature",
+        "features",
+        "points"
+      ],
+      "shape": "map",
+      "derived_from": {
+        "direct_edges": 0,
+        "join_edges": 0,
+        "reduce_edges": 0
+      },
+      "currently_composable": false,
+      "metric": "task-specific",
+      "representative_chain": [],
+      "example": {
+        "status": "none"
+      },
+      "missing": [
+        "typed DAG executor or matching executable edge"
+      ]
+    },
+    {
+      "input_form": "batch",
+      "output_form": "pose",
+      "input_sort": "images",
+      "output_sorts": [
+        "pose",
+        "transform"
+      ],
+      "shape": "map",
+      "derived_from": {
+        "direct_edges": 0,
+        "join_edges": 0,
+        "reduce_edges": 0
+      },
+      "currently_composable": false,
+      "metric": "task-specific",
+      "representative_chain": [],
+      "example": {
+        "status": "none"
+      },
+      "missing": [
+        "typed DAG executor or matching executable edge"
+      ]
+    },
+    {
+      "input_form": "batch",
+      "output_form": "scalar",
+      "input_sort": "images",
+      "output_sorts": [
+        "feature",
+        "scalar"
+      ],
+      "shape": "map",
+      "derived_from": {
+        "direct_edges": 0,
+        "join_edges": 0,
+        "reduce_edges": 0
+      },
+      "currently_composable": false,
+      "metric": "task-specific",
+      "representative_chain": [],
+      "example": {
+        "status": "none"
+      },
+      "missing": [
+        "typed DAG executor or matching executable edge"
+      ]
     },
     {
       "input_form": "batch",
       "output_form": "decision",
-      "shape": "map",
-      "currently_composable": true,
-      "metric": "false positive/false negative",
-      "patterns": [
-        "map"
+      "input_sort": "images",
+      "output_sorts": [
+        "bool",
+        "decision"
       ],
-      "resource_hint": "GPU candidate only after measurement",
-      "missing": [],
+      "shape": "map",
+      "derived_from": {
+        "direct_edges": 0,
+        "join_edges": 0,
+        "reduce_edges": 0
+      },
+      "currently_composable": false,
+      "metric": "task-specific",
+      "representative_chain": [],
       "example": {
-        "status": "none",
-        "source": "no mechanically verified example"
-      }
+        "status": "none"
+      },
+      "missing": [
+        "typed DAG executor or matching executable edge"
+      ]
     }
   ]
 }

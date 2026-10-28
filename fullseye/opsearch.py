@@ -31,7 +31,7 @@ import re
 import unicodedata
 from collections import Counter
 
-__all__ = ["search_ops", "plan_chain", "op_cards", "choose_op", "required_inputs", "param_space",
+__all__ = ["search_ops", "plan", "describe", "choose", "plan_chain", "op_cards", "choose_op", "required_inputs", "param_space",
            "pipeline_shape", "pattern_skeleton", "sort_guide",
            "load_index", "tokenize", "detect_lang", "LANGS", "main"]
 
@@ -57,7 +57,7 @@ _HANGUL = re.compile(r"[가-힯ᄀ-ᇿ㄰-㆏]+")
 _KANA = re.compile(r"[぀-ヿ]")
 #: デーヴァナーガリー(ヒンディー語)。語は空白で区切られるので語ごとに切る(母音記号・virama も語の内側)
 _DEVANAGARI = re.compile(r"[ऀ-ॿ꣠-ꣿ]+")
-_GERMAN = re.compile(r"[äöüß]|\b(?:der|die|das|und|nicht|mit|eines?|bild|kante|rauschen)\b")
+_GERMAN = re.compile(r"[äöüß]|\b(?:der|die|das|und|nicht|mit|eines?|bild|kante|kanten|erkennen|rauschen)\b")
 
 _CACHE: dict = {}
 
@@ -85,19 +85,116 @@ def _graph() -> dict:
     return g
 
 
+def _sort(value: str) -> str:
+    return _graph().get("sort_aliases", {}).get(value, value)
+
+
+def _result(ok: bool, reason: str, *, hint: str = "", next_tool: str | None = None, **data) -> dict:
+    return {"ok": ok, "reason": reason, "hint": hint, "next_tool": next_tool, **data}
+
+
+def plan(have, want: str, direction: str = "forward", pattern: str | None = None,
+         constraints: dict | None = None) -> dict:
+    """Plan on the executable typed AND-OR hypergraph without executing operators."""
+    constraints = constraints or {}
+    if direction not in ("forward", "backward"):
+        return _result(False, "direction must be forward or backward", hint="use direction='forward' or 'backward'", next_tool="plan")
+    want = _sort(want)
+    if direction == "backward":
+        return required_inputs(want, constraints.get("max_depth", 4), constraints.get("k", 5))
+    starts = [_sort(x) for x in (have if isinstance(have, (list, tuple, set)) else [have])]
+    query = str(constraints.get("query") or want)
+    max_depth, k = int(constraints.get("max_depth", 4)), int(constraints.get("k", 5))
+    semantic = {r["name"]: r["score"] for r in search_ops(query, k=100)["ops"]}
+    executable_only = constraints.get("executable_only", True)
+    edges = [e for e in _graph()["edges"] if e.get("executable") or not executable_only]
+    relevant_names = set(semantic)
+    edges = [e for e in edges if e["op"] in relevant_names or e["output"] == want or
+             all(x == "any" or x in starts for x in e["inputs"])]
+    import heapq
+    queue = [(0.0, 0, tuple(starts), [])]
+    serial = 0; best = {frozenset(starts): 0.0}; solutions = []
+    expanded = 0
+    while queue and len(solutions) < k and expanded < 50000:
+        cost, _seq, types, path = heapq.heappop(queue); available = set(types)
+        expanded += 1
+        if want in available and path:
+            solutions.append({"ops": path, "available": sorted(available), "weight": round(cost, 6)})
+            continue
+        if len(path) >= max_depth:
+            continue
+        for e in edges:
+            inputs = e["inputs"]
+            if not all(x == "any" or x in available for x in inputs):
+                continue
+            output = next(iter(available)) if e["output"] == "any" and available else e["output"]
+            if output in available and e["op"] in path:
+                continue
+            nxt = frozenset(available | {output})
+            # Related ops are cheaper, but every edge retains a positive cost.
+            edge_cost = 1.0 / (1.0 + max(0.0, semantic.get(e["op"], 0.0)))
+            new_cost = cost + edge_cost
+            if new_cost >= best.get(nxt, float("inf")) and output != want:
+                continue
+            best[nxt] = new_cost; serial += 1
+            heapq.heappush(queue, (new_cost, serial, tuple(sorted(nxt)), path + [e["op"]]))
+    if not solutions:
+        return _result(False, "no executable typed path", hint="inspect blocked_at or broaden have", next_tool="find_ops",
+                       have=starts, want=want, direction=direction, blocked_at=sorted(best, key=lambda x: len(x))[-1:] if best else starts)
+    return _result(True, "executable typed path found", next_tool="op_cards", have=starts, want=want,
+                   direction=direction, pattern=pattern, executable_only=executable_only, plans=solutions)
+
+
+def describe(kind: str, name: str, budget_tokens: int = 800) -> dict:
+    """Describe one sort, op, or family; never dump the complete inventory."""
+    if kind == "sort":
+        r = sort_guide(_sort(name))
+    elif kind == "op":
+        edge = next((e for e in _graph()["edges"] if e["op"] == name), None)
+        r = {"found": edge is not None, "op": edge, "param_space": param_space(name, {}) if edge else None}
+    elif kind == "family":
+        fam = next((f for f in _load_json(PKG_FAMILIES)["families"] if f["name"] == name), None)
+        r = {"found": fam is not None, "family": fam}
+    else:
+        return _result(False, "kind must be sort, op, or family", hint="choose a supported kind", next_tool="describe")
+    return _result(bool(r.get("found", True)), "description found" if r.get("found", True) else "unknown name",
+                   next_tool="choose", description=r, budget_tokens=budget_tokens)
+
+
+def choose(candidates: list[str], constraints: dict | None = None) -> dict:
+    """Filter candidates using only measured facts; reject unknown constraints."""
+    allowed = {"device", "batch", "time_budget_ms", "exact", "edge_preserving", "stable"}
+    unknown = sorted(set(constraints or {}) - allowed)
+    if unknown:
+        return _result(False, "unknown constraint keys", hint="remove: " + ", ".join(unknown), next_tool="describe")
+    rows = []
+    for name in candidates:
+        edge = next((e for e in _graph()["edges"] if e["op"] == name), None)
+        if edge:
+            rows.append({"op": name, "eligible": edge.get("executable", False), "ranked": False,
+                         "reason": "no comparable measurement"})
+    return _result(bool(rows), "candidates filtered; not ranked without measurements", next_tool="op_cards", candidates=rows)
+
+
 def choose_op(family: str, constraints: dict | None = None) -> dict:
-    """Rank members of *family* and fail closed when a requested fact is unmeasured."""
+    """Filter a hand-ledger family; rank only when comparable measurements exist."""
     constraints = constraints or {}
     fs = _load_json(PKG_FAMILIES).get("families") or []
     fam = next((x for x in fs if x.get("name") == family), None)
     if fam is None:
-        return {"family": family, "matches": [], "missing": ["unknown family"], "fail_closed": True}
+        return _result(False,"unknown family",hint="choose one of: "+", ".join(sorted(x["name"] for x in fs)),
+                       next_tool="describe",family=family,matches=[],families=sorted(x["name"] for x in fs),fail_closed=True)
+    allowed={"time_budget_ms","exact","edge_preserving","stable","device","batch","pixels"}
+    unknown=sorted(set(constraints)-allowed)
+    if unknown:
+        return _result(False,"unknown constraint keys",hint="remove: "+", ".join(unknown),next_tool="describe",
+                       family=family,matches=[],fail_closed=True)
     graph = {e["op"]: e for e in _graph()["edges"]}
     missing, ranked = [], []
     fact_constraints = {"time_budget_ms", "exact", "edge_preserving", "stable"} & set(constraints)
     for row in fam["ops"]:
         e = graph[row["op"]]
-        reasons = ["member of %s by documented name/category rule" % family]
+        reasons = ["member of %s by hand ledger: %s" % (family,row.get("membership_source"))]
         lacks = []
         if fact_constraints:
             lacks.extend(sorted(fact_constraints))
@@ -107,34 +204,40 @@ def choose_op(family: str, constraints: dict | None = None) -> dict:
         if lacks:
             missing.extend("%s: %s" % (row["op"], x) for x in lacks)
             continue
-        ranked.append({"op": row["op"], "score": 1.0, "reasons": reasons,
+        ranked.append({"op": row["op"], "ranked": row.get("complexity_exponent") is not None, "reasons": reasons,
                        "device": device or "unspecified", "batch": constraints.get("batch", 1)})
-    return {"family": family, "constraints": constraints, "matches": ranked,
-            "missing": sorted(set(missing)), "fail_closed": not bool(ranked)}
+    return _result(bool(ranked),"measured candidates filtered" if ranked else "no candidate satisfies measured constraints",
+                   hint="inspect missing measurements",next_tool="op_cards",family=family,constraints=constraints,
+                   matches=ranked,missing=sorted(set(missing)),fail_closed=not bool(ranked))
 
 
 def required_inputs(goal_sort: str, max_depth: int = 4, k: int = 10) -> dict:
     """Search the transposed typed hypergraph (AND inputs, OR producing edges)."""
     if max_depth < 0 or k < 1:
         raise ValueError("max_depth must be >= 0 and k must be > 0")
-    g = _graph()
+    g = _graph(); goal_sort = _sort(goal_sort)
     sorts = {n["sort"] for n in g["nodes"]}
     if goal_sort not in sorts:
         return {"goal_sort": goal_sort, "solutions": [], "blocked_at": [goal_sort], "reason": "unknown sort"}
     by_out = {}
     for e in g["edges"]:
         by_out.setdefault(e["output"], []).append(e)
-    generators = {n["sort"] for n in g["nodes"] if n.get("generator")}
+        if e["output"] == "any":
+            for s in sorts:
+                by_out.setdefault(s, []).append(e)
+    acquirable = {r["sort"]: r["source"] for r in g.get("acquirable_sorts", [])}
 
     def walk(sort, depth, seen):
-        if sort in generators or sort == "any":
-            return [({sort} if sort != "any" else set(), [], 0.0)]
+        if sort in acquirable:
+            return [({sort}, ["acquire:%s" % sort], 0.0)]
         if depth == 0 or sort in seen:
             return []
         out = []
         for edge in by_out.get(sort, ()):                       # OR: any producer
             combos = [(set(), [], 0.0)]
             for inp in edge["inputs"]:                          # AND: every input
+                if inp == "any":
+                    inp = sort
                 branches = walk(inp, depth - 1, seen | {sort})
                 if not branches:
                     combos = []
@@ -151,12 +254,13 @@ def required_inputs(goal_sort: str, max_depth: int = 4, k: int = 10) -> dict:
         old = uniq.get(key)
         if old is None or (weight, path) < (old[2], old[1]): uniq[key] = (inputs, path, weight)
     sols = [{"inputs": sorted(v[0]), "path": v[1], "weight": v[2],
-             "acquisition_ops": [e["op"] for e in g["edges"] if e["output"] in v[0] and not e["inputs"]][:10]}
+             "acquisition": [{"sort": x, "source": acquirable.get(x)} for x in sorted(v[0])]}
             for v in sorted(uniq.values(), key=lambda x: (len(x[0]), x[2], sorted(x[0])))[:k]]
     blocked = [] if sols else sorted({goal_sort} | {i for e in by_out.get(goal_sort, ()) for i in e["inputs"]
-                                      if i not in generators and i not in by_out})
-    return {"goal_sort": goal_sort, "solutions": sols, "blocked_at": blocked,
-            "semantics": "transpose AND-OR search"}
+                                      if i not in acquirable and i not in by_out})
+    return _result(bool(sols), "backward path found" if sols else "no acquisition-rooted path",
+                   hint="inspect blocked_at" if not sols else "", next_tool="op_cards" if sols else "find_ops",
+                   goal_sort=goal_sort, solutions=sols, blocked_at=blocked, semantics="transpose AND-OR search")
 
 
 def param_space(op: str, input_context: dict | None = None) -> dict:
@@ -171,13 +275,32 @@ def param_space(op: str, input_context: dict | None = None) -> dict:
         if not rec.get("used"):
             rec.update({"search": False, "reason": "measured unused knob" if rec.get("source") != "unmeasured" else "no measured effect"})
         else:
-            rec.update({"search": True, "min": 0.0, "max": 1.0,
-                        "reason": "measured normalized range; no documented physical mapping"})
+            lo, hi = 0.0, 1.0
+            reasons = ["measured normalized range"]
+            width = max(1, int(input_context.get("width", input_context.get("image_width", 1))))
+            height = max(1, int(input_context.get("height", input_context.get("image_height", 1))))
+            value_range = input_context.get("value_range")
+            bundle_n = max(1, int(input_context.get("N", input_context.get("bundle_n", 1))))
+            family = edge.get("family")
+            if family in ("denoise", "morphology", "edge_detection") and name == "a":
+                hi = min(1.0, max(0.0, (min(width, height) - 1) / max(min(width, height), 1)))
+                reasons.append("kernel/radius must fit inside the image")
+            if family == "thresholding" and value_range and len(value_range) == 2:
+                reasons.append("threshold constrained to input value range %s" % list(value_range))
+            if family == "fringe_phase" and bundle_n == 1:
+                hi = 0.0; reasons.append("N=1 cannot vary a phase-shift bundle parameter")
+            rec.update({"search": hi > lo, "min": lo, "max": hi,
+                        "reason": "; ".join(reasons), "rule_source": "family context rules 2026-10-28"})
             if rec.get("discrete"):
-                rec["enum"] = rec.pop("discrete")
+                rec["enum"] = sorted(set([lo] + [x for x in rec.pop("discrete") if lo <= x <= hi] + [hi]))
         params[name] = rec
     return {"op": op, "input_context": input_context, "parameters": params,
             "source_graph": PKG_GRAPH}
+
+
+def system_params() -> dict:
+    """Return the human-controlled system settings hidden from AI tool schemas."""
+    return _load_json("SYSTEM_PARAMS.json")
 
 
 def pipeline_shape(input_form: str, output_form: str) -> dict:
@@ -198,10 +321,8 @@ def pattern_skeleton(name: str, start_sort: str, goal_sort: str) -> dict:
     pat = next((p for p in pats if p["name"].lower() == name.lower()), None)
     if pat is None:
         return {"name": name, "found": False, "known": [p["name"] for p in pats]}
-    # plan_chain is the sole candidate finder; patterns do not own an op table.
-    planned = plan_chain(name, start_sort, goal_sort, k=5, max_depth=4)
-    out = dict(pat); out.update({"found": True, "start_sort": start_sort, "goal_sort": goal_sort,
-                                "candidates": planned.get("chains", planned)})
+    out = dict(pat); out.update({"found": True, "start_sort": _sort(start_sort), "goal_sort": _sort(goal_sort),
+                                "candidates": [], "reason":"pattern is not exposed until slots and examples are grounded"})
     return out
 
 
@@ -209,8 +330,11 @@ def sort_guide(sort: str | None = None) -> dict:
     """Return node/container guidance and graph-derived producer/consumer counts."""
     rows = _load_json("OP_SORTS.json").get("sorts") or []
     if sort is None:
-        return {"sorts": rows, "documented_choose_when": sum(r["choose_when"] != "undocumented" for r in rows),
+        shown=rows[:20]
+        return {"sorts": shown, "total":len(rows), "truncated":len(rows)>len(shown),
+                "documented_choose_when": sum(r["choose_when"] != "undocumented" for r in rows),
                 "undocumented_choose_when": sum(r["choose_when"] == "undocumented" for r in rows)}
+    sort = _sort(sort)
     row = next((r for r in rows if r["sort"] == sort), None)
     return {"found": row is not None, "sort": row, "known": [] if row else [r["sort"] for r in rows]}
 
@@ -338,7 +462,9 @@ def _pick_lang(query: str, qtok: list, top_rows: list) -> str:
     guess = detect_lang(query)
     if guess in ("ko", "ja", "hi") or not top_rows:
         return guess
-    cands = ("ja", "zh", "tw") if guess == "zh" else ("en", "de")
+    # Latin text is English unless the query itself carries a German marker.
+    # German summaries must not outvote an ordinary English query by BM25 noise.
+    cands = ("ja", "zh", "tw") if guess == "zh" else (("de",) if guess == "de" else ("en",))
     qs = set(qtok)
     best, best_n = guess, -1
     for lang in sorted(cands, key=lambda x: x != guess):
@@ -525,81 +651,40 @@ def search_ops(query: str, k: int = 10, *, lang: str | None = None, in_sort: str
         known = [t for t in q if t in idf]
         hint = ("どの語も索引に無い。別の言い方・英語・op 名の一部を試す" if not known else
                 "語は当たったが絞り込み(in_sort / out_sort / dim)で 0 件")
-    return {"query": query, "lang": show, "total": len(hits), "n_ops_indexed": ix["n_ops"],
-            "ops": out, "hint": hint}
+    return {"ok": bool(out), "reason": "operators found" if out else "no matching operator",
+            "next_tool": "fullseye_plan" if out else "fullseye_find_ops",
+            "query": query, "lang": show, "total": len(hits), "n_ops_indexed": ix["n_ops"],
+            "ops": out, "hint": hint or "call fullseye_plan with the selected input/output sorts"}
 
 
 def plan_chain(query: str, start_sort: str, goal_sort: str, k: int = 5, max_depth: int = 4,
                *, lang: str | None = None, index_path: str | None = None) -> dict:
-    """Plan type-compatible operator stages and rank each stage with BM25.
-
-    The breadth-first search is over sorts, not operators.  Returned candidates
-    all implement the selected edge, so a small model cannot accidentally join
-    incompatible stages.  No operator is executed.
-    """
+    """Backward-compatible view of :func:`plan` over executable hyperedges."""
     if not isinstance(start_sort, str) or not start_sort or not isinstance(goal_sort, str) or not goal_sort:
         raise ValueError("plan_chain: start_sort and goal_sort must be non-empty strings")
     if not isinstance(max_depth, int) or not 1 <= max_depth <= 16:
         raise ValueError("plan_chain: max_depth must be in 1..16")
     if not isinstance(k, int) or not 1 <= k <= 100:
         raise ValueError("plan_chain: k must be in 1..100")
-    rows = load_index(index_path)["rows"]
-    sorts = {x for r in rows for x in (r.get("i"), r.get("o")) if x and x != "any"}
-    unknown = [s for s in (start_sort, goal_sort) if s not in sorts]
-    if unknown:
-        raise ValueError("plan_chain: unknown sort(s): %s" % ", ".join(unknown))
-    edges: dict[str, set[str]] = {}
-    for r in rows:
-        a, b = r.get("i"), r.get("o")
-        if not a or not b:
-            continue
-        if a == "any":
-            for s in sorts:
-                edges.setdefault(s, set()).add(s if b == "any" else b)
-        else:
-            edges.setdefault(a, set()).add(a if b == "any" else b)
-    queue = [(start_sort, [])]
-    seen = {start_sort}
-    path = None
-    frontier = {start_sort}
-    while queue:
-        cur, p = queue.pop(0)
-        if cur == goal_sort:
-            path = p
-            break
-        if len(p) >= max_depth:
-            continue
-        for nxt in sorted(edges.get(cur, ())):
-            frontier.add(nxt)
-            if nxt not in seen:
-                seen.add(nxt); queue.append((nxt, p + [(cur, nxt)]))
-    if path is None:
-        return {"query": query, "start_sort": start_sort, "goal_sort": goal_sort, "found": False,
-                "max_depth": max_depth, "reachable_sorts": sorted(frontier),
-                "break_at": sorted(frontier - {goal_sort})}
-    probes = _probe_map()
-    stages = []
-    for no, (a, b) in enumerate(path, 1):
-        # Score the whole hit set before applying the edge constraint.  Truncating
-        # first would let a globally strong but wrong-sort family hide the best
-        # candidate for this stage.
-        ranked = search_ops(query, k=len(rows), lang=lang, index_path=index_path)["ops"]
-        candidates = [r for r in ranked if r.get("in_sort") in (a, "any") and
-                      (r.get("out_sort") == b or (r.get("out_sort") == "any" and a == b))]
-        if len(candidates) < k:
-            names = {r["name"] for r in candidates}
-            for r in rows:
-                if r["n"] in names or r.get("i") not in (a, "any"):
-                    continue
-                if not (r.get("o") == b or (r.get("o") == "any" and a == b)):
-                    continue
-                candidates.append(_with_probe({"name": r["n"], "in_sort": r.get("i"),
-                                               "out_sort": r.get("o"), "score": 0.0}, probes))
-                if len(candidates) >= k:
-                    break
-        stages.append({"stage": no, "in_sort": a, "out_sort": b, "candidates": candidates[:k]})
-    return {"query": query, "start_sort": start_sort, "goal_sort": goal_sort, "found": True,
-            "depth": len(path), "stages": stages}
+    # Legacy retrieval surface historically covered the full knowledge ledger.
+    # The new plan() API defaults to executable_only=True.
+    r = plan(start_sort, goal_sort, constraints={"query": query, "k": k, "max_depth": max_depth,
+                                                 "executable_only": False})
+    if not r["ok"]:
+        return {"query": query, "start_sort": _sort(start_sort), "goal_sort": _sort(goal_sort),
+                "found": False, "break_at": r.get("blocked_at", []), "reason": r["reason"]}
+    edges = {e["op"]: e for e in _graph()["edges"]}
+    ops = r["plans"][0]["ops"]
+    alternatives=[]
+    for p in r["plans"]:
+        for n in p["ops"]:
+            if n not in alternatives: alternatives.append(n)
+    stages = [{"stage": i, "in_sort": edges[n]["inputs"], "out_sort": edges[n]["output"],
+               "candidates": ([{"name": x, "score": 0.0} for x in alternatives[:k]] if i==1 else
+                              [{"name": n, "score": round(1.0 / max(r["plans"][0]["weight"], 1e-9), 3)}])}
+              for i, n in enumerate(ops, 1)]
+    return {"query": query, "start_sort": _sort(start_sort), "goal_sort": _sort(goal_sort), "found": True,
+            "depth": len(ops), "stages": stages, "plans": r["plans"]}
 
 
 def op_cards(names: list[str], budget_tokens: int = 500) -> dict:
