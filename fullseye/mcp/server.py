@@ -30,6 +30,7 @@ import sys
 from typing import Any
 
 import numpy as np
+from fssystem import get_system
 
 from .catalog import Catalog, CatalogError, SOURCES
 from .diagnose import side_by_side, stats_of, verdict_of
@@ -38,7 +39,12 @@ from .handles import HandleError, HandleStore
 PROTOCOL_VERSION = "2025-06-18"
 SERVER_NAME = "fullseye"
 #: llmesh/mcp/validator.py の ``_MAX_RAW_BYTES`` と同じ。超えたら typed tree を落とす。
-MAX_STRUCTURED_BYTES = 512_000
+MAX_STRUCTURED_BYTES = int(get_system("mcp_response_budget"))
+
+def _execution_policy() -> dict:
+    return {"random_seed":get_system("random_seed"), "tile_size":get_system("tile_size"),
+            "border_policy":get_system("border_policy"), "numeric_floor":get_system("numeric_floor"),
+            "iteration_limit":get_system("iteration_limit")}
 #: 検索 1 回で返す上限。文脈経済のため(MCP-Universe: 歩数とともに入力が急増)。
 MAX_SEARCH_LIMIT = 100
 VISION = ("auto", "none", "thumb")
@@ -100,11 +106,8 @@ TOOLS: dict[str, dict] = {
             "properties": {
                 "query": {"type": "string", "minLength": 1, "maxLength": 200,
                           "description": "やりたいこと(例: ノイズ除去 / remove noise / 边缘检测)"},
-                "lang": {"type": "string", "enum": ["ja", "en", "zh", "tw", "ko", "de", "hi"],
-                         "description": "要約を返す言語(既定は問い合わせから推す)"},
                 "in_sort": {"type": "string", "description": _SORT_DESC},
                 "out_sort": {"type": "string", "description": _SORT_DESC},
-                "limit": {"type": "integer", "minimum": 1, "maximum": MAX_SEARCH_LIMIT},
             },
             "required": ["query"],
             "additionalProperties": False,
@@ -155,8 +158,7 @@ TOOLS: dict[str, dict] = {
     "fullseye_op_cards": {
         "description": "Return short complete op cards within a token budget; cards are never cut mid-card.",
         "inputSchema": {"type": "object", "properties": {
-            "names": {"type": "array", "minItems": 1, "maxItems": 100, "items": {"type": "string"}},
-            "budget_tokens": {"type": "integer", "minimum": 1, "maximum": 100000}},
+            "names": {"type": "array", "minItems": 1, "maxItems": 100, "items": {"type": "string"}}},
             "required": ["names"], "additionalProperties": False},
     },
     "fullseye_validate_pipeline": {
@@ -168,8 +170,7 @@ TOOLS: dict[str, dict] = {
                                "inputs": {"type":"array","items":{"type":"string"}},
                                "params": {"type":"object"},
                                "a": {"type": "number"}, "b": {"type": "number"}},
-                "required": ["op"], "additionalProperties": False}},
-            "max_stages": {"type": "integer", "minimum": 1, "maximum": 64}},
+                "required": ["op"], "additionalProperties": False}}},
             "required": ["start_sort", "stages"], "additionalProperties": False},
     },
     "fullseye_op_help": {
@@ -203,7 +204,6 @@ TOOLS: dict[str, dict] = {
             "properties": {
                 "path": {"type": "string", "maxLength": 1024},
                 "color": {"type": "boolean", "description": "true なら (H,W,3) の color として読む"},
-                "vision": _VISION,
             },
             "required": ["path"],
             "additionalProperties": False,
@@ -240,7 +240,7 @@ TOOLS: dict[str, dict] = {
         "description": "ハンドルの数値統計と判定。vision=thumb で小図(1 枚)を resource_link で返す。",
         "inputSchema": {
             "type": "object",
-            "properties": {"handle": _HANDLE, "vision": _VISION},
+            "properties": {"handle": _HANDLE},
             "required": ["handle"],
             "additionalProperties": False,
         },
@@ -271,8 +271,6 @@ TOOLS: dict[str, dict] = {
                     },
                     "description": "[{op, a?, b?}, …]。a/b の既定は 0.5",
                 },
-                "allow_degraded": {"type": "boolean"},
-                "vision": _VISION,
             },
             "required": ["stages"],
             "additionalProperties": False,
@@ -696,9 +694,10 @@ def _out_sort(op, in_sort: str | None) -> str:
     return op.out_sort
 
 
-def validate_pipeline(stages: list[dict], start_sort: str, cat: Catalog, *, max_stages: int = 64) -> dict:
+def validate_pipeline(stages: list[dict], start_sort: str, cat: Catalog, *, max_stages: int | None = None) -> dict:
     """Shared non-executing pipeline validator used by both MCP entry points."""
     import ops
+    max_stages = int(max_stages or get_system("pipeline_max_stages"))
     errors, normalized = [], []
     if start_sort not in cat.sorts:
         errors.append({"layer": "pipeline", "stage": 0, "reason": "unknown_sort", "value": start_sort,
@@ -972,6 +971,8 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
     import fullseye
     from fullseye.opsearch import _graph
     edges={e["op"]:e for e in _graph()["edges"]}
+    policy=_execution_policy()
+    np.random.seed(int(policy["random_seed"]))
     start_sort=store.get(a["handle"])[0]["sort"] if a.get("handle") else "unknown"
     checked=validate_pipeline(a["stages"],start_sort,cat)
     if not checked["valid"]:
@@ -1014,7 +1015,7 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
                         "params":params,"out_sort":out_sort,"handle":handle})
     last_ref="stage:%d"%len(a["stages"]); last_meta,_last=values[last_ref]
     result={"completed":len(records),"stages":records,"output_ref":last_ref,
-            "handle":last_meta.get("handle"),"out_sort":last_meta["sort"]}
+            "handle":last_meta.get("handle"),"out_sort":last_meta["sort"],"system_policy":policy}
     return tool_result(json.dumps(result,ensure_ascii=False,separators=(",",":")),result,
                        max_structured_bytes=max_structured_bytes)
 

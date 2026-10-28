@@ -192,10 +192,12 @@ _REPO = pathlib.Path(__file__).resolve().parents[1]
 
 
 def _readers_of(name):
-    """``get_system("<name>")`` を実際に呼ぶリポジトリ直下の .py ファイル名。"""
+    """``get_system("<name>")`` を実際に呼ぶリポジトリ内の Python ファイル。"""
     pat = re.compile(r"""get_system\(\s*['"]%s['"]\s*\)""" % re.escape(name))
     hits = set()
-    for p in _REPO.glob("*.py"):
+    for p in _REPO.rglob("*.py"):
+        if any(part in {".git","__pycache__","build","dist","tests"} for part in p.parts):
+            continue
         if p.name in ("fssystem.py",):
             continue
         try:
@@ -203,7 +205,7 @@ def _readers_of(name):
         except UnicodeDecodeError:
             continue
         if pat.search(text):
-            hits.add(p.name)
+            hits.add(p.relative_to(_REPO).as_posix())
     return hits
 
 

@@ -138,18 +138,11 @@ def _param_metadata(name: str, family: str, knob: dict | None) -> dict:
     return out
 
 def _system_params():
-    def p(default, meaning, hidden, source="system design 2026-10-28"):
-        return {"default": default, "meaning": meaning, "hide_from_ai": hidden, "source": source}
-    return {"schema": 1, "params": {
-      "plan_k": p(5,"maximum returned plans",True), "plan_max_depth": p(4,"maximum graph depth",True),
-      "budget_tokens": p(800,"default textual response budget",True), "limit": p(20,"default row limit",True),
-      "max_structured_bytes": p(512000,"structured MCP response ceiling",True,"fullseye.mcp.server"),
-      "max_stages": p(64,"pipeline stage safety ceiling",True), "device": p("cpu","execution device",True),
-      "batch": p(1,"batch size",True), "lang": p("auto","response language",True),
-      "vision": p("auto","diagnostic image policy",True), "seed": p(0,"deterministic random seed",True),
-      "tile_size": p(512,"large-image tile edge",True), "border": p("reflect","neighborhood border policy",True),
-      "numeric_floor": p(1e-12,"numerical denominator floor",True), "iteration_limit": p(100,"iterative solver cap",True),
-      "gpu_idle_policy": p("no compute process and no loaded local model","GPU measurement admission",True)}}
+    import fssystem
+    return {"schema":2,"generated_from":"fssystem.SYSTEM_PARAMS","params":{
+        name:{"default":spec["default"],"values":list(spec["values"]),"meaning":spec["doc"],
+              "hide_from_ai":True,"applied_by":list(spec["applied_by"] or [])}
+        for name,spec in sorted(fssystem.SYSTEM_PARAMS.items())}}
 
 
 def build() -> dict[str, object]:

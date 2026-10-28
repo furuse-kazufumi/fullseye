@@ -402,8 +402,8 @@
       "sort": "images",
       "container": "sequence",
       "size_hint": "input-dependent",
-      "produced_by": 19,
-      "consumed_by": 37,
+      "produced_by": 20,
+      "consumed_by": 38,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -868,6 +868,17 @@
       "consumed_by": 13,
       "generator": true,
       "type_check": true,
+      "choose_when": "undocumented",
+      "source": "chain_fuzz catalog"
+    },
+    {
+      "sort": "seq<image>",
+      "container": "dense_array",
+      "size_hint": "input-dependent",
+      "produced_by": 1,
+      "consumed_by": 1,
+      "generator": false,
+      "type_check": false,
       "choose_when": "undocumented",
       "source": "chain_fuzz catalog"
     },

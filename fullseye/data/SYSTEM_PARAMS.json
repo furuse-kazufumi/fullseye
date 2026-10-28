@@ -1,101 +1,200 @@
 {
-  "schema": 1,
+  "schema": 2,
+  "generated_from": "fssystem.SYSTEM_PARAMS",
   "params": {
-    "plan_k": {
-      "default": 5,
-      "meaning": "maximum returned plans",
-      "hide_from_ai": true,
-      "source": "system design 2026-10-28"
-    },
-    "plan_max_depth": {
-      "default": 4,
-      "meaning": "maximum graph depth",
-      "hide_from_ai": true,
-      "source": "system design 2026-10-28"
-    },
-    "budget_tokens": {
-      "default": 800,
-      "meaning": "default textual response budget",
-      "hide_from_ai": true,
-      "source": "system design 2026-10-28"
-    },
-    "limit": {
-      "default": 20,
-      "meaning": "default row limit",
-      "hide_from_ai": true,
-      "source": "system design 2026-10-28"
-    },
-    "max_structured_bytes": {
-      "default": 512000,
-      "meaning": "structured MCP response ceiling",
-      "hide_from_ai": true,
-      "source": "fullseye.mcp.server"
-    },
-    "max_stages": {
-      "default": 64,
-      "meaning": "pipeline stage safety ceiling",
-      "hide_from_ai": true,
-      "source": "system design 2026-10-28"
-    },
-    "device": {
-      "default": "cpu",
-      "meaning": "execution device",
-      "hide_from_ai": true,
-      "source": "system design 2026-10-28"
-    },
-    "batch": {
-      "default": 1,
-      "meaning": "batch size",
-      "hide_from_ai": true,
-      "source": "system design 2026-10-28"
-    },
-    "lang": {
-      "default": "auto",
-      "meaning": "response language",
-      "hide_from_ai": true,
-      "source": "system design 2026-10-28"
-    },
-    "vision": {
-      "default": "auto",
-      "meaning": "diagnostic image policy",
-      "hide_from_ai": true,
-      "source": "system design 2026-10-28"
-    },
-    "seed": {
-      "default": 0,
-      "meaning": "deterministic random seed",
-      "hide_from_ai": true,
-      "source": "system design 2026-10-28"
-    },
-    "tile_size": {
-      "default": 512,
-      "meaning": "large-image tile edge",
-      "hide_from_ai": true,
-      "source": "system design 2026-10-28"
-    },
-    "border": {
+    "border_policy": {
       "default": "reflect",
-      "meaning": "neighborhood border policy",
+      "values": [
+        "reflect",
+        "nearest",
+        "constant"
+      ],
+      "meaning": "Neighborhood border policy.",
       "hide_from_ai": true,
-      "source": "system design 2026-10-28"
+      "applied_by": [
+        "fullseye/mcp/server.py"
+      ]
     },
-    "numeric_floor": {
-      "default": 1e-12,
-      "meaning": "numerical denominator floor",
+    "extra_checks": {
+      "default": "off",
+      "values": [
+        "off",
+        "on"
+      ],
+      "meaning": "★2026-09-08 に api.py と reprconv.py を追加。api.py は ``image``/``color`` の**値域 [0,1] 契約**を見る —— dtype は既定で fail-closed なのに値域は``ops.py`` の 1 行目に書いてあるだけで誰も検査しておらず、µm 単位の高さ場を渡すと Otsu が 0.5 µm で切って blob 387 個(正解 256)になった。reprconv.py は位置の点群を法線として渡す事故を捕まえる。既定でも fail-closed だが、**理屈の上では正しくないが実害が出るとは限らない**場面(同値を引き裂くヒストグラム整合、対称でない圧縮距離)を拒否に格上げする。既定を on にしていないのは、既存の呼び手が意図してその挙動を使っている場合があるため。",
       "hide_from_ai": true,
-      "source": "system design 2026-10-28"
+      "applied_by": [
+        "api.py",
+        "colortransport.py",
+        "imgmetrics.py",
+        "reprconv.py"
+      ]
+    },
+    "gpu_idle_policy": {
+      "default": "strict",
+      "values": [
+        "strict",
+        "disabled"
+      ],
+      "meaning": "GPU measurement admission policy.",
+      "hide_from_ai": true,
+      "applied_by": [
+        "tools/measure_device_crossover.py"
+      ]
     },
     "iteration_limit": {
       "default": 100,
-      "meaning": "iterative solver cap",
+      "values": [
+        50,
+        100,
+        500
+      ],
+      "meaning": "Iterative solver cap.",
       "hide_from_ai": true,
-      "source": "system design 2026-10-28"
+      "applied_by": [
+        "fullseye/mcp/server.py"
+      ]
     },
-    "gpu_idle_policy": {
-      "default": "no compute process and no loaded local model",
-      "meaning": "GPU measurement admission",
+    "mcp_response_budget": {
+      "default": 512000,
+      "values": [
+        128000,
+        256000,
+        512000
+      ],
+      "meaning": "Structured response byte cap.",
       "hide_from_ai": true,
-      "source": "system design 2026-10-28"
+      "applied_by": [
+        "fullseye/mcp/server.py"
+      ]
+    },
+    "metric_contract": {
+      "default": "strict",
+      "values": [
+        "strict",
+        "tolerant"
+      ],
+      "meaning": "測定 op を人が呼んでいるのか(strict)、自動で回しているのか(tolerant)。**op 自身はこの値を読まない** —— 読むと隠れた状態で返り値の型が変わり、この repo がいちばん嫌う『例外でなく、もっともらしく間違う』になる。★予約のみ(applied_by=None): 現状 metriccontract の寛容な入口(attempt/rank_attempts)はこの値を読まず、明示的に呼び分ける。設定は system_snapshot() で報告に写るだけで、数値も経路も変えない。",
+      "hide_from_ai": true,
+      "applied_by": []
+    },
+    "numeric_floor": {
+      "default": 1e-12,
+      "values": [
+        1e-15,
+        1e-12,
+        1e-09
+      ],
+      "meaning": "Numerical denominator floor.",
+      "hide_from_ai": true,
+      "applied_by": [
+        "fullseye/mcp/server.py"
+      ]
+    },
+    "pipeline_max_stages": {
+      "default": 64,
+      "values": [
+        16,
+        32,
+        64
+      ],
+      "meaning": "Pipeline stage cap.",
+      "hide_from_ai": true,
+      "applied_by": [
+        "fullseye/mcp/server.py"
+      ]
+    },
+    "plan_k": {
+      "default": 5,
+      "values": [
+        1,
+        3,
+        5,
+        10
+      ],
+      "meaning": "Maximum returned plans.",
+      "hide_from_ai": true,
+      "applied_by": [
+        "fullseye/opsearch.py"
+      ]
+    },
+    "plan_max_depth": {
+      "default": 4,
+      "values": [
+        2,
+        4,
+        8,
+        16
+      ],
+      "meaning": "Maximum hypergraph depth.",
+      "hide_from_ai": true,
+      "applied_by": [
+        "fullseye/opsearch.py"
+      ]
+    },
+    "plan_max_expansions": {
+      "default": 50000,
+      "values": [
+        1000,
+        10000,
+        50000,
+        100000
+      ],
+      "meaning": "Planner expansion cap.",
+      "hide_from_ai": true,
+      "applied_by": [
+        "fullseye/opsearch.py"
+      ]
+    },
+    "plan_timeout_ms": {
+      "default": 900,
+      "values": [
+        100,
+        500,
+        900,
+        2000
+      ],
+      "meaning": "Planner wall-time cap.",
+      "hide_from_ai": true,
+      "applied_by": [
+        "fullseye/opsearch.py"
+      ]
+    },
+    "random_seed": {
+      "default": 0,
+      "values": [
+        0,
+        1,
+        42
+      ],
+      "meaning": "Default deterministic seed.",
+      "hide_from_ai": true,
+      "applied_by": [
+        "fullseye/mcp/server.py"
+      ]
+    },
+    "tile_size": {
+      "default": 512,
+      "values": [
+        256,
+        512,
+        1024
+      ],
+      "meaning": "Large-image tile edge.",
+      "hide_from_ai": true,
+      "applied_by": [
+        "fullseye/mcp/server.py"
+      ]
+    },
+    "unmeasurable_policy": {
+      "default": "worst",
+      "values": [
+        "worst",
+        "skip"
+      ],
+      "meaning": "寛容な契約で『測れなかった』候補をどう扱うか。worst = 最悪値に倒して順位の最下位に置く / skip = 順位から外す。**strict の経路には無関係**。★予約のみ(applied_by=None): rank_attempts は常に worst(最下位)で、skip を設定しても順位は変わらない。",
+      "hide_from_ai": true,
+      "applied_by": []
     }
   }
 }

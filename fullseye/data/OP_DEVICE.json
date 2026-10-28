@@ -3,8 +3,8 @@
   "source_graph": "OP_GRAPH.json",
   "gpu_policy": "unmeasured unless device_timing says otherwise",
   "summary": {
-    "total_ops": 3604,
-    "rows_with_implementation_evidence": 93,
+    "total_ops": 3606,
+    "rows_with_implementation_evidence": 95,
     "omitted_unknown": 3511
   },
   "ops": [
@@ -1774,6 +1774,44 @@
         "status": "unmeasured"
       },
       "gpu_timing": "not_applicable"
+    },
+    {
+      "op": "type::images_to_seq_image",
+      "compute": {
+        "structure": "elementwise",
+        "intensity": "zero_copy",
+        "source_ref": "S00059"
+      },
+      "implementations": [
+        {
+          "backend": "planner/runtime identity",
+          "status": "available",
+          "source_ref": "S00059"
+        }
+      ],
+      "parity": {
+        "status": "unmeasured"
+      },
+      "gpu_timing": "unmeasured"
+    },
+    {
+      "op": "type::seq_image_to_images",
+      "compute": {
+        "structure": "elementwise",
+        "intensity": "zero_copy",
+        "source_ref": "S00059"
+      },
+      "implementations": [
+        {
+          "backend": "planner/runtime identity",
+          "status": "available",
+          "source_ref": "S00059"
+        }
+      ],
+      "parity": {
+        "status": "unmeasured"
+      },
+      "gpu_timing": "unmeasured"
     }
   ]
 }

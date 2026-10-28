@@ -204,11 +204,11 @@ def test_every_declared_tool_has_a_body(cat):
         if n == "fullseye_search_ops":
             a = {"query": "gauss"}
         elif n == "fullseye_find_ops":
-            a = {"query": "ノイズ除去", "limit": 3}
+            a = {"query": "ノイズ除去"}
         elif n == "fullseye_plan_chain":
             a = {"query": "count objects", "start_sort": "image", "goal_sort": "feature"}
         elif n == "fullseye_op_cards":
-            a = {"names": ["gaussian", "otsu"], "budget_tokens": 300}
+            a = {"names": ["gaussian", "otsu"]}
         elif n == "fullseye_plan":
             a = {"have": "image", "want": "region"}
         elif n == "fullseye_describe":
@@ -232,15 +232,15 @@ def test_every_declared_tool_has_a_body(cat):
         elif n == "fullseye_op_help":
             a = {"name": "gaussian"}
         elif n == "fullseye_load_image":
-            a = {"path": ctx["sample_path"], "vision": "none"}
+            a = {"path": ctx["sample_path"]}
         elif n == "fullseye_load_stack":
             a = {"paths": [ctx["sample_path"], ctx["sample_path"]], "sort": "images"}
         elif n == "fullseye_apply":
             a = {"handle": ctx["handle"], "op": "gaussian", "vision": "none"}
         elif n == "fullseye_inspect":
-            a = {"handle": ctx["handle_out"], "vision": "none"}
+            a = {"handle": ctx["handle_out"]}
         elif n == "fullseye_pipeline":
-            a = {"handle": ctx["handle"], "stages": [{"op": "gaussian"}, {"op": "otsu"}], "vision": "none"}
+            a = {"handle": ctx["handle"], "stages": [{"op": "gaussian"}, {"op": "otsu"}]}
         elif n == "fullseye_fix_text":
             # 文字入りの color 画像が要る。同梱サンプルに無いので書体で描く(書体が無い
             # 環境では、その旨を言って拒む道が通ることだけ確かめる)。

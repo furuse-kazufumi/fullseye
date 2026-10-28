@@ -188,8 +188,10 @@ def test_knob_schema_context_edges_and_system_params():
     assert opsearch.param_space("local_std",{"width":512})["parameters"]["a"]["enum"] == [0.0,0.25,0.49,0.75,1.0]
     one=opsearch.param_space("median",{"width":1,"height":1})
     assert one["parameters"]["a"]["max"] == 0.0
-    params=opsearch.system_params()["params"]
-    assert params and all(r["hide_from_ai"] and r["source"] for r in params.values())
+    system=opsearch.system_params(); params=system["params"]
+    assert system["generated_from"] == "fssystem.SYSTEM_PARAMS"
+    missing=[name for name,r in params.items() if not r["hide_from_ai"] or "applied_by" not in r]
+    assert missing == []
 
 def test_mcp_minimal_profile_is_eight_tools_and_patterns_are_hidden():
     from fullseye.mcp.server import handle_tools_list

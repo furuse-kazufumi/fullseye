@@ -198,19 +198,21 @@ def plan(have, want: str, direction: str = "forward", pattern: str | None = None
          constraints: dict | None = None, goal: str | None = None) -> dict:
     """Find minimum-cost typed hypergraph derivations and return dependency DAGs."""
     constraints = constraints or {}
+    from fssystem import get_system
     if direction not in ("forward", "backward"):
         return _result(False, "direction must be forward or backward", hint="use direction='forward' or 'backward'", next_tool="plan")
     want = _sort(want)
     starts = [_sort(x) for x in (have if isinstance(have, (list, tuple, set)) else [have]) if x]
     query = str(goal or constraints.get("goal") or constraints.get("query") or want)
-    max_depth, k = int(constraints.get("max_depth", 4)), int(constraints.get("k", 5))
+    max_depth = int(constraints.get("max_depth", get_system("plan_max_depth")))
+    k = int(constraints.get("k", get_system("plan_k")))
     executable_only = constraints.get("executable_only", True)
     if direction == "backward":
         starts = sorted({_sort(x["sort"]) for x in _graph().get("acquirable_sorts", [])})
     solutions, meta = _hypergraph_plans(starts, want, query, executable_only=executable_only, k=k,
                                         max_depth=max_depth,
-                                        max_expansions=int(constraints.get("max_expansions", 50000)),
-                                        timeout_ms=int(constraints.get("timeout_ms", 900)),
+                                        max_expansions=int(constraints.get("max_expansions", get_system("plan_max_expansions"))),
+                                        timeout_ms=int(constraints.get("timeout_ms", get_system("plan_timeout_ms"))),
                                         allow_sources=direction == "backward")
     if not solutions:
         return _result(False, "no executable typed path", hint="inspect blocked_at or broaden have", next_tool="find_ops",

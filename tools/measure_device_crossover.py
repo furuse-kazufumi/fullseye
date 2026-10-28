@@ -9,8 +9,12 @@ from pathlib import Path
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+from fssystem import get_system
 
 def gpu_idle() -> tuple[bool, str]:
+    if get_system("gpu_idle_policy") == "disabled":
+        return False, "GPU measurement disabled by system policy"
     try:
         q = subprocess.run(["nvidia-smi", "--query-compute-apps=pid,used_memory", "--format=csv,noheader,nounits"],
                            capture_output=True, text=True, timeout=5)
