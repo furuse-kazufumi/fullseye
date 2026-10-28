@@ -141,7 +141,7 @@
       ],
       "shape": "join",
       "derived_from": {
-        "direct_edges": 57,
+        "direct_edges": 58,
         "join_edges": 13,
         "reduce_edges": 0
       },
@@ -1189,7 +1189,7 @@
       ],
       "shape": "join",
       "derived_from": {
-        "direct_edges": 57,
+        "direct_edges": 58,
         "join_edges": 13,
         "reduce_edges": 0
       },

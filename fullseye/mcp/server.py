@@ -722,9 +722,10 @@ def validate_pipeline(stages: list[dict], start_sort: str, cat: Catalog, *, max_
                 errors.append({"layer":"stage","stage":i,"reason":"unknown_op","value":name,
                                "candidates":[x for x in cat.nearest(name) if x != name]})
                 continue
-            if not edge.get("executable"):
+            if not edge.get("verified_executable"):
                 errors.append({"layer":"stage","stage":i,"reason":"not_executable_in_mcp","value":name,
-                               "detail":edge.get("executable_reason","no verified executor"),"candidates":[]})
+                               "detail":edge.get("not_executable_in_mcp", edge.get("executable_reason","no verified executor")),
+                               "candidates":[]})
                 continue
             if len(refs) != len(edge["inputs"]):
                 errors.append({"layer":"stage","stage":i,"reason":"input_arity_mismatch","value":len(refs),
@@ -752,6 +753,11 @@ def validate_pipeline(stages: list[dict], start_sort: str, cat: Catalog, *, max_
             normalized.append({"op":name,"inputs":list(refs),"params":dict(spec.get("params",{})),
                                "a":float(spec.get("a",0.5)),"b":float(spec.get("b",0.5)),
                                "in_sorts":edge["inputs"],"out_sort":out})
+            continue
+        if edge is not None and not edge.get("verified_executable"):
+            errors.append({"layer":"stage","stage":i,"reason":"not_executable_in_mcp","value":name,
+                           "detail":edge.get("not_executable_in_mcp", edge.get("executable_reason",
+                                      "no verified executor")),"candidates":[]})
             continue
         op = ops._BY_NAME.get(name)
         if op is None:

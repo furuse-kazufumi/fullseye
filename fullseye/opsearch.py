@@ -119,7 +119,7 @@ def _hypergraph_plans(starts: list[str], want: str, query: str, *, executable_on
     """Knuth-style relaxation: retain bounded derivations per type, never type sets."""
     graph = _graph()
     scores = {r["name"]: r["score"] for r in search_ops(query, k=len(graph["edges"]))["ops"]}
-    edges = [e for e in graph["edges"] if (e.get("executable") or not executable_only)
+    edges = [e for e in graph["edges"] if (e.get("verified_executable") or not executable_only)
              and e.get("output") not in ("unknown", "any")
              and "unknown" not in e.get("inputs", ())]
     by_input = {}
@@ -255,7 +255,7 @@ def choose(candidates: list[str], constraints: dict | None = None) -> dict:
             if missing:
                 missing_facts.append({"op":name,"missing":missing})
                 continue
-            rows.append({"op": name, "eligible": edge.get("executable", False), "ranked": False,
+            rows.append({"op": name, "eligible": edge.get("verified_executable", False), "ranked": False,
                          "reason": "no comparable measurement"})
     return _result(bool(rows), "candidates filtered; not ranked without measurements" if rows else "no measured candidate satisfies constraints",
                    next_tool="op_cards", candidates=rows, missing_measurements=missing_facts)

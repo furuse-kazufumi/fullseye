@@ -242,3 +242,32 @@ def test_backward_acquisition_steps_are_unique():
         acquire=[x for x in solution["path"] if x.startswith("acquire:")]
         if len(acquire) != len(set(acquire)): duplicates.append(acquire)
     assert duplicates == []
+
+def test_mcp_execution_is_probe_verified_and_runtime_targets_are_exact(tmp_path):
+    from fullseye.mcp.catalog import Catalog
+    from fullseye.mcp.handles import HandleStore
+    from fullseye.mcp.server import call_tool
+    graph=load("OP_GRAPH.json"); edges={e["op"]:e for e in graph["edges"]}
+    assert edges["psnr"]["runtime_target"] == {"module":"imgmetrics","callable":"psnr"}
+    assert edges["triangulate"]["runtime_target"] == {"module":"twoview","callable":"triangulate"}
+    assert edges["lens_file_read"]["not_executable_in_mcp"] == "io_side_effect"
+    assert edges["lens_file_write"]["not_executable_in_mcp"] == "io_side_effect"
+    verified=[e for e in graph["edges"] if e.get("verified_executable")]
+    assert verified and all(e.get("verification",{}).get("status") == "ok" for e in verified)
+
+    outside=tmp_path/"outside.json"
+    store=HandleStore(roots=[])
+    import numpy as np
+    seed=store.put(np.zeros((2,2)),sort="image",provenance=[])["handle"]
+    attack=call_tool("fullseye_pipeline",{"stages":[
+        {"op":"lens_file_read","inputs":[],"params":{"source":str(outside)}},
+        {"op":"lens_file_write","inputs":["stage:1"],"params":{"path":str(outside)}}],
+        "handle":seed},Catalog.load(),store)
+    assert attack["isError"] is True
+    assert "not_executable_in_mcp" in str(attack["structuredContent"])
+    assert not outside.exists()
+
+    unlisted=call_tool("fullseye_validate_pipeline",{"start_sort":"image","stages":[
+        {"op":"psnr","inputs":["input","input"],"params":{}}]},Catalog.load(),store)
+    assert unlisted["structuredContent"]["valid"] is False
+    assert unlisted["structuredContent"]["errors"][0]["reason"] == "not_executable_in_mcp"

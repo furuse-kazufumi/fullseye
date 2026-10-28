@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import argparse
 import ast
+import inspect
 import json
 import os
 import re
@@ -34,6 +35,12 @@ ACQUIRABLE = {
     "lightfield": "light-field camera grid",
     "volume": "tomographic/volumetric acquisition",
     "video": "camera stream acquisition",
+}
+# These non-registry callables are exercised with meaningful synthetic arrays
+# by the named gate.  Keeping this allowlist small and reviewable is deliberate.
+VERIFIED_PYTHON = {
+    "polarization_render", "polarization_dolp_map", "decode_fringe",
+    "deflectometry_phase_to_slope",
 }
 DUPLICATE_EXEMPTIONS = {
     "gaussians_to_voxel": "chain_fuzz compatibility alias; first declaration is the public contract",
@@ -113,6 +120,80 @@ def _python_functions() -> dict[str, dict]:
     return found
 
 
+_IO_PARAM_RX = re.compile(
+    r"(?:^|_)(?:path|paths|file|files|filename|filepath|dir|directory|folder|url|uri|"
+    r"source|destination|target|callback|callable|function|func|writer|reader|stream|socket)(?:$|_)", re.I)
+
+
+def _runtime_function(fn) -> dict:
+    """Describe the exact callable registered by chain_fuzz, never a namesake."""
+    module = getattr(fn, "__module__", None)
+    qualname = getattr(fn, "__qualname__", None)
+    if not module or not qualname or "<locals>" in qualname:
+        raise RuntimeError("operator has no importable runtime target: %r" % (fn,))
+    params = []
+    try:
+        sig = inspect.signature(fn)
+    except (TypeError, ValueError) as exc:
+        return {"module": module, "callable": qualname, "parameters": [],
+                "signature_error": type(exc).__name__}
+    for p in sig.parameters.values():
+        if p.kind in (p.VAR_POSITIONAL, p.VAR_KEYWORD):
+            continue
+        annotation = "unannotated" if p.annotation is inspect.Parameter.empty else str(p.annotation)
+        rec = {"name": p.name, "type": annotation,
+               "required": p.default is inspect.Parameter.empty,
+               "range": "undocumented", "unit": "undocumented"}
+        if p.default is not inspect.Parameter.empty:
+            try:
+                json.dumps(p.default)
+                rec["default"] = p.default
+            except (TypeError, ValueError):
+                rec["default"] = repr(p.default)
+        params.append(rec)
+    return {"module": module, "callable": qualname, "parameters": params,
+            "doc": inspect.getdoc(fn) or ""}
+
+
+def _mcp_unsafe_parameter(parameters: list[dict]) -> str | None:
+    for p in parameters:
+        name, annotation = p.get("name", ""), p.get("type", "")
+        if _IO_PARAM_RX.search(name) or re.search(r"\b(?:PathLike|IO|Callable|URL)\b", annotation, re.I):
+            return p.get("name") or "parameter"
+    return None
+
+
+def _verified_registry_ops() -> set[str]:
+    """CPU-only execution allowlist; verification happens in this generation run."""
+    import warnings
+    import numpy as np
+    import chain_fuzz
+    import op_probe
+    import ops
+    verified = set()
+    for registry_op in ops.REGISTRY:
+        name, out_sort = registry_op.name, registry_op.out_sort
+        try:
+            value = op_probe.sample_input(registry_op.in_sort, np.random.default_rng(20261028), structured=True)
+            if value is None:
+                continue
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                result = registry_op.fn(value, 0.5, 0.5)
+            check = chain_fuzz.TYPE_CHECKS.get(out_sort)
+            if result is None or (check is not None and not check(result)):
+                continue
+            arrays = ([result] if isinstance(result, np.ndarray) else
+                      [v for v in result.values() if isinstance(v, np.ndarray)]
+                      if isinstance(result, dict) else [])
+            if any(a.dtype.kind in "fc" and not np.isfinite(a).all() for a in arrays):
+                continue
+            verified.add(name)
+        except Exception:
+            continue
+    return verified
+
+
 def _knobs() -> dict:
     # docs/op_knob.json is the measured source.  The package copy is written by
     # gen_mcp_data later in regen_all, so reading that copy would invert the chain.
@@ -157,7 +238,7 @@ def build() -> dict[str, object]:
     import conversion_matrix as cm
     a = cm.analyse()
     knobs = _knobs()
-    python_functions = _python_functions()
+    verified_registry = _verified_registry_ops()
     index = json.loads((ROOT / "docs" / "OP_INDEX.json").read_text(encoding="utf-8"))
     index_rows = index.get("ops") or []
     if not index_rows:
@@ -180,6 +261,7 @@ def build() -> dict[str, object]:
     signatures = {}
     duplicate_declarations = []
     excluded_chain_only = []
+    runtime_functions = {}
     for name, category, ins, out, _fn in a["ops"]:
         if name not in index_names:
             excluded_chain_only.append({"op": name, "reason": "not present in public OP_INDEX"})
@@ -199,6 +281,11 @@ def build() -> dict[str, object]:
                                            "exemption": DUPLICATE_EXEMPTIONS.get(name)})
             continue
         seen.add(name); signatures[name] = signature
+        target = _runtime_function(_fn)
+        previous = runtime_functions.get(name)
+        if previous and (previous["module"], previous["callable"]) != (target["module"], target["callable"]):
+            raise RuntimeError("operator %s resolves to multiple runtime targets" % name)
+        runtime_functions[name] = target
         produced[out] += 1
         consumed.update(ins)
         text = f"{name} {category}".lower()
@@ -282,19 +369,38 @@ def build() -> dict[str, object]:
             edge["executor"] = {"kind": "registry", "callable": edge["op"]}
             edge["parameter_schema"] = []
             executable_reasons["registry"] += 1
-            continue
-        fn = python_functions.get(edge["op"])
-        if edge.get("type_semantics") == "unknown":
+        fn = runtime_functions.get(edge["op"])
+        if fn is not None:
+            edge["runtime_target"] = {"module": fn["module"], "callable": fn["callable"]}
+        if not edge.get("executable") and edge.get("type_semantics") == "unknown":
             edge["executable_reason"] = "unknown_input_or_output_sort"
-        elif fn is None:
+        elif not edge.get("executable") and fn is None:
             edge["executable_reason"] = "python_callable_not_found"
-        elif len(fn["parameters"]) < len(edge["inputs"]):
+        elif not edge.get("executable") and len(fn["parameters"]) < len(edge["inputs"]):
             edge["executable_reason"] = "python_signature_has_fewer_inputs_than_graph"
-        else:
+        elif not edge.get("executable"):
             edge["executable"] = True
             edge["executor"] = {"kind": "python", "module": fn["module"], "callable": fn["callable"]}
             edge["parameter_schema"] = fn["parameters"][len(edge["inputs"]):]
             executable_reasons["python_signature"] += 1
+
+        unsafe = _mcp_unsafe_parameter((fn or {}).get("parameters", []))
+        if unsafe:
+            edge["verified_executable"] = False
+            edge["not_executable_in_mcp"] = "io_side_effect"
+            edge["mcp_rejection_detail"] = "unsafe parameter: %s" % unsafe
+        elif edge.get("executor", {}).get("kind") == "registry" and edge["op"] in verified_registry:
+            edge["verified_executable"] = True
+            edge["verification"] = {"source": "tools/gen_op_facets.py::_verified_registry_ops", "status": "ok",
+                                    "checks": ["executed", "typed", "shape", "finite"]}
+        elif edge.get("executor", {}).get("kind") == "python" and edge["op"] in VERIFIED_PYTHON:
+            edge["verified_executable"] = True
+            edge["verification"] = {
+                "source": "tests/test_op_facets_2026_10_28.py::test_three_multi_input_business_dags_execute_through_mcp",
+                "status": "ok", "checks": ["executed", "typed", "shape", "finite", "meaningful_synthetic_input"]}
+        else:
+            edge["verified_executable"] = False
+            edge["not_executable_in_mcp"] = "not_verified"
 
     stochastic_rx = re.compile(r"^(?:aug_|tb_random_)|random")
     global_rx = re.compile(r"equalize|autocontrast|autolevel")
@@ -316,7 +422,9 @@ def build() -> dict[str, object]:
                          ("type::seq_image_to_images","seq<image>","images")):
         edges.append({"op":name,"inputs":[inp],"output":out,"category":"type_equivalence",
                       "family":None,"type_semantics":"typed","consumes_input":True,
-                      "bundle_semantics":"elementwise","executable":True,
+                      "bundle_semantics":"elementwise","executable":True,"verified_executable":True,
+                      "verification":{"source":"identity semantics","status":"ok",
+                                      "checks":["typed","shape","finite"]},
                       "executor":{"kind":"identity","callable":"identity"},"parameter_schema":[],
                       "compute":{"structure":"elementwise","intensity":"zero_copy","source":alias_src},
                       "implementations":[{"backend":"planner/runtime identity","status":"available","source":alias_src}],
