@@ -243,13 +243,22 @@ def choose(candidates: list[str], constraints: dict | None = None) -> dict:
     unknown = sorted(set(constraints or {}) - allowed)
     if unknown:
         return _result(False, "unknown constraint keys", hint="remove: " + ", ".join(unknown), next_tool="describe")
-    rows = []
+    rows, missing_facts = [], []
     for name in candidates:
         edge = next((e for e in _graph()["edges"] if e["op"] == name), None)
         if edge:
+            missing=[]
+            if constraints and constraints.get("device") == "cuda" and edge.get("gpu_timing") in (None,"unmeasured"):
+                missing.append("cuda timing")
+            if constraints and "time_budget_ms" in constraints and edge.get("cpu_timing_ms") is None:
+                missing.append("cpu timing")
+            if missing:
+                missing_facts.append({"op":name,"missing":missing})
+                continue
             rows.append({"op": name, "eligible": edge.get("executable", False), "ranked": False,
                          "reason": "no comparable measurement"})
-    return _result(bool(rows), "candidates filtered; not ranked without measurements", next_tool="op_cards", candidates=rows)
+    return _result(bool(rows), "candidates filtered; not ranked without measurements" if rows else "no measured candidate satisfies constraints",
+                   next_tool="op_cards", candidates=rows, missing_measurements=missing_facts)
 
 
 def choose_op(family: str, constraints: dict | None = None) -> dict:
@@ -275,7 +284,7 @@ def choose_op(family: str, constraints: dict | None = None) -> dict:
         if fact_constraints:
             lacks.extend(sorted(fact_constraints))
         device = constraints.get("device")
-        if device == "cuda" and e.get("gpu_timing") == "unmeasured":
+        if device == "cuda" and e.get("gpu_timing") in (None, "unmeasured"):
             lacks.append("cuda timing")
         if lacks:
             missing.extend("%s: %s" % (row["op"], x) for x in lacks)
@@ -326,6 +335,8 @@ def required_inputs(goal_sort: str, max_depth: int = 4, k: int = 10) -> dict:
     raw = walk(goal_sort, max_depth, set())
     uniq = {}
     for inputs, path, weight in raw:
+        seen_acquire=set()
+        path=[step for step in path if not step.startswith("acquire:") or not (step in seen_acquire or seen_acquire.add(step))]
         key = tuple(sorted(inputs))
         old = uniq.get(key)
         if old is None or (weight, path) < (old[2], old[1]): uniq[key] = (inputs, path, weight)
@@ -795,7 +806,8 @@ def op_cards(names: list[str], budget_tokens: int = 500) -> dict:
         if used + cost > budget_tokens:
             break
         cards.append(card); used += cost
-    return {"cards": cards, "used_tokens": used, "budget_tokens": budget_tokens,
+    actual_tokens=math.ceil(len(json.dumps(cards,ensure_ascii=False,separators=(",",":")))/4)
+    return {"cards": cards, "used_tokens": actual_tokens, "budget_tokens": budget_tokens,
             "truncated": len(cards) + len(missing) < len(names), "missing": missing}
 
 

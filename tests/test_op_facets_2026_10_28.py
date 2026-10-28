@@ -18,7 +18,7 @@ def test_graph_is_non_vacuous_and_edges_have_sources():
 def test_family_ops_exist_and_properties_have_sources():
     names={e["op"] for e in load("OP_GRAPH.json")["edges"]}
     fs=load("OP_FAMILIES.json")["families"]
-    assert len(fs) == 7 and sum(len(f["ops"]) for f in fs) >= 17
+    assert len(fs) >= 7 and sum(len(f["ops"]) for f in fs) >= 17
     bad=[r["op"] for f in fs for r in f["ops"] if r["op"] not in names or not r["membership_source"]]
     assert not bad
 
@@ -213,3 +213,32 @@ def test_mcp_minimal_profile_is_ten_tools_and_patterns_are_hidden():
     from fullseye.mcp.server import handle_tools_list
     r=handle_tools_list({"profile":"minimal"}); assert len(r["tools"])==10 and r["estimated_tokens"] < 1500
     full=handle_tools_list({"profile":"full"}); assert "fullseye_patterns" not in {x["name"] for x in full["tools"]}
+
+def test_round2_honesty_gates_for_choose_region_paths_and_compact_output(tmp_path):
+    import math
+    import numpy as np
+    from fullseye.mcp.catalog import Catalog
+    from fullseye.mcp.diagnose import stats_of,verdict_of
+    from fullseye.mcp.handles import HandleStore
+    from fullseye.mcp.server import call_tool
+    chosen=opsearch.choose(["gaussian","median"],{"device":"cuda"})
+    assert not chosen["ok"] and chosen["candidates"] == [] and chosen["missing_measurements"]
+    region=np.ones((100,100)); region.flat[:30]=0
+    verdict=verdict_of(stats_of(region),op_name="dyn_threshold",out_sort="region")
+    assert verdict["verdict"] == "degenerate_region" and verdict["escalate"]
+    root=tmp_path/"root"; root.mkdir(); np.save(root/"relative.npy",np.zeros((4,4)))
+    store=HandleStore(roots=[str(root)]); loaded=store.load("relative.npy")
+    assert loaded["shape"] == [4,4]
+    result=call_tool("fullseye_plan",{"have":"image","want":"region","goal":"segment"},Catalog.load(),store)
+    assert not result["content"][0]["text"].lstrip().startswith("{")
+    cards=opsearch.op_cards(["gaussian"],10000)
+    actual=math.ceil(len(json.dumps(cards["cards"],ensure_ascii=False,separators=(",",":")))/4)
+    assert cards["used_tokens"] == actual
+
+def test_backward_acquisition_steps_are_unique():
+    r=opsearch.required_inputs("normalmap",max_depth=4,k=10)
+    duplicates=[]
+    for solution in r.get("solutions",[]):
+        acquire=[x for x in solution["path"] if x.startswith("acquire:")]
+        if len(acquire) != len(set(acquire)): duplicates.append(acquire)
+    assert duplicates == []

@@ -1487,22 +1487,22 @@
 ## `fullseye/mcp/diagnose.py`
 
 - **L87** — ★順序が答えを変える(2026-09-15 実測): `ones + inf` は有限部の std が 0 なので 「定数」が先に当たり、0..715 の配列は 99.9 % が ≥ 1 なので「飽和」が先に当たった。 より根本的な異常を先に言う: 非有限 → 定数 → 範囲外 → 飽和 → 平坦。
-- **L106** — ★飽和・平坦は **image / color だけ**。region は 0/1 が契約なので「飽和」ではない —— リファクタで region を含めてしまい、`--demo` で otsu の出力が「飽和」と判定されて 小図が昇格した(2026-09-15 実測)。region の定数(空 / 全面)は上で拾う。
+- **L109** — ★飽和・平坦は **image / color だけ**。region は 0/1 が契約なので「飽和」ではない —— リファクタで region を含めてしまい、`--demo` で otsu の出力が「飽和」と判定されて 小図が昇格した(2026-09-15 実測)。region の定数(空 / 全面)は上で拾う。
 
 ## `fullseye/mcp/handles.py`
 
 - **L49** — ★thumb_dir を渡されたときに作っていなかった(mkdtemp のときだけ存在する)。 小図の保存が FileNotFoundError で落ち、テスト 4 件で発覚(2026-09-15)。
-- **L118** — ★2026-10-11: 根の中の壊れた png・object 配列の npy は ValueError 等を HandleError に 写さず投げ、dispatch を抜けてサーバのループが死んでいた。読めない中身は理由つきで断る (-32602)。npy は pickle を決して許さない。
+- **L122** — ★2026-10-11: 根の中の壊れた png・object 配列の npy は ValueError 等を HandleError に 写さず投げ、dispatch を抜けてサーバのループが死んでいた。読めない中身は理由つきで断る (-32602)。npy は pickle を決して許さない。
 
 ## `fullseye/mcp/server.py`
 
-- **L428** — ★2026-10-11: Infinity(JSON の 1e309 も inf になる)が通り、fix_text の bbox で int(inf) の OverflowError がサーバのループまで抜けていた。NaN と同じく境界で断る。
-- **L486** — ★2026-10-11: Content-Length が無い / 0 のフレームで None(= EOF)を返し、サーバが 黙って終了していた。EOF は「ヘッダを 1 行も読めない」ときだけで、壊れたフレームは FramingError(→ -32700)にしてループを続ける。
-- **L846** — ★2026-10-11: out_sort "any"(identity など素通しの op)は受けた型を保つ (engine._thread_sort と同じ規則)。"any" をそのまま次段に流すと [identity, gaussian] が「any は image でない」で拒否されていた。
-- **L921** — ★bbox が無いときは glyphops.make_spec に任せる。版面が取れなければ items に bbox が 入らない = 黙って外れた箱で直すことは起きない。ここでは理由を付けて断る。
-- **L1165** — ★2026-10-11: find_ops は「既知の種別以外は拒否する」と書きながら typo を受け、 0 件を返していた。search_ops と同じ門を通す。
-- **L1275** — ★2026-10-11: params が配列 / 文字列、name が配列 / dict のとき、.get や辞書引きの AttributeError / TypeError が run_stdio_server のループまで抜け、サーバが死んでいた (後続の正しい要求にも返事が無い)。型は境界で検査して -32602、残りは最後の網で -32603。
-- **L1322** — ★2026-09-20(GenSpark 第 38 報 N135): 「2390 names」が op 数と読まれた —— 数えているのは op 名 + HALCON 別名。
+- **L438** — ★2026-10-11: Infinity(JSON の 1e309 も inf になる)が通り、fix_text の bbox で int(inf) の OverflowError がサーバのループまで抜けていた。NaN と同じく境界で断る。
+- **L496** — ★2026-10-11: Content-Length が無い / 0 のフレームで None(= EOF)を返し、サーバが 黙って終了していた。EOF は「ヘッダを 1 行も読めない」ときだけで、壊れたフレームは FramingError(→ -32700)にしてループを続ける。
+- **L916** — ★2026-10-11: out_sort "any"(identity など素通しの op)は受けた型を保つ (engine._thread_sort と同じ規則)。"any" をそのまま次段に流すと [identity, gaussian] が「any は image でない」で拒否されていた。
+- **L1046** — ★bbox が無いときは glyphops.make_spec に任せる。版面が取れなければ items に bbox が 入らない = 黙って外れた箱で直すことは起きない。ここでは理由を付けて断る。
+- **L1294** — ★2026-10-11: find_ops は「既知の種別以外は拒否する」と書きながら typo を受け、 0 件を返していた。search_ops と同じ門を通す。
+- **L1406** — ★2026-10-11: params が配列 / 文字列、name が配列 / dict のとき、.get や辞書引きの AttributeError / TypeError が run_stdio_server のループまで抜け、サーバが死んでいた (後続の正しい要求にも返事が無い)。型は境界で検査して -32602、残りは最後の網で -32603。
+- **L1453** — ★2026-09-20(GenSpark 第 38 報 N135): 「2390 names」が op 数と読まれた —— 数えているのは op 名 + HALCON 別名。
 
 ## `fullseye/xlsxio.py`
 
@@ -2967,10 +2967,10 @@
 - **L90** — ★2026-10-07: 以下 3 本も `tools/` の外にあり、列挙が `tools/*.py` しか見ていなかったので 鎖にも表にも無かった。どれも registry とコミット済みの入力だけから決まり、2 回 回してバイト一致・各 3 秒(実測)。置き去りの実例: EXAMPLES.md は「67-op」、REFERENCES.md は「153 operators」、 OP_DISPOSITION.json は implemented 324(実際 405)のままだった。
 - **L98** — ★2026-10-15: `--md` が無く、**何も書いていなかった**(要約を標準出力に出すだけ)。 docs/CONVERSION_MATRIX.md は 2026-09-02 の「型 59 / 変換ペア 164」のまま古び、 --check は「書かない段」を drift として見られないので 6 週間通っていた。 いまは `trace_problems()` が「宣言した出力に触れもしない段」を拒む。
 - **L106** — ★2026-10-15: 13 番目から最後の方へ下げた。docmap が docs/*.md の**題**を読むので、 題を持つ生成物(OPERATORS / REFERENCES / EXAMPLES / EXAMPLES_3D / SENSOR_PLAYBOOK / CONVERSION_MATRIX / DESIGN_NOTES*)を書く 7 段すべてより後でなければならない —— 以前はその 7 段より前にあり、題が変わると 2 回回さないと揃わなかった。 文献層の本体はコーパスが要る(EXCLUDED)が、「op ノート N 本」の件数は docs/ops を数えれば直せる。 docs/ops を書く opdocs の後、題を読む docmap(gen_docs_index_ops)の前。
-- **L290** — * ★そして危険: 生成直後の記事は画像を**相対パス**で書く。公開版は `raw.githubusercontent.com` の絶対 URL に直したもの(Qiita は相対パスだと 画像が出ない —— memory `feedback_qiita_svg_path_and_cache`)。生成器だけを 回すと、その絶対 URL が 42 行ぶん巻き戻る。**回すなら記事の公開手順まで 通しでやること。** 除外は**ファイル名で**書く。散文でまとめると(「wing*_gallery の 10 本」) 機械で照合できず、下の `unclassified()` が働かない。
-- **L653** — ★2026-10-07: 印も探す場所も狭すぎた。初版は ``open(..,"w")`` / ``write_text`` / ``savefig`` / ``json.dump`` だけを ``tools/*.py``(直下のみ)で探していたので、 * **repo 直下の生成器が 1 本も見えなかった** —— ``samples.py``(docs/EXAMPLES.md が 「67-op」のまま)、``references.py``(「153 operators」)、``dispositions.py``、 ``lib_coverage.py``(885 op のまま)、``honest_summary.py`` …。``imgevolve.py`` と ``catalog.py`` だけが手で足されていた —— 手で足す方式は、足し忘れを拾えない。 * **画像の書き手が 1 本も釣れなかった** —— PIL の ``.save``、imageio の ``mimwrite``、``write_bytes``、Fullseye 自身の ``write_video`` / ``save_gif`` …。 ``gen_banner`` の PNG は「731 2-D + 265 3-D」と書いたまま古びている。 * ``tools/impl2/`` など**下の階層**も見ていなかった(docs/op_*.json の台帳)。 印を広げれば門・デモ・ライブラリも釣れる。それは構わない —— **釣れたものは全部 上の表に理由つきで載せる**(印は緩めない)。
-- **L668** — ★2026-10-25: まだ狭かった。``pv.write_viewer(`` / ``fs.write_viewer(`` で HTML を書く生成器 (``tools/build_view2026_viewers.py``、題材の枝の ``tools/build_*_anim3d.py``)がどの表にも 載っていなかった。同じ洗い出しで ``open(.., "wb")``(``"w"`` しか見ていなかった)と ``shutil.copy*`` / ``copytree`` / ``move`` も足した。印ごとに「その印でしか釣れない実在の 生成器」を ``tests/test_regen_all.py`` が要求する(印を消せば落ちる)。
-- **L716** — ★`tools/` の外にある生成物。`tools/*.py` を歩くだけでは**永久に見つからない** 位置にあり、実際 `docs/OP_INDEX.json` を取りこぼしていた。
+- **L288** — * ★そして危険: 生成直後の記事は画像を**相対パス**で書く。公開版は `raw.githubusercontent.com` の絶対 URL に直したもの(Qiita は相対パスだと 画像が出ない —— memory `feedback_qiita_svg_path_and_cache`)。生成器だけを 回すと、その絶対 URL が 42 行ぶん巻き戻る。**回すなら記事の公開手順まで 通しでやること。** 除外は**ファイル名で**書く。散文でまとめると(「wing*_gallery の 10 本」) 機械で照合できず、下の `unclassified()` が働かない。
+- **L651** — ★2026-10-07: 印も探す場所も狭すぎた。初版は ``open(..,"w")`` / ``write_text`` / ``savefig`` / ``json.dump`` だけを ``tools/*.py``(直下のみ)で探していたので、 * **repo 直下の生成器が 1 本も見えなかった** —— ``samples.py``(docs/EXAMPLES.md が 「67-op」のまま)、``references.py``(「153 operators」)、``dispositions.py``、 ``lib_coverage.py``(885 op のまま)、``honest_summary.py`` …。``imgevolve.py`` と ``catalog.py`` だけが手で足されていた —— 手で足す方式は、足し忘れを拾えない。 * **画像の書き手が 1 本も釣れなかった** —— PIL の ``.save``、imageio の ``mimwrite``、``write_bytes``、Fullseye 自身の ``write_video`` / ``save_gif`` …。 ``gen_banner`` の PNG は「731 2-D + 265 3-D」と書いたまま古びている。 * ``tools/impl2/`` など**下の階層**も見ていなかった(docs/op_*.json の台帳)。 印を広げれば門・デモ・ライブラリも釣れる。それは構わない —— **釣れたものは全部 上の表に理由つきで載せる**(印は緩めない)。
+- **L666** — ★2026-10-25: まだ狭かった。``pv.write_viewer(`` / ``fs.write_viewer(`` で HTML を書く生成器 (``tools/build_view2026_viewers.py``、題材の枝の ``tools/build_*_anim3d.py``)がどの表にも 載っていなかった。同じ洗い出しで ``open(.., "wb")``(``"w"`` しか見ていなかった)と ``shutil.copy*`` / ``copytree`` / ``move`` も足した。印ごとに「その印でしか釣れない実在の 生成器」を ``tests/test_regen_all.py`` が要求する(印を消せば落ちる)。
+- **L714** — ★`tools/` の外にある生成物。`tools/*.py` を歩くだけでは**永久に見つからない** 位置にあり、実際 `docs/OP_INDEX.json` を取りこぼしていた。
 
 ## `torch_lazy.py`
 

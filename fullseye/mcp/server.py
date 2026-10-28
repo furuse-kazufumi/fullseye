@@ -539,6 +539,8 @@ def _log(*parts) -> None:
 def tool_result(text: str, structured: dict | None, *, links: list | None = None,
                 max_structured_bytes: int = MAX_STRUCTURED_BYTES) -> dict:
     """本文(text)は必ず付け、typed tree は上限内なら付ける。超えたら**落としたと書く**。"""
+    if structured is not None and get_system("mcp_body_mode") == "compact" and text.lstrip().startswith(("{","[")):
+        text="structured result: %d bytes" % len(json.dumps(structured,ensure_ascii=False).encode("utf-8"))
     content: list[dict] = [{"type": "text", "text": text}]
     for lk in links or ():
         content.append(lk)

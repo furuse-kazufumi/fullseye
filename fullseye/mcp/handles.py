@@ -59,7 +59,11 @@ class HandleStore:
     def _check_path(self, path: str) -> str:
         if not isinstance(path, str) or not path.strip():
             raise HandleError("path が空")
-        real = os.path.realpath(path)
+        if os.path.isabs(path):
+            real = os.path.realpath(path)
+        else:
+            candidates=[os.path.realpath(os.path.join(root,path)) for root in self.roots]
+            real=next((p for p in candidates if os.path.isfile(p)), candidates[0] if candidates else os.path.realpath(path))
         inside = any(real == r or real.startswith(r + os.sep) for r in self.roots)
         if not inside:
             raise HandleError(

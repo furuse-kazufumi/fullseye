@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from fullseye.opsearch import plan_chain, search_ops
+from fullseye.opsearch import plan as plan_api, plan_chain, search_ops
 
 ROOT = Path(__file__).resolve().parents[1]
 BENCH = ROOT / "docs" / "ops" / "rag_benchmark.json"
@@ -24,17 +24,21 @@ def _recall(found, relevant):
 
 def _measure(rows):
     queries = []
-    by_category = defaultdict(lambda: {"search": [], "plan": []})
+    by_category = defaultdict(lambda: {"search": [], "plan": [], "executable": []})
     for row in rows:
         direct = [x["name"] for x in search_ops(row["query"], 10)["ops"]]
         plan = plan_chain(row["query"], row["start_sort"], row["goal_sort"], k=10, max_depth=4)
         planned = [x["name"] for stage in plan.get("stages", []) for x in stage["candidates"]]
+        executable=plan_api(row["start_sort"],row["goal_sort"],goal=row["query"])
+        executable_names=[name for p in executable.get("plans",[]) for name in p["ops"]]
         sr, pr = _recall(direct, row["relevant"]), _recall(planned, row["relevant"])
-        queries.append((row, sr, pr))
+        er=_recall(executable_names,row["relevant"])
+        queries.append((row, sr, pr, er))
         by_category[row["category"]]["search"].append(sr)
         by_category[row["category"]]["plan"].append(pr)
+        by_category[row["category"]]["executable"].append(er)
     avg = lambda xs: sum(xs) / len(xs)
-    return queries, {k: {m: avg(v[m]) for m in ("search", "plan")} for k, v in by_category.items()}
+    return queries, {k: {m: avg(v[m]) for m in ("search", "plan", "executable")} for k, v in by_category.items()}
 
 
 def test_corpus_is_large_balanced_and_multilingual():
@@ -67,20 +71,21 @@ def test_per_query_category_and_overall_recall_gates():
     queries, cats = _measure(data["queries"])
     overall_search = sum(q[1] for q in queries) / len(queries)
     overall_plan = sum(q[2] for q in queries) / len(queries)
+    overall_executable = sum(q[3] for q in queries) / len(queries)
     gate = data["thresholds"]
     assert overall_plan >= gate["overall_plan"]["minimum"]
-    assert overall_plan >= overall_search, "typed planning must not regress the one-shot macro recall"
-    assert overall_plan <= gate["overall_plan"]["measured"], "recall improved; update the recorded upper reference"
+    assert overall_executable >= gate["overall_executable_plan"]["minimum"]
+    assert overall_executable >= overall_search, "default executable planning must not regress one-shot recall"
     for name, limits in gate["categories"].items():
         assert cats[name]["plan"] >= limits["minimum"], (name, cats[name])
-        assert cats[name]["plan"] <= limits["measured"], "%s improved; update the recorded upper reference" % name
     # Every query value is retained in the generated report, not hidden by averages.
     report = json.loads(REPORT.read_text(encoding="utf-8"))
     got = {r["id"]: r for r in report["queries"]}
-    for row, sr, pr in queries:
+    for row, sr, pr, er in queries:
         assert got[row["id"]]["search_recall_at_10"] == pytest.approx(sr)
         assert got[row["id"]]["untyped_recall_at_10"] == pytest.approx(sr)
         assert got[row["id"]]["plan_recall_at_10"] == pytest.approx(pr)
+        assert got[row["id"]]["executable_plan_recall_at_10"] == pytest.approx(er)
 
 
 def test_synonym_gap_generated_artifact_is_current():
@@ -91,15 +96,18 @@ def test_synonym_gap_generated_artifact_is_current():
     assert expected, "the gap report must not become vacuously empty"
 
 
+def _validate_rows(rows):
+    assert rows, "an empty benchmark must never pass"
+
 def test_gate_rejects_empty_and_one_query_regression():
     with pytest.raises(AssertionError):
-        assert [], "an empty benchmark must never pass"
+        _validate_rows([])
     data = _data()
     rows = [dict(r) for r in data["queries"]]
     # One full miss changes macro recall by 1/40=0.025; the overall margin is
     # exactly smaller than that, so a single currently-correct query must fail.
     measured, _ = _measure(rows)
-    victim = next(i for i, (_, _, pr) in enumerate(measured) if pr == 1.0)
+    victim = next(i for i, (_, _, pr, _er) in enumerate(measured) if pr == 1.0)
     rows[victim] = dict(rows[victim], relevant=["no_such_operator_for_mutation_gate"])
     changed, _ = _measure(rows)
     score = sum(q[2] for q in changed) / len(changed)

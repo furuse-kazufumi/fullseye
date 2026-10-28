@@ -5,33 +5,39 @@
   "overall": {
     "search_recall_at_10": 0.625,
     "untyped_recall_at_10": 0.625,
-    "plan_recall_at_10": 0.8
+    "plan_recall_at_10": 0.875,
+    "executable_plan_recall_at_10": 0.825
   },
   "categories": {
     "fast_3d": {
       "n_queries": 8,
       "search_recall_at_10": 0.75,
-      "plan_recall_at_10": 0.75
+      "plan_recall_at_10": 1.0,
+      "executable_plan_recall_at_10": 0.875
     },
     "general": {
       "n_queries": 8,
       "search_recall_at_10": 0.75,
-      "plan_recall_at_10": 0.75
+      "plan_recall_at_10": 0.5,
+      "executable_plan_recall_at_10": 0.5
     },
     "multi_product": {
       "n_queries": 8,
       "search_recall_at_10": 0.625,
-      "plan_recall_at_10": 0.75
+      "plan_recall_at_10": 0.875,
+      "executable_plan_recall_at_10": 0.875
     },
     "positioning": {
       "n_queries": 8,
       "search_recall_at_10": 0.625,
-      "plan_recall_at_10": 0.875
+      "plan_recall_at_10": 1.0,
+      "executable_plan_recall_at_10": 0.875
     },
     "specular_transparent": {
       "n_queries": 8,
       "search_recall_at_10": 0.375,
-      "plan_recall_at_10": 0.875
+      "plan_recall_at_10": 1.0,
+      "executable_plan_recall_at_10": 1.0
     }
   },
   "queries": [
@@ -42,6 +48,7 @@
       "search_recall_at_10": 1.0,
       "untyped_recall_at_10": 1.0,
       "plan_recall_at_10": 1.0,
+      "executable_plan_recall_at_10": 1.0,
       "missed_by_search": [],
       "missed_by_plan": []
     },
@@ -52,6 +59,7 @@
       "search_recall_at_10": 1.0,
       "untyped_recall_at_10": 1.0,
       "plan_recall_at_10": 1.0,
+      "executable_plan_recall_at_10": 1.0,
       "missed_by_search": [],
       "missed_by_plan": []
     },
@@ -62,6 +70,7 @@
       "search_recall_at_10": 0.0,
       "untyped_recall_at_10": 0.0,
       "plan_recall_at_10": 1.0,
+      "executable_plan_recall_at_10": 1.0,
       "missed_by_search": [
         "shape_locate"
       ],
@@ -74,6 +83,7 @@
       "search_recall_at_10": 1.0,
       "untyped_recall_at_10": 1.0,
       "plan_recall_at_10": 1.0,
+      "executable_plan_recall_at_10": 1.0,
       "missed_by_search": [],
       "missed_by_plan": []
     },
@@ -84,6 +94,7 @@
       "search_recall_at_10": 1.0,
       "untyped_recall_at_10": 1.0,
       "plan_recall_at_10": 1.0,
+      "executable_plan_recall_at_10": 1.0,
       "missed_by_search": [],
       "missed_by_plan": []
     },
@@ -93,13 +104,12 @@
       "query": "다품종 부품을 형상 기반으로 위치 찾기",
       "search_recall_at_10": 0.0,
       "untyped_recall_at_10": 0.0,
-      "plan_recall_at_10": 0.0,
+      "plan_recall_at_10": 1.0,
+      "executable_plan_recall_at_10": 1.0,
       "missed_by_search": [
         "shape_locate"
       ],
-      "missed_by_plan": [
-        "shape_locate"
-      ]
+      "missed_by_plan": []
     },
     {
       "id": "mv07",
@@ -108,6 +118,7 @@
       "search_recall_at_10": 0.0,
       "untyped_recall_at_10": 0.0,
       "plan_recall_at_10": 0.0,
+      "executable_plan_recall_at_10": 0.0,
       "missed_by_search": [
         "cv_good_features"
       ],
@@ -122,6 +133,7 @@
       "search_recall_at_10": 1.0,
       "untyped_recall_at_10": 1.0,
       "plan_recall_at_10": 1.0,
+      "executable_plan_recall_at_10": 1.0,
       "missed_by_search": [],
       "missed_by_plan": []
     },
@@ -132,6 +144,7 @@
       "search_recall_at_10": 0.0,
       "untyped_recall_at_10": 0.0,
       "plan_recall_at_10": 1.0,
+      "executable_plan_recall_at_10": 1.0,
       "missed_by_search": [
         "polarization_separate"
       ],
@@ -144,6 +157,7 @@
       "search_recall_at_10": 1.0,
       "untyped_recall_at_10": 1.0,
       "plan_recall_at_10": 1.0,
+      "executable_plan_recall_at_10": 1.0,
       "missed_by_search": [],
       "missed_by_plan": []
     },
@@ -154,6 +168,7 @@
       "search_recall_at_10": 0.0,
       "untyped_recall_at_10": 0.0,
       "plan_recall_at_10": 1.0,
+      "executable_plan_recall_at_10": 1.0,
       "missed_by_search": [
         "polarization_render"
       ],
@@ -166,6 +181,7 @@
       "search_recall_at_10": 1.0,
       "untyped_recall_at_10": 1.0,
       "plan_recall_at_10": 1.0,
+      "executable_plan_recall_at_10": 1.0,
       "missed_by_search": [],
       "missed_by_plan": []
     },
@@ -176,6 +192,7 @@
       "search_recall_at_10": 1.0,
       "untyped_recall_at_10": 1.0,
       "plan_recall_at_10": 1.0,
+      "executable_plan_recall_at_10": 1.0,
       "missed_by_search": [],
       "missed_by_plan": []
     },
@@ -186,6 +203,7 @@
       "search_recall_at_10": 0.0,
       "untyped_recall_at_10": 0.0,
       "plan_recall_at_10": 1.0,
+      "executable_plan_recall_at_10": 1.0,
       "missed_by_search": [
         "polarization_separate"
       ],
@@ -198,6 +216,7 @@
       "search_recall_at_10": 0.0,
       "untyped_recall_at_10": 0.0,
       "plan_recall_at_10": 1.0,
+      "executable_plan_recall_at_10": 1.0,
       "missed_by_search": [
         "polarization_dolp_map"
       ],
@@ -209,13 +228,12 @@
       "query": "金属光沢部を偏光方向ごとに撮像するシミュレーション",
       "search_recall_at_10": 0.0,
       "untyped_recall_at_10": 0.0,
-      "plan_recall_at_10": 0.0,
+      "plan_recall_at_10": 1.0,
+      "executable_plan_recall_at_10": 1.0,
       "missed_by_search": [
         "polarization_render"
       ],
-      "missed_by_plan": [
-        "polarization_render"
-      ]
+      "missed_by_plan": []
     },
     {
       "id": "po01",
@@ -224,6 +242,7 @@
       "search_recall_at_10": 1.0,
       "untyped_recall_at_10": 1.0,
       "plan_recall_at_10": 1.0,
+      "executable_plan_recall_at_10": 1.0,
       "missed_by_search": [],
       "missed_by_plan": []
     },
@@ -233,13 +252,12 @@
       "query": "輪郭モデルでワークの位置を決める",
       "search_recall_at_10": 0.0,
       "untyped_recall_at_10": 0.0,
-      "plan_recall_at_10": 0.0,
+      "plan_recall_at_10": 1.0,
+      "executable_plan_recall_at_10": 0.0,
       "missed_by_search": [
         "shape_locate"
       ],
-      "missed_by_plan": [
-        "shape_locate"
-      ]
+      "missed_by_plan": []
     },
     {
       "id": "po03",
@@ -248,6 +266,7 @@
       "search_recall_at_10": 1.0,
       "untyped_recall_at_10": 1.0,
       "plan_recall_at_10": 1.0,
+      "executable_plan_recall_at_10": 1.0,
       "missed_by_search": [],
       "missed_by_plan": []
     },
@@ -258,6 +277,7 @@
       "search_recall_at_10": 1.0,
       "untyped_recall_at_10": 1.0,
       "plan_recall_at_10": 1.0,
+      "executable_plan_recall_at_10": 1.0,
       "missed_by_search": [],
       "missed_by_plan": []
     },
@@ -268,6 +288,7 @@
       "search_recall_at_10": 0.0,
       "untyped_recall_at_10": 0.0,
       "plan_recall_at_10": 1.0,
+      "executable_plan_recall_at_10": 1.0,
       "missed_by_search": [
         "shape_locate"
       ],
@@ -280,6 +301,7 @@
       "search_recall_at_10": 1.0,
       "untyped_recall_at_10": 1.0,
       "plan_recall_at_10": 1.0,
+      "executable_plan_recall_at_10": 1.0,
       "missed_by_search": [],
       "missed_by_plan": []
     },
@@ -290,6 +312,7 @@
       "search_recall_at_10": 0.0,
       "untyped_recall_at_10": 0.0,
       "plan_recall_at_10": 1.0,
+      "executable_plan_recall_at_10": 1.0,
       "missed_by_search": [
         "shape_locate"
       ],
@@ -302,6 +325,7 @@
       "search_recall_at_10": 1.0,
       "untyped_recall_at_10": 1.0,
       "plan_recall_at_10": 1.0,
+      "executable_plan_recall_at_10": 1.0,
       "missed_by_search": [],
       "missed_by_plan": []
     },
@@ -312,6 +336,7 @@
       "search_recall_at_10": 1.0,
       "untyped_recall_at_10": 1.0,
       "plan_recall_at_10": 1.0,
+      "executable_plan_recall_at_10": 1.0,
       "missed_by_search": [],
       "missed_by_plan": []
     },
@@ -322,6 +347,7 @@
       "search_recall_at_10": 1.0,
       "untyped_recall_at_10": 1.0,
       "plan_recall_at_10": 1.0,
+      "executable_plan_recall_at_10": 1.0,
       "missed_by_search": [],
       "missed_by_plan": []
     },
@@ -332,6 +358,7 @@
       "search_recall_at_10": 1.0,
       "untyped_recall_at_10": 1.0,
       "plan_recall_at_10": 1.0,
+      "executable_plan_recall_at_10": 1.0,
       "missed_by_search": [],
       "missed_by_plan": []
     },
@@ -342,6 +369,7 @@
       "search_recall_at_10": 1.0,
       "untyped_recall_at_10": 1.0,
       "plan_recall_at_10": 1.0,
+      "executable_plan_recall_at_10": 1.0,
       "missed_by_search": [],
       "missed_by_plan": []
     },
@@ -352,6 +380,7 @@
       "search_recall_at_10": 1.0,
       "untyped_recall_at_10": 1.0,
       "plan_recall_at_10": 1.0,
+      "executable_plan_recall_at_10": 1.0,
       "missed_by_search": [],
       "missed_by_plan": []
     },
@@ -361,13 +390,12 @@
       "query": "구조광 프린지에서 높이 복원",
       "search_recall_at_10": 0.0,
       "untyped_recall_at_10": 0.0,
-      "plan_recall_at_10": 0.0,
+      "plan_recall_at_10": 1.0,
+      "executable_plan_recall_at_10": 1.0,
       "missed_by_search": [
         "decode_fringe"
       ],
-      "missed_by_plan": [
-        "decode_fringe"
-      ]
+      "missed_by_plan": []
     },
     {
       "id": "m307",
@@ -376,6 +404,7 @@
       "search_recall_at_10": 1.0,
       "untyped_recall_at_10": 1.0,
       "plan_recall_at_10": 1.0,
+      "executable_plan_recall_at_10": 1.0,
       "missed_by_search": [],
       "missed_by_plan": []
     },
@@ -385,13 +414,12 @@
       "query": "高速三次元計測で参照位相をほどく",
       "search_recall_at_10": 0.0,
       "untyped_recall_at_10": 0.0,
-      "plan_recall_at_10": 0.0,
+      "plan_recall_at_10": 1.0,
+      "executable_plan_recall_at_10": 0.0,
       "missed_by_search": [
         "unwrap_phase_2d"
       ],
-      "missed_by_plan": [
-        "unwrap_phase_2d"
-      ]
+      "missed_by_plan": []
     },
     {
       "id": "ge01",
@@ -400,6 +428,7 @@
       "search_recall_at_10": 1.0,
       "untyped_recall_at_10": 1.0,
       "plan_recall_at_10": 1.0,
+      "executable_plan_recall_at_10": 1.0,
       "missed_by_search": [],
       "missed_by_plan": []
     },
@@ -410,6 +439,7 @@
       "search_recall_at_10": 0.0,
       "untyped_recall_at_10": 0.0,
       "plan_recall_at_10": 0.0,
+      "executable_plan_recall_at_10": 0.0,
       "missed_by_search": [
         "otsu"
       ],
@@ -423,9 +453,12 @@
       "query": "領域の面積と重心位置を測る",
       "search_recall_at_10": 1.0,
       "untyped_recall_at_10": 1.0,
-      "plan_recall_at_10": 1.0,
+      "plan_recall_at_10": 0.0,
+      "executable_plan_recall_at_10": 0.0,
       "missed_by_search": [],
-      "missed_by_plan": []
+      "missed_by_plan": [
+        "area_center"
+      ]
     },
     {
       "id": "ge04",
@@ -434,6 +467,7 @@
       "search_recall_at_10": 1.0,
       "untyped_recall_at_10": 1.0,
       "plan_recall_at_10": 1.0,
+      "executable_plan_recall_at_10": 1.0,
       "missed_by_search": [],
       "missed_by_plan": []
     },
@@ -444,6 +478,7 @@
       "search_recall_at_10": 1.0,
       "untyped_recall_at_10": 1.0,
       "plan_recall_at_10": 1.0,
+      "executable_plan_recall_at_10": 1.0,
       "missed_by_search": [],
       "missed_by_plan": []
     },
@@ -454,6 +489,7 @@
       "search_recall_at_10": 1.0,
       "untyped_recall_at_10": 1.0,
       "plan_recall_at_10": 1.0,
+      "executable_plan_recall_at_10": 1.0,
       "missed_by_search": [],
       "missed_by_plan": []
     },
@@ -463,9 +499,12 @@
       "query": "영역의 면적과 중심 위치 측정",
       "search_recall_at_10": 1.0,
       "untyped_recall_at_10": 1.0,
-      "plan_recall_at_10": 1.0,
+      "plan_recall_at_10": 0.0,
+      "executable_plan_recall_at_10": 0.0,
       "missed_by_search": [],
-      "missed_by_plan": []
+      "missed_by_plan": [
+        "area_center"
+      ]
     },
     {
       "id": "ge08",
@@ -474,6 +513,7 @@
       "search_recall_at_10": 0.0,
       "untyped_recall_at_10": 0.0,
       "plan_recall_at_10": 0.0,
+      "executable_plan_recall_at_10": 0.0,
       "missed_by_search": [
         "count_obj"
       ],

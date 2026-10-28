@@ -41,7 +41,7 @@ claude mcp add fullseye -- py -3.11 -m fullseye.mcp
 set FULLSEYE_MCP_ROOT=C:\path\to\images;D:\more   (PowerShell: $env:FULLSEYE_MCP_ROOT = "...")
 ```
 
-## tool は 17 個(op はデータとして検索し、個別 tool にはしない)
+## 最小プロファイルは10道具(opはデータとして検索する)
 
 op はデータで、tool は「探す・読む・読み込む・走らせる・観察する」の数個だけ。
 tool を 1,942 個並べると LLM の文脈を食い潰す(TheMCPCompany の実測: 18,000 tool は
@@ -51,13 +51,15 @@ retrieval 無しでは使えない)。
 |---|---|
 | `fullseye_search_ops` | 名前・HALCON 名・カテゴリ・次元の部分一致。返り値の `sources` が出どころ(index / registry / ledger / note / facade)、`by_sources` が層別の内訳 |
 | `fullseye_find_ops` | やりたいことの言葉(日本語・英語・中文 簡/繁・한국어・Deutsch・हिन्दी)で探す。op の要約 7 言語・名前・HALCON 名・型を BM25 で照合し、順位つきで要約(問い合わせの言語)とノートの場所を返す。同義語は拾わない |
-| `fullseye_plan_chain` | start sort から goal sort までの型経路を探し、各段の候補を BM25 順で返す。実行はしない |
+| `fullseye_plan` | have・want・goalから型付きDAGを返す。後ろ向きも同じ超グラフ探索器を使う |
+| `fullseye_describe` | sort・op・族を1件だけ説明する |
 | `fullseye_op_cards` | 候補 op の短いカードを token 予算内で返す。カードの途中では切らない |
 | `fullseye_validate_pipeline` | op 名、型連鎖、a/b の範囲、段数を実行せず検査し、段番号つきの理由と候補を返す |
 | `fullseye_op_help` | op の知識層ノート(使い方・つまみ a/b の実効・HALCON 相当)+ 生成済みで実行が検証された図を `resource_link` で |
 | `fullseye_catalog_coverage` | カタログ 5 層の交差。検索がどれだけの機能を見えているか |
 | `fullseye_list_samples` | 同梱サンプル(来歴・ライセンスつき) |
 | `fullseye_load_image` | 画像 → ハンドル。画素は返さず、数値統計 + 判定 |
+| `fullseye_load_stack` | 複数画像 → `images` / `seq<image>` / `polsweep` の束ハンドル |
 | `fullseye_apply` | ハンドルに op を 1 つ。出力ハンドル + 数値統計 + 判定 + 劣化台帳 |
 | `fullseye_pipeline` | op を順に。段ごとに記録、型連鎖は走らせる前に検査、strict は失敗段で停止 |
 | `fullseye_inspect` | ハンドルの数値統計 + 判定(+ 小図) |
@@ -68,15 +70,15 @@ retrieval 無しでは使えない)。
 | `fullseye_estimate_distortion` | 本来まっすぐな**線群の点列**(`lines`=`[[x,y],…]` を並べた配列、2 本以上・各線 3 点以上)と 3x3 内部行列 `K` から Brown–Conrady 歪み係数 `dist=[k1,k2,p1,p2,k3]` を推定(plumb-line 法、チェッカー不要)。`radial`=1/2/3、`tangential` 真偽。返す `dist` は `undistort_image` にそのまま渡せる。`lines`/`K` は信頼境界で再検証し、形が違えば `-32602`、推定不能は `isError` |
 
 小さな LLM は、候補を絞ってから短い説明だけを渡す。推奨順は
-`find_ops / plan_chain → op_cards → validate_pipeline → pipeline`。
+`find_ops / plan → op_cards → validate_pipeline → pipeline`。
 
 ```json
-{"name":"fullseye_plan_chain","arguments":{"query":"count connected defects","start_sort":"image","goal_sort":"feature","k":5,"max_depth":4}}
-{"name":"fullseye_op_cards","arguments":{"names":["otsu","count_obj"],"budget_tokens":200}}
+{"name":"fullseye_plan","arguments":{"have":"image","want":"feature","goal":"count connected defects"}}
+{"name":"fullseye_op_cards","arguments":{"names":["otsu","count_obj"]}}
 {"name":"fullseye_validate_pipeline","arguments":{"start_sort":"image","stages":[{"op":"otsu"},{"op":"count_obj"}]}}
 ```
 
-`find_ops` と `plan_chain` の `probe` は既定入力での試し実行結果である。
+`find_ops` の `probe` は既定入力での試し実行結果である。
 失敗は「その入力では動かなかった」という選択材料であり、op 自体の故障とは断定しない。
 
 ## 触って見るビューアを書く(`fullseye_write_viewer`)
@@ -248,13 +250,8 @@ Function Hijacking(tool 選択の乗っ取り ASR 70〜100 %)—— と、TRIZ �
 画像処理ライブラリを MCP で公開した先行例は、8 コーパスを引いて 0 件だった(2026-09-15)。
 # AI に op を選ばせる短い手順
 
-`fullseye_pipeline_shape` で入出力の形を決め、`fullseye_required_inputs` で解から必要な入力を逆引きする。
-次に `fullseye_choose_op` で族の候補を絞り、`fullseye_patterns` で型付きの骨格を得る。
-各段の探索範囲は `fullseye_param_space`、型の意味は `fullseye_sort_guide` で確認する。未計測の制約は
-推測で補わず、fail-closed の理由として返る。
-
-現在の推奨入口は `fullseye_plan`、`fullseye_describe`、`fullseye_choose` の3つである。旧入口は
-後方互換の薄い別名として残す。`tools/list` に `{"profile":"minimal"}` を渡すか、
-`FULLSEYE_MCP_PROFILE=minimal` を設定すると、実行までに必要な8道具だけを公開する。
-2026-10-28のJSON文字数÷4による計測では、全25道具が約3,505トークン、最小8道具が約1,157トークンである。
-未検証の設計パターンはMCP一覧には出さない。
+公開する計画入口は `fullseye_plan`、`fullseye_describe`、`fullseye_choose` の3つだけである。
+未計測の制約は推測で補わず、fail-closedの理由として返す。`tools/list` に
+`{"profile":"minimal"}` を渡すか、`FULLSEYE_MCP_PROFILE=minimal`を設定すると実行に必要な10道具を公開する。
+2026-10-28のJSON文字数÷4による計測では、全20道具が約2,964トークン、最小10道具が約1,166トークンである。
+未検証の設計パターンと重複した計画入口はMCP一覧に出さない。
