@@ -679,9 +679,10 @@ def plan_chain(query: str, start_sort: str, goal_sort: str, k: int = 5, max_dept
     for p in r["plans"]:
         for n in p["ops"]:
             if n not in alternatives: alternatives.append(n)
+    probes = _probe_map()
     stages = [{"stage": i, "in_sort": edges[n]["inputs"], "out_sort": edges[n]["output"],
-               "candidates": ([{"name": x, "score": 0.0} for x in alternatives[:k]] if i==1 else
-                              [{"name": n, "score": round(1.0 / max(r["plans"][0]["weight"], 1e-9), 3)}])}
+               "candidates": ([_with_probe({"name": x, "score": 0.0}, probes) for x in alternatives[:k]] if i==1 else
+                              [_with_probe({"name": n, "score": round(1.0 / max(r["plans"][0]["weight"], 1e-9), 3)}, probes)])}
               for i, n in enumerate(ops, 1)]
     return {"query": query, "start_sort": _sort(start_sort), "goal_sort": _sort(goal_sort), "found": True,
             "depth": len(ops), "stages": stages, "plans": r["plans"]}

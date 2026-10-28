@@ -89,7 +89,8 @@ def test_business_plan_mutation_is_caught(monkeypatch):
     g=load("OP_GRAPH.json"); g["edges"]=[e for e in g["edges"] if e["op"]!="decode_fringe"]
     monkeypatch.setitem(opsearch._CACHE,"json:OP_GRAPH.json",g)
     r=opsearch.plan("images","depth",constraints={"query":"fringe projection height","k":5,"executable_only":False})
-    assert not any("decode_fringe" in p["ops"] for p in r.get("plans",[]))
+    matching_plans=[p for p in r.get("plans",[]) if "decode_fringe" in p["ops"]]
+    assert matching_plans == []
 
 def test_family_negative_examples_and_cpu_measurements():
     f=load("OP_FAMILIES.json"); members={x["name"]:{r["op"] for r in x["ops"]} for x in f["families"]}
