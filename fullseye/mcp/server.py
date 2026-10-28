@@ -105,6 +105,25 @@ TOOLS: dict[str, dict] = {
             "max_depth": {"type": "integer", "minimum": 1, "maximum": 16}},
             "required": ["query", "start_sort", "goal_sort"], "additionalProperties": False},
     },
+    "fullseye_choose_op": {
+        "description": "Rank operators in a measured family; requested but unmeasured facts fail closed.",
+        "inputSchema": {"type": "object", "properties": {
+            "family": {"type": "string"}, "constraints": {"type": "object"}},
+            "required": ["family"], "additionalProperties": False},
+    },
+    "fullseye_required_inputs": {
+        "description": "Search the transposed AND-OR op graph from a desired output to required input sort sets.",
+        "inputSchema": {"type": "object", "properties": {
+            "goal_sort": {"type": "string"}, "max_depth": {"type": "integer", "minimum": 0, "maximum": 16},
+            "k": {"type": "integer", "minimum": 1, "maximum": 100}},
+            "required": ["goal_sort"], "additionalProperties": False},
+    },
+    "fullseye_param_space": {
+        "description": "Narrow an op's measured knob search space from input context; unused knobs are excluded.",
+        "inputSchema": {"type": "object", "properties": {
+            "op": {"type": "string"}, "input_context": {"type": "object"}},
+            "required": ["op"], "additionalProperties": False},
+    },
     "fullseye_op_cards": {
         "description": "Return short complete op cards within a token budget; cards are never cut mid-card.",
         "inputSchema": {"type": "object", "properties": {
@@ -1122,6 +1141,20 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
         except ValueError as exc:
             raise ArgError(str(exc)) from exc
         return tool_result(json.dumps(r, ensure_ascii=False, indent=2), r, max_structured_bytes=max_structured_bytes)
+    if name in ("fullseye_choose_op", "fullseye_required_inputs", "fullseye_param_space"):
+        from fullseye.opsearch import choose_op, required_inputs, param_space
+        try:
+            if name == "fullseye_choose_op":
+                r = choose_op(a["family"], a.get("constraints"))
+            elif name == "fullseye_required_inputs":
+                r = required_inputs(a["goal_sort"], a.get("max_depth", 4), a.get("k", 10))
+            else:
+                r = param_space(a["op"], a.get("input_context"))
+        except ValueError as exc:
+            raise ArgError(str(exc)) from exc
+        text = json.dumps(r, ensure_ascii=False, indent=2)
+        failed = r.get("fail_closed") or (name == "fullseye_required_inputs" and not r.get("solutions"))
+        return _tool_error(text, r) if failed else tool_result(text, r, max_structured_bytes=max_structured_bytes)
     if name == "fullseye_op_cards":
         from fullseye.opsearch import op_cards
         try:
