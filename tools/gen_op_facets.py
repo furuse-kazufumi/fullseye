@@ -34,6 +34,9 @@ ACQUIRABLE = {
     "volume": "tomographic/volumetric acquisition",
     "video": "camera stream acquisition",
 }
+DUPLICATE_EXEMPTIONS = {
+    "gaussians_to_voxel": "chain_fuzz compatibility alias; first declaration is the public contract",
+}
 
 def canonical_sort(value: str | None) -> str:
     value = (value or "untyped").strip()
@@ -47,6 +50,18 @@ def split_inputs(value) -> list[str]:
     # Old indexes encoded n-ary inputs as a display string.  It is never a sort.
     return [canonical_sort(x) for x in re.split(r"\s*(?:×|\+|,)\s*", str(value)) if x]
 
+def type_semantics(inputs: list[str], output: str) -> tuple[list[str], str, str, bool]:
+    """Replace the overloaded historical ``any`` with explicit meanings."""
+    inputs = ["unknown" if x in ("any", "untyped") else x for x in inputs]
+    if output == "any":
+        output = "poly" if inputs and inputs[0] != "unknown" else "unknown"
+    elif output == "untyped":
+        output = "unknown"
+    semantics = ("source" if not inputs and output != "unknown" else
+                 "poly" if output == "poly" else
+                 "unknown" if output == "unknown" or "unknown" in inputs else "typed")
+    return inputs, output, semantics, bool(inputs)
+
 FAMILY_RULES = {
     "denoise": r"denois|noise.*(?:filter|remove|reduce)|median|bilateral|nlm|wiener",
     "edge_detection": r"canny|sobel|prewitt|scharr|laplac|edge|deriche",
@@ -56,15 +71,6 @@ FAMILY_RULES = {
     "fringe_phase": r"fringe|phase.*(?:shift|extract|demod)|fourier.*phase",
     "sorting": r"(?:quick|heap|merge|intro|stable|radix|counting)_?sort|^sort_",
 }
-
-STRUCTURE_RULES = [
-    ("global_transform", r"fft|fourier|dct|wavelet"),
-    ("irregular_sequential", r"watershed|flood|unwrap|connected|component|(?:quick|heap|merge).*sort"),
-    ("reduction_histogram", r"hist|reduce|mean|median|percentile|otsu"),
-    ("neighborhood_stencil", r"filter|blur|gauss|median|sobel|canny|morph|erod|dilat|laplac"),
-    ("sparse_graph", r"graph|mesh|path|route|sparse"),
-]
-
 
 def _dump(path: Path, obj) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -124,6 +130,10 @@ def build() -> dict[str, object]:
         raise RuntimeError("docs/OP_INDEX.json has no ops")
     executable = {r["name"] for r in index_rows if r.get("tier") in {"registry", "color", "nary"}}
     index_names = {r["name"] for r in index_rows}
+    nary = {r["name"]: r for r in index_rows if r.get("tier") == "nary"}
+    for name, row in nary.items():
+        if row.get("arity") != len(row.get("in_sorts") or []):
+            raise RuntimeError("nary declaration arity mismatch for %s" % name)
     family_rows: dict[str, list] = defaultdict(list)
     try:
         import accel
@@ -141,10 +151,18 @@ def build() -> dict[str, object]:
             excluded_chain_only.append({"op": name, "reason": "not present in public OP_INDEX"})
             continue
         ins, out = split_inputs(ins), canonical_sort(out)
+        if name in nary:
+            ins = [canonical_sort(x) for x in nary[name]["in_sorts"]]
+        ins, out, semantics, consumes = type_semantics(ins, out)
         signature = (tuple(ins), out, category)
         if name in seen:
-            duplicate_declarations.append({"op": name, "conflicting": signatures[name] != signature,
-                                           "kept": signatures[name], "ignored": signature})
+            conflict = signatures[name] != signature
+            if conflict and name not in DUPLICATE_EXEMPTIONS:
+                raise RuntimeError("conflicting operator declarations for %s: %r != %r" %
+                                   (name, signatures[name], signature))
+            duplicate_declarations.append({"op": name, "conflicting": conflict,
+                                           "kept": signatures[name], "ignored": signature,
+                                           "exemption": DUPLICATE_EXEMPTIONS.get(name)})
             continue
         seen.add(name); signatures[name] = signature
         produced[out] += 1
@@ -153,10 +171,20 @@ def build() -> dict[str, object]:
         fam = next((f for f, rx in FAMILY_RULES.items() if re.search(rx, text)), None)
         structure = "unknown"
         if name in accel_names:
-            structure = ("neighborhood_stencil" if re.search(r"gauss|sobel|median|morph|blur", name) else "elementwise")
+            if name in {"lowpass", "highpass"}:
+                structure = "global_transform"
+            elif name == "fill_holes":
+                structure = "irregular_sequential"
+            elif re.search(r"gauss|sobel|median|morph|blur", name):
+                structure = "neighborhood_stencil"
+            else:
+                structure = "elementwise"
         src = _source(name, category)
         edge = {"op": name, "inputs": list(ins), "output": out, "category": category,
-                "family": fam, "executable": name in executable,
+                "family": None, "family_candidate": fam,
+                "family_candidate_source": "heuristic_regex" if fam else None,
+                "type_semantics": semantics, "consumes_input": consumes,
+                "executable": name in executable,
                 "compute": {"structure": structure,
                             "intensity": "memory_or_unknown", "source": src},
                 "implementations": [{"backend": "python/registry", "status": "available", "source": src}],
@@ -176,12 +204,17 @@ def build() -> dict[str, object]:
         if name in seen:
             continue
         seen.add(name)
-        ins, out = split_inputs(row.get("in_sort")), canonical_sort(row.get("out_sort"))
+        ins = ([canonical_sort(x) for x in row.get("in_sorts", [])] if row.get("tier") == "nary"
+               else split_inputs(row.get("in_sort")))
+        out = canonical_sort(row.get("out_sort"))
+        ins, out, semantics, consumes = type_semantics(ins, out)
         category = row.get("category") or "untyped"
         text = f"{name} {category}".lower()
         fam = next((f for f, rx in FAMILY_RULES.items() if re.search(rx, text)), None)
         src = {"kind": "index", "value": "docs/OP_INDEX.json"}
-        edge = {"op": name, "inputs": ins, "output": out, "category": category, "family": fam,
+        edge = {"op": name, "inputs": ins, "output": out, "category": category, "family": None,
+                "family_candidate": fam, "family_candidate_source": "heuristic_regex" if fam else None,
+                "type_semantics": semantics, "consumes_input": consumes,
                 "executable": name in executable,
                 "compute": {"structure": "unknown", "intensity": "unknown", "source": src},
                 "implementations": [{"backend": row.get("module") or "registry", "status": "available", "source": src}],
@@ -200,7 +233,8 @@ def build() -> dict[str, object]:
     for name in ("quicksort", "heapsort", "mergesort"):
         src = {"kind": "docstring", "value": "algo.py", "detail": name}
         edges.append({"op": name, "inputs": ["sequence"], "output": "sequence", "category": "sort",
-                      "family": "sorting", "executable": False,
+                      "family": "sorting", "type_semantics": "typed", "consumes_input": True,
+                      "executable": False,
                       "compute": {"structure": "irregular_sequential", "intensity": "comparison_bound", "source": src},
                       "implementations": [{"backend":"algo Python/C generator","status":"available","source":src}],
                       "parity":{"status":"unmeasured","source":"algo differential test"},
@@ -233,6 +267,7 @@ def build() -> dict[str, object]:
     checks = {canonical_sort(x) for x in a["checks"]}
     all_sorts = sorted({canonical_sort(s) for s in a["sorts"]} |
                        {x for e in edges for x in e["inputs"]} | {e["output"] for e in edges})
+    all_sorts = [s for s in all_sorts if s != "any"]
     for sort in all_sorts:
         nodes.append({"sort": sort, "container": _container(sort), "size_hint": "input-dependent",
                       "produced_by": produced[sort], "consumed_by": consumed[sort],

@@ -11,7 +11,7 @@
     {
       "op": "fill_holes",
       "compute": {
-        "structure": "elementwise",
+        "structure": "irregular_sequential",
         "intensity": "memory_or_unknown",
         "source_ref": "S00001"
       },
@@ -30,7 +30,7 @@
     {
       "op": "lowpass",
       "compute": {
-        "structure": "elementwise",
+        "structure": "global_transform",
         "intensity": "memory_or_unknown",
         "source_ref": "S00003"
       },
@@ -49,7 +49,7 @@
     {
       "op": "highpass",
       "compute": {
-        "structure": "elementwise",
+        "structure": "global_transform",
         "intensity": "memory_or_unknown",
         "source_ref": "S00003"
       },

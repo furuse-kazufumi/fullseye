@@ -14,17 +14,6 @@
       "source": "chain_fuzz catalog"
     },
     {
-      "sort": "any",
-      "container": "structured_value",
-      "size_hint": "input-dependent",
-      "produced_by": 92,
-      "consumed_by": 159,
-      "generator": false,
-      "type_check": true,
-      "choose_when": "undocumented",
-      "source": "chain_fuzz catalog"
-    },
-    {
       "sort": "attnmap",
       "container": "mapping",
       "size_hint": "input-dependent",
@@ -403,7 +392,7 @@
       "container": "dense_array",
       "size_hint": "input-dependent",
       "produced_by": 717,
-      "consumed_by": 1028,
+      "consumed_by": 1039,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -663,6 +652,17 @@
       "source": "chain_fuzz catalog"
     },
     {
+      "sort": "poly",
+      "container": "structured_value",
+      "size_hint": "input-dependent",
+      "produced_by": 39,
+      "consumed_by": 0,
+      "generator": false,
+      "type_check": false,
+      "choose_when": "undocumented",
+      "source": "chain_fuzz catalog"
+    },
+    {
       "sort": "poly_surface",
       "container": "structured_value",
       "size_hint": "input-dependent",
@@ -733,7 +733,7 @@
       "container": "sparse_set",
       "size_hint": "input-dependent",
       "produced_by": 185,
-      "consumed_by": 152,
+      "consumed_by": 158,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -1044,6 +1044,17 @@
       "consumed_by": 2,
       "generator": true,
       "type_check": true,
+      "choose_when": "undocumented",
+      "source": "chain_fuzz catalog"
+    },
+    {
+      "sort": "unknown",
+      "container": "structured_value",
+      "size_hint": "input-dependent",
+      "produced_by": 53,
+      "consumed_by": 159,
+      "generator": false,
+      "type_check": false,
       "choose_when": "undocumented",
       "source": "chain_fuzz catalog"
     },

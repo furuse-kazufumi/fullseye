@@ -72,6 +72,26 @@ def test_graph_population_vocabulary_and_execution_boundary():
     nonexec=[name for name in core if not next(e for e in g["edges"] if e["op"]==name)["executable"]]
     assert not nonexec
 
+def test_any_is_split_and_unknown_edges_are_not_planned():
+    g=load("OP_GRAPH.json")
+    assert "any" not in {n["sort"] for n in g["nodes"]}
+    assert all(e["type_semantics"] in {"typed","poly","unknown","source"} for e in g["edges"])
+    unknown={e["op"] for e in g["edges"] if e["type_semantics"]=="unknown"}
+    r=opsearch.plan("image","pose",goal="register",constraints={"executable_only":False,"k":20})
+    planned={op for p in r.get("plans",[]) for op in p["ops"]}
+    assert planned.isdisjoint(unknown)
+    assert all(e["consumes_input"] == bool(e["inputs"]) for e in g["edges"])
+
+def test_nary_registry_declarations_are_exact_and_duplicate_is_explained():
+    g=load("OP_GRAPH.json"); idx=load("OP_INDEX.json")
+    edges={e["op"]:e for e in g["edges"]}
+    nary=[r for r in idx["ops"] if r.get("tier")=="nary"]
+    assert nary
+    mismatches=[r["name"] for r in nary if edges[r["name"]]["inputs"] != r["in_sorts"]]
+    assert mismatches == []
+    duplicate=next(x for x in g["diagnostics"]["duplicate_declarations"] if x["op"]=="gaussians_to_voxel")
+    assert duplicate["exemption"]
+
 def test_six_business_plans_put_grounded_main_op_in_results():
     tasks=[
       ("deflectometry phase slope dent",["image","image"],"normalmap","deflectometry_phase_to_slope"),

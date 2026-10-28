@@ -38,13 +38,13 @@
         "image",
         "phase"
       ],
-      "shape": "serial",
+      "shape": "join",
       "derived_from": {
         "direct_edges": 409,
-        "join_edges": 0,
+        "join_edges": 13,
         "reduce_edges": 0
       },
-      "currently_composable": true,
+      "currently_composable": false,
       "metric": "RMSE/PSNR",
       "representative_chain": [
         "abs_diff_image"
@@ -1078,13 +1078,13 @@
         "image",
         "phase"
       ],
-      "shape": "serial",
+      "shape": "join",
       "derived_from": {
         "direct_edges": 409,
-        "join_edges": 0,
+        "join_edges": 13,
         "reduce_edges": 0
       },
-      "currently_composable": true,
+      "currently_composable": false,
       "metric": "RMSE/PSNR",
       "representative_chain": [
         "abs_diff_image"
