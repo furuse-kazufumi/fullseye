@@ -28,6 +28,7 @@ from __future__ import annotations
 import json
 import math
 import re
+import time
 import unicodedata
 from collections import Counter
 
@@ -93,56 +94,130 @@ def _result(ok: bool, reason: str, *, hint: str = "", next_tool: str | None = No
     return {"ok": ok, "reason": reason, "hint": hint, "next_tool": next_tool, **data}
 
 
+def _plan_dag(root: dict) -> tuple[list[dict], list[str]]:
+    """Flatten one derivation tree into a dependency DAG with stable references."""
+    stages, seen = [], {}
+    def emit(node):
+        if node.get("base") is not None:
+            return "have:%s" % node["base"]
+        key = node["signature"]
+        if key in seen:
+            return seen[key]
+        refs = [emit(child) for child in node["children"]]
+        ref = "stage:%d" % (len(stages) + 1)
+        seen[key] = ref
+        stages.append({"id": ref, "op": node["edge"]["op"], "inputs": refs,
+                       "in_sorts": node["edge"]["inputs"], "out_sort": node["sort"],
+                       "params": {}})
+        return ref
+    output = emit(root)
+    return stages, [output]
+
+
+def _hypergraph_plans(starts: list[str], want: str, query: str, *, executable_only: bool,
+                      k: int, max_depth: int, max_expansions: int, timeout_ms: int,
+                      allow_sources: bool) -> tuple[list[dict], dict]:
+    """Knuth-style relaxation: retain bounded derivations per type, never type sets."""
+    graph = _graph()
+    scores = {r["name"]: r["score"] for r in search_ops(query, k=len(graph["edges"]))["ops"]}
+    edges = [e for e in graph["edges"] if (e.get("executable") or not executable_only)
+             and e.get("output") not in ("unknown", "any")
+             and "unknown" not in e.get("inputs", ())]
+    by_input = {}
+    for edge in edges:
+        for sort in set(edge.get("inputs", ())):
+            by_input.setdefault(sort, []).append(edge)
+    best = {s: [{"base": s, "sort": s, "cost": 0.0, "depth": 0,
+                 "signature": "have:%s" % s, "consumed": frozenset({s})}] for s in starts}
+    started = time.monotonic(); expanded = 0; changed = True; capped = None
+    while changed:
+        changed = False
+        for edge in edges:
+            if expanded >= max_expansions:
+                capped = "max_expansions"; break
+            if (time.monotonic() - started) * 1000 >= timeout_ms:
+                capped = "timeout_ms"; break
+            ins = edge.get("inputs", [])
+            if not ins:
+                if not allow_sources or edge.get("type_semantics") != "source":
+                    continue
+                children = []
+            else:
+                choices = []
+                possible = True
+                for inp in ins:
+                    if inp == "poly":
+                        possible = False; break
+                    rows = best.get(inp)
+                    if not rows:
+                        possible = False; break
+                    choices.append(rows[0])
+                if not possible:
+                    continue
+                children = choices
+            expanded += 1
+            depth = 1 + max((x["depth"] for x in children), default=0)
+            if depth > max_depth:
+                continue
+            out = edge["output"]
+            if out == "poly":
+                out = children[0]["sort"] if children else "unknown"
+            consumed = frozenset().union(*(x["consumed"] for x in children)) if children else frozenset()
+            if not consumed and not allow_sources:
+                continue
+            relevance = max(0.0, scores.get(edge["op"], 0.0))
+            cost = sum(x["cost"] for x in children) + 1.0 / (1.0 + relevance)
+            sig = "%s(%s)" % (edge["op"], ",".join(x["signature"] for x in children))
+            row = {"sort": out, "cost": cost, "depth": depth, "edge": edge,
+                   "children": children, "signature": sig, "consumed": consumed}
+            rows = best.setdefault(out, [])
+            if any(x["signature"] == sig for x in rows):
+                continue
+            rows.append(row); rows.sort(key=lambda x: (x["cost"], x["depth"], x["signature"]))
+            del rows[k:]
+            if row in rows:
+                changed = True
+        if capped:
+            break
+    plans = []
+    for root in best.get(want, []):
+        if root.get("base") is not None or not root["consumed"]:
+            continue
+        stages, outputs = _plan_dag(root)
+        plans.append({"dag": {"stages": stages, "outputs": outputs},
+                      "ops": [x["op"] for x in stages], "weight": round(root["cost"], 6),
+                      "depth": root["depth"], "consumed_have": sorted(root["consumed"])})
+    meta = {"expanded": expanded, "elapsed_ms": round((time.monotonic() - started) * 1000, 3),
+            "limit_reached": capped, "unknown_edges_excluded": sum(
+                e.get("output") in ("unknown", "any") or "unknown" in e.get("inputs", ())
+                for e in graph["edges"])}
+    return plans, meta
+
+
 def plan(have, want: str, direction: str = "forward", pattern: str | None = None,
-         constraints: dict | None = None) -> dict:
-    """Plan on the executable typed AND-OR hypergraph without executing operators."""
+         constraints: dict | None = None, goal: str | None = None) -> dict:
+    """Find minimum-cost typed hypergraph derivations and return dependency DAGs."""
     constraints = constraints or {}
     if direction not in ("forward", "backward"):
         return _result(False, "direction must be forward or backward", hint="use direction='forward' or 'backward'", next_tool="plan")
     want = _sort(want)
-    if direction == "backward":
-        return required_inputs(want, constraints.get("max_depth", 4), constraints.get("k", 5))
-    starts = [_sort(x) for x in (have if isinstance(have, (list, tuple, set)) else [have])]
-    query = str(constraints.get("query") or want)
+    starts = [_sort(x) for x in (have if isinstance(have, (list, tuple, set)) else [have]) if x]
+    query = str(goal or constraints.get("goal") or constraints.get("query") or want)
     max_depth, k = int(constraints.get("max_depth", 4)), int(constraints.get("k", 5))
-    semantic = {r["name"]: r["score"] for r in search_ops(query, k=100)["ops"]}
     executable_only = constraints.get("executable_only", True)
-    edges = [e for e in _graph()["edges"] if e.get("executable") or not executable_only]
-    relevant_names = set(semantic)
-    edges = [e for e in edges if e["op"] in relevant_names or e["output"] == want or
-             all(x == "any" or x in starts for x in e["inputs"])]
-    import heapq
-    queue = [(0.0, 0, tuple(starts), [])]
-    serial = 0; best = {frozenset(starts): 0.0}; solutions = []
-    expanded = 0
-    while queue and len(solutions) < k and expanded < 50000:
-        cost, _seq, types, path = heapq.heappop(queue); available = set(types)
-        expanded += 1
-        if want in available and path:
-            solutions.append({"ops": path, "available": sorted(available), "weight": round(cost, 6)})
-            continue
-        if len(path) >= max_depth:
-            continue
-        for e in edges:
-            inputs = e["inputs"]
-            if not all(x == "any" or x in available for x in inputs):
-                continue
-            output = next(iter(available)) if e["output"] == "any" and available else e["output"]
-            if output in available and e["op"] in path:
-                continue
-            nxt = frozenset(available | {output})
-            # Related ops are cheaper, but every edge retains a positive cost.
-            edge_cost = 1.0 / (1.0 + max(0.0, semantic.get(e["op"], 0.0)))
-            new_cost = cost + edge_cost
-            if new_cost >= best.get(nxt, float("inf")) and output != want:
-                continue
-            best[nxt] = new_cost; serial += 1
-            heapq.heappush(queue, (new_cost, serial, tuple(sorted(nxt)), path + [e["op"]]))
+    if direction == "backward":
+        starts = sorted({_sort(x["sort"]) for x in _graph().get("acquirable_sorts", [])})
+    solutions, meta = _hypergraph_plans(starts, want, query, executable_only=executable_only, k=k,
+                                        max_depth=max_depth,
+                                        max_expansions=int(constraints.get("max_expansions", 50000)),
+                                        timeout_ms=int(constraints.get("timeout_ms", 900)),
+                                        allow_sources=direction == "backward")
     if not solutions:
         return _result(False, "no executable typed path", hint="inspect blocked_at or broaden have", next_tool="find_ops",
-                       have=starts, want=want, direction=direction, blocked_at=sorted(best, key=lambda x: len(x))[-1:] if best else starts)
+                       have=starts, want=want, direction=direction, partial=meta, blocked_at=[want])
     return _result(True, "executable typed path found", next_tool="op_cards", have=starts, want=want,
-                   direction=direction, pattern=pattern, executable_only=executable_only, plans=solutions)
+                    goal=query, direction=direction, pattern=pattern, executable_only=executable_only,
+                    search=meta, plans=solutions)
 
 
 def describe(kind: str, name: str, budget_tokens: int = 800) -> dict:

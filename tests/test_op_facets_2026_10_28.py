@@ -84,6 +84,19 @@ def test_six_business_plans_put_grounded_main_op_in_results():
              for query,have,want,main in tasks]
     failed=[main for main,r in results if not r["ok"] or not any(main in p["ops"] for p in r["plans"])]
     assert not failed
+    assert all(all("dag" in p and p["dag"]["outputs"] for p in r["plans"]) for _,r in results)
+
+def test_hypergraph_plan_is_bounded_and_shared_by_both_directions():
+    forward=opsearch.plan("images","depth",goal="fringe projection height",
+                          constraints={"max_depth":4,"k":3,"executable_only":False})
+    backward=opsearch.plan(None,"depth",direction="backward",goal="fringe projection height",
+                           constraints={"max_depth":4,"k":3,"executable_only":False})
+    assert forward["ok"] and backward["ok"]
+    assert "decode_fringe" in forward["plans"][0]["ops"]
+    assert "decode_fringe" in backward["plans"][0]["ops"]
+    assert forward["search"]["elapsed_ms"] < 1000
+    capped=opsearch.plan("image","feature",goal="features",constraints={"max_expansions":1})
+    assert capped["partial"]["limit_reached"] == "max_expansions"
 
 def test_business_plan_mutation_is_caught(monkeypatch):
     g=load("OP_GRAPH.json"); g["edges"]=[e for e in g["edges"] if e["op"]!="decode_fringe"]
