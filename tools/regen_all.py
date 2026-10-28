@@ -305,6 +305,8 @@ _IMAGE_REASON = ("画像・動画の書き手。PNG/GIF のバイトは Pillow �
 _SPIKE_REASON = ("スパイク(実験)の記録。spikes/out_gallery/ の図は当時の証跡として凍結してあり、"
                  "再描画(matplotlib / GUI)はバイトが変わる。")
 EXCLUDED = {
+    "tools/measure_device_crossover.py": ("GPU timing is machine-dependent and must be run manually only after "
+                                           "the script verifies that the GPU is idle; raw timing is not deterministic."),
     "tools/build_shwfs_anim3d.py": ("Shack-Hartmann 波面センサーの動く 3-D 教材(docs/view2026/anim3d/shack_hartmann_anim3d.html)。"
                                      "`py -3.11 tools/anim3d_i18n.py --build build_shwfs_anim3d --out docs/view2026/anim3d/shack_hartmann_anim3d.html` で書く"
                                      "(翻訳表 tools/anim3d_i18n_tables/build_shwfs_anim3d.json)。門は tests/test_anim3d_shwfs_2026_10_27.py。"),

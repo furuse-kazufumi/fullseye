@@ -12,18 +12,22 @@ def load(name):
 def test_graph_is_non_vacuous_and_edges_have_sources():
     g=load("OP_GRAPH.json")
     assert len(g["nodes"]) >= 90 and len(g["edges"]) >= 2500
-    assert all(e.get("source") and e.get("compute",{}).get("source") for e in g["edges"])
+    missing=[e["op"] for e in g["edges"] if not e.get("source") or not e.get("compute",{}).get("source")]
+    assert not missing
 
 def test_family_ops_exist_and_properties_have_sources():
     names={e["op"] for e in load("OP_GRAPH.json")["edges"]}
     fs=load("OP_FAMILIES.json")["families"]
     assert len(fs) >= 7 and sum(len(f["ops"]) for f in fs) > 20
-    assert all(r["op"] in names and r["property_sources"] for f in fs for r in f["ops"])
+    bad=[r["op"] for f in fs for r in f["ops"] if r["op"] not in names or not r["property_sources"]]
+    assert not bad
 
 def test_backward_solutions_are_forward_edges():
     r=opsearch.required_inputs("depth", max_depth=3, k=5)
     edges={e["op"] for e in load("OP_GRAPH.json")["edges"]}
-    assert r["solutions"] and all(set(s["path"]) <= edges for s in r["solutions"])
+    assert r["solutions"]
+    bad=[s["path"] for s in r["solutions"] if not set(s["path"]) <= edges]
+    assert not bad
 
 def test_unused_knobs_are_not_searchable():
     g=load("OP_GRAPH.json")

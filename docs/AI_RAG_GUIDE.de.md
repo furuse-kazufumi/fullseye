@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 4ff32c503cc5 -->
+<!-- i18n-source-sha: c482e07df267 -->
 # Fullseye als RAG eines KI-Assistenten nutzen (für Claude Code)
 
 [日本語](./AI_RAG_GUIDE.md) · [English](./AI_RAG_GUIDE.en.md) · [简体中文](./AI_RAG_GUIDE.zh.md) · [繁體中文](./AI_RAG_GUIDE.tw.md) · [한국어](./AI_RAG_GUIDE.ko.md) · **Deutsch** · [हिन्दी](./AI_RAG_GUIDE.hi.md)
