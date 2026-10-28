@@ -132,3 +132,8 @@ wheel(pip install)にも `docs/literature` は入っていません。
 4. **表示まで一気通貫**: Studio(`py -3.11 studio.py`)を開けば、AI が組んだ結果を
    画像ウィンドウ・3D 表示として人間が同じ画面で検査できます(`dev_open_window` 等で
    スクリプトから複数窓の配置も可能)。
+# op グラフを使う手順
+
+入出力の型が分かる場合は意味検索だけで選ばず、`pipeline_shape` → `required_inputs` → `choose_op` →
+`pattern_skeleton` → `param_space` の順に使う。すべて `OP_GRAPH.json` の節点と辺を参照するため、
+別々の一覧の食い違いを避けられる。型の選択理由が `undocumented` の場合は、人のノートが無いという意味である。

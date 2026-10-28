@@ -246,3 +246,9 @@ Self-Healing Router(失敗は必ず記録か昇格、**沈黙のスキップに�
 Function Hijacking(tool 選択の乗っ取り ASR 70〜100 %)—— と、TRIZ の分離原理
 (画像は「在らねばならない」かつ「在ってはならない」→ 時間で分離 + #25 セルフサービス)。
 画像処理ライブラリを MCP で公開した先行例は、8 コーパスを引いて 0 件だった(2026-09-15)。
+# AI に op を選ばせる短い手順
+
+`fullseye_pipeline_shape` で入出力の形を決め、`fullseye_required_inputs` で解から必要な入力を逆引きする。
+次に `fullseye_choose_op` で族の候補を絞り、`fullseye_patterns` で型付きの骨格を得る。
+各段の探索範囲は `fullseye_param_space`、型の意味は `fullseye_sort_guide` で確認する。未計測の制約は
+推測で補わず、fail-closed の理由として返る。

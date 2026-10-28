@@ -144,3 +144,7 @@ reproject_to_points / elevation_map / segment_objects / ...`.
 Launch Fullseye Studio (`py -3.11 studio.py`) to display images / 3-D results in
 graphics windows the user can inspect; programs can open and place multiple windows
 (`dev_open_window` etc. — see `docs/HDEVELOP_DEV_OPS.md` and `docs/STUDIO_GUIDE.md`).
+# Typed op selection
+
+Use the unified op graph: pipeline shape → required inputs → choose op → pattern skeleton → parameter space.
+Do not turn an unmeasured device result into a performance claim.
