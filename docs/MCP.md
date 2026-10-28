@@ -252,3 +252,9 @@ Function Hijacking(tool 選択の乗っ取り ASR 70〜100 %)—— と、TRIZ �
 次に `fullseye_choose_op` で族の候補を絞り、`fullseye_patterns` で型付きの骨格を得る。
 各段の探索範囲は `fullseye_param_space`、型の意味は `fullseye_sort_guide` で確認する。未計測の制約は
 推測で補わず、fail-closed の理由として返る。
+
+現在の推奨入口は `fullseye_plan`、`fullseye_describe`、`fullseye_choose` の3つである。旧入口は
+後方互換の薄い別名として残す。`tools/list` に `{"profile":"minimal"}` を渡すか、
+`FULLSEYE_MCP_PROFILE=minimal` を設定すると、実行までに必要な8道具だけを公開する。
+2026-10-28のJSON文字数÷4による計測では、全25道具が約3,505トークン、最小8道具が約1,157トークンである。
+未検証の設計パターンはMCP一覧には出さない。

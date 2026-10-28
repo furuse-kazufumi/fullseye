@@ -148,3 +148,6 @@ graphics windows the user can inspect; programs can open and place multiple wind
 
 Before execution, call pipeline shape, required inputs, family choice, pattern skeleton, and parameter space in that order.
 Treat unmeasured timing or undocumented guidance as unknown; do not infer it.
+
+Prefer `fullseye_plan` → `fullseye_op_cards` → `fullseye_validate_pipeline`; use the minimal MCP profile.
+Do not expose pattern records whose `grounded` field is false.

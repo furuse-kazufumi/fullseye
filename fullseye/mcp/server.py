@@ -54,6 +54,19 @@ _VISION = {"type": "string", "enum": list(VISION),
            "description": "auto=判定が ok でないときだけ対比の小図を出す / none=出さない / thumb=必ず出す"}
 
 TOOLS: dict[str, dict] = {
+    "fullseye_plan": {
+        "description": "型付き経路を計画する。入力と欲しい型が分かったら使い、次に fullseye_op_cards を呼ぶ。",
+        "inputSchema": {"type":"object","properties":{"have":{"oneOf":[{"type":"string"},{"type":"array","items":{"type":"string"}}]},
+            "want":{"type":"string"},"direction":{"type":"string","enum":["forward","backward"]},
+            "pattern":{"type":"string"}},"required":["have","want"],"additionalProperties":False}},
+    "fullseye_describe": {
+        "description": "型・op・族を1件説明する。候補の詳細が必要なときに使い、次に fullseye_choose を呼ぶ。",
+        "inputSchema":{"type":"object","properties":{"kind":{"type":"string","enum":["sort","op","family"]},"name":{"type":"string"}},
+                       "required":["kind","name"],"additionalProperties":False}},
+    "fullseye_choose": {
+        "description": "候補を測定済み制約だけで絞る。候補名が揃った後に使い、次に fullseye_op_cards を呼ぶ。",
+        "inputSchema":{"type":"object","properties":{"candidates":{"type":"array","items":{"type":"string"},"minItems":1},
+                       "constraints":{"type":"object"}},"required":["candidates"],"additionalProperties":False}},
     "fullseye_search_ops": {
         "description": (
             "fullseye の op を探す。名前・HALCON 名・カテゴリ・次元の部分一致。"
@@ -106,7 +119,7 @@ TOOLS: dict[str, dict] = {
             "required": ["query", "start_sort", "goal_sort"], "additionalProperties": False},
     },
     "fullseye_choose_op": {
-        "description": "Rank operators in a measured family; requested but unmeasured facts fail closed.",
+        "description": "族の候補を実測済みの事実だけで絞る。族を選んだ後に使い、次に fullseye_op_cards を呼ぶ。",
         "inputSchema": {"type": "object", "properties": {
             "family": {"type": "string"}, "constraints": {"type": "object"}},
             "required": ["family"], "additionalProperties": False},
@@ -119,13 +132,13 @@ TOOLS: dict[str, dict] = {
             "required": ["goal_sort"], "additionalProperties": False},
     },
     "fullseye_param_space": {
-        "description": "Narrow an op's measured knob search space from input context; unused knobs are excluded.",
+        "description": "入力文脈と実測からopのつまみ範囲を返す。op決定後に使い、次に validate_pipeline を呼ぶ。",
         "inputSchema": {"type": "object", "properties": {
             "op": {"type": "string"}, "input_context": {"type": "object"}},
             "required": ["op"], "additionalProperties": False},
     },
     "fullseye_pipeline_shape": {
-        "description": "Choose pipeline topology from input and output forms using the unified op graph.",
+        "description": "グラフから入出力形に合う構造を調べる。形が分かるときに使い、次に fullseye_plan を呼ぶ。",
         "inputSchema": {"type":"object","properties":{"input_form":{"type":"string"},"output_form":{"type":"string"}},
                        "required":["input_form","output_form"],"additionalProperties":False},
     },
@@ -1000,9 +1013,17 @@ def _version() -> str:
         return "0"
 
 
-def handle_tools_list(_params: dict) -> dict:
-    return {"tools": [{"name": n, "description": t["description"], "inputSchema": t["inputSchema"]}
-                      for n, t in sorted(TOOLS.items())]}
+MINIMAL_TOOLS = {"fullseye_find_ops", "fullseye_plan", "fullseye_op_cards", "fullseye_validate_pipeline",
+                 "fullseye_pipeline", "fullseye_load_image", "fullseye_inspect", "fullseye_op_help"}
+TOOLS.pop("fullseye_patterns", None)  # ungrounded template: retained in data/Python, not exposed through MCP
+
+def handle_tools_list(params: dict) -> dict:
+    profile = params.get("profile") or os.environ.get("FULLSEYE_MCP_PROFILE", "full")
+    names = MINIMAL_TOOLS if profile == "minimal" else set(TOOLS)
+    rows = [{"name": n, "description": TOOLS[n]["description"], "inputSchema": TOOLS[n]["inputSchema"]}
+            for n in sorted(names)]
+    return {"tools": rows, "profile": profile,
+            "estimated_tokens": math.ceil(len(json.dumps(rows, ensure_ascii=False)) / 4)}
 
 
 def _import_json(a: dict, store: HandleStore) -> dict:
@@ -1130,6 +1151,16 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
         raise ArgError("知らない tool: %r(あるのは %s)" % (name, sorted(TOOLS)))
     a = _validate(TOOLS[name]["inputSchema"], args if args is not None else {})
     store = store if store is not None else HandleStore()
+    if name in ("fullseye_plan", "fullseye_describe", "fullseye_choose"):
+        from fullseye.opsearch import plan, describe, choose
+        if name == "fullseye_plan":
+            r = plan(a["have"], a["want"], a.get("direction", "forward"), a.get("pattern"))
+        elif name == "fullseye_describe":
+            r = describe(a["kind"], a["name"])
+        else:
+            r = choose(a["candidates"], a.get("constraints"))
+        text = json.dumps(r, ensure_ascii=False, indent=2)
+        return tool_result(text, r, max_structured_bytes=max_structured_bytes) if r["ok"] else _tool_error(text, r)
     if name in ("fullseye_search_ops", "fullseye_find_ops"):
         # ★2026-10-11: find_ops は「既知の種別以外は拒否する」と書きながら typo を受け、
         # 0 件を返していた。search_ops と同じ門を通す。

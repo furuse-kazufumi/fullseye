@@ -137,3 +137,8 @@ wheel(pip install)にも `docs/literature` は入っていません。
 入出力の型が分かる場合は意味検索だけで選ばず、`pipeline_shape` → `required_inputs` → `choose_op` →
 `pattern_skeleton` → `param_space` の順に使う。すべて `OP_GRAPH.json` の節点と辺を参照するため、
 別々の一覧の食い違いを避けられる。型の選択理由が `undocumented` の場合は、人のノートが無いという意味である。
+
+新しいコードでは `plan(have, want, direction=...)` を最初に使う。既定ではMCP pipelineから実行できる辺だけを
+計画する。台帳だけにある研究用opも調べる場合はPython APIで `constraints={"executable_only": false}` を明示する。
+`describe` は1件だけを返し、全型一覧を無制限に返さない。`choose` は比較できる実測がない候補を順位付けしない。
+つまみ範囲は `docs/op_knob.json` の実測と入力文脈に基づき、効かなかったつまみを探索から除く。
