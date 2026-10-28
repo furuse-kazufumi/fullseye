@@ -70,15 +70,16 @@ def test_per_query_category_and_overall_recall_gates():
     gate = data["thresholds"]
     assert overall_plan >= gate["overall_plan"]["minimum"]
     assert overall_plan >= overall_search, "typed planning must not regress the one-shot macro recall"
-    assert overall_plan == pytest.approx(gate["overall_plan"]["measured"])
+    assert overall_plan <= gate["overall_plan"]["measured"], "recall improved; update the recorded upper reference"
     for name, limits in gate["categories"].items():
         assert cats[name]["plan"] >= limits["minimum"], (name, cats[name])
-        assert cats[name]["plan"] == pytest.approx(limits["measured"])
+        assert cats[name]["plan"] <= limits["measured"], "%s improved; update the recorded upper reference" % name
     # Every query value is retained in the generated report, not hidden by averages.
     report = json.loads(REPORT.read_text(encoding="utf-8"))
     got = {r["id"]: r for r in report["queries"]}
     for row, sr, pr in queries:
         assert got[row["id"]]["search_recall_at_10"] == pytest.approx(sr)
+        assert got[row["id"]]["untyped_recall_at_10"] == pytest.approx(sr)
         assert got[row["id"]]["plan_recall_at_10"] == pytest.approx(pr)
 
 

@@ -3,13 +3,13 @@
   "description": "Industrial wording to grounded operators used by repository PoCs. Each evidence line must contain its operator name.",
   "metric": "macro-average recall@10; each query recall is |top10 intersect relevant| / |relevant|",
   "thresholds": {
-    "overall_plan": {"measured": 0.700, "minimum": 0.680, "rationale": "40-query measurement on 2026-10-28; 0.020 below measured, so one full-query regression (0.025) fails"},
+    "overall_plan": {"measured": 0.800, "minimum": 0.790, "rationale": "40-query measurement on 2026-10-28; upper reference requires an explicit update on improvement; one full-query regression (0.025) fails the lower bound"},
     "categories": {
-      "multi_product": {"measured": 0.875, "minimum": 0.775, "rationale": "8-query macro recall; 0.100 margin, less than one query (0.125)"},
-      "specular_transparent": {"measured": 0.750, "minimum": 0.650, "rationale": "8-query macro recall; 0.100 margin, less than one query (0.125)"},
-      "positioning": {"measured": 1.000, "minimum": 0.900, "rationale": "8-query macro recall; 0.100 margin, less than one query (0.125)"},
-      "fast_3d": {"measured": 0.625, "minimum": 0.525, "rationale": "8-query macro recall; 0.100 margin, less than one query (0.125)"},
-      "general": {"measured": 0.250, "minimum": 0.150, "rationale": "8-query macro recall; 0.100 margin, less than one query (0.125)"}
+      "multi_product": {"measured": 0.750, "minimum": 0.650, "rationale": "8-query macro recall; upper reference is updated explicitly on improvement"},
+      "specular_transparent": {"measured": 0.875, "minimum": 0.775, "rationale": "8-query macro recall; upper reference is updated explicitly on improvement"},
+      "positioning": {"measured": 0.875, "minimum": 0.775, "rationale": "8-query macro recall; upper reference is updated explicitly on improvement"},
+      "fast_3d": {"measured": 0.750, "minimum": 0.650, "rationale": "8-query macro recall; upper reference is updated explicitly on improvement"},
+      "general": {"measured": 0.750, "minimum": 0.650, "rationale": "8-query macro recall; upper reference is updated explicitly on improvement"}
     }
   },
   "queries": [

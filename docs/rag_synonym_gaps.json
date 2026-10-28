@@ -4,33 +4,34 @@
   "n_queries": 40,
   "overall": {
     "search_recall_at_10": 0.625,
-    "plan_recall_at_10": 0.7
+    "untyped_recall_at_10": 0.625,
+    "plan_recall_at_10": 0.8
   },
   "categories": {
     "fast_3d": {
       "n_queries": 8,
       "search_recall_at_10": 0.75,
-      "plan_recall_at_10": 0.625
+      "plan_recall_at_10": 0.75
     },
     "general": {
       "n_queries": 8,
       "search_recall_at_10": 0.75,
-      "plan_recall_at_10": 0.25
+      "plan_recall_at_10": 0.75
     },
     "multi_product": {
       "n_queries": 8,
       "search_recall_at_10": 0.625,
-      "plan_recall_at_10": 0.875
+      "plan_recall_at_10": 0.75
     },
     "positioning": {
       "n_queries": 8,
       "search_recall_at_10": 0.625,
-      "plan_recall_at_10": 1.0
+      "plan_recall_at_10": 0.875
     },
     "specular_transparent": {
       "n_queries": 8,
       "search_recall_at_10": 0.375,
-      "plan_recall_at_10": 0.75
+      "plan_recall_at_10": 0.875
     }
   },
   "queries": [
@@ -39,6 +40,7 @@
       "category": "multi_product",
       "query": "多品種の部品で共通に使えるコーナー特徴を取る",
       "search_recall_at_10": 1.0,
+      "untyped_recall_at_10": 1.0,
       "plan_recall_at_10": 1.0,
       "missed_by_search": [],
       "missed_by_plan": []
@@ -48,6 +50,7 @@
       "category": "multi_product",
       "query": "段取り替え後のワークをテンプレートで位置検出",
       "search_recall_at_10": 1.0,
+      "untyped_recall_at_10": 1.0,
       "plan_recall_at_10": 1.0,
       "missed_by_search": [],
       "missed_by_plan": []
@@ -57,6 +60,7 @@
       "category": "multi_product",
       "query": "品種ごとに輪郭形状で照合して場所を探す",
       "search_recall_at_10": 0.0,
+      "untyped_recall_at_10": 0.0,
       "plan_recall_at_10": 1.0,
       "missed_by_search": [
         "shape_locate"
@@ -68,6 +72,7 @@
       "category": "multi_product",
       "query": "混在する製品種類に共通するコーナー特徴を探す",
       "search_recall_at_10": 1.0,
+      "untyped_recall_at_10": 1.0,
       "plan_recall_at_10": 1.0,
       "missed_by_search": [],
       "missed_by_plan": []
@@ -77,6 +82,7 @@
       "category": "multi_product",
       "query": "多品种工件用模板相关定位",
       "search_recall_at_10": 1.0,
+      "untyped_recall_at_10": 1.0,
       "plan_recall_at_10": 1.0,
       "missed_by_search": [],
       "missed_by_plan": []
@@ -86,17 +92,21 @@
       "category": "multi_product",
       "query": "다품종 부품을 형상 기반으로 위치 찾기",
       "search_recall_at_10": 0.0,
-      "plan_recall_at_10": 1.0,
+      "untyped_recall_at_10": 0.0,
+      "plan_recall_at_10": 0.0,
       "missed_by_search": [
         "shape_locate"
       ],
-      "missed_by_plan": []
+      "missed_by_plan": [
+        "shape_locate"
+      ]
     },
     {
       "id": "mv07",
       "category": "multi_product",
       "query": "Merkmale für wechselnde Produktvarianten finden",
       "search_recall_at_10": 0.0,
+      "untyped_recall_at_10": 0.0,
       "plan_recall_at_10": 0.0,
       "missed_by_search": [
         "cv_good_features"
@@ -110,6 +120,7 @@
       "category": "multi_product",
       "query": "混流ラインで部品の見た目を正規化相互相関で探す",
       "search_recall_at_10": 1.0,
+      "untyped_recall_at_10": 1.0,
       "plan_recall_at_10": 1.0,
       "missed_by_search": [],
       "missed_by_plan": []
@@ -119,6 +130,7 @@
       "category": "specular_transparent",
       "query": "鏡面の拡散反射と正反射を偏光画像から分離する",
       "search_recall_at_10": 0.0,
+      "untyped_recall_at_10": 0.0,
       "plan_recall_at_10": 1.0,
       "missed_by_search": [
         "polarization_separate"
@@ -130,6 +142,7 @@
       "category": "specular_transparent",
       "query": "透明体の偏光度マップを計算する",
       "search_recall_at_10": 1.0,
+      "untyped_recall_at_10": 1.0,
       "plan_recall_at_10": 1.0,
       "missed_by_search": [],
       "missed_by_plan": []
@@ -139,19 +152,19 @@
       "category": "specular_transparent",
       "query": "偏光板の角度掃引画像を合成して鏡面を調べる",
       "search_recall_at_10": 0.0,
-      "plan_recall_at_10": 0.0,
+      "untyped_recall_at_10": 0.0,
+      "plan_recall_at_10": 1.0,
       "missed_by_search": [
         "polarization_render"
       ],
-      "missed_by_plan": [
-        "polarization_render"
-      ]
+      "missed_by_plan": []
     },
     {
       "id": "sp04",
       "category": "specular_transparent",
       "query": "separate diffuse and specular reflection with polarization",
       "search_recall_at_10": 1.0,
+      "untyped_recall_at_10": 1.0,
       "plan_recall_at_10": 1.0,
       "missed_by_search": [],
       "missed_by_plan": []
@@ -161,6 +174,7 @@
       "category": "specular_transparent",
       "query": "用偏振图计算透明表面的线偏振度",
       "search_recall_at_10": 1.0,
+      "untyped_recall_at_10": 1.0,
       "plan_recall_at_10": 1.0,
       "missed_by_search": [],
       "missed_by_plan": []
@@ -170,6 +184,7 @@
       "category": "specular_transparent",
       "query": "편광 스윕에서 정반사와 난반사 분리",
       "search_recall_at_10": 0.0,
+      "untyped_recall_at_10": 0.0,
       "plan_recall_at_10": 1.0,
       "missed_by_search": [
         "polarization_separate"
@@ -181,6 +196,7 @@
       "category": "specular_transparent",
       "query": "Polarisationsgrad einer spiegelnden Oberfläche bestimmen",
       "search_recall_at_10": 0.0,
+      "untyped_recall_at_10": 0.0,
       "plan_recall_at_10": 1.0,
       "missed_by_search": [
         "polarization_dolp_map"
@@ -192,6 +208,7 @@
       "category": "specular_transparent",
       "query": "金属光沢部を偏光方向ごとに撮像するシミュレーション",
       "search_recall_at_10": 0.0,
+      "untyped_recall_at_10": 0.0,
       "plan_recall_at_10": 0.0,
       "missed_by_search": [
         "polarization_render"
@@ -205,6 +222,7 @@
       "category": "positioning",
       "query": "画像内のテンプレート位置を正規化相関で求める",
       "search_recall_at_10": 1.0,
+      "untyped_recall_at_10": 1.0,
       "plan_recall_at_10": 1.0,
       "missed_by_search": [],
       "missed_by_plan": []
@@ -214,17 +232,21 @@
       "category": "positioning",
       "query": "輪郭モデルでワークの位置を決める",
       "search_recall_at_10": 0.0,
-      "plan_recall_at_10": 1.0,
+      "untyped_recall_at_10": 0.0,
+      "plan_recall_at_10": 0.0,
       "missed_by_search": [
         "shape_locate"
       ],
-      "missed_by_plan": []
+      "missed_by_plan": [
+        "shape_locate"
+      ]
     },
     {
       "id": "po03",
       "category": "positioning",
       "query": "治具合わせ用の安定した特徴点を検出する",
       "search_recall_at_10": 1.0,
+      "untyped_recall_at_10": 1.0,
       "plan_recall_at_10": 1.0,
       "missed_by_search": [],
       "missed_by_plan": []
@@ -234,6 +256,7 @@
       "category": "positioning",
       "query": "locate a template by normalized cross correlation",
       "search_recall_at_10": 1.0,
+      "untyped_recall_at_10": 1.0,
       "plan_recall_at_10": 1.0,
       "missed_by_search": [],
       "missed_by_plan": []
@@ -243,6 +266,7 @@
       "category": "positioning",
       "query": "使用形状模型定位工件",
       "search_recall_at_10": 0.0,
+      "untyped_recall_at_10": 0.0,
       "plan_recall_at_10": 1.0,
       "missed_by_search": [
         "shape_locate"
@@ -254,6 +278,7 @@
       "category": "positioning",
       "query": "정규화 상관으로 템플릿 위치 검출",
       "search_recall_at_10": 1.0,
+      "untyped_recall_at_10": 1.0,
       "plan_recall_at_10": 1.0,
       "missed_by_search": [],
       "missed_by_plan": []
@@ -263,6 +288,7 @@
       "category": "positioning",
       "query": "Werkstück mit einem Formmodell lokalisieren",
       "search_recall_at_10": 0.0,
+      "untyped_recall_at_10": 0.0,
       "plan_recall_at_10": 1.0,
       "missed_by_search": [
         "shape_locate"
@@ -274,6 +300,7 @@
       "category": "positioning",
       "query": "ロボット把持前に画像の良いコーナーを抽出",
       "search_recall_at_10": 1.0,
+      "untyped_recall_at_10": 1.0,
       "plan_recall_at_10": 1.0,
       "missed_by_search": [],
       "missed_by_plan": []
@@ -283,6 +310,7 @@
       "category": "fast_3d",
       "query": "位相シフト縞画像からラップ位相を計算する",
       "search_recall_at_10": 1.0,
+      "untyped_recall_at_10": 1.0,
       "plan_recall_at_10": 1.0,
       "missed_by_search": [],
       "missed_by_plan": []
@@ -292,17 +320,17 @@
       "category": "fast_3d",
       "query": "二πで飛ぶ位相を二次元でアンラップする",
       "search_recall_at_10": 1.0,
-      "plan_recall_at_10": 0.0,
+      "untyped_recall_at_10": 1.0,
+      "plan_recall_at_10": 1.0,
       "missed_by_search": [],
-      "missed_by_plan": [
-        "unwrap_phase_2d"
-      ]
+      "missed_by_plan": []
     },
     {
       "id": "m303",
       "category": "fast_3d",
       "query": "構造化光の縞画像から高さを復元する",
       "search_recall_at_10": 1.0,
+      "untyped_recall_at_10": 1.0,
       "plan_recall_at_10": 1.0,
       "missed_by_search": [],
       "missed_by_plan": []
@@ -312,6 +340,7 @@
       "category": "fast_3d",
       "query": "compute wrapped phase from phase-shift fringe images",
       "search_recall_at_10": 1.0,
+      "untyped_recall_at_10": 1.0,
       "plan_recall_at_10": 1.0,
       "missed_by_search": [],
       "missed_by_plan": []
@@ -321,28 +350,31 @@
       "category": "fast_3d",
       "query": "二维展开结构光的包裹相位",
       "search_recall_at_10": 1.0,
-      "plan_recall_at_10": 0.0,
+      "untyped_recall_at_10": 1.0,
+      "plan_recall_at_10": 1.0,
       "missed_by_search": [],
-      "missed_by_plan": [
-        "unwrap_phase_2d"
-      ]
+      "missed_by_plan": []
     },
     {
       "id": "m306",
       "category": "fast_3d",
       "query": "구조광 프린지에서 높이 복원",
       "search_recall_at_10": 0.0,
-      "plan_recall_at_10": 1.0,
+      "untyped_recall_at_10": 0.0,
+      "plan_recall_at_10": 0.0,
       "missed_by_search": [
         "decode_fringe"
       ],
-      "missed_by_plan": []
+      "missed_by_plan": [
+        "decode_fringe"
+      ]
     },
     {
       "id": "m307",
       "category": "fast_3d",
       "query": "gewickelte Phase aus Phasenschiebebildern berechnen",
       "search_recall_at_10": 1.0,
+      "untyped_recall_at_10": 1.0,
       "plan_recall_at_10": 1.0,
       "missed_by_search": [],
       "missed_by_plan": []
@@ -352,6 +384,7 @@
       "category": "fast_3d",
       "query": "高速三次元計測で参照位相をほどく",
       "search_recall_at_10": 0.0,
+      "untyped_recall_at_10": 0.0,
       "plan_recall_at_10": 0.0,
       "missed_by_search": [
         "unwrap_phase_2d"
@@ -365,17 +398,17 @@
       "category": "general",
       "query": "画像のノイズをガウシアン平滑化で落とす",
       "search_recall_at_10": 1.0,
-      "plan_recall_at_10": 0.0,
+      "untyped_recall_at_10": 1.0,
+      "plan_recall_at_10": 1.0,
       "missed_by_search": [],
-      "missed_by_plan": [
-        "gaussian"
-      ]
+      "missed_by_plan": []
     },
     {
       "id": "ge02",
       "category": "general",
       "query": "画像を大津法で二値領域にする",
       "search_recall_at_10": 0.0,
+      "untyped_recall_at_10": 0.0,
       "plan_recall_at_10": 0.0,
       "missed_by_search": [
         "otsu"
@@ -389,17 +422,17 @@
       "category": "general",
       "query": "領域の面積と重心位置を測る",
       "search_recall_at_10": 1.0,
-      "plan_recall_at_10": 0.0,
+      "untyped_recall_at_10": 1.0,
+      "plan_recall_at_10": 1.0,
       "missed_by_search": [],
-      "missed_by_plan": [
-        "area_center"
-      ]
+      "missed_by_plan": []
     },
     {
       "id": "ge04",
       "category": "general",
       "query": "連結した製品領域の個数を数える",
       "search_recall_at_10": 1.0,
+      "untyped_recall_at_10": 1.0,
       "plan_recall_at_10": 1.0,
       "missed_by_search": [],
       "missed_by_plan": []
@@ -409,17 +442,17 @@
       "category": "general",
       "query": "remove impulse noise with a median filter",
       "search_recall_at_10": 1.0,
-      "plan_recall_at_10": 0.0,
+      "untyped_recall_at_10": 1.0,
+      "plan_recall_at_10": 1.0,
       "missed_by_search": [],
-      "missed_by_plan": [
-        "cv_median"
-      ]
+      "missed_by_plan": []
     },
     {
       "id": "ge06",
       "category": "general",
       "query": "用大津阈值分割前景区域",
       "search_recall_at_10": 1.0,
+      "untyped_recall_at_10": 1.0,
       "plan_recall_at_10": 1.0,
       "missed_by_search": [],
       "missed_by_plan": []
@@ -429,17 +462,17 @@
       "category": "general",
       "query": "영역의 면적과 중심 위치 측정",
       "search_recall_at_10": 1.0,
-      "plan_recall_at_10": 0.0,
+      "untyped_recall_at_10": 1.0,
+      "plan_recall_at_10": 1.0,
       "missed_by_search": [],
-      "missed_by_plan": [
-        "area_center"
-      ]
+      "missed_by_plan": []
     },
     {
       "id": "ge08",
       "category": "general",
       "query": "getrennte Regionen zählen",
       "search_recall_at_10": 0.0,
+      "untyped_recall_at_10": 0.0,
       "plan_recall_at_10": 0.0,
       "missed_by_search": [
         "count_obj"

@@ -41,7 +41,7 @@ def build() -> dict:
         categories[row["category"]]["search"].append(sr)
         categories[row["category"]]["plan"].append(pr)
         rec = {"id": row["id"], "category": row["category"], "query": row["query"],
-               "search_recall_at_10": sr, "plan_recall_at_10": pr,
+               "search_recall_at_10": sr, "untyped_recall_at_10": sr, "plan_recall_at_10": pr,
                "missed_by_search": sorted(set(row["relevant"]) - set(direct)),
                "missed_by_plan": sorted(set(row["relevant"]) - set(names))}
         queries.append(rec)
@@ -53,6 +53,7 @@ def build() -> dict:
     return {"generated_by": "tools/gen_rag_benchmark_report.py", "source": "docs/ops/rag_benchmark.json",
             "n_queries": len(rows),
             "overall": {"search_recall_at_10": av([q["search_recall_at_10"] for q in queries]),
+                        "untyped_recall_at_10": av([q["untyped_recall_at_10"] for q in queries]),
                         "plan_recall_at_10": av([q["plan_recall_at_10"] for q in queries])},
             "categories": by_category, "queries": queries, "synonym_gaps": gaps}
 
