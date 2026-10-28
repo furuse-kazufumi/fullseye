@@ -238,7 +238,7 @@ READS = {
         "docs/DESIGN_NOTES.md", "docs/DESIGN_NOTES.*.md",
         "docs/AI_RAG_GUIDE.md", "docs/AI_RAG_GUIDE.*.md"],
     "tools/gen_mcp_data.py": ["docs/OP_INDEX.json", "docs/ops/*"],
-    "tools/gen_op_facets.py": ["docs/OP_INDEX.json", "docs/ops/families.json",
+    "tools/gen_op_facets.py": ["docs/OP_INDEX.json", "auto_specs_data.py", "docs/ops/families.json",
                                 "docs/ops/families_timing.json"],
     "tools/gen_rag_benchmark_report.py": ["docs/ops/rag_benchmark.json",
                                              "fullseye/data/OP_SEARCH.json",
