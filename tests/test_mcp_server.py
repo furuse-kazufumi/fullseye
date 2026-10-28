@@ -26,6 +26,33 @@ import pytest
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 from fullseye.mcp import TOOLS, Catalog, call_tool, dispatch, run_stdio_server  # noqa: E402
+from fullseye.mcp.server import OP_EXECUTION_TOOLS, handle_tools_list  # noqa: E402
+
+
+def test_every_op_execution_entry_uses_verified_allowlist_and_profiles_match_calls(monkeypatch):
+    import numpy as np
+    from fullseye.mcp.handles import HandleStore
+    cat = Catalog.load(); store = HandleStore(roots=[])
+    handle = store.put(np.zeros((8, 8)), sort="image", provenance=[])["handle"]
+    assert OP_EXECUTION_TOOLS == {"fullseye_apply", "fullseye_pipeline"}
+    calls = {
+        "fullseye_apply": {"handle": handle, "op": "img_to_counts"},
+        "fullseye_pipeline": {"handle": handle, "stages": [{"op": "img_to_counts"}]},
+    }
+    outcomes = []
+    for name in sorted(OP_EXECUTION_TOOLS):
+        try:
+            result = call_tool(name, calls[name], cat, store)
+            outcomes.append(bool(result.get("isError")))
+        except Exception as exc:
+            outcomes.append("not verified" in str(exc) or "not_executable_in_mcp" in str(exc))
+    assert outcomes == [True, True]
+
+    monkeypatch.setenv("FULLSEYE_MCP_PROFILE", "minimal")
+    listed = {row["name"] for row in handle_tools_list({})["tools"]}
+    assert "fullseye_apply" not in listed
+    with pytest.raises(Exception, match="not available in MCP profile"):
+        call_tool("fullseye_apply", {"handle": handle, "op": "gaussian"}, cat, store)
 from fullseye.mcp.server import ArgError, MAX_SEARCH_LIMIT, read_message  # noqa: E402
 
 

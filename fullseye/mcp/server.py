@@ -683,6 +683,12 @@ def _resolve_op(name: str, cat: Catalog, *, stage: int | None = None):
         where = "段 %d: " % stage if stage else ""
         raise ArgError("%sfullseye_apply で実行できる op ではない: %r(registry 層に無い)。近い名前: %s"
                        % (where, name, cat.nearest(name)))
+    from fullseye.opsearch import _graph
+    edge = next((e for e in _graph()["edges"] if e["op"] == name), None)
+    if edge is None or not edge.get("verified_executable"):
+        where = "stage %d: " % stage if stage else ""
+        reason = (edge or {}).get("not_executable_in_mcp", "not verified")
+        raise ArgError("%sop is not verified for MCP execution: %r (%s)" % (where, name, reason))
     return op
 
 
@@ -1272,9 +1278,18 @@ for _internal_tool in ("fullseye_patterns", "fullseye_plan_chain", "fullseye_req
                        "fullseye_choose_op"):
     TOOLS.pop(_internal_tool, None)
 
+OP_EXECUTION_TOOLS = frozenset({"fullseye_apply", "fullseye_pipeline"})
+
+def _profile_tool_names(profile: str) -> set[str]:
+    if profile == "minimal":
+        return set(MINIMAL_TOOLS)
+    if profile == "full":
+        return set(TOOLS)
+    raise ArgError("unknown MCP tool profile: %r" % profile)
+
 def handle_tools_list(params: dict) -> dict:
     profile = params.get("profile") or os.environ.get("FULLSEYE_MCP_PROFILE", "full")
-    names = MINIMAL_TOOLS if profile == "minimal" else set(TOOLS)
+    names = _profile_tool_names(profile)
     rows = [{"name": n, "description": TOOLS[n]["description"], "inputSchema": TOOLS[n]["inputSchema"]}
             for n in sorted(names)]
     return {"tools": rows, "profile": profile,
@@ -1404,6 +1419,9 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
     """tool 本体。引数違反は ArgError(= -32602)、実行の失敗は isError の結果。"""
     if name not in TOOLS:
         raise ArgError("知らない tool: %r(あるのは %s)" % (name, sorted(TOOLS)))
+    profile = os.environ.get("FULLSEYE_MCP_PROFILE", "full")
+    if name not in _profile_tool_names(profile):
+        raise ArgError("tool %r is not available in MCP profile %r" % (name, profile))
     a = _validate(TOOLS[name]["inputSchema"], args if args is not None else {})
     store = store if store is not None else HandleStore()
     if name in ("fullseye_plan", "fullseye_describe", "fullseye_choose"):
