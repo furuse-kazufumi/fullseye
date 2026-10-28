@@ -708,9 +708,20 @@ def _out_sort(op, in_sort: str | None) -> str:
     return op.out_sort
 
 
+def _resolve_pipeline_ref(ref: str, values: dict, store: HandleStore | None):
+    """Resolve one pipeline reference for both validation and execution."""
+    if not isinstance(ref, str):
+        raise ArgError("pipeline reference must be a string: %r" % (ref,))
+    if ref in values:
+        return values[ref]
+    if ref.startswith("fullseye://") and store is not None:
+        return store.get(ref)
+    raise ArgError("unknown pipeline reference: %s" % ref)
+
+
 def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, *,
                       max_stages: int | None = None, bindings: dict | None = None,
-                      store: HandleStore | None = None) -> dict:
+                      store: HandleStore | None = None, outputs: list[str] | None = None) -> dict:
     """Shared non-executing pipeline validator used by both MCP entry points."""
     import ops
     max_stages = int(max_stages or get_system("pipeline_max_stages"))
@@ -726,21 +737,27 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
                        "value": len(stages), "limit": max_stages, "candidates": []})
     from fullseye.opsearch import _graph, _sort
     graph_edges = {e["op"]: e for e in _graph()["edges"]}
-    binding_sorts = {}
+    binding_sorts = {}; binding_values = {}
     for ref, handle in bindings.items():
         if not ref.startswith("have:"):
             errors.append({"layer":"binding","stage":0,"reason":"invalid_binding_name","value":ref,"candidates":[]})
         elif store is None:
             binding_sorts[ref] = ref.split(":",1)[1]
+            binding_values[ref] = ({"sort":binding_sorts[ref],"handle":handle},None)
         else:
-            try: binding_sorts[ref] = _sort(store.get(handle)[0]["sort"])
+            try:
+                binding_values[ref] = store.get(handle)
+                binding_sorts[ref] = _sort(binding_values[ref][0]["sort"])
             except HandleError as exc:
                 errors.append({"layer":"binding","stage":0,"reason":"invalid_handle","value":handle,
                                "detail":str(exc),"candidates":[]})
     if start_sort is not None:
         binding_sorts.setdefault("have:%s" % start_sort, start_sort)
+        binding_values.setdefault("have:%s" % start_sort,({"sort":start_sort,"handle":None},None))
     indexed = {"stage:%d" % i: (i, spec) for i, spec in enumerate(stages[:max_stages], 1)}
-    deps = {ref: {x for x in spec.get("inputs", []) if isinstance(x,str) and x.startswith("stage:")}
+    deps = {ref: ({x for x in spec.get("inputs", []) if isinstance(x,str) and x.startswith("stage:")} |
+                  {v["ref"] for v in spec.get("params",{}).values()
+                   if isinstance(v,dict) and isinstance(v.get("ref"),str) and v["ref"].startswith("stage:")})
             for ref,(_i,spec) in indexed.items()}
     ordered=[]; pending=dict(indexed)
     while pending:
@@ -771,23 +788,22 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
             if len(refs) != len(edge["inputs"]):
                 errors.append({"layer":"stage","stage":i,"reason":"input_arity_mismatch","value":len(refs),
                                "expected":len(edge["inputs"]),"candidates":[]})
-            actual=[]
+            actual=[]; resolved=[]
             for ref in refs:
-                if ref.startswith("stage:"):
-                    actual.append(stage_sorts.get(ref, "unknown"))
-                elif ref.startswith("have:"):
-                    actual.append(binding_sorts.get(ref, "unknown"))
-                elif store is not None and ref.startswith("fullseye://"):
-                    try: actual.append(_sort(store.get(ref)[0]["sort"]))
-                    except HandleError: actual.append("unknown")
-                else:
-                    actual.append("unknown")
+                known={**binding_values,**{r:({"sort":s,"handle":r},None) for r,s in stage_sorts.items()}}
+                try:
+                    meta,_value=_resolve_pipeline_ref(ref,known,store)
+                    actual.append(_sort(meta["sort"])); resolved.append(meta.get("handle") or ref)
+                except (ArgError,HandleError) as exc:
+                    actual.append("unknown"); resolved.append(ref)
+                    errors.append({"layer":"stage","stage":i,"reason":"unknown_input_ref",
+                                   "value":ref,"detail":str(exc),"candidates":[]})
             mismatches=[{"input":j,"actual":a,"expected":b} for j,(a,b) in enumerate(zip(actual,edge["inputs"]))
                         if b not in ("poly",a)]
             if mismatches:
                 errors.append({"layer":"stage","stage":i,"reason":"sort_mismatch","value":mismatches,"candidates":[]})
             roles=edge.get("input_roles",[])
-            if len(set(refs)) != len(refs) and len(set(roles)) > 1 and not spec.get("allow_reuse",False):
+            if len(set(resolved)) != len(resolved) and len(set(roles)) > 1 and not spec.get("allow_reuse",False):
                 errors.append({"layer":"stage","stage":i,"reason":"distinct_role_reuses_reference",
                                "value":list(zip(roles,refs)),"candidates":[]})
             schema={p["name"]:p for p in edge.get("parameter_schema",[])}
@@ -801,13 +817,24 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
             for pname,pvalue in spec.get("params",{}).items():
                 if isinstance(pvalue,dict) and "ref" in pvalue:
                     expected=edge.get("ref_parameters",{}).get(pname)
-                    actual_sort=(stage_sorts.get(pvalue["ref"]) or binding_sorts.get(pvalue["ref"]))
+                    known={**binding_values,**{r:({"sort":s,"handle":r},None) for r,s in stage_sorts.items()}}
+                    try: actual_sort=_sort(_resolve_pipeline_ref(pvalue["ref"],known,store)[0]["sort"])
+                    except (ArgError,HandleError) as exc:
+                        actual_sort=None
+                        errors.append({"layer":"stage","stage":i,"reason":"unknown_parameter_ref",
+                                       "value":pvalue["ref"],"detail":str(exc),"candidates":[]})
                     if expected is None:
                         errors.append({"layer":"stage","stage":i,"reason":"parameter_ref_not_declared",
                                        "value":pname,"candidates":sorted(edge.get("ref_parameters",{}))})
                     elif actual_sort not in (expected,None):
                         errors.append({"layer":"stage","stage":i,"reason":"parameter_ref_sort_mismatch",
                                        "value":actual_sort,"expected":expected,"candidates":[]})
+                elif isinstance(pvalue,dict) and "profile" in pvalue:
+                    from fssystem import resolve_profile
+                    try: resolve_profile(pvalue["profile"])
+                    except (TypeError,ValueError) as exc:
+                        errors.append({"layer":"stage","stage":i,"reason":"unknown_profile",
+                                       "value":pvalue.get("profile"),"detail":str(exc),"candidates":[]})
             out = actual[0] if edge["output"] == "poly" and actual else edge["output"]
             ref="stage:%d"%i; stage_sorts[ref]=out; cur=out
             normalized.append({"stage":i,"op":name,"inputs":list(refs),"params":dict(spec.get("params",{})),
@@ -836,6 +863,12 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
         cur = _out_sort(op, cur)
         normalized.append({"op": name, "a": float(spec.get("a", 0.5)), "b": float(spec.get("b", 0.5)),
                            "in_sort": op.in_sort, "out_sort": cur})
+    known_outputs={**binding_values,**{r:({"sort":s,"handle":r},None) for r,s in stage_sorts.items()}}
+    for ref in outputs or []:
+        try: _resolve_pipeline_ref(ref,known_outputs,store)
+        except (ArgError,HandleError) as exc:
+            errors.append({"layer":"pipeline","stage":0,"reason":"unknown_output_ref",
+                           "value":ref,"detail":str(exc),"candidates":[]})
     return {"valid": not errors, "start_sort": start_sort, "bindings":bindings, "out_sort": cur,
             "stages": normalized, "execution_order":[x[0] for x in ordered], "errors": errors}
 
@@ -1044,7 +1077,8 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
     bindings=dict(a.get("bindings",{}))
     if a.get("handle") and start_sort:
         bindings.setdefault("have:%s"%start_sort,a["handle"])
-    checked=validate_pipeline(a["stages"],start_sort,cat,bindings=bindings,store=store)
+    checked=validate_pipeline(a["stages"],start_sort,cat,bindings=bindings,store=store,
+                              outputs=a.get("outputs"))
     if not checked["valid"]:
         if not explicit:
             first=checked["errors"][0]
@@ -1058,24 +1092,22 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
         spec=original[i]
         edge=edges[spec["op"]]; args=[]; metas=[]
         refs=next(x["inputs"] for x in checked["stages"] if x["stage"]==i)
-        blocked=[ref for ref in refs if ref in failed]
+        param_refs=[v["ref"] for v in spec.get("params",{}).values()
+                    if isinstance(v,dict) and "ref" in v]
+        blocked=[ref for ref in refs + param_refs if ref in failed]
         if blocked:
             failed.add("stage:%d"%i)
             records.append({"stage":i,"ref":"stage:%d"%i,"op":edge["op"],"status":"skipped",
                             "reason":"dependency_failed","blocked_by":blocked})
             continue
         for ref in refs:
-            if ref in values:
-                meta,value=values[ref]
-            elif ref.startswith("fullseye://"):
-                meta,value=store.get(ref); values[ref]=(meta,value)
-            else:
-                return _tool_error("unknown pipeline input reference: %s"%ref,{"stage":i,"reason":"unknown_input_ref"})
+            meta,value=_resolve_pipeline_ref(ref,values,store)
+            values.setdefault(ref,(meta,value))
             metas.append(meta); args.append(value)
         params=dict(spec.get("params",{}))
         for pname,pvalue in list(params.items()):
             if isinstance(pvalue,dict) and "ref" in pvalue:
-                params[pname]=values[pvalue["ref"]][1]
+                params[pname]=_resolve_pipeline_ref(pvalue["ref"],values,store)[1]
             elif isinstance(pvalue,dict) and "profile" in pvalue:
                 from fssystem import resolve_profile
                 try: params[pname]=resolve_profile(pvalue["profile"])

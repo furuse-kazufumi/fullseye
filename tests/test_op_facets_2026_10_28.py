@@ -296,6 +296,23 @@ def test_plan_dag_contract_accepts_have_bindings_reorders_and_rejects_role_alias
     assert [r["stage"] for r in result["structuredContent"]["stages"]] == [2,1]
     assert result["structuredContent"]["out_sort"] == "image"
 
+    attacks=[
+      {"outputs":["stage:7"],"stages":[{"op":"gaussian","inputs":["have:image"]}]},
+      {"stages":[{"op":"gaussian","inputs":["fullseye://img/0000000000000000"]}]},
+      {"stages":[{"op":"gaussian","inputs":["have:image"],"params":{"x":{"ref":"stage:99"}}}]},
+      {"stages":[{"op":"polarization_render","inputs":["have:image","have:image"],
+                  "allow_reuse":True,"params":{"angles_deg":{"profile":"nope.x"}}}]},
+    ]
+    rejected=[]
+    for attack in attacks:
+        response=call_tool("fullseye_pipeline",{"handle":images,**attack},cat,store)
+        rejected.append(response.get("isError") is True)
+    assert rejected == [True,True,True,True]
+
+    alias=call_tool("fullseye_pipeline",{"handle":images,"bindings":{"have:image":images},"stages":[
+        {"op":"deflectometry_phase_to_slope","inputs":["have:image",images],"params":{}}]},cat,store)
+    assert alias.get("isError") is True
+
     image=store.put(np.zeros((8,8)),sort="image",provenance=[])["handle"]
     bad=validate_pipeline([{"op":"deflectometry_phase_to_slope",
                            "inputs":["have:image","have:image"],"params":{}}],None,cat,
