@@ -1,1517 +1,500 @@
 {
-  "schema": 1,
+  "schema": 2,
   "source_graph": "OP_GRAPH.json",
-  "rule_source": "tools/gen_op_facets.py:FAMILY_RULES",
+  "membership_source": "docs/ops/families.json",
+  "regex_role": "candidate suggestions only",
   "families": [
     {
       "name": "denoise",
       "ops": [
         {
-          "op": "bilateral_filter_depth",
+          "op": "gaussian",
           "inputs": [
-            "depth"
+            "image"
           ],
-          "output": "depth",
-          "properties": [],
-          "property_sources": [
+          "output": "image",
+          "membership_source": "docs/ops/2d/smoothing/gaussian.md",
+          "properties": [
             {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "bilateral_filter_depth/3d"
+              "name": "deterministic",
+              "value": true,
+              "source": "repeated CPU probe"
             }
           ],
-          "complexity_exponent": null,
+          "property_sources": [
+            {
+              "kind": "measurement",
+              "value": "docs/ops/families_timing.json"
+            }
+          ],
+          "complexity_exponent": 0.43,
           "quality": {
-            "status": "unmeasured"
+            "status": "measured",
+            "probes": [
+              {
+                "probe": 1,
+                "metric": "psnr",
+                "value": 20.322694187465558
+              },
+              {
+                "probe": 2,
+                "metric": "psnr",
+                "value": 20.30645812488161
+              }
+            ]
           }
         },
         {
-          "op": "cx_wiener_deconvolve",
+          "op": "median",
           "inputs": [
-            "image2d"
+            "image"
           ],
-          "output": "image2d",
-          "properties": [],
-          "property_sources": [
+          "output": "image",
+          "membership_source": "docs/ops/2d/rank/median.md",
+          "properties": [
             {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "cx_wiener_deconvolve/2d"
+              "name": "deterministic",
+              "value": true,
+              "source": "repeated CPU probe"
             }
           ],
-          "complexity_exponent": null,
+          "property_sources": [
+            {
+              "kind": "measurement",
+              "value": "docs/ops/families_timing.json"
+            }
+          ],
+          "complexity_exponent": 0.99,
           "quality": {
-            "status": "unmeasured"
+            "status": "measured",
+            "probes": [
+              {
+                "probe": 1,
+                "metric": "psnr",
+                "value": 28.100069433391035
+              },
+              {
+                "probe": 2,
+                "metric": "psnr",
+                "value": 27.861691128576066
+              }
+            ]
           }
         },
         {
-          "op": "joint_bilateral",
+          "op": "bilateral",
           "inputs": [
-            "depth",
-            "image2d"
+            "image"
           ],
-          "output": "depth",
-          "properties": [],
-          "property_sources": [
+          "output": "image",
+          "membership_source": "docs/ops/2d/smoothing/bilateral.md",
+          "properties": [
             {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "joint_bilateral/3d"
+              "name": "deterministic",
+              "value": true,
+              "source": "repeated CPU probe"
             }
           ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "temporal_bilateral",
-          "inputs": [
-            "video"
-          ],
-          "output": "video",
-          "properties": [],
           "property_sources": [
             {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "temporal_bilateral/videostream"
+              "kind": "measurement",
+              "value": "docs/ops/families_timing.json"
             }
           ],
-          "complexity_exponent": null,
+          "complexity_exponent": 0.46,
           "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "temporal_median_window",
-          "inputs": [
-            "video"
-          ],
-          "output": "video",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "temporal_median_window/videostream"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
+            "status": "measured",
+            "probes": [
+              {
+                "probe": 1,
+                "metric": "psnr",
+                "value": 26.40311342054713
+              },
+              {
+                "probe": 2,
+                "metric": "psnr",
+                "value": 26.28788894190755
+              }
+            ]
           }
         }
       ],
-      "probes": [],
+      "probes": [
+        "synthetic_probe_1",
+        "synthetic_probe_2"
+      ],
       "timing_source": "docs/ops/families_timing.json"
     },
     {
       "name": "edge_detection",
       "ops": [
         {
-          "op": "canny3d",
+          "op": "canny",
           "inputs": [
-            "voxel"
+            "image"
           ],
-          "output": "voxel",
-          "properties": [],
-          "property_sources": [
+          "output": "region",
+          "membership_source": "docs/ops/2d/segmentation/canny.md",
+          "properties": [
             {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "canny3d/3d"
+              "name": "deterministic",
+              "value": true,
+              "source": "repeated CPU probe"
             }
           ],
-          "complexity_exponent": null,
+          "property_sources": [
+            {
+              "kind": "measurement",
+              "value": "docs/ops/families_timing.json"
+            }
+          ],
+          "complexity_exponent": 0.72,
           "quality": {
-            "status": "unmeasured"
+            "status": "measured",
+            "probes": [
+              {
+                "probe": 1,
+                "metric": "iou",
+                "value": 0.13829279923700524
+              },
+              {
+                "probe": 2,
+                "metric": "iou",
+                "value": 0.13590844062947066
+              }
+            ]
           }
         },
         {
-          "op": "coverage_edge_points",
+          "op": "cv_canny",
           "inputs": [
-            "image2d",
-            "image2d",
-            "image2d"
+            "image"
           ],
-          "output": "matrix",
-          "properties": [],
-          "property_sources": [
+          "output": "region",
+          "membership_source": "docs/ops/2d/segmentation/cv_canny.md",
+          "properties": [
             {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "coverage_edge_points/drive"
+              "name": "deterministic",
+              "value": true,
+              "source": "repeated CPU probe"
             }
           ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "cutting_edge_render",
-          "inputs": [
-            "table",
-            "any",
-            "scalar",
-            "scalar",
-            "scalar"
-          ],
-          "output": "rgb",
-          "properties": [],
           "property_sources": [
             {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "cutting_edge_render/drive"
+              "kind": "measurement",
+              "value": "docs/ops/families_timing.json"
             }
           ],
-          "complexity_exponent": null,
+          "complexity_exponent": 0.19,
           "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "edge_alias_energy",
-          "inputs": [
-            "image2d"
-          ],
-          "output": "measurement",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "edge_alias_energy/3d"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "edge_points",
-          "inputs": [
-            "voxel"
-          ],
-          "output": "points",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "edge_points/3d"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "edge_spread",
-          "inputs": [
-            "image2d"
-          ],
-          "output": "table",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "edge_spread/optics"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "edge_stop_g",
-          "inputs": [
-            "image2d"
-          ],
-          "output": "table",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "edge_stop_g/segmentation"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "graph_edge_consensus",
-          "inputs": [
-            "table"
-          ],
-          "output": "table",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "graph_edge_consensus/graph"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "graph_edges_as_lines",
-          "inputs": [
-            "conn_graph",
-            "points"
-          ],
-          "output": "table",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "graph_edges_as_lines/conngraph"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "graph_laplacian_spectrum",
-          "inputs": [
-            "conn_graph"
-          ],
-          "output": "signal",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "graph_laplacian_spectrum/conngraph"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "knife_edge_track",
-          "inputs": [
-            "rgb"
-          ],
-          "output": "table",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "knife_edge_track/drive"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "laplace_inverse_talbot",
-          "inputs": [
-            "signal",
-            "signal",
-            "signal"
-          ],
-          "output": "signal",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "laplace_inverse_talbot/math"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "laplacian_smooth",
-          "inputs": [
-            "mesh"
-          ],
-          "output": "mesh",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "laplacian_smooth/3d"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "link_edges",
-          "inputs": [
-            "voxel"
-          ],
-          "output": "voxel",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "link_edges/3d"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "mean_edge_error",
-          "inputs": [
-            "pose"
-          ],
-          "output": "measurement",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "mean_edge_error/3d"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "mesh_edge_lengths",
-          "inputs": [
-            "mesh"
-          ],
-          "output": "signal",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "mesh_edge_lengths/3d"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "mesh_edge_stats",
-          "inputs": [
-            "mesh"
-          ],
-          "output": "table",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "mesh_edge_stats/3d"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "mesh_split_long_edges",
-          "inputs": [
-            "mesh"
-          ],
-          "output": "mesh",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "mesh_split_long_edges/3d"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "occlusion_edges",
-          "inputs": [
-            "depth"
-          ],
-          "output": "image2d",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "occlusion_edges/3d"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "profile_leading_edge_radius",
-          "inputs": [
-            "pairs"
-          ],
-          "output": "measurement",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "profile_leading_edge_radius/profile"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "profile_trailing_edge_gap",
-          "inputs": [
-            "pairs"
-          ],
-          "output": "measurement",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "profile_trailing_edge_gap/profile"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "sfr_from_edge",
-          "inputs": [
-            "table"
-          ],
-          "output": "pairs",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "sfr_from_edge/optics"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "sobel3d",
-          "inputs": [
-            "voxel"
-          ],
-          "output": "gradient",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "sobel3d/3d"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "tile_edge_crossing",
-          "inputs": [
-            "table"
-          ],
-          "output": "scalar",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "tile_edge_crossing/drive"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "tilt_wedge_retained",
-          "inputs": [
-            "scalar",
-            "scalar",
-            "scalar",
-            "scalar"
-          ],
-          "output": "table",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "tilt_wedge_retained/drive"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "vol_edge_probe",
-          "inputs": [
-            "voxel"
-          ],
-          "output": "table",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "vol_edge_probe/3d"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "vx_sobel3x3",
-          "inputs": [
-            "image2d"
-          ],
-          "output": "table",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "vx_sobel3x3/vx"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
+            "status": "measured",
+            "probes": [
+              {
+                "probe": 1,
+                "metric": "iou",
+                "value": 0.12466042861454875
+              },
+              {
+                "probe": 2,
+                "metric": "iou",
+                "value": 0.11769991015274034
+              }
+            ]
           }
         }
       ],
-      "probes": [],
+      "probes": [
+        "synthetic_probe_1",
+        "synthetic_probe_2"
+      ],
       "timing_source": "docs/ops/families_timing.json"
     },
     {
       "name": "thresholding",
       "ops": [
         {
-          "op": "emva_sensitivity_threshold",
-          "inputs": [],
-          "output": "table",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "emva_sensitivity_threshold/optics"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "graph_binarize",
+          "op": "threshold",
           "inputs": [
-            "conn_graph"
+            "image"
           ],
-          "output": "conn_graph",
-          "properties": [],
-          "property_sources": [
+          "output": "region",
+          "membership_source": "docs/ops/2d/segmentation/threshold.md",
+          "properties": [
             {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "graph_binarize/conngraph"
+              "name": "deterministic",
+              "value": true,
+              "source": "repeated CPU probe"
             }
           ],
-          "complexity_exponent": null,
+          "property_sources": [
+            {
+              "kind": "measurement",
+              "value": "docs/ops/families_timing.json"
+            }
+          ],
+          "complexity_exponent": 0.33,
           "quality": {
-            "status": "unmeasured"
+            "status": "measured",
+            "probes": [
+              {
+                "probe": 1,
+                "metric": "iou",
+                "value": 1.0
+              },
+              {
+                "probe": 2,
+                "metric": "iou",
+                "value": 1.0
+              }
+            ]
           }
         },
         {
-          "op": "graph_cut_binary",
+          "op": "otsu",
           "inputs": [
-            "image2d"
+            "image"
           ],
-          "output": "table",
-          "properties": [],
-          "property_sources": [
+          "output": "region",
+          "membership_source": "docs/ops/2d/segmentation/otsu.md",
+          "properties": [
             {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "graph_cut_binary/segmentation"
+              "name": "deterministic",
+              "value": true,
+              "source": "repeated CPU probe"
             }
           ],
-          "complexity_exponent": null,
+          "property_sources": [
+            {
+              "kind": "measurement",
+              "value": "docs/ops/families_timing.json"
+            }
+          ],
+          "complexity_exponent": 0.28,
           "quality": {
-            "status": "unmeasured"
+            "status": "measured",
+            "probes": [
+              {
+                "probe": 1,
+                "metric": "iou",
+                "value": 1.0
+              },
+              {
+                "probe": 2,
+                "metric": "iou",
+                "value": 1.0
+              }
+            ]
           }
         },
         {
-          "op": "holdout_threshold",
+          "op": "sk_sauvola",
           "inputs": [
-            "signal",
-            "signal",
-            "signal",
-            "signal"
+            "image"
           ],
-          "output": "table",
-          "properties": [],
-          "property_sources": [
+          "output": "region",
+          "membership_source": "docs/ops/2d/segmentation/sk_sauvola.md",
+          "properties": [
             {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "holdout_threshold/emproof"
+              "name": "deterministic",
+              "value": true,
+              "source": "repeated CPU probe"
             }
           ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "skill_test_thresholds",
-          "inputs": [],
-          "output": "table",
-          "properties": [],
           "property_sources": [
             {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "skill_test_thresholds/drive"
+              "kind": "measurement",
+              "value": "docs/ops/families_timing.json"
             }
           ],
-          "complexity_exponent": null,
+          "complexity_exponent": 0.42,
           "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "threshold_isodata",
-          "inputs": [
-            "image2d"
-          ],
-          "output": "table",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "threshold_isodata/segmentation"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "threshold_kapur",
-          "inputs": [
-            "image2d"
-          ],
-          "output": "table",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "threshold_kapur/segmentation"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "threshold_kittler",
-          "inputs": [
-            "image2d"
-          ],
-          "output": "table",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "threshold_kittler/segmentation"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "threshold_triangle",
-          "inputs": [
-            "image2d"
-          ],
-          "output": "table",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "threshold_triangle/segmentation"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
+            "status": "measured",
+            "probes": [
+              {
+                "probe": 1,
+                "metric": "iou",
+                "value": 0.3992673992673993
+              },
+              {
+                "probe": 2,
+                "metric": "iou",
+                "value": 0.3992256889091323
+              }
+            ]
           }
         }
       ],
-      "probes": [],
+      "probes": [
+        "synthetic_probe_1",
+        "synthetic_probe_2"
+      ],
       "timing_source": "docs/ops/families_timing.json"
     },
     {
       "name": "morphology",
       "ops": [
         {
-          "op": "area_opening_attr",
+          "op": "cv_erode",
           "inputs": [
-            "image2d"
+            "image"
           ],
-          "output": "table",
-          "properties": [],
-          "property_sources": [
+          "output": "image",
+          "membership_source": "docs/ops/2d/morphology/cv_erode.md",
+          "properties": [
             {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "area_opening_attr/segmentation"
+              "name": "deterministic",
+              "value": true,
+              "source": "repeated CPU probe"
             }
           ],
-          "complexity_exponent": null,
+          "property_sources": [
+            {
+              "kind": "measurement",
+              "value": "docs/ops/families_timing.json"
+            }
+          ],
+          "complexity_exponent": 0.61,
           "quality": {
-            "status": "unmeasured"
+            "status": "measured",
+            "probes": [
+              {
+                "probe": 1,
+                "metric": "iou",
+                "value": 0.8345444382336501
+              },
+              {
+                "probe": 2,
+                "metric": "iou",
+                "value": 0.8345444382336501
+              }
+            ]
           }
         },
         {
-          "op": "min_enclosing_sphere",
+          "op": "cv_dilate",
           "inputs": [
-            "points"
+            "image"
           ],
-          "output": "primitive",
-          "properties": [],
-          "property_sources": [
+          "output": "image",
+          "membership_source": "docs/ops/2d/morphology/cv_dilate.md",
+          "properties": [
             {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "min_enclosing_sphere/3d"
+              "name": "deterministic",
+              "value": true,
+              "source": "repeated CPU probe"
             }
           ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "morph",
-          "inputs": [
-            "image2d",
-            "image2d",
-            "pairs",
-            "pairs"
-          ],
-          "output": "image2d",
-          "properties": [],
           "property_sources": [
             {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "morph/shape2d"
+              "kind": "measurement",
+              "value": "docs/ops/families_timing.json"
             }
           ],
-          "complexity_exponent": null,
+          "complexity_exponent": 0.63,
           "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "morph_blackhat3d",
-          "inputs": [
-            "voxel"
-          ],
-          "output": "voxel",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "morph_blackhat3d/3d"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "morph_chan_vese",
-          "inputs": [
-            "image2d",
-            "mask"
-          ],
-          "output": "table",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "morph_chan_vese/segmentation"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "morph_close3d",
-          "inputs": [
-            "voxel"
-          ],
-          "output": "voxel",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "morph_close3d/3d"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "morph_dilate3d",
-          "inputs": [
-            "voxel"
-          ],
-          "output": "voxel",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "morph_dilate3d/3d"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "morph_erode3d",
-          "inputs": [
-            "voxel"
-          ],
-          "output": "voxel",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "morph_erode3d/3d"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "morph_geodesic_ac",
-          "inputs": [
-            "image2d",
-            "mask"
-          ],
-          "output": "table",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "morph_geodesic_ac/segmentation"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "morph_gradient3d",
-          "inputs": [
-            "voxel"
-          ],
-          "output": "voxel",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "morph_gradient3d/3d"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "morph_open3d",
-          "inputs": [
-            "voxel"
-          ],
-          "output": "voxel",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "morph_open3d/3d"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "morph_sequence",
-          "inputs": [
-            "image2d",
-            "image2d",
-            "pairs",
-            "pairs"
-          ],
-          "output": "images",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "morph_sequence/shape2d"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "morph_tophat3d",
-          "inputs": [
-            "voxel"
-          ],
-          "output": "voxel",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "morph_tophat3d/3d"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "pc_thinning_report",
-          "inputs": [
-            "points",
-            "points"
-          ],
-          "output": "table",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "pc_thinning_report/3d"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "skeleton_branches3d",
-          "inputs": [
-            "voxel"
-          ],
-          "output": "voxel",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "skeleton_branches3d/3d"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "skeleton_endpoints3d",
-          "inputs": [
-            "voxel"
-          ],
-          "output": "voxel",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "skeleton_endpoints3d/3d"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "skeleton_graph3d",
-          "inputs": [
-            "voxel"
-          ],
-          "output": "table",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "skeleton_graph3d/3d"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "skeleton_junctions3d",
-          "inputs": [
-            "voxel"
-          ],
-          "output": "voxel",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "skeleton_junctions3d/3d"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "skeleton_prune3d",
-          "inputs": [
-            "voxel"
-          ],
-          "output": "voxel",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "skeleton_prune3d/3d"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "skeletonize_vol",
-          "inputs": [
-            "voxel"
-          ],
-          "output": "voxel",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "skeletonize_vol/3d"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "tem_amorphous_film",
-          "inputs": [],
-          "output": "image2d",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "tem_amorphous_film/optics"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "thin_film_reflectance",
-          "inputs": [
-            "signal"
-          ],
-          "output": "signal",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "thin_film_reflectance/optics"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "thin_film_rgb",
-          "inputs": [
-            "normalmap"
-          ],
-          "output": "rgbimage",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "thin_film_rgb/optics"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "thin_lens",
-          "inputs": [],
-          "output": "table",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "thin_lens/optics"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "tree_morphometry",
-          "inputs": [
-            "table"
-          ],
-          "output": "table",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "tree_morphometry/graph"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "world_thin_structures",
-          "inputs": [],
-          "output": "table",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "world_thin_structures/segmentation"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
+            "status": "measured",
+            "probes": [
+              {
+                "probe": 1,
+                "metric": "iou",
+                "value": 0.8482693219535324
+              },
+              {
+                "probe": 2,
+                "metric": "iou",
+                "value": 0.8482693219535324
+              }
+            ]
           }
         }
       ],
-      "probes": [],
+      "probes": [
+        "synthetic_probe_1",
+        "synthetic_probe_2"
+      ],
       "timing_source": "docs/ops/families_timing.json"
     },
     {
       "name": "phase_unwrap",
       "ops": [
         {
-          "op": "cylinder_unwrap",
-          "inputs": [
-            "voxel"
-          ],
-          "output": "voxel",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "cylinder_unwrap/3d"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "equirect_defect_unwrap_pipe",
-          "inputs": [
-            "image2d"
-          ],
-          "output": "table",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "equirect_defect_unwrap_pipe/optics"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "itof_unwrap_error_rate",
-          "inputs": [],
-          "output": "table",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "itof_unwrap_error_rate/optics"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "itof_unwrap_multifreq",
-          "inputs": [
-            "table"
-          ],
-          "output": "table",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "itof_unwrap_multifreq/optics"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "phase_unwrap",
-          "inputs": [
-            "image2d"
-          ],
-          "output": "image2d",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "phase_unwrap/2d"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "polar_unwrap",
-          "inputs": [
-            "image2d"
-          ],
-          "output": "image2d",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "polar_unwrap/3d"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "retardation_unwrap_multiwavelength",
-          "inputs": [
-            "images"
-          ],
-          "output": "table",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "retardation_unwrap_multiwavelength/optics"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
           "op": "unwrap_phase_2d",
           "inputs": [
-            "image2d"
+            "image"
           ],
-          "output": "image2d",
+          "output": "image",
+          "membership_source": "docs/ops/3d/structured_light/unwrap_phase_2d.md",
           "properties": [],
           "property_sources": [
             {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "unwrap_phase_2d/3d"
+              "kind": "measurement",
+              "value": "docs/ops/families_timing.json"
             }
           ],
           "complexity_exponent": null,
           "quality": {
             "status": "unmeasured"
+          }
+        },
+        {
+          "op": "xsk_unwrap_phase",
+          "inputs": [
+            "image"
+          ],
+          "output": "image",
+          "membership_source": "docs/ops/2d/restoration/xsk_unwrap_phase.md",
+          "properties": [
+            {
+              "name": "deterministic",
+              "value": true,
+              "source": "repeated CPU probe"
+            }
+          ],
+          "property_sources": [
+            {
+              "kind": "measurement",
+              "value": "docs/ops/families_timing.json"
+            }
+          ],
+          "complexity_exponent": 1.13,
+          "quality": {
+            "status": "measured",
+            "probes": [
+              {
+                "probe": 1,
+                "metric": "iou",
+                "value": 0.1941189236111111
+              },
+              {
+                "probe": 2,
+                "metric": "iou",
+                "value": 0.1941189236111111
+              }
+            ]
           }
         }
       ],
-      "probes": [],
+      "probes": [
+        "synthetic_probe_1",
+        "synthetic_probe_2"
+      ],
       "timing_source": "docs/ops/families_timing.json"
     },
     {
       "name": "fringe_phase",
       "ops": [
         {
-          "op": "cubic_photoelastic_birefringence",
-          "inputs": [
-            "image2d",
-            "image2d",
-            "image2d"
-          ],
-          "output": "table",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "cubic_photoelastic_birefringence/optics"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
           "op": "decode_fringe",
           "inputs": [
             "images"
           ],
           "output": "depth",
+          "membership_source": "docs/ops/3d/structured_light/decode_fringe.md",
           "properties": [],
           "property_sources": [
             {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "decode_fringe/3d"
+              "kind": "measurement",
+              "value": "docs/ops/families_timing.json"
             }
           ],
           "complexity_exponent": null,
@@ -1520,108 +503,17 @@
           }
         },
         {
-          "op": "fringe_multipath_phase_error",
-          "inputs": [],
-          "output": "table",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "fringe_multipath_phase_error/optics"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "moire_phase_to_shift",
-          "inputs": [],
-          "output": "table",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "moire_phase_to_shift/optics"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "predict_fringe_phase_error",
+          "op": "micro_phase_decode",
           "inputs": [
-            "table"
+            "images"
           ],
           "output": "table",
+          "membership_source": "docs/ops/optics/light_transport/micro_phase_decode.md",
           "properties": [],
           "property_sources": [
             {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "predict_fringe_phase_error/optics"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "retardation_from_birefringence",
-          "inputs": [
-            "image2d"
-          ],
-          "output": "table",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "retardation_from_birefringence/optics"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "synthesize_fringes",
-          "inputs": [
-            "image2d"
-          ],
-          "output": "images",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "synthesize_fringes/3d"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "wave_fringe_period",
-          "inputs": [
-            "image2d"
-          ],
-          "output": "measurement",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "wave_fringe_period/math"
+              "kind": "measurement",
+              "value": "docs/ops/families_timing.json"
             }
           ],
           "complexity_exponent": null,
@@ -1630,13 +522,140 @@
           }
         }
       ],
-      "probes": [],
+      "probes": [
+        "synthetic_probe_1",
+        "synthetic_probe_2"
+      ],
       "timing_source": "docs/ops/families_timing.json"
     },
     {
       "name": "sorting",
-      "ops": [],
-      "probes": [],
+      "ops": [
+        {
+          "op": "quicksort",
+          "inputs": [
+            "sequence"
+          ],
+          "output": "sequence",
+          "membership_source": "algo.py:2859",
+          "properties": [
+            {
+              "name": "deterministic",
+              "value": true,
+              "source": "repeated CPU probe"
+            },
+            {
+              "name": "stable",
+              "value": false,
+              "source": "algo.py docstring"
+            }
+          ],
+          "property_sources": [
+            {
+              "kind": "measurement",
+              "value": "docs/ops/families_timing.json"
+            }
+          ],
+          "complexity_exponent": 1.1,
+          "quality": {
+            "status": "measured",
+            "probes": [
+              {
+                "pattern": "duplicates",
+                "correct": true
+              },
+              {
+                "pattern": "reverse",
+                "correct": true
+              }
+            ]
+          }
+        },
+        {
+          "op": "heapsort",
+          "inputs": [
+            "sequence"
+          ],
+          "output": "sequence",
+          "membership_source": "algo.py:2863",
+          "properties": [
+            {
+              "name": "deterministic",
+              "value": true,
+              "source": "repeated CPU probe"
+            },
+            {
+              "name": "stable",
+              "value": false,
+              "source": "algo.py docstring"
+            }
+          ],
+          "property_sources": [
+            {
+              "kind": "measurement",
+              "value": "docs/ops/families_timing.json"
+            }
+          ],
+          "complexity_exponent": 1.14,
+          "quality": {
+            "status": "measured",
+            "probes": [
+              {
+                "pattern": "duplicates",
+                "correct": true
+              },
+              {
+                "pattern": "reverse",
+                "correct": true
+              }
+            ]
+          }
+        },
+        {
+          "op": "mergesort",
+          "inputs": [
+            "sequence"
+          ],
+          "output": "sequence",
+          "membership_source": "algo.py:2867",
+          "properties": [
+            {
+              "name": "deterministic",
+              "value": true,
+              "source": "repeated CPU probe"
+            },
+            {
+              "name": "stable",
+              "value": true,
+              "source": "algo.py docstring"
+            }
+          ],
+          "property_sources": [
+            {
+              "kind": "measurement",
+              "value": "docs/ops/families_timing.json"
+            }
+          ],
+          "complexity_exponent": 1.11,
+          "quality": {
+            "status": "measured",
+            "probes": [
+              {
+                "pattern": "duplicates",
+                "correct": true
+              },
+              {
+                "pattern": "reverse",
+                "correct": true
+              }
+            ]
+          }
+        }
+      ],
+      "probes": [
+        "synthetic_probe_1",
+        "synthetic_probe_2"
+      ],
       "timing_source": "docs/ops/families_timing.json"
     }
   ]

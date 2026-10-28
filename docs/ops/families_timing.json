@@ -1,0 +1,746 @@
+{
+  "generated_by": "tools/measure_op_families.py",
+  "environment": {
+    "platform": "Windows-10-10.0.26300-SP0",
+    "python": "3.11.9",
+    "numpy": "2.4.6"
+  },
+  "measurements": {
+    "gaussian": {
+      "status": "measured",
+      "sizes": [
+        {
+          "n": 64,
+          "ms": 0.16299996059387922
+        },
+        {
+          "n": 128,
+          "ms": 0.18179998733103275
+        },
+        {
+          "n": 256,
+          "ms": 0.5310000269673765
+        }
+      ],
+      "peak_bytes": 592028,
+      "complexity_exponent": 0.43,
+      "quality": {
+        "status": "measured",
+        "probes": [
+          {
+            "probe": 1,
+            "metric": "psnr",
+            "value": 20.322694187465558
+          },
+          {
+            "probe": 2,
+            "metric": "psnr",
+            "value": 20.30645812488161
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "deterministic",
+          "value": true,
+          "source": "repeated CPU probe"
+        }
+      ]
+    },
+    "median": {
+      "status": "measured",
+      "sizes": [
+        {
+          "n": 64,
+          "ms": 1.9284000154584646
+        },
+        {
+          "n": 128,
+          "ms": 8.133499999530613
+        },
+        {
+          "n": 256,
+          "ms": 30.171899998094887
+        }
+      ],
+      "peak_bytes": 592004,
+      "complexity_exponent": 0.99,
+      "quality": {
+        "status": "measured",
+        "probes": [
+          {
+            "probe": 1,
+            "metric": "psnr",
+            "value": 28.100069433391035
+          },
+          {
+            "probe": 2,
+            "metric": "psnr",
+            "value": 27.861691128576066
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "deterministic",
+          "value": true,
+          "source": "repeated CPU probe"
+        }
+      ]
+    },
+    "bilateral": {
+      "status": "measured",
+      "sizes": [
+        {
+          "n": 64,
+          "ms": 2.8013999690301716
+        },
+        {
+          "n": 128,
+          "ms": 3.8822999922558665
+        },
+        {
+          "n": 256,
+          "ms": 9.986400022171438
+        }
+      ],
+      "peak_bytes": 3164040,
+      "complexity_exponent": 0.46,
+      "quality": {
+        "status": "measured",
+        "probes": [
+          {
+            "probe": 1,
+            "metric": "psnr",
+            "value": 26.40311342054713
+          },
+          {
+            "probe": 2,
+            "metric": "psnr",
+            "value": 26.28788894190755
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "deterministic",
+          "value": true,
+          "source": "repeated CPU probe"
+        }
+      ]
+    },
+    "canny": {
+      "status": "measured",
+      "sizes": [
+        {
+          "n": 64,
+          "ms": 0.19249995239078999
+        },
+        {
+          "n": 128,
+          "ms": 0.395099981687963
+        },
+        {
+          "n": 256,
+          "ms": 1.402400026563555
+        }
+      ],
+      "peak_bytes": 2098066,
+      "complexity_exponent": 0.72,
+      "quality": {
+        "status": "measured",
+        "probes": [
+          {
+            "probe": 1,
+            "metric": "iou",
+            "value": 0.13829279923700524
+          },
+          {
+            "probe": 2,
+            "metric": "iou",
+            "value": 0.13590844062947066
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "deterministic",
+          "value": true,
+          "source": "repeated CPU probe"
+        }
+      ]
+    },
+    "cv_canny": {
+      "status": "measured",
+      "sizes": [
+        {
+          "n": 64,
+          "ms": 0.4569999873638153
+        },
+        {
+          "n": 128,
+          "ms": 0.4284000024199486
+        },
+        {
+          "n": 256,
+          "ms": 0.7817000150680542
+        }
+      ],
+      "peak_bytes": 1049848,
+      "complexity_exponent": 0.19,
+      "quality": {
+        "status": "measured",
+        "probes": [
+          {
+            "probe": 1,
+            "metric": "iou",
+            "value": 0.12466042861454875
+          },
+          {
+            "probe": 2,
+            "metric": "iou",
+            "value": 0.11769991015274034
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "deterministic",
+          "value": true,
+          "source": "repeated CPU probe"
+        }
+      ]
+    },
+    "threshold": {
+      "status": "measured",
+      "sizes": [
+        {
+          "n": 64,
+          "ms": 0.027100031729787588
+        },
+        {
+          "n": 128,
+          "ms": 0.033999967854470015
+        },
+        {
+          "n": 256,
+          "ms": 0.06769999163225293
+        }
+      ],
+      "peak_bytes": 721496,
+      "complexity_exponent": 0.33,
+      "quality": {
+        "status": "measured",
+        "probes": [
+          {
+            "probe": 1,
+            "metric": "iou",
+            "value": 1.0
+          },
+          {
+            "probe": 2,
+            "metric": "iou",
+            "value": 1.0
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "deterministic",
+          "value": true,
+          "source": "repeated CPU probe"
+        }
+      ]
+    },
+    "otsu": {
+      "status": "measured",
+      "sizes": [
+        {
+          "n": 64,
+          "ms": 0.3328000311739743
+        },
+        {
+          "n": 128,
+          "ms": 0.382099999114871
+        },
+        {
+          "n": 256,
+          "ms": 0.7278999546542764
+        }
+      ],
+      "peak_bytes": 2759112,
+      "complexity_exponent": 0.28,
+      "quality": {
+        "status": "measured",
+        "probes": [
+          {
+            "probe": 1,
+            "metric": "iou",
+            "value": 1.0
+          },
+          {
+            "probe": 2,
+            "metric": "iou",
+            "value": 1.0
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "deterministic",
+          "value": true,
+          "source": "repeated CPU probe"
+        }
+      ]
+    },
+    "sk_sauvola": {
+      "status": "measured",
+      "sizes": [
+        {
+          "n": 64,
+          "ms": 0.4113999893888831
+        },
+        {
+          "n": 128,
+          "ms": 0.548899988643825
+        },
+        {
+          "n": 256,
+          "ms": 1.3078000047244132
+        }
+      ],
+      "peak_bytes": 3786012,
+      "complexity_exponent": 0.42,
+      "quality": {
+        "status": "measured",
+        "probes": [
+          {
+            "probe": 1,
+            "metric": "iou",
+            "value": 0.3992673992673993
+          },
+          {
+            "probe": 2,
+            "metric": "iou",
+            "value": 0.3992256889091323
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "deterministic",
+          "value": true,
+          "source": "repeated CPU probe"
+        }
+      ]
+    },
+    "cv_erode": {
+      "status": "measured",
+      "sizes": [
+        {
+          "n": 64,
+          "ms": 0.030800001695752144
+        },
+        {
+          "n": 128,
+          "ms": 0.05440000677481294
+        },
+        {
+          "n": 256,
+          "ms": 0.16520003555342555
+        }
+      ],
+      "peak_bytes": 591226,
+      "complexity_exponent": 0.61,
+      "quality": {
+        "status": "measured",
+        "probes": [
+          {
+            "probe": 1,
+            "metric": "iou",
+            "value": 0.8345444382336501
+          },
+          {
+            "probe": 2,
+            "metric": "iou",
+            "value": 0.8345444382336501
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "deterministic",
+          "value": true,
+          "source": "repeated CPU probe"
+        }
+      ]
+    },
+    "cv_dilate": {
+      "status": "measured",
+      "sizes": [
+        {
+          "n": 64,
+          "ms": 0.02889998722821474
+        },
+        {
+          "n": 128,
+          "ms": 0.05390000296756625
+        },
+        {
+          "n": 256,
+          "ms": 0.16500003403052688
+        }
+      ],
+      "peak_bytes": 591226,
+      "complexity_exponent": 0.63,
+      "quality": {
+        "status": "measured",
+        "probes": [
+          {
+            "probe": 1,
+            "metric": "iou",
+            "value": 0.8482693219535324
+          },
+          {
+            "probe": 2,
+            "metric": "iou",
+            "value": 0.8482693219535324
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "deterministic",
+          "value": true,
+          "source": "repeated CPU probe"
+        }
+      ]
+    },
+    "unwrap_phase_2d": {
+      "status": "unavailable",
+      "reason": "not in executable 2-D registry"
+    },
+    "xsk_unwrap_phase": {
+      "status": "measured",
+      "sizes": [
+        {
+          "n": 64,
+          "ms": 0.6548999808728695
+        },
+        {
+          "n": 128,
+          "ms": 2.948200039099902
+        },
+        {
+          "n": 256,
+          "ms": 15.028599998913705
+        }
+      ],
+      "peak_bytes": 2164528,
+      "complexity_exponent": 1.13,
+      "quality": {
+        "status": "measured",
+        "probes": [
+          {
+            "probe": 1,
+            "metric": "iou",
+            "value": 0.1941189236111111
+          },
+          {
+            "probe": 2,
+            "metric": "iou",
+            "value": 0.1941189236111111
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "deterministic",
+          "value": true,
+          "source": "repeated CPU probe"
+        }
+      ]
+    },
+    "decode_fringe": {
+      "status": "unavailable",
+      "reason": "not in executable 2-D registry"
+    },
+    "micro_phase_decode": {
+      "status": "unavailable",
+      "reason": "not in executable 2-D registry"
+    },
+    "quicksort": {
+      "status": "measured",
+      "cases": [
+        {
+          "pattern": "random",
+          "n": 1000,
+          "ms": 0.6203000084497035
+        },
+        {
+          "pattern": "random",
+          "n": 10000,
+          "ms": 7.538199948612601
+        },
+        {
+          "pattern": "random",
+          "n": 100000,
+          "ms": 96.84439998818561
+        },
+        {
+          "pattern": "nearly_sorted",
+          "n": 1000,
+          "ms": 0.9754000348038971
+        },
+        {
+          "pattern": "nearly_sorted",
+          "n": 10000,
+          "ms": 26.914200047031045
+        },
+        {
+          "pattern": "nearly_sorted",
+          "n": 100000,
+          "ms": 843.2398999575526
+        },
+        {
+          "pattern": "reverse",
+          "n": 1000,
+          "ms": 0.7529999711550772
+        },
+        {
+          "pattern": "reverse",
+          "n": 10000,
+          "ms": 20.35119995707646
+        },
+        {
+          "pattern": "reverse",
+          "n": 100000,
+          "ms": 603.8000000407919
+        },
+        {
+          "pattern": "duplicates",
+          "n": 1000,
+          "ms": 0.2193999825976789
+        },
+        {
+          "pattern": "duplicates",
+          "n": 10000,
+          "ms": 2.5351999793201685
+        },
+        {
+          "pattern": "duplicates",
+          "n": 100000,
+          "ms": 22.50540000386536
+        }
+      ],
+      "complexity_exponent": 1.1,
+      "quality": {
+        "status": "measured",
+        "probes": [
+          {
+            "pattern": "duplicates",
+            "correct": true
+          },
+          {
+            "pattern": "reverse",
+            "correct": true
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "deterministic",
+          "value": true,
+          "source": "repeated CPU probe"
+        },
+        {
+          "name": "stable",
+          "value": false,
+          "source": "algo.py docstring"
+        }
+      ]
+    },
+    "heapsort": {
+      "status": "measured",
+      "cases": [
+        {
+          "pattern": "random",
+          "n": 1000,
+          "ms": 0.944600033108145
+        },
+        {
+          "pattern": "random",
+          "n": 10000,
+          "ms": 13.411700027063489
+        },
+        {
+          "pattern": "random",
+          "n": 100000,
+          "ms": 179.0801000315696
+        },
+        {
+          "pattern": "nearly_sorted",
+          "n": 1000,
+          "ms": 0.9615999879315495
+        },
+        {
+          "pattern": "nearly_sorted",
+          "n": 10000,
+          "ms": 14.015000022482127
+        },
+        {
+          "pattern": "nearly_sorted",
+          "n": 100000,
+          "ms": 175.2066999906674
+        },
+        {
+          "pattern": "reverse",
+          "n": 1000,
+          "ms": 0.851699966005981
+        },
+        {
+          "pattern": "reverse",
+          "n": 10000,
+          "ms": 13.125099998433143
+        },
+        {
+          "pattern": "reverse",
+          "n": 100000,
+          "ms": 162.93729998869821
+        },
+        {
+          "pattern": "duplicates",
+          "n": 1000,
+          "ms": 0.9531999821774662
+        },
+        {
+          "pattern": "duplicates",
+          "n": 10000,
+          "ms": 13.112500018905848
+        },
+        {
+          "pattern": "duplicates",
+          "n": 100000,
+          "ms": 159.06599996378645
+        }
+      ],
+      "complexity_exponent": 1.14,
+      "quality": {
+        "status": "measured",
+        "probes": [
+          {
+            "pattern": "duplicates",
+            "correct": true
+          },
+          {
+            "pattern": "reverse",
+            "correct": true
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "deterministic",
+          "value": true,
+          "source": "repeated CPU probe"
+        },
+        {
+          "name": "stable",
+          "value": false,
+          "source": "algo.py docstring"
+        }
+      ]
+    },
+    "mergesort": {
+      "status": "measured",
+      "cases": [
+        {
+          "pattern": "random",
+          "n": 1000,
+          "ms": 0.7597999647259712
+        },
+        {
+          "pattern": "random",
+          "n": 10000,
+          "ms": 10.134299984201789
+        },
+        {
+          "pattern": "random",
+          "n": 100000,
+          "ms": 128.55859997216612
+        },
+        {
+          "pattern": "nearly_sorted",
+          "n": 1000,
+          "ms": 0.6904000183567405
+        },
+        {
+          "pattern": "nearly_sorted",
+          "n": 10000,
+          "ms": 8.462499943561852
+        },
+        {
+          "pattern": "nearly_sorted",
+          "n": 100000,
+          "ms": 111.26309999963269
+        },
+        {
+          "pattern": "reverse",
+          "n": 1000,
+          "ms": 0.7211999618448317
+        },
+        {
+          "pattern": "reverse",
+          "n": 10000,
+          "ms": 8.680100028868765
+        },
+        {
+          "pattern": "reverse",
+          "n": 100000,
+          "ms": 111.01779999444261
+        },
+        {
+          "pattern": "duplicates",
+          "n": 1000,
+          "ms": 0.7776999846100807
+        },
+        {
+          "pattern": "duplicates",
+          "n": 10000,
+          "ms": 10.08840004215017
+        },
+        {
+          "pattern": "duplicates",
+          "n": 100000,
+          "ms": 119.44320000475273
+        }
+      ],
+      "complexity_exponent": 1.11,
+      "quality": {
+        "status": "measured",
+        "probes": [
+          {
+            "pattern": "duplicates",
+            "correct": true
+          },
+          {
+            "pattern": "reverse",
+            "correct": true
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "deterministic",
+          "value": true,
+          "source": "repeated CPU probe"
+        },
+        {
+          "name": "stable",
+          "value": true,
+          "source": "algo.py docstring"
+        }
+      ]
+    }
+  }
+}
