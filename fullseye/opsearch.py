@@ -353,14 +353,19 @@ def param_space(op: str, input_context: dict | None = None) -> dict:
         else:
             lo, hi = 0.0, 1.0
             reasons = ["measured normalized range"]
-            width = max(1, int(input_context.get("width", input_context.get("image_width", 1))))
-            height = max(1, int(input_context.get("height", input_context.get("image_height", 1))))
+            width_value = input_context.get("width", input_context.get("image_width"))
+            height_value = input_context.get("height", input_context.get("image_height"))
             value_range = input_context.get("value_range")
             bundle_n = max(1, int(input_context.get("N", input_context.get("bundle_n", 1))))
             family = edge.get("family")
-            if family in ("denoise", "morphology", "edge_detection") and name == "a":
-                hi = min(1.0, max(0.0, (min(width, height) - 1) / max(min(width, height), 1)))
-                reasons.append("kernel/radius must fit inside the image")
+            physical = rec.get("physical_values")
+            if physical and width_value is not None and height_value is not None:
+                side=max(1,min(int(width_value),int(height_value)))
+                allowed=[v for v in physical if v <= side]
+                rec["allowed_physical_values"]=allowed
+                reasons.append("docstring physical values fitted to image side %d" % side)
+                if not allowed:
+                    hi=lo
             if family == "thresholding" and value_range and len(value_range) == 2:
                 reasons.append("threshold constrained to input value range %s" % list(value_range))
             if family == "fringe_phase" and bundle_n == 1:
@@ -368,7 +373,10 @@ def param_space(op: str, input_context: dict | None = None) -> dict:
             rec.update({"search": hi > lo, "min": lo, "max": hi,
                         "reason": "; ".join(reasons), "rule_source": "family context rules 2026-10-28"})
             if rec.get("discrete"):
-                rec["enum"] = sorted(set([lo] + [x for x in rec.pop("discrete") if lo <= x <= hi] + [hi]))
+                values=sorted(set([lo] + [x for x in rec.pop("discrete") if lo <= x <= hi] + [hi]))
+                if physical and rec.get("allowed_physical_values") is not None:
+                    values=values[:len(rec["allowed_physical_values"])]
+                rec["enum"] = values
         params[name] = rec
     return {"op": op, "input_context": input_context, "parameters": params,
             "source_graph": PKG_GRAPH}

@@ -198,9 +198,12 @@ def test_family_negative_examples_and_cpu_measurements():
 
 def test_knob_schema_context_edges_and_system_params():
     assert opsearch.param_space("lowpass",{"width":512})["parameters"]["a"]["search"]
+    gaussian=opsearch.param_space("gaussian",{})["parameters"]["a"]
+    assert gaussian["search"] and gaussian["physical_range"] == [0.3,3.0]
     assert opsearch.param_space("local_std",{"width":512})["parameters"]["a"]["enum"] == [0.0,0.25,0.49,0.75,1.0]
     one=opsearch.param_space("median",{"width":1,"height":1})
     assert one["parameters"]["a"]["max"] == 0.0
+    assert one["parameters"]["a"]["allowed_physical_values"] == []
     system=opsearch.system_params(); params=system["params"]
     assert system["generated_from"] == "fssystem.SYSTEM_PARAMS"
     missing=[name for name,r in params.items() if not r["hide_from_ai"] or "applied_by" not in r]

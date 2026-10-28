@@ -28391,7 +28391,12 @@
             0.0,
             1.0
           ],
-          "mapping": "measured normalized knob; physical mapping not documented",
+          "mapping": "cutoff = 0.05 + 0.4*a",
+          "physical_range": [
+            0.05,
+            0.45
+          ],
+          "unit": "normalized_frequency",
           "source_ref": "S00002"
         },
         "b": {
@@ -28686,7 +28691,14 @@
             0.0,
             1.0
           ],
-          "mapping": "measured normalized knob; physical mapping not documented",
+          "mapping": "docstring _k(a)",
+          "physical_values": [
+            3,
+            5,
+            7,
+            9
+          ],
+          "unit": "pixels",
           "discrete": [
             0.25,
             0.49,
@@ -28702,7 +28714,14 @@
             0.0,
             1.0
           ],
-          "mapping": "measured normalized knob; physical mapping not documented",
+          "mapping": "docstring _k(b)",
+          "physical_values": [
+            3,
+            5,
+            7,
+            9
+          ],
+          "unit": "pixels",
           "source_ref": "S00002"
         }
       },
@@ -201442,7 +201461,12 @@
             0.0,
             1.0
           ],
-          "mapping": "measured normalized knob; physical mapping not documented",
+          "mapping": "sigma = 0.3 + 2.7*a",
+          "physical_range": [
+            0.3,
+            3.0
+          ],
+          "unit": "pixels",
           "source_ref": "S00002"
         },
         "b": {
@@ -211056,7 +211080,14 @@
             0.0,
             1.0
           ],
-          "mapping": "measured normalized knob; physical mapping not documented",
+          "mapping": "docstring _k(a)",
+          "physical_values": [
+            3,
+            5,
+            7,
+            9
+          ],
+          "unit": "pixels",
           "discrete": [
             0.25,
             0.49,

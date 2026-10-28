@@ -132,6 +132,14 @@ def _param_metadata(name: str, family: str, knob: dict | None) -> dict:
                "effect": effect, "kind": kind or ("continuous" if used else "unused")}
         if used:
             rec.update({"normalized": [0.0, 1.0], "mapping": "measured normalized knob; physical mapping not documented"})
+            if key == "a" and name in {"median","local_std"}:
+                rec.update({"mapping":"docstring _k(a)","physical_values":[3,5,7,9],"unit":"pixels"})
+            elif key == "b" and name == "local_std":
+                rec.update({"mapping":"docstring _k(b)","physical_values":[3,5,7,9],"unit":"pixels"})
+            elif key == "a" and name == "gaussian":
+                rec.update({"mapping":"sigma = 0.3 + 2.7*a","physical_range":[0.3,3.0],"unit":"pixels"})
+            elif key == "a" and name == "lowpass":
+                rec.update({"mapping":"cutoff = 0.05 + 0.4*a","physical_range":[0.05,0.45],"unit":"normalized_frequency"})
             if key == "a" and knob.get("breakpoints"):
                 rec["discrete"] = knob["breakpoints"]
         out[key] = rec
