@@ -1,0 +1,101 @@
+{
+  "schema": 1,
+  "params": {
+    "plan_k": {
+      "default": 5,
+      "meaning": "maximum returned plans",
+      "hide_from_ai": true,
+      "source": "system design 2026-10-28"
+    },
+    "plan_max_depth": {
+      "default": 4,
+      "meaning": "maximum graph depth",
+      "hide_from_ai": true,
+      "source": "system design 2026-10-28"
+    },
+    "budget_tokens": {
+      "default": 800,
+      "meaning": "default textual response budget",
+      "hide_from_ai": true,
+      "source": "system design 2026-10-28"
+    },
+    "limit": {
+      "default": 20,
+      "meaning": "default row limit",
+      "hide_from_ai": true,
+      "source": "system design 2026-10-28"
+    },
+    "max_structured_bytes": {
+      "default": 512000,
+      "meaning": "structured MCP response ceiling",
+      "hide_from_ai": true,
+      "source": "fullseye.mcp.server"
+    },
+    "max_stages": {
+      "default": 64,
+      "meaning": "pipeline stage safety ceiling",
+      "hide_from_ai": true,
+      "source": "system design 2026-10-28"
+    },
+    "device": {
+      "default": "cpu",
+      "meaning": "execution device",
+      "hide_from_ai": true,
+      "source": "system design 2026-10-28"
+    },
+    "batch": {
+      "default": 1,
+      "meaning": "batch size",
+      "hide_from_ai": true,
+      "source": "system design 2026-10-28"
+    },
+    "lang": {
+      "default": "auto",
+      "meaning": "response language",
+      "hide_from_ai": true,
+      "source": "system design 2026-10-28"
+    },
+    "vision": {
+      "default": "auto",
+      "meaning": "diagnostic image policy",
+      "hide_from_ai": true,
+      "source": "system design 2026-10-28"
+    },
+    "seed": {
+      "default": 0,
+      "meaning": "deterministic random seed",
+      "hide_from_ai": true,
+      "source": "system design 2026-10-28"
+    },
+    "tile_size": {
+      "default": 512,
+      "meaning": "large-image tile edge",
+      "hide_from_ai": true,
+      "source": "system design 2026-10-28"
+    },
+    "border": {
+      "default": "reflect",
+      "meaning": "neighborhood border policy",
+      "hide_from_ai": true,
+      "source": "system design 2026-10-28"
+    },
+    "numeric_floor": {
+      "default": 1e-12,
+      "meaning": "numerical denominator floor",
+      "hide_from_ai": true,
+      "source": "system design 2026-10-28"
+    },
+    "iteration_limit": {
+      "default": 100,
+      "meaning": "iterative solver cap",
+      "hide_from_ai": true,
+      "source": "system design 2026-10-28"
+    },
+    "gpu_idle_policy": {
+      "default": "no compute process and no loaded local model",
+      "meaning": "GPU measurement admission",
+      "hide_from_ai": true,
+      "source": "system design 2026-10-28"
+    }
+  }
+}
