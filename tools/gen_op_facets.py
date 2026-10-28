@@ -141,7 +141,7 @@ def _runtime_function(fn) -> dict:
     """Describe the exact callable registered by chain_fuzz, never a namesake."""
     module = getattr(fn, "__module__", None)
     qualname = getattr(fn, "__qualname__", None)
-    if not module or not qualname or "<locals>" in qualname:
+    if not module or not qualname:
         raise RuntimeError("operator has no importable runtime target: %r" % (fn,))
     params = []
     try:
@@ -253,6 +253,8 @@ def build() -> dict[str, object]:
     a = cm.analyse()
     knobs = _knobs()
     verified_registry = _verified_registry_ops()
+    import ops as runtime_ops
+    registry_by_name = {op.name:op for op in runtime_ops.REGISTRY}
     index = json.loads((ROOT / "docs" / "OP_INDEX.json").read_text(encoding="utf-8"))
     index_rows = index.get("ops") or []
     if not index_rows:
@@ -280,6 +282,9 @@ def build() -> dict[str, object]:
         if name not in index_names:
             excluded_chain_only.append({"op": name, "reason": "not present in public OP_INDEX"})
             continue
+        if name in registry_by_name:
+            registered=registry_by_name[name]
+            ins,out,_fn=registered.in_sort,registered.out_sort,registered.fn
         ins, out = split_inputs(ins), canonical_sort(out)
         if name in nary:
             ins = [canonical_sort(x) for x in nary[name]["in_sorts"]]
@@ -392,11 +397,15 @@ def build() -> dict[str, object]:
     executable_reasons = Counter()
     for edge in edges:
         if edge.get("executable"):
-            edge["executor"] = {"kind": "registry", "callable": edge["op"]}
+            edge["executor"] = {"kind": "registry", "alias":edge["op"]}
             executable_reasons["registry"] += 1
         fn = runtime_functions.get(edge["op"])
+        if fn is None and edge["op"] in registry_by_name:
+            fn = _runtime_function(registry_by_name[edge["op"]].fn)
         if fn is not None:
             edge["runtime_target"] = {"module": fn["module"], "callable": fn["callable"]}
+            if edge.get("executor",{}).get("kind")=="registry":
+                edge["executor"].update(edge["runtime_target"])
         if not edge.get("executable") and edge.get("type_semantics") == "unknown":
             edge["executable_reason"] = "unknown_input_or_output_sort"
         elif not edge.get("executable") and fn is None:

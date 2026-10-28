@@ -263,6 +263,16 @@ def test_mcp_execution_is_probe_verified_and_runtime_targets_are_exact(tmp_path)
     verified=[e for e in graph["edges"] if e.get("verified_executable")]
     assert verified
     assert {e.get("verification",{}).get("status") for e in verified} == {"ok"}
+    import ops
+    collision_names={"fill_holes","lowpass","highpass","local_std","companding_mu_law"}
+    collision_targets={name:(edges[name]["runtime_target"]["module"],edges[name]["runtime_target"]["callable"])
+                       for name in collision_names}
+    registered_targets={name:(ops._BY_NAME[name].fn.__module__,ops._BY_NAME[name].fn.__qualname__)
+                        for name in collision_names}
+    assert collision_targets == registered_targets
+    assert {name:edges[name]["inputs"] for name in collision_names} == {
+        "fill_holes":["region"],"lowpass":["image"],"highpass":["image"],
+        "local_std":["image"],"companding_mu_law":["image"]}
 
     outside=tmp_path/"outside.json"
     store=HandleStore(roots=[])

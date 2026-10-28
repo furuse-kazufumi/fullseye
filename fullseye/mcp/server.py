@@ -1177,8 +1177,14 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
             if executor["kind"]=="identity":
                 out=args[0]
             elif executor["kind"]=="registry":
+                import ops as runtime_ops
                 incoming=args if len(args)>1 else args[0]
-                out=fullseye.apply(incoming,edge["op"],float(spec.get("a",.5)),float(spec.get("b",.5)),on_error="raise")
+                registered=runtime_ops._BY_NAME[executor["alias"]]
+                actual=(registered.fn.__module__,registered.fn.__qualname__)
+                expected=(executor["module"],executor["callable"])
+                if actual != expected:
+                    raise RuntimeError("registry target mismatch: %r != %r"%(actual,expected))
+                out=registered.fn(incoming,float(spec.get("a",.5)),float(spec.get("b",.5)))
             else:
                 fn=getattr(importlib.import_module(executor["module"]),executor["callable"])
                 out=fn(*args,**params)
