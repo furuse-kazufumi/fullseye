@@ -93,21 +93,33 @@ class HandleStore:
 
     # ---------------------------------------------------------------- store
     @staticmethod
-    def _hid(arr: np.ndarray, sort: str = "") -> str:
+    def _hid(arr, sort: str = "") -> str:
         h = hashlib.sha256()
-        h.update(np.ascontiguousarray(arr).tobytes())
-        h.update(("%s|%s|%s" % (arr.shape, arr.dtype, sort)).encode())
+        if isinstance(arr, np.ndarray):
+            h.update(np.ascontiguousarray(arr).tobytes())
+            h.update(("%s|%s|%s" % (arr.shape, arr.dtype, sort)).encode())
+        else:
+            import json
+            try:
+                payload = json.dumps(arr, sort_keys=True, ensure_ascii=False, default=repr)
+            except (TypeError, ValueError):
+                payload = repr(arr)
+            h.update((type(arr).__name__ + "|" + sort + "|" + payload).encode("utf-8"))
         return PREFIX + h.hexdigest()[:16]
 
     def put(self, arr, *, sort: str, provenance: list) -> dict:
-        arr = np.asarray(arr)
+        if isinstance(arr, (list, tuple)) and sort in {"image","images","seq<image>","points","volume"}:
+            arr = np.asarray(arr)
         hid = self._hid(arr, sort)
         self._evicted.discard(hid)          # 作り直したハンドルは生きている(追い出し印を消す)
         if hid in self._meta:
             self._meta.move_to_end(hid)
             return dict(self._meta[hid], dedup=True)
         self._seq += 1
-        meta = {"handle": hid, "sort": sort, "shape": list(arr.shape), "dtype": str(arr.dtype),
+        meta = {"handle": hid, "sort": sort,
+                "shape": list(arr.shape) if isinstance(arr, np.ndarray) else None,
+                "dtype": str(arr.dtype) if isinstance(arr, np.ndarray) else type(arr).__name__,
+                "array": isinstance(arr, np.ndarray),
                 "provenance": list(provenance), "seq": self._seq}
         self._meta[hid] = meta
         self._arr[hid] = arr
@@ -140,7 +152,7 @@ class HandleStore:
                               % (path, type(exc).__name__, str(exc)[:200])) from None
         return self.put(arr, sort=sort, provenance=[{"load": os.path.relpath(real, ROOT) if real.startswith(ROOT) else real}])
 
-    def get(self, handle: str) -> tuple[dict, np.ndarray]:
+    def get(self, handle: str) -> tuple[dict, object]:
         if not isinstance(handle, str) or not handle.startswith(PREFIX):
             raise HandleError("ハンドルは %s<16 hex> の形: %r" % (PREFIX, handle))
         if handle in self._evicted:

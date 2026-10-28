@@ -875,7 +875,7 @@
       "container": "structured_value",
       "size_hint": "input-dependent",
       "produced_by": 91,
-      "consumed_by": 245,
+      "consumed_by": 248,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -3498,6 +3498,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "vol",
+        "domain"
+      ],
       "runtime_target": {
         "module": "volops",
         "callable": "vol_reduce_domain"
@@ -4275,6 +4279,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a",
+        "b"
+      ],
       "runtime_target": {
         "module": "volregion",
         "callable": "vol_rle_union"
@@ -4330,6 +4338,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a",
+        "b"
+      ],
       "runtime_target": {
         "module": "volregion",
         "callable": "vol_rle_intersect"
@@ -4385,6 +4397,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a",
+        "b"
+      ],
       "runtime_target": {
         "module": "volregion",
         "callable": "vol_rle_difference"
@@ -5684,6 +5700,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "vol",
+        "psf"
+      ],
       "runtime_target": {
         "module": "volrestore",
         "callable": "vol_richardson_lucy"
@@ -6309,6 +6329,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "vol",
+        "template"
+      ],
       "runtime_target": {
         "module": "match3d",
         "callable": "match_shape_3d"
@@ -6389,6 +6413,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "scene",
+        "template"
+      ],
       "runtime_target": {
         "module": "match3d",
         "callable": "match_chamfer_3d"
@@ -6469,6 +6497,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "scene",
+        "template"
+      ],
       "runtime_target": {
         "module": "match3d",
         "callable": "match_curvature_3d"
@@ -6549,6 +6581,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "scene",
+        "template"
+      ],
       "runtime_target": {
         "module": "match3d",
         "callable": "match_hough_3d"
@@ -6653,6 +6689,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "scene_vol",
+        "model_vol"
+      ],
       "runtime_target": {
         "module": "match3d",
         "callable": "match_mip_2d"
@@ -6717,6 +6757,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "pts_scene",
+        "pts_model"
+      ],
       "runtime_target": {
         "module": "match3d",
         "callable": "match_points_ncc"
@@ -6803,6 +6847,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a",
+        "b"
+      ],
       "runtime_target": {
         "module": "match3d",
         "callable": "match_phase_3d"
@@ -6883,6 +6931,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "pts_scene",
+        "pts_model"
+      ],
       "runtime_target": {
         "module": "match3d",
         "callable": "match_pca"
@@ -7001,6 +7053,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a",
+        "b"
+      ],
       "runtime_target": {
         "module": "match3d",
         "callable": "match_logpolar_z"
@@ -7382,6 +7438,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a",
+        "b"
+      ],
       "runtime_target": {
         "module": "match3d",
         "callable": "match_sh_descriptor"
@@ -7543,6 +7603,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "scene",
+        "template",
+        "init_pos"
+      ],
       "runtime_target": {
         "module": "match3d",
         "callable": "refine_translation_lk"
@@ -7624,6 +7689,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "scene",
+        "template",
+        "init_pos"
+      ],
       "runtime_target": {
         "module": "match3d",
         "callable": "refine_lm"
@@ -7729,6 +7799,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "scene",
+        "template",
+        "init_angle_deg"
+      ],
       "runtime_target": {
         "module": "match3d",
         "callable": "refine_rotation_z"
@@ -7817,6 +7892,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "src",
+        "dst"
+      ],
       "runtime_target": {
         "module": "match3d",
         "callable": "icp_point2point_3d"
@@ -7938,6 +8017,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "src",
+        "dst",
+        "dst_normals"
+      ],
       "runtime_target": {
         "module": "match3d",
         "callable": "icp_point2plane"
@@ -8042,6 +8126,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "vol0",
+        "vol1"
+      ],
       "runtime_target": {
         "module": "match3d",
         "callable": "scene_flow_lk"
@@ -8540,6 +8628,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "src",
+        "dst"
+      ],
       "runtime_target": {
         "module": "feat_spin",
         "callable": "register_spin"
@@ -8692,6 +8784,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "src",
+        "dst"
+      ],
       "runtime_target": {
         "module": "feat_fpfh",
         "callable": "register_fpfh"
@@ -8852,6 +8948,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "src",
+        "dst"
+      ],
       "runtime_target": {
         "module": "feat_shot",
         "callable": "register_shot"
@@ -8980,6 +9080,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "src",
+        "src_kind"
+      ],
       "runtime_target": {
         "module": "fuse3d",
         "callable": "register_cross"
@@ -10544,6 +10648,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "x",
+        "y",
+        "z"
+      ],
       "runtime_target": {
         "module": "match3d",
         "callable": "fit_poly_surface"
@@ -10609,6 +10718,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "model",
+        "x",
+        "y"
+      ],
       "runtime_target": {
         "module": "match3d",
         "callable": "eval_poly_surface"
@@ -11297,6 +11411,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "incident",
+        "reflected"
+      ],
       "runtime_target": {
         "module": "match3d",
         "callable": "normal_from_reflection"
@@ -16274,6 +16392,10 @@
           "kind": "unused"
         }
       },
+      "ref_parameters": {
+        "ref_phase": "image",
+        "mask": "region"
+      },
       "runtime_target": {
         "module": "fringe",
         "callable": "decode_fringe"
@@ -16507,6 +16629,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "wrapped",
+        "coarse"
+      ],
       "runtime_target": {
         "module": "fringe",
         "callable": "absolute_phase"
@@ -16645,6 +16771,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "src_ctrl",
+        "dst_ctrl"
+      ],
       "runtime_target": {
         "module": "deform3d",
         "callable": "tps_fit"
@@ -16764,6 +16894,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "src",
+        "dst"
+      ],
       "runtime_target": {
         "module": "deform3d",
         "callable": "register_nonrigid"
@@ -16844,6 +16978,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "src",
+        "dst"
+      ],
       "runtime_target": {
         "module": "deform3d",
         "callable": "register_cpd_rigid"
@@ -17158,6 +17296,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "vol_a",
+        "vol_b"
+      ],
       "runtime_target": {
         "module": "medial",
         "callable": "medial_match"
@@ -17744,6 +17886,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a",
+        "b"
+      ],
       "runtime_target": {
         "module": "metrics3d",
         "callable": "chamfer_distance"
@@ -17808,6 +17954,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a",
+        "b"
+      ],
       "runtime_target": {
         "module": "metrics3d",
         "callable": "hausdorff_distance"
@@ -17863,6 +18013,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a",
+        "b"
+      ],
       "runtime_target": {
         "module": "metrics3d",
         "callable": "m3c2_distance"
@@ -17956,6 +18110,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a",
+        "b"
+      ],
       "runtime_target": {
         "module": "metrics3d",
         "callable": "fscore"
@@ -18019,6 +18177,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a",
+        "b"
+      ],
       "runtime_target": {
         "module": "metrics3d",
         "callable": "rmse_correspondence"
@@ -18144,6 +18306,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "vol_a",
+        "vol_b"
+      ],
       "runtime_target": {
         "module": "metrics3d",
         "callable": "voxel_iou"
@@ -18208,6 +18374,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "R_est",
+        "t_est"
+      ],
       "runtime_target": {
         "module": "metrics3d",
         "callable": "pose_error"
@@ -19957,6 +20127,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "desc_a",
+        "desc_b"
+      ],
       "runtime_target": {
         "module": "descriptors3d",
         "callable": "shape_distance"
@@ -20022,6 +20196,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "x",
+        "y",
+        "z"
+      ],
       "runtime_target": {
         "module": "bspline_surf",
         "callable": "fit_bspline_surface"
@@ -20103,6 +20282,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "tck",
+        "x",
+        "y"
+      ],
       "runtime_target": {
         "module": "bspline_surf",
         "callable": "eval_bspline_surface"
@@ -20169,6 +20353,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "x",
+        "y",
+        "z",
+        "tck"
+      ],
       "runtime_target": {
         "module": "bspline_surf",
         "callable": "surface_residual"
@@ -21040,6 +21230,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "pts1",
+        "pts2"
+      ],
       "runtime_target": {
         "module": "twoview",
         "callable": "fundamental_8point"
@@ -21095,6 +21289,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "pts1",
+        "pts2"
+      ],
       "runtime_target": {
         "module": "twoview",
         "callable": "essential_8point"
@@ -21130,7 +21328,8 @@
       "op": "recover_pose",
       "inputs": [
         "image",
-        "image"
+        "image",
+        "matrix"
       ],
       "output": "pose",
       "category": "3d",
@@ -21166,6 +21365,14 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "test",
+        "reference",
+        "K1"
+      ],
+      "ref_parameters": {
+        "K2": "matrix"
+      },
       "runtime_target": {
         "module": "twoview",
         "callable": "recover_pose"
@@ -21176,13 +21383,6 @@
         "callable": "recover_pose"
       },
       "parameter_schema": [
-        {
-          "name": "K1",
-          "type": "unannotated",
-          "required": true,
-          "range": "undocumented",
-          "unit": "undocumented"
-        },
         {
           "name": "K2",
           "type": "unannotated",
@@ -21209,7 +21409,9 @@
       "op": "triangulate",
       "inputs": [
         "image",
-        "image"
+        "image",
+        "matrix",
+        "matrix"
       ],
       "output": "points",
       "category": "3d",
@@ -21245,6 +21447,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "uv1",
+        "uv2",
+        "P1",
+        "P2"
+      ],
       "runtime_target": {
         "module": "twoview",
         "callable": "triangulate"
@@ -21254,22 +21462,7 @@
         "module": "twoview",
         "callable": "triangulate"
       },
-      "parameter_schema": [
-        {
-          "name": "P1",
-          "type": "unannotated",
-          "required": true,
-          "range": "undocumented",
-          "unit": "undocumented"
-        },
-        {
-          "name": "P2",
-          "type": "unannotated",
-          "required": true,
-          "range": "undocumented",
-          "unit": "undocumented"
-        }
-      ],
+      "parameter_schema": [],
       "verified_executable": false,
       "not_executable_in_mcp": "not_verified",
       "bundle_semantics": "unknown",
@@ -21315,6 +21508,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "F",
+        "pts1"
+      ],
       "runtime_target": {
         "module": "twoview",
         "callable": "sampson_distance"
@@ -23890,6 +24087,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "source",
+        "target"
+      ],
       "runtime_target": {
         "module": "gicp",
         "callable": "gicp"
@@ -24464,6 +24665,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "pose_i",
+        "pose_j"
+      ],
       "runtime_target": {
         "module": "pose_graph",
         "callable": "relative_pose"
@@ -24726,6 +24931,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "pts0",
+        "pts1"
+      ],
       "runtime_target": {
         "module": "scene_flow3d",
         "callable": "nearest_neighbor_flow"
@@ -24781,6 +24990,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "pts0",
+        "pts1"
+      ],
       "runtime_target": {
         "module": "scene_flow3d",
         "callable": "rigid_flow"
@@ -24845,6 +25058,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "pts0",
+        "pts1"
+      ],
       "runtime_target": {
         "module": "scene_flow3d",
         "callable": "smooth_flow"
@@ -25709,6 +25926,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "pts0",
+        "pts1"
+      ],
       "runtime_target": {
         "module": "motion_seg3d",
         "callable": "segment_rigid_motions"
@@ -25812,6 +26033,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "pts0",
+        "pts1"
+      ],
       "runtime_target": {
         "module": "motion_seg3d",
         "callable": "estimate_flow"
@@ -25867,6 +26092,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "pts_from",
+        "pts_to"
+      ],
       "runtime_target": {
         "module": "motion_seg3d",
         "callable": "fit_rigid"
@@ -25922,6 +26151,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "img_ref",
+        "img_src"
+      ],
       "runtime_target": {
         "module": "plane_sweep",
         "callable": "plane_sweep_depth"
@@ -26628,6 +26861,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a",
+        "b"
+      ],
       "runtime_target": {
         "module": "sdf_ops",
         "callable": "sdf_union"
@@ -26683,6 +26920,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a",
+        "b"
+      ],
       "runtime_target": {
         "module": "sdf_ops",
         "callable": "sdf_intersect"
@@ -26738,6 +26979,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a",
+        "b"
+      ],
       "runtime_target": {
         "module": "sdf_ops",
         "callable": "sdf_subtract"
@@ -26793,6 +27038,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a",
+        "b"
+      ],
       "runtime_target": {
         "module": "sdf_ops",
         "callable": "sdf_smooth_union"
@@ -27167,6 +27416,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "source",
+        "target"
+      ],
       "runtime_target": {
         "module": "registration_eval",
         "callable": "inlier_ratio"
@@ -27238,6 +27491,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "source",
+        "target"
+      ],
       "runtime_target": {
         "module": "registration_eval",
         "callable": "rmse_inliers"
@@ -27309,6 +27566,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "source",
+        "target"
+      ],
       "runtime_target": {
         "module": "registration_eval",
         "callable": "registration_recall"
@@ -27395,6 +27656,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "gt",
+        "est"
+      ],
       "runtime_target": {
         "module": "registration_eval",
         "callable": "rotation_translation_error"
@@ -29916,6 +30181,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "V",
+        "F"
+      ],
       "runtime_target": {
         "module": "meshres",
         "callable": "mesh_reduction_report"
@@ -30471,6 +30740,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "points",
+        "thinned"
+      ],
       "runtime_target": {
         "module": "meshres",
         "callable": "pc_thinning_report"
@@ -30597,6 +30870,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "x",
+        "y"
+      ],
       "runtime_target": {
         "module": "funct1d",
         "callable": "create_funct_1d_pairs"
@@ -31322,6 +31599,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "y1",
+        "y2"
+      ],
       "runtime_target": {
         "module": "funct1d",
         "callable": "compose_funct_1d"
@@ -31440,6 +31721,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "y1",
+        "y2"
+      ],
       "runtime_target": {
         "module": "funct1d",
         "callable": "match_funct_1d_trans"
@@ -31495,6 +31780,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "y1",
+        "y2"
+      ],
       "runtime_target": {
         "module": "funct1d",
         "callable": "distance_funct_1d"
@@ -33403,6 +33692,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "data",
+        "template",
+        "psd"
+      ],
       "runtime_target": {
         "module": "gwsearch",
         "callable": "matched_filter_snr"
@@ -33579,6 +33873,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "snr_a",
+        "snr_b"
+      ],
       "runtime_target": {
         "module": "gwsearch",
         "callable": "coincidence_delay"
@@ -34534,6 +34832,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "x",
+        "y",
+        "xq"
+      ],
       "runtime_target": {
         "module": "mathops",
         "callable": "interp_linear"
@@ -34599,6 +34902,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "x",
+        "y",
+        "xq"
+      ],
       "runtime_target": {
         "module": "mathops",
         "callable": "interp_cubic"
@@ -34672,6 +34980,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "points",
+        "values",
+        "query"
+      ],
       "runtime_target": {
         "module": "mathops",
         "callable": "interp_scattered"
@@ -34760,6 +35073,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "x",
+        "y"
+      ],
       "runtime_target": {
         "module": "mathops",
         "callable": "poly_fit"
@@ -34823,6 +35140,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "coeffs",
+        "x"
+      ],
       "runtime_target": {
         "module": "mathops",
         "callable": "poly_eval"
@@ -35089,6 +35410,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "z",
+        "fz"
+      ],
       "runtime_target": {
         "module": "mathops",
         "callable": "cplx_contour_integral"
@@ -35207,6 +35532,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "z",
+        "fz"
+      ],
       "runtime_target": {
         "module": "mathops",
         "callable": "cplx_cauchy_value"
@@ -35270,6 +35599,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "z",
+        "fz"
+      ],
       "runtime_target": {
         "module": "mathops",
         "callable": "cplx_argument_principle"
@@ -35325,6 +35658,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "z",
+        "fz"
+      ],
       "runtime_target": {
         "module": "mathops",
         "callable": "cplx_laurent_coeffs"
@@ -35694,6 +36031,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "zeros",
+        "poles"
+      ],
       "runtime_target": {
         "module": "mathops",
         "callable": "cplx_rational_field"
@@ -38336,6 +38677,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "r",
+        "f"
+      ],
       "runtime_target": {
         "module": "mathtransforms",
         "callable": "hankel_transform"
@@ -38424,6 +38769,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "num",
+        "den"
+      ],
       "runtime_target": {
         "module": "mathtransforms",
         "callable": "tf_poles_zeros"
@@ -38480,6 +38829,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "num",
+        "den",
+        "w"
+      ],
       "runtime_target": {
         "module": "mathtransforms",
         "callable": "tf_freq_response"
@@ -38536,6 +38890,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "num",
+        "den",
+        "t"
+      ],
       "runtime_target": {
         "module": "mathtransforms",
         "callable": "tf_impulse_response"
@@ -38592,6 +38951,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "num",
+        "den",
+        "t"
+      ],
       "runtime_target": {
         "module": "mathtransforms",
         "callable": "tf_step_response"
@@ -38647,6 +39011,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "num",
+        "den"
+      ],
       "runtime_target": {
         "module": "mathtransforms",
         "callable": "tf_bilinear"
@@ -38720,6 +39088,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "num",
+        "den",
+        "t"
+      ],
       "runtime_target": {
         "module": "mathtransforms",
         "callable": "laplace_inverse_talbot"
@@ -39811,6 +40184,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "xk",
+        "yk",
+        "x"
+      ],
       "runtime_target": {
         "module": "mathnumerics",
         "callable": "interp_barycentric"
@@ -39875,6 +40253,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "q0",
+        "p0"
+      ],
       "runtime_target": {
         "module": "mathnumerics",
         "callable": "integrate_hamiltonian"
@@ -39964,6 +40346,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "t",
+        "y",
+        "freqs"
+      ],
       "runtime_target": {
         "module": "mathspectral",
         "callable": "lomb_scargle"
@@ -40453,6 +40840,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "p",
+        "q"
+      ],
       "runtime_target": {
         "module": "mathestimation",
         "callable": "hist_distance"
@@ -40525,6 +40916,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "x",
+        "y"
+      ],
       "runtime_target": {
         "module": "mathestimation",
         "callable": "stat_ttest_paired"
@@ -40580,6 +40975,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "x",
+        "y"
+      ],
       "runtime_target": {
         "module": "mathestimation",
         "callable": "stat_ttest_welch"
@@ -40769,6 +41168,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "x",
+        "theta"
+      ],
       "runtime_target": {
         "module": "mathestimation",
         "callable": "crlb_gaussian"
@@ -40846,6 +41249,15 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "z",
+        "F",
+        "H",
+        "Q",
+        "R",
+        "x0",
+        "P0"
+      ],
       "runtime_target": {
         "module": "mathestimation",
         "callable": "kalman_smooth"
@@ -42614,6 +43026,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "field",
+        "transfer"
+      ],
       "runtime_target": {
         "module": "optics",
         "callable": "four_f_filter"
@@ -42943,6 +43359,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "image",
+        "pupil"
+      ],
       "runtime_target": {
         "module": "optics",
         "callable": "pupil_blur"
@@ -43812,6 +44232,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "img",
+        "dark_mask",
+        "bright_mask"
+      ],
       "runtime_target": {
         "module": "edgesfr",
         "callable": "veiling_glare_index"
@@ -43867,6 +44292,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "y0",
+        "y1"
+      ],
       "runtime_target": {
         "module": "sensorchar",
         "callable": "emva_pair_statistics"
@@ -43922,6 +44351,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "mu_y",
+        "var_y"
+      ],
       "runtime_target": {
         "module": "sensorchar",
         "callable": "emva_photon_transfer"
@@ -43999,6 +44432,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "mu_p",
+        "mu_y"
+      ],
       "runtime_target": {
         "module": "sensorchar",
         "callable": "emva_quantum_efficiency"
@@ -44076,6 +44513,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "H",
+        "mu_y"
+      ],
       "runtime_target": {
         "module": "sensorchar",
         "callable": "emva_linearity_error"
@@ -44379,6 +44820,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "t_exp",
+        "mu_y_dark"
+      ],
       "runtime_target": {
         "module": "sensorchar",
         "callable": "emva_dark_current"
@@ -44450,6 +44895,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "dark_stack",
+        "bright_stack"
+      ],
       "runtime_target": {
         "module": "sensorchar",
         "callable": "emva_spatial_nonuniformity"
@@ -44990,6 +45439,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "x",
+        "y"
+      ],
       "runtime_target": {
         "module": "sensorchar",
         "callable": "emva_bspline_regression"
@@ -45070,6 +45523,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "mu_y",
+        "var_y"
+      ],
       "runtime_target": {
         "module": "sensorchar",
         "callable": "emva_ptc_linearity_check"
@@ -45163,6 +45620,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "y0",
+        "y1"
+      ],
       "runtime_target": {
         "module": "sensorchar",
         "callable": "emva_noise_whiteness"
@@ -45299,6 +45760,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "mu_p",
+        "mu_y",
+        "var_y"
+      ],
       "runtime_target": {
         "module": "sensorgeneral",
         "callable": "emva_general_sensitivity"
@@ -45384,6 +45850,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "dark_stack",
+        "bright_stack"
+      ],
       "runtime_target": {
         "module": "sensorgeneral",
         "callable": "emva_general_nonuniformity"
@@ -45469,6 +45939,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "mu_p_ref",
+        "mu_y_ref"
+      ],
       "runtime_target": {
         "module": "sensorgeneral",
         "callable": "emva_general_relative_qe"
@@ -46865,6 +47339,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "directions",
+        "normals"
+      ],
       "runtime_target": {
         "module": "glassmirror",
         "callable": "refract_rays"
@@ -54454,6 +54932,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "solid",
+        "cavity"
+      ],
       "runtime_target": {
         "module": "optscene",
         "callable": "scene_difference"
@@ -54695,6 +55177,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "directions",
+        "normals"
+      ],
       "runtime_target": {
         "module": "optscene",
         "callable": "reflect_rays"
@@ -54751,6 +55237,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "scene",
+        "origins",
+        "directions"
+      ],
       "runtime_target": {
         "module": "optscene",
         "callable": "trace_rays"
@@ -54807,6 +55298,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "scene",
+        "points",
+        "light"
+      ],
       "runtime_target": {
         "module": "optscene",
         "callable": "illumination_visibility"
@@ -54863,6 +55359,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "scene",
+        "camera",
+        "lights"
+      ],
       "runtime_target": {
         "module": "optscene",
         "callable": "render_optscene"
@@ -55023,6 +55524,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "scene",
+        "camera"
+      ],
       "runtime_target": {
         "module": "optscene",
         "callable": "optscene_depth"
@@ -55087,6 +55592,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "scene",
+        "camera"
+      ],
       "runtime_target": {
         "module": "optscene",
         "callable": "optscene_mask"
@@ -55150,6 +55659,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "scene",
+        "camera"
+      ],
       "runtime_target": {
         "module": "optscene",
         "callable": "optscene_defect_mask"
@@ -55214,6 +55727,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "scene",
+        "camera"
+      ],
       "runtime_target": {
         "module": "optscene",
         "callable": "optscene_instances"
@@ -55849,6 +56366,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "lens",
+        "sensor"
+      ],
       "runtime_target": {
         "module": "optscene",
         "callable": "covers_sensor"
@@ -56500,6 +57021,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "sensor",
+        "lens",
+        "lights"
+      ],
       "runtime_target": {
         "module": "optscene",
         "callable": "vision_layout"
@@ -56704,6 +57230,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "scene",
+        "camera",
+        "lights"
+      ],
       "runtime_target": {
         "module": "optscene",
         "callable": "linescan_capture"
@@ -57242,6 +57773,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "scene",
+        "camera",
+        "lights"
+      ],
       "runtime_target": {
         "module": "optscene",
         "callable": "inspection_dataset"
@@ -57662,6 +58198,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "scene",
+        "camera"
+      ],
       "runtime_target": {
         "module": "optscene",
         "callable": "render_studio"
@@ -60175,6 +60715,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a",
+        "b"
+      ],
       "runtime_target": {
         "module": "spectralrad",
         "callable": "spectral_product"
@@ -62325,6 +62869,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "peaks",
+        "probe"
+      ],
       "runtime_target": {
         "module": "chromconf",
         "callable": "chromatic_confocal_readout"
@@ -67258,6 +67806,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "image",
+        "depth_map_m",
+        "distance_map_m"
+      ],
       "runtime_target": {
         "module": "watermedia",
         "callable": "underwater_image"
@@ -68853,6 +69406,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "system",
+        "table",
+        "criteria"
+      ],
       "runtime_target": {
         "module": "lenstol",
         "callable": "tolerance_monte_carlo"
@@ -68950,6 +69508,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "system",
+        "table",
+        "criteria"
+      ],
       "runtime_target": {
         "module": "lenstol",
         "callable": "tolerance_sensitivity"
@@ -69308,6 +69871,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "main_lens",
+        "mla",
+        "sensor"
+      ],
       "runtime_target": {
         "module": "plenoptic",
         "callable": "plenoptic_system"
@@ -69388,6 +69956,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "system",
+        "scene"
+      ],
       "runtime_target": {
         "module": "plenoptic",
         "callable": "plenoptic_capture"
@@ -70028,6 +70600,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a",
+        "b"
+      ],
       "runtime_target": {
         "module": "omni360",
         "callable": "ws_psnr"
@@ -70092,6 +70668,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a",
+        "b"
+      ],
       "runtime_target": {
         "module": "omni360",
         "callable": "s_psnr"
@@ -70791,6 +71371,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "left",
+        "right"
+      ],
       "runtime_target": {
         "module": "omni360",
         "callable": "stereo360_sbs"
@@ -70846,6 +71430,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "left",
+        "right"
+      ],
       "runtime_target": {
         "module": "omni360",
         "callable": "stereo360_top_bottom"
@@ -70901,6 +71489,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "left",
+        "right"
+      ],
       "runtime_target": {
         "module": "omni360",
         "callable": "omni_anaglyph_compose"
@@ -70965,6 +71557,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "left",
+        "right"
+      ],
       "runtime_target": {
         "module": "omni360",
         "callable": "anaglyph_crosstalk"
@@ -71125,6 +71721,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "left",
+        "right"
+      ],
       "runtime_target": {
         "module": "omni360",
         "callable": "stereo_pack"
@@ -71189,6 +71789,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "left",
+        "right"
+      ],
       "runtime_target": {
         "module": "omni360",
         "callable": "anaglyph_from_ods"
@@ -71893,6 +72497,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "texture",
+        "defect_mask"
+      ],
       "runtime_target": {
         "module": "watervision",
         "callable": "wet_dry_inspection_pair"
@@ -73990,6 +74598,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "image",
+        "ref_image"
+      ],
       "runtime_target": {
         "module": "moirealign",
         "callable": "moire_mark_read"
@@ -74467,6 +75079,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "sample_stack",
+        "reference_stack"
+      ],
       "runtime_target": {
         "module": "gratinginterf",
         "callable": "grating_three_image_retrieve"
@@ -81744,6 +82360,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "amplitude",
+        "phase"
+      ],
       "runtime_target": {
         "module": "fourierptycho",
         "callable": "fp_capture"
@@ -81948,6 +82568,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "images",
+        "na_x",
+        "na_y"
+      ],
       "runtime_target": {
         "module": "fourierptycho",
         "callable": "fp_stack_from_images"
@@ -82825,6 +83450,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "amplitude",
+        "phase"
+      ],
       "runtime_target": {
         "module": "coherent",
         "callable": "coherent_image"
@@ -83645,6 +84274,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "sxx",
+        "syy",
+        "txy"
+      ],
       "runtime_target": {
         "module": "photoelastic",
         "callable": "principal_stress"
@@ -83925,6 +84559,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "sxx",
+        "syy",
+        "txy"
+      ],
       "runtime_target": {
         "module": "photoelastic",
         "callable": "cubic_photoelastic_birefringence"
@@ -84918,6 +85557,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "dolp",
+        "zenith_deg"
+      ],
       "runtime_target": {
         "module": "sfpolar",
         "callable": "sfp_estimate_index"
@@ -86132,6 +86775,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "poly_i",
+        "poly_j"
+      ],
       "runtime_target": {
         "module": "radiosity3d",
         "callable": "form_factor_polygons"
@@ -86481,6 +87128,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "scene",
+        "camera",
+        "lights"
+      ],
       "runtime_target": {
         "module": "radiosity3d",
         "callable": "render_optscene_gi"
@@ -90285,6 +90937,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "diffuse",
+        "specular"
+      ],
       "runtime_target": {
         "module": "specularity",
         "callable": "polarization_render"
@@ -91081,6 +91737,13 @@
           "effect": 0.0,
           "kind": "unused"
         }
+      },
+      "input_roles": [
+        "phase_x",
+        "phase_y"
+      ],
+      "ref_parameters": {
+        "rig": "table"
       },
       "runtime_target": {
         "module": "deflectometry",
@@ -92438,6 +93101,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "qimage",
+        "other"
+      ],
       "runtime_target": {
         "module": "quatimage",
         "callable": "quat_image_multiply"
@@ -93352,6 +94019,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "qimage",
+        "template"
+      ],
       "runtime_target": {
         "module": "quatimage",
         "callable": "quat_correlate"
@@ -95821,6 +96492,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "x",
+        "y"
+      ],
       "runtime_target": {
         "module": "acoustics",
         "callable": "coherence"
@@ -95908,6 +96583,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "x",
+        "y"
+      ],
       "runtime_target": {
         "module": "acoustics",
         "callable": "transfer_function"
@@ -96019,6 +96698,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a",
+        "b"
+      ],
       "runtime_target": {
         "module": "acoustics",
         "callable": "gcc_delay"
@@ -98352,6 +99035,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "lattice_a",
+        "lattice_b"
+      ],
       "runtime_target": {
         "module": "flyvision",
         "callable": "fly_eye_merge"
@@ -98989,6 +99676,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "signal_a",
+        "signal_b"
+      ],
       "runtime_target": {
         "module": "flyvision",
         "callable": "fly_emd_response"
@@ -100986,6 +101677,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "guf",
+        "mcm"
+      ],
       "runtime_target": {
         "module": "spc",
         "callable": "gum_validate"
@@ -101492,6 +102187,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "scores",
+        "labels"
+      ],
       "runtime_target": {
         "module": "anomeval",
         "callable": "anomaly_image_auroc"
@@ -101547,6 +102246,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "scores",
+        "masks"
+      ],
       "runtime_target": {
         "module": "anomeval",
         "callable": "anomaly_pixel_auroc"
@@ -101602,6 +102305,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "scores",
+        "masks"
+      ],
       "runtime_target": {
         "module": "anomeval",
         "callable": "anomaly_pro"
@@ -101666,6 +102373,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "predicted",
+        "masks"
+      ],
       "runtime_target": {
         "module": "anomeval",
         "callable": "anomaly_region_overlap"
@@ -101730,6 +102441,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "scores",
+        "masks"
+      ],
       "runtime_target": {
         "module": "anomeval",
         "callable": "anomaly_pixel_f1_max"
@@ -101785,6 +102500,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "scores",
+        "labels"
+      ],
       "runtime_target": {
         "module": "anomeval",
         "callable": "anomaly_image_f1_max"
@@ -101840,6 +102559,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "scores",
+        "labels"
+      ],
       "runtime_target": {
         "module": "anomeval",
         "callable": "anomaly_operating_point"
@@ -103160,6 +103883,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a",
+        "b"
+      ],
       "runtime_target": {
         "module": "graphinv",
         "callable": "graph_strength_growth"
@@ -104031,6 +104758,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a",
+        "b"
+      ],
       "runtime_target": {
         "module": "physarum_search",
         "callable": "physarum_transport_image"
@@ -104717,6 +105448,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "residues",
+        "moduli"
+      ],
       "runtime_target": {
         "module": "residue",
         "callable": "residue_integer_crt"
@@ -104948,6 +105683,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "image0",
+        "image1"
+      ],
       "runtime_target": {
         "module": "residue",
         "callable": "crt_displacement"
@@ -105051,6 +105790,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "image",
+        "reference"
+      ],
       "runtime_target": {
         "module": "residue",
         "callable": "harmonic_rotation"
@@ -105226,6 +105969,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "gx",
+        "gy"
+      ],
       "runtime_target": {
         "module": "vxcore",
         "callable": "vx_magnitude"
@@ -105281,6 +106028,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "gx",
+        "gy"
+      ],
       "runtime_target": {
         "module": "vxcore",
         "callable": "vx_phase"
@@ -105711,6 +106462,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "image",
+        "map_x",
+        "map_y"
+      ],
       "runtime_target": {
         "module": "vxcore",
         "callable": "vx_remap"
@@ -106798,6 +107554,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "elements",
+        "placements"
+      ],
       "runtime_target": {
         "module": "drivecourse",
         "callable": "course_layout"
@@ -107099,6 +107859,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "world",
+        "pose",
+        "K"
+      ],
       "runtime_target": {
         "module": "driveworld",
         "callable": "world_camera"
@@ -107570,6 +108335,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "origin",
+        "dirs"
+      ],
       "runtime_target": {
         "module": "lidarsim",
         "callable": "ray_plane_range"
@@ -107633,6 +108402,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "origin",
+        "dirs"
+      ],
       "runtime_target": {
         "module": "lidarsim",
         "callable": "ray_box_ranges"
@@ -107696,6 +108469,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "pose0",
+        "pose1"
+      ],
       "runtime_target": {
         "module": "drivettc",
         "callable": "relative_motion"
@@ -107760,6 +108537,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "K",
+        "T_rel"
+      ],
       "runtime_target": {
         "module": "drivettc",
         "callable": "foe_from_motion"
@@ -107816,6 +108597,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "depth",
+        "K",
+        "T_rel"
+      ],
       "runtime_target": {
         "module": "drivettc",
         "callable": "flow_from_depth_motion"
@@ -107872,6 +108658,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "depth",
+        "K",
+        "T_rel"
+      ],
       "runtime_target": {
         "module": "drivettc",
         "callable": "ttc_truth"
@@ -107935,6 +108726,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "u",
+        "v"
+      ],
       "runtime_target": {
         "module": "drivettc",
         "callable": "ttc_from_flow"
@@ -108233,6 +109028,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "u",
+        "v"
+      ],
       "runtime_target": {
         "module": "drivettc",
         "callable": "foe_from_flow"
@@ -109258,6 +110057,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "x",
+        "y"
+      ],
       "runtime_target": {
         "module": "driveterrain",
         "callable": "perlin2"
@@ -109432,6 +110235,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "x",
+        "y",
+        "p"
+      ],
       "runtime_target": {
         "module": "driveterrain",
         "callable": "fbm_height"
@@ -109488,6 +110296,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "x",
+        "y",
+        "p"
+      ],
       "runtime_target": {
         "module": "driveterrain",
         "callable": "fbm_gradient"
@@ -109900,6 +110713,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "x",
+        "y",
+        "p"
+      ],
       "runtime_target": {
         "module": "driveterrain",
         "callable": "terrain_height"
@@ -109965,6 +110783,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "x",
+        "y",
+        "p"
+      ],
       "runtime_target": {
         "module": "driveterrain",
         "callable": "terrain_gradient"
@@ -110029,6 +110852,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "p",
+        "course"
+      ],
       "runtime_target": {
         "module": "driveterrain",
         "callable": "terrain_mesh"
@@ -110100,6 +110927,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "world",
+        "p"
+      ],
       "runtime_target": {
         "module": "driveterrain",
         "callable": "world_apply_terrain"
@@ -110304,6 +111135,13 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "world",
+        "view",
+        "pose",
+        "K",
+        "m"
+      ],
       "runtime_target": {
         "module": "driveterrain",
         "callable": "world_materials"
@@ -110636,6 +111474,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "world",
+        "mesh"
+      ],
       "runtime_target": {
         "module": "driveterrain",
         "callable": "add_mesh_object"
@@ -111240,6 +112082,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "p0",
+        "v0"
+      ],
       "runtime_target": {
         "module": "ballistics",
         "callable": "flight_simulate"
@@ -111563,6 +112409,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "v",
+        "omega"
+      ],
       "runtime_target": {
         "module": "ballistics",
         "callable": "bounce"
@@ -113660,6 +114510,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "uvs",
+        "poses",
+        "Ks"
+      ],
       "runtime_target": {
         "module": "balltrack",
         "callable": "triangulate_dlt"
@@ -113711,6 +114566,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "tracks",
+        "poses",
+        "Ks"
+      ],
       "runtime_target": {
         "module": "balltrack",
         "callable": "track_triangulate"
@@ -113761,6 +114621,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "t",
+        "z"
+      ],
       "runtime_target": {
         "module": "balltrack",
         "callable": "bounce_detect"
@@ -113907,6 +114771,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "dirs0",
+        "dirs1"
+      ],
       "runtime_target": {
         "module": "balltrack",
         "callable": "spin_from_markers"
@@ -114020,6 +114888,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "points",
+        "pose",
+        "K"
+      ],
       "runtime_target": {
         "module": "balltrack",
         "callable": "reproject"
@@ -114377,6 +115250,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "world",
+        "mesh"
+      ],
       "runtime_target": {
         "module": "ballworld",
         "callable": "add_ball"
@@ -114696,6 +115573,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "world",
+        "i"
+      ],
       "runtime_target": {
         "module": "ballworld",
         "callable": "ball_truth"
@@ -114907,6 +115788,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "v",
+        "omega"
+      ],
       "runtime_target": {
         "module": "racket",
         "callable": "racket_impact"
@@ -115191,6 +116076,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "v_in",
+        "omega_in"
+      ],
       "runtime_target": {
         "module": "racket",
         "callable": "racket_plan"
@@ -115507,6 +116396,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "p",
+        "v",
+        "w"
+      ],
       "runtime_target": {
         "module": "racket",
         "callable": "shot_is_legal"
@@ -115610,6 +116504,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "bp",
+        "rp",
+        "tp"
+      ],
       "runtime_target": {
         "module": "racket",
         "callable": "rally_simulate"
@@ -118686,6 +119585,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "world",
+        "mesh"
+      ],
       "runtime_target": {
         "module": "kendamaworld",
         "callable": "add_ken"
@@ -119299,6 +120202,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "world",
+        "i_ken"
+      ],
       "runtime_target": {
         "module": "kendamaworld",
         "callable": "ken_truth"
@@ -119857,6 +120764,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "gs",
+        "world"
+      ],
       "runtime_target": {
         "module": "gsplatnp",
         "callable": "gs_update"
@@ -121062,6 +121973,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "world",
+        "pose",
+        "K"
+      ],
       "runtime_target": {
         "module": "drivehumanoid",
         "callable": "world_camera_impostors"
@@ -123452,6 +124368,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "depth",
+        "label",
+        "K"
+      ],
       "runtime_target": {
         "module": "carlabridge",
         "callable": "lead_from_depth"
@@ -124214,6 +125135,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "run",
+        "layout"
+      ],
       "runtime_target": {
         "module": "drivetown",
         "callable": "town_checks"
@@ -124987,6 +125912,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "lat",
+        "lon"
+      ],
       "runtime_target": {
         "module": "drivejapan",
         "callable": "latlon_to_local"
@@ -125934,6 +126863,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "state",
+        "u"
+      ],
       "runtime_target": {
         "module": "drivecommonroad",
         "callable": "ks_step"
@@ -126345,6 +127278,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "scene",
+        "run"
+      ],
       "runtime_target": {
         "module": "drivecommonroad",
         "callable": "cr_collision"
@@ -126417,6 +127354,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "scene",
+        "run"
+      ],
       "runtime_target": {
         "module": "drivecommonroad",
         "callable": "cr_solution_xml"
@@ -126815,6 +127756,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "s0",
+        "v0",
+        "command"
+      ],
       "runtime_target": {
         "module": "drivelong",
         "callable": "long_simulate"
@@ -126930,6 +127876,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "v",
+        "reaction",
+        "brake"
+      ],
       "runtime_target": {
         "module": "drivelong",
         "callable": "stopping_distance_grade"
@@ -127018,6 +127969,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "v",
+        "dist_to_line"
+      ],
       "runtime_target": {
         "module": "drivelong",
         "callable": "stop_line_plan"
@@ -127298,6 +128253,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "theta",
+        "tau",
+        "a_drive"
+      ],
       "runtime_target": {
         "module": "drivelong",
         "callable": "hill_start_rollback"
@@ -127380,6 +128340,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "t_release",
+        "tau",
+        "a_drive",
+        "b_hold"
+      ],
       "runtime_target": {
         "module": "drivelong",
         "callable": "hill_start_command"
@@ -127633,6 +128599,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "when",
+        "lat",
+        "lon"
+      ],
       "runtime_target": {
         "module": "driveenv",
         "callable": "sun_at"
@@ -127686,6 +128657,13 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "year",
+        "month",
+        "day",
+        "lat",
+        "lon"
+      ],
       "runtime_target": {
         "module": "driveenv",
         "callable": "sun_events"
@@ -127758,6 +128736,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "elevation",
+        "azimuth"
+      ],
       "runtime_target": {
         "module": "driveenv",
         "callable": "sun_vector"
@@ -127887,6 +128869,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "L0",
+        "L_h",
+        "beta",
+        "d"
+      ],
       "runtime_target": {
         "module": "driveenv",
         "callable": "koschmieder"
@@ -128065,6 +129053,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "rows",
+        "horizon_row",
+        "focal",
+        "cam_height"
+      ],
       "runtime_target": {
         "module": "driveenv",
         "callable": "road_row_distance"
@@ -128118,6 +129112,13 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "rows",
+        "luminance",
+        "horizon_row",
+        "focal",
+        "cam_height"
+      ],
       "runtime_target": {
         "module": "driveenv",
         "callable": "fog_beta_from_profile"
@@ -128168,6 +129169,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "E_glare",
+        "theta_deg"
+      ],
       "runtime_target": {
         "module": "driveenv",
         "callable": "veiling_luminance"
@@ -128269,6 +129274,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "sight",
+        "reaction",
+        "brake"
+      ],
       "runtime_target": {
         "module": "driveenv",
         "callable": "sight_stop_speed"
@@ -128581,6 +129591,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "world",
+        "pose",
+        "K"
+      ],
       "runtime_target": {
         "module": "driveenv",
         "callable": "env_render"
@@ -129183,6 +130198,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "i",
+        "j",
+        "x"
+      ],
       "runtime_target": {
         "module": "driveinf",
         "callable": "tile_road_distance"
@@ -129234,6 +130254,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "i",
+        "j",
+        "x"
+      ],
       "runtime_target": {
         "module": "driveinf",
         "callable": "tile_height"
@@ -129415,6 +130440,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "cache",
+        "i"
+      ],
       "runtime_target": {
         "module": "driveinf",
         "callable": "tile_stream"
@@ -129922,6 +130951,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "pos",
+        "vel",
+        "goals"
+      ],
       "runtime_target": {
         "module": "drivetraffic",
         "callable": "social_force_step"
@@ -132041,6 +133075,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "sig_left",
+        "sig_right"
+      ],
       "runtime_target": {
         "module": "drivedecide",
         "callable": "tdoa_bearing"
@@ -133939,6 +134977,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a",
+        "b"
+      ],
       "runtime_target": {
         "module": "drivecrossing",
         "callable": "lamp_pair_phase"
@@ -135897,6 +136939,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "progress",
+        "left_on"
+      ],
       "runtime_target": {
         "module": "drivepass",
         "callable": "roundabout_signal_check"
@@ -136273,6 +137319,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "object_distance",
+        "speed"
+      ],
       "runtime_target": {
         "module": "drivepass",
         "callable": "convex_mirror_misjudge"
@@ -137227,6 +138277,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "gray",
+        "inside",
+        "outside"
+      ],
       "runtime_target": {
         "module": "pegsim",
         "callable": "coverage_edge_points"
@@ -137447,6 +138502,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "rgb",
+        "depth",
+        "K",
+        "R_cam_to_world"
+      ],
       "runtime_target": {
         "module": "pegsim",
         "callable": "peg_offset_from_rgbd"
@@ -137520,6 +138581,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "rgb",
+        "truth_uv",
+        "est_uv"
+      ],
       "runtime_target": {
         "module": "pegsim",
         "callable": "peg_measure_overlay"
@@ -137926,6 +138992,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "E1",
+        "nu1"
+      ],
       "runtime_target": {
         "module": "tacsim",
         "callable": "combined_modulus"
@@ -137999,6 +139069,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "F",
+        "R",
+        "Estar"
+      ],
       "runtime_target": {
         "module": "tacsim",
         "callable": "hertz_sphere"
@@ -138054,6 +139129,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "R",
+        "Estar"
+      ],
       "runtime_target": {
         "module": "tacsim",
         "callable": "hertz_force"
@@ -138127,6 +139206,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "F_per_L",
+        "R",
+        "Estar"
+      ],
       "runtime_target": {
         "module": "tacsim",
         "callable": "hertz_cylinder"
@@ -138184,6 +139268,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "r",
+        "a",
+        "delta",
+        "R"
+      ],
       "runtime_target": {
         "module": "tacsim",
         "callable": "hertz_surface_uz"
@@ -138240,6 +139330,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "r",
+        "a",
+        "p0"
+      ],
       "runtime_target": {
         "module": "tacsim",
         "callable": "hertz_pressure"
@@ -138781,6 +139876,13 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "normals",
+        "X",
+        "Y",
+        "R",
+        "pitch"
+      ],
       "runtime_target": {
         "module": "tacsim",
         "callable": "contact_radius_fit"
@@ -138848,6 +139950,13 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "normals",
+        "X",
+        "Y",
+        "R",
+        "a0"
+      ],
       "runtime_target": {
         "module": "tacsim",
         "callable": "contact_radius_fit_pixelwise"
@@ -138933,6 +140042,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "normals",
+        "X",
+        "Y",
+        "pitch"
+      ],
       "runtime_target": {
         "module": "tacsim",
         "callable": "membrane_delta_from_normals"
@@ -139008,6 +140123,13 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "Q",
+        "hz",
+        "mu",
+        "G",
+        "nu"
+      ],
       "runtime_target": {
         "module": "tacslip",
         "callable": "mindlin_partial_slip"
@@ -139121,6 +140243,13 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "r",
+        "a",
+        "p0",
+        "G",
+        "nu"
+      ],
       "runtime_target": {
         "module": "tacslip",
         "callable": "hertz_surface_ur"
@@ -139180,6 +140309,14 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "x",
+        "y",
+        "q0",
+        "a",
+        "G",
+        "nu"
+      ],
       "runtime_target": {
         "module": "tacslip",
         "callable": "hertzian_tangential_inner"
@@ -139237,6 +140374,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "n",
+        "pitch",
+        "G",
+        "nu"
+      ],
       "runtime_target": {
         "module": "tacslip",
         "callable": "cerruti_kernel"
@@ -139367,6 +140510,13 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "hz",
+        "mp",
+        "X",
+        "Y",
+        "kern"
+      ],
       "runtime_target": {
         "module": "tacslip",
         "callable": "membrane_shear_field"
@@ -139422,6 +140572,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "n",
+        "pitch_px"
+      ],
       "runtime_target": {
         "module": "tacslip",
         "callable": "membrane_markers"
@@ -139496,6 +140650,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "pts",
+        "fx",
+        "fy",
+        "pitch"
+      ],
       "runtime_target": {
         "module": "tacslip",
         "callable": "displace_markers"
@@ -139553,6 +140713,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "rgb",
+        "pts",
+        "r_px",
+        "dark"
+      ],
       "runtime_target": {
         "module": "tacslip",
         "callable": "membrane_render_markers"
@@ -139617,6 +140783,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "rgb",
+        "bg"
+      ],
       "runtime_target": {
         "module": "tacslip",
         "callable": "marker_image"
@@ -139673,6 +140843,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "m",
+        "dark",
+        "r_px"
+      ],
       "runtime_target": {
         "module": "tacslip",
         "callable": "marker_detect"
@@ -139738,6 +140913,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "p0",
+        "p1",
+        "pitch_px"
+      ],
       "runtime_target": {
         "module": "tacslip",
         "callable": "marker_match_grow"
@@ -139841,6 +141021,13 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "m_ref",
+        "m_cur",
+        "dark",
+        "pitch_px",
+        "r_px"
+      ],
       "runtime_target": {
         "module": "tacslip",
         "callable": "marker_track"
@@ -139909,6 +141096,14 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "hz",
+        "X",
+        "Y",
+        "kern",
+        "G",
+        "nu"
+      ],
       "runtime_target": {
         "module": "tacslip",
         "callable": "mindlin_model"
@@ -139965,6 +141160,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "model",
+        "pts_px",
+        "u_m"
+      ],
       "runtime_target": {
         "module": "tacslip",
         "callable": "mindlin_fit"
@@ -140046,6 +141246,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "model",
+        "pts_px",
+        "u_m"
+      ],
       "runtime_target": {
         "module": "tacslip",
         "callable": "mindlin_fit_vector"
@@ -140118,6 +141323,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "pts_c",
+        "u_px"
+      ],
       "runtime_target": {
         "module": "tacslip",
         "callable": "stick_radius_modelfree"
@@ -140261,6 +141470,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "dirpath",
+        "name"
+      ],
       "runtime_target": {
         "module": "tacslip",
         "callable": "fem_nodes_load"
@@ -140316,6 +141529,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "fz",
+        "fxz"
+      ],
       "runtime_target": {
         "module": "tacslip",
         "callable": "fem_vs_halfspace"
@@ -140373,6 +141590,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "X",
+        "Y",
+        "a",
+        "P"
+      ],
       "runtime_target": {
         "module": "tactorque",
         "callable": "punch_pressure"
@@ -140459,6 +141682,13 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "r",
+        "a",
+        "P",
+        "G",
+        "nu"
+      ],
       "runtime_target": {
         "module": "tactorque",
         "callable": "punch_surface_uz"
@@ -140515,6 +141745,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "X",
+        "Y",
+        "hz"
+      ],
       "runtime_target": {
         "module": "tactorque",
         "callable": "hertz_pressure_shifted"
@@ -140585,6 +141820,13 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "X",
+        "Y",
+        "a",
+        "b",
+        "P"
+      ],
       "runtime_target": {
         "module": "tactorque",
         "callable": "ellipse_pressure_shifted"
@@ -140654,6 +141896,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "p",
+        "X",
+        "Y",
+        "pitch"
+      ],
       "runtime_target": {
         "module": "tactorque",
         "callable": "pressure_first_moment"
@@ -140711,6 +141959,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "n",
+        "pitch",
+        "G",
+        "nu"
+      ],
       "runtime_target": {
         "module": "tactorque",
         "callable": "boussinesq_kernel"
@@ -140839,6 +142093,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "p",
+        "G",
+        "nu"
+      ],
       "runtime_target": {
         "module": "tactorque",
         "callable": "surface_divergence_closed_form"
@@ -140895,6 +142154,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "p_before",
+        "p_after",
+        "kern"
+      ],
       "runtime_target": {
         "module": "tactorque",
         "callable": "tilt_shear_field"
@@ -140954,6 +142218,14 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "X",
+        "Y",
+        "a",
+        "Mz",
+        "kern",
+        "G"
+      ],
       "runtime_target": {
         "module": "tactorque",
         "callable": "torsion_stick_field"
@@ -141010,6 +142282,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "pts",
+        "u",
+        "radius"
+      ],
       "runtime_target": {
         "module": "tactorque",
         "callable": "marker_divergence"
@@ -141082,6 +142359,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "pts",
+        "u"
+      ],
       "runtime_target": {
         "module": "tactorque",
         "callable": "rigid_rotation_fit"
@@ -141146,6 +142427,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "pts",
+        "u"
+      ],
       "runtime_target": {
         "module": "tactorque",
         "callable": "tactile_dipole_moment"
@@ -141258,6 +142543,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "D",
+        "M"
+      ],
       "runtime_target": {
         "module": "tactorque",
         "callable": "dipole_to_torque_fit"
@@ -141316,6 +142605,13 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "pts",
+        "u",
+        "area",
+        "G",
+        "nu"
+      ],
       "runtime_target": {
         "module": "tactorque",
         "callable": "torque_decompose"
@@ -141433,6 +142729,15 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "pts",
+        "u",
+        "sigma_px",
+        "pitch",
+        "coef",
+        "area",
+        "radius"
+      ],
       "runtime_target": {
         "module": "tactorque",
         "callable": "dipole_torque_resolution"
@@ -141535,6 +142840,16 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "m_ref",
+        "m_cur",
+        "dark",
+        "pitch_px",
+        "r_px",
+        "pitch",
+        "G",
+        "nu"
+      ],
       "runtime_target": {
         "module": "tactorque",
         "callable": "grasp_torque_frame"
@@ -141774,6 +143089,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "v",
+        "normal",
+        "e",
+        "kt"
+      ],
       "runtime_target": {
         "module": "puck",
         "callable": "puck_wall_bounce"
@@ -141831,6 +143152,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "p0",
+        "v0",
+        "table",
+        "t_end"
+      ],
       "runtime_target": {
         "module": "puck",
         "callable": "puck_slide_predict"
@@ -142031,6 +143358,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "p0",
+        "v0",
+        "table",
+        "t_end"
+      ],
       "runtime_target": {
         "module": "puck",
         "callable": "puck_mirror_path"
@@ -142214,6 +143547,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "table",
+        "height",
+        "fovy_deg",
+        "shape"
+      ],
       "runtime_target": {
         "module": "puck",
         "callable": "puck_pinhole_camera"
@@ -142501,6 +143840,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "table",
+        "cam",
+        "p0",
+        "v0"
+      ],
       "runtime_target": {
         "module": "puck",
         "callable": "puck_synth_frames"
@@ -143364,6 +144709,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "q_now",
+        "plan",
+        "t"
+      ],
       "runtime_target": {
         "module": "puck",
         "callable": "fivebar_trajectory"
@@ -143612,6 +144962,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "obs",
+        "kp"
+      ],
       "runtime_target": {
         "module": "pegfail",
         "callable": "insertion_signature"
@@ -143853,6 +145207,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "kp",
+        "depth",
+        "fx_over_fz",
+        "m_over_rfz"
+      ],
       "runtime_target": {
         "module": "pegfail",
         "callable": "jamming_force_check"
@@ -144072,6 +145432,14 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "kp",
+        "q_slide",
+        "q_hinge",
+        "q_hinge_rest",
+        "tip_xyz",
+        "axis"
+      ],
       "runtime_target": {
         "module": "pegfail",
         "callable": "wrist_load_from_deflection"
@@ -144162,6 +145530,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "kp",
+        "F",
+        "M_tip",
+        "e_x"
+      ],
       "runtime_target": {
         "module": "pegfail",
         "callable": "tip_force_ratios"
@@ -144271,6 +145645,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "true_cls",
+        "pred_cls"
+      ],
       "runtime_target": {
         "module": "pegfail",
         "callable": "failure_confusion"
@@ -144535,6 +145913,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "R",
+        "H"
+      ],
       "runtime_target": {
         "module": "granular",
         "callable": "heap_volume_cone"
@@ -144599,6 +145981,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "volume",
+        "bulk_density"
+      ],
       "runtime_target": {
         "module": "granular",
         "callable": "heap_mass"
@@ -144719,6 +146105,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "D0",
+        "d",
+        "bulk_density"
+      ],
       "runtime_target": {
         "module": "granular",
         "callable": "beverloo_rate"
@@ -144801,6 +146192,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "D0",
+        "W",
+        "d",
+        "bulk_density"
+      ],
       "runtime_target": {
         "module": "granular",
         "callable": "beverloo_fit"
@@ -144877,6 +146274,14 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "D0",
+        "d",
+        "bulk_density",
+        "phi_deg",
+        "pitch",
+        "duration"
+      ],
       "runtime_target": {
         "module": "granular",
         "callable": "discharge_synth"
@@ -144983,6 +146388,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "frames",
+        "pitch",
+        "bulk_density",
+        "times"
+      ],
       "runtime_target": {
         "module": "granular",
         "callable": "dispense_mass_from_video"
@@ -145034,6 +146445,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "mass_below",
+        "times",
+        "mass_total"
+      ],
       "runtime_target": {
         "module": "granular",
         "callable": "hopper_discharge_rate"
@@ -145107,6 +146523,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "phi_deg",
+        "L",
+        "h0"
+      ],
       "runtime_target": {
         "module": "granular",
         "callable": "spoon_tilt_critical"
@@ -145173,6 +146594,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "theta_deg",
+        "phi_deg",
+        "L",
+        "h0"
+      ],
       "runtime_target": {
         "module": "granular",
         "callable": "spoon_tilt_dispense"
@@ -145299,6 +146726,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "phi_deg",
+        "radius_px"
+      ],
       "runtime_target": {
         "module": "granular",
         "callable": "heap_synth_cone"
@@ -145420,6 +146851,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "u",
+        "H_px",
+        "phi_deg"
+      ],
       "runtime_target": {
         "module": "granular",
         "callable": "cone_profile_px"
@@ -145914,6 +147350,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "pos",
+        "radius",
+        "floor_height",
+        "bin_radius"
+      ],
       "runtime_target": {
         "module": "granular",
         "callable": "heap_spheres_select"
@@ -145980,6 +147422,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "pos",
+        "radius",
+        "pitch",
+        "extent"
+      ],
       "runtime_target": {
         "module": "granular",
         "callable": "spheres_to_heightmap"
@@ -146038,6 +147486,13 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "pos",
+        "radius",
+        "pitch",
+        "extent",
+        "height"
+      ],
       "runtime_target": {
         "module": "granular",
         "callable": "spheres_to_silhouette"
@@ -146105,6 +147560,13 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "pos",
+        "radius",
+        "pitch",
+        "extent",
+        "height"
+      ],
       "runtime_target": {
         "module": "granular",
         "callable": "spheres_render_shaded"
@@ -146173,6 +147635,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "n_spheres",
+        "radius"
+      ],
       "runtime_target": {
         "module": "granular",
         "callable": "heap_scene_mjcf"
@@ -146350,6 +147816,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "path",
+        "pitch_mm",
+        "ball_radius_mm"
+      ],
       "runtime_target": {
         "module": "tacscalib",
         "callable": "calib_pack_load"
@@ -146408,6 +147879,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "shape",
+        "centre",
+        "a_px",
+        "R_px"
+      ],
       "runtime_target": {
         "module": "tacscalib",
         "callable": "sphere_normals_known"
@@ -146587,6 +148064,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "rgb_rows",
+        "normal_rows"
+      ],
       "runtime_target": {
         "module": "tacscalib",
         "callable": "gradient_lut_build"
@@ -146820,6 +148301,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "n_a",
+        "n_b"
+      ],
       "runtime_target": {
         "module": "tacscalib",
         "callable": "normal_error_map"
@@ -146878,6 +148363,13 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "shape",
+        "centre",
+        "a_px",
+        "R_px",
+        "pitch"
+      ],
       "runtime_target": {
         "module": "tacscalib",
         "callable": "sphere_cap_height"
@@ -147281,6 +148773,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "F_pad",
+        "M_pad",
+        "pad"
+      ],
       "runtime_target": {
         "module": "pegtactile",
         "callable": "peg_wrench_to_pad_loads"
@@ -147339,6 +148836,13 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "PR",
+        "qR",
+        "PL",
+        "qL",
+        "pad"
+      ],
       "runtime_target": {
         "module": "pegtactile",
         "callable": "pad_loads_to_peg_wrench"
@@ -147403,6 +148907,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "qR",
+        "qL"
+      ],
       "runtime_target": {
         "module": "pegtactile",
         "callable": "pad_shear_asymmetry"
@@ -147644,6 +149152,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "frame",
+        "pad"
+      ],
       "runtime_target": {
         "module": "pegtactile",
         "callable": "pad_tactile_read"
@@ -147733,6 +149245,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "kp",
+        "tip",
+        "axis"
+      ],
       "runtime_target": {
         "module": "pegtactile",
         "callable": "contact_candidates"
@@ -147809,6 +149326,14 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "kp",
+        "F",
+        "M_g",
+        "g",
+        "tip",
+        "axis"
+      ],
       "runtime_target": {
         "module": "pegtactile",
         "callable": "contact_state_from_wrench"
@@ -147909,6 +149434,14 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "kp",
+        "F",
+        "M_g",
+        "g",
+        "tip",
+        "axis"
+      ],
       "runtime_target": {
         "module": "pegtactile",
         "callable": "two_point_forces"
@@ -147977,6 +149510,14 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "kp",
+        "state",
+        "theta",
+        "depth",
+        "mu",
+        "fn_tip"
+      ],
       "runtime_target": {
         "module": "pegtactile",
         "callable": "whitney_wrench"
@@ -148051,6 +149592,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "F",
+        "where",
+        "c",
+        "axis"
+      ],
       "runtime_target": {
         "module": "pegtactile",
         "callable": "friction_from_single_contact"
@@ -148152,6 +149699,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "dx",
+        "F"
+      ],
       "runtime_target": {
         "module": "pegtactile",
         "callable": "wrist_stiffness_fit"
@@ -148221,6 +149772,15 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "rgb",
+        "depth",
+        "K",
+        "R_cam_to_world",
+        "cam_w",
+        "carriage_pos",
+        "r_peg"
+      ],
       "runtime_target": {
         "module": "pegtactile",
         "callable": "wrist_deflection_from_rgbd"
@@ -148454,6 +150014,13 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "render",
+        "op",
+        "angles",
+        "n",
+        "centre"
+      ],
       "runtime_target": {
         "module": "pegtactile",
         "callable": "equivariance_check"
@@ -148555,6 +150122,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "scene",
+        "heel_x",
+        "heel_z",
+        "theta_deg"
+      ],
       "runtime_target": {
         "module": "cutting",
         "callable": "cutting_face_render"
@@ -148662,6 +150235,13 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "scene",
+        "end_face",
+        "cut_y_top",
+        "lean_deg",
+        "edge_z"
+      ],
       "runtime_target": {
         "module": "cutting",
         "callable": "cutting_edge_render"
@@ -149014,6 +150594,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "image",
+        "track",
+        "px_per_mm",
+        "board_row"
+      ],
       "runtime_target": {
         "module": "cutting",
         "callable": "cut_depth_from_side"
@@ -149079,6 +150665,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "image",
+        "px_per_mm",
+        "board_row"
+      ],
       "runtime_target": {
         "module": "cutting",
         "callable": "slice_thickness_profile"
@@ -149153,6 +150744,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "image",
+        "px_per_mm",
+        "board_row",
+        "z_band"
+      ],
       "runtime_target": {
         "module": "cutting",
         "callable": "cut_surface_roughness"
@@ -149218,6 +150815,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "z_meas_mm",
+        "z_cmd_mm",
+        "k_n_per_mm"
+      ],
       "runtime_target": {
         "module": "cutting",
         "callable": "force_from_wrist_displacement"
@@ -149273,6 +150875,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "R_j_per_m2",
+        "width_mm"
+      ],
       "runtime_target": {
         "module": "cutting",
         "callable": "cut_force_atkins"
@@ -149362,6 +150968,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "theta_deg",
+        "vx",
+        "vz"
+      ],
       "runtime_target": {
         "module": "cutting",
         "callable": "slice_push_ratio"
@@ -149418,6 +151029,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "theta_deg",
+        "x_mm",
+        "z_mm"
+      ],
       "runtime_target": {
         "module": "cutting",
         "callable": "slice_push_from_track"
@@ -149475,6 +151091,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "theta_deg",
+        "edge_z_at_xc",
+        "food_w",
+        "food_top"
+      ],
       "runtime_target": {
         "module": "cutting",
         "callable": "food_cut_width"
@@ -149531,6 +151153,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "F_n",
+        "w_eff_mm",
+        "xi"
+      ],
       "runtime_target": {
         "module": "cutting",
         "callable": "cut_force_fit"
@@ -149595,6 +151222,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "path",
+        "license"
+      ],
       "runtime_target": {
         "module": "cutting",
         "callable": "cut_force_csv_load"
@@ -149708,6 +151339,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "p_left",
+        "p_right",
+        "string_length"
+      ],
       "runtime_target": {
         "module": "diabolo",
         "callable": "diabolo_spheroid"
@@ -149821,6 +151457,13 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "state",
+        "sticks_prev",
+        "sticks_now",
+        "dt",
+        "params"
+      ],
       "runtime_target": {
         "module": "diabolo",
         "callable": "diabolo_dynamics_step"
@@ -149905,6 +151548,14 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "x0",
+        "v0",
+        "sticks",
+        "t_end",
+        "dt",
+        "params"
+      ],
       "runtime_target": {
         "module": "diabolo",
         "callable": "diabolo_simulate"
@@ -150008,6 +151659,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "p0",
+        "v0",
+        "sticks",
+        "params"
+      ],
       "runtime_target": {
         "module": "diabolo",
         "callable": "diabolo_throw_catch_truth"
@@ -150145,6 +151802,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "p_left",
+        "p_right",
+        "p_diabolo",
+        "mass"
+      ],
       "runtime_target": {
         "module": "diabolo",
         "callable": "string_tension_from_sag"
@@ -150313,6 +151976,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "cam",
+        "params"
+      ],
       "runtime_target": {
         "module": "diabolo",
         "callable": "diabolo_render"
@@ -150466,6 +152133,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "img",
+        "cam",
+        "params"
+      ],
       "runtime_target": {
         "module": "diabolo",
         "callable": "diabolo_axis_from_image"
@@ -150540,6 +152212,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "img",
+        "cam",
+        "params",
+        "pose"
+      ],
       "runtime_target": {
         "module": "diabolo",
         "callable": "diabolo_marker_phase"
@@ -150614,6 +152292,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "phases",
+        "smears",
+        "dt",
+        "exposure"
+      ],
       "runtime_target": {
         "module": "diabolo",
         "callable": "diabolo_spin_from_markers"
@@ -150679,6 +152363,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "frames",
+        "cam",
+        "params"
+      ],
       "runtime_target": {
         "module": "diabolo",
         "callable": "diabolo_track"
@@ -150812,6 +152501,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "shape",
+        "size",
+        "Estar"
+      ],
       "runtime_target": {
         "module": "tacdome",
         "callable": "powerlaw_linear_contact"
@@ -151119,6 +152813,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a",
+        "L",
+        "lin"
+      ],
       "runtime_target": {
         "module": "tacdome",
         "callable": "large_deformation_inverse"
@@ -151192,6 +152891,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "delta",
+        "L",
+        "lin"
+      ],
       "runtime_target": {
         "module": "tacdome",
         "callable": "mdr_spring_bed"
@@ -151391,6 +153095,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a",
+        "pitch"
+      ],
       "runtime_target": {
         "module": "tacdome",
         "callable": "dome_contact_image"
@@ -151791,6 +153499,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "peg_points",
+        "hole_vertices"
+      ],
       "runtime_target": {
         "module": "pegsym",
         "callable": "polygon_fit_check"
@@ -151847,6 +153559,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "n",
+        "apothem",
+        "clearance"
+      ],
       "runtime_target": {
         "module": "pegsym",
         "callable": "rotation_window"
@@ -151944,6 +153661,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "peg_vertices",
+        "hole_vertices",
+        "theta"
+      ],
       "runtime_target": {
         "module": "pegsym",
         "callable": "polygon_two_point_depth"
@@ -152106,6 +153828,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "image",
+        "K",
+        "R",
+        "t"
+      ],
       "runtime_target": {
         "module": "pegsym",
         "callable": "plane_topview"
@@ -152293,6 +154021,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "peg_view",
+        "hole_view",
+        "n"
+      ],
       "runtime_target": {
         "module": "pegsym",
         "callable": "relative_yaw_from_images"
@@ -152373,6 +154106,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "angle",
+        "n"
+      ],
       "runtime_target": {
         "module": "pegsym",
         "callable": "symmetry_fold"
@@ -152428,6 +154165,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "n_sym",
+        "phi_cap"
+      ],
       "runtime_target": {
         "module": "pegsym",
         "callable": "rotation_search_plan"
@@ -152500,6 +154241,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "n_sym",
+        "phi_cap"
+      ],
       "runtime_target": {
         "module": "pegsym",
         "callable": "search_expected_tries"
@@ -152573,6 +154318,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "pitch",
+        "step",
+        "r_max"
+      ],
       "runtime_target": {
         "module": "pegsym",
         "callable": "spiral_search_points"
@@ -152641,6 +154391,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "points",
+        "capture",
+        "rho"
+      ],
       "runtime_target": {
         "module": "pegsym",
         "callable": "spiral_expected_tries"
@@ -152705,6 +154460,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "peg_vertices",
+        "hole_vertices"
+      ],
       "runtime_target": {
         "module": "pegsym",
         "callable": "pegsym_scene_mjcf"
@@ -152864,6 +154623,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "force",
+        "radius",
+        "res"
+      ],
       "runtime_target": {
         "module": "polish",
         "callable": "preston_pressure_kernel"
@@ -152946,6 +154710,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "path",
+        "force",
+        "radius",
+        "k_p"
+      ],
       "runtime_target": {
         "module": "polish",
         "callable": "preston_removal_map"
@@ -153080,6 +154850,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "y",
+        "force",
+        "radius",
+        "k_p"
+      ],
       "runtime_target": {
         "module": "polish",
         "callable": "preston_track_profile"
@@ -153170,6 +154946,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "force",
+        "radius",
+        "k_p",
+        "coat"
+      ],
       "runtime_target": {
         "module": "polish",
         "callable": "wipe_band_width"
@@ -153244,6 +155026,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "radius",
+        "length",
+        "pitch",
+        "n_strokes"
+      ],
       "runtime_target": {
         "module": "polish",
         "callable": "raster_wipe_area"
@@ -153576,6 +155364,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "image",
+        "threshold",
+        "res"
+      ],
       "runtime_target": {
         "module": "polish",
         "callable": "band_width_profile"
@@ -153640,6 +155433,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "z_before",
+        "z_after"
+      ],
       "runtime_target": {
         "module": "polish",
         "callable": "removal_depth_from_heights"
@@ -153712,6 +155509,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "depth_map",
+        "dwell_map"
+      ],
       "runtime_target": {
         "module": "polish",
         "callable": "preston_coefficient_fit"
@@ -153780,6 +155581,14 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "z",
+        "pressure",
+        "k_w",
+        "k_p",
+        "speed",
+        "duration"
+      ],
       "runtime_target": {
         "module": "polish",
         "callable": "winkler_polish_run"
@@ -153955,6 +155764,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a",
+        "h"
+      ],
       "runtime_target": {
         "module": "scoop",
         "callable": "spoon_bowl_volume"
@@ -154027,6 +155840,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a_px",
+        "h_px"
+      ],
       "runtime_target": {
         "module": "scoop",
         "callable": "scoop_synth_side"
@@ -154220,6 +156037,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "side_a",
+        "side_b",
+        "pitch"
+      ],
       "runtime_target": {
         "module": "scoop",
         "callable": "two_view_volume"
@@ -154287,6 +156109,13 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "side",
+        "rim_row",
+        "a_px",
+        "h_px",
+        "pitch"
+      ],
       "runtime_target": {
         "module": "scoop",
         "callable": "scoop_volume_read"
@@ -154392,6 +156221,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "volume",
+        "radius",
+        "packing"
+      ],
       "runtime_target": {
         "module": "scoop",
         "callable": "scoop_count"
@@ -154458,6 +156292,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a",
+        "pitch",
+        "radius",
+        "bulk_density"
+      ],
       "runtime_target": {
         "module": "scoop",
         "callable": "scoop_image_limit"
@@ -154573,6 +156413,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "theta_deg",
+        "phi_deg",
+        "L",
+        "h0"
+      ],
       "runtime_target": {
         "module": "scoop",
         "callable": "tilt_wedge_retained"
@@ -154633,6 +156479,15 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "theta_deg",
+        "omega_deg_s",
+        "phi_deg",
+        "L",
+        "h0",
+        "B",
+        "bulk_density"
+      ],
       "runtime_target": {
         "module": "scoop",
         "callable": "tilt_pour_rate"
@@ -154691,6 +156546,13 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "side",
+        "lip_row",
+        "lip_col",
+        "theta_deg",
+        "L_px"
+      ],
       "runtime_target": {
         "module": "scoop",
         "callable": "tilted_surface_read"
@@ -154780,6 +156642,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "flux",
+        "radius",
+        "width"
+      ],
       "runtime_target": {
         "module": "scoop",
         "callable": "stream_synth"
@@ -154981,6 +156848,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "frames",
+        "dt",
+        "radius_px"
+      ],
       "runtime_target": {
         "module": "scoop",
         "callable": "stream_flux_read"
@@ -155031,6 +156903,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "n_spheres",
+        "radius"
+      ],
       "runtime_target": {
         "module": "scoop",
         "callable": "scoop_scene_mjcf"
@@ -155217,6 +157093,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "L",
+        "B",
+        "h0",
+        "radius"
+      ],
       "runtime_target": {
         "module": "scoop",
         "callable": "pour_scene_mjcf"
@@ -155554,6 +157436,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "d50",
+        "sigma_ln"
+      ],
       "runtime_target": {
         "module": "grind",
         "callable": "particle_size_synth"
@@ -155618,6 +157504,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "x_feed",
+        "x_product"
+      ],
       "runtime_target": {
         "module": "grind",
         "callable": "comminution_energy"
@@ -155706,6 +157596,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "t",
+        "d"
+      ],
       "runtime_target": {
         "module": "grind",
         "callable": "comminution_law_fit"
@@ -155770,6 +157664,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "t",
+        "w"
+      ],
       "runtime_target": {
         "module": "grind",
         "callable": "breakage_first_order_fit"
@@ -156029,6 +157927,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "power",
+        "d50"
+      ],
       "runtime_target": {
         "module": "grind",
         "callable": "ae_size_correspondence"
@@ -156094,6 +157996,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "n",
+        "d_med",
+        "sigma_ln"
+      ],
       "runtime_target": {
         "module": "grind",
         "callable": "particle_image_synth"
@@ -156273,6 +158180,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "A",
+        "B"
+      ],
       "runtime_target": {
         "module": "ozakimm",
         "callable": "matmul_ozaki"
@@ -156369,6 +158280,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "A",
+        "B"
+      ],
       "runtime_target": {
         "module": "ozakimm",
         "callable": "matmul_reproducible"
@@ -156434,6 +158349,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "A",
+        "B",
+        "n_slices"
+      ],
       "runtime_target": {
         "module": "ozakimm",
         "callable": "ozaki_error_bound"
@@ -156489,6 +158409,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "P",
+        "Q"
+      ],
       "runtime_target": {
         "module": "ozakimm",
         "callable": "cross_covariance_reproducible"
@@ -156553,6 +158477,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "P",
+        "Q"
+      ],
       "runtime_target": {
         "module": "ozakimm",
         "callable": "kabsch_reproducible"
@@ -157032,6 +158960,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "frames",
+        "res",
+        "frame_dt"
+      ],
       "runtime_target": {
         "module": "swarmflow",
         "callable": "swarm_field_from_tracks"
@@ -157083,6 +159016,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "frames",
+        "res",
+        "frame_dt"
+      ],
       "runtime_target": {
         "module": "swarmflow",
         "callable": "swarm_field_from_piv"
@@ -157134,6 +159072,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "x",
+        "y",
+        "cylinder"
+      ],
       "runtime_target": {
         "module": "swarmflow",
         "callable": "potential_flow_cylinder"
@@ -157433,6 +159376,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "x",
+        "t",
+        "h0"
+      ],
       "runtime_target": {
         "module": "swarmflow",
         "callable": "ritter_dam_break"
@@ -157672,6 +159620,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "kind",
+        "a",
+        "species"
+      ],
       "runtime_target": {
         "module": "pxrd",
         "callable": "cubic_prototype"
@@ -157819,6 +159772,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "fwhm",
+        "two_theta",
+        "wavelength"
+      ],
       "runtime_target": {
         "module": "pxrd",
         "callable": "scherrer_size"
@@ -158201,6 +160159,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "two_theta",
+        "intensity"
+      ],
       "runtime_target": {
         "module": "pxrd",
         "callable": "diffraction_peaks"
@@ -158434,6 +160396,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "two_theta",
+        "intensity",
+        "dictionary"
+      ],
       "runtime_target": {
         "module": "pxrd",
         "callable": "phase_fractions"
@@ -158626,6 +160593,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "two_theta",
+        "intensity",
+        "dictionary"
+      ],
       "runtime_target": {
         "module": "pxrd",
         "callable": "phase_peel"
@@ -158724,6 +160696,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "d_median",
+        "sigma_ln",
+        "dose_mg",
+        "density"
+      ],
       "runtime_target": {
         "module": "doseunif",
         "callable": "dose_cv_lognormal"
@@ -158829,6 +160807,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "sizes",
+        "dose_mg",
+        "density"
+      ],
       "runtime_target": {
         "module": "doseunif",
         "callable": "dose_cv_from_sizes"
@@ -158881,6 +160864,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "t",
+        "d63",
+        "dose_mg",
+        "density"
+      ],
       "runtime_target": {
         "module": "doseunif",
         "callable": "grind_time_for_dose_cv"
@@ -159014,6 +161003,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "M",
+        "P",
+        "pad"
+      ],
       "runtime_target": {
         "module": "cuttouch",
         "callable": "torsion_partial_slip"
@@ -159112,6 +161106,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "read_R",
+        "read_L",
+        "pad",
+        "Lz"
+      ],
       "runtime_target": {
         "module": "cuttouch",
         "callable": "knife_load_from_pads"
@@ -159362,6 +161362,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "sinkage",
+        "slip",
+        "wheel",
+        "soil"
+      ],
       "runtime_target": {
         "module": "roverslip",
         "callable": "wheel_forces"
@@ -159666,6 +161672,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "slopes",
+        "slips"
+      ],
       "runtime_target": {
         "module": "roverslip",
         "callable": "slip_gp_fit"
@@ -159738,6 +161748,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "slopes",
+        "slips"
+      ],
       "runtime_target": {
         "module": "roverslip",
         "callable": "slip_quantile_fit"
@@ -160031,6 +162045,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "cost_map",
+        "start",
+        "goal"
+      ],
       "runtime_target": {
         "module": "roverslip",
         "callable": "risk_aware_path"
@@ -160215,6 +162234,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "mesh",
+        "point",
+        "normal"
+      ],
       "runtime_target": {
         "module": "polygrav",
         "callable": "polyhedron_clip_halfspace"
@@ -160530,6 +162554,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "word_a",
+        "word_b",
+        "n_strands"
+      ],
       "runtime_target": {
         "module": "braidpath",
         "callable": "braid_equivalent"
@@ -160594,6 +162623,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "traj_a",
+        "traj_b"
+      ],
       "runtime_target": {
         "module": "braidpath",
         "callable": "homotopy_class_compare"
@@ -160694,6 +162727,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "grid",
+        "start",
+        "goal"
+      ],
       "runtime_target": {
         "module": "braidpath",
         "callable": "homotopy_shortest_paths"
@@ -164075,6 +166113,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "image",
+        "template"
+      ],
       "runtime_target": {
         "module": "codematch",
         "callable": "ocm_match"
@@ -164163,6 +166205,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "image",
+        "template"
+      ],
       "runtime_target": {
         "module": "codematch",
         "callable": "isc_match"
@@ -164243,6 +166289,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "image",
+        "template"
+      ],
       "runtime_target": {
         "module": "codematch",
         "callable": "scc_match"
@@ -164339,6 +166389,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "background",
+        "image"
+      ],
       "runtime_target": {
         "module": "codematch",
         "callable": "radial_reach_filter"
@@ -164435,6 +166489,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "image",
+        "flat"
+      ],
       "runtime_target": {
         "module": "aoi",
         "callable": "flat_field_correct"
@@ -164524,6 +166582,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "reference",
+        "moving"
+      ],
       "runtime_target": {
         "module": "aoi",
         "callable": "register_image"
@@ -172283,6 +174345,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "spectrum_low",
+        "spectrum_high"
+      ],
       "runtime_target": {
         "module": "dualxray",
         "callable": "dual_kvp_channels"
@@ -175588,6 +177654,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "voxel_a",
+        "voxel_b"
+      ],
       "runtime_target": {
         "module": "reprconv",
         "callable": "correlation_score"
@@ -177776,6 +179846,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "axes",
+        "x",
+        "y"
+      ],
       "runtime_target": {
         "module": "annotate",
         "callable": "data_to_pixel"
@@ -178277,6 +180352,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "img",
+        "axes",
+        "x",
+        "y"
+      ],
       "runtime_target": {
         "module": "annotate",
         "callable": "plot_series"
@@ -179026,6 +181107,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "left",
+        "right"
+      ],
       "runtime_target": {
         "module": "annotate",
         "callable": "compare_frame"
@@ -182517,6 +184602,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "img",
+        "field"
+      ],
       "runtime_target": {
         "module": "annotate",
         "callable": "annotate_colorbar"
@@ -183321,6 +185410,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "src",
+        "dst"
+      ],
       "runtime_target": {
         "module": "gfx2d",
         "callable": "alpha_composite"
@@ -183376,6 +185469,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "src",
+        "dst"
+      ],
       "runtime_target": {
         "module": "gfx2d",
         "callable": "alpha_composite_premul"
@@ -183431,6 +185528,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "base",
+        "top"
+      ],
       "runtime_target": {
         "module": "gfx2d",
         "callable": "blend_mode"
@@ -183650,6 +185751,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "dst",
+        "sprite"
+      ],
       "runtime_target": {
         "module": "gfx2d",
         "callable": "sprite_blit"
@@ -184618,6 +186723,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "base",
+        "light"
+      ],
       "runtime_target": {
         "module": "gfx2d",
         "callable": "light_mask"
@@ -185933,6 +188042,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "raw",
+        "gain"
+      ],
       "runtime_target": {
         "module": "gfx2d",
         "callable": "lens_shading_correct"
@@ -186702,6 +188815,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "lab1",
+        "lab2"
+      ],
       "runtime_target": {
         "module": "imgmetrics",
         "callable": "delta_e_2000"
@@ -186782,6 +188899,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "lab1",
+        "lab2"
+      ],
       "runtime_target": {
         "module": "imgmetrics",
         "callable": "delta_e_76"
@@ -186837,6 +188958,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "rgb1",
+        "rgb2"
+      ],
       "runtime_target": {
         "module": "imgmetrics",
         "callable": "delta_e_map"
@@ -186913,6 +189038,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a",
+        "b"
+      ],
       "runtime_target": {
         "module": "imgmetrics",
         "callable": "mse"
@@ -186968,6 +189097,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a",
+        "b"
+      ],
       "runtime_target": {
         "module": "imgmetrics",
         "callable": "rmse"
@@ -187023,6 +189156,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a",
+        "b"
+      ],
       "runtime_target": {
         "module": "imgmetrics",
         "callable": "psnr"
@@ -187087,6 +189224,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a",
+        "b"
+      ],
       "runtime_target": {
         "module": "imgmetrics",
         "callable": "ssim"
@@ -187199,6 +189340,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a",
+        "b"
+      ],
       "runtime_target": {
         "module": "imgmetrics",
         "callable": "ms_ssim"
@@ -187317,6 +189462,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a",
+        "b"
+      ],
       "runtime_target": {
         "module": "imgmetrics",
         "callable": "ssim_map"
@@ -187500,6 +189649,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a",
+        "b"
+      ],
       "runtime_target": {
         "module": "imgmetrics",
         "callable": "joint_entropy"
@@ -187572,6 +189725,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a",
+        "b"
+      ],
       "runtime_target": {
         "module": "imgmetrics",
         "callable": "mutual_information"
@@ -187644,6 +189801,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a",
+        "b"
+      ],
       "runtime_target": {
         "module": "imgmetrics",
         "callable": "normalized_mutual_information"
@@ -187716,6 +189877,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a",
+        "b"
+      ],
       "runtime_target": {
         "module": "imgmetrics",
         "callable": "joint_histogram"
@@ -187851,6 +190016,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a",
+        "b"
+      ],
       "runtime_target": {
         "module": "imgmetrics",
         "callable": "ncd"
@@ -188037,6 +190206,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "x",
+        "y"
+      ],
       "runtime_target": {
         "module": "iqatid",
         "callable": "rank_spearman"
@@ -188087,6 +190260,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "x",
+        "y"
+      ],
       "runtime_target": {
         "module": "iqatid",
         "callable": "rank_kendall_b"
@@ -188285,6 +190462,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "root",
+        "metric"
+      ],
       "runtime_target": {
         "module": "iqatid",
         "callable": "tid2013_metric_values"
@@ -188335,6 +190516,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "root",
+        "fn"
+      ],
       "runtime_target": {
         "module": "iqatid",
         "callable": "tid2013_evaluate"
@@ -188387,6 +190572,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "values",
+        "author_values",
+        "mos"
+      ],
       "runtime_target": {
         "module": "iqatid",
         "callable": "tid2013_compare"
@@ -188487,6 +190677,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "ref",
+        "dist"
+      ],
       "runtime_target": {
         "module": "iqafsim",
         "callable": "fsim"
@@ -188551,6 +190745,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "ref",
+        "dist"
+      ],
       "runtime_target": {
         "module": "iqafsim",
         "callable": "fsimc"
@@ -188615,6 +190813,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "ref",
+        "dist"
+      ],
       "runtime_target": {
         "module": "iqafsim",
         "callable": "fsim_pair"
@@ -188687,6 +190889,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "ref",
+        "dist"
+      ],
       "runtime_target": {
         "module": "iqafsim",
         "callable": "gmsd"
@@ -188759,6 +190965,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "ref",
+        "dist"
+      ],
       "runtime_target": {
         "module": "iqafsim",
         "callable": "gmsd_map"
@@ -188839,6 +191049,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "ref",
+        "dist"
+      ],
       "runtime_target": {
         "module": "iqafsim",
         "callable": "vifp"
@@ -189046,6 +191260,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a",
+        "b"
+      ],
       "runtime_target": {
         "module": "imgmetrics",
         "callable": "compare_images"
@@ -189135,6 +191353,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "report",
+        "a",
+        "b"
+      ],
       "runtime_target": {
         "module": "imgmetrics",
         "callable": "measure_with"
@@ -189316,6 +191539,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "u_values",
+        "v_values"
+      ],
       "runtime_target": {
         "module": "colortransport",
         "callable": "wasserstein_1d"
@@ -189396,6 +191623,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "u_values",
+        "v_values"
+      ],
       "runtime_target": {
         "module": "colortransport",
         "callable": "transport_plan_1d"
@@ -189452,6 +191683,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a",
+        "b",
+        "cost"
+      ],
       "runtime_target": {
         "module": "colortransport",
         "callable": "sinkhorn"
@@ -189533,6 +191769,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a",
+        "b",
+        "cost"
+      ],
       "runtime_target": {
         "module": "colortransport",
         "callable": "sinkhorn_distance"
@@ -189598,6 +191839,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a",
+        "b",
+        "cost"
+      ],
       "runtime_target": {
         "module": "colortransport",
         "callable": "sinkhorn_divergence"
@@ -189789,6 +192035,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "src",
+        "ref"
+      ],
       "runtime_target": {
         "module": "colortransport",
         "callable": "histogram_match"
@@ -189861,6 +192111,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "src",
+        "ref"
+      ],
       "runtime_target": {
         "module": "colortransport",
         "callable": "color_transfer"
@@ -189933,6 +192187,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "src_samples",
+        "ref_samples"
+      ],
       "runtime_target": {
         "module": "colortransport",
         "callable": "gaussian_transport_map"
@@ -189989,6 +192247,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "src",
+        "dst",
+        "mask"
+      ],
       "runtime_target": {
         "module": "colortransport",
         "callable": "poisson_blend"
@@ -190127,6 +192390,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "hash1",
+        "hash2"
+      ],
       "runtime_target": {
         "module": "imgforensics",
         "callable": "hash_distance"
@@ -192488,6 +194755,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "reference",
+        "frame"
+      ],
       "runtime_target": {
         "module": "astrostack",
         "callable": "frame_align"
@@ -194446,6 +196717,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "measured",
+        "reference"
+      ],
       "runtime_target": {
         "module": "profileops",
         "callable": "profile_align"
@@ -194510,6 +196785,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "measured",
+        "reference"
+      ],
       "runtime_target": {
         "module": "profileops",
         "callable": "profile_deviation"
@@ -194793,6 +197072,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "source",
+        "target"
+      ],
       "runtime_target": {
         "module": "shapestats",
         "callable": "procrustes_fit"
@@ -194866,6 +197149,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "source",
+        "target"
+      ],
       "runtime_target": {
         "module": "shapestats",
         "callable": "procrustes_align"
@@ -194939,6 +197226,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "source",
+        "target"
+      ],
       "runtime_target": {
         "module": "shapestats",
         "callable": "procrustes_distance"
@@ -195739,6 +198030,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "query",
+        "surface"
+      ],
       "runtime_target": {
         "module": "shapestats",
         "callable": "signed_surface_distance"
@@ -196071,6 +198366,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "m1",
+        "m2"
+      ],
       "runtime_target": {
         "module": "fourierdesc",
         "callable": "descriptor_distance"
@@ -196535,6 +198834,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "img",
+        "src_pts",
+        "dst_pts"
+      ],
       "runtime_target": {
         "module": "imagemorph",
         "callable": "warp_tps_image"
@@ -196608,6 +198912,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "img",
+        "src_pts",
+        "dst_pts"
+      ],
       "runtime_target": {
         "module": "imagemorph",
         "callable": "warp_piecewise_affine"
@@ -196672,6 +198981,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a",
+        "b"
+      ],
       "runtime_target": {
         "module": "imagemorph",
         "callable": "blend"
@@ -196737,6 +199050,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "imgA",
+        "imgB",
+        "ptsA",
+        "ptsB"
+      ],
       "runtime_target": {
         "module": "imagemorph",
         "callable": "morph"
@@ -196826,6 +199145,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "imgA",
+        "imgB",
+        "ptsA",
+        "ptsB"
+      ],
       "runtime_target": {
         "module": "imagemorph",
         "callable": "morph_sequence"
@@ -199507,6 +201832,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a",
+        "b"
+      ],
       "runtime_target": {
         "module": "pivops",
         "callable": "piv_cross_correlate"
@@ -199628,6 +201957,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a",
+        "b"
+      ],
       "runtime_target": {
         "module": "pivops",
         "callable": "piv_multipass"
@@ -199745,6 +202078,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a",
+        "b",
+        "flow"
+      ],
       "runtime_target": {
         "module": "pivops",
         "callable": "piv_deform_pass"
@@ -201040,6 +203378,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "u",
+        "v"
+      ],
       "runtime_target": {
         "module": "dic",
         "callable": "strain_from_displacement"
@@ -201119,6 +203461,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "ref",
+        "cur",
+        "flow"
+      ],
       "runtime_target": {
         "module": "dic",
         "callable": "correlation_quality"
@@ -201307,6 +203654,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "flow",
+        "truth"
+      ],
       "runtime_target": {
         "module": "pivops",
         "callable": "piv_error_stats"
@@ -202801,6 +205152,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "height_m",
+        "geoid_height_m"
+      ],
       "runtime_target": {
         "module": "demops",
         "callable": "dem_height_frame_convert"
@@ -202874,6 +205229,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "h_ellipsoidal_m",
+        "h_orthometric_m",
+        "geoid_height_m"
+      ],
       "runtime_target": {
         "module": "demops",
         "callable": "dem_height_frame_residual"
@@ -203890,6 +206250,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "labels",
+        "seeds",
+        "distance"
+      ],
       "runtime_target": {
         "module": "blob2d",
         "callable": "blob_split"
@@ -205200,6 +207565,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "X",
+        "Y"
+      ],
       "runtime_target": {
         "module": "conngraph",
         "callable": "ridge_readout"
@@ -205264,6 +207633,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "X",
+        "Wout"
+      ],
       "runtime_target": {
         "module": "conngraph",
         "callable": "ridge_predict"
@@ -206649,6 +209022,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "before",
+        "after"
+      ],
       "runtime_target": {
         "module": "emproof",
         "callable": "seg_label_changes"
@@ -206723,6 +209100,12 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "train_pos",
+        "train_neg",
+        "test_pos",
+        "test_neg"
+      ],
       "runtime_target": {
         "module": "emproof",
         "callable": "holdout_threshold"
@@ -206788,6 +209171,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a",
+        "b"
+      ],
       "runtime_target": {
         "module": "segcompare",
         "callable": "seg_contingency"
@@ -206852,6 +209239,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a",
+        "b"
+      ],
       "runtime_target": {
         "module": "segcompare",
         "callable": "seg_variation_of_information"
@@ -206916,6 +209307,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a",
+        "b"
+      ],
       "runtime_target": {
         "module": "segcompare",
         "callable": "seg_rand"
@@ -207053,6 +209448,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a",
+        "b",
+        "synapses"
+      ],
       "runtime_target": {
         "module": "segcompare",
         "callable": "seg_wiring_variation"
@@ -207126,6 +209526,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "a",
+        "b",
+        "synapses"
+      ],
       "runtime_target": {
         "module": "segcompare",
         "callable": "seg_synapse_nri"
@@ -208252,6 +210657,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "vol_a",
+        "vol_b"
+      ],
       "runtime_target": {
         "module": "live4d",
         "callable": "vol_flow_3d"
@@ -211046,6 +213455,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "observed",
+        "expected"
+      ],
       "runtime_target": {
         "module": "printpath",
         "callable": "print_layer_defect_map"
@@ -211431,6 +213844,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "candidates",
+        "frame_index",
+        "unix_times"
+      ],
       "runtime_target": {
         "module": "geocam",
         "callable": "camera_orientation_from_sun_candidates"
@@ -212099,6 +214517,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "query",
+        "key"
+      ],
       "runtime_target": {
         "module": "llmcore",
         "callable": "attention_scores"
@@ -212290,6 +214712,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "query",
+        "key",
+        "value"
+      ],
       "runtime_target": {
         "module": "llmcore",
         "callable": "attention_softmax"
@@ -212371,6 +214798,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "query",
+        "key",
+        "value"
+      ],
       "runtime_target": {
         "module": "llmcore",
         "callable": "attention_tiled"
@@ -212460,6 +214892,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "query",
+        "key",
+        "value"
+      ],
       "runtime_target": {
         "module": "llmcore",
         "callable": "attention_linear"
@@ -212525,6 +214962,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "query",
+        "key",
+        "value"
+      ],
       "runtime_target": {
         "module": "llmcore",
         "callable": "attention_grouped"
@@ -212612,6 +215054,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "query_step",
+        "key_cache",
+        "value_cache"
+      ],
       "runtime_target": {
         "module": "llmcore",
         "callable": "kv_cache_decode"
@@ -212676,6 +215123,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "image",
+        "ref_image"
+      ],
       "runtime_target": {
         "module": "segmentation",
         "callable": "check_difference"
@@ -212741,6 +215192,11 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "image1",
+        "image2",
+        "ref_region"
+      ],
       "runtime_target": {
         "module": "segmentation",
         "callable": "class_2dim_sup"
@@ -212796,6 +215252,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "image1",
+        "image2"
+      ],
       "runtime_target": {
         "module": "segmentation",
         "callable": "class_2dim_unsup"
@@ -213367,6 +215827,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "labels_pred",
+        "labels_true"
+      ],
       "runtime_target": {
         "module": "segeval",
         "callable": "seg_confusion_table"
@@ -213431,6 +215895,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "labels_pred",
+        "labels_true"
+      ],
       "runtime_target": {
         "module": "segeval",
         "callable": "seg_dice_jaccard"
@@ -213503,6 +215971,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "labels_pred",
+        "labels_true"
+      ],
       "runtime_target": {
         "module": "segeval",
         "callable": "seg_boundary_f"
@@ -213567,6 +216039,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "labels_pred",
+        "labels_true"
+      ],
       "runtime_target": {
         "module": "segeval",
         "callable": "seg_hausdorff"
@@ -213631,6 +216107,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "labels_pred",
+        "labels_true"
+      ],
       "runtime_target": {
         "module": "segeval",
         "callable": "seg_mean_surface_distance"
@@ -213686,6 +216166,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "labels_pred",
+        "labels_true"
+      ],
       "runtime_target": {
         "module": "segeval",
         "callable": "seg_under_over_segmentation"
@@ -213750,6 +216234,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "labels_pred",
+        "labels_true"
+      ],
       "runtime_target": {
         "module": "segeval",
         "callable": "seg_object_counts_match"
@@ -213822,6 +216310,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "labels_pred",
+        "labels_true"
+      ],
       "runtime_target": {
         "module": "segeval",
         "callable": "seg_score_card"
@@ -216724,6 +219216,10 @@
           "kind": "unused"
         }
       },
+      "input_roles": [
+        "labels_sp",
+        "labels_true"
+      ],
       "runtime_target": {
         "module": "seggraph",
         "callable": "superpixel_quality"

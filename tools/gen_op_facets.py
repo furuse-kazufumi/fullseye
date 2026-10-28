@@ -42,6 +42,15 @@ VERIFIED_PYTHON = {
     "polarization_render", "polarization_dolp_map", "decode_fringe",
     "deflectometry_phase_to_slope",
 }
+DATA_INPUT_OVERRIDES = {
+    "triangulate": [("uv1", "image"), ("uv2", "image"), ("P1", "matrix"), ("P2", "matrix")],
+    "recover_pose": [("test", "image"), ("reference", "image"), ("K1", "matrix")],
+}
+REF_PARAMETER_OVERRIDES = {
+    "decode_fringe": {"ref_phase": "image", "mask": "region"},
+    "deflectometry_phase_to_slope": {"rig": "table"},
+    "recover_pose": {"K2": "matrix"},
+}
 DUPLICATE_EXEMPTIONS = {
     "gaussians_to_voxel": "chain_fuzz compatibility alias; first declaration is the public contract",
 }
@@ -269,6 +278,10 @@ def build() -> dict[str, object]:
         ins, out = split_inputs(ins), canonical_sort(out)
         if name in nary:
             ins = [canonical_sort(x) for x in nary[name]["in_sorts"]]
+        roles = None
+        if name in DATA_INPUT_OVERRIDES:
+            roles = [r for r, _s in DATA_INPUT_OVERRIDES[name]]
+            ins = [canonical_sort(s) for _r, s in DATA_INPUT_OVERRIDES[name]]
         ins, out, semantics, consumes = type_semantics(ins, out)
         signature = (tuple(ins), out, category)
         if name in seen:
@@ -282,6 +295,10 @@ def build() -> dict[str, object]:
             continue
         seen.add(name); signatures[name] = signature
         target = _runtime_function(_fn)
+        if roles is None and len(ins) > 1 and len(set(ins)) < len(ins):
+            names=[p["name"] for p in target["parameters"][:len(ins)]]
+            if len(names)==len(ins):
+                roles = names
         previous = runtime_functions.get(name)
         if previous and (previous["module"], previous["callable"]) != (target["module"], target["callable"]):
             raise RuntimeError("operator %s resolves to multiple runtime targets" % name)
@@ -312,6 +329,10 @@ def build() -> dict[str, object]:
                 "parity": {"status": "unmeasured", "source": "accel.parity required"},
                 "gpu_timing": "unmeasured", "parameters": _param_metadata(name, category, knobs.get(name)),
                 "source": src}
+        if roles:
+            edge["input_roles"] = roles
+        if name in REF_PARAMETER_OVERRIDES:
+            edge["ref_parameters"] = REF_PARAMETER_OVERRIDES[name]
         edges.append(edge)
         if fam:
             family_rows[fam].append({"op": name, "inputs": list(ins), "output": out,

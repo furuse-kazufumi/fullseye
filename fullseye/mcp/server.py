@@ -165,13 +165,15 @@ TOOLS: dict[str, dict] = {
         "description": "Validate op existence, knob ranges, stage count, and type chaining without execution (fail-closed).",
         "inputSchema": {"type": "object", "properties": {
             "start_sort": {"type": "string"},
+            "bindings": {"type":"object","additionalProperties":_HANDLE},
             "stages": {"type": "array", "minItems": 1, "maxItems": 64, "items": {"type": "object",
                 "properties": {"op": {"type": "string", "maxLength": 120},
                                "inputs": {"type":"array","items":{"type":"string"}},
                                "params": {"type":"object"},
+                               "allow_reuse":{"type":"boolean"},
                                "a": {"type": "number"}, "b": {"type": "number"}},
                 "required": ["op"], "additionalProperties": False}}},
-            "required": ["start_sort", "stages"], "additionalProperties": False},
+            "required": ["stages"], "additionalProperties": False},
     },
     "fullseye_op_help": {
         "description": (
@@ -203,6 +205,7 @@ TOOLS: dict[str, dict] = {
             "type": "object",
             "properties": {
                 "path": {"type": "string", "maxLength": 1024},
+                "vision": _VISION,
                 "color": {"type": "boolean", "description": "true なら (H,W,3) の color として読む"},
             },
             "required": ["path"],
@@ -240,7 +243,7 @@ TOOLS: dict[str, dict] = {
         "description": "ハンドルの数値統計と判定。vision=thumb で小図(1 枚)を resource_link で返す。",
         "inputSchema": {
             "type": "object",
-            "properties": {"handle": _HANDLE},
+            "properties": {"handle": _HANDLE, "vision": _VISION},
             "required": ["handle"],
             "additionalProperties": False,
         },
@@ -255,6 +258,9 @@ TOOLS: dict[str, dict] = {
             "type": "object",
             "properties": {
                 "handle": _HANDLE,
+                "bindings": {"type":"object","additionalProperties":_HANDLE},
+                "outputs": {"type":"array","items":{"type":"string"}},
+                "vision": _VISION,
                 "stages": {
                     "type": "array", "minItems": 1, "maxItems": 64,
                     "items": {
@@ -263,6 +269,7 @@ TOOLS: dict[str, dict] = {
                                 "op": {"type": "string", "maxLength": 120},
                                 "inputs": {"type":"array","items":{"type":"string"}},
                                 "params": {"type":"object"},
+                                "allow_reuse":{"type":"boolean"},
                             "a": {"type": "number", "minimum": 0.0, "maximum": 1.0},
                             "b": {"type": "number", "minimum": 0.0, "maximum": 1.0},
                         },
@@ -272,7 +279,7 @@ TOOLS: dict[str, dict] = {
                     "description": "[{op, a?, b?}, …]。a/b の既定は 0.5",
                 },
             },
-            "required": ["stages"],
+            "required": ["handle", "stages"],
             "additionalProperties": False,
         },
     },
@@ -696,12 +703,15 @@ def _out_sort(op, in_sort: str | None) -> str:
     return op.out_sort
 
 
-def validate_pipeline(stages: list[dict], start_sort: str, cat: Catalog, *, max_stages: int | None = None) -> dict:
+def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, *,
+                      max_stages: int | None = None, bindings: dict | None = None,
+                      store: HandleStore | None = None) -> dict:
     """Shared non-executing pipeline validator used by both MCP entry points."""
     import ops
     max_stages = int(max_stages or get_system("pipeline_max_stages"))
     errors, normalized = [], []
-    if start_sort not in cat.sorts:
+    bindings = dict(bindings or {})
+    if start_sort is not None and start_sort not in cat.sorts:
         errors.append({"layer": "pipeline", "stage": 0, "reason": "unknown_sort", "value": start_sort,
                        "candidates": []})
     if not stages:
@@ -711,12 +721,38 @@ def validate_pipeline(stages: list[dict], start_sort: str, cat: Catalog, *, max_
                        "value": len(stages), "limit": max_stages, "candidates": []})
     from fullseye.opsearch import _graph
     graph_edges = {e["op"]: e for e in _graph()["edges"]}
+    binding_sorts = {}
+    for ref, handle in bindings.items():
+        if not ref.startswith("have:"):
+            errors.append({"layer":"binding","stage":0,"reason":"invalid_binding_name","value":ref,"candidates":[]})
+        elif store is None:
+            binding_sorts[ref] = ref.split(":",1)[1]
+        else:
+            try: binding_sorts[ref] = store.get(handle)[0]["sort"]
+            except HandleError as exc:
+                errors.append({"layer":"binding","stage":0,"reason":"invalid_handle","value":handle,
+                               "detail":str(exc),"candidates":[]})
+    if start_sort is not None:
+        binding_sorts.setdefault("have:%s" % start_sort, start_sort)
+    indexed = {"stage:%d" % i: (i, spec) for i, spec in enumerate(stages[:max_stages], 1)}
+    deps = {ref: {x for x in spec.get("inputs", []) if isinstance(x,str) and x.startswith("stage:")}
+            for ref,(_i,spec) in indexed.items()}
+    ordered=[]; pending=dict(indexed)
+    while pending:
+        ready=sorted((ref for ref in pending if deps[ref].isdisjoint(pending)), key=lambda x:int(x.split(":")[1]))
+        if not ready:
+            errors.append({"layer":"pipeline","stage":0,"reason":"dependency_cycle","value":sorted(pending),"candidates":[]})
+            break
+        for ref in ready: ordered.append(pending.pop(ref));
     cur = start_sort
     stage_sorts = {}
-    for i, spec in enumerate(stages[:max_stages], 1):
+    for i, spec in ordered:
         name = spec.get("op")
         edge = graph_edges.get(name)
         refs = spec.get("inputs")
+        if refs is None:
+            refs = [] if not edge or not edge.get("inputs") else (["stage:%d"%(i-1)] if i>1 else
+                    (["have:%s"%start_sort] if start_sort else []))
         if refs is not None:
             if edge is None:
                 errors.append({"layer":"stage","stage":i,"reason":"unknown_op","value":name,
@@ -734,12 +770,21 @@ def validate_pipeline(stages: list[dict], start_sort: str, cat: Catalog, *, max_
             for ref in refs:
                 if ref.startswith("stage:"):
                     actual.append(stage_sorts.get(ref, "unknown"))
+                elif ref.startswith("have:"):
+                    actual.append(binding_sorts.get(ref, "unknown"))
+                elif store is not None and ref.startswith("fullseye://"):
+                    try: actual.append(store.get(ref)[0]["sort"])
+                    except HandleError: actual.append("unknown")
                 else:
-                    actual.append(start_sort)
+                    actual.append("unknown")
             mismatches=[{"input":j,"actual":a,"expected":b} for j,(a,b) in enumerate(zip(actual,edge["inputs"]))
                         if b not in ("poly",a)]
             if mismatches:
                 errors.append({"layer":"stage","stage":i,"reason":"sort_mismatch","value":mismatches,"candidates":[]})
+            roles=edge.get("input_roles",[])
+            if len(set(refs)) != len(refs) and len(set(roles)) > 1 and not spec.get("allow_reuse",False):
+                errors.append({"layer":"stage","stage":i,"reason":"distinct_role_reuses_reference",
+                               "value":list(zip(roles,refs)),"candidates":[]})
             schema={p["name"]:p for p in edge.get("parameter_schema",[])}
             unknown_params=sorted(set(spec.get("params",{}))-set(schema))
             if unknown_params:
@@ -748,9 +793,19 @@ def validate_pipeline(stages: list[dict], start_sort: str, cat: Catalog, *, max_
             missing=[n for n,p in schema.items() if p.get("required") and n not in spec.get("params",{})]
             if missing:
                 errors.append({"layer":"stage","stage":i,"reason":"missing_parameter","value":missing,"candidates":[]})
+            for pname,pvalue in spec.get("params",{}).items():
+                if isinstance(pvalue,dict) and "ref" in pvalue:
+                    expected=edge.get("ref_parameters",{}).get(pname)
+                    actual_sort=(stage_sorts.get(pvalue["ref"]) or binding_sorts.get(pvalue["ref"]))
+                    if expected is None:
+                        errors.append({"layer":"stage","stage":i,"reason":"parameter_ref_not_declared",
+                                       "value":pname,"candidates":sorted(edge.get("ref_parameters",{}))})
+                    elif actual_sort not in (expected,None):
+                        errors.append({"layer":"stage","stage":i,"reason":"parameter_ref_sort_mismatch",
+                                       "value":actual_sort,"expected":expected,"candidates":[]})
             out = actual[0] if edge["output"] == "poly" and actual else edge["output"]
             ref="stage:%d"%i; stage_sorts[ref]=out; cur=out
-            normalized.append({"op":name,"inputs":list(refs),"params":dict(spec.get("params",{})),
+            normalized.append({"stage":i,"op":name,"inputs":list(refs),"params":dict(spec.get("params",{})),
                                "a":float(spec.get("a",0.5)),"b":float(spec.get("b",0.5)),
                                "in_sorts":edge["inputs"],"out_sort":out})
             continue
@@ -776,8 +831,8 @@ def validate_pipeline(stages: list[dict], start_sort: str, cat: Catalog, *, max_
         cur = _out_sort(op, cur)
         normalized.append({"op": name, "a": float(spec.get("a", 0.5)), "b": float(spec.get("b", 0.5)),
                            "in_sort": op.in_sort, "out_sort": cur})
-    return {"valid": not errors, "start_sort": start_sort, "out_sort": cur,
-            "stages": normalized, "errors": errors}
+    return {"valid": not errors, "start_sort": start_sort, "bindings":bindings, "out_sort": cur,
+            "stages": normalized, "execution_order":[x[0] for x in ordered], "errors": errors}
 
 
 def _run_op(arr, op, ka: float, kb: float, allow: bool):
@@ -899,8 +954,7 @@ def _pipeline(a: dict, cat: Catalog, store: HandleStore, *,
               max_structured_bytes: int = MAX_STRUCTURED_BYTES) -> dict:
     """段を順に。**走らせる前に**型連鎖を検査し、strict は失敗した段で止まる。"""
     stages = a["stages"]
-    if any("inputs" in s or "params" in s for s in stages):
-        return _pipeline_dag(a, cat, store, max_structured_bytes=max_structured_bytes)
+    return _pipeline_dag(a, cat, store, max_structured_bytes=max_structured_bytes)
     meta, arr = store.get(a["handle"])
     checked = validate_pipeline(stages, meta["sort"], cat)
     if not checked["valid"]:
@@ -974,23 +1028,38 @@ def _pipeline(a: dict, cat: Catalog, store: HandleStore, *,
 
 
 def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_bytes: int) -> dict:
-    """Execute explicit multi-input dependencies; keep the legacy linear path intact."""
+    """Execute the same reference vocabulary emitted by the planner."""
     import importlib
     import fullseye
     from fullseye.opsearch import _graph
     edges={e["op"]:e for e in _graph()["edges"]}
     policy=_execution_policy()
-    np.random.seed(int(policy["random_seed"]))
-    start_sort=store.get(a["handle"])[0]["sort"] if a.get("handle") else "unknown"
-    checked=validate_pipeline(a["stages"],start_sort,cat)
+    explicit=bool(a.get("bindings") or a.get("outputs") or any("inputs" in s or "params" in s for s in a["stages"]))
+    start_sort=store.get(a["handle"])[0]["sort"] if a.get("handle") else None
+    bindings=dict(a.get("bindings",{}))
+    if a.get("handle") and start_sort:
+        bindings.setdefault("have:%s"%start_sort,a["handle"])
+    checked=validate_pipeline(a["stages"],start_sort,cat,bindings=bindings,store=store)
     if not checked["valid"]:
+        if not explicit:
+            first=checked["errors"][0]
+            op=a["stages"][first.get("stage",1)-1].get("op") if first.get("stage") else "pipeline"
+            raise ArgError("段 %s %s: %s"%(first.get("stage",0),op,
+                json.dumps(first,ensure_ascii=False)))
         return _tool_error(json.dumps(checked,ensure_ascii=False),checked)
-    values={}; records=[]
-    if a.get("handle"):
-        values[a["handle"]]=store.get(a["handle"])
-    for i,spec in enumerate(a["stages"],1):
+    values={ref:store.get(handle) for ref,handle in bindings.items()}; records=[]; failed=set(); links=[]
+    original={i:s for i,s in enumerate(a["stages"],1)}
+    for i in checked["execution_order"]:
+        spec=original[i]
         edge=edges[spec["op"]]; args=[]; metas=[]
-        for ref in spec.get("inputs",[]):
+        refs=next(x["inputs"] for x in checked["stages"] if x["stage"]==i)
+        blocked=[ref for ref in refs if ref in failed]
+        if blocked:
+            failed.add("stage:%d"%i)
+            records.append({"stage":i,"ref":"stage:%d"%i,"op":edge["op"],"status":"skipped",
+                            "reason":"dependency_failed","blocked_by":blocked})
+            continue
+        for ref in refs:
             if ref in values:
                 meta,value=values[ref]
             elif ref.startswith("fullseye://"):
@@ -999,6 +1068,9 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
                 return _tool_error("unknown pipeline input reference: %s"%ref,{"stage":i,"reason":"unknown_input_ref"})
             metas.append(meta); args.append(value)
         params=dict(spec.get("params",{}))
+        for pname,pvalue in list(params.items()):
+            if isinstance(pvalue,dict) and "ref" in pvalue:
+                params[pname]=values[pvalue["ref"]][1]
         try:
             executor=edge["executor"]
             if executor["kind"]=="identity":
@@ -1010,22 +1082,62 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
                 fn=getattr(importlib.import_module(executor["module"]),executor["callable"])
                 out=fn(*args,**params)
         except Exception as exc:  # noqa: BLE001
-            return _tool_error("stage %d %s failed: %s: %s"%(i,edge["op"],type(exc).__name__,str(exc)[:300]),
-                               {"stage":i,"op":edge["op"],"reason":"execution_failed","completed":i-1})
+            failed.add("stage:%d"%i)
+            records.append({"stage":i,"ref":"stage:%d"%i,"op":edge["op"],"status":"failed",
+                            "reason":"execution_failed","error":{"type":type(exc).__name__,"message":str(exc)[:300]}})
+            continue
         out_sort=metas[0]["sort"] if edge["output"]=="poly" and metas else edge["output"]
         ref="stage:%d"%i
-        if isinstance(out,np.ndarray):
-            meta=store.put(out,sort=out_sort,provenance=[{"pipeline":edge["op"],"inputs":spec.get("inputs",[])}])
-            values[ref]=(meta,out); handle=meta["handle"]
-        else:
-            meta={"handle":None,"sort":out_sort,"provenance":[]}; values[ref]=(meta,out); handle=None
-        records.append({"stage":i,"ref":ref,"op":edge["op"],"inputs":spec.get("inputs",[]),
-                        "params":params,"out_sort":out_sort,"handle":handle})
-    last_ref="stage:%d"%len(a["stages"]); last_meta,_last=values[last_ref]
-    result={"completed":len(records),"stages":records,"output_ref":last_ref,
-            "handle":last_meta.get("handle"),"out_sort":last_meta["sort"],"system_policy":policy}
-    return tool_result(json.dumps(result,ensure_ascii=False,separators=(",",":")),result,
-                       max_structured_bytes=max_structured_bytes)
+        array_sorts={"image","color","region","images","seq<image>","points","volume","depth","normalmap"}
+        invalid=(out_sort in array_sorts and not isinstance(out,np.ndarray))
+        invalid=invalid or (isinstance(out,np.ndarray) and out.dtype.kind in "fc" and not np.isfinite(out).all())
+        if invalid:
+            failed.add(ref); records.append({"stage":i,"ref":ref,"op":edge["op"],"status":"failed",
+                    "reason":"invalid_output","out_sort":out_sort}); continue
+        meta=store.put(out,sort=out_sort,provenance=[{"pipeline":edge["op"],"inputs":refs}])
+        values[ref]=(meta,out); handle=meta["handle"]
+        st=stats_of(out) if isinstance(out,np.ndarray) else {"kind":type(out).__name__}
+        vd=verdict_of(st,op_name=edge["op"],out_sort=out_sort) if isinstance(out,np.ndarray) else {
+            "verdict":"value","escalate":False,"reasons":[]}
+        rec={"stage":i,"ref":ref,"op":edge["op"],"inputs":refs,"status":"ok",
+             "params":spec.get("params",{}),"out_sort":out_sort,"handle":handle,"stats":st,**vd,"degraded":[]}
+        if isinstance(out,np.ndarray) and vd.get("escalate") and not links and a.get("vision","auto")!="none":
+            links=_maybe_thumb(store,meta,args[0] if args else None,out,vision=a.get("vision","auto"),
+                               escalate=True,quantity=False,tag="stage%d_%s"%(i,edge["op"]))
+            for link in links: link["description"]="段 %d(%s): "% (i,edge["op"])+link["description"]
+        if not isinstance(out,np.ndarray):
+            rec["value_handle"],rec["handle"]=handle,None
+            try:
+                encoded=json.dumps(out,ensure_ascii=False,default=repr)
+                if len(encoded)<=2048: rec["value"]=out
+            except (TypeError,ValueError): pass
+        records.append(rec)
+    outputs=a.get("outputs") or (["stage:%d"%len(a["stages"])] if a["stages"] else [])
+    output_rows=[{"ref":ref,"handle":values[ref][0]["handle"],"sort":values[ref][0]["sort"]}
+                 for ref in outputs if ref in values]
+    first_failed=next((r["stage"] for r in records if r.get("status")=="failed"),None)
+    visible_records=records if explicit else [r for r in records if r.get("status")!="skipped"]
+    result={"completed":sum(r.get("status")=="ok" for r in records),"failed":sum(r.get("status")=="failed" for r in records),
+            "stopped_at":first_failed,"strict":True,"stages":visible_records,"outputs":output_rows,"system_policy":policy}
+    if len(output_rows)==1:
+        result.update({"handle":output_rows[0]["handle"],"out_sort":output_rows[0]["sort"],
+                       "output_ref":output_rows[0]["ref"]})
+    if not explicit and records:
+        last_value=next((values[r["ref"]][1] for r in reversed(records)
+                         if r.get("status")=="ok" and not isinstance(values[r["ref"]][1],np.ndarray)),None)
+        last_array=next((values[r["ref"]][0]["handle"] for r in reversed(records)
+                         if r.get("status")=="ok" and isinstance(values[r["ref"]][1],np.ndarray)),None)
+        result["value"],result["handle"]=last_value,last_array
+        addon=_typed_json_addon(last_value,records[-1].get("out_sort"),max_structured_bytes) if last_value is not None else None
+        if addon is not None: result["json"]=addon[0]
+    if failed:
+        bad=next(r for r in records if r.get("status")=="failed")
+        return _tool_error("段 %d %s failed in strict mode: "% (bad["stage"],bad["op"])+
+                           json.dumps(result,ensure_ascii=False,separators=(",",":")),result)
+    text=(("パイプライン %d 段 完走: "%sum(r.get("status")=="ok" for r in records)) +
+          " -> ".join(r["op"] for r in records if r.get("status")=="ok"))
+    text += "\n判定=ok value=%s" % result.get("value")
+    return tool_result(text,result,links=links,max_structured_bytes=max_structured_bytes)
 
 
 def _fix_text(a: dict, store: HandleStore) -> dict:
@@ -1108,6 +1220,11 @@ def _fix_text(a: dict, store: HandleStore) -> dict:
 def _inspect(a: dict, store: HandleStore, *,
              max_structured_bytes: int = MAX_STRUCTURED_BYTES) -> dict:
     meta, arr = store.get(a["handle"])
+    if not isinstance(arr, np.ndarray):
+        structured={**meta,"value":arr}
+        return tool_result("%s sort=%s value=%s"%(meta["handle"],meta["sort"],
+                           json.dumps(arr,ensure_ascii=False,default=repr)[:2000]),structured,
+                           max_structured_bytes=max_structured_bytes)
     last_op = next((p["apply"] for p in reversed(meta["provenance"]) if "apply" in p), None)
     st, vd = _describe(meta, arr, op_name=last_op)
     import ops
@@ -1354,7 +1471,8 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
             raise ArgError(str(exc)) from exc
         return tool_result(json.dumps(r, ensure_ascii=False, indent=2), r, max_structured_bytes=max_structured_bytes)
     if name == "fullseye_validate_pipeline":
-        r = validate_pipeline(a["stages"], a["start_sort"], cat, max_stages=a.get("max_stages", 64))
+        r = validate_pipeline(a["stages"], a.get("start_sort"), cat, max_stages=a.get("max_stages", 64),
+                              bindings=a.get("bindings"),store=store)
         text = json.dumps(r, ensure_ascii=False, indent=2)
         return (tool_result(text, r, max_structured_bytes=max_structured_bytes) if r["valid"]
                 else _tool_error(text, r))

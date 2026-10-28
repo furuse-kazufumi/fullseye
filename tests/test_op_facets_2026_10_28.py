@@ -158,9 +158,9 @@ def test_three_multi_input_business_dags_execute_through_mcp():
     stack=put(frames,"images")
     fringe=call_tool("fullseye_pipeline",{"handle":stack,"stages":[
         {"op":"decode_fringe","inputs":[stack],"params":{"k":1.0}}]},cat,store)
-    phase=put(np.zeros((32,32)))
+    phase=put(np.zeros((32,32))); phase_y=put(np.full((32,32),1e-6))
     mirror=call_tool("fullseye_pipeline",{"handle":phase,"stages":[
-        {"op":"deflectometry_phase_to_slope","inputs":[phase,phase],"params":{}}]},cat,store)
+        {"op":"deflectometry_phase_to_slope","inputs":[phase,phase_y],"params":{}}]},cat,store)
     assert [polar.get("isError"),fringe.get("isError"),mirror.get("isError")] == [False,False,False]
     assert polar["structuredContent"]["out_sort"] == "region"
     assert fringe["structuredContent"]["out_sort"] == "depth"
@@ -253,7 +253,8 @@ def test_mcp_execution_is_probe_verified_and_runtime_targets_are_exact(tmp_path)
     assert edges["lens_file_read"]["not_executable_in_mcp"] == "io_side_effect"
     assert edges["lens_file_write"]["not_executable_in_mcp"] == "io_side_effect"
     verified=[e for e in graph["edges"] if e.get("verified_executable")]
-    assert verified and all(e.get("verification",{}).get("status") == "ok" for e in verified)
+    assert verified
+    assert {e.get("verification",{}).get("status") for e in verified} == {"ok"}
 
     outside=tmp_path/"outside.json"
     store=HandleStore(roots=[])
@@ -271,3 +272,40 @@ def test_mcp_execution_is_probe_verified_and_runtime_targets_are_exact(tmp_path)
         {"op":"psnr","inputs":["input","input"],"params":{}}]},Catalog.load(),store)
     assert unlisted["structuredContent"]["valid"] is False
     assert unlisted["structuredContent"]["errors"][0]["reason"] == "not_executable_in_mcp"
+
+def test_plan_dag_contract_accepts_have_bindings_reorders_and_rejects_role_aliasing():
+    import numpy as np
+    from fullseye.mcp.catalog import Catalog
+    from fullseye.mcp.handles import HandleStore
+    from fullseye.mcp.server import call_tool,validate_pipeline
+    cat=Catalog.load(); store=HandleStore(roots=[])
+    images=store.put(np.zeros((2,8,8)),sort="images",provenance=[])["handle"]
+    dag={"handle":images,"bindings":{"have:images":images},"outputs":["stage:1"],"stages":[
+        {"op":"type::seq_image_to_images","inputs":["stage:2"],"params":{}},
+        {"op":"type::images_to_seq_image","inputs":["have:images"],"params":{}}]}
+    result=call_tool("fullseye_pipeline",dag,cat,store)
+    assert result.get("isError") is False
+    assert [r["stage"] for r in result["structuredContent"]["stages"]] == [2,1]
+    assert result["structuredContent"]["out_sort"] == "images"
+
+    image=store.put(np.zeros((8,8)),sort="image",provenance=[])["handle"]
+    bad=validate_pipeline([{"op":"deflectometry_phase_to_slope",
+                           "inputs":["have:image","have:image"],"params":{}}],None,cat,
+                          bindings={"have:image":image},store=store)
+    assert any(e["reason"]=="distinct_role_reuses_reference" for e in bad["errors"])
+
+def test_parameter_refs_and_non_array_handles_share_the_pipeline_vocabulary():
+    import numpy as np
+    from fullseye.mcp.catalog import Catalog
+    from fullseye.mcp.handles import HandleStore
+    from fullseye.mcp.server import validate_pipeline,call_tool
+    cat=Catalog.load(); store=HandleStore(roots=[])
+    stack=store.put(np.zeros((4,8,8)),sort="images",provenance=[])["handle"]
+    ref=store.put(np.zeros((8,8)),sort="image",provenance=[])["handle"]
+    checked=validate_pipeline([{"op":"decode_fringe","inputs":["have:images"],
+        "params":{"ref_phase":{"ref":"have:image"}}}],None,cat,
+        bindings={"have:images":stack,"have:image":ref},store=store)
+    assert checked["valid"]
+    table=store.put({"score":0.75,"label":"ok"},sort="table",provenance=[])
+    inspected=call_tool("fullseye_inspect",{"handle":table["handle"]},cat,store)
+    assert inspected["structuredContent"]["value"]["score"] == .75
