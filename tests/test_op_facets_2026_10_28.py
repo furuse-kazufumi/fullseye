@@ -33,7 +33,8 @@ def test_unused_knobs_are_not_searchable():
     g=load("OP_GRAPH.json")
     edge=next(e for e in g["edges"] if any(not x.get("used") for x in e["parameters"].values()))
     r=opsearch.param_space(edge["op"], {})
-    assert all(not p["search"] for p in r["parameters"].values() if not p["used"])
+    bad=[p for p in r["parameters"].values() if not p["used"] and p["search"]]
+    assert not bad
 
 def test_new_mcp_surfaces_are_declared():
     expected={"fullseye_choose_op","fullseye_required_inputs","fullseye_param_space",
