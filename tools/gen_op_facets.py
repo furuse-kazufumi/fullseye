@@ -396,19 +396,9 @@ def build() -> dict[str, object]:
                         "timing_source":"docs/ops/families_timing.json"})
     families = {"schema": 2, "source_graph": "OP_GRAPH.json", "membership_source":"docs/ops/families.json",
                 "regex_role":"candidate suggestions only", "families":fam_out}
-    known_device = [e for e in edges if e["compute"]["structure"] != "unknown" or e["op"] in accel_names]
-    device = {"schema": 2, "source_graph": "OP_GRAPH.json", "gpu_policy": "unmeasured unless device_timing says otherwise",
-              "summary":{"total_ops":len(edges),"rows_with_implementation_evidence":len(known_device),
-                         "omitted_unknown":len(edges)-len(known_device)},
-              "ops": [{"op": e["op"], "compute": e["compute"], "implementations": e["implementations"],
-                       "parity": e.get("parity",{"status":"unmeasured"}),
-                       "gpu_timing": e.get("gpu_timing","unmeasured")} for e in known_device]}
-    sorts = {"schema": 1, "source_graph": "OP_GRAPH.json", "sorts": nodes}
     shapes = _shapes(edges)
-    patterns = _patterns()
-    return {"OP_GRAPH.json": graph, "OP_FAMILIES.json": families, "OP_DEVICE.json": device,
-            "OP_SORTS.json": sorts, "OP_SHAPES.json": shapes, "OP_PATTERNS.json": patterns,
-            "SYSTEM_PARAMS.json": _system_params(), "docs/ops/patterns.json": patterns}
+    return {"OP_GRAPH.json": graph, "OP_FAMILIES.json": families,
+            "OP_SHAPES.json": shapes, "SYSTEM_PARAMS.json": _system_params()}
 
 
 def _shapes(edges):

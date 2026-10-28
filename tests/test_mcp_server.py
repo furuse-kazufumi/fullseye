@@ -189,10 +189,8 @@ def test_every_declared_tool_has_a_body(cat):
     1 つの store を通して**実際の返り値から次の引数を作る**。"""
     from fullseye.mcp.handles import HandleStore
     store = HandleStore()
-    order = ["fullseye_search_ops", "fullseye_find_ops", "fullseye_plan_chain", "fullseye_op_cards",
+    order = ["fullseye_search_ops", "fullseye_find_ops", "fullseye_op_cards",
              "fullseye_plan", "fullseye_describe", "fullseye_choose",
-             "fullseye_choose_op", "fullseye_required_inputs", "fullseye_param_space",
-             "fullseye_pipeline_shape", "fullseye_sort_guide",
              "fullseye_validate_pipeline", "fullseye_op_help", "fullseye_catalog_coverage",
              "fullseye_list_samples", "fullseye_load_image", "fullseye_load_stack", "fullseye_apply", "fullseye_inspect",
              "fullseye_pipeline", "fullseye_fix_text",

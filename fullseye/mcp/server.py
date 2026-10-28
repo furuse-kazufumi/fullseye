@@ -1136,9 +1136,13 @@ def _version() -> str:
         return "0"
 
 
-MINIMAL_TOOLS = {"fullseye_find_ops", "fullseye_plan", "fullseye_op_cards", "fullseye_validate_pipeline",
-                 "fullseye_pipeline", "fullseye_load_image", "fullseye_inspect", "fullseye_op_help"}
-TOOLS.pop("fullseye_patterns", None)  # ungrounded template: retained in data/Python, not exposed through MCP
+MINIMAL_TOOLS = {"fullseye_find_ops", "fullseye_plan", "fullseye_describe", "fullseye_op_cards",
+                 "fullseye_validate_pipeline", "fullseye_pipeline", "fullseye_load_image",
+                 "fullseye_load_stack", "fullseye_list_samples", "fullseye_inspect"}
+for _internal_tool in ("fullseye_patterns", "fullseye_plan_chain", "fullseye_required_inputs",
+                       "fullseye_pipeline_shape", "fullseye_sort_guide", "fullseye_param_space",
+                       "fullseye_choose_op"):
+    TOOLS.pop(_internal_tool, None)
 
 def handle_tools_list(params: dict) -> dict:
     profile = params.get("profile") or os.environ.get("FULLSEYE_MCP_PROFILE", "full")

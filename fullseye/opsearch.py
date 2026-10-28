@@ -44,7 +44,6 @@ PKG_PROBE = "OP_PROBE.json"
 PKG_GRAPH = "OP_GRAPH.json"
 PKG_FAMILIES = "OP_FAMILIES.json"
 PKG_SHAPES = "OP_SHAPES.json"
-PKG_PATTERNS = "OP_PATTERNS.json"
 _STEM = 6
 _K1, _B = 1.2, 0.75
 #: 場ごとの重み: 名前に入っている語は要約の語より強い手掛かり
@@ -394,18 +393,14 @@ def pipeline_shape(input_form: str, output_form: str) -> dict:
 
 def pattern_skeleton(name: str, start_sort: str, goal_sort: str) -> dict:
     """Fill a typed pattern slot with candidates from the one op graph."""
-    pats = _load_json(PKG_PATTERNS).get("patterns") or []
-    pat = next((p for p in pats if p["name"].lower() == name.lower()), None)
-    if pat is None:
-        return {"name": name, "found": False, "known": [p["name"] for p in pats]}
-    out = dict(pat); out.update({"found": True, "start_sort": _sort(start_sort), "goal_sort": _sort(goal_sort),
-                                "candidates": [], "reason":"pattern is not exposed until slots and examples are grounded"})
-    return out
+    return {"name":name,"found":False,"grounded":False,"start_sort":_sort(start_sort),
+            "goal_sort":_sort(goal_sort),"candidates":[],
+            "reason":"no mechanically verified pattern example in OP_GRAPH"}
 
 
 def sort_guide(sort: str | None = None) -> dict:
     """Return node/container guidance and graph-derived producer/consumer counts."""
-    rows = _load_json("OP_SORTS.json").get("sorts") or []
+    rows = _graph().get("nodes") or []
     if sort is None:
         shown=rows[:20]
         return {"sorts": shown, "total":len(rows), "truncated":len(rows)>len(shown),

@@ -49,13 +49,14 @@ def test_unused_knobs_are_not_searchable():
     assert not bad
 
 def test_new_mcp_surfaces_are_declared():
-    expected={"fullseye_choose_op","fullseye_required_inputs","fullseye_param_space",
-              "fullseye_pipeline_shape","fullseye_sort_guide","fullseye_plan","fullseye_describe","fullseye_choose"}
-    assert expected <= set(TOOLS)
+    retired={"fullseye_plan_chain","fullseye_required_inputs","fullseye_pipeline_shape",
+             "fullseye_sort_guide","fullseye_param_space","fullseye_choose_op"}
+    assert retired.isdisjoint(TOOLS)
+    assert {"fullseye_plan","fullseye_describe","fullseye_choose"} <= set(TOOLS)
 
 def test_shape_pattern_and_sort_queries():
     assert opsearch.pipeline_shape("single","dense_field")["found"]
-    assert opsearch.pattern_skeleton("Pipe-and-Filter","image","region")["found"]
+    assert not opsearch.pattern_skeleton("Pipe-and-Filter","image","region")["found"]
     guide=opsearch.sort_guide()
     assert guide["sorts"] and guide["truncated"]
     assert guide["documented_choose_when"] + guide["undocumented_choose_when"] == guide["total"]
@@ -193,7 +194,7 @@ def test_knob_schema_context_edges_and_system_params():
     missing=[name for name,r in params.items() if not r["hide_from_ai"] or "applied_by" not in r]
     assert missing == []
 
-def test_mcp_minimal_profile_is_eight_tools_and_patterns_are_hidden():
+def test_mcp_minimal_profile_is_ten_tools_and_patterns_are_hidden():
     from fullseye.mcp.server import handle_tools_list
-    r=handle_tools_list({"profile":"minimal"}); assert len(r["tools"])==8 and r["estimated_tokens"] < 2000
+    r=handle_tools_list({"profile":"minimal"}); assert len(r["tools"])==10 and r["estimated_tokens"] < 1500
     full=handle_tools_list({"profile":"full"}); assert "fullseye_patterns" not in {x["name"] for x in full["tools"]}
