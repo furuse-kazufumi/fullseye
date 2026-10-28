@@ -101,6 +101,7 @@ CHAIN = [
     #   いまは `trace_problems()` が「宣言した出力に触れもしない段」を拒む。
     (["tools/conversion_matrix.py", "--md", "docs/CONVERSION_MATRIX.md"],
      "docs/CONVERSION_MATRIX.md(表現の変換表)"),
+    (["tools/gen_op_facets.py"], "single op graph and its generated facets"),
     (["tools/gen_design_notes.py"], "設計判断集(ソースの ★ から 6 言語)"),
     # ★2026-10-15: 13 番目から最後の方へ下げた。docmap が docs/*.md の**題**を読むので、
     #   題を持つ生成物(OPERATORS / REFERENCES / EXAMPLES / EXAMPLES_3D / SENSOR_PLAYBOOK /
@@ -174,6 +175,8 @@ OUTPUTS = {
     "tools/gen_mcp_data.py": ["fullseye/data/OP_INDEX.json", "fullseye/data/OP_NOTES.json",
                               "fullseye/data/OP_SEARCH.json", "fullseye/data/OP_CARDS.json",
                               "fullseye/data/OP_PROBE.json", "fullseye/data/op_knob.json"],
+    "tools/gen_op_facets.py": ["fullseye/data/OP_GRAPH.json", "fullseye/data/OP_FAMILIES.json",
+                                "fullseye/data/OP_DEVICE.json", "fullseye/data/OP_SORTS.json"],
     "tools/gen_rag_benchmark_report.py": ["docs/rag_synonym_gaps.json"],
     # 2026-10-23: 手で列挙していて #116 の文献 4 本が漏れ、regen が exit 1(--check は緑)だった。
     #   件数を打ち直す文献ノートの実ファイルと合わせる(OSS_LANDSCAPE.md は gen_oss_landscape.py の生成物、

@@ -31,13 +31,16 @@ import re
 import unicodedata
 from collections import Counter
 
-__all__ = ["search_ops", "plan_chain", "op_cards", "load_index", "tokenize", "detect_lang", "LANGS", "main"]
+__all__ = ["search_ops", "plan_chain", "op_cards", "choose_op", "required_inputs", "param_space",
+           "load_index", "tokenize", "detect_lang", "LANGS", "main"]
 
 #: 要約を持つ言語(ja = 原文)。表示言語の既定は問い合わせの文字種から決める(:func:`detect_lang`)。
 LANGS = ("ja", "en", "zh", "tw", "ko", "de", "hi")
 PKG_SEARCH = "OP_SEARCH.json"
 PKG_CARDS = "OP_CARDS.json"
 PKG_PROBE = "OP_PROBE.json"
+PKG_GRAPH = "OP_GRAPH.json"
+PKG_FAMILIES = "OP_FAMILIES.json"
 _STEM = 6
 _K1, _B = 1.2, 0.75
 #: 場ごとの重み: 名前に入っている語は要約の語より強い手掛かり
@@ -54,6 +57,124 @@ _DEVANAGARI = re.compile(r"[ऀ-ॿ꣠-ꣿ]+")
 _GERMAN = re.compile(r"[äöüß]|\b(?:der|die|das|und|nicht|mit|eines?|bild|kante|rauschen)\b")
 
 _CACHE: dict = {}
+
+
+def _load_json(name: str) -> dict:
+    """Load a non-op-list generated table, refusing missing or empty data."""
+    key = "json:" + name
+    if key in _CACHE:
+        return _CACHE[key]
+    from importlib.resources import files
+    p = files("fullseye") / "data" / name
+    if not p.is_file():
+        raise FileNotFoundError("fullseye/data/%s is missing; run tools/gen_op_facets.py" % name)
+    obj = json.loads(p.read_text(encoding="utf-8"))
+    if not obj:
+        raise ValueError("%s is empty" % name)
+    _CACHE[key] = obj
+    return obj
+
+
+def _graph() -> dict:
+    g = _load_json(PKG_GRAPH)
+    if not g.get("nodes") or not g.get("edges"):
+        raise ValueError("%s has an empty node or edge set" % PKG_GRAPH)
+    return g
+
+
+def choose_op(family: str, constraints: dict | None = None) -> dict:
+    """Rank members of *family* and fail closed when a requested fact is unmeasured."""
+    constraints = constraints or {}
+    fs = _load_json(PKG_FAMILIES).get("families") or []
+    fam = next((x for x in fs if x.get("name") == family), None)
+    if fam is None:
+        return {"family": family, "matches": [], "missing": ["unknown family"], "fail_closed": True}
+    graph = {e["op"]: e for e in _graph()["edges"]}
+    missing, ranked = [], []
+    fact_constraints = {"time_budget_ms", "exact", "edge_preserving", "stable"} & set(constraints)
+    for row in fam["ops"]:
+        e = graph[row["op"]]
+        reasons = ["member of %s by documented name/category rule" % family]
+        lacks = []
+        if fact_constraints:
+            lacks.extend(sorted(fact_constraints))
+        device = constraints.get("device")
+        if device == "cuda" and e.get("gpu_timing") == "unmeasured":
+            lacks.append("cuda timing")
+        if lacks:
+            missing.extend("%s: %s" % (row["op"], x) for x in lacks)
+            continue
+        ranked.append({"op": row["op"], "score": 1.0, "reasons": reasons,
+                       "device": device or "unspecified", "batch": constraints.get("batch", 1)})
+    return {"family": family, "constraints": constraints, "matches": ranked,
+            "missing": sorted(set(missing)), "fail_closed": not bool(ranked)}
+
+
+def required_inputs(goal_sort: str, max_depth: int = 4, k: int = 10) -> dict:
+    """Search the transposed typed hypergraph (AND inputs, OR producing edges)."""
+    if max_depth < 0 or k < 1:
+        raise ValueError("max_depth must be >= 0 and k must be > 0")
+    g = _graph()
+    sorts = {n["sort"] for n in g["nodes"]}
+    if goal_sort not in sorts:
+        return {"goal_sort": goal_sort, "solutions": [], "blocked_at": [goal_sort], "reason": "unknown sort"}
+    by_out = {}
+    for e in g["edges"]:
+        by_out.setdefault(e["output"], []).append(e)
+    generators = {n["sort"] for n in g["nodes"] if n.get("generator")}
+
+    def walk(sort, depth, seen):
+        if sort in generators or sort == "any":
+            return [({sort} if sort != "any" else set(), [], 0.0)]
+        if depth == 0 or sort in seen:
+            return []
+        out = []
+        for edge in by_out.get(sort, ()):                       # OR: any producer
+            combos = [(set(), [], 0.0)]
+            for inp in edge["inputs"]:                          # AND: every input
+                branches = walk(inp, depth - 1, seen | {sort})
+                if not branches:
+                    combos = []
+                    break
+                combos = [(a | b, pa + pb, wa + wb) for a, pa, wa in combos
+                          for b, pb, wb in branches][:k * 4]
+            out.extend((s, p + [edge["op"]], w + 1.0) for s, p, w in combos)
+        return out
+
+    raw = walk(goal_sort, max_depth, set())
+    uniq = {}
+    for inputs, path, weight in raw:
+        key = tuple(sorted(inputs))
+        old = uniq.get(key)
+        if old is None or (weight, path) < (old[2], old[1]): uniq[key] = (inputs, path, weight)
+    sols = [{"inputs": sorted(v[0]), "path": v[1], "weight": v[2],
+             "acquisition_ops": [e["op"] for e in g["edges"] if e["output"] in v[0] and not e["inputs"]][:10]}
+            for v in sorted(uniq.values(), key=lambda x: (len(x[0]), x[2], sorted(x[0])))[:k]]
+    blocked = [] if sols else sorted({goal_sort} | {i for e in by_out.get(goal_sort, ()) for i in e["inputs"]
+                                      if i not in generators and i not in by_out})
+    return {"goal_sort": goal_sort, "solutions": sols, "blocked_at": blocked,
+            "semantics": "transpose AND-OR search"}
+
+
+def param_space(op: str, input_context: dict | None = None) -> dict:
+    """Return context-narrowed normalized knob ranges without inventing physical units."""
+    input_context = input_context or {}
+    edge = next((e for e in _graph()["edges"] if e["op"] == op), None)
+    if edge is None:
+        raise ValueError("unknown op: %s" % op)
+    params = {}
+    for name, meta in edge.get("parameters", {}).items():
+        rec = dict(meta)
+        if not rec.get("used"):
+            rec.update({"search": False, "reason": "measured unused knob" if rec.get("source") != "unmeasured" else "no measured effect"})
+        else:
+            rec.update({"search": True, "min": 0.0, "max": 1.0,
+                        "reason": "measured normalized range; no documented physical mapping"})
+            if rec.get("discrete"):
+                rec["enum"] = rec.pop("discrete")
+        params[name] = rec
+    return {"op": op, "input_context": input_context, "parameters": params,
+            "source_graph": PKG_GRAPH}
 
 
 def _load_data(name: str) -> dict:
