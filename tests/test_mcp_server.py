@@ -53,6 +53,25 @@ def test_every_op_execution_entry_uses_verified_allowlist_and_profiles_match_cal
     assert "fullseye_apply" not in listed
     with pytest.raises(Exception, match="not available in MCP profile"):
         call_tool("fullseye_apply", {"handle": handle, "op": "gaussian"}, cat, store)
+
+
+def test_nested_tool_schema_rejects_bad_values_before_handlers():
+    cat = Catalog.load()
+    cases = [
+        ("fullseye_plan", {"have": [123], "want": "image"}),
+        ("fullseye_choose", {"candidates": ["gaussian"], "constraints": {"x": float("inf")}}),
+        ("fullseye_load_stack", {"paths": [123], "sort": "images"}),
+        ("fullseye_validate_pipeline", {"bindings": {"have:image": 123},
+          "stages": [{"op": "gaussian"}]}),
+        ("fullseye_validate_pipeline", {"stages": [{"op": "gaussian", "inputs": [123]}]}),
+        ("fullseye_validate_pipeline", {"stages": [{"op": "gaussian", "params": {"x": float("inf")}}]}),
+    ]
+    rejected=[]
+    for name,args in cases:
+        try: call_tool(name,args,cat)
+        except Exception as exc: rejected.append(isinstance(exc,ValueError))
+        else: rejected.append(False)
+    assert rejected == [True]*len(cases)
 from fullseye.mcp.server import ArgError, MAX_SEARCH_LIMIT, read_message  # noqa: E402
 
 

@@ -415,7 +415,7 @@ class ArgError(ValueError):
     """入力スキーマ違反。JSON-RPC の -32602 に写す。"""
 
 
-def _validate(schema: dict, args: Any) -> dict:
+def _validate_legacy(schema: dict, args: Any) -> dict:
     """依存を増やさない最小の検証(type / required / additionalProperties / enum /
     minimum / maximum / maxLength)。jsonschema があればそちらの方が厳密だが、
     **ここで検査する項目は全部自分で書けている**ことをテストが確かめる。"""
@@ -473,6 +473,62 @@ def _validate(schema: dict, args: Any) -> dict:
             raise ArgError("%s は %g 以下(%r)" % (k, p["maximum"], v))
         if "maxLength" in p and len(v) > p["maxLength"]:
             raise ArgError("%s は %d 文字以下" % (k, p["maxLength"]))
+    return args
+
+
+def _validate(schema: dict, args: Any) -> dict:
+    """Recursively validate the JSON-schema subset used by MCP tools."""
+    def check(spec, value, path):
+        if "oneOf" in spec:
+            matches = 0
+            for choice in spec["oneOf"]:
+                try:
+                    check(choice, value, path); matches += 1
+                except ArgError:
+                    pass
+            if matches != 1:
+                raise ArgError("%s は oneOf のどれか一つに一致する必要がある" % path)
+            return
+        kind = spec.get("type")
+        predicates = {
+            "object": lambda x: isinstance(x, dict), "array": lambda x: isinstance(x, list),
+            "string": lambda x: isinstance(x, str), "boolean": lambda x: isinstance(x, bool),
+            "integer": lambda x: isinstance(x, int) and not isinstance(x, bool),
+            "number": lambda x: isinstance(x, (int, float)) and not isinstance(x, bool),
+        }
+        if kind in predicates and not predicates[kind](value):
+            labels={"object":"オブジェクト","array":"配列","string":"文字列","boolean":"真偽値",
+                    "integer":"整数","number":"数"}
+            raise ArgError("%s は%sでなければならない: %s" % (path,labels[kind],type(value).__name__))
+        if isinstance(value, float) and not math.isfinite(value):
+            raise ArgError("%s must be finite" % path)
+        if kind == "object":
+            props = spec.get("properties", {}); additional = spec.get("additionalProperties", True)
+            extra = set(value) - set(props)
+            if additional is False and extra:
+                raise ArgError("%s に知らない引数がある: %s" % (path, sorted(extra)))
+            for name in spec.get("required", ()):
+                if name not in value:
+                    raise ArgError("%s.%s は必須" % (path, name))
+            for name, item in value.items():
+                child = props.get(name, additional if isinstance(additional, dict) else {})
+                check(child, item, "%s.%s" % (path, name))
+        elif kind == "array":
+            if len(value) < spec.get("minItems", 0) or len(value) > spec.get("maxItems", 10**9):
+                raise ArgError("%s has invalid length" % path)
+            for i, item in enumerate(value):
+                check(spec.get("items", {}), item, "%s[%d]" % (path, i))
+        elif not kind:
+            if isinstance(value, dict):
+                for name, item in value.items(): check({}, item, "%s.%s" % (path, name))
+            elif isinstance(value, list):
+                for i, item in enumerate(value): check({}, item, "%s[%d]" % (path, i))
+        if "enum" in spec and value not in spec["enum"]: raise ArgError("%s は列挙値のどれか" % path)
+        if "minimum" in spec and value < spec["minimum"]: raise ArgError("%s は最小値以上" % path)
+        if "maximum" in spec and value > spec["maximum"]: raise ArgError("%s は最大値以下" % path)
+        if "minLength" in spec and len(value) < spec["minLength"]: raise ArgError("%s is too short" % path)
+        if "maxLength" in spec and len(value) > spec["maxLength"]: raise ArgError("%s は指定文字以下" % path)
+    check(schema, args, "arguments")
     return args
 
 
