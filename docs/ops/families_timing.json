@@ -10,20 +10,20 @@
       "status": "measured",
       "sizes": [
         {
-          "n": 64,
-          "ms": 0.16299996059387922
-        },
-        {
           "n": 128,
-          "ms": 0.18179998733103275
+          "ms": 0.12579996837303042
         },
         {
           "n": 256,
-          "ms": 0.5310000269673765
+          "ms": 0.4951999871991575
+        },
+        {
+          "n": 512,
+          "ms": 2.0862000528723
         }
       ],
-      "peak_bytes": 592028,
-      "complexity_exponent": 0.43,
+      "peak_bytes": 2360780,
+      "complexity_exponent": 1.01,
       "quality": {
         "status": "measured",
         "probes": [
@@ -43,7 +43,7 @@
         {
           "name": "deterministic",
           "value": true,
-          "source": "repeated CPU probe"
+          "source": "two actual outputs on identical input"
         }
       ]
     },
@@ -51,20 +51,20 @@
       "status": "measured",
       "sizes": [
         {
-          "n": 64,
-          "ms": 1.9284000154584646
-        },
-        {
           "n": 128,
-          "ms": 8.133499999530613
+          "ms": 7.375200046226382
         },
         {
           "n": 256,
-          "ms": 30.171899998094887
+          "ms": 30.002200044691563
+        },
+        {
+          "n": 512,
+          "ms": 119.47430000873283
         }
       ],
-      "peak_bytes": 592004,
-      "complexity_exponent": 0.99,
+      "peak_bytes": 2360780,
+      "complexity_exponent": 1.0,
       "quality": {
         "status": "measured",
         "probes": [
@@ -84,7 +84,7 @@
         {
           "name": "deterministic",
           "value": true,
-          "source": "repeated CPU probe"
+          "source": "two actual outputs on identical input"
         }
       ]
     },
@@ -92,20 +92,20 @@
       "status": "measured",
       "sizes": [
         {
-          "n": 64,
-          "ms": 2.8013999690301716
-        },
-        {
           "n": 128,
-          "ms": 3.8822999922558665
+          "ms": 2.3794000153429806
         },
         {
           "n": 256,
-          "ms": 9.986400022171438
+          "ms": 6.6018999787047505
+        },
+        {
+          "n": 512,
+          "ms": 124.07010002061725
         }
       ],
-      "peak_bytes": 3164040,
-      "complexity_exponent": 0.46,
+      "peak_bytes": 12603296,
+      "complexity_exponent": 1.43,
       "quality": {
         "status": "measured",
         "probes": [
@@ -125,7 +125,7 @@
         {
           "name": "deterministic",
           "value": true,
-          "source": "repeated CPU probe"
+          "source": "two actual outputs on identical input"
         }
       ]
     },
@@ -133,32 +133,32 @@
       "status": "measured",
       "sizes": [
         {
-          "n": 64,
-          "ms": 0.19249995239078999
-        },
-        {
           "n": 128,
-          "ms": 0.395099981687963
+          "ms": 0.2929000183939934
         },
         {
           "n": 256,
-          "ms": 1.402400026563555
+          "ms": 1.2724999687634408
+        },
+        {
+          "n": 512,
+          "ms": 8.825599972624332
         }
       ],
-      "peak_bytes": 2098066,
-      "complexity_exponent": 0.72,
+      "peak_bytes": 8389050,
+      "complexity_exponent": 1.23,
       "quality": {
         "status": "measured",
         "probes": [
           {
             "probe": 1,
-            "metric": "iou",
-            "value": 0.13829279923700524
+            "metric": "boundary_f1",
+            "value": 0.6189376443418014
           },
           {
             "probe": 2,
-            "metric": "iou",
-            "value": 0.13590844062947066
+            "metric": "boundary_f1",
+            "value": 0.6225319396051103
           }
         ]
       },
@@ -166,7 +166,7 @@
         {
           "name": "deterministic",
           "value": true,
-          "source": "repeated CPU probe"
+          "source": "two actual outputs on identical input"
         }
       ]
     },
@@ -174,32 +174,32 @@
       "status": "measured",
       "sizes": [
         {
-          "n": 64,
-          "ms": 0.4569999873638153
-        },
-        {
           "n": 128,
-          "ms": 0.4284000024199486
+          "ms": 0.5450000171549618
         },
         {
           "n": 256,
-          "ms": 0.7817000150680542
+          "ms": 0.6145000224933028
+        },
+        {
+          "n": 512,
+          "ms": 2.967999957036227
         }
       ],
-      "peak_bytes": 1049848,
-      "complexity_exponent": 0.19,
+      "peak_bytes": 4194824,
+      "complexity_exponent": 0.61,
       "quality": {
         "status": "measured",
         "probes": [
           {
             "probe": 1,
-            "metric": "iou",
-            "value": 0.12466042861454875
+            "metric": "boundary_f1",
+            "value": 0.0
           },
           {
             "probe": 2,
-            "metric": "iou",
-            "value": 0.11769991015274034
+            "metric": "boundary_f1",
+            "value": 0.0
           }
         ]
       },
@@ -207,7 +207,7 @@
         {
           "name": "deterministic",
           "value": true,
-          "source": "repeated CPU probe"
+          "source": "two actual outputs on identical input"
         }
       ]
     },
@@ -215,20 +215,20 @@
       "status": "measured",
       "sizes": [
         {
-          "n": 64,
-          "ms": 0.027100031729787588
-        },
-        {
           "n": 128,
-          "ms": 0.033999967854470015
+          "ms": 0.0192999723367393
         },
         {
           "n": 256,
-          "ms": 0.06769999163225293
+          "ms": 0.05500001134350896
+        },
+        {
+          "n": 512,
+          "ms": 0.880699953995645
         }
       ],
-      "peak_bytes": 721496,
-      "complexity_exponent": 0.33,
+      "peak_bytes": 2883968,
+      "complexity_exponent": 1.38,
       "quality": {
         "status": "measured",
         "probes": [
@@ -248,7 +248,7 @@
         {
           "name": "deterministic",
           "value": true,
-          "source": "repeated CPU probe"
+          "source": "two actual outputs on identical input"
         }
       ]
     },
@@ -256,20 +256,20 @@
       "status": "measured",
       "sizes": [
         {
-          "n": 64,
-          "ms": 0.3328000311739743
-        },
-        {
           "n": 128,
-          "ms": 0.382099999114871
+          "ms": 0.1428000396117568
         },
         {
           "n": 256,
-          "ms": 0.7278999546542764
+          "ms": 0.4987999564036727
+        },
+        {
+          "n": 512,
+          "ms": 2.8099999763071537
         }
       ],
-      "peak_bytes": 2759112,
-      "complexity_exponent": 0.28,
+      "peak_bytes": 4474522,
+      "complexity_exponent": 1.07,
       "quality": {
         "status": "measured",
         "probes": [
@@ -289,7 +289,7 @@
         {
           "name": "deterministic",
           "value": true,
-          "source": "repeated CPU probe"
+          "source": "two actual outputs on identical input"
         }
       ]
     },
@@ -297,20 +297,20 @@
       "status": "measured",
       "sizes": [
         {
-          "n": 64,
-          "ms": 0.4113999893888831
-        },
-        {
           "n": 128,
-          "ms": 0.548899988643825
+          "ms": 0.3005000180564821
         },
         {
           "n": 256,
-          "ms": 1.3078000047244132
+          "ms": 1.3790000230073929
+        },
+        {
+          "n": 512,
+          "ms": 14.426100009586662
         }
       ],
-      "peak_bytes": 3786012,
-      "complexity_exponent": 0.42,
+      "peak_bytes": 14905196,
+      "complexity_exponent": 1.4,
       "quality": {
         "status": "measured",
         "probes": [
@@ -330,7 +330,7 @@
         {
           "name": "deterministic",
           "value": true,
-          "source": "repeated CPU probe"
+          "source": "two actual outputs on identical input"
         }
       ]
     },
@@ -338,20 +338,20 @@
       "status": "measured",
       "sizes": [
         {
-          "n": 64,
-          "ms": 0.030800001695752144
-        },
-        {
           "n": 128,
-          "ms": 0.05440000677481294
+          "ms": 0.045599997974932194
         },
         {
           "n": 256,
-          "ms": 0.16520003555342555
+          "ms": 0.15089998487383127
+        },
+        {
+          "n": 512,
+          "ms": 0.9571000118739903
         }
       ],
-      "peak_bytes": 591226,
-      "complexity_exponent": 0.61,
+      "peak_bytes": 2360482,
+      "complexity_exponent": 1.1,
       "quality": {
         "status": "measured",
         "probes": [
@@ -371,7 +371,7 @@
         {
           "name": "deterministic",
           "value": true,
-          "source": "repeated CPU probe"
+          "source": "two actual outputs on identical input"
         }
       ]
     },
@@ -379,20 +379,20 @@
       "status": "measured",
       "sizes": [
         {
-          "n": 64,
-          "ms": 0.02889998722821474
-        },
-        {
           "n": 128,
-          "ms": 0.05390000296756625
+          "ms": 0.043000036384910345
         },
         {
           "n": 256,
-          "ms": 0.16500003403052688
+          "ms": 0.14760001795366406
+        },
+        {
+          "n": 512,
+          "ms": 0.9165999945253134
         }
       ],
-      "peak_bytes": 591226,
-      "complexity_exponent": 0.63,
+      "peak_bytes": 2360482,
+      "complexity_exponent": 1.1,
       "quality": {
         "status": "measured",
         "probes": [
@@ -412,7 +412,7 @@
         {
           "name": "deterministic",
           "value": true,
-          "source": "repeated CPU probe"
+          "source": "two actual outputs on identical input"
         }
       ]
     },
@@ -424,19 +424,19 @@
       "status": "measured",
       "sizes": [
         {
-          "n": 64,
-          "ms": 0.6548999808728695
-        },
-        {
           "n": 128,
-          "ms": 2.948200039099902
+          "ms": 3.034800000023097
         },
         {
           "n": 256,
-          "ms": 15.028599998913705
+          "ms": 16.025999968405813
+        },
+        {
+          "n": 512,
+          "ms": 70.38859999738634
         }
       ],
-      "peak_bytes": 2164528,
+      "peak_bytes": 8652048,
       "complexity_exponent": 1.13,
       "quality": {
         "status": "measured",
@@ -457,7 +457,7 @@
         {
           "name": "deterministic",
           "value": true,
-          "source": "repeated CPU probe"
+          "source": "two actual outputs on identical input"
         }
       ]
     },
@@ -475,65 +475,71 @@
         {
           "pattern": "random",
           "n": 1000,
-          "ms": 0.6203000084497035
+          "ms": 0.5596000119112432
         },
         {
           "pattern": "random",
           "n": 10000,
-          "ms": 7.538199948612601
+          "ms": 7.518799975514412
         },
         {
           "pattern": "random",
           "n": 100000,
-          "ms": 96.84439998818561
+          "ms": 98.24380005011335
         },
         {
           "pattern": "nearly_sorted",
           "n": 1000,
-          "ms": 0.9754000348038971
+          "ms": 1.048400008585304
         },
         {
           "pattern": "nearly_sorted",
           "n": 10000,
-          "ms": 26.914200047031045
+          "ms": 27.302700036671013
         },
         {
           "pattern": "nearly_sorted",
           "n": 100000,
-          "ms": 843.2398999575526
+          "ms": 858.2499999902211
         },
         {
           "pattern": "reverse",
           "n": 1000,
-          "ms": 0.7529999711550772
+          "ms": 0.7357999566011131
         },
         {
           "pattern": "reverse",
           "n": 10000,
-          "ms": 20.35119995707646
+          "ms": 20.74120001634583
         },
         {
           "pattern": "reverse",
           "n": 100000,
-          "ms": 603.8000000407919
+          "ms": 624.2066999548115
         },
         {
           "pattern": "duplicates",
           "n": 1000,
-          "ms": 0.2193999825976789
+          "ms": 0.2060999977402389
         },
         {
           "pattern": "duplicates",
           "n": 10000,
-          "ms": 2.5351999793201685
+          "ms": 2.3465999984182417
         },
         {
           "pattern": "duplicates",
           "n": 100000,
-          "ms": 22.50540000386536
+          "ms": 22.22250000340864
         }
       ],
-      "complexity_exponent": 1.1,
+      "complexity_exponents": {
+        "random": 1.12,
+        "nearly_sorted": 1.46,
+        "reverse": 1.46,
+        "duplicates": 1.02
+      },
+      "complexity_exponent": 1.12,
       "quality": {
         "status": "measured",
         "probes": [
@@ -551,12 +557,12 @@
         {
           "name": "deterministic",
           "value": true,
-          "source": "repeated CPU probe"
+          "source": "two actual outputs on identical input"
         },
         {
           "name": "stable",
           "value": false,
-          "source": "algo.py docstring"
+          "source": "keyed equal-key order probe"
         }
       ]
     },
@@ -566,65 +572,71 @@
         {
           "pattern": "random",
           "n": 1000,
-          "ms": 0.944600033108145
+          "ms": 0.9557000012136996
         },
         {
           "pattern": "random",
           "n": 10000,
-          "ms": 13.411700027063489
+          "ms": 13.093799992930144
         },
         {
           "pattern": "random",
           "n": 100000,
-          "ms": 179.0801000315696
+          "ms": 174.72130001988262
         },
         {
           "pattern": "nearly_sorted",
           "n": 1000,
-          "ms": 0.9615999879315495
+          "ms": 1.0285000316798687
         },
         {
           "pattern": "nearly_sorted",
           "n": 10000,
-          "ms": 14.015000022482127
+          "ms": 13.808900024741888
         },
         {
           "pattern": "nearly_sorted",
           "n": 100000,
-          "ms": 175.2066999906674
+          "ms": 173.01560001214966
         },
         {
           "pattern": "reverse",
           "n": 1000,
-          "ms": 0.851699966005981
+          "ms": 0.9024000028148293
         },
         {
           "pattern": "reverse",
           "n": 10000,
-          "ms": 13.125099998433143
+          "ms": 12.801400036551058
         },
         {
           "pattern": "reverse",
           "n": 100000,
-          "ms": 162.93729998869821
+          "ms": 163.682299957145
         },
         {
           "pattern": "duplicates",
           "n": 1000,
-          "ms": 0.9531999821774662
+          "ms": 0.9039000142365694
         },
         {
           "pattern": "duplicates",
           "n": 10000,
-          "ms": 13.112500018905848
+          "ms": 12.136700039263815
         },
         {
           "pattern": "duplicates",
           "n": 100000,
-          "ms": 159.06599996378645
+          "ms": 163.60259999055415
         }
       ],
-      "complexity_exponent": 1.14,
+      "complexity_exponents": {
+        "random": 1.13,
+        "nearly_sorted": 1.11,
+        "reverse": 1.13,
+        "duplicates": 1.13
+      },
+      "complexity_exponent": 1.13,
       "quality": {
         "status": "measured",
         "probes": [
@@ -642,12 +654,12 @@
         {
           "name": "deterministic",
           "value": true,
-          "source": "repeated CPU probe"
+          "source": "two actual outputs on identical input"
         },
         {
           "name": "stable",
           "value": false,
-          "source": "algo.py docstring"
+          "source": "keyed equal-key order probe"
         }
       ]
     },
@@ -657,65 +669,71 @@
         {
           "pattern": "random",
           "n": 1000,
-          "ms": 0.7597999647259712
+          "ms": 0.8885999559424818
         },
         {
           "pattern": "random",
           "n": 10000,
-          "ms": 10.134299984201789
+          "ms": 11.054299946408719
         },
         {
           "pattern": "random",
           "n": 100000,
-          "ms": 128.55859997216612
+          "ms": 129.79809998068959
         },
         {
           "pattern": "nearly_sorted",
           "n": 1000,
-          "ms": 0.6904000183567405
+          "ms": 0.6667000125162303
         },
         {
           "pattern": "nearly_sorted",
           "n": 10000,
-          "ms": 8.462499943561852
+          "ms": 8.688000030815601
         },
         {
           "pattern": "nearly_sorted",
           "n": 100000,
-          "ms": 111.26309999963269
+          "ms": 110.2818000363186
         },
         {
           "pattern": "reverse",
           "n": 1000,
-          "ms": 0.7211999618448317
+          "ms": 0.6935000419616699
         },
         {
           "pattern": "reverse",
           "n": 10000,
-          "ms": 8.680100028868765
+          "ms": 8.659500046633184
         },
         {
           "pattern": "reverse",
           "n": 100000,
-          "ms": 111.01779999444261
+          "ms": 122.87959997775033
         },
         {
           "pattern": "duplicates",
           "n": 1000,
-          "ms": 0.7776999846100807
+          "ms": 0.9037000127136707
         },
         {
           "pattern": "duplicates",
           "n": 10000,
-          "ms": 10.08840004215017
+          "ms": 11.111400031950325
         },
         {
           "pattern": "duplicates",
           "n": 100000,
-          "ms": 119.44320000475273
+          "ms": 128.95569996908307
         }
       ],
-      "complexity_exponent": 1.11,
+      "complexity_exponents": {
+        "random": 1.08,
+        "nearly_sorted": 1.11,
+        "reverse": 1.12,
+        "duplicates": 1.08
+      },
+      "complexity_exponent": 1.08,
       "quality": {
         "status": "measured",
         "probes": [
@@ -733,12 +751,12 @@
         {
           "name": "deterministic",
           "value": true,
-          "source": "repeated CPU probe"
+          "source": "two actual outputs on identical input"
         },
         {
           "name": "stable",
           "value": true,
-          "source": "algo.py docstring"
+          "source": "keyed equal-key order probe"
         }
       ]
     }

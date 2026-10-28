@@ -18,7 +18,7 @@
             {
               "name": "deterministic",
               "value": true,
-              "source": "repeated CPU probe"
+              "source": "two actual outputs on identical input"
             }
           ],
           "property_sources": [
@@ -27,7 +27,7 @@
               "value": "docs/ops/families_timing.json"
             }
           ],
-          "complexity_exponent": 0.43,
+          "complexity_exponent": 1.01,
           "quality": {
             "status": "measured",
             "probes": [
@@ -55,7 +55,7 @@
             {
               "name": "deterministic",
               "value": true,
-              "source": "repeated CPU probe"
+              "source": "two actual outputs on identical input"
             }
           ],
           "property_sources": [
@@ -64,7 +64,7 @@
               "value": "docs/ops/families_timing.json"
             }
           ],
-          "complexity_exponent": 0.99,
+          "complexity_exponent": 1.0,
           "quality": {
             "status": "measured",
             "probes": [
@@ -92,7 +92,7 @@
             {
               "name": "deterministic",
               "value": true,
-              "source": "repeated CPU probe"
+              "source": "two actual outputs on identical input"
             }
           ],
           "property_sources": [
@@ -101,7 +101,7 @@
               "value": "docs/ops/families_timing.json"
             }
           ],
-          "complexity_exponent": 0.46,
+          "complexity_exponent": 1.43,
           "quality": {
             "status": "measured",
             "probes": [
@@ -139,7 +139,7 @@
             {
               "name": "deterministic",
               "value": true,
-              "source": "repeated CPU probe"
+              "source": "two actual outputs on identical input"
             }
           ],
           "property_sources": [
@@ -148,19 +148,19 @@
               "value": "docs/ops/families_timing.json"
             }
           ],
-          "complexity_exponent": 0.72,
+          "complexity_exponent": 1.23,
           "quality": {
             "status": "measured",
             "probes": [
               {
                 "probe": 1,
-                "metric": "iou",
-                "value": 0.13829279923700524
+                "metric": "boundary_f1",
+                "value": 0.6189376443418014
               },
               {
                 "probe": 2,
-                "metric": "iou",
-                "value": 0.13590844062947066
+                "metric": "boundary_f1",
+                "value": 0.6225319396051103
               }
             ]
           }
@@ -176,7 +176,7 @@
             {
               "name": "deterministic",
               "value": true,
-              "source": "repeated CPU probe"
+              "source": "two actual outputs on identical input"
             }
           ],
           "property_sources": [
@@ -185,19 +185,19 @@
               "value": "docs/ops/families_timing.json"
             }
           ],
-          "complexity_exponent": 0.19,
+          "complexity_exponent": 0.61,
           "quality": {
             "status": "measured",
             "probes": [
               {
                 "probe": 1,
-                "metric": "iou",
-                "value": 0.12466042861454875
+                "metric": "boundary_f1",
+                "value": 0.0
               },
               {
                 "probe": 2,
-                "metric": "iou",
-                "value": 0.11769991015274034
+                "metric": "boundary_f1",
+                "value": 0.0
               }
             ]
           }
@@ -223,7 +223,7 @@
             {
               "name": "deterministic",
               "value": true,
-              "source": "repeated CPU probe"
+              "source": "two actual outputs on identical input"
             }
           ],
           "property_sources": [
@@ -232,7 +232,7 @@
               "value": "docs/ops/families_timing.json"
             }
           ],
-          "complexity_exponent": 0.33,
+          "complexity_exponent": 1.38,
           "quality": {
             "status": "measured",
             "probes": [
@@ -260,7 +260,7 @@
             {
               "name": "deterministic",
               "value": true,
-              "source": "repeated CPU probe"
+              "source": "two actual outputs on identical input"
             }
           ],
           "property_sources": [
@@ -269,7 +269,7 @@
               "value": "docs/ops/families_timing.json"
             }
           ],
-          "complexity_exponent": 0.28,
+          "complexity_exponent": 1.07,
           "quality": {
             "status": "measured",
             "probes": [
@@ -297,7 +297,7 @@
             {
               "name": "deterministic",
               "value": true,
-              "source": "repeated CPU probe"
+              "source": "two actual outputs on identical input"
             }
           ],
           "property_sources": [
@@ -306,7 +306,7 @@
               "value": "docs/ops/families_timing.json"
             }
           ],
-          "complexity_exponent": 0.42,
+          "complexity_exponent": 1.4,
           "quality": {
             "status": "measured",
             "probes": [
@@ -344,7 +344,7 @@
             {
               "name": "deterministic",
               "value": true,
-              "source": "repeated CPU probe"
+              "source": "two actual outputs on identical input"
             }
           ],
           "property_sources": [
@@ -353,7 +353,7 @@
               "value": "docs/ops/families_timing.json"
             }
           ],
-          "complexity_exponent": 0.61,
+          "complexity_exponent": 1.1,
           "quality": {
             "status": "measured",
             "probes": [
@@ -381,7 +381,7 @@
             {
               "name": "deterministic",
               "value": true,
-              "source": "repeated CPU probe"
+              "source": "two actual outputs on identical input"
             }
           ],
           "property_sources": [
@@ -390,7 +390,7 @@
               "value": "docs/ops/families_timing.json"
             }
           ],
-          "complexity_exponent": 0.63,
+          "complexity_exponent": 1.1,
           "quality": {
             "status": "measured",
             "probes": [
@@ -447,7 +447,7 @@
             {
               "name": "deterministic",
               "value": true,
-              "source": "repeated CPU probe"
+              "source": "two actual outputs on identical input"
             }
           ],
           "property_sources": [
@@ -542,12 +542,12 @@
             {
               "name": "deterministic",
               "value": true,
-              "source": "repeated CPU probe"
+              "source": "two actual outputs on identical input"
             },
             {
               "name": "stable",
               "value": false,
-              "source": "algo.py docstring"
+              "source": "keyed equal-key order probe"
             }
           ],
           "property_sources": [
@@ -556,7 +556,7 @@
               "value": "docs/ops/families_timing.json"
             }
           ],
-          "complexity_exponent": 1.1,
+          "complexity_exponent": 1.12,
           "quality": {
             "status": "measured",
             "probes": [
@@ -582,12 +582,12 @@
             {
               "name": "deterministic",
               "value": true,
-              "source": "repeated CPU probe"
+              "source": "two actual outputs on identical input"
             },
             {
               "name": "stable",
               "value": false,
-              "source": "algo.py docstring"
+              "source": "keyed equal-key order probe"
             }
           ],
           "property_sources": [
@@ -596,7 +596,7 @@
               "value": "docs/ops/families_timing.json"
             }
           ],
-          "complexity_exponent": 1.14,
+          "complexity_exponent": 1.13,
           "quality": {
             "status": "measured",
             "probes": [
@@ -622,12 +622,12 @@
             {
               "name": "deterministic",
               "value": true,
-              "source": "repeated CPU probe"
+              "source": "two actual outputs on identical input"
             },
             {
               "name": "stable",
               "value": true,
-              "source": "algo.py docstring"
+              "source": "keyed equal-key order probe"
             }
           ],
           "property_sources": [
@@ -636,7 +636,7 @@
               "value": "docs/ops/families_timing.json"
             }
           ],
-          "complexity_exponent": 1.11,
+          "complexity_exponent": 1.08,
           "quality": {
             "status": "measured",
             "probes": [

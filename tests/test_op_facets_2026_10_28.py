@@ -182,7 +182,19 @@ def test_family_negative_examples_and_cpu_measurements():
     assert "holdout_threshold" not in members["thresholding"]
     timing=json.loads((ROOT/"docs/ops/families_timing.json").read_text(encoding="utf-8"))
     measured=[r for r in timing["measurements"].values() if r["status"]=="measured"]
-    assert measured and all(r.get("complexity_exponent") is not None for r in measured)
+    assert measured
+    missing_exponents=[r for r in measured if r.get("complexity_exponent") is None]
+    assert missing_exponents == []
+    quick=timing["measurements"]["quicksort"]
+    assert set(quick["complexity_exponents"]) == {"random","nearly_sorted","reverse","duplicates"}
+    assert 1.4 <= quick["complexity_exponents"]["nearly_sorted"] < 1.6
+    stability={n:next(p["value"] for p in timing["measurements"][n]["properties"] if p["name"]=="stable")
+               for n in ("quicksort","heapsort","mergesort")}
+    assert stability == {"quicksort":False,"heapsort":False,"mergesort":True}
+    g=load("OP_GRAPH.json")
+    heuristic=[e for e in g["edges"] if e.get("family_candidate") and not e.get("family")]
+    assert heuristic
+    assert {e["family_candidate_source"] for e in heuristic} == {"heuristic_regex"}
 
 def test_knob_schema_context_edges_and_system_params():
     assert opsearch.param_space("lowpass",{"width":512})["parameters"]["a"]["search"]

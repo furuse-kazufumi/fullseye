@@ -22,9 +22,11 @@ def image_measure(name, family):
     fn=ops.RT.get(name)
     if fn is None: return {"status":"unavailable","reason":"not in executable 2-D registry"}
     times=[]; peak=0
-    for n in (64,128,256):
+    for n in (128,256,512):
         x=np.random.default_rng(10+n).random((n,n))
-        tracemalloc.start(); ms=timed(lambda: fn(x,.5,.5)); _,pk=tracemalloc.get_traced_memory(); tracemalloc.stop()
+        fn(x,.5,.5)  # warm-up is outside timing
+        ms=timed(lambda: fn(x,.5,.5))
+        tracemalloc.start(); fn(x,.5,.5); _,pk=tracemalloc.get_traced_memory(); tracemalloc.stop()
         times.append({"n":n,"ms":ms}); peak=max(peak,pk)
     exponent=float(np.polyfit(np.log([x['n']**2 for x in times]),np.log([max(x['ms'],1e-6) for x in times]),1)[0])
     quality=[]
@@ -36,11 +38,17 @@ def image_measure(name, family):
         if out.shape != truth.shape: quality.append({"probe":seed,"status":"shape_mismatch"}); continue
         if family=='denoise':
             mse=float(np.mean((out-truth)**2)); quality.append({"probe":seed,"metric":"psnr","value":-10*math.log10(max(mse,1e-15))})
+        elif family=='edge_detection':
+            pred=out>np.quantile(out,.8); gy,gx=np.gradient(truth); gt=np.hypot(gx,gy)>0
+            tp=np.count_nonzero(pred&gt); precision=tp/max(np.count_nonzero(pred),1); recall=tp/max(np.count_nonzero(gt),1)
+            quality.append({"probe":seed,"metric":"boundary_f1","value":float(2*precision*recall/max(precision+recall,1e-15))})
         else:
             pred=out>.5; gt=truth>.5; inter=int(np.count_nonzero(pred&gt)); union=int(np.count_nonzero(pred|gt))
             quality.append({"probe":seed,"metric":"iou","value":inter/max(union,1)})
+    probe=np.random.default_rng(999).random((96,96)); first=np.asarray(fn(probe,.5,.5)); second=np.asarray(fn(probe,.5,.5))
+    deterministic=bool(np.array_equal(first,second,equal_nan=True))
     return {"status":"measured","sizes":times,"peak_bytes":peak,"complexity_exponent":round(exponent,2),
-            "quality":{"status":"measured","probes":quality},"properties":[{"name":"deterministic","value":True,"source":"repeated CPU probe"}]}
+            "quality":{"status":"measured","probes":quality},"properties":[{"name":"deterministic","value":deterministic,"source":"two actual outputs on identical input"}]}
 
 def sort_measure(name):
     fn=algo_fn(name); rows=[]
@@ -49,14 +57,25 @@ def sort_measure(name):
         rng=np.random.default_rng(n); x=rng.integers(0,32 if pattern=='duplicates' else n,size=n).tolist()
         if pattern=='nearly_sorted': x=sorted(x); x[n//2:n//2+2]=reversed(x[n//2:n//2+2])
         elif pattern=='reverse': x=sorted(x,reverse=True)
-        ms=timed(lambda: fn(x)); rows.append({"pattern":pattern,"n":n,"ms":ms})
-    base=[r for r in rows if r['pattern']=='random']
-    exponent=float(np.polyfit(np.log([r['n'] for r in base]),np.log([max(r['ms'],1e-6) for r in base]),1)[0])
-    return {"status":"measured","cases":rows,"complexity_exponent":round(exponent,2),
+        fn(x); ms=timed(lambda: fn(x)); rows.append({"pattern":pattern,"n":n,"ms":ms})
+    exponents={}
+    for pattern in ('random','nearly_sorted','reverse','duplicates'):
+        base=[r for r in rows if r['pattern']==pattern]
+        exponents[pattern]=round(float(np.polyfit(np.log([r['n'] for r in base]),np.log([max(r['ms'],1e-6) for r in base]),1)[0]),2)
+    class Keyed:
+        def __init__(self,key,order): self.key,self.order=key,order
+        def __lt__(self,other): return self.key<other.key
+        def __le__(self,other): return self.key<=other.key
+        def __eq__(self,other): return isinstance(other,Keyed) and self.key==other.key
+    keyed=[Keyed(k,i) for i,k in enumerate([1,0,1,0,1,0])]
+    stable_out=fn(keyed); stable=all([x.order for x in stable_out if x.key==k]==sorted(x.order for x in keyed if x.key==k) for k in (0,1))
+    sample=[5,1,5,2,0]; deterministic=fn(sample)==fn(sample)
+    return {"status":"measured","cases":rows,"complexity_exponents":exponents,
+            "complexity_exponent":exponents['random'],
             "quality":{"status":"measured","probes":[{"pattern":"duplicates","correct":fn([2,1,2,0])==[0,1,2,2]},
                                                           {"pattern":"reverse","correct":fn([3,2,1])==[1,2,3]}]},
-            "properties":[{"name":"deterministic","value":True,"source":"repeated CPU probe"},
-                          {"name":"stable","value":name=='mergesort',"source":"algo.py docstring"}]}
+            "properties":[{"name":"deterministic","value":deterministic,"source":"two actual outputs on identical input"},
+                          {"name":"stable","value":stable,"source":"keyed equal-key order probe"}]}
 
 def main():
     led=json.loads(LEDGER.read_text(encoding='utf8')); measurements={}
