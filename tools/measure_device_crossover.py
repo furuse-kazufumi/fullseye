@@ -36,17 +36,38 @@ def main(argv=None) -> int:
     ok, why = gpu_idle()
     if not ok:
         print("not measured (fail-closed): " + why)
-        return 0
+        return 2
     import torch
     if not torch.cuda.is_available():
         print("not measured (fail-closed): CUDA unavailable")
-        return 0
+        return 2
+    import accel
+    representatives = [n for n in ("gauss_filter", "median_image", "sobel_amp") if n in accel.ACCEL]
+    try:
+        import accel_vol
+        volume_rep = next(iter(accel_vol.VOL_ACCEL))
+    except Exception:
+        volume_rep = None
     rows=[]
-    for n in map(int, ns.sizes.split(",")):
+    def median_ms(fn):
+        fn()                         # warm-up
+        vals=[]
+        for _ in range(5):
+            t=time.perf_counter(); fn(); torch.cuda.synchronize(); vals.append((time.perf_counter()-t)*1000)
+        return float(np.median(vals))
+    for op in representatives:
+      for n in map(int, ns.sizes.split(",")):
         for b in map(int, ns.batches.split(",")):
-            x=np.random.default_rng(0).random((b,n,n), dtype=np.float32)
-            t=time.perf_counter(); y=torch.from_numpy(x).to("cuda"); y=(y*1.01).clamp(0,1); y.cpu().numpy(); torch.cuda.synchronize()
-            rows.append({"size":n,"batch":b,"cuda_transfer_included_ms":(time.perf_counter()-t)*1000})
+            imgs=list(np.random.default_rng(0).random((b,n,n), dtype=np.float32))
+            cpu=median_ms(lambda: accel.run_batch(op,imgs,.5,.5,"cpu"))
+            transfer=median_ms(lambda: accel.run_batch(op,imgs,.5,.5,"cuda"))
+            # One resident tensor section measures the amortized no-host-transfer kernel path.
+            fn=accel.ACCEL[op][0]; tx=torch.as_tensor(np.stack(imgs),device="cuda")[:,None]
+            resident=median_ms(lambda: fn(tx,.5,.5))
+            rows.append({"op":op,"structure":"representative 2-D accel","size":n,"batch":b,
+                         "cpu_ms":cpu,"cuda_transfer_included_ms":transfer,"cuda_resident_ms":resident})
+    if volume_rep:
+        rows.append({"op":volume_rep,"structure":"volume representative","status":"scripted; run_batch_vol uses same warmup/median policy"})
     obj={"environment":{"platform":platform.platform(),"python":platform.python_version(),"numpy":np.__version__,
                         "torch":torch.__version__,"device":torch.cuda.get_device_name(0)},"measurements":rows}
     Path(ns.output).write_text(json.dumps(obj,indent=2)+"\n",encoding="utf-8")
