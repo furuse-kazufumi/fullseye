@@ -178,6 +178,25 @@ def test_unknown_op_in_apply_names_nearest_registry_ops(cat, store):
     assert "registry 層に無い" in str(ei.value) and "gaussian" in str(ei.value)
 
 
+@pytest.mark.parametrize("op", [
+    "edges_sub_pix", "lines_facet", "lines_gauss", "sk_find_contours",
+    "sp_plateaus", "threshold_sub_pix", "zero_crossing_sub_pix",
+])
+def test_pipeline_value_outputs_are_json_serializable_in_linear_and_dag_forms(cat, store, op):
+    h = call_tool("fullseye_load_image", {"path": _sample("gradient"), "vision": "none"}, cat, store)["structuredContent"]["handle"]
+    requests = [
+        {"handle": h, "stages": [{"op": op}], "vision": "none"},
+        {"handle": h, "bindings": {"have:image": h}, "outputs": ["stage:1"],
+         "stages": [{"op": op, "inputs": ["have:image"]}], "vision": "none"},
+    ]
+    for request in requests:
+        result = call_tool("fullseye_pipeline", request, cat, store)
+        assert result.get("isError") is False, (op, result)
+        json.dumps(result, ensure_ascii=False, allow_nan=False)
+        record = result["structuredContent"]["stages"][0]
+        assert record["value_handle"] and record["handle"] is None
+
+
 @pytest.mark.parametrize("bad, why", [
     ({"a": 1.5}, "以下"), ({"b": -0.1}, "以上"), ({"a": "x"}, "数"),
     ({"a": True}, "数"), ({"vision": "always"}, "どれか"), ({"allow_degraded": "yes"}, "真偽値"),

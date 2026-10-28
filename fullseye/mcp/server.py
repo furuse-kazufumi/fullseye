@@ -948,6 +948,64 @@ def _typed_json_addon(arr, sort, max_bytes):
     return env, md
 
 
+def _pipeline_json_value(value, store: HandleStore, *, sort: str, provenance: list,
+                         max_bytes: int = 2048):
+    """Return a bounded, genuinely JSON-serializable pipeline value.
+
+    Registry value outputs sometimes contain ndarrays inside dictionaries.  ``repr``
+    is useful for diagnostics but must never be used as proof that the original tree
+    can be put in ``structuredContent``.  Small arrays are described inline; larger
+    arrays get their own handle.  Unsupported/cyclic/oversized trees are omitted and
+    remain available through the value handle created by the caller.
+    """
+    active: set[int] = set()
+
+    def convert(item):
+        if item is None or isinstance(item, (str, bool, int)):
+            return item
+        if isinstance(item, float):
+            return item if math.isfinite(item) else None
+        if isinstance(item, np.generic):
+            return convert(item.item())
+        if isinstance(item, np.ndarray):
+            desc = {"shape": list(item.shape), "dtype": str(item.dtype)}
+            try:
+                listed = item.tolist()
+                candidate = dict(desc, value=listed)
+                if len(json.dumps(candidate, ensure_ascii=False).encode("utf-8")) <= max_bytes:
+                    return candidate
+            except (TypeError, ValueError, OverflowError):
+                pass
+            meta = store.put(item, sort=sort, provenance=provenance)
+            return dict(desc, handle=meta["handle"])
+        if isinstance(item, dict):
+            oid = id(item)
+            if oid in active or not all(isinstance(k, str) for k in item):
+                raise ValueError("value is not a JSON tree")
+            active.add(oid)
+            try:
+                return {k: convert(v) for k, v in item.items()}
+            finally:
+                active.remove(oid)
+        if isinstance(item, (list, tuple)):
+            oid = id(item)
+            if oid in active:
+                raise ValueError("value is cyclic")
+            active.add(oid)
+            try:
+                return [convert(v) for v in item]
+            finally:
+                active.remove(oid)
+        raise ValueError("unsupported value type %s" % type(item).__name__)
+
+    try:
+        normalized = convert(value)
+        encoded = json.dumps(normalized, ensure_ascii=False, allow_nan=False).encode("utf-8")
+    except (TypeError, ValueError, OverflowError, HandleError):
+        return None
+    return normalized if len(encoded) <= max_bytes else None
+
+
 def _apply(a: dict, cat: Catalog, store: HandleStore, *,
            max_structured_bytes: int = MAX_STRUCTURED_BYTES) -> dict:
     op = _resolve_op(a["op"], cat)
@@ -1070,10 +1128,11 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
             for link in links: link["description"]="段 %d(%s): "% (i,edge["op"])+link["description"]
         if not isinstance(out,np.ndarray):
             rec["value_handle"],rec["handle"]=handle,None
-            try:
-                encoded=json.dumps(out,ensure_ascii=False,default=repr)
-                if len(encoded)<=2048: rec["value"]=out
-            except (TypeError,ValueError): pass
+            normalized=_pipeline_json_value(
+                out,store,sort=out_sort,
+                provenance=[{"pipeline_value":edge["op"],"stage":i}],max_bytes=2048)
+            if normalized is not None:
+                rec["value"]=normalized
         records.append(rec)
     outputs=a.get("outputs") or (["stage:%d"%len(a["stages"])] if a["stages"] else [])
     output_rows=[{"ref":ref,"handle":values[ref][0]["handle"],"sort":values[ref][0]["sort"]}
@@ -1086,11 +1145,15 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
         result.update({"handle":output_rows[0]["handle"],"out_sort":output_rows[0]["sort"],
                        "output_ref":output_rows[0]["ref"]})
     if not explicit and records:
-        last_value=next((values[r["ref"]][1] for r in reversed(records)
-                         if r.get("status")=="ok" and not isinstance(values[r["ref"]][1],np.ndarray)),None)
+        last_value_record=next((r for r in reversed(records)
+                                if r.get("status")=="ok" and
+                                not isinstance(values[r["ref"]][1],np.ndarray)),None)
+        last_value=values[last_value_record["ref"]][1] if last_value_record is not None else None
         last_array=next((values[r["ref"]][0]["handle"] for r in reversed(records)
                          if r.get("status")=="ok" and isinstance(values[r["ref"]][1],np.ndarray)),None)
-        result["value"],result["handle"]=last_value,last_array
+        result["handle"]=last_array
+        if last_value_record is not None and "value" in last_value_record:
+            result["value"]=last_value_record["value"]
         addon=_typed_json_addon(last_value,records[-1].get("out_sort"),max_structured_bytes) if last_value is not None else None
         if addon is not None: result["json"]=addon[0]
     if failed:
