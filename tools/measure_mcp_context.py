@@ -25,13 +25,16 @@ def build():
  for query,have,want in TASKS:
   found=search_ops(query,3)
   planned=plan(have,want,goal=query,constraints={"k":3,"max_depth":4})
+  # Wall time is diagnostic, not model context.  Counting it makes this generated
+  # benchmark drift whenever the decimal representation of elapsed_ms changes.
+  planned.get("search",{}).pop("elapsed_ms",None)
   names=planned.get("plans",[{}])[0].get("ops",[])[:5]
   cards=op_cards(names,700) if names else {"cards":[]}
   response_tokens=tokens(found)+tokens(planned)+tokens(cards)
   rows.append({"task":query,"tool_schema_tokens":schema["estimated_tokens"],
                "response_tokens":response_tokens,"total_tokens":schema["estimated_tokens"]+response_tokens,
                "planned":bool(planned.get("ok")),"ops":names})
- return {"method":"minimal tools schema + find_ops(limit=3) + plan(k=3) + cards; UTF-8 bytes/4",
+ return {"method":"minimal tools schema + find_ops(limit=3) + plan(k=3) + cards; UTF-8 bytes/4; volatile timing excluded",
          "scope":"Counts discovery through planning/cards only; execution and answer-correctness evaluation are excluded.",
          "tool_profiles":{"full_tokens":full_schema["estimated_tokens"],
                           "minimal_tokens":schema["estimated_tokens"]},

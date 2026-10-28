@@ -1,5 +1,5 @@
 {
-  "method": "minimal tools schema + find_ops(limit=3) + plan(k=3) + cards; UTF-8 bytes/4",
+  "method": "minimal tools schema + find_ops(limit=3) + plan(k=3) + cards; UTF-8 bytes/4; volatile timing excluded",
   "scope": "Counts discovery through planning/cards only; execution and answer-correctness evaluation are excluded.",
   "tool_profiles": {
     "full_tokens": 3196,
@@ -10,8 +10,8 @@
     {
       "task": "surface dent from reflected fringes",
       "tool_schema_tokens": 1397,
-      "response_tokens": 929,
-      "total_tokens": 2326,
+      "response_tokens": 925,
+      "total_tokens": 2322,
       "planned": true,
       "ops": [
         "deflectometry_phase_to_slope"
@@ -20,8 +20,8 @@
     {
       "task": "find scratches using polarization",
       "tool_schema_tokens": 1397,
-      "response_tokens": 938,
-      "total_tokens": 2335,
+      "response_tokens": 933,
+      "total_tokens": 2330,
       "planned": true,
       "ops": [
         "polarization_dolp_map"
@@ -30,8 +30,8 @@
     {
       "task": "recover projected fringe height",
       "tool_schema_tokens": 1397,
-      "response_tokens": 1202,
-      "total_tokens": 2599,
+      "response_tokens": 1198,
+      "total_tokens": 2595,
       "planned": true,
       "ops": [
         "decode_fringe"
@@ -40,8 +40,8 @@
     {
       "task": "locate a part for handling",
       "tool_schema_tokens": 1397,
-      "response_tokens": 875,
-      "total_tokens": 2272,
+      "response_tokens": 871,
+      "total_tokens": 2268,
       "planned": true,
       "ops": [
         "shape_locate"
@@ -50,8 +50,8 @@
     {
       "task": "fast structured-light depth",
       "tool_schema_tokens": 1397,
-      "response_tokens": 1207,
-      "total_tokens": 2604,
+      "response_tokens": 1203,
+      "total_tokens": 2600,
       "planned": true,
       "ops": [
         "decode_fringe"
@@ -60,13 +60,13 @@
     {
       "task": "switch product and detect corners",
       "tool_schema_tokens": 1397,
-      "response_tokens": 998,
-      "total_tokens": 2395,
+      "response_tokens": 993,
+      "total_tokens": 2390,
       "planned": true,
       "ops": [
         "cv_good_features"
       ]
     }
   ],
-  "max_tokens": 2604
+  "max_tokens": 2600
 }
