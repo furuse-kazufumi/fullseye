@@ -757,7 +757,8 @@ def plan_chain(query: str, start_sort: str, goal_sort: str, k: int = 5, max_dept
     # Legacy retrieval surface historically covered the full knowledge ledger.
     # The new plan() API defaults to executable_only=True.
     r = plan(start_sort, goal_sort, constraints={"query": query, "k": k, "max_depth": max_depth,
-                                                 "executable_only": False})
+                                                 "executable_only": False,
+                                                 "timeout_ms": 60_000})
     if not r["ok"]:
         return {"query": query, "start_sort": _sort(start_sort), "goal_sort": _sort(goal_sort),
                 "found": False, "break_at": r.get("blocked_at", []), "reason": r["reason"]}

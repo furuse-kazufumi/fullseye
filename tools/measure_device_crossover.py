@@ -72,6 +72,7 @@ def main(argv=None) -> int:
                          "cpu_ms":cpu,"cuda_transfer_included_ms":transfer,"cuda_resident_ms":resident})
     if volume_rep:
         rows.append({"op":volume_rep,"structure":"volume representative","status":"scripted; run_batch_vol uses same warmup/median policy"})
+    rows=[row for row in rows if row.get("status","measured") == "measured"]
     obj={"environment":{"platform":platform.platform(),"python":platform.python_version(),"numpy":np.__version__,
                         "torch":torch.__version__,"device":torch.cuda.get_device_name(0)},"measurements":rows}
     Path(ns.output).write_text(json.dumps(obj,indent=2)+"\n",encoding="utf-8")

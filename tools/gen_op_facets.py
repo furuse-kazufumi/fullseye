@@ -522,6 +522,14 @@ def build() -> dict[str, object]:
     edge_map = {e["op"]: e for e in edges}
     timing_path = DOCS / "families_timing.json"
     timing = json.loads(timing_path.read_text(encoding="utf-8")) if timing_path.exists() else {"measurements":{}}
+    def _validate_rows(families, measurements):
+        if not families:
+            raise RuntimeError("family ledger is empty")
+        empty=[f["name"] for f in families if not f.get("members")]
+        missing=[m["op"] for f in families for m in f.get("members",[]) if m["op"] not in measurements]
+        if empty or missing:
+            raise RuntimeError("invalid family measurements: empty=%r missing=%r" % (empty,missing))
+    _validate_rows(ledger.get("families",[]),timing.get("measurements") or {})
     fam_out=[]
     for f in ledger["families"]:
         rows=[]
