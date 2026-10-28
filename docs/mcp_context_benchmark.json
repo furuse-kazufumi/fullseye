@@ -60,8 +60,8 @@
     {
       "task": "switch product and detect corners",
       "tool_schema_tokens": 1397,
-      "response_tokens": 997,
-      "total_tokens": 2394,
+      "response_tokens": 998,
+      "total_tokens": 2395,
       "planned": true,
       "ops": [
         "cv_good_features"

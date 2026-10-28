@@ -74,6 +74,17 @@ def test_nested_tool_schema_rejects_bad_values_before_handlers():
     assert rejected == [True]*len(cases)
 
 
+def test_deep_tool_arguments_are_invalid_params_not_internal_errors():
+    nested=1
+    for _ in range(990):
+        nested=[nested]
+    response=dispatch({"jsonrpc":"2.0","id":1,"method":"tools/call","params":{
+        "name":"fullseye_validate_pipeline","arguments":{"start_sort":"image","stages":[
+            {"op":"gaussian","params":{"nested":nested}}]}}},Catalog.load())
+    assert response["error"]["code"] == -32602, response
+    assert "maximum nesting depth" in response["error"]["message"]
+
+
 def test_handle_byte_lru_and_stack_pixel_limits(monkeypatch):
     import numpy as np
     from fullseye.mcp.handles import HandleError, HandleStore

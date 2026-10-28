@@ -415,14 +415,19 @@ class ArgError(ValueError):
     """入力スキーマ違反。JSON-RPC の -32602 に写す。"""
 
 
+MAX_SCHEMA_DEPTH = 64
+
+
 def _validate(schema: dict, args: Any) -> dict:
     """Recursively validate the JSON-schema subset used by MCP tools."""
-    def check(spec, value, path):
+    def check(spec, value, path, depth=0):
+        if depth > MAX_SCHEMA_DEPTH:
+            raise ArgError("%s exceeds maximum nesting depth %d" % (path, MAX_SCHEMA_DEPTH))
         if "oneOf" in spec:
             matches = 0
             for choice in spec["oneOf"]:
                 try:
-                    check(choice, value, path); matches += 1
+                    check(choice, value, path, depth); matches += 1
                 except ArgError:
                     pass
             if matches != 1:
@@ -451,19 +456,19 @@ def _validate(schema: dict, args: Any) -> dict:
                     raise ArgError("%s.%s は必須" % (path, name))
             for name, item in value.items():
                 child = props.get(name, additional if isinstance(additional, dict) else {})
-                check(child, item, "%s.%s" % (path, name))
+                check(child, item, "%s.%s" % (path, name), depth + 1)
         elif kind == "array":
             if len(value) < spec.get("minItems", 0):
                 raise ArgError("%s は%d 段以上" % (path,spec["minItems"]))
             if len(value) > spec.get("maxItems", 10**9):
                 raise ArgError("%s は%d以下" % (path,spec["maxItems"]))
             for i, item in enumerate(value):
-                check(spec.get("items", {}), item, "%s[%d]" % (path, i))
+                check(spec.get("items", {}), item, "%s[%d]" % (path, i), depth + 1)
         elif not kind:
             if isinstance(value, dict):
-                for name, item in value.items(): check({}, item, "%s.%s" % (path, name))
+                for name, item in value.items(): check({}, item, "%s.%s" % (path, name), depth + 1)
             elif isinstance(value, list):
-                for i, item in enumerate(value): check({}, item, "%s[%d]" % (path, i))
+                for i, item in enumerate(value): check({}, item, "%s[%d]" % (path, i), depth + 1)
         if "enum" in spec and value not in spec["enum"]: raise ArgError("%s は列挙値のどれか" % path)
         if "minimum" in spec and value < spec["minimum"]: raise ArgError("%s は最小値以上" % path)
         if "maximum" in spec and value > spec["maximum"]: raise ArgError("%s は最大値以下" % path)
