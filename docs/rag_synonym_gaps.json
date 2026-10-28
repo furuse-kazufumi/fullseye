@@ -5,7 +5,7 @@
   "overall": {
     "search_recall_at_10": 0.625,
     "untyped_recall_at_10": 0.625,
-    "plan_recall_at_10": 0.8,
+    "plan_recall_at_10": 0.775,
     "executable_plan_recall_at_10": 0.6
   },
   "categories": {
@@ -30,7 +30,7 @@
     "positioning": {
       "n_queries": 8,
       "search_recall_at_10": 0.625,
-      "plan_recall_at_10": 0.875,
+      "plan_recall_at_10": 0.75,
       "executable_plan_recall_at_10": 0.875
     },
     "specular_transparent": {
@@ -317,12 +317,14 @@
       "query": "Werkstück mit einem Formmodell lokalisieren",
       "search_recall_at_10": 0.0,
       "untyped_recall_at_10": 0.0,
-      "plan_recall_at_10": 1.0,
+      "plan_recall_at_10": 0.0,
       "executable_plan_recall_at_10": 1.0,
       "missed_by_search": [
         "shape_locate"
       ],
-      "missed_by_plan": []
+      "missed_by_plan": [
+        "shape_locate"
+      ]
     },
     {
       "id": "po08",

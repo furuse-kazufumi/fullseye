@@ -369,17 +369,20 @@ def param_space(op: str, input_context: dict | None = None) -> dict:
                 reasons.append("docstring physical values fitted to image side %d" % side)
                 if not allowed:
                     hi=lo
+                elif len(allowed)<len(physical):
+                    hi=len(allowed)/len(physical)
             if family == "thresholding" and value_range and len(value_range) == 2:
                 reasons.append("threshold constrained to input value range %s" % list(value_range))
             if family == "fringe_phase" and bundle_n == 1:
                 hi = 0.0; reasons.append("N=1 cannot vary a phase-shift bundle parameter")
             rec.update({"search": hi > lo, "min": lo, "max": hi,
                         "reason": "; ".join(reasons), "rule_source": "family context rules 2026-10-28"})
-            if rec.get("discrete"):
-                values=sorted(set([lo] + [x for x in rec.pop("discrete") if lo <= x <= hi] + [hi]))
-                if physical and rec.get("allowed_physical_values") is not None:
-                    values=values[:len(rec["allowed_physical_values"])]
-                rec["enum"] = values
+            if physical:
+                allowed=rec.get("allowed_physical_values",physical)
+                rec["enum"]=[(i+.5)/len(physical) for i in range(len(allowed))]
+                rec.pop("discrete",None)
+            elif rec.get("discrete"):
+                rec["enum"]=sorted(set([lo]+[x for x in rec.pop("discrete") if lo<=x<=hi]+[hi]))
         params[name] = rec
     return {"op": op, "input_context": input_context, "parameters": params,
             "source_graph": PKG_GRAPH}

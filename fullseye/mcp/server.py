@@ -42,9 +42,7 @@ SERVER_NAME = "fullseye"
 MAX_STRUCTURED_BYTES = int(get_system("mcp_response_budget"))
 
 def _execution_policy() -> dict:
-    return {"random_seed":get_system("random_seed"), "tile_size":get_system("tile_size"),
-            "border_policy":get_system("border_policy"), "numeric_floor":get_system("numeric_floor"),
-            "iteration_limit":get_system("iteration_limit")}
+    return {"status":"declared_not_applied"}
 #: 検索 1 回で返す上限。文脈経済のため(MCP-Universe: 歩数とともに入力が急増)。
 MAX_SEARCH_LIMIT = 100
 VISION = ("auto", "none", "thumb")
@@ -1071,6 +1069,10 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
         for pname,pvalue in list(params.items()):
             if isinstance(pvalue,dict) and "ref" in pvalue:
                 params[pname]=values[pvalue["ref"]][1]
+            elif isinstance(pvalue,dict) and "profile" in pvalue:
+                from fssystem import resolve_profile
+                try: params[pname]=resolve_profile(pvalue["profile"])
+                except ValueError as exc: raise ArgError(str(exc)) from exc
         try:
             executor=edge["executor"]
             if executor["kind"]=="identity":

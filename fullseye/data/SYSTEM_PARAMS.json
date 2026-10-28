@@ -9,11 +9,11 @@
         "nearest",
         "constant"
       ],
-      "meaning": "Neighborhood border policy.",
+      "meaning": "Reserved neighborhood border policy.",
       "hide_from_ai": true,
-      "applied_by": [
-        "fullseye/mcp/server.py"
-      ]
+      "applied_by": [],
+      "affects_numbers": true,
+      "status": "declared_not_applied"
     },
     "extra_checks": {
       "default": "off",
@@ -28,7 +28,9 @@
         "colortransport.py",
         "imgmetrics.py",
         "reprconv.py"
-      ]
+      ],
+      "affects_numbers": false,
+      "status": "applied"
     },
     "gpu_idle_policy": {
       "default": "strict",
@@ -40,7 +42,9 @@
       "hide_from_ai": true,
       "applied_by": [
         "tools/measure_device_crossover.py"
-      ]
+      ],
+      "affects_numbers": false,
+      "status": "applied"
     },
     "iteration_limit": {
       "default": 100,
@@ -49,11 +53,11 @@
         100,
         500
       ],
-      "meaning": "Iterative solver cap.",
+      "meaning": "Reserved iterative solver cap.",
       "hide_from_ai": true,
-      "applied_by": [
-        "fullseye/mcp/server.py"
-      ]
+      "applied_by": [],
+      "affects_numbers": false,
+      "status": "declared_not_applied"
     },
     "mcp_body_mode": {
       "default": "compact",
@@ -65,7 +69,9 @@
       "hide_from_ai": true,
       "applied_by": [
         "fullseye/mcp/server.py"
-      ]
+      ],
+      "affects_numbers": false,
+      "status": "applied"
     },
     "mcp_response_budget": {
       "default": 512000,
@@ -78,7 +84,9 @@
       "hide_from_ai": true,
       "applied_by": [
         "fullseye/mcp/server.py"
-      ]
+      ],
+      "affects_numbers": false,
+      "status": "applied"
     },
     "metric_contract": {
       "default": "strict",
@@ -88,7 +96,9 @@
       ],
       "meaning": "測定 op を人が呼んでいるのか(strict)、自動で回しているのか(tolerant)。**op 自身はこの値を読まない** —— 読むと隠れた状態で返り値の型が変わり、この repo がいちばん嫌う『例外でなく、もっともらしく間違う』になる。★予約のみ(applied_by=None): 現状 metriccontract の寛容な入口(attempt/rank_attempts)はこの値を読まず、明示的に呼び分ける。設定は system_snapshot() で報告に写るだけで、数値も経路も変えない。",
       "hide_from_ai": true,
-      "applied_by": []
+      "applied_by": [],
+      "affects_numbers": false,
+      "status": "declared_not_applied"
     },
     "numeric_floor": {
       "default": 1e-12,
@@ -97,11 +107,11 @@
         1e-12,
         1e-09
       ],
-      "meaning": "Numerical denominator floor.",
+      "meaning": "Reserved numerical denominator floor.",
       "hide_from_ai": true,
-      "applied_by": [
-        "fullseye/mcp/server.py"
-      ]
+      "applied_by": [],
+      "affects_numbers": true,
+      "status": "declared_not_applied"
     },
     "pipeline_max_stages": {
       "default": 64,
@@ -114,7 +124,9 @@
       "hide_from_ai": true,
       "applied_by": [
         "fullseye/mcp/server.py"
-      ]
+      ],
+      "affects_numbers": false,
+      "status": "applied"
     },
     "plan_k": {
       "default": 5,
@@ -128,7 +140,9 @@
       "hide_from_ai": true,
       "applied_by": [
         "fullseye/opsearch.py"
-      ]
+      ],
+      "affects_numbers": false,
+      "status": "applied"
     },
     "plan_max_depth": {
       "default": 4,
@@ -142,7 +156,9 @@
       "hide_from_ai": true,
       "applied_by": [
         "fullseye/opsearch.py"
-      ]
+      ],
+      "affects_numbers": false,
+      "status": "applied"
     },
     "plan_max_expansions": {
       "default": 50000,
@@ -156,7 +172,9 @@
       "hide_from_ai": true,
       "applied_by": [
         "fullseye/opsearch.py"
-      ]
+      ],
+      "affects_numbers": false,
+      "status": "applied"
     },
     "plan_timeout_ms": {
       "default": 900,
@@ -170,7 +188,9 @@
       "hide_from_ai": true,
       "applied_by": [
         "fullseye/opsearch.py"
-      ]
+      ],
+      "affects_numbers": false,
+      "status": "applied"
     },
     "random_seed": {
       "default": 0,
@@ -179,11 +199,11 @@
         1,
         42
       ],
-      "meaning": "Default deterministic seed.",
+      "meaning": "Reserved default seed; stochastic ops receive profile seeds explicitly.",
       "hide_from_ai": true,
-      "applied_by": [
-        "fullseye/mcp/server.py"
-      ]
+      "applied_by": [],
+      "affects_numbers": true,
+      "status": "declared_not_applied"
     },
     "tile_size": {
       "default": 512,
@@ -192,11 +212,11 @@
         512,
         1024
       ],
-      "meaning": "Large-image tile edge.",
+      "meaning": "Reserved large-image tile edge.",
       "hide_from_ai": true,
-      "applied_by": [
-        "fullseye/mcp/server.py"
-      ]
+      "applied_by": [],
+      "affects_numbers": false,
+      "status": "declared_not_applied"
     },
     "unmeasurable_policy": {
       "default": "worst",
@@ -206,7 +226,9 @@
       ],
       "meaning": "寛容な契約で『測れなかった』候補をどう扱うか。worst = 最悪値に倒して順位の最下位に置く / skip = 順位から外す。**strict の経路には無関係**。★予約のみ(applied_by=None): rank_attempts は常に worst(最下位)で、skip を設定しても順位は変わらない。",
       "hide_from_ai": true,
-      "applied_by": []
+      "applied_by": [],
+      "affects_numbers": false,
+      "status": "declared_not_applied"
     }
   }
 }

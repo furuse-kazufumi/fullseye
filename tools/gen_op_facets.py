@@ -242,7 +242,9 @@ def _system_params():
     import fssystem
     return {"schema":2,"generated_from":"fssystem.SYSTEM_PARAMS","params":{
         name:{"default":spec["default"],"values":list(spec["values"]),"meaning":spec["doc"],
-              "hide_from_ai":True,"applied_by":list(spec["applied_by"] or [])}
+              "hide_from_ai":True,"applied_by":list(spec["applied_by"] or []),
+              "affects_numbers":bool(spec["affects_numbers"]),
+              "status":"applied" if spec["applied_by"] else "declared_not_applied"}
         for name,spec in sorted(fssystem.SYSTEM_PARAMS.items())}}
 
 

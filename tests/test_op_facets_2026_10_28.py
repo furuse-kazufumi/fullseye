@@ -202,7 +202,7 @@ def test_knob_schema_context_edges_and_system_params():
     assert opsearch.param_space("lowpass",{"width":512})["parameters"]["a"]["search"]
     gaussian=opsearch.param_space("gaussian",{})["parameters"]["a"]
     assert gaussian["search"] and gaussian["physical_range"] == [0.3,3.0]
-    assert opsearch.param_space("local_std",{"width":512})["parameters"]["a"]["enum"] == [0.0,0.25,0.49,0.75,1.0]
+    assert opsearch.param_space("local_std",{"width":512})["parameters"]["a"]["enum"] == [.125,.375,.625,.875]
     one=opsearch.param_space("median",{"width":1,"height":1})
     assert one["parameters"]["a"]["max"] == 0.0
     assert one["parameters"]["a"]["allowed_physical_values"] == []
@@ -341,3 +341,34 @@ def test_round3_type_truth_uses_aliases_and_one_parameter_schema():
     shapes=load("OP_SHAPES.json")
     forms={r["input_form"]:r["input_sort"] for r in shapes["shapes"]}
     assert len({forms[x] for x in ("same_view_bundle","different_views","reference_target","time_series")}) == 3
+
+def test_physical_knob_midpoints_profiles_and_system_param_honesty():
+    import numpy as np
+    import ops
+    from fssystem import save_profile,resolve_profile
+    from fullseye.mcp.catalog import Catalog
+    from fullseye.mcp.handles import HandleStore
+    from fullseye.mcp.server import call_tool,ArgError
+    median=opsearch.param_space("median",{"width":32,"height":32})["parameters"]["a"]
+    assert [ops._k(a) for a in median["enum"]] == median["physical_values"]
+    small=opsearch.param_space("median",{"width":5,"height":5})["parameters"]["a"]
+    assert small["allowed_physical_values"] == [3,5] and small["max"] == .5
+    save_profile("product_a",{"decode_k":1.0}); save_profile("product_b",{"decode_k":2.0})
+    assert resolve_profile("product_b.decode_k") == 2.0
+    store=HandleStore(roots=[]); cat=Catalog.load()
+    frames=np.stack([.5+.4*np.cos(2*np.pi*i/4)*np.ones((8,8)) for i in range(4)])
+    handle=store.put(frames,sort="images",provenance=[])["handle"]
+    base={"handle":handle,"bindings":{"have:images":handle},"stages":[
+        {"op":"decode_fringe","inputs":["have:images"],"params":{"k":{"profile":"product_a.decode_k"}}}]}
+    assert call_tool("fullseye_pipeline",base,cat,store)["isError"] is False
+    base["stages"][0]["params"]["k"]={"profile":"product_b.decode_k"}
+    assert call_tool("fullseye_pipeline",base,cat,store)["isError"] is False
+    base["stages"][0]["params"]["k"]={"profile":"typo.decode_k"}
+    try: call_tool("fullseye_pipeline",base,cat,store)
+    except ArgError: rejected=True
+    else: rejected=False
+    assert rejected
+    params=opsearch.system_params()["params"]
+    unapplied=[r for r in params.values() if not r["applied_by"]]
+    assert unapplied and {r["status"] for r in unapplied} == {"declared_not_applied"}
+    assert params["border_policy"]["affects_numbers"] and params["numeric_floor"]["affects_numbers"]
