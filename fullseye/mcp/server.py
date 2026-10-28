@@ -96,6 +96,33 @@ TOOLS: dict[str, dict] = {
             "additionalProperties": False,
         },
     },
+    "fullseye_plan_chain": {
+        "description": "Plan a type-compatible op chain without execution. Use before op_cards, validate_pipeline, then pipeline.",
+        "inputSchema": {"type": "object", "properties": {
+            "query": {"type": "string", "minLength": 1, "maxLength": 200},
+            "start_sort": {"type": "string"}, "goal_sort": {"type": "string"},
+            "k": {"type": "integer", "minimum": 1, "maximum": 100},
+            "max_depth": {"type": "integer", "minimum": 1, "maximum": 16}},
+            "required": ["query", "start_sort", "goal_sort"], "additionalProperties": False},
+    },
+    "fullseye_op_cards": {
+        "description": "Return short complete op cards within a token budget; cards are never cut mid-card.",
+        "inputSchema": {"type": "object", "properties": {
+            "names": {"type": "array", "minItems": 1, "maxItems": 100, "items": {"type": "string"}},
+            "budget_tokens": {"type": "integer", "minimum": 1, "maximum": 100000}},
+            "required": ["names"], "additionalProperties": False},
+    },
+    "fullseye_validate_pipeline": {
+        "description": "Validate op existence, knob ranges, stage count, and type chaining without execution (fail-closed).",
+        "inputSchema": {"type": "object", "properties": {
+            "start_sort": {"type": "string"},
+            "stages": {"type": "array", "minItems": 1, "maxItems": 64, "items": {"type": "object",
+                "properties": {"op": {"type": "string", "maxLength": 120},
+                               "a": {"type": "number"}, "b": {"type": "number"}},
+                "required": ["op"], "additionalProperties": False}},
+            "max_stages": {"type": "integer", "minimum": 1, "maximum": 64}},
+            "required": ["start_sort", "stages"], "additionalProperties": False},
+    },
     "fullseye_op_help": {
         "description": (
             "op の知識層ノート(使い方・つまみ a/b の実効・HALCON 相当・関連ガイド)と、"
@@ -597,6 +624,42 @@ def _out_sort(op, in_sort: str | None) -> str:
     return op.out_sort
 
 
+def validate_pipeline(stages: list[dict], start_sort: str, cat: Catalog, *, max_stages: int = 64) -> dict:
+    """Shared non-executing pipeline validator used by both MCP entry points."""
+    import ops
+    errors, normalized = [], []
+    if start_sort not in cat.sorts:
+        errors.append({"layer": "pipeline", "stage": 0, "reason": "unknown_sort", "value": start_sort,
+                       "candidates": []})
+    if not stages:
+        errors.append({"layer": "pipeline", "stage": 0, "reason": "empty_pipeline", "candidates": []})
+    if len(stages) > max_stages:
+        errors.append({"layer": "pipeline", "stage": 0, "reason": "too_many_stages",
+                       "value": len(stages), "limit": max_stages, "candidates": []})
+    cur = start_sort
+    for i, spec in enumerate(stages[:max_stages], 1):
+        name = spec.get("op")
+        op = ops._BY_NAME.get(name)
+        if op is None:
+            errors.append({"layer": "stage", "stage": i, "reason": "unknown_op", "value": name,
+                           "candidates": cat.nearest(name)})
+            continue
+        for knob in ("a", "b"):
+            value = spec.get(knob, 0.5)
+            if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(float(value)) or not 0 <= value <= 1:
+                errors.append({"layer": "stage", "stage": i, "reason": "knob_out_of_range",
+                               "knob": knob, "value": value, "candidates": [0.0, 0.5, 1.0]})
+        if op.in_sort not in ("any", cur):
+            errors.append({"layer": "stage", "stage": i, "reason": "sort_mismatch", "value": cur,
+                           "expected": op.in_sort, "candidates": [r.name for r in cat.entries.values()
+                           if r.in_sort in ("any", cur)][:10]})
+        cur = _out_sort(op, cur)
+        normalized.append({"op": name, "a": float(spec.get("a", 0.5)), "b": float(spec.get("b", 0.5)),
+                           "in_sort": op.in_sort, "out_sort": cur})
+    return {"valid": not errors, "start_sort": start_sort, "out_sort": cur,
+            "stages": normalized, "errors": errors}
+
+
 def _run_op(arr, op, ka: float, kb: float, allow: bool):
     """1 op を走らせる。strict で失敗したら (None, degraded, err)。"""
     import backend_safe
@@ -716,8 +779,21 @@ def _pipeline(a: dict, cat: Catalog, store: HandleStore, *,
               max_structured_bytes: int = MAX_STRUCTURED_BYTES) -> dict:
     """段を順に。**走らせる前に**型連鎖を検査し、strict は失敗した段で止まる。"""
     stages = a["stages"]
-    ops_ = [_resolve_op(s["op"], cat, stage=i) for i, s in enumerate(stages, 1)]
     meta, arr = store.get(a["handle"])
+    checked = validate_pipeline(stages, meta["sort"], cat)
+    if not checked["valid"]:
+        # Preserve the established human-readable pipeline error while the
+        # structured validation endpoint exposes machine-readable reasons.
+        cur, prev = meta["sort"], "handle %s" % meta["handle"]
+        import ops as _ops
+        for i, spec in enumerate(stages, 1):
+            op0 = _ops._BY_NAME.get(spec.get("op"))
+            if op0 is None:
+                break
+            _check_sort(op0, cur, stage=i, prev=prev)
+            cur, prev = _out_sort(op0, cur), "previous stage %s output" % op0.name
+        raise ArgError("pipeline validation failed: %s" % json.dumps(checked["errors"], ensure_ascii=False))
+    ops_ = [_resolve_op(s["op"], cat, stage=i) for i, s in enumerate(stages, 1)]
     cur, prev = meta["sort"], "ハンドル %s" % meta["handle"]
     for i, op in enumerate(ops_, 1):
         _check_sort(op, cur, stage=i, prev=prev)
@@ -1039,6 +1115,25 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
         except ValueError as exc:                          # 空の問い合わせ等は引数違反(-32602)
             raise ArgError(str(exc)) from exc
         return tool_result(_format(r), r, max_structured_bytes=max_structured_bytes)
+    if name == "fullseye_plan_chain":
+        from fullseye.opsearch import plan_chain
+        try:
+            r = plan_chain(a["query"], a["start_sort"], a["goal_sort"], a.get("k", 5), a.get("max_depth", 4))
+        except ValueError as exc:
+            raise ArgError(str(exc)) from exc
+        return tool_result(json.dumps(r, ensure_ascii=False, indent=2), r, max_structured_bytes=max_structured_bytes)
+    if name == "fullseye_op_cards":
+        from fullseye.opsearch import op_cards
+        try:
+            r = op_cards(a["names"], a.get("budget_tokens", 500))
+        except ValueError as exc:
+            raise ArgError(str(exc)) from exc
+        return tool_result(json.dumps(r, ensure_ascii=False, indent=2), r, max_structured_bytes=max_structured_bytes)
+    if name == "fullseye_validate_pipeline":
+        r = validate_pipeline(a["stages"], a["start_sort"], cat, max_stages=a.get("max_stages", 64))
+        text = json.dumps(r, ensure_ascii=False, indent=2)
+        return (tool_result(text, r, max_structured_bytes=max_structured_bytes) if r["valid"]
+                else _tool_error(text, r))
     if name == "fullseye_op_help":
         h = cat.help(a["name"])
         if not h["found"]:

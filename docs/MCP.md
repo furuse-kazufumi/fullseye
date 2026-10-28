@@ -41,7 +41,7 @@ claude mcp add fullseye -- py -3.11 -m fullseye.mcp
 set FULLSEYE_MCP_ROOT=C:\path\to\images;D:\more   (PowerShell: $env:FULLSEYE_MCP_ROOT = "...")
 ```
 
-## tool は 9 つ(op は 1,942 あるが tool にはしない)
+## tool は 17 個(op はデータとして検索し、個別 tool にはしない)
 
 op はデータで、tool は「探す・読む・読み込む・走らせる・観察する」の数個だけ。
 tool を 1,942 個並べると LLM の文脈を食い潰す(TheMCPCompany の実測: 18,000 tool は
@@ -51,6 +51,9 @@ retrieval 無しでは使えない)。
 |---|---|
 | `fullseye_search_ops` | 名前・HALCON 名・カテゴリ・次元の部分一致。返り値の `sources` が出どころ(index / registry / ledger / note / facade)、`by_sources` が層別の内訳 |
 | `fullseye_find_ops` | やりたいことの言葉(日本語・英語・中文 簡/繁・한국어・Deutsch・हिन्दी)で探す。op の要約 7 言語・名前・HALCON 名・型を BM25 で照合し、順位つきで要約(問い合わせの言語)とノートの場所を返す。同義語は拾わない |
+| `fullseye_plan_chain` | start sort から goal sort までの型経路を探し、各段の候補を BM25 順で返す。実行はしない |
+| `fullseye_op_cards` | 候補 op の短いカードを token 予算内で返す。カードの途中では切らない |
+| `fullseye_validate_pipeline` | op 名、型連鎖、a/b の範囲、段数を実行せず検査し、段番号つきの理由と候補を返す |
 | `fullseye_op_help` | op の知識層ノート(使い方・つまみ a/b の実効・HALCON 相当)+ 生成済みで実行が検証された図を `resource_link` で |
 | `fullseye_catalog_coverage` | カタログ 5 層の交差。検索がどれだけの機能を見えているか |
 | `fullseye_list_samples` | 同梱サンプル(来歴・ライセンスつき) |
@@ -63,6 +66,18 @@ retrieval 無しでは使えない)。
 | `fullseye_export_json` | ハンドルの中身を **JSON 封筒で持ち出す**。`structuredContent` に `fullseye.from_jsonable` で bit そのまま戻せる封筒、本文に `fullseye.to_markdown` の読める描画。`readable=true` で数をリストに。上限(512 KB)超の大きな画像は `isError` で断る(画像はハンドル/小図で扱う) |
 | `fullseye_write_viewer` | PoC の結果を**自己完結した 1 枚の HTML ビューア**にして書く(タブ・正直なバッジ `passed` / `limit` / `null`・数字・3-D の点群/メッシュ・2-D 動画と時系列・前後の分割・ja/en/zh/tw/ko/de/hi/fr の切り替え)。`spec`(JSON)・`lang`(言語の配列、先頭が既定)・`name`。`spec` は信頼境界で再検証し、形違い・NaN・未知のバッジ/種類・欠けた訳は `-32602`。書き先はサンドボックスだけで、`resource_link` で返す |
 | `fullseye_estimate_distortion` | 本来まっすぐな**線群の点列**(`lines`=`[[x,y],…]` を並べた配列、2 本以上・各線 3 点以上)と 3x3 内部行列 `K` から Brown–Conrady 歪み係数 `dist=[k1,k2,p1,p2,k3]` を推定(plumb-line 法、チェッカー不要)。`radial`=1/2/3、`tangential` 真偽。返す `dist` は `undistort_image` にそのまま渡せる。`lines`/`K` は信頼境界で再検証し、形が違えば `-32602`、推定不能は `isError` |
+
+小さな LLM は、候補を絞ってから短い説明だけを渡す。推奨順は
+`find_ops / plan_chain → op_cards → validate_pipeline → pipeline`。
+
+```json
+{"name":"fullseye_plan_chain","arguments":{"query":"count connected defects","start_sort":"image","goal_sort":"feature","k":5,"max_depth":4}}
+{"name":"fullseye_op_cards","arguments":{"names":["otsu","count_obj"],"budget_tokens":200}}
+{"name":"fullseye_validate_pipeline","arguments":{"start_sort":"image","stages":[{"op":"otsu"},{"op":"count_obj"}]}}
+```
+
+`find_ops` と `plan_chain` の `probe` は既定入力での試し実行結果である。
+失敗は「その入力では動かなかった」という選択材料であり、op 自体の故障とは断定しない。
 
 ## 触って見るビューアを書く(`fullseye_write_viewer`)
 

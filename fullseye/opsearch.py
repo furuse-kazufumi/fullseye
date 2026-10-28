@@ -31,11 +31,13 @@ import re
 import unicodedata
 from collections import Counter
 
-__all__ = ["search_ops", "load_index", "tokenize", "detect_lang", "LANGS", "main"]
+__all__ = ["search_ops", "plan_chain", "op_cards", "load_index", "tokenize", "detect_lang", "LANGS", "main"]
 
 #: 要約を持つ言語(ja = 原文)。表示言語の既定は問い合わせの文字種から決める(:func:`detect_lang`)。
 LANGS = ("ja", "en", "zh", "tw", "ko", "de", "hi")
 PKG_SEARCH = "OP_SEARCH.json"
+PKG_CARDS = "OP_CARDS.json"
+PKG_PROBE = "OP_PROBE.json"
 _STEM = 6
 _K1, _B = 1.2, 0.75
 #: 場ごとの重み: 名前に入っている語は要約の語より強い手掛かり
@@ -52,6 +54,32 @@ _DEVANAGARI = re.compile(r"[ऀ-ॿ꣠-ꣿ]+")
 _GERMAN = re.compile(r"[äöüß]|\b(?:der|die|das|und|nicht|mit|eines?|bild|kante|rauschen)\b")
 
 _CACHE: dict = {}
+
+
+def _load_data(name: str) -> dict:
+    """Load a generated AI-facing table from package data, fail-closed."""
+    key = "data:" + name
+    if key in _CACHE:
+        return _CACHE[key]
+    from importlib.resources import files
+    p = files("fullseye") / "data" / name
+    if not p.is_file():
+        raise FileNotFoundError("fullseye/data/%s is missing; run tools/gen_mcp_data.py" % name)
+    obj = json.loads(p.read_text(encoding="utf-8"))
+    if not obj.get("ops"):
+        raise ValueError("%s contains no operators" % name)
+    _CACHE[key] = obj
+    return obj
+
+
+def _probe_map() -> dict:
+    return {r["name"]: r for r in _load_data(PKG_PROBE)["ops"]}
+
+
+def _with_probe(row: dict, probes: dict) -> dict:
+    out = dict(row)
+    out["probe"] = probes.get(row["name"], {"status": "not_in_registry", "reason": "not executable by fullseye.apply"})
+    return out
 
 #: 同じ言語の中の言い換え(手で書いた表、2026-10-07)。要約の 6 言語は**言語をまたぐ**対応は持っているが、
 #: 同じ言語の別の言い方(「檢測」と「偵測」、「校正」と「キャリブレーション」)は持たない。問い合わせにどれかが
@@ -328,6 +356,11 @@ def search_ops(query: str, k: int = 10, *, lang: str | None = None, in_sort: str
         if ctx:                                                        # 人が書いた文脈(どの場面で使う op か)
             row["contexts"] = list(ctx[:3])
         out.append(row)
+    try:
+        probes = _probe_map()
+    except (FileNotFoundError, ValueError):
+        probes = {}
+    out = [_with_probe(r, probes) for r in out]
     hint = None
     if not out:
         known = [t for t in q if t in idf]
@@ -335,6 +368,99 @@ def search_ops(query: str, k: int = 10, *, lang: str | None = None, in_sort: str
                 "語は当たったが絞り込み(in_sort / out_sort / dim)で 0 件")
     return {"query": query, "lang": show, "total": len(hits), "n_ops_indexed": ix["n_ops"],
             "ops": out, "hint": hint}
+
+
+def plan_chain(query: str, start_sort: str, goal_sort: str, k: int = 5, max_depth: int = 4,
+               *, lang: str | None = None, index_path: str | None = None) -> dict:
+    """Plan type-compatible operator stages and rank each stage with BM25.
+
+    The breadth-first search is over sorts, not operators.  Returned candidates
+    all implement the selected edge, so a small model cannot accidentally join
+    incompatible stages.  No operator is executed.
+    """
+    if not isinstance(start_sort, str) or not start_sort or not isinstance(goal_sort, str) or not goal_sort:
+        raise ValueError("plan_chain: start_sort and goal_sort must be non-empty strings")
+    if not isinstance(max_depth, int) or not 1 <= max_depth <= 16:
+        raise ValueError("plan_chain: max_depth must be in 1..16")
+    if not isinstance(k, int) or not 1 <= k <= 100:
+        raise ValueError("plan_chain: k must be in 1..100")
+    rows = load_index(index_path)["rows"]
+    sorts = {x for r in rows for x in (r.get("i"), r.get("o")) if x and x != "any"}
+    unknown = [s for s in (start_sort, goal_sort) if s not in sorts]
+    if unknown:
+        raise ValueError("plan_chain: unknown sort(s): %s" % ", ".join(unknown))
+    edges: dict[str, set[str]] = {}
+    for r in rows:
+        a, b = r.get("i"), r.get("o")
+        if not a or not b:
+            continue
+        if a == "any":
+            for s in sorts:
+                edges.setdefault(s, set()).add(s if b == "any" else b)
+        else:
+            edges.setdefault(a, set()).add(a if b == "any" else b)
+    queue = [(start_sort, [])]
+    seen = {start_sort}
+    path = None
+    frontier = {start_sort}
+    while queue:
+        cur, p = queue.pop(0)
+        if cur == goal_sort:
+            path = p
+            break
+        if len(p) >= max_depth:
+            continue
+        for nxt in sorted(edges.get(cur, ())):
+            frontier.add(nxt)
+            if nxt not in seen:
+                seen.add(nxt); queue.append((nxt, p + [(cur, nxt)]))
+    if path is None:
+        return {"query": query, "start_sort": start_sort, "goal_sort": goal_sort, "found": False,
+                "max_depth": max_depth, "reachable_sorts": sorted(frontier),
+                "break_at": sorted(frontier - {goal_sort})}
+    probes = _probe_map()
+    stages = []
+    for no, (a, b) in enumerate(path, 1):
+        # Score the whole hit set before applying the edge constraint.  Truncating
+        # first would let a globally strong but wrong-sort family hide the best
+        # candidate for this stage.
+        ranked = search_ops(query, k=len(rows), lang=lang, index_path=index_path)["ops"]
+        candidates = [r for r in ranked if r.get("in_sort") in (a, "any") and
+                      (r.get("out_sort") == b or (r.get("out_sort") == "any" and a == b))]
+        if len(candidates) < k:
+            names = {r["name"] for r in candidates}
+            for r in rows:
+                if r["n"] in names or r.get("i") not in (a, "any"):
+                    continue
+                if not (r.get("o") == b or (r.get("o") == "any" and a == b)):
+                    continue
+                candidates.append(_with_probe({"name": r["n"], "in_sort": r.get("i"),
+                                               "out_sort": r.get("o"), "score": 0.0}, probes))
+                if len(candidates) >= k:
+                    break
+        stages.append({"stage": no, "in_sort": a, "out_sort": b, "candidates": candidates[:k]})
+    return {"query": query, "start_sort": start_sort, "goal_sort": goal_sort, "found": True,
+            "depth": len(path), "stages": stages}
+
+
+def op_cards(names: list[str], budget_tokens: int = 500) -> dict:
+    """Return complete short cards without splitting a card at the token budget."""
+    if not isinstance(names, list) or not names or not all(isinstance(n, str) and n for n in names):
+        raise ValueError("op_cards: names must be a non-empty list of strings")
+    if not isinstance(budget_tokens, int) or budget_tokens < 1:
+        raise ValueError("op_cards: budget_tokens must be a positive int")
+    table = {r["name"]: r for r in _load_data(PKG_CARDS)["ops"]}
+    cards, used, missing = [], 0, []
+    for name in names:
+        card = table.get(name)
+        if card is None:
+            missing.append(name); continue
+        cost = int(card.get("tokens", 1))
+        if used + cost > budget_tokens:
+            break
+        cards.append(card); used += cost
+    return {"cards": cards, "used_tokens": used, "budget_tokens": budget_tokens,
+            "truncated": len(cards) + len(missing) < len(names), "missing": missing}
 
 
 def _format(res: dict) -> str:

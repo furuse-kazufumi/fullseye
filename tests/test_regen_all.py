@@ -97,7 +97,7 @@ _OLD_ORDER = [
     "tools/gen_oss_landscape.py", "tools/gen_view2026_pages.py", "tools/gen_trust_block.py",
     "tools/gen_literature_counts.py", "tools/gen_docs_index_ops.py", "tools/gen_examples3d_doc.py",
     "tools/gen_sensor_playbook.py", "imgevolve.py", "tools/halcon_compat_profile.py", "catalog.py", "dispositions.py", "references.py", "samples.py",
-    "tools/gen_mcp_data.py", "tools/conversion_matrix.py", "tools/gen_design_notes.py",
+    "tools/gen_mcp_data.py", "tools/gen_rag_benchmark_report.py", "tools/conversion_matrix.py", "tools/gen_design_notes.py",
     "tools/gen_doc_counts.py",
 ]
 

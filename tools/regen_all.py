@@ -114,7 +114,8 @@ CHAIN = [
     # 差分が数値だけだと確認できた場合に限り source-sha も更新する。
     (["tools/gen_doc_counts.py"], "README の registry 件数 + AI_RAG_GUIDE の op ノート件数"),
     # 索引と op ノートの後(複製するので)。
-    (["tools/gen_mcp_data.py"], "fullseye/data/OP_INDEX.json + OP_NOTES.json(MCP が wheel から読む複製)"),
+    (["tools/gen_mcp_data.py"], "fullseye/data operator search, cards, and probe metadata"),
+    (["tools/gen_rag_benchmark_report.py"], "RAG recall measurement and synonym-gap report"),
 ]
 
 #: ---- 段の依存表(2026-10-15)------------------------------------------------------
@@ -171,7 +172,9 @@ OUTPUTS = {
     "tools/gen_doc_counts.py": ["docs/README.md", "docs/README.*.md",
                                  "docs/AI_RAG_GUIDE.md", "docs/AI_RAG_GUIDE.*.md"],
     "tools/gen_mcp_data.py": ["fullseye/data/OP_INDEX.json", "fullseye/data/OP_NOTES.json",
-                              "fullseye/data/OP_SEARCH.json", "fullseye/data/op_knob.json"],
+                              "fullseye/data/OP_SEARCH.json", "fullseye/data/OP_CARDS.json",
+                              "fullseye/data/OP_PROBE.json", "fullseye/data/op_knob.json"],
+    "tools/gen_rag_benchmark_report.py": ["docs/rag_synonym_gaps.json"],
     # 2026-10-23: 手で列挙していて #116 の文献 4 本が漏れ、regen が exit 1(--check は緑)だった。
     #   件数を打ち直す文献ノートの実ファイルと合わせる(OSS_LANDSCAPE.md は gen_oss_landscape.py の生成物、
     #   oss_landscape_notes.md は手書きの注で、どちらもこの段は書かない)。
@@ -232,6 +235,9 @@ READS = {
         "docs/DESIGN_NOTES.md", "docs/DESIGN_NOTES.*.md",
         "docs/AI_RAG_GUIDE.md", "docs/AI_RAG_GUIDE.*.md"],
     "tools/gen_mcp_data.py": ["docs/OP_INDEX.json", "docs/ops/*"],
+    "tools/gen_rag_benchmark_report.py": ["docs/ops/rag_benchmark.json",
+                                            "fullseye/data/OP_SEARCH.json",
+                                            "fullseye/data/OP_PROBE.json"],
     "tools/gen_literature_counts.py": ["docs/ops/*"],
     "tools/gen_doc_counts.py": ["docs/README.md", "docs/README.*.md"],
 }

@@ -189,7 +189,8 @@ def test_every_declared_tool_has_a_body(cat):
     1 つの store を通して**実際の返り値から次の引数を作る**。"""
     from fullseye.mcp.handles import HandleStore
     store = HandleStore()
-    order = ["fullseye_search_ops", "fullseye_find_ops", "fullseye_op_help", "fullseye_catalog_coverage",
+    order = ["fullseye_search_ops", "fullseye_find_ops", "fullseye_plan_chain", "fullseye_op_cards",
+             "fullseye_validate_pipeline", "fullseye_op_help", "fullseye_catalog_coverage",
              "fullseye_list_samples", "fullseye_load_image", "fullseye_apply", "fullseye_inspect",
              "fullseye_pipeline", "fullseye_fix_text",
              "fullseye_import_json", "fullseye_export_json", "fullseye_estimate_distortion",
@@ -201,6 +202,12 @@ def test_every_declared_tool_has_a_body(cat):
             a = {"query": "gauss"}
         elif n == "fullseye_find_ops":
             a = {"query": "ノイズ除去", "limit": 3}
+        elif n == "fullseye_plan_chain":
+            a = {"query": "count objects", "start_sort": "image", "goal_sort": "feature"}
+        elif n == "fullseye_op_cards":
+            a = {"names": ["gaussian", "otsu"], "budget_tokens": 300}
+        elif n == "fullseye_validate_pipeline":
+            a = {"start_sort": "image", "stages": [{"op": "gaussian"}, {"op": "otsu"}]}
         elif n == "fullseye_op_help":
             a = {"name": "gaussian"}
         elif n == "fullseye_load_image":
