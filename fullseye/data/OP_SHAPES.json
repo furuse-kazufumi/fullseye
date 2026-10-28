@@ -40,118 +40,119 @@
       ],
       "shape": "join",
       "derived_from": {
-        "direct_edges": 409,
+        "direct_edges": 539,
+        "join_edges": 74,
+        "reduce_edges": 0
+      },
+      "currently_composable": false,
+      "metric": "RMSE/PSNR",
+      "representative_chain": [
+        "eval_poly_surface"
+      ],
+      "example": {
+        "status": "verified_graph_edge",
+        "op": "eval_poly_surface"
+      },
+      "missing": []
+    },
+    {
+      "input_form": "single",
+      "output_form": "mask",
+      "input_sort": "image",
+      "output_sorts": [
+        "region"
+      ],
+      "shape": "join",
+      "derived_from": {
+        "direct_edges": 86,
+        "join_edges": 3,
+        "reduce_edges": 0
+      },
+      "currently_composable": false,
+      "metric": "IoU",
+      "representative_chain": [
+        "check_difference"
+      ],
+      "example": {
+        "status": "verified_graph_edge",
+        "op": "check_difference"
+      },
+      "missing": []
+    },
+    {
+      "input_form": "single",
+      "output_form": "sparse_features",
+      "input_sort": "image",
+      "output_sorts": [
+        "contour",
+        "feature",
+        "features",
+        "points"
+      ],
+      "shape": "join",
+      "derived_from": {
+        "direct_edges": 59,
+        "join_edges": 1,
+        "reduce_edges": 0
+      },
+      "currently_composable": false,
+      "metric": "task-specific",
+      "representative_chain": [
+        "triangulate"
+      ],
+      "example": {
+        "status": "verified_graph_edge",
+        "op": "triangulate"
+      },
+      "missing": []
+    },
+    {
+      "input_form": "single",
+      "output_form": "pose",
+      "input_sort": "image",
+      "output_sorts": [
+        "pose",
+        "transform"
+      ],
+      "shape": "join",
+      "derived_from": {
+        "direct_edges": 1,
+        "join_edges": 1,
+        "reduce_edges": 0
+      },
+      "currently_composable": false,
+      "metric": "task-specific",
+      "representative_chain": [
+        "recover_pose"
+      ],
+      "example": {
+        "status": "verified_graph_edge",
+        "op": "recover_pose"
+      },
+      "missing": []
+    },
+    {
+      "input_form": "single",
+      "output_form": "scalar",
+      "input_sort": "image",
+      "output_sorts": [
+        "feature",
+        "scalar"
+      ],
+      "shape": "join",
+      "derived_from": {
+        "direct_edges": 57,
         "join_edges": 13,
         "reduce_edges": 0
       },
       "currently_composable": false,
-      "metric": "RMSE/PSNR",
-      "representative_chain": [
-        "abs_diff_image"
-      ],
-      "example": {
-        "status": "verified_graph_edge",
-        "op": "abs_diff_image"
-      },
-      "missing": []
-    },
-    {
-      "input_form": "single",
-      "output_form": "mask",
-      "input_sort": "image",
-      "output_sorts": [
-        "region"
-      ],
-      "shape": "serial",
-      "derived_from": {
-        "direct_edges": 83,
-        "join_edges": 0,
-        "reduce_edges": 0
-      },
-      "currently_composable": true,
-      "metric": "IoU",
-      "representative_chain": [
-        "adaptive_gauss_thresh"
-      ],
-      "example": {
-        "status": "verified_graph_edge",
-        "op": "adaptive_gauss_thresh"
-      },
-      "missing": []
-    },
-    {
-      "input_form": "single",
-      "output_form": "sparse_features",
-      "input_sort": "image",
-      "output_sorts": [
-        "contour",
-        "feature",
-        "features",
-        "points"
-      ],
-      "shape": "serial",
-      "derived_from": {
-        "direct_edges": 57,
-        "join_edges": 0,
-        "reduce_edges": 0
-      },
-      "currently_composable": true,
       "metric": "task-specific",
       "representative_chain": [
-        "cooc_feature_matrix"
+        "heap_volume_heightmap"
       ],
       "example": {
         "status": "verified_graph_edge",
-        "op": "cooc_feature_matrix"
-      },
-      "missing": []
-    },
-    {
-      "input_form": "single",
-      "output_form": "pose",
-      "input_sort": "image",
-      "output_sorts": [
-        "pose",
-        "transform"
-      ],
-      "shape": "serial",
-      "derived_from": {
-        "direct_edges": 0,
-        "join_edges": 0,
-        "reduce_edges": 0
-      },
-      "currently_composable": false,
-      "metric": "task-specific",
-      "representative_chain": [],
-      "example": {
-        "status": "none"
-      },
-      "missing": [
-        "typed DAG executor or matching executable edge"
-      ]
-    },
-    {
-      "input_form": "single",
-      "output_form": "scalar",
-      "input_sort": "image",
-      "output_sorts": [
-        "feature",
-        "scalar"
-      ],
-      "shape": "serial",
-      "derived_from": {
-        "direct_edges": 42,
-        "join_edges": 0,
-        "reduce_edges": 0
-      },
-      "currently_composable": true,
-      "metric": "task-specific",
-      "representative_chain": [
-        "cooc_feature_matrix"
-      ],
-      "example": {
-        "status": "verified_graph_edge",
-        "op": "cooc_feature_matrix"
+        "op": "heap_volume_heightmap"
       },
       "missing": []
     },
@@ -189,21 +190,22 @@
         "image",
         "phase"
       ],
-      "shape": "serial",
+      "shape": "bundle_reduction",
       "derived_from": {
-        "direct_edges": 0,
+        "direct_edges": 10,
         "join_edges": 0,
-        "reduce_edges": 0
+        "reduce_edges": 10
       },
-      "currently_composable": false,
+      "currently_composable": true,
       "metric": "RMSE/PSNR",
-      "representative_chain": [],
+      "representative_chain": [
+        "wrapped_phase"
+      ],
       "example": {
-        "status": "none"
+        "status": "verified_graph_edge",
+        "op": "wrapped_phase"
       },
-      "missing": [
-        "typed DAG executor or matching executable edge"
-      ]
+      "missing": []
     },
     {
       "input_form": "same_view_bundle",
@@ -212,21 +214,22 @@
       "output_sorts": [
         "region"
       ],
-      "shape": "serial",
+      "shape": "join",
       "derived_from": {
-        "direct_edges": 0,
-        "join_edges": 0,
-        "reduce_edges": 0
+        "direct_edges": 1,
+        "join_edges": 1,
+        "reduce_edges": 1
       },
       "currently_composable": false,
       "metric": "IoU",
-      "representative_chain": [],
+      "representative_chain": [
+        "class_ndim_norm"
+      ],
       "example": {
-        "status": "none"
+        "status": "verified_graph_edge",
+        "op": "class_ndim_norm"
       },
-      "missing": [
-        "typed DAG executor or matching executable edge"
-      ]
+      "missing": []
     },
     {
       "input_form": "same_view_bundle",
@@ -336,21 +339,22 @@
         "image",
         "phase"
       ],
-      "shape": "serial",
+      "shape": "bundle_reduction",
       "derived_from": {
-        "direct_edges": 0,
+        "direct_edges": 10,
         "join_edges": 0,
-        "reduce_edges": 0
+        "reduce_edges": 10
       },
-      "currently_composable": false,
+      "currently_composable": true,
       "metric": "RMSE/PSNR",
-      "representative_chain": [],
+      "representative_chain": [
+        "wrapped_phase"
+      ],
       "example": {
-        "status": "none"
+        "status": "verified_graph_edge",
+        "op": "wrapped_phase"
       },
-      "missing": [
-        "typed DAG executor or matching executable edge"
-      ]
+      "missing": []
     },
     {
       "input_form": "different_views",
@@ -359,21 +363,22 @@
       "output_sorts": [
         "region"
       ],
-      "shape": "serial",
+      "shape": "join",
       "derived_from": {
-        "direct_edges": 0,
-        "join_edges": 0,
-        "reduce_edges": 0
+        "direct_edges": 1,
+        "join_edges": 1,
+        "reduce_edges": 1
       },
       "currently_composable": false,
       "metric": "IoU",
-      "representative_chain": [],
+      "representative_chain": [
+        "class_ndim_norm"
+      ],
       "example": {
-        "status": "none"
+        "status": "verified_graph_edge",
+        "op": "class_ndim_norm"
       },
-      "missing": [
-        "typed DAG executor or matching executable edge"
-      ]
+      "missing": []
     },
     {
       "input_form": "different_views",
@@ -483,21 +488,22 @@
         "image",
         "phase"
       ],
-      "shape": "serial",
+      "shape": "bundle_reduction",
       "derived_from": {
-        "direct_edges": 0,
+        "direct_edges": 10,
         "join_edges": 0,
-        "reduce_edges": 0
+        "reduce_edges": 10
       },
-      "currently_composable": false,
+      "currently_composable": true,
       "metric": "RMSE/PSNR",
-      "representative_chain": [],
+      "representative_chain": [
+        "wrapped_phase"
+      ],
       "example": {
-        "status": "none"
+        "status": "verified_graph_edge",
+        "op": "wrapped_phase"
       },
-      "missing": [
-        "typed DAG executor or matching executable edge"
-      ]
+      "missing": []
     },
     {
       "input_form": "reference_target",
@@ -506,21 +512,22 @@
       "output_sorts": [
         "region"
       ],
-      "shape": "serial",
+      "shape": "join",
       "derived_from": {
-        "direct_edges": 0,
-        "join_edges": 0,
-        "reduce_edges": 0
+        "direct_edges": 1,
+        "join_edges": 1,
+        "reduce_edges": 1
       },
       "currently_composable": false,
       "metric": "IoU",
-      "representative_chain": [],
+      "representative_chain": [
+        "class_ndim_norm"
+      ],
       "example": {
-        "status": "none"
+        "status": "verified_graph_edge",
+        "op": "class_ndim_norm"
       },
-      "missing": [
-        "typed DAG executor or matching executable edge"
-      ]
+      "missing": []
     },
     {
       "input_form": "reference_target",
@@ -630,20 +637,20 @@
         "image",
         "phase"
       ],
-      "shape": "bundle_reduction",
+      "shape": "join",
       "derived_from": {
-        "direct_edges": 1,
-        "join_edges": 0,
-        "reduce_edges": 1
+        "direct_edges": 6,
+        "join_edges": 1,
+        "reduce_edges": 6
       },
-      "currently_composable": true,
+      "currently_composable": false,
       "metric": "RMSE/PSNR",
       "representative_chain": [
-        "tb_temporal_band_power"
+        "lockin_amplitude"
       ],
       "example": {
         "status": "verified_graph_edge",
-        "op": "tb_temporal_band_power"
+        "op": "lockin_amplitude"
       },
       "missing": []
     },
@@ -930,18 +937,18 @@
       ],
       "shape": "serial",
       "derived_from": {
-        "direct_edges": 5,
+        "direct_edges": 9,
         "join_edges": 0,
         "reduce_edges": 0
       },
       "currently_composable": true,
       "metric": "RMSE/PSNR",
       "representative_chain": [
-        "tb_normals_to_egi"
+        "render_point_depth"
       ],
       "example": {
         "status": "verified_graph_edge",
-        "op": "tb_normals_to_egi"
+        "op": "render_point_depth"
       },
       "missing": []
     },
@@ -978,20 +985,20 @@
         "features",
         "points"
       ],
-      "shape": "serial",
+      "shape": "join",
       "derived_from": {
-        "direct_edges": 26,
-        "join_edges": 0,
+        "direct_edges": 52,
+        "join_edges": 7,
         "reduce_edges": 0
       },
-      "currently_composable": true,
+      "currently_composable": false,
       "metric": "task-specific",
       "representative_chain": [
-        "tb_arc_length"
+        "statistical_outlier_removal"
       ],
       "example": {
         "status": "verified_graph_edge",
-        "op": "tb_arc_length"
+        "op": "statistical_outlier_removal"
       },
       "missing": []
     },
@@ -1003,21 +1010,22 @@
         "pose",
         "transform"
       ],
-      "shape": "serial",
+      "shape": "join",
       "derived_from": {
-        "direct_edges": 0,
-        "join_edges": 0,
+        "direct_edges": 12,
+        "join_edges": 12,
         "reduce_edges": 0
       },
       "currently_composable": false,
       "metric": "task-specific",
-      "representative_chain": [],
+      "representative_chain": [
+        "match_pca"
+      ],
       "example": {
-        "status": "none"
+        "status": "verified_graph_edge",
+        "op": "match_pca"
       },
-      "missing": [
-        "typed DAG executor or matching executable edge"
-      ]
+      "missing": []
     },
     {
       "input_form": "point_mesh",
@@ -1027,20 +1035,20 @@
         "feature",
         "scalar"
       ],
-      "shape": "serial",
+      "shape": "join",
       "derived_from": {
-        "direct_edges": 5,
-        "join_edges": 0,
+        "direct_edges": 6,
+        "join_edges": 1,
         "reduce_edges": 0
       },
-      "currently_composable": true,
+      "currently_composable": false,
       "metric": "task-specific",
       "representative_chain": [
-        "tb_arc_length"
+        "mesh_signed_volume"
       ],
       "example": {
         "status": "verified_graph_edge",
-        "op": "tb_arc_length"
+        "op": "mesh_signed_volume"
       },
       "missing": []
     },
@@ -1080,18 +1088,18 @@
       ],
       "shape": "join",
       "derived_from": {
-        "direct_edges": 409,
-        "join_edges": 13,
+        "direct_edges": 539,
+        "join_edges": 74,
         "reduce_edges": 0
       },
       "currently_composable": false,
       "metric": "RMSE/PSNR",
       "representative_chain": [
-        "abs_diff_image"
+        "eval_poly_surface"
       ],
       "example": {
         "status": "verified_graph_edge",
-        "op": "abs_diff_image"
+        "op": "eval_poly_surface"
       },
       "missing": []
     },
@@ -1102,20 +1110,20 @@
       "output_sorts": [
         "region"
       ],
-      "shape": "serial",
+      "shape": "join",
       "derived_from": {
-        "direct_edges": 83,
-        "join_edges": 0,
+        "direct_edges": 86,
+        "join_edges": 3,
         "reduce_edges": 0
       },
-      "currently_composable": true,
+      "currently_composable": false,
       "metric": "IoU",
       "representative_chain": [
-        "adaptive_gauss_thresh"
+        "check_difference"
       ],
       "example": {
         "status": "verified_graph_edge",
-        "op": "adaptive_gauss_thresh"
+        "op": "check_difference"
       },
       "missing": []
     },
@@ -1129,20 +1137,20 @@
         "features",
         "points"
       ],
-      "shape": "serial",
+      "shape": "join",
       "derived_from": {
-        "direct_edges": 57,
-        "join_edges": 0,
+        "direct_edges": 59,
+        "join_edges": 1,
         "reduce_edges": 0
       },
-      "currently_composable": true,
+      "currently_composable": false,
       "metric": "task-specific",
       "representative_chain": [
-        "cooc_feature_matrix"
+        "triangulate"
       ],
       "example": {
         "status": "verified_graph_edge",
-        "op": "cooc_feature_matrix"
+        "op": "triangulate"
       },
       "missing": []
     },
@@ -1154,21 +1162,22 @@
         "pose",
         "transform"
       ],
-      "shape": "serial",
+      "shape": "join",
       "derived_from": {
-        "direct_edges": 0,
-        "join_edges": 0,
+        "direct_edges": 1,
+        "join_edges": 1,
         "reduce_edges": 0
       },
       "currently_composable": false,
       "metric": "task-specific",
-      "representative_chain": [],
+      "representative_chain": [
+        "recover_pose"
+      ],
       "example": {
-        "status": "none"
+        "status": "verified_graph_edge",
+        "op": "recover_pose"
       },
-      "missing": [
-        "typed DAG executor or matching executable edge"
-      ]
+      "missing": []
     },
     {
       "input_form": "huge_single",
@@ -1178,20 +1187,20 @@
         "feature",
         "scalar"
       ],
-      "shape": "serial",
+      "shape": "join",
       "derived_from": {
-        "direct_edges": 42,
-        "join_edges": 0,
+        "direct_edges": 57,
+        "join_edges": 13,
         "reduce_edges": 0
       },
-      "currently_composable": true,
+      "currently_composable": false,
       "metric": "task-specific",
       "representative_chain": [
-        "cooc_feature_matrix"
+        "heap_volume_heightmap"
       ],
       "example": {
         "status": "verified_graph_edge",
-        "op": "cooc_feature_matrix"
+        "op": "heap_volume_heightmap"
       },
       "missing": []
     },
@@ -1229,21 +1238,22 @@
         "image",
         "phase"
       ],
-      "shape": "map",
+      "shape": "bundle_reduction",
       "derived_from": {
-        "direct_edges": 0,
+        "direct_edges": 10,
         "join_edges": 0,
-        "reduce_edges": 0
+        "reduce_edges": 10
       },
-      "currently_composable": false,
+      "currently_composable": true,
       "metric": "RMSE/PSNR",
-      "representative_chain": [],
+      "representative_chain": [
+        "wrapped_phase"
+      ],
       "example": {
-        "status": "none"
+        "status": "verified_graph_edge",
+        "op": "wrapped_phase"
       },
-      "missing": [
-        "typed DAG executor or matching executable edge"
-      ]
+      "missing": []
     },
     {
       "input_form": "batch",
@@ -1252,21 +1262,22 @@
       "output_sorts": [
         "region"
       ],
-      "shape": "map",
+      "shape": "join",
       "derived_from": {
-        "direct_edges": 0,
-        "join_edges": 0,
-        "reduce_edges": 0
+        "direct_edges": 1,
+        "join_edges": 1,
+        "reduce_edges": 1
       },
       "currently_composable": false,
       "metric": "IoU",
-      "representative_chain": [],
+      "representative_chain": [
+        "class_ndim_norm"
+      ],
       "example": {
-        "status": "none"
+        "status": "verified_graph_edge",
+        "op": "class_ndim_norm"
       },
-      "missing": [
-        "typed DAG executor or matching executable edge"
-      ]
+      "missing": []
     },
     {
       "input_form": "batch",

@@ -194,7 +194,7 @@ def test_every_declared_tool_has_a_body(cat):
              "fullseye_choose_op", "fullseye_required_inputs", "fullseye_param_space",
              "fullseye_pipeline_shape", "fullseye_sort_guide",
              "fullseye_validate_pipeline", "fullseye_op_help", "fullseye_catalog_coverage",
-             "fullseye_list_samples", "fullseye_load_image", "fullseye_apply", "fullseye_inspect",
+             "fullseye_list_samples", "fullseye_load_image", "fullseye_load_stack", "fullseye_apply", "fullseye_inspect",
              "fullseye_pipeline", "fullseye_fix_text",
              "fullseye_import_json", "fullseye_export_json", "fullseye_estimate_distortion",
              "fullseye_write_viewer"]
@@ -233,6 +233,8 @@ def test_every_declared_tool_has_a_body(cat):
             a = {"name": "gaussian"}
         elif n == "fullseye_load_image":
             a = {"path": ctx["sample_path"], "vision": "none"}
+        elif n == "fullseye_load_stack":
+            a = {"paths": [ctx["sample_path"], ctx["sample_path"]], "sort": "images"}
         elif n == "fullseye_apply":
             a = {"handle": ctx["handle"], "op": "gaussian", "vision": "none"}
         elif n == "fullseye_inspect":

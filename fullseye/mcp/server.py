@@ -57,7 +57,8 @@ TOOLS: dict[str, dict] = {
     "fullseye_plan": {
         "description": "型付き経路を計画する。入力と欲しい型が分かったら使い、次に fullseye_op_cards を呼ぶ。",
         "inputSchema": {"type":"object","properties":{"have":{"oneOf":[{"type":"string"},{"type":"array","items":{"type":"string"}}]},
-            "want":{"type":"string"},"direction":{"type":"string","enum":["forward","backward"]},
+            "want":{"type":"string"},"goal":{"type":"string","maxLength":400},
+            "direction":{"type":"string","enum":["forward","backward"]},
             "pattern":{"type":"string"}},"required":["have","want"],"additionalProperties":False}},
     "fullseye_describe": {
         "description": "型・op・族を1件説明する。候補の詳細が必要なときに使い、次に fullseye_choose を呼ぶ。",
@@ -164,6 +165,8 @@ TOOLS: dict[str, dict] = {
             "start_sort": {"type": "string"},
             "stages": {"type": "array", "minItems": 1, "maxItems": 64, "items": {"type": "object",
                 "properties": {"op": {"type": "string", "maxLength": 120},
+                               "inputs": {"type":"array","items":{"type":"string"}},
+                               "params": {"type":"object"},
                                "a": {"type": "number"}, "b": {"type": "number"}},
                 "required": ["op"], "additionalProperties": False}},
             "max_stages": {"type": "integer", "minimum": 1, "maximum": 64}},
@@ -205,6 +208,13 @@ TOOLS: dict[str, dict] = {
             "required": ["path"],
             "additionalProperties": False,
         },
+    },
+    "fullseye_load_stack": {
+        "description": "Load several sandboxed images into one typed sequence handle for multi-frame operators.",
+        "inputSchema": {"type":"object","properties":{
+            "paths":{"type":"array","minItems":1,"maxItems":256,"items":{"type":"string"}},
+            "sort":{"type":"string","enum":["seq<image>","images","polsweep"]}},
+            "required":["paths","sort"],"additionalProperties":False},
     },
     "fullseye_apply": {
         "description": (
@@ -249,8 +259,10 @@ TOOLS: dict[str, dict] = {
                     "type": "array", "minItems": 1, "maxItems": 64,
                     "items": {
                         "type": "object",
-                        "properties": {
-                            "op": {"type": "string", "maxLength": 120},
+                            "properties": {
+                                "op": {"type": "string", "maxLength": 120},
+                                "inputs": {"type":"array","items":{"type":"string"}},
+                                "params": {"type":"object"},
                             "a": {"type": "number", "minimum": 0.0, "maximum": 1.0},
                             "b": {"type": "number", "minimum": 0.0, "maximum": 1.0},
                         },
@@ -262,7 +274,7 @@ TOOLS: dict[str, dict] = {
                 "allow_degraded": {"type": "boolean"},
                 "vision": _VISION,
             },
-            "required": ["handle", "stages"],
+            "required": ["stages"],
             "additionalProperties": False,
         },
     },
@@ -642,6 +654,20 @@ def _load_image(a: dict, store: HandleStore) -> dict:
     text = "%s  sort=%s\n%s" % (meta["handle"], meta["sort"], _stats_line(st, vd))
     return tool_result(text, structured, links=links)
 
+def _load_stack(a: dict, store: HandleStore) -> dict:
+    arrays, provenance = [], []
+    for path in a["paths"]:
+        meta = store.load(path)
+        _, arr = store.get(meta["handle"])
+        arrays.append(arr); provenance.extend(meta["provenance"])
+    try:
+        stack = np.stack(arrays)
+    except ValueError as exc:
+        raise ArgError("stack images must have one shape: %s" % exc) from None
+    sort = a["sort"]
+    meta = store.put(stack, sort=sort, provenance=provenance + [{"load_stack":len(arrays)}])
+    return tool_result("%s sort=%s shape=%s" % (meta["handle"],sort,meta["shape"]), meta)
+
 
 def _resolve_op(name: str, cat: Catalog, *, stage: int | None = None):
     """registry 層の op に解決する。無ければ近い名前を添えて拒否(黙って倒さない)。"""
@@ -682,9 +708,50 @@ def validate_pipeline(stages: list[dict], start_sort: str, cat: Catalog, *, max_
     if len(stages) > max_stages:
         errors.append({"layer": "pipeline", "stage": 0, "reason": "too_many_stages",
                        "value": len(stages), "limit": max_stages, "candidates": []})
+    from fullseye.opsearch import _graph
+    graph_edges = {e["op"]: e for e in _graph()["edges"]}
     cur = start_sort
+    stage_sorts = {}
     for i, spec in enumerate(stages[:max_stages], 1):
         name = spec.get("op")
+        edge = graph_edges.get(name)
+        refs = spec.get("inputs")
+        if refs is not None:
+            if edge is None:
+                errors.append({"layer":"stage","stage":i,"reason":"unknown_op","value":name,
+                               "candidates":[x for x in cat.nearest(name) if x != name]})
+                continue
+            if not edge.get("executable"):
+                errors.append({"layer":"stage","stage":i,"reason":"not_executable_in_mcp","value":name,
+                               "detail":edge.get("executable_reason","no verified executor"),"candidates":[]})
+                continue
+            if len(refs) != len(edge["inputs"]):
+                errors.append({"layer":"stage","stage":i,"reason":"input_arity_mismatch","value":len(refs),
+                               "expected":len(edge["inputs"]),"candidates":[]})
+            actual=[]
+            for ref in refs:
+                if ref.startswith("stage:"):
+                    actual.append(stage_sorts.get(ref, "unknown"))
+                else:
+                    actual.append(start_sort)
+            mismatches=[{"input":j,"actual":a,"expected":b} for j,(a,b) in enumerate(zip(actual,edge["inputs"]))
+                        if b not in ("poly",a)]
+            if mismatches:
+                errors.append({"layer":"stage","stage":i,"reason":"sort_mismatch","value":mismatches,"candidates":[]})
+            schema={p["name"]:p for p in edge.get("parameter_schema",[])}
+            unknown_params=sorted(set(spec.get("params",{}))-set(schema))
+            if unknown_params:
+                errors.append({"layer":"stage","stage":i,"reason":"unknown_parameter","value":unknown_params,
+                               "candidates":sorted(schema)})
+            missing=[n for n,p in schema.items() if p.get("required") and n not in spec.get("params",{})]
+            if missing:
+                errors.append({"layer":"stage","stage":i,"reason":"missing_parameter","value":missing,"candidates":[]})
+            out = actual[0] if edge["output"] == "poly" and actual else edge["output"]
+            ref="stage:%d"%i; stage_sorts[ref]=out; cur=out
+            normalized.append({"op":name,"inputs":list(refs),"params":dict(spec.get("params",{})),
+                               "a":float(spec.get("a",0.5)),"b":float(spec.get("b",0.5)),
+                               "in_sorts":edge["inputs"],"out_sort":out})
+            continue
         op = ops._BY_NAME.get(name)
         if op is None:
             errors.append({"layer": "stage", "stage": i, "reason": "unknown_op", "value": name,
@@ -825,6 +892,8 @@ def _pipeline(a: dict, cat: Catalog, store: HandleStore, *,
               max_structured_bytes: int = MAX_STRUCTURED_BYTES) -> dict:
     """段を順に。**走らせる前に**型連鎖を検査し、strict は失敗した段で止まる。"""
     stages = a["stages"]
+    if any("inputs" in s or "params" in s for s in stages):
+        return _pipeline_dag(a, cat, store, max_structured_bytes=max_structured_bytes)
     meta, arr = store.get(a["handle"])
     checked = validate_pipeline(stages, meta["sort"], cat)
     if not checked["valid"]:
@@ -894,6 +963,57 @@ def _pipeline(a: dict, cat: Catalog, store: HandleStore, *,
         if md:
             lines.append("\n" + md)                             # 追加: 最終出力の Markdown
     return tool_result("\n".join(lines), structured, links=links,
+                       max_structured_bytes=max_structured_bytes)
+
+
+def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_bytes: int) -> dict:
+    """Execute explicit multi-input dependencies; keep the legacy linear path intact."""
+    import importlib
+    import fullseye
+    from fullseye.opsearch import _graph
+    edges={e["op"]:e for e in _graph()["edges"]}
+    start_sort=store.get(a["handle"])[0]["sort"] if a.get("handle") else "unknown"
+    checked=validate_pipeline(a["stages"],start_sort,cat)
+    if not checked["valid"]:
+        return _tool_error(json.dumps(checked,ensure_ascii=False),checked)
+    values={}; records=[]
+    if a.get("handle"):
+        values[a["handle"]]=store.get(a["handle"])
+    for i,spec in enumerate(a["stages"],1):
+        edge=edges[spec["op"]]; args=[]; metas=[]
+        for ref in spec.get("inputs",[]):
+            if ref in values:
+                meta,value=values[ref]
+            elif ref.startswith("fullseye://"):
+                meta,value=store.get(ref); values[ref]=(meta,value)
+            else:
+                return _tool_error("unknown pipeline input reference: %s"%ref,{"stage":i,"reason":"unknown_input_ref"})
+            metas.append(meta); args.append(value)
+        params=dict(spec.get("params",{}))
+        try:
+            executor=edge["executor"]
+            if executor["kind"]=="registry":
+                incoming=args if len(args)>1 else args[0]
+                out=fullseye.apply(incoming,edge["op"],float(spec.get("a",.5)),float(spec.get("b",.5)),on_error="raise")
+            else:
+                fn=getattr(importlib.import_module(executor["module"]),executor["callable"])
+                out=fn(*args,**params)
+        except Exception as exc:  # noqa: BLE001
+            return _tool_error("stage %d %s failed: %s: %s"%(i,edge["op"],type(exc).__name__,str(exc)[:300]),
+                               {"stage":i,"op":edge["op"],"reason":"execution_failed","completed":i-1})
+        out_sort=metas[0]["sort"] if edge["output"]=="poly" and metas else edge["output"]
+        ref="stage:%d"%i
+        if isinstance(out,np.ndarray):
+            meta=store.put(out,sort=out_sort,provenance=[{"pipeline":edge["op"],"inputs":spec.get("inputs",[])}])
+            values[ref]=(meta,out); handle=meta["handle"]
+        else:
+            meta={"handle":None,"sort":out_sort,"provenance":[]}; values[ref]=(meta,out); handle=None
+        records.append({"stage":i,"ref":ref,"op":edge["op"],"inputs":spec.get("inputs",[]),
+                        "params":params,"out_sort":out_sort,"handle":handle})
+    last_ref="stage:%d"%len(a["stages"]); last_meta,_last=values[last_ref]
+    result={"completed":len(records),"stages":records,"output_ref":last_ref,
+            "handle":last_meta.get("handle"),"out_sort":last_meta["sort"]}
+    return tool_result(json.dumps(result,ensure_ascii=False,separators=(",",":")),result,
                        max_structured_bytes=max_structured_bytes)
 
 
@@ -1154,7 +1274,7 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
     if name in ("fullseye_plan", "fullseye_describe", "fullseye_choose"):
         from fullseye.opsearch import plan, describe, choose
         if name == "fullseye_plan":
-            r = plan(a["have"], a["want"], a.get("direction", "forward"), a.get("pattern"))
+            r = plan(a["have"], a["want"], a.get("direction", "forward"), a.get("pattern"), goal=a.get("goal"))
         elif name == "fullseye_describe":
             r = describe(a["kind"], a["name"])
         else:
@@ -1243,6 +1363,8 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
     try:
         if name == "fullseye_load_image":
             return _load_image(a, store)
+        if name == "fullseye_load_stack":
+            return _load_stack(a, store)
         if name == "fullseye_apply":
             return _apply(a, cat, store, max_structured_bytes=max_structured_bytes)
         if name == "fullseye_inspect":

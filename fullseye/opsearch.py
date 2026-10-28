@@ -770,11 +770,22 @@ def op_cards(names: list[str], budget_tokens: int = 500) -> dict:
     if not isinstance(budget_tokens, int) or budget_tokens < 1:
         raise ValueError("op_cards: budget_tokens must be a positive int")
     table = {r["name"]: r for r in _load_data(PKG_CARDS)["ops"]}
+    import difflib
+    edges={e["op"]:e for e in _graph()["edges"]}
     cards, used, missing = [], 0, []
     for name in names:
         card = table.get(name)
         if card is None:
-            missing.append(name); continue
+            missing.append({"name":name,"near":difflib.get_close_matches(name,table,n=3,cutoff=.45)}); continue
+        card=dict(card); edge=edges.get(name,{})
+        card.update({"inputs":edge.get("inputs",[]),"output":edge.get("output"),
+                     "executable":bool(edge.get("executable")),
+                     "executable_reason":edge.get("executable_reason"),
+                     "parameters":edge.get("parameter_schema",[])})
+        executor=edge.get("executor")
+        if executor and executor.get("kind")=="python":
+            card["python_call"]="%s.%s(%s)"%(executor["module"],executor["callable"],
+                ", ".join(edge.get("inputs",[])+[p["name"]+"=..." for p in edge.get("parameter_schema",[])]))
         cost = int(card.get("tokens", 1))
         if used + cost > budget_tokens:
             break

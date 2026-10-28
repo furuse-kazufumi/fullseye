@@ -75,12 +75,14 @@ def test_graph_population_vocabulary_and_execution_boundary():
 def test_any_is_split_and_unknown_edges_are_not_planned():
     g=load("OP_GRAPH.json")
     assert "any" not in {n["sort"] for n in g["nodes"]}
-    assert all(e["type_semantics"] in {"typed","poly","unknown","source"} for e in g["edges"])
+    invalid_semantics=[e["op"] for e in g["edges"] if e["type_semantics"] not in {"typed","poly","unknown","source"}]
+    assert invalid_semantics == []
     unknown={e["op"] for e in g["edges"] if e["type_semantics"]=="unknown"}
     r=opsearch.plan("image","pose",goal="register",constraints={"executable_only":False,"k":20})
     planned={op for p in r.get("plans",[]) for op in p["ops"]}
     assert planned.isdisjoint(unknown)
-    assert all(e["consumes_input"] == bool(e["inputs"]) for e in g["edges"])
+    invalid_consumption=[e["op"] for e in g["edges"] if e["consumes_input"] != bool(e["inputs"])]
+    assert invalid_consumption == []
 
 def test_nary_registry_declarations_are_exact_and_duplicate_is_explained():
     g=load("OP_GRAPH.json"); idx=load("OP_INDEX.json")
@@ -124,6 +126,41 @@ def test_business_plan_mutation_is_caught(monkeypatch):
     r=opsearch.plan("images","depth",constraints={"query":"fringe projection height","k":5,"executable_only":False})
     matching_plans=[p for p in r.get("plans",[]) if "decode_fringe" in p["ops"]]
     assert matching_plans == []
+
+def test_three_multi_input_business_dags_execute_through_mcp():
+    import numpy as np
+    from fullseye.mcp.catalog import Catalog
+    from fullseye.mcp.handles import HandleStore
+    from fullseye.mcp.server import call_tool
+    store=HandleStore(roots=[]); cat=Catalog.load()
+    def put(value,sort="image"):
+        return store.put(np.asarray(value,float),sort=sort,provenance=[{"synthetic":True}])["handle"]
+    diffuse=put(np.full((32,32),.3)); specular=put(np.full((32,32),.1))
+    polar=call_tool("fullseye_pipeline",{"handle":diffuse,"stages":[
+        {"op":"polarization_render","inputs":[diffuse,specular],"params":{}},
+        {"op":"polarization_dolp_map","inputs":["stage:1"],"params":{}},
+        {"op":"threshold","inputs":["stage:2"],"params":{},"a":.5}]},cat,store)
+    frames=np.stack([.5+.4*np.cos(2*(2*np.pi*i/4))*np.ones((32,32)) for i in range(4)])
+    stack=put(frames,"images")
+    fringe=call_tool("fullseye_pipeline",{"handle":stack,"stages":[
+        {"op":"decode_fringe","inputs":[stack],"params":{"k":1.0}}]},cat,store)
+    phase=put(np.zeros((32,32)))
+    mirror=call_tool("fullseye_pipeline",{"handle":phase,"stages":[
+        {"op":"deflectometry_phase_to_slope","inputs":[phase,phase],"params":{}}]},cat,store)
+    assert [polar.get("isError"),fringe.get("isError"),mirror.get("isError")] == [False,False,False]
+    assert polar["structuredContent"]["out_sort"] == "region"
+    assert fringe["structuredContent"]["out_sort"] == "depth"
+    assert mirror["structuredContent"]["out_sort"] == "normalmap"
+
+def test_validate_distinguishes_unknown_from_known_non_executable():
+    from fullseye.mcp.catalog import Catalog
+    from fullseye.mcp.server import validate_pipeline
+    cat=Catalog.load()
+    known=validate_pipeline([{"op":"register_cross","inputs":["input","input"],"params":{}}],"image",cat)
+    missing=validate_pipeline([{"op":"definitely_missing_op","inputs":["input"],"params":{}}],"image",cat)
+    assert known["errors"][0]["reason"] == "not_executable_in_mcp"
+    assert missing["errors"][0]["reason"] == "unknown_op"
+    assert "definitely_missing_op" not in missing["errors"][0]["candidates"]
 
 def test_family_negative_examples_and_cpu_measurements():
     f=load("OP_FAMILIES.json"); members={x["name"]:{r["op"] for r in x["ops"]} for x in f["families"]}

@@ -9,6 +9,7 @@ inventories.
 from __future__ import annotations
 
 import argparse
+import ast
 import json
 import os
 import re
@@ -80,6 +81,37 @@ def _dump(path: Path, obj) -> None:
 def _source(name: str, family: str) -> dict:
     return {"kind": "registry", "value": "chain_fuzz catalog", "detail": family}
 
+def _python_functions() -> dict[str, dict]:
+    """Read top-level signatures without importing modules or running user code."""
+    found = {}
+    for path in sorted(ROOT.glob("*.py")):
+        if path.name.startswith(("test_", "setup")):
+            continue
+        try:
+            tree = ast.parse(path.read_text(encoding="utf-8"))
+        except (SyntaxError, UnicodeDecodeError):
+            continue
+        for node in tree.body:
+            if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) or node.name.startswith("_"):
+                continue
+            args = node.args.posonlyargs + node.args.args
+            defaults = [None] * (len(args) - len(node.args.defaults)) + list(node.args.defaults)
+            params = []
+            for arg, default in zip(args, defaults):
+                ann = ast.unparse(arg.annotation) if arg.annotation else None
+                rec = {"name": arg.arg, "type": ann or "unannotated",
+                       "required": default is None, "range": "undocumented", "unit": "undocumented"}
+                if default is not None:
+                    try:
+                        value = ast.literal_eval(default)
+                        json.dumps(value)
+                        rec["default"] = value
+                    except (ValueError, TypeError): rec["default"] = ast.unparse(default)
+                params.append(rec)
+            found.setdefault(node.name, {"module": path.stem, "callable": node.name, "parameters": params,
+                                         "doc": ast.get_docstring(node) or ""})
+    return found
+
 
 def _knobs() -> dict:
     # docs/op_knob.json is the measured source.  The package copy is written by
@@ -124,6 +156,7 @@ def build() -> dict[str, object]:
     import conversion_matrix as cm
     a = cm.analyse()
     knobs = _knobs()
+    python_functions = _python_functions()
     index = json.loads((ROOT / "docs" / "OP_INDEX.json").read_text(encoding="utf-8"))
     index_rows = index.get("ops") or []
     if not index_rows:
@@ -242,6 +275,26 @@ def build() -> dict[str, object]:
                       "population_extension_reason":"generic algorithm layer requested by design"})
         produced["sequence"] += 1; consumed["sequence"] += 1
 
+    executable_reasons = Counter()
+    for edge in edges:
+        if edge.get("executable"):
+            edge["executor"] = {"kind": "registry", "callable": edge["op"]}
+            edge["parameter_schema"] = []
+            executable_reasons["registry"] += 1
+            continue
+        fn = python_functions.get(edge["op"])
+        if edge.get("type_semantics") == "unknown":
+            edge["executable_reason"] = "unknown_input_or_output_sort"
+        elif fn is None:
+            edge["executable_reason"] = "python_callable_not_found"
+        elif len(fn["parameters"]) < len(edge["inputs"]):
+            edge["executable_reason"] = "python_signature_has_fewer_inputs_than_graph"
+        else:
+            edge["executable"] = True
+            edge["executor"] = {"kind": "python", "module": fn["module"], "callable": fn["callable"]}
+            edge["parameter_schema"] = fn["parameters"][len(edge["inputs"]):]
+            executable_reasons["python_signature"] += 1
+
     # Intern provenance once and omit blanket unknown measurements.  This keeps
     # OP_GRAPH readable instead of repeating the same unmeasured/source record
     # thousands of times.
@@ -287,6 +340,11 @@ def build() -> dict[str, object]:
                                   "lightfield":"grid<image>","volume":"stack3<image>"},
              "lifted_map_edges":lifted,
              "parameter_summary":parameter_summary,
+             "execution_summary":{"executable":sum(bool(e.get("executable")) for e in edges),
+                                  "reasons":dict(sorted(executable_reasons.items())),
+                                  "not_executable_reasons":dict(sorted(Counter(
+                                      e.get("executable_reason", "unclassified") for e in edges
+                                      if not e.get("executable")).items()))},
              "sources":sources,
              "counts": {"nodes": len(nodes), "edges": len(edges),
                         "conversion_pairs": len(a["edges"]),
