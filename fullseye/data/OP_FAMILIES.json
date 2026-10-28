@@ -4,6 +4,109 @@
   "rule_source": "tools/gen_op_facets.py:FAMILY_RULES",
   "families": [
     {
+      "name": "denoise",
+      "ops": [
+        {
+          "op": "bilateral_filter_depth",
+          "inputs": [
+            "depth"
+          ],
+          "output": "depth",
+          "properties": [],
+          "property_sources": [
+            {
+              "kind": "registry",
+              "value": "name/category",
+              "detail": "bilateral_filter_depth/3d"
+            }
+          ],
+          "complexity_exponent": null,
+          "quality": {
+            "status": "unmeasured"
+          }
+        },
+        {
+          "op": "cx_wiener_deconvolve",
+          "inputs": [
+            "image2d"
+          ],
+          "output": "image2d",
+          "properties": [],
+          "property_sources": [
+            {
+              "kind": "registry",
+              "value": "name/category",
+              "detail": "cx_wiener_deconvolve/2d"
+            }
+          ],
+          "complexity_exponent": null,
+          "quality": {
+            "status": "unmeasured"
+          }
+        },
+        {
+          "op": "joint_bilateral",
+          "inputs": [
+            "depth",
+            "image2d"
+          ],
+          "output": "depth",
+          "properties": [],
+          "property_sources": [
+            {
+              "kind": "registry",
+              "value": "name/category",
+              "detail": "joint_bilateral/3d"
+            }
+          ],
+          "complexity_exponent": null,
+          "quality": {
+            "status": "unmeasured"
+          }
+        },
+        {
+          "op": "temporal_bilateral",
+          "inputs": [
+            "video"
+          ],
+          "output": "video",
+          "properties": [],
+          "property_sources": [
+            {
+              "kind": "registry",
+              "value": "name/category",
+              "detail": "temporal_bilateral/videostream"
+            }
+          ],
+          "complexity_exponent": null,
+          "quality": {
+            "status": "unmeasured"
+          }
+        },
+        {
+          "op": "temporal_median_window",
+          "inputs": [
+            "video"
+          ],
+          "output": "video",
+          "properties": [],
+          "property_sources": [
+            {
+              "kind": "registry",
+              "value": "name/category",
+              "detail": "temporal_median_window/videostream"
+            }
+          ],
+          "complexity_exponent": null,
+          "quality": {
+            "status": "unmeasured"
+          }
+        }
+      ],
+      "probes": [],
+      "timing_source": "docs/ops/families_timing.json"
+    },
+    {
       "name": "edge_detection",
       "ops": [
         {
@@ -524,6 +627,183 @@
               "kind": "registry",
               "value": "name/category",
               "detail": "vx_sobel3x3/vx"
+            }
+          ],
+          "complexity_exponent": null,
+          "quality": {
+            "status": "unmeasured"
+          }
+        }
+      ],
+      "probes": [],
+      "timing_source": "docs/ops/families_timing.json"
+    },
+    {
+      "name": "thresholding",
+      "ops": [
+        {
+          "op": "emva_sensitivity_threshold",
+          "inputs": [],
+          "output": "table",
+          "properties": [],
+          "property_sources": [
+            {
+              "kind": "registry",
+              "value": "name/category",
+              "detail": "emva_sensitivity_threshold/optics"
+            }
+          ],
+          "complexity_exponent": null,
+          "quality": {
+            "status": "unmeasured"
+          }
+        },
+        {
+          "op": "graph_binarize",
+          "inputs": [
+            "conn_graph"
+          ],
+          "output": "conn_graph",
+          "properties": [],
+          "property_sources": [
+            {
+              "kind": "registry",
+              "value": "name/category",
+              "detail": "graph_binarize/conngraph"
+            }
+          ],
+          "complexity_exponent": null,
+          "quality": {
+            "status": "unmeasured"
+          }
+        },
+        {
+          "op": "graph_cut_binary",
+          "inputs": [
+            "image2d"
+          ],
+          "output": "table",
+          "properties": [],
+          "property_sources": [
+            {
+              "kind": "registry",
+              "value": "name/category",
+              "detail": "graph_cut_binary/segmentation"
+            }
+          ],
+          "complexity_exponent": null,
+          "quality": {
+            "status": "unmeasured"
+          }
+        },
+        {
+          "op": "holdout_threshold",
+          "inputs": [
+            "signal",
+            "signal",
+            "signal",
+            "signal"
+          ],
+          "output": "table",
+          "properties": [],
+          "property_sources": [
+            {
+              "kind": "registry",
+              "value": "name/category",
+              "detail": "holdout_threshold/emproof"
+            }
+          ],
+          "complexity_exponent": null,
+          "quality": {
+            "status": "unmeasured"
+          }
+        },
+        {
+          "op": "skill_test_thresholds",
+          "inputs": [],
+          "output": "table",
+          "properties": [],
+          "property_sources": [
+            {
+              "kind": "registry",
+              "value": "name/category",
+              "detail": "skill_test_thresholds/drive"
+            }
+          ],
+          "complexity_exponent": null,
+          "quality": {
+            "status": "unmeasured"
+          }
+        },
+        {
+          "op": "threshold_isodata",
+          "inputs": [
+            "image2d"
+          ],
+          "output": "table",
+          "properties": [],
+          "property_sources": [
+            {
+              "kind": "registry",
+              "value": "name/category",
+              "detail": "threshold_isodata/segmentation"
+            }
+          ],
+          "complexity_exponent": null,
+          "quality": {
+            "status": "unmeasured"
+          }
+        },
+        {
+          "op": "threshold_kapur",
+          "inputs": [
+            "image2d"
+          ],
+          "output": "table",
+          "properties": [],
+          "property_sources": [
+            {
+              "kind": "registry",
+              "value": "name/category",
+              "detail": "threshold_kapur/segmentation"
+            }
+          ],
+          "complexity_exponent": null,
+          "quality": {
+            "status": "unmeasured"
+          }
+        },
+        {
+          "op": "threshold_kittler",
+          "inputs": [
+            "image2d"
+          ],
+          "output": "table",
+          "properties": [],
+          "property_sources": [
+            {
+              "kind": "registry",
+              "value": "name/category",
+              "detail": "threshold_kittler/segmentation"
+            }
+          ],
+          "complexity_exponent": null,
+          "quality": {
+            "status": "unmeasured"
+          }
+        },
+        {
+          "op": "threshold_triangle",
+          "inputs": [
+            "image2d"
+          ],
+          "output": "table",
+          "properties": [],
+          "property_sources": [
+            {
+              "kind": "registry",
+              "value": "name/category",
+              "detail": "threshold_triangle/segmentation"
             }
           ],
           "complexity_exponent": null,
@@ -1197,288 +1477,48 @@
       "timing_source": "docs/ops/families_timing.json"
     },
     {
-      "name": "denoise",
-      "ops": [
-        {
-          "op": "bilateral_filter_depth",
-          "inputs": [
-            "depth"
-          ],
-          "output": "depth",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "bilateral_filter_depth/3d"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "cx_wiener_deconvolve",
-          "inputs": [
-            "image2d"
-          ],
-          "output": "image2d",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "cx_wiener_deconvolve/2d"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "joint_bilateral",
-          "inputs": [
-            "depth",
-            "image2d"
-          ],
-          "output": "depth",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "joint_bilateral/3d"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "temporal_bilateral",
-          "inputs": [
-            "video"
-          ],
-          "output": "video",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "temporal_bilateral/videostream"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "temporal_median_window",
-          "inputs": [
-            "video"
-          ],
-          "output": "video",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "temporal_median_window/videostream"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        }
-      ],
-      "probes": [],
-      "timing_source": "docs/ops/families_timing.json"
-    },
-    {
-      "name": "thresholding",
-      "ops": [
-        {
-          "op": "emva_sensitivity_threshold",
-          "inputs": [],
-          "output": "table",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "emva_sensitivity_threshold/optics"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "graph_binarize",
-          "inputs": [
-            "conn_graph"
-          ],
-          "output": "conn_graph",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "graph_binarize/conngraph"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "graph_cut_binary",
-          "inputs": [
-            "image2d"
-          ],
-          "output": "table",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "graph_cut_binary/segmentation"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "holdout_threshold",
-          "inputs": [
-            "signal",
-            "signal",
-            "signal",
-            "signal"
-          ],
-          "output": "table",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "holdout_threshold/emproof"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "skill_test_thresholds",
-          "inputs": [],
-          "output": "table",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "skill_test_thresholds/drive"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "threshold_isodata",
-          "inputs": [
-            "image2d"
-          ],
-          "output": "table",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "threshold_isodata/segmentation"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "threshold_kapur",
-          "inputs": [
-            "image2d"
-          ],
-          "output": "table",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "threshold_kapur/segmentation"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "threshold_kittler",
-          "inputs": [
-            "image2d"
-          ],
-          "output": "table",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "threshold_kittler/segmentation"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        },
-        {
-          "op": "threshold_triangle",
-          "inputs": [
-            "image2d"
-          ],
-          "output": "table",
-          "properties": [],
-          "property_sources": [
-            {
-              "kind": "registry",
-              "value": "name/category",
-              "detail": "threshold_triangle/segmentation"
-            }
-          ],
-          "complexity_exponent": null,
-          "quality": {
-            "status": "unmeasured"
-          }
-        }
-      ],
-      "probes": [],
-      "timing_source": "docs/ops/families_timing.json"
-    },
-    {
       "name": "fringe_phase",
       "ops": [
+        {
+          "op": "cubic_photoelastic_birefringence",
+          "inputs": [
+            "image2d",
+            "image2d",
+            "image2d"
+          ],
+          "output": "table",
+          "properties": [],
+          "property_sources": [
+            {
+              "kind": "registry",
+              "value": "name/category",
+              "detail": "cubic_photoelastic_birefringence/optics"
+            }
+          ],
+          "complexity_exponent": null,
+          "quality": {
+            "status": "unmeasured"
+          }
+        },
+        {
+          "op": "decode_fringe",
+          "inputs": [
+            "images"
+          ],
+          "output": "depth",
+          "properties": [],
+          "property_sources": [
+            {
+              "kind": "registry",
+              "value": "name/category",
+              "detail": "decode_fringe/3d"
+            }
+          ],
+          "complexity_exponent": null,
+          "quality": {
+            "status": "unmeasured"
+          }
+        },
         {
           "op": "fringe_multipath_phase_error",
           "inputs": [],
@@ -1531,8 +1571,71 @@
           "quality": {
             "status": "unmeasured"
           }
+        },
+        {
+          "op": "retardation_from_birefringence",
+          "inputs": [
+            "image2d"
+          ],
+          "output": "table",
+          "properties": [],
+          "property_sources": [
+            {
+              "kind": "registry",
+              "value": "name/category",
+              "detail": "retardation_from_birefringence/optics"
+            }
+          ],
+          "complexity_exponent": null,
+          "quality": {
+            "status": "unmeasured"
+          }
+        },
+        {
+          "op": "synthesize_fringes",
+          "inputs": [
+            "image2d"
+          ],
+          "output": "images",
+          "properties": [],
+          "property_sources": [
+            {
+              "kind": "registry",
+              "value": "name/category",
+              "detail": "synthesize_fringes/3d"
+            }
+          ],
+          "complexity_exponent": null,
+          "quality": {
+            "status": "unmeasured"
+          }
+        },
+        {
+          "op": "wave_fringe_period",
+          "inputs": [
+            "image2d"
+          ],
+          "output": "measurement",
+          "properties": [],
+          "property_sources": [
+            {
+              "kind": "registry",
+              "value": "name/category",
+              "detail": "wave_fringe_period/math"
+            }
+          ],
+          "complexity_exponent": null,
+          "quality": {
+            "status": "unmeasured"
+          }
         }
       ],
+      "probes": [],
+      "timing_source": "docs/ops/families_timing.json"
+    },
+    {
+      "name": "sorting",
+      "ops": [],
       "probes": [],
       "timing_source": "docs/ops/families_timing.json"
     }

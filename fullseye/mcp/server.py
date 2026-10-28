@@ -124,6 +124,20 @@ TOOLS: dict[str, dict] = {
             "op": {"type": "string"}, "input_context": {"type": "object"}},
             "required": ["op"], "additionalProperties": False},
     },
+    "fullseye_pipeline_shape": {
+        "description": "Choose pipeline topology from input and output forms using the unified op graph.",
+        "inputSchema": {"type":"object","properties":{"input_form":{"type":"string"},"output_form":{"type":"string"}},
+                       "required":["input_form","output_form"],"additionalProperties":False},
+    },
+    "fullseye_patterns": {
+        "description": "Return a typed design-pattern skeleton whose candidates come from plan_chain.",
+        "inputSchema": {"type":"object","properties":{"name":{"type":"string"},"start_sort":{"type":"string"},"goal_sort":{"type":"string"}},
+                       "required":["name","start_sort","goal_sort"],"additionalProperties":False},
+    },
+    "fullseye_sort_guide": {
+        "description": "Explain a sort as a computer-science container with graph-derived counts.",
+        "inputSchema": {"type":"object","properties":{"sort":{"type":"string"}},"additionalProperties":False},
+    },
     "fullseye_op_cards": {
         "description": "Return short complete op cards within a token budget; cards are never cut mid-card.",
         "inputSchema": {"type": "object", "properties": {
@@ -1155,6 +1169,17 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
         text = json.dumps(r, ensure_ascii=False, indent=2)
         failed = r.get("fail_closed") or (name == "fullseye_required_inputs" and not r.get("solutions"))
         return _tool_error(text, r) if failed else tool_result(text, r, max_structured_bytes=max_structured_bytes)
+    if name in ("fullseye_pipeline_shape", "fullseye_patterns", "fullseye_sort_guide"):
+        from fullseye.opsearch import pipeline_shape, pattern_skeleton, sort_guide
+        if name == "fullseye_pipeline_shape":
+            r = pipeline_shape(a["input_form"], a["output_form"])
+        elif name == "fullseye_patterns":
+            r = pattern_skeleton(a["name"], a["start_sort"], a["goal_sort"])
+        else:
+            r = sort_guide(a.get("sort"))
+        text = json.dumps(r, ensure_ascii=False, indent=2)
+        return (_tool_error(text, r) if r.get("found") is False else
+                tool_result(text, r, max_structured_bytes=max_structured_bytes))
     if name == "fullseye_op_cards":
         from fullseye.opsearch import op_cards
         try:

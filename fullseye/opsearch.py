@@ -32,6 +32,7 @@ import unicodedata
 from collections import Counter
 
 __all__ = ["search_ops", "plan_chain", "op_cards", "choose_op", "required_inputs", "param_space",
+           "pipeline_shape", "pattern_skeleton", "sort_guide",
            "load_index", "tokenize", "detect_lang", "LANGS", "main"]
 
 #: 要約を持つ言語(ja = 原文)。表示言語の既定は問い合わせの文字種から決める(:func:`detect_lang`)。
@@ -41,6 +42,8 @@ PKG_CARDS = "OP_CARDS.json"
 PKG_PROBE = "OP_PROBE.json"
 PKG_GRAPH = "OP_GRAPH.json"
 PKG_FAMILIES = "OP_FAMILIES.json"
+PKG_SHAPES = "OP_SHAPES.json"
+PKG_PATTERNS = "OP_PATTERNS.json"
 _STEM = 6
 _K1, _B = 1.2, 0.75
 #: 場ごとの重み: 名前に入っている語は要約の語より強い手掛かり
@@ -175,6 +178,41 @@ def param_space(op: str, input_context: dict | None = None) -> dict:
         params[name] = rec
     return {"op": op, "input_context": input_context, "parameters": params,
             "source_graph": PKG_GRAPH}
+
+
+def pipeline_shape(input_form: str, output_form: str) -> dict:
+    """Describe execution topology implied by input/output forms."""
+    rows = _load_json(PKG_SHAPES).get("shapes") or []
+    exact = [r for r in rows if r["input_form"] == input_form and r["output_form"] == output_form]
+    if not exact:
+        return {"input_form": input_form, "output_form": output_form, "found": False,
+                "known_input_forms": sorted({r["input_form"] for r in rows}),
+                "known_output_forms": sorted({r["output_form"] for r in rows})}
+    out = dict(exact[0]); out["found"] = True
+    return out
+
+
+def pattern_skeleton(name: str, start_sort: str, goal_sort: str) -> dict:
+    """Fill a typed pattern slot with candidates from the one op graph."""
+    pats = _load_json(PKG_PATTERNS).get("patterns") or []
+    pat = next((p for p in pats if p["name"].lower() == name.lower()), None)
+    if pat is None:
+        return {"name": name, "found": False, "known": [p["name"] for p in pats]}
+    # plan_chain is the sole candidate finder; patterns do not own an op table.
+    planned = plan_chain(name, start_sort, goal_sort, k=5, max_depth=4)
+    out = dict(pat); out.update({"found": True, "start_sort": start_sort, "goal_sort": goal_sort,
+                                "candidates": planned.get("chains", planned)})
+    return out
+
+
+def sort_guide(sort: str | None = None) -> dict:
+    """Return node/container guidance and graph-derived producer/consumer counts."""
+    rows = _load_json("OP_SORTS.json").get("sorts") or []
+    if sort is None:
+        return {"sorts": rows, "documented_choose_when": sum(r["choose_when"] != "undocumented" for r in rows),
+                "undocumented_choose_when": sum(r["choose_when"] == "undocumented" for r in rows)}
+    row = next((r for r in rows if r["sort"] == sort), None)
+    return {"found": row is not None, "sort": row, "known": [] if row else [r["sort"] for r in rows]}
 
 
 def _load_data(name: str) -> dict:

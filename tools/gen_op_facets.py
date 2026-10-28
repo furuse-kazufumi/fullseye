@@ -27,7 +27,7 @@ FAMILY_RULES = {
     "thresholding": r"threshold|binar|otsu|niblack|sauvola",
     "morphology": r"morph|erod|dilat|opening|closing|skeleton|thin(?:ning)?",
     "phase_unwrap": r"unwrap",
-    "fringe_phase": r"phase.*(?:shift|extract|demod)|fringe.*phase|fourier.*phase",
+    "fringe_phase": r"fringe|phase.*(?:shift|extract|demod)|fourier.*phase",
     "sorting": r"(?:quick|heap|merge|intro|stable|radix|counting)_?sort|^sort_",
 }
 
@@ -117,15 +117,49 @@ def build() -> dict[str, object]:
              "nodes": nodes, "edges": edges,
              "diagnostics": {k: a[k] for k in ("dead_ends", "orphans", "never_consumed", "unchecked_ops", "unreachable")}}
     families = {"schema": 1, "source_graph": "OP_GRAPH.json", "rule_source": "tools/gen_op_facets.py:FAMILY_RULES",
-                "families": [{"name": f, "ops": sorted(rows, key=lambda x: x["op"]),
+                "families": [{"name": f, "ops": sorted(family_rows.get(f, []), key=lambda x: x["op"]),
                               "probes": [], "timing_source": "docs/ops/families_timing.json"}
-                             for f, rows in family_rows.items()]}
+                             for f in FAMILY_RULES]}
     device = {"schema": 1, "source_graph": "OP_GRAPH.json", "gpu_policy": "unmeasured unless device_timing says otherwise",
               "ops": [{"op": e["op"], "compute": e["compute"], "implementations": e["implementations"],
                        "parity": e["parity"], "gpu_timing": e["gpu_timing"]} for e in edges]}
     sorts = {"schema": 1, "source_graph": "OP_GRAPH.json", "sorts": nodes}
+    shapes = _shapes()
+    patterns = _patterns()
     return {"OP_GRAPH.json": graph, "OP_FAMILIES.json": families, "OP_DEVICE.json": device,
-            "OP_SORTS.json": sorts}
+            "OP_SORTS.json": sorts, "OP_SHAPES.json": shapes, "OP_PATTERNS.json": patterns,
+            "docs/ops/patterns.json": patterns}
+
+
+def _shapes():
+    rows = [
+      ("single", "dense_field", "serial", True, "RMSE/PSNR"),
+      ("same_view_bundle", "dense_field", "bundle_reduction", True, "RMSE/PSNR"),
+      ("different_views", "pose", "join", False, "pose error"),
+      ("reference_target", "mask", "join", False, "IoU"),
+      ("time_series", "sparse_features", "stateful_stream", False, "position error/F1"),
+      ("volume", "mask", "serial", True, "IoU"),
+      ("point_mesh", "scalar", "serial", True, "bias/repeatability"),
+      ("huge_single", "dense_field", "tile", False, "RMSE/PSNR"),
+      ("batch", "decision", "map", True, "false positive/false negative"),
+    ]
+    return {"schema":1,"source_graph":"OP_GRAPH.json","shapes":[
+      {"input_form":i,"output_form":o,"shape":s,"currently_composable":ok,"metric":m,
+       "patterns":["Pipe-and-Filter"] if s=="serial" else [s],
+       "resource_hint":"GPU candidate only after measurement" if s=="map" else "device depends on edge attributes",
+       "missing":[] if ok else ["typed DAG executor" if s=="join" else "executor support for "+s],
+       "example":{"status":"none","source":"no mechanically verified example"}}
+      for i,o,s,ok,m in rows]}
+
+
+def _patterns():
+    names = ["Pipe-and-Filter","Strategy","Adapter","Template Method","Coarse-to-fine",
+             "Hypothesize-and-Verify","Voting","Chain of Responsibility","Decorator"]
+    return {"schema":1,"source_graph":"OP_GRAPH.json","patterns":[
+      {"name":n,"intent":n,"slots":[{"role":"typed operator","input":"$current","output":"$next",
+                                       "family":None}],
+       "example":{"status":"none","source":"no mechanically verified example"}}
+      for n in names]}
 
 
 def _container(sort: str) -> str:
@@ -146,7 +180,7 @@ def main(argv=None) -> int:
     built = build()
     bad = []
     for name, obj in built.items():
-        p = DATA / name
+        p = (ROOT / name) if name.startswith("docs/") else (DATA / name)
         text = json.dumps(obj, ensure_ascii=False, indent=2) + "\n"
         if ns.check:
             if not p.exists() or p.read_text(encoding="utf-8") != text: bad.append(str(p))

@@ -190,6 +190,8 @@ def test_every_declared_tool_has_a_body(cat):
     from fullseye.mcp.handles import HandleStore
     store = HandleStore()
     order = ["fullseye_search_ops", "fullseye_find_ops", "fullseye_plan_chain", "fullseye_op_cards",
+             "fullseye_choose_op", "fullseye_required_inputs", "fullseye_param_space",
+             "fullseye_pipeline_shape", "fullseye_patterns", "fullseye_sort_guide",
              "fullseye_validate_pipeline", "fullseye_op_help", "fullseye_catalog_coverage",
              "fullseye_list_samples", "fullseye_load_image", "fullseye_apply", "fullseye_inspect",
              "fullseye_pipeline", "fullseye_fix_text",
@@ -206,6 +208,18 @@ def test_every_declared_tool_has_a_body(cat):
             a = {"query": "count objects", "start_sort": "image", "goal_sort": "feature"}
         elif n == "fullseye_op_cards":
             a = {"names": ["gaussian", "otsu"], "budget_tokens": 300}
+        elif n == "fullseye_choose_op":
+            a = {"family": "edge_detection", "constraints": {}}
+        elif n == "fullseye_required_inputs":
+            a = {"goal_sort": "depth", "max_depth": 2, "k": 2}
+        elif n == "fullseye_param_space":
+            a = {"op": "points_to_voxel", "input_context": {"width": 512, "height": 512}}
+        elif n == "fullseye_pipeline_shape":
+            a = {"input_form": "single", "output_form": "dense_field"}
+        elif n == "fullseye_patterns":
+            a = {"name": "Pipe-and-Filter", "start_sort": "image", "goal_sort": "region"}
+        elif n == "fullseye_sort_guide":
+            a = {"sort": "image2d"}
         elif n == "fullseye_validate_pipeline":
             a = {"start_sort": "image", "stages": [{"op": "gaussian"}, {"op": "otsu"}]}
         elif n == "fullseye_op_help":

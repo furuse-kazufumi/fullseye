@@ -10282,7 +10282,7 @@
       ],
       "output": "depth",
       "category": "3d",
-      "family": null,
+      "family": "fringe_phase",
       "reversible": "unknown",
       "loss": "unknown",
       "compute": {
@@ -10333,7 +10333,7 @@
       ],
       "output": "images",
       "category": "3d",
-      "family": null,
+      "family": "fringe_phase",
       "reversible": "unknown",
       "loss": "unknown",
       "compute": {
@@ -25736,7 +25736,7 @@
       ],
       "output": "measurement",
       "category": "math",
-      "family": null,
+      "family": "fringe_phase",
       "reversible": "unknown",
       "loss": "unknown",
       "compute": {
@@ -51543,7 +51543,7 @@
       ],
       "output": "table",
       "category": "optics",
-      "family": null,
+      "family": "fringe_phase",
       "reversible": "unknown",
       "loss": "unknown",
       "compute": {
@@ -51698,7 +51698,7 @@
       ],
       "output": "table",
       "category": "optics",
-      "family": null,
+      "family": "fringe_phase",
       "reversible": "unknown",
       "loss": "unknown",
       "compute": {
