@@ -134,7 +134,7 @@ SYSTEM_PARAMS = {
                             "affects_numbers": False, "applied_by": ("fullseye/opsearch.py",), "doc": "Planner expansion cap."},
     "plan_timeout_ms": {"values": (100, 500, 900, 2000), "default": 900, "tightens_only": True,
                         "affects_numbers": False, "applied_by": ("fullseye/opsearch.py",), "doc": "Planner wall-time cap."},
-    "mcp_response_budget": {"values": (128000, 256000, 512000), "default": 512000, "tightens_only": True,
+    "mcp_response_budget": {"values": (16000, 128000, 256000, 512000), "default": 512000, "tightens_only": True,
                             "affects_numbers": False, "applied_by": ("fullseye/mcp/server.py",), "doc": "Structured response byte cap."},
     "mcp_body_mode": {"values": ("compact", "duplicate"), "default": "compact", "tightens_only": False,
                       "affects_numbers": False, "applied_by": ("fullseye/mcp/server.py",), "doc": "Avoid duplicating structured JSON in text."},

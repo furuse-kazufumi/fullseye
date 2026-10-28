@@ -90,7 +90,9 @@ def _sort(value: str) -> str:
 
 
 def _result(ok: bool, reason: str, *, hint: str = "", next_tool: str | None = None, **data) -> dict:
-    return {"ok": ok, "reason": reason, "hint": hint, "next_tool": next_tool, **data}
+    names={"plan":"fullseye_plan","find_ops":"fullseye_find_ops","describe":"fullseye_describe",
+           "choose":"fullseye_choose","op_cards":"fullseye_op_cards"}
+    return {"ok": ok, "reason": reason, "hint": hint, "next_tool": names.get(next_tool,next_tool), **data}
 
 
 def _plan_dag(root: dict) -> tuple[list[dict], list[str]]:
@@ -652,7 +654,7 @@ def _name_tables(rows: list) -> tuple[dict, dict]:
     return names, aliases
 
 
-def search_ops(query: str, k: int = 10, *, lang: str | None = None, in_sort: str | None = None,
+def search_ops(query: str, k: int = 3, *, lang: str | None = None, in_sort: str | None = None,
                out_sort: str | None = None, dim: str | None = None, index_path: str | None = None) -> dict:
     """``query``(:data:`LANGS` のどの言語でも)に合う op を順位つきで返す。
 

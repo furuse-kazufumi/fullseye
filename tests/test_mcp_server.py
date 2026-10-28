@@ -280,7 +280,7 @@ def test_every_declared_tool_has_a_body(cat):
         assert res["isError"] is False, (n, res["content"][0]["text"][:300])
         sc = res.get("structuredContent", {})
         if n == "fullseye_list_samples":
-            ctx["sample_path"] = sc["samples"][0]["path"]
+            ctx["sample_path"] = sc["samples"][0]
         elif n == "fullseye_load_image":
             ctx["handle"] = sc["handle"]
         elif n == "fullseye_apply":

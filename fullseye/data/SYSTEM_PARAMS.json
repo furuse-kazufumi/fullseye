@@ -76,6 +76,7 @@
     "mcp_response_budget": {
       "default": 512000,
       "values": [
+        16000,
         128000,
         256000,
         512000

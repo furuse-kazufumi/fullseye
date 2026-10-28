@@ -130,6 +130,8 @@ class HandleStore:
         return dict(meta)
 
     def load(self, path: str, *, color: bool = False) -> dict:
+        named=next((r["path"] for r in self.samples() if r["name"]==path),None)
+        if named is not None: path=named
         real = self._check_path(path)
         # ★2026-10-11: 根の中の壊れた png・object 配列の npy は ValueError 等を HandleError に
         # 写さず投げ、dispatch を抜けてサーバのループが死んでいた。読めない中身は理由つきで断る

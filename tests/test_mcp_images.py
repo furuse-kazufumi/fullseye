@@ -94,8 +94,8 @@ def test_real_stdio_chains_handles_across_calls():
         talk("initialize", protocolVersion="2025-06-18", capabilities={}, clientInfo={"name": "t", "version": "0"})
         s = call("fullseye_list_samples")
         assert not s["isError"]
-        coins = next(x for x in s["structuredContent"]["samples"] if x["name"] == "coins")
-        h0 = call("fullseye_load_image", path=coins["path"])
+        assert "coins" in s["structuredContent"]["samples"]
+        h0 = call("fullseye_load_image", path="coins")
         assert not h0["isError"], h0["content"][0]["text"]
         sc0 = h0["structuredContent"]
         assert sc0["handle"].startswith(PREFIX) and sc0["sort"] == "image"

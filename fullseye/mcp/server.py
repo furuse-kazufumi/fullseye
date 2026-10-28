@@ -106,6 +106,7 @@ TOOLS: dict[str, dict] = {
                           "description": "やりたいこと(例: ノイズ除去 / remove noise / 边缘检测)"},
                 "in_sort": {"type": "string", "description": _SORT_DESC},
                 "out_sort": {"type": "string", "description": _SORT_DESC},
+                "limit": {"type":"integer","minimum":1,"maximum":MAX_SEARCH_LIMIT,"default":3},
             },
             "required": ["query"],
             "additionalProperties": False,
@@ -1428,7 +1429,7 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
     if name == "fullseye_find_ops":
         from fullseye.opsearch import _format, search_ops
         try:
-            r = search_ops(a["query"], a.get("limit", 10), lang=a.get("lang"),
+            r = search_ops(a["query"], a.get("limit", 3), lang=a.get("lang"),
                            in_sort=a.get("in_sort"), out_sort=a.get("out_sort"))
         except ValueError as exc:                          # 空の問い合わせ等は引数違反(-32602)
             raise ArgError(str(exc)) from exc
@@ -1451,7 +1452,7 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
                 r = param_space(a["op"], a.get("input_context"))
         except ValueError as exc:
             raise ArgError(str(exc)) from exc
-        text = json.dumps(r, ensure_ascii=False, indent=2)
+        text = json.dumps(r, ensure_ascii=False, separators=(",", ":"))
         failed = r.get("fail_closed") or (name == "fullseye_required_inputs" and not r.get("solutions"))
         return _tool_error(text, r) if failed else tool_result(text, r, max_structured_bytes=max_structured_bytes)
     if name in ("fullseye_pipeline_shape", "fullseye_patterns", "fullseye_sort_guide"):
@@ -1491,9 +1492,9 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
         return tool_result(_coverage_text(c), c, max_structured_bytes=max_structured_bytes)
     if name == "fullseye_list_samples":
         rows = store.samples()
-        text = "同梱サンプル %d 枚(根: %s)\n" % (len(rows), store.roots) + "\n".join(
-            "- %s  %s  [%s / %s]" % (r["name"], r["path"], r["source"], r["licence"]) for r in rows)
-        return tool_result(text, {"samples": rows, "roots": store.roots},
+        names=[r["name"] for r in rows]
+        text="samples: "+", ".join(names)
+        return tool_result(text, {"samples": names},
                            max_structured_bytes=max_structured_bytes)
     try:
         if name == "fullseye_load_image":
