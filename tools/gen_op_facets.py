@@ -295,6 +295,34 @@ def build() -> dict[str, object]:
             edge["parameter_schema"] = fn["parameters"][len(edge["inputs"]):]
             executable_reasons["python_signature"] += 1
 
+    stochastic_rx = re.compile(r"^(?:aug_|tb_random_)|random")
+    global_rx = re.compile(r"equalize|autocontrast|autolevel")
+    bundle_sorts = {"images","seq<image>","video","polsweep","lightfield","volume"}
+    for edge in edges:
+        if stochastic_rx.search(edge["op"]):
+            edge["bundle_semantics"] = "stochastic"
+        elif any(x in bundle_sorts for x in edge["inputs"]) or edge["output"] in bundle_sorts:
+            edge["bundle_semantics"] = "temporal" if "video" in edge["inputs"] else "stack_global"
+        elif (len(edge["inputs"]) == 1 and edge["inputs"][0] == edge["output"] and
+              edge["compute"]["structure"] in {"elementwise","neighborhood_stencil"} and
+              not global_rx.search(edge["op"])):
+            edge["bundle_semantics"] = "elementwise"
+        else:
+            edge["bundle_semantics"] = "unknown"
+
+    alias_src={"kind":"type_equivalence","value":"images ≡ seq<image>"}
+    for name,inp,out in (("type::images_to_seq_image","images","seq<image>"),
+                         ("type::seq_image_to_images","seq<image>","images")):
+        edges.append({"op":name,"inputs":[inp],"output":out,"category":"type_equivalence",
+                      "family":None,"type_semantics":"typed","consumes_input":True,
+                      "bundle_semantics":"elementwise","executable":True,
+                      "executor":{"kind":"identity","callable":"identity"},"parameter_schema":[],
+                      "compute":{"structure":"elementwise","intensity":"zero_copy","source":alias_src},
+                      "implementations":[{"backend":"planner/runtime identity","status":"available","source":alias_src}],
+                      "parameters":{},"source":alias_src,
+                      "population_extension_reason":"explicit bundle type equivalence"})
+        produced[out]+=1; consumed[inp]+=1
+
     # Intern provenance once and omit blanket unknown measurements.  This keeps
     # OP_GRAPH readable instead of repeating the same unmeasured/source record
     # thousands of times.
@@ -328,7 +356,8 @@ def build() -> dict[str, object]:
                       "choose_when": "undocumented", "source": "chain_fuzz catalog"})
     lifted = [{"op":"map::"+e["op"],"base_op":e["op"],"input":"seq<%s>"%e["inputs"][0],
                "output":"seq<%s>"%e["output"],"kind":"map"}
-              for e in edges if e.get("executable") and len(e["inputs"])==1 and e["inputs"][0]==e["output"]]
+              for e in edges if e.get("executable") and e.get("bundle_semantics")=="elementwise"
+              and len(e["inputs"])==1 and e["inputs"][0]==e["output"]]
     parameter_summary={"measured_ops":sum(bool(knobs.get(e["op"])) for e in edges),
                        "a_unused":sum("a" in e.get("parameters",{}) and e["parameters"]["a"].get("source")!="unmeasured" and not e["parameters"]["a"].get("used") for e in edges),
                        "b_unused":sum("b" in e.get("parameters",{}) and e["parameters"]["b"].get("source")!="unmeasured" and not e["parameters"]["b"].get("used") for e in edges),

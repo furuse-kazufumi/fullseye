@@ -992,7 +992,9 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
         params=dict(spec.get("params",{}))
         try:
             executor=edge["executor"]
-            if executor["kind"]=="registry":
+            if executor["kind"]=="identity":
+                out=args[0]
+            elif executor["kind"]=="registry":
                 incoming=args if len(args)>1 else args[0]
                 out=fullseye.apply(incoming,edge["op"],float(spec.get("a",.5)),float(spec.get("b",.5)),on_error="raise")
             else:

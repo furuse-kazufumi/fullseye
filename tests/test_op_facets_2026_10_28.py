@@ -94,6 +94,19 @@ def test_nary_registry_declarations_are_exact_and_duplicate_is_explained():
     duplicate=next(x for x in g["diagnostics"]["duplicate_declarations"] if x["op"]=="gaussians_to_voxel")
     assert duplicate["exemption"]
 
+def test_bundle_types_are_nodes_and_only_grounded_elementwise_ops_are_lifted():
+    g=load("OP_GRAPH.json")
+    assert "seq<image>" in {n["sort"] for n in g["nodes"]}
+    equivalence={e["op"] for e in g["edges"] if e["category"]=="type_equivalence"}
+    assert equivalence == {"type::images_to_seq_image","type::seq_image_to_images"}
+    edges={e["op"]:e for e in g["edges"]}
+    unsafe=[r["base_op"] for r in g["lifted_map_edges"]
+            if edges[r["base_op"]]["bundle_semantics"] != "elementwise"]
+    assert unsafe == []
+    forbidden=[r["base_op"] for r in g["lifted_map_edges"]
+               if r["base_op"].startswith(("aug_","tb_random_")) or r["base_op"] in {"equalize","autocontrast","autolevel"}]
+    assert forbidden == []
+
 def test_six_business_plans_put_grounded_main_op_in_results():
     tasks=[
       ("deflectometry phase slope dent",["image","image"],"normalmap","deflectometry_phase_to_slope"),
