@@ -486,7 +486,7 @@
         {
           "op": "decode_fringe",
           "inputs": [
-            "images"
+            "seq<image>"
           ],
           "output": "depth",
           "membership_source": "docs/ops/3d/structured_light/decode_fringe.md",
@@ -505,7 +505,7 @@
         {
           "op": "micro_phase_decode",
           "inputs": [
-            "images"
+            "seq<image>"
           ],
           "output": "table",
           "membership_source": "docs/ops/optics/light_transport/micro_phase_decode.md",

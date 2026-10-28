@@ -26,7 +26,10 @@ DOCS = ROOT / "docs" / "ops"
 # Public canonical vocabulary is the executor vocabulary.  Graph/ledger aliases
 # are accepted at every API boundary and normalized exactly once here.
 SORT_ALIASES = {"image2d": "image", "mask": "region", "contour2d": "contour",
-                "features": "feature", "pointcloud": "points"}
+                "features": "feature", "pointcloud": "points", "images":"seq<image>",
+                "video":"seq<image>"}
+TYPE_CONSTRUCTORS={"images":"seq<image>","video":"seq<image>","polsweep":"seq<polarized_image>",
+                   "lightfield":"grid<image>","volume":"stack3<image>"}
 ACQUIRABLE = {
     "image": "camera acquisition contract",
     "images": "multi-frame camera acquisition contract",
@@ -71,7 +74,7 @@ def type_semantics(inputs: list[str], output: str) -> tuple[list[str], str, str,
     """Replace the overloaded historical ``any`` with explicit meanings."""
     inputs = ["unknown" if x in ("any", "untyped") else x for x in inputs]
     if output == "any":
-        output = "poly" if inputs and inputs[0] != "unknown" else "unknown"
+        output = "unknown"
     elif output == "untyped":
         output = "unknown"
     semantics = ("source" if not inputs and output != "unknown" else
@@ -388,7 +391,6 @@ def build() -> dict[str, object]:
     for edge in edges:
         if edge.get("executable"):
             edge["executor"] = {"kind": "registry", "callable": edge["op"]}
-            edge["parameter_schema"] = []
             executable_reasons["registry"] += 1
         fn = runtime_functions.get(edge["op"])
         if fn is not None:
@@ -404,6 +406,8 @@ def build() -> dict[str, object]:
             edge["executor"] = {"kind": "python", "module": fn["module"], "callable": fn["callable"]}
             edge["parameter_schema"] = fn["parameters"][len(edge["inputs"]):]
             executable_reasons["python_signature"] += 1
+        if edge.get("executor",{}).get("kind")=="python":
+            edge.pop("parameters",None)
 
         unsafe = _mcp_unsafe_parameter((fn or {}).get("parameters", []))
         if unsafe:
@@ -437,21 +441,6 @@ def build() -> dict[str, object]:
             edge["bundle_semantics"] = "elementwise"
         else:
             edge["bundle_semantics"] = "unknown"
-
-    alias_src={"kind":"type_equivalence","value":"images ≡ seq<image>"}
-    for name,inp,out in (("type::images_to_seq_image","images","seq<image>"),
-                         ("type::seq_image_to_images","seq<image>","images")):
-        edges.append({"op":name,"inputs":[inp],"output":out,"category":"type_equivalence",
-                      "family":None,"type_semantics":"typed","consumes_input":True,
-                      "bundle_semantics":"elementwise","executable":True,"verified_executable":True,
-                      "verification":{"source":"identity semantics","status":"ok",
-                                      "checks":["typed","shape","finite"]},
-                      "executor":{"kind":"identity","callable":"identity"},"parameter_schema":[],
-                      "compute":{"structure":"elementwise","intensity":"zero_copy","source":alias_src},
-                      "implementations":[{"backend":"planner/runtime identity","status":"available","source":alias_src}],
-                      "parameters":{},"source":alias_src,
-                      "population_extension_reason":"explicit bundle type equivalence"})
-        produced[out]+=1; consumed[inp]+=1
 
     # Intern provenance once and omit blanket unknown measurements.  This keeps
     # OP_GRAPH readable instead of repeating the same unmeasured/source record
@@ -488,15 +477,30 @@ def build() -> dict[str, object]:
                "output":"seq<%s>"%e["output"],"kind":"map"}
               for e in edges if e.get("executable") and e.get("bundle_semantics")=="elementwise"
               and len(e["inputs"])==1 and e["inputs"][0]==e["output"]]
+    for row in lifted:
+        src={"kind":"derived_map","value":row["base_op"]}; sid=intern(src)
+        edges.append({"op":row["op"],"inputs":[row["input"]],"output":row["output"],
+                      "category":"map","family":None,"type_semantics":"typed","consumes_input":True,
+                      "bundle_semantics":"elementwise","executable":False,"verified_executable":False,
+                      "executable_reason":"map_executor_not_implemented","not_executable_in_mcp":"not_verified",
+                      "compute":{"structure":"elementwise","intensity":"derived","source_ref":sid},
+                      "implementations":[],"parameters":{},"source_ref":sid,
+                      "population_extension_reason":"grounded elementwise lifting"})
+        for sort in (row["input"],row["output"]):
+            if sort not in {n["sort"] for n in nodes}:
+                nodes.append({"sort":sort,"container":_container(sort),"size_hint":"input-dependent",
+                              "produced_by":0,"consumed_by":0,"generator":False,"type_check":False,
+                              "choose_when":"derived map container","source":"derived map"})
     parameter_summary={"measured_ops":sum(bool(knobs.get(e["op"])) for e in edges),
                        "a_unused":sum("a" in e.get("parameters",{}) and e["parameters"]["a"].get("source")!="unmeasured" and not e["parameters"]["a"].get("used") for e in edges),
                        "b_unused":sum("b" in e.get("parameters",{}) and e["parameters"]["b"].get("source")!="unmeasured" and not e["parameters"]["b"].get("used") for e in edges),
                        "reason":"docs/op_knob.json measured no output effect"}
     graph = {"schema": 2, "generated_by": "tools/gen_op_facets.py", "model": "typed AND-OR hypergraph",
              "sort_aliases": SORT_ALIASES, "population": "union of docs/OP_INDEX.json and chain_fuzz catalog",
-             "acquirable_sorts": [{"sort": s, "source": src} for s, src in ACQUIRABLE.items()],
-             "type_constructors":{"images":"seq<image>","video":"seq<image>","polsweep":"seq<polarized_image>",
-                                  "lightfield":"grid<image>","volume":"stack3<image>"},
+             "acquirable_sorts": [{"sort": s, "source": " / ".join(srcs)} for s,srcs in sorted(
+                 (lambda grouped: grouped.items())({s:[src for raw,src in ACQUIRABLE.items() if canonical_sort(raw)==s]
+                                                    for s in {canonical_sort(raw) for raw in ACQUIRABLE}}))],
+             "type_constructors":TYPE_CONSTRUCTORS,
              "lifted_map_edges":lifted,
              "parameter_summary":parameter_summary,
              "execution_summary":{"executable":sum(bool(e.get("executable")) for e in edges),
@@ -539,9 +543,9 @@ def build() -> dict[str, object]:
 
 
 def _shapes(edges):
-    input_forms={"single":"image","same_view_bundle":"images","different_views":"images",
-                 "reference_target":"images","time_series":"video","volume":"volume",
-                 "point_mesh":"points","huge_single":"image","batch":"images"}
+    input_forms={"single":"image","same_view_bundle":"seq<image>","different_views":"seq<view<image>>",
+                 "reference_target":"tuple<image,image>","time_series":"seq<image>","volume":"volume",
+                 "point_mesh":"points","huge_single":"image","batch":"seq<image>"}
     output_forms={"dense_field":{"image","depth","phase","flow"},"mask":{"region"},
                   "sparse_features":{"feature","features","contour","points"},"pose":{"pose","transform"},
                   "scalar":{"scalar","feature"},"decision":{"bool","decision"}}
@@ -554,14 +558,13 @@ def _shapes(edges):
         shape="join" if joins else ("bundle_reduction" if reductions else ("map" if inf=="batch" else "serial"))
         rows.append({"input_form":inf,"output_form":outf,"input_sort":insort,"output_sorts":sorted(outs),
                      "shape":shape,"derived_from":{"direct_edges":len(direct),"join_edges":len(joins),"reduce_edges":len(reductions)},
-                     "currently_composable":bool(direct) and shape in {"serial","bundle_reduction"},
+                     "currently_composable":bool(direct),
                      "metric":"IoU" if outf=="mask" else ("RMSE/PSNR" if outf=="dense_field" else "task-specific"),
                      "representative_chain":[direct[0]["op"]] if direct else [],
                      "example":{"status":"verified_graph_edge","op":direct[0]["op"]} if direct else {"status":"none"},
                      "missing":[] if direct else ["typed DAG executor or matching executable edge"]})
     return {"schema":2,"source_graph":"OP_GRAPH.json","input_forms":list(input_forms),
-            "output_forms":list(output_forms),"type_constructors":{"images":"seq<image>","video":"seq<image>",
-            "polsweep":"seq<polarized_image>","lightfield":"grid<image>","volume":"stack3<image>"},"shapes":rows}
+            "output_forms":list(output_forms),"type_constructors":TYPE_CONSTRUCTORS,"shapes":rows}
 
 
 def _patterns():

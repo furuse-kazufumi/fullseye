@@ -719,7 +719,7 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
     if len(stages) > max_stages:
         errors.append({"layer": "pipeline", "stage": 0, "reason": "too_many_stages",
                        "value": len(stages), "limit": max_stages, "candidates": []})
-    from fullseye.opsearch import _graph
+    from fullseye.opsearch import _graph, _sort
     graph_edges = {e["op"]: e for e in _graph()["edges"]}
     binding_sorts = {}
     for ref, handle in bindings.items():
@@ -728,7 +728,7 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
         elif store is None:
             binding_sorts[ref] = ref.split(":",1)[1]
         else:
-            try: binding_sorts[ref] = store.get(handle)[0]["sort"]
+            try: binding_sorts[ref] = _sort(store.get(handle)[0]["sort"])
             except HandleError as exc:
                 errors.append({"layer":"binding","stage":0,"reason":"invalid_handle","value":handle,
                                "detail":str(exc),"candidates":[]})
@@ -773,7 +773,7 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
                 elif ref.startswith("have:"):
                     actual.append(binding_sorts.get(ref, "unknown"))
                 elif store is not None and ref.startswith("fullseye://"):
-                    try: actual.append(store.get(ref)[0]["sort"])
+                    try: actual.append(_sort(store.get(ref)[0]["sort"]))
                     except HandleError: actual.append("unknown")
                 else:
                     actual.append("unknown")

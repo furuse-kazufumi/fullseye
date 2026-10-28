@@ -43,7 +43,7 @@ def test_backward_solutions_are_forward_edges():
 
 def test_unused_knobs_are_not_searchable():
     g=load("OP_GRAPH.json")
-    edge=next(e for e in g["edges"] if any(not x.get("used") for x in e["parameters"].values()))
+    edge=next(e for e in g["edges"] if any(not x.get("used") for x in e.get("parameters",{}).values()))
     r=opsearch.param_space(edge["op"], {})
     bad=[p for p in r["parameters"].values() if not p["used"] and p["search"]]
     assert not bad
@@ -99,7 +99,8 @@ def test_bundle_types_are_nodes_and_only_grounded_elementwise_ops_are_lifted():
     g=load("OP_GRAPH.json")
     assert "seq<image>" in {n["sort"] for n in g["nodes"]}
     equivalence={e["op"] for e in g["edges"] if e["category"]=="type_equivalence"}
-    assert equivalence == {"type::images_to_seq_image","type::seq_image_to_images"}
+    assert equivalence == set()
+    assert g["sort_aliases"]["images"] == "seq<image>"
     edges={e["op"]:e for e in g["edges"]}
     unsafe=[r["base_op"] for r in g["lifted_map_edges"]
             if edges[r["base_op"]]["bundle_semantics"] != "elementwise"]
@@ -107,6 +108,7 @@ def test_bundle_types_are_nodes_and_only_grounded_elementwise_ops_are_lifted():
     forbidden=[r["base_op"] for r in g["lifted_map_edges"]
                if r["base_op"].startswith(("aug_","tb_random_")) or r["base_op"] in {"equalize","autocontrast","autolevel"}]
     assert forbidden == []
+    assert {r["op"] for r in g["lifted_map_edges"]} <= {e["op"] for e in g["edges"]}
 
 def test_six_business_plans_put_grounded_main_op_in_results():
     tasks=[
@@ -279,14 +281,14 @@ def test_plan_dag_contract_accepts_have_bindings_reorders_and_rejects_role_alias
     from fullseye.mcp.handles import HandleStore
     from fullseye.mcp.server import call_tool,validate_pipeline
     cat=Catalog.load(); store=HandleStore(roots=[])
-    images=store.put(np.zeros((2,8,8)),sort="images",provenance=[])["handle"]
-    dag={"handle":images,"bindings":{"have:images":images},"outputs":["stage:1"],"stages":[
-        {"op":"type::seq_image_to_images","inputs":["stage:2"],"params":{}},
-        {"op":"type::images_to_seq_image","inputs":["have:images"],"params":{}}]}
+    images=store.put(np.zeros((8,8)),sort="image",provenance=[])["handle"]
+    dag={"handle":images,"bindings":{"have:image":images},"outputs":["stage:1"],"stages":[
+        {"op":"invert","inputs":["stage:2"],"params":{}},
+        {"op":"gaussian","inputs":["have:image"],"params":{}}]}
     result=call_tool("fullseye_pipeline",dag,cat,store)
     assert result.get("isError") is False
     assert [r["stage"] for r in result["structuredContent"]["stages"]] == [2,1]
-    assert result["structuredContent"]["out_sort"] == "images"
+    assert result["structuredContent"]["out_sort"] == "image"
 
     image=store.put(np.zeros((8,8)),sort="image",provenance=[])["handle"]
     bad=validate_pipeline([{"op":"deflectometry_phase_to_slope",
@@ -326,3 +328,16 @@ def test_priority_queue_planner_replays_backward_derivations_forward():
             checked+=1
     assert failures == []
     assert checked >= 10
+
+def test_round3_type_truth_uses_aliases_and_one_parameter_schema():
+    graph=load("OP_GRAPH.json")
+    assert [e["op"] for e in graph["edges"] if e["type_semantics"]=="poly"] == []
+    assert {graph["sort_aliases"][x] for x in ("images","video")} == {"seq<image>"}
+    python_edges=[e for e in graph["edges"] if e.get("executor",{}).get("kind")=="python"]
+    registry_edges=[e for e in graph["edges"] if e.get("executor",{}).get("kind")=="registry"]
+    assert python_edges and registry_edges
+    assert [e["op"] for e in python_edges if "parameters" in e or "parameter_schema" not in e] == []
+    assert [e["op"] for e in registry_edges if "parameter_schema" in e or "parameters" not in e] == []
+    shapes=load("OP_SHAPES.json")
+    forms={r["input_form"]:r["input_sort"] for r in shapes["shapes"]}
+    assert len({forms[x] for x in ("same_view_bundle","different_views","reference_target","time_series")}) == 3
