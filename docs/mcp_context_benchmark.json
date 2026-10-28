@@ -1,5 +1,10 @@
 {
   "method": "minimal tools schema + find_ops(limit=3) + plan(k=3) + cards; UTF-8 bytes/4",
+  "scope": "Counts discovery through planning/cards only; execution and answer-correctness evaluation are excluded.",
+  "tool_profiles": {
+    "full_tokens": 3196,
+    "minimal_tokens": 1397
+  },
   "target_tokens": 4000,
   "tasks": [
     {
@@ -45,8 +50,8 @@
     {
       "task": "fast structured-light depth",
       "tool_schema_tokens": 1397,
-      "response_tokens": 1097,
-      "total_tokens": 2494,
+      "response_tokens": 1207,
+      "total_tokens": 2604,
       "planned": true,
       "ops": [
         "decode_fringe"
@@ -55,13 +60,13 @@
     {
       "task": "switch product and detect corners",
       "tool_schema_tokens": 1397,
-      "response_tokens": 998,
-      "total_tokens": 2395,
+      "response_tokens": 997,
+      "total_tokens": 2394,
       "planned": true,
       "ops": [
         "cv_good_features"
       ]
     }
   ],
-  "max_tokens": 2599
+  "max_tokens": 2604
 }

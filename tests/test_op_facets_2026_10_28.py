@@ -330,13 +330,16 @@ def test_plan_dag_contract_accepts_have_bindings_reorders_and_rejects_role_alias
     ]
     rejected=[]
     for attack in attacks:
-        response=call_tool("fullseye_pipeline",{"handle":images,**attack},cat,store)
-        rejected.append(response.get("isError") is True)
+        try: response=call_tool("fullseye_pipeline",{"handle":images,**attack},cat,store)
+        except ValueError: rejected.append(True)
+        else: rejected.append(response.get("isError") is True)
     assert rejected == [True,True,True,True]
 
-    alias=call_tool("fullseye_pipeline",{"handle":images,"bindings":{"have:image":images},"stages":[
+    try: alias_response=call_tool("fullseye_pipeline",{"handle":images,"bindings":{"have:image":images},"stages":[
         {"op":"deflectometry_phase_to_slope","inputs":["have:image",images],"params":{}}]},cat,store)
-    assert alias.get("isError") is True
+    except ValueError: alias_rejected=True
+    else: alias_rejected=alias_response.get("isError") is True
+    assert alias_rejected
 
     image=store.put(np.zeros((8,8)),sort="image",provenance=[])["handle"]
     bad=validate_pipeline([{"op":"deflectometry_phase_to_slope",

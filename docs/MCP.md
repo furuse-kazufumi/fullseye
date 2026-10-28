@@ -216,10 +216,8 @@ otsu(a=0.50, b=0.50) → fullseye://img/2c1e…
 
 ## 黙って劣化しない(strict 既定)
 
-fullseye には fail-soft 層があり、op が失敗しても型の合う値が返る。MCP では**既定を strict**
-(`on_error="raise"`)にし、劣化したら**拒否して理由を返す**。`allow_degraded=true` を明示した
-ときだけ fail-soft を許し、そのときは `degraded` に「どの op が・どの層で・なぜ」を必ず載せる
-(空でも `[]`)。
+fullseye には fail-soft 層があるが、MCP pipeline は**strict固定**とし、op が失敗したら
+拒否して理由を返す。途中までの段階記録は返すが、劣化値を後続段へ流さない。
 
 ## fail-closed の一覧
 
@@ -253,5 +251,5 @@ Function Hijacking(tool 選択の乗っ取り ASR 70〜100 %)—— と、TRIZ �
 公開する計画入口は `fullseye_plan`、`fullseye_describe`、`fullseye_choose` の3つだけである。
 未計測の制約は推測で補わず、fail-closedの理由として返す。`tools/list` に
 `{"profile":"minimal"}` を渡すか、`FULLSEYE_MCP_PROFILE=minimal`を設定すると実行に必要な10道具を公開する。
-2026-10-28のJSON文字数÷4による計測では、全20道具が約2,964トークン、最小10道具が約1,166トークンである。
+`docs/mcp_context_benchmark.json`を生成する実測では、全20道具が3,196トークン、最小10道具が1,397トークンである。
 未検証の設計パターンと重複した計画入口はMCP一覧に出さない。

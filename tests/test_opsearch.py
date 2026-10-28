@@ -120,7 +120,7 @@ def test_facade_cli_and_mcp_share_one_search(capsys):
     from fullseye.mcp.catalog import Catalog
     from fullseye.mcp.server import ArgError, call_tool
     cat = Catalog.load()
-    res = call_tool("fullseye_find_ops", {"query": "边缘检测"}, cat)
+    res = call_tool("fullseye_find_ops", {"query": "边缘检测", "limit": 10}, cat)
     rows = res["structuredContent"]["ops"]
     assert len(rows) == 10 and set(o["name"] for o in rows) & EDGE
     with pytest.raises(ArgError):

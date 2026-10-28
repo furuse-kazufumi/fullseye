@@ -364,6 +364,18 @@ def test_the_demo_runs_as_written_and_shows_a_verdict():
     assert "server exit: 0" in out
 
 
+def test_mcp_doc_token_counts_and_4k_scope_come_from_benchmark():
+    import json
+    from pathlib import Path
+    root=Path(ROOT)
+    bench=json.loads((root/"docs/mcp_context_benchmark.json").read_text(encoding="utf-8"))
+    doc=(root/"docs/MCP.md").read_text(encoding="utf-8")
+    profiles=bench["tool_profiles"]
+    assert f'{profiles["full_tokens"]:,}トークン' in doc
+    assert f'{profiles["minimal_tokens"]:,}トークン' in doc
+    assert "execution and answer-correctness evaluation are excluded" in bench["scope"]
+
+
 # --------------------------------------------------------------------------- #
 # 5. パイプライン(段ごとの記録、失敗した段で止まる、型連鎖)                        #
 # --------------------------------------------------------------------------- #

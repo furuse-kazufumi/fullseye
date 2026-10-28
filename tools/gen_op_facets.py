@@ -213,7 +213,7 @@ def _verified_registry_ops() -> dict[str, dict]:
                         [v for v in result.values() if isinstance(v,np.ndarray)] if isinstance(result,dict) else [])
                 if any(a.dtype.kind in "fc" and not np.isfinite(a).all() for a in arrays):
                     raise ValueError("nonfinite_output")
-                results[name]={"status":"ok","elapsed_ms":round(elapsed*1000,3)}
+                results[name]={"status":"ok","under_2_seconds":True}
         except Exception as exc:
             results[name]={"status":"failed","reason":type(exc).__name__,"detail":str(exc)[:200]}
         finally:
@@ -446,8 +446,7 @@ def build() -> dict[str, object]:
             edge["verified_executable"] = True
             edge["verification"] = {"source": "tools/gen_op_facets.py::_verified_registry_ops", "status": "ok",
                                     "checks": ["executed", "typed", "shape", "finite", "temporary_cwd",
-                                               "filesystem_unchanged", "random_state_unchanged", "under_2_seconds"],
-                                    "elapsed_ms":registry_verification[edge["op"]]["elapsed_ms"]}
+                                               "filesystem_unchanged", "random_state_unchanged", "under_2_seconds"]}
         elif edge.get("executor", {}).get("kind") == "python" and edge["op"] in VERIFIED_PYTHON:
             edge["verified_executable"] = True
             edge["verification"] = {

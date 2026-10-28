@@ -20,6 +20,7 @@ def tokens(value):
  return math.ceil(len(json.dumps(value,ensure_ascii=False,separators=(",",":")).encode("utf-8"))/4)
 def build():
  schema=handle_tools_list({"profile":"minimal"})
+ full_schema=handle_tools_list({"profile":"full"})
  rows=[]
  for query,have,want in TASKS:
   found=search_ops(query,3)
@@ -31,6 +32,9 @@ def build():
                "response_tokens":response_tokens,"total_tokens":schema["estimated_tokens"]+response_tokens,
                "planned":bool(planned.get("ok")),"ops":names})
  return {"method":"minimal tools schema + find_ops(limit=3) + plan(k=3) + cards; UTF-8 bytes/4",
+         "scope":"Counts discovery through planning/cards only; execution and answer-correctness evaluation are excluded.",
+         "tool_profiles":{"full_tokens":full_schema["estimated_tokens"],
+                          "minimal_tokens":schema["estimated_tokens"]},
          "target_tokens":4000,"tasks":rows,"max_tokens":max(r["total_tokens"] for r in rows)}
 if __name__=="__main__":
  out=ROOT/"docs/mcp_context_benchmark.json"

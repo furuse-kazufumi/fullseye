@@ -415,67 +415,6 @@ class ArgError(ValueError):
     """入力スキーマ違反。JSON-RPC の -32602 に写す。"""
 
 
-def _validate_legacy(schema: dict, args: Any) -> dict:
-    """依存を増やさない最小の検証(type / required / additionalProperties / enum /
-    minimum / maximum / maxLength)。jsonschema があればそちらの方が厳密だが、
-    **ここで検査する項目は全部自分で書けている**ことをテストが確かめる。"""
-    if not isinstance(args, dict):
-        raise ArgError("arguments はオブジェクトでなければならない(%s)" % type(args).__name__)
-    props = schema.get("properties", {})
-    if schema.get("additionalProperties") is False:
-        extra = sorted(set(args) - set(props))
-        if extra:
-            raise ArgError("知らない引数: %s(許すのは %s)" % (extra, sorted(props)))
-    for k in schema.get("required", ()):
-        if k not in args:
-            raise ArgError("必須の引数が無い: %s" % k)
-    for k, v in args.items():
-        p = props[k]
-        t = p.get("type")
-        if t == "string" and not isinstance(v, str):
-            raise ArgError("%s は文字列でなければならない(%r)" % (k, v))
-        if t == "boolean" and not isinstance(v, bool):
-            raise ArgError("%s は真偽値でなければならない(%r)" % (k, v))
-        if t == "integer" and (not isinstance(v, int) or isinstance(v, bool)):
-            raise ArgError("%s は整数でなければならない(%r)" % (k, v))
-        if t == "number" and (not isinstance(v, (int, float)) or isinstance(v, bool)):
-            raise ArgError("%s は数でなければならない(%r)" % (k, v))
-        if t == "number" and isinstance(v, float) and not math.isfinite(v):
-            # ★2026-10-11: Infinity(JSON の 1e309 も inf になる)が通り、fix_text の bbox で
-            # int(inf) の OverflowError がサーバのループまで抜けていた。NaN と同じく境界で断る。
-            raise ArgError("%s が有限の数でない(%r)" % (k, v))
-        if t == "array":
-            if not isinstance(v, list):
-                raise ArgError("%s は配列でなければならない(%s)" % (k, type(v).__name__))
-            # 唯一の配列はパイプラインの段なので「段」と数える
-            if "minItems" in p and len(v) < p["minItems"]:
-                raise ArgError("%s は %d 段以上(いま %d)" % (k, p["minItems"], len(v)))
-            if "maxItems" in p and len(v) > p["maxItems"]:
-                raise ArgError("%s は %d 段以下(いま %d)" % (k, p["maxItems"], len(v)))
-            items = p.get("items")
-            if items and items.get("type") == "object":
-                for i, it in enumerate(v):
-                    try:
-                        _validate(items, it)
-                    except ArgError as exc:
-                        raise ArgError("%s[%d]: %s" % (k, i, exc)) from exc
-            elif items and items.get("type") == "number":
-                for i, it in enumerate(v):
-                    if (not isinstance(it, (int, float)) or isinstance(it, bool)
-                            or not math.isfinite(it)):
-                        raise ArgError("%s[%d] は有限の数でなければならない(%r)" % (k, i, it))
-            continue
-        if "enum" in p and v not in p["enum"]:
-            raise ArgError("%s は %s のどれか(%r)" % (k, p["enum"], v))
-        if "minimum" in p and v < p["minimum"]:
-            raise ArgError("%s は %g 以上(%r)" % (k, p["minimum"], v))
-        if "maximum" in p and v > p["maximum"]:
-            raise ArgError("%s は %g 以下(%r)" % (k, p["maximum"], v))
-        if "maxLength" in p and len(v) > p["maxLength"]:
-            raise ArgError("%s は %d 文字以下" % (k, p["maxLength"]))
-    return args
-
-
 def _validate(schema: dict, args: Any) -> dict:
     """Recursively validate the JSON-schema subset used by MCP tools."""
     def check(spec, value, path):
@@ -514,8 +453,10 @@ def _validate(schema: dict, args: Any) -> dict:
                 child = props.get(name, additional if isinstance(additional, dict) else {})
                 check(child, item, "%s.%s" % (path, name))
         elif kind == "array":
-            if len(value) < spec.get("minItems", 0) or len(value) > spec.get("maxItems", 10**9):
-                raise ArgError("%s has invalid length" % path)
+            if len(value) < spec.get("minItems", 0):
+                raise ArgError("%s は%d 段以上" % (path,spec["minItems"]))
+            if len(value) > spec.get("maxItems", 10**9):
+                raise ArgError("%s は%d以下" % (path,spec["maxItems"]))
             for i, item in enumerate(value):
                 check(spec.get("items", {}), item, "%s[%d]" % (path, i))
         elif not kind:
@@ -783,7 +724,6 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
                       max_stages: int | None = None, bindings: dict | None = None,
                       store: HandleStore | None = None, outputs: list[str] | None = None) -> dict:
     """Shared non-executing pipeline validator used by both MCP entry points."""
-    import ops
     max_stages = int(max_stages or get_system("pipeline_max_stages"))
     errors, normalized = [], []
     bindings = dict(bindings or {})
@@ -808,6 +748,10 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
             try:
                 binding_values[ref] = store.get(handle)
                 binding_sorts[ref] = _sort(binding_values[ref][0]["sort"])
+                declared=_sort(ref.split(":",1)[1])
+                if declared != binding_sorts[ref]:
+                    errors.append({"layer":"binding","stage":0,"reason":"binding_sort_mismatch",
+                                   "value":binding_sorts[ref],"expected":declared,"candidates":[]})
             except HandleError as exc:
                 errors.append({"layer":"binding","stage":0,"reason":"invalid_handle","value":handle,
                                "detail":str(exc),"candidates":[]})
@@ -901,28 +845,6 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
                                "a":float(spec.get("a",0.5)),"b":float(spec.get("b",0.5)),
                                "in_sorts":edge["inputs"],"out_sort":out})
             continue
-        if edge is not None and not edge.get("verified_executable"):
-            errors.append({"layer":"stage","stage":i,"reason":"not_executable_in_mcp","value":name,
-                           "detail":edge.get("not_executable_in_mcp", edge.get("executable_reason",
-                                      "no verified executor")),"candidates":[]})
-            continue
-        op = ops._BY_NAME.get(name)
-        if op is None:
-            errors.append({"layer": "stage", "stage": i, "reason": "unknown_op", "value": name,
-                           "candidates": cat.nearest(name)})
-            continue
-        for knob in ("a", "b"):
-            value = spec.get(knob, 0.5)
-            if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(float(value)) or not 0 <= value <= 1:
-                errors.append({"layer": "stage", "stage": i, "reason": "knob_out_of_range",
-                               "knob": knob, "value": value, "candidates": [0.0, 0.5, 1.0]})
-        if op.in_sort not in ("any", cur):
-            errors.append({"layer": "stage", "stage": i, "reason": "sort_mismatch", "value": cur,
-                           "expected": op.in_sort, "candidates": [r.name for r in cat.entries.values()
-                           if r.in_sort in ("any", cur)][:10]})
-        cur = _out_sort(op, cur)
-        normalized.append({"op": name, "a": float(spec.get("a", 0.5)), "b": float(spec.get("b", 0.5)),
-                           "in_sort": op.in_sort, "out_sort": cur})
     known_outputs={**binding_values,**{r:({"sort":s,"handle":r},None) for r,s in stage_sorts.items()}}
     for ref in outputs or []:
         try: _resolve_pipeline_ref(ref,known_outputs,store)
@@ -1050,79 +972,7 @@ def _apply(a: dict, cat: Catalog, store: HandleStore, *,
 
 def _pipeline(a: dict, cat: Catalog, store: HandleStore, *,
               max_structured_bytes: int = MAX_STRUCTURED_BYTES) -> dict:
-    """段を順に。**走らせる前に**型連鎖を検査し、strict は失敗した段で止まる。"""
-    stages = a["stages"]
-    return _pipeline_dag(a, cat, store, max_structured_bytes=max_structured_bytes)
-    meta, arr = store.get(a["handle"])
-    checked = validate_pipeline(stages, meta["sort"], cat)
-    if not checked["valid"]:
-        # Preserve the established human-readable pipeline error while the
-        # structured validation endpoint exposes machine-readable reasons.
-        cur, prev = meta["sort"], "handle %s" % meta["handle"]
-        import ops as _ops
-        for i, spec in enumerate(stages, 1):
-            op0 = _ops._BY_NAME.get(spec.get("op"))
-            if op0 is None:
-                break
-            _check_sort(op0, cur, stage=i, prev=prev)
-            cur, prev = _out_sort(op0, cur), "previous stage %s output" % op0.name
-        raise ArgError("pipeline validation failed: %s" % json.dumps(checked["errors"], ensure_ascii=False))
-    ops_ = [_resolve_op(s["op"], cat, stage=i) for i, s in enumerate(stages, 1)]
-    cur, prev = meta["sort"], "ハンドル %s" % meta["handle"]
-    for i, op in enumerate(ops_, 1):
-        _check_sort(op, cur, stage=i, prev=prev)
-        # ★2026-10-11: out_sort "any"(identity など素通しの op)は受けた型を保つ
-        # (engine._thread_sort と同じ規則)。"any" をそのまま次段に流すと
-        # [identity, gaussian] が「any は image でない」で拒否されていた。
-        cur, prev = _out_sort(op, cur), "前段 %s の出力" % op.name
-    allow = bool(a.get("allow_degraded", False))
-    vision = a.get("vision", "auto")
-    recs: list[dict] = []
-    links: list[dict] = []
-    escalated = False
-    cur_meta, cur_val = meta, arr
-    final_handle, final_value = None, None
-    for i, (s, op) in enumerate(zip(stages, ops_), 1):
-        ka, kb = float(s.get("a", 0.5)), float(s.get("b", 0.5))
-        thumb_ok = vision == "thumb" or (vision == "auto" and not escalated)
-        rec, lk, m2, out = _stage(store, cur_meta, cur_val, op, ka, kb, allow, vision=vision,
-                                  thumb_allowed=thumb_ok, tag="stage%d_%s" % (i, op.name))
-        rec["stage"] = i
-        recs.append(rec)
-        if "error" in rec:
-            text = ("段 %d の %s が strict で拒否された(%d/%d 段まで完了)。\n%s\n"
-                    "(allow_degraded=true で fail-soft を許せるが、劣化は degraded に載る)"
-                    % (i, op.name, i - 1, len(stages), _stage_text(rec)))
-            return _tool_error(text, {"handle_in": meta["handle"], "stages": recs,
-                                      "completed": i - 1, "stopped_at": i, "strict": not allow})
-        if lk:
-            for l in lk:
-                l["description"] = "段 %d(%s): " % (i, op.name) + l["description"]
-            links += lk
-            escalated = True
-        if m2 is not None:
-            cur_meta, cur_val = m2, out
-            if m2.get("handle"):
-                final_handle = m2["handle"]
-        else:
-            final_value = rec.get("value")
-            cur_meta, cur_val = {"handle": None, "sort": _out_sort(op, cur_meta.get("sort")),
-                                 "provenance": cur_meta.get("provenance", [])}, out
-    structured = {"handle_in": meta["handle"], "stages": recs, "completed": len(recs),
-                  "stopped_at": None, "handle": final_handle, "value": final_value,
-                  "strict": not allow}
-    lines = ["パイプライン %d 段 完走 → %s" % (
-        len(recs), final_handle or ("value=%s" % final_value))]
-    for r in recs:
-        lines.append("[段 %d] " % r["stage"] + _stage_text(r).replace("\n", "\n        "))
-    addon = _typed_json_addon(cur_val, cur, max_structured_bytes)   # 最終段の型付き結果(素通しは受けた型)
-    if addon is not None:
-        env, md = addon
-        structured["json"] = env                                # 追加: 最終出力の封筒(bit 一致)
-        if md:
-            lines.append("\n" + md)                             # 追加: 最終出力の Markdown
-    return tool_result("\n".join(lines), structured, links=links,
-                       max_structured_bytes=max_structured_bytes)
+    return _pipeline_dag(a,cat,store,max_structured_bytes=max_structured_bytes)
 
 
 def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_bytes: int) -> dict:
@@ -1140,6 +990,10 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
     checked=validate_pipeline(a["stages"],start_sort,cat,bindings=bindings,store=store,
                               outputs=a.get("outputs"))
     if not checked["valid"]:
+        argument_reasons={"unknown_input_ref","unknown_parameter_ref","unknown_profile",
+                          "unknown_output_ref","invalid_handle","invalid_binding_name","binding_sort_mismatch"}
+        if any(e.get("reason") in argument_reasons for e in checked["errors"]):
+            raise ArgError("pipeline validation failed: %s"%json.dumps(checked["errors"],ensure_ascii=False))
         if not explicit:
             first=checked["errors"][0]
             op=a["stages"][first.get("stage",1)-1].get("op") if first.get("stage") else "pipeline"
@@ -1178,13 +1032,15 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
                 out=args[0]
             elif executor["kind"]=="registry":
                 import ops as runtime_ops
+                import backend_safe
                 incoming=args if len(args)>1 else args[0]
                 registered=runtime_ops._BY_NAME[executor["alias"]]
                 actual=(registered.fn.__module__,registered.fn.__qualname__)
                 expected=(executor["module"],executor["callable"])
                 if actual != expected:
                     raise RuntimeError("registry target mismatch: %r != %r"%(actual,expected))
-                out=registered.fn(incoming,float(spec.get("a",.5)),float(spec.get("b",.5)))
+                with backend_safe.strict_mode(True), backend_safe.current_op(edge["op"]):
+                    out=registered.fn(incoming,float(spec.get("a",.5)),float(spec.get("b",.5)))
             else:
                 fn=getattr(importlib.import_module(executor["module"]),executor["callable"])
                 out=fn(*args,**params)
@@ -1748,9 +1604,9 @@ def demo() -> int:
         tools = call("tools/list")["tools"]
         print("tools:", ", ".join(t["name"] for t in tools))
         s = tool("fullseye_list_samples")
-        coins = next(x for x in s["structuredContent"]["samples"] if x["name"] == "coins")
+        coins = "coins"
         tool("fullseye_search_ops", query="threshold", limit=5)
-        h = tool("fullseye_load_image", path=coins["path"])["structuredContent"]["handle"]
+        h = tool("fullseye_load_image", path=coins)["structuredContent"]["handle"]
         pipe = tool("fullseye_pipeline", handle=h,
                     stages=[{"op": "gaussian", "a": 0.3}, {"op": "otsu"}, {"op": "count_obj"}])
         seg = pipe["structuredContent"]["handle"]
