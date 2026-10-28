@@ -73,6 +73,21 @@
       "affects_numbers": false,
       "status": "applied"
     },
+    "mcp_handle_max_bytes": {
+      "default": 134217728,
+      "values": [
+        67108864,
+        134217728,
+        268435456
+      ],
+      "meaning": "LRU byte cap for live MCP handles.",
+      "hide_from_ai": true,
+      "applied_by": [
+        "fullseye/mcp/handles.py"
+      ],
+      "affects_numbers": false,
+      "status": "applied"
+    },
     "mcp_response_budget": {
       "default": 512000,
       "values": [
@@ -82,6 +97,21 @@
         512000
       ],
       "meaning": "Structured response byte cap.",
+      "hide_from_ai": true,
+      "applied_by": [
+        "fullseye/mcp/server.py"
+      ],
+      "affects_numbers": false,
+      "status": "applied"
+    },
+    "mcp_stack_max_pixels": {
+      "default": 33554432,
+      "values": [
+        16777216,
+        33554432,
+        67108864
+      ],
+      "meaning": "Total source pixels admitted by load_stack.",
       "hide_from_ai": true,
       "applied_by": [
         "fullseye/mcp/server.py"

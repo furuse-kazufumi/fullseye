@@ -718,10 +718,14 @@ def _load_image(a: dict, store: HandleStore) -> dict:
 
 def _load_stack(a: dict, store: HandleStore) -> dict:
     arrays, provenance = [], []
+    pixels = 0; limit = int(get_system("mcp_stack_max_pixels"))
     for path in a["paths"]:
         meta = store.load(path)
         _, arr = store.get(meta["handle"])
         arrays.append(arr); provenance.extend(meta["provenance"])
+        pixels += int(np.asarray(arr).size)
+        if pixels > limit:
+            raise ArgError("load_stack total pixels %d exceeds limit %d" % (pixels,limit))
     try:
         stack = np.stack(arrays)
     except ValueError as exc:

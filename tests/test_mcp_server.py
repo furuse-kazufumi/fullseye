@@ -72,6 +72,25 @@ def test_nested_tool_schema_rejects_bad_values_before_handlers():
         except Exception as exc: rejected.append(isinstance(exc,ValueError))
         else: rejected.append(False)
     assert rejected == [True]*len(cases)
+
+
+def test_handle_byte_lru_and_stack_pixel_limits(monkeypatch):
+    import numpy as np
+    from fullseye.mcp.handles import HandleError, HandleStore
+    store=HandleStore(roots=[],max_items=100,max_bytes=1024)
+    first=store.put(np.zeros(80,dtype=np.float64),sort="image",provenance=[])["handle"]
+    store.put(np.ones(80,dtype=np.float64),sort="image",provenance=[])
+    with pytest.raises(HandleError,match="byte limit|追い出"):
+        store.get(first)
+    with pytest.raises(HandleError,match="byte limit"):
+        store.put(np.zeros(200,dtype=np.float64),sort="image",provenance=[])
+
+    from fullseye.mcp import server
+    real=server.get_system
+    monkeypatch.setattr(server,"get_system",lambda name: 1000 if name=="mcp_stack_max_pixels" else real(name))
+    sample_store=HandleStore(max_bytes=10_000_000)
+    with pytest.raises(ValueError,match="total pixels"):
+        call_tool("fullseye_load_stack",{"paths":["gradient"]*2,"sort":"images"},Catalog.load(),sample_store)
 from fullseye.mcp.server import ArgError, MAX_SEARCH_LIMIT, read_message  # noqa: E402
 
 
