@@ -1,0 +1,150 @@
+{
+  "schema": 1,
+  "source_graph": "OP_GRAPH.json",
+  "patterns": [
+    {
+      "name": "Pipe-and-Filter",
+      "intent": "Pipe-and-Filter",
+      "slots": [
+        {
+          "role": "typed operator",
+          "input": "$current",
+          "output": "$next",
+          "family": null
+        }
+      ],
+      "example": {
+        "status": "none",
+        "source": "no mechanically verified example"
+      }
+    },
+    {
+      "name": "Strategy",
+      "intent": "Strategy",
+      "slots": [
+        {
+          "role": "typed operator",
+          "input": "$current",
+          "output": "$next",
+          "family": null
+        }
+      ],
+      "example": {
+        "status": "none",
+        "source": "no mechanically verified example"
+      }
+    },
+    {
+      "name": "Adapter",
+      "intent": "Adapter",
+      "slots": [
+        {
+          "role": "typed operator",
+          "input": "$current",
+          "output": "$next",
+          "family": null
+        }
+      ],
+      "example": {
+        "status": "none",
+        "source": "no mechanically verified example"
+      }
+    },
+    {
+      "name": "Template Method",
+      "intent": "Template Method",
+      "slots": [
+        {
+          "role": "typed operator",
+          "input": "$current",
+          "output": "$next",
+          "family": null
+        }
+      ],
+      "example": {
+        "status": "none",
+        "source": "no mechanically verified example"
+      }
+    },
+    {
+      "name": "Coarse-to-fine",
+      "intent": "Coarse-to-fine",
+      "slots": [
+        {
+          "role": "typed operator",
+          "input": "$current",
+          "output": "$next",
+          "family": null
+        }
+      ],
+      "example": {
+        "status": "none",
+        "source": "no mechanically verified example"
+      }
+    },
+    {
+      "name": "Hypothesize-and-Verify",
+      "intent": "Hypothesize-and-Verify",
+      "slots": [
+        {
+          "role": "typed operator",
+          "input": "$current",
+          "output": "$next",
+          "family": null
+        }
+      ],
+      "example": {
+        "status": "none",
+        "source": "no mechanically verified example"
+      }
+    },
+    {
+      "name": "Voting",
+      "intent": "Voting",
+      "slots": [
+        {
+          "role": "typed operator",
+          "input": "$current",
+          "output": "$next",
+          "family": null
+        }
+      ],
+      "example": {
+        "status": "none",
+        "source": "no mechanically verified example"
+      }
+    },
+    {
+      "name": "Chain of Responsibility",
+      "intent": "Chain of Responsibility",
+      "slots": [
+        {
+          "role": "typed operator",
+          "input": "$current",
+          "output": "$next",
+          "family": null
+        }
+      ],
+      "example": {
+        "status": "none",
+        "source": "no mechanically verified example"
+      }
+    },
+    {
+      "name": "Decorator",
+      "intent": "Decorator",
+      "slots": [
+        {
+          "role": "typed operator",
+          "input": "$current",
+          "output": "$next",
+          "family": null
+        }
+      ],
+      "example": {
+        "status": "none",
+        "source": "no mechanically verified example"
+      }
+    }
+  ]
+}
