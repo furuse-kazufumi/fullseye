@@ -13,8 +13,12 @@ import ast
 import inspect
 import json
 import os
+import random
 import re
+import shutil
 import sys
+import tempfile
+import time
 from collections import Counter, defaultdict
 from pathlib import Path
 
@@ -175,35 +179,47 @@ def _mcp_unsafe_parameter(parameters: list[dict]) -> str | None:
     return None
 
 
-def _verified_registry_ops() -> set[str]:
+def _verified_registry_ops() -> dict[str, dict]:
     """CPU-only execution allowlist; verification happens in this generation run."""
     import warnings
     import numpy as np
     import chain_fuzz
     import op_probe
     import ops
-    verified = set()
+    results = {}
     for registry_op in ops.REGISTRY:
         name, out_sort = registry_op.name, registry_op.out_sort
+        old_cwd=os.getcwd(); np_state=np.random.get_state(); py_state=random.getstate(); tmp=None
         try:
-            value = op_probe.sample_input(registry_op.in_sort, np.random.default_rng(20261028), structured=True)
-            if value is None:
-                continue
-            with warnings.catch_warnings():
-                warnings.simplefilter("ignore")
-                result = registry_op.fn(value, 0.5, 0.5)
-            check = chain_fuzz.TYPE_CHECKS.get(out_sort)
-            if result is None or (check is not None and not check(result)):
-                continue
-            arrays = ([result] if isinstance(result, np.ndarray) else
-                      [v for v in result.values() if isinstance(v, np.ndarray)]
-                      if isinstance(result, dict) else [])
-            if any(a.dtype.kind in "fc" and not np.isfinite(a).all() for a in arrays):
-                continue
-            verified.add(name)
-        except Exception:
-            continue
-    return verified
+            with tempfile.TemporaryDirectory(prefix="fullseye-verify-",ignore_cleanup_errors=True) as tmp:
+                os.chdir(tmp); before={p.relative_to(tmp).as_posix() for p in Path(tmp).rglob("*")}
+                value = op_probe.sample_input(registry_op.in_sort,np.random.default_rng(20261028),structured=True)
+                if value is None: raise ValueError("no_sample_input")
+                started=time.monotonic()
+                with warnings.catch_warnings():
+                    warnings.simplefilter("ignore"); result=registry_op.fn(value,0.5,0.5)
+                elapsed=time.monotonic()-started
+                after={p.relative_to(tmp).as_posix() for p in Path(tmp).rglob("*")}
+                if elapsed>2.0: raise TimeoutError("execution exceeded 2 seconds")
+                if before != after: raise RuntimeError("filesystem_side_effect: %s"%sorted(after-before))
+                now=np.random.get_state()
+                if np_state[0]!=now[0] or not np.array_equal(np_state[1],now[1]) or np_state[2:]!=now[2:]:
+                    raise RuntimeError("numpy_random_state_changed")
+                if py_state != random.getstate(): raise RuntimeError("python_random_state_changed")
+                check=chain_fuzz.TYPE_CHECKS.get(out_sort)
+                if result is None: raise ValueError("returned_none")
+                if check is not None and not check(result): raise TypeError("output_type_mismatch")
+                arrays=([result] if isinstance(result,np.ndarray) else
+                        [v for v in result.values() if isinstance(v,np.ndarray)] if isinstance(result,dict) else [])
+                if any(a.dtype.kind in "fc" and not np.isfinite(a).all() for a in arrays):
+                    raise ValueError("nonfinite_output")
+                results[name]={"status":"ok","elapsed_ms":round(elapsed*1000,3)}
+        except Exception as exc:
+            results[name]={"status":"failed","reason":type(exc).__name__,"detail":str(exc)[:200]}
+        finally:
+            os.chdir(old_cwd); np.random.set_state(np_state); random.setstate(py_state)
+            if tmp: shutil.rmtree(tmp,ignore_errors=True)
+    return results
 
 
 def _knobs() -> dict:
@@ -252,7 +268,8 @@ def build() -> dict[str, object]:
     import conversion_matrix as cm
     a = cm.analyse()
     knobs = _knobs()
-    verified_registry = _verified_registry_ops()
+    registry_verification = _verified_registry_ops()
+    verified_registry = {name for name,result in registry_verification.items() if result["status"]=="ok"}
     import ops as runtime_ops
     registry_by_name = {op.name:op for op in runtime_ops.REGISTRY}
     index = json.loads((ROOT / "docs" / "OP_INDEX.json").read_text(encoding="utf-8"))
@@ -428,7 +445,9 @@ def build() -> dict[str, object]:
         elif edge.get("executor", {}).get("kind") == "registry" and edge["op"] in verified_registry:
             edge["verified_executable"] = True
             edge["verification"] = {"source": "tools/gen_op_facets.py::_verified_registry_ops", "status": "ok",
-                                    "checks": ["executed", "typed", "shape", "finite"]}
+                                    "checks": ["executed", "typed", "shape", "finite", "temporary_cwd",
+                                               "filesystem_unchanged", "random_state_unchanged", "under_2_seconds"],
+                                    "elapsed_ms":registry_verification[edge["op"]]["elapsed_ms"]}
         elif edge.get("executor", {}).get("kind") == "python" and edge["op"] in VERIFIED_PYTHON:
             edge["verified_executable"] = True
             edge["verification"] = {
@@ -437,6 +456,8 @@ def build() -> dict[str, object]:
         else:
             edge["verified_executable"] = False
             edge["not_executable_in_mcp"] = "not_verified"
+            if edge.get("executor",{}).get("kind")=="registry" and edge["op"] in registry_verification:
+                edge["verification"] = registry_verification[edge["op"]]
 
     stochastic_rx = re.compile(r"^(?:aug_|tb_random_)|random")
     global_rx = re.compile(r"equalize|autocontrast|autolevel")

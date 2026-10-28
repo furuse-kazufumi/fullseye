@@ -263,6 +263,21 @@ def test_mcp_execution_is_probe_verified_and_runtime_targets_are_exact(tmp_path)
     verified=[e for e in graph["edges"] if e.get("verified_executable")]
     assert verified
     assert {e.get("verification",{}).get("status") for e in verified} == {"ok"}
+    registry_verified=[e for e in verified if e.get("executor",{}).get("kind")=="registry"]
+    required_checks={"temporary_cwd","filesystem_unchanged","random_state_unchanged","under_2_seconds"}
+    missing_side_effect_checks=[e["op"] for e in registry_verified
+                                if not required_checks <= set(e["verification"]["checks"])]
+    assert missing_side_effect_checks == []
+    registry_failures=[e for e in graph["edges"] if e.get("executor",{}).get("kind")=="registry"
+                       and not e.get("verified_executable") and e.get("verification")]
+    assert {e["verification"]["status"] for e in registry_failures} == {"failed"}
+
+    from tools.gen_op_facets import VERIFIED_PYTHON
+    cited_python={"polarization_render","polarization_dolp_map","decode_fringe",
+                  "deflectometry_phase_to_slope"}
+    assert VERIFIED_PYTHON == cited_python
+    graph_python={e["op"] for e in verified if e.get("executor",{}).get("kind")=="python"}
+    assert graph_python == cited_python
     import ops
     collision_names={"fill_holes","lowpass","highpass","local_std","companding_mu_law"}
     collision_targets={name:(edges[name]["runtime_target"]["module"],edges[name]["runtime_target"]["callable"])
