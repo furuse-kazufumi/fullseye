@@ -786,7 +786,7 @@ def op_cards(names: list[str], budget_tokens: int = 500) -> dict:
     table = {r["name"]: r for r in _load_data(PKG_CARDS)["ops"]}
     import difflib
     edges={e["op"]:e for e in _graph()["edges"]}
-    cards, used, missing = [], 0, []
+    cards, missing = [], []
     for name in names:
         card = table.get(name)
         if card is None:
@@ -800,11 +800,22 @@ def op_cards(names: list[str], budget_tokens: int = 500) -> dict:
         if executor and executor.get("kind")=="python":
             card["python_call"]="%s.%s(%s)"%(executor["module"],executor["callable"],
                 ", ".join(edge.get("inputs",[])+[p["name"]+"=..." for p in edge.get("parameter_schema",[])]))
-        cost = int(card.get("tokens", 1))
-        if used + cost > budget_tokens:
+        # The stored estimate predates the execution/type fields added above.
+        # Recompute the complete card cost to a fixed point (the token count is
+        # itself part of the card), including the JSON list boundary returned by
+        # this API.  A card is either included whole or not included at all.
+        card["tokens"] = 0
+        for _ in range(4):
+            cost=math.ceil(len(json.dumps([card],ensure_ascii=False,separators=(",",":")))/4)
+            if card["tokens"] == cost:
+                break
+            card["tokens"] = cost
+        prospective=math.ceil(len(json.dumps(cards+[card],ensure_ascii=False,separators=(",",":")))/4)
+        if prospective > budget_tokens:
             break
-        cards.append(card); used += cost
-    actual_tokens=math.ceil(len(json.dumps(cards,ensure_ascii=False,separators=(",",":")))/4)
+        cards.append(card)
+    actual_tokens=(math.ceil(len(json.dumps(cards,ensure_ascii=False,separators=(",",":")))/4)
+                   if cards else 0)
     return {"cards": cards, "used_tokens": actual_tokens, "budget_tokens": budget_tokens,
             "truncated": len(cards) + len(missing) < len(names), "missing": missing}
 
