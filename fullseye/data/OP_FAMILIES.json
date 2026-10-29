@@ -27,7 +27,7 @@
               "value": "docs/ops/families_timing.json"
             }
           ],
-          "complexity_exponent": 1.1,
+          "complexity_exponent": 1.11,
           "quality": {
             "status": "measured",
             "probes": [
@@ -64,7 +64,7 @@
               "value": "docs/ops/families_timing.json"
             }
           ],
-          "complexity_exponent": 1.0,
+          "complexity_exponent": 0.81,
           "quality": {
             "status": "measured",
             "probes": [
@@ -101,7 +101,7 @@
               "value": "docs/ops/families_timing.json"
             }
           ],
-          "complexity_exponent": 1.68,
+          "complexity_exponent": 2.01,
           "quality": {
             "status": "measured",
             "probes": [
@@ -185,7 +185,7 @@
               "value": "docs/ops/families_timing.json"
             }
           ],
-          "complexity_exponent": 1.04,
+          "complexity_exponent": 1.24,
           "quality": {
             "status": "measured",
             "probes": [
@@ -232,7 +232,7 @@
               "value": "docs/ops/families_timing.json"
             }
           ],
-          "complexity_exponent": 1.62,
+          "complexity_exponent": 1.66,
           "quality": {
             "status": "measured",
             "probes": [
@@ -269,7 +269,7 @@
               "value": "docs/ops/families_timing.json"
             }
           ],
-          "complexity_exponent": 1.25,
+          "complexity_exponent": 1.41,
           "quality": {
             "status": "measured",
             "probes": [
@@ -306,7 +306,7 @@
               "value": "docs/ops/families_timing.json"
             }
           ],
-          "complexity_exponent": 1.57,
+          "complexity_exponent": 2.06,
           "quality": {
             "status": "measured",
             "probes": [
@@ -353,7 +353,7 @@
               "value": "docs/ops/families_timing.json"
             }
           ],
-          "complexity_exponent": 1.24,
+          "complexity_exponent": 1.12,
           "quality": {
             "status": "measured",
             "probes": [
@@ -390,7 +390,7 @@
               "value": "docs/ops/families_timing.json"
             }
           ],
-          "complexity_exponent": 1.22,
+          "complexity_exponent": 1.27,
           "quality": {
             "status": "measured",
             "probes": [
@@ -456,7 +456,7 @@
               "value": "docs/ops/families_timing.json"
             }
           ],
-          "complexity_exponent": 1.13,
+          "complexity_exponent": 1.02,
           "quality": {
             "status": "unmeasured",
             "reason": "no valid synthetic ground-truth metric for phase unwrapping"
@@ -545,7 +545,7 @@
               "value": "docs/ops/families_timing.json"
             }
           ],
-          "complexity_exponent": 1.11,
+          "complexity_exponent": 1.26,
           "quality": {
             "status": "measured",
             "probes": [
@@ -585,7 +585,7 @@
               "value": "docs/ops/families_timing.json"
             }
           ],
-          "complexity_exponent": 1.14,
+          "complexity_exponent": 1.19,
           "quality": {
             "status": "measured",
             "probes": [
@@ -625,7 +625,7 @@
               "value": "docs/ops/families_timing.json"
             }
           ],
-          "complexity_exponent": 1.11,
+          "complexity_exponent": 1.19,
           "quality": {
             "status": "measured",
             "probes": [

@@ -1,6 +1,6 @@
 {
   "generated_by": "tools/measure_op_families.py",
-  "code_sha256": "1672505a6cae23b5f1ee57b4bf207f3769fea3c7b4e1deeb6fb6ecdb2e2d8c8e",
+  "code_sha256": "c2073a51c259d38361c51db9f4271dc098016f57de2525e45f1399b391961b5d",
   "environment": {
     "platform": "Windows-10-10.0.26300-SP0",
     "python": "3.11.9",
@@ -15,23 +15,23 @@
           "pixels": 65536,
           "width": 256,
           "height": 256,
-          "ms": 0.5136000108905137
+          "ms": 0.5096999811939895
         },
         {
           "pixels": 262144,
           "width": 512,
           "height": 512,
-          "ms": 2.6599999982863665
+          "ms": 2.2802999592386186
         },
         {
           "pixels": 589824,
           "width": 768,
           "height": 768,
-          "ms": 5.694499996025115
+          "ms": 5.91750000603497
         }
       ],
-      "peak_bytes": 5309842,
-      "complexity_exponent": 1.1,
+      "peak_bytes": 5309900,
+      "complexity_exponent": 1.11,
       "quality": {
         "status": "measured",
         "probes": [
@@ -63,23 +63,23 @@
           "pixels": 65536,
           "width": 256,
           "height": 256,
-          "ms": 30.25270003126934
+          "ms": 68.30530002480373
         },
         {
           "pixels": 262144,
           "width": 512,
           "height": 512,
-          "ms": 122.13780003366992
+          "ms": 170.59400002472103
         },
         {
           "pixels": 589824,
           "width": 768,
           "height": 768,
-          "ms": 270.5644000088796
+          "ms": 418.0220999987796
         }
       ],
       "peak_bytes": 5309900,
-      "complexity_exponent": 1.0,
+      "complexity_exponent": 0.81,
       "quality": {
         "status": "measured",
         "probes": [
@@ -111,23 +111,23 @@
           "pixels": 65536,
           "width": 256,
           "height": 256,
-          "ms": 7.597100047860295
+          "ms": 7.248500012792647
         },
         {
           "pixels": 262144,
           "width": 512,
           "height": 512,
-          "ms": 124.20990003738552
+          "ms": 227.97339997487143
         },
         {
           "pixels": 589824,
           "width": 768,
           "height": 768,
-          "ms": 275.91749996645376
+          "ms": 528.5613000160083
         }
       ],
       "peak_bytes": 28340128,
-      "complexity_exponent": 1.68,
+      "complexity_exponent": 2.01,
       "quality": {
         "status": "measured",
         "probes": [
@@ -159,22 +159,22 @@
           "pixels": 65536,
           "width": 256,
           "height": 256,
-          "ms": 1.2832999927923083
+          "ms": 1.496099983341992
         },
         {
           "pixels": 262144,
           "width": 512,
           "height": 512,
-          "ms": 8.68670002091676
+          "ms": 9.075700014363974
         },
         {
           "pixels": 589824,
           "width": 768,
           "height": 768,
-          "ms": 22.127299977000803
+          "ms": 26.00359998177737
         }
       ],
-      "peak_bytes": 18874752,
+      "peak_bytes": 18874810,
       "complexity_exponent": 1.3,
       "quality": {
         "status": "measured",
@@ -207,23 +207,23 @@
           "pixels": 65536,
           "width": 256,
           "height": 256,
-          "ms": 0.6542999763041735
+          "ms": 0.8196000126190484
         },
         {
           "pixels": 262144,
           "width": 512,
           "height": 512,
-          "ms": 2.9190999921411276
+          "ms": 5.357599991839379
         },
         {
           "pixels": 589824,
           "width": 768,
           "height": 768,
-          "ms": 6.3180000288411975
+          "ms": 12.056200008373708
         }
       ],
-      "peak_bytes": 9437652,
-      "complexity_exponent": 1.04,
+      "peak_bytes": 9437704,
+      "complexity_exponent": 1.24,
       "quality": {
         "status": "measured",
         "probes": [
@@ -255,23 +255,23 @@
           "pixels": 65536,
           "width": 256,
           "height": 256,
-          "ms": 0.057399971410632133
+          "ms": 0.0638000201433897
         },
         {
           "pixels": 262144,
           "width": 512,
           "height": 512,
-          "ms": 0.7534999749623239
+          "ms": 0.8126000175252557
         },
         {
           "pixels": 589824,
           "width": 768,
           "height": 768,
-          "ms": 1.8724999972619116
+          "ms": 2.3283999762497842
         }
       ],
       "peak_bytes": 6488448,
-      "complexity_exponent": 1.62,
+      "complexity_exponent": 1.66,
       "quality": {
         "status": "measured",
         "probes": [
@@ -303,23 +303,23 @@
           "pixels": 65536,
           "width": 256,
           "height": 256,
-          "ms": 0.38680003490298986
+          "ms": 0.47640001866966486
         },
         {
           "pixels": 262144,
           "width": 512,
           "height": 512,
-          "ms": 2.444899990223348
+          "ms": 2.8302999562583864
         },
         {
           "pixels": 589824,
           "width": 768,
           "height": 768,
-          "ms": 5.890699976589531
+          "ms": 10.811500018462539
         }
       ],
       "peak_bytes": 10045134,
-      "complexity_exponent": 1.25,
+      "complexity_exponent": 1.41,
       "quality": {
         "status": "measured",
         "probes": [
@@ -351,23 +351,23 @@
           "pixels": 65536,
           "width": 256,
           "height": 256,
-          "ms": 1.1003999970853329
+          "ms": 1.0621999972499907
         },
         {
           "pixels": 262144,
           "width": 512,
           "height": 512,
-          "ms": 13.645800005178899
+          "ms": 16.67260000249371
         },
         {
           "pixels": 589824,
           "width": 768,
           "height": 768,
-          "ms": 32.61799999745563
+          "ms": 100.79950001090765
         }
       ],
       "peak_bytes": 33365868,
-      "complexity_exponent": 1.57,
+      "complexity_exponent": 2.06,
       "quality": {
         "status": "measured",
         "probes": [
@@ -399,23 +399,23 @@
           "pixels": 65536,
           "width": 256,
           "height": 256,
-          "ms": 0.15649996930733323
+          "ms": 0.2038999809883535
         },
         {
           "pixels": 262144,
           "width": 512,
           "height": 512,
-          "ms": 0.9492000099271536
+          "ms": 1.0113000171259046
         },
         {
           "pixels": 589824,
           "width": 768,
           "height": 768,
-          "ms": 2.344299980904907
+          "ms": 2.3673000396229327
         }
       ],
       "peak_bytes": 5309602,
-      "complexity_exponent": 1.24,
+      "complexity_exponent": 1.12,
       "quality": {
         "status": "measured",
         "probes": [
@@ -447,23 +447,23 @@
           "pixels": 65536,
           "width": 256,
           "height": 256,
-          "ms": 0.14990003546699882
+          "ms": 0.15030003851279616
         },
         {
           "pixels": 262144,
           "width": 512,
           "height": 512,
-          "ms": 0.8677999721840024
+          "ms": 0.9733999613672495
         },
         {
           "pixels": 589824,
           "width": 768,
           "height": 768,
-          "ms": 2.1572999539785087
+          "ms": 2.396399970166385
         }
       ],
       "peak_bytes": 5309602,
-      "complexity_exponent": 1.22,
+      "complexity_exponent": 1.27,
       "quality": {
         "status": "measured",
         "probes": [
@@ -499,23 +499,23 @@
           "pixels": 65536,
           "width": 256,
           "height": 256,
-          "ms": 15.592599986121058
+          "ms": 38.48719998495653
         },
         {
           "pixels": 262144,
           "width": 512,
           "height": 512,
-          "ms": 70.69940003566444
+          "ms": 191.28889997955412
         },
         {
           "pixels": 589824,
           "width": 768,
           "height": 768,
-          "ms": 190.36000000778586
+          "ms": 347.237000009045
         }
       ],
       "peak_bytes": 19465488,
-      "complexity_exponent": 1.13,
+      "complexity_exponent": 1.02,
       "quality": {
         "status": "unmeasured",
         "reason": "no valid synthetic ground-truth metric for phase unwrapping"
@@ -543,71 +543,71 @@
         {
           "pattern": "random",
           "items": 1000,
-          "ms": 0.5849000299349427
+          "ms": 0.5491999909281731
         },
         {
           "pattern": "random",
           "items": 10000,
-          "ms": 7.733699982054532
+          "ms": 7.093599997460842
         },
         {
           "pattern": "random",
           "items": 100000,
-          "ms": 99.07260001637042
+          "ms": 182.27160000242293
         },
         {
           "pattern": "nearly_sorted",
           "items": 1000,
-          "ms": 0.9649000130593777
+          "ms": 0.35659997956827283
         },
         {
           "pattern": "nearly_sorted",
           "items": 10000,
-          "ms": 27.11620001355186
+          "ms": 12.245000049006194
         },
         {
           "pattern": "nearly_sorted",
           "items": 100000,
-          "ms": 871.297100035008
+          "ms": 77.12139998329803
         },
         {
           "pattern": "reverse",
           "items": 1000,
-          "ms": 0.8331999997608364
+          "ms": 0.3848000196740031
         },
         {
           "pattern": "reverse",
           "items": 10000,
-          "ms": 20.248199987690896
+          "ms": 4.672799957916141
         },
         {
           "pattern": "reverse",
           "items": 100000,
-          "ms": 629.3063999619335
+          "ms": 79.54160001827404
         },
         {
           "pattern": "duplicates",
           "items": 1000,
-          "ms": 0.2389999572187662
+          "ms": 0.24749996373429894
         },
         {
           "pattern": "duplicates",
           "items": 10000,
-          "ms": 2.4815999786369503
+          "ms": 2.7211999986320734
         },
         {
           "pattern": "duplicates",
           "items": 100000,
-          "ms": 21.82540000649169
+          "ms": 36.19700000854209
         }
       ],
       "complexity_exponents": {
-        "random": 1.11,
-        "nearly_sorted": 1.48,
-        "reverse": 1.44,
-        "duplicates": 0.98
+        "random": 1.26,
+        "nearly_sorted": 1.17,
+        "reverse": 1.16,
+        "duplicates": 1.08
       },
-      "complexity_exponent": 1.11,
+      "complexity_exponent": 1.26,
       "quality": {
         "status": "measured",
         "probes": [
@@ -641,71 +641,71 @@
         {
           "pattern": "random",
           "items": 1000,
-          "ms": 0.9226000402122736
+          "ms": 1.041300012730062
         },
         {
           "pattern": "random",
           "items": 10000,
-          "ms": 12.984500033780932
+          "ms": 20.042199990712106
         },
         {
           "pattern": "random",
           "items": 100000,
-          "ms": 177.05830000340939
+          "ms": 250.83570001879707
         },
         {
           "pattern": "nearly_sorted",
           "items": 1000,
-          "ms": 0.9742000256665051
+          "ms": 1.0252000065520406
         },
         {
           "pattern": "nearly_sorted",
           "items": 10000,
-          "ms": 13.547100010327995
+          "ms": 18.849499989300966
         },
         {
           "pattern": "nearly_sorted",
           "items": 100000,
-          "ms": 175.34120002528653
+          "ms": 237.2719999984838
         },
         {
           "pattern": "reverse",
           "items": 1000,
-          "ms": 0.8553999941796064
+          "ms": 0.9984999778680503
         },
         {
           "pattern": "reverse",
           "items": 10000,
-          "ms": 12.088300019968301
+          "ms": 13.90479999827221
         },
         {
           "pattern": "reverse",
           "items": 100000,
-          "ms": 165.6997000100091
+          "ms": 323.429899988696
         },
         {
           "pattern": "duplicates",
           "items": 1000,
-          "ms": 0.9132999693974853
+          "ms": 1.0681000421755016
         },
         {
           "pattern": "duplicates",
           "items": 10000,
-          "ms": 12.731000024359673
+          "ms": 13.774299994111061
         },
         {
           "pattern": "duplicates",
           "items": 100000,
-          "ms": 160.7316000154242
+          "ms": 281.4426000113599
         }
       ],
       "complexity_exponents": {
-        "random": 1.14,
-        "nearly_sorted": 1.13,
-        "reverse": 1.14,
-        "duplicates": 1.12
+        "random": 1.19,
+        "nearly_sorted": 1.18,
+        "reverse": 1.26,
+        "duplicates": 1.21
       },
-      "complexity_exponent": 1.14,
+      "complexity_exponent": 1.19,
       "quality": {
         "status": "measured",
         "probes": [
@@ -739,71 +739,71 @@
         {
           "pattern": "random",
           "items": 1000,
-          "ms": 0.7913999725133181
+          "ms": 0.9033000096678734
         },
         {
           "pattern": "random",
           "items": 10000,
-          "ms": 9.913099987898022
+          "ms": 11.609600041992962
         },
         {
           "pattern": "random",
           "items": 100000,
-          "ms": 128.78810003167018
+          "ms": 213.59629998914897
         },
         {
           "pattern": "nearly_sorted",
           "items": 1000,
-          "ms": 0.671599991619587
+          "ms": 0.7357000140473247
         },
         {
           "pattern": "nearly_sorted",
           "items": 10000,
-          "ms": 8.318800013512373
+          "ms": 12.168999994173646
         },
         {
           "pattern": "nearly_sorted",
           "items": 100000,
-          "ms": 111.59719998249784
+          "ms": 181.83129996759817
         },
         {
           "pattern": "reverse",
           "items": 1000,
-          "ms": 0.666300009470433
+          "ms": 0.7121000089682639
         },
         {
           "pattern": "reverse",
           "items": 10000,
-          "ms": 10.051799996290356
+          "ms": 9.797100035939366
         },
         {
           "pattern": "reverse",
           "items": 100000,
-          "ms": 112.21230000955984
+          "ms": 273.5052999923937
         },
         {
           "pattern": "duplicates",
           "items": 1000,
-          "ms": 0.770699989516288
+          "ms": 0.8090999908745289
         },
         {
           "pattern": "duplicates",
           "items": 10000,
-          "ms": 9.94439999340102
+          "ms": 10.85129997227341
         },
         {
           "pattern": "duplicates",
           "items": 100000,
-          "ms": 119.59610000485554
+          "ms": 254.40259999595582
         }
       ],
       "complexity_exponents": {
-        "random": 1.11,
-        "nearly_sorted": 1.11,
-        "reverse": 1.11,
-        "duplicates": 1.1
+        "random": 1.19,
+        "nearly_sorted": 1.2,
+        "reverse": 1.29,
+        "duplicates": 1.25
       },
-      "complexity_exponent": 1.11,
+      "complexity_exponent": 1.19,
       "quality": {
         "status": "measured",
         "probes": [
