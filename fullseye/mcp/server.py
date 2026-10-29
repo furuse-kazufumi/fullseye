@@ -677,7 +677,8 @@ def _load_stack(a: dict, store: HandleStore) -> dict:
         stack = np.stack(arrays)
     except ValueError as exc:
         raise ArgError("stack images must have one shape: %s" % exc) from None
-    sort = a["sort"]
+    from fullseye.opsearch import normalize_sort
+    sort = normalize_sort(a["sort"])
     meta = store.put(stack, sort=sort, provenance=provenance + [{"load_stack":len(arrays)}])
     return tool_result("%s sort=%s shape=%s" % (meta["handle"],sort,meta["shape"]), meta)
 
@@ -787,8 +788,17 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
     """Shared non-executing pipeline validator used by both MCP entry points."""
     max_stages = int(max_stages or get_system("pipeline_max_stages"))
     errors, normalized = [], []
-    bindings = dict(bindings or {})
-    if start_sort is not None and start_sort not in cat.sorts:
+    from fullseye.opsearch import _graph, known_sorts, normalize_sort
+    def normalize_ref(ref):
+        if isinstance(ref, str) and ref.startswith("have:"):
+            return "have:%s" % normalize_sort(ref.split(":", 1)[1])
+        return ref
+    start_sort = normalize_sort(start_sort)
+    bindings = {
+        ("have:%s" % normalize_sort(ref.split(":", 1)[1]) if isinstance(ref, str) and ref.startswith("have:") else ref): handle
+        for ref, handle in dict(bindings or {}).items()
+    }
+    if start_sort is not None and start_sort not in known_sorts():
         errors.append({"layer": "pipeline", "stage": 0, "reason": "unknown_sort", "value": start_sort,
                        "candidates": []})
     if not stages:
@@ -796,7 +806,6 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
     if len(stages) > max_stages:
         errors.append({"layer": "pipeline", "stage": 0, "reason": "too_many_stages",
                        "value": len(stages), "limit": max_stages, "candidates": []})
-    from fullseye.opsearch import _graph, _sort
     graph_edges = {e["op"]: e for e in _graph()["edges"]}
     binding_sorts = {}; binding_values = {}
     for ref, handle in bindings.items():
@@ -808,8 +817,8 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
         else:
             try:
                 binding_values[ref] = store.get(handle)
-                binding_sorts[ref] = _sort(binding_values[ref][0]["sort"])
-                declared=_sort(ref.split(":",1)[1])
+                binding_sorts[ref] = normalize_sort(binding_values[ref][0]["sort"])
+                declared=normalize_sort(ref.split(":",1)[1])
                 if declared != binding_sorts[ref]:
                     errors.append({"layer":"binding","stage":0,"reason":"binding_sort_mismatch",
                                    "value":binding_sorts[ref],"expected":declared,"candidates":[]})
@@ -837,6 +846,8 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
         name = spec.get("op")
         edge = graph_edges.get(name)
         refs = spec.get("inputs")
+        if refs is not None:
+            refs = [normalize_ref(ref) for ref in refs]
         if refs is None:
             refs = [] if not edge or not edge.get("inputs") else (["stage:%d"%(i-1)] if i>1 else
                     (["have:%s"%start_sort] if start_sort else []))
@@ -858,7 +869,7 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
                 known={**binding_values,**{r:({"sort":s,"handle":r},None) for r,s in stage_sorts.items()}}
                 try:
                     meta,_value=_resolve_pipeline_ref(ref,known,store)
-                    actual.append(_sort(meta["sort"])); resolved.append(meta.get("handle") or ref)
+                    actual.append(normalize_sort(meta["sort"])); resolved.append(meta.get("handle") or ref)
                 except (ArgError,HandleError) as exc:
                     actual.append("unknown"); resolved.append(ref)
                     errors.append({"layer":"stage","stage":i,"reason":"unknown_input_ref",
@@ -883,7 +894,8 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
                 if isinstance(pvalue,dict) and "ref" in pvalue:
                     expected=edge.get("ref_parameters",{}).get(pname)
                     known={**binding_values,**{r:({"sort":s,"handle":r},None) for r,s in stage_sorts.items()}}
-                    try: actual_sort=_sort(_resolve_pipeline_ref(pvalue["ref"],known,store)[0]["sort"])
+                    param_ref = normalize_ref(pvalue["ref"])
+                    try: actual_sort=normalize_sort(_resolve_pipeline_ref(param_ref,known,store)[0]["sort"])
                     except (ArgError,HandleError) as exc:
                         actual_sort=None
                         errors.append({"layer":"stage","stage":i,"reason":"unknown_parameter_ref",
@@ -908,6 +920,7 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
             continue
     known_outputs={**binding_values,**{r:({"sort":s,"handle":r},None) for r,s in stage_sorts.items()}}
     for ref in outputs or []:
+        ref = normalize_ref(ref)
         try: _resolve_pipeline_ref(ref,known_outputs,store)
         except (ArgError,HandleError) as exc:
             errors.append({"layer":"pipeline","stage":0,"reason":"unknown_output_ref",
@@ -1121,6 +1134,7 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
             raise ArgError("%s段 %s %s: %s"%(label,first.get("stage",0),op,
                 json.dumps(first,ensure_ascii=False)))
         return _tool_error(json.dumps(checked,ensure_ascii=False),checked)
+    bindings = checked["bindings"]
     outputs=a.get("outputs") or (["stage:%d"%len(a["stages"])] if a["stages"] else [])
     from collections import Counter
     remaining=Counter(outputs)
@@ -1560,8 +1574,11 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
     if name in ("fullseye_search_ops", "fullseye_find_ops"):
         # ★2026-10-11: find_ops は「既知の種別以外は拒否する」と書きながら typo を受け、
         # 0 件を返していた。search_ops と同じ門を通す。
+        from fullseye.opsearch import known_sorts, normalize_sort
         for k in ("in_sort", "out_sort"):
-            if a.get(k) and a[k] not in cat.sorts:
+            if a.get(k):
+                a[k] = normalize_sort(a[k])
+            if a.get(k) and a[k] not in known_sorts():
                 raise ArgError("%s=%r は知らない種別(あるのは %s)" % (k, a[k], cat.sorts))
     if name == "fullseye_search_ops":
         r = cat.search(a.get("query", ""), in_sort=a.get("in_sort"), out_sort=a.get("out_sort"),

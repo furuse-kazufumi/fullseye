@@ -34,7 +34,7 @@ from collections import Counter
 
 __all__ = ["search_ops", "plan", "describe", "choose", "plan_chain", "op_cards", "choose_op", "required_inputs", "param_space",
            "pipeline_shape", "pattern_skeleton", "sort_guide",
-           "load_index", "tokenize", "detect_lang", "LANGS", "main"]
+           "load_index", "tokenize", "detect_lang", "normalize_sort", "sort_aliases", "known_sorts", "LANGS", "main"]
 
 #: 要約を持つ言語(ja = 原文)。表示言語の既定は問い合わせの文字種から決める(:func:`detect_lang`)。
 LANGS = ("ja", "en", "zh", "tw", "ko", "de", "hi")
@@ -85,8 +85,27 @@ def _graph() -> dict:
     return g
 
 
-def _sort(value: str) -> str:
-    return _graph().get("sort_aliases", {}).get(value, value)
+def sort_aliases() -> dict[str, str]:
+    """Return the generated OP_GRAPH sort aliases used at every public boundary."""
+    return dict(_graph().get("sort_aliases", {}))
+
+
+def normalize_sort(value: str | None) -> str | None:
+    """Canonicalize a sort name with OP_GRAPH's generated alias table."""
+    if value is None:
+        return None
+    return sort_aliases().get(value, value)
+
+
+def known_sorts() -> set[str]:
+    """Canonical sorts declared by the generated typed graph."""
+    graph = _graph()
+    return ({normalize_sort(x) for edge in graph["edges"] for x in [edge.get("output"), *edge.get("inputs", [])] if x}
+            | {normalize_sort(x["sort"]) for x in graph.get("acquirable_sorts", [])})
+
+
+# Kept for internal callers and old imports; all boundaries use the same function.
+_sort = normalize_sort
 
 
 def _result(ok: bool, reason: str, *, hint: str = "", next_tool: str | None = None, **data) -> dict:
@@ -671,6 +690,7 @@ def search_ops(query: str, k: int = 3, *, lang: str | None = None, in_sort: str 
         raise ValueError("search_ops: lang must be one of %s, got %r" % (LANGS, lang))
     if not (isinstance(k, int) and k > 0):
         raise ValueError("search_ops: k must be a positive int, got %r" % (k,))
+    in_sort, out_sort = normalize_sort(in_sort), normalize_sort(out_sort)
     ix = load_index(index_path)
     q = list(dict.fromkeys(tokenize(query)))
     extra = _synonym_tokens(query, set(q))
