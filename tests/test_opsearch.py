@@ -124,6 +124,7 @@ def test_plans_have_machine_stages_and_one_line_comparison_hints():
     result = opsearch.plan("image", "region", goal="segment foreground",
                            constraints={"k": 7, "max_depth": 4, "timeout_ms": 5000})
     assert result["ok"]
+    assert len(result["plans"]) >= 2, "diverse proposals need more than one plan to compare"
     for proposal in result["plans"]:
         assert proposal["dag"]["stages"] and proposal["difference"] and proposal["line"]
         assert " -> " in proposal["line"]
