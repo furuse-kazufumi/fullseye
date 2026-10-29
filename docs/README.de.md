@@ -142,7 +142,7 @@ Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. F
 
 **Gemessene Abdeckung**: evolvierbare Ops 942/942, typisiertes Ledger 2644/2656, Fassade `fullseye.<name>` 706/1491 — **die Fassade ist erst zur Hälfte abgedeckt**.
 
-**Gemessener Inhalt**: von 3609 Notizen verweisen **3579** auf mindestens ein lauffähiges Beispiel (30 ohne), **3408** haben einen Nutzungsabschnitt ab 120 Zeichen (201 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 3609.
+**Gemessener Inhalt**: von 3607 Notizen verweisen **3579** auf mindestens ein lauffähiges Beispiel (28 ohne), **3408** haben einen Nutzungsabschnitt ab 120 Zeichen (199 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 3607.
 
 | Dimension | Ops | Einstieg |
 |---|---:|---|
@@ -297,7 +297,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## Dokumentkarte — alle 290
+## Dokumentkarte — alle 292
 
 Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** (die 3,607 Operator-Notizen und 69 Familien-Leitfäden unter `docs/ops/` über den Operator-Abschnitt oben; Artikel über [articles/](articles/README.md)). **Die Texte sind überwiegend japanisch.**
 
@@ -439,7 +439,7 @@ Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** 
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(207)
+**Other**(209)
 
 | Dokument | Inhalt |
 |---|---|
@@ -464,6 +464,7 @@ Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** 
 | [`DESIGN_NOTES.md`](DESIGN_NOTES.md) | Fullseye-Entwurfsnotizen (aus den ★-Kommentaren im Quellcode erzeugt) → [`DESIGN_NOTES.de.md`](DESIGN_NOTES.de.md) · Original _(ja)_ |
 | [`DESIGN_NOTES.tw.md`](DESIGN_NOTES.tw.md) | Fullseye 設計判斷集（由原始碼中的 ★ 註解產生） _(tw)_ |
 | [`DESIGN_NOTES.zh.md`](DESIGN_NOTES.zh.md) | Fullseye 设计判断集（由源码中的 ★ 注释生成） _(zh)_ |
+| [`DEVICE_GUIDE.md`](DEVICE_GUIDE.md) | CPU / GPU の選び方 _(ja)_ |
 | [`ENGINE.de.md`](ENGINE.de.md) | FullseyeEngine — Laufzeitumgebung zur Ausführung entworfener Pipelines |
 | [`ENGINE.en.md`](ENGINE.en.md) | FullseyeEngine — the runtime that executes a pipeline you designed |
 | [`ENGINE.ko.md`](ENGINE.ko.md) | FullseyeEngine — 설계한 파이프라인을 실행하는 런타임 |
@@ -503,6 +504,7 @@ Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** 
 | [`MCP.md`](MCP.md) | Fullseye を MCP(Model Context Protocol)から使う _(ja)_ |
 | [`NAN_INPUT_AUDIT.md`](NAN_INPUT_AUDIT.md) | 非有限入力監査 _(ja)_ |
 | [`OP_COMBINATION_MATRIX.en.md`](OP_COMBINATION_MATRIX.en.md) | fullseye 3D op × op Combination Matrix (prioritized by feasibility × differentiation) |
+| [`PIPELINE_SHAPES.md`](PIPELINE_SHAPES.md) | Typed DAG execution |
 | [`SAMPLE_IMAGE_REFERENCES.en.md`](SAMPLE_IMAGE_REFERENCES.en.md) | Sample images — provenance, source papers & public repositories |
 | [`STUDIO_GUIDE.de.md`](STUDIO_GUIDE.de.md) | Vollständiger Leitfaden zu Fullseye Studio |
 | [`STUDIO_GUIDE.en.md`](STUDIO_GUIDE.en.md) | The complete guide to Fullseye Studio |

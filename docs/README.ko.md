@@ -142,7 +142,7 @@
 
 **실측 커버리지**: 진화 연산자 942/942, 타입 台帳 2644/2656, 한 줄 파사드 `fullseye.<이름>` 706/1491 — **파사드는 아직 절반**.
 
-**내용 실측**: 3609건 중 실행 가능한 예제가 붙은 것은 **3579**건(30건은 없음), 사용법이 120자 이상인 것은 **3408**건(201건은 한 줄 요약). 구조(호출 형식·타입·다음 연산자)는 3609건 모두.
+**내용 실측**: 3607건 중 실행 가능한 예제가 붙은 것은 **3579**건(28건은 없음), 사용법이 120자 이상인 것은 **3408**건(199건은 한 줄 요약). 구조(호출 형식·타입·다음 연산자)는 3607건 모두.
 
 | 차원 | 연산자 수 | 입구 |
 |---|---:|---|
@@ -297,7 +297,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## 문서 지도 — 전 290건
+## 문서 지도 — 전 292건
 
 **색인에서 닿지 않는 문서를 만들지 않기** 위한 전체 지도입니다(`docs/ops/`의 연산자 노트 3,607건과 패밀리 가이드 69건은 위의 「연산자 찾기」에서, 기사는 [articles/](articles/README.md)에서). **본문은 대부분 일본어입니다.**
 
@@ -439,7 +439,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(207)
+**Other**(209)
 
 | 문서 | 내용 |
 |---|---|
@@ -464,6 +464,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`DESIGN_NOTES.md`](DESIGN_NOTES.md) | Fullseye 설계 판단 모음(소스의 ★ 주석에서 생성) → [`DESIGN_NOTES.ko.md`](DESIGN_NOTES.ko.md) · 원문 _(ja)_ |
 | [`DESIGN_NOTES.tw.md`](DESIGN_NOTES.tw.md) | Fullseye 設計判斷集（由原始碼中的 ★ 註解產生） _(tw)_ |
 | [`DESIGN_NOTES.zh.md`](DESIGN_NOTES.zh.md) | Fullseye 设计判断集（由源码中的 ★ 注释生成） _(zh)_ |
+| [`DEVICE_GUIDE.md`](DEVICE_GUIDE.md) | CPU / GPU の選び方 _(ja)_ |
 | [`ENGINE.de.md`](ENGINE.de.md) | FullseyeEngine — Laufzeitumgebung zur Ausführung entworfener Pipelines |
 | [`ENGINE.en.md`](ENGINE.en.md) | FullseyeEngine — the runtime that executes a pipeline you designed |
 | [`ENGINE.ko.md`](ENGINE.ko.md) | FullseyeEngine — 설계한 파이프라인을 실행하는 런타임 |
@@ -503,6 +504,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`MCP.md`](MCP.md) | Fullseye を MCP(Model Context Protocol)から使う _(ja)_ |
 | [`NAN_INPUT_AUDIT.md`](NAN_INPUT_AUDIT.md) | 非有限入力監査 _(ja)_ |
 | [`OP_COMBINATION_MATRIX.en.md`](OP_COMBINATION_MATRIX.en.md) | fullseye 3D op × op Combination Matrix (prioritized by feasibility × differentiation) |
+| [`PIPELINE_SHAPES.md`](PIPELINE_SHAPES.md) | Typed DAG execution |
 | [`SAMPLE_IMAGE_REFERENCES.en.md`](SAMPLE_IMAGE_REFERENCES.en.md) | Sample images — provenance, source papers & public repositories |
 | [`STUDIO_GUIDE.de.md`](STUDIO_GUIDE.de.md) | Vollständiger Leitfaden zu Fullseye Studio |
 | [`STUDIO_GUIDE.en.md`](STUDIO_GUIDE.en.md) | The complete guide to Fullseye Studio |

@@ -41,7 +41,6 @@ def _allowed() -> dict[int, str]:
     single = t["registry"] + t["color"]
     notes = [p for p in (ROOT / "docs" / "ops").rglob("*.md")
              if not re.match(r"^INDEX(\.[a-z]{2})?\.md$", p.name) and p.name != "SAMPLES.md"
-             and p.name not in {"DEVICE_GUIDE.md", "PIPELINE_SHAPES.md"}
              and "guides" not in p.parts]
     import ops3d
     n3d = len(ops3d.list_ops())          # 3-D 台帳の op(1 本は別台帳と同名なので索引では 1 少ない)
