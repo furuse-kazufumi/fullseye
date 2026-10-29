@@ -366,7 +366,7 @@ def decode_fringe(phase_shift_images, ref_phase=None, k=1.0,
 
 
 def fringe_ftp_phase(image, carrier_axis="x", carrier_period=None,
-                     bandwidth=0.35, k=1.0, min_modulation=0.05,
+                     bandwidth=0.35, k=1.0, min_modulation=None,
                      return_info=False):
     """縞 1 枚から高さ・位相を Takeda の Fourier transform profilometry で復元する。
 
@@ -451,6 +451,8 @@ def fringe_ftp_phase(image, carrier_axis="x", carrier_period=None,
     analytic = np.fft.ifft2(np.fft.ifftshift(spectrum * window))
     amp = 2.0 * np.abs(analytic)
     relative_mod = float(np.percentile(amp, 75)) / dynamic
+    if min_modulation is None:
+        min_modulation = 0.05
     if relative_mod < float(min_modulation):
         raise ValueError(
             "fringe_ftp_phase: no separable fringe sideband "

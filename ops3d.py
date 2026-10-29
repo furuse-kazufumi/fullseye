@@ -93,8 +93,12 @@ import annotate3d
 
 
 def fringe_ftp_phase(image, carrier_axis="x", carrier_period=None,
-                     bandwidth=.35, k=1.0, min_modulation=.05):
+                     bandwidth=.35, k=1.0, min_modulation=None):
     """縞 1 枚から高さ・位相を Takeda の Fourier transform profilometry で復元する。"""
+    # ``None`` selects the fail-closed default.  This is an acceptance gate (it
+    # raises below threshold), not a continuous image-processing knob.
+    if min_modulation is None:
+        min_modulation = .05
     return fringe.fringe_ftp_phase(
         image, carrier_axis=carrier_axis, carrier_period=carrier_period,
         bandwidth=bandwidth, k=k, min_modulation=min_modulation,

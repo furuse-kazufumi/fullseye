@@ -13,7 +13,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 # fringe_ftp_phase — 3D `structured_light` op
 
 - **データ種**: `image2d` → `depth`
-- **呼び出し**: `import fullseye as fs; fs.ledger.fringe_ftp_phase(image, carrier_axis='x', carrier_period=None, bandwidth=0.35, k=1.0, min_modulation=0.05, return_info=False)` (実装を直接呼ぶなら `import fringe; fringe.fringe_ftp_phase(image, carrier_axis='x', carrier_period=None, bandwidth=0.35, k=1.0, min_modulation=0.05, return_info=False)`、台帳から引くなら `ops3d.get("fringe_ftp_phase")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.fringe_ftp_phase(image, carrier_axis='x', carrier_period=None, bandwidth=0.35, k=1.0, min_modulation=None, return_info=False)` (実装を直接呼ぶなら `import fringe; fringe.fringe_ftp_phase(image, carrier_axis='x', carrier_period=None, bandwidth=0.35, k=1.0, min_modulation=None, return_info=False)`、台帳から引くなら `ops3d.get("fringe_ftp_phase")`)
 - **台帳経由の戻り値**: `fullseye.ledger.fringe_ftp_phase(...)` は**宣言 out 型 `depth` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.fringe_ftp_phase.raw(...)`、または `fringe.fringe_ftp_phase` を直接呼ぶ。
 
 ## 使い方
