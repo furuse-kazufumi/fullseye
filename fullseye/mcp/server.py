@@ -847,7 +847,11 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
     if len(stages) > max_stages:
         errors.append({"layer": "pipeline", "stage": 0, "reason": "too_many_stages",
                        "value": len(stages), "limit": max_stages, "candidates": []})
-    graph_edges = {e["op"]: e for e in _graph()["edges"]}
+    graph_edges = {
+        e["op"]: {**e, "inputs": [normalize_sort(x) for x in e.get("inputs", ())],
+                  "output": normalize_sort(e.get("output"))}
+        for e in _graph()["edges"]
+    }
     binding_sorts = {}; binding_values = {}
     for ref, handle in bindings.items():
         if not ref.startswith("have:"):

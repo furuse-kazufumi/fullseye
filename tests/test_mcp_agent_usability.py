@@ -47,6 +47,36 @@ def test_conversation_seq_image_aliases_work_at_mcp_entries(tmp_path):
     assert x["structuredContent"]["sort"] == "seq<image>"
 
 
+def test_fringe_search_normalizes_the_legacy_index_sort_on_both_sides():
+    """OP_SEARCH still says images while OP_GRAPH and the API say seq<image>."""
+    legacy = search_ops("fringe depth", 3, in_sort="images", out_sort="depth")
+    canonical = search_ops("fringe depth", 3, in_sort="seq<image>", out_sort="depth")
+    assert len(legacy["ops"]) == len(canonical["ops"]) > 0
+    assert "decode_fringe" in {row["name"] for row in legacy["ops"]}
+
+
+def test_aliases_keep_result_counts_at_search_plan_validate_and_pipeline_boundaries(tmp_path):
+    cat = Catalog.load()
+    store = HandleStore(roots=[str(tmp_path)])
+    for alias, canonical in sort_aliases().items():
+        assert len(search_ops("image", 20, in_sort=alias)["ops"]) == len(
+            search_ops("image", 20, in_sort=canonical)["ops"])
+        assert len(search_ops("image", 20, out_sort=alias)["ops"]) == len(
+            search_ops("image", 20, out_sort=canonical)["ops"])
+        assert len(plan(alias, canonical).get("plans", [])) == len(
+            plan(canonical, canonical).get("plans", []))
+        alias_validation = validate_pipeline([], alias, cat)
+        canonical_validation = validate_pipeline([], canonical, cat)
+        assert len(alias_validation["errors"]) == len(canonical_validation["errors"])
+        alias_handle = store.put(np.zeros((2, 2)), sort=alias, provenance=[])["handle"]
+        canonical_handle = store.put(np.ones((2, 2)), sort=canonical, provenance=[])["handle"]
+        stages = [{"op": "definitely_unknown", "inputs": []}]
+        alias_pipeline = call_tool("fullseye_pipeline", {"handle": alias_handle, "stages": stages}, cat, store)
+        canonical_pipeline = call_tool("fullseye_pipeline", {"handle": canonical_handle, "stages": stages}, cat, store)
+        assert len(alias_pipeline["structuredContent"]["errors"]) == len(
+            canonical_pipeline["structuredContent"]["errors"])
+
+
 def test_zero_hit_type_filter_returns_routes_and_typed_unfiltered_top():
     result = search_ops("threshold", 3, in_sort="color", out_sort="region")
     assert result["ops"] == []

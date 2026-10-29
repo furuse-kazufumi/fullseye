@@ -140,9 +140,15 @@ def _hypergraph_plans(starts: list[str], want: str, query: str, *, executable_on
     """Knuth-style relaxation: retain bounded derivations per type, never type sets."""
     graph = _graph()
     scores = {r["name"]: r["score"] for r in search_ops(query, k=len(graph["edges"]))["ops"]}
-    edges = [e for e in graph["edges"] if (e.get("verified_executable") or not executable_only)
-             and e.get("output") not in ("unknown", "any")
-             and "unknown" not in e.get("inputs", ())]
+    # Generated ledgers can lag behind the canonical sort vocabulary (for
+    # example OP_SEARCH used ``images`` while OP_GRAPH used ``seq<image>``).
+    # Normalize both graph sides here, rather than relying on every generator
+    # having changed spelling in lockstep.
+    edges = [{**e, "inputs": [normalize_sort(x) for x in e.get("inputs", ())],
+              "output": normalize_sort(e.get("output"))}
+             for e in graph["edges"] if (e.get("verified_executable") or not executable_only)
+             and normalize_sort(e.get("output")) not in ("unknown", "any")
+             and "unknown" not in {normalize_sort(x) for x in e.get("inputs", ())}]
     import heapq
     import itertools
     by_input = {}
@@ -728,9 +734,9 @@ def search_ops(query: str, k: int = 3, *, lang: str | None = None, in_sort: str 
     hits = []
     for i, s in scores.items():
         r = rows[i]
-        if in_sort and r.get("i") != in_sort:
+        if in_sort and normalize_sort(r.get("i")) != in_sort:
             continue
-        if out_sort and r.get("o") != out_sort:
+        if out_sort and normalize_sort(r.get("o")) != out_sort:
             continue
         if dim and r.get("d") != dim:
             continue
