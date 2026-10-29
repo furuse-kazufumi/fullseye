@@ -111,15 +111,17 @@ class AlgoOp:
 # --------------------------------------------------------------------------- #
 _PY_QUICKSORT = '''\
 def run(a):
-    """Quicksort with 3-way (Dutch national flag) partition + median-of-three pivot.
+    """Quicksort with Bentley-McIlroy 3-way partition + median-of-three pivot.
 
     Three-way partitioning collects keys EQUAL to the pivot in the middle and
     recurses only on the strictly-smaller / strictly-greater sides, so runs of
     equal keys collapse to O(n): all-equal and few-distinct inputs (e.g. a binary
     mask flattened to a sequence) stay O(n log n), where a plain Lomuto quicksort
     degrades to O(n^2). Median-of-three additionally protects sorted / reverse
-    inputs. Iterative (explicit stack, larger side pushed first) so stack depth is
-    O(log n). In place on a copy. Assumes NaN-free input (see module docstring).
+    inputs. The bidirectional scan preserves balanced partitions on monotone and
+    organ-pipe inputs instead of repeatedly rotating one outer band. Iterative
+    (explicit stack, larger side pushed first) so stack depth is O(log n). In
+    place on a copy. Assumes NaN-free input (see module docstring).
     """
     a = list(a)
     n = len(a)
@@ -138,27 +140,49 @@ def run(a):
             a[lo], a[hi] = a[hi], a[lo]
         if a[hi] < a[mid]:
             a[mid], a[hi] = a[hi], a[mid]
-        pivot = a[mid]
-        lt, i, gt = lo, lo, hi          # a[lo..lt-1] < pivot, a[gt+1..hi] > pivot
-        while i <= gt:
-            if a[i] < pivot:
-                a[lt], a[i] = a[i], a[lt]; lt += 1; i += 1
-            elif a[i] > pivot:
-                a[i], a[gt] = a[gt], a[i]; gt -= 1
-            else:
-                i += 1                   # a[i] == pivot: leave it in the middle band
-        lsz, rsz = lt - lo, hi - gt      # sizes of the two outer ranges
+        a[lo], a[mid] = a[mid], a[lo]
+        pivot = a[lo]
+        i, j, p, q = lo, hi + 1, lo, hi + 1
+        while True:
+            i += 1
+            while i <= hi and a[i] < pivot:
+                i += 1
+            j -= 1
+            while j >= lo and a[j] > pivot:
+                j -= 1
+            if i == j and not (a[i] < pivot) and not (a[i] > pivot):
+                p += 1
+                a[p], a[i] = a[i], a[p]
+            if i >= j:
+                break
+            a[i], a[j] = a[j], a[i]
+            if not (a[i] < pivot) and not (a[i] > pivot):
+                p += 1
+                a[p], a[i] = a[i], a[p]
+            if not (a[j] < pivot) and not (a[j] > pivot):
+                q -= 1
+                a[q], a[j] = a[j], a[q]
+        i = j + 1
+        k = lo
+        while k <= p:
+            a[k], a[j] = a[j], a[k]
+            k += 1; j -= 1
+        k = hi
+        while k >= q:
+            a[k], a[i] = a[i], a[k]
+            k -= 1; i += 1
+        lsz, rsz = j - lo + 1, hi - i + 1
         if lsz > rsz:                    # push the larger side first -> stack O(log n)
-            stack.append((lo, lt - 1))
-            stack.append((gt + 1, hi))
+            stack.append((lo, j))
+            stack.append((i, hi))
         else:
-            stack.append((gt + 1, hi))
-            stack.append((lo, lt - 1))
+            stack.append((i, hi))
+            stack.append((lo, j))
     return a
 '''
 
 _C_QUICKSORT = '''\
-/* Quicksort: 3-way (Dutch national flag) partition, median-of-three pivot,
+/* Quicksort: Bentley-McIlroy 3-way partition, median-of-three pivot,
  * explicit stack. Equal keys collect in the middle band, so all-equal /
  * few-distinct inputs stay O(n log n) (a plain Lomuto scan would be O(n^2)). */
 static void _swap(double* a, int i, int j) { double t = a[i]; a[i] = a[j]; a[j] = t; }
@@ -176,20 +200,32 @@ void quicksort(double* a, int n) {
         if (a[mid] < a[lo]) _swap(a, lo, mid);
         if (a[hi] < a[lo]) _swap(a, lo, hi);
         if (a[hi] < a[mid]) _swap(a, mid, hi);
-        double pivot = a[mid];
-        int lt = lo, i = lo, gt = hi;
-        while (i <= gt) {
-            if (a[i] < pivot) { _swap(a, lt, i); lt++; i++; }
-            else if (a[i] > pivot) { _swap(a, i, gt); gt--; }
-            else i++;
+        _swap(a, lo, mid);
+        double pivot = a[lo];
+        int i = lo, j = hi + 1, p = lo, q = hi + 1;
+        for (;;) {
+            i++;
+            while (i <= hi && a[i] < pivot) i++;
+            j--;
+            while (j >= lo && a[j] > pivot) j--;
+            if (i == j && !(a[i] < pivot) && !(a[i] > pivot)) {
+                p++; _swap(a, p, i);
+            }
+            if (i >= j) break;
+            _swap(a, i, j);
+            if (!(a[i] < pivot) && !(a[i] > pivot)) { p++; _swap(a, p, i); }
+            if (!(a[j] < pivot) && !(a[j] > pivot)) { q--; _swap(a, q, j); }
         }
-        int lsz = lt - lo, rsz = hi - gt;
+        i = j + 1;
+        for (int k = lo; k <= p; k++, j--) _swap(a, k, j);
+        for (int k = hi; k >= q; k--, i++) _swap(a, k, i);
+        int lsz = j - lo + 1, rsz = hi - i + 1;
         if (lsz > rsz) {
-            lo_st[sp] = lo; hi_st[sp] = lt - 1; sp++;
-            lo_st[sp] = gt + 1; hi_st[sp] = hi; sp++;
+            lo_st[sp] = lo; hi_st[sp] = j; sp++;
+            lo_st[sp] = i; hi_st[sp] = hi; sp++;
         } else {
-            lo_st[sp] = gt + 1; hi_st[sp] = hi; sp++;
-            lo_st[sp] = lo; hi_st[sp] = lt - 1; sp++;
+            lo_st[sp] = i; hi_st[sp] = hi; sp++;
+            lo_st[sp] = lo; hi_st[sp] = j; sp++;
         }
     }
 }
@@ -2859,7 +2895,7 @@ ALGO_REGISTRY: list[AlgoOp] = [
     AlgoOp("quicksort", "sort", SEQ, SEQ, KIND_SORT, "quicksort",
            _PY_QUICKSORT, _C_QUICKSORT,
            "Sort a sequence ascending, in place (O(n log n), robust to duplicates).",
-           "Hoare 1961 quicksort; 3-way (Dutch national flag) partition; median-of-three pivot"),
+           "Hoare 1961 quicksort; Bentley-McIlroy 3-way partition; median-of-three pivot"),
     AlgoOp("heapsort", "sort", SEQ, SEQ, KIND_SORT, "heapsort_asc",
            _PY_HEAPSORT, _C_HEAPSORT,
            "Sort a sequence ascending, in place (worst-case O(n log n)).",
