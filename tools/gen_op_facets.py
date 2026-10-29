@@ -47,7 +47,7 @@ ACQUIRABLE = {
 # by the named gate.  Keeping this allowlist small and reviewable is deliberate.
 VERIFIED_PYTHON = {
     "polarization_render", "polarization_dolp_map", "decode_fringe",
-    "deflectometry_phase_to_slope",
+    "deflectometry_phase_to_slope", "fringe_ftp_phase", "depth_from_focus",
     "fit_circle_geometric", "fit_curve_principal_axis",
     "phase_correlation_shift", "fit_surface_principal_axes",
 }

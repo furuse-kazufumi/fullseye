@@ -1,4 +1,4 @@
-# 3D operator help — 374 ops in 68 categories
+# 3D operator help — 376 ops in 68 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/3d/<category>/<op>.md` を走査。
 
@@ -245,9 +245,9 @@
 
 [carve](space_carving/carve.md) · [carve_look_at](space_carving/carve_look_at.md) · [synthesize_silhouette](space_carving/synthesize_silhouette.md) · [visual_hull](space_carving/visual_hull.md)
 
-### structured_light (7)
+### structured_light (9)
 
-[absolute_phase](structured_light/absolute_phase.md) · [decode_fringe](structured_light/decode_fringe.md) · [graycode_decode](structured_light/graycode_decode.md) · [synthesize_fringes](structured_light/synthesize_fringes.md) · [triangulate_column](structured_light/triangulate_column.md) · [unwrap_phase_2d](structured_light/unwrap_phase_2d.md) · [wrapped_phase](structured_light/wrapped_phase.md)
+[absolute_phase](structured_light/absolute_phase.md) · [decode_fringe](structured_light/decode_fringe.md) · [depth_from_focus](structured_light/depth_from_focus.md) · [fringe_ftp_phase](structured_light/fringe_ftp_phase.md) · [graycode_decode](structured_light/graycode_decode.md) · [synthesize_fringes](structured_light/synthesize_fringes.md) · [triangulate_column](structured_light/triangulate_column.md) · [unwrap_phase_2d](structured_light/unwrap_phase_2d.md) · [wrapped_phase](structured_light/wrapped_phase.md)
 
 ### superquadric (4)
 

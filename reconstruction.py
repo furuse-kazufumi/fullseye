@@ -206,7 +206,16 @@ def sfs_mod_lr(image, **kw):
 
 def depth_from_focus(images, focus_positions=None):
     """フォーカススタックから画素ごと最良合焦位置=深度を推定(depth_from_focus)。
-    合焦度は局所ラプラシアン分散(Sum-Modified-Laplacian)。"""
+
+    合焦度は 5x5 窓の modified-Laplacian 応答を使い、最大の画像番号を ``index``、
+    対応する ``focus_positions`` (省略時は番号)を ``depth``、最大応答を
+    ``sharpness`` として返す。同点は従来どおり最初の画像を選ぶ。テクスチャが無い
+    領域では合焦位置を決められず、番号 0 を返すので ``sharpness`` を信頼度として
+    必ず併用する。
+
+    出典: S. K. Nayar and Y. Nakagawa, “Shape from Focus,” IEEE Trans. Pattern
+    Anal. Mach. Intell. 16(8), 824–831 (1994), doi:10.1109/34.308479.
+    """
     from scipy.ndimage import laplace, uniform_filter
     stack = np.stack([np.asarray(im, float) for im in images], axis=0)
     K = stack.shape[0]

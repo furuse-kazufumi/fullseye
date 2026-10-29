@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3605,
- "n_notes": 3611,
+ "n_ops": 3607,
+ "n_notes": 3613,
  "notes": {
   "vol_dilate": [
    {
@@ -11271,7 +11271,7 @@
     "dim": "3d",
     "category": "geometry",
     "in": "points",
-    "out": "surface_poly",
+    "out": "table",
     "path": "docs/ops/3d/geometry/fit_surface_principal_axes.md"
    }
   ],
@@ -13381,6 +13381,26 @@
     "in": "images",
     "out": "depth",
     "path": "docs/ops/3d/structured_light/decode_fringe.md"
+   }
+  ],
+  "depth_from_focus": [
+   {
+    "op": "depth_from_focus",
+    "dim": "3d",
+    "category": "structured_light",
+    "in": "images",
+    "out": "depth",
+    "path": "docs/ops/3d/structured_light/depth_from_focus.md"
+   }
+  ],
+  "fringe_ftp_phase": [
+   {
+    "op": "fringe_ftp_phase",
+    "dim": "3d",
+    "category": "structured_light",
+    "in": "image2d",
+    "out": "depth",
+    "path": "docs/ops/3d/structured_light/fringe_ftp_phase.md"
    }
   ],
   "graycode_decode": [

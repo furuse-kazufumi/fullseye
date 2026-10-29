@@ -553,7 +553,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 **space**
 - **星の点像を副画素で測り、角距離で星表へ対応付けて衛星姿勢を求める** — 固定 seed の合成星表 196 星と PSF・光子雑音・読み出し雑音を含む 128×128 像を作り、star_detect の 18 検出(真の星 16 + ホットピクセル 2)を三角形の角距離で全星表へ照合し、偽点を捨てて kabsch で姿勢を推定する。誤対応 0・偽点棄却 2/2・姿勢角誤差 0.0046 度。太陽・月の迷光、星不足、高速回転の星の流れは未計算の限界。 `py -3.11 examples/poc_star_tracker.py`
 
-### 3-D 点群/体積/曲面(122 例)
+### 3-D 点群/体積/曲面(123 例)
 
 **registration**
 - **CADモデルをノイズ入り3Dスキャンに位置合わせ** — 初期姿勢なしで CAD 設計形状を実物スキャン点群に合わせ、置かれた向きと位置を復元する(FPFH+RANSACで粗く→ICPでセンサノイズ床まで)。 `py -3.11 examples_3d/cad_to_scan.py`
@@ -683,6 +683,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 **structured_light**
 - **位相シフト縞投影で高さを復元** — 縞合成→wrapped_phase→unwrap_phase_2d→decode で高さ(RMSE 0.63%)。位相アンラップ無しは2π跳びで88%誤る。 `py -3.11 examples_3d/structured_light.py`
+- **縞1枚と焦点スタックから深さを復元** — 単一搬送波縞を fringe_ftp_phase で高さへ、3枚の焦点スタックを depth_from_focus で深さへ変換し、既知真値で精度とテクスチャ無し領域の限界を検証。 `py -3.11 examples_3d/ftp_and_focus_depth.py`
 - **構造化光スキャナ 1 台を閉ループで回す(投影→撮影→復号→三角測量)** — 描画した実シーン(球+段差箱+床)へ相補Gray 18枚+位相シフト4枚を投影し、absolute_phaseで2π次数を確定、triangulate_columnで視線×コラム平面を解いて深度へ。真値深度をRMSE 0.233mm(レンジ287mmの0.081%)で再現。Gray整数のみ(0.548mm)の2.4倍、位相のみ(209.8mm)の901倍良い。Gray復号は全16521画素で誤り0。 `py -3.11 examples_3d/structured_light_scan.py`
 - **Gray code 構造化光の絶対デコード** — 物体で湾曲した投影機コラム番号(0..127)をGray codeビット面7枚からgraycode_decodeで絶対復号。全12288画素で整数厳密一致(100%)。極性反転(0%)/面順取り違え(13%)/最頻値決め打ち(2%)のnullを判別的に上回る。撮影ノイズ42%まで厳密。 `py -3.11 examples_3d/graycode_structured_light.py`
 
@@ -788,9 +789,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3611 ops / 55 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3613 ops / 55 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 959 · **3d** 374 · **fit** 3 · **math** 114 · **optics** 483 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 39 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 717 · **tomography** 32 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 3 · **calib** 21 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族の一覧: **2d** 959 · **3d** 376 · **fit** 3 · **math** 114 · **optics** 483 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 39 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 717 · **tomography** 32 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 3 · **calib** 21 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d(959 ops / 49 categories)
 
@@ -1853,7 +1854,7 @@ _計 3611 ops / 55 families。並びとノートの在り処は `docs/ops/INDEX.
 - `xg_orientation` (halcon: `orientation_points_xld`) `contour → feature` — Principal-axis orientation in degrees, folded to [0,180) and /180 scaled. · 例: `gallery2d_geometry`
 - `xg_regress_contours` `contour → feature` — Total-least-squares line residual RMS = sqrt(minor covariance eigenvalue). · 例: `gallery2d_geometry`, `poc_screw_thread_metrology`
 
-### 3d(374 ops / 68 categories)
+### 3d(376 ops / 68 categories)
 
 点群・体積・メッシュ・深度の op(`ops3d.OPS3D`)。関数として呼ぶ。
 
@@ -2012,7 +2013,7 @@ _計 3611 ops / 55 families。並びとノートの在り処は `docs/ops/INDEX.
 - `fit_plane_3d` `points → primitive` — 点群 → 最小二乗平面(通過点=重心, 法線=最小主軸, 残差 RMS)。返り値 (point, normal, resid)。 · 例: `geometry_metrology`
 - `fit_sphere3` `points → primitive` — Algebraic (Kåsa) least-squares sphere fit to ``(depth, row, col)`` points: · 例: `primitive_fitting_3d`, `roi_domain_boundary`
 - `fit_sphere_3d` `points → primitive` — 点群 → 最小二乗球(代数フィット)。返り値 (center, radius)。配管/ボール計測に。 · 例: `geometry_metrology`
-- `fit_surface_principal_axes` `points → surface_poly` — 斜めの反った面を PCA 主軸へ回してから多項式 ``z'=f(x',y')`` を当てはめる。 · 例: `primitive_fitting_3d`
+- `fit_surface_principal_axes` `points → table` — 斜めの反った面を PCA 主軸へ回してから多項式 ``z'=f(x',y')`` を当てはめる。 · 例: `primitive_fitting_3d`
 - `intersect_line_plane` `primitive → position` — 直線 ∩ 平面 → 点(平行なら None)。 · 例: `geometry_metrology`
 - `intersect_planes` `primitive → primitive` — 平面 ∩ 平面 → 直線(通過点, 方向)。平行なら None。 · 例: `geometry_metrology`
 - `line_from_2points` `points → primitive` — 2 点 → 直線(通過点, 単位方向)。2 座標で線が定まる(2D/3D 共通)。 · 例: `geometry_metrology`
@@ -2297,11 +2298,13 @@ _計 3611 ops / 55 families。並びとノートの在り処は `docs/ops/INDEX.
 - `synthesize_silhouette` `points → image2d` — 3-D 点群を (K,R,t) カメラへ射影し占有画素 True のシルエット(H,W bool)を返す。 · 例: `space_carving`
 - `visual_hull` `images → voxel` — 多視点シルエットの visual hull を voxel 占有として返す(:func:`carve` の別名)。 · 例: `space_carving`
 
-#### 3d / structured_light(7)
+#### 3d / structured_light(9)
 - `absolute_phase` `image2d × image2d → image2d` — 巻き込み位相を、粗いが絶対的な位相推定で「次数確定」して絶対位相にする。 · 例: `structured_light_scan`
 - `decode_fringe` `images → depth` — 位相シフト画像列を一括復号: wrapped → unwrap →(参照減算で)高さ。 · 例: `structured_light`
+- `depth_from_focus` `images → depth` — 焦点を変えた画像から高さ・深さを画素ごとの最良合焦位置として推定する。 · 例: `ftp_and_focus_depth`
+- `fringe_ftp_phase` `image2d → depth` — 縞 1 枚から高さ・位相を Takeda の Fourier transform profilometry で復元する。 · 例: `ftp_and_focus_depth`
 - `graycode_decode` `images → image2d` — Gray code ビット画像列 → 整数フリンジ次数マップ(絶対次数)。 · 例: `graycode_structured_light`, `structured_light_scan`
-- `synthesize_fringes` `image2d → images` — 既知の height map から N-step 位相シフト縞画像列を合成する(テスト/サンプル生成用)。 · 例: `structured_light`
+- `synthesize_fringes` `image2d → images` — 既知の height map から N-step 位相シフト縞画像列を合成する(テスト/サンプル生成用)。 · 例: `ftp_and_focus_depth`, `structured_light`
 - `triangulate_column` `image2d → depth` — 各カメラ画素の「投影機コラム番号」から深度 Z を三角測量する(構造化光の最終段)。 · 例: `structured_light_scan`
 - `unwrap_phase_2d` `image2d → image2d` — wrapped phase を skimage.restoration.unwrap_phase で連続位相に展開する。 · 例: `structured_light`
 - `wrapped_phase` `images → image2d` — N-step 位相シフト縞画像から wrapped phase (-π, π] を求める。 · 例: `structured_light`, `structured_light_scan`

@@ -1,4 +1,4 @@
-{"generated_by": "tools/gen_mcp_data.py", "probe": "CPU, a=b=0.5, representative input", "n_ops": 3611, "ops": [
+{"generated_by": "tools/gen_mcp_data.py", "probe": "CPU, a=b=0.5, representative input", "n_ops": 3613, "ops": [
 {"name":"a3_distribution","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"aabb","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"abbe_number","status":"not_in_registry","reason":"not executable by fullseye.apply"},
@@ -622,6 +622,7 @@
 {"name":"dem_stream_network","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"dem_tpi","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"dem_viewshed","status":"not_in_registry","reason":"not executable by fullseye.apply"},
+{"name":"depth_from_focus","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"depth_of_field","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"depth_to_organized_points","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"depth_to_points","status":"not_in_registry","reason":"not executable by fullseye.apply"},
@@ -1004,6 +1005,7 @@
 {"name":"fresnel_water_air","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"friction_circle_usage","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"friction_from_single_contact","status":"not_in_registry","reason":"not executable by fullseye.apply"},
+{"name":"fringe_ftp_phase","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"fringe_multipath_phase_error","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"from_xld","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"fscore","status":"not_in_registry","reason":"not executable by fullseye.apply"},

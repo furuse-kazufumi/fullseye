@@ -3,7 +3,7 @@ op: fit_surface_principal_axes
 dim: 3d
 category: geometry
 in: points
-out: surface_poly
+out: table
 examples: [primitive_fitting_3d]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -12,7 +12,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 # fit_surface_principal_axes — 3D `geometry` op
 
-- **データ種**: `points` → `surface_poly`
+- **データ種**: `points` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.fit_surface_principal_axes(points, degree: 'int' = 2, *, isotropy_ratio: 'float' = 0.95) -> 'dict'` (実装を直接呼ぶなら `import measure3d; measure3d.fit_surface_principal_axes(points, degree: 'int' = 2, *, isotropy_ratio: 'float' = 0.95) -> 'dict'`、台帳から引くなら `ops3d.get("fit_surface_principal_axes")`)
 
 ## 使い方
@@ -37,9 +37,9 @@ returned normal agrees with :func:`fit_plane3` up to sign.
 
 - [primitive_fitting_3d](../../../../examples_3d/primitive_fitting_3d.py) — `py -3.11 examples_3d/primitive_fitting_3d.py`
 
-## 型が繋がる次の op(`surface_poly` を入力に取れる)
+## 型が繋がる次の op(`table` を入力に取れる)
 
-[fuse_to_voxel](../fusion/fuse_to_voxel.md)
+[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [mesh_select_lod](../resolution/mesh_select_lod.md)
 
 ## 同カテゴリ(`geometry`)
 

@@ -265,6 +265,14 @@ KNOB_SKIP_SLOW = frozenset({
     "tid2013_compare", "watershed_vol",
 })
 
+# These parameters deliberately change acceptance rather than the value returned
+# for accepted input.  KnobHook ignores rejected variants, so sweeping them cannot
+# establish liveness from output comparison.  Keep this list narrow and reviewed.
+KNOB_EXEMPT = {
+    ("fit_circle_geometric", "radius_limit_factor"):
+        "safety bound: changing it only accepts or rejects a line-like circle fit",
+}
+
 
 def knob_variants(default):
     """Two in-range alternatives to a numeric default."""
@@ -343,6 +351,11 @@ class KnobHook:
         for p in params:
             if p.default is inspect.Parameter.empty or p.name in _NOT_A_KNOB \
                     or p.kind not in (p.POSITIONAL_OR_KEYWORD, p.KEYWORD_ONLY):
+                continue
+            if (name, p.name) in KNOB_EXEMPT:
+                # The public summary has three states; an explicitly reviewed
+                # acceptance-only knob belongs to the unmeasured state, not debt.
+                out[p.name] = "unmeasured"
                 continue
             if p.name in kwargs:
                 default = kwargs[p.name]

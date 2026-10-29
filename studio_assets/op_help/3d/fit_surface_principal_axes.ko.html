@@ -1,6 +1,6 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">fit_surface_principal_axes — 3D <code style="color:#22d3bf">geometry</code> op</h2>
-<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">surface_poly</code></p>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_surface_principal_axes(points, degree: &#x27;int&#x27; = 2, *, isotropy_ratio: &#x27;float&#x27; = 0.95) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import measure3d; measure3d.fit_surface_principal_axes(points, degree: &#x27;int&#x27; = 2, *, isotropy_ratio: &#x27;float&#x27; = 0.95) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;fit_surface_principal_axes&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>비스듬히 휜 면을 PCA 축으로 회전한 뒤 다항식 z&#x27;=f(x&#x27;,y&#x27;)를 맞춥니다.</p>
@@ -10,8 +10,8 @@
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:primitive_fitting_3d">primitive_fitting_3d</a> — <code style="color:#22d3bf">py -3.11 examples_3d/primitive_fitting_3d.py</code></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">surface_poly</code> 를 입력으로 받는 것)</h3>
-<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:mesh_select_lod">mesh_select_lod</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">geometry</code>)</h3>
 <p><a style="color:#22d3bf" href="op3d:line_from_2points">line_from_2points</a> · <a style="color:#22d3bf" href="op3d:plane_from_3points">plane_from_3points</a> · <a style="color:#22d3bf" href="op3d:angle_3points">angle_3points</a> · <a style="color:#22d3bf" href="op3d:angle_between_lines">angle_between_lines</a> · <a style="color:#22d3bf" href="op3d:angle_between_planes">angle_between_planes</a> · <a style="color:#22d3bf" href="op3d:angle_line_plane">angle_line_plane</a> · <a style="color:#22d3bf" href="op3d:distance_point_plane">distance_point_plane</a> · <a style="color:#22d3bf" href="op3d:distance_point_line">distance_point_line</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">

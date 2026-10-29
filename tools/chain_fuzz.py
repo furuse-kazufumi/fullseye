@@ -532,6 +532,14 @@ def _b_register_cross(pool, rng):
     return (a, "points", b, "points"), {"method": "icp"}
 
 
+def _b_fringe_ftp(pool, rng):
+    """FTP には一般模様でなく、直流から分離した搬送波縞を渡す。"""
+    import fringe
+    height = np.zeros((48, 64), dtype=np.float64)
+    frame = fringe.synthesize_fringes(height, n_steps=3, freq=8.0)[0]
+    return (frame,), {}
+
+
 def _b_abcd(pool, rng):
     """ABCD 素子リスト。半分は妥当な系(実経路を通す)、半分は pool の table
     (dict や他 op の返り)= 敵対入力で fail-closed を叩く。"""
@@ -7230,6 +7238,7 @@ def _b_photoel_unwrap(pool, rng):
 
 
 OP_ARG_BUILDERS = {
+    "fringe_ftp_phase": _b_fringe_ftp,
     "plenoptic_system": _b_plenoptic_system,
     # --- 光弾性(photoelastic、2026-10-23): 単位つきの必須引数を SI の桁で渡す --- #
     "retardation_from_birefringence": _b_photoel_birefringence,

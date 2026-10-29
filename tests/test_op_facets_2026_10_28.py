@@ -307,7 +307,8 @@ def test_mcp_execution_is_probe_verified_and_runtime_targets_are_exact(tmp_path)
 
     from tools.gen_op_facets import VERIFIED_PYTHON
     cited_python={"polarization_render","polarization_dolp_map","decode_fringe",
-                  "deflectometry_phase_to_slope", "fit_circle_geometric",
+                  "deflectometry_phase_to_slope", "fringe_ftp_phase", "depth_from_focus",
+                  "fit_circle_geometric",
                   "fit_curve_principal_axis", "phase_correlation_shift",
                   "fit_surface_principal_axes"}
     assert VERIFIED_PYTHON == cited_python

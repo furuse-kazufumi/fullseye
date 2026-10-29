@@ -9187,6 +9187,24 @@
    "de": "Decodiert eine Phasenschiebe-Bildserie in einem Zug: wrapped → Entfaltung → (per Referenzsubtraktion) Höhe.",
    "hi": "phase-shift image series को एक साथ decode करता है: wrapped → unwrap → (reference घटाकर) height।"
   },
+  "3d/depth_from_focus": {
+   "fp": "de745f5184a6",
+   "en": "Estimate height/depth from differently focused images as the best-focus position at each pixel.",
+   "zh": "根据不同焦点的图像，以每个像素的最佳对焦位置估计高度/深度。",
+   "tw": "根據不同焦點的影像，以每個像素的最佳對焦位置估計高度/深度。",
+   "ko": "초점을 바꾼 영상에서 픽셀별 최적 초점 위치를 높이/깊이로 추정한다.",
+   "de": "Schätzt Höhe/Tiefe aus unterschiedlich fokussierten Bildern als Position der besten Schärfe je Pixel.",
+   "hi": "अलग-अलग फ़ोकस वाली छवियों से प्रत्येक पिक्सेल की सर्वोत्तम फ़ोकस स्थिति को ऊँचाई/गहराई के रूप में अनुमानित करता है।"
+  },
+  "3d/fringe_ftp_phase": {
+   "fp": "ea2694e5e3ee",
+   "en": "Recover height/phase from one fringe image using Takeda Fourier-transform profilometry.",
+   "zh": "使用 Takeda 傅里叶变换轮廓术从单幅条纹图像恢复高度/相位。",
+   "tw": "使用 Takeda 傅立葉轉換輪廓術從單幅條紋影像恢復高度/相位。",
+   "ko": "Takeda 푸리에 변환 프로파일로메트리로 줄무늬 영상 한 장에서 높이/위상을 복원한다.",
+   "de": "Rekonstruiert Höhe/Phase aus einem einzelnen Streifenbild mittels Takeda-Fouriertransformationsprofilometrie.",
+   "hi": "Takeda Fourier-transform profilometry से एक fringe छवि से height/phase पुनर्प्राप्त करता है।"
+  },
   "3d/depth_to_organized_points": {
    "fp": "0f5f2b96d8a7",
    "en": "An organized depth image → grid-aligned 3-D points (H,W,3).",
