@@ -157,7 +157,11 @@ def test_three_multi_input_business_dags_execute_through_mcp():
         {"op":"polarization_render","inputs":[diffuse,specular],"params":{}},
         {"op":"polarization_dolp_map","inputs":["stage:1"],"params":{}},
         {"op":"threshold","inputs":["stage:2"],"params":{},"a":.5}]},cat,store)
-    frames=np.stack([.5+.4*np.cos(2*(2*np.pi*i/4))*np.ones((32,32)) for i in range(4)])
+    # A real 4-step signal with phase 0.7 rad. The old frames cos(2*(2*pi*i/4)) had zero modulation
+    # (sin/cos sums are rounding dust), so the 'expected' 1.68 was the dust of one platform: py3.11 passed,
+    # py3.12 on master gave 0.053 off.
+    true_phase=0.7
+    frames=np.stack([.5+.4*np.cos(true_phase-2*np.pi*i/4)*np.ones((32,32)) for i in range(4)])
     stack=put(frames,"images")
     fringe=call_tool("fullseye_pipeline",{"handle":stack,"stages":[
         {"op":"decode_fringe","inputs":[stack],"params":{"k":1.0}}]},cat,store)
@@ -171,7 +175,7 @@ def test_three_multi_input_business_dags_execute_through_mcp():
     polar_value=np.asarray(store.get(polar["structuredContent"]["handle"])[1])
     depth_value=np.asarray(store.get(fringe["structuredContent"]["handle"])[1])
     assert 0 < np.count_nonzero(polar_value) < polar_value.size
-    expected_height=np.full((32,32),1.6814535479687922)
+    expected_height=np.full((32,32),1.0*true_phase)  # k=1.0
     assert float(np.sqrt(np.mean((depth_value-expected_height)**2))) < 1e-9
 
 def test_validate_distinguishes_unknown_from_known_non_executable():
