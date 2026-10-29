@@ -546,11 +546,40 @@ def _log(*parts) -> None:
 # --------------------------------------------------------------------------- #
 # tool の結果                                                                   #
 # --------------------------------------------------------------------------- #
+def _structured_summary(value: dict) -> str:
+    """Make structured results useful to text-only MCP clients in at most 3 lines."""
+    ok = value.get("ok", value.get("valid", value.get("verdict", "ok") not in ("failed", "error")))
+    reason = value.get("reason") or value.get("verdict")
+    first = ("ok" if ok else "error") + ((": " + str(reason)) if reason else "")
+    lines = [first]
+    count_parts = []
+    for key in ("total", "returned", "count"):
+        if key in value:
+            count_parts.append("%s=%s" % (key, value[key]))
+    for key in ("ops", "plans", "stages", "samples"):
+        rows = value.get(key)
+        if isinstance(rows, list):
+            count_parts.append("%s=%d" % (key, len(rows)))
+            names = [row.get("name") if isinstance(row, dict) else row for row in rows[:3]]
+            names = [str(name) for name in names if name]
+            if names:
+                count_parts.append("top=" + ",".join(names))
+            break
+    if count_parts:
+        lines.append(" ".join(count_parts))
+    handle = value.get("handle")
+    sort = value.get("sort") or value.get("out_sort")
+    if handle or sort:
+        lines.append(" ".join(x for x in (("handle=" + str(handle)) if handle else "",
+                                           ("sort=" + str(sort)) if sort else "") if x))
+    return "\n".join(lines[:3])
+
+
 def tool_result(text: str, structured: dict | None, *, links: list | None = None,
                 max_structured_bytes: int = MAX_STRUCTURED_BYTES) -> dict:
     """本文(text)は必ず付け、typed tree は上限内なら付ける。超えたら**落としたと書く**。"""
     if structured is not None and get_system("mcp_body_mode") == "compact" and text.lstrip().startswith(("{","[")):
-        text="structured result: %d bytes" % len(json.dumps(structured,ensure_ascii=False).encode("utf-8"))
+        text = _structured_summary(structured)
     content: list[dict] = [{"type": "text", "text": text}]
     for lk in links or ():
         content.append(lk)
@@ -570,6 +599,8 @@ def tool_result(text: str, structured: dict | None, *, links: list | None = None
 
 
 def _tool_error(text: str, structured: dict | None = None) -> dict:
+    if structured is not None and get_system("mcp_body_mode") == "compact" and text.lstrip().startswith(("{", "[")):
+        text = _structured_summary(structured)
     r: dict = {"content": [{"type": "text", "text": text}], "isError": True}
     if structured is not None:
         r["structuredContent"] = structured

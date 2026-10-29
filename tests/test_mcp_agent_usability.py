@@ -4,7 +4,7 @@ import pytest
 
 from fullseye.mcp.catalog import Catalog
 from fullseye.mcp.handles import HandleStore
-from fullseye.mcp.server import call_tool, validate_pipeline
+from fullseye.mcp.server import _tool_error, call_tool, tool_result, validate_pipeline
 from fullseye.opsearch import normalize_sort, plan, search_ops, sort_aliases
 
 
@@ -93,3 +93,17 @@ def test_mcp_load_paths_never_expose_root_or_home(tmp_path):
     refusal = str(caught.value)
     assert "<outside>/secret.png" in refusal
     assert str(tmp_path) not in refusal and str(root) not in refusal
+
+
+def test_structured_results_have_short_useful_text_for_text_only_clients():
+    structured = {"ok": True, "reason": "operators found", "total": 9,
+                  "ops": [{"name": "otsu"}, {"name": "threshold"}],
+                  "handle": "fullseye://img/0123456789abcdef", "out_sort": "region"}
+    result = tool_result(str(structured).replace("'", '"'), structured)
+    text = result["content"][0]["text"]
+    assert "structured result" not in text
+    assert text.splitlines() == ["ok: operators found", "total=9 ops=2 top=otsu,threshold",
+                                 "handle=fullseye://img/0123456789abcdef sort=region"]
+    assert len(text.encode("utf-8")) < 180
+    failed = _tool_error('{"valid":false}', {"valid": False, "reason": "sort_mismatch", "stages": []})
+    assert failed["content"][0]["text"].startswith("error: sort_mismatch")
