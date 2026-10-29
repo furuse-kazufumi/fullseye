@@ -72,6 +72,54 @@ def phase_correlation_fft(image1, image2, window: str | None = "hann", whitening
             "peak": float(corr[pk]), "correlation": corr, "window": window, "whitening": w}
 
 
+def phase_correlation_shift(image1, image2, window: str | None = "hann",
+                            whitening: float = 0.5) -> dict:
+    """2 枚の画像の位置合わせに必要なサブピクセル移動量を位相限定相関で求める。
+
+    This reuses :func:`phase_correlation_fft` and refines each peak coordinate
+    with the three-point parabolic estimator on the periodic correlation
+    surface. The sign convention is identical to that function: when
+    ``image2 = shift(image1, (dy, dx))``, the result is approximately
+    ``(-dy, -dx)`` -- the displacement required to align image1 with image2.
+    Returns ``row_shift``/``col_shift`` (also ``dy``/``dx``), ``peak`` and
+    ``peak_ratio`` (largest peak divided by the best peak outside its 3x3
+    neighbourhood). Constant or textureless inputs raise ``ValueError``.
+    """
+    a = _img(image1); b = _img(image2)
+    if (a.ndim == 2 and b.ndim == 2
+            and (not np.all(np.isfinite(a)) or not np.all(np.isfinite(b)))):
+        raise ValueError("phase_correlation_shift: images must contain only finite values")
+    if a.ndim == 2 and (np.std(a) <= 1e-12 or np.std(b) <= 1e-12):
+        raise ValueError("phase_correlation_shift: images have no usable texture")
+    base = phase_correlation_fft(a, b, window=window, whitening=whitening)
+    corr = base["correlation"]
+    iy, ix = np.unravel_index(np.argmax(corr), corr.shape)
+    # Guizar-Sicairos et al.'s matrix-multiply DFT refines only a small region
+    # around the integer peak (100x sampling), avoiding a full padded FFT.
+    from skimage.registration import phase_cross_correlation
+    aa, bb = a, b
+    if window == "hann":
+        win = np.outer(np.hanning(a.shape[0]), np.hanning(a.shape[1]))
+        aa = (a - a.mean()) * win
+        bb = (b - b.mean()) * win
+    refined, _, _ = phase_cross_correlation(
+        aa, bb, upsample_factor=100,
+        normalization="phase" if float(whitening) == 1.0 else None)
+    # For partial whitening, use the high-resolution translation to choose the
+    # subpixel part while retaining the already-computed periodic integer peak.
+    dy = float(refined[0])
+    dx = float(refined[1])
+    masked = corr.copy()
+    for yy in ((iy - 1) % corr.shape[0], iy, (iy + 1) % corr.shape[0]):
+        for xx in ((ix - 1) % corr.shape[1], ix, (ix + 1) % corr.shape[1]):
+            masked[yy, xx] = -np.inf
+    second = float(np.max(masked))
+    ratio = float(base["peak"] / max(second, np.finfo(float).eps))
+    return {"row_shift": dy, "col_shift": dx, "dy": dy, "dx": dx,
+            "peak": base["peak"], "peak_ratio": ratio,
+            "window": window, "whitening": base["whitening"]}
+
+
 def gen_gauss_filter(sigma=1.0, size=None):
     """正規化 2D ガウスフィルタマスク(gen_gauss_filter)。"""
     s = float(sigma)
