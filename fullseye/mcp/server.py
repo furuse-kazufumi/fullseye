@@ -106,7 +106,7 @@ TOOLS: dict[str, dict] = {
                           "description": "やりたいこと(例: ノイズ除去 / remove noise / 边缘检测)"},
                 "in_sort": {"type": "string", "description": _SORT_DESC},
                 "out_sort": {"type": "string", "description": _SORT_DESC},
-                "limit": {"type":"integer","minimum":1,"maximum":MAX_SEARCH_LIMIT,"default":3},
+                "limit": {"type":"integer","minimum":1,"maximum":MAX_SEARCH_LIMIT,"default":7},
             },
             "required": ["query"],
             "additionalProperties": False,
@@ -1614,7 +1614,16 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
             r = describe(a["kind"], a["name"])
         else:
             r = choose(a["candidates"], a.get("constraints"))
-        text = json.dumps(r, ensure_ascii=False, indent=2)
+        if name == "fullseye_plan" and r.get("ok"):
+            lines = ["# | stages | difference | types"]
+            for number, proposal in enumerate(r.get("plans", ()), 1):
+                stages = " -> ".join(proposal.get("ops", ()))
+                types = "%s -> %s" % (",".join(r.get("have", ())), r.get("want"))
+                lines.append("%d | %s | %s | %s" %
+                             (number, stages, proposal.get("difference", "typed route"), types))
+            text = "\n".join(lines)
+        else:
+            text = json.dumps(r, ensure_ascii=False, indent=2)
         return tool_result(text, r, max_structured_bytes=max_structured_bytes) if r["ok"] else _tool_error(text, r)
     if name in ("fullseye_search_ops", "fullseye_find_ops"):
         # ★2026-10-11: find_ops は「既知の種別以外は拒否する」と書きながら typo を受け、
@@ -1632,16 +1641,25 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
     if name == "fullseye_find_ops":
         from fullseye.opsearch import _format, search_ops
         try:
-            r = search_ops(a["query"], a.get("limit", 3), lang=a.get("lang"),
+            from fssystem import get_system
+            total_limit = a.get("limit", get_system("find_ops_k"))
+            # The default seven is one comparison set (ops + examples).  An
+            # explicit non-default limit keeps the legacy meaning: that many
+            # operator rows, with recipes as supplementary metadata.
+            recipe_limit = min(get_system("find_ops_recipe_max"), total_limit)
+            op_limit = total_limit - recipe_limit if total_limit == get_system("find_ops_k") else total_limit
+            r = search_ops(a["query"], op_limit, lang=a.get("lang"),
                            in_sort=a.get("in_sort"), out_sort=a.get("out_sort"))
         except ValueError as exc:                          # 空の問い合わせ等は引数違反(-32602)
             raise ArgError(str(exc)) from exc
         from fullseye.recipesearch import find_recipes
-        r["recipes"] = find_recipes(a["query"], limit=2, lang=a.get("lang"),
+        r["recipes"] = find_recipes(a["query"], limit=recipe_limit, lang=a.get("lang"),
                                       in_sort=a.get("in_sort"), out_sort=a.get("out_sort"))
         text = _format(r)
         for recipe in r["recipes"]:
             text += "\nrecipe: %s [%s -> %s] %s" % (recipe["name"], recipe["input_sort"], recipe["output_sort"], recipe["when"])
+        r["proposals"] = ([{"kind": "op", **row} for row in r["ops"]] +
+                          [{"kind": "recipe", **row} for row in r["recipes"]])[:total_limit]
         return tool_result(text, r, max_structured_bytes=max_structured_bytes)
     if name == "fullseye_plan_chain":
         from fullseye.opsearch import plan_chain

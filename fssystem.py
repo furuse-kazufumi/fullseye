@@ -126,7 +126,11 @@ SYSTEM_PARAMS = {
             "skip を設定しても順位は変わらない。"
         ),
     },
-    "plan_k": {"values": (1, 3, 5, 10), "default": 5, "tightens_only": True,
+    "find_ops_k": {"values": (3, 5, 7, 10), "default": 7, "tightens_only": True,
+                   "affects_numbers": False, "applied_by": ("fullseye/opsearch.py", "fullseye/mcp/server.py"), "doc": "Default number of diverse operator proposals."},
+    "find_ops_recipe_max": {"values": (0, 1, 2, 3), "default": 2, "tightens_only": True,
+                            "affects_numbers": False, "applied_by": ("fullseye/mcp/server.py",), "doc": "Maximum recipe-derived proposals within the find_ops total."},
+    "plan_k": {"values": (1, 3, 5, 7, 10), "default": 7, "tightens_only": True,
                "affects_numbers": False, "applied_by": ("fullseye/opsearch.py",), "doc": "Maximum returned plans."},
     "plan_max_depth": {"values": (2, 4, 8, 16), "default": 4, "tightens_only": True,
                        "affects_numbers": False, "applied_by": ("fullseye/opsearch.py",), "doc": "Maximum hypergraph depth."},

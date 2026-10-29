@@ -85,6 +85,36 @@ def _graph() -> dict:
     return g
 
 
+def _identity_tables() -> tuple[dict[str, str], dict[str, list[str]]]:
+    """Return a stable semantic/runtime identity and its aliases for every op."""
+    edges = {e["op"]: e for e in _graph()["edges"]}
+    summaries = {r["name"]: r.get("summary", "") for r in _load_json(PKG_CARDS).get("ops", [])}
+    keys = {}
+    for name, edge in edges.items():
+        target = edge.get("runtime_target") or edge.get("executor") or {}
+        target_key = (target.get("module"), target.get("callable"))
+        family = edge.get("family")
+        text = summaries.get(name, "").lower()
+        identical = re.search(r"identical to\s+`?([a-z0-9_]+)", text)
+        if identical:
+            key = "identical:" + identical.group(1)
+        elif family:
+            key = "family:" + str(family)
+        elif any(target_key):
+            key = "runtime:%s.%s" % target_key
+        else:
+            key = "op:" + name
+        keys[name] = key
+    # Resolve 'identical to X' onto X's identity when possible.
+    for name, key in list(keys.items()):
+        if key.startswith("identical:") and key[10:] in keys:
+            keys[name] = keys[key[10:]]
+    groups = {}
+    for name, key in keys.items():
+        groups.setdefault(key, []).append(name)
+    return keys, {key: sorted(names) for key, names in groups.items()}
+
+
 def sort_aliases() -> dict[str, str]:
     """Return the generated OP_GRAPH sort aliases used at every public boundary."""
     return dict(_graph().get("sort_aliases", {}))
@@ -189,7 +219,7 @@ def _hypergraph_plans(starts: list[str], want: str, query: str, *, executable_on
         rows=best.setdefault(row["sort"],[])
         if any(x["signature"]==row["signature"] for x in rows): continue
         rows.append(row); rows.sort(key=lambda x:(x["cost"],x["depth"],x["signature"]))
-        del rows[k:]
+        del rows[k * 8:]
         if row not in rows: continue
         for edge in by_input.get(row["sort"],[]): enqueue(edge)
     plans = []
@@ -199,12 +229,27 @@ def _hypergraph_plans(starts: list[str], want: str, query: str, *, executable_on
             continue
         stages, outputs = _plan_dag(root)
         ops=frozenset(x["op"] for x in stages)
-        if selected and any(ops==old for old in selected):
+        # Do not return near-copies which merely change the final edge.  A
+        # Jaccard ceiling keeps genuinely different approaches available.
+        if selected and any((len(ops & old) / len(ops | old)) >= 0.70 for old in selected):
             continue
         selected.append(ops)
+        edge_by_name = {e["op"]: e for e in graph["edges"]}
+        traits = []
+        for op in [x["op"] for x in stages]:
+            e = edge_by_name.get(op, {})
+            trait = e.get("family") or e.get("category") or op
+            if trait not in traits:
+                traits.append(trait)
+        difference = ", ".join(str(x) for x in traits[:3]) or "typed route"
         plans.append({"dag": {"stages": stages, "outputs": outputs},
                       "ops": [x["op"] for x in stages], "weight": round(root["cost"], 6),
-                      "depth": root["depth"], "consumed_have": sorted(root["consumed"])})
+                      "depth": root["depth"], "consumed_have": sorted(root["consumed"]),
+                      "difference": difference,
+                      "line": "%s | %s -> %s" % (" -> ".join(x["op"] for x in stages),
+                                                    ",".join(starts), want)})
+        if len(plans) == k:
+            break
     meta = {"expanded": expanded, "elapsed_ms": round((time.monotonic() - started) * 1000, 3),
             "limit_reached": capped, "unknown_edges_excluded": sum(
                 e.get("output") in ("unknown", "any") or "unknown" in e.get("inputs", ())
@@ -679,7 +724,7 @@ def _name_tables(rows: list) -> tuple[dict, dict]:
     return names, aliases
 
 
-def search_ops(query: str, k: int = 3, *, lang: str | None = None, in_sort: str | None = None,
+def search_ops(query: str, k: int | None = None, *, lang: str | None = None, in_sort: str | None = None,
                out_sort: str | None = None, dim: str | None = None, index_path: str | None = None) -> dict:
     """``query``(:data:`LANGS` のどの言語でも)に合う op を順位つきで返す。
 
@@ -690,6 +735,9 @@ def search_ops(query: str, k: int = 3, *, lang: str | None = None, in_sort: str 
     >>> r = search_ops("remove noise", k=3)
     >>> [o["name"] for o in r["ops"]]                       # doctest: +SKIP
     """
+    if k is None:
+        from fssystem import get_system
+        k = int(get_system("find_ops_k"))
     if not isinstance(query, str) or not query.strip():
         raise ValueError("search_ops: query must be a non-empty string")
     if lang is not None and lang not in LANGS:
@@ -744,17 +792,32 @@ def search_ops(query: str, k: int = 3, *, lang: str | None = None, in_sort: str 
     hits.sort()
     show = lang or _pick_lang(query, q, [rows[i] for _, _, i in hits[:10]])
     out = []
-    for neg, _, i in hits[:k]:
+    identity, groups = _identity_tables()
+    seen_identity = set()
+    for neg, _, i in hits:
         r = rows[i]
+        ident = identity.get(r["n"], "op:" + r["n"])
+        if ident in seen_identity:
+            continue
+        seen_identity.add(ident)
         summ = r.get("s") or {}
+        summary = summ.get(show) or summ.get("en") or summ.get("ja") or ""
+        summary = summary.replace("\n", " ")
+        if len(summary) > 160:
+            summary = summary[:157] + "..."
         row = {"name": r["n"], "dim": r.get("d"), "category": r.get("c"),
-               "in_sort": r.get("i"), "out_sort": r.get("o"), "halcon": r.get("h"),
-               "note": r.get("p"), "summary": summ.get(show) or summ.get("en") or summ.get("ja") or "",
+               "in_sort": normalize_sort(r.get("i")), "out_sort": normalize_sort(r.get("o")), "halcon": r.get("h"),
+               "note": r.get("p"), "summary": summary,
                "score": round(-neg, 3)}
         ctx = (r.get("t") if show == "ja" else (r.get("te") or r.get("t"))) or ()
         if ctx:                                                        # 人が書いた文脈(どの場面で使う op か)
-            row["contexts"] = list(ctx[:3])
+            row["contexts"] = [str(ctx[0])[:160]]
+        same = [name for name in groups.get(ident, ()) if name != r["n"]]
+        if same:
+            row["same_as"] = same
         out.append(row)
+        if len(out) == k:
+            break
     try:
         probes = _probe_map()
     except (FileNotFoundError, ValueError):
@@ -877,6 +940,8 @@ def _format(res: dict) -> str:
         if o["summary"]:
             s = o["summary"].replace("\n", " ")
             lines.append("    " + (s if len(s) <= 160 else s[:157] + "..."))
+        if o.get("same_as"):
+            lines.append("    同じもの: " + ", ".join(o["same_as"]))
         if o["note"]:
             lines.append("    note: " + o["note"])
     if res.get("unfiltered_top"):
@@ -900,7 +965,7 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(prog="fullseye-rag search",
                                  description="Find Fullseye operators by what they do (ja/en/zh/tw/ko/de/hi).")
     ap.add_argument("query", nargs="+", help="what you want to do, in any supported language")
-    ap.add_argument("-k", type=int, default=10, help="how many rows (default 10)")
+    ap.add_argument("-k", type=int, default=None, help="how many diverse rows (default: system find_ops_k, normally 7)")
     ap.add_argument("--lang", choices=LANGS, default=None, help="summary language (default: from the query)")
     ap.add_argument("--in-sort", default=None)
     ap.add_argument("--out-sort", default=None)
