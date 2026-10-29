@@ -365,6 +365,116 @@ def decode_fringe(phase_shift_images, ref_phase=None, k=1.0,
     return phase_to_height(unwrapped, ref_phase, k)
 
 
+def fringe_ftp_phase(image, carrier_axis="x", carrier_period=None,
+                     bandwidth=0.35, k=1.0, min_modulation=None,
+                     return_info=False):
+    """縞 1 枚から高さ・位相を Takeda の Fourier transform profilometry で復元する。
+
+    2-D FFT の直流から離れた片側一次スペクトルを窓で抜き、複素解析信号へ戻して
+    位相を展開し、搬送波の線形ランプを除く。``carrier_axis`` は位相が増える方向
+    (``"x"``=列、``"y"``=行)。``carrier_period`` は画素単位で、省略時は指定軸の
+    正周波数側にある最大ピークから推定する。``bandwidth`` は搬送周波数に対する
+    Gaussian 窓の標準偏差の比(0 < bandwidth < 1)。``k`` は rad から高さへの係数。
+
+    返り値は通常 ``height``。``return_info=True`` なら ``(height, info)`` となり、
+    ``info`` は搬送波を除いた ``phase``、実際に使った
+    ``carrier_period``、``carrier_frequency``、``estimated_carrier``、解析信号の
+    ``modulation`` を持つ。高さは既存の ``phase_to_height(phase, 0, k)`` で作る。
+
+    業務上の言い方では「縞 1 枚から高さ」「1枚の縞画像から位相」を求める op。
+
+    1 枚で済む代わりに、対象位相の空間帯域が搬送波と直流/反対側サイドバンドの間に
+    収まる必要がある。急な高さ、段差、オクルージョンでは帯域重なりと Itoh 条件違反で
+    誤る。3 枚以上を撮れて広い帯域や低い搬送波を扱うなら ``decode_fringe`` の位相
+    シフト法を使う。一定画像や、抽出した変調振幅が画像の動的範囲に対して小さすぎる
+    画像は丸め誤差から位相を作らず ``ValueError`` にする。
+
+    出典: M. Takeda, H. Ina and S. Kobayashi, “Fourier-transform method of
+    fringe-pattern analysis for computer-based topography and interferometry,”
+    J. Opt. Soc. Am. 72(1), 156–160 (1982), doi:10.1364/JOSA.72.000156.
+    """
+    im = np.asarray(image, dtype=np.float64)
+    if im.ndim != 2 or im.size == 0:
+        raise ValueError(f"fringe_ftp_phase expects a non-empty 2D image: got shape={im.shape}")
+    if not np.all(np.isfinite(im)):
+        raise ValueError("fringe_ftp_phase: image contains NaN/Inf")
+    axis = {"x": 1, "y": 0, 1: 1, 0: 0}.get(carrier_axis)
+    if axis is None:
+        raise ValueError("carrier_axis must be 'x' or 'y'")
+    bw = float(bandwidth)
+    if not 0.0 < bw < 1.0:
+        raise ValueError("bandwidth must satisfy 0 < bandwidth < 1")
+    dynamic = float(np.ptp(im))
+    scale = max(float(np.max(np.abs(im))), 1.0)
+    if dynamic <= 64.0 * np.finfo(float).eps * scale:
+        raise ValueError("fringe_ftp_phase: image is constant (no fringe modulation)")
+
+    centered = im - float(np.mean(im))
+    spectrum = np.fft.fftshift(np.fft.fft2(centered))
+    h, w = im.shape
+    fy = np.fft.fftshift(np.fft.fftfreq(h))[:, None]
+    fx = np.fft.fftshift(np.fft.fftfreq(w))[None, :]
+    along = fx if axis == 1 else fy
+    cross = fy if axis == 1 else fx
+    estimated = carrier_period is None
+    if estimated:
+        # A carrier must be separated from DC by at least two DFT bins.  Integrating
+        # over the transverse direction makes the estimate stable for 2-D phase fields.
+        power = np.abs(spectrum) ** 2
+        profile = power.sum(axis=0 if axis == 1 else 1)
+        freq = np.fft.fftshift(np.fft.fftfreq(w if axis == 1 else h))
+        min_f = 2.0 / (w if axis == 1 else h)
+        eligible = freq >= min_f
+        if not np.any(eligible):
+            raise ValueError("fringe_ftp_phase: image is too small to separate a carrier")
+        idxs = np.flatnonzero(eligible)
+        peak_i = int(idxs[np.argmax(profile[eligible])])
+        positive_power = profile[eligible]
+        prominence = float(positive_power.max()) / max(
+            float(np.median(positive_power)), np.finfo(float).tiny)
+        if prominence < 5.0:
+            raise ValueError(
+                "fringe_ftp_phase: no distinct carrier peak "
+                f"(spectral prominence {prominence:.3g} < 5)"
+            )
+        carrier_f = float(freq[peak_i])
+    else:
+        period = float(carrier_period)
+        if not np.isfinite(period) or period <= 2.0:
+            raise ValueError("carrier_period must be finite and greater than 2 pixels")
+        carrier_f = 1.0 / period
+        if carrier_f >= 0.5:
+            raise ValueError("carrier_period puts the carrier at/above Nyquist")
+
+    sigma = max(carrier_f * bw, 1.0 / max(h, w))
+    window = np.exp(-0.5 * (((along - carrier_f) / sigma) ** 2 + (cross / sigma) ** 2))
+    analytic = np.fft.ifft2(np.fft.ifftshift(spectrum * window))
+    amp = 2.0 * np.abs(analytic)
+    relative_mod = float(np.percentile(amp, 75)) / dynamic
+    if min_modulation is None:
+        min_modulation = 0.05
+    if relative_mod < float(min_modulation):
+        raise ValueError(
+            "fringe_ftp_phase: no separable fringe sideband "
+            f"(relative modulation {relative_mod:.3g} < {float(min_modulation):.3g})"
+        )
+    wrapped = np.angle(analytic)
+    unwrapped = unwrap_phase_2d(wrapped)
+    coord = (np.arange(w)[None, :] if axis == 1 else np.arange(h)[:, None])
+    phase = unwrapped - 2.0 * np.pi * carrier_f * coord
+    phase -= float(np.nanmean(phase))
+    height = phase_to_height(phase, 0.0, k)
+    info = {
+        "phase": phase,
+        "carrier_period": 1.0 / carrier_f,
+        "carrier_frequency": carrier_f,
+        "estimated_carrier": estimated,
+        "modulation": amp,
+        "relative_modulation": relative_mod,
+    }
+    return (height, info) if return_info else height
+
+
 # --------------------------------------------------------------------------- #
 # 7. 合成ヘルパ: 既知 height map → 位相シフト縞画像列                            #
 # --------------------------------------------------------------------------- #

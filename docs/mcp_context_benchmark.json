@@ -30,8 +30,8 @@
     {
       "task": "recover projected fringe height",
       "tool_schema_tokens": 1435,
-      "response_tokens": 1198,
-      "total_tokens": 2633,
+      "response_tokens": 1065,
+      "total_tokens": 2500,
       "planned": true,
       "ops": [
         "decode_fringe"
@@ -50,11 +50,11 @@
     {
       "task": "fast structured-light depth",
       "tool_schema_tokens": 1435,
-      "response_tokens": 1203,
-      "total_tokens": 2638,
+      "response_tokens": 952,
+      "total_tokens": 2387,
       "planned": true,
       "ops": [
-        "decode_fringe"
+        "depth_from_focus"
       ]
     },
     {
@@ -68,5 +68,5 @@
       ]
     }
   ],
-  "max_tokens": 2638
+  "max_tokens": 2500
 }

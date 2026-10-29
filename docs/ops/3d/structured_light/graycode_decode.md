@@ -61,7 +61,7 @@ thresh:     二値化しきい値(画素値 >= thresh を 1)。
 
 ## 同カテゴリ(`structured_light`)
 
-[wrapped_phase](wrapped_phase.md) · [unwrap_phase_2d](unwrap_phase_2d.md) · [decode_fringe](decode_fringe.md) · [synthesize_fringes](synthesize_fringes.md) · [absolute_phase](absolute_phase.md) · [triangulate_column](triangulate_column.md)
+[wrapped_phase](wrapped_phase.md) · [unwrap_phase_2d](unwrap_phase_2d.md) · [decode_fringe](decode_fringe.md) · [fringe_ftp_phase](fringe_ftp_phase.md) · [depth_from_focus](depth_from_focus.md) · [synthesize_fringes](synthesize_fringes.md) · [absolute_phase](absolute_phase.md) · [triangulate_column](triangulate_column.md)
 
 ---
 *Provenance: fringe.py — 3D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

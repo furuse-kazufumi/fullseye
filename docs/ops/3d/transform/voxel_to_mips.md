@@ -38,7 +38,7 @@ dtype float64。値は入力の最大値そのまま(正規化しない)。負�
 
 ## 型が繋がる次の op(`images` を入力に取れる)
 
-[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [photometric_stereo](../photometric/photometric_stereo.md) · [wrapped_phase](../structured_light/wrapped_phase.md) · [graycode_decode](../structured_light/graycode_decode.md) · [decode_fringe](../structured_light/decode_fringe.md) · [carve](../space_carving/carve.md) · [visual_hull](../space_carving/visual_hull.md)
+[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [photometric_stereo](../photometric/photometric_stereo.md) · [wrapped_phase](../structured_light/wrapped_phase.md) · [graycode_decode](../structured_light/graycode_decode.md) · [decode_fringe](../structured_light/decode_fringe.md) · [depth_from_focus](../structured_light/depth_from_focus.md) · [carve](../space_carving/carve.md) · [visual_hull](../space_carving/visual_hull.md)
 
 ## 同カテゴリ(`transform`)
 

@@ -1,6 +1,6 @@
 # Fullseye 3-D ビジョン — 事例ギャラリー(EXAMPLES_3D)
 
-Fullseye の 3-D オペレータ群(`ops3d` = 373 の型付き op)を、**実問題を解く実行可能な事例**（全 122 件）で示します。
+Fullseye の 3-D オペレータ群(`ops3d` = 375 の型付き op)を、**実問題を解く実行可能な事例**（全 123 件）で示します。
 各事例は自己完結・自己検証のスクリプト(`examples_3d/<id>.py`)で、データを読み・op を呼び・**ground truth を print して assert** します。
 一覧は `examples3d.py` レジストリが正本で、`examples3d.validate()` が全件を実行して**動くものだけ**を掲示します。
 
@@ -21,7 +21,7 @@ PYTHONPATH=<repo> PYTHONUTF8=1 py -3.11 examples_3d/<id>.py
 
 ## 実データ源
 
-- **合成データ(制御GT)** — 94 事例
+- **合成データ(制御GT)** — 95 事例
 - **手続き生成(GTは幾何/解析)** — 14 事例
 - **骨格CT(MS-Human-700 実解剖骨)** — 4 事例
 - **小惑星イトカワ(Gaskell形状モデル/JAXA)** — 6 事例
@@ -169,6 +169,7 @@ PYTHONPATH=<repo> PYTHONUTF8=1 py -3.11 examples_3d/<id>.py
 ### 構造化光
 
 - **位相シフト縞投影で高さを復元** (`structured_light`, synthetic) — 縞合成→wrapped_phase→unwrap_phase_2d→decode で高さ(RMSE 0.63%)。位相アンラップ無しは2π跳びで88%誤る。
+- **縞1枚と焦点スタックから深さを復元** (`ftp_and_focus_depth`, synthetic) — 単一搬送波縞を fringe_ftp_phase で高さへ、3枚の焦点スタックを depth_from_focus で深さへ変換し、既知真値で精度とテクスチャ無し領域の限界を検証。
 - **構造化光スキャナ 1 台を閉ループで回す(投影→撮影→復号→三角測量)** (`structured_light_scan`, synthetic) — 描画した実シーン(球+段差箱+床)へ相補Gray 18枚+位相シフト4枚を投影し、absolute_phaseで2π次数を確定、triangulate_columnで視線×コラム平面を解いて深度へ。真値深度をRMSE 0.233mm(レンジ287mmの0.081%)で再現。Gray整数のみ(0.548mm)の2.4倍、位相のみ(209.8mm)の901倍良い。Gray復号は全16521画素で誤り0。
 - **Gray code 構造化光の絶対デコード** (`graycode_structured_light`, synthetic) — 物体で湾曲した投影機コラム番号(0..127)をGray codeビット面7枚からgraycode_decodeで絶対復号。全12288画素で整数厳密一致(100%)。極性反転(0%)/面順取り違え(13%)/最頻値決め打ち(2%)のnullを判別的に上回る。撮影ノイズ42%まで厳密。
 

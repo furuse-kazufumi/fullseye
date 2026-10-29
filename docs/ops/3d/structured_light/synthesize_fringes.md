@@ -4,7 +4,7 @@ dim: 3d
 category: structured_light
 in: image2d
 out: images
-examples: [structured_light]
+examples: [ftp_and_focus_depth, structured_light]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.8.1  # fullseye lib version this note was generated for
@@ -50,15 +50,16 @@ return_phase: True なら (images, total_phase) を返す(テスト・デバッ�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [ftp_and_focus_depth](../../../../examples_3d/ftp_and_focus_depth.py) — `py -3.11 examples_3d/ftp_and_focus_depth.py`
 - [structured_light](../../../../examples_3d/structured_light.py) — `py -3.11 examples_3d/structured_light.py`
 
 ## 型が繋がる次の op(`images` を入力に取れる)
 
-[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [photometric_stereo](../photometric/photometric_stereo.md) · [wrapped_phase](wrapped_phase.md) · [graycode_decode](graycode_decode.md) · [decode_fringe](decode_fringe.md) · [carve](../space_carving/carve.md) · [visual_hull](../space_carving/visual_hull.md)
+[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [photometric_stereo](../photometric/photometric_stereo.md) · [wrapped_phase](wrapped_phase.md) · [graycode_decode](graycode_decode.md) · [decode_fringe](decode_fringe.md) · [depth_from_focus](depth_from_focus.md) · [carve](../space_carving/carve.md) · [visual_hull](../space_carving/visual_hull.md)
 
 ## 同カテゴリ(`structured_light`)
 
-[wrapped_phase](wrapped_phase.md) · [unwrap_phase_2d](unwrap_phase_2d.md) · [graycode_decode](graycode_decode.md) · [decode_fringe](decode_fringe.md) · [absolute_phase](absolute_phase.md) · [triangulate_column](triangulate_column.md)
+[wrapped_phase](wrapped_phase.md) · [unwrap_phase_2d](unwrap_phase_2d.md) · [graycode_decode](graycode_decode.md) · [decode_fringe](decode_fringe.md) · [fringe_ftp_phase](fringe_ftp_phase.md) · [depth_from_focus](depth_from_focus.md) · [absolute_phase](absolute_phase.md) · [triangulate_column](triangulate_column.md)
 
 ---
 *Provenance: fringe.py — 3D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

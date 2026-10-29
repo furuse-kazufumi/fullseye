@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">depth_from_focus — 3D <code style="color:#22d3bf">structured_light</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">depth</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.depth_from_focus(images, focus_positions=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import ops3d; ops3d.depth_from_focus(images, focus_positions=None)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;depth_from_focus&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.depth_from_focus(...)</code> liefert <b>nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">depth</code></b> (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.depth_from_focus.raw(...)</code> oder rufe <code style="color:#22d3bf">ops3d.depth_from_focus</code> direkt auf.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Schätzt Höhe/Tiefe aus unterschiedlich fokussierten Bildern als Position der besten Schärfe je Pixel.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>「焦点を変えた画像から高さ」「ピントを変えた複数画像から深さ」を求める shape-from-focus の入口。詳細な信頼度が必要なら <code style="color:#22d3bf">reconstruction.depth_from_focus</code> を直接呼び <code style="color:#22d3bf">sharpness</code> も確認する。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — Tiefensensoren — Messprinzipien, Werte realer Geräte, wie Messlücken entstehen</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:ftp_and_focus_depth">ftp_and_focus_depth</a> — <code style="color:#22d3bf">py -3.11 examples_3d/ftp_and_focus_depth.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">depth</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="op3d:depth_to_points">depth_to_points</a> · <a style="color:#22d3bf" href="op3d:tsdf_from_depth">tsdf_from_depth</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:depth_to_organized_points">depth_to_organized_points</a> · <a style="color:#22d3bf" href="op3d:normals_from_depth">normals_from_depth</a> · <a style="color:#22d3bf" href="op3d:occlusion_edges">occlusion_edges</a> · <a style="color:#22d3bf" href="op3d:bearing_angle_image">bearing_angle_image</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">structured_light</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:wrapped_phase">wrapped_phase</a> · <a style="color:#22d3bf" href="op3d:unwrap_phase_2d">unwrap_phase_2d</a> · <a style="color:#22d3bf" href="op3d:graycode_decode">graycode_decode</a> · <a style="color:#22d3bf" href="op3d:decode_fringe">decode_fringe</a> · <a style="color:#22d3bf" href="op3d:fringe_ftp_phase">fringe_ftp_phase</a> · <a style="color:#22d3bf" href="op3d:synthesize_fringes">synthesize_fringes</a> · <a style="color:#22d3bf" href="op3d:absolute_phase">absolute_phase</a> · <a style="color:#22d3bf" href="op3d:triangulate_column">triangulate_column</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops3d.py — 3D Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

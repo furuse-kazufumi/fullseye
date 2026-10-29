@@ -46,7 +46,7 @@
     {"id":"m303","category":"fast_3d","lang":"ja","query":"構造化光の縞画像から高さを復元する","start_sort":"images","goal_sort":"depth","relevant":["decode_fringe"],"evidence":{"decode_fringe":"examples_3d/structured_light.py:92"}},
     {"id":"m304","category":"fast_3d","lang":"en","query":"compute wrapped phase from phase-shift fringe images","start_sort":"images","goal_sort":"image2d","relevant":["wrapped_phase"],"evidence":{"wrapped_phase":"examples_3d/structured_light.py:82"}},
     {"id":"m305","category":"fast_3d","lang":"zh","query":"二维展开结构光的包裹相位","start_sort":"image2d","goal_sort":"image2d","relevant":["unwrap_phase_2d"],"evidence":{"unwrap_phase_2d":"examples_3d/structured_light.py:89"}},
-    {"id":"m306","category":"fast_3d","lang":"ko","query":"구조광 프린지에서 높이 복원","start_sort":"images","goal_sort":"depth","relevant":["decode_fringe"],"evidence":{"decode_fringe":"examples_3d/structured_light.py:92"}},
+    {"id":"m306","category":"fast_3d","lang":"ko","query":"구조광 프린지에서 높이 복원","start_sort":"images","goal_sort":"depth","relevant":["decode_fringe","fringe_ftp_phase"],"evidence":{"decode_fringe":"examples_3d/structured_light.py:92","fringe_ftp_phase":"examples_3d/ftp_and_focus_depth.py:22"}},
     {"id":"m307","category":"fast_3d","lang":"de","query":"gewickelte Phase aus Phasenschiebebildern berechnen","start_sort":"images","goal_sort":"image2d","relevant":["wrapped_phase"],"evidence":{"wrapped_phase":"examples_3d/structured_light.py:82"}},
     {"id":"m308","category":"fast_3d","lang":"ja","query":"高速三次元計測で参照位相をほどく","start_sort":"image2d","goal_sort":"image2d","relevant":["unwrap_phase_2d"],"evidence":{"unwrap_phase_2d":"examples_3d/structured_light.py:89"}},
 

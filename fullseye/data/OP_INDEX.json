@@ -1,8 +1,8 @@
 {
- "n_ops": 3601,
+ "n_ops": 3603,
  "tiers": {
   "color": 12,
-  "ledger": 2642,
+  "ledger": 2644,
   "nary": 17,
   "registry": 930
  },
@@ -6681,6 +6681,19 @@
    ]
   },
   {
+   "name": "depth_from_focus",
+   "halcon": "",
+   "in_sort": "images",
+   "out_sort": "depth",
+   "category": "structured_light",
+   "tier": "ledger",
+   "ledger": "ops3d",
+   "dim": "3d",
+   "in_sorts": [
+    "images"
+   ]
+  },
+  {
    "name": "depth_of_field",
    "halcon": "",
    "in_sort": null,
@@ -10743,6 +10756,19 @@
     "text",
     "any",
     "signal"
+   ]
+  },
+  {
+   "name": "fringe_ftp_phase",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "depth",
+   "category": "structured_light",
+   "tier": "ledger",
+   "ledger": "ops3d",
+   "dim": "3d",
+   "in_sorts": [
+    "image2d"
    ]
   },
   {
