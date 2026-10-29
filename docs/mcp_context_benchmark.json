@@ -1,5 +1,5 @@
 {
-  "method": "minimal tools schema + find_ops(limit=3) + plan(k=3) + cards; UTF-8 bytes/4; volatile timing excluded",
+  "method": "minimal tools schema + find_ops(limit=7) + plan(k=7 diverse paths) + cards; UTF-8 bytes/4; volatile timing excluded",
   "scope": "Counts discovery through planning/cards only; execution and answer-correctness evaluation are excluded.",
   "tool_profiles": {
     "full_tokens": 3233,
@@ -10,9 +10,11 @@
     {
       "task": "surface dent from reflected fringes",
       "tool_schema_tokens": 1435,
-      "response_tokens": 925,
-      "total_tokens": 2360,
+      "response_tokens": 2102,
+      "total_tokens": 3537,
       "planned": true,
+      "expected": "deflectometry_phase_to_slope",
+      "expected_rank": 7,
       "ops": [
         "deflectometry_phase_to_slope"
       ]
@@ -20,9 +22,11 @@
     {
       "task": "find scratches using polarization",
       "tool_schema_tokens": 1435,
-      "response_tokens": 933,
-      "total_tokens": 2368,
+      "response_tokens": 2220,
+      "total_tokens": 3655,
       "planned": true,
+      "expected": "polarization_dolp_map",
+      "expected_rank": null,
       "ops": [
         "polarization_dolp_map"
       ]
@@ -30,9 +34,11 @@
     {
       "task": "recover projected fringe height",
       "tool_schema_tokens": 1435,
-      "response_tokens": 1198,
-      "total_tokens": 2633,
+      "response_tokens": 2194,
+      "total_tokens": 3629,
       "planned": true,
+      "expected": "decode_fringe",
+      "expected_rank": 2,
       "ops": [
         "decode_fringe"
       ]
@@ -40,9 +46,11 @@
     {
       "task": "locate a part for handling",
       "tool_schema_tokens": 1435,
-      "response_tokens": 871,
-      "total_tokens": 2306,
+      "response_tokens": 1846,
+      "total_tokens": 3281,
       "planned": true,
+      "expected": "shape_locate",
+      "expected_rank": 1,
       "ops": [
         "shape_locate"
       ]
@@ -50,9 +58,11 @@
     {
       "task": "fast structured-light depth",
       "tool_schema_tokens": 1435,
-      "response_tokens": 1203,
-      "total_tokens": 2638,
+      "response_tokens": 2457,
+      "total_tokens": 3892,
       "planned": true,
+      "expected": "decode_fringe",
+      "expected_rank": 2,
       "ops": [
         "decode_fringe"
       ]
@@ -60,13 +70,16 @@
     {
       "task": "switch product and detect corners",
       "tool_schema_tokens": 1435,
-      "response_tokens": 993,
-      "total_tokens": 2428,
+      "response_tokens": 2451,
+      "total_tokens": 3886,
       "planned": true,
+      "expected": "cv_good_features",
+      "expected_rank": null,
       "ops": [
-        "cv_good_features"
+        "xcv2_fast_count"
       ]
     }
   ],
-  "max_tokens": 2638
+  "recall_at_7": 0.6666666666666666,
+  "max_tokens": 3892
 }

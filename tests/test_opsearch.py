@@ -110,6 +110,25 @@ def test_filters_and_errors():
         search_ops("edge", k=0)
 
 
+def test_default_seven_are_distinct_implementations_and_report_aliases():
+    from fssystem import get_system
+    assert get_system("find_ops_k") == get_system("plan_k") == 7
+    rows = search_ops("automatic threshold")["ops"]
+    assert len(rows) == 7
+    identity, _groups = opsearch._identity_tables()
+    assert len({identity[row["name"]] for row in rows}) == len(rows)
+    assert any(row.get("same_as") for row in rows)
+
+
+def test_plans_have_machine_stages_and_one_line_comparison_hints():
+    result = opsearch.plan("image", "region", goal="segment foreground",
+                           constraints={"k": 7, "max_depth": 4, "timeout_ms": 5000})
+    assert result["ok"]
+    for proposal in result["plans"]:
+        assert proposal["dag"]["stages"] and proposal["difference"] and proposal["line"]
+        assert " -> " in proposal["line"]
+
+
 def test_facade_cli_and_mcp_share_one_search(capsys):
     assert fullseye.search_ops is opsearch.search_ops
     from fullseye import rag_setup
