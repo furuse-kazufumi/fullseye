@@ -134,6 +134,7 @@ def test_hypergraph_plan_is_bounded_and_shared_by_both_directions():
     # Backward planning may acquire one image and legitimately rank the
     # single-frame FTP route first.  The shared multi-frame route must remain
     # among the bounded alternatives, but need not be the first acquisition.
+    assert len(backward["plans"]) >= 1, "backward planning returned no plan"
     assert any("decode_fringe" in p["ops"] for p in backward["plans"])
     assert forward["search"]["expanded"] > 0
     capped=opsearch.plan("image","feature",goal="features",constraints={"max_expansions":1})
