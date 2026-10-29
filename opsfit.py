@@ -32,7 +32,3 @@ RESULT_ADAPTERS = {}
 def list_ops(category=None):
     return sorted(n for n, m in OPSFIT.items()
                   if category is None or m["category"] == category)
-
-
-def get(name):
-    return OPSFIT[name]["func"]
