@@ -1636,7 +1636,13 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
                            in_sort=a.get("in_sort"), out_sort=a.get("out_sort"))
         except ValueError as exc:                          # 空の問い合わせ等は引数違反(-32602)
             raise ArgError(str(exc)) from exc
-        return tool_result(_format(r), r, max_structured_bytes=max_structured_bytes)
+        from fullseye.recipesearch import find_recipes
+        r["recipes"] = find_recipes(a["query"], limit=2, lang=a.get("lang"),
+                                      in_sort=a.get("in_sort"), out_sort=a.get("out_sort"))
+        text = _format(r)
+        for recipe in r["recipes"]:
+            text += "\nrecipe: %s [%s -> %s] %s" % (recipe["name"], recipe["input_sort"], recipe["output_sort"], recipe["when"])
+        return tool_result(text, r, max_structured_bytes=max_structured_bytes)
     if name == "fullseye_plan_chain":
         from fullseye.opsearch import plan_chain
         try:

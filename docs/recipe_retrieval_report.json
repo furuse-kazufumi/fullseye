@@ -1,0 +1,89 @@
+{
+  "method": "Business-language queries contain no operator names; hit when the expected existing recipe is in top 2.",
+  "recall_at_2": 1.0,
+  "queries": [
+    {
+      "query": "remove impulse noise",
+      "expected": "Denoise — median",
+      "top_2": [
+        "FA — scratch on hairline metal",
+        "Denoise — median"
+      ],
+      "hit": true
+    },
+    {
+      "query": "count holes in backlit plate",
+      "expected": "FA — count holes in a back-lit plate",
+      "top_2": [
+        "FA — count holes in a back-lit plate",
+        "Count — blobs"
+      ],
+      "hit": true
+    },
+    {
+      "query": "uneven lighting document",
+      "expected": "Binarize — document (adaptive)",
+      "top_2": [
+        "Binarize — document (adaptive)",
+        "FA — scratch on hairline metal"
+      ],
+      "hit": true
+    },
+    {
+      "query": "detect bright spots",
+      "expected": "Spots — local maxima",
+      "top_2": [
+        "Spots — local maxima",
+        "FA — scratch on hairline metal"
+      ],
+      "hit": true
+    },
+    {
+      "query": "hairline metal scratch",
+      "expected": "FA — scratch on hairline metal",
+      "top_2": [
+        "FA — scratch on hairline metal"
+      ],
+      "hit": true
+    },
+    {
+      "query": "weld x-ray pores",
+      "expected": "FA — weld porosity (X-ray)",
+      "top_2": [
+        "FA — weld porosity (X-ray)",
+        "Spots — local maxima"
+      ],
+      "hit": true
+    }
+  ],
+  "inventory": [
+    {
+      "source": "recipes.py RECIPES",
+      "found": 25,
+      "included": 25,
+      "excluded": 0,
+      "reason": null
+    },
+    {
+      "source": "examples/poc_*.py",
+      "found": 280,
+      "included": 0,
+      "excluded": 280,
+      "reason": "PoC programs are arbitrary Python; a linear MCP pipeline cannot be extracted statically without guessing."
+    },
+    {
+      "source": "studio_lite/gates/recipes_gate.json",
+      "found": 10,
+      "included": 0,
+      "excluded": 10,
+      "reason": "Execution gates duplicate selected built-in recipes and are not distinct examples."
+    },
+    {
+      "source": "docs/**/*.md",
+      "found": 4111,
+      "included": 0,
+      "excluded": 4111,
+      "reason": "Documentation contains prose and snippets, not a statically unambiguous inventory of MCP stages."
+    }
+  ]
+}
