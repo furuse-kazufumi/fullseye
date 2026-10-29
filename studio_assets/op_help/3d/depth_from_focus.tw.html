@@ -6,8 +6,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>根據不同焦點的影像，以每個像素的最佳對焦位置估計高度/深度。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>「焦点を変えた画像から高さ」「ピントを変えた複数画像から深さ」を求める shape-from-focus の入口。各画素で Sum-Modified-Laplacian 合焦度が最大になるスタック番号を返し、<code style="color:#22d3bf">focus_positions</code> があれば物理位置へ置き換える。テクスチャの無い領域は決められず先頭位置になるため、詳細な信頼度が必要なら <code style="color:#22d3bf">reconstruction.depth_from_focus</code> を直接呼び <code style="color:#22d3bf">sharpness</code> も確認する。</p>
-<p>S. K. Nayar and Y. Nakagawa, “Shape from Focus,” IEEE TPAMI 16(8), 824–831 (1994), doi:10.1109/34.308479.</p>
+<p>「焦点を変えた画像から高さ」「ピントを変えた複数画像から深さ」を求める shape-from-focus の入口。詳細な信頼度が必要なら <code style="color:#22d3bf">reconstruction.depth_from_focus</code> を直接呼び <code style="color:#22d3bf">sharpness</code> も確認する。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度感測器知識 —— 測距原理、實機數值、缺測的表現</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

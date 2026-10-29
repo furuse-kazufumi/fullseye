@@ -21,13 +21,8 @@ version: 0.8.1  # fullseye lib version this note was generated for
 焦点を変えた画像から高さ・深さを画素ごとの最良合焦位置として推定する。
 
 「焦点を変えた画像から高さ」「ピントを変えた複数画像から深さ」を求める
-shape-from-focus の入口。各画素で Sum-Modified-Laplacian 合焦度が最大になる
-スタック番号を返し、``focus_positions`` があれば物理位置へ置き換える。
-テクスチャの無い領域は決められず先頭位置になるため、詳細な信頼度が必要なら
+shape-from-focus の入口。詳細な信頼度が必要なら
 ``reconstruction.depth_from_focus`` を直接呼び ``sharpness`` も確認する。
-
-S. K. Nayar and Y. Nakagawa, “Shape from Focus,” IEEE TPAMI 16(8),
-824–831 (1994), doi:10.1109/34.308479.
 
 ## 背景知識ガイド(この op の手前にある物理・規約)
 

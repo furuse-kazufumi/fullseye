@@ -6,8 +6,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Estimate height/depth from differently focused images as the best-focus position at each pixel.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>「焦点を変えた画像から高さ」「ピントを変えた複数画像から深さ」を求める shape-from-focus の入口。各画素で Sum-Modified-Laplacian 合焦度が最大になるスタック番号を返し、<code style="color:#22d3bf">focus_positions</code> があれば物理位置へ置き換える。テクスチャの無い領域は決められず先頭位置になるため、詳細な信頼度が必要なら <code style="color:#22d3bf">reconstruction.depth_from_focus</code> を直接呼び <code style="color:#22d3bf">sharpness</code> も確認する。</p>
-<p>S. K. Nayar and Y. Nakagawa, “Shape from Focus,” IEEE TPAMI 16(8), 824–831 (1994), doi:10.1109/34.308479.</p>
+<p>「焦点を変えた画像から高さ」「ピントを変えた複数画像から深さ」を求める shape-from-focus の入口。詳細な信頼度が必要なら <code style="color:#22d3bf">reconstruction.depth_from_focus</code> を直接呼び <code style="color:#22d3bf">sharpness</code> も確認する。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — Depth sensors — ranging principles, real-device figures, how dropouts appear</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

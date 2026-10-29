@@ -1753,16 +1753,16 @@
 
 ## `ops3d.py`
 
-- **L415** — ★ out は image2d ではなく **rgbimage**(2026-09-02 実測)。docstring も 実装も「RGB (size, size, 3) float [0,1]」で、この行だけが 2-D の 輝度画像を名乗っていた。mesh の種を入れて初めてこの op が実行され、 型述語が「declared 'image2d' but returned ndarray(512,512,3)」と TYPEMISS を出して顕在化した(それまでは (V,F) を 2 位置引数に割る 形のせいで**一度も実行されていなかった**)。他の render_* 3 op (ambient_occlusion / cast_shadow / supersample_mesh)は実測どおり 2-D なので image2d のままでよい ― 嘘だったのはここ 1 行だけ。
-- **L438** — ★どれだけ細分しても**次数 5 の頂点はちょうど 12 個**。これは V - E + F = 2 の帰結であって実装の都合ではない(11 個でも 13 個でも 球にならない)。mesh_subdivide は任意メッシュの細分で、正多面体から の構成は持っていなかった。入力を取らない生成 op。
-- **L444** — ★極小曲面と掃引(2026-09-23)。極小曲面は**平均曲率 H が至るところ 0** の 曲面で、既存 `vertex_curvature` がまさにそれを測る —— 「これは極小曲面だ」 という主張を、作り方を知らない op が採点する。カテノイドとヘリコイドは 等長なのでガウス曲率 K が一致するが、それは**必要条件にすぎない**(門に するのは H)。実測 |H| 中央値 0.0001 に対し、対照群の単位球 1.00004・ 半径 1 の円柱 0.50000。
-- **L454** — ★これは**節面近似**であって厳密な三重周期極小曲面ではない。残差は 隠さず docstring に書く(主曲率スケールの 1 % 程度)。
-- **L540** — ★新しい sort は作らない: ノード表と枝表は「単位も意味も違う 2 つの表」で、 タプルで返して adapter に `r[0]` と書くと **枝表を黙って捨てる** (`pose_error` / `m3c2_distance` で繰り返した失敗の型)。1 つの dict に 両方を入れれば宣言 'table' が実返りと一致し、捨てるものが無い。
-- **L695** — ★2026-09-08 追加。それまで彫刻用の姿勢ヘルパ(visualhull.look_at)は どの公開層からも引けず、同名の render3d.look_at(gluLookAt・−Z 前方)を 掴むと **例外なく空の hull** になった(poc_livestock_body_volume)。
-- **L716** — ★ out は image2d ではなく **keypoints**(2026-09-15 実測)。実返りは 像面上の (N,2) 画素座標で、入力 (160,3) に対し (160,2) が出る —— 画像ではない。同じ型の嘘を "render" 節の ``project_points`` で 2026-09-02 に既に直しているのに(「旧宣言 'image2d' は型の嘘で、 pnp3d 側の 'image2d' 宣言と噛み合って PnP を壊していた」)、 **この 1 行だけが兄弟一掃から取り残されていた**。 例外にならないのは ``_sort_ok`` が image に ndim == 2 しか求めず、 (N,2) が「幅 2 の画像」として黙って通るから。値域も画素座標 (実測 16.0 .. 47.9)で [0,1] ではなく、image を名乗る限り 下流の閾値 op に渡ると意味を失う。
-- **L806** — ★ 保留していた理由(a)「points 候補リストが短くなり既存 champion を黙って 書き換える」は、backends_typed.TYPE_TO_SORT で coordgrid → points へ畳む ことで消えている: 2-D 橋の tb_sphere_sdf / tb_box_sdf には INPUT_ADAPTERS._points_to_grid が付いていて **点群から座標場を実際に作って いる**ので、あちらの "points" 宣言は嘘ではない(実測: (64,3) を渡すと (16,16,16) が返る = 生きている)。嘘だったのは 3-D 台帳の側だけだった。
-- **L969** — ★ axis=1。`pairs` の正典は **(N,2)**(消費側 6 op が (2,N) を名指しで 拒否することを実測)。述語が `lambda v: True` だった間、ここは (2,n) を 作っており「どの消費側も受け取れない形」を宣言型として名乗っていた
-- **L1007** — ★ position の正典は **[z, y, x] の 3 成分**。多数決ではなく**消費側を実行 して**決めた: refine_translation_lk / refine_lm は 4 成分を渡すと "init_pos must have exactly 3 components [z, y, x] (got 4)" で fail-closed する(実測)。生成器も (8.0, 8.0, 8.0) の 3 成分。ところが match_* 系は docstring どおり **[score, d, h, w] の 4 成分**を返しており、宣言 out が "position" のまま流すと後段の精緻化 op が全滅する = 型の嘘。 score 自体は正直な情報なので**関数側は削らず**(get() は 4 成分のまま)、 台帳の型を名乗る call() 側で座標だけを取り出す(project_points と同じ扱い)。
+- **L432** — ★ out は image2d ではなく **rgbimage**(2026-09-02 実測)。docstring も 実装も「RGB (size, size, 3) float [0,1]」で、この行だけが 2-D の 輝度画像を名乗っていた。mesh の種を入れて初めてこの op が実行され、 型述語が「declared 'image2d' but returned ndarray(512,512,3)」と TYPEMISS を出して顕在化した(それまでは (V,F) を 2 位置引数に割る 形のせいで**一度も実行されていなかった**)。他の render_* 3 op (ambient_occlusion / cast_shadow / supersample_mesh)は実測どおり 2-D なので image2d のままでよい ― 嘘だったのはここ 1 行だけ。
+- **L455** — ★どれだけ細分しても**次数 5 の頂点はちょうど 12 個**。これは V - E + F = 2 の帰結であって実装の都合ではない(11 個でも 13 個でも 球にならない)。mesh_subdivide は任意メッシュの細分で、正多面体から の構成は持っていなかった。入力を取らない生成 op。
+- **L461** — ★極小曲面と掃引(2026-09-23)。極小曲面は**平均曲率 H が至るところ 0** の 曲面で、既存 `vertex_curvature` がまさにそれを測る —— 「これは極小曲面だ」 という主張を、作り方を知らない op が採点する。カテノイドとヘリコイドは 等長なのでガウス曲率 K が一致するが、それは**必要条件にすぎない**(門に するのは H)。実測 |H| 中央値 0.0001 に対し、対照群の単位球 1.00004・ 半径 1 の円柱 0.50000。
+- **L471** — ★これは**節面近似**であって厳密な三重周期極小曲面ではない。残差は 隠さず docstring に書く(主曲率スケールの 1 % 程度)。
+- **L557** — ★新しい sort は作らない: ノード表と枝表は「単位も意味も違う 2 つの表」で、 タプルで返して adapter に `r[0]` と書くと **枝表を黙って捨てる** (`pose_error` / `m3c2_distance` で繰り返した失敗の型)。1 つの dict に 両方を入れれば宣言 'table' が実返りと一致し、捨てるものが無い。
+- **L712** — ★2026-09-08 追加。それまで彫刻用の姿勢ヘルパ(visualhull.look_at)は どの公開層からも引けず、同名の render3d.look_at(gluLookAt・−Z 前方)を 掴むと **例外なく空の hull** になった(poc_livestock_body_volume)。
+- **L733** — ★ out は image2d ではなく **keypoints**(2026-09-15 実測)。実返りは 像面上の (N,2) 画素座標で、入力 (160,3) に対し (160,2) が出る —— 画像ではない。同じ型の嘘を "render" 節の ``project_points`` で 2026-09-02 に既に直しているのに(「旧宣言 'image2d' は型の嘘で、 pnp3d 側の 'image2d' 宣言と噛み合って PnP を壊していた」)、 **この 1 行だけが兄弟一掃から取り残されていた**。 例外にならないのは ``_sort_ok`` が image に ndim == 2 しか求めず、 (N,2) が「幅 2 の画像」として黙って通るから。値域も画素座標 (実測 16.0 .. 47.9)で [0,1] ではなく、image を名乗る限り 下流の閾値 op に渡ると意味を失う。
+- **L823** — ★ 保留していた理由(a)「points 候補リストが短くなり既存 champion を黙って 書き換える」は、backends_typed.TYPE_TO_SORT で coordgrid → points へ畳む ことで消えている: 2-D 橋の tb_sphere_sdf / tb_box_sdf には INPUT_ADAPTERS._points_to_grid が付いていて **点群から座標場を実際に作って いる**ので、あちらの "points" 宣言は嘘ではない(実測: (64,3) を渡すと (16,16,16) が返る = 生きている)。嘘だったのは 3-D 台帳の側だけだった。
+- **L986** — ★ axis=1。`pairs` の正典は **(N,2)**(消費側 6 op が (2,N) を名指しで 拒否することを実測)。述語が `lambda v: True` だった間、ここは (2,n) を 作っており「どの消費側も受け取れない形」を宣言型として名乗っていた
+- **L1024** — ★ position の正典は **[z, y, x] の 3 成分**。多数決ではなく**消費側を実行 して**決めた: refine_translation_lk / refine_lm は 4 成分を渡すと "init_pos must have exactly 3 components [z, y, x] (got 4)" で fail-closed する(実測)。生成器も (8.0, 8.0, 8.0) の 3 成分。ところが match_* 系は docstring どおり **[score, d, h, w] の 4 成分**を返しており、宣言 out が "position" のまま流すと後段の精緻化 op が全滅する = 型の嘘。 score 自体は正直な情報なので**関数側は削らず**(get() は 4 成分のまま)、 台帳の型を名乗る call() 側で座標だけを取り出す(project_points と同じ扱い)。
 
 ## `opsacoustics.py`
 
@@ -2711,26 +2711,26 @@
 - **L305** — 事象の位置(点過程)—— point_spectrum の入口。★**一様乱数だけにしない**: 周期成分が無いと「周期を見つける op」の意味のある挙動を一度も踏まないので、 周期 17.0 の列に 12 個の無関係な事象を混ぜた**構造データ**を種にする (乱数だけの試験は構造の欠陥を隠す、というこの repo の規律)。
 - **L503** — ★rng を 1 つも引かない —— 探針(ledger_contracts)は種を型名の順に同じ乱数列から作るので、 ここで乱数を引くと型名が後ろの種(image2d / matrix / signal …)が全部ずれ、他族の op の判定が 動く(2026-10-15 に実測: 無関係な 6 op が「拒否」に、11 個のノブの判定が入れ替わった)。
 - **L508** — ★design と同じく rng を 1 つも引かない(種は型名の順に同じ乱数列から作られる)。模型の観測は simcal の内側の固定の種(20261015)で作るので決定的。
-- **L805** — ★2026-10-13: TYPE_CHECKS["pose"] は (R, t, info) の 3 つ組も pose として通す (register_spin / register_shot / register_cpd_rigid / icp …)。ここで 2 つに 展開すると、その組が引かれた連鎖で ValueError(seed 3_000_0xx、縞に近づく ハエの眼の 5 op を足して抽選がずれた回で露見)。先頭 2 つだけ取る。
-- **L938** — ★ 非有限が混じった点群は **KD 木の構築そのものが生の ValueError で落ちる** (scipy: "data must be finite")。プールは NONFINITE を記録したうえで値を 残す設計なので、汚れた点群がここへ来るのは想定内 —— 建てる側が防ぐ。 2026-09-06 に実際に踏んだ: 新しい族が増えて連鎖の歩き方が変わり、 seed 3_000_0xx でこの経路に当たってファザー自身が停止した(op の欠陥では なく**道具の欠陥**。束縛できない入力は例外ではなくスキップが約束)。
-- **L1290** — ★単位空間は渡さない(渡すなら 3 つ全部)。渡さない形は「データ自身から 作る」訓練時の呼び方で、ファザーが最も広く回せる。
-- **L6914** — ★2026-10-18: 窓 3 つ + 厚さ 0 から始まる勾配。窓の番号(low / high)のノブは窓が 3 つないと どの値も同じ 2 窓を指し、min_log(素通しに近い画素を拒否する下限)は L が 0.01〜0.04 の画素が 無いと効かない —— 効く入力を渡す(効かないノブを台帳に載せない)。 窓は 120 kV で 20 / 40 / 60 keV(隣り合う狭い窓 20〜35 / 35〜55 では Cr と Mn の R が逆転し、 effective_z_map が単調でないとして拒否する —— それは op の正しい拒否で、ノブの検査にならない)。
-- **L7124** — ★obs2 の 2 点目は台車 0 の終点から (−0.15, 1.0) ずらした所: 射影の角 0.1 → 0.2 rad で終点と点の順が入れ替わり、 組紐語が変わる(角が「効かないノブ」に見えない入力。類が同じかは角に依らない —— それは門が別に見る)。
-- **L8101** — ★2026-10-11: file = 書き出したファイルのパス(write_wav の返り、read_wav の入力)。 述語が無いあいだ、write_wav が None を返しても誰も気づかなかった。
-- **L8223** — ★ 2026-09-02 まで ``lambda v: True`` だった = **述語が「有る」と数えられている ぶん、無いより悪い**(点検スクリプトも「述語あり」に数えてしまう)。実測で None / 42 / 文字列 / dict まで通していた。 正典は消費側 6 op(reprconv の pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar)を**全部実行して**決めた: 6 op とも上の 2 形だけを受け、 それ以外は "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" で名指しの fail-closed になる(実測)。**(2,N) は受けない**ので、 2-tuple を np.stack で (2,N) に潰していた adapter 3 件は axis=1 へ直した。 長さの違う 2 本(histogram の counts/edges)も「対」ではないので弾く。
-- **L8355** — ★ 「2 要素ちょうど」は pose(`len >= 2` で info を許す)と**わざと違う**。 実測 2026-09-02: mesh を 1 引数で受ける既存 consumer 4 件 (face_normals / vertex_normals / mesh_area / vertex_curvature)は 3-tuple に対して "mesh must be a 2-element tuple (vertices, faces)" を 送出し、cadmap の `_mesh` と render3d._mesh_arrays も 2 要素しか受けない。 つまり **この repo の mesh sort の正典は 2-tuple** で、余分な要素は 「情報が多い」のではなく下流が全滅する型の嘘になる。唯一の例外だった `voxel_to_mesh`((v, f, n) を返す)は ops3d.RESULT_ADAPTERS で正典の 並びを取り出すようにした(gicp / vol_label と同じ扱い)。
-- **L8564** — ★2026-10-11: ``system`` キーに最適化後の処方(同じ object_mm = inf)
-- **L8566** — ★2026-10-15: 絞りと像面の前の面は平面(R = inf、lens_system の規約どおり)
-- **L8568** — ★2026-10-15: 図の values に処方の平面の R = inf と、無焦点の EFL / BFL = inf、 分散の無い媒質の ν_d = inf を写す(lens_system の規約どおり)
-- **L8571** — ★2026-10-15: 非共軸の系(raytrace3d)は面の R = inf・物体の inf を記録に持ち、 ゴーストの表・光線の束は「届かない光線 = NaN」(trace_rays と同じ規約)、 図の values にも平面の R = inf を写す。opd_samples は瞳の外 = NaN、 with_wavelength は処方(object_mm = inf)をそのまま返す。
-- **L8578** — ★2026-10-19: 照準 / ケラレ係数を設定した処方もそのまま返す(R = inf、object_mm = inf)
-- **L8580** — ★2026-10-18: .zmx から読んだ処方(lensfile)は lens_system そのもの(物体が無限遠 なら object_mm = inf、平面の R = inf、ファイル側の面の表の DISZ = INFINITY)
-- **L8583** — ★2026-10-19: 構成ごとに解決した処方も lens_system そのもの(R = inf、object_mm = inf)
-- **L8585** — ★2026-10-19: 硝材置換・大域探索は処方(R = inf)を入れ子で返す
-- **L8587** — ★2026-10-19: 最適化後の処方(R = inf)を返す
-- **L8589** — ★2026-10-20: 解を解いた・解を外した・afocal の・像面を曲げた処方(R = inf、object_mm = inf)と、 その解の一覧(R = inf の行)を返す
-- **L8612** — ★2026-10-11(tests/test_ledger_contracts.py が初めて全台帳 op を呼んで挙げた分のうち、 **docstring が非有限を名指ししている**もの)。どれも「無い・測れない・届かない」を 0 で埋めず nan / inf で言う設計で、実際に非有限だった欄と docstring の欄が一致する ことを 1 本ずつ確かめた。docstring に書かれていない非有限(world_camera の depth の inf など)は**載せていない** —— 台帳の負債(docs/LEDGER_CONTRACT_DEBT.json)に残る。
-- **L8736** — ★2026-10-07: プロセスごとに分ける。固定名だと xdist の別ワーカーが同じ捨て場を共有し、片方の テストが「中身を消してから、何か落ちたことを確かめる」間に相手が消す/書く(Windows では開いている ファイルの unlink が PermissionError)。
+- **L813** — ★2026-10-13: TYPE_CHECKS["pose"] は (R, t, info) の 3 つ組も pose として通す (register_spin / register_shot / register_cpd_rigid / icp …)。ここで 2 つに 展開すると、その組が引かれた連鎖で ValueError(seed 3_000_0xx、縞に近づく ハエの眼の 5 op を足して抽選がずれた回で露見)。先頭 2 つだけ取る。
+- **L946** — ★ 非有限が混じった点群は **KD 木の構築そのものが生の ValueError で落ちる** (scipy: "data must be finite")。プールは NONFINITE を記録したうえで値を 残す設計なので、汚れた点群がここへ来るのは想定内 —— 建てる側が防ぐ。 2026-09-06 に実際に踏んだ: 新しい族が増えて連鎖の歩き方が変わり、 seed 3_000_0xx でこの経路に当たってファザー自身が停止した(op の欠陥では なく**道具の欠陥**。束縛できない入力は例外ではなくスキップが約束)。
+- **L1298** — ★単位空間は渡さない(渡すなら 3 つ全部)。渡さない形は「データ自身から 作る」訓練時の呼び方で、ファザーが最も広く回せる。
+- **L6922** — ★2026-10-18: 窓 3 つ + 厚さ 0 から始まる勾配。窓の番号(low / high)のノブは窓が 3 つないと どの値も同じ 2 窓を指し、min_log(素通しに近い画素を拒否する下限)は L が 0.01〜0.04 の画素が 無いと効かない —— 効く入力を渡す(効かないノブを台帳に載せない)。 窓は 120 kV で 20 / 40 / 60 keV(隣り合う狭い窓 20〜35 / 35〜55 では Cr と Mn の R が逆転し、 effective_z_map が単調でないとして拒否する —— それは op の正しい拒否で、ノブの検査にならない)。
+- **L7132** — ★obs2 の 2 点目は台車 0 の終点から (−0.15, 1.0) ずらした所: 射影の角 0.1 → 0.2 rad で終点と点の順が入れ替わり、 組紐語が変わる(角が「効かないノブ」に見えない入力。類が同じかは角に依らない —— それは門が別に見る)。
+- **L8110** — ★2026-10-11: file = 書き出したファイルのパス(write_wav の返り、read_wav の入力)。 述語が無いあいだ、write_wav が None を返しても誰も気づかなかった。
+- **L8232** — ★ 2026-09-02 まで ``lambda v: True`` だった = **述語が「有る」と数えられている ぶん、無いより悪い**(点検スクリプトも「述語あり」に数えてしまう)。実測で None / 42 / 文字列 / dict まで通していた。 正典は消費側 6 op(reprconv の pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar)を**全部実行して**決めた: 6 op とも上の 2 形だけを受け、 それ以外は "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" で名指しの fail-closed になる(実測)。**(2,N) は受けない**ので、 2-tuple を np.stack で (2,N) に潰していた adapter 3 件は axis=1 へ直した。 長さの違う 2 本(histogram の counts/edges)も「対」ではないので弾く。
+- **L8364** — ★ 「2 要素ちょうど」は pose(`len >= 2` で info を許す)と**わざと違う**。 実測 2026-09-02: mesh を 1 引数で受ける既存 consumer 4 件 (face_normals / vertex_normals / mesh_area / vertex_curvature)は 3-tuple に対して "mesh must be a 2-element tuple (vertices, faces)" を 送出し、cadmap の `_mesh` と render3d._mesh_arrays も 2 要素しか受けない。 つまり **この repo の mesh sort の正典は 2-tuple** で、余分な要素は 「情報が多い」のではなく下流が全滅する型の嘘になる。唯一の例外だった `voxel_to_mesh`((v, f, n) を返す)は ops3d.RESULT_ADAPTERS で正典の 並びを取り出すようにした(gicp / vol_label と同じ扱い)。
+- **L8573** — ★2026-10-11: ``system`` キーに最適化後の処方(同じ object_mm = inf)
+- **L8575** — ★2026-10-15: 絞りと像面の前の面は平面(R = inf、lens_system の規約どおり)
+- **L8577** — ★2026-10-15: 図の values に処方の平面の R = inf と、無焦点の EFL / BFL = inf、 分散の無い媒質の ν_d = inf を写す(lens_system の規約どおり)
+- **L8580** — ★2026-10-15: 非共軸の系(raytrace3d)は面の R = inf・物体の inf を記録に持ち、 ゴーストの表・光線の束は「届かない光線 = NaN」(trace_rays と同じ規約)、 図の values にも平面の R = inf を写す。opd_samples は瞳の外 = NaN、 with_wavelength は処方(object_mm = inf)をそのまま返す。
+- **L8587** — ★2026-10-19: 照準 / ケラレ係数を設定した処方もそのまま返す(R = inf、object_mm = inf)
+- **L8589** — ★2026-10-18: .zmx から読んだ処方(lensfile)は lens_system そのもの(物体が無限遠 なら object_mm = inf、平面の R = inf、ファイル側の面の表の DISZ = INFINITY)
+- **L8592** — ★2026-10-19: 構成ごとに解決した処方も lens_system そのもの(R = inf、object_mm = inf)
+- **L8594** — ★2026-10-19: 硝材置換・大域探索は処方(R = inf)を入れ子で返す
+- **L8596** — ★2026-10-19: 最適化後の処方(R = inf)を返す
+- **L8598** — ★2026-10-20: 解を解いた・解を外した・afocal の・像面を曲げた処方(R = inf、object_mm = inf)と、 その解の一覧(R = inf の行)を返す
+- **L8621** — ★2026-10-11(tests/test_ledger_contracts.py が初めて全台帳 op を呼んで挙げた分のうち、 **docstring が非有限を名指ししている**もの)。どれも「無い・測れない・届かない」を 0 で埋めず nan / inf で言う設計で、実際に非有限だった欄と docstring の欄が一致する ことを 1 本ずつ確かめた。docstring に書かれていない非有限(world_camera の depth の inf など)は**載せていない** —— 台帳の負債(docs/LEDGER_CONTRACT_DEBT.json)に残る。
+- **L8745** — ★2026-10-07: プロセスごとに分ける。固定名だと xdist の別ワーカーが同じ捨て場を共有し、片方の テストが「中身を消してから、何か落ちたことを確かめる」間に相手が消す/書く(Windows では開いている ファイルの unlink が PermissionError)。
 
 ## `tools/chain_mine.py`
 

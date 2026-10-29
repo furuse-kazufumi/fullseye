@@ -13,6 +13,7 @@ op の入力)を機械的に列挙・スコアリングでき、指数的な拡�
 """
 import numpy as np
 import sys
+from functools import wraps
 
 import match3d
 import feat_harris
@@ -100,6 +101,7 @@ def fringe_ftp_phase(image, carrier_axis="x", carrier_period=None,
         return_info=False)
 
 
+@wraps(reconstruction.depth_from_focus)
 def depth_from_focus(images, focus_positions=None):
     """焦点を変えた画像から高さ・深さを画素ごとの最良合焦位置として推定する。
 
@@ -113,6 +115,21 @@ def depth_from_focus(images, focus_positions=None):
     824–831 (1994), doi:10.1109/34.308479.
     """
     return reconstruction.depth_from_focus(images, focus_positions=focus_positions)["depth"]
+
+
+# ``wraps`` makes the old HALCON facade and this typed door one identity; retain the
+# business-language summary used by MCP search instead of inheriting the lower-level text.
+depth_from_focus.__doc__ = """焦点を変えた画像から高さ・深さを画素ごとの最良合焦位置として推定する。
+
+「焦点を変えた画像から高さ」「ピントを変えた複数画像から深さ」を求める
+shape-from-focus の入口。詳細な信頼度が必要なら
+``reconstruction.depth_from_focus`` を直接呼び ``sharpness`` も確認する。
+"""
+# Keep this adapter as the executable target.  ``__wrapped__`` above is only the
+# cross-door identity marker; copying the wrapped module would bypass the depth
+# extraction and expose the lower-level result dictionary through MCP.
+depth_from_focus.__module__ = __name__
+depth_from_focus.__qualname__ = "depth_from_focus"
 
 _MOD = {"match3d": match3d, "feat_harris": feat_harris, "feat_spin": feat_spin,
         "feat_shot": feat_shot, "feat_fpfh": feat_fpfh, "fuse3d": fuse3d,
