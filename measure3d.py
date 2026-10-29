@@ -73,7 +73,7 @@ def fit_surface_principal_axes(points, degree: int = 2,
         raise ValueError("isotropy_ratio must be in (0, 1)")
     center = p.mean(0)
     _, s, vt = np.linalg.svd(p - center, full_matrices=False)
-    if s[1] <= 1e-12 or (s[1] / s[0]) ** 2 >= limit:
+    if s[1] <= np.finfo(float).eps * np.linalg.norm(p - center) or (s[1] / s[0]) ** 2 >= limit:
         raise ValueError("point cloud is too isotropic; principal in-plane axes are undefined")
     if np.linalg.det(vt) < 0:
         vt[-1] *= -1

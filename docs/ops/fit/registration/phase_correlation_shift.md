@@ -13,20 +13,26 @@ version: 0.8.1  # fullseye lib version this note was generated for
 # phase_correlation_shift — FIT `registration` op
 
 - **データ種**: `image2d × image2d` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.phase_correlation_shift(image1, image2, window: 'str | None' = 'hann', whitening: 'float' = 0.5) -> 'dict'` (実装を直接呼ぶなら `import filters_freq; filters_freq.phase_correlation_shift(image1, image2, window: 'str | None' = 'hann', whitening: 'float' = 0.5) -> 'dict'`、台帳から引くなら `opsfit.get("phase_correlation_shift")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.phase_correlation_shift(image1, image2, window: 'str | None' = 'hann', whitening: 'float' = 0.5, method: 'str' = 'parabolic') -> 'dict'` (実装を直接呼ぶなら `import filters_freq; filters_freq.phase_correlation_shift(image1, image2, window: 'str | None' = 'hann', whitening: 'float' = 0.5, method: 'str' = 'parabolic') -> 'dict'`、台帳から引くなら `opsfit.get("phase_correlation_shift")`)
 
 ## 使い方
 
 2 枚の画像の位置合わせに必要なサブピクセル移動量を位相限定相関で求める。
 
-This reuses :func:`phase_correlation_fft` and refines each peak coordinate
-with the three-point parabolic estimator on the periodic correlation
-surface. The sign convention is identical to that function: when
-``image2 = shift(image1, (dy, dx))``, the result is approximately
-``(-dy, -dx)`` -- the displacement required to align image1 with image2.
+The default ``method="parabolic"`` reuses the whitening-aware periodic
+correlation surface from :func:`phase_correlation_fft` and refines its
+integer peak independently along each axis with the wrapped three-point
+parabola. ``method="upsample"`` instead uses scikit-image's 100x local
+upsampled DFT and fails closed with ``MissingDependencyError`` when that
+optional dependency is absent. On the fixed 96x112 truth gates, parabolic
+errors are 0.166 px (Hann) / 0.172 px (no window), versus 0.010 px for
+upsample with either window; the parabolic result is biased 0.166 / 0.171
+px toward the integer grid. The sign convention is explicit: when
+``image2 = shift(image1, d)``, the result is approximately ``-d``, so
+``shift(image2, result)`` approximately equals ``image1``.
 Returns ``row_shift``/``col_shift`` (also ``dy``/``dx``), ``peak`` and
 ``peak_ratio`` (largest peak divided by the best peak outside its 3x3
-neighbourhood). Constant or textureless inputs raise ``ValueError``.
+neighbourhood). Constant or relatively textureless inputs raise ``ValueError``.
 
 ## 参考(サンプルデータ・文献)
 

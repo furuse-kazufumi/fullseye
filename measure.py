@@ -173,7 +173,7 @@ def fit_curve_principal_axis(points, degree: int = 2,
     xy = p[:, ::-1]
     center = xy.mean(0)
     _, s, vt = np.linalg.svd(xy - center, full_matrices=False)
-    if s[0] <= 1e-12 or (s[1] / s[0]) ** 2 >= ratio_limit:
+    if s[0] <= np.finfo(float).eps * np.linalg.norm(xy - center) or (s[1] / s[0]) ** 2 >= ratio_limit:
         raise ValueError("point cloud is too isotropic; no principal axis is defined")
     if np.linalg.det(vt) < 0:
         vt[1] *= -1

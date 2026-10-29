@@ -1,10 +1,10 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">phase_correlation_shift — FIT <code style="color:#22d3bf">registration</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.phase_correlation_shift(image1, image2, window: &#x27;str | None&#x27; = &#x27;hann&#x27;, whitening: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import filters_freq; filters_freq.phase_correlation_shift(image1, image2, window: &#x27;str | None&#x27; = &#x27;hann&#x27;, whitening: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsfit.get(&quot;phase_correlation_shift&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.phase_correlation_shift(image1, image2, window: &#x27;str | None&#x27; = &#x27;hann&#x27;, whitening: &#x27;float&#x27; = 0.5, method: &#x27;str&#x27; = &#x27;parabolic&#x27;) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import filters_freq; filters_freq.phase_correlation_shift(image1, image2, window: &#x27;str | None&#x27; = &#x27;hann&#x27;, whitening: &#x27;float&#x27; = 0.5, method: &#x27;str&#x27; = &#x27;parabolic&#x27;) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsfit.get(&quot;phase_correlation_shift&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>위상 한정 상관으로 두 영상 정렬에 필요한 서브픽셀 이동량을 구합니다.</p>
-<p>FFT 상관 봉우리를 재사용하고 국소 업샘플 DFT로 세분화합니다. 부호는 phase_correlation_fft와 같아 image2 변위의 반대를 반환합니다. dy, dx, 봉우리와 봉우리 비를 반환하며 무텍스처 영상은 거부합니다.</p>
+<p>기본값은 whitening이 적용된 주기 FFT 상관 봉우리를 각 축의 주기 경계 3점 포물선으로 세분화합니다. method=upsample은 scikit-image의 100배 국소 DFT를 쓰며 의존성이 없으면 fail-closed합니다. 진리 게이트의 Hann 유/무 오차는 포물선 0.166/0.172 px, 업샘플 0.010/0.010 px이고 격자 쪽 편향은 0.166/0.171 px입니다. image2=shift(image1,d)이면 결과는 약 -d이므로 shift(image2,result)≈image1입니다. dy, dx, 봉우리와 봉우리 비를 반환하며 상대적으로 텍스처가 없는 영상은 거부합니다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

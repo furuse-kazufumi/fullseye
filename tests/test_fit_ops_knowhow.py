@@ -1,4 +1,6 @@
 """Truth gates for geometric-circle, subpixel-shift, and principal-axis fits."""
+import builtins
+
 import numpy as np
 import pytest
 from scipy.ndimage import fourier_shift
@@ -46,21 +48,35 @@ def _texture(shape=(96, 112)):
             + .15 * np.sin(.19 * x + .11 * y))
 
 
-def test_phase_correlation_shift_recovers_fourier_translation():
+@pytest.mark.parametrize("window,method,expected_error,grid_bias", [
+    ("hann", "parabolic", 0.1663, 0.1656),
+    (None, "parabolic", 0.1718, 0.1710),
+    ("hann", "upsample", 0.0100, 0.0075),
+    (None, "upsample", 0.0100, 0.0075),
+])
+def test_phase_correlation_shift_recovers_fourier_translation(
+        window, method, expected_error, grid_bias):
     # Broadband texture gives an identifiable subpixel phase slope; the exact
     # Fourier shift has no interpolation error in its construction.
     a = np.random.default_rng(3).normal(size=(96, 112))
     truth = (2.35, -1.7)
     b = np.fft.ifftn(fourier_shift(np.fft.fftn(a), truth)).real
-    got = filters_freq.phase_correlation_shift(a, b, window="hann", whitening=0.5)
-    assert np.linalg.norm(np.array([got["dy"], got["dx"]]) + truth) < 0.22
+    got = filters_freq.phase_correlation_shift(
+        a, b, window=window, whitening=0.5, method=method)
+    estimate = np.array([got["dy"], got["dx"]])
+    error = np.linalg.norm(estimate + truth)
+    toward_grid = (np.linalg.norm(truth - np.rint(truth))
+                   - np.linalg.norm(estimate - np.rint(estimate)))
+    assert error == pytest.approx(expected_error, abs=5e-4)
+    assert toward_grid == pytest.approx(grid_bias, abs=5e-4)
     assert got["peak_ratio"] > 1
 
 
-def test_phase_shift_hann_beats_none_for_nonperiodic_crop():
+def test_phase_shift_nonperiodic_crop_stays_within_measured_error():
     from scipy.ndimage import shift
     # A non-periodic spatial crop exposes the wrap boundary. On this fixed
-    # broadband sample tapering reduces the error (about .099 vs .106 px).
+    # broadband sample gives 0.196 px (Hann) and 0.193 px (no window) with the
+    # deliberately simple parabolic estimator.
     a = np.random.default_rng(1).normal(size=(96, 112))
     truth = np.array([3.65, -4.2])
     b = shift(a, truth, order=3, mode="constant", cval=0.0)
@@ -68,12 +84,54 @@ def test_phase_shift_hann_beats_none_for_nonperiodic_crop():
                                       for k in ("dy", "dx"))) + truth)
     en = np.linalg.norm(np.array(list(filters_freq.phase_correlation_shift(a, b, None, .5)[k]
                                       for k in ("dy", "dx"))) + truth)
-    assert eh < en
+    assert eh == pytest.approx(.1963, abs=5e-4)
+    assert en == pytest.approx(.1927, abs=5e-4)
 
 
 def test_phase_shift_rejects_textureless():
     with pytest.raises(ValueError, match="texture"):
         filters_freq.phase_correlation_shift(np.ones((16, 16)), np.ones((16, 16)))
+
+
+def test_phase_shift_texture_test_is_intensity_scale_invariant():
+    a = np.arange(256, dtype=float).reshape(16, 16)
+    for scale in (1e-30, 1e30):
+        got = filters_freq.phase_correlation_shift(scale * a, scale * np.roll(a, 2, 0),
+                                                   window=None)
+        assert got["dy"] == pytest.approx(-2.0)
+
+
+def test_phase_shift_upsample_honours_partial_whitening():
+    a = np.random.default_rng(3).normal(size=(96, 112))
+    truth = (2.35, -1.7)
+    b = np.fft.ifftn(fourier_shift(np.fft.fftn(a), truth)).real
+    raw = filters_freq.phase_correlation_shift(a, b, None, 0.0, "upsample")
+    half = filters_freq.phase_correlation_shift(a, b, None, 0.5, "upsample")
+    assert raw["dy"] == pytest.approx(-2.35)
+    assert half["dy"] == pytest.approx(-2.34)
+
+
+def test_phase_shift_default_needs_no_skimage_but_upsample_fails_closed(monkeypatch):
+    original_import = builtins.__import__
+    def blocked(name, *args, **kwargs):
+        if name.startswith("skimage"):
+            raise ImportError("blocked optional dependency")
+        return original_import(name, *args, **kwargs)
+    monkeypatch.setattr(builtins, "__import__", blocked)
+    a = np.arange(256, dtype=float).reshape(16, 16)
+    assert filters_freq.phase_correlation_shift(a, np.roll(a, 2, 0), window=None)["dy"] == -2
+    with pytest.raises(ImportError, match="optional dependency"):
+        filters_freq.phase_correlation_shift(a, np.roll(a, 2, 0), window=None,
+                                             method="upsample")
+
+
+def test_principal_fit_degeneracy_tests_are_coordinate_scale_invariant():
+    curve = _curve(25)
+    x, y = np.meshgrid(np.linspace(-3, 3, 13), np.linspace(-1, 1, 9))
+    surface = np.column_stack([.2 * x.ravel() - .3 * y.ravel(), y.ravel(), x.ravel()])
+    for scale in (1e-20, 1e20):
+        assert measure.fit_curve_principal_axis(scale * curve, 2)["rms"] >= 0
+        assert measure3d.fit_surface_principal_axes(scale * surface, 1)["rms"] >= 0
 
 
 def _curve(angle):
