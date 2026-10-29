@@ -74,18 +74,20 @@ def phase_correlation_fft(image1, image2, window: str | None = "hann", whitening
 
 def phase_correlation_shift(image1, image2, window: str | None = "hann",
                             whitening: float = 0.5,
-                            method: str = "parabolic") -> dict:
+                            method: str = "upsample",
+                            upsample_factor: int = 100) -> dict:
     """2 枚の画像の位置合わせに必要なサブピクセル移動量を位相限定相関で求める。
 
-    The default ``method="parabolic"`` reuses the whitening-aware periodic
-    correlation surface from :func:`phase_correlation_fft` and refines its
-    integer peak independently along each axis with the wrapped three-point
-    parabola. ``method="upsample"`` instead uses scikit-image's 100x local
-    upsampled DFT and fails closed with ``MissingDependencyError`` when that
-    optional dependency is absent. On the fixed 96x112 truth gates, parabolic
-    errors are 0.166 px (Hann) / 0.172 px (no window), versus 0.010 px for
-    upsample with either window; the parabolic result is biased 0.166 / 0.171
-    px toward the integer grid. The sign convention is explicit: when
+    The default ``method="upsample"`` refines the whitening-aware periodic
+    FFT peak by evaluating a 1.5-pixel neighbourhood with a matrix-multiply
+    local DFT using only NumPy (``upsample_factor=100`` by default).
+    ``method="parabola"`` is faster, but its wrapped three-point parabola is
+    biased about 0.166 px toward the integer grid. On the fixed 96x112 truth
+    gates, parabola errors are 0.166 px (Hann) / 0.172 px (no window), versus
+    0.010 px for upsampling with either window; upsampling is required to stay
+    within 0.02 px and within 0.01 px of scikit-image when it is installed.
+    The local DFT follows Guizar-Sicairos, Thurman & Fienup (2008), Optics
+    Letters 33(2), 156-158, doi:10.1364/OL.33.000156. The sign convention is explicit: when
     ``image2 = shift(image1, d)``, the result is approximately ``-d``, so
     ``shift(image2, result)`` approximately equals ``image1``.
     Returns ``row_shift``/``col_shift`` (also ``dy``/``dx``), ``peak`` and
@@ -96,8 +98,10 @@ def phase_correlation_shift(image1, image2, window: str | None = "hann",
     if (a.ndim == 2 and b.ndim == 2
             and (not np.all(np.isfinite(a)) or not np.all(np.isfinite(b)))):
         raise ValueError("phase_correlation_shift: images must contain only finite values")
-    if method not in ("parabolic", "upsample"):
-        raise ValueError("phase_correlation_shift: method must be 'parabolic' or 'upsample'")
+    if method not in ("parabola", "upsample"):
+        raise ValueError("phase_correlation_shift: method must be 'parabola' or 'upsample'")
+    if isinstance(upsample_factor, bool) or not isinstance(upsample_factor, (int, np.integer)) or upsample_factor < 1:
+        raise ValueError("phase_correlation_shift: upsample_factor must be a positive integer")
     def _relative_texture(im):
         scale = abs(float(np.mean(im))) + float(np.ptp(im))
         return 0.0 if scale == 0.0 else float(np.std(im)) / scale
@@ -107,7 +111,7 @@ def phase_correlation_shift(image1, image2, window: str | None = "hann",
     base = phase_correlation_fft(a, b, window=window, whitening=whitening)
     corr = base["correlation"]
     iy, ix = np.unravel_index(np.argmax(corr), corr.shape)
-    if method == "parabolic":
+    if method == "parabola":
         def _offset(vm, v0, vp):
             denom = vm - 2.0 * v0 + vp
             if denom == 0.0 or not np.isfinite(denom):
@@ -118,24 +122,33 @@ def phase_correlation_shift(image1, image2, window: str | None = "hann",
         dx = float(base["col_shift"] + _offset(corr[iy, (ix - 1) % corr.shape[1]],
                                                     corr[iy, ix], corr[iy, (ix + 1) % corr.shape[1]]))
     else:
-        try:
-            from skimage.registration import phase_cross_correlation
-        except ImportError as exc:
-            from backend_safe import missing_dependency
-            raise missing_dependency("skimage", "method='upsample'", op="phase_correlation_shift") from exc
-        aa, bb = a, b
-        if window == "hann":
-            win = np.outer(np.hanning(a.shape[0]), np.hanning(a.shape[1]))
-            aa = (a - a.mean()) * win
-            bb = (b - b.mean()) * win
-        w = base["whitening"]
-        if w > 0.0:
-            fa, fb = np.fft.fftn(aa), np.fft.fftn(bb)
-            aa = np.fft.ifftn(fa / (np.abs(fa) ** w + 1e-12)).real
-            bb = np.fft.ifftn(fb / (np.abs(fb) ** w + 1e-12)).real
-        refined, _, _ = phase_cross_correlation(
-            aa, bb, upsample_factor=100, normalization=None)
-        dy, dx = float(refined[0]), float(refined[1])
+        factor = int(upsample_factor)
+        shifts = np.array([base["row_shift"], base["col_shift"]], dtype=float)
+        if factor > 1:
+            shifts = np.round(shifts * factor) / factor
+            region_size = int(np.ceil(1.5 * factor))
+            dftshift = np.fix(region_size / 2.0)
+            offsets = dftshift - shifts * factor
+            aa, bb = a, b
+            if window == "hann":
+                win = np.outer(np.hanning(a.shape[0]), np.hanning(a.shape[1]))
+                aa, bb = (a - a.mean()) * win, (b - b.mean()) * win
+            spectrum = np.fft.fft2(aa) * np.conj(np.fft.fft2(bb))
+            if base["whitening"] > 0.0:
+                spectrum /= np.abs(spectrum) ** base["whitening"] + 1e-12
+
+            # Each axis is a dense DFT matrix; no padded full-frame FFT is made.
+            data = spectrum.conj()
+            for n_items, offset in reversed(list(zip(data.shape, offsets))):
+                kernel = ((np.arange(region_size)[:, None] - offset)
+                          * np.fft.fftfreq(n_items, d=factor))
+                data = np.tensordot(np.exp(-2j * np.pi * kernel), data,
+                                    axes=(1, -1))
+            local_corr = data.conj()
+            maxima = np.array(np.unravel_index(np.argmax(np.abs(local_corr)),
+                                               local_corr.shape), dtype=float)
+            shifts += (maxima - dftshift) / factor
+        dy, dx = map(float, shifts)
     masked = corr.copy()
     for yy in ((iy - 1) % corr.shape[0], iy, (iy + 1) % corr.shape[0]):
         for xx in ((ix - 1) % corr.shape[1], ix, (ix + 1) % corr.shape[1]):

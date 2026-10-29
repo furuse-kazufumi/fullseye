@@ -25866,7 +25866,15 @@
           "required": false,
           "range": "undocumented",
           "unit": "undocumented",
-          "default": "parabolic"
+          "default": "upsample"
+        },
+        {
+          "name": "upsample_factor",
+          "type": "int",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 100
         }
       ],
       "verified_executable": true,

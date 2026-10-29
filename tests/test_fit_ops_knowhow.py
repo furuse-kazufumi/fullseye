@@ -49,8 +49,8 @@ def _texture(shape=(96, 112)):
 
 
 @pytest.mark.parametrize("window,method,expected_error,grid_bias", [
-    ("hann", "parabolic", 0.1663, 0.1656),
-    (None, "parabolic", 0.1718, 0.1710),
+    ("hann", "parabola", 0.1663, 0.1656),
+    (None, "parabola", 0.1718, 0.1710),
     ("hann", "upsample", 0.0100, 0.0075),
     (None, "upsample", 0.0100, 0.0075),
 ])
@@ -76,13 +76,13 @@ def test_phase_shift_nonperiodic_crop_stays_within_measured_error():
     from scipy.ndimage import shift
     # A non-periodic spatial crop exposes the wrap boundary. On this fixed
     # broadband sample gives 0.196 px (Hann) and 0.193 px (no window) with the
-    # deliberately simple parabolic estimator.
+    # deliberately simple parabola estimator.
     a = np.random.default_rng(1).normal(size=(96, 112))
     truth = np.array([3.65, -4.2])
     b = shift(a, truth, order=3, mode="constant", cval=0.0)
-    eh = np.linalg.norm(np.array(list(filters_freq.phase_correlation_shift(a, b, "hann", .5)[k]
+    eh = np.linalg.norm(np.array(list(filters_freq.phase_correlation_shift(a, b, "hann", .5, "parabola")[k]
                                       for k in ("dy", "dx"))) + truth)
-    en = np.linalg.norm(np.array(list(filters_freq.phase_correlation_shift(a, b, None, .5)[k]
+    en = np.linalg.norm(np.array(list(filters_freq.phase_correlation_shift(a, b, None, .5, "parabola")[k]
                                       for k in ("dy", "dx"))) + truth)
     assert eh == pytest.approx(.1963, abs=5e-4)
     assert en == pytest.approx(.1927, abs=5e-4)
@@ -111,7 +111,20 @@ def test_phase_shift_upsample_honours_partial_whitening():
     assert half["dy"] == pytest.approx(-2.34)
 
 
-def test_phase_shift_default_needs_no_skimage_but_upsample_fails_closed(monkeypatch):
+@pytest.mark.parametrize("window", ["hann", None])
+def test_phase_shift_upsample_is_below_two_hundredths_and_beats_parabola(window):
+    a = np.random.default_rng(3).normal(size=(96, 112))
+    truth = np.array([2.35, -1.7])
+    b = np.fft.ifftn(fourier_shift(np.fft.fftn(a), truth)).real
+    errors = {}
+    for method in ("upsample", "parabola"):
+        got = filters_freq.phase_correlation_shift(a, b, window, .5, method)
+        errors[method] = np.linalg.norm(np.array([got["dy"], got["dx"]]) + truth)
+    assert errors["upsample"] <= .02
+    assert errors["upsample"] < errors["parabola"]
+
+
+def test_phase_shift_default_needs_no_skimage(monkeypatch):
     original_import = builtins.__import__
     def blocked(name, *args, **kwargs):
         if name.startswith("skimage"):
@@ -120,9 +133,22 @@ def test_phase_shift_default_needs_no_skimage_but_upsample_fails_closed(monkeypa
     monkeypatch.setattr(builtins, "__import__", blocked)
     a = np.arange(256, dtype=float).reshape(16, 16)
     assert filters_freq.phase_correlation_shift(a, np.roll(a, 2, 0), window=None)["dy"] == -2
-    with pytest.raises(ImportError, match="optional dependency"):
-        filters_freq.phase_correlation_shift(a, np.roll(a, 2, 0), window=None,
-                                             method="upsample")
+    assert filters_freq.phase_correlation_shift(a, np.roll(a, 2, 0), window=None,
+                                                method="upsample")["dy"] == -2
+
+
+def test_phase_shift_numpy_upsample_matches_skimage():
+    registration = pytest.importorskip("skimage.registration")
+    a = np.random.default_rng(3).normal(size=(96, 112))
+    truth = (2.35, -1.7)
+    b = np.fft.ifftn(fourier_shift(np.fft.fftn(a), truth)).real
+    got = filters_freq.phase_correlation_shift(a, b, None, .5)
+    fa, fb = np.fft.fftn(a), np.fft.fftn(b)
+    aa = np.fft.ifftn(fa / (np.abs(fa) ** .5 + 1e-12)).real
+    bb = np.fft.ifftn(fb / (np.abs(fb) ** .5 + 1e-12)).real
+    expected, _, _ = registration.phase_cross_correlation(
+        aa, bb, upsample_factor=100, normalization=None)
+    assert np.linalg.norm(np.array([got["dy"], got["dx"]]) - expected) <= .01
 
 
 def test_principal_fit_degeneracy_tests_are_coordinate_scale_invariant():

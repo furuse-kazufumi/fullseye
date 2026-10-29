@@ -13,21 +13,22 @@ version: 0.8.1  # fullseye lib version this note was generated for
 # phase_correlation_shift — FIT `registration` op
 
 - **データ種**: `image2d × image2d` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.phase_correlation_shift(image1, image2, window: 'str | None' = 'hann', whitening: 'float' = 0.5, method: 'str' = 'parabolic') -> 'dict'` (実装を直接呼ぶなら `import filters_freq; filters_freq.phase_correlation_shift(image1, image2, window: 'str | None' = 'hann', whitening: 'float' = 0.5, method: 'str' = 'parabolic') -> 'dict'`、台帳から引くなら `opsfit.get("phase_correlation_shift")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.phase_correlation_shift(image1, image2, window: 'str | None' = 'hann', whitening: 'float' = 0.5, method: 'str' = 'upsample', upsample_factor: 'int' = 100) -> 'dict'` (実装を直接呼ぶなら `import filters_freq; filters_freq.phase_correlation_shift(image1, image2, window: 'str | None' = 'hann', whitening: 'float' = 0.5, method: 'str' = 'upsample', upsample_factor: 'int' = 100) -> 'dict'`、台帳から引くなら `opsfit.get("phase_correlation_shift")`)
 
 ## 使い方
 
 2 枚の画像の位置合わせに必要なサブピクセル移動量を位相限定相関で求める。
 
-The default ``method="parabolic"`` reuses the whitening-aware periodic
-correlation surface from :func:`phase_correlation_fft` and refines its
-integer peak independently along each axis with the wrapped three-point
-parabola. ``method="upsample"`` instead uses scikit-image's 100x local
-upsampled DFT and fails closed with ``MissingDependencyError`` when that
-optional dependency is absent. On the fixed 96x112 truth gates, parabolic
-errors are 0.166 px (Hann) / 0.172 px (no window), versus 0.010 px for
-upsample with either window; the parabolic result is biased 0.166 / 0.171
-px toward the integer grid. The sign convention is explicit: when
+The default ``method="upsample"`` refines the whitening-aware periodic
+FFT peak by evaluating a 1.5-pixel neighbourhood with a matrix-multiply
+local DFT using only NumPy (``upsample_factor=100`` by default).
+``method="parabola"`` is faster, but its wrapped three-point parabola is
+biased about 0.166 px toward the integer grid. On the fixed 96x112 truth
+gates, parabola errors are 0.166 px (Hann) / 0.172 px (no window), versus
+0.010 px for upsampling with either window; upsampling is required to stay
+within 0.02 px and within 0.01 px of scikit-image when it is installed.
+The local DFT follows Guizar-Sicairos, Thurman & Fienup (2008), Optics
+Letters 33(2), 156-158, doi:10.1364/OL.33.000156. The sign convention is explicit: when
 ``image2 = shift(image1, d)``, the result is approximately ``-d``, so
 ``shift(image2, result)`` approximately equals ``image1``.
 Returns ``row_shift``/``col_shift`` (also ``dy``/``dx``), ``peak`` and
