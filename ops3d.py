@@ -312,6 +312,7 @@ _CATALOG = {
         ("fit_plane3", "measure3d", ["points"], "primitive", False),
         ("fit_sphere3", "measure3d", ["points"], "primitive", False),
         ("fit_circle3", "measure3d", ["points"], "primitive", False),
+        ("fit_surface_principal_axes", "measure3d", ["points"], "surface_poly", False),
         ("smallest_box3_axis", "measure3d", ["points"], "primitive", False),
         ("fit_box3", "measure3d", ["points"], "primitive", False),
         ("smallest_box3", "measure3d", ["points"], "primitive", False),
