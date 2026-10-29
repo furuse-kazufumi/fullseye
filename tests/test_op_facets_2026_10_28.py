@@ -199,7 +199,8 @@ def test_family_negative_examples_and_cpu_measurements():
     assert missing_exponents == []
     quick=timing["measurements"]["quicksort"]
     assert set(quick["complexity_exponents"]) == {"random","nearly_sorted","reverse","duplicates"}
-    assert quick["complexity_exponents"]["nearly_sorted"] > 1.2
+    assert quick["complexity_exponents"]["nearly_sorted"] < 1.25
+    assert quick["complexity_exponents"]["reverse"] < 1.25
     stability={n:next(p["value"] for p in timing["measurements"][n]["properties"] if p["name"]=="stable")
                for n in ("quicksort","heapsort","mergesort")}
     assert stability == {"quicksort":False,"heapsort":False,"mergesort":True}

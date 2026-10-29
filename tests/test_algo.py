@@ -743,6 +743,93 @@ def test_quicksort_handles_duplicates_in_reasonable_time():
     assert time.perf_counter() - t < 2.0
 
 
+def _quicksort_comparisons(values):
+    """Run the Python reference and return its key-comparison count."""
+    count = [0]
+
+    class Counted:
+        def __init__(self, value):
+            self.value = value
+
+        def __lt__(self, other):
+            count[0] += 1
+            return self.value < other.value
+
+        def __gt__(self, other):
+            count[0] += 1
+            return self.value > other.value
+
+    out = algo.py_fn("quicksort")([Counted(x) for x in values])
+    assert [x.value for x in out] == sorted(values)
+    return count[0]
+
+
+def _quicksort_complexity_inputs(n):
+    rng = random.Random(0x51A7 + n)
+    random_values = list(range(n))
+    rng.shuffle(random_values)
+    nearly_sorted = list(range(n))
+    for i in range(0, n - 1, max(2, n // 32)):
+        nearly_sorted[i], nearly_sorted[i + 1] = nearly_sorted[i + 1], nearly_sorted[i]
+    return {
+        "sorted": list(range(n)),
+        "reverse": list(range(n - 1, -1, -1)),
+        "nearly_sorted": nearly_sorted,
+        "random": random_values,
+        "duplicates": [rng.randrange(16) for _ in range(n)],
+        "all_equal": [7] * n,
+        "organ_pipe": list(range((n + 1) // 2)) + list(range(n // 2 - 1, -1, -1)),
+    }
+
+
+@pytest.mark.parametrize("pattern", [
+    "sorted", "reverse", "nearly_sorted", "random", "duplicates", "all_equal", "organ_pipe",
+])
+def test_quicksort_comparison_growth_is_subquadratic(pattern):
+    # Two sizes one decimal order apart make the fitted two-point exponent an
+    # intentionally one-sided regression gate. 1.25 leaves normal n*log(n)
+    # finite-size overhead room, but rejects the observed ~n^1.45 degeneration.
+    small, large = 512, 8192
+    inputs_small = _quicksort_complexity_inputs(small)[pattern]
+    inputs_large = _quicksort_complexity_inputs(large)[pattern]
+    c_small = _quicksort_comparisons(inputs_small)
+    c_large = _quicksort_comparisons(inputs_large)
+    exponent = math.log(c_large / c_small) / math.log(large / small)
+    assert exponent < 1.25, (pattern, c_small, c_large, exponent)
+
+
+def test_old_dnf_partition_rotates_sorted_right_half_and_skews_next_split():
+    # A small diagnostic probe for the failure mechanism. The initial suspicion
+    # was reversal, but measurement shows a rotation: the first greater key is
+    # repeatedly swapped and finishes at the far edge.
+    a = list(range(15))
+    pivot = a[len(a) // 2]
+    lt = i = 0
+    gt = len(a) - 1
+    while i <= gt:
+        if a[i] < pivot:
+            a[lt], a[i] = a[i], a[lt]
+            lt += 1
+            i += 1
+        elif a[i] > pivot:
+            a[i], a[gt] = a[gt], a[i]
+            gt -= 1
+        else:
+            i += 1
+    right = a[gt + 1:]
+    assert right == [9, 10, 11, 12, 13, 14, 8]
+
+    # Its next median-of-three pivot has only one key below it: a 1:5 split,
+    # rather than the balanced split the original sorted band would produce.
+    lo, hi = gt + 1, len(a) - 1
+    mid = lo + (hi - lo) // 2
+    trio = sorted((a[lo], a[mid], a[hi]))
+    next_pivot = trio[1]
+    below = sum(x < next_pivot for x in right)
+    above = sum(x > next_pivot for x in right)
+    assert (below, above) == (1, 5)
+
+
 @pytest.mark.parametrize("name", _REDUCES)
 def test_reductions_match_oracle(name):
     rng = random.Random(7)
