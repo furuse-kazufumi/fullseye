@@ -32,6 +32,39 @@
       "affects_numbers": false,
       "status": "applied"
     },
+    "find_ops_k": {
+      "default": 7,
+      "values": [
+        3,
+        5,
+        7,
+        10
+      ],
+      "meaning": "Default number of diverse operator proposals.",
+      "hide_from_ai": true,
+      "applied_by": [
+        "fullseye/opsearch.py",
+        "fullseye/mcp/server.py"
+      ],
+      "affects_numbers": false,
+      "status": "applied"
+    },
+    "find_ops_recipe_max": {
+      "default": 2,
+      "values": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "meaning": "Maximum recipe-derived proposals within the find_ops total.",
+      "hide_from_ai": true,
+      "applied_by": [
+        "fullseye/mcp/server.py"
+      ],
+      "affects_numbers": false,
+      "status": "applied"
+    },
     "gpu_idle_policy": {
       "default": "strict",
       "values": [
@@ -175,11 +208,12 @@
       "status": "applied"
     },
     "plan_k": {
-      "default": 5,
+      "default": 7,
       "values": [
         1,
         3,
         5,
+        7,
         10
       ],
       "meaning": "Maximum returned plans.",
