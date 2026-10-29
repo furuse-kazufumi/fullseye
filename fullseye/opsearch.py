@@ -89,22 +89,12 @@ def _identity_tables() -> tuple[dict[str, str], dict[str, list[str]]]:
     """Return a stable semantic/runtime identity and its aliases for every op."""
     edges = {e["op"]: e for e in _graph()["edges"]}
     summaries = {r["name"]: r.get("summary", "") for r in _load_json(PKG_CARDS).get("ops", [])}
-    keys = {}
-    for name, edge in edges.items():
-        target = edge.get("runtime_target") or edge.get("executor") or {}
-        target_key = (target.get("module"), target.get("callable"))
-        family = edge.get("family")
+    keys = {name: "op:" + name for name in edges}
+    for name in edges:
         text = summaries.get(name, "").lower()
-        identical = re.search(r"identical to\s+`?([a-z0-9_]+)", text)
+        identical = re.search(r"identical to\s+`*([a-z0-9_]+)", text)
         if identical:
-            key = "identical:" + identical.group(1)
-        elif family:
-            key = "family:" + str(family)
-        elif any(target_key):
-            key = "runtime:%s.%s" % target_key
-        else:
-            key = "op:" + name
-        keys[name] = key
+            keys[name] = "identical:" + identical.group(1)
     # Resolve 'identical to X' onto X's identity when possible.
     for name, key in list(keys.items()):
         if key.startswith("identical:") and key[10:] in keys:

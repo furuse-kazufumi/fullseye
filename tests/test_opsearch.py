@@ -120,6 +120,17 @@ def test_default_seven_are_distinct_implementations_and_report_aliases():
     assert any(row.get("same_as") for row in rows)
 
 
+def test_identity_folding_does_not_merge_generic_registry_wrappers():
+    identity, groups = opsearch._identity_tables()
+    # These closures dispatch many genuinely different implementations.  Their
+    # display names are not implementation identities.
+    for left, right in (("fill_up_shape", "boundary"),
+                        ("sk_remove_holes", "sk_area_opening"),
+                        ("gen_contour_region_xld", "select_shape_xld")):
+        assert identity[left] != identity[right]
+        assert right not in groups[identity[left]]
+
+
 def test_plans_have_machine_stages_and_one_line_comparison_hints():
     result = opsearch.plan("image", "region", goal="segment foreground",
                            constraints={"k": 7, "max_depth": 4, "timeout_ms": 5000})

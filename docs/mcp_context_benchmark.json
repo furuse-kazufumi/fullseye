@@ -10,8 +10,8 @@
     {
       "task": "surface dent from reflected fringes",
       "tool_schema_tokens": 1458,
-      "response_tokens": 283,
-      "total_tokens": 1741,
+      "response_tokens": 286,
+      "total_tokens": 1744,
       "planned": true,
       "expected": "deflectometry_phase_to_slope",
       "expected_rank": 1,
@@ -22,8 +22,8 @@
     {
       "task": "find scratches using polarization",
       "tool_schema_tokens": 1458,
-      "response_tokens": 170,
-      "total_tokens": 1628,
+      "response_tokens": 167,
+      "total_tokens": 1625,
       "planned": true,
       "expected": "polarization_dolp_map",
       "expected_rank": 1,
@@ -34,8 +34,8 @@
     {
       "task": "recover projected fringe height",
       "tool_schema_tokens": 1458,
-      "response_tokens": 148,
-      "total_tokens": 1606,
+      "response_tokens": 169,
+      "total_tokens": 1627,
       "planned": true,
       "expected": "decode_fringe",
       "expected_rank": 1,
@@ -46,8 +46,8 @@
     {
       "task": "locate a part for handling",
       "tool_schema_tokens": 1458,
-      "response_tokens": 150,
-      "total_tokens": 1608,
+      "response_tokens": 149,
+      "total_tokens": 1607,
       "planned": true,
       "expected": "shape_locate",
       "expected_rank": 1,
@@ -58,20 +58,20 @@
     {
       "task": "fast structured-light depth",
       "tool_schema_tokens": 1458,
-      "response_tokens": 148,
-      "total_tokens": 1606,
+      "response_tokens": 173,
+      "total_tokens": 1631,
       "planned": true,
       "expected": "decode_fringe",
-      "expected_rank": 1,
+      "expected_rank": 2,
       "ops": [
-        "decode_fringe"
+        "depth_from_focus"
       ]
     },
     {
       "task": "switch product and detect corners",
       "tool_schema_tokens": 1458,
-      "response_tokens": 352,
-      "total_tokens": 1810,
+      "response_tokens": 288,
+      "total_tokens": 1746,
       "planned": true,
       "expected": "cv_good_features",
       "expected_rank": 1,
@@ -81,5 +81,5 @@
     }
   ],
   "recall_at_7": 1.0,
-  "max_tokens": 1810
+  "max_tokens": 1746
 }

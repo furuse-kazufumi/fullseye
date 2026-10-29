@@ -116,7 +116,7 @@ def test_six_business_plans_put_grounded_main_op_in_results():
       ("map degree of polarization for surface scratches","polsweep","image","polarization_dolp_map"),
       ("measure weld bead height from projected stripes","images","depth","decode_fringe"),
       ("locate each part against its reference patch","image","match","ncc_locate"),
-      ("recover a fast depth map on the production line","images","depth","decode_fringe"),
+      ("recover a fast depth map from a focus stack on the production line","images","depth","depth_from_focus"),
       ("corner landmarks for tracking product pose","image","feature","cv_good_features")]
     results=[(main,opsearch.plan(have,want,constraints={"query":query,"max_depth":3,"k":5,"executable_only":False}))
              for query,have,want,main in tasks]
@@ -131,7 +131,7 @@ def test_hypergraph_plan_is_bounded_and_shared_by_both_directions():
                            constraints={"max_depth":4,"k":3,"executable_only":False})
     assert forward["ok"] and backward["ok"]
     assert "decode_fringe" in forward["plans"][0]["ops"]
-    assert "decode_fringe" in backward["plans"][0]["ops"]
+    assert "fringe_ftp_phase" in backward["plans"][0]["ops"]
     assert forward["search"]["expanded"] > 0
     capped=opsearch.plan("image","feature",goal="features",constraints={"max_expansions":1})
     assert capped["partial"]["limit_reached"] == "max_expansions"
@@ -279,7 +279,7 @@ def test_mcp_execution_is_probe_verified_and_runtime_targets_are_exact(tmp_path)
 
     from tools.gen_op_facets import VERIFIED_PYTHON
     cited_python={"polarization_render","polarization_dolp_map","decode_fringe",
-                  "deflectometry_phase_to_slope"}
+                  "deflectometry_phase_to_slope","fringe_ftp_phase","depth_from_focus"}
     assert VERIFIED_PYTHON == cited_python
     graph_python={e["op"] for e in verified if e.get("executor",{}).get("kind")=="python"}
     assert graph_python == cited_python

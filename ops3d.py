@@ -12,6 +12,8 @@ op の入力)を機械的に列挙・スコアリングでき、指数的な拡�
     ops3d.compatible("register_fpfh")       # 出力が別 op の入力になる後続候補
 """
 import numpy as np
+import sys
+from functools import wraps
 
 import match3d
 import feat_harris
@@ -23,6 +25,7 @@ import photometric
 import range_image
 import pcl_filter
 import fringe
+import reconstruction
 import deform3d
 import medial
 import metrics3d
@@ -88,10 +91,55 @@ import volrestore
 # --- 図注(2026-09-03): 3-D アンカーを射影して矢印・引き出し線・寸法を描く ---
 import annotate3d
 
+
+def fringe_ftp_phase(image, carrier_axis="x", carrier_period=None,
+                     bandwidth=.35, k=1.0, min_modulation=None):
+    """縞 1 枚から高さ・位相を Takeda の Fourier transform profilometry で復元する。"""
+    # ``None`` selects the fail-closed default.  This is an acceptance gate (it
+    # raises below threshold), not a continuous image-processing knob.
+    if min_modulation is None:
+        min_modulation = .05
+    return fringe.fringe_ftp_phase(
+        image, carrier_axis=carrier_axis, carrier_period=carrier_period,
+        bandwidth=bandwidth, k=k, min_modulation=min_modulation,
+        return_info=False)
+
+
+@wraps(reconstruction.depth_from_focus)
+def depth_from_focus(images, focus_positions=None):
+    """焦点を変えた画像から高さ・深さを画素ごとの最良合焦位置として推定する。
+
+    「焦点を変えた画像から高さ」「ピントを変えた複数画像から深さ」を求める
+    shape-from-focus の入口。各画素で Sum-Modified-Laplacian 合焦度が最大になる
+    スタック番号を返し、``focus_positions`` があれば物理位置へ置き換える。
+    テクスチャの無い領域は決められず先頭位置になるため、詳細な信頼度が必要なら
+    ``reconstruction.depth_from_focus`` を直接呼び ``sharpness`` も確認する。
+
+    S. K. Nayar and Y. Nakagawa, “Shape from Focus,” IEEE TPAMI 16(8),
+    824–831 (1994), doi:10.1109/34.308479.
+    """
+    return reconstruction.depth_from_focus(images, focus_positions=focus_positions)["depth"]
+
+
+# ``wraps`` makes the old HALCON facade and this typed door one identity; retain the
+# business-language summary used by MCP search instead of inheriting the lower-level text.
+depth_from_focus.__doc__ = """焦点を変えた画像から高さ・深さを画素ごとの最良合焦位置として推定する。
+
+「焦点を変えた画像から高さ」「ピントを変えた複数画像から深さ」を求める
+shape-from-focus の入口。詳細な信頼度が必要なら
+``reconstruction.depth_from_focus`` を直接呼び ``sharpness`` も確認する。
+"""
+# Keep this adapter as the executable target.  ``__wrapped__`` above is only the
+# cross-door identity marker; copying the wrapped module would bypass the depth
+# extraction and expose the lower-level result dictionary through MCP.
+depth_from_focus.__module__ = __name__
+depth_from_focus.__qualname__ = "depth_from_focus"
+
 _MOD = {"match3d": match3d, "feat_harris": feat_harris, "feat_spin": feat_spin,
         "feat_shot": feat_shot, "feat_fpfh": feat_fpfh, "fuse3d": fuse3d,
         "photometric": photometric, "range_image": range_image, "pcl_filter": pcl_filter,
-        "fringe": fringe, "deform3d": deform3d, "medial": medial,
+        "fringe": fringe, "reconstruction": reconstruction, "ops3d": sys.modules[__name__],
+        "deform3d": deform3d, "medial": medial,
         "metrics3d": metrics3d, "ransac_fit": ransac_fit, "edges3d": edges3d, "recon3d": recon3d,
         "curve3d": curve3d, "descriptors3d": descriptors3d, "bspline_surf": bspline_surf,
         "pnp3d": pnp3d, "regionprops3d": regionprops3d,
@@ -479,6 +527,8 @@ _CATALOG = {
         ("unwrap_phase_2d", "fringe", ["image2d"], "image2d", False),
         ("graycode_decode", "fringe", ["images"], "image2d", False),
         ("decode_fringe", "fringe", ["images"], "depth", False),
+        ("fringe_ftp_phase", "fringe", ["image2d"], "depth", False),
+        ("depth_from_focus", "ops3d", ["images"], "depth", False),
         ("synthesize_fringes", "fringe", ["image2d"], "images", False),
         ("absolute_phase", "fringe", ["image2d", "image2d"], "image2d", False),
         ("triangulate_column", "fringe", ["image2d"], "depth", False),
@@ -931,6 +981,8 @@ RESULT_ADAPTERS = {
     "photometric_stereo": lambda r: r[0] if isinstance(r, tuple) else r,
     "synthesize_fringes": lambda r: [r[i] for i in range(r.shape[0])]
     if hasattr(r, "shape") and getattr(r, "ndim", 0) == 3 else r,
+    "fringe_ftp_phase": lambda r: r[0] if isinstance(r, tuple) else r,
+    "depth_from_focus": lambda r: r["depth"] if isinstance(r, dict) else r,
     # torch Tensor を返す GPU op → numpy(catalog は配列型を宣言している)
     "edt_jfa": lambda r: r.detach().cpu().numpy() if hasattr(r, "detach") else r,
     "edt_jfa_vector": lambda r: r.detach().cpu().numpy() if hasattr(r, "detach") else r,

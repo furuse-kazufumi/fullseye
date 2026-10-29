@@ -625,9 +625,11 @@ def main():
     assert max(scale) / min(scale) > 1.2, "正規化係数がフレーム間で振れていない"
     # 7. 穴 (c): 非正規化の合焦指標は 1.0 で飽和する
     assert n_tied >= 3, "xcv2_lap_var が飽和しない —— 穴 (c) が直った?"
-    # 8. 穴 (a): per-pixel の焦点評価 op は公開 API に無い
-    assert "depth_from_focus" not in fs.ledger and "depth_from_focus" not in fs.op, \
-        "depth_from_focus が登録された —— 穴 (a) が直った?"
+    # 8. 旧版の穴 (a) は解消済み: per-pixel の焦点評価が台帳から届く
+    assert "depth_from_focus" in fs.ledger, "depth_from_focus が台帳から消えた"
+    public_depth = fs.ledger.depth_from_focus(stack, focus_positions=focus_mm)
+    assert public_depth.shape == depth.shape and np.isfinite(public_depth).all(), \
+        "公開 depth_from_focus が有限な深度画像を返さない"
     # 9. 穴 (d): defocus_blur に遮蔽が無い(手前の合焦面が奥のぼけに汚される)
     assert near[:, 100:112].std() < 0.97 * t2[:, 100:112].std(), \
         "手前の合焦面が汚染されていない —— 穴 (d) が直った?"
