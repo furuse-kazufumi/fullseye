@@ -366,8 +366,9 @@ def decode_fringe(phase_shift_images, ref_phase=None, k=1.0,
 
 
 def fringe_ftp_phase(image, carrier_axis="x", carrier_period=None,
-                     bandwidth=0.35, k=1.0, min_modulation=0.05):
-    """1 枚の搬送波縞から Takeda の Fourier transform profilometry で位相/高さを出す。
+                     bandwidth=0.35, k=1.0, min_modulation=0.05,
+                     return_info=False):
+    """縞 1 枚から高さ・位相を Takeda の Fourier transform profilometry で復元する。
 
     2-D FFT の直流から離れた片側一次スペクトルを窓で抜き、複素解析信号へ戻して
     位相を展開し、搬送波の線形ランプを除く。``carrier_axis`` は位相が増える方向
@@ -375,9 +376,12 @@ def fringe_ftp_phase(image, carrier_axis="x", carrier_period=None,
     正周波数側にある最大ピークから推定する。``bandwidth`` は搬送周波数に対する
     Gaussian 窓の標準偏差の比(0 < bandwidth < 1)。``k`` は rad から高さへの係数。
 
-    返り値は ``(height, info)``。``info`` は搬送波を除いた ``phase``、実際に使った
+    返り値は通常 ``height``。``return_info=True`` なら ``(height, info)`` となり、
+    ``info`` は搬送波を除いた ``phase``、実際に使った
     ``carrier_period``、``carrier_frequency``、``estimated_carrier``、解析信号の
     ``modulation`` を持つ。高さは既存の ``phase_to_height(phase, 0, k)`` で作る。
+
+    業務上の言い方では「縞 1 枚から高さ」「1枚の縞画像から位相」を求める op。
 
     1 枚で済む代わりに、対象位相の空間帯域が搬送波と直流/反対側サイドバンドの間に
     収まる必要がある。急な高さ、段差、オクルージョンでは帯域重なりと Itoh 条件違反で
@@ -466,7 +470,7 @@ def fringe_ftp_phase(image, carrier_axis="x", carrier_period=None,
         "modulation": amp,
         "relative_modulation": relative_mod,
     }
-    return height, info
+    return (height, info) if return_info else height
 
 
 # --------------------------------------------------------------------------- #
