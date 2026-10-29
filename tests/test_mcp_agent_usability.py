@@ -88,6 +88,16 @@ def test_zero_hit_type_filter_returns_routes_and_typed_unfiltered_top():
     assert len(str(result).encode("utf-8")) < 3000
 
 
+def test_zero_hit_rescue_is_visible_to_text_only_mcp_clients():
+    response = call_tool("fullseye_find_ops", {
+        "query": "threshold", "in_sort": "color", "out_sort": "region",
+    }, Catalog.load())
+    text = response["content"][0]["text"]
+    assert "絞らない上位: threshold(image→region)" in text
+    assert "変換: color → image は rgb1_to_gray" in text
+    assert len(text.splitlines()) <= 4
+
+
 def test_color_request_reports_gray_file_honestly_for_image_and_stack(tmp_path):
     import imgio
     path = tmp_path / "gray.png"

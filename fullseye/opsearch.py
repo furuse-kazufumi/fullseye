@@ -879,6 +879,16 @@ def _format(res: dict) -> str:
             lines.append("    " + (s if len(s) <= 160 else s[:157] + "..."))
         if o["note"]:
             lines.append("    note: " + o["note"])
+    if res.get("unfiltered_top"):
+        rows = res["unfiltered_top"][:3]
+        lines.append("絞らない上位: " + ", ".join(
+            "%s(%s→%s)" % (o["name"], o.get("in_sort") or "?", o.get("out_sort") or "?")
+            for o in rows))
+    if res.get("conversion_paths"):
+        paths = res["conversion_paths"][:2]
+        lines.append("変換: " + "; ".join(
+            "%s → %s は %s" % (path["from"], path["to"], " → ".join(path["ops"]))
+            for path in paths))
     if res.get("hint"):
         lines.append("hint: " + res["hint"])
     return "\n".join(lines)
