@@ -61,6 +61,9 @@ REF_PARAMETER_OVERRIDES = {
 DUPLICATE_EXEMPTIONS = {
     "gaussians_to_voxel": "chain_fuzz compatibility alias; first declaration is the public contract",
 }
+POLYMORPHIC_PASSTHROUGHS = {
+    "identity": "ops.py:_identity returns its input value unchanged",
+}
 
 def canonical_sort(value: str | None) -> str:
     value = (value or "untyped").strip()
@@ -85,6 +88,13 @@ def type_semantics(inputs: list[str], output: str) -> tuple[list[str], str, str,
                  "poly" if output == "poly" else
                  "unknown" if output == "unknown" or "unknown" in inputs else "typed")
     return inputs, output, semantics, bool(inputs)
+
+
+def passthrough_semantics(name: str, inputs: list[str], output: str) -> tuple[list[str], str]:
+    """Turn only source-backed identity contracts from historical ``any`` into poly."""
+    if name in POLYMORPHIC_PASSTHROUGHS and inputs == ["any"] and output == "any":
+        return ["poly"], "poly"
+    return inputs, output
 
 FAMILY_RULES = {
     "denoise": r"denois|noise.*(?:filter|remove|reduce)|median|bilateral|nlm|wiener",
@@ -309,6 +319,7 @@ def build() -> dict[str, object]:
         if name in DATA_INPUT_OVERRIDES:
             roles = [r for r, _s in DATA_INPUT_OVERRIDES[name]]
             ins = [canonical_sort(s) for _r, s in DATA_INPUT_OVERRIDES[name]]
+        ins, out = passthrough_semantics(name, ins, out)
         ins, out, semantics, consumes = type_semantics(ins, out)
         signature = (tuple(ins), out, category)
         if name in seen:
@@ -356,6 +367,8 @@ def build() -> dict[str, object]:
                 "parity": {"status": "unmeasured", "source": "accel.parity required"},
                 "gpu_timing": "unmeasured", "parameters": _param_metadata(name, category, knobs.get(name)),
                 "source": src}
+        if name in POLYMORPHIC_PASSTHROUGHS:
+            edge["type_evidence"] = POLYMORPHIC_PASSTHROUGHS[name]
         if roles:
             edge["input_roles"] = roles
         if name in REF_PARAMETER_OVERRIDES:
@@ -376,6 +389,7 @@ def build() -> dict[str, object]:
         ins = ([canonical_sort(x) for x in row.get("in_sorts", [])] if row.get("tier") == "nary"
                else split_inputs(row.get("in_sort")))
         out = canonical_sort(row.get("out_sort"))
+        ins, out = passthrough_semantics(name, ins, out)
         ins, out, semantics, consumes = type_semantics(ins, out)
         category = row.get("category") or "untyped"
         text = f"{name} {category}".lower()
@@ -389,6 +403,8 @@ def build() -> dict[str, object]:
                 "implementations": [{"backend": row.get("module") or "registry", "status": "available", "source": src}],
                 "parity": {"status": "unmeasured", "source": "accel.parity required"},
                 "gpu_timing": "unmeasured", "parameters": _param_metadata(name, category, knobs.get(name)), "source": src}
+        if name in POLYMORPHIC_PASSTHROUGHS:
+            edge["type_evidence"] = POLYMORPHIC_PASSTHROUGHS[name]
         edges.append(edge)
         produced[out] += 1; consumed.update(ins)
         if fam:

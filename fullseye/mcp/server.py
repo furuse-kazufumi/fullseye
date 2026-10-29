@@ -1117,7 +1117,8 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
         if not explicit:
             first=checked["errors"][0]
             op=a["stages"][first.get("stage",1)-1].get("op") if first.get("stage") else "pipeline"
-            raise ArgError("段 %s %s: %s"%(first.get("stage",0),op,
+            label="型の不一致: " if first.get("reason")=="sort_mismatch" else ""
+            raise ArgError("%s段 %s %s: %s"%(label,first.get("stage",0),op,
                 json.dumps(first,ensure_ascii=False)))
         return _tool_error(json.dumps(checked,ensure_ascii=False),checked)
     outputs=a.get("outputs") or (["stage:%d"%len(a["stages"])] if a["stages"] else [])

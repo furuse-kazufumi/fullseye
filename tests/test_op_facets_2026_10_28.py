@@ -382,7 +382,11 @@ def test_priority_queue_planner_replays_backward_derivations_forward():
 
 def test_round3_type_truth_uses_aliases_and_one_parameter_schema():
     graph=load("OP_GRAPH.json")
-    assert [e["op"] for e in graph["edges"] if e["type_semantics"]=="poly"] == []
+    polymorphic=[e for e in graph["edges"] if e["type_semantics"]=="poly"]
+    assert [e["op"] for e in polymorphic] == ["identity"]
+    identity=polymorphic[0]
+    assert identity["inputs"] == ["poly"] and identity["output"] == "poly"
+    assert identity["type_evidence"] == "ops.py:_identity returns its input value unchanged"
     assert {graph["sort_aliases"][x] for x in ("images","video")} == {"seq<image>"}
     python_edges=[e for e in graph["edges"] if e.get("executor",{}).get("kind")=="python"]
     registry_edges=[e for e in graph["edges"] if e.get("executor",{}).get("kind")=="registry"]

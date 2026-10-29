@@ -352,7 +352,7 @@
     }
   },
   "counts": {
-    "nodes": 100,
+    "nodes": 101,
     "edges": 3604,
     "conversion_pairs": 395,
     "conversion_edge_incidence": 2336
@@ -997,6 +997,17 @@
       "source": "chain_fuzz catalog"
     },
     {
+      "sort": "poly",
+      "container": "structured_value",
+      "size_hint": "input-dependent",
+      "produced_by": 1,
+      "consumed_by": 1,
+      "generator": false,
+      "type_check": false,
+      "choose_when": "undocumented",
+      "source": "chain_fuzz catalog"
+    },
+    {
       "sort": "poly_surface",
       "container": "structured_value",
       "size_hint": "input-dependent",
@@ -1396,8 +1407,8 @@
       "sort": "unknown",
       "container": "structured_value",
       "size_hint": "input-dependent",
-      "produced_by": 92,
-      "consumed_by": 159,
+      "produced_by": 91,
+      "consumed_by": 158,
       "generator": false,
       "type_check": false,
       "choose_when": "undocumented",
@@ -208507,14 +208518,14 @@
     {
       "op": "identity",
       "inputs": [
-        "unknown"
+        "poly"
       ],
-      "output": "unknown",
+      "output": "poly",
       "category": "misc",
       "family": null,
       "family_candidate": null,
       "family_candidate_source": null,
-      "type_semantics": "unknown",
+      "type_semantics": "poly",
       "consumes_input": true,
       "executable": true,
       "compute": {
@@ -208543,6 +208554,7 @@
           "kind": "unused"
         }
       },
+      "type_evidence": "ops.py:_identity returns its input value unchanged",
       "executor": {
         "kind": "registry",
         "alias": "identity",
