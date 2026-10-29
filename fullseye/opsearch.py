@@ -169,7 +169,14 @@ def _hypergraph_plans(starts: list[str], want: str, query: str, *, executable_on
                       allow_sources: bool) -> tuple[list[dict], dict]:
     """Knuth-style relaxation: retain bounded derivations per type, never type sets."""
     graph = _graph()
-    scores = {r["name"]: r["score"] for r in search_ops(query, k=len(graph["edges"]))["ops"]}
+    score_rows = search_ops(query, k=len(graph["edges"]))["ops"]
+    scores = {r["name"]: r["score"] for r in score_rows}
+    identities, groups = _identity_tables()
+    # Search presents one representative per implementation, but planning
+    # still needs the representative's relevance on every executable alias.
+    for row in score_rows:
+        for alias in groups.get(identities.get(row["name"]), ()):
+            scores.setdefault(alias, row["score"])
     # Generated ledgers can lag behind the canonical sort vocabulary (for
     # example OP_SEARCH used ``images`` while OP_GRAPH used ``seq<image>``).
     # Normalize both graph sides here, rather than relying on every generator
