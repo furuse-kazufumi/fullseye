@@ -335,7 +335,9 @@ py-modules = [
               # knobs 欄が読む(2026-09-20、GenSpark 第 18〜20 報 I1)。
               "data/op_knob.json",
               # 意味で op を引く検索の索引(6 言語の要約。fullseye.opsearch / fullseye-rag search、2026-10-07)
-              "data/OP_SEARCH.json"]
+              "data/OP_SEARCH.json", "data/OP_CARDS.json", "data/OP_PROBE.json",
+              "data/OP_GRAPH.json", "data/OP_FAMILIES.json", "data/OP_DEVICE.json", "data/OP_SORTS.json",
+              "data/OP_SHAPES.json", "data/OP_PATTERNS.json", "data/SYSTEM_PARAMS.json"]
 # Studio runtime assets shipped inside the `studio_assets` package so an installed
 # wheel has localisation, per-operator help, and the bundled sample images (the
 # Studio degrades to English-only / no-help / no-samples without them).

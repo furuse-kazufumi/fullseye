@@ -38,7 +38,7 @@ if _ROOT not in sys.path:
     sys.path.insert(0, _ROOT)
 
 from fullseye.mcp.catalog import NOTE_KEYS, OP_INDEX, OP_KNOB, OPS_DOCS, PKG_INDEX, PKG_KNOBS, PKG_NOTES, scan_notes  # noqa: E402
-from fullseye.opsearch import PKG_SEARCH  # noqa: E402
+from fullseye.opsearch import PKG_CARDS, PKG_PROBE, PKG_SEARCH  # noqa: E402
 
 DATA_DIR = os.path.join(_ROOT, "fullseye", "data")
 
@@ -213,6 +213,67 @@ def build_search() -> dict:
             "ops": rows}
 
 
+def build_cards(search: dict, knobs: list) -> dict:
+    """Build compact, stable cards for small-context models."""
+    kt = {r.get("op"): r for r in knobs}
+    rows = []
+    for r in search["ops"]:
+        name, kr = r["n"], kt.get(r["n"]) or {}
+        card = {"name": name, "in_sort": r.get("i"), "out_sort": r.get("o"),
+                "summary": ((r.get("s") or {}).get("en") or (r.get("s") or {}).get("ja") or "")[:220],
+                "knobs": {"a": kr.get("a_kind") or "unspecified",
+                            "b": "unused" if kr.get("b_used") is False else "unspecified"},
+                "cautions": (["type metadata is incomplete"] if not r.get("i") or not r.get("o") else []) +
+                             (["knob probe: %s" % kr["status"]] if kr.get("status") not in (None, "determined") else []),
+                "call": "fullseye.apply(value, %r, 0.5, 0.5)" % name}
+        card["tokens"] = max(1, (len(json.dumps(card, ensure_ascii=False)) + 3) // 4)
+        rows.append(card)
+    return {"generated_by": "tools/gen_mcp_data.py", "n_ops": len(rows), "ops": rows}
+
+
+def build_probe(search: dict) -> dict:
+    """Publish a CPU-only one-shot probe; a failure describes this input, not the op."""
+    import warnings
+    import numpy as np
+    import op_probe
+    import ops
+    os.environ.setdefault("CUDA_VISIBLE_DEVICES", "-1")
+    registry = {o.name: o for o in ops.REGISTRY}
+    out = []
+    for name in sorted(r["n"] for r in search["ops"]):
+        op = registry.get(name)
+        if op is None:
+            out.append({"name": name, "status": "not_in_registry", "reason": "not executable by fullseye.apply"})
+            continue
+        input_error = None
+        try:
+            value = op_probe.sample_input(op.in_sort, np.random.default_rng(20261028), structured=True)
+        except Exception as exc:
+            value, input_error = None, "%s: %s" % (type(exc).__name__, str(exc)[:160])
+        if value is None:
+            out.append({"name": name, "status": "input_unavailable", "in_sort": op.in_sort,
+                        "reason": input_error or "no representative input for this sort"})
+            continue
+        try:
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                result = op.fn(value, 0.5, 0.5)
+            arrays = ([result] if isinstance(result, np.ndarray) else
+                      [v for v in result.values() if isinstance(v, np.ndarray)] if isinstance(result, dict) else [])
+            bad = any(a.dtype.kind in "fc" and not np.isfinite(a).all() for a in arrays)
+            status, reason = (("nonfinite", "representative input produced NaN or infinity") if bad else
+                              ("shape_mismatch", "representative input produced no value") if result is None else ("ok", None))
+        except Exception as exc:
+            status, reason = "exception", "%s: %s" % (type(exc).__name__, str(exc)[:240])
+        row = {"name": name, "status": status, "in_sort": op.in_sort, "out_sort": op.out_sort,
+               "probe_input": "op_probe.sample_input(%r, structured=True)" % op.in_sort}
+        if reason:
+            row["reason"] = reason
+        out.append(row)
+    return {"generated_by": "tools/gen_mcp_data.py", "probe": "CPU, a=b=0.5, representative input",
+            "n_ops": len(out), "ops": out}
+
+
 def _dump_compact(obj) -> str:
     # 1 op 1 行(差分が読める)で、行の中は詰める —— indent=1 だと 6 言語ぶんで wheel が太る
     head = {k: v for k, v in obj.items() if k != "ops"}
@@ -228,8 +289,11 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--check", action="store_true", help="書かずに一致を確かめる(不一致で exit 1)")
     a = ap.parse_args(argv)
+    search, knobs = build_search(), build_knobs()
     targets = {PKG_INDEX: _dump(build_index()), PKG_NOTES: _dump(build_notes()),
-               PKG_KNOBS: _dump(build_knobs()), PKG_SEARCH: _dump_compact(build_search())}
+               PKG_KNOBS: _dump(knobs), PKG_SEARCH: _dump_compact(search),
+               PKG_CARDS: _dump_compact(build_cards(search, knobs)),
+               PKG_PROBE: _dump_compact(build_probe(search))}
     os.makedirs(DATA_DIR, exist_ok=True)
     rc = 0
     for name, text in targets.items():

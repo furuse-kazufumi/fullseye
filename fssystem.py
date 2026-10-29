@@ -62,7 +62,7 @@ import contextvars
 
 __all__ = [
     "SYSTEM_PARAMS", "set_system", "get_system", "query_system",
-    "system", "reset_system", "system_snapshot",
+    "system", "reset_system", "system_snapshot", "PROFILES", "save_profile", "resolve_profile",
 ]
 
 
@@ -126,7 +126,66 @@ SYSTEM_PARAMS = {
             "skip を設定しても順位は変わらない。"
         ),
     },
+    "plan_k": {"values": (1, 3, 5, 10), "default": 5, "tightens_only": True,
+               "affects_numbers": False, "applied_by": ("fullseye/opsearch.py",), "doc": "Maximum returned plans."},
+    "plan_max_depth": {"values": (2, 4, 8, 16), "default": 4, "tightens_only": True,
+                       "affects_numbers": False, "applied_by": ("fullseye/opsearch.py",), "doc": "Maximum hypergraph depth."},
+    "plan_max_expansions": {"values": (1000, 10000, 50000, 100000), "default": 50000, "tightens_only": True,
+                            "affects_numbers": False, "applied_by": ("fullseye/opsearch.py",), "doc": "Planner expansion cap."},
+    "plan_timeout_ms": {"values": (100, 500, 900, 2000), "default": 900, "tightens_only": True,
+                        "affects_numbers": False, "applied_by": ("fullseye/opsearch.py",), "doc": "Planner wall-time cap."},
+    "mcp_response_budget": {"values": (16000, 128000, 256000, 512000), "default": 512000, "tightens_only": True,
+                            "affects_numbers": False, "applied_by": ("fullseye/mcp/server.py",), "doc": "Structured response byte cap."},
+    "mcp_body_mode": {"values": ("compact", "duplicate"), "default": "compact", "tightens_only": False,
+                      "affects_numbers": False, "applied_by": ("fullseye/mcp/server.py",), "doc": "Avoid duplicating structured JSON in text."},
+    "mcp_handle_max_bytes": {"values": (67108864, 134217728, 268435456), "default": 134217728, "tightens_only": True,
+                              "affects_numbers": False, "applied_by": ("fullseye/mcp/handles.py",), "doc": "LRU byte cap for live MCP handles."},
+    "mcp_pipeline_max_intermediate_bytes": {"values": (67108864, 134217728, 268435456), "default": 134217728, "tightens_only": True,
+                              "affects_numbers": False, "applied_by": ("fullseye/mcp/server.py",), "doc": "Cumulative byte cap for outputs produced by one MCP pipeline request."},
+    "mcp_stack_max_pixels": {"values": (16777216, 33554432, 67108864), "default": 33554432, "tightens_only": True,
+                              "affects_numbers": False, "applied_by": ("fullseye/mcp/server.py",), "doc": "Pixel cap for MCP image loads, stacks, and operation outputs."},
+    "pipeline_max_stages": {"values": (16, 32, 64), "default": 64, "tightens_only": True,
+                            "affects_numbers": False, "applied_by": ("fullseye/mcp/server.py",), "doc": "Pipeline stage cap."},
+    "random_seed": {"values": (0, 1, 42), "default": 0, "tightens_only": False,
+                    "affects_numbers": True, "applied_by": None, "doc": "Reserved default seed; stochastic ops receive profile seeds explicitly."},
+    "tile_size": {"values": (256, 512, 1024), "default": 512, "tightens_only": False,
+                  "affects_numbers": False, "applied_by": None, "doc": "Reserved large-image tile edge."},
+    "border_policy": {"values": ("reflect", "nearest", "constant"), "default": "reflect", "tightens_only": False,
+                      "affects_numbers": True, "applied_by": None, "doc": "Reserved neighborhood border policy."},
+    "numeric_floor": {"values": (1e-15, 1e-12, 1e-9), "default": 1e-12, "tightens_only": False,
+                      "affects_numbers": True, "applied_by": None, "doc": "Reserved numerical denominator floor."},
+    "iteration_limit": {"values": (50, 100, 500), "default": 100, "tightens_only": True,
+                        "affects_numbers": False, "applied_by": None, "doc": "Reserved iterative solver cap."},
+    "gpu_idle_policy": {"values": ("strict", "disabled"), "default": "strict", "tightens_only": True,
+                        "affects_numbers": False, "applied_by": ("tools/measure_device_crossover.py",), "doc": "GPU measurement admission policy."},
 }
+
+PROFILES = {
+    "deflectometry_rig": {"width_mm":300.0,"height_mm":200.0,"period_mm":10.0,
+                           "phase_steps":4,"orientation":"xy","decode_k":1.0},
+    "camera_default": {"K":[[1000.0,0.0,512.0],[0.0,1000.0,384.0],[0.0,0.0,1.0]]},
+    "product_default": {"material":"generic_glass","refractive_index":1.5,
+                         "detection_threshold":0.5,"tolerance_mm":0.1},
+    "simulation_default": {"noise_sigma":0.0,"bits":12,"seed":0},
+}
+
+def save_profile(name, values):
+    if not isinstance(name,str) or not name or "." in name or not isinstance(values,dict):
+        raise ValueError("profile requires a simple name and object values")
+    PROFILES[name]=dict(values)
+
+def resolve_profile(reference):
+    if not isinstance(reference,str) or "." not in reference:
+        raise ValueError("profile reference must be '<name>.<item>'")
+    name,path=reference.split(".",1)
+    if name not in PROFILES:
+        raise ValueError("unknown profile %r; known: %s"%(name,sorted(PROFILES)))
+    value=PROFILES[name]
+    for part in path.split("."):
+        if not isinstance(value,dict) or part not in value:
+            raise ValueError("unknown profile item %r in %s"%(path,name))
+        value=value[part]
+    return value
 
 _VARS = {
     name: contextvars.ContextVar(f"fssystem.{name}", default=spec["default"])

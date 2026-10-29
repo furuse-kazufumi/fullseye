@@ -1,0 +1,834 @@
+{
+  "generated_by": "tools/measure_op_families.py",
+  "code_sha256": "1672505a6cae23b5f1ee57b4bf207f3769fea3c7b4e1deeb6fb6ecdb2e2d8c8e",
+  "environment": {
+    "platform": "Windows-10-10.0.26300-SP0",
+    "python": "3.11.9",
+    "numpy": "2.4.6"
+  },
+  "measurements": {
+    "gaussian": {
+      "status": "measured",
+      "input_unit": "pixels",
+      "sizes": [
+        {
+          "pixels": 65536,
+          "width": 256,
+          "height": 256,
+          "ms": 0.5136000108905137
+        },
+        {
+          "pixels": 262144,
+          "width": 512,
+          "height": 512,
+          "ms": 2.6599999982863665
+        },
+        {
+          "pixels": 589824,
+          "width": 768,
+          "height": 768,
+          "ms": 5.694499996025115
+        }
+      ],
+      "peak_bytes": 5309842,
+      "complexity_exponent": 1.1,
+      "quality": {
+        "status": "measured",
+        "probes": [
+          {
+            "probe": 1,
+            "metric": "psnr",
+            "value": 20.322694187465558
+          },
+          {
+            "probe": 2,
+            "metric": "psnr",
+            "value": 20.30645812488161
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "deterministic",
+          "value": true,
+          "source": "two actual outputs on identical input"
+        }
+      ]
+    },
+    "median": {
+      "status": "measured",
+      "input_unit": "pixels",
+      "sizes": [
+        {
+          "pixels": 65536,
+          "width": 256,
+          "height": 256,
+          "ms": 30.25270003126934
+        },
+        {
+          "pixels": 262144,
+          "width": 512,
+          "height": 512,
+          "ms": 122.13780003366992
+        },
+        {
+          "pixels": 589824,
+          "width": 768,
+          "height": 768,
+          "ms": 270.5644000088796
+        }
+      ],
+      "peak_bytes": 5309900,
+      "complexity_exponent": 1.0,
+      "quality": {
+        "status": "measured",
+        "probes": [
+          {
+            "probe": 1,
+            "metric": "psnr",
+            "value": 28.100069433391035
+          },
+          {
+            "probe": 2,
+            "metric": "psnr",
+            "value": 27.861691128576066
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "deterministic",
+          "value": true,
+          "source": "two actual outputs on identical input"
+        }
+      ]
+    },
+    "bilateral": {
+      "status": "measured",
+      "input_unit": "pixels",
+      "sizes": [
+        {
+          "pixels": 65536,
+          "width": 256,
+          "height": 256,
+          "ms": 7.597100047860295
+        },
+        {
+          "pixels": 262144,
+          "width": 512,
+          "height": 512,
+          "ms": 124.20990003738552
+        },
+        {
+          "pixels": 589824,
+          "width": 768,
+          "height": 768,
+          "ms": 275.91749996645376
+        }
+      ],
+      "peak_bytes": 28340128,
+      "complexity_exponent": 1.68,
+      "quality": {
+        "status": "measured",
+        "probes": [
+          {
+            "probe": 1,
+            "metric": "psnr",
+            "value": 26.40311342054713
+          },
+          {
+            "probe": 2,
+            "metric": "psnr",
+            "value": 26.28788894190755
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "deterministic",
+          "value": true,
+          "source": "two actual outputs on identical input"
+        }
+      ]
+    },
+    "canny": {
+      "status": "measured",
+      "input_unit": "pixels",
+      "sizes": [
+        {
+          "pixels": 65536,
+          "width": 256,
+          "height": 256,
+          "ms": 1.2832999927923083
+        },
+        {
+          "pixels": 262144,
+          "width": 512,
+          "height": 512,
+          "ms": 8.68670002091676
+        },
+        {
+          "pixels": 589824,
+          "width": 768,
+          "height": 768,
+          "ms": 22.127299977000803
+        }
+      ],
+      "peak_bytes": 18874752,
+      "complexity_exponent": 1.3,
+      "quality": {
+        "status": "measured",
+        "probes": [
+          {
+            "probe": 1,
+            "metric": "boundary_f1",
+            "value": 0.6189376443418014
+          },
+          {
+            "probe": 2,
+            "metric": "boundary_f1",
+            "value": 0.6225319396051103
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "deterministic",
+          "value": true,
+          "source": "two actual outputs on identical input"
+        }
+      ]
+    },
+    "cv_canny": {
+      "status": "measured",
+      "input_unit": "pixels",
+      "sizes": [
+        {
+          "pixels": 65536,
+          "width": 256,
+          "height": 256,
+          "ms": 0.6542999763041735
+        },
+        {
+          "pixels": 262144,
+          "width": 512,
+          "height": 512,
+          "ms": 2.9190999921411276
+        },
+        {
+          "pixels": 589824,
+          "width": 768,
+          "height": 768,
+          "ms": 6.3180000288411975
+        }
+      ],
+      "peak_bytes": 9437652,
+      "complexity_exponent": 1.04,
+      "quality": {
+        "status": "measured",
+        "probes": [
+          {
+            "probe": 1,
+            "status": "unmeasured",
+            "reason": "synthetic boundary probe produced zero F1"
+          },
+          {
+            "probe": 2,
+            "status": "unmeasured",
+            "reason": "synthetic boundary probe produced zero F1"
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "deterministic",
+          "value": true,
+          "source": "two actual outputs on identical input"
+        }
+      ]
+    },
+    "threshold": {
+      "status": "measured",
+      "input_unit": "pixels",
+      "sizes": [
+        {
+          "pixels": 65536,
+          "width": 256,
+          "height": 256,
+          "ms": 0.057399971410632133
+        },
+        {
+          "pixels": 262144,
+          "width": 512,
+          "height": 512,
+          "ms": 0.7534999749623239
+        },
+        {
+          "pixels": 589824,
+          "width": 768,
+          "height": 768,
+          "ms": 1.8724999972619116
+        }
+      ],
+      "peak_bytes": 6488448,
+      "complexity_exponent": 1.62,
+      "quality": {
+        "status": "measured",
+        "probes": [
+          {
+            "probe": 1,
+            "metric": "iou",
+            "value": 1.0
+          },
+          {
+            "probe": 2,
+            "metric": "iou",
+            "value": 1.0
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "deterministic",
+          "value": true,
+          "source": "two actual outputs on identical input"
+        }
+      ]
+    },
+    "otsu": {
+      "status": "measured",
+      "input_unit": "pixels",
+      "sizes": [
+        {
+          "pixels": 65536,
+          "width": 256,
+          "height": 256,
+          "ms": 0.38680003490298986
+        },
+        {
+          "pixels": 262144,
+          "width": 512,
+          "height": 512,
+          "ms": 2.444899990223348
+        },
+        {
+          "pixels": 589824,
+          "width": 768,
+          "height": 768,
+          "ms": 5.890699976589531
+        }
+      ],
+      "peak_bytes": 10045134,
+      "complexity_exponent": 1.25,
+      "quality": {
+        "status": "measured",
+        "probes": [
+          {
+            "probe": 1,
+            "metric": "iou",
+            "value": 1.0
+          },
+          {
+            "probe": 2,
+            "metric": "iou",
+            "value": 1.0
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "deterministic",
+          "value": true,
+          "source": "two actual outputs on identical input"
+        }
+      ]
+    },
+    "sk_sauvola": {
+      "status": "measured",
+      "input_unit": "pixels",
+      "sizes": [
+        {
+          "pixels": 65536,
+          "width": 256,
+          "height": 256,
+          "ms": 1.1003999970853329
+        },
+        {
+          "pixels": 262144,
+          "width": 512,
+          "height": 512,
+          "ms": 13.645800005178899
+        },
+        {
+          "pixels": 589824,
+          "width": 768,
+          "height": 768,
+          "ms": 32.61799999745563
+        }
+      ],
+      "peak_bytes": 33365868,
+      "complexity_exponent": 1.57,
+      "quality": {
+        "status": "measured",
+        "probes": [
+          {
+            "probe": 1,
+            "metric": "iou",
+            "value": 0.3992673992673993
+          },
+          {
+            "probe": 2,
+            "metric": "iou",
+            "value": 0.3992256889091323
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "deterministic",
+          "value": true,
+          "source": "two actual outputs on identical input"
+        }
+      ]
+    },
+    "cv_erode": {
+      "status": "measured",
+      "input_unit": "pixels",
+      "sizes": [
+        {
+          "pixels": 65536,
+          "width": 256,
+          "height": 256,
+          "ms": 0.15649996930733323
+        },
+        {
+          "pixels": 262144,
+          "width": 512,
+          "height": 512,
+          "ms": 0.9492000099271536
+        },
+        {
+          "pixels": 589824,
+          "width": 768,
+          "height": 768,
+          "ms": 2.344299980904907
+        }
+      ],
+      "peak_bytes": 5309602,
+      "complexity_exponent": 1.24,
+      "quality": {
+        "status": "measured",
+        "probes": [
+          {
+            "probe": 1,
+            "metric": "iou",
+            "value": 0.8345444382336501
+          },
+          {
+            "probe": 2,
+            "metric": "iou",
+            "value": 0.8345444382336501
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "deterministic",
+          "value": true,
+          "source": "two actual outputs on identical input"
+        }
+      ]
+    },
+    "cv_dilate": {
+      "status": "measured",
+      "input_unit": "pixels",
+      "sizes": [
+        {
+          "pixels": 65536,
+          "width": 256,
+          "height": 256,
+          "ms": 0.14990003546699882
+        },
+        {
+          "pixels": 262144,
+          "width": 512,
+          "height": 512,
+          "ms": 0.8677999721840024
+        },
+        {
+          "pixels": 589824,
+          "width": 768,
+          "height": 768,
+          "ms": 2.1572999539785087
+        }
+      ],
+      "peak_bytes": 5309602,
+      "complexity_exponent": 1.22,
+      "quality": {
+        "status": "measured",
+        "probes": [
+          {
+            "probe": 1,
+            "metric": "iou",
+            "value": 0.8482693219535324
+          },
+          {
+            "probe": 2,
+            "metric": "iou",
+            "value": 0.8482693219535324
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "deterministic",
+          "value": true,
+          "source": "two actual outputs on identical input"
+        }
+      ]
+    },
+    "unwrap_phase_2d": {
+      "status": "unavailable",
+      "reason": "not in executable 2-D registry"
+    },
+    "xsk_unwrap_phase": {
+      "status": "measured",
+      "input_unit": "pixels",
+      "sizes": [
+        {
+          "pixels": 65536,
+          "width": 256,
+          "height": 256,
+          "ms": 15.592599986121058
+        },
+        {
+          "pixels": 262144,
+          "width": 512,
+          "height": 512,
+          "ms": 70.69940003566444
+        },
+        {
+          "pixels": 589824,
+          "width": 768,
+          "height": 768,
+          "ms": 190.36000000778586
+        }
+      ],
+      "peak_bytes": 19465488,
+      "complexity_exponent": 1.13,
+      "quality": {
+        "status": "unmeasured",
+        "reason": "no valid synthetic ground-truth metric for phase unwrapping"
+      },
+      "properties": [
+        {
+          "name": "deterministic",
+          "value": true,
+          "source": "two actual outputs on identical input"
+        }
+      ]
+    },
+    "decode_fringe": {
+      "status": "unavailable",
+      "reason": "not in executable 2-D registry"
+    },
+    "micro_phase_decode": {
+      "status": "unavailable",
+      "reason": "not in executable 2-D registry"
+    },
+    "quicksort": {
+      "status": "measured",
+      "input_unit": "items",
+      "cases": [
+        {
+          "pattern": "random",
+          "items": 1000,
+          "ms": 0.5849000299349427
+        },
+        {
+          "pattern": "random",
+          "items": 10000,
+          "ms": 7.733699982054532
+        },
+        {
+          "pattern": "random",
+          "items": 100000,
+          "ms": 99.07260001637042
+        },
+        {
+          "pattern": "nearly_sorted",
+          "items": 1000,
+          "ms": 0.9649000130593777
+        },
+        {
+          "pattern": "nearly_sorted",
+          "items": 10000,
+          "ms": 27.11620001355186
+        },
+        {
+          "pattern": "nearly_sorted",
+          "items": 100000,
+          "ms": 871.297100035008
+        },
+        {
+          "pattern": "reverse",
+          "items": 1000,
+          "ms": 0.8331999997608364
+        },
+        {
+          "pattern": "reverse",
+          "items": 10000,
+          "ms": 20.248199987690896
+        },
+        {
+          "pattern": "reverse",
+          "items": 100000,
+          "ms": 629.3063999619335
+        },
+        {
+          "pattern": "duplicates",
+          "items": 1000,
+          "ms": 0.2389999572187662
+        },
+        {
+          "pattern": "duplicates",
+          "items": 10000,
+          "ms": 2.4815999786369503
+        },
+        {
+          "pattern": "duplicates",
+          "items": 100000,
+          "ms": 21.82540000649169
+        }
+      ],
+      "complexity_exponents": {
+        "random": 1.11,
+        "nearly_sorted": 1.48,
+        "reverse": 1.44,
+        "duplicates": 0.98
+      },
+      "complexity_exponent": 1.11,
+      "quality": {
+        "status": "measured",
+        "probes": [
+          {
+            "pattern": "duplicates",
+            "correct": true
+          },
+          {
+            "pattern": "reverse",
+            "correct": true
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "deterministic",
+          "value": true,
+          "source": "two actual outputs on identical input"
+        },
+        {
+          "name": "stable",
+          "value": false,
+          "source": "keyed equal-key order probe"
+        }
+      ]
+    },
+    "heapsort": {
+      "status": "measured",
+      "input_unit": "items",
+      "cases": [
+        {
+          "pattern": "random",
+          "items": 1000,
+          "ms": 0.9226000402122736
+        },
+        {
+          "pattern": "random",
+          "items": 10000,
+          "ms": 12.984500033780932
+        },
+        {
+          "pattern": "random",
+          "items": 100000,
+          "ms": 177.05830000340939
+        },
+        {
+          "pattern": "nearly_sorted",
+          "items": 1000,
+          "ms": 0.9742000256665051
+        },
+        {
+          "pattern": "nearly_sorted",
+          "items": 10000,
+          "ms": 13.547100010327995
+        },
+        {
+          "pattern": "nearly_sorted",
+          "items": 100000,
+          "ms": 175.34120002528653
+        },
+        {
+          "pattern": "reverse",
+          "items": 1000,
+          "ms": 0.8553999941796064
+        },
+        {
+          "pattern": "reverse",
+          "items": 10000,
+          "ms": 12.088300019968301
+        },
+        {
+          "pattern": "reverse",
+          "items": 100000,
+          "ms": 165.6997000100091
+        },
+        {
+          "pattern": "duplicates",
+          "items": 1000,
+          "ms": 0.9132999693974853
+        },
+        {
+          "pattern": "duplicates",
+          "items": 10000,
+          "ms": 12.731000024359673
+        },
+        {
+          "pattern": "duplicates",
+          "items": 100000,
+          "ms": 160.7316000154242
+        }
+      ],
+      "complexity_exponents": {
+        "random": 1.14,
+        "nearly_sorted": 1.13,
+        "reverse": 1.14,
+        "duplicates": 1.12
+      },
+      "complexity_exponent": 1.14,
+      "quality": {
+        "status": "measured",
+        "probes": [
+          {
+            "pattern": "duplicates",
+            "correct": true
+          },
+          {
+            "pattern": "reverse",
+            "correct": true
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "deterministic",
+          "value": true,
+          "source": "two actual outputs on identical input"
+        },
+        {
+          "name": "stable",
+          "value": false,
+          "source": "keyed equal-key order probe"
+        }
+      ]
+    },
+    "mergesort": {
+      "status": "measured",
+      "input_unit": "items",
+      "cases": [
+        {
+          "pattern": "random",
+          "items": 1000,
+          "ms": 0.7913999725133181
+        },
+        {
+          "pattern": "random",
+          "items": 10000,
+          "ms": 9.913099987898022
+        },
+        {
+          "pattern": "random",
+          "items": 100000,
+          "ms": 128.78810003167018
+        },
+        {
+          "pattern": "nearly_sorted",
+          "items": 1000,
+          "ms": 0.671599991619587
+        },
+        {
+          "pattern": "nearly_sorted",
+          "items": 10000,
+          "ms": 8.318800013512373
+        },
+        {
+          "pattern": "nearly_sorted",
+          "items": 100000,
+          "ms": 111.59719998249784
+        },
+        {
+          "pattern": "reverse",
+          "items": 1000,
+          "ms": 0.666300009470433
+        },
+        {
+          "pattern": "reverse",
+          "items": 10000,
+          "ms": 10.051799996290356
+        },
+        {
+          "pattern": "reverse",
+          "items": 100000,
+          "ms": 112.21230000955984
+        },
+        {
+          "pattern": "duplicates",
+          "items": 1000,
+          "ms": 0.770699989516288
+        },
+        {
+          "pattern": "duplicates",
+          "items": 10000,
+          "ms": 9.94439999340102
+        },
+        {
+          "pattern": "duplicates",
+          "items": 100000,
+          "ms": 119.59610000485554
+        }
+      ],
+      "complexity_exponents": {
+        "random": 1.11,
+        "nearly_sorted": 1.11,
+        "reverse": 1.11,
+        "duplicates": 1.1
+      },
+      "complexity_exponent": 1.11,
+      "quality": {
+        "status": "measured",
+        "probes": [
+          {
+            "pattern": "duplicates",
+            "correct": true
+          },
+          {
+            "pattern": "reverse",
+            "correct": true
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "deterministic",
+          "value": true,
+          "source": "two actual outputs on identical input"
+        },
+        {
+          "name": "stable",
+          "value": true,
+          "source": "keyed equal-key order probe"
+        }
+      ]
+    }
+  }
+}

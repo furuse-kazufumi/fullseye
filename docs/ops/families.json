@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "families": [
+    {"name":"denoise","members":[
+      {"op":"gaussian","source":"docs/ops/2d/smoothing/gaussian.md"},
+      {"op":"median","source":"docs/ops/2d/rank/median.md"},
+      {"op":"bilateral","source":"docs/ops/2d/smoothing/bilateral.md"}]},
+    {"name":"edge_detection","members":[
+      {"op":"canny","source":"docs/ops/2d/segmentation/canny.md"},
+      {"op":"cv_canny","source":"docs/ops/2d/segmentation/cv_canny.md"}]},
+    {"name":"thresholding","members":[
+      {"op":"threshold","source":"docs/ops/2d/segmentation/threshold.md"},
+      {"op":"otsu","source":"docs/ops/2d/segmentation/otsu.md"},
+      {"op":"sk_sauvola","source":"docs/ops/2d/segmentation/sk_sauvola.md"}]},
+    {"name":"morphology","members":[
+      {"op":"cv_erode","source":"docs/ops/2d/morphology/cv_erode.md"},
+      {"op":"cv_dilate","source":"docs/ops/2d/morphology/cv_dilate.md"}]},
+    {"name":"phase_unwrap","members":[
+      {"op":"unwrap_phase_2d","source":"docs/ops/3d/structured_light/unwrap_phase_2d.md"},
+      {"op":"xsk_unwrap_phase","source":"docs/ops/2d/restoration/xsk_unwrap_phase.md"}]},
+    {"name":"fringe_phase","members":[
+      {"op":"decode_fringe","source":"docs/ops/3d/structured_light/decode_fringe.md"},
+      {"op":"micro_phase_decode","source":"docs/ops/optics/light_transport/micro_phase_decode.md"}]},
+    {"name":"sorting","members":[
+      {"op":"quicksort","source":"algo.py:2859"},
+      {"op":"heapsort","source":"algo.py:2863"},
+      {"op":"mergesort","source":"algo.py:2867"}]}
+  ]
+}

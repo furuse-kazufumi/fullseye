@@ -1,0 +1,651 @@
+{
+  "schema": 2,
+  "source_graph": "OP_GRAPH.json",
+  "membership_source": "docs/ops/families.json",
+  "regex_role": "candidate suggestions only",
+  "families": [
+    {
+      "name": "denoise",
+      "ops": [
+        {
+          "op": "gaussian",
+          "inputs": [
+            "image"
+          ],
+          "output": "image",
+          "membership_source": "docs/ops/2d/smoothing/gaussian.md",
+          "properties": [
+            {
+              "name": "deterministic",
+              "value": true,
+              "source": "two actual outputs on identical input"
+            }
+          ],
+          "property_sources": [
+            {
+              "kind": "measurement",
+              "value": "docs/ops/families_timing.json"
+            }
+          ],
+          "complexity_exponent": 1.1,
+          "quality": {
+            "status": "measured",
+            "probes": [
+              {
+                "probe": 1,
+                "metric": "psnr",
+                "value": 20.322694187465558
+              },
+              {
+                "probe": 2,
+                "metric": "psnr",
+                "value": 20.30645812488161
+              }
+            ]
+          }
+        },
+        {
+          "op": "median",
+          "inputs": [
+            "image"
+          ],
+          "output": "image",
+          "membership_source": "docs/ops/2d/rank/median.md",
+          "properties": [
+            {
+              "name": "deterministic",
+              "value": true,
+              "source": "two actual outputs on identical input"
+            }
+          ],
+          "property_sources": [
+            {
+              "kind": "measurement",
+              "value": "docs/ops/families_timing.json"
+            }
+          ],
+          "complexity_exponent": 1.0,
+          "quality": {
+            "status": "measured",
+            "probes": [
+              {
+                "probe": 1,
+                "metric": "psnr",
+                "value": 28.100069433391035
+              },
+              {
+                "probe": 2,
+                "metric": "psnr",
+                "value": 27.861691128576066
+              }
+            ]
+          }
+        },
+        {
+          "op": "bilateral",
+          "inputs": [
+            "image"
+          ],
+          "output": "image",
+          "membership_source": "docs/ops/2d/smoothing/bilateral.md",
+          "properties": [
+            {
+              "name": "deterministic",
+              "value": true,
+              "source": "two actual outputs on identical input"
+            }
+          ],
+          "property_sources": [
+            {
+              "kind": "measurement",
+              "value": "docs/ops/families_timing.json"
+            }
+          ],
+          "complexity_exponent": 1.68,
+          "quality": {
+            "status": "measured",
+            "probes": [
+              {
+                "probe": 1,
+                "metric": "psnr",
+                "value": 26.40311342054713
+              },
+              {
+                "probe": 2,
+                "metric": "psnr",
+                "value": 26.28788894190755
+              }
+            ]
+          }
+        }
+      ],
+      "probes": [
+        "synthetic_probe_1",
+        "synthetic_probe_2"
+      ],
+      "timing_source": "docs/ops/families_timing.json"
+    },
+    {
+      "name": "edge_detection",
+      "ops": [
+        {
+          "op": "canny",
+          "inputs": [
+            "image"
+          ],
+          "output": "region",
+          "membership_source": "docs/ops/2d/segmentation/canny.md",
+          "properties": [
+            {
+              "name": "deterministic",
+              "value": true,
+              "source": "two actual outputs on identical input"
+            }
+          ],
+          "property_sources": [
+            {
+              "kind": "measurement",
+              "value": "docs/ops/families_timing.json"
+            }
+          ],
+          "complexity_exponent": 1.3,
+          "quality": {
+            "status": "measured",
+            "probes": [
+              {
+                "probe": 1,
+                "metric": "boundary_f1",
+                "value": 0.6189376443418014
+              },
+              {
+                "probe": 2,
+                "metric": "boundary_f1",
+                "value": 0.6225319396051103
+              }
+            ]
+          }
+        },
+        {
+          "op": "cv_canny",
+          "inputs": [
+            "image"
+          ],
+          "output": "region",
+          "membership_source": "docs/ops/2d/segmentation/cv_canny.md",
+          "properties": [
+            {
+              "name": "deterministic",
+              "value": true,
+              "source": "two actual outputs on identical input"
+            }
+          ],
+          "property_sources": [
+            {
+              "kind": "measurement",
+              "value": "docs/ops/families_timing.json"
+            }
+          ],
+          "complexity_exponent": 1.04,
+          "quality": {
+            "status": "measured",
+            "probes": [
+              {
+                "probe": 1,
+                "status": "unmeasured",
+                "reason": "synthetic boundary probe produced zero F1"
+              },
+              {
+                "probe": 2,
+                "status": "unmeasured",
+                "reason": "synthetic boundary probe produced zero F1"
+              }
+            ]
+          }
+        }
+      ],
+      "probes": [
+        "synthetic_probe_1",
+        "synthetic_probe_2"
+      ],
+      "timing_source": "docs/ops/families_timing.json"
+    },
+    {
+      "name": "thresholding",
+      "ops": [
+        {
+          "op": "threshold",
+          "inputs": [
+            "image"
+          ],
+          "output": "region",
+          "membership_source": "docs/ops/2d/segmentation/threshold.md",
+          "properties": [
+            {
+              "name": "deterministic",
+              "value": true,
+              "source": "two actual outputs on identical input"
+            }
+          ],
+          "property_sources": [
+            {
+              "kind": "measurement",
+              "value": "docs/ops/families_timing.json"
+            }
+          ],
+          "complexity_exponent": 1.62,
+          "quality": {
+            "status": "measured",
+            "probes": [
+              {
+                "probe": 1,
+                "metric": "iou",
+                "value": 1.0
+              },
+              {
+                "probe": 2,
+                "metric": "iou",
+                "value": 1.0
+              }
+            ]
+          }
+        },
+        {
+          "op": "otsu",
+          "inputs": [
+            "image"
+          ],
+          "output": "region",
+          "membership_source": "docs/ops/2d/segmentation/otsu.md",
+          "properties": [
+            {
+              "name": "deterministic",
+              "value": true,
+              "source": "two actual outputs on identical input"
+            }
+          ],
+          "property_sources": [
+            {
+              "kind": "measurement",
+              "value": "docs/ops/families_timing.json"
+            }
+          ],
+          "complexity_exponent": 1.25,
+          "quality": {
+            "status": "measured",
+            "probes": [
+              {
+                "probe": 1,
+                "metric": "iou",
+                "value": 1.0
+              },
+              {
+                "probe": 2,
+                "metric": "iou",
+                "value": 1.0
+              }
+            ]
+          }
+        },
+        {
+          "op": "sk_sauvola",
+          "inputs": [
+            "image"
+          ],
+          "output": "region",
+          "membership_source": "docs/ops/2d/segmentation/sk_sauvola.md",
+          "properties": [
+            {
+              "name": "deterministic",
+              "value": true,
+              "source": "two actual outputs on identical input"
+            }
+          ],
+          "property_sources": [
+            {
+              "kind": "measurement",
+              "value": "docs/ops/families_timing.json"
+            }
+          ],
+          "complexity_exponent": 1.57,
+          "quality": {
+            "status": "measured",
+            "probes": [
+              {
+                "probe": 1,
+                "metric": "iou",
+                "value": 0.3992673992673993
+              },
+              {
+                "probe": 2,
+                "metric": "iou",
+                "value": 0.3992256889091323
+              }
+            ]
+          }
+        }
+      ],
+      "probes": [
+        "synthetic_probe_1",
+        "synthetic_probe_2"
+      ],
+      "timing_source": "docs/ops/families_timing.json"
+    },
+    {
+      "name": "morphology",
+      "ops": [
+        {
+          "op": "cv_erode",
+          "inputs": [
+            "image"
+          ],
+          "output": "image",
+          "membership_source": "docs/ops/2d/morphology/cv_erode.md",
+          "properties": [
+            {
+              "name": "deterministic",
+              "value": true,
+              "source": "two actual outputs on identical input"
+            }
+          ],
+          "property_sources": [
+            {
+              "kind": "measurement",
+              "value": "docs/ops/families_timing.json"
+            }
+          ],
+          "complexity_exponent": 1.24,
+          "quality": {
+            "status": "measured",
+            "probes": [
+              {
+                "probe": 1,
+                "metric": "iou",
+                "value": 0.8345444382336501
+              },
+              {
+                "probe": 2,
+                "metric": "iou",
+                "value": 0.8345444382336501
+              }
+            ]
+          }
+        },
+        {
+          "op": "cv_dilate",
+          "inputs": [
+            "image"
+          ],
+          "output": "image",
+          "membership_source": "docs/ops/2d/morphology/cv_dilate.md",
+          "properties": [
+            {
+              "name": "deterministic",
+              "value": true,
+              "source": "two actual outputs on identical input"
+            }
+          ],
+          "property_sources": [
+            {
+              "kind": "measurement",
+              "value": "docs/ops/families_timing.json"
+            }
+          ],
+          "complexity_exponent": 1.22,
+          "quality": {
+            "status": "measured",
+            "probes": [
+              {
+                "probe": 1,
+                "metric": "iou",
+                "value": 0.8482693219535324
+              },
+              {
+                "probe": 2,
+                "metric": "iou",
+                "value": 0.8482693219535324
+              }
+            ]
+          }
+        }
+      ],
+      "probes": [
+        "synthetic_probe_1",
+        "synthetic_probe_2"
+      ],
+      "timing_source": "docs/ops/families_timing.json"
+    },
+    {
+      "name": "phase_unwrap",
+      "ops": [
+        {
+          "op": "unwrap_phase_2d",
+          "inputs": [
+            "image"
+          ],
+          "output": "image",
+          "membership_source": "docs/ops/3d/structured_light/unwrap_phase_2d.md",
+          "properties": [],
+          "property_sources": [
+            {
+              "kind": "measurement",
+              "value": "docs/ops/families_timing.json"
+            }
+          ],
+          "complexity_exponent": null,
+          "quality": {
+            "status": "unmeasured"
+          }
+        },
+        {
+          "op": "xsk_unwrap_phase",
+          "inputs": [
+            "image"
+          ],
+          "output": "image",
+          "membership_source": "docs/ops/2d/restoration/xsk_unwrap_phase.md",
+          "properties": [
+            {
+              "name": "deterministic",
+              "value": true,
+              "source": "two actual outputs on identical input"
+            }
+          ],
+          "property_sources": [
+            {
+              "kind": "measurement",
+              "value": "docs/ops/families_timing.json"
+            }
+          ],
+          "complexity_exponent": 1.13,
+          "quality": {
+            "status": "unmeasured",
+            "reason": "no valid synthetic ground-truth metric for phase unwrapping"
+          }
+        }
+      ],
+      "probes": [
+        "synthetic_probe_1",
+        "synthetic_probe_2"
+      ],
+      "timing_source": "docs/ops/families_timing.json"
+    },
+    {
+      "name": "fringe_phase",
+      "ops": [
+        {
+          "op": "decode_fringe",
+          "inputs": [
+            "seq<image>"
+          ],
+          "output": "depth",
+          "membership_source": "docs/ops/3d/structured_light/decode_fringe.md",
+          "properties": [],
+          "property_sources": [
+            {
+              "kind": "measurement",
+              "value": "docs/ops/families_timing.json"
+            }
+          ],
+          "complexity_exponent": null,
+          "quality": {
+            "status": "unmeasured"
+          }
+        },
+        {
+          "op": "micro_phase_decode",
+          "inputs": [
+            "seq<image>"
+          ],
+          "output": "table",
+          "membership_source": "docs/ops/optics/light_transport/micro_phase_decode.md",
+          "properties": [],
+          "property_sources": [
+            {
+              "kind": "measurement",
+              "value": "docs/ops/families_timing.json"
+            }
+          ],
+          "complexity_exponent": null,
+          "quality": {
+            "status": "unmeasured"
+          }
+        }
+      ],
+      "probes": [
+        "synthetic_probe_1",
+        "synthetic_probe_2"
+      ],
+      "timing_source": "docs/ops/families_timing.json"
+    },
+    {
+      "name": "sorting",
+      "ops": [
+        {
+          "op": "quicksort",
+          "inputs": [
+            "sequence"
+          ],
+          "output": "sequence",
+          "membership_source": "algo.py:2859",
+          "properties": [
+            {
+              "name": "deterministic",
+              "value": true,
+              "source": "two actual outputs on identical input"
+            },
+            {
+              "name": "stable",
+              "value": false,
+              "source": "keyed equal-key order probe"
+            }
+          ],
+          "property_sources": [
+            {
+              "kind": "measurement",
+              "value": "docs/ops/families_timing.json"
+            }
+          ],
+          "complexity_exponent": 1.11,
+          "quality": {
+            "status": "measured",
+            "probes": [
+              {
+                "pattern": "duplicates",
+                "correct": true
+              },
+              {
+                "pattern": "reverse",
+                "correct": true
+              }
+            ]
+          }
+        },
+        {
+          "op": "heapsort",
+          "inputs": [
+            "sequence"
+          ],
+          "output": "sequence",
+          "membership_source": "algo.py:2863",
+          "properties": [
+            {
+              "name": "deterministic",
+              "value": true,
+              "source": "two actual outputs on identical input"
+            },
+            {
+              "name": "stable",
+              "value": false,
+              "source": "keyed equal-key order probe"
+            }
+          ],
+          "property_sources": [
+            {
+              "kind": "measurement",
+              "value": "docs/ops/families_timing.json"
+            }
+          ],
+          "complexity_exponent": 1.14,
+          "quality": {
+            "status": "measured",
+            "probes": [
+              {
+                "pattern": "duplicates",
+                "correct": true
+              },
+              {
+                "pattern": "reverse",
+                "correct": true
+              }
+            ]
+          }
+        },
+        {
+          "op": "mergesort",
+          "inputs": [
+            "sequence"
+          ],
+          "output": "sequence",
+          "membership_source": "algo.py:2867",
+          "properties": [
+            {
+              "name": "deterministic",
+              "value": true,
+              "source": "two actual outputs on identical input"
+            },
+            {
+              "name": "stable",
+              "value": true,
+              "source": "keyed equal-key order probe"
+            }
+          ],
+          "property_sources": [
+            {
+              "kind": "measurement",
+              "value": "docs/ops/families_timing.json"
+            }
+          ],
+          "complexity_exponent": 1.11,
+          "quality": {
+            "status": "measured",
+            "probes": [
+              {
+                "pattern": "duplicates",
+                "correct": true
+              },
+              {
+                "pattern": "reverse",
+                "correct": true
+              }
+            ]
+          }
+        }
+      ],
+      "probes": [
+        "synthetic_probe_1",
+        "synthetic_probe_2"
+      ],
+      "timing_source": "docs/ops/families_timing.json"
+    }
+  ]
+}

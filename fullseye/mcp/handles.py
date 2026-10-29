@@ -43,9 +43,11 @@ def default_roots() -> list[str]:
 
 class HandleStore:
     def __init__(self, roots: list[str] | None = None, *, max_items: int = 256,
-                 thumb_dir: str | None = None):
+                 max_bytes: int | None = None, thumb_dir: str | None = None):
+        from fssystem import get_system
         self.roots = [os.path.realpath(r) for r in (roots if roots is not None else default_roots())]
         self.max_items = int(max_items)
+        self.max_bytes = int(max_bytes if max_bytes is not None else get_system("mcp_handle_max_bytes"))
         # ★thumb_dir を渡されたときに作っていなかった(mkdtemp のときだけ存在する)。
         #   小図の保存が FileNotFoundError で落ち、テスト 4 件で発覚(2026-09-15)。
         self.thumb_dir = thumb_dir or tempfile.mkdtemp(prefix="fullseye-mcp-")
@@ -59,7 +61,11 @@ class HandleStore:
     def _check_path(self, path: str) -> str:
         if not isinstance(path, str) or not path.strip():
             raise HandleError("path が空")
-        real = os.path.realpath(path)
+        if os.path.isabs(path):
+            real = os.path.realpath(path)
+        else:
+            candidates=[os.path.realpath(os.path.join(root,path)) for root in self.roots]
+            real=next((p for p in candidates if os.path.isfile(p)), candidates[0] if candidates else os.path.realpath(path))
         inside = any(real == r or real.startswith(r + os.sep) for r in self.roots)
         if not inside:
             raise HandleError(
@@ -89,21 +95,40 @@ class HandleStore:
 
     # ---------------------------------------------------------------- store
     @staticmethod
-    def _hid(arr: np.ndarray, sort: str = "") -> str:
+    def _hid(arr, sort: str = "") -> str:
         h = hashlib.sha256()
-        h.update(np.ascontiguousarray(arr).tobytes())
-        h.update(("%s|%s|%s" % (arr.shape, arr.dtype, sort)).encode())
+        if isinstance(arr, np.ndarray):
+            h.update(np.ascontiguousarray(arr).tobytes())
+            h.update(("%s|%s|%s" % (arr.shape, arr.dtype, sort)).encode())
+        else:
+            import json
+            try:
+                payload = json.dumps(arr, sort_keys=True, ensure_ascii=False, default=repr)
+            except (TypeError, ValueError):
+                payload = repr(arr)
+            h.update((type(arr).__name__ + "|" + sort + "|" + payload).encode("utf-8"))
         return PREFIX + h.hexdigest()[:16]
 
     def put(self, arr, *, sort: str, provenance: list) -> dict:
-        arr = np.asarray(arr)
+        if isinstance(arr, (list, tuple)) and sort in {"image","images","seq<image>","points","volume"}:
+            arr = np.asarray(arr)
         hid = self._hid(arr, sort)
         self._evicted.discard(hid)          # 作り直したハンドルは生きている(追い出し印を消す)
         if hid in self._meta:
             self._meta.move_to_end(hid)
             return dict(self._meta[hid], dedup=True)
+        size = int(arr.nbytes) if isinstance(arr,np.ndarray) else len(repr(arr).encode("utf-8"))
+        if size > self.max_bytes:
+            raise HandleError("handle requires %d bytes, above byte limit %d" % (size,self.max_bytes))
+        while self._meta and sum(m.get("bytes",0) for m in self._meta.values()) + size > self.max_bytes:
+            old, _ = self._meta.popitem(last=False)
+            self._arr.pop(old, None); self._evicted.add(old)
         self._seq += 1
-        meta = {"handle": hid, "sort": sort, "shape": list(arr.shape), "dtype": str(arr.dtype),
+        meta = {"handle": hid, "sort": sort,
+                "shape": list(arr.shape) if isinstance(arr, np.ndarray) else None,
+                "dtype": str(arr.dtype) if isinstance(arr, np.ndarray) else type(arr).__name__,
+                "array": isinstance(arr, np.ndarray),
+                "bytes": size,
                 "provenance": list(provenance), "seq": self._seq}
         self._meta[hid] = meta
         self._arr[hid] = arr
@@ -114,6 +139,8 @@ class HandleStore:
         return dict(meta)
 
     def load(self, path: str, *, color: bool = False) -> dict:
+        named=next((r["path"] for r in self.samples() if r["name"]==path),None)
+        if named is not None: path=named
         real = self._check_path(path)
         # ★2026-10-11: 根の中の壊れた png・object 配列の npy は ValueError 等を HandleError に
         # 写さず投げ、dispatch を抜けてサーバのループが死んでいた。読めない中身は理由つきで断る
@@ -136,7 +163,7 @@ class HandleStore:
                               % (path, type(exc).__name__, str(exc)[:200])) from None
         return self.put(arr, sort=sort, provenance=[{"load": os.path.relpath(real, ROOT) if real.startswith(ROOT) else real}])
 
-    def get(self, handle: str) -> tuple[dict, np.ndarray]:
+    def get(self, handle: str) -> tuple[dict, object]:
         if not isinstance(handle, str) or not handle.startswith(PREFIX):
             raise HandleError("ハンドルは %s<16 hex> の形: %r" % (PREFIX, handle))
         if handle in self._evicted:
@@ -157,4 +184,5 @@ class HandleStore:
 
     def stats(self) -> dict:
         return {"alive": len(self._meta), "evicted": len(self._evicted),
+                "bytes":sum(m.get("bytes",0) for m in self._meta.values()),"max_bytes":self.max_bytes,
                 "max_items": self.max_items, "roots": self.roots, "thumb_dir": self.thumb_dir}

@@ -94,8 +94,8 @@ def test_real_stdio_chains_handles_across_calls():
         talk("initialize", protocolVersion="2025-06-18", capabilities={}, clientInfo={"name": "t", "version": "0"})
         s = call("fullseye_list_samples")
         assert not s["isError"]
-        coins = next(x for x in s["structuredContent"]["samples"] if x["name"] == "coins")
-        h0 = call("fullseye_load_image", path=coins["path"])
+        assert "coins" in s["structuredContent"]["samples"]
+        h0 = call("fullseye_load_image", path="coins")
         assert not h0["isError"], h0["content"][0]["text"]
         sc0 = h0["structuredContent"]
         assert sc0["handle"].startswith(PREFIX) and sc0["sort"] == "image"
@@ -176,6 +176,25 @@ def test_unknown_op_in_apply_names_nearest_registry_ops(cat, store):
     with pytest.raises(ArgError) as ei:
         call_tool("fullseye_apply", {"handle": h, "op": "gaussy"}, cat, store)
     assert "registry 層に無い" in str(ei.value) and "gaussian" in str(ei.value)
+
+
+@pytest.mark.parametrize("op", [
+    "edges_sub_pix", "lines_facet", "lines_gauss", "sk_find_contours",
+    "sp_plateaus", "threshold_sub_pix", "zero_crossing_sub_pix",
+])
+def test_pipeline_value_outputs_are_json_serializable_in_linear_and_dag_forms(cat, store, op):
+    h = call_tool("fullseye_load_image", {"path": _sample("gradient"), "vision": "none"}, cat, store)["structuredContent"]["handle"]
+    requests = [
+        {"handle": h, "stages": [{"op": op}], "vision": "none"},
+        {"handle": h, "bindings": {"have:image": h}, "outputs": ["stage:1"],
+         "stages": [{"op": op, "inputs": ["have:image"]}], "vision": "none"},
+    ]
+    for request in requests:
+        result = call_tool("fullseye_pipeline", request, cat, store)
+        assert result.get("isError") is False, (op, result)
+        json.dumps(result, ensure_ascii=False, allow_nan=False)
+        record = result["structuredContent"]["stages"][0]
+        assert record["value_handle"] and record["handle"] is None
 
 
 @pytest.mark.parametrize("bad, why", [
@@ -362,6 +381,18 @@ def test_the_demo_runs_as_written_and_shows_a_verdict():
     assert "resource_link:" in out, "inspect(vision=thumb) の小図が出ていない"
     assert "型の不一致" in out, "型不一致の拒否の見本が出ていない"
     assert "server exit: 0" in out
+
+
+def test_mcp_doc_token_counts_and_4k_scope_come_from_benchmark():
+    import json
+    from pathlib import Path
+    root=Path(ROOT)
+    bench=json.loads((root/"docs/mcp_context_benchmark.json").read_text(encoding="utf-8"))
+    doc=(root/"docs/MCP.md").read_text(encoding="utf-8")
+    profiles=bench["tool_profiles"]
+    assert f'{profiles["full_tokens"]:,}トークン' in doc
+    assert f'{profiles["minimal_tokens"]:,}トークン' in doc
+    assert "execution and answer-correctness evaluation are excluded" in bench["scope"]
 
 
 # --------------------------------------------------------------------------- #

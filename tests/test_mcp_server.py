@@ -26,6 +26,109 @@ import pytest
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 from fullseye.mcp import TOOLS, Catalog, call_tool, dispatch, run_stdio_server  # noqa: E402
+from fullseye.mcp.server import OP_EXECUTION_TOOLS, handle_tools_list  # noqa: E402
+
+
+def test_every_op_execution_entry_uses_verified_allowlist_and_profiles_match_calls(monkeypatch):
+    import numpy as np
+    from fullseye.mcp.handles import HandleStore
+    cat = Catalog.load(); store = HandleStore(roots=[])
+    handle = store.put(np.zeros((8, 8)), sort="image", provenance=[])["handle"]
+    assert OP_EXECUTION_TOOLS == {"fullseye_apply", "fullseye_pipeline"}
+    calls = {
+        "fullseye_apply": {"handle": handle, "op": "img_to_counts"},
+        "fullseye_pipeline": {"handle": handle, "stages": [{"op": "img_to_counts"}]},
+    }
+    outcomes = []
+    for name in sorted(OP_EXECUTION_TOOLS):
+        try:
+            result = call_tool(name, calls[name], cat, store)
+            outcomes.append(bool(result.get("isError")))
+        except Exception as exc:
+            outcomes.append("not verified" in str(exc) or "not_executable_in_mcp" in str(exc))
+    assert outcomes == [True, True]
+
+    monkeypatch.setenv("FULLSEYE_MCP_PROFILE", "minimal")
+    listed = {row["name"] for row in handle_tools_list({})["tools"]}
+    assert "fullseye_apply" not in listed
+    with pytest.raises(Exception, match="not available in MCP profile"):
+        call_tool("fullseye_apply", {"handle": handle, "op": "gaussian"}, cat, store)
+
+
+def test_nested_tool_schema_rejects_bad_values_before_handlers():
+    cat = Catalog.load()
+    cases = [
+        ("fullseye_plan", {"have": [123], "want": "image"}),
+        ("fullseye_choose", {"candidates": ["gaussian"], "constraints": {"x": float("inf")}}),
+        ("fullseye_load_stack", {"paths": [123], "sort": "images"}),
+        ("fullseye_validate_pipeline", {"bindings": {"have:image": 123},
+          "stages": [{"op": "gaussian"}]}),
+        ("fullseye_validate_pipeline", {"stages": [{"op": "gaussian", "inputs": [123]}]}),
+        ("fullseye_validate_pipeline", {"stages": [{"op": "gaussian", "params": {"x": float("inf")}}]}),
+    ]
+    rejected=[]
+    for name,args in cases:
+        try: call_tool(name,args,cat)
+        except Exception as exc: rejected.append(isinstance(exc,ValueError))
+        else: rejected.append(False)
+    assert rejected == [True]*len(cases)
+
+
+def test_deep_tool_arguments_are_invalid_params_not_internal_errors():
+    nested=1
+    for _ in range(990):
+        nested=[nested]
+    response=dispatch({"jsonrpc":"2.0","id":1,"method":"tools/call","params":{
+        "name":"fullseye_validate_pipeline","arguments":{"start_sort":"image","stages":[
+            {"op":"gaussian","params":{"nested":nested}}]}}},Catalog.load())
+    assert response["error"]["code"] == -32602, response
+    assert "maximum nesting depth" in response["error"]["message"]
+
+
+def test_handle_byte_lru_and_stack_pixel_limits(monkeypatch):
+    import numpy as np
+    from fullseye.mcp.handles import HandleError, HandleStore
+    store=HandleStore(roots=[],max_items=100,max_bytes=1024)
+    first=store.put(np.zeros(80,dtype=np.float64),sort="image",provenance=[])["handle"]
+    store.put(np.ones(80,dtype=np.float64),sort="image",provenance=[])
+    with pytest.raises(HandleError,match="byte limit|追い出"):
+        store.get(first)
+    with pytest.raises(HandleError,match="byte limit"):
+        store.put(np.zeros(200,dtype=np.float64),sort="image",provenance=[])
+
+    from fullseye.mcp import server
+    real=server.get_system
+    monkeypatch.setattr(server,"get_system",lambda name: 1000 if name=="mcp_stack_max_pixels" else real(name))
+    sample_store=HandleStore(max_bytes=10_000_000)
+    with pytest.raises(ValueError,match="total pixels"):
+        call_tool("fullseye_load_stack",{"paths":["gradient"]*2,"sort":"images"},Catalog.load(),sample_store)
+
+
+def test_pipeline_intermediate_and_image_pixel_limits(monkeypatch):
+    import numpy as np
+    from fullseye.mcp import server
+    from fullseye.mcp.handles import HandleStore
+
+    real=server.get_system
+    limits={"mcp_pipeline_max_intermediate_bytes":100_000,
+            "mcp_stack_max_pixels":10_000_000}
+    monkeypatch.setattr(server,"get_system",lambda name: limits.get(name,real(name)))
+    store=HandleStore(roots=[],max_bytes=10_000_000)
+    h=store.put(np.zeros((64,64)),sort="image",provenance=[])["handle"]
+    result=call_tool("fullseye_pipeline",{"handle":h,"vision":"none",
+        "stages":[{"op":"gaussian"} for _ in range(8)]},Catalog.load(),store)
+    assert result["isError"] is True
+    failed=next(row for row in result["structuredContent"]["stages"] if row.get("status")=="failed")
+    assert failed["reason"] == "resource_limit"
+    assert "intermediate bytes" in failed["error"]["message"]
+    assert result["structuredContent"]["intermediate_bytes"] > 100_000
+
+    limits["mcp_pipeline_max_intermediate_bytes"]=10_000_000
+    limits["mcp_stack_max_pixels"]=1000
+    with pytest.raises(ValueError,match="output pixels"):
+        call_tool("fullseye_apply",{"handle":h,"op":"gaussian","vision":"none"},Catalog.load(),store)
+    with pytest.raises(ValueError,match="output pixels"):
+        call_tool("fullseye_load_image",{"path":"gradient","vision":"none"},Catalog.load(),HandleStore())
 from fullseye.mcp.server import ArgError, MAX_SEARCH_LIMIT, read_message  # noqa: E402
 
 
@@ -189,8 +292,10 @@ def test_every_declared_tool_has_a_body(cat):
     1 つの store を通して**実際の返り値から次の引数を作る**。"""
     from fullseye.mcp.handles import HandleStore
     store = HandleStore()
-    order = ["fullseye_search_ops", "fullseye_find_ops", "fullseye_op_help", "fullseye_catalog_coverage",
-             "fullseye_list_samples", "fullseye_load_image", "fullseye_apply", "fullseye_inspect",
+    order = ["fullseye_search_ops", "fullseye_find_ops", "fullseye_op_cards",
+             "fullseye_plan", "fullseye_describe", "fullseye_choose",
+             "fullseye_validate_pipeline", "fullseye_op_help", "fullseye_catalog_coverage",
+             "fullseye_list_samples", "fullseye_load_image", "fullseye_load_stack", "fullseye_apply", "fullseye_inspect",
              "fullseye_pipeline", "fullseye_fix_text",
              "fullseye_import_json", "fullseye_export_json", "fullseye_estimate_distortion",
              "fullseye_write_viewer"]
@@ -200,17 +305,43 @@ def test_every_declared_tool_has_a_body(cat):
         if n == "fullseye_search_ops":
             a = {"query": "gauss"}
         elif n == "fullseye_find_ops":
-            a = {"query": "ノイズ除去", "limit": 3}
+            a = {"query": "ノイズ除去"}
+        elif n == "fullseye_plan_chain":
+            a = {"query": "count objects", "start_sort": "image", "goal_sort": "feature"}
+        elif n == "fullseye_op_cards":
+            a = {"names": ["gaussian", "otsu"]}
+        elif n == "fullseye_plan":
+            a = {"have": "image", "want": "region"}
+        elif n == "fullseye_describe":
+            a = {"kind": "op", "name": "gaussian"}
+        elif n == "fullseye_choose":
+            a = {"candidates": ["gaussian", "median"]}
+        elif n == "fullseye_choose_op":
+            a = {"family": "edge_detection", "constraints": {}}
+        elif n == "fullseye_required_inputs":
+            a = {"goal_sort": "depth", "max_depth": 2, "k": 2}
+        elif n == "fullseye_param_space":
+            a = {"op": "points_to_voxel", "input_context": {"width": 512, "height": 512}}
+        elif n == "fullseye_pipeline_shape":
+            a = {"input_form": "single", "output_form": "dense_field"}
+        elif n == "fullseye_patterns":
+            a = {"name": "Pipe-and-Filter", "start_sort": "image", "goal_sort": "region"}
+        elif n == "fullseye_sort_guide":
+            a = {"sort": "image2d"}
+        elif n == "fullseye_validate_pipeline":
+            a = {"start_sort": "image", "stages": [{"op": "gaussian"}, {"op": "otsu"}]}
         elif n == "fullseye_op_help":
             a = {"name": "gaussian"}
         elif n == "fullseye_load_image":
-            a = {"path": ctx["sample_path"], "vision": "none"}
+            a = {"path": ctx["sample_path"]}
+        elif n == "fullseye_load_stack":
+            a = {"paths": [ctx["sample_path"], ctx["sample_path"]], "sort": "images"}
         elif n == "fullseye_apply":
             a = {"handle": ctx["handle"], "op": "gaussian", "vision": "none"}
         elif n == "fullseye_inspect":
-            a = {"handle": ctx["handle_out"], "vision": "none"}
+            a = {"handle": ctx["handle_out"]}
         elif n == "fullseye_pipeline":
-            a = {"handle": ctx["handle"], "stages": [{"op": "gaussian"}, {"op": "otsu"}], "vision": "none"}
+            a = {"handle": ctx["handle"], "stages": [{"op": "gaussian"}, {"op": "otsu"}]}
         elif n == "fullseye_fix_text":
             # 文字入りの color 画像が要る。同梱サンプルに無いので書体で描く(書体が無い
             # 環境では、その旨を言って拒む道が通ることだけ確かめる)。
@@ -252,7 +383,7 @@ def test_every_declared_tool_has_a_body(cat):
         assert res["isError"] is False, (n, res["content"][0]["text"][:300])
         sc = res.get("structuredContent", {})
         if n == "fullseye_list_samples":
-            ctx["sample_path"] = sc["samples"][0]["path"]
+            ctx["sample_path"] = sc["samples"][0]
         elif n == "fullseye_load_image":
             ctx["handle"] = sc["handle"]
         elif n == "fullseye_apply":

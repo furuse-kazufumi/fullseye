@@ -132,3 +132,10 @@ wheel(pip install)にも `docs/literature` は入っていません。
 4. **表示まで一気通貫**: Studio(`py -3.11 studio.py`)を開けば、AI が組んだ結果を
    画像ウィンドウ・3D 表示として人間が同じ画面で検査できます(`dev_open_window` 等で
    スクリプトから複数窓の配置も可能)。
+# op グラフを使う手順
+
+入出力の型が分かる場合は `plan(have, want, goal, direction=...)` を最初に使う。既定ではMCP pipelineから
+実行できる辺だけをDAGとして計画する。台帳だけにある研究用opを調べる場合に限り、Python APIの
+`constraints={"executable_only": false}`を使う。これはMCPのAI向けschemaには出さない。
+`describe` は1件だけを返し、全型一覧を無制限に返さない。`choose` は比較できる実測がない候補を順位付けしない。
+つまみ範囲は `docs/op_knob.json` の実測と入力文脈に基づき、効かなかったつまみを探索から除く。

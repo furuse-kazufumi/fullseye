@@ -101,6 +101,7 @@ CHAIN = [
     #   いまは `trace_problems()` が「宣言した出力に触れもしない段」を拒む。
     (["tools/conversion_matrix.py", "--md", "docs/CONVERSION_MATRIX.md"],
      "docs/CONVERSION_MATRIX.md(表現の変換表)"),
+      (["tools/gen_op_facets.py"], "single op graph and its generated facets"),
     (["tools/gen_design_notes.py"], "設計判断集(ソースの ★ から 6 言語)"),
     # ★2026-10-15: 13 番目から最後の方へ下げた。docmap が docs/*.md の**題**を読むので、
     #   題を持つ生成物(OPERATORS / REFERENCES / EXAMPLES / EXAMPLES_3D / SENSOR_PLAYBOOK /
@@ -114,7 +115,9 @@ CHAIN = [
     # 差分が数値だけだと確認できた場合に限り source-sha も更新する。
     (["tools/gen_doc_counts.py"], "README の registry 件数 + AI_RAG_GUIDE の op ノート件数"),
     # 索引と op ノートの後(複製するので)。
-    (["tools/gen_mcp_data.py"], "fullseye/data/OP_INDEX.json + OP_NOTES.json(MCP が wheel から読む複製)"),
+    (["tools/gen_mcp_data.py"], "fullseye/data operator search, cards, and probe metadata"),
+    (["tools/measure_mcp_context.py"], "six-task minimal MCP context benchmark"),
+    (["tools/gen_rag_benchmark_report.py"], "RAG recall measurement and synonym-gap report"),
 ]
 
 #: ---- 段の依存表(2026-10-15)------------------------------------------------------
@@ -171,7 +174,12 @@ OUTPUTS = {
     "tools/gen_doc_counts.py": ["docs/README.md", "docs/README.*.md",
                                  "docs/AI_RAG_GUIDE.md", "docs/AI_RAG_GUIDE.*.md"],
     "tools/gen_mcp_data.py": ["fullseye/data/OP_INDEX.json", "fullseye/data/OP_NOTES.json",
-                              "fullseye/data/OP_SEARCH.json", "fullseye/data/op_knob.json"],
+                              "fullseye/data/OP_SEARCH.json", "fullseye/data/OP_CARDS.json",
+                              "fullseye/data/OP_PROBE.json", "fullseye/data/op_knob.json"],
+    "tools/gen_op_facets.py": ["fullseye/data/OP_GRAPH.json", "fullseye/data/OP_FAMILIES.json",
+                                  "fullseye/data/OP_SHAPES.json", "fullseye/data/SYSTEM_PARAMS.json"],
+    "tools/measure_mcp_context.py": ["docs/mcp_context_benchmark.json"],
+    "tools/gen_rag_benchmark_report.py": ["docs/rag_synonym_gaps.json"],
     # 2026-10-23: 手で列挙していて #116 の文献 4 本が漏れ、regen が exit 1(--check は緑)だった。
     #   件数を打ち直す文献ノートの実ファイルと合わせる(OSS_LANDSCAPE.md は gen_oss_landscape.py の生成物、
     #   oss_landscape_notes.md は手書きの注で、どちらもこの段は書かない)。
@@ -232,6 +240,14 @@ READS = {
         "docs/DESIGN_NOTES.md", "docs/DESIGN_NOTES.*.md",
         "docs/AI_RAG_GUIDE.md", "docs/AI_RAG_GUIDE.*.md"],
     "tools/gen_mcp_data.py": ["docs/OP_INDEX.json", "docs/ops/*"],
+    "tools/gen_op_facets.py": ["docs/OP_INDEX.json", "docs/ops/families.json",
+                                  "docs/ops/families_timing.json"],
+    "tools/measure_mcp_context.py": ["fullseye/data/OP_GRAPH.json", "fullseye/data/OP_SEARCH.json",
+                                      "fullseye/data/OP_CARDS.json", "fullseye/data/OP_PROBE.json"],
+    "tools/gen_rag_benchmark_report.py": ["docs/ops/rag_benchmark.json",
+                                             "fullseye/data/OP_SEARCH.json",
+                                             "fullseye/data/OP_PROBE.json",
+                                             "fullseye/data/OP_GRAPH.json"],
     "tools/gen_literature_counts.py": ["docs/ops/*"],
     "tools/gen_doc_counts.py": ["docs/README.md", "docs/README.*.md"],
 }
@@ -294,6 +310,10 @@ _IMAGE_REASON = ("画像・動画の書き手。PNG/GIF のバイトは Pillow �
 _SPIKE_REASON = ("スパイク(実験)の記録。spikes/out_gallery/ の図は当時の証跡として凍結してあり、"
                  "再描画(matplotlib / GUI)はバイトが変わる。")
 EXCLUDED = {
+    "tools/measure_op_families.py": ("CPU timing and peak memory are machine-dependent raw measurements; run manually, "
+                                      "then commit docs/ops/families_timing.json with environment metadata."),
+    "tools/measure_device_crossover.py": ("GPU timing is machine-dependent and must be run manually only after "
+                                           "the script verifies that the GPU is idle; raw timing is not deterministic."),
     "tools/build_shwfs_anim3d.py": ("Shack-Hartmann 波面センサーの動く 3-D 教材(docs/view2026/anim3d/shack_hartmann_anim3d.html)。"
                                      "`py -3.11 tools/anim3d_i18n.py --build build_shwfs_anim3d --out docs/view2026/anim3d/shack_hartmann_anim3d.html` で書く"
                                      "(翻訳表 tools/anim3d_i18n_tables/build_shwfs_anim3d.json)。門は tests/test_anim3d_shwfs_2026_10_27.py。"),

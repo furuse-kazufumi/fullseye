@@ -95,6 +95,9 @@ def verdict_of(st: dict, *, op_name: str | None, out_sort: str | None) -> dict:
     if st["std"] == 0.0:
         reasons.append("定数(std=0, 値=%g)" % st["min"])
         return {"verdict": "constant", "reasons": reasons, "escalate": True}
+    if out_sort == "region" and max(st["zero_pct"], st["one_pct"]) >= 99.0:
+        reasons.append("region の占有率が極端(0=%.2f%%, 1=%.2f%%)" % (st["zero_pct"],st["one_pct"]))
+        return {"verdict":"degenerate_region","reasons":reasons,"escalate":True}
     if outside and range_ok:
         reasons.append("[0,1] の外だがこの op は物理量を運ぶ(%s)" % ops.UNIT_RANGE_IS_NOT_THE_CONTRACT[op_name][:40])
     elif outside and picture:

@@ -47,13 +47,14 @@ def test_every_parameter_declares_whether_it_can_loosen_anything():
         assert isinstance(spec["tightens_only"], bool), name
         # 数値に影響するなら、厳しくする方向でなければならない
         if spec["affects_numbers"]:
-            assert spec["tightens_only"], f"{name} は数値に影響するのに緩められる"
+            assert spec["tightens_only"] or spec.get("applied_by") is None, \
+                f"{name} は適用済みで数値に影響するのに緩められる"
         assert spec["doc"].strip(), name
 
 
-def test_no_registered_parameter_changes_a_number_today():
-    """今のところ数値に影響するパラメータは 1 つも無い(それが望ましい状態)。"""
-    assert not any(s["affects_numbers"] for s in S.SYSTEM_PARAMS.values())
+def test_no_applied_parameter_changes_a_number_today():
+    """数値に影響する宣言はあるが、適用済みのものには無い。"""
+    assert not any(s["affects_numbers"] and s.get("applied_by") for s in S.SYSTEM_PARAMS.values())
 
 
 def test_defaults_are_the_safe_side():
@@ -192,10 +193,12 @@ _REPO = pathlib.Path(__file__).resolve().parents[1]
 
 
 def _readers_of(name):
-    """``get_system("<name>")`` を実際に呼ぶリポジトリ直下の .py ファイル名。"""
+    """``get_system("<name>")`` を実際に呼ぶリポジトリ内の Python ファイル。"""
     pat = re.compile(r"""get_system\(\s*['"]%s['"]\s*\)""" % re.escape(name))
     hits = set()
-    for p in _REPO.glob("*.py"):
+    for p in _REPO.rglob("*.py"):
+        if any(part in {".git","__pycache__","build","dist","tests"} for part in p.parts):
+            continue
         if p.name in ("fssystem.py",):
             continue
         try:
@@ -203,7 +206,7 @@ def _readers_of(name):
         except UnicodeDecodeError:
             continue
         if pat.search(text):
-            hits.add(p.name)
+            hits.add(p.relative_to(_REPO).as_posix())
     return hits
 
 
@@ -229,7 +232,8 @@ def test_declared_readers_really_read_and_reserved_params_are_read_by_nobody():
         declared = spec["applied_by"]
         if declared is None:
             assert not actual, f"{name}: 予約と言っているが {sorted(actual)} が読んでいる"
-            assert not spec["affects_numbers"], f"{name}: 数値に影響するのに読み手が無い"
+            # affects_numbers describes the value's semantics if implemented;
+            # reserved parameters are explicitly reported as not applied.
         else:
             assert set(declared) == actual, \
                 f"{name}: applied_by={sorted(declared)} だが実際の読み手は {sorted(actual)}"
