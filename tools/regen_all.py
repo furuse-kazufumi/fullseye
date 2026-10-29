@@ -116,6 +116,8 @@ CHAIN = [
     (["tools/gen_doc_counts.py"], "README の registry 件数 + AI_RAG_GUIDE の op ノート件数"),
     # 索引と op ノートの後(複製するので)。
     (["tools/gen_mcp_data.py"], "fullseye/data operator search, cards, and probe metadata"),
+    (["tools/gen_recipe_index.py"], "existing-example recipe retrieval index and source inventory"),
+    (["tools/gen_recipe_retrieval_report.py"], "business-language recipe recall report"),
     (["tools/measure_mcp_context.py"], "six-task minimal MCP context benchmark"),
     (["tools/gen_rag_benchmark_report.py"], "RAG recall measurement and synonym-gap report"),
 ]
@@ -178,6 +180,8 @@ OUTPUTS = {
                               "fullseye/data/OP_PROBE.json", "fullseye/data/op_knob.json"],
     "tools/gen_op_facets.py": ["fullseye/data/OP_GRAPH.json", "fullseye/data/OP_FAMILIES.json",
                                   "fullseye/data/OP_SHAPES.json", "fullseye/data/SYSTEM_PARAMS.json"],
+    "tools/gen_recipe_index.py": ["fullseye/data/RECIPE_INDEX.json"],
+    "tools/gen_recipe_retrieval_report.py": ["docs/recipe_retrieval_report.json"],
     "tools/measure_mcp_context.py": ["docs/mcp_context_benchmark.json"],
     "tools/gen_rag_benchmark_report.py": ["docs/rag_synonym_gaps.json"],
     # 2026-10-23: 手で列挙していて #116 の文献 4 本が漏れ、regen が exit 1(--check は緑)だった。
@@ -242,6 +246,8 @@ READS = {
     "tools/gen_mcp_data.py": ["docs/OP_INDEX.json", "docs/ops/*"],
     "tools/gen_op_facets.py": ["docs/OP_INDEX.json", "docs/ops/families.json",
                                   "docs/ops/families_timing.json"],
+    "tools/gen_recipe_index.py": ["fullseye/data/OP_SEARCH.json"],
+    "tools/gen_recipe_retrieval_report.py": ["fullseye/data/RECIPE_INDEX.json"],
     "tools/measure_mcp_context.py": ["fullseye/data/OP_GRAPH.json", "fullseye/data/OP_SEARCH.json",
                                       "fullseye/data/OP_CARDS.json", "fullseye/data/OP_PROBE.json"],
     "tools/gen_rag_benchmark_report.py": ["docs/ops/rag_benchmark.json",

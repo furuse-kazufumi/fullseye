@@ -1,0 +1,860 @@
+{
+  "schema_version": 1,
+  "recipes": [
+    {
+      "name": "Denoise — bilateral + unsharp",
+      "task": "denoise",
+      "input_sort": "image",
+      "output_sort": "image",
+      "stages": [
+        {
+          "op": "bilateral",
+          "a": 0.5,
+          "b": 0.5
+        },
+        {
+          "op": "unsharp",
+          "a": 0.3,
+          "b": 0.5
+        }
+      ],
+      "when": "edge-preserving smooth, then a light sharpen",
+      "image": null,
+      "source": {
+        "path": "recipes.py",
+        "line": 18
+      },
+      "index_text": {
+        "ja": "Denoise — bilateral + unsharp denoise edge-preserving smooth, then a light sharpen エッジ保存平滑化（bilateral filter）。HALCON の ``bilateral_filter``（bilateral filtering of an image.）に相当。 Unsharp mask. ★出口で [0,1] に clip する(2026-09-02)。",
+        "en": "Denoise — bilateral + unsharp denoise edge-preserving smooth, then a light sharpen Edge-preserving smoothing (bilateral filter). Equivalent to HALCON's ``bilateral_filter`` (bilateral filtering of an image.). Unsharp mask. ★It clips to [0,1] on the way out (2026-09-02).",
+        "zh": "Denoise — bilateral + unsharp denoise edge-preserving smooth, then a light sharpen 保边平滑（双边滤波器）。相当于 HALCON 的 ``bilateral_filter``（bilateral filtering of an image.）。 非锐化掩蔽。★出口处 clip 到 [0,1] (2026-09-02)。",
+        "tw": "Denoise — bilateral + unsharp denoise edge-preserving smooth, then a light sharpen 保邊平滑化（雙邊濾波器）。相當於 HALCON 的 ``bilateral_filter``（bilateral filtering of an image.）。 非銳化遮罩。★出口處 clip 到 [0,1] (2026-09-02)。",
+        "ko": "Denoise — bilateral + unsharp denoise edge-preserving smooth, then a light sharpen 에지 보존 평활화(bilateral filter). HALCON의 ``bilateral_filter``(bilateral filtering of an image.)에 해당한다. 언샤프 마스크. ★출구에서 [0,1] 로 clip 합니다(2026-09-02).",
+        "de": "Denoise — bilateral + unsharp denoise edge-preserving smooth, then a light sharpen Kantenerhaltende Glattung (Bilateralfilter). Entspricht HALCONs ``bilateral_filter`` (bilateral filtering of an image.). Unscharfmaskierung. ★Sie klippt am Ausgang auf [0,1] (2026-09-02).",
+        "hi": "Denoise — bilateral + unsharp denoise edge-preserving smooth, then a light sharpen Edge को बचाते हुए smoothing (bilateral filter)। HALCON के ``bilateral_filter`` (bilateral filtering of an image.) के समकक्ष है। Unsharp mask। ★आउटपुट पर [0,1] में clip करता है (2026-09-02)।"
+      }
+    },
+    {
+      "name": "Denoise — total variation",
+      "task": "denoise",
+      "input_sort": "image",
+      "output_sort": "image",
+      "stages": [
+        {
+          "op": "sk_tv",
+          "a": 0.5,
+          "b": 0.5
+        }
+      ],
+      "when": "ROF TV denoising",
+      "image": null,
+      "source": {
+        "path": "recipes.py",
+        "line": 21
+      },
+      "index_text": {
+        "ja": "Denoise — total variation denoise ROF TV denoising 全変動ノイズ除去(TV denoising、Chambolle 法)。エッジを保ったまま平坦部のノイズを滑らかにする —— メディアン/ガウスぼかしと違い、輪郭のシャープさを崩しにくいのが特徴。",
+        "en": "Denoise — total variation denoise ROF TV denoising Total variation denoising (TV denoising, Chambolle's method). Smooths noise in flat regions while preserving edges - unlike median/Gaussian blur, it is characterized by not easily degrading the sharpness of contours.",
+        "zh": "Denoise — total variation denoise ROF TV denoising 全变分去噪（TV denoising，Chambolle 方法）。在保留边缘的同时平滑平坦区域的噪声——与中值/高斯模糊不同，其特点是不易破坏轮廓的锐利度。",
+        "tw": "Denoise — total variation denoise ROF TV denoising 全變分去噪（TV denoising，Chambolle 方法）。在保留邊緣的同時平滑平坦區域的雜訊——與中值/高斯模糊不同，其特點是不易破壞輪廓的銳利度。",
+        "ko": "Denoise — total variation denoise ROF TV denoising 전변동 노이즈 제거(TV denoising, Chambolle 기법). 에지를 보존하면서 평탄한 영역의 노이즈를 매끄럽게 한다 —— 미디언/가우시안 블러와 달리 윤곽의 선명함을 잘 무너뜨리지 않는 것이 특징이다.",
+        "de": "Denoise — total variation denoise ROF TV denoising Total-Variation-Rauschunterdrückung (TV denoising, Chambolle-Verfahren). Glättet das Rauschen in flachen Bereichen bei gleichzeitiger Erhaltung der Kanten - im Unterschied zu Median-/Gauß-Weichzeichnung zeichnet es sich dadurch aus, dass die Schärfe der Konturen nur schwer beeinträchtigt wird.",
+        "hi": "Denoise — total variation denoise ROF TV denoising Total variation denoising (TV denoising, Chambolle विधि)। Edges को बचाते हुए समतल हिस्सों का noise smooth करता है —— median/Gaussian blur के विपरीत, इसकी खासियत है कि contour की sharpness आसानी से नहीं बिगड़ती।"
+      }
+    },
+    {
+      "name": "Denoise — median",
+      "task": "denoise",
+      "input_sort": "image",
+      "output_sort": "image",
+      "stages": [
+        {
+          "op": "median",
+          "a": 0.4,
+          "b": 0.5
+        }
+      ],
+      "when": "impulse-noise friendly",
+      "image": null,
+      "source": {
+        "path": "recipes.py",
+        "line": 23
+      },
+      "index_text": {
+        "ja": "Denoise — median denoise impulse-noise friendly メディアン（中央値）フィルタ。HALCON の ``median_image``（Compute a median filter with various masks.）に相当。",
+        "en": "Denoise — median denoise impulse-noise friendly Median filter. Equivalent to HALCON's ``median_image`` (Compute a median filter with various masks.).",
+        "zh": "Denoise — median denoise impulse-noise friendly 中值滤波器。相当于 HALCON 的 ``median_image``（Compute a median filter with various masks.）。",
+        "tw": "Denoise — median denoise impulse-noise friendly 中值濾波器。相當於 HALCON 的 ``median_image``（Compute a median filter with various masks.）。",
+        "ko": "Denoise — median denoise impulse-noise friendly 중앙값(median) 필터. HALCON의 ``median_image``(Compute a median filter with various masks.)에 해당한다.",
+        "de": "Denoise — median denoise impulse-noise friendly Medianfilter. Entspricht HALCONs ``median_image`` (Compute a median filter with various masks.).",
+        "hi": "Denoise — median denoise impulse-noise friendly Median (माध्यिका) filter। HALCON के ``median_image`` (Compute a median filter with various masks.) के समकक्ष है।"
+      }
+    },
+    {
+      "name": "Edge — Sobel + Otsu",
+      "task": "edge",
+      "input_sort": "image",
+      "output_sort": "region",
+      "stages": [
+        {
+          "op": "gaussian",
+          "a": 0.4,
+          "b": 0.5
+        },
+        {
+          "op": "sobel_amp",
+          "a": 0.5,
+          "b": 0.5
+        },
+        {
+          "op": "otsu",
+          "a": 0.4,
+          "b": 0.5
+        }
+      ],
+      "when": "gradient magnitude thresholded to a binary edge map",
+      "image": null,
+      "source": {
+        "path": "recipes.py",
+        "line": 25
+      },
+      "index_text": {
+        "ja": "Edge — Sobel + Otsu edge gradient magnitude thresholded to a binary edge map 等方ガウシアン平滑化。HALCON の ``gauss_filter``（Smooth using discrete Gauss functions.）に相当。 Sobel 勾配の振幅(``hypot(sobel_x, sobel_y)`` を正規化)。縦横それぞれの 1 次微分カーネルから勾配ベクトルの大きさを求める最も基本的なエッジ検出。 HALCON の ``sobel_amp``（Detect edges (amplitude) using the Sobel operator.）に相当。 大津の判別分析法（Otsu's method）による自動しきい値処理。HALCON の ``binary_threshold``（Segment an image using binary thresholding.）に相当。",
+        "en": "Edge — Sobel + Otsu edge gradient magnitude thresholded to a binary edge map Isotropic Gaussian smoothing. Equivalent to HALCON's ``gauss_filter`` (Smooth using discrete Gauss functions.). The magnitude of the Sobel gradient (normalized ``hypot(sobel_x, sobel_y)``). The most basic edge detection method, computing the magnitude of the gradient vector from the vertical and horizontal first-derivative kernels. Equivalent to HALCON's ``sobel_amp`` (Detect edges (amplitude) using the Sobel operator.). Automatic thresholding using Otsu's method. Equivalent to HALCON's ``binary_threshold`` (Segment an image using binary thresholding.).",
+        "zh": "Edge — Sobel + Otsu edge gradient magnitude thresholded to a binary edge map 各向同性高斯平滑。相当于 HALCON 的 ``gauss_filter``（Smooth using discrete Gauss functions.）。 Sobel 梯度的振幅(``hypot(sobel_x, sobel_y)`` 归一化)。由纵、横两个一阶微分核求出梯度向量大小,是最基本的边缘检测方法。相当于 HALCON 的 ``sobel_amp``(Detect edges (amplitude) using the Sobel operator.)。 使用大津法（Otsu's method）进行的自动阈值处理。相当于 HALCON 的 ``binary_threshold``（Segment an image using binary thresholding.）。",
+        "tw": "Edge — Sobel + Otsu edge gradient magnitude thresholded to a binary edge map 等向性高斯平滑化。相當於 HALCON 的 ``gauss_filter``（Smooth using discrete Gauss functions.）。 Sobel 梯度的振幅(``hypot(sobel_x, sobel_y)`` 正規化)。由縱、橫兩個一階微分核求出梯度向量大小,是最基本的邊緣偵測方法。相當於 HALCON 的 ``sobel_amp``(Detect edges (amplitude) using the Sobel operator.)。 使用大津法（Otsu's method）進行的自動閾值處理。相當於 HALCON 的 ``binary_threshold``（Segment an image using binary thresholding.）。",
+        "ko": "Edge — Sobel + Otsu edge gradient magnitude thresholded to a binary edge map 등방성 가우시안 평활화. HALCON의 ``gauss_filter``(Smooth using discrete Gauss functions.)에 해당한다. Sobel 그래디언트의 진폭(``hypot(sobel_x, sobel_y)``를 정규화). 세로·가로 각각의 1차 미분 커널로부터 그래디언트 벡터의 크기를 구하는 가장 기본적인 에지 검출. HALCON의 ``sobel_amp``(Detect edges (amplitude) using the Sobel operator.)에 해당한다. 오츠 방법(Otsu's method)에 의한 자동 임계값 처리. HALCON의 ``binary_threshold``(Segment an image using binary thresholding.)에 해당한다.",
+        "de": "Edge — Sobel + Otsu edge gradient magnitude thresholded to a binary edge map Isotrope Gauß-Glättung. Entspricht HALCONs ``gauss_filter`` (Smooth using discrete Gauss functions.). Der Betrag des Sobel-Gradienten (normiertes ``hypot(sobel_x, sobel_y)``). Die grundlegendste Kantenerkennung, die die Größe des Gradientenvektors aus den vertikalen und horizontalen Kernen erster Ableitung berechnet. Entspricht HALCONs ``sobel_amp`` (Detect edges (amplitude) using the Sobel operator.). Automatische Schwellenwertbildung mittels Otsu-Verfahren (Otsu's method). Entspricht HALCONs ``binary_threshold`` (Segment an image using binary thresholding.).",
+        "hi": "Edge — Sobel + Otsu edge gradient magnitude thresholded to a binary edge map Isotropic Gaussian smoothing। HALCON के ``gauss_filter`` (Smooth using discrete Gauss functions.) के समकक्ष है। Sobel gradient का amplitude (``hypot(sobel_x, sobel_y)`` को normalise किया गया)। खड़ी और आड़ी दिशा के क्रम 1 वाले derivative kernels से gradient vector का magnitude निकालने वाला सबसे बुनियादी edge detection। HALCON के ``sobel_amp`` (Detect edges (amplitude) using the Sobel operator.) के समकक्ष है। Otsu की discriminant analysis method (Otsu's method) से automatic thresholding। HALCON के ``binary_threshold`` (Segment an image using binary thresholding.) के समकक्ष है।"
+      }
+    },
+    {
+      "name": "Edge — Canny",
+      "task": "edge",
+      "input_sort": "image",
+      "output_sort": "region",
+      "stages": [
+        {
+          "op": "gaussian",
+          "a": 0.4,
+          "b": 0.5
+        },
+        {
+          "op": "canny",
+          "a": 0.4,
+          "b": 0.5
+        }
+      ],
+      "when": "smoothed then Canny edges (image -> region)",
+      "image": null,
+      "source": {
+        "path": "recipes.py",
+        "line": 28
+      },
+      "index_text": {
+        "ja": "Edge — Canny edge smoothed then Canny edges (image -> region) 等方ガウシアン平滑化。HALCON の ``gauss_filter``（Smooth using discrete Gauss functions.）に相当。 簡易 Canny 風エッジ検出（region を返す）。HALCON の ``edges_image``（Extract edges using Deriche, Lanser, Shen, or Canny filters.）に対応付けられているが、非極大抑制やヒステリシスしきい値処理は行わない簡略版（近似）。",
+        "en": "Edge — Canny edge smoothed then Canny edges (image -> region) Isotropic Gaussian smoothing. Equivalent to HALCON's ``gauss_filter`` (Smooth using discrete Gauss functions.). Simplified Canny-style edge detection (returns a region). Mapped to HALCON's ``edges_image`` (Extract edges using Deriche, Lanser, Shen, or Canny filters.), but this is a simplified version (an approximation) that does not perform non-maximum suppression or hysteresis thresholding.",
+        "zh": "Edge — Canny edge smoothed then Canny edges (image -> region) 各向同性高斯平滑。相当于 HALCON 的 ``gauss_filter``（Smooth using discrete Gauss functions.）。 简化版 Canny 风格边缘检测（返回 region）。对应 HALCON 的 ``edges_image``（Extract edges using Deriche, Lanser, Shen, or Canny filters.），但这是一个不进行非极大值抑制和滞后阈值处理的简化版本(近似)。",
+        "tw": "Edge — Canny edge smoothed then Canny edges (image -> region) 等向性高斯平滑化。相當於 HALCON 的 ``gauss_filter``（Smooth using discrete Gauss functions.）。 簡化版 Canny 風格邊緣偵測（回傳 region）。對應 HALCON 的 ``edges_image``（Extract edges using Deriche, Lanser, Shen, or Canny filters.），但這是不進行非極大值抑制與遲滯閾值處理的簡化版本(近似)。",
+        "ko": "Edge — Canny edge smoothed then Canny edges (image -> region) 등방성 가우시안 평활화. HALCON의 ``gauss_filter``(Smooth using discrete Gauss functions.)에 해당한다. 간이 Canny 스타일 에지 검출(region을 반환). HALCON의 ``edges_image``(Extract edges using Deriche, Lanser, Shen, or Canny filters.)에 대응되지만, 비최대 억제(non-maximum suppression)와 히스테리시스 임계값 처리를 수행하지 않는 간략화된 버전(근사)이다.",
+        "de": "Edge — Canny edge smoothed then Canny edges (image -> region) Isotrope Gauß-Glättung. Entspricht HALCONs ``gauss_filter`` (Smooth using discrete Gauss functions.). Vereinfachte Canny-artige Kantenerkennung (gibt eine Region zurück). Ist HALCONs ``edges_image`` (Extract edges using Deriche, Lanser, Shen, or Canny filters.) zugeordnet, jedoch eine vereinfachte Version (Approximation), die weder Non-Maximum-Suppression noch Hysterese-Schwellenwertbildung durchführt.",
+        "hi": "Edge — Canny edge smoothed then Canny edges (image -> region) Isotropic Gaussian smoothing। HALCON के ``gauss_filter`` (Smooth using discrete Gauss functions.) के समकक्ष है। सरल Canny जैसा edge detection (region लौटाता है)। इसे HALCON के ``edges_image`` (Extract edges using Deriche, Lanser, Shen, or Canny filters.) से जोड़ा गया है, लेकिन यह non-maximum suppression और hysteresis thresholding नहीं करने वाला सरल संस्करण है (सन्निकटन)।"
+      }
+    },
+    {
+      "name": "Segment — blob / coin",
+      "task": "segment",
+      "input_sort": "image",
+      "output_sort": "region",
+      "stages": [
+        {
+          "op": "gaussian",
+          "a": 0.45,
+          "b": 0.5
+        },
+        {
+          "op": "otsu",
+          "a": 0.4,
+          "b": 0.5
+        },
+        {
+          "op": "fill_up",
+          "a": 0.5,
+          "b": 0.5
+        },
+        {
+          "op": "remove_small",
+          "a": 0.3,
+          "b": 0.5
+        }
+      ],
+      "when": "smooth, threshold, fill holes, drop specks",
+      "image": null,
+      "source": {
+        "path": "recipes.py",
+        "line": 31
+      },
+      "index_text": {
+        "ja": "Segment — blob / coin segment smooth, threshold, fill holes, drop specks 等方ガウシアン平滑化。HALCON の ``gauss_filter``（Smooth using discrete Gauss functions.）に相当。 大津の判別分析法（Otsu's method）による自動しきい値処理。HALCON の ``binary_threshold``（Segment an image using binary thresholding.）に相当。 領域内部の穴(背景に完全に囲まれた領域)を埋める (``ndimage.binary_fill_holes``)。外周とつながっていない背景の孔だけが 埋まり、外周とつながった凹みは埋まらない。HALCON の ``fill_up``（Fill up holes in regions.）に相当。 小さい連結領域を面積で除去する。HALCON の ``select_shape``（Choose regions with the aid of shape features.）に相当。",
+        "en": "Segment — blob / coin segment smooth, threshold, fill holes, drop specks Isotropic Gaussian smoothing. Equivalent to HALCON's ``gauss_filter`` (Smooth using discrete Gauss functions.). Automatic thresholding using Otsu's method. Equivalent to HALCON's ``binary_threshold`` (Segment an image using binary thresholding.). Fills holes inside a region (areas completely surrounded by background) using ``ndimage.binary_fill_holes``. Only background holes that are not connected to the outer boundary are filled; indentations connected to the outer boundary are not filled. Equivalent to HALCON's ``fill_up`` (Fill up holes in regions.). Removes small connected regions based on area. Equivalent to HALCON's ``select_shape`` (Choose regions with the aid of shape features.).",
+        "zh": "Segment — blob / coin segment smooth, threshold, fill holes, drop specks 各向同性高斯平滑。相当于 HALCON 的 ``gauss_filter``（Smooth using discrete Gauss functions.）。 使用大津法（Otsu's method）进行的自动阈值处理。相当于 HALCON 的 ``binary_threshold``（Segment an image using binary thresholding.）。 填补区域内部的孔洞(完全被背景包围的区域)(``ndimage.binary_fill_holes``)。只有未与外周相连的背景孔洞会被填补,与外周相连的凹陷不会被填补。相当于 HALCON 的 ``fill_up``(Fill up holes in regions.)。 根据面积去除较小的连通区域。相当于 HALCON 的 ``select_shape``（Choose regions with the aid of shape features.）。",
+        "tw": "Segment — blob / coin segment smooth, threshold, fill holes, drop specks 等向性高斯平滑化。相當於 HALCON 的 ``gauss_filter``（Smooth using discrete Gauss functions.）。 使用大津法（Otsu's method）進行的自動閾值處理。相當於 HALCON 的 ``binary_threshold``（Segment an image using binary thresholding.）。 填補區域內部的孔洞(完全被背景包圍的區域)(``ndimage.binary_fill_holes``)。只有未與外周相連的背景孔洞會被填補,與外周相連的凹陷不會被填補。相當於 HALCON 的 ``fill_up``(Fill up holes in regions.)。 依面積去除較小的連通區域。相當於 HALCON 的 ``select_shape``（Choose regions with the aid of shape features.）。",
+        "ko": "Segment — blob / coin segment smooth, threshold, fill holes, drop specks 등방성 가우시안 평활화. HALCON의 ``gauss_filter``(Smooth using discrete Gauss functions.)에 해당한다. 오츠 방법(Otsu's method)에 의한 자동 임계값 처리. HALCON의 ``binary_threshold``(Segment an image using binary thresholding.)에 해당한다. 영역 내부의 구멍(배경으로 완전히 둘러싸인 영역)을 채운다(``ndimage.binary_fill_holes``). 외곽과 연결되지 않은 배경 구멍만 채워지며, 외곽과 연결된 오목한 부분은 채워지지 않는다. HALCON의 ``fill_up``(Fill up holes in regions.)에 해당. 면적을 기준으로 작은 연결 영역을 제거한다. HALCON의 ``select_shape``(Choose regions with the aid of shape features.)에 해당한다.",
+        "de": "Segment — blob / coin segment smooth, threshold, fill holes, drop specks Isotrope Gauß-Glättung. Entspricht HALCONs ``gauss_filter`` (Smooth using discrete Gauss functions.). Automatische Schwellenwertbildung mittels Otsu-Verfahren (Otsu's method). Entspricht HALCONs ``binary_threshold`` (Segment an image using binary thresholding.). Füllt Löcher im Inneren einer Region (Bereiche, die vollständig vom Hintergrund umschlossen sind) mit ``ndimage.binary_fill_holes``. Nur Hintergrundlöcher, die nicht mit dem äußeren Rand verbunden sind, werden gefüllt; Einbuchtungen, die mit dem äußeren Rand verbunden sind, bleiben ungefüllt. Entspricht HALCONs ``fill_up`` (Fill up holes in regions.). Entfernt kleine zusammenhängende Regionen anhand der Fläche. Entspricht HALCONs ``select_shape`` (Choose regions with the aid of shape features.).",
+        "hi": "Segment — blob / coin segment smooth, threshold, fill holes, drop specks Isotropic Gaussian smoothing। HALCON के ``gauss_filter`` (Smooth using discrete Gauss functions.) के समकक्ष है। Otsu की discriminant analysis method (Otsu's method) से automatic thresholding। HALCON के ``binary_threshold`` (Segment an image using binary thresholding.) के समकक्ष है। Region के अंदर के छेद (background से पूरी तरह घिरे हिस्से) भरता है (``ndimage.binary_fill_holes``)। केवल बाहरी सीमा से न जुड़े background के छेद भरते हैं, बाहरी सीमा से जुड़े गड्ढे नहीं भरते। HALCON के ``fill_up`` (Fill up holes in regions.) के समकक्ष है। छोटे connected regions को क्षेत्रफल के आधार पर हटाता है। HALCON के ``select_shape`` (Choose regions with the aid of shape features.) के समकक्ष है।"
+      }
+    },
+    {
+      "name": "Count — blobs",
+      "task": "measure",
+      "input_sort": "image",
+      "output_sort": "feature",
+      "stages": [
+        {
+          "op": "gaussian",
+          "a": 0.45,
+          "b": 0.5
+        },
+        {
+          "op": "otsu",
+          "a": 0.4,
+          "b": 0.5
+        },
+        {
+          "op": "fill_up",
+          "a": 0.5,
+          "b": 0.5
+        },
+        {
+          "op": "count_obj",
+          "a": 0.5,
+          "b": 0.5
+        }
+      ],
+      "when": "ends in a feature — the object count",
+      "image": null,
+      "source": {
+        "path": "recipes.py",
+        "line": 35
+      },
+      "index_text": {
+        "ja": "Count — blobs measure ends in a feature — the object count 等方ガウシアン平滑化。HALCON の ``gauss_filter``（Smooth using discrete Gauss functions.）に相当。 大津の判別分析法（Otsu's method）による自動しきい値処理。HALCON の ``binary_threshold``（Segment an image using binary thresholding.）に相当。 領域内部の穴(背景に完全に囲まれた領域)を埋める (``ndimage.binary_fill_holes``)。外周とつながっていない背景の孔だけが 埋まり、外周とつながった凹みは埋まらない。HALCON の ``fill_up``（Fill up holes in regions.）に相当。 連結成分の個数を数える(``ndimage.label``、既定 8 連結)。HALCON の ``count_obj``/``connection`` の既定と同じ 8 連結を採用しており、斜めに 接する 2 つの塊は 1 個として数える(4 連結にすると過剰カウントになる例 =セルカウントで実測 342 個 vs 327 個、コード内コメント参照)。HALCON の ``count_obj``（Number of objects in a tuple.）に相当。",
+        "en": "Count — blobs measure ends in a feature — the object count Isotropic Gaussian smoothing. Equivalent to HALCON's ``gauss_filter`` (Smooth using discrete Gauss functions.). Automatic thresholding using Otsu's method. Equivalent to HALCON's ``binary_threshold`` (Segment an image using binary thresholding.). Fills holes inside a region (areas completely surrounded by background) using ``ndimage.binary_fill_holes``. Only background holes that are not connected to the outer boundary are filled; indentations connected to the outer boundary are not filled. Equivalent to HALCON's ``fill_up`` (Fill up holes in regions.). Counts the number of connected components (``ndimage.label``, default 8-connectivity). Uses 8-connectivity, the same default as HALCON's ``count_obj``/``connection``, so two blobs touching diagonally are counted as one (an example where switching to 4-connectivity causes over-counting -- measured cell counts of 342 vs. 327; see the in-code comment). Equivalent to HALCON's ``count_obj`` (Number of objects in a tuple.).",
+        "zh": "Count — blobs measure ends in a feature — the object count 各向同性高斯平滑。相当于 HALCON 的 ``gauss_filter``（Smooth using discrete Gauss functions.）。 使用大津法（Otsu's method）进行的自动阈值处理。相当于 HALCON 的 ``binary_threshold``（Segment an image using binary thresholding.）。 填补区域内部的孔洞(完全被背景包围的区域)(``ndimage.binary_fill_holes``)。只有未与外周相连的背景孔洞会被填补,与外周相连的凹陷不会被填补。相当于 HALCON 的 ``fill_up``(Fill up holes in regions.)。 统计连通成分的个数(``ndimage.label``,默认 8 连通)。采用与 HALCON 的 ``count_obj``/``connection`` 默认相同的 8 连通,因此对角相接的两个团块会被计为 1 个(若改为 4 连通会导致计数过多的例子——细胞计数实测为 342 个 vs 327 个,参见代码内注释)。相当于 HALCON 的 ``count_obj``(Number of objects in a tuple.)。",
+        "tw": "Count — blobs measure ends in a feature — the object count 等向性高斯平滑化。相當於 HALCON 的 ``gauss_filter``（Smooth using discrete Gauss functions.）。 使用大津法（Otsu's method）進行的自動閾值處理。相當於 HALCON 的 ``binary_threshold``（Segment an image using binary thresholding.）。 填補區域內部的孔洞(完全被背景包圍的區域)(``ndimage.binary_fill_holes``)。只有未與外周相連的背景孔洞會被填補,與外周相連的凹陷不會被填補。相當於 HALCON 的 ``fill_up``(Fill up holes in regions.)。 統計連通成分的個數(``ndimage.label``,預設 8 連通)。採用與 HALCON 的 ``count_obj``/``connection`` 預設相同的 8 連通,因此對角相接的兩個團塊會被算成 1 個(若改為 4 連通會導致計數過多的例子——細胞計數實測為 342 個 vs 327 個,參見程式碼內註解)。相當於 HALCON 的 ``count_obj``(Number of objects in a tuple.)。",
+        "ko": "Count — blobs measure ends in a feature — the object count 등방성 가우시안 평활화. HALCON의 ``gauss_filter``(Smooth using discrete Gauss functions.)에 해당한다. 오츠 방법(Otsu's method)에 의한 자동 임계값 처리. HALCON의 ``binary_threshold``(Segment an image using binary thresholding.)에 해당한다. 영역 내부의 구멍(배경으로 완전히 둘러싸인 영역)을 채운다(``ndimage.binary_fill_holes``). 외곽과 연결되지 않은 배경 구멍만 채워지며, 외곽과 연결된 오목한 부분은 채워지지 않는다. HALCON의 ``fill_up``(Fill up holes in regions.)에 해당. 연결 성분의 개수를 센다(``ndimage.label``, 기본 8-연결). HALCON의 ``count_obj``/``connection``의 기본값과 같은 8-연결을 채택하고 있어, 대각선으로 맞닿은 두 덩어리를 1개로 센다(4-연결로 하면 과다 계수되는 예 = 세포 계수 실측 342개 vs 327개, 코드 내 주석 참조). HALCON의 ``count_obj``(Number of objects in a tuple.)에 해당.",
+        "de": "Count — blobs measure ends in a feature — the object count Isotrope Gauß-Glättung. Entspricht HALCONs ``gauss_filter`` (Smooth using discrete Gauss functions.). Automatische Schwellenwertbildung mittels Otsu-Verfahren (Otsu's method). Entspricht HALCONs ``binary_threshold`` (Segment an image using binary thresholding.). Füllt Löcher im Inneren einer Region (Bereiche, die vollständig vom Hintergrund umschlossen sind) mit ``ndimage.binary_fill_holes``. Nur Hintergrundlöcher, die nicht mit dem äußeren Rand verbunden sind, werden gefüllt; Einbuchtungen, die mit dem äußeren Rand verbunden sind, bleiben ungefüllt. Entspricht HALCONs ``fill_up`` (Fill up holes in regions.). Zählt die Anzahl zusammenhängender Komponenten (``ndimage.label``, standardmäßig 8-Konnektivität). Verwendet dieselbe 8-Konnektivität wie der Standard von HALCONs ``count_obj``/``connection``, sodass zwei diagonal berührende Klumpen als einer gezählt werden (ein Beispiel, bei dem 4-Konnektivität zu Überzählung führt -- gemessene Zellzahlen von 342 gegenüber 327, siehe Kommentar im Code). Entspricht HALCONs ``count_obj`` (Number of objects in a tuple.).",
+        "hi": "Count — blobs measure ends in a feature — the object count Isotropic Gaussian smoothing। HALCON के ``gauss_filter`` (Smooth using discrete Gauss functions.) के समकक्ष है। Otsu की discriminant analysis method (Otsu's method) से automatic thresholding। HALCON के ``binary_threshold`` (Segment an image using binary thresholding.) के समकक्ष है। Region के अंदर के छेद (background से पूरी तरह घिरे हिस्से) भरता है (``ndimage.binary_fill_holes``)। केवल बाहरी सीमा से न जुड़े background के छेद भरते हैं, बाहरी सीमा से जुड़े गड्ढे नहीं भरते। HALCON के ``fill_up`` (Fill up holes in regions.) के समकक्ष है। Connected components की संख्या गिनता है (``ndimage.label``, default 8-connectivity)। HALCON के ``count_obj``/``connection`` के default जैसी ही 8-connectivity अपनाई गई है, इसलिए तिरछे छूने वाले 2 टुकड़ों को 1 गिना जाता है (4-connectivity से ज़्यादा गिनती हो जाती है, उदाहरण = cell count में मापा गया 342 बनाम 327, code के अंदर का comment देखें)। HALCON के ``count_obj`` (Number of objects in a tuple.) के समकक्ष है।"
+      }
+    },
+    {
+      "name": "Binarize — document (adaptive)",
+      "task": "ocr",
+      "input_sort": "image",
+      "output_sort": "region",
+      "stages": [
+        {
+          "op": "adaptive_gauss_thresh",
+          "a": 0.5,
+          "b": 0.5
+        }
+      ],
+      "when": "local adaptive threshold for uneven lighting",
+      "image": null,
+      "source": {
+        "path": "recipes.py",
+        "line": 39
+      },
+      "index_text": {
+        "ja": "Binarize — document (adaptive) ocr local adaptive threshold for uneven lighting ガウシアン平滑化した局所平均を基準にした適応的しきい値処理。HALCON の ``local_threshold``（Segment an image using local thresholding.）に相当。",
+        "en": "Binarize — document (adaptive) ocr local adaptive threshold for uneven lighting Adaptive thresholding based on a locally Gaussian-smoothed mean. Equivalent to HALCON's ``local_threshold`` (Segment an image using local thresholding.).",
+        "zh": "Binarize — document (adaptive) ocr local adaptive threshold for uneven lighting 以高斯平滑后的局部均值为基准进行自适应阈值处理。相当于 HALCON 的 ``local_threshold``（Segment an image using local thresholding.）。",
+        "tw": "Binarize — document (adaptive) ocr local adaptive threshold for uneven lighting 以高斯平滑後的局部平均值為基準進行自適應閾值處理。相當於 HALCON 的 ``local_threshold``（Segment an image using local thresholding.）。",
+        "ko": "Binarize — document (adaptive) ocr local adaptive threshold for uneven lighting 가우시안 평활화한 국소 평균을 기준으로 하는 적응형 임계값 처리. HALCON의 ``local_threshold``(Segment an image using local thresholding.)에 해당한다.",
+        "de": "Binarize — document (adaptive) ocr local adaptive threshold for uneven lighting Adaptive Schwellenwertbildung anhand eines gaußgeglätteten lokalen Mittelwerts. Entspricht HALCONs ``local_threshold`` (Segment an image using local thresholding.).",
+        "hi": "Binarize — document (adaptive) ocr local adaptive threshold for uneven lighting Gaussian smoothing किए गए local mean को आधार बनाकर adaptive thresholding। HALCON के ``local_threshold`` (Segment an image using local thresholding.) के समकक्ष है।"
+      }
+    },
+    {
+      "name": "Enhance — CLAHE contrast",
+      "task": "enhance",
+      "input_sort": "image",
+      "output_sort": "image",
+      "stages": [
+        {
+          "op": "clahe",
+          "a": 0.5,
+          "b": 0.5
+        }
+      ],
+      "when": "local histogram equalization",
+      "image": null,
+      "source": {
+        "path": "recipes.py",
+        "line": 42
+      },
+      "index_text": {
+        "ja": "Enhance — CLAHE contrast enhance local histogram equalization Contrast-Limited Adaptive Histogram Equalization (tiled, bilinearly blended).",
+        "en": "Enhance — CLAHE contrast enhance local histogram equalization Contrast-Limited Adaptive Histogram Equalization (tiled, bilinearly blended).",
+        "zh": "Enhance — CLAHE contrast enhance local histogram equalization 对比度受限的自适应直方图均衡(分块,双线性拼接)。",
+        "tw": "Enhance — CLAHE contrast enhance local histogram equalization 對比度受限的自適應直方圖均衡(分塊,雙線性拼接)。",
+        "ko": "Enhance — CLAHE contrast enhance local histogram equalization 대비 제한 적응 히스토그램 평활화(타일 분할 + 이중선형으로 이음).",
+        "de": "Enhance — CLAHE contrast enhance local histogram equalization Kontrastbegrenzte adaptive Histogrammangleichung (gekachelt, bilinear überblendet).",
+        "hi": "Enhance — CLAHE contrast enhance local histogram equalization Contrast-Limited Adaptive Histogram Equalization (tiles में, bilinear रूप से मिलाया गया)।"
+      }
+    },
+    {
+      "name": "Enhance — histogram equalize",
+      "task": "enhance",
+      "input_sort": "image",
+      "output_sort": "image",
+      "stages": [
+        {
+          "op": "equalize",
+          "a": 0.5,
+          "b": 0.5
+        }
+      ],
+      "when": "global equalization",
+      "image": null,
+      "source": {
+        "path": "recipes.py",
+        "line": 44
+      },
+      "index_text": {
+        "ja": "Enhance — histogram equalize enhance global equalization ヒストグラム均等化（線形化）。HALCON の ``equ_histo_image``（Histogram linearization of images）に相当。",
+        "en": "Enhance — histogram equalize enhance global equalization Histogram equalization (linearization). Equivalent to HALCON's ``equ_histo_image`` (Histogram linearization of images).",
+        "zh": "Enhance — histogram equalize enhance global equalization 直方图均衡化（线性化）。相当于 HALCON 的 ``equ_histo_image``（Histogram linearization of images）。",
+        "tw": "Enhance — histogram equalize enhance global equalization 直方圖均化（線性化）。相當於 HALCON 的 ``equ_histo_image``（Histogram linearization of images）。",
+        "ko": "Enhance — histogram equalize enhance global equalization 히스토그램 평활화(equalization, 선형화). HALCON의 ``equ_histo_image``(Histogram linearization of images)에 해당한다.",
+        "de": "Enhance — histogram equalize enhance global equalization Histogrammausgleich (Linearisierung). Entspricht HALCONs ``equ_histo_image`` (Histogram linearization of images).",
+        "hi": "Enhance — histogram equalize enhance global equalization Histogram equalisation (linearisation)। HALCON के ``equ_histo_image`` (Histogram linearization of images) के समकक्ष है।"
+      }
+    },
+    {
+      "name": "Enhance — gamma",
+      "task": "enhance",
+      "input_sort": "image",
+      "output_sort": "image",
+      "stages": [
+        {
+          "op": "gamma",
+          "a": 0.4,
+          "b": 0.5
+        }
+      ],
+      "when": "gamma tone curve",
+      "image": null,
+      "source": {
+        "path": "recipes.py",
+        "line": 46
+      },
+      "index_text": {
+        "ja": "Enhance — gamma enhance gamma tone curve ガンマ補正（べき乗変換）。HALCON の ``pow_image``（Raise an image to a power.）に相当。",
+        "en": "Enhance — gamma enhance gamma tone curve Gamma correction (power-law transformation). Equivalent to HALCON's ``pow_image`` (Raise an image to a power.).",
+        "zh": "Enhance — gamma enhance gamma tone curve 伽马校正（幂次变换）。相当于 HALCON 的 ``pow_image``（Raise an image to a power.）。",
+        "tw": "Enhance — gamma enhance gamma tone curve 伽瑪校正（冪次轉換）。相當於 HALCON 的 ``pow_image``（Raise an image to a power.）。",
+        "ko": "Enhance — gamma enhance gamma tone curve 감마 보정(거듭제곱 변환). HALCON의 ``pow_image``(Raise an image to a power.)에 해당한다.",
+        "de": "Enhance — gamma enhance gamma tone curve Gammakorrektur (Potenztransformation). Entspricht HALCONs ``pow_image`` (Raise an image to a power.).",
+        "hi": "Enhance — gamma enhance gamma tone curve Gamma correction (power transform)। HALCON के ``pow_image`` (Raise an image to a power.) के समकक्ष है।"
+      }
+    },
+    {
+      "name": "Sharpen — unsharp mask",
+      "task": "enhance",
+      "input_sort": "image",
+      "output_sort": "image",
+      "stages": [
+        {
+          "op": "unsharp",
+          "a": 0.6,
+          "b": 0.5
+        }
+      ],
+      "when": "unsharp masking",
+      "image": null,
+      "source": {
+        "path": "recipes.py",
+        "line": 48
+      },
+      "index_text": {
+        "ja": "Sharpen — unsharp mask enhance unsharp masking Unsharp mask. ★出口で [0,1] に clip する(2026-09-02)。",
+        "en": "Sharpen — unsharp mask enhance unsharp masking Unsharp mask. ★It clips to [0,1] on the way out (2026-09-02).",
+        "zh": "Sharpen — unsharp mask enhance unsharp masking 非锐化掩蔽。★出口处 clip 到 [0,1] (2026-09-02)。",
+        "tw": "Sharpen — unsharp mask enhance unsharp masking 非銳化遮罩。★出口處 clip 到 [0,1] (2026-09-02)。",
+        "ko": "Sharpen — unsharp mask enhance unsharp masking 언샤프 마스크. ★출구에서 [0,1] 로 clip 합니다(2026-09-02).",
+        "de": "Sharpen — unsharp mask enhance unsharp masking Unscharfmaskierung. ★Sie klippt am Ausgang auf [0,1] (2026-09-02).",
+        "hi": "Sharpen — unsharp mask enhance unsharp masking Unsharp mask। ★आउटपुट पर [0,1] में clip करता है (2026-09-02)।"
+      }
+    },
+    {
+      "name": "Sharpen — highpass",
+      "task": "enhance",
+      "input_sort": "image",
+      "output_sort": "image",
+      "stages": [
+        {
+          "op": "highpass",
+          "a": 0.4,
+          "b": 0.5
+        }
+      ],
+      "when": "frequency-domain high-pass",
+      "image": null,
+      "source": {
+        "path": "recipes.py",
+        "line": 50
+      },
+      "index_text": {
+        "ja": "Sharpen — highpass enhance frequency-domain high-pass Butterworth high-pass. Same Nyquist / length contract as :func:`lowpass`.",
+        "en": "Sharpen — highpass enhance frequency-domain high-pass Butterworth high-pass. Same Nyquist / length contract as :func:`lowpass`.",
+        "zh": "Sharpen — highpass enhance frequency-domain high-pass 巴特沃斯高通。奈奎斯特与长度约定与 :func:`lowpass` 相同。",
+        "tw": "Sharpen — highpass enhance frequency-domain high-pass 巴特沃斯高通。奈奎斯特與長度約定與 :func:`lowpass` 相同。",
+        "ko": "Sharpen — highpass enhance frequency-domain high-pass 버터워스 고역 통과. 나이퀴스트/길이 계약은 :func:`lowpass` 와 같다.",
+        "de": "Sharpen — highpass enhance frequency-domain high-pass Butterworth-Hochpass. Gleicher Nyquist- / Längenvertrag wie :func:`lowpass`.",
+        "hi": "Sharpen — highpass enhance frequency-domain high-pass Butterworth high-pass। :func:`lowpass` जैसा ही Nyquist / लंबाई का नियम।"
+      }
+    },
+    {
+      "name": "Texture — Gabor",
+      "task": "texture",
+      "input_sort": "image",
+      "output_sort": "image",
+      "stages": [
+        {
+          "op": "gabor",
+          "a": 0.3,
+          "b": 0.4
+        }
+      ],
+      "when": "oriented band-pass texture response",
+      "image": null,
+      "source": {
+        "path": "recipes.py",
+        "line": 52
+      },
+      "index_text": {
+        "ja": "Texture — Gabor texture oriented band-pass texture response Gabor energy |v * g| — an oriented band-pass texture response.",
+        "en": "Texture — Gabor texture oriented band-pass texture response Gabor energy |v * g| — an oriented band-pass texture response.",
+        "zh": "Texture — Gabor texture oriented band-pass texture response Gabor 能量 |v * g| —— 具方向性的带通纹理响应。",
+        "tw": "Texture — Gabor texture oriented band-pass texture response Gabor 能量 |v * g| —— 具方向性的帶通紋理響應。",
+        "ko": "Texture — Gabor texture oriented band-pass texture response Gabor 에너지 |v * g| —— 방위를 가진 대역통과 텍스처 응답.",
+        "de": "Texture — Gabor texture oriented band-pass texture response Gabor-Energie |v * g| — eine orientierte Bandpass-Texturantwort.",
+        "hi": "Texture — Gabor texture oriented band-pass texture response Gabor energy |v * g| — दिशा पर निर्भर band-pass texture response।"
+      }
+    },
+    {
+      "name": "Texture — local std",
+      "task": "texture",
+      "input_sort": "image",
+      "output_sort": "image",
+      "stages": [
+        {
+          "op": "std_filter",
+          "a": 0.5,
+          "b": 0.5
+        }
+      ],
+      "when": "local standard deviation",
+      "image": null,
+      "source": {
+        "path": "recipes.py",
+        "line": 54
+      },
+      "index_text": {
+        "ja": "Texture — local std texture local standard deviation 局所窓内の標準偏差（テクスチャの粗さの指標）。HALCON の ``deviation_image``（Calculate the standard deviation of gray values within rectangular windows.）に相当。",
+        "en": "Texture — local std texture local standard deviation Standard deviation within a local window (an indicator of texture coarseness). Equivalent to HALCON's ``deviation_image`` (Calculate the standard deviation of gray values within rectangular windows.).",
+        "zh": "Texture — local std texture local standard deviation 局部窗口内的标准差（纹理粗糙度的指标）。相当于 HALCON 的 ``deviation_image``（Calculate the standard deviation of gray values within rectangular windows.）。",
+        "tw": "Texture — local std texture local standard deviation 局部視窗內的標準差（紋理粗糙度的指標）。相當於 HALCON 的 ``deviation_image``（Calculate the standard deviation of gray values within rectangular windows.）。",
+        "ko": "Texture — local std texture local standard deviation 국소 윈도우 내 표준편차(텍스처 거칠기의 지표). HALCON의 ``deviation_image``(Calculate the standard deviation of gray values within rectangular windows.)에 해당한다.",
+        "de": "Texture — local std texture local standard deviation Standardabweichung innerhalb eines lokalen Fensters (ein Maß für die Texturrauheit). Entspricht HALCONs ``deviation_image`` (Calculate the standard deviation of gray values within rectangular windows.).",
+        "hi": "Texture — local std texture local standard deviation Local window के अंदर standard deviation (texture की खुरदरापन का संकेतक)। HALCON के ``deviation_image`` (Calculate the standard deviation of gray values within rectangular windows.) के समकक्ष है।"
+      }
+    },
+    {
+      "name": "Keypoints — Harris corners",
+      "task": "features",
+      "input_sort": "image",
+      "output_sort": "image",
+      "stages": [
+        {
+          "op": "sk_corner_harris",
+          "a": 0.5,
+          "b": 0.5
+        }
+      ],
+      "when": "corner response map",
+      "image": null,
+      "source": {
+        "path": "recipes.py",
+        "line": 56
+      },
+      "index_text": {
+        "ja": "Keypoints — Harris corners features corner response map Harris コーナー応答(skimage 実装)。勾配の構造テンソルから、平坦部/エッジ/コーナーを見分ける符号付きスコアを計算する古典的なコーナー検出器。",
+        "en": "Keypoints — Harris corners features corner response map Harris corner response (skimage implementation). A classic corner detector that computes a signed score from the structure tensor of the gradient, distinguishing flat regions, edges, and corners.",
+        "zh": "Keypoints — Harris corners features corner response map Harris 角点响应(skimage 实现)。这是一种经典的角点检测器,根据梯度的结构张量计算出用于区分平坦区域/边缘/角点的带符号分数。",
+        "tw": "Keypoints — Harris corners features corner response map Harris 角點響應(skimage 實作)。這是一種經典的角點偵測器,根據梯度的結構張量計算出用於區分平坦區域/邊緣/角點的帶符號分數。",
+        "ko": "Keypoints — Harris corners features corner response map Harris 코너 응답(skimage 구현). 그래디언트의 구조 텐서로부터 평탄부/에지/코너를 구별하는 부호 있는 점수를 계산하는 고전적인 코너 검출기이다.",
+        "de": "Keypoints — Harris corners features corner response map Harris-Eckenantwort (skimage-Implementierung). Ein klassischer Eckendetektor, der aus dem Strukturtensor des Gradienten einen vorzeichenbehafteten Score berechnet, der flache Bereiche, Kanten und Ecken unterscheidet.",
+        "hi": "Keypoints — Harris corners features corner response map Harris corner response (skimage implementation)। Gradient के structure tensor से समतल हिस्से/edge/corner में भेद करने वाला signed score निकालने वाला classic corner detector।"
+      }
+    },
+    {
+      "name": "Blobs — Difference of Gaussians",
+      "task": "features",
+      "input_sort": "image",
+      "output_sort": "image",
+      "stages": [
+        {
+          "op": "sk_dog",
+          "a": 0.3,
+          "b": 0.6
+        }
+      ],
+      "when": "DoG blob response",
+      "image": null,
+      "source": {
+        "path": "recipes.py",
+        "line": 58
+      },
+      "index_text": {
+        "ja": "Blobs — Difference of Gaussians features DoG blob response DoG(Difference of Gaussians、ガウス差分)フィルタ。2 つの異なる σ でぼかした画像の差分を取り、LoG(Laplacian of Gaussian)に近いバンドパス応答(特定の空間周波数帯だけを強調するエッジ/ブロブ検出)を安く得る。",
+        "en": "Blobs — Difference of Gaussians features DoG blob response DoG (Difference of Gaussians) filter. Takes the difference between images blurred with two different sigma values, cheaply obtaining a bandpass response close to LoG (Laplacian of Gaussian) - edge/blob detection that emphasizes only a specific spatial-frequency band.",
+        "zh": "Blobs — Difference of Gaussians features DoG blob response DoG（Difference of Gaussians，高斯差分）滤波器。取用两个不同 σ 模糊后的图像之差，以低成本获得接近 LoG（Laplacian of Gaussian）的带通响应（只强调特定空间频率带的边缘/斑点检测）。",
+        "tw": "Blobs — Difference of Gaussians features DoG blob response DoG（Difference of Gaussians，高斯差分）濾波器。取兩個不同 σ 模糊後影像的差值，以低成本取得接近 LoG（Laplacian of Gaussian）的帶通響應（僅強調特定空間頻率帶的邊緣/斑點偵測）。",
+        "ko": "Blobs — Difference of Gaussians features DoG blob response DoG(Difference of Gaussians, 가우시안 차분) 필터. 서로 다른 두 σ로 블러 처리한 이미지의 차분을 취해, LoG(Laplacian of Gaussian)에 가까운 대역통과 응답(특정 공간 주파수 대역만 강조하는 에지/블롭 검출)을 저렴하게 얻는다.",
+        "de": "Blobs — Difference of Gaussians features DoG blob response DoG-Filter (Difference of Gaussians, Gauß-Differenz). Bildet die Differenz zweier mit unterschiedlichem σ geglätteter Bilder und erhält dadurch kostengünstig eine Bandpassantwort, die dem LoG (Laplacian of Gaussian) nahekommt (Kanten-/Blob-Erkennung, die nur ein bestimmtes Ortsfrequenzband hervorhebt).",
+        "hi": "Blobs — Difference of Gaussians features DoG blob response DoG (Difference of Gaussians) filter। 2 अलग σ से blur की गई images का अंतर लेकर, LoG (Laplacian of Gaussian) के करीब band-pass response (केवल एक खास spatial frequency band को उभारने वाला edge/blob detection) सस्ते में पाता है।"
+      }
+    },
+    {
+      "name": "Morphology — gradient",
+      "task": "morphology",
+      "input_sort": "image",
+      "output_sort": "image",
+      "stages": [
+        {
+          "op": "morph_grad",
+          "a": 0.5,
+          "b": 0.5
+        }
+      ],
+      "when": "dilation minus erosion",
+      "image": null,
+      "source": {
+        "path": "recipes.py",
+        "line": 60
+      },
+      "index_text": {
+        "ja": "Morphology — gradient morphology dilation minus erosion モルフォロジー勾配（膨張 − 侵食）。HALCON の ``gray_range_rect``（Determine the gray value range within a rectangle.）に相当。",
+        "en": "Morphology — gradient morphology dilation minus erosion Morphological gradient (dilation minus erosion). Equivalent to HALCON's ``gray_range_rect`` (Determine the gray value range within a rectangle.).",
+        "zh": "Morphology — gradient morphology dilation minus erosion 形态学梯度（膨胀 − 腐蚀）。相当于 HALCON 的 ``gray_range_rect``（Determine the gray value range within a rectangle.）。",
+        "tw": "Morphology — gradient morphology dilation minus erosion 形態學梯度（膨脹 − 侵蝕）。相當於 HALCON 的 ``gray_range_rect``（Determine the gray value range within a rectangle.）。",
+        "ko": "Morphology — gradient morphology dilation minus erosion 모폴로지 그래디언트(팽창 − 침식). HALCON의 ``gray_range_rect``(Determine the gray value range within a rectangle.)에 해당한다.",
+        "de": "Morphology — gradient morphology dilation minus erosion Morphologischer Gradient (Dilatation minus Erosion). Entspricht HALCONs ``gray_range_rect`` (Determine the gray value range within a rectangle.).",
+        "hi": "Morphology — gradient morphology dilation minus erosion Morphological gradient (dilation − erosion)। HALCON के ``gray_range_rect`` (Determine the gray value range within a rectangle.) के समकक्ष है।"
+      }
+    },
+    {
+      "name": "Shape — distance transform",
+      "task": "shape",
+      "input_sort": "image",
+      "output_sort": "image",
+      "stages": [
+        {
+          "op": "gaussian",
+          "a": 0.4,
+          "b": 0.5
+        },
+        {
+          "op": "otsu",
+          "a": 0.4,
+          "b": 0.5
+        },
+        {
+          "op": "distance_transform",
+          "a": 0.5,
+          "b": 0.5
+        }
+      ],
+      "when": "distance to background inside each region",
+      "image": null,
+      "source": {
+        "path": "recipes.py",
+        "line": 62
+      },
+      "index_text": {
+        "ja": "Shape — distance transform shape distance to background inside each region 等方ガウシアン平滑化。HALCON の ``gauss_filter``（Smooth using discrete Gauss functions.）に相当。 大津の判別分析法（Otsu's method）による自動しきい値処理。HALCON の ``binary_threshold``（Segment an image using binary thresholding.）に相当。 ユークリッド距離変換(``ndimage.distance_transform_edt``)を最大値で 正規化した画像。各前景画素について最も近い背景画素までの距離を表す ―― 値が大きいほど領域の「奥」にある画素。出力は ``region`` ではなく ``image`` 型になる点に注意。HALCON の ``distance_transform``（Compute the distance transformation of a region.）に相当。",
+        "en": "Shape — distance transform shape distance to background inside each region Isotropic Gaussian smoothing. Equivalent to HALCON's ``gauss_filter`` (Smooth using discrete Gauss functions.). Automatic thresholding using Otsu's method. Equivalent to HALCON's ``binary_threshold`` (Segment an image using binary thresholding.). An image obtained by normalizing the Euclidean distance transform (``ndimage.distance_transform_edt``) by its maximum value. It represents, for each foreground pixel, the distance to the nearest background pixel -- the larger the value, the \"deeper\" the pixel is inside the region. Note that the output type is ``image``, not ``region``. Equivalent to HALCON's ``distance_transform`` (Compute the distance transformation of a region.).",
+        "zh": "Shape — distance transform shape distance to background inside each region 各向同性高斯平滑。相当于 HALCON 的 ``gauss_filter``（Smooth using discrete Gauss functions.）。 使用大津法（Otsu's method）进行的自动阈值处理。相当于 HALCON 的 ``binary_threshold``（Segment an image using binary thresholding.）。 以最大值归一化后的欧几里得距离变换(``ndimage.distance_transform_edt``)图像。表示每个前景像素到最近背景像素的距离——数值越大,说明该像素越处于区域的\"深处\"。请注意输出类型是 ``image`` 而不是 ``region``。相当于 HALCON 的 ``distance_transform``(Compute the distance transformation of a region.)。",
+        "tw": "Shape — distance transform shape distance to background inside each region 等向性高斯平滑化。相當於 HALCON 的 ``gauss_filter``（Smooth using discrete Gauss functions.）。 使用大津法（Otsu's method）進行的自動閾值處理。相當於 HALCON 的 ``binary_threshold``（Segment an image using binary thresholding.）。 以最大值正規化後的歐幾里得距離變換(``ndimage.distance_transform_edt``)影像。表示每個前景像素到最近背景像素的距離——數值越大,代表該像素越處於區域的「深處」。請注意輸出型別是 ``image`` 而非 ``region``。相當於 HALCON 的 ``distance_transform``(Compute the distance transformation of a region.)。",
+        "ko": "Shape — distance transform shape distance to background inside each region 등방성 가우시안 평활화. HALCON의 ``gauss_filter``(Smooth using discrete Gauss functions.)에 해당한다. 오츠 방법(Otsu's method)에 의한 자동 임계값 처리. HALCON의 ``binary_threshold``(Segment an image using binary thresholding.)에 해당한다. 최댓값으로 정규화한 유클리드 거리 변환(``ndimage.distance_transform_edt``) 이미지. 각 전경 픽셀에 대해 가장 가까운 배경 픽셀까지의 거리를 나타낸다 -- 값이 클수록 영역의 '안쪽 깊이'에 있는 픽셀이다. 출력이 ``region``이 아니라 ``image`` 타입이 되는 점에 주의. HALCON의 ``distance_transform``(Compute the distance transformation of a region.)에 해당.",
+        "de": "Shape — distance transform shape distance to background inside each region Isotrope Gauß-Glättung. Entspricht HALCONs ``gauss_filter`` (Smooth using discrete Gauss functions.). Automatische Schwellenwertbildung mittels Otsu-Verfahren (Otsu's method). Entspricht HALCONs ``binary_threshold`` (Segment an image using binary thresholding.). Ein Bild, das durch Normierung der euklidischen Distanztransformation (``ndimage.distance_transform_edt``) auf ihren Maximalwert entsteht. Es gibt für jedes Vordergrundpixel den Abstand zum nächstgelegenen Hintergrundpixel an -- je größer der Wert, desto 'tiefer' liegt das Pixel im Inneren der Region. Zu beachten: Der Ausgabetyp ist ``image``, nicht ``region``. Entspricht HALCONs ``distance_transform`` (Compute the distance transformation of a region.).",
+        "hi": "Shape — distance transform shape distance to background inside each region Isotropic Gaussian smoothing। HALCON के ``gauss_filter`` (Smooth using discrete Gauss functions.) के समकक्ष है। Otsu की discriminant analysis method (Otsu's method) से automatic thresholding। HALCON के ``binary_threshold`` (Segment an image using binary thresholding.) के समकक्ष है। Euclidean distance transform (``ndimage.distance_transform_edt``) को अधिकतम मान से normalise की गई image। हर foreground pixel के लिए सबसे नज़दीकी background pixel तक की दूरी दर्शाता है ―― मान जितना बड़ा, pixel region में उतना \"गहरा\"। ध्यान दें कि आउटपुट ``region`` नहीं बल्कि ``image`` type का होता है। HALCON के ``distance_transform`` (Compute the distance transformation of a region.) के समकक्ष है।"
+      }
+    },
+    {
+      "name": "Spots — local maxima",
+      "task": "features",
+      "input_sort": "image",
+      "output_sort": "region",
+      "stages": [
+        {
+          "op": "gaussian",
+          "a": 0.4,
+          "b": 0.5
+        },
+        {
+          "op": "local_max",
+          "a": 0.5,
+          "b": 0.5
+        }
+      ],
+      "when": "bright-spot detection",
+      "image": null,
+      "source": {
+        "path": "recipes.py",
+        "line": 65
+      },
+      "index_text": {
+        "ja": "Spots — local maxima features bright-spot detection 等方ガウシアン平滑化。HALCON の ``gauss_filter``（Smooth using discrete Gauss functions.）に相当。 局所極大点検出。``x`` が窓内の最大値(``_k(a)``)に一致し、かつ ``x > 0.3+0.4*b`` を満たす画素だけを前景とする ―― 平坦な高原状の領域では 複数の隣接画素が同時に「極大」として残る点に注意(真の孤立点ピークだけを 残す保証はない)。HALCON の ``local_max``（Detect all local maxima in an image.）に相当。",
+        "en": "Spots — local maxima features bright-spot detection Isotropic Gaussian smoothing. Equivalent to HALCON's ``gauss_filter`` (Smooth using discrete Gauss functions.). Local maxima detection. Only pixels where ``x`` matches the maximum value within the window (``_k(a)``) and also satisfy ``x > 0.3+0.4*b`` are treated as foreground -- note that in flat, plateau-like regions, multiple adjacent pixels can simultaneously remain as \"maxima\" (there is no guarantee that only true isolated peak points remain). Corresponds to HALCON's ``local_max`` (Detect all local maxima in an image).",
+        "zh": "Spots — local maxima features bright-spot detection 各向同性高斯平滑。相当于 HALCON 的 ``gauss_filter``（Smooth using discrete Gauss functions.）。 局部极大点检测。仅将``x``与窗口内最大值(``_k(a)``)一致、且满足``x > 0.3+0.4*b``的像素视为前景——需注意在平坦的高原状区域中,可能有多个相邻像素同时被保留为“极大值”(无法保证只留下真正的孤立峰值点)。相当于HALCON的``local_max``(Detect all local maxima in an image.)。",
+        "tw": "Spots — local maxima features bright-spot detection 等向性高斯平滑化。相當於 HALCON 的 ``gauss_filter``（Smooth using discrete Gauss functions.）。 局部極大點偵測。僅將``x``與視窗內最大值(``_k(a)``)一致、且滿足``x > 0.3+0.4*b``的像素視為前景——需注意在平坦的高原狀區域中,可能有多個相鄰像素同時被保留為「極大值」(無法保證只留下真正的孤立峰值點)。相當於HALCON的``local_max``(Detect all local maxima in an image.)。",
+        "ko": "Spots — local maxima features bright-spot detection 등방성 가우시안 평활화. HALCON의 ``gauss_filter``(Smooth using discrete Gauss functions.)에 해당한다. 국소 극대점 검출. ``x``가 창 내 최댓값(``_k(a)``)과 일치하고, 또한 ``x > 0.3+0.4*b``를 만족하는 화소만을 전경으로 한다 —— 평탄한 고원 형태의 영역에서는 여러 인접 화소가 동시에 \"극대\"로 남을 수 있다는 점에 주의한다(진정한 고립점 피크만 남는다는 보장은 없다). HALCON의 ``local_max``(Detect all local maxima in an image.)에 해당한다.",
+        "de": "Spots — local maxima features bright-spot detection Isotrope Gauß-Glättung. Entspricht HALCONs ``gauss_filter`` (Smooth using discrete Gauss functions.). Erkennung lokaler Maxima. Nur Pixel, bei denen ``x`` dem Maximalwert innerhalb des Fensters (``_k(a)``) entspricht und zusätzlich ``x > 0.3+0.4*b`` erfüllen, gelten als Vordergrund -- zu beachten ist, dass in flachen, plateauartigen Bereichen mehrere benachbarte Pixel gleichzeitig als „Maximum\" bestehen bleiben können (es gibt keine Garantie, dass nur echte isolierte Spitzenpunkte übrig bleiben). Entspricht HALCONs ``local_max`` (Detect all local maxima in an image.).",
+        "hi": "Spots — local maxima features bright-spot detection Isotropic Gaussian smoothing। HALCON के ``gauss_filter`` (Smooth using discrete Gauss functions.) के समकक्ष है। Local maxima detection। केवल उन pixels को foreground मानता है जहाँ ``x`` window (``_k(a)``) के अधिकतम मान के बराबर है और ``x > 0.3+0.4*b`` भी पूरा होता है ―― ध्यान दें कि समतल पठार जैसे regions में कई पड़ोसी pixels एक साथ \"maximum\" के रूप में बचे रहते हैं (केवल असली अकेले peak points बचने की गारंटी नहीं है)। HALCON के ``local_max`` (Detect all local maxima in an image.) के समकक्ष है।"
+      }
+    },
+    {
+      "name": "FA — scratch on hairline metal",
+      "task": "inspect",
+      "input_sort": "image",
+      "output_sort": "region",
+      "stages": [
+        {
+          "op": "gaussian",
+          "a": 0.1,
+          "b": 0.5
+        },
+        {
+          "op": "sk_rolling_ball",
+          "a": 0.2,
+          "b": 0.5
+        },
+        {
+          "op": "threshold",
+          "a": 0.12,
+          "b": 0.5
+        },
+        {
+          "op": "select_shape",
+          "a": 0.0,
+          "b": 0.5
+        }
+      ],
+      "when": "dark-field ring light makes the torn scratch floor bright; a rolling ball (radius 9) removes the hairline glints' slow background, a fixed threshold keeps what is 0.12 above it, specks under 16 px are dropped",
+      "image": "metal_hairline_scratch",
+      "source": {
+        "path": "recipes.py",
+        "line": 72
+      },
+      "index_text": {
+        "ja": "FA — scratch on hairline metal inspect dark-field ring light makes the torn scratch floor bright; a rolling ball (radius 9) removes the hairline glints' slow background, a fixed threshold keeps what is 0.12 above it, specks under 16 px are dropped 等方ガウシアン平滑化。HALCON の ``gauss_filter``（Smooth using discrete Gauss functions.）に相当。 ローリングボール法による背景差し引き。画像の輝度を地形と見立て、指定半径の球をその下から転がして得られる包絡面を背景と推定し、元画像から引き算する—— 照明ムラ(緩やかな輝度勾配)の除去に使う。 大域しきい値処理（グローバルスレッショルド）。HALCON の ``threshold``（Segment an image using global threshold.）に相当。 面積が閾値(``16+a*200`` 画素)未満の連結成分を除去する(小さなノイズ状 領域の除去)。HALCON の ``select_shape``（Choose regions with the aid of shape features.）は面積・円形度・凸性など任意の形状特徴で選別できる 汎用演算子だが、ここでは面積による足切り 1 種類に固定している(近似)。",
+        "en": "FA — scratch on hairline metal inspect dark-field ring light makes the torn scratch floor bright; a rolling ball (radius 9) removes the hairline glints' slow background, a fixed threshold keeps what is 0.12 above it, specks under 16 px are dropped Isotropic Gaussian smoothing. Equivalent to HALCON's ``gauss_filter`` (Smooth using discrete Gauss functions.). Background subtraction by the rolling-ball method. Treats image brightness as terrain, rolls a ball of a given radius underneath it, estimates the resulting envelope surface as the background, and subtracts it from the original image -- used to remove uneven illumination (gradual brightness gradients). Global thresholding. Equivalent to HALCON's ``threshold`` (Segment an image using global threshold.). Removes connected components whose area is below a threshold (``16+a*200`` pixels) -- i.e., removes small noise-like regions. HALCON's ``select_shape`` (Choose regions with the aid of shape features.) is a general-purpose operator that can filter by any shape feature such as area, circularity, or convexity, but here it is fixed to a single area-based cutoff (an approximation).",
+        "zh": "FA — scratch on hairline metal inspect dark-field ring light makes the torn scratch floor bright; a rolling ball (radius 9) removes the hairline glints' slow background, a fixed threshold keeps what is 0.12 above it, specks under 16 px are dropped 各向同性高斯平滑。相当于 HALCON 的 ``gauss_filter``（Smooth using discrete Gauss functions.）。 基于滚球法(rolling ball)的背景扣除。将图像亮度视为地形,在其下方滚动指定半径的球体,以所得的包络面作为背景估计,并从原图像中减去 —— 用于去除照明不均(缓慢的亮度梯度)。 全局阈值处理（global threshold）。相当于 HALCON 的 ``threshold``（Segment an image using global threshold.）。 去除面积低于阈值(``16+a*200`` 像素)的连通成分(去除类似噪声的小区域)。HALCON 的 ``select_shape``(Choose regions with the aid of shape features.)是可以用面积、圆形度、凸性等任意形状特征进行筛选的通用算子,但这里固定为按面积截断这一种(近似)。",
+        "tw": "FA — scratch on hairline metal inspect dark-field ring light makes the torn scratch floor bright; a rolling ball (radius 9) removes the hairline glints' slow background, a fixed threshold keeps what is 0.12 above it, specks under 16 px are dropped 等向性高斯平滑化。相當於 HALCON 的 ``gauss_filter``（Smooth using discrete Gauss functions.）。 基於滾球法(rolling ball)的背景扣除。將影像亮度視為地形,在其下方滾動指定半徑的球體,以所得的包絡面作為背景估計值,並從原始影像中減去 —— 用於去除照明不均(緩慢的亮度梯度)。 全域閾值處理（global threshold）。相當於 HALCON 的 ``threshold``（Segment an image using global threshold.）。 去除面積低於閾值(``16+a*200`` 像素)的連通成分(去除類似雜訊的小區域)。HALCON 的 ``select_shape``(Choose regions with the aid of shape features.)是可用面積、圓形度、凸性等任意形狀特徵篩選的通用運算子,但這裡固定為以面積截斷這一種(近似)。",
+        "ko": "FA — scratch on hairline metal inspect dark-field ring light makes the torn scratch floor bright; a rolling ball (radius 9) removes the hairline glints' slow background, a fixed threshold keeps what is 0.12 above it, specks under 16 px are dropped 등방성 가우시안 평활화. HALCON의 ``gauss_filter``(Smooth using discrete Gauss functions.)에 해당한다. 롤링볼(rolling ball)법에 의한 배경 차감. 이미지의 밝기를 지형으로 간주하여, 지정한 반지름의 공을 그 아래에서 굴려 얻어지는 포락면을 배경으로 추정하고 원본 이미지에서 빼는 방식이다 —— 조명 불균일(완만한 밝기 구배)의 제거에 사용한다. 전역 임계값 처리(global threshold). HALCON의 ``threshold``(Segment an image using global threshold.)에 해당한다. 면적이 임계값(``16+a*200`` 픽셀) 미만인 연결 성분을 제거한다(작은 노이즈성 영역 제거). HALCON의 ``select_shape``(Choose regions with the aid of shape features.)는 면적, 원형도, 볼록성 등 임의의 형상 특징으로 선별할 수 있는 범용 연산자지만, 여기서는 면적 기준의 컷오프 한 종류로 고정되어 있다(근사).",
+        "de": "FA — scratch on hairline metal inspect dark-field ring light makes the torn scratch floor bright; a rolling ball (radius 9) removes the hairline glints' slow background, a fixed threshold keeps what is 0.12 above it, specks under 16 px are dropped Isotrope Gauß-Glättung. Entspricht HALCONs ``gauss_filter`` (Smooth using discrete Gauss functions.). Hintergrundsubtraktion nach der Rolling-Ball-Methode. Betrachtet die Bildhelligkeit als Relief, rollt eine Kugel mit angegebenem Radius darunter hindurch, schätzt die resultierende Hüllfläche als Hintergrund und subtrahiert sie vom Originalbild -- dient zur Beseitigung ungleichmäßiger Beleuchtung (allmähliche Helligkeitsgradienten). Globale Schwellenwertbildung (Global Threshold). Entspricht HALCONs ``threshold`` (Segment an image using global threshold.). Entfernt zusammenhängende Komponenten, deren Fläche unter einem Schwellenwert (``16+a*200`` Pixel) liegt (Entfernung kleiner, rauschartiger Regionen). HALCONs ``select_shape`` (Choose regions with the aid of shape features.) ist ein universeller Operator, der nach beliebigen Formmerkmalen wie Fläche, Rundheit oder Konvexität filtern kann, hier jedoch fest auf einen einzigen flächenbasierten Grenzwert festgelegt ist (eine Approximation).",
+        "hi": "FA — scratch on hairline metal inspect dark-field ring light makes the torn scratch floor bright; a rolling ball (radius 9) removes the hairline glints' slow background, a fixed threshold keeps what is 0.12 above it, specks under 16 px are dropped Isotropic Gaussian smoothing। HALCON के ``gauss_filter`` (Smooth using discrete Gauss functions.) के समकक्ष है। Rolling ball विधि से background subtraction। Image की brightness को terrain मानकर, दी गई radius का गोला उसके नीचे से घुमाकर मिलने वाली envelope surface को background मानता है और मूल image से घटा देता है —— असमान रोशनी (धीमे brightness gradient) को हटाने के लिए इस्तेमाल होता है। Global thresholding। HALCON के ``threshold`` (Segment an image using global threshold.) के समकक्ष है। Threshold (``16+a*200`` pixels) से कम क्षेत्रफल वाले connected components हटाता है (छोटे noise जैसे regions हटाना)। HALCON का ``select_shape`` (Choose regions with the aid of shape features.) क्षेत्रफल, circularity, convexity जैसे किसी भी shape feature से छाँट सकने वाला सामान्य operator है, लेकिन यहाँ केवल 1 प्रकार, क्षेत्रफल से कटौती, तय है (सन्निकटन)।"
+      }
+    },
+    {
+      "name": "FA — dent and foreign fibre on resin",
+      "task": "inspect",
+      "input_sort": "image",
+      "output_sort": "region",
+      "stages": [
+        {
+          "op": "gaussian",
+          "a": 1.0,
+          "b": 0.5
+        },
+        {
+          "op": "hx_plane_deviation",
+          "a": 0.5,
+          "b": 0.5
+        },
+        {
+          "op": "threshold",
+          "a": 0.05,
+          "b": 0.5
+        },
+        {
+          "op": "select_shape",
+          "a": 0.2,
+          "b": 0.5
+        }
+      ],
+      "when": "smooth away the mould texture, subtract the best-fit plane (the bar light's fall-off) and keep |deviation| > 0.05 in blobs of 56 px or more; a dent shows as its shading pair (dark and bright half), a dark fibre as one line",
+      "image": "resin_dent_fibre",
+      "source": {
+        "path": "recipes.py",
+        "line": 79
+      },
+      "index_text": {
+        "ja": "FA — dent and foreign fibre on resin inspect smooth away the mould texture, subtract the best-fit plane (the bar light's fall-off) and keep |deviation| > 0.05 in blobs of 56 px or more; a dent shows as its shading pair (dark and bright half), a dark fibre as one line 等方ガウシアン平滑化。HALCON の ``gauss_filter``（Smooth using discrete Gauss functions.）に相当。 gray 値の 1 次平面近似からの偏差 |v - plane|(平坦度/欠陥検査)。 大域しきい値処理（グローバルスレッショルド）。HALCON の ``threshold``（Segment an image using global threshold.）に相当。 面積が閾値(``16+a*200`` 画素)未満の連結成分を除去する(小さなノイズ状 領域の除去)。HALCON の ``select_shape``（Choose regions with the aid of shape features.）は面積・円形度・凸性など任意の形状特徴で選別できる 汎用演算子だが、ここでは面積による足切り 1 種類に固定している(近似)。",
+        "en": "FA — dent and foreign fibre on resin inspect smooth away the mould texture, subtract the best-fit plane (the bar light's fall-off) and keep |deviation| > 0.05 in blobs of 56 px or more; a dent shows as its shading pair (dark and bright half), a dark fibre as one line Isotropic Gaussian smoothing. Equivalent to HALCON's ``gauss_filter`` (Smooth using discrete Gauss functions.). The deviation of the grey values from their first-order plane fit, |v − plane| (flatness / defect inspection). Global thresholding. Equivalent to HALCON's ``threshold`` (Segment an image using global threshold.). Removes connected components whose area is below a threshold (``16+a*200`` pixels) -- i.e., removes small noise-like regions. HALCON's ``select_shape`` (Choose regions with the aid of shape features.) is a general-purpose operator that can filter by any shape feature such as area, circularity, or convexity, but here it is fixed to a single area-based cutoff (an approximation).",
+        "zh": "FA — dent and foreign fibre on resin inspect smooth away the mould texture, subtract the best-fit plane (the bar light's fall-off) and keep |deviation| > 0.05 in blobs of 56 px or more; a dent shows as its shading pair (dark and bright half), a dark fibre as one line 各向同性高斯平滑。相当于 HALCON 的 ``gauss_filter``（Smooth using discrete Gauss functions.）。 灰度相对一次平面拟合的偏差 |v − plane|(平面度/缺陷检测)。 全局阈值处理（global threshold）。相当于 HALCON 的 ``threshold``（Segment an image using global threshold.）。 去除面积低于阈值(``16+a*200`` 像素)的连通成分(去除类似噪声的小区域)。HALCON 的 ``select_shape``(Choose regions with the aid of shape features.)是可以用面积、圆形度、凸性等任意形状特征进行筛选的通用算子,但这里固定为按面积截断这一种(近似)。",
+        "tw": "FA — dent and foreign fibre on resin inspect smooth away the mould texture, subtract the best-fit plane (the bar light's fall-off) and keep |deviation| > 0.05 in blobs of 56 px or more; a dent shows as its shading pair (dark and bright half), a dark fibre as one line 等向性高斯平滑化。相當於 HALCON 的 ``gauss_filter``（Smooth using discrete Gauss functions.）。 灰階相對一次平面擬合的偏差 |v − plane|(平面度/缺陷檢測)。 全域閾值處理（global threshold）。相當於 HALCON 的 ``threshold``（Segment an image using global threshold.）。 去除面積低於閾值(``16+a*200`` 像素)的連通成分(去除類似雜訊的小區域)。HALCON 的 ``select_shape``(Choose regions with the aid of shape features.)是可用面積、圓形度、凸性等任意形狀特徵篩選的通用運算子,但這裡固定為以面積截斷這一種(近似)。",
+        "ko": "FA — dent and foreign fibre on resin inspect smooth away the mould texture, subtract the best-fit plane (the bar light's fall-off) and keep |deviation| > 0.05 in blobs of 56 px or more; a dent shows as its shading pair (dark and bright half), a dark fibre as one line 등방성 가우시안 평활화. HALCON의 ``gauss_filter``(Smooth using discrete Gauss functions.)에 해당한다. 그레이값의 1 차 평면 근사로부터의 편차 |v − plane|(평탄도/결함 검사). 전역 임계값 처리(global threshold). HALCON의 ``threshold``(Segment an image using global threshold.)에 해당한다. 면적이 임계값(``16+a*200`` 픽셀) 미만인 연결 성분을 제거한다(작은 노이즈성 영역 제거). HALCON의 ``select_shape``(Choose regions with the aid of shape features.)는 면적, 원형도, 볼록성 등 임의의 형상 특징으로 선별할 수 있는 범용 연산자지만, 여기서는 면적 기준의 컷오프 한 종류로 고정되어 있다(근사).",
+        "de": "FA — dent and foreign fibre on resin inspect smooth away the mould texture, subtract the best-fit plane (the bar light's fall-off) and keep |deviation| > 0.05 in blobs of 56 px or more; a dent shows as its shading pair (dark and bright half), a dark fibre as one line Isotrope Gauß-Glättung. Entspricht HALCONs ``gauss_filter`` (Smooth using discrete Gauss functions.). Abweichung der Grauwerte von ihrer linearen Ebenenanpassung, |v − plane| (Ebenheits-/Defektprüfung). Globale Schwellenwertbildung (Global Threshold). Entspricht HALCONs ``threshold`` (Segment an image using global threshold.). Entfernt zusammenhängende Komponenten, deren Fläche unter einem Schwellenwert (``16+a*200`` Pixel) liegt (Entfernung kleiner, rauschartiger Regionen). HALCONs ``select_shape`` (Choose regions with the aid of shape features.) ist ein universeller Operator, der nach beliebigen Formmerkmalen wie Fläche, Rundheit oder Konvexität filtern kann, hier jedoch fest auf einen einzigen flächenbasierten Grenzwert festgelegt ist (eine Approximation).",
+        "hi": "FA — dent and foreign fibre on resin inspect smooth away the mould texture, subtract the best-fit plane (the bar light's fall-off) and keep |deviation| > 0.05 in blobs of 56 px or more; a dent shows as its shading pair (dark and bright half), a dark fibre as one line Isotropic Gaussian smoothing। HALCON के ``gauss_filter`` (Smooth using discrete Gauss functions.) के समकक्ष है। Gray मानों के क्रम 1 वाले plane approximation से deviation |v - plane| (समतलता/defect जाँच)। Global thresholding। HALCON के ``threshold`` (Segment an image using global threshold.) के समकक्ष है। Threshold (``16+a*200`` pixels) से कम क्षेत्रफल वाले connected components हटाता है (छोटे noise जैसे regions हटाना)। HALCON का ``select_shape`` (Choose regions with the aid of shape features.) क्षेत्रफल, circularity, convexity जैसे किसी भी shape feature से छाँट सकने वाला सामान्य operator है, लेकिन यहाँ केवल 1 प्रकार, क्षेत्रफल से कटौती, तय है (सन्निकटन)।"
+      }
+    },
+    {
+      "name": "FA — engraved lot code (binarize for OCR)",
+      "task": "inspect",
+      "input_sort": "image",
+      "output_sort": "region",
+      "stages": [
+        {
+          "op": "gaussian",
+          "a": 0.4,
+          "b": 0.5
+        },
+        {
+          "op": "otsu",
+          "a": 0.5,
+          "b": 0.5
+        },
+        {
+          "op": "select_shape",
+          "a": 0.2,
+          "b": 0.5
+        }
+      ],
+      "when": "dark-field ring: the laser-melted engraving is bright on blasted aluminium; smooth the blast glints, Otsu, drop specks -> one region per glyph",
+      "image": "engraved_lot_code",
+      "source": {
+        "path": "recipes.py",
+        "line": 86
+      },
+      "index_text": {
+        "ja": "FA — engraved lot code (binarize for OCR) inspect dark-field ring: the laser-melted engraving is bright on blasted aluminium; smooth the blast glints, Otsu, drop specks -> one region per glyph 等方ガウシアン平滑化。HALCON の ``gauss_filter``（Smooth using discrete Gauss functions.）に相当。 大津の判別分析法（Otsu's method）による自動しきい値処理。HALCON の ``binary_threshold``（Segment an image using binary thresholding.）に相当。 面積が閾値(``16+a*200`` 画素)未満の連結成分を除去する(小さなノイズ状 領域の除去)。HALCON の ``select_shape``（Choose regions with the aid of shape features.）は面積・円形度・凸性など任意の形状特徴で選別できる 汎用演算子だが、ここでは面積による足切り 1 種類に固定している(近似)。",
+        "en": "FA — engraved lot code (binarize for OCR) inspect dark-field ring: the laser-melted engraving is bright on blasted aluminium; smooth the blast glints, Otsu, drop specks -> one region per glyph Isotropic Gaussian smoothing. Equivalent to HALCON's ``gauss_filter`` (Smooth using discrete Gauss functions.). Automatic thresholding using Otsu's method. Equivalent to HALCON's ``binary_threshold`` (Segment an image using binary thresholding.). Removes connected components whose area is below a threshold (``16+a*200`` pixels) -- i.e., removes small noise-like regions. HALCON's ``select_shape`` (Choose regions with the aid of shape features.) is a general-purpose operator that can filter by any shape feature such as area, circularity, or convexity, but here it is fixed to a single area-based cutoff (an approximation).",
+        "zh": "FA — engraved lot code (binarize for OCR) inspect dark-field ring: the laser-melted engraving is bright on blasted aluminium; smooth the blast glints, Otsu, drop specks -> one region per glyph 各向同性高斯平滑。相当于 HALCON 的 ``gauss_filter``（Smooth using discrete Gauss functions.）。 使用大津法（Otsu's method）进行的自动阈值处理。相当于 HALCON 的 ``binary_threshold``（Segment an image using binary thresholding.）。 去除面积低于阈值(``16+a*200`` 像素)的连通成分(去除类似噪声的小区域)。HALCON 的 ``select_shape``(Choose regions with the aid of shape features.)是可以用面积、圆形度、凸性等任意形状特征进行筛选的通用算子,但这里固定为按面积截断这一种(近似)。",
+        "tw": "FA — engraved lot code (binarize for OCR) inspect dark-field ring: the laser-melted engraving is bright on blasted aluminium; smooth the blast glints, Otsu, drop specks -> one region per glyph 等向性高斯平滑化。相當於 HALCON 的 ``gauss_filter``（Smooth using discrete Gauss functions.）。 使用大津法（Otsu's method）進行的自動閾值處理。相當於 HALCON 的 ``binary_threshold``（Segment an image using binary thresholding.）。 去除面積低於閾值(``16+a*200`` 像素)的連通成分(去除類似雜訊的小區域)。HALCON 的 ``select_shape``(Choose regions with the aid of shape features.)是可用面積、圓形度、凸性等任意形狀特徵篩選的通用運算子,但這裡固定為以面積截斷這一種(近似)。",
+        "ko": "FA — engraved lot code (binarize for OCR) inspect dark-field ring: the laser-melted engraving is bright on blasted aluminium; smooth the blast glints, Otsu, drop specks -> one region per glyph 등방성 가우시안 평활화. HALCON의 ``gauss_filter``(Smooth using discrete Gauss functions.)에 해당한다. 오츠 방법(Otsu's method)에 의한 자동 임계값 처리. HALCON의 ``binary_threshold``(Segment an image using binary thresholding.)에 해당한다. 면적이 임계값(``16+a*200`` 픽셀) 미만인 연결 성분을 제거한다(작은 노이즈성 영역 제거). HALCON의 ``select_shape``(Choose regions with the aid of shape features.)는 면적, 원형도, 볼록성 등 임의의 형상 특징으로 선별할 수 있는 범용 연산자지만, 여기서는 면적 기준의 컷오프 한 종류로 고정되어 있다(근사).",
+        "de": "FA — engraved lot code (binarize for OCR) inspect dark-field ring: the laser-melted engraving is bright on blasted aluminium; smooth the blast glints, Otsu, drop specks -> one region per glyph Isotrope Gauß-Glättung. Entspricht HALCONs ``gauss_filter`` (Smooth using discrete Gauss functions.). Automatische Schwellenwertbildung mittels Otsu-Verfahren (Otsu's method). Entspricht HALCONs ``binary_threshold`` (Segment an image using binary thresholding.). Entfernt zusammenhängende Komponenten, deren Fläche unter einem Schwellenwert (``16+a*200`` Pixel) liegt (Entfernung kleiner, rauschartiger Regionen). HALCONs ``select_shape`` (Choose regions with the aid of shape features.) ist ein universeller Operator, der nach beliebigen Formmerkmalen wie Fläche, Rundheit oder Konvexität filtern kann, hier jedoch fest auf einen einzigen flächenbasierten Grenzwert festgelegt ist (eine Approximation).",
+        "hi": "FA — engraved lot code (binarize for OCR) inspect dark-field ring: the laser-melted engraving is bright on blasted aluminium; smooth the blast glints, Otsu, drop specks -> one region per glyph Isotropic Gaussian smoothing। HALCON के ``gauss_filter`` (Smooth using discrete Gauss functions.) के समकक्ष है। Otsu की discriminant analysis method (Otsu's method) से automatic thresholding। HALCON के ``binary_threshold`` (Segment an image using binary thresholding.) के समकक्ष है। Threshold (``16+a*200`` pixels) से कम क्षेत्रफल वाले connected components हटाता है (छोटे noise जैसे regions हटाना)। HALCON का ``select_shape`` (Choose regions with the aid of shape features.) क्षेत्रफल, circularity, convexity जैसे किसी भी shape feature से छाँट सकने वाला सामान्य operator है, लेकिन यहाँ केवल 1 प्रकार, क्षेत्रफल से कटौती, तय है (सन्निकटन)।"
+      }
+    },
+    {
+      "name": "FA — count holes in a back-lit plate",
+      "task": "measure",
+      "input_sort": "image",
+      "output_sort": "feature",
+      "stages": [
+        {
+          "op": "otsu",
+          "a": 0.5,
+          "b": 0.5
+        },
+        {
+          "op": "sk_clear_border",
+          "a": 0.5,
+          "b": 0.5
+        },
+        {
+          "op": "count_obj",
+          "a": 0.5,
+          "b": 0.5
+        }
+      ],
+      "when": "back light: light passes through the holes and around the part; Otsu keeps the light, clearing what touches the border leaves only the through-holes, then count",
+      "image": "machined_plate_holes",
+      "source": {
+        "path": "recipes.py",
+        "line": 91
+      },
+      "index_text": {
+        "ja": "FA — count holes in a back-lit plate measure back light: light passes through the holes and around the part; Otsu keeps the light, clearing what touches the border leaves only the through-holes, then count 大津の判別分析法（Otsu's method）による自動しきい値処理。HALCON の ``binary_threshold``（Segment an image using binary thresholding.）に相当。 画像端に接する成分の除去。前景領域のうち画像の外周に触れている連結成分をすべて背景に落とす —— 視野の端で切れた(全体像が写っていない)物体を解析対象から除外する定番の前処理。 連結成分の個数を数える(``ndimage.label``、既定 8 連結)。HALCON の ``count_obj``/``connection`` の既定と同じ 8 連結を採用しており、斜めに 接する 2 つの塊は 1 個として数える(4 連結にすると過剰カウントになる例 =セルカウントで実測 342 個 vs 327 個、コード内コメント参照)。HALCON の ``count_obj``（Number of objects in a tuple.）に相当。",
+        "en": "FA — count holes in a back-lit plate measure back light: light passes through the holes and around the part; Otsu keeps the light, clearing what touches the border leaves only the through-holes, then count Automatic thresholding using Otsu's method. Equivalent to HALCON's ``binary_threshold`` (Segment an image using binary thresholding.). Removal of components touching the image border. Drops all connected components of the foreground region that touch the image's outer edge back to background -- a standard preprocessing step for excluding objects cut off at the edge of the field of view (not fully captured) from analysis. Counts the number of connected components (``ndimage.label``, default 8-connectivity). Uses 8-connectivity, the same default as HALCON's ``count_obj``/``connection``, so two blobs touching diagonally are counted as one (an example where switching to 4-connectivity causes over-counting -- measured cell counts of 342 vs. 327; see the in-code comment). Equivalent to HALCON's ``count_obj`` (Number of objects in a tuple.).",
+        "zh": "FA — count holes in a back-lit plate measure back light: light passes through the holes and around the part; Otsu keeps the light, clearing what touches the border leaves only the through-holes, then count 使用大津法（Otsu's method）进行的自动阈值处理。相当于 HALCON 的 ``binary_threshold``（Segment an image using binary thresholding.）。 去除接触图像边缘的连通分量。将前景区域中所有与图像外周相接触的连通分量全部归为背景 —— 这是排除在视野边缘被截断(未拍到完整图像)的物体使其不参与分析的常规前处理。 统计连通成分的个数(``ndimage.label``,默认 8 连通)。采用与 HALCON 的 ``count_obj``/``connection`` 默认相同的 8 连通,因此对角相接的两个团块会被计为 1 个(若改为 4 连通会导致计数过多的例子——细胞计数实测为 342 个 vs 327 个,参见代码内注释)。相当于 HALCON 的 ``count_obj``(Number of objects in a tuple.)。",
+        "tw": "FA — count holes in a back-lit plate measure back light: light passes through the holes and around the part; Otsu keeps the light, clearing what touches the border leaves only the through-holes, then count 使用大津法（Otsu's method）進行的自動閾值處理。相當於 HALCON 的 ``binary_threshold``（Segment an image using binary thresholding.）。 去除接觸影像邊緣的連通元件。將前景區域中所有與影像外周相接觸的連通元件全部歸為背景 —— 這是排除在視野邊緣被截斷(未拍到完整影像)的物體使其不參與分析的常規前處理。 統計連通成分的個數(``ndimage.label``,預設 8 連通)。採用與 HALCON 的 ``count_obj``/``connection`` 預設相同的 8 連通,因此對角相接的兩個團塊會被算成 1 個(若改為 4 連通會導致計數過多的例子——細胞計數實測為 342 個 vs 327 個,參見程式碼內註解)。相當於 HALCON 的 ``count_obj``(Number of objects in a tuple.)。",
+        "ko": "FA — count holes in a back-lit plate measure back light: light passes through the holes and around the part; Otsu keeps the light, clearing what touches the border leaves only the through-holes, then count 오츠 방법(Otsu's method)에 의한 자동 임계값 처리. HALCON의 ``binary_threshold``(Segment an image using binary thresholding.)에 해당한다. 이미지 가장자리에 닿은 성분 제거. 전경 영역 중 이미지 외곽에 닿아 있는 연결 성분을 모두 배경으로 떨어뜨린다 —— 시야 가장자리에서 잘린(전체 모습이 찍히지 않은) 물체를 분석 대상에서 제외하는 표준적인 전처리이다. 연결 성분의 개수를 센다(``ndimage.label``, 기본 8-연결). HALCON의 ``count_obj``/``connection``의 기본값과 같은 8-연결을 채택하고 있어, 대각선으로 맞닿은 두 덩어리를 1개로 센다(4-연결로 하면 과다 계수되는 예 = 세포 계수 실측 342개 vs 327개, 코드 내 주석 참조). HALCON의 ``count_obj``(Number of objects in a tuple.)에 해당.",
+        "de": "FA — count holes in a back-lit plate measure back light: light passes through the holes and around the part; Otsu keeps the light, clearing what touches the border leaves only the through-holes, then count Automatische Schwellenwertbildung mittels Otsu-Verfahren (Otsu's method). Entspricht HALCONs ``binary_threshold`` (Segment an image using binary thresholding.). Entfernung von Komponenten, die den Bildrand berühren. Setzt alle zusammenhängenden Komponenten der Vordergrundregion, die den äußeren Bildrand berühren, auf Hintergrund zurück -- eine Standard-Vorverarbeitung, um am Rand des Sichtfelds abgeschnittene (nicht vollständig erfasste) Objekte von der Analyse auszuschließen. Zählt die Anzahl zusammenhängender Komponenten (``ndimage.label``, standardmäßig 8-Konnektivität). Verwendet dieselbe 8-Konnektivität wie der Standard von HALCONs ``count_obj``/``connection``, sodass zwei diagonal berührende Klumpen als einer gezählt werden (ein Beispiel, bei dem 4-Konnektivität zu Überzählung führt -- gemessene Zellzahlen von 342 gegenüber 327, siehe Kommentar im Code). Entspricht HALCONs ``count_obj`` (Number of objects in a tuple.).",
+        "hi": "FA — count holes in a back-lit plate measure back light: light passes through the holes and around the part; Otsu keeps the light, clearing what touches the border leaves only the through-holes, then count Otsu की discriminant analysis method (Otsu's method) से automatic thresholding। HALCON के ``binary_threshold`` (Segment an image using binary thresholding.) के समकक्ष है। Image के किनारे को छूने वाले components हटाता है। Foreground region में से image की बाहरी सीमा को छूने वाले सभी connected components को background बना देता है —— field of view के किनारे पर कटी हुई (पूरी न दिखने वाली) वस्तुओं को विश्लेषण से बाहर करने की मानक पूर्व-प्रक्रिया। Connected components की संख्या गिनता है (``ndimage.label``, default 8-connectivity)। HALCON के ``count_obj``/``connection`` के default जैसी ही 8-connectivity अपनाई गई है, इसलिए तिरछे छूने वाले 2 टुकड़ों को 1 गिना जाता है (4-connectivity से ज़्यादा गिनती हो जाती है, उदाहरण = cell count में मापा गया 342 बनाम 327, code के अंदर का comment देखें)। HALCON के ``count_obj`` (Number of objects in a tuple.) के समकक्ष है।"
+      }
+    },
+    {
+      "name": "FA — weld porosity (X-ray)",
+      "task": "inspect",
+      "input_sort": "image",
+      "output_sort": "region",
+      "stages": [
+        {
+          "op": "gaussian",
+          "a": 0.4,
+          "b": 0.5
+        },
+        {
+          "op": "local_threshold",
+          "a": 1.0,
+          "b": 0.66
+        },
+        {
+          "op": "select_shape",
+          "a": 0.0,
+          "b": 0.5
+        }
+      ],
+      "when": "pores are thinner steel, so brighter; keep pixels 0.048 above a sigma-4 local background (follows the weld cap), drop specks under 16 px",
+      "image": "weld_xray_porosity",
+      "source": {
+        "path": "recipes.py",
+        "line": 96
+      },
+      "index_text": {
+        "ja": "FA — weld porosity (X-ray) inspect pores are thinner steel, so brighter; keep pixels 0.048 above a sigma-4 local background (follows the weld cap), drop specks under 16 px 等方ガウシアン平滑化。HALCON の ``gauss_filter``（Smooth using discrete Gauss functions.）に相当。 局所ガウス平滑化+オフセットによるしきい値処理(``gaussian_filter(x, 1+3*a)`` にオフセット ``(b-0.5)*0.3`` を加えたものがしきい値)。 ``dyn_threshold`` と似た発想だが、局所平均を矩形窓でなくガウシアンで 求める点が異なる。HALCON の ``local_threshold``（Segment an image using local thresholding.）に相当。 面積が閾値(``16+a*200`` 画素)未満の連結成分を除去する(小さなノイズ状 領域の除去)。HALCON の ``select_shape``（Choose regions with the aid of shape features.）は面積・円形度・凸性など任意の形状特徴で選別できる 汎用演算子だが、ここでは面積による足切り 1 種類に固定している(近似)。",
+        "en": "FA — weld porosity (X-ray) inspect pores are thinner steel, so brighter; keep pixels 0.048 above a sigma-4 local background (follows the weld cap), drop specks under 16 px Isotropic Gaussian smoothing. Equivalent to HALCON's ``gauss_filter`` (Smooth using discrete Gauss functions.). Thresholding via local Gaussian smoothing plus an offset (the threshold is ``gaussian_filter(x, 1+3*a)`` plus offset ``(b-0.5)*0.3``). A similar idea to ``dyn_threshold``, but differs in that the local mean is computed with a Gaussian instead of a rectangular window. Corresponds to HALCON's ``local_threshold`` (Segment an image using local thresholding). Removes connected components whose area is below a threshold (``16+a*200`` pixels) -- i.e., removes small noise-like regions. HALCON's ``select_shape`` (Choose regions with the aid of shape features.) is a general-purpose operator that can filter by any shape feature such as area, circularity, or convexity, but here it is fixed to a single area-based cutoff (an approximation).",
+        "zh": "FA — weld porosity (X-ray) inspect pores are thinner steel, so brighter; keep pixels 0.048 above a sigma-4 local background (follows the weld cap), drop specks under 16 px 各向同性高斯平滑。相当于 HALCON 的 ``gauss_filter``（Smooth using discrete Gauss functions.）。 局部高斯平滑加偏移量的阈值处理(阈值为``gaussian_filter(x, 1+3*a)``加上偏移量``(b-0.5)*0.3``)。构想与``dyn_threshold``类似,不同之处在于局部平均值是以高斯而非矩形窗口求得。相当于HALCON的``local_threshold``(Segment an image using local thresholding.)。 去除面积低于阈值(``16+a*200`` 像素)的连通成分(去除类似噪声的小区域)。HALCON 的 ``select_shape``(Choose regions with the aid of shape features.)是可以用面积、圆形度、凸性等任意形状特征进行筛选的通用算子,但这里固定为按面积截断这一种(近似)。",
+        "tw": "FA — weld porosity (X-ray) inspect pores are thinner steel, so brighter; keep pixels 0.048 above a sigma-4 local background (follows the weld cap), drop specks under 16 px 等向性高斯平滑化。相當於 HALCON 的 ``gauss_filter``（Smooth using discrete Gauss functions.）。 局部高斯平滑加偏移量的閾值處理(閾值為``gaussian_filter(x, 1+3*a)``加上偏移量``(b-0.5)*0.3``)。構想與``dyn_threshold``類似,不同之處在於局部平均值是以高斯而非矩形視窗求得。相當於HALCON的``local_threshold``(Segment an image using local thresholding.)。 去除面積低於閾值(``16+a*200`` 像素)的連通成分(去除類似雜訊的小區域)。HALCON 的 ``select_shape``(Choose regions with the aid of shape features.)是可用面積、圓形度、凸性等任意形狀特徵篩選的通用運算子,但這裡固定為以面積截斷這一種(近似)。",
+        "ko": "FA — weld porosity (X-ray) inspect pores are thinner steel, so brighter; keep pixels 0.048 above a sigma-4 local background (follows the weld cap), drop specks under 16 px 등방성 가우시안 평활화. HALCON의 ``gauss_filter``(Smooth using discrete Gauss functions.)에 해당한다. 국소 가우시안 평활화 + 오프셋에 의한 임계값 처리(임계값은 ``gaussian_filter(x, 1+3*a)``에 오프셋 ``(b-0.5)*0.3``을 더한 것). ``dyn_threshold``와 비슷한 발상이지만, 국소 평균을 사각형 창이 아닌 가우시안으로 구한다는 점이 다르다. HALCON의 ``local_threshold``(Segment an image using local thresholding.)에 해당한다. 면적이 임계값(``16+a*200`` 픽셀) 미만인 연결 성분을 제거한다(작은 노이즈성 영역 제거). HALCON의 ``select_shape``(Choose regions with the aid of shape features.)는 면적, 원형도, 볼록성 등 임의의 형상 특징으로 선별할 수 있는 범용 연산자지만, 여기서는 면적 기준의 컷오프 한 종류로 고정되어 있다(근사).",
+        "de": "FA — weld porosity (X-ray) inspect pores are thinner steel, so brighter; keep pixels 0.048 above a sigma-4 local background (follows the weld cap), drop specks under 16 px Isotrope Gauß-Glättung. Entspricht HALCONs ``gauss_filter`` (Smooth using discrete Gauss functions.). Schwellenwertbildung durch lokale Gaußglättung plus Offset (der Schwellenwert ist ``gaussian_filter(x, 1+3*a)`` zuzüglich Offset ``(b-0.5)*0.3``). Eine ähnliche Idee wie ``dyn_threshold``, unterscheidet sich aber darin, dass der lokale Mittelwert mit einem Gauß-Kern statt einem rechteckigen Fenster berechnet wird. Entspricht HALCONs ``local_threshold`` (Segment an image using local thresholding.). Entfernt zusammenhängende Komponenten, deren Fläche unter einem Schwellenwert (``16+a*200`` Pixel) liegt (Entfernung kleiner, rauschartiger Regionen). HALCONs ``select_shape`` (Choose regions with the aid of shape features.) ist ein universeller Operator, der nach beliebigen Formmerkmalen wie Fläche, Rundheit oder Konvexität filtern kann, hier jedoch fest auf einen einzigen flächenbasierten Grenzwert festgelegt ist (eine Approximation).",
+        "hi": "FA — weld porosity (X-ray) inspect pores are thinner steel, so brighter; keep pixels 0.048 above a sigma-4 local background (follows the weld cap), drop specks under 16 px Isotropic Gaussian smoothing। HALCON के ``gauss_filter`` (Smooth using discrete Gauss functions.) के समकक्ष है। Local Gaussian smoothing + offset से thresholding (``gaussian_filter(x, 1+3*a)`` में offset ``(b-0.5)*0.3`` जोड़कर threshold बनता है)। ``dyn_threshold`` जैसा ही विचार, लेकिन local mean आयताकार window के बजाय Gaussian से निकालता है, यह अंतर है। HALCON के ``local_threshold`` (Segment an image using local thresholding.) के समकक्ष है। Threshold (``16+a*200`` pixels) से कम क्षेत्रफल वाले connected components हटाता है (छोटे noise जैसे regions हटाना)। HALCON का ``select_shape`` (Choose regions with the aid of shape features.) क्षेत्रफल, circularity, convexity जैसे किसी भी shape feature से छाँट सकने वाला सामान्य operator है, लेकिन यहाँ केवल 1 प्रकार, क्षेत्रफल से कटौती, तय है (सन्निकटन)।"
+      }
+    }
+  ],
+  "inventory": [
+    {
+      "source": "recipes.py RECIPES",
+      "found": 25,
+      "included": 25,
+      "excluded": 0,
+      "reason": null
+    },
+    {
+      "source": "examples/poc_*.py",
+      "found": 280,
+      "included": 0,
+      "excluded": 280,
+      "reason": "PoC programs are arbitrary Python; a linear MCP pipeline cannot be extracted statically without guessing."
+    },
+    {
+      "source": "studio_lite/gates/recipes_gate.json",
+      "found": 10,
+      "included": 0,
+      "excluded": 10,
+      "reason": "Execution gates duplicate selected built-in recipes and are not distinct examples."
+    },
+    {
+      "source": "docs/**/*.md",
+      "found": 4111,
+      "included": 0,
+      "excluded": 4111,
+      "reason": "Documentation contains prose and snippets, not a statically unambiguous inventory of MCP stages."
+    }
+  ]
+}
