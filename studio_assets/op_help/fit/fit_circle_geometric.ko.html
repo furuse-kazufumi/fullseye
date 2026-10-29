@@ -1,0 +1,20 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">fit_circle_geometric — FIT <code style="color:#22d3bf">fit</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">keypoints</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_circle_geometric(points, *, max_iterations: &#x27;int&#x27; = 100, radius_limit_factor: &#x27;float&#x27; = 1000000.0) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import measure; measure.fit_circle_geometric(points, *, max_iterations: &#x27;int&#x27; = 100, radius_limit_factor: &#x27;float&#x27; = 1000000.0) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsfit.get(&quot;fit_circle_geometric&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>짧은 원호를 포함한 (행, 열) 점에 기하 최소제곱 원과 반경을 맞춥니다.</p>
+<p>Kåsa 초기값에서 Levenberg–Marquardt로 반경 거리를 최소화합니다. 중심, 반경, 기하 RMS, 반복 횟수와 수렴 여부를 반환하며 잘못되거나 공선이거나 발산한 입력은 ValueError입니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:fit_ops_from_knowhow">fit_ops_from_knowhow</a> — <code style="color:#22d3bf">py -3.11 examples/fit_ops_from_knowhow.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">fit</code>)</h3>
+<p><a style="color:#22d3bf" href="opfit:fit_curve_principal_axis">fit_curve_principal_axis</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: measure.py — FIT 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

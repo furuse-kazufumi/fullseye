@@ -1,0 +1,20 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">phase_correlation_shift — FIT <code style="color:#22d3bf">registration</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.phase_correlation_shift(image1, image2, window: &#x27;str | None&#x27; = &#x27;hann&#x27;, whitening: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import filters_freq; filters_freq.phase_correlation_shift(image1, image2, window: &#x27;str | None&#x27; = &#x27;hann&#x27;, whitening: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsfit.get(&quot;phase_correlation_shift&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>phase-only correlation से दो चित्रों को मिलाने हेतु उप-पिक्सेल स्थानांतरण ज्ञात करें।</p>
+<p>FFT सहसंबंध शिखर को स्थानीय upsampled DFT से परिष्कृत किया जाता है। चिह्न phase_correlation_fft जैसा है: image1 को image2 से मिलाने हेतु image2 के विस्थापन का ऋण लौटता है। dy, dx, peak और peak ratio लौटते हैं; बनावटहीन चित्र अस्वीकार होते हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:fit_ops_from_knowhow">fit_ops_from_knowhow</a> — <code style="color:#22d3bf">py -3.11 examples/fit_ops_from_knowhow.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">registration</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: filters_freq.py — FIT operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

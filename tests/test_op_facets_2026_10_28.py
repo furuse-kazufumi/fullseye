@@ -178,6 +178,34 @@ def test_three_multi_input_business_dags_execute_through_mcp():
     expected_height=np.full((32,32),1.0*true_phase)  # k=1.0
     assert float(np.sqrt(np.mean((depth_value-expected_height)**2))) < 1e-9
 
+def test_fit_ops_execute_through_mcp_with_meaningful_inputs():
+    import numpy as np
+    from scipy.ndimage import fourier_shift
+    from fullseye.mcp.catalog import Catalog
+    from fullseye.mcp.handles import HandleStore
+    from fullseye.mcp.server import call_tool
+    store=HandleStore(roots=[]); cat=Catalog.load()
+    def put(value,sort):
+        return store.put(np.asarray(value,float),sort=sort,provenance=[{"synthetic":True}])["handle"]
+    t=np.linspace(-.5,.5,80); arc=np.column_stack([50*np.sin(t),50*np.cos(t)])
+    edge=np.column_stack([np.linspace(-20,20,101),3*np.linspace(-1,1,101)**2])[:,::-1]
+    image=np.random.default_rng(3).normal(size=(64,64)); moved=np.fft.ifftn(
+        fourier_shift(np.fft.fftn(image),(1.25,-2.4))).real
+    x,y=np.meshgrid(np.linspace(-3,3,13),np.linspace(-1,1,9))
+    surface=np.column_stack([.2*x.ravel()-.3*y.ravel(),y.ravel(),x.ravel()])
+    handles=[put(arc,"keypoints"),put(edge,"keypoints"),put(image,"image"),
+             put(moved,"image"),put(surface,"points")]
+    calls=[("fit_circle_geometric",[handles[0]],{}),
+           ("fit_curve_principal_axis",[handles[1]],{"degree":2}),
+           ("phase_correlation_shift",handles[2:4],{}),
+           ("fit_surface_principal_axes",[handles[4]],{"degree":1})]
+    results=[]
+    for op,inputs,params in calls:
+        results.append(call_tool("fullseye_pipeline",{"handle":inputs[0],"stages":[
+            {"op":op,"inputs":inputs,"params":params}]},cat,store))
+    assert [r.get("isError") for r in results] == [False]*4
+    assert [r["structuredContent"]["out_sort"] for r in results] == ["table","table","table","surface_poly"]
+
 def test_validate_distinguishes_unknown_from_known_non_executable():
     from fullseye.mcp.catalog import Catalog
     from fullseye.mcp.server import validate_pipeline
@@ -279,7 +307,9 @@ def test_mcp_execution_is_probe_verified_and_runtime_targets_are_exact(tmp_path)
 
     from tools.gen_op_facets import VERIFIED_PYTHON
     cited_python={"polarization_render","polarization_dolp_map","decode_fringe",
-                  "deflectometry_phase_to_slope"}
+                  "deflectometry_phase_to_slope", "fit_circle_geometric",
+                  "fit_curve_principal_axis", "phase_correlation_shift",
+                  "fit_surface_principal_axes"}
     assert VERIFIED_PYTHON == cited_python
     graph_python={e["op"] for e in verified if e.get("executor",{}).get("kind")=="python"}
     assert graph_python == cited_python

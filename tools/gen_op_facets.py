@@ -48,6 +48,8 @@ ACQUIRABLE = {
 VERIFIED_PYTHON = {
     "polarization_render", "polarization_dolp_map", "decode_fringe",
     "deflectometry_phase_to_slope",
+    "fit_circle_geometric", "fit_curve_principal_axis",
+    "phase_correlation_shift", "fit_surface_principal_axes",
 }
 DATA_INPUT_OVERRIDES = {
     "triangulate": [("uv1", "image"), ("uv2", "image"), ("P1", "matrix"), ("P2", "matrix")],

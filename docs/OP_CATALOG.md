@@ -13,27 +13,10 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(443 例)
-
-**morphing**
-- **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
-
-**math**
-- **分解が遅いのはアルゴリズムのせいではない(BLAS スレッド上限)** — 多コア機で SVD 系が遅くなる原因(スレッド過剰割り当て)を自分の機械で測り、op 側と自前 numpy 側の両方で上限の効果を出す。行列積は逆に遅くなること、上限は短辺で決まることまで含めて、速さを assert せず印字する。 `py -3.11 examples/blas_thread_budget.py`
-- **点群の曲率記述子を一度の近傍探索でまとめて得る** — 放物面点群から主曲率・平均曲率・Gauss 曲率・shape index・curvedness・法線をまとめて計算し、個別計算と一致することを確かめる。 `py -3.11 examples/perf_pointcloud_descriptors.py`
-- **monogenic の振幅・位相・向きを一度の検証で読む** — 合成正弦格子の Riesz/monogenic 場を作り、まとめて得た三量が個別の公開関数と数値一致することを確かめる。 `py -3.11 examples/perf_monogenic_metrics.py`
-- **体積の spline 係数を複数の線プローブで再利用する** — 検証済みの読み取り専用体積と cubic spline 係数を準備し、異なる線プローブが通常計算と同じ値を返すことを確かめる。 `py -3.11 examples/perf_prepared_volume_probe.py`
-- **偏光の分離・DoLP・Stokes を一度の当てはめで得る** — 既知の偏光スイープを合成し、一括解析の diffuse・specular・DoLP・Stokes が個別の公開関数と一致することを確かめる。 `py -3.11 examples/perf_polarization_analyze.py`
-- **変換核の再利用と省メモリ処理を一緒に確かめる** — Hankel 核のキャッシュ、PIV 外れ値マスクの行分割、packed 10-bit pixel の low-memory 復号が各基準結果と一致することを確かめる。 `py -3.11 examples/perf_hankel_plan_and_piv_stream.py`
-- **離散幾何と位相を画像・メッシュ・点群で —— 壁のある部屋の歩く距離・球面の測地線・トーラスの Gauss–Bonnet・Delaunay** — 棚卸し(2026-10-03)で op として無かった 6 本を 2-D/3-D で: 壁のすき間を回り込む距離を画像の格子で熱法により求め、8 近傍の Dijkstra は等距離線が八角形に歪んで誤差が細かくしても消えない(10.8 倍)/ 球面では辺の Dijkstra が 7.7% で止まり熱法は 0.8% まで減る / トーラスの角欠損は外側が正・内側が負で総和は歪めても 0、球は 4π / Delaunay の三角形の数は 2n−h−2 で外接円・3-D の外接球は空。 `py -3.11 examples/geometry_tour.py`
-- **推定と統計の古典を素朴なやり方と並べる —— 割当・Kalman 平滑化・Cramér–Rao 下界・帰無仮説の p 値・姿勢の補間** — 棚卸し(2026-10-03)で op として無かった 12 本: 貪欲な対応付けは総距離 4.90 で全点を取り違え Hungarian は 2.65、観測が途切れても Kalman 平滑化は前後から軌跡を戻し(RMS 0.38 → 0.15、一括最小二乗と厳密に一致)、直線の当てはめの精度は Cramér–Rao 下界にぴったり乗り、差の無い 2 群を 2000 回比べると 5% 前後が偶然「有意」、4×4 行列を直線で混ぜた姿勢の補間は途中で体積が 0.07 倍に縮み se3 の exp/log なら剛体のまま。 `py -3.11 examples/estimation_tour.py`
-- **FFT では足りないスペクトル推定 —— 6° 離れた 2 つの電波を MUSIC で割る・時刻がばらばらな観測の周期を Lomb–Scargle で** — 棚卸し(2026-10-03)で 0 本だった部分空間法と不等間隔の周期図: 8 素子のアンテナ列(ビーム幅 12.7°)で 6° 離れた 2 波は遅延和では 1 つの山に融け、MUSIC は 2 本の峰、ESPRIT は格子なしで角度を解き、波源の数は MDL で当てる。同じ信号の反射(相関した 2 波)では MUSIC も割れない。時刻を無視して並び順のまま FFT すると周期の峰がずれ、Lomb–Scargle は観測時刻のまま真の周波数に峰を立てる(等間隔なら周期図と恒等的に一致)。 `py -3.11 examples/spectral_tour.py`
-- **数値計算の古典を失敗例と並べて見る —— Runge 現象・Euler の渦巻きと Verlet の輪・乱数と Sobol・Gauss 求積・ぼけた縁の erf** — 棚卸し(2026-10-03)でどの層にも無かった 8 本を、うまくいく方法とうまくいかない方法を同じ軸に並べて確かめる: 等間隔の補間は 41 点で誤差 1e5、Chebyshev 点は 3e-4 / Euler はエネルギーが 300 歩で 20 倍、Verlet は有界、RK4 は短時間は正確だが誤差が時間に比例して増え t≈2300 で Verlet に抜かれる / 積分誤差の傾き 乱数 −0.5・Sobol −1 / Gauss は n 点で 2n−1 次まで厳密 / ガウスでぼけた段差は ½(1+erf)。 `py -3.11 examples/numerics_tour.py`
-- **フーリエ以外の積分変換を一巡する —— 炎の Abel 断層化・円い穴の Airy(Hankel)・2 次系の応答・数値逆ラプラス** — 棚卸し(2026-10-03)で 0 本だった Laplace 系統と Abel・Hankel を足した 10 本を、閉じた式と重ねて確かめる: 横から撮った炎の像から逆 Abel で断面を戻し(2 つの独立な戻し方)、雑音の誤差が微分では 1/dr、殻剥きでは 1/√dr で増えて標本数で優劣が逆転すること、円板の Hankel 変換が J₁ の閉じた式に重なり最初の暗い輪が 0.61/a、2 次系の減衰比を振ったステップ応答と Bode、1/√s の Talbot 逆変換が M=20 前後で 1e-12 に届き増やしすぎると丸めで悪化すること。 `py -3.11 examples/transforms_tour.py`
-- **視覚計測を支える数学 op(mathops)を計測ワークフローで一巡** — 平面フィット→残差統計→共分散楕円の主軸化→較正曲線の多項式フィット(条件数監視)→補間で逆引き。mathops 16 op を実データ風に通し閉形式 GT と照合。 `py -3.11 examples/math_metrology.py`
-- **複素解析 op(mathops tier2)を閉形式の真値と突き合わせる** — 偏角原理で零点数、コーシー積分で内部値復元、等角性・正則性判定を点列として持つ閉曲線から numpy 演算で答える。 `py -3.11 examples/math_complex.py`
+### 2-D 画像/信号/幾何(444 例)
 
 **metrology**
+- **短い円弧・小数移動・斜めの曲線を偏りなく当てはめる** — 幾何距離の円、局所アップサンプル位相相関、主軸へ回してからの曲線・曲面当てはめを真値で検証する。 `py -3.11 examples/fit_ops_from_knowhow.py`
 - **全数の表面像と抜き取り断層像を同じ接合部へ結ぶ** — 緑の基板、配線、部品、環状照明を映す接合材、欠品・立ち・橋絡を 512 px の表面像にし、同じ領域を投影から再構成した 3 高さの断層像と縦断面に対応づける。中央接合部の空隙、金属による筋、検出器むらによる輪は再構成結果にだけ現れる。水等価ファントムは筋が 3σ 未満、金属入りは 4σ 超。環状照明の反射方向は閉形式と 2°以内。樹脂・銅・接合材の減弱順と比は Hubbell & Seltzer, *NIST SRD 126*（米国政府資料、public domain）の表から 5 %以内。従来の面積率・体積率・順位は検証図に残す。 `py -3.11 examples/poc_aoi_ct_traceability.py`
 - **面を走査する白色干渉計** — 512×512 の段差・傾き・粗面を 48 面の干渉縞で走査し、4 枚の生フレーム、動画、復元高さ、誤差、低変調の品質像を主図にする。包絡幅は光源帯域の閉形式と 0.29 %、縞周期は λ/2 と 2e-16、滑らかな段差の繰返しは 2.2 nm（装置の語彙は ISO 25178-604）。帯域を半分にする破壊探針で包絡幅は 2.000 倍になる。従来の 1-D 段差・走査刻み・雑音検証は後段へ残す。 `py -3.11 examples/poc_interferometry_step.py`
 - **視触覚センサのマーカー配列からせん断場・固着/滑り・接線力を読む —— Cattaneo–Mindlin の閉形式と有限要素の節点変位を門に** — 物理シミュ × Fullseye 系列 第 2 弾の第 2 本(第 1 本 = 法線荷重)。真値は 2 系統: 閉形式(Johnson 1985: Cattaneo–Mindlin の部分滑り c/a = (1 − Q/μP)^{1/3}・q = q′ − q″・δx = 3μP(2−ν)/(16Ga)[1 − (1−Q/μP)^{2/3}]・kt = 8Ga/(2−ν)、Hertz 形接線トラクションの円内解 3.91、法線荷重の半径変位 3.41b、Cerruti の点荷重解)と、有限要素の節点変位(有限厚ドーム状ゲル、Robo-Touch/Taxim 同梱 MIT、FULLSEYE_TAXIM_DATA があるとき)。自分で作ったのは接触円の外側(閉形式なし)を画素平均の Cerruti 核で FFT 畳み込み(円内の 3.91 と 0.02 %)、任意の固着半径の場を相似則 g(x) − (c/a)²g(x·a/c) で出す逆算模型(畳み込み 1 回、真の変位で c/a 0.001)、変位で中心を移してから描くマーカー像。被験者 = 既存 op(blob2d の重心、pivops の窓相関、backends_subpix の副画素極値、tac_shear_field、measure.fit_circle)。新モジュール tacslip 20 op。門 20 本(FEM 2 本はデータがあるとき): ∫q dA = Q、kt、錨 70.5 µm、ūr の最大は 0.93a、固着円の一様性 0.006 %、遠方 1/r、重心の往復 0.003 px、追跡 RMS 0.01 px(961/961)、逆算 Q/μP 0.03・c/a 0.02・μ と Q の分離(μ は低 Q で 2c/(1−c²) 倍に増幅、0.75 以上で 3 %)、全滑りで核が消える、指数 0.34、エントロピー単調、tac_shear_field は分けない、密度・雑音、FEM の r½ = 2.3 mm と Cerruti の ν 0.49〜0.51。正直に: 半空間・小変形・Coulomb・準静的、FEM は点荷重状で荷重不明(形だけ)、相関と最近傍は |u| ≥ ピッチ/2 を測れない(対応は視野の縁が遠方場という前提)。踏んだ罠: 規則格子の PIV は 5 px を −3 px と読む(格子周期のエイリアス)、半径 2 px の円盤の重心は ±0.03 px の pixel-locking で格子共通モードになり c/a を 0.02 ずらす(半径 2.5 px + 反復ガウス重みで 3 分の 1、剛体シフト項は 1/r の尾と縮退して逆効果)、ūr の最大は縁でなく 0.93a、滑り環で隣のマーカーの縞が繋がる。 `py -3.11 examples/poc_tacsim_marker_shear.py`
@@ -110,6 +93,24 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **家畜の体積計測(視体積交差は上界。凹みはカメラを増やしても埋まらない)** — 多視点シルエットの交差(visual hull)から家畜の体積を出し、体重へ換算する。視体積交差は**必ず上界**なので、問題は「良いか」ではなく「必ず上に出る」こと。★★閉形式の崖が**現場の目安を訂正した**: 「K 台なら K 角形」は正しくない。平行投影ではカメラ 1 台が視線に**直交する接線 2 本**を与え、しかも**向かい合う 2 台は同じ 2 本**しか与えないので、接線の本数は偶数 K なら K 本、**奇数 K なら 2K 本**。よって **3 台と 6 台は幾何としてまったく同じ**で、**13 台(実測 1.03056)が 16 台(1.04768)に勝つ**。「体重 2 % 以内」なら奇数 13 台 / 偶数 24 台 —— 円の素朴な読み (K/π)tan(π/K) は 13 台と出るので、**偶数台で組む現場は 11 台足りない見積り**を持つ。支持関数から出した楕円(a/b=2.76)の厳密値と実測は全 K で **閉形式のすぐ上**に乗り(差 +0.002〜+0.018)、下界として的中。★対照: この縮退は平行投影の性質で、距離 8 m まで近づけると 3 台 1.20699 / 6 台 1.11211 と差が 7.1 倍に開く。★★展示の中心は**消える誤差と消えない誤差を分けて数える**こと: 脚の間の幽霊は K=4 → 48 で 7.13 % → 1.37 %(5.2 倍)と素直に減るのに、**背中のくぼみはカメラ 12 倍で 3.8 ポイントしか減らない**(56.4 % → 52.6 %)。分かれ目は「凹みが輪郭に出るか」。K=48 の残差 +3.4 % の内訳はくぼみ +1.00 % / 幽霊 +1.76 %、取りこぼしは全 K で 0。★シルエット 1 画素で **+3.21 %/px**(体重 +23.7 kg)。Steiner の ΔV/V=(S/V)δ の予測 +3.09 %/px と比 1.04 で当たる(ただし押し上げ要因と押し下げ要因が偶然釣り合った旨を明記)。★物差しで勝者が変わる: 体積由来体重とアロメトリ体重は「K=24 + 2 画素収縮」が最良だが、**重心の高さでは収縮なしが勝つ**(細い脚が先に消える)。★★予想を外した: 「巻尺は凸包を測るので胸囲では 3-D 凸包が強い」と踏んだが実測 **+55.2 %** で最悪の部類 —— 体全体の凸包は腹の下を埋めるため縦断面が地面まで伸びる。**『断面の凸包』と『凸包の断面』は別物**。★上半球ランダム 8 台は等間隔と平均では互角(120 試行で 57.5 %)だが、**最悪は +30.20 %(等間隔の 2.4 倍)** —— 危ないのは平均でなく裾。★★道具の穴を見つけてその場で埋めた: 空間彫刻が要る OpenCV 規約の姿勢ヘルパが 4 層のどこからも引けず、同名の `fs.look_at`(gluLookAt・-Z 前方)を掴むと**例外なく空の hull** が返っていた。`carve_look_at` を台帳に載せ、全点がカメラ後方なら警告を出すようにした。 `py -3.11 examples/poc_livestock_body_volume.py`
 - **熱画像は温度画像ではない(放射率と反射と、足し算にならない不確かさ)** — 熱カメラの DN を温度に戻す全経路を、真値を植えて測る。前向きモデルは L = τ[ε L_bb(T_obj) + (1-ε) L_bb(T_refl)] + (1-τ) L_bb(T_atm) で、T_obj / ε / T_refl / τ / T_atm を植えてから逆変換する。★床を先に測る: 往復 1.75e-06 K、量子化 6.28e-03 K、+NETD 2.71e-02 K。**350.0 K だと厳密に 0 が出たが、それは校正表の節点にたまたま乗っただけ**なので節点を外して測り直した(0 を床と呼ぶのは嘘)。★★閉形式の予測を印字して外した: 素朴な n = c2/(λ_eff T) は数値微分から最大 16.6 % ずれ、外れの正体は実効波長の選び方ではなく **e^x/(e^x-1) の欠け**(x = c2/λT)。入れると誤差 0.00 %。★★崖の向きも外した: 「低温ほど急」と印字したが、**絶対誤差は高温ほど大きい**(Δε/ε=5 % で 305 K の 0.233 K → 800 K の 16.907 K)。log-log の傾きは実測 2.717 で、内訳は T/n = 1.741 + 反射因子 0.977 = 2.718 —— 閉形式は最初からそう言っていて、自分の式を読み違えていた。★★「低温ほど急」は正しかったが犯人が違った: 周囲からの上昇で割ると放射率の誤差は 4.7 %→3.4 % と1.40 倍しか動かず発散しないのに、**T_refl の取り違えは 13.2 %→0.0 % で 972 倍**。上昇 10 K を切ると反射が放射率より重くなる。★★不確かさは足し算にならない: ε=0.60±0.05・T_refl=300±5 K・相関 +0.7 を 20000 試行で数えると、**「95 % 区間」が実際に真値を包む割合は独立 RSS で 88.03 %、相関つき MC で 94.44 %**。床を先に測ってあり、相関 0 なら RSS 95.03 % / MC 94.52 % なので、落差は実装ではなく**相関の無視そのもの**。真の u 5.6518 K に対し RSS は 4.5086 K = **区間が 20.2 % 狭い**。相関が負なら逆に 99.64 % と過剰になる。★★guard band: 40000 試行で誤合格 8.03 %(不確かさ無視)→ 0.81 %(RSS)→ 0.14 %(MC)。**RSS は MC の 5.6 倍**誤合格する。★単位の崖 8 通りで例外 3 / 静かに 5。**同じ「T_refl を摂氏で書く」取り違えが ε=0.95 では通り(-22.1 K)、ε=0.10 では例外になる** —— 止まるかどうかは間違いの種類ではなく場面で決まる。★熱画像では、同じ 375.0 K のボルト(ε=0.10)が ε=1 の絵で周りの塗装面より **62.3 K 低く**写る(= 健全に見える)。ε 地図で 375.0 K に戻るが、**補正は偏りを消す代わりに雑音を増やす**(残差 rms は塗装面 0.0571 K に対しボルト 0.3673 K = 6.4 倍)。★★道具の穴を見つけてその場で直した: `noise_sigma(method='mad')` が整数画像で 0 に潰れ、下流の `star_detect` が植えた点目標 2 個を **0 個**と返していた。 `py -3.11 examples/poc_thermal_radiometry.py`
 - **測地の高さと座標系(数字はもっともらしいまま数十メートル間違う)** — GNSS が返す楕円体高 h と、地図と設計図が使う標高 H は `H = h - N`(N = ジオイド高、日本付近で 30〜40 m)。この取り違えがどの量に効き、どの量では消えるかを、合成のジオイド場で真値を植てて測る。★床を二重に取る: 既存 op の往復 3D 1.07e-06 m に加え、独立実装(反復法)との差 緯度 7.2e-07 m —— **往復だけでは「両方同じ向きに誤り」を排除できない**。★閉形式の予測が当たったもの: 傾斜への影響の上限 atan|∇N| 予測 0.008771 度 / 実測 0.008600 度(N 一定の対照群は 2.0e-14 度 = 厳密に 0)、土量 ΔV = A·N̄ が差 1.5e-08 m^3、平地の流向反転 76.1 % 予測 / 76.2 % 実測(D8 では 97.2 %)、datum の相対誤差 -116.0 ppm 予測 / -106.1 ppm 実測。★★外した予測: 視通への影響の上限を |∇N|·d = 2.60 m と置いたが実測 0.052 m(**50 分の 1**)—— **N の線形部は視線にも地面にも同じだけ乗って消える**。絞り直した上限 |N''|d²/8 = 0.144 m の 36 % に収まった。曲率落ち 14.2 m のほうが 276 倍効く。★★崖は閉形式で出るが**1 つの数字では出ない**: 平面近似の落ち d²/2R は 10 km で予測 -7.8481 m に対し、実測は南北 -7.8652 m / 東西 -7.8303 m。子午線 6357143 m と卯酉線 6385412 m の差で、平均半径の予測は**両者のあいだ**に来る(30 km で 0.316 m 開く)。★主題: **同じ 36 m が、差を取る量ではほぼ消え(傾斜 0.0086 度・視通 0.052 m)、絶対量では全部効く**(土量 +3.97e+07 m^3、浸水 41.9 % → 0.0 %)。対照群で「設計面も同じ GNSS で作る」と誤差が 0.0 m^3 —— **汚染された物差しで測ると誤差が見えなくなる**。★測地成果の取り違えは平均 446.6 m(281.6〜592.7)なのに、相対検査が見せるのは 1 km あたり 0.106 m = **4216 分の 1**。★静かに間違う / うるさく壊れるを分けて数えた: 標本 3600 の全球格子で**例外が出たのは緯経の入れ替えだけ、それも 50.0 %**。ラジアン→度(8883 km)、経度符号反転(4800 km)、ECEF の x/y 入れ替え(4849 km、**返った緯度経度が妥当な範囲に収まった点 100 %**)、高さフィート(228 m)は例外 0 件。**11 項目のうち静かに間違うものが 10 件**。★★道具の穴を見つけてその場で直した: `dem_ecef_to_geodetic` が地球中心付近で**緯度 180 度**を返していた。 `py -3.11 examples/poc_geodetic_height_frames.py`
+
+**morphing**
+- **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
+
+**math**
+- **分解が遅いのはアルゴリズムのせいではない(BLAS スレッド上限)** — 多コア機で SVD 系が遅くなる原因(スレッド過剰割り当て)を自分の機械で測り、op 側と自前 numpy 側の両方で上限の効果を出す。行列積は逆に遅くなること、上限は短辺で決まることまで含めて、速さを assert せず印字する。 `py -3.11 examples/blas_thread_budget.py`
+- **点群の曲率記述子を一度の近傍探索でまとめて得る** — 放物面点群から主曲率・平均曲率・Gauss 曲率・shape index・curvedness・法線をまとめて計算し、個別計算と一致することを確かめる。 `py -3.11 examples/perf_pointcloud_descriptors.py`
+- **monogenic の振幅・位相・向きを一度の検証で読む** — 合成正弦格子の Riesz/monogenic 場を作り、まとめて得た三量が個別の公開関数と数値一致することを確かめる。 `py -3.11 examples/perf_monogenic_metrics.py`
+- **体積の spline 係数を複数の線プローブで再利用する** — 検証済みの読み取り専用体積と cubic spline 係数を準備し、異なる線プローブが通常計算と同じ値を返すことを確かめる。 `py -3.11 examples/perf_prepared_volume_probe.py`
+- **偏光の分離・DoLP・Stokes を一度の当てはめで得る** — 既知の偏光スイープを合成し、一括解析の diffuse・specular・DoLP・Stokes が個別の公開関数と一致することを確かめる。 `py -3.11 examples/perf_polarization_analyze.py`
+- **変換核の再利用と省メモリ処理を一緒に確かめる** — Hankel 核のキャッシュ、PIV 外れ値マスクの行分割、packed 10-bit pixel の low-memory 復号が各基準結果と一致することを確かめる。 `py -3.11 examples/perf_hankel_plan_and_piv_stream.py`
+- **離散幾何と位相を画像・メッシュ・点群で —— 壁のある部屋の歩く距離・球面の測地線・トーラスの Gauss–Bonnet・Delaunay** — 棚卸し(2026-10-03)で op として無かった 6 本を 2-D/3-D で: 壁のすき間を回り込む距離を画像の格子で熱法により求め、8 近傍の Dijkstra は等距離線が八角形に歪んで誤差が細かくしても消えない(10.8 倍)/ 球面では辺の Dijkstra が 7.7% で止まり熱法は 0.8% まで減る / トーラスの角欠損は外側が正・内側が負で総和は歪めても 0、球は 4π / Delaunay の三角形の数は 2n−h−2 で外接円・3-D の外接球は空。 `py -3.11 examples/geometry_tour.py`
+- **推定と統計の古典を素朴なやり方と並べる —— 割当・Kalman 平滑化・Cramér–Rao 下界・帰無仮説の p 値・姿勢の補間** — 棚卸し(2026-10-03)で op として無かった 12 本: 貪欲な対応付けは総距離 4.90 で全点を取り違え Hungarian は 2.65、観測が途切れても Kalman 平滑化は前後から軌跡を戻し(RMS 0.38 → 0.15、一括最小二乗と厳密に一致)、直線の当てはめの精度は Cramér–Rao 下界にぴったり乗り、差の無い 2 群を 2000 回比べると 5% 前後が偶然「有意」、4×4 行列を直線で混ぜた姿勢の補間は途中で体積が 0.07 倍に縮み se3 の exp/log なら剛体のまま。 `py -3.11 examples/estimation_tour.py`
+- **FFT では足りないスペクトル推定 —— 6° 離れた 2 つの電波を MUSIC で割る・時刻がばらばらな観測の周期を Lomb–Scargle で** — 棚卸し(2026-10-03)で 0 本だった部分空間法と不等間隔の周期図: 8 素子のアンテナ列(ビーム幅 12.7°)で 6° 離れた 2 波は遅延和では 1 つの山に融け、MUSIC は 2 本の峰、ESPRIT は格子なしで角度を解き、波源の数は MDL で当てる。同じ信号の反射(相関した 2 波)では MUSIC も割れない。時刻を無視して並び順のまま FFT すると周期の峰がずれ、Lomb–Scargle は観測時刻のまま真の周波数に峰を立てる(等間隔なら周期図と恒等的に一致)。 `py -3.11 examples/spectral_tour.py`
+- **数値計算の古典を失敗例と並べて見る —— Runge 現象・Euler の渦巻きと Verlet の輪・乱数と Sobol・Gauss 求積・ぼけた縁の erf** — 棚卸し(2026-10-03)でどの層にも無かった 8 本を、うまくいく方法とうまくいかない方法を同じ軸に並べて確かめる: 等間隔の補間は 41 点で誤差 1e5、Chebyshev 点は 3e-4 / Euler はエネルギーが 300 歩で 20 倍、Verlet は有界、RK4 は短時間は正確だが誤差が時間に比例して増え t≈2300 で Verlet に抜かれる / 積分誤差の傾き 乱数 −0.5・Sobol −1 / Gauss は n 点で 2n−1 次まで厳密 / ガウスでぼけた段差は ½(1+erf)。 `py -3.11 examples/numerics_tour.py`
+- **フーリエ以外の積分変換を一巡する —— 炎の Abel 断層化・円い穴の Airy(Hankel)・2 次系の応答・数値逆ラプラス** — 棚卸し(2026-10-03)で 0 本だった Laplace 系統と Abel・Hankel を足した 10 本を、閉じた式と重ねて確かめる: 横から撮った炎の像から逆 Abel で断面を戻し(2 つの独立な戻し方)、雑音の誤差が微分では 1/dr、殻剥きでは 1/√dr で増えて標本数で優劣が逆転すること、円板の Hankel 変換が J₁ の閉じた式に重なり最初の暗い輪が 0.61/a、2 次系の減衰比を振ったステップ応答と Bode、1/√s の Talbot 逆変換が M=20 前後で 1e-12 に届き増やしすぎると丸めで悪化すること。 `py -3.11 examples/transforms_tour.py`
+- **視覚計測を支える数学 op(mathops)を計測ワークフローで一巡** — 平面フィット→残差統計→共分散楕円の主軸化→較正曲線の多項式フィット(条件数監視)→補間で逆引き。mathops 16 op を実データ風に通し閉形式 GT と照合。 `py -3.11 examples/math_metrology.py`
+- **複素解析 op(mathops tier2)を閉形式の真値と突き合わせる** — 偏角原理で零点数、コーシー積分で内部値復元、等角性・正則性判定を点列として持つ閉曲線から numpy 演算で答える。 `py -3.11 examples/math_complex.py`
 
 **terrain**
 - **地形を測る(傾斜・水の流れ・日当たりを閉形式と突き合わせる)** — 平面・円錐・ガウス丘という解析曲面で傾斜と曲率を検算し、離散化の誤差と式の誤りを2 次収束で区別する。欠測(水面)の扱いで集水量がどう変わるかを 3 通り並べ、日当たりを向き別に出す。**この PoC が天空率の 18 倍の遅さを暴いた**。 `py -3.11 examples/poc_dem_terrain.py`
@@ -787,9 +788,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3607 ops / 54 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3611 ops / 55 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 959 · **3d** 373 · **math** 114 · **optics** 483 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 39 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 717 · **tomography** 32 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 3 · **calib** 21 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族の一覧: **2d** 959 · **3d** 374 · **fit** 3 · **math** 114 · **optics** 483 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 39 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 717 · **tomography** 32 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 3 · **calib** 21 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d(959 ops / 49 categories)
 
@@ -1852,7 +1853,7 @@ _計 3607 ops / 54 families。並びとノートの在り処は `docs/ops/INDEX.
 - `xg_orientation` (halcon: `orientation_points_xld`) `contour → feature` — Principal-axis orientation in degrees, folded to [0,180) and /180 scaled. · 例: `gallery2d_geometry`
 - `xg_regress_contours` `contour → feature` — Total-least-squares line residual RMS = sqrt(minor covariance eigenvalue). · 例: `gallery2d_geometry`, `poc_screw_thread_metrology`
 
-### 3d(373 ops / 68 categories)
+### 3d(374 ops / 68 categories)
 
 点群・体積・メッシュ・深度の op(`ops3d.OPS3D`)。関数として呼ぶ。
 
@@ -1993,7 +1994,7 @@ _計 3607 ops / 54 families。並びとノートの在り処は `docs/ops/INDEX.
 - `vol_resize` `voxel → voxel` — Resample a volume to a new grid (``scipy.ndimage.zoom``, cell semantics). · 例: `vol_geometry_transform`
 - `vol_rotate` `voxel → voxel` — Rotate a volume in the plane of an axis pair (``scipy.ndimage.rotate``). · 例: `vol_geometry_transform`
 
-#### 3d / geometry(24)
+#### 3d / geometry(25)
 - `angle_3points` `points → measurement` — 3 点のなす角(頂点 b、度)。∠ABC。 · 例: `geometry_metrology`
 - `angle_between_lines` `primitive → measurement` — 2 直線の方向ベクトルがなす鋭角を度で返す(向きは区別せず 0〜90°)。 · 例: `geometry_metrology`
 - `angle_between_planes` `primitive → measurement` — 2 平面の二面角(法線 n1,n2、度)。 · 例: `geometry_metrology`
@@ -2011,6 +2012,7 @@ _計 3607 ops / 54 families。並びとノートの在り処は `docs/ops/INDEX.
 - `fit_plane_3d` `points → primitive` — 点群 → 最小二乗平面(通過点=重心, 法線=最小主軸, 残差 RMS)。返り値 (point, normal, resid)。 · 例: `geometry_metrology`
 - `fit_sphere3` `points → primitive` — Algebraic (Kåsa) least-squares sphere fit to ``(depth, row, col)`` points: · 例: `primitive_fitting_3d`, `roi_domain_boundary`
 - `fit_sphere_3d` `points → primitive` — 点群 → 最小二乗球(代数フィット)。返り値 (center, radius)。配管/ボール計測に。 · 例: `geometry_metrology`
+- `fit_surface_principal_axes` `points → surface_poly` — 斜めの反った面を PCA 主軸へ回してから多項式 ``z'=f(x',y')`` を当てはめる。 · 例: `primitive_fitting_3d`
 - `intersect_line_plane` `primitive → position` — 直線 ∩ 平面 → 点(平行なら None)。 · 例: `geometry_metrology`
 - `intersect_planes` `primitive → primitive` — 平面 ∩ 平面 → 直線(通過点, 方向)。平行なら None。 · 例: `geometry_metrology`
 - `line_from_2points` `points → primitive` — 2 点 → 直線(通過点, 単位方向)。2 座標で線が定まる(2D/3D 共通)。 · 例: `geometry_metrology`
@@ -2364,6 +2366,15 @@ _計 3607 ops / 54 families。並びとノートの在り処は `docs/ops/INDEX.
 - `recover_pose` `image2d × image2d → pose` — 対応点 + K から相対姿勢 (R,t) と 3D 構造を復元(cheirality で一意化)。→ (R, t_unit, points3d)。 · 例: `two_view_pose`
 - `sampson_distance` `image2d × image2d → signal` — エピポーラ拘束の Sampson 距離(1 次幾何誤差、各対応)。→ (N,)。 · 例: `two_view_pose`
 - `triangulate` `image2d × image2d → points` — DLT 三角測量: 2 視点の対応点 + 射影行列 → 3D 点。→ (N,3)。 · 例: `sfm_recon`
+
+### fit(3 ops / 2 categories)
+
+#### fit / fit(2)
+- `fit_circle_geometric` `keypoints → table` — 短い円弧を含む ``(row, col)`` 点に幾何距離の最小二乗で円と半径を当てはめる。 · 例: `fit_ops_from_knowhow`
+- `fit_curve_principal_axis` `keypoints → table` — 斜めの曲がった縁を主軸へ回してから多項式 ``y'=f(x')`` を当てはめる。 · 例: `fit_ops_from_knowhow`
+
+#### fit / registration(1)
+- `phase_correlation_shift` `image2d × image2d → table` — 2 枚の画像の位置合わせに必要なサブピクセル移動量を位相限定相関で求める。 · 例: `fit_ops_from_knowhow`
 
 ### math(114 ops / 12 categories)
 

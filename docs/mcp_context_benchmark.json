@@ -10,8 +10,8 @@
     {
       "task": "surface dent from reflected fringes",
       "tool_schema_tokens": 1435,
-      "response_tokens": 925,
-      "total_tokens": 2360,
+      "response_tokens": 923,
+      "total_tokens": 2358,
       "planned": true,
       "ops": [
         "deflectometry_phase_to_slope"
@@ -40,8 +40,8 @@
     {
       "task": "locate a part for handling",
       "tool_schema_tokens": 1435,
-      "response_tokens": 871,
-      "total_tokens": 2306,
+      "response_tokens": 870,
+      "total_tokens": 2305,
       "planned": true,
       "ops": [
         "shape_locate"

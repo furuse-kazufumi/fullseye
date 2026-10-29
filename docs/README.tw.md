@@ -62,7 +62,7 @@
 | `validated-public-real-data` | 使用公開實測資料的範例在檢查中實際執行 | 18 |
 | `validated-hardware` | 已在實機上驗證(僅在接受外部報告時) | 0 |
 
-443 個範例中,檢查實際執行的有 443 個。
+444 個範例中,檢查實際執行的有 444 個。
 
 ### 各版本的運算子數
 
@@ -138,18 +138,18 @@
 
 ## 尋找運算子
 
-共有 **3,607 篇運算子說明**(呼叫方式、型別契約、HALCON 對應、參考文獻、來源)與 **69 篇族群指南**。依維度的入口:
+共有 **3,611 篇運算子說明**(呼叫方式、型別契約、HALCON 對應、參考文獻、來源)與 **69 篇族群指南**。依維度的入口:
 
-**實測涵蓋**: 演化運算子 942/942、型別台帳 2644/2656、單行門面 `fullseye.<名稱>` 706/1491 —— **門面側僅涵蓋一半**。
+**實測涵蓋**: 演化運算子 942/942、型別台帳 2648/2660、單行門面 `fullseye.<名稱>` 710/1495 —— **門面側僅涵蓋一半**。
 
-**內容實測**: 3607 篇中，附有可執行範例的 **3579** 篇(28 篇沒有)，用法說明 120 字以上的 **3408** 篇(199 篇僅一行)。結構(呼叫形式、型別、可銜接運算子)3607 篇全有。
+**內容實測**: 3611 篇中，附有可執行範例的 **3583** 篇(28 篇沒有)，用法說明 120 字以上的 **3412** 篇(199 篇僅一行)。結構(呼叫形式、型別、可銜接運算子)3611 篇全有。
 
 | 維度 | 運算子數 | 入口 |
 |---|---:|---|
 | `2d` | 959 | [INDEX](ops/2d/INDEX.md) |
 | `drive` | 717 | [INDEX](ops/drive/INDEX.md) |
 | `optics` | 483 | [INDEX](ops/optics/INDEX.md) · [guide](ops/optics/guides/optics_imaging.md) |
-| `3d` | 373 | [INDEX](ops/3d/INDEX.md) |
+| `3d` | 374 | [INDEX](ops/3d/INDEX.md) |
 | `math` | 114 | [INDEX](ops/math/INDEX.md) · [guide](ops/math/guides/math_metrology.md) |
 | `segmentation` | 59 | [INDEX](ops/segmentation/INDEX.md) · [guide](ops/segmentation/guides/halcon_segmentation.md) |
 | `annotate` | 51 | [INDEX](ops/annotate/INDEX.md) · [guide](ops/annotate/guides/figure_annotation.md) |
@@ -199,6 +199,7 @@
 | `residue` | 5 | [INDEX](ops/residue/INDEX.md) |
 | `cadmap` | 4 | [INDEX](ops/cadmap/INDEX.md) |
 | `aoi` | 3 | [INDEX](ops/aoi/INDEX.md) · [guide](ops/aoi/guides/aoi_frontend.md) |
+| `fit` | 3 | [INDEX](ops/fit/INDEX.md) |
 | `text` | 3 | [INDEX](ops/text/INDEX.md) |
 
 依名稱搜尋請用 `py -3.11 imgevolve.py ops --search edge`;全部運算子的對照表見 [OP_CATALOG.md](OP_CATALOG.md)，跨維度入口見 [ops/INDEX.md](ops/INDEX.md)。
@@ -299,7 +300,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## 文件地圖 — 共 292 篇
 
-完整地圖，確保**沒有任何文件無法從索引到達**(`docs/ops/` 下的 3,607 篇運算子說明與 69 篇族群指南從上面的「尋找運算子」進入; 文章見 [articles/](articles/README.md))。**內文多為日文。**
+完整地圖，確保**沒有任何文件無法從索引到達**(`docs/ops/` 下的 3,611 篇運算子說明與 69 篇族群指南從上面的「尋找運算子」進入; 文章見 [articles/](articles/README.md))。**內文多為日文。**
 
 **Getting started**(12)
 

@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3601,
- "n_notes": 3607,
+ "n_ops": 3605,
+ "n_notes": 3611,
  "notes": {
   "vol_dilate": [
    {
@@ -11263,6 +11263,16 @@
     "in": "points",
     "out": "primitive",
     "path": "docs/ops/3d/geometry/fit_sphere_3d.md"
+   }
+  ],
+  "fit_surface_principal_axes": [
+   {
+    "op": "fit_surface_principal_axes",
+    "dim": "3d",
+    "category": "geometry",
+    "in": "points",
+    "out": "surface_poly",
+    "path": "docs/ops/3d/geometry/fit_surface_principal_axes.md"
    }
   ],
   "intersect_line_plane": [
@@ -23098,6 +23108,36 @@
     "in": "labels2d × labels2d × table",
     "out": "table",
     "path": "docs/ops/emproof/wiring/seg_wiring_variation.md"
+   }
+  ],
+  "fit_circle_geometric": [
+   {
+    "op": "fit_circle_geometric",
+    "dim": "fit",
+    "category": "fit",
+    "in": "keypoints",
+    "out": "table",
+    "path": "docs/ops/fit/fit/fit_circle_geometric.md"
+   }
+  ],
+  "fit_curve_principal_axis": [
+   {
+    "op": "fit_curve_principal_axis",
+    "dim": "fit",
+    "category": "fit",
+    "in": "keypoints",
+    "out": "table",
+    "path": "docs/ops/fit/fit/fit_curve_principal_axis.md"
+   }
+  ],
+  "phase_correlation_shift": [
+   {
+    "op": "phase_correlation_shift",
+    "dim": "fit",
+    "category": "registration",
+    "in": "image2d × image2d",
+    "out": "table",
+    "path": "docs/ops/fit/registration/phase_correlation_shift.md"
    }
   ],
   "lattice_moire_peak": [

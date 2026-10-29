@@ -1,4 +1,4 @@
-{"generated_by": "tools/gen_mcp_data.py", "probe": "CPU, a=b=0.5, representative input", "n_ops": 3607, "ops": [
+{"generated_by": "tools/gen_mcp_data.py", "probe": "CPU, a=b=0.5, representative input", "n_ops": 3611, "ops": [
 {"name":"a3_distribution","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"aabb","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"abbe_number","status":"not_in_registry","reason":"not executable by fullseye.apply"},
@@ -905,7 +905,9 @@
 {"name":"fit_bspline_surface","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"fit_circle3","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"fit_circle_3d","status":"not_in_registry","reason":"not executable by fullseye.apply"},
+{"name":"fit_circle_geometric","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"fit_cone","status":"not_in_registry","reason":"not executable by fullseye.apply"},
+{"name":"fit_curve_principal_axis","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"fit_ellipsoid","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"fit_line3","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"fit_line_3d","status":"not_in_registry","reason":"not executable by fullseye.apply"},
@@ -920,6 +922,7 @@
 {"name":"fit_spin","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"fit_spline_curve","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"fit_superquadric","status":"not_in_registry","reason":"not executable by fullseye.apply"},
+{"name":"fit_surface_principal_axes","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"fit_torus","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"fit_zernike","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"fivebar_fk","status":"not_in_registry","reason":"not executable by fullseye.apply"},
@@ -2033,6 +2036,7 @@
 {"name":"ph_reaction_diffusion","status":"ok","in_sort":"image","out_sort":"image","probe_input":"op_probe.sample_input('image', structured=True)"},
 {"name":"ph_total_variation_flow","status":"ok","in_sort":"image","out_sort":"image","probe_input":"op_probe.sample_input('image', structured=True)"},
 {"name":"phase_congruency_pc","status":"not_in_registry","reason":"not executable by fullseye.apply"},
+{"name":"phase_correlation_shift","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"phase_deg","status":"ok","in_sort":"image","out_sort":"image","probe_input":"op_probe.sample_input('image', structured=True)"},
 {"name":"phase_dictionary","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"phase_displacement","status":"not_in_registry","reason":"not executable by fullseye.apply"},
