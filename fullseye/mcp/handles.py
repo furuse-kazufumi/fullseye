@@ -58,6 +58,16 @@ class HandleStore:
         self._seq = 0
 
     # ---------------------------------------------------------------- paths
+    def display_path(self, path: str) -> str:
+        """Return an MCP-safe path label without exposing host roots or home dirs."""
+        real = os.path.realpath(path)
+        for root in self.roots:
+            if real == root:
+                return "<root>"
+            if real.startswith(root + os.sep):
+                return "<root>/" + os.path.relpath(real, root).replace(os.sep, "/")
+        return "<outside>/" + os.path.basename(real)
+
     def _check_path(self, path: str) -> str:
         if not isinstance(path, str) or not path.strip():
             raise HandleError("path が空")
@@ -69,12 +79,12 @@ class HandleStore:
         inside = any(real == r or real.startswith(r + os.sep) for r in self.roots)
         if not inside:
             raise HandleError(
-                "根の外のパスは読まない: %s(読めるのは %s の下だけ。"
-                "FULLSEYE_MCP_ROOT で根を足せる)" % (path, self.roots))
+                "根の外のパスは読まない: %s(読めるのは <root> の下だけ。"
+                "FULLSEYE_MCP_ROOT で根を足せる)" % self.display_path(real))
         if os.path.splitext(real)[1].lower() not in IMAGE_EXT:
-            raise HandleError("読める拡張子は %s: %s" % (IMAGE_EXT, path))
+            raise HandleError("読める拡張子は %s: %s" % (IMAGE_EXT, self.display_path(real)))
         if not os.path.isfile(real):
-            raise HandleError("ファイルが無い: %s" % path)
+            raise HandleError("ファイルが無い: %s" % self.display_path(real))
         return real
 
     def samples(self) -> list[dict]:
@@ -138,10 +148,11 @@ class HandleStore:
             self._evicted.add(old)
         return dict(meta)
 
-    def load(self, path: str, *, color: bool = False) -> dict:
+    def load(self, path: str, *, color: bool = False, force_color: bool = False) -> dict:
         named=next((r["path"] for r in self.samples() if r["name"]==path),None)
         if named is not None: path=named
         real = self._check_path(path)
+        note = None
         # ★2026-10-11: 根の中の壊れた png・object 配列の npy は ValueError 等を HandleError に
         # 写さず投げ、dispatch を抜けてサーバのループが死んでいた。読めない中身は理由つきで断る
         # (-32602)。npy は pickle を決して許さない。
@@ -154,14 +165,29 @@ class HandleStore:
                 sort = "image" if arr.ndim == 2 else "color" if arr.ndim == 3 and arr.shape[-1] == 3 else "any"
             else:
                 import imgio
-                arr = imgio.load(real, color=color)
-                sort = "color" if color else "image"
+                arr = imgio.load(real, color=(color or force_color))
+                is_gray = (arr.ndim == 2 or
+                           (arr.ndim == 3 and arr.shape[-1] == 3 and
+                            np.array_equal(arr[..., 0], arr[..., 1]) and
+                            np.array_equal(arr[..., 1], arr[..., 2])))
+                if is_gray and not force_color:
+                    if arr.ndim == 3:
+                        arr = arr[..., 0]
+                    sort = "image"
+                    note = "ファイルは灰色なので image で読んだ"
+                else:
+                    sort = "color" if arr.ndim == 3 and arr.shape[-1] == 3 else "image"
+                    note = None
         except HandleError:
             raise
         except Exception as exc:                                # noqa: BLE001 - 中身は untrusted
             raise HandleError("読めない画像: %s(%s: %s)"
-                              % (path, type(exc).__name__, str(exc)[:200])) from None
-        return self.put(arr, sort=sort, provenance=[{"load": os.path.relpath(real, ROOT) if real.startswith(ROOT) else real}])
+                              % (self.display_path(real), type(exc).__name__, str(exc)[:200])) from None
+        meta = self.put(arr, sort=sort, provenance=[{"load": self.display_path(real)}])
+        if note:
+            meta["note"] = note
+            self._meta[meta["handle"]]["note"] = note
+        return meta
 
     def get(self, handle: str) -> tuple[dict, object]:
         if not isinstance(handle, str) or not handle.startswith(PREFIX):

@@ -206,6 +206,7 @@ TOOLS: dict[str, dict] = {
                 "path": {"type": "string", "maxLength": 1024},
                 "vision": _VISION,
                 "color": {"type": "boolean", "description": "true なら (H,W,3) の color として読む"},
+                "force_color": {"type": "boolean", "description": "灰色ファイルも明示的に3チャンネル color として読む"},
             },
             "required": ["path"],
             "additionalProperties": False,
@@ -215,7 +216,8 @@ TOOLS: dict[str, dict] = {
         "description": "Load several sandboxed images into one typed sequence handle for multi-frame operators.",
         "inputSchema": {"type":"object","properties":{
             "paths":{"type":"array","minItems":1,"maxItems":256,"items":{"type":"string"}},
-            "sort":{"type":"string","enum":["seq<image>","images","polsweep"]}},
+            "sort":{"type":"string","enum":["seq<image>","images","polsweep"]},
+            "color":{"type":"boolean"},"force_color":{"type":"boolean"}},
             "required":["paths","sort"],"additionalProperties":False},
     },
     "fullseye_apply": {
@@ -544,11 +546,40 @@ def _log(*parts) -> None:
 # --------------------------------------------------------------------------- #
 # tool の結果                                                                   #
 # --------------------------------------------------------------------------- #
+def _structured_summary(value: dict) -> str:
+    """Make structured results useful to text-only MCP clients in at most 3 lines."""
+    ok = value.get("ok", value.get("valid", value.get("verdict", "ok") not in ("failed", "error")))
+    reason = value.get("reason") or value.get("verdict")
+    first = ("ok" if ok else "error") + ((": " + str(reason)) if reason else "")
+    lines = [first]
+    count_parts = []
+    for key in ("total", "returned", "count"):
+        if key in value:
+            count_parts.append("%s=%s" % (key, value[key]))
+    for key in ("ops", "plans", "stages", "samples"):
+        rows = value.get(key)
+        if isinstance(rows, list):
+            count_parts.append("%s=%d" % (key, len(rows)))
+            names = [row.get("name") if isinstance(row, dict) else row for row in rows[:3]]
+            names = [str(name) for name in names if name]
+            if names:
+                count_parts.append("top=" + ",".join(names))
+            break
+    if count_parts:
+        lines.append(" ".join(count_parts))
+    handle = value.get("handle")
+    sort = value.get("sort") or value.get("out_sort")
+    if handle or sort:
+        lines.append(" ".join(x for x in (("handle=" + str(handle)) if handle else "",
+                                           ("sort=" + str(sort)) if sort else "") if x))
+    return "\n".join(lines[:3])
+
+
 def tool_result(text: str, structured: dict | None, *, links: list | None = None,
                 max_structured_bytes: int = MAX_STRUCTURED_BYTES) -> dict:
     """本文(text)は必ず付け、typed tree は上限内なら付ける。超えたら**落としたと書く**。"""
     if structured is not None and get_system("mcp_body_mode") == "compact" and text.lstrip().startswith(("{","[")):
-        text="structured result: %d bytes" % len(json.dumps(structured,ensure_ascii=False).encode("utf-8"))
+        text = _structured_summary(structured)
     content: list[dict] = [{"type": "text", "text": text}]
     for lk in links or ():
         content.append(lk)
@@ -568,6 +599,8 @@ def tool_result(text: str, structured: dict | None, *, links: list | None = None
 
 
 def _tool_error(text: str, structured: dict | None = None) -> dict:
+    if structured is not None and get_system("mcp_body_mode") == "compact" and text.lstrip().startswith(("{", "[")):
+        text = _structured_summary(structured)
     r: dict = {"content": [{"type": "text", "text": text}], "isError": True}
     if structured is not None:
         r["structuredContent"] = structured
@@ -651,7 +684,8 @@ def _maybe_thumb(store: HandleStore, meta: dict, inp, out, *, vision: str, escal
 
 
 def _load_image(a: dict, store: HandleStore) -> dict:
-    meta = store.load(a["path"], color=bool(a.get("color", False)))
+    meta = store.load(a["path"], color=bool(a.get("color", False)),
+                      force_color=bool(a.get("force_color", False)))
     _, arr = store.get(meta["handle"])
     _enforce_pixel_limit(arr, "load_image")
     st, vd = _describe(meta, arr)
@@ -660,16 +694,21 @@ def _load_image(a: dict, store: HandleStore) -> dict:
     structured = {"handle": meta["handle"], "sort": meta["sort"], "shape": meta["shape"],
                   "dtype": meta["dtype"], "provenance": meta["provenance"],
                   "stats": st, **vd, "dedup": bool(meta.get("dedup", False))}
+    if meta.get("note"):
+        structured["note"] = meta["note"]
     text = "%s  sort=%s\n%s" % (meta["handle"], meta["sort"], _stats_line(st, vd))
     return tool_result(text, structured, links=links)
 
 def _load_stack(a: dict, store: HandleStore) -> dict:
-    arrays, provenance = [], []
+    arrays, provenance, notes = [], [], []
     pixels = 0; limit = int(get_system("mcp_stack_max_pixels"))
     for path in a["paths"]:
-        meta = store.load(path)
+        meta = store.load(path, color=bool(a.get("color", False)),
+                          force_color=bool(a.get("force_color", False)))
         _, arr = store.get(meta["handle"])
         arrays.append(arr); provenance.extend(meta["provenance"])
+        if meta.get("note"):
+            notes.append(meta["note"])
         pixels += int(np.asarray(arr).size)
         if pixels > limit:
             raise ArgError("load_stack total pixels %d exceeds limit %d" % (pixels,limit))
@@ -677,8 +716,11 @@ def _load_stack(a: dict, store: HandleStore) -> dict:
         stack = np.stack(arrays)
     except ValueError as exc:
         raise ArgError("stack images must have one shape: %s" % exc) from None
-    sort = a["sort"]
+    from fullseye.opsearch import normalize_sort
+    sort = normalize_sort(a["sort"])
     meta = store.put(stack, sort=sort, provenance=provenance + [{"load_stack":len(arrays)}])
+    if notes:
+        meta["note"] = notes[0] if len(notes) == len(arrays) else "%d/%d files were gray and read as image" % (len(notes), len(arrays))
     return tool_result("%s sort=%s shape=%s" % (meta["handle"],sort,meta["shape"]), meta)
 
 
@@ -787,8 +829,17 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
     """Shared non-executing pipeline validator used by both MCP entry points."""
     max_stages = int(max_stages or get_system("pipeline_max_stages"))
     errors, normalized = [], []
-    bindings = dict(bindings or {})
-    if start_sort is not None and start_sort not in cat.sorts:
+    from fullseye.opsearch import _graph, known_sorts, normalize_sort
+    def normalize_ref(ref):
+        if isinstance(ref, str) and ref.startswith("have:"):
+            return "have:%s" % normalize_sort(ref.split(":", 1)[1])
+        return ref
+    start_sort = normalize_sort(start_sort)
+    bindings = {
+        ("have:%s" % normalize_sort(ref.split(":", 1)[1]) if isinstance(ref, str) and ref.startswith("have:") else ref): handle
+        for ref, handle in dict(bindings or {}).items()
+    }
+    if start_sort is not None and start_sort not in known_sorts():
         errors.append({"layer": "pipeline", "stage": 0, "reason": "unknown_sort", "value": start_sort,
                        "candidates": []})
     if not stages:
@@ -796,8 +847,11 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
     if len(stages) > max_stages:
         errors.append({"layer": "pipeline", "stage": 0, "reason": "too_many_stages",
                        "value": len(stages), "limit": max_stages, "candidates": []})
-    from fullseye.opsearch import _graph, _sort
-    graph_edges = {e["op"]: e for e in _graph()["edges"]}
+    graph_edges = {
+        e["op"]: {**e, "inputs": [normalize_sort(x) for x in e.get("inputs", ())],
+                  "output": normalize_sort(e.get("output"))}
+        for e in _graph()["edges"]
+    }
     binding_sorts = {}; binding_values = {}
     for ref, handle in bindings.items():
         if not ref.startswith("have:"):
@@ -808,8 +862,8 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
         else:
             try:
                 binding_values[ref] = store.get(handle)
-                binding_sorts[ref] = _sort(binding_values[ref][0]["sort"])
-                declared=_sort(ref.split(":",1)[1])
+                binding_sorts[ref] = normalize_sort(binding_values[ref][0]["sort"])
+                declared=normalize_sort(ref.split(":",1)[1])
                 if declared != binding_sorts[ref]:
                     errors.append({"layer":"binding","stage":0,"reason":"binding_sort_mismatch",
                                    "value":binding_sorts[ref],"expected":declared,"candidates":[]})
@@ -837,6 +891,8 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
         name = spec.get("op")
         edge = graph_edges.get(name)
         refs = spec.get("inputs")
+        if refs is not None:
+            refs = [normalize_ref(ref) for ref in refs]
         if refs is None:
             refs = [] if not edge or not edge.get("inputs") else (["stage:%d"%(i-1)] if i>1 else
                     (["have:%s"%start_sort] if start_sort else []))
@@ -858,7 +914,7 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
                 known={**binding_values,**{r:({"sort":s,"handle":r},None) for r,s in stage_sorts.items()}}
                 try:
                     meta,_value=_resolve_pipeline_ref(ref,known,store)
-                    actual.append(_sort(meta["sort"])); resolved.append(meta.get("handle") or ref)
+                    actual.append(normalize_sort(meta["sort"])); resolved.append(meta.get("handle") or ref)
                 except (ArgError,HandleError) as exc:
                     actual.append("unknown"); resolved.append(ref)
                     errors.append({"layer":"stage","stage":i,"reason":"unknown_input_ref",
@@ -883,7 +939,8 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
                 if isinstance(pvalue,dict) and "ref" in pvalue:
                     expected=edge.get("ref_parameters",{}).get(pname)
                     known={**binding_values,**{r:({"sort":s,"handle":r},None) for r,s in stage_sorts.items()}}
-                    try: actual_sort=_sort(_resolve_pipeline_ref(pvalue["ref"],known,store)[0]["sort"])
+                    param_ref = normalize_ref(pvalue["ref"])
+                    try: actual_sort=normalize_sort(_resolve_pipeline_ref(param_ref,known,store)[0]["sort"])
                     except (ArgError,HandleError) as exc:
                         actual_sort=None
                         errors.append({"layer":"stage","stage":i,"reason":"unknown_parameter_ref",
@@ -908,6 +965,7 @@ def validate_pipeline(stages: list[dict], start_sort: str | None, cat: Catalog, 
             continue
     known_outputs={**binding_values,**{r:({"sort":s,"handle":r},None) for r,s in stage_sorts.items()}}
     for ref in outputs or []:
+        ref = normalize_ref(ref)
         try: _resolve_pipeline_ref(ref,known_outputs,store)
         except (ArgError,HandleError) as exc:
             errors.append({"layer":"pipeline","stage":0,"reason":"unknown_output_ref",
@@ -1121,6 +1179,7 @@ def _pipeline_dag(a: dict, cat: Catalog, store: HandleStore, *, max_structured_b
             raise ArgError("%s段 %s %s: %s"%(label,first.get("stage",0),op,
                 json.dumps(first,ensure_ascii=False)))
         return _tool_error(json.dumps(checked,ensure_ascii=False),checked)
+    bindings = checked["bindings"]
     outputs=a.get("outputs") or (["stage:%d"%len(a["stages"])] if a["stages"] else [])
     from collections import Counter
     remaining=Counter(outputs)
@@ -1560,8 +1619,11 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
     if name in ("fullseye_search_ops", "fullseye_find_ops"):
         # ★2026-10-11: find_ops は「既知の種別以外は拒否する」と書きながら typo を受け、
         # 0 件を返していた。search_ops と同じ門を通す。
+        from fullseye.opsearch import known_sorts, normalize_sort
         for k in ("in_sort", "out_sort"):
-            if a.get(k) and a[k] not in cat.sorts:
+            if a.get(k):
+                a[k] = normalize_sort(a[k])
+            if a.get(k) and a[k] not in known_sorts():
                 raise ArgError("%s=%r は知らない種別(あるのは %s)" % (k, a[k], cat.sorts))
     if name == "fullseye_search_ops":
         r = cat.search(a.get("query", ""), in_sort=a.get("in_sort"), out_sort=a.get("out_sort"),

@@ -251,5 +251,5 @@ Function Hijacking(tool 選択の乗っ取り ASR 70〜100 %)—— と、TRIZ �
 公開する計画入口は `fullseye_plan`、`fullseye_describe`、`fullseye_choose` の3つだけである。
 未計測の制約は推測で補わず、fail-closedの理由として返す。`tools/list` に
 `{"profile":"minimal"}` を渡すか、`FULLSEYE_MCP_PROFILE=minimal`を設定すると実行に必要な10道具を公開する。
-`docs/mcp_context_benchmark.json`を生成する実測では、全20道具が3,196トークン、最小10道具が1,397トークンである。
+`docs/mcp_context_benchmark.json`を生成する実測では、全20道具が3,233トークン、最小10道具が1,435トークンである。
 未検証の設計パターンと重複した計画入口はMCP一覧に出さない。

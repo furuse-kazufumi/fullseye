@@ -34,7 +34,7 @@ from collections import Counter
 
 __all__ = ["search_ops", "plan", "describe", "choose", "plan_chain", "op_cards", "choose_op", "required_inputs", "param_space",
            "pipeline_shape", "pattern_skeleton", "sort_guide",
-           "load_index", "tokenize", "detect_lang", "LANGS", "main"]
+           "load_index", "tokenize", "detect_lang", "normalize_sort", "sort_aliases", "known_sorts", "LANGS", "main"]
 
 #: 要約を持つ言語(ja = 原文)。表示言語の既定は問い合わせの文字種から決める(:func:`detect_lang`)。
 LANGS = ("ja", "en", "zh", "tw", "ko", "de", "hi")
@@ -85,8 +85,27 @@ def _graph() -> dict:
     return g
 
 
-def _sort(value: str) -> str:
-    return _graph().get("sort_aliases", {}).get(value, value)
+def sort_aliases() -> dict[str, str]:
+    """Return the generated OP_GRAPH sort aliases used at every public boundary."""
+    return dict(_graph().get("sort_aliases", {}))
+
+
+def normalize_sort(value: str | None) -> str | None:
+    """Canonicalize a sort name with OP_GRAPH's generated alias table."""
+    if value is None:
+        return None
+    return sort_aliases().get(value, value)
+
+
+def known_sorts() -> set[str]:
+    """Canonical sorts declared by the generated typed graph."""
+    graph = _graph()
+    return ({normalize_sort(x) for edge in graph["edges"] for x in [edge.get("output"), *edge.get("inputs", [])] if x}
+            | {normalize_sort(x["sort"]) for x in graph.get("acquirable_sorts", [])})
+
+
+# Kept for internal callers and old imports; all boundaries use the same function.
+_sort = normalize_sort
 
 
 def _result(ok: bool, reason: str, *, hint: str = "", next_tool: str | None = None, **data) -> dict:
@@ -121,9 +140,15 @@ def _hypergraph_plans(starts: list[str], want: str, query: str, *, executable_on
     """Knuth-style relaxation: retain bounded derivations per type, never type sets."""
     graph = _graph()
     scores = {r["name"]: r["score"] for r in search_ops(query, k=len(graph["edges"]))["ops"]}
-    edges = [e for e in graph["edges"] if (e.get("verified_executable") or not executable_only)
-             and e.get("output") not in ("unknown", "any")
-             and "unknown" not in e.get("inputs", ())]
+    # Generated ledgers can lag behind the canonical sort vocabulary (for
+    # example OP_SEARCH used ``images`` while OP_GRAPH used ``seq<image>``).
+    # Normalize both graph sides here, rather than relying on every generator
+    # having changed spelling in lockstep.
+    edges = [{**e, "inputs": [normalize_sort(x) for x in e.get("inputs", ())],
+              "output": normalize_sort(e.get("output"))}
+             for e in graph["edges"] if (e.get("verified_executable") or not executable_only)
+             and normalize_sort(e.get("output")) not in ("unknown", "any")
+             and "unknown" not in {normalize_sort(x) for x in e.get("inputs", ())}]
     import heapq
     import itertools
     by_input = {}
@@ -671,6 +696,7 @@ def search_ops(query: str, k: int = 3, *, lang: str | None = None, in_sort: str 
         raise ValueError("search_ops: lang must be one of %s, got %r" % (LANGS, lang))
     if not (isinstance(k, int) and k > 0):
         raise ValueError("search_ops: k must be a positive int, got %r" % (k,))
+    in_sort, out_sort = normalize_sort(in_sort), normalize_sort(out_sort)
     ix = load_index(index_path)
     q = list(dict.fromkeys(tokenize(query)))
     extra = _synonym_tokens(query, set(q))
@@ -708,9 +734,9 @@ def search_ops(query: str, k: int = 3, *, lang: str | None = None, in_sort: str 
     hits = []
     for i, s in scores.items():
         r = rows[i]
-        if in_sort and r.get("i") != in_sort:
+        if in_sort and normalize_sort(r.get("i")) != in_sort:
             continue
-        if out_sort and r.get("o") != out_sort:
+        if out_sort and normalize_sort(r.get("o")) != out_sort:
             continue
         if dim and r.get("d") != dim:
             continue
@@ -735,14 +761,37 @@ def search_ops(query: str, k: int = 3, *, lang: str | None = None, in_sort: str 
         probes = {}
     out = [_with_probe(r, probes) for r in out]
     hint = None
+    alternatives = []
+    conversion_paths = []
     if not out:
         known = [t for t in q if t in idf]
         hint = ("どの語も索引に無い。別の言い方・英語・op 名の一部を試す" if not known else
                 "語は当たったが絞り込み(in_sort / out_sort / dim)で 0 件")
-    return {"ok": bool(out), "reason": "operators found" if out else "no matching operator",
+        if known and (in_sort or out_sort or dim):
+            broad = search_ops(query, 3, lang=lang, index_path=index_path)
+            alternatives = [{key: row.get(key) for key in ("name", "in_sort", "out_sort")}
+                            for row in broad["ops"]]
+            if in_sort:
+                targets = list(dict.fromkeys(row["in_sort"] for row in alternatives
+                                             if row.get("in_sort") not in (None, "any", in_sort)))
+                for target in targets:
+                    route = plan(in_sort, target, constraints={"k": 1, "max_depth": 4,
+                                                               "max_expansions": 2000, "timeout_ms": 250})
+                    if route["ok"]:
+                        stages = route["plans"][0]["dag"]["stages"]
+                        conversion_paths.append({"from": in_sort, "to": target,
+                                                 "ops": [stage["op"] for stage in stages]})
+                    if len(conversion_paths) == 2:
+                        break
+    result = {"ok": bool(out), "reason": "operators found" if out else "no matching operator",
             "next_tool": "fullseye_plan" if out else "fullseye_find_ops",
             "query": query, "lang": show, "total": len(hits), "n_ops_indexed": ix["n_ops"],
             "ops": out, "hint": hint or "call fullseye_plan with the selected input/output sorts"}
+    if alternatives:
+        result["unfiltered_top"] = alternatives
+    if conversion_paths:
+        result["conversion_paths"] = conversion_paths
+    return result
 
 
 def plan_chain(query: str, start_sort: str, goal_sort: str, k: int = 5, max_depth: int = 4,
@@ -830,6 +879,16 @@ def _format(res: dict) -> str:
             lines.append("    " + (s if len(s) <= 160 else s[:157] + "..."))
         if o["note"]:
             lines.append("    note: " + o["note"])
+    if res.get("unfiltered_top"):
+        rows = res["unfiltered_top"][:3]
+        lines.append("絞らない上位: " + ", ".join(
+            "%s(%s→%s)" % (o["name"], o.get("in_sort") or "?", o.get("out_sort") or "?")
+            for o in rows))
+    if res.get("conversion_paths"):
+        paths = res["conversion_paths"][:2]
+        lines.append("変換: " + "; ".join(
+            "%s → %s は %s" % (path["from"], path["to"], " → ".join(path["ops"]))
+            for path in paths))
     if res.get("hint"):
         lines.append("hint: " + res["hint"])
     return "\n".join(lines)
