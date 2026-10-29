@@ -45,3 +45,14 @@ def test_conversation_seq_image_aliases_work_at_mcp_entries(tmp_path):
     store = HandleStore(roots=[str(tmp_path)])
     x = call_tool("fullseye_load_stack", {"paths": [str(p)], "sort": "images"}, cat, store)
     assert x["structuredContent"]["sort"] == "seq<image>"
+
+
+def test_zero_hit_type_filter_returns_routes_and_typed_unfiltered_top():
+    result = search_ops("threshold", 3, in_sort="color", out_sort="region")
+    assert result["ops"] == []
+    assert 1 <= len(result["conversion_paths"]) <= 2
+    assert any(path["from"] == "color" and path["to"] == "image" and
+               "rgb1_to_gray" in path["ops"] for path in result["conversion_paths"])
+    assert 1 <= len(result["unfiltered_top"]) <= 3
+    assert all(set(row) == {"name", "in_sort", "out_sort"} for row in result["unfiltered_top"])
+    assert len(str(result).encode("utf-8")) < 3000

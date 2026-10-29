@@ -755,14 +755,37 @@ def search_ops(query: str, k: int = 3, *, lang: str | None = None, in_sort: str 
         probes = {}
     out = [_with_probe(r, probes) for r in out]
     hint = None
+    alternatives = []
+    conversion_paths = []
     if not out:
         known = [t for t in q if t in idf]
         hint = ("どの語も索引に無い。別の言い方・英語・op 名の一部を試す" if not known else
                 "語は当たったが絞り込み(in_sort / out_sort / dim)で 0 件")
-    return {"ok": bool(out), "reason": "operators found" if out else "no matching operator",
+        if known and (in_sort or out_sort or dim):
+            broad = search_ops(query, 3, lang=lang, index_path=index_path)
+            alternatives = [{key: row.get(key) for key in ("name", "in_sort", "out_sort")}
+                            for row in broad["ops"]]
+            if in_sort:
+                targets = list(dict.fromkeys(row["in_sort"] for row in alternatives
+                                             if row.get("in_sort") not in (None, "any", in_sort)))
+                for target in targets:
+                    route = plan(in_sort, target, constraints={"k": 1, "max_depth": 4,
+                                                               "max_expansions": 2000, "timeout_ms": 250})
+                    if route["ok"]:
+                        stages = route["plans"][0]["dag"]["stages"]
+                        conversion_paths.append({"from": in_sort, "to": target,
+                                                 "ops": [stage["op"] for stage in stages]})
+                    if len(conversion_paths) == 2:
+                        break
+    result = {"ok": bool(out), "reason": "operators found" if out else "no matching operator",
             "next_tool": "fullseye_plan" if out else "fullseye_find_ops",
             "query": query, "lang": show, "total": len(hits), "n_ops_indexed": ix["n_ops"],
             "ops": out, "hint": hint or "call fullseye_plan with the selected input/output sorts"}
+    if alternatives:
+        result["unfiltered_top"] = alternatives
+    if conversion_paths:
+        result["conversion_paths"] = conversion_paths
+    return result
 
 
 def plan_chain(query: str, start_sort: str, goal_sort: str, k: int = 5, max_depth: int = 4,
