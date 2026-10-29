@@ -1755,16 +1755,16 @@
 
 ## `ops3d.py`
 
-- **L388** — ★out 不是 image2d 而是 **rgbimage**(2026-09-02 實測)。docstring 與實作都是「RGB (size, size, 3) float [0,1]」,唯獨這一行自稱是 2-D 的亮度圖。直到放入 mesh 的種子,這個 op 才被執行,型別謂詞以 TYPEMISS「declared 'image2d' but returned ndarray(512,512,3)」將其暴露(在此之前,因把 (V,F) 拆成 2 個位置參數的形式,它**一次都沒被執行過**)。其餘 3 個 render_* op(ambient_occlusion / cast_shadow / supersample_mesh)如實測為 2-D,故保持 image2d 即可 -- 撒謊的僅此一行。
-- **L411** _(ja)_ — ★どれだけ細分しても**次数 5 の頂点はちょうど 12 個**。これは V - E + F = 2 の帰結であって実装の都合ではない(11 個でも 13 個でも 球にならない)。mesh_subdivide は任意メッシュの細分で、正多面体から の構成は持っていなかった。入力を取らない生成 op。
-- **L417** _(ja)_ — ★極小曲面と掃引(2026-09-23)。極小曲面は**平均曲率 H が至るところ 0** の 曲面で、既存 `vertex_curvature` がまさにそれを測る —— 「これは極小曲面だ」 という主張を、作り方を知らない op が採点する。カテノイドとヘリコイドは 等長なのでガウス曲率 K が一致するが、それは**必要条件にすぎない**(門に するのは H)。実測 |H| 中央値 0.0001 に対し、対照群の単位球 1.00004・ 半径 1 の円柱 0.50000。
-- **L427** _(ja)_ — ★これは**節面近似**であって厳密な三重周期極小曲面ではない。残差は 隠さず docstring に書く(主曲率スケールの 1 % 程度)。
-- **L511** _(ja)_ — ★新しい sort は作らない: ノード表と枝表は「単位も意味も違う 2 つの表」で、 タプルで返して adapter に `r[0]` と書くと **枝表を黙って捨てる** (`pose_error` / `m3c2_distance` で繰り返した失敗の型)。1 つの dict に 両方を入れれば宣言 'table' が実返りと一致し、捨てるものが無い。
-- **L666** — ★2026-09-08 追加。此前用於雕刻的位姿輔助(visualhull.look_at)從任何公開層都引不到,而抓到同名的 render3d.look_at(gluLookAt、-Z 朝前)就會**無一例外地得到空的 hull**(poc_livestock_body_volume)。
-- **L687** _(ja)_ — ★ out は image2d ではなく **keypoints**(2026-09-15 実測)。実返りは 像面上の (N,2) 画素座標で、入力 (160,3) に対し (160,2) が出る —— 画像ではない。同じ型の嘘を "render" 節の ``project_points`` で 2026-09-02 に既に直しているのに(「旧宣言 'image2d' は型の嘘で、 pnp3d 側の 'image2d' 宣言と噛み合って PnP を壊していた」)、 **この 1 行だけが兄弟一掃から取り残されていた**。 例外にならないのは ``_sort_ok`` が image に ndim == 2 しか求めず、 (N,2) が「幅 2 の画像」として黙って通るから。値域も画素座標 (実測 16.0 .. 47.9)で [0,1] ではなく、image を名乗る限り 下流の閾値 op に渡ると意味を失う。
-- **L777** — ★曾擱置的理由(a)「points 候選清單變短而悄悄改寫既有 champion」,已隨 backends_typed.TYPE_TO_SORT 把 coordgrid -> points 摺疊而消失:2-D 橋的 tb_sphere_sdf / tb_box_sdf 帶有 INPUT_ADAPTERS._points_to_grid,**確實會從點雲生成座標場**,所以那邊的 "points" 宣告並非謊言(實測:傳入 (64,3) 會回傳 (16,16,16) = 是活的)。撒謊的只是 3-D 台帳那一側。
-- **L938** — ★axis=1。`pairs` 的正典是 **(N,2)**(實測:消費側 6 個 op 明確拒絕 (2,N))。當謂詞還是 `lambda v: True` 時,這裡生成的是 (2,n),把「任何消費側都無法接收的形狀」當作宣告型別來自稱
-- **L976** — ★position 的正典是 **[z, y, x] 的 3 個分量**。不是靠多數表決,而是**執行消費側**來定的:refine_translation_lk / refine_lm 在傳入 4 個分量時,會以 "init_pos must have exactly 3 components [z, y, x] (got 4)" fail-closed(實測)。生成器也是 (8.0, 8.0, 8.0) 的 3 分量。然而 match_* 系列按 docstring 回傳 **[score, d, h, w] 的 4 個分量**,若宣告 out 仍為 "position" 就放行,後段的精化 op 會全軍覆沒 = 型別的謊言。由於 score 本身是誠實資訊,**函數一側不刪**(get() 保持 4 分量),而在自稱台帳型別的 call() 一側只取出座標(與 project_points 同樣處理)。
+- **L415** — ★out 不是 image2d 而是 **rgbimage**(2026-09-02 實測)。docstring 與實作都是「RGB (size, size, 3) float [0,1]」,唯獨這一行自稱是 2-D 的亮度圖。直到放入 mesh 的種子,這個 op 才被執行,型別謂詞以 TYPEMISS「declared 'image2d' but returned ndarray(512,512,3)」將其暴露(在此之前,因把 (V,F) 拆成 2 個位置參數的形式,它**一次都沒被執行過**)。其餘 3 個 render_* op(ambient_occlusion / cast_shadow / supersample_mesh)如實測為 2-D,故保持 image2d 即可 -- 撒謊的僅此一行。
+- **L438** _(ja)_ — ★どれだけ細分しても**次数 5 の頂点はちょうど 12 個**。これは V - E + F = 2 の帰結であって実装の都合ではない(11 個でも 13 個でも 球にならない)。mesh_subdivide は任意メッシュの細分で、正多面体から の構成は持っていなかった。入力を取らない生成 op。
+- **L444** _(ja)_ — ★極小曲面と掃引(2026-09-23)。極小曲面は**平均曲率 H が至るところ 0** の 曲面で、既存 `vertex_curvature` がまさにそれを測る —— 「これは極小曲面だ」 という主張を、作り方を知らない op が採点する。カテノイドとヘリコイドは 等長なのでガウス曲率 K が一致するが、それは**必要条件にすぎない**(門に するのは H)。実測 |H| 中央値 0.0001 に対し、対照群の単位球 1.00004・ 半径 1 の円柱 0.50000。
+- **L454** _(ja)_ — ★これは**節面近似**であって厳密な三重周期極小曲面ではない。残差は 隠さず docstring に書く(主曲率スケールの 1 % 程度)。
+- **L540** _(ja)_ — ★新しい sort は作らない: ノード表と枝表は「単位も意味も違う 2 つの表」で、 タプルで返して adapter に `r[0]` と書くと **枝表を黙って捨てる** (`pose_error` / `m3c2_distance` で繰り返した失敗の型)。1 つの dict に 両方を入れれば宣言 'table' が実返りと一致し、捨てるものが無い。
+- **L695** — ★2026-09-08 追加。此前用於雕刻的位姿輔助(visualhull.look_at)從任何公開層都引不到,而抓到同名的 render3d.look_at(gluLookAt、-Z 朝前)就會**無一例外地得到空的 hull**(poc_livestock_body_volume)。
+- **L716** _(ja)_ — ★ out は image2d ではなく **keypoints**(2026-09-15 実測)。実返りは 像面上の (N,2) 画素座標で、入力 (160,3) に対し (160,2) が出る —— 画像ではない。同じ型の嘘を "render" 節の ``project_points`` で 2026-09-02 に既に直しているのに(「旧宣言 'image2d' は型の嘘で、 pnp3d 側の 'image2d' 宣言と噛み合って PnP を壊していた」)、 **この 1 行だけが兄弟一掃から取り残されていた**。 例外にならないのは ``_sort_ok`` が image に ndim == 2 しか求めず、 (N,2) が「幅 2 の画像」として黙って通るから。値域も画素座標 (実測 16.0 .. 47.9)で [0,1] ではなく、image を名乗る限り 下流の閾値 op に渡ると意味を失う。
+- **L806** — ★曾擱置的理由(a)「points 候選清單變短而悄悄改寫既有 champion」,已隨 backends_typed.TYPE_TO_SORT 把 coordgrid -> points 摺疊而消失:2-D 橋的 tb_sphere_sdf / tb_box_sdf 帶有 INPUT_ADAPTERS._points_to_grid,**確實會從點雲生成座標場**,所以那邊的 "points" 宣告並非謊言(實測:傳入 (64,3) 會回傳 (16,16,16) = 是活的)。撒謊的只是 3-D 台帳那一側。
+- **L969** — ★axis=1。`pairs` 的正典是 **(N,2)**(實測:消費側 6 個 op 明確拒絕 (2,N))。當謂詞還是 `lambda v: True` 時,這裡生成的是 (2,n),把「任何消費側都無法接收的形狀」當作宣告型別來自稱
+- **L1007** — ★position 的正典是 **[z, y, x] 的 3 個分量**。不是靠多數表決,而是**執行消費側**來定的:refine_translation_lk / refine_lm 在傳入 4 個分量時,會以 "init_pos must have exactly 3 components [z, y, x] (got 4)" fail-closed(實測)。生成器也是 (8.0, 8.0, 8.0) 的 3 分量。然而 match_* 系列按 docstring 回傳 **[score, d, h, w] 的 4 個分量**,若宣告 out 仍為 "position" 就放行,後段的精化 op 會全軍覆沒 = 型別的謊言。由於 score 本身是誠實資訊,**函數一側不刪**(get() 保持 4 分量),而在自稱台帳型別的 call() 一側只取出座標(與 project_points 同樣處理)。
 
 ## `opsacoustics.py`
 

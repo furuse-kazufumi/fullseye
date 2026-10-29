@@ -4,14 +4,14 @@
   "n_queries": 40,
   "overall": {
     "search_recall_at_10": 0.625,
-    "plan_recall_at_10": 0.8,
+    "plan_recall_at_10": 0.775,
     "executable_plan_recall_at_10": 0.6
   },
   "categories": {
     "fast_3d": {
       "n_queries": 8,
       "search_recall_at_10": 0.75,
-      "plan_recall_at_10": 1.0,
+      "plan_recall_at_10": 0.875,
       "executable_plan_recall_at_10": 0.25
     },
     "general": {
@@ -365,12 +365,14 @@
       "category": "fast_3d",
       "query": "구조광 프린지에서 높이 복원",
       "search_recall_at_10": 0.0,
-      "plan_recall_at_10": 1.0,
+      "plan_recall_at_10": 0.0,
       "executable_plan_recall_at_10": 1.0,
       "missed_by_search": [
         "decode_fringe"
       ],
-      "missed_by_plan": []
+      "missed_by_plan": [
+        "decode_fringe"
+      ]
     },
     {
       "id": "m307",

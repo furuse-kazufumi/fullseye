@@ -53,9 +53,9 @@
     "reason": "docs/op_knob.json measured no output effect"
   },
   "execution_summary": {
-    "executable": 3409,
+    "executable": 3411,
     "reasons": {
-      "python_signature": 2450,
+      "python_signature": 2452,
       "registry": 959
     },
     "not_executable_reasons": {
@@ -353,9 +353,9 @@
   },
   "counts": {
     "nodes": 101,
-    "edges": 3604,
+    "edges": 3606,
     "conversion_pairs": 395,
-    "conversion_edge_incidence": 2336
+    "conversion_edge_incidence": 2338
   },
   "nodes": [
     {
@@ -560,7 +560,7 @@
       "sort": "depth",
       "container": "dense_array",
       "size_hint": "input-dependent",
-      "produced_by": 14,
+      "produced_by": 16,
       "consumed_by": 37,
       "generator": true,
       "type_check": true,
@@ -748,7 +748,7 @@
       "container": "dense_array",
       "size_hint": "input-dependent",
       "produced_by": 721,
-      "consumed_by": 1043,
+      "consumed_by": 1044,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -1221,7 +1221,7 @@
       "container": "dense_array",
       "size_hint": "input-dependent",
       "produced_by": 59,
-      "consumed_by": 102,
+      "consumed_by": 103,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -13925,6 +13925,164 @@
           "range": "undocumented",
           "unit": "undocumented",
           "default": "general"
+        }
+      ],
+      "verified_executable": true,
+      "verification": {
+        "source": "tests/test_op_facets_2026_10_28.py::test_three_multi_input_business_dags_execute_through_mcp",
+        "status": "ok",
+        "checks": [
+          "executed",
+          "typed",
+          "shape",
+          "finite",
+          "meaningful_synthetic_input"
+        ]
+      },
+      "bundle_semantics": "stack_global",
+      "source_ref": "S00001"
+    },
+    {
+      "op": "fringe_ftp_phase",
+      "inputs": [
+        "image"
+      ],
+      "output": "depth",
+      "category": "3d",
+      "family": null,
+      "family_candidate": "fringe_phase",
+      "family_candidate_source": "heuristic_regex",
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00001"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00001"
+        }
+      ],
+      "runtime_target": {
+        "module": "fringe",
+        "callable": "fringe_ftp_phase"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "fringe",
+        "callable": "fringe_ftp_phase"
+      },
+      "parameter_schema": [
+        {
+          "name": "carrier_axis",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": "x"
+        },
+        {
+          "name": "carrier_period",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
+        },
+        {
+          "name": "bandwidth",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.35
+        },
+        {
+          "name": "k",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 1.0
+        },
+        {
+          "name": "min_modulation",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": 0.05
+        },
+        {
+          "name": "return_info",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": false
+        }
+      ],
+      "verified_executable": true,
+      "verification": {
+        "source": "tests/test_op_facets_2026_10_28.py::test_three_multi_input_business_dags_execute_through_mcp",
+        "status": "ok",
+        "checks": [
+          "executed",
+          "typed",
+          "shape",
+          "finite",
+          "meaningful_synthetic_input"
+        ]
+      },
+      "bundle_semantics": "unknown",
+      "source_ref": "S00001"
+    },
+    {
+      "op": "depth_from_focus",
+      "inputs": [
+        "seq<image>"
+      ],
+      "output": "depth",
+      "category": "3d",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": true,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "memory_or_unknown",
+        "source_ref": "S00001"
+      },
+      "implementations": [
+        {
+          "backend": "python/registry",
+          "status": "available",
+          "source_ref": "S00001"
+        }
+      ],
+      "runtime_target": {
+        "module": "ops3d",
+        "callable": "depth_from_focus"
+      },
+      "executor": {
+        "kind": "python",
+        "module": "ops3d",
+        "callable": "depth_from_focus"
+      },
+      "parameter_schema": [
+        {
+          "name": "focus_positions",
+          "type": "unannotated",
+          "required": false,
+          "range": "undocumented",
+          "unit": "undocumented",
+          "default": null
         }
       ],
       "verified_executable": true,

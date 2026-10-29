@@ -47,7 +47,7 @@ ACQUIRABLE = {
 # by the named gate.  Keeping this allowlist small and reviewable is deliberate.
 VERIFIED_PYTHON = {
     "polarization_render", "polarization_dolp_map", "decode_fringe",
-    "deflectometry_phase_to_slope",
+    "deflectometry_phase_to_slope", "fringe_ftp_phase", "depth_from_focus",
 }
 DATA_INPUT_OVERRIDES = {
     "triangulate": [("uv1", "image"), ("uv2", "image"), ("P1", "matrix"), ("P2", "matrix")],

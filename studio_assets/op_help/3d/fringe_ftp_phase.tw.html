@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">fringe_ftp_phase — 3D <code style="color:#22d3bf">structured_light</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">depth</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fringe_ftp_phase(image, carrier_axis=&#x27;x&#x27;, carrier_period=None, bandwidth=0.35, k=1.0, min_modulation=0.05, return_info=False)</code>(要直接呼叫實作,<code style="color:#22d3bf">import fringe; fringe.fringe_ftp_phase(image, carrier_axis=&#x27;x&#x27;, carrier_period=None, bandwidth=0.35, k=1.0, min_modulation=0.05, return_info=False)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;fringe_ftp_phase&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>經台帳呼叫的回傳值</b>: <code style="color:#22d3bf">fullseye.ledger.fringe_ftp_phase(...)</code> 只回傳<b>宣告的 out 型別 <code style="color:#22d3bf">depth</code> 的值</b>(底層函式還會回傳輔助資訊)。需要被捨棄的部分時,請用 <code style="color:#22d3bf">fullseye.ledger.fringe_ftp_phase.raw(...)</code>,或直接呼叫 <code style="color:#22d3bf">fringe.fringe_ftp_phase</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>使用 Takeda 傅立葉轉換輪廓術從單幅條紋影像恢復高度/相位。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>2-D FFT の直流から離れた片側一次スペクトルを窓で抜き、複素解析信号へ戻して位相を展開し、搬送波の線形ランプを除く。<code style="color:#22d3bf">carrier_axis</code> は位相が増える方向(<code style="color:#22d3bf">&quot;x&quot;</code>=列、<code style="color:#22d3bf">&quot;y&quot;</code>=行)。<code style="color:#22d3bf">carrier_period</code> は画素単位で、省略時は指定軸の正周波数側にある最大ピークから推定する。<code style="color:#22d3bf">bandwidth</code> は搬送周波数に対する Gaussian 窓の標準偏差の比(0 &lt; bandwidth &lt; 1)。<code style="color:#22d3bf">k</code> は rad から高さへの係数。</p>
+<p>返り値は通常 <code style="color:#22d3bf">height</code>。<code style="color:#22d3bf">return_info=True</code> なら <code style="color:#22d3bf">(height, info)</code> となり、<code style="color:#22d3bf">info</code> は搬送波を除いた <code style="color:#22d3bf">phase</code>、実際に使った <code style="color:#22d3bf">carrier_period</code>、<code style="color:#22d3bf">carrier_frequency</code>、<code style="color:#22d3bf">estimated_carrier</code>、解析信号の <code style="color:#22d3bf">modulation</code> を持つ。高さは既存の <code style="color:#22d3bf">phase_to_height(phase, 0, k)</code> で作る。</p>
+<p>業務上の言い方では「縞 1 枚から高さ」「1枚の縞画像から位相」を求める op。</p>
+<p>1 枚で済む代わりに、対象位相の空間帯域が搬送波と直流/反対側サイドバンドの間に収まる必要がある。急な高さ、段差、オクルージョンでは帯域重なりと Itoh 条件違反で誤る。3 枚以上を撮れて広い帯域や低い搬送波を扱うなら <code style="color:#22d3bf">decode_fringe</code> の位相シフト法を使う。一定画像や、抽出した変調振幅が画像の動的範囲に対して小さすぎる画像は丸め誤差から位相を作らず <code style="color:#22d3bf">ValueError</code> にする。</p>
+<p>出典: M. Takeda, H. Ina and S. Kobayashi, “Fourier-transform method of fringe-pattern analysis for computer-based topography and interferometry,” J. Opt. Soc. Am. 72(1), 156–160 (1982), doi:10.1364/JOSA.72.000156.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度感測器知識 —— 測距原理、實機數值、缺測的表現</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:ftp_and_focus_depth">ftp_and_focus_depth</a> — <code style="color:#22d3bf">py -3.11 examples_3d/ftp_and_focus_depth.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">depth</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="op3d:depth_to_points">depth_to_points</a> · <a style="color:#22d3bf" href="op3d:tsdf_from_depth">tsdf_from_depth</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:depth_to_organized_points">depth_to_organized_points</a> · <a style="color:#22d3bf" href="op3d:normals_from_depth">normals_from_depth</a> · <a style="color:#22d3bf" href="op3d:occlusion_edges">occlusion_edges</a> · <a style="color:#22d3bf" href="op3d:bearing_angle_image">bearing_angle_image</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">structured_light</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:wrapped_phase">wrapped_phase</a> · <a style="color:#22d3bf" href="op3d:unwrap_phase_2d">unwrap_phase_2d</a> · <a style="color:#22d3bf" href="op3d:graycode_decode">graycode_decode</a> · <a style="color:#22d3bf" href="op3d:decode_fringe">decode_fringe</a> · <a style="color:#22d3bf" href="op3d:depth_from_focus">depth_from_focus</a> · <a style="color:#22d3bf" href="op3d:synthesize_fringes">synthesize_fringes</a> · <a style="color:#22d3bf" href="op3d:absolute_phase">absolute_phase</a> · <a style="color:#22d3bf" href="op3d:triangulate_column">triangulate_column</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: fringe.py — 3D 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
