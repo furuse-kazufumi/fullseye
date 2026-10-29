@@ -58,6 +58,16 @@ class HandleStore:
         self._seq = 0
 
     # ---------------------------------------------------------------- paths
+    def display_path(self, path: str) -> str:
+        """Return an MCP-safe path label without exposing host roots or home dirs."""
+        real = os.path.realpath(path)
+        for root in self.roots:
+            if real == root:
+                return "<root>"
+            if real.startswith(root + os.sep):
+                return "<root>/" + os.path.relpath(real, root).replace(os.sep, "/")
+        return "<outside>/" + os.path.basename(real)
+
     def _check_path(self, path: str) -> str:
         if not isinstance(path, str) or not path.strip():
             raise HandleError("path が空")
@@ -69,12 +79,12 @@ class HandleStore:
         inside = any(real == r or real.startswith(r + os.sep) for r in self.roots)
         if not inside:
             raise HandleError(
-                "根の外のパスは読まない: %s(読めるのは %s の下だけ。"
-                "FULLSEYE_MCP_ROOT で根を足せる)" % (path, self.roots))
+                "根の外のパスは読まない: %s(読めるのは <root> の下だけ。"
+                "FULLSEYE_MCP_ROOT で根を足せる)" % self.display_path(real))
         if os.path.splitext(real)[1].lower() not in IMAGE_EXT:
-            raise HandleError("読める拡張子は %s: %s" % (IMAGE_EXT, path))
+            raise HandleError("読める拡張子は %s: %s" % (IMAGE_EXT, self.display_path(real)))
         if not os.path.isfile(real):
-            raise HandleError("ファイルが無い: %s" % path)
+            raise HandleError("ファイルが無い: %s" % self.display_path(real))
         return real
 
     def samples(self) -> list[dict]:
@@ -172,8 +182,8 @@ class HandleStore:
             raise
         except Exception as exc:                                # noqa: BLE001 - 中身は untrusted
             raise HandleError("読めない画像: %s(%s: %s)"
-                              % (path, type(exc).__name__, str(exc)[:200])) from None
-        meta = self.put(arr, sort=sort, provenance=[{"load": os.path.relpath(real, ROOT) if real.startswith(ROOT) else real}])
+                              % (self.display_path(real), type(exc).__name__, str(exc)[:200])) from None
+        meta = self.put(arr, sort=sort, provenance=[{"load": self.display_path(real)}])
         if note:
             meta["note"] = note
             self._meta[meta["handle"]]["note"] = note

@@ -74,3 +74,22 @@ def test_color_request_reports_gray_file_honestly_for_image_and_stack(tmp_path):
                                                "color": True}, cat, store)["structuredContent"]
     assert stack["sort"] == "seq<image>" and stack["shape"] == [1, 4, 4]
     assert "灰色" in stack["note"]
+
+
+def test_mcp_load_paths_never_expose_root_or_home(tmp_path):
+    import imgio
+    root = tmp_path / "private-root"
+    root.mkdir()
+    path = root / "gray.png"
+    imgio.save(str(path), np.zeros((2, 2), dtype=np.uint8))
+    cat, store = Catalog.load(), HandleStore(roots=[str(root)])
+    success = call_tool("fullseye_load_image", {"path": str(path), "vision": "none"}, cat, store)
+    success_text = str(success)
+    assert "<root>/gray.png" in success_text
+    assert str(root) not in success_text and str(tmp_path.parent) not in success_text
+    outside = tmp_path / "secret.png"
+    with pytest.raises(Exception) as caught:
+        call_tool("fullseye_load_image", {"path": str(outside), "vision": "none"}, cat, store)
+    refusal = str(caught.value)
+    assert "<outside>/secret.png" in refusal
+    assert str(tmp_path) not in refusal and str(root) not in refusal
