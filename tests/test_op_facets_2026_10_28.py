@@ -438,7 +438,9 @@ def test_minimal_context_six_tasks_stay_under_four_thousand_tokens():
     from fullseye.mcp.handles import HandleStore
     from fullseye.mcp.server import call_tool
     found=call_tool("fullseye_find_ops",{"query":"remove noise"},Catalog.load(),HandleStore(roots=[]))
-    assert len(found["structuredContent"]["ops"]) <= 3
+    body=found["structuredContent"]
+    assert len(body["proposals"]) == 7
+    assert len(body["ops"]) + len(body["recipes"]) == 7
     report=json.loads((ROOT/"docs/mcp_context_benchmark.json").read_text(encoding="utf-8"))
     assert len(report["tasks"]) == 6 and report["max_tokens"] <= 4000
     assert 16000 in opsearch.system_params()["params"]["mcp_response_budget"]["values"]

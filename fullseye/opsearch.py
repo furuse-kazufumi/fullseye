@@ -219,7 +219,9 @@ def _hypergraph_plans(starts: list[str], want: str, query: str, *, executable_on
         rows=best.setdefault(row["sort"],[])
         if any(x["signature"]==row["signature"] for x in rows): continue
         rows.append(row); rows.sort(key=lambda x:(x["cost"],x["depth"],x["signature"]))
-        del rows[k * 8:]
+        # Seven-proposal mode needs an over-complete pool for diversity.  Keep
+        # explicit legacy k values ranking-compatible with their old beam.
+        del rows[(k * 8 if k == 7 else k):]
         if row not in rows: continue
         for edge in by_input.get(row["sort"],[]): enqueue(edge)
     plans = []
