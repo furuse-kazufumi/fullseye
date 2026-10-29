@@ -445,7 +445,7 @@ def _validate(schema: dict, args: Any) -> dict:
                     "integer":"整数","number":"数"}
             raise ArgError("%s は%sでなければならない: %s" % (path,labels[kind],type(value).__name__))
         if isinstance(value, float) and not math.isfinite(value):
-            raise ArgError("%s must be finite" % path)
+            raise ArgError("%s は有限値でなければならない (must be finite)" % path)
         if kind == "object":
             props = spec.get("properties", {}); additional = spec.get("additionalProperties", True)
             extra = set(value) - set(props)
