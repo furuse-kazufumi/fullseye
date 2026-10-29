@@ -2,16 +2,16 @@
   "method": "minimal tools schema + find_ops(limit=3) + plan(k=3) + cards; UTF-8 bytes/4; volatile timing excluded",
   "scope": "Counts discovery through planning/cards only; execution and answer-correctness evaluation are excluded.",
   "tool_profiles": {
-    "full_tokens": 3196,
-    "minimal_tokens": 1397
+    "full_tokens": 3233,
+    "minimal_tokens": 1435
   },
   "target_tokens": 4000,
   "tasks": [
     {
       "task": "surface dent from reflected fringes",
-      "tool_schema_tokens": 1397,
+      "tool_schema_tokens": 1435,
       "response_tokens": 925,
-      "total_tokens": 2322,
+      "total_tokens": 2360,
       "planned": true,
       "ops": [
         "deflectometry_phase_to_slope"
@@ -19,9 +19,9 @@
     },
     {
       "task": "find scratches using polarization",
-      "tool_schema_tokens": 1397,
+      "tool_schema_tokens": 1435,
       "response_tokens": 933,
-      "total_tokens": 2330,
+      "total_tokens": 2368,
       "planned": true,
       "ops": [
         "polarization_dolp_map"
@@ -29,9 +29,9 @@
     },
     {
       "task": "recover projected fringe height",
-      "tool_schema_tokens": 1397,
+      "tool_schema_tokens": 1435,
       "response_tokens": 1065,
-      "total_tokens": 2462,
+      "total_tokens": 2500,
       "planned": true,
       "ops": [
         "decode_fringe"
@@ -39,9 +39,9 @@
     },
     {
       "task": "locate a part for handling",
-      "tool_schema_tokens": 1397,
+      "tool_schema_tokens": 1435,
       "response_tokens": 871,
-      "total_tokens": 2268,
+      "total_tokens": 2306,
       "planned": true,
       "ops": [
         "shape_locate"
@@ -49,9 +49,9 @@
     },
     {
       "task": "fast structured-light depth",
-      "tool_schema_tokens": 1397,
+      "tool_schema_tokens": 1435,
       "response_tokens": 952,
-      "total_tokens": 2349,
+      "total_tokens": 2387,
       "planned": true,
       "ops": [
         "depth_from_focus"
@@ -59,14 +59,14 @@
     },
     {
       "task": "switch product and detect corners",
-      "tool_schema_tokens": 1397,
+      "tool_schema_tokens": 1435,
       "response_tokens": 993,
-      "total_tokens": 2390,
+      "total_tokens": 2428,
       "planned": true,
       "ops": [
         "cv_good_features"
       ]
     }
   ],
-  "max_tokens": 2462
+  "max_tokens": 2500
 }
