@@ -206,6 +206,7 @@ TOOLS: dict[str, dict] = {
                 "path": {"type": "string", "maxLength": 1024},
                 "vision": _VISION,
                 "color": {"type": "boolean", "description": "true なら (H,W,3) の color として読む"},
+                "force_color": {"type": "boolean", "description": "灰色ファイルも明示的に3チャンネル color として読む"},
             },
             "required": ["path"],
             "additionalProperties": False,
@@ -215,7 +216,8 @@ TOOLS: dict[str, dict] = {
         "description": "Load several sandboxed images into one typed sequence handle for multi-frame operators.",
         "inputSchema": {"type":"object","properties":{
             "paths":{"type":"array","minItems":1,"maxItems":256,"items":{"type":"string"}},
-            "sort":{"type":"string","enum":["seq<image>","images","polsweep"]}},
+            "sort":{"type":"string","enum":["seq<image>","images","polsweep"]},
+            "color":{"type":"boolean"},"force_color":{"type":"boolean"}},
             "required":["paths","sort"],"additionalProperties":False},
     },
     "fullseye_apply": {
@@ -651,7 +653,8 @@ def _maybe_thumb(store: HandleStore, meta: dict, inp, out, *, vision: str, escal
 
 
 def _load_image(a: dict, store: HandleStore) -> dict:
-    meta = store.load(a["path"], color=bool(a.get("color", False)))
+    meta = store.load(a["path"], color=bool(a.get("color", False)),
+                      force_color=bool(a.get("force_color", False)))
     _, arr = store.get(meta["handle"])
     _enforce_pixel_limit(arr, "load_image")
     st, vd = _describe(meta, arr)
@@ -660,16 +663,21 @@ def _load_image(a: dict, store: HandleStore) -> dict:
     structured = {"handle": meta["handle"], "sort": meta["sort"], "shape": meta["shape"],
                   "dtype": meta["dtype"], "provenance": meta["provenance"],
                   "stats": st, **vd, "dedup": bool(meta.get("dedup", False))}
+    if meta.get("note"):
+        structured["note"] = meta["note"]
     text = "%s  sort=%s\n%s" % (meta["handle"], meta["sort"], _stats_line(st, vd))
     return tool_result(text, structured, links=links)
 
 def _load_stack(a: dict, store: HandleStore) -> dict:
-    arrays, provenance = [], []
+    arrays, provenance, notes = [], [], []
     pixels = 0; limit = int(get_system("mcp_stack_max_pixels"))
     for path in a["paths"]:
-        meta = store.load(path)
+        meta = store.load(path, color=bool(a.get("color", False)),
+                          force_color=bool(a.get("force_color", False)))
         _, arr = store.get(meta["handle"])
         arrays.append(arr); provenance.extend(meta["provenance"])
+        if meta.get("note"):
+            notes.append(meta["note"])
         pixels += int(np.asarray(arr).size)
         if pixels > limit:
             raise ArgError("load_stack total pixels %d exceeds limit %d" % (pixels,limit))
@@ -680,6 +688,8 @@ def _load_stack(a: dict, store: HandleStore) -> dict:
     from fullseye.opsearch import normalize_sort
     sort = normalize_sort(a["sort"])
     meta = store.put(stack, sort=sort, provenance=provenance + [{"load_stack":len(arrays)}])
+    if notes:
+        meta["note"] = notes[0] if len(notes) == len(arrays) else "%d/%d files were gray and read as image" % (len(notes), len(arrays))
     return tool_result("%s sort=%s shape=%s" % (meta["handle"],sort,meta["shape"]), meta)
 
 

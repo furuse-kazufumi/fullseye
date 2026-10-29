@@ -56,3 +56,21 @@ def test_zero_hit_type_filter_returns_routes_and_typed_unfiltered_top():
     assert 1 <= len(result["unfiltered_top"]) <= 3
     assert all(set(row) == {"name", "in_sort", "out_sort"} for row in result["unfiltered_top"])
     assert len(str(result).encode("utf-8")) < 3000
+
+
+def test_color_request_reports_gray_file_honestly_for_image_and_stack(tmp_path):
+    import imgio
+    path = tmp_path / "gray.png"
+    imgio.save(str(path), np.arange(16, dtype=np.uint8).reshape(4, 4))
+    cat, store = Catalog.load(), HandleStore(roots=[str(tmp_path)])
+    loaded = call_tool("fullseye_load_image", {"path": str(path), "color": True,
+                                                "vision": "none"}, cat, store)["structuredContent"]
+    assert loaded["sort"] == "image" and loaded["shape"] == [4, 4]
+    assert loaded["note"] == "ファイルは灰色なので image で読んだ"
+    forced = call_tool("fullseye_load_image", {"path": str(path), "force_color": True,
+                                                "vision": "none"}, cat, store)["structuredContent"]
+    assert forced["sort"] == "color" and forced["shape"] == [4, 4, 3]
+    stack = call_tool("fullseye_load_stack", {"paths": [str(path)], "sort": "images",
+                                               "color": True}, cat, store)["structuredContent"]
+    assert stack["sort"] == "seq<image>" and stack["shape"] == [1, 4, 4]
+    assert "灰色" in stack["note"]

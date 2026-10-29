@@ -138,10 +138,11 @@ class HandleStore:
             self._evicted.add(old)
         return dict(meta)
 
-    def load(self, path: str, *, color: bool = False) -> dict:
+    def load(self, path: str, *, color: bool = False, force_color: bool = False) -> dict:
         named=next((r["path"] for r in self.samples() if r["name"]==path),None)
         if named is not None: path=named
         real = self._check_path(path)
+        note = None
         # ★2026-10-11: 根の中の壊れた png・object 配列の npy は ValueError 等を HandleError に
         # 写さず投げ、dispatch を抜けてサーバのループが死んでいた。読めない中身は理由つきで断る
         # (-32602)。npy は pickle を決して許さない。
@@ -154,14 +155,29 @@ class HandleStore:
                 sort = "image" if arr.ndim == 2 else "color" if arr.ndim == 3 and arr.shape[-1] == 3 else "any"
             else:
                 import imgio
-                arr = imgio.load(real, color=color)
-                sort = "color" if color else "image"
+                arr = imgio.load(real, color=(color or force_color))
+                is_gray = (arr.ndim == 2 or
+                           (arr.ndim == 3 and arr.shape[-1] == 3 and
+                            np.array_equal(arr[..., 0], arr[..., 1]) and
+                            np.array_equal(arr[..., 1], arr[..., 2])))
+                if is_gray and not force_color:
+                    if arr.ndim == 3:
+                        arr = arr[..., 0]
+                    sort = "image"
+                    note = "ファイルは灰色なので image で読んだ"
+                else:
+                    sort = "color" if arr.ndim == 3 and arr.shape[-1] == 3 else "image"
+                    note = None
         except HandleError:
             raise
         except Exception as exc:                                # noqa: BLE001 - 中身は untrusted
             raise HandleError("読めない画像: %s(%s: %s)"
                               % (path, type(exc).__name__, str(exc)[:200])) from None
-        return self.put(arr, sort=sort, provenance=[{"load": os.path.relpath(real, ROOT) if real.startswith(ROOT) else real}])
+        meta = self.put(arr, sort=sort, provenance=[{"load": os.path.relpath(real, ROOT) if real.startswith(ROOT) else real}])
+        if note:
+            meta["note"] = note
+            self._meta[meta["handle"]]["note"] = note
+        return meta
 
     def get(self, handle: str) -> tuple[dict, object]:
         if not isinstance(handle, str) or not handle.startswith(PREFIX):
