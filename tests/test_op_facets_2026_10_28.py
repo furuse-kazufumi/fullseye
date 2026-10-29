@@ -433,7 +433,7 @@ def test_physical_knob_midpoints_profiles_and_system_param_honesty():
     assert unapplied and {r["status"] for r in unapplied} == {"declared_not_applied"}
     assert params["border_policy"]["affects_numbers"] and params["numeric_floor"]["affects_numbers"]
 
-def test_minimal_context_six_tasks_stay_under_four_thousand_tokens():
+def test_minimal_context_six_tasks_stay_under_2800_tokens():
     from fullseye.mcp.catalog import Catalog
     from fullseye.mcp.handles import HandleStore
     from fullseye.mcp.server import call_tool
@@ -442,5 +442,6 @@ def test_minimal_context_six_tasks_stay_under_four_thousand_tokens():
     assert len(body["proposals"]) == 7
     assert len(body["ops"]) + len(body["recipes"]) == 7
     report=json.loads((ROOT/"docs/mcp_context_benchmark.json").read_text(encoding="utf-8"))
-    assert len(report["tasks"]) == 6 and report["max_tokens"] <= 4000
+    assert len(report["tasks"]) == 6 and report["max_tokens"] <= 2800
+    assert report["recall_at_7"] >= 4/6
     assert 16000 in opsearch.system_params()["params"]["mcp_response_budget"]["values"]

@@ -147,3 +147,18 @@ def test_structured_results_have_short_useful_text_for_text_only_clients():
     assert len(text.encode("utf-8")) < 180
     failed = _tool_error('{"valid":false}', {"valid": False, "reason": "sort_mismatch", "stages": []})
     assert failed["content"][0]["text"].startswith("error: sort_mismatch")
+
+
+def test_discovery_and_plan_text_keep_one_proposal_per_line():
+    cat = Catalog.load()
+    found = call_tool("fullseye_find_ops", {"query": "remove noise", "limit": 7}, cat)
+    lines = found["content"][0]["text"].splitlines()
+    assert len(lines) == len(found["structuredContent"]["proposals"]) == 7
+    assert all(" | " in line for line in lines)
+    detailed = call_tool("fullseye_find_ops", {"query": "remove noise", "limit": 7,
+                                                 "detail": True}, cat)
+    assert len(detailed["content"][0]["text"]) > len(found["content"][0]["text"])
+    planned = call_tool("fullseye_plan", {"have": "image", "want": "feature",
+                                           "goal": "detect corners"}, cat)
+    assert len(planned["content"][0]["text"].splitlines()) == len(
+        planned["structuredContent"]["plans"])

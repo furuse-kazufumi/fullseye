@@ -3,39 +3,39 @@
   "source": "docs/ops/rag_benchmark.json",
   "n_queries": 40,
   "overall": {
-    "search_recall_at_10": 0.625,
-    "plan_recall_at_10": 0.8,
-    "executable_plan_recall_at_10": 0.6
+    "search_recall_at_10": 0.575,
+    "plan_recall_at_10": 0.625,
+    "executable_plan_recall_at_10": 0.45
   },
   "categories": {
     "fast_3d": {
       "n_queries": 8,
       "search_recall_at_10": 0.75,
-      "plan_recall_at_10": 1.0,
+      "plan_recall_at_10": 0.875,
       "executable_plan_recall_at_10": 0.25
     },
     "general": {
       "n_queries": 8,
-      "search_recall_at_10": 0.75,
-      "plan_recall_at_10": 0.5,
-      "executable_plan_recall_at_10": 0.5
+      "search_recall_at_10": 0.625,
+      "plan_recall_at_10": 0.125,
+      "executable_plan_recall_at_10": 0.0
     },
     "multi_product": {
       "n_queries": 8,
       "search_recall_at_10": 0.625,
-      "plan_recall_at_10": 0.75,
-      "executable_plan_recall_at_10": 0.75
+      "plan_recall_at_10": 0.625,
+      "executable_plan_recall_at_10": 0.625
     },
     "positioning": {
       "n_queries": 8,
-      "search_recall_at_10": 0.625,
-      "plan_recall_at_10": 0.875,
-      "executable_plan_recall_at_10": 0.875
+      "search_recall_at_10": 0.5,
+      "plan_recall_at_10": 0.75,
+      "executable_plan_recall_at_10": 0.75
     },
     "specular_transparent": {
       "n_queries": 8,
       "search_recall_at_10": 0.375,
-      "plan_recall_at_10": 0.875,
+      "plan_recall_at_10": 0.75,
       "executable_plan_recall_at_10": 0.625
     }
   },
@@ -65,12 +65,14 @@
       "category": "multi_product",
       "query": "品種ごとに輪郭形状で照合して場所を探す",
       "search_recall_at_10": 0.0,
-      "plan_recall_at_10": 1.0,
-      "executable_plan_recall_at_10": 1.0,
+      "plan_recall_at_10": 0.0,
+      "executable_plan_recall_at_10": 0.0,
       "missed_by_search": [
         "shape_locate"
       ],
-      "missed_by_plan": []
+      "missed_by_plan": [
+        "shape_locate"
+      ]
     },
     {
       "id": "mv04",
@@ -157,12 +159,14 @@
       "category": "specular_transparent",
       "query": "偏光板の角度掃引画像を合成して鏡面を調べる",
       "search_recall_at_10": 0.0,
-      "plan_recall_at_10": 1.0,
+      "plan_recall_at_10": 0.0,
       "executable_plan_recall_at_10": 1.0,
       "missed_by_search": [
         "polarization_render"
       ],
-      "missed_by_plan": []
+      "missed_by_plan": [
+        "polarization_render"
+      ]
     },
     {
       "id": "sp04",
@@ -250,10 +254,12 @@
       "id": "po03",
       "category": "positioning",
       "query": "治具合わせ用の安定した特徴点を検出する",
-      "search_recall_at_10": 1.0,
+      "search_recall_at_10": 0.0,
       "plan_recall_at_10": 1.0,
       "executable_plan_recall_at_10": 1.0,
-      "missed_by_search": [],
+      "missed_by_search": [
+        "cv_good_features"
+      ],
       "missed_by_plan": []
     },
     {
@@ -293,12 +299,14 @@
       "category": "positioning",
       "query": "Werkstück mit einem Formmodell lokalisieren",
       "search_recall_at_10": 0.0,
-      "plan_recall_at_10": 1.0,
-      "executable_plan_recall_at_10": 1.0,
+      "plan_recall_at_10": 0.0,
+      "executable_plan_recall_at_10": 0.0,
       "missed_by_search": [
         "shape_locate"
       ],
-      "missed_by_plan": []
+      "missed_by_plan": [
+        "shape_locate"
+      ]
     },
     {
       "id": "po08",
@@ -387,22 +395,26 @@
       "category": "fast_3d",
       "query": "高速三次元計測で参照位相をほどく",
       "search_recall_at_10": 0.0,
-      "plan_recall_at_10": 1.0,
+      "plan_recall_at_10": 0.0,
       "executable_plan_recall_at_10": 0.0,
       "missed_by_search": [
         "unwrap_phase_2d"
       ],
-      "missed_by_plan": []
+      "missed_by_plan": [
+        "unwrap_phase_2d"
+      ]
     },
     {
       "id": "ge01",
       "category": "general",
       "query": "画像のノイズをガウシアン平滑化で落とす",
       "search_recall_at_10": 1.0,
-      "plan_recall_at_10": 1.0,
-      "executable_plan_recall_at_10": 1.0,
+      "plan_recall_at_10": 0.0,
+      "executable_plan_recall_at_10": 0.0,
       "missed_by_search": [],
-      "missed_by_plan": []
+      "missed_by_plan": [
+        "gaussian"
+      ]
     },
     {
       "id": "ge02",
@@ -434,10 +446,12 @@
       "id": "ge04",
       "category": "general",
       "query": "連結した製品領域の個数を数える",
-      "search_recall_at_10": 1.0,
+      "search_recall_at_10": 0.0,
       "plan_recall_at_10": 1.0,
-      "executable_plan_recall_at_10": 1.0,
-      "missed_by_search": [],
+      "executable_plan_recall_at_10": 0.0,
+      "missed_by_search": [
+        "count_obj"
+      ],
       "missed_by_plan": []
     },
     {
@@ -445,20 +459,24 @@
       "category": "general",
       "query": "remove impulse noise with a median filter",
       "search_recall_at_10": 1.0,
-      "plan_recall_at_10": 1.0,
-      "executable_plan_recall_at_10": 1.0,
+      "plan_recall_at_10": 0.0,
+      "executable_plan_recall_at_10": 0.0,
       "missed_by_search": [],
-      "missed_by_plan": []
+      "missed_by_plan": [
+        "cv_median"
+      ]
     },
     {
       "id": "ge06",
       "category": "general",
       "query": "用大津阈值分割前景区域",
       "search_recall_at_10": 1.0,
-      "plan_recall_at_10": 1.0,
-      "executable_plan_recall_at_10": 1.0,
+      "plan_recall_at_10": 0.0,
+      "executable_plan_recall_at_10": 0.0,
       "missed_by_search": [],
-      "missed_by_plan": []
+      "missed_by_plan": [
+        "otsu"
+      ]
     },
     {
       "id": "ge07",
@@ -561,6 +579,14 @@
       ]
     },
     {
+      "id": "po03",
+      "category": "positioning",
+      "query": "治具合わせ用の安定した特徴点を検出する",
+      "missed_by_search": [
+        "cv_good_features"
+      ]
+    },
+    {
       "id": "po05",
       "category": "positioning",
       "query": "使用形状模型定位工件",
@@ -598,6 +624,14 @@
       "query": "画像を大津法で二値領域にする",
       "missed_by_search": [
         "otsu"
+      ]
+    },
+    {
+      "id": "ge04",
+      "category": "general",
+      "query": "連結した製品領域の個数を数える",
+      "missed_by_search": [
+        "count_obj"
       ]
     },
     {

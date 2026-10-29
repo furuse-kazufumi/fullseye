@@ -107,6 +107,8 @@ TOOLS: dict[str, dict] = {
                 "in_sort": {"type": "string", "description": _SORT_DESC},
                 "out_sort": {"type": "string", "description": _SORT_DESC},
                 "limit": {"type":"integer","minimum":1,"maximum":MAX_SEARCH_LIMIT,"default":7},
+                "detail": {"type":"boolean","default":False,
+                           "description":"true なら候補の要約・出典を本文にも展開する"},
             },
             "required": ["query"],
             "additionalProperties": False,
@@ -1615,12 +1617,11 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
         else:
             r = choose(a["candidates"], a.get("constraints"))
         if name == "fullseye_plan" and r.get("ok"):
-            lines = ["# | stages | difference | types"]
+            lines = []
             for number, proposal in enumerate(r.get("plans", ()), 1):
                 stages = " -> ".join(proposal.get("ops", ()))
                 types = "%s -> %s" % (",".join(r.get("have", ())), r.get("want"))
-                lines.append("%d | %s | %s | %s" %
-                             (number, stages, proposal.get("difference", "typed route"), types))
+                lines.append("%d | %s | %s" % (number, stages, types))
             text = "\n".join(lines)
         else:
             text = json.dumps(r, ensure_ascii=False, indent=2)
@@ -1655,9 +1656,25 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
         from fullseye.recipesearch import find_recipes
         r["recipes"] = find_recipes(a["query"], limit=recipe_limit, lang=a.get("lang"),
                                       in_sort=a.get("in_sort"), out_sort=a.get("out_sort"))
-        text = _format(r)
-        for recipe in r["recipes"]:
-            text += "\nrecipe: %s [%s -> %s] %s" % (recipe["name"], recipe["input_sort"], recipe["output_sort"], recipe["when"])
+        if a.get("detail"):
+            text = _format(r)
+            for recipe in r["recipes"]:
+                text += "\nrecipe: %s [%s -> %s] %s" % (recipe["name"], recipe["input_sort"], recipe["output_sort"], recipe["when"])
+        else:
+            lines = []
+            for op in r["ops"]:
+                purpose = " ".join(op.get("summary", "").replace("\n", " ").split()[:12]) or "目的説明なし"
+                aliases = op.get("same_as") or []
+                alias_text = (" = " + " = ".join(aliases)) if aliases else ""
+                lines.append("%s%s | %s → %s | %s" %
+                             (op["name"], alias_text, op.get("in_sort") or "?",
+                              op.get("out_sort") or "?", purpose))
+            for recipe in r["recipes"]:
+                ops = [stage[0] if isinstance(stage, list) else stage.get("op", "?")
+                       for stage in recipe.get("stages", [])]
+                lines.append("recipe: %s | %d stages | %s" %
+                             (recipe["name"], len(ops), " → ".join(ops)))
+            text = "\n".join(lines) or _format(r)
         r["proposals"] = ([{"kind": "op", **row} for row in r["ops"]] +
                           [{"kind": "recipe", **row} for row in r["recipes"]])[:total_limit]
         return tool_result(text, r, max_structured_bytes=max_structured_bytes)
