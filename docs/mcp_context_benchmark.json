@@ -30,8 +30,8 @@
     {
       "task": "recover projected fringe height",
       "tool_schema_tokens": 1397,
-      "response_tokens": 1067,
-      "total_tokens": 2464,
+      "response_tokens": 1065,
+      "total_tokens": 2462,
       "planned": true,
       "ops": [
         "decode_fringe"
@@ -40,8 +40,8 @@
     {
       "task": "locate a part for handling",
       "tool_schema_tokens": 1397,
-      "response_tokens": 870,
-      "total_tokens": 2267,
+      "response_tokens": 871,
+      "total_tokens": 2268,
       "planned": true,
       "ops": [
         "shape_locate"
@@ -50,8 +50,8 @@
     {
       "task": "fast structured-light depth",
       "tool_schema_tokens": 1397,
-      "response_tokens": 951,
-      "total_tokens": 2348,
+      "response_tokens": 952,
+      "total_tokens": 2349,
       "planned": true,
       "ops": [
         "depth_from_focus"
@@ -68,5 +68,5 @@
       ]
     }
   ],
-  "max_tokens": 2464
+  "max_tokens": 2462
 }

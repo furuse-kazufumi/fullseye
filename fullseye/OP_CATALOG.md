@@ -2299,8 +2299,8 @@ _計 3609 ops / 54 families。並びとノートの在り処は `docs/ops/INDEX.
 #### 3d / structured_light(9)
 - `absolute_phase` `image2d × image2d → image2d` — 巻き込み位相を、粗いが絶対的な位相推定で「次数確定」して絶対位相にする。 · 例: `structured_light_scan`
 - `decode_fringe` `images → depth` — 位相シフト画像列を一括復号: wrapped → unwrap →(参照減算で)高さ。 · 例: `structured_light`
-- `depth_from_focus` `images → depth` — フォーカススタックから画素ごと最良合焦位置=深度を推定(depth_from_focus)。 · 例: `ftp_and_focus_depth`
-- `fringe_ftp_phase` `image2d → depth` — 1 枚の搬送波縞から Takeda の Fourier transform profilometry で位相/高さを出す。 · 例: `ftp_and_focus_depth`
+- `depth_from_focus` `images → depth` — 焦点を変えた画像から高さ・深さを画素ごとの最良合焦位置として推定する。 · 例: `ftp_and_focus_depth`
+- `fringe_ftp_phase` `image2d → depth` — 縞 1 枚から高さ・位相を Takeda の Fourier transform profilometry で復元する。 · 例: `ftp_and_focus_depth`
 - `graycode_decode` `images → image2d` — Gray code ビット画像列 → 整数フリンジ次数マップ(絶対次数)。 · 例: `graycode_structured_light`, `structured_light_scan`
 - `synthesize_fringes` `image2d → images` — 既知の height map から N-step 位相シフト縞画像列を合成する(テスト/サンプル生成用)。 · 例: `ftp_and_focus_depth`, `structured_light`
 - `triangulate_column` `image2d → depth` — 各カメラ画素の「投影機コラム番号」から深度 Z を三角測量する(構造化光の最終段)。 · 例: `structured_light_scan`
