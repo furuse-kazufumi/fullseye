@@ -22,6 +22,11 @@ def _recall(found, relevant):
     return len(set(found) & set(relevant)) / len(set(relevant))
 
 
+# Per-query executable plans, kept so a failing gate shows which queries moved (a bare
+# "0.525 >= 0.576" cost a full CI run to investigate on 2026-10-30).
+_EXEC_DETAIL: dict = {}
+
+
 def _measure(rows):
     queries = []
     by_category = defaultdict(lambda: {"search": [], "plan": [], "executable": []})
@@ -34,6 +39,7 @@ def _measure(rows):
         sr, pr = _recall(direct, row["relevant"]), _recall(planned, row["relevant"])
         er=_recall(executable_names,row["relevant"])
         queries.append((row, sr, pr, er))
+        _EXEC_DETAIL[row["id"]] = (round(er, 3), [p["ops"] for p in executable.get("plans", [])][:7])
         by_category[row["category"]]["search"].append(sr)
         by_category[row["category"]]["plan"].append(pr)
         by_category[row["category"]]["executable"].append(er)
@@ -74,7 +80,8 @@ def test_per_query_category_and_overall_recall_gates():
     overall_executable = sum(q[3] for q in queries) / len(queries)
     gate = data["thresholds"]
     assert overall_plan >= gate["overall_plan"]["minimum"]
-    assert overall_executable >= gate["overall_executable_plan"]["minimum"]
+    assert overall_executable >= gate["overall_executable_plan"]["minimum"], (
+        overall_executable, {k: v for k, v in _EXEC_DETAIL.items() if v[0] < 1.0})
     for name, limits in gate["categories"].items():
         assert cats[name]["plan"] >= limits["minimum"], (name, cats[name])
         if name != "general":

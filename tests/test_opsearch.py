@@ -110,6 +110,37 @@ def test_filters_and_errors():
         search_ops("edge", k=0)
 
 
+def test_default_seven_are_distinct_implementations_and_report_aliases():
+    from fssystem import get_system
+    assert get_system("find_ops_k") == get_system("plan_k") == 7
+    rows = search_ops("automatic threshold")["ops"]
+    assert len(rows) == 7
+    identity, _groups = opsearch._identity_tables()
+    assert len({identity[row["name"]] for row in rows}) == len(rows)
+    assert any(row.get("same_as") for row in rows)
+
+
+def test_identity_folding_does_not_merge_generic_registry_wrappers():
+    identity, groups = opsearch._identity_tables()
+    # These closures dispatch many genuinely different implementations.  Their
+    # display names are not implementation identities.
+    for left, right in (("fill_up_shape", "boundary"),
+                        ("sk_remove_holes", "sk_area_opening"),
+                        ("gen_contour_region_xld", "select_shape_xld")):
+        assert identity[left] != identity[right]
+        assert right not in groups[identity[left]]
+
+
+def test_plans_have_machine_stages_and_one_line_comparison_hints():
+    result = opsearch.plan("image", "region", goal="segment foreground",
+                           constraints={"k": 7, "max_depth": 4, "timeout_ms": 5000})
+    assert result["ok"]
+    assert len(result["plans"]) >= 2, "diverse proposals need more than one plan to compare"
+    for proposal in result["plans"]:
+        assert proposal["dag"]["stages"] and proposal["difference"] and proposal["line"]
+        assert " -> " in proposal["line"]
+
+
 def test_facade_cli_and_mcp_share_one_search(capsys):
     assert fullseye.search_ops is opsearch.search_ops
     from fullseye import rag_setup
