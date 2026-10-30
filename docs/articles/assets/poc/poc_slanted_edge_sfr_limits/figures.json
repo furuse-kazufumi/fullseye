@@ -1,0 +1,12 @@
+[
+  {
+    "file": "01_sfr_limits.png",
+    "name": "sfr_limits",
+    "caption": "Fullseye optical truth against slanted-edge estimates over angle, gamma, and noise.",
+    "shape": [
+      900,
+      1600,
+      4
+    ]
+  }
+]

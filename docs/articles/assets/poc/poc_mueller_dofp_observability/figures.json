@@ -1,0 +1,12 @@
+[
+  {
+    "file": "01_observability.png",
+    "name": "observability",
+    "caption": "SVD-computed observability and noise propagation for linear-only and QWP-augmented polarimeters.",
+    "shape": [
+      900,
+      1600,
+      4
+    ]
+  }
+]

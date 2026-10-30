@@ -2,7 +2,7 @@
 
 ### 産業検査ウィング ―― 合格の数字と不合格の数字は両立する
 
-検査ラインの数字は合否に直結するので、1 つの指標に畳みたくなります。この部屋の 37 点は、畳んだ瞬間に消えるものを並べたものです。まとめた ROC が種類別の盲点を隠す織物、MTF が合格のまま黒レベルが不合格になる迷光、読取率だけ見ると寛容なデコーダが良く見えるバーコード。
+検査ラインの数字は合否に直結するので、1 つの指標に畳みたくなります。この部屋の 40 点は、畳んだ瞬間に消えるものを並べたものです。まとめた ROC が種類別の盲点を隠す織物、MTF が合格のまま黒レベルが不合格になる迷光、読取率だけ見ると寛容なデコーダが良く見えるバーコード。
 
 真値はどれも自分で仕込んであります。周期地の閉形式、レーザー断面の h(x)、1 次元熱伝導の解析解、閉形式の欠陥周波数。だから「検出できました」の先にある「どこで検出できなくなるか」を、しきい値を後から合わせずに測れます。
 
@@ -1175,6 +1175,54 @@ py -3.11 examples/poc_braid_homotopy_classes.py
 この回が作った図は全部で **5 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_braid_homotopy_classes)
 
 使用 op(ノートへ): [`braid_class_representatives`](https://furuse.work/ops/drive/braidpath/braid_class_representatives.html) · [`braid_equivalent`](https://furuse.work/ops/drive/braidpath/braid_equivalent.html) · [`braid_from_trajectories`](https://furuse.work/ops/drive/braidpath/braid_from_trajectories.html) · [`braid_reduce`](https://furuse.work/ops/drive/braidpath/braid_reduce.html) · [`dynnikov_act`](https://furuse.work/ops/drive/braidpath/dynnikov_act.html) · [`dynnikov_coordinates`](https://furuse.work/ops/drive/braidpath/dynnikov_coordinates.html) · [`grid_distances`](https://furuse.work/ops/drive/agv/grid_distances.html) · [`grid_hole_points`](https://furuse.work/ops/drive/braidpath/grid_hole_points.html) · [`grid_paths_to_xy`](https://furuse.work/ops/drive/braidpath/grid_paths_to_xy.html) · [`homotopy_class_compare`](https://furuse.work/ops/drive/braidpath/homotopy_class_compare.html) · [`homotopy_shortest_paths`](https://furuse.work/ops/drive/braidpath/homotopy_shortest_paths.html) · [`mapf_cbs`](https://furuse.work/ops/drive/agv/mapf_cbs.html) · [`mapf_prioritized`](https://furuse.work/ops/drive/agv/mapf_prioritized.html) · [`pairwise_winding`](https://furuse.work/ops/drive/braidpath/pairwise_winding.html) · [`plan_conflicts`](https://furuse.work/ops/drive/agv/plan_conflicts.html) · [`plan_cost`](https://furuse.work/ops/drive/agv/plan_cost.html)
+
+## No.2026.282 —— 同じRMS波面誤差でも収差形状でMaréchal近似の破綻点が変わる
+
+[![同じRMS波面誤差でも収差形状でMaréchal近似の破綻点が変わる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_wavefront_aberration_limits/01_aberration_limits_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_wavefront_aberration_limits/01_aberration_limits.png)
+
+*↑ **同じRMS波面誤差でも収差形状でMaréchal近似の破綻点が変わる** ―― Noll正規化したデフォーカス、非点、コマ、球面収差を各121点、計484条件で掃引した。FullseyeのPSF FFTによる軸上Strehlと独立な瞳積分の最大絶対誤差は6.66e-16。Maréchal近似が5 %外れる境界はRMSで0.1283、0.2012、0.1633、0.1458波となり、同じRMSだけではStrehlを決められない。下段は0.20波RMSのPSF像そのもの。*
+
+```
+py -3.11 examples/poc_wavefront_aberration_limits.py
+```
+
+ソース: [examples/poc_wavefront_aberration_limits.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_wavefront_aberration_limits.py)
+
+この回が作った図は全部で **1 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_wavefront_aberration_limits)
+
+使用 op(ノートへ): [`pupil_psf`](https://furuse.work/ops/optics/wave/pupil_psf.html)
+
+## No.2026.283 —— 4方位偏光カメラにはMueller行列の7次元が見えない
+
+[![4方位偏光カメラにはMueller行列の7次元が見えない](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mueller_dofp_observability/01_observability_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mueller_dofp_observability/01_observability.png)
+
+*↑ **4方位偏光カメラにはMueller行列の7次元が見えない** ―― 0/45/90/135度の線偏光マイクロアナライザだけで作る設計行列のrankは、手書きせずSVDで9/16と計算した。発生側と解析側にQWP状態を加えるとrank 16。FullseyeのMueller連鎖と独立なKronecker設計式は最大1.39e-17で一致した。読み出し雑音0.2 %、200試行でMueller行列の相対誤差中央値は線偏光だけの41.64 %からQWP追加で1.40 %へ下がる。*
+
+```
+py -3.11 examples/poc_mueller_dofp_observability.py
+```
+
+ソース: [examples/poc_mueller_dofp_observability.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_mueller_dofp_observability.py)
+
+この回が作った図は全部で **1 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_mueller_dofp_observability)
+
+使用 op(ノートへ): [`mueller_element`](https://furuse.work/ops/optics/polarization/mueller_element.html)
+
+## No.2026.284 —— 斜めエッジSFRは角度だけでなくガンマでもMTF50を誤る
+
+[![斜めエッジSFRは角度だけでなくガンマでもMTF50を誤る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_slanted_edge_sfr_limits/01_sfr_limits_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_slanted_edge_sfr_limits/01_sfr_limits.png)
+
+*↑ **斜めエッジSFRは角度だけでなくガンマでもMTF50を誤る** ―― 3.45 µm画素、F/5.6、550 nmの系について、角度21、ガンマ5、雑音4段階の420条件を計算した。Fullseyeの回折MTFと円形瞳の閉形式は1e-12未満で一致し、画素開口を含む真値MTF50は0.34551 cycles/pixel。線形・無雑音の独立な面積標本化エッジ経路との差は最大0.01076 cycles/pixel。10 %超の破綻は掃引範囲の最小角1.0度から現れ、非線形トーン応答が角度選択と同程度に測定値を動かす。*
+
+```
+py -3.11 examples/poc_slanted_edge_sfr_limits.py
+```
+
+ソース: [examples/poc_slanted_edge_sfr_limits.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_slanted_edge_sfr_limits.py)
+
+この回が作った図は全部で **1 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_slanted_edge_sfr_limits)
+
+使用 op(ノートへ): [`mtf_diffraction`](https://furuse.work/ops/optics/imaging/mtf_diffraction.html)
 
 ### 寸法・形状計測ウィング ―― 偏りと散らばりは別々に持つ
 

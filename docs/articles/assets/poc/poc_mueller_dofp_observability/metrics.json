@@ -1,0 +1,10 @@
+{
+  "linear_rank": 9,
+  "qwp_rank": 16,
+  "independent_path_max_error": 1.3877787807814457e-17,
+  "median_relative_error": {
+    "linear_only": 0.4164299704064903,
+    "qwp_added": 0.014010674986273487
+  },
+  "trials": 200
+}

@@ -1,0 +1,10 @@
+{
+  "fft_vs_pupil_max_abs_error": 6.661338147750939e-16,
+  "five_percent_boundary_rms_waves": {
+    "defocus": 0.12833333333333333,
+    "astigmatism": 0.20124999999999998,
+    "coma": 0.16333333333333333,
+    "spherical": 0.14583333333333331
+  },
+  "conditions": 484
+}
