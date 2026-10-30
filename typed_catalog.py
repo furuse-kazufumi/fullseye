@@ -755,6 +755,9 @@ def catalog():
     for n, m in ops3d.OPS3D.items():
         if m["func"] is not None:
             ops.append((n, "3d", list(m["in"]), m["out"], m["func"]))
+    import opsfit
+    for n, m in opsfit.OPSFIT.items():
+        ops.append((n, "fit", list(m["in"]), m["out"], m["func"]))
     for n, m in ops1d.OPS1D.items():
         if m["func"] is not None and m["category"] != "io":   # ファイル I/O は除外
             ops.append((n, "1d", list(m["in"]), m["out"], m["func"]))

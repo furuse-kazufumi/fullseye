@@ -1,8 +1,8 @@
 {
- "n_ops": 3603,
+ "n_ops": 3607,
  "tiers": {
   "color": 12,
-  "ledger": 2644,
+  "ledger": 2648,
   "nary": 17,
   "registry": 930
  },
@@ -9544,6 +9544,19 @@
    ]
   },
   {
+   "name": "fit_circle_geometric",
+   "halcon": "",
+   "in_sort": "keypoints",
+   "out_sort": "table",
+   "category": "fit",
+   "tier": "ledger",
+   "ledger": "opsfit",
+   "dim": "fit",
+   "in_sorts": [
+    "keypoints"
+   ]
+  },
+  {
    "name": "fit_cone",
    "halcon": "",
    "in_sort": "points",
@@ -9554,6 +9567,19 @@
    "dim": "3d",
    "in_sorts": [
     "points"
+   ]
+  },
+  {
+   "name": "fit_curve_principal_axis",
+   "halcon": "",
+   "in_sort": "keypoints",
+   "out_sort": "table",
+   "category": "fit",
+   "tier": "ledger",
+   "ledger": "opsfit",
+   "dim": "fit",
+   "in_sorts": [
+    "keypoints"
    ]
   },
   {
@@ -9724,6 +9750,19 @@
    "in_sort": "points",
    "out_sort": "primitive",
    "category": "superquadric",
+   "tier": "ledger",
+   "ledger": "ops3d",
+   "dim": "3d",
+   "in_sorts": [
+    "points"
+   ]
+  },
+  {
+   "name": "fit_surface_principal_axes",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "table",
+   "category": "geometry",
    "tier": "ledger",
    "ledger": "ops3d",
    "dim": "3d",
@@ -20972,6 +21011,20 @@
    "ledger": "opsimgmetrics",
    "dim": "imgmetrics",
    "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "phase_correlation_shift",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "registration",
+   "tier": "ledger",
+   "ledger": "opsfit",
+   "dim": "fit",
+   "in_sorts": [
+    "image2d",
     "image2d"
    ]
   },

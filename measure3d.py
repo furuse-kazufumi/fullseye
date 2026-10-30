@@ -40,8 +40,65 @@ import numpy as np
 
 __all__ = [
     "fit_line3", "fit_plane3", "fit_sphere3", "fit_circle3",
+    "fit_surface_principal_axes",
     "smallest_box3_axis", "fit_box3", "smallest_box3", "smallest_sphere3",
 ]
+
+
+def _poly_powers_2d(degree):
+    return [(i, j) for total in range(degree + 1)
+            for i in range(total, -1, -1) for j in [total - i]]
+
+
+def fit_surface_principal_axes(points, degree: int = 2,
+                               *, isotropy_ratio: float = 0.95) -> dict:
+    """斜めの反った面を PCA 主軸へ回してから多項式 ``z'=f(x',y')`` を当てはめる。
+
+    The two largest principal axes span the local x/y plane and the smallest is
+    local z. Returns ``center``, row-vector ``axes``, monomial ``powers``,
+    ``coefficients``, local and original-frame ``fitted_points``, unit
+    ``normal`` at the centroid, and gradient-normalised geometric ``rms``.
+    ``degree`` is the total polynomial degree. A cloud whose two largest
+    variances differ by less than ``isotropy_ratio`` is rejected because its
+    in-plane principal directions are not identifiable. For degree one the
+    returned normal agrees with :func:`fit_plane3` up to sign.
+    """
+    p = _as_points3(points, 3, "points")
+    degree = int(degree)
+    powers = _poly_powers_2d(degree)
+    if degree < 1 or len(p) <= len(powers):
+        raise ValueError("degree must be >= 1 with more points than coefficients")
+    limit = float(isotropy_ratio)
+    if not (0.0 < limit < 1.0):
+        raise ValueError("isotropy_ratio must be in (0, 1)")
+    center = p.mean(0)
+    _, s, vt = np.linalg.svd(p - center, full_matrices=False)
+    if s[1] <= np.finfo(float).eps * np.linalg.norm(p - center) or (s[1] / s[0]) ** 2 >= limit:
+        raise ValueError("point cloud is too isotropic; principal in-plane axes are undefined")
+    if np.linalg.det(vt) < 0:
+        vt[-1] *= -1
+    local = (p - center) @ vt.T
+    design = np.column_stack([local[:, 0] ** i * local[:, 1] ** j for i, j in powers])
+    coef, *_ = np.linalg.lstsq(design, local[:, 2], rcond=None)
+    zfit = design @ coef
+    fitted_local = np.column_stack([local[:, :2], zfit])
+    fitted = center + fitted_local @ vt
+    gx = sum(c * i * local[:, 0] ** (i - 1) * local[:, 1] ** j
+             for c, (i, j) in zip(coef, powers) if i)
+    gy = sum(c * j * local[:, 0] ** i * local[:, 1] ** (j - 1)
+             for c, (i, j) in zip(coef, powers) if j)
+    residual = (local[:, 2] - zfit) / np.sqrt(1.0 + gx * gx + gy * gy)
+    gx0 = sum(c * i * (0.0 ** (i - 1)) * (0.0 ** j)
+              for c, (i, j) in zip(coef, powers) if i)
+    gy0 = sum(c * j * (0.0 ** i) * (0.0 ** (j - 1))
+              for c, (i, j) in zip(coef, powers) if j)
+    normal_local = np.array([-gx0, -gy0, 1.0])
+    normal = normal_local @ vt
+    normal /= np.linalg.norm(normal)
+    return {**_center_keys(center), "axes": vt, "powers": powers,
+            "coefficients": coef, "local_points": local,
+            "fitted_points": fitted, "normal": normal,
+            "rms": float(np.sqrt(np.mean(residual * residual)))}
 
 
 # --------------------------------------------------------------------------- #

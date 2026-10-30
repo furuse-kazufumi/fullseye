@@ -34,6 +34,7 @@ import opnames as _opnames
 
 #: 台帳(registry モジュール名, テーブル属性)。`tools/opdocs.LEDGER_DIMS` と同じ並び。
 _LEDGERS = (
+    ("opsfit", "OPSFIT"),
     ("ops3d", "OPS3D"), ("opsmath", "OPSMATH"), ("opsoptics", "OPSOPTICS"),
     ("opslightfield", "OPSLIGHTFIELD"), ("opsphoton", "OPSPHOTON"),
     ("opsspecular", "OPSSPECULAR"), ("opsmotionmag", "OPSMOTIONMAG"),

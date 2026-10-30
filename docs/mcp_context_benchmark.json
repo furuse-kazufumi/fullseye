@@ -30,8 +30,8 @@
     {
       "task": "recover projected fringe height",
       "tool_schema_tokens": 1435,
-      "response_tokens": 1065,
-      "total_tokens": 2500,
+      "response_tokens": 1066,
+      "total_tokens": 2501,
       "planned": true,
       "ops": [
         "decode_fringe"
@@ -60,13 +60,13 @@
     {
       "task": "switch product and detect corners",
       "tool_schema_tokens": 1435,
-      "response_tokens": 993,
-      "total_tokens": 2428,
+      "response_tokens": 992,
+      "total_tokens": 2427,
       "planned": true,
       "ops": [
         "cv_good_features"
       ]
     }
   ],
-  "max_tokens": 2500
+  "max_tokens": 2501
 }

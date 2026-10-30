@@ -171,7 +171,8 @@ def report(a: dict, show_matrix: bool) -> str:
     w("")
 
     w(f"■ 出力型に述語が無い変換 op ({len(a['unchecked_ops'])}) ― 何を返しても TYPEMISS にならない")
-    w(f"   対象の型: {', '.join(a['unchecked_sorts'])}")
+    unchecked = ", ".join(a["unchecked_sorts"])
+    w(f"   対象の型: {unchecked}" if unchecked else "   対象の型: なし")
     by_sort: dict[str, list[str]] = defaultdict(list)
     for name in a["unchecked_ops"]:
         by_sort[dict((n, o) for n, _f, _i, o, _fn in a["ops"])[name]].append(name)

@@ -56,6 +56,13 @@ print(f"fit_plane3  : 法線誤差 = {abs(abs(rp['normal'] @ n0) - 1):.2e}, rms 
 assert abs(abs(rp["normal"] @ n0) - 1) < 1e-9 and rp["rms"] < 1e-6
 assert rp["rms"] < 1e-3 * null_rms                         # 判別的に null を下回る
 
+# 主軸へ回してからの一次曲面は、TLS 平面と同じ法線になる。
+gx, gy = np.meshgrid(np.linspace(-4, 4, 17), np.linspace(-1, 1, 9))
+Psurface = np.column_stack([.2 * gx.ravel() - .3 * gy.ravel(), gy.ravel(), gx.ravel()]) @ R.T
+rps = m3.fit_surface_principal_axes(Psurface, 1)
+rpt = m3.fit_plane3(Psurface)
+assert abs(rps["normal"] @ rpt["normal"]) > 1 - 1e-12 and rps["rms"] < 1e-12
+
 # --- 3) 球: 既知の中心・半径の球面上の点 -----------------------------------
 cs, Rr = np.array([3.0, -2.0, 7.0]), 4.3
 u = np.random.default_rng(4).standard_normal((200, 3))

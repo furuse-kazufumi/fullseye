@@ -62,6 +62,8 @@ _CODE = "#22d3bf"
 #: gets its own ``docs/ops/<dim>/`` tree, ``op_help/<dim>/`` help dir, anchor
 #: namespace (``op<dim>:`` / ``guide<dim>:``) and one authored family guide.
 LEDGER_DIMS = {
+    "fit": {"registry": "opsfit", "table": "OPSFIT",
+            "module": "measure", "family": "geometric_fitting"},
     "math": {"registry": "opsmath", "table": "OPSMATH", "module": "mathops",
              "family": "math_metrology"},
     "optics": {"registry": "opsoptics", "table": "OPSOPTICS", "module": "optics",
