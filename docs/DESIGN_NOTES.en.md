@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 637 of 1569. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 637 of 1570. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -2845,6 +2845,10 @@ This repository records *why* things are the way they are in **comments in the s
 - **L127** _(ja)_ — ★2026-10-04: 主点を 0.5 画素ずらすだけの橋(CARLA ↔ Fullseye の内部パラメータ)。3×3 で焦点距離が正の K しか受けず、 汎用の合成 matrix は fail-closed で拒否される(op_probe の探針 K では走る —— tests/test_backends_typed_liveness.py)。
 - **L140** — ★2026-09-07 (user instruction "there's no need to consolidate into one image; things that are stepwise or have multiple conditions should be split out", "for some things a pseudo-color is easier to understand", "complex ones may even be an animated GIF"). In addition to the main figure `<op>.png`: `<op>.a.jpg` / `<op>.b.jpg` — 3 images with the knob swept to 0.1 / 0.5 / 0.9 (**only when the output changes**; if it doesn't change, the reason goes in the manifest) `<op>.chain.jpg` — a stepwise figure for an op that has a preceding op (image → intermediate → output) `<op>.gif` — when the output is video / light field / volume, showing frames / viewpoints / slices in sequence (the still `<op>.png` is the finished form and the GIF is additional; Studio's QTextBrowser shows the first frame). Apply pseudo-color only to the output of a **field of quantity** (distance, phase, orientation, depth, curvature …), and write `(viridis)` in the caption. Filter types stay gray (don't present them as a color-changing op).
 - **L756** — ★"It ran" and "a meaningful output came out" are different (2026-09-07, user's remark "what's with the pure-black out?"). If an empty array is counted as "has a figure", a black slab becomes a figure. Record empty as empty and write the reason in the note.
+
+## `tools/gen_view2026_pages.py`
+
+- **L172** _(ja)_ — ★2026-10-30: 2 つの展示の日本語が 10/27 から「???…」のまま載っていた(× と − も全言語で ? に)。 文字コードの往復で失われた文字は ? か U+FFFD になる。どちらも訳として通さない。
 
 ## `tools/gen_wing2d_gallery.py`
 

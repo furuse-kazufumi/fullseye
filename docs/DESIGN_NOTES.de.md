@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 612 von 1569. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 612 von 1570. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -2845,6 +2845,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L127** _(ja)_ — ★2026-10-04: 主点を 0.5 画素ずらすだけの橋(CARLA ↔ Fullseye の内部パラメータ)。3×3 で焦点距離が正の K しか受けず、 汎用の合成 matrix は fail-closed で拒否される(op_probe の探針 K では走る —— tests/test_backends_typed_liveness.py)。
 - **L140** — ★2026-09-07 (Nutzeranweisung "es besteht kein Bedarf, alles in ein Bild zusammenzufassen; Stufenweises oder solches mit mehreren Bedingungen getrennt ausgeben", "bei manchem ist eine Falschfarbe verstaendlicher", "Komplexes gerne auch als animiertes GIF"). Zusaetzlich zur Hauptabbildung `<op>.png`: `<op>.a.jpg` / `<op>.b.jpg` — 3 Bilder mit dem Regler auf 0.1 / 0.5 / 0.9 gestellt (**nur wenn sich die Ausgabe aendert**; aendert sie sich nicht, kommt der Grund ins manifest) `<op>.chain.jpg` — eine Stufenabbildung fuer eine op mit vorgeschalteter op (Bild → Zwischenschritt → Ausgabe) `<op>.gif` — wenn die Ausgabe Video / Lichtfeld / Volumen ist, Frames / Blickpunkte / Slices der Reihe nach zeigen (das Standbild `<op>.png` ist die fertige Form und das GIF ist zusaetzlich; Studios QTextBrowser zeigt das erste Frame). Wende Falschfarbe nur auf die Ausgabe eines **Feldes einer Groesse** an (Abstand, Phase, Orientierung, Tiefe, Kruemmung …) und schreibe `(viridis)` in die Bildunterschrift. Filter-Typen bleiben grau (nicht als farbwechselnde op darstellen).
 - **L756** — ★"Es lief" und "eine sinnvolle Ausgabe kam heraus" sind zweierlei (2026-09-07, Bemerkung des Nutzers "was soll das pechschwarze out?"). Zaehlt man ein leeres Array als "hat eine Abbildung", wird eine schwarze Platte zur Abbildung. Erfasse Leeres als leer und schreibe den Grund in die Notiz.
+
+## `tools/gen_view2026_pages.py`
+
+- **L172** _(ja)_ — ★2026-10-30: 2 つの展示の日本語が 10/27 から「???…」のまま載っていた(× と − も全言語で ? に)。 文字コードの往復で失われた文字は ? か U+FFFD になる。どちらも訳として通さない。
 
 ## `tools/gen_wing2d_gallery.py`
 

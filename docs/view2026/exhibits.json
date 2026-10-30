@@ -2481,34 +2481,34 @@
    "motion": true,
    "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_shwfs_anim3d.py",
    "label": {
-    "ja": "???????????????",
+    "ja": "スポットのずれで光の波面を測る",
     "en": "Measuring a wavefront from spot shifts",
-    "zh": "Measuring a wavefront from spot shifts",
-    "tw": "Measuring a wavefront from spot shifts",
-    "ko": "Measuring a wavefront from spot shifts",
-    "de": "Measuring a wavefront from spot shifts",
-    "hi": "Measuring a wavefront from spot shifts",
-    "fr": "Measuring a wavefront from spot shifts"
+    "zh": "由光斑位移测量光的波前",
+    "tw": "由光斑位移量測光的波前",
+    "ko": "스폿의 어긋남으로 빛의 파면을 측정",
+    "de": "Wellenfront aus Spotverschiebungen messen",
+    "hi": "spot के खिसकने से प्रकाश का wavefront मापना",
+    "fr": "Mesurer un front d'onde à partir du déplacement des taches"
    },
    "see": {
-    "ja": "?32?32?????128?128????????????????????8????6?8?12????????????????????????????????",
-    "en": "Centroids are measured from diffraction images made by padding each 32?32 subaperture to 128?128. 8 synthetic modes are recovered with 6, 8 and 12 modes to show omitted high order and leakage into extra modes.",
-    "zh": "Centroids are measured from diffraction images made by padding each 32?32 subaperture to 128?128. 8 synthetic modes are recovered with 6, 8 and 12 modes to show omitted high order and leakage into extra modes.",
-    "tw": "Centroids are measured from diffraction images made by padding each 32?32 subaperture to 128?128. 8 synthetic modes are recovered with 6, 8 and 12 modes to show omitted high order and leakage into extra modes.",
-    "ko": "Centroids are measured from diffraction images made by padding each 32?32 subaperture to 128?128. 8 synthetic modes are recovered with 6, 8 and 12 modes to show omitted high order and leakage into extra modes.",
-    "de": "Centroids are measured from diffraction images made by padding each 32?32 subaperture to 128?128. 8 synthetic modes are recovered with 6, 8 and 12 modes to show omitted high order and leakage into extra modes.",
-    "hi": "Centroids are measured from diffraction images made by padding each 32?32 subaperture to 128?128. 8 synthetic modes are recovered with 6, 8 and 12 modes to show omitted high order and leakage into extra modes.",
-    "fr": "Centroids are measured from diffraction images made by padding each 32?32 subaperture to 128?128. 8 synthetic modes are recovered with 6, 8 and 12 modes to show omitted high order and leakage into extra modes."
+    "ja": "各 32×32 のサブ開口を 128×128 へゼロ詰めした回折像から重心を測る。合成した 8 モードを 6、8、12 モードで復元し、足りない高次と余分なモードへの漏れを見せる。",
+    "en": "Centroids are measured from diffraction images made by padding each 32×32 subaperture to 128×128. 8 synthetic modes are recovered with 6, 8 and 12 modes to show omitted high order and leakage into extra modes.",
+    "zh": "把每个 32×32 子孔径补零到 128×128,由衍射像测量质心。用 6、8、12 个模式复原合成的 8 个模式,显示遗漏的高阶项和向多余模式的泄漏。",
+    "tw": "把每個 32×32 子孔徑補零到 128×128,由繞射像量測質心。用 6、8、12 個模式復原合成的 8 個模式,顯示遺漏的高階項和向多餘模式的洩漏。",
+    "ko": "각 32×32 부분 개구를 128×128로 제로 패딩한 회절상에서 무게중심을 측정한다. 합성한 8개 모드를 6, 8, 12개 모드로 복원해 빠진 고차 성분과 여분 모드로의 누설을 보여 준다.",
+    "de": "Schwerpunkte werden aus Beugungsbildern gemessen, für die jede 32×32-Subapertur auf 128×128 aufgefüllt wird. 8 synthetische Moden werden mit 6, 8 und 12 Moden rekonstruiert, um fehlende hohe Ordnungen und Übersprechen in überzählige Moden zu zeigen.",
+    "hi": "हर 32×32 sub-aperture को 128×128 तक zero-pad करके बनी diffraction छवि से centroid मापा जाता है। 8 synthetic modes को 6, 8 और 12 modes से फिर बनाकर छूटे high order और अतिरिक्त modes में रिसाव दिखाया जाता है।",
+    "fr": "Les barycentres sont mesurés sur des images de diffraction obtenues en complétant chaque sous-pupille de 32×32 jusqu'à 128×128. 8 modes synthétiques sont reconstruits avec 6, 8 et 12 modes pour montrer l'ordre élevé omis et la fuite vers les modes superflus."
    },
    "num": {
-    "ja": "6 / 8 / 12?????????0.0437 / 0.0126 / 0.0132 waves??????0.0146 waves?????????????0.656???????2.94 waves??????????",
-    "en": "Wavefront errors with 6 / 8 / 12 modes are 0.0437 / 0.0126 / 0.0132 waves; the noise allowance is 0.0146 waves. The photon-error log-log slope is ?0.656, and the diffraction peak leaves the fixed window from 2.94 waves.",
-    "zh": "Wavefront errors with 6 / 8 / 12 modes are 0.0437 / 0.0126 / 0.0132 waves; the noise allowance is 0.0146 waves. The photon-error log-log slope is ?0.656, and the diffraction peak leaves the fixed window from 2.94 waves.",
-    "tw": "Wavefront errors with 6 / 8 / 12 modes are 0.0437 / 0.0126 / 0.0132 waves; the noise allowance is 0.0146 waves. The photon-error log-log slope is ?0.656, and the diffraction peak leaves the fixed window from 2.94 waves.",
-    "ko": "Wavefront errors with 6 / 8 / 12 modes are 0.0437 / 0.0126 / 0.0132 waves; the noise allowance is 0.0146 waves. The photon-error log-log slope is ?0.656, and the diffraction peak leaves the fixed window from 2.94 waves.",
-    "de": "Wavefront errors with 6 / 8 / 12 modes are 0.0437 / 0.0126 / 0.0132 waves; the noise allowance is 0.0146 waves. The photon-error log-log slope is ?0.656, and the diffraction peak leaves the fixed window from 2.94 waves.",
-    "hi": "Wavefront errors with 6 / 8 / 12 modes are 0.0437 / 0.0126 / 0.0132 waves; the noise allowance is 0.0146 waves. The photon-error log-log slope is ?0.656, and the diffraction peak leaves the fixed window from 2.94 waves.",
-    "fr": "Wavefront errors with 6 / 8 / 12 modes are 0.0437 / 0.0126 / 0.0132 waves; the noise allowance is 0.0146 waves. The photon-error log-log slope is ?0.656, and the diffraction peak leaves the fixed window from 2.94 waves."
+    "ja": "6 / 8 / 12 モードの波面誤差は 0.0437 / 0.0126 / 0.0132 waves、雑音の許容は 0.0146 waves。光子数に対する誤差の両対数傾きは −0.656、回折ピークは 2.94 waves から固定窓の外へ出る。",
+    "en": "Wavefront errors with 6 / 8 / 12 modes are 0.0437 / 0.0126 / 0.0132 waves; the noise allowance is 0.0146 waves. The photon-error log-log slope is −0.656, and the diffraction peak leaves the fixed window from 2.94 waves.",
+    "zh": "6 / 8 / 12 个模式的波前误差为 0.0437 / 0.0126 / 0.0132 waves,噪声容许值为 0.0146 waves。误差对光子数的双对数斜率为 −0.656,衍射峰从 2.94 waves 起移出固定窗口。",
+    "tw": "6 / 8 / 12 個模式的波前誤差為 0.0437 / 0.0126 / 0.0132 waves,雜訊容許值為 0.0146 waves。誤差對光子數的雙對數斜率為 −0.656,繞射峰從 2.94 waves 起移出固定視窗。",
+    "ko": "6 / 8 / 12개 모드의 파면 오차는 0.0437 / 0.0126 / 0.0132 waves, 잡음 허용치는 0.0146 waves. 광자 수에 대한 오차의 양대수 기울기는 −0.656이고, 회절 피크는 2.94 waves부터 고정 창 밖으로 나간다.",
+    "de": "Die Wellenfrontfehler mit 6 / 8 / 12 Moden betragen 0.0437 / 0.0126 / 0.0132 waves; die Rauschtoleranz ist 0.0146 waves. Die doppelt logarithmische Steigung des Fehlers über der Photonenzahl ist −0.656, und die Beugungsspitze verlässt das feste Fenster ab 2.94 waves.",
+    "hi": "6 / 8 / 12 modes के wavefront त्रुटि 0.0437 / 0.0126 / 0.0132 waves हैं; noise की सीमा 0.0146 waves है। photon संख्या के साथ त्रुटि का log-log ढलान −0.656 है, और diffraction peak 2.94 waves से fixed window के बाहर चला जाता है।",
+    "fr": "Les erreurs de front d'onde avec 6 / 8 / 12 modes valent 0.0437 / 0.0126 / 0.0132 waves ; la tolérance au bruit est de 0.0146 waves. La pente log-log de l'erreur en fonction du nombre de photons est −0.656, et le pic de diffraction sort de la fenêtre fixe à partir de 2.94 waves."
    },
    "youtube_url": ""
   },
@@ -2559,34 +2559,34 @@
    "motion": true,
    "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_insar_anim3d.py",
    "label": {
-    "ja": "????? mm ??????",
+    "ja": "宇宙から数 mm の沈下を測る",
     "en": "Measure millimetre subsidence from orbit",
-    "zh": "Measure millimetre subsidence from orbit",
-    "tw": "Measure millimetre subsidence from orbit",
-    "ko": "Measure millimetre subsidence from orbit",
-    "de": "Measure millimetre subsidence from orbit",
-    "hi": "Measure millimetre subsidence from orbit",
-    "fr": "Measure millimetre subsidence from orbit"
+    "zh": "从太空测量毫米级的地面沉降",
+    "tw": "從太空量測毫米級的地面沉陷",
+    "ko": "우주에서 수 mm의 침하를 측정",
+    "de": "Millimeter-Senkungen aus dem Orbit messen",
+    "hi": "अंतरिक्ष से कुछ mm का धँसाव मापना",
+    "fr": "Mesurer depuis l'orbite un affaissement de quelques millimètres"
    },
    "see": {
-    "ja": "???????????????????????????????????????",
+    "ja": "色の輪(干渉縞)をほどいて、お椀形の沈下地図にする。大気の遅れを強くすると、誤差がはっきり増える。",
     "en": "Unwrap coloured rings into a bowl-shaped subsidence map; stronger atmosphere measurably increases error.",
-    "zh": "Unwrap coloured rings into a bowl-shaped subsidence map; stronger atmosphere measurably increases error.",
-    "tw": "Unwrap coloured rings into a bowl-shaped subsidence map; stronger atmosphere measurably increases error.",
-    "ko": "Unwrap coloured rings into a bowl-shaped subsidence map; stronger atmosphere measurably increases error.",
-    "de": "Unwrap coloured rings into a bowl-shaped subsidence map; stronger atmosphere measurably increases error.",
-    "hi": "Unwrap coloured rings into a bowl-shaped subsidence map; stronger atmosphere measurably increases error.",
-    "fr": "Unwrap coloured rings into a bowl-shaped subsidence map; stronger atmosphere measurably increases error."
+    "zh": "把彩色的环(干涉条纹)解开,变成碗形的沉降图;大气延迟越强,误差明显变大。",
+    "tw": "把彩色的環(干涉條紋)解開,變成碗形的沉陷圖;大氣延遲越強,誤差明顯變大。",
+    "ko": "색 고리(간섭무늬)를 풀어 사발 모양의 침하 지도로 만든다. 대기 지연을 키우면 오차가 뚜렷이 늘어난다.",
+    "de": "Farbige Ringe (Interferenzstreifen) werden zu einer schüsselförmigen Senkungskarte abgewickelt; stärkere Atmosphäre erhöht den Fehler messbar.",
+    "hi": "रंगीन छल्लों (interference fringes) को खोलकर कटोरे जैसा धँसाव नक्शा बनाया जाता है; वायुमंडल की देरी बढ़ने पर त्रुटि साफ़ बढ़ती है।",
+    "fr": "Les anneaux colorés (franges d'interférence) sont déroulés en une carte d'affaissement en forme de cuvette ; une atmosphère plus forte augmente nettement l'erreur."
    },
    "num": {
-    "ja": "?? RMS 1.53 mm????? 1.02 mm?????????? RMS ? 3.70 mm ????",
+    "ja": "地図の RMS 1.53 mm、中心の誤差 1.02 mm。大気の遅れを強くすると RMS が 3.70 mm 増える。",
     "en": "Map RMS 1.53 mm and centre error 1.02 mm; stronger atmospheric delay adds 3.70 mm RMS.",
-    "zh": "Map RMS 1.53 mm and centre error 1.02 mm; stronger atmospheric delay adds 3.70 mm RMS.",
-    "tw": "Map RMS 1.53 mm and centre error 1.02 mm; stronger atmospheric delay adds 3.70 mm RMS.",
-    "ko": "Map RMS 1.53 mm and centre error 1.02 mm; stronger atmospheric delay adds 3.70 mm RMS.",
-    "de": "Map RMS 1.53 mm and centre error 1.02 mm; stronger atmospheric delay adds 3.70 mm RMS.",
-    "hi": "Map RMS 1.53 mm and centre error 1.02 mm; stronger atmospheric delay adds 3.70 mm RMS.",
-    "fr": "Map RMS 1.53 mm and centre error 1.02 mm; stronger atmospheric delay adds 3.70 mm RMS."
+    "zh": "地图 RMS 1.53 mm,中心误差 1.02 mm;大气延迟增强时 RMS 增加 3.70 mm。",
+    "tw": "地圖 RMS 1.53 mm,中心誤差 1.02 mm;大氣延遲增強時 RMS 增加 3.70 mm。",
+    "ko": "지도 RMS 1.53 mm, 중심 오차 1.02 mm. 대기 지연을 키우면 RMS가 3.70 mm 늘어난다.",
+    "de": "Karten-RMS 1.53 mm und Zentrumsfehler 1.02 mm; stärkere atmosphärische Verzögerung erhöht den RMS um 3.70 mm.",
+    "hi": "नक्शे का RMS 1.53 mm और केंद्र की त्रुटि 1.02 mm; वायुमंडल की देरी बढ़ने पर RMS 3.70 mm बढ़ता है।",
+    "fr": "RMS de la carte 1.53 mm et erreur au centre 1.02 mm ; un retard atmosphérique plus fort ajoute 3.70 mm de RMS."
    },
    "youtube_url": ""
   },
