@@ -15,6 +15,7 @@ import math
 import numpy as np
 import tacsim
 import tacslip
+import fvbench_layer as layer
 
 WIDTH, HEIGHT, FPS = 320, 240, 30.0
 E_GEL, NU, THICKNESS = 0.18e6, 0.48, 4e-3
@@ -50,6 +51,9 @@ class Calibration:
     marker_dark: float = .72
     marker_radius_px: float = 2.4
     marker_pitch_px: float = 24.0
+    slip_threshold2016: float = 900.0
+    slip_threshold2017: float = 900.0
+    proposed_ca_threshold: float = .12
 
 
 def _project(xy_m: np.ndarray, z_m=0.0) -> np.ndarray:
@@ -86,13 +90,10 @@ def _background(color, brightness, phase, deform, moving_bg):
 
 
 def _cerruti_point(points, loads, sources):
-    """Cerruti 式3.22の面内2成分を離散トラクションに重ね合わせる。"""
+    """接着層の接線 Green 関数を離散トラクションに重ね合わせる。"""
     out = np.zeros_like(points)
     for force, src in zip(loads, sources):
-        d = points-src; r = np.maximum(np.linalg.norm(d, axis=1), 0.7e-3)
-        # 等方半空間の接線点荷重 Green テンソル。
-        A = 1/(4*math.pi*G_GEL)
-        out += A*(2*(1-NU)*force/r[:,None] + 2*NU*d*np.sum(d*force,axis=1)[:,None]/r[:,None]**3)
+        out += layer.tangential_kernel(points, src, force, NU, E_GEL, THICKNESS*1e3)
     return out
 
 
@@ -103,9 +104,9 @@ def _physical_displacement(truth: Truth):
     u = np.zeros_like(d); uz = np.zeros(len(d))
     if p <= 0: return u, uz
     hz = tacsim.hertz_sphere(p, truth.indenter_radius_mm*1e-3, tacsim.combined_modulus(E_GEL, NU))
-    uz = tacsim.hertz_surface_uz(r, hz["a"], hz["delta"], hz["R"])
-    ur = tacslip.hertz_surface_ur(r, hz["a"], hz["p0"], G_GEL, NU)
-    u += np.divide(d, r[:,None], out=np.zeros_like(d), where=r[:,None]>0)*ur[:,None]
+    # 4 mm bonded layer: selectively integrated axisymmetric Q4 FEM table.
+    normal = layer.normal_kernel(MARKER_WORLD, centre, NU, p, max(hz["a"]*1e3, 1.0))
+    u += normal[:,:2]; uz += normal[:,2]
     q = np.array([fx, fy]); qn = np.linalg.norm(q)
     if qn:
         q = q*min(1.0, MU*p/qn); ca = max(0.0, 1-qn/(MU*p))**(1/3)
@@ -121,6 +122,10 @@ def _physical_displacement(truth: Truth):
         tang = np.column_stack((-d[:,1], d[:,0])); rr=np.maximum(r,1e-3)
         # Reissner--Sagoci/Cerruti の遠方 1/r^2。係数はトルク次元から決まる。
         u += truth.torque_Nm*tang/(4*math.pi*G_GEL*rr[:,None]**3)
+    if truth.angle_deg:
+        # Stuck contact carries the object's in-plane rotation into the marker field.
+        theta=math.radians(truth.angle_deg); tang=np.column_stack((-d[:,1],d[:,0]))
+        u += theta*tang*np.exp(-(r/max(hz["a"],1e-6))**4)[:,None]
     return u, uz
 
 
@@ -159,7 +164,7 @@ def _per_marker(image, calib):
     for a,b in zip(p0,tr["p1"]):
         def area(m,p):
             x,y=np.rint(p).astype(int); s=m[max(0,y-4):y+5,max(0,x-4):x+5]
-            return float((s>.42).sum())
+            return float(np.clip((s-.25)/.65,0,1).sum())
         ds.append(area(m1,b)-area(m0,a))
     return np.column_stack((u[:,0],np.asarray(ds),u[:,1])),tr
 
@@ -203,8 +208,8 @@ def read_baseline2016(image, calib):
     """2016公開式。論文 y は法線: [cx dx, cy ds, cz dy]、|.|80%以下を平均。"""
     pm,_=_per_marker(image,calib); feat=_aggregate_signed(pm) if len(pm) else np.zeros(3)
     paper=_affine(calib.coef2016,feat); score,prox=_baseline_common(image,calib)
-    return {"force_N":np.array([paper[0],paper[2],paper[1]]),"torque":0.,"slip":score>900,
-            "slip_dir":None,"proximity":prox,"angle_deg":0.,"motion_pixels":score,"method":"FingerVision-2016"}
+    return {"force_N":np.array([paper[0],paper[2],paper[1]]),"torque":None,"slip":score>calib.slip_threshold2016,
+            "slip_dir":None,"proximity":prox,"angle_deg":None,"motion_pixels":score,"method":"FingerVision-2016"}
 
 
 def read_baseline2017(image, calib):
@@ -212,8 +217,8 @@ def read_baseline2017(image, calib):
     pm,_=_per_marker(image,calib)
     feat=np.array([pm[:,0].mean(),np.hypot(pm[:,0],pm[:,2]).mean(),pm[:,2].mean()]) if len(pm) else np.zeros(3)
     paper=_affine(calib.coef2017,feat); score,prox=_baseline_common(image,calib)
-    return {"force_N":np.array([paper[0],paper[2],paper[1]]),"torque":0.,"slip":score>900,
-            "slip_dir":None,"proximity":prox,"angle_deg":0.,"motion_pixels":score,"method":"FingerVision-2017"}
+    return {"force_N":np.array([paper[0],paper[2],paper[1]]),"torque":None,"slip":score>calib.slip_threshold2017,
+            "slip_dir":None,"proximity":prox,"angle_deg":None,"motion_pixels":score,"method":"FingerVision-2017"}
 
 
 read_baseline=read_baseline2016
@@ -229,27 +234,29 @@ def read_tactile(image, calib):
     # 画像pxを射影の局所Jacobianでmへ戻す。
     u_m=u*(CAMERA_DISTANCE/FISHEYE_F)
     xy=(p-np.array([WIDTH/2,HEIGHT/2]))*(CAMERA_DISTANCE/FISHEYE_F)
-    n=len(xy); K=np.zeros((2*n,2*n))
+    n=len(xy); K=np.zeros((3*n,3*n))
     for j,s in enumerate(xy):
-        ex=_cerruti_point(xy,np.array([[1.,0.]]),np.array([s])); ey=_cerruti_point(xy,np.array([[0.,1.]]),np.array([s]))
-        K[:n,2*j]=ex[:,0]; K[n:,2*j]=ex[:,1]; K[:n,2*j+1]=ey[:,0]; K[n:,2*j+1]=ey[:,1]
-    obs=np.r_[u_m[:,0],u_m[:,1]]; lam=1e-4*np.linalg.norm(K,2)**2
-    traction=np.linalg.solve(K.T@K+lam*np.eye(2*n),K.T@obs).reshape(n,2)
-    q=traction.sum(0)
-    # 法線は Hertz 3.41b の符号付き放射変位を候補荷重へ物理当てはめ。
-    rr=np.linalg.norm(xy,axis=1); radial=np.sum(u_m*xy,axis=1)/np.maximum(rr,1e-9)
-    cand=np.linspace(.25,25,100); err=[]
-    for P in cand:
-        h=tacsim.hertz_sphere(P,R_INDENTER,tacsim.combined_modulus(E_GEL,NU))
-        err.append(np.mean((radial-tacslip.hertz_surface_ur(rr,h["a"],h["p0"],G_GEL,NU))**2))
-    P=float(cand[int(np.argmin(err))])
-    mag=np.linalg.norm(u_m,axis=1); core=np.percentile(mag,25); ca=float(np.clip(1-np.std(mag)/(core+1e-9),0,1))
+        ex=layer.tangential_kernel(xy,s,[1.,0.],NU,E_GEL); ey=layer.tangential_kernel(xy,s,[0.,1.],NU,E_GEL)
+        ez=layer.normal_kernel(xy,s,NU,1.,2.)
+        K[:n,3*j]=ex[:,0]; K[n:2*n,3*j]=ex[:,1]
+        K[:n,3*j+1]=ey[:,0]; K[n:2*n,3*j+1]=ey[:,1]
+        K[:n,3*j+2]=ez[:,0]; K[n:2*n,3*j+2]=ez[:,1]; K[2*n:,3*j+2]=ez[:,2]
+    # blob projected area A is proportional to (D-z)^-2: dz ~= D*dA/(2A).
+    ref_area=math.pi*calib.marker_radius_px**2
+    uz_m=np.clip(pm[:,1]/max(2*ref_area,1)*CAMERA_DISTANCE,-2e-3,2e-3)
+    obs=np.r_[u_m[:,0],u_m[:,1],uz_m]; lam=3e-3*np.linalg.norm(K,2)**2
+    traction=np.linalg.solve(K.T@K+lam*np.eye(3*n),K.T@obs).reshape(n,3)
+    traction[:,2]=np.maximum(traction[:,2],0); q=traction[:,:2].sum(0); P=float(traction[:,2].sum())
+    rr=np.linalg.norm(xy,axis=1)
+    # Cattaneo--Mindlin: c/a=(1-Q/(mu P))^(1/3), using only reconstructed tractions.
+    load_ratio=np.linalg.norm(q)/max(MU*P,1e-9)
+    ca=float(max(0.,1-load_ratio)**(1/3))
     direction=q/(np.linalg.norm(q)+1e-12); omega=np.sum(xy[:,0]*u_m[:,1]-xy[:,1]*u_m[:,0])/np.sum(xy*xy)
     visible=tr["matched"]>=6
     return {"force_N":np.array([q[0],q[1],P]),"torque":float(4*math.pi*G_GEL*omega*np.mean(rr**3)),
-            "slip":bool(visible and ca<.12),"slip_precursor":bool(visible and ca<.45),"slip_dir":direction,
+            "slip":bool(visible and ca<calib.proposed_ca_threshold),"slip_precursor":bool(visible and ca<.45),"slip_dir":direction,
             "proximity":float(np.mean(np.abs(image-calib.reference)))>.018,"angle_deg":math.degrees(omega),
-            "matched":tr["matched"],"c_over_a":ca,"method":"regularized-Boussinesq-Cerruti"}
+            "matched":tr["matched"],"c_over_a":ca,"method":"regularized-bonded-layer-FEM"}
 
 
 def _fit_affine(x,y):
@@ -275,3 +282,23 @@ def calibrate(samples, reference):
     c.coef2016=np.column_stack([_fit_affine(f16[:,i],truth[:,i]) for i in range(3)])
     c.coef2017=np.column_stack([_fit_affine(f17[:,i],truth[:,i]) for i in range(3)])
     return c
+
+
+def tune_slip_thresholds(calib, frames, budget=41):
+    """Tune all three slip thresholds on the same frames and search budget."""
+    import copy
+    methods=(read_baseline2016,read_baseline2017,read_tactile); vals=[]
+    for fn in methods:
+        state=copy.copy(calib); state.previous=None; state.mog2=None; row=[]
+        for image,_ in frames:
+            out=fn(image,state); row.append(out.get("motion_pixels",out.get("c_over_a",1.)))
+        vals.append(np.asarray(row))
+    y=np.asarray([label for _,label in frames],bool)
+    def best(v, reverse=False):
+        candidates=np.linspace(float(v.min())-1e-9,float(v.max())+1e-9,budget); chosen=(0.,candidates[0])
+        for t in candidates:
+            p=v<t if reverse else v>t; tp=np.sum(p&y); score=2*tp/max(2*tp+np.sum(p&~y)+np.sum(~p&y),1)
+            if score>chosen[0]: chosen=(float(score),float(t))
+        return chosen[1]
+    calib.slip_threshold2016=best(vals[0]); calib.slip_threshold2017=best(vals[1]); calib.proposed_ca_threshold=best(vals[2],True)
+    return calib

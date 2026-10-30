@@ -15,7 +15,7 @@
   "caption": "較正に無い半径・位置・範囲。",
   "shape": [
    360,
-   560,
+   703,
    3
   ]
  },
@@ -25,7 +25,7 @@
   "caption": "Q=muPからの遅れ。未検出は200 ms表示。",
   "shape": [
    360,
-   676,
+   687,
    3
   ]
  },
@@ -40,5 +40,17 @@
   ],
   "csv": "04_fvbench_condition_f1.csv",
   "tsv": "04_fvbench_condition_f1.tsv"
+ },
+ {
+  "file": "05_fvbench_layer_physics.png",
+  "name": "fvbench_layer_physics",
+  "caption": "1 N, a=6 mm; selective reduced integration Q4 FEM.",
+  "shape": [
+   200,
+   452,
+   3
+  ],
+  "csv": "05_fvbench_layer_physics.csv",
+  "tsv": "05_fvbench_layer_physics.tsv"
  }
 ]

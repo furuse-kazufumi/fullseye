@@ -3,6 +3,7 @@ import inspect
 import numpy as np
 
 import fvbench as F
+import fvbench_layer as L
 
 
 def _calib():
@@ -48,7 +49,29 @@ def test_public_formula_axes_percentile_and_affine_calibration():
 def test_forward_model_does_not_use_estimator_coefficients():
     src = inspect.getsource(F._physical_displacement) + inspect.getsource(F.synthesize)
     assert "coef2016" not in src and "coef2017" not in src
-    assert "hertz_surface_uz" in src and "_cerruti_point" in src
+    assert "layer.normal_kernel" in src and "_cerruti_point" in src
+
+
+def test_bonded_layer_mesh_converges_and_near_incompressible_lateral_motion_survives():
+    conv = L.convergence(.48)
+    assert conv[-1][-1] < .03
+    ratios = []
+    for nu in (.40, .45, .48, .49, .499):
+        r, ur, _ = L.axisymmetric_bonded_layer(nu, 96, 18)
+        uh, _ = L.halfspace_normal(r, nu)
+        ratios.append(np.max(np.abs(ur)) / np.max(np.abs(uh)))
+    assert ratios[-1] > 20 * ratios[0]
+
+
+def test_baselines_report_no_rotation_output_and_slip_tuning_budget_is_shared():
+    c, ref = _calib()
+    frames=[]
+    for k,q in enumerate(np.linspace(0,1.2*F.MU*8,8)):
+        frames.append((F.synthesize(F.Truth((q,0,8)),phase=k/2,seed=80+k),q>=F.MU*8))
+    F.tune_slip_thresholds(c,frames,budget=11)
+    assert F.read_baseline2016(ref,c)["angle_deg"] is None
+    assert F.read_baseline2017(ref,c)["angle_deg"] is None
+    assert np.isfinite([c.slip_threshold2016,c.slip_threshold2017,c.proposed_ca_threshold]).all()
 
 
 def test_fixed_seed_is_repeatable_and_dark_failure_is_exposed():

@@ -2,9 +2,10 @@
 """FingerVision 公開式2版とGreen関数逆算を、独立した物理合成像で比較する。
 
 外部: Yamaguchi & Atkeson (Humanoids 2016/2017) の式、Johnson (1985)
-§3, §7.2、既存 tacsim/tacslip。自作: 4 mm XP-565相当層、皮膚--カメラ
-22 mmの等距離魚眼、較正/評価分離、時系列評価。FULLSEYE_TAXIM_DATA が無い
-環境なので有限厚FEM補正はせず、半空間が層厚4 mmを超える範囲を負け条件にする。
+§3, §7.2、既存 tacsim/tacslip。自作: 4 mm XP-565相当接着層の選択的
+低減積分Q4軸対称FEM、皮膚--カメラ22 mmの等距離魚眼、較正/評価分離。
+ビーズは論文どおり金型底、すなわち接触表面（報告深さ0 mm）に置く。
+FULLSEYE_TAXIM_DATA が無いためTaxim節点変位との第三照合は未実施。
 門: 同じRGB像、推定器はTruthを読まない、順方向に較正係数なし、基準式の探針。
 Run: py -3.11 examples/poc_fingervision_benchmark.py [--full]
 """
@@ -15,6 +16,7 @@ import numpy as np
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 import examplefig as figs  # noqa:E402
 import fvbench as F  # noqa:E402
+import fvbench_layer as L  # noqa:E402
 
 
 def clone(c):
@@ -33,6 +35,20 @@ def f1_ci(y,p):
     return score,max(0,mid-half),min(1,mid+half)
 
 
+def physics_validation():
+    rows=[]
+    for nu in (.40,.45,.48,.49,.499):
+        r,ur,uz=L.axisymmetric_bonded_layer(nu,96,18)
+        uh,zh=L.halfspace_normal(r,nu)
+        rows.append((nu,float(np.max(np.abs(ur))/np.max(np.abs(uh))),float(uz[0]/zh[0]),
+                     float(np.max(np.abs(ur))),float(uz[0])))
+    # Barber (2019) §4 Eq. (4.1), attributed there to Johnson: u=p/k.
+    nu=.40; a=.016; r,_,uz=L.axisymmetric_bonded_layer(nu,96,18,16.,1.,rmax_mm=48.)
+    p0=3/(2*math.pi*a*a); k=F.E_GEL*(1-nu)/((1+nu)*(1-2*nu)*F.THICKNESS)
+    theory_ratio=float(uz[0]/(p0/k))
+    return rows,L.convergence(.48),theory_ratio
+
+
 def evaluate(full=False):
     t0=time.perf_counter(); ref=F.synthesize(F.Truth((0,0,0)),seed=1)
     # 較正: 中心、半径12 mm、2--14 N。評価は半径9/16 mm、偏心、1--20 N。
@@ -41,11 +57,18 @@ def evaluate(full=False):
         for fx,fy in ((0,0),(.18*p,0),(0,-.14*p)):
             tr=F.Truth((fx,fy,p)); cal.append((F.synthesize(tr,seed=10+i),tr.force_N,0.))
     c=F.calibrate(cal,ref)
+    slip_cal=[]
+    for case in range(6):
+        p=5+case
+        for k,q in enumerate(np.linspace(0,1.2*F.MU*p,8)):
+            label=q>=F.MU*p; tr=F.Truth((q,0,p),slip=label)
+            slip_cal.append((F.synthesize(tr,phase=k/2,seed=500+case*8+k),label))
+    F.tune_slip_thresholds(c,slip_cal,budget=41)
     ev=[]
     for i,p in enumerate(np.linspace(1,20,40 if full else 16)):
         tr=F.Truth(((-1)**i*.22*p, .16*p, p),contact_xy_mm=(3,-2),indenter_radius_mm=9 if i%2 else 16)
         ev.append((tr,F.synthesize(tr,seed=100+i)))
-    methods=(F.read_baseline2016,F.read_baseline2017,F.read_tactile); names=("基準2016","基準2017","Green逆算")
+    methods=(F.read_baseline2016,F.read_baseline2017,F.read_tactile); names=("基準2016","基準2017","層Green逆算")
     def force_set(rows):
         truth=np.asarray([x[1] for x in rows]); pred=[]
         for fn in methods:
@@ -77,10 +100,15 @@ def evaluate(full=False):
             if precursor is not None: leads.append(1000*(onset-precursor)/F.FPS)
         vals=[f1_ci(yy[m],pp[m]) for m in range(3)]; slip_rows.append((label,*vals))
     # 回転は画像の同じ組を三手法へ渡す。
-    angles=np.linspace(-10,10,11); rot=[]
-    for fn in methods:
+    angles=np.linspace(-10,10,11); rot=[None,None]
+    for fn in methods[2:]:
         pred=[fn(F.synthesize(F.Truth((0,0,8),angle_deg=float(a)),seed=900+i),clone(c))["angle_deg"] for i,a in enumerate(angles)]
         rot.append(_score_rmse(pred,angles))
+    physical,conv,theory_ratio=physics_validation()
+    print("半空間比（nu, 層/半空間 横最大, 縦中心, 層横m, 層縦m）")
+    for row in physical: print(row)
+    print("FEM収束（nr,nz,横最大,縦中心,直前格子との差）",conv)
+    print(f"薄層理論照合: Barber (2019) §4 Eq. 4.1（Johnson帰属）のu=p/kに対するFEM中心変位比={theory_ratio:.3f} (nu=.40,a/h=4)。")
     print("力（各セル RMSE N / R2、軸 Fx,Fy,Fz）")
     print("method       calibration                         evaluation")
     for n in names:
@@ -88,8 +116,8 @@ def evaluate(full=False):
     print("滑り F1 [Wilson 95% CI]")
     for row in slip_rows: print(row[0],*[f"{v[0]:.3f}[{v[1]:.3f},{v[2]:.3f}]" for v in row[1:]])
     print("遅れ中央値ms",[float(np.nanmedian(x)) if np.isfinite(x).any() else None for x in delays],"前兆先行ms",float(np.median(leads)) if leads else None)
-    print("回転RMSE deg",dict(zip(names,rot)))
-    print("負け条件: Green逆算は暗所/マーカー消失、ヒステリシス、接触半径が4 mm層厚を超える大荷重で不利。有限厚FEMデータなし。")
+    print("回転RMSE deg",{n:("—" if v is None else v) for n,v in zip(names,rot)})
+    print("負け条件: 層Green逆算は暗所/マーカー消失、ヒステリシス、剥離、未知のビーズ深さで不利。Taxim外部FEMデータなし。")
     print("画像再現度: 実画像が無いためTaximのSSIM/PSNRとは比較しない。")
     if figs.enabled():
         figs.save_grid("fvbench_sensor_examples",[ref,ev[-1][1]],ncols=2,captions=["reference","unseen radius/offset"],caption="22 mm等距離魚眼、物理順方向。")
@@ -98,7 +126,10 @@ def evaluate(full=False):
         figs.save("fvbench_force_scatter",figs.render_plot(series,xlabel="truth [N]",ylabel="estimate [N]",title="held-out force"),caption="較正に無い半径・位置・範囲。")
         figs.save("fvbench_slip_delay",figs.render_plot([(n,np.arange(len(d)),np.nan_to_num(d,nan=200)) for n,d in zip(names,delays)],xlabel="sequence",ylabel="delay [ms]",title="30 fps slip onset"),caption="Q=muPからの遅れ。未検出は200 ms表示。")
         figs.save_table("fvbench_condition_f1",["condition",*names],[[r[0],*[f"{x[0]:.3f} [{x[1]:.3f},{x[2]:.3f}]" for x in r[1:]]] for r in slip_rows],title="Slip F1 (Wilson 95% CI)",caption="--fullは各条件25時系列×8=200フレーム。")
-    return {"force":force,"slip":slip_rows,"delays":delays,"rotation":rot,"elapsed_s":time.perf_counter()-t0,"n_per_condition":cases*8}
+        figs.save_table("fvbench_layer_physics",["nu","ur layer/half","uz layer/half","ur layer [um]","uz layer [um]"],
+                        [[f"{x[0]:.3f}",f"{x[1]:.3f}",f"{x[2]:.3f}",f"{1e6*x[3]:.2f}",f"{1e6*x[4]:.2f}"] for x in physical],
+                        title="4 mm bonded layer versus half-space",caption="1 N, a=6 mm; selective reduced integration Q4 FEM.")
+    return {"force":force,"slip":slip_rows,"delays":delays,"rotation":rot,"physics":physical,"convergence":conv,"theory_ratio":theory_ratio,"elapsed_s":time.perf_counter()-t0,"n_per_condition":cases*8}
 
 
 if __name__=="__main__":
