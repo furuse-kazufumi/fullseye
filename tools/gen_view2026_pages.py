@@ -205,6 +205,10 @@ def validate(d: dict) -> list[str]:
         for f in ("label", "see"):
             full("%s.%s" % (pid, f), e[f])
         full("%s.num" % pid, e["num"], allow_empty=True)
+        if "youtube_url" not in e:
+            bad.append("%s: youtube_url 欄が無い(未公開なら空文字)" % pid)
+        elif e["youtube_url"] and not re.match(r"^https://(?:www\.)?(?:youtube\.com/watch\?v=|youtu\.be/)[A-Za-z0-9_-]+", e["youtube_url"]):
+            bad.append("%s: youtube_url が YouTube の動画 URL でない: %s" % (pid, e["youtube_url"]))
         if e["category"] not in cats:
             bad.append("%s: category %r が categories に無い" % (pid, e["category"]))
         checks = [(DOCS / _media_rel(d, e), "図"), (BASE / "thumbs" / (pid + ".jpg"), "サムネイル")]
@@ -428,8 +432,9 @@ def build(d: dict, lang: str) -> str:
             kind = ui[_media_kind(_media_rel(d, e))]
             if _is_viewer(d, e):
                 kind += ", " + _viewer_mb(d, e)
+            youtube = " [YouTube](%s)" % e["youtube_url"] if e.get("youtube_url") else ""
             out.append("- [%s](%s) (%s): %s%s%s" % (
-                e["label"][lang], media(e), kind, e["see"][lang], num, link))
+                e["label"][lang], media(e), kind, e["see"][lang], num, link + youtube))
         out.append("")
     out += ["</div>", "", "## " + ui["h_about"], "", ui["about"], ""]
 

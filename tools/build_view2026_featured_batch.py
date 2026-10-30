@@ -95,7 +95,7 @@ def main() -> None:
             "id": pid, "category": WING_CATEGORY[src["wing"]], "media": media,
             "motion": media.lower().endswith((".gif", ".mp4")), "label": label,
             "see": dict(SEE), "num": {lang: evidence for lang in d["langs"]},
-            "numbers_source": src["numbers_source"],
+            "numbers_source": src["numbers_source"], "youtube_url": "",
         }
         d["exhibits"].append(item)
     DATA.write_text(json.dumps(d, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")

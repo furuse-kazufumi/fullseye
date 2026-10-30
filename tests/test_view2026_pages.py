@@ -54,6 +54,15 @@ def test_a_missing_translation_stops_the_generator():
     assert any(cid in b for b in bad), bad
 
 
+def test_youtube_is_hidden_when_empty_and_invalid_urls_stop_generation():
+    d = G.load()
+    assert all("youtube_url" in e for e in d["exhibits"])
+    assert "[YouTube](" not in G.build(d, "en")
+    broken = copy.deepcopy(d)
+    broken["exhibits"][0]["youtube_url"] = "https://example.invalid/static.mp4"
+    assert any("YouTube" in x for x in G.validate(broken))
+
+
 def test_a_stale_translation_stops_the_generator():
     broken = copy.deepcopy(G.load())
     broken["capabilities"]["titles"]["no-such-capability"] = {"zh": "x"}

@@ -600,7 +600,8 @@
     "de": "Selbst bei gleichem Rauschen liegt die Nachweisgrenze auf echten Texturen beim 2.03- bis 3.47-Fachen der synthetischen (Defekte mit bekannter Position und Amplitude).",
     "hi": "noise बराबर करने पर भी असली texture पर detection limit synthetic की 2.03-3.47 गुना है (ज्ञात position और amplitude वाले defect पर)।",
     "fr": "Même à niveau de bruit égal, la limite de détection sur le fond réel est de 2.03 à 3.47 fois celle du fond synthétique (pour des défauts de position et d'amplitude connues)."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "poc_active_contours",
@@ -636,7 +637,8 @@
     "de": "Nur die äußere Kraft auf GVF umgestellt: Dice 0.993 gegenüber der wahren Kante.",
     "hi": "सिर्फ external force को GVF में बदलने पर Dice 0.993 (असली edge के सापेक्ष)।",
     "fr": "En remplaçant uniquement la force externe par le GVF, on obtient un Dice de 0.993 (par rapport au vrai contour)."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "poc_dic_strain",
@@ -672,7 +674,8 @@
     "de": "Wahre Dehnung 3000 µε. Die kleine Dehnung liest wegen der Drehung nur 2341 µε, Green-Lagrange 2961 µε (Theorie 3005 µε).",
     "hi": "असली strain 3000 µε। small strain rotation के कारण 2341 µε (कम), Green-Lagrange 2961 µε (theory 3005 µε)।",
     "fr": "La vraie déformation est de 3000 µε. La petite déformation donne 2341 µε, sous-estimée à cause de la rotation, tandis que Green-Lagrange donne 2961 µε (théorie : 3005 µε)."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "poc_focus_stacking",
@@ -708,7 +711,8 @@
     "de": "Scharfes Gesamtbild PSNR 33.69 dB (das 1 mittlere Einzelbild 28.52 dB), Tiefenfehler 0.467 mm (texturierte Bereiche).",
     "hi": "all-in-focus PSNR 33.69 dB (बीच का 1 frame 28.52 dB), depth error 0.467 mm (texture वाले हिस्से में)।",
     "fr": "PSNR de l'image entièrement nette 33.69 dB (1 image centrale : 28.52 dB), erreur de profondeur 0.467 mm (zones texturées)."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "poc_registration_basin",
@@ -744,7 +748,8 @@
     "de": "Drehfehler nach 60 Iterationen: 0.6 Grad ab 30 und 90 (Erfolg), 179.5 Grad ab 150 (Fehlschlag).",
     "hi": "60 iterations के बाद rotation error: 30 और 90 degree से 0.6 degree (सफल), 150 से 179.5 degree (असफल)।",
     "fr": "Erreur de rotation après 60 itérations : 0.6 degré pour 30 et 90 degrés (succès), 179.5 degrés pour 150 degrés (échec)."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "poc_stockpile_volume",
@@ -780,7 +785,8 @@
     "de": "Volumenfehler +17.20 % -> +0.05 % (wahre Basis; Sollvolumen in geschlossener Form 3572.6089 m³).",
     "hi": "volume error +17.20 % -> +0.05 % (असली base; ground truth volume closed form से 3572.6089 m³)।",
     "fr": "L'erreur sur la quantité en stock passe de +17.20 % à +0.05 % (base réelle ; la vérité terrain du volume est la forme fermée 3572.6089 m³)."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "poc_ct_fidelity",
@@ -816,7 +822,8 @@
     "de": "FBP mit 12 Projektionen (RMSE 0.2576) unterliegt sogar einem leeren Bild (0.2420). Eine Massenprüfung fand -3.34 % Verlust, korrigiert auf -0.0099 %.",
     "hi": "12 projections वाला FBP (RMSE 0.2576) खाली image (0.2420) से भी हारता है। mass check ने -3.34 % की कमी पकड़ी, जिसे -0.0099 % तक ठीक किया गया।",
     "fr": "La FBP à 12 projections a une RMSE de 0.2576, pire même que l'image vide (0.2420). Une vérification de la masse a révélé une perte de −3.34 %, corrigée à −0.0099 %."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "poc_ct_void_morphology",
@@ -852,7 +859,8 @@
     "de": "Porenanteil 2.46 % zu 2.63 %, aber der Median des Abstands zur Grenzfläche beträgt 60.0 µm zu 10.0 µm.",
     "hi": "void fraction 2.46 % बनाम 2.63 %, फिर भी interface से दूरी का median 60.0 µm बनाम 10.0 µm।",
     "fr": "Le taux de vides est de 2.46 % contre 2.63 %, mais la médiane de la distance à l'interface est de 60.0 µm contre 10.0 µm."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "poc_interferometry_step",
@@ -888,7 +896,8 @@
     "de": "Bias unter 2.4 nm bei 1 % Rauschen (Stufen 50-500 nm). Phasenschieben springt bei 0.153 µm um λ/2.",
     "hi": "1 % noise पर bias 2.4 nm के भीतर (step 50-500 nm)। phase shifting 0.153 µm पर λ/2 कूदता है।",
     "fr": "Biais inférieur à 2.4 nm pour un bruit de 1 % (marches de 50 à 500 nm). La méthode de décalage de phase saute de λ/2 à 0.153 µm."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "poc_polarization_specular",
@@ -924,7 +933,8 @@
     "de": "Der Fehler des diffusen Anteils folgt der geschlossenen Form R_p·E und ist beim Brewster-Winkel 56.31 Grad gleich 0.",
     "hi": "diffuse घटक का error closed form R_p·E से मेल खाता है और Brewster angle 56.31 degree पर 0 होता है।",
     "fr": "L'erreur de la composante diffuse coïncide avec la forme fermée R_p·E et vaut 0 à l'angle de Brewster de 56.31 degrés."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "poc_photoelasticity",
@@ -960,7 +970,8 @@
     "de": "Streifenordnung in der Mitte 2.38, wie die geschlossene Form sagt. Das Polariskop des op stimmt mit dem Lehrbuch auf 2.2e-16 überein.",
     "hi": "केंद्र का fringe order 2.38 (closed form के अनुसार)। op का polariscope textbook सूत्र से अधिकतम 2.2e-16 अलग।",
     "fr": "L'ordre de frange au centre est de 2.38 (conforme à la forme fermée). Le système polarimétrique de l'op s'écarte au plus de 2.2e-16 de la formule du manuel."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "poc_thermography_ndt",
@@ -996,7 +1007,8 @@
     "de": "Ein 0.5 mm tiefer, 2 mm breiter Defekt: +612 % mit 25 s Anpassungsfenster, -9 % mit 4 s.",
     "hi": "0.5 mm गहरा, 2 mm चौड़ा defect: 25 s fitting window पर +612 %, 4 s पर -9 %।",
     "fr": "Un défaut de 0.5 mm de profondeur et de 2 mm de diamètre donne +612 % avec une fenêtre temporelle d'ajustement de 25 s, et −9 % avec une fenêtre ramenée à 4 s."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "poc_motion_magnification",
@@ -1032,7 +1044,8 @@
     "de": "Wahre Amplitude 0.1000 px; gemessen roh 0.10012, nach Verstärkung 0.10013 px. Sie hilft dem Auge, nicht der Messung.",
     "hi": "असली amplitude 0.1000 px; raw से 0.10012, magnification के बाद 0.10013 px। magnification देखने में मदद करता है, measurement नहीं सुधारता।",
     "fr": "Pour une amplitude réelle de 0.1000 px, on mesure 0.10012 sur la vidéo brute et 0.10013 px après amplification. L'amplification est un outil de visualisation et n'améliore pas la mesure."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "poc_table_tennis_bounce",
@@ -1068,7 +1081,8 @@
     "de": "Aus dem Video gelesene Sprunghöhe 23.0 cm (Ground Truth 23.0 cm).",
     "hi": "video से पढ़ी उछाल की ऊँचाई 23.0 cm (ground truth 23.0 cm)।",
     "fr": "Hauteur de rebond lue sur la vidéo : 23.0 cm (vérité terrain 23.0 cm)."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "poc_compound_eye",
@@ -1104,7 +1118,8 @@
     "de": "SNR-Gewinn 2.25 bei N=5 (√5 = 2.24) und 5.33 bei N=49 (√49 = 7.00).",
     "hi": "SNR gain N=5 पर 2.25 (√5 = 2.24), N=49 पर 5.33 (√49 = 7.00)।",
     "fr": "Le gain de SNR est de 2.25 pour N=5 (√5 = 2.24) et de 5.33 pour N=49 (√49 = 7.00)."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "poc_pegsim_insertion",
@@ -1140,7 +1155,8 @@
     "de": "7 Servoschritte verringern den wahren Versatz von 2.24 auf 0.03 mm; korrigiertes Einsetzen gelingt 12 / 12.",
     "hi": "7 servo steps में असली offset 2.24 -> 0.03 mm; correction के साथ insertion 12 / 12 सफल।",
     "fr": "Après 7 itérations d'asservissement, le décalage réel passe de 2.24 à 0.03 mm. L'insertion avec correction réussit 12 fois sur 12."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "poc_air_hockey_intercept",
@@ -1176,7 +1192,8 @@
     "de": "Das 95-%-Band des Schnittpunkts schrumpft von 145 mm bei N = 3 Frames auf 7 mm bei N = 16.",
     "hi": "crossing point का 95 % band N = 3 frames पर 145 mm से N = 16 पर 7 mm।",
     "fr": "La bande à 95 % du point d'intersection passe de 145 mm pour N = 3 images à 7 mm pour N = 16 images."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "poc_tacsim_elastic_membrane",
@@ -1212,7 +1229,8 @@
     "de": "Gegenüber der geschlossenen Hertz-Form: Kontaktradius 0.05-0.26 %, Kraft 0.14-0.79 % (0.02-0.12 N).",
     "hi": "Hertz closed form के सापेक्ष: contact radius error 0.05-0.26 %, force error 0.14-0.79 % (0.02-0.12 N)।",
     "fr": "Par rapport à la forme fermée de Hertz : erreur sur le rayon de contact de 0.05 à 0.26 %, erreur sur la charge de 0.14 à 0.79 % (0.02 à 0.12 N)."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "poc_table_tennis_spin",
@@ -1248,7 +1266,8 @@
     "de": "Aufprall bei x = 0.49 / 0.75 / 1.12 m. Aus der Kurve gelesener Spin sagt den Aufprall aller 4 Bälle auf 2 cm genau voraus.",
     "hi": "landing x = 0.49 / 0.75 / 1.12 m। curve से पढ़े spin से अनुमानित landing point चारों 4 balls में ground truth से 2 cm के भीतर।",
     "fr": "Points de chute x = 0.49 / 0.75 / 1.12 m. Les points de chute anticipés à partir de la rotation lue sur la courbure de la trajectoire sont à moins de 2 cm de la vérité terrain pour les 4 balles."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "poc_table_tennis_rally_loop",
@@ -1284,7 +1303,8 @@
     "de": "Er landet 10.2 cm zu kurz; die Vorhersage erster Ordnung vor dem Schlag: 2.06 × 5 cm = 10.3 cm.",
     "hi": "target से 10.2 cm पहले गिरती है; shot से पहले first-order अनुमान 2.06 × 5 cm = 10.3 cm।",
     "fr": "La balle tombe 10.2 cm avant la cible. La prédiction au premier ordre avant la frappe est 2.06 × 5 cm = 10.3 cm."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "poc_driving_traffic",
@@ -1320,7 +1340,8 @@
     "de": "Erkannt bei t = 7.30 s (0.133 s Verzögerung), Halt 7.09 m vor dem Weg des Kindes.",
     "hi": "t = 7.30 s पर detect (ground truth से 0.133 s देर), बच्चे के रास्ते से 7.09 m पहले रुकती है।",
     "fr": "Détection à t = 7.30 s pour une vérité terrain (retard de 0.133 s), arrêt à 7.09 m avant la trajectoire de l'enfant."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "poc_driving_crossing",
@@ -1356,7 +1377,8 @@
     "de": "240 regeltreue Fahrer: 0 Verstöße, 0 auf dem Gleis bei Zugankunft. Einfahren während des Alarms: 157 Verstöße, 23 davon auf dem Gleis.",
     "hi": "नियम मानने वाले 240 drivers: 0 violations, train आने पर track पर 0। alarm में घुसने वाले version में 157 violations, जिनमें 23 track पर।",
     "fr": "240 conducteurs respectant la règle : 0 infraction, 0 sur la voie à l'arrivée du train. Dans la version où l'on entre pendant l'alarme, 157 conducteurs commettent une infraction, dont 23 sur la voie."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "poc_driving_pass",
@@ -1392,7 +1414,8 @@
     "de": "Ein Auto 29 m vor dem Spiegel wirkt nach Bildgröße 139 m entfernt (geschlossene Form, vertikal: 140 m).",
     "hi": "mirror से 29 m दूर की car image size से 139 m दूर पढ़ी जाती है (closed form vertical reading 140 m)।",
     "fr": "Un véhicule situé à 29 m du miroir paraît, d'après la taille de son image, à 139 m (lecture verticale en forme fermée : 140 m)."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "poc_ttc_rss",
@@ -1428,7 +1451,8 @@
     "de": "Bremsen, als RSS bei t = 6.0 s Gefahr meldet; Halt 10.25 m davor.",
     "hi": "RSS के danger बताने पर t = 6.0 s पर braking, 10.25 m पहले रुकती है।",
     "fr": "Freinage à t = 6.0 s, lorsque RSS signale un danger, avec un arrêt 10.25 m avant l'obstacle."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "poc_eye_to_brain",
@@ -1464,7 +1488,8 @@
     "de": "Korrelation von gereizter Säule und Antwortschwerpunkt: Konnektom -0.92, gradtreu gemischt +0.01.",
     "hi": "stimulated column और response centroid का correlation: connectome -0.92, degree-preserving shuffle +0.01।",
     "fr": "Corrélation entre la position de la colonne stimulée et le centroïde de la réponse : connectome −0.92, permutation conservant les degrés +0.01."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "poc_malecns_activity_wave",
@@ -1500,7 +1525,8 @@
     "de": "In der echten Verdrahtung wächst der mittlere Abstand der Aktivität in 17 Schritten von 88 auf 230 µm; neu verdrahtet streut er in 3 Schritten auf 300 µm.",
     "hi": "असली wiring में activity की औसत दूरी 17 steps में 88 -> 230 µm बढ़ती है; rewired में 3 steps में 300 µm तक बिखर जाती है।",
     "fr": "Dans le câblage réel, la distance moyenne d'activité s'étend de 88 → 230 µm en 17 pas ; avec le câblage reconnecté, elle se disperse à 300 µm en 3 pas."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "poc_microns_brain_wave",
@@ -1536,7 +1562,8 @@
     "de": "Korrelation mit der Messung: echte Verdrahtung 0.085, gradtreu gemischt 0.048.",
     "hi": "measurement से correlation: असली wiring 0.085, degree-preserving shuffle 0.048।",
     "fr": "Corrélation avec la mesure : câblage réel 0.085, permutation conservant les degrés 0.048."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "evis_stereo_depth",
@@ -1575,7 +1602,8 @@
     "de": "Fehler der Bohnenentfernung: Median 0.66 %, max. 1.91 % (229 / 241 Frames lesbar).",
     "hi": "bean तक दूरी का error: median 0.66 %, max 1.91 % (229 / 241 frames पढ़ने योग्य)।",
     "fr": "Erreur sur la distance au haricot : médiane 0.66 %, maximum 1.91 % (229 / 241 images lisibles)."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "evis_bean_track",
@@ -1614,7 +1642,8 @@
     "de": "In allen 163 sichtbaren Frames erkannt (163 / 163); Schwerpunktfehler gegenüber der Wahrheit im Median 0.10 px.",
     "hi": "दिखने वाले सभी 163 frames में detect (163 / 163); centroid error ground truth से median 0.10 px।",
     "fr": "Détection sur la totalité des 163 images où il est visible (163 / 163) ; erreur du centroïde, médiane de 0.10 px par rapport à la vérité terrain."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "organ_volume",
@@ -1652,7 +1681,8 @@
     "de": "6 Organe; Volumendifferenz ≤ 0.191 %; χ = 2 und 0 Randkanten.",
     "hi": "6 अंग; आयतन अंतर ≤ 0.191%; χ = 2 और सीमा किनारे 0।",
     "fr": "6 organes ; écart de volume ≤ 0.191 % ; χ = 2 et 0 arête de bord."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "interactive_anim3d_viewer",
@@ -1689,7 +1719,8 @@
     "de": "",
     "hi": "",
     "fr": ""
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "particle_dissolution",
@@ -1727,7 +1758,8 @@
     "de": "Numerische ODE gegen Kubikwurzelgesetz: < 1e-12. Ab Radius 3.0 mm liegt der Bildfehler 0.00058 unter der Grenze 0.0616. Aus Bildkurven gemessenes Zeitverhältnis: 0.5008.",
     "hi": "संख्यात्मक ODE और घनमूल नियम का अंतर < 1e-12 है। 3.0 mm या अधिक त्रिज्या पर चित्र त्रुटि 0.00058, सीमा 0.0616 से कम है। चित्र वक्र से मापा समय अनुपात 0.5008 है।",
     "fr": "ODE numérique contre loi de racine cubique : < 1e-12. Au-dessus d'un rayon de 3.0 mm, l'erreur d'image 0.00058 reste sous la borne 0.0616. Rapport temporel mesuré sur les courbes d'image : 0.5008."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "laser_diffraction",
@@ -1765,7 +1797,8 @@
     "de": "1st-dark-ring difference from 1.22 λ/d: 0.0000587 rad. D50 errors from signals synthesized on a separate fine grid: 4.22% unimodal and 3.79% bimodal, below the 5.25% bound.",
     "hi": "1st-dark-ring difference from 1.22 λ/d: 0.0000587 rad. D50 errors from signals synthesized on a separate fine grid: 4.22% unimodal and 3.79% bimodal, below the 5.25% bound.",
     "fr": "1st-dark-ring difference from 1.22 λ/d: 0.0000587 rad. D50 errors from signals synthesized on a separate fine grid: 4.22% unimodal and 3.79% bimodal, below the 5.25% bound."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "tablet_inspection",
@@ -1803,7 +1836,8 @@
     "de": "Foreign-particle position error 0.292 px; measured and normal-approximation 90% detection areas are both 3 px² = 0.0192 mm²; CIEDE2000 direct-formula difference < 1e-12; 5 separated blobs.",
     "hi": "Foreign-particle position error 0.292 px; measured and normal-approximation 90% detection areas are both 3 px² = 0.0192 mm²; CIEDE2000 direct-formula difference < 1e-12; 5 separated blobs.",
     "fr": "Foreign-particle position error 0.292 px; measured and normal-approximation 90% detection areas are both 3 px² = 0.0192 mm²; CIEDE2000 direct-formula difference < 1e-12; 5 separated blobs."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "satellite_gsd",
@@ -1841,7 +1875,8 @@
     "de": "Bei 400 km, 5-µm-Pixeln und 8 m Brennweite beträgt die GSD 0.250 m. Bei 550 nm und 2.4 m Öffnung beträgt der Rayleigh-Bodenradius 0.112 m. Die Atmosphäre bleibt in der Grenzzeile ausdrücklich unberechnet.",
     "hi": "400 km ऊँचाई, 5 µm pixels और 8 m focal length पर GSD 0.250 m है। 550 nm और 2.4 m aperture पर Rayleigh ground radius 0.112 m है। वातावरण को सीमा-पंक्ति में स्पष्ट रूप से अनगणित रखा गया है।",
     "fr": "À 400 km, avec des pixels de 5 µm et une focale de 8 m, la GSD vaut 0.250 m. À 550 nm avec une ouverture de 2.4 m, le rayon de Rayleigh au sol vaut 0.112 m. L'atmosphère reste explicitement non calculée dans la ligne de limite."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "ship_stability",
@@ -1879,7 +1914,8 @@
     "de": "Kastenfehler 2.26e-16; Gewichtsfehler 3.58e-16; GZ-Steigung gegen GM 0.123 %. Mit hohem G ist GM = -0.350 m.",
     "hi": "डिब्बाकार त्रुटि 2.26e-16; भार त्रुटि 3.58e-16; GZ ढाल और GM में अंतर 0.123%। ऊँचे G पर GM = -0.350 m।",
     "fr": "Erreur du caisson 2.26e-16 ; erreur de poids 3.58e-16 ; écart pente GZ–GM 0.123 %. Avec G haut, GM = -0.350 m."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "bridge_dic",
@@ -1917,7 +1953,8 @@
     "de": "DIC gegen geschlossene Form: RMS 0.0823 mm bei einer aus Nullrausch-Bias und Rauschversuchen gebildeten Grenze von 0.0927 mm. Das Maximum liegt im mittleren Frame; die Rauschsteigung ist 1.012.",
     "hi": "DIC बनाम closed form RMS 0.0823 mm है, zero-noise bias और noisy trials से बनी सीमा 0.0927 mm। peak मध्य frame पर है और noise slope 1.012 है।",
     "fr": "RMS DIC–forme fermée : 0.0823 mm pour un seuil de 0.0927 mm issu du biais sans bruit et d'essais bruités. Le pic est sur l'image centrale et la pente du bruit vaut 1.012."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "rail_light_section",
@@ -1955,7 +1992,8 @@
     "de": "From a noisy subpixel laser line: section RMS 0.699 mm, shape-free wear error 0.0577 mm and profile-measured gauge error 0.346 mm. The triangulation op and independent closed form agree to < 1e-12 mm.",
     "hi": "From a noisy subpixel laser line: section RMS 0.699 mm, shape-free wear error 0.0577 mm and profile-measured gauge error 0.346 mm. The triangulation op and independent closed form agree to < 1e-12 mm.",
     "fr": "From a noisy subpixel laser line: section RMS 0.699 mm, shape-free wear error 0.0577 mm and profile-measured gauge error 0.346 mm. The triangulation op and independent closed form agree to < 1e-12 mm."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "salt_xrd_anim3d",
@@ -1993,7 +2031,8 @@
     "de": "",
     "hi": "",
     "fr": ""
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "gauss_bonnet",
@@ -2031,7 +2070,8 @@
     "de": "In 17 geprüften Zeilen unterscheiden sich Σ K / 2π und χ um weniger als 1e-12; nur die Schale mit Rand liegt um 24.0 × 2π daneben und stimmt, sobald der Randterm hinzukommt.",
     "hi": "17 जाँची गई पंक्तियों में Σ K / 2π और χ का अंतर 1e-12 से कम; केवल सीमा वाला कटोरा 24.0 × 2π से चूकता है, और सीमा-पद जोड़ते ही मेल खाता है।",
     "fr": "Sur 17 lignes vérifiées, Σ K / 2π et χ diffèrent de moins de 1e-12 ; seul le bol à bord manque de 24.0 × 2π, et coïncide dès qu'on ajoute le terme de bord."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "ultrasound_bmode",
@@ -2069,7 +2109,8 @@
     "de": "Messgitter mit 224 mal 768 Punkten und über 150 Streuern; die Tiefenverschiebung wird bei 1540 gegenüber 1480 m/s im Bild gemessen.",
     "hi": "224×768 मापन ग्रिड और 150 से अधिक प्रकीर्णक; 1540 और 1480 m/s की छवियों से गहराई का खिसकाव मापा जाता है।",
     "fr": "Grille de mesure de 224 par 768 points et plus de 150 diffuseurs ; le décalage en profondeur est mesuré entre 1540 et 1480 m/s."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "oct_retina",
@@ -2107,7 +2148,8 @@
     "de": "Bei 45/70 nm Bandbreite weicht die FWHM um 0.35/0.17 µm von der geschlossenen Form ab. Der maximale Dickenfehler beträgt 8.66 µm, der Foveafehler 0.38 µm; endliche Pixel senken die Empfindlichkeit bei 600 µm auf 0.798.",
     "hi": "45/70 nm बैंडविड्थ पर FWHM बंद रूप से 0.35/0.17 µm अलग है। कुल मोटाई की अधिकतम त्रुटि 8.66 µm, फोवियल त्रुटि 0.38 µm और सीमित पिक्सेल के कारण 600 µm पर संवेदनशीलता 0.798 है।",
     "fr": "Pour 45/70 nm de bande, la FWHM diffère de la forme fermée de 0.35/0.17 µm. L’erreur maximale d’épaisseur vaut 8.66 µm, celle de la fovéa 0.38 µm ; les pixels finis réduisent la sensibilité à 600 µm à 0.798."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "pulseox",
@@ -2145,7 +2187,8 @@
     "de": "Maximale R-Abweichung 0.00068; maximaler SpO₂-Fehler 0.034 %. Bei 10 % COHb liest das Modell wahre 90.0 % als 91.0 %.",
     "hi": "R का अधिकतम अंतर 0.00068 और SpO₂ की अधिकतम त्रुटि 0.034%। 10% COHb पर मॉडल सही 90.0% को 91.0% पढ़ता है।",
     "fr": "Écart maximal de R : 0.00068 ; erreur maximale de SpO₂ : 0.034 %. Avec 10 % de COHb, le modèle lit 91.0 % au lieu de 90.0 %."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "poc_star_tracker",
@@ -2183,7 +2226,8 @@
     "de": "Against the full 196-star catalogue: 16 genuine stars, 0 mismatches, 2/2 false points rejected, 0.0046-degree attitude error and 0.1406 degree per 1 pixel; Kabsch vs direct SVD differs by less than 1e-12.",
     "hi": "Against the full 196-star catalogue: 16 genuine stars, 0 mismatches, 2/2 false points rejected, 0.0046-degree attitude error and 0.1406 degree per 1 pixel; Kabsch vs direct SVD differs by less than 1e-12.",
     "fr": "Against the full 196-star catalogue: 16 genuine stars, 0 mismatches, 2/2 false points rejected, 0.0046-degree attitude error and 0.1406 degree per 1 pixel; Kabsch vs direct SVD differs by less than 1e-12."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "venue_shadow",
@@ -2221,7 +2265,8 @@
     "de": "Die 2 Sonnenpositionswege unterscheiden sich um < 1e-12°; relative Fehler von Länge und Fläche des Schattens einer 20-m-Box sind < 1e-12; der Mittagsschatten bleibt unter der Höchstpunktgrenze.",
     "hi": "सूर्य-स्थिति के 2 मार्गों में अंतर < 1e-12° है; 20 m डिब्बे की छाया की लंबाई और क्षेत्रफल की सापेक्ष त्रुटियाँ < 1e-12 हैं; दोपहर की छाया उच्चतम-बिंदु सीमा में है।",
     "fr": "Les 2 calculs de position solaire diffèrent de < 1e-12°; les erreurs relatives de longueur et d'aire de l'ombre d'une boîte de 20 m sont < 1e-12; l'ombre de midi reste sous la borne du point culminant."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "kelvin_wake",
@@ -2259,7 +2304,8 @@
     "de": "Auf demselben physikalischen Gitter liegen die gemessenen Halbwinkel bei 18.10–20.25 deg; der maximale Fehler zu arcsin(1/3) beträgt 1.37 deg, die Streuung über drei Geschwindigkeiten 2.15 deg. Der maximale Wellenlängenfehler ist 0.50 m; das Verhältnis bei 12 m/s zu 4 m/s beträgt 9.05.",
     "hi": "एक ही वास्तविक grid पर मापा अर्ध-कोण 18.10–20.25 deg है; arcsin(1/3) से अधिकतम अंतर 1.37 deg और तीन गतियों का फैलाव 2.15 deg है। अधिकतम wavelength error 0.50 m है; 12 m/s और 4 m/s का wavelength ratio 9.05 है।",
     "fr": "Sur la même grille physique, les demi-angles mesurés vont de 18.10 à 20.25 deg; l'écart maximal à arcsin(1/3) vaut 1.37 deg et la dispersion entre trois vitesses 2.15 deg. L'erreur maximale de longueur d'onde est de 0.50 m; le rapport entre 12 m/s et 4 m/s vaut 9.05."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "catenary_wear",
@@ -2297,7 +2343,8 @@
     "de": "From 36 rows rendered by subpixel ray-section intersections, normal-based reflection, pixel integration, PSF and noise: maximum band-width error 0.0469 mm, remaining-height error 0.0068 mm and width difference with versus without stagger 0.0436 mm. Rain, dirt, vibration and oblique viewing remain an explicit uncomputed limit.",
     "hi": "From 36 rows rendered by subpixel ray-section intersections, normal-based reflection, pixel integration, PSF and noise: maximum band-width error 0.0469 mm, remaining-height error 0.0068 mm and width difference with versus without stagger 0.0436 mm. Rain, dirt, vibration and oblique viewing remain an explicit uncomputed limit.",
     "fr": "From 36 rows rendered by subpixel ray-section intersections, normal-based reflection, pixel integration, PSF and noise: maximum band-width error 0.0469 mm, remaining-height error 0.0068 mm and width difference with versus without stagger 0.0436 mm. Rain, dirt, vibration and oblique viewing remain an explicit uncomputed limit."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "hypercentric_lens",
@@ -2335,7 +2382,8 @@
     "de": "Entrance-pupil positions from paraxial_trace and ABCD differ by less than 1e-12 mm. The side band measured in noisy synthetic images agrees with the closed form within 0.180 px; the telecentric measurement is a 0.900 px noise floor. Depth of field and distortion are shown as uncomputed limits.",
     "hi": "Entrance-pupil positions from paraxial_trace and ABCD differ by less than 1e-12 mm. The side band measured in noisy synthetic images agrees with the closed form within 0.180 px; the telecentric measurement is a 0.900 px noise floor. Depth of field and distortion are shown as uncomputed limits.",
     "fr": "Entrance-pupil positions from paraxial_trace and ABCD differ by less than 1e-12 mm. The side band measured in noisy synthetic images agrees with the closed form within 0.180 px; the telecentric measurement is a 0.900 px noise floor. Depth of field and distortion are shown as uncomputed limits."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "borescope",
@@ -2373,7 +2421,8 @@
     "de": "Maximum sequential-trace versus ABCD-op difference is 1.33e-15; invariant residual is 3.47e-18. Transmission is stage-invariant; the 401×401 ray grid differs from the closed aperture area by 0.0030. Reconstructed-image and jinc-approximation 50% periods are 61.64 / 58.43 µm.",
     "hi": "Maximum sequential-trace versus ABCD-op difference is 1.33e-15; invariant residual is 3.47e-18. Transmission is stage-invariant; the 401×401 ray grid differs from the closed aperture area by 0.0030. Reconstructed-image and jinc-approximation 50% periods are 61.64 / 58.43 µm.",
     "fr": "Maximum sequential-trace versus ABCD-op difference is 1.33e-15; invariant residual is 3.47e-18. Transmission is stage-invariant; the 401×401 ray grid differs from the closed aperture area by 0.0030. Reconstructed-image and jinc-approximation 50% periods are 61.64 / 58.43 µm."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "tunnel_crack",
@@ -2411,7 +2460,8 @@
     "de": "Bei 0.10 mm/Pixel werden 99.1 % der wahren Risslänge erfasst. Der Breitenfehler mit lokalem Hintergrund beträgt 0.023 mm bei einem Kriterium von 0.038 mm. Messung und Schätzung für 90 % liegen bei 0.25 mm/Pixel, das Vergleichskriterium bei 0.029 mm. Ein 24.31 mm langer Fugen-Fehlalarm bleibt sichtbar.",
     "hi": "0.10 mm/pixel पर सही दरार लंबाई का 99.1% मिलता है। स्थानीय पृष्ठभूमि से चौड़ाई त्रुटि 0.023 mm है और मानदंड 0.038 mm है। 90% प्राप्ति का माप और अनुमान दोनों 0.25 mm/pixel हैं, तुलना मानदंड 0.029 mm है। जोड़ की 24.31 mm गलत पहचान भी दिखती है।",
     "fr": "À 0.10 mm/pixel, 99.1 % de la longueur vraie est retrouvée. L'erreur de largeur sur fond local vaut 0.023 mm pour un critère de 0.038 mm. La mesure et l'estimation à 90 % valent toutes deux 0.25 mm/pixel, avec un critère de comparaison de 0.029 mm. Un faux positif de joint de 24.31 mm reste visible."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "shack-hartmann",
@@ -2449,7 +2499,8 @@
     "de": "Wavefront errors with 6 / 8 / 12 modes are 0.0437 / 0.0126 / 0.0132 waves; the noise allowance is 0.0146 waves. The photon-error log-log slope is ?0.656, and the diffraction peak leaves the fixed window from 2.94 waves.",
     "hi": "Wavefront errors with 6 / 8 / 12 modes are 0.0437 / 0.0126 / 0.0132 waves; the noise allowance is 0.0146 waves. The photon-error log-log slope is ?0.656, and the diffraction peak leaves the fixed window from 2.94 waves.",
     "fr": "Wavefront errors with 6 / 8 / 12 modes are 0.0437 / 0.0126 / 0.0132 waves; the noise allowance is 0.0146 waves. The photon-error log-log slope is ?0.656, and the diffraction peak leaves the fixed window from 2.94 waves."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "photoelastic",
@@ -2487,7 +2538,8 @@
     "de": "Across 3 loads, multiwavelength-phase force error reaches 0.11%, horizontal-diameter dark-fringe error 0.60%, and the 2 routes differ by up to 0.71%. Images include 1% read noise, shot noise, and 8-bit quantization.",
     "hi": "Across 3 loads, multiwavelength-phase force error reaches 0.11%, horizontal-diameter dark-fringe error 0.60%, and the 2 routes differ by up to 0.71%. Images include 1% read noise, shot noise, and 8-bit quantization.",
     "fr": "Across 3 loads, multiwavelength-phase force error reaches 0.11%, horizontal-diameter dark-fringe error 0.60%, and the 2 routes differ by up to 0.71%. Images include 1% read noise, shot noise, and 8-bit quantization."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "insar_subsidence",
@@ -2525,7 +2577,8 @@
     "de": "Map RMS 1.53 mm and centre error 1.02 mm; stronger atmospheric delay adds 3.70 mm RMS.",
     "hi": "Map RMS 1.53 mm and centre error 1.02 mm; stronger atmospheric delay adds 3.70 mm RMS.",
     "fr": "Map RMS 1.53 mm and centre error 1.02 mm; stronger atmospheric delay adds 3.70 mm RMS."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "multibeam_bathymetry",
@@ -2563,7 +2616,8 @@
     "de": "Independent layered inversion gives 0.069 m RMS against a 0.202 m combined 3σ criterion. The outer-beam two-term approximation residual is 2.76% of bend RMS, within its 25% criterion. The RK4 ray's Snell-invariant residual is 2.91e-16.",
     "hi": "Independent layered inversion gives 0.069 m RMS against a 0.202 m combined 3σ criterion. The outer-beam two-term approximation residual is 2.76% of bend RMS, within its 25% criterion. The RK4 ray's Snell-invariant residual is 2.91e-16.",
     "fr": "Independent layered inversion gives 0.069 m RMS against a 0.202 m combined 3σ criterion. The outer-beam two-term approximation residual is 2.76% of bend RMS, within its 25% criterion. The RK4 ray's Snell-invariant residual is 2.91e-16."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "thermo_delamination",
@@ -2601,7 +2655,8 @@
     "de": "Die Differenz zur geschlossenen Lösung beträgt 0.217 %, der Mittelpunktfehler 6.92 mm, der Durchmesserfehler 4.70 mm und der Tiefenfehler 0.960 mm. 3 Defekte werden erkannt, der tiefste 1 nicht.",
     "hi": "परिमित-अंतर और बंद रूप में 0.217% अंतर है; केंद्र त्रुटि 6.92 mm, व्यास त्रुटि 4.70 mm और गहराई त्रुटि 0.960 mm है। 3 दोष मिलते हैं और सबसे गहरा 1 नहीं मिलता।",
     "fr": "L'écart à la forme fermée vaut 0.217 %, l'erreur de centre 6.92 mm, de diamètre 4.70 mm et de profondeur 0.960 mm. 3 défauts sont détectés, le plus profond 1 ne l'est pas."
-   }
+   },
+   "youtube_url": ""
   },
   {
    "id": "poc_barcode_1d",
@@ -2638,7 +2693,8 @@
     "hi": "Over the 384 images past the onset of damage, the strict decoder that checks run structure misreads 7.3 %, while the lenient decoder that always returns nine digits misreads 46.1 % — and has the higher success rate (47.7 % versus 40.1 %). The tilt cliff is pure geometry (predicted 15.95 degrees) and lands between 15 and 16 degrees.",
     "fr": "Over the 384 images past the onset of damage, the strict decoder that checks run structure misreads 7.3 %, while the lenient decoder that always returns nine digits misreads 46.1 % — and has the higher success rate (47.7 % versus 40.1 %). The tilt cliff is pure geometry (predicted 15.95 degrees) and lands between 15 and 16 degrees."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_bearing_diagnosis",
@@ -2675,7 +2731,8 @@
     "hi": "An impulse train synthesised at the closed-form defect frequency (BPFO 104.556 Hz), sunk into noise, with detection rates of the raw spectrum and the envelope spectrum side by side. The worst SNR at which 10 of 10 seeds still detect is -0.9 dB for the raw spectrum and -18.4 dB for the envelope, a 17.5 dB gap.",
     "fr": "An impulse train synthesised at the closed-form defect frequency (BPFO 104.556 Hz), sunk into noise, with detection rates of the raw spectrum and the envelope spectrum side by side. The worst SNR at which 10 of 10 seeds still detect is -0.9 dB for the raw spectrum and -18.4 dB for the envelope, a 17.5 dB gap."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_bilateral_asymmetry",
@@ -2712,7 +2769,8 @@
     "hi": "Even a perfectly symmetric specimen never scores 0: the floor drops from 1.33 mm (point-to-point) to 0.030 mm (point-to-plane) to 0.012 mm (neighbourhood smoothing). The residual-minimising plane is dragged 2.92 mm / 1.72 degrees by a 6.33 mm bulge, and 46 % of the asymmetry disappears.",
     "fr": "Even a perfectly symmetric specimen never scores 0: the floor drops from 1.33 mm (point-to-point) to 0.030 mm (point-to-plane) to 0.012 mm (neighbourhood smoothing). The residual-minimising plane is dragged 2.92 mm / 1.72 degrees by a 6.33 mm bulge, and 46 % of the asymmetry disappears."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_crack_width",
@@ -2749,7 +2807,8 @@
     "hi": "Cracks from 0.05 to 2.0 mm wide in a field where 1 px = 0.20 mm, measured by thresholding-and-counting and by integrating the intensity deficit across the crack. Thresholding returns nothing at or below 0.20 mm and reports 0.200 mm for all four true widths between 0.25 and 0.40 mm.",
     "fr": "Cracks from 0.05 to 2.0 mm wide in a field where 1 px = 0.20 mm, measured by thresholding-and-counting and by integrating the intensity deficit across the crack. Thresholding returns nothing at or below 0.20 mm and reports 0.200 mm for all four true widths between 0.25 and 0.40 mm."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_dimensional_inspection",
@@ -2786,7 +2845,8 @@
     "hi": "A part defined by a signed distance function (slot width 50.50 px, 1 px = 12.5 µm), imaged through a known PSF and noise and measured by four caliper systems. Otsu's integer width (the null) has an RMS error of 0.464 px = 5.8 µm; the buried 1-D measuring implementation is biased by -0.0113 px = -0.14 µm, 41x better.",
     "fr": "A part defined by a signed distance function (slot width 50.50 px, 1 px = 12.5 µm), imaged through a known PSF and noise and measured by four caliper systems. Otsu's integer width (the null) has an RMS error of 0.464 px = 5.8 µm; the buried 1-D measuring implementation is biased by -0.0113 px = -0.14 µm, 41x better."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_fabric_defect",
@@ -2823,7 +2883,8 @@
     "hi": "Three defect classes (thread break, stain, dim patch) buried in a weave of period 8 px, with the detector's score map and per-class ROC curves side by side. The everyday recipe 'notch out the grid, remove low frequencies' pools to an AUC of 0.8113 and looks like a pass, but the dim-patch class alone scores 0.4746, worse than chance.",
     "fr": "Three defect classes (thread break, stain, dim patch) buried in a weave of period 8 px, with the detector's score map and per-class ROC curves side by side. The everyday recipe 'notch out the grid, remove low frequencies' pools to an AUC of 0.8113 and looks like a pass, but the dim-patch class alone scores 0.4746, worse than chance."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_fiber_orientation",
@@ -2860,7 +2921,8 @@
     "hi": "Orientation of 140 fibres drawn from a von Mises distribution, read with a structure tensor. For a true mean of 177.9 degrees the arithmetic mean reports 105.55 degrees (-72.33), while the doubled-angle circular mean is off by +0.17 degrees — with not one bit of the image or the measurement changed.",
     "fr": "Orientation of 140 fibres drawn from a von Mises distribution, read with a structure tensor. For a true mean of 177.9 degrees the arithmetic mean reports 105.55 degrees (-72.33), while the doubled-angle circular mean is off by +0.17 degrees — with not one bit of the image or the measurement changed."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_gear_tooth_metrology",
@@ -2897,7 +2959,8 @@
     "hi": "The null's least-squares circle has a diameter of 47.278 mm, which is neither the pitch (48), tip (52) nor root (43) circle. One missing tooth turns an eccentricity of 0.050 mm into 0.1285 mm (+157 %); the traditional method of one sample per tooth returns 0.0501 mm (+0.2 %).",
     "fr": "The null's least-squares circle has a diameter of 47.278 mm, which is neither the pitch (48), tip (52) nor root (43) circle. One missing tooth turns an eccentricity of 0.050 mm into 0.1285 mm (+157 %); the traditional method of one sample per tooth returns 0.0501 mm (+0.2 %)."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_matrix_code_reading",
@@ -2934,7 +2997,8 @@
     "hi": "The nulls sit at chance (0.526 / 0.507) while the reader scores 0.0000. Cliffs: 78 degrees of tilt, two modules of finder-pattern occlusion; run beside the condition that receives the true homography, localisation is always the stage that fails first.",
     "fr": "The nulls sit at chance (0.526 / 0.507) while the reader scores 0.0000. Cliffs: 78 degrees of tilt, two modules of finder-pattern occlusion; run beside the condition that receives the true homography, localisation is always the stage that fails first."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_moire_screen",
@@ -2971,7 +3035,8 @@
     "hi": "At a smoothing σ of 8 px the total error is +0.9 %, made of +8.3 % moire leakage cancelling -7.4 % attenuation of the real defect. At k = 0.67 the fundamental beat looks safe, yet the third harmonic lands in the defect band and the leakage reaches +202.6 % of the true value.",
     "fr": "At a smoothing σ of 8 px the total error is +0.9 %, made of +8.3 % moire leakage cancelling -7.4 % attenuation of the real defect. At k = 0.67 the fundamental beat looks safe, yet the third harmonic lands in the defect band and the leakage reaches +202.6 % of the true value."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_particle_sizing",
@@ -3008,7 +3073,8 @@
     "hi": "D10 / D50 / D90 from a synthetic scatter of particles, with merges (pulling large) and edge cuts (pulling small) counted separately. At an area fraction of 13.8 % the D50 error is +0.55 % — because 28 merges and 19 edge cuts happen to balance.",
     "fr": "D10 / D50 / D90 from a synthetic scatter of particles, with merges (pulling large) and edge cuts (pulling small) counted separately. At an area fraction of 13.8 % the D50 error is +0.55 % — because 28 merges and 19 edge cuts happen to balance."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_strain_history",
@@ -3045,7 +3111,8 @@
     "hi": "One hour of creep in 25 frames, with strain history from accumulating adjacent-frame displacements versus comparing each frame directly with the reference. At the end, cumulative errs by 61 µε and direct by 1878 µε — cumulative wins 31x and the textbook crossover in time never appears (it lives on the noise axis instead).",
     "fr": "One hour of creep in 25 frames, with strain history from accumulating adjacent-frame displacements versus comparing each frame directly with the reference. At the end, cumulative errs by 61 µε and direct by 1878 µε — cumulative wins 31x and the textbook crossover in time never appears (it lives on the noise axis instead)."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_surface_roughness",
@@ -3082,7 +3149,8 @@
     "hi": "Calling the raw rms 'Sq' overstates it 20x; removing only the plane still leaves 1.8x. At 8 µm sampling Sa is -3.5 % (pass) while Sz is -19.8 % (fail); Sz keeps growing with evaluation area and never plateaus, so there is no such thing as the true Sz.",
     "fr": "Calling the raw rms 'Sq' overstates it 20x; removing only the plane still leaves 1.8x. At 8 µm sampling Sa is -3.5 % (pass) while Sz is -19.8 % (fail); Sz keeps growing with evaluation area and never plateaus, so there is no such thing as the true Sz."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_thermal_drift_metrology",
@@ -3119,7 +3187,8 @@
     "hi": "A 40 mm square measured by a camera whose focal length, mount and principal point drift with temperature ΔT, the error split into a + b·R in image radius. At ΔT = 15 K the constant term is +224.5 ppm (the single-cause control gives +225.3 ppm).",
     "fr": "A 40 mm square measured by a camera whose focal length, mount and principal point drift with temperature ΔT, the error split into a + b·R in image radius. At ΔT = 15 K the constant term is +224.5 ppm (the single-cause control gives +225.3 ppm)."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_veiling_glare",
@@ -3156,7 +3225,8 @@
     "hi": "Raising the tail fraction from 0 to 0.20 moves MTF50 from 0.2347 to 0.2249 cyc/px (-4.2 %, still passing) while the black level goes from 0.0 to 15.7 % (failing). A ±16 px measurement window captures only 6 % of the tail's energy; a glare figure means nothing until the measurement extent is declared.",
     "fr": "Raising the tail fraction from 0 to 0.20 moves MTF50 from 0.2347 to 0.2249 cyc/px (-4.2 %, still passing) while the black level goes from 0.0 to 15.7 % (failing). A ±16 px measurement window captures only 6 % of the tail's energy; a glare figure means nothing until the measurement extent is declared."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_weld_bead_profile",
@@ -3193,7 +3263,8 @@
     "hi": "The centroid beats the null (integer argmax per column) by 9.3x, and with zero noise the log-parabola is exact to machine precision, 12 orders better than a plain parabola; at 1 % noise the two are 0.00272 versus 0.00260 mm, indistinguishable. Five spatter points break all three estimators together to 0.11 mm (40x); what matters is not refinement but which peak you pick.",
     "fr": "The centroid beats the null (integer argmax per column) by 9.3x, and with zero noise the log-parabola is exact to machine precision, 12 orders better than a plain parabola; at 1 % noise the two are 0.00272 versus 0.00260 mm, indistinguishable. Five spatter points break all three estimators together to 0.11 mm (40x); what matters is not refinement but which peak you pick."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_leak_localization",
@@ -3230,7 +3301,8 @@
     "hi": "Locating a leak in a 120 m buried main from the arrival-time difference at two sensors, with the source, sound speed, attenuation and reflections all planted as ground truth. With the true sound speed the estimate lands within 0.0107 m at 0 dB SNR (1.2x the Knapp-Carter bound of 0.0091 m); the threshold was predicted at -20.1 dB but measured at -12.5 dB, below which the error jumps to 36.0 m — the whole search window.",
     "fr": "Locating a leak in a 120 m buried main from the arrival-time difference at two sensors, with the source, sound speed, attenuation and reflections all planted as ground truth. With the true sound speed the estimate lands within 0.0107 m at 0 dB SNR (1.2x the Knapp-Carter bound of 0.0091 m); the threshold was predicted at -20.1 dB but measured at -12.5 dB, below which the error jumps to 36.0 m — the whole search window."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_machine_condition_fusion",
@@ -3267,7 +3339,8 @@
     "hi": "Fused accuracy is 100.0 % — but vibration alone is also 100.0 %: thermal and geometry add nothing. Misalignment reaches 100.0 % from any single sensor (correlations with the true severity 0.843 / 0.841 / 0.978 — three faces of one number), while thermal alone can never separate healthy, unbalance and looseness (48/48 confusions inside that trio) and dropping vibration takes them from 100.0 % to 50.0 % / 31.2 %.",
     "fr": "Fused accuracy is 100.0 % — but vibration alone is also 100.0 %: thermal and geometry add nothing. Misalignment reaches 100.0 % from any single sensor (correlations with the true severity 0.843 / 0.841 / 0.978 — three faces of one number), while thermal alone can never separate healthy, unbalance and looseness (48/48 confusions inside that trio) and dropping vibration takes them from 100.0 % to 50.0 % / 31.2 %."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_metal_grain_size",
@@ -3304,7 +3377,8 @@
     "hi": "Grains are synthesized as a 2-D Voronoi tessellation with 2-px boundaries, then etching unevenness, noise and boundary gaps are added; ASTM E112 grain size G is measured by the planimetric method (Otsu + connected components) and the lineal-intercept method (local threshold + test lines in 4 directions). The planimetric method survives noise alone (-0.02) and etching unevenness alone (-0.40) but dies under both (+3.82), and loses one G step at 7.2 % boundary gaps; the intercept method holds to 40.7 % — the predicte",
     "fr": "Grains are synthesized as a 2-D Voronoi tessellation with 2-px boundaries, then etching unevenness, noise and boundary gaps are added; ASTM E112 grain size G is measured by the planimetric method (Otsu + connected components) and the lineal-intercept method (local threshold + test lines in 4 directions). The planimetric method survives noise alone (-0.02) and etching unevenness alone (-0.40) but dies under both (+3.82), and loses one G step at 7.2 % boundary gaps; the intercept method holds to 40.7 % — the predicte"
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_recycling_sorting",
@@ -3341,7 +3415,8 @@
     "hi": "Fragments on a belt carry material, dirt, wetness, tilt and occlusion in known amounts, imaged in 64 SWIR bands. Per-fragment degradation is closed form, s(l)=g*R(l)*exp(-w*A_w(l))+(a*u(l)+c), so invariance can be predicted before measuring: the spectral angle is invariant to the multiplicative g (0.995 to 0.990 as dirt goes 0 to 0.8; 0.993 at 70 degrees of tilt), and a second derivative annihilates the linear baseline (raw SAM falls 0.995 to 0.827 under an additive baseline while the derivative stays at 0.995 at e",
     "fr": "Fragments on a belt carry material, dirt, wetness, tilt and occlusion in known amounts, imaged in 64 SWIR bands. Per-fragment degradation is closed form, s(l)=g*R(l)*exp(-w*A_w(l))+(a*u(l)+c), so invariance can be predicted before measuring: the spectral angle is invariant to the multiplicative g (0.995 to 0.990 as dirt goes 0 to 0.8; 0.993 at 70 degrees of tilt), and a second derivative annihilates the linear baseline (raw SAM falls 0.995 to 0.827 under an additive baseline while the derivative stays at 0.995 at e"
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_screw_thread_metrology",
@@ -3378,7 +3453,8 @@
     "hi": "An M6-like silhouette drawn from the ISO 68-1 basic triangle in closed form (1 px = 25 µm). An FFT of the binarised column widths reports half the true pitch, 20 px, because the two profiles are offset by P/2 and their sum is constant.",
     "fr": "An M6-like silhouette drawn from the ISO 68-1 basic triangle in closed form (1 px = 25 µm). An FFT of the binarised column widths reports half the true pitch, 20 px, because the two profiles are offset by P/2 and their sum is constant."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_solar_el_inspection",
@@ -3415,7 +3491,8 @@
     "hi": "A crystalline-silicon cell (100 fingers, 3 busbars, 70 grains) is rendered in closed form as an EL image with two electrically isolated regions (true inactive area 4.77 %), 5 cracks and 8 finger interruptions, then imaged through cos^4 vignetting and photon noise. The zero-point global threshold reports a dark-pixel fraction of 21.7 % as the inactive area, but 42 % of those pixels are fingers and busbars and 33 % are grains and vignetting; only 20 % are truly inactive.",
     "fr": "A crystalline-silicon cell (100 fingers, 3 busbars, 70 grains) is rendered in closed form as an EL image with two electrically isolated regions (true inactive area 4.77 %), 5 cracks and 8 finger interruptions, then imaged through cos^4 vignetting and photon noise. The zero-point global threshold reports a dark-pixel fraction of 21.7 % as the inactive area, but 42 % of those pixels are fingers and busbars and 33 % are grains and vignetting; only 20 % are truly inactive."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_solder_fillet_aoi",
@@ -3452,7 +3529,8 @@
     "hi": "A 1608 chip's pads and terminations carry circular-arc fillets fixed by contact angle and cross-section area; three ring lights at different elevations (red 30-40°, green 15-30°, blue 0-15° of surface tilt) are integrated over a GGX lobe to synthesise the AOI image, and joints are graded good / insufficient / bridge / tombstone. With an 18° contact angle the concave arc rises to 72° at the wall, so even the lowest ring sees only 28.8 % of the height (predicted): naively integrating the band tilts recovers 0.284 of",
     "fr": "A 1608 chip's pads and terminations carry circular-arc fillets fixed by contact angle and cross-section area; three ring lights at different elevations (red 30-40°, green 15-30°, blue 0-15° of surface tilt) are integrated over a GGX lobe to synthesise the AOI image, and joints are graded good / insufficient / bridge / tombstone. With an 18° contact angle the concave arc rises to 72° at the wall, so even the lowest ring sees only 28.8 % of the height (predicted): naively integrating the band tilts recovers 0.284 of"
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_asbuilt_wall_deviation",
@@ -3489,7 +3567,8 @@
     "hi": "A 6.0 x 4.0 x 2.7 m indoor point cloud carries known defects: wall plumb errors of 1.20-9.00 mrad, a 5.00 mrad plan-view squareness error, and a 9 mm out-of-plane bulge. The naive axis-aligned bounding box over-reports the width by 19.1 mm, and rotating the room by just 1 deg relative to the scanner axes adds 80.1 mm (611.1 mm at 10 deg) — it is measuring W cos psi + D sin psi, the room's heading, while the plane-pair distance stays at +2.24 mm regardless.",
     "fr": "A 6.0 x 4.0 x 2.7 m indoor point cloud carries known defects: wall plumb errors of 1.20-9.00 mrad, a 5.00 mrad plan-view squareness error, and a 9 mm out-of-plane bulge. The naive axis-aligned bounding box over-reports the width by 19.1 mm, and rotating the room by just 1 deg relative to the scanner axes adds 80.1 mm (611.1 mm at 10 deg) — it is measuring W cos psi + D sin psi, the room's heading, while the plane-pair distance stays at +2.24 mm regardless."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_battery_electrode_breathing",
@@ -3526,7 +3605,8 @@
     "hi": "Ground truth: anode 1.00 %, cathode 0.20 %, separator 0 %, stack 480.0 -> 482.136 um (+2.136 um = +0.4450 %). Counting binarised pixels resolves 0 of 12 layers, while a fixed-threshold crossing is also sub-pixel and lands on the answer with no noise (+0.004495) — what kills it is the control group: with zero strain, an illumination offset of +0.10 alone yields -1.07e-02, a false strain 2.4x the true one and of the opposite sign, and a gain of x1.30 halves the crossings so the measurement fails outright.",
     "fr": "Ground truth: anode 1.00 %, cathode 0.20 %, separator 0 %, stack 480.0 -> 482.136 um (+2.136 um = +0.4450 %). Counting binarised pixels resolves 0 of 12 layers, while a fixed-threshold crossing is also sub-pixel and lands on the answer with no noise (+0.004495) — what kills it is the control group: with zero strain, an illumination offset of +0.10 alone yields -1.07e-02, a false strain 2.4x the true one and of the opposite sign, and a gain of x1.30 halves the crossings so the measurement fails outright."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_battery_electrode_tortuosity",
@@ -3563,7 +3643,8 @@
     "hi": "Against the shop-floor default (Bruggeman tau = eps^-0.5) we put the real thing: the steady-state diffusion equation solved on the same volume. At eps = 0.4448 the rule gives 1.499 against a true 1.843 (-18.6 %), and sweeping eps from 0.691 to 0.168 widens the error from -8.2 % to -69.1 % (fitted exponents 1.78 and 2.70 — never 1.5).",
     "fr": "Against the shop-floor default (Bruggeman tau = eps^-0.5) we put the real thing: the steady-state diffusion equation solved on the same volume. At eps = 0.4448 the rule gives 1.499 against a true 1.843 (-18.6 %), and sweeping eps from 0.691 to 0.168 widens the error from -8.2 % to -69.1 % (fitted exponents 1.78 and 2.70 — never 1.5)."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_bump_coplanarity",
@@ -3600,7 +3681,8 @@
     "hi": "A height map of 256 Cu pillars is planted with 50 µm PV warpage, 4 µm 1-sigma pillar-to-pillar spread and six short bumps. The zero point — subtract only a least-squares plane, the JEDEC seating plane — reads the individual deviation with 8.84 µm RMS error (2.2x the real spread), raising 58 false rejects while missing one genuinely short bump.",
     "fr": "A height map of 256 Cu pillars is planted with 50 µm PV warpage, 4 µm 1-sigma pillar-to-pillar spread and six short bumps. The zero point — subtract only a least-squares plane, the JEDEC seating plane — reads the individual deviation with 8.84 µm RMS error (2.2x the real spread), raising 58 false rejects while missing one genuinely short bump."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_die_tilt_tsv_overlay",
@@ -3637,7 +3719,8 @@
     "hi": "Two stacked dies carry a 7x7 TSV lattice with a planted overlay of (+0.800, -0.450) um, +0.01500 deg of rotation and a die tilt of (1.20, 0.70) deg; a single CT volume is the whole measurement. Comparing the top-surface via openings directly misses by 2.419 um — 2.4x the +-1.0 um spec, and larger than the 0.918 um real overlay.",
     "fr": "Two stacked dies carry a 7x7 TSV lattice with a planted overlay of (+0.800, -0.450) um, +0.01500 deg of rotation and a die tilt of (1.20, 0.70) deg; a single CT volume is the whole measurement. Comparing the top-surface via openings directly misses by 2.419 um — 2.4x the +-1.0 um spec, and larger than the 0.918 um real overlay."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_multibeam_bathymetry",
@@ -3674,7 +3757,8 @@
     "hi": "The ground truth is planted here: a perfectly horizontal bottom at 50.0 m, sound speed 1520 to 1480 m/s (gradient -0.800 /s), 141 beams over +/-70 degrees, and the verdict comes from a real standard, IHO S-44 Order 1a (TVU at 50 m = 0.8201 m). The cliff was predicted twice before measuring: a rough expansion, dz = (g D^2 / 2 c0) tan^2(theta), gives 48.15 degrees, and the exact closed form (rays are circular arcs inside a constant-gradient layer) gives 48.68.",
     "fr": "The ground truth is planted here: a perfectly horizontal bottom at 50.0 m, sound speed 1520 to 1480 m/s (gradient -0.800 /s), 141 beams over +/-70 degrees, and the verdict comes from a real standard, IHO S-44 Order 1a (TVU at 50 m = 0.8201 m). The cliff was predicted twice before measuring: a rough expansion, dz = (g D^2 / 2 c0) tan^2(theta), gives 48.15 degrees, and the exact closed form (rays are circular arcs inside a constant-gradient layer) gives 48.68."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_print_registration",
@@ -3711,7 +3795,8 @@
     "hi": "Four CMYK plates carry the conventional screen angles (C 15, M 75, Y 0, K 45 degrees) at 133 lpi scanned at 1200 dpi, giving a screen pitch of 9.02 px, and each plate is displaced by a known amount. Along the lattice axes that limit is p/2 = 4.51 px and along the diagonal p/sqrt(2) = 6.38 px; beyond it the measurement folds back.",
     "fr": "Four CMYK plates carry the conventional screen angles (C 15, M 75, Y 0, K 45 degrees) at 133 lpi scanned at 1200 dpi, giving a screen pitch of 9.02 px, and each plate is displaced by a known amount. Along the lattice axes that limit is p/2 = 4.51 px and along the diagonal p/sqrt(2) = 6.38 px; beyond it the measurement folds back."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_rail_corrugation",
@@ -3748,7 +3833,8 @@
     "hi": "The null baseline, reading the versine directly as height, ranges from 0.0 % to 200.0 % of the truth depending on wavelength: one and the same 10 m chord reads lambda=10 m at +100 %, lambda=1.5 m at +50 %, lambda=30 m at -50 %, and lambda=5.0 / 2.5 / 1.0 m at -100 %. The blind spots are exact geometry: |H(lambda)| = |1 - cos(pi L / lambda)| is exactly zero at lambda = L/(2n) and doubles at lambda = L/(2n+1).",
     "fr": "The null baseline, reading the versine directly as height, ranges from 0.0 % to 200.0 % of the truth depending on wavelength: one and the same 10 m chord reads lambda=10 m at +100 %, lambda=1.5 m at +50 %, lambda=30 m at -50 %, and lambda=5.0 / 2.5 / 1.0 m at -100 %. The blind spots are exact geometry: |H(lambda)| = |1 - cos(pi L / lambda)| is exactly zero at lambda = L/(2n) and doubles at lambda = L/(2n+1)."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_real_coin_metrology",
@@ -3785,7 +3871,8 @@
     "hi": "The background does slope, 0.427 to 0.161 down the rows and 0.331 to 0.059 across the columns — and yet a plain global Otsu with hole filling and an area floor of 150 lands exactly on the true 24. The truth is fixed by three independent paths agreeing (an area plateau spanning 50 to 800, a Hough circle search with the radii stated explicitly, and Sobel plus hole filling) and then checked one-to-one, each circle falling inside exactly one component.",
     "fr": "The background does slope, 0.427 to 0.161 down the rows and 0.331 to 0.059 across the columns — and yet a plain global Otsu with hole filling and an area floor of 150 lands exactly on the true 24. The truth is fixed by three independent paths agreeing (an area plateau spanning 50 to 800, a Hough circle search with the radii stated explicitly, and Sobel plus hole filling) and then checked one-to-one, each circle falling inside exactly one component."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_real_texture_invariance",
@@ -3822,7 +3909,8 @@
     "hi": "Three real textures (brick, grass, gravel, all CC0) rotated by known angles, measuring how far the descriptor drifts from itself. The benchmark is set before measuring: the smallest distance between materials, 0.01250 between grass and gravel, is the resolution of the task, and any rotation drift beyond it means a rotated sample is further from itself than from a different material.",
     "fr": "Three real textures (brick, grass, gravel, all CC0) rotated by known angles, measuring how far the descriptor drifts from itself. The benchmark is set before measuring: the smallest distance between materials, 0.01250 between grass and gravel, is the resolution of the task, and any rotation drift beyond it means a rotated sample is further from itself than from a different material."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_web_roll_periodicity",
@@ -3859,7 +3947,8 @@
     "hi": "Reading the naive spectral maximum names a real but innocent roller: an impulse train has a comb whose harmonics are as tall as the fundamental, so the maximum grabs C/2 = 235.62 mm, and that lands on the cooling roller at 314.16 mm in the table. That error stays at 235.9 mm as the miss rate goes from 0 to 50 % — a constant error is not evidence of robustness, it is the same mistake repeated.",
     "fr": "Reading the naive spectral maximum names a real but innocent roller: an impulse train has a comb whose harmonics are as tall as the fundamental, so the maximum grabs C/2 = 235.62 mm, and that lands on the cooling roller at 314.16 mm in the table. That error stays at 235.9 mm as the miss rate goes from 0 to 50 % — a constant error is not evidence of robustness, it is the same mistake repeated."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_weld_bead_scan_angle",
@@ -3896,7 +3985,8 @@
     "hi": "A fillet-weld cross-section is built in closed form with convexity, leg lengths, throat and undercut depth varied along the weld line by known functions, then the triangulation angle is swept from 15 to 70 degrees. Height resolution improves as 1/sin(theta) while any face rising steeper than cot(theta) hides in its own shadow, so the far parent plate turns away exactly at the predicted 37.0 degrees and the far undercut starts vanishing earlier, at 20.8-34.5 degrees (the deeper the groove, the sooner).",
     "fr": "A fillet-weld cross-section is built in closed form with convexity, leg lengths, throat and undercut depth varied along the weld line by known functions, then the triangulation angle is swept from 15 to 70 degrees. Height resolution improves as 1/sin(theta) while any face rising steeper than cot(theta) hides in its own shadow, so the far parent plate turns away exactly at the predicted 37.0 degrees and the far undercut starts vanishing earlier, at 20.8-34.5 degrees (the deeper the groove, the sooner)."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_aoi_ct_traceability",
@@ -3933,7 +4023,8 @@
     "hi": "A regular array does not match one-to-one on point positions alone: all 30 pads of a 6x5 grid have degenerate distance signatures (9 distinct ones), because the grid maps onto itself and the orientation cannot be read. Fiducials with three distinct side lengths (3600/5200/6325 um) pin rotation and reflection uniquely, and the correspondence is recovered exactly under translation, rotation and re-indexing.",
     "fr": "A regular array does not match one-to-one on point positions alone: all 30 pads of a 6x5 grid have degenerate distance signatures (9 distinct ones), because the grid maps onto itself and the orientation cannot be read. Fiducials with three distinct side lengths (3600/5200/6325 um) pin rotation and reflection uniquely, and the correspondence is recovered exactly under translation, rotation and re-indexing."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_spc",
@@ -3970,7 +4061,8 @@
     "hi": "The Xbar-R chart catches a +4σ shift planted at the tail across 4 subgroups at once (n=5 constants A2/D3/D4 = 0.577/0.000/2.115, ISO 8258); CUSUM catches a +0.8σ sustained drift that Shewhart 3σ never flags, at #45 (right after the drift starts). Process capability separates \"capable\" from \"capable at the current centre\": centred on the spec midpoint Cpk = Cp = 1.307, shifted by +1 Cpk = 0.981 < Cp.",
     "fr": "The Xbar-R chart catches a +4σ shift planted at the tail across 4 subgroups at once (n=5 constants A2/D3/D4 = 0.577/0.000/2.115, ISO 8258); CUSUM catches a +0.8σ sustained drift that Shewhart 3σ never flags, at #45 (right after the drift starts). Process capability separates \"capable\" from \"capable at the current centre\": centred on the spec midpoint Cpk = Cp = 1.307, shifted by +1 Cpk = 0.981 < Cp."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_glyph_typo_detection",
@@ -4007,7 +4099,8 @@
     "hi": "Because the intended string is given as input, no 6000-way classification is needed: each cell is compared against one specified character. The threshold is not guessed but derived from the 95th percentile of the distance between the same character in different typefaces (0.058).",
     "fr": "Because the intended string is given as input, no 6000-way classification is needed: each cell is compared against one specified character. The threshold is not guessed but derived from the 95th percentile of the distance between the same character in different typefaces (0.058)."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_print_layer_inspection",
@@ -4044,7 +4137,8 @@
     "hi": "3D-printer data flows shape (mesh) → layers (slices) → path (G-code) → the layer images taken during printing. The new family printpath (11 ops, numpy + stdlib, no new types) closes that loop with the existing vocabulary (mesh / voxel / table / image2d), so the truth can be planted by hand.",
     "fr": "3D-printer data flows shape (mesh) → layers (slices) → path (G-code) → the layer images taken during printing. The new family printpath (11 ops, numpy + stdlib, no new types) closes that loop with the existing vocabulary (mesh / voxel / table / image2d), so the truth can be planted by hand."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_measurement_system_analysis",
@@ -4081,7 +4175,8 @@
     "hi": "The analysis-of-variance decomposition closes algebraically (1e-16); repeatability equals the mean of the per-cell sample variance numpy computes independently; the published worked example is reproduced to 1.5e-06 with contribution percentages 3.4/4.4/7.8/92.2 exactly. Keeping or pooling the interaction moves EV by 7.3 %, so the model actually used is reported; a negative variance component appears in 24 of 40 runs when the true component is zero and is declared, not hidden.",
     "fr": "The analysis-of-variance decomposition closes algebraically (1e-16); repeatability equals the mean of the per-cell sample variance numpy computes independently; the published worked example is reproduced to 1.5e-06 with contribution percentages 3.4/4.4/7.8/92.2 exactly. Keeping or pooling the interaction moves EV by 7.3 %, so the model actually used is reported; a negative variance component appears in 24 of 40 runs when the true component is zero and is declared, not hidden."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_allsky_cloud_cover",
@@ -4118,7 +4213,8 @@
     "hi": "The same cloud reads 0.00789 at the zenith and 0.01142 at 82 degrees (1.45x). Geometry alone errs by -5.02 %, detection alone by +37.95 %, and the naive count cancels them to +29.73 %.",
     "fr": "The same cloud reads 0.00789 at the zenith and 0.01142 at 82 degrees (1.45x). Geometry alone errs by -5.02 %, detection alone by +37.95 %, and the naive count cancels them to +29.73 %."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_cell_counting",
@@ -4155,7 +4251,8 @@
     "hi": "In the densest condition the null misses 25 of 78 cells, every one of them an under-segmentation. Sweeping the seed suppression finds a balance point where the count bias is +0.3 cells while 13.3 segmentation errors remain; report the count alone and it passes as the best setting.",
     "fr": "In the densest condition the null misses 25 of 78 cells, every one of them an under-segmentation. Sweeping the seed suppression finds a balance point where the count bias is +0.3 cells while 13.3 segmentation errors remain; report the count alone and it passes as the best setting."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_pigment_unmixing",
@@ -4192,7 +4289,8 @@
     "hi": "Splitting the visible range into 16 bands does no better than RGB (recall 0.118 versus 0.119); what won was adding near-infrared. The same detector scores an AUC of 1.000 on ultramarine, 0.630 on azurite and 0.013 on losses — averaged, all of that vanishes.",
     "fr": "Splitting the visible range into 16 bands does no better than RGB (recall 0.118 versus 0.119); what won was adding near-infrared. The same detector scores an AUC of 1.000 on ultramarine, 0.630 on azurite and 0.013 on losses — averaged, all of that vanishes."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_dtof_ranging",
@@ -4229,7 +4327,8 @@
     "hi": "With 200 photons the raw peak position errs by 11.02 mm and the gated centroid by 2.29 mm, riding the 31.83 mm/√N bound at 1.00 to 1.07x. With background the plain centroid collapses by two orders (564 mm at SBR 0.031), and the family's recommended Gaussian fit at 8.82 mm loses to a gated centroid a user can write in six lines.",
     "fr": "With 200 photons the raw peak position errs by 11.02 mm and the gated centroid by 2.29 mm, riding the 31.83 mm/√N bound at 1.00 to 1.07x. With background the plain centroid collapses by two orders (564 mm at SBR 0.031), and the family's recommended Gaussian fit at 8.82 mm loses to a gated centroid a user can write in six lines."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_document_scan",
@@ -4266,7 +4365,8 @@
     "hi": "The estimate reaches a grid RMS of 1.091 px (doing nothing: 37.376 px), but swapping in the same-named function with a different model (affine) is 32x worse and raises no exception. Shadow strength 0.45 gives a corner RMS of 6.81 px; 0.55 gives 66.06 px — a cliff.",
     "fr": "The estimate reaches a grid RMS of 1.091 px (doing nothing: 37.376 px), but swapping in the same-named function with a different model (affine) is 32x worse and raises no exception. Shadow strength 0.45 gives a corner RMS of 6.81 px; 0.55 gives 66.06 px — a cliff."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_camera_calibration",
@@ -4303,7 +4403,8 @@
     "hi": "With the board tilted 32 / 8 / 2 degrees the reprojection RMS spans 0.0688 to 0.0690 px (ratio 1.00) while the focal-length error spans 0.026 to 7.334 % (281x).",
     "fr": "With the board tilted 32 / 8 / 2 degrees the reprojection RMS spans 0.0688 to 0.0690 px (ratio 1.00) while the focal-length error spans 0.026 to 7.334 % (281x)."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_camera_shake_deblur",
@@ -4340,7 +4441,8 @@
     "hi": "Without noise the image recovers from 22.38 to 56.41 dB; at 20 dB SNR the gain is 1.82 dB. A kernel angle off by 19.4 degrees is beaten by doing nothing, and undoing rotational blur with a single kernel makes the centre of rotation worse by -49.41 dB.",
     "fr": "Without noise the image recovers from 22.38 to 56.41 dB; at 20 dB SNR the gain is 1.82 dB. A kernel angle off by 19.4 degrees is beaten by doing nothing, and undoing rotational blur with a single kernel makes the centre of rotation worse by -49.41 dB."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_mt_hidden_fault",
@@ -4377,7 +4479,8 @@
     "hi": "The 20 features (vibration, thermal, shape) of the machine-condition PoC: 48 healthy records form a Mahalanobis–Taguchi unit space, and 32 further healthy records set both thresholds — univariate max|z| and MD — at zero false alarms. global temperature: ρ=0.999), so a record that breaks the correlation is far in distance while every single feature stays in range.",
     "fr": "The 20 features (vibration, thermal, shape) of the machine-condition PoC: 48 healthy records form a Mahalanobis–Taguchi unit space, and 32 further healthy records set both thresholds — univariate max|z| and MD — at zero false alarms. global temperature: ρ=0.999), so a record that breaks the correlation is far in distance while every single feature stays in range."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_attention_identities",
@@ -4414,7 +4517,8 @@
     "hi": "The operators are a new family of ten, written in numpy alone - no torch - and the input is a sequence of image patches (a 64 by 64 picture cut into sixty-four eight-by-eight tiles), so attention here is literally the entrance to a vision transformer and the claims hold on the picture side too. The first finding is that tiled attention with an online softmax, the core of FlashAttention, is exact: across seven tile sizes from one row to sixty-four the worst disagreement with the one-pass computation is 1.33e-15.",
     "fr": "The operators are a new family of ten, written in numpy alone - no torch - and the input is a sequence of image patches (a 64 by 64 picture cut into sixty-four eight-by-eight tiles), so attention here is literally the entrance to a vision transformer and the claims hold on the picture side too. The first finding is that tiled attention with an online softmax, the core of FlashAttention, is exact: across seven tile sizes from one row to sixty-four the worst disagreement with the one-pass computation is 1.33e-15."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_battery_ct_degradation",
@@ -4451,7 +4555,8 @@
     "hi": "Only 29.4 % of a 10 % electrode swelling reaches the outside, and a caliper across the centre reads 3.6 times the volume-equivalent mean (+0.235 vs +0.066 mm). Three cells tuned to the same external bulge differ by 0.000 mm in can height yet separate internally (void fraction 0.00 vs 5.20 %, layer flatness 0.0156 vs 0.0784 mm), and the resolution cliff for those internal numbers is set by the 0.120 mm inter-layer gap, not the 0.200 mm electrode — voxel/thickness = 0.30, where the sampling-theorem prediction said 0.",
     "fr": "Only 29.4 % of a 10 % electrode swelling reaches the outside, and a caliper across the centre reads 3.6 times the volume-equivalent mean (+0.235 vs +0.066 mm). Three cells tuned to the same external bulge differ by 0.000 mm in can height yet separate internally (void fraction 0.00 vs 5.20 %, layer flatness 0.0156 vs 0.0784 mm), and the resolution cliff for those internal numbers is set by the 0.120 mm inter-layer gap, not the 0.200 mm electrode — voxel/thickness = 0.30, where the sampling-theorem prediction said 0."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_particle_tracking",
@@ -4488,7 +4593,8 @@
     "hi": "A video of 400 particles tracked, with the diffusion coefficient D read from the trajectories. Ambiguous mislinks pull D down to 0.925x; mislinks caused by missing targets push it up to 3.429x in the same video — one error rate cannot tell you the direction.",
     "fr": "A video of 400 particles tracked, with the diffusion coefficient D read from the trajectories. Ambiguous mislinks pull D down to 0.925x; mislinks caused by missing targets push it up to 3.429x in the same video — one error rate cannot tell you the direction."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_astro_photometry",
@@ -4525,7 +4631,8 @@
     "hi": "A star field placed to specification and stacked N deep, to see whether aperture-photometry error falls as 1/√N. From N = 1 to 16 the median error drops from 0.6350 % to 0.1616 %, within 4.6 % of theory in all eight cases.",
     "fr": "A star field placed to specification and stacked N deep, to see whether aperture-photometry error falls as 1/√N. From N = 1 to 16 the median error drops from 0.6350 % to 0.1616 %, within 4.6 % of theory in all eight cases."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_nuclei_ploidy",
@@ -4562,7 +4669,8 @@
     "hi": "Even the true area misclassifies 15.4 %; integrated intensity misclassifies 0 %. Forgetting to subtract background leaves the classification intact while the DNA index alone breaks from 2.115 to 1.702 (-20 %) — invisible if you only watch the classification.",
     "fr": "Even the true area misclassifies 15.4 %; integrated intensity misclassifies 0 %. Forgetting to subtract background leaves the classification intact while the DNA index alone breaks from 2.115 to 1.702 (-20 %) — invisible if you only watch the classification."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_white_balance",
@@ -4599,7 +4707,8 @@
     "hi": "Linear RGB synthesised from 24 known spectral reflectances and known illuminants, with illuminant estimation scored by recovery angular error. Max-RGB is best at a median of 1.06 degrees over 11 illuminants, but removing the single brightest patch takes it to 8.45 degrees, and tripling exposure to saturate 43 % of pixels takes it to 13.61 degrees, identical to doing nothing.",
     "fr": "Linear RGB synthesised from 24 known spectral reflectances and known illuminants, with illuminant estimation scored by recovery angular error. Max-RGB is best at a median of 1.06 degrees over 11 illuminants, but removing the single brightest patch takes it to 8.45 degrees, and tripling exposure to saturate 43 % of pixels takes it to 13.61 degrees, identical to doing nothing."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_lightfield_depth",
@@ -4636,7 +4745,8 @@
     "hi": "A 9×9 light field rendered by analytic inverse mapping, with focus-measure, EPI-slope and two-view block matching scored against the true slope map. The winner beats the constant null by 22x, but beats two-view matching — which uses only 2 of the 81 views — by just 1.6x, and only with cubic interpolation.",
     "fr": "A 9×9 light field rendered by analytic inverse mapping, with focus-measure, EPI-slope and two-view block matching scored against the true slope map. The winner beats the constant null by 22x, but beats two-view matching — which uses only 2 of the 81 views — by just 1.6x, and only with cubic interpolation."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_forensics_roc",
@@ -4673,7 +4783,8 @@
     "hi": "Ten forgeries made by pasting a JPEG q60 patch onto a q92 background and saving at q95, scored with a per-pixel ROC. ELA's single number points the opposite way from the textbook (paste / background = 0.58x), and an untouched image still yields an AUC of 0.797 from position bias alone.",
     "fr": "Ten forgeries made by pasting a JPEG q60 patch onto a q92 background and saving at q95, scored with a per-pixel ROC. ELA's single number points the opposite way from the textbook (paste / background = 0.58x), and an untouched image still yields an AUC of 0.797 from position bias alone."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_panorama_drift",
@@ -4710,7 +4821,8 @@
     "hi": "36 frames cut from a cylindrical panorama by a known rotation sequence and chained pairwise around a full turn. Adjacent seams agree to 0.12 px, yet the one closing seam opens by 1.5 px (13x).",
     "fr": "36 frames cut from a cylindrical panorama by a known rotation sequence and chained pairwise around a full turn. Adjacent seams agree to 0.12 px, yet the one closing seam opens by 1.5 px (13x)."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_dehazing",
@@ -4747,7 +4859,8 @@
     "hi": "The overall +4.04 dB hides a -1.49 dB degradation of the near field covered by +4.03 dB mid and +11.28 dB far. Above 782 m visibility dehazing does harm, and adding noise raises PSNR (an accidental cancellation).",
     "fr": "The overall +4.04 dB hides a -1.49 dB degradation of the near field covered by +4.03 dB mid and +11.28 dB far. Above 782 m visibility dehazing does harm, and adding noise raises PSNR (an accidental cancellation)."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_text_region_truth",
@@ -4784,7 +4897,8 @@
     "hi": "Recognisers (trained models) stay out by design, so the geometry of text alone — a stroke has nearly constant width — drives a classical detector (Stroke Width Transform, Epshtein 2010) in three ops, graded on text we rendered ourselves (ink pixels known to the pixel). Three truths: for a rectangular stroke of width w the SWT equals w at every pixel (edges are defined as the inner boundary pixels on the ink side and width = centre-to-centre distance of opposing boundary pixels + 1, which makes it an exact integer);",
     "fr": "Recognisers (trained models) stay out by design, so the geometry of text alone — a stroke has nearly constant width — drives a classical detector (Stroke Width Transform, Epshtein 2010) in three ops, graded on text we rendered ourselves (ink pixels known to the pixel). Three truths: for a rectangular stroke of width w the SWT equals w at every pixel (edges are defined as the inner boundary pixels on the ink side and width = centre-to-centre distance of opposing boundary pixels + 1, which makes it an exact integer);"
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_zernike_aberrations",
@@ -4821,7 +4935,8 @@
     "hi": "Zernike polynomials form an orthogonal system on the unit disk and are the vocabulary of aberration itself: (2,0) is defocus, (2,+-2) astigmatism, (3,+-1) coma, (4,0) spherical. The twenty-eight modes with n at most six - the closed form (n+1)(n+2)/2 - all equal one exactly at the rim, and the number of radial zeros matches (n-|m|)/2 for every one of them.",
     "fr": "Zernike polynomials form an orthogonal system on the unit disk and are the vocabulary of aberration itself: (2,0) is defocus, (2,+-2) astigmatism, (3,+-1) coma, (4,0) spherical. The twenty-eight modes with n at most six - the closed form (n+1)(n+2)/2 - all equal one exactly at the rim, and the number of radial zeros matches (n-|m|)/2 for every one of them."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_bev_sensor_fusion",
@@ -4858,7 +4973,8 @@
     "hi": "Fusion reaches an occupancy IoU of 0.7033 against 0.5417 for the best single sensor — and every bit of that gain comes from complementary visibility, not accuracy. One pixel of reprojection error becomes 0.083 m at 22 m; the cliff is set by the object width, not the 0.2 m cell (IoU drops only 5.8 % when 68 % of the points have already crossed a cell); by 3 deg of yaw the fusion has fallen below the single sensor.",
     "fr": "Fusion reaches an occupancy IoU of 0.7033 against 0.5417 for the best single sensor — and every bit of that gain comes from complementary visibility, not accuracy. One pixel of reprojection error becomes 0.083 m at 22 m; the cliff is set by the object width, not the 0.2 m cell (IoU drops only 5.8 % when 68 % of the points have already crossed a cell); by 3 deg of yaw the fusion has fallen below the single sensor."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_template_tracking",
@@ -4895,7 +5011,8 @@
     "hi": "All 152 of the 152 drifted frames passed the peak threshold calibrated without occlusion and reported 'found'.",
     "fr": "All 152 of the 152 drifted frames passed the peak threshold calibrated without occlusion and reported 'found'."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_dem_terrain",
@@ -4932,7 +5049,8 @@
     "hi": "The sky-view factor takes 2.03 s on a 513×513 grid with 8 directions; before the rewrite it took 41.9 s, and the tests had only ever checked that it runs.",
     "fr": "The sky-view factor takes 2.03 s on a 513×513 grid with 8 directions; before the rewrite it took 41.9 s, and the tests had only ever checked that it runs."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_vessel_network",
@@ -4969,7 +5087,8 @@
     "hi": "Counting branch pixels directly gives 47 pixels for 25 branches; grouping them into connected components gives exactly 25. Spurs come not from the skeletonisation but from boundary roughness (spurious branches 0 → 72), and radii within 3 px of a branch are overestimated by +26.2 %.",
     "fr": "Counting branch pixels directly gives 47 pixels for 25 branches; grouping them into connected components gives exactly 25. Spurs come not from the skeletonisation but from boundary roughness (spurious branches 0 → 72), and radii within 3 px of a branch are overestimated by +26.2 %."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_real_stain_unmix",
@@ -5006,7 +5125,8 @@
     "hi": "On synthetic data it separates perfectly — recompose one stain at unit concentration, solve again, and recovery is 1.0000 with 0.0000 crosstalk — so anyone looking only at synthesis concludes the problem is solved. On the real slide the haematoxylin concentration runs down to -4.446 and 11.51 % of pixels are negative, which is physically impossible: a negative concentration means the dye emitted light.",
     "fr": "On synthetic data it separates perfectly — recompose one stain at unit concentration, solve again, and recovery is 1.0000 with 0.0000 crosstalk — so anyone looking only at synthesis concludes the problem is solved. On the real slide the haematoxylin concentration runs down to -4.446 and 11.51 % of pixels are negative, which is physically impossible: a negative concentration means the dye emitted light."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_pv_thermal_survey",
@@ -5043,7 +5163,8 @@
     "hi": "A hotspot dissipating 320 W/m² is 11.20 K before dilution yet reaches the camera as 4.23 K — and the dilution comes not from the lateral conduction we expected (x0.960) but from the camera (x0.511). A control scene containing no electrical fault at all still raises 6 blobs when the whole-image mean is the reference (1 healthy, 5 non-fault).",
     "fr": "A hotspot dissipating 320 W/m² is 11.20 K before dilution yet reaches the camera as 4.23 K — and the dilution comes not from the lateral conduction we expected (x0.960) but from the camera (x0.511). A control scene containing no electrical fault at all still raises 6 blobs when the whole-image mean is the reference (1 healthy, 5 non-fault)."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_fresco_craquelure",
@@ -5080,7 +5201,8 @@
     "hi": "Truth separates the types on all three indicators (cell diameter 18.0 vs 45.2 px, straightness 0.960 vs 1.000, degree-4 fraction 0.20 vs 0.83), yet the age type's degree-4 fraction drifts toward the drying value under texture (0.87 → 0.64) and raking light (0.70) while diameter and straightness stay put. Both predicted cliffs failed to appear: recall is still 0.696 at 0.15 px width and false positives only 0.382 at texture contrast 0.64.",
     "fr": "Truth separates the types on all three indicators (cell diameter 18.0 vs 45.2 px, straightness 0.960 vs 1.000, degree-4 fraction 0.20 vs 0.83), yet the age type's degree-4 fraction drifts toward the drying value under texture (0.87 → 0.64) and raking light (0.70) while diameter and straightness stay put. Both predicted cliffs failed to appear: recall is still 0.696 at 0.15 px width and false positives only 0.382 at texture contrast 0.64."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_real_stereo_depth",
@@ -5117,7 +5239,8 @@
     "hi": "The first exhibit in this museum measured on a **real photograph** (Middlebury 2014 motorcycle, with ground-truth disparity). The distributor's own note says the holes in the truth are NaN; they are +inf, so np.nanmedian reports a median disparity of 44.97 px instead of 42.55 px, while fill_disparity and apply_cmap — which test with isfinite — handle them correctly.",
     "fr": "The first exhibit in this museum measured on a **real photograph** (Middlebury 2014 motorcycle, with ground-truth disparity). The distributor's own note says the holes in the truth are NaN; they are +inf, so np.nanmedian reports a median disparity of 44.97 px instead of 42.55 px, while fill_disparity and apply_cmap — which test with isfinite — handle them correctly."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_superresolution_limits",
@@ -5154,7 +5277,8 @@
     "hi": "No single-image upscaler beats the bicubic null by more than +0.036 dB. Drizzling 16 sub-pixel-shifted frames gains +13.96 dB in the undersampled condition, and the modulation of a period-6 pattern beyond Nyquist rises from 0.03 to 0.38.",
     "fr": "No single-image upscaler beats the bicubic null by more than +0.036 dB. Drizzling 16 sub-pixel-shifted frames gains +13.96 dB in the undersampled condition, and the modulation of a period-6 pattern beyond Nyquist rises from 0.03 to 0.38."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_agv_fleet",
@@ -5191,7 +5315,8 @@
     "hi": "A transport plan for 12 vehicles on a floor grid is built with focal-search CBS (cost 96 ≤ 1.1 × lower bound 88), then executed 1000 times with each vehicle delayed with probability 0.3 per step. Naive execution (\"move if the next cell is free\") jams in 641 of 1000 runs; execution that follows the action dependency graph (ADG, Hönig et al.",
     "fr": "A transport plan for 12 vehicles on a floor grid is built with focal-search CBS (cost 96 ≤ 1.1 × lower bound 88), then executed 1000 times with each vehicle delayed with probability 0.3 per step. Naive execution (\"move if the next cell is free\") jams in 641 of 1000 runs; execution that follows the action dependency graph (ADG, Hönig et al."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_tacsim_marker_shear",
@@ -5228,7 +5353,8 @@
     "hi": "Closed forms (Johnson, Contact Mechanics, CUP 1985): the Cattaneo 1938 / Mindlin 1949 partial-slip solution (§7.2) — a sphere pressed with normal P and then loaded tangentially with Q < μP has a stick circle c/a = (1 − Q/μP)^{1/3}, a shear traction q = q′ − q″ (the difference of two Hertz-shaped tractions, pinned at the Coulomb limit μp(r) in the slip annulus), a rigid-sphere tangential displacement δx = 3μP(2−ν)/(16Ga)[1 − (1−Q/μP)^{2/3}], an initial tangential stiffness kt = 8Ga/(2−ν), and a uniform surface displ",
     "fr": "Closed forms (Johnson, Contact Mechanics, CUP 1985): the Cattaneo 1938 / Mindlin 1949 partial-slip solution (§7.2) — a sphere pressed with normal P and then loaded tangentially with Q < μP has a stick circle c/a = (1 − Q/μP)^{1/3}, a shear traction q = q′ − q″ (the difference of two Hertz-shaped tractions, pinned at the Coulomb limit μp(r) in the slip annulus), a rigid-sphere tangential displacement δx = 3μP(2−ν)/(16Ga)[1 − (1−Q/μP)^{2/3}], an initial tangential stiffness kt = 8Ga/(2−ν), and a uniform surface displ"
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_cad_scan_deviation",
@@ -5265,7 +5391,8 @@
     "hi": "After alignment the signed deviation and the out-of-tolerance area show that the local dent is diluted by only 3.7 %, while a 121 um dent appears at the centre of the part where the truth is just 1.2 um (closed form predicts -120 um). What survives depends on how much the defect resembles the six rigid-body degrees of freedom; along the edges the nearest neighbour jumps to the adjacent face, producing 66.5 mm^2 of false out-of-tolerance area even in a defect-free control.",
     "fr": "After alignment the signed deviation and the out-of-tolerance area show that the local dent is diluted by only 3.7 %, while a 121 um dent appears at the centre of the part where the truth is just 1.2 um (closed form predicts -120 um). What survives depends on how much the defect resembles the six rigid-body degrees of freedom; along the edges the nearest neighbour jumps to the adjacent face, producing 66.5 mm^2 of false out-of-tolerance area even in a defect-free control."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_timelapse_growth",
@@ -5302,7 +5429,8 @@
     "hi": "A video of colonies spreading and merging, read as a (t, y, x) volume with 3-D connected components. Pixel area makes merging look early (-1.16 frames for pair 0-1) while rounding onto the frame grid makes it look late (+0.94); the two oppose, so the sum looks small.",
     "fr": "A video of colonies spreading and merging, read as a (t, y, x) volume with 3-D connected components. Pixel area makes merging look early (-1.16 frames for pair 0-1) while rounding onto the frame grid makes it look late (+0.94); the two oppose, so the sum looks small."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_sea_ice_concentration",
@@ -5339,7 +5467,8 @@
     "hi": "Hard classification is off by -4.2 points, unmixing by +0.02. The bias is explained by the perimeter fraction (R² = 0.984) and crosses zero near a concentration of 0.49 — validate only there and it passes.",
     "fr": "Hard classification is off by -4.2 points, unmixing by +0.02. The bias is explained by the perimeter fraction (R² = 0.984) and crosses zero near a concentration of 0.49 — validate only there and it passes."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_wound_area_tracking",
@@ -5376,7 +5505,8 @@
     "hi": "A 4 % change in distance moves the area by 7.7 %; with the distance drifting 1.2 % per day the null reports k = 0.1424 against a true 0.1200 (+18.7 %). Its standard deviation, 0.0049, is smaller than the 0.0059 of recalibrating every time — the most stable and the most wrong answer.",
     "fr": "A 4 % change in distance moves the area by 7.7 %; with the distance drifting 1.2 % per day the null reports k = 0.1424 against a true 0.1200 (+18.7 %). Its standard deviation, 0.0049, is smaller than the 0.0059 of recalibrating every time — the most stable and the most wrong answer."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_fiber_light_guide",
@@ -5413,7 +5543,8 @@
     "hi": "Seven new ops (`fiberoptics`, category `fiber` of `opsoptics`): group index, material dispersion, numerical aperture, V number, LP_lm modes from the weakly guiding characteristic equation, the LP01 mode field diameter and light-guide efficiency. Fused silica has group index 1.4626 at 1.55 µm, its material-dispersion zero at 1272.8 nm and D = 21.9 ps/(nm km) at 1.55 µm, all within the published ranges.",
     "fr": "Seven new ops (`fiberoptics`, category `fiber` of `opsoptics`): group index, material dispersion, numerical aperture, V number, LP_lm modes from the weakly guiding characteristic equation, the LP01 mode field diameter and light-guide efficiency. Fused silica has group index 1.4626 at 1.55 µm, its material-dispersion zero at 1272.8 nm and D = 21.9 ps/(nm km) at 1.55 µm, all within the published ranges."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_weld_radiograph_porosity",
@@ -5450,7 +5581,8 @@
     "hi": "A radiograph drawn in closed form with Beer–Lambert: 10 mm plate, arc-shaped reinforcement, spherical pores, plus scatter, unsharpness and film grain. The fixed-threshold baseline counts the weld toe as pores (124 blobs, total area 15.19 mm² against 7.93 true).",
     "fr": "A radiograph drawn in closed form with Beer–Lambert: 10 mm plate, arc-shaped reinforcement, spherical pores, plus scatter, unsharpness and film grain. The fixed-threshold baseline counts the weld toe as pores (124 blobs, total area 15.19 mm² against 7.93 true)."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_prnu_camera_fingerprint",
@@ -5487,7 +5619,8 @@
     "hi": "Two virtual cameras carry a fixed sensitivity pattern K; the fingerprint is estimated from 30 residuals and matched. Under clean conditions the same camera scores a median PCE of 2192 against 15.7 for the other (AUC 1.000), but JPEG-like quantisation at quality 50 cuts PCE to 3.6 % and a 0.5x downscale to 1.5 % — and what killed it was the residual extractor, not the geometry.",
     "fr": "Two virtual cameras carry a fixed sensitivity pattern K; the fingerprint is estimated from 30 residuals and matched. Under clean conditions the same camera scores a median PCE of 2192 against 15.7 for the other (AUC 1.000), but JPEG-like quantisation at quality 50 cuts PCE to 3.6 % and a 0.5x downscale to 1.5 % — and what killed it was the residual extractor, not the geometry."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_rotation_invariance_audit",
@@ -5524,7 +5657,8 @@
     "hi": "A real photograph (scikit-image `coins`, Greek coins from Pompeii, British Museum) is turned through a full circle in 5-degree steps and the wobble is split into three arms: **A** rotate the greyscale and re-threshold (what people actually do), **B** rotate the 0-degree binary mask with nearest neighbour (re-rasterisation only), **C** multiples of 90 degrees via `np.rot90` (exact). **Arm C is exactly 0.00 % for all seven quantities**: the measurements carry no orientation bias at all, so every bit of the wobble is",
     "fr": "A real photograph (scikit-image `coins`, Greek coins from Pompeii, British Museum) is turned through a full circle in 5-degree steps and the wobble is split into three arms: **A** rotate the greyscale and re-threshold (what people actually do), **B** rotate the 0-degree binary mask with nearest neighbour (re-rasterisation only), **C** multiples of 90 degrees via `np.rot90` (exact). **Arm C is exactly 0.00 % for all seven quantities**: the measurements carry no orientation bias at all, so every bit of the wobble is"
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   },
   {
    "id": "poc_colormap_readability",
@@ -5561,7 +5695,8 @@
     "hi": "A smooth field with provably zero steps was painted and the false edges counted in CIE L* and CIEDE2000: jet raises 3, hsv 4, while viridis and gray raise none. Their positions follow in closed form from the sRGB transfer function and the CIE Y weights — jet's lightness reversals are predicted at 0.3750 / 0.4490 / 0.6250 and measured at 0.3750 / 0.4492 / 0.6250 (max error 0.0002).",
     "fr": "A smooth field with provably zero steps was painted and the false edges counted in CIE L* and CIEDE2000: jet raises 3, hsv 4, while viridis and gray raise none. Their positions follow in closed form from the sRGB transfer function and the CIE Y weights — jet's lightness reversals are predicted at 0.3750 / 0.4490 / 0.6250 and measured at 0.3750 / 0.4492 / 0.6250 (max error 0.0002)."
    },
-   "numbers_source": "log"
+   "numbers_source": "log",
+   "youtube_url": ""
   }
  ],
  "series": [
