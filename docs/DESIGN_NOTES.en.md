@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 637 of 1570. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 637 of 1571. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -2708,6 +2708,10 @@ This repository records *why* things are the way they are in **comments in the s
 ## `textregion.py`
 
 - **L92** _(ja)_ — ★幅 1 のストローク(2026-09-27 実測: size 16 のフォントは縦の連が 1 px で、行の再現率が 雑音に依らず 0 % だった)。境界画素の 1 歩先が既に地なら、その画素だけの幅 1。 勾配は 1 px の棒では消えて向きが定まらないので、勾配を使わず 4 近傍で決める: 上下がともに地、または左右がともに地なら、その画素の幅は 1。
+
+## `tools/build_view2026_featured_batch.py`
+
+- **L90** _(ja)_ — ★2026-10-30: 「出来れば全 PoC を載せたい」。初版は 80 本で切っていた。台帳の PoC は手書きの見どころか この一括のどちらかに必ず載る —— 載らない PoC があれば理由(図が無い・数が無い・分類の無い翼)ごと止める。
 
 ## `tools/chain_fuzz.py`
 
