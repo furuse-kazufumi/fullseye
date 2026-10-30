@@ -4,7 +4,7 @@ dim: annotate
 category: paper
 in: image2d
 out: image2d
-examples: [paper_figure, poc_real_defect_floor]
+examples: [lighthouse_vfactory_cli, paper_figure, poc_real_defect_floor]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.8.1  # fullseye lib version this note was generated for
@@ -49,6 +49,7 @@ ValueError
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [lighthouse_vfactory_cli](../../../../examples/lighthouse_vfactory_cli.py) — `py -3.11 examples/lighthouse_vfactory_cli.py`
 - [paper_figure](../../../../examples/paper_figure.py) — `py -3.11 examples/paper_figure.py`
 - [poc_real_defect_floor](../../../../examples/poc_real_defect_floor.py) — `py -3.11 examples/poc_real_defect_floor.py`
 

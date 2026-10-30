@@ -4,7 +4,7 @@ dim: spc
 category: variation
 in: video
 out: table
-examples: [poc_good_sample_variation_model]
+examples: [lighthouse_vfactory, poc_good_sample_variation_model]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.8.1  # fullseye lib version this note was generated for
@@ -49,6 +49,7 @@ Raises ``ValueError`` on an empty stack, a stack that is not (n, H, W) / a list 
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [lighthouse_vfactory](../../../../examples/lighthouse_vfactory.py) — `py -3.11 examples/lighthouse_vfactory.py`
 - [poc_good_sample_variation_model](../../../../examples/poc_good_sample_variation_model.py) — `py -3.11 examples/poc_good_sample_variation_model.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)

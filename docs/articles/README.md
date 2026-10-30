@@ -28,11 +28,11 @@ All figures are regenerable with `py -3.11 tools/gen_article_assets.py`
 
 <!-- articles:start -->
 
-## この下にあるもの(全 66 本 —— 生成)
+## この下にあるもの(全 67 本 —— 生成)
 
 `py -3.11 tools/gen_docs_index_ops.py` が `docs/articles/` を歩いて作ります。**ここから辿れない文書を作らない**ための一覧なので、手で足し引きしないでください。
 
-**記事**(30) —— 記事本文。長文の原稿はここが正本で、Qiita などへはここから出す。
+**記事**(31) —— 記事本文。長文の原稿はここが正本で、Qiita などへはここから出す。
 
 | ファイル | 見出し |
 |---|---|
@@ -50,6 +50,7 @@ All figures are regenerable with `py -3.11 tools/gen_article_assets.py`
 | [`fullseye_poc_museum_qiita_ja.md`](fullseye_poc_museum_qiita_ja.md) | 紙面の計測館 ―― 真値を自分で仕込んで、画像計測の「壊れる場所」を先に知る |
 | [`fullseye_poc_museum_what_qiita_en.md`](fullseye_poc_museum_what_qiita_en.md) | A Metrology Museum on Paper — The What-Is-Measured Wing (industrial, dimensional, biomedical, sky and ground) |
 | [`fullseye_poc_museum_what_qiita_ja.md`](fullseye_poc_museum_what_qiita_ja.md) | 紙面の計測館 —— 何を測るかの棟(産業検査・寸法計測・医用生物・天文環境) |
+| [`lighthouse_evolution_study.md`](lighthouse_evolution_study.md) | Lighthouse 仮想工場: Fullseye 自律探索（C4） |
 | [`qiita_3dgs_sim_native.md`](qiita_3dgs_sim_native.md) | 物理シミュレーションを、そのまま3D Gaussian Splattingにする ―― 「姿勢推定いらず」の3DGSを純PyTorchでRTX 5090に実装した話 |
 | [`qiita_autonomous_driving_en.md`](qiita_autonomous_driving_en.md) | Self-Driving Demos Move, So Nobody Measures Whether They Are Right — A PoC Series Scored by Theorems and Second Imple... |
 | [`qiita_autonomous_driving_ja.md`](qiita_autonomous_driving_ja.md) | 自動運転のデモは動くので、誰も正しさを測らない ―― 定理と第 2 実装で採点する PoC シリーズ |

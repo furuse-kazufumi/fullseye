@@ -1,0 +1,62 @@
+[
+ {
+  "file": "01_miss_comparison.png",
+  "name": "miss_comparison",
+  "caption": "学習用と独立holdoutの見逃し率。95%区間はresults.json。",
+  "shape": [
+   640,
+   1280,
+   3
+  ]
+ },
+ {
+  "file": "02_difficulty_curve.png",
+  "name": "difficulty_curve",
+  "caption": "欠陥の難しさ別検出率。小寸法・低コントラスト・欠測側で低下する。",
+  "shape": [
+   640,
+   1280,
+   3
+  ]
+ },
+ {
+  "file": "03_variation_false_positive_curve.png",
+  "name": "variation_false_positive_curve",
+  "caption": "良品ばらつきを増やしたときの過検出率。学習済み模型と閾値は固定。",
+  "shape": [
+   640,
+   1280,
+   3
+  ]
+ },
+ {
+  "file": "04_budget_curve.png",
+  "name": "budget_curve",
+  "caption": "探索予算と学習・評価成績。差は過学習の大きさを示す。",
+  "shape": [
+   640,
+   1280,
+   3
+  ]
+ },
+ {
+  "file": "05_miss_example.png",
+  "name": "miss_example",
+  "caption": "提案法の見逃し例。検出器出力から選び、真値は表示だけに使用。長辺1280 px以上。",
+  "shape": [
+   640,
+   1280,
+   3
+  ]
+ },
+ {
+  "file": "06_false_positive_example.png",
+  "name": "false_positive_example",
+  "caption": "提案法の過検出例。検出器出力から選び、真値は表示だけに使用。長辺1280 px以上。",
+  "shape": [
+   640,
+   1280,
+   3
+  ]
+ }
+]

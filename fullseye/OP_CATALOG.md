@@ -1296,7 +1296,7 @@ _計 3613 ops / 55 families。並びとノートの在り処は `docs/ops/INDEX.
 - `m1_measure_thresh` (halcon: `measure_thresh`) `image → feature` — 中心を通るキャリパー線上で、輝度プロファイルが指定レベルを横切った回数を数える（HALCON ``measure_thresh`` に相当: 矩形/円弧に沿って特定のグレー値を持つ点を抽出する）。 · 例: `gallery2d_contour_measure`
 
 #### 2d / misc(1)
-- `identity` (halcon: `copy_image`) `any → any` — 恒等写像。HALCON の ``copy_image``（Copy an image and allocate new memory for it.）に対応付けられているが、実装は新しいメモリを確保して複製する ``copy_image`` とは異なり、入力の配列をそのまま返すだけ（複製しない）。 · 例: `gallery_nary_image_algebra`, `optics_four_f_processor`, `poc_em_branch_territory`, `poc_food_cutting_measure`
+- `identity` (halcon: `copy_image`) `any → any` — 恒等写像。HALCON の ``copy_image``（Copy an image and allocate new memory for it.）に対応付けられているが、実装は新しいメモリを確保して複製する ``copy_image`` とは異なり、入力の配列をそのまま返すだけ（複製しない）。 · 例: `gallery_nary_image_algebra`, `lighthouse_vfactory`, `optics_four_f_processor`, `poc_em_branch_territory`, `poc_food_cutting_measure`
 
 #### 2d / morphology(36)
 - `bothat` (halcon: `gray_bothat`) `image → image` — ブラックトップハット（クロージング − 原画像）。HALCON の ``gray_bothat``（Perform a gray value bottom hat transformation on an image.）に相当。 · 例: `example_scratch_width`, `gallery2d_morphology`, `poc_metal_grain_size`
@@ -1309,10 +1309,10 @@ _計 3613 ops / 55 families。並びとノートの在り処は `docs/ops/INDEX.
 - `cv_tophat` (halcon: `gray_tophat`) `image → image` — トップハット変換(top-hat、OpenCV 実装)。「元画像 − 開処理結果」を計算し、明るい背景の上にある、構造要素より小さい明るい特徴だけを抽出する。 · 例: `gallery2d_morphology`
 - `f2_gray_inside` (halcon: `gray_inside`) `image → image` — Grayscale hole-fill: for each pixel, the lowest gray value attainable on any path to the image border == morphological reconstruction of the image by erosion from a border-anchored marker. Dark basins enclosed by brighter walls are raised toward the wall height; regions connected to the border stay dark. ``a`` sets the maximum fill depth ``h = 0.02 + 0.98*a``; ``b`` is ignored. · 例: `gallery2d_morphology`
 - `f2_gray_skeleton` (halcon: `gray_skeleton`) `image → image` — Thinning of a gray-value image: skeletonise the bright region (threshold set by ``a``) and lift the 1-px medial ridge back to the original gray values. ``b`` is ignored. · 例: `gallery2d_morphology`
-- `gclose` (halcon: `gray_closing`) `image → image` — グレースケールクロージング（膨張してから侵食）。HALCON の ``gray_closing``（Perform a gray value closing on an image.）に相当。 · 例: `gallery2d_morphology`
+- `gclose` (halcon: `gray_closing`) `image → image` — グレースケールクロージング（膨張してから侵食）。HALCON の ``gray_closing``（Perform a gray value closing on an image.）に相当。 · 例: `gallery2d_morphology`, `lighthouse_vfactory`
 - `gdilate` (halcon: `gray_dilation`) `image → image` — グレースケール膨張（明るい側に広げる）。HALCON の ``gray_dilation``（Perform a gray value dilation on an image.）に相当。 · 例: `gallery2d_morphology`
 - `gerode` (halcon: `gray_erosion`) `image → image` — グレースケール侵食（暗い側に広げる）。HALCON の ``gray_erosion``（Perform a gray value erosion on an image.）に相当。 · 例: `gallery2d_morphology`
-- `gopen` (halcon: `gray_opening`) `image → image` — グレースケールオープニング（侵食してから膨張）。HALCON の ``gray_opening``（Perform a gray value opening on an image.）に相当。 · 例: `gallery2d_morphology`
+- `gopen` (halcon: `gray_opening`) `image → image` — グレースケールオープニング（侵食してから膨張）。HALCON の ``gray_opening``（Perform a gray value opening on an image.）に相当。 · 例: `gallery2d_morphology`, `lighthouse_vfactory`
 - `gray_bothat` (halcon: `gray_bothat`) `image → image` — ブラックトップハット(クロージング − 元画像)。周囲より暗い小さな構造 (穴・くぼみ)だけを抽出する、``gray_tophat`` と明暗が逆の演算。HALCON の ``gray_bothat``（Perform a gray value bottom hat transformation on an image.）に相当。 · 例: `gallery2d_morphology`, `poc_metal_grain_size`
 - `gray_closing` (halcon: `gray_closing`) `image → image` — グレースケールクロージング(膨張の後に同じ構造要素で収縮)。暗い小さな 穴・くぼみを埋める、``gray_opening`` と対の演算。HALCON の ``gray_closing``（Perform a gray value closing on an image.）に相当。 · 例: `gallery2d_morphology`, `poc_solar_el_inspection`
 - `gray_closing_rect` (halcon: `gray_closing_rect`) `image → image` — 正方形窓（一辺 ``_k(a)``=3/5/7/9）によるグレースケール・クロージング（gray closing、膨張の後に収縮）。小さな暗い穴・くぼみを埋めながら大まかな明るさは保つ。b は未使用。 · 例: `gallery2d_morphology`
@@ -1542,7 +1542,7 @@ _計 3613 ops / 55 families。並びとノートの在り処は `docs/ops/INDEX.
 - `sk_sauvola` (halcon: `var_threshold`) `image → region` — Sauvola の局所適応しきい値。各ピクセル周辺の局所平均・標準偏差からローカルにしきい値を決める手法で、照明ムラのある文書画像の二値化(文字抽出)向けに設計されている。 · 例: `gallery2d_segmentation`, `poc_matrix_code_reading`, `poc_segmentation_gauntlet`, `threshold_family_agreement`
 - `sk_slic` `image → region` — SLIC(Simple Linear Iterative Clustering)によるスーパーピクセル分割。色(ここではグレー値)と座標を合わせた空間で k-means クラスタリングを行い、ほぼ均等な大きさの領域に分割する。ここでは分割結果の境界線を領域として返す。 · 例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
 - `sk_yen` (halcon: `binary_threshold`) `image → region` — Yen の最大相関基準(maximum correlation criterion)による大域しきい値二値化。ヒストグラムのエントロピーベースの評価量を最大化してしきい値を選ぶ、大津法・Li 法とはまた別の自動しきい値法。 · 例: `gallery2d_segmentation`, `threshold_family_agreement`
-- `threshold` (halcon: `threshold`) `image → region` — 大域しきい値処理（グローバルスレッショルド）。HALCON の ``threshold``（Segment an image using global threshold.）に相当。 · 例: `gallery2d_segmentation`, `poc_bone_trabecular_thickness`, `poc_change_detection_misreg`, `poc_fresco_craquelure`, `poc_gear_tooth_metrology`, `poc_metal_grain_size`, `poc_screw_thread_metrology`, `poc_tof_camera`, `poc_traffic_counting`, `poc_virtual_sem_kv_cd_bse`, `poc_water_level`, `tof_realdata`, `video_streaming`
+- `threshold` (halcon: `threshold`) `image → region` — 大域しきい値処理（グローバルスレッショルド）。HALCON の ``threshold``（Segment an image using global threshold.）に相当。 · 例: `gallery2d_segmentation`, `lighthouse_vfactory`, `poc_bone_trabecular_thickness`, `poc_change_detection_misreg`, `poc_fresco_craquelure`, `poc_gear_tooth_metrology`, `poc_metal_grain_size`, `poc_screw_thread_metrology`, `poc_tof_camera`, `poc_traffic_counting`, `poc_virtual_sem_kv_cd_bse`, `poc_water_level`, `tof_realdata`, `video_streaming`
 - `var_threshold` (halcon: `var_threshold`) `image → region` — Sauvola の局所適応的二値化(``skimage.filters.threshold_sauvola``、 窓サイズ ``2*int(a*6)+3``)。局所平均と局所標準偏差の両方を使ってしきい値 を決めるため、``dyn_threshold`` より照明ムラや低コントラスト文書に強い。 HALCON の ``var_threshold``（Threshold an image by local mean and standard deviation analysis.）に相当する近似(定式化は似た発想だが Sauvola の式と HALCON の式は係数が異なる ―― 同一の数値結果にはならない)。 · 例: `gallery2d_segmentation`, `poc_document_scan`
 - `watersheds` (halcon: `watersheds`) `image → region` — 分水嶺(watershed)セグメンテーション。勾配画像を地形とみなし、 暗い領域(``x < 0.2+0.3*a``)をマーカーとして分水嶺線を求め、その境界線を 返す。HALCON の ``watersheds``（Extract watersheds and basins from an image.）に相当。 · 例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
 - `watersheds_threshold` (halcon: `watersheds_threshold`) `image → region` — 実装は ``watersheds`` と同一(``kind: "watershed"``)。HALCON の ``watersheds_threshold``（Extract watershed basins from an image using a threshold.）は本来、隣接する集水域を統合する深さのしきい値を持つ演算子 だが、この代役では統合しきい値を実装せず ``watersheds`` と同じ結果を返す (近似の限界)。 · 例: `gallery2d_segmentation`
@@ -3451,11 +3451,11 @@ _計 3613 ops / 55 families。並びとノートの在り処は `docs/ops/INDEX.
 - `gum_validate` `table × table → table` — モンテカルロの結果で伝播則の結果を**検証**する(``table``)。 · 例: `poc_measurement_system_analysis`
 
 #### spc / variation(5)
-- `varmodel_alignment` `video → table` — Translation offset of every good sample against the typical position of the stack, and the margin to the tolerance (``table``). · 例: `poc_good_sample_variation_model`
+- `varmodel_alignment` `video → table` — Translation offset of every good sample against the typical position of the stack, and the margin to the tolerance (``table``). · 例: `lighthouse_vfactory`, `poc_good_sample_variation_model`
 - `varmodel_band_k` `入力なし → table` — Half-width ``k`` (in spread units) of the tolerance band for a declared two-sided per-pixel false-alarm rate (``table``).
 - `varmodel_calibrate` `table × video → table` — Re-derive the band half-width ``k`` from held-out good images, for data that break the normal assumption (``table``). · 例: `poc_good_sample_variation_model`
-- `varmodel_fit` `video → table` — Learn a per-pixel variation model (centre, spread, band half-width k) from a stack of good samples (``table``). · 例: `poc_good_sample_variation_model`, `poc_patch_anomaly`
-- `varmodel_score` `image2d × table → table` — Score one image against a ``varmodel_fit`` model: z map in sigmas, out-of-band map and a per-region explanation (``table``). · 例: `poc_good_sample_variation_model`, `poc_patch_anomaly`
+- `varmodel_fit` `video → table` — Learn a per-pixel variation model (centre, spread, band half-width k) from a stack of good samples (``table``). · 例: `lighthouse_vfactory`, `poc_good_sample_variation_model`, `poc_patch_anomaly`
+- `varmodel_score` `image2d × table → table` — Score one image against a ``varmodel_fit`` model: z map in sigmas, out-of-band map and a per-region explanation (``table``). · 例: `lighthouse_vfactory`, `poc_good_sample_variation_model`, `poc_patch_anomaly`
 
 ### graph(20 ops / 9 categories)
 
@@ -4554,7 +4554,7 @@ _計 3613 ops / 55 families。並びとノートの在り処は `docs/ops/INDEX.
 - `annotate_inset_layout` `入力なし → table` — table(dict)を返す: 拡大差し込みの置き場所と倍率を閉形式で決める。 · 例: `paper_figure`
 - `annotate_leader` `image2d → image2d` — 画像(image2d)を返す: 肘つき引き出し線 + 文字(複数点の衝突回避つき)。 · 例: `paper_figure`
 - `annotate_leader_layout` `入力なし → table` — table(dict)を返す: 引き出し線の配置(肘・文字位置・板の矩形)を閉形式で決める。 · 例: `paper_figure`
-- `annotate_legend` `image2d → image2d` — 画像(image2d)を返す: 番号つき丸マーカー × 説明の凡例(:func:`annotate_markers` の対)。 · 例: `paper_figure`, `poc_real_defect_floor`
+- `annotate_legend` `image2d → image2d` — 画像(image2d)を返す: 番号つき丸マーカー × 説明の凡例(:func:`annotate_markers` の対)。 · 例: `lighthouse_vfactory_cli`, `paper_figure`, `poc_real_defect_floor`
 - `annotate_markers` `image2d → image2d` — 画像(image2d)を返す: 番号(または短い文字)入りの丸いマーカーを各点に置く。 · 例: `paper_figure`
 - `annotate_orientation` `image2d → image2d` — 画像(image2d)を返す: 方位(北)や向きを示す矢印 + 文字。 · 例: `paper_figure`
 - `annotate_outline` `image2d × mask → image2d` — 画像(image2d)を返す: マスクの輪郭を(AA の)閉折れ線で描き、重心に文字を置く。 · 例: `paper_figure`, `poc_rotation_invariance_audit`
