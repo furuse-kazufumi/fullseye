@@ -3,6 +3,8 @@
 
 **Language:** [日本語](README.md) · [English](README.en.md) · [简体中文](README.zh.md) · [繁體中文](README.tw.md) · [한국어](README.ko.md) · [Deutsch](README.de.md)
 
+> **ViEW2026(2026년 12월 3–4일, 퍼시피코 요코하마)에서 발표합니다 → [ViEW2026 페이지](view2026/ko/)** (PoC의 움직이는 결과, 브라우저에서 조작하는 뷰어, 논문 정보)
+
 > **참고:** 지금 번역되어 있는 것은 이 색인 페이지뿐입니다. 여기서 링크되는 개별 문서는 당분간 일본어판만 있습니다.
 
 

@@ -3,6 +3,8 @@
 
 **Language:** [日本語](README.md) · [English](README.en.md) · [简体中文](README.zh.md) · [繁體中文](README.tw.md) · [한국어](README.ko.md) · [Deutsch](README.de.md)
 
+> **Vortrag auf der ViEW2026 (3.–4. Dezember 2026, Pacifico Yokohama) → [ViEW2026-Seite](view2026/de/)** (bewegte PoC-Ergebnisse, Viewer zum Ausprobieren im Browser, das Paper)
+
 > **Hinweis:** Übersetzt ist bisher nur diese Indexseite. Die einzelnen Dokumente, auf die sie verweist, liegen vorerst ausschließlich auf Japanisch vor.
 
 

@@ -3,6 +3,8 @@
 
 **Language:** [日本語](README.md) · [English](README.en.md) · [简体中文](README.zh.md) · [繁體中文](README.tw.md) · [한국어](README.ko.md) · [Deutsch](README.de.md)
 
+> **將於 ViEW2026(2026 年 12 月 3–4 日,橫濱 Pacifico)演講 → [ViEW2026 頁面](view2026/tw/)**(PoC 的動態結果、可在瀏覽器中操作的檢視器、論文資訊)
+
 > **請注意：**目前只有這份索引頁有譯文，它所連結的各篇文件暫時僅有日文版。
 
 
