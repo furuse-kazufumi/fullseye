@@ -648,16 +648,18 @@ _SWEEP_HINT = TX.T("再生または下のスライダーで引数を動かす。
                    "Lancer ou déplacer le curseur pour changer l'argument.")
 
 
-def _sweep(pid, parameter, unit, values, frames, metric=None):
+def _sweep(pid, parameter_label, parameter_unit, values, frames,
+           metric=None, metric_label=None, metric_unit=""):
     vals = np.asarray(values, float)
     fr = np.asarray(frames)
-    series = [] if metric is None else [{"label": parameter, "color": "#ffb74d", "values": metric,
+    series = [] if metric is None else [{"label": metric_label, "unit": metric_unit,
+                                         "color": "#ffb74d", "values": metric,
                                          "lo": float(np.min(metric)), "hi": float(np.max(metric) + 1e-12), "decimals": 3}]
     tab = pv.viewer_frames_tab("sweep", TX.T("引数の掃引", "Parameter sweep", "参数扫描", "參數掃描", "매개변수 스윕",
                                                     "Parametersuche", "पैरामीटर स्वीप", "Balayage du paramètre"),
                                "passed", _SWEEP_SUB, fr, dt=0.18, series=series, png=True,
-                               axis={"values": vals, "segments": [{"k": 0, "label": parameter,
-                                                                      "unit": unit, "decimals": 3}]})
+                               axis={"values": vals, "segments": [{"k": 0, "label": parameter_label,
+                                                                      "unit": parameter_unit, "decimals": 3}]})
     return pv.viewer_spec(pid, _SWEEP_TITLE, _SWEEP_SUB, _SWEEP_HINT, [tab])
 
 
@@ -668,7 +670,8 @@ def build_focus_sweep():
     for v in vals:
         st=P.focal_stack(tex, depth, focus, f_number=float(v), layers=16); fm=P.fm_laplacian(st); fused=P.fuse(st,fm,focus)[0]
         frames.append(_gray(fused,0,1)); err.append(P.rms(fused-tex))
-    return _sweep("poc_focus_stacking", TX.T("F値", "f-number", "光圈值", "光圈值", "조리개값", "Blendenzahl", "एफ़-नंबर", "nombre d’ouverture"), "", vals, frames, err)
+    return _sweep("poc_focus_stacking", TX.T("F値", "f-number", "光圈值", "光圈值", "조리개값", "Blendenzahl", "एफ़-नंबर", "nombre d’ouverture"), "", vals, frames, err,
+                  TX.T("真のテクスチャとのRMSE (0–1階調)", "RMSE from true texture (0–1 intensity)", "与真实纹理的 RMSE（0–1 灰度）", "與真實紋理的 RMSE（0–1 灰階）", "실제 텍스처와의 RMSE (0–1 명암)", "RMSE zur wahren Textur (Intensität 0–1)", "वास्तविक टेक्सचर से RMSE (0–1 तीव्रता)", "RMSE par rapport à la texture vraie (intensité 0–1)"))
 
 
 def build_interferometry_sweep():
@@ -677,7 +680,8 @@ def build_interferometry_sweep():
         _,st=P.make_stack(0.55,float(v),i,dz=P.DZ,n_planes=P.NP)
         measured_step_um, rejected_fraction = P.measure_step(0.55,float(v),i,dz=P.DZ,n_planes=P.NP)
         frames.append(_gray(st[len(st)//2],float(st.min()),float(st.max()))); err.append(abs(float(measured_step_um)-0.55))
-    return _sweep("poc_interferometry_step", TX.T("雑音 σ", "noise σ", "噪声 σ", "雜訊 σ", "잡음 σ", "Rauschen σ", "शोर σ", "bruit σ"), "", vals, frames, err)
+    return _sweep("poc_interferometry_step", TX.T("雑音 σ", "noise σ", "噪声 σ", "雜訊 σ", "잡음 σ", "Rauschen σ", "शोर σ", "bruit σ"), "", vals, frames, err,
+                  TX.T("段差0.55 µmとの絶対差", "Absolute error from 0.55 µm step", "与 0.55 µm 台阶的绝对差", "與 0.55 µm 階差的絕對差", "0.55 µm 단차와의 절대 차이", "Absolutfehler zur Stufe von 0,55 µm", "0.55 µm चरण से निरपेक्ष अंतर", "Écart absolu à la marche de 0,55 µm"), "µm")
 
 
 def build_polarization_sweep():
@@ -685,14 +689,16 @@ def build_polarization_sweep():
     for v in vals:
         ss,sp=P.specular_components(l,float(v)); raw=P.render_sweep(d,ss,sp); sep=P.separate(raw)
         diffuse=np.asarray(sep[0] if isinstance(sep,tuple) else sep); frames.append(_gray(diffuse,0,0.7)); err.append(P.rmse(diffuse,d))
-    return _sweep("poc_polarization_specular", TX.T("入射角", "incidence angle", "入射角", "入射角", "입사각", "Einfallswinkel", "आपतन कोण", "angle d’incidence"), "°", vals, frames, err)
+    return _sweep("poc_polarization_specular", TX.T("入射角", "incidence angle", "入射角", "入射角", "입사각", "Einfallswinkel", "आपतन कोण", "angle d’incidence"), "°", vals, frames, err,
+                  TX.T("真の拡散成分とのRMSE (0–1階調)", "RMSE from true diffuse component (0–1 intensity)", "与真实漫反射分量的 RMSE（0–1 灰度）", "與真實漫反射分量的 RMSE（0–1 灰階）", "실제 확산 성분과의 RMSE (0–1 명암)", "RMSE zur wahren diffusen Komponente (Intensität 0–1)", "वास्तविक विसरित घटक से RMSE (0–1 तीव्रता)", "RMSE par rapport à la composante diffuse vraie (intensité 0–1)"))
 
 
 def build_photoelastic_sweep():
     P=_load("poc_photoelasticity"); _,theta,delta=P.build_fields()
     vals=np.linspace(0,135,25); images=[P.polariscope_image(delta,theta,float(v)) for v in vals]
     frames=[_gray(im,0,1) for im in images]; mean_intensity=[float(np.mean(im)) for im in images]
-    return _sweep("poc_photoelasticity", TX.T("検光子角", "analyser angle", "检偏器角度", "檢偏器角度", "검광자 각도", "Analysatorwinkel", "विश्लेषक कोण", "angle de l’analyseur"), "°", vals, frames, mean_intensity)
+    return _sweep("poc_photoelasticity", TX.T("検光子角", "analyser angle", "检偏器角度", "檢偏器角度", "검광자 각도", "Analysatorwinkel", "विश्लेषक कोण", "angle de l’analyseur"), "°", vals, frames, mean_intensity,
+                  TX.T("平均輝度 (0–1)", "Mean intensity (0–1)", "平均亮度（0–1）", "平均亮度（0–1）", "평균 명암 (0–1)", "Mittlere Intensität (0–1)", "औसत तीव्रता (0–1)", "Intensité moyenne (0–1)"))
 
 
 
@@ -701,7 +707,8 @@ def build_compound_sweep():
     clean=np.asarray(lf[P.V_C,P.U_C])
     for i,v in enumerate(vals):
         noisy,_,_=P.add_photoreceptor_noise(lf,float(v),seed=i); im=np.asarray(noisy[P.V_C,P.U_C]); frames.append(_gray(im,float(im.min()),float(im.max()))); rms.append(float(np.sqrt(np.mean((im-clean)**2))))
-    return _sweep("poc_compound_eye", TX.T("視点ごとのSNR", "per-view SNR", "每视点信噪比", "每視點訊噪比", "시점별 SNR", "SNR je Ansicht", "प्रति-दृश्य SNR", "SNR par vue"), "", vals, frames, rms)
+    return _sweep("poc_compound_eye", TX.T("視点ごとのSNR", "per-view SNR", "每视点信噪比", "每視點訊噪比", "시점별 SNR", "SNR je Ansicht", "प्रति-दृश्य SNR", "SNR par vue"), "", vals, frames, rms,
+                  TX.T("無雑音像とのRMSE (0–1階調)", "RMSE from noise-free image (0–1 intensity)", "与无噪声图像的 RMSE（0–1 灰度）", "與無雜訊影像的 RMSE（0–1 灰階）", "무잡음 영상과의 RMSE (0–1 명암)", "RMSE zum rauschfreien Bild (Intensität 0–1)", "शोर-रहित छवि से RMSE (0–1 तीव्रता)", "RMSE par rapport à l’image sans bruit (intensité 0–1)"))
 
 
 def build_ct_threshold_sweep():
@@ -709,7 +716,8 @@ def build_ct_threshold_sweep():
     z=obs.shape[0]//2
     for v in vals:
         m=P.segment(obs,sc["layer"],float(v)); frames.append(np.where(m[z],255,_gray(obs[z],float(obs.min()),float(obs.max())))); frac.append(P.void_fraction(m,sc["layer"]))
-    return _sweep("poc_ct_void_morphology", TX.T("しきい値", "threshold", "阈值", "閾值", "임계값", "Schwellenwert", "सीमा", "seuil"), "", vals, frames, frac)
+    return _sweep("poc_ct_void_morphology", TX.T("しきい値", "threshold", "阈值", "閾值", "임계값", "Schwellenwert", "सीमा", "seuil"), "", vals, frames, frac,
+                  TX.T("ボイド体積率 (0–1)", "Void volume fraction (0–1)", "孔隙体积分数（0–1）", "孔隙體積率（0–1）", "공극 체적률 (0–1)", "Porenvolumenanteil (0–1)", "रिक्ति आयतन अंश (0–1)", "Fraction volumique des vides (0–1)"))
 
 
 def build_active_sweep():
@@ -721,7 +729,8 @@ def build_active_sweep():
         for row,col in np.rint(points).astype(int):
             frame[max(0,row-1):row+2,max(0,col-1):col+2]=255
         frames.append(frame); score.append(float(np.sqrt(np.mean((points-final)**2))))
-    return _sweep("poc_active_contours", TX.T("反復回数", "iterations", "迭代次数", "迭代次數", "반복 횟수", "Iterationen", "पुनरावृत्तियाँ", "itérations"), "", vals, frames, score)
+    return _sweep("poc_active_contours", TX.T("反復回数", "iterations", "迭代次数", "迭代次數", "반복 횟수", "Iterationen", "पुनरावृत्तियाँ", "itérations"), "", vals, frames, score,
+                  TX.T("最終輪郭との座標RMS差", "Coordinate RMS difference from final contour", "与最终轮廓的坐标 RMS 差", "與最終輪廓的座標 RMS 差", "최종 윤곽선과의 좌표 RMS 차이", "RMS-Koordinatendifferenz zur Endkontur", "अंतिम समोच्च से निर्देशांक RMS अंतर", "Écart RMS des coordonnées au contour final"), "px")
 
 
 BUILDERS = {
