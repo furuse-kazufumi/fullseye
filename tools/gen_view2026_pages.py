@@ -239,6 +239,9 @@ def validate(d: dict) -> list[str]:
                 for l in langs:
                     expected = src["caption_ja" if l == "ja" else "caption_en"]
                     got = e["see"][l] + e["num"][l]
+                    # 英語のキャプションが日本語を引用している(路面標示など)行だけ、末尾の日本語の印を許す
+                    if l != "ja" and _KANA.search(expected) and got == expected + " " + JA_MARK:
+                        got = expected
                     if got != expected:
                         bad.append("%s [%s]: 台帳のキャプションと逐語一致しない —— build_view2026_featured_batch.py を再実行すること" % (pid, l))
         else:
