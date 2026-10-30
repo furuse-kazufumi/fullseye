@@ -1,0 +1,46 @@
+[
+ {
+  "file": "01_success_vs_retries.png",
+  "name": "success_vs_retries",
+  "caption": "同じ仮想空間・品物・乱数で3手法を比較。実機97%との勝敗比較ではない。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "02_success_by_product.png",
+  "name": "success_by_product",
+  "caption": "0..9は商品表順。低摩擦・薄板・重量物を含み、100%にならない難しさ。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_failure_types.png",
+  "name": "failure_types",
+  "caption": "失敗は重複させず、最初に確定した真値の型で数える。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_representative_trial.gif",
+  "name": "representative_trial",
+  "caption": "代表試行の模式図(縦横比640:360を保持)。数値評価のレンダリングではない。",
+  "shape": [
+   360,
+   640,
+   3
+  ],
+  "animated": true,
+  "frames": 28,
+  "frames_written": 28,
+  "fps": 8.0
+ }
+]
