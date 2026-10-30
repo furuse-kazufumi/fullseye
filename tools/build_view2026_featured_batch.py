@@ -15,7 +15,6 @@ ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "docs/view2026/exhibits.json"
 LEDGER = ROOT / "docs/articles/exhibits/poc_captions.json"
 ASSETS = ROOT / "docs/articles/assets/poc"
-N = 80
 
 WING_CATEGORY = {
     "wing_industrial": "inspection", "wing_metrology": "inspection",
@@ -24,7 +23,27 @@ WING_CATEGORY = {
     "wing_geometry": "geometry3d", "wing_color": "optics",
     "wing_forensics": "inspection", "wing_threed": "geometry3d",
     "wing_device": "optics",
+    "lane_drive": "driving", "lane_math": "math",
 }
+#: 英語のキャプションの中で、日本語のまま引くのが正しい語(路面標示の文字など)。ここに無いかなは訳し忘れとして止める。
+QUOTED_JA = {"止まれ"}
+_KANA = re.compile(r"[\u3040-\u30ff]+")
+
+
+def caption_for(src: dict, lang: str) -> str:
+    """その言語のページに載せるキャプション。日本語以外はかなの漏れを検査し、引用語だけなら日本語の印を付ける。"""
+    if lang == "ja":
+        return src["caption_ja"]
+    text = src["caption_en"]
+    runs = set(_KANA.findall(text))
+    if not runs:
+        return text
+    stray = {r for r in runs if not any(r in q for q in QUOTED_JA)}
+    if stray:
+        raise SystemExit("%s: caption_en に訳し忘れのかな %s —— 台帳 poc_captions.json を直すこと" % (src["id"], sorted(stray)))
+    return text + " _(ja)_"
+
+
 def media_for(pid: str) -> str | None:
     p = ASSETS / pid / "figures.json"
     if not p.is_file():
@@ -57,22 +76,25 @@ def main() -> None:
     candidates.sort()
     # Round-robin categories after the industrial half prevents one field from
     # consuming the gallery merely because its IDs sort first.
-    industrial = [x for x in candidates if x[0] == 0][:40]
+    industrial = [x for x in candidates if x[0] == 0]
     rest = [x for x in candidates if x not in industrial]
     buckets = {}
     for x in rest:
         buckets.setdefault(x[3]["wing"], []).append(x)
     varied = []
-    while len(varied) < N - len(industrial) and any(buckets.values()):
+    while any(buckets.values()):
         for wing in sorted(buckets):
-            if buckets[wing] and len(varied) < N - len(industrial):
+            if buckets[wing]:
                 varied.append(buckets[wing].pop(0))
     chosen = industrial + varied
-    if len(chosen) != N:
-        raise SystemExit(f"only {len(chosen)} eligible PoCs")
+    # ★2026-10-30: 「出来れば全 PoC を載せたい」。初版は 80 本で切っていた。台帳の PoC は手書きの見どころか
+    #   この一括のどちらかに必ず載る —— 載らない PoC があれば理由(図が無い・数が無い・分類の無い翼)ごと止める。
+    left = [e["id"] for e in ledger if e["id"] not in old and e["id"] not in {x[2] for x in chosen}]
+    if left:
+        raise SystemExit("台帳の PoC が見どころに載らない: %s" % left)
     for _, _, pid, src, media in chosen:
         label = all_by_id[pid]["label"]
-        captions = {lang: src["caption_ja" if lang == "ja" else "caption_en"] for lang in d["langs"]}
+        captions = {lang: caption_for(src, lang) for lang in d["langs"]}
         item = {
             "id": pid, "category": WING_CATEGORY[src["wing"]], "media": media,
             "motion": media.lower().endswith((".gif", ".mp4")), "label": label,
