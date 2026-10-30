@@ -4,7 +4,7 @@ dim: spc
 category: variation
 in: image2d × table
 out: table
-examples: [poc_good_sample_variation_model, poc_patch_anomaly]
+examples: [lighthouse_vfactory, poc_good_sample_variation_model, poc_patch_anomaly]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.8.1  # fullseye lib version this note was generated for
@@ -49,6 +49,7 @@ image (``translate``).
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [lighthouse_vfactory](../../../../examples/lighthouse_vfactory.py) — `py -3.11 examples/lighthouse_vfactory.py`
 - [poc_good_sample_variation_model](../../../../examples/poc_good_sample_variation_model.py) — `py -3.11 examples/poc_good_sample_variation_model.py`
 - [poc_patch_anomaly](../../../../examples/poc_patch_anomaly.py) — `py -3.11 examples/poc_patch_anomaly.py`
 

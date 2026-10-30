@@ -20,7 +20,17 @@
   ]
  },
  {
-  "file": "03_miss_example.png",
+  "file": "03_variation_false_positive_curve.png",
+  "name": "variation_false_positive_curve",
+  "caption": "良品ばらつきを増やしたときの過検出率。学習済み模型と閾値は固定。",
+  "shape": [
+   640,
+   1280,
+   3
+  ]
+ },
+ {
+  "file": "04_miss_example.png",
   "name": "miss_example",
   "caption": "提案法の見逃し例。検出器出力から選び、真値は表示だけに使用。長辺1280 px以上。",
   "shape": [
@@ -30,7 +40,7 @@
   ]
  },
  {
-  "file": "04_false_positive_example.png",
+  "file": "05_false_positive_example.png",
   "name": "false_positive_example",
   "caption": "提案法の過検出例。検出器出力から選び、真値は表示だけに使用。長辺1280 px以上。",
   "shape": [

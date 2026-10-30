@@ -28,6 +28,15 @@ def _curve(result):
             rr=np.linspace(a[1],b[1],100).astype(int); cc=np.linspace(a[0],b[0],100).astype(int); canvas[rr,cc]=((.5,.5,.5) if j==0 else (.1,.4,.85))
     return fs.annotate_legend(canvas,["難しさ別検出率: 灰=基準、青=提案","左=易 / 右=難"],(20,20),font_size=24,radius=16)
 
+def _variation_curve(result):
+    canvas=np.ones((640,1280,3),float); rows=result["variation_sweep"]
+    for j,key in enumerate(("baseline_false_positive_percent","ours_false_positive_percent")):
+        pts=[(120+i*245,570-int(4.8*r[key])) for i,r in enumerate(rows)]
+        for a,b in zip(pts[:-1],pts[1:]):
+            rr=np.linspace(a[1],b[1],160).astype(int); cc=np.linspace(a[0],b[0],160).astype(int)
+            canvas[rr,cc]=((.5,.5,.5) if j==0 else (.1,.4,.85))
+    return fs.annotate_legend(canvas,["良品ばらつき強度と過検出率: 灰=golden、青=変動モデル","強度 0.25 / 0.5 / 1 / 1.5 / 2"],(20,20),font_size=24,radius=16)
+
 def _overlay(measured,truth,label):
     if measured.ndim==2 and measured.shape[1]!=3:
         im=np.asarray(measured,float); im=(im-im.min())/(np.ptp(im)+1e-9); rgb=np.dstack((im,im,im))
@@ -45,6 +54,7 @@ def main(kind):
     save_result(kind,result,out)
     figs.save("miss_comparison",_bar(result),caption="学習用と独立holdoutの見逃し率。95%区間はresults.json。")
     figs.save("difficulty_curve",_curve(result),caption="欠陥の難しさ別検出率。小寸法・低コントラスト・欠測側で低下する。")
+    figs.save("variation_false_positive_curve",_variation_curve(result),caption="良品ばらつきを増やしたときの過検出率。学習済み模型と閾値は固定。")
     ours=result["_rows"][1]; seeds=result["seeds"]["holdout"]
     cases=(("miss_example",lambda r:r[0].defective and not r[1],"提案法の見逃し例"),("false_positive_example",lambda r:(not r[0].defective) and r[1],"提案法の過検出例"))
     for name,pred,label in cases:

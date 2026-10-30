@@ -4,8 +4,10 @@
 Generators alone know truth.  Detectors accept only measured pixels/points; matching
 against truth happens in :func:`score` after detector return.  Randomness is confined
 to specimen generation and sensor noise.  The searched pipeline uses Fullseye's
-``components`` op after a robust residual transform; the baseline is a fixed global
-contrast rule.  This module deliberately adds no Fullseye op.
+``varmodel_fit`` / ``varmodel_score`` variation model, Fullseye registration and
+morphology ops.  The baseline receives the identical good-image stack and uses the
+industrial golden-template recipe: mean image, normalized cross-correlation
+registration, residual, and a fixed threshold.  This module deliberately adds no op.
 """
 from __future__ import annotations
 
@@ -30,6 +32,17 @@ SEARCH_BUDGET = 12
 KINDS = ("tyre", "wheel", "bevel", "smt")
 WEF = {"tyre": 99.0, "wheel": 98.1, "bevel": 90.0, "smt": 99.0}
 LABEL = {"tyre": "タイヤX線", "wheel": "鋳造ホイールX線", "bevel": "開先3D", "smt": "SMT AOI"}
+DECLARED_FAR = 1e-3
+FULLSEYE_OPS = ("varmodel_alignment", "varmodel_fit", "varmodel_score", "gclose", "ransac_plane", "fit_plane3")
+_OP_CALLS: list[str] = []
+
+
+def _op(name, *args, **kwargs):
+    """Call and audit a public Fullseye op used by the proposed pipeline."""
+    _OP_CALLS.append(name)
+    if name in ("gclose", "gopen"):
+        return fs.apply(args[0], name, *args[1:], **kwargs)
+    return getattr(fs.ledger, name)(*args, **kwargs)
 
 
 @dataclass(frozen=True)
@@ -49,13 +62,14 @@ def _disk(shape, y, x, r):
     return (yy - y) ** 2 + (xx - x) ** 2 <= r * r
 
 
-def tyre(seed: int):
+def tyre(seed: int, variation: float = 1.0):
     """Beer-Lambert rubber/steel radiograph with Poisson quanta and focal blur."""
     rng = np.random.default_rng(seed); n = 128; yy, xx = np.indices((n, n))
-    rubber = 10 + 7 * np.sqrt(np.clip(1 - ((yy - 64) / 58) ** 2, 0, 1))
+    shift=rng.normal(0,1.0*variation); pitch=8+rng.normal(0,.22*variation)
+    rubber = 10+rng.normal(0,.35*variation) + 7 * np.sqrt(np.clip(1 - ((yy - 64) / 58) ** 2, 0, 1))
     mu_path = .055 * rubber
-    for x in range(12, 121, 8):
-        mu_path += .30 * np.exp(-((xx - x - 1.5 * np.sin(yy / 15)) ** 2) / 1.2)
+    for x in np.arange(12, 121, pitch):
+        mu_path += .30 * np.exp(-((xx - x-shift-(1.5+rng.normal(0,.12*variation))*np.sin(yy/15+rng.normal(0,.05*variation)))**2)/1.2)
     bad = rng.random() < .72; typ = rng.choice(("cord_waviness", "foreign", "bubble", "broken_cord"))
     cy, cx = int(rng.integers(26, 103)), int(rng.integers(25, 104)); size = float(rng.uniform(1.3, 6.2))
     contrast = float(rng.uniform(.025, .20))
@@ -63,18 +77,19 @@ def tyre(seed: int):
         m = _disk((n, n), cy, cx, size)
         if typ in ("bubble", "broken_cord"): mu_path[m] -= contrast
         else: mu_path[m] += contrast
-    photons = 8500 * np.exp(-mu_path)
+    photons = 8500*(1+rng.normal(0,.025*variation)) * np.exp(-mu_path)
     img = rng.poisson(np.maximum(photons, 1)).astype(float) / 8500
     img = ndi.gaussian_filter(img, .9)  # finite focal spot
     diff = float(np.clip(1 - contrast / .20 + .05 / max(size, 1), 0, 1))
     return img, Truth(bad, bad and size >= 4.5, (cy, cx), diff, str(typ), size)
 
 
-def wheel(seed: int):
+def wheel(seed: int, variation: float = 1.0):
     """Cast aluminium radiograph; pores/shrinkage/inclusion in spoke-root ROI."""
     rng = np.random.default_rng(seed); n = 128; yy, xx = np.indices((n, n)); r = np.hypot(xx-64, yy-64)
-    spoke = .15 * (np.cos(5*np.arctan2(yy-64, xx-64)) > .55) * ((r > 20) & (r < 57))
-    thickness = 5 + 8*((r > 17) & (r < 59)) + spoke
+    dy,dx=rng.normal(0,.8*variation,2); theta=rng.normal(0,.025*variation); rr=np.hypot(xx-64-dx,yy-64-dy); phi=np.arctan2(yy-64-dy,xx-64-dx)+theta
+    spoke = (.15+rng.normal(0,.018*variation))*(np.cos(5*phi)>.55)*((rr>20)&(rr<57))
+    thickness=5+rng.normal(0,.22*variation)+(8+rng.normal(0,.28*variation))*((rr>17)&(rr<59))+spoke
     img = np.exp(-.075*thickness); bad = rng.random() < .64
     typ = str(rng.choice(("gas_pore", "shrinkage", "inclusion"))); a = float(rng.uniform(1.2, 6.8))
     ang = rng.uniform(-math.pi, math.pi); rad = rng.uniform(20, 55); cy = 64+rad*np.sin(ang); cx = 64+rad*np.cos(ang)
@@ -83,18 +98,19 @@ def wheel(seed: int):
         m = _disk(img.shape, cy, cx, a)
         img[m] += amp if typ != "inclusion" else -amp
         if typ == "shrinkage": img += amp*.45*np.exp(-((xx-cx)**2/25+(yy-cy)**2/3))
-    img = ndi.gaussian_filter(img, 1.0); img += rng.normal(0, .012, img.shape)
+    img=ndi.gaussian_filter(img,max(.65,1+rng.normal(0,.08*variation))); img*=1+rng.normal(0,.018*variation); img += rng.normal(0,.012,img.shape)
     root = 20 <= rad <= 34
     severe = bool(bad and (a >= 4.0 or (a >= 2.7 and root)))
     diff = float(np.clip(1-amp/.18+.04/a, 0, 1))
     return img, Truth(bad, severe, (cy, cx), diff, typ, a)
 
 
-def smt(seed: int):
+def smt(seed: int, variation: float = 1.0):
     """Three-ring AOI image with five common solder-joint defect modes."""
     rng = np.random.default_rng(seed); h, w = 96, 144; yy, xx = np.indices((h, w))
     board = .20+.035*np.sin(xx/13)+.02*np.cos(yy/11); img = np.dstack((board*.7, board, board*.65))
-    pad = (abs(xx-72)<35)&(abs(yy-48)<13); img[pad] = (.68, .72, .76)
+    dx,dy=rng.normal(0,1.0*variation,2); ang=rng.normal(0,.025*variation); xr=(xx-72-dx)*np.cos(ang)+(yy-48-dy)*np.sin(ang); yr=-(xx-72-dx)*np.sin(ang)+(yy-48-dy)*np.cos(ang)
+    pad=(abs(xr)<35+rng.normal(0,.7*variation))&(abs(yr)<13+rng.normal(0,.5*variation)); solder=np.array((.68,.72,.76))*(1+rng.normal(0,.07*variation)); img[pad]=solder
     bad = rng.random() < .68; typ = str(rng.choice(("bridge", "open", "shift", "void", "tombstone")))
     size = float(rng.uniform(2, 10)); amp = float(rng.uniform(.06, .38)); cy, cx = 48., 72.
     if bad:
@@ -104,19 +120,19 @@ def smt(seed: int):
         elif typ == "void": m = _disk((h,w), 48, 72, size)
         else: m = (abs(xx-72)<29)&(abs(yy-(48-size))<8)
         img[m] += (-amp if typ in ("open", "void") else amp)*np.array((.8,.45,.2))
-    img = ndi.gaussian_filter(img, (.8,.8,0)); img += rng.normal(0,.015,img.shape)
+    warp=1+rng.normal(0,.025*variation)*(yy-h/2)/(h/2); img*=warp[...,None]*(1+rng.normal(0,.035*variation)); img=ndi.gaussian_filter(img,(.8,.8,0)); img+=rng.normal(0,.015,img.shape)
     gray = img @ np.array((.25,.6,.15)); diff=float(np.clip(1-amp/.38+.03/size,0,1))
     return gray, Truth(bad, bad and (size >= 6 or typ in ("bridge","tombstone")), (cy,cx), diff, typ, size)
 
 
-def bevel(seed: int):
+def bevel(seed: int, variation: float = 1.0):
     """Metric plate bevel cloud with scanner noise, missing points and outliers."""
     rng=np.random.default_rng(seed); n=900; x=rng.uniform(-45,45,n); y=rng.uniform(-16,16,n)
     angle=35.0; root=2.0; z=np.where(abs(y)<8, (8-abs(y))*math.tan(math.radians(angle)), 0)
-    true_rot=float(rng.normal(0,1.5)); true_shift=float(rng.normal(0,.7)); bad=rng.random()<.62
+    true_rot=float(rng.normal(0,1.5*variation)); true_shift=float(rng.normal(0,.7*variation)); bad=rng.random()<.62
     angle_err=float(rng.uniform(-4.5,4.5)) if bad else float(rng.normal(0,.5)); root_err=float(rng.uniform(-1.0,1.0)) if bad else float(rng.normal(0,.1))
     z += np.where(abs(y)<8, (8-abs(y))*(math.tan(math.radians(angle+angle_err))-math.tan(math.radians(angle))), 0)
-    keep=rng.random(n)>.10; pts=np.c_[x[keep]+true_shift,y[keep],z[keep]]; pts += rng.normal(0,.08,pts.shape)
+    keep=rng.random(n)>(.10+.03*variation); pts=np.c_[x[keep]+true_shift,y[keep]*np.cos(np.radians(true_rot)),z[keep]+y[keep]*np.sin(np.radians(true_rot))]; pts += rng.normal(0,.08*(1+.2*variation),pts.shape)
     out=rng.uniform((-45,-16,-2),(45,16,8),(35,3)); pts=np.vstack((pts,out))
     truth=Truth(bad, bad and (abs(angle_err)>3 or abs(root_err)>.6),(48,72),min(1,abs(angle_err)/6+.2),"angle_or_root",abs(angle_err),angle_err,root_err)
     return pts, truth
@@ -126,11 +142,20 @@ GENERATORS={"tyre":tyre,"wheel":wheel,"bevel":bevel,"smt":smt}
 
 
 def baseline_detector(measured: np.ndarray, kind: str, threshold: float=.16, model=None):
-    """Fixed classical rule; accepts measured data only."""
+    """Golden mean + normalized cross-correlation registration + fixed threshold."""
     if kind == "bevel":
         p=measured[np.abs(measured[:,1])<7]; slope=np.polyfit(np.abs(p[:,1]),p[:,2],1)[0]
-        angle=math.degrees(math.atan(abs(slope))); return {"hit": abs(angle-35)>2.8, "angle":angle, "root":2.0}
-    a=np.asarray(measured,float); bg=ndi.gaussian_filter(a,5); residual=np.abs(a-bg)
+        angle=math.degrees(math.atan(abs(slope))); return {"hit":abs(angle-35)>threshold,"angle":angle,"root":2.0}
+    a=np.asarray(measured,float)
+    if model is not None:
+        ref=model["golden"]
+        aa=(a-a.mean())/(a.std()+1e-12); rr=(ref-ref.mean())/(ref.std()+1e-12)
+        cc=np.fft.irfft2(np.fft.rfft2(aa)*np.conj(np.fft.rfft2(rr)))
+        shift=np.array(np.unravel_index(np.argmax(cc),cc.shape),float)
+        shift[shift>np.array(a.shape)/2]-=np.array(a.shape)[shift>np.array(a.shape)/2]
+        a=ndi.shift(a,-shift,order=1,mode="nearest"); residual=np.abs(a-ref)
+    else:
+        residual=np.abs(a-ndi.gaussian_filter(a,5))
     scale_values=residual
     if kind == "smt":
         roi=np.zeros_like(residual,bool); roi[38:59,58:87]=True
@@ -142,41 +167,25 @@ def baseline_detector(measured: np.ndarray, kind: str, threshold: float=.16, mod
 
 
 def fullseye_detector(measured: np.ndarray, kind: str, threshold: float=.08, scale: float=3.0, model=None):
-    """Robust Fullseye pipeline; no truth argument or stochastic decision."""
+    """Fullseye op pipeline: varmodel_score registration/statistics then gclose morphology."""
     if kind == "bevel":
         p=np.asarray(measured); core=p[(np.abs(p[:,1])<7)&(p[:,2]>-1)&(p[:,2]<8)]
-        bins=np.linspace(-7,7,22); med=[]; ctr=[]
-        for lo,hi in zip(bins[:-1],bins[1:]):
-            q=core[(core[:,1]>=lo)&(core[:,1]<hi)]
-            if len(q)>5: ctr.append(abs((lo+hi)/2)); med.append(np.median(q[:,2]))
-        slope=np.polyfit(ctr,med,1)[0]; angle=math.degrees(math.atan(abs(slope)))
+        planes=[]
+        for side in (-1,1):
+            q=core[core[:,1]*side>0]
+            _op("fit_plane3",q)  # least-squares audit/reference using the identical points
+            planes.append(_op("ransac_plane",q,.30)[0])
+        slopes=[abs(float(pl["normal"][1]/pl["normal"][2])) for pl in planes]
+        angle=math.degrees(math.atan(float(np.mean(slopes))))
         return {"hit":abs(angle-35)>threshold,"angle":angle,"root":2.0}
     a=np.asarray(measured,float)
-    if kind == "tyre" and model is not None:
-        # 周期コードは列方向スペクトルの強い線を落とし、低周波のゴム厚も除く。
-        ref=model["template"]
-        f=np.fft.rfft(ref-ref.mean(axis=1,keepdims=True),axis=1); power=np.median(np.abs(f),axis=0)
-        keep=np.ones_like(power); peaks=np.argsort(power[2:])[-5:]+2
-        for p in peaks: keep[max(0,p-1):p+2]=0
-        periodic=np.fft.irfft(f*(1-keep),n=a.shape[1],axis=1)
-        background=ref.mean(axis=1,keepdims=True)+periodic
-        residual=np.abs((a-background)-ndi.gaussian_filter(a-background,(7,3)))
-    elif kind == "wheel" and model is not None:
-        # CAD 透過像（良品統計テンプレート）との差を、位相相関で平行移動補正して取る。
-        ref=model["template"]; cc=np.fft.irfft2(np.fft.rfft2(a)*np.conj(np.fft.rfft2(ref)))
-        shift=np.array(np.unravel_index(np.argmax(cc),cc.shape),float); shift[shift>np.array(a.shape)/2]-=np.array(a.shape)[shift>np.array(a.shape)/2]
-        aligned=ndi.shift(a,-shift,order=1,mode="nearest"); residual=np.abs(aligned-ref)
-        residual=ndi.binary_opening(residual>np.quantile(residual,.85),iterations=1).astype(float)*residual
-    elif kind == "smt" and model is not None:
-        # 良品を位置合わせして得た平均・分散に対する z 残差。連結したブリッジを保つ。
-        residual=np.abs(a-model["template"])/(model["spread"]+0.012)
-        residual=ndi.grey_closing(residual,size=(3,3))
+    if model is not None and "variation" in model:
+        scored=_op("varmodel_score",a,model["variation"],align="translate")
+        residual=np.abs(scored["z"]); residual=np.asarray(_op("gclose",residual,.15,.15),float)
+        mask=scored["valid"] & (residual>threshold)
     else:
-        bg=ndi.median_filter(a,size=max(3,int(scale)*2+1)); residual=np.abs(a-bg)
-    # Fullseye supplies the deterministic linear intensity transform; scipy labels.
-    lo,hi=float(residual.min()),float(residual.max())
-    residual=np.asarray(fs.scale_y_funct_1d(residual.ravel(),1/(hi-lo+1e-12),-lo/(hi-lo+1e-12)),float).reshape(residual.shape)
-    mad=np.median(np.abs(residual-np.median(residual)))+1e-9; mask=residual > threshold*mad
+        residual=np.abs(a-ndi.median_filter(a,size=max(3,int(scale)*2+1)))
+        mad=np.median(np.abs(residual-np.median(residual)))+1e-9; mask=residual>threshold*mad
     labels,n=ndi.label(mask,structure=np.ones((3,3),int))
     if int(n)==0: return {"hit":False,"center":(-1.,-1.),"strength":0.}
     ids=np.arange(1,int(n)+1); weights=ndi.sum(residual,labels,ids); k=int(ids[int(np.argmax(weights))])
@@ -184,11 +193,11 @@ def fullseye_detector(measured: np.ndarray, kind: str, threshold: float=.08, sca
     return {"hit":bool(weights.max()>threshold),"center":(float(cy),float(cx)),"strength":float(weights.max())}
 
 
-def score(kind: str, seeds, detector, params):
+def score(kind: str, seeds, detector, params, variation: float = 1.0):
     """Independent truth matching and metrics with Wilson 95% intervals."""
     rows=[]; t0=time.perf_counter()
     for seed in seeds:
-        measured,truth=GENERATORS[kind](seed); out=detector(measured,kind,**params)
+        measured,truth=GENERATORS[kind](seed,variation=variation); out=detector(measured,kind,**params)
         loc=True if (kind=="bevel" or not truth.defective) else np.hypot(*(np.subtract(out.get("center",(-99,-99)),truth.center))) <= max(8,2*truth.size)
         detected=bool(out["hit"] and loc); rows.append((truth,detected,out))
     elapsed=(time.perf_counter()-t0)*1000/len(rows); defects=[r for r in rows if r[0].defective]; good=[r for r in rows if not r[0].defective]; sev=[r for r in defects if r[0].severe]
@@ -206,7 +215,7 @@ def score(kind: str, seeds, detector, params):
 
 
 def _training_model(kind: str, seeds):
-    """学習用の良品だけから統計参照像を作る（評価 seed は受け取らない）。"""
+    """Build both methods from the exact same training-good images."""
     if kind not in ("tyre", "wheel", "smt"):
         return None
     good=[]
@@ -214,14 +223,16 @@ def _training_model(kind: str, seeds):
         measured, truth=GENERATORS[kind](seed)
         if not truth.defective: good.append(np.asarray(measured,float))
     stack=np.stack(good)
-    return {"template":np.median(stack,axis=0),
-            "spread":np.maximum(np.median(np.abs(stack-np.median(stack,axis=0)),axis=0)*1.4826,.006)}
+    _op("varmodel_alignment",stack,max_misalign_px=12.0)
+    vm=_op("varmodel_fit",stack,spread="moderated",far=DECLARED_FAR,align="translate",
+           max_misalign_px=12.0,spread_floor=.003)
+    return {"golden":stack.mean(axis=0),"variation":vm,"training_good_seeds":[s for s in seeds if not GENERATORS[kind](s)[1].defective]}
 
 
 def tune(kind: str, detector, seeds, model=None):
     """同じ12候補の探索予算で、学習用の見逃し+過検出だけを最小化する。"""
     if kind == "bevel":
-        grid=np.linspace(.7,4.2,SEARCH_BUDGET)
+        grid=np.linspace(.15,4.2,SEARCH_BUDGET)
     elif detector is fullseye_detector:
         grid=np.geomspace(2.0,500.0,SEARCH_BUDGET)
     else:
@@ -256,17 +267,32 @@ def audit_detector_boundary():
 
 
 def run(kind: str, full: bool=False):
+    _OP_CALLS.clear()
     audit_detector_boundary(); train=TRAIN_SEEDS if full else QUICK_TRAIN_SEEDS; hold=HOLDOUT_SEEDS if full else QUICK_HOLDOUT_SEEDS
     model=_training_model(kind,train)
-    base_threshold,base_search=tune(kind,baseline_detector,train)
+    base_threshold,base_search=tune(kind,baseline_detector,train,model)
     threshold,train_metric=tune(kind,fullseye_detector,train,model)
-    bp={"threshold":base_threshold}; op={"threshold":threshold,"scale":3,"model":model}
+    bp={"threshold":base_threshold,"model":model}; op={"threshold":threshold,"scale":3,"model":model}
     base_train,_=score(kind,train,baseline_detector,bp); ours_train,_=score(kind,train,fullseye_detector,op)
     base_hold,base_rows=score(kind,hold,baseline_detector,bp); ours_hold,ours_rows=score(kind,hold,fullseye_detector,op)
     b=base_hold["miss_rate"][0]; o=ours_hold["miss_rate"][0]; reduction=100*(b-o)/b if b else None
     sig={"defect_miss":_mcnemar(base_rows,ours_rows,lambda r:r[0].defective and not r[1]),
          "good_false_positive":_mcnemar(base_rows,ours_rows,lambda r:(not r[0].defective) and r[1])}
-    return {"kind":kind,"model":LABEL[kind],"mode":"full" if full else "quick","seeds":{"train":list(train),"holdout":list(hold)},"search_budget_each":SEARCH_BUDGET,"defect_model":DEFECT_TABLE[kind],"baseline":"学習用で調整した固定閾値・古典局所差分" if kind!="bevel" else "学習用で調整した外れ値除去なし最小二乗","pipeline":{"tyre":"周波数ノッチ→周期背景除去→残差成分","wheel":"CAD由来良品参照→位相相関位置合わせ→差分形態学","bevel":"ROI→外れ値に強い中央値プロファイル→角度当てはめ","smt":"位置合わせ良品平均・MAD→接合z残差→連結形態学"}[kind],"selected_thresholds":{"baseline":base_threshold,"ours":threshold},"train_search_metric":{"baseline":base_search,"ours":train_metric},"train":{"baseline":base_train,"ours":ours_train},"holdout":{"baseline":base_hold,"ours":ours_hold},"mcnemar":sig,"miss_reduction_percent":reduction,"wef_reported_reduction_percent":WEF[kind],"comparison_warning":"WEFは各実工場の導入前との比較。本仮想工場の同一真値比較とは前提が異なり、勝敗を示さない。","loss_condition":"高難度(小寸法・低コントラスト・境界/欠測)では基準を下回る場合がある。difficulty曲線を参照。","_rows":(base_rows,ours_rows)}
+    sweep=[]
+    for level in (.25,.5,1.,1.5,2.):
+        ss=hold[:min(160,len(hold))]
+        bm,_=score(kind,ss,baseline_detector,bp,level); om,_=score(kind,ss,fullseye_detector,op,level)
+        sweep.append({"variation_level":level,"baseline_false_positive_percent":bm["false_positive_rate"][0],"ours_false_positive_percent":om["false_positive_rate"][0]})
+    far={"declared_pixel_far":DECLARED_FAR,"measured_pixel_far":None,"good_images":0}
+    if model is not None:
+        ne=nv=ng=0
+        for seed in hold:
+            image,truth=GENERATORS[kind](seed)
+            if not truth.defective:
+                z=_op("varmodel_score",image,model["variation"],align="translate")
+                ne+=z["n_exceed"]; nv+=z["n_valid"]; ng+=1
+        far={"declared_pixel_far":DECLARED_FAR,"measured_pixel_far":ne/nv if nv else None,"good_images":ng}
+    return {"kind":kind,"model":LABEL[kind],"mode":"full" if full else "quick","seeds":{"train":list(train),"holdout":list(hold)},"search_budget_each":SEARCH_BUDGET,"defect_model":DEFECT_TABLE[kind],"good_variation":VARIATION_TABLE[kind],"baseline":"同じ学習良品の平均像+正規化相互相関位置合わせ+固定閾値" if kind!="bevel" else "同じ点群を使う外れ値除去なし最小二乗","pipeline":"Fullseye位置合わせ→良品変動モデル→z残差→形態学" if kind!="bevel" else "同じ点群ROI→頑健中央値プロファイル→角度当てはめ","fullseye_ops":sorted(set(_OP_CALLS)),"selected_thresholds":{"baseline":base_threshold,"ours":threshold},"train_search_metric":{"baseline":base_search,"ours":train_metric},"train":{"baseline":base_train,"ours":ours_train},"holdout":{"baseline":base_hold,"ours":ours_hold},"variation_sweep":sweep,"far_check":far,"mcnemar":sig,"miss_reduction_percent":reduction,"wef_reported_reduction_percent":WEF[kind],"comparison_warning":"WEFは各実工場の導入前との比較。本仮想工場の同一真値比較とは前提が異なり、勝敗を示さない。","loss_condition":"variation_sweepまたは高難度曲線で提案法が基準を下回る条件を負けとして申告する。","_rows":(base_rows,ours_rows)}
 
 
 DEFECT_TABLE={
@@ -274,6 +300,12 @@ DEFECT_TABLE={
  "wheel":{"types":["ガス気孔","引け巣","介在物"],"size":"半径1.2–6.8 px","prevalence":"64%","basis":"重大=半径4 px以上、またはスポーク根元で2.7 px以上。応力集中部を厳しくする工学的スクリーニング規則（規格の合否値ではない）。"},
  "bevel":{"types":["開先角外れ","ルート面外れ"],"size":"角度±4.5°、ルート±1.0 mm","prevalence":"62%","basis":"実寸mm、点雑音σ=0.08 mm、欠測10%、外れ値35点。範囲は位置合わせ感度試験の設計値。"},
  "smt":{"types":["ブリッジ","未はんだ","ずれ","ボイド","トゥームストーン"],"size":"2–10 px","prevalence":"68%","basis":"3色リングAOIの簡略反射像。種類はIPC-A-610で一般に検査される状態、寸法・率は感度試験の設計値。"}}
+
+VARIATION_TABLE={
+ "tyre":{"factors":"コードpitch σ0.22 px、うねりσ0.12、ゴム厚σ0.35、管電流σ2.5%、搬送σ1.0 px","basis":"Beer–Lambert線積分とPoisson量子雑音に重ねた工程感度試験範囲。"},
+ "wheel":{"factors":"鋳造肉厚σ0.22/0.28、置き方σ0.8 px・回転σ0.025 rad、線源倍率σ1.8%、スポーク厚σ0.018","basis":"鋳造・治具・撮像の独立工程変動として与えた感度試験値。"},
+ "bevel":{"factors":"置き方σ0.7 mm・σ1.5°、視点傾き、欠測10%+3%×強度、点雑音σ0.08 mm","basis":"既存CAD/scan・ICP PoCと同じ実寸点群の感度試験。"},
+ "smt":{"factors":"載置x/y σ1 px・θ σ0.025 rad、はんだ寸法σ0.7/0.5 px・量σ7%、反りσ2.5%、照明σ3.5%","basis":"IPC-A-610状態分類を対象にした簡略3リングAOI工程の感度試験値。"}}
 
 
 def save_result(kind: str, result: dict, out: Path):

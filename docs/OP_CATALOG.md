@@ -1309,10 +1309,10 @@ _計 3613 ops / 55 families。並びとノートの在り処は `docs/ops/INDEX.
 - `cv_tophat` (halcon: `gray_tophat`) `image → image` — トップハット変換(top-hat、OpenCV 実装)。「元画像 − 開処理結果」を計算し、明るい背景の上にある、構造要素より小さい明るい特徴だけを抽出する。 · 例: `gallery2d_morphology`
 - `f2_gray_inside` (halcon: `gray_inside`) `image → image` — Grayscale hole-fill: for each pixel, the lowest gray value attainable on any path to the image border == morphological reconstruction of the image by erosion from a border-anchored marker. Dark basins enclosed by brighter walls are raised toward the wall height; regions connected to the border stay dark. ``a`` sets the maximum fill depth ``h = 0.02 + 0.98*a``; ``b`` is ignored. · 例: `gallery2d_morphology`
 - `f2_gray_skeleton` (halcon: `gray_skeleton`) `image → image` — Thinning of a gray-value image: skeletonise the bright region (threshold set by ``a``) and lift the 1-px medial ridge back to the original gray values. ``b`` is ignored. · 例: `gallery2d_morphology`
-- `gclose` (halcon: `gray_closing`) `image → image` — グレースケールクロージング（膨張してから侵食）。HALCON の ``gray_closing``（Perform a gray value closing on an image.）に相当。 · 例: `gallery2d_morphology`
+- `gclose` (halcon: `gray_closing`) `image → image` — グレースケールクロージング（膨張してから侵食）。HALCON の ``gray_closing``（Perform a gray value closing on an image.）に相当。 · 例: `gallery2d_morphology`, `lighthouse_vfactory`
 - `gdilate` (halcon: `gray_dilation`) `image → image` — グレースケール膨張（明るい側に広げる）。HALCON の ``gray_dilation``（Perform a gray value dilation on an image.）に相当。 · 例: `gallery2d_morphology`
 - `gerode` (halcon: `gray_erosion`) `image → image` — グレースケール侵食（暗い側に広げる）。HALCON の ``gray_erosion``（Perform a gray value erosion on an image.）に相当。 · 例: `gallery2d_morphology`
-- `gopen` (halcon: `gray_opening`) `image → image` — グレースケールオープニング（侵食してから膨張）。HALCON の ``gray_opening``（Perform a gray value opening on an image.）に相当。 · 例: `gallery2d_morphology`
+- `gopen` (halcon: `gray_opening`) `image → image` — グレースケールオープニング（侵食してから膨張）。HALCON の ``gray_opening``（Perform a gray value opening on an image.）に相当。 · 例: `gallery2d_morphology`, `lighthouse_vfactory`
 - `gray_bothat` (halcon: `gray_bothat`) `image → image` — ブラックトップハット(クロージング − 元画像)。周囲より暗い小さな構造 (穴・くぼみ)だけを抽出する、``gray_tophat`` と明暗が逆の演算。HALCON の ``gray_bothat``（Perform a gray value bottom hat transformation on an image.）に相当。 · 例: `gallery2d_morphology`, `poc_metal_grain_size`
 - `gray_closing` (halcon: `gray_closing`) `image → image` — グレースケールクロージング(膨張の後に同じ構造要素で収縮)。暗い小さな 穴・くぼみを埋める、``gray_opening`` と対の演算。HALCON の ``gray_closing``（Perform a gray value closing on an image.）に相当。 · 例: `gallery2d_morphology`, `poc_solar_el_inspection`
 - `gray_closing_rect` (halcon: `gray_closing_rect`) `image → image` — 正方形窓（一辺 ``_k(a)``=3/5/7/9）によるグレースケール・クロージング（gray closing、膨張の後に収縮）。小さな暗い穴・くぼみを埋めながら大まかな明るさは保つ。b は未使用。 · 例: `gallery2d_morphology`
@@ -3451,11 +3451,11 @@ _計 3613 ops / 55 families。並びとノートの在り処は `docs/ops/INDEX.
 - `gum_validate` `table × table → table` — モンテカルロの結果で伝播則の結果を**検証**する(``table``)。 · 例: `poc_measurement_system_analysis`
 
 #### spc / variation(5)
-- `varmodel_alignment` `video → table` — Translation offset of every good sample against the typical position of the stack, and the margin to the tolerance (``table``). · 例: `poc_good_sample_variation_model`
+- `varmodel_alignment` `video → table` — Translation offset of every good sample against the typical position of the stack, and the margin to the tolerance (``table``). · 例: `lighthouse_vfactory`, `poc_good_sample_variation_model`
 - `varmodel_band_k` `入力なし → table` — Half-width ``k`` (in spread units) of the tolerance band for a declared two-sided per-pixel false-alarm rate (``table``).
 - `varmodel_calibrate` `table × video → table` — Re-derive the band half-width ``k`` from held-out good images, for data that break the normal assumption (``table``). · 例: `poc_good_sample_variation_model`
-- `varmodel_fit` `video → table` — Learn a per-pixel variation model (centre, spread, band half-width k) from a stack of good samples (``table``). · 例: `poc_good_sample_variation_model`, `poc_patch_anomaly`
-- `varmodel_score` `image2d × table → table` — Score one image against a ``varmodel_fit`` model: z map in sigmas, out-of-band map and a per-region explanation (``table``). · 例: `poc_good_sample_variation_model`, `poc_patch_anomaly`
+- `varmodel_fit` `video → table` — Learn a per-pixel variation model (centre, spread, band half-width k) from a stack of good samples (``table``). · 例: `lighthouse_vfactory`, `poc_good_sample_variation_model`, `poc_patch_anomaly`
+- `varmodel_score` `image2d × table → table` — Score one image against a ``varmodel_fit`` model: z map in sigmas, out-of-band map and a per-region explanation (``table``). · 例: `lighthouse_vfactory`, `poc_good_sample_variation_model`, `poc_patch_anomaly`
 
 ### graph(20 ops / 9 categories)
 
@@ -4919,7 +4919,7 @@ _計 3613 ops / 55 families。並びとノートの在り処は `docs/ops/INDEX.
 - `negate_funct_1d` `signal → signal` — Sign-flipped y-values (HALCON ``negate_funct_1d``). · 例: `gallery_oned_audio_funct`, `gallery_spectrum_signal_bridge`
 - `num_points_funct_1d` `signal → measurement` — Number of samples (HALCON ``num_points_funct_1d``). · 例: `signal_funct1d`
 - `sample_funct_1d` `signal → signal` — Every *step*-th sample (HALCON ``sample_funct_1d``). · 例: `poc_cold_chain_excursion`, `signal_funct1d`
-- `scale_y_funct_1d` `signal → signal` — Linear map of the y-values, ``mult * y + add`` (HALCON ``scale_y_funct_1d``). · 例: `lighthouse_vfactory`, `signal_funct1d`
+- `scale_y_funct_1d` `signal → signal` — Linear map of the y-values, ``mult * y + add`` (HALCON ``scale_y_funct_1d``). · 例: `signal_funct1d`
 - `smooth_funct_1d_gauss` `signal → signal` — Gaussian smoothing of a 1-D function (HALCON ``smooth_funct_1d_gauss``). · 例: `poc_fiber_orientation`, `poc_tree_ring_dendro`, `poc_web_roll_periodicity`, `signal_funct1d`
 - `smooth_funct_1d_mean` `signal → signal` — Iterated moving-average smoothing (HALCON ``smooth_funct_1d_mean``). · 例: `poc_weld_bead_profile`, `signal_funct1d`
 - `transform_funct_1d` `signal → pairs` — Independent affine transform of x and y (HALCON ``transform_funct_1d``). · 例: `gallery_oned_audio_funct`

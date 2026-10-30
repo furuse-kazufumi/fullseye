@@ -38,7 +38,43 @@ def test_equal_search_budget_and_training_only(monkeypatch):
 
 def test_tuned_baselines_are_not_all_or_nothing():
     for kind in vf.KINDS:
-        threshold,metric=vf.tune(kind,vf.baseline_detector,vf.QUICK_TRAIN_SEEDS)
+        model=vf._training_model(kind,vf.QUICK_TRAIN_SEEDS)
+        threshold,metric=vf.tune(kind,vf.baseline_detector,vf.QUICK_TRAIN_SEEDS,model)
         assert threshold > 0
         assert 0 < metric["miss_rate"][0] < 100
         assert 0 < metric["false_positive_rate"][0] < 100
+
+def test_good_parts_have_structural_variation_beyond_sensor_noise():
+    for kind in vf.KINDS:
+        good=[]
+        for seed in vf.TRAIN_SEEDS:
+            image,truth=vf.GENERATORS[kind](seed)
+            if not truth.defective:
+                good.append(image)
+            if len(good)==3: break
+        assert len(good)==3
+        if kind=="bevel":
+            # Point count changes through scanner dropout and pose changes in metric coordinates.
+            assert len({len(x) for x in good})>1 or abs(good[0][:,0].mean()-good[1][:,0].mean())>.05
+        else:
+            assert float(abs(good[0]-good[1]).mean())>.003
+
+def test_both_methods_receive_the_same_training_model(monkeypatch):
+    model=vf._training_model("tyre",vf.QUICK_TRAIN_SEEDS)
+    seen=[]
+    def fake_score(kind,seeds,detector,params,variation=1.0):
+        seen.append((detector.__name__,id(params.get("model"))))
+        metric={"miss_rate":[10,1,20],"false_positive_rate":[10,1,20]}
+        return metric,[]
+    monkeypatch.setattr(vf,"score",fake_score)
+    vf.tune("tyre",vf.baseline_detector,vf.QUICK_TRAIN_SEEDS,model)
+    vf.tune("tyre",vf.fullseye_detector,vf.QUICK_TRAIN_SEEDS,model)
+    assert {mid for _,mid in seen}=={id(model)}
+
+def test_proposed_detector_calls_multiple_fullseye_ops():
+    model=vf._training_model("tyre",vf.QUICK_TRAIN_SEEDS)
+    image,_=vf.tyre(123)
+    vf._OP_CALLS.clear()
+    vf.fullseye_detector(image,"tyre",threshold=3,model=model)
+    assert {"varmodel_score","gclose"} <= set(vf._OP_CALLS)
+    assert {"varmodel_alignment","varmodel_fit"} <= set(vf.FULLSEYE_OPS)

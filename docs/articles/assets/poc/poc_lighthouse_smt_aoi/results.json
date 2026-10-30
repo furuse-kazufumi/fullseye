@@ -1061,84 +1061,94 @@
     "prevalence": "68%",
     "basis": "3色リングAOIの簡略反射像。種類はIPC-A-610で一般に検査される状態、寸法・率は感度試験の設計値。"
   },
-  "baseline": "学習用で調整した固定閾値・古典局所差分",
-  "pipeline": "位置合わせ良品平均・MAD→接合z残差→連結形態学",
+  "good_variation": {
+    "factors": "載置x/y σ1 px・θ σ0.025 rad、はんだ寸法σ0.7/0.5 px・量σ7%、反りσ2.5%、照明σ3.5%",
+    "basis": "IPC-A-610状態分類を対象にした簡略3リングAOI工程の感度試験値。"
+  },
+  "baseline": "同じ学習良品の平均像+正規化相互相関位置合わせ+固定閾値",
+  "pipeline": "Fullseye位置合わせ→良品変動モデル→z残差→形態学",
+  "fullseye_ops": [
+    "gclose",
+    "varmodel_alignment",
+    "varmodel_fit",
+    "varmodel_score"
+  ],
   "selected_thresholds": {
-    "baseline": 3.75,
-    "ours": 9.015994422895846
+    "baseline": 6.5,
+    "ours": 5.4578184881661285
   },
   "train_search_metric": {
     "baseline": {
       "n": 240,
-      "defects": 181,
+      "defects": 173,
       "miss_rate": [
-        69.61325966850829,
-        62.56264612616809,
-        75.84862060166806
+        86.1271676300578,
+        80.1875947663716,
+        90.49713099951153
       ],
       "false_positive_rate": [
-        13.559322033898304,
-        7.034090749685569,
-        24.539898454917758
+        55.223880597014926,
+        43.35740153183886,
+        66.52379821520243
       ],
       "severe_miss_rate": [
-        61.240310077519375,
-        52.623779368868405,
-        69.20673155542038
+        90.76923076923077,
+        84.5573862873241,
+        94.64071056746542
       ],
-      "ms_per_part": 1.0326620831619948,
+      "ms_per_part": 1.4133412502512026,
       "difficulty": [
         {
           "lo": 0,
           "hi": 0.33,
-          "detection_rate": 48.529411764705884
+          "detection_rate": 14.0625
         },
         {
           "lo": 0.33,
           "hi": 0.66,
-          "detection_rate": 26.582278481012654
+          "detection_rate": 8.620689655172415
         },
         {
           "lo": 0.66,
           "hi": 1,
-          "detection_rate": 2.941176470588235
+          "detection_rate": 19.607843137254903
         }
       ]
     },
     "ours": {
       "n": 240,
-      "defects": 181,
+      "defects": 173,
       "miss_rate": [
-        0.0,
-        0,
-        2.078320031854301
+        94.79768786127167,
+        90.40981160628627,
+        97.23924834340882
       ],
       "false_positive_rate": [
-        0.0,
-        0,
-        6.113147978409207
+        14.925373134328357,
+        8.314184208625061,
+        25.34061748981201
       ],
       "severe_miss_rate": [
-        0.0,
-        0,
-        2.8918651988533712
+        93.07692307692308,
+        87.36567808329254,
+        96.31532991422094
       ],
-      "ms_per_part": 1.5560829163102123,
+      "ms_per_part": 7.508354166930076,
       "difficulty": [
         {
           "lo": 0,
           "hi": 0.33,
-          "detection_rate": 100.0
+          "detection_rate": 10.9375
         },
         {
           "lo": 0.33,
           "hi": 0.66,
-          "detection_rate": 100.0
+          "detection_rate": 1.7241379310344827
         },
         {
           "lo": 0.66,
           "hi": 1,
-          "detection_rate": 100.0
+          "detection_rate": 1.9607843137254901
         }
       ]
     }
@@ -1146,75 +1156,75 @@
   "train": {
     "baseline": {
       "n": 240,
-      "defects": 181,
+      "defects": 173,
       "miss_rate": [
-        69.61325966850829,
-        62.56264612616809,
-        75.84862060166806
+        86.1271676300578,
+        80.1875947663716,
+        90.49713099951153
       ],
       "false_positive_rate": [
-        13.559322033898304,
-        7.034090749685569,
-        24.539898454917758
+        55.223880597014926,
+        43.35740153183886,
+        66.52379821520243
       ],
       "severe_miss_rate": [
-        61.240310077519375,
-        52.623779368868405,
-        69.20673155542038
+        90.76923076923077,
+        84.5573862873241,
+        94.64071056746542
       ],
-      "ms_per_part": 1.0718929169039864,
+      "ms_per_part": 1.4324691665630478,
       "difficulty": [
         {
           "lo": 0,
           "hi": 0.33,
-          "detection_rate": 48.529411764705884
+          "detection_rate": 14.0625
         },
         {
           "lo": 0.33,
           "hi": 0.66,
-          "detection_rate": 26.582278481012654
+          "detection_rate": 8.620689655172415
         },
         {
           "lo": 0.66,
           "hi": 1,
-          "detection_rate": 2.941176470588235
+          "detection_rate": 19.607843137254903
         }
       ]
     },
     "ours": {
       "n": 240,
-      "defects": 181,
+      "defects": 173,
       "miss_rate": [
-        0.0,
-        0,
-        2.078320031854301
+        94.79768786127167,
+        90.40981160628627,
+        97.23924834340882
       ],
       "false_positive_rate": [
-        0.0,
-        0,
-        6.113147978409207
+        14.925373134328357,
+        8.314184208625061,
+        25.34061748981201
       ],
       "severe_miss_rate": [
-        0.0,
-        0,
-        2.8918651988533712
+        93.07692307692308,
+        87.36567808329254,
+        96.31532991422094
       ],
-      "ms_per_part": 1.6468916665568638,
+      "ms_per_part": 7.462793749679501,
       "difficulty": [
         {
           "lo": 0,
           "hi": 0.33,
-          "detection_rate": 100.0
+          "detection_rate": 10.9375
         },
         {
           "lo": 0.33,
           "hi": 0.66,
-          "detection_rate": 100.0
+          "detection_rate": 1.7241379310344827
         },
         {
           "lo": 0.66,
           "hi": 1,
-          "detection_rate": 100.0
+          "detection_rate": 1.9607843137254901
         }
       ]
     }
@@ -1222,95 +1232,127 @@
   "holdout": {
     "baseline": {
       "n": 800,
-      "defects": 558,
+      "defects": 540,
       "miss_rate": [
-        64.33691756272401,
-        60.27682311571889,
-        68.20095425071322
+        88.51851851851852,
+        85.55326120096777,
+        90.93959995566313
       ],
       "false_positive_rate": [
-        20.66115702479339,
-        16.03774987049581,
-        26.201480593347583
+        52.307692307692314,
+        46.24713416570344,
+        58.30104928982443
       ],
       "severe_miss_rate": [
-        54.7979797979798,
-        49.87331031174777,
-        59.63045317859441
+        93.85026737967914,
+        90.94133964596529,
+        95.86752417421755
       ],
-      "ms_per_part": 1.0142656249809079,
+      "ms_per_part": 1.4373684999009129,
       "difficulty": [
         {
           "lo": 0,
           "hi": 0.33,
-          "detection_rate": 49.48979591836735
+          "detection_rate": 8.928571428571429
         },
         {
           "lo": 0.33,
           "hi": 0.66,
-          "detection_rate": 36.206896551724135
+          "detection_rate": 10.326086956521738
         },
         {
           "lo": 0.66,
           "hi": 1,
-          "detection_rate": 13.846153846153847
+          "detection_rate": 17.424242424242426
         }
       ]
     },
     "ours": {
       "n": 800,
-      "defects": 558,
+      "defects": 540,
       "miss_rate": [
-        0.17921146953405018,
-        0.03164141875262359,
-        1.0080822328958123
+        95.37037037037037,
+        93.2550010562688,
+        96.84476328687818
       ],
       "false_positive_rate": [
-        0.4132231404958678,
-        0.07297943345591293,
-        2.3031847307864286
+        15.384615384615385,
+        11.50590825183085,
+        20.271339915251225
       ],
       "severe_miss_rate": [
-        0.0,
-        0,
-        0.9607804690657499
+        93.58288770053476,
+        90.62937342234721,
+        95.65016805746865
       ],
-      "ms_per_part": 1.5693841250322293,
+      "ms_per_part": 7.593472999869846,
       "difficulty": [
         {
           "lo": 0,
           "hi": 0.33,
-          "detection_rate": 100.0
+          "detection_rate": 7.142857142857142
         },
         {
           "lo": 0.33,
           "hi": 0.66,
-          "detection_rate": 100.0
+          "detection_rate": 3.260869565217391
         },
         {
           "lo": 0.66,
           "hi": 1,
-          "detection_rate": 99.23076923076923
+          "detection_rate": 2.272727272727273
         }
       ]
     }
   },
+  "variation_sweep": [
+    {
+      "variation_level": 0.25,
+      "baseline_false_positive_percent": 4.444444444444445,
+      "ours_false_positive_percent": 0.0
+    },
+    {
+      "variation_level": 0.5,
+      "baseline_false_positive_percent": 17.77777777777778,
+      "ours_false_positive_percent": 0.0
+    },
+    {
+      "variation_level": 1.0,
+      "baseline_false_positive_percent": 42.22222222222222,
+      "ours_false_positive_percent": 15.555555555555555
+    },
+    {
+      "variation_level": 1.5,
+      "baseline_false_positive_percent": 66.66666666666666,
+      "ours_false_positive_percent": 53.333333333333336
+    },
+    {
+      "variation_level": 2.0,
+      "baseline_false_positive_percent": 73.33333333333333,
+      "ours_false_positive_percent": 84.44444444444444
+    }
+  ],
+  "far_check": {
+    "declared_pixel_far": 0.001,
+    "measured_pixel_far": 0.002454622583299054,
+    "good_images": 260
+  },
   "mcnemar": {
     "defect_miss": {
-      "baseline_only_error": 358,
-      "ours_only_error": 0,
-      "exact_p": 3.4063678720065206e-108,
+      "baseline_only_error": 25,
+      "ours_only_error": 62,
+      "exact_p": 9.06079859652185e-05,
       "significant_0_05": true
     },
     "good_false_positive": {
-      "baseline_only_error": 50,
-      "ours_only_error": 1,
-      "exact_p": 4.618527782440651e-14,
+      "baseline_only_error": 111,
+      "ours_only_error": 15,
+      "exact_p": 2.788349566618262e-19,
       "significant_0_05": true
     }
   },
-  "miss_reduction_percent": 99.72144846796657,
+  "miss_reduction_percent": -7.740585774058572,
   "wef_reported_reduction_percent": 99.0,
   "comparison_warning": "WEFは各実工場の導入前との比較。本仮想工場の同一真値比較とは前提が異なり、勝敗を示さない。",
-  "loss_condition": "高難度(小寸法・低コントラスト・境界/欠測)では基準を下回る場合がある。difficulty曲線を参照。"
+  "loss_condition": "variation_sweepまたは高難度曲線で提案法が基準を下回る条件を負けとして申告する。"
 }
