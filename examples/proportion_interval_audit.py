@@ -18,6 +18,14 @@ def main():
     print("POD >= 0.90 at one-sided 95%% confidence requires %d/%d" %
           (required, required))
 
+    # Closed forms of the one-sided Clopper-Pearson limits at the edges: alpha ** (1 / n).
+    assert abs(detected["lower"] - 0.05 ** (1 / 10)) < 1e-9, detected
+    assert abs(false_calls["upper"] - (1 - 0.05 ** (1 / 20))) < 1e-9, false_calls
+    assert required == 29
+    assert fs.ledger.proportion_interval(28, 28, sides="lower")["lower"] < 0.90
+    assert fs.ledger.proportion_interval(29, 29, sides="lower")["lower"] >= 0.90
+    print("PASS")
+
 
 if __name__ == "__main__":
     main()
