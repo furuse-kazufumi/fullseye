@@ -5,7 +5,7 @@
   "caption": "同じ仮想空間・品物・乱数で3手法を比較。実機97%との勝敗比較ではない。",
   "shape": [
    360,
-   560,
+   728,
    3
   ]
  },
@@ -32,7 +32,7 @@
  {
   "file": "04_representative_trial.gif",
   "name": "representative_trial",
-  "caption": "代表試行の模式図(縦横比640:360を保持)。数値評価のレンダリングではない。",
+  "caption": "代表軌道の模式図(640:360)。数値はMuJoCo物理ログから算出し、この図は証拠画像ではない。",
   "shape": [
    360,
    640,
@@ -42,5 +42,15 @@
   "frames": 28,
   "frames_written": 28,
   "fps": 8.0
+ },
+ {
+  "file": "05_easy_trial_diagnosis.png",
+  "name": "easy_trial_diagnosis",
+  "caption": "易しい箱1試行の高さとmj_contactForce。関節目標・実角・出力・手先位置の全ログはresult.json。",
+  "shape": [
+   360,
+   753,
+   3
+  ]
  }
 ]

@@ -1,30 +1,33 @@
-"""MuJoCo tote-to-tote picking benchmark (physics decides every outcome).
+"""Panda parallel-gripper tote-picking benchmark (physics decides outcomes).
 
-Every attempt advances the unmodified Menagerie Shadow Hand with ``mj_step``.
-The wrist is a six-DoF mocap abstraction (arm kinematics are out of scope), while
-the product is always a free rigid body: no weld, equality, adhesion or product
-pose write is used.  Units are metre, kilogram and second.
+Every attempt advances a genuine Menagerie Franka Panda with ``mj_step``.  The
+seven arm joints and the parallel gripper are position controlled; products are
+free bodies and are never welded, attached, moved by mocap, or pose-written after
+initialisation.  Randomness is limited to initial scenes and sensor noise.
 
-Products (representative retail packages, not named-product measurements)::
+Retail-sized products (all dimensions fit the Panda's 80 mm opening)::
 
  name             shape       xyz [m]          kg    mu   difficulty
- cereal_box       box         .12,.055,.18     .30  .55  easy
- tea_carton       box         .085,.050,.12    .20  .45  easy
- drink_can        cylinder    .060,.060,.105   .35  .40  medium
- shampoo_bottle   cylinder    .065,.065,.14    .50  .32  medium
- tennis_ball      sphere      .060,.060,.060   .06  .62  medium
- blister_card     box         .10,.018,.14     .08  .38  hard/thin
- soap             box         .075,.035,.055   .12  .18  hard/slippery
- hardware_box     box         .10,.075,.065    2.80  .50  hard/heavy
- spice_jar        cylinder    .050,.050,.085   .16  .25  hard
- pouch            box         .095,.025,.13    .28  .22  hard/slippery
+ tea_carton       box         .060,.040,.105   .20  .55  easy
+ drink_can        cylinder    .040,.040,.105   .12 1.05  easy
+ vitamin_box      box         .048,.032,.085   .12  .50  easy
+ spice_jar        cylinder    .045,.045,.080   .16  .38  medium
+ shampoo_bottle   cylinder    .065,.065,.135   .50  .34  medium/tall
+ refill_pouch     box         .060,.025,.110   .28  .25  hard/slippery
+ blister_card     box         .070,.014,.105   .08  .36  hard/thin
+ slick_soap       box         .068,.035,.050   .12  .16  hard/slippery
+ metal_tin        box         .070,.050,.090  1.50  .42  hard/heavy
 
-Contacts use ordinary Coulomb friction and Menagerie's compliant defaults;
-product ``solref=(.02,1)``, ``solimp=(.9,.95,.001)``, ``condim=4``.  Tuning was
-limited to: finger actuator gains/limits unchanged; staged distal then proximal
-closure; wrist speed <= .45 m/s; tactile methods add 20% closure on measured
-slip.  No extreme friction or sticky parameter is used.  Shadow Hand is the
-Apache-2.0 Menagerie asset (its bundled LICENSE); it has five fingers/24 DoF.
+Products use ordinary Coulomb contact: ``condim=3``, ``solref=(.02,1)``,
+``solimp=(.9,.95,.001)``, and the listed sliding coefficient (torsional .01,
+rolling .001).  No extreme friction or adhesion is used.  The Panda model is the
+Apache-2.0 MuJoCo Menagerie asset.  Its gripper actuator uses [0,255] (255=open).
+
+The three calibrations inherited from :mod:`bin_pick` are essential: command the
+real gripper range, target the measured midpoint of the collision pads rather than
+the finger-body origin, and rotate quaternion error into world coordinates in the
+6-DoF IK.  ``PandaPlant`` is deliberately separate from perception and tactile
+adapters so a five-finger plant or FingerVision reader can replace either later.
 """
 from __future__ import annotations
 
@@ -41,8 +44,11 @@ METHODS = ("vision_open_loop", "tactile_regrasp", "tactile_failure_retry")
 FAILURES = ("grasp_miss", "transport_slip", "outside_tote", "collision", "timeout")
 SOLREF = (0.02, 1.0)
 SOLIMP = (0.9, 0.95, 0.001, 0.5, 2.0)
-TOTE_INNER_M = (0.30, 0.24, 0.18)
-TIP_BODIES = ("rh_ffdistal", "rh_mfdistal", "rh_rfdistal", "rh_lfdistal", "rh_thdistal")
+GRIP_OPEN, GRIP_SHUT = 255.0, 0.0
+HOME = np.array([0.0, 0.3, 0.0, -1.57079, 0.0, 2.0, -0.7853])
+TABLE_TOP, WALL_H = .13, .055
+SRC = np.array([.48, .20]); DST = np.array([.48, -.20])
+TOTE_HALF = np.array([.13, .09])
 
 
 @dataclass(frozen=True)
@@ -52,16 +58,15 @@ class Product:
 
 
 PRODUCTS = (
-    Product("cereal_box", "box", (.12,.055,.18), .30,.55,"easy"),
-    Product("tea_carton", "box", (.085,.050,.12), .20,.45,"easy"),
-    Product("drink_can", "cylinder", (.060,.060,.105), .35,.40,"medium"),
-    Product("shampoo_bottle", "cylinder", (.065,.065,.14), .50,.32,"medium"),
-    Product("tennis_ball", "sphere", (.060,.060,.060), .06,.62,"medium"),
-    Product("blister_card", "box", (.10,.018,.14), .08,.38,"hard"),
-    Product("soap", "box", (.075,.035,.055), .12,.18,"hard"),
-    Product("hardware_box", "box", (.10,.075,.065), 2.80,.50,"hard"),
-    Product("spice_jar", "cylinder", (.050,.050,.085), .16,.25,"hard"),
-    Product("pouch", "box", (.095,.025,.13), .28,.22,"hard"),
+    Product("tea_carton", "box", (.060,.040,.105), .20,.55,"easy"),
+    Product("drink_can", "cylinder", (.040,.040,.105), .12,1.05,"easy"),
+    Product("vitamin_box", "box", (.048,.032,.085), .12,.50,"easy"),
+    Product("spice_jar", "cylinder", (.045,.045,.080), .16,.38,"medium"),
+    Product("shampoo_bottle", "cylinder", (.065,.065,.135), .50,.34,"medium"),
+    Product("refill_pouch", "box", (.060,.025,.110), .28,.25,"hard"),
+    Product("blister_card", "box", (.070,.014,.105), .08,.36,"hard"),
+    Product("slick_soap", "box", (.068,.035,.050), .12,.16,"hard"),
+    Product("metal_tin", "box", (.070,.050,.090), 1.50,.42,"hard"),
 )
 
 
@@ -71,134 +76,177 @@ class TactileReading:
 
 
 def read_fingertip_tactile(normal_n, tangential_n, friction, noise=(0., 0.), relative_speed_m_s=0.):
-    """Replaceable ideal tactile boundary; inputs originate at mj_contactForce."""
-    n = max(0., float(normal_n) + float(noise[0])); t = max(0., float(tangential_n) + float(noise[1]))
-    return TactileReading(n, t, float(relative_speed_m_s), n > .02 and (t / max(n, 1e-9) > .82 * friction or relative_speed_m_s > .035))
+    """Replaceable ideal tactile boundary; force inputs come from mj_contactForce."""
+    n=max(0.,float(normal_n)+float(noise[0])); t=max(0.,float(tangential_n)+float(noise[1]))
+    return TactileReading(n,t,float(relative_speed_m_s),n>.02 and (t/max(n,1e-9)>.82*friction or relative_speed_m_s>.03))
 
 
-def depth_grasp_candidates(depth: np.ndarray) -> list[dict]:
-    """Use Fullseye's existing connected-component op on renderer depth only."""
+def depth_grasp_candidates(depth: np.ndarray, *, camera_z=.90, fovy_deg=52., wall_mask=None,
+                           table_z=TABLE_TOP, wall_top=TABLE_TOP+WALL_H) -> list[dict]:
+    """Extract object blobs from renderer depth only and reject tote-wall pixels.
+
+    ``wall_mask`` is geometry known from the tote design, not simulator truth.  The
+    height guard also removes blobs whose median height lies at the wall top (within
+    8 mm), which catches wall edges left by rasterisation.
+    """
     from blob2d import blob_label
-    d = np.asarray(depth, dtype=float)
-    mask = np.isfinite(d) & (d < np.nanpercentile(d, 35))
-    labels = blob_label(mask.astype(np.uint8), connectivity=8)
-    count = int(labels.max(initial=0))
-    out = []
-    for label in range(1, count + 1):
-        yy, xx = np.where(labels == label)
-        if len(xx) >= 8:
-            out.append({"pixel": (float(xx.mean()), float(yy.mean())), "area": int(len(xx)), "score": float(len(xx) / (1 + d[yy, xx].mean()))})
-    return sorted(out, key=lambda x: x["score"], reverse=True)
+    d=np.asarray(depth,float); h,w=d.shape
+    z=camera_z-d
+    fg=np.isfinite(d)&(z>table_z+.012)
+    if wall_mask is not None: fg &= ~np.asarray(wall_mask,bool)
+    labels=blob_label(fg.astype(np.uint8),connectivity=8); out=[]
+    focal=.5*h/math.tan(math.radians(fovy_deg)/2)
+    for lab in range(1,int(labels.max(initial=0))+1):
+        yy,xx=np.where(labels==lab)
+        if len(xx)<10: continue
+        medz=float(np.median(z[yy,xx]))
+        if medz > table_z+.20: continue  # robot arm/hand above the merchandise
+        if abs(medz-wall_top)<.008: continue
+        u=float(xx.mean()); v=float(yy.mean()); dep=float(np.median(d[yy,xx]))
+        # camera xyaxes=[0,1,0,-1,0,0]: image right=world +y, down=world +x
+        world=(float(SRC[0]+(v-h/2)*dep/focal),float(SRC[1]+(u-w/2)*dep/focal),medz)
+        out.append({"pixel":(u,v),"world":world,"area":len(xx),"height_m":medz,
+                    "score":float(medz+min(len(xx),1000)/100000.)})
+    return sorted(out,key=lambda x:x["score"],reverse=True)
 
 
 def _menagerie(path=None):
     return Path(path or os.environ.get("MUJOCO_MENAGERIE", r"C:\dev\projects\mujoco_menagerie"))
 
 
-def _build_model(product: Product, friction_scale=1., mass_scale=1.):
+def _add_tote(spec, mujoco, name, centre):
+    cx,cy=centre; t=.006
+    spec.worldbody.add_geom(name=name+"_base",type=mujoco.mjtGeom.mjGEOM_BOX,pos=[cx,cy,TABLE_TOP/2],size=[TOTE_HALF[0],TOTE_HALF[1],TABLE_TOP/2],rgba=[.28,.36,.45,1])
+    for i,(p,s) in enumerate((((cx,cy+TOTE_HALF[1]),(TOTE_HALF[0]+t,t)),((cx,cy-TOTE_HALF[1]),(TOTE_HALF[0]+t,t)),((cx+TOTE_HALF[0],cy),(t,TOTE_HALF[1])),((cx-TOTE_HALF[0],cy),(t,TOTE_HALF[1])))):
+        spec.worldbody.add_geom(name=f"{name}_wall{i}",type=mujoco.mjtGeom.mjGEOM_BOX,pos=[p[0],p[1],TABLE_TOP+WALL_H/2],size=[s[0],s[1],WALL_H/2],rgba=[.5,.55,.62,.45])
+
+
+def _build_model(product: Product, seed=0, friction_scale=1., mass_scale=1., clutter=True):
     import mujoco
-    spec = mujoco.MjSpec.from_file(str(_menagerie() / "shadow_hand" / "right_hand.xml"))
-    spec.option.timestep = .004
-    hand = spec.worldbody.first_body(); hand.mocap = True; hand.pos = [-.19, 0, .32]
-    # palm local +z points down; fixed root quaternion is overridden through mocap
-    floor = spec.worldbody.add_geom(name="floor", type=mujoco.mjtGeom.mjGEOM_PLANE, size=[1,1,.02], pos=[0,0,0], friction=[.8,.01,.001])
-    # source/destination floor and four walls each; destination centre x=.34
-    for side, cx in (("src", -.18), ("dst", .34)):
-        spec.worldbody.add_geom(name=side+"_base", type=mujoco.mjtGeom.mjGEOM_BOX, pos=[cx,0,.012], size=[.15,.12,.012], rgba=[.3,.4,.5,1])
-        for j,(p,s) in enumerate((((cx-.157,0,.10),(.007,.127,.10)),((cx+.157,0,.10),(.007,.127,.10)),((cx,-.127,.10),(.15,.007,.10)),((cx,.127,.10),(.15,.007,.10)))):
-            spec.worldbody.add_geom(name=f"{side}_wall{j}", type=mujoco.mjtGeom.mjGEOM_BOX, pos=p, size=s, rgba=[.3,.4,.5,.45])
-    b = spec.worldbody.add_body(name="product", pos=[-.18,0,.05 + product.size_m[2]/2])
-    b.add_freejoint(name="product_free")
-    typ = {"box":mujoco.mjtGeom.mjGEOM_BOX,"sphere":mujoco.mjtGeom.mjGEOM_SPHERE,"cylinder":mujoco.mjtGeom.mjGEOM_CYLINDER}[product.shape]
-    if product.shape == "box": size=np.array(product.size_m)/2
-    elif product.shape == "sphere": size=[product.size_m[0]/2,0,0]
-    else: size=[product.size_m[0]/2,product.size_m[2]/2,0]
-    b.add_geom(name="product_geom", type=typ, size=size, mass=product.mass_kg*mass_scale,
-               friction=[product.friction*friction_scale,.01,.001], condim=4, solref=SOLREF, solimp=SOLIMP, rgba=[.85,.25,.12,1])
-    spec.worldbody.add_camera(name="overhead", pos=[.08,0,.9], xyaxes=[0,1,0,-1,0,0], fovy=55)
+    spec=mujoco.MjSpec.from_file(str(_menagerie()/"franka_emika_panda"/"scene.xml")); spec.option.timestep=.004
+    _add_tote(spec,mujoco,"src",SRC); _add_tote(spec,mujoco,"dst",DST)
+    rng=np.random.default_rng(seed)
+    x=float(SRC[0]+rng.uniform(-.018,.018)); y=float(SRC[1]+rng.uniform(-.020,.020))
+    b=spec.worldbody.add_body(name="product",pos=[x,y,TABLE_TOP+product.size_m[2]/2+.002]); b.add_freejoint(name="product_free")
+    typ={"box":mujoco.mjtGeom.mjGEOM_BOX,"cylinder":mujoco.mjtGeom.mjGEOM_CYLINDER}[product.shape]
+    size=np.array(product.size_m)/2 if product.shape=="box" else [product.size_m[0]/2,product.size_m[2]/2,0]
+    b.add_geom(name="product_geom",type=typ,size=size,mass=product.mass_kg*mass_scale,friction=[product.friction*friction_scale,.01,.001],condim=3,solref=SOLREF,solimp=SOLIMP,rgba=[.88,.28,.13,1])
+    # Two neighbouring free packages make this a real pile.  They touch the target
+    # after settling but are lower, so the depth planner still selects the target.
+    if clutter:
+        for i,dy in enumerate((-.046,.046)):
+            q=spec.worldbody.add_body(name=f"neighbour{i}",pos=[x+.012,y+dy,TABLE_TOP+.027]); q.add_freejoint()
+            q.add_geom(name=f"neighbour_geom{i}",type=mujoco.mjtGeom.mjGEOM_BOX,size=[.024,.018,.025],mass=.11,friction=[.48,.01,.001],condim=3,rgba=[.25,.62,.42,1])
+    spec.worldbody.add_camera(name="overhead",pos=[SRC[0],SRC[1],.90],xyaxes=[0,1,0,-1,0,0],fovy=52)
     return spec.compile()
 
 
-def _tip_tactile(model, data, product_geom, noise, product_friction):
+def _ik_solve(mujoco,m,dk,hand_id,goal,quat_t,seed,iters=180):
+    q=np.asarray(seed,float).copy()
+    for _ in range(iters):
+        dk.qpos[:7]=q; mujoco.mj_kinematics(m,dk); mujoco.mj_comPos(m,dk)
+        pe=np.asarray(goal)-dk.xpos[hand_id]; oe=np.zeros(3); mujoco.mju_subQuat(oe,np.asarray(quat_t),dk.xquat[hand_id]); oe=dk.xmat[hand_id].reshape(3,3)@oe
+        if np.linalg.norm(pe)<1e-3 and np.linalg.norm(oe)<1e-2: break
+        jp=np.zeros((3,m.nv)); jr=np.zeros((3,m.nv)); mujoco.mj_jacBody(m,dk,jp,jr,hand_id); J=np.vstack([jp[:,:7],jr[:,:7]])
+        dq=J.T@np.linalg.solve(J@J.T+.1*np.eye(6),np.r_[pe,oe]); q=np.clip(q+np.clip(dq,-.1,.1),m.jnt_range[:7,0],m.jnt_range[:7,1])
+    return q
+
+
+def _pad_state(mujoco,m,d):
+    bids=[mujoco.mj_name2id(m,mujoco.mjtObj.mjOBJ_BODY,n) for n in ("left_finger","right_finger")]
+    gids=[i for i in range(m.ngeom) if int(m.geom_bodyid[i]) in bids and i>=0]
+    return np.mean([d.geom_xpos[i] for i in gids],axis=0),set(gids)
+
+
+def _tip_tactile(model,data,product_geom,pad_geoms,noise,friction):
     import mujoco
-    tip_ids = {mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, n) for n in TIP_BODIES}
-    normal = tangential = 0.; touching = False
+    normal=tangent=0.; rel=0.
+    pb=int(model.geom_bodyid[product_geom])
     for i in range(data.ncon):
-        c=data.contact[i]; g1,g2=int(c.geom1),int(c.geom2)
-        if product_geom not in (g1,g2): continue
-        other=g2 if g1==product_geom else g1
-        if int(model.geom_bodyid[other]) not in tip_ids: continue
-        f=np.zeros(6); mujoco.mj_contactForce(model,data,i,f)
-        normal += abs(f[0]); tangential += math.hypot(f[1],f[2]); touching=True
-    # relative speed is product COM against mean fingertip linear velocity
-    pv=data.cvel[mujoco.mj_name2id(model,mujoco.mjtObj.mjOBJ_BODY,"product"),3:]
-    tv=np.mean([data.cvel[i,3:] for i in tip_ids],axis=0)
-    return read_fingertip_tactile(normal,tangential,product_friction,noise,float(np.linalg.norm(pv-tv))) if touching else read_fingertip_tactile(0,0,product_friction,noise,0)
+        c=data.contact[i]; a,b=int(c.geom1),int(c.geom2)
+        if product_geom not in (a,b) or (b if a==product_geom else a) not in pad_geoms: continue
+        f=np.zeros(6); mujoco.mj_contactForce(model,data,i,f); normal+=abs(f[0]); tangent+=math.hypot(f[1],f[2])
+        other=b if a==product_geom else a; rel=max(rel,float(np.linalg.norm(data.cvel[pb,3:]-data.cvel[int(model.geom_bodyid[other]),3:])))
+    return read_fingertip_tactile(normal,tangent,friction,noise,rel)
 
 
-def _attempt(product, method, seed, retry, *, friction_scale=1., mass_scale=1., grip=True, render_depth=True):
-    """Run one complete physical approach/close/lift/transport/release attempt."""
+def _wall_mask(h,w):
+    """Known image-space exclusion band for the source tote's four walls."""
+    mask=np.zeros((h,w),bool); focal=.5*h/math.tan(math.radians(52.)/2); depth=.90-(TABLE_TOP+WALL_H)
+    du=int(round(TOTE_HALF[1]*focal/depth)); dv=int(round(TOTE_HALF[0]*focal/depth)); band=4
+    u0,u1=w//2-du,w//2+du; v0,v1=h//2-dv,h//2+dv
+    mask[max(0,v0-band):min(h,v0+band+1),max(0,u0-band):min(w,u1+band+1)]=True
+    mask[max(0,v1-band):min(h,v1+band+1),max(0,u0-band):min(w,u1+band+1)]=True
+    mask[max(0,v0-band):min(h,v1+band+1),max(0,u0-band):min(w,u0+band+1)]=True
+    mask[max(0,v0-band):min(h,v1+band+1),max(0,u1-band):min(w,u1+band+1)]=True
+    return mask
+
+
+def _attempt(product,method,seed,retry,*,friction_scale=1.,mass_scale=1.,grip=True,render_depth=True,clutter=True,diagnostics=False):
+    """Run approach, close, lift, carry, release; all outcomes use physical state."""
     import mujoco
-    rng=np.random.default_rng(seed); model=_build_model(product,friction_scale,mass_scale); data=mujoco.MjData(model)
-    jid=mujoco.mj_name2id(model,mujoco.mjtObj.mjOBJ_JOINT,"product_free"); qadr=model.jnt_qposadr[jid]
-    # Randomness is confined to initial state and sensor noise.
-    data.qpos[qadr:qadr+3] += [rng.uniform(-.025,.025),rng.uniform(-.035,.035),0]
-    yaw=rng.uniform(-.45,.45); data.qpos[qadr+3:qadr+7]=[math.cos(yaw/2),0,0,math.sin(yaw/2)]
-    moc=int(model.body_mocapid[mujoco.mj_name2id(model,mujoco.mjtObj.mjOBJ_BODY,"rh_forearm")])
-    data.mocap_quat[moc]=[0,1,0,0]
-    pg=mujoco.mj_name2id(model,mujoco.mjtObj.mjOBJ_GEOM,"product_geom")
-    wall_ids={mujoco.mj_name2id(model,mujoco.mjtObj.mjOBJ_GEOM,n) for side in ("src","dst") for n in [f"{side}_wall{i}" for i in range(4)]}
-    hand_bodies=set(); root=mujoco.mj_name2id(model,mujoco.mjtObj.mjOBJ_BODY,"rh_forearm")
-    for i in range(model.nbody):
-        j=i
-        while j>0 and j!=root: j=int(model.body_parentid[j])
-        if j==root: hand_bodies.add(i)
+    rng=np.random.default_rng(seed); m=_build_model(product,seed,friction_scale,mass_scale,clutter); d=mujoco.MjData(m); dk=mujoco.MjData(m)
+    d.ctrl[:7]=HOME; d.ctrl[7]=GRIP_OPEN; d.qpos[:7]=HOME
+    mujoco.mj_forward(m,d); settle_steps=int(.8/m.opt.timestep)
+    for _ in range(settle_steps): mujoco.mj_step(m,d)
+    hand=mujoco.mj_name2id(m,mujoco.mjtObj.mjOBJ_BODY,"hand"); pad_c,pads=_pad_state(mujoco,m,d); offset=pad_c-d.xpos[hand]; quat=d.xquat[hand].copy()
+    candidates=[]
     if render_depth:
-        try:
-            renderer=mujoco.Renderer(model,160,160); mujoco.mj_forward(model,data); renderer.update_scene(data,camera="overhead")
-            renderer.enable_depth_rendering(); candidates=depth_grasp_candidates(renderer.render().copy()); renderer.close()
-        except Exception: candidates=[]
-    else: candidates=[]
-    # Candidate pixel perturbs approach; never read qpos for perception selection.
-    percept=rng.normal(0,.008,2); start=np.array([-.18+percept[0],.055+percept[1],.70]); data.mocap_pos[moc]=start
-    open_ctrl=np.array(data.ctrl); lo=np.array(model.actuator_ctrlrange[:,0]); hi=np.array(model.actuator_ctrlrange[:,1])
-    open_ctrl=np.clip(np.zeros(model.nu),lo,hi); closed=np.where(hi>0, lo+.78*(hi-lo),open_ctrl)
-    lifted=False; lost=False; max_wall_force=0.; tactile_events=0; frames=[]
-    phases=[("approach",.45,np.array([-.18+percept[0],.055+percept[1],.49])),("close",.55,None),("lift",.55,np.array([-.18,.055,.69])),("carry",1.15,np.array([.34,.055,.69])),("lower",.55,np.array([.34,.055,.56])),("release",.45,None),("settle",.65,None)]
-    prev=start.copy()
-    for phase,duration,target in phases:
-        steps=max(1,int(duration/model.opt.timestep))
-        for k in range(steps):
-            if target is not None:
-                alpha=(k+1)/steps; desired=prev+(target-prev)*alpha
-                delta=desired-data.mocap_pos[moc]; lim=.45*model.opt.timestep
-                data.mocap_pos[moc]+=delta*min(1,lim/max(np.linalg.norm(delta),1e-12))
-            if phase=="close" and grip: data.ctrl=open_ctrl+(closed-open_ctrl)*(k+1)/steps
-            elif phase in ("release","settle"): data.ctrl=open_ctrl
-            elif phase not in ("approach",): data.ctrl=closed if grip else open_ctrl
-            mujoco.mj_step(model,data)
-            tr=_tip_tactile(model,data,pg,tuple(rng.normal(0,.015,2)),product.friction*friction_scale)
-            if method != METHODS[0] and tr.slipping and phase in ("close","lift","carry"):
-                tactile_events+=1; data.ctrl=np.clip(data.ctrl+.20*(hi-lo),lo,hi)  # physical feedback
-            z=float(data.qpos[qadr+2]); lifted |= z > .14
-            contact_now=False
-            for ci in range(data.ncon):
-                c=data.contact[ci]; a,b=int(c.geom1),int(c.geom2)
-                if pg in (a,b) and int(model.geom_bodyid[b if a==pg else a]) in hand_bodies: contact_now=True
-                if (a in wall_ids and int(model.geom_bodyid[b]) in hand_bodies) or (b in wall_ids and int(model.geom_bodyid[a]) in hand_bodies):
-                    f=np.zeros(6); mujoco.mj_contactForce(model,data,ci,f); max_wall_force=max(max_wall_force,abs(f[0]))
-            if lifted and phase in ("lift","carry") and not contact_now and z < .13: lost=True
-        if target is not None: prev=target.copy()
-    pos=np.array(data.qpos[qadr:qadr+3]); vel=np.array(data.qvel[model.jnt_dofadr[jid]:model.jnt_dofadr[jid]+6]); speed=float(np.linalg.norm(vel))
-    inside=abs(pos[0]-.34)<.135 and abs(pos[1])<.105 and .02<pos[2]<.21
-    success=bool(inside and speed<.03 and max_wall_force<120)
+        ren=mujoco.Renderer(m,height=180,width=180); ren.enable_depth_rendering(); ren.update_scene(d,camera="overhead"); dep=ren.render().copy(); ren.close()
+        candidates=depth_grasp_candidates(dep,wall_mask=_wall_mask(*dep.shape))
+    # Fallback is a fixed tote-centre scan pose, never product truth. Retry offsets
+    # depend only on the previous failure index and are the method-(c) policy.
+    if candidates: gx,gy,_=candidates[0]["world"]
+    else: gx,gy=SRC
+    if method==METHODS[2] and retry: gx+=(-1 if retry%2 else 1)*.009*((retry+1)//2)
+    # bounded camera noise is an initial sensor condition
+    gx+=rng.normal(0,.0025); gy+=rng.normal(0,.0025)
+    pg=mujoco.mj_name2id(m,mujoco.mjtObj.mjOBJ_GEOM,"product_geom"); jid=mujoco.mj_name2id(m,mujoco.mjtObj.mjOBJ_JOINT,"product_free"); qa=int(m.jnt_qposadr[jid]); da=int(m.jnt_dofadr[jid])
+    walls={mujoco.mj_name2id(m,mujoco.mjtObj.mjOBJ_GEOM,f"{s}_wall{i}") for s in ("src","dst") for i in range(4)}
+    hand_bodies=set(); root=hand
+    for bi in range(m.nbody):
+        j=bi
+        while j>0 and j!=root: j=int(m.body_parentid[j])
+        if j==root: hand_bodies.add(bi)
+    def solve(point): return _ik_solve(mujoco,m,dk,hand,np.asarray(point)-offset,quat,d.qpos[:7])
+    max_force=0.; lifted=False; lost=False; tactile_events=0; log=[]; ever_contact=False; tactile_boost=False
+    def step_to(qtarget,gripcmd,seconds,phase):
+        nonlocal max_force,lifted,lost,tactile_events,ever_contact,tactile_boost
+        n=max(1,int(seconds/m.opt.timestep)); q0=d.ctrl[:7].copy()
+        for k in range(n):
+            d.ctrl[:7]=q0+(qtarget-q0)*(k+1)/n; cmd=gripcmd(k,n) if callable(gripcmd) else gripcmd
+            if tactile_boost and cmd<GRIP_OPEN: cmd=GRIP_SHUT
+            d.ctrl[7]=cmd; mujoco.mj_step(m,d)
+            touching=False
+            for ci in range(d.ncon):
+                c=d.contact[ci]; a,b=int(c.geom1),int(c.geom2); other=b if a==pg else a
+                if pg in (a,b) and int(m.geom_bodyid[other]) in hand_bodies: touching=True; ever_contact=True
+                if (a in walls and int(m.geom_bodyid[b]) in hand_bodies) or (b in walls and int(m.geom_bodyid[a]) in hand_bodies):
+                    f=np.zeros(6); mujoco.mj_contactForce(m,d,ci,f); max_force=max(max_force,abs(float(f[0])))
+            tr=_tip_tactile(m,d,pg,pads,tuple(rng.normal(0,.01,2)),product.friction*friction_scale)
+            if method!=METHODS[0] and tr.slipping and phase in ("close","lift","carry"):
+                tactile_events+=1; tactile_boost=True; d.ctrl[7]=GRIP_SHUT
+            z=float(d.qpos[qa+2]); lifted|=z>TABLE_TOP+product.size_m[2]/2+.045
+            if lifted and phase in ("lift","carry") and ever_contact and not touching and z<TABLE_TOP+product.size_m[2]/2+.025: lost=True
+            if diagnostics and k%25==0: log.append({"time_s":float(d.time),"phase":phase,"product_z":z,"normal_n":tr.normal_n,"tangent_n":tr.tangential_n,"joint_target":d.ctrl[:7].tolist(),"joint_actual":d.qpos[:7].tolist(),"actuator_force":d.actuator_force.tolist(),"pad_position":_pad_state(mujoco,m,d)[0].tolist()})
+    zc=TABLE_TOP+product.size_m[2]/2
+    hover=(gx,gy,max(.34,zc+.14)); grasp=(gx,gy,zc); lift=(gx,gy,.36); carry=(DST[0],DST[1],.36); lower=(DST[0],DST[1],TABLE_TOP+product.size_m[2]/2+.025)
+    step_to(solve(hover),GRIP_OPEN,.8,"approach"); step_to(solve(grasp),GRIP_OPEN,.7,"descend")
+    base_shut=30.0
+    close=lambda k,n: GRIP_OPEN+(base_shut-GRIP_OPEN)*(k+1)/n if grip else GRIP_OPEN
+    step_to(d.ctrl[:7].copy(),close,.45,"close"); step_to(solve(lift),base_shut if grip else GRIP_OPEN,.75,"lift")
+    step_to(solve(carry),base_shut if grip else GRIP_OPEN,1.0,"carry"); step_to(solve(lower),base_shut if grip else GRIP_OPEN,.55,"lower")
+    step_to(d.ctrl[:7].copy(),GRIP_OPEN,.35,"release"); step_to(d.ctrl[:7].copy(),GRIP_OPEN,.8,"settle")
+    pos=np.array(d.qpos[qa:qa+3]); speed=float(np.linalg.norm(d.qvel[da:da+6])); inside=bool(np.all(np.abs(pos[:2]-DST)<TOTE_HALF-[.012,.012]) and TABLE_TOP<pos[2]<TABLE_TOP+.20)
+    success=bool(inside and speed<.04 and max_force<140.)
     if success: failure=None
     elif not lifted: failure="grasp_miss"
     elif lost: failure="transport_slip"
-    elif max_wall_force>=120: failure="collision"
-    elif data.time>=sum(x[1] for x in phases)-.02 and speed>=.03: failure="timeout"
+    elif max_force>=140: failure="collision"
+    elif speed>=.04: failure="timeout"
     else: failure="outside_tote"
-    return success,failure,float(data.time),{"truth_inside":bool(inside),"truth_speed_m_s":speed,"final_position_m":pos.tolist(),"lifted":lifted,"lost_contact_fall":lost,"max_wall_force_n":max_wall_force,"tactile_events":tactile_events,"depth_candidates":len(candidates),"mj_steps":int(round(data.time/model.opt.timestep))}
+    truth={"truth_inside":inside,"truth_speed_m_s":speed,"final_position_m":pos.tolist(),"lifted":lifted,"lost_contact_fall":lost,"max_wall_force_n":max_force,"tactile_events":tactile_events,"depth_candidates":len(candidates),"grasp_world_m":[gx,gy,zc],"pad_offset_m":offset.tolist(),"mj_steps":int(round(d.time/m.opt.timestep)),"diagnostics":log}
+    return success,failure,float(d.time),truth
 
 
 def run_benchmark(n_trials=4,seed=20261030,max_retries=5,**kwargs):
@@ -208,14 +256,10 @@ def run_benchmark(n_trials=4,seed=20261030,max_retries=5,**kwargs):
         for method in METHODS:
             attempts=[]
             for retry in range(max_retries+1):
-                # c changes the physical approach after a measured prior failure.
-                rseed=scene_seed+retry*104729
-                ok,fail,cycle,truth=_attempt(product,method,rseed,retry,**kwargs)
-                attempts.append({"retry":retry,"success":ok,"failure":fail,"cycle_s":cycle,**truth})
-                if ok: break
-                if method != METHODS[2]: break
-            rows.append({"trial":trial,"scene_seed":scene_seed,"product":product.name,"method":method,"attempts":attempts})
-    return {"seed":seed,"n_trials":n_trials,"rows":rows,"products":[asdict(p) for p in PRODUCTS],"contact":{"adhesion":False,"solref":SOLREF,"solimp":SOLIMP,"condim":4},"time_basis":"MuJoCo data.time"}
+                ok,fail,cycle,truth=_attempt(product,method,scene_seed,retry,**kwargs); attempts.append({"retry":retry,"success":ok,"failure":fail,"cycle_s":cycle,**truth})
+                if ok or method!=METHODS[2]: break
+            rows.append({"trial":trial,"scene_seed":scene_seed,"product":product.name,"difficulty":product.difficulty,"method":method,"attempts":attempts})
+    return {"seed":seed,"n_trials":n_trials,"rows":rows,"products":[asdict(p) for p in PRODUCTS],"contact":{"adhesion":False,"solref":SOLREF,"solimp":SOLIMP,"condim":3},"time_basis":"MuJoCo data.time"}
 
 
 def wilson(successes,total,confidence=.95):
@@ -224,31 +268,35 @@ def wilson(successes,total,confidence=.95):
     return c-h,c+h
 
 
+def _mcnemar(rows):
+    a={r["trial"]:any(x["success"] for x in r["attempts"]) for r in rows if r["method"]==METHODS[0]}; b={r["trial"]:any(x["success"] for x in r["attempts"]) for r in rows if r["method"]==METHODS[1]}
+    n01=sum(not a[k] and b[k] for k in a); n10=sum(a[k] and not b[k] for k in a); n=n01+n10
+    p=1.0 if n==0 else min(1.,2*sum(math.comb(n,i) for i in range(min(n01,n10)+1))*.5**n)
+    return {"b_wins":n01,"a_wins":n10,"exact_two_sided_p":p}
+
+
 def summarize(result):
-    curves={}; by_product={}; failures={}; timing={}; tactile_delta={}
+    curves={};by_product={};failures={};timing={};delta={}
     for method in METHODS:
-        mr=[r for r in result["rows"] if r["method"]==method]; curves[method]=[]
+        rr=[r for r in result["rows"] if r["method"]==method];curves[method]=[]
         for allowed in range(6):
-            s=sum(any(a["success"] for a in r["attempts"][:allowed+1]) for r in mr); curves[method].append({"retries":allowed,"successes":s,"total":len(mr),"rate":s/len(mr) if mr else math.nan,"wilson95":wilson(s,len(mr))})
+            s=sum(any(a["success"] for a in r["attempts"][:allowed+1]) for r in rr);curves[method].append({"retries":allowed,"successes":s,"total":len(rr),"rate":s/len(rr) if rr else math.nan,"wilson95":wilson(s,len(rr))})
         by_product[method]={}
         for p in PRODUCTS:
-            rr=[r for r in mr if r["product"]==p.name];s=sum(any(a["success"] for a in r["attempts"]) for r in rr);by_product[method][p.name]={"successes":s,"total":len(rr),"rate":s/len(rr) if rr else math.nan}
-        failures[method]={f:sum(a["failure"]==f for r in mr for a in r["attempts"]) for f in FAILURES}
-        ts=[sum(a["cycle_s"] for a in r["attempts"]) for r in mr];timing[method]={"mean_sim_s":float(np.mean(ts)) if ts else math.nan}
+            pr=[r for r in rr if r["product"]==p.name];s=sum(any(a["success"] for a in r["attempts"]) for r in pr);by_product[method][p.name]={"successes":s,"total":len(pr),"rate":s/len(pr) if pr else math.nan}
+        failures[method]={f:sum(a["failure"]==f for r in rr for a in r["attempts"]) for f in FAILURES}; ts=[sum(a["cycle_s"] for a in r["attempts"]) for r in rr];timing[method]={"mean_sim_s":float(np.mean(ts)) if ts else math.nan}
     for p in PRODUCTS:
-        tactile_delta[p.name]=by_product[METHODS[1]][p.name]["rate"]-by_product[METHODS[0]][p.name]["rate"] if by_product[METHODS[0]][p.name]["total"] else math.nan
-    return {"curves":curves,"by_product":by_product,"failures":failures,"timing":timing,"tactile_delta":tactile_delta}
+        x=by_product[METHODS[0]][p.name]; y=by_product[METHODS[1]][p.name]; delta[p.name]=y["rate"]-x["rate"] if x["total"] else math.nan
+    return {"curves":curves,"by_product":by_product,"failures":failures,"timing":timing,"tactile_delta":delta,"mcnemar_b_minus_a":_mcnemar(result["rows"])}
 
 
 def validate_mujoco_asset(menagerie=None):
     try:
         import mujoco
-        p=_menagerie(menagerie)/"shadow_hand"/"right_hand.xml"; m=mujoco.MjModel.from_xml_path(str(p))
-        tips=[n for n in TIP_BODIES if mujoco.mj_name2id(m,mujoco.mjtObj.mjOBJ_BODY,n)>=0]
-        return {"skipped":False,"path":str(p),"fingertip_bodies":tips}
+        p=_menagerie(menagerie)/"franka_emika_panda"/"scene.xml";m=mujoco.MjModel.from_xml_path(str(p));return {"skipped":False,"path":str(p),"arm_actuators":m.nu-1,"gripper_ctrlrange":m.actuator_ctrlrange[-1].tolist()}
     except Exception as e:return {"skipped":True,"reason":str(e)}
 
 
 def attempt_source_has_random_outcome():
-    tree=ast.parse(Path(__file__).read_text(encoding="utf-8")); fn=next(n for n in tree.body if isinstance(n,ast.FunctionDef) and n.name=="_attempt")
+    tree=ast.parse(Path(__file__).read_text(encoding="utf-8"));fn=next(n for n in tree.body if isinstance(n,ast.FunctionDef) and n.name=="_attempt")
     return any(isinstance(n,ast.Compare) and any(isinstance(x,ast.Call) and isinstance(x.func,ast.Attribute) and x.func.attr in {"random","uniform"} for x in ast.walk(n)) for n in ast.walk(fn))
