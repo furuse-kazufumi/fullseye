@@ -570,6 +570,10 @@ EXCLUDED = {
 #: だから**釣れたものは全部ここに名前と理由を書いて外す**(印は緩めない)。
 _OUT_REASON = "出力は out/(gitignore)で、コミット物を書かない。"
 NOT_A_GENERATOR = {
+    # ---- 2026-10-30: ViEW2026 の正本 docs/view2026/exhibits.json を編集する道具(生成物ではなく入力を書く) ----
+    "tools/build_view2026_featured_batch.py": "入力の編集。台帳 poc_captions.json から注目 80 本を exhibits.json(正本)へ書き込む。台帳が変わったら手で回して commit する(逐語一致の門が回し忘れを止める)。",
+    "tools/register_view2026_sweep_viewers.py": "入力の編集。引数掃引ビューアの案内文を exhibits.json(正本)の viewers に登録する。登録を変えたときだけ手で回す。",
+    "tools/register_view2026_youtube.py": "入力の編集。YouTube の URL を exhibits.json(正本)に書く。動画を上げたときだけ手で回す。",
     # ---- 2026-10-25: Studio をブラウザで動かす可否の探針(tools/probe_studio_web/、製品ではない) ----
     "tools/probe_studio_web/op_inventory.py": "探針。全 op を実装モジュールの import で分類し、結果 JSON は --out(repo の外)へ書く。",
     "tools/probe_studio_web/bench_body.py": "探針のベンチ本体(CPython と Pyodide で同じファイルを読む)。実測値なので回すたびに変わる。",

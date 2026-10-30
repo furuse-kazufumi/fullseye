@@ -329,6 +329,11 @@ SECOND_BATCH = {
     "poc_phase_measuring_deflectometry": ["split", "frames", "split", "split", "split", "split"],
     "poc_asteroid_curvature": ["points", "points", "points", "points"],
 }
+THIRD_BATCH = {
+    "poc_focus_stacking", "poc_interferometry_step", "poc_polarization_specular",
+    "poc_photoelasticity", "poc_compound_eye",
+    "poc_ct_void_morphology", "poc_active_contours",
+}
 
 
 def _builders():
@@ -341,13 +346,31 @@ def _builders():
 
 def test_the_viewer_registry_counts_are_fixed():
     B = _builders()
-    assert len(B.BUILDERS) == 7                                      # 第 1 弾 3 + 第 2 弾 4
+    assert len(B.BUILDERS) == 14                                     # 第 1 弾 3 + 第 2 弾 4 + 引数掃引 7
     assert set(SECOND_BATCH) <= set(B.BUILDERS)
     d = json.load(open(os.path.join(_ROOT, "docs", "view2026", "exhibits.json"), encoding="utf-8"))
     assert [i["id"] for i in d["viewers"]["items"]] == list(B.BUILDERS)   # 案内ページの並び = 登録の並び
-    assert len(B.BUILDERS) == 7                                      # 空の対象を周って「通った」ことにしない
+    assert len(B.BUILDERS) == 14                                     # 空の対象を周って「通った」ことにしない
     for pid in B.BUILDERS:
         assert os.path.isfile(os.path.join(_ROOT, "docs", "view2026", "viewers", pid + ".html")), pid
+
+
+@pytest.mark.parametrize("pid", sorted(THIRD_BATCH))
+def test_parameter_sweep_viewer_has_a_physical_slider_and_is_small(pid):
+    B = _builders()
+    spec = B.BUILDERS[pid]()
+    assert len(spec["tabs"]) == 1 and spec["tabs"][0]["kind"] == "frames"
+    axis = spec["tabs"][0]["axis"]
+    assert len(axis["values"]) == len(spec["tabs"][0]["frames"])
+    assert axis["segments"][0]["label"] and axis["segments"][0]["k"] == 0
+    # ★2026-10-30: 運動拡大の掃引は振幅を 40 倍にしても指標が 3.93 -> 3.97 で平らだった(64 px 用の読み出しを
+    #   160 px の動画に当てていた)。つまみを動かしても絵も指標も変わらないビューアは偽物なので止める。
+    fr = [np.asarray(f, np.float64) for f in spec["tabs"][0]["frames"]]
+    assert len(fr) >= 8 and np.ptp(fr[-1] - fr[0]) > 0, "端のコマが同じ"
+    for s in spec["tabs"][0]["series"]:
+        v = np.asarray(s["values"], np.float64)
+        assert np.ptp(v) > 0.05 * max(np.abs(v).max(), 1e-12), "指標が平ら: %s" % s["label"]
+    assert len(pv._build_html(spec, B.ALL_LANGS).encode("utf-8")) < 5_000_000
 
 
 @pytest.mark.parametrize("pid", sorted(SECOND_BATCH))

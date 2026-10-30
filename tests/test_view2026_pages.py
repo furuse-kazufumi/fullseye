@@ -54,12 +54,33 @@ def test_a_missing_translation_stops_the_generator():
     assert any(cid in b for b in bad), bad
 
 
+def test_youtube_is_hidden_when_empty_and_invalid_urls_stop_generation():
+    d = G.load()
+    assert len(d["exhibits"]) >= 100
+    assert all("youtube_url" in e for e in d["exhibits"])
+    assert "[YouTube](" not in G.build(d, "en")
+    broken = copy.deepcopy(d)
+    broken["exhibits"][0]["youtube_url"] = "https://example.invalid/static.mp4"
+    bad = G.validate(broken)
+    assert len(bad) >= 1
+    assert any("YouTube" in x for x in bad)
+
+
 def test_a_stale_translation_stops_the_generator():
     broken = copy.deepcopy(G.load())
     broken["capabilities"]["titles"]["no-such-capability"] = {"zh": "x"}
     bad = G.validate(broken)
     assert bad
     assert any("no-such-capability" in b for b in bad)
+
+
+def test_a_one_character_change_to_a_ledger_caption_stops_the_generator():
+    broken = copy.deepcopy(G.load())
+    item = next(e for e in broken["exhibits"] if "numbers_source" in e)
+    item["see"]["ja"] += "改"
+    bad = G.validate(broken)
+    assert len(bad) >= 1
+    assert any(item["id"] in message and "逐語一致" in message for message in bad), bad
 
 
 def test_a_missing_example_stops_the_generator(monkeypatch):
