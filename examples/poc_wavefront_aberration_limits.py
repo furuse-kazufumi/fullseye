@@ -14,6 +14,7 @@ from pathlib import Path
 import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import optics as fs  # noqa: E402
+import examplefig as figs  # noqa: E402
 
 SLUG = "poc_wavefront_aberration_limits"
 ROOT = Path(__file__).resolve().parents[1]
@@ -49,9 +50,16 @@ def main():
     ax.set(xlabel="Zernike RMS [waves]",ylabel="Strehl ratio",ylim=(0,1.03)); ax.grid(); ax.legend(ncol=3)
     for a,(name,z) in zip([fig.add_subplot(gs[1,i]) for i in range(4)],zs.items()):
         ps=fs.pupil_psf(pupil.astype(float),opd_waves=.20*z,oversample=4); c=ps.shape[0]//2; a.imshow(np.log10(ps[c-35:c+36,c-35:c+36]+1e-9),cmap="magma",vmin=-8); a.set_title(f"{name}, 0.20 waves RMS"); a.set_xlabel("image x [samples]"); a.set_ylabel("image y [samples]")
-    fig.suptitle("Aberration shape, not RMS alone, controls Marechal breakdown"); fig.tight_layout(); fn="01_aberration_limits.png"; fig.savefig(OUT/fn); plt.close(fig)
+    fig.suptitle("Aberration shape, not RMS alone, controls Marechal breakdown"); fig.tight_layout(); fn="01_aberration_limits.png"; fig.savefig(OUT/fn); fig.canvas.draw(); figs.save('aberration_limits', np.asarray(fig.canvas.buffer_rgba())[..., :3].copy(), caption='Four unit-RMS Noll Zernike modes: exact pupil integral, Fullseye FFT, Marechal approximation, and computed PSFs.'); plt.close(fig)
     metrics={"fft_vs_pupil_max_abs_error":maxerr,"five_percent_boundary_rms_waves":bounds,"conditions":484}
     (OUT/"metrics.json").write_text(json.dumps(metrics,indent=2)+"\n",encoding="utf-8")
     (OUT/"figures.json").write_text(json.dumps([{"file":fn,"name":"aberration_limits","caption":"Four unit-RMS Noll Zernike modes: exact pupil integral, Fullseye FFT, Marechal approximation, and computed PSFs.","shape":[900,1600,4]}],indent=2)+"\n",encoding="utf-8")
     print(json.dumps(metrics)); print("PASS",SLUG)
-if __name__ == "__main__": main()
+
+def _report_figure_errors():
+    for err in figs.errors():   # 図が書けなかった理由を黙って捨てない
+        print("[figure error]", err)
+
+if __name__ == "__main__":
+    main()
+    _report_figure_errors()

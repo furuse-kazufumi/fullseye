@@ -14,6 +14,7 @@ import json,sys
 from pathlib import Path
 import numpy as np
 sys.path.insert(0,str(Path(__file__).resolve().parents[1])); import optics as fs  # noqa:E402
+import examplefig as figs  # noqa: E402
 SLUG="poc_slanted_edge_sfr_limits"; ROOT=Path(__file__).resolve().parents[1]; OUT=ROOT/"docs/articles/assets/poc"/SLUG
 PITCH=3.45; FNO=5.6; LAM=.55
 def truth_curve():
@@ -55,7 +56,14 @@ def main():
     ax[0].axhline(.5,color="gray",ls="--"); ax[0].set(xlabel="spatial frequency [cycles/pixel]",ylabel="MTF",ylim=(0,1.05)); ax[0].grid(); ax[0].legend()
     for g in (1.,.6,.35):
         rr=[r for r in rows if r[1]==g and r[2]==.005]; ax[1].plot([r[0] for r in rr],[100*r[4] for r in rr],"o-",label=f"gamma={g}")
-    ax[1].axhline(10,color="r",ls="--",label="10% gate"); ax[1].set(xlabel="edge angle [deg]",ylabel="MTF50 relative error [%]"); ax[1].grid(); ax[1].legend(); fig.suptitle("Slanted-edge SFR bias is driven by nonlinear tone response as well as edge angle"); fig.tight_layout(); fn="01_sfr_limits.png"; fig.savefig(OUT/fn); plt.close(fig)
+    ax[1].axhline(10,color="r",ls="--",label="10% gate"); ax[1].set(xlabel="edge angle [deg]",ylabel="MTF50 relative error [%]"); ax[1].grid(); ax[1].legend(); fig.suptitle("Slanted-edge SFR bias is driven by nonlinear tone response as well as edge angle"); fig.tight_layout(); fn="01_sfr_limits.png"; fig.savefig(OUT/fn); fig.canvas.draw(); figs.save('sfr_limits', np.asarray(fig.canvas.buffer_rgba())[..., :3].copy(), caption='Fullseye optical truth against slanted-edge estimates over angle, gamma, and noise.'); plt.close(fig)
     metrics={"conditions":420,"truth_mtf50_cyc_px":t50,"clean_max_abs_error_cyc_px":maxclean,"first_ten_percent_failure_angle_deg":boundary}
     (OUT/"metrics.json").write_text(json.dumps(metrics,indent=2)+"\n"); (OUT/"figures.json").write_text(json.dumps([{"file":fn,"name":"sfr_limits","caption":"Fullseye optical truth against slanted-edge estimates over angle, gamma, and noise.","shape":[900,1600,4]}],indent=2)+"\n"); print(json.dumps(metrics)); print("PASS",SLUG)
-if __name__=="__main__": main()
+
+def _report_figure_errors():
+    for err in figs.errors():   # 図が書けなかった理由を黙って捨てない
+        print("[figure error]", err)
+
+if __name__ == "__main__":
+    main()
+    _report_figure_errors()

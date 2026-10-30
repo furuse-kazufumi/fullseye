@@ -12,6 +12,7 @@ import json, sys
 from pathlib import Path
 import numpy as np
 sys.path.insert(0,str(Path(__file__).resolve().parents[1])); import optics as fs  # noqa:E402
+import examplefig as figs  # noqa: E402
 SLUG="poc_mueller_dofp_observability"; ROOT=Path(__file__).resolve().parents[1]; OUT=ROOT/"docs/articles/assets/poc"/SLUG
 ANG=(0.,45.,90.,135.)
 def states(qwp=False):
@@ -44,7 +45,14 @@ def main():
     for D,label in ((A,"linear DoFP"),(B,"with QWP states")): ax[0].semilogy(np.arange(1,17),np.pad(np.linalg.svd(D,compute_uv=False),(0,16-min(D.shape)),constant_values=np.nan),"o-",label=label)
     ax[0].set(xlabel="singular-value index",ylabel="singular value",title=f"Computed ranks: {ranks[0]} / {ranks[1]}"); ax[0].grid(); ax[0].legend()
     ax[1].bar(errs.keys(),errs.values(),color=["#d95f02","#1b9e77"]); ax[1].set(ylabel="median relative Mueller error",title="200 trials, read noise = 0.2%")
-    fig.suptitle("A four-angle polarization camera has a seven-dimensional Mueller blind space"); fig.tight_layout(); fn="01_observability.png"; fig.savefig(OUT/fn); plt.close(fig)
+    fig.suptitle("A four-angle polarization camera has a seven-dimensional Mueller blind space"); fig.tight_layout(); fn="01_observability.png"; fig.savefig(OUT/fn); fig.canvas.draw(); figs.save('observability', np.asarray(fig.canvas.buffer_rgba())[..., :3].copy(), caption='SVD-computed observability and noise propagation for linear-only and QWP-augmented polarimeters.'); plt.close(fig)
     metrics={"linear_rank":int(ranks[0]),"qwp_rank":int(ranks[1]),"independent_path_max_error":patherr,"median_relative_error":errs,"trials":200}
     (OUT/"metrics.json").write_text(json.dumps(metrics,indent=2)+"\n"); (OUT/"figures.json").write_text(json.dumps([{"file":fn,"name":"observability","caption":"SVD-computed observability and noise propagation for linear-only and QWP-augmented polarimeters.","shape":[900,1600,4]}],indent=2)+"\n"); print(json.dumps(metrics)); print("PASS",SLUG)
-if __name__=="__main__": main()
+
+def _report_figure_errors():
+    for err in figs.errors():   # 図が書けなかった理由を黙って捨てない
+        print("[figure error]", err)
+
+if __name__ == "__main__":
+    main()
+    _report_figure_errors()
