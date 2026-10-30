@@ -42,6 +42,14 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 - **[Talbot-Teppich und Gitter-Röntgenbilder](../viewers/poc_grating_interferometry.html?lang=de)**: In der Absorption beträgt das Kontrast-Rausch-Verhältnis des Risses nur 1.34, im Dunkelfeld steigt es auf 13.5, und beim Drehen des Gitters lässt sich sogar die Faserrichtung ablesen.
 - **[Mikrometerdellen im Spiegelbild von Streifen](../viewers/poc_phase_measuring_deflectometry.html?lang=de)**: Im Foto ist das Signal nur das 0.17-Fache des Rauschens und nichts zu sehen; in der aus dem Spiegelbild der Streifen erzeugten Krümmungskarte ragt eine 1 µm tiefe Delle 57-mal über das Rauschen.
 - **[Wie stark sich die Oberfläche eines Asteroiden krümmt](../viewers/poc_asteroid_curvature.html?lang=de)**: Die Krümmung wird aus den Punkten eines echten Asteroiden berechnet; Grate und Felsblockkanten erscheinen in Farbe. Der Maßstab wurde zuerst an einer Kugel mit bekannter Antwort geprüft.
+- **[Fokus-Stacking](../viewers/poc_focus_stacking.html?lang=de)**: Führt die PoC-Funktion erneut aus und variiert f-number über 2.0–16.0.
+- **[Weißlicht-Stufen](../viewers/poc_interferometry_step.html?lang=de)**: Führt die PoC-Funktion erneut aus und variiert noise σ über 0.000–0.120.
+- **[Polarisation](../viewers/poc_polarization_specular.html?lang=de)**: Führt die PoC-Funktion erneut aus und variiert incidence angle über 0–80°.
+- **[Spannungsoptik](../viewers/poc_photoelasticity.html?lang=de)**: Führt die PoC-Funktion erneut aus und variiert analyser angle über 0–180°.
+- **[Bewegungsverstärkung](../viewers/poc_motion_magnification.html?lang=de)**: Führt die PoC-Funktion erneut aus und variiert motion amplitude über 0.02–0.80 px.
+- **[Fliegen-Facettenauge](../viewers/poc_compound_eye.html?lang=de)**: Führt die PoC-Funktion erneut aus und variiert per-view SNR über 0.5–16.0.
+- **[Poren in Fügeschicht](../viewers/poc_ct_void_morphology.html?lang=de)**: Führt die PoC-Funktion erneut aus und variiert threshold über 0.2–0.8.
+- **[Aktive Konturen](../viewers/poc_active_contours.html?lang=de)**: Führt die PoC-Funktion erneut aus und variiert threshold über image min–max.
 
 ## Highlights
 

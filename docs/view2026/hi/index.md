@@ -42,6 +42,14 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - **[टैल्बट कालीन और ग्रेटिंग एक्स-रे चित्र](../viewers/poc_grating_interferometry.html?lang=hi)**: अवशोषण में दरार का कंट्रास्ट-शोर अनुपात केवल 1.34 है; डार्क फ़ील्ड में वह 13.5 हो जाता है, और ग्रेटिंग घुमाने से रेशे की दिशा तक पढ़ी जा सकती है।
 - **[धारियों के प्रतिबिंब में µm गड्ढे](../viewers/poc_phase_measuring_deflectometry.html?lang=hi)**: फ़ोटो में संकेत शोर का केवल 0.17 गुना है और कुछ नहीं दिखता; धारियों के प्रतिबिंब से बने वक्रता के नक्शे में 1 µm गहरा गड्ढा शोर से 57 गुना ऊँचा खड़ा दिखता है।
 - **[क्षुद्रग्रह की सतह कितनी मुड़ी है](../viewers/poc_asteroid_curvature.html?lang=hi)**: वास्तविक क्षुद्रग्रह के बिंदुओं से वक्रता निकाली गई है, कटक और चट्टानों के किनारे रंग में दिखते हैं। पैमाने को पहले ऐसे गोले पर जाँचा गया जिसका उत्तर ज्ञात है।
+- **[Focus stacking](../viewers/poc_focus_stacking.html?lang=hi)**: PoC फ़ंक्शन दोबारा चलाकर f-number को 2.0–16.0 तक बदलता है।
+- **[White-light step](../viewers/poc_interferometry_step.html?lang=hi)**: PoC फ़ंक्शन दोबारा चलाकर noise σ को 0.000–0.120 तक बदलता है।
+- **[Polarization](../viewers/poc_polarization_specular.html?lang=hi)**: PoC फ़ंक्शन दोबारा चलाकर incidence angle को 0–80° तक बदलता है।
+- **[Photoelasticity](../viewers/poc_photoelasticity.html?lang=hi)**: PoC फ़ंक्शन दोबारा चलाकर analyser angle को 0–180° तक बदलता है।
+- **[Motion magnification](../viewers/poc_motion_magnification.html?lang=hi)**: PoC फ़ंक्शन दोबारा चलाकर motion amplitude को 0.02–0.80 px तक बदलता है।
+- **[Fly compound eye](../viewers/poc_compound_eye.html?lang=hi)**: PoC फ़ंक्शन दोबारा चलाकर per-view SNR को 0.5–16.0 तक बदलता है।
+- **[Joint voids (CT)](../viewers/poc_ct_void_morphology.html?lang=hi)**: PoC फ़ंक्शन दोबारा चलाकर threshold को 0.2–0.8 तक बदलता है।
+- **[Active contours](../viewers/poc_active_contours.html?lang=hi)**: PoC फ़ंक्शन दोबारा चलाकर threshold को image min–max तक बदलता है।
 
 ## मुख्य झलकियाँ
 

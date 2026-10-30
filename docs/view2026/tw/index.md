@@ -42,6 +42,14 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - **[塔爾博特地毯與光柵 X 光像](../viewers/poc_grating_interferometry.html?lang=tw)**: 在吸收像中裂紋的對比雜訊比只有 1.34,在暗場像中升到 13.5,轉動光柵還能讀出纖維的方向。
 - **[用條紋鏡像看微米級凹坑](../viewers/poc_phase_measuring_deflectometry.html?lang=tw)**: 照片中的訊號只有雜訊的 0.17 倍,什麼也看不見;而由條紋鏡像做出的曲率圖中,深 1 µm 的凹坑高出雜訊 57 倍。
 - **[小行星表面的彎曲程度](../viewers/poc_asteroid_curvature.html?lang=tw)**: 由真實小行星的點雲算出曲率,用顏色看山脊和巨石邊緣。先在答案已知的球面上驗證了方法。
+- **[景深合成](../viewers/poc_focus_stacking.html?lang=tw)**: 重新執行 PoC 函數，將 f-number 在 2.0–16.0 範圍內掃描。
+- **[白光干涉段差](../viewers/poc_interferometry_step.html?lang=tw)**: 重新執行 PoC 函數，將 noise σ 在 0.000–0.120 範圍內掃描。
+- **[偏光去鏡面反射](../viewers/poc_polarization_specular.html?lang=tw)**: 重新執行 PoC 函數，將 incidence angle 在 0–80° 範圍內掃描。
+- **[光彈應力](../viewers/poc_photoelasticity.html?lang=tw)**: 重新執行 PoC 函數，將 analyser angle 在 0–180° 範圍內掃描。
+- **[微振動放大](../viewers/poc_motion_magnification.html?lang=tw)**: 重新執行 PoC 函數，將 motion amplitude 在 0.02–0.80 px 範圍內掃描。
+- **[蒼蠅複眼](../viewers/poc_compound_eye.html?lang=tw)**: 重新執行 PoC 函數，將 per-view SNR 在 0.5–16.0 範圍內掃描。
+- **[接合層孔洞](../viewers/poc_ct_void_morphology.html?lang=tw)**: 重新執行 PoC 函數，將 threshold 在 0.2–0.8 範圍內掃描。
+- **[主動輪廓](../viewers/poc_active_contours.html?lang=tw)**: 重新執行 PoC 函數，將 threshold 在 image min–max 範圍內掃描。
 
 ## 精選
 

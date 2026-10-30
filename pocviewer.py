@@ -1104,8 +1104,8 @@ def _pack_tab(tab: dict, store: _Store, idx: int, ctx: _Ctx) -> dict:
         out["checks"] = _pack_checks(tab["checks"], tab["badge"], where, ctx)
     if tab.get("lesson") is not None:                     # 任意。学習用の型
         out["lesson"] = _pack_lesson(tab["lesson"], where, ctx)
-    if tab.get("axis") is not None and kind != "anim3d":
-        raise ValueError("%s: axis は kind \"anim3d\" だけ(%s には時間つまみが無い)" % (where, kind))
+    if tab.get("axis") is not None and kind not in ("anim3d", "frames"):
+        raise ValueError("%s: axis は時間つまみを持つ anim3d / frames だけ" % where)
     if tab.get("view"):
         out["view"] = {k: float(v) for k, v in tab["view"].items() if k in ("az", "el", "dist")}
         if tab["view"].get("target") is not None:     # anim3d: look at this world point instead of the scene centre
@@ -1159,6 +1159,8 @@ def _pack_tab(tab: dict, store: _Store, idx: int, ctx: _Ctx) -> dict:
         out["dt"] = float(tab.get("dt", 0.2))
         out["boxes"] = _pack_boxes(tab.get("boxes", []), T, where, ctx)
         out["series"] = _pack_series(tab.get("series", []), T, where, ctx)
+        if tab.get("axis") is not None:
+            out["axis"] = _pack_axis(tab["axis"], T, where, ctx)
     elif kind == "anim3d":
         _pack_anim3d(tab, out, store, where, ctx)
         if tab.get("axis") is not None:                   # 任意。時間つまみの読みを物理量に
@@ -2395,14 +2397,14 @@ def viewer_points_tab(tab_id, label, badge, text, pos, val=None, cbar=None, rgb=
 
 
 def viewer_frames_tab(tab_id, label, badge, text, frames, dt=0.2, boxes=None, series=None,
-                      numbers=None, png=False, checks=None) -> dict:
+                      numbers=None, png=False, checks=None, axis=None) -> dict:
     """2-D の画像列のタブ。``boxes`` は重ねる枠(真値と推定)、``series`` は時系列グラフ。
 
     ``png=True`` ならコマを無損失の PNG で埋める(画素は 1 つも変えない。生の u8 より小さいことが多い)。
     """
     return _tab("frames", tab_id, label, badge, text, numbers,
-                {"frames": frames, "dt": dt, "boxes": boxes or [], "series": series or [],
-                 "png": True if png else None, "checks": checks})
+                 {"frames": frames, "dt": dt, "boxes": boxes or [], "series": series or [],
+                  "png": True if png else None, "checks": checks, "axis": axis})
 
 
 def viewer_split_tab(tab_id, label, badge, text, before, after, label_before, label_after,

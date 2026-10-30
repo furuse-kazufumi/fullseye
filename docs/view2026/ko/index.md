@@ -42,6 +42,14 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - **[탈보 카펫과 격자 X선 영상](../viewers/poc_grating_interferometry.html?lang=ko)**: 흡수 영상에서는 균열의 대비 잡음비가 1.34에 불과하지만 암시야에서는 13.5로 올라가고, 격자를 돌리면 섬유의 방향까지 읽을 수 있습니다.
 - **[줄무늬 거울상으로 보는 µm 오목](../viewers/poc_phase_measuring_deflectometry.html?lang=ko)**: 사진의 신호는 잡음의 0.17배라 아무것도 보이지 않지만, 줄무늬 거울상으로 만든 곡률 지도에서는 깊이 1 µm의 오목이 잡음의 57배로 솟아 보입니다.
 - **[소행성 표면은 얼마나 휘어 있는가](../viewers/poc_asteroid_curvature.html?lang=ko)**: 실제 소행성의 점군에서 곡률을 구해 능선과 큰 바위의 가장자리를 색으로 봅니다. 답을 아는 구에서 먼저 잣대를 확인했습니다.
+- **[초점 합성](../viewers/poc_focus_stacking.html?lang=ko)**: PoC 함수를 다시 실행해 f-number을(를) 2.0–16.0 범위에서 훑는다.
+- **[백색광 간섭 단차](../viewers/poc_interferometry_step.html?lang=ko)**: PoC 함수를 다시 실행해 noise σ을(를) 0.000–0.120 범위에서 훑는다.
+- **[편광 정반사 제거](../viewers/poc_polarization_specular.html?lang=ko)**: PoC 함수를 다시 실행해 incidence angle을(를) 0–80° 범위에서 훑는다.
+- **[광탄성 응력](../viewers/poc_photoelasticity.html?lang=ko)**: PoC 함수를 다시 실행해 analyser angle을(를) 0–180° 범위에서 훑는다.
+- **[미세 진동 확대](../viewers/poc_motion_magnification.html?lang=ko)**: PoC 함수를 다시 실행해 motion amplitude을(를) 0.02–0.80 px 범위에서 훑는다.
+- **[파리 겹눈](../viewers/poc_compound_eye.html?lang=ko)**: PoC 함수를 다시 실행해 per-view SNR을(를) 0.5–16.0 범위에서 훑는다.
+- **[접합층 보이드](../viewers/poc_ct_void_morphology.html?lang=ko)**: PoC 함수를 다시 실행해 threshold을(를) 0.2–0.8 범위에서 훑는다.
+- **[능동 윤곽](../viewers/poc_active_contours.html?lang=ko)**: PoC 함수를 다시 실행해 threshold을(를) image min–max 범위에서 훑는다.
 
 ## 하이라이트
 

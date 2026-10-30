@@ -42,6 +42,14 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - **[塔尔博特地毯与光栅 X 射线像](../viewers/poc_grating_interferometry.html?lang=zh)**: 在吸收像中裂纹的对比噪声比只有 1.34,在暗场像中升到 13.5,转动光栅还能读出纤维的方向。
 - **[用条纹镜像看微米级凹坑](../viewers/poc_phase_measuring_deflectometry.html?lang=zh)**: 照片中的信号只有噪声的 0.17 倍,什么也看不见;而由条纹镜像做出的曲率图中,深 1 µm 的凹坑高出噪声 57 倍。
 - **[小行星表面的弯曲程度](../viewers/poc_asteroid_curvature.html?lang=zh)**: 由真实小行星的点云算出曲率,用颜色看山脊和巨石边缘。先在答案已知的球面上验证了方法。
+- **[景深合成](../viewers/poc_focus_stacking.html?lang=zh)**: 重新运行 PoC 函数，将 f-number 在 2.0–16.0 范围内扫描。
+- **[白光干涉台阶](../viewers/poc_interferometry_step.html?lang=zh)**: 重新运行 PoC 函数，将 noise σ 在 0.000–0.120 范围内扫描。
+- **[偏振去镜面反射](../viewers/poc_polarization_specular.html?lang=zh)**: 重新运行 PoC 函数，将 incidence angle 在 0–80° 范围内扫描。
+- **[光弹性应力](../viewers/poc_photoelasticity.html?lang=zh)**: 重新运行 PoC 函数，将 analyser angle 在 0–180° 范围内扫描。
+- **[微振动放大](../viewers/poc_motion_magnification.html?lang=zh)**: 重新运行 PoC 函数，将 motion amplitude 在 0.02–0.80 px 范围内扫描。
+- **[苍蝇复眼](../viewers/poc_compound_eye.html?lang=zh)**: 重新运行 PoC 函数，将 per-view SNR 在 0.5–16.0 范围内扫描。
+- **[接合层空洞](../viewers/poc_ct_void_morphology.html?lang=zh)**: 重新运行 PoC 函数，将 threshold 在 0.2–0.8 范围内扫描。
+- **[主动轮廓](../viewers/poc_active_contours.html?lang=zh)**: 重新运行 PoC 函数，将 threshold 在 image min–max 范围内扫描。
 
 ## 精选
 

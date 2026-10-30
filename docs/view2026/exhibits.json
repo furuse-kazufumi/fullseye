@@ -11816,6 +11816,190 @@
      "hi": "वास्तविक क्षुद्रग्रह के बिंदुओं से वक्रता निकाली गई है, कटक और चट्टानों के किनारे रंग में दिखते हैं। पैमाने को पहले ऐसे गोले पर जाँचा गया जिसका उत्तर ज्ञात है।",
      "fr": "La courbure est calculée à partir des points d'un astéroïde réel ; crêtes et bords de blocs apparaissent en couleur. La règle a d'abord été vérifiée sur une sphère dont la réponse est connue."
     }
+   },
+   {
+    "id": "poc_focus_stacking",
+    "title": {
+     "ja": "焦点合成",
+     "en": "Focus stacking",
+     "zh": "景深合成",
+     "tw": "景深合成",
+     "ko": "초점 합성",
+     "de": "Fokus-Stacking",
+     "hi": "Focus stacking",
+     "fr": "Empilement de mise au point"
+    },
+    "line": {
+     "ja": "PoC 関数を再実行して f-number を 2.0–16.0 で掃引する。",
+     "en": "Re-runs the PoC function while sweeping f-number over 2.0–16.0.",
+     "zh": "重新运行 PoC 函数，将 f-number 在 2.0–16.0 范围内扫描。",
+     "tw": "重新執行 PoC 函數，將 f-number 在 2.0–16.0 範圍內掃描。",
+     "ko": "PoC 함수를 다시 실행해 f-number을(를) 2.0–16.0 범위에서 훑는다.",
+     "de": "Führt die PoC-Funktion erneut aus und variiert f-number über 2.0–16.0.",
+     "hi": "PoC फ़ंक्शन दोबारा चलाकर f-number को 2.0–16.0 तक बदलता है।",
+     "fr": "Réexécute la fonction du PoC en faisant varier f-number de 2.0–16.0."
+    }
+   },
+   {
+    "id": "poc_interferometry_step",
+    "title": {
+     "ja": "白色干渉の段差",
+     "en": "White-light steps",
+     "zh": "白光干涉台阶",
+     "tw": "白光干涉段差",
+     "ko": "백색광 간섭 단차",
+     "de": "Weißlicht-Stufen",
+     "hi": "White-light step",
+     "fr": "Marches en interférométrie en lumière blanche"
+    },
+    "line": {
+     "ja": "PoC 関数を再実行して noise σ を 0.000–0.120 で掃引する。",
+     "en": "Re-runs the PoC function while sweeping noise σ over 0.000–0.120.",
+     "zh": "重新运行 PoC 函数，将 noise σ 在 0.000–0.120 范围内扫描。",
+     "tw": "重新執行 PoC 函數，將 noise σ 在 0.000–0.120 範圍內掃描。",
+     "ko": "PoC 함수를 다시 실행해 noise σ을(를) 0.000–0.120 범위에서 훑는다.",
+     "de": "Führt die PoC-Funktion erneut aus und variiert noise σ über 0.000–0.120.",
+     "hi": "PoC फ़ंक्शन दोबारा चलाकर noise σ को 0.000–0.120 तक बदलता है।",
+     "fr": "Réexécute la fonction du PoC en faisant varier noise σ de 0.000–0.120."
+    }
+   },
+   {
+    "id": "poc_polarization_specular",
+    "title": {
+     "ja": "偏光で鏡面除去",
+     "en": "Polarization",
+     "zh": "偏振去镜面反射",
+     "tw": "偏光去鏡面反射",
+     "ko": "편광 정반사 제거",
+     "de": "Polarisation",
+     "hi": "Polarization",
+     "fr": "Suppression des reflets spéculaires par polarisation"
+    },
+    "line": {
+     "ja": "PoC 関数を再実行して incidence angle を 0–80° で掃引する。",
+     "en": "Re-runs the PoC function while sweeping incidence angle over 0–80°.",
+     "zh": "重新运行 PoC 函数，将 incidence angle 在 0–80° 范围内扫描。",
+     "tw": "重新執行 PoC 函數，將 incidence angle 在 0–80° 範圍內掃描。",
+     "ko": "PoC 함수를 다시 실행해 incidence angle을(를) 0–80° 범위에서 훑는다.",
+     "de": "Führt die PoC-Funktion erneut aus und variiert incidence angle über 0–80°.",
+     "hi": "PoC फ़ंक्शन दोबारा चलाकर incidence angle को 0–80° तक बदलता है।",
+     "fr": "Réexécute la fonction du PoC en faisant varier incidence angle de 0–80°."
+    }
+   },
+   {
+    "id": "poc_photoelasticity",
+    "title": {
+     "ja": "光弾性の応力",
+     "en": "Photoelasticity",
+     "zh": "光弹性应力",
+     "tw": "光彈應力",
+     "ko": "광탄성 응력",
+     "de": "Spannungsoptik",
+     "hi": "Photoelasticity",
+     "fr": "Contraintes en photoélasticimétrie"
+    },
+    "line": {
+     "ja": "PoC 関数を再実行して analyser angle を 0–180° で掃引する。",
+     "en": "Re-runs the PoC function while sweeping analyser angle over 0–180°.",
+     "zh": "重新运行 PoC 函数，将 analyser angle 在 0–180° 范围内扫描。",
+     "tw": "重新執行 PoC 函數，將 analyser angle 在 0–180° 範圍內掃描。",
+     "ko": "PoC 함수를 다시 실행해 analyser angle을(를) 0–180° 범위에서 훑는다.",
+     "de": "Führt die PoC-Funktion erneut aus und variiert analyser angle über 0–180°.",
+     "hi": "PoC फ़ंक्शन दोबारा चलाकर analyser angle को 0–180° तक बदलता है।",
+     "fr": "Réexécute la fonction du PoC en faisant varier analyser angle de 0–180°."
+    }
+   },
+   {
+    "id": "poc_motion_magnification",
+    "title": {
+     "ja": "微小振動の拡大",
+     "en": "Motion magnification",
+     "zh": "微振动放大",
+     "tw": "微振動放大",
+     "ko": "미세 진동 확대",
+     "de": "Bewegungsverstärkung",
+     "hi": "Motion magnification",
+     "fr": "Amplification de micro-vibrations"
+    },
+    "line": {
+     "ja": "PoC 関数を再実行して motion amplitude を 0.02–0.80 px で掃引する。",
+     "en": "Re-runs the PoC function while sweeping motion amplitude over 0.02–0.80 px.",
+     "zh": "重新运行 PoC 函数，将 motion amplitude 在 0.02–0.80 px 范围内扫描。",
+     "tw": "重新執行 PoC 函數，將 motion amplitude 在 0.02–0.80 px 範圍內掃描。",
+     "ko": "PoC 함수를 다시 실행해 motion amplitude을(를) 0.02–0.80 px 범위에서 훑는다.",
+     "de": "Führt die PoC-Funktion erneut aus und variiert motion amplitude über 0.02–0.80 px.",
+     "hi": "PoC फ़ंक्शन दोबारा चलाकर motion amplitude को 0.02–0.80 px तक बदलता है।",
+     "fr": "Réexécute la fonction du PoC en faisant varier motion amplitude de 0.02–0.80 px."
+    }
+   },
+   {
+    "id": "poc_compound_eye",
+    "title": {
+     "ja": "ハエの複眼",
+     "en": "Fly compound eye",
+     "zh": "苍蝇复眼",
+     "tw": "蒼蠅複眼",
+     "ko": "파리 겹눈",
+     "de": "Fliegen-Facettenauge",
+     "hi": "Fly compound eye",
+     "fr": "Œil composé de la mouche"
+    },
+    "line": {
+     "ja": "PoC 関数を再実行して per-view SNR を 0.5–16.0 で掃引する。",
+     "en": "Re-runs the PoC function while sweeping per-view SNR over 0.5–16.0.",
+     "zh": "重新运行 PoC 函数，将 per-view SNR 在 0.5–16.0 范围内扫描。",
+     "tw": "重新執行 PoC 函數，將 per-view SNR 在 0.5–16.0 範圍內掃描。",
+     "ko": "PoC 함수를 다시 실행해 per-view SNR을(를) 0.5–16.0 범위에서 훑는다.",
+     "de": "Führt die PoC-Funktion erneut aus und variiert per-view SNR über 0.5–16.0.",
+     "hi": "PoC फ़ंक्शन दोबारा चलाकर per-view SNR को 0.5–16.0 तक बदलता है।",
+     "fr": "Réexécute la fonction du PoC en faisant varier per-view SNR de 0.5–16.0."
+    }
+   },
+   {
+    "id": "poc_ct_void_morphology",
+    "title": {
+     "ja": "接合層のボイド",
+     "en": "Joint voids (CT)",
+     "zh": "接合层空洞",
+     "tw": "接合層孔洞",
+     "ko": "접합층 보이드",
+     "de": "Poren in Fügeschicht",
+     "hi": "Joint voids (CT)",
+     "fr": "Vides dans la couche de jonction"
+    },
+    "line": {
+     "ja": "PoC 関数を再実行して threshold を 0.2–0.8 で掃引する。",
+     "en": "Re-runs the PoC function while sweeping threshold over 0.2–0.8.",
+     "zh": "重新运行 PoC 函数，将 threshold 在 0.2–0.8 范围内扫描。",
+     "tw": "重新執行 PoC 函數，將 threshold 在 0.2–0.8 範圍內掃描。",
+     "ko": "PoC 함수를 다시 실행해 threshold을(를) 0.2–0.8 범위에서 훑는다.",
+     "de": "Führt die PoC-Funktion erneut aus und variiert threshold über 0.2–0.8.",
+     "hi": "PoC फ़ंक्शन दोबारा चलाकर threshold को 0.2–0.8 तक बदलता है।",
+     "fr": "Réexécute la fonction du PoC en faisant varier threshold de 0.2–0.8."
+    }
+   },
+   {
+    "id": "poc_active_contours",
+    "title": {
+     "ja": "動的輪郭",
+     "en": "Active contours",
+     "zh": "主动轮廓",
+     "tw": "主動輪廓",
+     "ko": "능동 윤곽",
+     "de": "Aktive Konturen",
+     "hi": "Active contours",
+     "fr": "Contours actifs"
+    },
+    "line": {
+     "ja": "PoC 関数を再実行して threshold を image min–max で掃引する。",
+     "en": "Re-runs the PoC function while sweeping threshold over image min–max.",
+     "zh": "重新运行 PoC 函数，将 threshold 在 image min–max 范围内扫描。",
+     "tw": "重新執行 PoC 函數，將 threshold 在 image min–max 範圍內掃描。",
+     "ko": "PoC 함수를 다시 실행해 threshold을(를) image min–max 범위에서 훑는다.",
+     "de": "Führt die PoC-Funktion erneut aus und variiert threshold über image min–max.",
+     "hi": "PoC फ़ंक्शन दोबारा चलाकर threshold को image min–max तक बदलता है।",
+     "fr": "Réexécute la fonction du PoC en faisant varier threshold de image min–max."
+    }
    }
   ]
  }

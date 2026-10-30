@@ -42,6 +42,14 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 - **[Talbot carpet and grating X-ray images](../viewers/poc_grating_interferometry.html?lang=en)**: In absorption the crack's contrast-to-noise ratio is only 1.34; in dark field it rises to 13.5, and turning the grating even reveals the fibre direction.
 - **[Micron dents in a mirror image of stripes](../viewers/poc_phase_measuring_deflectometry.html?lang=en)**: In a photograph the signal is 0.17 times the noise and nothing shows; in the curvature map built from the mirror image of stripes, a dent 1 µm deep stands 57 times above the noise.
 - **[How sharply an asteroid's surface bends](../viewers/poc_asteroid_curvature.html?lang=en)**: Curvature computed from the points of a real asteroid, with ridges and boulder edges shown in colour. The ruler is checked first on a sphere whose answer is known.
+- **[Focus stacking](../viewers/poc_focus_stacking.html?lang=en)**: Re-runs the PoC function while sweeping f-number over 2.0–16.0.
+- **[White-light steps](../viewers/poc_interferometry_step.html?lang=en)**: Re-runs the PoC function while sweeping noise σ over 0.000–0.120.
+- **[Polarization](../viewers/poc_polarization_specular.html?lang=en)**: Re-runs the PoC function while sweeping incidence angle over 0–80°.
+- **[Photoelasticity](../viewers/poc_photoelasticity.html?lang=en)**: Re-runs the PoC function while sweeping analyser angle over 0–180°.
+- **[Motion magnification](../viewers/poc_motion_magnification.html?lang=en)**: Re-runs the PoC function while sweeping motion amplitude over 0.02–0.80 px.
+- **[Fly compound eye](../viewers/poc_compound_eye.html?lang=en)**: Re-runs the PoC function while sweeping per-view SNR over 0.5–16.0.
+- **[Joint voids (CT)](../viewers/poc_ct_void_morphology.html?lang=en)**: Re-runs the PoC function while sweeping threshold over 0.2–0.8.
+- **[Active contours](../viewers/poc_active_contours.html?lang=en)**: Re-runs the PoC function while sweeping threshold over image min–max.
 
 ## Highlights
 

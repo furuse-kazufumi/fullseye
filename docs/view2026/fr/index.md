@@ -42,6 +42,14 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 - **[Tapis de Talbot et images X par réseaux](../viewers/poc_grating_interferometry.html?lang=fr)**: En absorption, le rapport contraste/bruit de la fissure n'est que de 1.34 ; en champ sombre il monte à 13.5, et en tournant le réseau on lit même la direction des fibres.
 - **[Creux de quelques µm dans l'image-miroir de franges](../viewers/poc_phase_measuring_deflectometry.html?lang=fr)**: Dans une photo, le signal vaut 0.17 fois le bruit et rien n'apparaît ; dans la carte de courbure issue de l'image-miroir de franges, un creux de 1 µm dépasse le bruit de 57 fois.
 - **[À quel point la surface d'un astéroïde se courbe](../viewers/poc_asteroid_curvature.html?lang=fr)**: La courbure est calculée à partir des points d'un astéroïde réel ; crêtes et bords de blocs apparaissent en couleur. La règle a d'abord été vérifiée sur une sphère dont la réponse est connue.
+- **[Empilement de mise au point](../viewers/poc_focus_stacking.html?lang=fr)**: Réexécute la fonction du PoC en faisant varier f-number de 2.0–16.0.
+- **[Marches en interférométrie en lumière blanche](../viewers/poc_interferometry_step.html?lang=fr)**: Réexécute la fonction du PoC en faisant varier noise σ de 0.000–0.120.
+- **[Suppression des reflets spéculaires par polarisation](../viewers/poc_polarization_specular.html?lang=fr)**: Réexécute la fonction du PoC en faisant varier incidence angle de 0–80°.
+- **[Contraintes en photoélasticimétrie](../viewers/poc_photoelasticity.html?lang=fr)**: Réexécute la fonction du PoC en faisant varier analyser angle de 0–180°.
+- **[Amplification de micro-vibrations](../viewers/poc_motion_magnification.html?lang=fr)**: Réexécute la fonction du PoC en faisant varier motion amplitude de 0.02–0.80 px.
+- **[Œil composé de la mouche](../viewers/poc_compound_eye.html?lang=fr)**: Réexécute la fonction du PoC en faisant varier per-view SNR de 0.5–16.0.
+- **[Vides dans la couche de jonction](../viewers/poc_ct_void_morphology.html?lang=fr)**: Réexécute la fonction du PoC en faisant varier threshold de 0.2–0.8.
+- **[Contours actifs](../viewers/poc_active_contours.html?lang=fr)**: Réexécute la fonction du PoC en faisant varier threshold de image min–max.
 
 ## Points forts
 

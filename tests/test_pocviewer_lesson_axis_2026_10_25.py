@@ -113,7 +113,7 @@ def test_lesson_missing_key_and_translation_are_named():
                        list(pv.LANGS))
 
 
-def test_axis_is_packed_and_only_for_anim3d():
+def test_axis_is_packed_for_tabs_with_a_time_slider():
     html = pv._build_html(_spec([_tab("a", axis=_axis())]), ["ja", "en"])
     a = _data(html)["tabs"][0]["axis"]
     assert a["v"] == pytest.approx(list(np.linspace(0, 60, TN)))
@@ -121,8 +121,13 @@ def test_axis_is_packed_and_only_for_anim3d():
     assert "function axisText" in html and "tab.axis ? axisText(tab, f)" in html
     fr = pv.viewer_frames_tab("f", _tx("l"), "null", _tx("t"), np.zeros((TN, 3, 3), np.uint8))
     fr["axis"] = _axis()
-    with pytest.raises(ValueError, match="anim3d"):
-        pv._build_html(_spec([fr]), "ja")
+    packed = _data(pv._build_html(_spec([fr]), "ja"))["tabs"][0]
+    assert packed["axis"]["v"] == pytest.approx(list(np.linspace(0, 60, TN)))
+    split = pv.viewer_split_tab("s", _tx("l"), "null", _tx("t"), np.zeros((3, 3), np.uint8),
+                                np.zeros((3, 3), np.uint8), _tx("a"), _tx("b"))
+    split["axis"] = _axis()
+    with pytest.raises(ValueError, match="時間つまみ"):
+        pv._build_html(_spec([split]), "ja")
 
 
 @pytest.mark.parametrize("over, msg", [

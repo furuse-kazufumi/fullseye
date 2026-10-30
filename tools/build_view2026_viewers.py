@@ -632,6 +632,97 @@ def build_asteroid() -> dict:
                           credit=tx["credit"])
 
 
+# --------------------------------------------------------------------------- #
+# 第 3 弾 — PoC の公開関数を引数掃引する軽量ビューア 8 本。                       #
+# --------------------------------------------------------------------------- #
+_SWEEP_TITLE = TX.T("引数を動かして結果を見る", "Sweep a real PoC parameter", "移动参数查看结果",
+                    "移動參數查看結果", "매개변수를 움직여 결과 보기", "Einen PoC-Parameter variieren",
+                    "PoC पैरामीटर बदलकर परिणाम देखें", "Faire varier un paramètre du PoC")
+_SWEEP_SUB = TX.T("各コマは PoC の関数を再実行した結果。", "Every frame is recomputed by the PoC function.",
+                  "每帧都由 PoC 函数重新计算。", "每格都由 PoC 函數重新計算。", "각 프레임은 PoC 함수가 다시 계산한다.",
+                  "Jedes Bild wird von der PoC-Funktion neu berechnet.", "हर फ़्रेम PoC फ़ंक्शन से फिर गणित होता है।",
+                  "Chaque image est recalculée par la fonction du PoC.")
+_SWEEP_HINT = TX.T("再生または下のスライダーで引数を動かす。", "Play or drag the slider to change the argument.",
+                   "播放或拖动滑块来改变参数。", "播放或拖曳滑桿來改變參數。", "재생하거나 슬라이더로 인수를 바꾼다.",
+                   "Abspielen oder den Regler ziehen, um das Argument zu ändern.", "चलाएँ या तर्क बदलने के लिए स्लाइडर खींचें।",
+                   "Lancer ou déplacer le curseur pour changer l'argument.")
+
+
+def _sweep(pid, parameter, unit, values, frames, metric=None):
+    vals = np.asarray(values, float)
+    fr = np.asarray(frames)
+    series = [] if metric is None else [{"label": parameter, "color": "#ffb74d", "values": metric,
+                                         "lo": float(np.min(metric)), "hi": float(np.max(metric) + 1e-12), "decimals": 3}]
+    tab = pv.viewer_frames_tab("sweep", TX.T("引数の掃引", "Parameter sweep", "参数扫描", "參數掃描", "매개변수 스윕",
+                                                    "Parametersuche", "पैरामीटर स्वीप", "Balayage du paramètre"),
+                               "passed", _SWEEP_SUB, fr, dt=0.18, series=series, png=True,
+                               axis={"values": vals, "segments": [{"k": 0, "label": parameter,
+                                                                      "unit": unit, "decimals": 3}]})
+    return pv.viewer_spec(pid, _SWEEP_TITLE, _SWEEP_SUB, _SWEEP_HINT, [tab])
+
+
+def build_focus_sweep():
+    P = _load("poc_focus_stacking"); depth, tex = P.ground_truth(size=128, seed=7)
+    focus = np.linspace(float(depth.min()), float(depth.max()), 12); vals = np.linspace(2.0, 16.0, 24)
+    frames=[]; err=[]
+    for v in vals:
+        st=P.focal_stack(tex, depth, focus, f_number=float(v), layers=16); fm=P.fm_laplacian(st); fused=P.fuse(st,fm,focus)[0]
+        frames.append(_gray(fused,0,1)); err.append(P.rms(fused-tex))
+    return _sweep("poc_focus_stacking", TX.T(*(["f-number"]*8)), "", vals, frames, err)
+
+
+def build_interferometry_sweep():
+    P=_load("poc_interferometry_step"); vals=np.linspace(0.0,0.12,24); frames=[]; err=[]
+    for i,v in enumerate(vals):
+        _,st=P.make_stack(0.55,float(v),i,dz=P.DZ,n_planes=P.NP); est=P.measure_step(0.55,float(v),i,dz=P.DZ,n_planes=P.NP)
+        frames.append(_gray(st[len(st)//2],float(st.min()),float(st.max()))); err.append(abs(float(est[0] if isinstance(est,tuple) else est)-0.55))
+    return _sweep("poc_interferometry_step", TX.T(*(["noise σ"]*8)), "", vals, frames, err)
+
+
+def build_polarization_sweep():
+    P=_load("poc_polarization_specular"); d,l=P.scene(128,160); vals=np.linspace(0,80,25); frames=[]; err=[]
+    for v in vals:
+        ss,sp=P.specular_components(l,float(v)); raw=P.render_sweep(d,ss,sp); sep=P.separate(raw)
+        diffuse=np.asarray(sep[0] if isinstance(sep,tuple) else sep); frames.append(_gray(diffuse,0,0.7)); err.append(P.rmse(diffuse,d))
+    return _sweep("poc_polarization_specular", TX.T(*(["incidence angle"]*8)), "°", vals, frames, err)
+
+
+def build_photoelastic_sweep():
+    P=_load("poc_photoelasticity"); _,theta,delta=P.build_fields()
+    vals=np.linspace(0,180,25); frames=[_gray(P.polariscope_image(delta,theta,float(v)),0,1) for v in vals]
+    return _sweep("poc_photoelasticity", TX.T(*(["analyser angle"]*8)), "°", vals, frames)
+
+
+def build_motion_sweep():
+    P=_load("poc_motion_magnification"); vals=np.linspace(0.02,0.8,24); base=P.surface(h=128,w=160); frames=[]; amp=[]
+    for v in vals:
+        clip,disp=P.make_clip([(float(v),P.FREQ,0.0)],t=16,base=base); frames.append(_gray(clip[-1],0,1)); amp.append(P.amp_rms(P.read_dx_oracle(clip)))
+    return _sweep("poc_motion_magnification", TX.T(*(["motion amplitude"]*8)), "px", vals, frames, amp)
+
+
+def build_compound_sweep():
+    P=_load("poc_compound_eye"); lf,_=P.ommatidial_scene((1.0,),occlusion=False,seed=1); vals=np.geomspace(0.5,16,24); frames=[]; rms=[]
+    clean=np.asarray(lf[P.V_C,P.U_C])
+    for i,v in enumerate(vals):
+        noisy,_,_=P.add_photoreceptor_noise(lf,float(v),seed=i); im=np.asarray(noisy[P.V_C,P.U_C]); frames.append(_gray(im,float(im.min()),float(im.max()))); rms.append(float(np.sqrt(np.mean((im-clean)**2))))
+    return _sweep("poc_compound_eye", TX.T(*(["per-view SNR"]*8)), "", vals, frames, rms)
+
+
+def build_ct_threshold_sweep():
+    P=_load("poc_ct_void_morphology"); voids=P.make_voids("sphere","spread","interface"); sc=P.build_scene(voids,voxel=0.06); obs=P.observe(sc["mu"],0.06); vals=np.linspace(0.2,0.8,24); frames=[]; frac=[]
+    z=obs.shape[0]//2
+    for v in vals:
+        m=P.segment(obs,sc["layer"],float(v)); frames.append(np.where(m[z],255,_gray(obs[z],float(obs.min()),float(obs.max())))); frac.append(P.void_fraction(m,sc["layer"]))
+    return _sweep("poc_ct_void_morphology", TX.T(*(["threshold"]*8)), "", vals, frames, frac)
+
+
+def build_active_sweep():
+    P=_load("poc_active_contours"); r=_quiet(P.u_shape); im=np.asarray(r["img"]); truth=np.asarray(r["U"]); vals=np.linspace(float(im.min()),float(im.max()),24); frames=[]; score=[]
+    for v in vals:
+        m=im>v; frames.append(np.where(m,255,0).astype(np.uint8)); score.append(P.jac(m,truth))
+    return _sweep("poc_active_contours", TX.T(*(["threshold"]*8)), "", vals, frames, score)
+
+
 BUILDERS = {
     "poc_cad_scan_deviation": build_cad,
     "poc_lidar_terrain_change": build_lidar,
@@ -640,6 +731,14 @@ BUILDERS = {
     "poc_grating_interferometry": build_talbot,
     "poc_phase_measuring_deflectometry": build_deflect,
     "poc_asteroid_curvature": build_asteroid,
+    "poc_focus_stacking": build_focus_sweep,
+    "poc_interferometry_step": build_interferometry_sweep,
+    "poc_polarization_specular": build_polarization_sweep,
+    "poc_photoelasticity": build_photoelastic_sweep,
+    "poc_motion_magnification": build_motion_sweep,
+    "poc_compound_eye": build_compound_sweep,
+    "poc_ct_void_morphology": build_ct_threshold_sweep,
+    "poc_active_contours": build_active_sweep,
 }
 
 

@@ -57,6 +57,14 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - **[タルボ絨毯と格子の X 線像](viewers/poc_grating_interferometry.html?lang=ja)**: 吸収では割れのコントラスト雑音比が 1.34 しかないが、暗視野では 13.5 に上がり、格子を回すと繊維の向きまで読める。
 - **[縞の鏡像で見る µm の凹み](viewers/poc_phase_measuring_deflectometry.html?lang=ja)**: 写真の信号は雑音の 0.17 倍で何も見えないが、縞の鏡像から作る曲率の地図では、深さ 1 µm の凹みが雑音の 57 倍に立つ。
 - **[小惑星の表面の曲がり具合](viewers/poc_asteroid_curvature.html?lang=ja)**: 実在の小惑星の点群から曲率を出し、尾根や巨礫の縁を色で見る。答えの分かる球で、先に物差しを確かめてある。
+- **[焦点合成](viewers/poc_focus_stacking.html?lang=ja)**: PoC 関数を再実行して f-number を 2.0–16.0 で掃引する。
+- **[白色干渉の段差](viewers/poc_interferometry_step.html?lang=ja)**: PoC 関数を再実行して noise σ を 0.000–0.120 で掃引する。
+- **[偏光で鏡面除去](viewers/poc_polarization_specular.html?lang=ja)**: PoC 関数を再実行して incidence angle を 0–80° で掃引する。
+- **[光弾性の応力](viewers/poc_photoelasticity.html?lang=ja)**: PoC 関数を再実行して analyser angle を 0–180° で掃引する。
+- **[微小振動の拡大](viewers/poc_motion_magnification.html?lang=ja)**: PoC 関数を再実行して motion amplitude を 0.02–0.80 px で掃引する。
+- **[ハエの複眼](viewers/poc_compound_eye.html?lang=ja)**: PoC 関数を再実行して per-view SNR を 0.5–16.0 で掃引する。
+- **[接合層のボイド](viewers/poc_ct_void_morphology.html?lang=ja)**: PoC 関数を再実行して threshold を 0.2–0.8 で掃引する。
+- **[動的輪郭](viewers/poc_active_contours.html?lang=ja)**: PoC 関数を再実行して threshold を image min–max で掃引する。
 
 ## 見どころ
 
