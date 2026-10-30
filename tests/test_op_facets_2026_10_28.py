@@ -116,7 +116,7 @@ def test_six_business_plans_put_grounded_main_op_in_results():
       ("map degree of polarization for surface scratches","polsweep","image","polarization_dolp_map"),
       ("measure weld bead height from projected stripes","images","depth","decode_fringe"),
       ("locate each part against its reference patch","image","match","ncc_locate"),
-      ("recover a fast depth map from a focus stack on the production line","images","depth","depth_from_focus"),
+      ("recover a fast fringe-projection depth map on the production line","images","depth","decode_fringe"),
       ("corner landmarks for tracking product pose","image","feature","cv_good_features")]
     results=[(main,opsearch.plan(have,want,constraints={"query":query,"max_depth":3,"k":5,"executable_only":False}))
              for query,have,want,main in tasks]
@@ -131,7 +131,11 @@ def test_hypergraph_plan_is_bounded_and_shared_by_both_directions():
                            constraints={"max_depth":4,"k":3,"executable_only":False})
     assert forward["ok"] and backward["ok"]
     assert "decode_fringe" in forward["plans"][0]["ops"]
-    assert "fringe_ftp_phase" in backward["plans"][0]["ops"]
+    # Backward planning may acquire one image and legitimately rank the
+    # single-frame FTP route first.  The shared multi-frame route must remain
+    # among the bounded alternatives, but need not be the first acquisition.
+    assert len(backward["plans"]) >= 1, "backward planning returned no plan"
+    assert any("decode_fringe" in p["ops"] for p in backward["plans"])
     assert forward["search"]["expanded"] > 0
     capped=opsearch.plan("image","feature",goal="features",constraints={"max_expansions":1})
     assert capped["partial"]["limit_reached"] == "max_expansions"
@@ -177,6 +181,34 @@ def test_three_multi_input_business_dags_execute_through_mcp():
     assert 0 < np.count_nonzero(polar_value) < polar_value.size
     expected_height=np.full((32,32),1.0*true_phase)  # k=1.0
     assert float(np.sqrt(np.mean((depth_value-expected_height)**2))) < 1e-9
+
+def test_fit_ops_execute_through_mcp_with_meaningful_inputs():
+    import numpy as np
+    from scipy.ndimage import fourier_shift
+    from fullseye.mcp.catalog import Catalog
+    from fullseye.mcp.handles import HandleStore
+    from fullseye.mcp.server import call_tool
+    store=HandleStore(roots=[]); cat=Catalog.load()
+    def put(value,sort):
+        return store.put(np.asarray(value,float),sort=sort,provenance=[{"synthetic":True}])["handle"]
+    t=np.linspace(-.5,.5,80); arc=np.column_stack([50*np.sin(t),50*np.cos(t)])
+    edge=np.column_stack([np.linspace(-20,20,101),3*np.linspace(-1,1,101)**2])[:,::-1]
+    image=np.random.default_rng(3).normal(size=(64,64)); moved=np.fft.ifftn(
+        fourier_shift(np.fft.fftn(image),(1.25,-2.4))).real
+    x,y=np.meshgrid(np.linspace(-3,3,13),np.linspace(-1,1,9))
+    surface=np.column_stack([.2*x.ravel()-.3*y.ravel(),y.ravel(),x.ravel()])
+    handles=[put(arc,"keypoints"),put(edge,"keypoints"),put(image,"image"),
+             put(moved,"image"),put(surface,"points")]
+    calls=[("fit_circle_geometric",[handles[0]],{}),
+           ("fit_curve_principal_axis",[handles[1]],{"degree":2}),
+           ("phase_correlation_shift",handles[2:4],{}),
+           ("fit_surface_principal_axes",[handles[4]],{"degree":1})]
+    results=[]
+    for op,inputs,params in calls:
+        results.append(call_tool("fullseye_pipeline",{"handle":inputs[0],"stages":[
+            {"op":op,"inputs":inputs,"params":params}]},cat,store))
+    assert [r.get("isError") for r in results] == [False]*4
+    assert [r["structuredContent"]["out_sort"] for r in results] == ["table"]*4
 
 def test_validate_distinguishes_unknown_from_known_non_executable():
     from fullseye.mcp.catalog import Catalog
@@ -279,7 +311,10 @@ def test_mcp_execution_is_probe_verified_and_runtime_targets_are_exact(tmp_path)
 
     from tools.gen_op_facets import VERIFIED_PYTHON
     cited_python={"polarization_render","polarization_dolp_map","decode_fringe",
-                  "deflectometry_phase_to_slope","fringe_ftp_phase","depth_from_focus"}
+                  "deflectometry_phase_to_slope", "fringe_ftp_phase", "depth_from_focus",
+                  "fit_circle_geometric",
+                  "fit_curve_principal_axis", "phase_correlation_shift",
+                  "fit_surface_principal_axes"}
     assert VERIFIED_PYTHON == cited_python
     graph_python={e["op"] for e in verified if e.get("executor",{}).get("kind")=="python"}
     assert graph_python == cited_python

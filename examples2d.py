@@ -38,6 +38,9 @@ DIR = os.path.join(_ROOT, "examples")
 # id -> metadata. `name`/`summary` are plain-language (what real problem it solves);
 # `task` groups the gallery; `data` is the provenance. Every id maps to examples/<id>.py.
 EXAMPLES = [
+    {"id": "fit_ops_from_knowhow", "task": "metrology", "data": "synthetic",
+     "name": "短い円弧・小数移動・斜めの曲線を偏りなく当てはめる",
+     "summary": "幾何距離の円、局所アップサンプル位相相関、主軸へ回してからの曲線・曲面当てはめを真値で検証する。"},
     # -- morphing / warping ------------------------------------------------------ #
     {"id": "image_morph", "task": "morphing", "data": "synthetic",
      "name": "2人の顔の中間を作る(対応点駆動モーフ)",

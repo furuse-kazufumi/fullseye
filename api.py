@@ -64,6 +64,7 @@ import events  # noqa: E402  (neuromorphic / event-camera vision from frames: DV
 import video  # noqa: E402  (read/write video & GIF clips as numpy frames)
 import recipes  # noqa: E402  (curated sample pipelines)
 import measure  # noqa: E402  (line profiles / distance / angle)
+from filters_freq import phase_correlation_shift  # noqa: E402,F401
 import volio  # noqa: E402  (volumetric/medical import: DICOM/NIfTI/NRRD/MetaImage/TIFF -> volume)
 import raster  # noqa: E402  (bit-depth-preserving raster + metric depth: 16-bit/float/PFM)
 import render3d  # noqa: E402  (mesh -> depth/silhouette/normals render + SDF + solid voxelization)
@@ -98,7 +99,8 @@ from stereo import (  # noqa: E402,F401
     speckle_filter, fill_disparity, disparity_confidence,
 )
 from measure import (line_profile, distance, angle,  # noqa: E402,F401
-                     fit_line, fit_circle, fit_ellipse, fit_rectangle2)
+                     fit_line, fit_circle, fit_circle_geometric,
+                     fit_curve_principal_axis, fit_ellipse, fit_rectangle2)
 # Exact geometric predicates (robust orientation / in-circle / in-sphere): the
 # correct SIGN even when float64 rounds a near-degenerate determinant to the wrong
 # side. Used by the convex hull; exposed for robust user-side geometry.
@@ -144,6 +146,7 @@ from opassist import (op_find, op_run, op_path, op_assist,  # noqa: E402,F401
 # numpy-only (no torch), so always available; the torch-backed op registry below is guarded.
 from measure3d import (  # noqa: E402,F401
     fit_line3, fit_plane3, fit_sphere3, fit_circle3,
+    fit_surface_principal_axes,
     smallest_box3, smallest_box3_axis, fit_box3, smallest_sphere3)
 from regionprops3d import inner_box3  # noqa: E402,F401  (3-D inner_rectangle1)
 import measure3d          # noqa: E402,F401
@@ -1217,8 +1220,8 @@ __all__ = [
     "match_descriptors", "match_keypoints",
     "video", "read_frames", "iter_frames", "frame_pairs", "write_video", "probe",
     "recipes", "recipe", "measure", "line_profile", "distance", "angle",
-    "fit_line", "fit_circle", "fit_ellipse", "fit_rectangle2",
-    "fit_line3", "fit_plane3", "fit_sphere3", "fit_circle3",
+    "fit_line", "fit_circle", "fit_circle_geometric", "fit_curve_principal_axis", "phase_correlation_shift", "fit_ellipse", "fit_rectangle2",
+    "fit_line3", "fit_plane3", "fit_sphere3", "fit_circle3", "fit_surface_principal_axes",
     "smallest_box3", "smallest_box3_axis", "fit_box3", "smallest_sphere3", "inner_box3",
     "measure3d", "regionprops3d", "ops3d", "pipeline3d",
     "algo", "algo_ops", "algo_categories", "find_algo", "run_algo",

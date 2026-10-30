@@ -1206,11 +1206,29 @@ def _knob_builders():
         mov = np.roll(cb, (3, 5), axis=(0, 1)) + 0.3 * np.roll(cb, (1, 1), axis=(0, 1))
         return [cb, mov], {}
 
+    def short_arc(pool, rng):
+        # A noisy 18 degree arc needs several LM evaluations.  The generic keypoint
+        # cloud converges from Kasa's seed immediately, hiding max_iterations.
+        t = np.deg2rad(np.linspace(-9.0, 9.0, 15))
+        noise = np.random.default_rng(23).normal(0.0, 0.015, (len(t), 2))
+        points = np.column_stack([20.0 + 12.0 * np.sin(t),
+                                  -7.0 + 12.0 * np.cos(t)]) + noise
+        return [points], {"max_iterations": 8}
+
+    def subpixel_pair(pool, rng):
+        # Fourier shifting preserves texture and gives a genuine off-grid peak.
+        from scipy.ndimage import fourier_shift
+        base = np.random.default_rng(29).standard_normal((48, 56))
+        moved = np.fft.ifftn(fourier_shift(np.fft.fftn(base), (1.37, -2.61))).real
+        return [base, moved], {"window": None, "upsample_factor": 8}
+
     return {"refract_rays": oblique, "env_lightbox": sphere_dirs,
             "print_layer_defect_map": layers, "photometric_stereo": ps, "gs_render": gs,
             "slope_to_curvature": bowl_normals, "deflectometry_render": plate,
             "iterate_fixed_point": fixed_point, "mc_sequential_mean": seq_mean,
-            "iv_richardson_lucy_until": rl_until, "register_image": ghost_checker}
+            "iv_richardson_lucy_until": rl_until, "register_image": ghost_checker,
+            "fit_circle_geometric": short_arc,
+            "phase_correlation_shift": subpixel_pair}
 
 
 def _calib_builders():

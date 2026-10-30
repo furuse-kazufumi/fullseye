@@ -1,0 +1,20 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">fit_circle_geometric — FIT <code style="color:#22d3bf">fit</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">keypoints</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_circle_geometric(points, *, max_iterations: &#x27;int&#x27; = 100, radius_limit_factor: &#x27;float&#x27; = 1000000.0) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import measure; measure.fit_circle_geometric(points, *, max_iterations: &#x27;int&#x27; = 100, radius_limit_factor: &#x27;float&#x27; = 1000000.0) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsfit.get(&quot;fit_circle_geometric&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>用几何最小二乘法对包括短圆弧的（行、列）点拟合圆和半径。</p>
+<p>以 Kåsa 结果初始化 Levenberg–Marquardt，最小化径向距离。返回圆心、半径、几何 RMS、迭代次数和收敛状态；无效、共线或发散时引发 ValueError。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:fit_ops_from_knowhow">fit_ops_from_knowhow</a> — <code style="color:#22d3bf">py -3.11 examples/fit_ops_from_knowhow.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">fit</code>)</h3>
+<p><a style="color:#22d3bf" href="opfit:fit_curve_principal_axis">fit_curve_principal_axis</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: measure.py — FIT 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

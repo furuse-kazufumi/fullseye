@@ -5,7 +5,8 @@ from __future__ import annotations
 import numpy as np
 
 __all__ = ["line_profile", "distance", "angle", "profile_stats",
-           "fit_line", "fit_circle", "fit_ellipse", "fit_rectangle2"]
+           "fit_line", "fit_circle", "fit_circle_geometric",
+           "fit_curve_principal_axis", "fit_ellipse", "fit_rectangle2"]
 
 
 def line_profile(image, p0, p1, num=None):
@@ -87,7 +88,9 @@ def fit_circle(points) -> dict:
     ``x² + y² = 2·cx·x + 2·cy·y + c`` in the least-squares sense — exact for points
     on a circle, and a standard robust estimator under moderate noise (Coope 1993).
     Returns centre ``(cy, cx)``, ``r``, and the RMS radial residual. Raises
-    ``ValueError`` on < 3 points or a collinear/degenerate set (no finite circle)."""
+    ``ValueError`` on < 3 points or a collinear/degenerate set (no finite circle).
+    This algebraic fit is biased on short noisy arcs; use
+    :func:`fit_circle_geometric` to minimise geometric radial distances."""
     p = _as_points(points, 3, "points")
     y, x = p[:, 0], p[:, 1]
     # Collinear points admit only an infinite-radius (line) "circle": the algebraic
@@ -105,6 +108,88 @@ def fit_circle(points) -> dict:
     r = float(np.sqrt(r2))
     resid = np.hypot(x - cx, y - cy) - r
     return {"cy": cy, "cx": cx, "r": r, "rms": float(np.sqrt(np.mean(resid ** 2)))}
+
+
+def fit_circle_geometric(points, *, max_iterations: int = 100,
+                         radius_limit_factor: float = 1e6) -> dict:
+    """短い円弧を含む ``(row, col)`` 点に幾何距離の最小二乗で円と半径を当てはめる。
+
+    Kåsa's algebraic fit supplies the initial centre and radius, then a
+    Levenberg--Marquardt solve minimises ``hypot(x-cx, y-cy) - r`` (Chernov &
+    Lesort 2005).  Returns ``cy``, ``cx``, ``r``, geometric ``rms``,
+    ``iterations`` and ``converged``. ``max_iterations`` is the maximum number
+    of function evaluations. ``radius_limit_factor`` bounds the fitted radius
+    relative to the point-cloud span; an exceeded bound is reported as
+    ``ValueError`` instead of returning a line-like, effectively infinite
+    circle. Non-finite, collinear, or fewer than three points are also rejected.
+    """
+    from scipy.optimize import least_squares
+    p = _as_points(points, 3, "points")
+    initial = fit_circle(p)  # also performs the collinearity check
+    y, x = p[:, 0], p[:, 1]
+    span = float(np.hypot(np.ptp(x), np.ptp(y)))
+    if not isinstance(max_iterations, (int, np.integer)) or max_iterations < 1:
+        raise ValueError("max_iterations must be a positive integer")
+    lim = float(radius_limit_factor)
+    if not np.isfinite(lim) or lim <= 1.0:
+        raise ValueError("radius_limit_factor must be finite and > 1")
+
+    def residual(q):
+        return np.hypot(x - q[0], y - q[1]) - q[2]
+
+    sol = least_squares(residual, [initial["cx"], initial["cy"], initial["r"]],
+                        method="lm", max_nfev=int(max_iterations),
+                        ftol=1e-12, xtol=1e-12, gtol=1e-12)
+    cx, cy, radius = map(float, sol.x)
+    if (not np.all(np.isfinite(sol.x)) or radius <= 0.0
+            or radius > lim * max(span, np.finfo(float).eps)):
+        raise ValueError("geometric circle radius diverged; the arc is too line-like")
+    res = residual(sol.x)
+    return {"cy": cy, "cx": cx, "r": radius,
+            "rms": float(np.sqrt(np.mean(res * res))),
+            "iterations": int(sol.nfev), "converged": bool(sol.success)}
+
+
+def fit_curve_principal_axis(points, degree: int = 2,
+                             *, isotropy_ratio: float = 0.95) -> dict:
+    """斜めの曲がった縁を主軸へ回してから多項式 ``y'=f(x')`` を当てはめる。
+
+    Returns the image-plane ``angle_deg``, ``centroid`` (row, col), polynomial
+    ``coefficients`` in NumPy's descending-power convention, orthonormal
+    ``axes`` (rows are local x/y axes in col,row order), local coordinates,
+    ``fitted_points`` in the original row/col frame, and a gradient-normalised
+    geometric ``rms``. ``degree`` must be at least one and leave more samples
+    than coefficients. A nearly round cloud (minor/major variance ratio at or
+    above ``isotropy_ratio``) is rejected because its principal direction is
+    undefined.
+    """
+    p = _as_points(points, 3, "points")
+    degree = int(degree)
+    if degree < 1 or len(p) <= degree:
+        raise ValueError("degree must be >= 1 with more points than coefficients")
+    ratio_limit = float(isotropy_ratio)
+    if not (0.0 < ratio_limit < 1.0):
+        raise ValueError("isotropy_ratio must be in (0, 1)")
+    xy = p[:, ::-1]
+    center = xy.mean(0)
+    _, s, vt = np.linalg.svd(xy - center, full_matrices=False)
+    if s[0] <= np.finfo(float).eps * np.linalg.norm(xy - center) or (s[1] / s[0]) ** 2 >= ratio_limit:
+        raise ValueError("point cloud is too isotropic; no principal axis is defined")
+    if np.linalg.det(vt) < 0:
+        vt[1] *= -1
+    if vt[0, 0] < 0:
+        vt *= -1
+    local = (xy - center) @ vt.T
+    coef = np.polyfit(local[:, 0], local[:, 1], degree)
+    fitted_local = np.column_stack([local[:, 0], np.polyval(coef, local[:, 0])])
+    fitted_xy = center + fitted_local @ vt
+    slope = np.polyval(np.polyder(coef), local[:, 0])
+    geometric = (local[:, 1] - fitted_local[:, 1]) / np.sqrt(1.0 + slope * slope)
+    angle = float(((np.degrees(np.arctan2(vt[0, 1], vt[0, 0])) + 90) % 180) - 90)
+    return {"angle_deg": angle, "centroid": center[::-1].copy(),
+            "coefficients": coef, "axes": vt, "local_points": local,
+            "fitted_points": fitted_xy[:, ::-1],
+            "rms": float(np.sqrt(np.mean(geometric * geometric)))}
 
 
 def fit_ellipse(points) -> dict:

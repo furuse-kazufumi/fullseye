@@ -187,7 +187,19 @@ def main(argv=None):
                     help="git の差分を見ず、帳簿に触る門を全部回す")
     ap.add_argument("--no-regen", action="store_true",
                     help="regen_all.py --check を省く(生成物を触っていない時だけ)")
+    ap.add_argument("ops", nargs="*", help="今回追加した op 名(報告と索引存在確認に使う)")
     args = ap.parse_args(argv)
+
+    if args.ops:
+        import json
+        index_path = os.path.join(ROOT, "docs", "OP_INDEX.json")
+        with open(index_path, encoding="utf-8") as fh:
+            known = {r["name"] for r in json.load(fh).get("ops", [])}
+        missing = [name for name in args.ops if name not in known]
+        print("対象 op: " + ", ".join(args.ops))
+        if missing:
+            print("索引に無い対象 op: " + ", ".join(missing))
+            return 2
 
     sel = _selected()
     if not args.all:

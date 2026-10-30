@@ -9,6 +9,10 @@
   "hi"
  ],
  "summaries": {
+  "fit/fit_circle_geometric": {"fp":"c1c88c753ed5","en":"Fit a circle and radius to (row, col) points, including short arcs, by geometric least squares.","zh":"用几何最小二乘法对包括短圆弧的（行、列）点拟合圆和半径。","tw":"以幾何最小平方法對包含短圓弧的（列、欄）點擬合圓與半徑。","ko":"짧은 원호를 포함한 (행, 열) 점에 기하 최소제곱 원과 반경을 맞춥니다.","de":"Passt Kreis und Radius geometrisch an (Zeile, Spalte)-Punkte einschließlich kurzer Bögen an.","hi":"छोटे चाप सहित (पंक्ति, स्तंभ) बिंदुओं पर ज्यामितीय न्यूनतम-वर्ग वृत्त और त्रिज्या फिट करें।"},
+  "fit/fit_curve_principal_axis": {"fp":"66a5b091ea62","en":"Rotate a slanted curved edge to its principal axis, then fit polynomial y'=f(x').","zh":"将倾斜曲边旋转到主轴后拟合多项式 y'=f(x')。","tw":"將傾斜曲邊旋轉到主軸後擬合多項式 y'=f(x')。","ko":"비스듬한 곡선 가장자리를 주축으로 회전한 뒤 다항식 y'=f(x')를 맞춥니다.","de":"Dreht eine schräge gekrümmte Kante auf ihre Hauptachse und passt dann y'=f(x') an.","hi":"तिरछे मुड़े किनारे को प्रधान अक्ष पर घुमाकर बहुपद y'=f(x') फिट करें।"},
+  "fit/phase_correlation_shift": {"fp":"c22abb95cbd2","en":"Estimate the subpixel translation needed to align two images by phase-only correlation.","zh":"用相位限定相关估计两幅图像对齐所需的亚像素平移。","tw":"以相位限定相關估計兩幅影像對齊所需的次像素平移。","ko":"위상 한정 상관으로 두 영상 정렬에 필요한 서브픽셀 이동량을 구합니다.","de":"Schätzt per Phasenkorrelation die zur Ausrichtung zweier Bilder nötige Subpixelverschiebung.","hi":"phase-only correlation से दो चित्रों को मिलाने हेतु उप-पिक्सेल स्थानांतरण ज्ञात करें।"},
+  "3d/fit_surface_principal_axes": {"fp":"f060205eba25","en":"Rotate a slanted warped surface to PCA axes, then fit polynomial z'=f(x',y').","zh":"将倾斜翘曲面旋转到 PCA 轴后拟合多项式 z'=f(x',y')。","tw":"將傾斜翹曲面旋轉到 PCA 軸後擬合多項式 z'=f(x',y')。","ko":"비스듬히 휜 면을 PCA 축으로 회전한 뒤 다항식 z'=f(x',y')를 맞춥니다.","de":"Dreht eine schräge gewölbte Fläche auf PCA-Achsen und passt dann z'=f(x',y') an.","hi":"तिरछी मुड़ी सतह को PCA अक्षों पर घुमाकर बहुपद z'=f(x',y') फिट करें।"},
   "optics/brazilian_disc_stress": {
    "fp": "42f3f7ca4257",
    "en": "Closed-form plane stress σx, σy, τxy of a diametrically compressed disc (Brazilian disc) → dict.",
