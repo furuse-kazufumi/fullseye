@@ -168,6 +168,15 @@ def transport(pore: np.ndarray, axis: int = 0) -> dict:
     flat_idx, g = pore_graph(vol)
     plane = np.unravel_index(flat_idx, vol.shape)[0]
     lo, hi = plane == 0, plane == n - 1
+    _, labels = sp.csgraph.connected_components(g, directed=False)
+    through = bool(set(labels[lo]).intersection(labels[hi])) if lo.any() and hi.any() else False
+    if not through:
+        eps = float(vol.mean())
+        return {"eps": eps, "d_eff": 0.0, "tau_f": float("inf"),
+                "status": "no_through_path", "phi": np.zeros(flat_idx.size),
+                "flat_idx": flat_idx, "shape": vol.shape,
+                "bond": (np.array([], int), np.array([], int), np.array([], float)),
+                "cg_info": None, "lo": lo, "hi": hi, "graph": g}
     free = ~(lo | hi)
     lap = sp.diags(np.asarray(g.sum(1)).ravel()) - g
     a_ff = lap[free][:, free].tocsr()
@@ -185,7 +194,8 @@ def transport(pore: np.ndarray, axis: int = 0) -> dict:
     # bond ごとの散逸 (phi_a - phi_b)^2 —— 「働いている空隙」の地図
     coo = sp.triu(g).tocoo()
     diss = (phi[coo.row] - phi[coo.col]) ** 2
-    return {"eps": eps, "d_eff": d_eff, "tau_f": eps / max(d_eff, 1e-15),
+    return {"eps": eps, "d_eff": d_eff, "tau_f": eps / d_eff,
+            "status": "ok" if info == 0 else "solver_not_converged",
             "phi": phi, "flat_idx": flat_idx, "shape": vol.shape,
             "bond": (coo.row, coo.col, diss), "cg_info": info,
             "lo": lo, "hi": hi, "graph": g}

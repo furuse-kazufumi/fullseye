@@ -398,8 +398,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `examples/poc_battery_electrode_tortuosity.py`
 
 - **L136** — ★Eine Verarbeitung, die nicht auf einem öffentlichen Pfad liegt: ein 6-Nachbarn-Adjazenzgraph im Voxelraum. fullseye besitzt 3-D # Zusammenhangskomponenten (vol_label) und eine Distanztransformation (vol_distance_transform), aber # keinen Zugang (geodätische Distanz, Transport) für "einen Pfad, der durch den Hohlraum hindurchführt". # --------------------------------------------------------------------------- #
-- **L248** — ★Übergibt man einen 64-Voxel-Schnitt unverändert, ist das Panel nur 64 px breit, sodass der Titeltext nicht hineinpasst und die ganze Abbildung scheitert (examplefig gibt nicht stillschweigend auf).
-- **L269** — ★Lässt man die Festphase bei 0, wird log10(Dissipation) negativ, sodass **die Festphase am hellsten** eingefärbt wird (genau das erzeugten wir einmal am 2026-09-08). Wir ordnen die Festphase den untersten 2 % des Hohlraums zu.
+- **L258** — ★Übergibt man einen 64-Voxel-Schnitt unverändert, ist das Panel nur 64 px breit, sodass der Titeltext nicht hineinpasst und die ganze Abbildung scheitert (examplefig gibt nicht stillschweigend auf).
+- **L279** — ★Lässt man die Festphase bei 0, wird log10(Dissipation) negativ, sodass **die Festphase am hellsten** eingefärbt wird (genau das erzeugten wir einmal am 2026-09-08). Wir ordnen die Festphase den untersten 2 % des Hohlraums zu.
 
 ## `examples/poc_beam_modal_video.py`
 
@@ -478,9 +478,9 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_cold_chain_excursion.py`
 
-- **L568** — ★Das Fenster zur Peak-Suche reicht **nur bis kurz vor dem nächsten Türöffnen/-schließen**. Nimmt man es zu breit, greift es bei großem τ die steigende Flanke des nächsten Pulses auf und lässt es so aussehen, als "komme die Klippe nie" (am 2026-09-08 mit einem 200-Minuten-Fenster hineingetreten: das gemessene y=53 dehnte sich auf 153 Minuten).
-- **L947** — ★Mache die Blickrichtung (die D-Achse) zur **Breite**. Projiziert man mit (t, y, x) unverändert, wird D = Zeit 720, und man erhält nur ein schmales Bild (H, W) = (60, 12).
-- **L1006** — ★Unterscheide, ob ein "Treffer" der Konvention zu verdanken oder bloßer Zufall ist: störe jeden Punkt um ±1 m und zähle.
+- **L570** — ★Das Fenster zur Peak-Suche reicht **nur bis kurz vor dem nächsten Türöffnen/-schließen**. Nimmt man es zu breit, greift es bei großem τ die steigende Flanke des nächsten Pulses auf und lässt es so aussehen, als "komme die Klippe nie" (am 2026-09-08 mit einem 200-Minuten-Fenster hineingetreten: das gemessene y=53 dehnte sich auf 153 Minuten).
+- **L949** — ★Mache die Blickrichtung (die D-Achse) zur **Breite**. Projiziert man mit (t, y, x) unverändert, wird D = Zeit 720, und man erhält nur ein schmales Bild (H, W) = (60, 12).
+- **L1008** — ★Unterscheide, ob ein "Treffer" der Konvention zu verdanken oder bloßer Zufall ist: störe jeden Punkt um ±1 m und zähle.
 
 ## `examples/poc_colocalization_crosstalk.py`
 
@@ -1133,7 +1133,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_surface_roughness.py`
 
-- **L272** — ★Die Wahrheit wird **erst nach Deklaration des Bandes** definiert. Nicht die Rauheitskomponente selbst, sondern "die Rauheitskomponente nach dem Schnitt bei λc" ist die Wahrheit. Nimmt man hier das rohe rough_true, weicht selbst eine Messung nach korrektem Verfahren um -23% ab, und diese 23% vermischen sich mit dem Abtastfehler. Eine "Rauheitswahrheit" ohne Band existiert nicht -- das ist zugleich die Aussage von Abschnitt 2.
+- **L270** — ★Die Wahrheit wird **erst nach Deklaration des Bandes** definiert. Nicht die Rauheitskomponente selbst, sondern "die Rauheitskomponente nach dem Schnitt bei λc" ist die Wahrheit. Nimmt man hier das rohe rough_true, weicht selbst eine Messung nach korrektem Verfahren um -23% ab, und diese 23% vermischen sich mit dem Abtastfehler. Eine "Rauheitswahrheit" ohne Band existiert nicht -- das ist zugleich die Aussage von Abschnitt 2.
 
 ## `examples/poc_swc_tree_truth.py`
 
@@ -1182,24 +1182,24 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_thermal_radiometry.py`
 
-- **L507** — ★Vorwärts ist **direkte Integration**, invers ist eine **Kalibriertabelle**. Ein Hin-und-Zurück durch dieselbe Tabelle liefert trivialerweise Fehler 0 und gilt nicht als Messung des Bodens.
-- **L528** — ★Dass Case-0 **exakt 0** ist, liegt daran, dass 350.0 K zufällig auf einem Tabellenknoten liegt. Weg vom Knoten zeigt sich der Interpolationsfehler -- **0 als Boden zu bezeichnen ist eine Lüge**.
-- **L757** — ★Die x-Achse ist der **Anstieg über die Umgebung**. Bleibt es bei T_obj, kollabiert die Divergenz zu einer einzigen senkrechten Linie am linken Rand, und das entscheidende "ab wo es springt" ist nicht ablesbar.
-- **L767** — ★``plot_series`` **weist** Punkte außerhalb des Rahmens **ab** (weil sie am Rahmen kleben und wie echte Daten aussehen). Die divergierende Seite schneidet der Aufrufer vorher ab.
-- **L821** — ★Die x-Achse ist das **absolute** Δε. Als relatives Δε/ε geplottet überlappen sich die drei Kurven exakt (weil ε gemäß §2 aus der Gleichung herausfällt) -- das Diagramm sagt nichts aus.
-- **L1154** — ★Das Guard-Band nutzt den **oberen** Überstand. Da wir als Bestehen behaupten wollen, dass "die Wahrheit nicht **über** dem Schwellwert liegt", schneiden wir am oberen Ende des Intervalls. Nimmt man das untere off[0], schneidet man zu flach (genau um die Rechtsschiefe der Verteilung) -- einmal so geschrieben und daran gemerkt, dass die Falsch-Bestehen nicht abnahmen.
-- **L1257** — ★Bei derselben Verwechslung fällt L_obj auf der ε=0.10-Fläche ins Negative und **löst eine Ausnahme aus**. Das heißt, "anhalten oder still danebenliegen" entscheidet nicht die Verwechslung, sondern die **Szene**.
-- **L1331** — ★Die Wärmequelle als **flaches Plateau** ausführen. Als Berg gilt "Schraube und Umgebung bei gleicher Temperatur" nicht, und man kann nicht trennen, ob die scheinbare Mulde vom Emissionsgrad oder von der Temperatur kommt.
-- **L1378** — ★Die Korrektur beseitigt den Bias, vervielfacht aber das Rauschen um 1/ε. Deshalb ist in Abbildung (d) nur die Schraube körnig.
-- **L1450** — ★``op_find`` greift über Teiltreffer am Wortstamm. ``blackbody`` liefert 4 Treffer, deren Inhalt aber Morphologie wie ``cv_blackhat`` ist und **nichts mit Wärmestrahlung zu tun hat**. Aus der Trefferzahl "es existiert" abzulesen, geht daneben. Erst **nach Blick auf den führenden Namen** sagen.
-- **L1600** — 3. ★Eine Vorhersage, die danebenlag: der absolute Fehler ist **bei höherer Temperatur größer**
-- **L1602** — ★Selbst bei geändertem Maßstab **divergiert** der Emissionsgradfehler nicht mit dem Anstiegsverhältnis (er sättigt in Δε/ε)
-- **L1605** — ★Was divergiert, ist die reflektierte scheinbare Temperatur (je kleiner der Anstieg, desto stärker springt sie)
-- **L1618** — 6. ★★Überdeckungsrate. Am Boden (ρ=0) sind RSS und MC beide 95 %; mit Korrelation fällt RSS ab
-- **L1622** — ★Die MC-Seite pendelt sich bei 94.4-94.6 % ein (nicht exakt 95 %). Die Intervallenden werden über Perzentile aus 40000 Versuchen bestimmt, es gibt also Stichprobenfehler, und in der Realität ist auch Quantisierung beigemischt. **Genau das einschließend sagt man "MC trifft"**.
-- **L1638** — 7. ★Die Fehltreffer neigen zu einer Seite (symmetrisches ±k·u verfehlt eine schiefe Verteilung)
-- **L1642** — 8. ★★guard band: Falsch-Bestehen ist Ignorieren > RSS > MC, Falsch-Durchfallen umgekehrt
-- **L1662** — ★Die Korrektur beseitigt den Bias, vervielfacht dafür aber das Rauschen um 1/ε (nahe am ε-Verhältnis von 9.5)
+- **L522** — ★Vorwärts ist **direkte Integration**, invers ist eine **Kalibriertabelle**. Ein Hin-und-Zurück durch dieselbe Tabelle liefert trivialerweise Fehler 0 und gilt nicht als Messung des Bodens.
+- **L543** — ★Dass Case-0 **exakt 0** ist, liegt daran, dass 350.0 K zufällig auf einem Tabellenknoten liegt. Weg vom Knoten zeigt sich der Interpolationsfehler -- **0 als Boden zu bezeichnen ist eine Lüge**.
+- **L772** — ★Die x-Achse ist der **Anstieg über die Umgebung**. Bleibt es bei T_obj, kollabiert die Divergenz zu einer einzigen senkrechten Linie am linken Rand, und das entscheidende "ab wo es springt" ist nicht ablesbar.
+- **L782** — ★``plot_series`` **weist** Punkte außerhalb des Rahmens **ab** (weil sie am Rahmen kleben und wie echte Daten aussehen). Die divergierende Seite schneidet der Aufrufer vorher ab.
+- **L836** — ★Die x-Achse ist das **absolute** Δε. Als relatives Δε/ε geplottet überlappen sich die drei Kurven exakt (weil ε gemäß §2 aus der Gleichung herausfällt) -- das Diagramm sagt nichts aus.
+- **L1169** — ★Das Guard-Band nutzt den **oberen** Überstand. Da wir als Bestehen behaupten wollen, dass "die Wahrheit nicht **über** dem Schwellwert liegt", schneiden wir am oberen Ende des Intervalls. Nimmt man das untere off[0], schneidet man zu flach (genau um die Rechtsschiefe der Verteilung) -- einmal so geschrieben und daran gemerkt, dass die Falsch-Bestehen nicht abnahmen.
+- **L1272** — ★Bei derselben Verwechslung fällt L_obj auf der ε=0.10-Fläche ins Negative und **löst eine Ausnahme aus**. Das heißt, "anhalten oder still danebenliegen" entscheidet nicht die Verwechslung, sondern die **Szene**.
+- **L1346** — ★Die Wärmequelle als **flaches Plateau** ausführen. Als Berg gilt "Schraube und Umgebung bei gleicher Temperatur" nicht, und man kann nicht trennen, ob die scheinbare Mulde vom Emissionsgrad oder von der Temperatur kommt.
+- **L1392** — ★Die Korrektur beseitigt den Bias, vervielfacht aber das Rauschen um 1/ε. Deshalb ist in Abbildung (d) nur die Schraube körnig.
+- **L1464** — ★``op_find`` greift über Teiltreffer am Wortstamm. ``blackbody`` liefert 4 Treffer, deren Inhalt aber Morphologie wie ``cv_blackhat`` ist und **nichts mit Wärmestrahlung zu tun hat**. Aus der Trefferzahl "es existiert" abzulesen, geht daneben. Erst **nach Blick auf den führenden Namen** sagen.
+- **L1614** — 3. ★Eine Vorhersage, die danebenlag: der absolute Fehler ist **bei höherer Temperatur größer**
+- **L1616** — ★Selbst bei geändertem Maßstab **divergiert** der Emissionsgradfehler nicht mit dem Anstiegsverhältnis (er sättigt in Δε/ε)
+- **L1619** — ★Was divergiert, ist die reflektierte scheinbare Temperatur (je kleiner der Anstieg, desto stärker springt sie)
+- **L1632** — 6. ★★Überdeckungsrate. Am Boden (ρ=0) sind RSS und MC beide 95 %; mit Korrelation fällt RSS ab
+- **L1636** — ★Die MC-Seite pendelt sich bei 94.4-94.6 % ein (nicht exakt 95 %). Die Intervallenden werden über Perzentile aus 40000 Versuchen bestimmt, es gibt also Stichprobenfehler, und in der Realität ist auch Quantisierung beigemischt. **Genau das einschließend sagt man "MC trifft"**.
+- **L1652** — 7. ★Die Fehltreffer neigen zu einer Seite (symmetrisches ±k·u verfehlt eine schiefe Verteilung)
+- **L1656** — 8. ★★guard band: Falsch-Bestehen ist Ignorieren > RSS > MC, Falsch-Durchfallen umgekehrt
+- **L1676** — ★Die Korrektur beseitigt den Bias, vervielfacht dafür aber das Rauschen um 1/ε (nahe am ε-Verhältnis von 9.5)
 
 ## `examples/poc_thermography_ndt.py`
 
