@@ -66,9 +66,9 @@
     },
     {
       "source": "examples/poc_*.py",
-      "found": 280,
+      "found": 284,
       "included": 0,
-      "excluded": 280,
+      "excluded": 284,
       "reason": "PoC programs are arbitrary Python; a linear MCP pipeline cannot be extracted statically without guessing."
     },
     {

@@ -1542,7 +1542,7 @@ _計 3613 ops / 55 families。並びとノートの在り処は `docs/ops/INDEX.
 - `sk_sauvola` (halcon: `var_threshold`) `image → region` — Sauvola の局所適応しきい値。各ピクセル周辺の局所平均・標準偏差からローカルにしきい値を決める手法で、照明ムラのある文書画像の二値化(文字抽出)向けに設計されている。 · 例: `gallery2d_segmentation`, `poc_matrix_code_reading`, `poc_segmentation_gauntlet`, `threshold_family_agreement`
 - `sk_slic` `image → region` — SLIC(Simple Linear Iterative Clustering)によるスーパーピクセル分割。色(ここではグレー値)と座標を合わせた空間で k-means クラスタリングを行い、ほぼ均等な大きさの領域に分割する。ここでは分割結果の境界線を領域として返す。 · 例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
 - `sk_yen` (halcon: `binary_threshold`) `image → region` — Yen の最大相関基準(maximum correlation criterion)による大域しきい値二値化。ヒストグラムのエントロピーベースの評価量を最大化してしきい値を選ぶ、大津法・Li 法とはまた別の自動しきい値法。 · 例: `gallery2d_segmentation`, `threshold_family_agreement`
-- `threshold` (halcon: `threshold`) `image → region` — 大域しきい値処理（グローバルスレッショルド）。HALCON の ``threshold``（Segment an image using global threshold.）に相当。 · 例: `gallery2d_segmentation`, `poc_bone_trabecular_thickness`, `poc_change_detection_misreg`, `poc_fresco_craquelure`, `poc_gear_tooth_metrology`, `poc_metal_grain_size`, `poc_screw_thread_metrology`, `poc_tof_camera`, `poc_traffic_counting`, `poc_virtual_sem_kv_cd_bse`, `poc_water_level`, `tof_realdata`, `video_streaming`
+- `threshold` (halcon: `threshold`) `image → region` — 大域しきい値処理（グローバルスレッショルド）。HALCON の ``threshold``（Segment an image using global threshold.）に相当。 · 例: `gallery2d_segmentation`, `lighthouse_vfactory`, `poc_bone_trabecular_thickness`, `poc_change_detection_misreg`, `poc_fresco_craquelure`, `poc_gear_tooth_metrology`, `poc_metal_grain_size`, `poc_screw_thread_metrology`, `poc_tof_camera`, `poc_traffic_counting`, `poc_virtual_sem_kv_cd_bse`, `poc_water_level`, `tof_realdata`, `video_streaming`
 - `var_threshold` (halcon: `var_threshold`) `image → region` — Sauvola の局所適応的二値化(``skimage.filters.threshold_sauvola``、 窓サイズ ``2*int(a*6)+3``)。局所平均と局所標準偏差の両方を使ってしきい値 を決めるため、``dyn_threshold`` より照明ムラや低コントラスト文書に強い。 HALCON の ``var_threshold``（Threshold an image by local mean and standard deviation analysis.）に相当する近似(定式化は似た発想だが Sauvola の式と HALCON の式は係数が異なる ―― 同一の数値結果にはならない)。 · 例: `gallery2d_segmentation`, `poc_document_scan`
 - `watersheds` (halcon: `watersheds`) `image → region` — 分水嶺(watershed)セグメンテーション。勾配画像を地形とみなし、 暗い領域(``x < 0.2+0.3*a``)をマーカーとして分水嶺線を求め、その境界線を 返す。HALCON の ``watersheds``（Extract watersheds and basins from an image.）に相当。 · 例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
 - `watersheds_threshold` (halcon: `watersheds_threshold`) `image → region` — 実装は ``watersheds`` と同一(``kind: "watershed"``)。HALCON の ``watersheds_threshold``（Extract watershed basins from an image using a threshold.）は本来、隣接する集水域を統合する深さのしきい値を持つ演算子 だが、この代役では統合しきい値を実装せず ``watersheds`` と同じ結果を返す (近似の限界)。 · 例: `gallery2d_segmentation`
@@ -4554,7 +4554,7 @@ _計 3613 ops / 55 families。並びとノートの在り処は `docs/ops/INDEX.
 - `annotate_inset_layout` `入力なし → table` — table(dict)を返す: 拡大差し込みの置き場所と倍率を閉形式で決める。 · 例: `paper_figure`
 - `annotate_leader` `image2d → image2d` — 画像(image2d)を返す: 肘つき引き出し線 + 文字(複数点の衝突回避つき)。 · 例: `paper_figure`
 - `annotate_leader_layout` `入力なし → table` — table(dict)を返す: 引き出し線の配置(肘・文字位置・板の矩形)を閉形式で決める。 · 例: `paper_figure`
-- `annotate_legend` `image2d → image2d` — 画像(image2d)を返す: 番号つき丸マーカー × 説明の凡例(:func:`annotate_markers` の対)。 · 例: `paper_figure`, `poc_real_defect_floor`
+- `annotate_legend` `image2d → image2d` — 画像(image2d)を返す: 番号つき丸マーカー × 説明の凡例(:func:`annotate_markers` の対)。 · 例: `lighthouse_vfactory_cli`, `paper_figure`, `poc_real_defect_floor`
 - `annotate_markers` `image2d → image2d` — 画像(image2d)を返す: 番号(または短い文字)入りの丸いマーカーを各点に置く。 · 例: `paper_figure`
 - `annotate_orientation` `image2d → image2d` — 画像(image2d)を返す: 方位(北)や向きを示す矢印 + 文字。 · 例: `paper_figure`
 - `annotate_outline` `image2d × mask → image2d` — 画像(image2d)を返す: マスクの輪郭を(AA の)閉折れ線で描き、重心に文字を置く。 · 例: `paper_figure`, `poc_rotation_invariance_audit`
@@ -4919,7 +4919,7 @@ _計 3613 ops / 55 families。並びとノートの在り処は `docs/ops/INDEX.
 - `negate_funct_1d` `signal → signal` — Sign-flipped y-values (HALCON ``negate_funct_1d``). · 例: `gallery_oned_audio_funct`, `gallery_spectrum_signal_bridge`
 - `num_points_funct_1d` `signal → measurement` — Number of samples (HALCON ``num_points_funct_1d``). · 例: `signal_funct1d`
 - `sample_funct_1d` `signal → signal` — Every *step*-th sample (HALCON ``sample_funct_1d``). · 例: `poc_cold_chain_excursion`, `signal_funct1d`
-- `scale_y_funct_1d` `signal → signal` — Linear map of the y-values, ``mult * y + add`` (HALCON ``scale_y_funct_1d``). · 例: `signal_funct1d`
+- `scale_y_funct_1d` `signal → signal` — Linear map of the y-values, ``mult * y + add`` (HALCON ``scale_y_funct_1d``). · 例: `lighthouse_vfactory`, `signal_funct1d`
 - `smooth_funct_1d_gauss` `signal → signal` — Gaussian smoothing of a 1-D function (HALCON ``smooth_funct_1d_gauss``). · 例: `poc_fiber_orientation`, `poc_tree_ring_dendro`, `poc_web_roll_periodicity`, `signal_funct1d`
 - `smooth_funct_1d_mean` `signal → signal` — Iterated moving-average smoothing (HALCON ``smooth_funct_1d_mean``). · 例: `poc_weld_bead_profile`, `signal_funct1d`
 - `transform_funct_1d` `signal → pairs` — Independent affine transform of x and y (HALCON ``transform_funct_1d``). · 例: `gallery_oned_audio_funct`

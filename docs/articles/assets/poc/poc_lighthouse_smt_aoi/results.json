@@ -1,0 +1,250 @@
+{
+  "kind": "smt",
+  "model": "SMT AOI",
+  "seeds": {
+    "train": [
+      110,
+      111,
+      112,
+      113,
+      114,
+      115,
+      116,
+      117,
+      118,
+      119,
+      120,
+      121
+    ],
+    "holdout": [
+      910,
+      911,
+      912,
+      913,
+      914,
+      915,
+      916,
+      917,
+      918,
+      919,
+      920,
+      921,
+      922,
+      923,
+      924,
+      925,
+      926,
+      927,
+      928,
+      929
+    ]
+  },
+  "defect_model": {
+    "types": [
+      "ブリッジ",
+      "未はんだ",
+      "ずれ",
+      "ボイド",
+      "トゥームストーン"
+    ],
+    "size": "2–10 px",
+    "prevalence": "68%",
+    "basis": "3色リングAOIの簡略反射像。種類はIPC-A-610で一般に検査される状態、寸法・率は感度試験の設計値。"
+  },
+  "baseline": "固定全体コントラスト閾値",
+  "pipeline": "median residual → Fullseye scale_y_funct_1d → MAD → components",
+  "selected_threshold": 2.0,
+  "train_search_metric": {
+    "n": 12,
+    "defects": 5,
+    "miss_rate": [
+      20.0,
+      3.6223160969787447,
+      62.44717358814613
+    ],
+    "false_positive_rate": [
+      42.857142857142854,
+      15.821692226262684,
+      74.95457695909742
+    ],
+    "severe_miss_rate": [
+      0.0,
+      0,
+      48.990002040399915
+    ],
+    "ms_per_part": 8.271091666150218,
+    "difficulty": [
+      {
+        "lo": 0,
+        "hi": 0.33,
+        "detection_rate": 100.0
+      },
+      {
+        "lo": 0.33,
+        "hi": 0.66,
+        "detection_rate": 50.0
+      },
+      {
+        "lo": 0.66,
+        "hi": 1,
+        "detection_rate": 100.0
+      }
+    ]
+  },
+  "train": {
+    "baseline": {
+      "n": 12,
+      "defects": 5,
+      "miss_rate": [
+        100.0,
+        56.550850524791905,
+        100
+      ],
+      "false_positive_rate": [
+        0.0,
+        0,
+        35.433884297520656
+      ],
+      "severe_miss_rate": [
+        100.0,
+        51.009997959600085,
+        100
+      ],
+      "ms_per_part": 0.9859083317375431,
+      "difficulty": [
+        {
+          "lo": 0,
+          "hi": 0.33,
+          "detection_rate": 0.0
+        },
+        {
+          "lo": 0.33,
+          "hi": 0.66,
+          "detection_rate": 0.0
+        },
+        {
+          "lo": 0.66,
+          "hi": 1,
+          "detection_rate": 0.0
+        }
+      ]
+    },
+    "ours": {
+      "n": 12,
+      "defects": 5,
+      "miss_rate": [
+        20.0,
+        3.6223160969787447,
+        62.44717358814613
+      ],
+      "false_positive_rate": [
+        42.857142857142854,
+        15.821692226262684,
+        74.95457695909742
+      ],
+      "severe_miss_rate": [
+        0.0,
+        0,
+        48.990002040399915
+      ],
+      "ms_per_part": 8.04634999561434,
+      "difficulty": [
+        {
+          "lo": 0,
+          "hi": 0.33,
+          "detection_rate": 100.0
+        },
+        {
+          "lo": 0.33,
+          "hi": 0.66,
+          "detection_rate": 50.0
+        },
+        {
+          "lo": 0.66,
+          "hi": 1,
+          "detection_rate": 100.0
+        }
+      ]
+    }
+  },
+  "holdout": {
+    "baseline": {
+      "n": 20,
+      "defects": 13,
+      "miss_rate": [
+        100.0,
+        77.18981569447084,
+        100
+      ],
+      "false_positive_rate": [
+        0.0,
+        0,
+        35.433884297520656
+      ],
+      "severe_miss_rate": [
+        100.0,
+        70.08472464490407,
+        100
+      ],
+      "ms_per_part": 0.958524999441579,
+      "difficulty": [
+        {
+          "lo": 0,
+          "hi": 0.33,
+          "detection_rate": 0.0
+        },
+        {
+          "lo": 0.33,
+          "hi": 0.66,
+          "detection_rate": 0.0
+        },
+        {
+          "lo": 0.66,
+          "hi": 1,
+          "detection_rate": 0.0
+        }
+      ]
+    },
+    "ours": {
+      "n": 20,
+      "defects": 13,
+      "miss_rate": [
+        53.84615384615385,
+        29.14343243183205,
+        76.79424569851186
+      ],
+      "false_positive_rate": [
+        57.14285714285714,
+        25.04542304090258,
+        84.17830777373732
+      ],
+      "severe_miss_rate": [
+        44.44444444444444,
+        18.8775429471914,
+        73.33526542559703
+      ],
+      "ms_per_part": 8.220915001584217,
+      "difficulty": [
+        {
+          "lo": 0,
+          "hi": 0.33,
+          "detection_rate": 50.0
+        },
+        {
+          "lo": 0.33,
+          "hi": 0.66,
+          "detection_rate": 40.0
+        },
+        {
+          "lo": 0.66,
+          "hi": 1,
+          "detection_rate": 50.0
+        }
+      ]
+    }
+  },
+  "miss_reduction_percent": 46.15384615384615,
+  "wef_reported_reduction_percent": 99.0,
+  "comparison_warning": "WEFは各実工場の導入前との比較。本仮想工場の同一真値比較とは前提が異なり、勝敗を示さない。",
+  "loss_condition": "高難度(小寸法・低コントラスト・境界/欠測)では基準を下回る場合がある。difficulty曲線を参照。"
+}

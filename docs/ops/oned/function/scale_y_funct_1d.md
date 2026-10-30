@@ -4,7 +4,7 @@ dim: oned
 category: function
 in: signal
 out: signal
-examples: [signal_funct1d]
+examples: [lighthouse_vfactory, signal_funct1d]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.8.1  # fullseye lib version this note was generated for
@@ -36,6 +36,7 @@ Empty input (``y`` with 0 elements) returns an empty result (reason: a 1-D funct
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [lighthouse_vfactory](../../../../examples/lighthouse_vfactory.py) — `py -3.11 examples/lighthouse_vfactory.py`
 - [signal_funct1d](../../../../examples/signal_funct1d.py) — `py -3.11 examples/signal_funct1d.py`
 
 ## 型が繋がる次の op(`signal` を入力に取れる)

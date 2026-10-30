@@ -1,0 +1,32 @@
+[
+ {
+  "file": "01_miss_comparison.png",
+  "name": "miss_comparison",
+  "caption": "学習用と独立holdoutの見逃し率。95%区間はresults.json。",
+  "shape": [
+   260,
+   520,
+   3
+  ]
+ },
+ {
+  "file": "02_difficulty_curve.png",
+  "name": "difficulty_curve",
+  "caption": "欠陥の難しさ別検出率。小寸法・低コントラスト・欠測側で低下する。",
+  "shape": [
+   240,
+   520,
+   3
+  ]
+ },
+ {
+  "file": "03_representative_overlay.png",
+  "name": "representative_overlay",
+  "caption": "代表holdout試料。赤枠（点群は青点）は測定データ上の欠陥領域で、縦横比を保持。",
+  "shape": [
+   240,
+   520,
+   3
+  ]
+ }
+]

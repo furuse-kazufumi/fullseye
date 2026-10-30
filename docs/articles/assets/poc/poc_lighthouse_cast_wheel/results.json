@@ -1,0 +1,248 @@
+{
+  "kind": "wheel",
+  "model": "鋳造ホイールX線",
+  "seeds": {
+    "train": [
+      110,
+      111,
+      112,
+      113,
+      114,
+      115,
+      116,
+      117,
+      118,
+      119,
+      120,
+      121
+    ],
+    "holdout": [
+      910,
+      911,
+      912,
+      913,
+      914,
+      915,
+      916,
+      917,
+      918,
+      919,
+      920,
+      921,
+      922,
+      923,
+      924,
+      925,
+      926,
+      927,
+      928,
+      929
+    ]
+  },
+  "defect_model": {
+    "types": [
+      "ガス気孔",
+      "引け巣",
+      "介在物"
+    ],
+    "size": "半径1.2–6.8 px",
+    "prevalence": "64%",
+    "basis": "重大=半径4 px以上、またはスポーク根元で2.7 px以上。応力集中部を厳しくする工学的スクリーニング規則（規格の合否値ではない）。"
+  },
+  "baseline": "固定全体コントラスト閾値",
+  "pipeline": "median residual → Fullseye scale_y_funct_1d → MAD → components",
+  "selected_threshold": 4.0,
+  "train_search_metric": {
+    "n": 12,
+    "defects": 5,
+    "miss_rate": [
+      40.0,
+      11.76182311592533,
+      76.9280067791163
+    ],
+    "false_positive_rate": [
+      0.0,
+      0,
+      35.433884297520656
+    ],
+    "severe_miss_rate": [
+      50.0,
+      15.003570882017147,
+      84.99642911798286
+    ],
+    "ms_per_part": 9.083233337150887,
+    "difficulty": [
+      {
+        "lo": 0,
+        "hi": 0.33,
+        "detection_rate": 100.0
+      },
+      {
+        "lo": 0.33,
+        "hi": 0.66,
+        "detection_rate": 50.0
+      },
+      {
+        "lo": 0.66,
+        "hi": 1,
+        "detection_rate": 0.0
+      }
+    ]
+  },
+  "train": {
+    "baseline": {
+      "n": 12,
+      "defects": 5,
+      "miss_rate": [
+        80.0,
+        37.55282641185388,
+        96.37768390302125
+      ],
+      "false_positive_rate": [
+        0.0,
+        0,
+        35.433884297520656
+      ],
+      "severe_miss_rate": [
+        75.0,
+        30.06360524426366,
+        95.44139373553637
+      ],
+      "ms_per_part": 0.9457083360757679,
+      "difficulty": [
+        {
+          "lo": 0,
+          "hi": 0.33,
+          "detection_rate": 0.0
+        },
+        {
+          "lo": 0.33,
+          "hi": 0.66,
+          "detection_rate": 50.0
+        },
+        {
+          "lo": 0.66,
+          "hi": 1,
+          "detection_rate": 0.0
+        }
+      ]
+    },
+    "ours": {
+      "n": 12,
+      "defects": 5,
+      "miss_rate": [
+        40.0,
+        11.76182311592533,
+        76.9280067791163
+      ],
+      "false_positive_rate": [
+        0.0,
+        0,
+        35.433884297520656
+      ],
+      "severe_miss_rate": [
+        50.0,
+        15.003570882017147,
+        84.99642911798286
+      ],
+      "ms_per_part": 8.990741664698968,
+      "difficulty": [
+        {
+          "lo": 0,
+          "hi": 0.33,
+          "detection_rate": 100.0
+        },
+        {
+          "lo": 0.33,
+          "hi": 0.66,
+          "detection_rate": 50.0
+        },
+        {
+          "lo": 0.66,
+          "hi": 1,
+          "detection_rate": 0.0
+        }
+      ]
+    }
+  },
+  "holdout": {
+    "baseline": {
+      "n": 20,
+      "defects": 13,
+      "miss_rate": [
+        92.3076923076923,
+        66.68546607175266,
+        98.62899336203037
+      ],
+      "false_positive_rate": [
+        0.0,
+        0,
+        35.433884297520656
+      ],
+      "severe_miss_rate": [
+        100.0,
+        60.96569663469354,
+        99.99999999999999
+      ],
+      "ms_per_part": 0.9708950005006045,
+      "difficulty": [
+        {
+          "lo": 0,
+          "hi": 0.33,
+          "detection_rate": 16.666666666666664
+        },
+        {
+          "lo": 0.33,
+          "hi": 0.66,
+          "detection_rate": 0.0
+        },
+        {
+          "lo": 0.66,
+          "hi": 1,
+          "detection_rate": 0.0
+        }
+      ]
+    },
+    "ours": {
+      "n": 20,
+      "defects": 13,
+      "miss_rate": [
+        46.15384615384615,
+        23.205754301488142,
+        70.85656756816796
+      ],
+      "false_positive_rate": [
+        0.0,
+        0,
+        35.433884297520656
+      ],
+      "severe_miss_rate": [
+        50.0,
+        18.761280689940868,
+        81.23871931005912
+      ],
+      "ms_per_part": 9.136065002530813,
+      "difficulty": [
+        {
+          "lo": 0,
+          "hi": 0.33,
+          "detection_rate": 100.0
+        },
+        {
+          "lo": 0.33,
+          "hi": 0.66,
+          "detection_rate": 50.0
+        },
+        {
+          "lo": 0.66,
+          "hi": 1,
+          "detection_rate": 0.0
+        }
+      ]
+    }
+  },
+  "miss_reduction_percent": 50.0,
+  "wef_reported_reduction_percent": 98.1,
+  "comparison_warning": "WEFは各実工場の導入前との比較。本仮想工場の同一真値比較とは前提が異なり、勝敗を示さない。",
+  "loss_condition": "高難度(小寸法・低コントラスト・境界/欠測)では基準を下回る場合がある。difficulty曲線を参照。"
+}

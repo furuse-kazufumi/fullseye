@@ -1,0 +1,249 @@
+{
+  "kind": "tyre",
+  "model": "タイヤX線",
+  "seeds": {
+    "train": [
+      110,
+      111,
+      112,
+      113,
+      114,
+      115,
+      116,
+      117,
+      118,
+      119,
+      120,
+      121
+    ],
+    "holdout": [
+      910,
+      911,
+      912,
+      913,
+      914,
+      915,
+      916,
+      917,
+      918,
+      919,
+      920,
+      921,
+      922,
+      923,
+      924,
+      925,
+      926,
+      927,
+      928,
+      929
+    ]
+  },
+  "defect_model": {
+    "types": [
+      "コード乱れ",
+      "異物",
+      "気泡",
+      "コード切れ"
+    ],
+    "size": "半径1.3–6.2 px",
+    "prevalence": "72%",
+    "basis": "Beer–Lambert、8500光子、焦点ぼけσ=0.9 px。寸法・率は公開性能値ではなく感度試験の設計範囲。"
+  },
+  "baseline": "固定全体コントラスト閾値",
+  "pipeline": "median residual → Fullseye scale_y_funct_1d → MAD → components",
+  "selected_threshold": 0.1,
+  "train_search_metric": {
+    "n": 12,
+    "defects": 6,
+    "miss_rate": [
+      100.0,
+      60.96569663469354,
+      99.99999999999999
+    ],
+    "false_positive_rate": [
+      0.0,
+      0,
+      39.03430336530645
+    ],
+    "severe_miss_rate": [
+      100.0,
+      43.84939195509823,
+      100
+    ],
+    "ms_per_part": 9.338008327176794,
+    "difficulty": [
+      {
+        "lo": 0,
+        "hi": 0.33,
+        "detection_rate": 0.0
+      },
+      {
+        "lo": 0.33,
+        "hi": 0.66,
+        "detection_rate": 0.0
+      },
+      {
+        "lo": 0.66,
+        "hi": 1,
+        "detection_rate": 0.0
+      }
+    ]
+  },
+  "train": {
+    "baseline": {
+      "n": 12,
+      "defects": 6,
+      "miss_rate": [
+        100.0,
+        60.96569663469354,
+        99.99999999999999
+      ],
+      "false_positive_rate": [
+        0.0,
+        0,
+        39.03430336530645
+      ],
+      "severe_miss_rate": [
+        100.0,
+        43.84939195509823,
+        100
+      ],
+      "ms_per_part": 3.1313333311118186,
+      "difficulty": [
+        {
+          "lo": 0,
+          "hi": 0.33,
+          "detection_rate": 0.0
+        },
+        {
+          "lo": 0.33,
+          "hi": 0.66,
+          "detection_rate": 0.0
+        },
+        {
+          "lo": 0.66,
+          "hi": 1,
+          "detection_rate": 0.0
+        }
+      ]
+    },
+    "ours": {
+      "n": 12,
+      "defects": 6,
+      "miss_rate": [
+        100.0,
+        60.96569663469354,
+        99.99999999999999
+      ],
+      "false_positive_rate": [
+        0.0,
+        0,
+        39.03430336530645
+      ],
+      "severe_miss_rate": [
+        100.0,
+        43.84939195509823,
+        100
+      ],
+      "ms_per_part": 9.539258336493125,
+      "difficulty": [
+        {
+          "lo": 0,
+          "hi": 0.33,
+          "detection_rate": 0.0
+        },
+        {
+          "lo": 0.33,
+          "hi": 0.66,
+          "detection_rate": 0.0
+        },
+        {
+          "lo": 0.66,
+          "hi": 1,
+          "detection_rate": 0.0
+        }
+      ]
+    }
+  },
+  "holdout": {
+    "baseline": {
+      "n": 20,
+      "defects": 13,
+      "miss_rate": [
+        100.0,
+        77.18981569447084,
+        100
+      ],
+      "false_positive_rate": [
+        0.0,
+        0,
+        35.433884297520656
+      ],
+      "severe_miss_rate": [
+        100.0,
+        51.009997959600085,
+        100
+      ],
+      "ms_per_part": 3.07695500086993,
+      "difficulty": [
+        {
+          "lo": 0,
+          "hi": 0.33,
+          "detection_rate": 0.0
+        },
+        {
+          "lo": 0.33,
+          "hi": 0.66,
+          "detection_rate": 0.0
+        },
+        {
+          "lo": 0.66,
+          "hi": 1,
+          "detection_rate": 0.0
+        }
+      ]
+    },
+    "ours": {
+      "n": 20,
+      "defects": 13,
+      "miss_rate": [
+        84.61538461538461,
+        57.764829491368985,
+        95.6742736817262
+      ],
+      "false_positive_rate": [
+        14.285714285714285,
+        2.567895594897479,
+        51.313450331903
+      ],
+      "severe_miss_rate": [
+        100.0,
+        51.009997959600085,
+        100
+      ],
+      "ms_per_part": 9.341239999048412,
+      "difficulty": [
+        {
+          "lo": 0,
+          "hi": 0.33,
+          "detection_rate": 0.0
+        },
+        {
+          "lo": 0.33,
+          "hi": 0.66,
+          "detection_rate": 50.0
+        },
+        {
+          "lo": 0.66,
+          "hi": 1,
+          "detection_rate": 0.0
+        }
+      ]
+    }
+  },
+  "miss_reduction_percent": 15.384615384615385,
+  "wef_reported_reduction_percent": 99.0,
+  "comparison_warning": "WEFは各実工場の導入前との比較。本仮想工場の同一真値比較とは前提が異なり、勝敗を示さない。",
+  "loss_condition": "高難度(小寸法・低コントラスト・境界/欠測)では基準を下回る場合がある。difficulty曲線を参照。"
+}
