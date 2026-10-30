@@ -46,7 +46,6 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - **[백색광 간섭 단차](../viewers/poc_interferometry_step.html?lang=ko)**: PoC 함수를 다시 실행해 잡음 σ을(를) 0.000–0.120 범위에서 훑는다.
 - **[편광 정반사 제거](../viewers/poc_polarization_specular.html?lang=ko)**: PoC 함수를 다시 실행해 입사각을(를) 0–80° 범위에서 훑는다.
 - **[광탄성 응력](../viewers/poc_photoelasticity.html?lang=ko)**: PoC 함수를 다시 실행해 검광자 각도을(를) 0–135° 범위에서 훑는다.
-- **[미세 진동 확대](../viewers/poc_motion_magnification.html?lang=ko)**: PoC 함수를 다시 실행해 운동 진폭을(를) 0.02–0.80 px 범위에서 훑는다.
 - **[파리 겹눈](../viewers/poc_compound_eye.html?lang=ko)**: PoC 함수를 다시 실행해 시점별 SNR을(를) 0.5–16.0 범위에서 훑는다.
 - **[접합층 보이드](../viewers/poc_ct_void_morphology.html?lang=ko)**: PoC 함수를 다시 실행해 임계값을(를) 0.2–0.8 범위에서 훑는다.
 - **[능동 윤곽](../viewers/poc_active_contours.html?lang=ko)**: PoC 함수를 다시 실행해 반복 횟수을(를) 0–1000 범위에서 훑는다.

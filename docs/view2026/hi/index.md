@@ -46,7 +46,6 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - **[White-light step](../viewers/poc_interferometry_step.html?lang=hi)**: PoC फ़ंक्शन दोबारा चलाकर शोर σ को 0.000–0.120 तक बदलता है।
 - **[Polarization](../viewers/poc_polarization_specular.html?lang=hi)**: PoC फ़ंक्शन दोबारा चलाकर आपतन कोण को 0–80° तक बदलता है।
 - **[Photoelasticity](../viewers/poc_photoelasticity.html?lang=hi)**: PoC फ़ंक्शन दोबारा चलाकर विश्लेषक कोण को 0–135° तक बदलता है।
-- **[Motion magnification](../viewers/poc_motion_magnification.html?lang=hi)**: PoC फ़ंक्शन दोबारा चलाकर गति आयाम को 0.02–0.80 px तक बदलता है।
 - **[Fly compound eye](../viewers/poc_compound_eye.html?lang=hi)**: PoC फ़ंक्शन दोबारा चलाकर प्रति-दृश्य SNR को 0.5–16.0 तक बदलता है।
 - **[Joint voids (CT)](../viewers/poc_ct_void_morphology.html?lang=hi)**: PoC फ़ंक्शन दोबारा चलाकर सीमा को 0.2–0.8 तक बदलता है।
 - **[Active contours](../viewers/poc_active_contours.html?lang=hi)**: PoC फ़ंक्शन दोबारा चलाकर पुनरावृत्तियाँ को 0–1000 तक बदलता है।

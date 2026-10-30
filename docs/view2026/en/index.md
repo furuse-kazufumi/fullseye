@@ -46,7 +46,6 @@ Run the paper's figures yourself, on a phone too. Switch methods with the tabs a
 - **[White-light steps](../viewers/poc_interferometry_step.html?lang=en)**: Re-runs the PoC function while sweeping noise σ over 0.000–0.120.
 - **[Polarization](../viewers/poc_polarization_specular.html?lang=en)**: Re-runs the PoC function while sweeping incidence angle over 0–80°.
 - **[Photoelasticity](../viewers/poc_photoelasticity.html?lang=en)**: Re-runs the PoC function while sweeping analyser angle over 0–135°.
-- **[Motion magnification](../viewers/poc_motion_magnification.html?lang=en)**: Re-runs the PoC function while sweeping motion amplitude over 0.02–0.80 px.
 - **[Fly compound eye](../viewers/poc_compound_eye.html?lang=en)**: Re-runs the PoC function while sweeping per-view SNR over 0.5–16.0.
 - **[Joint voids (CT)](../viewers/poc_ct_void_morphology.html?lang=en)**: Re-runs the PoC function while sweeping threshold over 0.2–0.8.
 - **[Active contours](../viewers/poc_active_contours.html?lang=en)**: Re-runs the PoC function while sweeping iterations over 0–1000.

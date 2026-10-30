@@ -46,7 +46,6 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - **[白光干涉台阶](../viewers/poc_interferometry_step.html?lang=zh)**: 重新运行 PoC 函数，将 噪声 σ 在 0.000–0.120 范围内扫描。
 - **[偏振去镜面反射](../viewers/poc_polarization_specular.html?lang=zh)**: 重新运行 PoC 函数，将 入射角 在 0–80° 范围内扫描。
 - **[光弹性应力](../viewers/poc_photoelasticity.html?lang=zh)**: 重新运行 PoC 函数，将 检偏器角度 在 0–135° 范围内扫描。
-- **[微振动放大](../viewers/poc_motion_magnification.html?lang=zh)**: 重新运行 PoC 函数，将 运动振幅 在 0.02–0.80 px 范围内扫描。
 - **[苍蝇复眼](../viewers/poc_compound_eye.html?lang=zh)**: 重新运行 PoC 函数，将 每视点信噪比 在 0.5–16.0 范围内扫描。
 - **[接合层空洞](../viewers/poc_ct_void_morphology.html?lang=zh)**: 重新运行 PoC 函数，将 阈值 在 0.2–0.8 范围内扫描。
 - **[主动轮廓](../viewers/poc_active_contours.html?lang=zh)**: 重新运行 PoC 函数，将 迭代次数 在 0–1000 范围内扫描。

@@ -695,12 +695,6 @@ def build_photoelastic_sweep():
     return _sweep("poc_photoelasticity", TX.T("検光子角", "analyser angle", "检偏器角度", "檢偏器角度", "검광자 각도", "Analysatorwinkel", "विश्लेषक कोण", "angle de l’analyseur"), "°", vals, frames, mean_intensity)
 
 
-def build_motion_sweep():
-    P=_load("poc_motion_magnification"); vals=np.linspace(0.02,0.8,24); base=P.surface(h=128,w=160); frames=[]; amp=[]
-    for v in vals:
-        clip,disp=P.make_clip([(float(v),P.FREQ,0.0)],t=16,base=base); frames.append(_gray(clip[-1],0,1)); amp.append(P.amp_rms(P.read_dx_oracle(clip)))
-    return _sweep("poc_motion_magnification", TX.T("運動振幅", "motion amplitude", "运动振幅", "運動振幅", "운동 진폭", "Bewegungsamplitude", "गति आयाम", "amplitude du mouvement"), "px", vals, frames, amp)
-
 
 def build_compound_sweep():
     P=_load("poc_compound_eye"); lf,_=P.ommatidial_scene((1.0,),occlusion=False,seed=1); vals=np.geomspace(0.5,16,24); frames=[]; rms=[]
@@ -742,7 +736,6 @@ BUILDERS = {
     "poc_interferometry_step": build_interferometry_sweep,
     "poc_polarization_specular": build_polarization_sweep,
     "poc_photoelasticity": build_photoelastic_sweep,
-    "poc_motion_magnification": build_motion_sweep,
     "poc_compound_eye": build_compound_sweep,
     "poc_ct_void_morphology": build_ct_threshold_sweep,
     "poc_active_contours": build_active_sweep,

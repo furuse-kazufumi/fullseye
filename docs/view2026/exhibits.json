@@ -12055,29 +12055,6 @@
     }
    },
    {
-    "id": "poc_motion_magnification",
-    "title": {
-     "ja": "微小振動の拡大",
-     "en": "Motion magnification",
-     "zh": "微振动放大",
-     "tw": "微振動放大",
-     "ko": "미세 진동 확대",
-     "de": "Bewegungsverstärkung",
-     "hi": "Motion magnification",
-     "fr": "Amplification de micro-vibrations"
-    },
-    "line": {
-     "ja": "PoC 関数を再実行して 運動振幅 を 0.02–0.80 px で掃引する。",
-     "en": "Re-runs the PoC function while sweeping motion amplitude over 0.02–0.80 px.",
-     "zh": "重新运行 PoC 函数，将 运动振幅 在 0.02–0.80 px 范围内扫描。",
-     "tw": "重新執行 PoC 函數，將 運動振幅 在 0.02–0.80 px 範圍內掃描。",
-     "ko": "PoC 함수를 다시 실행해 운동 진폭을(를) 0.02–0.80 px 범위에서 훑는다.",
-     "de": "Führt die PoC-Funktion erneut aus und variiert Bewegungsamplitude über 0.02–0.80 px.",
-     "hi": "PoC फ़ंक्शन दोबारा चलाकर गति आयाम को 0.02–0.80 px तक बदलता है।",
-     "fr": "Réexécute la fonction du PoC en faisant varier amplitude du mouvement de 0.02–0.80 px."
-    }
-   },
-   {
     "id": "poc_compound_eye",
     "title": {
      "ja": "ハエの複眼",

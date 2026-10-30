@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 612 von 1568. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 612 von 1569. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -2375,6 +2375,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `tests/test_gaits.py`
 
 - **L99** _(ja)_ — ★2026-09-14: ここは `resolve()` の戻りを検査せず `spec["xml"]` を引いていた。 `scene_registry` が**実在しない場面に None を返す**設計(資産が無い環境では 正しい振る舞い)なので、資産チェックアウトが無いと `TypeError` で落ちる。 同じファイル群の `test_fullseye_3dgs.py` は**既にこの skip 作法を持っていた** —— 作法が兄弟に適用されていなかった ([[feedback_same_bug_class_recurs_check_siblings]])。
+
+## `tests/test_gen_poc_viewer.py`
+
+- **L366** _(ja)_ — ★2026-10-30: 運動拡大の掃引は振幅を 40 倍にしても指標が 3.93 -> 3.97 で平らだった(64 px 用の読み出しを 160 px の動画に当てていた)。つまみを動かしても絵も指標も変わらないビューアは偽物なので止める。
 
 ## `tests/test_generative.py`
 

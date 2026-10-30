@@ -46,7 +46,6 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 - **[Weißlicht-Stufen](../viewers/poc_interferometry_step.html?lang=de)**: Führt die PoC-Funktion erneut aus und variiert Rauschen σ über 0.000–0.120.
 - **[Polarisation](../viewers/poc_polarization_specular.html?lang=de)**: Führt die PoC-Funktion erneut aus und variiert Einfallswinkel über 0–80°.
 - **[Spannungsoptik](../viewers/poc_photoelasticity.html?lang=de)**: Führt die PoC-Funktion erneut aus und variiert Analysatorwinkel über 0–135°.
-- **[Bewegungsverstärkung](../viewers/poc_motion_magnification.html?lang=de)**: Führt die PoC-Funktion erneut aus und variiert Bewegungsamplitude über 0.02–0.80 px.
 - **[Fliegen-Facettenauge](../viewers/poc_compound_eye.html?lang=de)**: Führt die PoC-Funktion erneut aus und variiert SNR je Ansicht über 0.5–16.0.
 - **[Poren in Fügeschicht](../viewers/poc_ct_void_morphology.html?lang=de)**: Führt die PoC-Funktion erneut aus und variiert Schwellenwert über 0.2–0.8.
 - **[Aktive Konturen](../viewers/poc_active_contours.html?lang=de)**: Führt die PoC-Funktion erneut aus und variiert Iterationen über 0–1000.

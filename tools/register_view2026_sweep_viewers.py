@@ -10,7 +10,6 @@ SWEEPS = {
     "poc_interferometry_step": (("雑音 σ", "noise σ", "噪声 σ", "雜訊 σ", "잡음 σ", "Rauschen σ", "शोर σ", "bruit σ"), "0.000–0.120"),
     "poc_polarization_specular": (("入射角", "incidence angle", "入射角", "入射角", "입사각", "Einfallswinkel", "आपतन कोण", "angle d’incidence"), "0–80°"),
     "poc_photoelasticity": (("検光子角", "analyser angle", "检偏器角度", "檢偏器角度", "검광자 각도", "Analysatorwinkel", "विश्लेषक कोण", "angle de l’analyseur"), "0–135°"),
-    "poc_motion_magnification": (("運動振幅", "motion amplitude", "运动振幅", "運動振幅", "운동 진폭", "Bewegungsamplitude", "गति आयाम", "amplitude du mouvement"), "0.02–0.80 px"),
     "poc_compound_eye": (("視点ごとのSNR", "per-view SNR", "每视点信噪比", "每視點訊噪比", "시점별 SNR", "SNR je Ansicht", "प्रति-दृश्य SNR", "SNR par vue"), "0.5–16.0"),
     "poc_ct_void_morphology": (("しきい値", "threshold", "阈值", "閾值", "임계값", "Schwellenwert", "सीमा", "seuil"), "0.2–0.8"),
     "poc_active_contours": (("反復回数", "iterations", "迭代次数", "迭代次數", "반복 횟수", "Iterationen", "पुनरावृत्तियाँ", "itérations"), "0–1000"),

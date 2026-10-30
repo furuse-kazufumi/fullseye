@@ -46,7 +46,6 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - **[白光干涉段差](../viewers/poc_interferometry_step.html?lang=tw)**: 重新執行 PoC 函數，將 雜訊 σ 在 0.000–0.120 範圍內掃描。
 - **[偏光去鏡面反射](../viewers/poc_polarization_specular.html?lang=tw)**: 重新執行 PoC 函數，將 入射角 在 0–80° 範圍內掃描。
 - **[光彈應力](../viewers/poc_photoelasticity.html?lang=tw)**: 重新執行 PoC 函數，將 檢偏器角度 在 0–135° 範圍內掃描。
-- **[微振動放大](../viewers/poc_motion_magnification.html?lang=tw)**: 重新執行 PoC 函數，將 運動振幅 在 0.02–0.80 px 範圍內掃描。
 - **[蒼蠅複眼](../viewers/poc_compound_eye.html?lang=tw)**: 重新執行 PoC 函數，將 每視點訊噪比 在 0.5–16.0 範圍內掃描。
 - **[接合層孔洞](../viewers/poc_ct_void_morphology.html?lang=tw)**: 重新執行 PoC 函數，將 閾值 在 0.2–0.8 範圍內掃描。
 - **[主動輪廓](../viewers/poc_active_contours.html?lang=tw)**: 重新執行 PoC 函數，將 迭代次數 在 0–1000 範圍內掃描。

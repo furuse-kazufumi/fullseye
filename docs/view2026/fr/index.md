@@ -46,7 +46,6 @@ Manipulez vous-même les figures de l'article, même sur téléphone. Changez de
 - **[Marches en interférométrie en lumière blanche](../viewers/poc_interferometry_step.html?lang=fr)**: Réexécute la fonction du PoC en faisant varier bruit σ de 0.000–0.120.
 - **[Suppression des reflets spéculaires par polarisation](../viewers/poc_polarization_specular.html?lang=fr)**: Réexécute la fonction du PoC en faisant varier angle d’incidence de 0–80°.
 - **[Contraintes en photoélasticimétrie](../viewers/poc_photoelasticity.html?lang=fr)**: Réexécute la fonction du PoC en faisant varier angle de l’analyseur de 0–135°.
-- **[Amplification de micro-vibrations](../viewers/poc_motion_magnification.html?lang=fr)**: Réexécute la fonction du PoC en faisant varier amplitude du mouvement de 0.02–0.80 px.
 - **[Œil composé de la mouche](../viewers/poc_compound_eye.html?lang=fr)**: Réexécute la fonction du PoC en faisant varier SNR par vue de 0.5–16.0.
 - **[Vides dans la couche de jonction](../viewers/poc_ct_void_morphology.html?lang=fr)**: Réexécute la fonction du PoC en faisant varier seuil de 0.2–0.8.
 - **[Contours actifs](../viewers/poc_active_contours.html?lang=fr)**: Réexécute la fonction du PoC en faisant varier itérations de 0–1000.

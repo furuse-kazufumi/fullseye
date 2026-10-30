@@ -61,7 +61,6 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - **[白色干渉の段差](viewers/poc_interferometry_step.html?lang=ja)**: PoC 関数を再実行して 雑音 σ を 0.000–0.120 で掃引する。
 - **[偏光で鏡面除去](viewers/poc_polarization_specular.html?lang=ja)**: PoC 関数を再実行して 入射角 を 0–80° で掃引する。
 - **[光弾性の応力](viewers/poc_photoelasticity.html?lang=ja)**: PoC 関数を再実行して 検光子角 を 0–135° で掃引する。
-- **[微小振動の拡大](viewers/poc_motion_magnification.html?lang=ja)**: PoC 関数を再実行して 運動振幅 を 0.02–0.80 px で掃引する。
 - **[ハエの複眼](viewers/poc_compound_eye.html?lang=ja)**: PoC 関数を再実行して 視点ごとのSNR を 0.5–16.0 で掃引する。
 - **[接合層のボイド](viewers/poc_ct_void_morphology.html?lang=ja)**: PoC 関数を再実行して しきい値 を 0.2–0.8 で掃引する。
 - **[動的輪郭](viewers/poc_active_contours.html?lang=ja)**: PoC 関数を再実行して 反復回数 を 0–1000 で掃引する。
