@@ -54,3 +54,15 @@ def test_easy_open_loop_reaches_seventy_percent():
 def test_no_attachment_or_product_pose_write_after_initialization():
     src=inspect.getsource(T._attempt);assert "weld" not in src and "eq_" not in src and "mocap" not in src
     result=T.run_benchmark(1,max_retries=0,render_depth=False,clutter=False);assert result["contact"]["adhesion"] is False
+
+def test_every_method_gets_the_same_retry_allowance():
+    result=T.run_benchmark(1,max_retries=2,render_depth=False,clutter=False,grip=False)
+    assert {r["method"]:len(r["attempts"]) for r in result["rows"]}=={m:3 for m in T.METHODS}
+    assert all([a["retry"] for a in r["attempts"]]==[0,1,2] for r in result["rows"])
+
+def test_evidence_frames_are_mujoco_renderer_output():
+    src=inspect.getsource(T._attempt)
+    render_src=inspect.getsource(T._render_mujoco_frame)
+    assert "_render_mujoco_frame" in src
+    assert "renderer.update_scene" in render_src and "renderer.render" in render_src
+    assert "render_size=(1280,720)" in src.replace(" ","")

@@ -27,8 +27,6 @@ import sys
 import time
 from pathlib import Path
 
-import numpy as np
-
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import examplefig as figs  # noqa: E402
 import totepick as TP  # noqa: E402
@@ -40,25 +38,20 @@ def gate(name, ok, detail=""):
         raise AssertionError(name)
 
 
-def _representative_frames():
+def _render_trial(name, product_index, method, seed, expected, caption):
+    """Record an actual attempt; every frame passes TP._render_mujoco_frame."""
     frames = []
-    for k in range(28):
-        im = np.full((360, 640, 3), [238, 240, 244], np.uint8)
-        # two foldable-container-sized totes; object moves on a smooth wrist path
-        im[145:315, 38:282] = [93, 115, 137]
-        im[155:305, 48:272] = [210, 219, 224]
-        im[145:315, 358:602] = [93, 115, 137]
-        im[155:305, 368:592] = [210, 219, 224]
-        t = k / 27
-        x = int(170 + 310 * t)
-        y = int(235 - 125 * np.sin(np.pi * t))
-        im[y - 18:y + 18, x - 30:x + 30] = [224, 103, 62]
-        # parallel Panda fingers; this is a trajectory diagram, not evidence imagery
-        for j in range(2):
-            xx = x - 28 + 49 * j
-            im[max(0, y - 57):y - 24, xx:xx + 7] = [58, 63, 72]
-        frames.append(im)
-    return frames
+    outcome = TP._attempt(TP.PRODUCTS[product_index], method, seed, 0,
+                          render_depth=True, clutter=True, frame_sink=frames,
+                          render_size=(1280, 720))
+    gate("代表動画 " + name, outcome[1] == expected,
+         "success" if outcome[0] else str(outcome[1]))
+    figs.save_gif(name, frames, fps=8, caption=caption)
+    return {"name": name, "product": TP.PRODUCTS[product_index].name,
+            "method": method, "seed": seed,
+            "outcome": "success" if outcome[0] else outcome[1],
+            "resolution": [1280, 720], "frames": len(frames),
+            "duration_s": len(frames) / 8}
 
 
 def figures(summary, diagnostic=None):
@@ -78,8 +71,6 @@ def figures(summary, diagnostic=None):
     figs.save_plot("failure_types", series, xlabel="failure: miss, slip, outside, collision, timeout",
                    ylabel="attempt count", title="Truth failure categories", colors=colors,
                    caption="失敗は重複させず、最初に確定した真値の型で数える。")
-    figs.save_gif("representative_trial", _representative_frames(), fps=8,
-                  caption="代表軌道の模式図(640:360)。数値はMuJoCo物理ログから算出し、この図は証拠画像ではない。")
     if diagnostic:
         ts=[x["time_s"] for x in diagnostic]
         series=[("product height [m]",ts,[x["product_z"] for x in diagnostic]),
@@ -88,6 +79,18 @@ def figures(summary, diagnostic=None):
         figs.save_plot("easy_trial_diagnosis",series,xlabel="MuJoCo time [s]",ylabel="measured value",
                        title="Easy-product physical diagnosis",colors=["neutral","emphasis","right"],
                        caption="易しい箱1試行の高さとmj_contactForce。関節目標・実角・出力・手先位置の全ログはresult.json。")
+    return [
+        _render_trial("trial_success_shampoo", 4, TP.METHODS[0], 4, None,
+                      "MuJoCo実描画: シャンプーボトルの成功試行。"),
+        _render_trial("trial_tactile_rescue", 0, TP.METHODS[1], 13, None,
+                      "MuJoCo実描画: 視覚のみでは時間切れ、触覚で救済された同一場面。"),
+        _render_trial("trial_fail_grasp_miss", 8, TP.METHODS[0], 0, "grasp_miss",
+                      "MuJoCo実描画: 重量缶の掴み損ね。"),
+        _render_trial("trial_fail_transport_slip", 1, TP.METHODS[0], 5, "transport_slip",
+                      "MuJoCo実描画: 缶の運搬中滑落。"),
+        _render_trial("trial_fail_timeout", 0, TP.METHODS[0], 12, "timeout",
+                      "MuJoCo実描画: 箱の静止時間切れ。"),
+    ]
 
 
 def main():
@@ -99,7 +102,15 @@ def main():
     elapsed = time.perf_counter() - t0
     result["summary"] = summary
     diag=TP._attempt(TP.PRODUCTS[0],TP.METHODS[1],7,0,render_depth=True,clutter=True,diagnostics=True)[3]["diagnostics"]
-    result["diagnosis"]={"easy_trial_log":diag,"fix_effect":{"previous_shadow_or_leap_easy_rate":0.0,
+    former_zero={}
+    for product_index,diag_seed in ((4,4),(8,8)):
+        product=TP.PRODUCTS[product_index]
+        attempt=TP._attempt(product,TP.METHODS[1],diag_seed,0,render_depth=True,clutter=True,diagnostics=True)
+        former_zero[product.name]={"outcome":"success" if attempt[0] else attempt[1],
+            "trace":attempt[3]["diagnostics"],"lifted":attempt[3]["lifted"],
+            "cause":"standard tendon servo supplied about 4 N at the wide opening; contact height/load compounded the miss",
+            "fix":"6x servo stiffness/damping within the +/-100 N force range; 20 mm loaded-contact compensation"}
+    result["diagnosis"]={"easy_trial_log":diag,"former_zero_percent_products":former_zero,"fix_effect":{"previous_shadow_or_leap_easy_rate":0.0,
         "panda_open_loop_easy_rate":sum(r["attempts"][0]["success"] for r in result["rows"] if r["method"]==TP.METHODS[0] and r["difficulty"]=="easy")/max(1,sum(r["method"]==TP.METHODS[0] and r["difficulty"]=="easy" for r in result["rows"])),
         "fixes":["finger-pad centre calibration","world-frame orientation error in 6-DoF IK","depth wall exclusion","Panda gripper ctrlrange 0..255"]}}
     result["wall_seconds"] = elapsed
@@ -119,7 +130,9 @@ def main():
         gate("易しい品物で開ループ70%以上", easy_rate>=.70, f"{easy_rate:.1%}")
         gate("異常な100%ではない", all(summary["curves"][m][-1]["rate"] < 1 for m in TP.METHODS))
     gate("全試行でmj_step", all(a["mj_steps"] > 1000 for r in result["rows"] for a in r["attempts"]))
-    figures(summary,diag)
+    if full:
+        gate("全手法が再試行を使用", all(any(len(r["attempts"])>1 for r in result["rows"] if r["method"]==m) for m in TP.METHODS))
+    result["representative_videos"]=figures(summary,diag)
     out = figs.target_dir()
     if out is not None:
         (out / "result.json").write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")

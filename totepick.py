@@ -76,7 +76,20 @@ class TactileReading:
 
 
 def read_fingertip_tactile(normal_n, tangential_n, friction, noise=(0., 0.), relative_speed_m_s=0.):
-    """Replaceable ideal tactile boundary; force inputs come from mj_contactForce."""
+    """Read the replaceable tactile boundary used by the controller.
+
+    Inputs are the two finger-pad contact state reduced to total normal force
+    [N], total tangential force [N], the contacted material's Coulomb friction,
+    additive force noise ``(normal, tangential)`` [N], and pad/product relative
+    speed [m/s].  The output is :class:`TactileReading`: measured normal and
+    tangential force, relative speed, and the slip/incipient-slip flag.
+
+    A later FingerVision integration replaces only this function's producer:
+    call ``fvbench.read_tactile(marker_frames)`` and adapt its force, slip, and
+    incipient-slip fields into these scalar inputs/output.  Planning, retry, and
+    physics code must not import ``fvbench``.  This benchmark intentionally keeps
+    the MuJoCo ``mj_contactForce`` producer for now.
+    """
     n=max(0.,float(normal_n)+float(noise[0])); t=max(0.,float(tangential_n)+float(noise[1]))
     return TactileReading(n,t,float(relative_speed_m_s),n>.02 and (t/max(n,1e-9)>.82*friction or relative_speed_m_s>.03))
 
@@ -138,7 +151,16 @@ def _build_model(product: Product, seed=0, friction_scale=1., mass_scale=1., clu
             q=spec.worldbody.add_body(name=f"neighbour{i}",pos=[x+.012,y+dy,TABLE_TOP+.027]); q.add_freejoint()
             q.add_geom(name=f"neighbour_geom{i}",type=mujoco.mjtGeom.mjGEOM_BOX,size=[.024,.018,.025],mass=.11,friction=[.48,.01,.001],condim=3,rgba=[.25,.62,.42,1])
     spec.worldbody.add_camera(name="overhead",pos=[SRC[0],SRC[1],.90],xyaxes=[0,1,0,-1,0,0],fovy=52)
-    return spec.compile()
+    model=spec.compile()
+    model.vis.global_.offwidth=1280
+    model.vis.global_.offheight=720
+    # Menagerie's tendon position servo produces only about 4 N at a 65--70 mm
+    # opening (diagnosed actuator_force), despite its honest +/-100 N limit.
+    # Raise stiffness/damping, not friction: this yields about 24 N and remains
+    # far inside that published actuator force range.
+    model.actuator_gainprm[-1,0]*=6.
+    model.actuator_biasprm[-1,1:3]*=6.
+    return model
 
 
 def _ik_solve(mujoco,m,dk,hand_id,goal,quat_t,seed,iters=180):
@@ -182,10 +204,18 @@ def _wall_mask(h,w):
     return mask
 
 
-def _attempt(product,method,seed,retry,*,friction_scale=1.,mass_scale=1.,grip=True,render_depth=True,clutter=True,diagnostics=False):
+def _render_mujoco_frame(renderer, data, camera):
+    """Render one evidence frame through MuJoCo (kept separate for the gate)."""
+    renderer.update_scene(data, camera=camera)
+    return renderer.render().copy()
+
+
+def _attempt(product,method,seed,retry,*,friction_scale=1.,mass_scale=1.,grip=True,render_depth=True,clutter=True,diagnostics=False,frame_sink=None,render_size=(1280,720)):
     """Run approach, close, lift, carry, release; all outcomes use physical state."""
     import mujoco
-    rng=np.random.default_rng(seed); m=_build_model(product,seed,friction_scale,mass_scale,clutter); d=mujoco.MjData(m); dk=mujoco.MjData(m)
+    # The physical scene stays paired across methods and retries.  Retry-specific
+    # camera/tactile noise represents a fresh observation of that same scene.
+    rng=np.random.default_rng(np.random.SeedSequence([seed,retry])); m=_build_model(product,seed,friction_scale,mass_scale,clutter); d=mujoco.MjData(m); dk=mujoco.MjData(m)
     d.ctrl[:7]=HOME; d.ctrl[7]=GRIP_OPEN; d.qpos[:7]=HOME
     mujoco.mj_forward(m,d); settle_steps=int(.8/m.opt.timestep)
     for _ in range(settle_steps): mujoco.mj_step(m,d)
@@ -209,14 +239,23 @@ def _attempt(product,method,seed,retry,*,friction_scale=1.,mass_scale=1.,grip=Tr
         while j>0 and j!=root: j=int(m.body_parentid[j])
         if j==root: hand_bodies.add(bi)
     def solve(point): return _ik_solve(mujoco,m,dk,hand,np.asarray(point)-offset,quat,d.qpos[:7])
+    evidence_renderer=evidence_camera=None; evidence_step=0
+    if frame_sink is not None:
+        width,height=map(int,render_size); evidence_renderer=mujoco.Renderer(m,height=height,width=width)
+        evidence_camera=mujoco.MjvCamera(); evidence_camera.type=mujoco.mjtCamera.mjCAMERA_FREE
+        evidence_camera.lookat[:]=[.48,0.,.23]; evidence_camera.distance=.82
+        evidence_camera.elevation=-24.; evidence_camera.azimuth=165.
     max_force=0.; lifted=False; lost=False; tactile_events=0; log=[]; ever_contact=False; tactile_boost=False
     def step_to(qtarget,gripcmd,seconds,phase):
-        nonlocal max_force,lifted,lost,tactile_events,ever_contact,tactile_boost
+        nonlocal max_force,lifted,lost,tactile_events,ever_contact,tactile_boost,evidence_step
         n=max(1,int(seconds/m.opt.timestep)); q0=d.ctrl[:7].copy()
         for k in range(n):
             d.ctrl[:7]=q0+(qtarget-q0)*(k+1)/n; cmd=gripcmd(k,n) if callable(gripcmd) else gripcmd
             if tactile_boost and cmd<GRIP_OPEN: cmd=GRIP_SHUT
             d.ctrl[7]=cmd; mujoco.mj_step(m,d)
+            if evidence_renderer is not None and evidence_step%55==0:
+                frame_sink.append(_render_mujoco_frame(evidence_renderer,d,evidence_camera))
+            evidence_step+=1
             touching=False
             for ci in range(d.ncon):
                 c=d.contact[ci]; a,b=int(c.geom1),int(c.geom2); other=b if a==pg else a
@@ -228,15 +267,25 @@ def _attempt(product,method,seed,retry,*,friction_scale=1.,mass_scale=1.,grip=Tr
                 tactile_events+=1; tactile_boost=True; d.ctrl[7]=GRIP_SHUT
             z=float(d.qpos[qa+2]); lifted|=z>TABLE_TOP+product.size_m[2]/2+.045
             if lifted and phase in ("lift","carry") and ever_contact and not touching and z<TABLE_TOP+product.size_m[2]/2+.025: lost=True
-            if diagnostics and k%25==0: log.append({"time_s":float(d.time),"phase":phase,"product_z":z,"normal_n":tr.normal_n,"tangent_n":tr.tangential_n,"joint_target":d.ctrl[:7].tolist(),"joint_actual":d.qpos[:7].tolist(),"actuator_force":d.actuator_force.tolist(),"pad_position":_pad_state(mujoco,m,d)[0].tolist()})
+            if diagnostics and k%25==0:
+                finger_pos=[d.xpos[mujoco.mj_name2id(m,mujoco.mjtObj.mjOBJ_BODY,n)].tolist() for n in ("left_finger","right_finger")]
+                log.append({"time_s":float(d.time),"phase":phase,"product_z":z,"normal_n":tr.normal_n,"tangent_n":tr.tangential_n,"joint_target":d.ctrl[:7].tolist(),"joint_actual":d.qpos[:7].tolist(),"actuator_force":d.actuator_force.tolist(),"gripper_ctrl":float(d.ctrl[7]),"finger_positions":finger_pos,"pad_position":_pad_state(mujoco,m,d)[0].tolist()})
     zc=TABLE_TOP+product.size_m[2]/2
-    hover=(gx,gy,max(.34,zc+.14)); grasp=(gx,gy,zc); lift=(gx,gy,.36); carry=(DST[0],DST[1],.36); lower=(DST[0],DST[1],TABLE_TOP+product.size_m[2]/2+.025)
+    # Loaded position servos stop the pad midpoint about 20 mm above its IK goal.
+    # Compensate at contact only; diagnosis showed both former 0%-products were
+    # squeezed near their top edge and pushed aside before lift.
+    hover=(gx,gy,max(.34,zc+.14)); grasp=(gx,gy,zc-.020); lift=(gx,gy,.36); carry=(DST[0],DST[1],.36); lower=(DST[0],DST[1],TABLE_TOP+product.size_m[2]/2+.025)
     step_to(solve(hover),GRIP_OPEN,.8,"approach"); step_to(solve(grasp),GRIP_OPEN,.7,"descend")
+    # Open-loop uses a moderate, product-safe force.  Tactile methods command
+    # GRIP_SHUT only on measured slip/incipient slip, so their benefit remains a
+    # feedback effect rather than an always-on stronger gripper.
     base_shut=30.0
     close=lambda k,n: GRIP_OPEN+(base_shut-GRIP_OPEN)*(k+1)/n if grip else GRIP_OPEN
     step_to(d.ctrl[:7].copy(),close,.45,"close"); step_to(solve(lift),base_shut if grip else GRIP_OPEN,.75,"lift")
     step_to(solve(carry),base_shut if grip else GRIP_OPEN,1.0,"carry"); step_to(solve(lower),base_shut if grip else GRIP_OPEN,.55,"lower")
     step_to(d.ctrl[:7].copy(),GRIP_OPEN,.35,"release"); step_to(d.ctrl[:7].copy(),GRIP_OPEN,.8,"settle")
+    if evidence_renderer is not None:
+        frame_sink.append(_render_mujoco_frame(evidence_renderer,d,evidence_camera)); evidence_renderer.close()
     pos=np.array(d.qpos[qa:qa+3]); speed=float(np.linalg.norm(d.qvel[da:da+6])); inside=bool(np.all(np.abs(pos[:2]-DST)<TOTE_HALF-[.012,.012]) and TABLE_TOP<pos[2]<TABLE_TOP+.20)
     success=bool(inside and speed<.04 and max_force<140.)
     if success: failure=None
@@ -257,7 +306,7 @@ def run_benchmark(n_trials=4,seed=20261030,max_retries=5,**kwargs):
             attempts=[]
             for retry in range(max_retries+1):
                 ok,fail,cycle,truth=_attempt(product,method,scene_seed,retry,**kwargs); attempts.append({"retry":retry,"success":ok,"failure":fail,"cycle_s":cycle,**truth})
-                if ok or method!=METHODS[2]: break
+                if ok: break
             rows.append({"trial":trial,"scene_seed":scene_seed,"product":product.name,"difficulty":product.difficulty,"method":method,"attempts":attempts})
     return {"seed":seed,"n_trials":n_trials,"rows":rows,"products":[asdict(p) for p in PRODUCTS],"contact":{"adhesion":False,"solref":SOLREF,"solimp":SOLIMP,"condim":3},"time_basis":"MuJoCo data.time"}
 
