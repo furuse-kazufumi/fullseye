@@ -34,7 +34,7 @@ The museum is split across several articles; **each wing reads on its own** — 
 
 | Article | Wings | Exhibits |
 |---|---|---:|
-| [A Metrology Museum on Paper — The What-Is-Measured Wing (industrial, dimensional, biomedical, sky and ground)](https://qiita.com/furuse-kazufumi/items/4f65e33d11099a1ebbca) | The Industrial Inspection / The Dimensional and Shape Metrology / The Medical and Biological / The Astronomy and Environment | 134 |
+| [A Metrology Museum on Paper — The What-Is-Measured Wing (industrial, dimensional, biomedical, sky and ground)](https://qiita.com/furuse-kazufumi/items/4f65e33d11099a1ebbca) | The Industrial Inspection / The Dimensional and Shape Metrology / The Medical and Biological / The Astronomy and Environment | 137 |
 | [A Metrology Museum on Paper — The How-It-Is-Measured Wing (restoration, space-time, calibration, colour, forensics, 3-D shape)](https://qiita.com/furuse-kazufumi/items/9468b213793e3f6b1dc8) | The Image Quality and Restoration / The Time-as-3-D / The Geometry and Calibration / The Colour and Separation / The Forensics and Documents / The 3-D Shape | 98 |
 | [A Metrology Museum on Paper — The Instrument Wing (sensors and instruments reproduced from physics)](https://qiita.com/furuse-kazufumi/items/43e090b439d9d9183f60) | The Instrument | 34 |
 | [Nobody Checks a Mathematical Picture, Because It Already Looks Right — A PoC Series Where the Theorem Is the Test](https://qiita.com/furuse-kazufumi/items/dc100e7ea90e9575c40b) | Mathematical pictures | 7 |
@@ -61,14 +61,14 @@ Three rules survive even if the author is forgotten. **Count failures by kind** 
 
 ## Recently added (newest first)
 
-- 2026-10-31 — No.2026.282 Tactile First-Attempt Gains Vanish When Both Sides Get Five Retries — Panda Tote Picking
-- 2026-10-31 — No.2026.283 A Bonded 4 mm Layer Is Not a Half-Space — Benchmarking FingerVision Displacement, Force and Slip on Physics-Based Synthetic Images
-- 2026-10-31 — No.2026.284 Meeting a Declared Pixel FAR Still Leaves a Part-Level Trade-off — A Virtual Tyre X-ray Factory
-- 2026-10-31 — No.2026.285 Search Cuts Misses but Leaves False Positives — A Virtual Cast-Wheel X-ray Factory
-- 2026-10-31 — No.2026.286 Minimising Point-Cloud Misses Brings False Positives Back — A Virtual 3D Bevel-Inspection Factory
-- 2026-10-31 — No.2026.287 Only SMT Search Lowers Misses and False Positives Together — A Virtual AOI Factory
-- 2026-10-26 — No.2026.279 How One Star Image Reveals Satellite Attitude
-- 2026-10-25 — No.2026.277 The Venue Buildings and Asteroid Itokawa on One Ruler — Turning PLATEAU CityGML LOD2 into a Triangle Mesh
+- 2026-10-31 — No.2026.285 Tactile First-Attempt Gains Vanish When Both Sides Get Five Retries — Panda Tote Picking
+- 2026-10-31 — No.2026.286 A Bonded 4 mm Layer Is Not a Half-Space — Benchmarking FingerVision Displacement, Force and Slip on Physics-Based Synthetic Images
+- 2026-10-31 — No.2026.287 Meeting a Declared Pixel FAR Still Leaves a Part-Level Trade-off — A Virtual Tyre X-ray Factory
+- 2026-10-31 — No.2026.288 Search Cuts Misses but Leaves False Positives — A Virtual Cast-Wheel X-ray Factory
+- 2026-10-31 — No.2026.289 Minimising Point-Cloud Misses Brings False Positives Back — A Virtual 3D Bevel-Inspection Factory
+- 2026-10-31 — No.2026.290 Only SMT Search Lowers Misses and False Positives Together — A Virtual AOI Factory
+- 2026-10-30 — No.2026.282 The Marechal Approximation Breaks at Different RMS Errors for Different Aberration Shapes
+- 2026-10-30 — No.2026.283 A Four-Angle Polarization Camera Leaves Seven Mueller Dimensions Unseen
 
 ## Applying it to your own problem
 

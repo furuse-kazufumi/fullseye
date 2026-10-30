@@ -203,6 +203,10 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../articles/assets/poc/poc_mueller_dofp_observability/01_observability.png"><img src="thumbs/poc_mueller_dofp_observability.jpg" alt="4 方位偏光カメラに見えない Mueller 行列の 7 次元" loading="lazy" width="320" height="320"><span>4 方位偏光カメラに見えない Mueller 行列の 7 次元</span></a>
 <a href="../articles/assets/poc/poc_slanted_edge_sfr_limits/01_sfr_limits.png"><img src="thumbs/poc_slanted_edge_sfr_limits.jpg" alt="斜めエッジ SFR はガンマで MTF50 を誤る" loading="lazy" width="320" height="320"><span>斜めエッジ SFR はガンマで MTF50 を誤る</span></a>
 <a href="../articles/assets/poc/poc_wavefront_aberration_limits/01_aberration_limits.png"><img src="thumbs/poc_wavefront_aberration_limits.jpg" alt="収差の形で変わる Maréchal 近似の限界" loading="lazy" width="320" height="320"><span>収差の形で変わる Maréchal 近似の限界</span></a>
+<a href="../articles/assets/poc/poc_lighthouse_bevel_pointcloud/05_miss_example.png"><img src="thumbs/poc_lighthouse_bevel_pointcloud.jpg" alt="開先 3D 点群の仮想工場: 頑健な当てはめと過検出" loading="lazy" width="320" height="320"><span>開先 3D 点群の仮想工場: 頑健な当てはめと過検出</span></a>
+<a href="../articles/assets/poc/poc_lighthouse_cast_wheel/05_miss_example.png"><img src="thumbs/poc_lighthouse_cast_wheel.jpg" alt="鋳造ホイール X 線の仮想工場: 見逃しと過検出の綱引き" loading="lazy" width="320" height="320"><span>鋳造ホイール X 線の仮想工場: 見逃しと過検出の綱引き</span></a>
+<a href="../articles/assets/poc/poc_lighthouse_smt_aoi/05_miss_example.png"><img src="thumbs/poc_lighthouse_smt_aoi.jpg" alt="SMT AOI の仮想工場: 探索が見逃しと過検出を同時に下げた" loading="lazy" width="320" height="320"><span>SMT AOI の仮想工場: 探索が見逃しと過検出を同時に下げた</span></a>
+<a href="../articles/assets/poc/poc_lighthouse_tyre_xray/05_miss_example.png"><img src="thumbs/poc_lighthouse_tyre_xray.jpg" alt="タイヤ X 線の仮想工場: 宣言した誤検出率が破れる" loading="lazy" width="320" height="320"><span>タイヤ X 線の仮想工場: 宣言した誤検出率が破れる</span></a>
 <a href="../articles/assets/poc/poc_car_parking/05_truths.png"><img src="thumbs/poc_car_parking.jpg" alt="最短の曲がり方" loading="lazy" width="320" height="320"><span>最短の曲がり方</span></a>
 <a href="../articles/assets/poc/poc_complex_plane_fields/05_mandelbrot.png"><img src="thumbs/poc_complex_plane_fields.jpg" alt="複素平面を面で" loading="lazy" width="320" height="320"><span>複素平面を面で</span></a>
 <a href="../articles/assets/poc/poc_allsky_cloud_cover/04_allsky.png"><img src="thumbs/poc_allsky_cloud_cover.jpg" alt="全天カメラの雲量" loading="lazy" width="320" height="320"><span>全天カメラの雲量</span></a>
@@ -378,6 +382,8 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../articles/assets/poc/poc_sem_tem_same_particle/08_tem_focus_sweep.gif"><img src="thumbs/poc_sem_tem_same_particle.jpg" alt="同じ粒子を走査像と透過像で測る" loading="lazy" width="320" height="320"><b>&#9654;</b><span>同じ粒子を走査像と透過像で測る</span></a>
 <a href="../articles/assets/poc/poc_tof_camera/09_dtof_light_front.gif"><img src="thumbs/poc_tof_camera.jpg" alt="同じ3次元場面の間接ToFと直接ToF: 多経路・混合画素・pile-up・体積誤差" loading="lazy" width="320" height="320"><b>&#9654;</b><span>同じ3次元場面の間接ToFと直接ToF: 多経路・混合画素・pile-up・体積誤差</span></a>
 <a href="../articles/assets/poc/poc_omni360_inspection/08_anaglyph_and_limits.png"><img src="thumbs/poc_omni360_inspection.jpg" alt="全天球の検査撮影と立体表示" loading="lazy" width="320" height="320"><span>全天球の検査撮影と立体表示</span></a>
+<a href="../articles/assets/poc/poc_fingervision_benchmark/05_fvbench_layer_physics.png"><img src="thumbs/poc_fingervision_benchmark.jpg" alt="視覚触覚センサ: 4 mm の接着層は半無限体ではない" loading="lazy" width="320" height="320"><span>視覚触覚センサ: 4 mm の接着層は半無限体ではない</span></a>
+<a href="../articles/assets/poc/poc_tote_picking_tactile/06_trial_tactile_rescue.gif"><img src="thumbs/poc_tote_picking_tactile.jpg" alt="かご間ピッキング: 触覚の利得はやり直しで消える" loading="lazy" width="320" height="320"><b>&#9654;</b><span>かご間ピッキング: 触覚の利得はやり直しで消える</span></a>
 </div>
 
 ## シリーズ記事
@@ -523,7 +529,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## ぜんぶ見る
 
-PoC 283 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
+PoC 289 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
 
 <noscript><p><a href="../GALLERY.html">(JavaScript が無い環境では、ギャラリーのページで全部の図を見られます)</a></p></noscript>
 
@@ -536,13 +542,15 @@ PoC 283 本と、ロボットの例 5 本。グループを開くとサムネイ
 </div>
 </details>
 
-<details class="vall"><summary><b>ロボットの身体(学習済み方策を Fullseye 上で実行)</b> (1)</summary>
+<details class="vall"><summary><b>ロボットの身体(学習済み方策を Fullseye 上で実行)</b> (3)</summary>
 <div class="vg vs">
 <a href="../view2026/media/g1_run_fullseye.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/g1_run_policy.jpg" alt="人型ロボット G1 が走る" width="200" height="200"><b>&#9654;</b><span>人型ロボット G1 が走る</span></a>
+<a href="../articles/assets/poc/poc_tote_picking_tactile/06_trial_tactile_rescue.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_tote_picking_tactile.jpg" alt="かご間ピッキング: 触覚の利得はやり直しで消える" width="200" height="200"><b>&#9654;</b><span>かご間ピッキング: 触覚の利得はやり直しで消える</span></a>
+<a href="../articles/assets/poc/poc_fingervision_benchmark/05_fvbench_layer_physics.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_fingervision_benchmark.jpg" alt="視覚触覚センサ: 4 mm の接着層は半無限体ではない" width="200" height="200"><span>視覚触覚センサ: 4 mm の接着層は半無限体ではない</span></a>
 </div>
 </details>
 
-<details class="vall"><summary><b>産業検査</b> (50)</summary>
+<details class="vall"><summary><b>産業検査</b> (54)</summary>
 <div class="vg vs">
 <a href="../articles/assets/poc/poc_barcode_1d/01_misread_split.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_barcode_1d.jpg" alt="1 次元バーコード" width="200" height="200"><span>1 次元バーコード</span></a>
 <a href="../articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_battery_electrode_tortuosity.jpg" alt="電極の屈曲度" width="200" height="200"><span>電極の屈曲度</span></a>
@@ -594,6 +602,10 @@ PoC 283 本と、ロボットの例 5 本。グループを開くとサムネイ
 <a href="../articles/assets/poc/poc_wavefront_aberration_limits/01_aberration_limits.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_wavefront_aberration_limits.jpg" alt="収差の形で変わる Maréchal 近似の限界" width="200" height="200"><span>収差の形で変わる Maréchal 近似の限界</span></a>
 <a href="../articles/assets/poc/poc_mueller_dofp_observability/01_observability.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_mueller_dofp_observability.jpg" alt="4 方位偏光カメラに見えない Mueller 行列の 7 次元" width="200" height="200"><span>4 方位偏光カメラに見えない Mueller 行列の 7 次元</span></a>
 <a href="../articles/assets/poc/poc_slanted_edge_sfr_limits/01_sfr_limits.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_slanted_edge_sfr_limits.jpg" alt="斜めエッジ SFR はガンマで MTF50 を誤る" width="200" height="200"><span>斜めエッジ SFR はガンマで MTF50 を誤る</span></a>
+<a href="../articles/assets/poc/poc_lighthouse_tyre_xray/01_miss_comparison.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_lighthouse_tyre_xray.jpg" alt="タイヤ X 線の仮想工場: 宣言した誤検出率が破れる" width="200" height="200"><span>タイヤ X 線の仮想工場: 宣言した誤検出率が破れる</span></a>
+<a href="../articles/assets/poc/poc_lighthouse_cast_wheel/01_miss_comparison.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_lighthouse_cast_wheel.jpg" alt="鋳造ホイール X 線の仮想工場: 見逃しと過検出の綱引き" width="200" height="200"><span>鋳造ホイール X 線の仮想工場: 見逃しと過検出の綱引き</span></a>
+<a href="../articles/assets/poc/poc_lighthouse_bevel_pointcloud/01_miss_comparison.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_lighthouse_bevel_pointcloud.jpg" alt="開先 3D 点群の仮想工場: 頑健な当てはめと過検出" width="200" height="200"><span>開先 3D 点群の仮想工場: 頑健な当てはめと過検出</span></a>
+<a href="../articles/assets/poc/poc_lighthouse_smt_aoi/01_miss_comparison.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/poc_lighthouse_smt_aoi.jpg" alt="SMT AOI の仮想工場: 探索が見逃しと過検出を同時に下げた" width="200" height="200"><span>SMT AOI の仮想工場: 探索が見逃しと過検出を同時に下げた</span></a>
 </div>
 </details>
 
@@ -992,6 +1004,10 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 - [4 方位偏光カメラに見えない Mueller 行列の 7 次元](../articles/assets/poc/poc_mueller_dofp_observability/01_observability.png) (図): 0/45/90/135度の線偏光マイクロアナライザだけで作る設計行列のrankは、手書きせずSVDで9/16と計算した。発生側と解析側にQWP状態を加えるとrank 16。FullseyeのMueller連鎖と独立なKronecker設計式は最大1.39e-17で一致した。読み出し雑音0.2 %、200試行でMueller行列の相対誤差中央値は線偏光だけの41.64 %からQWP追加で1.40 %へ下がる。 [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_mueller_dofp_observability.py)
 - [斜めエッジ SFR はガンマで MTF50 を誤る](../articles/assets/poc/poc_slanted_edge_sfr_limits/01_sfr_limits.png) (図): 3.45 µm画素、F/5.6、550 nmの系について、角度21、ガンマ5、雑音4段階の420条件を計算した。Fullseyeの回折MTFと円形瞳の閉形式は1e-12未満で一致し、画素開口を含む真値MTF50は0.34551 cycles/pixel。線形・無雑音の独立な面積標本化エッジ経路との差は最大0.01076 cycles/pixel。10 %超の破綻は掃引範囲の最小角1.0度から現れ、非線形トーン応答が角度選択と同程度に測定値を動かす。 [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_slanted_edge_sfr_limits.py)
 - [収差の形で変わる Maréchal 近似の限界](../articles/assets/poc/poc_wavefront_aberration_limits/01_aberration_limits.png) (図): Noll正規化したデフォーカス、非点、コマ、球面収差を各121点、計484条件で掃引した。FullseyeのPSF FFTによる軸上Strehlと独立な瞳積分の最大絶対誤差は6.66e-16。Maréchal近似が5 %外れる境界はRMSで0.1283、0.2012、0.1633、0.1458波となり、同じRMSだけではStrehlを決められない。下段は0.20波RMSのPSF像そのもの。 [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_wavefront_aberration_limits.py)
+- [開先 3D 点群の仮想工場: 頑健な当てはめと過検出](../articles/assets/poc/poc_lighthouse_bevel_pointcloud/05_miss_example.png) (図): 画像ではなく点群を測るため画素FARの実測対象は無いが、部品FAR 5 %を宣言した進化法はholdoutで16.4 %に破れた。12/48評価の探索で進化法は見逃し16.7 %と最小になった一方、手組み法は見逃し20.6 %・過検出4.9 %で、基準47.3 %・11.2 %より両方低い。つまり進化法は見逃しをさらに減らす代わりに過検出を増やした。WEFの開先欠陥90 %減は別の実工場・前提の値なので参考にのみ掲げる。 [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lighthouse_bevel_pointcloud.py)
+- [鋳造ホイール X 線の仮想工場: 見逃しと過検出の綱引き](../articles/assets/poc/poc_lighthouse_cast_wheel/05_miss_example.png) (図): 宣言した画素FAR 1e-3は独立評価で0.00198となり1.98倍に破れた。12/48評価の探索後、進化法はholdoutで見逃し15.9 %まで下げたが過検出34.6 %、手組み法は16.9 %・26 %だった。基準は見逃し40.6 %、過検出100 %で、両提案は改善するものの、探索した閾値にも見逃しと過検出の交換が残る。WEFの重大欠陥見逃し98.1 %減は異なる実工場の導入前比較なので、同じ真値を使う本評価との勝敗には使わない。 [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lighthouse_cast_wheel.py)
+- [SMT AOI の仮想工場: 探索が見逃しと過検出を同時に下げた](../articles/assets/poc/poc_lighthouse_smt_aoi/05_miss_example.png) (図): 宣言した画素FAR 1e-3は独立評価で0.00245となり2.45倍に破れた。それでも12/48評価の探索はSMTでだけ両方の部品誤りを有意に改善し、進化法は見逃し57.4 %・過検出2.69 %、基準は88.5 %・52.3 %だった。McNemar exact pは見逃し3.6e-07、過検出4.6e-29。手組み法は過検出6.92 %まで下げる代わりに見逃し96.9 %へ悪化した。WEFの不良率99 %減は前提の異なる実工場の値として併記するだけである。 [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lighthouse_smt_aoi.py)
+- [タイヤ X 線の仮想工場: 宣言した誤検出率が破れる](../articles/assets/poc/poc_lighthouse_tyre_xray/05_miss_example.png) (図): 画素FARを1e-3と宣言した変動模型は、独立評価で0.00511と5.11倍に破れた。探索は12/48評価の予算で行い、最終holdoutの進化法は見逃し49.6 %・過検出6.33 %。基準の72.7 %・16.7 %より両方低いが、手組み法は見逃し44 %とさらに低い代わりに過検出22.2 %で、一長一短が残る。WEFの不良流出99 %減は実工場の導入前比較で前提が違うため参考値としてのみ並べる。 [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lighthouse_tyre_xray.py)
 - [書類をまっすぐに](../articles/assets/poc/poc_document_scan/02_shadow_tradeoff.png) (図): 既知のホモグラフィと照明で撮った書類を戻し、4 隅と格子の画素誤差で採点した図。推定は格子 RMS 1.091 px(何もしない 37.376 px)だが、名前が同じでモデルが違う関数(アフィン)を取り違えると 32 倍悪く、例外は出ない。影の強さ 0.45 で 4 隅 RMS 6.81 px、0.55 で 66.06 px と崖。 [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_document_scan.py)
 - [手ブレ補正](../articles/assets/poc/poc_camera_shake_deblur/05_kernel_angle_sweep.gif) (GIF): 既知の直線ブレ核を掛けて戻し、雑音と核の推定誤差で上限を測った図。無雑音なら 22.38 → 56.41 dB、SNR 20 dB では取り分 1.82 dB。核の角度が 19.4 度ずれると「何もしない」に抜かれ、回転ブレを 1 枚の核で戻すと回転中心が -49.41 dB 悪化する。 [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_camera_shake_deblur.py)
 - [改竄検出の ROC](../articles/assets/poc/poc_forensics_roc/01_score_maps.png) (図): JPEG q60 の素材を q92 の背景に貼って q95 で保存した改竄画像 10 枚を、画素ごとの ROC で採点した図。ELA の 1 つの数字は向きが教科書と逆(貼付部 / 背景 = 0.58 倍)で、改竄していない画像でも場所への偏りで AUC 0.797 が出る。ゴーストの谷の深さは AUC 0.997 だが、全体を q75 で再圧縮すると 0.975 へ落ちる。 [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_forensics_roc.py)
@@ -1180,6 +1196,8 @@ document.querySelectorAll("details.vall").forEach(function (d) {
 - [ペグ挿入](../articles/assets/poc/poc_pegsim_insertion/04_pegsim_insert_corrected.gif) (GIF): 手首カメラで穴の位置を測って寄せ、柔らかい手首でペグを入れる(MuJoCo)。 **サーボ 7 回で真のずれ 2.24 → 0.03 mm。補正ありの挿入は 12 / 12 成功。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pegsim_insertion.py)
 - [エアホッケー](../articles/assets/poc/poc_air_hockey_intercept/02_airhockey_prediction_cone_narrows.gif) (GIF): 粗いカメラでパックを追い、守備線との交点を予測する。コマが増えるほど予測の帯が細る。 **交点の 95 % 帯は N = 3 コマで 145 mm → N = 16 コマで 7 mm。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_air_hockey_intercept.py)
 - [視触覚センサ](../articles/assets/poc/poc_tacsim_elastic_membrane/03_tacsim_force_sweep.gif) (GIF): 弾性膜を球で押す荷重を上げ、膜の画像から接触半径を読む。 **Hertz の閉形式に対し、接触半径の誤差 0.05〜0.26 %、荷重の誤差 0.14〜0.79 %(0.02〜0.12 N)。** [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_tacsim_elastic_membrane.py)
+- [視覚触覚センサ: 4 mm の接着層は半無限体ではない](../articles/assets/poc/poc_fingervision_benchmark/05_fvbench_layer_physics.png) (図): 接着した4 mmのほぼ非圧縮な層では、表面マーカーの横変位が半無限体理論の4.98倍(ν = 0.48)から115倍(ν = 0.499)になり、公開式の前提が先に壊れる。肌色物体の滑り検出F1は層Green逆算が0.842、公開2016/2017法はともに0。力は公開2017法が最良またはほぼ互角で、未知の押し子に対する法線力RMSEは0.872 N、場全体ridgeは0.926 Nだった一方、ridgeは較正内では0.088 Nまで合うため過学習が露出した。22 mm等距離魚眼、4 mm接着層のFEM、ビーズ追跡、力・滑りを同じ順方向模型で生成して較正外の半径・位置・荷重で評価した。黒い物や暗所では黒ビーズと背景の輝度差が消え、公開法も全場法も同じ入力を失うため原理的に読めない。 [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_fingervision_benchmark.py)
+- [かご間ピッキング: 触覚の利得はやり直しで消える](../articles/assets/poc/poc_tote_picking_tactile/06_trial_tactile_rescue.gif) (GIF): 意外なのは、視覚だけと触覚再把持に同じ最大5回のやり直しを公平に許すと、成功率がどちらも81.7 %になり、差が消えること(McNemar exact p = 1.0)。触覚は単回なら63.7 %で視覚だけの62.3 %を上回るが、効いたのは触覚の有無そのものより、掴み損ね・滑落・置き先外・衝突・時間切れを真値で分けて次の手を変える失敗型別リトライで、最大5回時に90.3 %へ達した。MuJoCo MenagerieのFranka Pandaを全試行で逐次積分し、深度像だけから候補を選び、指パッドの接触力を理想化触覚として読む。INSOL-HIGH実機の報道値は約300回、最大5回のやり直し込み97 %だが、設備・対象物・成功条件が違うため参考として併記するだけで、仮想工場との勝敗には使わない。 [ソース](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_tote_picking_tactile.py)
 
 **卓球・運動計測**
 

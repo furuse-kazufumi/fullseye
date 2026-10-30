@@ -4,23 +4,23 @@
 
 > **[紙面の計測館 総合案内](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6)** の一棟です。ほかの棟・用語・テーゼは案内にあります。
 
-この棟には **134 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
+この棟には **137 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
 
 > 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。
 
 ### 産業検査ウィング ―― 合格の数字と不合格の数字は両立する
 
-検査ラインの数字は合否に直結するので、1 つの指標に畳みたくなります。この部屋の 41 点は、畳んだ瞬間に消えるものを並べたものです。まとめた ROC が種類別の盲点を隠す織物、MTF が合格のまま黒レベルが不合格になる迷光、読取率だけ見ると寛容なデコーダが良く見えるバーコード。
+検査ラインの数字は合否に直結するので、1 つの指標に畳みたくなります。この部屋の 44 点は、畳んだ瞬間に消えるものを並べたものです。まとめた ROC が種類別の盲点を隠す織物、MTF が合格のまま黒レベルが不合格になる迷光、読取率だけ見ると寛容なデコーダが良く見えるバーコード。
 
 真値はどれも自分で仕込んであります。周期地の閉形式、レーザー断面の h(x)、1 次元熱伝導の解析解、閉形式の欠陥周波数。だから「検出できました」の先にある「どこで検出できなくなるか」を、しきい値を後から合わせずに測れます。
 
 もう 1 つの共通点は、壊れ方が連続ではなく崖であること。傾き 15 度と 16 度、時間窓 25 秒と 4 秒、ΔT 1.6 K ―― その位置は幾何か物理で先に計算できる場合が多く、計算できたものは実測と突き合わせてあります。
 
-## No.2026.284 —— 宣言FARを守っても部品判定は一長一短 ―― タイヤX線の仮想工場
+## No.2026.287 —— 宣言FARを守っても部品判定は一長一短 ―― タイヤX線の仮想工場
 
 [![宣言FARを守っても部品判定は一長一短 ―― タイヤX線の仮想工場](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_tyre_xray/01_miss_comparison_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_tyre_xray/01_miss_comparison.png)
 
-*↑ **宣言FARを守っても部品判定は一長一短 ―― タイヤX線の仮想工場** ―― 画素FARを1e-3と宣言した変動模型は、独立評価で0.005106535852671736と5.11倍に破れた。探索は12/48評価の予算で行い、最終holdoutの進化法は見逃し49.568221070811745 %・過検出6.334841628959276 %。基準の72.71157167530224 %・16.7420814479638 %より両方低いが、手組み法は見逃し44.04145077720207 %とさらに低い代わりに過検出22.171945701357465 %で、一長一短が残る。WEFの不良流出99 %減は実工場の導入前比較で前提が違うため参考値としてのみ並べる。*
+*↑ **宣言FARを守っても部品判定は一長一短 ―― タイヤX線の仮想工場** ―― 画素FARを1e-3と宣言した変動模型は、独立評価で0.00511と5.11倍に破れた。探索は12/48評価の予算で行い、最終holdoutの進化法は見逃し49.6 %・過検出6.33 %。基準の72.7 %・16.7 %より両方低いが、手組み法は見逃し44 %とさらに低い代わりに過検出22.2 %で、一長一短が残る。WEFの不良流出99 %減は実工場の導入前比較で前提が違うため参考値としてのみ並べる。*
 
 [![欠陥の難しさ別検出率。小寸法・低コントラスト・欠測側で低下する。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_tyre_xray/02_difficulty_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_tyre_xray/02_difficulty_curve.png)
 
@@ -52,11 +52,11 @@ py -3.11 examples/poc_lighthouse_tyre_xray.py --full
 
 
 
-## No.2026.285 —— 見逃しを減らす探索は過検出を残す ―― 鋳造ホイールX線の仮想工場
+## No.2026.288 —— 見逃しを減らす探索は過検出を残す ―― 鋳造ホイールX線の仮想工場
 
 [![見逃しを減らす探索は過検出を残す ―― 鋳造ホイールX線の仮想工場](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_cast_wheel/01_miss_comparison_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_cast_wheel/01_miss_comparison.png)
 
-*↑ **見逃しを減らす探索は過検出を残す ―― 鋳造ホイールX線の仮想工場** ―― 宣言した画素FAR 1e-3は独立評価で0.001984718907451604となり1.98倍に破れた。12/48評価の探索後、進化法はholdoutで見逃し15.94488188976378 %まで下げたが過検出34.58904109589041 %、手組み法は16.92913385826772 %・26.027397260273972 %だった。基準は見逃し40.55118110236221 %、過検出100 %で、両提案は改善するものの、探索した閾値にも見逃しと過検出の交換が残る。WEFの重大欠陥見逃し98.1 %減は異なる実工場の導入前比較なので、同じ真値を使う本評価との勝敗には使わない。*
+*↑ **見逃しを減らす探索は過検出を残す ―― 鋳造ホイールX線の仮想工場** ―― 宣言した画素FAR 1e-3は独立評価で0.00198となり1.98倍に破れた。12/48評価の探索後、進化法はholdoutで見逃し15.9 %まで下げたが過検出34.6 %、手組み法は16.9 %・26 %だった。基準は見逃し40.6 %、過検出100 %で、両提案は改善するものの、探索した閾値にも見逃しと過検出の交換が残る。WEFの重大欠陥見逃し98.1 %減は異なる実工場の導入前比較なので、同じ真値を使う本評価との勝敗には使わない。*
 
 [![欠陥の難しさ別検出率。小寸法・低コントラスト・欠測側で低下する。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_cast_wheel/02_difficulty_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_cast_wheel/02_difficulty_curve.png)
 
@@ -88,11 +88,11 @@ py -3.11 examples/poc_lighthouse_cast_wheel.py --full
 
 
 
-## No.2026.286 —— 点群の見逃しを最小にすると過検出が戻る ―― 開先3D検査の仮想工場
+## No.2026.289 —— 点群の見逃しを最小にすると過検出が戻る ―― 開先3D検査の仮想工場
 
 [![点群の見逃しを最小にすると過検出が戻る ―― 開先3D検査の仮想工場](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_bevel_pointcloud/01_miss_comparison_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_bevel_pointcloud/01_miss_comparison.png)
 
-*↑ **点群の見逃しを最小にすると過検出が戻る ―― 開先3D検査の仮想工場** ―― 画像ではなく点群を測るため画素FARの実測対象は無いが、部品FAR 5 %を宣言した進化法はholdoutで16.433566433566433 %に破れた。12/48評価の探索で進化法は見逃し16.731517509727624 %と最小になった一方、手組み法は見逃し20.622568093385212 %・過検出4.895104895104895 %で、基準47.276264591439684 %・11.188811188811188 %より両方低い。つまり進化法は見逃しをさらに減らす代わりに過検出を増やした。WEFの開先欠陥90 %減は別の実工場・前提の値なので参考にのみ掲げる。*
+*↑ **点群の見逃しを最小にすると過検出が戻る ―― 開先3D検査の仮想工場** ―― 画像ではなく点群を測るため画素FARの実測対象は無いが、部品FAR 5 %を宣言した進化法はholdoutで16.4 %に破れた。12/48評価の探索で進化法は見逃し16.7 %と最小になった一方、手組み法は見逃し20.6 %・過検出4.9 %で、基準47.3 %・11.2 %より両方低い。つまり進化法は見逃しをさらに減らす代わりに過検出を増やした。WEFの開先欠陥90 %減は別の実工場・前提の値なので参考にのみ掲げる。*
 
 [![欠陥の難しさ別検出率。小寸法・低コントラスト・欠測側で低下する。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_bevel_pointcloud/02_difficulty_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_bevel_pointcloud/02_difficulty_curve.png)
 
@@ -124,11 +124,11 @@ py -3.11 examples/poc_lighthouse_bevel_pointcloud.py --full
 
 
 
-## No.2026.287 —— SMTだけは探索が見逃しと過検出を同時に下げた ―― AOIの仮想工場
+## No.2026.290 —— SMTだけは探索が見逃しと過検出を同時に下げた ―― AOIの仮想工場
 
 [![SMTだけは探索が見逃しと過検出を同時に下げた ―― AOIの仮想工場](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_smt_aoi/01_miss_comparison_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_smt_aoi/01_miss_comparison.png)
 
-*↑ **SMTだけは探索が見逃しと過検出を同時に下げた ―― AOIの仮想工場** ―― 宣言した画素FAR 1e-3は独立評価で0.002454622583299054となり2.45倍に破れた。それでも12/48評価の探索はSMTでだけ両方の部品誤りを有意に改善し、進化法は見逃し57.407407407407405 %・過検出2.6923076923076925 %、基準は88.51851851851852 %・52.307692307692314 %だった。McNemar exact pは見逃し3.5883588815862885e-07、過検出4.581478055141831e-29。手組み法は過検出6.923076923076923 %まで下げる代わりに見逃し96.85185185185186 %へ悪化した。WEFの不良率99 %減は前提の異なる実工場の値として併記するだけである。*
+*↑ **SMTだけは探索が見逃しと過検出を同時に下げた ―― AOIの仮想工場** ―― 宣言した画素FAR 1e-3は独立評価で0.00245となり2.45倍に破れた。それでも12/48評価の探索はSMTでだけ両方の部品誤りを有意に改善し、進化法は見逃し57.4 %・過検出2.69 %、基準は88.5 %・52.3 %だった。McNemar exact pは見逃し3.6e-07、過検出4.6e-29。手組み法は過検出6.92 %まで下げる代わりに見逃し96.9 %へ悪化した。WEFの不良率99 %減は前提の異なる実工場の値として併記するだけである。*
 
 [![欠陥の難しさ別検出率。小寸法・低コントラスト・欠測側で低下する。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_smt_aoi/02_difficulty_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_smt_aoi/02_difficulty_curve.png)
 
@@ -1327,6 +1327,54 @@ py -3.11 examples/poc_braid_homotopy_classes.py
 この回が作った図は全部で **5 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_braid_homotopy_classes)
 
 使用 op(ノートへ): [`braid_class_representatives`](https://furuse.work/ops/drive/braidpath/braid_class_representatives.html) · [`braid_equivalent`](https://furuse.work/ops/drive/braidpath/braid_equivalent.html) · [`braid_from_trajectories`](https://furuse.work/ops/drive/braidpath/braid_from_trajectories.html) · [`braid_reduce`](https://furuse.work/ops/drive/braidpath/braid_reduce.html) · [`dynnikov_act`](https://furuse.work/ops/drive/braidpath/dynnikov_act.html) · [`dynnikov_coordinates`](https://furuse.work/ops/drive/braidpath/dynnikov_coordinates.html) · [`grid_distances`](https://furuse.work/ops/drive/agv/grid_distances.html) · [`grid_hole_points`](https://furuse.work/ops/drive/braidpath/grid_hole_points.html) · [`grid_paths_to_xy`](https://furuse.work/ops/drive/braidpath/grid_paths_to_xy.html) · [`homotopy_class_compare`](https://furuse.work/ops/drive/braidpath/homotopy_class_compare.html) · [`homotopy_shortest_paths`](https://furuse.work/ops/drive/braidpath/homotopy_shortest_paths.html) · [`mapf_cbs`](https://furuse.work/ops/drive/agv/mapf_cbs.html) · [`mapf_prioritized`](https://furuse.work/ops/drive/agv/mapf_prioritized.html) · [`pairwise_winding`](https://furuse.work/ops/drive/braidpath/pairwise_winding.html) · [`plan_conflicts`](https://furuse.work/ops/drive/agv/plan_conflicts.html) · [`plan_cost`](https://furuse.work/ops/drive/agv/plan_cost.html)
+
+## No.2026.282 —— 同じRMS波面誤差でも収差形状でMaréchal近似の破綻点が変わる
+
+[![同じRMS波面誤差でも収差形状でMaréchal近似の破綻点が変わる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_wavefront_aberration_limits/01_aberration_limits_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_wavefront_aberration_limits/01_aberration_limits.png)
+
+*↑ **同じRMS波面誤差でも収差形状でMaréchal近似の破綻点が変わる** ―― Noll正規化したデフォーカス、非点、コマ、球面収差を各121点、計484条件で掃引した。FullseyeのPSF FFTによる軸上Strehlと独立な瞳積分の最大絶対誤差は6.66e-16。Maréchal近似が5 %外れる境界はRMSで0.1283、0.2012、0.1633、0.1458波となり、同じRMSだけではStrehlを決められない。下段は0.20波RMSのPSF像そのもの。*
+
+```
+py -3.11 examples/poc_wavefront_aberration_limits.py
+```
+
+ソース: [examples/poc_wavefront_aberration_limits.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_wavefront_aberration_limits.py)
+
+この回が作った図は全部で **1 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_wavefront_aberration_limits)
+
+使用 op(ノートへ): [`pupil_psf`](https://furuse.work/ops/optics/wave/pupil_psf.html)
+
+## No.2026.283 —— 4方位偏光カメラにはMueller行列の7次元が見えない
+
+[![4方位偏光カメラにはMueller行列の7次元が見えない](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mueller_dofp_observability/01_observability_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mueller_dofp_observability/01_observability.png)
+
+*↑ **4方位偏光カメラにはMueller行列の7次元が見えない** ―― 0/45/90/135度の線偏光マイクロアナライザだけで作る設計行列のrankは、手書きせずSVDで9/16と計算した。発生側と解析側にQWP状態を加えるとrank 16。FullseyeのMueller連鎖と独立なKronecker設計式は最大1.39e-17で一致した。読み出し雑音0.2 %、200試行でMueller行列の相対誤差中央値は線偏光だけの41.64 %からQWP追加で1.40 %へ下がる。*
+
+```
+py -3.11 examples/poc_mueller_dofp_observability.py
+```
+
+ソース: [examples/poc_mueller_dofp_observability.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_mueller_dofp_observability.py)
+
+この回が作った図は全部で **1 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_mueller_dofp_observability)
+
+使用 op(ノートへ): [`mueller_element`](https://furuse.work/ops/optics/polarization/mueller_element.html)
+
+## No.2026.284 —— 斜めエッジSFRは角度だけでなくガンマでもMTF50を誤る
+
+[![斜めエッジSFRは角度だけでなくガンマでもMTF50を誤る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_slanted_edge_sfr_limits/01_sfr_limits_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_slanted_edge_sfr_limits/01_sfr_limits.png)
+
+*↑ **斜めエッジSFRは角度だけでなくガンマでもMTF50を誤る** ―― 3.45 µm画素、F/5.6、550 nmの系について、角度21、ガンマ5、雑音4段階の420条件を計算した。Fullseyeの回折MTFと円形瞳の閉形式は1e-12未満で一致し、画素開口を含む真値MTF50は0.34551 cycles/pixel。線形・無雑音の独立な面積標本化エッジ経路との差は最大0.01076 cycles/pixel。10 %超の破綻は掃引範囲の最小角1.0度から現れ、非線形トーン応答が角度選択と同程度に測定値を動かす。*
+
+```
+py -3.11 examples/poc_slanted_edge_sfr_limits.py
+```
+
+ソース: [examples/poc_slanted_edge_sfr_limits.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_slanted_edge_sfr_limits.py)
+
+この回が作った図は全部で **1 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_slanted_edge_sfr_limits)
+
+使用 op(ノートへ): [`mtf_diffraction`](https://furuse.work/ops/optics/imaging/mtf_diffraction.html)
 
 ### 寸法・形状計測ウィング ―― 偏りと散らばりは別々に持つ
 

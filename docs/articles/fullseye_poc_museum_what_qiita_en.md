@@ -4,23 +4,23 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**134 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**137 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
 ### The Industrial Inspection Wing — A Passing Number and a Failing Number Can Coexist
 
-Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The 41 exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.
+Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The 44 exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.
 
 Every ground truth is planted: a closed-form periodic background, the laser-profile h(x), the analytic 1-D heat-conduction solution, closed-form bearing defect frequencies. That is what lets each exhibit measure 'where detection stops working' instead of 'detection worked', without fitting the threshold afterwards.
 
 The other shared feature is that failure arrives as a cliff, not a slope: 15 versus 16 degrees of tilt, a 25-second versus a 4-second fitting window, ΔT of 1.6 K. Most of those positions can be predicted from geometry or physics first, and wherever they could be, the prediction is checked against the measurement.
 
-## No.2026.284 —— Meeting a Declared Pixel FAR Still Leaves a Part-Level Trade-off — A Virtual Tyre X-ray Factory
+## No.2026.287 —— Meeting a Declared Pixel FAR Still Leaves a Part-Level Trade-off — A Virtual Tyre X-ray Factory
 
 [![Meeting a Declared Pixel FAR Still Leaves a Part-Level Trade-off — A Virtual Tyre X-ray Factory](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_tyre_xray/01_miss_comparison_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_tyre_xray/01_miss_comparison.png)
 
-*↑ **Meeting a Declared Pixel FAR Still Leaves a Part-Level Trade-off — A Virtual Tyre X-ray Factory** ―― The variation model declares a pixel FAR of 1e-3, yet independent evaluation measures 0.005106535852671736, a 5.11-fold breach. Search uses budgets of 12 and 48 evaluations. On the final holdout, the evolved pipeline has 49.568221070811745% misses and 6.334841628959276% false positives, both below the baseline's 72.71157167530224% and 16.7420814479638%. The hand-built pipeline lowers misses further to 44.04145077720207% but raises false positives to 22.171945701357465%, leaving a real trade-off. WEF's reported 99% reduction in defect escape compares a different factory before and after deployment and is shown only as context.*
+*↑ **Meeting a Declared Pixel FAR Still Leaves a Part-Level Trade-off — A Virtual Tyre X-ray Factory** ―― The variation model declares a pixel FAR of 1e-3, yet independent evaluation measures 0.00511, a 5.11-fold breach. Search uses budgets of 12 and 48 evaluations. On the final holdout, the evolved pipeline has 49.6% misses and 6.33% false positives, both below the baseline's 72.7% and 16.7%. The hand-built pipeline lowers misses further to 44% but raises false positives to 22.2%, leaving a real trade-off. WEF's reported 99% reduction in defect escape compares a different factory before and after deployment and is shown only as context.*
 
 [![欠陥の難しさ別検出率。小寸法・低コントラスト・欠測側で低下する。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_tyre_xray/02_difficulty_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_tyre_xray/02_difficulty_curve.png)
 
@@ -52,11 +52,11 @@ This run produced **10 figures** in total - [see them all](https://github.com/fu
 
 
 
-## No.2026.285 —— Search Cuts Misses but Leaves False Positives — A Virtual Cast-Wheel X-ray Factory
+## No.2026.288 —— Search Cuts Misses but Leaves False Positives — A Virtual Cast-Wheel X-ray Factory
 
 [![Search Cuts Misses but Leaves False Positives — A Virtual Cast-Wheel X-ray Factory](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_cast_wheel/01_miss_comparison_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_cast_wheel/01_miss_comparison.png)
 
-*↑ **Search Cuts Misses but Leaves False Positives — A Virtual Cast-Wheel X-ray Factory** ―― The declared pixel FAR of 1e-3 measures 0.001984718907451604 on independent data, a 1.98-fold breach. After search budgets of 12 and 48 evaluations, the evolved pipeline reaches 15.94488188976378% misses but 34.58904109589041% false positives on holdout; the hand-built pipeline gives 16.92913385826772% and 26.027397260273972%. The baseline records 40.55118110236221% misses and 100% false positives, so both proposals improve it, but the searched threshold still trades one error against the other. WEF's reported 98.1% reduction in critical-defect misses is a before-and-after figure from a different physical factory and is not used to declare a winner here.*
+*↑ **Search Cuts Misses but Leaves False Positives — A Virtual Cast-Wheel X-ray Factory** ―― The declared pixel FAR of 1e-3 measures 0.00198 on independent data, a 1.98-fold breach. After search budgets of 12 and 48 evaluations, the evolved pipeline reaches 15.9% misses but 34.6% false positives on holdout; the hand-built pipeline gives 16.9% and 26%. The baseline records 40.6% misses and 100% false positives, so both proposals improve it, but the searched threshold still trades one error against the other. WEF's reported 98.1% reduction in critical-defect misses is a before-and-after figure from a different physical factory and is not used to declare a winner here.*
 
 [![欠陥の難しさ別検出率。小寸法・低コントラスト・欠測側で低下する。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_cast_wheel/02_difficulty_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_cast_wheel/02_difficulty_curve.png)
 
@@ -88,11 +88,11 @@ This run produced **10 figures** in total - [see them all](https://github.com/fu
 
 
 
-## No.2026.286 —— Minimising Point-Cloud Misses Brings False Positives Back — A Virtual 3D Bevel-Inspection Factory
+## No.2026.289 —— Minimising Point-Cloud Misses Brings False Positives Back — A Virtual 3D Bevel-Inspection Factory
 
 [![Minimising Point-Cloud Misses Brings False Positives Back — A Virtual 3D Bevel-Inspection Factory](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_bevel_pointcloud/01_miss_comparison_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_bevel_pointcloud/01_miss_comparison.png)
 
-*↑ **Minimising Point-Cloud Misses Brings False Positives Back — A Virtual 3D Bevel-Inspection Factory** ―― This instrument measures a point cloud rather than pixels, so there is no measured pixel-FAR denominator; instead, the evolved pipeline declares a 5% part FAR and breaches it at 16.433566433566433% on holdout. With search budgets of 12 and 48 evaluations, evolution gives the lowest miss rate, 16.731517509727624%. The hand-built pipeline gives 20.622568093385212% misses and 4.895104895104895% false positives, both below the baseline's 47.276264591439684% and 11.188811188811188%. Evolution therefore buys fewer misses by bringing false positives back. WEF's reported 90% reduction in bevel defects comes from another physical factory under different assumptions and is included only for context.*
+*↑ **Minimising Point-Cloud Misses Brings False Positives Back — A Virtual 3D Bevel-Inspection Factory** ―― This instrument measures a point cloud rather than pixels, so there is no measured pixel-FAR denominator; instead, the evolved pipeline declares a 5% part FAR and breaches it at 16.4% on holdout. With search budgets of 12 and 48 evaluations, evolution gives the lowest miss rate, 16.7%. The hand-built pipeline gives 20.6% misses and 4.9% false positives, both below the baseline's 47.3% and 11.2%. Evolution therefore buys fewer misses by bringing false positives back. WEF's reported 90% reduction in bevel defects comes from another physical factory under different assumptions and is included only for context.*
 
 [![欠陥の難しさ別検出率。小寸法・低コントラスト・欠測側で低下する。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_bevel_pointcloud/02_difficulty_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_bevel_pointcloud/02_difficulty_curve.png)
 
@@ -124,11 +124,11 @@ This run produced **10 figures** in total - [see them all](https://github.com/fu
 
 
 
-## No.2026.287 —— Only SMT Search Lowers Misses and False Positives Together — A Virtual AOI Factory
+## No.2026.290 —— Only SMT Search Lowers Misses and False Positives Together — A Virtual AOI Factory
 
 [![Only SMT Search Lowers Misses and False Positives Together — A Virtual AOI Factory](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_smt_aoi/01_miss_comparison_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_smt_aoi/01_miss_comparison.png)
 
-*↑ **Only SMT Search Lowers Misses and False Positives Together — A Virtual AOI Factory** ―― The declared pixel FAR of 1e-3 measures 0.002454622583299054 independently, a 2.45-fold breach. Even so, SMT is the one application where search budgets of 12 and 48 evaluations significantly improve both part-level errors: the evolved pipeline records 57.407407407407405% misses and 2.6923076923076925% false positives, against the baseline's 88.51851851851852% and 52.307692307692314%. McNemar exact p is 3.5883588815862885e-07 for misses and 4.581478055141831e-29 for false positives. The hand-built method lowers false positives to 6.923076923076923% but worsens misses to 96.85185185185186%. WEF's reported 99% defect-rate reduction is shown only as a result from a physical factory with different premises.*
+*↑ **Only SMT Search Lowers Misses and False Positives Together — A Virtual AOI Factory** ―― The declared pixel FAR of 1e-3 measures 0.00245 independently, a 2.45-fold breach. Even so, SMT is the one application where search budgets of 12 and 48 evaluations significantly improve both part-level errors: the evolved pipeline records 57.4% misses and 2.69% false positives, against the baseline's 88.5% and 52.3%. McNemar exact p is 3.6e-07 for misses and 4.6e-29 for false positives. The hand-built method lowers false positives to 6.92% but worsens misses to 96.9%. WEF's reported 99% defect-rate reduction is shown only as a result from a physical factory with different premises.*
 
 [![欠陥の難しさ別検出率。小寸法・低コントラスト・欠測側で低下する。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_smt_aoi/02_difficulty_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_smt_aoi/02_difficulty_curve.png)
 
@@ -1327,6 +1327,54 @@ Source: [examples/poc_braid_homotopy_classes.py](https://github.com/furuse-kazuf
 This run produced **5 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_braid_homotopy_classes)
 
 Ops used (notes): [`braid_class_representatives`](https://furuse.work/ops/drive/braidpath/braid_class_representatives.html) · [`braid_equivalent`](https://furuse.work/ops/drive/braidpath/braid_equivalent.html) · [`braid_from_trajectories`](https://furuse.work/ops/drive/braidpath/braid_from_trajectories.html) · [`braid_reduce`](https://furuse.work/ops/drive/braidpath/braid_reduce.html) · [`dynnikov_act`](https://furuse.work/ops/drive/braidpath/dynnikov_act.html) · [`dynnikov_coordinates`](https://furuse.work/ops/drive/braidpath/dynnikov_coordinates.html) · [`grid_distances`](https://furuse.work/ops/drive/agv/grid_distances.html) · [`grid_hole_points`](https://furuse.work/ops/drive/braidpath/grid_hole_points.html) · [`grid_paths_to_xy`](https://furuse.work/ops/drive/braidpath/grid_paths_to_xy.html) · [`homotopy_class_compare`](https://furuse.work/ops/drive/braidpath/homotopy_class_compare.html) · [`homotopy_shortest_paths`](https://furuse.work/ops/drive/braidpath/homotopy_shortest_paths.html) · [`mapf_cbs`](https://furuse.work/ops/drive/agv/mapf_cbs.html) · [`mapf_prioritized`](https://furuse.work/ops/drive/agv/mapf_prioritized.html) · [`pairwise_winding`](https://furuse.work/ops/drive/braidpath/pairwise_winding.html) · [`plan_conflicts`](https://furuse.work/ops/drive/agv/plan_conflicts.html) · [`plan_cost`](https://furuse.work/ops/drive/agv/plan_cost.html)
+
+## No.2026.282 —— The Marechal Approximation Breaks at Different RMS Errors for Different Aberration Shapes
+
+[![The Marechal Approximation Breaks at Different RMS Errors for Different Aberration Shapes](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_wavefront_aberration_limits/01_aberration_limits_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_wavefront_aberration_limits/01_aberration_limits.png)
+
+*↑ **The Marechal Approximation Breaks at Different RMS Errors for Different Aberration Shapes** ―― Four Noll-normalised modes—defocus, astigmatism, coma and spherical aberration—are swept over 121 points each, 484 conditions in total. On-axis Strehl from Fullseye's PSF FFT agrees with an independent pupil integral to a maximum absolute error of 6.66e-16. The 5 percent failure boundaries of the Marechal approximation are 0.1283, 0.2012, 0.1633 and 0.1458 waves RMS, showing that RMS alone does not determine Strehl. The lower row shows the computed PSF images at 0.20 waves RMS.*
+
+```
+py -3.11 examples/poc_wavefront_aberration_limits.py
+```
+
+Source: [examples/poc_wavefront_aberration_limits.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_wavefront_aberration_limits.py)
+
+This run produced **1 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_wavefront_aberration_limits)
+
+Ops used (notes): [`pupil_psf`](https://furuse.work/ops/optics/wave/pupil_psf.html)
+
+## No.2026.283 —— A Four-Angle Polarization Camera Leaves Seven Mueller Dimensions Unseen
+
+[![A Four-Angle Polarization Camera Leaves Seven Mueller Dimensions Unseen](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mueller_dofp_observability/01_observability_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mueller_dofp_observability/01_observability.png)
+
+*↑ **A Four-Angle Polarization Camera Leaves Seven Mueller Dimensions Unseen** ―― The design matrix formed by 0, 45, 90 and 135 degree linear micro-analysers has SVD-computed rank 9 of 16; the number is not hard-coded. Adding quarter-wave-plate states on generation and analysis raises the rank to 16. Fullseye's Mueller chain and an independent Kronecker design equation agree within 1.39e-17. Across 200 trials with 0.2 percent read noise, median relative Mueller error falls from 41.64 percent for linear-only measurements to 1.40 percent with the QWP states.*
+
+```
+py -3.11 examples/poc_mueller_dofp_observability.py
+```
+
+Source: [examples/poc_mueller_dofp_observability.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_mueller_dofp_observability.py)
+
+This run produced **1 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_mueller_dofp_observability)
+
+Ops used (notes): [`mueller_element`](https://furuse.work/ops/optics/polarization/mueller_element.html)
+
+## No.2026.284 —— Slanted-Edge SFR Misreads MTF50 Through Gamma as Well as Edge Angle
+
+[![Slanted-Edge SFR Misreads MTF50 Through Gamma as Well as Edge Angle](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_slanted_edge_sfr_limits/01_sfr_limits_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_slanted_edge_sfr_limits/01_sfr_limits.png)
+
+*↑ **Slanted-Edge SFR Misreads MTF50 Through Gamma as Well as Edge Angle** ―― For a 3.45 um pixel, F/5.6 and 550 nm system, 21 angles, five gamma values and four noise levels produce 420 computed conditions. Fullseye's diffraction MTF agrees with the circular-pupil closed form below 1e-12; including the pixel aperture gives a true MTF50 of 0.34551 cycles per pixel. The independent area-sampled edge route differs by at most 0.01076 cycles per pixel when linear and noiseless. Failures beyond 10 percent already appear at the smallest swept angle, 1.0 degree, and nonlinear tone response moves the result as strongly as angle selection.*
+
+```
+py -3.11 examples/poc_slanted_edge_sfr_limits.py
+```
+
+Source: [examples/poc_slanted_edge_sfr_limits.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_slanted_edge_sfr_limits.py)
+
+This run produced **1 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_slanted_edge_sfr_limits)
+
+Ops used (notes): [`mtf_diffraction`](https://furuse.work/ops/optics/imaging/mtf_diffraction.html)
 
 ### The Dimensional and Shape Metrology Wing — Keep Bias and Scatter Apart
 

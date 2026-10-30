@@ -16,7 +16,7 @@ The same range fails differently in iToF and dToF through multipath and pile-up;
 
 Every exhibit is gated by a closed form, public measurement or independent implementation. The aim is not to claim a complete substitute for hardware. It is to state which physics is present and which is still absent, then find when the reported measurement stops being trustworthy before touching the instrument.
 
-## No.2026.282 —— Tactile First-Attempt Gains Vanish When Both Sides Get Five Retries — Panda Tote Picking
+## No.2026.285 —— Tactile First-Attempt Gains Vanish When Both Sides Get Five Retries — Panda Tote Picking
 
 [![Tactile First-Attempt Gains Vanish When Both Sides Get Five Retries — Panda Tote Picking](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tote_picking_tactile/01_success_vs_retries_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tote_picking_tactile/01_success_vs_retries.png)
 
@@ -64,11 +64,11 @@ This run produced **9 figures** in total - [see them all](https://github.com/fur
 
 
 
-## No.2026.283 —— A Bonded 4 mm Layer Is Not a Half-Space — Benchmarking FingerVision Displacement, Force and Slip on Physics-Based Synthetic Images
+## No.2026.286 —— A Bonded 4 mm Layer Is Not a Half-Space — Benchmarking FingerVision Displacement, Force and Slip on Physics-Based Synthetic Images
 
 [![A Bonded 4 mm Layer Is Not a Half-Space — Benchmarking FingerVision Displacement, Force and Slip on Physics-Based Synthetic Images](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fingervision_benchmark/05_fvbench_layer_physics_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fingervision_benchmark/05_fvbench_layer_physics.png)
 
-*↑ **A Bonded 4 mm Layer Is Not a Half-Space — Benchmarking FingerVision Displacement, Force and Slip on Physics-Based Synthetic Images** ―― In a bonded, nearly incompressible 4 mm layer, lateral marker displacement is 4.98 times the half-space prediction at nu = 0.48 and 115 times it at nu = 0.499, so the assumption behind the public equations fails first. On skin-coloured objects the layer-Green slip detector reaches F1 0.842 (0.85 rounded), while both public 2016 and 2017 methods score zero. For force, the public 2017 method is best or nearly tied: held-out normal-force RMSE is 0.872 N against 0.926 N for the full-field ridge model. The ridge model fits calibration at 0.088 N, exposing overfitting on unseen indenters. A 22 mm equidistant fisheye camera, a finite-element bonded layer, bead tracking, force and slip all share one forward model and are evaluated at unseen radii, positions and loads. With black objects or in the dark, black beads lose contrast against the background, so both the public and full-field methods fundamentally lose their input.*
+*↑ **A Bonded 4 mm Layer Is Not a Half-Space — Benchmarking FingerVision Displacement, Force and Slip on Physics-Based Synthetic Images** ―― In a bonded, nearly incompressible 4 mm layer, lateral marker displacement is 4.98 times the half-space prediction at nu = 0.48 and 115 times it at nu = 0.499, so the assumption behind the public equations fails first. On skin-coloured objects the layer-Green slip detector reaches F1 0.842, while both public 2016 and 2017 methods score zero. For force, the public 2017 method is best or nearly tied: held-out normal-force RMSE is 0.872 N against 0.926 N for the full-field ridge model. The ridge model fits calibration at 0.088 N, exposing overfitting on unseen indenters. A 22 mm equidistant fisheye camera, a finite-element bonded layer, bead tracking, force and slip all share one forward model and are evaluated at unseen radii, positions and loads. With black objects or in the dark, black beads lose contrast against the background, so both the public and full-field methods fundamentally lose their input.*
 
 [![22 mm等距離魚眼、物理順方向。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fingervision_benchmark/01_fvbench_sensor_examples_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fingervision_benchmark/01_fvbench_sensor_examples.png)
 

@@ -339,7 +339,7 @@
   },
   "poc_fingervision_benchmark": {
    "accessioned": "2026-10-31",
-   "no": "2026.283"
+   "no": "2026.286"
   },
   "poc_fly_optomotor_steering": {
    "accessioned": "2026-09-22",
@@ -507,19 +507,19 @@
   },
   "poc_lighthouse_bevel_pointcloud": {
    "accessioned": "2026-10-31",
-   "no": "2026.286"
+   "no": "2026.289"
   },
   "poc_lighthouse_cast_wheel": {
    "accessioned": "2026-10-31",
-   "no": "2026.285"
+   "no": "2026.288"
   },
   "poc_lighthouse_smt_aoi": {
    "accessioned": "2026-10-31",
-   "no": "2026.287"
+   "no": "2026.290"
   },
   "poc_lighthouse_tyre_xray": {
    "accessioned": "2026-10-31",
-   "no": "2026.284"
+   "no": "2026.287"
   },
   "poc_live4d": {
    "accessioned": "2026-09-21",
@@ -1027,7 +1027,7 @@
   },
   "poc_tote_picking_tactile": {
    "accessioned": "2026-10-31",
-   "no": "2026.282"
+   "no": "2026.285"
   },
   "poc_traffic_counting": {
    "accessioned": "2026-09-06",

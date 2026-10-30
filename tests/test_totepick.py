@@ -57,6 +57,7 @@ def test_no_attachment_or_product_pose_write_after_initialization():
 
 def test_every_method_gets_the_same_retry_allowance():
     result=T.run_benchmark(1,max_retries=2,render_depth=False,clutter=False,grip=False)
+    assert len(result["rows"]) >= 3
     assert {r["method"]:len(r["attempts"]) for r in result["rows"]}=={m:3 for m in T.METHODS}
     assert all([a["retry"] for a in r["attempts"]]==[0,1,2] for r in result["rows"])
 

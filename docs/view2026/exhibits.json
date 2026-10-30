@@ -5720,6 +5720,158 @@
    "youtube_url": ""
   },
   {
+   "id": "poc_lighthouse_bevel_pointcloud",
+   "category": "inspection",
+   "media": "05_miss_example.png",
+   "motion": false,
+   "label": {
+    "ja": "開先 3D 点群の仮想工場: 頑健な当てはめと過検出",
+    "en": "Virtual bevel 3-D point-cloud check: robust fitting and false alarms",
+    "zh": "坡口三维点云虚拟工厂:稳健拟合与误检",
+    "tw": "坡口三維點雲虛擬工廠:穩健擬合與誤檢",
+    "ko": "개선 3D 점군 가상 공장: 강건한 맞춤과 과검출",
+    "de": "Virtuelle 3-D-Fasenprüfung: robuste Anpassung und Fehlalarme",
+    "hi": "बेवल 3-D बिंदु-मेघ का आभासी कारखाना: मज़बूत फ़िट और गलत अलार्म",
+    "fr": "Contrôle virtuel de chanfrein en nuage de points 3-D : ajustement robuste et fausses alarmes"
+   },
+   "see": {
+    "ja": "画像ではなく点群を測るため画素FARの実測対象は無いが、部品FAR 5 %を宣言した進化法はholdoutで16.4 %に破れた。12/48評価の探索で進化法は見逃し16.7 %と最小になった一方、手組み法は見逃し20.6 %・過検出4.9 %で、基準47.3 %・11.2 %より両方低い。つまり進化法は見逃しをさらに減らす代わりに過検出を増やした。WEFの開先欠陥90 %減は別の実工場・前提の値なので参考にのみ掲げる。",
+    "en": "This instrument measures a point cloud rather than pixels, so there is no measured pixel-FAR denominator; instead, the evolved pipeline declares a 5% part FAR and breaches it at 16.4% on holdout. With search budgets of 12 and 48 evaluations, evolution gives the lowest miss rate, 16.7%. The hand-built pipeline gives 20.6% misses and 4.9% false positives, both below the baseline's 47.3% and 11.2%. Evolution therefore buys fewer misses by bringing false positives back. WEF's reported 90% reduction in bevel defects comes from another physical factory under different assumptions and is included only for context.",
+    "zh": "This instrument measures a point cloud rather than pixels, so there is no measured pixel-FAR denominator; instead, the evolved pipeline declares a 5% part FAR and breaches it at 16.4% on holdout. With search budgets of 12 and 48 evaluations, evolution gives the lowest miss rate, 16.7%. The hand-built pipeline gives 20.6% misses and 4.9% false positives, both below the baseline's 47.3% and 11.2%. Evolution therefore buys fewer misses by bringing false positives back. WEF's reported 90% reduction in bevel defects comes from another physical factory under different assumptions and is included only for context.",
+    "tw": "This instrument measures a point cloud rather than pixels, so there is no measured pixel-FAR denominator; instead, the evolved pipeline declares a 5% part FAR and breaches it at 16.4% on holdout. With search budgets of 12 and 48 evaluations, evolution gives the lowest miss rate, 16.7%. The hand-built pipeline gives 20.6% misses and 4.9% false positives, both below the baseline's 47.3% and 11.2%. Evolution therefore buys fewer misses by bringing false positives back. WEF's reported 90% reduction in bevel defects comes from another physical factory under different assumptions and is included only for context.",
+    "ko": "This instrument measures a point cloud rather than pixels, so there is no measured pixel-FAR denominator; instead, the evolved pipeline declares a 5% part FAR and breaches it at 16.4% on holdout. With search budgets of 12 and 48 evaluations, evolution gives the lowest miss rate, 16.7%. The hand-built pipeline gives 20.6% misses and 4.9% false positives, both below the baseline's 47.3% and 11.2%. Evolution therefore buys fewer misses by bringing false positives back. WEF's reported 90% reduction in bevel defects comes from another physical factory under different assumptions and is included only for context.",
+    "de": "This instrument measures a point cloud rather than pixels, so there is no measured pixel-FAR denominator; instead, the evolved pipeline declares a 5% part FAR and breaches it at 16.4% on holdout. With search budgets of 12 and 48 evaluations, evolution gives the lowest miss rate, 16.7%. The hand-built pipeline gives 20.6% misses and 4.9% false positives, both below the baseline's 47.3% and 11.2%. Evolution therefore buys fewer misses by bringing false positives back. WEF's reported 90% reduction in bevel defects comes from another physical factory under different assumptions and is included only for context.",
+    "hi": "This instrument measures a point cloud rather than pixels, so there is no measured pixel-FAR denominator; instead, the evolved pipeline declares a 5% part FAR and breaches it at 16.4% on holdout. With search budgets of 12 and 48 evaluations, evolution gives the lowest miss rate, 16.7%. The hand-built pipeline gives 20.6% misses and 4.9% false positives, both below the baseline's 47.3% and 11.2%. Evolution therefore buys fewer misses by bringing false positives back. WEF's reported 90% reduction in bevel defects comes from another physical factory under different assumptions and is included only for context.",
+    "fr": "This instrument measures a point cloud rather than pixels, so there is no measured pixel-FAR denominator; instead, the evolved pipeline declares a 5% part FAR and breaches it at 16.4% on holdout. With search budgets of 12 and 48 evaluations, evolution gives the lowest miss rate, 16.7%. The hand-built pipeline gives 20.6% misses and 4.9% false positives, both below the baseline's 47.3% and 11.2%. Evolution therefore buys fewer misses by bringing false positives back. WEF's reported 90% reduction in bevel defects comes from another physical factory under different assumptions and is included only for context."
+   },
+   "num": {
+    "ja": "",
+    "en": "",
+    "zh": "",
+    "tw": "",
+    "ko": "",
+    "de": "",
+    "hi": "",
+    "fr": ""
+   },
+   "numbers_source": "results.json",
+   "youtube_url": ""
+  },
+  {
+   "id": "poc_lighthouse_cast_wheel",
+   "category": "inspection",
+   "media": "05_miss_example.png",
+   "motion": false,
+   "label": {
+    "ja": "鋳造ホイール X 線の仮想工場: 見逃しと過検出の綱引き",
+    "en": "Virtual cast-wheel X-ray: trading misses for false alarms",
+    "zh": "铸造轮毂 X 射线虚拟工厂:漏检与误检的拉锯",
+    "tw": "鑄造輪圈 X 光虛擬工廠:漏檢與誤檢的拉鋸",
+    "ko": "주조 휠 X선 가상 공장: 미검출과 과검출의 줄다리기",
+    "de": "Virtuelle Gussrad-Röntgenprüfung: Fehlschlupf gegen Fehlalarm",
+    "hi": "ढलवाँ पहिये का आभासी एक्स-रे: चूक और गलत अलार्म की खींचतान",
+    "fr": "Radiographie virtuelle de jantes coulées : manqués contre fausses alarmes"
+   },
+   "see": {
+    "ja": "宣言した画素FAR 1e-3は独立評価で0.00198となり1.98倍に破れた。12/48評価の探索後、進化法はholdoutで見逃し15.9 %まで下げたが過検出34.6 %、手組み法は16.9 %・26 %だった。基準は見逃し40.6 %、過検出100 %で、両提案は改善するものの、探索した閾値にも見逃しと過検出の交換が残る。WEFの重大欠陥見逃し98.1 %減は異なる実工場の導入前比較なので、同じ真値を使う本評価との勝敗には使わない。",
+    "en": "The declared pixel FAR of 1e-3 measures 0.00198 on independent data, a 1.98-fold breach. After search budgets of 12 and 48 evaluations, the evolved pipeline reaches 15.9% misses but 34.6% false positives on holdout; the hand-built pipeline gives 16.9% and 26%. The baseline records 40.6% misses and 100% false positives, so both proposals improve it, but the searched threshold still trades one error against the other. WEF's reported 98.1% reduction in critical-defect misses is a before-and-after figure from a different physical factory and is not used to declare a winner here.",
+    "zh": "The declared pixel FAR of 1e-3 measures 0.00198 on independent data, a 1.98-fold breach. After search budgets of 12 and 48 evaluations, the evolved pipeline reaches 15.9% misses but 34.6% false positives on holdout; the hand-built pipeline gives 16.9% and 26%. The baseline records 40.6% misses and 100% false positives, so both proposals improve it, but the searched threshold still trades one error against the other. WEF's reported 98.1% reduction in critical-defect misses is a before-and-after figure from a different physical factory and is not used to declare a winner here.",
+    "tw": "The declared pixel FAR of 1e-3 measures 0.00198 on independent data, a 1.98-fold breach. After search budgets of 12 and 48 evaluations, the evolved pipeline reaches 15.9% misses but 34.6% false positives on holdout; the hand-built pipeline gives 16.9% and 26%. The baseline records 40.6% misses and 100% false positives, so both proposals improve it, but the searched threshold still trades one error against the other. WEF's reported 98.1% reduction in critical-defect misses is a before-and-after figure from a different physical factory and is not used to declare a winner here.",
+    "ko": "The declared pixel FAR of 1e-3 measures 0.00198 on independent data, a 1.98-fold breach. After search budgets of 12 and 48 evaluations, the evolved pipeline reaches 15.9% misses but 34.6% false positives on holdout; the hand-built pipeline gives 16.9% and 26%. The baseline records 40.6% misses and 100% false positives, so both proposals improve it, but the searched threshold still trades one error against the other. WEF's reported 98.1% reduction in critical-defect misses is a before-and-after figure from a different physical factory and is not used to declare a winner here.",
+    "de": "The declared pixel FAR of 1e-3 measures 0.00198 on independent data, a 1.98-fold breach. After search budgets of 12 and 48 evaluations, the evolved pipeline reaches 15.9% misses but 34.6% false positives on holdout; the hand-built pipeline gives 16.9% and 26%. The baseline records 40.6% misses and 100% false positives, so both proposals improve it, but the searched threshold still trades one error against the other. WEF's reported 98.1% reduction in critical-defect misses is a before-and-after figure from a different physical factory and is not used to declare a winner here.",
+    "hi": "The declared pixel FAR of 1e-3 measures 0.00198 on independent data, a 1.98-fold breach. After search budgets of 12 and 48 evaluations, the evolved pipeline reaches 15.9% misses but 34.6% false positives on holdout; the hand-built pipeline gives 16.9% and 26%. The baseline records 40.6% misses and 100% false positives, so both proposals improve it, but the searched threshold still trades one error against the other. WEF's reported 98.1% reduction in critical-defect misses is a before-and-after figure from a different physical factory and is not used to declare a winner here.",
+    "fr": "The declared pixel FAR of 1e-3 measures 0.00198 on independent data, a 1.98-fold breach. After search budgets of 12 and 48 evaluations, the evolved pipeline reaches 15.9% misses but 34.6% false positives on holdout; the hand-built pipeline gives 16.9% and 26%. The baseline records 40.6% misses and 100% false positives, so both proposals improve it, but the searched threshold still trades one error against the other. WEF's reported 98.1% reduction in critical-defect misses is a before-and-after figure from a different physical factory and is not used to declare a winner here."
+   },
+   "num": {
+    "ja": "",
+    "en": "",
+    "zh": "",
+    "tw": "",
+    "ko": "",
+    "de": "",
+    "hi": "",
+    "fr": ""
+   },
+   "numbers_source": "results.json",
+   "youtube_url": ""
+  },
+  {
+   "id": "poc_lighthouse_smt_aoi",
+   "category": "inspection",
+   "media": "05_miss_example.png",
+   "motion": false,
+   "label": {
+    "ja": "SMT AOI の仮想工場: 探索が見逃しと過検出を同時に下げた",
+    "en": "Virtual SMT AOI: search lowers misses and false alarms together",
+    "zh": "SMT AOI 虚拟工厂:搜索同时降低漏检与误检",
+    "tw": "SMT AOI 虛擬工廠:搜尋同時降低漏檢與誤檢",
+    "ko": "SMT AOI 가상 공장: 탐색이 미검출과 과검출을 함께 낮췄다",
+    "de": "Virtuelle SMT-AOI: Die Suche senkt Fehlschlupf und Fehlalarm zugleich",
+    "hi": "SMT AOI का आभासी कारखाना: खोज ने चूक और गलत अलार्म दोनों घटाए",
+    "fr": "AOI SMT virtuelle : la recherche réduit à la fois manqués et fausses alarmes"
+   },
+   "see": {
+    "ja": "宣言した画素FAR 1e-3は独立評価で0.00245となり2.45倍に破れた。それでも12/48評価の探索はSMTでだけ両方の部品誤りを有意に改善し、進化法は見逃し57.4 %・過検出2.69 %、基準は88.5 %・52.3 %だった。McNemar exact pは見逃し3.6e-07、過検出4.6e-29。手組み法は過検出6.92 %まで下げる代わりに見逃し96.9 %へ悪化した。WEFの不良率99 %減は前提の異なる実工場の値として併記するだけである。",
+    "en": "The declared pixel FAR of 1e-3 measures 0.00245 independently, a 2.45-fold breach. Even so, SMT is the one application where search budgets of 12 and 48 evaluations significantly improve both part-level errors: the evolved pipeline records 57.4% misses and 2.69% false positives, against the baseline's 88.5% and 52.3%. McNemar exact p is 3.6e-07 for misses and 4.6e-29 for false positives. The hand-built method lowers false positives to 6.92% but worsens misses to 96.9%. WEF's reported 99% defect-rate reduction is shown only as a result from a physical factory with different premises.",
+    "zh": "The declared pixel FAR of 1e-3 measures 0.00245 independently, a 2.45-fold breach. Even so, SMT is the one application where search budgets of 12 and 48 evaluations significantly improve both part-level errors: the evolved pipeline records 57.4% misses and 2.69% false positives, against the baseline's 88.5% and 52.3%. McNemar exact p is 3.6e-07 for misses and 4.6e-29 for false positives. The hand-built method lowers false positives to 6.92% but worsens misses to 96.9%. WEF's reported 99% defect-rate reduction is shown only as a result from a physical factory with different premises.",
+    "tw": "The declared pixel FAR of 1e-3 measures 0.00245 independently, a 2.45-fold breach. Even so, SMT is the one application where search budgets of 12 and 48 evaluations significantly improve both part-level errors: the evolved pipeline records 57.4% misses and 2.69% false positives, against the baseline's 88.5% and 52.3%. McNemar exact p is 3.6e-07 for misses and 4.6e-29 for false positives. The hand-built method lowers false positives to 6.92% but worsens misses to 96.9%. WEF's reported 99% defect-rate reduction is shown only as a result from a physical factory with different premises.",
+    "ko": "The declared pixel FAR of 1e-3 measures 0.00245 independently, a 2.45-fold breach. Even so, SMT is the one application where search budgets of 12 and 48 evaluations significantly improve both part-level errors: the evolved pipeline records 57.4% misses and 2.69% false positives, against the baseline's 88.5% and 52.3%. McNemar exact p is 3.6e-07 for misses and 4.6e-29 for false positives. The hand-built method lowers false positives to 6.92% but worsens misses to 96.9%. WEF's reported 99% defect-rate reduction is shown only as a result from a physical factory with different premises.",
+    "de": "The declared pixel FAR of 1e-3 measures 0.00245 independently, a 2.45-fold breach. Even so, SMT is the one application where search budgets of 12 and 48 evaluations significantly improve both part-level errors: the evolved pipeline records 57.4% misses and 2.69% false positives, against the baseline's 88.5% and 52.3%. McNemar exact p is 3.6e-07 for misses and 4.6e-29 for false positives. The hand-built method lowers false positives to 6.92% but worsens misses to 96.9%. WEF's reported 99% defect-rate reduction is shown only as a result from a physical factory with different premises.",
+    "hi": "The declared pixel FAR of 1e-3 measures 0.00245 independently, a 2.45-fold breach. Even so, SMT is the one application where search budgets of 12 and 48 evaluations significantly improve both part-level errors: the evolved pipeline records 57.4% misses and 2.69% false positives, against the baseline's 88.5% and 52.3%. McNemar exact p is 3.6e-07 for misses and 4.6e-29 for false positives. The hand-built method lowers false positives to 6.92% but worsens misses to 96.9%. WEF's reported 99% defect-rate reduction is shown only as a result from a physical factory with different premises.",
+    "fr": "The declared pixel FAR of 1e-3 measures 0.00245 independently, a 2.45-fold breach. Even so, SMT is the one application where search budgets of 12 and 48 evaluations significantly improve both part-level errors: the evolved pipeline records 57.4% misses and 2.69% false positives, against the baseline's 88.5% and 52.3%. McNemar exact p is 3.6e-07 for misses and 4.6e-29 for false positives. The hand-built method lowers false positives to 6.92% but worsens misses to 96.9%. WEF's reported 99% defect-rate reduction is shown only as a result from a physical factory with different premises."
+   },
+   "num": {
+    "ja": "",
+    "en": "",
+    "zh": "",
+    "tw": "",
+    "ko": "",
+    "de": "",
+    "hi": "",
+    "fr": ""
+   },
+   "numbers_source": "results.json",
+   "youtube_url": ""
+  },
+  {
+   "id": "poc_lighthouse_tyre_xray",
+   "category": "inspection",
+   "media": "05_miss_example.png",
+   "motion": false,
+   "label": {
+    "ja": "タイヤ X 線の仮想工場: 宣言した誤検出率が破れる",
+    "en": "Virtual tyre X-ray line: the declared false-alarm rate breaks",
+    "zh": "轮胎 X 射线虚拟工厂:声明的误报率被突破",
+    "tw": "輪胎 X 光虛擬工廠:宣告的誤報率被突破",
+    "ko": "타이어 X선 가상 공장: 선언한 오검출률이 깨진다",
+    "de": "Virtuelle Reifen-Röntgenlinie: Die erklärte Fehlalarmrate hält nicht",
+    "hi": "टायर एक्स-रे का आभासी कारखाना: घोषित गलत-अलार्म दर टूटती है",
+    "fr": "Ligne virtuelle de radiographie de pneus : le taux de fausses alarmes déclaré ne tient pas"
+   },
+   "see": {
+    "ja": "画素FARを1e-3と宣言した変動模型は、独立評価で0.00511と5.11倍に破れた。探索は12/48評価の予算で行い、最終holdoutの進化法は見逃し49.6 %・過検出6.33 %。基準の72.7 %・16.7 %より両方低いが、手組み法は見逃し44 %とさらに低い代わりに過検出22.2 %で、一長一短が残る。WEFの不良流出99 %減は実工場の導入前比較で前提が違うため参考値としてのみ並べる。",
+    "en": "The variation model declares a pixel FAR of 1e-3, yet independent evaluation measures 0.00511, a 5.11-fold breach. Search uses budgets of 12 and 48 evaluations. On the final holdout, the evolved pipeline has 49.6% misses and 6.33% false positives, both below the baseline's 72.7% and 16.7%. The hand-built pipeline lowers misses further to 44% but raises false positives to 22.2%, leaving a real trade-off. WEF's reported 99% reduction in defect escape compares a different factory before and after deployment and is shown only as context.",
+    "zh": "The variation model declares a pixel FAR of 1e-3, yet independent evaluation measures 0.00511, a 5.11-fold breach. Search uses budgets of 12 and 48 evaluations. On the final holdout, the evolved pipeline has 49.6% misses and 6.33% false positives, both below the baseline's 72.7% and 16.7%. The hand-built pipeline lowers misses further to 44% but raises false positives to 22.2%, leaving a real trade-off. WEF's reported 99% reduction in defect escape compares a different factory before and after deployment and is shown only as context.",
+    "tw": "The variation model declares a pixel FAR of 1e-3, yet independent evaluation measures 0.00511, a 5.11-fold breach. Search uses budgets of 12 and 48 evaluations. On the final holdout, the evolved pipeline has 49.6% misses and 6.33% false positives, both below the baseline's 72.7% and 16.7%. The hand-built pipeline lowers misses further to 44% but raises false positives to 22.2%, leaving a real trade-off. WEF's reported 99% reduction in defect escape compares a different factory before and after deployment and is shown only as context.",
+    "ko": "The variation model declares a pixel FAR of 1e-3, yet independent evaluation measures 0.00511, a 5.11-fold breach. Search uses budgets of 12 and 48 evaluations. On the final holdout, the evolved pipeline has 49.6% misses and 6.33% false positives, both below the baseline's 72.7% and 16.7%. The hand-built pipeline lowers misses further to 44% but raises false positives to 22.2%, leaving a real trade-off. WEF's reported 99% reduction in defect escape compares a different factory before and after deployment and is shown only as context.",
+    "de": "The variation model declares a pixel FAR of 1e-3, yet independent evaluation measures 0.00511, a 5.11-fold breach. Search uses budgets of 12 and 48 evaluations. On the final holdout, the evolved pipeline has 49.6% misses and 6.33% false positives, both below the baseline's 72.7% and 16.7%. The hand-built pipeline lowers misses further to 44% but raises false positives to 22.2%, leaving a real trade-off. WEF's reported 99% reduction in defect escape compares a different factory before and after deployment and is shown only as context.",
+    "hi": "The variation model declares a pixel FAR of 1e-3, yet independent evaluation measures 0.00511, a 5.11-fold breach. Search uses budgets of 12 and 48 evaluations. On the final holdout, the evolved pipeline has 49.6% misses and 6.33% false positives, both below the baseline's 72.7% and 16.7%. The hand-built pipeline lowers misses further to 44% but raises false positives to 22.2%, leaving a real trade-off. WEF's reported 99% reduction in defect escape compares a different factory before and after deployment and is shown only as context.",
+    "fr": "The variation model declares a pixel FAR of 1e-3, yet independent evaluation measures 0.00511, a 5.11-fold breach. Search uses budgets of 12 and 48 evaluations. On the final holdout, the evolved pipeline has 49.6% misses and 6.33% false positives, both below the baseline's 72.7% and 16.7%. The hand-built pipeline lowers misses further to 44% but raises false positives to 22.2%, leaving a real trade-off. WEF's reported 99% reduction in defect escape compares a different factory before and after deployment and is shown only as context."
+   },
+   "num": {
+    "ja": "",
+    "en": "",
+    "zh": "",
+    "tw": "",
+    "ko": "",
+    "de": "",
+    "hi": "",
+    "fr": ""
+   },
+   "numbers_source": "results.json",
+   "youtube_url": ""
+  },
+  {
    "id": "poc_car_parking",
    "category": "driving",
    "media": "05_truths.png",
@@ -12368,6 +12520,82 @@
    },
    "numbers_source": "log",
    "youtube_url": ""
+  },
+  {
+   "id": "poc_fingervision_benchmark",
+   "category": "robotics",
+   "media": "05_fvbench_layer_physics.png",
+   "motion": false,
+   "label": {
+    "ja": "視覚触覚センサ: 4 mm の接着層は半無限体ではない",
+    "en": "Visuotactile sensor: a bonded 4 mm layer is not a half-space",
+    "zh": "视触觉传感器:4 mm 粘接层不是半无限体",
+    "tw": "視觸覺感測器:4 mm 黏接層不是半無限體",
+    "ko": "시각 촉각 센서: 접착된 4 mm 층은 반무한체가 아니다",
+    "de": "Visuotaktiler Sensor: Eine verklebte 4-mm-Schicht ist kein Halbraum",
+    "hi": "दृश्य-स्पर्श सेंसर: चिपकी 4 mm परत अर्ध-अनंत पिंड नहीं है",
+    "fr": "Capteur visuotactile : une couche collée de 4 mm n'est pas un demi-espace"
+   },
+   "see": {
+    "ja": "接着した4 mmのほぼ非圧縮な層では、表面マーカーの横変位が半無限体理論の4.98倍(ν = 0.48)から115倍(ν = 0.499)になり、公開式の前提が先に壊れる。肌色物体の滑り検出F1は層Green逆算が0.842、公開2016/2017法はともに0。力は公開2017法が最良またはほぼ互角で、未知の押し子に対する法線力RMSEは0.872 N、場全体ridgeは0.926 Nだった一方、ridgeは較正内では0.088 Nまで合うため過学習が露出した。22 mm等距離魚眼、4 mm接着層のFEM、ビーズ追跡、力・滑りを同じ順方向模型で生成して較正外の半径・位置・荷重で評価した。黒い物や暗所では黒ビーズと背景の輝度差が消え、公開法も全場法も同じ入力を失うため原理的に読めない。",
+    "en": "In a bonded, nearly incompressible 4 mm layer, lateral marker displacement is 4.98 times the half-space prediction at nu = 0.48 and 115 times it at nu = 0.499, so the assumption behind the public equations fails first. On skin-coloured objects the layer-Green slip detector reaches F1 0.842, while both public 2016 and 2017 methods score zero. For force, the public 2017 method is best or nearly tied: held-out normal-force RMSE is 0.872 N against 0.926 N for the full-field ridge model. The ridge model fits calibration at 0.088 N, exposing overfitting on unseen indenters. A 22 mm equidistant fisheye camera, a finite-element bonded layer, bead tracking, force and slip all share one forward model and are evaluated at unseen radii, positions and loads. With black objects or in the dark, black beads lose contrast against the background, so both the public and full-field methods fundamentally lose their input.",
+    "zh": "In a bonded, nearly incompressible 4 mm layer, lateral marker displacement is 4.98 times the half-space prediction at nu = 0.48 and 115 times it at nu = 0.499, so the assumption behind the public equations fails first. On skin-coloured objects the layer-Green slip detector reaches F1 0.842, while both public 2016 and 2017 methods score zero. For force, the public 2017 method is best or nearly tied: held-out normal-force RMSE is 0.872 N against 0.926 N for the full-field ridge model. The ridge model fits calibration at 0.088 N, exposing overfitting on unseen indenters. A 22 mm equidistant fisheye camera, a finite-element bonded layer, bead tracking, force and slip all share one forward model and are evaluated at unseen radii, positions and loads. With black objects or in the dark, black beads lose contrast against the background, so both the public and full-field methods fundamentally lose their input.",
+    "tw": "In a bonded, nearly incompressible 4 mm layer, lateral marker displacement is 4.98 times the half-space prediction at nu = 0.48 and 115 times it at nu = 0.499, so the assumption behind the public equations fails first. On skin-coloured objects the layer-Green slip detector reaches F1 0.842, while both public 2016 and 2017 methods score zero. For force, the public 2017 method is best or nearly tied: held-out normal-force RMSE is 0.872 N against 0.926 N for the full-field ridge model. The ridge model fits calibration at 0.088 N, exposing overfitting on unseen indenters. A 22 mm equidistant fisheye camera, a finite-element bonded layer, bead tracking, force and slip all share one forward model and are evaluated at unseen radii, positions and loads. With black objects or in the dark, black beads lose contrast against the background, so both the public and full-field methods fundamentally lose their input.",
+    "ko": "In a bonded, nearly incompressible 4 mm layer, lateral marker displacement is 4.98 times the half-space prediction at nu = 0.48 and 115 times it at nu = 0.499, so the assumption behind the public equations fails first. On skin-coloured objects the layer-Green slip detector reaches F1 0.842, while both public 2016 and 2017 methods score zero. For force, the public 2017 method is best or nearly tied: held-out normal-force RMSE is 0.872 N against 0.926 N for the full-field ridge model. The ridge model fits calibration at 0.088 N, exposing overfitting on unseen indenters. A 22 mm equidistant fisheye camera, a finite-element bonded layer, bead tracking, force and slip all share one forward model and are evaluated at unseen radii, positions and loads. With black objects or in the dark, black beads lose contrast against the background, so both the public and full-field methods fundamentally lose their input.",
+    "de": "In a bonded, nearly incompressible 4 mm layer, lateral marker displacement is 4.98 times the half-space prediction at nu = 0.48 and 115 times it at nu = 0.499, so the assumption behind the public equations fails first. On skin-coloured objects the layer-Green slip detector reaches F1 0.842, while both public 2016 and 2017 methods score zero. For force, the public 2017 method is best or nearly tied: held-out normal-force RMSE is 0.872 N against 0.926 N for the full-field ridge model. The ridge model fits calibration at 0.088 N, exposing overfitting on unseen indenters. A 22 mm equidistant fisheye camera, a finite-element bonded layer, bead tracking, force and slip all share one forward model and are evaluated at unseen radii, positions and loads. With black objects or in the dark, black beads lose contrast against the background, so both the public and full-field methods fundamentally lose their input.",
+    "hi": "In a bonded, nearly incompressible 4 mm layer, lateral marker displacement is 4.98 times the half-space prediction at nu = 0.48 and 115 times it at nu = 0.499, so the assumption behind the public equations fails first. On skin-coloured objects the layer-Green slip detector reaches F1 0.842, while both public 2016 and 2017 methods score zero. For force, the public 2017 method is best or nearly tied: held-out normal-force RMSE is 0.872 N against 0.926 N for the full-field ridge model. The ridge model fits calibration at 0.088 N, exposing overfitting on unseen indenters. A 22 mm equidistant fisheye camera, a finite-element bonded layer, bead tracking, force and slip all share one forward model and are evaluated at unseen radii, positions and loads. With black objects or in the dark, black beads lose contrast against the background, so both the public and full-field methods fundamentally lose their input.",
+    "fr": "In a bonded, nearly incompressible 4 mm layer, lateral marker displacement is 4.98 times the half-space prediction at nu = 0.48 and 115 times it at nu = 0.499, so the assumption behind the public equations fails first. On skin-coloured objects the layer-Green slip detector reaches F1 0.842, while both public 2016 and 2017 methods score zero. For force, the public 2017 method is best or nearly tied: held-out normal-force RMSE is 0.872 N against 0.926 N for the full-field ridge model. The ridge model fits calibration at 0.088 N, exposing overfitting on unseen indenters. A 22 mm equidistant fisheye camera, a finite-element bonded layer, bead tracking, force and slip all share one forward model and are evaluated at unseen radii, positions and loads. With black objects or in the dark, black beads lose contrast against the background, so both the public and full-field methods fundamentally lose their input."
+   },
+   "num": {
+    "ja": "",
+    "en": "",
+    "zh": "",
+    "tw": "",
+    "ko": "",
+    "de": "",
+    "hi": "",
+    "fr": ""
+   },
+   "numbers_source": "log",
+   "youtube_url": ""
+  },
+  {
+   "id": "poc_tote_picking_tactile",
+   "category": "robotics",
+   "media": "06_trial_tactile_rescue.gif",
+   "motion": true,
+   "label": {
+    "ja": "かご間ピッキング: 触覚の利得はやり直しで消える",
+    "en": "Tote picking: the tactile gain vanishes once retries are allowed",
+    "zh": "料箱间拣选:允许重试后触觉的增益消失",
+    "tw": "料箱間揀選:允許重試後觸覺的增益消失",
+    "ko": "토트 피킹: 재시도를 허용하면 촉각의 이득이 사라진다",
+    "de": "Kistenkommissionierung: Der Tastsinn-Vorteil verschwindet mit Wiederholungen",
+    "hi": "टोट पिकिंग: दोबारा प्रयास की छूट पर स्पर्श का लाभ गायब",
+    "fr": "Prélèvement en bac : le gain tactile disparaît avec les reprises"
+   },
+   "see": {
+    "ja": "意外なのは、視覚だけと触覚再把持に同じ最大5回のやり直しを公平に許すと、成功率がどちらも81.7 %になり、差が消えること(McNemar exact p = 1.0)。触覚は単回なら63.7 %で視覚だけの62.3 %を上回るが、効いたのは触覚の有無そのものより、掴み損ね・滑落・置き先外・衝突・時間切れを真値で分けて次の手を変える失敗型別リトライで、最大5回時に90.3 %へ達した。MuJoCo MenagerieのFranka Pandaを全試行で逐次積分し、深度像だけから候補を選び、指パッドの接触力を理想化触覚として読む。INSOL-HIGH実機の報道値は約300回、最大5回のやり直し込み97 %だが、設備・対象物・成功条件が違うため参考として併記するだけで、仮想工場との勝敗には使わない。",
+    "en": "The non-obvious result is that when vision-only and tactile regrasp are each allowed the same fair maximum of five retries, both finish at 81.7% and the difference disappears (McNemar exact p = 1.0). On a single attempt tactile reaches 63.7% against 62.3% for vision-only, but the substantial gain comes from changing the next action according to the ground-truth failure class — grasp miss, transport slip, outside placement, collision or timeout — which reaches 90.3% with five retries. Every trial integrates a real MuJoCo Menagerie Franka Panda trajectory; candidates come only from the depth image and finger-pad contact force is used as idealised tactile input. The reported INSOL-HIGH hardware result, about 300 attempts and 97% with up to five retries, is shown only as context: the equipment, objects and success criteria differ, so it is not a contest with this virtual factory.",
+    "zh": "The non-obvious result is that when vision-only and tactile regrasp are each allowed the same fair maximum of five retries, both finish at 81.7% and the difference disappears (McNemar exact p = 1.0). On a single attempt tactile reaches 63.7% against 62.3% for vision-only, but the substantial gain comes from changing the next action according to the ground-truth failure class — grasp miss, transport slip, outside placement, collision or timeout — which reaches 90.3% with five retries. Every trial integrates a real MuJoCo Menagerie Franka Panda trajectory; candidates come only from the depth image and finger-pad contact force is used as idealised tactile input. The reported INSOL-HIGH hardware result, about 300 attempts and 97% with up to five retries, is shown only as context: the equipment, objects and success criteria differ, so it is not a contest with this virtual factory.",
+    "tw": "The non-obvious result is that when vision-only and tactile regrasp are each allowed the same fair maximum of five retries, both finish at 81.7% and the difference disappears (McNemar exact p = 1.0). On a single attempt tactile reaches 63.7% against 62.3% for vision-only, but the substantial gain comes from changing the next action according to the ground-truth failure class — grasp miss, transport slip, outside placement, collision or timeout — which reaches 90.3% with five retries. Every trial integrates a real MuJoCo Menagerie Franka Panda trajectory; candidates come only from the depth image and finger-pad contact force is used as idealised tactile input. The reported INSOL-HIGH hardware result, about 300 attempts and 97% with up to five retries, is shown only as context: the equipment, objects and success criteria differ, so it is not a contest with this virtual factory.",
+    "ko": "The non-obvious result is that when vision-only and tactile regrasp are each allowed the same fair maximum of five retries, both finish at 81.7% and the difference disappears (McNemar exact p = 1.0). On a single attempt tactile reaches 63.7% against 62.3% for vision-only, but the substantial gain comes from changing the next action according to the ground-truth failure class — grasp miss, transport slip, outside placement, collision or timeout — which reaches 90.3% with five retries. Every trial integrates a real MuJoCo Menagerie Franka Panda trajectory; candidates come only from the depth image and finger-pad contact force is used as idealised tactile input. The reported INSOL-HIGH hardware result, about 300 attempts and 97% with up to five retries, is shown only as context: the equipment, objects and success criteria differ, so it is not a contest with this virtual factory.",
+    "de": "The non-obvious result is that when vision-only and tactile regrasp are each allowed the same fair maximum of five retries, both finish at 81.7% and the difference disappears (McNemar exact p = 1.0). On a single attempt tactile reaches 63.7% against 62.3% for vision-only, but the substantial gain comes from changing the next action according to the ground-truth failure class — grasp miss, transport slip, outside placement, collision or timeout — which reaches 90.3% with five retries. Every trial integrates a real MuJoCo Menagerie Franka Panda trajectory; candidates come only from the depth image and finger-pad contact force is used as idealised tactile input. The reported INSOL-HIGH hardware result, about 300 attempts and 97% with up to five retries, is shown only as context: the equipment, objects and success criteria differ, so it is not a contest with this virtual factory.",
+    "hi": "The non-obvious result is that when vision-only and tactile regrasp are each allowed the same fair maximum of five retries, both finish at 81.7% and the difference disappears (McNemar exact p = 1.0). On a single attempt tactile reaches 63.7% against 62.3% for vision-only, but the substantial gain comes from changing the next action according to the ground-truth failure class — grasp miss, transport slip, outside placement, collision or timeout — which reaches 90.3% with five retries. Every trial integrates a real MuJoCo Menagerie Franka Panda trajectory; candidates come only from the depth image and finger-pad contact force is used as idealised tactile input. The reported INSOL-HIGH hardware result, about 300 attempts and 97% with up to five retries, is shown only as context: the equipment, objects and success criteria differ, so it is not a contest with this virtual factory.",
+    "fr": "The non-obvious result is that when vision-only and tactile regrasp are each allowed the same fair maximum of five retries, both finish at 81.7% and the difference disappears (McNemar exact p = 1.0). On a single attempt tactile reaches 63.7% against 62.3% for vision-only, but the substantial gain comes from changing the next action according to the ground-truth failure class — grasp miss, transport slip, outside placement, collision or timeout — which reaches 90.3% with five retries. Every trial integrates a real MuJoCo Menagerie Franka Panda trajectory; candidates come only from the depth image and finger-pad contact force is used as idealised tactile input. The reported INSOL-HIGH hardware result, about 300 attempts and 97% with up to five retries, is shown only as context: the equipment, objects and success criteria differ, so it is not a contest with this virtual factory."
+   },
+   "num": {
+    "ja": "",
+    "en": "",
+    "zh": "",
+    "tw": "",
+    "ko": "",
+    "de": "",
+    "hi": "",
+    "fr": ""
+   },
+   "numbers_source": "result.json and log",
+   "youtube_url": ""
   }
  ],
  "series": [
@@ -12811,6 +13039,40 @@
     "de": "Humanoider G1 läuft",
     "hi": "Humanoid G1 दौड़ता है",
     "fr": "Le robot humanoïde G1 en course"
+   }
+  },
+  {
+   "id": "poc_tote_picking_tactile",
+   "group": "robot_body",
+   "media": "06_trial_tactile_rescue.gif",
+   "motion": true,
+   "thumb_src": "01_success_vs_retries.png",
+   "label": {
+    "ja": "かご間ピッキング: 触覚の利得はやり直しで消える",
+    "en": "Tote picking: the tactile gain vanishes once retries are allowed",
+    "zh": "料箱间拣选:允许重试后触觉的增益消失",
+    "tw": "料箱間揀選:允許重試後觸覺的增益消失",
+    "ko": "토트 피킹: 재시도를 허용하면 촉각의 이득이 사라진다",
+    "de": "Kistenkommissionierung: Der Tastsinn-Vorteil verschwindet mit Wiederholungen",
+    "hi": "टोट पिकिंग: दोबारा प्रयास की छूट पर स्पर्श का लाभ गायब",
+    "fr": "Prélèvement en bac : le gain tactile disparaît avec les reprises"
+   }
+  },
+  {
+   "id": "poc_fingervision_benchmark",
+   "group": "robot_body",
+   "media": "05_fvbench_layer_physics.png",
+   "motion": false,
+   "thumb_src": "05_fvbench_layer_physics.png",
+   "label": {
+    "ja": "視覚触覚センサ: 4 mm の接着層は半無限体ではない",
+    "en": "Visuotactile sensor: a bonded 4 mm layer is not a half-space",
+    "zh": "视触觉传感器:4 mm 粘接层不是半无限体",
+    "tw": "視觸覺感測器:4 mm 黏接層不是半無限體",
+    "ko": "시각 촉각 센서: 접착된 4 mm 층은 반무한체가 아니다",
+    "de": "Visuotaktiler Sensor: Eine verklebte 4-mm-Schicht ist kein Halbraum",
+    "hi": "दृश्य-स्पर्श सेंसर: चिपकी 4 mm परत अर्ध-अनंत पिंड नहीं है",
+    "fr": "Capteur visuotactile : une couche collée de 4 mm n'est pas un demi-espace"
    }
   },
   {
@@ -17418,6 +17680,74 @@
     "de": "Schrägkanten-SFR verfälscht MTF50 durch Gamma",
     "hi": "तिरछी किनारी SFR गामा के कारण MTF50 गलत पढ़ती है",
     "fr": "La SFR à bord incliné fausse le MTF50 à cause du gamma"
+   }
+  },
+  {
+   "id": "poc_lighthouse_tyre_xray",
+   "group": "wing_industrial",
+   "media": "01_miss_comparison.png",
+   "motion": false,
+   "thumb_src": "01_miss_comparison.png",
+   "label": {
+    "ja": "タイヤ X 線の仮想工場: 宣言した誤検出率が破れる",
+    "en": "Virtual tyre X-ray line: the declared false-alarm rate breaks",
+    "zh": "轮胎 X 射线虚拟工厂:声明的误报率被突破",
+    "tw": "輪胎 X 光虛擬工廠:宣告的誤報率被突破",
+    "ko": "타이어 X선 가상 공장: 선언한 오검출률이 깨진다",
+    "de": "Virtuelle Reifen-Röntgenlinie: Die erklärte Fehlalarmrate hält nicht",
+    "hi": "टायर एक्स-रे का आभासी कारखाना: घोषित गलत-अलार्म दर टूटती है",
+    "fr": "Ligne virtuelle de radiographie de pneus : le taux de fausses alarmes déclaré ne tient pas"
+   }
+  },
+  {
+   "id": "poc_lighthouse_cast_wheel",
+   "group": "wing_industrial",
+   "media": "01_miss_comparison.png",
+   "motion": false,
+   "thumb_src": "01_miss_comparison.png",
+   "label": {
+    "ja": "鋳造ホイール X 線の仮想工場: 見逃しと過検出の綱引き",
+    "en": "Virtual cast-wheel X-ray: trading misses for false alarms",
+    "zh": "铸造轮毂 X 射线虚拟工厂:漏检与误检的拉锯",
+    "tw": "鑄造輪圈 X 光虛擬工廠:漏檢與誤檢的拉鋸",
+    "ko": "주조 휠 X선 가상 공장: 미검출과 과검출의 줄다리기",
+    "de": "Virtuelle Gussrad-Röntgenprüfung: Fehlschlupf gegen Fehlalarm",
+    "hi": "ढलवाँ पहिये का आभासी एक्स-रे: चूक और गलत अलार्म की खींचतान",
+    "fr": "Radiographie virtuelle de jantes coulées : manqués contre fausses alarmes"
+   }
+  },
+  {
+   "id": "poc_lighthouse_bevel_pointcloud",
+   "group": "wing_industrial",
+   "media": "01_miss_comparison.png",
+   "motion": false,
+   "thumb_src": "01_miss_comparison.png",
+   "label": {
+    "ja": "開先 3D 点群の仮想工場: 頑健な当てはめと過検出",
+    "en": "Virtual bevel 3-D point-cloud check: robust fitting and false alarms",
+    "zh": "坡口三维点云虚拟工厂:稳健拟合与误检",
+    "tw": "坡口三維點雲虛擬工廠:穩健擬合與誤檢",
+    "ko": "개선 3D 점군 가상 공장: 강건한 맞춤과 과검출",
+    "de": "Virtuelle 3-D-Fasenprüfung: robuste Anpassung und Fehlalarme",
+    "hi": "बेवल 3-D बिंदु-मेघ का आभासी कारखाना: मज़बूत फ़िट और गलत अलार्म",
+    "fr": "Contrôle virtuel de chanfrein en nuage de points 3-D : ajustement robuste et fausses alarmes"
+   }
+  },
+  {
+   "id": "poc_lighthouse_smt_aoi",
+   "group": "wing_industrial",
+   "media": "01_miss_comparison.png",
+   "motion": false,
+   "thumb_src": "01_miss_comparison.png",
+   "label": {
+    "ja": "SMT AOI の仮想工場: 探索が見逃しと過検出を同時に下げた",
+    "en": "Virtual SMT AOI: search lowers misses and false alarms together",
+    "zh": "SMT AOI 虚拟工厂:搜索同时降低漏检与误检",
+    "tw": "SMT AOI 虛擬工廠:搜尋同時降低漏檢與誤檢",
+    "ko": "SMT AOI 가상 공장: 탐색이 미검출과 과검출을 함께 낮췄다",
+    "de": "Virtuelle SMT-AOI: Die Suche senkt Fehlschlupf und Fehlalarm zugleich",
+    "hi": "SMT AOI का आभासी कारखाना: खोज ने चूक और गलत अलार्म दोनों घटाए",
+    "fr": "AOI SMT virtuelle : la recherche réduit à la fois manqués et fausses alarmes"
    }
   },
   {

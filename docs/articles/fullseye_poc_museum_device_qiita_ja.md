@@ -16,7 +16,7 @@
 
 各展示は閉形式、公開実測値、独立実装のいずれかを門にしています。狙いは実機の完全な代用品を名乗ることではなく、どの物理を入れ、何をまだ入れていないかを明示したうえで、測定値がいつ信用できなくなるかを実機に触れる前に確かめることです。
 
-## No.2026.282 —— 触覚の一発目の利得は、同じ5回のやり直しを許すと消える ―― Pandaのかご間ピッキング
+## No.2026.285 —— 触覚の一発目の利得は、同じ5回のやり直しを許すと消える ―― Pandaのかご間ピッキング
 
 [![触覚の一発目の利得は、同じ5回のやり直しを許すと消える ―― Pandaのかご間ピッキング](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tote_picking_tactile/01_success_vs_retries_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tote_picking_tactile/01_success_vs_retries.png)
 
@@ -64,11 +64,11 @@ py -3.11 examples/poc_tote_picking_tactile.py --full
 
 
 
-## No.2026.283 —— 4 mmの接着層は半無限体ではない ―― FingerVisionの変位・力・滑りを物理合成像で比較する
+## No.2026.286 —— 4 mmの接着層は半無限体ではない ―― FingerVisionの変位・力・滑りを物理合成像で比較する
 
 [![4 mmの接着層は半無限体ではない ―― FingerVisionの変位・力・滑りを物理合成像で比較する](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fingervision_benchmark/05_fvbench_layer_physics_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fingervision_benchmark/05_fvbench_layer_physics.png)
 
-*↑ **4 mmの接着層は半無限体ではない ―― FingerVisionの変位・力・滑りを物理合成像で比較する** ―― 接着した4 mmのほぼ非圧縮な層では、表面マーカーの横変位が半無限体理論の4.98倍(ν = 0.48)から115倍(ν = 0.499)になり、公開式の前提が先に壊れる。肌色物体の滑り検出F1は層Green逆算が0.842(丸めて0.85)、公開2016/2017法はともに0。力は公開2017法が最良またはほぼ互角で、未知の押し子に対する法線力RMSEは0.872 N、場全体ridgeは0.926 Nだった一方、ridgeは較正内では0.088 Nまで合うため過学習が露出した。22 mm等距離魚眼、4 mm接着層のFEM、ビーズ追跡、力・滑りを同じ順方向模型で生成して較正外の半径・位置・荷重で評価した。黒い物や暗所では黒ビーズと背景の輝度差が消え、公開法も全場法も同じ入力を失うため原理的に読めない。*
+*↑ **4 mmの接着層は半無限体ではない ―― FingerVisionの変位・力・滑りを物理合成像で比較する** ―― 接着した4 mmのほぼ非圧縮な層では、表面マーカーの横変位が半無限体理論の4.98倍(ν = 0.48)から115倍(ν = 0.499)になり、公開式の前提が先に壊れる。肌色物体の滑り検出F1は層Green逆算が0.842、公開2016/2017法はともに0。力は公開2017法が最良またはほぼ互角で、未知の押し子に対する法線力RMSEは0.872 N、場全体ridgeは0.926 Nだった一方、ridgeは較正内では0.088 Nまで合うため過学習が露出した。22 mm等距離魚眼、4 mm接着層のFEM、ビーズ追跡、力・滑りを同じ順方向模型で生成して較正外の半径・位置・荷重で評価した。黒い物や暗所では黒ビーズと背景の輝度差が消え、公開法も全場法も同じ入力を失うため原理的に読めない。*
 
 [![22 mm等距離魚眼、物理順方向。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fingervision_benchmark/01_fvbench_sensor_examples_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fingervision_benchmark/01_fvbench_sensor_examples.png)
 
