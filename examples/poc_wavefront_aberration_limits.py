@@ -41,6 +41,15 @@ def compute():
     assert maxerr < .015
     return pupil,zs,sig,exact,fft,marechal,maxerr,boundaries
 
+def strehl_definitions(mode="coma", rms=.2, n=128, oversample=12):
+    """Return fixed-axis and same-plane peak ratios as separate definitions."""
+    pupil,zs=zernikes(n); ideal=fs.pupil_psf(pupil.astype(float),oversample=oversample)
+    psf=fs.pupil_psf(pupil.astype(float),opd_waves=rms*zs[mode],oversample=oversample)
+    c=ideal.shape[0]//2; peak=np.unravel_index(np.argmax(psf),psf.shape)
+    return {"fixed_axis_ratio":float(psf[c,c]/ideal.max()),
+            "same_plane_peak_ratio":float(psf.max()/ideal.max()),
+            "peak_shift_px":(int(peak[0]-c),int(peak[1]-c))}
+
 def main():
     import matplotlib.pyplot as plt
     pupil,zs,sig,exact,fft,marechal,maxerr,bounds=compute(); OUT.mkdir(parents=True,exist_ok=True)
@@ -51,7 +60,9 @@ def main():
     for a,(name,z) in zip([fig.add_subplot(gs[1,i]) for i in range(4)],zs.items()):
         ps=fs.pupil_psf(pupil.astype(float),opd_waves=.20*z,oversample=4); c=ps.shape[0]//2; a.imshow(np.log10(ps[c-35:c+36,c-35:c+36]+1e-9),cmap="magma",vmin=-8); a.set_title(f"{name}, 0.20 waves RMS"); a.set_xlabel("image x [samples]"); a.set_ylabel("image y [samples]")
     fig.suptitle("Aberration shape, not RMS alone, controls Marechal breakdown"); fig.tight_layout(); fn="01_aberration_limits.png"; fig.savefig(OUT/fn); fig.canvas.draw(); figs.save('aberration_limits', np.asarray(fig.canvas.buffer_rgba())[..., :3].copy(), caption='Four unit-RMS Noll Zernike modes: exact pupil integral, Fullseye FFT, Marechal approximation, and computed PSFs.'); plt.close(fig)
-    metrics={"fft_vs_pupil_max_abs_error":maxerr,"five_percent_boundary_rms_waves":bounds,"conditions":484}
+    coma={str(s):strehl_definitions("coma",s) for s in (.2,.3)}
+    metrics={"fft_fixed_axis_vs_pupil_max_abs_error":maxerr,"five_percent_boundary_fixed_axis_rms_waves":bounds,"coma_definition_check":coma,"conditions":484,
+             "definitions":{"fixed_axis_ratio":"intensity at the unaberrated-axis sample / ideal peak","same_plane_peak_ratio":"maximum intensity in the fixed image plane / ideal peak","best_focus_ratio":"not computed in this fixed-plane sweep"}}
     (OUT/"metrics.json").write_text(json.dumps(metrics,indent=2)+"\n",encoding="utf-8")
     (OUT/"figures.json").write_text(json.dumps([{"file":fn,"name":"aberration_limits","caption":"Four unit-RMS Noll Zernike modes: exact pupil integral, Fullseye FFT, Marechal approximation, and computed PSFs.","shape":[900,1600,4]}],indent=2)+"\n",encoding="utf-8")
     print(json.dumps(metrics)); print("PASS",SLUG)

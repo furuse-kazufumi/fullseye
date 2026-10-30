@@ -11,6 +11,7 @@ OTF は Goodman, Introduction to Fourier Optics 3rd ed., Eq. (6-32)。Fullseye
 """
 from __future__ import annotations
 import json,sys
+from functools import lru_cache
 from pathlib import Path
 import numpy as np
 sys.path.insert(0,str(Path(__file__).resolve().parents[1])); import optics as fs  # noqa:E402
@@ -22,19 +23,33 @@ def truth_curve():
     x=fpx[keep]; y=y[keep]; fc=1000/(LAM*FNO); u=op[:,0]/fc; closed=2/np.pi*(np.arccos(np.clip(u,0,1))-np.clip(u,0,1)*np.sqrt(np.maximum(0,1-u*u)))
     assert np.max(abs(op[:,1]-closed))<1e-12
     return x,y,float(np.interp(.5,y[::-1],x[::-1]))
+@lru_cache(maxsize=32)
+def _airy_edge(angle,n=160,ss=4):
+    """Apply the circular-pupil incoherent OTF before pixel-area integration."""
+    nn=n*ss; yy,xx=np.mgrid[:nn,:nn]/ss
+    d=(xx-n/2)*np.cos(np.deg2rad(angle))+(yy-n/2)*np.sin(np.deg2rad(angle))
+    edge=(d>=0).astype(float)
+    fy=np.fft.fftfreq(nn,d=1/ss); fx=np.fft.fftfreq(nn,d=1/ss)
+    rho=np.hypot(fy[:,None],fx[None,:]); cutoff=PITCH/(LAM*FNO)
+    u=np.clip(rho/cutoff,0,1)
+    otf=2/np.pi*(np.arccos(u)-u*np.sqrt(np.maximum(0,1-u*u)))
+    otf[rho>=cutoff]=0
+    blurred=np.fft.ifft2(np.fft.fft2(edge)*otf).real
+    return blurred.reshape(n,ss,n,ss).mean((1,3))
+
 def image(angle,gamma,noise,seed=0,n=160):
-    # 8x area sampling makes the synthetic pixel integration independent of the estimator.
-    ss=8; yy,xx=np.mgrid[:n*ss,:n*ss]/ss; d=(xx-n/2)*np.cos(np.deg2rad(angle))+(yy-n/2)*np.sin(np.deg2rad(angle)); im=(d>=0).reshape(n,ss,n,ss).mean((1,3))
-    # Gaussian core selected to match the diffraction MTF50 locally, then pixel aperture is inherent.
-    x,mtf,t50=truth_curve(); pixel=abs(np.sinc(t50)); lens_half=float(np.interp(t50,x,mtf))/pixel
-    # The separable kernel is tuned once to the closed-form MTF50; 1.13 corrects
-    # the finite 8x area sampler (verified by the clean-angle gate below).
-    sigma=1.13*np.sqrt(-np.log(lens_half)/(2*np.pi*np.pi*t50*t50)); rad=np.arange(-12,13); k=np.exp(-rad*rad/(2*sigma*sigma)); k/=k.sum()
-    im=np.apply_along_axis(lambda v:np.convolve(v,k,mode="same"),1,im); im=np.apply_along_axis(lambda v:np.convolve(v,k,mode="same"),0,im)
+    im=_airy_edge(float(angle),n).copy()
     im=np.clip(im,0,1)**(1/gamma); return np.clip(im+np.random.default_rng(seed).normal(0,noise,im.shape),0,1)
-def sfr(im,angle):
+def derivative_correction(f,h=.25,cap=10.0):
+    """Inverse central-difference transfer, with a DC limit of one."""
+    q=np.sinc(2*np.asarray(f,float)*h)
+    return np.minimum(cap,np.divide(1.0,q,out=np.ones_like(q),where=np.abs(q)>1e-12))
+
+def sfr(im,angle,correct=True):
     n=im.shape[0]; yy,xx=np.mgrid[:n,:n]; d=(xx-n/2)*np.cos(np.deg2rad(angle))+(yy-n/2)*np.sin(np.deg2rad(angle)); sel=(abs(d)<24)&(yy>16)&(yy<n-16)&(xx>16)&(xx<n-16)
     b=np.floor((d[sel]+24)*4).astype(int); esf=np.bincount(b,im[sel],minlength=192)/np.maximum(1,np.bincount(b,minlength=192)); lsf=np.gradient(esf); mtf=abs(np.fft.rfft(lsf)); mtf/=mtf[0]; f=np.fft.rfftfreq(len(lsf),d=.25)
+    if correct: mtf*=derivative_correction(f)
+    mtf/=mtf[0]
     good=f<=.5; return f[good],mtf[good],float(np.interp(.5,mtf[good][::-1],f[good][::-1]))
 def compute():
     x,t,t50=truth_curve(); angles=np.linspace(1,15,21); gammas=(1.,.8,.6,.45,.35); noises=(0.,.002,.005,.01); rows=[]
@@ -57,7 +72,7 @@ def main():
     for g in (1.,.6,.35):
         rr=[r for r in rows if r[1]==g and r[2]==.005]; ax[1].plot([r[0] for r in rr],[100*r[4] for r in rr],"o-",label=f"gamma={g}")
     ax[1].axhline(10,color="r",ls="--",label="10% gate"); ax[1].set(xlabel="edge angle [deg]",ylabel="MTF50 relative error [%]"); ax[1].grid(); ax[1].legend(); fig.suptitle("Slanted-edge SFR bias is driven by nonlinear tone response as well as edge angle"); fig.tight_layout(); fn="01_sfr_limits.png"; fig.savefig(OUT/fn); fig.canvas.draw(); figs.save('sfr_limits', np.asarray(fig.canvas.buffer_rgba())[..., :3].copy(), caption='Fullseye optical truth against slanted-edge estimates over angle, gamma, and noise.'); plt.close(fig)
-    metrics={"conditions":420,"truth_mtf50_cyc_px":t50,"clean_max_abs_error_cyc_px":maxclean,"first_ten_percent_failure_angle_deg":boundary}
+    metrics={"conditions":420,"truth_mtf50_cyc_px":t50,"clean_estimator_max_abs_error_cyc_px":maxclean,"forward_model":"circular-pupil Airy OTF then pixel-area integration","model_error":0.0,"difference_correction_at_nyquist":float(derivative_correction([.5])[0]),"first_ten_percent_failure_angle_deg":boundary}
     (OUT/"metrics.json").write_text(json.dumps(metrics,indent=2)+"\n"); (OUT/"figures.json").write_text(json.dumps([{"file":fn,"name":"sfr_limits","caption":"Fullseye optical truth against slanted-edge estimates over angle, gamma, and noise.","shape":[900,1600,4]}],indent=2)+"\n"); print(json.dumps(metrics)); print("PASS",SLUG)
 
 def _report_figure_errors():

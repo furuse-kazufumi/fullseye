@@ -1076,7 +1076,7 @@ py -3.11 examples/poc_lens_tolerancing.py
 
 [![処方から撮るプレノプティックカメラ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/03_raw_microimages_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/03_raw_microimages.png)
 
-*↑ **処方から撮るプレノプティックカメラ** ―― 【修正中 2026-10-31】深度・リフォーカス・EPI の図は、撮影した raw を復号したものではなく、別に合成したライトフィールドから作っています。距離は候補 3 距離への割り当てで、連続的な測距ではありません。raw から復号して深度までをつないだ版に差し替えます。主レンズ、周期球面 MLA、センサを逆追跡する合成 PoC。生画像には円盤状マイクロ像の格子、円盤間の暗い隅、円盤内の場面断片が現れ、EPI には視差の斜線が現れる。白色面の暗い隅は 21.33 %（閉形式 21.46 %）、円盤端/中心の輝度比は 9.92e-6、格子ピークは 0.06667 cycle/pixel、EPI は 0.6 px/view。開口を外すと暗い隅が 0 % になり門が赤になる。境界光線と校正残差も fail-closed に拒否する。*
+*↑ **処方から撮るプレノプティックカメラ** ―― 主レンズ、正方周期 MLA、センサを逆追跡した raw と、同じ処方で撮った白画像を使う。白画像を校正して raw を復号し、そのライトフィールドだけから EPI・リフォーカス・連続距離を計算する。raw を変えると三つの出力が変わる因果試験を置いた。候補距離への3分類は廃止し、処方の slope↔距離式を使って候補にない 0.75 m と 1.3 m を往復した誤差は 1e-9 m 未満。カメラ断面とF値比の図は検証ではない概念図と明記した。*
 
 [![480 x 480 sensor, 32 x 32 MLA, 15 pixels per microlens; five prescription-traced rays.](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/01_camera_section_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/01_camera_section.png)
 
@@ -1110,7 +1110,7 @@ py -3.11 examples/poc_plenoptic_camera.py
 
 この回が作った図は全部で **9 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_plenoptic_camera)
 
-使用 op(ノートへ): [`lens_scene`](https://furuse.work/ops/optics/lensrender/lens_scene.html) · [`lens_system`](https://furuse.work/ops/optics/design/lens_system.html) · [`lf_depth_from_focus`](https://furuse.work/ops/lightfield/depth/lf_depth_from_focus.html) · [`lf_refocus`](https://furuse.work/ops/lightfield/refocus/lf_refocus.html) · [`mla_surface`](https://furuse.work/ops/optics/plenoptic/mla_surface.html) · [`paraxial_trace`](https://furuse.work/ops/optics/design/paraxial_trace.html) · [`plenoptic_capture`](https://furuse.work/ops/optics/plenoptic/plenoptic_capture.html) · [`plenoptic_mla_calibrate`](https://furuse.work/ops/optics/plenoptic/plenoptic_mla_calibrate.html) · [`plenoptic_refocus_depth`](https://furuse.work/ops/optics/plenoptic/plenoptic_refocus_depth.html) · [`plenoptic_system`](https://furuse.work/ops/optics/plenoptic/plenoptic_system.html)
+使用 op(ノートへ): [`lens_scene`](https://furuse.work/ops/optics/lensrender/lens_scene.html) · [`lens_system`](https://furuse.work/ops/optics/design/lens_system.html) · [`lf_depth_from_focus`](https://furuse.work/ops/lightfield/depth/lf_depth_from_focus.html) · [`lf_refocus`](https://furuse.work/ops/lightfield/refocus/lf_refocus.html) · [`mla_surface`](https://furuse.work/ops/optics/plenoptic/mla_surface.html) · [`paraxial_trace`](https://furuse.work/ops/optics/design/paraxial_trace.html) · [`plenoptic_capture`](https://furuse.work/ops/optics/plenoptic/plenoptic_capture.html) · [`plenoptic_decode`](https://furuse.work/ops/optics/plenoptic/plenoptic_decode.html) · [`plenoptic_mla_calibrate`](https://furuse.work/ops/optics/plenoptic/plenoptic_mla_calibrate.html) · [`plenoptic_refocus_depth`](https://furuse.work/ops/optics/plenoptic/plenoptic_refocus_depth.html) · [`plenoptic_system`](https://furuse.work/ops/optics/plenoptic/plenoptic_system.html)
 
 ## No.2026.273 —— 同じ粒子を走査像と透過像で測る ―― 52 nm と 48 nm のどちらが正しいか
 
