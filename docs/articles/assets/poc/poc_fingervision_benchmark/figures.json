@@ -1,0 +1,78 @@
+[
+ {
+  "file": "01_fvbench_sensor_examples.png",
+  "name": "fvbench_sensor_examples",
+  "caption": "22 mm等距離魚眼、物理順方向。",
+  "shape": [
+   292,
+   670,
+   3
+  ]
+ },
+ {
+  "file": "02_fvbench_force_scatter.png",
+  "name": "fvbench_force_scatter",
+  "caption": "較正に無い半径・位置・範囲。",
+  "shape": [
+   360,
+   703,
+   3
+  ]
+ },
+ {
+  "file": "03_fvbench_slip_delay.png",
+  "name": "fvbench_slip_delay",
+  "caption": "Q=muPからの遅れ。未検出は200 ms表示。",
+  "shape": [
+   360,
+   687,
+   3
+  ]
+ },
+ {
+  "file": "04_fvbench_condition_f1.png",
+  "name": "fvbench_condition_f1",
+  "caption": "--fullは各条件25時系列×8=200フレーム。",
+  "shape": [
+   224,
+   645,
+   3
+  ],
+  "csv": "04_fvbench_condition_f1.csv",
+  "tsv": "04_fvbench_condition_f1.tsv"
+ },
+ {
+  "file": "05_fvbench_layer_physics.png",
+  "name": "fvbench_layer_physics",
+  "caption": "1 N, a=6 mm; selective reduced integration Q4 FEM.",
+  "shape": [
+   200,
+   452,
+   3
+  ],
+  "csv": "05_fvbench_layer_physics.csv",
+  "tsv": "05_fvbench_layer_physics.tsv"
+ },
+ {
+  "file": "06_fvbench_contrast_boundary.png",
+  "name": "fvbench_contrast_boundary",
+  "caption": "6 markers未満では全変位場手法が推定不能。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "07_fvbench_force_metrics.png",
+  "name": "fvbench_force_metrics",
+  "caption": "RMSE [N] / R2。ridgeのlambdaは較正内CVのみで選択。",
+  "shape": [
+   368,
+   428,
+   3
+  ],
+  "csv": "07_fvbench_force_metrics.csv",
+  "tsv": "07_fvbench_force_metrics.tsv"
+ }
+]
