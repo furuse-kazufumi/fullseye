@@ -4,7 +4,7 @@ dim: optics
 category: imaging
 in: 
 out: pairs
-examples: [optics_imaging, poc_lens_file_roundtrip, poc_pixel_shift, poc_veiling_glare]
+examples: [optics_imaging, poc_lens_file_roundtrip, poc_pixel_shift, poc_slanted_edge_sfr_limits, poc_veiling_glare]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.8.1  # fullseye lib version this note was generated for
@@ -75,6 +75,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 - [optics_imaging](../../../../examples/optics_imaging.py) — `py -3.11 examples/optics_imaging.py`
 - [poc_lens_file_roundtrip](../../../../examples/poc_lens_file_roundtrip.py) — `py -3.11 examples/poc_lens_file_roundtrip.py`
 - [poc_pixel_shift](../../../../examples/poc_pixel_shift.py) — `py -3.11 examples/poc_pixel_shift.py`
+- [poc_slanted_edge_sfr_limits](../../../../examples/poc_slanted_edge_sfr_limits.py) — `py -3.11 examples/poc_slanted_edge_sfr_limits.py`
 - [poc_veiling_glare](../../../../examples/poc_veiling_glare.py) — `py -3.11 examples/poc_veiling_glare.py`
 
 ## 型が繋がる次の op(`pairs` を入力に取れる)

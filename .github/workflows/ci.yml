@@ -256,6 +256,9 @@ jobs:
     needs: changes
     if: needs.changes.outputs.docs-only != 'true'
     runs-on: ubuntu-latest
+    # ★2026-10-30: master の py3.12 片 4 が 91 % で 2 時間半止まった(pytest の timeout=900 も効かず、テストの外で
+    #   固まったとみられる)。上限が無いと GitHub の既定 6 時間まで runner を握るので、片の実測(最長 ~75 分)の倍で切る。
+    timeout-minutes: 150
     strategy:
       fail-fast: false
       matrix:
@@ -344,8 +347,12 @@ jobs:
         #   次からは duration-baseline ジョブの artifact(test-durations-merged)を同じ道具で取り込む。
         # ★コメントは `run: >` の中に書かない: 折り畳みスカラーでは `#` 行も本文で、シェルの
         #   コメントになって**その後ろの引数(--store-durations)が消える**(2026-10-22 に実際に消えていた)。
+        # py3.12 shard 4 stopped twice after its last quiet progress line.  Keep
+        # each node id visible there, and use Linux's signal timeout so a C call
+        # holding the GIL cannot also prevent pytest-timeout from firing.
         run: >
-          pytest -q -ra ${{ matrix.python-version == '3.11' && '--cov' || '' }}
+          pytest ${{ matrix.python-version == '3.12' && matrix.shard == 4 && '-v --timeout-method=signal' || '-q' }}
+          -ra ${{ matrix.python-version == '3.11' && '--cov' || '' }}
           --splits 6 --group ${{ matrix.shard }} --splitting-algorithm least_duration
           --durations-path .test_durations --store-durations
       - name: Name this shard's duration data

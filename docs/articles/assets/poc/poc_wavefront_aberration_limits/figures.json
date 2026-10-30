@@ -1,0 +1,12 @@
+[
+  {
+    "file": "01_aberration_limits.png",
+    "name": "aberration_limits",
+    "caption": "Four unit-RMS Noll Zernike modes: exact pupil integral, Fullseye FFT, Marechal approximation, and computed PSFs.",
+    "shape": [
+      900,
+      1600,
+      4
+    ]
+  }
+]
