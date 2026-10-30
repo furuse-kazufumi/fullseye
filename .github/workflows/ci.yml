@@ -256,6 +256,9 @@ jobs:
     needs: changes
     if: needs.changes.outputs.docs-only != 'true'
     runs-on: ubuntu-latest
+    # ★2026-10-30: master の py3.12 片 4 が 91 % で 2 時間半止まった(pytest の timeout=900 も効かず、テストの外で
+    #   固まったとみられる)。上限が無いと GitHub の既定 6 時間まで runner を握るので、片の実測(最長 ~75 分)の倍で切る。
+    timeout-minutes: 150
     strategy:
       fail-fast: false
       matrix:

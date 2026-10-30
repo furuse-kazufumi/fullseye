@@ -5606,6 +5606,120 @@
    "youtube_url": ""
   },
   {
+   "id": "poc_mueller_dofp_observability",
+   "category": "inspection",
+   "media": "01_observability.png",
+   "motion": false,
+   "label": {
+    "ja": "4 方位偏光カメラに見えない Mueller 行列の 7 次元",
+    "en": "Seven Mueller dimensions a four-angle polarisation camera cannot see",
+    "zh": "四方位偏振相机看不到的 Mueller 矩阵 7 个维度",
+    "tw": "四方位偏振相機看不到的 Mueller 矩陣 7 個維度",
+    "ko": "4방위 편광 카메라가 보지 못하는 Mueller 행렬의 7차원",
+    "de": "Sieben Mueller-Dimensionen, die eine Vier-Winkel-Polarisationskamera nicht sieht",
+    "hi": "चार-कोण ध्रुवण कैमरा Mueller मैट्रिक्स के 7 आयाम नहीं देख पाता",
+    "fr": "Sept dimensions de Mueller invisibles pour une caméra de polarisation à quatre angles"
+   },
+   "see": {
+    "ja": "0/45/90/135度の線偏光マイクロアナライザだけで作る設計行列のrankは、手書きせずSVDで9/16と計算した。発生側と解析側にQWP状態を加えるとrank 16。FullseyeのMueller連鎖と独立なKronecker設計式は最大1.39e-17で一致した。読み出し雑音0.2 %、200試行でMueller行列の相対誤差中央値は線偏光だけの41.64 %からQWP追加で1.40 %へ下がる。",
+    "en": "The design matrix formed by 0, 45, 90 and 135 degree linear micro-analysers has SVD-computed rank 9 of 16; the number is not hard-coded. Adding quarter-wave-plate states on generation and analysis raises the rank to 16. Fullseye's Mueller chain and an independent Kronecker design equation agree within 1.39e-17. Across 200 trials with 0.2 percent read noise, median relative Mueller error falls from 41.64 percent for linear-only measurements to 1.40 percent with the QWP states.",
+    "zh": "The design matrix formed by 0, 45, 90 and 135 degree linear micro-analysers has SVD-computed rank 9 of 16; the number is not hard-coded. Adding quarter-wave-plate states on generation and analysis raises the rank to 16. Fullseye's Mueller chain and an independent Kronecker design equation agree within 1.39e-17. Across 200 trials with 0.2 percent read noise, median relative Mueller error falls from 41.64 percent for linear-only measurements to 1.40 percent with the QWP states.",
+    "tw": "The design matrix formed by 0, 45, 90 and 135 degree linear micro-analysers has SVD-computed rank 9 of 16; the number is not hard-coded. Adding quarter-wave-plate states on generation and analysis raises the rank to 16. Fullseye's Mueller chain and an independent Kronecker design equation agree within 1.39e-17. Across 200 trials with 0.2 percent read noise, median relative Mueller error falls from 41.64 percent for linear-only measurements to 1.40 percent with the QWP states.",
+    "ko": "The design matrix formed by 0, 45, 90 and 135 degree linear micro-analysers has SVD-computed rank 9 of 16; the number is not hard-coded. Adding quarter-wave-plate states on generation and analysis raises the rank to 16. Fullseye's Mueller chain and an independent Kronecker design equation agree within 1.39e-17. Across 200 trials with 0.2 percent read noise, median relative Mueller error falls from 41.64 percent for linear-only measurements to 1.40 percent with the QWP states.",
+    "de": "The design matrix formed by 0, 45, 90 and 135 degree linear micro-analysers has SVD-computed rank 9 of 16; the number is not hard-coded. Adding quarter-wave-plate states on generation and analysis raises the rank to 16. Fullseye's Mueller chain and an independent Kronecker design equation agree within 1.39e-17. Across 200 trials with 0.2 percent read noise, median relative Mueller error falls from 41.64 percent for linear-only measurements to 1.40 percent with the QWP states.",
+    "hi": "The design matrix formed by 0, 45, 90 and 135 degree linear micro-analysers has SVD-computed rank 9 of 16; the number is not hard-coded. Adding quarter-wave-plate states on generation and analysis raises the rank to 16. Fullseye's Mueller chain and an independent Kronecker design equation agree within 1.39e-17. Across 200 trials with 0.2 percent read noise, median relative Mueller error falls from 41.64 percent for linear-only measurements to 1.40 percent with the QWP states.",
+    "fr": "The design matrix formed by 0, 45, 90 and 135 degree linear micro-analysers has SVD-computed rank 9 of 16; the number is not hard-coded. Adding quarter-wave-plate states on generation and analysis raises the rank to 16. Fullseye's Mueller chain and an independent Kronecker design equation agree within 1.39e-17. Across 200 trials with 0.2 percent read noise, median relative Mueller error falls from 41.64 percent for linear-only measurements to 1.40 percent with the QWP states."
+   },
+   "num": {
+    "ja": "",
+    "en": "",
+    "zh": "",
+    "tw": "",
+    "ko": "",
+    "de": "",
+    "hi": "",
+    "fr": ""
+   },
+   "numbers_source": "log",
+   "youtube_url": ""
+  },
+  {
+   "id": "poc_slanted_edge_sfr_limits",
+   "category": "inspection",
+   "media": "01_sfr_limits.png",
+   "motion": false,
+   "label": {
+    "ja": "斜めエッジ SFR はガンマで MTF50 を誤る",
+    "en": "Slanted-edge SFR misreads MTF50 through gamma",
+    "zh": "斜边 SFR 因伽马而误判 MTF50",
+    "tw": "斜邊 SFR 因伽瑪而誤判 MTF50",
+    "ko": "경사 에지 SFR은 감마 때문에 MTF50을 잘못 읽는다",
+    "de": "Schrägkanten-SFR verfälscht MTF50 durch Gamma",
+    "hi": "तिरछी किनारी SFR गामा के कारण MTF50 गलत पढ़ती है",
+    "fr": "La SFR à bord incliné fausse le MTF50 à cause du gamma"
+   },
+   "see": {
+    "ja": "3.45 µm画素、F/5.6、550 nmの系について、角度21、ガンマ5、雑音4段階の420条件を計算した。Fullseyeの回折MTFと円形瞳の閉形式は1e-12未満で一致し、画素開口を含む真値MTF50は0.34551 cycles/pixel。線形・無雑音の独立な面積標本化エッジ経路との差は最大0.01076 cycles/pixel。10 %超の破綻は掃引範囲の最小角1.0度から現れ、非線形トーン応答が角度選択と同程度に測定値を動かす。",
+    "en": "For a 3.45 um pixel, F/5.6 and 550 nm system, 21 angles, five gamma values and four noise levels produce 420 computed conditions. Fullseye's diffraction MTF agrees with the circular-pupil closed form below 1e-12; including the pixel aperture gives a true MTF50 of 0.34551 cycles per pixel. The independent area-sampled edge route differs by at most 0.01076 cycles per pixel when linear and noiseless. Failures beyond 10 percent already appear at the smallest swept angle, 1.0 degree, and nonlinear tone response moves the result as strongly as angle selection.",
+    "zh": "For a 3.45 um pixel, F/5.6 and 550 nm system, 21 angles, five gamma values and four noise levels produce 420 computed conditions. Fullseye's diffraction MTF agrees with the circular-pupil closed form below 1e-12; including the pixel aperture gives a true MTF50 of 0.34551 cycles per pixel. The independent area-sampled edge route differs by at most 0.01076 cycles per pixel when linear and noiseless. Failures beyond 10 percent already appear at the smallest swept angle, 1.0 degree, and nonlinear tone response moves the result as strongly as angle selection.",
+    "tw": "For a 3.45 um pixel, F/5.6 and 550 nm system, 21 angles, five gamma values and four noise levels produce 420 computed conditions. Fullseye's diffraction MTF agrees with the circular-pupil closed form below 1e-12; including the pixel aperture gives a true MTF50 of 0.34551 cycles per pixel. The independent area-sampled edge route differs by at most 0.01076 cycles per pixel when linear and noiseless. Failures beyond 10 percent already appear at the smallest swept angle, 1.0 degree, and nonlinear tone response moves the result as strongly as angle selection.",
+    "ko": "For a 3.45 um pixel, F/5.6 and 550 nm system, 21 angles, five gamma values and four noise levels produce 420 computed conditions. Fullseye's diffraction MTF agrees with the circular-pupil closed form below 1e-12; including the pixel aperture gives a true MTF50 of 0.34551 cycles per pixel. The independent area-sampled edge route differs by at most 0.01076 cycles per pixel when linear and noiseless. Failures beyond 10 percent already appear at the smallest swept angle, 1.0 degree, and nonlinear tone response moves the result as strongly as angle selection.",
+    "de": "For a 3.45 um pixel, F/5.6 and 550 nm system, 21 angles, five gamma values and four noise levels produce 420 computed conditions. Fullseye's diffraction MTF agrees with the circular-pupil closed form below 1e-12; including the pixel aperture gives a true MTF50 of 0.34551 cycles per pixel. The independent area-sampled edge route differs by at most 0.01076 cycles per pixel when linear and noiseless. Failures beyond 10 percent already appear at the smallest swept angle, 1.0 degree, and nonlinear tone response moves the result as strongly as angle selection.",
+    "hi": "For a 3.45 um pixel, F/5.6 and 550 nm system, 21 angles, five gamma values and four noise levels produce 420 computed conditions. Fullseye's diffraction MTF agrees with the circular-pupil closed form below 1e-12; including the pixel aperture gives a true MTF50 of 0.34551 cycles per pixel. The independent area-sampled edge route differs by at most 0.01076 cycles per pixel when linear and noiseless. Failures beyond 10 percent already appear at the smallest swept angle, 1.0 degree, and nonlinear tone response moves the result as strongly as angle selection.",
+    "fr": "For a 3.45 um pixel, F/5.6 and 550 nm system, 21 angles, five gamma values and four noise levels produce 420 computed conditions. Fullseye's diffraction MTF agrees with the circular-pupil closed form below 1e-12; including the pixel aperture gives a true MTF50 of 0.34551 cycles per pixel. The independent area-sampled edge route differs by at most 0.01076 cycles per pixel when linear and noiseless. Failures beyond 10 percent already appear at the smallest swept angle, 1.0 degree, and nonlinear tone response moves the result as strongly as angle selection."
+   },
+   "num": {
+    "ja": "",
+    "en": "",
+    "zh": "",
+    "tw": "",
+    "ko": "",
+    "de": "",
+    "hi": "",
+    "fr": ""
+   },
+   "numbers_source": "log",
+   "youtube_url": ""
+  },
+  {
+   "id": "poc_wavefront_aberration_limits",
+   "category": "inspection",
+   "media": "01_aberration_limits.png",
+   "motion": false,
+   "label": {
+    "ja": "収差の形で変わる Maréchal 近似の限界",
+    "en": "Where the Maréchal approximation fails, by aberration shape",
+    "zh": "Maréchal 近似的失效点随像差形状而变",
+    "tw": "Maréchal 近似的失效點隨像差形狀而變",
+    "ko": "수차 모양에 따라 달라지는 Maréchal 근사의 한계",
+    "de": "Grenzen der Maréchal-Näherung je nach Aberrationsform",
+    "hi": "विपथन के आकार के अनुसार Maréchal सन्निकटन की सीमा",
+    "fr": "Limites de l'approximation de Maréchal selon la forme de l'aberration"
+   },
+   "see": {
+    "ja": "Noll正規化したデフォーカス、非点、コマ、球面収差を各121点、計484条件で掃引した。FullseyeのPSF FFTによる軸上Strehlと独立な瞳積分の最大絶対誤差は6.66e-16。Maréchal近似が5 %外れる境界はRMSで0.1283、0.2012、0.1633、0.1458波となり、同じRMSだけではStrehlを決められない。下段は0.20波RMSのPSF像そのもの。",
+    "en": "Four Noll-normalised modes—defocus, astigmatism, coma and spherical aberration—are swept over 121 points each, 484 conditions in total. On-axis Strehl from Fullseye's PSF FFT agrees with an independent pupil integral to a maximum absolute error of 6.66e-16. The 5 percent failure boundaries of the Marechal approximation are 0.1283, 0.2012, 0.1633 and 0.1458 waves RMS, showing that RMS alone does not determine Strehl. The lower row shows the computed PSF images at 0.20 waves RMS.",
+    "zh": "Four Noll-normalised modes—defocus, astigmatism, coma and spherical aberration—are swept over 121 points each, 484 conditions in total. On-axis Strehl from Fullseye's PSF FFT agrees with an independent pupil integral to a maximum absolute error of 6.66e-16. The 5 percent failure boundaries of the Marechal approximation are 0.1283, 0.2012, 0.1633 and 0.1458 waves RMS, showing that RMS alone does not determine Strehl. The lower row shows the computed PSF images at 0.20 waves RMS.",
+    "tw": "Four Noll-normalised modes—defocus, astigmatism, coma and spherical aberration—are swept over 121 points each, 484 conditions in total. On-axis Strehl from Fullseye's PSF FFT agrees with an independent pupil integral to a maximum absolute error of 6.66e-16. The 5 percent failure boundaries of the Marechal approximation are 0.1283, 0.2012, 0.1633 and 0.1458 waves RMS, showing that RMS alone does not determine Strehl. The lower row shows the computed PSF images at 0.20 waves RMS.",
+    "ko": "Four Noll-normalised modes—defocus, astigmatism, coma and spherical aberration—are swept over 121 points each, 484 conditions in total. On-axis Strehl from Fullseye's PSF FFT agrees with an independent pupil integral to a maximum absolute error of 6.66e-16. The 5 percent failure boundaries of the Marechal approximation are 0.1283, 0.2012, 0.1633 and 0.1458 waves RMS, showing that RMS alone does not determine Strehl. The lower row shows the computed PSF images at 0.20 waves RMS.",
+    "de": "Four Noll-normalised modes—defocus, astigmatism, coma and spherical aberration—are swept over 121 points each, 484 conditions in total. On-axis Strehl from Fullseye's PSF FFT agrees with an independent pupil integral to a maximum absolute error of 6.66e-16. The 5 percent failure boundaries of the Marechal approximation are 0.1283, 0.2012, 0.1633 and 0.1458 waves RMS, showing that RMS alone does not determine Strehl. The lower row shows the computed PSF images at 0.20 waves RMS.",
+    "hi": "Four Noll-normalised modes—defocus, astigmatism, coma and spherical aberration—are swept over 121 points each, 484 conditions in total. On-axis Strehl from Fullseye's PSF FFT agrees with an independent pupil integral to a maximum absolute error of 6.66e-16. The 5 percent failure boundaries of the Marechal approximation are 0.1283, 0.2012, 0.1633 and 0.1458 waves RMS, showing that RMS alone does not determine Strehl. The lower row shows the computed PSF images at 0.20 waves RMS.",
+    "fr": "Four Noll-normalised modes—defocus, astigmatism, coma and spherical aberration—are swept over 121 points each, 484 conditions in total. On-axis Strehl from Fullseye's PSF FFT agrees with an independent pupil integral to a maximum absolute error of 6.66e-16. The 5 percent failure boundaries of the Marechal approximation are 0.1283, 0.2012, 0.1633 and 0.1458 waves RMS, showing that RMS alone does not determine Strehl. The lower row shows the computed PSF images at 0.20 waves RMS."
+   },
+   "num": {
+    "ja": "",
+    "en": "",
+    "zh": "",
+    "tw": "",
+    "ko": "",
+    "de": "",
+    "hi": "",
+    "fr": ""
+   },
+   "numbers_source": "log",
+   "youtube_url": ""
+  },
+  {
    "id": "poc_car_parking",
    "category": "driving",
    "media": "05_truths.png",
@@ -17253,6 +17367,57 @@
     "de": "Mehrroboter-Pläne nach ihrem Zopf sortieren",
     "hi": "Multi-robot plans को braid के घूमने के ढंग से अलग करना",
     "fr": "Classer des plans multi-robots selon leur tresse"
+   }
+  },
+  {
+   "id": "poc_wavefront_aberration_limits",
+   "group": "wing_industrial",
+   "media": "01_aberration_limits.png",
+   "motion": false,
+   "thumb_src": "01_aberration_limits.png",
+   "label": {
+    "ja": "収差の形で変わる Maréchal 近似の限界",
+    "en": "Where the Maréchal approximation fails, by aberration shape",
+    "zh": "Maréchal 近似的失效点随像差形状而变",
+    "tw": "Maréchal 近似的失效點隨像差形狀而變",
+    "ko": "수차 모양에 따라 달라지는 Maréchal 근사의 한계",
+    "de": "Grenzen der Maréchal-Näherung je nach Aberrationsform",
+    "hi": "विपथन के आकार के अनुसार Maréchal सन्निकटन की सीमा",
+    "fr": "Limites de l'approximation de Maréchal selon la forme de l'aberration"
+   }
+  },
+  {
+   "id": "poc_mueller_dofp_observability",
+   "group": "wing_industrial",
+   "media": "01_observability.png",
+   "motion": false,
+   "thumb_src": "01_observability.png",
+   "label": {
+    "ja": "4 方位偏光カメラに見えない Mueller 行列の 7 次元",
+    "en": "Seven Mueller dimensions a four-angle polarisation camera cannot see",
+    "zh": "四方位偏振相机看不到的 Mueller 矩阵 7 个维度",
+    "tw": "四方位偏振相機看不到的 Mueller 矩陣 7 個維度",
+    "ko": "4방위 편광 카메라가 보지 못하는 Mueller 행렬의 7차원",
+    "de": "Sieben Mueller-Dimensionen, die eine Vier-Winkel-Polarisationskamera nicht sieht",
+    "hi": "चार-कोण ध्रुवण कैमरा Mueller मैट्रिक्स के 7 आयाम नहीं देख पाता",
+    "fr": "Sept dimensions de Mueller invisibles pour une caméra de polarisation à quatre angles"
+   }
+  },
+  {
+   "id": "poc_slanted_edge_sfr_limits",
+   "group": "wing_industrial",
+   "media": "01_sfr_limits.png",
+   "motion": false,
+   "thumb_src": "01_sfr_limits.png",
+   "label": {
+    "ja": "斜めエッジ SFR はガンマで MTF50 を誤る",
+    "en": "Slanted-edge SFR misreads MTF50 through gamma",
+    "zh": "斜边 SFR 因伽马而误判 MTF50",
+    "tw": "斜邊 SFR 因伽瑪而誤判 MTF50",
+    "ko": "경사 에지 SFR은 감마 때문에 MTF50을 잘못 읽는다",
+    "de": "Schrägkanten-SFR verfälscht MTF50 durch Gamma",
+    "hi": "तिरछी किनारी SFR गामा के कारण MTF50 गलत पढ़ती है",
+    "fr": "La SFR à bord incliné fausse le MTF50 à cause du gamma"
    }
   },
   {
