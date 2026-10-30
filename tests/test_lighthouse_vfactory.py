@@ -20,3 +20,25 @@ def test_generators_and_detectors_are_deterministic_and_separate():
 
 def test_train_and_holdout_do_not_overlap():
     assert set(vf.TRAIN_SEEDS).isdisjoint(vf.HOLDOUT_SEEDS)
+    assert len(vf.TRAIN_SEEDS) >= 200
+    assert len(vf.HOLDOUT_SEEDS) >= 500
+
+def test_equal_search_budget_and_training_only(monkeypatch):
+    seen=[]
+    original=vf.score
+    def guarded(kind,seeds,detector,params):
+        assert not (set(seeds) & set(vf.HOLDOUT_SEEDS))
+        seen.append((detector.__name__,tuple(seeds)))
+        return original(kind,seeds,detector,params)
+    monkeypatch.setattr(vf,"score",guarded)
+    vf.tune("tyre",vf.baseline_detector,vf.QUICK_TRAIN_SEEDS)
+    vf.tune("tyre",vf.fullseye_detector,vf.QUICK_TRAIN_SEEDS)
+    assert sum(n=="baseline_detector" for n,_ in seen)==vf.SEARCH_BUDGET
+    assert sum(n=="fullseye_detector" for n,_ in seen)==vf.SEARCH_BUDGET
+
+def test_tuned_baselines_are_not_all_or_nothing():
+    for kind in vf.KINDS:
+        threshold,metric=vf.tune(kind,vf.baseline_detector,vf.QUICK_TRAIN_SEEDS)
+        assert threshold > 0
+        assert 0 < metric["miss_rate"][0] < 100
+        assert 0 < metric["false_positive_rate"][0] < 100

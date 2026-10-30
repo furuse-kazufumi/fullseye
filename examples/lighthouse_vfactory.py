@@ -18,11 +18,15 @@ from pathlib import Path
 
 import numpy as np
 from scipy import ndimage as ndi
+from scipy.stats import binomtest
 
 import fullseye as fs
 
-TRAIN_SEEDS = tuple(range(110, 122))
-HOLDOUT_SEEDS = tuple(range(910, 930))
+TRAIN_SEEDS = tuple(range(10_000, 10_240))
+HOLDOUT_SEEDS = tuple(range(20_000, 20_800))
+QUICK_TRAIN_SEEDS = TRAIN_SEEDS[:48]
+QUICK_HOLDOUT_SEEDS = HOLDOUT_SEEDS[:96]
+SEARCH_BUDGET = 12
 KINDS = ("tyre", "wheel", "bevel", "smt")
 WEF = {"tyre": 99.0, "wheel": 98.1, "bevel": 90.0, "smt": 99.0}
 LABEL = {"tyre": "タイヤX線", "wheel": "鋳造ホイールX線", "bevel": "開先3D", "smt": "SMT AOI"}
@@ -121,16 +125,23 @@ def bevel(seed: int):
 GENERATORS={"tyre":tyre,"wheel":wheel,"bevel":bevel,"smt":smt}
 
 
-def baseline_detector(measured: np.ndarray, kind: str, threshold: float=.16):
+def baseline_detector(measured: np.ndarray, kind: str, threshold: float=.16, model=None):
     """Fixed classical rule; accepts measured data only."""
     if kind == "bevel":
         p=measured[np.abs(measured[:,1])<7]; slope=np.polyfit(np.abs(p[:,1]),p[:,2],1)[0]
         angle=math.degrees(math.atan(abs(slope))); return {"hit": abs(angle-35)>2.8, "angle":angle, "root":2.0}
-    a=np.asarray(measured,float); bg=ndi.gaussian_filter(a,5); residual=np.abs(a-bg); pos=np.unravel_index(np.argmax(residual),residual.shape)
-    return {"hit":bool(residual[pos]>threshold),"center":tuple(map(float,pos)),"strength":float(residual[pos])}
+    a=np.asarray(measured,float); bg=ndi.gaussian_filter(a,5); residual=np.abs(a-bg)
+    scale_values=residual
+    if kind == "smt":
+        roi=np.zeros_like(residual,bool); roi[38:59,58:87]=True
+        scale_values=residual[roi]
+        residual=np.where(roi,residual,0.0)
+    pos=np.unravel_index(np.argmax(residual),residual.shape)
+    strength=float(residual[pos]/(np.std(scale_values)+1e-12))
+    return {"hit":bool(strength>threshold),"center":tuple(map(float,pos)),"strength":strength}
 
 
-def fullseye_detector(measured: np.ndarray, kind: str, threshold: float=.08, scale: float=3.0):
+def fullseye_detector(measured: np.ndarray, kind: str, threshold: float=.08, scale: float=3.0, model=None):
     """Robust Fullseye pipeline; no truth argument or stochastic decision."""
     if kind == "bevel":
         p=np.asarray(measured); core=p[(np.abs(p[:,1])<7)&(p[:,2]>-1)&(p[:,2]<8)]
@@ -140,7 +151,28 @@ def fullseye_detector(measured: np.ndarray, kind: str, threshold: float=.08, sca
             if len(q)>5: ctr.append(abs((lo+hi)/2)); med.append(np.median(q[:,2]))
         slope=np.polyfit(ctr,med,1)[0]; angle=math.degrees(math.atan(abs(slope)))
         return {"hit":abs(angle-35)>threshold,"angle":angle,"root":2.0}
-    a=np.asarray(measured,float); bg=ndi.median_filter(a,size=max(3,int(scale)*2+1)); residual=np.abs(a-bg)
+    a=np.asarray(measured,float)
+    if kind == "tyre" and model is not None:
+        # 周期コードは列方向スペクトルの強い線を落とし、低周波のゴム厚も除く。
+        ref=model["template"]
+        f=np.fft.rfft(ref-ref.mean(axis=1,keepdims=True),axis=1); power=np.median(np.abs(f),axis=0)
+        keep=np.ones_like(power); peaks=np.argsort(power[2:])[-5:]+2
+        for p in peaks: keep[max(0,p-1):p+2]=0
+        periodic=np.fft.irfft(f*(1-keep),n=a.shape[1],axis=1)
+        background=ref.mean(axis=1,keepdims=True)+periodic
+        residual=np.abs((a-background)-ndi.gaussian_filter(a-background,(7,3)))
+    elif kind == "wheel" and model is not None:
+        # CAD 透過像（良品統計テンプレート）との差を、位相相関で平行移動補正して取る。
+        ref=model["template"]; cc=np.fft.irfft2(np.fft.rfft2(a)*np.conj(np.fft.rfft2(ref)))
+        shift=np.array(np.unravel_index(np.argmax(cc),cc.shape),float); shift[shift>np.array(a.shape)/2]-=np.array(a.shape)[shift>np.array(a.shape)/2]
+        aligned=ndi.shift(a,-shift,order=1,mode="nearest"); residual=np.abs(aligned-ref)
+        residual=ndi.binary_opening(residual>np.quantile(residual,.85),iterations=1).astype(float)*residual
+    elif kind == "smt" and model is not None:
+        # 良品を位置合わせして得た平均・分散に対する z 残差。連結したブリッジを保つ。
+        residual=np.abs(a-model["template"])/(model["spread"]+0.012)
+        residual=ndi.grey_closing(residual,size=(3,3))
+    else:
+        bg=ndi.median_filter(a,size=max(3,int(scale)*2+1)); residual=np.abs(a-bg)
     # Fullseye supplies the deterministic linear intensity transform; scipy labels.
     lo,hi=float(residual.min()),float(residual.max())
     residual=np.asarray(fs.scale_y_funct_1d(residual.ravel(),1/(hi-lo+1e-12),-lo/(hi-lo+1e-12)),float).reshape(residual.shape)
@@ -157,7 +189,7 @@ def score(kind: str, seeds, detector, params):
     rows=[]; t0=time.perf_counter()
     for seed in seeds:
         measured,truth=GENERATORS[kind](seed); out=detector(measured,kind,**params)
-        loc=True if kind=="bevel" else np.hypot(*(np.subtract(out.get("center",(-99,-99)),truth.center))) <= max(8,2*truth.size)
+        loc=True if (kind=="bevel" or not truth.defective) else np.hypot(*(np.subtract(out.get("center",(-99,-99)),truth.center))) <= max(8,2*truth.size)
         detected=bool(out["hit"] and loc); rows.append((truth,detected,out))
     elapsed=(time.perf_counter()-t0)*1000/len(rows); defects=[r for r in rows if r[0].defective]; good=[r for r in rows if not r[0].defective]; sev=[r for r in defects if r[0].severe]
     miss=sum(not r[1] for r in defects); fp=sum(r[1] for r in good); smiss=sum(not r[1] for r in sev)
@@ -173,13 +205,45 @@ def score(kind: str, seeds, detector, params):
     return out,rows
 
 
-def tune(kind: str):
-    grid=([.1,.5,1.,2.,4.,8.] if kind!="bevel" else [1.0,1.5,2.0,2.5]); best=None
+def _training_model(kind: str, seeds):
+    """学習用の良品だけから統計参照像を作る（評価 seed は受け取らない）。"""
+    if kind not in ("tyre", "wheel", "smt"):
+        return None
+    good=[]
+    for seed in seeds:
+        measured, truth=GENERATORS[kind](seed)
+        if not truth.defective: good.append(np.asarray(measured,float))
+    stack=np.stack(good)
+    return {"template":np.median(stack,axis=0),
+            "spread":np.maximum(np.median(np.abs(stack-np.median(stack,axis=0)),axis=0)*1.4826,.006)}
+
+
+def tune(kind: str, detector, seeds, model=None):
+    """同じ12候補の探索予算で、学習用の見逃し+過検出だけを最小化する。"""
+    if kind == "bevel":
+        grid=np.linspace(.7,4.2,SEARCH_BUDGET)
+    elif detector is fullseye_detector:
+        grid=np.geomspace(2.0,500.0,SEARCH_BUDGET)
+    else:
+        grid=np.linspace(.45,6.5,SEARCH_BUDGET)
+    best=None
     for th in grid:
-        m,_=score(kind,TRAIN_SEEDS,fullseye_detector,{"threshold":th,"scale":3})
+        params={"threshold":float(th),"model":model}
+        if detector is fullseye_detector: params["scale"]=3
+        m,_=score(kind,seeds,detector,params)
         objective=m["miss_rate"][0]+m["false_positive_rate"][0]
-        if best is None or objective<best[0]: best=(objective,th,m)
+        # 「全部出す」「何も出さない」は選ばない。
+        valid=0 < m["miss_rate"][0] < 100 and 0 < m["false_positive_rate"][0] < 100
+        key=(not valid,objective)
+        if best is None or key<best[0]: best=(key,float(th),m)
     return best[1],best[2]
+
+
+def _mcnemar(base_rows, ours_rows, selector):
+    pairs=[(selector(a),selector(b)) for a,b in zip(base_rows,ours_rows) if a[0].defective==b[0].defective]
+    n10=sum(a and not b for a,b in pairs); n01=sum((not a) and b for a,b in pairs)
+    p=float(binomtest(min(n10,n01),n10+n01,.5).pvalue) if n10+n01 else 1.0
+    return {"baseline_only_error":n10,"ours_only_error":n01,"exact_p":p,"significant_0_05":p<.05}
 
 
 def audit_detector_boundary():
@@ -192,11 +256,17 @@ def audit_detector_boundary():
 
 
 def run(kind: str, full: bool=False):
-    audit_detector_boundary(); train=TRAIN_SEEDS if full else TRAIN_SEEDS[:8]; hold=HOLDOUT_SEEDS if full else HOLDOUT_SEEDS[:12]
-    threshold,train_metric=tune(kind); base_train,_=score(kind,train,baseline_detector,{"threshold":.13 if kind!="bevel" else 2.8})
-    ours_train,_=score(kind,train,fullseye_detector,{"threshold":threshold,"scale":3}); base_hold,base_rows=score(kind,hold,baseline_detector,{"threshold":.13 if kind!="bevel" else 2.8}); ours_hold,ours_rows=score(kind,hold,fullseye_detector,{"threshold":threshold,"scale":3})
+    audit_detector_boundary(); train=TRAIN_SEEDS if full else QUICK_TRAIN_SEEDS; hold=HOLDOUT_SEEDS if full else QUICK_HOLDOUT_SEEDS
+    model=_training_model(kind,train)
+    base_threshold,base_search=tune(kind,baseline_detector,train)
+    threshold,train_metric=tune(kind,fullseye_detector,train,model)
+    bp={"threshold":base_threshold}; op={"threshold":threshold,"scale":3,"model":model}
+    base_train,_=score(kind,train,baseline_detector,bp); ours_train,_=score(kind,train,fullseye_detector,op)
+    base_hold,base_rows=score(kind,hold,baseline_detector,bp); ours_hold,ours_rows=score(kind,hold,fullseye_detector,op)
     b=base_hold["miss_rate"][0]; o=ours_hold["miss_rate"][0]; reduction=100*(b-o)/b if b else None
-    return {"kind":kind,"model":LABEL[kind],"seeds":{"train":list(train),"holdout":list(hold)},"defect_model":DEFECT_TABLE[kind],"baseline":"固定全体コントラスト閾値" if kind!="bevel" else "外れ値除去なし最小二乗、角度閾値2.8°","pipeline":"median residual → Fullseye scale_y_funct_1d → MAD → components" if kind!="bevel" else "ROI・外れ値除去 → robust profile fit","selected_threshold":threshold,"train_search_metric":train_metric,"train":{"baseline":base_train,"ours":ours_train},"holdout":{"baseline":base_hold,"ours":ours_hold},"miss_reduction_percent":reduction,"wef_reported_reduction_percent":WEF[kind],"comparison_warning":"WEFは各実工場の導入前との比較。本仮想工場の同一真値比較とは前提が異なり、勝敗を示さない。","loss_condition":"高難度(小寸法・低コントラスト・境界/欠測)では基準を下回る場合がある。difficulty曲線を参照。","_rows":(base_rows,ours_rows)}
+    sig={"defect_miss":_mcnemar(base_rows,ours_rows,lambda r:r[0].defective and not r[1]),
+         "good_false_positive":_mcnemar(base_rows,ours_rows,lambda r:(not r[0].defective) and r[1])}
+    return {"kind":kind,"model":LABEL[kind],"mode":"full" if full else "quick","seeds":{"train":list(train),"holdout":list(hold)},"search_budget_each":SEARCH_BUDGET,"defect_model":DEFECT_TABLE[kind],"baseline":"学習用で調整した固定閾値・古典局所差分" if kind!="bevel" else "学習用で調整した外れ値除去なし最小二乗","pipeline":{"tyre":"周波数ノッチ→周期背景除去→残差成分","wheel":"CAD由来良品参照→位相相関位置合わせ→差分形態学","bevel":"ROI→外れ値に強い中央値プロファイル→角度当てはめ","smt":"位置合わせ良品平均・MAD→接合z残差→連結形態学"}[kind],"selected_thresholds":{"baseline":base_threshold,"ours":threshold},"train_search_metric":{"baseline":base_search,"ours":train_metric},"train":{"baseline":base_train,"ours":ours_train},"holdout":{"baseline":base_hold,"ours":ours_hold},"mcnemar":sig,"miss_reduction_percent":reduction,"wef_reported_reduction_percent":WEF[kind],"comparison_warning":"WEFは各実工場の導入前との比較。本仮想工場の同一真値比較とは前提が異なり、勝敗を示さない。","loss_condition":"高難度(小寸法・低コントラスト・境界/欠測)では基準を下回る場合がある。difficulty曲線を参照。","_rows":(base_rows,ours_rows)}
 
 
 DEFECT_TABLE={
