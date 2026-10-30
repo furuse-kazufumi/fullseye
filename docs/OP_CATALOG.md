@@ -792,9 +792,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3613 ops / 55 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3615 ops / 55 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 959 · **3d** 376 · **fit** 3 · **math** 114 · **optics** 483 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 39 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 717 · **tomography** 32 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 3 · **calib** 21 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族の一覧: **2d** 959 · **3d** 376 · **fit** 3 · **math** 114 · **optics** 483 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 717 · **tomography** 32 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 3 · **calib** 21 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d(959 ops / 49 categories)
 
@@ -3397,7 +3397,7 @@ _計 3613 ops / 55 families。並びとノートの在り処は `docs/ops/INDEX.
 #### flyvision / tuning(1)
 - `fly_dsi` `signal → table` — Direction-selectivity index and preferred direction from tuning responses. · 例: `poc_fly_vision`
 
-### spc(39 ops / 11 categories)
+### spc(41 ops / 11 categories)
 
 #### spc / anomaly_eval(7)
 - `anomaly_image_auroc` `signal × signal → table` — Image-level AUROC from one anomaly score per image and a good/defective label per image (``table``). · 例: `anomaly_eval_metrics`, `poc_good_sample_variation_model`, `poc_patch_anomaly`
@@ -3439,12 +3439,14 @@ _計 3613 ops / 55 families。並びとノートの在り処は `docs/ops/INDEX.
 #### spc / multivariate(1)
 - `spc_hotelling_t2` `matrix → table` — Multivariate SPC by Hotelling's T² with an F-distributed control limit. · 例: `poc_spc`
 
-#### spc / pod(5)
+#### spc / pod(7)
 - `pod_ahat_fit` `table → table` — â vs a の回帰を、左右の打ち切りつき最尤法で当てる(``table``)。 · 例: `poc_pod_lighting`, `poc_sam_hybrid_bonding_voids`
 - `pod_decision_tradeoff` `table × signal → table` — 判定閾値 ``a_dec`` を振ったときの (a50, a90, a90/95, 誤検出確率) の取引表(``table``)。 · 例: `poc_pod_lighting`
 - `pod_false_call` `signal → table` — 無欠陥部位の応答 ``noise`` と判定閾値 ``a_dec`` から誤検出確率(``table``)。 · 例: `poc_pod_lighting`, `poc_sam_hybrid_bonding_voids`
 - `pod_from_ahat` `table → table` — â vs a の回帰と判定閾値 ``a_dec`` から POD(a) 曲線と a50 / a90 / a90/95(``table``)。 · 例: `poc_pod_lighting`, `poc_sam_hybrid_bonding_voids`
 - `pod_hitmiss_fit` `table → table` — 見つけた/見落としたの 2 値データから POD(a) を一般化線形モデルで当てる(``table``)。 · 例: `poc_pod_lighting`, `poc_sem_wafer_defect_edge_bias`, `poc_si_wafer_pl_defect_visibility`
+- `proportion_interval` `入力なし → table` — 二項比率 ``k/n`` の点推定と信頼限界を返す(``table``)。 · 例: `proportion_interval_audit`
+- `trials_for_all_success` `入力なし → scalar` — 全数成功で ``p >= p_min`` を片側 ``confidence`` で示す最小試行数(``scalar``)。 · 例: `proportion_interval_audit`
 
 #### spc / uncertainty(5)
 - `gum_expanded` `table → table` — Welch-Satterthwaite の有効自由度と包含係数 k、拡張不確かさ U(``table``)。 · 例: `poc_measurement_system_analysis`

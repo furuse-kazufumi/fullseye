@@ -140,11 +140,11 @@
 
 ## 查找算子
 
-共有 **3,613 篇算子说明**(调用形式、类型契约、HALCON 对应、参考文献、来源)与 **69 篇族指南**。按维度的入口:
+共有 **3,615 篇算子说明**(调用形式、类型契约、HALCON 对应、参考文献、来源)与 **69 篇族指南**。按维度的入口:
 
-**实测覆盖**: 演化算子 942/942、类型化台账 2650/2662、单行门面 `fullseye.<名称>` 710/1495 —— **门面侧仅覆盖一半**。
+**实测覆盖**: 演化算子 942/942、类型化台账 2652/2664、单行门面 `fullseye.<名称>` 710/1495 —— **门面侧仅覆盖一半**。
 
-**内容实测**: 3613 篇中，附有可运行示例的 **3585** 篇(28 篇没有)，用法说明 120 字以上的 **3414** 篇(199 篇仅一行)。结构(调用形式、类型、可衔接算子)3613 篇全有。
+**内容实测**: 3615 篇中，附有可运行示例的 **3587** 篇(28 篇没有)，用法说明 120 字以上的 **3416** 篇(199 篇仅一行)。结构(调用形式、类型、可衔接算子)3615 篇全有。
 
 | 维度 | 算子数 | 入口 |
 |---|---:|---|
@@ -160,7 +160,7 @@
 | `generative` | 42 | [INDEX](ops/generative/INDEX.md) · [guide](ops/generative/guides/generative_art.md) |
 | `imgmetrics` | 42 | [INDEX](ops/imgmetrics/INDEX.md) · [guide](ops/imgmetrics/guides/image_difference_metrics.md) |
 | `reprconv` | 42 | [INDEX](ops/reprconv/INDEX.md) |
-| `spc` | 39 | [INDEX](ops/spc/INDEX.md) |
+| `spc` | 41 | [INDEX](ops/spc/INDEX.md) |
 | `tomography` | 32 | [INDEX](ops/tomography/INDEX.md) |
 | `piv` | 29 | [INDEX](ops/piv/INDEX.md) · [guide](ops/piv/guides/piv_displacement.md) |
 | `conngraph` | 28 | [INDEX](ops/conngraph/INDEX.md) · [guide](ops/conngraph/guides/conngraph.md) |
@@ -302,7 +302,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## 文档地图 — 共 300 篇
 
-完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 3,613 篇算子说明与 69 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
+完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 3,615 篇算子说明与 69 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
 
 **Getting started**(12)
 

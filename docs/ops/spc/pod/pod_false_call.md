@@ -51,7 +51,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 ## 同カテゴリ(`pod`)
 
-[pod_ahat_fit](pod_ahat_fit.md) · [pod_from_ahat](pod_from_ahat.md) · [pod_hitmiss_fit](pod_hitmiss_fit.md) · [pod_decision_tradeoff](pod_decision_tradeoff.md)
+[proportion_interval](proportion_interval.md) · [trials_for_all_success](trials_for_all_success.md) · [pod_ahat_fit](pod_ahat_fit.md) · [pod_from_ahat](pod_from_ahat.md) · [pod_hitmiss_fit](pod_hitmiss_fit.md) · [pod_decision_tradeoff](pod_decision_tradeoff.md)
 
 ---
 *Provenance: pod.py — SPC operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

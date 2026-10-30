@@ -42,6 +42,7 @@ C. J. Clopper & E. S. Pearson, *Biometrika* 26:404, 1934(二項の信頼限界)�
 from __future__ import annotations
 
 import math
+import numbers
 
 import numpy as np
 
@@ -49,6 +50,109 @@ import numpy as np
 MAX_POD_ROWS = 1 << 20
 
 _LINKS = ("logit", "probit", "cloglog")
+
+
+def _proportion_inputs(k, n, confidence, op):
+    """Validate scalar binomial-count inputs without silently truncating them."""
+    if isinstance(k, (bool, np.bool_)) or not isinstance(k, numbers.Integral):
+        raise ValueError("%s: k must be an integer, got %r" % (op, k))
+    if isinstance(n, (bool, np.bool_)) or not isinstance(n, numbers.Integral):
+        raise ValueError("%s: n must be an integer, got %r" % (op, n))
+    k, n = int(k), int(n)
+    if n < 1:
+        raise ValueError("%s: n must be at least 1, got %d" % (op, n))
+    if not 0 <= k <= n:
+        raise ValueError("%s: require 0 <= k <= n, got k=%d, n=%d" % (op, k, n))
+    if isinstance(confidence, (bool, np.bool_)):
+        raise ValueError("%s: confidence must be in (0, 1), got %r" % (op, confidence))
+    try:
+        confidence = float(confidence)
+    except (TypeError, ValueError, OverflowError) as exc:
+        raise ValueError("%s: confidence must be a finite number in (0, 1)" % op) from exc
+    if not math.isfinite(confidence) or not 0.0 < confidence < 1.0:
+        raise ValueError("%s: confidence must be in (0, 1), got %r" % (op, confidence))
+    return k, n, confidence
+
+
+def proportion_interval(k, n, *, confidence=0.95, sides="two", method="clopper_pearson"):
+    """二項比率 ``k/n`` の点推定と信頼限界を返す(``table``)。
+
+    ``sides`` は ``"two"``(両側)、``"lower"``(片側下限)、``"upper"``
+    (片側上限)、``method`` は ``"clopper_pearson"``、``"wilson"``、
+    ``"jeffreys"``。返り値は ``estimate``、``lower``、``upper``、``method``、
+    ``confidence``、``sides``、``k``、``n`` を持つ。保証・合否判定には正確で
+    保守的な Clopper--Pearson、推定には Wilson / Jeffreys を使い分ける。
+
+    ``k=0`` / ``k=n`` も有限の限界を返す。たとえば 10/10 の 95 % 片側
+    下限は 0.7411、0/20 の片側上限は 0.1391 である。
+
+    空の入力(``n=0``)は ``ValueError`` を返す(理由: 比率を定義できない)。
+    拒否(``ValueError``): 非整数の ``k`` / ``n``、``0 <= k <= n`` 違反、
+    ``confidence`` が (0, 1) 外、未知の ``sides`` / ``method``。
+    """
+    op = "proportion_interval"
+    k, n, confidence = _proportion_inputs(k, n, confidence, op)
+    if sides not in ("two", "lower", "upper"):
+        raise ValueError("%s: sides must be 'two', 'lower', or 'upper', got %r" % (op, sides))
+    if method not in ("clopper_pearson", "wilson", "jeffreys"):
+        raise ValueError("%s: unknown method %r" % (op, method))
+    alpha = 1.0 - confidence
+    tail = alpha / 2.0 if sides == "two" else alpha
+    phat = k / n
+    st = _stats()
+
+    if method == "clopper_pearson":
+        lower = 0.0 if k == 0 else float(st.beta.ppf(tail, k, n - k + 1))
+        upper = 1.0 if k == n else float(st.beta.ppf(1.0 - tail, k + 1, n - k))
+    elif method == "wilson":
+        z = float(st.norm.ppf(1.0 - tail))
+        den = 1.0 + z * z / n
+        center = (phat + z * z / (2.0 * n)) / den
+        half = z * math.sqrt(phat * (1.0 - phat) / n + z * z / (4.0 * n * n)) / den
+        lower, upper = max(0.0, center - half), min(1.0, center + half)
+    else:
+        lower = 0.0 if k == 0 else float(st.beta.ppf(tail, k + 0.5, n - k + 0.5))
+        upper = 1.0 if k == n else float(st.beta.ppf(1.0 - tail, k + 0.5, n - k + 0.5))
+
+    if sides == "lower":
+        upper = 1.0
+    elif sides == "upper":
+        lower = 0.0
+    return {"estimate": phat, "lower": lower, "upper": upper, "method": method,
+            "confidence": confidence, "sides": sides, "k": k, "n": n}
+
+
+def trials_for_all_success(p_min, *, confidence=0.95):
+    """全数成功で ``p >= p_min`` を片側 ``confidence`` で示す最小試行数(``scalar``)。
+
+    返り値は整数で、Clopper--Pearson の全数成功時の閉形式
+    ``(1-confidence)**(1/n) >= p_min`` に基づく。たとえば POD >= 0.90 を
+    95 % 信頼で示すには 29/29 が必要である。誤警報率 ``p <= p_max`` を
+    0 件で示す件数は ``trials_for_all_success(1-p_max, confidence=...)`` と同じ。
+
+    拒否(``ValueError``): ``p_min`` または ``confidence`` が有限な (0, 1) 外。
+    """
+    op = "trials_for_all_success"
+    for name, value in (("p_min", p_min), ("confidence", confidence)):
+        if isinstance(value, (bool, np.bool_)):
+            raise ValueError("%s: %s must be in (0, 1), got %r" % (op, name, value))
+        try:
+            fv = float(value)
+        except (TypeError, ValueError, OverflowError) as exc:
+            raise ValueError("%s: %s must be a finite number in (0, 1)" % (op, name)) from exc
+        if not math.isfinite(fv) or not 0.0 < fv < 1.0:
+            raise ValueError("%s: %s must be in (0, 1), got %r" % (op, name, value))
+        if name == "p_min":
+            p_min = fv
+        else:
+            confidence = fv
+    n = max(1, int(math.ceil(math.log1p(-confidence) / math.log(p_min))))
+    # Guard against a quotient rounded onto an adjacent integer boundary.
+    while (1.0 - confidence) ** (1.0 / n) < p_min:
+        n += 1
+    while n > 1 and (1.0 - confidence) ** (1.0 / (n - 1)) >= p_min:
+        n -= 1
+    return n
 
 
 # --------------------------------------------------------------------------- #
@@ -742,10 +846,8 @@ _PFP_CONF = (0.5, 0.9, 0.95)
 
 def _pfp_bounds(k, n):
     """k 回の誤検出 / n 機会の片側上限(Clopper–Pearson)。k = n なら 1。"""
-    st = _stats()
-    if k >= n:
-        return tuple(1.0 for _ in _PFP_CONF)
-    return tuple(float(st.beta.ppf(cf, k + 1, n - k)) for cf in _PFP_CONF)
+    return tuple(proportion_interval(k, n, confidence=cf, sides="upper")["upper"]
+                 for cf in _PFP_CONF)
 
 
 def _noise_stats(noise, log_response, op):
@@ -860,11 +962,12 @@ def pod_decision_tradeoff(fit, noise, a_dec_grid=None, n_grid=25, level=0.95):
 # --------------------------------------------------------------------------- #
 def _registry():
     """このモジュールが publish する op(名前 -> 関数)。手書きせずモジュールから作る。"""
+    public = {"proportion_interval", "trials_for_all_success"}
     return {name: obj for name, obj in sorted(globals().items())
-            if name.startswith("pod_") and callable(obj)}
+            if (name.startswith("pod_") or name in public) and callable(obj)}
 
 
 POD = _registry()
 
 __all__ = ["pod_ahat_fit", "pod_from_ahat", "pod_hitmiss_fit", "pod_false_call",
-           "pod_decision_tradeoff"]
+           "pod_decision_tradeoff", "proportion_interval", "trials_for_all_success"]

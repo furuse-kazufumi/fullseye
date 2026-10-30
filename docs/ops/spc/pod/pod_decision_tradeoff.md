@@ -51,7 +51,7 @@ MIL-HDBK-1823A G.3.6.2.4.1(図 G-28)の数表版。閾値を上げれば誤検�
 
 ## 同カテゴリ(`pod`)
 
-[pod_ahat_fit](pod_ahat_fit.md) · [pod_from_ahat](pod_from_ahat.md) · [pod_hitmiss_fit](pod_hitmiss_fit.md) · [pod_false_call](pod_false_call.md)
+[proportion_interval](proportion_interval.md) · [trials_for_all_success](trials_for_all_success.md) · [pod_ahat_fit](pod_ahat_fit.md) · [pod_from_ahat](pod_from_ahat.md) · [pod_hitmiss_fit](pod_hitmiss_fit.md) · [pod_false_call](pod_false_call.md)
 
 ---
 *Provenance: pod.py — SPC operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
