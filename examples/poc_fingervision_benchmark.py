@@ -180,4 +180,7 @@ def evaluate(full=False):
 
 if __name__=="__main__":
     ap=argparse.ArgumentParser(); ap.add_argument("--full",action="store_true"); ns=ap.parse_args(); out=evaluate(ns.full)
+    figure_errors=figs.errors()
+    if figure_errors: print("図の書き出しで失敗:","; ".join(figure_errors))
     if not ns.full and out["elapsed_s"]>60: raise SystemExit("default run exceeded 60 s")
+    print("PASS")

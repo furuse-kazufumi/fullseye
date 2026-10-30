@@ -1634,6 +1634,24 @@ EXAMPLES = [
     {"id": "poc_tof_camera", "task": "optics_sensing", "data": "synthetic",
      "name": "同じ3次元場面を間接ToFと直接ToFで測る――多経路・混合画素・pile-up・体積誤差",
      "summary": "箱、コーナー、透明板、光沢面、細い柱、暗明市松を同じ解析的な光線真値で測る。20/80/100 MHz・4相の間接方式と光子到着ヒストグラムの直接方式を、曖昧距離、雑音予算、高調波、多経路、混合画素、時間ビン、pile-up、反射率、箱体積について閉形式と比較する。新しいopは追加しない。学習0、較正0、門27件。"},
+    {"id": "poc_tote_picking_tactile", "task": "inspection", "data": "synthetic",
+     "name": "Pandaのかご間ピッキング――触覚と失敗型別リトライを公平な再試行で比べる",
+     "summary": "MuJoCo MenagerieのPandaを逐次積分し、視覚のみ、理想化触覚、失敗型別リトライを同じ場面と乱数で比較する。"},
+    {"id": "poc_fingervision_benchmark", "task": "optics_sensing", "data": "synthetic",
+     "name": "FingerVisionベンチマーク――4 mm接着層の変位・力・滑りを物理合成像で比べる",
+     "summary": "公開式2版、有限層Green逆算、全場ridgeを、魚眼カメラと有限要素法から作った較正外の像で比較する。"},
+    {"id": "poc_lighthouse_tyre_xray", "task": "inspection", "data": "synthetic",
+     "name": "仮想工場のタイヤX線検査――固定基準・手組み・探索を独立holdoutで比べる",
+     "summary": "Beer–Lambert合成像に真値を仕込み、Fullseyeパイプラインの見逃し、過検出、宣言FARの破れを測る。"},
+    {"id": "poc_lighthouse_cast_wheel", "task": "inspection", "data": "synthetic",
+     "name": "仮想工場の鋳造ホイールX線検査――気孔・引け巣・介在物を探索する",
+     "summary": "重大度つき欠陥の合成X線像で固定基準・手組み・探索を独立holdout評価する。"},
+    {"id": "poc_lighthouse_bevel_pointcloud", "task": "inspection", "data": "synthetic",
+     "name": "仮想工場の開先3D点群検査――欠測と外れ値の下で角度欠陥を探す",
+     "summary": "CAD開先から点群を作り、固定基準・頑健な手組み・探索の見逃しと過検出を測る。"},
+    {"id": "poc_lighthouse_smt_aoi", "task": "inspection", "data": "synthetic",
+     "name": "仮想工場のSMT AOI――5欠陥を3色照明で探す",
+     "summary": "外観合成像だけを検出器に渡し、固定基準・手組み・探索を独立holdoutで比較する。"},
     {"id": "poc_zmx_public_verify", "task": "optics_sensing", "data": "synthetic",
      "name": "公開 .zmx 処方を独立計算で照合し、検査レンズとして採点する",
      "summary": "4 本の処方を別の読取器と光線追跡器で照合し、無限遠・入口瞳径 1 mm・5.5 µm 画素の条件で照明、歪曲、色ずれ、MTF、3 画素傷の視認性を採点する。OPD の規約差も図に残す。"},
@@ -2026,6 +2044,8 @@ EXAMPLES = [
 # honest reason. test_examples2d enforces: registry ∪ EXCLUDED == files on disk,
 # and the two sets are disjoint, so a new script cannot slip in unlisted.
 EXCLUDED = {
+    "lighthouse_vfactory": "support module shared by the four Lighthouse PoCs; cannot run as a standalone exhibit",
+    "lighthouse_vfactory_cli": "shared CLI and figure writer; cannot run without one of the four Lighthouse kinds",
     "lensfile_tolerance_worst_mtf": "runnable composability sample covered by the lens-tolerancing exhibit; "
                                     "cannot be numbered again without creating a duplicate exhibit",
     "optimized_lens_tolerance_sensitivity": "runnable composability sample covered by the lens-tolerancing exhibit; "

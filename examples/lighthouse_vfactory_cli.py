@@ -56,18 +56,19 @@ def _overlay(measured,truth,label):
         rgb=np.ones((640,1280,3)); p=measured; x=((p[:,0]+50)*12).astype(int); y=(570-p[:,2]*45).astype(int); ok=(x>=0)&(x<1280)&(y>=0)&(y<640); rgb[y[ok],x[ok]]=(.1,.2,.7)
     return fs.annotate_legend(rgb,[label,"赤枠=真値領域（点群は測定点）"],(20,20),font_size=22,radius=15)
 
-def main(kind):
+def main(kind, save_figure=figs.save):
     ap=argparse.ArgumentParser(); ap.add_argument("--full",action="store_true"); ns=ap.parse_args()
     result=run(kind,ns.full); ids={"tyre":"tyre_xray","wheel":"cast_wheel","bevel":"bevel_pointcloud","smt":"smt_aoi"}; out=Path(__file__).resolve().parents[1]/"docs/articles/assets/poc"/("poc_lighthouse_"+ids[kind])
-    save_result(kind,result,out)
-    figs.save("miss_comparison",_bar(result),caption="学習用と独立holdoutの見逃し率。95%区間はresults.json。")
-    figs.save("difficulty_curve",_curve(result),caption="欠陥の難しさ別検出率。小寸法・低コントラスト・欠測側で低下する。")
-    figs.save("variation_false_positive_curve",_variation_curve(result),caption="良品ばらつきを増やしたときの過検出率。学習済み模型と閾値は固定。")
-    figs.save("budget_curve",_budget_curve(result),caption="探索予算と学習・評価成績。差は過学習の大きさを示す。")
+    if figs.enabled():
+        save_result(kind,result,out)
+    save_figure("miss_comparison",_bar(result),"学習用と独立holdoutの見逃し率。95%区間はresults.json。")
+    save_figure("difficulty_curve",_curve(result),"欠陥の難しさ別検出率。小寸法・低コントラスト・欠測側で低下する。")
+    save_figure("variation_false_positive_curve",_variation_curve(result),"良品ばらつきを増やしたときの過検出率。学習済み模型と閾値は固定。")
+    save_figure("budget_curve",_budget_curve(result),"探索予算と学習・評価成績。差は過学習の大きさを示す。")
     ours=result["_rows"][2]; seeds=result["seeds"]["holdout"]
     cases=(("miss_example",lambda r:r[0].defective and not r[1],"提案法の見逃し例"),("false_positive_example",lambda r:(not r[0].defective) and r[1],"提案法の過検出例"))
     for name,pred,label in cases:
         idx=next((i for i,r in enumerate(ours) if pred(r)),0); measured,truth=GENERATORS[kind](seeds[idx])
-        figs.save(name,_overlay(measured,truth,label),caption=label+"。検出器出力から選び、真値は表示だけに使用。長辺1280 px以上。")
+        save_figure(name,_overlay(measured,truth,label),label+"。検出器出力から選び、真値は表示だけに使用。長辺1280 px以上。")
     if figs.errors(): raise RuntimeError("; ".join(figs.errors()))
-    clean={k:v for k,v in result.items() if k!="_rows"}; print(json.dumps(clean,ensure_ascii=False,indent=2)); return 0
+    clean={k:v for k,v in result.items() if k!="_rows"}; print(json.dumps(clean,ensure_ascii=False,indent=2)); print("PASS"); return 0

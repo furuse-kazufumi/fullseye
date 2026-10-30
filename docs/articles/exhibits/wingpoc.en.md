@@ -2,11 +2,155 @@
 
 ### The Industrial Inspection Wing — A Passing Number and a Failing Number Can Coexist
 
-Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The 37 exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.
+Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The 41 exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.
 
 Every ground truth is planted: a closed-form periodic background, the laser-profile h(x), the analytic 1-D heat-conduction solution, closed-form bearing defect frequencies. That is what lets each exhibit measure 'where detection stops working' instead of 'detection worked', without fitting the threshold afterwards.
 
 The other shared feature is that failure arrives as a cliff, not a slope: 15 versus 16 degrees of tilt, a 25-second versus a 4-second fitting window, ΔT of 1.6 K. Most of those positions can be predicted from geometry or physics first, and wherever they could be, the prediction is checked against the measurement.
+
+## No.2026.284 —— Meeting a Declared Pixel FAR Still Leaves a Part-Level Trade-off — A Virtual Tyre X-ray Factory
+
+[![Meeting a Declared Pixel FAR Still Leaves a Part-Level Trade-off — A Virtual Tyre X-ray Factory](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_tyre_xray/01_miss_comparison_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_tyre_xray/01_miss_comparison.png)
+
+*↑ **Meeting a Declared Pixel FAR Still Leaves a Part-Level Trade-off — A Virtual Tyre X-ray Factory** ―― The variation model declares a pixel FAR of 1e-3, yet independent evaluation measures 0.005106535852671736, a 5.11-fold breach. Search uses budgets of 12 and 48 evaluations. On the final holdout, the evolved pipeline has 49.568221070811745% misses and 6.334841628959276% false positives, both below the baseline's 72.71157167530224% and 16.7420814479638%. The hand-built pipeline lowers misses further to 44.04145077720207% but raises false positives to 22.171945701357465%, leaving a real trade-off. WEF's reported 99% reduction in defect escape compares a different factory before and after deployment and is shown only as context.*
+
+[![欠陥の難しさ別検出率。小寸法・低コントラスト・欠測側で低下する。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_tyre_xray/02_difficulty_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_tyre_xray/02_difficulty_curve.png)
+
+*↑ The measurement ―― 欠陥の難しさ別検出率。小寸法・低コントラスト・欠測側で低下する。 (figure labels are in Japanese; the numbers are the same)*
+
+[![良品ばらつきを増やしたときの過検出率。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_tyre_xray/03_variation_false_positive_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_tyre_xray/03_variation_false_positive_curve.png)
+
+*↑ 良品ばらつきを増やしたときの過検出率。*
+
+[![探索予算と学習・評価成績。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_tyre_xray/04_budget_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_tyre_xray/04_budget_curve.png)
+
+*↑ 探索予算と学習・評価成績。*
+
+[![提案法の見逃し例。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_tyre_xray/05_miss_example_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_tyre_xray/05_miss_example.png)
+
+*↑ 提案法の見逃し例。*
+
+[![提案法の過検出例。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_tyre_xray/06_false_positive_example_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_tyre_xray/06_false_positive_example.png)
+
+*↑ 提案法の過検出例。*
+
+```
+py -3.11 examples/poc_lighthouse_tyre_xray.py --full
+```
+
+Source: [examples/poc_lighthouse_tyre_xray.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lighthouse_tyre_xray.py)
+
+This run produced **10 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_lighthouse_tyre_xray)
+
+
+
+## No.2026.285 —— Search Cuts Misses but Leaves False Positives — A Virtual Cast-Wheel X-ray Factory
+
+[![Search Cuts Misses but Leaves False Positives — A Virtual Cast-Wheel X-ray Factory](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_cast_wheel/01_miss_comparison_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_cast_wheel/01_miss_comparison.png)
+
+*↑ **Search Cuts Misses but Leaves False Positives — A Virtual Cast-Wheel X-ray Factory** ―― The declared pixel FAR of 1e-3 measures 0.001984718907451604 on independent data, a 1.98-fold breach. After search budgets of 12 and 48 evaluations, the evolved pipeline reaches 15.94488188976378% misses but 34.58904109589041% false positives on holdout; the hand-built pipeline gives 16.92913385826772% and 26.027397260273972%. The baseline records 40.55118110236221% misses and 100% false positives, so both proposals improve it, but the searched threshold still trades one error against the other. WEF's reported 98.1% reduction in critical-defect misses is a before-and-after figure from a different physical factory and is not used to declare a winner here.*
+
+[![欠陥の難しさ別検出率。小寸法・低コントラスト・欠測側で低下する。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_cast_wheel/02_difficulty_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_cast_wheel/02_difficulty_curve.png)
+
+*↑ The measurement ―― 欠陥の難しさ別検出率。小寸法・低コントラスト・欠測側で低下する。 (figure labels are in Japanese; the numbers are the same)*
+
+[![良品ばらつきを増やしたときの過検出率。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_cast_wheel/03_variation_false_positive_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_cast_wheel/03_variation_false_positive_curve.png)
+
+*↑ 良品ばらつきを増やしたときの過検出率。*
+
+[![探索予算と学習・評価成績。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_cast_wheel/04_budget_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_cast_wheel/04_budget_curve.png)
+
+*↑ 探索予算と学習・評価成績。*
+
+[![提案法の見逃し例。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_cast_wheel/05_miss_example_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_cast_wheel/05_miss_example.png)
+
+*↑ 提案法の見逃し例。*
+
+[![提案法の過検出例。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_cast_wheel/06_false_positive_example_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_cast_wheel/06_false_positive_example.png)
+
+*↑ 提案法の過検出例。*
+
+```
+py -3.11 examples/poc_lighthouse_cast_wheel.py --full
+```
+
+Source: [examples/poc_lighthouse_cast_wheel.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lighthouse_cast_wheel.py)
+
+This run produced **10 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_lighthouse_cast_wheel)
+
+
+
+## No.2026.286 —— Minimising Point-Cloud Misses Brings False Positives Back — A Virtual 3D Bevel-Inspection Factory
+
+[![Minimising Point-Cloud Misses Brings False Positives Back — A Virtual 3D Bevel-Inspection Factory](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_bevel_pointcloud/01_miss_comparison_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_bevel_pointcloud/01_miss_comparison.png)
+
+*↑ **Minimising Point-Cloud Misses Brings False Positives Back — A Virtual 3D Bevel-Inspection Factory** ―― This instrument measures a point cloud rather than pixels, so there is no measured pixel-FAR denominator; instead, the evolved pipeline declares a 5% part FAR and breaches it at 16.433566433566433% on holdout. With search budgets of 12 and 48 evaluations, evolution gives the lowest miss rate, 16.731517509727624%. The hand-built pipeline gives 20.622568093385212% misses and 4.895104895104895% false positives, both below the baseline's 47.276264591439684% and 11.188811188811188%. Evolution therefore buys fewer misses by bringing false positives back. WEF's reported 90% reduction in bevel defects comes from another physical factory under different assumptions and is included only for context.*
+
+[![欠陥の難しさ別検出率。小寸法・低コントラスト・欠測側で低下する。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_bevel_pointcloud/02_difficulty_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_bevel_pointcloud/02_difficulty_curve.png)
+
+*↑ The measurement ―― 欠陥の難しさ別検出率。小寸法・低コントラスト・欠測側で低下する。 (figure labels are in Japanese; the numbers are the same)*
+
+[![良品ばらつきを増やしたときの過検出率。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_bevel_pointcloud/03_variation_false_positive_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_bevel_pointcloud/03_variation_false_positive_curve.png)
+
+*↑ 良品ばらつきを増やしたときの過検出率。*
+
+[![探索予算と学習・評価成績。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_bevel_pointcloud/04_budget_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_bevel_pointcloud/04_budget_curve.png)
+
+*↑ 探索予算と学習・評価成績。*
+
+[![提案法の見逃し例。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_bevel_pointcloud/05_miss_example_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_bevel_pointcloud/05_miss_example.png)
+
+*↑ 提案法の見逃し例。*
+
+[![提案法の過検出例。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_bevel_pointcloud/06_false_positive_example_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_bevel_pointcloud/06_false_positive_example.png)
+
+*↑ 提案法の過検出例。*
+
+```
+py -3.11 examples/poc_lighthouse_bevel_pointcloud.py --full
+```
+
+Source: [examples/poc_lighthouse_bevel_pointcloud.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lighthouse_bevel_pointcloud.py)
+
+This run produced **10 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_lighthouse_bevel_pointcloud)
+
+
+
+## No.2026.287 —— Only SMT Search Lowers Misses and False Positives Together — A Virtual AOI Factory
+
+[![Only SMT Search Lowers Misses and False Positives Together — A Virtual AOI Factory](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_smt_aoi/01_miss_comparison_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_smt_aoi/01_miss_comparison.png)
+
+*↑ **Only SMT Search Lowers Misses and False Positives Together — A Virtual AOI Factory** ―― The declared pixel FAR of 1e-3 measures 0.002454622583299054 independently, a 2.45-fold breach. Even so, SMT is the one application where search budgets of 12 and 48 evaluations significantly improve both part-level errors: the evolved pipeline records 57.407407407407405% misses and 2.6923076923076925% false positives, against the baseline's 88.51851851851852% and 52.307692307692314%. McNemar exact p is 3.5883588815862885e-07 for misses and 4.581478055141831e-29 for false positives. The hand-built method lowers false positives to 6.923076923076923% but worsens misses to 96.85185185185186%. WEF's reported 99% defect-rate reduction is shown only as a result from a physical factory with different premises.*
+
+[![欠陥の難しさ別検出率。小寸法・低コントラスト・欠測側で低下する。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_smt_aoi/02_difficulty_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_smt_aoi/02_difficulty_curve.png)
+
+*↑ The measurement ―― 欠陥の難しさ別検出率。小寸法・低コントラスト・欠測側で低下する。 (figure labels are in Japanese; the numbers are the same)*
+
+[![良品ばらつきを増やしたときの過検出率。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_smt_aoi/03_variation_false_positive_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_smt_aoi/03_variation_false_positive_curve.png)
+
+*↑ 良品ばらつきを増やしたときの過検出率。*
+
+[![探索予算と学習・評価成績。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_smt_aoi/04_budget_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_smt_aoi/04_budget_curve.png)
+
+*↑ 探索予算と学習・評価成績。*
+
+[![提案法の見逃し例。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_smt_aoi/05_miss_example_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_smt_aoi/05_miss_example.png)
+
+*↑ 提案法の見逃し例。*
+
+[![提案法の過検出例。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_smt_aoi/06_false_positive_example_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_smt_aoi/06_false_positive_example.png)
+
+*↑ 提案法の過検出例。*
+
+```
+py -3.11 examples/poc_lighthouse_smt_aoi.py --full
+```
+
+Source: [examples/poc_lighthouse_smt_aoi.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lighthouse_smt_aoi.py)
+
+This run produced **10 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_lighthouse_smt_aoi)
+
+
 
 ## No.2026.003 —— Where a 1-D Barcode Stops Reading — Counting Misreads and Unreadables Separately
 
@@ -8478,11 +8622,95 @@ This run produced **3 figures** in total - [see them all](https://github.com/fur
 
 ### The Instrument Wing — From Raw Output to Instrument-Specific Failure
 
-It is easy to borrow an instrument's name and produce a convenient image. The 32 exhibits in this room instead build raw output from photons, electrons, interference, heat diffusion, scanning and ray tracing, then carry that output through to the quantity normally reported.
+It is easy to borrow an instrument's name and produce a convenient image. The 34 exhibits in this room instead build raw output from photons, electrons, interference, heat diffusion, scanning and ray tracing, then carry that output through to the quantity normally reported.
 
 The same range fails differently in iToF and dToF through multipath and pile-up; the same particles read at different diameters in SEM and TEM. More TDI stages reveal dark defects while accumulating each synchronisation error across all stages. A model that omits the instrument physics cannot reproduce where the instrument breaks.
 
 Every exhibit is gated by a closed form, public measurement or independent implementation. The aim is not to claim a complete substitute for hardware. It is to state which physics is present and which is still absent, then find when the reported measurement stops being trustworthy before touching the instrument.
+
+## No.2026.282 —— Tactile First-Attempt Gains Vanish When Both Sides Get Five Retries — Panda Tote Picking
+
+[![Tactile First-Attempt Gains Vanish When Both Sides Get Five Retries — Panda Tote Picking](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tote_picking_tactile/01_success_vs_retries_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tote_picking_tactile/01_success_vs_retries.png)
+
+*↑ **Tactile First-Attempt Gains Vanish When Both Sides Get Five Retries — Panda Tote Picking** ―― The non-obvious result is that when vision-only and tactile regrasp are each allowed the same fair maximum of five retries, both finish at 81.7% and the difference disappears (McNemar exact p = 1.0). On a single attempt tactile reaches 63.7% against 62.3% for vision-only, but the substantial gain comes from changing the next action according to the ground-truth failure class — grasp miss, transport slip, outside placement, collision or timeout — which reaches 90.3% with five retries. Every trial integrates a real MuJoCo Menagerie Franka Panda trajectory; candidates come only from the depth image and finger-pad contact force is used as idealised tactile input. The reported INSOL-HIGH hardware result, about 300 attempts and 97% with up to five retries, is shown only as context: the equipment, objects and success criteria differ, so it is not a contest with this virtual factory.*
+
+[![0..9は商品表順。低摩擦・薄板・重量物を含み、100%にならない難しさ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tote_picking_tactile/02_success_by_product_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tote_picking_tactile/02_success_by_product.png)
+
+*↑ The measurement ―― 0..9は商品表順。低摩擦・薄板・重量物を含み、100%にならない難しさ。 (figure labels are in Japanese; the numbers are the same)*
+
+[![失敗は重複させず、最初に確定した真値の型で数える。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tote_picking_tactile/03_failure_types_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tote_picking_tactile/03_failure_types.png)
+
+*↑ 失敗は重複させず、最初に確定した真値の型で数える。*
+
+[![易しい箱1試行の高さとmj_contactForce。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tote_picking_tactile/04_easy_trial_diagnosis_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tote_picking_tactile/04_easy_trial_diagnosis.png)
+
+*↑ 易しい箱1試行の高さとmj_contactForce。*
+
+[![MuJoCo実描画: シャンプーボトルの成功試行。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tote_picking_tactile/05_trial_success_shampoo.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tote_picking_tactile/05_trial_success_shampoo.gif)
+
+*↑ The animation ―― MuJoCo実描画: シャンプーボトルの成功試行。*
+
+[![MuJoCo実描画: 視覚のみでは時間切れ、触覚で救済された同一場面。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tote_picking_tactile/06_trial_tactile_rescue.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tote_picking_tactile/06_trial_tactile_rescue.gif)
+
+*↑ The animation ―― MuJoCo実描画: 視覚のみでは時間切れ、触覚で救済された同一場面。*
+
+[![MuJoCo実描画: 重量缶の掴み損ね。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tote_picking_tactile/07_trial_fail_grasp_miss.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tote_picking_tactile/07_trial_fail_grasp_miss.gif)
+
+*↑ The animation ―― MuJoCo実描画: 重量缶の掴み損ね。*
+
+[![MuJoCo実描画: 缶の運搬中滑落。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tote_picking_tactile/08_trial_fail_transport_slip.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tote_picking_tactile/08_trial_fail_transport_slip.gif)
+
+*↑ The animation ―― MuJoCo実描画: 缶の運搬中滑落。*
+
+[![MuJoCo実描画: 箱の静止時間切れ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tote_picking_tactile/09_trial_fail_timeout.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tote_picking_tactile/09_trial_fail_timeout.gif)
+
+*↑ The animation ―― MuJoCo実描画: 箱の静止時間切れ。*
+
+```
+py -3.11 examples/poc_tote_picking_tactile.py --full
+```
+
+Source: [examples/poc_tote_picking_tactile.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_tote_picking_tactile.py)
+
+This run produced **9 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_tote_picking_tactile)
+
+
+
+## No.2026.283 —— A Bonded 4 mm Layer Is Not a Half-Space — Benchmarking FingerVision Displacement, Force and Slip on Physics-Based Synthetic Images
+
+[![A Bonded 4 mm Layer Is Not a Half-Space — Benchmarking FingerVision Displacement, Force and Slip on Physics-Based Synthetic Images](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fingervision_benchmark/05_fvbench_layer_physics_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fingervision_benchmark/05_fvbench_layer_physics.png)
+
+*↑ **A Bonded 4 mm Layer Is Not a Half-Space — Benchmarking FingerVision Displacement, Force and Slip on Physics-Based Synthetic Images** ―― In a bonded, nearly incompressible 4 mm layer, lateral marker displacement is 4.98 times the half-space prediction at nu = 0.48 and 115 times it at nu = 0.499, so the assumption behind the public equations fails first. On skin-coloured objects the layer-Green slip detector reaches F1 0.842 (0.85 rounded), while both public 2016 and 2017 methods score zero. For force, the public 2017 method is best or nearly tied: held-out normal-force RMSE is 0.872 N against 0.926 N for the full-field ridge model. The ridge model fits calibration at 0.088 N, exposing overfitting on unseen indenters. A 22 mm equidistant fisheye camera, a finite-element bonded layer, bead tracking, force and slip all share one forward model and are evaluated at unseen radii, positions and loads. With black objects or in the dark, black beads lose contrast against the background, so both the public and full-field methods fundamentally lose their input.*
+
+[![22 mm等距離魚眼、物理順方向。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fingervision_benchmark/01_fvbench_sensor_examples_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fingervision_benchmark/01_fvbench_sensor_examples.png)
+
+*↑ The measurement ―― 22 mm等距離魚眼、物理順方向。 (figure labels are in Japanese; the numbers are the same)*
+
+[![較正に無い半径・位置・範囲。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fingervision_benchmark/02_fvbench_force_scatter_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fingervision_benchmark/02_fvbench_force_scatter.png)
+
+*↑ 較正に無い半径・位置・範囲。*
+
+[![Q=muPからの遅れ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fingervision_benchmark/03_fvbench_slip_delay_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fingervision_benchmark/03_fvbench_slip_delay.png)
+
+*↑ Q=muPからの遅れ。*
+
+[![--fullは各条件25時系列×8=200フレーム。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fingervision_benchmark/04_fvbench_condition_f1_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fingervision_benchmark/04_fvbench_condition_f1.png)
+
+*↑ --fullは各条件25時系列×8=200フレーム。*
+
+[![6 markers未満では全変位場手法が推定不能。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fingervision_benchmark/06_fvbench_contrast_boundary_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fingervision_benchmark/06_fvbench_contrast_boundary.png)
+
+*↑ 6 markers未満では全変位場手法が推定不能。*
+
+```
+py -3.11 examples/poc_fingervision_benchmark.py --full
+```
+
+Source: [examples/poc_fingervision_benchmark.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_fingervision_benchmark.py)
+
+This run produced **7 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_fingervision_benchmark)
+
+Ops used (notes): [`rmse`](https://furuse.work/ops/imgmetrics/fidelity/rmse.html)
 
 ## No.2026.010 —— Where CT Reconstruction Starts to Break as Projections Are Removed
 

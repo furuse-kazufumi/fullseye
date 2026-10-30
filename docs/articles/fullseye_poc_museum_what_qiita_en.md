@@ -4,17 +4,161 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**130 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**134 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
 ### The Industrial Inspection Wing — A Passing Number and a Failing Number Can Coexist
 
-Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The 37 exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.
+Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The 41 exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.
 
 Every ground truth is planted: a closed-form periodic background, the laser-profile h(x), the analytic 1-D heat-conduction solution, closed-form bearing defect frequencies. That is what lets each exhibit measure 'where detection stops working' instead of 'detection worked', without fitting the threshold afterwards.
 
 The other shared feature is that failure arrives as a cliff, not a slope: 15 versus 16 degrees of tilt, a 25-second versus a 4-second fitting window, ΔT of 1.6 K. Most of those positions can be predicted from geometry or physics first, and wherever they could be, the prediction is checked against the measurement.
+
+## No.2026.284 —— Meeting a Declared Pixel FAR Still Leaves a Part-Level Trade-off — A Virtual Tyre X-ray Factory
+
+[![Meeting a Declared Pixel FAR Still Leaves a Part-Level Trade-off — A Virtual Tyre X-ray Factory](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_tyre_xray/01_miss_comparison_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_tyre_xray/01_miss_comparison.png)
+
+*↑ **Meeting a Declared Pixel FAR Still Leaves a Part-Level Trade-off — A Virtual Tyre X-ray Factory** ―― The variation model declares a pixel FAR of 1e-3, yet independent evaluation measures 0.005106535852671736, a 5.11-fold breach. Search uses budgets of 12 and 48 evaluations. On the final holdout, the evolved pipeline has 49.568221070811745% misses and 6.334841628959276% false positives, both below the baseline's 72.71157167530224% and 16.7420814479638%. The hand-built pipeline lowers misses further to 44.04145077720207% but raises false positives to 22.171945701357465%, leaving a real trade-off. WEF's reported 99% reduction in defect escape compares a different factory before and after deployment and is shown only as context.*
+
+[![欠陥の難しさ別検出率。小寸法・低コントラスト・欠測側で低下する。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_tyre_xray/02_difficulty_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_tyre_xray/02_difficulty_curve.png)
+
+*↑ The measurement ―― 欠陥の難しさ別検出率。小寸法・低コントラスト・欠測側で低下する。 (figure labels are in Japanese; the numbers are the same)*
+
+[![良品ばらつきを増やしたときの過検出率。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_tyre_xray/03_variation_false_positive_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_tyre_xray/03_variation_false_positive_curve.png)
+
+*↑ 良品ばらつきを増やしたときの過検出率。*
+
+[![探索予算と学習・評価成績。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_tyre_xray/04_budget_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_tyre_xray/04_budget_curve.png)
+
+*↑ 探索予算と学習・評価成績。*
+
+[![提案法の見逃し例。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_tyre_xray/05_miss_example_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_tyre_xray/05_miss_example.png)
+
+*↑ 提案法の見逃し例。*
+
+[![提案法の過検出例。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_tyre_xray/06_false_positive_example_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_tyre_xray/06_false_positive_example.png)
+
+*↑ 提案法の過検出例。*
+
+```
+py -3.11 examples/poc_lighthouse_tyre_xray.py --full
+```
+
+Source: [examples/poc_lighthouse_tyre_xray.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lighthouse_tyre_xray.py)
+
+This run produced **10 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_lighthouse_tyre_xray)
+
+
+
+## No.2026.285 —— Search Cuts Misses but Leaves False Positives — A Virtual Cast-Wheel X-ray Factory
+
+[![Search Cuts Misses but Leaves False Positives — A Virtual Cast-Wheel X-ray Factory](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_cast_wheel/01_miss_comparison_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_cast_wheel/01_miss_comparison.png)
+
+*↑ **Search Cuts Misses but Leaves False Positives — A Virtual Cast-Wheel X-ray Factory** ―― The declared pixel FAR of 1e-3 measures 0.001984718907451604 on independent data, a 1.98-fold breach. After search budgets of 12 and 48 evaluations, the evolved pipeline reaches 15.94488188976378% misses but 34.58904109589041% false positives on holdout; the hand-built pipeline gives 16.92913385826772% and 26.027397260273972%. The baseline records 40.55118110236221% misses and 100% false positives, so both proposals improve it, but the searched threshold still trades one error against the other. WEF's reported 98.1% reduction in critical-defect misses is a before-and-after figure from a different physical factory and is not used to declare a winner here.*
+
+[![欠陥の難しさ別検出率。小寸法・低コントラスト・欠測側で低下する。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_cast_wheel/02_difficulty_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_cast_wheel/02_difficulty_curve.png)
+
+*↑ The measurement ―― 欠陥の難しさ別検出率。小寸法・低コントラスト・欠測側で低下する。 (figure labels are in Japanese; the numbers are the same)*
+
+[![良品ばらつきを増やしたときの過検出率。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_cast_wheel/03_variation_false_positive_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_cast_wheel/03_variation_false_positive_curve.png)
+
+*↑ 良品ばらつきを増やしたときの過検出率。*
+
+[![探索予算と学習・評価成績。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_cast_wheel/04_budget_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_cast_wheel/04_budget_curve.png)
+
+*↑ 探索予算と学習・評価成績。*
+
+[![提案法の見逃し例。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_cast_wheel/05_miss_example_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_cast_wheel/05_miss_example.png)
+
+*↑ 提案法の見逃し例。*
+
+[![提案法の過検出例。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_cast_wheel/06_false_positive_example_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_cast_wheel/06_false_positive_example.png)
+
+*↑ 提案法の過検出例。*
+
+```
+py -3.11 examples/poc_lighthouse_cast_wheel.py --full
+```
+
+Source: [examples/poc_lighthouse_cast_wheel.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lighthouse_cast_wheel.py)
+
+This run produced **10 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_lighthouse_cast_wheel)
+
+
+
+## No.2026.286 —— Minimising Point-Cloud Misses Brings False Positives Back — A Virtual 3D Bevel-Inspection Factory
+
+[![Minimising Point-Cloud Misses Brings False Positives Back — A Virtual 3D Bevel-Inspection Factory](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_bevel_pointcloud/01_miss_comparison_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_bevel_pointcloud/01_miss_comparison.png)
+
+*↑ **Minimising Point-Cloud Misses Brings False Positives Back — A Virtual 3D Bevel-Inspection Factory** ―― This instrument measures a point cloud rather than pixels, so there is no measured pixel-FAR denominator; instead, the evolved pipeline declares a 5% part FAR and breaches it at 16.433566433566433% on holdout. With search budgets of 12 and 48 evaluations, evolution gives the lowest miss rate, 16.731517509727624%. The hand-built pipeline gives 20.622568093385212% misses and 4.895104895104895% false positives, both below the baseline's 47.276264591439684% and 11.188811188811188%. Evolution therefore buys fewer misses by bringing false positives back. WEF's reported 90% reduction in bevel defects comes from another physical factory under different assumptions and is included only for context.*
+
+[![欠陥の難しさ別検出率。小寸法・低コントラスト・欠測側で低下する。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_bevel_pointcloud/02_difficulty_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_bevel_pointcloud/02_difficulty_curve.png)
+
+*↑ The measurement ―― 欠陥の難しさ別検出率。小寸法・低コントラスト・欠測側で低下する。 (figure labels are in Japanese; the numbers are the same)*
+
+[![良品ばらつきを増やしたときの過検出率。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_bevel_pointcloud/03_variation_false_positive_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_bevel_pointcloud/03_variation_false_positive_curve.png)
+
+*↑ 良品ばらつきを増やしたときの過検出率。*
+
+[![探索予算と学習・評価成績。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_bevel_pointcloud/04_budget_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_bevel_pointcloud/04_budget_curve.png)
+
+*↑ 探索予算と学習・評価成績。*
+
+[![提案法の見逃し例。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_bevel_pointcloud/05_miss_example_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_bevel_pointcloud/05_miss_example.png)
+
+*↑ 提案法の見逃し例。*
+
+[![提案法の過検出例。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_bevel_pointcloud/06_false_positive_example_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_bevel_pointcloud/06_false_positive_example.png)
+
+*↑ 提案法の過検出例。*
+
+```
+py -3.11 examples/poc_lighthouse_bevel_pointcloud.py --full
+```
+
+Source: [examples/poc_lighthouse_bevel_pointcloud.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lighthouse_bevel_pointcloud.py)
+
+This run produced **10 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_lighthouse_bevel_pointcloud)
+
+
+
+## No.2026.287 —— Only SMT Search Lowers Misses and False Positives Together — A Virtual AOI Factory
+
+[![Only SMT Search Lowers Misses and False Positives Together — A Virtual AOI Factory](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_smt_aoi/01_miss_comparison_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_smt_aoi/01_miss_comparison.png)
+
+*↑ **Only SMT Search Lowers Misses and False Positives Together — A Virtual AOI Factory** ―― The declared pixel FAR of 1e-3 measures 0.002454622583299054 independently, a 2.45-fold breach. Even so, SMT is the one application where search budgets of 12 and 48 evaluations significantly improve both part-level errors: the evolved pipeline records 57.407407407407405% misses and 2.6923076923076925% false positives, against the baseline's 88.51851851851852% and 52.307692307692314%. McNemar exact p is 3.5883588815862885e-07 for misses and 4.581478055141831e-29 for false positives. The hand-built method lowers false positives to 6.923076923076923% but worsens misses to 96.85185185185186%. WEF's reported 99% defect-rate reduction is shown only as a result from a physical factory with different premises.*
+
+[![欠陥の難しさ別検出率。小寸法・低コントラスト・欠測側で低下する。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_smt_aoi/02_difficulty_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_smt_aoi/02_difficulty_curve.png)
+
+*↑ The measurement ―― 欠陥の難しさ別検出率。小寸法・低コントラスト・欠測側で低下する。 (figure labels are in Japanese; the numbers are the same)*
+
+[![良品ばらつきを増やしたときの過検出率。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_smt_aoi/03_variation_false_positive_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_smt_aoi/03_variation_false_positive_curve.png)
+
+*↑ 良品ばらつきを増やしたときの過検出率。*
+
+[![探索予算と学習・評価成績。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_smt_aoi/04_budget_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_smt_aoi/04_budget_curve.png)
+
+*↑ 探索予算と学習・評価成績。*
+
+[![提案法の見逃し例。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_smt_aoi/05_miss_example_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_smt_aoi/05_miss_example.png)
+
+*↑ 提案法の見逃し例。*
+
+[![提案法の過検出例。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_smt_aoi/06_false_positive_example_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_smt_aoi/06_false_positive_example.png)
+
+*↑ 提案法の過検出例。*
+
+```
+py -3.11 examples/poc_lighthouse_smt_aoi.py --full
+```
+
+Source: [examples/poc_lighthouse_smt_aoi.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lighthouse_smt_aoi.py)
+
+This run produced **10 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_lighthouse_smt_aoi)
+
+
 
 ## No.2026.003 —— Where a 1-D Barcode Stops Reading — Counting Misreads and Unreadables Separately
 

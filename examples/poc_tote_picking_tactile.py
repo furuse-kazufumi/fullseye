@@ -138,6 +138,10 @@ def main():
         (out / "result.json").write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps({"n_trials": n, "wall_seconds": elapsed, "curves": summary["curves"],
                       "tactile_delta": summary["tactile_delta"], "timing": summary["timing"]}, ensure_ascii=False, indent=2))
+    figure_errors = figs.errors()
+    if figure_errors:
+        print("図の書き出しで失敗:", "; ".join(figure_errors))
+    print("PASS")
 
 
 if __name__ == "__main__":

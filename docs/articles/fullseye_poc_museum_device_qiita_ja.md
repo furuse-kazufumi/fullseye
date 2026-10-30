@@ -4,17 +4,101 @@
 
 > **[紙面の計測館 総合案内](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6)** の一棟です。ほかの棟・用語・テーゼは案内にあります。
 
-この棟には **32 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
+この棟には **34 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
 
 > 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。
 
 ### 装置の棟 ―― 生の出力から、装置固有の壊れ方まで再現する
 
-計測装置を名前だけ借り、都合のよい画像を出すのは簡単です。この部屋の 32 点は逆に、光子・電子・干渉・熱拡散・走査・光線追跡から装置の生出力を作り、そこから普段の測定値までを一続きにしています。
+計測装置を名前だけ借り、都合のよい画像を出すのは簡単です。この部屋の 34 点は逆に、光子・電子・干渉・熱拡散・走査・光線追跡から装置の生出力を作り、そこから普段の測定値までを一続きにしています。
 
 同じ距離でも iToF と dToF では多重反射と pile-up の現れ方が違い、同じ粒子でも SEM と TEM では直径が違って読めます。TDI は段数を増やせば暗い欠陥が見える一方、同期ずれを段数ぶん積み重ねます。装置名が同じでも、物理を省いた模型では壊れる場所を再現できません。
 
 各展示は閉形式、公開実測値、独立実装のいずれかを門にしています。狙いは実機の完全な代用品を名乗ることではなく、どの物理を入れ、何をまだ入れていないかを明示したうえで、測定値がいつ信用できなくなるかを実機に触れる前に確かめることです。
+
+## No.2026.282 —— 触覚の一発目の利得は、同じ5回のやり直しを許すと消える ―― Pandaのかご間ピッキング
+
+[![触覚の一発目の利得は、同じ5回のやり直しを許すと消える ―― Pandaのかご間ピッキング](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tote_picking_tactile/01_success_vs_retries_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tote_picking_tactile/01_success_vs_retries.png)
+
+*↑ **触覚の一発目の利得は、同じ5回のやり直しを許すと消える ―― Pandaのかご間ピッキング** ―― 意外なのは、視覚だけと触覚再把持に同じ最大5回のやり直しを公平に許すと、成功率がどちらも81.7 %になり、差が消えること(McNemar exact p = 1.0)。触覚は単回なら63.7 %で視覚だけの62.3 %を上回るが、効いたのは触覚の有無そのものより、掴み損ね・滑落・置き先外・衝突・時間切れを真値で分けて次の手を変える失敗型別リトライで、最大5回時に90.3 %へ達した。MuJoCo MenagerieのFranka Pandaを全試行で逐次積分し、深度像だけから候補を選び、指パッドの接触力を理想化触覚として読む。INSOL-HIGH実機の報道値は約300回、最大5回のやり直し込み97 %だが、設備・対象物・成功条件が違うため参考として併記するだけで、仮想工場との勝敗には使わない。*
+
+[![0..9は商品表順。低摩擦・薄板・重量物を含み、100%にならない難しさ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tote_picking_tactile/02_success_by_product_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tote_picking_tactile/02_success_by_product.png)
+
+*↑ 測定の図 ―― 0..9は商品表順。低摩擦・薄板・重量物を含み、100%にならない難しさ。*
+
+[![失敗は重複させず、最初に確定した真値の型で数える。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tote_picking_tactile/03_failure_types_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tote_picking_tactile/03_failure_types.png)
+
+*↑ 失敗は重複させず、最初に確定した真値の型で数える。*
+
+[![易しい箱1試行の高さとmj_contactForce。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tote_picking_tactile/04_easy_trial_diagnosis_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tote_picking_tactile/04_easy_trial_diagnosis.png)
+
+*↑ 易しい箱1試行の高さとmj_contactForce。*
+
+[![MuJoCo実描画: シャンプーボトルの成功試行。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tote_picking_tactile/05_trial_success_shampoo.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tote_picking_tactile/05_trial_success_shampoo.gif)
+
+*↑ 動く図 ―― MuJoCo実描画: シャンプーボトルの成功試行。*
+
+[![MuJoCo実描画: 視覚のみでは時間切れ、触覚で救済された同一場面。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tote_picking_tactile/06_trial_tactile_rescue.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tote_picking_tactile/06_trial_tactile_rescue.gif)
+
+*↑ 動く図 ―― MuJoCo実描画: 視覚のみでは時間切れ、触覚で救済された同一場面。*
+
+[![MuJoCo実描画: 重量缶の掴み損ね。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tote_picking_tactile/07_trial_fail_grasp_miss.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tote_picking_tactile/07_trial_fail_grasp_miss.gif)
+
+*↑ 動く図 ―― MuJoCo実描画: 重量缶の掴み損ね。*
+
+[![MuJoCo実描画: 缶の運搬中滑落。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tote_picking_tactile/08_trial_fail_transport_slip.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tote_picking_tactile/08_trial_fail_transport_slip.gif)
+
+*↑ 動く図 ―― MuJoCo実描画: 缶の運搬中滑落。*
+
+[![MuJoCo実描画: 箱の静止時間切れ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tote_picking_tactile/09_trial_fail_timeout.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tote_picking_tactile/09_trial_fail_timeout.gif)
+
+*↑ 動く図 ―― MuJoCo実描画: 箱の静止時間切れ。*
+
+```
+py -3.11 examples/poc_tote_picking_tactile.py --full
+```
+
+ソース: [examples/poc_tote_picking_tactile.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_tote_picking_tactile.py)
+
+この回が作った図は全部で **9 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_tote_picking_tactile)
+
+
+
+## No.2026.283 —— 4 mmの接着層は半無限体ではない ―― FingerVisionの変位・力・滑りを物理合成像で比較する
+
+[![4 mmの接着層は半無限体ではない ―― FingerVisionの変位・力・滑りを物理合成像で比較する](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fingervision_benchmark/05_fvbench_layer_physics_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fingervision_benchmark/05_fvbench_layer_physics.png)
+
+*↑ **4 mmの接着層は半無限体ではない ―― FingerVisionの変位・力・滑りを物理合成像で比較する** ―― 接着した4 mmのほぼ非圧縮な層では、表面マーカーの横変位が半無限体理論の4.98倍(ν = 0.48)から115倍(ν = 0.499)になり、公開式の前提が先に壊れる。肌色物体の滑り検出F1は層Green逆算が0.842(丸めて0.85)、公開2016/2017法はともに0。力は公開2017法が最良またはほぼ互角で、未知の押し子に対する法線力RMSEは0.872 N、場全体ridgeは0.926 Nだった一方、ridgeは較正内では0.088 Nまで合うため過学習が露出した。22 mm等距離魚眼、4 mm接着層のFEM、ビーズ追跡、力・滑りを同じ順方向模型で生成して較正外の半径・位置・荷重で評価した。黒い物や暗所では黒ビーズと背景の輝度差が消え、公開法も全場法も同じ入力を失うため原理的に読めない。*
+
+[![22 mm等距離魚眼、物理順方向。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fingervision_benchmark/01_fvbench_sensor_examples_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fingervision_benchmark/01_fvbench_sensor_examples.png)
+
+*↑ 測定の図 ―― 22 mm等距離魚眼、物理順方向。*
+
+[![較正に無い半径・位置・範囲。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fingervision_benchmark/02_fvbench_force_scatter_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fingervision_benchmark/02_fvbench_force_scatter.png)
+
+*↑ 較正に無い半径・位置・範囲。*
+
+[![Q=muPからの遅れ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fingervision_benchmark/03_fvbench_slip_delay_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fingervision_benchmark/03_fvbench_slip_delay.png)
+
+*↑ Q=muPからの遅れ。*
+
+[![--fullは各条件25時系列×8=200フレーム。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fingervision_benchmark/04_fvbench_condition_f1_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fingervision_benchmark/04_fvbench_condition_f1.png)
+
+*↑ --fullは各条件25時系列×8=200フレーム。*
+
+[![6 markers未満では全変位場手法が推定不能。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fingervision_benchmark/06_fvbench_contrast_boundary_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fingervision_benchmark/06_fvbench_contrast_boundary.png)
+
+*↑ 6 markers未満では全変位場手法が推定不能。*
+
+```
+py -3.11 examples/poc_fingervision_benchmark.py --full
+```
+
+ソース: [examples/poc_fingervision_benchmark.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_fingervision_benchmark.py)
+
+この回が作った図は全部で **7 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_fingervision_benchmark)
+
+使用 op(ノートへ): [`rmse`](https://furuse.work/ops/imgmetrics/fidelity/rmse.html)
 
 ## No.2026.010 —— 投影数を減らすと CT 再構成はどこから壊れるか
 

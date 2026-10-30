@@ -4,5 +4,15 @@
 自作: 5欠陥の外観像、固定閾値基準、探索・holdout評価。
 門: 検出器は画像以外を受け取らず、乱数で判定しない。
 """
+import examplefig as figs
 from lighthouse_vfactory_cli import main
-if __name__ == "__main__": raise SystemExit(main("smt"))
+
+
+def save_figure(name, image, caption):
+    return figs.save(name, image, caption=caption)
+
+
+if __name__ == "__main__":
+    status = main("smt", save_figure)
+    if figs.errors(): print("図の書き出しで失敗:", "; ".join(figs.errors()))
+    raise SystemExit(status)

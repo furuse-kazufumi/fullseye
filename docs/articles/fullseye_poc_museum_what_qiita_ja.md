@@ -4,17 +4,161 @@
 
 > **[紙面の計測館 総合案内](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6)** の一棟です。ほかの棟・用語・テーゼは案内にあります。
 
-この棟には **130 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
+この棟には **134 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
 
 > 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。
 
 ### 産業検査ウィング ―― 合格の数字と不合格の数字は両立する
 
-検査ラインの数字は合否に直結するので、1 つの指標に畳みたくなります。この部屋の 37 点は、畳んだ瞬間に消えるものを並べたものです。まとめた ROC が種類別の盲点を隠す織物、MTF が合格のまま黒レベルが不合格になる迷光、読取率だけ見ると寛容なデコーダが良く見えるバーコード。
+検査ラインの数字は合否に直結するので、1 つの指標に畳みたくなります。この部屋の 41 点は、畳んだ瞬間に消えるものを並べたものです。まとめた ROC が種類別の盲点を隠す織物、MTF が合格のまま黒レベルが不合格になる迷光、読取率だけ見ると寛容なデコーダが良く見えるバーコード。
 
 真値はどれも自分で仕込んであります。周期地の閉形式、レーザー断面の h(x)、1 次元熱伝導の解析解、閉形式の欠陥周波数。だから「検出できました」の先にある「どこで検出できなくなるか」を、しきい値を後から合わせずに測れます。
 
 もう 1 つの共通点は、壊れ方が連続ではなく崖であること。傾き 15 度と 16 度、時間窓 25 秒と 4 秒、ΔT 1.6 K ―― その位置は幾何か物理で先に計算できる場合が多く、計算できたものは実測と突き合わせてあります。
+
+## No.2026.284 —— 宣言FARを守っても部品判定は一長一短 ―― タイヤX線の仮想工場
+
+[![宣言FARを守っても部品判定は一長一短 ―― タイヤX線の仮想工場](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_tyre_xray/01_miss_comparison_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_tyre_xray/01_miss_comparison.png)
+
+*↑ **宣言FARを守っても部品判定は一長一短 ―― タイヤX線の仮想工場** ―― 画素FARを1e-3と宣言した変動模型は、独立評価で0.005106535852671736と5.11倍に破れた。探索は12/48評価の予算で行い、最終holdoutの進化法は見逃し49.568221070811745 %・過検出6.334841628959276 %。基準の72.71157167530224 %・16.7420814479638 %より両方低いが、手組み法は見逃し44.04145077720207 %とさらに低い代わりに過検出22.171945701357465 %で、一長一短が残る。WEFの不良流出99 %減は実工場の導入前比較で前提が違うため参考値としてのみ並べる。*
+
+[![欠陥の難しさ別検出率。小寸法・低コントラスト・欠測側で低下する。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_tyre_xray/02_difficulty_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_tyre_xray/02_difficulty_curve.png)
+
+*↑ 測定の図 ―― 欠陥の難しさ別検出率。小寸法・低コントラスト・欠測側で低下する。*
+
+[![良品ばらつきを増やしたときの過検出率。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_tyre_xray/03_variation_false_positive_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_tyre_xray/03_variation_false_positive_curve.png)
+
+*↑ 良品ばらつきを増やしたときの過検出率。*
+
+[![探索予算と学習・評価成績。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_tyre_xray/04_budget_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_tyre_xray/04_budget_curve.png)
+
+*↑ 探索予算と学習・評価成績。*
+
+[![提案法の見逃し例。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_tyre_xray/05_miss_example_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_tyre_xray/05_miss_example.png)
+
+*↑ 提案法の見逃し例。*
+
+[![提案法の過検出例。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_tyre_xray/06_false_positive_example_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_tyre_xray/06_false_positive_example.png)
+
+*↑ 提案法の過検出例。*
+
+```
+py -3.11 examples/poc_lighthouse_tyre_xray.py --full
+```
+
+ソース: [examples/poc_lighthouse_tyre_xray.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lighthouse_tyre_xray.py)
+
+この回が作った図は全部で **10 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_lighthouse_tyre_xray)
+
+
+
+## No.2026.285 —— 見逃しを減らす探索は過検出を残す ―― 鋳造ホイールX線の仮想工場
+
+[![見逃しを減らす探索は過検出を残す ―― 鋳造ホイールX線の仮想工場](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_cast_wheel/01_miss_comparison_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_cast_wheel/01_miss_comparison.png)
+
+*↑ **見逃しを減らす探索は過検出を残す ―― 鋳造ホイールX線の仮想工場** ―― 宣言した画素FAR 1e-3は独立評価で0.001984718907451604となり1.98倍に破れた。12/48評価の探索後、進化法はholdoutで見逃し15.94488188976378 %まで下げたが過検出34.58904109589041 %、手組み法は16.92913385826772 %・26.027397260273972 %だった。基準は見逃し40.55118110236221 %、過検出100 %で、両提案は改善するものの、探索した閾値にも見逃しと過検出の交換が残る。WEFの重大欠陥見逃し98.1 %減は異なる実工場の導入前比較なので、同じ真値を使う本評価との勝敗には使わない。*
+
+[![欠陥の難しさ別検出率。小寸法・低コントラスト・欠測側で低下する。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_cast_wheel/02_difficulty_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_cast_wheel/02_difficulty_curve.png)
+
+*↑ 測定の図 ―― 欠陥の難しさ別検出率。小寸法・低コントラスト・欠測側で低下する。*
+
+[![良品ばらつきを増やしたときの過検出率。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_cast_wheel/03_variation_false_positive_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_cast_wheel/03_variation_false_positive_curve.png)
+
+*↑ 良品ばらつきを増やしたときの過検出率。*
+
+[![探索予算と学習・評価成績。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_cast_wheel/04_budget_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_cast_wheel/04_budget_curve.png)
+
+*↑ 探索予算と学習・評価成績。*
+
+[![提案法の見逃し例。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_cast_wheel/05_miss_example_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_cast_wheel/05_miss_example.png)
+
+*↑ 提案法の見逃し例。*
+
+[![提案法の過検出例。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_cast_wheel/06_false_positive_example_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_cast_wheel/06_false_positive_example.png)
+
+*↑ 提案法の過検出例。*
+
+```
+py -3.11 examples/poc_lighthouse_cast_wheel.py --full
+```
+
+ソース: [examples/poc_lighthouse_cast_wheel.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lighthouse_cast_wheel.py)
+
+この回が作った図は全部で **10 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_lighthouse_cast_wheel)
+
+
+
+## No.2026.286 —— 点群の見逃しを最小にすると過検出が戻る ―― 開先3D検査の仮想工場
+
+[![点群の見逃しを最小にすると過検出が戻る ―― 開先3D検査の仮想工場](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_bevel_pointcloud/01_miss_comparison_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_bevel_pointcloud/01_miss_comparison.png)
+
+*↑ **点群の見逃しを最小にすると過検出が戻る ―― 開先3D検査の仮想工場** ―― 画像ではなく点群を測るため画素FARの実測対象は無いが、部品FAR 5 %を宣言した進化法はholdoutで16.433566433566433 %に破れた。12/48評価の探索で進化法は見逃し16.731517509727624 %と最小になった一方、手組み法は見逃し20.622568093385212 %・過検出4.895104895104895 %で、基準47.276264591439684 %・11.188811188811188 %より両方低い。つまり進化法は見逃しをさらに減らす代わりに過検出を増やした。WEFの開先欠陥90 %減は別の実工場・前提の値なので参考にのみ掲げる。*
+
+[![欠陥の難しさ別検出率。小寸法・低コントラスト・欠測側で低下する。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_bevel_pointcloud/02_difficulty_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_bevel_pointcloud/02_difficulty_curve.png)
+
+*↑ 測定の図 ―― 欠陥の難しさ別検出率。小寸法・低コントラスト・欠測側で低下する。*
+
+[![良品ばらつきを増やしたときの過検出率。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_bevel_pointcloud/03_variation_false_positive_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_bevel_pointcloud/03_variation_false_positive_curve.png)
+
+*↑ 良品ばらつきを増やしたときの過検出率。*
+
+[![探索予算と学習・評価成績。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_bevel_pointcloud/04_budget_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_bevel_pointcloud/04_budget_curve.png)
+
+*↑ 探索予算と学習・評価成績。*
+
+[![提案法の見逃し例。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_bevel_pointcloud/05_miss_example_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_bevel_pointcloud/05_miss_example.png)
+
+*↑ 提案法の見逃し例。*
+
+[![提案法の過検出例。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_bevel_pointcloud/06_false_positive_example_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_bevel_pointcloud/06_false_positive_example.png)
+
+*↑ 提案法の過検出例。*
+
+```
+py -3.11 examples/poc_lighthouse_bevel_pointcloud.py --full
+```
+
+ソース: [examples/poc_lighthouse_bevel_pointcloud.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lighthouse_bevel_pointcloud.py)
+
+この回が作った図は全部で **10 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_lighthouse_bevel_pointcloud)
+
+
+
+## No.2026.287 —— SMTだけは探索が見逃しと過検出を同時に下げた ―― AOIの仮想工場
+
+[![SMTだけは探索が見逃しと過検出を同時に下げた ―― AOIの仮想工場](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_smt_aoi/01_miss_comparison_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_smt_aoi/01_miss_comparison.png)
+
+*↑ **SMTだけは探索が見逃しと過検出を同時に下げた ―― AOIの仮想工場** ―― 宣言した画素FAR 1e-3は独立評価で0.002454622583299054となり2.45倍に破れた。それでも12/48評価の探索はSMTでだけ両方の部品誤りを有意に改善し、進化法は見逃し57.407407407407405 %・過検出2.6923076923076925 %、基準は88.51851851851852 %・52.307692307692314 %だった。McNemar exact pは見逃し3.5883588815862885e-07、過検出4.581478055141831e-29。手組み法は過検出6.923076923076923 %まで下げる代わりに見逃し96.85185185185186 %へ悪化した。WEFの不良率99 %減は前提の異なる実工場の値として併記するだけである。*
+
+[![欠陥の難しさ別検出率。小寸法・低コントラスト・欠測側で低下する。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_smt_aoi/02_difficulty_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_smt_aoi/02_difficulty_curve.png)
+
+*↑ 測定の図 ―― 欠陥の難しさ別検出率。小寸法・低コントラスト・欠測側で低下する。*
+
+[![良品ばらつきを増やしたときの過検出率。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_smt_aoi/03_variation_false_positive_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_smt_aoi/03_variation_false_positive_curve.png)
+
+*↑ 良品ばらつきを増やしたときの過検出率。*
+
+[![探索予算と学習・評価成績。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_smt_aoi/04_budget_curve_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_smt_aoi/04_budget_curve.png)
+
+*↑ 探索予算と学習・評価成績。*
+
+[![提案法の見逃し例。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_smt_aoi/05_miss_example_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_smt_aoi/05_miss_example.png)
+
+*↑ 提案法の見逃し例。*
+
+[![提案法の過検出例。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_smt_aoi/06_false_positive_example_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lighthouse_smt_aoi/06_false_positive_example.png)
+
+*↑ 提案法の過検出例。*
+
+```
+py -3.11 examples/poc_lighthouse_smt_aoi.py --full
+```
+
+ソース: [examples/poc_lighthouse_smt_aoi.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lighthouse_smt_aoi.py)
+
+この回が作った図は全部で **10 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_lighthouse_smt_aoi)
+
+
 
 ## No.2026.003 —— 1 次元バーコードが読めなくなる境界 ―― 誤読と読み取り不能を分けて数える
 
