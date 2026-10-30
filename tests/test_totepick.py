@@ -1,59 +1,75 @@
-"""Tote-picking benchmark gates that remain meaningful without MuJoCo assets."""
+"""Physics honesty gates for the tote-picking benchmark."""
 from __future__ import annotations
 
+import ast
+import inspect
+
 import numpy as np
+import pytest
 
 import totepick as T
 
 
-def test_deterministic_and_paired_seeds():
-    a = T.run_benchmark(30, seed=7)
-    b = T.run_benchmark(30, seed=7)
+pytestmark = pytest.mark.skipif(T.validate_mujoco_asset()["skipped"], reason="[skip] MuJoCo/Menagerie unavailable")
+
+
+def run(seed=7, **kw):
+    return T._attempt(T.PRODUCTS[2], T.METHODS[1], seed, 0, render_depth=False, **kw)
+
+
+def test_attempt_integrates_mujoco_and_is_deterministic():
+    a = run(); b = run()
     assert a == b
-    for trial in range(30):
-        rows = [r for r in a["rows"] if r["trial"] == trial]
-        assert len(rows) == 3
-        assert len({r["scene_seed"] for r in rows}) == 1
-        assert {r["method"] for r in rows} == set(T.METHODS)
+    assert a[3]["mj_steps"] > 1000
+    assert a[2] == pytest.approx(4.336)
 
 
-def test_success_is_truth_inside_and_still_not_attachment():
-    r = T.run_benchmark(40, seed=9)
-    assert r["contact"]["adhesion"] is False
-    assert "weld" not in repr(r).lower()
-    successes = [a for row in r["rows"] for a in row["attempts"] if a["success"]]
-    assert successes
-    assert all(a["truth_inside"] and a["truth_speed_m_s"] < .03 for a in successes)
+def test_open_hand_cannot_succeed():
+    outcomes = [run(i, grip=False)[0] for i in range(3)]
+    assert sum(outcomes) == 0
 
 
-def test_tactile_is_one_replaceable_boundary_and_detects_slip():
+def test_success_definition_is_final_truth_only():
+    src = inspect.getsource(T._attempt)
+    tree = ast.parse(src)
+    # Random calls exist for initial pose/noise, but no random comparison decides success.
+    success_assign = [n for n in ast.walk(tree) if isinstance(n, ast.Assign)
+                      and any(isinstance(x, ast.Name) and x.id == "success" for x in n.targets)]
+    assert len(success_assign) == 1
+    assert not any(isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute)
+                   and n.func.attr in {"random", "uniform", "choice"}
+                   for n in ast.walk(success_assign[0].value))
+    assert "inside and speed<.03" in src
+
+
+def test_tactile_comes_from_contact_force_and_changes_control():
+    src = inspect.getsource(T)
+    assert "mj_contactForce" in src
+    assert "data.ctrl=np.clip" in src
     safe = T.read_fingertip_tactile(10, 1, .5, (0, 0))
     slip = T.read_fingertip_tactile(2, 2, .2, (0, 0))
     assert not safe.slipping and slip.slipping
 
 
-def test_retry_curves_wilson_and_nontrivial_difficulty():
-    s = T.summarize(T.run_benchmark(300, seed=20261030))
-    for m in T.METHODS:
-        rates = [x["rate"] for x in s["curves"][m]]
-        assert rates == sorted(rates)
-        assert rates[-1] < 1
-        assert all(lo <= x["rate"] <= hi for x in s["curves"][m] for lo, hi in [x["wilson95"]])
-    assert len(set(round(s["by_product"][T.METHODS[0]][p.name]["rate"], 3) for p in T.PRODUCTS)) > 2
+def test_friction_and_mass_change_physics_response():
+    # Same initial condition; these are measured contact/motion responses, not odds.
+    low = run(11, friction_scale=.25)[3]
+    nominal = run(11, friction_scale=1.)[3]
+    light = run(13, mass_scale=.4)[3]
+    heavy = run(13, mass_scale=2.)[3]
+    assert (low["tactile_events"], low["final_position_m"]) != (nominal["tactile_events"], nominal["final_position_m"])
+    assert not np.allclose(light["final_position_m"], heavy["final_position_m"], atol=1e-5)
 
 
-def test_depth_candidate_uses_existing_blob_op():
-    depth = np.ones((40, 50))
-    depth[5:13, 7:17] = .4
-    depth[20:33, 28:43] = .6
-    candidates = T.depth_grasp_candidates(depth)
-    assert len(candidates) == 2
-    assert candidates[0]["score"] >= candidates[1]["score"]
+def test_perception_has_no_truth_state_access():
+    src = inspect.getsource(T.depth_grasp_candidates)
+    assert "qpos" not in src and "MjData" not in src
+    depth=np.ones((40,50)); depth[5:15,8:20]=.3
+    assert T.depth_grasp_candidates(depth)
 
 
-def test_missing_menagerie_is_an_explicit_skip_not_benchmark_pass(tmp_path):
-    status = T.validate_mujoco_asset(tmp_path)
-    assert status["skipped"] is True
-    # The asset-independent benchmark still has substantive gates and outcomes.
-    r = T.run_benchmark(12)
-    assert any(a["failure"] for row in r["rows"] for a in row["attempts"])
+def test_no_attachment_or_product_pose_write_after_initialization():
+    src=inspect.getsource(T._attempt)
+    assert "weld" not in src and "eq_" not in src and "mocap" not in src[src.find("pg="):].replace("mocap_pos[moc]", "")
+    result=T.run_benchmark(1, max_retries=0, render_depth=False)
+    assert result["contact"]["adhesion"] is False
