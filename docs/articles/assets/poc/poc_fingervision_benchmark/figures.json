@@ -35,7 +35,7 @@
   "caption": "--fullは各条件25時系列×8=200フレーム。",
   "shape": [
    224,
-   509,
+   645,
    3
   ],
   "csv": "04_fvbench_condition_f1.csv",
@@ -52,5 +52,27 @@
   ],
   "csv": "05_fvbench_layer_physics.csv",
   "tsv": "05_fvbench_layer_physics.tsv"
+ },
+ {
+  "file": "06_fvbench_contrast_boundary.png",
+  "name": "fvbench_contrast_boundary",
+  "caption": "6 markers未満では全変位場手法が推定不能。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "07_fvbench_force_metrics.png",
+  "name": "fvbench_force_metrics",
+  "caption": "RMSE [N] / R2。ridgeのlambdaは較正内CVのみで選択。",
+  "shape": [
+   368,
+   428,
+   3
+  ],
+  "csv": "07_fvbench_force_metrics.csv",
+  "tsv": "07_fvbench_force_metrics.tsv"
  }
 ]

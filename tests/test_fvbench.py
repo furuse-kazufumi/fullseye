@@ -80,3 +80,28 @@ def test_fixed_seed_is_repeatable_and_dark_failure_is_exposed():
     c, _ = _calib()
     dark = F.synthesize(t, brightness=0.025, color="black", seed=8)
     assert F.read_tactile(dark, c)["matched"] < 6
+
+
+def test_field_ridge_uses_fixed_full_field_and_calibration_only_cv():
+    c, _ = _calib()
+    assert set(c.ridge_models) == {"raw", "green-pca"}
+    assert c.ridge_selected in c.ridge_models
+    assert np.isfinite(c.ridge_lambda) and c.ridge_lambda > 0
+    # 評価集合を受け取る経路自体がないことを門にする。
+    assert set(inspect.signature(F._fit_ridge_cv).parameters) == {
+        "X", "Y", "basis", "lambdas", "folds"
+    }
+    im = F.synthesize(F.Truth((1.5, .5, 9), torque_Nm=.001), seed=91)
+    feat, _ = F._field_features(im, c)
+    assert feat.shape == (len(F.MARKERS) * 3,)
+    for variant in ("raw", "green-pca"):
+        out = F.read_field_ridge(im, c, variant)
+        assert np.asarray(out["force_N"]).shape == (3,)
+        assert np.isfinite([*out["force_N"], out["torque"], out["load_ratio"]]).all()
+
+
+def test_black_dark_visibility_failure_is_shared_by_field_methods():
+    c, _ = _calib()
+    dark = F.synthesize(F.Truth((1, 0, 8)), brightness=.025, color="black", seed=92)
+    assert F.read_field_ridge(dark, c)["matched"] < 6
+    assert F.read_tactile(dark, c)["matched"] < 6

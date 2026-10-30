@@ -54,6 +54,11 @@ class Calibration:
     slip_threshold2016: float = 900.0
     slip_threshold2017: float = 900.0
     proposed_ca_threshold: float = .12
+    ridge_models: dict = field(default_factory=dict)
+    ridge_selected: str = "raw"
+    ridge_lambda: float = math.nan
+    ridge_cv_rmse: dict = field(default_factory=dict)
+    ridge_mu_warning: float = .8
 
 
 def _project(xy_m: np.ndarray, z_m=0.0) -> np.ndarray:
@@ -169,6 +174,39 @@ def _per_marker(image, calib):
     return np.column_stack((u[:,0],np.asarray(ds),u[:,1])),tr
 
 
+def _field_features(image, calib):
+    """追跡点を35個の基準格子へ対応させた [dx,dy,ds] の固定長特徴。"""
+    pm,tr=_per_marker(image,calib); out=np.zeros((len(MARKERS),3))
+    if len(pm):
+        dist=np.linalg.norm(tr["p0"][:,None,:]-MARKERS[None,:,:],axis=2)
+        for i,j in enumerate(np.argmin(dist,axis=1)):
+            if dist[i,j] < calib.marker_pitch_px*.45:
+                out[j]=[pm[i,0],pm[i,2],pm[i,1]]
+    return out.ravel(),tr
+
+
+def _ridge_predict(model, feature):
+    x=(np.asarray(feature)-model["mean"])/model["scale"]
+    if model["basis"] is not None: x=x@model["basis"]
+    return np.r_[x,1.]@model["coef"]
+
+
+def read_field_ridge(image, calib, variant=None):
+    """場全体のridge推定。学習済み画像特徴だけを読み、真値経路を持たない。"""
+    feat,tr=_field_features(image,calib); key=variant or calib.ridge_selected
+    if key not in calib.ridge_models:
+        raise ValueError("field ridge is not calibrated")
+    y=_ridge_predict(calib.ridge_models[key],feat); force=y[:3]
+    ratio=np.linalg.norm(force[:2])/max(MU*max(force[2],0.),1e-9)
+    visible=tr.get("matched",0)>=6
+    return {"force_N":force,"torque":float(y[3]),"slip":bool(visible and ratio>=1.),
+            "slip_precursor":bool(visible and ratio>=calib.ridge_mu_warning),
+            "slip_dir":force[:2]/(np.linalg.norm(force[:2])+1e-12),
+            "proximity":float(np.mean(np.abs(image-calib.reference)))>.018,
+            "angle_deg":None,"matched":tr.get("matched",0),"load_ratio":float(ratio),
+            "method":"full-field-ridge-"+key}
+
+
 def _aggregate_signed(v):
     """論文2016: 各要素で絶対値80 percentile以下を平均（符号は保つ）。"""
     out=[]
@@ -264,8 +302,49 @@ def _fit_affine(x,y):
     return np.linalg.lstsq(A,y,rcond=None)[0]
 
 
+def _green_basis(rank=18):
+    """層Green関数の単位荷重応答から作る物理基底（評価値は不使用）。"""
+    cols=[]; xy=MARKER_WORLD
+    for src in MARKER_WORLD[::2]:
+        ex=layer.tangential_kernel(xy,src,[1.,0.],NU,E_GEL)
+        ey=layer.tangential_kernel(xy,src,[0.,1.],NU,E_GEL)
+        ez=layer.normal_kernel(xy,src,NU,1.,2.)
+        cols += [np.column_stack((ex[:,0],ex[:,1],np.zeros(len(xy)))).ravel(),
+                 np.column_stack((ey[:,0],ey[:,1],np.zeros(len(xy)))).ravel(),
+                 np.column_stack((ez[:,0],ez[:,1],ez[:,2])).ravel()]
+    u,_,_=np.linalg.svd(np.asarray(cols).T,full_matrices=False)
+    return u[:,:min(rank,u.shape[1])]
+
+
+def _fit_ridge_cv(X,Y,basis,lambdas,folds=5):
+    """決定論的CV。返値は較正集合だけから決まり、評価集合の引数を持たない。"""
+    X=np.asarray(X,float); Y=np.asarray(Y,float); n=len(X)
+    # 連続する同一法線荷重（標準較正は接線5方向）を同じfoldへ置く。
+    if n < 10:
+        fold=np.arange(n)%min(folds,n)
+    else:
+        group=5 if n >= 50 else 3
+        fold=(np.arange(n)//group)%min(folds,max(2,n//group))
+    scores=[]
+    for lam in lambdas:
+        pred=np.zeros_like(Y)
+        for k in range(fold.max()+1):
+            va=fold==k; tr=~va; mu=X[tr].mean(0); sc=X[tr].std(0); sc[sc<1e-8]=1.
+            a=(X[tr]-mu)/sc; b=(X[va]-mu)/sc
+            if basis is not None: a=a@basis; b=b@basis
+            aa=np.column_stack((a,np.ones(len(a)))); reg=np.eye(aa.shape[1]); reg[-1,-1]=0
+            w=np.linalg.solve(aa.T@aa+lam*reg,aa.T@Y[tr]); pred[va]=np.column_stack((b,np.ones(len(b))))@w
+        scores.append(float(np.sqrt(np.mean((pred-Y)**2))))
+    lam=float(lambdas[int(np.argmin(scores))]); mu=X.mean(0); sc=X.std(0); sc[sc<1e-8]=1.
+    a=(X-mu)/sc
+    if basis is not None: a=a@basis
+    aa=np.column_stack((a,np.ones(len(a)))); reg=np.eye(aa.shape[1]); reg[-1,-1]=0
+    w=np.linalg.solve(aa.T@aa+lam*reg,aa.T@Y)
+    return {"mean":mu,"scale":sc,"basis":basis,"coef":w,"lambda":lam,"cv_rmse":min(scores)}
+
+
 def calibrate(samples, reference):
-    """同一較正集合で2016/2017を切片付き最小二乗。提案法には係数を渡さない。"""
+    """全手法を同一較正集合で学習。ridge のλ選択も較正内CVだけで行う。"""
     c=Calibration(np.asarray(reference),_marker_map(reference))
     try:
         import cv2
@@ -274,13 +353,26 @@ def calibrate(samples, reference):
         c.hs_hist=cv2.calcHist([hsv],[0,1],mask,[100,10],[0,180,0,256]); cv2.normalize(c.hs_hist,c.hs_hist,0,255,cv2.NORM_MINMAX)
     except (ImportError,AttributeError):
         c.use_cv2=False
-    f16=[]; f17=[]; truth=[]
-    for im,force,_ in samples:
+    f16=[]; f17=[]; fields=[]; truth=[]
+    for im,force,torque in samples:
         pm,_=_per_marker(im,c); f16.append(_aggregate_signed(pm))
-        f17.append([pm[:,0].mean(),np.hypot(pm[:,0],pm[:,2]).mean(),pm[:,2].mean()]); truth.append([force[0],force[2],force[1]])
+        f17.append([pm[:,0].mean(),np.hypot(pm[:,0],pm[:,2]).mean(),pm[:,2].mean()]); fields.append(_field_features(im,c)[0])
+        truth.append([force[0],force[2],force[1]])
     f16=np.asarray(f16); f17=np.asarray(f17); truth=np.asarray(truth)
     c.coef2016=np.column_stack([_fit_affine(f16[:,i],truth[:,i]) for i in range(3)])
     c.coef2017=np.column_stack([_fit_affine(f17[:,i],truth[:,i]) for i in range(3)])
+    target=np.asarray([[*force,float(torque)] for _,force,torque in samples])
+    lambdas=np.logspace(-5,4,15); raw=_fit_ridge_cv(fields,target,None,lambdas)
+    # Green基底は物理変位の単位が異なるため、特徴標準化後に直交化し直す。
+    gb=_green_basis()
+    # Green応答はraw特徴空間の基底。ridge入力と同じ標準化座標へ写す。
+    field_scale=np.asarray(fields).std(0); field_scale[field_scale<1e-8]=1.
+    gb=np.linalg.qr(gb/field_scale[:,None])[0]
+    physical=_fit_ridge_cv(fields,target,gb,lambdas)
+    c.ridge_models={"raw":raw,"green-pca":physical}
+    c.ridge_cv_rmse={k:v["cv_rmse"] for k,v in c.ridge_models.items()}
+    c.ridge_selected=min(c.ridge_cv_rmse,key=c.ridge_cv_rmse.get)
+    c.ridge_lambda=c.ridge_models[c.ridge_selected]["lambda"]
     return c
 
 
