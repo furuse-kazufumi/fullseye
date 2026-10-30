@@ -2,7 +2,7 @@
  {
   "file": "01_fvbench_sensor_examples.png",
   "name": "fvbench_sensor_examples",
-  "caption": "320x240、4 mm 透明皮膚越しの景色と物体、5 mm格子・1 mm黒ビーズ。等距離魚眼近似。",
+  "caption": "22 mm等距離魚眼、物理順方向。",
   "shape": [
    292,
    670,
@@ -12,7 +12,7 @@
  {
   "file": "02_fvbench_force_scatter.png",
   "name": "fvbench_force_scatter",
-  "caption": "同じ較正像・同じ評価像。公開線形式とマーカー力学式の真値対推定値。",
+  "caption": "較正に無い半径・位置・範囲。",
   "shape": [
    360,
    560,
@@ -22,20 +22,20 @@
  {
   "file": "03_fvbench_slip_delay.png",
   "name": "fvbench_slip_delay",
-  "caption": "30 fps。未検出は200 msで表示。",
+  "caption": "Q=muPからの遅れ。未検出は200 ms表示。",
   "shape": [
    360,
-   655,
+   676,
    3
   ]
  },
  {
   "file": "04_fvbench_condition_f1.png",
   "name": "fvbench_condition_f1",
-  "caption": "黒・肌色・背景移動・暗所・非滑り変形を同じseedで比較。",
+  "caption": "--fullは各条件25時系列×8=200フレーム。",
   "shape": [
    224,
-   248,
+   509,
    3
   ],
   "csv": "04_fvbench_condition_f1.csv",
