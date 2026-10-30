@@ -159,7 +159,17 @@ def build() -> list[tuple[str, int]]:
     """見どころのサムネイルを書く。元が無ければ例外で止める(黙って欠けさせない)。"""
     OUT.mkdir(parents=True, exist_ok=True)
     out = []
-    for pid, rel, frame, crop in SPEC:
+    data = json.loads(DATA.read_text(encoding="utf-8"))
+    specs = list(SPEC)
+    known = {s[0] for s in specs}
+    # Batch additions carry their reviewed source image in the canonical data.
+    # Only thumbnails are square-cropped; opening a tile always shows the
+    # original image at its native aspect ratio.
+    for e in data["exhibits"]:
+        if e["id"] not in known:
+            rel = e.get("media_path") or (_P + e["id"] + "/" + e["media"])
+            specs.append((e["id"], rel, 0.5, None))
+    for pid, rel, frame, crop in specs:
         src = DOCS / rel
         if not src.is_file():
             raise FileNotFoundError("サムネイルの元が無い: %s" % src)
