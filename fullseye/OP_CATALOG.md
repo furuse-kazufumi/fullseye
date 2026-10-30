@@ -1296,7 +1296,7 @@ _計 3613 ops / 55 families。並びとノートの在り処は `docs/ops/INDEX.
 - `m1_measure_thresh` (halcon: `measure_thresh`) `image → feature` — 中心を通るキャリパー線上で、輝度プロファイルが指定レベルを横切った回数を数える（HALCON ``measure_thresh`` に相当: 矩形/円弧に沿って特定のグレー値を持つ点を抽出する）。 · 例: `gallery2d_contour_measure`
 
 #### 2d / misc(1)
-- `identity` (halcon: `copy_image`) `any → any` — 恒等写像。HALCON の ``copy_image``（Copy an image and allocate new memory for it.）に対応付けられているが、実装は新しいメモリを確保して複製する ``copy_image`` とは異なり、入力の配列をそのまま返すだけ（複製しない）。 · 例: `gallery_nary_image_algebra`, `optics_four_f_processor`, `poc_em_branch_territory`, `poc_food_cutting_measure`
+- `identity` (halcon: `copy_image`) `any → any` — 恒等写像。HALCON の ``copy_image``（Copy an image and allocate new memory for it.）に対応付けられているが、実装は新しいメモリを確保して複製する ``copy_image`` とは異なり、入力の配列をそのまま返すだけ（複製しない）。 · 例: `gallery_nary_image_algebra`, `lighthouse_vfactory`, `optics_four_f_processor`, `poc_em_branch_territory`, `poc_food_cutting_measure`
 
 #### 2d / morphology(36)
 - `bothat` (halcon: `gray_bothat`) `image → image` — ブラックトップハット（クロージング − 原画像）。HALCON の ``gray_bothat``（Perform a gray value bottom hat transformation on an image.）に相当。 · 例: `example_scratch_width`, `gallery2d_morphology`, `poc_metal_grain_size`

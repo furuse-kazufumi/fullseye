@@ -30,7 +30,17 @@
   ]
  },
  {
-  "file": "04_miss_example.png",
+  "file": "04_budget_curve.png",
+  "name": "budget_curve",
+  "caption": "探索予算と学習・評価成績。差は過学習の大きさを示す。",
+  "shape": [
+   640,
+   1280,
+   3
+  ]
+ },
+ {
+  "file": "05_miss_example.png",
   "name": "miss_example",
   "caption": "提案法の見逃し例。検出器出力から選び、真値は表示だけに使用。長辺1280 px以上。",
   "shape": [
@@ -40,7 +50,7 @@
   ]
  },
  {
-  "file": "05_false_positive_example.png",
+  "file": "06_false_positive_example.png",
   "name": "false_positive_example",
   "caption": "提案法の過検出例。検出器出力から選び、真値は表示だけに使用。長辺1280 px以上。",
   "shape": [

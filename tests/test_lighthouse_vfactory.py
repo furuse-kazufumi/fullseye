@@ -2,6 +2,7 @@
 import importlib.util
 import sys
 from pathlib import Path
+import pytest
 ROOT=Path(__file__).resolve().parents[1]
 spec=importlib.util.spec_from_file_location("lighthouse_vfactory",ROOT/"examples/lighthouse_vfactory.py")
 vf=importlib.util.module_from_spec(spec); sys.modules[spec.name]=vf; spec.loader.exec_module(vf)
@@ -78,3 +79,21 @@ def test_proposed_detector_calls_multiple_fullseye_ops():
     vf.fullseye_detector(image,"tyre",threshold=3,model=model)
     assert {"varmodel_score","gclose"} <= set(vf._OP_CALLS)
     assert {"varmodel_alignment","varmodel_fit"} <= set(vf.FULLSEYE_OPS)
+
+
+def test_evolution_never_sees_evaluation_seeds_and_is_reproducible(monkeypatch):
+    monkeypatch.setattr(vf, "score", lambda kind, seeds, detector, params: (
+        {"miss_rate": [params["threshold"] % 17, 0, 0],
+         "false_positive_rate": [params["threshold"] % 7, 0, 0]}, []))
+    model = {"variation": object()}
+    a = vf.evolve_pipeline("tyre", vf.TRAIN_SEEDS[:24], model, 12)
+    b = vf.evolve_pipeline("tyre", vf.TRAIN_SEEDS[:24], model, 12)
+    assert not set(a["seen_seeds"]) & set(vf.HOLDOUT_SEEDS)
+    assert a["pipeline"] == b["pipeline"]
+    with pytest.raises(ValueError, match="evaluation seeds"):
+        vf.evolve_pipeline("tyre", vf.HOLDOUT_SEEDS[:2], model, 2)
+
+
+def test_evolution_pipeline_is_typed_and_uses_fullseye_vocabulary():
+    assert vf.EVOLUTION_VOCABULARY["preprocess"] == ("varmodel_score",)
+    assert {"gclose", "gopen"} <= set(vf.EVOLUTION_VOCABULARY["morphology"])

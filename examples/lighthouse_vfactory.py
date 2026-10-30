@@ -29,6 +29,8 @@ HOLDOUT_SEEDS = tuple(range(20_000, 20_800))
 QUICK_TRAIN_SEEDS = TRAIN_SEEDS[:48]
 QUICK_HOLDOUT_SEEDS = HOLDOUT_SEEDS[:96]
 SEARCH_BUDGET = 12
+EVOLUTION_BUDGETS = (12, 48)
+EVOLUTION_SEED = 20261030
 KINDS = ("tyre", "wheel", "bevel", "smt")
 WEF = {"tyre": 99.0, "wheel": 98.1, "bevel": 90.0, "smt": 99.0}
 LABEL = {"tyre": "タイヤX線", "wheel": "鋳造ホイールX線", "bevel": "開先3D", "smt": "SMT AOI"}
@@ -193,6 +195,116 @@ def fullseye_detector(measured: np.ndarray, kind: str, threshold: float=.08, sca
     return {"hit":bool(weights.max()>threshold),"center":(float(cy),float(cx)),"strength":float(weights.max())}
 
 
+# The vocabulary is deliberately small and typed.  It is the Lighthouse adapter
+# for the same genome -> typed stages -> train-only selection route used by
+# evolve.run; every executable image stage is an existing Fullseye op.  No op is
+# added by this experiment.
+EVOLUTION_VOCABULARY = {
+    "preprocess": ("varmodel_score",),
+    "morphology": ("identity", "gclose", "gopen"),
+    "decision": ("peak", "component_energy", "tail_mean"),
+}
+
+
+def evolved_detector(measured: np.ndarray, kind: str, threshold: float = 4.0,
+                     model=None, pipeline=None):
+    """Evolved pipeline (readable form): alignment/variation z -> morphology ->
+    peak, connected-component energy, or tail-mean decision -> calibrated gate.
+
+    ``pipeline`` is a name-pinned typed genome emitted by :func:`evolve_pipeline`.
+    Detectors receive pixels/points and the training model only, never truth.
+    """
+    if kind == "bevel":
+        # Point-cloud vocabulary: points -> robust planes -> feature -> decision.
+        out = fullseye_detector(measured, kind, threshold=threshold, model=model)
+        out["strength"] = abs(out["angle"] - 35.0)
+        return out
+    spec = pipeline or {"morphology": "identity", "decision": "peak", "radius": .15}
+    scored = _op("varmodel_score", np.asarray(measured, float), model["variation"], align="translate")
+    residual = np.abs(np.asarray(scored["z"], float))
+    morph = spec["morphology"]
+    if morph != "identity":
+        residual = np.asarray(_op(morph, residual, spec["radius"], spec["radius"]), float)
+    residual = np.where(scored["valid"], residual, 0.0)
+    if kind == "smt":
+        roi = np.zeros_like(residual, bool); roi[34:63, 52:93] = True
+        residual = np.where(roi, residual, 0.0)
+    pos = np.unravel_index(int(np.argmax(residual)), residual.shape)
+    if spec["decision"] == "peak":
+        strength = float(residual[pos])
+    elif spec["decision"] == "tail_mean":
+        q = np.quantile(residual[residual > 0], .995) if np.any(residual > 0) else 0
+        strength = float(np.mean(residual[residual >= q])) if q else 0.0
+    else:
+        mask = residual > 2.0
+        labels, n = ndi.label(mask, structure=np.ones((3, 3), int))
+        if n:
+            ids = np.arange(1, n + 1); energy = ndi.sum(residual, labels, ids)
+            k = int(ids[np.argmax(energy)]); pos = ndi.center_of_mass(residual, labels, k)
+            strength = float(np.max(energy))
+        else:
+            strength = 0.0
+    return {"hit": bool(strength > threshold), "center": tuple(map(float, pos)), "strength": strength}
+
+
+def _candidate(rng, kind="tyre"):
+    """Decode one deterministic typed genome without changing the global op registry."""
+    return {"preprocess": "varmodel_score",
+            "morphology": EVOLUTION_VOCABULARY["morphology"][int(rng.integers(3))],
+            "decision": EVOLUTION_VOCABULARY["decision"][int(rng.integers(3))],
+            "radius": float((.08, .15, .25)[int(rng.integers(3))]),
+            "threshold": float(np.exp(rng.uniform(np.log(.1 if kind == "bevel" else 1.5),
+                                                   np.log(5.0 if kind == "bevel" else 300.0))))}
+
+
+def evolve_pipeline(kind: str, seeds, model, budget: int, search_seed: int = EVOLUTION_SEED):
+    """Train-only typed pipeline/parameter evolution with an internal locked validation.
+
+    First 2/3 of ``seeds`` fit/calibrate; the final 1/3 selects.  The objective is
+    miss + 2*max(FAR-5%, 0) + FAR: both errors matter and FAR above 5% is constrained.
+    Evaluation seeds are rejected explicitly.  Equal seed and budget reproduce the
+    byte-identical champion.  Returns an audit record including every seen seed.
+    """
+    seeds = tuple(seeds)
+    if set(seeds) & set(HOLDOUT_SEEDS):
+        raise ValueError("evaluation seeds must never enter evolution")
+    cut = max(1, 2 * len(seeds) // 3); fit, valid = seeds[:cut], seeds[cut:]
+    rng = np.random.default_rng(search_seed + KINDS.index(kind))
+    t0 = time.perf_counter(); best = None; history = []
+    for evaluation in range(1, budget + 1):
+        spec = _candidate(rng, kind)
+        # Separate validation-tail calibration: detector sees measurements only;
+        # labels are consumed here by the outer evaluator, never by the detector.
+        good_strength = []
+        probe = dict(spec); probe["threshold"] = 0.0
+        for seed in valid:
+            measured, truth = GENERATORS[kind](seed)
+            if not truth.defective:
+                good_strength.append(evolved_detector(measured, kind, threshold=0.0,
+                                                      model=model, pipeline=probe)["strength"])
+        if good_strength:
+            spec["threshold"] = float(np.quantile(good_strength, .95, method="higher"))
+        params = {"threshold": spec["threshold"], "model": model, "pipeline": spec}
+        metric, _ = score(kind, valid, evolved_detector, params)
+        miss, far = metric["miss_rate"][0], metric["false_positive_rate"][0]
+        objective = miss + far + 2 * max(0.0, far - 5.0)
+        key = (objective, far, miss, json.dumps(spec, sort_keys=True))
+        if best is None or key < best[0]: best = (key, dict(spec), metric)
+        history.append({"evaluations": evaluation, "best_validation_objective": best[0][0]})
+    champion = best[1]
+    pipeline_text = (f"points -> fit_plane3/ransac_plane -> angle_feature -> "
+                     f"threshold({champion['threshold']:.6g} deg) -> decision") if kind == "bevel" else (
+        f"image -> varmodel_score(z) -> {champion['morphology']}({champion['radius']}) -> "
+        f"{champion['decision']} -> threshold({champion['threshold']:.6g}) -> decision")
+    return {"pipeline": champion, "pipeline_text": pipeline_text,
+        "types": (["points", "planes", "feature", "decision"] if kind == "bevel" else
+                  ["image", "score-image", "score-image", "feature", "decision"]),
+        "objective": "miss% + FAR% + 2*max(FAR%-5,0)", "budget_evaluations": budget,
+        "search_seed": search_seed, "fit_seeds": list(fit), "validation_seeds": list(valid),
+        "seen_seeds": list(seeds), "validation": best[2], "history": history,
+        "elapsed_seconds": time.perf_counter() - t0}
+
+
 def score(kind: str, seeds, detector, params, variation: float = 1.0):
     """Independent truth matching and metrics with Wilson 95% intervals."""
     rows=[]; t0=time.perf_counter()
@@ -229,14 +341,14 @@ def _training_model(kind: str, seeds):
     return {"golden":stack.mean(axis=0),"variation":vm,"training_good_seeds":[s for s in seeds if not GENERATORS[kind](s)[1].defective]}
 
 
-def tune(kind: str, detector, seeds, model=None):
+def tune(kind: str, detector, seeds, model=None, budget=SEARCH_BUDGET):
     """同じ12候補の探索予算で、学習用の見逃し+過検出だけを最小化する。"""
     if kind == "bevel":
-        grid=np.linspace(.15,4.2,SEARCH_BUDGET)
+        grid=np.linspace(.15,4.2,budget)
     elif detector is fullseye_detector:
-        grid=np.geomspace(2.0,500.0,SEARCH_BUDGET)
+        grid=np.geomspace(2.0,500.0,budget)
     else:
-        grid=np.linspace(.45,6.5,SEARCH_BUDGET)
+        grid=np.linspace(.45,6.5,budget)
     best=None
     for th in grid:
         params={"threshold":float(th),"model":model}
@@ -259,7 +371,7 @@ def _mcnemar(base_rows, ours_rows, selector):
 
 def audit_detector_boundary():
     """Fail if detector interfaces/source can consume generator truth."""
-    for f in (baseline_detector,fullseye_detector):
+    for f in (baseline_detector,fullseye_detector,evolved_detector):
         assert "truth" not in inspect.signature(f).parameters
         src=inspect.getsource(f)
         assert "GENERATORS" not in src and "Truth(" not in src
@@ -270,14 +382,29 @@ def run(kind: str, full: bool=False):
     _OP_CALLS.clear()
     audit_detector_boundary(); train=TRAIN_SEEDS if full else QUICK_TRAIN_SEEDS; hold=HOLDOUT_SEEDS if full else QUICK_HOLDOUT_SEEDS
     model=_training_model(kind,train)
-    base_threshold,base_search=tune(kind,baseline_detector,train,model)
-    threshold,train_metric=tune(kind,fullseye_detector,train,model)
+    base_threshold,base_search=tune(kind,baseline_detector,train,model,budget=max(EVOLUTION_BUDGETS))
+    threshold,train_metric=tune(kind,fullseye_detector,train,model,budget=max(EVOLUTION_BUDGETS))
+    evolution_curve=[]
+    for budget in EVOLUTION_BUDGETS:
+        evo=evolve_pipeline(kind,train,model,budget)
+        ep={"threshold":evo["pipeline"]["threshold"],"model":model,"pipeline":evo["pipeline"]}
+        ev_train,_=score(kind,train,evolved_detector,ep)
+        ev_hold,_=score(kind,hold,evolved_detector,ep)
+        evolution_curve.append({"budget_evaluations":budget,"elapsed_seconds":evo["elapsed_seconds"],
+                                "pipeline":evo["pipeline"],"pipeline_text":evo["pipeline_text"],
+                                "train":ev_train,"holdout":ev_hold,"audit":evo})
+    evolved=evolution_curve[-1]; ep={"threshold":evolved["pipeline"]["threshold"],"model":model,"pipeline":evolved["pipeline"]}
     bp={"threshold":base_threshold,"model":model}; op={"threshold":threshold,"scale":3,"model":model}
     base_train,_=score(kind,train,baseline_detector,bp); ours_train,_=score(kind,train,fullseye_detector,op)
     base_hold,base_rows=score(kind,hold,baseline_detector,bp); ours_hold,ours_rows=score(kind,hold,fullseye_detector,op)
+    evolved_hold,evolved_rows=score(kind,hold,evolved_detector,ep)
     b=base_hold["miss_rate"][0]; o=ours_hold["miss_rate"][0]; reduction=100*(b-o)/b if b else None
     sig={"defect_miss":_mcnemar(base_rows,ours_rows,lambda r:r[0].defective and not r[1]),
-         "good_false_positive":_mcnemar(base_rows,ours_rows,lambda r:(not r[0].defective) and r[1])}
+         "good_false_positive":_mcnemar(base_rows,ours_rows,lambda r:(not r[0].defective) and r[1]),
+         "evolved_vs_baseline_defect_miss":_mcnemar(base_rows,evolved_rows,lambda r:r[0].defective and not r[1]),
+         "evolved_vs_baseline_good_fp":_mcnemar(base_rows,evolved_rows,lambda r:(not r[0].defective) and r[1]),
+         "evolved_vs_hand_defect_miss":_mcnemar(ours_rows,evolved_rows,lambda r:r[0].defective and not r[1]),
+         "evolved_vs_hand_good_fp":_mcnemar(ours_rows,evolved_rows,lambda r:(not r[0].defective) and r[1])}
     sweep=[]
     for level in (.25,.5,1.,1.5,2.):
         ss=hold[:min(160,len(hold))]
@@ -292,7 +419,10 @@ def run(kind: str, full: bool=False):
                 z=_op("varmodel_score",image,model["variation"],align="translate")
                 ne+=z["n_exceed"]; nv+=z["n_valid"]; ng+=1
         far={"declared_pixel_far":DECLARED_FAR,"measured_pixel_far":ne/nv if nv else None,"good_images":ng}
-    return {"kind":kind,"model":LABEL[kind],"mode":"full" if full else "quick","seeds":{"train":list(train),"holdout":list(hold)},"search_budget_each":SEARCH_BUDGET,"defect_model":DEFECT_TABLE[kind],"good_variation":VARIATION_TABLE[kind],"baseline":"同じ学習良品の平均像+正規化相互相関位置合わせ+固定閾値" if kind!="bevel" else "同じ点群を使う外れ値除去なし最小二乗","pipeline":"Fullseye位置合わせ→良品変動モデル→z残差→形態学" if kind!="bevel" else "同じ点群ROI→頑健中央値プロファイル→角度当てはめ","fullseye_ops":sorted(set(_OP_CALLS)),"selected_thresholds":{"baseline":base_threshold,"ours":threshold},"train_search_metric":{"baseline":base_search,"ours":train_metric},"train":{"baseline":base_train,"ours":ours_train},"holdout":{"baseline":base_hold,"ours":ours_hold},"variation_sweep":sweep,"far_check":far,"mcnemar":sig,"miss_reduction_percent":reduction,"wef_reported_reduction_percent":WEF[kind],"comparison_warning":"WEFは各実工場の導入前との比較。本仮想工場の同一真値比較とは前提が異なり、勝敗を示さない。","loss_condition":"variation_sweepまたは高難度曲線で提案法が基準を下回る条件を負けとして申告する。","_rows":(base_rows,ours_rows)}
+    far["evolved_declared_part_far"] = .05
+    far["evolved_measured_part_far"] = evolved_hold["false_positive_rate"][0] / 100
+    far["calibration"] = "学習fitと分離したvalidationで目的関数の5%制約ペナルティを較正"
+    return {"kind":kind,"model":LABEL[kind],"mode":"full" if full else "quick","seeds":{"train":list(train),"holdout":list(hold)},"search_budget_each":max(EVOLUTION_BUDGETS),"search_budgets":list(EVOLUTION_BUDGETS),"defect_model":DEFECT_TABLE[kind],"good_variation":VARIATION_TABLE[kind],"baseline":"同じ学習良品の平均像+正規化相互相関位置合わせ+固定閾値" if kind!="bevel" else "同じ点群を使う外れ値除去なし最小二乗","pipeline":"Fullseye位置合わせ→良品変動モデル→z残差→形態学" if kind!="bevel" else "同じ点群ROI→頑健中央値プロファイル→角度当てはめ","evolved_pipeline":evolved["pipeline_text"],"fullseye_ops":sorted(set(_OP_CALLS)),"selected_thresholds":{"baseline":base_threshold,"ours":threshold,"evolved":evolved["pipeline"]["threshold"]},"train_search_metric":{"baseline":base_search,"ours":train_metric,"evolved":evolved["audit"]["validation"]},"train":{"baseline":base_train,"ours":ours_train,"evolved":evolved["train"]},"holdout":{"baseline":base_hold,"ours":ours_hold,"evolved":evolved_hold},"budget_curve":evolution_curve,"variation_sweep":sweep,"far_check":far,"mcnemar":sig,"miss_reduction_percent":reduction,"wef_reported_reduction_percent":WEF[kind],"comparison_warning":"WEFは各実工場の導入前との比較。本仮想工場の同一真値比較とは前提が異なり、勝敗を示さない。","loss_condition":"variation_sweepまたは高難度曲線で進化法が基準・手組みを下回る条件を負けとして申告する。","_rows":(base_rows,ours_rows,evolved_rows)}
 
 
 DEFECT_TABLE={
