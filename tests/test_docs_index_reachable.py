@@ -130,11 +130,7 @@ def test_every_document_is_reachable_from_the_index(lang):
     """
     root = _index_path(lang)
     seen = _reachable(root)
-    # ★2026-10-21(ユーザー指示): docs/view2026/ は論文の QR コードが入口で、発表(12/3-4)まで
-    #   他の頁からリンクを張らない(目立たせない)。地図(_DOCMAP_SKIP)からも外してある。
-    #   発表後にここと _DOCMAP_SKIP の両方から外して地図に戻す。
-    qr_only = DOCS / "view2026"
-    orphans = [p for p in _all_md() if p not in seen and qr_only not in p.parents]
+    orphans = [p for p in _all_md() if p not in seen]
     rel = sorted(str(p.relative_to(ROOT)).replace("\\", "/") for p in orphans)
     assert not orphans, (
         "索引 %s から辿れない文書が %d 本ある。入口が無い文書は在っても無いのと"

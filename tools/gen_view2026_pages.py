@@ -62,6 +62,7 @@ QIITA = "https://qiita.com/furuse-kazufumi/items/"
 JA_MARK = "_(ja)_"                     # tools/i18n_status.py の印と同じ
 PIXEL = "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
 _KANA = re.compile(r"[぀-ヿ]")
+_GARBLE = re.compile(r"\ufffd|\?{3,}|(?<=\d)\?(?=\d)")
 _NUM = re.compile(r"\d+(?:\.\d+)?")
 _LIQUID = re.compile(re.escape("{" + "{") + "|" + re.escape("{" + "%"))
 
@@ -168,6 +169,12 @@ def validate(d: dict) -> list[str]:
             return
         if empty:
             bad.append("%s: 訳が無い言語 %s" % (name, empty))
+        # ★2026-10-30: 2 つの展示の日本語が 10/27 から「???…」のまま載っていた(× と − も全言語で ? に)。
+        #   文字コードの往復で失われた文字は ? か U+FFFD になる。どちらも訳として通さない。
+        for l in langs:
+            m = _GARBLE.search(str(tr.get(l, "")))
+            if m:
+                bad.append("%s [%s]: 文字化け(%r) —— 元の文字を復元すること" % (name, l, m.group(0)))
 
     for k, tr in d["ui"].items():
         if k in ("title_tr", "series_lang_note"):      # ja だけ空(日本語では要らない)

@@ -3,6 +3,8 @@
 
 **Language:** [日本語](README.md) · [English](README.en.md) · [简体中文](README.zh.md) · [繁體中文](README.tw.md) · [한국어](README.ko.md) · [Deutsch](README.de.md)
 
+> **将在 ViEW2026(2026 年 12 月 3–4 日,横滨 Pacifico)演讲 → [ViEW2026 页面](view2026/zh/)**(PoC 的动态结果、可在浏览器中操作的查看器、论文信息)
+
 > **请注意：**目前只有本索引页有译文，它所链接的各篇文档暂时仅有日文版。
 
 
@@ -298,7 +300,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## 文档地图 — 共 292 篇
+## 文档地图 — 共 300 篇
 
 完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 3,613 篇算子说明与 69 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
 
@@ -440,7 +442,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(209)
+**Other**(217)
 
 | 文档 | 内容 |
 |---|---|
@@ -653,5 +655,13 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`literature/electron_microscopy.md`](literature/electron_microscopy.md) | 文献層: 電子顕微鏡の撮像と計測(厳選) _(ja)_ |
 | [`literature/industrial_optical_sensing.md`](literature/industrial_optical_sensing.md) | 文献層: 工業用光学センシング(厳選) _(ja)_ |
 | [`literature/sensitivity_uq_calibration.md`](literature/sensitivity_uq_calibration.md) | 文献層: 感度解析・不確かさ定量化・較正(厳選) _(ja)_ |
+| [`view2026/de/index.md`](view2026/de/index.md) | Fullseye — ViEW2026 |
+| [`view2026/en/index.md`](view2026/en/index.md) | Fullseye — ViEW2026 |
+| [`view2026/fr/index.md`](view2026/fr/index.md) | Fullseye — ViEW2026 |
+| [`view2026/hi/index.md`](view2026/hi/index.md) | Fullseye — ViEW2026 |
+| [`view2026/index.md`](view2026/index.md) | Fullseye — ViEW2026 |
+| [`view2026/ko/index.md`](view2026/ko/index.md) | Fullseye — ViEW2026 |
+| [`view2026/tw/index.md`](view2026/tw/index.md) | Fullseye — ViEW2026 |
+| [`view2026/zh/index.md`](view2026/zh/index.md) | Fullseye — ViEW2026 |
 
 <!-- docmap:end -->
