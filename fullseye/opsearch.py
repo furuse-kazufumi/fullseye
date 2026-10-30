@@ -216,10 +216,15 @@ def _hypergraph_plans(starts: list[str], want: str, query: str, *, executable_on
         rows=best.setdefault(row["sort"],[])
         if any(x["signature"]==row["signature"] for x in rows): continue
         rows.append(row); rows.sort(key=lambda x:(x["cost"],x["depth"],x["signature"]))
-        # Seven-proposal mode needs an over-complete pool for diversity.  Keep
-        # explicit legacy k values ranking-compatible with their old beam.
-        del rows[(k * 8 if k == 7 else k):]
-        if row not in rows: continue
+        # Seven-proposal mode needs an over-complete pool for diversity, but only
+        # at the wanted sort where the Jaccard filter picks the final plans.
+        # Widening every intermediate sort made the search ~15x slower and hit
+        # plan_timeout_ms on slower CI runners (empty plans, 2026-10-30).
+        # Explicit legacy k values stay ranking-compatible with their old beam.
+        del rows[(k * 8 if k == 7 and row["sort"] == want else k):]
+        # The extra pool only feeds the final diversity filter; expanding further
+        # from it would re-create the wide beam downstream.
+        if row not in rows[:k]: continue
         for edge in by_input.get(row["sort"],[]): enqueue(edge)
     plans = []
     selected=[]
