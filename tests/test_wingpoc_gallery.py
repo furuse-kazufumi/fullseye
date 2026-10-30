@@ -322,6 +322,7 @@ def test_museum_has_three_generated_parts_and_a_device_wing(cap):
         "poc_dtof_ranging",
         "poc_dual_energy_xray",
         "poc_emva1288_sensor",
+        "poc_fingervision_benchmark",
         "poc_grating_interferometry",
         "poc_gw_detector_pseudo_simulation",
         "poc_industrial_oct",
@@ -346,6 +347,7 @@ def test_museum_has_three_generated_parts_and_a_device_wing(cap):
         "poc_thermography_ndt",
         "poc_thin_film_reflectometry",
         "poc_tof_camera",
+        "poc_tote_picking_tactile",
         "poc_virtual_sem_kv_cd_bse",
         "poc_weld_radiograph_porosity",
     }

@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(447 例)
+### 2-D 画像/信号/幾何(453 例)
 
 **metrology**
 - **短い円弧・小数移動・斜めの曲線を偏りなく当てはめる** — 幾何距離の円、局所アップサンプル位相相関、主軸へ回してからの曲線・曲面当てはめを真値で検証する。 `py -3.11 examples/fit_ops_from_knowhow.py`
@@ -359,6 +359,11 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 **inspection**
 - **3D プリンタの層検査(形 → 層 → 経路 → 画像 の往復を自分で閉じ、仕込んだ欠陥を数字で捕まえる)** — 新族 printpath(11 op、numpy + 標準ライブラリ): G-code の読み書き・体積・時間・層ラスタ、メッシュのスライス(輪郭と層マスク)、3MF の読み書き、層画像の符号つき欠陥図。層の面積は閉形式と一致、押し出し量は周長 × 線幅 × 層厚 / 断面積と厳密一致、注入した欠陥 12 か所を許容 3 px で再現率 0.96・偽陽性 0、カメラ 0.2 mm ずれで再現率 0.90(正直に曲線で)。 `py -3.11 examples/poc_print_layer_inspection.py`
 - **EM 連結体校正のセカンドオピニオン(膜はラベルの境界にしか無いはず)** — EM 断面の自動分割が残す融合と分断を学習なしで数える: 内部を横切る膜の弦 = 融合の疑い(閉じた輪は穴で除く)、膜の無い境界 = 分断の疑い。CREMI sample A の正解ラベルに人工誤りを仕込み、閾値を前半の断面で選んで後半で測る(holdout_threshold): 分断 AUC 1.00、融合 0.83(面積で揃えた負例、乱数 0.53・面積だけ 0.70)。揃えないと面積だけで 0.87 が出る = 評価の罠を op で封じる。疑わしい箇所を立方体の上で回す GIF。新族 emproof 7 op。生データは commit しない。 `py -3.11 examples/poc_em_second_opinion.py`
+- **Pandaのかご間ピッキング――触覚と失敗型別リトライを公平な再試行で比べる** — MuJoCo MenagerieのPandaを逐次積分し、視覚のみ、理想化触覚、失敗型別リトライを同じ場面と乱数で比較する。 `py -3.11 examples/poc_tote_picking_tactile.py`
+- **仮想工場のタイヤX線検査――固定基準・手組み・探索を独立holdoutで比べる** — Beer–Lambert合成像に真値を仕込み、Fullseyeパイプラインの見逃し、過検出、宣言FARの破れを測る。 `py -3.11 examples/poc_lighthouse_tyre_xray.py`
+- **仮想工場の鋳造ホイールX線検査――気孔・引け巣・介在物を探索する** — 重大度つき欠陥の合成X線像で固定基準・手組み・探索を独立holdout評価する。 `py -3.11 examples/poc_lighthouse_cast_wheel.py`
+- **仮想工場の開先3D点群検査――欠測と外れ値の下で角度欠陥を探す** — CAD開先から点群を作り、固定基準・頑健な手組み・探索の見逃しと過検出を測る。 `py -3.11 examples/poc_lighthouse_bevel_pointcloud.py`
+- **仮想工場のSMT AOI――5欠陥を3色照明で探す** — 外観合成像だけを検出器に渡し、固定基準・手組み・探索を独立holdoutで比較する。 `py -3.11 examples/poc_lighthouse_smt_aoi.py`
 - **照明の円錐と観察の NA ―― 光の円錐の開き方を変えるだけで、同じ打痕・傷・ムラが消えたり出たりする** — 鏡面に近い金属部品の浅い打痕・ヘアラインの上の傷・梨地のムラは、光源の種類より先に、各点に届く光の円錐の半角 α と向きを、カメラが受け取る円錐(物体側 NA、半角 β)に対してどう置くかで見え方が決まる(顕微鏡のケーラー照明の照明 NA と対物 NA、シュリーレン法のナイフエッジと同じ幾何)。鏡面の反射は方向の球の上の等長写像なので、明るさは 2 つの球冠の交わりという閉形式になり、傾き θ が |α − β|/2 より小さければ見えず、(α + β)/2 を越えると暗い。新 op 5 本(`illumdesign` の `solid_angle_light` / `solid_angle_boundaries` / `solid_angle_brightness` / `solid_angle_sweep` / `solid_angle_render`)。閉形式とレンズの瞳の数値積分(射影立体角の重み)の差は 0.002。NA 0.033 のテレセンで、深さ 2 µm の打痕(最大傾き 0.25°)は α = β でだけ輪になり(画像のコントラスト −0.091、閉形式と 1e-4)、α = 0.5° と 7° では閉形式の予言どおり 0 になる。ヘアラインの筋(傾きの 99 % 点 0.82°)を消して斜面 4° の傷だけを黒くする α は閉形式で 3.5〜6.1° と決まり、α = 4° で筋の揺れが α = β の 0.014 倍、傷のコントラスト −1.00。円錐を β 傾けると平らな地が 0.39 の明るさになり、打痕の左右の斜面が 0.53 と 0.25(閉形式 0.54 / 0.25)に分かれて傾きの符号が読める。梨地の斑(微小面の広がり 1.3° 対 0.8°)は α = β で −0.20、α = 7° で −0.02。★壊れる条件: 面のうねり ±0.25° があると α = β では地の揺れが打痕の沈みの 1.6 倍になり、しきい値で打痕だけを拾えない。微小面の広がり σ が 0.25° でもコントラストは 1/3、4° では α をどう選んでも 0.001。照明の立体角だけを変えて同じワークを撮った比較写真は、再利用できるライセンスでは見つからなかった(実画像との突合は未了)。学習 0、較正 0、門 15 件。 `py -3.11 examples/poc_illumination_cone_vs_na.py`
 - **ハイブリッド接合のボイドは超音波の明るさでなく位相で見つける(SAM の C スキャン、周波数の取引、POD)** — 厚さ 100 µm の Si のダイの下の接合面(SiO2 1 + 1 µm、直径 40 µm・ピッチ 80 µm の Cu パッド 1 + 1 µm)に直径 5〜24 µm のボイドを置き、水 1 mm・F# 3 の集束探触子の SAM で撮る。エコーは層の伝達行列(Airy の再帰・時間領域の経路の和・光学の薄膜の式と 1e-12 で照合済み)。★★接合面の期待時刻で読んだ位相は、誘電体 −91°・Cu パッド +84°(薄い層は直交)、ボイドは誘電体の中 −175°・パッドの上 +159°(反転)。★★振幅の像ではボイド 12 個中 8 個が良品の画素の明るさの範囲に隠れる。直交の背景に反転のエコーが直角に足されるので、9〜16 µm のボイドの振幅の変化は 0.4〜3.5σ、位相を使う変化は 3.0〜8.9σ。位相の像で反転と読む画素は 16 µm 以上のボイドすべてで、良品 26,724 画素中 1 画素。★従来の「|RF| 最大の 1 点の符号」は無傷の Cu パッドで 140〜400 MHz の間に 5 回転ぶ。★最適周波数は閉形式 (k/a)·sqrt(log2(1 + a² ln2/(β k²)))(10 µm で 139.16 MHz、総当たりと一致)、表面エコーの裾がゲートに入る下限 130 MHz。★★POD(â vs a、88 個): 位相を使う検出の a90/95 は 150 / 200 / 300 MHz で 12.4 / 13.9 / 57.6 µm、振幅だけは 16.6 / 19.3 / 101.6 µm(同じ基準・同じ閾値の規則)。1-D 平面波・縦波だけ・ガウスの横 PSF・屈折の収差なし・Si の減衰 0(未確認)・kissing bond なしの合成であることは docstring に明記。検査 16 件・約 15 秒。 `py -3.11 examples/poc_sam_hybrid_bonding_voids.py`
 
@@ -481,6 +486,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **プレノプティック生画像を復号して再合焦と深度を得る** — 合成した生画像を光線場へ復号し、再合焦像と焦点系列からの深度推定までを一続きで検証する。 `py -3.11 examples/plenoptic_decode_pipeline.py`
 - **処方どおりのレンズ越しに 3 次元の場面を撮る ―― 被写界深度・猫の目のボケ・隅の光量・色収差・ゴーストを、閉形式と既存の op と独立の追跡で採点** — レンズ設計の画面はスポットダイアグラムや MTF の数字までは出すが、「この処方で 1 m 先の資料を撮ると絵はどう写るか」は見せない。センサ側から射出瞳を標本化して処方の全面を**逆向きに**追跡し(Kolb, Mitchell & Hanrahan 1995)、物体空間の場面で陰影をつけ、光子・ショットノイズ・読み出しノイズ・量子化まで通す。新 op 8 本(`lensrender`、`opsoptics` の `lensrender`): `lens_scene`(平面・球・メッシュ・光源の場面の検証)/ `exit_pupil_samples` / `trace_sensor_rays`(センサ → 瞳 → 全面を逆向きに、ケラレと全反射は NaN と印)/ `scene_radiance`(ランバート + ブリン・フォン + 影)/ `render_scene_through_lens`(放射照度 → 電子数 → ノイズ → 画像)/ `bokeh_shape`(猫の目)/ `render_ghost_overlay`(2 回反射のゴースト)/ `render_compare_prescriptions`(処方ごとの品質の表)。(1) 逆向きの追跡は `ray_bundle` の逆(入射点 8.7e-15 mm、方向 4.2e-16)、理想レンズ越しの白い面は π L sin²α に相対 2e-6、点光源は画素 1 つに入り光子数が I Ω t QE λ/hc に 1e-6、市松の刃 15 本は `distortion_map` に 0.096 px(歪みは外縁で 5.2 px)、0.7 視野の横色収差は `chromatic_shift` に 0.08 px。(2) 同じ EFL・同じ F ナンバーの三枚玉 2 本(片方は半径を 7〜10 % の 1.5 倍ずらした)で解像チャートを 1 m で撮ると、RMS スポット(軸上)は 10.7 と 53.4 µm(5.0 倍)、刃の 10–90 % は 4.6 と 15.4 px、MTF50 は 0.116 と 0.053 cyc/px で、順は `spot_stats` と一致する。(3) 理想レンズの 0.5 m の点光源のボケは薄肉レンズの錯乱円に 0.31 %、F/8 は F/2.8 の 0.349 倍(2.8/8 = 0.350)。理想レンズの 20 mm 後ろの丸い遮光板では猫の目の面積比が 2 つの円の重なりの閉形式 0.635 に 1.6 % 以内(凸包 0.625・描いた絵 0.639・瞳の通過率 0.636)、子午面に 3.6e-15 mm で対称。三枚玉の隅は像面湾曲でボケの円そのものが 1.3 倍になり、面積比は通過率と一致しない(そう書く)。(4) 白い面の相対照度は `lensimage` に 0.7 視野まで 1.61 %、8.7° で 3.2 %(物体側と像側の cos⁴ の差)。絞りを前に置いた単玉の格子は隅で −6.6 % の樽型。(5) ゴースト 15 本のエネルギー比は閉形式 r² (1−r)^(2(j−i)−2) に 4.4e-16、重心は `ghost_analysis` に 8e-4 px、反射率 0 で重ねは厳密に 0。(6) 0.2 mm の傷(センサ上 10.4 µm)の対比は良い方 0.547・ずらした方 0.261(48 %)で、前向きに追跡したスポットを線に畳み込んだ独立の予測 0.542 と 0.261 に合う。(7) ★正直な限界: 幾何光学のみで回折が無く、F/11 に絞った良いレンズの点像は Airy 円盤の 0.32 倍に描かれる(F/6.25 は収差が支配で 2.7 倍)。(8) 壊して確かめる探針(屈折率の向きを逆にする・絞りの半径を 10 % 違える・合焦を 1.5 m にずらす)は門が赤になる。学習 0、較正 0、門 30 件。 `py -3.11 examples/poc_photograph_through_prescription.py`
 - **同じ3次元場面を間接ToFと直接ToFで測る――多経路・混合画素・pile-up・体積誤差** — 箱、コーナー、透明板、光沢面、細い柱、暗明市松を同じ解析的な光線真値で測る。20/80/100 MHz・4相の間接方式と光子到着ヒストグラムの直接方式を、曖昧距離、雑音予算、高調波、多経路、混合画素、時間ビン、pile-up、反射率、箱体積について閉形式と比較する。新しいopは追加しない。学習0、較正0、門27件。 `py -3.11 examples/poc_tof_camera.py`
+- **FingerVisionベンチマーク――4 mm接着層の変位・力・滑りを物理合成像で比べる** — 公開式2版、有限層Green逆算、全場ridgeを、魚眼カメラと有限要素法から作った較正外の像で比較する。 `py -3.11 examples/poc_fingervision_benchmark.py`
 - **公開 .zmx 処方を独立計算で照合し、検査レンズとして採点する** — 4 本の処方を別の読取器と光線追跡器で照合し、無限遠・入口瞳径 1 mm・5.5 µm 画素の条件で照明、歪曲、色ずれ、MTF、3 画素傷の視認性を採点する。OPD の規約差も図に残す。 `py -3.11 examples/poc_zmx_public_verify.py`
 - **全天球の検査撮影と立体表示を一つの測定工程として確かめる** — 合成トンネルを全天球、キューブ面、魚眼対、立体視、赤シアン表示、移動映像へ変換し、継ぎ目、死角、球面画質、距離、安定化、タイル範囲、欠陥寸法を真値と照合する。 `py -3.11 examples/poc_omni360_inspection.py`
 - **光弾性の族を一巡する ―― 応力場から縞、偏光像、そして応力へ** — 直径圧縮の円板と Kirsch の板の応力場を閉形式で作り、応力光学則で位相差に、平面・円偏光器の縞と 6 強度の偏光計の像にして、閉形式で主応力差と主軸へ戻す。3 波長で 1 波長を超える次数を決め、Si(100) では結晶方位で複屈折が変わることを出典つきの係数で示す。 `py -3.11 examples/photoelastic_roundtrip.py`
@@ -1299,7 +1305,7 @@ _計 3613 ops / 55 families。並びとノートの在り処は `docs/ops/INDEX.
 - `m1_measure_thresh` (halcon: `measure_thresh`) `image → feature` — 中心を通るキャリパー線上で、輝度プロファイルが指定レベルを横切った回数を数える（HALCON ``measure_thresh`` に相当: 矩形/円弧に沿って特定のグレー値を持つ点を抽出する）。 · 例: `gallery2d_contour_measure`
 
 #### 2d / misc(1)
-- `identity` (halcon: `copy_image`) `any → any` — 恒等写像。HALCON の ``copy_image``（Copy an image and allocate new memory for it.）に対応付けられているが、実装は新しいメモリを確保して複製する ``copy_image`` とは異なり、入力の配列をそのまま返すだけ（複製しない）。 · 例: `gallery_nary_image_algebra`, `optics_four_f_processor`, `poc_em_branch_territory`, `poc_food_cutting_measure`
+- `identity` (halcon: `copy_image`) `any → any` — 恒等写像。HALCON の ``copy_image``（Copy an image and allocate new memory for it.）に対応付けられているが、実装は新しいメモリを確保して複製する ``copy_image`` とは異なり、入力の配列をそのまま返すだけ（複製しない）。 · 例: `gallery_nary_image_algebra`, `lighthouse_vfactory`, `optics_four_f_processor`, `poc_em_branch_territory`, `poc_food_cutting_measure`
 
 #### 2d / morphology(36)
 - `bothat` (halcon: `gray_bothat`) `image → image` — ブラックトップハット（クロージング − 原画像）。HALCON の ``gray_bothat``（Perform a gray value bottom hat transformation on an image.）に相当。 · 例: `example_scratch_width`, `gallery2d_morphology`, `poc_metal_grain_size`
@@ -1312,10 +1318,10 @@ _計 3613 ops / 55 families。並びとノートの在り処は `docs/ops/INDEX.
 - `cv_tophat` (halcon: `gray_tophat`) `image → image` — トップハット変換(top-hat、OpenCV 実装)。「元画像 − 開処理結果」を計算し、明るい背景の上にある、構造要素より小さい明るい特徴だけを抽出する。 · 例: `gallery2d_morphology`
 - `f2_gray_inside` (halcon: `gray_inside`) `image → image` — Grayscale hole-fill: for each pixel, the lowest gray value attainable on any path to the image border == morphological reconstruction of the image by erosion from a border-anchored marker. Dark basins enclosed by brighter walls are raised toward the wall height; regions connected to the border stay dark. ``a`` sets the maximum fill depth ``h = 0.02 + 0.98*a``; ``b`` is ignored. · 例: `gallery2d_morphology`
 - `f2_gray_skeleton` (halcon: `gray_skeleton`) `image → image` — Thinning of a gray-value image: skeletonise the bright region (threshold set by ``a``) and lift the 1-px medial ridge back to the original gray values. ``b`` is ignored. · 例: `gallery2d_morphology`
-- `gclose` (halcon: `gray_closing`) `image → image` — グレースケールクロージング（膨張してから侵食）。HALCON の ``gray_closing``（Perform a gray value closing on an image.）に相当。 · 例: `gallery2d_morphology`
+- `gclose` (halcon: `gray_closing`) `image → image` — グレースケールクロージング（膨張してから侵食）。HALCON の ``gray_closing``（Perform a gray value closing on an image.）に相当。 · 例: `gallery2d_morphology`, `lighthouse_vfactory`
 - `gdilate` (halcon: `gray_dilation`) `image → image` — グレースケール膨張（明るい側に広げる）。HALCON の ``gray_dilation``（Perform a gray value dilation on an image.）に相当。 · 例: `gallery2d_morphology`
 - `gerode` (halcon: `gray_erosion`) `image → image` — グレースケール侵食（暗い側に広げる）。HALCON の ``gray_erosion``（Perform a gray value erosion on an image.）に相当。 · 例: `gallery2d_morphology`
-- `gopen` (halcon: `gray_opening`) `image → image` — グレースケールオープニング（侵食してから膨張）。HALCON の ``gray_opening``（Perform a gray value opening on an image.）に相当。 · 例: `gallery2d_morphology`
+- `gopen` (halcon: `gray_opening`) `image → image` — グレースケールオープニング（侵食してから膨張）。HALCON の ``gray_opening``（Perform a gray value opening on an image.）に相当。 · 例: `gallery2d_morphology`, `lighthouse_vfactory`
 - `gray_bothat` (halcon: `gray_bothat`) `image → image` — ブラックトップハット(クロージング − 元画像)。周囲より暗い小さな構造 (穴・くぼみ)だけを抽出する、``gray_tophat`` と明暗が逆の演算。HALCON の ``gray_bothat``（Perform a gray value bottom hat transformation on an image.）に相当。 · 例: `gallery2d_morphology`, `poc_metal_grain_size`
 - `gray_closing` (halcon: `gray_closing`) `image → image` — グレースケールクロージング(膨張の後に同じ構造要素で収縮)。暗い小さな 穴・くぼみを埋める、``gray_opening`` と対の演算。HALCON の ``gray_closing``（Perform a gray value closing on an image.）に相当。 · 例: `gallery2d_morphology`, `poc_solar_el_inspection`
 - `gray_closing_rect` (halcon: `gray_closing_rect`) `image → image` — 正方形窓（一辺 ``_k(a)``=3/5/7/9）によるグレースケール・クロージング（gray closing、膨張の後に収縮）。小さな暗い穴・くぼみを埋めながら大まかな明るさは保つ。b は未使用。 · 例: `gallery2d_morphology`
@@ -1545,7 +1551,7 @@ _計 3613 ops / 55 families。並びとノートの在り処は `docs/ops/INDEX.
 - `sk_sauvola` (halcon: `var_threshold`) `image → region` — Sauvola の局所適応しきい値。各ピクセル周辺の局所平均・標準偏差からローカルにしきい値を決める手法で、照明ムラのある文書画像の二値化(文字抽出)向けに設計されている。 · 例: `gallery2d_segmentation`, `poc_matrix_code_reading`, `poc_segmentation_gauntlet`, `threshold_family_agreement`
 - `sk_slic` `image → region` — SLIC(Simple Linear Iterative Clustering)によるスーパーピクセル分割。色(ここではグレー値)と座標を合わせた空間で k-means クラスタリングを行い、ほぼ均等な大きさの領域に分割する。ここでは分割結果の境界線を領域として返す。 · 例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
 - `sk_yen` (halcon: `binary_threshold`) `image → region` — Yen の最大相関基準(maximum correlation criterion)による大域しきい値二値化。ヒストグラムのエントロピーベースの評価量を最大化してしきい値を選ぶ、大津法・Li 法とはまた別の自動しきい値法。 · 例: `gallery2d_segmentation`, `threshold_family_agreement`
-- `threshold` (halcon: `threshold`) `image → region` — 大域しきい値処理（グローバルスレッショルド）。HALCON の ``threshold``（Segment an image using global threshold.）に相当。 · 例: `gallery2d_segmentation`, `poc_bone_trabecular_thickness`, `poc_change_detection_misreg`, `poc_fresco_craquelure`, `poc_gear_tooth_metrology`, `poc_metal_grain_size`, `poc_screw_thread_metrology`, `poc_tof_camera`, `poc_traffic_counting`, `poc_virtual_sem_kv_cd_bse`, `poc_water_level`, `tof_realdata`, `video_streaming`
+- `threshold` (halcon: `threshold`) `image → region` — 大域しきい値処理（グローバルスレッショルド）。HALCON の ``threshold``（Segment an image using global threshold.）に相当。 · 例: `gallery2d_segmentation`, `lighthouse_vfactory`, `poc_bone_trabecular_thickness`, `poc_change_detection_misreg`, `poc_fresco_craquelure`, `poc_gear_tooth_metrology`, `poc_metal_grain_size`, `poc_screw_thread_metrology`, `poc_tof_camera`, `poc_traffic_counting`, `poc_virtual_sem_kv_cd_bse`, `poc_water_level`, `tof_realdata`, `video_streaming`
 - `var_threshold` (halcon: `var_threshold`) `image → region` — Sauvola の局所適応的二値化(``skimage.filters.threshold_sauvola``、 窓サイズ ``2*int(a*6)+3``)。局所平均と局所標準偏差の両方を使ってしきい値 を決めるため、``dyn_threshold`` より照明ムラや低コントラスト文書に強い。 HALCON の ``var_threshold``（Threshold an image by local mean and standard deviation analysis.）に相当する近似(定式化は似た発想だが Sauvola の式と HALCON の式は係数が異なる ―― 同一の数値結果にはならない)。 · 例: `gallery2d_segmentation`, `poc_document_scan`
 - `watersheds` (halcon: `watersheds`) `image → region` — 分水嶺(watershed)セグメンテーション。勾配画像を地形とみなし、 暗い領域(``x < 0.2+0.3*a``)をマーカーとして分水嶺線を求め、その境界線を 返す。HALCON の ``watersheds``（Extract watersheds and basins from an image.）に相当。 · 例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
 - `watersheds_threshold` (halcon: `watersheds_threshold`) `image → region` — 実装は ``watersheds`` と同一(``kind: "watershed"``)。HALCON の ``watersheds_threshold``（Extract watershed basins from an image using a threshold.）は本来、隣接する集水域を統合する深さのしきい値を持つ演算子 だが、この代役では統合しきい値を実装せず ``watersheds`` と同じ結果を返す (近似の限界)。 · 例: `gallery2d_segmentation`
@@ -3454,11 +3460,11 @@ _計 3613 ops / 55 families。並びとノートの在り処は `docs/ops/INDEX.
 - `gum_validate` `table × table → table` — モンテカルロの結果で伝播則の結果を**検証**する(``table``)。 · 例: `poc_measurement_system_analysis`
 
 #### spc / variation(5)
-- `varmodel_alignment` `video → table` — Translation offset of every good sample against the typical position of the stack, and the margin to the tolerance (``table``). · 例: `poc_good_sample_variation_model`
+- `varmodel_alignment` `video → table` — Translation offset of every good sample against the typical position of the stack, and the margin to the tolerance (``table``). · 例: `lighthouse_vfactory`, `poc_good_sample_variation_model`
 - `varmodel_band_k` `入力なし → table` — Half-width ``k`` (in spread units) of the tolerance band for a declared two-sided per-pixel false-alarm rate (``table``).
 - `varmodel_calibrate` `table × video → table` — Re-derive the band half-width ``k`` from held-out good images, for data that break the normal assumption (``table``). · 例: `poc_good_sample_variation_model`
-- `varmodel_fit` `video → table` — Learn a per-pixel variation model (centre, spread, band half-width k) from a stack of good samples (``table``). · 例: `poc_good_sample_variation_model`, `poc_patch_anomaly`
-- `varmodel_score` `image2d × table → table` — Score one image against a ``varmodel_fit`` model: z map in sigmas, out-of-band map and a per-region explanation (``table``). · 例: `poc_good_sample_variation_model`, `poc_patch_anomaly`
+- `varmodel_fit` `video → table` — Learn a per-pixel variation model (centre, spread, band half-width k) from a stack of good samples (``table``). · 例: `lighthouse_vfactory`, `poc_good_sample_variation_model`, `poc_patch_anomaly`
+- `varmodel_score` `image2d × table → table` — Score one image against a ``varmodel_fit`` model: z map in sigmas, out-of-band map and a per-region explanation (``table``). · 例: `lighthouse_vfactory`, `poc_good_sample_variation_model`, `poc_patch_anomaly`
 
 ### graph(20 ops / 9 categories)
 
@@ -4557,7 +4563,7 @@ _計 3613 ops / 55 families。並びとノートの在り処は `docs/ops/INDEX.
 - `annotate_inset_layout` `入力なし → table` — table(dict)を返す: 拡大差し込みの置き場所と倍率を閉形式で決める。 · 例: `paper_figure`
 - `annotate_leader` `image2d → image2d` — 画像(image2d)を返す: 肘つき引き出し線 + 文字(複数点の衝突回避つき)。 · 例: `paper_figure`
 - `annotate_leader_layout` `入力なし → table` — table(dict)を返す: 引き出し線の配置(肘・文字位置・板の矩形)を閉形式で決める。 · 例: `paper_figure`
-- `annotate_legend` `image2d → image2d` — 画像(image2d)を返す: 番号つき丸マーカー × 説明の凡例(:func:`annotate_markers` の対)。 · 例: `paper_figure`, `poc_real_defect_floor`
+- `annotate_legend` `image2d → image2d` — 画像(image2d)を返す: 番号つき丸マーカー × 説明の凡例(:func:`annotate_markers` の対)。 · 例: `lighthouse_vfactory_cli`, `paper_figure`, `poc_real_defect_floor`
 - `annotate_markers` `image2d → image2d` — 画像(image2d)を返す: 番号(または短い文字)入りの丸いマーカーを各点に置く。 · 例: `paper_figure`
 - `annotate_orientation` `image2d → image2d` — 画像(image2d)を返す: 方位(北)や向きを示す矢印 + 文字。 · 例: `paper_figure`
 - `annotate_outline` `image2d × mask → image2d` — 画像(image2d)を返す: マスクの輪郭を(AA の)閉折れ線で描き、重心に文字を置く。 · 例: `paper_figure`, `poc_rotation_invariance_audit`
@@ -4862,7 +4868,7 @@ _計 3613 ops / 55 families。並びとノートの在り処は `docs/ops/INDEX.
 - `ms_ssim` `image2d × image2d → scalar` — 多尺度 SSIM(Wang, Simoncelli & Bovik, Asilomar Conf. 2003)。 · 例: `image_quality_metrics`
 - `mse` `image2d × image2d → scalar` — 平均二乗誤差。``data_range`` に依らない生の量。 · 例: `image_quality_metrics`
 - `psnr` `image2d × image2d → scalar` — 2 枚の画像のピーク信号対雑音比(PSNR、単位 dB)を返す。 · 例: `image_quality_metrics`, `poc_camera_shake_deblur`, `poc_dehazing`, `poc_focus_stacking`, `poc_iqa_tid2013`, `poc_pixel_shift`, `poc_real_deblur_honesty`, `poc_superresolution_limits`
-- `rmse` `image2d × image2d → scalar` — 平均二乗誤差の平方根(画素値と同じ単位)。 · 例: `grasp_pose`, `image_quality_metrics`, `poc_ct_fidelity`, `poc_datacenter_thermal_field`, `poc_polarization_specular`, `poc_structure_4d_deterioration`
+- `rmse` `image2d × image2d → scalar` — 平均二乗誤差の平方根(画素値と同じ単位)。 · 例: `grasp_pose`, `image_quality_metrics`, `poc_ct_fidelity`, `poc_datacenter_thermal_field`, `poc_fingervision_benchmark`, `poc_polarization_specular`, `poc_structure_4d_deterioration`
 - `ssim` `image2d × image2d → scalar` — 構造的類似度(Wang, Bovik, Sheikh & Simoncelli, IEEE TIP 13(4), 2004)。 · 例: `image_quality_metrics`, `poc_camera_shake_deblur`, `poc_ct_fidelity`, `poc_dehazing`, `poc_iqa_tid2013`, `poc_superresolution_limits`
 - `ssim_map` `image2d × image2d → image2d` — SSIM の**マップ**(平均を取る前)。どこが似ていないかを絵で見るため。 · 例: `image_quality_metrics`, `poc_iqa_tid2013`
 

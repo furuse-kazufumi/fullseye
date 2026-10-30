@@ -1,0 +1,112 @@
+[
+ {
+  "file": "01_success_vs_retries.png",
+  "name": "success_vs_retries",
+  "caption": "同じ仮想空間・品物・乱数で3手法を比較。実機97%との勝敗比較ではない。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "02_success_by_product.png",
+  "name": "success_by_product",
+  "caption": "0..9は商品表順。低摩擦・薄板・重量物を含み、100%にならない難しさ。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_failure_types.png",
+  "name": "failure_types",
+  "caption": "失敗は重複させず、最初に確定した真値の型で数える。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_easy_trial_diagnosis.png",
+  "name": "easy_trial_diagnosis",
+  "caption": "易しい箱1試行の高さとmj_contactForce。関節目標・実角・出力・手先位置の全ログはresult.json。",
+  "shape": [
+   360,
+   753,
+   3
+  ]
+ },
+ {
+  "file": "05_trial_success_shampoo.gif",
+  "name": "trial_success_shampoo",
+  "caption": "MuJoCo実描画: シャンプーボトルの成功試行。",
+  "shape": [
+   720,
+   1280,
+   3
+  ],
+  "animated": true,
+  "frames": 26,
+  "frames_written": 26,
+  "fps": 8.0
+ },
+ {
+  "file": "06_trial_tactile_rescue.gif",
+  "name": "trial_tactile_rescue",
+  "caption": "MuJoCo実描画: 視覚のみでは時間切れ、触覚で救済された同一場面。",
+  "shape": [
+   720,
+   1280,
+   3
+  ],
+  "animated": true,
+  "frames": 26,
+  "frames_written": 26,
+  "fps": 8.0
+ },
+ {
+  "file": "07_trial_fail_grasp_miss.gif",
+  "name": "trial_fail_grasp_miss",
+  "caption": "MuJoCo実描画: 重量缶の掴み損ね。",
+  "shape": [
+   720,
+   1280,
+   3
+  ],
+  "animated": true,
+  "frames": 26,
+  "frames_written": 26,
+  "fps": 8.0
+ },
+ {
+  "file": "08_trial_fail_transport_slip.gif",
+  "name": "trial_fail_transport_slip",
+  "caption": "MuJoCo実描画: 缶の運搬中滑落。",
+  "shape": [
+   720,
+   1280,
+   3
+  ],
+  "animated": true,
+  "frames": 26,
+  "frames_written": 26,
+  "fps": 8.0
+ },
+ {
+  "file": "09_trial_fail_timeout.gif",
+  "name": "trial_fail_timeout",
+  "caption": "MuJoCo実描画: 箱の静止時間切れ。",
+  "shape": [
+   720,
+   1280,
+   3
+  ],
+  "animated": true,
+  "frames": 26,
+  "frames_written": 26,
+  "fps": 8.0
+ }
+]

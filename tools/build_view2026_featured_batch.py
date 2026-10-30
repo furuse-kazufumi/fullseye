@@ -44,6 +44,12 @@ def caption_for(src: dict, lang: str) -> str:
     return text + " _(ja)_"
 
 
+#: 翼の対応では入らない分類・見せたい図の上書き(2026-10-31: 仮想工場のロボット 2 本は「ロボット」の分類で、
+#: かご間ピッキングは MuJoCo の実描画の GIF を見せる)。
+CATEGORY_OVERRIDE = {"poc_tote_picking_tactile": "robotics", "poc_fingervision_benchmark": "robotics"}
+MEDIA_OVERRIDE = {"poc_tote_picking_tactile": "06_trial_tactile_rescue.gif"}
+
+
 def media_for(pid: str) -> str | None:
     p = ASSETS / pid / "figures.json"
     if not p.is_file():
@@ -66,7 +72,7 @@ def main() -> None:
     candidates = []
     for e in ledger:
         pid = e["id"]
-        media = media_for(pid)
+        media = MEDIA_OVERRIDE.get(pid) or media_for(pid)
         if (pid in old or pid not in all_by_id or e["wing"] not in WING_CATEGORY or
                 not media or not re.search(r"\d", e.get("caption_en", ""))):
             continue
@@ -96,7 +102,7 @@ def main() -> None:
         label = all_by_id[pid]["label"]
         captions = {lang: caption_for(src, lang) for lang in d["langs"]}
         item = {
-            "id": pid, "category": WING_CATEGORY[src["wing"]], "media": media,
+            "id": pid, "category": CATEGORY_OVERRIDE.get(pid, WING_CATEGORY[src["wing"]]), "media": media,
             "motion": media.lower().endswith((".gif", ".mp4")), "label": label,
             "see": captions, "num": {lang: "" for lang in d["langs"]},
             "numbers_source": src["numbers_source"], "youtube_url": "",

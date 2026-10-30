@@ -5,7 +5,7 @@ category: morphology
 in: image
 out: image
 halcon: gray_closing
-examples: [gallery2d_morphology]
+examples: [gallery2d_morphology, lighthouse_vfactory]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.8.1  # fullseye lib version this note was generated for
@@ -64,6 +64,7 @@ gclose 0.35 0.50
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_morphology](../../../../examples/gallery2d_morphology.py) — `py -3.11 examples/gallery2d_morphology.py`
+- [lighthouse_vfactory](../../../../examples/lighthouse_vfactory.py) — `py -3.11 examples/lighthouse_vfactory.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)
 
