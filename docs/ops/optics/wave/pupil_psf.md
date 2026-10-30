@@ -4,7 +4,7 @@ dim: optics
 category: wave
 in: image2d
 out: image2d
-examples: [optics_imaging]
+examples: [optics_imaging, poc_wavefront_aberration_limits]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.8.1  # fullseye lib version this note was generated for
@@ -117,6 +117,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [optics_imaging](../../../../examples/optics_imaging.py) — `py -3.11 examples/optics_imaging.py`
+- [poc_wavefront_aberration_limits](../../../../examples/poc_wavefront_aberration_limits.py) — `py -3.11 examples/poc_wavefront_aberration_limits.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 

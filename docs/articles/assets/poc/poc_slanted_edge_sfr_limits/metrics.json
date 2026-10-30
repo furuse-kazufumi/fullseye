@@ -1,0 +1,6 @@
+{
+  "conditions": 420,
+  "truth_mtf50_cyc_px": 0.3455079748842897,
+  "clean_max_abs_error_cyc_px": 0.010755770966354994,
+  "first_ten_percent_failure_angle_deg": 1.0
+}

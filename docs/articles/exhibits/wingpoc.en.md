@@ -2,7 +2,7 @@
 
 ### The Industrial Inspection Wing — A Passing Number and a Failing Number Can Coexist
 
-Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The 37 exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.
+Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The 40 exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.
 
 Every ground truth is planted: a closed-form periodic background, the laser-profile h(x), the analytic 1-D heat-conduction solution, closed-form bearing defect frequencies. That is what lets each exhibit measure 'where detection stops working' instead of 'detection worked', without fitting the threshold afterwards.
 
@@ -1175,6 +1175,54 @@ Source: [examples/poc_braid_homotopy_classes.py](https://github.com/furuse-kazuf
 This run produced **5 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_braid_homotopy_classes)
 
 Ops used (notes): [`braid_class_representatives`](https://furuse.work/ops/drive/braidpath/braid_class_representatives.html) · [`braid_equivalent`](https://furuse.work/ops/drive/braidpath/braid_equivalent.html) · [`braid_from_trajectories`](https://furuse.work/ops/drive/braidpath/braid_from_trajectories.html) · [`braid_reduce`](https://furuse.work/ops/drive/braidpath/braid_reduce.html) · [`dynnikov_act`](https://furuse.work/ops/drive/braidpath/dynnikov_act.html) · [`dynnikov_coordinates`](https://furuse.work/ops/drive/braidpath/dynnikov_coordinates.html) · [`grid_distances`](https://furuse.work/ops/drive/agv/grid_distances.html) · [`grid_hole_points`](https://furuse.work/ops/drive/braidpath/grid_hole_points.html) · [`grid_paths_to_xy`](https://furuse.work/ops/drive/braidpath/grid_paths_to_xy.html) · [`homotopy_class_compare`](https://furuse.work/ops/drive/braidpath/homotopy_class_compare.html) · [`homotopy_shortest_paths`](https://furuse.work/ops/drive/braidpath/homotopy_shortest_paths.html) · [`mapf_cbs`](https://furuse.work/ops/drive/agv/mapf_cbs.html) · [`mapf_prioritized`](https://furuse.work/ops/drive/agv/mapf_prioritized.html) · [`pairwise_winding`](https://furuse.work/ops/drive/braidpath/pairwise_winding.html) · [`plan_conflicts`](https://furuse.work/ops/drive/agv/plan_conflicts.html) · [`plan_cost`](https://furuse.work/ops/drive/agv/plan_cost.html)
+
+## No.2026.282 —— The Marechal Approximation Breaks at Different RMS Errors for Different Aberration Shapes
+
+[![The Marechal Approximation Breaks at Different RMS Errors for Different Aberration Shapes](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_wavefront_aberration_limits/01_aberration_limits_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_wavefront_aberration_limits/01_aberration_limits.png)
+
+*↑ **The Marechal Approximation Breaks at Different RMS Errors for Different Aberration Shapes** ―― Four Noll-normalised modes—defocus, astigmatism, coma and spherical aberration—are swept over 121 points each, 484 conditions in total. On-axis Strehl from Fullseye's PSF FFT agrees with an independent pupil integral to a maximum absolute error of 6.66e-16. The 5 percent failure boundaries of the Marechal approximation are 0.1283, 0.2012, 0.1633 and 0.1458 waves RMS, showing that RMS alone does not determine Strehl. The lower row shows the computed PSF images at 0.20 waves RMS.*
+
+```
+py -3.11 examples/poc_wavefront_aberration_limits.py
+```
+
+Source: [examples/poc_wavefront_aberration_limits.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_wavefront_aberration_limits.py)
+
+This run produced **1 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_wavefront_aberration_limits)
+
+Ops used (notes): [`pupil_psf`](https://furuse.work/ops/optics/wave/pupil_psf.html)
+
+## No.2026.283 —— A Four-Angle Polarization Camera Leaves Seven Mueller Dimensions Unseen
+
+[![A Four-Angle Polarization Camera Leaves Seven Mueller Dimensions Unseen](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mueller_dofp_observability/01_observability_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mueller_dofp_observability/01_observability.png)
+
+*↑ **A Four-Angle Polarization Camera Leaves Seven Mueller Dimensions Unseen** ―― The design matrix formed by 0, 45, 90 and 135 degree linear micro-analysers has SVD-computed rank 9 of 16; the number is not hard-coded. Adding quarter-wave-plate states on generation and analysis raises the rank to 16. Fullseye's Mueller chain and an independent Kronecker design equation agree within 1.39e-17. Across 200 trials with 0.2 percent read noise, median relative Mueller error falls from 41.64 percent for linear-only measurements to 1.40 percent with the QWP states.*
+
+```
+py -3.11 examples/poc_mueller_dofp_observability.py
+```
+
+Source: [examples/poc_mueller_dofp_observability.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_mueller_dofp_observability.py)
+
+This run produced **1 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_mueller_dofp_observability)
+
+Ops used (notes): [`mueller_element`](https://furuse.work/ops/optics/polarization/mueller_element.html)
+
+## No.2026.284 —— Slanted-Edge SFR Misreads MTF50 Through Gamma as Well as Edge Angle
+
+[![Slanted-Edge SFR Misreads MTF50 Through Gamma as Well as Edge Angle](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_slanted_edge_sfr_limits/01_sfr_limits_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_slanted_edge_sfr_limits/01_sfr_limits.png)
+
+*↑ **Slanted-Edge SFR Misreads MTF50 Through Gamma as Well as Edge Angle** ―― For a 3.45 um pixel, F/5.6 and 550 nm system, 21 angles, five gamma values and four noise levels produce 420 computed conditions. Fullseye's diffraction MTF agrees with the circular-pupil closed form below 1e-12; including the pixel aperture gives a true MTF50 of 0.34551 cycles per pixel. The independent area-sampled edge route differs by at most 0.01076 cycles per pixel when linear and noiseless. Failures beyond 10 percent already appear at the smallest swept angle, 1.0 degree, and nonlinear tone response moves the result as strongly as angle selection.*
+
+```
+py -3.11 examples/poc_slanted_edge_sfr_limits.py
+```
+
+Source: [examples/poc_slanted_edge_sfr_limits.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_slanted_edge_sfr_limits.py)
+
+This run produced **1 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_slanted_edge_sfr_limits)
+
+Ops used (notes): [`mtf_diffraction`](https://furuse.work/ops/optics/imaging/mtf_diffraction.html)
 
 ### The Dimensional and Shape Metrology Wing — Keep Bias and Scatter Apart
 

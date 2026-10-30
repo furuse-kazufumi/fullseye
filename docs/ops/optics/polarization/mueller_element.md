@@ -4,7 +4,7 @@ dim: optics
 category: polarization
 in: 
 out: matrix
-examples: [optics_imaging, poc_photoelasticity, polarization_camera_pipeline]
+examples: [optics_imaging, poc_mueller_dofp_observability, poc_photoelasticity, polarization_camera_pipeline]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.8.1  # fullseye lib version this note was generated for
@@ -93,6 +93,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [optics_imaging](../../../../examples/optics_imaging.py) — `py -3.11 examples/optics_imaging.py`
+- [poc_mueller_dofp_observability](../../../../examples/poc_mueller_dofp_observability.py) — `py -3.11 examples/poc_mueller_dofp_observability.py`
 - [poc_photoelasticity](../../../../examples/poc_photoelasticity.py) — `py -3.11 examples/poc_photoelasticity.py`
 - [polarization_camera_pipeline](../../../../examples/polarization_camera_pipeline.py) — `py -3.11 examples/polarization_camera_pipeline.py`
 
