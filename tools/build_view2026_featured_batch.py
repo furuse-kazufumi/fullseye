@@ -25,24 +25,6 @@ WING_CATEGORY = {
     "wing_forensics": "inspection", "wing_threed": "geometry3d",
     "wing_device": "optics",
 }
-SEE = {
-    "ja": "実行した PoC の図で、真値との一致と破綻条件を確認する。",
-    "en": "The executed PoC shows agreement with ground truth and where it fails.",
-    "zh": "运行 PoC 的图同时显示与真值的一致性及失效条件。",
-    "tw": "執行 PoC 的圖同時顯示與真值的一致性及失效條件。",
-    "ko": "실행한 PoC 그림에서 참값과의 일치와 실패 조건을 확인한다.",
-    "de": "Die ausgeführte PoC zeigt Übereinstimmung mit der Referenz und die Versagensgrenze.",
-    "hi": "चलाया गया PoC सत्य मान से मेल और विफलता की सीमा दिखाता है।",
-    "fr": "Le PoC exécuté montre l'accord avec la vérité terrain et sa limite d'échec.",
-}
-
-
-def numeric_excerpt(text: str) -> str:
-    sentences = re.split(r"(?<=[.!?])\s+", text.strip())
-    chosen = [s for s in sentences if re.search(r"\d", s)]
-    return " ".join(chosen[:2])[:520].strip()
-
-
 def media_for(pid: str) -> str | None:
     p = ASSETS / pid / "figures.json"
     if not p.is_file():
@@ -90,11 +72,11 @@ def main() -> None:
         raise SystemExit(f"only {len(chosen)} eligible PoCs")
     for _, _, pid, src, media in chosen:
         label = all_by_id[pid]["label"]
-        evidence = numeric_excerpt(src["caption_en"])
+        captions = {lang: src["caption_ja" if lang == "ja" else "caption_en"] for lang in d["langs"]}
         item = {
             "id": pid, "category": WING_CATEGORY[src["wing"]], "media": media,
             "motion": media.lower().endswith((".gif", ".mp4")), "label": label,
-            "see": dict(SEE), "num": {lang: evidence for lang in d["langs"]},
+            "see": captions, "num": {lang: "" for lang in d["langs"]},
             "numbers_source": src["numbers_source"], "youtube_url": "",
         }
         d["exhibits"].append(item)

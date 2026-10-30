@@ -197,6 +197,8 @@ def validate(d: dict) -> list[str]:
         full("groups." + g["id"], g["name"])
     full("paper.abstract", d["paper"]["abstract"])
 
+    ledger_rows = json.loads((ROOT / d["all_source"]).read_text(encoding="utf-8"))["exhibits"]
+    ledger = {e["id"]: e for e in ledger_rows}
     ids = [e["id"] for e in d["exhibits"]]
     if len(ids) != len(set(ids)):
         bad.append("見どころの id が重複している")
@@ -222,12 +224,23 @@ def validate(d: dict) -> list[str]:
             if lack:
                 bad.append("%s: ビューアに無い言語 %s —— py -3.11 tools/anim3d_i18n.py --build %s --out docs/%s"
                            % (pid, lack, pid, _media_rel(d, e)))
-        ref = Counter(_NUM.findall(e["see"]["ja"] + " " + e["num"]["ja"]))
-        for l in langs[1:]:
-            got = Counter(_NUM.findall(e["see"][l] + " " + e["num"][l]))
-            if got != ref:
-                bad.append("%s [%s]: 数の並びが日本語と違う(日本語のみ %s / %s のみ %s)" % (
-                    pid, l, sorted((ref - got).elements()), l, sorted((got - ref).elements())))
+        if "numbers_source" in e:
+            src = ledger.get(pid)
+            if src is None or src.get("numbers_source") != e["numbers_source"]:
+                bad.append("%s: 台帳の numbers_source と一致しない —— build_view2026_featured_batch.py を再実行すること" % pid)
+            else:
+                for l in langs:
+                    expected = src["caption_ja" if l == "ja" else "caption_en"]
+                    got = e["see"][l] + e["num"][l]
+                    if got != expected:
+                        bad.append("%s [%s]: 台帳のキャプションと逐語一致しない —— build_view2026_featured_batch.py を再実行すること" % (pid, l))
+        else:
+            ref = Counter(_NUM.findall(e["see"]["ja"] + " " + e["num"]["ja"]))
+            for l in langs[1:]:
+                got = Counter(_NUM.findall(e["see"][l] + " " + e["num"][l]))
+                if got != ref:
+                    bad.append("%s [%s]: 数の並びが日本語と違う(日本語のみ %s / %s のみ %s)" % (
+                        pid, l, sorted((ref - got).elements()), l, sorted((got - ref).elements())))
 
     for s in d["series"]:
         full("series.%s.label" % s["id"], s["label"])
@@ -361,7 +374,10 @@ def build(d: dict, lang: str) -> str:
     out.append("")
 
     # 1. 見どころ
-    out += ["## " + ui["h_highlights"], "", '<div class="vg">']
+    out += ["## " + ui["h_highlights"], ""]
+    if lang != "ja" and any("numbers_source" in e for e in d["exhibits"]):
+        out += [ui["poc_caption_lang_note"], ""]
+    out += ['<div class="vg">']
     for e in d["exhibits"]:
         lab = e["label"][lang]
         mark = "<b>&#9654;</b>" if e["motion"] else ""

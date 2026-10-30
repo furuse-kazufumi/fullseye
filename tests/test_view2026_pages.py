@@ -71,6 +71,14 @@ def test_a_stale_translation_stops_the_generator():
     assert any("no-such-capability" in b for b in bad)
 
 
+def test_a_one_character_change_to_a_ledger_caption_stops_the_generator():
+    broken = copy.deepcopy(G.load())
+    item = next(e for e in broken["exhibits"] if "numbers_source" in e)
+    item["see"]["ja"] += "改"
+    bad = G.validate(broken)
+    assert any(item["id"] in message and "逐語一致" in message for message in bad), bad
+
+
 def test_a_missing_example_stops_the_generator(monkeypatch):
     real = G.capabilities()
     assert real

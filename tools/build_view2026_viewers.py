@@ -668,15 +668,16 @@ def build_focus_sweep():
     for v in vals:
         st=P.focal_stack(tex, depth, focus, f_number=float(v), layers=16); fm=P.fm_laplacian(st); fused=P.fuse(st,fm,focus)[0]
         frames.append(_gray(fused,0,1)); err.append(P.rms(fused-tex))
-    return _sweep("poc_focus_stacking", TX.T(*(["f-number"]*8)), "", vals, frames, err)
+    return _sweep("poc_focus_stacking", TX.T("F値", "f-number", "光圈值", "光圈值", "조리개값", "Blendenzahl", "एफ़-नंबर", "nombre d’ouverture"), "", vals, frames, err)
 
 
 def build_interferometry_sweep():
     P=_load("poc_interferometry_step"); vals=np.linspace(0.0,0.12,24); frames=[]; err=[]
     for i,v in enumerate(vals):
-        _,st=P.make_stack(0.55,float(v),i,dz=P.DZ,n_planes=P.NP); est=P.measure_step(0.55,float(v),i,dz=P.DZ,n_planes=P.NP)
-        frames.append(_gray(st[len(st)//2],float(st.min()),float(st.max()))); err.append(abs(float(est[0] if isinstance(est,tuple) else est)-0.55))
-    return _sweep("poc_interferometry_step", TX.T(*(["noise σ"]*8)), "", vals, frames, err)
+        _,st=P.make_stack(0.55,float(v),i,dz=P.DZ,n_planes=P.NP)
+        measured_step_um, rejected_fraction = P.measure_step(0.55,float(v),i,dz=P.DZ,n_planes=P.NP)
+        frames.append(_gray(st[len(st)//2],float(st.min()),float(st.max()))); err.append(abs(float(measured_step_um)-0.55))
+    return _sweep("poc_interferometry_step", TX.T("雑音 σ", "noise σ", "噪声 σ", "雜訊 σ", "잡음 σ", "Rauschen σ", "शोर σ", "bruit σ"), "", vals, frames, err)
 
 
 def build_polarization_sweep():
@@ -684,20 +685,21 @@ def build_polarization_sweep():
     for v in vals:
         ss,sp=P.specular_components(l,float(v)); raw=P.render_sweep(d,ss,sp); sep=P.separate(raw)
         diffuse=np.asarray(sep[0] if isinstance(sep,tuple) else sep); frames.append(_gray(diffuse,0,0.7)); err.append(P.rmse(diffuse,d))
-    return _sweep("poc_polarization_specular", TX.T(*(["incidence angle"]*8)), "°", vals, frames, err)
+    return _sweep("poc_polarization_specular", TX.T("入射角", "incidence angle", "入射角", "入射角", "입사각", "Einfallswinkel", "आपतन कोण", "angle d’incidence"), "°", vals, frames, err)
 
 
 def build_photoelastic_sweep():
     P=_load("poc_photoelasticity"); _,theta,delta=P.build_fields()
-    vals=np.linspace(0,180,25); frames=[_gray(P.polariscope_image(delta,theta,float(v)),0,1) for v in vals]
-    return _sweep("poc_photoelasticity", TX.T(*(["analyser angle"]*8)), "°", vals, frames)
+    vals=np.linspace(0,135,25); images=[P.polariscope_image(delta,theta,float(v)) for v in vals]
+    frames=[_gray(im,0,1) for im in images]; mean_intensity=[float(np.mean(im)) for im in images]
+    return _sweep("poc_photoelasticity", TX.T("検光子角", "analyser angle", "检偏器角度", "檢偏器角度", "검광자 각도", "Analysatorwinkel", "विश्लेषक कोण", "angle de l’analyseur"), "°", vals, frames, mean_intensity)
 
 
 def build_motion_sweep():
     P=_load("poc_motion_magnification"); vals=np.linspace(0.02,0.8,24); base=P.surface(h=128,w=160); frames=[]; amp=[]
     for v in vals:
         clip,disp=P.make_clip([(float(v),P.FREQ,0.0)],t=16,base=base); frames.append(_gray(clip[-1],0,1)); amp.append(P.amp_rms(P.read_dx_oracle(clip)))
-    return _sweep("poc_motion_magnification", TX.T(*(["motion amplitude"]*8)), "px", vals, frames, amp)
+    return _sweep("poc_motion_magnification", TX.T("運動振幅", "motion amplitude", "运动振幅", "運動振幅", "운동 진폭", "Bewegungsamplitude", "गति आयाम", "amplitude du mouvement"), "px", vals, frames, amp)
 
 
 def build_compound_sweep():
@@ -705,7 +707,7 @@ def build_compound_sweep():
     clean=np.asarray(lf[P.V_C,P.U_C])
     for i,v in enumerate(vals):
         noisy,_,_=P.add_photoreceptor_noise(lf,float(v),seed=i); im=np.asarray(noisy[P.V_C,P.U_C]); frames.append(_gray(im,float(im.min()),float(im.max()))); rms.append(float(np.sqrt(np.mean((im-clean)**2))))
-    return _sweep("poc_compound_eye", TX.T(*(["per-view SNR"]*8)), "", vals, frames, rms)
+    return _sweep("poc_compound_eye", TX.T("視点ごとのSNR", "per-view SNR", "每视点信噪比", "每視點訊噪比", "시점별 SNR", "SNR je Ansicht", "प्रति-दृश्य SNR", "SNR par vue"), "", vals, frames, rms)
 
 
 def build_ct_threshold_sweep():
@@ -713,14 +715,19 @@ def build_ct_threshold_sweep():
     z=obs.shape[0]//2
     for v in vals:
         m=P.segment(obs,sc["layer"],float(v)); frames.append(np.where(m[z],255,_gray(obs[z],float(obs.min()),float(obs.max())))); frac.append(P.void_fraction(m,sc["layer"]))
-    return _sweep("poc_ct_void_morphology", TX.T(*(["threshold"]*8)), "", vals, frames, frac)
+    return _sweep("poc_ct_void_morphology", TX.T("しきい値", "threshold", "阈值", "閾值", "임계값", "Schwellenwert", "सीमा", "seuil"), "", vals, frames, frac)
 
 
 def build_active_sweep():
-    P=_load("poc_active_contours"); r=_quiet(P.u_shape); im=np.asarray(r["img"]); truth=np.asarray(r["U"]); vals=np.linspace(float(im.min()),float(im.max()),24); frames=[]; score=[]
-    for v in vals:
-        m=im>v; frames.append(np.where(m,255,0).astype(np.uint8)); score.append(P.jac(m,truth))
-    return _sweep("poc_active_contours", TX.T(*(["threshold"]*8)), "", vals, frames, score)
+    P=_load("poc_active_contours"); r=_quiet(P.u_shape); im=np.asarray(r["img"]); history=r["gvf"]["history"]
+    picks=np.unique(np.rint(np.linspace(0,len(history)-1,min(24,len(history)))).astype(int)); vals=20*picks; frames=[]; score=[]
+    final=np.asarray(history[-1],float)
+    for k in picks:
+        points=np.asarray(history[k],float); frame=_gray(im,float(im.min()),float(im.max()))
+        for row,col in np.rint(points).astype(int):
+            frame[max(0,row-1):row+2,max(0,col-1):col+2]=255
+        frames.append(frame); score.append(float(np.sqrt(np.mean((points-final)**2))))
+    return _sweep("poc_active_contours", TX.T("反復回数", "iterations", "迭代次数", "迭代次數", "반복 횟수", "Iterationen", "पुनरावृत्तियाँ", "itérations"), "", vals, frames, score)
 
 
 BUILDERS = {

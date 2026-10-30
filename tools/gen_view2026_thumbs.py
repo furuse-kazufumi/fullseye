@@ -144,6 +144,15 @@ def _square(im: Image.Image, crop, size: int) -> Image.Image:
     return im.crop(box).resize((size, size), Image.LANCZOS)
 
 
+def _contain_square(im: Image.Image, size: int) -> Image.Image:
+    """縦横比を保って正方形に収め、余白を白で埋める。"""
+    fitted = im.copy()
+    fitted.thumbnail((size, size), Image.LANCZOS)
+    out = Image.new("RGB", (size, size), "white")
+    out.paste(fitted, ((size - fitted.width) // 2, (size - fitted.height) // 2))
+    return out
+
+
 def _save_jpg(im: Image.Image, dst: Path, quality: int, limit: int | None = None) -> int:
     """JPEG で書く。limit を超えたら品質を下げて書き直す(下限 40)。"""
     q = quality
@@ -162,9 +171,7 @@ def build() -> list[tuple[str, int]]:
     data = json.loads(DATA.read_text(encoding="utf-8"))
     specs = list(SPEC)
     known = {s[0] for s in specs}
-    # Batch additions carry their reviewed source image in the canonical data.
-    # Only thumbnails are square-cropped; opening a tile always shows the
-    # original image at its native aspect ratio.
+    generated = {e["id"] for e in data["exhibits"] if "numbers_source" in e}
     for e in data["exhibits"]:
         if e["id"] not in known:
             rel = e.get("media_path") or (_P + e["id"] + "/" + e["media"])
@@ -174,7 +181,9 @@ def build() -> list[tuple[str, int]]:
         if not src.is_file():
             raise FileNotFoundError("サムネイルの元が無い: %s" % src)
         dst = OUT / (pid + ".jpg")
-        out.append((dst.name, _save_jpg(_square(_load(src, frame), crop, SIZE), dst, QUALITY)))
+        im = _load(src, frame)
+        thumb = _contain_square(im, SIZE) if pid in generated else _square(im, crop, SIZE)
+        out.append((dst.name, _save_jpg(thumb, dst, QUALITY)))
     return out
 
 
@@ -259,7 +268,8 @@ def main(argv=None) -> int:
     a = ap.parse_args(argv)
     res = build() + build_series()
     res_all = build_all()
-    keep = {s[0] + ".jpg" for s in SPEC}
+    data = json.loads(DATA.read_text(encoding="utf-8"))
+    keep = {e["id"] + ".jpg" for e in data["exhibits"]}
     stale = sorted(p.name for p in OUT.glob("*.jpg") if p.name not in keep)
     if stale:
         print("SPEC に無いサムネイルが残っている(消すこと): %s" % stale, file=sys.stderr)
