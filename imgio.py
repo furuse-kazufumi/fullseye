@@ -955,7 +955,9 @@ def save_ply(path: str, points, colors=None) -> None:
              "property float x", "property float y", "property float z"]
     C = None
     if colors is not None:
-        C = np.clip(np.asarray(colors, np.float64) * 255, 0, 255).astype(int)
+        # PLY colour channels are integers.  Round to nearest instead of truncating:
+        # 0.5 is the midpoint and must become 128, not 127.
+        C = np.clip(np.rint(np.asarray(colors, np.float64) * 255), 0, 255).astype(int)
         lines += ["property uchar red", "property uchar green", "property uchar blue"]
     lines.append("end_header")
     body = []

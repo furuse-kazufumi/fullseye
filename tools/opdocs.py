@@ -107,6 +107,8 @@ LEDGER_DIMS = {
                  "module": "volcolor", "family": "volume_labelling"},
     "reprconv": {"registry": "opsreprconv", "table": "OPSREPRCONV",
                  "module": "reprconv", "family": "representation_conversion"},
+    "fileio": {"registry": "opsfileio", "table": "OPSFILEIO",
+               "module": "fileio", "family": "file_formats"},
     "cadmap": {"registry": "opscadmap", "table": "OPSCADMAP",
                "module": "cadmap", "family": "cad_surface_mapping"},
     "annotate": {"registry": "opsannotate", "table": "OPSANNOTATE",

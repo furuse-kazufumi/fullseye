@@ -49,26 +49,26 @@
 
 ## `api.py`
 
-- **L169** _(ja)_ — ★2026-10-02: 合成パイプライン 6 本を fs.<名前> から出す。以前は ``fs.pipeline3d.<fn>`` でしか届かず、 公開経路の門では「1 本も届かない島」として _INTERNAL に置かれていた。import 自体は torch が無くても 通る(torch_lazy)。torch を要るのは呼んだときの FPFH / ICP の側だけ。
-- **L873** _(ja)_ — ★名前はすべて glyph_ で始める。1-D / 2-D / 3-D でレジストリが分かれている repo なので、接頭辞の無い名前は公開経路ごとに別物を指す事故を起こす。
-- **L889** _(ja)_ — ★JSON 一枚で受ける入口。op ではなく API 層の関数(レジストリの op は (画像, a, b) 固定でノブ 2 つなので、文字列も JSON も渡せない)。
-- **L944** — ★``annotate.overlay_mask`` **有意不暴露到頂層**。同名的 ``imgio.overlay_mask`` 已作為 ``fs.overlay_mask`` 公開，其參數與含義都不同(imgio = 原始 RGB、mask>0.5、fill/margin / annotate = 角色名的顏色、也可用權重 [0,1]、拒絕形狀不匹配)。在同名上載入不同的約定，呼叫方收到的不是例外而是**看似合理卻不同的圖**。公開 API 的破壞性變更不擅自做，故帶角色的那個用 ``fs.annotate.overlay_mask`` 取用。
-- **L1106** _(ja)_ — ★2026-10-02: 「名前の無い非公開関数」の棚卸しで、op として振る舞うのに公開経路が 1 本も無かった 18 本。 どれも既存の型つき台帳の約束(台帳 = 実装モジュールの集合)に合わないので、facade(fs.<名前>)から出す。 門は tests/test_hidden_ops_exposed_2026_10_02.py(定理か第 2 実装)。
-- **L1663** _(ja)_ — ★空・空白だけの名前は「無い」(2026-09-20、GenSpark N27): 多くの op は halcon 別名が "" なので、 `name == halcon` の一致で "" が **lowpass に解決**し、保存したパイプラインに空名が混ざると 別の op が黙って走っていた。名前の照合はこの先で行うので、ここで先に切る。
-- **L1666** _(ja)_ — ★2026-10-11: このコメントと判定が docstring より**前**にあったので、関数に docstring が 無かった(``find_op.__doc__`` が None)。説明の門(台帳・facade 版)が拾った。
-- **L1682** _(ja)_ — ★大小文字とハイフンだけ違う名前は同じ op(2026-09-20、GenSpark N50): HALCON のリファレンスは GAUSS_FILTER のように大文字で書かれることが多く、`GAUSS_FILTER` / `Gauss-Filter` が unknown だった。 正規化して 1 度だけ引き直す(元の綴りに一致が無いときだけなので、既存の解決は変わらない)。
-- **L1751** _(ja)_ — ★2026-09-20(GenSpark 第 35 報 N124): 台帳 op の名前を apply に渡すと「unknown operator」と言い、 op_names() を案内していた(そこにも無い)。索引は tier を知っているので、正しい入口を言う。
-- **L2051** _(ja)_ — ★2026-09-20(GenSpark 第 55 報 N199): `with strict_mode(): apply(gray, "access_channel")` が例外にならず、 入力型の fallback(source="input")が台帳に残っていた。strict は op 本体の例外と GPU / 高速路だけが見ていて、 `_guard_input` と非有限出力の門は `on_error` しか見ていなかった —— 「厳密」が経路ごとに別の意味だった。 strict(strict_mode / set_strict / FULLSEYE_STRICT)は on_error=None のとき "raise" と同じ。明示の on_error は文脈より強い(引数 > 文脈 > 環境変数 > 既定)。
-- **L2082** — ★ **目前對彩色影像沒有正確的呼叫方式**:整批傳入會混色,按通道呼叫 3 次會讓自正規化的 op 把每個通道除以各自的最大值,破壞通道間的比值(灰階邊緣法的角度誤差從自建 Sobel 的 1.03 度 -> 每圖 4.17 度 -> 每通道 27.86 度,零點 29.14 度)。倒向哪一邊是**合約的決定**,所以這裡不改動任何一個預設數值,僅在 `on_error="raise"` 時拒絕,預設則記入台帳使其可見。詳情與選項見 docs/KNOWN_ISSUES.md。
-- **L2370** _(ja)_ — ★2026-09-20(GenSpark 第 26 報 N97): 素の str / dict / スカラーは ndarray でないのでここを素通りし、 既定の fallback 方針では**入力がそのまま**返っていた(``apply("abc", "gaussian") == "abc"``)。 raster を取る op には、配列にしてから同じ検査を掛ける。list / tuple は数値の入れ子として下で配列化される。
-- **L2406** _(ja)_ — ★float16 / float32 → float64 の昇格は無損失(値も範囲も変わらない)なので記録しない(2026-09-20、 GenSpark N29): float16 は scipy.ndimage が扱えず op が RuntimeError → fallback で**入力のコピー**が 返っていた。float32 は op が float32 で走り float32 を返していた(契約は float64)。
-- **L2677** _(ja)_ — ★2026-10-18(外部レビュー 0.6.0 N224): 以前の文は「got name=ndarray」だけで、受け取った image 側 (op 名の文字列)を言わず、規約の説明と食い違って読めた。受け取った 2 つと、直した呼び方を言う。
-- **L2798** _(ja)_ — ★形状不一致(2026-09-19 外部レビュー #13): ラスタ同士の n-ary で形が違うと numpy の 「could not be broadcast」がそのまま台帳に残り、既定の方針では**第 1 入力が そのまま返る**(sort として妥当な fallback)。返り値の形だけ見た利用者には 「(32,32)+(32,16) が (32,32) で成功した」と映った。何が要るかを文で言う。
-- **L2802** _(ja)_ — ★ただし第 2 入力がマスク(畳み込みの核)の op は形が違って当然 —— 3×3 のマスクを 画像と同じ大きさに埋めないと呼べない、では入口として壊れている(2026-10-12、例の 付与で発見)。核を取る op だけ名指しで外す。
-- **L3111** _(ja)_ — ★2026-09-20(GenSpark 第 15・16 報 N67): 4 op の入口の関門(ops.NATIVE_CRASHES_ON_DEGENERATE)は 効いているのに、その事実は ops.py の中にしか無く、registry を使う側からは見えなかった。 行に載せる(None = 関門なし。理由の文がそのまま値)。
-- **L3115** _(ja)_ — ★2026-09-20(GenSpark 第 20 報 N84): 同じ HALCON 別名を複数の op が名乗る(cv_ / sk_ の移植と コアの実装)。どれが走るかは find_op の規則(完全一致 → name == halcon → _ALIAS_CANONICAL)で 決まっていて曖昧ではないが、その事実が行に無かった。halcon_peers = 同じ別名を名乗る他の op。
-- **L3236** _(ja)_ — ★2026-09-20(GenSpark 第 24 報 N95): 綴り違いの sort が黙って 0 行だった(「該当なし」と区別できない)。
-- **L3246** _(ja)_ — ★台帳には**入力ゼロ**の op(カタログを返すだけ)が在り ``in_sort`` が None になる。 生の None を並べ替えの鍵に混ぜると TypeError で落ちる —— レジストリと n-ary だけ だった頃は None が現れなかったので、この鍵は 2026-09-25 まで壊れずに済んでいた。
+- **L170** _(ja)_ — ★2026-10-02: 合成パイプライン 6 本を fs.<名前> から出す。以前は ``fs.pipeline3d.<fn>`` でしか届かず、 公開経路の門では「1 本も届かない島」として _INTERNAL に置かれていた。import 自体は torch が無くても 通る(torch_lazy)。torch を要るのは呼んだときの FPFH / ICP の側だけ。
+- **L881** _(ja)_ — ★名前はすべて glyph_ で始める。1-D / 2-D / 3-D でレジストリが分かれている repo なので、接頭辞の無い名前は公開経路ごとに別物を指す事故を起こす。
+- **L897** _(ja)_ — ★JSON 一枚で受ける入口。op ではなく API 層の関数(レジストリの op は (画像, a, b) 固定でノブ 2 つなので、文字列も JSON も渡せない)。
+- **L952** — ★``annotate.overlay_mask`` **有意不暴露到頂層**。同名的 ``imgio.overlay_mask`` 已作為 ``fs.overlay_mask`` 公開，其參數與含義都不同(imgio = 原始 RGB、mask>0.5、fill/margin / annotate = 角色名的顏色、也可用權重 [0,1]、拒絕形狀不匹配)。在同名上載入不同的約定，呼叫方收到的不是例外而是**看似合理卻不同的圖**。公開 API 的破壞性變更不擅自做，故帶角色的那個用 ``fs.annotate.overlay_mask`` 取用。
+- **L1114** _(ja)_ — ★2026-10-02: 「名前の無い非公開関数」の棚卸しで、op として振る舞うのに公開経路が 1 本も無かった 18 本。 どれも既存の型つき台帳の約束(台帳 = 実装モジュールの集合)に合わないので、facade(fs.<名前>)から出す。 門は tests/test_hidden_ops_exposed_2026_10_02.py(定理か第 2 実装)。
+- **L1676** _(ja)_ — ★空・空白だけの名前は「無い」(2026-09-20、GenSpark N27): 多くの op は halcon 別名が "" なので、 `name == halcon` の一致で "" が **lowpass に解決**し、保存したパイプラインに空名が混ざると 別の op が黙って走っていた。名前の照合はこの先で行うので、ここで先に切る。
+- **L1679** _(ja)_ — ★2026-10-11: このコメントと判定が docstring より**前**にあったので、関数に docstring が 無かった(``find_op.__doc__`` が None)。説明の門(台帳・facade 版)が拾った。
+- **L1695** _(ja)_ — ★大小文字とハイフンだけ違う名前は同じ op(2026-09-20、GenSpark N50): HALCON のリファレンスは GAUSS_FILTER のように大文字で書かれることが多く、`GAUSS_FILTER` / `Gauss-Filter` が unknown だった。 正規化して 1 度だけ引き直す(元の綴りに一致が無いときだけなので、既存の解決は変わらない)。
+- **L1764** _(ja)_ — ★2026-09-20(GenSpark 第 35 報 N124): 台帳 op の名前を apply に渡すと「unknown operator」と言い、 op_names() を案内していた(そこにも無い)。索引は tier を知っているので、正しい入口を言う。
+- **L2064** _(ja)_ — ★2026-09-20(GenSpark 第 55 報 N199): `with strict_mode(): apply(gray, "access_channel")` が例外にならず、 入力型の fallback(source="input")が台帳に残っていた。strict は op 本体の例外と GPU / 高速路だけが見ていて、 `_guard_input` と非有限出力の門は `on_error` しか見ていなかった —— 「厳密」が経路ごとに別の意味だった。 strict(strict_mode / set_strict / FULLSEYE_STRICT)は on_error=None のとき "raise" と同じ。明示の on_error は文脈より強い(引数 > 文脈 > 環境変数 > 既定)。
+- **L2095** — ★ **目前對彩色影像沒有正確的呼叫方式**:整批傳入會混色,按通道呼叫 3 次會讓自正規化的 op 把每個通道除以各自的最大值,破壞通道間的比值(灰階邊緣法的角度誤差從自建 Sobel 的 1.03 度 -> 每圖 4.17 度 -> 每通道 27.86 度,零點 29.14 度)。倒向哪一邊是**合約的決定**,所以這裡不改動任何一個預設數值,僅在 `on_error="raise"` 時拒絕,預設則記入台帳使其可見。詳情與選項見 docs/KNOWN_ISSUES.md。
+- **L2383** _(ja)_ — ★2026-09-20(GenSpark 第 26 報 N97): 素の str / dict / スカラーは ndarray でないのでここを素通りし、 既定の fallback 方針では**入力がそのまま**返っていた(``apply("abc", "gaussian") == "abc"``)。 raster を取る op には、配列にしてから同じ検査を掛ける。list / tuple は数値の入れ子として下で配列化される。
+- **L2419** _(ja)_ — ★float16 / float32 → float64 の昇格は無損失(値も範囲も変わらない)なので記録しない(2026-09-20、 GenSpark N29): float16 は scipy.ndimage が扱えず op が RuntimeError → fallback で**入力のコピー**が 返っていた。float32 は op が float32 で走り float32 を返していた(契約は float64)。
+- **L2690** _(ja)_ — ★2026-10-18(外部レビュー 0.6.0 N224): 以前の文は「got name=ndarray」だけで、受け取った image 側 (op 名の文字列)を言わず、規約の説明と食い違って読めた。受け取った 2 つと、直した呼び方を言う。
+- **L2811** _(ja)_ — ★形状不一致(2026-09-19 外部レビュー #13): ラスタ同士の n-ary で形が違うと numpy の 「could not be broadcast」がそのまま台帳に残り、既定の方針では**第 1 入力が そのまま返る**(sort として妥当な fallback)。返り値の形だけ見た利用者には 「(32,32)+(32,16) が (32,32) で成功した」と映った。何が要るかを文で言う。
+- **L2815** _(ja)_ — ★ただし第 2 入力がマスク(畳み込みの核)の op は形が違って当然 —— 3×3 のマスクを 画像と同じ大きさに埋めないと呼べない、では入口として壊れている(2026-10-12、例の 付与で発見)。核を取る op だけ名指しで外す。
+- **L3124** _(ja)_ — ★2026-09-20(GenSpark 第 15・16 報 N67): 4 op の入口の関門(ops.NATIVE_CRASHES_ON_DEGENERATE)は 効いているのに、その事実は ops.py の中にしか無く、registry を使う側からは見えなかった。 行に載せる(None = 関門なし。理由の文がそのまま値)。
+- **L3128** _(ja)_ — ★2026-09-20(GenSpark 第 20 報 N84): 同じ HALCON 別名を複数の op が名乗る(cv_ / sk_ の移植と コアの実装)。どれが走るかは find_op の規則(完全一致 → name == halcon → _ALIAS_CANONICAL)で 決まっていて曖昧ではないが、その事実が行に無かった。halcon_peers = 同じ別名を名乗る他の op。
+- **L3249** _(ja)_ — ★2026-09-20(GenSpark 第 24 報 N95): 綴り違いの sort が黙って 0 行だった(「該当なし」と区別できない)。
+- **L3259** _(ja)_ — ★台帳には**入力ゼロ**の op(カタログを返すだけ)が在り ``in_sort`` が None になる。 生の None を並べ替えの鍵に混ぜると TypeError で落ちる —— レジストリと n-ary だけ だった頃は None が現れなかったので、この鍵は 2026-09-25 まで壊れずに済んでいた。
 
 ## `astrostack.py`
 
@@ -1471,11 +1471,11 @@
 
 ## `fullseye/__init__.py`
 
-- **L462** _(ja)_ — ★2026-10-02: 「名前の無い非公開関数」の棚卸しで、op として振る舞うのに公開経路が 1 本も無かった 18 本。 どれも既存の型つき台帳の約束(台帳 = 実装モジュールの集合)に合わないので、facade(fs.<名前>)から出す。 門は tests/test_hidden_ops_exposed_2026_10_02.py(定理か第 2 実装)。
-- **L505** _(ja)_ — ★1-D 版は **signal_ 接頭辞**で出す。素の名前で出すと `fs.local_std`(1-D)と `fs.ledger.local_std`(2-D)が別物を指す —— 既に `lowpass` がその状態になっており(facade=dsp / ledger=2-D)、 同じ罠を増やさない。次元をまたぐ同名は、呼ぶ側で見分けがつく形にする。
-- **L735** — ★與宣告 out 型別對齊的 adapter，會**丟棄回傳元組的 op 的第 2 項及以後**(``drizzle_resample`` 的 ``wht``、``piv_cross_correlate`` 的 ``info``)。當被丟棄的一側需要用到時,從台帳入口就搆不著。2026-09-06,某超解析度 PoC 寫成 ``flow, info = fs.ledger.piv_cross_correlate(...)``,沿第 1 軸拆開 (2,R,C),把 dy 的第 2 列當作 dx 使用,使偏移估計從 0.12 -> 0.74 像素(不拋例外)。用 ``.raw`` 可搆到原始回傳:``fs.ledger.piv_cross_correlate.raw(a, b)``。
-- **L1222** _(ja)_ — ★字の検証・修正(glyph_*)。**dir() でなく __all__ が一次情報**なので ここに載せる —— dir は環境依存で、載せ忘れは全体スイートでしか出ない。
-- **L1309** _(ja)_ — ★2026-09-20(GenSpark 第 50 報 N175 / N176): `import fullseye; fullseye.os` が通っていた —— import に使った 道具(os / sys / warnings と __future__ の annotations)は facade の名前ではない。tab 補完と dir() を汚さない。
+- **L467** _(ja)_ — ★2026-10-02: 「名前の無い非公開関数」の棚卸しで、op として振る舞うのに公開経路が 1 本も無かった 18 本。 どれも既存の型つき台帳の約束(台帳 = 実装モジュールの集合)に合わないので、facade(fs.<名前>)から出す。 門は tests/test_hidden_ops_exposed_2026_10_02.py(定理か第 2 実装)。
+- **L510** _(ja)_ — ★1-D 版は **signal_ 接頭辞**で出す。素の名前で出すと `fs.local_std`(1-D)と `fs.ledger.local_std`(2-D)が別物を指す —— 既に `lowpass` がその状態になっており(facade=dsp / ledger=2-D)、 同じ罠を増やさない。次元をまたぐ同名は、呼ぶ側で見分けがつく形にする。
+- **L740** — ★與宣告 out 型別對齊的 adapter，會**丟棄回傳元組的 op 的第 2 項及以後**(``drizzle_resample`` 的 ``wht``、``piv_cross_correlate`` 的 ``info``)。當被丟棄的一側需要用到時,從台帳入口就搆不著。2026-09-06,某超解析度 PoC 寫成 ``flow, info = fs.ledger.piv_cross_correlate(...)``,沿第 1 軸拆開 (2,R,C),把 dy 的第 2 列當作 dx 使用,使偏移估計從 0.12 -> 0.74 像素(不拋例外)。用 ``.raw`` 可搆到原始回傳:``fs.ledger.piv_cross_correlate.raw(a, b)``。
+- **L1232** _(ja)_ — ★字の検証・修正(glyph_*)。**dir() でなく __all__ が一次情報**なので ここに載せる —— dir は環境依存で、載せ忘れは全体スイートでしか出ない。
+- **L1319** _(ja)_ — ★2026-09-20(GenSpark 第 50 報 N175 / N176): `import fullseye; fullseye.os` が通っていた —— import に使った 道具(os / sys / warnings と __future__ の annotations)は facade の名前ではない。tab 補完と dir() を汚さない。
 
 ## `fullseye/mcp/catalog.py`
 
@@ -1707,27 +1707,27 @@
 ## `opassist.py`
 
 - **L56** _(ja)_ — ★2026-10-23: カメラ校正(calib / caltab / fit_transform、21 op)。実装は 2026-08 から あり試験も 30 本超あったのに、台帳が無いので op ノートが 1 枚も無く、fs.ledger / OP_INDEX.json / op_find("caltab") のどこからも引けなかった(fs.<名前> は 21 中 1)。 新語なし(points / pose / matrix / table / contour / image2d)。
-- **L76** — ★2026-09-08：ops1d(dsp 16 + funct1d 23)已註冊,卻既未出現在 docs,也未出現在 op_run / op_assist / op_find -- 「註冊了」和「查得到」是兩回事。加入 opdocs 後,這道門便對查不到的一側鳴響。
-- **L317** — ★設計(2026-09-04,使用者「能處理各種容器類型固然更好,但統一感也很重要」):最初在 `kind` 裡混入了 "seq" 和 "matrix" -- 即**值的類型**(數值、整數還是選項)與**容器的形狀**(1 個、向量還是矩陣)在同一個欄位裡相互競爭。從 UI 看,「int 的 3 向量」無法表達,而唯獨矩陣的結構位於 `seq` 鍵之下,處理各不相同。將此處正交化,`kind` 只放值類型,容器一律放入 `container`。純量也不作例外(`{"form": "scalar", "shape": ()}`),因此 UI 可以把分支寫成一條。
-- **L451** — ★最長匹配。若按從短到長看,`sigma_per_mm` 會命中 `_mm` 而變成 "mm"(實際是 1/mm)。單位一錯,UI 的數字就會悄悄變成別的東西。
-- **L534** _(ja)_ — ★2026-09-20(GenSpark 第 15 報 N71): ``write_wav(path, x, rate)`` は in=["signal"] なので、 第 1 引数の ``path`` に signal が割り当てられ、``op_run("write_wav")`` が配列をファイル名として 開こうとしていた。パス名の引数は、宣言 sort が "file" のときだけデータ(読む側)で、 それ以外は書き先のパラメータ —— データ型は次の引数へ送る。
-- **L567** — ★要點在此:有些參數**其預設值並非以 tuple 給出**。`center=None`(可省略的 (row,col))、必需的 `trans`(3 向量)、`k_cam`(3x3 矩陣)... 只看預設值就會看成「一個數值」,UI 便只出一個 spin box 而崩潰。用名字補足結構。
-- **L781** _(ja)_ — ★一様乱数の行列にしない —— 成分・モジュラリティ・rich club は構造が無いと 「どのノブでも同じ数」になり、押して動いても意味のある絵にならない。
-- **L785** _(ja)_ — llmcore(2026-09-24): ★一様乱数にしない —— どの行も似た向きになり、 注意の重みが全行ほぼ一様になって「押しても何も起きない」種になる。 滑らかな画像を 8x8 パッチに切ると、近い場所が近い向きを向く。
-- **L801** — ★實測發現:向 `prism_min_deviation_deg` 的波長輸入傳入 0..1 的通用 signal,會被「波長須為正值」拒絕,變成一個**範例跑不動的 op**。若已知單位,以該量的合理範圍作種,更接近「一按就動」。
-- **L994** — 日文(CJK)的連綴。★``_WORD_RE`` 為 ``[a-z0-9]+``,因此日語查詢**一個詞都取不到**(對日語輸入而言 ``_WORD_RE.findall(...) == []``)。詞幹那一段失效,而部分匹配是連空白一起去找字串,所以**日語的多詞查詢在結構上必定 0 命中** -- 在一款 docstring 大半為日語、以 6 種語言分發的產品裡。2026-09-08 由 `poc_search_sweep_width` 踩到而查明(經 ``op_find`` 查「點檢出」/「光斑檢出」/「小目標」的日語查詢均為 0 命中,而帶次像素質心的點目標檢出只有 ``star_detect``,卻無法從日語抵達)。
-- **L1047** — 視為詞幹一致的公共前綴長度。★取 4 會把 "median"/"medial" 及 "contrast"/"contour" 連到一起;切在 5,則 "correlation"/"correlate"(8)、"segmentation"/"segment"(7)、"rotation"/"rotate"(5)、"gaussian"/"gauss"(5) 能被拾取,而上述兩組不會。
-- **L1057** — 公共前綴**之後允許的詞尾**。★僅憑前綴長度判定會把 "median"/"medial" 連起來(共有 5 個字元的 "media")。看詞尾是否像屈折詞尾,則 "correlation"/"correlate"(ion / e)通過,而 "median"/"medial"(n / l)與 "corner"/"cornea"(r / a)落選。
-- **L1153** — ★下限。沒有它時,"zzz-nothing-matches" 會回傳 `histogram_match`(因為 "matches" 與 `match_*` 詞幹一致)。若命中詞的權重不足整條查詢的 15 %,則視為「未命中」。實測:"digital image correlation" 為 0.19(通過),"zzz-nothing-matches" 為 0.10(丟棄)。
-- **L1293** _(ja)_ — ★欧文の段(2026-10-15): 欧文のクエリは 1 行目の doc までしか見ておらず、引数の説明にだけ 出る語が 0 件だった —— "orthometric"(標高)は dem_height_frame_convert の frm / to にしか 書かれておらず、op_find("ortho") は名前に ortho を含む doe_orthogonal_array(直交表)しか 返さなかった。docstring 全文の部分一致を、どの段より低い点(12)で最後に拾う。
-- **L1334** _(ja)_ — ★2026-09-19(GenSpark N2): ``fullseye.apply([x, y], "add_image")`` で**動く**のに、 ``op_names()`` にも ``op_find()`` にも載っていなかった(op_names は 1 入力のレジストリだけ、 op_find は台帳 + レジストリだけを見ていた)。呼べるものは探せなければならない。
-- **L1363** _(ja)_ — ★2026-10-18(外部レビュー 0.6.0 の一次検証): op_find("sgm") が 0 件で、外部 AI は「SGM は無い」と結論した。 実際には ``fullseye.disparity_sgm``(Hirschmüller の SGM、census の費用 + 経路集約)が 0.1 系から在り、 ``fullseye.stereo`` の族ごと**ファサードにだけ**在る —— 台帳・2-D レジストリ・n-ary のどれにも載らないので、 探す側からは見えなかった([[feedback_search_all_tiers_before_declaring_a_gap]] と同じ型)。 名前と docstring の 1 行目で、他の層より 1 点低く拾う(同名なら op 表の行が勝つ)。
-- **L1391** _(ja)_ — ★2026-09-20: 何で当たったかを ``match`` に(exact = 名前の完全一致 / name = 名前の部分一致 / stem = 語幹 /
-- **L1462** _(ja)_ — ★2026-09-20(GenSpark 第 55 報 N200): op_run(img, "gaussian") が `unhashable type: 'numpy.ndarray'`、 op_run("gaussian", img) が「not in any ledger」で終わり、registry op は apply で走ることを言わなかった。
-- **L1482** _(ja)_ — ★2026-09-20(GenSpark 第 20 報 N87): 種を作れない型(mesh / lab / matrix …)は None のまま 関数に渡り、IndexError / AttributeError / AxisError が利用者に届いていた(11 op)。 呼ばずに、どの入力を渡せばよいかを言う。
-- **L1495** _(ja)_ — ★2026-09-20(N71): データ引数が署名の先頭に無い op(write_wav(path, x))は名前で渡す —— 位置で渡すと 配列が path に入る。データ引数の名前は param_spec が知っている。
-- **L1505** _(ja)_ — ★2026-09-20(GenSpark 第 34 報 N122、再現): 入力を一部だけ渡すと(blend_mode(base) で top 無し)Python の生の 「missing 1 required positional argument」が届いていた。0 個のときは上で種を作って言うのに、1 個以上のときは 検査が無かった。必須のデータ引数が位置でも名前でも来ていなければ、期待する形を 1 文で言う。
-- **L1523** _(ja)_ — ★2026-09-20(N87): 自動の数値サンプル(1.0)が座標や行列を要する引数に合わないと、op の中の IndexError がそのまま利用者に届いていた(scene_box の center_mm 等)。自動値が原因なら言う。
+- **L77** — ★2026-09-08：ops1d(dsp 16 + funct1d 23)已註冊,卻既未出現在 docs,也未出現在 op_run / op_assist / op_find -- 「註冊了」和「查得到」是兩回事。加入 opdocs 後,這道門便對查不到的一側鳴響。
+- **L318** — ★設計(2026-09-04,使用者「能處理各種容器類型固然更好,但統一感也很重要」):最初在 `kind` 裡混入了 "seq" 和 "matrix" -- 即**值的類型**(數值、整數還是選項)與**容器的形狀**(1 個、向量還是矩陣)在同一個欄位裡相互競爭。從 UI 看,「int 的 3 向量」無法表達,而唯獨矩陣的結構位於 `seq` 鍵之下,處理各不相同。將此處正交化,`kind` 只放值類型,容器一律放入 `container`。純量也不作例外(`{"form": "scalar", "shape": ()}`),因此 UI 可以把分支寫成一條。
+- **L452** — ★最長匹配。若按從短到長看,`sigma_per_mm` 會命中 `_mm` 而變成 "mm"(實際是 1/mm)。單位一錯,UI 的數字就會悄悄變成別的東西。
+- **L535** _(ja)_ — ★2026-09-20(GenSpark 第 15 報 N71): ``write_wav(path, x, rate)`` は in=["signal"] なので、 第 1 引数の ``path`` に signal が割り当てられ、``op_run("write_wav")`` が配列をファイル名として 開こうとしていた。パス名の引数は、宣言 sort が "file" のときだけデータ(読む側)で、 それ以外は書き先のパラメータ —— データ型は次の引数へ送る。
+- **L568** — ★要點在此:有些參數**其預設值並非以 tuple 給出**。`center=None`(可省略的 (row,col))、必需的 `trans`(3 向量)、`k_cam`(3x3 矩陣)... 只看預設值就會看成「一個數值」,UI 便只出一個 spin box 而崩潰。用名字補足結構。
+- **L782** _(ja)_ — ★一様乱数の行列にしない —— 成分・モジュラリティ・rich club は構造が無いと 「どのノブでも同じ数」になり、押して動いても意味のある絵にならない。
+- **L786** _(ja)_ — llmcore(2026-09-24): ★一様乱数にしない —— どの行も似た向きになり、 注意の重みが全行ほぼ一様になって「押しても何も起きない」種になる。 滑らかな画像を 8x8 パッチに切ると、近い場所が近い向きを向く。
+- **L802** — ★實測發現:向 `prism_min_deviation_deg` 的波長輸入傳入 0..1 的通用 signal,會被「波長須為正值」拒絕,變成一個**範例跑不動的 op**。若已知單位,以該量的合理範圍作種,更接近「一按就動」。
+- **L995** — 日文(CJK)的連綴。★``_WORD_RE`` 為 ``[a-z0-9]+``,因此日語查詢**一個詞都取不到**(對日語輸入而言 ``_WORD_RE.findall(...) == []``)。詞幹那一段失效,而部分匹配是連空白一起去找字串,所以**日語的多詞查詢在結構上必定 0 命中** -- 在一款 docstring 大半為日語、以 6 種語言分發的產品裡。2026-09-08 由 `poc_search_sweep_width` 踩到而查明(經 ``op_find`` 查「點檢出」/「光斑檢出」/「小目標」的日語查詢均為 0 命中,而帶次像素質心的點目標檢出只有 ``star_detect``,卻無法從日語抵達)。
+- **L1048** — 視為詞幹一致的公共前綴長度。★取 4 會把 "median"/"medial" 及 "contrast"/"contour" 連到一起;切在 5,則 "correlation"/"correlate"(8)、"segmentation"/"segment"(7)、"rotation"/"rotate"(5)、"gaussian"/"gauss"(5) 能被拾取,而上述兩組不會。
+- **L1058** — 公共前綴**之後允許的詞尾**。★僅憑前綴長度判定會把 "median"/"medial" 連起來(共有 5 個字元的 "media")。看詞尾是否像屈折詞尾,則 "correlation"/"correlate"(ion / e)通過,而 "median"/"medial"(n / l)與 "corner"/"cornea"(r / a)落選。
+- **L1154** — ★下限。沒有它時,"zzz-nothing-matches" 會回傳 `histogram_match`(因為 "matches" 與 `match_*` 詞幹一致)。若命中詞的權重不足整條查詢的 15 %,則視為「未命中」。實測:"digital image correlation" 為 0.19(通過),"zzz-nothing-matches" 為 0.10(丟棄)。
+- **L1294** _(ja)_ — ★欧文の段(2026-10-15): 欧文のクエリは 1 行目の doc までしか見ておらず、引数の説明にだけ 出る語が 0 件だった —— "orthometric"(標高)は dem_height_frame_convert の frm / to にしか 書かれておらず、op_find("ortho") は名前に ortho を含む doe_orthogonal_array(直交表)しか 返さなかった。docstring 全文の部分一致を、どの段より低い点(12)で最後に拾う。
+- **L1335** _(ja)_ — ★2026-09-19(GenSpark N2): ``fullseye.apply([x, y], "add_image")`` で**動く**のに、 ``op_names()`` にも ``op_find()`` にも載っていなかった(op_names は 1 入力のレジストリだけ、 op_find は台帳 + レジストリだけを見ていた)。呼べるものは探せなければならない。
+- **L1364** _(ja)_ — ★2026-10-18(外部レビュー 0.6.0 の一次検証): op_find("sgm") が 0 件で、外部 AI は「SGM は無い」と結論した。 実際には ``fullseye.disparity_sgm``(Hirschmüller の SGM、census の費用 + 経路集約)が 0.1 系から在り、 ``fullseye.stereo`` の族ごと**ファサードにだけ**在る —— 台帳・2-D レジストリ・n-ary のどれにも載らないので、 探す側からは見えなかった([[feedback_search_all_tiers_before_declaring_a_gap]] と同じ型)。 名前と docstring の 1 行目で、他の層より 1 点低く拾う(同名なら op 表の行が勝つ)。
+- **L1392** _(ja)_ — ★2026-09-20: 何で当たったかを ``match`` に(exact = 名前の完全一致 / name = 名前の部分一致 / stem = 語幹 /
+- **L1463** _(ja)_ — ★2026-09-20(GenSpark 第 55 報 N200): op_run(img, "gaussian") が `unhashable type: 'numpy.ndarray'`、 op_run("gaussian", img) が「not in any ledger」で終わり、registry op は apply で走ることを言わなかった。
+- **L1483** _(ja)_ — ★2026-09-20(GenSpark 第 20 報 N87): 種を作れない型(mesh / lab / matrix …)は None のまま 関数に渡り、IndexError / AttributeError / AxisError が利用者に届いていた(11 op)。 呼ばずに、どの入力を渡せばよいかを言う。
+- **L1496** _(ja)_ — ★2026-09-20(N71): データ引数が署名の先頭に無い op(write_wav(path, x))は名前で渡す —— 位置で渡すと 配列が path に入る。データ引数の名前は param_spec が知っている。
+- **L1506** _(ja)_ — ★2026-09-20(GenSpark 第 34 報 N122、再現): 入力を一部だけ渡すと(blend_mode(base) で top 無し)Python の生の 「missing 1 required positional argument」が届いていた。0 個のときは上で種を作って言うのに、1 個以上のときは 検査が無かった。必須のデータ引数が位置でも名前でも来ていなければ、期待する形を 1 文で言う。
+- **L1524** _(ja)_ — ★2026-09-20(N87): 自動の数値サンプル(1.0)が座標や行列を要する引数に合わないと、op の中の IndexError がそのまま利用者に届いていた(scene_box の center_mm 等)。自動値が原因なら言う。
 
 ## `ops.py`
 
@@ -2935,21 +2935,21 @@
 
 ## `tools/opdocs.py`
 
-- **L140** — ★2026-09-08: ops1d（dsp 16 + funct1d 23）雖已註冊，卻 **在 docs/ops 下沒有一張筆記** —— 它出現在 OP_CATALOG 中，但因為沒有每個 op 的筆記（型別契約、陷阱、相關 op），從 RAG 語料庫中整個缺失。是在 `poc_web_roll_periodicity` 給 dsp 添了 2 個時發現的。
-- **L917** _(ja)_ — ★2026-09-23 の実測: 1 回 7〜11 秒かかるこの関数を、`gen_docs_index_ops` が 6 言語 x 3 ブロックで 18 回呼んでおり、`test_the_generated_blocks_are_current` だけで **129 秒**使っていた(スイート 2,301 秒の 5.6 %)。答えは `ops.REGISTRY` と `docs/` から決まり、1 プロセスの中で動かない。 前提は「同じプロセスの中では台帳とノートが変わらない」。生成器は `regen_all.py` が**別プロセスで**呼ぶので跨がない。プロセス内でノートを 書き換えてから読み直す側は `_records_cache_clear()` を呼ぶこと (呼ばないと古い答えが返る —— 黙って古い値を返すのが一番たちが悪いので、 ここに明記しておく)。
-- **L979** — ★n 元（多輸入）層。到 2026-09-09 為止**有 17 個運算子連一份說明都沒有**（`add_image`、`sub_image`、`bit_and`、`reduce_domain`、`union2`…）。它們以 tier=`nary` 出現在 `OP_INDEX.json`，但 `docs/ops/` 下沒有說明，因此**永遠無法從 RAG 語料中檢索到**。漏掉的原因很清楚：這裡只走訪 `ops.REGISTRY`，而 `ops.REGISTRY`（899）與 2-D 說明數（899）相等，從註冊表一側數就顯得毫無缺漏。只有跨層去數才會暴露。
-- **L1021** — ★2026-09-07: ``OPS3D[...]["doc"]`` 是註冊時**只切出 docstring 的第 1 行**的產物（ops3d._build）。在筆記的"用法"裡用它，無論實作寫了幾段都會變成一行 —— "用法只有一行的 op 494 本"中的 3-D 部分正是這個截斷造成的（docstring 本身很長的 op 很多）。和臺帳 dim 一樣，把函式的 docstring 整個讀進來。
-- **L1044** — ★ 橋接 op（``tb_<name>``）與臺帳的 ``<name>`` 實作相同，範例以臺帳名書寫。到 2026-09-06 為止有 147 本是"零範例"，但那只是沒有數到**以別名存在、呼叫同一實作的範例**而已。繼承臺帳一側的範例，並在筆記中明確寫上"原 op 的範例"（以免說謊）。
-- **L1102** _(ja)_ — ★2026-10-12: 2-D の例索引(``op_example_index._op_names_2d``)は ``ops.REGISTRY`` から identity と 橋渡し op(category ``typed``)を外し、n-ary 層(``imgops_nary``)はそもそも数えない。そのため この 3 種のノートは、examples/ に ``fullseye.apply([x1, x2], "add_image")`` や ``fullseye.apply(F, "tb_cx_ifft")`` と**名指しで呼ぶ例があっても**「(まだありません)」のままだった (n-ary 17 本・identity・元 op の例を継承できない tb_cx_* 7 本)。カバレッジの門の母集団は変えず、 ノートの案内だけ同じ呼び出し検出(``_index_for``)で名前を直接引く。
-- **L1280** — ★n 元運算子無法透過 `fullseye.apply` 呼叫——那是單張影像的模型。在這裡寫單圖的呼叫方式會**讓說明說謊**：說明唯一的職責就是告訴別人怎麼呼叫，所以錯誤的呼叫方式比沒有更糟。公開入口是 `fullseye.FullseyeGraph`。
-- **L1299** — ★2026-09-07: **先寫公開路徑**。這裡只寫了實作模組的直接 import，沒有出現使用者實際使用的 `fullseye.ledger.<名>`（除 2-D 以外的全部 1,244 op）。PoC 反覆報告"fs.<名> 裡沒有"，問題不在於名字缺失，而在於**入口沒有寫**。
-- **L1750** — ★ 入口用 6 種語言呈現（2026-09-09）。葉子（Studio 的 op 說明）有 6 種語言 10,191 頁，然而**通往那裡的索引卻只有日語** —— 譯文存在卻到不了，這種形式的缺失。框架的文案放在 `T()` 上，所以對照翻譯的空洞由既有的門（test_chrome_translation_table_has_no_holes）來看守。
-- **L1790** _(ja)_ — ★2026-10-15: 族の名前だけでは中身が分からない。`drive`(694)は研磨(polish)・粉末 X 線回折 (pxrd)・触覚(tac*)・peg-in-hole を抱え、`optics` は材料表(matprop)・ファイバ(fiber)・ センサーの特性(sensorchar)を抱える —— 族名で選ぶ読み手は、それらを開かずに「無い」と言う。 入口でカテゴリ名を全部見せる(名前は識別子なので訳さない。各カテゴリはその族の INDEX の節)。
-- **L1801** _(ja)_ — ★2026-09-15: 用途から引く索引(docs/CAPABILITIES.md)へ**ここから**送る。文書だけを 渡した AI が 1 回目に見つけられなかったのは、この目次にも AI_RAG_GUIDE にも 導線が無かったから。
-- **L1810** — ★ 這裡長期只指向 `2d/guides/`，從未把讀者引向光學、PIV、斷層成像等 30 個族的指南（2026-09-09 修正）。
-- **L1968** _(ja)_ — コードスパン。★``…``(RST / docstring の二重バッククォート)を `…` より**先に**試す。 2026-10-07 まで `([^`]+)` だけで、``p`` measures … ``p`` が「`` の 2 文字目と次の `` の 1 文字目」で組まれ、コードと散文が**反転して**表示されていた(英語版 3,153 枚中 約 2,800 枚)。前に付いた RST ロール(:func:`x` など)は飲み込み、対象名だけをコードで出す (733 枚で ``:func:`` が生で見えていた)。
-- **L2137** _(ja)_ — ★置き換えは描画時と同じ退避記号で(空白にすると ``**raises `ValueError`**`` の閉じの 直前が空白になって太字の組が外れず、英字にすると ``**name**`(a)``` の閉じの直後が 英字になって外れない —— どちらも「閉じていない」と誤判定して次の箇条書きを飲み込んだ)。
-- **L2839** _(ja)_ — ★2026-09-20: 生成を終えたあと、インタプリタの終了処理(fullseye が引き込む mediapipe の shutdown dispatcher)で 30〜60 分固まり、regen_all の連鎖がその間止まった(2 度実測、CPU 0)。 出力は全部書き終えているので、flush してから os._exit で確定させる。
+- **L142** — ★2026-09-08: ops1d（dsp 16 + funct1d 23）雖已註冊，卻 **在 docs/ops 下沒有一張筆記** —— 它出現在 OP_CATALOG 中，但因為沒有每個 op 的筆記（型別契約、陷阱、相關 op），從 RAG 語料庫中整個缺失。是在 `poc_web_roll_periodicity` 給 dsp 添了 2 個時發現的。
+- **L919** _(ja)_ — ★2026-09-23 の実測: 1 回 7〜11 秒かかるこの関数を、`gen_docs_index_ops` が 6 言語 x 3 ブロックで 18 回呼んでおり、`test_the_generated_blocks_are_current` だけで **129 秒**使っていた(スイート 2,301 秒の 5.6 %)。答えは `ops.REGISTRY` と `docs/` から決まり、1 プロセスの中で動かない。 前提は「同じプロセスの中では台帳とノートが変わらない」。生成器は `regen_all.py` が**別プロセスで**呼ぶので跨がない。プロセス内でノートを 書き換えてから読み直す側は `_records_cache_clear()` を呼ぶこと (呼ばないと古い答えが返る —— 黙って古い値を返すのが一番たちが悪いので、 ここに明記しておく)。
+- **L981** — ★n 元（多輸入）層。到 2026-09-09 為止**有 17 個運算子連一份說明都沒有**（`add_image`、`sub_image`、`bit_and`、`reduce_domain`、`union2`…）。它們以 tier=`nary` 出現在 `OP_INDEX.json`，但 `docs/ops/` 下沒有說明，因此**永遠無法從 RAG 語料中檢索到**。漏掉的原因很清楚：這裡只走訪 `ops.REGISTRY`，而 `ops.REGISTRY`（899）與 2-D 說明數（899）相等，從註冊表一側數就顯得毫無缺漏。只有跨層去數才會暴露。
+- **L1023** — ★2026-09-07: ``OPS3D[...]["doc"]`` 是註冊時**只切出 docstring 的第 1 行**的產物（ops3d._build）。在筆記的"用法"裡用它，無論實作寫了幾段都會變成一行 —— "用法只有一行的 op 494 本"中的 3-D 部分正是這個截斷造成的（docstring 本身很長的 op 很多）。和臺帳 dim 一樣，把函式的 docstring 整個讀進來。
+- **L1046** — ★ 橋接 op（``tb_<name>``）與臺帳的 ``<name>`` 實作相同，範例以臺帳名書寫。到 2026-09-06 為止有 147 本是"零範例"，但那只是沒有數到**以別名存在、呼叫同一實作的範例**而已。繼承臺帳一側的範例，並在筆記中明確寫上"原 op 的範例"（以免說謊）。
+- **L1104** _(ja)_ — ★2026-10-12: 2-D の例索引(``op_example_index._op_names_2d``)は ``ops.REGISTRY`` から identity と 橋渡し op(category ``typed``)を外し、n-ary 層(``imgops_nary``)はそもそも数えない。そのため この 3 種のノートは、examples/ に ``fullseye.apply([x1, x2], "add_image")`` や ``fullseye.apply(F, "tb_cx_ifft")`` と**名指しで呼ぶ例があっても**「(まだありません)」のままだった (n-ary 17 本・identity・元 op の例を継承できない tb_cx_* 7 本)。カバレッジの門の母集団は変えず、 ノートの案内だけ同じ呼び出し検出(``_index_for``)で名前を直接引く。
+- **L1282** — ★n 元運算子無法透過 `fullseye.apply` 呼叫——那是單張影像的模型。在這裡寫單圖的呼叫方式會**讓說明說謊**：說明唯一的職責就是告訴別人怎麼呼叫，所以錯誤的呼叫方式比沒有更糟。公開入口是 `fullseye.FullseyeGraph`。
+- **L1301** — ★2026-09-07: **先寫公開路徑**。這裡只寫了實作模組的直接 import，沒有出現使用者實際使用的 `fullseye.ledger.<名>`（除 2-D 以外的全部 1,244 op）。PoC 反覆報告"fs.<名> 裡沒有"，問題不在於名字缺失，而在於**入口沒有寫**。
+- **L1752** — ★ 入口用 6 種語言呈現（2026-09-09）。葉子（Studio 的 op 說明）有 6 種語言 10,191 頁，然而**通往那裡的索引卻只有日語** —— 譯文存在卻到不了，這種形式的缺失。框架的文案放在 `T()` 上，所以對照翻譯的空洞由既有的門（test_chrome_translation_table_has_no_holes）來看守。
+- **L1792** _(ja)_ — ★2026-10-15: 族の名前だけでは中身が分からない。`drive`(694)は研磨(polish)・粉末 X 線回折 (pxrd)・触覚(tac*)・peg-in-hole を抱え、`optics` は材料表(matprop)・ファイバ(fiber)・ センサーの特性(sensorchar)を抱える —— 族名で選ぶ読み手は、それらを開かずに「無い」と言う。 入口でカテゴリ名を全部見せる(名前は識別子なので訳さない。各カテゴリはその族の INDEX の節)。
+- **L1803** _(ja)_ — ★2026-09-15: 用途から引く索引(docs/CAPABILITIES.md)へ**ここから**送る。文書だけを 渡した AI が 1 回目に見つけられなかったのは、この目次にも AI_RAG_GUIDE にも 導線が無かったから。
+- **L1812** — ★ 這裡長期只指向 `2d/guides/`，從未把讀者引向光學、PIV、斷層成像等 30 個族的指南（2026-09-09 修正）。
+- **L1970** _(ja)_ — コードスパン。★``…``(RST / docstring の二重バッククォート)を `…` より**先に**試す。 2026-10-07 まで `([^`]+)` だけで、``p`` measures … ``p`` が「`` の 2 文字目と次の `` の 1 文字目」で組まれ、コードと散文が**反転して**表示されていた(英語版 3,153 枚中 約 2,800 枚)。前に付いた RST ロール(:func:`x` など)は飲み込み、対象名だけをコードで出す (733 枚で ``:func:`` が生で見えていた)。
+- **L2139** _(ja)_ — ★置き換えは描画時と同じ退避記号で(空白にすると ``**raises `ValueError`**`` の閉じの 直前が空白になって太字の組が外れず、英字にすると ``**name**`(a)``` の閉じの直後が 英字になって外れない —— どちらも「閉じていない」と誤判定して次の箇条書きを飲み込んだ)。
+- **L2841** _(ja)_ — ★2026-09-20: 生成を終えたあと、インタプリタの終了処理(fullseye が引き込む mediapipe の shutdown dispatcher)で 30〜60 分固まり、regen_all の連鎖がその間止まった(2 度実測、CPU 0)。 出力は全部書き終えているので、flush してから os._exit で確定させる。
 
 ## `tools/preflight.py`
 
@@ -2972,15 +2972,15 @@
 - **L49** _(ja)_ — ★最上流。`auto_specs_data.py` は backends_auto が registry を組む入力(wheel 同梱の data/auto_specs/*.json の複製)なので、registry を読む下流すべてより先に回す。 2026-10-07 まで `tools/` の外にあって鎖にも表にも無かった(差分は無かったが、 spec を足して回し忘れても誰も気づけなかった)。
 - **L54** — ★唯一位於 `tools/` 之外的生成物。正因如此才被漏掉——只要按 `tools/*.py` 去找產生器，就永遠找不到它。
 - **L56** — ★2026-10-15：從第 16 位提到第 2 位。它的輸入只有 registry（不讀其他階段的生成物），但 gen_capabilities_index 與 gen_trust_block 卻**先於**它讀取此檔——在新增 op 的合併中若索引取主線一側，舊索引裡沒有新 op，鏈就會停下（整合作業中是先手動執行 `imgevolve.py index` 繞過的）。順序由下方的 OUTPUTS / READS 經 `order_violations()` 檢查。
-- **L72** _(ja)_ — ★展示館より**先**に回す —— 生成器は見出しに収蔵番号を出すので、 未発行の展示が 1 つでもあると BuildError で止まる。
-- **L86** _(ja)_ — ★これも `tools/` の外。2026-09-20 まで鎖に無く、docs/OPERATORS.md が 885 op / 47 分類(2026-09-06 の値)のまま置き去りだった(GenSpark 第 53 報と ユーザー指摘)。生成器が鎖に無い生成物は、必ず古びる。
-- **L90** _(ja)_ — ★2026-10-07: 以下 3 本も `tools/` の外にあり、列挙が `tools/*.py` しか見ていなかったので 鎖にも表にも無かった。どれも registry とコミット済みの入力だけから決まり、2 回 回してバイト一致・各 3 秒(実測)。置き去りの実例: EXAMPLES.md は「67-op」、REFERENCES.md は「153 operators」、 OP_DISPOSITION.json は implemented 324(実際 405)のままだった。
-- **L98** — ★2026-10-15：沒有 `--md`，**什麼都沒寫**（只把摘要印到標準輸出）。docs/CONVERSION_MATRIX.md 停在 2026-09-02 的「型別 59 / 轉換對 164」而過時，而 --check 無法把「不寫的階段」視為 drift，於是通過了 6 週。現在由 `trace_problems()` 拒絕「連宣告的輸出都不碰的階段」。
-- **L106** _(ja)_ — ★2026-10-15: 13 番目から最後の方へ下げた。docmap が docs/*.md の**題**を読むので、 題を持つ生成物(OPERATORS / REFERENCES / EXAMPLES / EXAMPLES_3D / SENSOR_PLAYBOOK / CONVERSION_MATRIX / DESIGN_NOTES*)を書く 7 段すべてより後でなければならない —— 以前はその 7 段より前にあり、題が変わると 2 回回さないと揃わなかった。 文献層の本体はコーパスが要る(EXCLUDED)が、「op ノート N 本」の件数は docs/ops を数えれば直せる。 docs/ops を書く opdocs の後、題を読む docmap(gen_docs_index_ops)の前。
-- **L301** — * ★而且危險：剛生成的文章用**相對路徑**寫圖像。公開版是改成 `raw.githubusercontent.com` 絕對 URL 後的（Qiita 用相對路徑不顯示圖像 —— memory `feedback_qiita_svg_path_and_cache`）。只跑生成器，那些絕對 URL 會回退 42 行。**要跑就一直跑到文章的公開步驟為止。** 排除項要**按檔名**寫。用散文歸納（"wing*_gallery 的 10 本"）機器無法比對，下面的 `unclassified()` 就不工作了。
-- **L668** _(ja)_ — ★2026-10-07: 印も探す場所も狭すぎた。初版は ``open(..,"w")`` / ``write_text`` / ``savefig`` / ``json.dump`` だけを ``tools/*.py``(直下のみ)で探していたので、 * **repo 直下の生成器が 1 本も見えなかった** —— ``samples.py``(docs/EXAMPLES.md が 「67-op」のまま)、``references.py``(「153 operators」)、``dispositions.py``、 ``lib_coverage.py``(885 op のまま)、``honest_summary.py`` …。``imgevolve.py`` と ``catalog.py`` だけが手で足されていた —— 手で足す方式は、足し忘れを拾えない。 * **画像の書き手が 1 本も釣れなかった** —— PIL の ``.save``、imageio の ``mimwrite``、``write_bytes``、Fullseye 自身の ``write_video`` / ``save_gif`` …。 ``gen_banner`` の PNG は「731 2-D + 265 3-D」と書いたまま古びている。 * ``tools/impl2/`` など**下の階層**も見ていなかった(docs/op_*.json の台帳)。 印を広げれば門・デモ・ライブラリも釣れる。それは構わない —— **釣れたものは全部 上の表に理由つきで載せる**(印は緩めない)。
-- **L683** _(ja)_ — ★2026-10-25: まだ狭かった。``pv.write_viewer(`` / ``fs.write_viewer(`` で HTML を書く生成器 (``tools/build_view2026_viewers.py``、題材の枝の ``tools/build_*_anim3d.py``)がどの表にも 載っていなかった。同じ洗い出しで ``open(.., "wb")``(``"w"`` しか見ていなかった)と ``shutil.copy*`` / ``copytree`` / ``move`` も足した。印ごとに「その印でしか釣れない実在の 生成器」を ``tests/test_regen_all.py`` が要求する(印を消せば落ちる)。
-- **L731** — ★位於 `tools/` 之外的生成物。只走訪 `tools/*.py` 永遠發現不了它，實際上 `docs/OP_INDEX.json` 就一直被漏掉。
+- **L73** _(ja)_ — ★展示館より**先**に回す —— 生成器は見出しに収蔵番号を出すので、 未発行の展示が 1 つでもあると BuildError で止まる。
+- **L87** _(ja)_ — ★これも `tools/` の外。2026-09-20 まで鎖に無く、docs/OPERATORS.md が 885 op / 47 分類(2026-09-06 の値)のまま置き去りだった(GenSpark 第 53 報と ユーザー指摘)。生成器が鎖に無い生成物は、必ず古びる。
+- **L91** _(ja)_ — ★2026-10-07: 以下 3 本も `tools/` の外にあり、列挙が `tools/*.py` しか見ていなかったので 鎖にも表にも無かった。どれも registry とコミット済みの入力だけから決まり、2 回 回してバイト一致・各 3 秒(実測)。置き去りの実例: EXAMPLES.md は「67-op」、REFERENCES.md は「153 operators」、 OP_DISPOSITION.json は implemented 324(実際 405)のままだった。
+- **L99** — ★2026-10-15：沒有 `--md`，**什麼都沒寫**（只把摘要印到標準輸出）。docs/CONVERSION_MATRIX.md 停在 2026-09-02 的「型別 59 / 轉換對 164」而過時，而 --check 無法把「不寫的階段」視為 drift，於是通過了 6 週。現在由 `trace_problems()` 拒絕「連宣告的輸出都不碰的階段」。
+- **L107** _(ja)_ — ★2026-10-15: 13 番目から最後の方へ下げた。docmap が docs/*.md の**題**を読むので、 題を持つ生成物(OPERATORS / REFERENCES / EXAMPLES / EXAMPLES_3D / SENSOR_PLAYBOOK / CONVERSION_MATRIX / DESIGN_NOTES*)を書く 7 段すべてより後でなければならない —— 以前はその 7 段より前にあり、題が変わると 2 回回さないと揃わなかった。 文献層の本体はコーパスが要る(EXCLUDED)が、「op ノート N 本」の件数は docs/ops を数えれば直せる。 docs/ops を書く opdocs の後、題を読む docmap(gen_docs_index_ops)の前。
+- **L304** — * ★而且危險：剛生成的文章用**相對路徑**寫圖像。公開版是改成 `raw.githubusercontent.com` 絕對 URL 後的（Qiita 用相對路徑不顯示圖像 —— memory `feedback_qiita_svg_path_and_cache`）。只跑生成器，那些絕對 URL 會回退 42 行。**要跑就一直跑到文章的公開步驟為止。** 排除項要**按檔名**寫。用散文歸納（"wing*_gallery 的 10 本"）機器無法比對，下面的 `unclassified()` 就不工作了。
+- **L671** _(ja)_ — ★2026-10-07: 印も探す場所も狭すぎた。初版は ``open(..,"w")`` / ``write_text`` / ``savefig`` / ``json.dump`` だけを ``tools/*.py``(直下のみ)で探していたので、 * **repo 直下の生成器が 1 本も見えなかった** —— ``samples.py``(docs/EXAMPLES.md が 「67-op」のまま)、``references.py``(「153 operators」)、``dispositions.py``、 ``lib_coverage.py``(885 op のまま)、``honest_summary.py`` …。``imgevolve.py`` と ``catalog.py`` だけが手で足されていた —— 手で足す方式は、足し忘れを拾えない。 * **画像の書き手が 1 本も釣れなかった** —— PIL の ``.save``、imageio の ``mimwrite``、``write_bytes``、Fullseye 自身の ``write_video`` / ``save_gif`` …。 ``gen_banner`` の PNG は「731 2-D + 265 3-D」と書いたまま古びている。 * ``tools/impl2/`` など**下の階層**も見ていなかった(docs/op_*.json の台帳)。 印を広げれば門・デモ・ライブラリも釣れる。それは構わない —— **釣れたものは全部 上の表に理由つきで載せる**(印は緩めない)。
+- **L686** _(ja)_ — ★2026-10-25: まだ狭かった。``pv.write_viewer(`` / ``fs.write_viewer(`` で HTML を書く生成器 (``tools/build_view2026_viewers.py``、題材の枝の ``tools/build_*_anim3d.py``)がどの表にも 載っていなかった。同じ洗い出しで ``open(.., "wb")``(``"w"`` しか見ていなかった)と ``shutil.copy*`` / ``copytree`` / ``move`` も足した。印ごとに「その印でしか釣れない実在の 生成器」を ``tests/test_regen_all.py`` が要求する(印を消せば落ちる)。
+- **L734** — ★位於 `tools/` 之外的生成物。只走訪 `tools/*.py` 永遠發現不了它，實際上 `docs/OP_INDEX.json` 就一直被漏掉。
 
 ## `torch_lazy.py`
 

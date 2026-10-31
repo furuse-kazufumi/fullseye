@@ -254,7 +254,9 @@ def test_pending_exposure_shrinks_when_fixed():
 #   6 op 本体は fs.ledger に載る)。実測 942 → 943。
 # 2026-10-23 組紐の例外の型 braidpath.TriplePointError(射影の三重点で組紐語が決まらない —— ValueError の子、
 #   12 op 本体は fs.ledger に載る)。実測 943 → 944。
-_HIDDEN_FUNCTIONS_TODAY = 944
+# 2026-10-31 opsfileio 台帳(メモリ内 file I/O 14 op): 台帳の内部 API 4 本で実測 944 → 948。
+#   op 自身は fs.ledger から引ける。
+_HIDDEN_FUNCTIONS_TODAY = 948
 
 
 def _hidden_total():

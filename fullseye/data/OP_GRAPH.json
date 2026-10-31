@@ -59,9 +59,9 @@
       "registry": 959
     },
     "not_executable_reasons": {
-      "python_callable_not_found": 6,
+      "python_callable_not_found": 14,
       "python_signature_has_fewer_inputs_than_graph": 1,
-      "unknown_input_or_output_sort": 188
+      "unknown_input_or_output_sort": 194
     }
   },
   "sources": {
@@ -358,7 +358,7 @@
   },
   "counts": {
     "nodes": 101,
-    "edges": 3612,
+    "edges": 3626,
     "conversion_pairs": 395,
     "conversion_edge_incidence": 2343
   },
@@ -895,8 +895,8 @@
       "sort": "mesh",
       "container": "structured_value",
       "size_hint": "input-dependent",
-      "produced_by": 20,
-      "consumed_by": 47,
+      "produced_by": 23,
+      "consumed_by": 50,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -983,8 +983,8 @@
       "sort": "points",
       "container": "sparse_set",
       "size_hint": "input-dependent",
-      "produced_by": 77,
-      "consumed_by": 291,
+      "produced_by": 78,
+      "consumed_by": 292,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -1368,8 +1368,8 @@
       "sort": "table",
       "container": "sequence",
       "size_hint": "input-dependent",
-      "produced_by": 1163,
-      "consumed_by": 544,
+      "produced_by": 1166,
+      "consumed_by": 547,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -1379,8 +1379,8 @@
       "sort": "text",
       "container": "structured_value",
       "size_hint": "input-dependent",
-      "produced_by": 8,
-      "consumed_by": 24,
+      "produced_by": 12,
+      "consumed_by": 28,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -1412,8 +1412,8 @@
       "sort": "unknown",
       "container": "structured_value",
       "size_hint": "input-dependent",
-      "produced_by": 91,
-      "consumed_by": 158,
+      "produced_by": 94,
+      "consumed_by": 161,
       "generator": false,
       "type_check": false,
       "choose_when": "undocumented",
@@ -185764,6 +185764,546 @@
       "source_ref": "S00056"
     },
     {
+      "op": "e57_read",
+      "inputs": [
+        "unknown"
+      ],
+      "output": "table",
+      "category": "e57",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "unknown",
+      "consumes_input": true,
+      "executable": false,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "unknown",
+        "source_ref": "S00056"
+      },
+      "implementations": [
+        {
+          "backend": "registry",
+          "status": "available",
+          "source_ref": "S00056"
+        }
+      ],
+      "parameters": {
+        "a": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        },
+        "b": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        }
+      },
+      "executable_reason": "unknown_input_or_output_sort",
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00056"
+    },
+    {
+      "op": "e57_write",
+      "inputs": [
+        "table"
+      ],
+      "output": "unknown",
+      "category": "e57",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "unknown",
+      "consumes_input": true,
+      "executable": false,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "unknown",
+        "source_ref": "S00056"
+      },
+      "implementations": [
+        {
+          "backend": "registry",
+          "status": "available",
+          "source_ref": "S00056"
+        }
+      ],
+      "parameters": {
+        "a": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        },
+        "b": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        }
+      },
+      "executable_reason": "unknown_input_or_output_sort",
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00056"
+    },
+    {
+      "op": "mesh_read_obj",
+      "inputs": [
+        "text"
+      ],
+      "output": "mesh",
+      "category": "mesh",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": false,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "unknown",
+        "source_ref": "S00056"
+      },
+      "implementations": [
+        {
+          "backend": "registry",
+          "status": "available",
+          "source_ref": "S00056"
+        }
+      ],
+      "parameters": {
+        "a": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        },
+        "b": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        }
+      },
+      "executable_reason": "python_callable_not_found",
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00056"
+    },
+    {
+      "op": "mesh_read_off",
+      "inputs": [
+        "text"
+      ],
+      "output": "mesh",
+      "category": "mesh",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": false,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "unknown",
+        "source_ref": "S00056"
+      },
+      "implementations": [
+        {
+          "backend": "registry",
+          "status": "available",
+          "source_ref": "S00056"
+        }
+      ],
+      "parameters": {
+        "a": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        },
+        "b": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        }
+      },
+      "executable_reason": "python_callable_not_found",
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00056"
+    },
+    {
+      "op": "mesh_read_ply",
+      "inputs": [
+        "unknown"
+      ],
+      "output": "table",
+      "category": "mesh",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "unknown",
+      "consumes_input": true,
+      "executable": false,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "unknown",
+        "source_ref": "S00056"
+      },
+      "implementations": [
+        {
+          "backend": "registry",
+          "status": "available",
+          "source_ref": "S00056"
+        }
+      ],
+      "parameters": {
+        "a": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        },
+        "b": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        }
+      },
+      "executable_reason": "unknown_input_or_output_sort",
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00056"
+    },
+    {
+      "op": "mesh_read_stl",
+      "inputs": [
+        "unknown"
+      ],
+      "output": "mesh",
+      "category": "mesh",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "unknown",
+      "consumes_input": true,
+      "executable": false,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "unknown",
+        "source_ref": "S00056"
+      },
+      "implementations": [
+        {
+          "backend": "registry",
+          "status": "available",
+          "source_ref": "S00056"
+        }
+      ],
+      "parameters": {
+        "a": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        },
+        "b": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        }
+      },
+      "executable_reason": "unknown_input_or_output_sort",
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00056"
+    },
+    {
+      "op": "mesh_write_obj",
+      "inputs": [
+        "mesh"
+      ],
+      "output": "text",
+      "category": "mesh",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": false,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "unknown",
+        "source_ref": "S00056"
+      },
+      "implementations": [
+        {
+          "backend": "registry",
+          "status": "available",
+          "source_ref": "S00056"
+        }
+      ],
+      "parameters": {
+        "a": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        },
+        "b": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        }
+      },
+      "executable_reason": "python_callable_not_found",
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00056"
+    },
+    {
+      "op": "mesh_write_off",
+      "inputs": [
+        "mesh"
+      ],
+      "output": "text",
+      "category": "mesh",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": false,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "unknown",
+        "source_ref": "S00056"
+      },
+      "implementations": [
+        {
+          "backend": "registry",
+          "status": "available",
+          "source_ref": "S00056"
+        }
+      ],
+      "parameters": {
+        "a": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        },
+        "b": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        }
+      },
+      "executable_reason": "python_callable_not_found",
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00056"
+    },
+    {
+      "op": "mesh_write_ply",
+      "inputs": [
+        "table"
+      ],
+      "output": "unknown",
+      "category": "mesh",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "unknown",
+      "consumes_input": true,
+      "executable": false,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "unknown",
+        "source_ref": "S00056"
+      },
+      "implementations": [
+        {
+          "backend": "registry",
+          "status": "available",
+          "source_ref": "S00056"
+        }
+      ],
+      "parameters": {
+        "a": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        },
+        "b": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        }
+      },
+      "executable_reason": "unknown_input_or_output_sort",
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00056"
+    },
+    {
+      "op": "mesh_write_stl",
+      "inputs": [
+        "mesh"
+      ],
+      "output": "unknown",
+      "category": "mesh",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "unknown",
+      "consumes_input": true,
+      "executable": false,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "unknown",
+        "source_ref": "S00056"
+      },
+      "implementations": [
+        {
+          "backend": "registry",
+          "status": "available",
+          "source_ref": "S00056"
+        }
+      ],
+      "parameters": {
+        "a": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        },
+        "b": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        }
+      },
+      "executable_reason": "unknown_input_or_output_sort",
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00056"
+    },
+    {
+      "op": "points_read_xyz",
+      "inputs": [
+        "text"
+      ],
+      "output": "points",
+      "category": "points",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": false,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "unknown",
+        "source_ref": "S00056"
+      },
+      "implementations": [
+        {
+          "backend": "registry",
+          "status": "available",
+          "source_ref": "S00056"
+        }
+      ],
+      "parameters": {
+        "a": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        },
+        "b": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        }
+      },
+      "executable_reason": "python_callable_not_found",
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00056"
+    },
+    {
+      "op": "points_write_xyz",
+      "inputs": [
+        "points"
+      ],
+      "output": "text",
+      "category": "points",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": false,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "unknown",
+        "source_ref": "S00056"
+      },
+      "implementations": [
+        {
+          "backend": "registry",
+          "status": "available",
+          "source_ref": "S00056"
+        }
+      ],
+      "parameters": {
+        "a": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        },
+        "b": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        }
+      },
+      "executable_reason": "python_callable_not_found",
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00056"
+    },
+    {
       "op": "read_audio",
       "inputs": [
         "file"
@@ -185815,6 +186355,96 @@
       ],
       "output": "signal",
       "category": "io",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": false,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "unknown",
+        "source_ref": "S00056"
+      },
+      "implementations": [
+        {
+          "backend": "registry",
+          "status": "available",
+          "source_ref": "S00056"
+        }
+      ],
+      "parameters": {
+        "a": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        },
+        "b": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        }
+      },
+      "executable_reason": "python_callable_not_found",
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00056"
+    },
+    {
+      "op": "table_read_csv",
+      "inputs": [
+        "text"
+      ],
+      "output": "table",
+      "category": "table",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": false,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "unknown",
+        "source_ref": "S00056"
+      },
+      "implementations": [
+        {
+          "backend": "registry",
+          "status": "available",
+          "source_ref": "S00056"
+        }
+      ],
+      "parameters": {
+        "a": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        },
+        "b": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        }
+      },
+      "executable_reason": "python_callable_not_found",
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00056"
+    },
+    {
+      "op": "table_write_csv",
+      "inputs": [
+        "table"
+      ],
+      "output": "text",
+      "category": "table",
       "family": null,
       "family_candidate": null,
       "family_candidate_source": null,
