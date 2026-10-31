@@ -1667,122 +1667,6 @@
    "youtube_url": ""
   },
   {
-   "id": "interactive_anim3d_viewer",
-   "category": "anim3d",
-   "media": "interactive_anim3d_viewer.html",
-   "media_path": "view2026/anim3d/interactive_anim3d_viewer.html",
-   "motion": true,
-   "label": {
-    "ja": "アームと半透明のレンズ",
-    "en": "Arm and translucent lens",
-    "zh": "机械臂与半透明透镜",
-    "tw": "機械臂與半透明透鏡",
-    "ko": "로봇 팔과 반투명 렌즈",
-    "de": "Arm und halbtransparente Linse",
-    "hi": "Arm और अर्ध-पारदर्शी lens",
-    "fr": "Bras et lentille translucide"
-   },
-   "see": {
-    "ja": "アームが箱を運ぶ様子を、指で回して好きな向きから見る。光線が半透明のレンズを貫いて焦点へ集まり、右下では真上からの高さ画像とその二値化が同じ時間軸で進む。",
-    "en": "Rotate with a finger and watch the arm carry a box from any angle. Rays pass through a translucent lens to its focus, while a top-down height image and its binarisation advance on the same timeline.",
-    "zh": "用手指旋转,从任意角度观看机械臂搬运箱子。光线穿过半透明透镜会聚到焦点,下方的俯视高度图像及其二值化结果在同一时间轴上同步播放。",
-    "tw": "用手指旋轉,從任意角度觀看機械臂搬運箱子。光線穿過半透明透鏡匯聚到焦點,下方的俯視高度影像及其二值化結果在同一時間軸上同步播放。",
-    "ko": "손가락으로 돌려 로봇 팔이 상자를 옮기는 모습을 원하는 방향에서 본다. 광선이 반투명 렌즈를 지나 초점에 모이고, 아래에서는 위에서 본 높이 영상과 그 이진화가 같은 시간축으로 진행된다.",
-    "de": "Mit dem Finger drehen und den Arm beim Tragen einer Kiste aus jedem Winkel ansehen. Strahlen laufen durch eine halbtransparente Linse in den Brennpunkt, darunter laufen ein Höhenbild von oben und seine Binarisierung zeitgleich mit.",
-    "hi": "उंगली से घुमाकर किसी भी कोण से देखें कि arm box कैसे ले जाता है। किरणें अर्ध-पारदर्शी lens से होकर focus पर मिलती हैं, और नीचे ऊपर से ली गई height image और उसका binarisation उसी timeline पर चलते हैं।",
-    "fr": "Faites pivoter du doigt et regardez le bras porter une boîte sous n'importe quel angle. Des rayons traversent une lentille translucide jusqu'à son foyer, tandis qu'une image de hauteur vue de dessus et sa binarisation avancent sur la même échelle de temps."
-   },
-   "num": {
-    "ja": "",
-    "en": "",
-    "zh": "",
-    "tw": "",
-    "ko": "",
-    "de": "",
-    "hi": "",
-    "fr": ""
-   },
-   "youtube_url": ""
-  },
-  {
-   "id": "salt_xrd_anim3d",
-   "category": "anim3d",
-   "media": "salt_xrd_anim3d.html",
-   "media_path": "view2026/anim3d/salt_xrd_anim3d.html",
-   "motion": true,
-   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_saltxrd_anim3d.py",
-   "label": {
-    "ja": "塩の結晶の粉末 X 線回折",
-    "en": "Powder X-ray diffraction of salt",
-    "zh": "食盐晶体的粉末 X 射线衍射",
-    "tw": "食鹽晶體的粉末 X 光繞射",
-    "ko": "소금 결정의 분말 X선 회절",
-    "de": "Pulver-Röntgenbeugung an Salz",
-    "hi": "नमक के क्रिस्टल का powder X-ray diffraction",
-    "fr": "Diffraction des rayons X sur poudre de sel"
-   },
-   "see": {
-    "ja": "塩の単位胞に格子面の板を重ね、Bragg の角度を振ると行路差が λ の整数倍の所だけ受光面が光る。粒の向きをばらばらにすると点が環に育ち、波長を長くすると環は広がって消える。消滅則は 8 原子の波を足して見せる。",
-    "en": "Lattice planes are laid over the unit cell of salt; sweep the Bragg angle and the detector lights up only where the path difference is a whole number of λ. Scatter the grain orientations and spots grow into rings; lengthen the wavelength and the rings expand and vanish. The extinction rule is shown by adding the waves of the 8 atoms.",
-    "zh": "在食盐晶胞上叠加晶格面的薄板;扫过 Bragg 角时,只有光程差为 λ 整数倍处探测器才会亮。把晶粒取向打乱,点就长成环;把波长拉长,环扩大并消失。消光规则通过把 8 个原子的波相加来展示。",
-    "tw": "在食鹽晶胞上疊加晶格面的薄板;掃過 Bragg 角時,只有光程差為 λ 整數倍處探測器才會亮。把晶粒取向打亂,點就長成環;把波長拉長,環擴大並消失。消光規則透過把 8 個原子的波相加來展示。",
-    "ko": "소금의 단위세포에 격자면의 판을 겹치고 Bragg 각을 훑으면, 행로차가 λ의 정수배인 곳에서만 검출기가 빛난다. 알갱이의 방향을 흩뜨리면 점이 환으로 자라고, 파장을 길게 하면 환은 넓어져 사라진다. 소멸 규칙은 원자 8개의 파동을 더해 보인다.",
-    "de": "Gitterebenen liegen über der Elementarzelle des Salzes; beim Durchfahren des Bragg-Winkels leuchtet der Detektor nur dort, wo der Gangunterschied ein ganzes Vielfaches von λ ist. Werden die Körner zufällig gedreht, wachsen Punkte zu Ringen; wird die Wellenlänge länger, dehnen sich die Ringe aus und verschwinden. Die Auslöschungsregel zeigt sich beim Addieren der Wellen der 8 Atome.",
-    "hi": "नमक की unit cell पर lattice plane की चादरें रखी हैं; Bragg कोण घुमाइए तो detector केवल वहाँ जलता है जहाँ path difference λ का पूर्ण गुणज है। दानों के orientation बिखेरिए तो बिंदु ring बन जाते हैं; तरंगदैर्घ्य लंबी कीजिए तो ring फैलकर गायब हो जाते हैं। extinction नियम 8 परमाणुओं की तरंगें जोड़कर दिखाया गया है।",
-    "fr": "Des plans réticulaires sont posés sur la maille du sel ; balayez l'angle de Bragg et le détecteur ne s'allume que là où la différence de marche est un multiple entier de λ. Dispersez les orientations des grains et les points deviennent des anneaux ; allongez la longueur d'onde et les anneaux s'élargissent puis disparaissent. La règle d'extinction est montrée en additionnant les ondes des 8 atomes."
-   },
-   "num": {
-    "ja": "",
-    "en": "",
-    "zh": "",
-    "tw": "",
-    "ko": "",
-    "de": "",
-    "hi": "",
-    "fr": ""
-   },
-   "youtube_url": ""
-  },
-  {
-   "id": "photoelastic",
-   "category": "anim3d",
-   "media": "photoelastic_anim3d.html",
-   "media_path": "view2026/anim3d/photoelastic_anim3d.html",
-   "motion": true,
-   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/build_photoelastic_anim3d.py",
-   "label": {
-    "ja": "力を色の縞として見る",
-    "en": "See force as colored fringes",
-    "zh": "See force as colored fringes",
-    "tw": "See force as colored fringes",
-    "ko": "See force as colored fringes",
-    "de": "See force as colored fringes",
-    "hi": "See force as colored fringes",
-    "fr": "See force as colored fringes"
-   },
-   "see": {
-    "ja": "透明な円板を上下から押すと、偏光の暗線が中心を通過する。荷重を上げるほど縞が増え、6 強度と 3 波長の像から力を逆算できる。",
-    "en": "Pressing a transparent disc from above and below drives dark polarized fringes across its centre. More load produces more fringes, and 6 intensities at 3 wavelengths recover the force.",
-    "zh": "Pressing a transparent disc from above and below drives dark polarized fringes across its centre. More load produces more fringes, and 6 intensities at 3 wavelengths recover the force.",
-    "tw": "Pressing a transparent disc from above and below drives dark polarized fringes across its centre. More load produces more fringes, and 6 intensities at 3 wavelengths recover the force.",
-    "ko": "Pressing a transparent disc from above and below drives dark polarized fringes across its centre. More load produces more fringes, and 6 intensities at 3 wavelengths recover the force.",
-    "de": "Pressing a transparent disc from above and below drives dark polarized fringes across its centre. More load produces more fringes, and 6 intensities at 3 wavelengths recover the force.",
-    "hi": "Pressing a transparent disc from above and below drives dark polarized fringes across its centre. More load produces more fringes, and 6 intensities at 3 wavelengths recover the force.",
-    "fr": "Pressing a transparent disc from above and below drives dark polarized fringes across its centre. More load produces more fringes, and 6 intensities at 3 wavelengths recover the force."
-   },
-   "num": {
-    "ja": "3 荷重で、多波長位相の荷重誤差は最大 0.11%、水平直径の暗線像による誤差は最大 0.60%、2 経路の差は最大 0.71%。像は 1% 読出し雑音、ショット雑音、8 bit 量子化を含む。",
-    "en": "Across 3 loads, multiwavelength-phase force error reaches 0.11%, horizontal-diameter dark-fringe error 0.60%, and the 2 routes differ by up to 0.71%. Images include 1% read noise, shot noise, and 8-bit quantization.",
-    "zh": "Across 3 loads, multiwavelength-phase force error reaches 0.11%, horizontal-diameter dark-fringe error 0.60%, and the 2 routes differ by up to 0.71%. Images include 1% read noise, shot noise, and 8-bit quantization.",
-    "tw": "Across 3 loads, multiwavelength-phase force error reaches 0.11%, horizontal-diameter dark-fringe error 0.60%, and the 2 routes differ by up to 0.71%. Images include 1% read noise, shot noise, and 8-bit quantization.",
-    "ko": "Across 3 loads, multiwavelength-phase force error reaches 0.11%, horizontal-diameter dark-fringe error 0.60%, and the 2 routes differ by up to 0.71%. Images include 1% read noise, shot noise, and 8-bit quantization.",
-    "de": "Across 3 loads, multiwavelength-phase force error reaches 0.11%, horizontal-diameter dark-fringe error 0.60%, and the 2 routes differ by up to 0.71%. Images include 1% read noise, shot noise, and 8-bit quantization.",
-    "hi": "Across 3 loads, multiwavelength-phase force error reaches 0.11%, horizontal-diameter dark-fringe error 0.60%, and the 2 routes differ by up to 0.71%. Images include 1% read noise, shot noise, and 8-bit quantization.",
-    "fr": "Across 3 loads, multiwavelength-phase force error reaches 0.11%, horizontal-diameter dark-fringe error 0.60%, and the 2 routes differ by up to 0.71%. Images include 1% read noise, shot noise, and 8-bit quantization."
-   },
-   "youtube_url": ""
-  },
-  {
    "id": "poc_barcode_1d",
    "category": "inspection",
    "media": "03_collapse.png",
@@ -16707,7 +16591,7 @@
     "ko": "회의장 건물과 소행성 이토카와를 같은 자로: PLATEAU CityGML LOD2 를 메시로",
     "de": "Die Gebäude des Veranstaltungsorts und der Asteroid Itokawa auf einem Maßstab: PLATEAU-CityGML LOD2 als Netz",
     "hi": "आयोजन-स्थल की इमारतें और क्षुद्रग्रह Itokawa एक ही पैमाने पर: PLATEAU CityGML LOD2 को mesh में",
-   "fr": "Les bâtiments du site et l'astéroïde Itokawa à la même échelle : le CityGML LOD2 de PLATEAU en maillage"
+    "fr": "Les bâtiments du site et l'astéroïde Itokawa à la même échelle : le CityGML LOD2 de PLATEAU en maillage"
    }
   },
   {

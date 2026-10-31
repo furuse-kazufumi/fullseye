@@ -14,9 +14,10 @@ WITHDRAWN_IDS = {
     "pulseox", "poc_star_tracker", "bridge_dic", "hypercentric_lens",
     "kelvin_wake", "ship_stability", "thermo_delamination", "venue_shadow",
     "shack-hartmann", "tablet_inspection", "catenary_wear",
-    "insar_subsidence", "tunnel_crack",
+    "insar_subsidence", "tunnel_crack", "photoelastic",
+    "salt_xrd_anim3d", "interactive_anim3d_viewer",
 }
-KEPT_IDS = {"photoelastic", "salt_xrd_anim3d", "interactive_anim3d_viewer"}
+KEPT_IDS: set[str] = set()
 
 
 def load(name: str) -> dict:
@@ -34,10 +35,10 @@ def test_only_reviewed_anim3d_exhibits_remain_public() -> None:
 def test_withdrawn_catalog_is_complete_and_recoverable() -> None:
     archive = load("withdrawn_2026_10_31.json")
     items = archive["exhibits"]
-    assert len(items) == 23
+    assert len(items) == 26
     assert {item["id"] for item in items} == WITHDRAWN_IDS
-    assert sum(item["withdrawn_reason"].startswith("rework:") for item in items) == 12
-    assert sum(item["withdrawn_reason"].startswith("hold:") for item in items) == 11
+    assert sum(item["withdrawn_reason"].startswith("rework:") for item in items) == 13
+    assert sum(item["withdrawn_reason"].startswith("hold:") for item in items) == 13
     for item in items:
         assert (ROOT / "docs" / item["media_path"]).is_file(), item["id"]
 
