@@ -47,6 +47,8 @@ def test_other_examples_are_counted_not_typed():
 
 def test_every_highlight_has_lead_in_all_languages_and_renders_it_first():
     d = G.load()
+    assert len(d["exhibits"]) >= 13, "目玉展示の件数が縮んでいる"
+    assert len(d["langs"]) >= 7, "目玉展示の対応言語が縮んでいる"
     ledger = {
         e["id"]: e for e in json.loads(
             (G.ROOT / d["all_source"]).read_text(encoding="utf-8"))["exhibits"]
