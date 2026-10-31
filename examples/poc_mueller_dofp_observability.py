@@ -8,12 +8,15 @@ Eq. (1.14) ``I=.5*(S0+S1 cos2a+S2 sin2a)``。実務条件は 0/45/90/135°
 <1e-12、線偏光だけと QWP 追加設計の復元誤差を同じ真値で比較する。
 """
 from __future__ import annotations
-import json, sys
+import json, os, sys
 from pathlib import Path
 import numpy as np
 sys.path.insert(0,str(Path(__file__).resolve().parents[1])); import optics as fs  # noqa:E402
 import examplefig as figs  # noqa: E402
 SLUG="poc_mueller_dofp_observability"; ROOT=Path(__file__).resolve().parents[1]; OUT=ROOT/"docs/articles/assets/poc"/SLUG
+if not os.environ.get("FULLSEYE_FIGURE_DIR"):   # 図の規約: 環境変数が無ければ公開の図(docs/)を書かない
+    import tempfile
+    OUT = Path(tempfile.mkdtemp(prefix=SLUG + "_"))
 ANG=(0.,45.,90.,135.)
 def states(qwp=False):
     out=[]
