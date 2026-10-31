@@ -111,6 +111,7 @@ def scene_sentence(title: str, caption: str, lang: str, variant: int) -> str:
         subject = subject.replace(".", "").replace("?", "").replace("!", "")
         issue = issue.replace(".", "").replace("?", "").replace("!", "")
     if lang == "ja":
+        subject, issue = subject.replace("。", "、"), issue.replace("。", "、")
         issue = issue.rstrip("。.!?")
         if subject.endswith("か"):
             styles = (f"{subject}を調べるとき、{issue}", f"{subject}を確かめる場面では、{issue}")
@@ -157,15 +158,17 @@ EN_STOP = {
 
 
 def content_terms(exhibit: dict, lang: str, op_names: set[str]) -> list[str]:
-    caption = clean(exhibit["caption_" + lang], lang)
+    caption = exhibit["caption_" + lang].replace("`", "").replace("**", "")
     title = clean(exhibit["title_" + lang], lang).casefold()
     if lang == "ja":
         raw = re.findall(r"[一-龯々〆ヵヶァ-ヶー]{2,}", caption)
-        terms = [term for term in raw if term not in JA_STOP and term not in title]
+        title_terms = set(re.findall(r"[一-龯々〆ヵヶァ-ヶー]{2,}", title))
+        terms = [term for term in raw if term not in JA_STOP and term not in title_terms]
     else:
         raw = re.findall(r"[A-Za-z][A-Za-z-]{3,}", caption)
+        title_terms = set(re.findall(r"[a-z][a-z-]{3,}", title))
         terms = [term.casefold() for term in raw
-                 if term.casefold() not in EN_STOP and term.casefold() not in title
+                 if term.casefold() not in EN_STOP and term.casefold() not in title_terms
                  and term.casefold() not in op_names]
     unique = []
     for term in terms:
@@ -209,6 +212,7 @@ def make_lead(exhibit: dict, lang: str, op_names: set[str]) -> str:
         )
         method = methods[variant % len(methods)]
         _subject, issue = title_parts(clean(exhibit["title_ja"], "ja"), "ja")
+        issue = issue.replace("。", "、")
         finding = f"{terms[3]}と{terms[4]}の差を見ると、{issue.rstrip('。')}ことが分かる"
         lead = f"{scene}。{method}。{finding}。"
         if len(lead) > 160:
