@@ -7,6 +7,14 @@
 ウェハが δ 動くと縞は M = p_m / |Δp| = 50 倍の距離を動く。縞の位相をロックイン(既知の周波数での最小二乗)で
 読むと、ずれは雑音の下限まで読める。新 op 8 本(`moirealign`、`opsoptics` の `moire_align`)を閉形式の真値で採点する。
 
+タルボ効果 = 周期 p の格子にコヒーレントな光(X 線)を当てると、レンズ無しでも格子の後ろのタルボ距離 2p²/λ ごとに
+格子の像が自分で再生する現象。タルボ絨毯 = 格子の後ろの強度 I(x, z) を距離 z に沿って並べた図で、縞が現れては消える
+模様が織物の絨毯に見えることから。位相格子では最もコントラストの高い像がタルボ距離の分数の位置(分数タルボ距離)に来る。
+
+Talbot effect: behind a grating of period p lit by coherent light (or X-rays), the grating's own image re-forms without any lens at every
+Talbot length 2p²/λ. Talbot carpet: the intensity I(x, z) behind the grating laid out along the distance z, whose fringes appear and vanish
+like a woven carpet; for phase gratings the sharpest images sit at fractions of the Talbot length (fractional Talbot distances).
+
   1. **拡大率の閉形式**: 縞の周期は網点のモアレ(``printpath.halftone_moire_period``)と同じ式で 102 µm、像から測った
      周期も同じ。★拡大率は**どちらが動くか**で違う: ウェハが動けば M = p_m/|Δp| = 50、マスクが動けば p_w/|Δp| = 51
      (よく書かれる「M = p_w/|Δp|」はマスクが動く場合の式)。門: 像から測った縞の移動量 / δ が 2 つとも 1e-3 以内。

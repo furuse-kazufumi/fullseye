@@ -635,13 +635,6 @@ def build_asteroid() -> dict:
 # --------------------------------------------------------------------------- #
 # 第 3 弾 — PoC の公開関数を引数掃引する軽量ビューア 8 本。                       #
 # --------------------------------------------------------------------------- #
-_SWEEP_TITLE = TX.T("引数を動かして結果を見る", "Sweep a real PoC parameter", "移动参数查看结果",
-                    "移動參數查看結果", "매개변수를 움직여 결과 보기", "Einen PoC-Parameter variieren",
-                    "PoC पैरामीटर बदलकर परिणाम देखें", "Faire varier un paramètre du PoC")
-_SWEEP_SUB = TX.T("各コマは PoC の関数を再実行した結果。", "Every frame is recomputed by the PoC function.",
-                  "每帧都由 PoC 函数重新计算。", "每格都由 PoC 函數重新計算。", "각 프레임은 PoC 함수가 다시 계산한다.",
-                  "Jedes Bild wird von der PoC-Funktion neu berechnet.", "हर फ़्रेम PoC फ़ंक्शन से फिर गणित होता है।",
-                  "Chaque image est recalculée par la fonction du PoC.")
 _SWEEP_HINT = TX.T("再生または下のスライダーで引数を動かす。", "Play or drag the slider to change the argument.",
                    "播放或拖动滑块来改变参数。", "播放或拖曳滑桿來改變參數。", "재생하거나 슬라이더로 인수를 바꾼다.",
                    "Abspielen oder den Regler ziehen, um das Argument zu ändern.", "चलाएँ या तर्क बदलने के लिए स्लाइडर खींचें।",
@@ -649,7 +642,7 @@ _SWEEP_HINT = TX.T("再生または下のスライダーで引数を動かす。
 
 
 def _sweep(pid, parameter_label, parameter_unit, values, frames,
-           metric=None, metric_label=None, metric_unit=""):
+           *, title, watch, metric=None, metric_label=None, metric_unit=""):
     vals = np.asarray(values, float)
     fr = np.asarray(frames)
     series = [] if metric is None else [{"label": metric_label, "unit": metric_unit,
@@ -657,10 +650,10 @@ def _sweep(pid, parameter_label, parameter_unit, values, frames,
                                          "lo": float(np.min(metric)), "hi": float(np.max(metric) + 1e-12), "decimals": 3}]
     tab = pv.viewer_frames_tab("sweep", TX.T("引数の掃引", "Parameter sweep", "参数扫描", "參數掃描", "매개변수 스윕",
                                                     "Parametersuche", "पैरामीटर स्वीप", "Balayage du paramètre"),
-                               "passed", _SWEEP_SUB, fr, dt=0.18, series=series, png=True,
+                               "passed", watch, fr, dt=0.18, series=series, png=True,
                                axis={"values": vals, "segments": [{"k": 0, "label": parameter_label,
                                                                       "unit": parameter_unit, "decimals": 3}]})
-    return pv.viewer_spec(pid, _SWEEP_TITLE, _SWEEP_SUB, _SWEEP_HINT, [tab])
+    return pv.viewer_spec(pid, title, watch, _SWEEP_HINT, [tab])
 
 
 def build_focus_sweep():
@@ -670,8 +663,23 @@ def build_focus_sweep():
     for v in vals:
         st=P.focal_stack(tex, depth, focus, f_number=float(v), layers=16); fm=P.fm_laplacian(st); fused=P.fuse(st,fm,focus)[0]
         frames.append(_gray(fused,0,1)); err.append(P.rms(fused-tex))
-    return _sweep("poc_focus_stacking", TX.T("F値", "f-number", "光圈值", "光圈值", "조리개값", "Blendenzahl", "एफ़-नंबर", "nombre d’ouverture"), "", vals, frames, err,
-                  TX.T("真のテクスチャとのRMSE (0–1階調)", "RMSE from true texture (0–1 intensity)", "与真实纹理的 RMSE（0–1 灰度）", "與真實紋理的 RMSE（0–1 灰階）", "실제 텍스처와의 RMSE (0–1 명암)", "RMSE zur wahren Textur (Intensität 0–1)", "वास्तविक टेक्सचर से RMSE (0–1 तीव्रता)", "RMSE par rapport à la texture vraie (intensité 0–1)"))
+    title=TX.T("F値を上げるほど焦点合成像が真のテクスチャに近づく", "Raising the f-number brings the focus-stacked image closer to the true texture",
+               "提高光圈值，景深合成图像越接近真实纹理", "提高光圈值，景深合成影像越接近真實紋理",
+               "조리개값을 높일수록 초점 합성 영상이 실제 텍스처에 가까워진다", "Mit steigender Blendenzahl nähert sich das Fokusbild der wahren Textur",
+               "एफ़-नंबर बढ़ाने पर फ़ोकस-स्टैक की छवि वास्तविक टेक्सचर के पास आती है", "Augmenter le nombre d’ouverture rapproche l’image empilée de la texture vraie")
+    watch=TX.fmt(TX.T(
+        "F値で錯乱円の大きさを変え、同じ焦点列を融合する。F値 {x0:.1f} → {x1:.1f} で、真のテクスチャとの RMSE は {y0:.4f} → {y1:.4f}。",
+        "The f-number changes the circle of confusion before the same focal stack is fused. From f/{x0:.1f} to f/{x1:.1f}, RMSE from the true texture falls from {y0:.4f} to {y1:.4f}.",
+        "光圈值改变弥散圆大小，再融合相同的焦点序列。光圈值 {x0:.1f} → {x1:.1f} 时，与真实纹理的 RMSE 从 {y0:.4f} 降到 {y1:.4f}。",
+        "光圈值改變彌散圓大小，再融合相同的焦點序列。光圈值 {x0:.1f} → {x1:.1f} 時，與真實紋理的 RMSE 從 {y0:.4f} 降到 {y1:.4f}。",
+        "조리개값으로 착란원의 크기를 바꾼 뒤 같은 초점열을 합성한다. 조리개값 {x0:.1f} → {x1:.1f}에서 실제 텍스처와의 RMSE는 {y0:.4f} → {y1:.4f}로 줄어든다.",
+        "Die Blendenzahl ändert den Zerstreuungskreis, danach wird derselbe Fokusstapel fusioniert. Von f/{x0:.1f} bis f/{x1:.1f} fällt die RMSE zur wahren Textur von {y0:.4f} auf {y1:.4f}.",
+        "एफ़-नंबर से circle of confusion बदलता है और फिर उसी focal stack को जोड़ा जाता है। f/{x0:.1f} से f/{x1:.1f} पर वास्तविक टेक्सचर की RMSE {y0:.4f} से {y1:.4f} हो जाती है।",
+        "Le nombre d’ouverture change le cercle de confusion avant de fusionner la même pile focale. De f/{x0:.1f} à f/{x1:.1f}, la RMSE par rapport à la texture vraie passe de {y0:.4f} à {y1:.4f}."),
+        x0=vals[0], x1=vals[-1], y0=err[0], y1=err[-1])
+    return _sweep("poc_focus_stacking", TX.T("F値", "f-number", "光圈值", "光圈值", "조리개값", "Blendenzahl", "एफ़-नंबर", "nombre d’ouverture"), "", vals, frames,
+                  title=title, watch=watch, metric=err,
+                  metric_label=TX.T("真のテクスチャとのRMSE (0–1階調)", "RMSE from true texture (0–1 intensity)", "与真实纹理的 RMSE（0–1 灰度）", "與真實紋理的 RMSE（0–1 灰階）", "실제 텍스처와의 RMSE (0–1 명암)", "RMSE zur wahren Textur (Intensität 0–1)", "वास्तविक टेक्सचर से RMSE (0–1 तीव्रता)", "RMSE par rapport à la texture vraie (intensité 0–1)"))
 
 
 def build_interferometry_sweep():
@@ -680,8 +688,23 @@ def build_interferometry_sweep():
         _,st=P.make_stack(0.55,float(v),i,dz=P.DZ,n_planes=P.NP)
         measured_step_um, rejected_fraction = P.measure_step(0.55,float(v),i,dz=P.DZ,n_planes=P.NP)
         frames.append(_gray(st[len(st)//2],float(st.min()),float(st.max()))); err.append(abs(float(measured_step_um)-0.55))
-    return _sweep("poc_interferometry_step", TX.T("雑音 σ", "noise σ", "噪声 σ", "雜訊 σ", "잡음 σ", "Rauschen σ", "शोर σ", "bruit σ"), "", vals, frames, err,
-                  TX.T("段差0.55 µmとの絶対差", "Absolute error from 0.55 µm step", "与 0.55 µm 台阶的绝对差", "與 0.55 µm 階差的絕對差", "0.55 µm 단차와의 절대 차이", "Absolutfehler zur Stufe von 0,55 µm", "0.55 µm चरण से निरपेक्ष अंतर", "Écart absolu à la marche de 0,55 µm"), "µm")
+    title=TX.T("雑音が増えると白色干渉の段差誤差が広がる", "More noise widens the step error in white-light interferometry",
+               "噪声增大时，白光干涉的台阶误差扩大", "雜訊增大時，白光干涉的段差誤差擴大",
+               "잡음이 커지면 백색광 간섭의 단차 오차가 벌어진다", "Mehr Rauschen vergrößert den Stufenfehler der Weißlichtinterferometrie",
+               "शोर बढ़ने पर white-light interferometry की step error बढ़ती है", "Le bruit élargit l’erreur de marche en interférométrie en lumière blanche")
+    watch=TX.fmt(TX.T(
+        "σ は干渉信号へ加える振幅雑音で、曲線は既知の段差との絶対差。σ {x0:.3f} では {y0:.4f} µm、σ {x1:.3f} では {y1:.4f} µm で、掃引中の最大は {ymax:.4f} µm。",
+        "σ is amplitude noise added to the interference signal; the curve is absolute error from the planted step. It is {y0:.4f} µm at σ {x0:.3f}, {y1:.4f} µm at σ {x1:.3f}, and reaches {ymax:.4f} µm within the sweep.",
+        "σ 是加入干涉信号的幅度噪声，曲线表示与已知台阶的绝对差。σ {x0:.3f} 时为 {y0:.4f} µm，σ {x1:.3f} 时为 {y1:.4f} µm，扫描中的最大值为 {ymax:.4f} µm。",
+        "σ 是加入干涉訊號的振幅雜訊，曲線表示與已知段差的絕對差。σ {x0:.3f} 時為 {y0:.4f} µm，σ {x1:.3f} 時為 {y1:.4f} µm，掃引中的最大值為 {ymax:.4f} µm。",
+        "σ는 간섭 신호에 더하는 진폭 잡음이고, 곡선은 심어 둔 단차와의 절대 오차다. σ {x0:.3f}에서 {y0:.4f} µm, σ {x1:.3f}에서 {y1:.4f} µm이며 스윕 중 최댓값은 {ymax:.4f} µm다.",
+        "σ ist das dem Interferenzsignal hinzugefügte Amplitudenrauschen; die Kurve zeigt den Absolutfehler zur vorgegebenen Stufe. Bei σ {x0:.3f} sind es {y0:.4f} µm, bei σ {x1:.3f} {y1:.4f} µm; im Durchlauf werden maximal {ymax:.4f} µm erreicht.",
+        "σ interference signal में जोड़ा गया amplitude noise है; curve लगाए गए step से absolute error दिखाती है। σ {x0:.3f} पर {y0:.4f} µm, σ {x1:.3f} पर {y1:.4f} µm और sweep में अधिकतम {ymax:.4f} µm है।",
+        "σ est le bruit d’amplitude ajouté au signal d’interférence ; la courbe est l’écart absolu à la marche imposée. Il vaut {y0:.4f} µm à σ {x0:.3f}, {y1:.4f} µm à σ {x1:.3f}, avec un maximum de {ymax:.4f} µm sur le balayage."),
+        x0=vals[0], x1=vals[-1], y0=err[0], y1=err[-1], ymax=max(err))
+    return _sweep("poc_interferometry_step", TX.T("雑音 σ", "noise σ", "噪声 σ", "雜訊 σ", "잡음 σ", "Rauschen σ", "शोर σ", "bruit σ"), "", vals, frames,
+                  title=title, watch=watch, metric=err,
+                  metric_label=TX.T("段差0.55 µmとの絶対差", "Absolute error from 0.55 µm step", "与 0.55 µm 台阶的绝对差", "與 0.55 µm 階差的絕對差", "0.55 µm 단차와의 절대 차이", "Absolutfehler zur Stufe von 0,55 µm", "0.55 µm चरण से निरपेक्ष अंतर", "Écart absolu à la marche de 0,55 µm"), metric_unit="µm")
 
 
 def build_polarization_sweep():
@@ -689,16 +712,48 @@ def build_polarization_sweep():
     for v in vals:
         ss,sp=P.specular_components(l,float(v)); raw=P.render_sweep(d,ss,sp); sep=P.separate(raw)
         diffuse=np.asarray(sep[0] if isinstance(sep,tuple) else sep); frames.append(_gray(diffuse,0,0.7)); err.append(P.rmse(diffuse,d))
-    return _sweep("poc_polarization_specular", TX.T("入射角", "incidence angle", "入射角", "入射角", "입사각", "Einfallswinkel", "आपतन कोण", "angle d’incidence"), "°", vals, frames, err,
-                  TX.T("真の拡散成分とのRMSE (0–1階調)", "RMSE from true diffuse component (0–1 intensity)", "与真实漫反射分量的 RMSE（0–1 灰度）", "與真實漫反射分量的 RMSE（0–1 灰階）", "실제 확산 성분과의 RMSE (0–1 명암)", "RMSE zur wahren diffusen Komponente (Intensität 0–1)", "वास्तविक विसरित घटक से RMSE (0–1 तीव्रता)", "RMSE par rapport à la composante diffuse vraie (intensité 0–1)"))
+    best=int(np.argmin(err))
+    title=TX.T("入射角で鏡面分離の誤差が変わり、ブリュースター角近傍で最小になる", "Separation error changes with incidence angle and bottoms out near the Brewster angle",
+               "镜面分离误差随入射角变化，并在布儒斯特角附近最小", "鏡面分離誤差隨入射角變化，並在布魯斯特角附近最小",
+               "정반사 분리 오차는 입사각에 따라 바뀌며 브루스터각 부근에서 가장 작다", "Der Trennfehler hängt vom Einfallswinkel ab und ist nahe dem Brewster-Winkel am kleinsten",
+               "separation error आपतन कोण के साथ बदलती है और Brewster angle के पास सबसे कम होती है", "L’erreur de séparation varie avec l’incidence et atteint son minimum près de l’angle de Brewster")
+    watch=TX.fmt(TX.T(
+        "入射角でフレネル反射の s/p 成分が変わり、曲線は分離した拡散像と真値の RMSE。{xb:.1f}° で {yb:.5f} と最小になり、両端 {x0:.0f}° / {x1:.0f}° では {y0:.5f} / {y1:.5f}。",
+        "Incidence angle changes the Fresnel s/p components; the curve is RMSE between the separated diffuse image and truth. It bottoms out at {yb:.5f} near {xb:.1f}°, versus {y0:.5f} / {y1:.5f} at the {x0:.0f}° / {x1:.0f}° endpoints.",
+        "入射角改变菲涅耳反射的 s/p 分量，曲线是分离漫反射图与真值的 RMSE。在 {xb:.1f}° 附近降至最小 {yb:.5f}，两端 {x0:.0f}° / {x1:.0f}° 为 {y0:.5f} / {y1:.5f}。",
+        "入射角改變菲涅耳反射的 s/p 分量，曲線是分離漫反射影像與真值的 RMSE。在 {xb:.1f}° 附近降至最小 {yb:.5f}，兩端 {x0:.0f}° / {x1:.0f}° 為 {y0:.5f} / {y1:.5f}。",
+        "입사각에 따라 프레넬 반사의 s/p 성분이 바뀌며, 곡선은 분리한 확산 영상과 참값의 RMSE다. {xb:.1f}°에서 {yb:.5f}로 가장 작고 양 끝 {x0:.0f}° / {x1:.0f}°에서는 {y0:.5f} / {y1:.5f}다.",
+        "Der Einfallswinkel ändert die s/p-Anteile der Fresnel-Reflexion; die Kurve ist die RMSE zwischen getrenntem Diffusbild und Sollwert. Bei {xb:.1f}° liegt das Minimum {yb:.5f}; an den Endpunkten {x0:.0f}° / {x1:.0f}° sind es {y0:.5f} / {y1:.5f}.",
+        "आपतन कोण Fresnel reflection के s/p घटक बदलता है; curve अलग की गई diffuse image और truth की RMSE है। {xb:.1f}° पर न्यूनतम {yb:.5f} है, जबकि सिरों {x0:.0f}° / {x1:.0f}° पर {y0:.5f} / {y1:.5f} है।",
+        "L’incidence change les composantes s/p de Fresnel ; la courbe est la RMSE entre l’image diffuse séparée et la vérité. Le minimum vaut {yb:.5f} à {xb:.1f}°, contre {y0:.5f} / {y1:.5f} aux extrémités {x0:.0f}° / {x1:.0f}°."),
+        xb=vals[best], yb=err[best], x0=vals[0], x1=vals[-1], y0=err[0], y1=err[-1])
+    return _sweep("poc_polarization_specular", TX.T("入射角", "incidence angle", "入射角", "入射角", "입사각", "Einfallswinkel", "आपतन कोण", "angle d’incidence"), "°", vals, frames,
+                  title=title, watch=watch, metric=err,
+                  metric_label=TX.T("真の拡散成分とのRMSE (0–1階調)", "RMSE from true diffuse component (0–1 intensity)", "与真实漫反射分量的 RMSE（0–1 灰度）", "與真實漫反射分量的 RMSE（0–1 灰階）", "실제 확산 성분과의 RMSE (0–1 명암)", "RMSE zur wahren diffusen Komponente (Intensität 0–1)", "वास्तविक विसरित घटक से RMSE (0–1 तीव्रता)", "RMSE par rapport à la composante diffuse vraie (intensité 0–1)"))
 
 
 def build_photoelastic_sweep():
     P=_load("poc_photoelasticity"); _,theta,delta=P.build_fields()
     vals=np.linspace(0,135,25); images=[P.polariscope_image(delta,theta,float(v)) for v in vals]
     frames=[_gray(im,0,1) for im in images]; mean_intensity=[float(np.mean(im)) for im in images]
-    return _sweep("poc_photoelasticity", TX.T("検光子角", "analyser angle", "检偏器角度", "檢偏器角度", "검광자 각도", "Analysatorwinkel", "विश्लेषक कोण", "angle de l’analyseur"), "°", vals, frames, mean_intensity,
-                  TX.T("平均輝度 (0–1)", "Mean intensity (0–1)", "平均亮度（0–1）", "平均亮度（0–1）", "평균 명암 (0–1)", "Mittlere Intensität (0–1)", "औसत तीव्रता (0–1)", "Intensité moyenne (0–1)"))
+    title=TX.T("検光子を回すと光弾性縞が動き、平均輝度が周期的に変わる", "Rotating the analyser moves the photoelastic fringes and cycles their mean intensity",
+               "转动检偏器会移动光弹性条纹，并使平均亮度周期变化", "轉動檢偏器會移動光彈性條紋，並使平均亮度週期變化",
+               "검광자를 돌리면 광탄성 무늬가 움직이고 평균 명암이 주기적으로 바뀐다", "Beim Drehen des Analysators wandern die spannungsoptischen Streifen und ihre mittlere Intensität schwingt",
+               "analyser घुमाने पर photoelastic fringes चलते हैं और उनकी औसत तीव्रता आवर्ती बदलती है", "Tourner l’analyseur déplace les franges photoélastiques et fait osciller leur intensité moyenne")
+    watch=TX.fmt(TX.T(
+        "検光子角は試料後の偏光を選び、応力場の縞模様を動かす。平均輝度は {x0:.0f}° の {y0:.4f} から {x1:.0f}° の {y1:.4f} へ変わり、掃引中は {ymin:.4f}〜{ymax:.4f}。",
+        "The analyser angle selects the polarisation after the specimen and moves the stress fringes. Mean intensity changes from {y0:.4f} at {x0:.0f}° to {y1:.4f} at {x1:.0f}°, spanning {ymin:.4f}–{ymax:.4f} in the sweep.",
+        "检偏器角度选择试样后的偏振并移动应力条纹。平均亮度从 {x0:.0f}° 的 {y0:.4f} 变到 {x1:.0f}° 的 {y1:.4f}，扫描范围为 {ymin:.4f}–{ymax:.4f}。",
+        "檢偏器角度選擇試樣後的偏振並移動應力條紋。平均亮度從 {x0:.0f}° 的 {y0:.4f} 變到 {x1:.0f}° 的 {y1:.4f}，掃引範圍為 {ymin:.4f}–{ymax:.4f}。",
+        "검광자 각도는 시편 뒤의 편광을 골라 응력 무늬를 움직인다. 평균 명암은 {x0:.0f}°의 {y0:.4f}에서 {x1:.0f}°의 {y1:.4f}로 바뀌며 스윕 범위는 {ymin:.4f}–{ymax:.4f}다.",
+        "Der Analysatorwinkel wählt die Polarisation hinter der Probe und verschiebt die Spannungsstreifen. Die mittlere Intensität geht von {y0:.4f} bei {x0:.0f}° auf {y1:.4f} bei {x1:.0f}° und umfasst {ymin:.4f}–{ymax:.4f}.",
+        "analyser angle नमूने के बाद का polarization चुनता है और stress fringes को चलाता है। औसत तीव्रता {x0:.0f}° पर {y0:.4f} से {x1:.0f}° पर {y1:.4f} होती है और sweep में {ymin:.4f}–{ymax:.4f} रहती है।",
+        "L’angle de l’analyseur sélectionne la polarisation après l’éprouvette et déplace les franges de contrainte. L’intensité moyenne passe de {y0:.4f} à {x0:.0f}° à {y1:.4f} à {x1:.0f}°, entre {ymin:.4f} et {ymax:.4f} sur le balayage."),
+        x0=vals[0], x1=vals[-1], y0=mean_intensity[0], y1=mean_intensity[-1],
+        ymin=min(mean_intensity), ymax=max(mean_intensity))
+    return _sweep("poc_photoelasticity", TX.T("検光子角", "analyser angle", "检偏器角度", "檢偏器角度", "검광자 각도", "Analysatorwinkel", "विश्लेषक कोण", "angle de l’analyseur"), "°", vals, frames,
+                  title=title, watch=watch, metric=mean_intensity,
+                  metric_label=TX.T("平均輝度 (0–1)", "Mean intensity (0–1)", "平均亮度（0–1）", "平均亮度（0–1）", "평균 명암 (0–1)", "Mittlere Intensität (0–1)", "औसत तीव्रता (0–1)", "Intensité moyenne (0–1)"))
 
 
 
@@ -707,8 +762,23 @@ def build_compound_sweep():
     clean=np.asarray(lf[P.V_C,P.U_C])
     for i,v in enumerate(vals):
         noisy,_,_=P.add_photoreceptor_noise(lf,float(v),seed=i); im=np.asarray(noisy[P.V_C,P.U_C]); frames.append(_gray(im,float(im.min()),float(im.max()))); rms.append(float(np.sqrt(np.mean((im-clean)**2))))
-    return _sweep("poc_compound_eye", TX.T("視点ごとのSNR", "per-view SNR", "每视点信噪比", "每視點訊噪比", "시점별 SNR", "SNR je Ansicht", "प्रति-दृश्य SNR", "SNR par vue"), "", vals, frames, rms,
-                  TX.T("無雑音像とのRMSE (0–1階調)", "RMSE from noise-free image (0–1 intensity)", "与无噪声图像的 RMSE（0–1 灰度）", "與無雜訊影像的 RMSE（0–1 灰階）", "무잡음 영상과의 RMSE (0–1 명암)", "RMSE zum rauschfreien Bild (Intensität 0–1)", "शोर-रहित छवि से RMSE (0–1 तीव्रता)", "RMSE par rapport à l’image sans bruit (intensité 0–1)"))
+    title=TX.T("視点ごとのSNRを上げるほど複眼像が無雑音像に近づく", "Higher per-view SNR brings the compound-eye image closer to its noise-free image",
+               "提高每视点信噪比，复眼图像越接近无噪声图像", "提高每視點訊噪比，複眼影像越接近無雜訊影像",
+               "시점별 SNR을 높일수록 겹눈 영상이 무잡음 영상에 가까워진다", "Mit höherem SNR je Ansicht nähert sich das Facettenaugenbild dem rauschfreien Bild",
+               "प्रति-दृश्य SNR बढ़ाने पर compound-eye image शोर-रहित image के पास आती है", "Augmenter le SNR par vue rapproche l’image de l’œil composé de l’image sans bruit")
+    watch=TX.fmt(TX.T(
+        "視点ごとのSNRは各個眼へ加える独立雑音の強さを決め、曲線は中央視点の無雑音像との RMSE。SNR {x0:.1f} → {x1:.1f} で {y0:.4f} → {y1:.4f}。",
+        "Per-view SNR sets the independent noise added to each ommatidium; the curve is RMSE from the noise-free central view. From SNR {x0:.1f} to {x1:.1f}, it falls from {y0:.4f} to {y1:.4f}.",
+        "每视点信噪比决定加入各小眼的独立噪声，曲线是中央视点相对无噪声图像的 RMSE。信噪比 {x0:.1f} → {x1:.1f} 时，从 {y0:.4f} 降到 {y1:.4f}。",
+        "每視點訊噪比決定加入各小眼的獨立雜訊，曲線是中央視點相對無雜訊影像的 RMSE。訊噪比 {x0:.1f} → {x1:.1f} 時，從 {y0:.4f} 降到 {y1:.4f}。",
+        "시점별 SNR은 각 낱눈에 더하는 독립 잡음의 세기를 정하고, 곡선은 중앙 시점의 무잡음 영상과의 RMSE다. SNR {x0:.1f} → {x1:.1f}에서 {y0:.4f} → {y1:.4f}로 줄어든다.",
+        "Das SNR je Ansicht bestimmt das unabhängige Rauschen jedes Einzelauges; die Kurve ist die RMSE zur rauschfreien Zentralansicht. Von SNR {x0:.1f} bis {x1:.1f} fällt sie von {y0:.4f} auf {y1:.4f}.",
+        "प्रति-दृश्य SNR हर ommatidium में जोड़े गए स्वतंत्र noise को तय करता है; curve शोर-रहित central view की RMSE है। SNR {x0:.1f} से {x1:.1f} पर यह {y0:.4f} से {y1:.4f} हो जाती है।",
+        "Le SNR par vue fixe le bruit indépendant ajouté à chaque ommatidie ; la courbe est la RMSE par rapport à la vue centrale sans bruit. De {x0:.1f} à {x1:.1f}, elle passe de {y0:.4f} à {y1:.4f}."),
+        x0=vals[0], x1=vals[-1], y0=rms[0], y1=rms[-1])
+    return _sweep("poc_compound_eye", TX.T("視点ごとのSNR", "per-view SNR", "每视点信噪比", "每視點訊噪比", "시점별 SNR", "SNR je Ansicht", "प्रति-दृश्य SNR", "SNR par vue"), "", vals, frames,
+                  title=title, watch=watch, metric=rms,
+                  metric_label=TX.T("無雑音像とのRMSE (0–1階調)", "RMSE from noise-free image (0–1 intensity)", "与无噪声图像的 RMSE（0–1 灰度）", "與無雜訊影像的 RMSE（0–1 灰階）", "무잡음 영상과의 RMSE (0–1 명암)", "RMSE zum rauschfreien Bild (Intensität 0–1)", "शोर-रहित छवि से RMSE (0–1 तीव्रता)", "RMSE par rapport à l’image sans bruit (intensité 0–1)"))
 
 
 def build_ct_threshold_sweep():
@@ -716,8 +786,23 @@ def build_ct_threshold_sweep():
     z=obs.shape[0]//2
     for v in vals:
         m=P.segment(obs,sc["layer"],float(v)); frames.append(np.where(m[z],255,_gray(obs[z],float(obs.min()),float(obs.max())))); frac.append(P.void_fraction(m,sc["layer"]))
-    return _sweep("poc_ct_void_morphology", TX.T("しきい値", "threshold", "阈值", "閾值", "임계값", "Schwellenwert", "सीमा", "seuil"), "", vals, frames, frac,
-                  TX.T("ボイド体積率 (0–1)", "Void volume fraction (0–1)", "孔隙体积分数（0–1）", "孔隙體積率（0–1）", "공극 체적률 (0–1)", "Porenvolumenanteil (0–1)", "रिक्ति आयतन अंश (0–1)", "Fraction volumique des vides (0–1)"))
+    title=TX.T("しきい値を上げるほどボイド判定が広がり、体積率が増える", "Raising the threshold expands the segmented voids and increases their volume fraction",
+               "提高阈值会扩大空洞分割并增加体积分数", "提高閾值會擴大孔洞分割並增加體積率",
+               "임계값을 높일수록 보이드 판정이 넓어지고 체적률이 커진다", "Ein höherer Schwellenwert vergrößert die segmentierten Poren und ihren Volumenanteil",
+               "threshold बढ़ाने पर segmented voids फैलते हैं और उनका आयतन अंश बढ़ता है", "Relever le seuil étend les vides segmentés et augmente leur fraction volumique")
+    watch=TX.fmt(TX.T(
+        "接合層の CT 値がしきい値より低い画素をボイドと数え、曲線はその体積率。しきい値 {x0:.1f} → {x1:.1f} で {y0:.2f} % → {y1:.2f} %。",
+        "Voxels in the bond layer below the CT threshold count as void; the curve is their volume fraction. Raising the threshold from {x0:.1f} to {x1:.1f} changes it from {y0:.2f} % to {y1:.2f} %.",
+        "接合层中 CT 值低于阈值的体素被计为空洞，曲线是其体积分数。阈值 {x0:.1f} → {x1:.1f} 时，从 {y0:.2f} % 增到 {y1:.2f} %。",
+        "接合層中 CT 值低於閾值的體素被計為孔洞，曲線是其體積率。閾值 {x0:.1f} → {x1:.1f} 時，從 {y0:.2f} % 增到 {y1:.2f} %。",
+        "접합층에서 CT 값이 임계값보다 낮은 복셀을 보이드로 세며, 곡선은 그 체적률이다. 임계값 {x0:.1f} → {x1:.1f}에서 {y0:.2f} % → {y1:.2f} %로 늘어난다.",
+        "Voxel der Fügeschicht unter dem CT-Schwellenwert zählen als Poren; die Kurve zeigt ihren Volumenanteil. Von {x0:.1f} auf {x1:.1f} steigt er von {y0:.2f} % auf {y1:.2f} %.",
+        "bond layer में threshold से कम CT value वाले voxel को void गिना जाता है; curve उनका आयतन अंश है। threshold {x0:.1f} से {x1:.1f} करने पर यह {y0:.2f} % से {y1:.2f} % होता है।",
+        "Dans la couche de liaison, les voxels sous le seuil CT sont comptés comme vides ; la courbe est leur fraction volumique. De {x0:.1f} à {x1:.1f}, elle passe de {y0:.2f} % à {y1:.2f} %."),
+        x0=vals[0], x1=vals[-1], y0=frac[0], y1=frac[-1])
+    return _sweep("poc_ct_void_morphology", TX.T("しきい値", "threshold", "阈值", "閾值", "임계값", "Schwellenwert", "सीमा", "seuil"), "", vals, frames,
+                  title=title, watch=watch, metric=frac,
+                  metric_label=TX.T("ボイド体積率", "Void volume fraction", "孔隙体积分数", "孔隙體積率", "공극 체적률", "Porenvolumenanteil", "रिक्ति आयतन अंश", "Fraction volumique des vides"), metric_unit="%")
 
 
 def build_active_sweep():
@@ -729,8 +814,23 @@ def build_active_sweep():
         for row,col in np.rint(points).astype(int):
             frame[max(0,row-1):row+2,max(0,col-1):col+2]=255
         frames.append(frame); score.append(float(np.sqrt(np.mean((points-final)**2))))
-    return _sweep("poc_active_contours", TX.T("反復回数", "iterations", "迭代次数", "迭代次數", "반복 횟수", "Iterationen", "पुनरावृत्तियाँ", "itérations"), "", vals, frames, score,
-                  TX.T("最終輪郭との座標RMS差", "Coordinate RMS difference from final contour", "与最终轮廓的坐标 RMS 差", "與最終輪廓的座標 RMS 差", "최종 윤곽선과의 좌표 RMS 차이", "RMS-Koordinatendifferenz zur Endkontur", "अंतिम समोच्च से निर्देशांक RMS अंतर", "Écart RMS des coordonnées au contour final"), "px")
+    title=TX.T("反復を重ねるほどGVF輪郭が最終形へ近づく", "More iterations bring the GVF contour closer to its final shape",
+               "迭代越多，GVF 轮廓越接近最终形状", "迭代越多，GVF 輪廓越接近最終形狀",
+               "반복할수록 GVF 윤곽이 최종 형상에 가까워진다", "Mit mehr Iterationen nähert sich die GVF-Kontur ihrer Endform",
+               "iterations बढ़ने पर GVF contour अपने अंतिम आकार के पास आती है", "Les itérations rapprochent le contour GVF de sa forme finale")
+    watch=TX.fmt(TX.T(
+        "反復回数は GVF の外力で snake を更新した回数で、曲線は各輪郭と最終輪郭の座標 RMS 差。{x0:.0f} 回の {y0:.2f} px から {x1:.0f} 回の {y1:.2f} px まで縮む。",
+        "Iterations count GVF-driven snake updates; the curve is coordinate RMS difference from the final contour. It shrinks from {y0:.2f} px at {x0:.0f} iterations to {y1:.2f} px at {x1:.0f}.",
+        "迭代次数是 GVF 外力更新 snake 的次数，曲线是各轮廓与最终轮廓的坐标 RMS 差。从 {x0:.0f} 次的 {y0:.2f} px 缩到 {x1:.0f} 次的 {y1:.2f} px。",
+        "迭代次數是 GVF 外力更新 snake 的次數，曲線是各輪廓與最終輪廓的座標 RMS 差。從 {x0:.0f} 次的 {y0:.2f} px 縮到 {x1:.0f} 次的 {y1:.2f} px。",
+        "반복 횟수는 GVF 외력으로 snake를 갱신한 횟수이고, 곡선은 각 윤곽과 최종 윤곽의 좌표 RMS 차이다. {x0:.0f}회의 {y0:.2f} px에서 {x1:.0f}회의 {y1:.2f} px로 줄어든다.",
+        "Die Iterationszahl zählt GVF-getriebene Snake-Schritte; die Kurve ist die RMS-Koordinatendifferenz zur Endkontur. Sie sinkt von {y0:.2f} px bei {x0:.0f} Schritten auf {y1:.2f} px bei {x1:.0f}.",
+        "iterations GVF external force से snake update की गिनती हैं; curve हर contour और अंतिम contour की coordinate RMS difference है। यह {x0:.0f} iterations पर {y0:.2f} px से {x1:.0f} पर {y1:.2f} px हो जाती है।",
+        "Les itérations comptent les mises à jour du snake par la force GVF ; la courbe est l’écart RMS des coordonnées au contour final. Il passe de {y0:.2f} px à {x0:.0f} itérations à {y1:.2f} px à {x1:.0f}."),
+        x0=vals[0], x1=vals[-1], y0=score[0], y1=score[-1])
+    return _sweep("poc_active_contours", TX.T("反復回数", "iterations", "迭代次数", "迭代次數", "반복 횟수", "Iterationen", "पुनरावृत्तियाँ", "itérations"), "", vals, frames,
+                  title=title, watch=watch, metric=score,
+                  metric_label=TX.T("最終輪郭との座標RMS差", "Coordinate RMS difference from final contour", "与最终轮廓的坐标 RMS 差", "與最終輪廓的座標 RMS 差", "최종 윤곽선과의 좌표 RMS 차이", "RMS-Koordinatendifferenz zur Endkontur", "अंतिम समोच्च से निर्देशांक RMS अंतर", "Écart RMS des coordonnées au contour final"), metric_unit="px")
 
 
 BUILDERS = {

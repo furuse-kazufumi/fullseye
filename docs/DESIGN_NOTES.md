@@ -719,7 +719,7 @@
 
 ## `examples/poc_grating_interferometry.py`
 
-- **L315** — ★正直な限界: 段差の縁の 1 画素だけが π を超える板(平らな背景の隣)は、折り返しが見えずに通る
+- **L323** — ★正直な限界: 段差の縁の 1 画素だけが π を超える板(平らな背景の隣)は、折り返しが見えずに通る
 
 ## `examples/poc_gravitational_lens_invariants.py`
 

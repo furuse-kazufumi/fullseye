@@ -1,6 +1,10 @@
 """ViEW2026 の引数掃引で、入力軸と評価系列を取り違えないための回帰試験。"""
 from __future__ import annotations
 
+import json
+import re
+from pathlib import Path
+
 import numpy as np
 import pytest
 
@@ -19,8 +23,8 @@ CASES = [
      "Mean intensity (0–1)"),
     (B.build_compound_sweep, "視点ごとのSNR", "per-view SNR", "無雑音像とのRMSE (0–1階調)",
      "RMSE from noise-free image (0–1 intensity)"),
-    (B.build_ct_threshold_sweep, "しきい値", "threshold", "ボイド体積率 (0–1)",
-     "Void volume fraction (0–1)"),
+    (B.build_ct_threshold_sweep, "しきい値", "threshold", "ボイド体積率",
+     "Void volume fraction"),
     (B.build_active_sweep, "反復回数", "iterations", "最終輪郭との座標RMS差",
      "Coordinate RMS difference from final contour"),
 ]
@@ -30,11 +34,11 @@ CASES = [
 def sweep(request):
     fn, pja, pen, mja, men = request.param
     spec = fn()
-    return fn.__name__, spec["tabs"][0], pja, pen, mja, men
+    return fn.__name__, spec, spec["tabs"][0], pja, pen, mja, men
 
 
 def test_metric_label_is_not_parameter_label(sweep):
-    _, tab, pja, pen, mja, men = sweep
+    _, _, tab, pja, pen, mja, men = sweep
     axis_label = tab["axis"]["segments"][0]["label"]
     metric_label = tab["series"][0]["label"]
     assert (axis_label["ja"], axis_label["en"]) == (pja, pen)
@@ -82,10 +86,36 @@ def _expected_endpoints(name):
 
 
 def test_axis_and_metric_endpoints_match_poc_calculation(sweep):
-    name, tab, *_ = sweep
+    name, _, tab, *_ = sweep
     expected_axis, expected_metric = _expected_endpoints(name)
     assert np.asarray(tab["axis"]["values"])[[0, -1]] == pytest.approx(expected_axis)
     assert np.asarray(tab["series"][0]["values"])[[0, -1]] == pytest.approx(expected_metric)
+
+
+OLD_SWEEP_TITLES = {
+    "引数を動かして結果を見る", "Sweep a real PoC parameter", "移动参数查看结果", "移動參數查看結果",
+    "매개변수를 움직여 결과 보기", "Einen PoC-Parameter variieren",
+    "PoC पैरामीटर बदलकर परिणाम देखें", "Faire varier un paramètre du PoC",
+}
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def test_sweep_title_and_watch_are_specific_and_watch_contains_numbers(sweep):
+    _, spec, tab, *_ = sweep
+    assert set(spec["title"]) == set(pv.LANGS)
+    assert set(spec["title"].values()).isdisjoint(OLD_SWEEP_TITLES)
+    assert spec["subtitle"] == tab["text"]
+    assert all(re.search(r"\d", spec["subtitle"][lang]) for lang in pv.LANGS)
+
+
+def test_view2026_see_and_viewer_line_match_each_sweep_title(sweep):
+    _, spec, _, *_ = sweep
+    data = json.loads((ROOT / "docs" / "view2026" / "exhibits.json").read_text(encoding="utf-8"))
+    exhibit = next(e for e in data["exhibits"] if e["id"] == spec["id"])
+    viewer = next(e for e in data["viewers"]["items"] if e["id"] == spec["id"])
+    assert exhibit["see"] == spec["title"]
+    assert viewer["line"] == spec["title"]
+    assert set(exhibit["see"].values()).isdisjoint(OLD_SWEEP_TITLES)
 
 
 def test_frames_axis_uses_physical_value_and_keeps_seconds_fallback():
