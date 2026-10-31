@@ -231,7 +231,7 @@ def make_lead(exhibit: dict, lang: str, op_names: set[str]) -> str:
         method = methods[variant % len(methods)]
         _subject, issue = title_parts(clean(exhibit["title_en"], "en"), "en")
         issue = issue.replace(".", "")
-        finding = f"The contrast between {terms[3]} and {terms[4]} shows that {issue[:1].lower() + issue[1:]}"
+        finding = f"The contrast between {terms[0]} and {terms[1]} shows that {issue[:1].lower() + issue[1:]}"
         scene = scene[:1].upper() + scene[1:]
         method = method[:1].upper() + method[1:]
         finding = finding[:1].upper() + finding[1:]
