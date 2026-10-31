@@ -199,12 +199,13 @@ def make_lead(exhibit: dict, lang: str, op_names: set[str]) -> str:
     scene = scene_sentence(exhibit["title_" + lang], caption, lang, variant)
     terms = content_terms(exhibit, lang, op_names)
     if lang == "ja":
+        context, _ = title_parts(clean(exhibit["title_ja"], "ja"), "ja")
         source = "合成データ" if "合成" in caption else ("実測データ" if re.search(r"実測|公開|実写", caption) else "計算データ")
         methods = (
-            f"{source}で{terms[0]}と{terms[1]}を扱い、{terms[2]}がどう変わるかを調べた",
-            f"{source}に{terms[0]}を用意し、{terms[1]}と{terms[2]}を比べた",
-            f"{terms[0]}を含む{source}を作り、{terms[1]}と{terms[2]}の関係を測った",
-            f"{source}の{terms[0]}を使い、{terms[1]}と{terms[2]}を別々に確かめた",
+            f"{context}の{source}で{terms[0]}と{terms[1]}を扱い、{terms[2]}がどう変わるかを調べた",
+            f"{context}の{source}に{terms[0]}を用意し、{terms[1]}と{terms[2]}を比べた",
+            f"{context}について{terms[0]}を含む{source}を作り、{terms[1]}と{terms[2]}の関係を測った",
+            f"{context}を表す{source}の{terms[0]}を使い、{terms[1]}と{terms[2]}を別々に確かめた",
         )
         method = methods[variant % len(methods)]
         _subject, issue = title_parts(clean(exhibit["title_ja"], "ja"), "ja")
@@ -214,13 +215,14 @@ def make_lead(exhibit: dict, lang: str, op_names: set[str]) -> str:
             finding = f"{terms[3]}と{terms[4]}の差が、判定の限界を示す"
             lead = f"{scene}。{method}。{finding}。"
     else:
+        context, _ = title_parts(clean(exhibit["title_en"], "en"), "en")
         source = ("synthetic data" if "synthetic" in caption.casefold() else
                   "measured data" if re.search(r"measured|public|real-world|recorded", caption, re.I) else "computed data")
         methods = (
-            f"The {source} compares {terms[0]} with {terms[1]} and tracks {terms[2]}",
-            f"We place {terms[0]} in {source}, then compare {terms[1]} and {terms[2]}",
-            f"A {source} case links {terms[0]}, {terms[1]}, and {terms[2]}",
-            f"The test uses {terms[0]} from {source} to separate {terms[1]} from {terms[2]}",
+            f"For {context}, the {source} compares {terms[0]} with {terms[1]} and tracks {terms[2]}",
+            f"For {context}, we place {terms[0]} in {source}, then compare {terms[1]} and {terms[2]}",
+            f"A {source} case for {context} links {terms[0]}, {terms[1]}, and {terms[2]}",
+            f"The {context} test uses {terms[0]} from {source} to separate {terms[1]} from {terms[2]}",
         )
         method = methods[variant % len(methods)]
         _subject, issue = title_parts(clean(exhibit["title_en"], "en"), "en")
@@ -231,9 +233,13 @@ def make_lead(exhibit: dict, lang: str, op_names: set[str]) -> str:
         finding = finding[:1].upper() + finding[1:]
         lead = f"{scene}. {method}. {finding}."
         if len(lead) > 320:
+            method = compact(method, lang, 100)
             finding = compact(finding, lang, max(35, 314 - len(scene) - len(method)))
             lead = f"{scene}. {method}. {finding}."
     lead = replace_op_names(lead, lang, op_names)
+    if lang == "en" and len(lead) > 320:
+        parts = [part.rstrip(".") for part in lead.split(". ")]
+        lead = ". ".join(compact(part, lang, 98) for part in parts) + "."
     return remove_extra_numbers(lead)
 
 
