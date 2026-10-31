@@ -135,6 +135,8 @@ def test_lead_sentences_are_not_shared_by_four_exhibits():
 def test_english_leads_have_complete_sentences_matching_japanese():
     problems = []
     for exhibit in _caption_exhibits():
+        if not exhibit["lead_ja"] and not exhibit["lead_en"]:
+            continue
         sentences = _en_gate_sentences(exhibit["lead_en"])
         if not 2 <= len(sentences) <= 3:
             problems.append((exhibit["id"], "English sentence count", len(sentences)))
@@ -209,7 +211,7 @@ def test_english_leads_do_not_reuse_old_generator_trigrams():
 def test_leads_do_not_open_with_exhibit_boilerplate():
     rows = _caption_exhibits()
     for lang, prefix in (("ja", "この展示は"), ("en", "This exhibit")):
-        active = rows
+        active = [e for e in rows if e["lead_" + lang]]
         count = sum(e["lead_" + lang].startswith(prefix) for e in active)
         assert not active or count / len(active) <= 0.10, (lang, count, len(active))
 
@@ -220,6 +222,8 @@ def test_each_lead_uses_two_source_content_words_beyond_the_title():
         doc = _opening_docstring(exhibit["id"])
         for lang in ("ja", "en"):
             lead = exhibit["lead_" + lang]
+            if not lead:
+                continue
             title = exhibit["title_" + lang]
             source = _opening_caption(exhibit["caption_" + lang], lang) + " " + doc
             candidates = _content_words(source, lang) - _content_words(title, lang)
@@ -239,7 +243,7 @@ def test_leads_do_not_paste_the_full_title():
     assert not problems, problems[:30]
 
 
-def test_every_poc_has_a_short_plain_lead_in_both_languages():
+def test_every_poc_has_a_paired_optional_short_plain_lead():
     """初見の導入は短く、実装語や数表の代わりにならない文だけにする。"""
     op_names = {
         row["name"].casefold()
@@ -248,13 +252,15 @@ def test_every_poc_has_a_short_plain_lead_in_both_languages():
     forbidden = re.compile(r"`|\b(?:op|docstring|gate|regen)\b|門", re.IGNORECASE)
     problems = []
     for exhibit in _caption_exhibits():
+        if bool(exhibit.get("lead_ja")) != bool(exhibit.get("lead_en")):
+            problems.append((exhibit["id"], "unpaired lead"))
+            continue
+        if not exhibit.get("lead_ja"):
+            continue
         for lang, limit in (("ja", 160), ("en", 320)):
             lead = exhibit.get("lead_" + lang, "")
-            if not lead:
-                problems.append((exhibit["id"], lang, "missing"))
-                continue
-            if _sentence_count(lead, lang) > 3:
-                problems.append((exhibit["id"], lang, "more than three sentences"))
+            if _sentence_count(lead, lang) != 3:
+                problems.append((exhibit["id"], lang, "not three sentences"))
             if len(lead) > limit:
                 problems.append((exhibit["id"], lang, "too long"))
             if forbidden.search(lead):
@@ -268,6 +274,55 @@ def test_every_poc_has_a_short_plain_lead_in_both_languages():
             caption = exhibit["caption_" + lang]
             if caption.startswith(lead) or lead == caption[:len(lead)]:
                 problems.append((exhibit["id"], lang, "caption prefix copied"))
+    assert not problems, problems[:30]
+
+
+def test_leads_avoid_returned_boilerplate():
+    forbidden = {
+        "ja": ("の差を見ると", "を別々に確かめた", "がどう変わるかを調べた",
+               "の関係を測った", "の差が、", "ことが分かる"),
+        "en": ("Comparing X with Y shows", "we checked", "separately"),
+    }
+    problems = []
+    for exhibit in _caption_exhibits():
+        for lang in ("ja", "en"):
+            lead = exhibit["lead_" + lang]
+            for phrase in forbidden[lang]:
+                if phrase.casefold() in lead.casefold():
+                    problems.append((exhibit["id"], lang, phrase))
+    assert not problems, problems[:30]
+
+
+def test_second_and_third_sentence_openings_are_not_reused_five_times():
+    for lang in ("ja", "en"):
+        for sentence_index in (1, 2):
+            owners = {}
+            for exhibit in _caption_exhibits():
+                sentences = _sentences(exhibit["lead_" + lang], lang)
+                if len(sentences) <= sentence_index:
+                    continue
+                opening = sentences[sentence_index].strip()[:6].casefold()
+                owners.setdefault(opening, []).append(exhibit["id"])
+            repeated = [(opening, ids) for opening, ids in owners.items() if len(ids) >= 5]
+            assert not repeated, (lang, sentence_index + 1, repeated[:20])
+
+
+def test_every_lead_number_comes_from_its_caption():
+    number = re.compile(r"[-+]?\d+(?:\.\d+)?(?:e[-+]?\d+)?", re.IGNORECASE)
+    problems = []
+    for exhibit in _caption_exhibits():
+        for lang in ("ja", "en"):
+            lead = exhibit["lead_" + lang]
+            lead_numbers = number.findall(lead)
+            caption_numbers = set(number.findall(exhibit["caption_" + lang]))
+            missing = [value for value in lead_numbers if value not in caption_numbers]
+            if missing:
+                problems.append((exhibit["id"], lang, missing))
+            if lead:
+                sentences = _sentences(lead, lang)
+                second_numbers = number.findall(sentences[1]) if len(sentences) > 1 else []
+                if len(lead_numbers) != 1 or len(second_numbers) != 1:
+                    problems.append((exhibit["id"], lang, "one number required in sentence two"))
     assert not problems, problems[:30]
 
 

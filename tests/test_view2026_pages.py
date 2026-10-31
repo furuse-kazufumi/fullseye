@@ -55,10 +55,12 @@ def test_every_highlight_has_lead_in_all_languages_and_renders_it_first():
         assert all(exhibit["lead"][lang].strip() for lang in d["langs"]), exhibit["id"]
         source = ledger.get(exhibit["id"])
         if source:
-            assert exhibit["lead"]["ja"] == source["lead_ja"]
-            assert exhibit["lead"]["en"] == source["lead_en"]
+            expected_ja = source["lead_ja"] or exhibit["see"]["ja"]
+            expected_en = source["lead_en"] or exhibit["see"]["en"]
+            assert exhibit["lead"]["ja"] == expected_ja
+            assert exhibit["lead"]["en"] == expected_en
             for lang in d["langs"][2:]:
-                assert exhibit["lead"][lang] == source["lead_en"]
+                assert exhibit["lead"][lang] == expected_en
 
     page = G.build(d, "ja")
     for exhibit in d["exhibits"]:

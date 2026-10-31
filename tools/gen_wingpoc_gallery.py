@@ -100,10 +100,13 @@ def _load():
     for ex in cap["exhibits"]:
         if ex["id"] not in byid:
             raise BuildError("poc_captions.json: %r は examples2d.EXAMPLES に無い" % ex["id"])
-        for k in ("wing", "title_ja", "title_en", "lead_ja", "lead_en",
-                  "caption_ja", "caption_en", "added"):
+        for k in ("wing", "title_ja", "title_en", "caption_ja", "caption_en", "added"):
             if not ex.get(k):
                 raise BuildError("poc_captions.json: %s に %s が無い" % (ex["id"], k))
+        if "lead_ja" not in ex or "lead_en" not in ex:
+            raise BuildError("poc_captions.json: %s に lead のキーが無い" % ex["id"])
+        if bool(ex["lead_ja"]) != bool(ex["lead_en"]):
+            raise BuildError("poc_captions.json: %s の lead が日英で片落ち" % ex["id"])
         for k in ("caption_ja", "caption_en", "title_ja", "title_en"):
             if _LOCAL.search(ex[k]):
                 raise BuildError("ローカルパスが混ざっている: %s.%s" % (ex["id"], k))
@@ -336,7 +339,7 @@ def _exhibit_md(no: str, ex: dict, lang: str, pick: dict, thumb: str, byid: dict
     # plaque.  Keep the detailed plaque, but let the canonical registry describe the
     # new lead image precisely in each published language.
     cap = ex.get("figure_caption_" + lang) or ex["caption_" + lang]
-    lead = ex["lead_" + lang]
+    lead = ex["lead_" + lang].strip() or ex["caption_" + lang]
     full = RAW + ex["id"] + "/" + pick["file"]
     th = RAW + ex["id"] + "/" + thumb
     run = ex.get("run") or ("py -3.11 examples/%s.py" % ex["id"])
