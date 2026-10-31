@@ -179,30 +179,60 @@ def test_pick_lang_mapping_in_node():
 
 
 # --------------------------------------------------------------------------- 入口ページ
-def test_entry_page_links_anim3d_with_lang_and_size():
+def _inject_anim3d(d, tmp_path, langs):
+    """公開件数に依存しない、テスト専用の動く 3-D 展示を 1 本加える。"""
+    viewer = tmp_path / "injected_anim3d.html"
+    viewer.write_text(
+        '<script>const viewer={"langs":%s}; function pickLang() {}</script>'
+        % json.dumps(langs),
+        encoding="utf-8",
+    )
+    tr = {lang: "temporary viewer" for lang in d["langs"]}
+    d["exhibits"].append({
+        "id": "injected_anim3d",
+        "category": "anim3d",
+        "media_path": str(viewer),
+        "motion": True,
+        "source_url": "",
+        "label": tr,
+        "see": tr,
+        "num": {lang: "" for lang in d["langs"]},
+        "youtube_url": "",
+    })
+    return d["exhibits"][-1], viewer
+
+
+def test_entry_page_links_anim3d_with_lang_and_size(tmp_path):
     d = G.load()
-    vids = [e for e in d["exhibits"] if G._is_viewer(d, e)]
-    assert vids, "動く 3-D の展示が無い"
-    for e in vids:
-        assert e["category"] == "anim3d"
-        path = os.path.join(ROOT, "docs", G._media_rel(d, e))
-        assert G._viewer_langs(__import__("pathlib").Path(path)) == list(pv.LANGS)
-        html = open(path, encoding="utf-8").read()
-        assert "function pickLang" in html and "http://" not in html and "https://" not in html
-        mb = G._viewer_mb(d, e)
-        assert len(d["langs"]) == 8
-        for l in d["langs"]:
-            page = G.build(d, l)
-            assert "%s?lang=%s" % (G._media_rel(d, e), l) in page
-            assert "%s · %s" % (e["label"][l], mb) in page            # タイルに容量
-            assert d["ui"]["kind_anim3d"][l] in page
+    e, path = _inject_anim3d(d, tmp_path, list(pv.LANGS))
+    assert e["category"] == "anim3d"
+    assert G._viewer_langs(path) == list(pv.LANGS)
+    html = path.read_text(encoding="utf-8")
+    assert "function pickLang" in html and "http://" not in html and "https://" not in html
+    mb = G._viewer_mb(d, e)
+    assert len(d["langs"]) == 8
+    for l in d["langs"]:
+        page = G.build(d, l)
+        assert "%s?lang=%s" % (G._media_rel(d, e), l) in page
+        assert "%s · %s" % (e["label"][l], mb) in page                # タイルに容量
+        assert d["ui"]["kind_anim3d"][l] in page
 
 
-def test_viewer_lacking_a_language_stops_the_generator(monkeypatch):
-    monkeypatch.setattr(G, "_viewer_langs", lambda p: ["ja", "en"])
-    bad = G.validate(G.load())
+def test_viewer_lacking_a_language_stops_the_generator(tmp_path):
+    d = G.load()
+    _inject_anim3d(d, tmp_path, ["ja", "en"])
+    bad = G.validate(d)
     assert bad, "言語の欠けたビューアを止めなかった"
     assert any("ビューアに無い言語" in b for b in bad)
+
+
+def test_entry_pages_build_with_no_public_anim3d():
+    d = G.load()
+    assert not [e for e in d["exhibits"] if G._is_viewer(d, e)]
+    assert len(d["langs"]) == 8
+    for lang in d["langs"]:
+        page = G.build(d, lang)
+        assert page.startswith('<div class="vlang" markdown="1">')
 
 
 def test_committed_table_passes_for_the_sample():
