@@ -1044,7 +1044,7 @@ py -3.11 examples/poc_illumination_cone_vs_na.py
 
 ## No.2026.254 —— 明るさの値ではなく「変化の向き」で探す ―― 遮蔽 10 % で崩れる NCC と、6 割まで残る符号系の照合
 
-テンプレート照合の正規化相互相関(NCC)は明るさの値を比べるので、テンプレートの一部が隠れる・光沢が飛ぶ・片側だけ暗いといった局所の崩れに弱い。明るさの変化の向きを符号にして比べる照合 4 種(方向符号照合 OCM、増分符号相関 ISC、選択的相関係数 SCC、背景比較の Radial Reach Filter。文献の式から再実装)を codematch 6 op として足し、公開の実写 5 枚(CC0)から切った 32 x 32 のテンプレート 40 枚に段階的な撹乱を掛けた。当たりが半分を割る所は、遮蔽で NCC 10 %・SCC 36 %・ISC 63 %・OCM 67 %、飽和ハイライトで NCC 6 %・SCC 10 %・OCM 44 %・ISC 53 %。回転には 4 種とも弱い(7〜9°)。SCC は符号の合った画素だけを選ぶので無関係な位置でも相関が上がり(選択の偏り)、文献の式のままでは NCC より先に壊れた。無相関の使用率の期待値 + 4σ を床にして直した。空を切った平坦なテンプレート 11 枚では、NCC は相関 0.82 前後で 10 枚を外し、符号系は拒否するか正解する(誤答 0)。門は総当たりの第 2 実装・既存の NCC・単調変換での不変性・rot90 の可換性(巡回差を絶対差にした探針で崩れる)・正解位置の値の閉形式(1,080 試行で |z| ≤ 3.6)。
+テンプレート照合でよく使う正規化相互相関は、対象の一部が隠れたり光沢で白く飛んだりすると外れやすい。明るさの変化の向きを符号にして比べる照合を加え、公開の実写から切ったテンプレート 40 枚で撹乱を強めていった。符号で比べる照合は隠れに強いが、回転にはどの方法も弱かった。
 
 [![明るさの値ではなく「変化の向き」で探す ―― 遮蔽 10 % で崩れる NCC と、6 割まで残る符号系の照合](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_code_matching_breakdown/01_breakdown_occlusion_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_code_matching_breakdown/01_breakdown_occlusion.png)
 
@@ -1088,7 +1088,7 @@ py -3.11 examples/poc_code_matching_breakdown.py
 
 ## No.2026.256 —— 良品を並べて「いつもと違う」を言う ―― 誤検出率を宣言した変動モデルと、それが実画像で破れる所
 
-外観検査の古典「良品を何枚も撮り、画素ごとにいつもの値とばらつきを覚え、外れた画素を欠陥とする」を、帯の幅を手で決めず、1 画素あたりの誤検出率を宣言して決める op 族にした(新 op 5 本 varmodel_* と、方法に依存しない評価の物差し anomeval 4 本)。正規の良品なら新しい 1 枚の偏差は t 分布の予測区間に従うので、帯の幅は閉形式で出る。合成の良品で数えた誤検出率は、画素ごとの標準偏差・全画素で 1 つの分散・経験ベイズの縮小(Smyth 2004)・中央値と MAD の 4 種とも宣言の二項 4σ の帯に入り、画素ごとに雑音が違うのに 1 つの分散を使うと外れる。良品 5 枚では標準偏差の帯の幅は 9.4 倍(t₄ の裾)になり、縮小すると 5.0 倍、5σ の傷の検出率は 0.13 → 0.52。1〜2 px ずれた良品群は拒否され、無理に通すと縁の上の帯が 22 倍に太って縁の上の傷を 1 つも見つけない。並進を 1/20 px で測って Fourier シフトで合わせると 1.07 倍に戻る。3 枚に同じ傷のある「良品」群では標準偏差は傷を見逃し(0.00)、中央値と MAD は見つける(0.98)。公開実データ VisA pcb1(CC BY 4.0、試験 200 枚)では、合わせた帯の画素 AUROC 0.808・AUPRO 0.678 に対し、合わせない帯は 0.705・0.460。ゴールデン比較は画素 AUROC 0.826 と上回るが、欠陥を 1 つずつ数える AUPRO は 0.519 で下回る。宣言 1e-3 の誤検出率は実画像では 3.8 % で守られず、学習に使わなかった良品で帯を測り直しても 2.4 % —— 並進で取れない撮影の違いが残る。確率的なテクスチャ(DAGM 2007、CC BY 4.0)は平均像に構造が無く、位置合わせは「測れない」と報告され、検出は偶然並み(画素 AUROC 0.465)。この方法が効く所と効かない所の両方を数で示した。
+良品を何枚も撮り、画素ごとのいつものばらつきから外れた所を欠陥とするのは、外観検査の古典的な方法である。誤検出率を先に宣言して帯の幅を決めるようにし、公開の実画像 200 枚で採点した。位置合わせの有無が良品の枚数より効く一方、宣言した誤検出率は実画像では守られなかった。
 
 [![良品を並べて「いつもと違う」を言う ―― 誤検出率を宣言した変動モデルと、それが実画像で破れる所](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_good_sample_variation_model/01_band_width_alignment_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_good_sample_variation_model/01_band_width_alignment.png)
 
@@ -1204,7 +1204,7 @@ py -3.11 examples/poc_dense_bubble_count.py
 
 ## No.2026.280 —— フーリエ・タイコグラフィ ―― 4 倍の対物の広い視野のまま、20 倍相当の分解能と位相を、反復の位相回復で得る
 
-低倍率の対物の広い視野のまま、LED アレイで照明の角度を変えて撮った像の組を周波数空間でつなぎ、20 倍相当の分解能と位相を反復の位相回復(収束型の演算)で得る。新 op 6 本(`fourierptycho`、`opsoptics` の `fpm`): `fp_design`(合成 NA・遮断周期・隣り合う瞳の重なり率・LED の数・画素の標本化・境の LED を撮る前に)/ `fp_usaf_target` / `fp_capture`(斜めの平面波 → 瞳 → 強度、雑音・収差・LED アレイのずれ・反射型の高さ)/ `fp_stack_from_images`(実データの入口)/ `fp_reconstruct`(逐次の位相回復 + 瞳の同時推定 + LED の位置の補正。収束の履歴・止めた理由・合成 NA を返し、収束しなければ拒否)/ `fp_element_contrast`(USAF の要素ごとの3 本の棒の変調)。4 倍 / NA 0.1・LED 13 × 13 で合成 NA 0.424、4 倍の 1 枚は G7 E4(5.53 µm、閉形式 λ/NA 5.32 µm)まで、FP は G9 E5(1.22 µm、閉形式 1.25 µm)まで分解し、20 倍 / NA 0.40 のコヒーレント像と同じ要素。位相だけの物体は帯域制限した真値と rms 0.13 rad、反射型の 20〜40 nm の段差は rms 4.0 nm。重なりを 64 → 7 % に下げると、43 % 以上は収束、32 % 以下は「2 本の初期値が別の答えに着いた」か回数切れで拒否 —— 境が公表の下限 35 % を挟む。★残差だけでは見抜けない(重なり 18 % の残差は 64 % より小さい)。瞳の同時推定は収差 rms 0.12 波を 0.005 波まで戻し、LED アレイのずれ (0.6, −0.4) mm・1°・1.5 mm を (0.62, −0.36) mm・0.93°・1.25 mm と読み戻す。★k の符号の反転は位相の符号が反転した像に着き、残差は同じ(強度では区別できない)。実データ(公開の USAF の FP データ、repo に入れずデータがあるときだけ)では、公表の装置の値からの遮断周期 1.60 µm に対し G9 E3(1.55 µm)まで分解(生の 1 枚は G7 E3)。学習 0、較正 0、門 33 件。
+低倍率の対物レンズは視野が広い代わりに、細かいところが見えない。照明の角度を変えて撮った像を周波数空間でつなぎ直すと、低倍率の視野のまま 20 倍の像と同じ細かさまで分解した。照明の重なりが足りず収束しない条件では、答えを出さずに拒否する。
 
 [![フーリエ・タイコグラフィ ―― 4 倍の対物の広い視野のまま、20 倍相当の分解能と位相を、反復の位相回復で得る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fourier_ptychography/01_usaf_4x_fp_20x_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fourier_ptychography/01_usaf_4x_fp_20x.png)
 
@@ -1784,7 +1784,7 @@ py -3.11 examples/poc_particle_sizing.py
 
 ## No.2026.031 —— 光弾性で応力を測る ―― 巻き戻しが最初に失敗するのは等方点
 
-円板圧縮の閉形式応力場(中心 4.2441 MPa、縞次数 2.380)を Mueller 行列(偏光変化を表す4×4行列)の op で偏光像にし、縞から応力へ戻す図。op の偏光系は教科書式と 125 通りで最大差 2.2e-16。縞次数が 0.5 を超える 84.2 % の画素で位相が巻き、巻き戻しが最初に壊れるのは応力の大きい所ではなく、変調が落ちる等方点。
+透明な樹脂に力を加えて偏光を通すと、内部の応力が縞として見える。円板を押しつぶした応力場を偏光像にし、縞次数が 0.5 を超えて位相が巻いた画素から応力を戻した。戻しが最初に失敗するのは、応力の大きい所ではなく縞の変調が落ちる等方点だった。
 
 [![光弾性で応力を測る ―― 巻き戻しが最初に失敗するのは等方点](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/01_polariscope_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/01_polariscope.png)
 
@@ -2794,7 +2794,7 @@ py -3.11 examples/poc_moire_alignment.py
 
 ## No.2026.233 —— テレセントリックレンズと寸法計測 ―― 同じレンズの絞りを動かすだけで、高さで変わる倍率が消える
 
-主役は実画像: 論文(Stark ほか, Sci. Rep. 15, 28690, 2025、CC BY 4.0)のテレセン生画像を Fullseye の計測 op で測り、論文の値と突き合わせる。29.5° 傾いたアライメント板(円の間隔 1 mm)の 8 本のリングを、放射状の測定線(measure_pos)で取った線の中心へ「中心と形を共有する楕円の族」で当てると、長軸の伸びは 252.13 ± 0.04 px/mm で論文の K1 = 252.0 px/mm と +0.05 %(論文自身の K1・K2 が ±0.25 % 散っているので、それより細かい一致とは読まない)。★テレセンの証拠: 傾いた板の同心円の中心は r² に比例してずれない(β = 0.0035 ± 0.0034 px/mm²。同じ板を通常 f=25 で写すと 1.40 で、外側のリングの中心が 101 px ずれる)—— 入射瞳は 10.5 m より遠い。★リングごとに自由な楕円を当てると、影で弧が 36〜180° しか見えない外側のリングの長半径が外挿で狂う(弧 36° のリングで 768 px、正しくは 2142 px)。★樹脂の 3D プリント球(公称半径 2.5 mm)は輪郭の閾値で半径が 8 % 動き、真値にならない(2.400 / 2.452 mm。論文の計量級の球の生画像は公開データに無い)。以下は合成の章で、失敗条件を掃引する補助。ダイのボンディングやコネクタのピンは、高さの違う面の寸法を 1 枚の画像で測る。通常のレンズは近い面ほど大きく写すので段差の上と下で同じ寸法が違って写り、テレセントリックレンズは絞りを焦点に置いて主光線を光軸に平行にしてこれを消す。新 op 7 本(`telecentric`、`opsoptics` の `telecentric`): `telecentric_lens`(同じ BK7 相当の単レンズ f = 100 mm の絞りの位置だけを変えた通常 / 物体側 / 両側テレセン)/ `chief_ray_angle`(光線を入射瞳でなく絞りへ Newton 法で狙うので、入射瞳が無限遠でも動く —— `raytrace.chief_ray` はここで止まる)/ `magnification_vs_depth` / `telecentricity_error` / `defocus_spot_vs_depth` / `vignetting_vs_field` / `lens_equivalent_pinhole`(入射瞳に置いた `render3d` のピンホール)。像面を固定して物体を +5 mm 近づけると、作動距離 75 mm の FA レンズ(f = 25 mm)は倍率 +6.9 %、通常 f = 100 mm は +1.7 %、テレセンは −0.013 % で、実光線は閉形式 L/(L − Δz) と 7e-5 で一致する。オートフォーカスで合わせ直しても m = −f/(s − f) で +2.6 % 動き、戻らない。ピン(高さ 5 mm)・電極つきのダイ・穴(深さ 5 mm)を 3 種のレンズで描くと、FA レンズは画像から測ったピン上面の径を 6.9 % 大きく読み(閉形式と 7e-4)、ワークが 6 mm 上下すると読みが 8.6 % 動き、穴の内壁が 2,053 画素見えて底が 0.948 しか見えない(円の重なりの閉形式 0.949)。両側テレセンでは底が全部見え、内壁は 0 画素。部品はアルミの治具プレート・金めっきのピン・黒い樹脂モールドと銀色のリードの質感で描き(metalfinish の削り目と金属の複素屈折率の色、surfacelib の上塗り、影と AO)、照明を同軸落射・ドーム・低角リングに変えても、描いた画像から円の計測モデル(metrology)で測ったピン上面の径は閉形式と 0.33 % 以内、6 mm の上下で通常 f=25 は +8.3〜8.4 %、両側テレセンは ±0.16 % 以内。★物体で 47 µm/画素に粗くすると低角リングでは 2 % 外れた(暗視野で上面の縁が弱い)。★テレセンでも残る: 単レンズは瞳の球面収差で物高 8 mm のテレセン度が 0.05°(h³ で育つ)、物体側テレセンの歪曲は 3 %(両側の対称な配置では 0.005 %)。絞りのずれ δ は Newton の式で入射瞳を −f²/δ に動かし、物高 0.5 mm では閉形式と 0.04 %、8 mm では 11.8 % 大きい。テレセン度 0.1° が残ると段差 5 mm で 9.2 µm ずれる(閉形式 8.7 µm)。視野は前玉で決まり、50 % 点 11.6 mm は近軸の閉形式 12.4 mm より 0.8 mm 手前(瞳収差で光束が外へずれて太る)。ぼけの RMS の傾きは |m|·NA/√2 と 0.5 % 以内で、22 µm を回折で潰さない NA 0.033 では被写界深度は 0.68 mm が上限。第二の実装として OSS の optiland(MIT)と主光線の像の高さが 9e-8 mm で一致(屈折率は同じ公開の硝材カタログの係数なので、見ているのは光線追跡と狙いの実装)。学習 0、較正 0、門 29 件。
+段差のある部品を一枚の画像で測ると、普通のレンズでは近い面ほど大きく写り、寸法が違って読まれる。論文で公開されたテレセントリックレンズの実画像を測り、倍率が論文の値と 0.05 % の差で一致した。合成の章では、物体の高さが変わってもテレセントリックでは倍率がほとんど動かない。
 
 [![テレセントリックレンズと寸法計測 ―― 同じレンズの絞りを動かすだけで、高さで変わる倍率が消える](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_telecentric_metrology/08_real_alignment_plate_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_telecentric_metrology/08_real_alignment_plate.png)
 
@@ -7308,7 +7308,7 @@ py -3.11 examples/poc_lens_solves_afocal.py
 
 ## No.2026.239 —— 見た目が同じ異物をハイパースペクトルで選別する ―― 実画像 2 つ(樹脂の破片・豚バラの上の異物)と、材料表から作る合成で壊れ方を数える
 
-公開の実画像 2 つ(どちらも CC BY 4.0、repo には入れず取得スクリプト + キャッシュ)を Fullseye の op(`read_envi`・`spec_continuum_removal`・`spec_angle_mapper`・`spec_band_selection_fisher`)で分類し、データの正解ラベルで採点した。樹脂の破片 6 種(RODARE 3390、400〜2500 nm の分光カメラ): 連続体除去 + SAM でクラス平均の再現率 0.816(生の反射率の SAM は 0.439 —— 暗い破片は足し算のベースラインに負ける)。別の撮影の基準試料をライブラリにすると PP / PET / PE を 0.878、この PoC の材料表の物理モデルだけをライブラリにすると 0.628(当て推量 0.333)。黒い樹脂は反射率 0.03 で C-H の谷が他の 1/6。試験ヘッダの fwhm が切り出す前の450 個のまま残っていたのを fail-closed の読み手が拒否した —— 波長の札は樹脂の谷の位置で確かめ、fwhm だけ直した写しを読む。豚バラの上の異物 10 種(Zenodo 17242553、InGaAs ラインスキャン分光カメラ): 撮影で分けて採点(65 万画素)、SAM は AUC 0.92・誤警報 10 %、全 184 帯の LDA で検出 0.92・誤警報 1.1 %、Fisher の 6 帯で誤警報 2.1 %、3 帯では 23 % —— 合成では 3 帯で足りたのに実データでは足りない。合成(材料表の吸収帯 → Kubelka–Munk → ハロゲン × 溶融石英のレンズ × InGaAs、新 op 8 本)は壊れ方の補助: 仁と同色の異物は RGB でAUC 0.48、仁の含水率 12 % で誤排出 98 %、白板の後にランプが 200 K 下がると 49 %、カーボンブラック 1 wt % で PP と PE が 1 画素の雑音に埋もれる。合成の 1.000 と実データの 0.82〜0.92 の差が逆犯罪の大きさ。パラメータは一次情報(USGS の実測、論文、データシート)で照合し、PE の帯の強さを 2〜3 倍下げ、PET の最も深い 2 帯を足し、材料表の水の k を Segelstein 1981 に直した。
+肉や仁と同じ色の異物は、カラーカメラでは見分けられない。公開の実画像を分光画像として分類すると、豚バラの上の異物を誤警報 1.1 % で検出できた。帯域を減らすと誤警報が増え、合成データでは足りた条件が実データでは足りなかった。
 
 [![見た目が同じ異物をハイパースペクトルで選別する ―― 実画像 2 つ(樹脂の破片・豚バラの上の異物)と、材料表から作る合成で壊れ方を数える](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/01_real_polymer_flakes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/01_real_polymer_flakes.png)
 
@@ -9496,7 +9496,7 @@ py -3.11 examples/poc_emva1288_sensor.py
 
 ## No.2026.090 —— 溶接 X 線透過像の気孔 ―― 等級を 1 段間違える画像の割合で締める
 
-板厚 10 mm + 円弧の余盛 + 球形気孔を Beer–Lambert(吸収による指数減衰則) で閉形式に描き、散乱・不鋭度・粒状雑音を足した透過像。固定しきい値のゼロ点は余盛のつま先を気孔に数える(塊 124 個、合計面積 15.19 mm²、真値 7.93)。検出の崖は CNR = 16.12·d² から先に予測でき、50 % 検出径は Rose の CNR = 4 では 0.50 mm と外れ、平滑化と最小面積 3 px を入れた予測 0.58 mm に対し実測 0.57 mm。背景推定 op の窓上限(矩形オープニング 9 px)は 2.0 mm から検出率 50 % を割り 2.5 mm で 0 % の崖になる ―― op を選ぶことが測定範囲を選ぶ。散乱 SPR=1 は体積径を (1+SPR)^(-1/3) で -22.6 %(予測 -20.6 %)縮める。等級を 1 段間違える画像はゼロ点 90 % → 体積径 23 %。
+溶接の X 線透過像で気孔を数え損なうと、溶接の等級を間違える。固定しきい値は余盛の縁まで気孔と数え、塊を 124 個も出した。背景を推定してから検出すると本物の気孔に絞れ、等級を誤る画像が大きく減った。
 
 [![溶接 X 線透過像の気孔 ―― 等級を 1 段間違える画像の割合で締める](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weld_radiograph_porosity/01_scene_radiograph_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weld_radiograph_porosity/01_scene_radiograph.png)
 
@@ -9738,7 +9738,7 @@ FULLSEYE_GWOSC_DATA=<dir> py -3.11 examples/poc_gw_detector_pseudo_simulation.py
 
 ## No.2026.234 —— 写真では見えない µm の凹みを、画面に映した縞の鏡像で見つける ―― 位相計測デフレクトメトリ
 
-光沢面(車の塗装パネル、カバーガラス)の深さ数 µm の凹みは、照明を当てた写真ではまず見えない —— 鏡は照明しか写さない。面の前の画面に位相シフト縞を出し、その鏡像を撮ると、面が 1e-3 rad 傾くだけで 30 cm 先の画面では 0.6 mm ずれる。新 op 6 本(`deflectometry`、`opsspecular` の `deflectometry`): `deflectometry_rig` / `deflectometry_screen_pattern` / `deflectometry_render`(高さ場 → 縞の鏡像。拡散成分、散乱、ガラスの裏面反射、開口積分のピント、雑音)/ `deflectometry_phase_to_slope`(絶対位相 → 法線、`match3d.normal_from_reflection`)/ `slope_to_curvature`(積分せず 1 回微分)/ `deflectometry_sensitivity`(撮る前の閉形式)。深さ 3 µm と 1 µm の凹み・うねり 0.8 µm・研磨ムラ 0.12 µm を仕込んだ塗装パネルで、ソフトボックスの写真の欠陥の信号は最大 0.00066(8 bit の 1 段の 0.17 倍)なのに、曲率マップの SNR は 110 と 57。勾配を積分した凹みの深さは真値と 0.5 % 以内。位相の雑音は閉形式 √(2/N)·σ/b と 1.00 倍、面の傾きの雑音は σ_u/(2d) の 0.67 倍(双線形の読み直しの √(4/9) どおり)。壊れるところ: 部品を 0.3 mm 浮かせると見かけの傾き Δz·sin θ/d(0.1 % で一致)と半径 388 m の椀が出るが凹みの深さは 0.7 % しか変わらない / 画面の距離を 2 % 間違えると深さが 2.3 % 浅い / 拡散成分 0.85 までは 1 µm の凹みが見え、0.9 で粗い縞の次数が飛び始める / 無反射コートの無いカバーガラスでは裏面の光が凹みの斜面(くさび)で逆向きに曲がり、傾きの感度が閉形式 0.246 に縮んで凹みが 1/4 の深さに見える(実測 0.246)/ 開口 8 mm では面にピントで縞の振幅が 0.60 倍、画面にピントで凹みが 0.52 倍の深さ。学習 0、較正 0、門 22 件。
+光沢のある塗装面のごく浅い凹みは、照明を当てた写真ではまず見えない。面の前の画面に縞を映し、その鏡像のゆがみから曲率を求めると、深さ 3 µm の凹みがはっきり浮かんだ。写真ではほぼ一様な面に、縞の鏡像からだけ凹みが現れる。
 
 [![写真では見えない µm の凹みを、画面に映した縞の鏡像で見つける ―― 位相計測デフレクトメトリ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_phase_measuring_deflectometry/03_photo_vs_pmd_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_phase_measuring_deflectometry/03_photo_vs_pmd.png)
 
@@ -9906,7 +9906,7 @@ py -3.11 examples/poc_itof_multifreq.py
 
 ## No.2026.241 —— 工業用 OCT(光干渉断層法) ―― 塗装・コート・多層フィルムの層厚と中の欠陥を、1 本の干渉スペクトルの FFT で深さ方向に見る
 
-塗装・コンフォーマルコート・接着層・多層フィルムの層の並びと、層の中の空洞・剥離を光干渉断層(OCT)で壊さずに見る。新 op 13 本(`octscan`、`opsoptics` の `oct`): `oct_design`(軸分解能 0.44 λ0²/Δλ・深さ範囲 λ0²/(4δλ)・roll-off・SNR・横分解能と焦点深度を撮る前に)/ `oct_interferogram`・`oct_bscan_simulate`(層の並び → 干渉スペクトル、屈折率と分散は材料表)/ `oct_k_linearize`・`oct_dispersion_compensate`・`oct_dispersion_estimate`・`oct_ascan`・`oct_bscan` / `oct_layer_thickness`(群屈折率で厚さ、分離できなければ拒否)・`oct_bscan_boundaries`・`oct_bscan_flatten` / `oct_from_spectra`(生のスペクトルの入口)。**実測**: 公開の自動車塗装の生スペクトル(CC BY 4.0)を Fullseye の op だけで処理し、透明層 44.5 / 86.4 / 99.7 / 70.8 µm が論文の OCT と 1.5 µm 以内・顕微鏡と 3.6 µm 以内、着色層は 4 枚中 3 枚が顕微鏡と 2.3 µm 以内(1 枚は 7.6 µm ずれて未解決)、白の見本の着色層の下は拒否、透明層の光学厚 155.6 µm の深さに水平に出る自己相関の幽霊。合成: 群屈折率で割った厚さが真値と 0.04 µm、位相屈折率なら 0.9〜1.9 % 厚い、SNR・roll-off・分散の広がりが閉形式と一致、点像の幅の 1.4 倍より薄い層は拒否、コートの厚さの地図と空洞・剥離の検出。
+塗装や多層フィルムの層の厚さを、切らずに奥行き方向から見たい。公開されている自動車塗装の生の干渉スペクトルから透明層の厚さを求め、論文の OCT の値と 1.5 µm 以内で一致した。分離できない薄い層には値を出さず、測れないと返す。
 
 [![工業用 OCT(光干渉断層法) ―― 塗装・コート・多層フィルムの層厚と中の欠陥を、1 本の干渉スペクトルの FFT で深さ方向に見る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_industrial_oct/01_real_paint_bscans_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_industrial_oct/01_real_paint_bscans.png)
 
@@ -9950,7 +9950,7 @@ py -3.11 examples/poc_industrial_oct.py
 
 ## No.2026.237 —— 分光反射率で薄膜の膜厚を測る ―― 公開の実測データで採点し、縞・干渉色・FFT とあてはめ・膜厚むらの画像へ
 
-Si 上の SiO₂ の膜厚を反射スペクトルの干渉縞から測る op 5 本(`filmoptics`、`opsoptics` の `film`): `multilayer_reflectance`(転送行列)/ `film_color` / `film_thickness_fft` / `film_thickness_fit` / `film_thickness_map`。膜も基板も材料表(`materials`)の鍵で引く。★主役は他人が測った実物のデータ(どちらも CC BY 4.0): Schwarz ら 2024 の顕微分光では、裸の Si の実測反射率が材料表の Si と中央値 0.4 % 差、SiO₂ の膜厚は直入射のモデルで 92.9 nm(基準 98.5 nm と −5.7 %)、残差が最小の NA 0.5 を入れると 95.8 nm(−2.7 %)。測定点の被覆率は 11 点を平均 0.6 点の誤差で読み返す。同じ試料の実物のカラー顕微鏡写真からは、裸の Si で白を合わせるだけで画素ごとの膜厚が出て中央値 87.4 nm(−11 %、カメラの分光感度は不明)。Sánchez-Arriaga ら 2023 の安価な分光器では、標準 476.3 nm が 5 本すべて 2 % 以内、198.7 nm は中央値 +6.6 % で、1 本は最良の候補が 51 nm に外れて正しい値は 2 番目の候補に残る。FFT 法は 98 nm の膜を自分で「信頼できない」と言う(下限の閉形式 554 nm)。合成の章: 1 層は Airy の式(別実装)と 3e-15、縞の本数は d·Δx と ±1、FFT の下限の閉形式 538 nm と実測 525 nm、材料の取り違え・入射角・NA の偏りは閉形式どおり。公表の色表との色相の一致は 1〜3 次で 59 %(弱い門)。模型のウェハ(彗星は縁まで半径方向、縁の盛り上がり、芯ずれの輪 —— 量は文献表に結びつけ、無いものは模型と明記)では分光 31 帯域の膜厚マップが RMS 0.17 nm、RGB は候補が複数の画素が 14 %。学習 0、門 37 件。
+シリコン上の酸化膜の厚さは、反射スペクトルに出る干渉の縞から読み取れる。他の研究者が公開した実測データで採点し、裸のシリコンの実測反射率は材料表と 0.4 % の差に収まった。薄すぎる膜では、縞を数える方法が自ら信頼できないと判定する。
 
 [![分光反射率で薄膜の膜厚を測る ―― 公開の実測データで採点し、縞・干渉色・FFT とあてはめ・膜厚むらの画像へ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thin_film_reflectometry/01_real_micrograph_thickness_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thin_film_reflectometry/01_real_micrograph_thickness.png)
 
@@ -10034,7 +10034,7 @@ py -3.11 examples/poc_chromatic_confocal.py
 
 ## No.2026.245 —— 仮想 SEM ―― 電子を 1 個ずつ固体に撃つと、加速電圧で像も測れる線幅も変わる(実測値で採点)
 
-走査電子顕微鏡(SEM)の像は表面の写真ではなく、固体の中で散乱する一次電子の**相互作用の体積**から何が出てきたかの集計である。新 op 8 本(`sem_electron_mc` / `sem_yield_curve` / `sem_se_universal_curve` / `sem_line_profile` / `sem_cd_measure` / `sem_image` / `sem_charging_series` / `sem_se_escape_fraction`)と材料表の `material_electron_properties` で、一次電子を 1 個ずつ追うモンテカルロ(Joy の単散乱、弾性散乱は Browning 1994 の Mott 近似、阻止能は Joy-Luo)を組み、各段を外の実測値で採点した。反射電子係数 η は 7 元素(C〜Au)× 5/10/20/30 keV の全部が Joy のデータベースの実測の幅 ± 0.04 に入り、遮蔽ラザフォードに戻すと W・Au で外れる。最大の到達深さは Kanaya-Okayama の 0.83〜1.04 倍、深さは E^1.75(Si)/ E^1.52(Au)で伸びる(KO は 1.67)。二次電子の収率の形は C〜Ag の 5 元素で Lin & Joy 2005 の普遍曲線に RMS ≤ 0.076、Emax は表の −4〜+7 %(合わせていない)。W・Au は裾が厚く合わない(SE2 が主、未解決)。★ユーザーの見立て「Si の上の W は SE では見えず、反射電子の Z コントラストで浮かぶ」は条件つきで当たった: 段差の無い W を 1 kV で見たときだけ(SE +5 %、反射電子 +96 %)。5 kV では SE も +80 % —— 反射電子が表面を抜けるときに作る SE2 が Z を運ぶ。深さ 150 nm に埋もれた W は 1 kV では反射電子でも +3 %、20 kV で +154 %(情報深さ)。CD-SEM では PMMA の線(底辺 40 nm)を側壁 88 度で測ると、しきい値法の線幅が 1 kV 39.1 nm / 20 kV 39.9 nm ―― 低加速は側壁の上寄り(0.33)、高加速は根元(0.03)を測る。ただし側壁 80 度では差が小さく向きも逆で、「低加速ほど上を測る」は一般則ではない。垂直の側壁はどの電圧でも太く測る(+0.3〜+1.0 nm)。帯電は、η + δ > 1 の 0.5 kV で正に溜まって暗くなり、η + δ·F(V*) = 1 を二分法で別に解いた電位に 2e-15 V で止まる。20 kV は負に溜まり続けて明るくなる(現象論)。途中で見つけた欠陥も残す: 自由行程を出発点の材料で引いたまま材料の境界を素通りしていて、0.01 nm の Si のキャップで W の η が 0.425 → 0.329 に跳んでいた(境界で歩を切って直し、回帰の門にした)。実画像の章は未実施(線幅の真値つきの CC BY の CD-SEM 像が見つからない)。
+SEM の像は表面の写真ではなく、固体の中で散乱した電子のうち外へ出てきたものの集計である。電子を一つずつ追う模型を組み、反射電子の量を 7 元素の実測データベースと照合した。同じ線でも加速電圧を変えると、側壁のどの高さを線幅として測っているかが変わる。
 
 [![仮想 SEM ―― 電子を 1 個ずつ固体に撃つと、加速電圧で像も測れる線幅も変わる(実測値で採点)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_sem_kv_cd_bse/01_sem_interaction_volume_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_sem_kv_cd_bse/01_sem_interaction_volume.png)
 
@@ -10076,7 +10076,7 @@ py -3.11 examples/poc_virtual_sem_kv_cd_bse.py
 
 ## No.2026.246 —— 仮想の透過電子顕微鏡 ―― 焦点を振ると Thon リング(TEMパワースペクトルのCTF同心環)が動き、細部が反転し、実写の写真から焦点外れを当てる
 
-透過電子顕微鏡は薄い試料を透けた電子の位相を、球面収差 Cs と焦点外れ Δf で強度に変える。その変え方 CTF = −sin(χ + arcsin w) は周波数ごとに符号が入れ替わり、パワースペクトルに零点の同心円(Thon リング)を描く。新 op 11 本(`temsim`、`opsoptics` の `tem`): `tem_wavelength` / `tem_scherzer` / `tem_ctf` / `tem_ctf_profile` / `tem_projected_potential` / `tem_amorphous_film` / `tem_image_weak_phase` / `tem_multislice` / `tem_power_spectrum` / `tem_ctf_estimate` / `tem_ctf_correct`。結像は `coherent_image` に瞳 e^{iχ} を渡し、電子の散乱因子は `pxrd` の X 線の因子から Mott–Bethe で作り、リングの周期の初期値は k² について不等間隔の標本に `lomb_scargle`、フレームの位置合わせは `phase_correlation_fft`(どれも既存の op)。波長は公表値と 5 桁(300 kV で 1.9687 pm、補正なしは 13.7 % 長い)、零点は閉形式と 1.7e-12 Å⁻¹、Scherzer 焦点の最初の零点は 0.6580 Cs^¼ λ^¾、正弦位相格子の回折は J_n(φ₀)² と 1.6e-13。Si の平均内部ポテンシャルは中性原子の値 13.71 V に対して 13.83 V(実測 12.48 V より高いのは結合の分)。★Cu の f_e(0) は 10.5 % 小さい(X 線の当てはめの限界)。像が投影ポテンシャルに最もよく似る焦点は 900 Å で Scherzer 842 Å の 7 % 以内、正焦点では細部が反転する(相関 −0.30)。合成の写真 4 枚で Δf を 13 Å 以内、非点収差を 50 Å・5.2° 以内で回収し、jackknife の σ が誤差を覆う。雑音だけ・線量不足・正焦点の近く・タイルが 9 枚しかなく別の谷に落ちた当てはめ、の 4 例はすべて拒否。画素寸法を 2 % 間違えると Δf は 1.039 倍(閉形式 1.0404)。ドリフトした 10 枚は和にするとリングが消え(当てはまりの分解能 15.6 Å)、合わせると戻る(5.3 Å)。位相反転で投影ポテンシャルとの相関は 0.09 → 0.84、ウィーナーで 0.87、Δf を 10 % 間違えると 0.10。★実写(EMPIAR-10028、CC0)3 枚で、著者の CTFFIND3 の値と −55 / +65 / −0.5 Å(0.2 % 以内)。学習 0、較正 0、門 36 件。
+透過電子顕微鏡の像は、焦点の外し方によって細部の明暗が反転する。この結像を組み立て、公開の実写 3 枚から焦点外れを推定すると、著者の解析ソフトの値とほぼ一致した。焦点を振ると、パワースペクトルの同心円が動き、正焦点の近くで細部が反転する。
 
 [![仮想の透過電子顕微鏡 ―― 焦点を振ると Thon リング(TEMパワースペクトルのCTF同心環)が動き、細部が反転し、実写の写真から焦点外れを当てる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tem_ctf_thon_rings/02_thon_rings_four_defoci_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tem_ctf_thon_rings/02_thon_rings_four_defoci.png)
 
@@ -10198,7 +10198,7 @@ py -3.11 examples/poc_grating_interferometry.py
 
 ## No.2026.255 —— 肉の中の骨片とガラスを、2 つのエネルギーで材質ごとに分ける(デュアルエナジー / フォトンカウンティング X 線)
 
-食品の X 線検査の 1 枚の透過像は各画素で L = −ln(I/I₀) という 1 つの数しか測らない —— 厚い肉と薄い硬い異物は区別できない。光子のエネルギーを 2 つの窓で数え分ける検出器で撮ると、μ(E) の形が材質で違うので、各画素で厚みと材質が分かれる(Alvarez & Macovski 1976 の基底分解)。新 op 14 本(`opstomography` の `spectral_xray`): 材料表の X 線の列(`material_xray_attenuation` ほか 3 本、NIST SRD 126 の部分集合と混合則)と `dualxray` 10 本(X 線管のスペクトル・線質・検出器のチャネル・投影・基底分解・CRLB・R 値・実効 Z・弁別の誤り率)。μ/ρ は NIST の公表値と一致(Cu 8 keV 52.55、K 端 38.4 → 278.4)、管の模型の半価層は IEC 61267 の線質 8 つと 5.8 % 以内(模型は公開のスペクトル計算(MIT)の形に合わせ、IEC の値は合わせに使っていない)。厚さ 25〜60 mm の肉のトレイで、骨片とガラスの段差は肉のむらの 0.9 倍、しきい値 1 本では肉の 86 % を誤検出、高域を取っても肉の重なりの縁が偽の塊 2 個になるが、赤身 + Al に分けた Al の像は偽の塊 0。厚い PE と薄い Al の交絡の組は 1 つの窓では d′ = 0、2 つの窓の誤り率 Φ(−d′/2) はモンテカルロと 0.004 以内、分けられなくなる Al の厚さ(誤り率 5 %)は閉形式 0.125 mm・実測 0.126 mm、肉 40 mm の下で 0.364 mm。分解の雑音はクラメール・ラオの下限の 0.995 / 0.997 倍。壊れ方: 電荷共有 25 % を知らずに分解すると肉が Al に化け、単色の近似は肉 6 cm で Al −1.5 mm に偏る。埋まった異物の見かけの Z は密度でも動く(PVC は 13.9 が 18.7 に見える)。学習 0、較正 0、門 21 件。
+食品の X 線検査の透過像では、厚い肉と薄い硬い異物を区別できない。光子のエネルギーを 2 つの窓で数え分けて厚みと材質に分けると、肉の重なりが作った偽の異物が消えた。分けられなくなるアルミの厚さも、閉形式の予測どおりに現れた。
 
 [![肉の中の骨片とガラスを、2 つのエネルギーで材質ごとに分ける(デュアルエナジー / フォトンカウンティング X 線)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dual_energy_xray/04_tray_single_vs_basis_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dual_energy_xray/04_tray_single_vs_basis.png)
 

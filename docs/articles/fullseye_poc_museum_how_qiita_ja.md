@@ -2684,7 +2684,7 @@ py -3.11 examples/poc_lens_solves_afocal.py
 
 ## No.2026.239 —— 見た目が同じ異物をハイパースペクトルで選別する ―― 実画像 2 つ(樹脂の破片・豚バラの上の異物)と、材料表から作る合成で壊れ方を数える
 
-公開の実画像 2 つ(どちらも CC BY 4.0、repo には入れず取得スクリプト + キャッシュ)を Fullseye の op(`read_envi`・`spec_continuum_removal`・`spec_angle_mapper`・`spec_band_selection_fisher`)で分類し、データの正解ラベルで採点した。樹脂の破片 6 種(RODARE 3390、400〜2500 nm の分光カメラ): 連続体除去 + SAM でクラス平均の再現率 0.816(生の反射率の SAM は 0.439 —— 暗い破片は足し算のベースラインに負ける)。別の撮影の基準試料をライブラリにすると PP / PET / PE を 0.878、この PoC の材料表の物理モデルだけをライブラリにすると 0.628(当て推量 0.333)。黒い樹脂は反射率 0.03 で C-H の谷が他の 1/6。試験ヘッダの fwhm が切り出す前の450 個のまま残っていたのを fail-closed の読み手が拒否した —— 波長の札は樹脂の谷の位置で確かめ、fwhm だけ直した写しを読む。豚バラの上の異物 10 種(Zenodo 17242553、InGaAs ラインスキャン分光カメラ): 撮影で分けて採点(65 万画素)、SAM は AUC 0.92・誤警報 10 %、全 184 帯の LDA で検出 0.92・誤警報 1.1 %、Fisher の 6 帯で誤警報 2.1 %、3 帯では 23 % —— 合成では 3 帯で足りたのに実データでは足りない。合成(材料表の吸収帯 → Kubelka–Munk → ハロゲン × 溶融石英のレンズ × InGaAs、新 op 8 本)は壊れ方の補助: 仁と同色の異物は RGB でAUC 0.48、仁の含水率 12 % で誤排出 98 %、白板の後にランプが 200 K 下がると 49 %、カーボンブラック 1 wt % で PP と PE が 1 画素の雑音に埋もれる。合成の 1.000 と実データの 0.82〜0.92 の差が逆犯罪の大きさ。パラメータは一次情報(USGS の実測、論文、データシート)で照合し、PE の帯の強さを 2〜3 倍下げ、PET の最も深い 2 帯を足し、材料表の水の k を Segelstein 1981 に直した。
+肉や仁と同じ色の異物は、カラーカメラでは見分けられない。公開の実画像を分光画像として分類すると、豚バラの上の異物を誤警報 1.1 % で検出できた。帯域を減らすと誤警報が増え、合成データでは足りた条件が実データでは足りなかった。
 
 [![見た目が同じ異物をハイパースペクトルで選別する ―― 実画像 2 つ(樹脂の破片・豚バラの上の異物)と、材料表から作る合成で壊れ方を数える](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/01_real_polymer_flakes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/01_real_polymer_flakes.png)
 
