@@ -4,7 +4,9 @@
     py -3.11 examples/poc_river_surface_velocity.py
 
 岸に据えた監視カメラが川面を斜めに撮り、泡や浮遊物(トレーサ)の動きを窓ごとの
-相互相関(PIV)で追って表面流速 u(y) を出し、既知の水深で流量 Q = h ∫u dy まで出す
+相互相関(PIV)で追って表面流速 u_s(y) を出し、表面流速による流量 proxy
+Q_proxy = ∫h(y)u_s(y)dy を出す。実流量には、別に校正・測定した
+α(y)=u_depth-mean(y)/u_s(y) が必要で、Q = ∫h(y)α(y)u_s(y)dy となる
 —— LSPIV(Large-Scale Particle Image Velocimetry)の仕事です。**真値は川幅方向の
 流速分布 u(y)**(岸で 0・最大 1.5 m/s のべき乗則)と、そこから閉形式で出る流量。
 
@@ -334,14 +336,24 @@ def profile_from_flow(flow, info, ok=None):
     return np.asarray(info["rows"]) * S_PX, u_row
 
 
-def discharge(y, u):
-    """Q = h ∫ u dy。岸で u = 0 を境界条件に、欠測行は y で線形補間。"""
+def discharge(y, u, *, depth=DEPTH, alpha=1.0):
+    """``∫ h(y) alpha(y) u_surface(y) dy``。
+
+    既定値は従来 fixture の表面流速 proxy。配列は ``y`` と同じ位置の既知値。
+    """
     m = np.isfinite(u)
     if m.sum() < 2:
         return np.nan
     yy = np.concatenate([[0.0], y[m], [B_WIDTH]])
     uu = np.concatenate([[0.0], u[m], [0.0]])
-    return DEPTH * np.trapezoid(uu, yy)
+    def _field(v):
+        a = np.asarray(v, dtype=float)
+        if a.ndim == 0:
+            return np.full(yy.shape, float(a))
+        if a.shape != np.asarray(y).shape:
+            raise ValueError("depth/alpha の配列は y と同じ形である必要があります")
+        return np.interp(yy, np.asarray(y, float), a)
+    return np.trapezoid(_field(depth) * _field(alpha) * uu, yy)
 
 
 def speed_err(y, u):

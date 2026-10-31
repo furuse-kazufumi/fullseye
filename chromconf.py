@@ -598,6 +598,19 @@ def _plate_g(n, na):
     return 1.0 / n - np.sqrt(1.0 - na * na) / np.sqrt(n * n - na * na)
 
 
+def _plate_marginal_focus_um(n: float, na: float, thickness_um: float) -> float:
+    """平行平板の裏面へ集光する縁光線の焦点座標(空気側の実空間、µm)。
+
+    Snell 則 ``sin(beta)=NA/n`` を直接使った独立な幾何光線式
+    ``t*tan(beta)/tan(alpha)``。近軸座標は ``t/n`` で、両者の差は
+    ``-t*_plate_g(n, NA)`` となる。ここで較正座標・LSA はともに空気中で鏡を
+    動かした実空間座標であり、見かけ深さ ``t/n`` へもう一度換算しない。
+    """
+    alpha = math.asin(float(na))
+    beta = math.asin(float(na) / float(n))
+    return float(thickness_um) * math.tan(beta) / math.tan(alpha)
+
+
 def chromatic_confocal_spectrum(probe, surface_um: float = 500.0, stack=(), substrate="AL",
                                 source=None, detector=None, wl_step_nm: float = 0.5,
                                 tilt_deg: float = 0.0, roughness_nm: float = 0.0,
@@ -682,7 +695,7 @@ def chromatic_confocal_spectrum(probe, surface_um: float = 500.0, stack=(), subs
             kk = m.imag
             trans = trans * (1.0 - R) ** 2 * np.exp(-4.0 * math.pi * kk * 2.0 * t / (lam * 1e-3))
             z_app = z_app + t / n
-            lsa_extra = lsa_extra + t * _plate_g(n, na) / n   # 空気換算(深さの誤差は 1/n で効く)
+            lsa_extra = lsa_extra + t * _plate_g(n, na)       # 較正と同じ空気側の実空間座標
     if not any_in_range:
         raise ValueError("%s: no interface lies inside the calibrated range %.6g..%.6g µm (top surface at "
                          "%.6g µm) — no wavelength focuses on it; the sensor reports 'no surface'"
@@ -812,8 +825,9 @@ def chromatic_confocal_readout(peaks, probe, layer_material=None) -> dict:
 
       * ``thickness_paraxial_um`` = n(λ₂) × (z₂ − z₁) —— 見かけの厚さ × 屈折率(近軸)。λ₂ は下の面の
         ピーク波長(下の面に焦点を結んでいるのはこの色なので、群屈折率でなく位相屈折率)。
-      * ``thickness_um`` = n(λ₂)(z₂ − z₁) / (1 − g/2)、g = 1/n − cos α/√(n² − sin²α)(平板が足す縦球面
-        収差を厚さあたりで、応答のピークがその半分だけ深くずれる分を戻す。NA は λ₂ の較正の NA)。
+      * ``thickness_um`` = n(λ₂)(z₂ − z₁) / (1 − n·g/2)、g = 1/n − cos α/√(n² − sin²α)。
+        ``z`` と LSA は空気中で鏡を動かした実空間座標であり、平板の LSA ``t·g`` の半分だけ
+        応答ピークが動く。NA は λ₂ の較正の NA。
 
     返り値: ``heights_um``(各ピークの z、遠いほど大)/ ``wavelengths_nm`` / 層を指定したとき
     ``apparent_thickness_um`` / ``n_layer`` / ``na`` / ``thickness_paraxial_um`` / ``thickness_um``。
@@ -847,7 +861,7 @@ def chromatic_confocal_readout(peaks, probe, layer_material=None) -> dict:
         app = z[1] - z[0]
         g = float(_plate_g(n, na))
         out.update({"apparent_thickness_um": app, "n_layer": n, "na": na,
-                    "thickness_paraxial_um": n * app, "thickness_um": n * app / (1.0 - 0.5 * g)})
+                    "thickness_paraxial_um": n * app, "thickness_um": n * app / (1.0 - 0.5 * n * g)})
     return out
 
 
@@ -889,4 +903,4 @@ def chromatic_confocal_limits(probe, layer_material=None, tilt_max_deg: float = 
             "range_over_fwhm": float((probe["calibration_um"][-1] - probe["calibration_um"][0]) / fw[i_mid]),
             "max_tilt_deg": float(tmax.min()), "tilt_return": np.column_stack([th, curve]),
             "sparrow_fraction": float(SPARROW_FRACTION), "min_apparent_separation_um": float(sep),
-            "n_layer": n, "min_thickness_um": float(n * sep / (1.0 - 0.5 * g))}
+            "n_layer": n, "min_thickness_um": float(n * sep / (1.0 - 0.5 * n * g))}

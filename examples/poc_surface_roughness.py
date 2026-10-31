@@ -32,7 +32,7 @@ Sz が 2 倍になった。どちらが正しいのか」。答えは「どち�
  4) ★評価領域の掃引 —— Sz は「どれだけ長く見たか」を測っている
  5) カットオフ掃引(λc / λs)—— どちら側に何が居るか
  6) 傾き除去 —— 最小二乗平面 vs ロバスト(RANSAC)。傷が基準を汚す量
- 7) 1-D と 2-D の食い違い —— Rz は断面の取り方で何倍振れるか
+ 7) 1-D と 2-D の食い違い —— Rt は断面の取り方で何倍振れるか
  8) 順位表と所見
 
 【結果の要点(本文の print が正、以下は道しるべ)】
@@ -42,7 +42,8 @@ Sz が 2 倍になった。どちらが正しいのか」。答えは「どち�
   「λc で切ったあとの粗さ」として定義している(そう定義しないと、正しい手順で
   測っても -23% ずれ、それが標本化の誤差と混ざる)。
 - 標本間隔に弱い順は Sz ≪ Sa < Ssk ≈ Sku < Sq。**Sq が最も強い**のは
-  エイリアシングがエネルギーを折り返すだけで 2 次モーメントを保つから。
+ 今回の PSD・位相・標本条件では Sq の変化が比較的小さいから。間引き前後で
+ 2 次モーメントが保存される一般則はなく、正弦波では位相と DC 折返しで変わる。
   dx = 8 µm で Sa 誤差 -3.5% / Sz 誤差 -19.8% —— **同じデータで Sa は ±5%
   合格、Sz は不合格**になる。
 - Sz は評価領域を広げると単調に増える。ガウス極値の 2√(2 ln M) は増え方を
@@ -229,18 +230,15 @@ def areal_params(z):
             "Sku": float(np.mean(z ** 4) / sq ** 4)}
 
 
-def profile_params(p):
-    """Ra / Rq / Rz。**Rz はここでは評価長さ全体の最大高低差**(= Rt)とする。
-
-    ISO 4287 の Rz は基準長さ 5 区間の平均だが、それだと Sz(評価面全体の
-    最大高低差)と定義が揃わず「1-D と 2-D の食い違い」が定義差なのか
-    標本化差なのか分からなくなる。**揃えたうえで比べる**。
-    """
+def profile_params(p, n_sampling_lengths=5):
+    """Ra / Rq / Rz / Rt。Rz は等分した基準長さごとの高さ範囲の平均。"""
     p = np.asarray(p, dtype=np.float64)
     p = p - p.mean()
+    chunks = np.array_split(p, int(n_sampling_lengths))
+    rz = float(np.mean([c.max() - c.min() for c in chunks if c.size]))
     return {"Ra": float(np.mean(np.abs(p))),
             "Rq": float(np.sqrt(np.mean(p ** 2))),
-            "Rz": float(p.max() - p.min())}
+            "Rz": rz, "Rt": float(p.max() - p.min())}
 
 
 def rel_err(val, truth):
@@ -651,18 +649,18 @@ def main():
               f"{100 * rel_err(r_rs['Sq'], tr2['Sq']):>19.2f}%")
 
     # ---------------------------------------------------------------- 7 --- #
-    print("\n=== 7. 1-D(Ra/Rq/Rz)と 2-D(Sa/Sq/Sz)の食い違い ===")
+    print("\n=== 7. 1-D(Ra/Rq/Rt)と 2-D(Sa/Sq/Sz)の食い違い ===")
     print("  加工目は行方向(x)に走らせてある。つまり『目に平行な断面』は"
-          "加工目を一切見ない。Rz はここでは評価長さ全体の最大高低差(= Rt)で、"
+          "加工目を一切見ない。Rt は評価長さ全体の最大高低差で、"
           "Sz と定義を揃えてある。")
 
     def sections(fld, step=4):
         rows = np.array([[profile_params(
             profile_filter(fld[i, :], DX, LAMBDA_C, "high"))[k]
-            for k in ("Ra", "Rq", "Rz")] for i in range(0, N, step)])
+            for k in ("Ra", "Rq", "Rt")] for i in range(0, N, step)])
         cols = np.array([[profile_params(
             profile_filter(fld[:, j], DX, LAMBDA_C, "high"))[k]
-            for k in ("Ra", "Rq", "Rz")] for j in range(0, N, step)])
+            for k in ("Ra", "Rq", "Rt")] for j in range(0, N, step)])
         # 斜め断面は `fs.line_profile`(双一次補間)で取る。1 標本 = √2 画素。
         diag = []
         for off in range(0, N - 32, 16):
@@ -670,13 +668,13 @@ def main():
                                 (float(N - 1 - off), float(N - 1)), num=N)
             diag.append([profile_params(profile_filter(
                 p, DX * math.sqrt(2.0), LAMBDA_C, "high"))[k]
-                for k in ("Ra", "Rq", "Rz")])
+                for k in ("Ra", "Rq", "Rt")])
         return rows, cols, np.array(diag)
 
     print("\n  [7a] 向きの依存 —— 傷を抜いた面(加工目 + PSD だけ)で見る。")
     print("       傷が入ると外れ値が Rq を支配して、向きの効果が見えなくなるため。")
     r0, c0, d0 = sections(rough_without)
-    print(f"  {'断面の向き':<24}{'本数':>6}{'Ra 平均':>11}{'Rq 平均':>11}{'Rz 平均':>11}")
+    print(f"  {'断面の向き':<24}{'本数':>6}{'Ra 平均':>11}{'Rq 平均':>11}{'Rt 平均':>11}")
     for lab, a in (("目に平行(行)", r0), ("目に直交(列)", c0),
                    ("斜め 45°(line_profile)", d0)):
         print(f"  {lab:<24}{len(a):>6}{a[:, 0].mean():>11.4f}"
@@ -691,12 +689,12 @@ def main():
     print(f"     斜め 45° は両者の中間({d0[:, 1].mean():.4f})。加工目の向きが"
           "分からない面では、Rq の値そのものが走査方向の記録なしには再現しない。")
 
-    print("\n  [7b] Rz のばらつき —— 傷ありの面で、断面 1 本がどれだけ当てにならないか。")
+    print("\n  [7b] Rt のばらつき —— 傷ありの面で、断面 1 本がどれだけ当てにならないか。")
     rows, cols, diag = sections(rough_with)
     fld = rough_with
     s2d = areal_params(fld)
-    print(f"  {'断面の向き':<24}{'本数':>6}{'Rz 平均':>11}{'Rz 最小':>11}"
-          f"{'Rz 最大':>11}{'最大/最小':>11}{'Sz の 8 割超':>14}")
+    print(f"  {'断面の向き':<24}{'本数':>6}{'Rt 平均':>11}{'Rt 最小':>11}"
+          f"{'Rt 最大':>11}{'最大/最小':>11}{'Sz の 8 割超':>14}")
     for lab, a in (("目に平行(行)", rows), ("目に直交(列)", cols),
                    ("斜め 45°(line_profile)", diag)):
         n_hit = int((a[:, 2] > 0.8 * s2d["Sz"]).sum())

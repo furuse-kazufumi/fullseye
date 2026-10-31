@@ -22,9 +22,9 @@
 
 【この PoC が言えないこと(先に書く)】
 合成信号である。実機の記録には転がり滑り(実測 1 % 程度)・複数の共振・
-回転数変動・他部品の音が全部乗る。ここで出る検出限界 SNR は
+回転数変動・他部品の音が全部乗る。ここで出る 10/10 の経験的境界 SNR は
 **この合成モデル・この帯域・この記録長での上界**であって、現場の値ではない。
-本 PoC の主張は「検出限界という量が測れる形になっている」ことまで。
+本 PoC の主張は「有限試行の経験的境界と統計区間を測れる形になっている」ことまで。
 
 【グラウンドトゥルース(閉形式)】
 1. BPFO + BPFI = N f_r、BPFO = N FTF —— float64 で厳密に 0(丸め誤差ですらない)。
@@ -211,6 +211,16 @@ def main():
     threshold = 5.0
     print("   検出の判定条件 = 局所顕著さ >= %.1f かつ ピークが真値の高調波 1..4 と"
           " %.0f %% 以内で一致" % (threshold, 100 * TOL_FRAC))
+    # 閾値決定に使った null とは seed を分離した検証用 null。
+    validation_null_hits = 0
+    for s in range(20):
+        n = np.random.default_rng(1200 + s).standard_normal(int(DURATION * RATE))
+        env = A.envelope_spectrum(n, RATE, BAND[0], BAND[1])
+        _, _, loc = _peak_and_prominence(env["freqs"], env["magnitude"])
+        validation_null_hits += int(loc >= threshold)
+    fpr_upper = 1.0 - 0.05 ** (1.0 / 20.0) if validation_null_hits == 0 else float("nan")
+    print("   独立 null(seed 1200--1219): 誤警報 %d/20、片側 95 %% 上限 %.1f %%"
+          % (validation_null_hits, 100 * fpr_upper))
 
     # ------------------------------------------------------------------ #
     # 4) SNR を振る —— 生スペクトル(ゼロ点 a)との差が本題                #
@@ -252,8 +262,10 @@ def main():
     env_last = [s for s in sweep if s[3] == n_trial]
     raw_limit = raw_last[-1][1] if raw_last else float("nan")
     env_limit = env_last[-1][1] if env_last else float("nan")
-    print("   検出限界(10/10 を保てた最も悪い SNR): 生 %+.1f dB / 包絡線 %+.1f dB"
+    detection_lower = 0.05 ** (1.0 / n_trial)
+    print("   経験的境界(10/10 を保てた最も悪い SNR): 生 %+.1f dB / 包絡線 %+.1f dB"
           "  -> **%.1f dB 分の改善**" % (raw_limit, env_limit, raw_limit - env_limit))
+    print("   10/10 でも検出率の片側 95 %% 下限は %.1f %%" % (100 * detection_lower))
     print("   どちらも落ちるのは sigma=%.1f(SNR %+.1f dB)。そこでは包絡線も"
           % (sweep[-2][0], sweep[-2][1]))
     print("   欠陥と無関係な周波数を返す —— 「常にピークを返す op」なので、"
@@ -264,7 +276,7 @@ def main():
                    [("生スペクトル(ゼロ点)", snr_axis, np.array([s[2] for s in sweep])),
                     ("包絡線スペクトル", snr_axis, np.array([s[3] for s in sweep]))],
                    xlabel="SNR [dB]", ylabel="検出数 / %d 試行" % n_trial,
-                   title="検出限界 —— 崖の位置が %.1f dB ずれる" % (raw_limit - env_limit),
+                   title="経験的な 10/10 境界 —— 崖が %.1f dB ずれる" % (raw_limit - env_limit),
                    caption="どちらも最悪条件では 0 に落ちる。包絡線は万能ではなく、"
                            "崖が悪い SNR 側へ動くだけ。")
     assert env_limit < raw_limit                 # 包絡線が確かに下(悪い SNR)まで持つ

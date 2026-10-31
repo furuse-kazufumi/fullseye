@@ -1,16 +1,18 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
-"""金属積層造形の「工程中の熱画像」と「造形後の X 線 CT」を、既存の op だけでつなぐ。
+"""金属積層造形の熱画像解析と X 線 CT 解析を、独立な二つの章として検証する。
 
     py -3.11 examples/poc_am_thermal_to_ct.py
     FULLSEYE_DATA_DIR=<データの置き場> py -3.11 examples/poc_am_thermal_to_ct.py   # 実データの門も足す
 
-レーザー粉末床溶融(L-PBF)の検査は 2 つの装置に分かれています。**造形中**は高速カメラが
-溶融池の明るさを撮り、**造形後**は X 線 CT が中身と表面を撮る。この PoC は、その両端を
+熱画像は AMB2022-03 の裸 In718 板上の単トラック、CT は別データセットの
+Overhang Part X4 であり、同じ部品の工程前後ではありません。したがって両者を
+「つなぐ」推論は行わず、熱画像の解析と CT の解析を独立に採点します。この PoC は
 Fullseye の既存語彙(連結成分 ``blob_label`` / ``blob_features``、3-D の ``vol_label`` /
 ``vol_boundary_points``、面からの符号つき距離 ``signed_surface_distance``、メッシュの断面
 ``mesh_slice_stack``、採点 ``seg_dice_jaccard`` / ``seg_boundary_f``)で測り、
 **どの数字をどこまで言ってよいか**を門で固定します。
 
+実データの数字は 2026-10-02 に抽出した記録値で、既定実行の再計算値ではありません。
 この PoC が測る主張(門 = 下の assert。データが無い CI では合成側だけ、有れば実データの門を足す):
 
 1. **生信号を温度と呼ばない**。熱画像の値は 12 bit の DL(digital level)で、温度は放射率 ε を

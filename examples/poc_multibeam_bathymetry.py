@@ -1,11 +1,12 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
-"""多ビーム測深で海底が笑う —— 音速を取り違えると、壊れるのは外側ビームだけ。
+"""多ビーム測深で海底が笑う —— 直下較正後も外側に残る音速誤差。
 
 多ビーム音響測深機(マルチビーム)は、送受波器から扇状にビームを出し、
 往復時間と射出角から海底の深さを出します。ところが音は水中で**まっすぐ
 進みません** —— 水温・塩分で音速 c が深さごとに変わり、Snell の法則で
 光線が曲がります。処理で音速プロファイル c(z) を取り違えると、平らな
-海底が**外側ビームだけ反り返って**記録されます。現場ではこれを見た目から
+海底が反り返って記録されます。直下で平均音速を較正すると直下誤差は消えますが、
+外側ビームには反りが残ります。表面音速をそのまま使う条件では直下もずれます。現場ではこれを見た目から
 「スマイル(smile)」「フラウン(frown)」と呼びます。
 
 この PoC は、平らな海底と線形音速プロファイルを自分で植えてから、
@@ -66,13 +67,14 @@ https://www.ngdc.noaa.gov/ships/nancy_foster/NF-14-06_mb.html, accessed 2026-10-
    直下では検出のずれ -2.9 µs(深さ -0.002 m)ですが、**70 度では -2828 µs
    ＝ -0.725 m**。ビームが照らす帯が 70 度では **21396 µs**(直下の 171 倍)
    に伸び、往復時間が角度に対して凸なのでエコーが非対称になり、振幅検出の
-   頂点がビーム軸より手前へ寄るためです。実機が外側ビームで位相検出へ
-   切り替える理由がここに出ました。★**「床は一定」と書いてはいけません**。
-5. ★**層の切り方だけで TVU を割ります**。層内を等音速とみなす古い実装
-   (境界の曲がりは `fs.ledger.snell_angle`)は、65 度・50 m で
-   **2 層なら +1.299 m**、32 層で +0.079 m。層数 16 倍で誤差 16.6 分の 1 ＝
-   **1 次収束**。★キャストを何層に切るかは前処理の趣味ではなく、
-   精度そのものです。一方、層内の音速を 1 次とすれば層数を 1→256 に
+   頂点がビーム軸より手前へ寄るためです。この合成モデルでは外側ほど振幅ピーク
+   検出の偏りが増え、外側で位相検出を使う利点と整合します。★**「床は一定」と書いてはいけません**。
+5. ★**第 1 層の Snell 処理を直すと、等音速の中点近似は規格内で 2 次収束します**。
+   修正前に規格を割った値は層分割そのものではなく、第 1 層で ray parameter を
+   保存しなかった実装誤りでした。射出角を海面音速で定義し、
+   ray parameter を第 1 層から保存すると、65 度・50 m の深さ誤差は
+   **2 層で −0.016 m**、32 層で約 −0.00006 m。層数 16 倍で約 256 分の 1 になる。
+   一方、層内の音速を 1 次とすれば層数を 1→256 に
    変えても走時は 1.6e-15 s しか動きません(円弧が厳密だから)。
 6. **要因を 1 つずつ止めた対照群**(65 度)。勾配ゼロ + 真の平均音速では
    1e-12 m 未満、角度推定だけを入れても **0.000000 m**(`beamform_doa` の
@@ -92,9 +94,9 @@ https://www.ngdc.noaa.gov/ships/nancy_foster/NF-14-06_mb.html, accessed 2026-10-
    とともに増えると sinθ = p·c が増え、θ₀ > arcsin(c₀/c_bottom) の光線は
    反転して戻ります。Δc = +60 m/s・50 m で予測した限界角 **73.90 度**に
    対し、実測で最後に返ったビームは 73.0 度、最初に返らないビームは
-   74.0 度(1 度刻み)。★**深さが誤るのではなく、そのビームだけ何も
-   記録されない** —— swath が黙って狭くなります(届いたビームは逆向きに
-   曲がり、65 度で +5.919 m と深く出ます)。
+   74.0 度(1 度刻み)。限界角を超えたビームは何も記録されず swath が黙って
+   狭くなります。一方、限界角未満で届く外側ビームにも深度誤差が残り、
+   65 度では +5.919 m と深く出ます。
 9. ★**フットプリントの教科書式 d·Δθ/cos²θ は、電子的に振ったビームには
    足りません**。`beamform_delay_sum` で自分の配列のビーム幅を実測すると、
    ステア 0/45/70 度で 1.100 / 1.550 / 3.150 度 ＝ **1/cosθ で広がって
@@ -109,7 +111,7 @@ https://www.ngdc.noaa.gov/ships/nancy_foster/NF-14-06_mb.html, accessed 2026-10-
     ですが、**帯の端**では片方の直下ビームと片方の最外ビームが同じ海底を
     測り、食い違いは **2.697 m**(TVU の 3.3 倍)。★重なりを平均で見ると
     ゼロに見えるので、**帯の端まで見ないと見つかりません**。これは真値を
-    使わない検査なので、**実データでもできる唯一の検査**です。
+    使わず実データにも適用できる、**この PoC で実装した自己整合検査**です。
 11. ★**平らな海底が「地形」に見えます**。`dem_slope` で測ると、測線 1 本
     (継ぎ目なし)でも平均 1.494 度 / 最大 **2.985 度** の見かけの勾配が
     立ち(スマイルの曲がりそのもの)、測線 2 本を格子化すると重なり帯が
@@ -117,7 +119,7 @@ https://www.ngdc.noaa.gov/ships/nancy_foster/NF-14-06_mb.html, accessed 2026-10-
     0.000000 度。どちらも海底図の上では「谷の縁」に見えます。
 12. **サーモクラインは一定勾配で書けません**。混合層 + サーモクライン +
     深層の真値に対し、等音速処理の最大誤差 5.357 m を、表層と海底の 2 点を
-    結ぶ一定勾配の当てはめは 1.253 m まで(77 %)しか落とせません。
+    結ぶ一定勾配の当てはめは 1.253 m まで 77 % 改善しますが、残差は TVU を超えます。
     真のプロファイルで処理すれば 1.65e-07 m なので、**残りは処理の実装
     ではなくプロファイルの形の取り違え**だと切り分けられます。
     ★おまけに当てはめは**直下を +0.262 m 悪くします**(等音速側は直下較正
@@ -303,22 +305,22 @@ def trace_const_layers(prof, theta_deg: float, z_target: float, n_layers: int):
     そのまま使う。**音響では屈折率が音速の逆数に比例する**(n ∝ 1/c)ので、
     ``eta1 = 1/c₁`` / ``eta2 = 1/c₂`` を渡す —— ここは読む人が必ず躓く所。
 
-    返り値 ``(x, t)``。層の切り方が粗いと **1 次で**誤差が残る(§1 で測る)。
+    返り値 ``(x, t)``。射出角は海面音速で定義されるため、ray parameter
+    ``p = sin(theta0) / c(0)`` を第 1 層を含む全層で保存する。
     """
     edges = np.linspace(0.0, z_target, n_layers + 1)
     c_mid = np.interp(0.5 * (edges[:-1] + edges[1:]), prof[0], prof[1])
-    th = float(theta_deg)
+    p_ray = math.sin(math.radians(float(theta_deg))) / float(np.interp(0.0, prof[0], prof[1]))
     x = t = 0.0
     for k in range(n_layers):
         h = float(edges[k + 1] - edges[k])
         c = float(c_mid[k])
-        r = math.radians(th)
+        s = p_ray * c
+        if abs(s) >= 1.0:
+            return float("nan"), float("nan")
+        r = math.asin(s)
         x += h * math.tan(r)
         t += h / (c * math.cos(r))
-        if k + 1 < n_layers:
-            th = float(fs.ledger.snell_angle(th, 1.0 / c, 1.0 / float(c_mid[k + 1])))
-            if not math.isfinite(th):
-                return float("nan"), float("nan")
     return x, t
 
 
@@ -641,7 +643,7 @@ def section_scene():
     # 層内を**等音速**とみなす粗い実装(境界の曲がりは fs.ledger.snell_angle)
     th_probe = 65.0
     i65 = int(np.argmin(np.abs(BEAM_DEG - th_probe)))
-    print(f"  層内を**等音速**とみなす古い実装(境界で snell_angle)は、"
+    print(f"  層内を**等音速**とみなし ray parameter を全層で保存すると、"
           f"{th_probe:.0f} 度で:")
     conv = []
     for n_layer in (2, 4, 8, 16, 32):
@@ -651,10 +653,10 @@ def section_scene():
         print(f"    層 {n_layer:>3} 枚: 走時の差 {tc - float(t_ref[i65]):+.3e} s "
               f"= 深さ {dz:+.4f} m、水平 {xc - float(x_ref[i65]):+.4f} m")
     ratio = conv[0][1] / conv[-1][1]
+    order = math.log(conv[0][1] / conv[-1][1]) / math.log(conv[-1][0] / conv[0][0])
     print(f"  → 層を 2 → 32 枚に細かくすると誤差は {ratio:.1f} 倍小さくなる"
-          f"(層数 16 倍で {ratio:.1f} 倍 = ほぼ **1 次収束**)。")
-    print(f"     ★2 枚だと {conv[0][1]:.3f} m —— TVU {tvu(DEPTH_REF):.3f} m を"
-          f"**実装の刻みだけで**割る。キャストの層の切り方は精度の一部。")
+          f"(層数 16 倍で {ratio:.1f} 倍、観測次数 {order:.2f})。")
+    print(f"     ★2 枚の深さ誤差は {conv[0][1]:.3f} m。中点一定近似は約 2 次で収束する。")
     return {"prof": prof, "c0": c0, "cb": cb, "g": g, "ca": ca,
             "x": x_ref, "t": t_ref, "layer_worst": worst, "conv": conv}
 
@@ -711,7 +713,7 @@ def section_floor(scene):
     print(f"  ★**床は角度 {dz_ang:.4f} m / エコー {max(err_t):.4f} m**。")
     print("     ★エコーの床は直下では µs 未満だが、外側では**ビームが照らす帯**が")
     print("     長くなり、しかも往復時間が角度に対して凸なのでエコーが非対称になる。")
-    print("     振幅検出の頂点はビーム軸からずれる —— 外側で位相検出へ切り替える理由。")
+    print("     振幅検出の頂点はビーム軸からずれる —— 外側で位相検出を使う利点と整合。")
     figs.save_table("floor", ["ビーム角 [度]", "往復時間 [µs]", "エコー長 [µs]",
                               "検出のずれ [µs]", "深さ換算 [m]"], rows_e,
                     title="測定系の床 —— 角度推定とエコー検出は深さに何 m 効くか",
@@ -1029,7 +1031,7 @@ def section_frown():
     dz = smile_exact(ths[ok], dc, DEPTH_REF)
     print(f"  → 届いたビームは**逆向きに**曲がる: 65 度で "
           f"{float(smile_exact(65.0, dc, DEPTH_REF)):+.3f} m(深く出る = frown)。")
-    print("  → ★ここが厄介: 届かないビームは**深さが誤るのではなく、何も記録されない**。")
+    print("  → ★限界角を超えたビームは記録されない。一方、届く外側ビームにも深度誤差が残る。")
     print("     swath が黙って狭くなるだけなので、記録を見ても異常に見えない。")
     return {"pred": pred, "last": last, "first_bad": first_bad,
             "dz65": float(smile_exact(65.0, dc, DEPTH_REF)),
@@ -1166,7 +1168,7 @@ def section_dtm(scene):
           f"(振れ {max(off1, off2):.0f} m)で {far:.3f} m と測る点。")
     print(f"     → **食い違い {abs(a-b):.3f} m**")
     print(f"     (TVU {tvu(DEPTH_REF):.3f} m の {abs(a-b)/tvu(DEPTH_REF):.1f} 倍)")
-    print("  → ★これが**実データでもできる唯一の検査**。真の海底は誰も知らないが、"
+    print("  → ★これはこの PoC で実装した、実データにも使える真値不要の自己整合検査。"
           "\n     同じ海底を 2 度測った差なら、真値なしで出る。")
     # グリッド化して dem_slope で見かけの勾配を測る
     cell = 1.0
@@ -1367,7 +1369,7 @@ def section_op_holes():
     print("       レンジ-ドップラーを経由しない、素子スナップショット直入力の口。")
     print("    5. `snell_angle` の配列版(+ 音速で受ける薄いラッパ)。")
     print("    6. `crossline_discrepancy(soundings_a, soundings_b)` —— 真値なしで")
-    print("       できる唯一の検査(§9)。測量では標準の受入検査。")
+    print("       行う、この PoC の真値不要の自己整合検査(§9)。測量では標準の受入検査。")
     figs.save_table("op_holes", ["語幹", "fs", "fs.op", "fs.ledger",
                                  "op_find 件数(先頭)", "何が欲しかったか"], rows,
                     title="4 層すべて引いた結果 —— 音響測深の op は 1 つも無い",
@@ -2209,12 +2211,12 @@ def main() -> int:
     # --- 所見を固定する(穴が塞がったら鳴る)--------------------------------- #
     # 1. 一定勾配の層に切ったレイトレースは閉形式と一致する(円弧が厳密だから)
     assert scene["layer_worst"] < 1e-12, scene["layer_worst"]
-    # 等音速の層に切る古い実装は 1 次収束(層数 16 倍で誤差 1/12〜1/20)
+    # ray parameter を全層で保存する等音速中点近似は 2 次収束
     n_lo, e_lo = scene["conv"][0]
     n_hi, e_hi = scene["conv"][-1]
     assert (n_hi / n_lo) == 16.0
-    assert 12.0 < e_lo / e_hi < 20.0, scene["conv"]
-    assert e_lo > tvu(DEPTH_REF), scene["conv"]     # 2 層だと実装だけで TVU を割る
+    assert 240.0 < e_lo / e_hi < 270.0, scene["conv"]
+    assert 0.015 < e_lo < 0.018, scene["conv"]
     # 2. 角度推定は完全。エコー検出は**直下では無視できるが外側では効く**
     assert floor["dz_ang"] < 1e-3, floor["dz_ang"]
     assert floor["err_echo"] > 0.1, floor["err_echo"]

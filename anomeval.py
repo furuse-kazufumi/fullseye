@@ -302,17 +302,13 @@ def anomaly_image_f1_max(scores, labels):
 
 def _cp_lower(k, n, alpha):
     """One-sided Clopper-Pearson lower confidence limit of a binomial proportion (k of n, level 1 - alpha)."""
-    if k <= 0:
-        return 0.0
-    from scipy.stats import beta               # noqa: PLC0415
-    return float(beta.ppf(alpha, k, n - k + 1))
+    from pod import proportion_interval        # noqa: PLC0415
+    return proportion_interval(k, n, confidence=1.0 - alpha, sides="lower")["lower"]
 
 
 def _cp_upper(k, n, alpha):
-    if k >= n:
-        return 1.0
-    from scipy.stats import beta               # noqa: PLC0415
-    return float(beta.ppf(1.0 - alpha, k + 1, n - k))
+    from pod import proportion_interval        # noqa: PLC0415
+    return proportion_interval(k, n, confidence=1.0 - alpha, sides="upper")["upper"]
 
 
 def anomaly_operating_point(scores, labels, recall=0.95, confidence=0.95):

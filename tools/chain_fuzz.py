@@ -4828,6 +4828,14 @@ def _b_pod_decision_tradeoff(pool, rng):
     return (fit, rng.normal(-1.0, 0.5, 60)), {}
 
 
+def _b_proportion_interval(pool, rng):
+    return (9, 10), {"sides": "lower"}
+
+
+def _b_trials_for_all_success(pool, rng):
+    return (0.9,), {}
+
+
 def _anom_maps(rng, n=4, h=32, w=32):
     """異常スコアの図と欠陥マスク(anomeval の種)。欠陥は 2 つの矩形、スコアは欠陥で高めの連続値。
 
@@ -7327,6 +7335,8 @@ OP_ARG_BUILDERS = {
     "pod_hitmiss_fit": _b_pod_hitmiss_fit,
     "pod_false_call": _b_pod_false_call,
     "pod_decision_tradeoff": _b_pod_decision_tradeoff,
+    "proportion_interval": _b_proportion_interval,
+    "trials_for_all_success": _b_trials_for_all_success,
     "anomaly_image_auroc": _b_anomaly_image_auroc,
     "anomaly_pixel_auroc": _b_anomaly_pixel_auroc,
     "anomaly_pro": _b_anomaly_pro,

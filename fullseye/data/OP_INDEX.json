@@ -1,8 +1,8 @@
 {
- "n_ops": 3607,
+ "n_ops": 3609,
  "tiers": {
   "color": 12,
-  "ledger": 2648,
+  "ledger": 2650,
   "nary": 17,
   "registry": 930
  },
@@ -23181,6 +23181,17 @@
    "in_sorts": []
   },
   {
+   "name": "proportion_interval",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "pod",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": []
+  },
+  {
    "name": "psd_welch",
    "halcon": "",
    "in_sort": "signal",
@@ -32126,6 +32137,17 @@
    "in_sorts": [
     "table"
    ]
+  },
+  {
+   "name": "trials_for_all_success",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "scalar",
+   "category": "pod",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": []
   },
   {
    "name": "triangulate",
