@@ -312,8 +312,8 @@
    "caption_ja": "魚眼(等距離射影)の空に球冠の雲(立体角は閉形式)を置き、画素数比と立体角重みで雲量を数えた図。同じ雲が天頂角 0 → 82 度で 0.00789 → 0.01142(1.45 倍)に読める。幾何だけの誤差 -5.02 % と検出だけの誤差 +37.95 % が、素朴な数え方では +29.73 % に打ち消し合う。",
    "caption_en": "Spherical-cap clouds (closed-form solid angle) placed in an equidistant fisheye sky, with cloud fraction counted by pixel ratio and by solid-angle weight. The same cloud reads 0.00789 at the zenith and 0.01142 at 82 degrees (1.45x). Geometry alone errs by -5.02 %, detection alone by +37.95 %, and the naive count cancels them to +29.73 %.",
    "run": "py -3.11 examples/poc_allsky_cloud_cover.py",
-   "lead_ja": "全天カメラの雲量の評価では、画素を数えると位置で偏る。計算データの魚眼を使い、球冠と画素数比を別々に確かめた。立体角重と天頂角の差を見ると、画素を数えると位置で偏ることが分かる。",
-   "lead_en": "When assessing cloud fraction from an all-sky camera, pixel counts carry a positional bias. Using computed fisheye data, we checked the spherical cap and pixel-count ratio separately. The distinction between solid-angle weight and zenith angle shows that pixel counts carry a positional bias."
+   "lead_ja": "全天画像で雲量を求めるとき、同じ雲でも空の位置によって画素数が変わる。球冠の雲を魚眼画像へ投影し、天頂角82度まで画素数比と立体角重みを比べた。図では、画素数だけの雲量は地平線側ほど過大になり、二つの誤差が一部を打ち消している。",
+   "lead_en": "One cloud occupies different pixel areas at different positions in an all-sky image. Spherical caps were projected through a fisheye model and counted out to a zenith angle of 82 degrees. Pixel counting increasingly overstates clouds near the horizon, while geometric and detection errors partly cancel."
   },
   {
    "id": "poc_aoi_ct_traceability",
@@ -324,8 +324,8 @@
    "title_en": "Matching Full 2-D Inspection to Sampled 3-D Inspection — A Grid Overlaps Itself",
    "caption_ja": "実装ラインは二段になっている。AOI(自動外観検査)は全数を上から撮り、X 線 CT は抜き取りで中身を撮る。現場が知りたいのは「AOI の数字から CT の数字をどこまで言えるか」で、これは 1 台の装置の精度ではなく、2 つの装置の出した番号が同じ接合部を指しているかという対応づけの問題。規則正しく並んだ接合部は点の配置だけでは装置間で一対一に対応づかない ―― 6x5 の格子は 30 点すべての距離署名が縮退し、署名は 9 種類しかない(格子が自分自身に重なるので向きが読めない)。3 辺がすべて異なる基準マーク(3600/5200/6325 um)を入れると回転も鏡映も一意に決まり、並進 + 回転 + 番号の振り直しを与えても対応が全復元する。そのうえで AOI の見かけのボイド率は CT の体積率と相関 0.973、悪い順 5 個も 5/5 一致する ―― にもかかわらず、寿命に効く「界面に接したボイド」を持つ27 個のうちその 5 個で拾えるのは 19 % だけ。合否の順位が合っていることは、危ない個体を拾えていることを意味しない。最初これを剛体変換(Kabsch)だけで解こうとして失敗した経緯も残してある。",
    "caption_en": "The real line has two stages: AOI images every unit from above, X-ray CT samples a few and images the inside. What the floor wants to know is how far the CT numbers follow from the AOI numbers — which is not a question about one instrument's accuracy but about whether two instruments' indices point at the same joint. A regular array does not match one-to-one on point positions alone: all 30 pads of a 6x5 grid have degenerate distance signatures (9 distinct ones), because the grid maps onto itself and the orientation cannot be read. Fiducials with three distinct side lengths (3600/5200/6325 um) pin rotation and reflection uniquely, and the correspondence is recovered exactly under translation, rotation and re-indexing. With that closed, AOI's apparent void fraction correlates 0.973 with CT volume fraction and the worst five agree 5/5 — yet of the 27 parts carrying an interface-touching void (the kind that shortens life), those five catch only 19 %. Agreeing on the ranking does not mean catching the dangerous ones. The failed first attempt (Kabsch alone) is kept.",
-   "lead_ja": "全数の 二次元 検査と抜き取りの 三次元 検査を対応づける場面では、格子は自分自身に重なる。計算データの実装ラインを使い、二段と中身を別々に確かめた。現場と数字の差を見ると、格子は自分自身に重なることが分かる。",
-   "lead_en": "When full two-dimensional inspection is matched to sampled three-dimensional inspection, the grid overlaps itself. Using a computed assembly line, we checked the two stages and the internals separately. The distinction between the shop floor and the numbers reveals how the grid overlaps itself."
+   "lead_ja": "全数の外観検査と抜き取りCTを結ぶには、両装置の番号が同じ接合部を指す必要がある。異なる三辺の基準マークで対応を定め、界面に接したボイドを上位候補から拾える割合19 %を調べた。図では、見かけのボイド率の順位が合っても、寿命に関わる個体の多くを取り逃がしている。",
+   "lead_en": "Full visual inspection and sampled CT must assign the same index to each joint. Unequal-sided fiducials fixed this correspondence, then top-ranked candidates caught 19 % of interface-touching voids. Apparent void rankings can agree while most life-limiting parts are missed."
   },
   {
    "id": "poc_asbuilt_wall_deviation",
@@ -336,8 +336,8 @@
    "title_en": "As-built wall deviation — the bounding box measures the room's heading, not its size",
    "caption_ja": "内法 6.0 x 4.0 x 2.7 m の室内点群に、壁の倒れ(1.20〜9.00 mrad)・平面図の振れ 5.00 mrad・面外のふくらみ 9 mm を仕込み、素朴な外接直方体(AABB)と平面当てはめを同じ点群で突き合わせた。AABB は東西 +19.1 mm 過大で、部屋を走査軸に対して 1 度回すだけで +80.1 mm、10 度で +611.1 mm——これは施工誤差ではなく W cosψ + D sinψ という部屋の向きの式で、平面 2 枚の距離は ψ を振っても +2.24 mm から動かない。さらに AABB は点を 256 倍にすると +14.9 → +19.7 mm と広がり(雑音の最大値統計 2σ√(2 ln N))、測点を増やすほど悪くなる。外れ点(出 450 mm の家具)への壊れ方は 2 種類で、最小二乗は 10 % 混入で真値の 11 倍(66.3 mrad、閉形式の予測 63.8 と 4 % 以内)、RANSAC は 45 % まで持ちこたえて 55 % で棚へ乗り換える——そのとき倒れの誤差は 0.13 mrad と小さいまま面だけが 449.9 mm ずれるので、1 つの数字では破綻が見えない。面のふくらみ 1 個が倒れ(-1.258 mrad)・直交度(+0.500 mrad)・内法(+2.2 mm)の 3 つの判定を同時に汚し、どれも閉形式で 0.06 mrad 以内に予測できた。",
    "caption_en": "A 6.0 x 4.0 x 2.7 m indoor point cloud carries known defects: wall plumb errors of 1.20-9.00 mrad, a 5.00 mrad plan-view squareness error, and a 9 mm out-of-plane bulge. The naive axis-aligned bounding box over-reports the width by 19.1 mm, and rotating the room by just 1 deg relative to the scanner axes adds 80.1 mm (611.1 mm at 10 deg) — it is measuring W cos psi + D sin psi, the room's heading, while the plane-pair distance stays at +2.24 mm regardless. The AABB also grows with sample size (+14.9 to +19.7 mm for 256x more points, the 2-sigma-sqrt(2 ln N) extreme-value law), so adding measurements makes it worse. Furniture outliers break the two estimators differently: least squares is off by 11x the truth at 10 % contamination (66.3 mrad vs a closed-form 63.8), while RANSAC holds to 45 % and then jumps onto the cabinet at 55 % — where the plumb error stays a harmless 0.13 mrad but the plane itself is 449.9 mm out, so one number hides the failure. A single bulge corrupts plumb (-1.258 mrad), squareness (+0.500 mrad) and the internal dimension (+2.2 mm) at once, all predicted in closed form to within 0.06 mrad.",
-   "lead_ja": "竣工した部屋の壁を測るとき、外接直方体は寸法でなく部屋の向きを測っている。内法を含む計算データを作り、室内点群と平面図の関係を測った。面外と仕込の差を見ると、外接直方体は寸法でなく部屋の向きを測っていることが分かる。",
-   "lead_en": "On a finished room's walls, an enclosing cuboid measures orientation, not dimensions. We built computed data with inner dimensions and related the indoor point cloud to the plan. The distinction between out-of-plane and seeded values reveals how the cuboid measures orientation, not dimensions."
+   "lead_ja": "室内点群から内法を読むとき、部屋の向きや家具を寸法と取り違えるおそれがある。壁の倒れとふくらみを仕込んだ部屋を走査軸に対して回し、平面間距離の誤差が2.24 mmに留まることを確かめた。外接直方体は向きと測点数で広がり、平面当てはめも外れ点が過半になると家具へ乗り換える。",
+   "lead_en": "Point-cloud dimensions can confuse room heading or furniture with wall position. A room with known tilt and bulges was rotated, while its plane-pair error stayed at 2.24 mm. Bounding boxes grow with heading and sample count; plane fitting jumps to furniture when outliers become the majority."
   },
   {
    "id": "poc_astro_photometry",
@@ -349,8 +349,8 @@
    "caption_ja": "指定どおりに置いた星野を N 枚重ね、開口測光の誤差が 1/√N で落ちるかを見た図。N = 1 → 16 で中央誤差 0.6350 % → 0.1616 %、8 通りすべてで理論から 4.6 % 以内。宇宙線 1 発で単純平均は +5.89 %、κ-σ なら +0.30 % ―― 棄却率は動かないので「棄却率が上がったから効いた」とは言えない。",
    "caption_en": "A star field placed to specification and stacked N deep, to see whether aperture-photometry error falls as 1/√N. From N = 1 to 16 the median error drops from 0.6350 % to 0.1616 %, within 4.6 % of theory in all eight cases. One cosmic ray pushes the plain mean to +5.89 % while κ-σ clipping holds +0.30 %; the rejection rate does not move, so 'the rejection rate went up, therefore it worked' is not an available argument.",
    "run": "py -3.11 examples/poc_astro_photometry.py",
-   "lead_ja": "何枚重ねるとの評価では、星の明るさは何 % の精度で測れるか。計算データに指定を用意し、星野と開口測光を比べた。中央誤差と理論の差を見ると、星の明るさは何 % の精度で測れるかことが分かる。",
-   "lead_en": "When choosing a stack depth, the question is the percentage precision of stellar brightness. We prepared calculations that specification and compared the star field with aperture photometry. The distinction between central error and theory shows the percentage precision of stellar brightness."
+   "lead_ja": "星野を重ねる枚数を増やしたとき、測光誤差が理論どおり減るかを知りたい。既知の明るさを持つ星野を重ね、開口測光の中央誤差が0.1616 %まで下がる過程を測った。図では理論どおりに改善し、宇宙線が入る条件では棄却平均が単純平均より真値に近い。",
+   "lead_en": "The question is whether stacking more star fields reduces photometric error at the theoretical rate. Fields with known stellar brightness were stacked until aperture-photometry error fell to 0.1616 %. The expected improvement appears, while rejection averaging stays closer to truth when a cosmic ray is present."
   },
   {
    "id": "poc_barcode_1d",
@@ -362,8 +362,8 @@
    "caption_ja": "自作の簡易符号(実在規格ではない)を 4 通りに壊し、成功 / 誤読 / 読み取り不能を分けて数えた図。壊れ始めてからの 384 枚で、構造を検査する厳格デコーダは誤読 7.3 %、必ず 9 桁返す寛容デコーダは誤読 46.1 % ―― 成功率は寛容のほうが高い(47.7 % 対 40.1 %)。傾きの崖は幾何だけで決まり(予測 15.95 度)、実測は 15 度と 16 度のあいだ。",
    "caption_en": "A home-made simple code (not a real standard) damaged four ways, with success, misread and unreadable counted as three separate outcomes. Over the 384 images past the onset of damage, the strict decoder that checks run structure misreads 7.3 %, while the lenient decoder that always returns nine digits misreads 46.1 % — and has the higher success rate (47.7 % versus 40.1 %). The tilt cliff is pure geometry (predicted 15.95 degrees) and lands between 15 and 16 degrees.",
    "run": "py -3.11 examples/poc_barcode_1d.py",
-   "lead_ja": "1 次元バーコードが読めなくなる境界では、誤読と読み取り不能を分けて数える。自作を含む実測データを作り、簡易符号と成功の関係を測った。構造と検査の差を見ると、誤読と読み取り不能を分けて数えることが分かる。",
-   "lead_en": "At the limit of one-dimensional barcode reading, misreads and no-reads are counted separately. We created measured data with a home-made symbology and related the simple code to success. The distinction between structure and checks shows that misreads and no-reads are counted separately."
+   "lead_ja": "バーコードの評価では、答えを返す回数だけでなく、誤読か読み取り不能かを区別したい。簡易符号を四通りに壊し、厳格な読み方で誤読率7.3 %を測った。図では、必ず桁を返す読み方は成功率が高く見える一方、誤読を大幅に増やしている。",
+   "lead_en": "Barcode tests must distinguish a wrong value from no value instead of counting returned answers alone. A simple code was degraded in four ways; strict reading gave a 7.3 % misread rate. A permissive reader appears more successful because it always returns digits, but creates far more wrong answers."
   },
   {
    "id": "poc_battery_ct_degradation",
@@ -375,8 +375,8 @@
    "caption_ja": "角形リチウムイオンセルの積層電極とアルミ缶を真値つきで組み、劣化を既知の場(一様膨れ・局所膨れ・層間ガス空隙・電極ずれ)として与えて、順投影 → ビームハードニング → 光子雑音 → FBP(フィルタ補正逆投影) 再構成という実際の撮像を通してから測った。電極が 10 % 膨れても外形に出るのは 29.4 % だけで、しかも中央のノギスは体積等価な平均の 3.6 倍(+0.235 対 +0.066 mm)を読む。外形のふくらみを揃えた 3 つのセルは缶の高さが 0.000 mm しか違わないのに、内部指標は空隙率 0.00 対 5.20 %、層の平面度 0.0156 対 0.0784 mm で分かれ、その内部指標が壊れる崖は電極厚 0.200 mm ではなく層間の隙間 0.120 mm が決めた(voxel/層厚 = 0.30、標本化定理からの予測 0.80 は外れ)。",
    "caption_en": "A prismatic lithium-ion cell — stacked electrodes inside an aluminium can — is built with ground truth, degraded by known fields (uniform swelling, local swelling, inter-layer gas voids, electrode misalignment), and then imaged for real: forward projection, beam hardening, photon noise and FBP (filtered back-projection) reconstruction. Only 29.4 % of a 10 % electrode swelling reaches the outside, and a caliper across the centre reads 3.6 times the volume-equivalent mean (+0.235 vs +0.066 mm). Three cells tuned to the same external bulge differ by 0.000 mm in can height yet separate internally (void fraction 0.00 vs 5.20 %, layer flatness 0.0156 vs 0.0784 mm), and the resolution cliff for those internal numbers is set by the 0.120 mm inter-layer gap, not the 0.200 mm electrode — voxel/thickness = 0.30, where the sampling-theorem prediction said 0.80.",
    "run": "py -3.11 examples/poc_battery_ct_degradation.py",
-   "lead_ja": "電池セルの内部劣化を CT で測る場面では、膨れは外から見え、原因は中にある。計算データに角形リチウムイオンセルを用意し、積層電極とアルミ缶を比べた。順投影とビームハードニングの差を見ると、膨れは外から見え、原因は中にあることが分かる。",
-   "lead_en": "In CT of internal cell degradation, swelling appears outside, but its cause lies within. We compared the electrode stack and aluminum can of a computed prismatic lithium-ion cell. The gap between forward projection and beam hardening shows that swelling appears outside, but its cause lies within."
+   "lead_ja": "電池セルの外形が同じでも、内部では膨れや空隙の原因が異なることがある。既知の劣化を入れた積層電極をCT撮像し、電極の膨れのうち外形に現れる割合29.4 %を測った。図では缶の高さが揃ったセルでも内部指標が分かれ、外側の寸法だけでは原因を選べない。",
+   "lead_en": "Battery cells with the same exterior can hide different causes of swelling or voiding. Known defects were put into stacked electrodes and imaged by CT; only 29.4 % of electrode swelling reached the outside. Cells with matching can heights separate internally, so outside dimensions cannot identify the cause."
   },
   {
    "id": "poc_battery_electrode_breathing",
@@ -388,8 +388,8 @@
    "caption_ja": "充放電で膨らむ電極の伸びを、2 時期の断面画像の層境界をサブピクセルで追って出す。真値は負極 1.00 % / 正極 0.20 % / セパレータ 0 %、積層 480.0 → 482.136 µm(+2.136 µm = +0.4450 %)。二値化して画素数を数えるゼロ点は 12 層中 0 層しか読めない一方、固定しきい値の交差はサブピクセルなので雑音なしでは当たる(+0.004495)―― 殺すのは対照群のほうで、伸びゼロのままオフセットを +0.10 かけるだけで -1.07e-02、真値の 2.4 倍の偽の伸びを逆符号で返し、ゲイン x1.30 では交差が半分に落ちて測定不能になる。勾配ピーク(measure_pos)は同じ条件で 0.0 のまま。そして自分の「誤差 1.8e-14 px」を疑って積層を小数画素ずらすと、それは真値を画素の中心に置いた検査の産物で、実際は RMS 0.0088 / 最大 0.0122 px のピークロッキングだった(負極 1 層のひずみに 3.0 % 効く)。崖は 2 段あり、本数が壊れる崖は予測した 3σ の崖より 5.5 倍手前に来る。",
    "caption_en": "Electrode swelling is read from two cross-sections by tracking layer boundaries to sub-pixel accuracy. Ground truth: anode 1.00 %, cathode 0.20 %, separator 0 %, stack 480.0 -> 482.136 um (+2.136 um = +0.4450 %). Counting binarised pixels resolves 0 of 12 layers, while a fixed-threshold crossing is also sub-pixel and lands on the answer with no noise (+0.004495) — what kills it is the control group: with zero strain, an illumination offset of +0.10 alone yields -1.07e-02, a false strain 2.4x the true one and of the opposite sign, and a gain of x1.30 halves the crossings so the measurement fails outright. The gradient-peak estimator (measure_pos) stays at exactly 0.0 under both. Doubting our own '1.8e-14 px error' and shifting the stack by fractions of a pixel showed that figure to be an artefact of putting the truth on pixel centres: the real error is peak locking, RMS 0.0088 / max 0.0122 px, worth 3.0 % on the anode's strain. The cliff has two steps, and the one where boundary counts collapse arrives 5.5x earlier than the predicted 3-sigma limit.",
    "run": "py -3.11 examples/poc_battery_electrode_breathing.py",
-   "lead_ja": "電極の呼吸を µm で測るとき、サブピクセルなら何でもよいわけではない。計算データで充放電と時期を扱い、断面画像がどう変わるかを調べた。層境界と負極の差を見ると、サブピクセルなら何でもよいわけではないことが分かる。",
-   "lead_en": "When electrode breathing is measured in µm, not just any sub-pixel method will do. Using computed data on charge, discharge, and timing, we examined how the cross-section images change. The distinction between layer boundaries and the anode shows that not just any sub-pixel method will do."
+   "lead_ja": "充放電による電極のわずかな伸びを測るには、明るさの変化を変位と取り違えない方法が要る。二時期の断面で層境界を追い、積層全体の伸び+2.136 µmを読み取った。固定しきい値の交差は明るさのずれで偽の伸びを返すが、勾配ピークは同じ条件でもゼロを保つ。",
+   "lead_en": "Slight electrode growth must be separated from brightness changes between scans. Layer boundaries were tracked across two cross-sections, recovering a stack increase of +2.136 µm. A fixed brightness crossing reports false strain after an offset, whereas the gradient peak remains at zero."
   },
   {
    "id": "poc_battery_electrode_tortuosity",
@@ -401,8 +401,8 @@
    "caption_ja": "リチウムイオン電池の電極塗工層を合成マイクロ CT で作り、空隙率と屈曲度を出す。現場の既定値 Bruggeman τ = ε^(-0.5) をゼロ点に置き、同じボリュームで定常拡散方程式を解いた真値と比べると、ε = 0.4448 で 1.499 対 1.843(-18.6 %)、ε を 0.691 → 0.168 と振ると誤差は -8.2 % → -69.1 % と単調に開く(実測の指数は 1.78 と 2.70 で、1.5 乗則はどちらでもない)。画像解析がよく報告する測地屈曲度 1.182 はその 2 乗が Bruggeman に 1 %以内で寄り添うだけで、真値には寄らない。決定打は対照群 ―― 空隙率を 0.4448 対 0.4510 に揃えて粒子を 4:1 に潰すと厚み方向の τ は 1.843 → 6.794(異方比 0.97 → 4.20)なのに、経験則は両方に同じ 1.5 を返す(面内は -8 % で当たって見え、厚み方向は -78 %)。閉気孔は最大 1.92 % で犯人ではなく、効いているのは粒子半径の 0.40 倍しかない首。解像度の崖を予測して掃引したが崖は無く、voxel を 5.5 倍粗くすると ε は -0.4 % しか動かないのに τ は +72 % ずれる ―― 警告なしに。",
    "caption_en": "A synthetic micro-CT of a lithium-ion electrode coating, measured for porosity and tortuosity. Against the shop-floor default (Bruggeman tau = eps^-0.5) we put the real thing: the steady-state diffusion equation solved on the same volume. At eps = 0.4448 the rule gives 1.499 against a true 1.843 (-18.6 %), and sweeping eps from 0.691 to 0.168 widens the error from -8.2 % to -69.1 % (fitted exponents 1.78 and 2.70 — never 1.5). The geodesic tortuosity that imaging papers report (1.182) merely has a square that hugs Bruggeman to within 1 %; neither goes near the truth. The decisive control: hold porosity at 0.4448 vs 0.4510 and flatten the particles 4:1, and through-plane tau jumps 1.843 -> 6.794 (anisotropy 0.97 -> 4.20) while the rule returns the same 1.5 for both — in-plane looks right (-8 %), through-plane collapses (-78 %). Closed pores peak at 1.92 % and are not the culprit; the necks, 0.40 of a particle radius wide, are. We predicted a resolution cliff and found none: coarsening the voxel 5.5x moves eps by -0.4 % but tau by +72 %, with no warning of any kind.",
    "run": "py -3.11 examples/poc_battery_electrode_tortuosity.py",
-   "lead_ja": "電極の屈曲度を CT から測る場面では、経験則は空隙率しか見ない。合成データのリチウムイオン電池を使い、電極塗工層と合成マイクロを別々に確かめた。現場と既定値の差を見ると、経験則は空隙率しか見ないことが分かる。",
-   "lead_en": "When electrode tortuosity is measured from CT, the empirical rule considers only porosity. With a synthetic lithium-ion cell, we separately checked the electrode coating and synthetic micro-CT. The gap between shop practice and the default reveals how the empirical rule considers only porosity."
+   "lead_ja": "電極内を物質がどれだけ遠回りするかは、空隙率だけで決められるのかが問いになる。リチウムイオン電池の塗工層で定常拡散方程式を解き、厚み方向の屈曲度が6.794まで増える条件を作った。空隙率がほぼ同じでも経路の向きで結果が分かれ、経験則はこの異方性を見落とす。",
+   "lead_en": "The question is whether porosity alone can determine how far transport detours through an electrode. Diffusion was solved in coating layers with altered particle shape, producing a through-thickness tortuosity of 6.794. Nearly equal porosity can hide strongly directional paths, which the empirical rule misses."
   },
   {
    "id": "poc_beam_modal_video",
@@ -414,8 +414,8 @@
    "caption_ja": "片持ち梁(Euler–Bernoulli 閉形式)の 3 モード自由減衰を、雑音・照明ちらつき 100 Hz・手ぶれ・ローリングシャッター入りの動画に合成し、位相法(phase_displacement)と PIV(piv_cross_correlate)で f_n / ζ_n / MAC(モード形状の一致度) を測る。f_n は 3 モードとも 0.06 Hz 以内で当たるが、同じ時系列から出した ζ_1 は半値幅 0.0778 / 包絡線 0.0188 / 当てはめ 0.0181(真値 0.02)と方法で 3 通り。振幅を 0.02→2 px で掃引すると壊れる順番は f → ζ → MAC_2 → MAC_3 で、位相法は 0.02 px で f_1 誤差 +0.030 Hz のまま ζ_1 が真値の 0.23 倍になる。fps 48.5 では照明の折り返しがちょうど 3.00 Hz = f_1 に乗り、輝度のゼロ点は ζ を出せず位相法は 0.0191 で生き残る。",
    "caption_en": "A cantilever beam (closed-form Euler–Bernoulli modes) decaying freely in three modes is rendered into video with sensor noise, 100 Hz lighting flicker, camera shake and rolling shutter, then identified with phase-based displacement (phase_displacement) and PIV (piv_cross_correlate). All three natural frequencies come out within 0.06 Hz, but the damping ratio of mode 1 from the very same series is 0.0778 (half-power), 0.0188 (envelope) or 0.0181 (fit) against a true 0.02. Sweeping the amplitude from 0.02 to 2 px, the quantities break in the order f → ζ → MAC_2 → MAC_3: at 0.02 px the phase method still has f_1 within +0.030 Hz while ζ_1 is 0.23 of the truth. At 48.5 fps the flicker alias lands exactly on f_1 = 3.00 Hz; a single-pixel brightness zero-point cannot report ζ at all, while the phase method survives at 0.0191.",
    "run": "py -3.11 examples/poc_beam_modal_video.py",
-   "lead_ja": "動画から固有振動数・減衰比・モード形状を同定する場面では、f は最後まで生き残り、ζ が先に嘘をつく。合成データに片持を用意し、モード自由減衰と雑音を比べた。照明とローリングシャッター入の差を見ると、f は最後まで生き残り、ζ が先に嘘をつくことが分かる。",
-   "lead_en": "When natural frequency, damping ratio, and mode shape are identified from video, f holds up to the last, while ζ lies first. We prepared a synthetic cantilever and compared modal free decay with noise. The distinction between lighting and rolling shutter shows that f holds up to the last, while ζ lies first."
+   "lead_ja": "構造物の動画から振動を読むとき、周波数が合っていても減衰まで正しいとは限らない。片持ち梁の自由減衰に雑音や照明ちらつきを加え、固有振動数の誤差を0.06 Hz以内で測った。振幅を下げると減衰比が周波数より先に崩れ、同じ時系列でも算出法によって値が分かれる。",
+   "lead_en": "A correct vibration frequency in video does not ensure correct damping. Noise and lighting flicker were added to a freely decaying cantilever; modal frequencies stayed within 0.06 Hz. At low amplitude, damping fails before frequency and varies with the estimator used on the same time series."
   },
   {
    "id": "poc_bearing_diagnosis",
@@ -427,8 +427,8 @@
    "caption_ja": "閉形式の欠陥周波数(BPFO 104.556 Hz)で合成した衝撃列を雑音に沈め、生スペクトルと包絡線スペクトルの検出率を並べた図。10/10 を保てた最悪の SNR は生 -0.9 dB、包絡線 -18.4 dB で 17.5 dB の差。ただし欠陥の無い記録でも大域顕著さは 43 まで出る ―― しきい値を null から決めていなければ、この PoC 自体が偽陽性を出していた。",
    "caption_en": "An impulse train synthesised at the closed-form defect frequency (BPFO 104.556 Hz), sunk into noise, with detection rates of the raw spectrum and the envelope spectrum side by side. The worst SNR at which 10 of 10 seeds still detect is -0.9 dB for the raw spectrum and -18.4 dB for the envelope, a 17.5 dB gap. But a record with no defect at all still produces a global prominence of 43; had the threshold not been set from the null recording, this PoC would have been its own false positive.",
    "run": "py -3.11 examples/poc_bearing_diagnosis.py",
-   "lead_ja": "転がり軸受の異常診断の評価では、どこまで雑音に埋もれても当てられるか。合成データに閉形式を用意し、欠陥周波数と衝撃列を比べた。生スペクトルと包絡線スペクトルの差を見ると、どこまで雑音に埋もれても当てられるかことが分かる。",
-   "lead_en": "Rolling-bearing fault diagnosis is judged by how much noise it can tolerate. We prepared closed-form synthetic data and compared the defect frequency with the impulse train. The distinction between the raw and amplitude trace spectra shows how much noise the diagnosis can tolerate."
+   "lead_ja": "軸受の傷を振動から見つけるには、雑音の中で欠陥周波数をどこまで識別できるかを知りたい。既知の衝撃列を雑音へ沈め、包絡線スペクトルがSNR -18.4 dBでも全試行を検出する条件を測った。包絡線処理は生スペクトルより深い雑音に耐えるが、正常記録から決めたしきい値がなければ偽陽性を招く。",
+   "lead_en": "Bearing diagnosis needs a limit for finding fault impacts inside noise. A known impulse train was buried until the amplitude trace still detected every trial at -18.4 dB SNR. This processing reaches deeper than raw frequencies, but produces false alarms unless its cutoff comes from fault-free records."
   },
   {
    "id": "poc_bev_sensor_fusion",
@@ -440,8 +440,8 @@
    "caption_ja": "解析的な街路(先行トラック + 互いの影に 1 台ずつ隠れる遠方車)を作り、左ミラーの LiDAR(レーザー測距) と右ミラーの深度カメラを共通の鳥瞰格子へ融合して、外部パラメータの誤差を回転・並進・時刻ずれに分けて掃引した。融合の占有 IoU 0.7033 は単センサの最良 0.5417 を上回るが、その利得はすべて視界の相補性から来ている。再投影 1 px は 22 m 先で 0.083 m に化け、崖はセル 0.2 m ではなく車幅で決まり(半分の点がセルを跨いでも IoU は 5.8 % しか落ちない)、yaw 3 度で融合は単センサに負ける。",
    "caption_en": "An analytic street scene (a tall lead truck, plus two distant cars each hidden in the other sensor's shadow) is fused from a left-mirror LiDAR (laser ranging) and a right-mirror depth camera into one bird's-eye grid, then swept over rotation, translation and timing errors in the extrinsics. Fusion reaches an occupancy IoU of 0.7033 against 0.5417 for the best single sensor — and every bit of that gain comes from complementary visibility, not accuracy. One pixel of reprojection error becomes 0.083 m at 22 m; the cliff is set by the object width, not the 0.2 m cell (IoU drops only 5.8 % when 68 % of the points have already crossed a cell); by 3 deg of yaw the fusion has fallen below the single sensor.",
    "run": "py -3.11 examples/poc_bev_sensor_fusion.py",
-   "lead_ja": "鳥瞰図への多センサ融合の評価では、画像では合格の校正が、遠くでは長さになる。計算データの解析的を使い、街路と左ミラーを別々に確かめた。右ミラーと深度カメラの差を見ると、画像では合格の校正が、遠くでは長さになることが分かる。",
-   "lead_en": "In multi-sensor bird's-eye fusion, a calibration acceptable in images becomes a length error far away. Using computed analytic data, we checked the street and left mirror separately. The right mirror and depth camera show that such a calibration becomes a length error far away."
+   "lead_ja": "遠方の車を鳥瞰図へ重ねると、画像上の小さな校正誤差が実距離のずれになる。左右に置いた測距センサを共通格子へ融合し、再投影1 pxが遠方で車の位置を動かす量を追った。融合の利得は死角を補う配置から生まれるが、向きの誤差が増えると単独センサより悪くなる。",
+   "lead_en": "For distant vehicles, a small image calibration error becomes a physical shift in a bird's-eye map. Opposite-side range sensors were fused on one grid, tracing the effect of a 1 px reprojection error. Complementary views create the gain, but growing yaw error makes fusion worse than one sensor."
   },
   {
    "id": "poc_bilateral_asymmetry",
@@ -453,8 +453,8 @@
    "caption_ja": "厳密に左右対称な合成頭蓋の片側に既知の膨らみを入れ、鏡映して重ねた図。完全対称な標本でも床は 0 にならず、点対点 1.33 mm → 点対面 0.030 mm → 近傍平滑 0.012 mm。残差を最小にする面は 6.33 mm の膨らみで 2.92 mm / 1.72 度引きずられ、非対称量の 46 % が消える。",
    "caption_en": "A perfectly symmetric synthetic skull with a known bulge added on one side, mirrored and overlaid. Even a perfectly symmetric specimen never scores 0: the floor drops from 1.33 mm (point-to-point) to 0.030 mm (point-to-plane) to 0.012 mm (neighbourhood smoothing). The residual-minimising plane is dragged 2.92 mm / 1.72 degrees by a 6.33 mm bulge, and 46 % of the asymmetry disappears.",
    "run": "py -3.11 examples/poc_bilateral_asymmetry.py",
-   "lead_ja": "左右非対称性を測る場面では、対称面は変形に引きずられる。合成データの厳密を使い、左右対称と合成頭蓋を別々に確かめた。片側と鏡映の差を見ると、対称面は変形に引きずられることが分かる。",
-   "lead_en": "When measuring left-right asymmetry, the deformation drags the symmetry plane with it. Using exact synthetic data, we verified left-right symmetry and the synthetic skull separately. Comparing one side with its mirror image reveals how the deformation drags the symmetry plane with it."
+   "lead_ja": "左右差を測るための基準面が、片側の変形そのものに引かれないかを確かめる必要がある。左右対称な頭蓋へ既知の膨らみを入れ、残差を最小にする面が2.92 mm動く条件を測った。最適化した対称面は膨らみ側へ寄り、報告すべき非対称量の一部を消してしまう。",
+   "lead_en": "A reference plane for left-right asymmetry may be pulled toward a one-sided deformation. A known bulge was added to a symmetric skull; the best-fit plane moved by 2.92 mm. The optimized plane shifts toward the bulge and removes part of the asymmetry that should be reported."
   },
   {
    "id": "poc_bone_trabecular_thickness",
@@ -466,8 +466,8 @@
    "caption_ja": "線分の集合として閉形式で描いた 2-D 骨梁網(幅の中央値 120 µm)を、部分体積ぼけ・CT 雑音・カップ状バイアスで観測した。真値そのものが複数あり、幅の長さ加重平均 104.8 µm に対し最大内接円の定義では 121.6 µm、平板モデルは 118.4 µm ―― どの真値と比べるかで 9〜16 % が先に動く。解像度の崖は平均でなく分布に来る(画素 60 µm で分布の重なり 0.83 → 0.09、平均は量子化 -29.5 % と大津の太り +26.6 % が打ち消す)。雑音は斑点(σ 0.10 から)と途切れ(σ 0.15 から)の 2 方向から壊し、面積オープニングは斑点だけを消す。",
    "caption_en": "A 2-D trabecular network drawn in closed form as a set of segments (median width 120 µm), observed through partial-volume blur, CT noise and a cupping bias. There is more than one ground truth: the length-weighted mean width is 104.8 µm, the largest-inscribed-circle definition gives 121.6 µm and the plate model 118.4 µm — the choice of truth moves the answer by 9–16 % before any threshold does. The resolution cliff hits the distribution, not the mean (overlap with truth 0.83 → 0.09 at 60 µm pixels; the mean survives because quantisation at -29.5 % and Otsu thickening at +26.6 % cancel). Noise breaks from two sides, speckles from σ 0.10 and gaps from σ 0.15, and an area opening removes only the speckles.",
    "run": "py -3.11 examples/poc_bone_trabecular_thickness.py",
-   "lead_ja": "骨梁の厚さ・間隔・骨体積率では、平板モデルと直接法は同じ画像で別の値になる。線分を含む計算データを作り、集合と閉形式の関係を測った。二次元と骨梁網の差を見ると、平板モデルと直接法は同じ画像で別の値になることが分かる。",
-   "lead_en": "For trabecular thickness, spacing and bone volume ratio, the direct and plate methods differ on one image. We built computed data with segments and measured how the set relates to the closed form. Comparing the 2-D case with the trabecular network shows the two methods differ on one image."
+   "lead_ja": "骨梁の太さを画像から報告するとき、真値の定義が違えば同じ像でも値が変わる。既知幅の骨梁網へぼけと雑音を加え、画素60 µmで厚さ分布がどこまで重なるかを測った。平均値では二つの偏りが打ち消し合う一方、分布の一致は解像度低下で急に失われる。",
+   "lead_en": "Reported trabecular thickness changes with the definition of truth even on one image. Blur and noise were applied to known-width struts, and distribution overlap was measured at 60 µm pixels. Two biases cancel in the average while the thickness distribution loses agreement as resolution falls."
   },
   {
    "id": "poc_bump_coplanarity",
@@ -479,8 +479,8 @@
    "caption_ja": "Cu ピラー 256 本の高さ場に、そり PV 50 µm と個体差 1σ 4 µm、短小バンプ 6 本を仕込んで測り返す。そりを引かずに平面だけ引くゼロ点は読み取り RMS 誤差 8.84 µm(個体差の 2.2 倍)で、誤検出 58 本の裏で本物の短小を 1 本見逃す。2 次曲面を引くと 1.23 µm・誤検出 0 になるが、3 次にすると 1.37 µm と逆に悪くなる(仕込んだ高次成分が 4 次のロブなので 3 次では取れず、増えた項が個体差を吸う)。崖は幾何で予測でき、2 次が個体差 1σ に並ぶのは PV 169.9 µm の予測に対して実測 169.4 µm。★中央が 8 µm 沈む本物の低次不良を足すと、残差からは 88.2 % 消える一方で短小の検出数は 5→5 本のまま変わらず、見逃しだけが 0→2 本に増える ―― 消えた分は「そり 30.06→36.20 µm」に化けている。",
    "caption_en": "A height map of 256 Cu pillars is planted with 50 µm PV warpage, 4 µm 1-sigma pillar-to-pillar spread and six short bumps. The zero point — subtract only a least-squares plane, the JEDEC seating plane — reads the individual deviation with 8.84 µm RMS error (2.2x the real spread), raising 58 false rejects while missing one genuinely short bump. A quadratic reference surface brings it to 1.23 µm with zero false rejects; a cubic one is worse (1.37 µm), because the planted high-order mode is quartic and the four extra terms only absorb real signal. The cliff is predictable from geometry: the quadratic fit degrades to the 4 µm level at 169.9 µm PV (predicted) versus 169.4 µm (measured). Adding a real low-order defect — the centre sagging 8 µm — removes 88.2 % of it from the residual while the short-bump detection count stays at 5 of 6, and misses rise from 0 to 2; the lost signal reappears as warpage growing 30.06 to 36.20 µm.",
    "run": "py -3.11 examples/poc_bump_coplanarity.py",
-   "lead_ja": "バンプの共平面性を基板そりから分けるとき、引きすぎると本物の不良も消える。ピラーを含む実測データを作り、個体差と短小バンプの関係を測った。仕込とゼロ点の差を見ると、引きすぎると本物の不良も消えることが分かる。",
-   "lead_en": "Separating bump coplanarity from substrate warpage too aggressively also erases genuine defects. We created measured pillar data and examined how individual variation relates to short bumps. Comparing the planted state with the zero point shows that excess subtraction erases genuine defects."
+   "lead_ja": "基板のそりを高さ場から引くとき、補正面が本物の低いバンプまで吸収しないかが問題になる。短小ピラーを仕込んだ高さ場へ曲面を当て、二次補正後の読み取り誤差1.23 µmを測った。次数を増やしても精度は上がらず、広い低次不良はそりとして消えて見逃しが増える。",
+   "lead_en": "Warpage removal can absorb a genuinely low bump into the correction surface. Curves fitted to a seeded pillar field left a 1.23 µm readout error after quadratic correction. Raising the order does not help, and a broad low-order defect vanishes into reported warpage while missed bumps increase."
   },
   {
    "id": "poc_cad_scan_deviation",
@@ -492,8 +492,8 @@
    "caption_ja": "解析形状の機械部品に、局所へこみ・反り・摩耗を法線方向の既知量として仕込み、既知の姿勢・雑音・欠測つきの実測点群を合成した。合わせてから符号付き偏差と公差外面積を測ると、局所へこみの読みは 3.7 % しか薄まらないのに、真値が 1.2 µm しかない部品中央に深さ 121 µm の存在しないへこみが出る(閉形式の予測 -120 µm)。消えるか化けるかは剛体 6 自由度が吸える偏差場に似ているかどうかで決まり、稜線では最近傍が隣の面へ飛んで、欠陥ゼロの対照でも 66.5 mm^2 の偽の公差外領域が出た。",
    "caption_en": "An analytic machined part carries a known local dent, a bow and a wear band, all applied as exact displacements along the surface normal, and the scan is synthesized with a known pose, noise and one-sided occlusion. After alignment the signed deviation and the out-of-tolerance area show that the local dent is diluted by only 3.7 %, while a 121 um dent appears at the centre of the part where the truth is just 1.2 um (closed form predicts -120 um). What survives depends on how much the defect resembles the six rigid-body degrees of freedom; along the edges the nearest neighbour jumps to the adjacent face, producing 66.5 mm^2 of false out-of-tolerance area even in a defect-free control.",
    "run": "py -3.11 examples/poc_cad_scan_deviation.py",
-   "lead_ja": "CAD と実測点群の差分検査の評価では、合わせた分だけ欠陥が消え、無い所にへこみが出る。合成データの解析形状を使い、機械部品と局所を別々に確かめた。摩耗と法線方向の差を見ると、合わせた分だけ欠陥が消え、無い所にへこみが出ることが分かる。",
-   "lead_en": "In CAD-to-point-cloud comparison, alignment erases defects as it fits and creates dents where none exist. Using an analytic synthetic shape, we checked the machined part and local features separately. Comparing wear with the normal direction shows the same erasure of defects and false dents."
+   "lead_ja": "点群を設計形状へ合わせてから検査すると、位置合わせが欠陥を吸収したり別の場所へ移したりする。へこみや反りを既知量で入れた部品を合わせ、欠陥のない対照にも66.5平方mmの公差外領域が出る条件を測った。図では、剛体運動に似た偏差は薄まり、稜線では対応先が隣面へ飛んで偽のへこみが現れる。",
+   "lead_en": "Aligning a scan to its design can absorb a defect or move it elsewhere. Known dents and warps were added to a part; even the defect-free control produced 66.5 square mm of false rejected area. Rigid-like deviations shrink, while nearest points jump across edges and create a fictitious dent."
   },
   {
    "id": "poc_camera_calibration",
@@ -505,8 +505,8 @@
    "caption_ja": "既知の内部パラメータと姿勢で格子点を投影し、校正し直して成分ごとに誤差を出した図。板の傾き 32 / 8 / 2 度で再投影 RMS は 0.0688〜0.0690 px(比 1.00)なのに、fx の誤差は 0.026〜7.334 %(281 倍)。歪みのあるカメラでは退化検出の門が発火せず、非線形最適化は正面配置でも答えを返す。",
    "caption_en": "Grid points projected with known intrinsics and poses, re-calibrated, and the error split by component. With the board tilted 32 / 8 / 2 degrees the reprojection RMS spans 0.0688 to 0.0690 px (ratio 1.00) while the focal-length error spans 0.026 to 7.334 % (281x). With a distorting camera the degeneracy gate never fires, and the non-linear optimiser returns an answer even for a fronto-parallel board.",
    "run": "py -3.11 examples/poc_camera_calibration.py",
-   "lead_ja": "再投影誤差 0.05 pxの評価では、測定の確かさが課題になる。計算データの内部パラメータを使い、姿勢と格子点を別々に確かめた。校正と成分の差を見ると、測定の確かさが課題になることが分かる。",
-   "lead_en": "In evaluating a 0.05 px reprojection error, measurement certainty becomes the issue. Using the intrinsic parameters of computed data, we separately verified the poses and the grid points. Comparing the calibration with its components shows that measurement certainty becomes the issue."
+   "lead_ja": "カメラ校正では、再投影誤差が小さくても焦点距離まで正しいとは限らない。既知の姿勢で格子点を投影し直し、板の傾きが浅い条件で焦点距離誤差7.334 %を測った。再投影の値はほぼ変わらないまま内部パラメータだけが崩れ、最適化はもっともらしい答えを返す。",
+   "lead_en": "A small reprojection residual does not ensure correct camera focal length. Grid points from known poses were recalibrated, yielding 7.334 % focal-length error for shallow board tilt. The residual barely changes while internal parameters collapse, yet optimization still returns a plausible answer."
   },
   {
    "id": "poc_camera_shake_deblur",
@@ -518,8 +518,8 @@
    "caption_ja": "既知の直線ブレ核を掛けて戻し、雑音と核の推定誤差で上限を測った図。無雑音なら 22.38 → 56.41 dB、SNR 20 dB では取り分 1.82 dB。核の角度が 19.4 度ずれると「何もしない」に抜かれ、回転ブレを 1 枚の核で戻すと回転中心が -49.41 dB 悪化する。",
    "caption_en": "A known linear blur kernel applied and inverted, with the ceiling set by noise and by kernel estimation error. Without noise the image recovers from 22.38 to 56.41 dB; at 20 dB SNR the gain is 1.82 dB. A kernel angle off by 19.4 degrees is beaten by doing nothing, and undoing rotational blur with a single kernel makes the centre of rotation worse by -49.41 dB.",
    "run": "py -3.11 examples/poc_camera_shake_deblur.py",
-   "lead_ja": "手ぶれ補正では、ぼけを戻す処理よりも、ぶれの向きと長さを正しく見積もれるかが限界を決める。既知の直線ぶれを画像へ加え、雑音と推定角度を変えながら復元結果を元画像と比べた。図では、推定角度が外れると補正しない画像より悪くなり、回転ぶれを一つの核では戻せない。",
-   "lead_en": "Shake correction is limited less by deblurring than by estimating blur direction and length. We added a known linear blur and compared restorations with the original across noise and angle estimates. The diagram reveals wrong angles doing worse than no correction and one kernel failing on rotation."
+   "lead_ja": "手ぶれ補正の限界は、復元処理よりもぶれの向きと長さを正しく見積もれるかで決まる。既知の直線ぶれを画像へ加え、SNR 20 dBで復元結果を元画像と比べた。推定角度が外れると無補正より悪くなり、場所で向きが変わる回転ぶれは一つの核では戻せない。",
+   "lead_en": "Deblurring depends on estimating motion direction and length correctly. Known linear motion was applied, and restoration was scored against the original at 20 dB SNR. A wrong angle loses to no correction, while one kernel cannot undo rotational shake whose direction changes across the frame."
   },
   {
    "id": "poc_cell_counting",
@@ -531,8 +531,8 @@
    "caption_ja": "重なった細胞の合成画像で、個数・過分割・過統合を別々に数えた図。いちばん密な条件でゼロ点は 78 個中 25 個を取りこぼし、失点は全部過統合。種の間引きを振ると釣り合う点があり、個数の偏り +0.3 個なのに分割誤りは 13.3 件残る ―― 個数だけ報告すれば最良の設定として通る。",
    "caption_en": "Synthetic overlapping cells with the count, over-segmentation and under-segmentation tallied separately. In the densest condition the null misses 25 of 78 cells, every one of them an under-segmentation. Sweeping the seed suppression finds a balance point where the count bias is +0.3 cells while 13.3 segmentation errors remain; report the count alone and it passes as the best setting.",
    "run": "py -3.11 examples/poc_cell_counting.py",
-   "lead_ja": "重なった細胞をどう数えるかを確かめる場面では、個数・過分割・過統合を別々に測る。合成データの合成画像を使い、ゼロ点と個中を別々に確かめた。失点と全部過統合の差を見ると、個数・過分割・過統合を別々に測ることが分かる。",
-   "lead_en": "To count overlapping cells, we measure under-segmentation, over-segmentation and cell count separately. Using synthetic images, we checked the null baseline and the cell tally separately. Comparing misses with total under-segmentation shows the three quantities are measured separately."
+   "lead_ja": "重なった細胞では、総数が合っても一個ずつ正しく分けられたとは限らない。既知個数の合成画像で重なりを増やし、最密条件で78個の分割結果を採点した。個数の偏りがほぼ消える設定にも過分割と過統合が残るため、総数だけでは最良条件を選べない。",
+   "lead_en": "Overlapping cells can yield the right total without the right individuals. Overlap was increased in images with known counts, then segmentation was scored on the densest set of 78 cells. Split and merge errors remain where count bias nearly vanishes, so totals cannot select the best setting."
   },
   {
    "id": "poc_change_detection_misreg",
@@ -544,8 +544,8 @@
    "caption_ja": "2 時期の合成地表(畑・道路・建物・森林・湖)に建物新設・伐採・水域拡大を仕込み、時期 2 をサブピクセル平行移動・微小回転・照明差で崩して差分の偽陽性を測った。偽陽性はずれ 0.3 px まで雑音の床、0.5 px から崖(PSF から予測した δ*=τσ√2π/C=0.351 px と一致)、3 px で 7175 px。エッジ総長×ずれの比例則は 3 px で 0.78 倍だが崖を説明せず、PSF と雑音を入れた台帳予測は 0.84〜1.07 倍。位置合わせ 3 経路(PIV/特徴点/LK)は残留 0.02〜0.13 px まで戻すが、唯一の位相相関は 3-D 用の整数精度で残留 0.72 px ―― その偽陽性 995 px は「ずれだけ」の掃引を同じ残留で読んだ 915 px に乗る。伐採は位置合わせが完璧でも検出率 0.33、照明差だけの偽陽性 17198 px は放射補正で 0 になるがずれの 3497 px は直らない。",
    "caption_en": "A two-date synthetic land surface (fields, roads, buildings, forest, lake) with planted changes (new buildings, clear-cut, lake expansion); date 2 is degraded by sub-pixel shift, small rotation and an illumination change, and the false-positive area of plain differencing is measured. False positives stay at the noise floor up to 0.3 px and jump at 0.5 px (matching the PSF-derived onset δ*=τσ√2π/C=0.351 px), reaching 7175 px at 3 px. The edge-length × shift rule gives 0.78× at 3 px but cannot explain the cliff; the PSF+noise edge-ledger prediction is within 0.84–1.07×. Three registration paths (PIV, keypoints, LK) bring the residual down to 0.02–0.13 px, but the only phase-correlation path is 3-D and integer-valued (residual 0.72 px), and its 995 px of false positives lands on the shift-only sweep read at the same residual (915 px). Clear-cut recall is 0.33 even with perfect alignment; the illumination-only 17198 px vanish with radiometric normalisation while the 3497 px from shift do not.",
    "run": "py -3.11 examples/poc_change_detection_misreg.py",
-   "lead_ja": "変化検出と位置合わせ誤差の評価では、偽陽性はエッジの帯、しかも崖つき。合成データに時期を用意し、合成地表と建物新設を比べた。伐採と水域拡大の差を見ると、偽陽性はエッジの帯、しかも崖つきことが分かる。",
-   "lead_en": "In change detection with registration error, false positives form bands along edges, with a sharp cliff. With two-date synthetic data, we compared the land surface with new buildings. Comparing clear-cutting with lake expansion shows these edge-following false positives and their cliff."
+   "lead_ja": "二時期画像の差分では、変化していない地物の縁が位置ずれだけで変化として現れる。建物新設などを入れた地表画像をずらし、偽陽性が0.5 pxから急増する境界を測った。位置合わせ後の残留ずれも同じ境界に乗り、照明補正ではこの偽陽性を消せない。",
+   "lead_en": "In two-date subtraction, unchanged edges can appear as change solely from misregistration. Known land changes were inserted before shifting the images, revealing a false-positive cliff at 0.5 px. Residual alignment error follows the same cliff, which radiometric correction cannot remove."
   },
   {
    "id": "poc_cold_chain_excursion",
@@ -557,8 +557,8 @@
    "caption_ja": "12.0 m x 2.4 m のリーファー荷室の 12 時間を (t, y, x) の 1 つの体積(720 分 x 60 x 12 セル)として組み立て、吹き出し口からの距離・4 枚の壁からの侵入・扉開閉 5 回のパルス・荷の 1 次遅れ(空気 5 分 / 製品 64〜91 分)を既知の閉形式で仕込んだ図。真に不合格な製品セルは 108 / 490(22.0 %)なのに、製品にロガーを 1 個貼ると 82.4 % の置き方が「合格」と言う。要因を 1 つずつ止めると壊れ方が分かれる ―― 壁だけなら偽合格 95.5 %・偽不合格 0.0 %、壁を止めて扉だけ残すと偽不合格が 3.5 % 現れ、しかも製品に貼ったロガーは 100 % 合格と言う(短いパルスは製品に入らない)。崖は紙の上で予測できて、時定数の崖は「空気 + ロガー」の 2 段モデルで実測 19〜138 分に対し相対 18 % 以内、サンプリング間隔と 0.5 K 量子化の崖は予測と完全一致。同じ記録から出した 3 指標は「12 °C に許す時間」に直すと 60 / 276 / 197 分と 4.6 倍ずれ、720 セル中 82 セル(11.4 %)で合否が揃わない。",
    "caption_en": "Twelve hours of a 12.0 m x 2.4 m reefer hold, built as a single (t, y, x) volume of 720 min x 60 x 12 cells with known closed-form physics: distance from the supply vent, infiltration from each of the four walls, five door-opening pulses, and first-order thermal lag (5 min for air, 64-91 min for product). 108 of 490 product cells (22.0 %) truly fail, yet a single logger taped in the product reports PASS for 82.4 % of the placements. Turning the causes off one at a time separates the failure modes: walls alone give 95.5 % false passes and 0.0 % false alarms, while walls off and doors on drop true failures to 2.0 % but raise false alarms to 3.5 % — and a logger in the product then passes 100 % of the time, because short pulses never enter the product. The cliffs can be predicted on paper: the time-constant cliff measured at 19-138 min matches a two-stage (hold air + logger) model within 18 % relative, and the sampling-interval and 0.5 K quantisation cliffs match their predictions exactly. Converted to \"minutes allowed at 12 °C\", the three metrics computed from the same record differ by 4.6x (60 / 276 / 197 min) and disagree on the verdict at 82 of 720 placements (11.4 %).",
    "run": "py -3.11 examples/poc_cold_chain_excursion.py",
-   "lead_ja": "冷蔵輸送の温度記録の評価では、ロガーを置いた場所が合否を決めている。実測データにリーファー荷室を用意し、時間と体積を比べた。距離と侵入の差を見ると、ロガーを置いた場所が合否を決めていることが分かる。",
-   "lead_en": "In evaluating temperature records from refrigerated transport, logger placement decides pass or fail. We prepared a reefer hold within observations and compared time with volume. Comparing distance with infiltration shows that logger placement decides pass or fail."
+   "lead_ja": "冷蔵輸送では、一点の温度記録が荷室全体の製品を代表できるかが問われる。壁からの熱と扉開閉を入れた温度場で製品ロガーを動かし、置き方の82.4 %が不合格品を見逃す条件を測った。壁の熱は偽合格を生み、短い扉開閉は空気だけを温めるため、誤判定の向きが原因で分かれる。",
+   "lead_en": "The question is whether one temperature record represents every product in a cold load. Product loggers were moved through a field with wall heat and door openings; 82.4 % of placements missed failing goods. Wall heat creates false passes, whereas short door pulses warm air but not product and reverse the error."
   },
   {
    "id": "poc_colocalization_crosstalk",
