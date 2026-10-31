@@ -1,6 +1,9 @@
 {
   "conditions": 420,
   "truth_mtf50_cyc_px": 0.3455079748842897,
-  "clean_max_abs_error_cyc_px": 0.010755770966354994,
+  "clean_estimator_max_abs_error_cyc_px": 0.00871795417878296,
+  "forward_model": "circular-pupil Airy OTF then pixel-area integration",
+  "model_error": 0.0,
+  "difference_correction_at_nyquist": 1.1107207345395915,
   "first_ten_percent_failure_angle_deg": 1.0
 }

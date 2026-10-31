@@ -1188,7 +1188,7 @@ Ops used (notes): [`braid_class_representatives`](https://furuse.work/ops/drive/
 
 [![The Marechal Approximation Breaks at Different RMS Errors for Different Aberration Shapes](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_wavefront_aberration_limits/01_aberration_limits_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_wavefront_aberration_limits/01_aberration_limits.png)
 
-*↑ **The Marechal Approximation Breaks at Different RMS Errors for Different Aberration Shapes** ―― Four Noll-normalised modes—defocus, astigmatism, coma and spherical aberration—are swept over 121 points each, 484 conditions in total. On-axis Strehl from Fullseye's PSF FFT agrees with an independent pupil integral to a maximum absolute error of 6.66e-16. The 5 percent failure boundaries of the Marechal approximation are 0.1283, 0.2012, 0.1633 and 0.1458 waves RMS, showing that RMS alone does not determine Strehl. The lower row shows the computed PSF images at 0.20 waves RMS.*
+*↑ **The Marechal Approximation Breaks at Different RMS Errors for Different Aberration Shapes** ―― Four Noll-normalised aberrations are swept over 484 conditions. Fixed-axis intensity ratio, same-plane peak ratio and peak location are defined separately. Coma at 0.2/0.3 waves gives fixed-axis ratios 0.1816/0.0127, peak ratios 0.2178/0.1437 and peak shifts of 8/17 pixels. The 5 percent Marechal boundaries quoted are for the fixed-axis definition. Mahajan (1982/1983) already reported aberration-specific results; this PoC is a definition and implementation reproduction.*
 
 ```
 py -3.11 examples/poc_wavefront_aberration_limits.py
@@ -1220,7 +1220,7 @@ Ops used (notes): [`mueller_element`](https://furuse.work/ops/optics/polarizatio
 
 [![Slanted-Edge SFR Misreads MTF50 Through Gamma as Well as Edge Angle](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_slanted_edge_sfr_limits/01_sfr_limits_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_slanted_edge_sfr_limits/01_sfr_limits.png)
 
-*↑ **Slanted-Edge SFR Misreads MTF50 Through Gamma as Well as Edge Angle** ―― For a 3.45 um pixel, F/5.6 and 550 nm system, 21 angles, five gamma values and four noise levels produce 420 computed conditions. Fullseye's diffraction MTF agrees with the circular-pupil closed form below 1e-12; including the pixel aperture gives a true MTF50 of 0.34551 cycles per pixel. The independent area-sampled edge route differs by at most 0.01076 cycles per pixel when linear and noiseless. Failures beyond 10 percent already appear at the smallest swept angle, 1.0 degree, and nonlinear tone response moves the result as strongly as angle selection.*
+*↑ **Slanted-Edge SFR Misreads MTF50 Through Gamma as Well as Edge Angle** ―― For a 3.45 um pixel, F/5.6 and 550 nm system, the circular-pupil Airy OTF is applied to a high-resolution edge before pixel-area integration, so forward model and truth agree over the full frequency range. Central-difference correction is 1 at DC and 1.1107207 at Nyquist. Across 420 conditions the remaining clean linear estimator error is at most 0.00872 cycles per pixel, displayed separately from zero model error; failures beyond 10 percent begin at 1.0 degree.*
 
 ```
 py -3.11 examples/poc_slanted_edge_sfr_limits.py

@@ -2914,7 +2914,7 @@ _計 3615 ops / 55 families。並びとノートの在り処は `docs/ops/INDEX.
 #### optics / plenoptic(6)
 - `mla_surface` `入力なし → table` — Describe a periodic spherical-cap microlens array surface. · 例: `plenoptic_capture_pipeline`, `poc_plenoptic_camera`
 - `plenoptic_capture` `table × table → table` — Trace a raw plenoptic frame and its white calibration image. · 例: `plenoptic_capture_pipeline`, `poc_plenoptic_camera`
-- `plenoptic_decode` `image2d × table → lightfield` — Rectify a calibrated raw frame and return ``L[v,u,y,x]``. · 例: `plenoptic_decode_pipeline`
+- `plenoptic_decode` `image2d × table → lightfield` — Rectify a calibrated raw frame and return ``L[v,u,y,x]``. · 例: `plenoptic_decode_pipeline`, `poc_plenoptic_camera`
 - `plenoptic_mla_calibrate` `image2d → table` — Fit a rotated rectangular lenslet lattice to peaks of a white frame. · 例: `poc_plenoptic_camera`
 - `plenoptic_refocus_depth` `lightfield × table → table` — Convert light-field refocus slope(s) to object distance in metres. · 例: `poc_plenoptic_camera`
 - `plenoptic_system` `table × table × table → table` — Assemble a main lens, MLA and sensor and report F-number matching. · 例: `plenoptic_capture_pipeline`, `poc_plenoptic_camera`

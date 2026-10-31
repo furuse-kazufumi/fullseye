@@ -1188,7 +1188,7 @@ py -3.11 examples/poc_braid_homotopy_classes.py
 
 [![同じRMS波面誤差でも収差形状でMaréchal近似の破綻点が変わる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_wavefront_aberration_limits/01_aberration_limits_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_wavefront_aberration_limits/01_aberration_limits.png)
 
-*↑ **同じRMS波面誤差でも収差形状でMaréchal近似の破綻点が変わる** ―― Noll正規化したデフォーカス、非点、コマ、球面収差を各121点、計484条件で掃引した。FullseyeのPSF FFTによる軸上Strehlと独立な瞳積分の最大絶対誤差は6.66e-16。Maréchal近似が5 %外れる境界はRMSで0.1283、0.2012、0.1633、0.1458波となり、同じRMSだけではStrehlを決められない。下段は0.20波RMSのPSF像そのもの。*
+*↑ **同じRMS波面誤差でも収差形状でMaréchal近似の破綻点が変わる** ―― Noll正規化した4収差を計484条件で掃引した。固定軸強度比、同一像面のピーク比、ピーク位置を分けて定義する。コマ0.2/0.3波では固定軸比0.1816/0.0127、ピーク比0.2178/0.1437、ピーク移動8/17画素を再現した。Maréchal近似の5 %境界は固定軸比について0.1283、0.2012、0.1633、0.1458波。Mahajan (1982/1983) が収差別の結果を既に示しており、このPoCは定義と実装の再現確認である。*
 
 ```
 py -3.11 examples/poc_wavefront_aberration_limits.py
@@ -1220,7 +1220,7 @@ py -3.11 examples/poc_mueller_dofp_observability.py
 
 [![斜めエッジSFRは角度だけでなくガンマでもMTF50を誤る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_slanted_edge_sfr_limits/01_sfr_limits_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_slanted_edge_sfr_limits/01_sfr_limits.png)
 
-*↑ **斜めエッジSFRは角度だけでなくガンマでもMTF50を誤る** ―― 3.45 µm画素、F/5.6、550 nmの系について、角度21、ガンマ5、雑音4段階の420条件を計算した。Fullseyeの回折MTFと円形瞳の閉形式は1e-12未満で一致し、画素開口を含む真値MTF50は0.34551 cycles/pixel。線形・無雑音の独立な面積標本化エッジ経路との差は最大0.01076 cycles/pixel。10 %超の破綻は掃引範囲の最小角1.0度から現れ、非線形トーン応答が角度選択と同程度に測定値を動かす。*
+*↑ **斜めエッジSFRは角度だけでなくガンマでもMTF50を誤る** ―― 3.45 µm画素、F/5.6、550 nmの円形瞳Airy OTFを高解像度エッジへ適用してから画素面積積分し、真値とforward模型を全周波数で一致させた。中心差分補正はDCで1、Nyquistで1.1107207。420条件で、線形・無雑音の残る推定器誤差は最大0.00872 cycles/pixel、模型誤差は0として分離表示する。10 %超の破綻は1.0度から現れた。*
 
 ```
 py -3.11 examples/poc_slanted_edge_sfr_limits.py
