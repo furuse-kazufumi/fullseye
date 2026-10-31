@@ -75,6 +75,7 @@ from __future__ import annotations
 
 import argparse
 import colorsys
+from functools import lru_cache
 import json
 import math
 import os
@@ -968,16 +969,19 @@ def tab_spherical(fr, t):
                "label": _t("3 次の式の予測(1.2 mm 下にずらして描く)", "Third-order prediction (drawn 1.2 mm lower)")}]
     ratio = np.array([f["ta_real"] / f["ta_th"] for f in fr])
     strehl = np.array([f["psf"]["strehl"] if f["psf"] else np.nan for f in fr])
+    canonical = None if T == T_FULL else _canonical_event_values()
     events = [{"t": t[0], "label": _t("f/33: ほぼ 1 点に集まる", "f/33: nearly a point")}]
     k8 = next((k for k, s in enumerate(strehl) if np.isfinite(s) and s < 0.8), None)
     if k8 is not None:
-        events.append({"t": t[k8], "label": _t("回折の限界を越える(Strehl < 0.8、f/%.0f)" % fr[k8]["fno"],
-                                              "Beyond the diffraction limit (Strehl < 0.8, f/%.0f)" % fr[k8]["fno"])})
+        fno = fr[k8]["fno"] if canonical is None else canonical["strehl_fno"]
+        events.append({"t": t[k8], "label": _t("回折の限界を越える(Strehl < 0.8、f/%.0f)" % fno,
+                                              "Beyond the diffraction limit (Strehl < 0.8, f/%.0f)" % fno)})
     for lim, ja, en in ((1.05, "限界: 3 次の式から 5 %% 外れる(f/%.1f)", "Limit: third order off by 5 %% (f/%.1f)"),
                         (1.10, "限界: 10 %% 外れる(f/%.1f)", "Limit: off by 10 %% (f/%.1f)")):
         kk = next((k for k, r in enumerate(ratio) if r > lim), None)
         if kk is not None:
-            events.append({"t": t[kk], "label": _t(ja % fr[kk]["fno"], en % fr[kk]["fno"])})
+            fno = fr[kk]["fno"] if canonical is None else canonical["spherical_%.2f" % lim]
+            events.append({"t": t[kk], "label": _t(ja % fno, en % fno)})
 
     def cells(k, f):
         hw = half_window([f["spot"]], [f["psf"]], f["fno"])
@@ -1021,6 +1025,66 @@ def tab_spherical(fr, t):
 SMALL_FIELD = 0.5               # これより小さい画角では、比は 0/0 に近く意味が無い(「—」で出す)
 
 
+@lru_cache(maxsize=1)
+def _canonical_event_values():
+    """Return event labels on the published 56-frame sampling grid.
+
+    The quick build has only ten frames.  Taking the first sampled threshold
+    crossing from that grid changes labels such as f/3.8 to f/3.3, which in
+    turn makes the i18n source strings depend on the build mode.  Evaluate only
+    the inexpensive quantities needed by the events on the published grid so
+    quick and full builds use identical labels; event positions remain on the
+    build's own grid.
+    """
+    out = {}
+    for aperture in 1.5 + (20.0 - 1.5) * ease(np.linspace(0, 1, T_FULL)):
+        system = singlet(aperture)
+        para = fs.paraxial_trace(system)
+        um = para["marginal"]["u"][-1]
+        W = fs.seidel_coefficients(system, field=0.0)["wavefront_mm"]
+        fan = fs.ray_fan(system, field=0.0, n=21)
+        ratio = fan[-1, 1] / (4 * W["W040"] / um)
+        psf = psf_safe(system, 0.0)
+        strehl = psf["strehl"] if psf is not None else np.nan
+        if "strehl_fno" not in out and np.isfinite(strehl) and strehl < 0.8:
+            out["strehl_fno"] = para["fno"]
+        for limit in (1.05, 1.10):
+            key = "spherical_%.2f" % limit
+            if key not in out and ratio > limit:
+                out[key] = para["fno"]
+
+    system = descartes()
+    um = fs.paraxial_trace(system)["marginal"]["u"][-1]
+    for field in 10.0 * ease(np.linspace(0, 1, T_FULL)):
+        if field < SMALL_FIELD:
+            continue
+        W = fs.seidel_coefficients(system, field=field)["wavefront_mm"]
+        fan = fs.ray_fan(system, field=field, n=21, axis="y")
+        ratio = 0.5 * (fan[-1, 1] + fan[0, 1]) / (3 * W["W131"] / um)
+        if ratio > 1.05:
+            out["coma_field"] = field
+            break
+
+    system = stop_front()
+    um = fs.paraxial_trace(system)["marginal"]["u"][-1]
+    a = 4.0 * 0.999
+    q = np.linspace(-1, 1, 7)
+    px = np.r_[np.zeros(7), np.array([-1, -0.5, 0.5, 1.0])]
+    py = np.r_[q, np.zeros(4)]
+    for field in 20.0 * ease(np.linspace(0, 1, T_FULL)):
+        if field < SMALL_FIELD:
+            continue
+        W = fs.seidel_coefficients(system, field=field)["wavefront_mm"]
+        traced = trace(system, field, px * a, py * a)
+        tangential, _ = diff_foci(system, field, 4.0)
+        dz_real = tangential[2] - traced["points"][0, -1, 2]
+        dz_third = -2 * (W["W220"] + W["W222"]) / um ** 2
+        if abs(dz_real / dz_third - 1) > 0.05:
+            out["astig_field"] = field
+            break
+    return out
+
+
 def coma_ratio(f):
     return f["tc_real"] / f["tc_th"] if f["knob"] >= SMALL_FIELD else np.nan
 
@@ -1058,8 +1122,9 @@ def tab_coma(fr, t):
         events.append({"t": t[kk], "label": _t(ja, en)})
     kk = next((k for k, r in enumerate(ratio) if k > 0 and r > 1.05), None)
     if kk is not None:
-        events.append({"t": t[kk], "label": _t("限界: 3 次の式から 5 %% 外れる(%.1f°)" % fr[kk]["knob"],
-                                              "Limit: third order off by 5 %% (%.1f°)" % fr[kk]["knob"])})
+        field = fr[kk]["knob"] if T == T_FULL else _canonical_event_values()["coma_field"]
+        events.append({"t": t[kk], "label": _t("限界: 3 次の式から 5 %% 外れる(%.1f°)" % field,
+                                              "Limit: third order off by 5 %% (%.1f°)" % field)})
 
     def cells(k, f):
         hw = half_window([f["spot"]], [f["psf"]], f["fno"])
@@ -1148,8 +1213,9 @@ def tab_astig(fr, t):
     rT = np.array([f["dzT"] / f["dzT_th"] if f["knob"] >= SMALL_FIELD else np.nan for f in fr])
     kk = next((k for k, r in enumerate(rT) if k > 0 and abs(r - 1) > 0.05), None)
     if kk is not None:
-        events.append({"t": t[kk], "label": _t("限界: T 像面が 3 次の式から 5 %% 外れる(%.1f°)" % fr[kk]["knob"],
-                                              "Limit: T surface off third order by 5 %% (%.1f°)" % fr[kk]["knob"])})
+        field = fr[kk]["knob"] if T == T_FULL else _canonical_event_values()["astig_field"]
+        events.append({"t": t[kk], "label": _t("限界: T 像面が 3 次の式から 5 %% 外れる(%.1f°)" % field,
+                                              "Limit: T surface off third order by 5 %% (%.1f°)" % field)})
 
     def cells(k, f):
         hw = max(half_window(f["spot2"], [f["psf"]], f["fno"]), half_window([f["spot"]], [], f["fno"]) * 0)
