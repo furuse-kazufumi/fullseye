@@ -18,7 +18,7 @@ The null baseline placed throughout is 'do nothing'. Deblurring with the kernel 
 
 ## No.2026.007 —— How Much Camera Shake Can Be Undone — Make the Kernel, Apply It, Invert It, Compare
 
-For How Much Camera Shake Can Be Undone, Make the Kernel, Apply It, the method It, Compare. The computed data compares linear with blur and tracks applied. The contrast between inverted and ceiling shows that make the Kernel, Apply It, the method It, Compare.
+Camera-shake restoration is limited by estimating blur direction and length Known linear blur is added to pictures, then noise and angular error are varied while the restoration The plots show a wrong angle becoming worse than no correction and a single kernel failing on.
 
 [![How Much Camera Shake Can Be Undone — Make the Kernel, Apply It, Invert It, Compare](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_shake_deblur/01_noise_ceiling_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_shake_deblur/01_noise_ceiling.png)
 
@@ -52,7 +52,7 @@ Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_fram
 
 ## No.2026.062 —— Pseudo-colour changes what the reader decides — counting edges that are not there
 
-This exhibit covers “pseudo-colour changes what the reader decides”; the focus is “counting edges that are not there”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+A comparison of Pseudo-colour changes what the reader decides matters when counting edges that are not. A measured data case links smooth, field, and provably. The contrast between zero and steps shows that counting edges that are not there.
 
 [![Pseudo-colour changes what the reader decides — counting edges that are not there](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_colormap_readability/05_scene_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_colormap_readability/05_scene_maps.png)
 
@@ -92,7 +92,7 @@ Ops used (notes): [`delta_e_map`](https://furuse.work/ops/imgmetrics/colordiff/d
 
 ## No.2026.118 —— The Fly's Compound Eye Is a Light-Field Sensor — Neural Superposition Pays Only Up to the Knee
 
-This exhibit covers “the fly's compound eye is a light-field sensor”; the focus is “neural superposition pays only up to the knee”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+For The Fly's Compound Eye Is a Light-Field Sensor, Neural Superposition Pays Only Up to the Knee. The computed data compares plenoptic with synthesis and tracks ommatidial. The contrast between array and measuring shows that neural Superposition Pays Only Up to the Knee.
 
 [![The Fly's Compound Eye Is a Light-Field Sensor — Neural Superposition Pays Only Up to the Knee](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_compound_eye/01_compound_eye_scaling_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_compound_eye/01_compound_eye_scaling.png)
 
@@ -122,7 +122,7 @@ Ops used (notes): [`lf_all_in_focus`](https://furuse.work/ops/lightfield/depth/l
 
 ## No.2026.011 —— Removing Haze — Ground Truth From the Scattering Model, Transmission and Airlight Scored Apart
 
-This exhibit covers “removing haze”; the focus is “ground truth from the scattering model, transmission and airlight scored apart”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+A comparison of Removing Haze matters when Ground Truth From the Scattering Model, Transmission and. The test uses hazy from computed data to separate image from built. The contrast between depth and extinction shows that ground Truth From the Scattering Model, Transmission and Airlight Scored Apart.
 
 [![Removing Haze — Ground Truth From the Scattering Model, Transmission and Airlight Scored Apart](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dehazing/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dehazing/01_scene.png)
 
@@ -156,7 +156,7 @@ Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_fram
 
 ## No.2026.119 —— The Fly's Visual Front End as a Chain of Operators — Turning and Walking Through a Synthetic Sky, What Can and Cannot Be Read
 
-This exhibit covers “the fly's visual front end as a chain of operators”; the focus is “turning and walking through a synthetic sky, what can and cannot be read”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+A fly eye can recover self-rotation from wide-field motion A synthetic eye links hexagonal ommatidia, receptive fields, lamina filtering, and motion correlators The figures show when rotation direction is recovered and when receptive fields crossing the horizon.
 
 [![The Fly's Visual Front End as a Chain of Operators — Turning and Walking Through a Synthetic Sky, What Can and Cannot Be Read](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_vision/01_fly_vision_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_vision/01_fly_vision_scene.png)
 
@@ -194,7 +194,7 @@ Ops used (notes): [`fly_dsi`](https://furuse.work/ops/flyvision/tuning/fly_dsi.h
 
 ## No.2026.019 —— Focus Stacking — The All-in-Focus Image and the Depth Map Are Different Things
 
-This exhibit covers “focus stacking”; the focus is “the all-in-focus image and the depth map are different things”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+When measuring Focus Stacking, The All-in-Focus Image and the Depth Map Are Different Things. A computed data case links pulled, frames, and blurred. The contrast between closed-form and circle shows that the All-in-Focus Image and the Depth Map Are Different Things.
 
 [![Focus Stacking — The All-in-Focus Image and the Depth Map Are Different Things](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_focus_stacking/01_stack_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_focus_stacking/01_stack.png)
 
@@ -228,7 +228,7 @@ Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_fram
 
 ## No.2026.105 —— Deblurring a Real Photograph — Three Rulers, Three Different Winners
 
-This exhibit covers “deblurring a real photograph”; the focus is “three rulers, three different winners”. Using measured data, it compares conditions and checks how far the measurement remains reliable. The figure shows how the result and its error change across the tested conditions.
+When measuring Deblurring a Real Photograph, Three Rulers, Three Different Winners. The computed data compares here with only and tracks degradation. The contrast between planted and straight shows that three Rulers, Three Different Winners.
 
 [![Deblurring a Real Photograph — Three Rulers, Three Different Winners](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_deblur_honesty/01_restore_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_deblur_honesty/01_restore.png)
 
@@ -260,7 +260,7 @@ Ops used (notes): [`iv_motion_deblur`](https://furuse.work/ops/2d/restoration/iv
 
 ## No.2026.039 —— Does Super-Resolution Add Information? Downsample With the Truth in Hand, Restore, Count
 
-This exhibit examines “does super-resolution add information…”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+When measuring Does Super-Resolution Add Information, Downsample With the Truth in Hand, Restore, Count. The test uses observations from computed data to separate made from downsampling. The contrast between single-image and upscaling shows that downsample With the Truth in Hand, Restore, Count.
 
 [![Does Super-Resolution Add Information? Downsample With the Truth in Hand, Restore, Count](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_superresolution_limits/03_multiframe_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_superresolution_limits/03_multiframe.png)
 
@@ -294,7 +294,7 @@ Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_fram
 
 ## No.2026.194 —— Measuring Image-Quality Metrics Against a Public Ground Truth — TID2013's 3,000 Images × 971 Observers and the Authors' Published Values as the Gate
 
-This exhibit covers “measuring image-quality metrics against a public ground…”; the focus is “tid2013's three,zero images × nine hundred seventy-one observers and the authors' published values as the check”. Using public data, it compares conditions and checks how far the measurement remains reliable.
+In evaluating Measuring Image-Quality Metrics Against a Public Ground Truth, TID2013's , Images ×. The Measuring Image-Quality Metrics Against a Public Ground Truth test uses image-side from. The contrast between outside and reference shows that tID's , Images × Observers and the Authors' Published.
 
 [![Measuring Image-Quality Metrics Against a Public Ground Truth — TID2013's 3,000 Images × 971 Observers and the Authors' Published Values as the Gate](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_tid2013/06_tid2013_pair_ssim_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_tid2013/06_tid2013_pair_ssim_map.png)
 
@@ -332,7 +332,7 @@ Ops used (notes): [`luma_limited_u8`](https://furuse.work/ops/imgmetrics/iqa/lum
 
 ## No.2026.197 —— Perceptual Indices FSIM (feature similarity index) / FSIMc (colour extension of FSIM) / GMSD (gradient-similarity deviation) / VIF Matched to Four Digits Against an External Truth — TID2013's Three Author-Value Files and the Published Rank-Correlation Tables
 
-This exhibit covers “perceptual indices structural similarity score (feature similarity index)…”; the focus is “tid2013's three author-value files and the published rank-correlation tables”. Using public data, it compares conditions and checks how far the measurement remains reliable.
+Using Perceptual Indices the method / the method / the method / VIF Matched to Four Digits. A synthetic data case for Perceptual Indices the method / the method / the method / VIF Matched. The contrast between listed and implemented shows that tID2013's Three Author-Value Files and.
 
 [![Perceptual Indices FSIM (feature similarity index) / FSIMc (colour extension of FSIM) / GMSD (gradient-similarity deviation) / VIF Matched to Four Digits Against an External Truth — TID2013's Three Author-Value Files and the Published Rank-Correlation Tables](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_fsim_gmsd_vif/01_iqa_tid2013_mos_vs_fsim_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_fsim_gmsd_vif/01_iqa_tid2013_mos_vs_fsim.png)
 
@@ -372,7 +372,7 @@ Ops used (notes): [`fsim`](https://furuse.work/ops/imgmetrics/perceptual/fsim.ht
 
 ## No.2026.135 —— Holding a Course with a Fly's Optic Lobe Alone — From the Lamina to the Steering, Without Learning
 
-This exhibit covers “holding a course with a fly's optic lobe alone”; the focus is “from the lamina to the steering, without learning”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+In evaluating Holding a Course with a Fly's Optic Lobe Alone, while Without Learning. A measured data case for Holding a Course with a Fly's Optic Lobe Alone links vehicle, whose, and heading. The contrast between drifts and disturbance shows that from the Lamina to the Steering, Without Learning.
 
 [![Holding a Course with a Fly's Optic Lobe Alone — From the Lamina to the Steering, Without Learning](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_optomotor_steering/06_follow.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_optomotor_steering/06_follow.gif)
 
@@ -410,7 +410,7 @@ Ops used (notes): [`fly_egomotion_from_flow`](https://furuse.work/ops/flyvision/
 
 ## No.2026.148 —— The Exact Distance at Which Detail Vanishes, and the Area of a Changing Shape
 
-This exhibit examines “the exact distance at which detail vanishes…”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+A comparison of The Exact Distance at Which Detail Vanishes matters when and the Area of a Changing Shape. A measured data case for The Exact Distance at Which Detail Vanishes links both, picture, and that. The contrast between mixes and high shows that and the Area of a Changing Shape.
 
 [![The Exact Distance at Which Detail Vanishes, and the Area of a Changing Shape](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vanishing_detail_and_morphing_area/04_vanish_at_p_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vanishing_detail_and_morphing_area/04_vanish_at_p.png)
 
@@ -452,7 +452,7 @@ Ops used (notes): [`convex_hull`](https://furuse.work/ops/3d/bounds/convex_hull.
 
 ## No.2026.184 —— The Segmentation Gauntlet — Ten Methods Across Six Worlds With Ground Truth, and Which Measure Is Blind to Which Failure
 
-This exhibit covers “the segmentation gauntlet”; the focus is “ten methods across six worlds with ground truth…”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+A comparison of The Segmentation Gauntlet matters when Ten Methods Across Six Worlds With Ground Truth. For The Segmentation Gauntlet, the synthetic data compares adding with measures and tracks come. The contrast between modules and segeval shows that ten Methods Across Six Worlds With Ground Truth, and Which.
 
 [![The Segmentation Gauntlet — Ten Methods Across Six Worlds With Ground Truth, and Which Measure Is Blind to Which Failure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/01_worlds_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/01_worlds.png)
 
@@ -516,7 +516,7 @@ Ops used (notes): [`blob_distance`](https://furuse.work/ops/blob/split/blob_dist
 
 ## No.2026.186 —— Active Contours and Level Sets — Checking With Closed Forms How a Contour Shrinks, Enters a Concavity and Stops at an Edge
 
-This exhibit covers “active contours and level sets”; the focus is “checking with closed forms how a contour shrinks…”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+For Active Contours and Level Sets, while Enters a Concavity and Stops at an Edge. For Active Contours and Level Sets, the computed data compares segmentation with expansion and. The contrast between module and segcontour shows that checking With Closed Forms How a Contour Shrinks, Enters a Concavity and Stops at.
 
 [![Active Contours and Level Sets — Checking With Closed Forms How a Contour Shrinks, Enters a Concavity and Stops at an Edge](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_active_contours/01_inputs_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_active_contours/01_inputs.png)
 
@@ -564,7 +564,7 @@ Ops used (notes): [`chan_vese_evolve`](https://furuse.work/ops/segmentation/cont
 
 ## No.2026.187 —— Graph, Hierarchical and Threshold Segmentation — Max Flow = Min Cut, Ultrametrics, and Turning a Knob From Coarse to Fine
 
-This exhibit covers “graph, hierarchical and decision level segmentation”; the focus is “max flow = min cut, ultrametrics, and turning a knob from coarse to fine”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+A comparison of Graph, while and Turning a Knob From Coarse to Fine. The Graph, Hierarchical and the method Segmentation test uses expansion from computed data to separate batch from module. The contrast between seggraph and gates shows that max Flow = Min Cut, Ultrametrics, and Turning a Knob From Coarse to Fine.
 
 [![Graph, Hierarchical and Threshold Segmentation — Max Flow = Min Cut, Ultrametrics, and Turning a Knob From Coarse to Fine](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/01_inputs_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/01_inputs.png)
 
@@ -616,7 +616,7 @@ Ops used (notes): [`alpha_expansion`](https://furuse.work/ops/segmentation/graph
 
 ## No.2026.227 —— A Fly's Eye Closing In on Stripes — Do Zebra Stripes Really Spoil a Compound Eye's Sense of Distance, and Would a Fibonacci Eye Do Better?
 
-This exhibit covers “a fly's eye closing in on stripes”; the focus is “do zebra stripes really spoil a compound eye's sense of distance…”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+In evaluating A Fly's Eye Closing In on Stripes, while and Would a Fibonacci Eye Do Better. For A Fly's Eye Closing In on Stripes, the measured data compares tabanid with flies and tracks. The contrast between slow and down shows that do Zebra Stripes Really Spoil a Compound Eye's Sense of Distance, and Would a.
 
 [![A Fly's Eye Closing In on Stripes — Do Zebra Stripes Really Spoil a Compound Eye's Sense of Distance, and Would a Fibonacci Eye Do Better?](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zebra_stripes_fly_eye/02_reversal_ring.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zebra_stripes_fly_eye/02_reversal_ring.gif)
 
@@ -650,7 +650,7 @@ Ops used (notes): [`coherence`](https://furuse.work/ops/acoustics/dual/coherence
 
 ## No.2026.252 —— Calibrating Pixel-Shift Offsets and Pixel Aperture from the Images — Where Only Stripes Are Seen, the Shift Is Fixed in One Direction Only
 
-This exhibit covers “calibrating pixel-shift offsets and pixel aperture from the…”; the focus is “where only stripes are seen, the shift is fixed in one direction only”. Using synthetic and public data, it compares the measurement with a known answer.
+For Calibrating Pixel-Shift Offsets and Pixel Aperture from the Images, Where Only Stripes Are Seen. For Calibrating Pixel-Shift Offsets and Pixel Aperture from the Images, the computed data compares. The contrast between sim-to-real and calibration shows that where Only Stripes Are Seen, the Shift Is Fixed in One.
 
 [![Calibrating Pixel-Shift Offsets and Pixel Aperture from the Images — Where Only Stripes Are Seen, the Shift Is Fixed in One Direction Only](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/02_undetermined_map_star_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/02_undetermined_map_star.png)
 
@@ -688,7 +688,7 @@ Ops used (notes): [`pixel_shift_capture`](https://furuse.work/ops/optics/pixelsh
 
 ## No.2026.266 —— Water and Transparent Media — Ocean Waves, Surface Refraction, Colour Under Water and the Caustic of a Bottle, Scored Against Closed Forms, Published Values and Second Implementations
 
-This exhibit covers “water and transparent media”; the focus is “ocean waves, surface refraction, colour under water and the caustic of a bottle…”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+In evaluating Water and Transparent Media, while Published Values and Second Implementations. For Water and Transparent Media, we place moving in computed data, then compare lens and seen. The contrast between moving and lens shows that ocean Waves, while Published Values and Second Implementations.
 
 [![Water and Transparent Media — Ocean Waves, Surface Refraction, Colour Under Water and the Caustic of a Bottle, Scored Against Closed Forms, Published Values and Second Implementations](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/05_pool_views_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/05_pool_views.png)
 
@@ -730,7 +730,7 @@ Ops used (notes): [`beer_lambert_transmittance`](https://furuse.work/ops/optics/
 
 ## No.2026.268 —— How Water Looks in Inspection Images — Pool-Floor Caustics, a Bottle from the Side, a Wet Plate and a Hull Under Water, Scored Against Closed Forms and Second Methods
 
-This exhibit covers “how water looks in inspection images”; the focus is “pool-floor caustics, a bottle from the side, a wet plate and a hull under water…”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+A comparison of How Water Looks in Inspection Images matters when Pool-Floor Caustics, a Bottle from. The How Water Looks in Inspection Images test uses changes from computed data to separate what. The contrast between changes and what shows that pool-Floor Caustics, a Bottle from the Side, a Wet Plate and a Hull.
 
 [![How Water Looks in Inspection Images — Pool-Floor Caustics, a Bottle from the Side, a Wet Plate and a Hull Under Water, Scored Against Closed Forms and Second Methods](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_inspection_images/04_bottles_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_inspection_images/04_bottles.png)
 
@@ -772,7 +772,7 @@ Ops used (notes): [`bottle_image`](https://furuse.work/ops/optics/watervision/bo
 
 ## No.2026.269 —— Photographing a 3-D Scene Through the Actual Lens Prescription — Depth of Field, Cat's-Eye Bokeh, Corner Illumination, Colour Fringes and Ghosts, Scored Against Closed Forms, Existing Ops and an Independent Trace
 
-This exhibit covers “photographing a 3-d scene through the actual lens…”; the focus is “depth of field, cat's-eye bokeh, corner illumination, colour fringes and ghosts…”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+Using Photographing a three-dimensional Scene Through the Actual Lens Prescription in practice is. A computed data case for Photographing a three-dimensional Scene Through the Actual Lens. The contrast between lens-design and screen shows that depth of Field, while Existing Ops and an Independent Trace.
 
 [![Photographing a 3-D Scene Through the Actual Lens Prescription — Depth of Field, Cat's-Eye Bokeh, Corner Illumination, Colour Fringes and Ghosts, Scored Against Closed Forms, Existing Ops and an Independent Trace](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photograph_through_prescription/01_chart_good_vs_detuned_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photograph_through_prescription/01_chart_good_vs_detuned.png)
 
@@ -902,7 +902,7 @@ Ops used (notes): [`esdf`](https://furuse.work/ops/3d/occupancy/esdf.html) · [`
 
 ## No.2026.095 —— Measuring the Growth, Not the Width — Rephotographing the Same Wall Changes What the Error Is
 
-This exhibit covers “measuring the growth, not the width”; the focus is “rephotographing the same wall changes what the error is”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+In evaluating Measuring the Growth, while Rephotographing the Same Wall Changes What the Error Is. A computed data case links rephotographed, twelve, and epochs. The contrast between over and three shows that rephotographing the Same Wall Changes What the Error Is.
 
 [![Measuring the Growth, Not the Width — Rephotographing the Same Wall Changes What the Error Is](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width_timeseries/01_frames_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width_timeseries/01_frames.png)
 
@@ -944,7 +944,7 @@ Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_fram
 
 ## No.2026.026 —— Micro-Vibration of a Structure From Video — Does Motion Magnification Help You Measure?
 
-This exhibit covers “micro-vibration of a structure from video”; the focus is “does motion magnification help you measure”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+A comparison of Micro-Vibration of a Structure From Video matters when Does Motion Magnification Help. The test uses amplitude from computed data to separate synthesised from test. The contrast between whether and helps shows that does Motion Magnification Help You Measure?.
 
 [![Micro-Vibration of a Structure From Video — Does Motion Magnification Help You Measure?](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_motion_magnification/01_slit_scan_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_motion_magnification/01_slit_scan.png)
 
@@ -978,7 +978,7 @@ Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_fram
 
 ## No.2026.030 —— Particle Tracking as a (row, column, time) Volume — Mislinks Come in Two Directions
 
-This exhibit covers “particle tracking as a (row, column, time) volume”; the focus is “mislinks come in two directions”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+When measuring Particle Tracking as a Volume, Mislinks Come in Two Directions. We place video in computed data, then compare particles and tracked. The contrast between diffusion and coefficient shows that mislinks Come in Two Directions.
 
 [![Particle Tracking as a (row, column, time) Volume — Mislinks Come in Two Directions](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_particle_tracking/05_tracking_links.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_particle_tracking/05_tracking_links.gif)
 
@@ -1012,7 +1012,7 @@ Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_fram
 
 ## No.2026.111 —— Did It Settle, or Did We Just Scan It Again — What Changes When You Cut at the Detection Limit
 
-This exhibit covers “did it settle, or did we just scan it again”; the focus is “what changes when you cut at the detection limit”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+When measuring Did It Settle, while What Changes When You Cut at the Detection Limit. We place road in measured data, then compare surface and settling. The contrast between above and tunnel shows that what Changes When You Cut at the Detection Limit.
 
 [![Did It Settle, or Did We Just Scan It Again — What Changes When You Cut at the Detection Limit](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_settlement_significance/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_settlement_significance/01_scene.png)
 
@@ -1050,7 +1050,7 @@ This run produced **7 figures** in total - [see them all](https://github.com/fur
 
 ## No.2026.041 —— Template Tracking Drifts Quietly Before It Ever Loses the Target
 
-This exhibit examines “template tracking drifts quietly before it ever loses the…”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+In evaluating Template Tracking Drifts Quietly Before It, the measurement can become unreliable. We place camera in computed data, then compare moved and similarity. The contrast between transform and exposing shows that the measurement can become unreliable.
 
 [![Template Tracking Drifts Quietly Before It Ever Loses the Target](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_template_tracking/01_ncc_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_template_tracking/01_ncc_maps.png)
 
@@ -1084,7 +1084,7 @@ Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_fram
 
 ## No.2026.044 —— A Growth Time-Lapse as Space-Time Connected Components
 
-This exhibit examines “a growth time-lapse as space-time connected components”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+When measuring A Growth Time-Lapse as, the measurement can become unreliable. A computed data case links video, colonies, and spreading. The contrast between merging and volume shows that the measurement can become unreliable.
 
 [![A Growth Time-Lapse as Space-Time Connected Components](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_timelapse_growth/01_frames_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_timelapse_growth/01_frames.png)
 
@@ -1118,7 +1118,7 @@ Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_fram
 
 ## No.2026.045 —— Counting in (x, y, t) — Vehicles Passed, Occlusion, and One Constant: L/V
 
-This exhibit covers “counting in (x, y, t)”; the focus is “vehicles passed, occlusion, and one constant: L/V”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+When measuring Counting in, Vehicles Passed, Occlusion, and One Constant: L/V. We place traffic in synthetic data, then compare video and counted. The contrast between frame and virtual shows that vehicles Passed, Occlusion, and One Constant: L/V.
 
 [![Counting in (x, y, t) — Vehicles Passed, Occlusion, and One Constant: L/V](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_traffic_counting/01_per_frame_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_traffic_counting/01_per_frame.png)
 
@@ -1152,7 +1152,7 @@ Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_fram
 
 ## No.2026.089 —— Where the Warehouse Dwell Came From — Count Waiting Without Its Kind and Everything Is Just Congestion
 
-This exhibit covers “where the warehouse dwell came from”; the focus is “count waiting without its kind and everything is just congestion”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+In evaluating Where the Warehouse Dwell Came From, Count Waiting Without Its Kind and Everything Is. The test uses floor from synthetic data to separate plan from tracked. The contrast between workers and agvs shows that count Waiting Without Its Kind and Everything Is Just Congestion.
 
 [![Where the Warehouse Dwell Came From — Count Waiting Without Its Kind and Everything Is Just Congestion](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_warehouse_flow/09_scene_layout_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_warehouse_flow/09_scene_layout.png)
 
@@ -1190,7 +1190,7 @@ Ops used (notes): [`esdf`](https://furuse.work/ops/3d/occupancy/esdf.html) · [`
 
 ## No.2026.053 —— The Arrival-Time Surface as an Isosurface in (x, y, t)
 
-This exhibit examines “the arrival-time surface as an isosurface in (x, y, t)”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+In evaluating The Arrival-Time Surface as, the measurement can become unreliable. A computed data case links wavefronts, spreading, and point. The contrast between sources and extracted shows that the measurement can become unreliable.
 
 [![The Arrival-Time Surface as an Isosurface in (x, y, t)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/01_event_output_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/01_event_output.png)
 
@@ -1232,7 +1232,7 @@ Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_fram
 
 ## No.2026.127 —— A Clip as a Space-Time Cube — What Passed Where, and When, in One Solid
 
-This exhibit covers “a clip as a space-time cube”; the focus is “what passed where, and when, in one solid”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+Using A Clip as a Space-Time Cube in practice is difficult because What Passed Where, while in One Solid. A synthetic data case links video, summagator, and turns. The contrast between into and renders shows that what Passed Where, and When, in One Solid.
 
 [![A Clip as a Space-Time Cube — What Passed Where, and When, in One Solid](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_cube/02_cube_orbit.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_cube/02_cube_orbit.gif)
 
@@ -1274,7 +1274,7 @@ Ops used (notes): [`intensity`](https://furuse.work/ops/2d/features/intensity.ht
 
 ## No.2026.128 —— Living Tissue in 3D+t Without a Generator — Magnify, Flow, Interpolate, Height, All Against Truth
 
-This exhibit covers “living tissue in 3d+t without a generator”; the focus is “magnify, flow, interpolate, height, all against truth”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+In evaluating Living Tissue in three-dimensional+t Without a Generator, while All Against Truth. A synthetic data case links video, invents, and plausible. The contrast between motion and family shows that magnify, Flow, Interpolate, Height, All Against Truth.
 
 [![Living Tissue in 3D+t Without a Generator — Magnify, Flow, Interpolate, Height, All Against Truth](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/01_beating_orbit.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/01_beating_orbit.gif)
 
@@ -1324,7 +1324,7 @@ Ops used (notes): [`blend`](https://furuse.work/ops/shape2d/morph/blend.html) ·
 
 ## No.2026.206 —— Transcribing a Diabolo Model from the Paper and Checking It, then Reading Axis, Spin and Tension from Synthetic Video — Eq. (1b) as Printed Is Dimensionally Wrong and Gives NaN at the Real Dimensions; Closed Forms, an Exact String and MuJoCo as the Truth
 
-This exhibit covers “transcribing a diabolo model from the paper and checking…”; the focus is “eq, (1b) as printed is dimensionally wrong and gives nan at the real dimensions; closed…”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+A comparison of Transcribing a Diabolo Model from the Paper and Checking It, then Reading Axis, Spin. For Transcribing a Diabolo Model from the Paper and Checking It, then Reading Axis, Spin and. The contrast between primary and source shows that eq as Printed Is Dimensionally Wrong and Gives NaN at the Real.
 
 [![Transcribing a Diabolo Model from the Paper and Checking It, then Reading Axis, Spin and Tension from Synthetic Video — Eq. (1b) as Printed Is Dimensionally Wrong and Gives NaN at the Real Dimensions; Closed Forms, an Exact String and MuJoCo as the Truth](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_diabolo_model_and_vision/01_diabolo_throw_axis_from_image.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_diabolo_model_and_vision/01_diabolo_throw_axis_from_image.gif)
 
@@ -1366,7 +1366,7 @@ Ops used (notes): [`arrow`](https://furuse.work/ops/annotate/pointer/arrow.html)
 
 ## No.2026.213 —— A Swarm That Flows Like a Fluid Senses an Invisible Obstacle from the Disturbance of Its Velocity Field Alone — Reading the Impact Point and the Obstacle Outline by Tracking and PIV (particle image velocimetry) on Overhead Video, from Upstream Before Contact, and Saying Nothing When There Is No Obstacle
 
-This exhibit covers “a swarm that flows like a fluid senses an invisible…”; the focus is “reading the impact point and the obstacle outline by tracking and PIV…”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+For A Swarm That Flows Like a Fluid Senses an Invisible Obstacle from the Disturbance of Its Velocity. A measured data case for A Swarm That Flows Like a Fluid Senses an Invisible Obstacle from the. The contrast between hydrodynamics and particles shows that reading the Impact Point and the Obstacle Outline by.
 
 [![A Swarm That Flows Like a Fluid Senses an Invisible Obstacle from the Disturbance of Its Velocity Field Alone — Reading the Impact Point and the Obstacle Outline by Tracking and PIV (particle image velocimetry) on Overhead Video, from Upstream Before Contact, and Saying Nothing When There Is No Obstacle](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_swarm_obstacle_from_flow/02_swarmflow_speed_change_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_swarm_obstacle_from_flow/02_swarmflow_speed_change_maps.png)
 
@@ -1402,7 +1402,7 @@ Ops used (notes): [`blob_label`](https://furuse.work/ops/blob/connect/blob_label
 
 ## No.2026.170 —— Measuring a Table-Tennis Ball the Way the Pioneers Did — Multi-Camera Tracking, Triangulation, Trajectory Prediction, Bounce and Spin, Scored by Theorems on a Table with Ground Truth
 
-This exhibit covers “measuring a table-tennis ball the way the pioneers did”; the focus is “multi-camera tracking, triangulation, trajectory prediction, rebound and spin…”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+When measuring Measuring a Table-Tennis Ball the Way the Pioneers Did, Multi-Camera Tracking. For Measuring a Table-Tennis Ball the Way the Pioneers Did, while then compare tennis and same. The contrast between visual and stance shows that multi-Camera Tracking, while Scored by Theorems on a Table with Ground Truth.
 
 [![Measuring a Table-Tennis Ball the Way the Pioneers Did — Multi-Camera Tracking, Triangulation, Trajectory Prediction, Bounce and Spin, Scored by Theorems on a Table with Ground Truth](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/01_rig_view_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/01_rig_view.png)
 
@@ -1448,7 +1448,7 @@ Ops used (notes): [`add_ball`](https://furuse.work/ops/drive/ballworld/add_ball.
 
 ## No.2026.171 —— Kendama the Way the Pioneers Did It — A True-to-Shape Kendama Filmed by Two Cameras, the Ball's Flight Predicted from Images Alone and Caught in the Big, Small and Base Cups
 
-This exhibit covers “kendama the way the pioneers did it”; the focus is “a true-to-shape kendama filmed by two cameras…”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+For Kendama the Way the Pioneers Did It, while Small and Base Cups. For Kendama the Way the Pioneers Did It, while then compare have and played. The contrast between thirty and years shows that a True-to-Shape Kendama Filmed by Two Cameras, while Small and Base Cups.
 
 [![Kendama the Way the Pioneers Did It — A True-to-Shape Kendama Filmed by Two Cameras, the Ball's Flight Predicted from Images Alone and Caught in the Big, Small and Base Cups](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/01_rig_view_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/01_rig_view.png)
 
@@ -1494,7 +1494,7 @@ Ops used (notes): [`ball_detect`](https://furuse.work/ops/drive/balltrack/ball_d
 
 ## No.2026.174 —— Filming a Spinning Table-Tennis Ball and Reading Its Spin Two Ways — From the Curve and From the Markings
 
-This exhibit covers “filming a spinning table-tennis ball and reading its spin…”; the focus is “from the curve and from the markings”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+Using Filming a Spinning Table-Tennis Ball and Reading Its Spin Two Ways in practice is difficult. The Filming a Spinning Table-Tennis Ball and Reading Its Spin Two Ways test uses balls from. The contrast between speed and angle shows that from the Curve and From the Markings.
 
 [![Filming a Spinning Table-Tennis Ball and Reading Its Spin Two Ways — From the Curve and From the Markings](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_spin/03_top_view_sidespin.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_spin/03_top_view_sidespin.gif)
 
@@ -1528,7 +1528,7 @@ Ops used (notes): [`add_ball`](https://furuse.work/ops/drive/ballworld/add_ball.
 
 ## No.2026.175 —— Filming a Bouncing Table-Tennis Ball with a High-Speed Camera and Reading Restitution and Friction — Checked Against Published Values
 
-This exhibit covers “filming a bouncing table-tennis ball with a high-speed…”; the focus is “checked against published values”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+When measuring Filming a Bouncing Table-Tennis Ball with a High-Speed Camera and Reading Restitution. For Filming a Bouncing Table-Tennis Ball with a High-Speed Camera and Reading Restitution and. The contrast between decides and much shows that checked Against Published Values.
 
 [![Filming a Bouncing Table-Tennis Ball with a High-Speed Camera and Reading Restitution and Friction — Checked Against Published Values](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_bounce/05_regime_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_bounce/05_regime_map.png)
 
@@ -1562,7 +1562,7 @@ Ops used (notes): [`add_ball`](https://furuse.work/ops/drive/ballworld/add_ball.
 
 ## No.2026.177 —— Reading Errors End the Table-Tennis Rally — How Much Noise and Latency Move the Landing Point, in Closed Form Before the Shot
 
-This exhibit covers “reading errors end the table-tennis rally”; the focus is “how much noise and latency move the landing point, in closed form before the shot”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+Using Reading Errors End the Table-Tennis Rally in practice is difficult because How Much Noise and. A computed data case for Reading Errors End the Table-Tennis Rally links robot, reads, and ball. The contrast between then and computes shows that how Much Noise and Latency Move the Landing Point, in Closed Form.
 
 [![Reading Errors End the Table-Tennis Rally — How Much Noise and Latency Move the Landing Point, in Closed Form Before the Shot](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_rally_loop/01_landing_cloud.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_rally_loop/01_landing_cloud.gif)
 
@@ -1592,7 +1592,7 @@ Ops used (notes): [`aim_velocity`](https://furuse.work/ops/drive/racket/aim_velo
 
 ## No.2026.145 —— Testing the Periodic Boundary of Temporal Operators with a Seamless Loop
 
-This exhibit examines “testing the periodic edge condition of temporal operators with a…”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+In evaluating Testing the Periodic the method of Temporal Operators, the measurement can become unreliable. The Testing the Periodic the method of Temporal Operators test uses material from computed data to. The contrast between invariant and that shows that the measurement can become unreliable.
 
 [![Testing the Periodic Boundary of Temporal Operators with a Seamless Loop](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_periodic_video_boundary/05_contamination_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_periodic_video_boundary/05_contamination_map.png)
 
@@ -1676,7 +1676,7 @@ Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_fram
 
 ## No.2026.028 —— Chain the Neighbours Together and You Cannot Get Back Where You Started
 
-This exhibit examines “chain the neighbours together and you cannot get back where…”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+For Chain the Neighbours Together and You Cannot Get, the measurement can become unreliable. The test uses frames from computed data to separate cylindrical from panorama. The contrast between rotation and sequence shows that the measurement can become unreliable.
 
 [![Chain the Neighbours Together and You Cannot Get Back Where You Started](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_panorama_drift/01_seams_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_panorama_drift/01_seams.png)
 
@@ -1710,7 +1710,7 @@ Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_fram
 
 ## No.2026.108 —— Measuring on a Real Stereo Photograph — Three Stumbles Synthesis Never Produces
 
-This exhibit covers “measuring on a real stereo photograph”; the focus is “three stumbles synthesis never produces”. Using measured data, it compares conditions and checks how far the measurement remains reliable. The figure shows how the result and its error change across the tested conditions.
+In evaluating Measuring on a Real Stereo Photograph, Three Stumbles Synthesis Never Produces. A measured data case links exhibit, this, and museum. The contrast between measured and distributor shows that three Stumbles Synthesis Never Produces.
 
 [![Measuring on a Real Stereo Photograph — Three Stumbles Synthesis Never Produces](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_depth/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_depth/01_scene.png)
 
@@ -1744,7 +1744,7 @@ This run produced **5 figures** in total - [see them all](https://github.com/fur
 
 ## No.2026.034 —— The Convergence Basin of Point-Cloud Registration — How Far Off Can the Initial Pose Be?
 
-This exhibit covers “the convergence basin of point-cloud registration”; the focus is “how far off can the initial pose be”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+For The Convergence Basin of Point-Cloud Registration, How Far Off Can the Initial Pose Be. A computed data case links success, rate, and contoured. The contrast between re-sampled and every shows that how Far Off Can the Initial Pose Be?.
 
 [![The Convergence Basin of Point-Cloud Registration — How Far Off Can the Initial Pose Be?](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/01_basin_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/01_basin.png)
 
@@ -1780,7 +1780,7 @@ Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_fram
 
 ## No.2026.117 —— Which Quantities Really Survive a Rotation — Auditing Invariance on a Real Coin
 
-This exhibit covers “which quantities really survive a rotation”; the focus is “auditing invariance on a real coin”. Using measured data, it compares conditions and checks how far the measurement remains reliable. The figure shows how the result and its error change across the tested conditions.
+For Which Quantities Really Survive a Rotation, Auditing Invariance on a Real Coin. The synthetic data compares shape with features and tracks routinely. The contrast between called and rotation-invariant shows that auditing Invariance on a Real Coin.
 
 [![Which Quantities Really Survive a Rotation — Auditing Invariance on a Real Coin](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rotation_invariance_audit/01_rotation_frames_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rotation_invariance_audit/01_rotation_frames.png)
 
@@ -1802,7 +1802,7 @@ Ops used (notes): [`annotate_outline`](https://furuse.work/ops/annotate/paper/an
 
 ## No.2026.190 —— One Scene, Two Worlds — Scoring a Photoreal Simulator's Depth Against a Closed-Form Truth, Side by Side with Our Own World
 
-This exhibit covers “one scene, two worlds”; the focus is “scoring a photoreal simulator's depth against a closed-form truth…”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+When measuring One Scene, while Side by Side with Our Own World. A measured data case links author, wish, and finished. The contrast between everything and built shows that scoring a Photoreal Simulator's Depth Against a Closed-Form Truth, Side by Side with Our Own World.
 
 [![One Scene, Two Worlds — Scoring a Photoreal Simulator's Depth Against a Closed-Form Truth, Side by Side with Our Own World](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_carla_bridge/01_carla_two_worlds_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_carla_bridge/01_carla_two_worlds.png)
 
@@ -1832,7 +1832,7 @@ Ops used (notes): [`camera_pose_to_carla`](https://furuse.work/ops/drive/carla/c
 
 ## No.2026.191 —— Assembling One Town — Auto-Joining Driving-School Elements, Driving Through from Entry to Exit, and Scoring Every Stop Line on the Way
 
-This exhibit covers “assembling one town”; the focus is “auto-joining driving-school elements, driving through from entry to exit…”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+In evaluating Assembling One Town, while and Scoring Every Stop Line on the Way. The computed data compares foundation with author and tracks plan. The contrast between capstone and series shows that auto-Joining Driving-School Elements, Driving Through from Entry to Exit, and Scoring Every Stop Line on the Way.
 
 [![Assembling One Town — Auto-Joining Driving-School Elements, Driving Through from Entry to Exit, and Scoring Every Stop Line on the Way](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_town/01_town_overview_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_town/01_town_overview.png)
 
@@ -1874,7 +1874,7 @@ Ops used (notes): [`course_crank`](https://furuse.work/ops/drive/course/course_c
 
 ## No.2026.192 —— Building a Real Japanese Town in Our Own World and Driving It — Roads from OpenStreetMap, Buildings from PLATEAU, Japanese Furniture and Rules
 
-This exhibit covers “building a real japanese town in our own world and driving…”; the focus is “roads from openstreetmap, buildings from PLATEAU, japanese furniture and rules”. Using synthetic and public data, it compares the measurement with a known answer.
+For Building a Real Japanese Town in Our Own World and Driving It, while Japanese Furniture and Rules. The test uses author from synthetic data to separate wish from possible. The contrast between bundled and maps shows that roads from OpenStreetMap, Buildings from PLATEAU, Japanese Furniture and Rules.
 
 [![Building a Real Japanese Town in Our Own World and Driving It — Roads from OpenStreetMap, Buildings from PLATEAU, Japanese Furniture and Rules](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/04_japan_town_frames_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/04_japan_town_frames.png)
 
@@ -1916,7 +1916,7 @@ Ops used (notes): [`citygml_synthetic`](https://furuse.work/ops/drive/japan/city
 
 ## No.2026.193 —— Driving Our Own Driver Through Someone Else's Scenario and Submitting to Someone Else's Judge — CommonRoad Public Scenarios and TUM's Official Checker
 
-This exhibit covers “driving our own driver through someone else's scenario and…”; the focus is “commonroad public scenarios and tum's official checker”. Using public data, it compares conditions and checks how far the measurement remains reliable.
+In evaluating Driving Our Own Driver Through Someone Else's Scenario and Submitting to Someone Else's. For Driving Our Own Driver Through Someone Else's Scenario and Submitting to Someone Else's Judge. The contrast between your and traps shows that commonRoad Public Scenarios and TUM's Official Checker.
 
 [![Driving Our Own Driver Through Someone Else's Scenario and Submitting to Someone Else's Judge — CommonRoad Public Scenarios and TUM's Official Checker](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_commonroad/01_commonroad_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_commonroad/01_commonroad_scene.png)
 
@@ -1954,7 +1954,7 @@ Ops used (notes): [`boundary`](https://furuse.work/ops/2d/region/boundary.html) 
 
 ## No.2026.195 —— Peg-in-Hole with a Compliant Wrist — Whitney's Quasi-Static Geometry as the Gate, a Wrist Camera to Centre the Peg, MuJoCo Contacts to Check It
 
-This exhibit covers “peg-in-hole with a compliant wrist”; the focus is “whitney's quasi-static geometry as the check, a wrist camera to centre the peg…”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+For Peg-in-Hole with a Compliant Wrist, while MuJoCo Contacts to Check It. For Peg-in-Hole with a Compliant Wrist, the synthetic data compares exhibit with. The contrast between series and things shows that whitney's Quasi-Static Geometry as the method, a Wrist Camera to Centre the Peg, MuJoCo Contacts to Check It.
 
 [![Peg-in-Hole with a Compliant Wrist — Whitney's Quasi-Static Geometry as the Gate, a Wrist Camera to Centre the Peg, MuJoCo Contacts to Check It](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pegsim_insertion/03_pegsim_wrist_overlay_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pegsim_insertion/03_pegsim_wrist_overlay.png)
 
@@ -1992,7 +1992,7 @@ Ops used (notes): [`camera_world_to_cv`](https://furuse.work/ops/drive/pegsim/ca
 
 ## No.2026.200 —— Tracking, Predicting and Returning an Air-Hockey Puck with a Five-Bar Linkage — No Learning, Closed Forms and an External Simulator as the Gates
 
-This exhibit covers “tracking, predicting and returning an air-hockey puck with…”; the focus is “no learning, closed forms and an external simulator as the gates”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+Using Tracking, while Closed Forms and an External Simulator as the Gates. For Tracking, while then compare exhibit and physics-simulation. The contrast between fullseye and series shows that no Learning, Closed Forms and an External Simulator as the Gates.
 
 [![Tracking, Predicting and Returning an Air-Hockey Puck with a Five-Bar Linkage — No Learning, Closed Forms and an External Simulator as the Gates](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_air_hockey_intercept/01_airhockey_frame_detect_predict_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_air_hockey_intercept/01_airhockey_frame_detect_predict.png)
 
@@ -2030,7 +2030,7 @@ Ops used (notes): [`crosshair`](https://furuse.work/ops/annotate/pointer/crossha
 
 ## No.2026.201 —— Detecting and Recovering Peg-Insertion Failures with a Rule Table — Whitney's Contact States Instead of a VLM, MuJoCo as the Truth
 
-This exhibit covers “detecting and recovering peg-insertion failures with a rule…”; the focus is “whitney's contact states instead of a VLM, MuJoCo as the truth”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+For Detecting and Recovering Peg-Insertion Failures with a Rule Table, while MuJoCo as the Truth. A synthetic data case for Detecting and Recovering Peg-Insertion Failures with a Rule Table links. The contrast between physics-simulation and fullseye shows that whitney's Contact States Instead of a VLM, MuJoCo as.
 
 [![Detecting and Recovering Peg-Insertion Failures with a Rule Table — Whitney's Contact States Instead of a VLM, MuJoCo as the Truth](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_failure_recovery/01_pegfail_where_it_breaks_offset_flip_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_failure_recovery/01_pegfail_where_it_breaks_offset_flip.png)
 
@@ -2068,7 +2068,7 @@ Ops used (notes): [`chamfer_capture`](https://furuse.work/ops/drive/pegsim/chamf
 
 ## No.2026.203 —— Calibrating a Vision-Based Tactile Sensor's Illumination on Real Calibration Spheres, with a Gradient LUT as the Second Implementation — the Ball Radius and Hand-Marked Circles as the Truth
 
-This exhibit covers “calibrating a vision-based tactile sensor's illumination on…”; the focus is “the ball radius and hand-marked circles as the truth”. Using synthetic and public measured data, it compares the measurement with a known answer.
+Using Calibrating a Vision-Based Tactile Sensor's Illumination on Real Calibration Spheres, with a. For Calibrating a Vision-Based Tactile Sensor's Illumination on Real Calibration Spheres, with a. The contrast between continues and tacsim shows that the Ball Radius and Hand-Marked Circles as the Truth.
 
 [![Calibrating a Vision-Based Tactile Sensor's Illumination on Real Calibration Spheres, with a Gradient LUT as the Second Implementation — the Ball Radius and Hand-Marked Circles as the Truth](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacscalib_sphere_lut/01_tacscalib_synthetic_error_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacscalib_sphere_lut/01_tacscalib_synthetic_error_maps.png)
 
@@ -2110,7 +2110,7 @@ Ops used (notes): [`calib_pack_load`](https://furuse.work/ops/drive/tacscalib/ca
 
 ## No.2026.204 —— Reading Peg-in-Hole Insertion through Two Fingertip Membranes — Contact Wrench, Whitney's Contact States, Wall Friction and Wrist Stiffness from Shear Images; at the Wedging Boundary the Wrench Alone Is Blind
 
-This exhibit covers “reading peg-in-hole insertion through two fingertip…”; the focus is “contact wrench, whitney's contact states, wall friction and wrist stiffness from shear…”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+Using Reading Peg-in-Hole Insertion through Two Fingertip Membranes in practice is difficult because. For Reading Peg-in-Hole Insertion through Two Fingertip Membranes, the measured data compares. The contrast between series and three shows that contact Wrench, while at the Wedging the method the Wrench Alone Is Blind.
 
 [![Reading Peg-in-Hole Insertion through Two Fingertip Membranes — Contact Wrench, Whitney's Contact States, Wall Friction and Wrist Stiffness from Shear Images; at the Wedging Boundary the Wrench Alone Is Blind](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_insertion_tactile/12_pegtactile_wrist_stiffness_from_images_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_insertion_tactile/12_pegtactile_wrist_stiffness_from_images.png)
 
@@ -2156,7 +2156,7 @@ Ops used (notes): [`arrow`](https://furuse.work/ops/annotate/pointer/arrow.html)
 
 ## No.2026.208 —— Cutting a Peg's Rotation Search to 1/n with Its Symmetry — Inserting Square, Hexagonal and Keyed Pegs Checked by Group Identities, Closed Forms and MuJoCo; Friction Shrinks the Hexagon's Chamfer Window from 20.9° to 6.8°
 
-This exhibit covers “cutting a peg's rotation search to 1/n with its symmetry”; the focus is “inserting square, hexagonal and keyed pegs checked by group identities…”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+Using Cutting a Peg's Rotation Search to 1/n with Its Symmetry in practice is difficult because. The Cutting a Peg's Rotation Search to /n with Its Symmetry test uses physics-simulation from. The contrast between continues and subject shows that inserting Square, Hexagonal and Keyed Pegs Checked by Group.
 
 [![Cutting a Peg's Rotation Search to 1/n with Its Symmetry — Inserting Square, Hexagonal and Keyed Pegs Checked by Group Identities, Closed Forms and MuJoCo; Friction Shrinks the Hexagon's Chamfer Window from 20.9° to 6.8°](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_symmetry_search/01_pegsym_rotating_shapes_read_mod_2pi_over_n.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_symmetry_search/01_pegsym_rotating_shapes_read_mod_2pi_over_n.gif)
 
@@ -2198,7 +2198,7 @@ Ops used (notes): [`pegsym_scene_mjcf`](https://furuse.work/ops/drive/pegsym/peg
 
 ## No.2026.212 —— Registration That Does Not Move by a Single Bit When the Points Are Shuffled — FP64 Reductions by the Ozaki Scheme, with the Error Falling in Steps under a Guaranteed Bound; Slow on the CPU, and GPU Speed Is Left to cuBLAS Emulation
 
-This exhibit covers “registration that does not move by a single bit when the…”; the focus is “FP64 reductions by the ozaki scheme, with the error falling in steps under a guaranteed…”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+Using Registration That Does Not Move by a Single Bit When the Points Are Shuffled in practice is. The Registration That Does Not Move by a Single Bit When the Points Are Shuffled test uses same. The contrast between order and kabsch shows that fP64 Reductions by the Ozaki Scheme, with the Error Falling in Steps.
 
 [![Registration That Does Not Move by a Single Bit When the Points Are Shuffled — FP64 Reductions by the Ozaki Scheme, with the Error Falling in Steps under a Guaranteed Bound; Slow on the CPU, and GPU Speed Is Left to cuBLAS Emulation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_reproducible_icp/01_error_staircase_ozaki1_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_reproducible_icp/01_error_staircase_ozaki1.png)
 
@@ -2236,7 +2236,7 @@ Ops used (notes): [`cross_covariance_reproducible`](https://furuse.work/ops/driv
 
 ## No.2026.133 —— Where Is the Public Camera Looking — The Orientation of a Fixed Camera Whose Only Published Fact Is Its Position, from the Picture Itself
 
-This exhibit covers “where is the public camera looking”; the focus is “the orientation of a fixed camera whose only published fact is its position…”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+In evaluating Where Is the Public Camera Looking, while from the Picture Itself. For Where Is the Public Camera Looking, while then compare road and weather. The contrast between tourism and publish shows that the Orientation of a Fixed Camera Whose Only Published Fact Is Its Position, from the Picture Itself.
 
 [![Where Is the Public Camera Looking — The Orientation of a Fixed Camera Whose Only Published Fact Is Its Position, from the Picture Itself](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading/02_yaw_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading/02_yaw_sweep.gif)
 
@@ -2270,7 +2270,7 @@ Ops used (notes): [`camera_orientation_from_skyline`](https://furuse.work/ops/ge
 
 ## No.2026.134 —— Where Is the Public Camera Looking, for Real — Hunting the Sun in 807 Road Cameras, Fixing the Heading from One Sunset and Checking It Against the Road
 
-This exhibit covers “where is the public camera looking, for real”; the focus is “hunting the sun in 807 road cameras, fixing the heading from one sunset and checking it…”. Using synthetic and measured data, it compares the measurement with a known answer.
+In evaluating Where Is the Public Camera Looking, for Real, Hunting the Sun in 807 Road Cameras, Fixing. A synthetic data case for Where Is the Public Camera Looking, while and saturated. The contrast between disc and probing shows that hunting the Sun in Road Cameras, Fixing the Heading from One Sunset and.
 
 [![Where Is the Public Camera Looking, for Real — Hunting the Sun in 807 Road Cameras, Fixing the Heading from One Sunset and Checking It Against the Road](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading_real/02_sunset_follow.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading_real/02_sunset_follow.gif)
 
@@ -2308,7 +2308,7 @@ Ops used (notes): [`bloom`](https://furuse.work/ops/gfx2d/post/bloom.html) · [`
 
 ## No.2026.247 —— Calibrating a Thin-Film Model to Real Images — and Giving No Number to What the Data Do Not Determine
 
-This exhibit covers “calibrating a thin-film model to real images”; the focus is “and giving no number to what the data do not determine”. Using synthetic and public data, it compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+A comparison of Calibrating a Thin-Film Model to Real Images matters when and Giving No Number to What. For Calibrating a Thin-Film Model to Real Images, the synthetic data compares coefficients with. The contrast between coefficients and forward shows that and Giving No Number to What the Data Do Not Determine.
 
 [![Calibrating a Thin-Film Model to Real Images — and Giving No Number to What the Data Do Not Determine](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/08_real_determined_vs_combinations_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/08_real_determined_vs_combinations.png)
 
@@ -2354,7 +2354,7 @@ The shared warning is to convert to linear radiance before calling anything. Pas
 
 ## No.2026.032 —— Peeling Layers With Many Wavelengths — Underdrawing, Ground, Glaze and Fading, Truth in Hand
 
-This exhibit covers “peeling layers with many wavelengths”; the focus is “underdrawing, ground, glaze and fading, truth in hand”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+Using Peeling Layers With Many Wavelengths in practice is difficult because Underdrawing, Ground, Glaze. The computed data compares spectral with cube and tracks stacked. The contrast between then and unmixed shows that underdrawing, Ground, Glaze and Fading, Truth in Hand.
 
 [![Peeling Layers With Many Wavelengths — Underdrawing, Ground, Glaze and Fading, Truth in Hand](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pigment_unmixing/01_per_field_auc_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pigment_unmixing/01_per_field_auc.png)
 
@@ -2384,7 +2384,7 @@ Ops used (notes): [`delta_e_map`](https://furuse.work/ops/imgmetrics/colordiff/d
 
 ## No.2026.107 —— Separating a Real Immunostain by Colour — The Watchdog Was Blind to Exactly the Error It Should Catch
 
-This exhibit covers “separating a real immunostain by colour”; the focus is “the watchdog was blind to exactly the error it should catch”. Using synthetic and measured data, it compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+For Separating a Real Immunostain by Colour, The Watchdog Was Blind to Exactly the Error It Should Catch. A synthetic data case links deconvolution, separates, and perfectly. The contrast between recompose and unit shows that the Watchdog Was Blind to Exactly the Error It Should Catch.
 
 [![Separating a Real Immunostain by Colour — The Watchdog Was Blind to Exactly the Error It Should Catch](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stain_unmix/01_separation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stain_unmix/01_separation.png)
 
@@ -2414,7 +2414,7 @@ This run produced **4 figures** in total - [see them all](https://github.com/fur
 
 ## No.2026.051 —— Colour Constancy (White Balance) — No Method Works, Only Conditions Do
 
-This exhibit covers “colour constancy (white balance)”; the focus is “no method works, only conditions do”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+White-balance estimators change rank when the illuminant, reference patches, or exposure changes Linear colour pictures are synthesised from known reflectances and illuminants The plots show error rising sharply when the white reference is removed or saturated.
 
 [![Colour Constancy (White Balance) — No Method Works, Only Conditions Do](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_white_balance/01_casts_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_white_balance/01_casts.png)
 
@@ -2444,7 +2444,7 @@ Ops used (notes): [`delta_e_map`](https://furuse.work/ops/imgmetrics/colordiff/d
 
 ## No.2026.229 —— A Material Optical-Property Library — 86 Glasses, Crystals, Semiconductors, Metals, Liquids and Plastics in One Table, Scored on Catalogue Values and a Second Implementation
 
-This exhibit covers “a material optical-property library”; the focus is “86 glasses, crystals, semiconductors, metals, liquids and plastics in one table…”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+When measuring A Material Optical-Property Library, 86 Glasses, Crystals, Semiconductors, Metals. For A Material Optical-Property Library, while then compare observing and optics. The contrast between lenses and windows shows that Glasses, while Scored on Catalogue Values and a Second Implementation.
 
 [![A Material Optical-Property Library — 86 Glasses, Crystals, Semiconductors, Metals, Liquids and Plastics in One Table, Scored on Catalogue Values and a Second Implementation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/01_abbe_diagram_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/01_abbe_diagram.png)
 
@@ -2486,7 +2486,7 @@ Ops used (notes): [`abbe_number`](https://furuse.work/ops/optics/matprop/abbe_nu
 
 ## No.2026.230 —— Near-Infrared Inspection Through a Silicon Wafer — Choosing the LED Wavelength from the Source × Wafer × Sensor Integral
 
-This exhibit covers “near-infrared inspection through a silicon wafer”; the focus is “choosing the LED wavelength from the source × wafer × sensor integral”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+For Near-Infrared Inspection Through a Silicon Wafer, Choosing the LED Wavelength from the Source ×. For Near-Infrared Inspection Through a Silicon Wafer, the measured data compares back with side. The contrast between light and transparent shows that choosing the LED Wavelength from the Source × Wafer × Sensor.
 
 [![Near-Infrared Inspection Through a Silicon Wafer — Choosing the LED Wavelength from the Source × Wafer × Sensor Integral](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/01_wavelength_contradiction_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/01_wavelength_contradiction.png)
 
@@ -2524,7 +2524,7 @@ Ops used (notes): [`bandpass_spectrum`](https://furuse.work/ops/optics/spectral/
 
 ## No.2026.231 —— Optical Fibres and Light Guides — From the Material Table's Fused Silica to Modes, Dispersion, Mode Field and Illumination Efficiency
 
-This exhibit covers “optical fibres and light guides”; the focus is “from the material table's fused silica to modes, dispersion…”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+A comparison of Optical Fibres and Light Guides matters when From the Material Table's Fused Silica to. A computed data case for Optical Fibres and Light Guides links inspection, travels, and fibre. The contrast between bundles and interferometric shows that from the Material Table's Fused Silica to Modes.
 
 [![Optical Fibres and Light Guides — From the Material Table's Fused Silica to Modes, Dispersion, Mode Field and Illumination Efficiency](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_light_guide/03_lp_b_v_diagram_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_light_guide/03_lp_b_v_diagram.png)
 
@@ -2562,7 +2562,7 @@ Ops used (notes): [`energy_to_photons`](https://furuse.work/ops/optics/spectral/
 
 ## No.2026.249 —— Reading a Lens Design File (.zmx), Analysing It, Fixing It and Writing It Back — Scored Against Two Other Readers and a Round Trip
 
-This exhibit covers “reading a lens design file (.zmx), analysing it…”; the focus is “scored against two other readers and a round trip”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+When measuring Reading a Lens Design File, while Scored Against Two Other Readers and a Round Trip. The Reading a Lens Design File, Analysing It, Fixing It and Writing It Back test uses plain-text. The contrast between commercial and sequential shows that scored Against Two Other Readers and a Round Trip.
 
 [![Reading a Lens Design File (.zmx), Analysing It, Fixing It and Writing It Back — Scored Against Two Other Readers and a Round Trip](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_file_roundtrip/02_spot_diagram_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_file_roundtrip/02_spot_diagram.png)
 
@@ -2602,13 +2602,13 @@ Ops used (notes): [`drawing_raster`](https://furuse.work/ops/optics/drawing/draw
 
 ## No.2026.261 —— A Zoom Lens as Differences of One Prescription — Scored Against the Two-Thin-Lens Closed Form and a Round Trip Through the Design File's Multi-Configuration Table
 
-This exhibit covers “a zoom lens as differences of one prescription”; the focus is “scored against the two-thin-lens closed form and a round trip through the design file's…”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+When measuring A Zoom Lens as Differences of One Prescription, Scored Against the Two-Thin-Lens Closed. For A Zoom Lens as Differences of One Prescription, while then compare configurations and that. The contrast between differ and only shows that scored Against the Two-Thin-Lens Closed Form and a Round Trip.
 
 [![A Zoom Lens as Differences of One Prescription — Scored Against the Two-Thin-Lens Closed Form and a Round Trip Through the Design File's Multi-Configuration Table](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zoom_configurations/01_zoom_configurations_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zoom_configurations/01_zoom_configurations.png)
 
 *↑ **A Zoom Lens as Differences of One Prescription — Scored Against the Two-Thin-Lens Closed Form and a Round Trip Through the Design File's Multi-Configuration Table** ―― Several configurations that differ only in a spacing or a curvature, such as wide, standard and tele, are held as differences of one prescription instead of copies. Five new ops (`lensconfig`, category `lensconfig` of `opsoptics`): resolve all configurations, resolve one, the operand-by-configuration table, one metric (EFL, back focal length, RMS spot, MTF, encircled energy) per configuration, and append a configuration. `lens_file_read` / `lens_file_write` read and write the `MNUM` table of the design file (.zmx) with its `THIC` / `CRVT` / `GLSS` / `PRAM` rows; the row layout was checked on 24 public zoom-lens files. For two thin lenses (f1 = 100, f2 = 60 mm) at separations 10 / 20 / 30 mm the EFL and back focal length match the closed form f1 f2 / (f1 + f2 - d) to 1e-9, and for one ideal lens whose f changes per configuration the encircled energy is the Airy 83.8 % (worst difference 1e-4). A Cooke triplet with the gap between the first two lenses changed (the image distance refocused per configuration) has EFL 50.26 / 50.02 / 49.79 mm and on-axis RMS spot 3.6 / 12.0 / 26.2 um. Written to a .zmx with an MNUM table and read back, every overridden value and the EFL agree to 1e-12 per configuration and write-read-write gives the same table. A system whose aperture, field or wavelength differs between configurations cannot be carried by the verified rows, so the writer refuses it instead of dropping the difference. Learning 0, calibration 0, 14 gates.*
 
-Terms: MTF — The magnitude of the optical transfer function, showing how image contrast is transferred at each spatial frequency.
+Terms: MTF — The magnitude of the optical transfer function, showing how image contrast is transferred at each spatial frequency.; Airy pattern — The diffraction image of a circular aperture. The Airy-disc radius to the first dark ring is 1.22 λF.
 
 ```
 py -3.11 examples/poc_zoom_configurations.py
@@ -2622,7 +2622,7 @@ Ops used (notes): [`encircled_energy`](https://furuse.work/ops/optics/imaging/en
 
 ## No.2026.262 —— Glass Substitution and Multi-Start Search — Scored Against the Thin-Achromat Closed Form and the Third-Order Best-Form Bending
 
-This exhibit covers “optical material substitution and multi-start search”; the focus is “scored against the thin-achromat closed form and the third-order best-form bending”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+A comparison of the method Substitution and Multi-Start Search matters when Scored Against the Thin-Achromat. For the method Substitution and Multi-Start Search, the computed data compares model with swapped and. The contrast between local and optimiser shows that scored Against the Thin-Achromat Closed Form and the.
 
 [![Glass Substitution and Multi-Start Search — Scored Against the Thin-Achromat Closed Form and the Third-Order Best-Form Bending](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_global_search/01_lens_global_search_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_global_search/01_lens_global_search.png)
 
@@ -2640,7 +2640,7 @@ Ops used (notes): [`glass`](https://furuse.work/ops/optics/design/glass.html) ·
 
 ## No.2026.265 —— Designing a Triplet from a Table of Requirements — A Merit Function with Edge-Thickness, Centre-Thickness and Air-Gap Bounds, Scored Against Closed Forms and an Independent Implementation
 
-This exhibit covers “designing a triplet from a table of requirements”; the focus is “a merit function with edge-thickness, centre-thickness and air-gap bounds…”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+For Designing a Triplet from a Table of Requirements, A Merit Function with Edge-Thickness. A measured data case for Designing a Triplet from a Table of Requirements links designer, edge. The contrast between least and here shows that a Merit Function with Edge-Thickness, Centre-Thickness and Air-Gap Bounds, Scored.
 
 [![Designing a Triplet from a Table of Requirements — A Merit Function with Edge-Thickness, Centre-Thickness and Air-Gap Bounds, Scored Against Closed Forms and an Independent Implementation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_merit_operands/01_lens_merit_operands_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_merit_operands/01_lens_merit_operands.png)
 
@@ -2662,7 +2662,7 @@ Ops used (notes): [`lens_system`](https://furuse.work/ops/optics/design/lens_sys
 
 ## No.2026.267 —— Keeping a Design's Relations as Solves — A Double-Gauss Type Whose Focus and F-Number Follow the Stop, Afocal Telescopes, a Curved Image Surface and Odd Aspheres
 
-This exhibit covers “keeping a design's relations as solves”; the focus is “a double-gauss type whose focus and f-number follow the stop, afocal telescopes…”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+In evaluating Keeping a Design's Relations as Solves, while a Curved Image Surface and Odd Aspheres. The Keeping a Design's Relations as Solves test uses bundle from computed data to separate list. The contrast between keep and plane shows that a Double-Gauss Type Whose Focus and F-Number Follow the Stop, Afocal.
 
 [![Keeping a Design's Relations as Solves — A Double-Gauss Type Whose Focus and F-Number Follow the Stop, Afocal Telescopes, a Curved Image Surface and Odd Aspheres](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_solves_afocal/01_lens_solves_afocal_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_solves_afocal/01_lens_solves_afocal.png)
 
@@ -2684,7 +2684,7 @@ Ops used (notes): [`afocal_system`](https://furuse.work/ops/optics/lenssolve/afo
 
 ## No.2026.239 —— Sorting Look-Alike Foreign Matter with Hyperspectral NIR — Two Real Datasets (Plastic Flakes, Foreign Objects on Pork Belly) and a Material-Table Simulation of the Failure Modes
 
-This exhibit covers “sorting look-alike foreign matter with hyperspectral NIR”; the focus is “two real datasets (plastic flakes, foreign objects on pork belly) and a material-table…”. Using synthetic and public data, it compares the measurement with a known answer.
+Using Sorting Look-Alike Foreign Matter with Hyperspectral NIR in practice is difficult because Two. A measured data case for Sorting Look-Alike Foreign Matter with Hyperspectral NIR links public. The contrast between public and both shows that two Real Datasets and a Material-Table Simulation of the Failure Modes.
 
 [![Sorting Look-Alike Foreign Matter with Hyperspectral NIR — Two Real Datasets (Plastic Flakes, Foreign Objects on Pork Belly) and a Material-Table Simulation of the Failure Modes](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/01_real_polymer_flakes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/01_real_polymer_flakes.png)
 
@@ -2728,7 +2728,7 @@ Ops used (notes): [`carbon_black_absorption`](https://furuse.work/ops/optics/mat
 
 ## No.2026.270 —— Verifying Public .zmx Prescriptions Independently and Scoring Them as Inspection Lenses
 
-This exhibit examines “verifying public .zmx prescriptions independently and…”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+Using Verifying Publiczmx Prescriptions Independently and Scoring in practice is difficult because the. For Verifying Public.zmx Prescriptions Independently and Scoring, the computed data compares four. The contrast between four and calculated shows that the measurement can become unreliable.
 
 [![Verifying Public .zmx Prescriptions Independently and Scoring Them as Inspection Lenses](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/01_independent_verification_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/01_independent_verification.png)
 
@@ -2776,7 +2776,7 @@ The document exhibit puts a number on a hole: two functions with the same name a
 
 ## No.2026.015 —— Straightening a Hand-Held Document Photo — Keystone Correction and Shadow Removal Against Ground Truth
 
-This exhibit covers “straightening a hand-held document photo”; the focus is “keystone correction and shadow removal against ground truth”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+A comparison of Straightening a Hand-Held Document Photo matters when Keystone Correction and Shadow. The computed data compares imaged with homography and tracks lighting. The contrast between rectified and scored shows that keystone Correction and Shadow Removal Against Ground Truth.
 
 [![Straightening a Hand-Held Document Photo — Keystone Correction and Shadow Removal Against Ground Truth](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_document_scan/01_rectify_zero_points_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_document_scan/01_rectify_zero_points.png)
 
@@ -2806,7 +2806,7 @@ Ops used (notes): [`corner_response`](https://furuse.work/ops/2d/edges/corner_re
 
 ## No.2026.020 —— Forgery Detection as an ROC (true-positive versus false-positive curve) — Not the One Image Found, but Detection at a Fixed False-Positive Rate
 
-This exhibit covers “forgery detection as an ROC…”; the focus is “not the one image found, but detection at a fixed false-positive rate”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+Using Forgery Detection as an ROC in practice is difficult because Not the One Image Found, but. We place forgeries in computed data, then compare made and pasting. The contrast between jpeg and patch shows that not the One Image Found, but Detection at a Fixed False-Positive Rate.
 
 [![Forgery Detection as an ROC (true-positive versus false-positive curve) — Not the One Image Found, but Detection at a Fixed False-Positive Rate](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_forensics_roc/01_score_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_forensics_roc/01_score_maps.png)
 
@@ -2838,7 +2838,7 @@ Ops used (notes): [`copy_move_regions`](https://furuse.work/ops/imgforensics/cop
 
 ## No.2026.067 —— Craquelure networks — of three indicators, only junction degree breaks under imaging conditions
 
-This exhibit covers “craquelure networks”; the focus is “of three indicators, only junction degree breaks under imaging conditions”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+In evaluating Craquelure networks, while only junction degree breaks under imaging conditions. We place voronoi in measured data, then compare crack and drawn. The contrast between form and ground-truth shows that of three indicators, only junction degree breaks under imaging conditions.
 
 [![Craquelure networks — of three indicators, only junction degree breaks under imaging conditions](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fresco_craquelure/07_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fresco_craquelure/07_scene.png)
 
@@ -2876,7 +2876,7 @@ Ops used (notes): [`blob_features`](https://furuse.work/ops/blob/measure/blob_fe
 
 ## No.2026.077 —— Camera Fingerprints (PRNU): Which Camera Took This? — The Fingerprint Grows With Frame Count and Dies at the Save Button
 
-This exhibit covers “camera fingerprints (PRNU): which camera took this”; the focus is “the fingerprint grows with frame count and dies at the save button”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+When measuring Camera Fingerprints: Which Camera Took This?, The Fingerprint Grows With Frame Count and. The test uses virtual from computed data to separate cameras from carry. The contrast between fixed and sensitivity shows that the Fingerprint Grows With Frame Count and Dies at the Save Button.
 
 [![Camera Fingerprints (PRNU): Which Camera Took This? — The Fingerprint Grows With Frame Count and Dies at the Save Button](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_prnu_camera_fingerprint/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_prnu_camera_fingerprint/01_scene.png)
 
@@ -2916,7 +2916,7 @@ Ops used (notes): [`aug_jpeg_blocks`](https://furuse.work/ops/2d/augmentation/au
 
 ## No.2026.276 —— Physical Consistency of Footage — Ballistic or Thrusted, and Was the Clock Stretched?
 
-This exhibit covers “physical consistency of footage”; the focus is “ballistic or thrusted, and was the clock stretched”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+Using Physical Consistency of Footage in practice is difficult because Ballistic or Thrusted, and Was. The Physical Consistency of Footage test uses filmed from synthetic data to separate monocular from camera. The contrast between filmed and monocular shows that ballistic or Thrusted, and Was the Clock Stretched?.
 
 [![Physical Consistency of Footage — Ballistic or Thrusted, and Was the Clock Stretched?](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_physics_consistency/04_delta_aic_thrusted_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_physics_consistency/04_delta_aic_thrusted.png)
 
@@ -3084,7 +3084,7 @@ Ops used (notes): [`box_sdf`](https://furuse.work/ops/3d/sdf_csg/box_sdf.html) �
 
 ## No.2026.063 —— Crop leaf area from above — folded by projection before it is ever hidden
 
-This exhibit covers “crop leaf area from above”; the focus is “folded by projection before it is ever hidden”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+For Crop leaf area from above, folded by projection before it is ever hidden. A measured data case links maize, canopy, and built. The contrast between analytic and surfaces shows that folded by projection before it is ever hidden.
 
 [![Crop leaf area from above — folded by projection before it is ever hidden](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crop_phenotyping/08_scene_nadir_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crop_phenotyping/08_scene_nadir.png)
 
@@ -3124,7 +3124,7 @@ Ops used (notes): [`boundary_vertices`](https://furuse.work/ops/3d/mesh_process/
 
 ## No.2026.064 —— Collapsing joint voids into one number — what the number drops is the shape that matters
 
-This exhibit covers “collapsing joint voids into one number”; the focus is “what the number drops is the shape that matters”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+A comparison of Collapsing joint voids into one number matters when what the number drops is the shape. The synthetic data compares die-attach with bond and tracks line. The contrast between carries and five shows that what the number drops is the shape that matters.
 
 [![Collapsing joint voids into one number — what the number drops is the shape that matters](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_void_morphology/01_scene_sections_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_void_morphology/01_scene_sections.png)
 
@@ -3168,7 +3168,7 @@ Ops used (notes): [`boundary_vertices`](https://furuse.work/ops/3d/mesh_process/
 
 ## No.2026.065 —— Manufacturability from geometry alone — faces that sit on the threshold flip when you smooth them
 
-This exhibit covers “manufacturability from geometry alone”; the focus is “faces that sit on the decision level flip when you smooth them”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+In evaluating Manufacturability from geometry alone, faces that sit on the the method flip when you. The test uses part from synthetic data to separate design from values. The contrast between voxelised and then shows that faces that sit on the the method flip when you smooth them.
 
 [![Manufacturability from geometry alone — faces that sit on the threshold flip when you smooth them](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dfm_thickness_overhang/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dfm_thickness_overhang/01_scene.png)
 
@@ -3206,7 +3206,7 @@ Ops used (notes): [`box_sdf`](https://furuse.work/ops/3d/sdf_csg/box_sdf.html) �
 
 ## No.2026.070 —— Earthwork on a slope — align first and the scar gets shallower
 
-This exhibit covers “earthwork on a slope”; the focus is “align first and the scar gets shallower”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+In evaluating Earthwork on a slope, align first and the scar gets shallower. We place carries in synthetic data, then compare excavation and deposit. The contrast between volume and epochs shows that align first and the scar gets shallower.
 
 [![Earthwork on a slope — align first and the scar gets shallower](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/09_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/09_scene.png)
 
@@ -3248,7 +3248,7 @@ Ops used (notes): [`chamfer_distance`](https://furuse.work/ops/3d/metrics/chamfe
 
 ## No.2026.099 —— Weighing an Animal from Silhouettes — The Error You Can Buy Down, and the One You Cannot
 
-This exhibit covers “weighing an animal from silhouettes”; the focus is “the error you can buy down, and the one you cannot”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+When measuring Weighing an Animal from Silhouettes, The Error You Can Buy Down, and the One You Cannot. A measured data case links estimate, volume, and multi-view. The contrast between convert and weight shows that the Error You Can Buy Down, and the One You Cannot.
 
 [![Weighing an Animal from Silhouettes — The Error You Can Buy Down, and the One You Cannot](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_livestock_body_volume/10_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_livestock_body_volume/10_scene.png)
 
@@ -3290,7 +3290,7 @@ Ops used (notes): [`carve`](https://furuse.work/ops/3d/space_carving/carve.html)
 
 ## No.2026.072 —— Repair the mesh, then measure — the defect count clears, the quantity does not
 
-This exhibit covers “repair the mesh, then measure”; the focus is “the defect count clears, the quantity does not”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+In evaluating Repair the mesh, then measure, the defect count clears, the quantity does not. We place triangle in computed data, then compare built and boolean. The contrast between union and sphere shows that the defect count clears, the quantity does not.
 
 [![Repair the mesh, then measure — the defect count clears, the quantity does not](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mesh_quality_repair/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mesh_quality_repair/01_scene.png)
 
@@ -3332,7 +3332,7 @@ Ops used (notes): [`decimate_qem`](https://furuse.work/ops/3d/mesh_process/decim
 
 ## No.2026.101 —— Pallet load utilization — one number gives voids and overhang the same value
 
-This exhibit covers “pallet load utilization”; the focus is “one number gives voids and overhang the same value”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+Using Pallet load utilization in practice is difficult because one number gives voids and overhang the. The test uses loads from computed data to separate opposite from defects. The contrast between hides and cavity shows that one number gives voids and overhang the same value.
 
 [![Pallet load utilization — one number gives voids and overhang the same value](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pallet_load_utilization/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pallet_load_utilization/01_scene.png)
 
@@ -3370,7 +3370,7 @@ Ops used (notes): [`aabb`](https://furuse.work/ops/3d/bounds/aabb.html) · [`con
 
 ## No.2026.075 —— Pipe Wall Loss on the Unwrapped Map — The Axis You Choose Eats the Invert Corrosion
 
-This exhibit covers “pipe wall loss on the unwrapped map”; the focus is “the axis you choose eats the recover corrosion”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+For Pipe Wall Loss on the Unwrapped Map, The Axis You Choose Eats the the method Corrosion. The test uses carries from synthetic data to separate full-circumference from band. The contrast between weld and bead shows that the Axis You Choose Eats the the method Corrosion.
 
 [![Pipe Wall Loss on the Unwrapped Map — The Axis You Choose Eats the Invert Corrosion](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pipe_wall_loss/01_scene_pipe_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pipe_wall_loss/01_scene_pipe.png)
 
@@ -3408,7 +3408,7 @@ Ops used (notes): [`blob_label`](https://furuse.work/ops/blob/connect/blob_label
 
 ## No.2026.076 —— Warpage lives in the layer history — averaging the area throws the placement away
 
-This exhibit covers “warpage lives in the layer history”; the focus is “averaging the area throws the placement away”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+In evaluating Warpage lives in the layer history, averaging the area throws the placement away. The synthetic data compares seven with parts and tracks sliced. The contrast between into and layers shows that averaging the area throws the placement away.
 
 [![Warpage lives in the layer history — averaging the area throws the placement away](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_print_warpage_risk/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_print_warpage_risk/01_scene.png)
 
@@ -3446,7 +3446,7 @@ Ops used (notes): [`blob_features`](https://furuse.work/ops/blob/measure/blob_fe
 
 ## No.2026.081 —— Human-machine clearance — swap the body for a point, and the hazard vanishes with it
 
-This exhibit covers “human-machine clearance”; the focus is “swap the body for a point, and the hazard vanishes with it”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+For Human-machine clearance, swap the body for a point, and the hazard vanishes with it. We place ten-capsule in computed data, then compare articulated and moving. The contrast between synthesised and that shows that swap the body for a point, and the hazard vanishes with it.
 
 [![Human-machine clearance — swap the body for a point, and the hazard vanishes with it](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_safety_clearance/02_frames_clearance_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_safety_clearance/02_frames_clearance.png)
 
@@ -3484,7 +3484,7 @@ Ops used (notes): [`annotate3d_label`](https://furuse.work/ops/3d/annotate3d/ann
 
 ## No.2026.082 —— As-built deviation of a room — the compromise pose is handed to the innocent element
 
-This exhibit covers “as-built deviation of a room”; the focus is “the compromise pose is handed to the innocent element”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+For As-built deviation of a room, the compromise pose is handed to the innocent element. A synthetic data case links carries, construction, and errors. The contrast between leaning and walls shows that the compromise pose is handed to the innocent element.
 
 [![As-built deviation of a room — the compromise pose is handed to the innocent element](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_scan_to_bim_asbuilt/01_scene_plan_section_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_scan_to_bim_asbuilt/01_scene_plan_section.png)
 
@@ -3522,7 +3522,7 @@ Ops used (notes): [`box_sdf`](https://furuse.work/ops/3d/sdf_csg/box_sdf.html) �
 
 ## No.2026.086 —— Re-surveying a structure year by year — when the vantage moves, decay appears to advance
 
-This exhibit covers “re-surveying a structure year by year”; the focus is “when the vantage moves, decay appears to advance”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+When measuring Re-surveying a structure year by year, when the vantage moves, decay appears to advance. We place bridge in computed data, then compare girder and carries. The contrast between deflection and section shows that when the vantage moves, decay appears to advance.
 
 [![Re-surveying a structure year by year — when the vantage moves, decay appears to advance](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_structure_4d_deterioration/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_structure_4d_deterioration/01_scene.png)
 
@@ -3564,7 +3564,7 @@ Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_fram
 
 ## No.2026.087 —— Restoring what is missing by symmetry — the plane you assume is the lie you get
 
-This exhibit covers “restoring what is missing by symmetry”; the focus is “the plane you assume is the lie you get”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+In evaluating Restoring what is missing by symmetry, the plane you assume is the lie you get. The computed data compares bilaterally with symmetric and tracks mask. The contrast between synthesised and that shows that the plane you assume is the lie you get.
 
 [![Restoring what is missing by symmetry — the plane you assume is the lie you get](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_restoration/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_restoration/01_scene.png)
 
@@ -3602,7 +3602,7 @@ Ops used (notes): [`detect_reflection_symmetry`](https://furuse.work/ops/3d/symm
 
 ## No.2026.146 —— Endless Zooms and Turning Solids: Making the Return Itself the Ground Truth
 
-This exhibit examines “endless zooms and turning solids: making the return itself…”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+For Endless Zooms and Turning Solids: Making the Return, the measurement can become unreliable. The Endless Zooms and Turning Solids: Making the Return test uses motion from measured data to separate that from never. The contrast between ends and still shows that the measurement can become unreliable.
 
 [![Endless Zooms and Turning Solids: Making the Return Itself the Ground Truth](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_endless_zoom_and_turning_solids/01_zoom_steps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_endless_zoom_and_turning_solids/01_zoom_steps.png)
 
@@ -3648,7 +3648,7 @@ Ops used (notes): [`fractal_dimension`](https://furuse.work/ops/2d/features/frac
 
 ## No.2026.149 —— Scoring Four-Dimensional Claims with Ordinary Three-Dimensional Operators
 
-This exhibit examines “scoring four-dimensional claims with ordinary…”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+A comparison of Scoring Four-Dimensional Claims with matters when the measurement can become unreliable. For Scoring Four-Dimensional Claims with, we place topology in measured data, then compare algebra and four. The contrast between dimensions and scored shows that the measurement can become unreliable.
 
 [![Scoring Four-Dimensional Claims with Ordinary Three-Dimensional Operators](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_four_dimensions_by_three_d_tools/02_nested_tori_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_four_dimensions_by_three_d_tools/02_nested_tori.png)
 
@@ -3698,7 +3698,7 @@ Ops used (notes): [`curve3d_tube_mesh`](https://furuse.work/ops/3d/surface/curve
 
 ## No.2026.277 —— The Venue Buildings and Asteroid Itokawa on One Ruler — Turning PLATEAU CityGML LOD2 into a Triangle Mesh
 
-This exhibit covers “the venue buildings and asteroid itokawa on one ruler”; the focus is “turning PLATEAU citygml LOD2 into a triangle mesh”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+For The Venue Buildings and Asteroid Itokawa on One Ruler, Turning PLATEAU CityGML LOD2 into a Triangle. The The Venue Buildings and Asteroid Itokawa on One Ruler test uses author from synthetic data to. The contrast between author and idea shows that turning PLATEAU CityGML LOD into a Triangle Mesh.
 
 [![The Venue Buildings and Asteroid Itokawa on One Ruler — Turning PLATEAU CityGML LOD2 into a Triangle Mesh](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plateau_venue_lod2/01_venue_itokawa_top_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plateau_venue_lod2/01_venue_itokawa_top.png)
 
@@ -3720,7 +3720,7 @@ Ops used (notes): [`plateau_lod2_mesh`](https://furuse.work/ops/drive/japan/plat
 
 ## No.2026.279 —— How One Star Image Reveals Satellite Attitude
 
-This exhibit examines “how one star image reveals satellite attitude”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+In evaluating How One Star Image, the measurement can become unreliable. A synthetic data case for How One Star Image links seeded, catalogue, and point. The contrast between seeded and catalogue shows that the measurement can become unreliable.
 
 [![How One Star Image Reveals Satellite Attitude](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_tracker/01_star_tracker_camera_image_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_tracker/01_star_tracker_camera_image.png)
 

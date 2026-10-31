@@ -485,14 +485,23 @@
   "_short_ja": "95%信頼下限でも検出率90%となる寸法",
   "_short_en": "size giving 90% POD at 95% confidence"
  },
- "airy": {
-  "match": ["Airy", "Airy recursion", "Airy pattern", "エアリー"],
-  "ja": "Airyの式は平行平板内の多重反射を無限級数として合成し、同じ数学から円形開口の回折像であるAiryパターンも得られる。",
-  "en": "Airy's formula sums the infinite multiple reflections in a parallel plate; the related diffraction analysis gives the Airy pattern of a circular aperture.",
+ "airy_pattern": {
+  "match": ["Airy pattern", "Airy disc", "Airy disk", "エアリー像", "エアリー円板", "囲みエネルギー", "encircled energy"],
+  "ja": "円形開口の回折像。中央のAiry円板の半径は、第一暗環までで1.22 λFとなる。",
+  "en": "The diffraction image of a circular aperture. The Airy-disc radius to the first dark ring is 1.22 λF.",
   "source": "Born and Wolf, Principles of Optics, 7th ed., 1999",
-  "review": true,
-  "_short_ja": "多重反射を合成するAiryの式",
-  "_short_en": "Airy multiple-reflection formula"
+  "review": false,
+  "_short_ja": "円形開口の回折像と1.22 λFの半径",
+  "_short_en": "circular-aperture diffraction image, radius 1.22 λF"
+ },
+ "airy_formula": {
+  "match": ["Airy", "Airy recursion", "Airy formula", "Airy multiple-reflection formula", "エアリー"],
+  "ja": "平行平板内で繰り返す多重反射を無限級数として合成し、透過率を表す式。",
+  "en": "The formula for a parallel plate's transmittance obtained by summing its infinite series of multiple reflections.",
+  "source": "Born and Wolf, Principles of Optics, 7th ed., 1999",
+  "review": false,
+  "_short_ja": "平行平板の多重反射による透過率の式",
+  "_short_en": "parallel-plate multiple-reflection transmittance"
  },
  "zernike": {
   "match": ["Zernike Polynomials", "Zernike polynomial", "ゼルニケ多項式", "Zernike", "ゼルニケ"],

@@ -85,3 +85,14 @@ def test_sam_homographs_are_separate_and_gallery_can_render_terms():
     assert "sam_spectral" not in {x for x, _ in acoustic}
     assert G.glossary_line(ledger["poc_recycling_sorting"], "ja", glossary).startswith("用語:")
     assert G.glossary_line(ledger["poc_recycling_sorting"], "en", glossary).startswith("Terms:")
+
+
+def test_airy_pattern_and_multiple_reflection_formula_are_separate():
+    glossary = G.load_glossary()
+    ledger = {e["id"]: e for e in _ledger()}
+    pattern = G.terms_for_exhibit(ledger["poc_zoom_configurations"], "en", glossary, 999)
+    formula = G.terms_for_exhibit(ledger["poc_sam_hybrid_bonding_voids"], "en", glossary, 999)
+    assert "airy_pattern" in {term_id for term_id, _entry in pattern}
+    assert "airy_formula" not in {term_id for term_id, _entry in pattern}
+    assert "airy_formula" in {term_id for term_id, _entry in formula}
+    assert "airy_pattern" not in {term_id for term_id, _entry in formula}

@@ -588,17 +588,33 @@
   "source": "MIL-HDBK-1823A, Nondestructive Evaluation System Reliability Assessment, 2009",
   "review": false
  },
- "airy": {
+ "airy_pattern": {
+  "match": [
+   "Airy pattern",
+   "Airy disc",
+   "Airy disk",
+   "エアリー像",
+   "エアリー円板",
+   "囲みエネルギー",
+   "encircled energy"
+  ],
+  "ja": "円形開口の回折像。中央のAiry円板の半径は、第一暗環までで1.22 λFとなる。",
+  "en": "The diffraction image of a circular aperture. The Airy-disc radius to the first dark ring is 1.22 λF.",
+  "source": "Born and Wolf, Principles of Optics, 7th ed., 1999",
+  "review": false
+ },
+ "airy_formula": {
   "match": [
    "Airy",
    "Airy recursion",
-   "Airy pattern",
+   "Airy formula",
+   "Airy multiple-reflection formula",
    "エアリー"
   ],
-  "ja": "Airyの式は平行平板内の多重反射を無限級数として合成し、同じ数学から円形開口の回折像であるAiryパターンも得られる。",
-  "en": "Airy's formula sums the infinite multiple reflections in a parallel plate; the related diffraction analysis gives the Airy pattern of a circular aperture.",
+  "ja": "平行平板内で繰り返す多重反射を無限級数として合成し、透過率を表す式。",
+  "en": "The formula for a parallel plate's transmittance obtained by summing its infinite series of multiple reflections.",
   "source": "Born and Wolf, Principles of Optics, 7th ed., 1999",
-  "review": true
+  "review": false
  },
  "zernike": {
   "match": [

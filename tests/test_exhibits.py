@@ -69,22 +69,12 @@ def _content_words(text: str, lang: str) -> set[str]:
     return {word.casefold() for word in re.findall(r"[A-Za-z]{4,}", text)}
 
 
-# 移行中のバッチでも門を回せるよう、旧定型文だけは新しい四つの検査対象から外す。
-# 全件を書き換えた最終バッチでこの例外自体を削除する。
-def _is_legacy_lead(text: str, lang: str) -> bool:
-    if lang == "ja":
-        return "合成・計算したデータで条件を変え" in text or text.startswith("この展示は")
-    return "Using synthetic or computed data" in text or text.startswith("This exhibit")
-
-
 def test_lead_sentences_are_not_shared_by_four_exhibits():
     """句読点を替えただけの定型文も、四展示へ使い回した時点で拒否する。"""
     owners: dict[tuple[str, str], set[str]] = {}
     for exhibit in _caption_exhibits():
         for lang in ("ja", "en"):
             lead = exhibit["lead_" + lang]
-            if _is_legacy_lead(lead, lang):
-                continue
             for sentence in _sentences(lead, lang):
                 key = lang, _normalise_sentence(sentence)
                 owners.setdefault(key, set()).add(exhibit["id"])
@@ -95,7 +85,7 @@ def test_lead_sentences_are_not_shared_by_four_exhibits():
 def test_leads_do_not_open_with_exhibit_boilerplate():
     rows = _caption_exhibits()
     for lang, prefix in (("ja", "この展示は"), ("en", "This exhibit")):
-        active = [e for e in rows if not _is_legacy_lead(e["lead_" + lang], lang)]
+        active = rows
         count = sum(e["lead_" + lang].startswith(prefix) for e in active)
         assert not active or count / len(active) <= 0.10, (lang, count, len(active))
 
@@ -106,8 +96,6 @@ def test_each_lead_uses_two_source_content_words_beyond_the_title():
         doc = _opening_docstring(exhibit["id"])
         for lang in ("ja", "en"):
             lead = exhibit["lead_" + lang]
-            if _is_legacy_lead(lead, lang):
-                continue
             title = exhibit["title_" + lang]
             source = _opening_caption(exhibit["caption_" + lang], lang) + " " + doc
             candidates = _content_words(source, lang) - _content_words(title, lang)
@@ -122,7 +110,7 @@ def test_leads_do_not_paste_the_full_title():
     for exhibit in _caption_exhibits():
         for lang in ("ja", "en"):
             lead = exhibit["lead_" + lang]
-            if not _is_legacy_lead(lead, lang) and exhibit["title_" + lang] in lead:
+            if exhibit["title_" + lang] in lead:
                 problems.append((exhibit["id"], lang))
     assert not problems, problems[:30]
 

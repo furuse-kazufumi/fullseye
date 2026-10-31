@@ -18,7 +18,7 @@ Every exhibit is gated by a closed form, public measurement or independent imple
 
 ## No.2026.010 —— Where CT Reconstruction Starts to Break as Projections Are Removed
 
-This exhibit examines “where CT reconstruction starts to break as projections are…”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+Using Where CT Reconstruction Starts to Break in practice is difficult because the measurement can. The test uses shepp-logan from computed data to separate re-imaged from down. The contrast between placed and beside shows that the measurement can become unreliable.
 
 [![Where CT Reconstruction Starts to Break as Projections Are Removed](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_fidelity/01_recon_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_fidelity/01_recon_sweep.png)
 
@@ -46,7 +46,7 @@ Ops used (notes): [`backproject_sinogram`](https://furuse.work/ops/tomography/re
 
 ## No.2026.016 —— Ranging by Counting Photons — How Many for How Many Millimetres?
 
-This exhibit covers “ranging by counting photons”; the focus is “how many for how many millimetres”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+For Ranging by Counting Photons, How Many for How Many Millimetres. We place range in computed data, then compare read and arrival-time. The contrast between histogram and built shows that how Many for How Many Millimetres?.
 
 [![Ranging by Counting Photons — How Many for How Many Millimetres?](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dtof_ranging/01_light_front.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dtof_ranging/01_light_front.gif)
 
@@ -84,7 +84,7 @@ Ops used (notes): [`dtof_cube_depth`](https://furuse.work/ops/photon/dtof/dtof_c
 
 ## No.2026.022 —— How Accurately a White-Light Interferometer Measures a Nanometre Step
 
-This exhibit examines “how accurately a white-light interferometer measures a…”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+When measuring How Accurately a White-Light Interferometer Measures, the measurement can become. The measured data compares synthesised with the method-scanning and tracks stack. The contrast between steps and measured shows that the measurement can become unreliable.
 
 [![How Accurately a White-Light Interferometer Measures a Nanometre Step](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interferometry_step/01_surface_interferograms_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interferometry_step/01_surface_interferograms.png)
 
@@ -130,7 +130,7 @@ Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_fram
 
 ## No.2026.023 —— Depth From a Light Field — A Light Field of Known Depth, Confronted With Its Nulls
 
-This exhibit covers “depth from a light field”; the focus is “a light field of known depth, confronted with its nulls”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+In evaluating Depth From a Light Field, A Light Field of Known Depth, Confronted With Its Nulls. The test uses rendered from computed data to separate analytic from inverse. The contrast between mapping and focus-measure shows that a Light Field of Known Depth, Confronted With Its Nulls.
 
 [![Depth From a Light Field — A Light Field of Known Depth, Confronted With Its Nulls](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lightfield_depth/01_scene_and_depth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lightfield_depth/01_scene_and_depth.png)
 
@@ -174,7 +174,7 @@ Ops used (notes): [`color_bar`](https://furuse.work/ops/annotate/furniture/color
 
 ## No.2026.033 —— Stripping Specular Reflection With Polarisation — Truth From the Fresnel Equations
 
-This exhibit covers “stripping specular reflection with polarisation”; the focus is “truth from the fresnel equations”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+For Stripping Specular Reflection With Polarisation, Truth From the Fresnel Equations. We place diffuse in computed data, then compare components and synthesised. The contrast between terms and degree shows that truth From the Fresnel Equations.
 
 [![Stripping Specular Reflection With Polarisation — Truth From the Fresnel Equations](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_polarization_specular/01_raw_polarizer_mosaic_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_polarization_specular/01_raw_polarizer_mosaic.png)
 
@@ -212,7 +212,7 @@ Ops used (notes): [`fresnel_reflectance`](https://furuse.work/ops/3d/optics/fres
 
 ## No.2026.078 —— Drone Thermography of a PV Plant — You Think You Are Measuring Temperature Difference, but You Are Measuring Wind and Viewing Angle
 
-This exhibit covers “drone thermography of a PV plant”; the focus is “you think you are measuring temperature change…”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+For Drone Thermography of a PV Plant, while but You Are Measuring Wind and Viewing Angle. The test uses megawatt from computed data to separate array from synthesised. The contrast between closed-form and steady-state shows that you Think You Are Measuring Temperature the method, but You Are Measuring Wind and.
 
 [![Drone Thermography of a PV Plant — You Think You Are Measuring Temperature Difference, but You Are Measuring Wind and Viewing Angle](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pv_thermal_survey/06_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pv_thermal_survey/06_scene.png)
 
@@ -250,7 +250,7 @@ Ops used (notes): [`beer_lambert_transmittance`](https://furuse.work/ops/optics/
 
 ## No.2026.113 —— A Thermal Image Is Not a Temperature Image — Emissivity, Reflection, and an Uncertainty That Does Not Add
 
-This exhibit covers “a thermal image is not a temperature image”; the focus is “emissivity, reflection, and an uncertainty that does not add”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+A thermal-camera signal is not a temperature until emissivity, reflected surroundings Known-temperature objects generate radiance and detector counts, followed by quantisation, noise The figures show low-emissivity metal looking falsely cold and the noise penalty after correction.
 
 [![A Thermal Image Is Not a Temperature Image — Emissivity, Reflection, and an Uncertainty That Does Not Add](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermal_radiometry/15_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermal_radiometry/15_scene.png)
 
@@ -288,7 +288,7 @@ Ops used (notes): [`beer_lambert_transmittance`](https://furuse.work/ops/optics/
 
 ## No.2026.043 —— Depth of a Subsurface Defect by Pulsed Thermography
 
-This exhibit examines “depth of a subsurface defect by pulsed thermography”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+Using Depth of a Subsurface Defect in practice is difficult because the measurement can become unreliable. We place temperature in computed data, then compare flash and generated. The contrast between exact and heat-conduction shows that the measurement can become unreliable.
 
 [![Depth of a Subsurface Defect by Pulsed Thermography](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermography_ndt/02_depth_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermography_ndt/02_depth_map.png)
 
@@ -326,7 +326,7 @@ Ops used (notes): [`color_bar`](https://furuse.work/ops/annotate/furniture/color
 
 ## No.2026.178 —— Measuring a Camera Without Buying One — Recovering Quantum Efficiency, Gain and Dark Noise from a Planted Sensor with the EMVA 1288 (image-sensor characterization standard) Procedure
 
-This exhibit covers “measuring a camera without buying one”; the focus is “recovering quantum efficiency, gain and dark noise from a planted sensor with the EMVA…”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+Quantum efficiency and dark noise should be measured by a standard acquisition procedure rather than A synthetic sensor has known photon response, dark current, and pixel nonuniformity The plots show recovery accuracy and the limit where quantisation prevents estimation.
 
 [![Measuring a Camera Without Buying One — Recovering Quantum Efficiency, Gain and Dark Noise from a Planted Sensor with the EMVA 1288 (image-sensor characterization standard) Procedure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_sensor/01_raw_dark_flat_saturation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_sensor/01_raw_dark_flat_saturation.png)
 
@@ -370,7 +370,7 @@ Ops used (notes): [`emva_dark_current`](https://furuse.work/ops/optics/sensorcha
 
 ## No.2026.090 —— Porosity in Weld Radiographs — Closing With the Share of Images Misgraded by One Class
 
-This exhibit covers “porosity in weld radiographs”; the focus is “closing with the share of images misgraded by one class”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+When measuring Porosity in Weld Radiographs, Closing With the Share of Images Misgraded by One Class. We place drawn in measured data, then compare form and beer. The contrast between lambert and plate shows that closing With the Share of Images Misgraded by One Class.
 
 [![Porosity in Weld Radiographs — Closing With the Share of Images Misgraded by One Class](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weld_radiograph_porosity/01_scene_radiograph_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weld_radiograph_porosity/01_scene_radiograph.png)
 
@@ -410,7 +410,7 @@ Ops used (notes): [`blob_features`](https://furuse.work/ops/blob/measure/blob_fe
 
 ## No.2026.214 —— Peeling Phases One at a Time off a 2-D Powder X-ray Diffraction Image — Calibration, Azimuthal Integration, NNLS and the Unknown Phase in the Residual; References from the NIST SRM 640g Certificate and COD CIFs, with the Shared-Model Leak Measured by Deliberate Mismatch
 
-This exhibit covers “peeling phases one at a time off a 2-d powder x-ray…”; the focus is “calibration, azimuthal integration, NNLS and the unknown phase in the residual;…”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+A comparison of Peeling Phases One at a Time off a two-dimensional Powder X-ray Diffraction Image. A measured data case for Peeling Phases One at a Time off a two-dimensional Powder X-ray. The contrast between detector and records shows that calibration, Azimuthal Integration, NNLS and the Unknown Phase in the.
 
 [![Peeling Phases One at a Time off a 2-D Powder X-ray Diffraction Image — Calibration, Azimuthal Integration, NNLS and the Unknown Phase in the Residual; References from the NIST SRM 640g Certificate and COD CIFs, with the Shared-Model Leak Measured by Deliberate Mismatch](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pxrd_phase_peel/01_phase_peel.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pxrd_phase_peel/01_phase_peel.gif)
 
@@ -450,7 +450,7 @@ Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_fram
 
 ## No.2026.221 —— Measuring Black-Gloss and Glass from Polarisation - No Shading, but the Polarisation Remembers the Slope
 
-This exhibit examines “measuring black-gloss and optical material from polarisation - no…”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+For Measuring Black-Gloss and the method from Polarisation, while but the Polarisation Remembers. A measured data case for Measuring Black-Gloss and the method from Polarisation, while and dome. The contrast between lens and measured shows that but the Polarisation Remembers the Slope.
 
 [![Measuring Black-Gloss and Glass from Polarisation - No Shading, but the Polarisation Remembers the Slope](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_shape_from_polarization/05_normals_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_shape_from_polarization/05_normals.png)
 
@@ -492,7 +492,7 @@ Ops used (notes): [`aolp_to_azimuth`](https://furuse.work/ops/optics/shape_from_
 
 ## No.2026.185 —— From Melt-Pool Thermography to X-ray CT in Metal Additive Manufacturing — Raw Signal Is Not Temperature, Time Axis and Pixel Pitch, and Powder That Clings Only to Down-Facing Surfaces
 
-This exhibit concerns from melt-pool thermography to x-ray CT in metal additive…. This exhibit is under revision. Its explanation and figure will be replaced after verification.
+In evaluating From Melt-Pool Thermography to X-ray CT in Metal Additive Manufacturing, Raw Signal Is. A synthetic data case for From Melt-Pool Thermography to X-ray CT in Metal Additive Manufacturing. The contrast between single and track shows that raw Signal Is Not Temperature, Time Axis and Pixel Pitch, and.
 
 [![From Melt-Pool Thermography to X-ray CT in Metal Additive Manufacturing — Raw Signal Is Not Temperature, Time Axis and Pixel Pitch, and Powder That Clings Only to Down-Facing Surfaces](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_am_thermal_to_ct/01_melt_pool_frames.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_am_thermal_to_ct/01_melt_pool_frames.gif)
 
@@ -534,7 +534,7 @@ Ops used (notes): [`blob_features`](https://furuse.work/ops/blob/measure/blob_fe
 
 ## No.2026.225 —— How Much the Bright SEM Edge Inflates a Dimension — the Shape Matches but the Area Grows
 
-This exhibit concerns how much the bright SEM edge inflates a dimension. This exhibit is under revision. Its explanation and figure will be replaced after verification.
+For How Much the Bright SEM Edge Inflates a Dimension, the Shape Matches but the Area Grows. The How Much the Bright SEM Edge Inflates a Dimension test uses revision from synthetic data to separate subtracting from beam. The contrast between point and spread shows that the Shape Matches but the Area Grows.
 
 [![How Much the Bright SEM Edge Inflates a Dimension — the Shape Matches but the Area Grows](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_wafer_defect_edge_bias/01_sem_se_bse_bias_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_wafer_defect_edge_bias/01_sem_se_bse_bias.png)
 
@@ -570,7 +570,7 @@ Ops used (notes): [`blob_features`](https://furuse.work/ops/blob/measure/blob_fe
 
 ## No.2026.228 —— A Pseudo-Simulation of a Gravitational-Wave Detector — Cavity Optics, the Quantum-Noise Budget and the Matched Filter in Closed Form, Scored on the Real GW150914 Data
 
-This exhibit covers “a pseudo-simulation of a gravitational-wave detector”; the focus is “cavity optics, the quantum-noise budget and the matched filter in closed form…”. Using synthetic and public data, it compares the measurement with a known answer.
+A comparison of A Pseudo-Simulation of a Gravitational-Wave Detector matters when Cavity Optics, the. For A Pseudo-Simulation of a Gravitational-Wave Detector, the measured data compares much with. The contrast between interferometer and reading shows that cavity Optics, while Scored on the Real GW150914 Data.
 
 [![A Pseudo-Simulation of a Gravitational-Wave Detector — Cavity Optics, the Quantum-Noise Budget and the Matched Filter in Closed Form, Scored on the Real GW150914 Data](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gw_detector_pseudo_simulation/05_gw150914_whitened_vs_prl_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gw_detector_pseudo_simulation/05_gw150914_whitened_vs_prl.png)
 
@@ -612,7 +612,7 @@ Ops used (notes): [`bandpass`](https://furuse.work/ops/oned/signal/bandpass.html
 
 ## No.2026.234 —— Finding Micrometre Dents a Photograph Cannot Show, in the Mirror Image of a Fringe Screen — Phase-Measuring Deflectometry
 
-This exhibit covers “finding micrometre dents a photograph cannot show…”; the focus is “phase-measuring deflectometry”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+Using Finding Micrometre Dents a Photograph Cannot Show, in the Mirror Image of a Fringe Screen in. The Finding Micrometre Dents a Photograph Cannot Show, in the Mirror Image of a Fringe Screen test. The contrast between glossy and surface shows that phase-Measuring Deflectometry.
 
 [![Finding Micrometre Dents a Photograph Cannot Show, in the Mirror Image of a Fringe Screen — Phase-Measuring Deflectometry](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_phase_measuring_deflectometry/03_photo_vs_pmd_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_phase_measuring_deflectometry/03_photo_vs_pmd.png)
 
@@ -654,7 +654,7 @@ Ops used (notes): [`absolute_phase`](https://furuse.work/ops/3d/structured_light
 
 ## No.2026.235 —— TDI (time-delay integration) Line Scan and Line-Scan Lenses — Stages Reveal the Defects, a Sync Error Smears Them, and a C-Mount Lens Loses the Ends of a Long Sensor
 
-This exhibit covers “TDI (time-delay integration) line scan and line-scan lenses”; the focus is “stages reveal the defects, a sync error smears them…”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+Using TDI Line Scan and Line-Scan Lenses in practice is difficult because Stages Reveal the Defects, a. The TDI Line Scan and Line-Scan Lenses test uses moving from measured data to separate material. The contrast between moving and material shows that stages Reveal the Defects, a Sync Error Smears Them, and a.
 
 [![TDI (time-delay integration) Line Scan and Line-Scan Lenses — Stages Reveal the Defects, a Sync Error Smears Them, and a C-Mount Lens Loses the Ends of a Long Sensor](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tdi_linescan/01_tdi_stages_defects_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tdi_linescan/01_tdi_stages_defects.png)
 
@@ -694,7 +694,7 @@ Ops used (notes): [`emva_pair_statistics`](https://furuse.work/ops/optics/sensor
 
 ## No.2026.236 —— Pixel-Shift Imaging — Shift the Sensor One Pixel and False Colour Vanishes, Half a Pixel and Aliasing Vanishes; the MTF (modulation transfer function) Does Not Rise
 
-This exhibit covers “pixel-shift imaging”; the focus is “shift the sensor one pixel and false colour vanishes…”. Using synthetic and public data, it compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+In evaluating Pixel-Shift Imaging, while the MTF Does Not Rise. The Pixel-Shift Imaging test uses lead from synthetic data to separate chapter from runs. The contrast between lead and chapter shows that shift the Sensor One Pixel and False Colour Vanishes, Half a Pixel and Aliasing Vanishes; the MTF Does Not Rise.
 
 [![Pixel-Shift Imaging — Shift the Sensor One Pixel and False Colour Vanishes, Half a Pixel and Aliasing Vanishes; the MTF (modulation transfer function) Does Not Rise](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pixel_shift/14_real_chart_zoom_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pixel_shift/14_real_chart_zoom.png)
 
@@ -738,7 +738,7 @@ Ops used (notes): [`airy_pattern`](https://furuse.work/ops/optics/wave/airy_patt
 
 ## No.2026.243 —— Indirect Time of Flight, Multi-Frequency — Higher Frequencies Measure Finer, but Wrapping, Multipath, Flying Pixels and Harmonics Break It
 
-This exhibit covers “indirect time of flight, multi-frequency”; the focus is “higher frequencies measure finer, but wrapping, multipath…”. Using synthetic and public data, it compares the measurement with a known answer.
+Using Indirect Time of Flight, while Flying Pixels and Harmonics Break It. For Indirect Time of Flight, Multi-Frequency, the measured data compares continuous-wave with. The contrast between continuous-wave and modulated shows that higher Frequencies Measure Finer, while Flying Pixels and Harmonics Break It.
 
 [![Indirect Time of Flight, Multi-Frequency — Higher Frequencies Measure Finer, but Wrapping, Multipath, Flying Pixels and Harmonics Break It](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_itof_multifreq/01_warehouse_unwrap_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_itof_multifreq/01_warehouse_unwrap.png)
 
@@ -780,7 +780,7 @@ Ops used (notes): [`annotate_figure_grid`](https://furuse.work/ops/annotate/pape
 
 ## No.2026.241 —— Industrial OCT (optical coherence tomography) — Layer Thickness and Hidden Defects of Paints, Coatings and Multilayer Films, Seen in Depth by the FFT of One Spectral Interferogram
 
-This exhibit covers “industrial OCT (optical interference range tomography)”; the focus is “layer thickness and hidden defects of paints, coatings and multilayer films…”. Using synthetic and measured data, it compares the measurement with a known answer.
+Coatings and adhesive stacks need layer thickness and internal voids measured without cutting the part Public automotive-paint spectra and synthetic multilayers are converted from interferograms into depth The figures show transparent interfaces as peaks and the method refusing layers thinner than its.
 
 [![Industrial OCT (optical coherence tomography) — Layer Thickness and Hidden Defects of Paints, Coatings and Multilayer Films, Seen in Depth by the FFT of One Spectral Interferogram](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_industrial_oct/01_real_paint_bscans_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_industrial_oct/01_real_paint_bscans.png)
 
@@ -824,7 +824,7 @@ Ops used (notes): [`glass`](https://furuse.work/ops/optics/design/glass.html) ·
 
 ## No.2026.237 —— Thin-Film Thickness by Spectral Reflectometry — Scored on Public Measured Data, then Fringes, Interference Colours, FFT versus Model Fit and Thickness Maps
 
-This exhibit covers “thin-film thickness by spectral reflectometry”; the focus is “scored on public measured data, then fringes, interference colours…”. Using synthetic and public data, it compares the measurement with a known answer.
+When measuring Thin-Film Thickness by Spectral Reflectometry, Scored on Public Measured Data, then. The Thin-Film Thickness by Spectral Reflectometry test uses five from synthetic data to separate. The contrast between five and filmoptics shows that scored on Public Measured Data, then Fringes, Interference.
 
 [![Thin-Film Thickness by Spectral Reflectometry — Scored on Public Measured Data, then Fringes, Interference Colours, FFT versus Model Fit and Thickness Maps](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thin_film_reflectometry/01_real_micrograph_thickness_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thin_film_reflectometry/01_real_micrograph_thickness.png)
 
@@ -866,7 +866,7 @@ Ops used (notes): [`annotate_colorbar`](https://furuse.work/ops/annotate/paper/a
 
 ## No.2026.238 —— Chromatic Confocal Displacement Sensor — A Rainbow Ruler from Glass Dispersion, Reading Height from the Colour that Comes Back
 
-This exhibit concerns chromatic confocal displacement sensor. This exhibit is under revision. Its explanation and figure will be replaced after verification.
+For Chromatic Confocal Displacement Sensor, while Reading Height from the Colour that Comes Back. The Chromatic Confocal Displacement Sensor test uses revision from synthetic data to separate. The contrast between revision and spherical shows that a Rainbow Ruler from the method Dispersion, Reading Height from the.
 
 [![Chromatic Confocal Displacement Sensor — A Rainbow Ruler from Glass Dispersion, Reading Height from the Colour that Comes Back](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_chromatic_confocal/01_rainbow_ruler_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_chromatic_confocal/01_rainbow_ruler.png)
 
@@ -908,7 +908,7 @@ Ops used (notes): [`abbe_number`](https://furuse.work/ops/optics/matprop/abbe_nu
 
 ## No.2026.245 —— A Virtual SEM — Fire Electrons One by One into the Solid, and the Image and the Measured Line Width Change with the Voltage (Scored against Measured Data)
 
-This exhibit covers “a virtual SEM”; the focus is “fire electrons one by one into the solid, and the image and the measured line width…”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+When measuring A Virtual SEM, while and the Image and the Measured Line Width Change with the Voltage. For A Virtual SEM, the measured data compares photograph with surface and tracks tally. The contrast between photograph and surface shows that fire Electrons One by One into the Solid, and the Image and the.
 
 [![A Virtual SEM — Fire Electrons One by One into the Solid, and the Image and the Measured Line Width Change with the Voltage (Scored against Measured Data)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_sem_kv_cd_bse/01_sem_interaction_volume_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_sem_kv_cd_bse/01_sem_interaction_volume.png)
 
@@ -950,7 +950,7 @@ Ops used (notes): [`material_electron_properties`](https://furuse.work/ops/optic
 
 ## No.2026.246 —— A Virtual Transmission Electron Microscope — Thon Rings (CTF rings in a TEM power spectrum) Move with Focus, Fine Detail Reverses, and Defocus Is Read from Real Micrographs
 
-This exhibit covers “a virtual transmission electron microscope”; the focus is “thon rings (CTF rings in a TEM power frequency distribution) move with focus, fine detail reverses…”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+For A Virtual Transmission Electron Microscope, while and Defocus Is Read from Real Micrographs. For A Virtual Transmission Electron Microscope, the synthetic data compares turns with phase and. The contrast between turns and phase shows that thon Rings Move with Focus, while and Defocus Is Read from Real Micrographs.
 
 [![A Virtual Transmission Electron Microscope — Thon Rings (CTF rings in a TEM power spectrum) Move with Focus, Fine Detail Reverses, and Defocus Is Read from Real Micrographs](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tem_ctf_thon_rings/02_thon_rings_four_defoci_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tem_ctf_thon_rings/02_thon_rings_four_defoci.png)
 
@@ -990,7 +990,7 @@ Ops used (notes): [`tem_amorphous_film`](https://furuse.work/ops/optics/tem/tem_
 
 ## No.2026.250 —— Spectrometer and Illumination Trains — Where the Bandwidth Comes From, and Whether the Lamp Shows in the Field
 
-This exhibit covers “spectrometer and illumination trains”; the focus is “where the bandwidth comes from, and whether the lamp shows in the field”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+A comparison of Spectrometer and Illumination Trains matters when Where the Bandwidth Comes From, and. For Spectrometer and Illumination Trains, the computed data compares hyperspectral with used and. The contrast between hyperspectral and used shows that where the Bandwidth Comes From, and Whether the Lamp Shows.
 
 [![Spectrometer and Illumination Trains — Where the Bandwidth Comes From, and Whether the Lamp Shows in the Field](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_spectrometer_illumination/03_slit_image_smile_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_spectrometer_illumination/03_slit_image_smile.png)
 
@@ -1028,7 +1028,7 @@ Ops used (notes): [`chromatic_confocal_peaks`](https://furuse.work/ops/optics/co
 
 ## No.2026.251 —— Grating Interferometry — Fibre Orientation, Micro-Cracks and Pores That Absorption Cannot See, Read From the Fringe Amplitude (Dark Field)
 
-This exhibit covers “grating interferometry”; the focus is “fibre orientation, micro-cracks and pores that absorption cannot see…”. Using synthetic and public data, it compares the measurement with a known answer.
+When measuring Grating Interferometry, while Read From the Fringe Amplitude. For Grating Interferometry, we place interferometer in computed data, then compare dark and field. The contrast between interferometer and dark shows that fibre Orientation, while Read From the Fringe Amplitude.
 
 [![Grating Interferometry — Fibre Orientation, Micro-Cracks and Pores That Absorption Cannot See, Read From the Fringe Amplitude (Dark Field)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_grating_interferometry/12_real_three_images_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_grating_interferometry/12_real_three_images.png)
 
@@ -1072,7 +1072,7 @@ Ops used (notes): [`angular_spectrum_propagate`](https://furuse.work/ops/optics/
 
 ## No.2026.255 —— Bone and Glass in Meat, Separated by Material with Two X-ray Energies (Dual-Energy and Photon-Counting X-ray)
 
-This exhibit examines “bone and optical material in meat, separated by material with two…”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+In evaluating Bone and the method in Meat, Separated by Material with Two X-ray Energies. A measured data case for Bone and the method in Meat links single, transmission, and image. The contrast between single and transmission shows that separated by Material with Two X-ray Energies.
 
 [![Bone and Glass in Meat, Separated by Material with Two X-ray Energies (Dual-Energy and Photon-Counting X-ray)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dual_energy_xray/04_tray_single_vs_basis_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dual_energy_xray/04_tray_single_vs_basis.png)
 
@@ -1110,7 +1110,7 @@ Ops used (notes): [`basis_decomposition_crlb`](https://furuse.work/ops/tomograph
 
 ## No.2026.271 —— Budgeting Lens Manufacturing Tolerances through MTF (modulation transfer function), Yield, and Compensator Travel
 
-This exhibit examines “budgeting lens manufacturing tolerances through MTF…”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+A comparison of Budgeting Lens Manufacturing Tolerances through MTF matters when Yield, and Compensator. The Budgeting Lens Manufacturing Tolerances through MTF test uses public from measured data to separate triplet from prescription. The contrast between public and triplet shows that yield, and Compensator Travel.
 
 [![Budgeting Lens Manufacturing Tolerances through MTF (modulation transfer function), Yield, and Compensator Travel](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/01_sensitivity_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/01_sensitivity.png)
 
@@ -1154,7 +1154,7 @@ Ops used (notes): [`chief_ray`](https://furuse.work/ops/optics/design/chief_ray.
 
 ## No.2026.272 —— A Prescription-Based Plenoptic Camera
 
-This exhibit concerns a prescription-based plenoptic camera. This exhibit is under revision. Its explanation and figure will be replaced after verification.
+Using A Prescription-Based in practice is difficult because the measurement can become unreliable. For A Prescription-Based, the synthetic data compares revision with depth and tracks refocus. The contrast between revision and depth shows that the measurement can become unreliable.
 
 [![A Prescription-Based Plenoptic Camera](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/03_raw_microimages_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/03_raw_microimages.png)
 
@@ -1198,7 +1198,7 @@ Ops used (notes): [`lens_scene`](https://furuse.work/ops/optics/lensrender/lens_
 
 ## No.2026.273 —— Measuring the Same Particles in Scanning and Transmission Images — Which Is Right, 52 nm or 48 nm?
 
-This exhibit covers “measuring the same particles in scanning and transmission…”; the focus is “which is right, 52 nm or forty-eight nm”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+In evaluating Measuring the Same Particles in Scanning and Transmission Images, while 52 nm or nm. A computed data case for Measuring the Same Particles in Scanning and Transmission Images links ledger, fourteen, and spherical. The contrast between ledger and fourteen shows that which Is Right, nm or nm?.
 
 [![Measuring the Same Particles in Scanning and Transmission Images — Which Is Right, 52 nm or 48 nm?](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_tem_same_particle/02_same_specimen_sem_tem_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_tem_same_particle/02_same_specimen_sem_tem.png)
 
@@ -1240,7 +1240,7 @@ Ops used (notes): [`color_bar`](https://furuse.work/ops/annotate/furniture/color
 
 ## No.2026.274 —— Indirect and Direct Time of Flight on One 3-D Scene — Multipath, Mixed Pixels, Pile-up and Volume Error
 
-This exhibit covers “indirect and direct time of flight on one 3-d scene”; the focus is “multipath, mixed pixels, pile-up and volume error”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+Using Indirect and Direct Time of Flight on One three-dimensional Scene in practice is difficult. The Indirect and Direct Time of Flight on One three-dimensional Scene test uses same from. The contrast between same and shown shows that multipath, Mixed Pixels, Pile-up and Volume Error.
 
 [![Indirect and Direct Time of Flight on One 3-D Scene — Multipath, Mixed Pixels, Pile-up and Volume Error](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tof_camera/01_scene_viewer_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tof_camera/01_scene_viewer.png)
 
@@ -1282,7 +1282,7 @@ Ops used (notes): [`bilateral_filter_depth`](https://furuse.work/ops/3d/depth_de
 
 ## No.2026.275 —— Measurable Omnidirectional Inspection, Stereo Display and Moving Viewports
 
-This exhibit examines “measurable omnidirectional inspection…”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+A comparison of Measurable Omnidirectional Inspection matters when Stereo Display and Moving Viewports. A synthetic data case for Measurable Omnidirectional Inspection links m-radius, tunnel, and captured. The contrast between m-radius and tunnel shows that stereo Display and Moving Viewports.
 
 [![Measurable Omnidirectional Inspection, Stereo Display and Moving Viewports](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_omni360_inspection/08_anaglyph_and_limits_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_omni360_inspection/08_anaglyph_and_limits.png)
 

@@ -22,7 +22,8 @@ CANDIDATE_TERMS = {
     "strehl": ["Strehl", "ストレール"],
     "nyquist": ["Nyquist", "ナイキスト"],
     "mtf50": ["MTF50"],
-    "airy": ["Airy", "エアリー"],
+    "airy_pattern": ["Airy pattern", "Airy disc", "Airy disk", "エアリー像", "エアリー円板", "囲みエネルギー", "encircled energy"],
+    "airy_formula": ["Airy", "Airy recursion", "Airy formula", "Airy multiple-reflection formula", "エアリー"],
     "rayleigh": ["Rayleigh criterion", "Rayleigh resolution", "レイリー限界", "レイリー基準"],
     "brewster": ["Brewster angle", "Brewster's angle", "ブリュースター角"],
     "stokes": ["Stokes vector", "Stokes parameters", "ストークスベクトル", "ストークスパラメータ"],
@@ -97,6 +98,10 @@ def _allowed(term_id: str, exhibit_id: str) -> bool:
         return exhibit_id in {"poc_recycling_sorting", "poc_hyperspectral_foreign_matter"}
     if term_id == "sam_ultrasonic":
         return exhibit_id == "poc_sam_hybrid_bonding_voids"
+    if term_id == "airy_pattern":
+        return exhibit_id == "poc_zoom_configurations"
+    if term_id == "airy_formula":
+        return exhibit_id in {"poc_sam_hybrid_bonding_voids", "poc_thin_film_reflectometry"}
     return True
 
 

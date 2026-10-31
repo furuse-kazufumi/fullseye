@@ -144,7 +144,7 @@ py -3.11 examples/poc_bump_coplanarity.py
 
 ## No.2026.009 —— コンクリートのひび割れ幅は 1 画素より細い ―― 数える幅と、積分する幅
 
-この展示は「コンクリートのひび割れ幅は 1 画素より細い」を扱い、「数える幅と、積分する幅」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+コンクリートのひび割れ幅は 1 画素より細いの評価では、数える幅と、積分する幅。計算データに視野を用意し、二値化と輝度欠損を比べた。以下と全部の差を見ると、数える幅と、積分する幅ことが分かる。
 
 [![コンクリートのひび割れ幅は 1 画素より細い ―― 数える幅と、積分する幅](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width/02_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width/02_scene.png)
 
@@ -174,7 +174,7 @@ py -3.11 examples/poc_crack_width.py
 
 ## No.2026.017 —— 周期のある地に埋もれた欠陥 ―― まとめた ROC(真陽性率と偽陽性率の曲線) が隠すもの
 
-この展示は「周期のある地に埋もれた欠陥」を扱い、「まとめた ROC(真陽性率と偽陽性率の曲線) が隠すもの」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+周期のある地に埋もれた欠陥では、まとめた ROC が隠すもの。計算データで斑点とムラを扱い、検出器がどう変わるかを調べた。スコア地図と種類別の差を見ると、まとめた ROC が隠すものことが分かる。
 
 [![周期のある地に埋もれた欠陥 ―― まとめた ROC(真陽性率と偽陽性率の曲線) が隠すもの](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fabric_defect/04_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fabric_defect/04_scene.png)
 
@@ -206,7 +206,7 @@ py -3.11 examples/poc_fabric_defect.py
 
 ## No.2026.069 —— 音で漏水を掘り当てる ―― 相関がきれいでも、伝わる速さを間違えれば場所は外れる
 
-この展示は「音で漏水を掘り当てる」を扱い、「相関がきれいでも、伝わる速さを間違えれば場所は外れる」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+音で漏水を掘り当てるとき、相関がきれいでも、伝わる速さを間違えれば場所は外れる。埋設管を含む実測データを作り、漏水音と到達時間差の関係を測った。位置と仕事の差を見ると、相関がきれいでも、伝わる速さを間違えれば場所は外れることが分かる。
 
 [![音で漏水を掘り当てる ―― 相関がきれいでも、伝わる速さを間違えれば場所は外れる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_leak_localization/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_leak_localization/01_scene.png)
 
@@ -244,7 +244,7 @@ py -3.11 examples/poc_leak_localization.py
 
 ## No.2026.071 —— 熱・振動・形状を束ねる設備保全 —— 3 つ見ても、同じものを 3 回見ていることがある
 
-この展示は「熱・振動・形状を束ねる設備保全」を扱い、「3 つ見ても、同じものを 三回見ていることがある」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+熱・振動・形状を束ねる設備保全では、3 つ見ても、同じものを 回見ていることがある。実測データで回転機械と状態を扱い、欠陥周波数がどう変わるかを調べた。閉形式と定常フィン方程式の差を見ると、 つ見ても、同じものを 回見ていることがあることが分かる。
 
 [![熱・振動・形状を束ねる設備保全 —— 3 つ見ても、同じものを 3 回見ていることがある](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_machine_condition_fusion/01_scene_machine_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_machine_condition_fusion/01_scene_machine.png)
 
@@ -282,7 +282,7 @@ py -3.11 examples/poc_machine_condition_fusion.py
 
 ## No.2026.024 —— 2 値マトリクスコードを読む ―― 先に死ぬのはいつも幾何
 
-この展示は「2 値マトリクスコードを読む」を扱い、「先に死ぬのはいつも幾何」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+2 値マトリクスコードを読むでは、先に死ぬのはいつも幾何。同型を含む計算データを作り、レイアウトと乱数ビットの関係を測った。符号と遮蔽の差を見ると、先に死ぬのはいつも幾何ことが分かる。
 
 [![2 値マトリクスコードを読む ―― 先に死ぬのはいつも幾何](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_matrix_code_reading/01_symbol_and_errors_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_matrix_code_reading/01_symbol_and_errors.png)
 
@@ -312,7 +312,7 @@ py -3.11 examples/poc_matrix_code_reading.py
 
 ## No.2026.025 —— ディスプレイ検査のモアレ(二つの周期模様の差で生じる縞)は「本物のムラ」と区別できるか
 
-この展示は「ディスプレイ検査のモアレ(二つの周期模様の差で生じる縞)は「本物のムラ」と区別できるか」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+ディスプレイ検査のモアレは「本物のムの評価では、測定の確かさが課題になる。計算データに画素格子を用意し、表示と干渉を比べた。輝度ムラと合計誤差の差を見ると、測定の確かさが課題になることが分かる。
 
 [![ディスプレイ検査のモアレ(二つの周期模様の差で生じる縞)は「本物のムラ」と区別できるか](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_moire_screen/04_moire_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_moire_screen/04_moire_scene.png)
 
@@ -344,7 +344,7 @@ py -3.11 examples/poc_moire_screen.py
 
 ## No.2026.102 —— 印刷の版ずれを刷り上がりから測る ―― 網点は格子なので、答えは 1 つに決まらない
 
-この展示は「印刷の版ずれを刷り上がりから測る」を扱い、「網点は格子なので、答えは 1 つに決まらない」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+印刷の版ずれを刷り上がりから測るとき、網点は格子なので、答えは 1 つに決まらない。合成データでオフセットとラベル印刷を扱い、慣行がどう変わるかを調べた。スクリーン角と仕込の差を見ると、網点は格子なので、答えは つに決まらないことが分かる。
 
 [![印刷の版ずれを刷り上がりから測る ―― 網点は格子なので、答えは 1 つに決まらない](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_print_registration/04_sweep_wrap_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_print_registration/04_sweep_wrap.png)
 
@@ -382,7 +382,7 @@ py -3.11 examples/poc_print_registration.py
 
 ## No.2026.116 —— 薄い欠陥はどこまで見えるか —— 実写の地に真値を仕込んで検出限界を測る
 
-この展示は「薄い欠陥はどこまで見えるか」を扱い、「実写の地に真値を仕込んで検出限界を測る」を調べる。合成データと実測データを使い、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+薄い欠陥はどこまで見えるかを確かめる場面では、実写の地に真値を仕込んで検出限界を測る。合成データにラインを用意し、見積と普通を比べた。白色雑音と合成画像の差を見ると、実写の地に真値を仕込んで検出限界を測ることが分かる。
 
 [![薄い欠陥はどこまで見えるか —— 実写の地に真値を仕込んで検出限界を測る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_defect_floor/01_defect_floor_panels_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_defect_floor/01_defect_floor_panels.png)
 
@@ -404,7 +404,7 @@ py -3.11 examples/poc_real_defect_floor.py
 
 ## No.2026.109 —— 実写のテクスチャを回す ―― 「回転不変」は、それが要らない素材でだけ成り立つ
 
-この展示は「実写のテクスチャを回す」を扱い、「「回転不変」は、それが要らない素材でだけ成り立つ」を調べる。実測データで条件を比べ、測定結果がどこまで保たれるかを確かめる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+実写のテクスチャを回すの評価では、「回転不変」は、それが要らない素材でだけ成り立つ。実測データの角度を使い、記述子と自分自身を別々に確かめた。基準と距離の差を見ると、「回転不変」は、それが要らない素材でだけ成り立つことが分かる。
 
 [![実写のテクスチャを回す ―― 「回転不変」は、それが要らない素材でだけ成り立つ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_texture_invariance/01_textures_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_texture_invariance/01_textures.png)
 
@@ -434,7 +434,7 @@ py -3.11 examples/poc_real_texture_invariance.py
 
 ## No.2026.079 —— 混合廃棄物の材質選別 —— 何が消えるかは前処理の代数で決まる
 
-この展示は「混合廃棄物の材質選別」を扱い、「何が消えるかは前処理の代数で決まる」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+廃棄物を短波赤外で選別すると、濡れ、汚れ、傾きの影響は前処理ごとに異なる。材質が既知の合成破片へ各劣化を別々に与え、分光角、微分、連続体除去で分類結果を比べた。図では、乗算変化に強い処理と加算変化に強い処理が分かれ、平坦な金属は微分で消える。
 
 [![混合廃棄物の材質選別 —— 何が消えるかは前処理の代数で決まる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_recycling_sorting/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_recycling_sorting/01_scene.png)
 
@@ -474,7 +474,7 @@ py -3.11 examples/poc_recycling_sorting.py
 
 ## No.2026.084 —— 太陽電池セルの EL 画像から発電損失を推定する ―― 「暗い = 不活性」ではない
 
-この展示は「太陽電池セルの EL 画像から発電損失を推定する」を扱い、「「暗い = 不活性」ではない」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+太陽電池セルの EL 画像から発電損失を推定するとき、「暗い = 不活性」ではない。結晶シリコンセルを含む合成データを作り、閉形式と孤立領域の関係を測った。クラックと断線の差を見ると、「暗い = 不活性」ではないことが分かる。
 
 [![太陽電池セルの EL 画像から発電損失を推定する ―― 「暗い = 不活性」ではない](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solar_el_inspection/01_zero_point_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solar_el_inspection/01_zero_point_map.png)
 
@@ -512,7 +512,7 @@ py -3.11 examples/poc_solar_el_inspection.py
 
 ## No.2026.085 —— はんだフィレットの AOI ―― 3 リング照明は傾きの 3 段量子化器で、高さの 7 割は暗部にある
 
-この展示は「はんだフィレットの AOI」を扱い、「3 リング照明は傾きの 三段量子化器で、高さの 七割は暗部にある」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+はんだフィレットをリング照明で検査すると、色帯は高さそのものではなく表面の傾きを段階表示する。形状が既知のチップ、パッド、円弧フィレットを作り、照明角、位置ずれ、粗さを変えた外観画像を合成した。図では暗部に隠れた高さを円弧から外挿できる範囲と、部品ずれで良品を不足と誤る境界が分かる。
 
 [![はんだフィレットの AOI ―― 3 リング照明は傾きの 3 段量子化器で、高さの 7 割は暗部にある](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solder_fillet_aoi/02_scene_grid_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solder_fillet_aoi/02_scene_grid.png)
 
@@ -552,7 +552,7 @@ py -3.11 examples/poc_solder_fillet_aoi.py
 
 ## No.2026.121 —— 工程は管理下か、そして能力はあるか ―― 閉じた式だけで読む統計的工程管理
 
-この展示は「工程は管理下か、そして能力はあるか」を扱い、「閉じた式だけで読む統計的工程管理」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+工程は管理下か、そして能力はあるかを確かめる場面では、閉じた式だけで読む統計的工程管理。計算データのマシンビジョンを使い、寸法と欠陥数を別々に確かめた。系列と学習の差を見ると、閉じた式だけで読む統計的工程管理ことが分かる。
 
 [![工程は管理下か、そして能力はあるか ―― 閉じた式だけで読む統計的工程管理](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_spc/01_spc_xbar_chart_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_spc/01_spc_xbar_chart.png)
 
@@ -584,7 +584,7 @@ py -3.11 examples/poc_spc.py
 
 ## No.2026.152 —— どのセンサーも正常値なのに、設備は異常 ―― MT 法が単変量 3σ の見逃しを拾う量
 
-この展示は「どのセンサーも正常値なのに、設備は異常」を扱い、「MT 法が単変量 3σ の見逃しを拾う量」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+どのセンサーも正常値なのに、設備は異常では、MT 法が単変量 3σ の見逃しを拾う量。合成データで設備保全と健全を扱い、単位空間がどう変わるかを調べた。別標本と閾値の差を見ると、MT 法が単変量 σ の見逃しを拾う量ことが分かる。
 
 [![どのセンサーも正常値なのに、設備は異常 ―― MT 法が単変量 3σ の見逃しを拾う量](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mt_hidden_fault/01_mt_hidden_cloud_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mt_hidden_fault/01_mt_hidden_cloud.png)
 
@@ -622,7 +622,7 @@ py -3.11 examples/poc_mt_hidden_fault.py
 
 ## No.2026.155 —— 文字はどこにあるか、を学習なしで ―― 描いた文字を真値に、ストローク幅の検出器を採点する
 
-この展示は「文字はどこにあるか、を学習なしで」を扱い、「描いた文字を真値に、ストローク幅の検出器を採点する」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+文字はどこにあるか、を学習なしでの評価では、描いた文字を真値に、ストローク幅の検出器を採点する。計算データの前処理を使い、認識器と方針を別々に確かめた。幾何と一定の差を見ると、描いた文字を真値に、ストローク幅の検出器を採点することが分かる。
 
 [![文字はどこにあるか、を学習なしで ―― 描いた文字を真値に、ストローク幅の検出器を採点する](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_text_region_truth/01_text_region_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_text_region_truth/01_text_region_scene.png)
 
@@ -648,7 +648,7 @@ py -3.11 examples/poc_text_region_truth.py
 
 ## No.2026.042 —— カメラの熱ドリフトが寸法計測に効く量
 
-この展示は「カメラの熱ドリフトが寸法計測に効く量」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+カメラの熱ドリフトが寸法の評価では、測定の確かさが課題になる。計算データに温度を用意し、焦点距離と架台を比べた。主点と一辺の差を見ると、測定の確かさが課題になることが分かる。
 
 [![カメラの熱ドリフトが寸法計測に効く量](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermal_drift_metrology/04_error_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermal_drift_metrology/04_error_maps.png)
 
@@ -678,7 +678,7 @@ py -3.11 examples/poc_thermal_drift_metrology.py
 
 ## No.2026.047 —— 迷光がコントラスト計測を壊す ―― MTF(変調伝達関数) 合格・黒レベル不合格は両立する
 
-この展示は「迷光がコントラスト計測を壊す」を扱い、「MTF(変調伝達関数) 合格・黒レベル不合格は両立する」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+迷光がコントラスト計測を壊すでは、MTF 合格・黒レベル不合格は両立する。エッジを含む計算データを作り、黒四角と同時の関係を測った。割合と測定窓の差を見ると、MTF 合格・黒レベル不合格は両立することが分かる。
 
 [![迷光がコントラスト計測を壊す ―― MTF(変調伝達関数) 合格・黒レベル不合格は両立する](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_veiling_glare/04_glare_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_veiling_glare/04_glare_scene.png)
 
@@ -710,7 +710,7 @@ py -3.11 examples/poc_veiling_glare.py
 
 ## No.2026.224 —— カメラの中の前処理はデータシートの数をもっともらしく嘘にする ―― 雑音除去で量子効率 +83 %、規格の検査は見逃し、雑音の相関が見破る
 
-この展示は「カメラの中の前処理はデータシートの数をもっともらしく嘘にする」を扱い、「雑音除去で量子効率 +83 %、規格の検査は見逃し、雑音の相関が見破る」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+カメラの中の前処理はデータシートの数をもっともらしく嘘にする場面では、雑音の相関が見破る。合成データに仕込を用意し、合成センサと熱画素を比べた。手順とデジタルゲインの差を見ると、雑音除去で量子効率 +83 %、規格の検査は見逃し、雑音の相関が見破ることが分かる。
 
 [![カメラの中の前処理はデータシートの数をもっともらしく嘘にする ―― 雑音除去で量子効率 +83 %、規格の検査は見逃し、雑音の相関が見破る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_in_camera_processing/01_datasheet_lies_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_in_camera_processing/01_datasheet_lies.png)
 
@@ -746,7 +746,7 @@ py -3.11 examples/poc_emva1288_in_camera_processing.py
 
 ## No.2026.114 —— 搬送ロールの傷を周期から名指しする ―― 崖に着く前に、何も言えなくなる
 
-この展示は「搬送ロールの傷を周期から名指しする」を扱い、「崖に着く前に、何も言えなくなる」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+搬送ロールの傷を周期から名指しする場面では、崖に着く前に、何も言えなくなる。実測データにフィルムを用意し、電池電極と銅箔を比べた。周長と転写の差を見ると、崖に着く前に、何も言えなくなることが分かる。
 
 [![搬送ロールの傷を周期から名指しする ―― 崖に着く前に、何も言えなくなる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_web_roll_periodicity/01_scene_web_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_web_roll_periodicity/01_scene_web.png)
 
@@ -784,7 +784,7 @@ py -3.11 examples/poc_web_roll_periodicity.py
 
 ## No.2026.050 —— レーザー三角測量の断面から溶接ビードを測る ―― 測れなかったところを 0 と書く罪
 
-この展示は「レーザー三角測量の断面から溶接ビードを測る」を扱い、「測れなかったところを 0 と書く罪」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+レーザー三角測量の断面から溶接ビードを測る場面では、測れなかったところを 0 と書く罪。計算データに輝線を用意し、行位置と余盛高を比べた。アンダーカットとゼロ点の差を見ると、測れなかったところを と書く罪ことが分かる。
 
 [![レーザー三角測量の断面から溶接ビードを測る ―― 測れなかったところを 0 と書く罪](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weld_bead_profile/01_laser_images_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weld_bead_profile/01_laser_images.png)
 
@@ -814,7 +814,7 @@ py -3.11 examples/poc_weld_bead_profile.py
 
 ## No.2026.115 —— 光切断で溶接ビードを走査する ―― 分解能と遮蔽は同じノブの表裏
 
-この展示は「光切断で溶接ビードを走査する」を扱い、「分解能と遮蔽は同じノブの表裏」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+光切断で溶接ビードを走査するとき、分解能と遮蔽は同じノブの表裏。肉溶接を含む計算データを作り、断面と閉形式の関係を測った。余盛と脚長の差を見ると、分解能と遮蔽は同じノブの表裏ことが分かる。
 
 [![光切断で溶接ビードを走査する ―― 分解能と遮蔽は同じノブの表裏](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weld_bead_scan_angle/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weld_bead_scan_angle/01_scene.png)
 
@@ -852,7 +852,7 @@ py -3.11 examples/poc_weld_bead_scan_angle.py
 
 ## No.2026.122 —— 画像の誤字を認識せずに見つけて直す ―― 閾値は書体の違いから導く
 
-この展示は「画像の誤字を認識せずに見つけて直す」を扱い、「閾値は書体の違いから導く」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+画像の誤字を認識せずに見つけて直すでは、閾値は書体の違いから導く。合成データで文字列と入力を扱い、多クラス分類がどう変わるかを調べた。各マスと指定の差を見ると、閾値は書体の違いから導くことが分かる。
 
 [![画像の誤字を認識せずに見つけて直す ―― 閾値は書体の違いから導く](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_glyph_typo_detection/01_sign_before_after_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_glyph_typo_detection/01_sign_before_after.png)
 
@@ -874,7 +874,7 @@ py -3.11 examples/poc_glyph_typo_detection.py
 
 ## No.2026.130 —— 3D プリンタの層検査 ―― 形 → 層 → 経路 → 画像 の往復を自分で閉じ、仕込んだ欠陥を数字で捕まえる
 
-この展示は「3D プリンタの層検査」を扱い、「形 → 層 → 経路 → 画像の往復を自分で閉じ、仕込んだ欠陥を数字で捕まえる」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+三次元 プリンタの層検査では、形 → 層 → 経路 → 画像 の往復を自分で閉じ、仕込んだ欠陥を数字で捕まえる。計算データで印刷中と層画像を扱い、新族がどう変わるかを調べた。既存と語彙の差を見ると、形 → 層 → 経路 → 画像 の往復を自分で閉じ、仕込んだ欠陥を数字で捕まえることが分かる。
 
 [![3D プリンタの層検査 ―― 形 → 層 → 経路 → 画像 の往復を自分で閉じ、仕込んだ欠陥を数字で捕まえる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_print_layer_inspection/02_layers_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_print_layer_inspection/02_layers.png)
 
@@ -904,7 +904,7 @@ py -3.11 examples/poc_print_layer_inspection.py
 
 ## No.2026.189 —— 遅れても詰まらない倉庫 ―― AGV の群れは「計画が正しい」だけでは止まる
 
-この展示は「遅れても詰まらない倉庫」を扱い、「AGV の群れは「計画が正しい」だけでは止まる」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+倉庫では、搬送車が予定より遅れると、衝突のない計画でも通路が詰まる。格子上を走る搬送車に確率的な遅れを与え、素朴な実行と行動依存グラフによる実行を比べた。図では、到着済みの車両が通路を塞ぐ様子と、依存関係を守れば衝突もデッドロックも防げることが分かる。
 
 [![遅れても詰まらない倉庫 ―― AGV の群れは「計画が正しい」だけでは止まる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_agv_fleet/01_agv_naive_vs_adg.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_agv_fleet/01_agv_naive_vs_adg.gif)
 
@@ -934,13 +934,13 @@ py -3.11 examples/poc_agv_fleet.py
 
 ## No.2026.223 —— ハイブリッド接合のボイドは「明るさ」でなく「位相」で見つける ―― 小さなボイドは振幅の像で良品に隠れ、位相の像では反転して光る
 
-この展示は「ハイブリッド接合のボイドは「明るさ」でなく「位相」で見つける」を扱い、「小さなボイドは振幅の像で良品に隠れ、位相の像では反転して光る」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+ハイブリッド接合のボイドは「明るさ」でなく「位相」で見つける場面では、小さなボイドは振幅の像で良品に隠れ、位相の像では反転して光る。ハイブリッド接合のボイドは「明るさ」でなく「位相」で見つけるの合成データにダイを用意し、接合面と直径を比べた。ピッチとパッドの差が、判定の限界を示す。
 
 [![ハイブリッド接合のボイドは「明るさ」でなく「位相」で見つける ―― 小さなボイドは振幅の像で良品に隠れ、位相の像では反転して光る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sam_hybrid_bonding_voids/03_amplitude_vs_phase_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sam_hybrid_bonding_voids/03_amplitude_vs_phase.png)
 
 *↑ **ハイブリッド接合のボイドは「明るさ」でなく「位相」で見つける ―― 小さなボイドは振幅の像で良品に隠れ、位相の像では反転して光る** ―― 厚さ 100 µm の Si のダイの下の接合面(SiO2 1 + 1 µm、直径 40 µm・ピッチ 80 µm の Cu パッド 1 + 1 µm)に直径 5〜24 µm のボイドを置き、水 1 mm・F# 3 の集束探触子の SAM(走査型超音波顕微鏡) で撮る。エコーは層の伝達行列(Airy の再帰・時間領域の経路の和・光学の薄膜の式と 1e-12 で照合済み)。★★接合面の期待時刻で読んだ位相は、誘電体 −91°・Cu パッド +84°(薄い層は直交)、ボイドは誘電体の中 −175°・パッドの上 +159°(反転)。★★振幅の像ではボイド 12 個中 8 個が良品の画素の明るさの範囲に隠れる。直交の背景に反転のエコーが直角に足されるので、9〜16 µm のボイドの振幅の変化は 0.4〜3.5σ、位相を使う変化は 3.0〜8.9σ。位相の像で反転と読む画素は 16 µm 以上のボイドすべてで、良品 26,724 画素中 1 画素。★従来の「|RF| 最大の 1 点の符号」は無傷の Cu パッドで 140〜400 MHz の間に 5 回転ぶ。★最適周波数は閉形式 (k/a)·sqrt(log2(1 + a² ln2/(β k²)))(10 µm で 139.16 MHz、総当たりと一致)、表面エコーの裾がゲートに入る下限 130 MHz。★★POD(â vs a、88 個): 位相を使う検出の a90/95 は 150 / 200 / 300 MHz で 12.4 / 13.9 / 57.6 µm、振幅だけは 16.6 / 19.3 / 101.6 µm(同じ基準・同じ閾値の規則)。1-D 平面波・縦波だけ・ガウスの横 PSF・屈折の収差なし・Si の減衰 0(未確認)・kissing bond なしの合成であることは docstring に明記。検査 16 件・約 15 秒。*
 
-用語: SAM — 集束した超音波を試料上で走査し、反射波の振幅・位相・到達時間から内部界面や欠陥を画像化する装置。; Airy — Airyの式は平行平板内の多重反射を無限級数として合成し、同じ数学から円形開口の回折像であるAiryパターンも得られる。
+用語: SAM — 集束した超音波を試料上で走査し、反射波の振幅・位相・到達時間から内部界面や欠陥を画像化する装置。; Airy — 平行平板内で繰り返す多重反射を無限級数として合成し、透過率を表す式。
 
 [![接合面のエコーは表面エコーの 1 割未満。ボイドのエコーは反転、誘電体とパッドは直交(微分形)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sam_hybrid_bonding_voids/01_ascan_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sam_hybrid_bonding_voids/01_ascan.png)
 
@@ -978,7 +978,7 @@ py -3.11 examples/poc_sam_hybrid_bonding_voids.py
 
 ## No.2026.226 —— PL 像で細い溝はなぜ見えなくなるか ―― 拡散長が長いほど隠れるのは影の溝だけで、沈みの溝はむしろ目立つ
 
-この展示は「PL 像で細い溝はなぜ見えなくなるか」を扱い、「拡散長が長いほど隠れるのは影の溝だけで、沈みの溝はむしろ目立つ」を調べる。合成データと公開データを使い、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+PL 像で細い溝はなぜ見えなくなるかを確かめる場面では、拡散長が長いほど隠れるのは影の溝だけで、沈みの溝はむしろ目立つ。PL 像で細い溝はなぜ見えなくなるかを表す実測データのフォトルミネッセンスを使い、励起と過剰キャリアを別々に確かめた。拡散と光学の差が、判定の限界を示す。
 
 [![PL 像で細い溝はなぜ見えなくなるか ―― 拡散長が長いほど隠れるのは影の溝だけで、沈みの溝はむしろ目立つ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_si_wafer_pl_defect_visibility/03_pl_real_groove_after_hf_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_si_wafer_pl_defect_visibility/03_pl_real_groove_after_hf.png)
 
@@ -1006,7 +1006,7 @@ py -3.11 examples/poc_si_wafer_pl_defect_visibility.py
 
 ## No.2026.240 —— 照明の円錐と観察の NA ―― 光の円錐の開き方を変えるだけで、同じ打痕・傷・ムラが消えたり出たりする
 
-この展示は「照明の円錐と観察の NA」を扱い、「光の円錐の開き方を変えるだけで、同じ打痕・傷・ムラが消えたり出たりする」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+照明の円錐と観察の NAでは、光の円錐の開き方を変えるだけで、同じ打痕・傷・ムラが消えたり出たりする。照明の円錐と観察の NAの計算データで鏡面と金属部品を扱い、ヘアラインがどう変わるかを調べた。梨地と光源の差を見ると、光の円錐の開き方を変えるだけで、同じ打痕・傷・ムラが消えたり出たりすることが分かる。
 
 [![照明の円錐と観察の NA ―― 光の円錐の開き方を変えるだけで、同じ打痕・傷・ムラが消えたり出たりする](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illumination_cone_vs_na/02_works_by_cone_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illumination_cone_vs_na/02_works_by_cone.png)
 
@@ -1044,7 +1044,7 @@ py -3.11 examples/poc_illumination_cone_vs_na.py
 
 ## No.2026.254 —— 明るさの値ではなく「変化の向き」で探す ―― 遮蔽 10 % で崩れる NCC と、6 割まで残る符号系の照合
 
-この展示は「明るさの値ではなく「変化の向き」で探す」を扱い、「遮蔽 10 % で崩れる NCC と、六割まで残る符号系の照合」を調べる。公開の実測データで条件を比べ、測定結果がどこまで保たれるかを確かめる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+明るさの値ではなく「変化の向き」で探すの評価では、遮蔽 10 % で崩れる NCC と、 割まで残る符号系の照合。明るさの値ではなく「変化の向き」で探すの実測データにテンプレート照合を用意し、正規化相互相関と一部を比べた。光沢と片側の差が、判定の限界を示す。
 
 [![明るさの値ではなく「変化の向き」で探す ―― 遮蔽 10 % で崩れる NCC と、6 割まで残る符号系の照合](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_code_matching_breakdown/01_breakdown_occlusion_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_code_matching_breakdown/01_breakdown_occlusion.png)
 
@@ -1088,7 +1088,7 @@ py -3.11 examples/poc_code_matching_breakdown.py
 
 ## No.2026.256 —— 良品を並べて「いつもと違う」を言う ―― 誤検出率を宣言した変動モデルと、それが実画像で破れる所
 
-この展示は「良品を並べて「いつもと違う」を言う」を扱い、「誤検出率を宣言した変動モデルと、それが実画像で破れる所」を調べる。合成データと公開データを使い、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+良品を並べて「いつもと違う」を言うの評価では、誤検出率を宣言した変動モデルと、それが実画像で破れる所。良品を並べて「いつもと違う」を言うを表す合成データの外観検査を使い、古典と何枚を別々に確かめた。画素と欠陥の差を見ると、誤検出率を宣言した変動モデルと、それが実画像で破れる所ことが分かる。
 
 [![良品を並べて「いつもと違う」を言う ―― 誤検出率を宣言した変動モデルと、それが実画像で破れる所](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_good_sample_variation_model/01_band_width_alignment_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_good_sample_variation_model/01_band_width_alignment.png)
 
@@ -1122,7 +1122,7 @@ py -3.11 examples/poc_good_sample_variation_model.py
 
 ## No.2026.264 —— 良品だけから学ぶパッチ特徴の異常検知 ―― 深層特徴なしで、位置ごとの分布と記憶バンクを同じ採点台で比べ、再現率を保証する閾値まで
 
-この展示は「良品だけから学ぶパッチ特徴の異常検知」を扱い、「深層特徴なしで、位置ごとの分布と記憶バンクを同じ採点台で比べ、再現率を保証する閾値まで」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+良品だけから学ぶパッチ特徴の異常検知では、深層特徴なしで、位置ごとの分布と記憶バンクを同じ採点台で比べ、再現率を保証する閾値まで。良品だけから学ぶパッチ特徴の異常検知の合成データで外観検査と研究を扱い、特徴がどう変わるかを調べた。パッチと欠陥の差が、判定の限界を示す。
 
 [![良品だけから学ぶパッチ特徴の異常検知 ―― 深層特徴なしで、位置ごとの分布と記憶バンクを同じ採点台で比べ、再現率を保証する閾値まで](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/01_anomaly_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_patch_anomaly/01_anomaly_maps.png)
 
@@ -1162,7 +1162,7 @@ py -3.11 examples/poc_patch_anomaly.py
 
 ## No.2026.258 —— 密集した泡を数える ―― 重なりが深くて決まらないときは、個数ではなく区間を返す
 
-この展示は「密集した泡を数える」を扱い、「重なりが深くて決まらないときは、個数ではなく区間を返す」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+泡が深く重なると、一枚の画像だけでは一個か二個かを決められない。合成円と実写の泡で距離変換の山の突出度を測り、確実な個数ではなく下限と上限を返した。図では、重なりが深いほど区間が開き、無理に一つの数を返す方法より誤断定を抑えられる。
 
 [![密集した泡を数える ―― 重なりが深くて決まらないときは、個数ではなく区間を返す](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/01_real_bubbles_verdict_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dense_bubble_count/01_real_bubbles_verdict.png)
 
@@ -1204,7 +1204,7 @@ py -3.11 examples/poc_dense_bubble_count.py
 
 ## No.2026.280 —— フーリエ・タイコグラフィ ―― 4 倍の対物の広い視野のまま、20 倍相当の分解能と位相を、反復の位相回復で得る
 
-この展示は「フーリエ・タイコグラフィ」を扱い、「4 倍の対物の広い視野のまま、二十倍相当の分解能と位相を、反復の位相回復で得る」を調べる。合成データと公開データを使い、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+フーリエ・タイコグラフィでは、4 倍の対物の広い視野のまま、 倍相当の分解能と位相を、反復の位相回復で得る。フーリエ・タイコグラフィについて低倍率を含む合成データを作り、アレイと照明の関係を測った。角度と周波数空間の差が、判定の限界を示す。
 
 [![フーリエ・タイコグラフィ ―― 4 倍の対物の広い視野のまま、20 倍相当の分解能と位相を、反復の位相回復で得る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fourier_ptychography/01_usaf_4x_fp_20x_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fourier_ptychography/01_usaf_4x_fp_20x.png)
 
@@ -1242,7 +1242,7 @@ py -3.11 examples/poc_fourier_ptychography.py
 
 ## No.2026.281 —— 同じ始点と終点を結ぶ複数ロボットの計画を回り方で分ける ―― 時空の組紐と Dynnikov 座標でホモトピー類を数え、計画器の候補 61 本を 26 類に
 
-この展示は「同じ始点と終点を結ぶ複数ロボットの計画を回り方で分ける」を扱い、「時空の組紐と Dynnikov 座標でホモトピー類を数え、計画器の候補 61 本を 二十六類に」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+同じ始点と終点を結ぶ複数ロボットの計画を回り方で分けるとき、計画器の候補 61 本を 類に。同じ始点と終点を結ぶ複数ロボットの計画を回り方で分けるについて平面を含む計算データを作り、台車と時間の関係を測った。連続と射影の差が、判定の限界を示す。
 
 [![同じ始点と終点を結ぶ複数ロボットの計画を回り方で分ける ―― 時空の組紐と Dynnikov 座標でホモトピー類を数え、計画器の候補 61 本を 26 類に](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_braid_homotopy_classes/01_braid_classes_spacetime.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_braid_homotopy_classes/01_braid_classes_spacetime.gif)
 
@@ -1276,7 +1276,7 @@ py -3.11 examples/poc_braid_homotopy_classes.py
 
 ## No.2026.282 —— 同じRMS波面誤差でも収差形状でMaréchal近似の破綻点が変わる
 
-この展示は「同じ二乗平均平方根波面誤差でも収差形状でMaréchal近似の破綻点が変わる」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+同じ二乗平均平方根波面誤差でも収差形状でMaréchの評価では、測定の確かさが課題になる。同じ二乗平均平方根波面誤差でも収差形状でMaréchの計算データに正規化を用意し、デフォーカスと非点を比べた。コマと球面収差の差を見ると、測定の確かさが課題になることが分かる。
 
 [![同じRMS波面誤差でも収差形状でMaréchal近似の破綻点が変わる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_wavefront_aberration_limits/01_aberration_limits_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_wavefront_aberration_limits/01_aberration_limits.png)
 
@@ -1296,7 +1296,7 @@ py -3.11 examples/poc_wavefront_aberration_limits.py
 
 ## No.2026.283 —— 4方位偏光カメラにはMueller行列(偏光変化を表す4×4行列)の7次元が見えない
 
-この展示は「四方位偏光カメラにはMueller行列(偏光変化を表す四行四列行列)の7次元が見えない」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+4方位偏光カメラにはMueller行では、測定の確かさが課題になる。方位偏光カメラにはMueller行の計算データで線偏光マイクロアナライザと設計行列を扱い、手書がどう変わるかを調べた。計算と発生側の差を見ると、測定の確かさが課題になることが分かる。
 
 [![4方位偏光カメラにはMueller行列(偏光変化を表す4×4行列)の7次元が見えない](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mueller_dofp_observability/01_observability_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mueller_dofp_observability/01_observability.png)
 
@@ -1316,7 +1316,7 @@ py -3.11 examples/poc_mueller_dofp_observability.py
 
 ## No.2026.284 —— 斜めエッジSFRは角度だけでなくガンマでもMTF50(MTFが50%になる空間周波数)を誤る
 
-この展示は「斜めエッジSFRは角度だけでなくガンマでも半コントラスト周波数(MTFが50%になる空間周波数)を誤る」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+斜めエッジSFRは角度だけでなくガンマの評価では、測定の確かさが課題になる。斜めエッジSFRは角度だけでなくガンマを表す計算データの画素を使い、雑音と段階を別々に確かめた。計算と回折の差を見ると、測定の確かさが課題になることが分かる。
 
 [![斜めエッジSFRは角度だけでなくガンマでもMTF50(MTFが50%になる空間周波数)を誤る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_slanted_edge_sfr_limits/01_sfr_limits_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_slanted_edge_sfr_limits/01_sfr_limits.png)
 
@@ -1488,7 +1488,7 @@ py -3.11 examples/poc_bilateral_asymmetry.py
 
 ## No.2026.013 —— スペックル画像からひずみを測る(DIC)
 
-この展示は「スペックル画像からひずみを測る(DIC)」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+スペックル画像からひでは、測定の確かさが課題になる。ガウス斑点を含む計算データを作り、変形写像とスペックル対の関係を測った。変位と窓相関の差を見ると、測定の確かさが課題になることが分かる。
 
 [![スペックル画像からひずみを測る(DIC)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dic_strain/04_strain_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dic_strain/04_strain_map.png)
 
@@ -1524,7 +1524,7 @@ py -3.11 examples/poc_dic_strain.py
 
 ## No.2026.097 —— ダイの傾きと TSV の位置ずれを 1 つの CT から分ける ―― 傾きは回転まで偽装する
 
-この展示は「ダイの傾きと TSV の位置ずれを 1 つの CT から分ける」を扱い、「傾きは回転まで偽装する」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+ダイの傾きと TSV の位置ずれを 1 つの CT から分けるとき、傾きは回転まで偽装する。実測データで上下と仕込を扱い、ボリュームがどう変わるかを調べた。上面と開口の差を見ると、傾きは回転まで偽装することが分かる。
 
 [![ダイの傾きと TSV の位置ずれを 1 つの CT から分ける ―― 傾きは回転まで偽装する](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_die_tilt_tsv_overlay/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_die_tilt_tsv_overlay/01_scene.png)
 
@@ -1558,7 +1558,7 @@ py -3.11 examples/poc_die_tilt_tsv_overlay.py
 
 ## No.2026.014 —— 産業部品の寸法検査 ―― 偏りと散らばりを別々に出す
 
-この展示は「産業部品の寸法検査」を扱い、「偏りと散らばりを別々に出す」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+産業部品の寸法検査の評価では、偏りと散らばりを別々に出す。計算データに符号を用意し、距離関数と雑音を比べた。キャリパーと大津の差を見ると、偏りと散らばりを別々に出すことが分かる。
 
 [![産業部品の寸法検査 ―― 偏りと散らばりを別々に出す](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dimensional_inspection/01_slot_bias_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dimensional_inspection/01_slot_bias.png)
 
@@ -1590,7 +1590,7 @@ py -3.11 examples/poc_dimensional_inspection.py
 
 ## No.2026.018 —— 繊維の配向分布を測る ―― 角度は 180 度周期、素朴に平均すると 90 度ずれる
 
-この展示は「繊維の配向分布を測る」を扱い、「角度は 180 度周期、素朴に平均すると 九十度ずれる」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+繊維の配向分布を測るとき、角度は 180 度周期、素朴に平均すると 度ずれる。フォンを含む計算データを作り、ミーゼス分布と構造テンソルの関係を測った。算術平均と報告の差を見ると、角度は 度周期、素朴に平均すると 度ずれることが分かる。
 
 [![繊維の配向分布を測る ―― 角度は 180 度周期、素朴に平均すると 90 度ずれる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_orientation/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_orientation/01_scene.png)
 
@@ -1628,7 +1628,7 @@ py -3.11 examples/poc_fiber_orientation.py
 
 ## No.2026.021 —— 歯車の歯形を測る ―― 偏心は 1 次、歯は z 次
 
-この展示は「歯車の歯形を測る」を扱い、「偏心は 1 次、歯は z 次」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+歯車の歯形を測る場面では、偏心は 1 次、歯は z 次。計算データにインボリュートを用意し、閉形式とゼロ点を比べた。最小二乗円と直径の差を見ると、偏心は 次、歯は z 次ことが分かる。
 
 [![歯車の歯形を測る ―― 偏心は 1 次、歯は z 次](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gear_tooth_metrology/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gear_tooth_metrology/01_scene.png)
 
@@ -1666,7 +1666,7 @@ py -3.11 examples/poc_gear_tooth_metrology.py
 
 ## No.2026.073 —— 金属組織の結晶粒度 ―― 面積法と切片法は別の崖で落ちる
 
-この展示は「金属組織の結晶粒度」を扱い、「面積法と切片法は別の崖で落ちる」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+金属組織の粒界が途切れたり濃淡むらが重なったりすると、結晶粒度の測り方で結果が変わる。既知の粒を持つ合成組織へエッチングむら、雑音、粒界切れを加え、面積法と切片法を比べた。図では、面積法が相互作用で急に外れ、切片法はより深い途切れまで耐える。
 
 [![金属組織の結晶粒度 ―― 面積法と切片法は別の崖で落ちる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_metal_grain_size/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_metal_grain_size/01_scene.png)
 
@@ -1704,7 +1704,7 @@ py -3.11 examples/poc_metal_grain_size.py
 
 ## No.2026.100 —— 多ビーム測深で海底が笑う ―― 音速を取り違えると、壊れるのは外側ビームだけ
 
-この展示は「多ビーム測深で海底が笑う」を扱う。この展示は修正中。説明と図は検証後に差し替える。
+多ビーム測深で海底が笑うでは、音速を取り違えると、壊れるのは外側ビームだけ。修正中を含む実測データを作り、等音速とレイトレースの関係を測った。屈折と以下の差を見ると、音速を取り違えると、壊れるのは外側ビームだけことが分かる。
 
 [![多ビーム測深で海底が笑う ―― 音速を取り違えると、壊れるのは外側ビームだけ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_multibeam_bathymetry/12_across_track_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_multibeam_bathymetry/12_across_track.png)
 
@@ -1746,7 +1746,7 @@ py -3.11 examples/poc_multibeam_bathymetry.py
 
 ## No.2026.029 —— 粒度分布を画像から測る ―― 融合と縁切れが逆向きに効き、途中で打ち消し合う
 
-この展示は「粒度分布を画像から測る」を扱い、「融合と縁切れが逆向きに効き、途中で打ち消し合う」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+粒度分布を画像から測るとき、融合と縁切れが逆向きに効き、途中で打ち消し合う。合成データで粒子と合成画像を扱い、別々がどう変わるかを調べた。面積率と個数基準の差を見ると、融合と縁切れが逆向きに効き、途中で打ち消し合うことが分かる。
 
 [![粒度分布を画像から測る ―― 融合と縁切れが逆向きに効き、途中で打ち消し合う](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_particle_sizing/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_particle_sizing/01_scene.png)
 
@@ -1784,7 +1784,7 @@ py -3.11 examples/poc_particle_sizing.py
 
 ## No.2026.031 —— 光弾性で応力を測る ―― 巻き戻しが最初に失敗するのは等方点
 
-この展示は「光弾性で応力を測る」を扱い、「巻き戻しが最初に失敗するのは等方点」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+光弾性で応力を測るとき、巻き戻しが最初に失敗するのは等方点。円板圧縮を含む計算データを作り、閉形式応力場と行列の関係を測った。手法と偏光像の差を見ると、巻き戻しが最初に失敗するのは等方点ことが分かる。
 
 [![光弾性で応力を測る ―― 巻き戻しが最初に失敗するのは等方点](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/01_polariscope_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/01_polariscope.png)
 
@@ -1812,7 +1812,7 @@ py -3.11 examples/poc_photoelasticity.py
 
 ## No.2026.103 —— 弦でレールを測る ―― 伝達関数が 0 になる波長は、何 mm あっても 0 mm と出る
 
-この展示は「弦でレールを測る」を扱い、「伝達関数が 0 になる波長は、何 mm あっても 〇 mm と出る」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+弦でレールを測る場面では、伝達関数が 0 になる波長は、何 mm あっても mm と出る。実測データの軌道を使い、凹凸と中点を別々に確かめた。距離とレール削正の差を見ると、伝達関数が になる波長は、何 mm あっても mm と出ることが分かる。
 
 [![弦でレールを測る ―― 伝達関数が 0 になる波長は、何 mm あっても 0 mm と出る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rail_corrugation/02_transfer_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rail_corrugation/02_transfer.png)
 
@@ -1850,7 +1850,7 @@ py -3.11 examples/poc_rail_corrugation.py
 
 ## No.2026.104 —— 実写のコインを数えて測る ―― 当たっている答えに、余裕があるとは限らない
 
-この展示は「実写のコインを数えて測る」を扱い、「当たっている答えに、余裕があるとは限らない」を調べる。実測データで条件を比べ、測定結果がどこまで保たれるかを確かめる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+実写のコインを数えて測るとき、当たっている答えに、余裕があるとは限らない。実測データで照明と大域を扱い、駄目がどう変わるかを調べた。有名と背景の差を見ると、当たっている答えに、余裕があるとは限らないことが分かる。
 
 [![実写のコインを数えて測る ―― 当たっている答えに、余裕があるとは限らない](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_coin_metrology/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_coin_metrology/01_scene.png)
 
@@ -1882,7 +1882,7 @@ py -3.11 examples/poc_real_coin_metrology.py
 
 ## No.2026.083 —— ねじの輪郭からピッチ・フランク角・有効径 ―― 傾きは左右のフランクに逆符号で出る
 
-この展示は「ねじの輪郭からピッチ・フランク角・有効径」を扱い、「傾きは左右のフランクに逆符号で出る」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+ねじの輪郭からピッチ・フランク角・有効径では、傾きは左右のフランクに逆符号で出る。計算データで基本三角形と閉形式を扱い、相当がどう変わるかを調べた。投影像と二値化の差を見ると、傾きは左右のフランクに逆符号で出ることが分かる。
 
 [![ねじの輪郭からピッチ・フランク角・有効径 ―― 傾きは左右のフランクに逆符号で出る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_screw_thread_metrology/07_sampling_frames_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_screw_thread_metrology/07_sampling_frames.png)
 
@@ -1920,7 +1920,7 @@ py -3.11 examples/poc_screw_thread_metrology.py
 
 ## No.2026.112 —— 堆積物の在庫量 ―― 誰も測っていない「山の下の地面」が答えを決める
 
-この展示は「堆積物の在庫量」を扱い、「誰も測っていない「山の下の地面」が答えを決める」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+堆積物の在庫量では、誰も測っていない「山の下の地面」が答えを決める。実測データで鉱山と骨材を扱い、港湾がどう変わるかを調べた。三次元とスキャンの差を見ると、誰も測っていない「山の下の地面」が答えを決めることが分かる。
 
 [![堆積物の在庫量 ―― 誰も測っていない「山の下の地面」が答えを決める](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_stockpile_volume/05_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_stockpile_volume/05_scene.png)
 
@@ -1962,7 +1962,7 @@ py -3.11 examples/poc_stockpile_volume.py
 
 ## No.2026.038 —— クリープ試験のひずみ履歴 ―― 累積か直接か
 
-この展示は「クリープ試験のひずみ履歴」を扱い、「累積か直接か」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+クリープ試験のひずみ履歴では、累積か直接か。時間を含む計算データを作り、コマ撮と隣接コマの関係を測った。基準フレームと直接比較の差を見ると、累積か直接かことが分かる。
 
 [![クリープ試験のひずみ履歴 ―― 累積か直接か](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_strain_history/01_speckle_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_strain_history/01_speckle.png)
 
@@ -1996,7 +1996,7 @@ py -3.11 examples/poc_strain_history.py
 
 ## No.2026.040 —— 表面粗さ Sa / Sq / Sz は標本化とカットオフにどこまで耐えるか
 
-この展示は「表面粗さ Sa / Sq / Sz は標本化とカットオフにどこまで耐えるか」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+表面粗さ Sa / Sq / Sz は標本化とカの評価では、測定の確かさが課題になる。合成データの指定を使い、加工目とパラメータを別々に確かめた。過大と平面の差を見ると、測定の確かさが課題になることが分かる。
 
 [![表面粗さ Sa / Sq / Sz は標本化とカットオフにどこまで耐えるか](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_roughness/01_surface_components_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_roughness/01_surface_components.png)
 
@@ -2026,7 +2026,7 @@ py -3.11 examples/poc_surface_roughness.py
 
 ## No.2026.196 —— 視触覚センサ(弾性膜 + カメラ)の合成と逆算 ―― Hertz 接触とフォトメトリックステレオの閉形式を門に、球の押し込みから力を読む
 
-この展示は「視触覚センサ(弾性膜 + カメラ)の合成と逆算」を扱い、「Hertz 接触とフォトメトリックステレオの閉形式を検査に、球の押し込みから力を読む」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+視触覚センサの合成と逆算の評価では、Hertz 接触とフォトメトリックステレオの閉形式を判定に、球の押し込みから力を読む。視触覚センサの合成と逆算を表す合成データの物理シミュを使い、系列と系統を別々に確かめた。弾性接触と半空間の差が、判定の限界を示す。
 
 [![視触覚センサ(弾性膜 + カメラ)の合成と逆算 ―― Hertz 接触とフォトメトリックステレオの閉形式を門に、球の押し込みから力を読む](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacsim_elastic_membrane/01_tacsim_membrane_rgb_crop_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacsim_elastic_membrane/01_tacsim_membrane_rgb_crop.png)
 
@@ -2068,7 +2068,7 @@ py -3.11 examples/poc_tacsim_elastic_membrane.py
 
 ## No.2026.198 —— 視触覚センサのマーカー配列からせん断場・固着/滑り・接線力を読む ―― Cattaneo–Mindlin の閉形式と有限要素の節点変位を門に
 
-この展示は「視触覚センサのマーカー配列からせん断場・固着/滑り・接線力を読む」を扱い、「Cattaneo–Mindlin の閉形式と有限要素の節点変位を検査に」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+視触覚センサのマーカー配列からせん断場・固着/滑り・接線力を読むの評価では。視触覚センサのマーカー配列からせん断場・固着/滑り・接線力を読むの合成データに物理シミュを用意し、系列と系統を比べた。部分滑と法線の差を見ると、Cattaneo–Mindlin の閉形式と有限要素の節点変位を判定にことが分かる。
 
 [![視触覚センサのマーカー配列からせん断場・固着/滑り・接線力を読む ―― Cattaneo–Mindlin の閉形式と有限要素の節点変位を門に](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacsim_marker_shear/01_tacslip_marker_frames_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacsim_marker_shear/01_tacslip_marker_frames.png)
 
@@ -2106,7 +2106,7 @@ py -3.11 examples/poc_tacsim_marker_shear.py
 
 ## No.2026.199 —— 視触覚センサのマーカー場から「触覚双極子」で把持内の傾き・ねじりトルクを読む ―― Gauss の法則が半空間で恒等式になることを門に
 
-この展示は「視触覚センサのマーカー場から「触覚双極子」で把持内の傾き・ねじりトルクを読む」を扱い、「Gauss の法則が半空間で恒等式になることを検査に」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+視触覚センサのマーカー場から「触覚双極子」で把持内の傾き・ねじりトルクを読むでは、Gauss の法則が半空間で恒等式になることを判定に。視触覚センサのマーカー場から「触覚双極子」で把持内の傾き・ねじりトルクを読むの合成データで物理シミュと系列を扱い、再実装がどう変わるかを調べた。方法と学習の差が、判定の限界を示す。
 
 [![視触覚センサのマーカー場から「触覚双極子」で把持内の傾き・ねじりトルクを読む ―― Gauss の法則が半空間で恒等式になることを門に](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tactile_dipole_torque/01_tactorque_marker_field_dipole_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tactile_dipole_torque/01_tactorque_marker_field_dipole.png)
 
@@ -2144,7 +2144,7 @@ py -3.11 examples/poc_tactile_dipole_torque.py
 
 ## No.2026.202 —— 粉体の山を画像で測る ―― 安息角・体積・質量・流動性・排出率を規則だけで、真値は閉形式・公表値・MuJoCo
 
-この展示は「粉体の山を画像で測る」を扱い、「安息角・体積・質量・流動性・排出率を規則だけで、真値は閉形式・公表値・MuJoCo」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+粉体の山を画像で測る場面では、安息角・体積・質量・流動性・排出率を規則だけで、真値は閉形式・公表値・MuJoCo。粉体の山を画像で測るの合成データに物理シミュを用意し、系列と先行研究を比べた。粉体計量と観測の差を見ると、安息角・体積・質量・流動性・排出率を規則だけで、真値は閉形式・公表値・MuJoCoことが分かる。
 
 [![粉体の山を画像で測る ―― 安息角・体積・質量・流動性・排出率を規則だけで、真値は閉形式・公表値・MuJoCo](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_granular_heap_repose/01_granular_heap_side_view_two_lines_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_granular_heap_repose/01_granular_heap_side_view_two_lines.png)
 
@@ -2190,7 +2190,7 @@ py -3.11 examples/poc_granular_heap_repose.py
 
 ## No.2026.205 —— 食材の切断を画像で測る ―― 刃の追跡・切片の厚み・切断面の粗さ・手首のたわみからの切断力、真値は閉形式と MuJoCo
 
-この展示は「食材の切断を画像で測る」を扱い、「刃の追跡・切片の厚み・切断面の粗さ・手首のたわみからの切断力、真値は閉形式と MuJoCo」を調べる。合成データと公開データを使い、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+食材の切断を画像で測るとき、刃の追跡・切片の厚み・切断面の粗さ・手首のたわみからの切断力、真値は閉形式と MuJoCo。食材の切断を画像で測るの合成データで物理シミュと系列を扱い、題材がどう変わるかを調べた。ロボットと食材スライスの差が、判定の限界を示す。
 
 [![食材の切断を画像で測る ―― 刃の追跡・切片の厚み・切断面の粗さ・手首のたわみからの切断力、真値は閉形式と MuJoCo](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_food_cutting_measure/01_cutting_track_force.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_food_cutting_measure/01_cutting_track_force.gif)
 
@@ -2232,7 +2232,7 @@ py -3.11 examples/poc_food_cutting_measure.py
 
 ## No.2026.207 —— ドーム状の柔らかい指先を平らな物に押す大変形接触を、スケーリング則と連続体の厳密解で門にする ―― 原文の式 (3) の 1 次の係数は活字どおりだと円柱で力が負、本文の模型から 2n/(1+n) を導いた
 
-この展示は「ドーム状の柔らかい指先を平らな物に押す大変形接触を、スケーリング則と連続体の厳密解で検査にする」を扱い、「原文の式 (3) の 一次の係数は活字どおりだと円柱で力が負、本文の模型から 二n/(一+n) を導いた」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。
+ドーム状の柔らかい指先を平らな物に押す大変形接触を、本文の模型から 2n/ を導いた。ドーム状の柔らかい指先を平らな物に押す大変形接触を、スケーリング則と連続体の厳密解で判定にするを表す計算データの物理シミュを使い、系列と一次情報を別々に確かめた。指先センサと枠組の差が、判定の限界を示す。
 
 [![ドーム状の柔らかい指先を平らな物に押す大変形接触を、スケーリング則と連続体の厳密解で門にする ―― 原文の式 (3) の 1 次の係数は活字どおりだと円柱で力が負、本文の模型から 2n/(1+n) を導いた](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacdome_large_deformation/01_tacdome_press_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacdome_large_deformation/01_tacdome_press_sweep.gif)
 
@@ -2270,7 +2270,7 @@ py -3.11 examples/poc_tacdome_large_deformation.py
 
 ## No.2026.209 —— 研削・研磨・拭き取りを画像で測る ―― 削れた深さ・拭けた帯の幅・面積を Preston の式と接触圧の閉形式と MuJoCo で、柔らかい手首は板の高さの誤差 2 mm でも帯がそろい硬い手首は途中で浮いて拭けない
 
-この展示は「研削・研磨・拭き取りを画像で測る」を扱い、「削れた深さ・拭けた帯の幅・面積を Preston の式と接触圧の閉形式と MuJoCo で…」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+研削・研磨・拭き取りを画像で測るとき、柔らかい手首は板の高さの誤差 2 mm でも帯がそろい硬い手首は途中で浮いて拭けない。研削・研磨・拭き取りを画像で測るの計算データで物理シミュと系列を扱い、模倣学習がどう変わるかを調べた。可変コンプライアンスと剛性の差が、判定の限界を示す。
 
 [![研削・研磨・拭き取りを画像で測る ―― 削れた深さ・拭けた帯の幅・面積を Preston の式と接触圧の閉形式と MuJoCo で、柔らかい手首は板の高さの誤差 2 mm でも帯がそろい硬い手首は途中で浮いて拭けない](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_polish_wipe_measure/02_polish_track_profiles_vs_closed_form_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_polish_wipe_measure/02_polish_track_profiles_vs_closed_form.png)
 
@@ -2308,7 +2308,7 @@ py -3.11 examples/poc_polish_wipe_measure.py
 
 ## No.2026.210 —— 粉体のすくいと注ぎを画像で測る ―― すくった量を側面像の輪郭から、注ぎの流量を PIV(粒子画像流速測定) の速さ × Boolean 模型の線密度から、MuJoCo の球の個数と横切り数で 5 % 以内
 
-この展示は「粉体のすくいと注ぎを画像で測る」を扱い、「すくった量を側面像の輪郭から、注ぎの流量を PIV(粒子画像流速測定) の速さ × Boolean…」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+粉体のすくいと注ぎを画像で測る場面では、MuJoCo の球の個数と横切り数で 5 % 以内。粉体のすくいと注ぎを画像で測るの合成データに物理シミュを用意し、系列と先行研究を比べた。粉体計量と質量の差が、判定の限界を示す。
 
 [![粉体のすくいと注ぎを画像で測る ―― すくった量を側面像の輪郭から、注ぎの流量を PIV(粒子画像流速測定) の速さ × Boolean 模型の線密度から、MuJoCo の球の個数と横切り数で 5 % 以内](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_scoop_pour/01_scoop_spoon_side_views_states_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_scoop_pour/01_scoop_spoon_side_views_states.png)
 
@@ -2356,7 +2356,7 @@ py -3.11 examples/poc_powder_scoop_pour.py
 
 ## No.2026.211 —— 乳鉢の粉砕を測る ―― 粒度分布の D50、粉砕則、独立 3 回のばらつき、AE の帯域電力。真値は公開されたレーザー回折の実測、D50 の定義の違いが 1 区間 = 12 % の偏り
 
-この展示は「乳鉢の粉砕を測る」を扱い、「粒度分布の D50、粉砕則、独立 三回のばらつき、AE の帯域電力、真値は公開されたレーザー回折の実測…」を調べる。合成データと公開データを使い、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+乳鉢の粉砕を測る場面では、D50 の定義の違いが 区間 = % の偏り。乳鉢の粉砕を測るの合成データに物理シミュを用意し、系列と粉体を比べた。本目と題材の差が、判定の限界を示す。
 
 [![乳鉢の粉砕を測る ―― 粒度分布の D50、粉砕則、独立 3 回のばらつき、AE の帯域電力。真値は公開されたレーザー回折の実測、D50 の定義の違いが 1 区間 = 12 % の偏り](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_grinding_ae/01_synthetic_particles_labels_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_grinding_ae/01_synthetic_particles_labels.png)
 
@@ -2398,7 +2398,7 @@ py -3.11 examples/poc_powder_grinding_ae.py
 
 ## No.2026.215 —— 何分すり潰せば 1 回分の薬の量が揃うか ―― 粒径から含量のばらつきを閉形式と Monte Carlo で、粉砕則で必要な時間を逆算。写真の CV が低く出た正体は同じ 12 枚の縮尺違い
 
-この展示は「何分すり潰せば 1 回分の薬の量が揃うか」を扱い、「粒径から含量のばらつきを閉形式と Monte Carlo で、粉砕則で必要な時間を逆算…」を調べる。合成データと公開データを使い、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+何分すり潰せば 1 回分の薬の量が揃うかを調べるとき、写真の CV が低く出た正体は同じ 枚の縮尺違い。何分すり潰せば 回分の薬の量が揃うかについて乳鉢を含む実測データを作り、粉砕と複合の関係を測った。導出と個数基準の差が、判定の限界を示す。
 
 [![何分すり潰せば 1 回分の薬の量が揃うか ―― 粒径から含量のばらつきを閉形式と Monte Carlo で、粉砕則で必要な時間を逆算。写真の CV が低く出た正体は同じ 12 枚の縮尺違い](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dose_uniformity_from_grinding/01_cv_bias_decomposition_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dose_uniformity_from_grinding/01_cv_bias_decomposition.png)
 
@@ -2436,7 +2436,7 @@ py -3.11 examples/poc_dose_uniformity_from_grinding.py
 
 ## No.2026.216 —— 包丁を指先の視触覚だけで持って切る ―― 手首の力センサなしに靱性と刃の当たり位置、持てる柄の長さの限界。既存の読み手のねじりの過大(比 0.5 で +33 %)を部分滑りの数値解で直す
 
-この展示は「包丁を指先の視触覚だけで持って切る」を扱い、「手首の力センサなしに靱性と刃の当たり位置、持てる柄の長さの限界…」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+包丁を指先の視触覚だけで持って切るとき、既存の読み手のねじりの過大を部分滑りの数値解で直す。包丁を指先の視触覚だけで持って切るについて食材を含む合成データを作り、切断と画像の関係を測った。本指と接触レンチの差が、判定の限界を示す。
 
 [![包丁を指先の視触覚だけで持って切る ―― 手首の力センサなしに靱性と刃の当たり位置、持てる柄の長さの限界。既存の読み手のねじりの過大(比 0.5 で +33 %)を部分滑りの数値解で直す](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_knife_tactile_toughness/04_pad_images_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_knife_tactile_toughness/04_pad_images.png)
 
@@ -2474,7 +2474,7 @@ py -3.11 examples/poc_knife_tactile_toughness.py
 
 ## No.2026.142 —— その数字のうち、いくつが測り方のものか ―― ゲージ R&R(測定の反復性・再現性評価) と測定の不確かさ
 
-この展示は「その数字のうち、いくつが測り方のものか」を扱い、「ゲージ R&R(測定の反復性・再現性評価) と測定の不確かさ」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+その数字のうち、いくつが測り方のものかを調べるとき、ゲージ R&R と測定の不確かさ。その数字のうち、いくつが測り方のものかについて管理図を含む計算データを作り、工程能力と報告の関係を測った。全部と採点の差を見ると、ゲージ R&R と測定の不確かさことが分かる。
 
 [![その数字のうち、いくつが測り方のものか ―― ゲージ R&R(測定の反復性・再現性評価) と測定の不確かさ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/01_scene.png)
 
@@ -2518,7 +2518,7 @@ py -3.11 examples/poc_measurement_system_analysis.py
 
 ## No.2026.219 —— 「解像度の式」は見つかる大きさを教えない ―― 照明ごとの検出確率(MIL-HDBK-1823A)
 
-この展示は「「解像度の式」は見つかる大きさを教えない」を扱い、「照明ごとの検出確率(MIL-HDBK-1823A)」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+「解像度の式」は見つかる大きさを教えないでは、照明ごとの検出確率。「解像度の式」は見つかる大きさを教えないの実測データでヘアライン金属と物理モデルを扱い、カメラがどう変わるかを調べた。処理と自分の差を見ると、照明ごとの検出確率ことが分かる。
 
 [![「解像度の式」は見つかる大きさを教えない ―― 照明ごとの検出確率(MIL-HDBK-1823A)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pod_lighting/01_sites_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pod_lighting/01_sites.png)
 
@@ -2554,7 +2554,7 @@ py -3.11 examples/poc_pod_lighting.py
 
 ## No.2026.220 —— レーザー光切断の誤差の床はスペックルが決める ―― 平均しても消えない、推定器の順位も入れ替わる
 
-この展示は「レーザー光切断の誤差の床はスペックルが決める」を扱い、「平均しても消えない、推定器の順位も入れ替わる」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+レーザー光切断の誤差の床はスペックルが決めるとき、平均しても消えない、推定器の順位も入れ替わる。レーザー光切断の誤差の床はスペックルが決めるの実測データで溶接ビードと続編を扱い、光条がどう変わるかを調べた。加法雑音とコヒーレント結像の差を見ると、平均しても消えない、推定器の順位も入れ替わることが分かる。
 
 [![レーザー光切断の誤差の床はスペックルが決める ―― 平均しても消えない、推定器の順位も入れ替わる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_laser_line_speckle_floor/01_line_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_laser_line_speckle_floor/01_line.png)
 
@@ -2588,7 +2588,7 @@ py -3.11 examples/poc_laser_line_speckle_floor.py
 
 ## No.2026.222 —— 白い溝でも縞投影は外れる ―― 相互反射を直接光と分け、誤差を撮る前に予測し、マイクロ位相シフトで消す
 
-この展示は「白い溝でも縞投影は外れる」を扱い、「相互反射を直接光と分け、誤差を撮る前に予測し、マイクロ位相シフトで消す」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+白い溝でも縞投影は外れるとき、相互反射を直接光と分け、誤差を撮る前に予測し、マイクロ位相シフトで消す。白い溝でも縞投影は外れるの計算データで内角とポケットを扱い、部品がどう変わるかを調べた。反射率と光沢の差を見ると、相互反射を直接光と分け、誤差を撮る前に予測し、マイクロ位相シフトで消すことが分かる。
 
 [![白い溝でも縞投影は外れる ―― 相互反射を直接光と分け、誤差を撮る前に予測し、マイクロ位相シフトで消す](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interreflection_fringe_error/02_direct_global_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interreflection_fringe_error/02_direct_global.png)
 
@@ -2630,7 +2630,7 @@ py -3.11 examples/poc_interreflection_fringe_error.py
 
 ## No.2026.150 —— 収差の絵は、絵のまま採点できる —— ゼルニケ多項式(円形瞳上の直交収差多項式)と点像
 
-この展示は「収差の絵は、絵のまま採点できる」を扱い、「ゼルニケ多項式(円形瞳上の直交収差多項式)と点像」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+収差の絵は、絵のまま採点できるとき、ゼルニケ多項式と点像。収差の絵は、絵のまま採点できるの計算データで係数と閉形式を扱い、厳密がどう変わるかを調べた。一致と円板画像の差を見ると、ゼルニケ多項式と点像ことが分かる。
 
 [![収差の絵は、絵のまま採点できる —— ゼルニケ多項式(円形瞳上の直交収差多項式)と点像](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zernike_aberrations/01_zernike_pyramid_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zernike_aberrations/01_zernike_pyramid.png)
 
@@ -2678,7 +2678,7 @@ py -3.11 examples/poc_zernike_aberrations.py
 
 ## No.2026.151 —— 速くする工夫は、全部おなじ数の別の括り方だった —— 注意機構を恒等式で採点する
 
-この展示は「速くする工夫は、全部おなじ数の別の括り方だった」を扱い、「注意機構を恒等式で採点する」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+速くする工夫は、全部おなじ数の別の括り方だったでは、注意機構を恒等式で採点する。速くする工夫は、全部おなじ数の別の括り方だったの実測データで系譜と高速化を扱い、省メモリ化がどう変わるかを調べた。近似と等式の差を見ると、注意機構を恒等式で採点することが分かる。
 
 [![速くする工夫は、全部おなじ数の別の括り方だった —— 注意機構を恒等式で採点する](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_attention_identities/01_attention_masks_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_attention_identities/01_attention_masks.png)
 
@@ -2716,7 +2716,7 @@ py -3.11 examples/poc_attention_identities.py
 
 ## No.2026.218 —— 1 つずつでは決まらない角度と変位を、周期の違う位相を束ねて決める ―― 中国剰余定理を画像に
 
-この展示は「1 つずつでは決まらない角度と変位を、周期の違う位相を束ねて決める」を扱い、「中国剰余定理を画像に」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+1 つずつでは決まらない角度と変位を、周期の違う位相を束ねて決めるとき、中国剰余定理を画像に。 つずつでは決まらない角度と変位を、周期の違う位相を束ねて決めるの実測データで部品と区別を扱い、波長がどう変わるかを調べた。公約数と剰余の差を見ると、中国剰余定理を画像にことが分かる。
 
 [![1 つずつでは決まらない角度と変位を、周期の違う位相を束ねて決める ―― 中国剰余定理を画像に](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_residue_crt/02_residue_rotation_sawtooth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_residue_crt/02_residue_rotation_sawtooth.png)
 
@@ -2750,7 +2750,7 @@ py -3.11 examples/poc_residue_crt.py
 
 ## No.2026.232 —— モアレ(二つの周期模様の差で生じる縞)で位置合わせ ―― 見えない 2 µm の格子 2 枚を重ねると、1 nm のずれが縞の位相で読める
 
-この展示は「モアレ(二つの周期模様の差で生じる縞)で位置合わせ」を扱い、「見えない 2 µm の格子 二枚を重ねると、一 nm のずれが縞の位相で読める」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+モアレで位置合わせでは、見えない 2 µm の格子 枚を重ねると、 nm のずれが縞の位相で読める。モアレで位置合わせの計算データでリソグラフィとナノインプリントを扱い、マスクがどう変わるかを調べた。ウェハとピッチの差が、判定の限界を示す。
 
 [![モアレ(二つの周期模様の差で生じる縞)で位置合わせ ―― 見えない 2 µm の格子 2 枚を重ねると、1 nm のずれが縞の位相で読める](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_moire_alignment/02_one_nm_steps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_moire_alignment/02_one_nm_steps.png)
 
@@ -2794,7 +2794,7 @@ py -3.11 examples/poc_moire_alignment.py
 
 ## No.2026.233 —— テレセントリックレンズと寸法計測 ―― 同じレンズの絞りを動かすだけで、高さで変わる倍率が消える
 
-この展示は「テレセントリックレンズと寸法計測」を扱い、「同じレンズの絞りを動かすだけで、高さで変わる倍率が消える」を調べる。合成データと公開データを使い、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+テレセントリックレンズと寸法計測では、同じレンズの絞りを動かすだけで、高さで変わる倍率が消える。テレセントリックレンズと寸法計測の合成データで主役と実画像を扱い、論文がどう変わるかを調べた。テレセン生画像と計測の差を見ると、同じレンズの絞りを動かすだけで、高さで変わる倍率が消えることが分かる。
 
 [![テレセントリックレンズと寸法計測 ―― 同じレンズの絞りを動かすだけで、高さで変わる倍率が消える](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_telecentric_metrology/08_real_alignment_plate_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_telecentric_metrology/08_real_alignment_plate.png)
 
@@ -2836,7 +2836,7 @@ py -3.11 examples/poc_telecentric_metrology.py
 
 ## No.2026.242 —— 光学系の図面を計算から出す ―― レンズ断面図・撮像系の設置図・単レンズの製作図を SVG / DXF で、書いたファイルを読み戻して採点する
 
-この展示は「光学系の図面を計算から出す」を扱い、「レンズ断面図・撮像系の設置図・単レンズの製作図を SVG / DXF で、書いたファイルを読み戻して採点する」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+光学系の図面を計算から出すの評価では、書いたファイルを読み戻して採点する。光学系の図面を計算から出すを表す実測データの外観検査を使い、計測とレンズを別々に確かめた。断面図と装置の差を見ると、レンズ断面図・撮像系の設置図・単レンズの製作図を SVG / DXF で、書いたファイルを読み戻して採点することが分かる。
 
 [![光学系の図面を計算から出す ―― レンズ断面図・撮像系の設置図・単レンズの製作図を SVG / DXF で、書いたファイルを読み戻して採点する](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_optics_drawings/06_setup_ring_coaxial_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_optics_drawings/06_setup_ring_coaxial.png)
 
@@ -2874,7 +2874,7 @@ py -3.11 examples/poc_optics_drawings.py
 
 ## No.2026.244 —— 加工ポケットの相互反射を収束まで数える ―― 直接光だけのモデルは「反射率 1.32」で合い、収束解は真値に戻る
 
-この展示は「加工ポケットの相互反射を収束まで数える」を扱い、「直接光だけのモデルは「反射率 1.32」で合い、収束解は真値に戻る」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+加工ポケットの相互反射を収束まで数えるとき、直接光だけのモデルは「反射率 1.32」で合い、収束解は真値に戻る。加工ポケットの相互反射を収束まで数えるの実測データで部品と反射を扱い、検査用描画がどう変わるかを調べた。絶対値と意味の差が、判定の限界を示す。
 
 [![加工ポケットの相互反射を収束まで数える ―― 直接光だけのモデルは「反射率 1.32」で合い、収束解は真値に戻る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pocket_interreflection/02_residuals_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pocket_interreflection/02_residuals.png)
 
@@ -2912,7 +2912,7 @@ py -3.11 examples/poc_pocket_interreflection.py
 
 ## No.2026.248 —— 非共軸の光学系 ―― 同軸落射の半透鏡が鏡面の部品に偽の欠陥を写し、膜と傾きで消す。折り返しで装置を小さくする
 
-この展示は「非共軸の光学系」を扱い、「同軸落射の半透鏡が鏡面の部品に偽の欠陥を写し、膜と傾きで消す、折り返しで装置を小さくする」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+非共軸の光学系では、同軸落射の半透鏡が鏡面の部品に偽の欠陥を写し、膜と傾きで消す、折り返しで装置を小さくする。非共軸の光学系の計算データで外観検査と光軸を扱い、直線がどう変わるかを調べた。真上とミラーの差を見ると、同軸落射の半透鏡が鏡面の部品に偽の欠陥を写し、膜と傾きで消す、折り返しで装置を小さくすることが分かる。
 
 [![非共軸の光学系 ―― 同軸落射の半透鏡が鏡面の部品に偽の欠陥を写し、膜と傾きで消す。折り返しで装置を小さくする](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_noncoaxial_optics/05_false_defect_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_noncoaxial_optics/05_false_defect.png)
 
@@ -2950,7 +2950,7 @@ py -3.11 examples/poc_noncoaxial_optics.py
 
 ## No.2026.253 —— テレセンの実画像から撮像模型の係数を合わせる ―― 倍率は論文と合い、入射瞳は「1 m より遠い」までしか言えない
 
-この展示は「テレセンの実画像から撮像模型の係数を合わせる」を扱い、「倍率は論文と合い、入射瞳は「1 m より遠い」までしか言えない」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+テレセンの実画像から撮像模型の係数を合わせる場面では、倍率は論文と合い、入射瞳は「1 m より遠い」までしか言えない。テレセンの実画像から撮像模型の係数を合わせるの合成データにアライメント板を用意し、リングと中心線を比べた。歪曲と距離の差が、判定の限界を示す。
 
 [![テレセンの実画像から撮像模型の係数を合わせる ―― 倍率は論文と合い、入射瞳は「1 m より遠い」までしか言えない](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_telecentric/02_real_model_residuals_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_telecentric/02_real_model_residuals.png)
 
@@ -2976,7 +2976,7 @@ py -3.11 examples/poc_simcal_telecentric.py
 
 ## No.2026.259 —— 深い傷は平均線を凹ませる ―― ロバストなガウス・スプラインフィルタは何割の汚染まで耐えるか
 
-この展示は「深い傷は平均線を凹ませる」を扱い、「ロバストなガウス・スプラインフィルタは何割の汚染まで耐えるか」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+深い傷は平均線を凹ませる場面では、ロバストなガウス・スプラインフィルタは何割の汚染まで耐えるか。深い傷は平均線を凹ませるの合成データに計測を用意し、線形ガウスと健全を比べた。標本と断面の差を見ると、ロバストなガウス・スプラインフィルタは何割の汚染まで耐えるかことが分かる。
 
 [![深い傷は平均線を凹ませる ―― ロバストなガウス・スプラインフィルタは何割の汚染まで耐えるか](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_robust_profile_filter/04_scratched_surface_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_robust_profile_filter/04_scratched_surface.png)
 
@@ -3006,7 +3006,7 @@ py -3.11 examples/poc_robust_profile_filter.py
 
 ## No.2026.263 —— 画素ごとの直交復調(ロックイン)―― 多重極リングの法線・符号化間歇照明の昼間化・ロックイン・サーモグラフィを、閉形式と Rice の位相分布で採点
 
-この展示は「画素ごとの直交復調(ロックイン)」を扱い、「多重極リングの法線・符号化間歇照明の昼間化・ロックイン・サーモグラフィを、閉形式と Rice の位相分布で採点」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+画素ごとの直交復調の評価では、閉形式と Rice の位相分布で採点。画素ごとの直交復調の実測データに画像列を用意し、汎用と時間相関イメージセンサを比べた。関数と変種の差を見ると、多重極リングの法線・符号化間歇照明の昼間化・ロックイン・サーモグラフィを、閉形式と Rice の位相分布で採点ことが分かる。
 
 [![画素ごとの直交復調(ロックイン)―― 多重極リングの法線・符号化間歇照明の昼間化・ロックイン・サーモグラフィを、閉形式と Rice の位相分布で採点](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lockin_imaging/01_ring_amp_phase_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lockin_imaging/01_ring_amp_phase.png)
 
@@ -3118,7 +3118,7 @@ py -3.11 examples/poc_cell_counting.py
 
 ## No.2026.061 —— 蛍光の共局在は漏れ込みで嘘をつく ―― Pearson と Manders は別の場所で壊れる
 
-この展示は「蛍光の共局在は漏れ込みで嘘をつく」を扱い、「Pearson と Manders は別の場所で壊れる」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+二色蛍光像では、片方の光が別のチャンネルへ漏れると、離れた小胞まで共局在して見える。細胞体に小胞状の点を置き、漏れ込み、ぼけ、光子雑音を加えて相関係数と重なり率を測った。図では、漏れ込み補正で相関は戻る一方、閾値を使う指標には別の偏りが残る。
 
 [![蛍光の共局在は漏れ込みで嘘をつく ―― Pearson と Manders は別の場所で壊れる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_colocalization_crosstalk/01_scene_channels_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_colocalization_crosstalk/01_scene_channels.png)
 
@@ -3158,7 +3158,7 @@ py -3.11 examples/poc_colocalization_crosstalk.py
 
 ## No.2026.074 —— MRI のバイアス場と組織面積 ―― 灰白質と白質は逆向きに壊れ、足すと隠れる
 
-この展示は「MRI のバイアス場と組織面積」を扱い、「灰白質と白質は逆向きに壊れ、足すと隠れる」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+MRI のバイアス場と組織面積の評価では、灰白質と白質は逆向きに壊れ、足すと隠れる。実測データの楕円殻を使い、脳スライス風ファントムと表面コイル型を別々に確かめた。乗算場と雑音の差を見ると、灰白質と白質は逆向きに壊れ、足すと隠れることが分かる。
 
 [![MRI のバイアス場と組織面積 ―― 灰白質と白質は逆向きに壊れ、足すと隠れる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mri_bias_field/02_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mri_bias_field/02_scene.png)
 
@@ -3196,7 +3196,7 @@ py -3.11 examples/poc_mri_bias_field.py
 
 ## No.2026.027 —— 蛍光核の積分輝度から倍数性を出す ―― 面積では分かれない
 
-この展示は「蛍光核の積分輝度から倍数性を出す」を扱い、「面積では分かれない」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+蛍光核の積分輝度から倍数性を出すでは、面積では分かれない。別々を含む計算データを作り、誤分類と背景の関係を測った。指数と対象の差を見ると、面積では分かれないことが分かる。
 
 [![蛍光核の積分輝度から倍数性を出す ―― 面積では分かれない](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nuclei_ploidy/04_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nuclei_ploidy/04_scene.png)
 
@@ -3226,7 +3226,7 @@ py -3.11 examples/poc_nuclei_ploidy.py
 
 ## No.2026.048 —— 血管網を抜いて分岐を測る ―― ヒゲ、分岐近傍の径の過大、そして指数の脆さ
 
-この展示は「血管網を抜いて分岐を測る」を扱い、「ヒゲ、分岐近傍の径の過大、そして指数の脆さ」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+血管網を抜いて分岐を測るとき、ヒゲ、分岐近傍の径の過大、そして指数の脆さ。法則を含む合成データを作り、厳密と合成血管木の関係を測った。細線化と分岐点の差を見ると、ヒゲ、分岐近傍の径の過大、そして指数の脆さことが分かる。
 
 [![血管網を抜いて分岐を測る ―― ヒゲ、分岐近傍の径の過大、そして指数の脆さ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vessel_network/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vessel_network/01_scene.png)
 
@@ -3260,7 +3260,7 @@ py -3.11 examples/poc_vessel_network.py
 
 ## No.2026.052 —— 創傷面積の経時変化 ―― 較正の誤差は面積に 2 乗で効く
 
-この展示は「創傷面積の経時変化」を扱い、「較正の誤差は面積に 2 乗で効く」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+斜めから撮る創傷写真では、カメラとの距離がずれるだけで面積と治癒速度を誤る。閉形式の面積を持つ星形の創面を日ごとに撮影し、較正誤差と距離の漂いを加えて治癒定数を推定した。図では、推定値のばらつきが小さくても、毎回の較正を省くと偏りが残ることが分かる。
 
 [![創傷面積の経時変化 ―― 較正の誤差は面積に 2 乗で効く](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_wound_area_tracking/02_scenes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_wound_area_tracking/02_scenes.png)
 
@@ -3298,7 +3298,7 @@ py -3.11 examples/poc_wound_area_tracking.py
 
 ## No.2026.123 —— 幼虫コネクトームを reservoir にして数字を読む ―― 配線は効いていない
 
-この展示は「幼虫コネクトームを reservoir にして数字を読む」を扱い、「配線は効いていない」を調べる。公開データで条件を比べ、測定結果がどこまで保たれるかを確かめる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+幼虫の神経配線を固定した再帰網として使うと、手書き数字を読めても、生物の配線が効いたとは限らない。公開コネクトーム、次数を保って組み替えた配線、乱数配線に同じ入力と読み出し学習を与えた。図では三者の精度がほぼ並び、利得が特定の神経配線ではなく再帰網の仕組みから来ると分かる。
 
 [![幼虫コネクトームを reservoir にして数字を読む ―― 配線は効いていない](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_larval_connectome_reservoir/01_adjacency_binned_connectome_vs_shuffle_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_larval_connectome_reservoir/01_adjacency_binned_connectome_vs_shuffle.png)
 
@@ -3324,7 +3324,7 @@ py -3.11 examples/poc_larval_connectome_reservoir.py
 
 ## No.2026.124 —— ハエの脳の立体の上で、刺激の波が配線を伝わるのを見る ―― コネクトーム vs 次数保存 shuffle
 
-この展示は「ハエの脳の立体の上で、刺激の波が配線を伝わるのを見る」を扱い、「コネクトーム vs 次数保存 shuffle」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+ハエの脳の立体の上で、刺激の波が配線を伝わるのを見るとき、コネクトーム vs 次数保存 shuffle。展示を含む合成データを作り、精度と乱数グラフの関係を測った。座標とニューロンの差を見ると、コネクトーム vs 次数保存 shuffleことが分かる。
 
 [![ハエの脳の立体の上で、刺激の波が配線を伝わるのを見る ―― コネクトーム vs 次数保存 shuffle](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_malecns_activity_wave/02_activity_wave_three_views.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_malecns_activity_wave/02_activity_wave_three_views.gif)
 
@@ -3354,7 +3354,7 @@ py -3.11 examples/poc_malecns_activity_wave.py
 
 ## No.2026.125 —— 複眼が見る像と、脳のどこが反応するかを並べる ―― 個眼を指でなぞると応答が配線を伝わる
 
-この展示は「複眼が見る像と、脳のどこが反応するかを並べる」を扱い、「個眼を指でなぞると応答が配線を伝わる」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+複眼が見る像と、脳のどこが反応するかを並べるとき、個眼を指でなぞると応答が配線を伝わる。合成データで注釈と視葉ニューロンを扱い、六角柱がどう変わるかを調べた。右眼と中枢の差を見ると、個眼を指でなぞると応答が配線を伝わることが分かる。
 
 [![複眼が見る像と、脳のどこが反応するかを並べる ―― 個眼を指でなぞると応答が配線を伝わる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_eye_to_brain/02_image_through_the_eye.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_eye_to_brain/02_image_through_the_eye.gif)
 
@@ -3384,7 +3384,7 @@ py -3.11 examples/poc_eye_to_brain.py
 
 ## No.2026.126 —— EM 連結体校正のセカンドオピニオン ―― 膜はラベルの境界にしか無いはず
 
-この展示は「EM 連結体校正のセカンドオピニオン」を扱い、「膜はラベルの境界にしか無いはず」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+EM 連結体校正のセカンドオピニオンの評価では、膜はラベルの境界にしか無いはず。計算データに電子顕微鏡を用意し、連続断面とニューロンを比べた。自動分割と融合の差を見ると、膜はラベルの境界にしか無いはずことが分かる。
 
 [![EM 連結体校正のセカンドオピニオン ―― 膜はラベルの境界にしか無いはず](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_second_opinion/01_second_opinion_slice_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_second_opinion/01_second_opinion_slice.png)
 
@@ -3414,7 +3414,7 @@ py -3.11 examples/poc_em_second_opinion.py
 
 ## No.2026.129 —— 動きの量子化 ―― 脳から筋へ、命令の次元はどこで落ちるか(ハエの首と RL の関節を同じ物差しで)
 
-この展示は「動きの量子化」を扱い、「脳から筋へ、命令の次元はどこで落ちるか(ハエの首と RL の関節を同じ物差しで)」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+動きの量子化では、脳から筋へ、命令の次元はどこで落ちるか。計算データで筋肉と意識を扱い、何万がどう変わるかを調べた。状態と段階の差を見ると、脳から筋へ、命令の次元はどこで落ちるかことが分かる。
 
 [![動きの量子化 ―― 脳から筋へ、命令の次元はどこで落ちるか(ハエの首と RL の関節を同じ物差しで)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_motor_bottleneck/03_activity_flow.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_motor_bottleneck/03_activity_flow.gif)
 
@@ -3452,7 +3452,7 @@ py -3.11 examples/poc_connectome_motor_bottleneck.py
 
 ## No.2026.131 —— MICrONS の脳の波 ―― 1 mm³ の視覚野で、配線は実測の応答をどこまで説明するか
 
-この展示は「MICrONS の脳の波」を扱い、「1 mm³ の視覚野で、配線は実測の応答をどこまで説明するか」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+MICrONS の脳の波では、1 mm³ の視覚野で、配線は実測の応答をどこまで説明するか。ニューロンを含む合成データを作り、電子顕微鏡と光子の関係を測った。活動と両方の差を見ると、 mm³ の視覚野で、配線は実測の応答をどこまで説明するかことが分かる。
 
 [![MICrONS の脳の波 ―― 1 mm³ の視覚野で、配線は実測の応答をどこまで説明するか](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_microns_brain_wave/01_brain_wave.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_microns_brain_wave/01_brain_wave.gif)
 
@@ -3486,7 +3486,7 @@ py -3.11 examples/poc_microns_brain_wave.py
 
 ## No.2026.132 —— 枝の縄張り ―― 骨格が「どこ」かだけでなく「どの枝が近いか」を体積に配ると、枝ごとの体積と半径が測れる
 
-この展示は「枝の縄張り」を扱い、「骨格が「どこ」かだけでなく「どの枝が近いか」を体積に配ると、枝ごとの体積と半径が測れる」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+枝の縄張りでは、骨格が「どこ」かだけでなく「どの枝が近いか」を体積に配ると、枝ごとの体積と半径が測れる。合成データで連続断面とニューロンを扱い、骨格化がどう変わるかを調べた。グラフと形態計測の差を見ると、骨格が「どこ」かだけでなく「どの枝が近いか」を体積に配ると、枝ごとの体積と半径が測れることが分かる。
 
 [![枝の縄張り ―― 骨格が「どこ」かだけでなく「どの枝が近いか」を体積に配ると、枝ごとの体積と半径が測れる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_branch_territory/02_territory_turning.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_branch_territory/02_territory_turning.gif)
 
@@ -3516,7 +3516,7 @@ py -3.11 examples/poc_em_branch_territory.py
 
 ## No.2026.153 —— 線虫の配線は左右対称か ―― L/R 入れ替えの Jaccard(集合の重なり係数) を閉形式と次数保存ヌルで挟む
 
-この展示は「線虫の配線は左右対称か」を扱い、「L/R 入れ替えの Jaccard(集合の重なり係数) を閉形式と次数保存ヌルで挟む」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+線虫の配線は左右対称かを確かめる場面では、L/R 入れ替えの Jaccard を閉形式と次数保存ヌルで挟む。合成データに雌雄同体を用意し、化学シナプス配線と辺集合を比べた。完全対称と次数列の差を見ると、L/R 入れ替えの Jaccard を閉形式と次数保存ヌルで挟むことが分かる。
 
 [![線虫の配線は左右対称か ―― L/R 入れ替えの Jaccard(集合の重なり係数) を閉形式と次数保存ヌルで挟む](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_lr_symmetry/01_lr_jaccard_closed_form_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_lr_symmetry/01_lr_jaccard_closed_form.png)
 
@@ -3540,7 +3540,7 @@ py -3.11 examples/poc_connectome_lr_symmetry.py
 
 ## No.2026.156 —— 同じ線虫の配線は、個体が違うとどこまで同じか ―― 8 匹の発生系列で「全員に在る結合」を数える
 
-この展示は「同じ線虫の配線は、個体が違うとどこまで同じか」を扱い、「8 匹の発生系列で「全員に在る結合」を数える」を調べる。公開データで条件を比べ、測定結果がどこまで保たれるかを確かめる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+同じ線虫の配線は、個体が違うとどこまで同じかを調べるとき、8 匹の発生系列で「全員に在る結合」を数える。合成データで遺伝的と同一を扱い、化学シナプス配線がどう変わるかを調べた。匹全員と細胞の差を見ると、 匹の発生系列で「全員に在る結合」を数えることが分かる。
 
 [![同じ線虫の配線は、個体が違うとどこまで同じか ―― 8 匹の発生系列で「全員に在る結合」を数える](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_across_worms/01_occupancy_matrix_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_across_worms/01_occupancy_matrix.png)
 
@@ -3578,7 +3578,7 @@ py -3.11 examples/poc_connectome_across_worms.py
 
 ## No.2026.157 —— 40 年前の手作業の配線図と、今の成虫の配線はどれだけ重なるか ―― 時代の差を個体の差と並べる
 
-この展示は「40 年前の手作業の配線図と、今の成虫の配線はどれだけ重なるか」を扱い、「時代の差を個体の差と並べる」を調べる。公開データで条件を比べ、測定結果がどこまで保たれるかを確かめる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+年代の違う線虫の配線図を比べるには、再注釈の差と個体差を分けて考える必要がある。過去の手作業トレースと近年の成虫二個体を共通の神経細胞へ揃え、結合の重なりとシナプス数を比べた。図では、年代間の差より個体差が大きく、三個体に共通する結合は太い傾向を読める。
 
 [![40 年前の手作業の配線図と、今の成虫の配線はどれだけ重なるか ―― 時代の差を個体の差と並べる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_across_decades/01_jaccard_across_decades_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_connectome_across_decades/01_jaccard_across_decades.png)
 
@@ -3606,7 +3606,7 @@ py -3.11 examples/poc_connectome_across_decades.py
 
 ## No.2026.158 —— 線虫の神経突起は、生まれてから何倍に伸びるか ―― 8 匹の骨格を op で測り、論文の値と並べる
 
-この展示は「線虫の神経突起は、生まれてから何倍に伸びるか」を扱い、「8 匹の骨格を 処理 で測り、論文の値と並べる」を調べる。公開データで条件を比べ、測定結果がどこまで保たれるかを確かめる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+線虫の神経突起は、生まれてから何倍に伸びるかを調べるとき、8 匹の骨格を 手法 で測り、論文の値と並べる。計算データで構造と約束を扱い、閉形式がどう変わるかを調べた。通過と実装の差を見ると、 匹の骨格を 手法 で測り、論文の値と並べることが分かる。
 
 [![線虫の神経突起は、生まれてから何倍に伸びるか ―― 8 匹の骨格を op で測り、論文の値と並べる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_neurites_grow/01_neurite_length_growth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_neurites_grow/01_neurite_length_growth.png)
 
@@ -3628,7 +3628,7 @@ py -3.11 examples/poc_worm_neurites_grow.py
 
 ## No.2026.159 —— 電子顕微鏡の神経の切り出しを採点する ―― 分けすぎと、まとめすぎを別々の数字にする
 
-この展示は「電子顕微鏡の神経の切り出しを採点する」を扱い、「分けすぎと、まとめすぎを別々の数字にする」を調べる。公開データで条件を比べ、測定結果がどこまで保たれるかを確かめる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+電子顕微鏡の神経の切り出しを採点する場面では、分けすぎと、まとめすぎを別々の数字にする。計算データのコネクトームを使い、自動と分断を別々に確かめた。融合と種類の差を見ると、分けすぎと、まとめすぎを別々の数字にすることが分かる。
 
 [![電子顕微鏡の神経の切り出しを採点する ―― 分けすぎと、まとめすぎを別々の数字にする](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_split_merge_score/01_split_vs_merge_by_threshold_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_split_merge_score/01_split_vs_merge_by_threshold.png)
 
@@ -3650,7 +3650,7 @@ py -3.11 examples/poc_em_split_merge_score.py
 
 ## No.2026.160 —— 切り出しの誤りは、配線図のどこを壊すか ―― 画素の採点は分断を重く、融合を軽く数える
 
-この展示は「切り出しの誤りは、配線図のどこを壊すか」を扱い、「画素の採点は分断を重く、融合を軽く数える」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+切り出しの誤りは、配線図のどこを壊すかを調べるとき、画素の採点は分断を重く、融合を軽く数える。実測データでコネクトームと神経を扱い、シナプスがどう変わるかを調べた。注釈と全部の差を見ると、画素の採点は分断を重く、融合を軽く数えることが分かる。
 
 [![切り出しの誤りは、配線図のどこを壊すか ―― 画素の採点は分断を重く、融合を軽く数える](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_wiring_errors/01_proofreading_order_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_em_wiring_errors/01_proofreading_order.png)
 
@@ -3680,7 +3680,7 @@ py -3.11 examples/poc_em_wiring_errors.py
 
 ## No.2026.161 —— シナプスは神経突起に比例して増えるか ―― 8 匹の線虫で、形の成長と配線の成長を細胞ごとに並べる
 
-この展示は「シナプスは神経突起に比例して増えるか」を扱い、「8 匹の線虫で、形の成長と配線の成長を細胞ごとに並べる」を調べる。公開データで条件を比べ、測定結果がどこまで保たれるかを確かめる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+シナプスは神経突起に比例して増えるかを確かめる場面では、8 匹の線虫で、形の成長と配線の成長を細胞ごとに並べる。計算データの個体を使い、骨格と両方を別々に確かめた。手法と総長の差を見ると、 匹の線虫で、形の成長と配線の成長を細胞ごとに並べることが分かる。
 
 [![シナプスは神経突起に比例して増えるか ―― 8 匹の線虫で、形の成長と配線の成長を細胞ごとに並べる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_synapses_vs_neurites/01_density_by_stage_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_synapses_vs_neurites/01_density_by_stage.png)
 
@@ -3706,7 +3706,7 @@ py -3.11 examples/poc_worm_synapses_vs_neurites.py
 
 ## No.2026.162 —— 走行長は小さな融合を許さない ―― 同じ誤りを、ERL と VOI は違う重さで数える
 
-この展示は「走行長は小さな融合を許さない」を扱い、「同じ誤りを、ERL と VOI は違う重さで数える」を調べる。公開データで条件を比べ、測定結果がどこまで保たれるかを確かめる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+走行長は小さな融合を許さないでは、同じ誤りを、ERL と VOI は違う重さで数える。自動切を含む合成データを作り、採点と分割表の関係を測った。正解と骨格の差を見ると、同じ誤りを、ERL と VOI は違う重さで数えることが分かる。
 
 [![走行長は小さな融合を許さない ―― 同じ誤りを、ERL と VOI は違う重さで数える](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_skeleton_run_length_vs_voi/01_merge_size_erl_vs_voi_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_skeleton_run_length_vs_voi/01_merge_size_erl_vs_voi.png)
 
@@ -3728,7 +3728,7 @@ py -3.11 examples/poc_skeleton_run_length_vs_voi.py
 
 ## No.2026.163 —— 粘菌の管は迷路を解く ―― 太る・細るだけの力学が最短路に収束することを、定理と Dijkstra で挟む
 
-この展示は「粘菌の管は迷路を解く」を扱い、「太る・細るだけの力学が最短路に収束することを、定理と Dijkstra で挟む」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+粘菌の管は迷路を解くの評価では、太る・細るだけの力学が最短路に収束することを、定理と Dijkstra で挟む。計算データの流量を使い、一意と導電度を別々に確かめた。指示関数と証明の差を見ると、太る・細るだけの力学が最短路に収束することを、定理と Dijkstra で挟むことが分かる。
 
 [![粘菌の管は迷路を解く ―― 太る・細るだけの力学が最短路に収束することを、定理と Dijkstra で挟む](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_physarum_maze/01_maze_tubes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_physarum_maze/01_maze_tubes.png)
 
@@ -3758,7 +3758,7 @@ py -3.11 examples/poc_physarum_maze.py
 
 ## No.2026.165 —— 粘菌は最適輸送を解く ―― 源と吸込を質量の分布にすると、同じ管の力学が Earth Mover 距離へ収束する
 
-この展示は「粘菌は最適輸送を解く」を扱い、「源と吸込を質量の分布にすると、同じ管の力学が Earth Mover 距離へ収束する」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+粘菌の管が複数の供給源と吸込先を結ぶとき、その局所的な成長則が最適輸送へ収束するかを確かめたい。質量分布を与えたグラフと画像で管の太さを更新し、輸送費の上界と双対問題の下界を同時に計算した。図では、二つの境界が閉じる所で最適性を証明でき、残った管が輸送経路になる。
 
 [![粘菌は最適輸送を解く ―― 源と吸込を質量の分布にすると、同じ管の力学が Earth Mover 距離へ収束する](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_physarum_transport/01_transport_tubes_gif.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_physarum_transport/01_transport_tubes_gif.gif)
 
@@ -3792,7 +3792,7 @@ py -3.11 examples/poc_physarum_transport.py
 
 ## No.2026.154 —— 本物の木で骨格計測を採点する ―― NeuroMorpho の SWC を真値に、投影が何を壊すかを測る
 
-この展示は「本物の木で骨格計測を採点する」を扱い、「NeuroMorpho の SWC を真値に、投影が何を壊すかを測る」を調べる。公開データで条件を比べ、測定結果がどこまで保たれるかを確かめる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+神経や血管の投影像から木構造を測ると、視線による枝の重なりが偽の分岐を作る。実物の神経細胞から座標と半径を持つ節点を読み、回転して二次元へ投影した後で分岐数と骨格長を測った。図では三次元の値が回転で不変なのに、投影上の測定値は視線ごとに動く。
 
 [![本物の木で骨格計測を採点する ―― NeuroMorpho の SWC を真値に、投影が何を壊すかを測る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_swc_tree_truth/03_junctions_vs_view_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_swc_tree_truth/03_junctions_vs_view.png)
 
@@ -3818,7 +3818,7 @@ py -3.11 examples/poc_swc_tree_truth.py
 
 ## No.2026.164 —— 線虫の脳の核は生まれた時から在る ―― 8 匹の発生系列で「最も深い殻」に居続ける細胞を数える
 
-この展示は「線虫の脳の核は生まれた時から在る」を扱い、「8 匹の発生系列で「最も深い殻」に居続ける細胞を数える」を調べる。公開データで条件を比べ、測定結果がどこまで保たれるかを確かめる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+線虫の脳の核は生まれた時から在る場面では、8 匹の発生系列で「最も深い殻」に居続ける細胞を数える。線虫の脳の核は生まれた時から在るの計算データに生後を用意し、時間と成虫を比べた。化学シナプス配線と無向の差を見ると、 匹の発生系列で「最も深い殻」に居続ける細胞を数えることが分かる。
 
 [![線虫の脳の核は生まれた時から在る ―― 8 匹の発生系列で「最も深い殻」に居続ける細胞を数える](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_core_persists/03_core_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_worm_core_persists/03_core_map.png)
 
@@ -3848,7 +3848,7 @@ py -3.11 examples/poc_worm_core_persists.py
 
 ## No.2026.260 —— ハエ(雄)の脳を、細胞体 12 万 6 千個の点のまま描く ―― 点群を描く op を足し、絵の外の 4 つの答えで採点する
 
-この展示は「ハエ(雄)の脳を、細胞体 12 万 六千個の点のまま描く」を扱い、「点群を描く 処理 を足し、絵の外の 四つの答えで採点する」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+ハエの脳を、細胞体 12 万 千個の点のまま描くの評価では、点群を描く 手法 を足し、絵の外の つの答えで採点する。ハエの脳を、細胞体 万 千個の点のまま描くの合成データに全中枢神経系を用意し、注釈と上行を比べた。位置と上位クラスの差が、判定の限界を示す。
 
 [![ハエ(雄)の脳を、細胞体 12 万 6 千個の点のまま描く ―― 点群を描く op を足し、絵の外の 4 つの答えで採点する](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_flybrain_pointcloud/01_three_views_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_flybrain_pointcloud/01_three_views.png)
 
@@ -3986,7 +3986,7 @@ py -3.11 examples/poc_change_detection_misreg.py
 
 ## No.2026.096 —— 疎な温度センサから 3-D 熱場を復元する ―― 格子の死角がラックを消す
 
-この展示は「疎な温度センサから 三次元 熱場を復元する」を扱い、「格子の死角がラックを消す」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+疎な温度センサから 三次元 熱場を復元する場面では、格子の死角がラックを消す。実測データにサーバ室を用意し、温度場と格子状を比べた。ホットスポットとゼロ点の差を見ると、格子の死角がラックを消すことが分かる。
 
 [![疎な温度センサから 3-D 熱場を復元する ―― 格子の死角がラックを消す](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_datacenter_thermal_field/01_scene_truth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_datacenter_thermal_field/01_scene_truth.png)
 
@@ -4024,7 +4024,7 @@ py -3.11 examples/poc_datacenter_thermal_field.py
 
 ## No.2026.012 —— 地形を測る ―― 傾斜・水の流れ・日当たりを閉形式と突き合わせる
 
-この展示は「地形を測る」を扱い、「傾斜・水の流れ・日当たりを閉形式と突き合わせる」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+地形を測るとき、傾斜・水の流れ・日当たりを閉形式と突き合わせる。平面を含む計算データを作り、円錐とガウス丘の関係を測った。曲率と天空率の差を見ると、傾斜・水の流れ・日当たりを閉形式と突き合わせることが分かる。
 
 [![地形を測る ―― 傾斜・水の流れ・日当たりを閉形式と突き合わせる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dem_terrain/01_cone_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dem_terrain/01_cone.png)
 
@@ -4058,7 +4058,7 @@ py -3.11 examples/poc_dem_terrain.py
 
 ## No.2026.066 —— 系外惑星トランジットを開口測光で取り出す ―― 深さと継続時間は別々に壊れる
 
-この展示は「系外惑星トランジットを開口測光で取り出す」を扱い、「深さと継続時間は別々に壊れる」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+星の明るさから惑星通過を探すと、雲や画素内の位置ずれが浅い減光を隠す。合成星野に周辺減光つきの通過を仕込み、透明度、ドリフト、フラット不均一、光子雑音を別々に加えて開口測光した。図では、比較星との比で深さは戻っても、弱い信号では継続時間が先に崩れる。
 
 [![系外惑星トランジットを開口測光で取り出す ―― 深さと継続時間は別々に壊れる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_exoplanet_transit/01_scene_starfield_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_exoplanet_transit/01_scene_starfield.png)
 
@@ -4096,7 +4096,7 @@ py -3.11 examples/poc_exoplanet_transit.py
 
 ## No.2026.098 —— 座標は「もっともらしい数字」のまま数十メートル間違う ―― 楕円体高・測地成果・平面近似
 
-この展示は「座標は「もっともらしい数字」のまま数十メートル間違う」を扱い、「楕円体高・測地成果・平面近似」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+座標は「もっともらしい数字」のまま数十メートル間違うの評価では、楕円体高・測地成果・平面近似。合成データに地図を用意し、設計図と標高を比べた。関係とジオイド場の差を見ると、楕円体高・測地成果・平面近似ことが分かる。
 
 [![座標は「もっともらしい数字」のまま数十メートル間違う ―― 楕円体高・測地成果・平面近似](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_geodetic_height_frames/01_geoid_frames_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_geodetic_height_frames/01_geoid_frames.png)
 
@@ -4134,7 +4134,7 @@ py -3.11 examples/poc_geodetic_height_frames.py
 
 ## No.2026.068 —— 葉の病斑面積率 ―― 色の軸は照明に勝つが、等級は葉マスクと縁の定義で決まる
 
-この展示は「葉の病斑面積率」を扱い、「色の軸は照明に勝つが、等級は葉マスクと縁の定義で決まる」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+葉の病斑面積率の評価では、色の軸は照明に勝つが、等級は葉マスクと縁の定義で決まる。合成データの閉形式を使い、葉輪郭と既知面積を別々に確かめた。片側照明と白飛の差を見ると、色の軸は照明に勝つが、等級は葉マスクと縁の定義で決まることが分かる。
 
 [![葉の病斑面積率 ―― 色の軸は照明に勝つが、等級は葉マスクと縁の定義で決まる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_leaf_disease_area/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_leaf_disease_area/01_scene.png)
 
@@ -4172,7 +4172,7 @@ py -3.11 examples/poc_leaf_disease_area.py
 
 ## No.2026.106 —— 実写の深宇宙に既知の星を仕込む ―― 汚染は測定値と信頼度を同じ向きに嘘つかせる
 
-この展示は「実写の深宇宙に既知の星を仕込む」を扱い、「汚染は測定値と信頼度を同じ向きに嘘つかせる」を調べる。実測データで条件を比べ、測定結果がどこまで保たれるかを確かめる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+実写の深宇宙に既知の星を仕込むの評価では、汚染は測定値と信頼度を同じ向きに嘘つかせる。実測データに本物を用意し、背景とフラックスを比べた。ガウシアン星と回収の差を見ると、汚染は測定値と信頼度を同じ向きに嘘つかせることが分かる。
 
 [![実写の深宇宙に既知の星を仕込む ―― 汚染は測定値と信頼度を同じ向きに嘘つかせる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_sky_photometry/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_sky_photometry/01_scene.png)
 
@@ -4202,7 +4202,7 @@ py -3.11 examples/poc_real_sky_photometry.py
 
 ## No.2026.080 —— 河川表面流速を斜め動画から測る(LSPIV)―― 速度の誤差と流量の誤差は別に数える
 
-この展示は「河川表面流速を斜め動画から測る(LSPIV)」を扱い、「速度の誤差と流量の誤差は別に数える」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+河川表面流速を斜め動画から測るとき、速度の誤差と流量の誤差は別に数える。計算データで最大と乗則を扱い、流速分布がどう変わるかを調べた。泡トレーサと毎コマ動の差を見ると、速度の誤差と流量の誤差は別に数えることが分かる。
 
 [![河川表面流速を斜め動画から測る(LSPIV)―― 速度の誤差と流量の誤差は別に数える](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_river_surface_velocity/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_river_surface_velocity/01_scene.png)
 
@@ -4244,7 +4244,7 @@ py -3.11 examples/poc_river_surface_velocity.py
 
 ## No.2026.035 —— 海氷密接度 ―― 混合画素をどう数えるかで答えが変わる
 
-この展示は「海氷密接度」を扱い、「混合画素をどう数えるかで答えが変わる」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+海氷密接度の評価では、混合画素をどう数えるかで答えが変わる。計算データにバンド像を用意し、分類と線形混合分解を比べた。ポイントと周長率の差を見ると、混合画素をどう数えるかで答えが変わることが分かる。
 
 [![海氷密接度 ―― 混合画素をどう数えるかで答えが変わる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sea_ice_concentration/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sea_ice_concentration/01_scene.png)
 
@@ -4276,7 +4276,7 @@ py -3.11 examples/poc_sea_ice_concentration.py
 
 ## No.2026.110 —— 走査幅 ―― 空撮画像から測った 1 本の数字が、捜索計画の成否を決める
 
-この展示は「走査幅」を扱い、「空撮画像から測った 1 本の数字が、捜索計画の成否を決める」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+走査幅では、空撮画像から測った 1 本の数字が、捜索計画の成否を決める。実測データで横距離曲線と面積を扱い、画像処理がどう変わるかを調べた。意思決定と場所の差を見ると、空撮画像から測った 本の数字が、捜索計画の成否を決めることが分かる。
 
 [![走査幅 ―― 空撮画像から測った 1 本の数字が、捜索計画の成否を決める](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_search_sweep_width/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_search_sweep_width/01_scene.png)
 
@@ -4316,7 +4316,7 @@ py -3.11 examples/poc_search_sweep_width.py
 
 ## No.2026.036 —— 縁が暗い天体の輪郭はどこか ―― 周辺減光があると「50 % 法」は半径を小さく見る
 
-この展示は「縁が暗い天体の輪郭はどこか」を扱い、「周辺減光があると「50 % 法」は半径を小さく見る」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+縁が暗い天体の輪郭はどこかを調べるとき、周辺減光があると「50 % 法」は半径を小さく見る。太陽面を含む計算データを作り、シーイング越と勾配最大の関係を測った。モデル当と減光係数の差を見ると、周辺減光があると「 % 法」は半径を小さく見ることが分かる。
 
 [![縁が暗い天体の輪郭はどこか ―― 周辺減光があると「50 % 法」は半径を小さく見る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solar_limb_darkening/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solar_limb_darkening/01_scene.png)
 
@@ -4346,7 +4346,7 @@ py -3.11 examples/poc_solar_limb_darkening.py
 
 ## No.2026.037 —— 星の位置は何分の 1 画素まで測れて、どこで崖に落ちるか
 
-この展示は「星の位置は何分の 1 画素まで測れて、どこで崖に落ちるか」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+星の位置は何分の 1 画素まで測れての評価では、どこで崖に落ちるか。計算データの天球座標を使い、手法と情報を別々に確かめた。理論限界と重心の差を見ると、どこで崖に落ちるかことが分かる。
 
 [![星の位置は何分の 1 画素まで測れて、どこで崖に落ちるか](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_astrometry/03_starfield_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_astrometry/03_starfield.png)
 
@@ -4376,7 +4376,7 @@ py -3.11 examples/poc_star_astrometry.py
 
 ## No.2026.088 —— 年輪を数えて幅の時系列を取り出す ―― 年数の誤差と幅の相関は別の量
 
-この展示は「年輪を数えて幅の時系列を取り出す」を扱い、「年数の誤差と幅の相関は別の量」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+年輪を数えて幅の時系列を取り出すの評価では、年数の誤差と幅の相関は別の量。実測データに偏心を用意し、周方向と腐朽斑を比べた。木目と円板の差を見ると、年数の誤差と幅の相関は別の量ことが分かる。
 
 [![年輪を数えて幅の時系列を取り出す ―― 年数の誤差と幅の相関は別の量](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tree_ring_dendro/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tree_ring_dendro/01_scene.png)
 
@@ -4414,7 +4414,7 @@ py -3.11 examples/poc_tree_ring_dendro.py
 
 ## No.2026.046 —— 畑の緑を数える ―― 被覆率の真値を画素ごとの葉の面積率で持つ
 
-この展示は「畑の緑を数える」を扱い、「被覆率の真値を画素ごとの葉の面積率で持つ」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+畑の緑を数える場面では、被覆率の真値を画素ごとの葉の面積率で持つ。計算データのバンドを使い、圃場像とゼロ点を別々に確かめた。中期と上振の差を見ると、被覆率の真値を画素ごとの葉の面積率で持つことが分かる。
 
 [![畑の緑を数える ―― 被覆率の真値を画素ごとの葉の面積率で持つ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vegetation_cover/01_mixed_pixel_response_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vegetation_cover/01_mixed_pixel_response.png)
 
@@ -4444,7 +4444,7 @@ py -3.11 examples/poc_vegetation_cover.py
 
 ## No.2026.049 —— 河川の水位を斜め写真から測る ―― 透視を無視した「行番号」は弓なりに外れる
 
-この展示は「河川の水位を斜め写真から測る」を扱い、「透視を無視した「行番号」は弓なりに外れる」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+量水標を斜めから撮ると、画像の行番号をそのまま水位へ換算する方法は透視投影で曲がる。既知水位の合成画像で水面線を検出し、二点の線形換算と平面の射影変換を比べた。図では、線形換算の誤差が内挿と外挿で反転し、射影変換後には検出誤差だけが残る。
 
 [![河川の水位を斜め写真から測る ―― 透視を無視した「行番号」は弓なりに外れる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_level/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_level/01_scene.png)
 
@@ -4474,7 +4474,7 @@ py -3.11 examples/poc_water_level.py
 
 ## No.2026.217 —— 火星の実地形で車輪の滑りを不確かさ付きで予測し、滑りのリスクを避ける経路を引く ―― Bekker / Wong–Reece と CVaR、地形は HiRISE の DTM、ガウス過程はデータの外で立ち往生を「滑り 0.29」と答える
 
-この展示は「火星の実地形で車輪の滑りを不確かさ付きで予測し、滑りのリスクを避ける経路を引く」を扱い、「Bekker / Wong–Reece と CVaR、地形は HiRISE の DTM…」を調べる。合成データと公開データを使い、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+火星探査車の経路計画では、斜面の幾何だけでなく、土が支えきれず車輪が滑る確率も要る。土壌力学と視覚オドメトリから斜面ごとの滑り率と不確かさを求め、平均時間の経路と危険度を抑えた経路を実地形で比べた。図では短い経路が急斜面で立ち往生し、危険度を入れた経路が遠回りして回避する。
 
 [![火星の実地形で車輪の滑りを不確かさ付きで予測し、滑りのリスクを避ける経路を引く ―― Bekker / Wong–Reece と CVaR、地形は HiRISE の DTM、ガウス過程はデータの外で立ち往生を「滑り 0.29」と答える](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rover_slip_risk_path/07_two_soils_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rover_slip_risk_path/07_two_soils_scene.png)
 
@@ -4516,7 +4516,7 @@ py -3.11 examples/poc_rover_slip_risk_path.py
 
 ## No.2026.136 —— 高さは 2 つある・実データ編 ―― 公開された測量成果 523 点で、高さの取り違えを検出器にかける
 
-この展示は「高さは 二つある・実データ編」を扱い、「公開された測量成果 523 点で、高さの取り違えを検出器にかける」を調べる。公開データで条件を比べ、測定結果がどこまで保たれるかを確かめる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+高さは 2 つある・実データ編の評価では、公開された測量成果 点で、高さの取り違えを検出器にかける。高さは つある・実データ編を表す合成データの楕円体高を使い、標高と自分を別々に確かめた。数字と主張の差を見ると、公開された測量成果 点で、高さの取り違えを検出器にかけることが分かる。
 
 [![高さは 2 つある・実データ編 ―― 公開された測量成果 523 点で、高さの取り違えを検出器にかける](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_geodetic_benchmarks_real/03_misuse_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_geodetic_benchmarks_real/03_misuse.png)
 
@@ -4554,7 +4554,7 @@ py -3.11 examples/poc_geodetic_benchmarks_real.py
 
 ## No.2026.147 —— 重力レンズの像を、産業用の測定 op で採点する
 
-この展示は「重力レンズの像を、産業用の測定 処理 で採点する」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+重力レンズの像をの評価では、産業用の測定 手法 で採点する。重力レンズの像をを表す計算データの直接測を使い、厳密と不変量を別々に確かめた。道具と平凡の差を見ると、産業用の測定 手法 で採点することが分かる。
 
 [![重力レンズの像を、産業用の測定 op で採点する](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gravitational_lens_invariants/01_images_vs_u_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gravitational_lens_invariants/01_images_vs_u.png)
 
@@ -4596,7 +4596,7 @@ py -3.11 examples/poc_gravitational_lens_invariants.py
 
 ## No.2026.257 —— 水田の雑草はどれだけあるか ―― 色と肌理だけで雑草の画素を分け、被度を宣言した境で 4 段階にする
 
-この展示は「水田の雑草はどれだけあるか」を扱い、「色と肌理だけで雑草の画素を分け、被度を宣言した境で 4 段階にする」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+水田の雑草はどれだけあるかを調べるとき、色と肌理だけで雑草の画素を分け、被度を宣言した境で 4 段階にする。水田の雑草はどれだけあるかの計算データで注釈と雑草イネを扱い、区画がどう変わるかを調べた。判別と学習器の差を見ると、色と肌理だけで雑草の画素を分け、被度を宣言した境で 段階にすることが分かる。
 
 [![水田の雑草はどれだけあるか ―― 色と肌理だけで雑草の画素を分け、被度を宣言した境で 4 段階にする](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weed_rice_ratio/05_real_examples_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weed_rice_ratio/05_real_examples.png)
 
@@ -4642,7 +4642,7 @@ py -3.11 examples/poc_weed_rice_ratio.py
 
 ## No.2026.007 —— 手ブレはどこまで戻せるか ―― 核を自分で作り、掛けて、戻して、元と比べる
 
-手ブレはどこまで戻せるかを調べるとき、核を自分で作り、掛けて、戻して、元と比べる。計算データで直線ブレ核と雑音を扱い、推定誤差がどう変わるかを調べた。上限と角度の差を見ると、核を自分で作り、掛けて、戻して、元と比べることが分かる。
+手ぶれ補正では、ぼけを戻す処理よりも、ぶれの向きと長さを正しく見積もれるかが限界を決める。既知の直線ぶれを画像へ加え、雑音と推定角度を変えながら復元結果を元画像と比べた。図では、推定角度が外れると補正しない画像より悪くなり、回転ぶれを一つの核では戻せない。
 
 [![手ブレはどこまで戻せるか ―― 核を自分で作り、掛けて、戻して、元と比べる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_shake_deblur/01_noise_ceiling_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_shake_deblur/01_noise_ceiling.png)
 
@@ -4676,7 +4676,7 @@ py -3.11 examples/poc_camera_shake_deblur.py
 
 ## No.2026.062 —— 疑似カラーは読み手の判断を変える —— 無い境目を数え、位置を先に当てる
 
-この展示は「疑似カラーは読み手の判断を変える」を扱い、「無い境目を数え、位置を先に当てる」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+疑似カラーは読み手の判断を変えるとき、無い境目を数え、位置を先に当てる。段差を含む実測データを作り、ゼロと本立の関係を測った。伝達関数と係数の差を見ると、無い境目を数え、位置を先に当てることが分かる。
 
 [![疑似カラーは読み手の判断を変える —— 無い境目を数え、位置を先に当てる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_colormap_readability/05_scene_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_colormap_readability/05_scene_maps.png)
 
@@ -4716,7 +4716,7 @@ py -3.11 examples/poc_colormap_readability.py
 
 ## No.2026.118 —— ハエの複眼は光場センサ ―― 神経重ね合わせの「重ねると頑健」は膝の手前まで
 
-この展示は「ハエの複眼は光場センサ」を扱い、「神経重ね合わせの「重ねると頑健」は膝の手前まで」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+ハエの複眼は光場センサでは、神経重ね合わせの「重ねると頑健」は膝の手前まで。合成データで個眼アレイとプレノプティック系を扱い、利得がどう変わるかを調べた。小開口と厳密の差を見ると、神経重ね合わせの「重ねると頑健」は膝の手前までことが分かる。
 
 [![ハエの複眼は光場センサ ―― 神経重ね合わせの「重ねると頑健」は膝の手前まで](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_compound_eye/01_compound_eye_scaling_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_compound_eye/01_compound_eye_scaling.png)
 
@@ -4746,7 +4746,7 @@ py -3.11 examples/poc_compound_eye.py
 
 ## No.2026.011 —— 霞を剥がす ―― 大気散乱モデルで真値を作り、透過率と大気光を別々に採点する
 
-この展示は「霞を剥がす」を扱い、「大気散乱モデルで真値を作り、透過率と大気光を別々に採点する」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+霞を剥がすの評価では、大気散乱モデルで真値を作り、透過率と大気光を別々に採点する。計算データの深度を使い、消散係数とシーンを別々に確かめた。霞画像と除霞の差を見ると、大気散乱モデルで真値を作り、透過率と大気光を別々に採点することが分かる。
 
 [![霞を剥がす ―― 大気散乱モデルで真値を作り、透過率と大気光を別々に採点する](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dehazing/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dehazing/01_scene.png)
 
@@ -4780,7 +4780,7 @@ py -3.11 examples/poc_dehazing.py
 
 ## No.2026.119 —— ハエの視覚前段を op の連鎖で ―― 合成の空を回る/前進すると、何が読めて何が読めないか
 
-この展示は「ハエの視覚前段を 処理 の連鎖で」を扱い、「合成の空を回る/前進すると、何が読めて何が読めないか」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+ハエの複眼は全視野の動きから自己回転を読めるが、前進だけでも回転に似た信号が出る。六角格子の個眼、受容野、ラミナ、相関器をつないだ合成眼へ、回転と前進の空模様を入力した。図では回転方向を読める条件と、地平線をまたぐ受容野が前進を回転へ取り違える条件が分かる。
 
 [![ハエの視覚前段を op の連鎖で ―― 合成の空を回る/前進すると、何が読めて何が読めないか](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_vision/01_fly_vision_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_vision/01_fly_vision_scene.png)
 
@@ -4818,7 +4818,7 @@ py -3.11 examples/poc_fly_vision.py
 
 ## No.2026.019 —— 深度合成 ―― 全焦点画像と深度地図は別物
 
-この展示は「深度合成」を扱い、「全焦点画像と深度地図は別物」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+深度合成では、全焦点画像と深度地図は別物。錯乱円を含む計算データを作り、閉形式と融合の関係を測った。無テクスチャ領域とゼロ点の差を見ると、全焦点画像と深度地図は別物ことが分かる。
 
 [![深度合成 ―― 全焦点画像と深度地図は別物](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_focus_stacking/01_stack_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_focus_stacking/01_stack.png)
 
@@ -4852,7 +4852,7 @@ py -3.11 examples/poc_focus_stacking.py
 
 ## No.2026.105 —— 実写のブレを取る ―― 3 つの物差しに、3 人の勝者
 
-この展示は「実写のブレを取る」を扱い、「3 つの物差しに、三人の勝者」を調べる。実測データで条件を比べ、測定結果がどこまで保たれるかを確かめる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+実写のブレを取るとき、3 つの物差しに、 人の勝者。実測データで劣化と自分を扱い、ゼロ点がどう変わるかを調べた。相手とノブの差を見ると、 つの物差しに、 人の勝者ことが分かる。
 
 [![実写のブレを取る ―― 3 つの物差しに、3 人の勝者](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_deblur_honesty/01_restore_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_deblur_honesty/01_restore.png)
 
@@ -4884,7 +4884,7 @@ py -3.11 examples/poc_real_deblur_honesty.py
 
 ## No.2026.039 —— 超解像は情報を増やすのか ―― 真値を持ったまま縮小して、戻して、数える
 
-この展示は「超解像は情報を増やすのか」を扱い、「真値を持ったまま縮小して、戻して、数える」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+超解像は情報を増やすのかを確かめる場面では、真値を持ったまま縮小して、戻して、数える。計算データの観測を使い、単一画像拡大と逆投影を別々に確かめた。分解能と採点の差を見ると、真値を持ったまま縮小して、戻して、数えることが分かる。
 
 [![超解像は情報を増やすのか ―― 真値を持ったまま縮小して、戻して、数える](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_superresolution_limits/03_multiframe_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_superresolution_limits/03_multiframe.png)
 
@@ -4918,7 +4918,7 @@ py -3.11 examples/poc_superresolution_limits.py
 
 ## No.2026.194 —— 公開の正解で画質指標を測る ―― TID2013 の 3,000 枚 × 971 人の MOS と作者の公表値を門にする
 
-この展示は「公開の正解で画質指標を測る」を扱い、「TID2013 の 三,〇枚 × 九百七十一人の MOS と作者の公表値を検査にする」を調べる。公開データで条件を比べ、測定結果がどこまで保たれるかを確かめる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+公開の正解で画質指標を測る場面では、TID2013 の , 枚 × 人の MOS と作者の公表値を判定にする。公開の正解で画質指標を測るを表す合成データの自作を使い、自分と限界を別々に確かめた。画像側と基準の差が、判定の限界を示す。
 
 [![公開の正解で画質指標を測る ―― TID2013 の 3,000 枚 × 971 人の MOS と作者の公表値を門にする](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_tid2013/06_tid2013_pair_ssim_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_tid2013/06_tid2013_pair_ssim_map.png)
 
@@ -4956,7 +4956,7 @@ py -3.11 examples/poc_iqa_tid2013.py
 
 ## No.2026.197 —— 知覚指標 FSIM(特徴類似度指標) / FSIMc(FSIMのカラー拡張) / GMSD(勾配類似度の標準偏差) / VIF を外から来た真値で 4 桁一致させる ―― TID2013 の作者値ファイル 3 本と公表の順位相関表
 
-この展示は「知覚指標 構造類似度(特徴類似度指標) / 構造類似度(構造類似度のカラー拡張)…」を扱い、「TID2013 の作者値ファイル 三本と公表の順位相関表」を調べる。公開データで条件を比べ、測定結果がどこまで保たれるかを確かめる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+知覚指標 測定手法 / 測定手法 / 測定手法 / VIF を外から来た真値で 4 桁一致させるとき。知覚指標 測定手法 / 測定手法 / 測定手法 / VIF を外から来た真値で 桁一致させるについて系列を含む合成データを作り、未実装と公表値の関係を測った。配布物と一次情報の差が、判定の限界を示す。
 
 [![知覚指標 FSIM(特徴類似度指標) / FSIMc(FSIMのカラー拡張) / GMSD(勾配類似度の標準偏差) / VIF を外から来た真値で 4 桁一致させる ―― TID2013 の作者値ファイル 3 本と公表の順位相関表](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_fsim_gmsd_vif/01_iqa_tid2013_mos_vs_fsim_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_fsim_gmsd_vif/01_iqa_tid2013_mos_vs_fsim.png)
 
@@ -4996,7 +4996,7 @@ py -3.11 examples/poc_iqa_fsim_gmsd_vif.py
 
 ## No.2026.135 —— ハエの視葉だけで進路を立て直す ―― ラミナから操舵まで、学習なしで
 
-この展示は「ハエの視葉だけで進路を立て直す」を扱い、「ラミナから操舵まで、学習なしで」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+ハエの視葉だけで進路を立て直すでは、ラミナから操舵まで、学習なしで。ハエの視葉だけで進路を立て直すについて外乱を含む計算データを作り、機体と複眼の関係を測った。回路と反応の差を見ると、ラミナから操舵まで、学習なしでことが分かる。
 
 [![ハエの視葉だけで進路を立て直す ―― ラミナから操舵まで、学習なしで](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_optomotor_steering/06_follow.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fly_optomotor_steering/06_follow.gif)
 
@@ -5034,7 +5034,7 @@ py -3.11 examples/poc_fly_optomotor_steering.py
 
 ## No.2026.148 —— 遠ざかると消える距離と、形が変わるときの面積
 
-この展示は「遠ざかると消える距離と、形が変わるときの面積」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+遠ざかると消える距離とでは、形が変わるときの面積。遠ざかると消える距離とについて高周波を含む実測データを作り、低周波と直接測の関係を測った。厳密と分解の差を見ると、形が変わるときの面積ことが分かる。
 
 [![遠ざかると消える距離と、形が変わるときの面積](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vanishing_detail_and_morphing_area/04_vanish_at_p_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vanishing_detail_and_morphing_area/04_vanish_at_p.png)
 
@@ -5076,7 +5076,7 @@ py -3.11 examples/poc_vanishing_detail_and_morphing_area.py
 
 ## No.2026.184 —— セグメンテーションの関門 ―― 真値つきの 6 つの世界に 10 手法を当て、どの物差しがどの壊れ方に盲目かを測る
 
-この展示は「セグメンテーションの関検査」を扱い、「真値つきの 6 つの世界に 十手法を当て、どの物差しがどの壊れ方に盲目かを測る」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+セグメンテーションの関判定では、真値つきの 6 つの世界に 手法を当て、どの物差しがどの壊れ方に盲目かを測る。セグメンテーションの関判定の合成データで採点と新モジュールを扱い、分割表がどう変わるかを調べた。領域と係数の差が、判定の限界を示す。
 
 [![セグメンテーションの関門 ―― 真値つきの 6 つの世界に 10 手法を当て、どの物差しがどの壊れ方に盲目かを測る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/01_worlds_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_segmentation_gauntlet/01_worlds.png)
 
@@ -5140,7 +5140,7 @@ py -3.11 examples/poc_segmentation_gauntlet.py
 
 ## No.2026.186 —— 動的輪郭とレベルセット ―― 輪郭が縮み、凹みに入り、エッジで止まるまでを閉形式で確かめる
 
-この展示は「動的輪郭とレベルセット」を扱い、「輪郭が縮み、凹みに入り、エッジで止まるまでを閉形式で確かめる」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+動的輪郭とレベルセットでは、輪郭が縮み、凹みに入り、エッジで止まるまでを閉形式で確かめる。動的輪郭とレベルセットの計算データでセグメンテーション拡充と新モジュールを扱い、勾配ベクトル流がどう変わるかを調べた。エネルギーと発展の差を見ると、輪郭が縮み、凹みに入り、エッジで止まるまでを閉形式で確かめることが分かる。
 
 [![動的輪郭とレベルセット ―― 輪郭が縮み、凹みに入り、エッジで止まるまでを閉形式で確かめる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_active_contours/01_inputs_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_active_contours/01_inputs.png)
 
@@ -5188,7 +5188,7 @@ py -3.11 examples/poc_active_contours.py
 
 ## No.2026.187 —— グラフ・階層・閾値のセグメンテーション ―― 最大フロー = 最小カット、ultrametric、つまみを回すと粗から細へ
 
-この展示は「グラフ・階層・閾値のセグメンテーション」を扱い、「最大フロー = 最小カット、ultrametric、つまみを回すと粗から細へ」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+グラフ・階層・閾値のセグメンテーションの評価では、最大フロー = 最小カット、ultrametric、つまみを回すと粗から細へ。グラフ・階層・閾値のセグメンテーションを表す計算データのセグメンテーション拡充を使い、新モジュールと総当を別々に確かめた。最小と一致の差が、判定の限界を示す。
 
 [![グラフ・階層・閾値のセグメンテーション ―― 最大フロー = 最小カット、ultrametric、つまみを回すと粗から細へ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/01_inputs_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_graph_hierarchy_segmentation/01_inputs.png)
 
@@ -5240,7 +5240,7 @@ py -3.11 examples/poc_graph_hierarchy_segmentation.py
 
 ## No.2026.227 —— 縞に近づくハエの眼 ―― シマウマの縞で複眼の距離感は本当に狂うのか、複眼がフィボナッチの並びなら優秀か
 
-この展示は「縞に近づくハエの眼」を扱い、「シマウマの縞で複眼の距離感は本当に狂うのか、複眼がフィボナッチの並びなら優秀か」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+縞に近づくハエの眼では、シマウマの縞で複眼の距離感は本当に狂うのか、複眼がフィボナッチの並びなら優秀か。縞に近づくハエの眼の実測データでアブと手前を扱い、制御がどう変わるかを調べた。減速と市松の差を見ると、シマウマの縞で複眼の距離感は本当に狂うのか、複眼がフィボナッチの並びなら優秀かことが分かる。
 
 [![縞に近づくハエの眼 ―― シマウマの縞で複眼の距離感は本当に狂うのか、複眼がフィボナッチの並びなら優秀か](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zebra_stripes_fly_eye/02_reversal_ring.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zebra_stripes_fly_eye/02_reversal_ring.gif)
 
@@ -5274,7 +5274,7 @@ py -3.11 examples/poc_zebra_stripes_fly_eye.py
 
 ## No.2026.252 —— ピクセルシフトのずれと開口を実画像から合わせる ―― 縞しか写っていない所では、ずれは 1 方向にしか決まらない
 
-この展示は「ピクセルシフトのずれと開口を実画像から合わせる」を扱い、「縞しか写っていない所では、ずれは 1 方向にしか決まらない」を調べる。合成データと公開データを使い、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+ピクセルシフトのずれと開口を実画像から合わせるとき、縞しか写っていない所では、ずれは 1 方向にしか決まらない。ピクセルシフトのずれと開口を実画像から合わせるの計算データで撮像素子と画素を扱い、公称がどう変わるかを調べた。開口率とレンズの差が、判定の限界を示す。
 
 [![ピクセルシフトのずれと開口を実画像から合わせる ―― 縞しか写っていない所では、ずれは 1 方向にしか決まらない](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/02_undetermined_map_star_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_pixel_shift/02_undetermined_map_star.png)
 
@@ -5312,7 +5312,7 @@ py -3.11 examples/poc_simcal_pixel_shift.py
 
 ## No.2026.266 —— 水と透明媒質 ―― 海の波・水面の屈折・水中の色・瓶の焦線を、閉形式と公表値と第 2 実装で採点
 
-この展示は「水と透明媒質」を扱い、「海の波・水面の屈折・水中の色・瓶の焦線を、閉形式と公表値と第 2 実装で採点」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+水と透明媒質の評価では、海の波・水面の屈折・水中の色・瓶の焦線を、閉形式と公表値と第 2 実装で採点。水と透明媒質の計算データにレンズを用意し、距離と色フィルタを比べた。有義波高と周期の差を見ると、海の波・水面の屈折・水中の色・瓶の焦線を、閉形式と公表値と第 実装で採点ことが分かる。
 
 [![水と透明媒質 ―― 海の波・水面の屈折・水中の色・瓶の焦線を、閉形式と公表値と第 2 実装で採点](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/05_pool_views_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_transparent_media/05_pool_views.png)
 
@@ -5354,7 +5354,7 @@ py -3.11 examples/poc_water_transparent_media.py
 
 ## No.2026.268 —— 水が検査画像にどう写るか ―― プールの底のコースティクス・瓶の側面像・濡れた板・船体の水中画像を、閉形式と第 2 の方法で採点
 
-この展示は「水が検査画像にどう写るか」を扱い、「プールの底のコースティクス・瓶の側面像・濡れた板・船体の水中画像を、閉形式と第 2 の方法で採点」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+水が検査画像にどう写るかを確かめる場面では、閉形式と第 2 の方法で採点。水が検査画像にどう写るかを表す計算データの検査カメラを使い、映像と水面を別々に確かめた。模様と液体の差を見ると、プールの底のコースティクス・瓶の側面像・濡れた板・船体の水中画像を、閉形式と第 の方法で採点ことが分かる。
 
 [![水が検査画像にどう写るか ―― プールの底のコースティクス・瓶の側面像・濡れた板・船体の水中画像を、閉形式と第 2 の方法で採点](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_inspection_images/04_bottles_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_inspection_images/04_bottles.png)
 
@@ -5396,7 +5396,7 @@ py -3.11 examples/poc_water_inspection_images.py
 
 ## No.2026.269 —— 処方どおりのレンズ越しに 3 次元の場面を撮る ―― 被写界深度・猫の目のボケ・隅の光量・色収差・ゴーストを、閉形式と既存の op と独立の追跡で採点
 
-この展示は「処方どおりのレンズ越しに 三次元の場面を撮る」を扱い、「被写界深度・猫の目のボケ・隅の光量・色収差・ゴーストを、閉形式と既存の 処理 と独立の追跡で採点」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+処方どおりのレンズ越しに 3 次元の場面を撮るとき、閉形式と既存の 手法 と独立の追跡で採点。処方どおりのレンズ越しに 次元の場面を撮るについてレンズ設計を含む計算データを作り、画面とスポットダイアグラムの関係を測った。変調伝達関数と数字の差が、判定の限界を示す。
 
 [![処方どおりのレンズ越しに 3 次元の場面を撮る ―― 被写界深度・猫の目のボケ・隅の光量・色収差・ゴーストを、閉形式と既存の op と独立の追跡で採点](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photograph_through_prescription/01_chart_good_vs_detuned_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photograph_through_prescription/01_chart_good_vs_detuned.png)
 
@@ -5526,7 +5526,7 @@ py -3.11 examples/poc_cold_chain_excursion.py
 
 ## No.2026.095 —— ひび割れの「幅」ではなく「伸び」を測る ―― 同じ壁を撮り返すと誤差の性質が変わる
 
-この展示は「ひび割れの「幅」ではなく「伸び」を測る」を扱い、「同じ壁を撮り返すと誤差の性質が変わる」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+ひび割れの「幅」ではなく「伸び」を測るとき、同じ壁を撮り返すと誤差の性質が変わる。成長率を含む計算データを作り、値化と画素の関係を測った。過小と過大の差を見ると、同じ壁を撮り返すと誤差の性質が変わることが分かる。
 
 [![ひび割れの「幅」ではなく「伸び」を測る ―― 同じ壁を撮り返すと誤差の性質が変わる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width_timeseries/01_frames_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width_timeseries/01_frames.png)
 
@@ -5568,7 +5568,7 @@ py -3.11 examples/poc_crack_width_timeseries.py
 
 ## No.2026.026 —— 構造物の微小振動を映像から測る ―― モーション拡大は「測る」役に立つのか
 
-この展示は「構造物の微小振動を映像から測る」を扱い、「モーション拡大は「測る」役に立つのか」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+構造物の微小振動を映像から測る場面では、モーション拡大は「測る」役に立つのか。合成データの既知振幅を使い、拡大率と機械精度を別々に確かめた。厳密と測定精度の差を見ると、モーション拡大は「測る」役に立つのかことが分かる。
 
 [![構造物の微小振動を映像から測る ―― モーション拡大は「測る」役に立つのか](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_motion_magnification/01_slit_scan_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_motion_magnification/01_slit_scan.png)
 
@@ -5602,7 +5602,7 @@ py -3.11 examples/poc_motion_magnification.py
 
 ## No.2026.030 —— 粒子追跡を (行, 列, 時刻) の体積として測る ―― 誤リンクの向きは 1 種類ではない
 
-この展示は「粒子追跡を (行, 列, 時刻) の体積として測る」を扱い、「誤リンクの向きは 1 種類ではない」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+粒子追跡を の体積として測る場面では、誤リンクの向きは 1 種類ではない。計算データに動画を用意し、軌跡と拡散係数を比べた。曖昧と欠測の差を見ると、誤リンクの向きは 種類ではないことが分かる。
 
 [![粒子追跡を (行, 列, 時刻) の体積として測る ―― 誤リンクの向きは 1 種類ではない](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_particle_tracking/05_tracking_links.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_particle_tracking/05_tracking_links.gif)
 
@@ -5636,7 +5636,7 @@ py -3.11 examples/poc_particle_tracking.py
 
 ## No.2026.111 —— 沈下したのか、測り直しただけなのか ―― 検出限界で切ると景色が変わる
 
-この展示は「沈下したのか、測り直しただけなのか」を扱い、「検出限界で切ると景色が変わる」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+沈下したのか、測り直しただけなのかを確かめる場面では、検出限界で切ると景色が変わる。実測データにトンネル掘進を用意し、路面と時期を比べた。点群とゼロ点の差を見ると、検出限界で切ると景色が変わることが分かる。
 
 [![沈下したのか、測り直しただけなのか ―― 検出限界で切ると景色が変わる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_settlement_significance/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_settlement_significance/01_scene.png)
 
@@ -5674,7 +5674,7 @@ py -3.11 examples/poc_settlement_significance.py
 
 ## No.2026.041 —— テンプレート追跡は「見失う」より先に「静かにずれる」
 
-この展示は「テンプレート追跡は「見失う」より先に「静かにずれる」」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+テンプレート追跡は「見失う」より先の評価では、測定の確かさが課題になる。計算データに相似変換を用意し、カメラと自信満々を比べた。間違とフレームの差を見ると、測定の確かさが課題になることが分かる。
 
 [![テンプレート追跡は「見失う」より先に「静かにずれる」](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_template_tracking/01_ncc_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_template_tracking/01_ncc_maps.png)
 
@@ -5708,7 +5708,7 @@ py -3.11 examples/poc_template_tracking.py
 
 ## No.2026.044 —— 成長のタイムラプスを時空間の連結成分として測る
 
-この展示は「成長のタイムラプスを時空間の連結成分として測る」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+成長のタイムラプスを時空間の連では、測定の確かさが課題になる。合体を含む計算データを作り、コロニーと動画の関係を測った。体積と三次元の差を見ると、測定の確かさが課題になることが分かる。
 
 [![成長のタイムラプスを時空間の連結成分として測る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_timelapse_growth/01_frames_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_timelapse_growth/01_frames.png)
 
@@ -5742,7 +5742,7 @@ py -3.11 examples/poc_timelapse_growth.py
 
 ## No.2026.045 —— (x, y, t) で数える ―― 通過台数とオクルージョン、そして L/V という 1 つの定数
 
-この展示は「(x, y, t) で数える」を扱い、「通過台数とオクルージョン、そして L/V という 1 つの定数」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+で数える場面では、通過台数とオクルージョン、そして L/V という 1 つの定数。合成データに合成動画を用意し、フレームと計数を比べた。仮想ループとスリット画像の差を見ると、通過台数とオクルージョン、そして L/V という つの定数ことが分かる。
 
 [![(x, y, t) で数える ―― 通過台数とオクルージョン、そして L/V という 1 つの定数](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_traffic_counting/01_per_frame_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_traffic_counting/01_per_frame.png)
 
@@ -5776,7 +5776,7 @@ py -3.11 examples/poc_traffic_counting.py
 
 ## No.2026.089 —— 庫内の滞留はどこで生まれたか ―― 待ちの種類を分けずに数えると全部「混雑」になる
 
-この展示は「庫内の滞留はどこで生まれたか」を扱い、「待ちの種類を分けずに数えると全部「混雑」になる」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+庫内の滞留はどこで生まれたかを確かめる場面では、待ちの種類を分けずに数えると全部「混雑」になる。合成データの物流センターを使い、平面図と軌跡を別々に確かめた。補充待と人待の差を見ると、待ちの種類を分けずに数えると全部「混雑」になることが分かる。
 
 [![庫内の滞留はどこで生まれたか ―― 待ちの種類を分けずに数えると全部「混雑」になる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_warehouse_flow/09_scene_layout_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_warehouse_flow/09_scene_layout.png)
 
@@ -5814,7 +5814,7 @@ py -3.11 examples/poc_warehouse_flow.py
 
 ## No.2026.053 —— 到達時刻面を (x, y, t) の等値面として取り出す
 
-この展示は「到達時刻面を (x, y, t) の等値面として取り出す」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+到達時刻面を の等値面とでは、測定の確かさが課題になる。点源を含む計算データを作り、波面と体積の関係を測った。ゼロ点と枚数の差を見ると、測定の確かさが課題になることが分かる。
 
 [![到達時刻面を (x, y, t) の等値面として取り出す](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/01_event_output_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/01_event_output.png)
 
@@ -5856,7 +5856,7 @@ py -3.11 examples/poc_xyt_event_surface.py
 
 ## No.2026.127 —— 動画を空間 × 時間の立方体として見る ―― 何が・どこを・いつ通ったかが 1 枚の立体に出る
 
-この展示は「動画を空間 × 時間の立方体として見る」を扱い、「何が・どこを・いつ通ったかが 1 枚の立体に出る」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+動画を空間 × 時間の立方体として見るとき、何が・どこを・いつ通ったかが 1 枚の立体に出る。背景を含む合成データを作り、物体と場面の関係を測った。道具と新族の差を見ると、何が・どこを・いつ通ったかが 枚の立体に出ることが分かる。
 
 [![動画を空間 × 時間の立方体として見る ―― 何が・どこを・いつ通ったかが 1 枚の立体に出る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_cube/02_cube_orbit.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_cube/02_cube_orbit.gif)
 
@@ -5898,7 +5898,7 @@ py -3.11 examples/poc_video_cube.py
 
 ## No.2026.128 —— 生きている組織の 3D+t を古典手法だけで短い 3D 動画像に ―― 増幅・流れ・補間・高さ場、全部に真値
 
-この展示は「生きている組織の 3D+t を古典手法だけで短い 三D 動画像に」を扱い、「増幅・流れ・補間・高さ場、全部に真値」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+生きている組織の 三次元+t を古典手法だけで短い 三次元 動画像にでは、増幅・流れ・補間・高さ場、全部に真値。動画生成を含む合成データを作り、発明と新族の関係を測った。内容と実在の差を見ると、増幅・流れ・補間・高さ場、全部に真値ことが分かる。
 
 [![生きている組織の 3D+t を古典手法だけで短い 3D 動画像に ―― 増幅・流れ・補間・高さ場、全部に真値](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/01_beating_orbit.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_live4d/01_beating_orbit.gif)
 
@@ -5948,7 +5948,7 @@ py -3.11 examples/poc_live4d.py
 
 ## No.2026.206 —— ディアボロの解析模型を原文から写して確かめ、合成映像から軸・回転・張力を読む ―― 原文の式 (1b) は次元が合わず実機寸法で NaN、真値は閉形式・厳密な糸・MuJoCo
 
-この展示は「ディアボロの解析模型を原文から写して確かめ、合成映像から軸・回転・張力を読む」を扱い、「原文の式 (1b) は次元が合わず実機寸法で NaN、真値は閉形式・厳密な糸・MuJoCo」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+ディアボロの解析模型を原文から写して確かめ、真値は閉形式・厳密な糸・MuJoCo。ディアボロの解析模型を原文から写して確かめ、合成映像から軸・回転・張力を読むの合成データで物理シミュと系列を扱い、一次情報がどう変わるかを調べた。ロボット学習用とディアボロ解析模型の差が、判定の限界を示す。
 
 [![ディアボロの解析模型を原文から写して確かめ、合成映像から軸・回転・張力を読む ―― 原文の式 (1b) は次元が合わず実機寸法で NaN、真値は閉形式・厳密な糸・MuJoCo](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_diabolo_model_and_vision/01_diabolo_throw_axis_from_image.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_diabolo_model_and_vision/01_diabolo_throw_axis_from_image.gif)
 
@@ -5990,7 +5990,7 @@ py -3.11 examples/poc_diabolo_model_and_vision.py
 
 ## No.2026.213 —— 流体のように流れる群れが、見えない障害物を速度場の乱れだけで察知する ―― 俯瞰映像の追跡と PIV(粒子画像流速測定) で衝突点と障害物の輪郭を読む。当たる前の上流だけで分かり、障害物が無ければ何も言わない
 
-この展示は「流体のように流れる群れが、見えない障害物を速度場の乱れだけで察知する」を扱い、「俯瞰映像の追跡と PIV(粒子画像流速測定) で衝突点と障害物の輪郭を読む、当たる前の上流だけで分かり…」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。
+流体のように流れる群れが、障害物が無ければ何も言わない。流体のように流れる群れが、見えない障害物を速度場の乱れだけで察知するについてロボットを含む計算データを作り、平滑化粒子流体力学と個体の関係を測った。減速と圧力の差が、判定の限界を示す。
 
 [![流体のように流れる群れが、見えない障害物を速度場の乱れだけで察知する ―― 俯瞰映像の追跡と PIV(粒子画像流速測定) で衝突点と障害物の輪郭を読む。当たる前の上流だけで分かり、障害物が無ければ何も言わない](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_swarm_obstacle_from_flow/02_swarmflow_speed_change_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_swarm_obstacle_from_flow/02_swarmflow_speed_change_maps.png)
 
@@ -6026,7 +6026,7 @@ py -3.11 examples/poc_swarm_obstacle_from_flow.py
 
 ## No.2026.170 —— 卓球の球を先駆者の目で測る ―― 真値つきの台で、多カメラ追跡・三角測量・軌道予測・跳ね・スピンを定理で採点する
 
-この展示は「卓球の球を先駆者の目で測る」を扱い、「真値つきの台で、多カメラ追跡・三角測量・軌道予測・跳ね・スピンを定理で採点する」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+卓球の球を先駆者の目で測る場面では、真値つきの台で、多カメラ追跡・三角測量・軌道予測・跳ね・スピンを定理で採点する。卓球の球を先駆者の目で測るの合成データにロボット卓球を用意し、視覚と複数を比べた。カメラと抗力の差を見ると、真値つきの台で、多カメラ追跡・三角測量・軌道予測・跳ね・スピンを定理で採点することが分かる。
 
 [![卓球の球を先駆者の目で測る ―― 真値つきの台で、多カメラ追跡・三角測量・軌道予測・跳ね・スピンを定理で採点する](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/01_rig_view_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ball_bounce/01_rig_view.png)
 
@@ -6072,7 +6072,7 @@ py -3.11 examples/poc_ball_bounce.py
 
 ## No.2026.171 —— けん玉を先駆者の目で ―― 本物の形のけん玉を 2 台のカメラで撮り、画像だけから玉の軌道を予測して大皿・小皿・中皿で受ける
 
-この展示は「けん玉を先駆者の目で」を扱い、「本物の形のけん玉を 2 台のカメラで撮り、画像だけから玉の軌道を予測して大皿・小皿・中皿で受ける」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+けん玉を先駆者の目での評価では、本物の形のけん玉を 2 台のカメラで撮り、画像だけから玉の軌道を予測して大皿・小皿・中皿で受ける。けん玉を先駆者の目での合成データにロボットを用意し、研究と年続を比べた。手本と強化学習の差が、判定の限界を示す。
 
 [![けん玉を先駆者の目で ―― 本物の形のけん玉を 2 台のカメラで撮り、画像だけから玉の軌道を予測して大皿・小皿・中皿で受ける](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/01_rig_view_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_kendama/01_rig_view.png)
 
@@ -6118,7 +6118,7 @@ py -3.11 examples/poc_kendama.py
 
 ## No.2026.174 —— 回転で曲がる卓球の球を撮って、回転を 2 通りで読む ―― 曲がり方から / 球の模様から
 
-この展示は「回転で曲がる卓球の球を撮って、回転を 2 通りで読む」を扱い、「曲がり方から / 球の模様から」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+回転で曲がる卓球の球を撮って、回転を 2 通りで読むの評価では、曲がり方から / 球の模様から。回転で曲がる卓球の球を撮って、回転を 通りで読むを表す合成データのトップスピンを使い、前回転と手前を別々に確かめた。バックスピンと下回転の差を見ると、曲がり方から / 球の模様からことが分かる。
 
 [![回転で曲がる卓球の球を撮って、回転を 2 通りで読む ―― 曲がり方から / 球の模様から](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_spin/03_top_view_sidespin.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_spin/03_top_view_sidespin.gif)
 
@@ -6152,7 +6152,7 @@ py -3.11 examples/poc_table_tennis_spin.py
 
 ## No.2026.175 —— 跳ねる卓球の球を高速カメラで撮って、反発係数と摩擦係数を読む ―― 公表値と照合する
 
-この展示は「跳ねる卓球の球を高速カメラで撮って、反発係数と摩擦係数を読む」を扱い、「公表値と照合する」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+跳ねる卓球の球を高速カメラで撮って、反発係数と摩擦係数を読むの評価では、公表値と照合する。跳ねる卓球の球を高速カメラで撮って、反発係数と摩擦係数を読むの合成データに回転を用意し、摩擦と接地点を比べた。途中と展示の差を見ると、公表値と照合することが分かる。
 
 [![跳ねる卓球の球を高速カメラで撮って、反発係数と摩擦係数を読む ―― 公表値と照合する](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_bounce/05_regime_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_bounce/05_regime_map.png)
 
@@ -6186,7 +6186,7 @@ py -3.11 examples/poc_table_tennis_bounce.py
 
 ## No.2026.177 —— 読みの誤差が卓球のラリーを終わらせる ―― 雑音と遅れが着地点をどれだけ動かすかを、打つ前に閉形式で出す
 
-この展示は「読みの誤差が卓球のラリーを終わらせる」を扱い、「雑音と遅れが着地点をどれだけ動かすかを、打つ前に閉形式で出す」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+読みの誤差が卓球のラリーを終わらせるとき、雑音と遅れが着地点をどれだけ動かすかを、打つ前に閉形式で出す。読みの誤差が卓球のラリーを終わらせるについて卓球ロボットを含む計算データを作り、位置と相手コートの関係を測った。打球と計算の差を見ると、雑音と遅れが着地点をどれだけ動かすかを、打つ前に閉形式で出すことが分かる。
 
 [![読みの誤差が卓球のラリーを終わらせる ―― 雑音と遅れが着地点をどれだけ動かすかを、打つ前に閉形式で出す](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_rally_loop/01_landing_cloud.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_table_tennis_rally_loop/01_landing_cloud.gif)
 
@@ -6216,7 +6216,7 @@ py -3.11 examples/poc_table_tennis_rally_loop.py
 
 ## No.2026.145 —— 継ぎ目の無い動画で、時間方向 op の周期境界を検査する
 
-この展示は「継ぎ目の無い動画で、時間方向 処理 の周期境界を検査する」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+継ぎ目の無い動画での評価では、時間方向 手法 の周期境界を検査する。継ぎ目の無い動画でを表す計算データの周期的を使い、素材と厳密を別々に確かめた。不変量と巡回シフト等変性の差を見ると、時間方向 手法 の周期境界を検査することが分かる。
 
 [![継ぎ目の無い動画で、時間方向 op の周期境界を検査する](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_periodic_video_boundary/05_contamination_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_periodic_video_boundary/05_contamination_map.png)
 
@@ -6300,7 +6300,7 @@ py -3.11 examples/poc_camera_calibration.py
 
 ## No.2026.028 —— 隣どうしを鎖でつなぐと、一周して元に戻れない
 
-この展示は「隣どうしを鎖でつなぐと、一周して元に戻れない」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+隣どうしを鎖でつなぐとの評価では、一周して元に戻れない。計算データの回転列を使い、円筒パノラマと隣接ペアを別々に確かめた。上回と姿勢の差を見ると、一周して元に戻れないことが分かる。
 
 [![隣どうしを鎖でつなぐと、一周して元に戻れない](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_panorama_drift/01_seams_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_panorama_drift/01_seams.png)
 
@@ -6334,7 +6334,7 @@ py -3.11 examples/poc_panorama_drift.py
 
 ## No.2026.108 —— 実写のステレオ写真で測る ―― 合成では出ない 3 つの躓き
 
-この展示は「実写のステレオ写真で測る」を扱い、「合成では出ない 3 つの躓き」を調べる。実測データで条件を比べ、測定結果がどこまで保たれるかを確かめる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+実写のステレオ写真で測るとき、合成では出ない 3 つの躓き。博物館を含む実測データを作り、配布元と注記の関係を測った。実際と中央視差の差を見ると、合成では出ない つの躓きことが分かる。
 
 [![実写のステレオ写真で測る ―― 合成では出ない 3 つの躓き](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_depth/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stereo_depth/01_scene.png)
 
@@ -6368,7 +6368,7 @@ py -3.11 examples/poc_real_stereo_depth.py
 
 ## No.2026.034 —— 点群位置合わせの収束域 ―― 初期姿勢がどれだけずれたら壊れるか
 
-この展示は「点群位置合わせの収束域」を扱い、「初期姿勢がどれだけずれたら壊れるか」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+点群位置合わせの収束域では、初期姿勢がどれだけずれたら壊れるか。毎試行取を含む計算データを作り、成功率と等高線の関係を測った。並進と点対点の差を見ると、初期姿勢がどれだけずれたら壊れるかことが分かる。
 
 [![点群位置合わせの収束域 ―― 初期姿勢がどれだけずれたら壊れるか](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/01_basin_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/01_basin.png)
 
@@ -6404,7 +6404,7 @@ py -3.11 examples/poc_registration_basin.py
 
 ## No.2026.117 —— 「回転しても同じ」と言える量はどれか —— 実写の硬貨を 72 角度で回して数える
 
-この展示は「「回転しても同じ」と言える量はどれか」を扱い、「実写の硬貨を 72 角度で回して数える」を調べる。実測データで条件を比べ、測定結果がどこまで保たれるかを確かめる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+「回転しても同じ」と言える量はどれかを調べるとき、実写の硬貨を 72 角度で回して数える。合成データで特徴量と回転不変を扱い、画素がどう変わるかを調べた。格子と主張の差を見ると、実写の硬貨を 角度で回して数えることが分かる。
 
 [![「回転しても同じ」と言える量はどれか —— 実写の硬貨を 72 角度で回して数える](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rotation_invariance_audit/01_rotation_frames_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rotation_invariance_audit/01_rotation_frames.png)
 
@@ -6426,7 +6426,7 @@ py -3.11 examples/poc_rotation_invariance_audit.py
 
 ## No.2026.190 —— 同じ場面を 2 つの世界で撮る ―― 写実シミュレータの深度を閉形式の真値で採点し、自前の世界と並べる
 
-この展示は「同じ場面を 二つの世界で撮る」を扱い、「写実シミュレータの深度を閉形式の真値で採点し、自前の世界と並べる」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+同じ場面を 2 つの世界で撮るとき、写実シミュレータの深度を閉形式の真値で採点し、自前の世界と並べる。著者を含む計算データを作り、発案と一番リアルの関係を測った。環境と技術の差を見ると、写実シミュレータの深度を閉形式の真値で採点し、自前の世界と並べることが分かる。
 
 [![同じ場面を 2 つの世界で撮る ―― 写実シミュレータの深度を閉形式の真値で採点し、自前の世界と並べる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_carla_bridge/01_carla_two_worlds_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_carla_bridge/01_carla_two_worlds.png)
 
@@ -6456,7 +6456,7 @@ py -3.11 examples/poc_carla_bridge.py
 
 ## No.2026.191 —— 町を 1 つに組む ―― 教習所の要素を自動で継ぎ、入口から出口まで通して走り、途中の停止線を全部採点する
 
-この展示は「町を 1 つに組む」を扱い、「教習所の要素を自動で継ぎ、入口から出口まで通して走り、途中の停止線を全部採点する」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+町を 1 つに組むでは、教習所の要素を自動で継ぎ、入口から出口まで通して走り、途中の停止線を全部採点する。計算データで著者と発案を扱い、系列がどう変わるかを調べた。集大成と運転の差を見ると、教習所の要素を自動で継ぎ、入口から出口まで通して走り、途中の停止線を全部採点することが分かる。
 
 [![町を 1 つに組む ―― 教習所の要素を自動で継ぎ、入口から出口まで通して走り、途中の停止線を全部採点する](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_town/01_town_overview_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_town/01_town_overview.png)
 
@@ -6498,7 +6498,7 @@ py -3.11 examples/poc_driving_town.py
 
 ## No.2026.192 —— 実在の日本の町を自前の世界に建てて走る ―― 道は OpenStreetMap、建物は PLATEAU、道具立てと規則は日本のもの
 
-この展示は「実在の日本の町を自前の世界に建てて走る」を扱い、「道は OpenStreetMap、建物は PLATEAU、道具立てと規則は日本のもの」を調べる。合成データと公開データを使い、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+実在の日本の町を自前の世界に建てて走る場面では、道は OpenStreetMap、建物は PLATEAU、道具立てと規則は日本のもの。合成データの著者を使い、発案と出来を別々に確かめた。マップと外部の差を見ると、道は OpenStreetMap、建物は PLATEAU、道具立てと規則は日本のものことが分かる。
 
 [![実在の日本の町を自前の世界に建てて走る ―― 道は OpenStreetMap、建物は PLATEAU、道具立てと規則は日本のもの](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/04_japan_town_frames_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_japan_town/04_japan_town_frames.png)
 
@@ -6540,7 +6540,7 @@ py -3.11 examples/poc_driving_japan_town.py
 
 ## No.2026.193 —— 他人の場面で自分の運転手を走らせ、他人の採点器に出す ―― CommonRoad の公開シナリオと TUM の公式チェッカー
 
-この展示は「他人の場面で自分の運転手を走らせ、他人の採点器に出す」を扱い、「CommonRoad の公開シナリオと TUM の公式チェッカー」を調べる。公開データで条件を比べ、測定結果がどこまで保たれるかを確かめる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+他人の場面で自分の運転手を走らせ、他人の採点器に出すでは、CommonRoad の公開シナリオと TUM の公式チェッカー。他人の場面で自分の運転手を走らせ、他人の採点器に出すの合成データでユーザーと指摘を扱い、トラップ作がどう変わるかを調べた。攻略と限界の差が、判定の限界を示す。
 
 [![他人の場面で自分の運転手を走らせ、他人の採点器に出す ―― CommonRoad の公開シナリオと TUM の公式チェッカー](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_commonroad/01_commonroad_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_commonroad/01_commonroad_scene.png)
 
@@ -6578,7 +6578,7 @@ py -3.11 examples/poc_driving_commonroad.py
 
 ## No.2026.195 —— 柔らかい手首のペグ挿入 ―― Whitney の準静的幾何を門に、手首カメラの計測で穴へ寄せ、MuJoCo の接触で確かめる
 
-この展示は「柔らかい手首のペグ挿入」を扱い、「Whitney の準静的幾何を検査に、手首カメラの計測で穴へ寄せ、MuJoCo の接触で確かめる」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+柔らかい手首のペグ挿入では、Whitney の準静的幾何を判定に、手首カメラの計測で穴へ寄せ、MuJoCo の接触で確かめる。柔らかい手首のペグ挿入の合成データで物理シミュと系列を扱い、定理がどう変わるかを調べた。原著と有料の差が、判定の限界を示す。
 
 [![柔らかい手首のペグ挿入 ―― Whitney の準静的幾何を門に、手首カメラの計測で穴へ寄せ、MuJoCo の接触で確かめる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pegsim_insertion/03_pegsim_wrist_overlay_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pegsim_insertion/03_pegsim_wrist_overlay.png)
 
@@ -6616,7 +6616,7 @@ py -3.11 examples/poc_pegsim_insertion.py
 
 ## No.2026.200 —— エアホッケーのパックを追い、予測し、5 節リンクで打ち返す ―― 学習なし、閉形式と外部シムを門に
 
-この展示は「エアホッケーのパックを追い、予測し、5 節リンクで打ち返す」を扱い、「学習なし、閉形式と外部シムを検査に」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+エアホッケーのパックを追い、予測し、5 節リンクで打ち返すの評価では、学習なし、閉形式と外部シムを判定に。エアホッケーのパックを追い、予測し、 節リンクで打ち返すの合成データに物理シミュを用意し、系列と題材を比べた。低価格とエアホッケーロボットの差を見ると、学習なし、閉形式と外部シムを判定にことが分かる。
 
 [![エアホッケーのパックを追い、予測し、5 節リンクで打ち返す ―― 学習なし、閉形式と外部シムを門に](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_air_hockey_intercept/01_airhockey_frame_detect_predict_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_air_hockey_intercept/01_airhockey_frame_detect_predict.png)
 
@@ -6654,7 +6654,7 @@ py -3.11 examples/poc_air_hockey_intercept.py
 
 ## No.2026.201 —— ペグ挿入の失敗を規則の表で見つけて回復する ―― VLM の代わりに Whitney の接触状態、真値は MuJoCo
 
-この展示は「ペグ挿入の失敗を規則の表で見つけて回復する」を扱い、「VLM の代わりに Whitney の接触状態、真値は MuJoCo」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+ペグ挿入の失敗を規則の表で見つけて回復するとき、VLM の代わりに Whitney の接触状態、真値は MuJoCo。ペグ挿入の失敗を規則の表で見つけて回復するについて物理シミュを含む合成データを作り、系列と集大成の関係を測った。先行研究と手首の差が、判定の限界を示す。
 
 [![ペグ挿入の失敗を規則の表で見つけて回復する ―― VLM の代わりに Whitney の接触状態、真値は MuJoCo](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_failure_recovery/01_pegfail_where_it_breaks_offset_flip_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_failure_recovery/01_pegfail_where_it_breaks_offset_flip.png)
 
@@ -6692,7 +6692,7 @@ py -3.11 examples/poc_peg_failure_recovery.py
 
 ## No.2026.203 —— 視触覚センサの照明を実機の較正球で較正し、勾配 LUT を第 2 実装にする ―― 真値は球の半径と手当ての円
 
-この展示は「視触覚センサの照明を実機の較正球で較正し、勾配 LUT を第 2 実装にする」を扱い、「真値は球の半径と手当ての円」を調べる。合成データと公開の実測データを使い、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+視触覚センサの照明を実機の較正球で較正し、勾配 LUT を第 2 実装にする場面では、真値は球の半径と手当ての円。視触覚センサの照明を実機の較正球で較正し、勾配 LUT を第 実装にするの合成データに物理シミュを用意し、系列と色照明を比べた。自分と逆算の差を見ると、真値は球の半径と手当ての円ことが分かる。
 
 [![視触覚センサの照明を実機の較正球で較正し、勾配 LUT を第 2 実装にする ―― 真値は球の半径と手当ての円](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacscalib_sphere_lut/01_tacscalib_synthetic_error_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacscalib_sphere_lut/01_tacscalib_synthetic_error_maps.png)
 
@@ -6734,7 +6734,7 @@ py -3.11 examples/poc_tacscalib_sphere_lut.py
 
 ## No.2026.204 —— ペグ挿入を 2 本指の膜で読む ―― せん断の像から接触レンチ、Whitney の接触状態、壁の μ、手首剛性まで、くさびの境目はレンチだけでは見えない
 
-この展示は「ペグ挿入を 2 本指の膜で読む」を扱い、「せん断の像から接触レンチ、Whitney の接触状態、壁の μ、手首剛性まで、くさびの境目はレンチだけでは見えない」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+ペグ挿入を 2 本指の膜で読むでは、くさびの境目はレンチだけでは見えない。ペグ挿入を 本指の膜で読むの合成データで物理シミュと系列を扱い、視触覚がどう変わるかを調べた。集大成と指先の差が、判定の限界を示す。
 
 [![ペグ挿入を 2 本指の膜で読む ―― せん断の像から接触レンチ、Whitney の接触状態、壁の μ、手首剛性まで、くさびの境目はレンチだけでは見えない](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_insertion_tactile/12_pegtactile_wrist_stiffness_from_images_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_insertion_tactile/12_pegtactile_wrist_stiffness_from_images.png)
 
@@ -6780,7 +6780,7 @@ py -3.11 examples/poc_peg_insertion_tactile.py
 
 ## No.2026.208 —— ペグの対称性で回転の探索を 1/n に絞る ―― 角・六角・キー付きペグの挿入を群の恒等式と閉形式と MuJoCo で、六角形の面取りは摩擦で窓が 20.9° → 6.8° に縮む
 
-この展示は「ペグの対称性で回転の探索を 1/n に絞る」を扱い、「角・六角・キー付きペグの挿入を群の恒等式と閉形式と MuJoCo で…」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+ペグの対称性で回転の探索を 1/n に絞る場面では、六角形の面取りは摩擦で窓が ° → ° に縮む。ペグの対称性で回転の探索を /n に絞るを表す合成データの物理シミュを使い、系列と題材を別々に確かめた。学習と研究の差が、判定の限界を示す。
 
 [![ペグの対称性で回転の探索を 1/n に絞る ―― 角・六角・キー付きペグの挿入を群の恒等式と閉形式と MuJoCo で、六角形の面取りは摩擦で窓が 20.9° → 6.8° に縮む](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_symmetry_search/01_pegsym_rotating_shapes_read_mod_2pi_over_n.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_symmetry_search/01_pegsym_rotating_shapes_read_mod_2pi_over_n.gif)
 
@@ -6822,7 +6822,7 @@ py -3.11 examples/poc_peg_symmetry_search.py
 
 ## No.2026.212 —— 点の順を入れ替えても 1 ビットも動かない位置合わせ ―― Ozaki スキームの FP64 の縮約。誤差は段で落ち、上界で保証する。CPU では遅く、GPU の速さは cuBLAS のエミュレーションに任せる
 
-この展示は「点の順を入れ替えても 1 ビットも動かない位置合わせ」を扱い、「Ozaki スキームの FP六十四の縮約、誤差は段で落ち、上界で保証する、CPU では遅く…」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+点の順を入れ替えても 1 ビットも動かない位置合わせの評価では、GPU の速さは cuBLAS のエミュレーションに任せる。点の順を入れ替えても ビットも動かない位置合わせを表す計算データの万点を使い、点群と回転を別々に確かめた。普通と行列積の差が、判定の限界を示す。
 
 [![点の順を入れ替えても 1 ビットも動かない位置合わせ ―― Ozaki スキームの FP64 の縮約。誤差は段で落ち、上界で保証する。CPU では遅く、GPU の速さは cuBLAS のエミュレーションに任せる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_reproducible_icp/01_error_staircase_ozaki1_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_reproducible_icp/01_error_staircase_ozaki1.png)
 
@@ -6860,7 +6860,7 @@ py -3.11 examples/poc_reproducible_icp.py
 
 ## No.2026.133 —— 公共カメラはどこを向いているか ―― 位置しか公開されない固定カメラの向きを、写真そのものから決める
 
-この展示は「公共カメラはどこを向いているか」を扱い、「位置しか公開されない固定カメラの向きを、写真そのものから決める」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+公共カメラはどこを向いているかを確かめる場面では、位置しか公開されない固定カメラの向きを、写真そのものから決める。公共カメラはどこを向いているかの合成データに公共を用意し、道路と気象を比べた。観光と増減方向の差を見ると、位置しか公開されない固定カメラの向きを、写真そのものから決めることが分かる。
 
 [![公共カメラはどこを向いているか ―― 位置しか公開されない固定カメラの向きを、写真そのものから決める](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading/02_yaw_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading/02_yaw_sweep.gif)
 
@@ -6894,7 +6894,7 @@ py -3.11 examples/poc_public_camera_heading.py
 
 ## No.2026.134 —— 公共カメラはどこを向いているか・実写編 ―― 807 局の道路カメラで太陽を探し、日没 1 本から向きを決めて道路で検算する
 
-この展示は「公共カメラはどこを向いているか・実写編」を扱い、「807 局の道路カメラで太陽を探し、日没 一本から向きを決めて道路で検算する」を調べる。合成データと実測データを使い、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+公共カメラはどこを向いているか・実写編では、807 局の道路カメラで太陽を探し、日没 本から向きを決めて道路で検算する。公共カメラはどこを向いているか・実写編について飽和を含む合成データを作り、円盤と実写の関係を測った。フィンランドと天候カメラの差が、判定の限界を示す。
 
 [![公共カメラはどこを向いているか・実写編 ―― 807 局の道路カメラで太陽を探し、日没 1 本から向きを決めて道路で検算する](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading_real/02_sunset_follow.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading_real/02_sunset_follow.gif)
 
@@ -6932,7 +6932,7 @@ py -3.11 examples/poc_public_camera_heading_real.py
 
 ## No.2026.247 —— 実物の画像の誤差から薄膜の模型の係数を合わせる ―― データが決めない係数には数を出さない(sim-to-real 較正)
 
-この展示は「実物の画像の誤差から薄膜の模型の係数を合わせる」を扱い、「データが決めない係数には数を出さない(sim-to-real 較正)」を調べる。合成データと公開データを使い、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+実物の画像の誤差から薄膜の模型の係数を合わせるとき、データが決めない係数には数を出さない。実物の画像の誤差から薄膜の模型の係数を合わせるの合成データで較正と計画を扱い、感度解析がどう変わるかを調べた。再利用と転送行列の差を見ると、データが決めない係数には数を出さないことが分かる。
 
 [![実物の画像の誤差から薄膜の模型の係数を合わせる ―― データが決めない係数には数を出さない(sim-to-real 較正)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/08_real_determined_vs_combinations_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_simcal_thin_film/08_real_determined_vs_combinations.png)
 
@@ -6978,7 +6978,7 @@ py -3.11 examples/poc_simcal_thin_film.py
 
 ## No.2026.032 —— 多波長で層を剥がす ―― 下絵・地塗り・上塗り・褪色を、真値を握ったまま分離する
 
-この展示は「多波長で層を剥がす」を扱い、「下絵・地塗り・上塗り・褪色を、真値を握ったまま分離する」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+多波長で層を剥がすでは、下絵・地塗り・上塗り・褪色を、真値を握ったまま分離する。合成データで分光キューブと可視を扱い、バンドがどう変わるかを調べた。近赤外と検出器の差を見ると、下絵・地塗り・上塗り・褪色を、真値を握ったまま分離することが分かる。
 
 [![多波長で層を剥がす ―― 下絵・地塗り・上塗り・褪色を、真値を握ったまま分離する](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pigment_unmixing/01_per_field_auc_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pigment_unmixing/01_per_field_auc.png)
 
@@ -7008,7 +7008,7 @@ py -3.11 examples/poc_pigment_unmixing.py
 
 ## No.2026.107 —— 実写の免疫染色を色で分ける ―― 見張り役が、見張るべき誤りにだけ盲目だった
 
-この展示は「実写の免疫染色を色で分ける」を扱い、「見張り役が、見張るべき誤りにだけ盲目だった」を調べる。合成データと実測データを使い、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+実写の免疫染色を色で分けるとき、見張り役が、見張るべき誤りにだけ盲目だった。免疫染色像を含む合成データを作り、色分離と完璧の関係を測った。濃度と画素の差を見ると、見張り役が、見張るべき誤りにだけ盲目だったことが分かる。
 
 [![実写の免疫染色を色で分ける ―― 見張り役が、見張るべき誤りにだけ盲目だった](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stain_unmix/01_separation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_real_stain_unmix/01_separation.png)
 
@@ -7038,7 +7038,7 @@ py -3.11 examples/poc_real_stain_unmix.py
 
 ## No.2026.051 —— 色恒常性(ホワイトバランス)―― 「効く手法」は無い、あるのは効く条件だけ
 
-この展示は「色恒常性(ホワイトバランス)」を扱い、「「効く手法」は無い、あるのは効く条件だけ」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+ホワイトバランスは、光源や露出の条件が変わると最良の推定法も入れ替わる。既知の分光反射率と光源から線形色画像を合成し、白パッチ法などの光源推定を回復角度で採点した。図では白い基準物を外す場合と飽和させる場合に誤差が急増し、真の光源で補正しても色差が残る。
 
 [![色恒常性(ホワイトバランス)―― 「効く手法」は無い、あるのは効く条件だけ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_white_balance/01_casts_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_white_balance/01_casts.png)
 
@@ -7068,7 +7068,7 @@ py -3.11 examples/poc_white_balance.py
 
 ## No.2026.229 —— 材料の光学物性ライブラリ ―― 硝材・結晶・半導体・金属・液体・プラスチック 86 種を 1 つの表にし、カタログ公表値と第二実装で採点
 
-この展示は「材料の光学物性ライブラリ」を扱い、「硝材・結晶・半導体・金属・液体・プラスチック 86 種を 一つの表にし、カタログ公表値と第二実装で採点」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+材料の光学物性ライブラリの評価では、カタログ公表値と第二実装で採点。材料の光学物性ライブラリの計算データに観察用を用意し、光学系とレンズを比べた。観察対象とウェハの差を見ると、硝材・結晶・半導体・金属・液体・プラスチック 86 種を つの表にし、カタログ公表値と第二実装で採点ことが分かる。
 
 [![材料の光学物性ライブラリ ―― 硝材・結晶・半導体・金属・液体・プラスチック 86 種を 1 つの表にし、カタログ公表値と第二実装で採点](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/01_abbe_diagram_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_material_optical_library/01_abbe_diagram.png)
 
@@ -7110,7 +7110,7 @@ py -3.11 examples/poc_material_optical_library.py
 
 ## No.2026.230 —— Si ウェハ越しの近赤外透過検査 ―― 光源 × ウェハ × センサの波長積分で LED の波長を選ぶ
 
-この展示は「Si ウェハ越しの近赤外透過検査」を扱い、「光源 × ウェハ × センサの波長積分で LED の波長を選ぶ」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+Si ウェハ越しの近赤外透過検査では、光源 × ウェハ × センサの波長積分で LED の波長を選ぶ。Si ウェハ越しの近赤外透過検査の計算データでダイと裏側を扱い、近赤外がどう変わるかを調べた。材料と吸収端の差を見ると、光源 × ウェハ × センサの波長積分で LED の波長を選ぶことが分かる。
 
 [![Si ウェハ越しの近赤外透過検査 ―― 光源 × ウェハ × センサの波長積分で LED の波長を選ぶ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/01_wavelength_contradiction_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nir_silicon_transmission/01_wavelength_contradiction.png)
 
@@ -7148,7 +7148,7 @@ py -3.11 examples/poc_nir_silicon_transmission.py
 
 ## No.2026.231 —— 光ファイバとライトガイド ―― 材料表の溶融石英から、モード・分散・モード径・照明の効率まで
 
-この展示は「光ファイバとライトガイド」を扱い、「材料表の溶融石英から、モード・分散・モード径・照明の効率まで」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+光ファイバとライトガイドでは、材料表の溶融石英から、モード・分散・モード径・照明の効率まで。光ファイバとライトガイドについて検査を含む計算データを作り、ファイバと干渉の関係を測った。分光とガラスの差を見ると、材料表の溶融石英から、モード・分散・モード径・照明の効率までことが分かる。
 
 [![光ファイバとライトガイド ―― 材料表の溶融石英から、モード・分散・モード径・照明の効率まで](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_light_guide/03_lp_b_v_diagram_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_light_guide/03_lp_b_v_diagram.png)
 
@@ -7186,7 +7186,7 @@ py -3.11 examples/poc_fiber_light_guide.py
 
 ## No.2026.249 —— 光学設計ファイル(.zmx)を読んで、解析して、直して、書き戻す ―― 別の 2 実装と処方の往復で採点
 
-この展示は「光学設計ファイル(.zmx)を読んで、解析して、直して、書き戻す」を扱い、「別の 2 実装と処方の往復で採点」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+光学設計ファイルを読んで、解析して、直して、書き戻すの評価では、別の 2 実装と処方の往復で採点。光学設計ファイルを読んで、解析して、直して、書き戻すを表す計算データの市販を使い、逐次光線追跡と設計ソフトを別々に確かめた。保存とテキストの差を見ると、別の 実装と処方の往復で採点ことが分かる。
 
 [![光学設計ファイル(.zmx)を読んで、解析して、直して、書き戻す ―― 別の 2 実装と処方の往復で採点](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_file_roundtrip/02_spot_diagram_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_file_roundtrip/02_spot_diagram.png)
 
@@ -7226,13 +7226,13 @@ py -3.11 examples/poc_lens_file_roundtrip.py
 
 ## No.2026.261 —— ズームレンズ(多構成)を 1 つの処方の差分で持つ ―― 薄肉 2 枚の閉形式と、設計ファイルの多構成の表への往復で採点
 
-この展示は「ズームレンズ(多構成)を 1 つの処方の差分で持つ」を扱い、「薄肉 二枚の閉形式と、設計ファイルの多構成の表への往復で採点」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+ズームレンズを 1 つの処方の差分で持つの評価では、薄肉 枚の閉形式と、設計ファイルの多構成の表への往復で採点。ズームレンズを つの処方の差分で持つの実測データに広角を用意し、標準と望遠を比べた。間隔と曲率の差を見ると、薄肉 枚の閉形式と、設計ファイルの多構成の表への往復で採点ことが分かる。
 
 [![ズームレンズ(多構成)を 1 つの処方の差分で持つ ―― 薄肉 2 枚の閉形式と、設計ファイルの多構成の表への往復で採点](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zoom_configurations/01_zoom_configurations_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zoom_configurations/01_zoom_configurations.png)
 
 *↑ **ズームレンズ(多構成)を 1 つの処方の差分で持つ ―― 薄肉 2 枚の閉形式と、設計ファイルの多構成の表への往復で採点** ―― 広角・標準・望遠のように間隔や曲率だけが違う複数の構成を、処方を複製せず構成ごとの差分で持つ。新 op 5 本(`lensconfig`、`opsoptics` の `lensconfig`): `lens_configurations` / `lens_with_configuration` / `lens_configuration_table`(行 = 変わる量、列 = 構成)/ `lens_configuration_metrics`(EFL・後端焦点距離・RMS スポット・MTF・囲みエネルギーを構成ごとに)/ `lens_add_configuration`。`lens_file_read` / `lens_file_write` は設計ファイル(.zmx)の `MNUM` の表(`THIC` / `CRVT` / `GLSS` / `PRAM` の行)を読み書きする。行の形は公開のズームレンズ .zmx 24 本で確かめた。薄肉 2 枚(f1 = 100、f2 = 60 mm)の間隔 10 / 20 / 30 mm で EFL・後端焦点距離が閉形式 f1·f2/(f1+f2−d) と 1e-9 以内、単一の理想レンズの f を構成ごとに変えると囲みエネルギーは Airy の 83.8 %(最大の差 1e-4)。Cooke 三枚玉の前玉と中玉の間隔を変えた 3 構成(後端は構成ごとに合わせ直す)で EFL 50.26 / 50.02 / 49.79 mm、軸上 RMS スポット 3.6 / 12.0 / 26.2 µm。3 構成を MNUM 表つきの .zmx に書いて読み戻すと、構成ごとの全上書き値と EFL が 1e-12 以内で一致し、書き→読み→書きで同じ表になる。★構成ごとに口径・視野・波長が違う系は、検証できた行では運べないので .zmx への書き出しを拒否する(黙って落とさない)。学習 0、較正 0、門 14 件。*
 
-用語: MTF — 空間周波数ごとに像のコントラストが物体からどれだけ伝わるかを表す、光学伝達関数の絶対値。
+用語: MTF — 空間周波数ごとに像のコントラストが物体からどれだけ伝わるかを表す、光学伝達関数の絶対値。; Airy pattern — 円形開口の回折像。中央のAiry円板の半径は、第一暗環までで1.22 λFとなる。
 
 ```
 py -3.11 examples/poc_zoom_configurations.py
@@ -7246,7 +7246,7 @@ py -3.11 examples/poc_zoom_configurations.py
 
 ## No.2026.262 —— 硝材の置き換えと大域探索 ―― 色消し 2 枚の閉形式と、単レンズの曲げの 3 次収差の解で採点
 
-この展示は「硝材の置き換えと大域探索」を扱い、「色消し 2 枚の閉形式と、単レンズの曲げの 三次収差の解で採点」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+硝材の置き換えと大域探索では、色消し 2 枚の閉形式と、単レンズの曲げの 次収差の解で採点。硝材の置き換えと大域探索の計算データでモデル硝材とカタログ硝材を扱い、局所最適化がどう変わるかを調べた。始点と何度の差を見ると、色消し 枚の閉形式と、単レンズの曲げの 次収差の解で採点ことが分かる。
 
 [![硝材の置き換えと大域探索 ―― 色消し 2 枚の閉形式と、単レンズの曲げの 3 次収差の解で採点](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_global_search/01_lens_global_search_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_global_search/01_lens_global_search.png)
 
@@ -7264,7 +7264,7 @@ py -3.11 examples/poc_lens_global_search.py
 
 ## No.2026.265 —— 要求の表で三枚玉を設計する ―― 縁厚・中心厚・空気間隔の境界つきメリット関数を、閉形式と独立実装で採点
 
-この展示は「要求の表で三枚玉を設計する」を扱い、「縁厚・中心厚・空気間隔の境界つきメリット関数を、閉形式と独立実装で採点」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+要求の表で三枚玉を設計するとき、縁厚・中心厚・空気間隔の境界つきメリット関数を、閉形式と独立実装で採点。要求の表で三枚玉を設計するについて設計者を含む実測データを作り、以上と波面の関係を測った。目標と片側の差を見ると、縁厚・中心厚・空気間隔の境界つきメリット関数を、閉形式と独立実装で採点ことが分かる。
 
 [![要求の表で三枚玉を設計する ―― 縁厚・中心厚・空気間隔の境界つきメリット関数を、閉形式と独立実装で採点](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_merit_operands/01_lens_merit_operands_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_merit_operands/01_lens_merit_operands.png)
 
@@ -7286,7 +7286,7 @@ py -3.11 examples/poc_lens_merit_operands.py
 
 ## No.2026.267 —— 設計の関係を「解」で持つ ―― 絞りを変えても焦点と F ナンバーが追従する二重ガウス型、afocal 望遠鏡、曲面の像面、奇数次の非球面
 
-この展示は「設計の関係を「解」で持つ」を扱い、「絞りを変えても焦点と F ナンバーが追従する二重ガウス型、afocal 望遠鏡、曲面の像面、奇数次の非球面」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+設計の関係を「解」で持つの評価では、奇数次の非球面。設計の関係を「解」で持つを表す計算データの数字を使い、近軸と同心を別々に確かめた。規則と半径の差を見ると、絞りを変えても焦点と F ナンバーが追従する二重ガウス型、afocal 望遠鏡、曲面の像面、奇数次の非球面ことが分かる。
 
 [![設計の関係を「解」で持つ ―― 絞りを変えても焦点と F ナンバーが追従する二重ガウス型、afocal 望遠鏡、曲面の像面、奇数次の非球面](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_solves_afocal/01_lens_solves_afocal_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_solves_afocal/01_lens_solves_afocal.png)
 
@@ -7308,7 +7308,7 @@ py -3.11 examples/poc_lens_solves_afocal.py
 
 ## No.2026.239 —— 見た目が同じ異物をハイパースペクトルで選別する ―― 実画像 2 つ(樹脂の破片・豚バラの上の異物)と、材料表から作る合成で壊れ方を数える
 
-この展示は「見た目が同じ異物をハイパースペクトルで選別する」を扱い、「実画像 二つ(樹脂の破片・豚バラの上の異物)と、材料表から作る合成で壊れ方を数える」を調べる。合成データと公開データを使い、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+見た目が同じ異物をハイパースペクトルで選別するとき、実画像 2 つと、材料表から作る合成で壊れ方を数える。見た目が同じ異物をハイパースペクトルで選別するについて公開を含む合成データを作り、取得スクリプトとキャッシュの関係を測った。分類と正解ラベルの差が、判定の限界を示す。
 
 [![見た目が同じ異物をハイパースペクトルで選別する ―― 実画像 2 つ(樹脂の破片・豚バラの上の異物)と、材料表から作る合成で壊れ方を数える](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/01_real_polymer_flakes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_hyperspectral_foreign_matter/01_real_polymer_flakes.png)
 
@@ -7352,7 +7352,7 @@ py -3.11 examples/poc_hyperspectral_foreign_matter.py
 
 ## No.2026.270 —— 公開 .zmx 処方を独立計算で照合し、検査レンズとして採点する
 
-この展示は「公開 .zmx 処方を独立計算で照合し、検査レンズとして採点する」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+公開.zmx 処方を独立計算で照合しでは、検査レンズとして採点する。公開.zmx 処方を独立計算で照合しの計算データで読取器と光線追跡器を扱い、計算がどう変わるかを調べた。実光線とスポットの差を見ると、検査レンズとして採点することが分かる。
 
 [![公開 .zmx 処方を独立計算で照合し、検査レンズとして採点する](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/01_independent_verification_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_zmx_public_verify/01_independent_verification.png)
 
@@ -7400,7 +7400,7 @@ py -3.11 examples/poc_zmx_public_verify.py
 
 ## No.2026.015 —— 手持ちで撮った書類をまっすぐに戻す ―― 台形補正と影除去を、真値と突き合わせて測る
 
-この展示は「手持ちで撮った書類をまっすぐに戻す」を扱い、「台形補正と影除去を、真値と突き合わせて測る」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+手持ちで撮った書類をまっすぐに戻すでは、台形補正と影除去を、真値と突き合わせて測る。計算データでホモグラフィと照明を扱い、格子がどう変わるかを調べた。画素誤差と採点の差を見ると、台形補正と影除去を、真値と突き合わせて測ることが分かる。
 
 [![手持ちで撮った書類をまっすぐに戻す ―― 台形補正と影除去を、真値と突き合わせて測る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_document_scan/01_rectify_zero_points_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_document_scan/01_rectify_zero_points.png)
 
@@ -7430,7 +7430,7 @@ py -3.11 examples/poc_document_scan.py
 
 ## No.2026.020 —— 改竄検出を ROC(真陽性率と偽陽性率の曲線) で語る ―― 「見つかった 1 枚」ではなく、偽陽性を固定したときの検出率
 
-この展示は「改竄検出を ROC(真陽性率と偽陽性率の曲線) で語る」を扱い、「「見つかった 1 枚」ではなく、偽陽性を固定したときの検出率」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+改竄検出を ROC で語る場面では、「見つかった 1 枚」ではなく、偽陽性を固定したときの検出率。計算データに素材を用意し、背景と保存を比べた。改竄画像と画素の差を見ると、「見つかった 枚」ではなく、偽陽性を固定したときの検出率ことが分かる。
 
 [![改竄検出を ROC(真陽性率と偽陽性率の曲線) で語る ―― 「見つかった 1 枚」ではなく、偽陽性を固定したときの検出率](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_forensics_roc/01_score_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_forensics_roc/01_score_maps.png)
 
@@ -7462,7 +7462,7 @@ py -3.11 examples/poc_forensics_roc.py
 
 ## No.2026.067 —— 絵画のひび割れ網 ―― 3 指標のうち撮影条件で壊れるのは分岐次数だけ
 
-この展示は「絵画のひび割れ網」を扱い、「3 指標のうち撮影条件で壊れるのは分岐次数だけ」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+絵画のひび割れ網の評価では、3 指標のうち撮影条件で壊れるのは分岐次数だけ。計算データにボロノイ網を用意し、閉形式と乾燥を比べた。経年と色斑の差を見ると、 指標のうち撮影条件で壊れるのは分岐次数だけことが分かる。
 
 [![絵画のひび割れ網 ―― 3 指標のうち撮影条件で壊れるのは分岐次数だけ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fresco_craquelure/07_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fresco_craquelure/07_scene.png)
 
@@ -7500,7 +7500,7 @@ py -3.11 examples/poc_fresco_craquelure.py
 
 ## No.2026.077 —— カメラ指紋(PRNU)で「どのカメラで撮ったか」を当てる ―― 指紋は枚数で育ち、保存ボタンで消える
 
-この展示は「カメラ指紋(PRNU)で「どのカメラで撮ったか」を当てる」を扱い、「指紋は枚数で育ち、保存ボタンで消える」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+カメラ指紋で「どのカメラで撮ったか」を当てる場面では、指紋は枚数で育ち、保存ボタンで消える。計算データの仮想カメラを使い、固定と感度を別々に確かめた。仕込と残差の差を見ると、指紋は枚数で育ち、保存ボタンで消えることが分かる。
 
 [![カメラ指紋(PRNU)で「どのカメラで撮ったか」を当てる ―― 指紋は枚数で育ち、保存ボタンで消える](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_prnu_camera_fingerprint/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_prnu_camera_fingerprint/01_scene.png)
 
@@ -7540,7 +7540,7 @@ py -3.11 examples/poc_prnu_camera_fingerprint.py
 
 ## No.2026.276 —— 映像の物理整合性 ―― 壁を上って跳ぶ車は弾道か推力か、時間は引き延ばされていないか
 
-この展示は「映像の物理整合性」を扱い、「壁を上って跳ぶ車は弾道か推力か、時間は引き延ばされていないか」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+映像の物理整合性の評価では、壁を上って跳ぶ車は弾道か推力か、時間は引き延ばされていないか。映像の物理整合性を表す合成データの単眼カメラを使い、画素と寸法を別々に確かめた。尺度と平面軌跡の差を見ると、壁を上って跳ぶ車は弾道か推力か、時間は引き延ばされていないかことが分かる。
 
 [![映像の物理整合性 ―― 壁を上って跳ぶ車は弾道か推力か、時間は引き延ばされていないか](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_physics_consistency/04_delta_aic_thrusted_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_video_physics_consistency/04_delta_aic_thrusted.png)
 
@@ -7582,7 +7582,7 @@ py -3.11 examples/poc_video_physics_consistency.py
 
 ## No.2026.166 —— 車は最短でどう曲がるか ―― Dubins・Reeds–Shepp の閉形式と、占有格子の上の Hybrid A* で縦列駐車
 
-この展示は「車は最短でどう曲がるか」を扱い、「Dubins・Reeds–Shepp の閉形式と、占有格子の上の Hybrid A* で縦列駐車」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+車は最短でどう曲がるかを確かめる場面では、占有格子の上の Hybrid A* で縦列駐車。計算データの前輪を使い、姿勢と定理を別々に確かめた。前進と最短路の差を見ると、Dubins・Reeds–Shepp の閉形式と、占有格子の上の Hybrid A* で縦列駐車ことが分かる。
 
 [![車は最短でどう曲がるか ―― Dubins・Reeds–Shepp の閉形式と、占有格子の上の Hybrid A* で縦列駐車](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_car_parking/01_dubins_six_words_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_car_parking/01_dubins_six_words.png)
 
@@ -7616,7 +7616,7 @@ py -3.11 examples/poc_car_parking.py
 
 ## No.2026.167 —— 教習所が開校する ―― 規格寸法の周回コースに車と信号を置き、LiDAR(レーザー測距) とカメラで見て、定理と恒等式で採点する
 
-この展示は「教習所が開校する」を扱い、「規格寸法の周回コースに車と信号を置き、LiDAR(レーザー測距) とカメラで見て、定理と恒等式で採点する」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+教習所が開校する場面では、規格寸法の周回コースに車と信号を置き、LiDAR とカメラで見て、定理と恒等式で採点する。計算データに自動運転を用意し、デモと世界を比べた。道路交通法施行規則と別表第三の差を見ると、規格寸法の周回コースに車と信号を置き、LiDAR とカメラで見て、定理と恒等式で採点することが分かる。
 
 [![教習所が開校する ―― 規格寸法の周回コースに車と信号を置き、LiDAR(レーザー測距) とカメラで見て、定理と恒等式で採点する](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/01_course_plan_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_school/01_course_plan.png)
 
@@ -7656,7 +7656,7 @@ py -3.11 examples/poc_driving_school.py
 
 ## No.2026.168 —— 衝突までの時間と安全距離 ―― τ 理論の光学流と RSS の閉形式を、教習所の世界の真値で採点する
 
-この展示は「衝突までの時間と安全距離」を扱い、「τ 理論の光学流と RSS の閉形式を、教習所の世界の真値で採点する」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+衝突までの時間と安全距離の評価では、τ 理論の光学流と RSS の閉形式を、教習所の世界の真値で採点する。計算データの対向車を使い、何秒と応答時間を別々に確かめた。加減速と上限の差を見ると、τ 理論の光学流と RSS の閉形式を、教習所の世界の真値で採点することが分かる。
 
 [![衝突までの時間と安全距離 ―― τ 理論の光学流と RSS の閉形式を、教習所の世界の真値で採点する](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/01_scene_plan_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ttc_rss/01_scene_plan.png)
 
@@ -7694,7 +7694,7 @@ py -3.11 examples/poc_ttc_rss.py
 
 ## No.2026.169 —— 世界を広げる ―― 閉形式の地形と世界座標の材質、手続きの木と歩行者で、拡大の中心を流れから取り戻す
 
-この展示は「世界を広げる」を扱い、「閉形式の地形と世界座標の材質、手続きの木と歩行者で、拡大の中心を流れから取り戻す」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+世界を広げる場面では、閉形式の地形と世界座標の材質、手続きの木と歩行者で、拡大の中心を流れから取り戻す。合成データに巡目を用意し、教習所とコースを比べた。路面と模様の差を見ると、閉形式の地形と世界座標の材質、手続きの木と歩行者で、拡大の中心を流れから取り戻すことが分かる。
 
 [![世界を広げる ―― 閉形式の地形と世界座標の材質、手続きの木と歩行者で、拡大の中心を流れから取り戻す](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/01_scene_terrain_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_world_terrain/01_scene_terrain.png)
 
@@ -7732,7 +7732,7 @@ py -3.11 examples/poc_world_terrain.py
 
 ## No.2026.172 —— 車に慣性と坂を ―― 空走 + 制動で停止線の手前に止まり、坂道で止まって逆行せずに発進する
 
-この展示は「車に慣性と坂を」を扱い、「空走 + 制動で停止線の手前に止まり、坂道で止まって逆行せずに発進する」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+車に慣性と坂をの評価では、空走 + 制動で停止線の手前に止まり、坂道で止まって逆行せずに発進する。計算データに教習所を用意し、姿勢と時間を比べた。展示と運動の差を見ると、空走 + 制動で停止線の手前に止まり、坂道で止まって逆行せずに発進することが分かる。
 
 [![車に慣性と坂を ―― 空走 + 制動で停止線の手前に止まり、坂道で止まって逆行せずに発進する](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_longitudinal/01_drive_with_time.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_longitudinal/01_drive_with_time.gif)
 
@@ -7766,7 +7766,7 @@ py -3.11 examples/poc_driving_longitudinal.py
 
 ## No.2026.173 —— 太陽と天気 ―― 朝日の逆光で信号が読めない時間帯、霧の中で見えてから止まれる速さ、雨の路面、夜の前照灯
 
-この展示は「太陽と天気」を扱い、「朝日の逆光で信号が読めない時間帯、霧の中で見えてから止まれる速さ、雨の路面、夜の前照灯」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+太陽と天気の評価では、朝日の逆光で信号が読めない時間帯、霧の中で見えてから止まれる速さ、雨の路面、夜の前照灯。計算データに自動運転を用意し、太陽光と天候を比べた。展示と教習所の差を見ると、朝日の逆光で信号が読めない時間帯、霧の中で見えてから止まれる速さ、雨の路面、夜の前照灯ことが分かる。
 
 [![太陽と天気 ―― 朝日の逆光で信号が読めない時間帯、霧の中で見えてから止まれる速さ、雨の路面、夜の前照灯](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/04_fog_views_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_weather/04_fog_views.png)
 
@@ -7804,7 +7804,7 @@ py -3.11 examples/poc_driving_weather.py
 
 ## No.2026.176 —— 終わらない地図 ―― 区画を車の周りに作り足し、離れた区画は捨てて、50 km を途切れずに走る
 
-この展示は「終わらない地図」を扱い、「区画を車の周りに作り足し、離れた区画は捨てて、50 km を途切れずに走る」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+終わらない地図の評価では、区画を車の周りに作り足し、離れた区画は捨てて、50 km を途切れずに走る。計算データに著者を用意し、発案とマップを比べた。前後左右方向とエンドレスの差を見ると、区画を車の周りに作り足し、離れた区画は捨てて、 km を途切れずに走ることが分かる。
 
 [![終わらない地図 ―― 区画を車の周りに作り足し、離れた区画は捨てて、50 km を途切れずに走る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_endless_map/01_minimap_stream.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_endless_map/01_minimap_stream.gif)
 
@@ -7830,7 +7830,7 @@ py -3.11 examples/poc_driving_endless_map.py
 
 ## No.2026.179 —— 動く交通と死角 ―― 路肩駐車の陰の子ども、対向車とのすれ違い、バス停、下手な運転、横断歩道で待つ人
 
-この展示は「動く交通と死角」を扱い、「路肩駐車の陰の子ども、対向車とのすれ違い、バス停、下手な運転、横断歩道で待つ人」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+動く交通と死角では、路肩駐車の陰の子ども、対向車とのすれ違い、バス停、下手な運転、横断歩道で待つ人。計算データで著者と発案を扱い、歩行者がどう変わるかを調べた。外乱要素と自転車の差を見ると、路肩駐車の陰の子ども、対向車とのすれ違い、バス停、下手な運転、横断歩道で待つ人ことが分かる。
 
 [![動く交通と死角 ―― 路肩駐車の陰の子ども、対向車とのすれ違い、バス停、下手な運転、横断歩道で待つ人](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_traffic/01_dashcam_occlusion.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_traffic/01_dashcam_occlusion.gif)
 
@@ -7868,7 +7868,7 @@ py -3.11 examples/poc_driving_traffic.py
 
 ## No.2026.180 —— 判断の場面 ―― ミラーで左後方を確かめる、歩行者信号から黄を予測する、救急車に道を譲る、バスの発車を待つ
 
-この展示は「判断の場面」を扱い、「ミラーで左後方を確かめる、歩行者信号から黄を予測する、救急車に道を譲る、バスの発車を待つ」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+判断の場面では、ミラーで左後方を確かめる、歩行者信号から黄を予測する、救急車に道を譲る、バスの発車を待つ。計算データで著者と発案を扱い、必要がどう変わるかを調べた。確認とバス停車中の差を見ると、ミラーで左後方を確かめる、歩行者信号から黄を予測する、救急車に道を譲る、バスの発車を待つことが分かる。
 
 [![判断の場面 ―― ミラーで左後方を確かめる、歩行者信号から黄を予測する、救急車に道を譲る、バスの発車を待つ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_decisions/01_decisions_mirrors_ambulance.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_decisions/01_decisions_mirrors_ambulance.gif)
 
@@ -7906,7 +7906,7 @@ py -3.11 examples/poc_driving_decisions.py
 
 ## No.2026.181 —— 横の運動 ―― カーブの手前で落とす、車線の中を保つ、左に寄って左折する、内輪差で巻き込まない
 
-この展示は「横の運動」を扱い、「カーブの手前で落とす、車線の中を保つ、左に寄って左折する、内輪差で巻き込まない」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+横の運動では、カーブの手前で落とす、車線の中を保つ、左に寄って左折する、内輪差で巻き込まない。著者を含む計算データを作り、方針と部品の関係を測った。ルールベースと限定の差を見ると、カーブの手前で落とす、車線の中を保つ、左に寄って左折する、内輪差で巻き込まないことが分かる。
 
 [![横の運動 ―― カーブの手前で落とす、車線の中を保つ、左に寄って左折する、内輪差で巻き込まない](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_lateral/04_offtracking_geometry_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_lateral/04_offtracking_geometry.png)
 
@@ -7948,7 +7948,7 @@ py -3.11 examples/poc_driving_lateral.py
 
 ## No.2026.188 —— 横断歩道を渡るヒューマノイド ―― 車の物理は正確なまま、歩く側は安く描く
 
-この展示は「横断歩道を渡るヒューマノイド」を扱い、「車の物理は正確なまま、歩く側は安く描く」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+横断歩道を渡るヒューマノイドでは、車の物理は正確なまま、歩く側は安く描く。著者を含む計算データを作り、発案と何種類の関係を測った。擬似的と判定の差を見ると、車の物理は正確なまま、歩く側は安く描くことが分かる。
 
 [![横断歩道を渡るヒューマノイド ―― 車の物理は正確なまま、歩く側は安く描く](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_humanoids/01_humanoid_decimation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_humanoids/01_humanoid_decimation.png)
 
@@ -7978,7 +7978,7 @@ py -3.11 examples/poc_driving_humanoids.py
 
 ## No.2026.182 —— 踏切と交差点の優先 ―― 直前で止まって左右を見る、警報の間は入らない、向こう側が詰まっていれば入らない、広い道へは譲る
 
-この展示は「踏切と交差点の優先」を扱い、「直前で止まって左右を見る、警報の間は入らない、向こう側が詰まっていれば入らない、広い道へは譲る」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+踏切と交差点の優先の評価では、直前で止まって左右を見る、警報の間は入らない、向こう側が詰まっていれば入らない、広い道へは譲る。踏切と交差点の優先の計算データに教則を用意し、台帳と未着手を比べた。ルールベースと部品の差が、判定の限界を示す。
 
 [![踏切と交差点の優先 ―― 直前で止まって左右を見る、警報の間は入らない、向こう側が詰まっていれば入らない、広い道へは譲る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_crossing/01_crossing_dashcam.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_crossing/01_crossing_dashcam.gif)
 
@@ -8024,7 +8024,7 @@ py -3.11 examples/poc_driving_crossing.py
 
 ## No.2026.183 —— 追越しと見えない所 ―― 見通しが足りなければ待つ、ルームミラーに映ってから戻る、環道の車を妨げない、カーブミラーは遠く見える
 
-この展示は「追越しと見えない所」を扱い、「見通しが足りなければ待つ、ルームミラーに映ってから戻る、環道の車を妨げない、カーブミラーは遠く見える」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+追越しと見えない所の評価では、見通しが足りなければ待つ、ルームミラーに映ってから戻る、環道の車を妨げない、カーブミラーは遠く見える。追越しと見えない所の計算データに教則を用意し、台帳と未着手を比べた。ルールベースと部品の差が、判定の限界を示す。
 
 [![追越しと見えない所 ―― 見通しが足りなければ待つ、ルームミラーに映ってから戻る、環道の車を妨げない、カーブミラーは遠く見える](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_pass/01_overtake_dashcam.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_pass/01_overtake_dashcam.gif)
 
@@ -8070,7 +8070,7 @@ py -3.11 examples/poc_driving_pass.py
 
 ## No.2026.137 —— 写真を 1 本の線にして、回る振り子に描かせる ―― 濃淡 → 点描 → 巡回路 → フーリエ級数 → G-code
 
-この展示は「写真を 1 本の線にして、回る振り子に描かせる」を扱い、「濃淡 → 点描 → 巡回路 → フーリエ級数 → G-code」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+写真を 1 本の線にして、回る振り子に描かせるとき、濃淡 → 点描 → 巡回路 → フーリエ級数 → G-code。写真を 本の線にして、回る振り子に描かせるについて葛飾北斎を含む実測データを作り、神奈川沖浪裏とメトロポリタン美術館の関係を測った。連鎖と様式化の差が、判定の限界を示す。
 
 [![写真を 1 本の線にして、回る振り子に描かせる ―― 濃淡 → 点描 → 巡回路 → フーリエ級数 → G-code](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_one_stroke_epicycles/07_epicycles.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_one_stroke_epicycles/07_epicycles.gif)
 
@@ -8108,7 +8108,7 @@ py -3.11 examples/poc_one_stroke_epicycles.py
 
 ## No.2026.138 —— 複素平面を「面」で見る ―― 絵が定理を証明する側に回る
 
-この展示は「複素平面を「面」で見る」を扱い、「絵が定理を証明する側に回る」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+複素平面を「面」で見るとき、絵が定理を証明する側に回る。複素平面を「面」で見るの計算データで複素解析と位相彩色を扱い、ニュートンがどう変わるかを調べた。吸引域とマンデルブロ集合の差を見ると、絵が定理を証明する側に回ることが分かる。
 
 [![複素平面を「面」で見る ―― 絵が定理を証明する側に回る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_complex_plane_fields/05_mandelbrot_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_complex_plane_fields/05_mandelbrot.png)
 
@@ -8146,7 +8146,7 @@ py -3.11 examples/poc_complex_plane_fields.py
 
 ## No.2026.139 —— 定理が門になる図 ―― アポロニウス・フォード・測地ドーム・葉序・IFS・空間充填曲線
 
-この展示は「定理が検査になる図」を扱い、「アポロニウス・フォード・測地ドーム・葉序・IFS・空間充填曲線」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+定理が判定になる図では、アポロニウス・フォード・測地ドーム・葉序・IFS・空間充填曲線。定理が判定になる図について数学的を含む計算データを作り、実装と間違の関係を測った。螺旋と独立の差を見ると、アポロニウス・フォード・測地ドーム・葉序・IFS・空間充填曲線ことが分かる。
 
 [![定理が門になる図 ―― アポロニウス・フォード・測地ドーム・葉序・IFS・空間充填曲線](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_theorems_as_pictures/01_apollonian_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_theorems_as_pictures/01_apollonian.png)
 
@@ -8184,7 +8184,7 @@ py -3.11 examples/poc_theorems_as_pictures.py
 
 ## No.2026.140 —— うなりは一つ ―― 干渉縞と印刷のモアレ(二つの周期模様の差で生じる縞)は同じ数学である
 
-この展示は「うなりは一つ」を扱い、「干渉縞と印刷のモアレ(二つの周期模様の差で生じる縞)は同じ数学である」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+うなりは一つでは、干渉縞と印刷のモアレは同じ数学である。うなりは一つについて二重スリットを含む実測データを作り、網点と周期模様の関係を測った。教科書と周期構造の差を見ると、干渉縞と印刷のモアレは同じ数学であることが分かる。
 
 [![うなりは一つ ―― 干渉縞と印刷のモアレ(二つの周期模様の差で生じる縞)は同じ数学である](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/01_membrane_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beats_fringes_and_screens/01_membrane.png)
 
@@ -8224,7 +8224,7 @@ py -3.11 examples/poc_beats_fringes_and_screens.py
 
 ## No.2026.141 —— 絵では確かめられないもの ―― 力学系と極小曲面を定義と恒等式で採点する
 
-この展示は「絵では確かめられないもの」を扱い、「力学系と極小曲面を定義と恒等式で採点する」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+絵では確かめられないものの評価では、力学系と極小曲面を定義と恒等式で採点する。絵では確かめられないものの実測データにローレンツを用意し、アトラクタと積分器を比べた。平均曲率と一切効の差を見ると、力学系と極小曲面を定義と恒等式で採点することが分かる。
 
 [![絵では確かめられないもの ―― 力学系と極小曲面を定義と恒等式で採点する](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/02_lorenz_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_what_a_picture_cannot_check/02_lorenz.png)
 
@@ -8262,7 +8262,7 @@ py -3.11 examples/poc_what_a_picture_cannot_check.py
 
 ## No.2026.143 —— 無限に描き続ける絵を、恒等式で採点する
 
-この展示は「無限に描き続ける絵を、恒等式で採点する」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+無限に描き続ける絵をの評価では、恒等式で採点する。無限に描き続ける絵をの実測データに閉形式を用意し、整数不変量と素材を比べた。生成器と規則の差を見ると、恒等式で採点することが分かる。
 
 [![無限に描き続ける絵を、恒等式で採点する](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/07_apollonian_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_illusions_and_perpetual_drawing/07_apollonian.png)
 
@@ -8304,7 +8304,7 @@ py -3.11 examples/poc_illusions_and_perpetual_drawing.py
 
 ## No.2026.144 —— 錯視で測定器を健診する ―― キャリパーが外すのはどこで、なぜか
 
-この展示は「錯視で測定器を健診する」を扱い、「キャリパーが外すのはどこで、なぜか」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+錯視で測定器を健診する場面では、キャリパーが外すのはどこで、なぜか。錯視で測定器を健診するの計算データに採点を用意し、サブピクセル測定器と走行を比べた。カフェウォールと目地の差を見ると、キャリパーが外すのはどこで、なぜかことが分かる。
 
 [![錯視で測定器を健診する ―― キャリパーが外すのはどこで、なぜか](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/01_caliper_on_cafe_wall_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_calipers_under_illusion/01_caliper_on_cafe_wall.png)
 
@@ -8472,7 +8472,7 @@ py -3.11 examples/poc_cad_scan_deviation.py
 
 ## No.2026.063 —— 作物の葉面積を上から測る —— 隠れるより先に、投影が畳んでしまう
 
-この展示は「作物の葉面積を上から測る」を扱い、「隠れるより先に、投影が畳んでしまう」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+作物の葉面積を上から測るとき、隠れるより先に、投影が畳んでしまう。解析曲面を含む実測データを作り、トウモロコシ群落と天頂の関係を測った。厳密と植被率の差を見ると、隠れるより先に、投影が畳んでしまうことが分かる。
 
 [![作物の葉面積を上から測る —— 隠れるより先に、投影が畳んでしまう](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crop_phenotyping/08_scene_nadir_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crop_phenotyping/08_scene_nadir.png)
 
@@ -8512,7 +8512,7 @@ py -3.11 examples/poc_crop_phenotyping.py
 
 ## No.2026.064 —— 接合層のボイドを 1 個の数字に畳む ―― 畳んだ分だけ、寿命に効く形が消える
 
-この展示は「接合層のボイドを 1 個の数字に畳む」を扱い、「畳んだ分だけ、寿命に効く形が消える」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+接合層のボイドを 1 個の数字に畳むでは、畳んだ分だけ、寿命に効く形が消える。合成データでダイアタッチ接合層と体積率を扱い、厳密がどう変わるかを調べた。位置と近接の差を見ると、畳んだ分だけ、寿命に効く形が消えることが分かる。
 
 [![接合層のボイドを 1 個の数字に畳む ―― 畳んだ分だけ、寿命に効く形が消える](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_void_morphology/01_scene_sections_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_void_morphology/01_scene_sections.png)
 
@@ -8556,7 +8556,7 @@ py -3.11 examples/poc_ct_void_morphology.py
 
 ## No.2026.065 —— 造形しやすさを形から測る —— しきい値に貼りついた面は、丸めた分だけ判定が飛ぶ
 
-この展示は「造形しやすさを形から測る」を扱い、「しきい値に貼りついた面は、丸めた分だけ判定が飛ぶ」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+造形しやすさを形から測る場面では、しきい値に貼りついた面は、丸めた分だけ判定が飛ぶ。合成データの設計値を使い、合成部品とボクセル化を別々に確かめた。肉厚と要サポート面積の差を見ると、しきい値に貼りついた面は、丸めた分だけ判定が飛ぶことが分かる。
 
 [![造形しやすさを形から測る —— しきい値に貼りついた面は、丸めた分だけ判定が飛ぶ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dfm_thickness_overhang/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dfm_thickness_overhang/01_scene.png)
 
@@ -8594,7 +8594,7 @@ py -3.11 examples/poc_dfm_thickness_overhang.py
 
 ## No.2026.070 —— 斜面の土量 ―― 合わせてから引くと、崩れが浅くなる
 
-この展示は「斜面の土量」を扱い、「合わせてから引くと、崩れが浅くなる」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+斜面の土量の評価では、合わせてから引くと、崩れが浅くなる。合成データに傾斜を用意し、合成地形と既知体積を比べた。掘削と堆積の差を見ると、合わせてから引くと、崩れが浅くなることが分かる。
 
 [![斜面の土量 ―― 合わせてから引くと、崩れが浅くなる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/09_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lidar_terrain_change/09_scene.png)
 
@@ -8636,7 +8636,7 @@ py -3.11 examples/poc_lidar_terrain_change.py
 
 ## No.2026.099 —— シルエットから体重を測る ―― 台数で買える誤差と、いくら買っても消えない誤差
 
-この展示は「シルエットから体重を測る」を扱い、「台数で買える誤差と、いくら買っても消えない誤差」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+シルエットから体重を測るとき、台数で買える誤差と、いくら買っても消えない誤差。多視点シルエットを含む実測データを作り、交差と家畜の関係を測った。体積と換算の差を見ると、台数で買える誤差と、いくら買っても消えない誤差ことが分かる。
 
 [![シルエットから体重を測る ―― 台数で買える誤差と、いくら買っても消えない誤差](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_livestock_body_volume/10_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_livestock_body_volume/10_scene.png)
 
@@ -8678,7 +8678,7 @@ py -3.11 examples/poc_livestock_body_volume.py
 
 ## No.2026.072 —— 壊れたメッシュを直してから測る ―― 消えるのは欠陥の数で、戻るのは量ではない
 
-この展示は「壊れたメッシュを直してから測る」を扱い、「消えるのは欠陥の数で、戻るのは量ではない」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+壊れたメッシュを直してから測る場面では、消えるのは欠陥の数で、戻るのは量ではない。実測データにトーラスを用意し、角柱とブール和を比べた。三角メッシュと裏返の差を見ると、消えるのは欠陥の数で、戻るのは量ではないことが分かる。
 
 [![壊れたメッシュを直してから測る ―― 消えるのは欠陥の数で、戻るのは量ではない](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mesh_quality_repair/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mesh_quality_repair/01_scene.png)
 
@@ -8720,7 +8720,7 @@ py -3.11 examples/poc_mesh_quality_repair.py
 
 ## No.2026.101 —— パレットの積載率 —— 1 つの数字が「隙間」と「はみ出し」を同じ値にする
 
-この展示は「パレットの積載率」を扱い、「1 つの数字が「隙間」と「はみ出し」を同じ値にする」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+パレットの積載率の評価では、1 つの数字が「隙間」と「はみ出し」を同じ値にする。計算データの中身を使い、正反対と空洞を別々に確かめた。天端と制限の差を見ると、 つの数字が「隙間」と「はみ出し」を同じ値にすることが分かる。
 
 [![パレットの積載率 —— 1 つの数字が「隙間」と「はみ出し」を同じ値にする](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pallet_load_utilization/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pallet_load_utilization/01_scene.png)
 
@@ -8758,7 +8758,7 @@ py -3.11 examples/poc_pallet_load_utilization.py
 
 ## No.2026.075 —— 配管内面の減肉を展開図で測る ―― 軸を決めた分だけ、管底の腐食が消える
 
-この展示は「配管内面の減肉を展開図で測る」を扱い、「軸を決めた分だけ、管底の腐食が消える」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+配管内面の減肉を展開図で測る場面では、軸を決めた分だけ、管底の腐食が消える。合成データの孔食を使い、全周減肉と管底腐食を別々に確かめた。溶接ビードと楕円化の差を見ると、軸を決めた分だけ、管底の腐食が消えることが分かる。
 
 [![配管内面の減肉を展開図で測る ―― 軸を決めた分だけ、管底の腐食が消える](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pipe_wall_loss/01_scene_pipe_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pipe_wall_loss/01_scene_pipe.png)
 
@@ -8796,7 +8796,7 @@ py -3.11 examples/poc_pipe_wall_loss.py
 
 ## No.2026.076 —— 積層の反りは層の履歴が決める —— 均した面積は置き場所を捨てる
 
-この展示は「積層の反りは層の履歴が決める」を扱い、「均した面積は置き場所を捨てる」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+積層の反りは層の履歴が決めるとき、均した面積は置き場所を捨てる。合成データで一定と収縮を扱い、仕込がどう変わるかを調べた。合成形状と断面積の差を見ると、均した面積は置き場所を捨てることが分かる。
 
 [![積層の反りは層の履歴が決める —— 均した面積は置き場所を捨てる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_print_warpage_risk/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_print_warpage_risk/01_scene.png)
 
@@ -8834,7 +8834,7 @@ py -3.11 examples/poc_print_warpage_risk.py
 
 ## No.2026.081 —— 人と機械の安全距離 —— 代表点に置き換えた分だけ、危険が消える
 
-この展示は「人と機械の安全距離」を扱い、「代表点に置き換えた分だけ、危険が消える」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+人と機械の安全距離の評価では、代表点に置き換えた分だけ、危険が消える。合成データに多関節を用意し、骨格と人体を比べた。可動アームと表面の差を見ると、代表点に置き換えた分だけ、危険が消えることが分かる。
 
 [![人と機械の安全距離 —— 代表点に置き換えた分だけ、危険が消える](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_safety_clearance/02_frames_clearance_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_safety_clearance/02_frames_clearance.png)
 
@@ -8872,7 +8872,7 @@ py -3.11 examples/poc_safety_clearance.py
 
 ## No.2026.082 —— 設計と実物の食い違いを部屋から測る ―― 合わせの妥協角は、無傷の部材へ配られる
 
-この展示は「設計と実物の食い違いを部屋から測る」を扱い、「合わせの妥協角は、無傷の部材へ配られる」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+設計と実物の食い違いを部屋から測るとき、合わせの妥協角は、無傷の部材へ配られる。合成建物を含む合成データを作り、勾配と寸法違の関係を測った。開口と既知量の差を見ると、合わせの妥協角は、無傷の部材へ配られることが分かる。
 
 [![設計と実物の食い違いを部屋から測る ―― 合わせの妥協角は、無傷の部材へ配られる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_scan_to_bim_asbuilt/01_scene_plan_section_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_scan_to_bim_asbuilt/01_scene_plan_section.png)
 
@@ -8910,7 +8910,7 @@ py -3.11 examples/poc_scan_to_bim_asbuilt.py
 
 ## No.2026.086 —— 構造物を年ごとに測り返す —— 測る場所がずれると、劣化は進んだように見える
 
-この展示は「構造物を年ごとに測り返す」を扱い、「測る場所がずれると、劣化は進んだように見える」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+構造物を年ごとに測り返すの評価では、測る場所がずれると、劣化は進んだように見える。計算データに橋桁を用意し、断面欠損と支承沈下を比べた。時点と仕込の差を見ると、測る場所がずれると、劣化は進んだように見えることが分かる。
 
 [![構造物を年ごとに測り返す —— 測る場所がずれると、劣化は進んだように見える](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_structure_4d_deterioration/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_structure_4d_deterioration/01_scene.png)
 
@@ -8952,7 +8952,7 @@ py -3.11 examples/poc_structure_4d_deterioration.py
 
 ## No.2026.087 —— 対称性で欠けを補う —— 仮定した面がずれた分だけ、復元は嘘をつく
 
-この展示は「対称性で欠けを補う」を扱い、「仮定した面がずれた分だけ、復元は嘘をつく」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+対称性で欠けを補うでは、仮定した面がずれた分だけ、復元は嘘をつく。合成データで左右対称と仮面を扱い、完全形がどう変わるかを調べた。対称面と片側の差を見ると、仮定した面がずれた分だけ、復元は嘘をつくことが分かる。
 
 [![対称性で欠けを補う —— 仮定した面がずれた分だけ、復元は嘘をつく](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_restoration/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_symmetry_restoration/01_scene.png)
 
@@ -8990,7 +8990,7 @@ py -3.11 examples/poc_symmetry_restoration.py
 
 ## No.2026.146 —— 無限に寄り続ける絵と、回り続ける立体 ―― 「戻ってくること」を真値にする
 
-この展示は「無限に寄り続ける絵と、回り続ける立体」を扱い、「「戻ってくること」を真値にする」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+無限に寄り続ける絵と、回り続ける立体の評価では、「戻ってくること」を真値にする。無限に寄り続ける絵と、回り続ける立体を表す実測データの採点を使い、等式と無限ズームを別々に確かめた。自己相似比と画素単位の差を見ると、「戻ってくること」を真値にすることが分かる。
 
 [![無限に寄り続ける絵と、回り続ける立体 ―― 「戻ってくること」を真値にする](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_endless_zoom_and_turning_solids/01_zoom_steps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_endless_zoom_and_turning_solids/01_zoom_steps.png)
 
@@ -9036,7 +9036,7 @@ py -3.11 examples/poc_endless_zoom_and_turning_solids.py
 
 ## No.2026.149 —— 4 次元の主張を、3 次元の平凡な op で採点する
 
-この展示は「四次元の主張を、三次元の平凡な 処理 で採点する」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+4 次元の主張をの評価では、 次元の平凡な 手法 で採点する。 次元の主張をの実測データに位相を用意し、代数と産業用を比べた。厳密と点群の差を見ると、 次元の平凡な 手法 で採点することが分かる。
 
 [![4 次元の主張を、3 次元の平凡な op で採点する](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_four_dimensions_by_three_d_tools/02_nested_tori_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_four_dimensions_by_three_d_tools/02_nested_tori.png)
 
@@ -9086,7 +9086,7 @@ py -3.11 examples/poc_four_dimensions_by_three_d_tools.py
 
 ## No.2026.277 —— 会場の建物と小惑星イトカワを同じ物差しで ―― PLATEAU の CityGML LOD2 を三角形メッシュにして並べる
 
-この展示は「会場の建物と小惑星イトカワを同じ物差しで」を扱い、「PLATEAU の CityGML LOD2 を三角形メッシュにして並べる」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+会場の建物と小惑星イトカワを同じ物差しでの評価では、PLATEAU の CityGML LOD2 を三角形メッシュにして並べる。会場の建物と小惑星イトカワを同じ物差しでを表す合成データの著者を使い、発案とイトカワを別々に確かめた。実感と横浜の差が、判定の限界を示す。
 
 [![会場の建物と小惑星イトカワを同じ物差しで ―― PLATEAU の CityGML LOD2 を三角形メッシュにして並べる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plateau_venue_lod2/01_venue_itokawa_top_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plateau_venue_lod2/01_venue_itokawa_top.png)
 
@@ -9108,7 +9108,7 @@ py -3.11 examples/poc_plateau_venue_lod2.py
 
 ## No.2026.279 —— 星の写真1枚から衛星の姿勢が分かるのはなぜか
 
-この展示は「星の写真1枚から衛星の姿勢が分かるのはなぜか」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+星の写真1枚から衛星の姿勢がでは、測定の確かさが課題になる。星の写真枚から衛星の姿勢がについて固定を含む合成データを作り、合成星表と点広の関係を測った。関数と光子雑音の差を見ると、測定の確かさが課題になることが分かる。
 
 [![星の写真1枚から衛星の姿勢が分かるのはなぜか](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_tracker/01_star_tracker_camera_image_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_tracker/01_star_tracker_camera_image.png)
 
@@ -9144,7 +9144,7 @@ py -3.11 examples/poc_star_tracker.py
 
 ## No.2026.010 —— 投影数を減らすと CT 再構成はどこから壊れるか
 
-この展示は「投影数を減らすと CT 再構成はどこから壊れるか」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+投影数を減らすと CT 再構成はの評価では、測定の確かさが課題になる。計算データの空白画像を使い、無フィルタ逆投影と零点を別々に確かめた。サイノグラムと行和の差を見ると、測定の確かさが課題になることが分かる。
 
 [![投影数を減らすと CT 再構成はどこから壊れるか](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_fidelity/01_recon_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_fidelity/01_recon_sweep.png)
 
@@ -9172,7 +9172,7 @@ py -3.11 examples/poc_ct_fidelity.py
 
 ## No.2026.016 —— 光子を数えて距離を測る ―― 何個数えれば何ミリまで出るのか
 
-この展示は「光子を数えて距離を測る」を扱い、「何個数えれば何ミリまで出るのか」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+光子を数えて距離を測る場面では、何個数えれば何ミリまで出るのか。計算データに往復時刻を用意し、ガウシアンとビン積分を比べた。標本と到達時刻ヒストグラムの差を見ると、何個数えれば何ミリまで出るのかことが分かる。
 
 [![光子を数えて距離を測る ―― 何個数えれば何ミリまで出るのか](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dtof_ranging/01_light_front.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dtof_ranging/01_light_front.gif)
 
@@ -9210,7 +9210,7 @@ py -3.11 examples/poc_dtof_ranging.py
 
 ## No.2026.022 —— 白色干渉計でナノメートルの段差をどこまで正確に測れるか
 
-この展示は「白色干渉計でナノメートルの段差をどこまで正確に測れるか」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+白色干渉計でナノメートルの段差をどこでは、測定の確かさが課題になる。合成データで走査スタックと雑音を扱い、以内がどう変わるかを調べた。標準偏差とゼロ点の差を見ると、測定の確かさが課題になることが分かる。
 
 [![白色干渉計でナノメートルの段差をどこまで正確に測れるか](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interferometry_step/01_surface_interferograms_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interferometry_step/01_surface_interferograms.png)
 
@@ -9256,7 +9256,7 @@ py -3.11 examples/poc_interferometry_step.py
 
 ## No.2026.023 —— ライトフィールドから深度を出す ―― 既知の深度で作った光場に、ゼロ点を並べて突きつける
 
-この展示は「ライトフィールドから深度を出す」を扱い、「既知の深度で作った光場に、ゼロ点を並べて突きつける」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+ライトフィールドから深度を出すの評価では、既知の深度で作った光場に、ゼロ点を並べて突きつける。計算データの解析的を使い、逆写像と真値スロープ地図を別々に確かめた。焦点度と眼ブロックマッチングの差を見ると、既知の深度で作った光場に、ゼロ点を並べて突きつけることが分かる。
 
 [![ライトフィールドから深度を出す ―― 既知の深度で作った光場に、ゼロ点を並べて突きつける](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lightfield_depth/01_scene_and_depth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lightfield_depth/01_scene_and_depth.png)
 
@@ -9300,7 +9300,7 @@ py -3.11 examples/poc_lightfield_depth.py
 
 ## No.2026.033 —— 偏光で鏡面反射を剥がす ―― フレネルの式で真値を作り、分離結果を突き合わせる
 
-この展示は「偏光で鏡面反射を剥がす」を扱い、「フレネルの式で真値を作り、分離結果を突き合わせる」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+偏光で鏡面反射を剥がすの評価では、フレネルの式で真値を作り、分離結果を突き合わせる。合成データに拡散を用意し、成分と偏光度を比べた。採点と入射角の差を見ると、フレネルの式で真値を作り、分離結果を突き合わせることが分かる。
 
 [![偏光で鏡面反射を剥がす ―― フレネルの式で真値を作り、分離結果を突き合わせる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_polarization_specular/01_raw_polarizer_mosaic_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_polarization_specular/01_raw_polarizer_mosaic.png)
 
@@ -9338,7 +9338,7 @@ py -3.11 examples/poc_polarization_specular.py
 
 ## No.2026.078 —— 太陽光発電所のドローン熱画像 —— 温度差を測っているつもりで、風と角度を測っている
 
-この展示は「太陽光発電所のドローン熱画像」を扱い、「温度差を測っているつもりで、風と角度を測っている」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+太陽光発電所のドローン熱画像の評価では、温度差を測っているつもりで、風と角度を測っている。合成データの定常熱収支を使い、閉形式とメガソーラーを別々に確かめた。アレイと故障の差を見ると、温度差を測っているつもりで、風と角度を測っていることが分かる。
 
 [![太陽光発電所のドローン熱画像 —— 温度差を測っているつもりで、風と角度を測っている](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pv_thermal_survey/06_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pv_thermal_survey/06_scene.png)
 
@@ -9376,7 +9376,7 @@ py -3.11 examples/poc_pv_thermal_survey.py
 
 ## No.2026.113 —— 熱画像は温度画像ではない ―― 放射率・反射・透過を取り違えたまま「温度」と呼ぶ
 
-この展示は「熱画像は温度画像ではない」を扱い、「放射率・反射・透過を取り違えたまま「温度」と呼ぶ」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+熱カメラの画素値は、放射率、周囲の反射、空気の透過を補正しなければ温度にならない。既知温度から前向きモデルで全経路の放射輝度を合成し、量子化、雑音、較正誤差を順に加えた。図では、低放射率の金属が冷たく見える偏りと、補正後に雑音が増える代償を読み取れる。
 
 [![熱画像は温度画像ではない ―― 放射率・反射・透過を取り違えたまま「温度」と呼ぶ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermal_radiometry/15_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermal_radiometry/15_scene.png)
 
@@ -9414,7 +9414,7 @@ py -3.11 examples/poc_thermal_radiometry.py
 
 ## No.2026.043 —— パルスサーモグラフィで内部欠陥の深さを測る
 
-この展示は「パルスサーモグラフィで内部欠陥の深さを測る」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+パルスサーモグラフィで内部欠の評価では、測定の確かさが課題になる。計算データにフラッシュ加熱後を用意し、表面温度と次元熱伝導を比べた。厳密解と剥離の差を見ると、測定の確かさが課題になることが分かる。
 
 [![パルスサーモグラフィで内部欠陥の深さを測る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermography_ndt/02_depth_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermography_ndt/02_depth_map.png)
 
@@ -9452,7 +9452,7 @@ py -3.11 examples/poc_thermography_ndt.py
 
 ## No.2026.178 —— カメラを買わずにカメラを測る ―― EMVA 1288(画像センサ特性の測定標準) の手順で、既知の値を仕込んだセンサから量子効率・ゲイン・暗雑音を取り戻す
 
-この展示は「カメラを買わずにカメラを測る」を扱い、「EMVA 1288(画像センサ特性の測定標準) の手順で、既知の値を仕込んだセンサから量子効率・ゲイン・暗雑音を取り…」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+カメラの量子効率や暗雑音は、データシートの数字だけでなく、標準化した撮影手順から測る。既知の光子応答、暗電流、画素むらを持つセンサを合成し、明暗の画像対から各特性を推定した。図では、仕込んだ値の回収精度と、信号が量子化より小さくなって推定できなくなる境界が分かる。
 
 [![カメラを買わずにカメラを測る ―― EMVA 1288(画像センサ特性の測定標準) の手順で、既知の値を仕込んだセンサから量子効率・ゲイン・暗雑音を取り戻す](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_sensor/01_raw_dark_flat_saturation_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_emva1288_sensor/01_raw_dark_flat_saturation.png)
 
@@ -9496,7 +9496,7 @@ py -3.11 examples/poc_emva1288_sensor.py
 
 ## No.2026.090 —— 溶接 X 線透過像の気孔 ―― 等級を 1 段間違える画像の割合で締める
 
-この展示は「溶接 X 線透過像の気孔」を扱い、「等級を 1 段間違える画像の割合で締める」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+溶接 X 線透過像の気孔の評価では、等級を 1 段間違える画像の割合で締める。実測データに板厚を用意し、円弧と余盛を比べた。球形気孔と閉形式の差を見ると、等級を 段間違える画像の割合で締めることが分かる。
 
 [![溶接 X 線透過像の気孔 ―― 等級を 1 段間違える画像の割合で締める](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weld_radiograph_porosity/01_scene_radiograph_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weld_radiograph_porosity/01_scene_radiograph.png)
 
@@ -9536,7 +9536,7 @@ py -3.11 examples/poc_weld_radiograph_porosity.py
 
 ## No.2026.214 —— 粉末 X 線回折の 2-D 検出器像から相を 1 つずつ剥がす ―― 較正・方位積分・NNLS・残差の未知相。真値は NIST SRM 640g の証明書と COD の CIF、合成と解析が模型を共有する分は食い違わせて測る
 
-この展示は「粉末 X 線回折の 二次元 検出器像から相を 1 つずつ剥がす」を扱い、「較正・方位積分・NNLS・残差の未知相、真値は NIST SRM 六百四十g の証明書と COD の CIF…」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。
+粉末 X 線回折の 二次元 検出器像から相を 1 つずつ剥がすでは、合成と解析が模型を共有する分は食い違わせて測る。粉末 X 線回折の 二次元 検出器像から相を つずつ剥がすについて混合物を含む合成データを作り、検出器とデバイ環の関係を測った。粉末回折と同心円状回折線の差が、判定の限界を示す。
 
 [![粉末 X 線回折の 2-D 検出器像から相を 1 つずつ剥がす ―― 較正・方位積分・NNLS・残差の未知相。真値は NIST SRM 640g の証明書と COD の CIF、合成と解析が模型を共有する分は食い違わせて測る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pxrd_phase_peel/01_phase_peel.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pxrd_phase_peel/01_phase_peel.gif)
 
@@ -9576,7 +9576,7 @@ py -3.11 examples/poc_pxrd_phase_peel.py
 
 ## No.2026.221 —— 黒光沢とガラスの形を偏光で測る ―― 陰影が無くても、偏光は傾きを覚えている
 
-この展示は「黒光沢とガラスの形を偏光で測る」を扱い、「陰影が無くても、偏光は傾きを覚えている」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+黒光沢とガラスの形を偏光で測るとき、陰影が無くても、偏光は傾きを覚えている。黒光沢とガラスの形を偏光で測るについて黒光沢樹脂を含む合成データを作り、ドームとレンズの関係を測った。方位とオンチップ偏光子の差を見ると、陰影が無くても、偏光は傾きを覚えていることが分かる。
 
 [![黒光沢とガラスの形を偏光で測る ―― 陰影が無くても、偏光は傾きを覚えている](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_shape_from_polarization/05_normals_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_shape_from_polarization/05_normals.png)
 
@@ -9618,7 +9618,7 @@ py -3.11 examples/poc_shape_from_polarization.py
 
 ## No.2026.185 —— 金属積層造形の熱画像から X 線 CT へ ―― 生信号を温度と呼ばない、時間軸と画素ピッチ、下向き面だけに付く粉
 
-この展示は「金属積層造形の熱画像から X 線 CT へ」を扱う。この展示は修正中。説明と図は検証後に差し替える。
+金属積層造形の熱画像から X 線 CT へでは、生信号を温度と呼ばない、時間軸と画素ピッチ、下向き面だけに付く粉。金属積層造形の熱画像から X 線 CT へについて修正中を含む合成データを作り、単一トラックと造形物の関係を測った。実験と部品の差が、判定の限界を示す。
 
 [![金属積層造形の熱画像から X 線 CT へ ―― 生信号を温度と呼ばない、時間軸と画素ピッチ、下向き面だけに付く粉](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_am_thermal_to_ct/01_melt_pool_frames.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_am_thermal_to_ct/01_melt_pool_frames.gif)
 
@@ -9660,7 +9660,7 @@ py -3.11 examples/poc_am_thermal_to_ct.py
 
 ## No.2026.225 —— SEM の明るい縁が寸法をどれだけ太らせるか ―― 形は合うのに面積が太る
 
-この展示は「SEM の明るい縁が寸法をどれだけ太らせるか」を扱う。この展示は修正中。説明と図は検証後に差し替える。
+SEM の明るい縁が寸法をどれだけ太らせるかを確かめる場面では、形は合うのに面積が太る。SEM の明るい縁が寸法をどれだけ太らせるかを表す合成データの修正中を使い、ビームと点広を別々に確かめた。関数と場合の差を見ると、形は合うのに面積が太ることが分かる。
 
 [![SEM の明るい縁が寸法をどれだけ太らせるか ―― 形は合うのに面積が太る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_wafer_defect_edge_bias/01_sem_se_bse_bias_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_wafer_defect_edge_bias/01_sem_se_bse_bias.png)
 
@@ -9696,7 +9696,7 @@ py -3.11 examples/poc_sem_wafer_defect_edge_bias.py
 
 ## No.2026.228 —— 重力波望遠鏡の擬似シミュレーション ―― 共振器の式・量子雑音の予算・整合フィルタを閉形式で繋ぎ、GW150914 の実データで採点
 
-この展示は「重力波望遠鏡の擬似シミュレーション」を扱い、「共振器の式・量子雑音の予算・整合フィルタを閉形式で繋ぎ、GW150914 の実データで採点」を調べる。合成データと公開データを使い、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+重力波望遠鏡の擬似シミュレーションでは、共振器の式・量子雑音の予算・整合フィルタを閉形式で繋ぎ、GW150914 の実データで採点。重力波望遠鏡の擬似シミュレーションの計算データで干渉計と仕組を扱い、再現がどう変わるかを調べた。公表値と腕共振器の差が、判定の限界を示す。
 
 [![重力波望遠鏡の擬似シミュレーション ―― 共振器の式・量子雑音の予算・整合フィルタを閉形式で繋ぎ、GW150914 の実データで採点](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gw_detector_pseudo_simulation/05_gw150914_whitened_vs_prl_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gw_detector_pseudo_simulation/05_gw150914_whitened_vs_prl.png)
 
@@ -9738,7 +9738,7 @@ FULLSEYE_GWOSC_DATA=<dir> py -3.11 examples/poc_gw_detector_pseudo_simulation.py
 
 ## No.2026.234 —— 写真では見えない µm の凹みを、画面に映した縞の鏡像で見つける ―― 位相計測デフレクトメトリ
 
-この展示は「写真では見えない µm の凹みを、画面に映した縞の鏡像で見つける」を扱い、「位相計測デフレクトメトリ」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+写真では見えない µm の凹みを、画面に映した縞の鏡像で見つける場面では、位相計測デフレクトメトリ。写真では見えない µm の凹みを、画面に映した縞の鏡像で見つけるを表す実測データの光沢面を使い、塗装パネルとカバーガラスを別々に確かめた。照明と位相シフト縞の差を見ると、位相計測デフレクトメトリことが分かる。
 
 [![写真では見えない µm の凹みを、画面に映した縞の鏡像で見つける ―― 位相計測デフレクトメトリ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_phase_measuring_deflectometry/03_photo_vs_pmd_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_phase_measuring_deflectometry/03_photo_vs_pmd.png)
 
@@ -9780,7 +9780,7 @@ py -3.11 examples/poc_phase_measuring_deflectometry.py
 
 ## No.2026.235 —— TDI(時間遅延積分) ラインスキャンとラインスキャン用レンズ ―― 段数で欠陥が見え、同期がずれると流れ、C マウントでは長いセンサの端が消える
 
-この展示は「TDI(時間遅延積分) ラインスキャンとラインスキャン用レンズ」を扱い、「段数で欠陥が見え、同期がずれると流れ、C マウントでは長いセンサの端が消える」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+TDI ラインスキャンとラインスキャン用レンズの評価では、段数で欠陥が見え、同期がずれると流れ、C マウントでは長いセンサの端が消える。TDI ラインスキャンとラインスキャン用レンズを表す計算データのフィルムを使い、鋼板とウェハを別々に確かめた。ラインセンサと時間遅延積分の差が、判定の限界を示す。
 
 [![TDI(時間遅延積分) ラインスキャンとラインスキャン用レンズ ―― 段数で欠陥が見え、同期がずれると流れ、C マウントでは長いセンサの端が消える](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tdi_linescan/01_tdi_stages_defects_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tdi_linescan/01_tdi_stages_defects.png)
 
@@ -9820,7 +9820,7 @@ py -3.11 examples/poc_tdi_linescan.py
 
 ## No.2026.236 —— ピクセルシフト撮像 ―― センサを 1 画素動かすと偽色が消え、半画素動かすと折り返しが消える。MTF(変調伝達関数) は上がらない
 
-この展示は「ピクセルシフト撮像」を扱い、「センサを 1 画素動かすと偽色が消え、半画素動かすと折り返しが消える、MTF(変調伝達関数) は上がらない」を調べる。合成データと公開データを使い、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+ピクセルシフト撮像の評価では、センサを 1 画素動かすと偽色が消え、半画素動かすと折り返しが消える、MTF は上がらない。ピクセルシフト撮像を表す合成データの撮像素子を使い、圧電アクチュエータと画素を別々に確かめた。ピクセルシフトと外観検査の差が、判定の限界を示す。
 
 [![ピクセルシフト撮像 ―― センサを 1 画素動かすと偽色が消え、半画素動かすと折り返しが消える。MTF(変調伝達関数) は上がらない](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pixel_shift/14_real_chart_zoom_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pixel_shift/14_real_chart_zoom.png)
 
@@ -9864,7 +9864,7 @@ py -3.11 examples/poc_pixel_shift.py
 
 ## No.2026.243 —— 間接 ToF の多周波アンラップ ―― 周波数を上げるほど細かく測れるが、折り返し・多重反射・縁の混合・高調波で壊れる
 
-この展示は「間接 ToF の多周波アンラップ」を扱い、「周波数を上げるほど細かく測れるが、折り返し・多重反射・縁の混合・高調波で壊れる」を調べる。合成データと公開データを使い、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+間接 ToF の多周波アンラップでは、周波数を上げるほど細かく測れるが、折り返し・多重反射・縁の混合・高調波で壊れる。間接 ToF の多周波アンラップの実測データで変調と相関を扱い、位相がどう変わるかを調べた。生信号と距離の差が、判定の限界を示す。
 
 [![間接 ToF の多周波アンラップ ―― 周波数を上げるほど細かく測れるが、折り返し・多重反射・縁の混合・高調波で壊れる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_itof_multifreq/01_warehouse_unwrap_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_itof_multifreq/01_warehouse_unwrap.png)
 
@@ -9906,7 +9906,7 @@ py -3.11 examples/poc_itof_multifreq.py
 
 ## No.2026.241 —— 工業用 OCT(光干渉断層法) ―― 塗装・コート・多層フィルムの層厚と中の欠陥を、1 本の干渉スペクトルの FFT で深さ方向に見る
 
-この展示は「工業用 OCT(光干渉断層法)」を扱い、「塗装・コート・多層フィルムの層厚と中の欠陥を、1 本の干渉スペクトルの FFT で深さ方向に見る」を調べる。合成データと実測データを使い、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+塗装や接着層では、表面を壊さずに層厚と内部の空洞を測りたい。公開の自動車塗装スペクトルと合成した多層試料を使い、干渉スペクトルから深さ信号、境界、厚さを求めた。図では、透明層の境界がピークとして現れ、分解能より薄い層は測定を拒否する様子が分かる。
 
 [![工業用 OCT(光干渉断層法) ―― 塗装・コート・多層フィルムの層厚と中の欠陥を、1 本の干渉スペクトルの FFT で深さ方向に見る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_industrial_oct/01_real_paint_bscans_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_industrial_oct/01_real_paint_bscans.png)
 
@@ -9950,7 +9950,7 @@ py -3.11 examples/poc_industrial_oct.py
 
 ## No.2026.237 —— 分光反射率で薄膜の膜厚を測る ―― 公開の実測データで採点し、縞・干渉色・FFT とあてはめ・膜厚むらの画像へ
 
-この展示は「分光反射率で薄膜の膜厚を測る」を扱い、「公開の実測データで採点し、縞・干渉色・FFT とあてはめ・膜厚むらの画像へ」を調べる。合成データと公開データを使い、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+分光反射率で薄膜の膜厚を測る場面では、公開の実測データで採点し、縞・干渉色・FFT とあてはめ・膜厚むらの画像へ。分光反射率で薄膜の膜厚を測るを表す合成データの反射スペクトルを使い、干渉縞と転送行列を別々に確かめた。基板と材料表の差が、判定の限界を示す。
 
 [![分光反射率で薄膜の膜厚を測る ―― 公開の実測データで採点し、縞・干渉色・FFT とあてはめ・膜厚むらの画像へ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thin_film_reflectometry/01_real_micrograph_thickness_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thin_film_reflectometry/01_real_micrograph_thickness.png)
 
@@ -9992,7 +9992,7 @@ py -3.11 examples/poc_thin_film_reflectometry.py
 
 ## No.2026.238 —— クロマティック共焦点変位センサ ―― 硝材の分散で「虹のものさし」を作り、戻ってきた色で高さを読む
 
-この展示は「クロマティック共焦点変位センサ」を扱う。この展示は修正中。説明と図は検証後に差し替える。
+クロマティック共焦点変位センサの評価では、硝材の分散で「虹のものさし」を作り、戻ってきた色で高さを読む。クロマティック共焦点変位センサを表す合成データの修正中を使い、透明板と球面収差を別々に確かめた。見積と空気換算の差を見ると、硝材の分散で「虹のものさし」を作り、戻ってきた色で高さを読むことが分かる。
 
 [![クロマティック共焦点変位センサ ―― 硝材の分散で「虹のものさし」を作り、戻ってきた色で高さを読む](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_chromatic_confocal/01_rainbow_ruler_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_chromatic_confocal/01_rainbow_ruler.png)
 
@@ -10034,7 +10034,7 @@ py -3.11 examples/poc_chromatic_confocal.py
 
 ## No.2026.245 —— 仮想 SEM ―― 電子を 1 個ずつ固体に撃つと、加速電圧で像も測れる線幅も変わる(実測値で採点)
 
-この展示は「仮想 SEM」を扱い、「電子を 1 個ずつ固体に撃つと、加速電圧で像も測れる線幅も変わる(実測値で採点)」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+仮想 SEMでは、電子を 1 個ずつ固体に撃つと、加速電圧で像も測れる線幅も変わる。仮想 SEMの実測データで走査電子顕微鏡と表面を扱い、写真がどう変わるかを調べた。散乱と一次電子の差を見ると、電子を 個ずつ固体に撃つと、加速電圧で像も測れる線幅も変わることが分かる。
 
 [![仮想 SEM ―― 電子を 1 個ずつ固体に撃つと、加速電圧で像も測れる線幅も変わる(実測値で採点)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_sem_kv_cd_bse/01_sem_interaction_volume_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_virtual_sem_kv_cd_bse/01_sem_interaction_volume.png)
 
@@ -10076,7 +10076,7 @@ py -3.11 examples/poc_virtual_sem_kv_cd_bse.py
 
 ## No.2026.246 —— 仮想の透過電子顕微鏡 ―― 焦点を振ると Thon リング(TEMパワースペクトルのCTF同心環)が動き、細部が反転し、実写の写真から焦点外れを当てる
 
-この展示は「仮想の透過電子顕微鏡」を扱い、「焦点を振ると Thon リング(TEMパワースペクトルのCTF同心環)が動き、細部が反転し…」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+仮想の透過電子顕微鏡では、焦点を振ると Thon リングが動き、細部が反転し、実写の写真から焦点外れを当てる。仮想の透過電子顕微鏡の合成データで試料と電子を扱い、位相がどう変わるかを調べた。球面収差と強度の差を見ると、焦点を振ると Thon リングが動き、細部が反転し、実写の写真から焦点外れを当てることが分かる。
 
 [![仮想の透過電子顕微鏡 ―― 焦点を振ると Thon リング(TEMパワースペクトルのCTF同心環)が動き、細部が反転し、実写の写真から焦点外れを当てる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tem_ctf_thon_rings/02_thon_rings_four_defoci_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tem_ctf_thon_rings/02_thon_rings_four_defoci.png)
 
@@ -10116,7 +10116,7 @@ py -3.11 examples/poc_tem_ctf_thon_rings.py
 
 ## No.2026.250 —— 分光器と照明系 ―― 帯域の幅はスリットと格子のどこから来るか、光源の模様は視野に写るか
 
-この展示は「分光器と照明系」を扱い、「帯域の幅はスリットと格子のどこから来るか、光源の模様は視野に写るか」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+分光器と照明系では、帯域の幅はスリットと格子のどこから来るか、光源の模様は視野に写るか。分光器と照明系の計算データでハイパースペクトルとクロマティック共焦点を扱い、線幅がどう変わるかを調べた。数字と入口スリットの差を見ると、帯域の幅はスリットと格子のどこから来るか、光源の模様は視野に写るかことが分かる。
 
 [![分光器と照明系 ―― 帯域の幅はスリットと格子のどこから来るか、光源の模様は視野に写るか](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_spectrometer_illumination/03_slit_image_smile_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_spectrometer_illumination/03_slit_image_smile.png)
 
@@ -10154,7 +10154,7 @@ py -3.11 examples/poc_spectrometer_illumination.py
 
 ## No.2026.251 —— 格子干渉計 ―― 吸収では見えない繊維の向き・微小な割れ・気孔を、縞の振幅(暗視野)で見る
 
-この展示は「格子干渉計」を扱い、「吸収では見えない繊維の向き・微小な割れ・気孔を、縞の振幅(暗視野)で見る」を調べる。合成データと公開データを使い、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+格子干渉計の評価では、吸収では見えない繊維の向き・微小な割れ・気孔を、縞の振幅で見る。格子干渉計の計算データに暗視野を用意し、設計と閉形式を比べた。位相と吸収格子の差を見ると、吸収では見えない繊維の向き・微小な割れ・気孔を、縞の振幅で見ることが分かる。
 
 [![格子干渉計 ―― 吸収では見えない繊維の向き・微小な割れ・気孔を、縞の振幅(暗視野)で見る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_grating_interferometry/12_real_three_images_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_grating_interferometry/12_real_three_images.png)
 
@@ -10198,7 +10198,7 @@ py -3.11 examples/poc_grating_interferometry.py
 
 ## No.2026.255 —— 肉の中の骨片とガラスを、2 つのエネルギーで材質ごとに分ける(デュアルエナジー / フォトンカウンティング X 線)
 
-この展示は「肉の中の骨片とガラスを、二つのエネルギーで材質ごとに分ける…」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+肉の中の骨片とガラスをでは、2 つのエネルギーで材質ごとに分ける。肉の中の骨片とガラスをについて食品を含む実測データを作り、線検査と透過像の関係を測った。各画素と異物の差を見ると、 つのエネルギーで材質ごとに分けることが分かる。
 
 [![肉の中の骨片とガラスを、2 つのエネルギーで材質ごとに分ける(デュアルエナジー / フォトンカウンティング X 線)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dual_energy_xray/04_tray_single_vs_basis_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dual_energy_xray/04_tray_single_vs_basis.png)
 
@@ -10236,7 +10236,7 @@ py -3.11 examples/poc_dual_energy_xray.py
 
 ## No.2026.271 —— レンズの製造公差を、MTF(変調伝達関数)・歩留まり・補償ストロークまで一枚の予算にする
 
-この展示は「レンズの製造公差を、MTF(変調伝達関数)・歩留まり・補償ストロークまで一枚の予算にする」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+レンズの製造公差をの評価では、MTF・歩留まり・補償ストロークまで一枚の予算にする。レンズの製造公差をを表す実測データの公開処方を使い、三枚玉と曲率を別々に確かめた。屈折率とアッベ数の差を見ると、MTF・歩留まり・補償ストロークまで一枚の予算にすることが分かる。
 
 [![レンズの製造公差を、MTF(変調伝達関数)・歩留まり・補償ストロークまで一枚の予算にする](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/01_sensitivity_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lens_tolerancing/01_sensitivity.png)
 
@@ -10280,7 +10280,7 @@ py -3.11 examples/poc_lens_tolerancing.py
 
 ## No.2026.272 —— 処方から撮るプレノプティックカメラ
 
-この展示は「処方から撮るプレノプティックカメラ」を扱う。この展示は修正中。説明と図は検証後に差し替える。
+処方から撮るプレノプテでは、測定の確かさが課題になる。処方から撮るプレノプテの合成データで修正中と深度を扱い、リフォーカスがどう変わるかを調べた。エピポーラ平面画像と撮影の差を見ると、測定の確かさが課題になることが分かる。
 
 [![処方から撮るプレノプティックカメラ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/03_raw_microimages_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_plenoptic_camera/03_raw_microimages.png)
 
@@ -10324,7 +10324,7 @@ py -3.11 examples/poc_plenoptic_camera.py
 
 ## No.2026.273 —— 同じ粒子を走査像と透過像で測る ―― 52 nm と 48 nm のどちらが正しいか
 
-この展示は「同じ粒子を走査像と透過像で測る」を扱い、「52 nm と 四十八 nm のどちらが正しいか」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+同じ粒子を走査像と透過像で測るとき、52 nm と nm のどちらが正しいか。同じ粒子を走査像と透過像で測るについて球形を含む計算データを作り、ファセット粒子と台帳の関係を測った。面積相当径と最大傾斜の差を見ると、 nm と nm のどちらが正しいかことが分かる。
 
 [![同じ粒子を走査像と透過像で測る ―― 52 nm と 48 nm のどちらが正しいか](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_tem_same_particle/02_same_specimen_sem_tem_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sem_tem_same_particle/02_same_specimen_sem_tem.png)
 
@@ -10366,7 +10366,7 @@ py -3.11 examples/poc_sem_tem_same_particle.py
 
 ## No.2026.274 —— 同じ3次元場面を間接ToFと直接ToFで測る――多経路・混合画素・pile-up・体積誤差
 
-この展示は「同じ3次元場面を間接ToFと直接ToFで測る」を扱い、「多経路・混合画素・pile-up・体積誤差」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+同じ3次元場面を間接ToFと直接ToFで測る場面では、多経路・混合画素・pile-up・体積誤差。同じ次元場面を間接ToFと直接ToFで測るを表す合成データの画素を使い、場面と振幅を別々に確かめた。色距離と点群の差を見ると、多経路・混合画素・pile-up・体積誤差ことが分かる。
 
 [![同じ3次元場面を間接ToFと直接ToFで測る――多経路・混合画素・pile-up・体積誤差](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tof_camera/01_scene_viewer_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tof_camera/01_scene_viewer.png)
 
@@ -10408,7 +10408,7 @@ py -3.11 examples/poc_tof_camera.py
 
 ## No.2026.275 —— 全天球の検査撮影と立体表示を一つの測定工程として確かめる
 
-この展示は「全天球の検査撮影と立体表示を一つの測定工程として確かめる」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+全天球の検査撮影と立体表示を一つの測では、測定の確かさが課題になる。全天球の検査撮影と立体表示を一つの測について半径を含む合成データを作り、合成トンネルと魚眼の関係を測った。目誤差と死角の差を見ると、測定の確かさが課題になることが分かる。
 
 [![全天球の検査撮影と立体表示を一つの測定工程として確かめる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_omni360_inspection/08_anaglyph_and_limits_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_omni360_inspection/08_anaglyph_and_limits.png)
 
