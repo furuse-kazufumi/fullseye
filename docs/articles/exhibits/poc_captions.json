@@ -4048,8 +4048,8 @@
    "caption_ja": "Noll正規化したデフォーカス、非点、コマ、球面収差を各121点、計484条件で掃引した。FullseyeのPSF FFTによる軸上Strehlと独立な瞳積分の最大絶対誤差は6.66e-16。Maréchal近似が5 %外れる境界はRMSで0.1283、0.2012、0.1633、0.1458波となり、同じRMSだけではStrehlを決められない。下段は0.20波RMSのPSF像そのもの。",
    "caption_en": "Four Noll-normalised modes—defocus, astigmatism, coma and spherical aberration—are swept over 121 points each, 484 conditions in total. On-axis Strehl from Fullseye's PSF FFT agrees with an independent pupil integral to a maximum absolute error of 6.66e-16. The 5 percent failure boundaries of the Marechal approximation are 0.1283, 0.2012, 0.1633 and 0.1458 waves RMS, showing that RMS alone does not determine Strehl. The lower row shows the computed PSF images at 0.20 waves RMS.",
    "run": "py -3.11 examples/poc_wavefront_aberration_limits.py",
-   "lead_ja": "同じ二乗平均平方根波面誤差でも収差形状でMaréchの評価では、測定の確かさが課題になる。同じ二乗平均平方根波面誤差でも収差形状でMaréchの計算データに正規化を用意し、デフォーカスと非点を比べた。コマと球面収差の差を見ると、測定の確かさが課題になることが分かる。",
-   "lead_en": "With the Maréchal criterion, equal root-mean-square wavefront error across aberration shapes challenges measurement certainty. We normalized computed Maréchal data to compare defocus with astigmatism. Comparing coma and spherical aberration shows that measurement certainty is a challenge."
+   "lead_ja": "",
+   "lead_en": ""
   },
   {
    "id": "poc_mueller_dofp_observability",
@@ -4062,8 +4062,8 @@
    "caption_ja": "0/45/90/135度の線偏光マイクロアナライザだけで作る設計行列のrankは、手書きせずSVDで9/16と計算した。発生側と解析側にQWP状態を加えるとrank 16。FullseyeのMueller連鎖と独立なKronecker設計式は最大1.39e-17で一致した。読み出し雑音0.2 %、200試行でMueller行列の相対誤差中央値は線偏光だけの41.64 %からQWP追加で1.40 %へ下がる。",
    "caption_en": "The design matrix formed by 0, 45, 90 and 135 degree linear micro-analysers has SVD-computed rank 9 of 16; the number is not hard-coded. Adding quarter-wave-plate states on generation and analysis raises the rank to 16. Fullseye's Mueller chain and an independent Kronecker design equation agree within 1.39e-17. Across 200 trials with 0.2 percent read noise, median relative Mueller error falls from 41.64 percent for linear-only measurements to 1.40 percent with the QWP states.",
    "run": "py -3.11 examples/poc_mueller_dofp_observability.py",
-   "lead_ja": "4方位偏光カメラにはMueller行では、測定の確かさが課題になる。方位偏光カメラにはMueller行の計算データで線偏光マイクロアナライザと設計行列を扱い、手書がどう変わるかを調べた。計算と発生側の差を見ると、測定の確かさが課題になることが分かる。",
-   "lead_en": "Mueller evaluation of a four-orientation polarization camera challenges measurement certainty. With computed data, we treated linear micro-analysers and the design matrix and examined changes in hand-written values. Comparing computation and the generation side confirms this challenge."
+   "lead_ja": "",
+   "lead_en": ""
   },
   {
    "id": "poc_slanted_edge_sfr_limits",
@@ -4076,8 +4076,8 @@
    "caption_ja": "3.45 µm画素、F/5.6、550 nmの系について、角度21、ガンマ5、雑音4段階の420条件を計算した。Fullseyeの回折MTFと円形瞳の閉形式は1e-12未満で一致し、画素開口を含む真値MTF50は0.34551 cycles/pixel。線形・無雑音の独立な面積標本化エッジ経路との差は最大0.01076 cycles/pixel。10 %超の破綻は掃引範囲の最小角1.0度から現れ、非線形トーン応答が角度選択と同程度に測定値を動かす。",
    "caption_en": "For a 3.45 um pixel, F/5.6 and 550 nm system, 21 angles, five gamma values and four noise levels produce 420 computed conditions. Fullseye's diffraction MTF agrees with the circular-pupil closed form below 1e-12; including the pixel aperture gives a true MTF50 of 0.34551 cycles per pixel. The independent area-sampled edge route differs by at most 0.01076 cycles per pixel when linear and noiseless. Failures beyond 10 percent already appear at the smallest swept angle, 1.0 degree, and nonlinear tone response moves the result as strongly as angle selection.",
    "run": "py -3.11 examples/poc_slanted_edge_sfr_limits.py",
-   "lead_ja": "斜めエッジSFRは角度だけでなくガンマの評価では、測定の確かさが課題になる。斜めエッジSFRは角度だけでなくガンマを表す計算データの画素を使い、雑音と段階を別々に確かめた。計算と回折の差を見ると、測定の確かさが課題になることが分かる。",
-   "lead_en": "Measurement certainty is a challenge when slanted-edge SFR is evaluated for tone exponent as well as angle. We used computed pixels for angle and tone exponent and checked noise and steps separately. Comparing computation and diffraction shows that measurement certainty is a challenge."
+   "lead_ja": "",
+   "lead_en": ""
   }
  ]
 }
