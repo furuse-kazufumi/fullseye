@@ -40,7 +40,7 @@ py -3.11 examples/poc_barcode_1d.py
 
 ## No.2026.093 —— 電極の屈曲度を CT から測る ―― 経験則は空隙率しか見ない
 
-電極内を物質がどれだけ遠回りするかは、空隙率だけで決められるのかが問いになる。リチウムイオン電池の塗工層で定常拡散方程式を解き、厚み方向の屈曲度が6.794まで増える条件を作った。空隙率がほぼ同じでも経路の向きで結果が分かれ、経験則はこの異方性を見落とす。
+合成マイクロCT粒子床でBruggeman則を、同じ二値ボリュームと指定境界条件の定常拡散方程式による数値参照値と比較した。この構造族では空隙率0.4448で1.499対1.843。閉気孔率は最大1.92%で単独説明は難しく、狭い首は候補だが因果は分離していない。直線空隙は数値参照1対Bruggeman 2、非貫通構造はno_through_pathを返す。
 
 [![電極の屈曲度を CT から測る ―― 経験則は空隙率しか見ない](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_electrode_tortuosity/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png)
 

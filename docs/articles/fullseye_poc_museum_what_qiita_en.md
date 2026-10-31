@@ -48,7 +48,7 @@ Ops used (notes): [`decode_barcode`](https://furuse.work/ops/2d/barcode/decode_b
 
 ## No.2026.093 —— Electrode tortuosity from CT — the rule of thumb only sees porosity
 
-The question is whether porosity alone can determine how far transport detours through an electrode. Diffusion was solved in coating layers with altered particle shape, producing a through-thickness tortuosity of 6.794. Nearly equal porosity can hide strongly directional paths, which the empirical rule misses.
+On a synthetic micro-CT particle bed, Bruggeman is compared with a numerical reference from steady-state diffusion on the same binary volume under stated boundary conditions. For this family eps=0.4448 gives 1.499 versus 1.843 (-18.6%); sweeping 0.691 to 0.168 grows error -8.2% to -69.1%, with fitted exponents 1.78/2.70. Flattening particles 4:1 raises through-plane tau 1.843 to 6.794 while the rule stays near 1.5. Closed pores reach 1.92% and cannot explain the sweep alone; narrow necks are a candidate without isolated causality. Straight pores give numerical tau=1 versus Bruggeman 2; disconnected pores return no_through_path.
 
 [![Electrode tortuosity from CT — the rule of thumb only sees porosity](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_electrode_tortuosity/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png)
 

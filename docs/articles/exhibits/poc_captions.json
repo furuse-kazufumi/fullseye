@@ -401,8 +401,8 @@
    "caption_ja": "合成マイクロCT粒子床でBruggeman則を、同じ二値ボリュームと指定境界条件の定常拡散方程式による数値参照値と比較した。この構造族では空隙率0.4448で1.499対1.843。閉気孔率は最大1.92%で単独説明は難しく、狭い首は候補だが因果は分離していない。直線空隙は数値参照1対Bruggeman 2、非貫通構造はno_through_pathを返す。",
    "caption_en": "On a synthetic micro-CT particle bed, Bruggeman is compared with a numerical reference from steady-state diffusion on the same binary volume under stated boundary conditions. For this family eps=0.4448 gives 1.499 versus 1.843 (-18.6%); sweeping 0.691 to 0.168 grows error -8.2% to -69.1%, with fitted exponents 1.78/2.70. Flattening particles 4:1 raises through-plane tau 1.843 to 6.794 while the rule stays near 1.5. Closed pores reach 1.92% and cannot explain the sweep alone; narrow necks are a candidate without isolated causality. Straight pores give numerical tau=1 versus Bruggeman 2; disconnected pores return no_through_path.",
    "run": "py -3.11 examples/poc_battery_electrode_tortuosity.py",
-   "lead_ja": "電極内を物質がどれだけ遠回りするかは、空隙率だけで決められるのかが問いになる。リチウムイオン電池の塗工層で定常拡散方程式を解き、厚み方向の屈曲度が6.794まで増える条件を作った。空隙率がほぼ同じでも経路の向きで結果が分かれ、経験則はこの異方性を見落とす。",
-   "lead_en": "The question is whether porosity alone can determine how far transport detours through an electrode. Diffusion was solved in coating layers with altered particle shape, producing a through-thickness tortuosity of 6.794. Nearly equal porosity can hide strongly directional paths, which the empirical rule misses."
+   "lead_ja": "",
+   "lead_en": ""
   },
   {
    "id": "poc_beam_modal_video",
