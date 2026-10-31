@@ -37,7 +37,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[table_write_csv](table_write_csv.md) · [mesh_write_ply](../mesh/mesh_write_ply.md)
+[table_write_csv](table_write_csv.md) · [mesh_write_ply](../mesh/mesh_write_ply.md) · [mesh_read_ply](../mesh/mesh_read_ply.md) · [mesh_read_stl](../mesh/mesh_read_stl.md) · [e57_write](../e57/e57_write.md) · [e57_read](../e57/e57_read.md)
 
 ## 同カテゴリ(`table`)
 

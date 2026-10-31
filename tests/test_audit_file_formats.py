@@ -30,3 +30,11 @@ def test_file_format_counts_come_from_rows():
     assert len(rows) >= 20
     assert rows[".stl"]["read"]
     assert rows[".stl"]["write"]
+
+
+def test_lazy_backend_is_attributed_only_to_calling_format():
+    audit = _audit_module()
+    rows = audit._source_inventory()
+    assert "pye57" in rows[".e57"]["optional"]
+    for ext in (".csv", ".ply", ".stl", ".obj", ".off", ".xyz"):
+        assert "pye57" not in rows[ext]["optional"]

@@ -1,0 +1,20 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">e57_read — FILEIO <code style="color:#22d3bf">e57</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.e57_read(data)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import fileio; fileio.e57_read(data)</code>、台帳から引くなら <code style="color:#22d3bf">opsfileio.get(&quot;e57_read&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>ASTM E57 の <code style="color:#22d3bf">bytes</code> を読み、座標・強度・色・pose の点群 <code style="color:#22d3bf">table</code> を返す。</p>
+<p>この op は 1 scan の E57 を受け付ける。<code style="color:#22d3bf">pye57</code> 未導入時は黙って代替せず導入コマンドを含む <code style="color:#22d3bf">ImportError</code> を返す。呼び出し例: <code style="color:#22d3bf">table = e57_read(payload)</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:fileio_roundtrip">fileio_roundtrip</a> — <code style="color:#22d3bf">py -3.11 examples/fileio_roundtrip.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opfileio:table_write_csv">table_write_csv</a> · <a style="color:#22d3bf" href="opfileio:mesh_write_ply">mesh_write_ply</a> · <a style="color:#22d3bf" href="opfileio:mesh_read_ply">mesh_read_ply</a> · <a style="color:#22d3bf" href="opfileio:mesh_read_stl">mesh_read_stl</a> · <a style="color:#22d3bf" href="opfileio:e57_write">e57_write</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">e57</code>)</h3>
+<p><a style="color:#22d3bf" href="opfileio:e57_write">e57_write</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: fileio.py — FILEIO operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

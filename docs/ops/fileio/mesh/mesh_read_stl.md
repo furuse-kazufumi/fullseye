@@ -2,7 +2,7 @@
 op: mesh_read_stl
 dim: fileio
 category: mesh
-in: file
+in: any
 out: mesh
 examples: []
 author: Kazufumi Furuse
@@ -12,7 +12,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 # mesh_read_stl — FILEIO `mesh` op
 
-- **データ種**: `file` → `mesh`
+- **データ種**: `any` → `mesh`
 - **呼び出し**: `import fullseye as fs; fs.ledger.mesh_read_stl(data)` (実装を直接呼ぶなら `import fileio; fileio.mesh_read_stl(data)`、台帳から引くなら `opsfileio.get("mesh_read_stl")`)
 
 ## 使い方
@@ -34,7 +34,7 @@ ASCII / little-endian binary STL を読み、共有頂点の ``mesh`` `(vertices
 
 ## 型が繋がる次の op(`mesh` を入力に取れる)
 
-[mesh_write_stl](mesh_write_stl.md) · [mesh_write_obj](mesh_write_obj.md) · [mesh_write_off](mesh_write_off.md)
+[mesh_read_ply](mesh_read_ply.md) · [mesh_write_stl](mesh_write_stl.md) · [mesh_write_obj](mesh_write_obj.md) · [mesh_write_off](mesh_write_off.md) · [e57_read](../e57/e57_read.md)
 
 ## 同カテゴリ(`mesh`)
 

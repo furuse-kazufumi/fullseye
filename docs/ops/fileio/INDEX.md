@@ -1,8 +1,12 @@
-# FILEIO operator help — 12 ops in 3 categories
+# FILEIO operator help — 14 ops in 4 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/fileio/<category>/<op>.md` を走査。
 
 ## カテゴリ
+
+### e57 (2)
+
+[e57_read](e57/e57_read.md) · [e57_write](e57/e57_write.md)
 
 ### mesh (8)
 

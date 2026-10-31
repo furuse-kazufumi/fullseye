@@ -3,7 +3,7 @@ op: mesh_write_ply
 dim: fileio
 category: mesh
 in: table
-out: file
+out: any
 examples: [fileio_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -12,7 +12,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 # mesh_write_ply — FILEIO `mesh` op
 
-- **データ種**: `table` → `file`
+- **データ種**: `table` → `any`
 - **呼び出し**: `import fullseye as fs; fs.ledger.mesh_write_ply(table, *, binary)` (実装を直接呼ぶなら `import fileio; fileio.mesh_write_ply(table, *, binary)`、台帳から引くなら `opsfileio.get("mesh_write_ply")`)
 
 ## 使い方
@@ -33,9 +33,9 @@ ASCII 文字列、``binary=True`` は binary_little_endian bytes。色は最近�
 
 - [fileio_roundtrip](../../../../examples/fileio_roundtrip.py) — `py -3.11 examples/fileio_roundtrip.py`
 
-## 型が繋がる次の op(`file` を入力に取れる)
+## 型が繋がる次の op(`any` を入力に取れる)
 
-[mesh_read_ply](mesh_read_ply.md) · [mesh_read_stl](mesh_read_stl.md)
+[table_write_csv](../table/table_write_csv.md) · [table_read_csv](../table/table_read_csv.md) · [mesh_read_ply](mesh_read_ply.md) · [mesh_write_stl](mesh_write_stl.md) · [mesh_read_stl](mesh_read_stl.md) · [mesh_write_obj](mesh_write_obj.md) · [mesh_read_obj](mesh_read_obj.md) · [mesh_write_off](mesh_write_off.md)
 
 ## 同カテゴリ(`mesh`)
 

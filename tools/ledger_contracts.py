@@ -1252,6 +1252,46 @@ def _calib_builders():
             "find_marks_and_pose": grey_plate}
 
 
+def _fileio_builders():
+    """Valid in-memory payloads for the format ledger (never caller paths)."""
+    import fileio
+
+    points = np.array([[0.0, 0.0, 0.0], [1.0, 0.0, 0.0],
+                       [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
+    faces = np.array([[0, 2, 1], [0, 1, 3], [1, 2, 3], [2, 0, 3]], dtype=np.int64)
+    mesh = (points, faces)
+    ply_table = {"vertices": points, "faces": faces,
+                 "attributes": {"quality": np.linspace(0.0, 1.0, len(points))}}
+    csv_table = {"x": np.arange(4.0), "value": np.linspace(0.0, 1.0, 4)}
+    units = {"x": "mm", "value": "1"}
+    meta = {"source": "ledger contract probe",
+            "generated_at": "2026-10-31T00:00:00+00:00",
+            "coordinate_meaning": "x is the probe coordinate"}
+    e57_table = {"points": points, "intensity": np.linspace(0.1, 0.9, len(points)),
+                 "colors": np.tile([128, 64, 255], (len(points), 1)),
+                 "pose": {"rotation": [1, 0, 0, 0], "translation": [1, 2, 3]}}
+
+    def csv_payload():
+        return fileio.table_write_csv(csv_table, units=units, meta=meta)
+
+    return {
+        "table_write_csv": lambda pool, rng: ([csv_table], {"units": units, "meta": meta}),
+        "table_read_csv": lambda pool, rng: ([csv_payload()], {}),
+        "mesh_write_ply": lambda pool, rng: ([ply_table], {"binary": False}),
+        "mesh_read_ply": lambda pool, rng: ([fileio.mesh_write_ply(ply_table, binary=False)], {}),
+        "mesh_write_stl": lambda pool, rng: ([mesh], {"binary": False}),
+        "mesh_read_stl": lambda pool, rng: ([fileio.mesh_write_stl(mesh, binary=False)], {}),
+        "mesh_write_obj": lambda pool, rng: ([mesh], {}),
+        "mesh_read_obj": lambda pool, rng: ([fileio.mesh_write_obj(mesh)], {}),
+        "mesh_write_off": lambda pool, rng: ([mesh], {}),
+        "mesh_read_off": lambda pool, rng: ([fileio.mesh_write_off(mesh)], {}),
+        "points_write_xyz": lambda pool, rng: ([points], {}),
+        "points_read_xyz": lambda pool, rng: ([fileio.points_write_xyz(points)], {}),
+        "e57_write": lambda pool, rng: ([e57_table], {}),
+        "e57_read": lambda pool, rng: ([fileio.e57_write(e57_table)], {}),
+    }
+
+
 def probe_builders():
     """Every probe-local builder (name -> builder)."""
     out = dict(_optics_builders())
@@ -1259,6 +1299,7 @@ def probe_builders():
     out.update(_array_builders())
     out.update(_batch2_builders())
     out.update(_knob_builders())
+    out.update(_fileio_builders())
     return out
 
 

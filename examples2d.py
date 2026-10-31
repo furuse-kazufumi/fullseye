@@ -40,8 +40,8 @@ DIR = os.path.join(_ROOT, "examples")
 EXAMPLES = [
     {"id": "fileio_roundtrip", "task": "fileio", "data": "synthetic",
      "name": "表・メッシュ・点群を標準形式で受け渡す",
-     "summary": "単位と由来を持つ CSV、属性つき PLY、STL、OBJ、OFF、XYZ をメモリ上で書いて読み戻し、"
-                "pandas、plyfile、numpy-stl、trimesh でも同じ内容を読めることを自己検査する。"},
+     "summary": "単位と由来を持つ CSV、属性つき PLY、STL、OBJ、OFF、XYZ、E57 をメモリ上で書いて読み戻し、"
+                "pandas、plyfile、numpy-stl、trimesh、pye57 でも同じ内容を読めることを自己検査する。"},
     {"id": "fit_ops_from_knowhow", "task": "metrology", "data": "synthetic",
      "name": "短い円弧・小数移動・斜めの曲線を偏りなく当てはめる",
      "summary": "幾何距離の円、局所アップサンプル位相相関、主軸へ回してからの曲線・曲面当てはめを真値で検証する。"},

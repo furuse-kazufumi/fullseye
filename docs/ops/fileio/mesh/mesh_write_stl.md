@@ -3,7 +3,7 @@ op: mesh_write_stl
 dim: fileio
 category: mesh
 in: mesh
-out: file
+out: any
 examples: []
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -12,7 +12,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 # mesh_write_stl — FILEIO `mesh` op
 
-- **データ種**: `mesh` → `file`
+- **データ種**: `mesh` → `any`
 - **呼び出し**: `import fullseye as fs; fs.ledger.mesh_write_stl(mesh, *, binary)` (実装を直接呼ぶなら `import fileio; fileio.mesh_write_stl(mesh, *, binary)`、台帳から引くなら `opsfileio.get("mesh_write_stl")`)
 
 ## 使い方
@@ -32,9 +32,9 @@ STL は単位を持たない。binary は float32 なので、その精度で往
 
 - (まだありません)
 
-## 型が繋がる次の op(`file` を入力に取れる)
+## 型が繋がる次の op(`any` を入力に取れる)
 
-[mesh_read_ply](mesh_read_ply.md) · [mesh_read_stl](mesh_read_stl.md)
+[table_write_csv](../table/table_write_csv.md) · [table_read_csv](../table/table_read_csv.md) · [mesh_write_ply](mesh_write_ply.md) · [mesh_read_ply](mesh_read_ply.md) · [mesh_read_stl](mesh_read_stl.md) · [mesh_write_obj](mesh_write_obj.md) · [mesh_read_obj](mesh_read_obj.md) · [mesh_write_off](mesh_write_off.md)
 
 ## 同カテゴリ(`mesh`)
 

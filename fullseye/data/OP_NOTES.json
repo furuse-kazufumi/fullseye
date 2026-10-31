@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3621,
- "n_notes": 3627,
+ "n_ops": 3623,
+ "n_notes": 3629,
  "notes": {
   "vol_dilate": [
    {
@@ -23130,6 +23130,26 @@
     "path": "docs/ops/emproof/wiring/seg_wiring_variation.md"
    }
   ],
+  "e57_read": [
+   {
+    "op": "e57_read",
+    "dim": "fileio",
+    "category": "e57",
+    "in": "any",
+    "out": "table",
+    "path": "docs/ops/fileio/e57/e57_read.md"
+   }
+  ],
+  "e57_write": [
+   {
+    "op": "e57_write",
+    "dim": "fileio",
+    "category": "e57",
+    "in": "table",
+    "out": "any",
+    "path": "docs/ops/fileio/e57/e57_write.md"
+   }
+  ],
   "mesh_read_obj": [
    {
     "op": "mesh_read_obj",
@@ -23155,7 +23175,7 @@
     "op": "mesh_read_ply",
     "dim": "fileio",
     "category": "mesh",
-    "in": "file",
+    "in": "any",
     "out": "table",
     "path": "docs/ops/fileio/mesh/mesh_read_ply.md"
    }
@@ -23165,7 +23185,7 @@
     "op": "mesh_read_stl",
     "dim": "fileio",
     "category": "mesh",
-    "in": "file",
+    "in": "any",
     "out": "mesh",
     "path": "docs/ops/fileio/mesh/mesh_read_stl.md"
    }
@@ -23196,7 +23216,7 @@
     "dim": "fileio",
     "category": "mesh",
     "in": "table",
-    "out": "file",
+    "out": "any",
     "path": "docs/ops/fileio/mesh/mesh_write_ply.md"
    }
   ],
@@ -23206,7 +23226,7 @@
     "dim": "fileio",
     "category": "mesh",
     "in": "mesh",
-    "out": "file",
+    "out": "any",
     "path": "docs/ops/fileio/mesh/mesh_write_stl.md"
    }
   ],

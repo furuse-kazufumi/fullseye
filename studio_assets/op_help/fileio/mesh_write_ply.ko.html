@@ -1,6 +1,6 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">mesh_write_ply — FILEIO <code style="color:#22d3bf">mesh</code> op</h2>
-<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">file</code></p>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_write_ply(table, *, binary)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import fileio; fileio.mesh_write_ply(table, *, binary)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsfileio.get(&quot;mesh_write_ply&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>정점, 면, 색상, 법선 및 임의의 스칼라 속성을 ASCII 또는 리틀 엔디언 PLY로 씁니다(<code style="color:#22d3bf">text</code> / <code style="color:#22d3bf">bytes</code>).</p>
@@ -13,8 +13,8 @@
 <p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:fileio_roundtrip">fileio_roundtrip</a> — <code style="color:#22d3bf">py -3.11 examples/fileio_roundtrip.py</code></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">file</code> 를 입력으로 받는 것)</h3>
-<p><a style="color:#22d3bf" href="opfileio:mesh_read_ply">mesh_read_ply</a> · <a style="color:#22d3bf" href="opfileio:mesh_read_stl">mesh_read_stl</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">any</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opfileio:table_write_csv">table_write_csv</a> · <a style="color:#22d3bf" href="opfileio:table_read_csv">table_read_csv</a> · <a style="color:#22d3bf" href="opfileio:mesh_read_ply">mesh_read_ply</a> · <a style="color:#22d3bf" href="opfileio:mesh_write_stl">mesh_write_stl</a> · <a style="color:#22d3bf" href="opfileio:mesh_read_stl">mesh_read_stl</a> · <a style="color:#22d3bf" href="opfileio:mesh_write_obj">mesh_write_obj</a> · <a style="color:#22d3bf" href="opfileio:mesh_read_obj">mesh_read_obj</a> · <a style="color:#22d3bf" href="opfileio:mesh_write_off">mesh_write_off</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">mesh</code>)</h3>
 <p><a style="color:#22d3bf" href="opfileio:mesh_read_ply">mesh_read_ply</a> · <a style="color:#22d3bf" href="opfileio:mesh_write_stl">mesh_write_stl</a> · <a style="color:#22d3bf" href="opfileio:mesh_read_stl">mesh_read_stl</a> · <a style="color:#22d3bf" href="opfileio:mesh_write_obj">mesh_write_obj</a> · <a style="color:#22d3bf" href="opfileio:mesh_read_obj">mesh_read_obj</a> · <a style="color:#22d3bf" href="opfileio:mesh_write_off">mesh_write_off</a> · <a style="color:#22d3bf" href="opfileio:mesh_read_off">mesh_read_off</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">

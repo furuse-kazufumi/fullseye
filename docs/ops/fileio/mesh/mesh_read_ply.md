@@ -2,7 +2,7 @@
 op: mesh_read_ply
 dim: fileio
 category: mesh
-in: file
+in: any
 out: table
 examples: [fileio_roundtrip]
 author: Kazufumi Furuse
@@ -12,7 +12,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 # mesh_read_ply — FILEIO `mesh` op
 
-- **データ種**: `file` → `table`
+- **データ種**: `any` → `table`
 - **呼び出し**: `import fullseye as fs; fs.ledger.mesh_read_ply(data)` (実装を直接呼ぶなら `import fileio; fileio.mesh_read_ply(data)`、台帳から引くなら `opsfileio.get("mesh_read_ply")`)
 
 ## 使い方
@@ -34,7 +34,7 @@ property は名前を示して拒否する。呼び出し例: ``table = mesh_rea
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[table_write_csv](../table/table_write_csv.md) · [mesh_write_ply](mesh_write_ply.md)
+[table_write_csv](../table/table_write_csv.md) · [mesh_write_ply](mesh_write_ply.md) · [mesh_read_stl](mesh_read_stl.md) · [e57_write](../e57/e57_write.md) · [e57_read](../e57/e57_read.md)
 
 ## 同カテゴリ(`mesh`)
 

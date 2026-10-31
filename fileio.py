@@ -1,17 +1,24 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0.
 """Dependency-light, in-memory file-format operators.
 
-Writers in this module return text or bytes.  They never choose a path or touch
-the filesystem; callers may download the result in Studio, send it over an API,
-or save it explicitly.
+Writers in this module return text or bytes and never create a caller-visible
+file.  Callers may download the result in Studio, send it over an API, or save it
+explicitly.  The optional E57 backend is path-only, so that adapter uses and
+removes a private temporary file while still exposing an in-memory contract.
 """
 from __future__ import annotations
 
 import csv
 import datetime as _datetime
+import hashlib
 import io
 import math
+import os
 import struct
+import tempfile
+import threading
+import types
+import uuid
 from collections.abc import Mapping
 
 import numpy as np
@@ -22,10 +29,12 @@ __all__ = [
     "mesh_write_ply", "mesh_read_ply", "mesh_write_stl", "mesh_read_stl",
     "mesh_write_obj", "mesh_read_obj", "mesh_write_off", "mesh_read_off",
     "points_write_xyz", "points_read_xyz",
+    "e57_write", "e57_read",
 ]
 
 _CSV_META_REQUIRED = ("source", "generated_at", "coordinate_meaning")
 _MAX_CSV_CHARS = 256 * 1024 * 1024
+_E57_WRITE_LOCK = threading.Lock()
 
 
 def _csv_columns(table, op: str) -> dict[str, np.ndarray]:
@@ -491,3 +500,169 @@ def points_read_xyz(data):
     if len(points) == 0:
         raise ValueError("points_read_xyz: input contains no points")
     return points
+
+
+# ---------------------------------------------------------------------------
+# ASTM E57.  pye57/libE57 currently exposes a path-only API; the public
+# operators nevertheless consume/return bytes and clean their private temp file.
+# ---------------------------------------------------------------------------
+def _require_pye57():
+    try:
+        import pye57
+    except ImportError as exc:
+        raise ImportError(
+            "E57 support requires pye57; install it with `pip install pye57` "
+            "or `pip install 'fullseye[e57]'`") from exc
+    return pye57
+
+
+def _e57_scan_table(table, op: str):
+    if not isinstance(table, Mapping) or "points" not in table:
+        raise ValueError(f"{op}: table must contain 'points'")
+    points = _mesh._finite_points(table["points"], "points", op)
+    if len(points) == 0:
+        raise ValueError(f"{op}: points must not be empty")
+    raw = {"cartesianX": points[:, 0], "cartesianY": points[:, 1],
+           "cartesianZ": points[:, 2]}
+    intensity = table.get("intensity")
+    if intensity is not None:
+        intensity = np.asarray(intensity, dtype=np.float64)
+        if intensity.shape != (len(points),) or not np.isfinite(intensity).all():
+            raise ValueError(f"{op}: intensity must be finite and have shape ({len(points)},)")
+        raw["intensity"] = intensity
+    colors = table.get("colors")
+    if colors is not None:
+        colors = np.asarray(colors)
+        if colors.shape != points.shape or not np.isfinite(colors).all():
+            raise ValueError(f"{op}: colors must be finite (N, 3) matching points")
+        if colors.dtype.kind in "iu":
+            if colors.size and (colors.min() < 0 or colors.max() > 255):
+                raise ValueError(f"{op}: integer colors must be in [0, 255]")
+            colors8 = colors.astype(np.uint8)
+        else:
+            colors = colors.astype(np.float64)
+            if colors.size and (colors.min() < 0 or colors.max() > 1):
+                raise ValueError(f"{op}: floating colors must be in [0, 1]")
+            colors8 = np.rint(colors * 255).astype(np.uint8)
+        raw.update(colorRed=colors8[:, 0], colorGreen=colors8[:, 1],
+                   colorBlue=colors8[:, 2])
+    pose = table.get("pose", {})
+    if not isinstance(pose, Mapping):
+        raise ValueError(f"{op}: pose must be a mapping")
+    rotation = np.asarray(pose.get("rotation", [1, 0, 0, 0]), dtype=np.float64)
+    translation = np.asarray(pose.get("translation", [0, 0, 0]), dtype=np.float64)
+    if rotation.shape != (4,) or not np.isfinite(rotation).all() or np.linalg.norm(rotation) == 0:
+        raise ValueError(f"{op}: pose.rotation must be a finite nonzero quaternion [w,x,y,z]")
+    if translation.shape != (3,) or not np.isfinite(translation).all():
+        raise ValueError(f"{op}: pose.translation must be a finite (3,) vector")
+    rotation = rotation / np.linalg.norm(rotation)
+    return raw, rotation, translation
+
+
+def e57_write(table):
+    """座標・強度・色・pose を持つ点群 ``table`` を ASTM E57 の ``bytes`` に書く。
+
+    ``pye57`` は optional。未導入なら導入コマンドを含む ``ImportError`` で閉じる。
+    呼び出し例: ``payload = e57_write({'points': points, 'pose': pose})``。
+    """
+    pye57 = _require_pye57()
+    raw, rotation, translation = _e57_scan_table(table, "e57_write")
+    handle = tempfile.NamedTemporaryFile(suffix=".e57", delete=False)
+    path = handle.name
+    handle.close()
+    e57 = None
+    try:
+        # pye57 otherwise inserts random root/scan GUIDs.  Derive two UUIDs from
+        # the canonical point payload so identical inputs yield identical bytes
+        # while distinct scans retain distinct, stable identifiers.
+        digest = hashlib.sha256()
+        for name in sorted(raw):
+            arr = np.ascontiguousarray(raw[name])
+            digest.update(name.encode("ascii"))
+            digest.update(arr.dtype.str.encode("ascii"))
+            digest.update(str(arr.shape).encode("ascii"))
+            digest.update(arr.tobytes())
+        digest.update(np.ascontiguousarray(rotation).tobytes())
+        digest.update(np.ascontiguousarray(translation).tobytes())
+        token = digest.hexdigest()
+        identifiers = iter((uuid.uuid5(uuid.NAMESPACE_URL, token + ":root"),
+                            uuid.uuid5(uuid.NAMESPACE_URL, token + ":scan")))
+        backend = __import__(pye57.E57.__module__, fromlist=["E57"])
+        with _E57_WRITE_LOCK:
+            backend_uuid = backend.uuid
+            backend.uuid = types.SimpleNamespace(uuid4=lambda: next(identifiers))
+            try:
+                e57 = pye57.E57(path, mode="w")
+                e57.write_scan_raw(raw, rotation=rotation, translation=translation)
+                e57.close()
+                e57 = None
+            finally:
+                backend.uuid = backend_uuid
+        with open(path, "rb") as stream:
+            return stream.read()
+    except Exception as exc:
+        raise ValueError(f"e57_write: pye57 failed to encode the scan: {exc}") from exc
+    finally:
+        if e57 is not None:
+            e57.close()
+        try:
+            os.remove(path)
+        except FileNotFoundError:
+            pass
+
+
+def e57_read(data):
+    """ASTM E57 の ``bytes`` を読み、座標・強度・色・pose の点群 ``table`` を返す。
+
+    この op は 1 scan の E57 を受け付ける。``pye57`` 未導入時は黙って代替せず
+    導入コマンドを含む ``ImportError`` を返す。呼び出し例: ``table = e57_read(payload)``。
+    """
+    pye57 = _require_pye57()
+    if not isinstance(data, (bytes, bytearray, memoryview)):
+        raise ValueError(f"e57_read: expected bytes, got {type(data).__name__}")
+    payload = bytes(data)
+    if not payload:
+        raise ValueError("e57_read: input is empty")
+    handle = tempfile.NamedTemporaryFile(suffix=".e57", delete=False)
+    path = handle.name
+    try:
+        handle.write(payload)
+    finally:
+        handle.close()
+    e57 = None
+    try:
+        e57 = pye57.E57(path, mode="r")
+        if e57.scan_count != 1:
+            raise ValueError(f"e57_read: expected exactly one scan, found {e57.scan_count}")
+        raw = e57.read_scan_raw(0)
+        header = e57.get_header(0)
+        required = ("cartesianX", "cartesianY", "cartesianZ")
+        missing = [name for name in required if name not in raw]
+        if missing:
+            raise ValueError(f"e57_read: scan is missing {', '.join(missing)}")
+        points = np.column_stack([raw[name] for name in required]).astype(np.float64)
+        points = _mesh._finite_points(points, "points", "e57_read")
+        if len(points) == 0:
+            raise ValueError("e57_read: scan contains no points")
+        result = {"points": points,
+                  "pose": {"rotation": np.asarray(header.rotation, dtype=np.float64),
+                           "translation": np.asarray(header.translation, dtype=np.float64)}}
+        if "intensity" in raw:
+            result["intensity"] = np.asarray(raw["intensity"], dtype=np.float64)
+        color_fields = ("colorRed", "colorGreen", "colorBlue")
+        if all(name in raw for name in color_fields):
+            result["colors"] = np.column_stack([raw[name] for name in color_fields]).astype(np.uint8)
+        elif any(name in raw for name in color_fields):
+            raise ValueError("e57_read: incomplete RGB color fields")
+        return result
+    except ValueError:
+        raise
+    except Exception as exc:
+        raise ValueError(f"e57_read: pye57 rejected the input: {exc}") from exc
+    finally:
+        if e57 is not None:
+            e57.close()
+        try:
+            os.remove(path)
+        except FileNotFoundError:
+            pass

@@ -33,7 +33,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 ## 型が繋がる次の op(`text` を入力に取れる)
 
-[table_read_csv](../table/table_read_csv.md) · [mesh_read_obj](../mesh/mesh_read_obj.md) · [mesh_read_off](../mesh/mesh_read_off.md) · [points_read_xyz](points_read_xyz.md)
+[table_read_csv](../table/table_read_csv.md) · [mesh_read_ply](../mesh/mesh_read_ply.md) · [mesh_read_stl](../mesh/mesh_read_stl.md) · [mesh_read_obj](../mesh/mesh_read_obj.md) · [mesh_read_off](../mesh/mesh_read_off.md) · [points_read_xyz](points_read_xyz.md) · [e57_read](../e57/e57_read.md)
 
 ## 同カテゴリ(`points`)
 

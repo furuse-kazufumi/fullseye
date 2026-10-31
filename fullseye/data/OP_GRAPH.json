@@ -59,9 +59,9 @@
       "registry": 959
     },
     "not_executable_reasons": {
-      "python_callable_not_found": 18,
+      "python_callable_not_found": 14,
       "python_signature_has_fewer_inputs_than_graph": 1,
-      "unknown_input_or_output_sort": 188
+      "unknown_input_or_output_sort": 194
     }
   },
   "sources": {
@@ -358,7 +358,7 @@
   },
   "counts": {
     "nodes": 101,
-    "edges": 3624,
+    "edges": 3626,
     "conversion_pairs": 395,
     "conversion_edge_incidence": 2343
   },
@@ -631,8 +631,8 @@
       "sort": "file",
       "container": "structured_value",
       "size_hint": "input-dependent",
-      "produced_by": 3,
-      "consumed_by": 4,
+      "produced_by": 1,
+      "consumed_by": 2,
       "generator": false,
       "type_check": true,
       "choose_when": "undocumented",
@@ -1368,8 +1368,8 @@
       "sort": "table",
       "container": "sequence",
       "size_hint": "input-dependent",
-      "produced_by": 1165,
-      "consumed_by": 546,
+      "produced_by": 1166,
+      "consumed_by": 547,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -1412,8 +1412,8 @@
       "sort": "unknown",
       "container": "structured_value",
       "size_hint": "input-dependent",
-      "produced_by": 91,
-      "consumed_by": 158,
+      "produced_by": 94,
+      "consumed_by": 161,
       "generator": false,
       "type_check": false,
       "choose_when": "undocumented",
@@ -185764,6 +185764,96 @@
       "source_ref": "S00056"
     },
     {
+      "op": "e57_read",
+      "inputs": [
+        "unknown"
+      ],
+      "output": "table",
+      "category": "e57",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "unknown",
+      "consumes_input": true,
+      "executable": false,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "unknown",
+        "source_ref": "S00056"
+      },
+      "implementations": [
+        {
+          "backend": "registry",
+          "status": "available",
+          "source_ref": "S00056"
+        }
+      ],
+      "parameters": {
+        "a": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        },
+        "b": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        }
+      },
+      "executable_reason": "unknown_input_or_output_sort",
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00056"
+    },
+    {
+      "op": "e57_write",
+      "inputs": [
+        "table"
+      ],
+      "output": "unknown",
+      "category": "e57",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "unknown",
+      "consumes_input": true,
+      "executable": false,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "unknown",
+        "source_ref": "S00056"
+      },
+      "implementations": [
+        {
+          "backend": "registry",
+          "status": "available",
+          "source_ref": "S00056"
+        }
+      ],
+      "parameters": {
+        "a": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        },
+        "b": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        }
+      },
+      "executable_reason": "unknown_input_or_output_sort",
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00056"
+    },
+    {
       "op": "mesh_read_obj",
       "inputs": [
         "text"
@@ -185856,14 +185946,14 @@
     {
       "op": "mesh_read_ply",
       "inputs": [
-        "file"
+        "unknown"
       ],
       "output": "table",
       "category": "mesh",
       "family": null,
       "family_candidate": null,
       "family_candidate_source": null,
-      "type_semantics": "typed",
+      "type_semantics": "unknown",
       "consumes_input": true,
       "executable": false,
       "compute": {
@@ -185892,7 +185982,7 @@
           "kind": "unused"
         }
       },
-      "executable_reason": "python_callable_not_found",
+      "executable_reason": "unknown_input_or_output_sort",
       "verified_executable": false,
       "not_executable_in_mcp": "not_verified",
       "bundle_semantics": "unknown",
@@ -185901,14 +185991,14 @@
     {
       "op": "mesh_read_stl",
       "inputs": [
-        "file"
+        "unknown"
       ],
       "output": "mesh",
       "category": "mesh",
       "family": null,
       "family_candidate": null,
       "family_candidate_source": null,
-      "type_semantics": "typed",
+      "type_semantics": "unknown",
       "consumes_input": true,
       "executable": false,
       "compute": {
@@ -185937,7 +186027,7 @@
           "kind": "unused"
         }
       },
-      "executable_reason": "python_callable_not_found",
+      "executable_reason": "unknown_input_or_output_sort",
       "verified_executable": false,
       "not_executable_in_mcp": "not_verified",
       "bundle_semantics": "unknown",
@@ -186038,12 +186128,12 @@
       "inputs": [
         "table"
       ],
-      "output": "file",
+      "output": "unknown",
       "category": "mesh",
       "family": null,
       "family_candidate": null,
       "family_candidate_source": null,
-      "type_semantics": "typed",
+      "type_semantics": "unknown",
       "consumes_input": true,
       "executable": false,
       "compute": {
@@ -186072,7 +186162,7 @@
           "kind": "unused"
         }
       },
-      "executable_reason": "python_callable_not_found",
+      "executable_reason": "unknown_input_or_output_sort",
       "verified_executable": false,
       "not_executable_in_mcp": "not_verified",
       "bundle_semantics": "unknown",
@@ -186083,12 +186173,12 @@
       "inputs": [
         "mesh"
       ],
-      "output": "file",
+      "output": "unknown",
       "category": "mesh",
       "family": null,
       "family_candidate": null,
       "family_candidate_source": null,
-      "type_semantics": "typed",
+      "type_semantics": "unknown",
       "consumes_input": true,
       "executable": false,
       "compute": {
@@ -186117,7 +186207,7 @@
           "kind": "unused"
         }
       },
-      "executable_reason": "python_callable_not_found",
+      "executable_reason": "unknown_input_or_output_sort",
       "verified_executable": false,
       "not_executable_in_mcp": "not_verified",
       "bundle_semantics": "unknown",

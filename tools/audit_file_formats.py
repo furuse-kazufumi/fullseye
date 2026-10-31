@@ -79,6 +79,7 @@ def _module_name(path: Path) -> str:
 
 
 def _imports(tree: ast.Module, local: set[str]) -> tuple[set[str], set[str]]:
+    """Return module-level required/optional imports (not lazy function imports)."""
     required, optional = set(), set()
 
     def add(name: str, is_optional: bool) -> None:
@@ -92,7 +93,7 @@ def _imports(tree: ast.Module, local: set[str]) -> tuple[set[str], set[str]]:
             names = [a.name for a in node.names] if isinstance(node, ast.Import) else [node.module or ""]
             for name in names:
                 add(name, False)
-        elif isinstance(node, (ast.Try, ast.FunctionDef, ast.AsyncFunctionDef)):
+        elif isinstance(node, ast.Try):
             for sub in ast.walk(node):
                 if isinstance(sub, ast.Import):
                     for alias in sub.names:
@@ -100,6 +101,43 @@ def _imports(tree: ast.Module, local: set[str]) -> tuple[set[str], set[str]]:
                 elif isinstance(sub, ast.ImportFrom):
                     add(sub.module or "", True)
     return required, optional
+
+
+def _lazy_imports_and_calls(tree: ast.Module, local: set[str]):
+    """Map each function to its lazy imports and same-module call targets."""
+    imports, calls = {}, {}
+    functions = {node.name: node for node in tree.body
+                 if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))}
+    for name, node in functions.items():
+        deps = set()
+        for sub in ast.walk(node):
+            if isinstance(sub, ast.Import):
+                names = [alias.name for alias in sub.names]
+            elif isinstance(sub, ast.ImportFrom):
+                names = [sub.module or ""]
+            else:
+                continue
+            for imported in names:
+                top = imported.split(".", 1)[0]
+                if top and top not in local and top not in _STDLIB:
+                    deps.add(top)
+        imports[name] = deps
+        calls[name] = {sub.func.id for sub in ast.walk(node)
+                       if isinstance(sub, ast.Call) and isinstance(sub.func, ast.Name)
+                       and sub.func.id in functions}
+    return imports, calls
+
+
+def _reachable_lazy_imports(name: str, imports, calls) -> set[str]:
+    result, seen, stack = set(), set(), [name]
+    while stack:
+        current = stack.pop()
+        if current in seen:
+            continue
+        seen.add(current)
+        result.update(imports.get(current, ()))
+        stack.extend(calls.get(current, ()))
+    return result
 
 
 def _source_inventory():
@@ -114,6 +152,7 @@ def _source_inventory():
             continue
         module = _module_name(path)
         required, optional = _imports(tree, local)
+        lazy_imports, calls = _lazy_imports_and_calls(tree, local)
         globals_by_name = {}
         for node in tree.body:
             if isinstance(node, (ast.Assign, ast.AnnAssign)):
@@ -145,6 +184,7 @@ def _source_inventory():
                 rec["modules"].add(module)
                 rec["required"].update(required)
                 rec["optional"].update(optional)
+                rec["optional"].update(_reachable_lazy_imports(node.name, lazy_imports, calls))
                 if reads:
                     rec["read"].add(f"{module}.{node.name}")
                 if writes:

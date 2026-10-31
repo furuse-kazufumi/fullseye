@@ -37,7 +37,12 @@ def main():
                              "attributes": {"temperature": np.arange(4.)}}, binary=False)
     assert "temperature" in fs.mesh_read_ply(ply)["attributes"]
     np.testing.assert_array_equal(fs.points_read_xyz(fs.points_write_xyz(vertices)), vertices)
-    print("PASS: CSV, PLY, STL, OBJ, OFF, and XYZ round-trip in memory")
+    e57_table = {"points": vertices, "colors": np.tile([128, 64, 255], (4, 1)),
+                 "pose": {"rotation": [1, 0, 0, 0], "translation": [1, 2, 3]}}
+    e57_back = fs.e57_read(fs.e57_write(e57_table))
+    np.testing.assert_allclose(e57_back["points"], vertices, atol=1e-6)
+    np.testing.assert_array_equal(e57_back["colors"], e57_table["colors"])
+    print("PASS: CSV, PLY, STL, OBJ, OFF, XYZ, and E57 round-trip in memory")
 
 
 if __name__ == "__main__":
