@@ -147,3 +147,23 @@ def test_point_size_exemptions_have_specific_reasons():
     vague = {ident: reason for ident, reason in POINT_SIZE_EXEMPTIONS.items()
              if len(reason.strip()) < 12 or reason.strip().lower() in {"explicit", "legacy", "special"}}
     assert not vague, "point-size exemptions need specific reasons: %r" % vague
+
+
+def test_slider_x1_matches_python_default_in_headless_chrome():
+    """The browser's S.ps at slider ×1 is exactly the packed Python default."""
+    import sys
+    sys.path.insert(0, str(ROOT / "tools"))
+    import headless_chrome
+
+    if not headless_chrome.find_chrome():
+        import pytest
+        pytest.skip("Chrome / Chromium is not installed")
+    path = ROOT / "docs/view2026/viewers/poc_asteroid_curvature.html"
+    data = _data(path)
+    tab = next(t for t in data["tabs"] if t["kind"] == "points")
+    with headless_chrome.HeadlessChrome() as chrome:
+        chrome.open(path.as_uri() + "?tab=" + tab["id"], width=1280, height=1400)
+        chrome.wait_for("window.__pocviewerPointSize && window.__pocviewerPointSize().tab === %s" % json.dumps(tab["id"]))
+        actual = chrome.eval("window.__pocviewerPointSize()")
+    assert actual["scale"] == 1
+    assert actual["ps"] == tab["point_size"]

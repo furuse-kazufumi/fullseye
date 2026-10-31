@@ -278,6 +278,7 @@ UI: dict[str, dict[str, str]] = {
     "play": _t("▶ 再生", "▶ Play", "▶ 播放", "▶ 播放", "▶ 재생", "▶ Abspielen", "▶ चलाएँ", "▶ Lecture"),
     "pause": _t("⏸ 一時停止", "⏸ Pause", "⏸ 暂停", "⏸ 暫停", "⏸ 일시정지", "⏸ Pause", "⏸ रोकें", "⏸ Pause"),
     "speed": _t("速度", "Speed", "速度", "速度", "속도", "Tempo", "गति", "Vitesse"),
+    "point_size": _t("点の大きさ", "Point size", "点的大小", "點的大小", "점 크기", "Punktgröße", "बिंदु का आकार", "Taille des points"),
     "loop": _t("ループ", "Loop", "循环", "循環", "반복", "Schleife", "दोहराएँ", "Boucle"),
     "nogl": _t("この環境では WebGL を初期化できませんでした。別のブラウザ(Chrome / Edge / Safari の最新版)でお試しください。",
                "WebGL could not be initialised here. Please try a recent Chrome, Edge or Safari.",
@@ -1342,6 +1343,7 @@ _BODY = """
   <input type="range" id="scrub" min="0" max="1000" value="0">
   <span class="read" id="tlabel"></span>
   <label class="read" id="spl"><span id="spd"></span> <input type="range" id="speed" min="10" max="300" value="100" style="width:80px;vertical-align:middle"></label>
+  <label class="read" id="psl" style="display:none"><span id="pst"></span> <input type="range" id="pointsize" min="-2" max="2" step="0.01" value="0" style="width:120px;vertical-align:middle"> <span id="psv">&times;1</span></label>
   <label class="read a3" id="rtl" style="display:none"><span id="rtt"></span> <select id="rate"><option value="0.25">&times;0.25</option><option value="0.5">&times;0.5</option><option value="1" selected>&times;1</option><option value="2">&times;2</option><option value="4">&times;4</option></select></label>
   <label class="read" id="lpl"><input type="checkbox" id="loop" checked> <span id="lpt"></span></label>
   <label class="read a3" id="fwl" style="display:none"><input type="checkbox" id="follow"> <span id="fwt"></span></label>
@@ -1483,6 +1485,7 @@ function scene3d(tab){
 let az = -1.0, el = 0.5, dist = 3, playing = false, frame = 0, last = performance.now(), dirty = true;
 let atime = 0;   /* anim3d の再生時刻(秒、t と同じ尺度) */
 let splitX = 0.5;
+let pointScale = 1;  /* ページ内で共有。保存せず、読み込みごとに既定の ×1 */
 const PRESETS = {front:[-Math.PI/2, 0.08, 1], side:[0, 0.08, 1], iso:[-1.0, 0.5, 1], top:[-Math.PI/2, 1.5, 1]};
 function dist0(S){ return S.rad * 2.0; }
 function applyView(tab, S){
@@ -1510,7 +1513,7 @@ function draw3d(tab){
     gl.useProgram(PP);
     const lp = gl.getAttribLocation(PP, 'a_p'), lc = gl.getAttribLocation(PP, 'a_c');
     gl.uniformMatrix4fv(gl.getUniformLocation(PP, 'u_vp'), false, vp);
-    const px = S.ps * cv.height / (2 * Math.tan(fy / 2));
+    const px = S.ps * pointScale * cv.height / (2 * Math.tan(fy / 2));
     gl.uniform1f(gl.getUniformLocation(PP, 'u_ps'), px);
     const run = (pb, cb, cnt) => {
       gl.bindBuffer(gl.ARRAY_BUFFER, pb); gl.enableVertexAttribArray(lp); gl.vertexAttribPointer(lp, 3, gl.FLOAT, false, 0, 0);
@@ -1717,7 +1720,7 @@ function drawAnim(tab){
     gl.useProgram(PP);
     const pl = gl.getAttribLocation(PP, 'a_p'), cc = gl.getAttribLocation(PP, 'a_c');
     gl.uniformMatrix4fv(gl.getUniformLocation(PP, 'u_vp'), false, vp);
-    gl.uniform1f(gl.getUniformLocation(PP, 'u_ps'), cl.ps * cv.height / (2 * Math.tan(fy / 2)));
+    gl.uniform1f(gl.getUniformLocation(PP, 'u_ps'), cl.ps * pointScale * cv.height / (2 * Math.tan(fy / 2)));
     gl.enableVertexAttribArray(pl); gl.enableVertexAttribArray(cc);
     gl.bindBuffer(gl.ARRAY_BUFFER, cl.pos); gl.vertexAttribPointer(pl, 3, gl.FLOAT, false, 0, 0);
     gl.bindBuffer(gl.ARRAY_BUFFER, cl.col); gl.vertexAttribPointer(cc, 3, gl.UNSIGNED_BYTE, true, 0, 0);
@@ -1903,7 +1906,7 @@ function renderText(){
   const sel = $('lang'); sel.style.display = D.langs.length > 1 ? 'block' : 'none';
   sel.innerHTML = D.langs.map(l => '<option value="' + l + '"' + (l === L ? ' selected' : '') + '>' + esc(D.langnames[l]) + '</option>').join('');
   document.querySelectorAll('[data-v]').forEach(b => b.textContent = U(b.dataset.v));
-  $('spd').textContent = U('speed'); $('lpt').textContent = U('loop'); $('err').textContent = U('nogl');
+  $('spd').textContent = U('speed'); $('pst').textContent = U('point_size') + ' ×0.25–×4'; $('lpt').textContent = U('loop'); $('err').textContent = U('nogl');
   $('b1').textContent = U('back1'); $('f1').textContent = U('fwd1'); $('evp').textContent = U('evprev'); $('evn').textContent = U('evnext');
   $('rtt').textContent = U('speed'); $('fwt').textContent = U('follow');
   setBtn(); renderTabs(); renderMeta(); colorbar(get()); buildPanes(get()); buildEvents(get());
@@ -1918,6 +1921,7 @@ function select(id){
   $('wrap').className = two ? 'two' : (an && t.panes.length ? 'a3w' : ''); cv.style.display = two ? 'none' : 'block'; c2.style.display = two ? 'block' : 'none';
   document.querySelectorAll('.a3').forEach(e => { e.style.display = an ? '' : 'none'; });
   $('spl').style.display = an ? 'none' : '';
+  $('psl').style.display = t.kind === 'points' || (an && t.clouds.length) ? '' : 'none';
   if (an) { atime = t.t[0]; $('follow').checked = false; }
   $('views').style.display = two ? 'none' : 'flex';
   $('ctl').style.display = t.kind === 'split' ? 'none' : 'flex';
@@ -1957,6 +1961,11 @@ $('f1').onclick = () => { playing = false; setBtn(); seekFrame(get(), Math.floor
 $('evp').onclick = () => { const t = get(), f = Math.floor(frame); let k = 0; for (const e of t.events) if (e.k < f) k = e.k; seekFrame(t, k); };
 $('evn').onclick = () => { const t = get(), f = Math.floor(frame), e = t.events.find(e => e.k > f); if (e) seekFrame(t, e.k); };
 $('follow').onchange = () => { const t = get(); if (t.kind === 'anim3d' && gl) { const S = sceneAnim(t); if (!$('follow').checked) S.tgt = S.ctr.slice(); } dirty = true; };
+$('pointsize').oninput = e => {
+  pointScale = Math.pow(2, +e.target.value);
+  $('psv').textContent = '×' + (Math.round(pointScale * 100) / 100).toString();
+  dirty = true;
+};
 document.addEventListener('keydown', e => {
   const t = get(); if (t.kind !== 'anim3d' || /^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName)) return;
   if (e.key === ' ') { e.preventDefault(); $('play').onclick(); }
@@ -1992,6 +2001,8 @@ function splitMove(e){ const r = c2.getBoundingClientRect(); splitX = Math.min(1
 cv.addEventListener('wheel', e => { e.preventDefault(); const S = scene3d(get());
   dist = Math.min(dist0(S) * 8, Math.max(dist0(S) * 0.05, dist * Math.exp(e.deltaY * 0.0012))); dirty = true; }, {passive: false});
 window.addEventListener('resize', () => { dirty = true; });
+/* headless gate: ×1 のとき、描画が使う基準値 S.ps を Python が埋めた既定値と照合する。 */
+window.__pocviewerPointSize = () => { const t = get(), S = scene3d(t); return {tab: t.id, ps: S.ps, scale: pointScale}; };
 
 renderText(); select(cur); requestAnimationFrame(tick);
 })();
