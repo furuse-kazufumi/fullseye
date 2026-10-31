@@ -570,8 +570,8 @@
    "caption_ja": "細胞体に小胞状の点を 2 色ぶん撒き、B の点の 0 / 25 / 50 / 100 % を A と同位置に置いて真の共局在率を握る。漏れ込み行列 [[1, α], [β, 1]] と細胞質・PSF・光子雑音を掛けた観測に Pearson r と Otsu-Manders を当てると、無関係な 2 色が α=β=10 % で r=0.203、M1=0.132 になる。単染色対照から α を 0.0996(真値 0.10)と推定して線形分離すれば r は 0.007 に戻るが、Manders は 100 % でも 0.699(Otsu より下の裾が落ちる、閉形式の予想 0.750)。Pearson が 0.5 を超える崖は対称漏れ込み α=0.282(予想 2−√3=0.268)、ぼけの崖は Manders だけに来て σ=2.5 px で Otsu の前景が細胞体へ飛び移る。Costes のシャッフル検定は漏れ込みだけの r を p=0.000 で「有意」と言う。",
    "caption_en": "Two channels of vesicle-like puncta are scattered over a synthetic cell body, with 0 / 25 / 50 / 100 % of the B puncta placed exactly on A puncta so the true colocalization is known. After the bleed-through matrix [[1, α], [β, 1]], cytoplasm, PSF and photon noise, two unrelated channels give Pearson r=0.203 and Otsu-Manders M1=0.132 at α=β=10 %. Estimating α=0.0996 (truth 0.10) from single-stain controls and unmixing linearly restores r to 0.007, but Manders stays at 0.699 even for 100 % (the Gaussian tails below the Otsu threshold are lost; closed-form prediction 0.750). Pearson crosses 0.5 at symmetric α=0.282 (predicted 2−√3=0.268); blur only breaks Manders, with a step at σ=2.5 px where Otsu's foreground jumps from puncta to the whole cell. The Costes shuffle test calls pure bleed-through 'significant' at p=0.000.",
    "run": "py -3.11 examples/poc_colocalization_crosstalk.py",
-   "lead_ja": "この展示は「蛍光の共局在は漏れ込みで嘘をつく」を扱い、「Pearson と Manders は別の場所で壊れる」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。",
-   "lead_en": "This exhibit covers “colocalization lies under bleed-through”; the focus is “pearson and manders break in different places”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions."
+   "lead_ja": "蛍光の共局在は漏れ込みで嘘をつくの評価では、Pearson と Manders は別の場所で壊れる。計算データの細胞体を使い、小胞状と同位置を別々に確かめた。共局在率と行列の差を見ると、Pearson と Manders は別の場所で壊れることが分かる。",
+   "lead_en": "Using Colocalization lies under bleed-through in practice is difficult because Pearson and Manders. The test uses channels from synthetic data to separate vesicle-like from puncta. The contrast between scattered and over shows that pearson and Manders break in different places."
   },
   {
    "id": "poc_colormap_readability",
@@ -583,8 +583,8 @@
    "caption_ja": "段差がゼロと分かっているなめらかな場を塗り、CIE L* と CIEDE2000(知覚補正した色差式) で「無い境目」を数えた。jet は 3 本・hsv は 4 本立ち、viridis と gray は 0 本。★立つ位置は sRGB の伝達関数と CIE の Y 係数から解けて、jet の明度折返し予測 0.3750 / 0.4490 / 0.6250 に対し実測 0.3750 / 0.4492 / 0.6250(最大ずれ 0.0002)。本物の段差が偽の境目を追い越すのは jet で 0.296 %FS・viridis で 0.050 %FS(配色の LUT だけからの予測と一致)——jet を選ぶと段差に 5.9 倍の高さが要る。配色より効くのは写し方で、4.3 桁の 1/r² 場では区別できる階調の実効数が linear 1.4 → rank 76.0。★★外れ値を 1 個混ぜると log が 27.4 → 16.3(-41 %)落ち、percentile と rank だけが不変。",
    "caption_en": "A smooth field with provably zero steps was painted and the false edges counted in CIE L* and CIEDE2000 (perceptual colour-difference formula): jet raises 3, hsv 4, while viridis and gray raise none. Their positions follow in closed form from the sRGB transfer function and the CIE Y weights — jet's lightness reversals are predicted at 0.3750 / 0.4490 / 0.6250 and measured at 0.3750 / 0.4492 / 0.6250 (max error 0.0002). A real step only out-shouts the false edges above 0.296 %FS with jet versus 0.050 %FS with viridis, matching a prediction made from the colormap LUT alone: jet demands a 5.9x taller step. The value-to-colour mapping matters more than the palette — over a 4.3-decade 1/r^2 field the effective number of distinguishable levels goes from 1.4 (linear) to 76.0 (rank) — and a single outlier costs log 41 % of them (27.4 to 16.3) while percentile and rank are untouched.",
    "run": "py -3.11 examples/poc_colormap_readability.py",
-   "lead_ja": "この展示は「疑似カラーは読み手の判断を変える」を扱い、「無い境目を数え、位置を先に当てる」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。",
-   "lead_en": "This exhibit covers “pseudo-colour changes what the reader decides”; the focus is “counting edges that are not there”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions."
+   "lead_ja": "疑似カラーは読み手の判断を変えるとき、無い境目を数え、位置を先に当てる。段差を含む実測データを作り、ゼロと本立の関係を測った。伝達関数と係数の差を見ると、無い境目を数え、位置を先に当てることが分かる。",
+   "lead_en": "A comparison of Pseudo-colour changes what the reader decides matters when counting edges that are not. A measured data case links smooth, field, and provably. The contrast between zero and steps shows that counting edges that are not there."
   },
   {
    "id": "poc_compound_eye",
@@ -596,8 +596,8 @@
    "caption_ja": "個眼アレイを 9×9 のプレノプティック系として合成し、同じ点を N 個眼で重ねたときの SNR 利得を測った図。小開口では √N がほぼ厳密(N=5 で 2.25 対 2.24)だが、大開口では飽和する(N=49 で 5.33 対 7.00)。原因は雑音でなく、ずらして重ねた像の周縁 4 画素の誤差で、雑音だけの利得は 7.05(√N どおり)、周縁 8 画素を除けば 7.19。ハエの R1–R6 の 6 重の重ね合わせは膝の手前にある。距離はアレイでこそ出て(手前 +1.998・奥 +0.499、真値 2.00 / 0.50)、少数派の遮蔽者は median 重ねなら貫ける(隠れ画素の RMS: 中心 1 枚 0.237 → mean 0.065 → median 0.025)。",
    "caption_en": "A 9×9 plenoptic synthesis of the ommatidial array, measuring the SNR gain when the same point is pooled over N ommatidia. For small apertures √N holds almost exactly (N=5: 2.25 vs 2.24), but for large ones the gain saturates (N=49: 5.33 vs 7.00). The cause is not the noise but the error in the outer 4 pixels of the shifted views: the noise-only gain is 7.05 (√N holds), and excluding an 8-pixel border gives 7.19. The fly's six-fold pooling of R1–R6 sits below the knee. Depth comes from the array (near +1.998, far +0.499 against true 2.00 / 0.50), and a minority occluder is seen through by median pooling (RMS on hidden pixels: single view 0.237 → mean 0.065 → median 0.025).",
    "run": "py -3.11 examples/poc_compound_eye.py",
-   "lead_ja": "この展示は「ハエの複眼は光場センサ」を扱い、「神経重ね合わせの「重ねると頑健」は膝の手前まで」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。",
-   "lead_en": "This exhibit covers “the fly's compound eye is a light-field sensor”; the focus is “neural superposition pays only up to the knee”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer."
+   "lead_ja": "ハエの複眼は光場センサでは、神経重ね合わせの「重ねると頑健」は膝の手前まで。合成データで個眼アレイとプレノプティック系を扱い、利得がどう変わるかを調べた。小開口と厳密の差を見ると、神経重ね合わせの「重ねると頑健」は膝の手前までことが分かる。",
+   "lead_en": "For The Fly's Compound Eye Is a Light-Field Sensor, Neural Superposition Pays Only Up to the Knee. The computed data compares plenoptic with synthesis and tracks ommatidial. The contrast between array and measuring shows that neural Superposition Pays Only Up to the Knee."
   },
   {
    "id": "poc_crack_width",
@@ -609,8 +609,8 @@
    "caption_ja": "1 px = 0.20 mm の視野で幅 0.05〜2.0 mm のひび割れを振り、二値化して数える幅と輝度欠損を積分する幅を並べた図。二値化は 0.20 mm 以下で何も返さず、真値 0.25〜0.40 mm の 4 条件が全部 0.200 mm を返す。積分法は 0.05 mm(0.25 px)まで連続に追えるが、照明が曲がると 1 次のベースラインでは +0.1741 mm の下駄が乗る(2 次なら +0.0062 mm)。",
    "caption_en": "Cracks from 0.05 to 2.0 mm wide in a field where 1 px = 0.20 mm, measured by thresholding-and-counting and by integrating the intensity deficit across the crack. Thresholding returns nothing at or below 0.20 mm and reports 0.200 mm for all four true widths between 0.25 and 0.40 mm. Integration tracks continuously down to 0.05 mm (0.25 px), but curved illumination adds a +0.1741 mm offset under a first-order baseline (+0.0062 mm with second order).",
    "run": "py -3.11 examples/poc_crack_width.py",
-   "lead_ja": "この展示は「コンクリートのひび割れ幅は 1 画素より細い」を扱い、「数える幅と、積分する幅」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。",
-   "lead_en": "This exhibit covers “concrete crack width is thinner than a pixel”; the focus is “counting width versus integrating width”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions."
+   "lead_ja": "コンクリートのひび割れ幅は 1 画素より細いの評価では、数える幅と、積分する幅。計算データに視野を用意し、二値化と輝度欠損を比べた。以下と全部の差を見ると、数える幅と、積分する幅ことが分かる。",
+   "lead_en": "Using Concrete Crack Width Is Thinner Than a Pixel in practice is difficult because Counting Width. We place cracks in measured data, then compare wide and field. The contrast between measured and thresholding-and-counting shows that counting Width Versus Integrating Width."
   },
   {
    "id": "poc_crack_width_timeseries",
@@ -622,8 +622,8 @@
    "caption_ja": "1 px = 0.15 mm の壁を 3 年 12 期にわたり撮り返し、ひび割れの成長率 0.040 mm/年 を測る。2 値化して画素を数えるやり方は幅を 25.0 % 過小に言いながら成長率は +153.0 % 過大に言い、幅を凍結した対照群でも +0.0117 mm/年 の「成長」を出す(犯人はぼけ。要因を 1 つずつ止めて分けた)。輝度欠損を積分するやり方は成長率 +3.1 %、対照群では +0.0005 mm/年。★2 値化の成長率は初期の幅だけで 0.0241〜0.1038 mm/年 と動く ―― 1 画素の段差が観測窓に来たかどうかで決まる。",
    "caption_en": "A wall at 1 px = 0.15 mm, rephotographed for twelve epochs over three years, with a crack opening at a true 0.040 mm/yr. Thresholding and counting pixels understates the width by 25.0 % yet overstates the growth rate by +153.0 %, and invents +0.0117 mm/yr of growth in a control where the width is frozen (the culprit is blur, isolated by switching one nuisance at a time). Integrating the intensity deficit gives +3.1 % on the rate and +0.0005 mm/yr on the control. The thresholded rate swings from 0.0241 to 0.1038 mm/yr on initial width alone — it depends on whether a one-pixel step happens to fall inside the observation window.",
    "run": "py -3.11 examples/poc_crack_width_timeseries.py",
-   "lead_ja": "この展示は「ひび割れの「幅」ではなく「伸び」を測る」を扱い、「同じ壁を撮り返すと誤差の性質が変わる」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。",
-   "lead_en": "This exhibit covers “measuring the growth, not the width”; the focus is “rephotographing the same wall changes what the error is”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer."
+   "lead_ja": "ひび割れの「幅」ではなく「伸び」を測るとき、同じ壁を撮り返すと誤差の性質が変わる。成長率を含む計算データを作り、値化と画素の関係を測った。過小と過大の差を見ると、同じ壁を撮り返すと誤差の性質が変わることが分かる。",
+   "lead_en": "In evaluating Measuring the Growth, while Rephotographing the Same Wall Changes What the Error Is. A computed data case links rephotographed, twelve, and epochs. The contrast between over and three shows that rephotographing the Same Wall Changes What the Error Is."
   },
   {
    "id": "poc_crop_phenotyping",
@@ -635,8 +635,8 @@
    "caption_ja": "葉を解析曲面(片面面積 pi/4·L·W、葉角も投影係数も閉形式)で組んだトウモロコシ群落に、天頂からの厳密な z-buffer をかけて植被率・遮蔽・葉角を測った。植被率を Beer-Lambert で戻す素朴な葉面積指数は、消光係数を真値に直しても真の 4.85 に対し -52.2 %、しかも 2 段階クランピングから予測した天井 2.26 のすぐ上(実測 2.70)で止まる。遮蔽は天頂の植被率を 1 ビットも変えず、壊しているのは 1 セルを平均 3.49 枚の葉が覆うのに 1 枚と数える「投影が畳む分」のほうで、点密度を 4 倍にしても判別できる上限は +1.92 しか伸びなかった。",
    "caption_en": "A maize canopy built from analytic leaf surfaces (one-sided area pi/4·L·W, leaf angle and projection coefficient both closed-form) is viewed through an exact nadir z-buffer to measure cover, occlusion and leaf angle. Inverting cover with Beer-Lambert underestimates a true leaf area index of 4.85 by 52.2 % even with the exact extinction coefficient, and stalls just above the ceiling of 2.26 predicted from two-scale clumping (measured 2.70). Occlusion changes nadir cover by not one bit; what breaks the estimate is the folding of projection — an average of 3.49 leaves cover a cell yet are counted once — and quadrupling point density buys only +1.92 in the largest resolvable index.",
    "run": "py -3.11 examples/poc_crop_phenotyping.py",
-   "lead_ja": "この展示は「作物の葉面積を上から測る」を扱い、「隠れるより先に、投影が畳んでしまう」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。",
-   "lead_en": "This exhibit covers “crop leaf area from above”; the focus is “folded by projection before it is ever hidden”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions."
+   "lead_ja": "作物の葉面積を上から測るとき、隠れるより先に、投影が畳んでしまう。解析曲面を含む実測データを作り、トウモロコシ群落と天頂の関係を測った。厳密と植被率の差を見ると、隠れるより先に、投影が畳んでしまうことが分かる。",
+   "lead_en": "For Crop leaf area from above, folded by projection before it is ever hidden. A measured data case links maize, canopy, and built. The contrast between analytic and surfaces shows that folded by projection before it is ever hidden."
   },
   {
    "id": "poc_ct_fidelity",
@@ -648,8 +648,8 @@
    "caption_ja": "Shepp-Logan を 180 → 12 本で撮り直し、FBP(フィルタ補正逆投影) を空白画像と無フィルタ逆投影の 2 つの零点と並べた図。12 本の FBP(RMSE 0.2576)は空白画像(0.2420)より悪い。サイノグラムの行和という再構成を見ない検算が、RMSE では見えない質量欠損 -3.34 % を捕まえ、ランプフィルタの DC ビンを直して -0.0099 % に。",
    "caption_en": "Shepp-Logan re-imaged with 180 down to 12 projections, FBP (filtered back-projection) placed beside two nulls: a blank image and unfiltered back-projection. With 12 projections FBP (RMSE 0.2576) is worse than the blank image (0.2420). A check that never looks at the reconstruction — the row sums of the sinogram — caught a -3.34 % mass loss that RMSE could not see; fixing the ramp filter's DC bin brought it to -0.0099 %.",
    "run": "py -3.11 examples/poc_ct_fidelity.py",
-   "lead_ja": "この展示は「投影数を減らすと CT 再構成はどこから壊れるか」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。",
-   "lead_en": "This exhibit examines “where CT reconstruction starts to break as projections are…”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions."
+   "lead_ja": "投影数を減らすと CT 再構成はの評価では、測定の確かさが課題になる。計算データの空白画像を使い、無フィルタ逆投影と零点を別々に確かめた。サイノグラムと行和の差を見ると、測定の確かさが課題になることが分かる。",
+   "lead_en": "Using Where CT Reconstruction Starts to Break in practice is difficult because the measurement can. The test uses shepp-logan from computed data to separate re-imaged from down. The contrast between placed and beside shows that the measurement can become unreliable."
   },
   {
    "id": "poc_ct_void_morphology",
@@ -661,8 +661,8 @@
    "caption_ja": "合成のダイアタッチ接合層に、体積率を 3.000 % に厳密にそろえたまま位置・形・近接だけを変えた 5 条件のボイドを仕込み、PSF(点広がり関数)・雑音・カッピングつきの X 線 CT として撮り直した。2 値化してボイド率だけを出すゼロ点は 5 条件を 2.46〜2.63 %(開きは 0.17 ポイント)としか分けないのに、界面に接する扁平ボイドが界面を塞ぐ面積は同体積の球の 2.09 倍(14.49 対 6.92 %)、連なりの跨ぎ率は散在の 13.1 倍(80.0 対 6.1 %)になる。崖の予想は外れ、ボクセルを 60 µm まで粗くしてもボイド率は 3.21 % と崩れず(格子の位相の運で ±1.36 ポイント振れるだけ)、代わりに扁平度が測れなくなり界面欠損率が 14.16 → 9.78 % と『安全』側へ落ちた ―― 壊れる向きが合格の側なのがいちばん悪い。",
    "caption_en": "A synthetic die-attach bond line carries five void populations whose volume fraction is held exactly at 3.000 % while only their depth, shape and proximity change, re-imaged as an X-ray CT with a PSF (point spread function), noise and beam-hardening cupping. The naive zero point — threshold, then report void fraction — separates the five conditions by only 0.17 points (2.46 to 2.63 %), yet the interface area shadowed by flat voids is 2.09x that of volume-matched spheres (14.49 vs 6.92 %) and the largest cluster spans 13.1x further when the voids are chained (80.0 vs 6.1 %). The predicted cliff never arrives: at 60 um voxels the void fraction still reads 3.21 % (it only wobbles by 1.36 points with the grid phase), while flatness becomes unmeasurable and the interface-deficit metric drops from 14.16 to 9.78 % — the degradation runs toward 'pass', which is the worst possible direction.",
    "run": "py -3.11 examples/poc_ct_void_morphology.py",
-   "lead_ja": "この展示は「接合層のボイドを 1 個の数字に畳む」を扱い、「畳んだ分だけ、寿命に効く形が消える」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。",
-   "lead_en": "This exhibit covers “collapsing joint voids into one number”; the focus is “what the number drops is the shape that matters”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions."
+   "lead_ja": "接合層のボイドを 1 個の数字に畳むでは、畳んだ分だけ、寿命に効く形が消える。合成データでダイアタッチ接合層と体積率を扱い、厳密がどう変わるかを調べた。位置と近接の差を見ると、畳んだ分だけ、寿命に効く形が消えることが分かる。",
+   "lead_en": "A comparison of Collapsing joint voids into one number matters when what the number drops is the shape. The synthetic data compares die-attach with bond and tracks line. The contrast between carries and five shows that what the number drops is the shape that matters."
   },
   {
    "id": "poc_datacenter_thermal_field",
@@ -674,8 +674,8 @@
    "title_en": "A 3-D Thermal Field from Sparse Sensors — The Grid's Blind Spot Erases a Rack",
    "caption_ja": "サーバ室 12 x 8.4 x 3.0 m の温度場を式で置き、格子状の温度センサから復元してホットスポット 3 台を探す。★ゼロ点(全センサの平均 = 場は平らとみなす)は RMSE 2.192 °C でホットスポットを 1 台も見つけない。最良の RBF は 0.214 °C = 10.2 倍。★★崖は測る前に閉形式で言える: 間隔 d の 3-D 格子でピークからいちばん遠い点はセル中心の d√3/2 なので、見えるピークは **exp(-3d²/8σ²)** 倍に落ち、半減間隔は d* = 1.3596σ。幾何だけを取り出した実測との差は最大 **1.2e-15** —— 完全に一致する。★**外れたのは閉形式ではなく「現場で測れる量」のほう**。復元した場のピークには背景の復元誤差が同じ場所に載るので、素朴な実測は予測を最大 +0.2598 超過する —— つまり**崖は実際より浅く見える**。σ=0.22 m のラックは d=1.20 m で幾何の回復 0.000014(消滅)なのに、素朴に測ると 0.1609 残って見える。残っているのは背景の誤差。★閉形式は曲線ではなく**床**: 同じ d=0.60 m でもラックが格子のどこに落ちるかで回復は 0.0615(セル中心)から 1.0(センサ直上)まで跳ぶ。設計に使えるのは最悪位相の値だけで、「平均すればこれくらい見える」はそのラックには通じない。★対照群 a(格子 vs 乱数、同じ本数): 乱数は死角を**消さない。どのラックが死角に落ちるかを振るだけ**。格子の最悪距離を超える乱数点は実測 6.17 %(Poisson の予測 6.58 %、差 0.41 ポイント)。格子は幾何の下限を 1 度も割らないが、乱数は 3 台中 2 台で割った —— 同じ本数でも「最悪でもここまで見える」と設計時に言い切れるかが違う。★★対照群 b(補間法 3 種): **動かないのは指数、動くのは係数**。log 回復 vs d² の傾きは予測 -3.0612 /m² に対し 3 手法とも最大 3.05 % 差。しかし「崖の位置は手法で動かない」という予測は外した —— 薄板スプラインは内挿なのに節点の値を超えて一律 1.372 倍持ち上がり、半減間隔を 0.4777 → 0.6015 m(26 %)ずらす。最近傍と線形が小数点以下まで一致するのは、どちらも節点を超えないため。★「持ち上がる手法は偽の峰も同じだけ立てる」も外した: 床は最近傍 0.975 °C(雑音 0.15 °C の 6.5 倍 = 滑らかな背景を階段で近似した段差)に対し線形 0.132 / RBF 0.164 で、**持ち上がる側のほうが低い**。★物差し 3 つ(場の RMSE / ピーク温度の誤差 / 位置の誤差)を同時に勝つ手法は無い。線形補間は d=1.20 m で評価点の 71.2 % が凸包の外に出て最近傍に化ける —— センサを部屋の内側にしか置けない以上、外挿しない手法は端で必ず別の手法になる。★この PoC が炙り出した道具の穴を、その場で埋めた: 散らばった N-D 点から場を作る `fs.interp_scattered`(nearest / linear / rbf)。設計で効いたのは**凸包の外に出た割合を返り値に入れた**こと —— この PoC が測った 71.2 % は黙って NaN か別手法に化ける量なので、戻り値に居るべきだった。使ってみて `neighbors`(RBF を近傍だけで解く)も足した —— 全体解は O(n³) で1400 / 4000 / 8000 点が 0.55 / 1.76 / 7.53 秒。**op は使って初めて足りない引数が分かる**。",
    "caption_en": "A temperature field for a 12 x 8.4 x 3.0 m server room is written as a formula, then reconstructed from a grid of temperature sensors to find three overloaded racks. The null baseline, the mean of all sensors spread over the whole room, gives an RMSE of 2.192 degrees and finds no hot spot at all; the best method, a thin-plate RBF, gives 0.214, ten times better. The cliff can be stated in closed form before measuring: on a grid of spacing d the point furthest from a peak is the cell centre at d*sqrt(3)/2, so a Gaussian of width sigma is recovered at exp(-3d^2/8sigma^2) and halves at d* = 1.3596 sigma. Isolating the geometry, prediction and measurement differ by at most 1.2e-15. What failed was not the formula but the quantity a site can actually measure: the peak of a reconstructed field carries the background's reconstruction error at the same place, so a naive measurement exceeds the prediction by up to +0.2598 and the cliff looks shallower than it is. The sigma=0.22 m rack is recovered at 0.000014 at d=1.20 m, effectively gone, yet naively appears to hold 0.1609 — what remains is the background error. The closed form is a floor, not a curve: at the same d=0.60 m, recovery jumps from 0.0615 at a cell centre to 1.0 directly above a sensor, so only the worst phase is usable for design. Random placement does not remove blind spots; it only reshuffles which rack falls into one. Measured, 6.17 % of random points exceed the grid's worst distance against a Poisson prediction of 6.58 %. The grid never breaks its geometric lower bound while random placement broke it for two of the three racks: with the same sensor count, only one of them supports a guarantee. Swapping the interpolator moves the coefficient, not the exponent — all three slopes of log recovery against d^2 sit within 3.05 % of the predicted -3.0612 — but the prediction that the cliff position is method-independent was wrong: the thin-plate spline overshoots its own nodes by a factor of 1.372 and shifts the half-recovery spacing from 0.4777 to 0.6015 m, a 26 % move. The follow-up prediction, that an overshooting method raises the false peaks by the same factor, was also wrong: the nearest-neighbour floor is 0.975 degrees, 6.5 times the sensor noise, because a staircase approximation of a smooth background is itself a step. No method wins all three rulers at once, and at d=1.20 m linear interpolation falls outside the convex hull for 71.2 % of the evaluation points, silently becoming nearest-neighbour at the walls. The gap this PoC found has since been filled: fs.interp_scattered interpolates a field from scattered N-D points and returns the fraction of query points that fell outside the convex hull — the 71.2 % measured here is exactly the quantity that would otherwise turn silently into NaN or into another method under the first method's name.",
-   "lead_ja": "この展示は「疎な温度センサから 三次元 熱場を復元する」を扱い、「格子の死角がラックを消す」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。",
-   "lead_en": "This exhibit covers “a 3-d thermal field from sparse sensors”; the focus is “the grid's blind spot erases a rack”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions."
+   "lead_ja": "疎な温度センサから 三次元 熱場を復元する場面では、格子の死角がラックを消す。実測データにサーバ室を用意し、温度場と格子状を比べた。ホットスポットとゼロ点の差を見ると、格子の死角がラックを消すことが分かる。",
+   "lead_en": "For A three-dimensional Thermal Field from Sparse Sensors, The Grid's Blind Spot Erases a Rack. We place temperature in measured data, then compare server and room. The contrast between written and formula shows that the Grid's Blind Spot Erases a Rack."
   },
   {
    "id": "poc_dehazing",
@@ -687,8 +687,8 @@
    "caption_ja": "深度・大気光・消散係数から真の透過率とシーンを持った霞画像を作り、除霞を採点した図。全体 +4.04 dB の中身は近景 -1.49 dB の劣化を中景 +4.03 / 遠景 +11.28 dB が覆ったもの。視程 782 m 以上では除霞が害になり、雑音を足すと PSNR が上がる(偶然の打ち消し)。",
    "caption_en": "A hazy image built from depth, airlight and extinction so that the true transmission and the true scene are both known, then dehazed and scored. The overall +4.04 dB hides a -1.49 dB degradation of the near field covered by +4.03 dB mid and +11.28 dB far. Above 782 m visibility dehazing does harm, and adding noise raises PSNR (an accidental cancellation).",
    "run": "py -3.11 examples/poc_dehazing.py",
-   "lead_ja": "この展示は「霞を剥がす」を扱い、「大気散乱モデルで真値を作り、透過率と大気光を別々に採点する」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。",
-   "lead_en": "This exhibit covers “removing haze”; the focus is “ground truth from the scattering model, transmission and airlight scored apart”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer."
+   "lead_ja": "霞を剥がすの評価では、大気散乱モデルで真値を作り、透過率と大気光を別々に採点する。計算データの深度を使い、消散係数とシーンを別々に確かめた。霞画像と除霞の差を見ると、大気散乱モデルで真値を作り、透過率と大気光を別々に採点することが分かる。",
+   "lead_en": "A comparison of Removing Haze matters when Ground Truth From the Scattering Model, Transmission and. The test uses hazy from computed data to separate image from built. The contrast between depth and extinction shows that ground Truth From the Scattering Model, Transmission and Airlight Scored Apart."
   },
   {
    "id": "poc_dem_terrain",
@@ -700,8 +700,8 @@
    "caption_ja": "平面・円錐・ガウス丘で傾斜・曲率・天空率を閉形式と突き合わせた図。ガウス丘の曲率誤差はセルを半分にすると約 4 分の 1 ―― 離散化の誤差であって式の誤りではない。天空率は 513×513・8 方位で 2.03 秒 ―― 書き直す前は 41.9 秒かかっていて、テストは「動く」ことしか確かめていなかった。",
    "caption_en": "Slope, curvature and sky-view factor checked against closed forms on a plane, a cone and a Gaussian hill. Halving the cell size cuts the hill's curvature error by about four — a discretisation error, not a wrong formula. The sky-view factor takes 2.03 s on a 513×513 grid with 8 directions; before the rewrite it took 41.9 s, and the tests had only ever checked that it runs.",
    "run": "py -3.11 examples/poc_dem_terrain.py",
-   "lead_ja": "この展示は「地形を測る」を扱い、「傾斜・水の流れ・日当たりを閉形式と突き合わせる」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。",
-   "lead_en": "This exhibit covers “measuring terrain”; the focus is “slope, flow and insolation against closed forms”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions."
+   "lead_ja": "地形を測るとき、傾斜・水の流れ・日当たりを閉形式と突き合わせる。平面を含む計算データを作り、円錐とガウス丘の関係を測った。曲率と天空率の差を見ると、傾斜・水の流れ・日当たりを閉形式と突き合わせることが分かる。",
+   "lead_en": "Using Measuring Terrain in practice is difficult because Slope, Flow and Insolation Against Closed Forms. A computed data case links curvature, sky-view, and factor. The contrast between checked and plane shows that slope, Flow and Insolation Against Closed Forms."
   },
   {
    "id": "poc_dfm_thickness_overhang",
@@ -713,8 +713,8 @@
    "caption_ja": "設計値の分かる合成部品(薄壁・スロット・45 度前後の補強・穴)をボクセル化し、肉厚・要サポート面積・工具の入る隙間を測りました。しきい値 45 度の両側で必要面積は 185.22 → 576.10 mm^2 と 0.2 度で 3.11 倍に跳ね、その段差は等値面を距離場から取ると 100 %、平滑化でも 12 % 消えます。肉厚は 2 voxel 刻みに潰れ(内接球にしても同じ)、隙間の誤判定は両方向に出て、粗さ 0.500 mm では隙間が 2.000 mm に太り入らない工具を通します。",
    "caption_en": "A synthetic part with known design values (thin walls, a slot, ribs near 45 deg, holes) is voxelised, then wall thickness, support area and tool clearance are measured. Across the 45 deg threshold the support area jumps 185.22 -> 576.10 mm^2 — 3.11x for 0.2 deg — and that step vanishes entirely when the isosurface is taken from a distance field, and loses 12 % under smoothing. Thickness collapses onto a 2-voxel lattice (the inscribed sphere does not help), and clearance errors go both ways: at 0.500 mm voxels the slot appears 2.000 mm wide and admits a tool that does not fit.",
    "run": "py -3.11 examples/poc_dfm_thickness_overhang.py",
-   "lead_ja": "この展示は「造形しやすさを形から測る」を扱い、「しきい値に貼りついた面は、丸めた分だけ判定が飛ぶ」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。",
-   "lead_en": "This exhibit covers “manufacturability from geometry alone”; the focus is “faces that sit on the decision level flip when you smooth them”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer."
+   "lead_ja": "造形しやすさを形から測る場面では、しきい値に貼りついた面は、丸めた分だけ判定が飛ぶ。合成データの設計値を使い、合成部品とボクセル化を別々に確かめた。肉厚と要サポート面積の差を見ると、しきい値に貼りついた面は、丸めた分だけ判定が飛ぶことが分かる。",
+   "lead_en": "In evaluating Manufacturability from geometry alone, faces that sit on the the method flip when you. The test uses part from synthetic data to separate design from values. The contrast between voxelised and then shows that faces that sit on the the method flip when you smooth them."
   },
   {
    "id": "poc_dic_strain",
@@ -726,8 +726,8 @@
    "caption_ja": "3000 個のガウス斑点を変形写像で移してから描き直したスペックル対から変位とひずみを読む図。真の変位 0.37 px に対し窓相関(piv)の偏り 0.0002 px・散らばり 0.0022 px で、ゼロ点(動かないと答える)の 167 倍。剛体回転が微小ひずみの定義で数百 µε の嘘を作る ―― Green-Lagrange なら厳密に 0。",
    "caption_en": "Displacement and strain read from a speckle pair in which 3000 Gaussian spots were moved by the deformation map and redrawn, not interpolated. For a true shift of 0.37 px the window-correlation estimator (piv) is biased by 0.0002 px with 0.0022 px scatter, 167x better than the null that answers 'no motion'. A rigid rotation manufactures several hundred µε of false strain under the small-strain definition; Green-Lagrange gives exactly 0.",
    "run": "py -3.11 examples/poc_dic_strain.py",
-   "lead_ja": "この展示は「スペックル画像からひずみを測る(DIC)」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。",
-   "lead_en": "This exhibit examines “strain from speckle images (DIC)”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions."
+   "lead_ja": "スペックル画像からひでは、測定の確かさが課題になる。ガウス斑点を含む計算データを作り、変形写像とスペックル対の関係を測った。変位と窓相関の差を見ると、測定の確かさが課題になることが分かる。",
+   "lead_en": "When measuring Strain From, the measurement can become unreliable. A computed data case links displacement, read, and pair. The contrast between spots and were shows that the measurement can become unreliable."
   },
   {
    "id": "poc_die_tilt_tsv_overlay",
@@ -739,8 +739,8 @@
    "caption_ja": "上下 2 枚のダイに 7×7 の TSV を仕込み、真の位置ずれ (+0.800, −0.450) µm・回転 +0.01500°・傾き (1.20°, 0.70°) を与えた CT ボリューム 1 個だけで測り返す。上面の開口をそのまま比べるゼロ点は 2.419 µm 外し(仕様 ±1.0 µm の 2.4 倍、真の位置ずれ 0.918 µm より大きい)、その偽装量は「ダイ厚 × 上面法線の横成分」の閉形式と比 0.996 / 0.999 で一致する。ビアの軸で下面へ引き直すと 0.0023 µm まで戻る。★予想は外れた ―― 傾きは並進だけでなく回転も偽装する(Rx Ry のせん断 sinα sinβ 由来、予測 +0.00733° に対し対照群との差で実測 +0.00696°)。これは軸補正では消えず、測った傾きで逆投影して初めて対照群と同じ値に戻る。崖は 0.491° の予測に対し実測 0.492°。",
    "caption_en": "Two stacked dies carry a 7x7 TSV lattice with a planted overlay of (+0.800, -0.450) um, +0.01500 deg of rotation and a die tilt of (1.20, 0.70) deg; a single CT volume is the whole measurement. Comparing the top-surface via openings directly misses by 2.419 um — 2.4x the +-1.0 um spec, and larger than the 0.918 um real overlay. The bias matches the closed form 'die thickness x lateral part of the top-surface normal' to a ratio of 0.996 / 0.999, and re-projecting each via down its own fitted axis recovers the truth to 0.0023 um. The prediction that failed: tilt fakes rotation as well as translation, through the sin(alpha)sin(beta) shear of Rx Ry — predicted +0.00733 deg against +0.00696 deg measured as the difference from the zero-tilt control. Axis correction does not remove it; only de-projecting with the measured tilt does. The cliff lands at 0.492 deg measured against 0.491 deg predicted.",
    "run": "py -3.11 examples/poc_die_tilt_tsv_overlay.py",
-   "lead_ja": "この展示は「ダイの傾きと TSV の位置ずれを 1 つの CT から分ける」を扱い、「傾きは回転まで偽装する」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。",
-   "lead_en": "This exhibit covers “die tilt and TSV overlay from one CT”; the focus is “tilt fakes rotation too”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions."
+   "lead_ja": "ダイの傾きと TSV の位置ずれを 1 つの CT から分けるとき、傾きは回転まで偽装する。実測データで上下と仕込を扱い、ボリュームがどう変わるかを調べた。上面と開口の差を見ると、傾きは回転まで偽装することが分かる。",
+   "lead_en": "In evaluating Die tilt and TSV overlay from one CT, tilt fakes rotation too. The measured data compares stacked with dies and tracks carry. The contrast between lattice and planted shows that tilt fakes rotation too."
   },
   {
    "id": "poc_dimensional_inspection",
@@ -752,8 +752,8 @@
    "caption_ja": "符号つき距離関数で描いた部品(スロット幅 50.50 px、1 px = 12.5 µm)を既知の PSF(点広がり関数) と雑音で撮り、4 系のキャリパーで測った図。大津の整数幅(ゼロ点)は RMS 0.464 px = 5.8 µm、埋もれていた 1-D 計測実装の偏りは -0.0113 px = -0.14 µm で 41 倍。エッジ間距離が PSF 幅の 3.09 倍を切ると幅は系統的に大きく出るのに、API は成功を返し続ける。",
    "caption_en": "A part defined by a signed distance function (slot width 50.50 px, 1 px = 12.5 µm), imaged through a known PSF (point spread function) and noise and measured by four caliper systems. Otsu's integer width (the null) has an RMS error of 0.464 px = 5.8 µm; the buried 1-D measuring implementation is biased by -0.0113 px = -0.14 µm, 41x better. Once the edge spacing drops below 3.09 PSF widths the width comes out systematically large, and the API keeps returning success.",
    "run": "py -3.11 examples/poc_dimensional_inspection.py",
-   "lead_ja": "この展示は「産業部品の寸法検査」を扱い、「偏りと散らばりを別々に出す」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。",
-   "lead_en": "This exhibit covers “dimensional inspection of a machined part”; the focus is “bias and scatter as two numbers”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions."
+   "lead_ja": "産業部品の寸法検査の評価では、偏りと散らばりを別々に出す。計算データに符号を用意し、距離関数と雑音を比べた。キャリパーと大津の差を見ると、偏りと散らばりを別々に出すことが分かる。",
+   "lead_en": "For Dimensional Inspection of a Machined Part, Bias and Scatter as Two Numbers. We place defined in measured data, then compare signed and distance. The contrast between function and imaged shows that bias and Scatter as Two Numbers."
   },
   {
    "id": "poc_document_scan",
@@ -765,8 +765,8 @@
    "caption_ja": "既知のホモグラフィと照明で撮った書類を戻し、4 隅と格子の画素誤差で採点した図。推定は格子 RMS 1.091 px(何もしない 37.376 px)だが、名前が同じでモデルが違う関数(アフィン)を取り違えると 32 倍悪く、例外は出ない。影の強さ 0.45 で 4 隅 RMS 6.81 px、0.55 で 66.06 px と崖。",
    "caption_en": "A document imaged under a known homography and lighting, rectified, and scored by corner and grid error in pixels. The estimate reaches a grid RMS of 1.091 px (doing nothing: 37.376 px), but swapping in the same-named function with a different model (affine) is 32x worse and raises no exception. Shadow strength 0.45 gives a corner RMS of 6.81 px; 0.55 gives 66.06 px — a cliff.",
    "run": "py -3.11 examples/poc_document_scan.py",
-   "lead_ja": "この展示は「手持ちで撮った書類をまっすぐに戻す」を扱い、「台形補正と影除去を、真値と突き合わせて測る」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。",
-   "lead_en": "This exhibit covers “straightening a hand-held document photo”; the focus is “keystone correction and shadow removal against ground truth”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer."
+   "lead_ja": "手持ちで撮った書類をまっすぐに戻すでは、台形補正と影除去を、真値と突き合わせて測る。計算データでホモグラフィと照明を扱い、格子がどう変わるかを調べた。画素誤差と採点の差を見ると、台形補正と影除去を、真値と突き合わせて測ることが分かる。",
+   "lead_en": "A comparison of Straightening a Hand-Held Document Photo matters when Keystone Correction and Shadow. The computed data compares imaged with homography and tracks lighting. The contrast between rectified and scored shows that keystone Correction and Shadow Removal Against Ground Truth."
   },
   {
    "id": "poc_dtof_ranging",
@@ -782,8 +782,8 @@
    "caption_ja": "往復時刻にガウシアンをビン積分で置き Poisson 標本を引いた到達時刻ヒストグラムから距離を読む図。N = 200 光子でピーク位置そのまま 11.02 mm、ゲート重心 2.29 mm、理論限界 31.83 mm/√N に 1.00〜1.07 倍で乗る。背景が入ると素の重心は 2 桁崩れ(SBR 0.031 で 564 mm)、族が推すガウス当てはめ 8.82 mm は利用者が 6 行で書くゲート重心に負ける。",
    "caption_en": "Range read from an arrival-time histogram built by bin-integrating a Gaussian at the round-trip time and drawing Poisson samples. With 200 photons the raw peak position errs by 11.02 mm and the gated centroid by 2.29 mm, riding the 31.83 mm/√N bound at 1.00 to 1.07x. With background the plain centroid collapses by two orders (564 mm at SBR 0.031), and the family's recommended Gaussian fit at 8.82 mm loses to a gated centroid a user can write in six lines.",
    "run": "py -3.11 examples/poc_dtof_ranging.py",
-   "lead_ja": "この展示は「光子を数えて距離を測る」を扱い、「何個数えれば何ミリまで出るのか」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。",
-   "lead_en": "This exhibit covers “ranging by counting photons”; the focus is “how many for how many millimetres”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions."
+   "lead_ja": "光子を数えて距離を測る場面では、何個数えれば何ミリまで出るのか。計算データに往復時刻を用意し、ガウシアンとビン積分を比べた。標本と到達時刻ヒストグラムの差を見ると、何個数えれば何ミリまで出るのかことが分かる。",
+   "lead_en": "For Ranging by Counting Photons, How Many for How Many Millimetres. We place range in computed data, then compare read and arrival-time. The contrast between histogram and built shows that how Many for How Many Millimetres?."
   },
   {
    "id": "poc_exoplanet_transit",
@@ -795,8 +795,8 @@
    "caption_ja": "合成星野 240 枚に目標星だけ 10 ppt の周辺減光つきトランジットを仕込み、透明度変動・副画素ドリフト・フラット不均一・光子雑音を別々の乱数で載せて、fullseye の star_detect → frame_align → aperture_photometry で光度曲線を取り出す。ゼロ点(目標星の開口積分)は雲で深さ +72 ppt に壊れ、比較星との比なら -0.13 ppt / T14 -0.9 fr。比較星の選び方で残差 rms は 1.91〜11.43 ppt(6.0 倍)、逆分散重みは生の分散で決めると雲に騙されて単純和より 1.52 倍悪い。開口 1σ の崖は予想した重心誤差ではなく op の開口マスクの階段(supersample=8、不動の星で理論比 1.69 → 32 で 0.93)。検出限界 SNR=5 は暦既知で実測 1.48 / 理論 1.45 ppt、暦未知は 2.0 ppt で深さより先に継続時間が壊れる。ドリフト 2 px とフラット 3 % は単独で 0.16 / 0.08 ppt だが掛け算で 0.94 ppt、4 px で 2.97 ppt(真値の 30 %)の偽の深さ。",
    "caption_en": "A synthetic star field (240 frames) carries a 10 ppt limb-darkened transit on the target only, with transparency variation, sub-pixel drift, flat-field non-uniformity and photon noise injected from separate random streams; fullseye's star_detect → frame_align → aperture_photometry extracts the light curve. The zero point (target aperture sum alone) breaks under clouds to a depth error of +72 ppt; the ratio to comparison stars gives -0.13 ppt / T14 -0.9 fr. Comparison-star choice moves the residual rms from 1.91 to 11.43 ppt (6.0x), and inverse-variance weights computed from raw variance are fooled by clouds into 1.52x worse than a plain sum. The small-aperture cliff at 1σ was not the predicted centroid error but the op's aperture-mask staircase (supersample=8: a static star sits 1.69x above theory, 0.93x at 32). The SNR=5 detection limit is 1.48 ppt measured vs 1.45 ppt theory with a known ephemeris, 2.0 ppt blind, where the duration breaks before the depth. Drift 2 px and a 3 % flat are harmless alone (0.16 / 0.08 ppt) but multiply into a 0.94 ppt false depth, 2.97 ppt (30 % of truth) at 4 px.",
    "run": "py -3.11 examples/poc_exoplanet_transit.py",
-   "lead_ja": "この展示は「系外惑星トランジットを開口測光で取り出す」を扱い、「深さと継続時間は別々に壊れる」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。",
-   "lead_en": "This exhibit covers “exoplanet transit from aperture photometry”; the focus is “depth and duration fail separately”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions."
+   "lead_ja": "系外惑星トランジットを開口測光で取り出すの評価では、深さと継続時間は別々に壊れる。合成データの合成星野を使い、目標星と周辺減光を別々に確かめた。仕込と透明度変動の差を見ると、深さと継続時間は別々に壊れることが分かる。",
+   "lead_en": "In evaluating Exoplanet transit from aperture photometry, depth and duration fail separately. The test uses star from synthetic data to separate field from carries. The contrast between limb-darkened and target shows that depth and duration fail separately."
   },
   {
    "id": "poc_fabric_defect",
@@ -808,8 +808,8 @@
    "caption_ja": "周期 8 px の織り地に線・斑点・ムラの 3 種の欠陥を埋め、検出器のスコア地図と種類別の ROC(真陽性率と偽陽性率の曲線) を並べた図。現場でいちばん普通の「格子除去 + 低周波除去」はまとめた AUC 0.8113 で合格に見えるのに、ムラだけは 0.4746 とでたらめ以下。低周波を落とす 1 行が照明ムラと一緒に欠陥のムラを消していた ―― 外すだけで 0.9998 に戻る。",
    "caption_en": "Three defect classes (thread break, stain, dim patch) buried in a weave of period 8 px, with the detector's score map and per-class ROC (true-positive versus false-positive curve) curves side by side. The everyday recipe 'notch out the grid, remove low frequencies' pools to an AUC of 0.8113 and looks like a pass, but the dim-patch class alone scores 0.4746, worse than chance. The one line that removes low frequencies was deleting the defect along with the lighting; drop it and the class recovers to 0.9998.",
    "run": "py -3.11 examples/poc_fabric_defect.py",
-   "lead_ja": "この展示は「周期のある地に埋もれた欠陥」を扱い、「まとめた ROC(真陽性率と偽陽性率の曲線) が隠すもの」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。",
-   "lead_en": "This exhibit covers “defects buried in a periodic background”; the focus is “what a pooled ROC (true-positive versus false-positive curve) hides”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer."
+   "lead_ja": "周期のある地に埋もれた欠陥では、まとめた ROC が隠すもの。計算データで斑点とムラを扱い、検出器がどう変わるかを調べた。スコア地図と種類別の差を見ると、まとめた ROC が隠すものことが分かる。",
+   "lead_en": "In evaluating Defects Buried in a Periodic Background, What a Pooled ROC Hides. The computed data compares three with classes and tracks weave. The contrast between detector and score shows that what a Pooled ROC Hides."
   },
   {
    "id": "poc_fiber_orientation",
@@ -821,8 +821,8 @@
    "caption_ja": "フォン・ミーゼス分布から撒いた繊維 140 本の配向を構造テンソルで読む図。真の平均 177.9 度を算術平均は 105.55 度と報告し(-72.33 度)、2 倍角の円形平均なら +0.17 度 ―― 画像も測定も 1 ビットも変えていない。全画素を等しく数えると配向度が -31.3 % 落ちる。",
    "caption_en": "Orientation of 140 fibres drawn from a von Mises distribution, read with a structure tensor. For a true mean of 177.9 degrees the arithmetic mean reports 105.55 degrees (-72.33), while the doubled-angle circular mean is off by +0.17 degrees — with not one bit of the image or the measurement changed. Weighting every pixel equally drops the orientation index by -31.3 %.",
    "run": "py -3.11 examples/poc_fiber_orientation.py",
-   "lead_ja": "この展示は「繊維の配向分布を測る」を扱い、「角度は 180 度周期、素朴に平均すると 九十度ずれる」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。",
-   "lead_en": "This exhibit covers “fibre orientation distribution”; the focus is “angles repeat every 180 degrees, and a naive mean is ninety degrees off”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer."
+   "lead_ja": "繊維の配向分布を測るとき、角度は 180 度周期、素朴に平均すると 度ずれる。フォンを含む計算データを作り、ミーゼス分布と構造テンソルの関係を測った。算術平均と報告の差を見ると、角度は 度周期、素朴に平均すると 度ずれることが分かる。",
+   "lead_en": "In evaluating Fibre Orientation Distribution, while and a Naive Mean Is 90 Degrees Off. A computed data case links fibres, drawn, and mises. The contrast between read and structure shows that angles Repeat Every Degrees, and a Naive Mean Is Degrees Off."
   },
   {
    "id": "poc_fly_vision",
