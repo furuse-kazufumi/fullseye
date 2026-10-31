@@ -12,6 +12,7 @@ import copy
 import importlib.util
 import json
 import os
+import re
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 _spec = importlib.util.spec_from_file_location(
@@ -55,8 +56,10 @@ def test_every_highlight_has_lead_in_all_languages_and_renders_it_first():
         assert all(exhibit["lead"][lang].strip() for lang in d["langs"]), exhibit["id"]
         source = ledger.get(exhibit["id"])
         if source:
-            expected_ja = source["lead_ja"] or exhibit["see"]["ja"]
-            expected_en = source["lead_en"] or exhibit["see"]["en"]
+            expected_ja = source["lead_ja"] or source["caption_ja"]
+            expected_en = source["lead_en"] or source["caption_en"]
+            if not source["lead_en"] and re.search(r"[\u3040-\u30ff]", expected_en):
+                expected_en += " _(ja)_"
             assert exhibit["lead"]["ja"] == expected_ja
             assert exhibit["lead"]["en"] == expected_en
             for lang in d["langs"][2:]:
@@ -68,7 +71,9 @@ def test_every_highlight_has_lead_in_all_languages_and_renders_it_first():
         start = page.index(marker)
         end = page.find("\n- [", start + len(marker))
         block = page[start:end if end >= 0 else None]
-        assert block.index(exhibit["lead"]["ja"]) < block.index(exhibit["see"]["ja"]), exhibit["id"]
+        lead_at = block.index(exhibit["lead"]["ja"])
+        see_at = block.find(exhibit["see"]["ja"], lead_at + len(exhibit["lead"]["ja"]))
+        assert lead_at < see_at, exhibit["id"]
 
 
 def test_a_missing_translation_stops_the_generator():
