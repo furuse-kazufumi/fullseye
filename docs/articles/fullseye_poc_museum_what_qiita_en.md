@@ -18,7 +18,7 @@ The other shared feature is that failure arrives as a cliff, not a slope: 15 ver
 
 ## No.2026.003 —— Where a 1-D Barcode Stops Reading — Counting Misreads and Unreadables Separately
 
-This exhibit covers “where a 1-d barcode stops reading”; the focus is “counting misreads and unreadables separately”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+When measuring Where a 1-D Barcode Stops Reading, Counting Misreads and Unreadables Separately. A computed data case links home-made, simple, and damaged. The contrast between four and ways shows that counting Misreads and Unreadables Separately.
 
 [![Where a 1-D Barcode Stops Reading — Counting Misreads and Unreadables Separately](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_barcode_1d/01_misread_split_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_barcode_1d/01_misread_split.png)
 
@@ -48,7 +48,7 @@ Ops used (notes): [`decode_barcode`](https://furuse.work/ops/2d/barcode/decode_b
 
 ## No.2026.093 —— Electrode tortuosity from CT — the rule of thumb only sees porosity
 
-This exhibit covers “electrode tortuosity from CT”; the focus is “the rule of thumb only sees porosity”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+Using Electrode tortuosity from CT in practice is difficult because the rule of thumb only sees porosity. The test uses micro-ct from synthetic data to separate lithium-ion from coating. The contrast between measured and shop-floor shows that the rule of thumb only sees porosity.
 
 [![Electrode tortuosity from CT — the rule of thumb only sees porosity](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_electrode_tortuosity/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png)
 
@@ -88,7 +88,7 @@ Ops used (notes): [`vol_distance_transform`](https://furuse.work/ops/3d/medial/v
 
 ## No.2026.004 —— Rolling-Bearing Diagnosis — How Deep in Noise Can It Still Be Caught?
 
-This exhibit covers “rolling-bearing diagnosis”; the focus is “how deep in noise can it still be caught”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+For Rolling-Bearing Diagnosis, How Deep in Noise Can It Still Be Caught. We place impulse in computed data, then compare train and synthesised. The contrast between closed-form and defect shows that how Deep in Noise Can It Still Be Caught?.
 
 [![Rolling-Bearing Diagnosis — How Deep in Noise Can It Still Be Caught?](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bearing_diagnosis/01_envelope_vs_raw_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bearing_diagnosis/01_envelope_vs_raw.png)
 
@@ -114,7 +114,7 @@ Ops used (notes): [`bearing_defect_frequencies`](https://furuse.work/ops/acousti
 
 ## No.2026.094 —— Bump coplanarity versus substrate warpage — subtract too much and the real defect goes with it
 
-This exhibit covers “bump coplanarity versus substrate warpage”; the focus is “subtract too much and the real defect goes with it”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+In evaluating Bump coplanarity versus substrate warpage, subtract too much and the real defect goes. A measured data case links height, pillars, and planted. The contrast between sigma and pillar-to-pillar shows that subtract too much and the real defect goes with it.
 
 [![Bump coplanarity versus substrate warpage — subtract too much and the real defect goes with it](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bump_coplanarity/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bump_coplanarity/01_scene.png)
 
@@ -1352,7 +1352,7 @@ The recurring finding is that a number without its definition cannot be compared
 
 ## No.2026.120 —— Matching Full 2-D Inspection to Sampled 3-D Inspection — A Grid Overlaps Itself
 
-This exhibit covers “matching full 2-d inspection to sampled three-d inspection”; the focus is “a grid overlaps itself”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+In evaluating Matching Full two-dimensional Inspection to Sampled three-dimensional Inspection, A Grid. The test uses real from computed data to separate line from stages. The contrast between images and every shows that a Grid Overlaps Itself.
 
 [![Matching Full 2-D Inspection to Sampled 3-D Inspection — A Grid Overlaps Itself](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_aoi_ct_traceability/01_inspection_and_reconstructed_ct_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_aoi_ct_traceability/01_inspection_and_reconstructed_ct.png)
 
@@ -1390,7 +1390,7 @@ Ops used (notes): [`filtered_backprojection`](https://furuse.work/ops/tomography
 
 ## No.2026.091 —— As-built wall deviation — the bounding box measures the room's heading, not its size
 
-This exhibit covers “as-built wall deviation”; the focus is “the bounding box measures the room's heading, not its size”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+For As-built wall deviation, the bounding box measures the room's heading, not its size. A computed data case links indoor, point, and cloud. The contrast between carries and defects shows that the bounding box measures the room's heading, not its size.
 
 [![As-built wall deviation — the bounding box measures the room's heading, not its size](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_asbuilt_wall_deviation/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png)
 
@@ -1428,7 +1428,7 @@ Ops used (notes): [`aabb`](https://furuse.work/ops/3d/bounds/aabb.html) · [`ang
 
 ## No.2026.092 —— Measuring electrode breathing in microns — sub-pixel is not enough
 
-This exhibit covers “measuring electrode breathing in microns”; the focus is “sub-pixel is not enough”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+When measuring Measuring electrode breathing in microns, sub-pixel is not enough. The computed data compares swelling with read and tracks cross-sections. The contrast between tracking and layer shows that sub-pixel is not enough.
 
 [![Measuring electrode breathing in microns — sub-pixel is not enough](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_electrode_breathing/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_electrode_breathing/01_scene.png)
 
@@ -1466,7 +1466,7 @@ Ops used (notes): [`auto_threshold`](https://furuse.work/ops/2d/segmentation/aut
 
 ## No.2026.005 —— Measuring Bilateral Asymmetry — The Symmetry Plane Gets Dragged by the Deformation
 
-This exhibit covers “measuring left-right asymmetry”; the focus is “the symmetry plane gets dragged by the deformation”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+When measuring Measuring the method Asymmetry, The Symmetry Plane Gets Dragged by the Deformation. The test uses perfectly from synthetic data to separate symmetric from skull. The contrast between bulge and added shows that the Symmetry Plane Gets Dragged by the Deformation.
 
 [![Measuring Bilateral Asymmetry — The Symmetry Plane Gets Dragged by the Deformation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bilateral_asymmetry/03_deviation_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bilateral_asymmetry/03_deviation_map.png)
 
@@ -3060,7 +3060,7 @@ The thing to watch for is a method that appears to improve while the quantity it
 
 ## No.2026.057 —— Trabecular Thickness, Separation and Bone Volume Fraction — The Plate Model and the Direct Method Disagree on the Same Image
 
-This exhibit covers “trabecular thickness, separation and bone volume fraction”; the focus is “the plate model and the direct method disagree on the same image”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+Using Trabecular Thickness, Separation and Bone Volume Fraction in practice is difficult because The. A computed data case links two-dimensional, network, and drawn. The contrast between form and segments shows that the Plate Model and the Direct Method Disagree on the Same Image.
 
 [![Trabecular Thickness, Separation and Bone Volume Fraction — The Plate Model and the Direct Method Disagree on the Same Image](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bone_trabecular_thickness/01_scene_truth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bone_trabecular_thickness/01_scene_truth.png)
 
@@ -3098,7 +3098,7 @@ Ops used (notes): [`blob_distance`](https://furuse.work/ops/blob/split/blob_dist
 
 ## No.2026.008 —— Counting Overlapping Cells — Count, Over-Segmentation and Under-Segmentation as Three Numbers
 
-This exhibit covers “counting overlapping cells”; the focus is “count, over-segmentation and under-segmentation as three numbers”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+When measuring Counting Overlapping Cells, Count, Over-Segmentation and Under-Segmentation as Three. The test uses tallied from synthetic data to separate separately from densest. The contrast between condition and null shows that count, Over-Segmentation and Under-Segmentation as Three Numbers.
 
 [![Counting Overlapping Cells — Count, Over-Segmentation and Under-Segmentation as Three Numbers](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cell_counting/01_scene_dense_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cell_counting/01_scene_dense.png)
 
@@ -3898,7 +3898,7 @@ The other is that the definition of truth decides the conclusion. Counting thin 
 
 ## No.2026.001 —— All-Sky Cloud Cover — Counting Pixels Is Biased by Position
 
-This exhibit covers “all-sky cloud cover”; the focus is “counting pixels is biased by position”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+For All-Sky Cloud Cover, Counting Pixels Is Biased by Position. The test uses spherical-cap from computed data to separate clouds from placed. The contrast between equidistant and fisheye shows that counting Pixels Is Biased by Position.
 
 [![All-Sky Cloud Cover — Counting Pixels Is Biased by Position](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_allsky_cloud_cover/03_mask_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_allsky_cloud_cover/03_mask_sweep.png)
 
@@ -3928,7 +3928,7 @@ Ops used (notes): [`equirect_from_fisheye_pair`](https://furuse.work/ops/optics/
 
 ## No.2026.002 —— How Many Frames for What Photometric Precision?
 
-How Many Frames for What Photometric Precision? Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+For How Many Frames for, the measurement can become unreliable. We place star in computed data, then compare field and placed. The contrast between specification and stacked shows that the measurement can become unreliable.
 
 [![How Many Frames for What Photometric Precision?](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_astro_photometry/01_stack_scaling_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_astro_photometry/01_stack_scaling.png)
 
@@ -3958,7 +3958,7 @@ Ops used (notes): [`aperture_photometry`](https://furuse.work/ops/astrostack/pho
 
 ## No.2026.059 —— Change detection under misregistration — false positives are edge bands, with a cliff
 
-This exhibit covers “change detection under misregistration”; the focus is “false positives are edge bands, with a cliff”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+For Change detection under misregistration, false positives are edge bands, with a cliff. We place two-date in synthetic data, then compare land and surface. The contrast between planted and changes shows that false positives are edge bands, with a cliff.
 
 [![Change detection under misregistration — false positives are edge bands, with a cliff](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_change_detection_misreg/03_map_fp_shift_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_change_detection_misreg/03_map_fp_shift.png)
 

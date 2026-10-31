@@ -12,6 +12,7 @@ fail-closed 側の検査もここに置く。展示が増えるたびに人が�
 from __future__ import annotations
 
 import json
+import ast
 import re
 import sys
 from pathlib import Path
@@ -36,6 +37,94 @@ def _sentence_count(text: str, lang: str) -> int:
     if lang == "ja":
         return text.count("。")
     return text.count(". ") + int(text.endswith(".")) + text.count("? ") + int(text.endswith("?"))
+
+
+def _sentences(text: str, lang: str) -> list[str]:
+    """導入文の比較に使う文分割。句読点自体は比較から外す。"""
+    if lang == "ja":
+        return [s for s in re.split(r"[。！？]+", text) if s.strip()]
+    return [s for s in re.split(r"(?<=[.!?])\s+", text) if s.strip()]
+
+
+def _normalise_sentence(text: str) -> str:
+    return re.sub(r"[\s\W_]+", "", text, flags=re.UNICODE).casefold()
+
+
+def _opening_docstring(exhibit_id: str) -> str:
+    path = ROOT / "examples" / (exhibit_id + ".py")
+    if not path.is_file():
+        return ""
+    doc = ast.get_docstring(ast.parse(path.read_text(encoding="utf-8"))) or ""
+    return doc.split("\n\n", 1)[0]
+
+
+def _opening_caption(text: str, lang: str) -> str:
+    return " ".join(_sentences(text, lang)[:2])
+
+
+def _content_words(text: str, lang: str) -> set[str]:
+    if lang == "ja":
+        # 助詞を拾わず、意味を担う漢字語・カタカナ語だけを比較する。
+        return set(re.findall(r"(?:[一-龯々〆ヵヶ]{2,}|[ァ-ヶー]{2,})", text))
+    return {word.casefold() for word in re.findall(r"[A-Za-z]{4,}", text)}
+
+
+# 移行中のバッチでも門を回せるよう、旧定型文だけは新しい四つの検査対象から外す。
+# 全件を書き換えた最終バッチでこの例外自体を削除する。
+def _is_legacy_lead(text: str, lang: str) -> bool:
+    if lang == "ja":
+        return "合成・計算したデータで条件を変え" in text or text.startswith("この展示は")
+    return "Using synthetic or computed data" in text or text.startswith("This exhibit")
+
+
+def test_lead_sentences_are_not_shared_by_four_exhibits():
+    """句読点を替えただけの定型文も、四展示へ使い回した時点で拒否する。"""
+    owners: dict[tuple[str, str], set[str]] = {}
+    for exhibit in _caption_exhibits():
+        for lang in ("ja", "en"):
+            lead = exhibit["lead_" + lang]
+            if _is_legacy_lead(lead, lang):
+                continue
+            for sentence in _sentences(lead, lang):
+                key = lang, _normalise_sentence(sentence)
+                owners.setdefault(key, set()).add(exhibit["id"])
+    repeated = [(lang, sentence, sorted(ids)) for (lang, sentence), ids in owners.items() if len(ids) >= 4]
+    assert not repeated, repeated[:20]
+
+
+def test_leads_do_not_open_with_exhibit_boilerplate():
+    rows = _caption_exhibits()
+    for lang, prefix in (("ja", "この展示は"), ("en", "This exhibit")):
+        active = [e for e in rows if not _is_legacy_lead(e["lead_" + lang], lang)]
+        count = sum(e["lead_" + lang].startswith(prefix) for e in active)
+        assert not active or count / len(active) <= 0.10, (lang, count, len(active))
+
+
+def test_each_lead_uses_two_source_content_words_beyond_the_title():
+    problems = []
+    for exhibit in _caption_exhibits():
+        doc = _opening_docstring(exhibit["id"])
+        for lang in ("ja", "en"):
+            lead = exhibit["lead_" + lang]
+            if _is_legacy_lead(lead, lang):
+                continue
+            title = exhibit["title_" + lang]
+            source = _opening_caption(exhibit["caption_" + lang], lang) + " " + doc
+            candidates = _content_words(source, lang) - _content_words(title, lang)
+            present = {word for word in candidates if word in lead.casefold()}
+            if len(present) < 2:
+                problems.append((exhibit["id"], lang, sorted(present), sorted(candidates)))
+    assert not problems, problems[:30]
+
+
+def test_leads_do_not_paste_the_full_title():
+    problems = []
+    for exhibit in _caption_exhibits():
+        for lang in ("ja", "en"):
+            lead = exhibit["lead_" + lang]
+            if not _is_legacy_lead(lead, lang) and exhibit["title_" + lang] in lead:
+                problems.append((exhibit["id"], lang))
+    assert not problems, problems[:30]
 
 
 def test_every_poc_has_a_short_plain_lead_in_both_languages():

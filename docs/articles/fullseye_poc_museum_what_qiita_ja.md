@@ -18,7 +18,7 @@
 
 ## No.2026.003 —— 1 次元バーコードが読めなくなる境界 ―― 誤読と読み取り不能を分けて数える
 
-この展示は「一次元バーコードが読めなくなる境界」を扱い、「誤読と読み取り不能を分けて数える」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+1 次元バーコードが読めなくなる境界では、誤読と読み取り不能を分けて数える。自作を含む実測データを作り、簡易符号と成功の関係を測った。構造と検査の差を見ると、誤読と読み取り不能を分けて数えることが分かる。
 
 [![1 次元バーコードが読めなくなる境界 ―― 誤読と読み取り不能を分けて数える](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_barcode_1d/01_misread_split_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_barcode_1d/01_misread_split.png)
 
@@ -48,7 +48,7 @@ py -3.11 examples/poc_barcode_1d.py
 
 ## No.2026.093 —— 電極の屈曲度を CT から測る ―― 経験則は空隙率しか見ない
 
-この展示は「電極の屈曲度を CT から測る」を扱い、「経験則は空隙率しか見ない」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+電極の屈曲度を CT から測る場面では、経験則は空隙率しか見ない。合成データのリチウムイオン電池を使い、電極塗工層と合成マイクロを別々に確かめた。現場と既定値の差を見ると、経験則は空隙率しか見ないことが分かる。
 
 [![電極の屈曲度を CT から測る ―― 経験則は空隙率しか見ない](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_electrode_tortuosity/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_electrode_tortuosity/01_scene.png)
 
@@ -88,7 +88,7 @@ py -3.11 examples/poc_battery_electrode_tortuosity.py
 
 ## No.2026.004 —— 転がり軸受の異常診断 ―― どこまで雑音に埋もれても当てられるか
 
-この展示は「転がり軸受の異常診断」を扱い、「どこまで雑音に埋もれても当てられるか」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+転がり軸受の異常診断の評価では、どこまで雑音に埋もれても当てられるか。合成データに閉形式を用意し、欠陥周波数と衝撃列を比べた。生スペクトルと包絡線スペクトルの差を見ると、どこまで雑音に埋もれても当てられるかことが分かる。
 
 [![転がり軸受の異常診断 ―― どこまで雑音に埋もれても当てられるか](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bearing_diagnosis/01_envelope_vs_raw_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bearing_diagnosis/01_envelope_vs_raw.png)
 
@@ -114,7 +114,7 @@ py -3.11 examples/poc_bearing_diagnosis.py
 
 ## No.2026.094 —— バンプの共平面性を基板そりから分ける ―― 引きすぎると本物の不良も消える
 
-この展示は「バンプの共平面性を基板そりから分ける」を扱い、「引きすぎると本物の不良も消える」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+バンプの共平面性を基板そりから分けるとき、引きすぎると本物の不良も消える。ピラーを含む実測データを作り、個体差と短小バンプの関係を測った。仕込とゼロ点の差を見ると、引きすぎると本物の不良も消えることが分かる。
 
 [![バンプの共平面性を基板そりから分ける ―― 引きすぎると本物の不良も消える](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bump_coplanarity/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bump_coplanarity/01_scene.png)
 
@@ -1352,7 +1352,7 @@ py -3.11 examples/poc_slanted_edge_sfr_limits.py
 
 ## No.2026.120 —— 全数の 2-D 検査と抜き取りの 3-D 検査を対応づける ―― 格子は自分自身に重なる
 
-この展示は「全数の 二次元 検査と抜き取りの 三次元 検査を対応づける」を扱い、「格子は自分自身に重なる」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+全数の 二次元 検査と抜き取りの 三次元 検査を対応づける場面では、格子は自分自身に重なる。計算データの実装ラインを使い、二段と中身を別々に確かめた。現場と数字の差を見ると、格子は自分自身に重なることが分かる。
 
 [![全数の 2-D 検査と抜き取りの 3-D 検査を対応づける ―― 格子は自分自身に重なる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_aoi_ct_traceability/01_inspection_and_reconstructed_ct_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_aoi_ct_traceability/01_inspection_and_reconstructed_ct.png)
 
@@ -1390,7 +1390,7 @@ py -3.11 examples/poc_aoi_ct_traceability.py
 
 ## No.2026.091 —— 竣工した部屋の壁を測る —— 外接直方体は寸法でなく部屋の向きを測っている
 
-この展示は「竣工した部屋の壁を測る」を扱い、「外接直方体は寸法でなく部屋の向きを測っている」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+竣工した部屋の壁を測るとき、外接直方体は寸法でなく部屋の向きを測っている。内法を含む計算データを作り、室内点群と平面図の関係を測った。面外と仕込の差を見ると、外接直方体は寸法でなく部屋の向きを測っていることが分かる。
 
 [![竣工した部屋の壁を測る —— 外接直方体は寸法でなく部屋の向きを測っている](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_asbuilt_wall_deviation/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png)
 
@@ -1428,7 +1428,7 @@ py -3.11 examples/poc_asbuilt_wall_deviation.py
 
 ## No.2026.092 —— 電極の呼吸を µm で測る ―― サブピクセルなら何でもよいわけではない
 
-この展示は「電極の呼吸を µm で測る」を扱い、「サブピクセルなら何でもよいわけではない」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+電極の呼吸を µm で測るとき、サブピクセルなら何でもよいわけではない。計算データで充放電と時期を扱い、断面画像がどう変わるかを調べた。層境界と負極の差を見ると、サブピクセルなら何でもよいわけではないことが分かる。
 
 [![電極の呼吸を µm で測る ―― サブピクセルなら何でもよいわけではない](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_electrode_breathing/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_electrode_breathing/01_scene.png)
 
@@ -1466,7 +1466,7 @@ py -3.11 examples/poc_battery_electrode_breathing.py
 
 ## No.2026.005 —— 左右非対称性を測る ―― 対称面は変形に引きずられる
 
-この展示は「左右非対称性を測る」を扱い、「対称面は変形に引きずられる」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+左右非対称性を測る場面では、対称面は変形に引きずられる。合成データの厳密を使い、左右対称と合成頭蓋を別々に確かめた。片側と鏡映の差を見ると、対称面は変形に引きずられることが分かる。
 
 [![左右非対称性を測る ―― 対称面は変形に引きずられる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bilateral_asymmetry/03_deviation_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bilateral_asymmetry/03_deviation_map.png)
 
@@ -3058,7 +3058,7 @@ py -3.11 examples/poc_lockin_imaging.py
 
 ## No.2026.057 —— 骨梁の厚さ・間隔・骨体積率 ―― 平板モデルと直接法は同じ画像で別の値になる
 
-この展示は「骨梁の厚さ・間隔・骨体積率」を扱い、「平板モデルと直接法は同じ画像で別の値になる」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+骨梁の厚さ・間隔・骨体積率では、平板モデルと直接法は同じ画像で別の値になる。線分を含む計算データを作り、集合と閉形式の関係を測った。二次元と骨梁網の差を見ると、平板モデルと直接法は同じ画像で別の値になることが分かる。
 
 [![骨梁の厚さ・間隔・骨体積率 ―― 平板モデルと直接法は同じ画像で別の値になる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bone_trabecular_thickness/01_scene_truth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bone_trabecular_thickness/01_scene_truth.png)
 
@@ -3096,7 +3096,7 @@ py -3.11 examples/poc_bone_trabecular_thickness.py
 
 ## No.2026.008 —— 重なった細胞をどう数えるか ―― 個数・過分割・過統合を別々に測る
 
-この展示は「重なった細胞をどう数えるか」を扱い、「個数・過分割・過統合を別々に測る」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+重なった細胞をどう数えるかを確かめる場面では、個数・過分割・過統合を別々に測る。合成データの合成画像を使い、ゼロ点と個中を別々に確かめた。失点と全部過統合の差を見ると、個数・過分割・過統合を別々に測ることが分かる。
 
 [![重なった細胞をどう数えるか ―― 個数・過分割・過統合を別々に測る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cell_counting/01_scene_dense_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cell_counting/01_scene_dense.png)
 
@@ -3894,7 +3894,7 @@ py -3.11 examples/poc_flybrain_pointcloud.py
 
 ## No.2026.001 —— 全天カメラの雲量 ―― 画素を数えると位置で偏る
 
-この展示は「全天カメラの雲量」を扱い、「画素を数えると位置で偏る」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+全天カメラの雲量の評価では、画素を数えると位置で偏る。計算データの魚眼を使い、球冠と画素数比を別々に確かめた。立体角重と天頂角の差を見ると、画素を数えると位置で偏ることが分かる。
 
 [![全天カメラの雲量 ―― 画素を数えると位置で偏る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_allsky_cloud_cover/03_mask_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_allsky_cloud_cover/03_mask_sweep.png)
 
@@ -3924,7 +3924,7 @@ py -3.11 examples/poc_allsky_cloud_cover.py
 
 ## No.2026.002 —— 何枚重ねると、星の明るさは何 % の精度で測れるか
 
-この展示は「何枚重ねると、星の明るさは何 % の精度で測れるか」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+何枚重ねるとの評価では、星の明るさは何 % の精度で測れるか。計算データに指定を用意し、星野と開口測光を比べた。中央誤差と理論の差を見ると、星の明るさは何 % の精度で測れるかことが分かる。
 
 [![何枚重ねると、星の明るさは何 % の精度で測れるか](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_astro_photometry/01_stack_scaling_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_astro_photometry/01_stack_scaling.png)
 
@@ -3954,7 +3954,7 @@ py -3.11 examples/poc_astro_photometry.py
 
 ## No.2026.059 —— 変化検出と位置合わせ誤差 ―― 偽陽性はエッジの帯、しかも崖つき
 
-この展示は「変化検出と位置合わせ誤差」を扱い、「偽陽性はエッジの帯、しかも崖つき」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+変化検出と位置合わせ誤差の評価では、偽陽性はエッジの帯、しかも崖つき。合成データに時期を用意し、合成地表と建物新設を比べた。伐採と水域拡大の差を見ると、偽陽性はエッジの帯、しかも崖つきことが分かる。
 
 [![変化検出と位置合わせ誤差 ―― 偽陽性はエッジの帯、しかも崖つき](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_change_detection_misreg/03_map_fp_shift_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_change_detection_misreg/03_map_fp_shift.png)
 

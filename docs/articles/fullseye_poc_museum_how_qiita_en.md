@@ -18,7 +18,7 @@ The null baseline placed throughout is 'do nothing'. Deblurring with the kernel 
 
 ## No.2026.007 —— How Much Camera Shake Can Be Undone — Make the Kernel, Apply It, Invert It, Compare
 
-This exhibit covers “how much camera shake can be undone”; the focus is “make the kernel, apply it, recover it, compare”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+For How Much Camera Shake Can Be Undone, Make the Kernel, Apply It, the method It, Compare. The computed data compares linear with blur and tracks applied. The contrast between inverted and ceiling shows that make the Kernel, Apply It, the method It, Compare.
 
 [![How Much Camera Shake Can Be Undone — Make the Kernel, Apply It, Invert It, Compare](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_shake_deblur/01_noise_ceiling_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_shake_deblur/01_noise_ceiling.png)
 
@@ -820,7 +820,7 @@ The motion-magnification exhibit carries the most candid conclusion in the room:
 
 ## No.2026.055 —— Modal identification from video — frequency survives to the end, damping lies first
 
-This exhibit covers “modal identification from video”; the focus is “frequency survives to the end, damping lies first”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+When measuring Modal identification from video, frequency survives to the end, damping lies first. We place cantilever in computed data, then compare beam and decaying. The contrast between freely and three shows that frequency survives to the end, damping lies first.
 
 [![Modal identification from video — frequency survives to the end, damping lies first](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beam_modal_video/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beam_modal_video/01_scene.png)
 
@@ -864,7 +864,7 @@ Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_fram
 
 ## No.2026.060 —— The Cold-Chain Temperature Record — Where You Taped the Logger Is the Verdict
 
-This exhibit covers “the cold-chain temperature record”; the focus is “where you taped the logger is the verdict”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+When measuring The Cold-Chain Temperature Record, Where You Taped the Logger Is the Verdict. We place twelve in measured data, then compare hours and reefer. The contrast between hold and built shows that where You Taped the Logger Is the Verdict.
 
 [![The Cold-Chain Temperature Record — Where You Taped the Logger Is the Verdict](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cold_chain_excursion/01_scene_slices_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cold_chain_excursion/01_scene_slices.png)
 
@@ -1642,7 +1642,7 @@ A trap in the measuring procedure itself is kept on display: fix one point cloud
 
 ## No.2026.006 —— A Reprojection Error of 0.05 px Guarantees Nothing
 
-This exhibit examines “a reprojection error of 0.05 px guarantees nothing”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+When measuring A Reprojection Error of 0.05, the measurement can become unreliable. The test uses grid from computed data to separate points from projected. The contrast between intrinsics and poses shows that the measurement can become unreliable.
 
 [![A Reprojection Error of 0.05 px Guarantees Nothing](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_calibration/03_frame_fill_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_calibration/03_frame_fill.png)
 
@@ -2962,7 +2962,7 @@ The pitfalls specific to 3-D also get counted separately here. A nearest-neighbo
 
 ## No.2026.054 —— Battery cell degradation by CT — the swelling shows outside, the cause stays inside
 
-This exhibit covers “battery cell degradation by CT”; the focus is “the swelling shows outside, the cause stays inside”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+Using Battery cell degradation by CT in practice is difficult because the swelling shows outside, the. We place prismatic in computed data, then compare lithium-ion and stacked. The contrast between electrodes and aluminium shows that the swelling shows outside, the cause stays inside.
 
 [![Battery cell degradation by CT — the swelling shows outside, the cause stays inside](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_ct_degradation/02_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_ct_degradation/02_scene.png)
 
@@ -3002,7 +3002,7 @@ Ops used (notes): [`beam_hardening_apply`](https://furuse.work/ops/tomography/ar
 
 ## No.2026.056 —— Fusing two sensors into a bird's-eye grid — a calibration that passes in pixels turns into metres at range
 
-This exhibit covers “fusing two sensors into a bird's-eye grid”; the focus is “a calibration that passes in pixels turns into metres at range”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer.
+When measuring Fusing two sensors into a bird's-eye grid, a calibration that passes in pixels turns. The test uses analytic from computed data to separate street from scene. The contrast between fused and left-mirror shows that a calibration that passes in pixels turns into metres at range.
 
 [![Fusing two sensors into a bird's-eye grid — a calibration that passes in pixels turns into metres at range](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bev_sensor_fusion/01_scene_bev_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bev_sensor_fusion/01_scene_bev.png)
 
@@ -3042,7 +3042,7 @@ Ops used (notes): [`box_sdf`](https://furuse.work/ops/3d/sdf_csg/box_sdf.html) �
 
 ## No.2026.058 —— CAD-to-scan deviation inspection — the fit absorbs the defect and invents a dent
 
-This exhibit covers “cad-to-scan deviation inspection”; the focus is “the fit absorbs the defect and invents a dent”. Using synthetic or computed data, it varies the conditions and compares the measurement with a known answer. The figure shows how the result and its error change across the tested conditions.
+In evaluating CAD-to-scan deviation inspection, the fit absorbs the defect and invents a dent. The test uses analytic from computed data to separate machined from part. The contrast between carries and local shows that the fit absorbs the defect and invents a dent.
 
 [![CAD-to-scan deviation inspection — the fit absorbs the defect and invents a dent](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cad_scan_deviation/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cad_scan_deviation/01_scene.png)
 

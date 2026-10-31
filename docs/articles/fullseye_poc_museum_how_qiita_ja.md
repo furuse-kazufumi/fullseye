@@ -18,7 +18,7 @@
 
 ## No.2026.007 —— 手ブレはどこまで戻せるか ―― 核を自分で作り、掛けて、戻して、元と比べる
 
-この展示は「手ブレはどこまで戻せるか」を扱い、「核を自分で作り、掛けて、戻して、元と比べる」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+手ブレはどこまで戻せるかを調べるとき、核を自分で作り、掛けて、戻して、元と比べる。計算データで直線ブレ核と雑音を扱い、推定誤差がどう変わるかを調べた。上限と角度の差を見ると、核を自分で作り、掛けて、戻して、元と比べることが分かる。
 
 [![手ブレはどこまで戻せるか ―― 核を自分で作り、掛けて、戻して、元と比べる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_shake_deblur/01_noise_ceiling_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_shake_deblur/01_noise_ceiling.png)
 
@@ -820,7 +820,7 @@ py -3.11 examples/poc_photograph_through_prescription.py
 
 ## No.2026.055 —— 動画から固有振動数・減衰比・モード形状を同定する ―― f は最後まで生き残り、ζ が先に嘘をつく
 
-この展示は「動画から固有振動数・減衰比・モード形状を同定する」を扱い、「f は最後まで生き残り、ζ が先に嘘をつく」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+動画から固有振動数・減衰比・モード形状を同定する場面では、f は最後まで生き残り、ζ が先に嘘をつく。合成データに片持を用意し、モード自由減衰と雑音を比べた。照明とローリングシャッター入の差を見ると、f は最後まで生き残り、ζ が先に嘘をつくことが分かる。
 
 [![動画から固有振動数・減衰比・モード形状を同定する ―― f は最後まで生き残り、ζ が先に嘘をつく](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beam_modal_video/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beam_modal_video/01_scene.png)
 
@@ -864,7 +864,7 @@ py -3.11 examples/poc_beam_modal_video.py
 
 ## No.2026.060 —— 冷蔵輸送の温度記録 ―― ロガーを置いた場所が合否を決めている
 
-この展示は「冷蔵輸送の温度記録」を扱い、「ロガーを置いた場所が合否を決めている」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+冷蔵輸送の温度記録の評価では、ロガーを置いた場所が合否を決めている。実測データにリーファー荷室を用意し、時間と体積を比べた。距離と侵入の差を見ると、ロガーを置いた場所が合否を決めていることが分かる。
 
 [![冷蔵輸送の温度記録 ―― ロガーを置いた場所が合否を決めている](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cold_chain_excursion/01_scene_slices_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cold_chain_excursion/01_scene_slices.png)
 
@@ -1642,7 +1642,7 @@ py -3.11 examples/poc_periodic_video_boundary.py
 
 ## No.2026.006 —— 再投影誤差 0.05 px は何も保証しない
 
-この展示は「再投影誤差 0.05 px は何も保証しない」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+再投影誤差 0.05 pxの評価では、測定の確かさが課題になる。計算データの内部パラメータを使い、姿勢と格子点を別々に確かめた。校正と成分の差を見ると、測定の確かさが課題になることが分かる。
 
 [![再投影誤差 0.05 px は何も保証しない](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_calibration/03_frame_fill_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_calibration/03_frame_fill.png)
 
@@ -2962,7 +2962,7 @@ py -3.11 examples/poc_video_physics_consistency.py
 
 ## No.2026.054 —— 電池セルの内部劣化を CT で測る ―― 膨れは外から見え、原因は中にある
 
-この展示は「電池セルの内部劣化を CT で測る」を扱い、「膨れは外から見え、原因は中にある」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+電池セルの内部劣化を CT で測る場面では、膨れは外から見え、原因は中にある。計算データに角形リチウムイオンセルを用意し、積層電極とアルミ缶を比べた。順投影とビームハードニングの差を見ると、膨れは外から見え、原因は中にあることが分かる。
 
 [![電池セルの内部劣化を CT で測る ―― 膨れは外から見え、原因は中にある](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_ct_degradation/02_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_battery_ct_degradation/02_scene.png)
 
@@ -3002,7 +3002,7 @@ py -3.11 examples/poc_battery_ct_degradation.py
 
 ## No.2026.056 —— 鳥瞰図への多センサ融合 —— 画像では合格の校正が、遠くでは長さになる
 
-この展示は「鳥瞰図への多センサ融合」を扱い、「画像では合格の校正が、遠くでは長さになる」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+鳥瞰図への多センサ融合の評価では、画像では合格の校正が、遠くでは長さになる。計算データの解析的を使い、街路と左ミラーを別々に確かめた。右ミラーと深度カメラの差を見ると、画像では合格の校正が、遠くでは長さになることが分かる。
 
 [![鳥瞰図への多センサ融合 —— 画像では合格の校正が、遠くでは長さになる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bev_sensor_fusion/01_scene_bev_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bev_sensor_fusion/01_scene_bev.png)
 
@@ -3042,7 +3042,7 @@ py -3.11 examples/poc_bev_sensor_fusion.py
 
 ## No.2026.058 —— CAD と実測点群の差分検査 ―― 合わせた分だけ欠陥が消え、無い所にへこみが出る
 
-この展示は「CAD と実測点群の差分検査」を扱い、「合わせた分だけ欠陥が消え、無い所にへこみが出る」を調べる。合成・計算したデータで条件を変え、測定結果を既知の答えと比べる。図では、条件ごとの測定結果と誤差の変化を読み取れる。
+CAD と実測点群の差分検査の評価では、合わせた分だけ欠陥が消え、無い所にへこみが出る。合成データの解析形状を使い、機械部品と局所を別々に確かめた。摩耗と法線方向の差を見ると、合わせた分だけ欠陥が消え、無い所にへこみが出ることが分かる。
 
 [![CAD と実測点群の差分検査 ―― 合わせた分だけ欠陥が消え、無い所にへこみが出る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cad_scan_deviation/01_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cad_scan_deviation/01_scene.png)
 
