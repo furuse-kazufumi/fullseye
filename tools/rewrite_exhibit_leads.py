@@ -97,6 +97,9 @@ def title_parts(title: str, lang: str) -> tuple[str, str]:
             return bits[0].strip(), bits[1].strip()
         cut = max(2, len(title) * 2 // 3)
         return title[:cut].rstrip(), "測定の確かさが課題になる"
+    bits = re.split(r"[?,]", title, maxsplit=1)
+    if len(bits) == 2 and bits[0].strip():
+        return bits[0].strip(), bits[1].strip() or "the measurement can become unreliable"
     words = title.split()
     cut = max(2, len(words) * 2 // 3)
     return " ".join(words[:cut]), "the measurement can become unreliable"
