@@ -195,6 +195,7 @@ def _inject_anim3d(d, tmp_path, langs):
         "motion": True,
         "source_url": "",
         "label": tr,
+        "lead": tr,
         "see": tr,
         "num": {lang: "" for lang in d["langs"]},
         "youtube_url": "",
