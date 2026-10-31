@@ -745,7 +745,8 @@ function draw2d(tab){
   }
   const T_ = arr(tab.frames).shape[0], f = Math.min(T_-1, Math.max(0, Math.floor(frame)));
   ctx.drawImage(fimg, 0, 0, W*k, H*k);
-  let hud = U('frame') + ' ' + f + ' / ' + (T_-1) + '  (' + (f * tab.dt).toFixed(2) + ' s)';
+  let hud = tab.axis ? '<b>' + esc(axisText(tab, f)) + '</b>  <span style="opacity:.7">(' + U('frame') + ' ' + f + ' / ' + (T_-1) + ')</span>'
+    : U('frame') + ' ' + f + ' / ' + (T_-1) + '  (' + (f * tab.dt).toFixed(2) + ' s)';
   for (const b of tab.boxes) {
     const fl = b.flag ? b.flag[f] : false, [x, y] = b.xy[f], w = b.size[0]*k, h = b.size[1]*k;
     ctx.strokeStyle = fl ? b.flag_color : b.color; ctx.lineWidth = Math.max(2, k * 0.8);
@@ -758,7 +759,7 @@ function draw2d(tab){
     hud += '<br><span style="color:' + esc(s.color) + '">■</span> ' + line;
   }
   $('hud').innerHTML = hud;
-  $('tlabel').textContent = (f * tab.dt).toFixed(2) + ' s';
+  $('tlabel').textContent = tab.axis ? axisText(tab, f) : (f * tab.dt).toFixed(2) + ' s';
   $('scrub').value = String(Math.round(f / Math.max(1, T_-1) * 1000));
   drawPlot(tab, f);
 }

@@ -2809,6 +2809,11 @@ function axisText(tab, f){
 }
 """
 _JS_AXIS_SUBS = (
+    ("""  let hud = U('frame') + ' ' + f + ' / ' + (T_-1) + '  (' + (f * tab.dt).toFixed(2) + ' s)';\n""",
+     """  let hud = tab.axis ? '<b>' + esc(axisText(tab, f)) + '</b>  <span style="opacity:.7">(' + U('frame') + ' ' + f + ' / ' + (T_-1) + ')</span>'
+    : U('frame') + ' ' + f + ' / ' + (T_-1) + '  (' + (f * tab.dt).toFixed(2) + ' s)';\n"""),
+    ("""  $('tlabel').textContent = (f * tab.dt).toFixed(2) + ' s';\n""",
+     """  $('tlabel').textContent = tab.axis ? axisText(tab, f) : (f * tab.dt).toFixed(2) + ' s';\n"""),
     ("""  let hud = U('frame') + ' ' + f + ' / ' + (T_-1) + '  (' + (tab.t[f] - tab.t[0]).toFixed(2) + ' s)';\n""",
      """  let hud = tab.axis ? '<b>' + esc(axisText(tab, f)) + '</b>  <span style="opacity:.7">(' + U('frame') + ' ' + f + ' / ' + (T_-1) + ')</span>'
     : U('frame') + ' ' + f + ' / ' + (T_-1) + '  (' + (tab.t[f] - tab.t[0]).toFixed(2) + ' s)';\n"""),

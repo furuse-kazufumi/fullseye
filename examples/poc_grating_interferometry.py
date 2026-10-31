@@ -7,6 +7,14 @@
 暗視野は「縞の振幅がどれだけ落ちたか」で、画素より小さい構造の小角散乱を測る。この PoC は、その一連を Fullseye の
 op(`gratinginterf`、`opsoptics` の `grating_interf`、8 本)だけで組み、閉形式・第 2 実装・公開の実データで採点する。
 
+タルボ効果 = 周期 p の格子にコヒーレントな光(X 線)を当てると、レンズ無しでも格子の後ろのタルボ距離 2p²/λ ごとに
+格子の像が自分で再生する現象。タルボ絨毯 = 格子の後ろの強度 I(x, z) を距離 z に沿って並べた図で、縞が現れては消える
+模様が織物の絨毯に見えることから。位相格子では最もコントラストの高い像がタルボ距離の分数の位置(分数タルボ距離)に来る。
+
+Talbot effect: behind a grating of period p lit by coherent light (or X-rays), the grating's own image re-forms without any lens at every
+Talbot length 2p²/λ. Talbot carpet: the intensity I(x, z) behind the grating laid out along the distance z, whose fringes appear and vanish
+like a woven carpet; for phase gratings the sharpest images sit at fractions of the Talbot length (fractional Talbot distances).
+
   1. **タルボ絨毯**: 位相 π の格子の後ろの強度 I(x, z) を回折次数の和で出す(``talbot_carpet``、厳密な角スペクトル)。
      縞の可視度の極大が分数タルボ距離 (m − 1/2)·p²/(4λ)(Weitkamp ら 2005)に立ち、高さは方形波の基本波 4/π。
      第 2 実装 = 1 周期を標本化した場の FFT 伝搬(``optics.angular_spectrum_propagate``)。
