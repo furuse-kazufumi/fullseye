@@ -44,10 +44,22 @@ def _data(spec):
 
 def test_series_range_is_automatic_and_python_mapping_keeps_mm_values_in_frame():
     d = _data(_spec()); s = d["tabs"][0]["series"][0]
-    assert s["lo"] < 0.001 and s["hi"] > 0.003
+    assert s["lo"] == 0.0 and s["hi"] > 0.003
     assert s["lo"] < s["threshold"] < s["hi"]
     y = [pv._series_y(v, s["lo"], s["hi"], 8, 128) for v in s["values"]]
     assert all(8 <= q <= 128 for q in y)
+    assert pv._format_sig(-0.305577491) == "-0.306"
+    assert pv._format_sig(6.41712731) == "6.42"
+
+
+def test_indexed_png_roundtrip_is_exact_and_smaller_for_scientific_panels():
+    a = np.zeros((192, 256, 3), np.uint8)
+    a[:, :128] = [0, 102, 255]; a[:, 128:] = [255, 255, 255]
+    rec = pv._encode_array(a[None], "png")
+    assert pv._decode_array(rec).shape == (1, 192, 256, 3)
+    assert np.array_equal(pv._decode_array(rec)[0], a)
+    import base64
+    assert len(base64.b64decode(rec["png"][0])) < a.nbytes // 20
 
 
 def test_dynamic_and_static_body_fields_pack_with_global_colorbar_and_reject_bad_input():
@@ -98,6 +110,17 @@ def test_every_published_anim3d_page_passes_the_motion_gate():
         m = re.search(r"const D = (\{.*?\});\nconst \$ = ", path.read_text(encoding="utf-8"), re.S)
         if m:
             pv.viewer_motion_gate_data(json.loads(m.group(1)))
+
+
+def test_published_quality_gate_has_named_legacy_exemptions_and_no_stale_names():
+    exemptions = json.loads((ROOT / "tools" / "viewer_quality_exemptions.json").read_text(encoding="utf-8"))
+    seen = set()
+    for path in sorted((ROOT / "docs" / "view2026" / "anim3d").glob("*.html")):
+        m = re.search(r"const D = (\{.*?\});\nconst \$ = ", path.read_text(encoding="utf-8"), re.S)
+        if m:
+            data = json.loads(m.group(1)); seen.add(data["id"])
+            pv.viewer_quality_gate_data(data, exemptions)
+    assert set(exemptions) <= seen
 
 
 @pytest.mark.skipif(shutil.which("node") is None, reason="node が無い")

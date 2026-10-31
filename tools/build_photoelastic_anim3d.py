@@ -8,6 +8,7 @@ import sys
 from pathlib import Path
 
 import numpy as np
+from PIL import Image, ImageDraw
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
@@ -25,6 +26,10 @@ LOADS = (240.0, 480.0, 720.0)
 READ_NOISE = 0.01
 FULL_WELL = 10_000
 ADC_LEVELS = 256
+FRAME_COUNT = 24
+FIELD_SIZE = 161
+SURFACE_SIZE = 101
+PANEL_SIZE = 256
 
 
 def _disc(n=48):
@@ -164,14 +169,13 @@ def fringe_frames(load_values, size=57):
 def _grid_mesh(x, y, inside, scale=100.0):
     """Triangulate only complete grid cells; holes and specimen rims stay real geometry."""
     h, w = inside.shape
-    ids = -np.ones((h, w), int)
-    ids[inside] = np.arange(int(inside.sum()))
-    pos = np.c_[x[inside] * scale, y[inside] * scale, np.zeros(int(inside.sum()))]
+    ids = np.arange(h * w, dtype=int).reshape(h, w)
+    pos = np.c_[x.ravel() * scale, y.ravel() * scale, np.zeros(h * w)]
     faces = []
     for r in range(h - 1):
         for c in range(w - 1):
             q = ids[r:r + 2, c:c + 2]
-            if np.all(q >= 0):
+            if np.all(inside[r:r + 2, c:c + 2]):
                 faces.extend([[q[0, 0], q[0, 1], q[1, 1]], [q[0, 0], q[1, 1], q[1, 0]]])
     return pos, np.asarray(faces, int), ids
 
@@ -210,17 +214,24 @@ def _rgb_white_light(diff, angle, inside, thickness=THICKNESS, noise=0.0, fade=0
         order=pe.photoelastic_retardation(diff,thickness,COEFF,532e-9)["fringe_order"]
         rgb=.5+(rgb-.5)*np.exp(-fade*np.maximum(order-3,0))[...,None]
     if noise:
-        rgb += np.random.default_rng(seed).normal(0,noise,rgb.shape)
+        # Smooth fixed-pattern sensor noise: visible in the limit panel without
+        # spending the page budget on incompressible independent RGB speckle.
+        rng=np.random.default_rng(seed);h,w=rgb.shape[:2]
+        low=rng.normal(0,noise,(max(2,(h+7)//8),max(2,(w+7)//8),3)).astype(np.float32)
+        smooth=np.stack([np.asarray(Image.fromarray(low[...,c],"F").resize((w,h),Image.Resampling.BILINEAR)) for c in range(3)],-1)
+        rgb += smooth
     rgb=np.where(inside[...,None],rgb,.012)
     return np.uint8(np.clip(rgb,0,1)*255)
 
 
 def _map_rgb(a, inside, lo=None, hi=None, diverging=False):
+    """Map a scalar field to the same blue-white-red / sequential colours used in panels."""
     v=np.asarray(a,float); good=inside & np.isfinite(v)
     if lo is None: lo=float(np.percentile(v[good],2)) if np.any(good) else 0.0
     if hi is None: hi=float(np.percentile(v[good],98)) if np.any(good) else 1.0
-    u=np.clip((v-lo)/max(hi-lo,1e-12),0,1)
+    u=np.clip((v-lo)/max(hi-lo,1e-30),0,1)
     if diverging:
+        # Exact white at zero for symmetric lo/hi, saturated blue/red at the limits.
         rgb=np.stack([np.clip(2*u,0,1),1-np.abs(2*u-1),np.clip(2*(1-u),0,1)],-1)
     else:
         rgb=np.stack([.15+.85*u,.25+.65*np.sqrt(u),.75-.65*u],-1)
@@ -228,62 +239,142 @@ def _map_rgb(a, inside, lo=None, hi=None, diverging=False):
     return np.uint8(np.clip(rgb,0,1)*255)
 
 
-def _profile_image(truth, estimate, width=96, height=48):
-    im=np.full((height,width,3),12,np.uint8); n=len(truth); vmax=max(float(np.max(truth)),float(np.max(estimate)),1e-9)
-    def draw(y,color):
-        xx=np.linspace(4,width-5,n); yy=height-6-(height-12)*np.clip(y/vmax,0,1)
-        for i in range(n-1):
-            steps=max(1,int(abs(xx[i+1]-xx[i]))+1)
-            xs=np.linspace(xx[i],xx[i+1],steps).astype(int); ys=np.linspace(yy[i],yy[i+1],steps).astype(int)
-            im[np.clip(ys,0,height-1),np.clip(xs,0,width-1)]=color
-    im[height-6,4:width-4]=70; im[5:height-5,4]=70
-    draw(truth,[79,195,247]); draw(estimate,[255,183,77]); return im
+def _quantize_rgb(rgb, levels=5):
+    """Deterministic colour cube (5³=125 colours), allowing indexed lossless PNG storage."""
+    a=np.asarray(rgb,np.uint8);q=np.rint(a.astype(float)*(levels-1)/255).astype(np.uint8)
+    return np.rint(q.astype(float)*255/(levels-1)).astype(np.uint8)
 
 
-def _field_sweep(kind, values, size=29, noisy=False, fade=0.0):
-    """One op-driven array set feeds the 3-D field and synchronized panels (a)-(d)."""
+def _resize_rgb(rgb, width=PANEL_SIZE, height=PANEL_SIZE):
+    a=np.asarray(Image.fromarray(np.asarray(rgb,np.uint8),"RGB").resize((width,height),Image.Resampling.LANCZOS))
+    return _quantize_rgb(a)
+
+
+def _scalar_panel(a, inside, lo, hi, diverging=False, note="", unit="fringe"):
+    """A native 256 px scientific panel with a labelled colour band."""
+    field_w=PANEL_SIZE-42
+    rgb=_resize_rgb(_map_rgb(a,inside,lo,hi,diverging),field_w,PANEL_SIZE)
+    im=Image.new("RGB",(PANEL_SIZE,PANEL_SIZE),(12,16,21)); im.paste(Image.fromarray(rgb),(0,0))
+    dr=ImageDraw.Draw(im); x0=field_w+8; y0,y1=18,PANEL_SIZE-18
+    for y in range(y0,y1):
+        u=1-(y-y0)/max(1,y1-y0-1); val=lo+u*(hi-lo)
+        col=_map_rgb(np.array([[val]]),np.ones((1,1),bool),lo,hi,diverging)[0,0]
+        dr.line((x0,y,x0+12,y),fill=tuple(int(v) for v in col))
+    dr.rectangle((x0,y0,x0+12,y1),outline=(220,225,230))
+    dr.text((x0+15,y0-4),"%.2g"%hi,fill=(235,238,241));dr.text((x0+15,y1-8),"%.2g"%lo,fill=(235,238,241))
+    if unit: dr.text((x0-1,PANEL_SIZE-14),unit,fill=(190,198,207))
+    if note:
+        dr.rectangle((4,4,min(field_w-3,8+6*len(note)),18),fill=(8,12,16))
+        dr.text((7,6),note,fill=(255,255,255))
+    return _quantize_rgb(np.asarray(im))
+
+
+def _isoclinic_panel(angle_deg, inside, defined=True):
+    """Principal-direction map plus a curved family of 15-degree isoclinics."""
+    th=np.mod(np.asarray(angle_deg,float),90.0); u=th/90.0
+    rgb=np.stack([.50+.45*np.cos(2*np.pi*u),.50+.45*np.cos(2*np.pi*(u-1/3)),
+                  .50+.45*np.cos(2*np.pi*(u-2/3))],-1)
+    rgb=np.uint8(np.clip(rgb,0,1)*255); rgb[~inside]=3
+    # Circular angular distance draws the family itself, rather than multiplying by isochromatic intensity.
+    contour=np.zeros_like(inside)
+    for lev in np.arange(0,90,15):
+        d=np.abs((th-lev+45)%90-45); contour|=(d<1.1)&inside
+    rgb[contour]=(245,245,245)
+    out=Image.fromarray(_resize_rgb(rgb),"RGB"); dr=ImageDraw.Draw(out)
+    dr.rectangle((4,4,151,18),fill=(8,12,16));dr.text((7,6),"isoclinics: 15 deg family",fill=(255,255,255))
+    if not defined: dr.text((7,22),"P=0: direction undefined",fill=(255,190,80))
+    return _quantize_rgb(np.asarray(out))
+
+
+def _isoclinic_curvature_px(angle_deg, inside):
+    """Largest horizontal excursion of a constant-angle curve; a vertical stripe is near zero."""
+    th=np.mod(np.asarray(angle_deg,float),90.0); best=0.0
+    for lev in np.arange(0,90,15):
+        d=np.abs((th-lev+45)%90-45); m=(d<1.1)&inside
+        centres=[float(np.mean(np.flatnonzero(row))) for row in m if np.any(row)]
+        if len(centres)>2: best=max(best,float(np.ptp(centres)))
+    return best
+
+
+def _profile_image(truth, estimate, width=PANEL_SIZE, height=PANEL_SIZE):
+    """Closed form is a wide translucent blue underlay; estimate is a thin orange overlay."""
+    truth=np.asarray(truth,float);estimate=np.asarray(estimate,float);n=len(truth)
+    im=Image.new("RGB",(width,height),(12,16,21));dr=ImageDraw.Draw(im,"RGBA")
+    left,right,top,bottom=42,width-12,31,height-28
+    vmax=max(float(np.max(truth)),float(np.max(estimate)),1e-12)
+    xx=np.linspace(left,right,n)
+    def pts(y): return [(float(x),float(bottom-(bottom-top)*np.clip(v/vmax,0,1))) for x,v in zip(xx,y)]
+    dr.line((left,bottom,right,bottom),fill=(130,140,150,255),width=1);dr.line((left,top,left,bottom),fill=(130,140,150,255),width=1)
+    dr.line(pts(truth),fill=(79,195,247,145),width=8);dr.line(pts(estimate),fill=(255,183,77,255),width=3)
+    rms=float(np.sqrt(np.mean((truth-estimate)**2)))
+    dr.text((8,7),"closed blue | estimate orange; RMS=%.3g MPa"%rms,fill=(238,241,244,255))
+    dr.text((left,bottom+6),"horizontal diameter",fill=(190,198,207,255));dr.text((5,top),"MPa",fill=(190,198,207,255))
+    return _quantize_rgb(np.asarray(im)),rms
+
+
+def _combined_error_panel(n_panel, error_panel):
+    """Keep the error map full-size and place the unwrapped N map in a readable inset."""
+    out=Image.fromarray(np.asarray(error_panel,np.uint8),"RGB"); inset=Image.fromarray(np.asarray(n_panel,np.uint8),"RGB").resize((104,104),Image.Resampling.NEAREST)
+    out.paste(inset,(5,PANEL_SIZE-109));dr=ImageDraw.Draw(out);dr.rectangle((4,PANEL_SIZE-110,109,PANEL_SIZE-4),outline=(255,255,255),width=1)
+    return _quantize_rgb(np.asarray(out))
+
+
+def _field_sweep(kind, values, size=FIELD_SIZE, noisy=False, fade=0.0):
+    """One op-driven array set feeds dense 3-D vertex colours and native-resolution panels."""
     rgb3,fringe_images,iso,nmap,errmap,profiles,diffs,raw_height=[],[],[],[],[],[],[],[]
-    nmap_data,profile_data=[],[]
-    mesh=None
+    nmap_data,profile_data,error_max,profile_rms,isoc_curvature=[],[],[],[],[]
+    mesh=surface_mesh=None; surface_diff=[]
+    sel=np.unique(np.rint(np.linspace(0,size-1,SURFACE_SIZE)).astype(int))
     for k,value in enumerate(values):
         if kind=="disc":
             g=pe.brazilian_disc_stress(RADIUS,THICKNESS,max(float(value),1e-6),size=size)
         else:
             g=pe.kirsch_plate_stress(.005,max(float(value),1.0),half_width_m=.02,size=size)
         p=pe.principal_stress(g["sxx"],g["syy"],g["txy"]); inside=g["inside"]
-        if mesh is None: mesh=_grid_mesh(g["x"],g["y"],inside)
+        if mesh is None:
+            mesh=_grid_mesh(g["x"],g["y"],inside)
+            surface_mesh=_grid_mesh(g["x"][np.ix_(sel,sel)],g["y"][np.ix_(sel,sel)],inside[np.ix_(sel,sel)])
         ret=[]; phases=[]
         for lam in WAVELENGTHS_NM:
             rr=pe.photoelastic_retardation(p["difference"],THICKNESS,COEFF,lam*1e-9); ret.append(rr)
             phases.append(np.abs(np.mod(rr["delta_rad"]+np.pi,2*np.pi)-np.pi))
-        # The displayed inverse follows the same multi-wavelength op as the PoC.
         uw=pe.retardation_unwrap_multiwavelength(phases,WAVELENGTHS_NM.tolist(),12000.0)
         n_true=ret[1]["fringe_order"]; n_hat=uw["retardation_nm"]/WAVELENGTHS_NM[1]
-        # Exercise the polarization forward and inverse ops on the same field.
         pol=pe.photoelastic_polarization_images(ret[1]["delta_rad"],p["angle_deg"]+90,"stokes6")
         phase=pe.photoelastic_phase_estimate(pol,"stokes6",sum_tolerance=.08)
-        isoc=np.sin(np.deg2rad(2*p["angle_deg"]))**2*np.sin(ret[1]["delta_rad"]/2)**2
-        rgb=_rgb_white_light(p["difference"],p["angle_deg"],inside,noise=.018 if noisy else 0,
+        rgb=_rgb_white_light(p["difference"],p["angle_deg"],inside,noise=.003 if noisy else 0,
                              fade=fade,seed=900+k)
-        rgb3.append(rgb[inside]);fringe_images.append(rgb);iso.append(_map_rgb(isoc,inside,0,1));nmap.append(_map_rgb(n_hat,inside,0,max(1,float(np.percentile(n_true[inside],98)))))
-        e=np.where(inside,n_hat-n_true,np.nan); lim=max(.02,float(np.nanpercentile(np.abs(e),98)))
-        errmap.append(_map_rgb(e,inside,-lim,lim,True));diffs.append(p["difference"][inside]/1e6)
-        # Height is σ1−σ2, while x/y stay the specimen's physical coordinates.
-        raw_height.append(p["difference"][inside])
+        rgb3.append(_quantize_rgb(rgb));fringe_images.append(_resize_rgb(rgb));iso.append(_isoclinic_panel(p["angle_deg"],inside,float(value)>1e-5))
+        if float(value)>1e-5: isoc_curvature.append(_isoclinic_curvature_px(p["angle_deg"],inside))
+        n_hi=max(1,float(np.percentile(n_true[inside],98)))
+        nmap.append(_scalar_panel(n_hat,inside,0,n_hi,False,"N (multi-wavelength)","fringe"))
+        true_nm=THICKNESS*COEFF*p["difference"]*1e9
+        resolved=inside & uw["valid"] & (true_nm<12000.0)
+        e=np.where(resolved,n_hat-n_true,np.nan); absmax=float(np.nanmax(np.abs(e)));lim=max(absmax,1e-15)
+        error_max.append(absmax)
+        errmap.append(_scalar_panel(e,resolved,-lim,lim,True,"max |error| = %.2g fringe"%absmax,"fringe"))
+        diffs.append(p["difference"].ravel()/1e6);raw_height.append(p["difference"].ravel())
+        surface_diff.append(p["difference"][np.ix_(sel,sel)].ravel()/1e6)
         row=size//2; valid=np.flatnonzero(inside[row]); truth=p["difference"][row,valid]/1e6
         estimate=(n_hat[row,valid]*WAVELENGTHS_NM[1]*1e-9/(THICKNESS*COEFF))/1e6
-        profiles.append(_profile_image(truth,estimate))
-        nmap_data.append(np.where(inside,n_hat,0.0))
+        prof,rms=_profile_image(truth,estimate);profiles.append(prof);profile_rms.append(rms)
+        # CSV stays a regular 27x27 sampling of N(x,y); the visible panel and
+        # the 3-D field retain the full 161x161 calculation.
+        nmap_data.append(np.where(inside,n_hat,0.0)[::6,::6])
         profile_data.append(np.stack([truth,estimate]))
         assert phase["delta_rad"].shape == p["difference"].shape
-    # A global vertical scale preserves the load-dependent surface amplitude.
     zref=max(float(np.percentile(raw_height[-1],98)),1.0)
-    positions=np.stack([np.c_[mesh[0][:,:2],.08+1.15*np.clip(z/zref,0,1)] for z in raw_height])
+    surface_delta=1.15*np.clip(raw_height[-1].reshape(size,size)[np.ix_(sel,sel)].ravel()/zref,0,1)
+    surface_mesh[0][:,2]=.08
+    scale=np.asarray(values,float)/max(float(values[-1]),1e-30)
     panes=[np.stack(fringe_images),np.stack(iso),
-           np.concatenate([np.stack(nmap),np.stack(errmap)],axis=2),np.stack(profiles)]
+           np.stack([_combined_error_panel(n,e) for n,e in zip(nmap,errmap)]),np.stack(profiles)]
     pane_data=[None,None,np.stack(nmap_data),np.stack(profile_data)]
-    return {"pos":mesh[0],"faces":mesh[1],"rgb":np.stack([x for x in rgb3]),"diff":np.stack(diffs),
-            "surface_pos":positions,"panes":panes,"pane_data":pane_data}
+    return {"pos":mesh[0],"faces":mesh[1],"rgb":np.stack(rgb3),"diff":np.stack(diffs),
+            "surface_pos":surface_mesh[0],"surface_faces":surface_mesh[1],"surface_z":surface_delta,
+            "surface_diff":surface_diff[-1],"surface_scale":scale,"panes":panes,"pane_data":pane_data,
+            "error_max":max(error_max),"profile_rms":max(profile_rms),
+            "isoclinic_curvature_px":max(isoc_curvature or [0.0])}
 
 
 def scientific_gates():
@@ -317,20 +408,20 @@ def _lesson(qj, qe, choices, answer, ej, ee, formula, lj, le):
 
 
 def build_spec():
-    rows=measurements(); gates=scientific_gates(); frames=9; time=np.arange(frames)/8.0
-    loads=np.linspace(0,720,frames); remote=np.linspace(.05e6,1e6,frames); high=np.linspace(0,1800,frames)
+    rows=measurements(); gates=scientific_gates(); frames=FRAME_COUNT; time=np.arange(frames)/(frames-1)
+    loads=np.linspace(0,720,frames); remote=np.linspace(.05e6,1e6,frames); high=np.linspace(0,1500,frames)
     disc=_field_sweep("disc",loads); hole=_field_sweep("hole",remote); limit=_field_sweep("disc",high,noisy=True,fade=.32)
     shoe1=_contact_shoe(1);shoe2=_contact_shoe(-1);rim=_hole_rim()
     pane_labels=[T("(a) 白色光・暗視野の等色線", "(a) white-light dark-field isochromatics"),
                  T("(b) 等傾線", "(b) isoclinics"),
                  T("(c) 縞次数 N | 閉形式との差", "(c) fringe order N | error from closed form"),
-                 T("(d) 水平直径: 推定（橙）/閉形式（青）", "(d) horizontal diameter: estimate (orange) / closed form (blue)")]
-    def panes(field):
+                 T("(d) 水平直径: 閉形式（太い青）/推定（細い橙）", "(d) horizontal diameter: closed form (wide blue) / estimate (thin orange)")]
+    def panes(field, include_data=False):
         units=[None,None,"fringe order N","MPa (truth | estimate)"]
         out=[]
         for j,lab in enumerate(pane_labels):
             p={"label":lab,"frames":field["panes"][j],"png":True}
-            if field["pane_data"][j] is not None:
+            if include_data and field["pane_data"][j] is not None:
                 p.update(data=field["pane_data"][j],data_unit=units[j])
             out.append(p)
         return out
@@ -344,7 +435,9 @@ def build_spec():
         {"name":"hole_edge","pos":rim[0],"faces":rim[1],"rgb":[235,235,225]}]
     hx,hq=poses(2)
     ub=[{"name":"disc_fringe","pos":disc["pos"],"faces":disc["faces"],"rgb":disc["rgb"],"alpha":.48},
-        {"name":"stress_difference_surface","pos":disc["surface_pos"],"faces":disc["faces"],"val":disc["diff"],"alpha":.68},
+        {"name":"stress_difference_surface","pos":disc["surface_pos"],"z":disc["surface_z"],
+         "z_scale":disc["surface_scale"],"faces":disc["surface_faces"],"val":disc["surface_diff"],
+         "val_scale":disc["surface_scale"],"alpha":.68},
         {"name":"upper_contact_shoe","pos":shoe1[0],"faces":shoe1[1],"rgb":[210,115,70]},
         {"name":"lower_contact_shoe","pos":shoe2[0],"faces":shoe2[1],"rgb":[210,115,70]}]
     ux,uq=poses(4);ux[:,2,1]=approach;ux[:,3,1]=-approach
@@ -371,7 +464,7 @@ def build_spec():
     hi=float(np.max(disc["diff"]))
     tabs.append(pv.viewer_anim3d_tab("unwrap",T("③ 巻き戻しと誤差","③ Unwrap and error"),"passed",
       T("半透明曲面の高さと色は σ₁−σ₂、(c) 左は多波長で巻き戻した N、右は閉形式との差。根拠: 数値模型を閉形式で検証。", "The translucent surface height and color are σ1−σ2; panel (c) shows multi-wavelength N and its closed-form error. Evidence: numerical model checked by closed form."),
-      time,ub,ux,uq,panes=panes(disc),series=series_load,axis=axis_load,cbar={"lo":0,"hi":hi,"unit":"MPa","cmap":"seq","label":T("σ₁−σ₂","σ1−σ2")},checks=[
+      time,ub,ux,uq,panes=panes(disc,True),series=series_load,axis=axis_load,cbar={"lo":0,"hi":hi,"unit":"MPa","cmap":"seq","label":T("σ₁−σ₂","σ1−σ2")},checks=[
         {"what":T("多波長巻き戻し N の RMS","RMS fringe-order error after multi-wavelength unwrap"),"criterion":"< 1e-6 fringe","result":"%.3e fringe"%gates["order_rms"],"ok":gates["order_rms"]<1e-6},
         {"what":T("低変調による失敗の等方点への集中","low-modulation failures concentrated at isotropic points"),"criterion":T("等方域の失敗率 > その他","failure rate in isotropic region > elsewhere"),"result":T("等方 %.1f%% / その他 %.1f%%"%(100*gates["iso_fail"],100*gates["other_fail"]),"isotropic %.1f%% / elsewhere %.1f%%"%(100*gates["iso_fail"],100*gates["other_fail"])),"ok":gates["iso_fail"]>gates["other_fail"]}],
       lesson=_lesson("巻き戻しは最大応力から壊れる？","Does unwrapping fail first at maximum stress?",[("はい","yes, at maximum stress"),("いいえ、低変調域","no, at low modulation")],1,"等方点では位相軸が定まらず、応力が小さくても失敗する。","At isotropic points the phase axis is undefined, so failure can occur at low stress.",T("R=tC(σ₁−σ₂)","R=tC(σ1−σ2)"),"実験校正なしに定量応力を保証できない。","Quantitative stress is not guaranteed without experimental calibration."),view={"az":-.9,"el":.48,"dist":1.05}))
@@ -385,6 +478,11 @@ def build_spec():
       T("荷重つまみを動かし、(a)〜(d) と 3-D が同期することを確かめる","Move the load slider and verify that 3-D and panels (a)-(d) stay synchronized"),tabs,
       credit=T("合成データ。応力場は brazilian_disc_stress / kirsch_plate_stress、偏光と巻き戻しは photoelastic op。","Synthetic data. Stress uses brazilian_disc_stress / kirsch_plate_stress; polarization and unwrapping use photoelastic ops."))
     spec["generated"]="2026-10-31"
+    spec["_acceptance"]={"frames":frames,"field_grid":FIELD_SIZE,"panel_size":PANEL_SIZE,
+      "disc_vertices":len(disc["pos"]),"hole_vertices":len(hole["pos"]),"surface_vertices":len(disc["surface_pos"]),
+      "max_error_fringe":max(disc["error_max"],hole["error_max"],limit["error_max"]),
+      "profile_rms_mpa":max(disc["profile_rms"],hole["profile_rms"],limit["profile_rms"]),
+      "isoclinic_curvature_px":disc["isoclinic_curvature_px"]}
     return spec
 
 

@@ -101,14 +101,14 @@
    "hi": "(c) fringe order N | error from closed form",
    "fr": "(c) fringe order N | error from closed form"
   },
-  "(d) horizontal diameter: estimate (orange) / closed form (blue)": {
-   "ja": "(d) 水平直径: 推定（橙）/閉形式（青）",
-   "zh": "(d) horizontal diameter: estimate (orange) / closed form (blue)",
-   "tw": "(d) horizontal diameter: estimate (orange) / closed form (blue)",
-   "ko": "(d) horizontal diameter: estimate (orange) / closed form (blue)",
-   "de": "(d) horizontal diameter: estimate (orange) / closed form (blue)",
-   "hi": "(d) horizontal diameter: estimate (orange) / closed form (blue)",
-   "fr": "(d) horizontal diameter: estimate (orange) / closed form (blue)"
+  "(d) horizontal diameter: closed form (wide blue) / estimate (thin orange)": {
+   "ja": "(d) 水平直径: 閉形式（太い青）/推定（細い橙）",
+   "zh": "(d) horizontal diameter: closed form (wide blue) / estimate (thin orange)",
+   "tw": "(d) horizontal diameter: closed form (wide blue) / estimate (thin orange)",
+   "ko": "(d) horizontal diameter: closed form (wide blue) / estimate (thin orange)",
+   "de": "(d) horizontal diameter: closed form (wide blue) / estimate (thin orange)",
+   "hi": "(d) horizontal diameter: closed form (wide blue) / estimate (thin orange)",
+   "fr": "(d) horizontal diameter: closed form (wide blue) / estimate (thin orange)"
   },
   "disc-centre σ1−σ2": {
    "ja": "円板中心 σ₁−σ₂",

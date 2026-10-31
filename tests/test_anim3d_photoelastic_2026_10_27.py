@@ -43,6 +43,13 @@ def test_deterministic_mesh_and_explicit_limit():
     v,f=B._disc()
     assert len(v) == 98 and len(f) == 192
     spec=B.build_spec(); assert len(spec["tabs"]) == 4
+    metrics=spec["_acceptance"]
+    assert metrics["frames"] >= 24 and metrics["field_grid"] >= 160
+    assert metrics["disc_vertices"] >= 10_000 and metrics["hole_vertices"] >= 10_000
+    assert metrics["surface_vertices"] >= 10_000 and metrics["isoclinic_curvature_px"] > 5
+    assert all(min(p["frames"].shape[1:3]) >= 256 for t in spec["tabs"] for p in t["panes"])
+    data=B.pv._pack_spec(spec,["ja","en"]); B.pv.viewer_quality_gate_data(data)
+    assert len(B.pv._build_html(spec,["ja","en"]).encode("utf-8")) <= 4_000_000
     failed=[c for t in spec["tabs"] for c in t["checks"] if not c["ok"]]
     assert len(failed) == 1
     assert spec["tabs"][-1]["badge"] == "limit"

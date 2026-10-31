@@ -395,7 +395,7 @@ def _encode_array(a, t: str = "q16", lo=None, hi=None, per_axis: bool = False) -
         if u.dtype != np.uint8 or u.ndim not in (3, 4) or (u.ndim == 4 and u.shape[3] != 3) or len(u) == 0:
             raise ValueError("png で詰めるのは (T,H,W) か (T,H,W,3) の uint8")
         return {"t": t, "shape": shape,
-                "png": [base64.b64encode(_png_encode(f)).decode("ascii") for f in u]}
+                "png": [base64.b64encode(_png_encode(f, indexed=True)).decode("ascii") for f in u]}
     else:
         raise ValueError("未知の詰め方: %r" % t)
     rec["b64"] = base64.b64encode(raw).decode("ascii")
@@ -441,7 +441,7 @@ def _png_chunk(tag: bytes, body: bytes) -> bytes:
     return struct.pack(">I", len(body)) + tag + body + struct.pack(">I", zlib.crc32(tag + body) & 0xFFFFFFFF)
 
 
-def _png_encode(img) -> bytes:
+def _png_encode(img, indexed: bool = False) -> bytes:
     """(H,W) か (H,W,3) の uint8 を無損失の PNG のバイト列にする。
 
     行ごとのフィルタは None / Sub / Up から「符号つきの大きさの和が最小」のものを選ぶ(PNG 仕様の
@@ -452,8 +452,21 @@ def _png_encode(img) -> bytes:
     if a.dtype != np.uint8 or a.ndim not in (2, 3) or (a.ndim == 3 and a.shape[2] != 3) or a.size == 0:
         raise ValueError("PNG にする画像は (H,W) か (H,W,3) の uint8")
     H, W = a.shape[:2]
-    ch = 1 if a.ndim == 2 else 3
-    rows = a.reshape(H, W * ch).astype(np.int16)
+    palette = None
+    if a.ndim == 3 and indexed:
+        colors, inverse = np.unique(a.reshape(-1, 3), axis=0, return_inverse=True)
+        if len(colors) <= 256:
+            palette = np.zeros((256, 3), np.uint8)
+            palette[:len(colors)] = colors
+            pixels = inverse.astype(np.uint8).reshape(H, W)
+            ch, ctype = 1, 3
+        else:
+            pixels, ch, ctype = a, 3, 2
+    elif a.ndim == 3:
+        pixels, ch, ctype = a, 3, 2
+    else:
+        pixels, ch, ctype = a, 1, 0
+    rows = pixels.reshape(H, W * ch).astype(np.int16)
     sub = rows.copy()
     sub[:, ch:] -= rows[:, :-ch]
     up = rows.copy()
@@ -463,8 +476,9 @@ def _png_encode(img) -> bytes:
     pick = cost.argmin(axis=0)
     chosen = cand[pick, np.arange(H)]
     raw = np.concatenate([pick.astype(np.uint8)[:, None], chosen.astype(np.uint8)], axis=1).tobytes()
-    ihdr = struct.pack(">IIBBBBB", W, H, 8, 0 if ch == 1 else 2, 0, 0, 0)
-    return (_PNG_SIG + _png_chunk(b"IHDR", ihdr) + _png_chunk(b"IDAT", zlib.compress(raw, 9))
+    ihdr = struct.pack(">IIBBBBB", W, H, 8, ctype, 0, 0, 0)
+    plte = _png_chunk(b"PLTE", palette.tobytes()) if palette is not None else b""
+    return (_PNG_SIG + _png_chunk(b"IHDR", ihdr) + plte + _png_chunk(b"IDAT", zlib.compress(raw, 9))
             + _png_chunk(b"IEND", b""))
 
 
@@ -472,7 +486,7 @@ def _png_decode(data: bytes) -> np.ndarray:
     """:func:`_png_encode` の逆(8 bit のグレー / RGB、フィルタ 0/1/2、CRC を検査)。"""
     if data[:8] != _PNG_SIG:
         raise ValueError("PNG の署名が無い")
-    pos, ihdr, idat = 8, None, []
+    pos, ihdr, idat, palette = 8, None, [], None
     while pos + 12 <= len(data):
         n = struct.unpack(">I", data[pos:pos + 4])[0]
         tag, body = data[pos + 4:pos + 8], data[pos + 8:pos + 8 + n]
@@ -482,15 +496,17 @@ def _png_decode(data: bytes) -> np.ndarray:
             ihdr = struct.unpack(">IIBBBBB", body)
         elif tag == b"IDAT":
             idat.append(body)
+        elif tag == b"PLTE":
+            palette = np.frombuffer(body, np.uint8).reshape(-1, 3).copy()
         elif tag == b"IEND":
             break
         pos += 12 + n
     if ihdr is None:
         raise ValueError("PNG に IHDR が無い")
     W, H, depth, ctype, _c, _f, inter = ihdr
-    if depth != 8 or ctype not in (0, 2) or inter:
-        raise ValueError("この復号器は 8 bit のグレー / RGB、インタレース無しだけ")
-    ch = 1 if ctype == 0 else 3
+    if depth != 8 or ctype not in (0, 2, 3) or inter or (ctype == 3 and palette is None):
+        raise ValueError("この復号器は 8 bit のグレー / RGB / パレット、インタレース無しだけ")
+    ch = 3 if ctype == 2 else 1
     raw = np.frombuffer(zlib.decompress(b"".join(idat)), np.uint8).reshape(H, 1 + W * ch)
     out = np.zeros((H, W * ch), np.uint8)
     prev = np.zeros(W * ch, np.int64)
@@ -506,6 +522,8 @@ def _png_decode(data: bytes) -> np.ndarray:
             raise ValueError("この復号器はフィルタ 0/1/2 だけ(書く側と同じ): %d" % f)
         out[y] = cur
         prev = cur
+    if ctype == 3:
+        return palette[out.reshape(H, W)]
     return out.reshape(H, W) if ch == 1 else out.reshape(H, W, 3)
 
 
@@ -646,7 +664,16 @@ def _series_auto_range(values, *lines) -> tuple[float, float]:
         pad = max(abs(lo) * 0.05, 0.5)
     else:
         pad = (hi - lo) * 0.05
-    return lo - pad, hi + pad
+    # A series whose samples and reference lines are all physically non-negative
+    # must not acquire a fictitious negative margin (loads, stress differences, counts).
+    return (0.0 if lo >= 0.0 else lo - pad), hi + pad
+
+
+def _format_sig(value: float, digits: int = 3) -> str:
+    """Format a finite plot label with at most ``digits`` significant digits."""
+    if not np.isfinite(value) or not 1 <= int(digits) <= 4:
+        raise ValueError("plot label は有限値・有効数字 1..4 桁")
+    return format(float(value), ".%dg" % int(digits))
 
 
 def _series_y(value: float, lo: float, hi: float, top: float, bottom: float) -> float:
@@ -685,7 +712,7 @@ def _pack_series(raw, T: int, where: str, ctx: _Ctx) -> list:
 
 
 _HEX = re.compile(r"#[0-9a-fA-F]{6}\Z")
-_BODY_KEYS = frozenset({"name", "label", "pos", "faces", "rgb", "val", "alpha"})
+_BODY_KEYS = frozenset({"name", "label", "pos", "z", "z_scale", "faces", "rgb", "val", "val_scale", "alpha"})
 _TRAIL_KEYS = frozenset({"body", "offset", "xyz", "color", "tail", "label"})
 _CLOUD_KEYS = frozenset({"k", "pos", "rgb", "color", "point_size"})
 _PANE_KEYS = frozenset({"label", "frames", "boxes", "png", "dedupe", "wide", "data", "data_unit"})
@@ -876,6 +903,21 @@ def _pack_anim3d(tab: dict, out: dict, store: _Store, where: str, ctx: _Ctx) -> 
                               "faces": store.put(faces, "u32" if n > 65535 else "u16")}
         if pos.ndim == 3:
             pb["pos_t"] = True
+        if b.get("z") is not None:
+            if pos.ndim != 2:
+                raise ValueError("%s: z を使う pos は (N,3) の静的格子" % wb)
+            z = _finite(b["z"], wb + ".z")
+            if z.shape == (T, n) and b.get("z_scale") is None:
+                pb["z"] = store.put(z, "q16"); pb["z_t"] = True
+            elif z.shape == (n,) and b.get("z_scale") is not None:
+                zs = _finite(b["z_scale"], wb + ".z_scale")
+                if zs.shape != (T,):
+                    raise ValueError("%s: z_scale は (T,) = (%d,)" % (wb, T))
+                pb["z"] = store.put(z, "q16"); pb["z_scale"] = _clean_list(zs, 6); pb["z_scaled"] = True
+            else:
+                raise ValueError("%s: z は (T,N)、または (N,) + z_scale (T,)" % wb)
+        elif b.get("z_scale") is not None:
+            raise ValueError("%s: z_scale には z が要る" % wb)
         if b.get("label") is not None:
             pb["label"] = _bi(b["label"], wb + ".label", ctx)
         if "alpha" in b:
@@ -894,8 +936,14 @@ def _pack_anim3d(tab: dict, out: dict, store: _Store, where: str, ctx: _Ctx) -> 
             elif rgb.shape == (T, n, 3):
                 pb["rgb"] = store.put(_as_u8(rgb, wb + ".rgb"), "u8")
                 pb["rgb_t"] = True
+            elif rgb.ndim == 4 and rgb.shape[0] == T and rgb.shape[-1] == 3 and rgb.shape[1] * rgb.shape[2] == n:
+                # Dense regular-grid vertex colours compress far better as lossless PNG frames.
+                # The browser decodes a frame and uploads the exact RGB bytes to the colour buffer.
+                pb["rgb"] = store.put(_as_u8(rgb, wb + ".rgb"), "png")
+                pb["rgb_t"] = True
+                pb["rgb_png"] = True
             else:
-                raise ValueError("%s: rgb は (3,) か (N,3) か (T,N,3)" % wb)
+                raise ValueError("%s: rgb は (3,) か (N,3) か (T,N,3) か (T,H,W,3; H*W=N)" % wb)
         else:
             if cb is None:
                 raise ValueError("%s: val を使うならタブに cbar が要る" % wb)
@@ -905,6 +953,15 @@ def _pack_anim3d(tab: dict, out: dict, store: _Store, where: str, ctx: _Ctx) -> 
             pb["val"] = store.put(val, "q16", lo=cb["lo"], hi=cb["hi"])
             if val.ndim == 2:
                 pb["val_t"] = True
+            if b.get("val_scale") is not None:
+                if val.ndim != 1:
+                    raise ValueError("%s: val_scale を使う val は (N,)" % wb)
+                vs = _finite(b["val_scale"], wb + ".val_scale")
+                if vs.shape != (T,):
+                    raise ValueError("%s: val_scale は (T,) = (%d,)" % (wb, T))
+                pb["val_scale"] = _clean_list(vs, 6); pb["val_scaled"] = True
+        if b.get("val_scale") is not None and not has_val:
+            raise ValueError("%s: val_scale には val が要る" % wb)
         packed.append(pb)
     out["bodies"] = packed
     B = len(packed)
@@ -1347,6 +1404,12 @@ def _exports_from_data(data: dict, tab_id: str, frame: int = 0, lang: str = "ja"
             p = _decode_array(data["arrays"][body["pos"]])
             if body.get("pos_t"):
                 p = p[k]
+            elif body.get("z_t"):
+                p = p.copy()
+                p[:, 2] = _decode_array(data["arrays"][body["z"]])[k]
+            elif body.get("z_scaled"):
+                p = p.copy()
+                p[:, 2] += _decode_array(data["arrays"][body["z"]]) * body["z_scale"][k]
             q = Q[k, j]
             q = q / np.linalg.norm(q)
             R = _quat_matrix(q)
@@ -1354,6 +1417,8 @@ def _exports_from_data(data: dict, tab_id: str, frame: int = 0, lang: str = "ja"
             val = _decode_array(data["arrays"][body["val"]]) if body.get("val") is not None else None
             if body.get("val_t"):
                 val = val[k]
+            elif body.get("val_scaled"):
+                val = val * body["val_scale"][k]
             faces = _decode_array(data["arrays"][body["faces"]]).reshape(-1, 3)
             meta = _export_meta(data, tab, lang, "world x y z; value uses the color-bar unit")
             h = ["ply", "format ascii 1.0"] + ["comment " + x[2:] for x in meta]
@@ -1387,9 +1452,15 @@ def viewer_motion_gate(spec: dict) -> list[dict]:
             continue
         moving = False
         for body in tab.get("bodies", ()):
-            p, v = np.asarray(body.get("pos")), np.asarray(body.get("val"))
+            p, z = np.asarray(body.get("pos")), np.asarray(body.get("z"))
+            v, rgb = np.asarray(body.get("val")), np.asarray(body.get("rgb"))
             moving |= p.ndim == 3 and not np.array_equal(p[0], p[-1])
+            moving |= z.ndim == 2 and not np.array_equal(z[0], z[-1])
+            for key in ("z_scale", "val_scale"):
+                s = np.asarray(body.get(key))
+                moving |= s.ndim == 1 and len(s) > 1 and s[0] != s[-1]
             moving |= v.ndim == 2 and not np.array_equal(v[0], v[-1])
+            moving |= rgb.ndim in (3, 4) and not np.array_equal(rgb[0], rgb[-1])
         for key in ("xyz", "quat"):
             a = np.asarray(tab.get(key))
             moving |= a.ndim >= 1 and len(a) > 1 and not np.array_equal(a[0], a[-1])
@@ -1421,10 +1492,17 @@ def viewer_motion_gate_data(data: dict) -> list[dict]:
             a = _decode_array(arrays[tab[key]])
             moving |= len(a) > 1 and not np.array_equal(a[0], a[-1])
         for b in tab.get("bodies", ()):
-            for flag, key in (("pos_t", "pos"), ("val_t", "val"), ("rgb_t", "rgb")):
+            for flag, key in (("pos_t", "pos"), ("z_t", "z"), ("val_t", "val"), ("rgb_t", "rgb")):
                 if b.get(flag):
-                    a = _decode_array(arrays[b[key]])
-                    moving |= not np.array_equal(a[0], a[-1])
+                    rec = arrays[b[key]]
+                    if rec.get("t") == "png":
+                        moving |= len(rec["png"]) > 1 and rec["png"][0] != rec["png"][-1]
+                    else:
+                        a = _decode_array(rec)
+                        moving |= not np.array_equal(a[0], a[-1])
+            for flag, key in (("z_scaled", "z_scale"), ("val_scaled", "val_scale")):
+                if b.get(flag):
+                    moving |= b[key][0] != b[key][-1]
         for pane in tab.get("panes", ()):
             rec = arrays[pane["frames"]]
             if pane.get("index"):
@@ -1438,6 +1516,44 @@ def viewer_motion_gate_data(data: dict) -> list[dict]:
         if not moving and (not isinstance(reason, str) or len(reason.strip()) < 12):
             raise ValueError("tab %s: 公開 DATA の両端が静止。static_reason が必要" % tab.get("id"))
         rows.append({"tab": tab.get("id"), "moving": bool(moving), "static_reason": reason})
+    return rows
+
+
+def viewer_quality_gate_data(data: dict, exemptions: dict[str, str] | None = None) -> list[dict]:
+    """Gate native pane resolution and field-mesh density in packed viewer DATA.
+
+    A legacy public viewer may be exempted only by its exact exhibit id with a
+    concrete reason (12+ characters).  New pages should pass directly: pane
+    short side >= 192 px and every time-varying per-vertex field body >= 10,000
+    vertices (a future texture-backed body may set ``texture`` instead).
+    """
+    exemptions = exemptions or {}
+    exhibit = str(data.get("id", ""))
+    reason = exemptions.get(exhibit)
+    if reason is not None and (not isinstance(reason, str) or len(reason.strip()) < 12):
+        raise ValueError("quality exemption %s の理由が短い" % exhibit)
+    rows, failures = [], []
+    for tab in data.get("tabs", ()):
+        if tab.get("kind") != "anim3d":
+            continue
+        for j, pane in enumerate(tab.get("panes", ())):
+            shape = data["arrays"][pane["frames"]]["shape"]
+            short = min(int(shape[1]), int(shape[2]))
+            ok = short >= 192
+            rows.append({"tab": tab["id"], "item": "pane[%d]" % j, "value": short,
+                         "ok": ok, "exempt": bool(not ok and reason)})
+            if not ok and not reason:
+                failures.append("%s pane[%d] short side %d < 192" % (tab["id"], j, short))
+        for body in tab.get("bodies", ()):
+            field = body.get("val") is not None or body.get("rgb_t") or body.get("texture") is not None
+            ok = not field or int(body["n"]) >= 10_000 or body.get("texture") is not None
+            if field:
+                rows.append({"tab": tab["id"], "item": body["name"], "value": int(body["n"]),
+                             "ok": ok, "exempt": bool(not ok and reason)})
+            if not ok and not reason:
+                failures.append("%s body %s vertices %d < 10000" % (tab["id"], body["name"], body["n"]))
+    if failures:
+        raise ValueError("viewer quality gate: " + "; ".join(failures))
     return rows
 
 
@@ -1499,7 +1615,7 @@ _CSS = """
   .pane { flex:1 1 220px; min-width:0; }
   .pane.wide { flex:1 1 100%; }
   .pane .pl { font-size:12.5px; color:var(--dim); margin-bottom:3px; }
-  .pane canvas { width:100%; height:auto; max-height:36vh; object-fit:contain; image-rendering:pixelated; }
+  .pane canvas { width:100%; height:auto; max-height:36vh; object-fit:contain; image-rendering:auto; }
   .exports { margin:10px 18px; padding:10px 12px; border:1px solid var(--line); border-radius:8px; background:var(--panel); }
   .exports b { display:block; margin-bottom:7px; font-size:13px; }
   .exports .exbtn { display:flex; flex-wrap:wrap; gap:6px; }
@@ -1783,7 +1899,9 @@ function sceneAnim(tab){
   const grow = (x, y, z, r) => { const v = [x, y, z]; for (let k = 0; k < 3; k++) { if (v[k]-r < lo[k]) lo[k] = v[k]-r; if (v[k]+r > hi[k]) hi[k] = v[k]+r; } };
   for (let j = 0; j < B; j++) {
     const b = tab.bodies[j], PA = arr(b.pos).a, F = arr(b.faces).a;
-    const P = b.pos_t ? PA.slice(0, b.n*3) : PA;
+    const P = b.pos_t ? PA.slice(0, b.n*3) : new Float64Array(PA);
+    if (b.z_t) { const Z=arr(b.z).a; for (let i=0;i<b.n;i++) P[i*3+2]=Z[i]; }
+    else if (b.z_scaled) { const Z=arr(b.z).a,s=b.z_scale[0]; for (let i=0;i<b.n;i++) P[i*3+2]+=s*Z[i]; }
     if (b.n > 65535 && !u32ext) { S.fail = true; return anims[tab.id] = Object.assign(S, {rad: 1, ctr: [0,0,0], tgt: [0,0,0]}); }
     const blo = [Infinity,Infinity,Infinity], bhi = [-Infinity,-Infinity,-Infinity];   /* 物体の局所 AABB */
     for (let i = 0; i < PA.length; i += 3) for (let k = 0; k < 3; k++) { blo[k] = Math.min(blo[k], PA[i+k]); bhi[k] = Math.max(bhi[k], PA[i+k]); }
@@ -1791,13 +1909,15 @@ function sceneAnim(tab){
     for (const x of [blo[0], bhi[0]]) for (const y of [blo[1], bhi[1]]) for (const z of [blo[2], bhi[2]]) corners.push([x, y, z]);
     const col = new Uint8Array(b.n * 3);
     if (b.rgb1) { for (let i = 0; i < b.n; i++) col.set(b.rgb1, i*3); }
-    else if (b.rgb != null) { const A=arr(b.rgb).a; col.set(b.rgb_t?A.slice(0,b.n*3):A); }
-    else { const VA = arr(b.val).a, V = b.val_t ? VA.slice(0, b.n) : VA, cb = tab.cbar, sp = cb.hi - cb.lo;
-      for (let i = 0; i < b.n; i++) { const c = cmapRGB(cb.cmap, (V[i] - cb.lo) / sp); col[i*3] = c[0]; col[i*3+1] = c[1]; col[i*3+2] = c[2]; } }
+    else if (b.rgb != null && !b.rgb_png) { const A=arr(b.rgb).a; col.set(b.rgb_t?A.slice(0,b.n*3):A); }
+    else if (b.rgb_png) { /* frame 0 is uploaded by updateAnimBody after its PNG finishes loading */ }
+    else { const VA = arr(b.val).a, V = b.val_t ? VA.slice(0, b.n) : VA, cb = tab.cbar, sp = cb.hi - cb.lo,vs=b.val_scaled?b.val_scale[0]:1;
+      for (let i = 0; i < b.n; i++) { const c = cmapRGB(cb.cmap, (V[i]*vs - cb.lo) / sp); col[i*3] = c[0]; col[i*3+1] = c[1]; col[i*3+2] = c[2]; } }
     const idx = b.n > 65535 ? new Uint32Array(F) : new Uint16Array(F);
     S.bodies.push({pos: buf(new Float32Array(P)), nrm: buf(normalsOf(P, F)), col: buf(col), P: PA, F,
-      posT: !!b.pos_t, valT: !!b.val_t, rgbT: !!b.rgb_t, V: b.val != null ? arr(b.val).a : null,
-      RGB: b.rgb != null ? arr(b.rgb).a : null, last: 0,
+      posT: !!b.pos_t, zT: !!b.z_t, zScaled: !!b.z_scaled, valT: !!b.val_t, valScaled: !!b.val_scaled, rgbT: !!b.rgb_t, rgbPNG: !!b.rgb_png,
+      V: b.val != null ? arr(b.val).a : null, Z: b.z != null ? arr(b.z).a : null,
+      RGB: b.rgb != null && !b.rgb_png ? arr(b.rgb).a : null, last: -1,
       idx: buf(idx, gl.ELEMENT_ARRAY_BUFFER), count: idx.length, itype: b.n > 65535 ? gl.UNSIGNED_INT : gl.UNSIGNED_SHORT});
     for (let f = 0; f < T_; f++) {                  /* 場面の大きさ = 全コマで動かした AABB の角 */
       const o = f*B + j, m = quatMat(Q[o*4], Q[o*4+1], Q[o*4+2], Q[o*4+3], X[o*3], X[o*3+1], X[o*3+2]);
@@ -1824,19 +1944,22 @@ function sceneAnim(tab){
   return anims[tab.id] = S;
 }
 function updateAnimBody(tab, b, j, f){
-  if (b.last === f || (!b.posT && !b.valT && !b.rgbT)) return;
-  if (b.posT) {
-    const P = b.P.slice(f*tab.bodies[j].n*3, (f+1)*tab.bodies[j].n*3);
+  if (b.last === f || (!b.posT && !b.zT && !b.zScaled && !b.valT && !b.valScaled && !b.rgbT)) return;
+  if (b.posT || b.zT || b.zScaled) {
+    const n=tab.bodies[j].n, P = b.posT ? b.P.slice(f*n*3, (f+1)*n*3) : new Float64Array(b.P);
+    if (b.zT) for (let i=0;i<n;i++) P[i*3+2]=b.Z[f*n+i];
+    else if (b.zScaled) {const s=tab.bodies[j].z_scale[f];for(let i=0;i<n;i++)P[i*3+2]+=s*b.Z[i];}
     gl.bindBuffer(gl.ARRAY_BUFFER, b.pos); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(P), gl.DYNAMIC_DRAW);
     gl.bindBuffer(gl.ARRAY_BUFFER, b.nrm); gl.bufferData(gl.ARRAY_BUFFER, normalsOf(P, b.F), gl.DYNAMIC_DRAW);
   }
-  if (b.valT) {
-    const n = tab.bodies[j].n, V = b.V.slice(f*n, (f+1)*n), cb = tab.cbar, sp = cb.hi-cb.lo, col = new Uint8Array(n*3);
-    for (let i=0;i<n;i++) { const c=cmapRGB(cb.cmap,(V[i]-cb.lo)/sp); col[i*3]=c[0]; col[i*3+1]=c[1]; col[i*3+2]=c[2]; }
+  if (b.valT || b.valScaled) {
+    const n = tab.bodies[j].n, V = b.valT?b.V.slice(f*n, (f+1)*n):b.V, cb = tab.cbar, sp = cb.hi-cb.lo, col = new Uint8Array(n*3),vs=b.valScaled?tab.bodies[j].val_scale[f]:1;
+    for (let i=0;i<n;i++) { const c=cmapRGB(cb.cmap,(V[i]*vs-cb.lo)/sp); col[i*3]=c[0]; col[i*3+1]=c[1]; col[i*3+2]=c[2]; }
     gl.bindBuffer(gl.ARRAY_BUFFER, b.col); gl.bufferData(gl.ARRAY_BUFFER, col, gl.DYNAMIC_DRAW);
   }
   if (b.rgbT) {
-    const n=tab.bodies[j].n, col=b.RGB.slice(f*n*3,(f+1)*n*3);
+    const n=tab.bodies[j].n, col=b.rgbPNG ? bodyRGB(tab.bodies[j].rgb,f,n) : b.RGB.slice(f*n*3,(f+1)*n*3);
+    if (!col) return;
     gl.bindBuffer(gl.ARRAY_BUFFER,b.col);gl.bufferData(gl.ARRAY_BUFFER,new Uint8Array(col),gl.DYNAMIC_DRAW);
   }
   b.last = f;
@@ -1935,7 +2058,7 @@ function drawAnim(tab){
   drawAnimHud(tab, f);
 }
 /* 同じ時間軸の 2-D(センサー画像・op の結果)。PNG はブラウザが無損失で復号する */
-const imgs = {}, pimgs = {};
+const imgs = {}, pimgs = {}, bodyRGBs = {};
 function pngImg(key, t){
   const id = key + ':' + t; let im = pimgs[id];
   if (!im) { im = new Image(); im.onload = () => { dirty = true; }; im.src = 'data:image/png;base64,' + D.arrays[key].png[t]; pimgs[id] = im; }
@@ -1954,6 +2077,14 @@ function paneImage(key, t){
   }
   o.getContext('2d').putImageData(im, 0, 0);
   return imgs[id] = o;
+}
+function bodyRGB(key, t, n){
+  const id=key+':'+t; if(bodyRGBs[id])return bodyRGBs[id];
+  const im=pngImg(key,t); if(!im)return null;
+  const rec=D.arrays[key],H=rec.shape[1],W=rec.shape[2],o=document.createElement('canvas');
+  o.width=W;o.height=H;const g=o.getContext('2d');g.drawImage(im,0,0,W,H);const d=g.getImageData(0,0,W,H).data,a=new Uint8Array(n*3);
+  for(let i=0;i<n;i++){a[i*3]=d[i*4];a[i*3+1]=d[i*4+1];a[i*3+2]=d[i*4+2];}
+  return bodyRGBs[id]=a;
 }
 function buildPanes(tab){
   const box = $('panes');
@@ -2066,6 +2197,7 @@ function drawPlot(tab, f){
   g.strokeStyle = '#26313c'; g.lineWidth = 1; g.strokeRect(ml, mt, w - ml - mr, h - mt - mb);
   g.font = '11px sans-serif'; g.textBaseline = 'alphabetic';
   let lx = ml + 4;
+  const sig = v => Number(v).toPrecision(3).replace(/e\+/, 'e');
   for (const s of tab.series) {
     if (s.threshold != null) { g.setLineDash([4, 4]); g.strokeStyle = s.color; g.globalAlpha = 0.6; g.beginPath(); g.moveTo(ml, Y(s, s.threshold)); g.lineTo(w - mr, Y(s, s.threshold)); g.stroke(); g.setLineDash([]); g.globalAlpha = 1; }
     for (const ref of (s.references || [])) { g.setLineDash([2, 3]); g.strokeStyle = s.color; g.globalAlpha = 0.4; g.beginPath(); g.moveTo(ml, Y(s, ref)); g.lineTo(w-mr, Y(s, ref)); g.stroke(); g.setLineDash([]); g.globalAlpha = 1; }
@@ -2076,7 +2208,7 @@ function drawPlot(tab, f){
       g.stroke();
     }
     g.globalAlpha = 1; g.fillStyle = s.color;
-    const lab = T(s.label) + ' [' + s.lo + '–' + s.hi + (s.unit ? ' ' + s.unit : '') + ']'; g.fillText(lab, lx, h - 6); lx += g.measureText(lab).width + 16;
+    const lab = T(s.label) + ' [' + sig(s.lo) + '–' + sig(s.hi) + (s.unit ? ' ' + s.unit : '') + ']'; g.fillText(lab, lx, h - 6); lx += g.measureText(lab).width + 16;
   }
   if (tab.events) { g.strokeStyle = '#93a2b1'; g.globalAlpha = 0.55; g.setLineDash([2, 3]);
     for (const e of tab.events) { g.beginPath(); g.moveTo(X(e.k), mt); g.lineTo(X(e.k), h - mb); g.stroke(); }
@@ -2119,8 +2251,11 @@ function paneCSV(tab,j,f){
 }
 function bodyPLY(tab,j,f){
   const b=tab.bodies[j],T_=tab.t.length,k=Math.max(0,Math.min(T_-1,f|0)),PA=arr(b.pos).a,n=b.n;
-  const P=b.pos_t?PA.slice(k*n*3,(k+1)*n*3):PA,F=arr(b.faces).a,X=arr(tab.xyz).a,Q=arr(tab.quat).a,o=(k*tab.bodies.length+j),m=quatMat(Q[o*4],Q[o*4+1],Q[o*4+2],Q[o*4+3],X[o*3],X[o*3+1],X[o*3+2]);
+  const P=b.pos_t?PA.slice(k*n*3,(k+1)*n*3):new Float64Array(PA),F=arr(b.faces).a,X=arr(tab.xyz).a,Q=arr(tab.quat).a,o=(k*tab.bodies.length+j),m=quatMat(Q[o*4],Q[o*4+1],Q[o*4+2],Q[o*4+3],X[o*3],X[o*3+1],X[o*3+2]);
+  if(b.z_t){const Z=arr(b.z).a;for(let i=0;i<n;i++)P[i*3+2]=Z[k*n+i];}
+  else if(b.z_scaled){const Z=arr(b.z).a,s=b.z_scale[k];for(let i=0;i<n;i++)P[i*3+2]+=s*Z[i];}
   let V=null;if(b.val!=null){const A=arr(b.val).a;V=b.val_t?A.slice(k*n,(k+1)*n):A;}
+  if(V&&b.val_scaled){const s=b.val_scale[k];V=V.map(x=>x*s);}
   let h=['ply','format ascii 1.0'].concat(exMeta(tab,'world x y z; value uses the color-bar unit').map(x=>'comment '+x.slice(2)),
     ['element vertex '+n,'property float x','property float y','property float z']);
   if(V)h.push('property float value');h.push('element face '+b.nf,'property list uchar int vertex_indices','end_header');
