@@ -229,6 +229,7 @@ def test_viewer_lacking_a_language_stops_the_generator(tmp_path):
 def test_entry_pages_build_with_no_public_anim3d():
     d = G.load()
     assert not [e for e in d["exhibits"] if G._is_viewer(d, e)]
+    assert len(d["langs"]) == 8
     for lang in d["langs"]:
         page = G.build(d, lang)
         assert page.startswith('<div class="vlang" markdown="1">')
