@@ -335,6 +335,10 @@ EXCLUDED = {
                                      "(翻訳表 tools/anim3d_i18n_tables/build_shwfs_anim3d.json)。門は tests/test_anim3d_shwfs_2026_10_27.py。"),
     "tools/build_photoelastic_anim3d.py": ("光弾性の動く 3-D 教材。anim3d_i18n の翻訳表を通して生成し、"
                                              "tests/test_anim3d_photoelastic_2026_10_27.py で門にする。"),
+    "tools/build_industrial_oct_anim3d.py": ("工業用 OCT の実測塗装 B スキャンを動かす ja/en の 3-D 教材。"
+                                                "`py -3.11 tools/anim3d_i18n.py --build build_industrial_oct_anim3d "
+                                                "--out docs/view2026/viewers/industrial_oct_anim3d.html` で手動生成し、"
+                                                "tests/test_anim3d_industrial_oct_2026_11_01.py で門にする。"),
     "tools/build_bore_anim3d.py": ("ボアスコープのリレー結像とファイバ束の動く 3-D 教材(docs/view2026/anim3d/borescope_anim3d.html)。"
                                     "`py -3.11 tools/anim3d_i18n.py --build build_bore_anim3d --out docs/view2026/anim3d/borescope_anim3d.html` で書く"
                                     "(翻訳表 tools/anim3d_i18n_tables/build_bore_anim3d.json)。門は tests/test_anim3d_bore_2026_10_26.py。"),

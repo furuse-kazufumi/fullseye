@@ -20640,6 +20640,17 @@
     }
    },
    {
+    "id": "industrial_oct_anim3d",
+    "title": {
+     "ja": "自動車塗装の層をOCTで測る",
+     "en": "Measure automotive paint layers with OCT"
+    },
+    "line": {
+     "ja": "実測Bスキャンの層を3-Dで見て、屈折率と中心波長を動かすと層厚と論文型4図が同期する。",
+     "en": "View measured B-scan layers in 3-D; index and centre-wavelength sweeps synchronize thickness with 4 paper-style panels."
+    }
+   },
+   {
     "id": "poc_active_contours",
     "title": {
      "ja": "動的輪郭",

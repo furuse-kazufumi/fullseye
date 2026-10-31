@@ -48,6 +48,7 @@ Die Abbildungen der Arbeit lassen sich selbst bedienen, auch auf dem Smartphone.
 - **[Spannungsoptik](../viewers/poc_photoelasticity.html?lang=de)**: Beim Drehen des Analysators wandern die spannungsoptischen Streifen und ihre mittlere Intensität schwingt
 - **[Fliegen-Facettenauge](../viewers/poc_compound_eye.html?lang=de)**: Mit höherem SNR je Ansicht nähert sich das Facettenaugenbild dem rauschfreien Bild
 - **[Poren in Fügeschicht](../viewers/poc_ct_void_morphology.html?lang=de)**: Ein höherer Schwellenwert vergrößert die segmentierten Poren und ihren Volumenanteil
+- **[Measure automotive paint layers with OCT](../viewers/industrial_oct_anim3d.html?lang=de)**: View measured B-scan layers in 3-D; index and centre-wavelength sweeps synchronize thickness with 4 paper-style panels.
 - **[Aktive Konturen](../viewers/poc_active_contours.html?lang=de)**: Mit mehr Iterationen nähert sich die GVF-Kontur ihrer Endform
 
 ## Highlights

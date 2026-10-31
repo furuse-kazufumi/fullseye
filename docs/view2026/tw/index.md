@@ -48,6 +48,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - **[光彈應力](../viewers/poc_photoelasticity.html?lang=tw)**: 轉動檢偏器會移動光彈性條紋，並使平均亮度週期變化
 - **[蒼蠅複眼](../viewers/poc_compound_eye.html?lang=tw)**: 提高每視點訊噪比，複眼影像越接近無雜訊影像
 - **[接合層孔洞](../viewers/poc_ct_void_morphology.html?lang=tw)**: 提高閾值會擴大孔洞分割並增加體積率
+- **[Measure automotive paint layers with OCT](../viewers/industrial_oct_anim3d.html?lang=tw)**: View measured B-scan layers in 3-D; index and centre-wavelength sweeps synchronize thickness with 4 paper-style panels.
 - **[主動輪廓](../viewers/poc_active_contours.html?lang=tw)**: 迭代越多，GVF 輪廓越接近最終形狀
 
 ## 精選

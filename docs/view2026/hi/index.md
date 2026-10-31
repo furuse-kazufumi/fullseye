@@ -48,6 +48,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - **[Photoelasticity](../viewers/poc_photoelasticity.html?lang=hi)**: analyser घुमाने पर photoelastic fringes चलते हैं और उनकी औसत तीव्रता आवर्ती बदलती है
 - **[Fly compound eye](../viewers/poc_compound_eye.html?lang=hi)**: प्रति-दृश्य SNR बढ़ाने पर compound-eye image शोर-रहित image के पास आती है
 - **[Joint voids (CT)](../viewers/poc_ct_void_morphology.html?lang=hi)**: threshold बढ़ाने पर segmented voids फैलते हैं और उनका आयतन अंश बढ़ता है
+- **[Measure automotive paint layers with OCT](../viewers/industrial_oct_anim3d.html?lang=hi)**: View measured B-scan layers in 3-D; index and centre-wavelength sweeps synchronize thickness with 4 paper-style panels.
 - **[Active contours](../viewers/poc_active_contours.html?lang=hi)**: iterations बढ़ने पर GVF contour अपने अंतिम आकार के पास आती है
 
 ## मुख्य झलकियाँ
