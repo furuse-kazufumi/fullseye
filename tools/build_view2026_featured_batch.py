@@ -44,6 +44,12 @@ def caption_for(src: dict, lang: str) -> str:
     return text + " _(ja)_"
 
 
+def lead_for(src: dict, lang: str) -> str:
+    """Use a reviewed lead when present; otherwise show the full caption."""
+    key = "lead_ja" if lang == "ja" else "lead_en"
+    return src.get(key, "").strip() or caption_for(src, lang)
+
+
 def media_for(pid: str) -> str | None:
     p = ASSETS / pid / "figures.json"
     if not p.is_file():
@@ -59,6 +65,13 @@ def media_for(pid: str) -> str | None:
 def main() -> None:
     d = json.loads(DATA.read_text(encoding="utf-8"))
     ledger = json.loads(LEDGER.read_text(encoding="utf-8"))["exhibits"]
+    ledger_by_id = {e["id"]: e for e in ledger}
+    for item in d["exhibits"]:
+        src = ledger_by_id.get(item["id"])
+        if src:
+            item["lead"] = {
+                lang: lead_for(src, lang) for lang in d["langs"]
+            }
     all_by_id = {e["id"]: e for e in d["all"]}
     # Re-running replaces this generated batch and preserves hand-curated cards.
     d["exhibits"] = [e for e in d["exhibits"] if "numbers_source" not in e]
@@ -98,6 +111,7 @@ def main() -> None:
         item = {
             "id": pid, "category": WING_CATEGORY[src["wing"]], "media": media,
             "motion": media.lower().endswith((".gif", ".mp4")), "label": label,
+            "lead": {lang: lead_for(src, lang) for lang in d["langs"]},
             "see": captions, "num": {lang: "" for lang in d["langs"]},
             "numbers_source": src["numbers_source"], "youtube_url": "",
         }

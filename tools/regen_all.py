@@ -73,6 +73,7 @@ CHAIN = [
     # ★展示館より**先**に回す —— 生成器は見出しに収蔵番号を出すので、
     #   未発行の展示が 1 つでもあると BuildError で止まる。
     (["tools/gen_exhibit_numbers.py"], "収蔵番号の発行(追記のみ・既存は動かさない)"),
+    (["tools/gen_exhibit_glossary.py"], "展示の専門用語辞書 docs/articles/exhibits/glossary.json"),
     (["tools/gen_wingpoc_gallery.py"], "PoC 展示館(総合案内 + 棟、ja/en)"),
     (["tools/gen_examples_readme.py"], "examples/README.md"),
     (["tools/gen_oss_landscape.py"], "既存 OSS の地図(docs/literature/oss_landscape.json → OSS_LANDSCAPE.md)"),
@@ -156,6 +157,7 @@ OUTPUTS = {
     "tools/audit_fallbacks.py": ["docs/fallback_audit.json"],
     "tools/gen_maturity.py": ["docs/MATURITY.md", "docs/maturity.json"],
     "tools/gen_exhibit_numbers.py": ["docs/articles/exhibits/exhibit_numbers.json"],
+    "tools/gen_exhibit_glossary.py": ["docs/articles/exhibits/glossary.json"],
     "tools/gen_wingpoc_gallery.py": ["docs/articles/exhibits/wingpoc.*.md",
                                      "docs/articles/fullseye_poc_museum_qiita_*.md",
                                      # 棟ごとの記事(fullseye_poc_museum_<棟>_qiita_<言語>.md)も同じ段が書く
@@ -231,7 +233,9 @@ READS = {
     "tools/audit_file_formats.py": ["auto_specs_data.py", "docs/OP_INDEX.json"],
     "tools/halcon_compat_profile.py": ["docs/OP_INDEX.json"],
     "tools/gen_capabilities_index.py": ["docs/OP_INDEX.json"],
-    "tools/gen_wingpoc_gallery.py": ["docs/articles/exhibits/exhibit_numbers.json"],
+    "tools/gen_wingpoc_gallery.py": ["docs/articles/exhibits/exhibit_numbers.json",
+                                      "docs/articles/exhibits/glossary.json"],
+    "tools/gen_view2026_pages.py": ["docs/articles/exhibits/glossary.json"],
     "tools/gen_trust_block.py": ["docs/OP_INDEX.json", "docs/maturity.json",
                                  "docs/README.md", "docs/README.*.md"],
     "tools/gen_design_notes.py": ["auto_specs_data.py"],

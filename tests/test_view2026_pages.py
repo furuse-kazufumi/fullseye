@@ -10,7 +10,9 @@ from __future__ import annotations
 
 import copy
 import importlib.util
+import json
 import os
+import re
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 _spec = importlib.util.spec_from_file_location(
@@ -41,6 +43,39 @@ def test_other_examples_are_counted_not_typed():
     assert n > 50
     page = G.build(G.load(), "ja")
     assert ("PoC 以外の使用例 %d 本" % n) in page
+
+
+def test_every_highlight_has_lead_in_all_languages_and_renders_it_first():
+    d = G.load()
+    assert len(d["exhibits"]) >= 13, "目玉展示の件数が縮んでいる"
+    assert len(d["langs"]) >= 7, "目玉展示の対応言語が縮んでいる"
+    ledger = {
+        e["id"]: e for e in json.loads(
+            (G.ROOT / d["all_source"]).read_text(encoding="utf-8"))["exhibits"]
+    }
+    for exhibit in d["exhibits"]:
+        assert set(exhibit["lead"]) == set(d["langs"]), exhibit["id"]
+        assert all(exhibit["lead"][lang].strip() for lang in d["langs"]), exhibit["id"]
+        source = ledger.get(exhibit["id"])
+        if source:
+            expected_ja = source["lead_ja"] or source["caption_ja"]
+            expected_en = source["lead_en"] or source["caption_en"]
+            if not source["lead_en"] and re.search(r"[\u3040-\u30ff]", expected_en):
+                expected_en += " _(ja)_"
+            assert exhibit["lead"]["ja"] == expected_ja
+            assert exhibit["lead"]["en"] == expected_en
+            for lang in d["langs"][2:]:
+                assert exhibit["lead"][lang] == expected_en
+
+    page = G.build(d, "ja")
+    for exhibit in d["exhibits"]:
+        marker = "- [%s]" % exhibit["label"]["ja"]
+        start = page.index(marker)
+        end = page.find("\n- [", start + len(marker))
+        block = page[start:end if end >= 0 else None]
+        lead_at = block.index(exhibit["lead"]["ja"])
+        see_at = block.find(exhibit["see"]["ja"], lead_at + len(exhibit["lead"]["ja"]))
+        assert lead_at < see_at, exhibit["id"]
 
 
 def test_a_missing_translation_stops_the_generator():
