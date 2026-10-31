@@ -52,6 +52,7 @@ import ppf  # noqa: E402  (6-DoF surface matching by Point Pair Features -> obje
 import pointcloud  # noqa: E402  (point-cloud geometry: normals, voxel downsample)
 import pcseg  # noqa: E402  (point-cloud segmentation/fitting: RANSAC plane/sphere/cylinder, clusters, OBB)
 import mesh  # noqa: E402  (3-D object import: OBJ/STL/PLY/OFF -> vertices, points, voxels)
+import fileio  # noqa: E402  (in-memory CSV / mesh / point-cloud file operators)
 import meshio_opt  # noqa: E402  (optional heavier object formats: glTF/GLB, LAS/LAZ, PCD-binary)
 import pose  # noqa: E402  (silhouette posture descriptors)
 import locomotion  # noqa: E402  (balance/gait perception: contacts, support polygon, stability margin, gait phase)
@@ -205,6 +206,13 @@ import pocviewer  # noqa: E402,F401
 from mesh import (  # noqa: E402,F401
     read_mesh, read_points, write_mesh, write_points, sample_surface, mesh_to_points,
     voxelize, bounds, recenter, normalize_scale,
+)
+from fileio import (  # noqa: E402,F401
+    table_write_csv, table_read_csv,
+    mesh_write_ply, mesh_read_ply, mesh_write_stl, mesh_read_stl,
+    mesh_write_obj, mesh_read_obj, mesh_write_off, mesh_read_off,
+    points_write_xyz, points_read_xyz,
+    e57_write, e57_read,
 )
 from meshio_opt import (  # noqa: E402,F401
     read_gltf, read_gltf_merged, read_las, read_pcd, formats_available,
@@ -1160,6 +1168,11 @@ __all__ = [
     "viewer_points_tab", "viewer_frames_tab", "viewer_split_tab", "viewer_anim3d_tab",
     "viewer_export_strings", "viewer_motion_gate", "viewer_motion_gate_data", "viewer_quality_gate_data",
     "mesh", "read_mesh", "read_points", "write_mesh", "write_points", "sample_surface",
+    "fileio", "table_write_csv", "table_read_csv",
+    "mesh_write_ply", "mesh_read_ply", "mesh_write_stl", "mesh_read_stl",
+    "mesh_write_obj", "mesh_read_obj", "mesh_write_off", "mesh_read_off",
+    "points_write_xyz", "points_read_xyz",
+    "e57_write", "e57_read",
     "mesh_to_points", "voxelize", "bounds", "recenter", "normalize_scale",
     "meshio_opt", "read_gltf", "read_gltf_merged", "read_las", "read_pcd", "formats_available",
     "volio", "read_volume", "write_volume", "list_dicom_series", "VolumeMeta",

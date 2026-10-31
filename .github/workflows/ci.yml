@@ -97,7 +97,7 @@ jobs:
           sudo apt-get install -y -q fonts-noto-cjk fonts-ipafont-gothic
       - name: Install documentation-check dependencies (same optional backends as the full suite)
         run: >
-          pip install -e ".[opencv,skimage,pil,wavelets,gui,video,volume,gltf,lidar,pcd,xlsx]"
+          pip install -e ".[opencv,skimage,pil,wavelets,gui,video,volume,gltf,lidar,pcd,xlsx,export-verify]"
           pytest matplotlib sympy ziglang hypothesis pytest-timeout
       - name: Run documentation invariants
         run: >
@@ -305,7 +305,7 @@ jobs:
         # Python; gltf/lidar/pcd extras: small pure-python readers with real
         # format tests. torch/mujoco stay out (their tests skip honestly).
         run: >
-          pip install -e ".[opencv,skimage,pil,wavelets,gui,video,volume,gltf,lidar,pcd,xlsx]"
+          pip install -e ".[opencv,skimage,pil,wavelets,gui,video,volume,gltf,lidar,pcd,xlsx,export-verify]"
           pytest pytest-cov pytest-split matplotlib sympy ziglang hypothesis pytest-timeout
       # ★py3.11 **だけ** optional backend を実際に入れる。
       #
@@ -481,7 +481,7 @@ jobs:
         run: >
           # xlsx も入れる(2026-10-24: この行だけ抜けていて、能力ノートの Excel 出力の例が
           # 「xlsxio needs openpyxl」で落ちた。順番の問題ではなく入れ忘れ)。
-          pip install -e ".[opencv,skimage,pil,wavelets,gui,video,volume,gltf,lidar,pcd,xlsx]"
+          pip install -e ".[opencv,skimage,pil,wavelets,gui,video,volume,gltf,lidar,pcd,xlsx,export-verify]"
           pytest pytest-xdist pytest-randomly matplotlib sympy ziglang
       # 種を出力に残す —— 落ちたら `-p randomly --randomly-seed=<種>` で再現できる。
       - name: Shuffled, serial (順序依存だけを見る)

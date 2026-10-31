@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">table_read_csv — FILEIO <code style="color:#22d3bf">table</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">text</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.table_read_csv(text)</code> (die Implementierung direkt: <code style="color:#22d3bf">import fileio; fileio.table_read_csv(text)</code>; aus dem Register: <code style="color:#22d3bf">opsfileio.get(&quot;table_read_csv&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Liest das von <code style="color:#22d3bf">table_write_csv</code> erzeugte CSV mit Einheiten und gibt eine <code style="color:#22d3bf">table</code> mit Spalten, Einheiten und Metadaten zurück.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>返り値は <code style="color:#22d3bf">{&quot;columns&quot;: {列名: 1-D 配列}, &quot;units&quot;: {...}, &quot;meta&quot;: {...}}</code>。列名と単位の個数、全データ行の列数、必須メタデータを検査し、途中までの表は返さない。数値列は float64 (空欄は NaN)、数値以外を含む列は文字列配列になる。入力は UTF-8 の <code style="color:#22d3bf">str</code> または <code style="color:#22d3bf">bytes</code>。</p>
+<p>呼び出し例: <code style="color:#22d3bf">roundtrip = table_read_csv(table_write_csv(table, units=units, meta=meta))</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:fileio_roundtrip">fileio_roundtrip</a> — <code style="color:#22d3bf">py -3.11 examples/fileio_roundtrip.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opfileio:table_write_csv">table_write_csv</a> · <a style="color:#22d3bf" href="opfileio:mesh_write_ply">mesh_write_ply</a> · <a style="color:#22d3bf" href="opfileio:mesh_read_ply">mesh_read_ply</a> · <a style="color:#22d3bf" href="opfileio:mesh_read_stl">mesh_read_stl</a> · <a style="color:#22d3bf" href="opfileio:e57_write">e57_write</a> · <a style="color:#22d3bf" href="opfileio:e57_read">e57_read</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">table</code>)</h3>
+<p><a style="color:#22d3bf" href="opfileio:table_write_csv">table_write_csv</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: fileio.py — FILEIO Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

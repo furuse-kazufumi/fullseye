@@ -64,6 +64,7 @@ _LEDGERS = (
     ("opsdrive", "OPSDRIVE"),
     ("opstomography", "OPSTOMOGRAPHY"), ("opsvolcolor", "OPSVOLCOLOR"),
     ("opsreprconv", "OPSREPRCONV"), ("opscadmap", "OPSCADMAP"),
+    ("opsfileio", "OPSFILEIO"),
     ("opsannotate", "OPSANNOTATE"), ("opsgfx2d", "OPSGFX2D"),
     ("opsimgmetrics", "OPSIMGMETRICS"), ("opscolortransport", "OPSCOLORTRANSPORT"),
     ("opsimgforensics", "OPSIMGFORENSICS"), ("opsastrostack", "OPSASTROSTACK"),
