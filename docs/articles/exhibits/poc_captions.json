@@ -1388,8 +1388,8 @@
    "ops": [
     "sk_lbp"
    ],
-   "lead_ja": "実写のテクスチャを回すの評価では、「回転不変」は、それが要らない素材でだけ成り立つ。実測データの角度を使い、記述子と自分自身を別々に確かめた。基準と距離の差を見ると、「回転不変」は、それが要らない素材でだけ成り立つことが分かる。",
-   "lead_en": "In rotated real-textures, rotation invariance appears only in materials that do not need it. Using measured angles, we checked the descriptor and its self-comparison separately. The gap between benchmark and distance shows this invariance appears only in materials that do not need it."
+   "lead_ja": "",
+   "lead_en": ""
   },
   {
    "id": "poc_recycling_sorting",
@@ -1414,8 +1414,8 @@
    "caption_ja": "点群を毎試行取り直し、初期姿勢のずれに対する ICP(反復最近点法) の成功率を等高線にした図。並進ずれ 0 で成功率が 50 % を切るのは点対点 90 度、点対面 120 度。球や円柱は残差が同じまま姿勢が任意で、大域手法では 16/16 が見かけ上収束しつつ姿勢は誤り ―― 残差では検出できない。",
    "caption_en": "ICP (iterative closest point) success rate contoured against the initial pose error, with the point cloud re-sampled on every trial. With no translation offset, success drops below 50 % at 90 degrees for point-to-point and 120 degrees for point-to-plane. Spheres and cylinders converge to the same residual with an arbitrary pose; with the global method all 16 of 16 trials appear converged and the pose is wrong — undetectable from the residual.",
    "run": "py -3.11 examples/poc_registration_basin.py",
-   "lead_ja": "点群位置合わせの収束域では、初期姿勢がどれだけずれたら壊れるか。毎試行取を含む計算データを作り、成功率と等高線の関係を測った。並進と点対点の差を見ると、初期姿勢がどれだけずれたら壊れるかことが分かる。",
-   "lead_en": "In point-cloud registration's convergence region, the question is how much initial pose error causes failure. We computed data resampled each trial and measured success rate against its contours. The gap between translation and point-to-point shows how much initial pose error causes failure."
+   "lead_ja": "",
+   "lead_en": ""
   },
   {
    "id": "poc_river_surface_velocity",
@@ -1427,8 +1427,8 @@
    "caption_ja": "幅 8 m・最大 1.5 m/s のべき乗則の流速分布を真値に、泡トレーサを毎コマ動かして描いた川面を岸の斜めカメラ(ホモグラフィ既知)で 60 コマ撮り、空の映り込み・波紋・雑音を別々に足して、fullseye の piv_cross_correlate → warp_by_plane(正射化)→ piv_to_velocity で u(y) と流量 Q = h∫u dy を出す。ゼロ点(斜めのまま 1 尺度で換算)は近岸 +0.31 / 遠岸 -0.28 m/s と符号が逆で、見かけの川幅が 3.3 m に化けて流量 -57 %。正射化で速度 RMS 0.074 m/s・流量 -7.8 % だが、対照群でも流量 -3.0 % のうち -2.5 % は岸の台形積分だけで生じ、速度とは無関係。密度の崖は nan ではなく外れ値で来る(0.05 % で旗 44 %、アンサンブル相関は外れ窓を救わない)。窓を広げても岸の速度は「窓幅×勾配」の予想より桁で小さく(-0.008 m/s)、代わりに流量が -1.1 → -7.0 % と崖になる。動かない映り込みは細かいときだけ効き、引かれてから(速度比 0.70)張り付く(0.03)、時間中央値引きで 0.998 に戻る。dt の崖は 1/4 則ではなく対の消失で、探索上限を外しても同じ k=4 に立つ。",
    "caption_en": "A power-law surface velocity profile (8 m wide, 1.5 m/s peak) is the ground truth; foam tracers are advected frame by frame and imaged for 60 frames by an oblique bank camera with a known homography, with sky reflection, ripples and noise injected separately. fullseye's piv_cross_correlate → warp_by_plane (orthorectification) → piv_to_velocity yields u(y) and discharge Q = h∫u dy. The zero point (correlate the oblique frames, convert with one scale) errs +0.31 m/s near bank and -0.28 m/s far bank, the apparent width collapses to 3.3 m and Q is -57 %. Orthorectification gives 0.074 m/s RMS and Q -7.8 %, yet even the control group's Q -3.0 % is mostly (-2.5 %) the bank trapezoid rule, unrelated to velocity. The tracer-density cliff arrives as outliers, not NaNs (44 % flagged at 0.05 %; ensemble correlation does not rescue the lost windows). Widening the window smears the bank velocity by only -0.008 m/s, orders below the predicted window x gradient, while Q drifts from -1.1 to -7.0 %. Static reflections matter only when fine-grained: the estimate is first pulled (ratio 0.70) then pinned to zero (0.03), and a temporal median restores 0.998. The dt cliff is pair loss, not the quarter rule: removing the search limit leaves the cliff at the same k=4.",
    "run": "py -3.11 examples/poc_river_surface_velocity.py",
-   "lead_ja": "河川表面流速を斜め動画から測るとき、速度の誤差と流量の誤差は別に数える。計算データで最大と乗則を扱い、流速分布がどう変わるかを調べた。泡トレーサと毎コマ動の差を見ると、速度の誤差と流量の誤差は別に数えることが分かる。",
-   "lead_en": "When measuring river-surface velocity from oblique video, velocity and discharge errors count separately. Computed data with a peak and power law showed how the velocity profile changes. Comparing foam tracers with per-frame motion shows that velocity and discharge errors count separately."
+   "lead_ja": "",
+   "lead_en": ""
   },
   {
    "id": "poc_rotation_invariance_audit",
@@ -1440,8 +1440,8 @@
    "title_en": "Which Quantities Really Survive a Rotation — Auditing Invariance on a Real Coin",
    "caption_ja": "形の特徴量は当たり前のように「回転不変」と呼ばれる。だが**画素の格子は回転で不変ではない**ので、その主張はたいてい下請け(境界の数え方・補間・しきい値)の任意性のところで壊れる。scikit-image 同梱の実写 `coins`(大英博物館、ポンペイ出土のギリシャ硬貨)を 5 度ずつ 1 周させ、揺れを**3 本の腕**に分けて犯人を特定する: **A** 灰を線形補間して回してから二値化(人が実際にやること)/ **B** 0 度の二値マスクを最近傍で回す(境界の再ラスタライズだけ)/ **C** 90 度の倍数だけを `np.rot90` で回す(補間も再ラスタライズも無い)。回す道具は fullseye ではなく scipy —— 自分の回転で自分の不変性を測ると、両方同じ向きに間違っても気づけない。★**腕 C は 7 量すべてきっかり 0.00 %**。測り方そのものに向き依存は無く、揺れは全部「格子に置き直す代償」。★★**予測が外れた**: 書いた時点では「灰を補間して二値化し直すほうが荒れる」と思っていたが、**逆**だった —— 周囲長は A **2.52 %** < B **9.47 %**(3.8 倍)、円形度は A **4.82 %** < B **20.45 %**(4.2 倍)。二値マスクを最近傍で回すと境界が**階段のまま置き直される**のに対し、灰を補間してから二値化すると境界が下の連続信号から引き直される。**回すなら灰でやってから二値化する。二値マスクを回してはいけない。**★閉形式の錨(合成の正方形 L=80)では、45 度の 4 連結階段周囲長 `4L → 4L√2` の **+41.4 %** が上限。実測は **7.91 %** で、`regionprops` の Crofton 補正が 5.2 倍下回らせている —— 予測は「上限」であって「実測の当て」ではない、と書いておく。★**分母を疑う**: Hu[1](`moments_region_central_invar`)は円に近い形では真値がほぼ 0(3.9e-04)なので、相対ばらつき 29.6 % は「30 % ずれた」ではなく**0 を分母にした**だけ。表にその判定を並べてある。★図は反転色 `mode=\"xor\"`(最上位 bit だけ反転 —— 地の模様が残り、どの階調でも消えない)で輪郭を描き、72 コマの GIF で数字の揺れが見えるようにした。",
    "caption_en": "Shape features are routinely called rotation-invariant, but the pixel grid is not invariant under rotation, so the claim usually breaks at a helper — how the boundary is counted, how the image is interpolated, where the threshold lands. A real photograph (scikit-image `coins`, Greek coins from Pompeii, British Museum) is turned through a full circle in 5-degree steps and the wobble is split into three arms: **A** rotate the greyscale and re-threshold (what people actually do), **B** rotate the 0-degree binary mask with nearest neighbour (re-rasterisation only), **C** multiples of 90 degrees via `np.rot90` (exact). The rotation itself is done with scipy, not with fullseye — measuring your own invariance with your own rotation hides errors that lean the same way. **Arm C is exactly 0.00 % for all seven quantities**: the measurements carry no orientation bias at all, so every bit of the wobble is the cost of re-laying the boundary on the grid. **The prediction was wrong**: rotating the *binary mask* turns out to be far worse than interpolating the grey — perimeter 2.52 % (A) vs 9.47 % (B), circularity 4.82 % vs 20.45 %. Nearest-neighbour rotation re-lays a staircase; interpolating the grey re-derives the boundary from the underlying continuous signal. **Rotate the greyscale, never the mask.** A synthetic square anchors the closed form: the 4-connected staircase perimeter of a square rotated 45 degrees is bounded by `4L → 4L√2` (+41.4 %), but the measured swing is 7.91 % because `regionprops` applies a Crofton-style correction — the closed form is a ceiling, not a prediction. Finally, check the denominator: Hu[1] is ~0 for a near-circular blob (3.9e-04), so its 29.6 % relative spread means nothing at all.",
-   "lead_ja": "「回転しても同じ」と言える量はどれかを調べるとき、実写の硬貨を 72 角度で回して数える。合成データで特徴量と回転不変を扱い、画素がどう変わるかを調べた。格子と主張の差を見ると、実写の硬貨を 角度で回して数えることが分かる。",
-   "lead_en": "To find which quantities stay unchanged under rotation, a real coin is turned through seventy-two angles and counted. Synthetic data on features and rotation invariance showed how pixels change. Comparing the grid with the claim reveals which quantities remain unchanged."
+   "lead_ja": "",
+   "lead_en": ""
   },
   {
    "id": "poc_safety_clearance",
@@ -1453,8 +1453,8 @@
    "caption_ja": "多関節の骨格に太さを持たせた人体(カプセル 10 本)と可動アームを合成し、表面どうしの真の最小分離距離を時刻ごとに閉形式で持たせた場面で、速度分離監視の判定がどこで嘘になるかを数えた。人を重心 1 点 + 半径 0.30 m の球で代表すると危険時に +0.166 m 遠く言い、危険の 14.3 % を見落とす(足元 1 点なら 28.6 %)—— どちらも誤検知はほぼ 0 で、壊れ方は片側にしか出ない。背面カメラ 1 台では危険フレームの 48.6 % で「推定を決めた部位が真の最近傍と違う」ことが起き見落としは 18.1 %、2 台目で 0 % に戻るが、繰り返し性から名乗った不確かさ 0.036 m は遮蔽の偏り 0.178 m の 5 分の 1 しか無い。",
    "caption_en": "A ten-capsule articulated body and a moving arm are synthesised so that the true surface-to-surface minimum separation is known in closed form at every instant, and the speed-and-separation-monitoring verdict is then scored against it. Representing the person by one centroid inside a 0.30 m sphere reports the distance +0.166 m too far while a hazard is present and misses 14.3 % of the dangerous frames (28.6 % for a foot-level scanner) — with almost no false alarms, so the failure is strictly one-sided. With a single camera behind the person, 48.6 % of the dangerous frames have the estimate decided by a body part that is not the true nearest one, and 18.1 % are missed; a second camera restores 0 %, but the uncertainty claimed from repeatability, 0.036 m, is only one fifth of the 0.178 m bias that occlusion actually produces.",
    "run": "py -3.11 examples/poc_safety_clearance.py",
-   "lead_ja": "人と機械の安全距離の評価では、代表点に置き換えた分だけ、危険が消える。合成データに多関節を用意し、骨格と人体を比べた。可動アームと表面の差を見ると、代表点に置き換えた分だけ、危険が消えることが分かる。",
-   "lead_en": "In human-machine safety distance evaluation, danger vanishes as a representative point replaces the body. Using articulated synthetic data, we compared centreline and body. Comparing the moving arm with the surface shows that danger vanishes as a representative point replaces the body."
+   "lead_ja": "",
+   "lead_en": ""
   },
   {
    "id": "poc_scan_to_bim_asbuilt",
@@ -1466,8 +1466,8 @@
    "caption_ja": "部屋 1 つ分の合成建物に、壁の傾き・床の勾配と反り・柱の寸法違い・開口のずれを既知量で仕込み、3 か所からの走査(柱の影・入射角依存の雑音・混合画素・レジストレーション誤差つき)で測り返した。設計モデルへの平均距離という建物 1 個の数字は施工誤差の有無で 1.41 mm しか動かず、点群を一括で合わせると壁の傾きは真値の 69 % に痩せ、代わりに完全に水平な天井が 0.89 mrad 傾いて見える(合わせが吸う量を閉形式で先に予測し、実測との差は 0.05 mrad)。崖は欠測率でなく残った面の高さで決まり、同じ 90 % の欠測でも無作為に落とせば 0.098 mrad、下から順に残す形なら 1.234 mrad と 12.6 倍違った。",
    "caption_en": "A synthetic room carries known construction errors — leaning walls, a sloping and sagging floor, off-size columns, displaced openings — and is re-measured by a simulated scan from three stations with column shadows, incidence-dependent noise, mixed pixels and registration error. One number for the whole building (mean distance to the design model) moves by only 1.41 mm between a perfect building and a defective one; aligning the cloud in one piece shrinks the wall lean to 69 % of truth and hands 0.89 mrad of tilt to a ceiling that is perfectly level (a closed-form prediction of what the fit absorbs matches the measurement to 0.05 mrad). The cliff is set by the height of the surviving surface rather than by the dropout rate: at the same 90 % loss, dropping points at random costs 0.098 mrad while keeping only the lower band costs 1.234 mrad — 12.6 times worse.",
    "run": "py -3.11 examples/poc_scan_to_bim_asbuilt.py",
-   "lead_ja": "設計と実物の食い違いを部屋から測るとき、合わせの妥協角は、無傷の部材へ配られる。合成建物を含む合成データを作り、勾配と寸法違の関係を測った。開口と既知量の差を見ると、合わせの妥協角は、無傷の部材へ配られることが分かる。",
-   "lead_en": "When design mismatch is measured from a room, the alignment's compromise angle goes to undamaged members. Using a synthetic building, we measured how slope relates to dimensional deviation. Comparing openings with known quantities reveals how the alignment's compromise angle goes to undamaged members."
+   "lead_ja": "",
+   "lead_en": ""
   },
   {
    "id": "poc_screw_thread_metrology",
@@ -1479,8 +1479,8 @@
    "caption_ja": "ISO 68-1 の基本三角形を閉形式で描いた M6 相当の投影像(1 px = 25 µm)。二値化した列幅の FFT はピッチを真値の半分 20 px と答える(上下輪郭が P/2 ずれた三角波の和は定数)。軸を 3 度傾けると左右フランク角は 33.18 / 26.74 度に割れ、半和 29.81 度が真のフランク角、半差 3.19 度が傾きの推定になる。片側フランクで測るピッチは 1 次で狂う(+3.28 / -2.79 %)が頂点間隔は 2 次(-0.12 %)。傾きを戻せば P -0.009 %、d2 +0.033 %。",
    "caption_en": "An M6-like silhouette drawn from the ISO 68-1 basic triangle in closed form (1 px = 25 µm). An FFT of the binarised column widths reports half the true pitch, 20 px, because the two profiles are offset by P/2 and their sum is constant. Tilting the axis by 3 degrees splits the flank angles into 33.18 / 26.74 degrees: their half-sum 29.81 is the true flank angle and their half-difference 3.19 estimates the tilt. Pitch measured on one flank drifts at first order (+3.28 / -2.79 %) while the crest spacing drifts at second order (-0.12 %); undoing the tilt leaves P -0.009 % and d2 +0.033 %.",
    "run": "py -3.11 examples/poc_screw_thread_metrology.py",
-   "lead_ja": "ねじの輪郭からピッチ・フランク角・有効径では、傾きは左右のフランクに逆符号で出る。計算データで基本三角形と閉形式を扱い、相当がどう変わるかを調べた。投影像と二値化の差を見ると、傾きは左右のフランクに逆符号で出ることが分かる。",
-   "lead_en": "When a thread outline yields pitch, pitch diameter and flank angle, tilt reverses sign between left and right flanks. Computed data with the basic triangle and closed form showed how equivalents change. Comparing projection and binarization shows that tilt reverses sign between left and right flanks."
+   "lead_ja": "",
+   "lead_en": ""
   },
   {
    "id": "poc_sea_ice_concentration",
@@ -1492,8 +1492,8 @@
    "caption_ja": "PSF(点広がり関数) でぼかした海氷/水の 2 バンド像から密接度を硬い分類と線形混合分解で出した図。硬い分類は -4.2 ポイント、分解は +0.02 ポイント。偏りは周長率で説明がつき(R² = 0.984)、密接度 0.49 付近でゼロを横切る ―― そこだけで検証すると合格する。",
    "caption_en": "Ice concentration from a PSF (point spread function)-blurred two-band ice/water image, by hard classification and by linear unmixing. Hard classification is off by -4.2 points, unmixing by +0.02. The bias is explained by the perimeter fraction (R² = 0.984) and crosses zero near a concentration of 0.49 — validate only there and it passes.",
    "run": "py -3.11 examples/poc_sea_ice_concentration.py",
-   "lead_ja": "海氷密接度の評価では、混合画素をどう数えるかで答えが変わる。計算データにバンド像を用意し、分類と線形混合分解を比べた。ポイントと周長率の差を見ると、混合画素をどう数えるかで答えが変わることが分かる。",
-   "lead_en": "In evaluating sea-ice concentration, the counting of mixed pixels changes the result. We prepared band images from calculations and compared classification with linear unmixing. The gap between points and perimeter ratio reveals how the counting of mixed pixels changes the result."
+   "lead_ja": "",
+   "lead_en": ""
   },
   {
    "id": "poc_search_sweep_width",
@@ -1505,8 +1505,8 @@
    "title_en": "Sweep Width — One Number Measured from Aerial Images Decides Whether the Search Works",
    "caption_ja": "空撮画像から**横距離曲線** p(x)(機体直下からの横方向距離ごとの検出確率)を測り、その面積 **W = ∫p dx** を走査幅として捜索計画に渡す。画像処理と意思決定が 1 本の数字でつながる場所。★まず**走査幅の定義そのものを実証**した: 形の違う 4 本の曲線(実測 p / 幅 W の矩形 / 底辺 2W の三角形 / 二峰形)を同じ面積 **256.2 m** に揃えると、半幅 500 m に一様に撒いた目標の検出割合は 0.2559 / 0.2563 / 0.2556 / 0.2566 —— **4 つとも予測 0.2562 の 0.8σ 以内**。**曲線の形は消え、面積だけが残る**。これが 1 本の数字を計画に渡せる理由。★崖は被覆率 C = W·v·t/A = 1。閉形式を**先に印字**して min(1,C) = **1.0000**、1-exp(-C) = **0.6321**。矩形の対照群の実測は 1.0000 / 0.6348(+0.005 は航跡が有限本 n=64 だからで、厳密式 1-(1-W/Wd)^64 = 0.6350)。★★**予測を 4 つ外した**。(1) 実測の p を入れると平行捜索は **0.8464** で 1.000 に届かない —— min(1,C) は p が幅 W の**矩形**であること(定値域則)に依存していて、裾を引く実曲線では隣の航跡と裾が重なる。(2)「平らな曲線のほうが矩形に近く平行捜索に強い」は**逆**だった(0.7705 対 0.8464)。矩形に近いとは『平ら』ではなく『W の内側に立ち、外へ裾を引かない』こと(支持域/W が 2.40 対 2.25)。★同じ 2 本が**ランダム捜索では一致する**(0.6371 対 0.6357)—— ランダム捜索は面積しか見ない。(3)「端は解像度が落ちる」—— ナディア向きの中心投影では**地上分解能は端まで一定**(相対ばらつき 0.0e+00)。落ちるのは cos^4・大気・軸外ぼけのほうで、f-theta 光学なら端は 2.132 倍粗くなる。(4)「背景を引けば良くなる」—— 画像全体の中央値と σ で割るのは**アフィン変換なので順位が変わらない**(174.4 → 172.0 m)。効くのは**場所ごと**に引いたときだけ(239.6 m)。★**最適高度は内点に来た**(220 m で W = 258.1 ± 4.0 m)。ただし 220 m と 300 m は標準誤差内で**測り分けられていない**と正直に書いた。低高度側で落ちる理由は解像度ではなく**掃引幅そのもの**(高度 100 m では視野の端でも p = 0.707 のまま切れており W は下限値)。掃引速度 W·v で見ると、v ∝ min(1, h/600) の機体では最適が **420 m** へ動く —— **『高度を下げて W を上げる』は成り立たない**(下げると掃引幅が縮み、機体によっては速度まで落ちる)。★★**見張り役**: 検出率だけ見ていると誤検出が見えない。誤検出は端ではなく**直下に集中**する(0-32 m 帯 **113 件** / 最外 256-288 m 帯 **0 件**)—— 目標も白波も同じ cos^4・同じ大気で暗くなるので、**いちばんよく見える所がいちばん吠える**。同じ画像・同じ検出器で閾値だけ動かすと W は **406 m から 170 m** まで動く(誤検出 22.9 件/枚 → 0.37 件/枚)。**『走査幅 400 m』という報告は、誤検出率が書いていなければ何も言っていない**。★対照群は差 ± σ つきで並べた: 白波 +107.1±5.6、cos^4 +65.5±6.6、軸外ぼけ +48.6±6.2 に対し、**大気 +6.0±5.9 は 1.0σ で「効いている」と言えない**。足し算にもならない。★素材側の穴も 1 つ踏んだ: 点源を画素中心 1 点で標本すると**総フラックスの誤差は 4.6e-07 なのにピーク値が σ=0.9 px で 10.6 % 過大**になり、σ が横距離で変わるので横距離曲線そのものが傾く。**総和が合っていることは、山の高さが合っている証拠にならない** —— erf で画素を厳密積分するよう直した。★★道具の穴を 4 つ見つけ、**うち 1 つはその場で埋めた**: 点状目標の座標を返す 2-D op は `star_detect` だけなのに、「小さい目標 検出」「スポット 検出」「漂流 捜索」では op_find が **0 件**だった。掛けて見ると原因は名前ではなく **op_find 側** —— 語の切り出しが `[a-z0-9]+` の ASCII 限定で和文は語が 1 つも取れず、採点する doc も docstring の **1 行目だけ**(30 文字)。**和文の複数語クエリは構造的に必ず 0 件**になっていた。CJK の連なりを語として取り 2-gram で按分する段を「既存の点が 0 のときだけ」足し、採点対象を docstring 全文へ広げ、star_detect に「名前は天体だが中身は分野中立」と書いた。いまは同じ和文で 1〜2 位に出る(ただし「点 検出」は今も出ない —— 「点」1 文字は輪郭 op の説明にも必ず出るため。限界も隠さない)。",
    "caption_en": "Measure the lateral range curve p(x) from aerial imagery — detection probability as a function of cross-track distance — and hand its area, W = integral of p dx, to the search plan as the sweep width. This is where image processing and decision-making meet in a single number. The definition itself is demonstrated first: four curves of different shape (the measured p, a rectangle of width W, a triangle of base 2W, and a bimodal curve that cannot see nadir) all scaled to the same area of 256.2 m detect 0.2559 / 0.2563 / 0.2556 / 0.2566 of targets scattered uniformly over a half-width of 500 m, every one within 0.8 sigma of the predicted 0.2562. The shape vanishes; only the area survives. The cliff sits at coverage C = W v t / A = 1, printed in closed form before measuring: min(1, C) = 1.0000 and 1 - exp(-C) = 0.6321, against a rectangular control measuring 1.0000 and 0.6348 (the excess comes from having a finite 64 tracks; the exact value is 0.6350). Four predictions were wrong. Feeding the real p into a parallel sweep gives only 0.8464, not 1.000, because min(1, C) assumes the rectangular definite range law and a curve with tails overlaps its neighbouring tracks. The flatter curve was expected to be the more rectangle-like and therefore stronger, but it was the weaker (0.7705 against 0.8464): rectangle-like means standing inside W without tails, not being flat — while under random search the two curves tie, since random search only sees area. Ground resolution was expected to fall towards the swath edge, but for a nadir-looking central projection it is constant to 0.0e+00 relative spread; what falls is cos^4 vignetting, atmosphere and off-axis blur (an f-theta lens would coarsen the edge by 2.132 times). And subtracting a global background does nothing, because dividing by the whole-frame median and sigma is an affine map that cannot change the ranking (174.4 to 172.0 m); only a per-location subtraction helps (239.6 m). The optimum altitude lands in the interior at 220 m with W = 258.1 +/- 4.0 m, though 220 and 300 m are honestly not resolved apart; with an aircraft whose speed scales as min(1, h/600) the optimum moves to 420 m, so lowering the altitude to raise W does not work. The chaperone here is the false-alarm count, which concentrates at nadir rather than at the edge (113 in the 0-32 m band, zero in the outermost) because targets and whitecaps dim through the same cos^4: the best-seen place barks the most. Moving only the threshold slides W from 406 m to 170 m, so a sweep width quoted without a false-alarm rate says nothing at all.",
-   "lead_ja": "走査幅では、空撮画像から測った 1 本の数字が、捜索計画の成否を決める。実測データで横距離曲線と面積を扱い、画像処理がどう変わるかを調べた。意思決定と場所の差を見ると、空撮画像から測った 本の数字が、捜索計画の成否を決めることが分かる。",
-   "lead_en": "For sweep width, a single figure derived from aerial imagery determines whether a search plan succeeds. Measured data on lateral range curves and area showed how image processing changes. Comparing decision-making and place shows that one such figure decides whether a search plan succeeds."
+   "lead_ja": "",
+   "lead_en": ""
   },
   {
    "id": "poc_settlement_significance",
@@ -1518,8 +1518,8 @@
    "caption_ja": "トンネル掘進で沈んだ 24 x 16 m の路面を 2 時期の点群で測る。ゼロ点の最近傍距離(C2C)は変化ゼロでも中央値 47.74 mm を返し(正体は点間隔)、符号も持たない。M3C2 の平均は -2.43 mm で真値と一致するが、LoD を超えて有意なのは 275/551 core(49.9 %)でその平均は -4.34 mm ―― 1 行の平均はどちらとも一致しない。LoD は沈下ではなく面の地図で、ゾーンごとに 0.51〜3.58 mm。有意なものだけ足すと体積は 0.8569 → 0.7643 m3 に痩せ、その欠け量は core ごとの LoD から先に計算できる(予測 0.867 / 実測 0.892)。",
    "caption_en": "A 24 x 16 m road surface settling above a tunnel drive, measured from two epochs of point cloud. The nearest-neighbour baseline (C2C) returns a median of 47.74 mm even with zero change — that is just the point spacing — and carries no sign. M3C2 averages -2.43 mm, matching the truth, but only 275 of 551 cores (49.9 %) exceed their level of detection, and those average -4.34 mm: the single averaged number agrees with neither. LoD is a map of the surface, not of the settlement, ranging 0.51 to 3.58 mm across zones. Summing only the significant cores shrinks the volume from 0.8569 to 0.7643 m3, and that shortfall is predictable in advance from the per-core LoD (0.867 predicted versus 0.892 measured).",
    "run": "py -3.11 examples/poc_settlement_significance.py",
-   "lead_ja": "沈下したのか、測り直しただけなのかを確かめる場面では、検出限界で切ると景色が変わる。実測データにトンネル掘進を用意し、路面と時期を比べた。点群とゼロ点の差を見ると、検出限界で切ると景色が変わることが分かる。",
-   "lead_en": "When checking whether ground settled or was merely rescanned, a detection-limit cutoff changes the picture. Using measured data from a tunnel drive, we compared the road surface across epochs. The gap between point cloud and zero point shows that this cutoff changes the picture."
+   "lead_ja": "",
+   "lead_en": ""
   },
   {
    "id": "poc_solar_el_inspection",
@@ -1531,8 +1531,8 @@
    "caption_ja": "結晶シリコンセル(フィンガー 100 本・バスバー 3 本・結晶粒 70 個)の EL 画像を閉形式で合成し、孤立領域(真値 4.77 %)・クラック 5 本・断線 8 本を植えて cos^4 ビネッティングと光子雑音で観測した。ゼロ点の大域しきい値は暗画素率 21.7 % を不活性面積率と呼ぶが、その 42 % はフィンガー/バスバー、33 % は結晶粒とビネッティングで、本物の不活性領域は 20 %。行・列プロファイルで格子を割り、種別ごとの門で取ると面積率 4.61 %(誤差 -0.15 ポイント)、クラック再現率 0.88〜1.00、断線 8/8。sk_frangi は画像ごとの最大値で正規化するので、校正線は画像中でいちばん強くないと尺度を固定できず(実クラックと同じ線は応答 0.69、幅 3 px の強い線は 1.00)、校正なしは欠陥ゼロの良品で偽クラック 147 px を出す。結晶粒コントラスト c=0.24 から偽クラックと帯の飲み込みが同時に始まり、クラック幅の崖 1.25 px は「幅 × 深さ」の線形則(予測 1.38 px)で読める。",
    "caption_en": "A crystalline-silicon cell (100 fingers, 3 busbars, 70 grains) is rendered in closed form as an EL image with two electrically isolated regions (true inactive area 4.77 %), 5 cracks and 8 finger interruptions, then imaged through cos^4 vignetting and photon noise. The zero-point global threshold reports a dark-pixel fraction of 21.7 % as the inactive area, but 42 % of those pixels are fingers and busbars and 33 % are grains and vignetting; only 20 % are truly inactive. Dividing out the grid with row/column profiles and gating each defect type separately gives 4.61 % (-0.15 points), crack recall 0.88–1.00 and 8/8 interruptions. Because sk_frangi normalises by the per-image maximum, a calibration line only fixes the scale if it is the strongest ridge in the image (a line like the real cracks responds 0.69, a 3 px black line 1.00); without calibration the defect-free cell produces 147 px of false cracks. From grain contrast c=0.24 false cracks and swallowed interruption bands start together, and the crack-width cliff at 1.25 px follows the linear width-times-depth rule (predicted 1.38 px).",
    "run": "py -3.11 examples/poc_solar_el_inspection.py",
-   "lead_ja": "太陽電池セルの EL 画像から発電損失を推定するとき、「暗い = 不活性」ではない。結晶シリコンセルを含む合成データを作り、閉形式と孤立領域の関係を測った。クラックと断線の差を見ると、「暗い = 不活性」ではないことが分かる。",
-   "lead_en": "When estimating power loss from a solar cell's EL image, dark does not mean inactive. We synthesized a crystalline-silicon cell and measured how the closed form relates to isolated regions. Comparing cracks with finger interruptions shows that dark does not mean inactive."
+   "lead_ja": "",
+   "lead_en": ""
   },
   {
    "id": "poc_solar_limb_darkening",
@@ -1544,8 +1544,8 @@
    "caption_ja": "周辺減光つきの太陽面をシーイング越しに撮り、縁の半径を 50 % 法・勾配最大・モデル当てはめで測った図。「偏りは減光係数に比例」の予想は外れ、u = 0.8 で -12.76 px(幾何だけの予測 -13.14 px)。しきい値 0.26 付近でぼけの影響が消える打ち消し点は、u を変えると 0.38 へ動く。",
    "caption_en": "A limb-darkened solar disc seen through seeing, its radius measured by the 50 % rule, by gradient maximum and by model fitting. The prediction 'bias scales with the darkening coefficient' failed: at u = 0.8 the bias is -12.76 px (pure geometry predicts -13.14 px). The cancellation point near threshold 0.26, where blur appears to have no effect, moves to 0.38 when u changes.",
    "run": "py -3.11 examples/poc_solar_limb_darkening.py",
-   "lead_ja": "縁が暗い天体の輪郭はどこかを調べるとき、周辺減光があると「50 % 法」は半径を小さく見る。太陽面を含む計算データを作り、シーイング越と勾配最大の関係を測った。モデル当と減光係数の差を見ると、周辺減光があると「 % 法」は半径を小さく見ることが分かる。",
-   "lead_en": "When locating a dark-rimmed body's outline, limb darkening makes the 50 % cutoff underestimate the radius. We computed solar-disc data and measured how seeing relates to the gradient maximum. Comparing the model fit with the darkening coefficient shows this underestimate."
+   "lead_ja": "",
+   "lead_en": ""
   },
   {
    "id": "poc_solder_fillet_aoi",
@@ -1570,8 +1570,8 @@
    "caption_ja": "マシンビジョンが測った寸法・欠陥数の系列を、学習を一切使わない 4 つの SPC op(すべて教科書の閉じた式で、突き合わせる厳密な恒等式を持つ)に繋いだ図。Xbar-R 管理図は末尾に入れた +4σ のずれを 4 群ぶん即座に捕らえ(n=5 の定数 A2/D3/D4 = 0.577/0.000/2.115、ISO 8258)、CUSUM は Shewhart 3σ が 1 件も鳴らさない +0.8σ の持続ドリフトを #45(ドリフト開始直後)で捕らえる。工程能力は中心が仕様中点なら Cpk = Cp = 1.307、中心を +1 ずらすと Cpk = 0.981 < Cp と「能力はあるが今の中心では出せていない」を分けて示す。多変量 T² は相関する 3 計測の同時ドリフトを 1 判定にまとめる(UCL は F 分布由来)。「絵が良くなること」と同じで、工程が回っていることと管理下にあることは別々に測る。",
    "caption_en": "A series of dimensions and defect counts measured by machine vision, fed through four SPC ops that use no learning at all (each a textbook closed-form with an exact identity to check against). The Xbar-R chart catches a +4σ shift planted at the tail across 4 subgroups at once (n=5 constants A2/D3/D4 = 0.577/0.000/2.115, ISO 8258); CUSUM catches a +0.8σ sustained drift that Shewhart 3σ never flags, at #45 (right after the drift starts). Process capability separates \"capable\" from \"capable at the current centre\": centred on the spec midpoint Cpk = Cp = 1.307, shifted by +1 Cpk = 0.981 < Cp. Multivariate T² folds the simultaneous drift of three correlated measurements into one verdict (UCL from the F-distribution). As with image restoration, a process running and a process in control are measured separately.",
    "run": "py -3.11 examples/poc_spc.py",
-   "lead_ja": "工程は管理下か、そして能力はあるかを確かめる場面では、閉じた式だけで読む統計的工程管理。計算データのマシンビジョンを使い、寸法と欠陥数を別々に確かめた。系列と学習の差を見ると、閉じた式だけで読む統計的工程管理ことが分かる。",
-   "lead_en": "When checking whether a process is in control and capable, SPC can rely on closed-form expressions alone. Using computed machine-vision data, we checked dimensions and defect counts separately. Comparing the series with learning shows that closed forms alone suffice."
+   "lead_ja": "",
+   "lead_en": ""
   },
   {
    "id": "poc_mt_hidden_fault",
@@ -1583,8 +1583,8 @@
    "caption_ja": "設備保全 PoC(振動・熱・形状の 3 センサ、20 特徴量)の健全 48 本を MT 法(マハラノビス・タグチ)の単位空間にし、健全の別標本 32 本で「単変量 max|z|」と「MD」の閾値を両方とも誤警報 0 に揃えて比べた図。健全な設備では特徴量どうしが強く相関する(継手温度と全体温度で ρ=0.999)ので、相関が壊れた標本は各特徴量が正常範囲のままでも距離では遠い。単変量が『全特徴量とも正常範囲』と言った 169 標本のうち MT 法は 79 本(47 %)を異常と言う。散布図の左上(単変量の閾値より左・MT の閾値より上)がその領域。恒等式は 2 つ: 単位空間の MD² 平均 = (N−1)/N(ddof=1 の定義から厳密)、2 特徴で点 (+z, −z) の MD² = z²/(1−ρ)(閉形式)。慣習の |z|>3 は 20 特徴では偶然に 12.5 % 鳴る。軽い故障は正常(0)と故障(1)の線形内挿 ―― 元 PoC の「重症度 × 故障値」は軽い側で正常より静かで冷たい別の異常になり、検出率が重症度に単調でなかった。素材は合成で、この割合はこの相関構造の上界。",
    "caption_en": "The 20 features (vibration, thermal, shape) of the machine-condition PoC: 48 healthy records form a Mahalanobis–Taguchi unit space, and 32 further healthy records set both thresholds — univariate max|z| and MD — at zero false alarms. Healthy machines have strongly correlated features (coupling vs. global temperature: ρ=0.999), so a record that breaks the correlation is far in distance while every single feature stays in range. Of the 169 fault records the univariate rule called \"all features normal\", the MT method flags 79 (47 %); the upper-left region of the scatter (left of the univariate threshold, above the MD threshold) is exactly that set. Two exact identities: the unit space's mean MD² equals (N−1)/N (from the ddof=1 definition), and for two features the point (+z, −z) has MD² = z²/(1−ρ) in closed form. The customary |z|>3 fires by chance 12.5 % of the time with 20 features. Mild faults are a linear blend between normal (0) and fault (1) — the original PoC's \"severity × fault value\" produced, at the mild end, a machine quieter and cooler than normal, and detection was not monotone in severity. Synthetic material; the fraction is an upper bound for this correlation structure.",
    "run": "py -3.11 examples/poc_mt_hidden_fault.py",
-   "lead_ja": "どのセンサーも正常値なのに、設備は異常では、MT 法が単変量 3σ の見逃しを拾う量。合成データで設備保全と健全を扱い、単位空間がどう変わるかを調べた。別標本と閾値の差を見ると、MT 法が単変量 σ の見逃しを拾う量ことが分かる。",
-   "lead_en": "When all sensors look normal but equipment is faulty, the key quantity is the univariate 3σ misses caught by the MT method. Using synthetic maintenance data for healthy equipment, we examined how the unit space changes. Comparing held-out samples with thresholds reveals that quantity."
+   "lead_ja": "",
+   "lead_en": ""
   },
   {
    "id": "poc_text_region_truth",
@@ -1596,8 +1596,8 @@
    "caption_ja": "fullseye は OCR の前処理までで止まり「どこに文字があるか」を出す層が無かった。認識器(学習済みモデル)は載せない方針なので、文字の幾何 ―― ストロークの幅がほぼ一定 ―― だけで領域を出す古典(Stroke Width Transform、Epshtein 2010)を 3 op にし、自分でフォント描画した文字(インク画素が 1 px 単位で既知)で採点した図。真値は 3 つ: 幅 w の矩形ストロークで SWT = w が全画素で厳密(エッジを文字側の内側境界画素と定め、幅 = 向かい合う境界画素の中心間距離 + 1 という規約で整数になる)、2 倍拡大で中央値 5 → 10、描いたインクのうち候補矩形に入った割合(再現率)。Latin は size ≥ 32 でインク再現率 80〜90 %、CJK(漢字・かな)は 60〜79 %、矩形の精度は約 50 %(矩形は字の余白を含む)。文字の大きさ 6 段 × 雑音 4 段の表で、落ちるのは雑音でなく小さい字(size 16 の落ち込みは 12 より低く未解明として印字)。CJK フォントが無い環境ではラテン文字だけで回り、その旨を印字する。",
    "caption_en": "fullseye stopped at OCR pre-processing and had no layer answering \"where is the text\". Recognisers (trained models) stay out by design, so the geometry of text alone — a stroke has nearly constant width — drives a classical detector (Stroke Width Transform, Epshtein 2010) in three ops, graded on text we rendered ourselves (ink pixels known to the pixel). Three truths: for a rectangular stroke of width w the SWT equals w at every pixel (edges are defined as the inner boundary pixels on the ink side and width = centre-to-centre distance of opposing boundary pixels + 1, which makes it an exact integer); doubling the image doubles the median from 5 to 10; and the fraction of drawn ink that falls inside candidate boxes (recall). Latin text at size ≥ 32 reaches 80–90 % ink recall, CJK (kanji/kana) 60–79 %, box precision about 50 % (boxes include the glyphs' white space). A 6 sizes × 4 noise levels table shows that what breaks detection is small text, not noise (the dip at size 16 below size 12 is printed as unexplained). Without a CJK font the example runs Latin only and says so.",
    "run": "py -3.11 examples/poc_text_region_truth.py",
-   "lead_ja": "文字はどこにあるか、を学習なしでの評価では、描いた文字を真値に、ストローク幅の検出器を採点する。計算データの前処理を使い、認識器と方針を別々に確かめた。幾何と一定の差を見ると、描いた文字を真値に、ストローク幅の検出器を採点することが分かる。",
-   "lead_en": "To evaluate text localization without learning, we score a detector based on stroke width against rendered characters as ground truth. Using computed preprocessing data, we checked recognizers and policy separately. Comparing geometry with constant width shows this scoring in action."
+   "lead_ja": "",
+   "lead_en": ""
   },
   {
    "id": "poc_star_astrometry",
@@ -1609,8 +1609,8 @@
    "caption_ja": "既知の天球座標から描いた星の位置を 4 手法で測り、Fisher 情報の理論限界と比べた図。S/N 298 で重心(ゼロ点)は理論の 5.56 倍、背景引き重心は 1.03 倍で、限界を上回った手法は無い。暗い端でゼロ点が限界を下回って見える(0.2790 px 対 0.3471 px)のは、感度 0.038 で初期値の四捨五入を返しているだけ。",
    "caption_en": "Stars rendered from known celestial coordinates, located by four methods and compared with the Fisher-information bound. At S/N 298 the centroid (null) sits at 5.56x the bound and the background-subtracted centroid at 1.03x; no method beats the bound. At the faint end the null appears to beat it (0.2790 px versus 0.3471 px), but with a sensitivity of 0.038 it is merely returning the rounded initial guess.",
    "run": "py -3.11 examples/poc_star_astrometry.py",
-   "lead_ja": "星の位置は何分の 1 画素まで測れての評価では、どこで崖に落ちるか。計算データの天球座標を使い、手法と情報を別々に確かめた。理論限界と重心の差を見ると、どこで崖に落ちるかことが分かる。",
-   "lead_en": "When evaluating the subpixel precision of stellar positions, the question is where accuracy falls off a cliff. Using computed celestial-coordinate data, we checked methods and information separately. Comparing the theoretical limit with the centroid shows where that cliff lies."
+   "lead_ja": "",
+   "lead_en": ""
   },
   {
    "id": "poc_stockpile_volume",
@@ -1622,8 +1622,8 @@
    "title_en": "Stockpile Inventory — The Answer Is Fixed by the Ground Nobody Measured",
    "caption_ja": "鉱山・骨材・港湾の**堆積物の在庫量**を 3-D スキャンから出す。山と地面を別々の式で置き、安息角 37 度の円錐 3 個の**和**にしたので体積が解析的に閉じる(3572.6089 m^3、セル 0.025 m の数値積分と一致)。★★**在庫量という 1 個の数字は、誰も測っていない面 —— 山の下の地面 —— の仮定で決まる**。★崖 (a) 底面の仮定は閉形式 ΔV = -A・Δh で先に印字してから測り、7 通りで差 **0.0000 m^3**。驚きは一致ではなく大きさのほうで、**測量では誤差とも呼ばない 5 cm が在庫の 1.269 %、かさ 1.6 t/m^3 なら 72.5 t**(トラック 3 台分)。★崖 (b) 遮蔽は「円錐は線織面」から可視率 = arccos((H-h_s)/(D tanφ))/π。6 通りで差 ≤ 0.0201 で、その差はセルを 1.2 → 0.6 → 0.4 m にすると 0.0339 → 0.0171 → 0.0120 と **1 次で縮む** —— **模型の誤りではなく離散化**だと切り分けられる。★★予測を 1 つ外した: 遮蔽部を補間すると体積は**過小**に出ると思っていた(円錐面は凹なので弦は下を通る)が、実測は **+17.20 % の過大**。裏側が法尻まで丸ごと見えないため三角形の相手が「山の上」ではなく**山の外の地面**になり、稜線から 30 m 先へ張った弦の勾配 0.37 m/m が真の斜面 0.75 m/m の**上**を通る。「凹だから過小」は両端が山の上にあるときの話だった。★★相殺の罠が出た: 同じ 1 か所スキャンで、真の地面を底面にすると **+17.20 %**、現場の手(外周平均の水平底面)だと **+0.51 %**。良くなったのではなく、外周の高さも同じ補間で **+0.728 m** 持ち上がって引き算で消えているだけ —— 証拠に、外周のうち**実際に見えた点だけ**で底面を決めると **+12.05 %** に戻る。**汚染された物差しで汚染された対象を測ると、誤差は消えたように見える**。★同じ形が §7 にも: 法尻に残土の土手を混ぜると**外れ値に強い RANSAC のほうが数字は悪い**(+2.48 % 対 TLS +0.61 %)が、RANSAC は土手を正しく捨てて「土手なし」の答え +1.91 % へ戻っただけで、TLS が良く見えるのは土手の持ち上げがうねりの偏りをたまたま打ち消したから。★外周平均の水平底面は footprint が概ね対称なら地面の**傾きを勝手に打ち消す**(平らな対照群 +0.01 %)。残る +1.79 % は全部うねりで、**傾いた平面を当てはめると悪化する**(+1.91 %)—— 「自由度を増やせば良くなる」は成立しない。★物差しで勝者が入れ替わる: 体積は水平底面が僅かに良く、**重心は平面当てはめが 6 分の 1**(0.07 m 対 0.42 m)。積込計画に効くのは重心のほう。★★2 つの誤差は**足し算にならない**(-0.70 % のはずが +0.51 %)—— 遮蔽の補間が底面を決める外周まで動かすので、2 つは絡む。誤差収支を「底面 x % + 遮蔽 y %」と足す報告は、この時点で嘘になる。★★道具のバグを 1 つ見つけて、その場で直した: `dem_viewshed` が**観測者の目線より高いセルを軒並み「見えない」と返していた**(平地に置いた円錐の頂点が可視 0.0、目線より高い 1541 セルの可視 0 個、底面の遮蔽率 0.8863 対 閉形式 0.5710)。視線の標本が `np.rint` で**目標セル自身**に丸まる自己遮蔽で、標本が目標セルに乗った回を数えないよう修正した(いま 頂点 1.0 / 遮蔽率 0.5900)。★**それまでの門が通した理由**が収穫で、可視領域の試験は「平地」と「壁の**向こう側**」しか見ておらず、**壁そのものが見えるか**を一度も確かめていなかった。",
    "caption_en": "Stockpile inventory from a 3-D scan, for mining, aggregates and ports. The pile and the ground beneath it are written as separate formulas, and making the pile a sum of three cones at a 37 degree angle of repose closes the volume analytically at 3572.6089 m^3, matching a numerical integration at 0.025 m cells. The point is that the single number everyone quotes is fixed by a surface nobody measured: the ground under the pile. The first cliff is the assumed base, stated in closed form as dV = -A dh before measuring and matching to 0.0000 m^3 over seven offsets. The surprise is not the agreement but the size: 5 cm, which no survey would call an error, is 1.269 % of the inventory, or 72.5 t at a bulk density of 1.6 t/m^3 — three truckloads. The second cliff is occlusion. A cone is a ruled surface, so the visible fraction is arccos((H - h_s)/(D tan phi))/pi, matching to within 0.0201 over six geometries, and that residual halves with the cell size (0.0339, 0.0171, 0.0120 at 1.2, 0.6 and 0.4 m), which identifies it as discretisation rather than a wrong model. One prediction was wrong: interpolating across the occluded side was expected to under-estimate the volume, since a cone is concave and a chord passes below it, but the measurement is +17.20 %, an over-estimate. The far side is hidden all the way to the toe, so the triangulation connects the ridge not to the pile but to the ground beyond it, and a chord thrown 30 m past the ridge has a slope of 0.37 m/m that passes above the true 0.75 m/m slope. Then a cancellation trap: with the same single scan, using the true ground gives +17.20 % while the field practice of a horizontal base at the mean perimeter height gives +0.51 %. Nothing improved — the perimeter was lifted by the same interpolation, by +0.728 m, and the subtraction hides it; using only the perimeter points that were actually seen returns +12.05 %. A contaminated ruler applied to a contaminated object makes the error look like it went away. The same shape recurs with a berm of spoil at the toe: the outlier-resistant RANSAC fit reads worse (+2.48 %) than total least squares (+0.61 %), but RANSAC correctly rejected the berm and returned to the no-berm answer of +1.91 %, while TLS looked good because the berm's lift happened to cancel the bias from the undulating ground. Averaging the perimeter cancels the ground's tilt whenever the footprint is roughly symmetric — the flat control reads +0.01 % — so the remaining +1.79 % is entirely undulation, and fitting a tilted plane makes it worse (+1.91 %): more freedom does not mean less bias. The rulers disagree on the winner, with the horizontal base slightly better on volume and the fitted plane six times better on the centroid (0.07 m against 0.42 m), which is the quantity a loading plan uses. And the two errors do not add: -0.70 % expected against +0.51 % measured, because the occlusion fill moves the perimeter that fixes the base. Finally, a real bug was found and fixed: dem_viewshed reported every cell above the observer's eye as not visible — the apex of a cone on open flat ground read 0.0, none of the 1541 cells above eye level were visible, and the occluded fraction came out 0.8863 against a closed-form 0.5710. Line-of-sight samples rounded onto the target cell itself, occluding it against its own height; skipping those samples restores 1.0 at the apex and 0.5900 for the occluded fraction. The existing tests missed it because they only checked flat ground and what lies behind a wall, never whether the wall itself is visible.",
-   "lead_ja": "堆積物の在庫量では、誰も測っていない「山の下の地面」が答えを決める。実測データで鉱山と骨材を扱い、港湾がどう変わるかを調べた。三次元とスキャンの差を見ると、誰も測っていない「山の下の地面」が答えを決めることが分かる。",
-   "lead_en": "For stockpile inventory, the ground beneath the pile, which nobody measures, determines the result. Using measured data covering mines and aggregates, we examined how ports change. Comparing three-dimensional data with scans shows that this unmeasured ground determines the result."
+   "lead_ja": "",
+   "lead_en": ""
   },
   {
    "id": "poc_strain_history",
@@ -1635,8 +1635,8 @@
    "caption_ja": "1 時間のクリープを 25 コマ撮り、隣接コマの累積と基準フレームとの直接比較でひずみ履歴を出した図。終端で累積 61 µε / 直接 1878 µε と累積が 31 倍良く、教科書の「時刻で入れ替わる」交点は無い(入れ替わるのは雑音の軸)。コマを 24 → 4 歩に間引くと累積は -60 → -606 µε と悪化 ―― 効くのは歩数でなく 1 歩あたりの変形量。",
    "caption_en": "One hour of creep in 25 frames, with strain history from accumulating adjacent-frame displacements versus comparing each frame directly with the reference. At the end, cumulative errs by 61 µε and direct by 1878 µε — cumulative wins 31x and the textbook crossover in time never appears (it lives on the noise axis instead). Thinning from 24 to 4 steps worsens cumulative from -60 to -606 µε; what matters is the deformation per step, not the number of steps.",
    "run": "py -3.11 examples/poc_strain_history.py",
-   "lead_ja": "クリープ試験のひずみ履歴では、累積か直接か。時間を含む計算データを作り、コマ撮と隣接コマの関係を測った。基準フレームと直接比較の差を見ると、累積か直接かことが分かる。",
-   "lead_en": "For the strain history of a creep test, the choice is cumulative or direct. We created time-resolved computed data and measured how time-lapse frames relate to adjacent frames. The distinction between reference-frame and direct comparison resolves that choice."
+   "lead_ja": "",
+   "lead_en": ""
   },
   {
    "id": "poc_structure_4d_deterioration",
