@@ -41,7 +41,7 @@ meta={"source": "caliper", "generated_at": "2026-10-31T12:00:00+09:00",
 
 ## 型が繋がる次の op(`text` を入力に取れる)
 
-[table_read_csv](table_read_csv.md)
+[table_read_csv](table_read_csv.md) · [mesh_read_obj](../mesh/mesh_read_obj.md) · [mesh_read_off](../mesh/mesh_read_off.md) · [points_read_xyz](../points/points_read_xyz.md)
 
 ## 同カテゴリ(`table`)
 

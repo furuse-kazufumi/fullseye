@@ -37,7 +37,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-[table_write_csv](table_write_csv.md)
+[table_write_csv](table_write_csv.md) · [mesh_write_ply](../mesh/mesh_write_ply.md)
 
 ## 同カテゴリ(`table`)
 

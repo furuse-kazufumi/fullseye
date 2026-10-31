@@ -677,7 +677,7 @@ FULLSEYE_FIGURE_DIR=out/figs py -3.11 examples/<name>.py
 
 | script | 何を示すか |
 |---|---|
-| [`fileio_roundtrip.py`](fileio_roundtrip.py)<br>単位と由来を失わずに表を CSV で受け渡す | 列名、単位、出所、生成日時、座標の意味を持つ CSV をメモリ上で書いて読み戻し、標準 csv と pandas でも同じ数値列を読めることを自己検査する。 |
+| [`fileio_roundtrip.py`](fileio_roundtrip.py)<br>表・メッシュ・点群を標準形式で受け渡す | 単位と由来を持つ CSV、属性つき PLY、STL、OBJ、OFF、XYZ をメモリ上で書いて読み戻し、pandas、plyfile、numpy-stl、trimesh でも同じ内容を読めることを自己検査する。 |
 
 ## 補間 — `interpolation`(1 本)
 

@@ -9,6 +9,20 @@ _CATALOG = {
         ("table_write_csv", ["table"], "text"),
         ("table_read_csv", ["text"], "table"),
     ],
+    "mesh": [
+        ("mesh_write_ply", ["table"], "file"),
+        ("mesh_read_ply", ["file"], "table"),
+        ("mesh_write_stl", ["mesh"], "file"),
+        ("mesh_read_stl", ["file"], "mesh"),
+        ("mesh_write_obj", ["mesh"], "text"),
+        ("mesh_read_obj", ["text"], "mesh"),
+        ("mesh_write_off", ["mesh"], "text"),
+        ("mesh_read_off", ["text"], "mesh"),
+    ],
+    "points": [
+        ("points_write_xyz", ["points"], "text"),
+        ("points_read_xyz", ["text"], "points"),
+    ],
 }
 
 

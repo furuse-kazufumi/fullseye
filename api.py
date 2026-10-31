@@ -206,7 +206,12 @@ from mesh import (  # noqa: E402,F401
     read_mesh, read_points, write_mesh, write_points, sample_surface, mesh_to_points,
     voxelize, bounds, recenter, normalize_scale,
 )
-from fileio import table_write_csv, table_read_csv  # noqa: E402,F401
+from fileio import (  # noqa: E402,F401
+    table_write_csv, table_read_csv,
+    mesh_write_ply, mesh_read_ply, mesh_write_stl, mesh_read_stl,
+    mesh_write_obj, mesh_read_obj, mesh_write_off, mesh_read_off,
+    points_write_xyz, points_read_xyz,
+)
 from meshio_opt import (  # noqa: E402,F401
     read_gltf, read_gltf_merged, read_las, read_pcd, formats_available,
 )
@@ -1161,6 +1166,9 @@ __all__ = [
     "viewer_points_tab", "viewer_frames_tab", "viewer_split_tab", "viewer_anim3d_tab",
     "mesh", "read_mesh", "read_points", "write_mesh", "write_points", "sample_surface",
     "fileio", "table_write_csv", "table_read_csv",
+    "mesh_write_ply", "mesh_read_ply", "mesh_write_stl", "mesh_read_stl",
+    "mesh_write_obj", "mesh_read_obj", "mesh_write_off", "mesh_read_off",
+    "points_write_xyz", "points_read_xyz",
     "mesh_to_points", "voxelize", "bounds", "recenter", "normalize_scale",
     "meshio_opt", "read_gltf", "read_gltf_merged", "read_las", "read_pcd", "formats_available",
     "volio", "read_volume", "write_volume", "list_dicom_series", "VolumeMeta",

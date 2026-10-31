@@ -1,8 +1,8 @@
 {
- "n_ops": 3611,
+ "n_ops": 3621,
  "tiers": {
   "color": 12,
-  "ledger": 2652,
+  "ledger": 2662,
   "nary": 17,
   "registry": 930
  },
@@ -17490,6 +17490,58 @@
    ]
   },
   {
+   "name": "mesh_read_obj",
+   "halcon": "",
+   "in_sort": "text",
+   "out_sort": "mesh",
+   "category": "mesh",
+   "tier": "ledger",
+   "ledger": "opsfileio",
+   "dim": "fileio",
+   "in_sorts": [
+    "text"
+   ]
+  },
+  {
+   "name": "mesh_read_off",
+   "halcon": "",
+   "in_sort": "text",
+   "out_sort": "mesh",
+   "category": "mesh",
+   "tier": "ledger",
+   "ledger": "opsfileio",
+   "dim": "fileio",
+   "in_sorts": [
+    "text"
+   ]
+  },
+  {
+   "name": "mesh_read_ply",
+   "halcon": "",
+   "in_sort": "file",
+   "out_sort": "table",
+   "category": "mesh",
+   "tier": "ledger",
+   "ledger": "opsfileio",
+   "dim": "fileio",
+   "in_sorts": [
+    "file"
+   ]
+  },
+  {
+   "name": "mesh_read_stl",
+   "halcon": "",
+   "in_sort": "file",
+   "out_sort": "mesh",
+   "category": "mesh",
+   "tier": "ledger",
+   "ledger": "opsfileio",
+   "dim": "fileio",
+   "in_sorts": [
+    "file"
+   ]
+  },
+  {
    "name": "mesh_reduction_report",
    "halcon": "",
    "in_sort": "mesh",
@@ -17654,6 +17706,58 @@
    "tier": "ledger",
    "ledger": "ops3d",
    "dim": "3d",
+   "in_sorts": [
+    "mesh"
+   ]
+  },
+  {
+   "name": "mesh_write_obj",
+   "halcon": "",
+   "in_sort": "mesh",
+   "out_sort": "text",
+   "category": "mesh",
+   "tier": "ledger",
+   "ledger": "opsfileio",
+   "dim": "fileio",
+   "in_sorts": [
+    "mesh"
+   ]
+  },
+  {
+   "name": "mesh_write_off",
+   "halcon": "",
+   "in_sort": "mesh",
+   "out_sort": "text",
+   "category": "mesh",
+   "tier": "ledger",
+   "ledger": "opsfileio",
+   "dim": "fileio",
+   "in_sorts": [
+    "mesh"
+   ]
+  },
+  {
+   "name": "mesh_write_ply",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "file",
+   "category": "mesh",
+   "tier": "ledger",
+   "ledger": "opsfileio",
+   "dim": "fileio",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "mesh_write_stl",
+   "halcon": "",
+   "in_sort": "mesh",
+   "out_sort": "file",
+   "category": "mesh",
+   "tier": "ledger",
+   "ledger": "opsfileio",
+   "dim": "fileio",
    "in_sorts": [
     "mesh"
    ]
@@ -22093,6 +22197,19 @@
    ]
   },
   {
+   "name": "points_read_xyz",
+   "halcon": "",
+   "in_sort": "text",
+   "out_sort": "points",
+   "category": "points",
+   "tier": "ledger",
+   "ledger": "opsfileio",
+   "dim": "fileio",
+   "in_sorts": [
+    "text"
+   ]
+  },
+  {
    "name": "points_render",
    "halcon": "",
    "in_sort": "points",
@@ -22140,6 +22257,19 @@
    "tier": "ledger",
    "ledger": "ops3d",
    "dim": "3d",
+   "in_sorts": [
+    "points"
+   ]
+  },
+  {
+   "name": "points_write_xyz",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "text",
+   "category": "points",
+   "tier": "ledger",
+   "ledger": "opsfileio",
+   "dim": "fileio",
    "in_sorts": [
     "points"
    ]

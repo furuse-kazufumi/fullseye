@@ -228,7 +228,7 @@ MAY_OUTPUTS = {
 #: 2026-10-15 に audit hook の実測(全 23 段)から起こした。
 READS = {
     "imgevolve.py": ["fullseye/data/OP_INDEX.json", "fullseye/data/op_knob.json"],
-    "tools/audit_file_formats.py": ["docs/OP_INDEX.json"],
+    "tools/audit_file_formats.py": ["auto_specs_data.py", "docs/OP_INDEX.json"],
     "tools/halcon_compat_profile.py": ["docs/OP_INDEX.json"],
     "tools/gen_capabilities_index.py": ["docs/OP_INDEX.json"],
     "tools/gen_wingpoc_gallery.py": ["docs/articles/exhibits/exhibit_numbers.json"],
@@ -237,7 +237,7 @@ READS = {
     "tools/gen_design_notes.py": ["auto_specs_data.py"],
     "tools/gen_docs_index_ops.py": [
         "docs/ops/*", "docs/OP_CATALOG.md", "docs/CAPABILITIES.md", "docs/CAPABILITIES.*.md",
-        "docs/HARDENING.md", "docs/HARDENING.*.md", "docs/MATURITY.md",
+        "docs/HARDENING.md", "docs/HARDENING.*.md", "docs/MATURITY.md", "docs/FILE_FORMATS.md",
         "docs/articles/exhibits/wingpoc.*.md", "docs/articles/fullseye_poc_museum_qiita_*.md", "docs/articles/fullseye_poc_museum_*_qiita_*.md",
         "docs/literature/*.md",                       # 文献ノート全部(2026-10-23: 列挙だと増えた分が READS から漏れる)
         "docs/README.md", "docs/README.*.md", "docs/OP_COUNT_HISTORY.md",
