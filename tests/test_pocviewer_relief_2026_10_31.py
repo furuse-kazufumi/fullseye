@@ -38,11 +38,11 @@ def test_relief_packs_rgb_as_colour_and_val_only_as_normal_displacement():
     tab, body = data["tabs"][0], data["tabs"][0]["bodies"][0]
     assert tab["relief_default"] == 0.0
     assert body["rgb1"] == [40, 120, 220]
-    assert body["relief"] == {"lo": 0.0, "hi": 3.0, "size": 2.0}
+    assert body["relief"] == {"lo": 0.0, "hi": 3.0, "radius": np.sqrt(2), "size": np.sqrt(2)/4}
     decoded = pv._decode_array(data["arrays"][body["val"]])
     assert body["relief_png"] == {"lo": 0.0, "hi": 3.0}
     assert decoded.max() == 255
-    assert body["relief"]["size"] * 1.0 == 2.0  # ×1: 最大値の頂点は物体寸法ぶん移動
+    assert body["relief"]["size"] * 1.0 == np.sqrt(2)/4  # ×1: 外接半径の 1/4
 
 
 def test_relief_is_opt_in_so_existing_public_viewers_keep_their_generated_page():
@@ -69,7 +69,7 @@ def test_relief_rejects_time_varying_or_nonplanar_geometry(kw, message):
         pv._pack_spec(_spec(**kw), ["ja", "en"])
 
 
-def test_browser_gate_x0_has_zero_pixel_difference_and_x1_moves_peak_by_object_size(tmp_path):
+def test_browser_gate_x0_has_zero_pixel_difference_and_x2_stays_within_half_radius(tmp_path):
     sys.path.insert(0, str(ROOT / "tools"))
     import headless_chrome
     if not headless_chrome.find_chrome():
@@ -84,7 +84,9 @@ def test_browser_gate_x0_has_zero_pixel_difference_and_x1_moves_peak_by_object_s
         assert ch.eval("window.__viewerRelief.capture()") > 0
         ch.eval("window.__viewerRelief.set(0)")
         diff = ch.eval("window.__viewerRelief.pixelDiff()")
-        peak = ch.eval("window.__viewerRelief.vertex('plane',0,1,1)")
+        peak = ch.eval("window.__viewerRelief.vertex('plane',0,1,2)")
     assert diff == {"changed": 0, "max": 0}
     assert peak["normalized"] == 1
-    assert peak["distance"] == peak["expected"] == 2
+    assert np.isclose(peak["distance"], peak["expected"])
+    assert np.isclose(peak["distance"], .5*peak["radius"])
+    assert peak["negativeVertices"] == 0 and peak["minDistance"] >= 0

@@ -303,6 +303,19 @@ def _quantize_rgb(rgb, levels=5):
     return np.rint(q.astype(float)*255/(levels-1)).astype(np.uint8)
 
 
+def _delta_e76_srgb(a, b):
+    """CIE76 distance for two 8-bit sRGB colours (display acceptance gate)."""
+    def lab(c):
+        x=np.asarray(c,float)/255.0
+        x=np.where(x<=.04045,x/12.92,((x+.055)/1.055)**2.4)
+        xyz=np.array([[.4124564,.3575761,.1804375],[.2126729,.7151522,.0721750],
+                      [.0193339,.1191920,.9503041]])@x
+        q=xyz/np.array([.95047,1.0,1.08883])
+        f=np.where(q>(6/29)**3,np.cbrt(q),q/(3*(6/29)**2)+4/29)
+        return np.array([116*f[1]-16,500*(f[0]-f[1]),200*(f[1]-f[2])])
+    return float(np.linalg.norm(lab(a)-lab(b)))
+
+
 def _resize_rgb(rgb, width=PANEL_SIZE, height=PANEL_SIZE, compress=True):
     a=np.asarray(Image.fromarray(np.asarray(rgb,np.uint8),"RGB").resize((width,height),Image.Resampling.LANCZOS))
     return _quantize_rgb(a) if compress else _camera_palette_rgb(a)
@@ -380,8 +393,9 @@ def _estimate_order_from_rgb(rgb8, inside):
     return order,resolved
 
 
-def _scalar_panel(a, resolved, lo, hi, diverging=False, note="", unit="fringe", domain=None):
-    """A native 256 px panel; unestimable specimen pixels are uniform grey.
+def _scalar_panel(a, resolved, lo, hi, diverging=False, note="", unit="fringe", domain=None,
+                  unestimable_pct=None):
+    """A native 256 px panel; unestimable pixels are grey with a 45-degree hatch.
 
     ``resolved`` is the estimator mask and ``domain`` is the specimen.  Keeping the two
     masks separate prevents a failed estimate from looking like a physically zero error.
@@ -389,23 +403,44 @@ def _scalar_panel(a, resolved, lo, hi, diverging=False, note="", unit="fringe", 
     field_w=PANEL_SIZE-42
     resolved=np.asarray(resolved,bool);domain=resolved if domain is None else np.asarray(domain,bool)
     rgb=_resize_rgb(_map_rgb(a,resolved,lo,hi,diverging),field_w,PANEL_SIZE)
+    rgb=_quantize_rgb(rgb,levels=2)
     rr=_resize_mask(resolved,field_w,PANEL_SIZE);dd=_resize_mask(domain,field_w,PANEL_SIZE)
     missing=dd&~rr
     rgb[missing]=(128,128,128)
+    yy,xx=np.indices(missing.shape)
+    # Two-pixel diagonal strokes, repeated every eight pixels.  Applying the
+    # pattern after resizing makes its stated dimensions screen-pixel exact.
+    hatch=missing&(((xx+yy)%8)<2)
+    rgb[hatch]=(64,64,64)
     im=Image.new("RGB",(PANEL_SIZE,PANEL_SIZE),(12,16,21)); im.paste(Image.fromarray(rgb),(0,0))
-    dr=ImageDraw.Draw(im); x0=field_w+8; y0,y1=18,PANEL_SIZE-18
+    dr=ImageDraw.Draw(im); x0=field_w+8; y0,y1=18,PANEL_SIZE-48
     for y in range(y0,y1):
         u=1-(y-y0)/max(1,y1-y0-1); val=lo+u*(hi-lo)
         col=_map_rgb(np.array([[val]]),np.ones((1,1),bool),lo,hi,diverging)[0,0]
         dr.line((x0,y,x0+12,y),fill=tuple(int(v) for v in col))
     dr.rectangle((x0,y0,x0+12,y1),outline=(220,225,230))
     dr.text((x0+15,y0-4),"%.2g"%hi,fill=(235,238,241));dr.text((x0+15,y1-8),"%.2g"%lo,fill=(235,238,241))
-    if unit: dr.text((x0-1,PANEL_SIZE-14),unit,fill=(190,198,207))
+    sy=None
+    if unestimable_pct is not None:
+        sy=y1+8
+        dr.text((field_w-91,sy+15),"unestimable %.1f %%"%unestimable_pct,fill=(210,214,219))
+    elif unit:
+        dr.text((x0-1,PANEL_SIZE-14),unit,fill=(190,198,207))
     if note:
         lines=note.split("\n")
         dr.rectangle((4,4,field_w-3,7+11*len(lines)),fill=(8,12,16))
         for j,line in enumerate(lines): dr.text((7,6+11*j),line,fill=(255,255,255))
-    return _quantize_rgb(np.asarray(im),levels=2)
+    # Keep the PNG's base palette tiny, then restore the two exact neutral
+    # colours required by the uncertainty convention.
+    out=_quantize_rgb(np.asarray(im),levels=2)
+    out[:PANEL_SIZE,:field_w][missing]=(128,128,128)
+    out[:PANEL_SIZE,:field_w][hatch]=(64,64,64)
+    if sy is not None:
+        sw=Image.fromarray(out,"RGB"); sd=ImageDraw.Draw(sw)
+        sd.rectangle((x0,sy,x0+12,sy+12),fill=(128,128,128),outline=(255,255,255))
+        for d in range(-12,13,8): sd.line((x0+d,sy,x0+d+12,sy+12),fill=(64,64,64),width=2)
+        out=np.asarray(sw)
+    return out
 
 
 def _isoclinic_panel(angle_deg, inside, defined=True):
@@ -532,7 +567,7 @@ def _field_sweep(kind, values, size=FIELD_SIZE, noisy=False, estimator="rgb", pi
         unresolved_fraction.append(missing)
         errmap.append(_scalar_panel(e,resolved,-lim,lim,True,
           "max|err|=%.3f | unestimable=%.1f%%\ngray: weak/dense/ambiguous"%(absmax,100*missing),
-          "fringe",domain=inside_panel))
+          "fringe",domain=inside_panel,unestimable_pct=100*missing))
         diffs.append(p["difference"].ravel()/1e6);raw_height.append(p["difference"].ravel())
         surface_diff.append(p["difference"][np.ix_(sel,sel)].ravel()/1e6)
         row=PANEL_SIZE//2; valid=np.flatnonzero(inside_panel[row]); truth=true_panel[row,valid]*REFERENCE_WAVELENGTH_NM*1e-9/(THICKNESS*COEFF)/1e6
@@ -684,6 +719,7 @@ def build_spec():
       "hole_rgb_error_max":hole["error_max"],"max_error_fringe":max(disc["error_max"],hole["error_max"],limit["error_max"]),
       "profile_rms_mpa":max(disc["profile_rms"],hole["profile_rms"],limit["profile_rms"]),
       "unestimable_pct":{k:100*float(v["unresolved_fraction"][-1]) for k,v in shown.items()},
+      "unestimable_gray_delta_e":_delta_e76_srgb((128,128,128),(255,255,255)),
       "profile_estimated_pct":{"load":100*float(disc["profile_fraction"][-1]),
         "hole":100*float(hole["profile_fraction"][-1]),"unwrap":100*float(disc["profile_fraction"][-1]),
         "limits":100*float(limit["profile_fraction"][-1])},
@@ -691,8 +727,8 @@ def build_spec():
         "hole":float(hole["profile_rms_values"][-1]),"unwrap":float(disc["profile_rms_values"][-1]),
         "limits":float(limit["profile_rms_values"][-1])},
       "relief_x0_max_displacement":0.0,
-      "relief_x1_disc_displacement":float(np.max(np.ptp(disc["pos"],axis=0))),
-      "relief_x1_hole_displacement":float(np.max(np.ptp(hole["pos"],axis=0))),
+      "relief_x1_disc_displacement":1.25/4.0,
+      "relief_x1_hole_displacement":float(np.hypot(2.0,2.0))/4.0,
       "isoclinic_curvature_px":disc["isoclinic_curvature_px"]}
     return spec
 

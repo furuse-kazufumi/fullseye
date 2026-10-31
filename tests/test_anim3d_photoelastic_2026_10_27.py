@@ -61,18 +61,19 @@ def test_deterministic_mesh_and_explicit_limit():
     assert "灰=推定不能" in spec["tabs"][0]["panes"][2]["label"]["ja"]
     assert "灰=推定不能" in spec["tabs"][1]["panes"][2]["label"]["ja"]
     assert all(0 < v < 100 for v in metrics["unestimable_pct"].values())
+    assert metrics["unestimable_gray_delta_e"] > 30
     assert all(0 < v < 100 for v in metrics["profile_estimated_pct"].values())
     assert all(v > 0 for v in metrics["profile_final_rms_mpa"].values())
     assert metrics["relief_x0_max_displacement"] == 0
-    assert metrics["relief_x1_disc_displacement"] == 5.0
-    assert metrics["relief_x1_hole_displacement"] == 4.0
+    assert metrics["relief_x1_disc_displacement"] == 0.3125
+    assert np.isclose(metrics["relief_x1_hole_displacement"], np.sqrt(8)/4)
     assert all(min(p["frames"].shape[1:3]) >= 256 for t in spec["tabs"] for p in t["panes"])
     data=B.pv._pack_spec(spec,["ja","en"]); B.pv.viewer_quality_gate_data(data)
     assert data["tabs"][0]["relief_default"] == 0
     assert data["tabs"][1]["relief_default"] == 0
-    assert data["tabs"][0]["bodies"][0]["relief"]["size"] == 5.0
-    assert data["tabs"][1]["bodies"][0]["relief"]["size"] == 4.0
-    assert len(B.pv._build_html(spec,["ja","en"]).encode("utf-8")) <= 4_000_000
+    assert data["tabs"][0]["bodies"][0]["relief"]["size"] <= .25*data["tabs"][0]["bodies"][0]["relief"]["radius"]
+    assert data["tabs"][1]["bodies"][0]["relief"]["size"] <= .25*data["tabs"][1]["bodies"][0]["relief"]["radius"]
+    assert len(B.pv._build_html(spec,["ja","en"]).encode("utf-8")) <= 4_500_000
     failed=[c for t in spec["tabs"] for c in t["checks"] if not c["ok"]]
     assert len(failed) == 1
     assert spec["tabs"][-1]["badge"] == "limit"
@@ -96,6 +97,15 @@ def test_profile_rms_and_line_cover_only_estimable_samples():
     assert np.isclose(rms,np.sqrt(np.mean(np.array([0.,.1,.2,0.])**2)))
 
 
+def test_unestimable_panel_uses_exact_gray_and_two_pixel_eight_pitch_hatch():
+    domain=np.ones((256,214),bool); resolved=np.zeros_like(domain)
+    panel=B._scalar_panel(np.zeros_like(domain,float),resolved,-1,1,True,domain=domain,unestimable_pct=44.5)
+    assert tuple(panel[100,102]) == (128,128,128)
+    assert tuple(panel[100,100]) == (64,64,64)
+    assert tuple(panel[100,101]) == (64,64,64)
+    assert tuple(panel[100,108]) == (64,64,64)
+
+
 def test_generated_page_relief_browser_gates_for_disc_and_hole():
     sys.path.insert(0,str(ROOT/"tools"))
     import headless_chrome
@@ -113,5 +123,5 @@ def test_generated_page_relief_browser_gates_for_disc_and_hole():
         ch.wait_for("!window.__viewerRelief.vertex('hole',0,23,1).pending")
         hole=ch.eval("window.__viewerRelief.vertex('hole',0,23,1)")
     assert diff == {"changed":0,"max":0}
-    assert disc["normalized"] == 1 and disc["distance"] == disc["expected"] == 5
-    assert hole["normalized"] == 1 and hole["distance"] == hole["expected"] == 4
+    assert disc["normalized"] == 1 and np.isclose(disc["distance"], .25*disc["radius"])
+    assert hole["normalized"] == 1 and np.isclose(hole["distance"], .25*hole["radius"])

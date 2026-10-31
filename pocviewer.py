@@ -771,23 +771,32 @@ def _relief_default(x, where: str) -> float:
     return value
 
 
-def _planar_object_size(pos: np.ndarray, where: str) -> float:
-    """Return the largest AABB span after proving that all vertices are coplanar.
+def _planar_object_radius(pos: np.ndarray, faces: np.ndarray, where: str) -> tuple[float, np.ndarray]:
+    """Return the bounding radius and the vertices that belong to the specimen.
 
     Relief is a scalar-field display, not a second geometry model.  It is therefore
     accepted only for one static plane.  The tolerance is relative to the object's
     largest span; a genuinely curved mesh must use its real ``pos`` instead.
     """
     p = np.asarray(pos, dtype=float)
-    span = np.ptp(p, axis=0)
+    used = np.zeros(len(p), dtype=bool)
+    used[np.asarray(faces, dtype=np.int64).ravel()] = True
+    if not np.any(used):
+        raise ValueError("%s: 起伏を付ける面に頂点が無い" % where)
+    specimen = p[used]
+    span = np.ptp(specimen, axis=0)
     size = float(np.max(span))
     if not size > 0:
         raise ValueError("%s: 起伏を付ける平面の大きさが 0" % where)
-    singular = np.linalg.svd(p - np.mean(p, axis=0), compute_uv=False)
+    singular = np.linalg.svd(specimen - np.mean(specimen, axis=0), compute_uv=False)
     distance_scale = float(singular[-1] / max(np.sqrt(len(p)), 1.0))
     if distance_scale > size * 1e-9:
         raise ValueError("%s: relief_default は全頂点が同一平面にある body だけ" % where)
-    return size
+    centre = 0.5 * (np.min(specimen, axis=0) + np.max(specimen, axis=0))
+    radius = float(np.max(np.linalg.norm(specimen - centre, axis=1)))
+    if not radius > 0:
+        raise ValueError("%s: 起伏を付ける平面の外接半径が 0" % where)
+    return radius, used
 
 
 def _faces(raw, n: int, where: str) -> np.ndarray:
@@ -973,7 +982,10 @@ def _pack_anim3d(tab: dict, out: dict, store: _Store, where: str, ctx: _Ctx) -> 
             raise ValueError("%s: 色は rgb か val の片方だけ。併用は relief_default で val を起伏専用にするときだけ" % wb)
         val = vs = None
         if has_val:
-            val = _finite(b["val"], wb + ".val")
+            raw_val = np.asarray(b["val"], dtype=float)
+            # Relief alone may carry NaN outside the physical specimen.  It is a
+            # displacement validity marker, never a colour value.
+            val = raw_val if wants_relief else _finite(raw_val, wb + ".val")
             if val.shape not in ((n,), (T, n)):
                 raise ValueError("%s: val は (N,) か (T,N) = (%d,%d)" % (wb, T, n))
             if b.get("val_scale") is not None:
@@ -992,11 +1004,19 @@ def _pack_anim3d(tab: dict, out: dict, store: _Store, where: str, ctx: _Ctx) -> 
                 raise ValueError("%s: relief_default と半透明 alpha は同じ body では併用しない" % wb)
             if not has_val:
                 raise ValueError("%s: relief_default には高さを決める val が要る" % wb)
-            relief_size = _planar_object_size(pos, wb)
+            relief_radius, specimen_vertices = _planar_object_radius(pos, faces, wb)
             effective = val if vs is None else val[None, :] * vs[:, None]
-            relief_lo, relief_hi = float(np.min(effective)), float(np.max(effective))
+            valid = np.isfinite(effective)
+            valid &= specimen_vertices if effective.ndim == 1 else specimen_vertices[None, :]
+            if not np.any(valid):
+                raise ValueError("%s: 起伏の物体内に有限な val が無い" % wb)
+            relief_lo, relief_hi = float(np.min(effective[valid])), float(np.max(effective[valid]))
             if not relief_hi > relief_lo:
                 raise ValueError("%s: 起伏の val は lo < hi でなければならない" % wb)
+            # val_scale cannot change which vertices are finite, so a static val
+            # needs only one N-byte mask rather than repeating it for every frame.
+            relief_valid = (np.isfinite(val) & specimen_vertices) if val.ndim == 1 else valid
+            val = np.where(np.isfinite(val), val, relief_lo)
             relief_defaults.append(default)
         if has_rgb:
             rgb = np.asarray(b["rgb"])
@@ -1035,7 +1055,9 @@ def _pack_anim3d(tab: dict, out: dict, store: _Store, where: str, ctx: _Ctx) -> 
         if vs is not None:
             pb["val_scale"] = _clean_list(vs, 6); pb["val_scaled"] = True
         if wants_relief:
-            pb["relief"] = {"lo": relief_lo, "hi": relief_hi, "size": relief_size}
+            pb["relief_valid"] = store.put(np.asarray(relief_valid, np.uint8), "u8")
+            pb["relief"] = {"lo": relief_lo, "hi": relief_hi,
+                            "radius": relief_radius, "size": 0.25 * relief_radius}
         if b.get("val_scale") is not None and not has_val:
             raise ValueError("%s: val_scale には val が要る" % wb)
         packed.append(pb)
@@ -2515,8 +2537,8 @@ function reliefPNGValues(b){
 /* 高さ係数 = (val-lo)/(hi-lo)。色バッファには触らない。 */
 function reliefValues(b, f){
   const V=b.relief_png?reliefPNGValues(b):arr(b.val).a;if(!V)return null;
-  const n=b.n,o=b.val_t?f*n:0,s=b.val_scaled?b.val_scale[f]:1,lo=b.relief.lo,sp=b.relief.hi-lo,R=new Float32Array(n);
-  for(let i=0;i<n;i++)R[i]=Math.min(1,Math.max(0,(V[o+i]*s-lo)/sp));
+  const n=b.n,o=b.val_t?f*n:0,s=b.val_scaled?b.val_scale[f]:1,lo=b.relief.lo,sp=b.relief.hi-lo,R=new Float32Array(n),M=arr(b.relief_valid).a,mo=M.length===n?0:f*n;
+  for(let i=0;i<n;i++){const v=V[o+i]*s;R[i]=M[mo+i]&&Number.isFinite(v)?Math.min(1,Math.max(0,(v-lo)/sp)):0;}
   return R;
 }
 function reliefSelect(tab, anim){
@@ -2536,7 +2558,8 @@ function reliefVertex(tabId,j,f,mult){
   const tab=tabs.find(t=>t.id===tabId),b=tab&&tab.bodies[j];if(!b||!b.relief)return null;
   f=Math.max(0,Math.min(tab.t.length-1,f|0));const P=arr(b.pos).a,F=arr(b.faces).a,N=normalsOf(P,F),R=reliefValues(b,f);if(!R)return {pending:true};
   let k=0;for(let i=1;i<R.length;i++)if(R[i]>R[k])k=i;const d=R[k]*b.relief.size*mult,base=[P[k*3],P[k*3+1],P[k*3+2]];
-  return {vertex:k,normal:[N[k*3],N[k*3+1],N[k*3+2]],base,displaced:[base[0]+N[k*3]*d,base[1]+N[k*3+1]*d,base[2]+N[k*3+2]*d],distance:Math.abs(d),expected:b.relief.size*mult,normalized:R[k]};
+  let min=Infinity,max=-Infinity,negative=0;for(let i=0;i<R.length;i++){const x=R[i]*b.relief.size*mult;min=Math.min(min,x);max=Math.max(max,x);if(x<0)negative++;}
+  return {vertex:k,normal:[N[k*3],N[k*3+1],N[k*3+2]],base,displaced:[base[0]+N[k*3]*d,base[1]+N[k*3+1]*d,base[2]+N[k*3+2]*d],distance:Math.abs(d),expected:b.relief.size*mult,normalized:R[k],minDistance:min,maxDistance:max,negativeVertices:negative,radius:b.relief.radius};
 }
 window.__viewerRelief={
   set:setRelief,value:()=>reliefNow(get()),vertex:reliefVertex,
