@@ -38,6 +38,8 @@ import sys
 
 _ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, _ROOT)
+sys.path.insert(0, os.path.join(_ROOT, "tools"))
+from exhibit_glossary import glossary_line, load_glossary
 
 EXHIBITS = os.path.join(_ROOT, "docs", "articles", "exhibits")
 ASSETS = os.path.join(_ROOT, "docs", "articles", "assets", "poc")
@@ -337,6 +339,7 @@ def _exhibit_md(no: str, ex: dict, lang: str, pick: dict, thumb: str, byid: dict
     th = RAW + ex["id"] + "/" + thumb
     run = ex.get("run") or ("py -3.11 examples/%s.py" % ex["id"])
     src = GH + "examples/%s.py" % ex["id"]
+    term_line = glossary_line(ex, lang, load_glossary())
     lines = [
         # ★見出しは**収蔵番号**。順路番号(何番目か)は出さない —— 展示を 1 つ挟むだけで
         #   以降が全部ずれ、記事を分けるたびに番号が動くため(2026-09-25)。
@@ -347,6 +350,8 @@ def _exhibit_md(no: str, ex: dict, lang: str, pick: dict, thumb: str, byid: dict
         "*↑ **%s** ―― %s*" % (title, cap),
         "",
     ]
+    if term_line:
+        lines += [term_line, ""]
     if second is not None and thumb2 is not None:
         full2 = RAW + ex["id"] + "/" + second["file"]
         th2 = RAW + ex["id"] + "/" + thumb2

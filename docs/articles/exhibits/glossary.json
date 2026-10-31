@@ -1,0 +1,720 @@
+{
+ "fbp": {
+  "match": [
+   "FBP",
+   "filtered back-projection",
+   "フィルタ補正逆投影"
+  ],
+  "ja": "投影データを周波数フィルタで補正してから各方向へ逆投影し、断層像を再構成する手法。",
+  "en": "A tomographic reconstruction method that filters projection data and then back-projects it over all measured angles.",
+  "source": "Kak and Slaney, Principles of Computerized Tomographic Imaging, 1988",
+  "review": false
+ },
+ "bruggeman": {
+  "match": [
+   "Bruggeman",
+   "ブルッゲマン"
+  ],
+  "ja": "多孔質媒体の有効輸送特性を空隙率のべき乗で近似する関係で、電極では屈曲度や有効拡散係数の基準式として使われる。",
+  "en": "An effective-medium relation that approximates transport in a porous material by a power of porosity, often used as a baseline for tortuosity or effective diffusivity.",
+  "source": "Bruggeman, Annalen der Physik 24, 1935",
+  "review": false
+ },
+ "piv": {
+  "match": [
+   "PIV",
+   "particle image velocimetry",
+   "粒子画像流速測定"
+  ],
+  "ja": "粒子模様を短い時間差で撮影し、小領域どうしの変位から流れの速度場を求める計測法。",
+  "en": "A flow-measurement method that estimates a velocity field from the displacement of particle patterns between images separated by a short time.",
+  "source": "Raffel et al., Particle Image Velocimetry, 3rd ed., 2018",
+  "review": false
+ },
+ "mac": {
+  "match": [
+   "MAC",
+   "modal assurance criterion",
+   "モード信頼性評価基準"
+  ],
+  "ja": "二つのモード形状ベクトルの一致度を、正規化した内積の二乗として0から1で表す指標。",
+  "en": "A 0-to-1 measure of agreement between two mode-shape vectors, defined as the squared normalized inner product.",
+  "source": "Allemang, Sound and Vibration 37(8), 2003",
+  "review": false
+ },
+ "lidar": {
+  "match": [
+   "LiDAR",
+   "lidar",
+   "light detection and ranging"
+  ],
+  "ja": "レーザー光の往復時間などから対象までの距離を測り、周囲の三次元点群を得るセンサ。",
+  "en": "A sensor that measures range using laser light, commonly by time of flight, to produce a three-dimensional point cloud.",
+  "source": "Shan and Toth, Topographic Laser Ranging and Scanning, 2nd ed., 2018",
+  "review": false
+ },
+ "iou": {
+  "match": [
+   "IoU",
+   "intersection over union"
+  ],
+  "ja": "二つの領域の共通部分の面積を和集合の面積で割った、領域の重なりを0から1で表す指標。",
+  "en": "A 0-to-1 overlap score equal to the area of the intersection of two regions divided by the area of their union.",
+  "source": "Jaccard, Bulletin de la Société Vaudoise des Sciences Naturelles 37, 1901",
+  "review": false
+ },
+ "psf": {
+  "match": [
+   "PSF",
+   "point spread function",
+   "Point Spread Function",
+   "点広がり関数"
+  ],
+  "ja": "点状の物体を撮ったときに像がどのように広がるかを表す、撮像系の空間応答。",
+  "en": "The spatial response of an imaging system to a point object, describing how that point is blurred in the image.",
+  "source": "ISO 9334:2012, Optics and photonics — Optical transfer function",
+  "review": false
+ },
+ "otsu": {
+  "match": [
+   "Otsu",
+   "Otsu's method",
+   "大津の方法"
+  ],
+  "ja": "二値化後の二クラス間分散が最大になるように、画像ヒストグラムからしきい値を選ぶ方法。",
+  "en": "A histogram thresholding method that chooses the threshold maximizing the variance between the two resulting classes.",
+  "source": "Otsu, IEEE Transactions on Systems, Man, and Cybernetics 9(1), 1979",
+  "review": false
+ },
+ "ciede2000": {
+  "match": [
+   "CIEDE2000",
+   "CIEDE 2000",
+   "ΔE00"
+  ],
+  "ja": "CIE L*a*b*空間の色差を、明度・彩度・色相の知覚特性を補正して表すCIEの色差式。",
+  "en": "A CIE colour-difference formula in CIELAB that corrects the lightness, chroma, and hue terms to better follow visual differences.",
+  "source": "CIE 142:2001, Improvement to Industrial Colour-Difference Evaluation",
+  "review": false
+ },
+ "beer_lambert": {
+  "match": [
+   "Beer–Lambert",
+   "Beer-Lambert",
+   "ベール–ランベルト",
+   "ランベルト–ベール"
+  ],
+  "ja": "均一な吸収媒体を通る光の透過率が、濃度と光路長に対して指数関数的に減るという法則。",
+  "en": "The law stating that transmission through a homogeneous absorbing medium decreases exponentially with concentration and optical path length.",
+  "source": "IUPAC Gold Book, Beer–Lambert law",
+  "review": false
+ },
+ "epi": {
+  "match": [
+   "EPI",
+   "epipolar-plane image",
+   "epipolar plane image",
+   "エピポーラ平面画像"
+  ],
+  "ja": "ライトフィールドの位置と視点の二軸を切り出した画像で、同じ三次元点が奥行きに応じた傾きの線として現れる。",
+  "en": "A slice of a light field over one spatial and one angular coordinate, where a 3-D point traces a line whose slope depends on depth.",
+  "source": "Bolles, Baker and Marimont, International Journal of Computer Vision 1, 1987",
+  "review": false
+ },
+ "mueller": {
+  "match": [
+   "Mueller matrix",
+   "Mueller-matrix",
+   "Mueller 行列",
+   "Mueller行列",
+   "Mueller",
+   "ミュラー行列"
+  ],
+  "ja": "偏光状態を表すストークスベクトルに作用し、光学素子や試料による偏光変化を記述する4×4実行列。",
+  "en": "A real 4-by-4 matrix acting on a Stokes vector to describe how an optical element or sample changes polarization.",
+  "source": "Chipman, Lam and Young, Polarized Light and Optical Systems, 2018",
+  "review": false
+ },
+ "pce": {
+  "match": [
+   "PCE",
+   "peak-to-correlation energy"
+  ],
+  "ja": "相関面の主ピークの強さを、それ以外の相関エネルギーで正規化したカメラ指紋照合の指標。",
+  "en": "A camera-fingerprint matching score that normalizes the main correlation peak by the correlation energy away from that peak.",
+  "source": "Goljan, Fridrich and Filler, SPIE Electronic Imaging 7254, 2009",
+  "review": false
+ },
+ "hough": {
+  "match": [
+   "Hough",
+   "Hough transform",
+   "ハフ変換"
+  ],
+  "ja": "画像中の点を図形パラメータ空間へ投票し、直線や円などを投票の集中として検出する方法。",
+  "en": "A method that votes image points into a shape-parameter space and detects lines, circles, or other shapes as vote concentrations.",
+  "source": "Duda and Hart, Communications of the ACM 15(1), 1972",
+  "review": false
+ },
+ "sobel": {
+  "match": [
+   "Sobel",
+   "Sobel operator",
+   "ソーベル"
+  ],
+  "ja": "平滑化と一次差分を組み合わせた3×3カーネルで、画像の横・縦方向の輝度勾配を近似する演算子。",
+  "en": "A pair of 3-by-3 kernels combining smoothing and first differences to approximate horizontal and vertical image gradients.",
+  "source": "Sobel and Feldman, An Isotropic 3×3 Image Gradient Operator, 1968",
+  "review": false
+ },
+ "wiener": {
+  "match": [
+   "Wiener",
+   "Wiener filter",
+   "ウィーナーフィルタ"
+  ],
+  "ja": "信号と雑音の統計を使い、平均二乗誤差を最小にする線形フィルタ。",
+  "en": "A linear filter that uses signal and noise statistics to minimize mean squared estimation error.",
+  "source": "Wiener, Extrapolation, Interpolation, and Smoothing of Stationary Time Series, 1949",
+  "review": false
+ },
+ "swir": {
+  "match": [
+   "SWIR",
+   "short-wave infrared",
+   "shortwave infrared",
+   "短波赤外"
+  ],
+  "ja": "おおむね1〜3 µm付近の短波赤外域で、可視光では似た材料の吸収差を捉えられる波長帯。",
+  "en": "The short-wave infrared band, roughly around 1 to 3 µm, where material absorption can distinguish objects that look alike in visible light.",
+  "source": "ISO 20473:2007, Optics and photonics — Spectral bands",
+  "review": false
+ },
+ "sam_spectral": {
+  "match": [
+   "SAM",
+   "spectral angle mapper",
+   "分光角"
+  ],
+  "ja": "二つのスペクトルをベクトルとみなし、そのなす角で形の類似度を測る分類法で、全体の乗算には不変。",
+  "en": "A classifier that compares spectra by the angle between their vectors, making it invariant to a common multiplicative scale.",
+  "source": "Kruse et al., Remote Sensing of Environment 44, 1993",
+  "review": false
+ },
+ "sam_ultrasonic": {
+  "match": [
+   "SAM",
+   "scanning acoustic microscope",
+   "scanning acoustic microscopy",
+   "走査型超音波顕微鏡"
+  ],
+  "ja": "集束した超音波を試料上で走査し、反射波の振幅・位相・到達時間から内部界面や欠陥を画像化する装置。",
+  "en": "An instrument that scans focused ultrasound over a specimen and images internal interfaces or defects from echo amplitude, phase, or arrival time.",
+  "source": "Briggs and Kolosov, Acoustic Microscopy, 2nd ed., 2010",
+  "review": false
+ },
+ "icp": {
+  "match": [
+   "ICP",
+   "iterative closest point",
+   "反復最近点"
+  ],
+  "ja": "二つの点群で最近点対応と剛体変換の推定を交互に繰り返し、位置合わせする方法。",
+  "en": "A registration method that alternates nearest-point correspondence with rigid-transform estimation between two point clouds.",
+  "source": "Besl and McKay, IEEE TPAMI 14(2), 1992",
+  "review": false
+ },
+ "ggx": {
+  "match": [
+   "GGX",
+   "Trowbridge-Reitz"
+  ],
+  "ja": "粗い鏡面を微小面の法線分布で表す反射モデルで、長い裾を持つTrowbridge–Reitz分布を使う。",
+  "en": "A microfacet reflection model using the long-tailed Trowbridge–Reitz distribution of facet normals.",
+  "source": "Walter et al., Eurographics Symposium on Rendering, 2007",
+  "review": false
+ },
+ "cusum": {
+  "match": [
+   "CUSUM",
+   "cumulative sum control chart",
+   "累積和管理図"
+  ],
+  "ja": "基準値からの偏差を累積し、小さい持続的な平均変化を検出する管理図。",
+  "en": "A control chart that accumulates deviations from a reference value to detect small sustained shifts in the mean.",
+  "source": "Page, Biometrika 41(1/2), 1954",
+  "review": false
+ },
+ "shewhart": {
+  "match": [
+   "Shewhart",
+   "Shewhart chart",
+   "シューハート管理図"
+  ],
+  "ja": "工程統計量を中心線と管理限界に照らし、偶然変動では説明しにくい変化を監視する管理図。",
+  "en": "A control chart that compares a process statistic with a center line and control limits to flag changes unlikely under common-cause variation.",
+  "source": "ISO 7870-2:2023, Control charts — Shewhart control charts",
+  "review": false
+ },
+ "xbar_r": {
+  "match": [
+   "Xbar-R",
+   "X̄-R",
+   "X-bar and R",
+   "平均値–範囲管理図"
+  ],
+  "ja": "小群ごとの平均値と範囲を別々の管理図で追い、工程の中心とばらつきを監視する方法。",
+  "en": "A paired control-chart method that tracks subgroup means and ranges to monitor process location and spread.",
+  "source": "ISO 7870-2:2023, Control charts — Shewhart control charts",
+  "review": false
+ },
+ "mtf": {
+  "match": [
+   "MTF",
+   "modulation transfer function",
+   "変調伝達関数"
+  ],
+  "ja": "空間周波数ごとに像のコントラストが物体からどれだけ伝わるかを表す、光学伝達関数の絶対値。",
+  "en": "The magnitude of the optical transfer function, showing how image contrast is transferred at each spatial frequency.",
+  "source": "ISO 9334:2012, Optics and photonics — Optical transfer function",
+  "review": false
+ },
+ "prnu": {
+  "match": [
+   "PRNU",
+   "photo-response non-uniformity",
+   "光応答不均一性"
+  ],
+  "ja": "同じ光を当てても画素ごとに感度が異なる、画像センサの空間的な応答むら。",
+  "en": "Spatial pixel-to-pixel variation in an image sensor's response under uniform illumination.",
+  "source": "EMVA 1288 Release 4.0, 2021",
+  "review": false
+ },
+ "dsnu": {
+  "match": [
+   "DSNU",
+   "dark signal non-uniformity",
+   "暗信号不均一性"
+  ],
+  "ja": "光を遮ったときの平均信号が画素ごとに異なる、画像センサの固定的な暗信号むら。",
+  "en": "Spatial pixel-to-pixel variation of the mean dark signal when an image sensor receives no light.",
+  "source": "EMVA 1288 Release 4.0, 2021",
+  "review": false
+ },
+ "emva_1288": {
+  "match": [
+   "EMVA 1288",
+   "EMVA"
+  ],
+  "ja": "産業用画像センサの感度・雑音・飽和・不均一性などを、共通の測定手順と量で表す標準。",
+  "en": "A standard measurement procedure and set of quantities for sensitivity, noise, saturation, and non-uniformity of machine-vision image sensors.",
+  "source": "EMVA 1288 Release 4.0, 2021",
+  "review": false
+ },
+ "ssim": {
+  "match": [
+   "SSIM",
+   "structural similarity"
+  ],
+  "ja": "二画像の局所的な輝度・コントラスト・構造を比較し、知覚的な類似度を表す画質指標。",
+  "en": "An image-quality index comparing local luminance, contrast, and structure between two images.",
+  "source": "Wang et al., IEEE Transactions on Image Processing 13(4), 2004",
+  "review": false
+ },
+ "fsim": {
+  "match": [
+   "FSIM",
+   "feature similarity index"
+  ],
+  "ja": "位相一致度を主特徴、勾配強度を補助特徴として二画像の知覚的類似度を測る指標。",
+  "en": "An image-similarity index using phase congruency as the primary feature and gradient magnitude as a secondary feature.",
+  "source": "Zhang et al., IEEE Transactions on Image Processing 20(8), 2011",
+  "review": false
+ },
+ "fsimc": {
+  "match": [
+   "FSIMc",
+   "FSIMC"
+  ],
+  "ja": "FSIMに色差成分を加え、カラー画像の類似度を評価する拡張指標。",
+  "en": "The colour extension of FSIM, adding chromatic-difference terms to the feature-similarity score.",
+  "source": "Zhang et al., IEEE Transactions on Image Processing 20(8), 2011",
+  "review": false
+ },
+ "vifp": {
+  "match": [
+   "VIFP",
+   "pixel-domain visual information fidelity"
+  ],
+  "ja": "自然画像の統計モデルと視覚系モデルを使い、参照画像から試験画像へ保持された情報量の比を画素領域で測る指標。",
+  "en": "A pixel-domain image-quality metric measuring the fraction of reference information preserved through a natural-image and visual-system model.",
+  "source": "Sheikh and Bovik, IEEE Transactions on Image Processing 15(2), 2006",
+  "review": false
+ },
+ "gmsd": {
+  "match": [
+   "GMSD",
+   "gradient magnitude similarity deviation"
+  ],
+  "ja": "参照画像と試験画像の勾配強度類似度マップの標準偏差で、局所的な劣化のばらつきを測る画質指標。",
+  "en": "An image-quality metric defined as the standard deviation of a gradient-magnitude similarity map between reference and test images.",
+  "source": "Xue et al., IEEE Transactions on Image Processing 23(2), 2014",
+  "review": false
+ },
+ "dice": {
+  "match": [
+   "Dice",
+   "Dice coefficient",
+   "Dice score",
+   "ダイス係数"
+  ],
+  "ja": "二つの領域の共通部分を各領域の大きさの平均で正規化した、0から1の重なり指標。",
+  "en": "A 0-to-1 overlap score equal to twice the intersection size divided by the sum of the two region sizes.",
+  "source": "Dice, Ecology 26(3), 1945",
+  "review": false
+ },
+ "jaccard": {
+  "match": [
+   "Jaccard",
+   "Jaccard index",
+   "Jaccard score",
+   "ジャカード係数"
+  ],
+  "ja": "二つの集合の共通部分の大きさを和集合の大きさで割った、0から1の類似度。",
+  "en": "A 0-to-1 set-similarity score equal to intersection size divided by union size.",
+  "source": "Jaccard, Bulletin de la Société Vaudoise des Sciences Naturelles 37, 1901",
+  "review": false
+ },
+ "slic": {
+  "match": [
+   "SLIC",
+   "simple linear iterative clustering"
+  ],
+  "ja": "色と画像座標を合わせた距離で画素を局所クラスタリングし、ほぼ一様な超画素へ分ける方法。",
+  "en": "A local clustering method that groups pixels into approximately uniform superpixels using a distance over colour and image position.",
+  "source": "Achanta et al., IEEE TPAMI 34(11), 2012",
+  "review": false
+ },
+ "niblack": {
+  "match": [
+   "Niblack",
+   "Niblack threshold"
+  ],
+  "ja": "各画素の近傍平均と標準偏差から、場所ごとに異なる二値化しきい値を作る方法。",
+  "en": "A local thresholding method that sets each pixel's threshold from the mean and standard deviation in its neighbourhood.",
+  "source": "Niblack, An Introduction to Digital Image Processing, 1986",
+  "review": false
+ },
+ "sauvola": {
+  "match": [
+   "Sauvola",
+   "Sauvola threshold"
+  ],
+  "ja": "Niblack法を文書画像向けに修正し、局所平均と正規化した標準偏差からしきい値を決める方法。",
+  "en": "A document-oriented refinement of Niblack thresholding that uses the local mean and a normalized local standard deviation.",
+  "source": "Sauvola and Pietikäinen, Pattern Recognition 33(2), 2000",
+  "review": false
+ },
+ "gvf": {
+  "match": [
+   "GVF",
+   "gradient vector flow",
+   "勾配ベクトル流"
+  ],
+  "ja": "画像勾配を滑らかなベクトル場へ拡散し、離れた境界や凹部へもスネークを引き寄せる外力。",
+  "en": "An external force for active contours that diffuses image gradients into a smooth vector field, extending capture range and reaching concavities.",
+  "source": "Xu and Prince, IEEE Transactions on Image Processing 7(3), 1998",
+  "review": false
+ },
+ "drlse": {
+  "match": [
+   "DRLSE",
+   "distance regularized level set evolution"
+  ],
+  "ja": "レベルセット関数を符号付き距離に近く保つ正則化項を持ち、再初期化を不要にした輪郭発展法。",
+  "en": "A level-set evolution method whose distance regularization keeps the level-set function near a signed-distance function without reinitialization.",
+  "source": "Li et al., IEEE Transactions on Image Processing 19(12), 2010",
+  "review": false
+ },
+ "snic": {
+  "match": [
+   "SNIC",
+   "simple non-iterative clustering"
+  ],
+  "ja": "優先度付き領域成長で、連結性を保った超画素を反復なしに作るクラスタリング法。",
+  "en": "A priority-queue region-growing method that produces connected superpixels without iterative clustering.",
+  "source": "Achanta and Süsstrunk, CVPR, 2017",
+  "review": false
+ },
+ "tdi": {
+  "match": [
+   "TDI",
+   "time delay integration",
+   "時間遅延積分"
+  ],
+  "ja": "移動する像に合わせて複数段の電荷または信号を加算し、ラインセンサの露光量とSNRを高める方式。",
+  "en": "A line-sensor technique that sums charge or signals over multiple stages in step with image motion to increase exposure and SNR.",
+  "source": "Janesick, Scientific Charge-Coupled Devices, 2001",
+  "review": false
+ },
+ "ctf": {
+  "match": [
+   "CTF",
+   "contrast transfer function",
+   "コントラスト伝達関数"
+  ],
+  "ja": "透過電子顕微鏡で、試料の空間周波数成分が収差とデフォーカスにより像へどの符号・強さで伝わるかを表す関数。",
+  "en": "In transmission electron microscopy, the function describing the sign and strength with which specimen spatial frequencies transfer to the image under aberration and defocus.",
+  "source": "Reimer and Kohl, Transmission Electron Microscopy, 5th ed., 2008",
+  "review": false
+ },
+ "lau": {
+  "match": [
+   "Lau",
+   "Lau interferometer",
+   "ラウ干渉計"
+  ],
+  "ja": "空間的に非干渉な拡張光源を線源格子で分割し、周期条件を合わせて別の格子像の可視度を回復する干渉配置。",
+  "en": "An interferometric arrangement that divides a spatially incoherent extended source with a source grating and uses a period condition to recover visibility at another grating.",
+  "source": "Lau, Annalen der Physik 437(7-8), 1948",
+  "review": false
+ },
+ "ocm": {
+  "match": [
+   "OCM",
+   "orientation code matching",
+   "方向符号照合"
+  ],
+  "ja": "各画素の輝度勾配方向を離散符号に変え、符号差でテンプレートと画像を照合する方法。",
+  "en": "A template-matching method that quantizes each pixel's gradient orientation and compares the resulting orientation codes.",
+  "source": "Ullah, Kaneko and Igarashi, IEICE Transactions on Information and Systems E84-D(8), 2001",
+  "review": false
+ },
+ "auroc": {
+  "match": [
+   "AUROC",
+   "area under the ROC curve",
+   "ROC AUC"
+  ],
+  "ja": "判定しきい値を動かしたときの偽陽性率と真陽性率の曲線下面積で、順位付け性能を0から1で表す指標。",
+  "en": "The area under the receiver-operating-characteristic curve, summarizing ranking performance across thresholds on a 0-to-1 scale.",
+  "source": "Fawcett, Pattern Recognition Letters 27(8), 2006",
+  "review": false
+ },
+ "aupro": {
+  "match": [
+   "AUPRO",
+   "area under the PRO curve"
+  ],
+  "ja": "異常領域ごとの重なり率を偽陽性率に対して描き、所定の偽陽性率範囲で積分した異常検知指標。",
+  "en": "An anomaly-localization metric integrating per-region overlap against false-positive rate over a specified false-positive range.",
+  "source": "Bergmann et al., International Journal of Computer Vision 129, 2021",
+  "review": false
+ },
+ "strehl": {
+  "match": [
+   "Strehl",
+   "Strehl ratio",
+   "ストレール比"
+  ],
+  "ja": "収差のある光学系の点像中心強度を、同じ開口の無収差系の中心強度で割った像質指標。",
+  "en": "An image-quality ratio of the on-axis peak intensity of an aberrated point-spread function to that of the corresponding diffraction-limited system.",
+  "source": "Born and Wolf, Principles of Optics, 7th ed., 1999",
+  "review": false
+ },
+ "dic": {
+  "match": [
+   "DIC",
+   "digital image correlation",
+   "デジタル画像相関"
+  ],
+  "ja": "変形前後の表面模様を小領域ごとに相関照合し、変位場とその空間微分であるひずみを測る方法。",
+  "en": "A method that correlates local surface patterns before and after deformation to measure displacement and derive strain.",
+  "source": "Sutton, Orteu and Schreier, Image Correlation for Shape, Motion and Deformation Measurements, 2009",
+  "review": false
+ },
+ "roc": {
+  "match": [
+   "ROC",
+   "receiver operating characteristic",
+   "受信者動作特性"
+  ],
+  "ja": "判定しきい値を動かしたときの真陽性率を偽陽性率に対して描き、二値判定器のトレードオフを示す曲線。",
+  "en": "A curve of true-positive rate against false-positive rate as the decision threshold varies, showing a binary detector's trade-off.",
+  "source": "Fawcett, Pattern Recognition Letters 27(8), 2006",
+  "review": false
+ },
+ "mtf50": {
+  "match": [
+   "MTF50",
+   "MTF 50",
+   "50% MTF"
+  ],
+  "ja": "MTFが低周波での値の50%まで下がる空間周波数で、解像性能を一つの数に要約する指標。",
+  "en": "The spatial frequency at which MTF falls to 50% of its low-frequency value, used as a single-number resolution summary.",
+  "source": "ISO 12233:2024, Photography — Electronic still picture imaging — Resolution and spatial frequency responses",
+  "review": false
+ },
+ "debye_rings": {
+  "match": [
+   "Debye rings",
+   "Debye ring",
+   "デバイ環"
+  ],
+  "ja": "粉末中の無作為な結晶方位が同じ格子面間隔の回折円錐を作り、二次元検出器上に現れる同心円状の回折線。",
+  "en": "Concentric diffraction lines formed on a 2-D detector when randomly oriented crystallites produce a diffraction cone for each lattice spacing.",
+  "source": "Cullity and Stock, Elements of X-Ray Diffraction, 3rd ed., 2001",
+  "review": false
+ },
+ "pod": {
+  "match": [
+   "POD",
+   "Probability of Detection",
+   "probability of detection",
+   "検出確率"
+  ],
+  "ja": "欠陥の大きさなどの説明変数に対し、定めた検査手順が欠陥を検出する確率を表す曲線。",
+  "en": "A curve giving the probability that a specified inspection procedure detects a flaw as a function of flaw size or another explanatory variable.",
+  "source": "MIL-HDBK-1823A, Nondestructive Evaluation System Reliability Assessment, 2009",
+  "review": false
+ },
+ "a90_95": {
+  "match": [
+   "a90/95",
+   "a90/95"
+  ],
+  "ja": "POD曲線で検出確率90%を、片側95%信頼下限でも満たす欠陥寸法。",
+  "en": "The flaw size at which the lower one-sided 95% confidence bound on the POD reaches 90%.",
+  "source": "MIL-HDBK-1823A, Nondestructive Evaluation System Reliability Assessment, 2009",
+  "review": false
+ },
+ "airy": {
+  "match": [
+   "Airy",
+   "Airy recursion",
+   "Airy pattern",
+   "エアリー"
+  ],
+  "ja": "Airyの式は平行平板内の多重反射を無限級数として合成し、同じ数学から円形開口の回折像であるAiryパターンも得られる。",
+  "en": "Airy's formula sums the infinite multiple reflections in a parallel plate; the related diffraction analysis gives the Airy pattern of a circular aperture.",
+  "source": "Born and Wolf, Principles of Optics, 7th ed., 1999",
+  "review": true
+ },
+ "zernike": {
+  "match": [
+   "Zernike Polynomials",
+   "Zernike polynomial",
+   "ゼルニケ多項式",
+   "Zernike",
+   "ゼルニケ"
+  ],
+  "ja": "単位円上で直交する多項式系で、瞳面の波面収差をデフォーカスや非点収差などの係数へ分解する。",
+  "en": "An orthogonal polynomial basis on the unit disk used to decompose pupil wavefront error into terms such as defocus and astigmatism.",
+  "source": "ANSI Z80.28-2017, Methods for Reporting Optical Aberrations of Human Eyes",
+  "review": false
+ },
+ "hausdorff": {
+  "match": [
+   "Hausdorff",
+   "Hausdorff distance",
+   "ハウスドルフ距離"
+  ],
+  "ja": "一方の集合の各点から他方への最近距離の最大値を両方向で取り、大きい方を採る集合間距離。",
+  "en": "A distance between two point sets given by the larger of their two directed maximum nearest-neighbour distances.",
+  "source": "Huttenlocher, Klanderman and Rucklidge, IEEE TPAMI 15(9), 1993",
+  "review": false
+ },
+ "oct": {
+  "match": [
+   "OCT",
+   "optical coherence tomography",
+   "光干渉断層"
+  ],
+  "ja": "低コヒーレンス光の干渉を使って深さ方向の反射分布を測り、試料内部の断層像を非接触で得る方法。",
+  "en": "A non-contact method that uses low-coherence interference to measure depth-resolved reflectivity and form cross-sectional images.",
+  "source": "Huang et al., Science 254(5035), 1991",
+  "review": false
+ },
+ "thon_rings": {
+  "match": [
+   "Thon rings",
+   "Thon ring",
+   "Thon リング",
+   "ソンリング"
+  ],
+  "ja": "TEM像のパワースペクトルに現れる同心円で、CTFの零点と符号反転を反映し、デフォーカスや非点収差の推定に使う。",
+  "en": "Concentric rings in a TEM image power spectrum that follow CTF zeros and sign changes and are used to estimate defocus and astigmatism.",
+  "source": "Thon, Electron Microscopy in Material Science, 1971",
+  "review": false
+ },
+ "talbot_effect": {
+  "match": [
+   "Talbot effect",
+   "Talbot distance",
+   "Talbot length",
+   "fractional Talbot",
+   "タルボ効果",
+   "タルボ距離",
+   "分数タルボ"
+  ],
+  "ja": "周期構造をコヒーレント光で照明すると、自由空間伝搬の特定距離でその像や分数周期像がレンズなしに再生する近接回折現象。",
+  "en": "A near-field diffraction effect in which coherent illumination of a periodic structure reproduces its image, or fractional images, at specific free-space distances without a lens.",
+  "source": "Talbot, Philosophical Magazine 9, 1836",
+  "review": false
+ },
+ "talbot_carpet": {
+  "match": [
+   "Talbot carpet",
+   "タルボ絨毯"
+  ],
+  "ja": "周期格子の後方で強度分布を横位置と伝搬距離の二次元に並べ、自己像と分数自己像が織物状に続く様子を示す図。",
+  "en": "A two-dimensional plot of intensity behind a periodic grating versus transverse position and propagation distance, showing self-images and fractional self-images as a woven pattern.",
+  "source": "Berry and Klein, Journal of Modern Optics 43(10), 1996",
+  "review": false
+ },
+ "moire": {
+  "match": [
+   "Moiré",
+   "Moire",
+   "モアレ"
+  ],
+  "ja": "周期や向きがわずかに異なる二つの模様を重ねたとき、差の空間周波数として現れる長周期の縞。",
+  "en": "A long-period fringe produced at the difference spatial frequency when two patterns with slightly different pitch or orientation are superposed.",
+  "source": "Amidror, The Theory of the Moiré Phenomenon, 2nd ed., 2009",
+  "review": false
+ },
+ "lock_in": {
+  "match": [
+   "lock-in",
+   "lock in",
+   "ロックイン"
+  ],
+  "ja": "既知の基準周波数と同相・直交の成分を相関で取り出し、広帯域雑音の中から周期信号の振幅と位相を測る方法。",
+  "en": "A method that correlates with in-phase and quadrature references at a known frequency to recover a periodic signal's amplitude and phase from broadband noise.",
+  "source": "Meade, Lock-in Amplifiers: Principles and Applications, 1983",
+  "review": false
+ },
+ "gauge_rr": {
+  "match": [
+   "Gauge R&R",
+   "Gage R&R",
+   "ゲージ R&R"
+  ],
+  "ja": "同じ部品を複数の測定者が反復測定し、測定系のばらつきを反復性と再現性に分けて評価する測定システム解析。",
+  "en": "A measurement-system analysis in which multiple appraisers repeatedly measure parts to separate equipment repeatability from appraiser reproducibility.",
+  "source": "AIAG, Measurement Systems Analysis Reference Manual, 4th ed., 2010",
+  "review": false
+ },
+ "wilson": {
+  "match": [
+   "Wilson 95 %",
+   "Wilson 95%",
+   "Wilson interval",
+   "Wilson score interval"
+  ],
+  "ja": "二項比率の信頼区間を、正規近似のスコア検定を反転して求める方法で、標本が小さい場合もWald区間より安定する。",
+  "en": "A binomial-proportion confidence interval obtained by inverting the normal score test, generally more reliable than the Wald interval for small samples.",
+  "source": "Wilson, Journal of the American Statistical Association 22(158), 1927",
+  "review": false
+ }
+}

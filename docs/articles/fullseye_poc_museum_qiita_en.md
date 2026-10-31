@@ -62,8 +62,8 @@ Three rules survive even if the author is forgotten. **Count failures by kind** 
 ## Recently added (newest first)
 
 - 2026-10-30 — No.2026.282 The Marechal Approximation Breaks at Different RMS Errors for Different Aberration Shapes
-- 2026-10-30 — No.2026.283 A Four-Angle Polarization Camera Leaves Seven Mueller Dimensions Unseen
-- 2026-10-30 — No.2026.284 Slanted-Edge SFR Misreads MTF50 Through Gamma as Well as Edge Angle
+- 2026-10-30 — No.2026.283 A Four-Angle Polarization Camera Leaves Seven Mueller (4-by-4 polarization-transfer matrix) Dimensions Unseen
+- 2026-10-30 — No.2026.284 Slanted-Edge SFR Misreads MTF50 (spatial frequency at 50% MTF) Through Gamma as Well as Edge Angle
 - 2026-10-26 — No.2026.279 How One Star Image Reveals Satellite Attitude
 - 2026-10-25 — No.2026.277 The Venue Buildings and Asteroid Itokawa on One Ruler — Turning PLATEAU CityGML LOD2 into a Triangle Mesh
 - 2026-10-23 — No.2026.276 Physical Consistency of Footage — Ballistic or Thrusted, and Was the Clock Stretched?
