@@ -423,6 +423,7 @@ function sceneAnim(tab){
   S.tgt = S.ctr.slice();                          /* 追従の注視点(平滑化して動かす) */
   return anims[tab.id] = S;
 }
+
 function updateAnimBody(tab, b, j, f){
   if (b.last === f || (!b.posT && !b.zT && !b.zScaled && !b.valT && !b.valScaled && !b.rgbT)) return;
   if (b.posT || b.zT || b.zScaled) {

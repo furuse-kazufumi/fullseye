@@ -3270,6 +3270,7 @@ __all__ = [
     "BADGES", "UI", "LANGS", "LANG_NAMES", "KINDS", "viewer_text", "viewer_number", "viewer_spec", "viewer_mesh_tab",
     "viewer_points_tab", "viewer_frames_tab", "viewer_split_tab", "viewer_anim3d_tab", "write_viewer",
     "viewer_export_strings", "viewer_motion_gate", "viewer_motion_gate_data",
+    "viewer_quality_gate_data",
 ]
 
 

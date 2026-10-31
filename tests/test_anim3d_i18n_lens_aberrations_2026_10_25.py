@@ -48,6 +48,13 @@ def test_committed_table_passes(spec_and_table):
     assert unused == [], unused[:5]
 
 
+def test_quick_build_uses_the_same_translatable_event_labels():
+    spec = I18N.pick_spec(I18N.capture_specs(I18N.example_script(BUILDER)), None)
+    problems, unused = I18N.audit(spec, I18N.load_table(BUILDER))
+    assert problems == [], problems[:5]
+    assert unused == [], unused[:5]
+
+
 def test_translations_have_no_bold_marks_or_urls(spec_and_table):
     _, table = spec_and_table
     assert len(table["strings"]) > 50
