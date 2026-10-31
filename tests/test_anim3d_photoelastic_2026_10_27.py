@@ -106,6 +106,38 @@ def test_unestimable_panel_uses_exact_gray_and_two_pixel_eight_pitch_hatch():
     assert tuple(panel[100,108]) == (64,64,64)
 
 
+def test_unestimable_hatch_does_not_cross_opaque_heading_band():
+    domain=np.ones((256,214),bool); resolved=np.zeros_like(domain)
+    panel=B._scalar_panel(np.zeros_like(domain,float),resolved,-1,1,True,
+                          note="max|err|=0.035 | unestimable=6.4%\ngray: weak/dense/ambiguous",
+                          domain=domain,unestimable_pct=6.4)
+    # The complete heading rectangle is dark and contains no restored grey hatch.
+    band=panel[4:30,4:212]
+    assert not np.any(np.all(band==(128,128,128),axis=2))
+    assert not np.any(np.all(band==(64,64,64),axis=2))
+
+
+def test_hole_has_no_faces_inside_and_relief_clips_singular_vertices():
+    hole=B._field_sweep("hole",np.array([.05e6,1e6]),estimator="rgb")
+    radius=np.hypot(hole["pos"][:,0],hole["pos"][:,1])
+    assert np.count_nonzero(np.any(radius[hole["faces"]] < .005*100,axis=1)) == 0
+    assert np.max(hole["relief_value"]) == hole["relief_hi"]
+    assert hole["relief_hi"] < np.max(hole["diff"][-1])
+
+
+def test_relief_x2_has_no_adjacent_vertex_spike_over_tenth_radius():
+    for kind,values in (("disc",np.array([0.,720.])),("hole",np.array([.05e6,1e6]))):
+        field=B._field_sweep(kind,values,estimator="rgb")
+        faces=field["faces"]
+        edges=np.vstack((faces[:,(0,1)],faces[:,(1,2)],faces[:,(2,0)]))
+        used=np.unique(faces);v=field["relief_value"]
+        normalized=(v-v[used].min())/(v[used].max()-v[used].min())
+        # relief size is radius/4; multiplier x2 makes an edge displacement
+        # difference of radius/2 times the normalized value difference.
+        max_displacement_over_radius=.5*np.max(np.abs(normalized[edges[:,0]]-normalized[edges[:,1]]))
+        assert max_displacement_over_radius <= .1+1e-12, kind
+
+
 def test_generated_page_relief_browser_gates_for_disc_and_hole():
     sys.path.insert(0,str(ROOT/"tools"))
     import headless_chrome

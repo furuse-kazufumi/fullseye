@@ -187,6 +187,34 @@ def _grid_mesh(x, y, inside, scale=100.0):
     return pos, np.asarray(faces, int), ids
 
 
+def _relief_field(raw, faces, percentile=98.0, max_step=.05):
+    """Clip singular stress values before they become display displacement.
+
+    The same robust upper limit used for the visible relief is applied to the
+    vertex values.  In particular, a contact-point singularity must not turn
+    one vertex into a tall white needle.
+    """
+    values=np.asarray(raw,float).ravel()
+    used=np.zeros(len(values),bool);used[np.asarray(faces,int).ravel()]=True
+    hi=max(float(np.percentile(values[used],percentile)),1.0)
+    clipped=np.clip(values,0.0,hi)
+    lo=float(np.min(clipped[used]));span=max(hi-lo,1e-30)
+    normalized=(clipped-lo)/span
+    edges=np.vstack((faces[:,(0,1)],faces[:,(1,2)],faces[:,(2,0)]))
+    # Extend a clipped peak into its immediate neighbourhood until the display
+    # field is Lipschitz on every mesh edge.  At relief x2 the viewer uses
+    # 0.5*radius; max_step=.05 leaves a fourfold margin under the
+    # 0.1*radius spike gate.
+    for _ in range(len(values)):
+        before=normalized.copy()
+        np.maximum.at(normalized,edges[:,1],before[edges[:,0]]-max_step)
+        np.maximum.at(normalized,edges[:,0],before[edges[:,1]]-max_step)
+        if np.max(np.abs(normalized-before)) < 1e-12:
+            break
+    normalized[~used]=0.0
+    return lo+normalized*span,hi
+
+
 def _contact_shoe(sign=1, n=18):
     """Curved loading shoe matching the disc rim (not a generic box)."""
     a = np.linspace(np.deg2rad(70), np.deg2rad(110), n)
@@ -426,15 +454,21 @@ def _scalar_panel(a, resolved, lo, hi, diverging=False, note="", unit="fringe", 
         dr.text((field_w-91,sy+15),"unestimable %.1f %%"%unestimable_pct,fill=(210,214,219))
     elif unit:
         dr.text((x0-1,PANEL_SIZE-14),unit,fill=(190,198,207))
+    note_bottom=0
     if note:
         lines=note.split("\n")
-        dr.rectangle((4,4,field_w-3,7+11*len(lines)),fill=(8,12,16))
+        note_bottom=7+11*len(lines)
+        dr.rectangle((4,4,field_w-3,note_bottom),fill=(8,12,16))
         for j,line in enumerate(lines): dr.text((7,6+11*j),line,fill=(255,255,255))
     # Keep the PNG's base palette tiny, then restore the two exact neutral
     # colours required by the uncertainty convention.
     out=_quantize_rgb(np.asarray(im),levels=2)
-    out[:PANEL_SIZE,:field_w][missing]=(128,128,128)
-    out[:PANEL_SIZE,:field_w][hatch]=(64,64,64)
+    # Restore the exact uncertainty colours without painting over the opaque
+    # heading band.  The band is deliberately the topmost layer.
+    restore=missing.copy();restore[4:note_bottom+1,4:field_w-2]=False
+    restore_hatch=hatch&restore
+    out[:PANEL_SIZE,:field_w][restore]=(128,128,128)
+    out[:PANEL_SIZE,:field_w][restore_hatch]=(64,64,64)
     if sy is not None:
         sw=Image.fromarray(out,"RGB"); sd=ImageDraw.Draw(sw)
         sd.rectangle((x0,sy,x0+12,sy+12),fill=(128,128,128),outline=(255,255,255))
@@ -580,13 +614,14 @@ def _field_sweep(kind, values, size=FIELD_SIZE, noisy=False, estimator="rgb", pi
         nmap_data.append(np.where(resolved,n_hat_panel,0.0)[::10,::10])
         profile_data.append(np.stack([truth,np.nan_to_num(estimate,nan=0.0),np.isfinite(estimate).astype(float)]))
         assert phase["delta_rad"].shape == p["difference"].shape
-    zref=max(float(np.percentile(raw_height[-1],98)),1.0)
+    relief_value,zref=_relief_field(raw_height[-1],mesh[1])
     surface_delta=1.15*np.clip(raw_height[-1].reshape(size,size)[np.ix_(sel,sel)].ravel()/zref,0,1)
     surface_mesh[0][:,2]=.08
     scale=np.asarray(values,float)/max(float(values[-1]),1e-30)
     panes=[np.stack(fringe_images),np.stack(iso),np.stack(errmap),np.stack(profiles)]
     pane_data=[None,None,np.stack(nmap_data),np.stack(profile_data)]
     return {"pos":mesh[0],"faces":mesh[1],"rgb":np.stack(rgb3),"diff":np.stack(diffs),
+            "relief_value":relief_value/1e6,"relief_hi":zref/1e6,
             "surface_pos":surface_mesh[0],"surface_faces":surface_mesh[1],"surface_z":surface_delta,
             "surface_diff":surface_diff[-1],"surface_scale":scale,"panes":panes,"pane_data":pane_data,
             "error_max":max(error_max),"error_rms":max(error_rms),
@@ -656,12 +691,12 @@ def build_spec():
     def poses(n):
         x,q=_motion(frames,n);return x,q
     db=[{"name":"disc_field","pos":disc["pos"],"faces":disc["faces"],"rgb":disc["rgb"],
-         "val":disc["diff"][-1],"val_scale":disc["surface_scale"],"relief_default":0.0},
+         "val":disc["relief_value"],"val_scale":disc["surface_scale"],"relief_default":0.0},
         {"name":"upper_contact_shoe","pos":shoe1[0],"faces":shoe1[1],"rgb":[210,115,70]},
         {"name":"lower_contact_shoe","pos":shoe2[0],"faces":shoe2[1],"rgb":[210,115,70]}]
     dx,dq=poses(3); approach=np.linspace(.18,0,frames);dx[:,1,1]=approach;dx[:,2,1]=-approach
     hb=[{"name":"plate_with_hole","pos":hole["pos"],"faces":hole["faces"],"rgb":hole["rgb"],
-         "val":hole["diff"][-1],"val_scale":hole["surface_scale"],"relief_default":0.0},
+         "val":hole["relief_value"],"val_scale":hole["surface_scale"],"relief_default":0.0},
         {"name":"hole_edge","pos":rim[0],"faces":rim[1],"rgb":[235,235,225]}]
     hx,hq=poses(2)
     ub=[{"name":"disc_fringe","pos":disc["pos"],"faces":disc["faces"],"rgb":disc["rgb"],"alpha":.48},
