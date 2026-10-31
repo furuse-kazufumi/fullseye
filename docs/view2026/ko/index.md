@@ -49,6 +49,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - **[파리 겹눈](../viewers/poc_compound_eye.html?lang=ko)**: 시점별 SNR을 높일수록 겹눈 영상이 무잡음 영상에 가까워진다
 - **[접합층 보이드](../viewers/poc_ct_void_morphology.html?lang=ko)**: 임계값을 높일수록 보이드 판정이 넓어지고 체적률이 커진다
 - **[Measure automotive paint layers with OCT](../viewers/industrial_oct_anim3d.html?lang=ko)**: View measured B-scan layers in 3-D; index and centre-wavelength sweeps synchronize thickness with 4 paper-style panels.
+- **[Measure micron dents from reflected fringes](../viewers/phase_measuring_deflectometry_anim3d.html?lang=ko)**: Show photograph-invisible 3 µm and 1 µm dents as curvature colour in 3-D, sweeping distance error and the k_d 0.9 limit.
 - **[능동 윤곽](../viewers/poc_active_contours.html?lang=ko)**: 반복할수록 GVF 윤곽이 최종 형상에 가까워진다
 
 ## 하이라이트
