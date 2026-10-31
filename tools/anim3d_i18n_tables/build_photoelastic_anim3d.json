@@ -92,23 +92,23 @@
    "hi": "(b) isoclinics",
    "fr": "(b) isoclinics"
   },
-  "(c) estimation input = the 8-bit RGB image in (a) | error from closed form": {
-   "ja": "(c) 推定の入力 = (a) の8 bit RGB像 | 閉形式との差",
-   "zh": "(c) estimation input = the 8-bit RGB image in (a) | error from closed form",
-   "tw": "(c) estimation input = the 8-bit RGB image in (a) | error from closed form",
-   "ko": "(c) estimation input = the 8-bit RGB image in (a) | error from closed form",
-   "de": "(c) estimation input = the 8-bit RGB image in (a) | error from closed form",
-   "hi": "(c) estimation input = the 8-bit RGB image in (a) | error from closed form",
-   "fr": "(c) estimation input = the 8-bit RGB image in (a) | error from closed form"
+  "(c) estimation input = the 8-bit RGB image in (a) | error from closed form | grey = unestimable": {
+   "ja": "(c) 推定の入力 = (a) の8 bit RGB像 | 閉形式との差 | 灰=推定不能",
+   "zh": "(c) estimation input = the 8-bit RGB image in (a) | error from closed form | grey = unestimable",
+   "tw": "(c) estimation input = the 8-bit RGB image in (a) | error from closed form | grey = unestimable",
+   "ko": "(c) estimation input = the 8-bit RGB image in (a) | error from closed form | grey = unestimable",
+   "de": "(c) estimation input = the 8-bit RGB image in (a) | error from closed form | grey = unestimable",
+   "hi": "(c) estimation input = the 8-bit RGB image in (a) | error from closed form | grey = unestimable",
+   "fr": "(c) estimation input = the 8-bit RGB image in (a) | error from closed form | grey = unestimable"
   },
-  "(d) horizontal diameter: closed form (wide blue) / estimate (thin orange)": {
-   "ja": "(d) 水平直径: 閉形式（太い青）/推定（細い橙）",
-   "zh": "(d) horizontal diameter: closed form (wide blue) / estimate (thin orange)",
-   "tw": "(d) horizontal diameter: closed form (wide blue) / estimate (thin orange)",
-   "ko": "(d) horizontal diameter: closed form (wide blue) / estimate (thin orange)",
-   "de": "(d) horizontal diameter: closed form (wide blue) / estimate (thin orange)",
-   "hi": "(d) horizontal diameter: closed form (wide blue) / estimate (thin orange)",
-   "fr": "(d) horizontal diameter: closed form (wide blue) / estimate (thin orange)"
+  "(d) horizontal diameter: closed form (wide blue) / estimated intervals (thin orange; gaps unestimable)": {
+   "ja": "(d) 水平直径: 閉形式（太い青）/推定できた区間（細い橙、途切れは推定不能）",
+   "zh": "(d) horizontal diameter: closed form (wide blue) / estimated intervals (thin orange; gaps unestimable)",
+   "tw": "(d) horizontal diameter: closed form (wide blue) / estimated intervals (thin orange; gaps unestimable)",
+   "ko": "(d) horizontal diameter: closed form (wide blue) / estimated intervals (thin orange; gaps unestimable)",
+   "de": "(d) horizontal diameter: closed form (wide blue) / estimated intervals (thin orange; gaps unestimable)",
+   "hi": "(d) horizontal diameter: closed form (wide blue) / estimated intervals (thin orange; gaps unestimable)",
+   "fr": "(d) horizontal diameter: closed form (wide blue) / estimated intervals (thin orange; gaps unestimable)"
   },
   "disc-centre σ1−σ2": {
    "ja": "円板中心 σ₁−σ₂",
@@ -569,14 +569,14 @@
    "hi": "(c) input = three synthetic wavelength phases | error from closed form",
    "fr": "(c) input = three synthetic wavelength phases | error from closed form"
   },
-  "(c) estimation input = area-averaged (a) | error from closed form": {
-   "ja": "(c) 推定の入力 = 面積平均後の (a) | 閉形式との差",
-   "zh": "(c) estimation input = area-averaged (a) | error from closed form",
-   "tw": "(c) estimation input = area-averaged (a) | error from closed form",
-   "ko": "(c) estimation input = area-averaged (a) | error from closed form",
-   "de": "(c) estimation input = area-averaged (a) | error from closed form",
-   "hi": "(c) estimation input = area-averaged (a) | error from closed form",
-   "fr": "(c) estimation input = area-averaged (a) | error from closed form"
+  "(c) estimation input = area-averaged (a) | error from closed form | grey = unestimable": {
+   "ja": "(c) 推定の入力 = 面積平均後の (a) | 閉形式との差 | 灰=推定不能",
+   "zh": "(c) estimation input = area-averaged (a) | error from closed form | grey = unestimable",
+   "tw": "(c) estimation input = area-averaged (a) | error from closed form | grey = unestimable",
+   "ko": "(c) estimation input = area-averaged (a) | error from closed form | grey = unestimable",
+   "de": "(c) estimation input = area-averaged (a) | error from closed form | grey = unestimable",
+   "hi": "(c) estimation input = area-averaged (a) | error from closed form | grey = unestimable",
+   "fr": "(c) estimation input = area-averaged (a) | error from closed form | grey = unestimable"
   },
   "10th-order saturation / 1st-order saturation": {
    "ja": "10次の彩度 / 1次の彩度",

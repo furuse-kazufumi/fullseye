@@ -77,6 +77,11 @@
     ``camera`` ``{dist (T,), target (T,3)}``(コマごとのカメラ。桁の違う物を並べて寄る場面に)/
     ``labels`` ``[{body, offset (3,), text}]``(物体に付いて動く文字のラベル)
 
+    平面の scalar field は body に ``val`` と ``relief_default``(0..2)を持たせると、操作列に
+    「起伏 ×0〜×2」が出る。シェーダで頂点を法線方向へ
+    ``(val-lo)/(hi-lo) * 物体の最大寸法 * 倍率`` だけ動かす。RGB も併記でき、色は変えない。
+    ``pos (T,N,3)``、非平面、既存の ``z`` 変位には適用しない。
+
 共通の任意項目: ``view`` ``{az, el, dist}``(3-D の初期視点。dist は既定距離の倍率)。
 
 データの詰め方 —— **間引かない、量子化する**
@@ -97,6 +102,7 @@ import base64
 import hashlib
 import html
 import json
+import math
 import re
 import struct
 import sys
@@ -275,6 +281,10 @@ UI: dict[str, dict[str, str]] = {
     "stage": _t("段", "stage", "阶段", "階段", "단계", "Phase", "चरण", "étape"),
     "bodies": _t("物体", "bodies", "个物体", "個物體", "개 물체", "Körper", "वस्तुएँ", "objets"),
 }
+
+#: ``relief_default`` を持つ平面 body があるページだけに入れる操作名。
+_RELIEF_UI: dict[str, str] = _t(
+    "起伏", "Relief", "起伏", "起伏", "기복", "Relief", "उभार", "Relief")
 
 _MAXV = {"q8": 255, "q16": 65535}
 
@@ -712,7 +722,8 @@ def _pack_series(raw, T: int, where: str, ctx: _Ctx) -> list:
 
 
 _HEX = re.compile(r"#[0-9a-fA-F]{6}\Z")
-_BODY_KEYS = frozenset({"name", "label", "pos", "z", "z_scale", "faces", "rgb", "val", "val_scale", "alpha"})
+_BODY_KEYS = frozenset({"name", "label", "pos", "z", "z_scale", "faces", "rgb", "val", "val_scale", "alpha",
+                        "relief_default"})
 _TRAIL_KEYS = frozenset({"body", "offset", "xyz", "color", "tail", "label"})
 _CLOUD_KEYS = frozenset({"k", "pos", "rgb", "color", "point_size"})
 _PANE_KEYS = frozenset({"label", "frames", "boxes", "png", "dedupe", "wide", "data", "data_unit"})
@@ -748,6 +759,35 @@ def _alpha(x, where: str) -> float:
     if not np.isfinite(a) or not (0.0 < a <= 1.0):
         raise ValueError("%s: alpha は 0 < alpha <= 1(0 は見えない物体、1 が不透明): %r" % (where, x))
     return a
+
+
+def _relief_default(x, where: str) -> float:
+    """起伏つまみの初期倍率。有限な 0..2 の実数だけを通す。"""
+    if isinstance(x, bool) or not isinstance(x, (int, float, np.integer, np.floating)):
+        raise ValueError("%s: relief_default は 0..2 の数(bool・文字列は通さない): %r" % (where, x))
+    value = float(x)
+    if not np.isfinite(value) or not (0.0 <= value <= 2.0):
+        raise ValueError("%s: relief_default は 0..2: %r" % (where, x))
+    return value
+
+
+def _planar_object_size(pos: np.ndarray, where: str) -> float:
+    """Return the largest AABB span after proving that all vertices are coplanar.
+
+    Relief is a scalar-field display, not a second geometry model.  It is therefore
+    accepted only for one static plane.  The tolerance is relative to the object's
+    largest span; a genuinely curved mesh must use its real ``pos`` instead.
+    """
+    p = np.asarray(pos, dtype=float)
+    span = np.ptp(p, axis=0)
+    size = float(np.max(span))
+    if not size > 0:
+        raise ValueError("%s: 起伏を付ける平面の大きさが 0" % where)
+    singular = np.linalg.svd(p - np.mean(p, axis=0), compute_uv=False)
+    distance_scale = float(singular[-1] / max(np.sqrt(len(p)), 1.0))
+    if distance_scale > size * 1e-9:
+        raise ValueError("%s: relief_default は全頂点が同一平面にある body だけ" % where)
+    return size
 
 
 def _faces(raw, n: int, where: str) -> np.ndarray:
@@ -877,6 +917,7 @@ def _pack_anim3d(tab: dict, out: dict, store: _Store, where: str, ctx: _Ctx) -> 
         out["cbar"] = cb
     names: list = []
     packed = []
+    relief_defaults = []
     for j, b in enumerate(bodies):
         wb = "%s.bodies[%d]" % (where, j)
         _keys(b, _BODY_KEYS, wb)
@@ -925,8 +966,38 @@ def _pack_anim3d(tab: dict, out: dict, store: _Store, where: str, ctx: _Ctx) -> 
             if alpha < 1.0:                              # 1 は既定(不透明)。載せないので出力は今と同じ
                 pb["alpha"] = alpha
         has_rgb, has_val = b.get("rgb") is not None, b.get("val") is not None
-        if has_rgb == has_val:
-            raise ValueError("%s: 色は rgb か val(+タブの cbar)のどちらか 1 つ" % wb)
+        wants_relief = "relief_default" in b
+        if not has_rgb and not has_val:
+            raise ValueError("%s: rgb か val(+タブの cbar)が要る" % wb)
+        if has_rgb and has_val and not wants_relief:
+            raise ValueError("%s: 色は rgb か val の片方だけ。併用は relief_default で val を起伏専用にするときだけ" % wb)
+        val = vs = None
+        if has_val:
+            val = _finite(b["val"], wb + ".val")
+            if val.shape not in ((n,), (T, n)):
+                raise ValueError("%s: val は (N,) か (T,N) = (%d,%d)" % (wb, T, n))
+            if b.get("val_scale") is not None:
+                if val.ndim != 1:
+                    raise ValueError("%s: val_scale を使う val は (N,)" % wb)
+                vs = _finite(b["val_scale"], wb + ".val_scale")
+                if vs.shape != (T,):
+                    raise ValueError("%s: val_scale は (T,) = (%d,)" % (wb, T))
+        if wants_relief:
+            default = _relief_default(b["relief_default"], wb + ".relief_default")
+            if pos.ndim == 3:
+                raise ValueError("%s: relief_default は pos (T,N,3) の物体には適用しない" % wb)
+            if b.get("z") is not None:
+                raise ValueError("%s: relief_default は既に z 変位を持つ物体には適用しない" % wb)
+            if "alpha" in pb:
+                raise ValueError("%s: relief_default と半透明 alpha は同じ body では併用しない" % wb)
+            if not has_val:
+                raise ValueError("%s: relief_default には高さを決める val が要る" % wb)
+            relief_size = _planar_object_size(pos, wb)
+            effective = val if vs is None else val[None, :] * vs[:, None]
+            relief_lo, relief_hi = float(np.min(effective)), float(np.max(effective))
+            if not relief_hi > relief_lo:
+                raise ValueError("%s: 起伏の val は lo < hi でなければならない" % wb)
+            relief_defaults.append(default)
         if has_rgb:
             rgb = np.asarray(b["rgb"])
             if rgb.shape == (3,):
@@ -947,23 +1018,32 @@ def _pack_anim3d(tab: dict, out: dict, store: _Store, where: str, ctx: _Ctx) -> 
         else:
             if cb is None:
                 raise ValueError("%s: val を使うならタブに cbar が要る" % wb)
-            val = _finite(b["val"], wb + ".val")
-            if val.shape not in ((n,), (T, n)):
-                raise ValueError("%s: val は (N,) か (T,N) = (%d,%d)" % (wb, T, n))
             pb["val"] = store.put(val, "q16", lo=cb["lo"], hi=cb["hi"])
             if val.ndim == 2:
                 pb["val_t"] = True
-            if b.get("val_scale") is not None:
-                if val.ndim != 1:
-                    raise ValueError("%s: val_scale を使う val は (N,)" % wb)
-                vs = _finite(b["val_scale"], wb + ".val_scale")
-                if vs.shape != (T,):
-                    raise ValueError("%s: val_scale は (T,) = (%d,)" % (wb, T))
-                pb["val_scale"] = _clean_list(vs, 6); pb["val_scaled"] = True
+        if wants_relief and has_rgb:                    # rgb は色、val は変位だけ。色は一切変えない
+            side = int(round(math.sqrt(n)))
+            if val.ndim == 1 and side * side == n:
+                base_lo, base_hi = float(np.min(val)), float(np.max(val))
+                q = np.rint((val - base_lo) / max(base_hi - base_lo, 1e-30) * 255).astype(np.uint8)
+                pb["val"] = store.put(q.reshape(1, side, side), "png")
+                pb["relief_png"] = {"lo": base_lo, "hi": base_hi}
+            else:
+                pb["val"] = store.put(val, "q8", lo=relief_lo, hi=relief_hi)
+            if val.ndim == 2:
+                pb["val_t"] = True
+        if vs is not None:
+            pb["val_scale"] = _clean_list(vs, 6); pb["val_scaled"] = True
+        if wants_relief:
+            pb["relief"] = {"lo": relief_lo, "hi": relief_hi, "size": relief_size}
         if b.get("val_scale") is not None and not has_val:
             raise ValueError("%s: val_scale には val が要る" % wb)
         packed.append(pb)
     out["bodies"] = packed
+    if relief_defaults:
+        if not np.allclose(relief_defaults, relief_defaults[0], rtol=0.0, atol=1e-12):
+            raise ValueError("%s: 同じタブの relief_default は 1 本のつまみで共有するため同じ値にする" % where)
+        out["relief_default"] = relief_defaults[0]
     B = len(packed)
     xyz = _finite(tab.get("xyz"), where + ".xyz")
     if xyz.shape != (T, B, 3):
@@ -1329,6 +1409,8 @@ def _pack_spec(spec: dict, lang="ja") -> dict:
                       "ui": {k: {l: v[l] for l in langs} for k, v in _CHECK_UI.items()}}
     if any("lesson" in t for t in data["tabs"]):        # 学習用の型のページ(無ければ DATA は前と同じ)
         data["lu"] = {k: {l: v[l] for l in langs} for k, v in _LESSON_UI.items()}
+    if any("relief_default" in t for t in data["tabs"]):  # 起伏を明示したページだけ。既存ページは byte 不変
+        data["rf"] = {l: _RELIEF_UI[l] for l in langs}
     data["ui"] = {k: {l: v[l] for l in langs} for k, v in UI.items()}
     data["arrays"] = store.arrays
     return data
@@ -1415,6 +1497,9 @@ def _exports_from_data(data: dict, tab_id: str, frame: int = 0, lang: str = "ja"
             R = _quat_matrix(q)
             p = p @ R.T + X[k, j]
             val = _decode_array(data["arrays"][body["val"]]) if body.get("val") is not None else None
+            if val is not None and body.get("relief_png"):
+                r = body["relief_png"]
+                val = r["lo"] + val.reshape(-1) * (r["hi"] - r["lo"]) / 255.0
             if body.get("val_t"):
                 val = val[k]
             elif body.get("val_scaled"):
@@ -1943,6 +2028,7 @@ function sceneAnim(tab){
   S.tgt = S.ctr.slice();                          /* 追従の注視点(平滑化して動かす) */
   return anims[tab.id] = S;
 }
+
 function updateAnimBody(tab, b, j, f){
   if (b.last === f || (!b.posT && !b.zT && !b.zScaled && !b.valT && !b.valScaled && !b.rgbT)) return;
   if (b.posT || b.zT || b.zScaled) {
@@ -2401,6 +2487,127 @@ renderText(); select(cur); requestAnimationFrame(tick);
 """
 
 
+# ``relief_default`` を持つ平面 body があるページだけに入れる起伏つまみ。
+# 他の公開ビューアは HTML も描画も従来どおりになる。
+_BODY_RELIEF_ANCHOR = '  <span class="read" id="tlabel"></span>\n'
+_BODY_RELIEF = ('  <label class="read" id="rfl" style="display:none"><span id="rft"></span> '
+                '&times;<output id="rfv">0.00</output> <input type="range" id="relief" min="0" max="200" '
+                'step="1" value="0" style="width:120px;vertical-align:middle"></label>\n')
+_CSS_RELIEF = """
+  #rfl { white-space:nowrap; }
+  #rfl input { min-width:100px; }
+"""
+_JS_RELIEF_ANCHOR = "/* ---------- ページ ---------- */\n"
+_JS_RELIEF = r"""/* ---------- 平面スカラー場の起伏。relief_default を持つページだけ ---------- */
+const reliefState = {};
+const reliefPNGs = {};
+function reliefNow(tab){
+  if (tab.relief_default == null) return 0;
+  if (reliefState[tab.id] == null) reliefState[tab.id] = tab.relief_default;
+  return reliefState[tab.id];
+}
+function reliefPNGValues(b){
+  if(reliefPNGs[b.val])return reliefPNGs[b.val];const im=pngImg(b.val,0);if(!im)return null;
+  const rec=D.arrays[b.val],H=rec.shape[1],W=rec.shape[2],o=document.createElement('canvas');o.width=W;o.height=H;
+  const g=o.getContext('2d');g.drawImage(im,0,0,W,H);const d=g.getImageData(0,0,W,H).data,V=new Float64Array(b.n),lo=b.relief_png.lo,sp=b.relief_png.hi-lo;
+  for(let i=0;i<b.n;i++)V[i]=lo+d[i*4]*sp/255;return reliefPNGs[b.val]=V;
+}
+/* 高さ係数 = (val-lo)/(hi-lo)。色バッファには触らない。 */
+function reliefValues(b, f){
+  const V=b.relief_png?reliefPNGValues(b):arr(b.val).a;if(!V)return null;
+  const n=b.n,o=b.val_t?f*n:0,s=b.val_scaled?b.val_scale[f]:1,lo=b.relief.lo,sp=b.relief.hi-lo,R=new Float32Array(n);
+  for(let i=0;i<n;i++)R[i]=Math.min(1,Math.max(0,(V[o+i]*s-lo)/sp));
+  return R;
+}
+function reliefSelect(tab, anim){
+  const on=anim&&tab.relief_default!=null,v=reliefNow(tab),box=$('rfl');box.style.display=on?'inline-flex':'none';
+  if(on){$('relief').value=String(Math.round(v*100));$('rfv').value=v.toFixed(2);$('rfv').textContent=v.toFixed(2);}
+}
+function setRelief(v){
+  const tab=get();v=Math.min(2,Math.max(0,+v||0));reliefState[tab.id]=v;
+  $('relief').value=String(Math.round(v*100));$('rfv').value=v.toFixed(2);$('rfv').textContent=v.toFixed(2);
+  playing=false;setBtn();dirty=true;if(gl&&tab.kind==='anim3d'){dirty=false;render();}return v;
+}
+let reliefCapture=null;
+function reliefPixels(){
+  if(!gl)return null;dirty=false;render();gl.finish();const p=new Uint8Array(cv.width*cv.height*4);gl.readPixels(0,0,cv.width,cv.height,gl.RGBA,gl.UNSIGNED_BYTE,p);return p;
+}
+function reliefVertex(tabId,j,f,mult){
+  const tab=tabs.find(t=>t.id===tabId),b=tab&&tab.bodies[j];if(!b||!b.relief)return null;
+  f=Math.max(0,Math.min(tab.t.length-1,f|0));const P=arr(b.pos).a,F=arr(b.faces).a,N=normalsOf(P,F),R=reliefValues(b,f);if(!R)return {pending:true};
+  let k=0;for(let i=1;i<R.length;i++)if(R[i]>R[k])k=i;const d=R[k]*b.relief.size*mult,base=[P[k*3],P[k*3+1],P[k*3+2]];
+  return {vertex:k,normal:[N[k*3],N[k*3+1],N[k*3+2]],base,displaced:[base[0]+N[k*3]*d,base[1]+N[k*3+1]*d,base[2]+N[k*3+2]*d],distance:Math.abs(d),expected:b.relief.size*mult,normalized:R[k]};
+}
+window.__viewerRelief={
+  set:setRelief,value:()=>reliefNow(get()),vertex:reliefVertex,
+  capture:()=>{reliefCapture=reliefPixels();return reliefCapture?reliefCapture.length:0;},
+  pixelDiff:()=>{const p=reliefPixels();if(!p||!reliefCapture||p.length!==reliefCapture.length)return null;let changed=0,max=0;for(let i=0;i<p.length;i++){const d=Math.abs(p[i]-reliefCapture[i]);if(d){changed++;if(d>max)max=d;}}return {changed,max};}
+};
+"""
+_JS_RELIEF_SUBS = (
+    ("""  AP = prog('attribute vec3 a_p;attribute vec3 a_n;attribute vec3 a_c;uniform mat4 u_vp;uniform mat4 u_m;varying vec3 v_n;varying vec3 v_c;'+
+    'void main(){gl_Position=u_vp*u_m*vec4(a_p,1.0);v_n=(u_m*vec4(a_n,0.0)).xyz;v_c=a_c;}',
+""",
+     """  AP = prog('attribute vec3 a_p;attribute vec3 a_n;attribute vec3 a_c;attribute float a_r;uniform mat4 u_vp;uniform mat4 u_m;uniform float u_relief;varying vec3 v_n;varying vec3 v_c;'+
+    'void main(){vec3 p=a_p+a_n*a_r*u_relief;gl_Position=u_vp*u_m*vec4(p,1.0);v_n=(u_m*vec4(a_n,0.0)).xyz;v_c=a_c;}',
+"""),
+    ("""    const idx = b.n > 65535 ? new Uint32Array(F) : new Uint16Array(F);
+    S.bodies.push({pos: buf(new Float32Array(P)), nrm: buf(normalsOf(P, F)), col: buf(col), P: PA, F,
+""",
+     """    const idx = b.n > 65535 ? new Uint32Array(F) : new Uint16Array(F);
+    const rel0=b.relief?reliefValues(b,0):null,rel=b.relief?buf(rel0||new Float32Array(b.n)):null;
+    S.bodies.push({pos: buf(new Float32Array(P)), nrm: buf(normalsOf(P, F)), col: buf(col), rel, reliefReady:!!rel0, reliefPNG:!!b.relief_png, reliefSize:b.relief?b.relief.size:0, P: PA, F,
+"""),
+    ("""  if (b.last === f || (!b.posT && !b.zT && !b.zScaled && !b.valT && !b.valScaled && !b.rgbT)) return;
+""",
+     """  if ((b.last === f && !(b.reliefPNG&&!b.reliefReady)) || (!b.posT && !b.zT && !b.zScaled && !b.valT && !b.valScaled && !b.rgbT && !(b.reliefPNG&&!b.reliefReady))) return;
+"""),
+    ("""  if (b.valT || b.valScaled) {
+    const n = tab.bodies[j].n, V = b.valT?b.V.slice(f*n, (f+1)*n):b.V, cb = tab.cbar, sp = cb.hi-cb.lo, col = new Uint8Array(n*3),vs=b.valScaled?tab.bodies[j].val_scale[f]:1;
+""",
+     """  if (tab.bodies[j].relief && (b.valT || b.valScaled || (b.reliefPNG&&!b.reliefReady))) {
+    const R=reliefValues(tab.bodies[j],f);if(R){gl.bindBuffer(gl.ARRAY_BUFFER,b.rel);gl.bufferData(gl.ARRAY_BUFFER,R,gl.DYNAMIC_DRAW);b.reliefReady=true;}
+  }
+  if ((b.valT || b.valScaled) && tab.bodies[j].rgb1 == null && tab.bodies[j].rgb == null) {
+    const n = tab.bodies[j].n, V = b.valT?b.V.slice(f*n, (f+1)*n):b.V, cb = tab.cbar, sp = cb.hi-cb.lo, col = new Uint8Array(n*3),vs=b.valScaled?tab.bodies[j].val_scale[f]:1;
+"""),
+    ("""  const lp = gl.getAttribLocation(AP, 'a_p'), ln = gl.getAttribLocation(AP, 'a_n'), lc = gl.getAttribLocation(AP, 'a_c');
+  const um = gl.getUniformLocation(AP, 'u_m');
+""",
+     """  const lp = gl.getAttribLocation(AP, 'a_p'), ln = gl.getAttribLocation(AP, 'a_n'), lc = gl.getAttribLocation(AP, 'a_c'), lr = gl.getAttribLocation(AP, 'a_r');
+  const um = gl.getUniformLocation(AP, 'u_m'), ur = gl.getUniformLocation(AP, 'u_relief');
+"""),
+    ("""    gl.bindBuffer(gl.ARRAY_BUFFER, b.col); gl.vertexAttribPointer(lc, 3, gl.UNSIGNED_BYTE, true, 0, 0);
+    gl.uniformMatrix4fv(um, false, quatMat(S.Q[o*4], S.Q[o*4+1], S.Q[o*4+2], S.Q[o*4+3], S.X[o*3], S.X[o*3+1], S.X[o*3+2]));
+""",
+     """    gl.bindBuffer(gl.ARRAY_BUFFER, b.col); gl.vertexAttribPointer(lc, 3, gl.UNSIGNED_BYTE, true, 0, 0);
+    if(b.rel){gl.bindBuffer(gl.ARRAY_BUFFER,b.rel);gl.enableVertexAttribArray(lr);gl.vertexAttribPointer(lr,1,gl.FLOAT,false,0,0);}
+    else{gl.disableVertexAttribArray(lr);gl.vertexAttrib1f(lr,0);}
+    gl.uniform1f(ur,b.rel?reliefNow(tab)*b.reliefSize:0);
+    gl.uniformMatrix4fv(um, false, quatMat(S.Q[o*4], S.Q[o*4+1], S.Q[o*4+2], S.Q[o*4+3], S.X[o*3], S.X[o*3+1], S.X[o*3+2]));
+"""),
+    ("""  $('rtt').textContent = U('speed'); $('fwt').textContent = U('follow');
+""",
+     """  $('rtt').textContent = U('speed'); $('fwt').textContent = U('follow'); $('rft').textContent = T(D.rf);
+"""),
+    ("""  document.querySelectorAll('.a3').forEach(e => { e.style.display = an ? '' : 'none'; });
+  $('spl').style.display = an ? 'none' : '';
+""",
+     """  document.querySelectorAll('.a3').forEach(e => { e.style.display = an ? '' : 'none'; });
+  reliefSelect(t,an);
+  $('spl').style.display = an ? 'none' : '';
+"""),
+    ("""$('follow').onchange = () => { const t = get(); if (t.kind === 'anim3d' && gl) { const S = sceneAnim(t); if (!$('follow').checked) S.tgt = S.ctr.slice(); } dirty = true; };
+""",
+     """$('follow').onchange = () => { const t = get(); if (t.kind === 'anim3d' && gl) { const S = sceneAnim(t); if (!$('follow').checked) S.tgt = S.ctr.slice(); } dirty = true; };
+$('relief').oninput = e => setRelief(e.target.value/100);
+"""),
+    ("""  let V=null;if(b.val!=null){const A=arr(b.val).a;V=b.val_t?A.slice(k*n,(k+1)*n):A;}
+""",
+     """  let V=null;if(b.val!=null){if(b.relief_png)V=reliefPNGValues(b);else{const A=arr(b.val).a;V=b.val_t?A.slice(k*n,(k+1)*n):A;}}
+"""),
+)
+
 # 半透明の物体(bodies[*]["alpha"] < 1)がある場面だけ、_JS の _JS_ALPHA_ANCHOR の直前に差し込む塊。
 # 半透明の物体の無い場面では差し込まないので、ページは alpha を足す前とバイト単位で同じになる
 # (公開済みのビューア docs/view2026/viewers/*.html に drift を出さない)。
@@ -2720,6 +2927,11 @@ def _has_translucent(data: dict) -> bool:
                for t in data.get("tabs", ()))
 
 
+def _has_relief(data: dict) -> bool:
+    """詰めた仕様に起伏つまみを明示した anim3d タブがあるか。"""
+    return any(t.get("kind") == "anim3d" and "relief_default" in t for t in data.get("tabs", ()))
+
+
 def _build_html(spec: dict, lang="ja", detect_lang: bool = False) -> str:
     """仕様から HTML 文字列を作る(検査はここで行う)。``lang`` は :func:`_pack_spec` と同じ。
 
@@ -2753,6 +2965,15 @@ def _build_html(spec: dict, lang="ja", detect_lang: bool = False) -> str:
             raise AssertionError("ラベルの塊の差し込み位置が 1 回でない")
         js = js.replace(_JS_ALPHA_ANCHOR, _JS_LABELS + _JS_ALPHA_ANCHOR)
     css, body = _CSS, _BODY
+    if _has_relief(data):                               # 起伏を明示したページだけ。既存ページは byte 不変
+        for old, new in ((_JS_RELIEF_ANCHOR, _JS_RELIEF + _JS_RELIEF_ANCHOR),) + _JS_RELIEF_SUBS:
+            if js.count(old) != 1:
+                raise AssertionError("起伏の差し込み位置が 1 回でない: %r (count=%d)" % (old[:70], js.count(old)))
+            js = js.replace(old, new)
+        if body.count(_BODY_RELIEF_ANCHOR) != 1:
+            raise AssertionError("起伏つまみの差し込み位置が 1 回でない")
+        body = body.replace(_BODY_RELIEF_ANCHOR, _BODY_RELIEF_ANCHOR + _BODY_RELIEF)
+        css = css + _CSS_RELIEF
     if "bh" in data:                                     # checks を持つ場面だけ(無ければ今と同じページ)
         for old, new in ((_JS_BH_ANCHOR, _JS_BH + _JS_BH_ANCHOR),) + _JS_BH_SUBS:
             if js.count(old) != 1:
@@ -2880,7 +3101,11 @@ def viewer_anim3d_tab(tab_id, label, badge, text, t, bodies, xyz, quat, trails=N
     bodies : list of dict
         ``{"name": str, "pos": (N,3) または (T,N,3), "faces": (M,3) int,
         "rgb": (3,) か (N,3)(uint8 か 0..1)| "val": (N,) か (T,N)(+ ``cbar``), "label": 文字列の辞書(任意)}``。
-        色は rgb か val のどちらか 1 つ。未知の鍵(``"color": "red"`` など)は ``ValueError``。
+        通常、色は rgb か val のどちらか 1 つ。静的な平面で ``relief_default``(0..2)を指定した場合だけ
+        rgb と val を併記でき、rgb は色、val は起伏専用になる。操作列の「起伏 ×0〜×2」でシェーダが
+        ``(val-lo)/(hi-lo) * 物体の最大寸法 * 倍率`` を頂点法線方向へ足す。既定 0 は平面で色も座標も不変。
+        ``pos (T,N,3)``、非平面、``z`` 変位、半透明 body には適用しない。
+        未知の鍵(``"color": "red"`` など)は ``ValueError``。
         ``"alpha": float``(任意、0 < alpha <= 1、既定 1 = 不透明)で半透明にする(レンズ・ガラス板・
         ビームスプリッタなど)。半透明の物体は不透明の物体・軌跡・点群の **後に**、カメラから遠い順に重ねて
         描くので、中や後ろを通る軌跡(光線)が透けて見える。縁は少し濃く出る。目安は 0.25〜0.35。

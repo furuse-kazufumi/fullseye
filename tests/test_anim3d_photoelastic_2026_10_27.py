@@ -3,7 +3,10 @@ from __future__ import annotations
 import importlib.util
 import inspect
 import pathlib
+import sys
+import time
 import numpy as np
+import pytest
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 
@@ -55,9 +58,20 @@ def test_deterministic_mesh_and_explicit_limit():
     assert 1e-3 < metrics["hole_rgb_error_max"] < .1
     assert "fade" not in inspect.signature(B._rgb_white_light).parameters
     assert "推定の入力 = (a) の8 bit RGB像" in spec["tabs"][0]["panes"][2]["label"]["ja"]
-    assert "推定の入力 = (a) の8 bit RGB像" in spec["tabs"][1]["panes"][2]["label"]["ja"]
+    assert "灰=推定不能" in spec["tabs"][0]["panes"][2]["label"]["ja"]
+    assert "灰=推定不能" in spec["tabs"][1]["panes"][2]["label"]["ja"]
+    assert all(0 < v < 100 for v in metrics["unestimable_pct"].values())
+    assert all(0 < v < 100 for v in metrics["profile_estimated_pct"].values())
+    assert all(v > 0 for v in metrics["profile_final_rms_mpa"].values())
+    assert metrics["relief_x0_max_displacement"] == 0
+    assert metrics["relief_x1_disc_displacement"] == 5.0
+    assert metrics["relief_x1_hole_displacement"] == 4.0
     assert all(min(p["frames"].shape[1:3]) >= 256 for t in spec["tabs"] for p in t["panes"])
     data=B.pv._pack_spec(spec,["ja","en"]); B.pv.viewer_quality_gate_data(data)
+    assert data["tabs"][0]["relief_default"] == 0
+    assert data["tabs"][1]["relief_default"] == 0
+    assert data["tabs"][0]["bodies"][0]["relief"]["size"] == 5.0
+    assert data["tabs"][1]["bodies"][0]["relief"]["size"] == 4.0
     assert len(B.pv._build_html(spec,["ja","en"]).encode("utf-8")) <= 4_000_000
     failed=[c for t in spec["tabs"] for c in t["checks"] if not c["ok"]]
     assert len(failed) == 1
@@ -71,3 +85,33 @@ def test_continuous_spectrum_matches_michel_levy_order_and_fades_by_tenth_order(
     assert gate["sequence_ok"]
     assert gate["first_saturation"] > .5
     assert gate["tenth_saturation"] < .1 * gate["first_saturation"]
+
+
+def test_profile_rms_and_line_cover_only_estimable_samples():
+    truth=np.array([0.,1.,2.,3.,4.,5.])
+    estimate=np.array([0.,1.1,np.nan,np.nan,4.2,5.])
+    panel,rms,fraction=B._profile_image(truth,estimate)
+    assert panel.shape == (256,256,3)
+    assert fraction == 4/6
+    assert np.isclose(rms,np.sqrt(np.mean(np.array([0.,.1,.2,0.])**2)))
+
+
+def test_generated_page_relief_browser_gates_for_disc_and_hole():
+    sys.path.insert(0,str(ROOT/"tools"))
+    import headless_chrome
+    if not headless_chrome.find_chrome():
+        pytest.skip("Chrome が無い")
+    page=ROOT/"docs"/"view2026"/"anim3d"/"photoelastic_anim3d.html"
+    with headless_chrome.HeadlessChrome() as ch:
+        ch.open(headless_chrome.file_url(page)+"?tab=load&lang=ja",width=1100,height=1000)
+        ch.wait_for("window.__viewerRelief && !window.__viewerRelief.vertex('load',0,23,1).pending")
+        ch.eval("window.__viewerRelief.set(0)");time.sleep(.2)
+        assert ch.eval("window.__viewerRelief.capture()") > 0
+        ch.eval("window.__viewerRelief.set(0)")
+        diff=ch.eval("window.__viewerRelief.pixelDiff()")
+        disc=ch.eval("window.__viewerRelief.vertex('load',0,23,1)")
+        ch.wait_for("!window.__viewerRelief.vertex('hole',0,23,1).pending")
+        hole=ch.eval("window.__viewerRelief.vertex('hole',0,23,1)")
+    assert diff == {"changed":0,"max":0}
+    assert disc["normalized"] == 1 and disc["distance"] == disc["expected"] == 5
+    assert hole["normalized"] == 1 and hole["distance"] == hole["expected"] == 4

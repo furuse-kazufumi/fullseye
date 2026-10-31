@@ -348,11 +348,13 @@ def _rgb_inverse_model():
 def _estimate_order_from_rgb(rgb8, inside):
     """Estimate fringe order from the final displayed 8-bit RGB pixels only.
 
-    The estimator sees neither load nor stress.  It inverts the continuous-spectrum
-    forward colour locus, rejects colours with a competing order, and rejects a 3x3
-    neighbourhood whose recovered order changes by more than 0.4 fringe.  The latter is
-    an image-only sampling test: unresolved contact singularities are marked invalid
-    instead of being compared to hidden truth.
+    The estimator sees neither load nor stress.  A specimen pixel is estimable only
+    after three-pixel erosion and when every image-only gate passes: nearest spectral-
+    locus RGB distance < 10, competing-order distance advantage > 8, difference from
+    the 3x3 median < 0.08 fringe, 3x3 recovered-order range < 0.4 fringe, RGB chroma
+    > 10 ADC counts, and recovered order < 3.  Thus weak modulation / ambiguous colour
+    and fringes too dense for the displayed sampling are explicitly unestimable rather
+    than silently filled from neighbouring pixels or compared with hidden truth.
     """
     image=np.asarray(rgb8,np.uint8); mask=np.asarray(inside,bool)
     if image.shape != mask.shape+(3,):
@@ -378,10 +380,18 @@ def _estimate_order_from_rgb(rgb8, inside):
     return order,resolved
 
 
-def _scalar_panel(a, inside, lo, hi, diverging=False, note="", unit="fringe"):
-    """A native 256 px scientific panel with a labelled colour band."""
+def _scalar_panel(a, resolved, lo, hi, diverging=False, note="", unit="fringe", domain=None):
+    """A native 256 px panel; unestimable specimen pixels are uniform grey.
+
+    ``resolved`` is the estimator mask and ``domain`` is the specimen.  Keeping the two
+    masks separate prevents a failed estimate from looking like a physically zero error.
+    """
     field_w=PANEL_SIZE-42
-    rgb=_resize_rgb(_map_rgb(a,inside,lo,hi,diverging),field_w,PANEL_SIZE)
+    resolved=np.asarray(resolved,bool);domain=resolved if domain is None else np.asarray(domain,bool)
+    rgb=_resize_rgb(_map_rgb(a,resolved,lo,hi,diverging),field_w,PANEL_SIZE)
+    rr=_resize_mask(resolved,field_w,PANEL_SIZE);dd=_resize_mask(domain,field_w,PANEL_SIZE)
+    missing=dd&~rr
+    rgb[missing]=(128,128,128)
     im=Image.new("RGB",(PANEL_SIZE,PANEL_SIZE),(12,16,21)); im.paste(Image.fromarray(rgb),(0,0))
     dr=ImageDraw.Draw(im); x0=field_w+8; y0,y1=18,PANEL_SIZE-18
     for y in range(y0,y1):
@@ -392,8 +402,9 @@ def _scalar_panel(a, inside, lo, hi, diverging=False, note="", unit="fringe"):
     dr.text((x0+15,y0-4),"%.2g"%hi,fill=(235,238,241));dr.text((x0+15,y1-8),"%.2g"%lo,fill=(235,238,241))
     if unit: dr.text((x0-1,PANEL_SIZE-14),unit,fill=(190,198,207))
     if note:
-        dr.rectangle((4,4,min(field_w-3,8+6*len(note)),18),fill=(8,12,16))
-        dr.text((7,6),note,fill=(255,255,255))
+        lines=note.split("\n")
+        dr.rectangle((4,4,field_w-3,7+11*len(lines)),fill=(8,12,16))
+        for j,line in enumerate(lines): dr.text((7,6+11*j),line,fill=(255,255,255))
     return _quantize_rgb(np.asarray(im),levels=2)
 
 
@@ -425,19 +436,28 @@ def _isoclinic_curvature_px(angle_deg, inside):
 
 
 def _profile_image(truth, estimate, width=PANEL_SIZE, height=PANEL_SIZE):
-    """Closed form is a wide translucent blue underlay; estimate is a thin orange overlay."""
+    """Draw only estimated samples; NaN creates an honest gap in the orange line."""
     truth=np.asarray(truth,float);estimate=np.asarray(estimate,float);n=len(truth)
     im=Image.new("RGB",(width,height),(12,16,21));dr=ImageDraw.Draw(im,"RGBA")
-    left,right,top,bottom=42,width-12,31,height-28
-    vmax=max(float(np.max(truth)),float(np.max(estimate)),1e-12)
+    left,right,top,bottom=42,width-12,34,height-28
+    finite=np.isfinite(estimate); vmax=max(float(np.max(truth)),float(np.nanmax(estimate)) if np.any(finite) else 0.0,1e-12)
     xx=np.linspace(left,right,n)
-    def pts(y): return [(float(x),float(bottom-(bottom-top)*np.clip(v/vmax,0,1))) for x,v in zip(xx,y)]
+    def pts(y,xcoord=xx): return [(float(x),float(bottom-(bottom-top)*np.clip(v/vmax,0,1))) for x,v in zip(xcoord,y)]
     dr.line((left,bottom,right,bottom),fill=(130,140,150,255),width=1);dr.line((left,top,left,bottom),fill=(130,140,150,255),width=1)
-    dr.line(pts(truth),fill=(79,195,247,145),width=8);dr.line(pts(estimate),fill=(255,183,77,255),width=3)
-    rms=float(np.sqrt(np.mean((truth-estimate)**2)))
-    dr.text((8,7),"closed blue | estimate orange; RMS=%.3g MPa"%rms,fill=(238,241,244,255))
+    dr.line(pts(truth),fill=(79,195,247,145),width=8)
+    starts=np.flatnonzero(finite&~np.r_[False,finite[:-1]])
+    stops=np.flatnonzero(finite&~np.r_[finite[1:],False])+1
+    for a,b in zip(starts,stops):
+        if b-a>=2: dr.line(pts(estimate[a:b],xx[a:b]),fill=(255,183,77,255),width=3)
+        elif b-a==1:
+            p=pts(estimate[a:b],xx[a:b])[0];dr.ellipse((p[0]-2,p[1]-2,p[0]+2,p[1]+2),fill=(255,183,77,255))
+    rms=float(np.sqrt(np.mean((truth[finite]-estimate[finite])**2))) if np.any(finite) else float("nan")
+    fraction=float(np.mean(finite))
+    rms_text="%.3g MPa"%rms if np.isfinite(rms) else "--"
+    dr.text((8,5),"blue closed | orange estimate",fill=(238,241,244,255))
+    dr.text((8,16),"valid %.1f%% | RMS %s (valid only)"%(100*fraction,rms_text),fill=(238,241,244,255))
     dr.text((left,bottom+6),"horizontal diameter",fill=(190,198,207,255));dr.text((5,top),"MPa",fill=(190,198,207,255))
-    return _quantize_rgb(np.asarray(im),levels=3),rms
+    return _quantize_rgb(np.asarray(im),levels=3),rms,fraction
 
 
 def michel_levy_gates():
@@ -461,7 +481,7 @@ def michel_levy_gates():
 def _field_sweep(kind, values, size=FIELD_SIZE, noisy=False, estimator="rgb", pixel_average=1):
     """One op-driven array set feeds dense 3-D vertex colours and native-resolution panels."""
     rgb3,fringe_images,iso,errmap,profiles,diffs,raw_height=[],[],[],[],[],[],[]
-    nmap_data,profile_data,error_max,error_rms,profile_rms,isoc_curvature=[],[],[],[],[],[]
+    nmap_data,profile_data,error_max,error_rms,profile_rms,profile_fraction,unresolved_fraction,isoc_curvature=[],[],[],[],[],[],[],[]
     mesh=surface_mesh=None; surface_diff=[]
     sel=np.unique(np.rint(np.linspace(0,size-1,SURFACE_SIZE)).astype(int))
     for k,value in enumerate(values):
@@ -508,20 +528,22 @@ def _field_sweep(kind, values, size=FIELD_SIZE, noisy=False, estimator="rgb", pi
         lim=max(absmax,.001)
         error_max.append(absmax)
         error_rms.append(erms)
-        errmap.append(_scalar_panel(e,resolved,-lim,lim,True,"max |error| = %.3f fringe"%absmax,"fringe"))
+        missing=float(1.0-np.count_nonzero(resolved&inside_panel)/max(np.count_nonzero(inside_panel),1))
+        unresolved_fraction.append(missing)
+        errmap.append(_scalar_panel(e,resolved,-lim,lim,True,
+          "max|err|=%.3f | unestimable=%.1f%%\ngray: weak/dense/ambiguous"%(absmax,100*missing),
+          "fringe",domain=inside_panel))
         diffs.append(p["difference"].ravel()/1e6);raw_height.append(p["difference"].ravel())
         surface_diff.append(p["difference"][np.ix_(sel,sel)].ravel()/1e6)
         row=PANEL_SIZE//2; valid=np.flatnonzero(inside_panel[row]); truth=true_panel[row,valid]*REFERENCE_WAVELENGTH_NM*1e-9/(THICKNESS*COEFF)/1e6
-        good=np.flatnonzero(resolved[row])
-        if len(good)>=2:
-            estimated_order=np.interp(valid,good,n_hat_panel[row,good])
-        else:
-            estimated_order=np.zeros(len(valid))
+        row_ok=resolved[row,valid]
+        estimated_order=np.full(len(valid),np.nan)
+        estimated_order[row_ok]=n_hat_panel[row,valid[row_ok]]
         estimate=estimated_order*REFERENCE_WAVELENGTH_NM*1e-9/(THICKNESS*COEFF)/1e6
-        prof,rms=_profile_image(truth,estimate);profiles.append(prof);profile_rms.append(rms)
+        prof,rms,fraction=_profile_image(truth,estimate);profiles.append(prof);profile_rms.append(rms);profile_fraction.append(fraction)
         # CSV stays a regular sampling of the estimate made from the displayed image.
         nmap_data.append(np.where(resolved,n_hat_panel,0.0)[::10,::10])
-        profile_data.append(np.stack([truth,estimate]))
+        profile_data.append(np.stack([truth,np.nan_to_num(estimate,nan=0.0),np.isfinite(estimate).astype(float)]))
         assert phase["delta_rad"].shape == p["difference"].shape
     zref=max(float(np.percentile(raw_height[-1],98)),1.0)
     surface_delta=1.15*np.clip(raw_height[-1].reshape(size,size)[np.ix_(sel,sel)].ravel()/zref,0,1)
@@ -532,7 +554,10 @@ def _field_sweep(kind, values, size=FIELD_SIZE, noisy=False, estimator="rgb", pi
     return {"pos":mesh[0],"faces":mesh[1],"rgb":np.stack(rgb3),"diff":np.stack(diffs),
             "surface_pos":surface_mesh[0],"surface_faces":surface_mesh[1],"surface_z":surface_delta,
             "surface_diff":surface_diff[-1],"surface_scale":scale,"panes":panes,"pane_data":pane_data,
-            "error_max":max(error_max),"error_rms":max(error_rms),"profile_rms":max(profile_rms),
+            "error_max":max(error_max),"error_rms":max(error_rms),
+            "profile_rms":max((x for x in profile_rms if np.isfinite(x)),default=0.0),
+            "profile_rms_values":np.asarray(profile_rms),"profile_fraction":np.asarray(profile_fraction),
+            "unresolved_fraction":np.asarray(unresolved_fraction),
             "isoclinic_curvature_px":max(isoc_curvature or [0.0])}
 
 
@@ -584,8 +609,8 @@ def build_spec():
     def panes(field, c_label, include_data=False):
         pane_labels=[T("(a) 白色光・暗視野の等色線", "(a) white-light dark-field isochromatics"),
                      T("(b) 等傾線", "(b) isoclinics"),c_label,
-                     T("(d) 水平直径: 閉形式（太い青）/推定（細い橙）", "(d) horizontal diameter: closed form (wide blue) / estimate (thin orange)")]
-        units=[None,None,"fringe order N","MPa (truth | estimate)"]
+                     T("(d) 水平直径: 閉形式（太い青）/推定できた区間（細い橙、途切れは推定不能）", "(d) horizontal diameter: closed form (wide blue) / estimated intervals (thin orange; gaps unestimable)")]
+        units=[None,None,"fringe order N","rows: truth MPa | estimate MPa (0 if invalid) | estimate_valid"]
         out=[]
         for j,lab in enumerate(pane_labels):
             p={"label":lab,"frames":field["panes"][j],"png":True}
@@ -595,11 +620,13 @@ def build_spec():
         return out
     def poses(n):
         x,q=_motion(frames,n);return x,q
-    db=[{"name":"disc_field","pos":disc["pos"],"faces":disc["faces"],"rgb":disc["rgb"]},
+    db=[{"name":"disc_field","pos":disc["pos"],"faces":disc["faces"],"rgb":disc["rgb"],
+         "val":disc["diff"][-1],"val_scale":disc["surface_scale"],"relief_default":0.0},
         {"name":"upper_contact_shoe","pos":shoe1[0],"faces":shoe1[1],"rgb":[210,115,70]},
         {"name":"lower_contact_shoe","pos":shoe2[0],"faces":shoe2[1],"rgb":[210,115,70]}]
     dx,dq=poses(3); approach=np.linspace(.18,0,frames);dx[:,1,1]=approach;dx[:,2,1]=-approach
-    hb=[{"name":"plate_with_hole","pos":hole["pos"],"faces":hole["faces"],"rgb":hole["rgb"]},
+    hb=[{"name":"plate_with_hole","pos":hole["pos"],"faces":hole["faces"],"rgb":hole["rgb"],
+         "val":hole["diff"][-1],"val_scale":hole["surface_scale"],"relief_default":0.0},
         {"name":"hole_edge","pos":rim[0],"faces":rim[1],"rgb":[235,235,225]}]
     hx,hq=poses(2)
     ub=[{"name":"disc_fringe","pos":disc["pos"],"faces":disc["faces"],"rgb":disc["rgb"],"alpha":.48},
@@ -618,14 +645,14 @@ def build_spec():
     tabs=[]
     tabs.append(pv.viewer_anim3d_tab("load",T("① 荷重を上げる円板","① Load the disc"),"passed",
       T("【閉形式】荷重を上げると、連続スペクトルから生じる縞が荷重点から中心へ詰まる。(c) は (a) の8 bit RGB像だけから復元する。", "[Closed form] As load rises, continuous-spectrum fringes crowd from the contacts toward the centre. Panel (c) is recovered only from the 8-bit RGB image in (a)."),
-      time,db,dx,dq,panes=panes(disc,T("(c) 推定の入力 = (a) の8 bit RGB像 | 閉形式との差", "(c) estimation input = the 8-bit RGB image in (a) | error from closed form")),series=series_load,axis=axis_load,checks=[
+      time,db,dx,dq,panes=panes(disc,T("(c) 推定の入力 = (a) の8 bit RGB像 | 閉形式との差 | 灰=推定不能", "(c) estimation input = the 8-bit RGB image in (a) | error from closed form | grey = unestimable")),series=series_load,axis=axis_load,checks=[
         {"what":T("円板中心 σ₁−σ₂","disc-centre σ1−σ2"),"criterion":T("独立な 8P/(πDt) と相対差 < 1e-9","relative difference from independent 8P/(πDt) < 1e-9"),"result":"%.3e"%gates["disc_rel"],"ok":gates["disc_rel"]<1e-9},
         {"what":T("(a) の8 bit RGB像からの最大誤差","maximum error from the 8-bit RGB image in (a)"),"criterion":T("0 < 最大 |誤差| < 0.1 縞","0 < maximum absolute error < 0.1 fringe"),"result":"%.4f fringe"%disc["error_max"],"ok":0<disc["error_max"]<.1},
         {"what":T("Michel-Lévy の低次色順","low-order Michel-Lévy colour sequence"),"criterion":T("黒→灰→黄→橙→赤→紫→青→緑","black→grey→yellow→orange→red→purple→blue→green"),"result":T("8 色点が順序どおり","eight colour probes in order"),"ok":gates["sequence_ok"]}],
       lesson=_lesson("縞の数は荷重とどう変わる？","How does fringe count change with load?",[("増える","increases"),("減る","decreases")],0,"応力光学則で縞次数は主応力差に比例する。","The stress-optic law makes fringe order proportional to principal-stress difference.",T("N=t(σ₁−σ₂)C/λ","N=t(σ1−σ2)C/λ"),"この展示で実材料の残留応力や厚さむらは言えない。","This exhibit cannot determine real-material residual stress or thickness variation."),view={"az":-.9,"el":.55,"dist":1.05}))
     tabs.append(pv.viewer_anim3d_tab("hole",T("② 穴の縁の応力集中","② Stress concentration at a hole"),"passed",
       T("【閉形式】穴あき板を引くと穴の縁に縞が集中する。(c) は (a) の8 bit RGB像だけから復元し、Kirsch 解と比べる。", "[Closed form] Tension crowds fringes around the hole. Panel (c) is recovered only from the 8-bit RGB image in (a), then compared with Kirsch's solution."),
-      time,hb,hx,hq,panes=panes(hole,T("(c) 推定の入力 = (a) の8 bit RGB像 | 閉形式との差", "(c) estimation input = the 8-bit RGB image in (a) | error from closed form")),series=[{"label":T("遠方応力","remote stress"),"values":remote/1e6,"unit":"MPa","color":"#ffb74d"},{"label":T("穴縁の閉形式","closed-form hole edge"),"values":3*remote/1e6,"unit":"MPa","color":"#4fc3f7"}],
+      time,hb,hx,hq,panes=panes(hole,T("(c) 推定の入力 = (a) の8 bit RGB像 | 閉形式との差 | 灰=推定不能", "(c) estimation input = the 8-bit RGB image in (a) | error from closed form | grey = unestimable")),series=[{"label":T("遠方応力","remote stress"),"values":remote/1e6,"unit":"MPa","color":"#ffb74d"},{"label":T("穴縁の閉形式","closed-form hole edge"),"values":3*remote/1e6,"unit":"MPa","color":"#4fc3f7"}],
       axis={"values":remote/1e6,"segments":[{"k":0,"label":T("遠方応力 σ∞","remote stress σ∞"),"unit":"MPa","decimals":2}]},checks=[
         {"what":T("穴縁の周方向応力 / σ∞","hole-edge hoop stress / σ∞"),"criterion":T("Kirsch の独立値 3、相対差 < 1e-9","independent Kirsch value 3, relative error < 1e-9"),"result":"%.9f"%gates["kirsch_ratio"],"ok":gates["kirsch_rel"]<1e-9},
         {"what":T("(a) の8 bit RGB像からの最大誤差","maximum error from the 8-bit RGB image in (a)"),"criterion":T("0 < 最大 |誤差| < 0.1 縞","0 < maximum absolute error < 0.1 fringe"),"result":"%.4f fringe"%hole["error_max"],"ok":0<hole["error_max"]<.1}],
@@ -639,7 +666,7 @@ def build_spec():
       lesson=_lesson("巻き戻しは最大応力から壊れる？","Does unwrapping fail first at maximum stress?",[("はい","yes, at maximum stress"),("いいえ、低変調域","no, at low modulation")],1,"等方点では位相軸が定まらず、応力が小さくても失敗する。","At isotropic points the phase axis is undefined, so failure can occur at low stress.",T("R=tC(σ₁−σ₂)","R=tC(σ1−σ2)"),"実験校正なしに定量応力を保証できない。","Quantitative stress is not guaranteed without experimental calibration."),view={"az":-.9,"el":.48,"dist":1.05}))
     tabs.append(pv.viewer_anim3d_tab("limits",T("④ 白色光の限界","④ White-light limits"),"limit",
       T("【数値模型】連続スペクトルの高次縞は自然に退色し、4倍解像度の分光像を画素開口で面積平均すると細い縞が混ざる。", "[Numerical model] Continuous-spectrum high-order fringes fade naturally; fine fringes merge when a 4x supersampled spectral image is area-averaged over each pixel aperture."),
-      time,lb,lx,lq,panes=panes(limit,T("(c) 推定の入力 = 面積平均後の (a) | 閉形式との差", "(c) estimation input = area-averaged (a) | error from closed form")),series=[{"label":T("荷重","load"),"values":high,"unit":"N","color":"#ffb74d"}],axis={"values":high,"segments":[{"k":0,"label":T("荷重 P","load P"),"unit":"N","decimals":0}]},checks=[
+      time,lb,lx,lq,panes=panes(limit,T("(c) 推定の入力 = 面積平均後の (a) | 閉形式との差 | 灰=推定不能", "(c) estimation input = area-averaged (a) | error from closed form | grey = unestimable")),series=[{"label":T("荷重","load"),"values":high,"unit":"N","color":"#ffb74d"}],axis={"values":high,"segments":[{"k":0,"label":T("荷重 P","load P"),"unit":"N","decimals":0}]},checks=[
         {"what":T("10次の彩度 / 1次の彩度","10th-order saturation / 1st-order saturation"),"criterion":T("10次 < 1次","10th order < 1st order"),"result":"%.3f / %.3f"%(gates["tenth_saturation"],gates["first_saturation"]),"ok":gates["tenth_saturation"]<gates["first_saturation"]},
         {"what":T("高次縞から荷重だけを一意に分離","uniquely isolate load from high-order fringes"),"criterion":T("残留応力・厚さむら・退色と分離","separate residual stress, thickness variation, and desaturation"),"result":T("像だけでは分離不能","not separable from images alone"),"ok":False}],
       lesson=_lesson("縞が画素より細いと次数を保てる？","Can order survive subpixel fringes?",[("保てる","yes"),("保てない","no")],1,"連続スペクトルの位相差で高次色が薄れ、画素開口内の分光強度を面積平均すると細い縞が混ざる。","Continuous-spectrum phase differences wash out high-order colour, and area integration of spectral intensity over a pixel aperture mixes fine fringes.",T("Ipixel(λ) = area mean of I(x,y,λ)","Ipixel(λ) = area mean of I(x,y,λ)"),"この展示で実部品の合否や破壊荷重は言えない。","This exhibit cannot certify a real part or predict failure load."),view={"az":-.9,"el":.55,"dist":1.05}))
@@ -648,6 +675,7 @@ def build_spec():
       T("荷重つまみを動かし、(a)〜(d) と 3-D が同期することを確かめる","Move the load slider and verify that 3-D and panels (a)-(d) stay synchronized"),tabs,
       credit=T("合成データ。応力場は brazilian_disc_stress / kirsch_plate_stress、偏光と巻き戻しは photoelastic op、白色光は CIE 1931・D65 の spectrum_to_srgb op。","Synthetic data. Stress uses brazilian_disc_stress / kirsch_plate_stress; polarisation and unwrapping use photoelastic ops; white light uses the CIE 1931 and D65 spectrum_to_srgb op."))
     spec["generated"]="2026-10-31"
+    shown={"load":disc,"hole":hole,"unwrap_c":inverse,"limits":limit}
     spec["_acceptance"]={"frames":frames,"field_grid":FIELD_SIZE,"panel_size":PANEL_SIZE,
       "disc_vertices":len(disc["pos"]),"hole_vertices":len(hole["pos"]),"surface_vertices":len(disc["surface_pos"]),
       "white_wavelengths":len(WHITE_WAVELENGTHS_NM),"limit_supersample":LIMIT_SUPERSAMPLE,
@@ -655,6 +683,16 @@ def build_spec():
       "tenth_saturation":gates["tenth_saturation"],"disc_rgb_error_max":disc["error_max"],
       "hole_rgb_error_max":hole["error_max"],"max_error_fringe":max(disc["error_max"],hole["error_max"],limit["error_max"]),
       "profile_rms_mpa":max(disc["profile_rms"],hole["profile_rms"],limit["profile_rms"]),
+      "unestimable_pct":{k:100*float(v["unresolved_fraction"][-1]) for k,v in shown.items()},
+      "profile_estimated_pct":{"load":100*float(disc["profile_fraction"][-1]),
+        "hole":100*float(hole["profile_fraction"][-1]),"unwrap":100*float(disc["profile_fraction"][-1]),
+        "limits":100*float(limit["profile_fraction"][-1])},
+      "profile_final_rms_mpa":{"load":float(disc["profile_rms_values"][-1]),
+        "hole":float(hole["profile_rms_values"][-1]),"unwrap":float(disc["profile_rms_values"][-1]),
+        "limits":float(limit["profile_rms_values"][-1])},
+      "relief_x0_max_displacement":0.0,
+      "relief_x1_disc_displacement":float(np.max(np.ptp(disc["pos"],axis=0))),
+      "relief_x1_hole_displacement":float(np.max(np.ptp(hole["pos"],axis=0))),
       "isoclinic_curvature_px":disc["isoclinic_curvature_px"]}
     return spec
 
