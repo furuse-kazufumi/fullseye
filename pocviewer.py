@@ -106,6 +106,46 @@ from typing import Any
 
 import numpy as np
 
+
+_POINT_SIZE_SAMPLE = 20_000
+
+
+def _median_nearest_spacing(pos, sample_limit=_POINT_SIZE_SAMPLE) -> float:
+    """Return a deterministic estimate of the median non-self neighbour distance."""
+    p = np.asarray(pos, dtype=np.float64)
+    if p.ndim != 2 or p.shape[1] != 3 or len(p) < 2:
+        raise ValueError("point spacing needs at least two (x, y, z) points")
+    if not np.isfinite(p).all():
+        raise ValueError("point spacing needs finite coordinates")
+    rng = np.random.default_rng(0)
+    query = p if len(p) <= sample_limit else p[rng.choice(len(p), sample_limit, replace=False)]
+    try:
+        from scipy.spatial import cKDTree
+        distances = cKDTree(p).query(query, k=2, workers=1)[0][:, 1]
+    except ImportError:
+        # Fixed partial sampling bounds the optional-dependency fallback.
+        fallback_n = min(len(p), 5_000)
+        ref = p if len(p) <= fallback_n else p[rng.choice(len(p), fallback_n, replace=False)]
+        distances = np.empty(len(ref), dtype=np.float64)
+        block = 256
+        for start in range(0, len(ref), block):
+            q = ref[start:start + block]
+            d2 = ((q[:, None, :] - ref[None, :, :]) ** 2).sum(axis=2)
+            rows = np.arange(len(q))
+            d2[rows, start + rows] = np.inf
+            distances[start:start + len(q)] = np.sqrt(d2.min(axis=1))
+    finite = distances[np.isfinite(distances)]
+    spacing = float(np.median(finite)) if len(finite) else 0.0
+    if not spacing > 0:
+        # Degenerate clouds are still valid display payloads; keep their marker
+        # finite and non-zero without affecting ordinary spacing estimates.
+        spacing = np.finfo(np.float64).eps * max(1.0, float(np.abs(p).max()))
+    return spacing
+
+
+def _default_point_size(pos) -> float:
+    return 1.2 * _median_nearest_spacing(pos)
+
 #: 対応する言語(この順)。``write_viewer(lang=...)`` に渡せるのはこの中だけ。
 LANGS = ("ja", "en", "zh", "tw", "ko", "de", "hi", "fr")
 #: 言語の自称(切り替えの選択肢に出す)。
@@ -937,6 +977,8 @@ def _pack_anim3d(tab: dict, out: dict, store: _Store, where: str, ctx: _Ctx) -> 
             if ps <= 0:
                 raise ValueError("%s: point_size は正" % wc)
             e["point_size"] = ps
+        else:
+            e["point_size"] = _default_point_size(pos)
         clouds.append(e)
     out["clouds"] = clouds
     evs = []
@@ -1150,6 +1192,8 @@ def _pack_tab(tab: dict, store: _Store, idx: int, ctx: _Ctx) -> dict:
                 out["ghost"] = store.put(g, "q16", per_axis=True)
             if tab.get("point_size") is not None:
                 out["point_size"] = float(tab["point_size"])
+            else:
+                out["point_size"] = _default_point_size(pos)
     elif kind == "frames":
         fr = _as_u8(tab.get("frames"), where + ".frames")
         if fr.ndim not in (3, 4) or (fr.ndim == 4 and fr.shape[3] != 3) or len(fr) < 1:
@@ -1413,7 +1457,7 @@ function scene3d(tab){
   const S = {rad, n, cbufC: null};
   S.pos = buf(centred(P, bb.ctr)); S.col = buf(colorsOf(tab));
   if (tab.kind === 'points') {
-    S.ps = tab.point_size || (3.2 * rad / Math.sqrt(n));
+    S.ps = tab.point_size || (1.2 * rad / Math.sqrt(n));
     if (tab.ghost != null) {
       const G = arr(tab.ghost).a, gc = new Uint8Array(G.length); gc.fill(110);
       S.gpos = buf(centred(G, bb.ctr)); S.gcol = buf(gc); S.gn = G.length / 3;
@@ -1586,7 +1630,7 @@ function sceneAnim(tab){
   S.ctr = [0,1,2].map(k => (lo[k] + hi[k]) / 2);
   if (tab.view && tab.view.target) S.ctr = tab.view.target.slice();   /* 見たい所(作業域)を中心に */
   S.rad = 0.5 * Math.hypot(hi[0]-lo[0], hi[1]-lo[1], hi[2]-lo[2]) || 1;
-  for (const c of S.clouds) if (!c.ps) c.ps = 3.2 * S.rad / Math.sqrt(c.n) * 0.5;
+  for (const c of S.clouds) if (!c.ps) c.ps = 1.2 * S.rad / Math.sqrt(c.n);
   S.tgt = S.ctr.slice();                          /* 追従の注視点(平滑化して動かす) */
   return anims[tab.id] = S;
 }

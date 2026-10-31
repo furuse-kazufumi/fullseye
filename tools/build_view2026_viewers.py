@@ -620,7 +620,10 @@ def build_asteroid() -> dict:
                              numbers=[_n("as_high", "%.1f %%" % (100 * high)), _n("as_low", "%.1f %%" % (100 * low)),
                                       _n("as_coh", "%.3f" % coh)]),
         pv.viewer_points_tab("shape", tx["t_si"], "passed",
-                             TX.fmt(tx["x_si"], cx=100 * convex, cc=100 * concave),
+                             TX.fmt(tx["x_si"], cx=100 * convex, cc=100 * concave) | {
+                                 "ja": TX.fmt(tx["x_si"], cx=100 * convex, cc=100 * concave)["ja"]
+                                       + " 青が多いのは凸が %.0f %%だからです。" % (100 * convex),
+                             },
                              pts, val=si, cbar=cb_si, view=view,
                              numbers=[_n("as_convex", "%.1f %%" % (100 * convex)),
                                       _n("as_concave", "%.1f %%" % (100 * concave))]),

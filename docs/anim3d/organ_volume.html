@@ -234,7 +234,7 @@ function scene3d(tab){
   const S = {rad, n, cbufC: null};
   S.pos = buf(centred(P, bb.ctr)); S.col = buf(colorsOf(tab));
   if (tab.kind === 'points') {
-    S.ps = tab.point_size || (3.2 * rad / Math.sqrt(n));
+    S.ps = tab.point_size || (1.2 * rad / Math.sqrt(n));
     if (tab.ghost != null) {
       const G = arr(tab.ghost).a, gc = new Uint8Array(G.length); gc.fill(110);
       S.gpos = buf(centred(G, bb.ctr)); S.gcol = buf(gc); S.gn = G.length / 3;
@@ -407,7 +407,7 @@ function sceneAnim(tab){
   S.ctr = [0,1,2].map(k => (lo[k] + hi[k]) / 2);
   if (tab.view && tab.view.target) S.ctr = tab.view.target.slice();   /* 見たい所(作業域)を中心に */
   S.rad = 0.5 * Math.hypot(hi[0]-lo[0], hi[1]-lo[1], hi[2]-lo[2]) || 1;
-  for (const c of S.clouds) if (!c.ps) c.ps = 3.2 * S.rad / Math.sqrt(c.n) * 0.5;
+  for (const c of S.clouds) if (!c.ps) c.ps = 1.2 * S.rad / Math.sqrt(c.n);
   S.tgt = S.ctr.slice();                          /* 追従の注視点(平滑化して動かす) */
   return anims[tab.id] = S;
 }
