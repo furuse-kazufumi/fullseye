@@ -398,8 +398,8 @@ This repository records *why* things are the way they are in **comments in the s
 ## `examples/poc_battery_electrode_tortuosity.py`
 
 - **L136** — ★Processing not on a public path: a 6-neighbour adjacency graph in voxel space. fullseye has 3-D # connected components (vol_label) and a distance transform (vol_distance_transform), but # no entry point (geodesic distance, transport) for handling "a path passing through the void". # --------------------------------------------------------------------------- #
-- **L248** — ★Passing a 64-voxel slice as is gives a panel only 64 px wide, so the title text does not fit and the whole figure fails (examplefig does not give up silently).
-- **L269** — ★Leaving the solid phase at 0 makes log10(dissipation) negative, so **the solid phase is painted brightest** (we produced exactly that once on 2026-09-08). We map the solid phase to the bottom 2 % of the void.
+- **L258** — ★Passing a 64-voxel slice as is gives a panel only 64 px wide, so the title text does not fit and the whole figure fails (examplefig does not give up silently).
+- **L279** — ★Leaving the solid phase at 0 makes log10(dissipation) negative, so **the solid phase is painted brightest** (we produced exactly that once on 2026-09-08). We map the solid phase to the bottom 2 % of the void.
 
 ## `examples/poc_beam_modal_video.py`
 
@@ -478,9 +478,9 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_cold_chain_excursion.py`
 
-- **L568** — ★The window for finding the peak goes **only up to just before the next door opening/closing**. If you make it too wide, at large τ it picks up the rising edge of the next pulse and makes it look as though "the cliff never comes" (stepped on this on 2026-09-08 with a 200-minute window: the measured y=53 stretched to 153 minutes).
-- **L947** — ★Make the line-of-sight direction (the D axis) the **width**. If you project with (t, y, x) as is, D = time 720, and you only get a thin (H, W) = (60, 12) image.
-- **L1006** — ★Distinguish whether a "hit" is thanks to the convention or mere chance: perturb each point by ±1 m and count.
+- **L570** — ★The window for finding the peak goes **only up to just before the next door opening/closing**. If you make it too wide, at large τ it picks up the rising edge of the next pulse and makes it look as though "the cliff never comes" (stepped on this on 2026-09-08 with a 200-minute window: the measured y=53 stretched to 153 minutes).
+- **L949** — ★Make the line-of-sight direction (the D axis) the **width**. If you project with (t, y, x) as is, D = time 720, and you only get a thin (H, W) = (60, 12) image.
+- **L1008** — ★Distinguish whether a "hit" is thanks to the convention or mere chance: perturb each point by ±1 m and count.
 
 ## `examples/poc_colocalization_crosstalk.py`
 
@@ -721,7 +721,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_grating_interferometry.py`
 
-- **L315** _(ja)_ — ★正直な限界: 段差の縁の 1 画素だけが π を超える板(平らな背景の隣)は、折り返しが見えずに通る
+- **L323** _(ja)_ — ★正直な限界: 段差の縁の 1 画素だけが π を超える板(平らな背景の隣)は、折り返しが見えずに通る
 
 ## `examples/poc_gravitational_lens_invariants.py`
 
@@ -1133,7 +1133,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_surface_roughness.py`
 
-- **L272** — ★The truth is defined **only after declaring the band**. Not the roughness component itself, but "the roughness component after cutting at λc" is the truth. If you make this the raw rough_true, even measuring by the correct procedure is off by -23%, and that 23% mixes with the sampling error. There is no "roughness truth" that does not include a band -- this is also the claim of Section 2.
+- **L270** — ★The truth is defined **only after declaring the band**. Not the roughness component itself, but "the roughness component after cutting at λc" is the truth. If you make this the raw rough_true, even measuring by the correct procedure is off by -23%, and that 23% mixes with the sampling error. There is no "roughness truth" that does not include a band -- this is also the claim of Section 2.
 
 ## `examples/poc_swc_tree_truth.py`
 
@@ -1182,24 +1182,24 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_thermal_radiometry.py`
 
-- **L507** — ★Forward is **direct integration**, inverse is a **calibration table**. Round-tripping through the same table trivially yields error 0 and does not count as measuring the floor.
-- **L528** — ★Case-0 being **exactly 0** is because 350.0 K happens to land on a table node. Move off the node and the interpolation error shows -- **calling 0 the floor is a lie**.
-- **L757** — ★The x-axis is the **rise above the surroundings**. Left as T_obj, the divergence collapses into a single vertical line at the left edge, and the crucial "where it jumps from" cannot be read.
-- **L767** — ★``plot_series`` **rejects** points outside the frame (because they stick to the frame and look like real data). The caller clips the diverging side first.
-- **L821** — ★The x-axis is the **absolute** Δε. Plotted as relative Δε/ε the three curves overlap exactly (because ε drops out of the equation, per §2) -- the plot says nothing.
-- **L1154** — ★What the guard band uses is the **upper** overhang. Since what we want to assert as a pass is that "the truth is not **above** the threshold", we clip at the upper end of the interval. Using the lower off[0] clips too shallow (by however much the distribution is right-skewed) -- wrote it that way once and noticed because the false passes did not decrease.
-- **L1257** — ★For the same mix-up, on the ε=0.10 surface L_obj drops negative and **raises an exception**. In other words, "halt or fail silently" is decided not by the mix-up but by the **scene**.
-- **L1331** — ★Make the heat source a **flat plateau**. As a peak, "the bolt and its surroundings at the same temperature" does not hold, and you cannot separate whether the apparent trough is due to emissivity or to temperature.
-- **L1378** — ★The correction removes the bias but multiplies the noise by 1/ε. That is why only the bolt is grainy in figure (d).
-- **L1450** — ★``op_find`` matches on partial stems. ``blackbody`` returns 4 hits, but their contents are morphology such as ``cv_blackhat`` and have **nothing to do with thermal radiation**. Reading "it exists" from the count misses. Say it only **after looking at the leading name**.
-- **L1600** — 3. ★A prediction that missed: the absolute error is **larger at higher temperature**
-- **L1602** — ★Even changing the yardstick, the emissivity error does **not diverge** with the rise ratio (it plateaus in Δε/ε)
-- **L1605** — ★What diverges is the reflected apparent temperature (the smaller the rise, the more it jumps)
-- **L1618** — 6. ★★Coverage rate. At the floor (ρ=0) both RSS and MC are 95 %; adding correlation makes RSS drop
-- **L1622** — ★The MC side settles at 94.4-94.6 % (not exactly 95 %). The interval ends are set by percentiles over 40000 trials, so there is sampling error, and in reality quantization is mixed in too. **Say "MC hits" including all of that**.
-- **L1638** — 7. ★The misses lean to one side (symmetric ±k·u misses a skewed distribution)
-- **L1642** — 8. ★★guard band: false passes are ignore > RSS > MC, false fails the reverse
-- **L1662** — ★The correction removes the bias but in exchange multiplies the noise by 1/ε (close to the ε ratio of 9.5)
+- **L522** — ★Forward is **direct integration**, inverse is a **calibration table**. Round-tripping through the same table trivially yields error 0 and does not count as measuring the floor.
+- **L543** — ★Case-0 being **exactly 0** is because 350.0 K happens to land on a table node. Move off the node and the interpolation error shows -- **calling 0 the floor is a lie**.
+- **L772** — ★The x-axis is the **rise above the surroundings**. Left as T_obj, the divergence collapses into a single vertical line at the left edge, and the crucial "where it jumps from" cannot be read.
+- **L782** — ★``plot_series`` **rejects** points outside the frame (because they stick to the frame and look like real data). The caller clips the diverging side first.
+- **L836** — ★The x-axis is the **absolute** Δε. Plotted as relative Δε/ε the three curves overlap exactly (because ε drops out of the equation, per §2) -- the plot says nothing.
+- **L1169** — ★What the guard band uses is the **upper** overhang. Since what we want to assert as a pass is that "the truth is not **above** the threshold", we clip at the upper end of the interval. Using the lower off[0] clips too shallow (by however much the distribution is right-skewed) -- wrote it that way once and noticed because the false passes did not decrease.
+- **L1272** — ★For the same mix-up, on the ε=0.10 surface L_obj drops negative and **raises an exception**. In other words, "halt or fail silently" is decided not by the mix-up but by the **scene**.
+- **L1346** — ★Make the heat source a **flat plateau**. As a peak, "the bolt and its surroundings at the same temperature" does not hold, and you cannot separate whether the apparent trough is due to emissivity or to temperature.
+- **L1392** — ★The correction removes the bias but multiplies the noise by 1/ε. That is why only the bolt is grainy in figure (d).
+- **L1464** — ★``op_find`` matches on partial stems. ``blackbody`` returns 4 hits, but their contents are morphology such as ``cv_blackhat`` and have **nothing to do with thermal radiation**. Reading "it exists" from the count misses. Say it only **after looking at the leading name**.
+- **L1614** — 3. ★A prediction that missed: the absolute error is **larger at higher temperature**
+- **L1616** — ★Even changing the yardstick, the emissivity error does **not diverge** with the rise ratio (it plateaus in Δε/ε)
+- **L1619** — ★What diverges is the reflected apparent temperature (the smaller the rise, the more it jumps)
+- **L1632** — 6. ★★Coverage rate. At the floor (ρ=0) both RSS and MC are 95 %; adding correlation makes RSS drop
+- **L1636** — ★The MC side settles at 94.4-94.6 % (not exactly 95 %). The interval ends are set by percentiles over 40000 trials, so there is sampling error, and in reality quantization is mixed in too. **Say "MC hits" including all of that**.
+- **L1652** — 7. ★The misses lean to one side (symmetric ±k·u misses a skewed distribution)
+- **L1656** — 8. ★★guard band: false passes are ignore > RSS > MC, false fails the reverse
+- **L1676** — ★The correction removes the bias but in exchange multiplies the noise by 1/ε (close to the ε ratio of 9.5)
 
 ## `examples/poc_thermography_ndt.py`
 
