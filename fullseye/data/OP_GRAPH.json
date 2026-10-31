@@ -59,7 +59,7 @@
       "registry": 959
     },
     "not_executable_reasons": {
-      "python_callable_not_found": 6,
+      "python_callable_not_found": 8,
       "python_signature_has_fewer_inputs_than_graph": 1,
       "unknown_input_or_output_sort": 188
     }
@@ -358,7 +358,7 @@
   },
   "counts": {
     "nodes": 101,
-    "edges": 3612,
+    "edges": 3614,
     "conversion_pairs": 395,
     "conversion_edge_incidence": 2343
   },
@@ -1368,8 +1368,8 @@
       "sort": "table",
       "container": "sequence",
       "size_hint": "input-dependent",
-      "produced_by": 1163,
-      "consumed_by": 544,
+      "produced_by": 1164,
+      "consumed_by": 545,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -1379,8 +1379,8 @@
       "sort": "text",
       "container": "structured_value",
       "size_hint": "input-dependent",
-      "produced_by": 8,
-      "consumed_by": 24,
+      "produced_by": 9,
+      "consumed_by": 25,
       "generator": true,
       "type_check": true,
       "choose_when": "undocumented",
@@ -185815,6 +185815,96 @@
       ],
       "output": "signal",
       "category": "io",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": false,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "unknown",
+        "source_ref": "S00056"
+      },
+      "implementations": [
+        {
+          "backend": "registry",
+          "status": "available",
+          "source_ref": "S00056"
+        }
+      ],
+      "parameters": {
+        "a": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        },
+        "b": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        }
+      },
+      "executable_reason": "python_callable_not_found",
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00056"
+    },
+    {
+      "op": "table_read_csv",
+      "inputs": [
+        "text"
+      ],
+      "output": "table",
+      "category": "table",
+      "family": null,
+      "family_candidate": null,
+      "family_candidate_source": null,
+      "type_semantics": "typed",
+      "consumes_input": true,
+      "executable": false,
+      "compute": {
+        "structure": "unknown",
+        "intensity": "unknown",
+        "source_ref": "S00056"
+      },
+      "implementations": [
+        {
+          "backend": "registry",
+          "status": "available",
+          "source_ref": "S00056"
+        }
+      ],
+      "parameters": {
+        "a": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        },
+        "b": {
+          "used": false,
+          "source": "unmeasured",
+          "effect": 0.0,
+          "kind": "unused"
+        }
+      },
+      "executable_reason": "python_callable_not_found",
+      "verified_executable": false,
+      "not_executable_in_mcp": "not_verified",
+      "bundle_semantics": "unknown",
+      "source_ref": "S00056"
+    },
+    {
+      "op": "table_write_csv",
+      "inputs": [
+        "table"
+      ],
+      "output": "text",
+      "category": "table",
       "family": null,
       "family_candidate": null,
       "family_candidate_source": null,

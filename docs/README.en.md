@@ -64,7 +64,7 @@ The 97 capabilities, split by how they are verified (`docs/maturity.json`, rebui
 | `validated-public-real-data` | an example on public measured data runs in a gate | 18 |
 | `validated-hardware` | validated on hardware (only from accepted external reports) | 0 |
 
-Of 448 examples, 448 are actually run by a gate.
+Of 449 examples, 449 are actually run by a gate.
 
 ### Operator counts by version
 
@@ -140,11 +140,11 @@ Every one carries a closed-form or synthetic ground truth and a null model. Fail
 
 ## Find an operator
 
-**3,615 per-operator notes** (call form, type contract, HALCON counterpart, references, provenance) and **69 family guides**. Entry points by dimension:
+**3,617 per-operator notes** (call form, type contract, HALCON counterpart, references, provenance) and **69 family guides**. Entry points by dimension:
 
-**Measured coverage**: evolvable ops 942/942, typed ledger 2652/2664, one-line facade `fullseye.<name>` 710/1495 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
+**Measured coverage**: evolvable ops 942/942, typed ledger 2652/2664, one-line facade `fullseye.<name>` 712/1498 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
 
-**Measured substance**: of 3615 notes, **3587** link at least one runnable example (28 have none) and **3416** have a usage section of 120+ characters (199 are a one-line summary). The structure (call form, types, ops that chain next) is present in all 3615.
+**Measured substance**: of 3617 notes, **3589** link at least one runnable example (28 have none) and **3418** have a usage section of 120+ characters (199 are a one-line summary). The structure (call form, types, ops that chain next) is present in all 3617.
 
 | dimension | ops | entry |
 |---|---:|---|
@@ -203,6 +203,7 @@ Every one carries a closed-form or synthetic ground truth and a null model. Fail
 | `aoi` | 3 | [INDEX](ops/aoi/INDEX.md) · [guide](ops/aoi/guides/aoi_frontend.md) |
 | `fit` | 3 | [INDEX](ops/fit/INDEX.md) |
 | `text` | 3 | [INDEX](ops/text/INDEX.md) |
+| `fileio` | 2 | [INDEX](ops/fileio/INDEX.md) |
 
 Search by name with `py -3.11 imgevolve.py ops --search edge`; the full cross-library table is [OP_CATALOG.md](OP_CATALOG.md) and the cross-dimension entry point is [ops/INDEX.md](ops/INDEX.md).
 
@@ -300,9 +301,9 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## Document map — all 300
+## Document map — all 301
 
-The complete map, so that **no document is unreachable from this index** (the 3,615 per-op notes and 69 family guides under `docs/ops/` are reached from the operator section above; articles from [articles/](articles/README.md)). One unreachable file fails `tests/test_docs_index_reachable.py`. **Most bodies are in Japanese.**
+The complete map, so that **no document is unreachable from this index** (the 3,617 per-op notes and 69 family guides under `docs/ops/` are reached from the operator section above; articles from [articles/](articles/README.md)). One unreachable file fails `tests/test_docs_index_reachable.py`. **Most bodies are in Japanese.**
 
 **Getting started**(12)
 
@@ -442,7 +443,7 @@ The complete map, so that **no document is unreachable from this index** (the 3,
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(217)
+**Other**(218)
 
 | document | what it covers |
 |---|---|
@@ -475,6 +476,7 @@ The complete map, so that **no document is unreachable from this index** (the 3,
 | [`ENGINE.zh.md`](ENGINE.zh.md) | FullseyeEngine — 运行已设计管道的运行时 _(zh)_ |
 | [`EVIS_VISION_OSS_GAP.en.md`](EVIS_VISION_OSS_GAP.en.md) | evis Vision Components — OSS/ROS2 Gap Analysis (2026-08-17) |
 | [`EVOLUTION_ENVIRONMENT.en.md`](EVOLUTION_ENVIRONMENT.en.md) | Evolutionary Algorithm Development Environment — Expand, Contract, Promote |
+| [`FILE_FORMATS.md`](FILE_FORMATS.md) | Fullseye のファイル形式棚卸し _(ja)_ |
 | [`FSCRIPT_LANGUAGE.en.md`](FSCRIPT_LANGUAGE.en.md) | Fullseye Script — Language / Runtime / Watch IDE Design Specification (North Star) |
 | [`GALLERY.en.md`](GALLERY.en.md) | Fullseye Gallery |
 | [`GENERAL_ALGORITHMS.de.md`](GENERAL_ALGORITHMS.de.md) | Allgemeine Algorithmen implementierbar machen — algo-c Kompatibilitäts-Roadmap |

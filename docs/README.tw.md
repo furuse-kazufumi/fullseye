@@ -64,7 +64,7 @@
 | `validated-public-real-data` | 使用公開實測資料的範例在檢查中實際執行 | 18 |
 | `validated-hardware` | 已在實機上驗證(僅在接受外部報告時) | 0 |
 
-448 個範例中,檢查實際執行的有 448 個。
+449 個範例中,檢查實際執行的有 449 個。
 
 ### 各版本的運算子數
 
@@ -140,11 +140,11 @@
 
 ## 尋找運算子
 
-共有 **3,615 篇運算子說明**(呼叫方式、型別契約、HALCON 對應、參考文獻、來源)與 **69 篇族群指南**。依維度的入口:
+共有 **3,617 篇運算子說明**(呼叫方式、型別契約、HALCON 對應、參考文獻、來源)與 **69 篇族群指南**。依維度的入口:
 
-**實測涵蓋**: 演化運算子 942/942、型別台帳 2652/2664、單行門面 `fullseye.<名稱>` 710/1495 —— **門面側僅涵蓋一半**。
+**實測涵蓋**: 演化運算子 942/942、型別台帳 2652/2664、單行門面 `fullseye.<名稱>` 712/1498 —— **門面側僅涵蓋一半**。
 
-**內容實測**: 3615 篇中，附有可執行範例的 **3587** 篇(28 篇沒有)，用法說明 120 字以上的 **3416** 篇(199 篇僅一行)。結構(呼叫形式、型別、可銜接運算子)3615 篇全有。
+**內容實測**: 3617 篇中，附有可執行範例的 **3589** 篇(28 篇沒有)，用法說明 120 字以上的 **3418** 篇(199 篇僅一行)。結構(呼叫形式、型別、可銜接運算子)3617 篇全有。
 
 | 維度 | 運算子數 | 入口 |
 |---|---:|---|
@@ -203,6 +203,7 @@
 | `aoi` | 3 | [INDEX](ops/aoi/INDEX.md) · [guide](ops/aoi/guides/aoi_frontend.md) |
 | `fit` | 3 | [INDEX](ops/fit/INDEX.md) |
 | `text` | 3 | [INDEX](ops/text/INDEX.md) |
+| `fileio` | 2 | [INDEX](ops/fileio/INDEX.md) |
 
 依名稱搜尋請用 `py -3.11 imgevolve.py ops --search edge`;全部運算子的對照表見 [OP_CATALOG.md](OP_CATALOG.md)，跨維度入口見 [ops/INDEX.md](ops/INDEX.md)。
 
@@ -300,9 +301,9 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## 文件地圖 — 共 300 篇
+## 文件地圖 — 共 301 篇
 
-完整地圖，確保**沒有任何文件無法從索引到達**(`docs/ops/` 下的 3,615 篇運算子說明與 69 篇族群指南從上面的「尋找運算子」進入; 文章見 [articles/](articles/README.md))。**內文多為日文。**
+完整地圖，確保**沒有任何文件無法從索引到達**(`docs/ops/` 下的 3,617 篇運算子說明與 69 篇族群指南從上面的「尋找運算子」進入; 文章見 [articles/](articles/README.md))。**內文多為日文。**
 
 **Getting started**(12)
 
@@ -442,7 +443,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(217)
+**Other**(218)
 
 | 文件 | 內容 |
 |---|---|
@@ -475,6 +476,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ENGINE.zh.md`](ENGINE.zh.md) | FullseyeEngine — 运行已设计管道的运行时 _(zh)_ |
 | [`EVIS_VISION_OSS_GAP.en.md`](EVIS_VISION_OSS_GAP.en.md) | evis Vision Components — OSS/ROS2 Gap Analysis (2026-08-17) |
 | [`EVOLUTION_ENVIRONMENT.en.md`](EVOLUTION_ENVIRONMENT.en.md) | Evolutionary Algorithm Development Environment — Expand, Contract, Promote |
+| [`FILE_FORMATS.md`](FILE_FORMATS.md) | Fullseye のファイル形式棚卸し _(ja)_ |
 | [`FSCRIPT_LANGUAGE.en.md`](FSCRIPT_LANGUAGE.en.md) | Fullseye Script — Language / Runtime / Watch IDE Design Specification (North Star) |
 | [`GALLERY.en.md`](GALLERY.en.md) | Fullseye Gallery |
 | [`GENERAL_ALGORITHMS.de.md`](GENERAL_ALGORITHMS.de.md) | Allgemeine Algorithmen implementierbar machen — algo-c Kompatibilitäts-Roadmap |

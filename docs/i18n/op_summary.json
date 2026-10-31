@@ -32523,6 +32523,24 @@
    "ko": "격자 경로(각 대의 (row, col) 열)를 (K, T, 2) 의 [x, y] = [col, −row] 로 만든다(짧은 경로는 마지막 점으로 채운다).",
    "de": "Wandelt Gitterpfade (je Agent eine Folge von (row, col)) in (K, T, 2) mit [x, y] = [col, −row] um (kürzere Pfade werden mit ihrem letzten Punkt aufgefüllt).",
    "hi": "Grid paths (हर agent का (row, col) क्रम) को (K, T, 2) के [x, y] = [col, −row] में बदलता है (छोटे paths को अंतिम point से भरा जाता है)।"
+  },
+  "fileio/table_write_csv": {
+   "fp": "9a27a56f7ea9",
+   "en": "Writes a table with units and provenance as CSV text readable by pandas and MATLAB (``text``).",
+   "zh": "把带单位和来源信息的表写成 pandas 与 MATLAB 均可读取的 CSV 字符串(``text``)。",
+   "tw": "把帶單位和來源資訊的表寫成 pandas 與 MATLAB 均可讀取的 CSV 字串(``text``)。",
+   "ko": "단위와 출처가 있는 표를 pandas와 MATLAB에서 읽을 수 있는 CSV 문자열(``text``)로 쓴다.",
+   "de": "Schreibt eine Tabelle mit Einheiten und Herkunft als CSV-Text, den pandas und MATLAB lesen können (``text``).",
+   "hi": "इकाइयों और स्रोत वाली table को pandas तथा MATLAB में पढ़े जा सकने वाले CSV text (``text``) के रूप में लिखता है।"
+  },
+  "fileio/table_read_csv": {
+   "fp": "8520c1677033",
+   "en": "Reads the unit-aware CSV produced by :func:`table_write_csv` and returns a ``table`` containing columns, units, and metadata.",
+   "zh": "读取 :func:`table_write_csv` 生成的带单位 CSV，返回包含列、单位与元数据的 ``table``。",
+   "tw": "讀取 :func:`table_write_csv` 產生的帶單位 CSV，回傳包含欄、單位與中繼資料的 ``table``。",
+   "ko": ":func:`table_write_csv`가 만든 단위 포함 CSV를 읽고 열, 단위, 메타데이터가 든 ``table``을 반환한다.",
+   "de": "Liest das von :func:`table_write_csv` erzeugte CSV mit Einheiten und gibt eine ``table`` mit Spalten, Einheiten und Metadaten zurück.",
+   "hi": ":func:`table_write_csv` से बने इकाई-सहित CSV को पढ़कर columns, units और metadata वाली ``table`` लौटाता है।"
   }
  }
 }

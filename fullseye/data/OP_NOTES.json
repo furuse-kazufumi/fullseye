@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3609,
- "n_notes": 3615,
+ "n_ops": 3611,
+ "n_notes": 3617,
  "notes": {
   "vol_dilate": [
    {
@@ -23128,6 +23128,26 @@
     "in": "labels2d × labels2d × table",
     "out": "table",
     "path": "docs/ops/emproof/wiring/seg_wiring_variation.md"
+   }
+  ],
+  "table_read_csv": [
+   {
+    "op": "table_read_csv",
+    "dim": "fileio",
+    "category": "table",
+    "in": "text",
+    "out": "table",
+    "path": "docs/ops/fileio/table/table_read_csv.md"
+   }
+  ],
+  "table_write_csv": [
+   {
+    "op": "table_write_csv",
+    "dim": "fileio",
+    "category": "table",
+    "in": "table",
+    "out": "text",
+    "path": "docs/ops/fileio/table/table_write_csv.md"
    }
   ],
   "fit_circle_geometric": [

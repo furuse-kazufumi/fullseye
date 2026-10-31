@@ -66,7 +66,7 @@
 | `validated-public-real-data` | 公開の実測データを使う例が門で走る | 18 |
 | `validated-hardware` | 実機で検証(外部の報告を受理したときだけ) | 0 |
 
-例 448 本のうち、門が実際に走らせるもの 448 本。
+例 449 本のうち、門が実際に走らせるもの 449 本。
 
 ### 版ごとの op の数
 
@@ -142,11 +142,11 @@
 
 ## オペレータを探す
 
-**3,615 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **69 本の族ガイド**があります。次元ごとの入口:
+**3,617 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **69 本の族ガイド**があります。次元ごとの入口:
 
-**網羅の実測**: 進化 op 942/942、型つき台帳 2652/2664、1 行ファサード `fullseye.<名前>` 710/1495。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
+**網羅の実測**: 進化 op 942/942、型つき台帳 2652/2664、1 行ファサード `fullseye.<名前>` 712/1498。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
 
-**ノートの中身の実測**: 3615 本のうち、実行できる例が付いているのは **3587 本**(28 本は例ゼロ)、使い方の説明が 120 字以上あるのは **3416 本**(199 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 3615 本すべてにある。
+**ノートの中身の実測**: 3617 本のうち、実行できる例が付いているのは **3589 本**(28 本は例ゼロ)、使い方の説明が 120 字以上あるのは **3418 本**(199 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 3617 本すべてにある。
 
 | 次元 | op 数 | 入口 |
 |---|---:|---|
@@ -205,6 +205,7 @@
 | `aoi` | 3 | [INDEX](ops/aoi/INDEX.md) · [ガイド](ops/aoi/guides/aoi_frontend.md) |
 | `fit` | 3 | [INDEX](ops/fit/INDEX.md) |
 | `text` | 3 | [INDEX](ops/text/INDEX.md) |
+| `fileio` | 2 | [INDEX](ops/fileio/INDEX.md) |
 
 名前で引くなら `py -3.11 imgevolve.py ops --search edge`、全 op の対応表は [OP_CATALOG.md](OP_CATALOG.md)、次元をまたぐ入口は [ops/INDEX.md](ops/INDEX.md)。
 
@@ -302,9 +303,9 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## ドキュメント地図 — 全 300 本
+## ドキュメント地図 — 全 301 本
 
-**索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 3,615 本と族ガイド 69 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
+**索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 3,617 本と族ガイド 69 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
 
 **はじめに・使い方**(12)
 
@@ -444,7 +445,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) |
 
-**そのほか**(217)
+**そのほか**(218)
 
 | 文書 | 内容 |
 |---|---|
@@ -477,6 +478,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ENGINE.zh.md`](ENGINE.zh.md) | FullseyeEngine — 运行已设计管道的运行时 |
 | [`EVIS_VISION_OSS_GAP.en.md`](EVIS_VISION_OSS_GAP.en.md) | evis Vision Components — OSS/ROS2 Gap Analysis (2026-08-17) |
 | [`EVOLUTION_ENVIRONMENT.en.md`](EVOLUTION_ENVIRONMENT.en.md) | Evolutionary Algorithm Development Environment — Expand, Contract, Promote |
+| [`FILE_FORMATS.md`](FILE_FORMATS.md) | Fullseye のファイル形式棚卸し |
 | [`FSCRIPT_LANGUAGE.en.md`](FSCRIPT_LANGUAGE.en.md) | Fullseye Script — Language / Runtime / Watch IDE Design Specification (North Star) |
 | [`GALLERY.en.md`](GALLERY.en.md) | Fullseye Gallery |
 | [`GENERAL_ALGORITHMS.de.md`](GENERAL_ALGORITHMS.de.md) | Allgemeine Algorithmen implementierbar machen — algo-c Kompatibilitäts-Roadmap |

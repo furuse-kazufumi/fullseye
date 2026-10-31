@@ -9,7 +9,7 @@
 | XYZ text | `.asc` | `mesh.read_points` | `mesh.write_points` | — | stdlib / core | `tests/test_abi_apply.py`<br>`tests/test_abi_wheel.py`<br>+18 | — |
 | AVI video | `.avi` | — | `video.write_video` | — | optional: PIL, cv2, imageio | `tests/test_gen_visionlab_video.py`<br>`tests/test_perf_batch20_2026_10_20.py`<br>+2 | — |
 | BMP | `.bmp` | `raster.read_raster` | — | — | optional: cv2, imageio, tifffile | `tests/test_iqatid.py`<br>`tests/test_raster.py`<br>+1 | — |
-| CSV | `.csv` | `cutting.cut_force_csv_load`<br>`grind.ae_read_csv` | — | `ae_read_csv`<br>`cut_force_csv_load` | optional: mujoco | `tests/test_cutting.py`<br>`tests/test_doseunif.py`<br>+8 | `csv` |
+| CSV | `.csv` | `cutting.cut_force_csv_load`<br>`fileio.table_read_csv`<br>`grind.ae_read_csv` | `fileio.table_write_csv` | `ae_read_csv`<br>`cut_force_csv_load`<br>`table_read_csv`<br>`table_write_csv` | optional: mujoco | `tests/test_cutting.py`<br>`tests/test_doseunif.py`<br>+9 | `csv`<br>`pandas` |
 | DICOM | `.dcm` | `volio.read_volume` | `volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_public_api.py`<br>`tests/test_volio.py` | — |
 | DICOM | `.dicom` | `volio.read_volume` | `volio.write_volume` | — | optional: SimpleITK, tifffile | `tests/test_public_api.py`<br>`tests/test_volio.py` | — |
 | GIF | `.gif` | — | `examplefig.save_gif`<br>`projmap.save_gif`<br>`videocube.video_write_gif` | `video_write_gif` | optional: PIL, imageio, mujoco | `tests/test_docs_index_reachable.py`<br>`tests/test_examplefig_gif.py`<br>+9 | — |
@@ -57,6 +57,6 @@
 
 ## 集計
 
-形式（拡張子） **49**、読みあり **38**、書きあり **39**、読み書き対 **28**、公開 op あり **9**、テストあり **49**、独立の読み手による検証あり **1**。
+形式（拡張子） **49**、読みあり **38**、書きあり **40**、読み書き対 **29**、公開 op あり **9**、テストあり **49**、独立の読み手による検証あり **1**。
 
 集計値も上表から生成しており、文書内に別の手書き件数は持たない。

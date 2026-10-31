@@ -13,7 +13,10 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(448 例)
+### 2-D 画像/信号/幾何(449 例)
+
+**fileio**
+- **単位と由来を失わずに表を CSV で受け渡す** — 列名、単位、出所、生成日時、座標の意味を持つ CSV をメモリ上で書いて読み戻し、標準 csv と pandas でも同じ数値列を読めることを自己検査する。 `py -3.11 examples/fileio_roundtrip.py`
 
 **metrology**
 - **短い円弧・小数移動・斜めの曲線を偏りなく当てはめる** — 幾何距離の円、局所アップサンプル位相相関、主軸へ回してからの曲線・曲面当てはめを真値で検証する。 `py -3.11 examples/fit_ops_from_knowhow.py`
@@ -793,9 +796,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Operators by family(族 → カテゴリ、全 op)
 
-_計 3615 ops / 55 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
+_計 3617 ops / 56 families。並びとノートの在り処は `docs/ops/INDEX.md` と同じ(ノート = `docs/ops/<族>/<カテゴリ>/<op>.md`)。台帳族の op は `fs.ledger.<op>` で呼ぶ。_
 
-族の一覧: **2d** 959 · **3d** 376 · **fit** 3 · **math** 114 · **optics** 483 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 717 · **tomography** 32 · **volcolor** 11 · **reprconv** 42 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 3 · **calib** 21 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
+族の一覧: **2d** 959 · **3d** 376 · **fit** 3 · **math** 114 · **optics** 483 · **lightfield** 17 · **photon** 17 · **specular** 20 · **motionmag** 9 · **quat** 19 · **rangedoppler** 8 · **acoustics** 27 · **interferometry** 9 · **flyvision** 22 · **spc** 41 · **graph** 20 · **text** 3 · **residue** 5 · **vx** 10 · **drive** 717 · **tomography** 32 · **volcolor** 11 · **reprconv** 42 · **fileio** 2 · **cadmap** 4 · **annotate** 51 · **gfx2d** 44 · **multivar** 18 · **simcal** 10 · **converge** 6 · **codematch** 6 · **aoi** 3 · **calib** 21 · **generative** 42 · **imgmetrics** 42 · **oned** 49 · **colortransport** 11 · **imgforensics** 16 · **astrostack** 14 · **videostream** 16 · **profile** 12 · **shapestat** 16 · **measure1d** 17 · **roughness** 9 · **shape2d** 16 · **piv** 29 · **blob** 11 · **dem** 25 · **conngraph** 28 · **emproof** 14 · **videocube** 6 · **live4d** 14 · **printpath** 23 · **geocam** 9 · **llmcore** 10 · **segmentation** 59
 
 ### 2d(959 ops / 49 categories)
 
@@ -4514,6 +4517,12 @@ _計 3615 ops / 55 families。並びとノートの在り処は `docs/ops/INDEX.
 - `correlation_score` `voxel × voxel → score` — 2 つの ``voxel`` → 正規化相互相関の ``score`` volume。**この型の唯一の入口**。 · 例: `poc_leak_localization`, `representation_conversion`, `representation_roundtrip`
 - `score_to_image2d` `score → image2d` — ``score`` volume → 最大値投影 ``image2d``。``score`` の 2 つ目の出口。 · 例: `representation_conversion`
 - `score_to_position` `score → position` — ``score`` volume → 最大値の位置 ``position (z, y, x)``。``score`` の出口。 · 例: `representation_conversion`
+
+### fileio(2 ops / 1 categories)
+
+#### fileio / table(2)
+- `table_read_csv` `text → table` — :func:`table_write_csv` の単位つき CSV を読み、列・単位・メタデータの ``table`` を返す。 · 例: `fileio_roundtrip`
+- `table_write_csv` `table → text` — 単位と由来を持つ表を、pandas / MATLAB でも読める CSV 文字列にする(``text``)。 · 例: `fileio_roundtrip`
 
 ### cadmap(4 ops / 4 categories)
 

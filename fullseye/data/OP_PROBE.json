@@ -1,4 +1,4 @@
-{"generated_by": "tools/gen_mcp_data.py", "probe": "CPU, a=b=0.5, representative input", "n_ops": 3615, "ops": [
+{"generated_by": "tools/gen_mcp_data.py", "probe": "CPU, a=b=0.5, representative input", "n_ops": 3617, "ops": [
 {"name":"a3_distribution","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"aabb","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"abbe_number","status":"not_in_registry","reason":"not executable by fullseye.apply"},
@@ -2908,7 +2908,9 @@
 {"name":"synthesize_translation","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"table_params","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"table_px_to_mm","status":"not_in_registry","reason":"not executable by fullseye.apply"},
+{"name":"table_read_csv","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"table_world","status":"not_in_registry","reason":"not executable by fullseye.apply"},
+{"name":"table_write_csv","status":"not_in_registry","reason":"not executable by fullseye.apply"},
 {"name":"tac_contact_mask","status":"ok","in_sort":"image","out_sort":"region","probe_input":"op_probe.sample_input('image', structured=True)"},
 {"name":"tac_height_from_shading","status":"ok","in_sort":"image","out_sort":"image","probe_input":"op_probe.sample_input('image', structured=True)"},
 {"name":"tac_pressure_proxy","status":"ok","in_sort":"image","out_sort":"image","probe_input":"op_probe.sample_input('image', structured=True)"},
