@@ -9098,17 +9098,17 @@ Ops used (notes): [`bandpass`](https://furuse.work/ops/oned/signal/bandpass.html
 
 *↑ 左が真値の高さ(視野 40 mm、青 = 高い・橙 = 低い)。*
 
-[![真値(破線)と復元(実線)はほぼ重なるので、差を 10 倍にして点線で重ねた。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_phase_measuring_deflectometry/05_dimple_profile_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_phase_measuring_deflectometry/05_dimple_profile.png)
+[![1 台のカメラと 1 枚の画面では、面が Δz 高いことと、法線が Δz sin θ / d 傾いていることが同じ位相を作る(PMD の既知の不定性)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_phase_measuring_deflectometry/07_height_slope_ambiguity_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_phase_measuring_deflectometry/07_height_slope_ambiguity.png)
 
-*↑ 真値(破線)と復元(実線)はほぼ重なるので、差を 10 倍にして点線で重ねた。*
-
-[![平らな板を 0.3 mm 浮かせただけで、測った高さは 40 mm で約 14 µm 傾く(左、視野の中心で 3.4e-4 rad)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_phase_measuring_deflectometry/08_ambiguity_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_phase_measuring_deflectometry/08_ambiguity_map.png)
-
-*↑ 平らな板を 0.3 mm 浮かせただけで、測った高さは 40 mm で約 14 µm 傾く(左、視野の中心で 3.4e-4 rad)。*
+*↑ 1 台のカメラと 1 枚の画面では、面が Δz 高いことと、法線が Δz sin θ / d 傾いていることが同じ位相を作る(PMD の既知の不定性)。*
 
 [![表と裏の反射率はほぼ同じ(R1 0.043、R2 0.039)なので、2 つの縞の和の位相は上限 1.16 rad までずれ得る。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_phase_measuring_deflectometry/12_glass_back_reflection_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_phase_measuring_deflectometry/12_glass_back_reflection.png)
 
 *↑ 表と裏の反射率はほぼ同じ(R1 0.043、R2 0.039)なので、2 つの縞の和の位相は上限 1.16 rad までずれ得る。*
+
+[![基準(打撃の前の 30 枚の平均)からの位相の変化(巻き込み、±π)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_phase_measuring_deflectometry/16_real_phase_two_methods_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_phase_measuring_deflectometry/16_real_phase_two_methods.png)
+
+*↑ 基準(打撃の前の 30 枚の平均)からの位相の変化(巻き込み、±π)。*
 
 [![拡散成分 k_d = 0, 0.5, 0.8, 0.85, 0.9, 0.95, 0.98, 0.99, 0.995 と上げていったときの平均曲率(±2.5e-3 /mm)。雑音が 1/(1 − k_d) で増え、浅い凹み B が先に沈み、](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_phase_measuring_deflectometry/09_diffuse_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_phase_measuring_deflectometry/09_diffuse_sweep.gif)
 
@@ -9120,7 +9120,7 @@ py -3.11 examples/poc_phase_measuring_deflectometry.py
 
 Source: [examples/poc_phase_measuring_deflectometry.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_phase_measuring_deflectometry.py)
 
-This run produced **14 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_phase_measuring_deflectometry)
+This run produced **19 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_phase_measuring_deflectometry)
 
 Ops used (notes): [`absolute_phase`](https://furuse.work/ops/3d/structured_light/absolute_phase.html) · [`deflectometry_phase_to_slope`](https://furuse.work/ops/specular/deflectometry/deflectometry_phase_to_slope.html) · [`deflectometry_render`](https://furuse.work/ops/specular/deflectometry/deflectometry_render.html) · [`deflectometry_rig`](https://furuse.work/ops/specular/deflectometry/deflectometry_rig.html) · [`deflectometry_screen_pattern`](https://furuse.work/ops/specular/deflectometry/deflectometry_screen_pattern.html) · [`deflectometry_sensitivity`](https://furuse.work/ops/specular/deflectometry/deflectometry_sensitivity.html) · [`fresnel_dielectric`](https://furuse.work/ops/optics/interface/fresnel_dielectric.html) · [`integrate`](https://furuse.work/ops/3d/tsdf_fusion/integrate.html) · [`sfp_height`](https://furuse.work/ops/optics/shape_from_polarization/sfp_height.html) · [`slope_to_curvature`](https://furuse.work/ops/specular/deflectometry/slope_to_curvature.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`wrapped_phase`](https://furuse.work/ops/3d/structured_light/wrapped_phase.html)
 

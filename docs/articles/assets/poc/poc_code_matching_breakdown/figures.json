@@ -4,8 +4,8 @@
   "name": "breakdown_occlusion",
   "caption": "公開の実写 5 枚から切った 32 x 32 のテンプレートを、雑音 σ = 0.01 の場面で探す。点 = 段ごとの割合(各段 40 試行)。50 % を割る所が破綻点。",
   "shape": [
-   420,
-   720,
+   840,
+   1440,
    3
   ],
   "source": "camera — scikit-image (CC0 (Lav Varshney))\nastronaut — scikit-image (Public domain (NASA))\ncoffee — scikit-image (CC0 (Rachel Michetti))\nchelsea — scikit-image (CC0 (Stefan van der Walt))\nclock — scikit-image (Public domain (Stefan van der Walt))\ngravel — CC0Textures (CC0)"
@@ -15,8 +15,8 @@
   "name": "breakdown_highlight",
   "caption": "公開の実写 5 枚から切った 32 x 32 のテンプレートを、雑音 σ = 0.01 の場面で探す。点 = 段ごとの割合(各段 40 試行)。50 % を割る所が破綻点。",
   "shape": [
-   420,
-   720,
+   840,
+   1440,
    3
   ],
   "source": "camera — scikit-image (CC0 (Lav Varshney))\nastronaut — scikit-image (Public domain (NASA))\ncoffee — scikit-image (CC0 (Rachel Michetti))\nchelsea — scikit-image (CC0 (Stefan van der Walt))\nclock — scikit-image (Public domain (Stefan van der Walt))\ngravel — CC0Textures (CC0)"
@@ -26,8 +26,8 @@
   "name": "breakdown_shading",
   "caption": "公開の実写 5 枚から切った 32 x 32 のテンプレートを、雑音 σ = 0.01 の場面で探す。点 = 段ごとの割合(各段 40 試行)。50 % を割る所が破綻点。",
   "shape": [
-   420,
-   720,
+   840,
+   1440,
    3
   ],
   "source": "camera — scikit-image (CC0 (Lav Varshney))\nastronaut — scikit-image (Public domain (NASA))\ncoffee — scikit-image (CC0 (Rachel Michetti))\nchelsea — scikit-image (CC0 (Stefan van der Walt))\nclock — scikit-image (Public domain (Stefan van der Walt))\ngravel — CC0Textures (CC0)"
@@ -37,8 +37,8 @@
   "name": "breakdown_rotation",
   "caption": "公開の実写 5 枚から切った 32 x 32 のテンプレートを、雑音 σ = 0.01 の場面で探す。点 = 段ごとの割合(各段 40 試行)。50 % を割る所が破綻点。",
   "shape": [
-   420,
-   720,
+   840,
+   1440,
    3
   ],
   "source": "camera — scikit-image (CC0 (Lav Varshney))\nastronaut — scikit-image (Public domain (NASA))\ncoffee — scikit-image (CC0 (Rachel Michetti))\nchelsea — scikit-image (CC0 (Stefan van der Walt))\nclock — scikit-image (Public domain (Stefan van der Walt))\ngravel — CC0Textures (CC0)"
@@ -93,8 +93,8 @@
   "name": "closed_form_z",
   "caption": "雑音の無い場面の増分 Δ と σ から、組ごとの一致確率 Φ(Δ/(√2σ)) が決まる。",
   "shape": [
-   420,
-   890,
+   840,
+   1770,
    3
   ]
  },
@@ -103,8 +103,8 @@
   "name": "breakdown_table",
   "caption": "線形補間。遮蔽・ハイライトは面積比、減光は深さ、回転は度。",
   "shape": [
-   176,
-   376,
+   352,
+   750,
    3
   ],
   "csv": "10_breakdown_table.csv",

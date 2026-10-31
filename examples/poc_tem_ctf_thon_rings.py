@@ -756,6 +756,7 @@ def make_figures(ctf_curves, wp, sweep, est, drift, corr, real):
         styles.append("dashed")
         colors.append("reference" if df > 10000 else "neutral")
     figs.save_plot("ctf_curves", series, xlabel="k [1/Å]", ylabel="CTF", styles=styles, colors=colors, size=(820, 380),
+                   title="焦点外れによる CTF と包絡の変化",
                    caption="CTF = −sin(χ + arcsin w) に空間・時間の包絡を掛けた曲線(300 kV、Cs 2.7 mm、照明の半角 0.05 mrad、"
                            "焦点の広がり 60 Å)。零点(リング)の位置は閉形式と 1e-6 Å⁻¹ 以内で一致。Δf が大きいほど振動が速く、"
                            "空間の包絡(dχ/dk に比例して効く)が早く落ちる。")
@@ -768,6 +769,7 @@ def make_figures(ctf_curves, wp, sweep, est, drift, corr, real):
     figs.save_plot("scherzer_fidelity", [("像と投影ポテンシャルの相関", grid, fid),
                                          ("Scherzer √(4/3 Cs λ)", [NUMBERS["scherzer_A"]] * 2, [-1, 1])],
                    xlabel="Δf [Å]", ylabel="相関", styles=[None, "dashed"], colors=[None, "reference"], size=(720, 360),
+                   title="Scherzer 焦点で投影ポテンシャルに最も近づく",
                    ylim=(-1, 1),
                    caption="像 −(I − 1) と、点分解能 %.2f Å まで帯域を切った投影ポテンシャルとの相関。最大は Δf = %.0f Å"
                            "(Scherzer の 10 %% 以内)。正焦点では負(細部が反転)。"
@@ -791,6 +793,7 @@ def make_figures(ctf_curves, wp, sweep, est, drift, corr, real):
                                          (o["r"]["model"] - o["r"]["model"].mean()) / (o["r"]["model"].std() + 1e-12)
                                          * o["r"]["flat"].std())],
                    xlabel="k [1/Å]", ylabel="振れ", styles=[None, "dashed"], colors=[None, "reference"], size=(760, 340),
+                   title="動径平均と推定した CTF² の一致",
                    caption="背景(u = k² の上でリング 1 周期の移動平均)を引いて振れ幅で割った動径平均と、推定した Δf の CTF²。")
     # 5. 弱位相近似と厚さ
     rows_w, rows_t = wp
@@ -799,10 +802,12 @@ def make_figures(ctf_curves, wp, sweep, est, drift, corr, real):
                                              [rows_w[0][1], rows_w[0][1] * rows_w[-1][0] / rows_w[0][0]])],
                    xlabel="位相の rms [rad]", ylabel="相対差", styles=[None, "dashed"], colors=[None, "reference"],
                    size=(620, 340),
+                   title="位相が大きいと弱位相近似が崩れる",
                    caption="同じ試料のポテンシャルを 0.05〜4 倍して、弱位相近似の線形の像と coherent_image の像を比べた。"
                            "差は位相に比例して増え、0.1 rad で数 %、1 rad を超えると線形の像は使えない。")
     figs.save_plot("multislice_thickness", [("マルチスライス 対 投影近似", [a for a, _ in rows_t], [b for _, b in rows_t])],
                    xlabel="炭素の厚さ [Å]", ylabel="出射波の相対差", size=(620, 340),
+                   title="試料が厚いと投影近似から外れる",
                    caption="4 Å ずつのスライスで伝播させた出射波と、全体を 1 枚の位相物体とみなした出射波の差。"
                            "厚いほど試料の中の伝播(フレネル回折)が効く。")
     # 6. ドリフト

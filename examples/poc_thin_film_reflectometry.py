@@ -859,11 +859,17 @@ def make_figures(lam, chart, est, imgs, ident, micro, real):
                                                                        100 * (NUMBERS["real_bare_ratio_median"] - 1))
                            + "出典: Schwarz ら, Adv. Opt. Mater. (2024) doi:10.1002/adom.202402502、データ Zenodo 10.5281/zenodo.13753754(CC BY 4.0)。改変: 表から 2 本を選び、モデルの曲線を重ねた。")
     sh = real["sheffield"]
+    regular = [r for r in sh if r[4] >= 100.0]
+    outlier = [r for r in sh if r[4] < 100.0]
     figs.save_plot("real_standards",
-                   [("推定(最良の候補)", [r[3] for r in sh], [r[4] for r in sh]),
+                   [("推定(最良の候補)", [r[3] for r in regular], [r[4] for r in regular]),
+                    ("外れ: 公称 198.7 → 最良 51 nm(正解は 2 番目)",
+                     [r[3] for r in outlier], [r[4] for r in outlier]),
                     ("公称 = 推定", [150.0, 520.0], [150.0, 520.0])],
-                   xlabel="標準試料の公称の膜厚 [nm]", ylabel="スペクトルから推定 [nm]", kinds=["scatter", "line"],
-                   styles=[None, "dashed"], colors=["emphasis", "reference"], xlim=(150, 520), ylim=(0, 520),
+                   xlabel="標準試料の公称の膜厚 [nm]", ylabel="スペクトルから推定 [nm]",
+                   kinds=["scatter", "scatter", "line"],
+                   styles=[None, None, "dashed"], colors=["emphasis", "wrong", "reference"],
+                   xlim=(150, 520), ylim=(0, 520),
                    title="安価な分光器で測った SiO₂/Si 標準(10 本)",
                    caption="476.3 nm は最大 %.1f %%、198.7 nm は中央値 %.1f %% 厚めに読み、1 本は最良の候補が 51 nm に外れた"
                            "(正しい膜厚は 2 番目の候補)。" % (100 * NUMBERS["real_s1_worst"], 100 * NUMBERS["real_s2_median"])
@@ -977,16 +983,18 @@ def make_figures(lam, chart, est, imgs, ident, micro, real):
                            "色の向きだけで照合するので、薄い側でも候補が増える。")
     # 6. 膜厚を振る GIF(スペクトル + 色)
     frames = []
+    figure_scale = figs.figure_scale()
     for d in np.linspace(0.0, 1500.0, 46):
         p = spectrum(d)
         plot = figs.render_plot([("R(λ)", p[:, 0], p[:, 1])], xlabel="波長 [nm]", ylabel="反射率",
                                 title="SiO₂ %4.0f nm on Si" % d, size=(420, 280), ylim=(0.0, 0.6))
         sw = FO.film_color("SIO2", "SI", d, d + 1e-6, 2, exposure=1.6)["srgb"][0]
-        yy, xx = np.mgrid[0:280, 0:140]
-        disk = np.hypot(xx - 70, yy - 140) < 62
-        pane = np.full((280, 140, 3), 0.16)
+        yy, xx = np.mgrid[0:280 * figure_scale, 0:140 * figure_scale]
+        disk = np.hypot(xx - 70 * figure_scale, yy - 140 * figure_scale) < 62 * figure_scale
+        pane = np.full((280 * figure_scale, 140 * figure_scale, 3), 0.16)
         pane[disk] = sw                                           # その膜厚のウェハ(D65 で見た色)
-        frame = np.concatenate([np.asarray(plot)[..., :3], np.ones((280, 6, 3)), pane], axis=1)
+        frame = np.concatenate([np.asarray(plot)[..., :3],
+                                np.ones((280 * figure_scale, 6 * figure_scale, 3)), pane], axis=1)
         frames.append((np.clip(frame, 0, 1) * 255).astype(np.uint8))
     figs.save_gif("thickness_sweep", frames, "膜厚を 0 → 1.5 µm に振ると縞が増え、色が周期的に巡りながら淡くなる。", fps=8)
     # 7. 顕微鏡で見た彗星と暈(写真らしい絵 + 同じ模型の膜厚マップ)

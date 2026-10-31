@@ -24,8 +24,8 @@
   "name": "detect_vs_diameter",
   "caption": "小さい側の崖は CNR で予測どおり。大きい側の崖は背景推定の窓の大きさそのもの。",
   "shape": [
-   360,
-   716,
+   720,
+   1420,
    3
   ]
  },
@@ -34,8 +34,8 @@
   "name": "cnr_prediction",
   "caption": "",
   "shape": [
-   360,
-   560,
+   720,
+   1120,
    3
   ]
  },
@@ -44,8 +44,8 @@
   "name": "diameter_error",
   "caption": "面積径は小さい側で縮む(等高線が内側)。体積径は μ 既知なら偏らない。キャリパは縁の位置で決まる。",
   "shape": [
-   360,
-   790,
+   720,
+   1566,
    3
   ]
  },
@@ -64,8 +64,8 @@
   "name": "toe_detection",
   "caption": "",
   "shape": [
-   360,
-   560,
+   720,
+   1120,
    3
   ]
  },
@@ -74,8 +74,8 @@
   "name": "toe_false_positives",
   "caption": "",
   "shape": [
-   360,
-   748,
+   720,
+   1482,
    3
   ]
  },
@@ -94,8 +94,8 @@
   "name": "scatter_diameter_bias",
   "caption": "体積径は (1+SPR)^(-1/3) で縮む。しきい値径は小さい気孔ほど速く縮み、消える。",
   "shape": [
-   360,
-   737,
+   720,
+   1462,
    3
   ]
  },
@@ -104,8 +104,8 @@
   "name": "iqi_visibility",
   "caption": "視認基準 CNR ≥ 3(Rose)。10 mm の長さで平均。",
   "shape": [
-   248,
-   692,
+   496,
+   1372,
    3
   ],
   "csv": "11_iqi_visibility.csv",
@@ -116,8 +116,8 @@
   "name": "grade_errors",
   "caption": "ゼロ点は余盛を拾って全滅。fullseye の誤りは主に直径の誤分類。",
   "shape": [
-   176,
-   723,
+   352,
+   1441,
    3
   ],
   "csv": "12_grade_errors.csv",
