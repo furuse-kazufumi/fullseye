@@ -9,7 +9,7 @@
 <p>probe: <code style="color:#22d3bf">chromatic_confocal_probe</code> の dict。z は較正表を 3 次スプラインで逆引き(単調なので一意)。</p>
 <p>layer_material: 上の 2 ピークのあいだの層の材料(材料表の名前か屈折率の数)。与えると厚さを返す:</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">thickness_paraxial_um</code> = n(λ₂) × (z₂ − z₁) —— 見かけの厚さ × 屈折率(近軸)。λ₂ は下の面のピーク波長(下の面に焦点を結んでいるのはこの色なので、群屈折率でなく位相屈折率)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">thickness_um</code> = n(λ₂)(z₂ − z₁) / (1 − g/2)、g = 1/n − cos α/√(n² − sin²α)(平板が足す縦球面収差を厚さあたりで、応答のピークがその半分だけ深くずれる分を戻す。NA は λ₂ の較正の NA)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">thickness_um</code> = n(λ₂)(z₂ − z₁) / (1 − n·g/2)、g = 1/n − cos α/√(n² − sin²α)。<code style="color:#22d3bf">z</code> と LSA は空気中で鏡を動かした実空間座標であり、平板の LSA <code style="color:#22d3bf">t·g</code> の半分だけ応答ピークが動く。NA は λ₂ の較正の NA。</p>
 <p>返り値: <code style="color:#22d3bf">heights_um</code>(各ピークの z、遠いほど大)/ <code style="color:#22d3bf">wavelengths_nm</code> / 層を指定したとき <code style="color:#22d3bf">apparent_thickness_um</code> / <code style="color:#22d3bf">n_layer</code> / <code style="color:#22d3bf">na</code> / <code style="color:#22d3bf">thickness_paraxial_um</code> / <code style="color:#22d3bf">thickness_um</code>。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 空のピーク列、較正の帯域の外の波長、層を指定したのにピークが 2 本でない(薄すぎる膜は 1 本に潰れる —— 厚さを当て推量しない)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>

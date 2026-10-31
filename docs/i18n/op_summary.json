@@ -17836,6 +17836,24 @@
    "de": "Shewhart-Xbar-R-Regelkarte aus Untergruppen-Messwerten.",
    "hi": "subgroup measurements से Shewhart Xbar-R control chart।"
   },
+  "spc/proportion_interval": {
+   "fp": "40a502123fae",
+   "en": "Return the point estimate and confidence limits for the binomial proportion ``k/n`` (``table``).",
+   "zh": "返回二项比例 ``k/n`` 的点估计和置信限（``table``）。",
+   "tw": "傳回二項比例 ``k/n`` 的點估計與信賴界限（``table``）。",
+   "ko": "이항 비율 ``k/n`` 의 점 추정치와 신뢰 한계를 반환합니다(``table``).",
+   "de": "Liefert Punktschätzung und Konfidenzgrenzen für den Binomialanteil ``k/n`` (``table``).",
+   "hi": "द्विपद अनुपात ``k/n`` का बिंदु अनुमान और विश्वास सीमाएँ लौटाता है (``table``)।"
+  },
+  "spc/trials_for_all_success": {
+   "fp": "b4edf927c6ac",
+   "en": "Return the minimum trial count needed for all successes to establish ``p >= p_min`` at one-sided ``confidence`` (``scalar``).",
+   "zh": "返回在单侧 ``confidence`` 下以全数成功证明 ``p >= p_min`` 所需的最少试验数（``scalar``）。",
+   "tw": "傳回在單側 ``confidence`` 下以全數成功證明 ``p >= p_min`` 所需的最少試驗數（``scalar``）。",
+   "ko": "모두 성공했을 때 단측 ``confidence`` 로 ``p >= p_min`` 을 입증하는 데 필요한 최소 시행 수를 반환합니다(``scalar``).",
+   "de": "Liefert die minimale Versuchszahl, mit der ausschließlich Erfolge ``p >= p_min`` bei einseitigem ``confidence`` belegen (``scalar``).",
+   "hi": "सभी सफलताओं से एक-पक्षीय ``confidence`` पर ``p >= p_min`` स्थापित करने के लिए न्यूनतम परीक्षण संख्या लौटाता है (``scalar``)।"
+  },
   "spc/pod_ahat_fit": {
    "fp": "bda0bf37bc1f",
    "en": "Fit the â-vs-a regression by maximum likelihood with left and right censoring (``table``).",

@@ -13,24 +13,27 @@
    (band 内)を数で出す。これが面積の偏りの主因なら物理の主張を弱めて正直に書く。
 1. **SEM 像の物理モデル**(``sem_render``、新 op): 二次電子の縁効果(sec θ)+ ビーム
    PSF(ガウシアン)+ ポアソン雑音 + 緩い帯電。門 = 平面で一様 / 斜面で sec θ /
-   段差の明るい縁の幅が PSF 幅(いずれも閉形式)。
+   段差応答そのものの二次モーメント幅が PSF 幅(分割後の有効縁幅とは別の門)。
 2. **古典の分割連鎖**: しきい値 → ``blob_label`` → ``blob_features``。実データでは
    専門家マスクと ``seg_score_card``(Dice / Jaccard / 境界 F)。
-3. **寸法の偏り**: 合成(真値の面積が厳密)で、面積の太り ΔA を測り、**閉形式の予測
-   ΔA ≈ 周囲長 × 有効縁幅(≈ PSF 幅)** と照合。実データはマスク/分割の面積比を
+3. **寸法の偏り**: 合成(真値の面積が厳密)で、面積の太り ΔA を測り、正規 PSF の
+   閉形式 ``w = -σΦ⁻¹((t-1)/(secθ-1))`` と照合する。全条件での実測との相対差は
+   中央 0.260 なので「一致」とはせず、しきい値別の一致度を報告する。実データはマスク/分割の面積比を
    クラスごとに出す。
-4. **物理モデルによる補正**: 既知のビーム PSF 幅で面積を補正(ΔA を差し引く)。合成では
-   偏りがゼロに戻る門、実データでは偏りが縮むかを報告(縮まなければそのまま書く)。
+4. **物理モデルによる補正**: しきい値ごとの閉形式縁幅で ΔA を差し引く。しきい値を
+   1.02 / 1.05 / 1.10 と掃引し、残る偏りをすべて報告する。
 5. **埋め込み POD**: 良品の地(実データの空マスク画像、無ければ合成の雑音地)に既知寸法の
    欠陥を ``sem_render`` で埋め込み、分割連鎖で検出して ``pod_hitmiss_fit`` で a90/95。
    門 = 大きい欠陥ほど検出率が単調増加・a90/95 が存在。
 
-予想(2026-10-13): ★★**Dice は高いのに面積は系統的に太り、物理(既知 PSF 幅)で
-補正すると偏りが消える。** 予想どおりでなければ正直にそのまま書く。異常に良い結果は
+予想(2026-10-13): ★★**Dice は高いのに面積は系統的に太る。** 補正量は PSF だけでなく
+しきい値にも依存するため、閉形式と測定値を並べる。異常に良い結果は
 内訳を疑う。★実データの SEM 欠陥は**暗い**(背景より暗い穴)ので、縁は暗部を囲む明るい
 リングになる —— 合成の「明るい塊」と極性が逆であることも印字する。
 
-実データ(repo には同梱しない。環境変数 ``FULLSEYE_CARINTHIA_DATA`` に
+実データの分割しきい値は、以前の正解マスク面積由来から、画像の背景中央値と頑健標準偏差だけで
+決める方法へ変更した。以下の Dice などは環境変数がある実行だけで得る記録値であり、この実行では
+未確認である。実データ(repo には同梱しない。環境変数 ``FULLSEYE_CARINTHIA_DATA`` に
 ``carinthia-s.csv`` / ``images`` / ``masks`` のある dir を渡す。無ければ合成のみを走らせ
 「実データ門は未実行」と明示。CI は合成のみ):
 
@@ -45,6 +48,7 @@ Fullseye 寄与: SEM 計測の縁効果は外観検査の縁の太りと同じ�
 from __future__ import annotations
 
 import csv
+import math
 import os
 import sys
 import time
@@ -52,6 +56,7 @@ from pathlib import Path
 
 import numpy as np
 from scipy import ndimage as ndi
+from scipy.special import ndtri
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
@@ -98,6 +103,19 @@ def segment_bright(img, thr):
     return float(f["area"][i]), float(f["perimeter"][i]), (lab == i + 1)
 
 
+def edge_width_closed(threshold_ratio, psf_px, slope=CONE_SLOPE):
+    """ぼけた段のしきい値位置 [px]（解析解、外向きを正）。
+
+    内側の強度を ``sec(theta)``、背景を 1 とすると、正規 PSF の畳み込みから
+    ``w = -sigma*Phi^-1((t-1)/(sec(theta)-1))``。有効範囲は ``1 < t < sec(theta)``。
+    """
+    sec = math.sqrt(1.0 + float(slope) ** 2)
+    q = (float(threshold_ratio) - 1.0) / (sec - 1.0)
+    if not 0.0 < q < 1.0:
+        raise ValueError("threshold_ratio must lie between background 1 and sec(theta)")
+    return float(-float(psf_px) * ndtri(q))
+
+
 # --------------------------------------------------------------------------- #
 # 段 1: 物理モデルの閉形式の門                                                  #
 # --------------------------------------------------------------------------- #
@@ -117,7 +135,7 @@ def stage1_physics():
         print("     傾き %.1f(θ=%4.1f度): 比 %.5f / sec θ %.5f" %
               (slope, np.degrees(theta), meas, want))
 
-    print("   段差 → 明るい縁の幅 = PSF 幅:")
+    print("   段差応答 → 二次モーメント幅 = PSF 幅(分割後の有効縁幅とは別):")
     widths = []
     for psf in (1.0, 2.0, 3.0):
         H = np.zeros((80, 80)); H[:, 40:] = 30.0
@@ -131,7 +149,7 @@ def stage1_physics():
     assert np.ptp(flat) == 0.0, "平面が一様でない"
     assert sec_err < 1e-9, "斜面比が sec θ でない: %.2e" % sec_err
     assert all(abs(s - p) < 0.6 and s >= p for p, s in widths), "縁の幅が PSF に合わない: %r" % widths
-    print("   → 平面一様・斜面 sec θ(誤差 %.0e)・縁の幅 = PSF。" % sec_err)
+    print("   → 平面一様・斜面 sec θ(誤差 %.0e)・段差応答の二次モーメント幅 = PSF。" % sec_err)
     return sec_err
 
 
@@ -139,58 +157,85 @@ def stage1_physics():
 # 段 3: 寸法の偏り(合成、真値の面積が厳密)                                     #
 # --------------------------------------------------------------------------- #
 def stage3_bias_synthetic():
-    print("\n3) 寸法の偏り(合成、真値の面積が厳密): ΔA ≈ 周囲長 × 有効縁幅")
+    print("\n3) しきい値掃引: 測った縁幅と正規 PSF の独立な閉形式")
     print("   %-6s %-6s %8s %8s %7s %7s %8s %8s" %
           ("半径R", "PSF", "真面積", "測定面積", "比", "Dice", "周囲長", "ΔA/周囲長"))
-    S = 200; thr = BASE * 1.02             # 背景のすぐ上(外側へにじむ明るい縁を拾う)
+    S = 200
     rows, ratios, dices, w_over_psf = [], [], [], []
-    for R in (12, 18, 26, 36):
+    sweep = []
+    for tr in (1.02, 1.05, 1.10):
+      for R in (12, 18, 26, 36):
         for psf in (1.5, 2.5, 3.5):
             h, foot = cone((S, S), 100, 100, R)
             img = SM.sem_render(h, psf_px=psf, base=BASE)
-            a, p, mask = segment_bright(img, thr)
+            a, p, mask = segment_bright(img, BASE * tr)
             true = float(foot.sum())
             dice = SE.seg_dice_jaccard(mask.astype(np.int32), foot.astype(np.int32))["dice"]
             w = (a - true) / p if p > 0 else 0.0
+            wc = edge_width_closed(tr, psf)
+            sweep.append((tr, R, psf, w, wc, a / true))
             rows.append((R, psf, true, a, p))
             ratios.append(a / true); dices.append(dice); w_over_psf.append(w / psf)
             print("   %-6d %-6.1f %8.0f %8.0f %7.3f %7.3f %8.0f %8.2f" %
                   (R, psf, true, a, a / true, dice, p, w))
-    wop = float(np.median(w_over_psf))
+    wop = float(np.median([w / p for tr, _r, p, w, _wc, _ar in sweep if tr == 1.02]))
     dmed = float(np.median(dices))
-    print("   → ★Dice は高い(中央 %.3f = 形はよく合う)のに、面積は系統的に太る"
-          "(比 %.3f〜%.3f)。有効縁幅 / PSF の中央値 = %.2f —— **太りは 周囲長 × PSF 幅 "
-          "でよく説明できる**。" % (dmed, min(ratios), max(ratios), wop))
-    assert min(ratios) > 1.0, "太りが出ない(どこかで比が 1 以下): %.3f" % min(ratios)
+    print("   → ★Dice は高い(中央 %.3f = 形はよく合う)一方、面積比は %.3f〜%.3f。"
+          "t/base=1.02 に限ると有効縁幅 / PSF の中央値 = %.2f。"
+          % (dmed, min(ratios), max(ratios), wop))
+    low_ratios = [ar for tr, _r, _p, _w, _wc, ar in sweep if tr == 1.02]
+    assert min(low_ratios) > 1.0, "t/base=1.02 で太りが出ない: %.3f" % min(low_ratios)
     assert dmed > 0.8, "Dice が高くない(形が合っていない): %.3f" % dmed
-    assert 0.7 < wop < 1.4, "ΔA が 周囲長×PSF から外れる: w/psf=%.2f" % wop
-    return rows, ratios, wop, dmed
+    rel = float(np.median([abs(w - wc) / max(abs(wc), 1e-9) for _, _, _, w, wc, _ in sweep]))
+    print("   → 閉形式との縁幅の相対差(全しきい値・半径・PSFの中央値) %.3f。" % rel)
+    for tr in (1.02, 1.05, 1.10):
+        tr_rel = float(np.median([abs(w - wc) / max(abs(wc), 1e-9)
+                                 for t, _, _, w, wc, _ in sweep if t == tr]))
+        print("     t/base %.2f: 閉形式との相対差の中央値 %.3f" % (tr, tr_rel))
+    assert rel < 0.35, "測定縁幅が閉形式から外れる: %.3f" % rel
+    return rows, ratios, wop, dmed, sweep
 
 
 # --------------------------------------------------------------------------- #
-# 段 4: 物理モデルによる補正(既知のビーム PSF 幅で ΔA を差し引く)              #
+# 段 4: しきい値ごとの閉形式縁幅で ΔA を差し引く                              #
 # --------------------------------------------------------------------------- #
 def stage4_correction_synthetic():
-    print("\n4) 物理による補正: 面積 − 周囲長 × PSF幅 → 合成では偏りが消える")
+    print("\n4) しきい値ごとの閉形式縁幅で面積を補正")
     print("   %-6s %-6s %8s %9s %9s" % ("半径R", "PSF", "真面積", "補正前比", "補正後比"))
-    S = 200; thr = BASE * 1.02
-    before, after = [], []
-    for R in (12, 18, 26, 36):
+    S = 200
+    by_threshold = {}
+    for tr in (1.02, 1.05, 1.10):
+      before, after = [], []
+      for R in (12, 18, 26, 36):
         for psf in (1.5, 2.5, 3.5):
             h, foot = cone((S, S), 100, 100, R)
             img = SM.sem_render(h, psf_px=psf, base=BASE)
-            a, p, _ = segment_bright(img, thr)
+            a, p, _ = segment_bright(img, BASE * tr)
             true = float(foot.sum())
-            corrected = a - p * psf          # 既知のビーム PSF 幅で縁の太りを引く
+            corrected = a - p * edge_width_closed(tr, psf)
             before.append(a / true); after.append(corrected / true)
             print("   %-6d %-6.1f %8.0f %9.3f %9.3f" % (R, psf, true, a / true, corrected / true))
-    mb = float(np.median([abs(x - 1) for x in before]))
-    ma = float(np.median([abs(x - 1) for x in after]))
-    print("   → 補正前の偏り(中央 |比-1|)%.3f → 補正後 %.3f。**既知の PSF 幅で縁の太りが消える**。"
-          % (mb, ma))
-    assert ma < mb, "補正で偏りが縮まない: 前 %.3f 後 %.3f" % (mb, ma)
-    assert ma < 0.05, "補正後も偏りが残る: %.3f" % ma
-    return mb, ma
+      mb = float(np.median([abs(x - 1) for x in before]))
+      ma = float(np.median([abs(x - 1) for x in after]))
+      by_threshold[tr] = (mb, ma)
+      print("   → t/base %.2f: 補正前 %.3f → 補正後 %.3f" % (tr, mb, ma))
+      assert ma < mb
+    return by_threshold
+
+
+def stage4_noise_check():
+    """図と同じ 45 e-/px で、低いしきい値が雑音を拾う反例を数える。"""
+    h, foot = cone((200, 200), 100, 100, 26)
+    ratios = []
+    for seed in range(5):
+        img = SM.sem_render(h, psf_px=2.5, base=BASE, dose=45.0, seed=seed)
+        a, _p, _m = segment_bright(img, BASE * 1.02)
+        ratios.append(a / float(foot.sum()))
+    med = float(np.median(ratios))
+    print("   線量 45 e-/px・t/base 1.02: 面積比 %.2f〜%.2f、中央値 %.2f（雑音なしの補正は適用不可）"
+          % (min(ratios), max(ratios), med))
+    assert med > 5.0
+    return ratios
 
 
 # --------------------------------------------------------------------------- #
@@ -350,9 +395,9 @@ def stage2_3_real(picked):
             if M.sum() < 30:
                 continue
             polar.append(float(im[M].mean() - im[~M].mean()))
-            # 欠陥は暗い → 暗部を拾う(面積ぶんだけ下側分位)
-            q = 100.0 * min(2.0 * M.mean(), 0.5)
-            seg = im < np.percentile(im, q)
+            # 正解マスクを見ず、画像の背景中央値と頑健標準偏差だけで決める。
+            bg = float(np.median(im)); sig = _robust_std(im)
+            seg = im < (bg - 3.0 * sig)
             seg = ndi.binary_opening(seg, iterations=1)
             dj = SE.seg_dice_jaccard(seg.astype(np.int32), M.astype(np.int32))
             bf = SE.seg_boundary_f(seg.astype(np.int32), M.astype(np.int32), tau=2.0)
@@ -466,22 +511,21 @@ def make_figures():
                       "= 面積の太り。形(Dice)は高いまま、寸法だけが系統的に太る。")
 
     radii = [10, 14, 18, 24, 30, 38]
-    before, after = [], []
+    before = []
     for R in radii:
         hh, ff = cone((S, S), 100, 100, R)
         im = SM.sem_render(hh, psf_px=3.0, base=BASE)
         a, p, _ = segment_bright(im, thr); true = float(ff.sum())
-        before.append(a / true); after.append((a - p * 3.0) / true)
+        before.append(a / true)
     figs.save_plot(
         "sem_area_bias_vs_size",
-        [("補正前(面積/真値)", radii, before),
-         ("補正後(PSF 幅を引く)", radii, after),
+        [("測定面積/真値", radii, before),
          ("真値 = 1.0", radii, [1.0] * len(radii))],
         xlabel="欠陥半径 R [px]", ylabel="測定面積 / 真の面積",
         styles=[None, None, "dashed"],
         colors=["wrong", "right", "reference"],
-        caption="面積の太りは小さい欠陥ほど大きい(周囲長/面積 ∝ 1/R)。既知のビーム PSF 幅を"
-                "引くと、どの大きさでも 1.0 に戻る。")
+        caption="t/base=1.02 の数値模型。小さい欠陥ほど面積比が大きい。"
+                "PSF 幅だけを引く一般補正はこの図では主張しない。")
     return 5
 
 
@@ -503,8 +547,10 @@ def main():
     # --- 合成段(常に走る = CI の門) ---
     t_syn0 = time.perf_counter()
     sec_err = stage1_physics()
-    _rows, ratios, wop, dmed = stage3_bias_synthetic()
-    mb, ma = stage4_correction_synthetic()
+    _rows, ratios, wop, dmed, sweep = stage3_bias_synthetic()
+    corrections = stage4_correction_synthetic()
+    noisy_ratios = stage4_noise_check()
+    mb, ma = corrections[1.02]
 
     # --- 埋め込み POD(地は実データのクラス 6、無ければ合成) ---
     bgs, label = None, "合成の雑音地"
@@ -541,9 +587,9 @@ def main():
     print("   所要: 実データ段 %.2f 秒 / 合成段 %.2f 秒 / 合計 %.2f 秒"
           % (t_real, t_syn, time.perf_counter() - t0))
 
-    print("\nPASS: sem_render は平面一様・斜面 sec θ・縁幅=PSF(誤差 %.0e)。"
-          "面積は系統的に太る(比 %.2f〜%.2f)が Dice は高い(中央 %.3f)—— 既知の PSF 幅で"
-          "引くと偏りは %.3f→%.3f に消える。埋め込み POD(地 = %s)の a90/95 は %.1f px。%s"
+    print("\nPASS: sem_render は平面一様・斜面 sec θ・段差応答の二次モーメント幅=PSF(誤差 %.0e)。"
+          "面積比はしきい値で変わる(%.2f〜%.2f)が Dice は高い(中央 %.3f)—— t/base=1.02 の"
+          "閉形式補正で偏りは %.3f→%.3f。埋め込み POD(地 = %s)の a90/95 は %.1f px。%s"
           % (sec_err, min(ratios), max(ratios), dmed, mb, ma, label, a9095,
              ("実データ門も通過。" if real_on else "実データ門は未実行(合成のみ)。")))
     return 0

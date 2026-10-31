@@ -10,12 +10,15 @@ OTF は Goodman, Introduction to Fourier Optics 3rd ed., Eq. (6-32)。Fullseye
 合成 MTF 真値に対して最大 0.025 cyc/pixel、10 % 超の破綻境界は計算する。
 """
 from __future__ import annotations
-import json,sys
+import json,os,sys
 from pathlib import Path
 import numpy as np
 sys.path.insert(0,str(Path(__file__).resolve().parents[1])); import optics as fs  # noqa:E402
 import examplefig as figs  # noqa: E402
 SLUG="poc_slanted_edge_sfr_limits"; ROOT=Path(__file__).resolve().parents[1]; OUT=ROOT/"docs/articles/assets/poc"/SLUG
+if not os.environ.get("FULLSEYE_FIGURE_DIR"):   # 図の規約: 環境変数が無ければ公開の図(docs/)を書かない
+    import tempfile
+    OUT = Path(tempfile.mkdtemp(prefix=SLUG + "_"))
 PITCH=3.45; FNO=5.6; LAM=.55
 def truth_curve():
     op=np.asarray(fs.mtf_diffraction(FNO,LAM,801)); fpx=op[:,0]*PITCH/1000; y=op[:,1]*abs(np.sinc(fpx)); keep=fpx<=.5

@@ -1,0 +1,21 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">trials_for_all_success — SPC <code style="color:#22d3bf">pod</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">scalar</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.trials_for_all_success(p_min, *, confidence=0.95)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pod; pod.trials_for_all_success(p_min, *, confidence=0.95)</code>、台帳から引くなら <code style="color:#22d3bf">opsspc.get(&quot;trials_for_all_success&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>全数成功で <code style="color:#22d3bf">p &gt;= p_min</code> を片側 <code style="color:#22d3bf">confidence</code> で示す最小試行数(<code style="color:#22d3bf">scalar</code>)。</p>
+<p>返り値は整数で、Clopper--Pearson の全数成功時の閉形式 <code style="color:#22d3bf">(1-confidence)**(1/n) &gt;= p_min</code> に基づく。たとえば POD &gt;= 0.90 を 95 % 信頼で示すには 29/29 が必要である。誤警報率 <code style="color:#22d3bf">p &lt;= p_max</code> を 0 件で示す件数は <code style="color:#22d3bf">trials_for_all_success(1-p_max, confidence=...)</code> と同じ。</p>
+<p>拒否(<code style="color:#22d3bf">ValueError</code>): <code style="color:#22d3bf">p_min</code> または <code style="color:#22d3bf">confidence</code> が有限な (0, 1) 外。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:proportion_interval_audit">proportion_interval_audit</a> — <code style="color:#22d3bf">py -3.11 examples/proportion_interval_audit.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">scalar</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">pod</code>)</h3>
+<p><a style="color:#22d3bf" href="opspc:proportion_interval">proportion_interval</a> · <a style="color:#22d3bf" href="opspc:pod_ahat_fit">pod_ahat_fit</a> · <a style="color:#22d3bf" href="opspc:pod_from_ahat">pod_from_ahat</a> · <a style="color:#22d3bf" href="opspc:pod_hitmiss_fit">pod_hitmiss_fit</a> · <a style="color:#22d3bf" href="opspc:pod_false_call">pod_false_call</a> · <a style="color:#22d3bf" href="opspc:pod_decision_tradeoff">pod_decision_tradeoff</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pod.py — SPC operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

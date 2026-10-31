@@ -9,7 +9,7 @@
 """
 from __future__ import annotations
 
-import json, sys
+import json, os, sys
 from pathlib import Path
 import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -19,6 +19,9 @@ import examplefig as figs  # noqa: E402
 SLUG = "poc_wavefront_aberration_limits"
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "docs/articles/assets/poc" / SLUG
+if not os.environ.get("FULLSEYE_FIGURE_DIR"):   # 図の規約: 環境変数が無ければ公開の図(docs/)を書かない
+    import tempfile
+    OUT = Path(tempfile.mkdtemp(prefix=SLUG + "_"))
 
 def zernikes(n=192):
     q=(np.arange(n)+.5)*2/n-1; x,y=np.meshgrid(q,q); r=np.hypot(x,y); t=np.arctan2(y,x); m=r<=1
