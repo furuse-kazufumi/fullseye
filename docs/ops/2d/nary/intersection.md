@@ -5,7 +5,7 @@ category: nary
 in: region × region
 out: region
 halcon: intersection
-examples: [gallery_nary_image_algebra, poc_connectome_across_decades, poc_connectome_across_worms, poc_driving_crossing, poc_driving_japan_town, poc_driving_pass, poc_driving_school, poc_driving_town, poc_worm_neurites_grow]
+examples: [gallery_nary_image_algebra, poc_battery_electrode_tortuosity, poc_connectome_across_decades, poc_connectome_across_worms, poc_driving_crossing, poc_driving_japan_town, poc_driving_pass, poc_driving_school, poc_driving_town, poc_worm_neurites_grow]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.8.1  # fullseye lib version this note was generated for
@@ -29,6 +29,7 @@ version: 0.8.1  # fullseye lib version this note was generated for
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery_nary_image_algebra](../../../../examples/gallery_nary_image_algebra.py) — `py -3.11 examples/gallery_nary_image_algebra.py`
+- [poc_battery_electrode_tortuosity](../../../../examples/poc_battery_electrode_tortuosity.py) — `py -3.11 examples/poc_battery_electrode_tortuosity.py`
 - [poc_connectome_across_decades](../../../../examples/poc_connectome_across_decades.py) — `py -3.11 examples/poc_connectome_across_decades.py`
 - [poc_connectome_across_worms](../../../../examples/poc_connectome_across_worms.py) — `py -3.11 examples/poc_connectome_across_worms.py`
 - [poc_driving_crossing](../../../../examples/poc_driving_crossing.py) — `py -3.11 examples/poc_driving_crossing.py`
