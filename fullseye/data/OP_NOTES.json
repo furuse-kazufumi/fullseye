@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3609,
- "n_notes": 3615,
+ "n_ops": 3623,
+ "n_notes": 3629,
  "notes": {
   "vol_dilate": [
    {
@@ -23128,6 +23128,146 @@
     "in": "labels2d × labels2d × table",
     "out": "table",
     "path": "docs/ops/emproof/wiring/seg_wiring_variation.md"
+   }
+  ],
+  "e57_read": [
+   {
+    "op": "e57_read",
+    "dim": "fileio",
+    "category": "e57",
+    "in": "any",
+    "out": "table",
+    "path": "docs/ops/fileio/e57/e57_read.md"
+   }
+  ],
+  "e57_write": [
+   {
+    "op": "e57_write",
+    "dim": "fileio",
+    "category": "e57",
+    "in": "table",
+    "out": "any",
+    "path": "docs/ops/fileio/e57/e57_write.md"
+   }
+  ],
+  "mesh_read_obj": [
+   {
+    "op": "mesh_read_obj",
+    "dim": "fileio",
+    "category": "mesh",
+    "in": "text",
+    "out": "mesh",
+    "path": "docs/ops/fileio/mesh/mesh_read_obj.md"
+   }
+  ],
+  "mesh_read_off": [
+   {
+    "op": "mesh_read_off",
+    "dim": "fileio",
+    "category": "mesh",
+    "in": "text",
+    "out": "mesh",
+    "path": "docs/ops/fileio/mesh/mesh_read_off.md"
+   }
+  ],
+  "mesh_read_ply": [
+   {
+    "op": "mesh_read_ply",
+    "dim": "fileio",
+    "category": "mesh",
+    "in": "any",
+    "out": "table",
+    "path": "docs/ops/fileio/mesh/mesh_read_ply.md"
+   }
+  ],
+  "mesh_read_stl": [
+   {
+    "op": "mesh_read_stl",
+    "dim": "fileio",
+    "category": "mesh",
+    "in": "any",
+    "out": "mesh",
+    "path": "docs/ops/fileio/mesh/mesh_read_stl.md"
+   }
+  ],
+  "mesh_write_obj": [
+   {
+    "op": "mesh_write_obj",
+    "dim": "fileio",
+    "category": "mesh",
+    "in": "mesh",
+    "out": "text",
+    "path": "docs/ops/fileio/mesh/mesh_write_obj.md"
+   }
+  ],
+  "mesh_write_off": [
+   {
+    "op": "mesh_write_off",
+    "dim": "fileio",
+    "category": "mesh",
+    "in": "mesh",
+    "out": "text",
+    "path": "docs/ops/fileio/mesh/mesh_write_off.md"
+   }
+  ],
+  "mesh_write_ply": [
+   {
+    "op": "mesh_write_ply",
+    "dim": "fileio",
+    "category": "mesh",
+    "in": "table",
+    "out": "any",
+    "path": "docs/ops/fileio/mesh/mesh_write_ply.md"
+   }
+  ],
+  "mesh_write_stl": [
+   {
+    "op": "mesh_write_stl",
+    "dim": "fileio",
+    "category": "mesh",
+    "in": "mesh",
+    "out": "any",
+    "path": "docs/ops/fileio/mesh/mesh_write_stl.md"
+   }
+  ],
+  "points_read_xyz": [
+   {
+    "op": "points_read_xyz",
+    "dim": "fileio",
+    "category": "points",
+    "in": "text",
+    "out": "points",
+    "path": "docs/ops/fileio/points/points_read_xyz.md"
+   }
+  ],
+  "points_write_xyz": [
+   {
+    "op": "points_write_xyz",
+    "dim": "fileio",
+    "category": "points",
+    "in": "points",
+    "out": "text",
+    "path": "docs/ops/fileio/points/points_write_xyz.md"
+   }
+  ],
+  "table_read_csv": [
+   {
+    "op": "table_read_csv",
+    "dim": "fileio",
+    "category": "table",
+    "in": "text",
+    "out": "table",
+    "path": "docs/ops/fileio/table/table_read_csv.md"
+   }
+  ],
+  "table_write_csv": [
+   {
+    "op": "table_write_csv",
+    "dim": "fileio",
+    "category": "table",
+    "in": "table",
+    "out": "text",
+    "path": "docs/ops/fileio/table/table_write_csv.md"
    }
   ],
   "fit_circle_geometric": [

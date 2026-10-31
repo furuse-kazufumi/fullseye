@@ -38,6 +38,8 @@ import sys
 
 _ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, _ROOT)
+sys.path.insert(0, os.path.join(_ROOT, "tools"))
+from exhibit_glossary import glossary_line, load_glossary
 
 EXHIBITS = os.path.join(_ROOT, "docs", "articles", "exhibits")
 ASSETS = os.path.join(_ROOT, "docs", "articles", "assets", "poc")
@@ -110,6 +112,10 @@ def _load():
         for k in ("wing", "title_ja", "title_en", "caption_ja", "caption_en", "added"):
             if not ex.get(k):
                 raise BuildError("poc_captions.json: %s に %s が無い" % (ex["id"], k))
+        if "lead_ja" not in ex or "lead_en" not in ex:
+            raise BuildError("poc_captions.json: %s に lead のキーが無い" % ex["id"])
+        if bool(ex["lead_ja"]) != bool(ex["lead_en"]):
+            raise BuildError("poc_captions.json: %s の lead が日英で片落ち" % ex["id"])
         for k in ("caption_ja", "caption_en", "title_ja", "title_en"):
             if _LOCAL.search(ex[k]):
                 raise BuildError("ローカルパスが混ざっている: %s.%s" % (ex["id"], k))
@@ -416,20 +422,26 @@ def _exhibit_md(no: str, ex: dict, lang: str, pick: dict, thumb: str, byid: dict
     # plaque.  Keep the detailed plaque, but let the canonical registry describe the
     # new lead image precisely in each published language.
     cap = ex.get("figure_caption_" + lang) or ex["caption_" + lang]
+    lead = ex["lead_" + lang].strip() or ex["caption_" + lang]
     full = RAW + ex["id"] + "/" + pick["file"]
     th = RAW + ex["id"] + "/" + thumb
     run = ex.get("run") or ("py -3.11 examples/%s.py" % ex["id"])
     src = GH + "examples/%s.py" % ex["id"]
+    term_line = glossary_line(ex, lang, load_glossary())
     lines = [
         # ★見出しは**収蔵番号**。順路番号(何番目か)は出さない —— 展示を 1 つ挟むだけで
         #   以降が全部ずれ、記事を分けるたびに番号が動くため(2026-09-25)。
         "## No.%s —— %s" % (no, title),
+        "",
+        lead,
         "",
         "[![%s](%s)](%s)" % (title.replace("]", ")"), th, full),
         "",
         "*↑ **%s** ―― %s*" % (title, cap),
         "",
     ]
+    if term_line:
+        lines += [term_line, ""]
     if second is not None and thumb2 is not None:
         full2 = RAW + ex["id"] + "/" + second["file"]
         th2 = RAW + ex["id"] + "/" + thumb2

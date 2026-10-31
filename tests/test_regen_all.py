@@ -93,10 +93,11 @@ _OLD_ORDER = [
     "gen_auto_specs_data.py", "tools/opdocs.py", "tools/gen_op_catalog.py",
     "tools/gen_capabilities_index.py", "tools/gen_hardening_index.py", "tools/audit_fallbacks.py",
     "tools/gen_maturity.py",
-    "tools/gen_exhibit_numbers.py", "tools/gen_wingpoc_gallery.py", "tools/gen_examples_readme.py",
+    "tools/gen_exhibit_numbers.py", "tools/gen_exhibit_glossary.py",
+    "tools/gen_wingpoc_gallery.py", "tools/gen_examples_readme.py",
     "tools/gen_oss_landscape.py", "tools/gen_view2026_pages.py", "tools/gen_trust_block.py",
     "tools/gen_literature_counts.py", "tools/gen_docs_index_ops.py", "tools/gen_examples3d_doc.py",
-    "tools/gen_sensor_playbook.py", "imgevolve.py", "tools/halcon_compat_profile.py", "catalog.py", "dispositions.py", "references.py", "samples.py",
+    "tools/gen_sensor_playbook.py", "imgevolve.py", "tools/audit_file_formats.py", "tools/halcon_compat_profile.py", "catalog.py", "dispositions.py", "references.py", "samples.py",
     "tools/gen_mcp_data.py", "tools/gen_recipe_index.py", "tools/gen_recipe_retrieval_report.py", "tools/gen_rag_benchmark_report.py", "tools/conversion_matrix.py", "tools/gen_design_notes.py",
     "tools/gen_op_facets.py", "tools/measure_mcp_context.py",
     "tools/gen_doc_counts.py",
@@ -129,6 +130,8 @@ def test_the_order_gate_catches_the_old_order():
         ("tools/gen_trust_block.py", "imgevolve.py"),
         # 2026-10-22: 互換プロファイルは HALCON_PARITY.md を書き、旧順序では docs 索引がそれを先に読む。
         ("tools/gen_docs_index_ops.py", "tools/halcon_compat_profile.py"),
+        # FILE_FORMATS.md は audit_file_formats が書き、docs 索引が文書地図へ載せる。
+        ("tools/gen_docs_index_ops.py", "tools/audit_file_formats.py"),
             ("tools/gen_rag_benchmark_report.py", "tools/gen_op_facets.py"),
     } | {("tools/gen_docs_index_ops.py", w) for w in (
         "tools/gen_examples3d_doc.py", "tools/gen_sensor_playbook.py", "catalog.py",

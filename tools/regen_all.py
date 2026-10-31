@@ -59,6 +59,7 @@ CHAIN = [
     #   (統合作業で `imgevolve.py index` を手で先に回して回避していた)。順序は
     #   下の OUTPUTS / READS から `order_violations()` が検査する。
     (["imgevolve.py", "index"], "docs/OP_INDEX.json(レジストリの機械可読索引)"),
+    (["tools/audit_file_formats.py"], "docs/FILE_FORMATS.md(実装・op・テストから生成するファイル形式棚卸し)"),
     (["tools/halcon_compat_profile.py", "--manifest"],
      "HALCON 互換プロファイル + 比較試験 manifest + HALCON_PARITY の H15 節"),
     (["tools/opdocs.py", "all"],
@@ -72,6 +73,7 @@ CHAIN = [
     # ★展示館より**先**に回す —— 生成器は見出しに収蔵番号を出すので、
     #   未発行の展示が 1 つでもあると BuildError で止まる。
     (["tools/gen_exhibit_numbers.py"], "収蔵番号の発行(追記のみ・既存は動かさない)"),
+    (["tools/gen_exhibit_glossary.py"], "展示の専門用語辞書 docs/articles/exhibits/glossary.json"),
     (["tools/gen_wingpoc_gallery.py"], "PoC 展示館(総合案内 + 棟、ja/en)"),
     (["tools/gen_examples_readme.py"], "examples/README.md"),
     (["tools/gen_oss_landscape.py"], "既存 OSS の地図(docs/literature/oss_landscape.json → OSS_LANDSCAPE.md)"),
@@ -143,6 +145,7 @@ CHAIN = [
 OUTPUTS = {
     "gen_auto_specs_data.py": ["auto_specs_data.py"],
     "imgevolve.py": ["docs/OP_INDEX.json"],
+    "tools/audit_file_formats.py": ["docs/FILE_FORMATS.md"],
     "tools/halcon_compat_profile.py": ["docs/halcon_compat_profile.json",
                                         "docs/halcon_comparison_manifest.json",
                                         "docs/HALCON_PARITY.md"],
@@ -154,6 +157,7 @@ OUTPUTS = {
     "tools/audit_fallbacks.py": ["docs/fallback_audit.json"],
     "tools/gen_maturity.py": ["docs/MATURITY.md", "docs/maturity.json"],
     "tools/gen_exhibit_numbers.py": ["docs/articles/exhibits/exhibit_numbers.json"],
+    "tools/gen_exhibit_glossary.py": ["docs/articles/exhibits/glossary.json"],
     "tools/gen_wingpoc_gallery.py": ["docs/articles/exhibits/wingpoc.*.md",
                                      "docs/articles/fullseye_poc_museum_qiita_*.md",
                                      # 棟ごとの記事(fullseye_poc_museum_<棟>_qiita_<言語>.md)も同じ段が書く
@@ -226,15 +230,18 @@ MAY_OUTPUTS = {
 #: 2026-10-15 に audit hook の実測(全 23 段)から起こした。
 READS = {
     "imgevolve.py": ["fullseye/data/OP_INDEX.json", "fullseye/data/op_knob.json"],
+    "tools/audit_file_formats.py": ["auto_specs_data.py", "docs/OP_INDEX.json"],
     "tools/halcon_compat_profile.py": ["docs/OP_INDEX.json"],
     "tools/gen_capabilities_index.py": ["docs/OP_INDEX.json"],
-    "tools/gen_wingpoc_gallery.py": ["docs/articles/exhibits/exhibit_numbers.json"],
+    "tools/gen_wingpoc_gallery.py": ["docs/articles/exhibits/exhibit_numbers.json",
+                                      "docs/articles/exhibits/glossary.json"],
+    "tools/gen_view2026_pages.py": ["docs/articles/exhibits/glossary.json"],
     "tools/gen_trust_block.py": ["docs/OP_INDEX.json", "docs/maturity.json",
                                  "docs/README.md", "docs/README.*.md"],
     "tools/gen_design_notes.py": ["auto_specs_data.py"],
     "tools/gen_docs_index_ops.py": [
         "docs/ops/*", "docs/OP_CATALOG.md", "docs/CAPABILITIES.md", "docs/CAPABILITIES.*.md",
-        "docs/HARDENING.md", "docs/HARDENING.*.md", "docs/MATURITY.md",
+        "docs/HARDENING.md", "docs/HARDENING.*.md", "docs/MATURITY.md", "docs/FILE_FORMATS.md",
         "docs/articles/exhibits/wingpoc.*.md", "docs/articles/fullseye_poc_museum_qiita_*.md", "docs/articles/fullseye_poc_museum_*_qiita_*.md",
         "docs/literature/*.md",                       # 文献ノート全部(2026-10-23: 列挙だと増えた分が READS から漏れる)
         "docs/README.md", "docs/README.*.md", "docs/OP_COUNT_HISTORY.md",

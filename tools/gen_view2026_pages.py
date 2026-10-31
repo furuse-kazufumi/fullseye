@@ -54,6 +54,10 @@ from collections import Counter
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT / "tools") not in sys.path:
+    sys.path.insert(0, str(ROOT / "tools"))
+from exhibit_glossary import LEDGER as GLOSSARY_LEDGER, glossary_line, load_glossary
+
 DOCS = ROOT / "docs"
 BASE = DOCS / "view2026"
 DATA = BASE / "exhibits.json"
@@ -126,6 +130,11 @@ python examples/poc_focus_stacking.py
 
 def load(path: Path = DATA) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _glossary_inputs() -> tuple[dict, dict]:
+    rows = json.loads(GLOSSARY_LEDGER.read_text(encoding="utf-8"))["exhibits"]
+    return {row["id"]: row for row in rows}, load_glossary()
 
 
 def _media_rel(d: dict, e: dict) -> str:
@@ -211,7 +220,7 @@ def validate(d: dict) -> list[str]:
         bad.append("見どころの id が重複している")
     for e in d["exhibits"]:
         pid = e["id"]
-        for f in ("label", "see"):
+        for f in ("label", "lead", "see"):
             full("%s.%s" % (pid, f), e[f])
         full("%s.num" % pid, e["num"], allow_empty=True)
         if "youtube_url" not in e:
@@ -361,6 +370,7 @@ def counts(d: dict) -> tuple[int, int]:
 
 def build(d: dict, lang: str) -> str:
     ui = {k: v.get(lang, "") for k, v in d["ui"].items()}
+    glossary_ledger, glossary = _glossary_inputs()
     up = "" if lang == "ja" else "../"            # ページから docs/view2026/ への相対
     docs = up + "../"                              # ページから docs/ への相対
     def media(e):                                  # 動く 3-D の HTML はそのページの言語で開く
@@ -461,12 +471,16 @@ def build(d: dict, lang: str) -> str:
             if _is_viewer(d, e):
                 kind += ", " + _viewer_mb(d, e)
             youtube = " [YouTube](%s)" % e["youtube_url"] if e.get("youtube_url") else ""
-            line = "- [%s](%s) (%s): %s%s%s" % (
-                e["label"][lang], media(e), kind, e["see"][lang], num, link + youtube)
+            out.append("- [%s](%s) (%s): %s" % (
+                e["label"][lang], media(e), kind, e["lead"][lang]))
+            out.append("  %s%s%s" % (e["see"][lang], num, link + youtube))
             if lang in ("ja", "en") and e.get("ops"):
                 label = "使った Fullseye の op" if lang == "ja" else "Fullseye ops used"
-                line += "<br>\n  %s: %s" % (label, " · ".join("`%s`" % op for op in e["ops"]))
-            out.append(line)
+                out.append("  %s: %s" % (label, " · ".join("`%s`" % op for op in e["ops"])))
+            source_exhibit = glossary_ledger.get(e["id"])
+            term_line = glossary_line(source_exhibit, lang, glossary) if source_exhibit else ""
+            if term_line:
+                out.append("  " + term_line)
         out.append("")
     out += ["</div>", "", "## " + ui["h_about"], "", ui["about"], ""]
 
