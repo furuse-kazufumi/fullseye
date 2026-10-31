@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import copy
 import importlib.util
+import json
 import os
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -41,6 +42,31 @@ def test_other_examples_are_counted_not_typed():
     assert n > 50
     page = G.build(G.load(), "ja")
     assert ("PoC 以外の使用例 %d 本" % n) in page
+
+
+def test_every_highlight_has_lead_in_all_languages_and_renders_it_first():
+    d = G.load()
+    ledger = {
+        e["id"]: e for e in json.loads(
+            (G.ROOT / d["all_source"]).read_text(encoding="utf-8"))["exhibits"]
+    }
+    for exhibit in d["exhibits"]:
+        assert set(exhibit["lead"]) == set(d["langs"]), exhibit["id"]
+        assert all(exhibit["lead"][lang].strip() for lang in d["langs"]), exhibit["id"]
+        source = ledger.get(exhibit["id"])
+        if source:
+            assert exhibit["lead"]["ja"] == source["lead_ja"]
+            assert exhibit["lead"]["en"] == source["lead_en"]
+            for lang in d["langs"][2:]:
+                assert exhibit["lead"][lang] == source["lead_en"]
+
+    page = G.build(d, "ja")
+    for exhibit in d["exhibits"]:
+        marker = "- [%s]" % exhibit["label"]["ja"]
+        start = page.index(marker)
+        end = page.find("\n- [", start + len(marker))
+        block = page[start:end if end >= 0 else None]
+        assert block.index(exhibit["lead"]["ja"]) < block.index(exhibit["see"]["ja"]), exhibit["id"]
 
 
 def test_a_missing_translation_stops_the_generator():

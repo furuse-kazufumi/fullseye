@@ -12,6 +12,7 @@ fail-closed 側の検査もここに置く。展示が増えるたびに人が�
 from __future__ import annotations
 
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -21,8 +22,68 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 
 import build_exhibits as B  # noqa: E402
+from exhibit_glossary import load_glossary, terms_for_exhibit  # noqa: E402
 
 BASE = "https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/"
+CAPTIONS = ROOT / "docs" / "articles" / "exhibits" / "poc_captions.json"
+
+
+def _caption_exhibits():
+    return json.loads(CAPTIONS.read_text(encoding="utf-8"))["exhibits"]
+
+
+def _sentence_count(text: str, lang: str) -> int:
+    if lang == "ja":
+        return text.count("。")
+    return text.count(". ") + int(text.endswith(".")) + text.count("? ") + int(text.endswith("?"))
+
+
+def test_every_poc_has_a_short_plain_lead_in_both_languages():
+    """初見の導入は短く、実装語や数表の代わりにならない文だけにする。"""
+    op_names = {
+        row["name"].casefold()
+        for row in json.loads((ROOT / "fullseye" / "data" / "OP_INDEX.json").read_text(encoding="utf-8"))["ops"]
+    }
+    forbidden = re.compile(r"`|\b(?:op|docstring|gate|regen)\b|門", re.IGNORECASE)
+    problems = []
+    for exhibit in _caption_exhibits():
+        for lang, limit in (("ja", 160), ("en", 320)):
+            lead = exhibit.get("lead_" + lang, "")
+            if not lead:
+                problems.append((exhibit["id"], lang, "missing"))
+                continue
+            if _sentence_count(lead, lang) > 3:
+                problems.append((exhibit["id"], lang, "more than three sentences"))
+            if len(lead) > limit:
+                problems.append((exhibit["id"], lang, "too long"))
+            if forbidden.search(lead):
+                problems.append((exhibit["id"], lang, "implementation word"))
+            if len(re.findall(r"\d+(?:\.\d+)?", lead)) > 1:
+                problems.append((exhibit["id"], lang, "more than one number"))
+            words = {w.casefold() for w in re.findall(r"[A-Za-z][A-Za-z0-9_]*", lead)}
+            leaked = sorted(words & op_names)
+            if leaked:
+                problems.append((exhibit["id"], lang, "operator name: " + ", ".join(leaked)))
+            caption = exhibit["caption_" + lang]
+            if caption.startswith(lead) or lead == caption[:len(lead)]:
+                problems.append((exhibit["id"], lang, "caption prefix copied"))
+    assert not problems, problems[:30]
+
+
+def test_lead_glossary_terms_are_explained_on_the_same_exhibit():
+    glossary = load_glossary()
+    problems = []
+    for exhibit in _caption_exhibits():
+        for lang in ("ja", "en"):
+            lead = exhibit["lead_" + lang]
+            displayed = {term_id for term_id, _entry in terms_for_exhibit(exhibit, lang, glossary)}
+            for term_id, entry in glossary.items():
+                flags = re.IGNORECASE if lang == "en" else 0
+                if any(re.search(r"(?<![A-Za-z0-9_])" + re.escape(alias) + r"(?![A-Za-z0-9_])", lead, flags)
+                       for alias in entry["match"]):
+                    if term_id not in displayed:
+                        problems.append((exhibit["id"], lang, term_id))
+    assert not problems, problems[:30]
 
 
 def test_manifest_is_wellformed():

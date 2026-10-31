@@ -59,6 +59,13 @@ def media_for(pid: str) -> str | None:
 def main() -> None:
     d = json.loads(DATA.read_text(encoding="utf-8"))
     ledger = json.loads(LEDGER.read_text(encoding="utf-8"))["exhibits"]
+    ledger_by_id = {e["id"]: e for e in ledger}
+    for item in d["exhibits"]:
+        src = ledger_by_id.get(item["id"])
+        if src:
+            item["lead"] = {
+                lang: src["lead_ja" if lang == "ja" else "lead_en"] for lang in d["langs"]
+            }
     all_by_id = {e["id"]: e for e in d["all"]}
     # Re-running replaces this generated batch and preserves hand-curated cards.
     d["exhibits"] = [e for e in d["exhibits"] if "numbers_source" not in e]
@@ -98,6 +105,7 @@ def main() -> None:
         item = {
             "id": pid, "category": WING_CATEGORY[src["wing"]], "media": media,
             "motion": media.lower().endswith((".gif", ".mp4")), "label": label,
+            "lead": {lang: src["lead_ja" if lang == "ja" else "lead_en"] for lang in d["langs"]},
             "see": captions, "num": {lang: "" for lang in d["langs"]},
             "numbers_source": src["numbers_source"], "youtube_url": "",
         }

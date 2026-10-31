@@ -100,7 +100,8 @@ def _load():
     for ex in cap["exhibits"]:
         if ex["id"] not in byid:
             raise BuildError("poc_captions.json: %r は examples2d.EXAMPLES に無い" % ex["id"])
-        for k in ("wing", "title_ja", "title_en", "caption_ja", "caption_en", "added"):
+        for k in ("wing", "title_ja", "title_en", "lead_ja", "lead_en",
+                  "caption_ja", "caption_en", "added"):
             if not ex.get(k):
                 raise BuildError("poc_captions.json: %s に %s が無い" % (ex["id"], k))
         for k in ("caption_ja", "caption_en", "title_ja", "title_en"):
@@ -335,6 +336,7 @@ def _exhibit_md(no: str, ex: dict, lang: str, pick: dict, thumb: str, byid: dict
     # plaque.  Keep the detailed plaque, but let the canonical registry describe the
     # new lead image precisely in each published language.
     cap = ex.get("figure_caption_" + lang) or ex["caption_" + lang]
+    lead = ex["lead_" + lang]
     full = RAW + ex["id"] + "/" + pick["file"]
     th = RAW + ex["id"] + "/" + thumb
     run = ex.get("run") or ("py -3.11 examples/%s.py" % ex["id"])
@@ -344,6 +346,8 @@ def _exhibit_md(no: str, ex: dict, lang: str, pick: dict, thumb: str, byid: dict
         # ★見出しは**収蔵番号**。順路番号(何番目か)は出さない —— 展示を 1 つ挟むだけで
         #   以降が全部ずれ、記事を分けるたびに番号が動くため(2026-09-25)。
         "## No.%s —— %s" % (no, title),
+        "",
+        lead,
         "",
         "[![%s](%s)](%s)" % (title.replace("]", ")"), th, full),
         "",

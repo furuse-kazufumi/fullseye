@@ -73,6 +73,22 @@ def test_generated_articles_are_up_to_date(cap):
                                  % os.path.basename(path))
 
 
+def test_each_exhibit_lead_precedes_the_existing_plaque(cap):
+    c, byid = cap
+    nos = G._numbers()
+    for lang in ("ja", "en"):
+        page = G.build_wing_md(lang, c, byid, nos)
+        for exhibit in c["exhibits"]:
+            heading = "## No.%s —— " % nos[exhibit["id"]]
+            start = page.find(heading)
+            if start < 0:  # external/manual lanes are deliberately outside this generated wing
+                continue
+            end = page.find("\n## No.", start + len(heading))
+            block = page[start:end if end >= 0 else None]
+            assert block.index(exhibit["lead_" + lang]) < block.index("[!["), exhibit["id"]
+            assert block.index("[![") < block.index("*\u2191"), exhibit["id"]
+
+
 def test_every_referenced_asset_exists(cap):
     c, _byid = cap
     pat = re.compile(re.escape(G.RAW) + r"([A-Za-z0-9_./-]+)")

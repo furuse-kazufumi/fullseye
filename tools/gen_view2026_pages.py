@@ -220,7 +220,7 @@ def validate(d: dict) -> list[str]:
         bad.append("見どころの id が重複している")
     for e in d["exhibits"]:
         pid = e["id"]
-        for f in ("label", "see"):
+        for f in ("label", "lead", "see"):
             full("%s.%s" % (pid, f), e[f])
         full("%s.num" % pid, e["num"], allow_empty=True)
         if "youtube_url" not in e:
@@ -469,8 +469,9 @@ def build(d: dict, lang: str) -> str:
             if _is_viewer(d, e):
                 kind += ", " + _viewer_mb(d, e)
             youtube = " [YouTube](%s)" % e["youtube_url"] if e.get("youtube_url") else ""
-            out.append("- [%s](%s) (%s): %s%s%s" % (
-                e["label"][lang], media(e), kind, e["see"][lang], num, link + youtube))
+            out.append("- [%s](%s) (%s): %s" % (
+                e["label"][lang], media(e), kind, e["lead"][lang]))
+            out.append("  %s%s%s" % (e["see"][lang], num, link + youtube))
             source_exhibit = glossary_ledger.get(e["id"])
             term_line = glossary_line(source_exhibit, lang, glossary) if source_exhibit else ""
             if term_line:
