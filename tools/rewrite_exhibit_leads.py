@@ -107,6 +107,9 @@ def title_parts(title: str, lang: str) -> tuple[str, str]:
 
 def scene_sentence(title: str, caption: str, lang: str, variant: int) -> str:
     subject, issue = title_parts(clean(title, lang), lang)
+    if lang == "en":
+        subject = subject.replace(".", "").replace("?", "").replace("!", "")
+        issue = issue.replace(".", "").replace("?", "").replace("!", "")
     if lang == "ja":
         issue = issue.rstrip("。.!?")
         if subject.endswith("か"):
@@ -221,6 +224,7 @@ def make_lead(exhibit: dict, lang: str, op_names: set[str]) -> str:
         )
         method = methods[variant % len(methods)]
         _subject, issue = title_parts(clean(exhibit["title_en"], "en"), "en")
+        issue = issue.replace(".", "")
         finding = f"The contrast between {terms[3]} and {terms[4]} shows that {issue[:1].lower() + issue[1:]}"
         scene = scene[:1].upper() + scene[1:]
         method = method[:1].upper() + method[1:]
