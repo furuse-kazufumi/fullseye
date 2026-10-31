@@ -863,18 +863,18 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_multibeam_bathymetry.py`
 
-- **L357** _(ja)_ — ★走時を使い切った光線は cosθ が層の途中の値のまま残り、後ろの層で dt_full が 負になりうる。負の dt は rem を「生き返らせ」光線を進めてしまう(実データの 152 節点のキャストで 57 度・0.13 s が 110 m → 493 m になった)ので 0 で止める。
-- **L542** — The number of partial angles that synthesise the echo. ★Setting this to 61 makes, at 70 degrees, the arrival times of adjacent partial angles 330 µs apart, wider than the 64 µs pulse width, so the envelope becomes a **comb** and amplitude detection picks up one tooth (the detection offset came out as -1131 µs). It is more correct to build a histogram of the arrival-time density and convolve it with the pulse.
-- **L570** — ★Do not clip the lower bound at 0 —— the nadir beam then becomes one-sided and the illuminated band halves (stepped on this once, with the footprint coming out at half).
-- **L727** — ★Divide the x-axis by **the beam's own echo length**. Overlaying in raw µs lets 70 degrees (21 ms) monopolise the axis, collapsing nadir and 45 degrees into a single vertical line.
-- **L730** — ★``plot_series`` **rejects** points outside xlim (because they stick to the frame and look like real data). Clipping is the caller's job, so clip first.
-- **L1149** — ★Do not look at the **middle** of the overlap —— there both survey lines have the same swing angle, so the same error rides on both and the difference goes to zero. Take the **maximum over the whole band**.
-- **L1220** — ★Make the y-axis **height** (= −depth). Plotting depth as-is flips top and bottom, making a 'smiling' shape look like a 'frown'.
-- **L1291** — ★The y-axis is −depth. Plotting depth as-is gives an upside-down figure with the sea surface at the bottom and the seabed at the top.
-- **L1325** — ★``op_find`` matches on partial stems, so even when the count is non-zero the contents can be irrelevant ("footprint" → ``sk_median_disk``). **Look all the way to the top-level name** before saying 'it does not exist'.
-- **L1381** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
-- **L1972** _(ja)_ — ★左右に分ける: 音速の取り違えは θ について**偶**(左右対称)。ロールの小さな 取付偏りや参照格子の左右の食い違いは**奇**(D tanθ δ)。中心対称な階級なので k と n−1−k が鏡像。偶部で崖を測り、奇部は両解で同じか(= 音速でない)を見る。
-- **L2229** — ★The cliff of the all-paths case is **earlier than predicted**. The difference is the bias of amplitude detection (a quantity absent from the closed form)
+- **L359** _(ja)_ — ★走時を使い切った光線は cosθ が層の途中の値のまま残り、後ろの層で dt_full が 負になりうる。負の dt は rem を「生き返らせ」光線を進めてしまう(実データの 152 節点のキャストで 57 度・0.13 s が 110 m → 493 m になった)ので 0 で止める。
+- **L544** — The number of partial angles that synthesise the echo. ★Setting this to 61 makes, at 70 degrees, the arrival times of adjacent partial angles 330 µs apart, wider than the 64 µs pulse width, so the envelope becomes a **comb** and amplitude detection picks up one tooth (the detection offset came out as -1131 µs). It is more correct to build a histogram of the arrival-time density and convolve it with the pulse.
+- **L572** — ★Do not clip the lower bound at 0 —— the nadir beam then becomes one-sided and the illuminated band halves (stepped on this once, with the footprint coming out at half).
+- **L729** — ★Divide the x-axis by **the beam's own echo length**. Overlaying in raw µs lets 70 degrees (21 ms) monopolise the axis, collapsing nadir and 45 degrees into a single vertical line.
+- **L732** — ★``plot_series`` **rejects** points outside xlim (because they stick to the frame and look like real data). Clipping is the caller's job, so clip first.
+- **L1151** — ★Do not look at the **middle** of the overlap —— there both survey lines have the same swing angle, so the same error rides on both and the difference goes to zero. Take the **maximum over the whole band**.
+- **L1222** — ★Make the y-axis **height** (= −depth). Plotting depth as-is flips top and bottom, making a 'smiling' shape look like a 'frown'.
+- **L1293** — ★The y-axis is −depth. Plotting depth as-is gives an upside-down figure with the sea surface at the bottom and the seabed at the top.
+- **L1327** — ★``op_find`` matches on partial stems, so even when the count is non-zero the contents can be irrelevant ("footprint" → ``sk_median_disk``). **Look all the way to the top-level name** before saying 'it does not exist'.
+- **L1383** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
+- **L1974** _(ja)_ — ★左右に分ける: 音速の取り違えは θ について**偶**(左右対称)。ロールの小さな 取付偏りや参照格子の左右の食い違いは**奇**(D tanθ δ)。中心対称な階級なので k と n−1−k が鏡像。偶部で崖を測り、奇部は両解で同じか(= 音速でない)を見る。
+- **L2231** — ★The cliff of the all-paths case is **earlier than predicted**. The difference is the bias of amplitude detection (a quantity absent from the closed form)
 
 ## `examples/poc_nuclei_ploidy.py`
 

@@ -863,18 +863,18 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_multibeam_bathymetry.py`
 
-- **L357** _(ja)_ — ★走時を使い切った光線は cosθ が層の途中の値のまま残り、後ろの層で dt_full が 負になりうる。負の dt は rem を「生き返らせ」光線を進めてしまう(実データの 152 節点のキャストで 57 度・0.13 s が 110 m → 493 m になった)ので 0 で止める。
-- **L542** — Die Anzahl der Teilwinkel, die das Echo synthetisieren. ★Setzt man dies auf 61, liegen bei 70 Grad die Ankunftszeiten benachbarter Teilwinkel 330 µs auseinander, breiter als die Pulsbreite von 64 µs, sodass die Einhüllende zu einem **Kamm** wird und die Amplitudendetektion einen Zahn aufgreift (der Detektionsversatz ergab -1131 µs). Korrekter ist es, ein Histogramm der Ankunftszeitdichte zu bilden und mit dem Puls zu falten.
-- **L570** — ★Klemme die Untergrenze nicht bei 0 —— der Nadir-Strahl wird dann einseitig und das beleuchtete Band halbiert sich (bin einmal darauf hereingefallen, wobei der Footprint halb herauskam).
-- **L727** — ★Teile die x-Achse durch **die eigene Echolänge des Strahls**. Legt man in rohen µs übereinander, monopolisiert 70 Grad (21 ms) die Achse, und Nadir und 45 Grad fallen zu einer einzigen senkrechten Linie zusammen.
-- **L730** — ★``plot_series`` **verweigert** Punkte ausserhalb von xlim (weil sie am Rahmen kleben und wie echte Daten aussehen). Das Beschneiden ist Aufgabe des Aufrufers, also vorher beschneiden.
-- **L1149** — ★Schau nicht auf die **Mitte** der Überlappung —— dort haben beide Messlinien denselben Schwenkwinkel, sodass derselbe Fehler auf beiden liegt und die Differenz null wird. Nimm das **Maximum über das gesamte Band**.
-- **L1220** — ★Mach die y-Achse zur **Höhe** (= −Tiefe). Zeichnet man die Tiefe unverändert, kippen oben und unten, und eine 'lächelnde' Form sieht aus wie ein 'Stirnrunzeln'.
-- **L1291** — ★Die y-Achse ist −Tiefe. Zeichnet man die Tiefe unverändert, ergibt sich eine auf dem Kopf stehende Abbildung mit der Meeresoberfläche unten und dem Meeresboden oben.
-- **L1325** — ★``op_find`` trifft über partielle Stämme, daher können die Inhalte auch bei einer Anzahl ungleich 0 irrelevant sein ("footprint" → ``sk_median_disk``). **Schau bis zum Namen der obersten Ebene**, bevor du 'existiert nicht' sagst.
-- **L1381** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
-- **L1972** _(ja)_ — ★左右に分ける: 音速の取り違えは θ について**偶**(左右対称)。ロールの小さな 取付偏りや参照格子の左右の食い違いは**奇**(D tanθ δ)。中心対称な階級なので k と n−1−k が鏡像。偶部で崖を測り、奇部は両解で同じか(= 音速でない)を見る。
-- **L2229** — ★Die Klippe des Alle-Pfade-Falls liegt **früher als vorhergesagt**. Der Unterschied ist die Verzerrung der Amplitudendetektion (eine Grösse, die in der geschlossenen Form fehlt)
+- **L359** _(ja)_ — ★走時を使い切った光線は cosθ が層の途中の値のまま残り、後ろの層で dt_full が 負になりうる。負の dt は rem を「生き返らせ」光線を進めてしまう(実データの 152 節点のキャストで 57 度・0.13 s が 110 m → 493 m になった)ので 0 で止める。
+- **L544** — Die Anzahl der Teilwinkel, die das Echo synthetisieren. ★Setzt man dies auf 61, liegen bei 70 Grad die Ankunftszeiten benachbarter Teilwinkel 330 µs auseinander, breiter als die Pulsbreite von 64 µs, sodass die Einhüllende zu einem **Kamm** wird und die Amplitudendetektion einen Zahn aufgreift (der Detektionsversatz ergab -1131 µs). Korrekter ist es, ein Histogramm der Ankunftszeitdichte zu bilden und mit dem Puls zu falten.
+- **L572** — ★Klemme die Untergrenze nicht bei 0 —— der Nadir-Strahl wird dann einseitig und das beleuchtete Band halbiert sich (bin einmal darauf hereingefallen, wobei der Footprint halb herauskam).
+- **L729** — ★Teile die x-Achse durch **die eigene Echolänge des Strahls**. Legt man in rohen µs übereinander, monopolisiert 70 Grad (21 ms) die Achse, und Nadir und 45 Grad fallen zu einer einzigen senkrechten Linie zusammen.
+- **L732** — ★``plot_series`` **verweigert** Punkte ausserhalb von xlim (weil sie am Rahmen kleben und wie echte Daten aussehen). Das Beschneiden ist Aufgabe des Aufrufers, also vorher beschneiden.
+- **L1151** — ★Schau nicht auf die **Mitte** der Überlappung —— dort haben beide Messlinien denselben Schwenkwinkel, sodass derselbe Fehler auf beiden liegt und die Differenz null wird. Nimm das **Maximum über das gesamte Band**.
+- **L1222** — ★Mach die y-Achse zur **Höhe** (= −Tiefe). Zeichnet man die Tiefe unverändert, kippen oben und unten, und eine 'lächelnde' Form sieht aus wie ein 'Stirnrunzeln'.
+- **L1293** — ★Die y-Achse ist −Tiefe. Zeichnet man die Tiefe unverändert, ergibt sich eine auf dem Kopf stehende Abbildung mit der Meeresoberfläche unten und dem Meeresboden oben.
+- **L1327** — ★``op_find`` trifft über partielle Stämme, daher können die Inhalte auch bei einer Anzahl ungleich 0 irrelevant sein ("footprint" → ``sk_median_disk``). **Schau bis zum Namen der obersten Ebene**, bevor du 'existiert nicht' sagst.
+- **L1383** _(ja)_ — ★座標の約束: 格子の行 0 を**北(画像の上)**とし、世界座標は (x = 東, Y = 北 = -行方向, z = 上)。 行方向をそのまま +Y にすると左手系になり、絵が鏡像になる(上から見た静止図と左右が食い違う)。
+- **L1974** _(ja)_ — ★左右に分ける: 音速の取り違えは θ について**偶**(左右対称)。ロールの小さな 取付偏りや参照格子の左右の食い違いは**奇**(D tanθ δ)。中心対称な階級なので k と n−1−k が鏡像。偶部で崖を測り、奇部は両解で同じか(= 音速でない)を見る。
+- **L2231** — ★Die Klippe des Alle-Pfade-Falls liegt **früher als vorhergesagt**. Der Unterschied ist die Verzerrung der Amplitudendetektion (eine Grösse, die in der geschlossenen Form fehlt)
 
 ## `examples/poc_nuclei_ploidy.py`
 
