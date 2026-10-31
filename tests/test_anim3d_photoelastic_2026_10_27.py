@@ -1,6 +1,7 @@
 """Numerical and honesty gates for the photoelastic lesson."""
 from __future__ import annotations
 import importlib.util
+import inspect
 import pathlib
 import numpy as np
 
@@ -47,9 +48,26 @@ def test_deterministic_mesh_and_explicit_limit():
     assert metrics["frames"] >= 24 and metrics["field_grid"] >= 160
     assert metrics["disc_vertices"] >= 10_000 and metrics["hole_vertices"] >= 10_000
     assert metrics["surface_vertices"] >= 10_000 and metrics["isoclinic_curvature_px"] > 5
+    assert metrics["white_wavelengths"] >= 16 and metrics["limit_supersample"] == 4
+    assert metrics["michel_sequence_ok"]
+    assert metrics["tenth_saturation"] < metrics["first_saturation"]
+    assert 1e-3 < metrics["disc_rgb_error_max"] < .1
+    assert 1e-3 < metrics["hole_rgb_error_max"] < .1
+    assert "fade" not in inspect.signature(B._rgb_white_light).parameters
+    assert "推定の入力 = (a) の8 bit RGB像" in spec["tabs"][0]["panes"][2]["label"]["ja"]
+    assert "推定の入力 = (a) の8 bit RGB像" in spec["tabs"][1]["panes"][2]["label"]["ja"]
     assert all(min(p["frames"].shape[1:3]) >= 256 for t in spec["tabs"] for p in t["panes"])
     data=B.pv._pack_spec(spec,["ja","en"]); B.pv.viewer_quality_gate_data(data)
     assert len(B.pv._build_html(spec,["ja","en"]).encode("utf-8")) <= 4_000_000
     failed=[c for t in spec["tabs"] for c in t["checks"] if not c["ok"]]
     assert len(failed) == 1
     assert spec["tabs"][-1]["badge"] == "limit"
+
+
+def test_continuous_spectrum_matches_michel_levy_order_and_fades_by_tenth_order():
+    gate=B.michel_levy_gates()
+    assert len(B.WHITE_WAVELENGTHS_NM) == 31
+    assert B.WHITE_WAVELENGTHS_NM[0] == 400 and B.WHITE_WAVELENGTHS_NM[-1] == 700
+    assert gate["sequence_ok"]
+    assert gate["first_saturation"] > .5
+    assert gate["tenth_saturation"] < .1 * gate["first_saturation"]

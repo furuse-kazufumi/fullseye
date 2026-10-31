@@ -11,14 +11,14 @@
    "hi": "not separable from images alone",
    "fr": "not separable from images alone"
   },
-  "Δxfringe < pixel": {
-   "ja": "Δxfringe < pixel",
-   "zh": "Δxfringe < pixel",
-   "tw": "Δxfringe < pixel",
-   "ko": "Δxfringe < pixel",
-   "de": "Δxfringe < pixel",
-   "hi": "Δxfringe < pixel",
-   "fr": "Δxfringe < pixel"
+  "Ipixel(λ) = area mean of I(x,y,λ)": {
+   "ja": "Ipixel(λ) = area mean of I(x,y,λ)",
+   "zh": "Ipixel(λ) = area mean of I(x,y,λ)",
+   "tw": "Ipixel(λ) = area mean of I(x,y,λ)",
+   "ko": "Ipixel(λ) = area mean of I(x,y,λ)",
+   "de": "Ipixel(λ) = area mean of I(x,y,λ)",
+   "hi": "Ipixel(λ) = area mean of I(x,y,λ)",
+   "fr": "Ipixel(λ) = area mean of I(x,y,λ)"
   },
   "Measure invisible stress with colored fringes": {
    "ja": "見えない応力を色の縞で測る",
@@ -56,14 +56,14 @@
    "hi": "① Load the disc",
    "fr": "① Load the disc"
   },
-  "As load rises, white-light fringes emerge at the contacts and crowd toward the centre. The 3-D field and panels (a)-(d) share one op array. Evidence: closed form.": {
-   "ja": "荷重を上げると、荷重点から白色光の縞が湧き、中心へ詰まる。同じ op 配列を 3-D と (a)〜(d) に使う。根拠: 閉形式。",
-   "zh": "As load rises, white-light fringes emerge at the contacts and crowd toward the centre. The 3-D field and panels (a)-(d) share one op array. Evidence: closed form.",
-   "tw": "As load rises, white-light fringes emerge at the contacts and crowd toward the centre. The 3-D field and panels (a)-(d) share one op array. Evidence: closed form.",
-   "ko": "As load rises, white-light fringes emerge at the contacts and crowd toward the centre. The 3-D field and panels (a)-(d) share one op array. Evidence: closed form.",
-   "de": "As load rises, white-light fringes emerge at the contacts and crowd toward the centre. The 3-D field and panels (a)-(d) share one op array. Evidence: closed form.",
-   "hi": "As load rises, white-light fringes emerge at the contacts and crowd toward the centre. The 3-D field and panels (a)-(d) share one op array. Evidence: closed form.",
-   "fr": "As load rises, white-light fringes emerge at the contacts and crowd toward the centre. The 3-D field and panels (a)-(d) share one op array. Evidence: closed form."
+  "[Closed form] As load rises, continuous-spectrum fringes crowd from the contacts toward the centre. Panel (c) is recovered only from the 8-bit RGB image in (a).": {
+   "ja": "【閉形式】荷重を上げると、連続スペクトルから生じる縞が荷重点から中心へ詰まる。(c) は (a) の8 bit RGB像だけから復元する。",
+   "zh": "[Closed form] As load rises, continuous-spectrum fringes crowd from the contacts toward the centre. Panel (c) is recovered only from the 8-bit RGB image in (a).",
+   "tw": "[Closed form] As load rises, continuous-spectrum fringes crowd from the contacts toward the centre. Panel (c) is recovered only from the 8-bit RGB image in (a).",
+   "ko": "[Closed form] As load rises, continuous-spectrum fringes crowd from the contacts toward the centre. Panel (c) is recovered only from the 8-bit RGB image in (a).",
+   "de": "[Closed form] As load rises, continuous-spectrum fringes crowd from the contacts toward the centre. Panel (c) is recovered only from the 8-bit RGB image in (a).",
+   "hi": "[Closed form] As load rises, continuous-spectrum fringes crowd from the contacts toward the centre. Panel (c) is recovered only from the 8-bit RGB image in (a).",
+   "fr": "[Closed form] As load rises, continuous-spectrum fringes crowd from the contacts toward the centre. Panel (c) is recovered only from the 8-bit RGB image in (a)."
   },
   "central principal-stress difference": {
    "ja": "中心の主応力差",
@@ -92,14 +92,14 @@
    "hi": "(b) isoclinics",
    "fr": "(b) isoclinics"
   },
-  "(c) fringe order N | error from closed form": {
-   "ja": "(c) 縞次数 N | 閉形式との差",
-   "zh": "(c) fringe order N | error from closed form",
-   "tw": "(c) fringe order N | error from closed form",
-   "ko": "(c) fringe order N | error from closed form",
-   "de": "(c) fringe order N | error from closed form",
-   "hi": "(c) fringe order N | error from closed form",
-   "fr": "(c) fringe order N | error from closed form"
+  "(c) estimation input = the 8-bit RGB image in (a) | error from closed form": {
+   "ja": "(c) 推定の入力 = (a) の8 bit RGB像 | 閉形式との差",
+   "zh": "(c) estimation input = the 8-bit RGB image in (a) | error from closed form",
+   "tw": "(c) estimation input = the 8-bit RGB image in (a) | error from closed form",
+   "ko": "(c) estimation input = the 8-bit RGB image in (a) | error from closed form",
+   "de": "(c) estimation input = the 8-bit RGB image in (a) | error from closed form",
+   "hi": "(c) estimation input = the 8-bit RGB image in (a) | error from closed form",
+   "fr": "(c) estimation input = the 8-bit RGB image in (a) | error from closed form"
   },
   "(d) horizontal diameter: closed form (wide blue) / estimate (thin orange)": {
    "ja": "(d) 水平直径: 閉形式（太い青）/推定（細い橙）",
@@ -128,23 +128,23 @@
    "hi": "relative difference from independent 8P/(πDt) < 1e-9",
    "fr": "relative difference from independent 8P/(πDt) < 1e-9"
   },
-  "load from noisy polarization images": {
-   "ja": "雑音入り偏光像からの荷重",
-   "zh": "load from noisy polarization images",
-   "tw": "load from noisy polarization images",
-   "ko": "load from noisy polarization images",
-   "de": "load from noisy polarization images",
-   "hi": "load from noisy polarization images",
-   "fr": "load from noisy polarization images"
+  "maximum error from the 8-bit RGB image in (a)": {
+   "ja": "(a) の8 bit RGB像からの最大誤差",
+   "zh": "maximum error from the 8-bit RGB image in (a)",
+   "tw": "maximum error from the 8-bit RGB image in (a)",
+   "ko": "maximum error from the 8-bit RGB image in (a)",
+   "de": "maximum error from the 8-bit RGB image in (a)",
+   "hi": "maximum error from the 8-bit RGB image in (a)",
+   "fr": "maximum error from the 8-bit RGB image in (a)"
   },
-  "maximum error < 2% at three loads": {
-   "ja": "3 荷重で最大誤差 < 2%",
-   "zh": "maximum error < 2% at three loads",
-   "tw": "maximum error < 2% at three loads",
-   "ko": "maximum error < 2% at three loads",
-   "de": "maximum error < 2% at three loads",
-   "hi": "maximum error < 2% at three loads",
-   "fr": "maximum error < 2% at three loads"
+  "0 < maximum absolute error < 0.1 fringe": {
+   "ja": "0 < 最大 |誤差| < 0.1 縞",
+   "zh": "0 < maximum absolute error < 0.1 fringe",
+   "tw": "0 < maximum absolute error < 0.1 fringe",
+   "ko": "0 < maximum absolute error < 0.1 fringe",
+   "de": "0 < maximum absolute error < 0.1 fringe",
+   "hi": "0 < maximum absolute error < 0.1 fringe",
+   "fr": "0 < maximum absolute error < 0.1 fringe"
   },
   "load P": {
    "ja": "荷重 P",
@@ -218,14 +218,14 @@
    "hi": "② Stress concentration at a hole",
    "fr": "② Stress concentration at a hole"
   },
-  "Tension crowds fringes around the actual hole edge; the white ring marks the computed hole, not a box proxy. Evidence: Kirsch closed form.": {
-   "ja": "穴あき板を引くと穴の縁に縞が集中する。白い輪は計算領域の穴そのもので、箱による代用ではない。根拠: Kirsch の閉形式。",
-   "zh": "Tension crowds fringes around the actual hole edge; the white ring marks the computed hole, not a box proxy. Evidence: Kirsch closed form.",
-   "tw": "Tension crowds fringes around the actual hole edge; the white ring marks the computed hole, not a box proxy. Evidence: Kirsch closed form.",
-   "ko": "Tension crowds fringes around the actual hole edge; the white ring marks the computed hole, not a box proxy. Evidence: Kirsch closed form.",
-   "de": "Tension crowds fringes around the actual hole edge; the white ring marks the computed hole, not a box proxy. Evidence: Kirsch closed form.",
-   "hi": "Tension crowds fringes around the actual hole edge; the white ring marks the computed hole, not a box proxy. Evidence: Kirsch closed form.",
-   "fr": "Tension crowds fringes around the actual hole edge; the white ring marks the computed hole, not a box proxy. Evidence: Kirsch closed form."
+  "[Closed form] Tension crowds fringes around the hole. Panel (c) is recovered only from the 8-bit RGB image in (a), then compared with Kirsch's solution.": {
+   "ja": "【閉形式】穴あき板を引くと穴の縁に縞が集中する。(c) は (a) の8 bit RGB像だけから復元し、Kirsch 解と比べる。",
+   "zh": "[Closed form] Tension crowds fringes around the hole. Panel (c) is recovered only from the 8-bit RGB image in (a), then compared with Kirsch's solution.",
+   "tw": "[Closed form] Tension crowds fringes around the hole. Panel (c) is recovered only from the 8-bit RGB image in (a), then compared with Kirsch's solution.",
+   "ko": "[Closed form] Tension crowds fringes around the hole. Panel (c) is recovered only from the 8-bit RGB image in (a), then compared with Kirsch's solution.",
+   "de": "[Closed form] Tension crowds fringes around the hole. Panel (c) is recovered only from the 8-bit RGB image in (a), then compared with Kirsch's solution.",
+   "hi": "[Closed form] Tension crowds fringes around the hole. Panel (c) is recovered only from the 8-bit RGB image in (a), then compared with Kirsch's solution.",
+   "fr": "[Closed form] Tension crowds fringes around the hole. Panel (c) is recovered only from the 8-bit RGB image in (a), then compared with Kirsch's solution."
   },
   "remote stress": {
    "ja": "遠方応力",
@@ -335,14 +335,14 @@
    "hi": "③ Unwrap and error",
    "fr": "③ Unwrap and error"
   },
-  "The translucent surface height and color are σ1−σ2; panel (c) shows multi-wavelength N and its closed-form error. Evidence: numerical model checked by closed form.": {
-   "ja": "半透明曲面の高さと色は σ₁−σ₂、(c) 左は多波長で巻き戻した N、右は閉形式との差。根拠: 数値模型を閉形式で検証。",
-   "zh": "The translucent surface height and color are σ1−σ2; panel (c) shows multi-wavelength N and its closed-form error. Evidence: numerical model checked by closed form.",
-   "tw": "The translucent surface height and color are σ1−σ2; panel (c) shows multi-wavelength N and its closed-form error. Evidence: numerical model checked by closed form.",
-   "ko": "The translucent surface height and color are σ1−σ2; panel (c) shows multi-wavelength N and its closed-form error. Evidence: numerical model checked by closed form.",
-   "de": "The translucent surface height and color are σ1−σ2; panel (c) shows multi-wavelength N and its closed-form error. Evidence: numerical model checked by closed form.",
-   "hi": "The translucent surface height and color are σ1−σ2; panel (c) shows multi-wavelength N and its closed-form error. Evidence: numerical model checked by closed form.",
-   "fr": "The translucent surface height and color are σ1−σ2; panel (c) shows multi-wavelength N and its closed-form error. Evidence: numerical model checked by closed form."
+  "[Recovery from synthesis] Surface height and colour are σ1−σ2. Panel (c) unwraps three synthetic wavelength phases and compares them with the closed form.": {
+   "ja": "【合成からの復元】半透明曲面の高さと色は σ₁−σ₂。(c) は合成3波長位相を巻き戻し、閉形式と比べる。",
+   "zh": "[Recovery from synthesis] Surface height and colour are σ1−σ2. Panel (c) unwraps three synthetic wavelength phases and compares them with the closed form.",
+   "tw": "[Recovery from synthesis] Surface height and colour are σ1−σ2. Panel (c) unwraps three synthetic wavelength phases and compares them with the closed form.",
+   "ko": "[Recovery from synthesis] Surface height and colour are σ1−σ2. Panel (c) unwraps three synthetic wavelength phases and compares them with the closed form.",
+   "de": "[Recovery from synthesis] Surface height and colour are σ1−σ2. Panel (c) unwraps three synthetic wavelength phases and compares them with the closed form.",
+   "hi": "[Recovery from synthesis] Surface height and colour are σ1−σ2. Panel (c) unwraps three synthetic wavelength phases and compares them with the closed form.",
+   "fr": "[Recovery from synthesis] Surface height and colour are σ1−σ2. Panel (c) unwraps three synthetic wavelength phases and compares them with the closed form."
   },
   "σ1−σ2": {
    "ja": "σ₁−σ₂",
@@ -452,14 +452,14 @@
    "hi": "④ White-light limits",
    "fr": "④ White-light limits"
   },
-  "High-order fringes desaturate and merge under noise and pixel averaging. Failure conditions are shown on the same field. Evidence: numerical model.": {
-   "ja": "高次縞は退色し、雑音と画素平均で区別できなくなる。壊れる条件を隠さず同じ場で示す。根拠: 数値模型。",
-   "zh": "High-order fringes desaturate and merge under noise and pixel averaging. Failure conditions are shown on the same field. Evidence: numerical model.",
-   "tw": "High-order fringes desaturate and merge under noise and pixel averaging. Failure conditions are shown on the same field. Evidence: numerical model.",
-   "ko": "High-order fringes desaturate and merge under noise and pixel averaging. Failure conditions are shown on the same field. Evidence: numerical model.",
-   "de": "High-order fringes desaturate and merge under noise and pixel averaging. Failure conditions are shown on the same field. Evidence: numerical model.",
-   "hi": "High-order fringes desaturate and merge under noise and pixel averaging. Failure conditions are shown on the same field. Evidence: numerical model.",
-   "fr": "High-order fringes desaturate and merge under noise and pixel averaging. Failure conditions are shown on the same field. Evidence: numerical model."
+  "[Numerical model] Continuous-spectrum high-order fringes fade naturally; fine fringes merge when a 4x supersampled spectral image is area-averaged over each pixel aperture.": {
+   "ja": "【数値模型】連続スペクトルの高次縞は自然に退色し、4倍解像度の分光像を画素開口で面積平均すると細い縞が混ざる。",
+   "zh": "[Numerical model] Continuous-spectrum high-order fringes fade naturally; fine fringes merge when a 4x supersampled spectral image is area-averaged over each pixel aperture.",
+   "tw": "[Numerical model] Continuous-spectrum high-order fringes fade naturally; fine fringes merge when a 4x supersampled spectral image is area-averaged over each pixel aperture.",
+   "ko": "[Numerical model] Continuous-spectrum high-order fringes fade naturally; fine fringes merge when a 4x supersampled spectral image is area-averaged over each pixel aperture.",
+   "de": "[Numerical model] Continuous-spectrum high-order fringes fade naturally; fine fringes merge when a 4x supersampled spectral image is area-averaged over each pixel aperture.",
+   "hi": "[Numerical model] Continuous-spectrum high-order fringes fade naturally; fine fringes merge when a 4x supersampled spectral image is area-averaged over each pixel aperture.",
+   "fr": "[Numerical model] Continuous-spectrum high-order fringes fade naturally; fine fringes merge when a 4x supersampled spectral image is area-averaged over each pixel aperture."
   },
   "load": {
    "ja": "荷重",
@@ -506,14 +506,14 @@
    "hi": "no",
    "fr": "no"
   },
-  "Pixel averaging and finite white-light coherence desaturate high-order fringes.": {
-   "ja": "画素内平均と白色光の有限コヒーレンスで高次縞が退色する。",
-   "zh": "Pixel averaging and finite white-light coherence desaturate high-order fringes.",
-   "tw": "Pixel averaging and finite white-light coherence desaturate high-order fringes.",
-   "ko": "Pixel averaging and finite white-light coherence desaturate high-order fringes.",
-   "de": "Pixel averaging and finite white-light coherence desaturate high-order fringes.",
-   "hi": "Pixel averaging and finite white-light coherence desaturate high-order fringes.",
-   "fr": "Pixel averaging and finite white-light coherence desaturate high-order fringes."
+  "Continuous-spectrum phase differences wash out high-order colour, and area integration of spectral intensity over a pixel aperture mixes fine fringes.": {
+   "ja": "連続スペクトルの位相差で高次色が薄れ、画素開口内の分光強度を面積平均すると細い縞が混ざる。",
+   "zh": "Continuous-spectrum phase differences wash out high-order colour, and area integration of spectral intensity over a pixel aperture mixes fine fringes.",
+   "tw": "Continuous-spectrum phase differences wash out high-order colour, and area integration of spectral intensity over a pixel aperture mixes fine fringes.",
+   "ko": "Continuous-spectrum phase differences wash out high-order colour, and area integration of spectral intensity over a pixel aperture mixes fine fringes.",
+   "de": "Continuous-spectrum phase differences wash out high-order colour, and area integration of spectral intensity over a pixel aperture mixes fine fringes.",
+   "hi": "Continuous-spectrum phase differences wash out high-order colour, and area integration of spectral intensity over a pixel aperture mixes fine fringes.",
+   "fr": "Continuous-spectrum phase differences wash out high-order colour, and area integration of spectral intensity over a pixel aperture mixes fine fringes."
   },
   "This exhibit cannot certify a real part or predict failure load.": {
    "ja": "この展示で実部品の合否や破壊荷重は言えない。",
@@ -524,14 +524,77 @@
    "hi": "This exhibit cannot certify a real part or predict failure load.",
    "fr": "This exhibit cannot certify a real part or predict failure load."
   },
-  "Synthetic data. Stress uses brazilian_disc_stress / kirsch_plate_stress; polarization and unwrapping use photoelastic ops.": {
-   "ja": "合成データ。応力場は brazilian_disc_stress / kirsch_plate_stress、偏光と巻き戻しは photoelastic op。",
-   "zh": "Synthetic data. Stress uses brazilian_disc_stress / kirsch_plate_stress; polarization and unwrapping use photoelastic ops.",
-   "tw": "Synthetic data. Stress uses brazilian_disc_stress / kirsch_plate_stress; polarization and unwrapping use photoelastic ops.",
-   "ko": "Synthetic data. Stress uses brazilian_disc_stress / kirsch_plate_stress; polarization and unwrapping use photoelastic ops.",
-   "de": "Synthetic data. Stress uses brazilian_disc_stress / kirsch_plate_stress; polarization and unwrapping use photoelastic ops.",
-   "hi": "Synthetic data. Stress uses brazilian_disc_stress / kirsch_plate_stress; polarization and unwrapping use photoelastic ops.",
-   "fr": "Synthetic data. Stress uses brazilian_disc_stress / kirsch_plate_stress; polarization and unwrapping use photoelastic ops."
+  "Synthetic data. Stress uses brazilian_disc_stress / kirsch_plate_stress; polarisation and unwrapping use photoelastic ops; white light uses the CIE 1931 and D65 spectrum_to_srgb op.": {
+   "ja": "合成データ。応力場は brazilian_disc_stress / kirsch_plate_stress、偏光と巻き戻しは photoelastic op、白色光は CIE 1931・D65 の spectrum_to_srgb op。",
+   "zh": "Synthetic data. Stress uses brazilian_disc_stress / kirsch_plate_stress; polarisation and unwrapping use photoelastic ops; white light uses the CIE 1931 and D65 spectrum_to_srgb op.",
+   "tw": "Synthetic data. Stress uses brazilian_disc_stress / kirsch_plate_stress; polarisation and unwrapping use photoelastic ops; white light uses the CIE 1931 and D65 spectrum_to_srgb op.",
+   "ko": "Synthetic data. Stress uses brazilian_disc_stress / kirsch_plate_stress; polarisation and unwrapping use photoelastic ops; white light uses the CIE 1931 and D65 spectrum_to_srgb op.",
+   "de": "Synthetic data. Stress uses brazilian_disc_stress / kirsch_plate_stress; polarisation and unwrapping use photoelastic ops; white light uses the CIE 1931 and D65 spectrum_to_srgb op.",
+   "hi": "Synthetic data. Stress uses brazilian_disc_stress / kirsch_plate_stress; polarisation and unwrapping use photoelastic ops; white light uses the CIE 1931 and D65 spectrum_to_srgb op.",
+   "fr": "Synthetic data. Stress uses brazilian_disc_stress / kirsch_plate_stress; polarisation and unwrapping use photoelastic ops; white light uses the CIE 1931 and D65 spectrum_to_srgb op."
+  },
+  "low-order Michel-Lévy colour sequence": {
+   "ja": "Michel-Lévy の低次色順",
+   "zh": "low-order Michel-Lévy colour sequence",
+   "tw": "low-order Michel-Lévy colour sequence",
+   "ko": "low-order Michel-Lévy colour sequence",
+   "de": "low-order Michel-Lévy colour sequence",
+   "hi": "low-order Michel-Lévy colour sequence",
+   "fr": "low-order Michel-Lévy colour sequence"
+  },
+  "black→grey→yellow→orange→red→purple→blue→green": {
+   "ja": "黒→灰→黄→橙→赤→紫→青→緑",
+   "zh": "black→grey→yellow→orange→red→purple→blue→green",
+   "tw": "black→grey→yellow→orange→red→purple→blue→green",
+   "ko": "black→grey→yellow→orange→red→purple→blue→green",
+   "de": "black→grey→yellow→orange→red→purple→blue→green",
+   "hi": "black→grey→yellow→orange→red→purple→blue→green",
+   "fr": "black→grey→yellow→orange→red→purple→blue→green"
+  },
+  "eight colour probes in order": {
+   "ja": "8 色点が順序どおり",
+   "zh": "eight colour probes in order",
+   "tw": "eight colour probes in order",
+   "ko": "eight colour probes in order",
+   "de": "eight colour probes in order",
+   "hi": "eight colour probes in order",
+   "fr": "eight colour probes in order"
+  },
+  "(c) input = three synthetic wavelength phases | error from closed form": {
+   "ja": "(c) 入力 = 合成3波長位相 | 閉形式との差",
+   "zh": "(c) input = three synthetic wavelength phases | error from closed form",
+   "tw": "(c) input = three synthetic wavelength phases | error from closed form",
+   "ko": "(c) input = three synthetic wavelength phases | error from closed form",
+   "de": "(c) input = three synthetic wavelength phases | error from closed form",
+   "hi": "(c) input = three synthetic wavelength phases | error from closed form",
+   "fr": "(c) input = three synthetic wavelength phases | error from closed form"
+  },
+  "(c) estimation input = area-averaged (a) | error from closed form": {
+   "ja": "(c) 推定の入力 = 面積平均後の (a) | 閉形式との差",
+   "zh": "(c) estimation input = area-averaged (a) | error from closed form",
+   "tw": "(c) estimation input = area-averaged (a) | error from closed form",
+   "ko": "(c) estimation input = area-averaged (a) | error from closed form",
+   "de": "(c) estimation input = area-averaged (a) | error from closed form",
+   "hi": "(c) estimation input = area-averaged (a) | error from closed form",
+   "fr": "(c) estimation input = area-averaged (a) | error from closed form"
+  },
+  "10th-order saturation / 1st-order saturation": {
+   "ja": "10次の彩度 / 1次の彩度",
+   "zh": "10th-order saturation / 1st-order saturation",
+   "tw": "10th-order saturation / 1st-order saturation",
+   "ko": "10th-order saturation / 1st-order saturation",
+   "de": "10th-order saturation / 1st-order saturation",
+   "hi": "10th-order saturation / 1st-order saturation",
+   "fr": "10th-order saturation / 1st-order saturation"
+  },
+  "10th order < 1st order": {
+   "ja": "10次 < 1次",
+   "zh": "10th order < 1st order",
+   "tw": "10th order < 1st order",
+   "ko": "10th order < 1st order",
+   "de": "10th order < 1st order",
+   "hi": "10th order < 1st order",
+   "fr": "10th order < 1st order"
   },
   "yes, at maximum stress": {
    "ja": "はい",
