@@ -52,6 +52,15 @@ OUT_WING = {L: os.path.join(EXHIBITS, "wingpoc.%s.md" % L) for L in ("ja", "en")
 OUT_ARTICLE = {"ja": os.path.join(_ROOT, "docs", "articles", "fullseye_poc_museum_qiita_ja.md"),
                "en": os.path.join(_ROOT, "docs", "articles", "fullseye_poc_museum_qiita_en.md")}
 LEDGER = os.path.join(EXHIBITS, "exhibit_numbers.json")
+VIEW2026_A_OP_IDS = {
+    "poc_phase_measuring_deflectometry", "poc_industrial_oct",
+    "poc_hyperspectral_foreign_matter", "poc_thin_film_reflectometry",
+    "poc_cad_scan_deviation", "poc_telecentric_metrology",
+    "poc_tem_ctf_thon_rings", "poc_virtual_sem_kv_cd_bse",
+    "poc_dual_energy_xray", "poc_weld_radiograph_porosity",
+    "poc_good_sample_variation_model", "poc_code_matching_breakdown",
+    "poc_fourier_ptychography", "poc_photoelasticity",
+}
 
 
 def part_path(slug: str, lang: str) -> str:
@@ -369,16 +378,34 @@ def _figures_line(poc_id: str, lang: str) -> str:
     return "This run produced **%d figures** in total - [see them all](%s)" % (n, url)
 
 
-def _ops_line(poc_id: str, lang: str) -> str:
+def _ops_line(poc_id: str, lang: str, declared: list[str] | None = None) -> str:
     """「使用 op」行。細かい説明は書かず、ノート(ヘルプの目録)へのリンクに任せる
     (ユーザー方針 2026-09-07「ヘルプの目録へのリンクを貼っておけば細かい説明はいらない」)。"""
     tbl = _op_url_table()
-    names = _ops_used(poc_id)
+    detected = _ops_used(poc_id)
+    if declared is None:
+        names = detected
+    else:
+        names = list(declared)
+        if names != sorted(set(names)):
+            raise BuildError("%s: ops must be sorted and unique" % poc_id)
+        unknown = [name for name in names if name not in tbl]
+        if unknown:
+            raise BuildError("%s: unknown ops: %s" % (poc_id, ", ".join(unknown)))
+        if names != detected:
+            raise BuildError("%s: declared ops differ from source: declared=%s detected=%s" % (
+                poc_id, names, detected))
     if not names:
         return ""
-    links = " · ".join("[`%s`](%s)" % (n, tbl[n]) for n in names[:24])
-    more = "" if len(names) <= 24 else (" …(他 %d)" % (len(names) - 24) if lang == "ja" else " … (+%d)" % (len(names) - 24))
-    return ("使用 op(ノートへ): " if lang == "ja" else "Ops used (notes): ") + links + more
+    shown = names if declared is not None else names[:24]
+    links = " · ".join("[`%s`](%s)" % (n, tbl[n]) for n in shown)
+    more = "" if len(names) <= 24 or declared is not None else (
+        " …(他 %d)" % (len(names) - 24) if lang == "ja" else " … (+%d)" % (len(names) - 24))
+    if declared is not None:
+        label = "使った Fullseye の op(ノートへ): " if lang == "ja" else "Fullseye ops used (notes): "
+    else:
+        label = "使用 op(ノートへ): " if lang == "ja" else "Ops used (notes): "
+    return label + links + more
 
 
 def _exhibit_md(no: str, ex: dict, lang: str, pick: dict, thumb: str, byid: dict,
@@ -449,7 +476,7 @@ def _exhibit_md(no: str, ex: dict, lang: str, pick: dict, thumb: str, byid: dict
         #   「生成した数百枚はどこにあるのか記事からは分からない」)。
         _figures_line(ex["id"], lang),
         "",
-        _ops_line(ex["id"], lang),
+        _ops_line(ex["id"], lang, ex.get("ops") if ex["id"] in VIEW2026_A_OP_IDS else None),
         "",
     ]
     return "\n".join(lines)

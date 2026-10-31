@@ -992,7 +992,17 @@
     "hi": "केंद्र का fringe order 2.38 (closed form के अनुसार)। op का polariscope textbook सूत्र से अधिकतम 2.2e-16 अलग।",
     "fr": "L'ordre de frange au centre est de 2.38 (conforme à la forme fermée). Le système polarimétrique de l'op s'écarte au plus de 2.2e-16 de la formule du manuel."
    },
-   "youtube_url": ""
+   "youtube_url": "",
+   "ops": [
+    "axes_frame",
+    "axes_transform",
+    "mueller_apply",
+    "mueller_element",
+    "plot_series",
+    "text_box",
+    "ticks",
+    "unwrap_phase_2d"
+   ]
   },
   {
    "id": "poc_thermography_ndt",
@@ -5223,7 +5233,35 @@
     "fr": ""
    },
    "numbers_source": "log",
-   "youtube_url": ""
+   "youtube_url": "",
+   "ops": [
+    "add_metrology_object_circle_measure",
+    "annotate_scale_bar",
+    "apply_metrology_model",
+    "blast_normals",
+    "cast_shadow",
+    "chief_ray",
+    "chief_ray_angle",
+    "clearcoat_shade",
+    "create_metrology_model",
+    "defocus_spot_vs_depth",
+    "finish_shade",
+    "gen_measure_rectangle2",
+    "glass_catalog",
+    "lens_equivalent_pinhole",
+    "lens_system",
+    "magnification_vs_depth",
+    "measure_pos",
+    "metal_mirror_rgb",
+    "micro_normals",
+    "paraxial_trace",
+    "telecentric_lens",
+    "telecentricity_error",
+    "text_box",
+    "tonemap_reinhard",
+    "trace_rays",
+    "vignetting_vs_field"
+   ]
   },
   {
    "id": "poc_code_matching_breakdown",
@@ -5261,7 +5299,16 @@
     "fr": ""
    },
    "numbers_source": "log",
-   "youtube_url": ""
+   "youtube_url": "",
+   "ops": [
+    "isc_match",
+    "ncc_locate",
+    "ocm_match",
+    "radial_reach_filter",
+    "reflect",
+    "scc_match",
+    "text_box"
+   ]
   },
   {
    "id": "poc_dense_bubble_count",
@@ -5337,7 +5384,18 @@
     "fr": ""
    },
    "numbers_source": "log",
-   "youtube_url": ""
+   "youtube_url": "",
+   "ops": [
+    "anomaly_image_auroc",
+    "anomaly_pixel_auroc",
+    "anomaly_pro",
+    "anomaly_region_overlap",
+    "dc_rpca_sparse",
+    "varmodel_alignment",
+    "varmodel_calibrate",
+    "varmodel_fit",
+    "varmodel_score"
+   ]
   },
   {
    "id": "poc_noncoaxial_optics",
@@ -5603,7 +5661,16 @@
     "fr": ""
    },
    "numbers_source": "log",
-   "youtube_url": ""
+   "youtube_url": "",
+   "ops": [
+    "coherent_image",
+    "fp_capture",
+    "fp_design",
+    "fp_element_contrast",
+    "fp_reconstruct",
+    "fp_stack_from_images",
+    "fp_usaf_target"
+   ]
   },
   {
    "id": "poc_mueller_dofp_observability",
@@ -6933,7 +7000,25 @@
     "fr": ""
    },
    "numbers_source": "log",
-   "youtube_url": ""
+   "youtube_url": "",
+   "ops": [
+    "box_sdf",
+    "chamfer_distance",
+    "color_bar",
+    "esdf",
+    "estimate_normals",
+    "estimate_oriented_normals",
+    "face_areas",
+    "gicp",
+    "hausdorff_distance",
+    "icp_point2plane",
+    "icp_point2point_3d",
+    "query_distance",
+    "register_fpfh",
+    "sphere_sdf",
+    "text_box",
+    "voxel_grid_downsample"
+   ]
   },
   {
    "id": "poc_timelapse_growth",
@@ -7199,7 +7284,24 @@
     "fr": ""
    },
    "numbers_source": "log",
-   "youtube_url": ""
+   "youtube_url": "",
+   "ops": [
+    "blob_features",
+    "blob_label",
+    "blob_overlay",
+    "blob_select",
+    "estimate_noise",
+    "gauss_image",
+    "gen_measure_rectangle2",
+    "gray_opening_rect",
+    "identity",
+    "log_image",
+    "measure_pairs",
+    "measure_pos",
+    "median_rect",
+    "sk_rolling_ball",
+    "xsitk_grayscale_grindpeak"
+   ]
   },
   {
    "id": "poc_prnu_camera_fingerprint",
@@ -8377,7 +8479,19 @@
     "fr": ""
    },
    "numbers_source": "log",
-   "youtube_url": ""
+   "youtube_url": "",
+   "ops": [
+    "carbon_black_absorption",
+    "hyperspectral_band_weights",
+    "hyperspectral_capture",
+    "ingaas_photodiode_qe",
+    "kubelka_munk_reflectance",
+    "material_nir_absorption",
+    "median",
+    "nir_model_info",
+    "spectral_reflectance_from_material",
+    "text_box"
+   ]
   },
   {
    "id": "poc_am_thermal_to_ct",
@@ -10315,7 +10429,24 @@
     "fr": ""
    },
    "numbers_source": "log",
-   "youtube_url": ""
+   "youtube_url": "",
+   "ops": [
+    "glass",
+    "material_optical_constants",
+    "oct_ascan",
+    "oct_bscan",
+    "oct_bscan_boundaries",
+    "oct_bscan_flatten",
+    "oct_bscan_simulate",
+    "oct_design",
+    "oct_dispersion_broadening",
+    "oct_dispersion_compensate",
+    "oct_dispersion_estimate",
+    "oct_from_spectra",
+    "oct_interferogram",
+    "oct_k_linearize",
+    "oct_layer_thickness"
+   ]
   },
   {
    "id": "poc_peg_symmetry_search",
@@ -10847,7 +10978,21 @@
     "fr": ""
    },
    "numbers_source": "log",
-   "youtube_url": ""
+   "youtube_url": "",
+   "ops": [
+    "absolute_phase",
+    "deflectometry_phase_to_slope",
+    "deflectometry_render",
+    "deflectometry_rig",
+    "deflectometry_screen_pattern",
+    "deflectometry_sensitivity",
+    "fresnel_dielectric",
+    "integrate",
+    "sfp_height",
+    "slope_to_curvature",
+    "text_box",
+    "wrapped_phase"
+   ]
   },
   {
    "id": "poc_tacscalib_sphere_lut",
@@ -11607,7 +11752,20 @@
     "fr": ""
    },
    "numbers_source": "log",
-   "youtube_url": ""
+   "youtube_url": "",
+   "ops": [
+    "tem_amorphous_film",
+    "tem_ctf",
+    "tem_ctf_correct",
+    "tem_ctf_estimate",
+    "tem_ctf_profile",
+    "tem_image_weak_phase",
+    "tem_multislice",
+    "tem_power_spectrum",
+    "tem_projected_potential",
+    "tem_scherzer",
+    "tem_wavelength"
+   ]
   },
   {
    "id": "poc_plateau_venue_lod2",
@@ -11759,7 +11917,19 @@
     "fr": ""
    },
    "numbers_source": "log",
-   "youtube_url": ""
+   "youtube_url": "",
+   "ops": [
+    "annotate_colorbar",
+    "blackbody_spectrum",
+    "film_color",
+    "film_thickness_fft",
+    "film_thickness_fit",
+    "film_thickness_map",
+    "multilayer_reflectance",
+    "spectrum",
+    "text_box",
+    "thinning"
+   ]
   },
   {
    "id": "poc_rover_slip_risk_path",
@@ -11873,7 +12043,19 @@
     "fr": ""
    },
    "numbers_source": "log",
-   "youtube_url": ""
+   "youtube_url": "",
+   "ops": [
+    "material_electron_properties",
+    "sem_cd_measure",
+    "sem_charging_series",
+    "sem_electron_mc",
+    "sem_image",
+    "sem_line_profile",
+    "sem_se_escape_fraction",
+    "sem_se_universal_curve",
+    "sem_yield_curve",
+    "threshold"
+   ]
   },
   {
    "id": "poc_weed_rice_ratio",
@@ -11987,7 +12169,23 @@
     "fr": ""
    },
    "numbers_source": "log",
-   "youtube_url": ""
+   "youtube_url": "",
+   "ops": [
+    "basis_decomposition_crlb",
+    "basis_material_decompose",
+    "dual_energy_separability",
+    "dual_kvp_channels",
+    "ellipse",
+    "material_effective_z",
+    "material_from_sellmeier",
+    "material_xray_attenuation",
+    "material_xray_constants",
+    "photon_counting_channels",
+    "reflect",
+    "xray_beam_quality",
+    "xray_channel_projection",
+    "xray_tube_spectrum"
+   ]
   },
   {
    "id": "poc_worm_core_persists",

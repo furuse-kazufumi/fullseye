@@ -236,6 +236,8 @@ def validate(d: dict) -> list[str]:
             if src is None or src.get("numbers_source") != e["numbers_source"]:
                 bad.append("%s: 台帳の numbers_source と一致しない —— build_view2026_featured_batch.py を再実行すること" % pid)
             else:
+                if "ops" in e and src.get("ops") != e["ops"]:
+                    bad.append("%s: 台帳の ops と一致しない —— build_view2026_featured_batch.py を再実行すること" % pid)
                 for l in langs:
                     expected = src["caption_ja" if l == "ja" else "caption_en"]
                     got = e["see"][l] + e["num"][l]
@@ -459,8 +461,12 @@ def build(d: dict, lang: str) -> str:
             if _is_viewer(d, e):
                 kind += ", " + _viewer_mb(d, e)
             youtube = " [YouTube](%s)" % e["youtube_url"] if e.get("youtube_url") else ""
-            out.append("- [%s](%s) (%s): %s%s%s" % (
-                e["label"][lang], media(e), kind, e["see"][lang], num, link + youtube))
+            line = "- [%s](%s) (%s): %s%s%s" % (
+                e["label"][lang], media(e), kind, e["see"][lang], num, link + youtube)
+            if lang in ("ja", "en") and e.get("ops"):
+                label = "使った Fullseye の op" if lang == "ja" else "Fullseye ops used"
+                line += "<br>\n  %s: %s" % (label, " · ".join("`%s`" % op for op in e["ops"]))
+            out.append(line)
         out.append("")
     out += ["</div>", "", "## " + ui["h_about"], "", ui["about"], ""]
 
